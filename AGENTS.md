@@ -1,7 +1,7 @@
 # PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-02-08
-**Commit:** 5e25b78
+**Generated:** 2026-02-09
+**Commit:** 29d46c2
 **Branch:** master
 **Build System:** Bazel + npm (Google3-style hybrid)
 
@@ -39,7 +39,8 @@ resume/
 │   └── portfolio-worker/          # Edge portfolio worker
 │       ├── lib/                   # Stateless modules (security-headers.js)
 │       ├── src/job/               # Job-related modules
-│       └── src/styles/            # Modular CSS (animations, components)
+│       ├── src/styles/            # Modular CSS (animations, components)
+│       └── data.json              # Build-time resume data snapshot
 ├── tools/                         # Build, deploy, CI scripts
 │   ├── scripts/build/             # npm script wrappers
 │   └── ci/                        # affected.sh, CI helpers
@@ -47,7 +48,12 @@ resume/
 ├── infrastructure/                # Grafana/Elasticsearch/Prometheus/n8n
 ├── third_party/                   # npm deps (One Version Rule)
 ├── docs/                          # Documentation hub
-├── SECURITY_WARNING.md            # Exposed API key warnings
+├── .github/                       # CI/CD, CODEOWNERS, Dependabot, labeler
+│   ├── actions/setup/             # Composite action (Node/npm/Playwright)
+│   ├── workflows/ci.yml           # CI pipeline v2.0
+│   ├── CODEOWNERS                 # PR auto-reviewer assignment
+│   ├── dependabot.yml             # Automated dependency updates
+│   └── labeler.yml                # PR auto-labeling rules
 ├── BUILD.bazel                    # Root build aliases
 ├── MODULE.bazel                   # Bzlmod configuration
 └── OWNERS                         # Root code owners
@@ -101,7 +107,7 @@ bazel build //tools:deploy
 
 ```bash
 npm run build:all     # Build all
-npm run test:all      # Run all tests
+npm run test:unit     # Run unit tests
 npm run sync:data     # Propagate SSoT changes
 ```
 
@@ -117,20 +123,19 @@ npm run sync:data     # Propagate SSoT changes
 | Skip OWNERS review             | Breaks code ownership                              | Get OWNERS approval                                           |
 | Edit resume in multiple places | Data inconsistency                                 | Edit only `resume_data.json` (SSoT)                           |
 | Duplicate shared code          | workers/ vs shared/ drift                          | Keep business logic in shared/                                |
-| Duplicate shared↔workers code  | portfolio/src/job/ mirrors workers/src/ (37 files) | Consolidate: single source in workers/, import from portfolio |
-| Ignore SECURITY_WARNING.md     | Contains 6 exposed API keys                        | Read and act on warnings                                      |
+| Duplicate shared↔workers code  | portfolio/src/job/ mirrors workers/src/ (38 files) | Consolidate: single source in workers/, import from portfolio |
+| Ignore SECURITY_WARNING.md     | Contains 8 exposed API keys                        | Read and act on warnings                                      |
 
 ## REFACTORING CANDIDATES
 
 | File                   | Lines    | Issue                       | Recommended Fix                      |
 | ---------------------- | -------- | --------------------------- | ------------------------------------ |
-| `webhooks.js`          | 1129     | God Object                  | Split into handlers/ by event type   |
-| `resume-sync.js`       | 955      | 450-line switch             | Command pattern                      |
+| `resume-sync.js`       | 535      | Complex switch logic        | Command pattern                      |
 | `generate-worker.js`   | 1041     | Monolithic build            | Extract CSP/routing modules          |
-| `worker.js`            | 1534     | Generated monolith          | Modularize generate-worker.js output |
+| `worker.js`            | 1435     | Generated monolith          | Modularize generate-worker.js output |
 | `dashboard.html`       | 1386     | Inline everything           | Extract JS/CSS into separate files   |
 | `profile-sync.js`      | 966      | Complex sync logic          | Split into validators + transformers |
-| `src/job/` (portfolio) | 37 files | Full mirror of workers/src/ | Deduplicate: single source, import   |
+| `src/job/` (portfolio) | 38 files | Full mirror of workers/src/ | Deduplicate: single source, import   |
 
 ## BUILD PIPELINE
 
@@ -179,7 +184,6 @@ Dashboard Worker: workers/src/index.js → Cloudflare Worker
 | Trigger               | Action                                                          |
 | --------------------- | --------------------------------------------------------------- |
 | Push to `master`      | Analyze → Lint/Test → Build → Deploy → Verify                   |
-| Push to `develop`     | Analyze → Lint/Test (no deploy)                                 |
 | Deploy/verify failure | Auto-rollback via `wrangler rollback`                           |
 | PR opened/updated     | Ephemeral preview worker (`resume-pr-{N}`)                      |
 | PR to `master`        | Analyze → Lint/Test → Build → Preview comment                   |
@@ -271,16 +275,19 @@ source ~/.env && cd typescript/portfolio-worker && \
 
 ## FILES
 
-| File                  | Purpose                                   |
-| --------------------- | ----------------------------------------- |
-| `MODULE.bazel`        | Bzlmod deps (rules_shell)                 |
-| `WORKSPACE`           | Legacy Bazel compat                       |
-| `.bazelrc`            | Build configurations                      |
-| `BUILD.bazel`         | Package build rules (root aliases)        |
-| `OWNERS`              | Root code ownership                       |
-| `package.json`        | npm workspaces root                       |
-| `eslint.config.cjs`   | ESLint flat config (117-warning baseline) |
-| `SECURITY_WARNING.md` | Exposed API key warnings                  |
+| File                       | Purpose                                   |
+| -------------------------- | ----------------------------------------- |
+| `MODULE.bazel`             | Bzlmod deps (rules_shell)                 |
+| `WORKSPACE`                | Legacy Bazel compat                       |
+| `.bazelrc`                 | Build configurations                      |
+| `BUILD.bazel`              | Package build rules (root aliases)        |
+| `OWNERS`                   | Root code ownership                       |
+| `package.json`             | npm workspaces root                       |
+| `eslint.config.cjs`        | ESLint flat config (117-warning baseline) |
+| `docs/SECURITY_WARNING.md` | Exposed API key warnings                  |
+| `.github/CODEOWNERS`       | PR auto-reviewer assignment (from OWNERS) |
+| `.github/dependabot.yml`   | Automated npm dependency updates          |
+| `.github/labeler.yml`      | PR auto-labeling by path                  |
 
 ## AGENTS.MD HIERARCHY
 
