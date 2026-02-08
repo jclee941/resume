@@ -435,6 +435,7 @@
   color: var(--text-secondary);
   line-height: 1.6;
   margin-bottom: var(--space-2);
+  font-family: var(--font-sans);
 }
 
 .resume-tags {
@@ -515,6 +516,7 @@
   line-height: 1.6;
   margin: var(--space-2) 0;
   padding-left: var(--space-4);
+  font-family: var(--font-sans);
 }
 
 .project-tech {
