@@ -47,7 +47,7 @@
   "license": "MIT",
   "dependencies": {
     "@fastify/cookie": "^11.0.1",
-    "@fastify/cors": "^10.0.1",
+    "@fastify/cors": "^11.2.0",
     "@fastify/rate-limit": "^10.2.0",
     "@fastify/static": "^8.0.3",
     "@fastify/swagger": "^9.6.1",
