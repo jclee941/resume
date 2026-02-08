@@ -41,7 +41,7 @@ function generateSecurityHeaders(scriptHashes, styleHashes) {
     "style-src-elem 'self' 'unsafe-inline'",
     "style-src-attr 'unsafe-inline'",
     `connect-src 'self' https://www.google-analytics.com https://analytics.google.com ${CLOUDFLARE_ANALYTICS.connect}`,
-    "img-src 'self' data: https:",
+    "img-src 'self' data:",
     "font-src 'self'",
     "manifest-src 'self'",
     "worker-src 'self'",

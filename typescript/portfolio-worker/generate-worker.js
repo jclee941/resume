@@ -690,27 +690,7 @@ export default {
         });
       }
 
-      if (url.pathname === '/job' || url.pathname === '/job/health') {
-        // Job automation service health check endpoint
-        // Used by Service Status widget on homepage (fetches /job/health)
-        const jobHealth = {
-          status: 'healthy',
-          service: 'job-automation',
-          version: '${VERSION}',
-          message: 'Job automation service placeholder - full service coming soon'
-        };
-
-        metrics.requests_success++;
-        return new Response(JSON.stringify(jobHealth, null, 2), {
-          headers: {
-            ...SECURITY_HEADERS,
-            'Content-Type': 'application/json',
-            'Cache-Control': 'no-cache, no-store, must-revalidate'
-          }
-        });
-      }
-
-      if (url.pathname === '/metrics') {
+       if (url.pathname === '/metrics') {
         metrics.requests_success++;
         return new Response(generateMetrics(metrics), {
           headers: {
