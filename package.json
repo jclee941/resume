@@ -52,7 +52,7 @@
   "author": "Jaecheol Lee <qws941@kakao.com>",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.22.1"
+    "express": "^5.2.1"
   },
   "devDependencies": {
     "@playwright/test": "^1.57.0",
