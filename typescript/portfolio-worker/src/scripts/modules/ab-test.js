@@ -92,8 +92,6 @@ function trackConversion(testId, eventName, metadata = {}) {
   }).catch(() => {
     // Silently fail - don't block user experience
   });
-
-  console.log('📊 A/B Conversion:', event);
 }
 
 export function initializeABTesting() {
@@ -127,7 +125,4 @@ export function initializeABTesting() {
       });
     });
   }
-
-  // Log variant assignment for analytics
-  console.log('A/B Test: Resume variant ' + resumeVariant + ' assigned');
 }
