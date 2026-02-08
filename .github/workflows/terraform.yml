@@ -198,7 +198,7 @@ jobs:
           terraform_version: ${{ env.TF_VERSION }}
 
       - name: Download Plan
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: terraform-plan
           path: ${{ env.TF_WORKING_DIR }}
