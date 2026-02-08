@@ -1,7 +1,7 @@
 # PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-02-08
-**Commit:** 5e25b78
+**Generated:** 2026-02-09
+**Commit:** 29d46c2
 **Branch:** master
 **Build System:** Bazel + npm (Google3-style hybrid)
 
@@ -39,7 +39,8 @@ resume/
 │   └── portfolio-worker/          # Edge portfolio worker
 │       ├── lib/                   # Stateless modules (security-headers.js)
 │       ├── src/job/               # Job-related modules
-│       └── src/styles/            # Modular CSS (animations, components)
+│       ├── src/styles/            # Modular CSS (animations, components)
+│       └── data.json              # Build-time resume data snapshot
 ├── tools/                         # Build, deploy, CI scripts
 │   ├── scripts/build/             # npm script wrappers
 │   └── ci/                        # affected.sh, CI helpers
@@ -47,6 +48,12 @@ resume/
 ├── infrastructure/                # Grafana/Elasticsearch/Prometheus/n8n
 ├── third_party/                   # npm deps (One Version Rule)
 ├── docs/                          # Documentation hub
+├── .github/                       # CI/CD, CODEOWNERS, Dependabot, labeler
+│   ├── actions/setup/             # Composite action (Node/npm/Playwright)
+│   ├── workflows/ci.yml           # CI pipeline v2.0
+│   ├── CODEOWNERS                 # PR auto-reviewer assignment
+│   ├── dependabot.yml             # Automated dependency updates
+│   └── labeler.yml                # PR auto-labeling rules
 ├── SECURITY_WARNING.md            # Exposed API key warnings
 ├── BUILD.bazel                    # Root build aliases
 ├── MODULE.bazel                   # Bzlmod configuration
@@ -179,7 +186,6 @@ Dashboard Worker: workers/src/index.js → Cloudflare Worker
 | Trigger               | Action                                                          |
 | --------------------- | --------------------------------------------------------------- |
 | Push to `master`      | Analyze → Lint/Test → Build → Deploy → Verify                   |
-| Push to `develop`     | Analyze → Lint/Test (no deploy)                                 |
 | Deploy/verify failure | Auto-rollback via `wrangler rollback`                           |
 | PR opened/updated     | Ephemeral preview worker (`resume-pr-{N}`)                      |
 | PR to `master`        | Analyze → Lint/Test → Build → Preview comment                   |
@@ -271,16 +277,19 @@ source ~/.env && cd typescript/portfolio-worker && \
 
 ## FILES
 
-| File                  | Purpose                                   |
-| --------------------- | ----------------------------------------- |
-| `MODULE.bazel`        | Bzlmod deps (rules_shell)                 |
-| `WORKSPACE`           | Legacy Bazel compat                       |
-| `.bazelrc`            | Build configurations                      |
-| `BUILD.bazel`         | Package build rules (root aliases)        |
-| `OWNERS`              | Root code ownership                       |
-| `package.json`        | npm workspaces root                       |
-| `eslint.config.cjs`   | ESLint flat config (117-warning baseline) |
-| `SECURITY_WARNING.md` | Exposed API key warnings                  |
+| File                     | Purpose                                   |
+| ------------------------ | ----------------------------------------- |
+| `MODULE.bazel`           | Bzlmod deps (rules_shell)                 |
+| `WORKSPACE`              | Legacy Bazel compat                       |
+| `.bazelrc`               | Build configurations                      |
+| `BUILD.bazel`            | Package build rules (root aliases)        |
+| `OWNERS`                 | Root code ownership                       |
+| `package.json`           | npm workspaces root                       |
+| `eslint.config.cjs`      | ESLint flat config (117-warning baseline) |
+| `SECURITY_WARNING.md`    | Exposed API key warnings                  |
+| `.github/CODEOWNERS`     | PR auto-reviewer assignment (from OWNERS) |
+| `.github/dependabot.yml` | Automated npm dependency updates          |
+| `.github/labeler.yml`    | PR auto-labeling by path                  |
 
 ## AGENTS.MD HIERARCHY
 

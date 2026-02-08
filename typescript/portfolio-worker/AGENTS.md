@@ -1,7 +1,7 @@
 # PORTFOLIO WORKER KNOWLEDGE BASE
 
-**Generated:** 2026-02-08
-**Commit:** 5e25b78
+**Generated:** 2026-02-09
+**Commit:** 29d46c2
 **Branch:** master
 
 ## OVERVIEW
@@ -15,6 +15,7 @@ portfolio-worker/
 ├── index.html           # Source HTML (terminal UI, CLI commands)
 ├── generate-worker.js   # HTML → worker.js compiler (CSP hashes, escaping)
 ├── worker.js            # GENERATED - NEVER EDIT
+├── data.json            # Build-time resume data snapshot (synced from SSoT)
 ├── wrangler.toml        # Cloudflare Worker config
 ├── lib/                 # Stateless modules
 │   ├── security-headers.js  # CSP baseline, HSTS, X-* headers
@@ -45,11 +46,13 @@ portfolio-worker/
 ## BUILD PIPELINE
 
 ```
+resume_data.json (SSoT) → sync-resume-data.js → data.json
 index.html (edit this)
     ↓ generate-worker.js
         - Escape backticks in HTML
         - Compute SHA-256 CSP hashes for inline scripts
         - Inline all CSS from src/styles/
+        - Inline resume data from data.json
     ↓
 worker.js (NEVER EDIT - regenerated on build)
     ↓ wrangler deploy
