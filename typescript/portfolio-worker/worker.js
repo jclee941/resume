@@ -1,5 +1,5 @@
 // Cloudflare Worker - Auto-generated (IMPROVED VERSION)
-// Generated: 2026-02-08T10:12:47.609Z
+// Generated: 2026-02-08T10:15:49.882Z
 // Features: Template caching, JSDoc types, link helper, constants, rate limiting
 
 const INDEX_HTML = `<!doctype html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>이재철 - Infrastructure Engineer</title><meta name="description" content="이재철 - 인프라 엔지니어 | 금융·공공 분야 보안 인프라 및 관측성 설계·운영"><meta name="keywords" content="Infrastructure, Observability, Grafana, Prometheus, Loki, Splunk, 자동화, 인프라, 이재철"><meta name="author" content="이재철 (Jaecheol Lee)"><meta name="robots" content="index, follow"><meta name="google-site-verification" content="2a5f8c3b7d4e9a1f6c2b5e8d1a4f7c0b9e3d6a9f2c5"><script async src="https://www.googletagmanager.com/gtag/js?id=G-P9E8XY5K2L"></script><script>function gtag(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],gtag("js",new Date),gtag("config","G-P9E8XY5K2L",{page_path:window.location.pathname,language:"ko"})</script><link rel="canonical" href="https://resume.jclee.me"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="alternate" hreflang="ko-KR" href="https://resume.jclee.me"><link rel="alternate" hreflang="en-US" href="https://resume.jclee.me/en/"><link rel="alternate" hreflang="x-default" href="https://resume.jclee.me"><meta property="og:type" content="profile"><meta property="og:url" content="https://resume.jclee.me"><meta property="og:title" content="이재철 - Infrastructure Engineer"><meta property="og:description" content="인프라 엔지니어 | 금융·공공 분야 보안 인프라 및 관측성 설계·운영"><meta property="og:image" content="https://resume.jclee.me/og-image.webp"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:type" content="image/webp"><meta property="og:image:alt" content="Jaecheol Lee - Infrastructure Engineer Portfolio"><meta property="og:site_name" content="Jaecheol Lee Resume"><meta property="og:locale" content="ko_KR"><meta property="og:locale:alternate" content="en_US"><meta property="profile:first_name" content="Jaecheol"><meta property="profile:last_name" content="Lee"><meta property="profile:username" content="qws941"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:url" content="https://resume.jclee.me"><meta name="twitter:title" content="이재철 - Infrastructure Engineer"><meta name="twitter:description" content="인프라 엔지니어 | 금융·공공 분야 보안 인프라 및 관측성 설계·운영"><meta name="twitter:image" content="https://resume.jclee.me/og-image.webp"><meta name="twitter:creator" content="@qws941"><meta name="twitter:site" content="@qws941"><script type="application/ld+json">{
@@ -461,7 +461,7 @@ const RESUME_PDF_BASE64 = 'JVBERi0xLjUKJeTw7fgKMzggMCBvYmoKPDwvRmlsdGVyL0ZsYXRlR
 // Security headers
 const SECURITY_HEADERS = {
   "Content-Type": "text/html;charset=UTF-8",
-  "Content-Security-Policy": "default-src 'none'; script-src 'self' 'sha256-kTpVAG6lt9pOpYfBP2b1KWHlqjku79m80yvgPYcSZeU=' 'sha256-5NiDtPx8SF8bJR/sCkiCsBb8OCNckznoLYUCbsQU/lo=' 'sha256-dqqfxXEvIWlbYkghUfxVcMknQBQ2zi8DW3jvxKZ65fo=' 'sha256-92ZkZfK+6KL9XGdoPmyoJHijkRlshnV4bt9bKPg4Y80=' 'sha256-dL4F8pt4sZkLD9QHu7aP5pUaCr2kclW7Wpwgxu7dnbg=' 'sha256-Em4X12x7FJ83ABYuQ9g83T5p0xJcGld6Ec8vOchJtBE=' 'sha256-NVzBupllo8yD4RfyUXah0wVUSUF1jcv0sUR/omBz9qw=' 'sha256-nCiPfqOYuggKSwhwAMdWjnq/cdLaCo1dnxW9FPBEZSM=' 'sha256-ejv3KuWsiHLmQk4H/gGfcyNdLfHz0/RVasWLywuSzIM=' 'sha256-zs+4J8cC1q5fwDOyvn4APEMKVZsN1GmQ2jr0OQ2Z4Ng=' 'sha256-aqgtbzDOW7zHIbhXqXNSxzAlXB8Psw8OG18Wht/X/n0=' https://www.googletagmanager.com https://static.cloudflareinsights.com; style-src 'self' 'sha256-3Hl5fmUdyUZdA8mk8kjq7uE0pLxZkGwY5iUxltSqrCg=' 'sha256-c4tZoFGyGW0VbHQlpbxg6kEPAjAPt3yoESFR11bbxzI=' 'sha256-bE88M6Xw4aDgscLPAw7hW2GyivGYJzwHINh85QIQQ0k=' 'sha256-RX00Nnwv4lCd0zCAzriv3rj69Yov+GH1/uK8xd0ankI='; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'unsafe-inline'; connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://cloudflareinsights.com; img-src 'self' data: https:; font-src 'self'; manifest-src 'self'; worker-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests",
+  "Content-Security-Policy": "default-src 'none'; script-src 'self' 'sha256-kTpVAG6lt9pOpYfBP2b1KWHlqjku79m80yvgPYcSZeU=' 'sha256-5NiDtPx8SF8bJR/sCkiCsBb8OCNckznoLYUCbsQU/lo=' 'sha256-dqqfxXEvIWlbYkghUfxVcMknQBQ2zi8DW3jvxKZ65fo=' 'sha256-92ZkZfK+6KL9XGdoPmyoJHijkRlshnV4bt9bKPg4Y80=' 'sha256-dL4F8pt4sZkLD9QHu7aP5pUaCr2kclW7Wpwgxu7dnbg=' 'sha256-Em4X12x7FJ83ABYuQ9g83T5p0xJcGld6Ec8vOchJtBE=' 'sha256-NVzBupllo8yD4RfyUXah0wVUSUF1jcv0sUR/omBz9qw=' 'sha256-nCiPfqOYuggKSwhwAMdWjnq/cdLaCo1dnxW9FPBEZSM=' 'sha256-ejv3KuWsiHLmQk4H/gGfcyNdLfHz0/RVasWLywuSzIM=' 'sha256-zs+4J8cC1q5fwDOyvn4APEMKVZsN1GmQ2jr0OQ2Z4Ng=' 'sha256-aqgtbzDOW7zHIbhXqXNSxzAlXB8Psw8OG18Wht/X/n0=' https://www.googletagmanager.com https://static.cloudflareinsights.com; style-src 'self' 'sha256-3Hl5fmUdyUZdA8mk8kjq7uE0pLxZkGwY5iUxltSqrCg=' 'sha256-c4tZoFGyGW0VbHQlpbxg6kEPAjAPt3yoESFR11bbxzI=' 'sha256-bE88M6Xw4aDgscLPAw7hW2GyivGYJzwHINh85QIQQ0k=' 'sha256-RX00Nnwv4lCd0zCAzriv3rj69Yov+GH1/uK8xd0ankI='; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'unsafe-inline'; connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://cloudflareinsights.com; img-src 'self' data:; font-src 'self'; manifest-src 'self'; worker-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests",
   "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload",
   "X-Content-Type-Options": "nosniff",
   "X-Frame-Options": "DENY",
@@ -477,9 +477,9 @@ const metrics = {
   "requests_error": 0,
   "response_time_sum": 0,
   "vitals_received": 0,
-  "worker_start_time": 1770545567609,
+  "worker_start_time": 1770545749882,
   "version": "1.0.128",
-  "deployed_at": "2026-02-08T10:12:47.609Z"
+  "deployed_at": "2026-02-08T10:15:49.882Z"
 };
 
 // Histogram bucket boundaries (Prometheus standard)
@@ -1096,7 +1096,7 @@ export default {
         const health = {
           status: 'healthy',
           version: '1.0.128',
-          deployed_at: '2026-02-08T10:12:47.609Z',
+          deployed_at: '2026-02-08T10:15:49.882Z',
           uptime_seconds: uptime,
           metrics: {
             requests_total: metrics.requests_total,
