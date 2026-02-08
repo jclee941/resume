@@ -112,7 +112,7 @@ Commands defined in `index.html` within `terminalCommands` object.
 
 ## ANTI-PATTERNS
 
-> **⚠️ CRITICAL DUPLICATION**: `src/job/` is a near-complete mirror of `typescript/job-automation/workers/src/`. 37 files duplicated across handlers, middleware, services, utils, views, and workflows. Edit the **workers/** source, then sync to portfolio `src/job/`. Never edit `src/job/` directly.
+> **⚠️ CRITICAL DUPLICATION**: `src/job/` is a near-complete mirror of `typescript/job-automation/workers/src/`. 38 files duplicated across handlers, middleware, services, utils, views, and workflows. Edit the **workers/** source, then sync to portfolio `src/job/`. Never edit `src/job/` directly.
 
 | Anti-Pattern                 | Why                        | Do Instead                             |
 | ---------------------------- | -------------------------- | -------------------------------------- |
