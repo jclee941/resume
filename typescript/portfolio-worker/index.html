@@ -268,10 +268,9 @@
               </div>
               <div class="about-content">
                 <p class="cmd-output">
-                  > 보안 인프라 · Observability · 자동화<br />
-                  > 금융·공공 8년차 | 제로 트러스트 아키텍처 설계<br />
-                  > Grafana/Prometheus/Splunk 기반 통합 관측성 구축<br />
-                  > <span class="highlight">ITCEN CTS</span> (현재)
+                  보안 인프라 / 관측성 / 자동화<br />
+                  금융·공공 중심 8년차, 설계-운영-개선<br />
+                  ITCEN CTS (현재)
                 </p>
               </div>
             </section>
@@ -563,9 +562,9 @@
             '   ╚════╝  ╚═════╝╚══════╝╚══════╝╚══════╝</span>\\n' +
             '  ─────────────────────────────────────────\\n' +
             '  <span class="nf-label">Role:</span> Infrastructure Engineer\\n' +
-            '  <span class="nf-label">Focus:</span> Security Infra / Observability\\n' +
-            '  <span class="nf-label">Domain:</span> Finance, Public Sector\\n' +
-            '  <span class="nf-label">Stack:</span> Grafana, Prometheus, Splunk\\n' +
+            '  <span class="nf-label">Focus:</span> Security · Observability · Automation\\n' +
+            '  <span class="nf-label">Domain:</span> Finance · Public Sector\\n' +
+            '  <span class="nf-label">Stack:</span> K8s · Terraform · Prometheus · ELK\\n' +
             '  ─────────────────────────────────────────\\n' +
             '  <span class="nf-colors">███</span><span class="nf-colors c2">███</span><span class="nf-colors c3">███</span><span class="nf-colors c4">███</span><span class="nf-colors c5">███</span><span class="nf-colors c6">███</span><span class="nf-colors c7">███</span>\\n' +
             '</pre>'
@@ -626,13 +625,13 @@
           return (
             '<div class="help-output">' +
             'Available commands:\\n' +
-            '  <span class="cmd-name">neofetch</span>   - Display system info\\n' +
-            '  <span class="cmd-name">skills</span>     - Show tech stack\\n' +
-            '  <span class="cmd-name">experience</span> - View career history\\n' +
+            '  <span class="cmd-name">about</span>      - Show profile summary\\n' +
+            '  <span class="cmd-name">resume</span>     - View career experience\\n' +
             '  <span class="cmd-name">projects</span>   - List side projects\\n' +
+            '  <span class="cmd-name">skills</span>     - Show tech stack\\n' +
             '  <span class="cmd-name">contact</span>    - Contact information\\n' +
-            '  <span class="cmd-name">clear</span>      - Clear terminal\\n' +
-            '  <span class="cmd-name">help</span>       - Show this help' +
+            '  <span class="cmd-name">theme</span>      - Switch terminal theme\\n' +
+            '  <span class="cmd-name">clear</span>      - Clear terminal' +
             '</div>'
           );
         },
@@ -785,7 +784,7 @@
         window.terminalCommands.cat = function (args) {
           var files = {
             'about.txt':
-              '> 보안 인프라 / 관측성 / 자동화\\n> 금융·공공 중심 8년차, 설계-운영-개선\\n> ITCEN CTS (현재)',
+              '보안 인프라 / 관측성 / 자동화\\n금융·공공 중심 8년차, 설계-운영-개선\\nITCEN CTS (현재)',
             'contact.txt': 'Email: qws941@kakao.com\\nGitHub: github.com/qws941',
             'skills.json':
               '{\\n  "observability": ["Grafana", "Prometheus", "Loki", "Splunk"],\\n  "devops": ["GitLab CI/CD", "Ansible", "Terraform"]\\n}',
