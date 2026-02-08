@@ -1,0 +1,41 @@
+# Auto-detect text files and perform LF normalization
+* text=auto
+
+# Explicitly declare text files
+*.js text eol=lf
+*.cjs text eol=lf
+*.mjs text eol=lf
+*.ts text eol=lf
+*.json text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.toml text eol=lf
+*.sh text eol=lf
+*.bazel text eol=lf
+
+# Generated files (do not diff, mark as generated for GitHub stats)
+typescript/portfolio-worker/worker.js linguist-generated=true -diff
+typescript/portfolio-worker/worker-dev.js linguist-generated=true -diff
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+
+# Lock files (do not diff)
+package-lock.json -diff linguist-generated=true
+
+# Bazel
+*.bzl text eol=lf
+MODULE.bazel text eol=lf
+WORKSPACE text eol=lf
+BUILD.bazel text eol=lf
