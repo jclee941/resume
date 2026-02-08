@@ -47,17 +47,6 @@ test.describe('Visual Regression Tests', () => {
         maxDiffPixelRatio: 0.05,
       });
     });
-
-    // Stats section removed in redesign - test skipped
-    test.skip('stats grid screenshot', async ({ page }) => {
-      await page.goto('/');
-      await page.waitForLoadState('domcontentloaded');
-
-      const statsGrid = page.locator('.stats-grid').first();
-      await expect(statsGrid).toHaveScreenshot('desktop-stats.png', {
-        maxDiffPixelRatio: 0.05,
-      });
-    });
   });
 
   test.describe('Mobile Screenshots', () => {
@@ -159,18 +148,6 @@ test.describe('Visual Regression Tests', () => {
 
       const projectCard = page.locator('.project-item').first();
       await expect(projectCard).toHaveScreenshot('project-card.png', {
-        maxDiffPixelRatio: 0.05,
-      });
-    });
-
-    // Stats section removed in redesign - test skipped
-    test.skip('single stat card screenshot', async ({ page }) => {
-      await page.setViewportSize({ width: 1280, height: 720 });
-      await page.goto('/');
-      await page.waitForLoadState('domcontentloaded');
-
-      const statCard = page.locator('.stat-card').first();
-      await expect(statCard).toHaveScreenshot('stat-card.png', {
         maxDiffPixelRatio: 0.05,
       });
     });

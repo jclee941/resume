@@ -394,7 +394,7 @@ describe('A/B Testing Module', () => {
 
       expect(consoleSpy).toHaveBeenCalledWith(
         expect.stringContaining('📊 A/B Test Conversion:'),
-        expect.any(Object),
+        expect.any(Object)
       );
 
       consoleSpy.mockRestore();
@@ -403,8 +403,11 @@ describe('A/B Testing Module', () => {
 
     it('should handle localStorage availability in clearAllTests', () => {
       const originalLocalStorage = global.localStorage;
-      // @ts-ignore
-      delete global.localStorage;
+      Object.defineProperty(global, 'localStorage', {
+        value: undefined,
+        writable: true,
+        configurable: true,
+      });
 
       // Should not throw
       expect(() => clearAllTests()).not.toThrow();
