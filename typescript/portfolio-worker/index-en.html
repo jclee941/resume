@@ -81,7 +81,7 @@
         "@type": "Person",
         "@id": "https://resume.jclee.me/#person",
         "name": "Jaecheol Lee",
-        "alternateName": "이재철",
+        "alternateName": "Jaecheol Lee",
         "jobTitle": "AIOps / ML Platform Engineer",
         "description": "AIOps/ML Platform Engineer, Observability stack design, AI agent operations, financial infrastructure",
         "url": "https://resume.jclee.me",
@@ -230,7 +230,7 @@
                   ><span class="cmd-path">resume</span><span class="cmd-symbol">$</span>
                   <span class="cmd-input">whoami</span>
                 </div>
-                <h1 class="hero-title glitch" data-text="Jaecheol Lee">
+                <h1 class="hero-title glitch" data-text="Jaecheol Lee" aria-label="Jaecheol Lee">
                   <span class="typing-text glow-cyan">Jaecheol Lee</span
                   ><span class="cursor"></span>
                 </h1>
@@ -238,7 +238,13 @@
               </div>
             </section>
 
-            <section id="about" class="section-about reveal">
+            <section
+              id="about"
+              class="section-about reveal"
+              role="region"
+              aria-labelledby="about-heading"
+            >
+              <h2 id="about-heading" class="sr-only">About</h2>
               <div class="section-cmd">
                 <span class="section-cmd__command">cat about.txt</span>
               </div>
@@ -248,6 +254,36 @@
                   public sector. Design, operate, improve. Currently at
                   <span class="highlight">ITCEN CTS</span>.
                 </p>
+              </div>
+            </section>
+
+            <section
+              id="status"
+              class="section-status reveal"
+              role="region"
+              aria-labelledby="status-heading"
+            >
+              <h2 id="status-heading" class="sr-only">Status</h2>
+              <div class="section-cmd">
+                <span class="section-cmd__command">systemctl status services</span>
+              </div>
+              <div class="status-content">
+                <div class="status-header">
+                  <span class="status-indicator status-loading"></span>
+                  <span class="status-title">Service Status</span>
+                </div>
+                <ul class="status-list" id="status-list">
+                  <li class="status-item" data-url="https://resume.jclee.me">
+                    <span class="status-dot"></span>
+                    <span class="status-name">resume.jclee.me</span>
+                    <span class="status-state">checking...</span>
+                  </li>
+                  <li class="status-item" data-url="https://resume.jclee.me/job">
+                    <span class="status-dot"></span>
+                    <span class="status-name">resume.jclee.me/job</span>
+                    <span class="status-state">checking...</span>
+                  </li>
+                </ul>
               </div>
             </section>
 
@@ -286,7 +322,13 @@
               </ul>
             </section>
 
-            <section id="skills" class="section-skills reveal">
+            <section
+              id="skills"
+              class="section-skills reveal"
+              role="region"
+              aria-labelledby="skills-heading"
+            >
+              <h2 id="skills-heading" class="sr-only">Skills</h2>
               <div class="section-cmd">
                 <span class="section-cmd__command">cat skills.json</span>
               </div>

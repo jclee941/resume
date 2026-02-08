@@ -47,30 +47,12 @@
     </url>
 
     <url>
-        <loc>https://resume.jclee.me#infrastructure</loc>
-        <lastmod>2026-01-15</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.85</priority>
-        <xhtml:link rel="alternate" hreflang="ko-KR" href="https://resume.jclee.me#infrastructure"/>
-        <xhtml:link rel="alternate" hreflang="en-US" href="https://resume.jclee.me/en/#infrastructure"/>
-    </url>
-
-    <url>
         <loc>https://resume.jclee.me#skills</loc>
         <lastmod>2026-01-15</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
         <xhtml:link rel="alternate" hreflang="ko-KR" href="https://resume.jclee.me#skills"/>
         <xhtml:link rel="alternate" hreflang="en-US" href="https://resume.jclee.me/en/#skills"/>
-    </url>
-
-    <url>
-        <loc>https://resume.jclee.me#certifications</loc>
-        <lastmod>2026-01-15</lastmod>
-        <changefreq>yearly</changefreq>
-        <priority>0.75</priority>
-        <xhtml:link rel="alternate" hreflang="ko-KR" href="https://resume.jclee.me#certifications"/>
-        <xhtml:link rel="alternate" hreflang="en-US" href="https://resume.jclee.me/en/#certifications"/>
     </url>
 
     <url>
@@ -145,80 +127,6 @@
         <priority>0.75</priority>
         <xhtml:link rel="alternate" hreflang="ko-KR" href="https://resume.jclee.me#resume-2"/>
         <xhtml:link rel="alternate" hreflang="en-US" href="https://resume.jclee.me/en/#resume-2"/>
-    </url>
-
-    <!-- Infrastructure Pages -->
-    <url>
-        <loc>https://resume.jclee.me#infra-grafana</loc>
-        <lastmod>2026-01-15</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.8</priority>
-        <xhtml:link rel="alternate" hreflang="ko-KR" href="https://resume.jclee.me#infra-grafana"/>
-        <xhtml:link rel="alternate" hreflang="en-US" href="https://resume.jclee.me/en/#infra-grafana"/>
-    </url>
-
-    <url>
-        <loc>https://resume.jclee.me#infra-gitlab</loc>
-        <lastmod>2026-01-15</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.8</priority>
-        <xhtml:link rel="alternate" hreflang="ko-KR" href="https://resume.jclee.me#infra-gitlab"/>
-        <xhtml:link rel="alternate" hreflang="en-US" href="https://resume.jclee.me/en/#infra-gitlab"/>
-    </url>
-
-    <url>
-        <loc>https://resume.jclee.me#infra-n8n</loc>
-        <lastmod>2026-01-15</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.8</priority>
-        <xhtml:link rel="alternate" hreflang="ko-KR" href="https://resume.jclee.me#infra-n8n"/>
-        <xhtml:link rel="alternate" hreflang="en-US" href="https://resume.jclee.me/en/#infra-n8n"/>
-    </url>
-
-    <url>
-        <loc>https://resume.jclee.me#infra-metrics</loc>
-        <lastmod>2026-01-15</lastmod>
-        <changefreq>daily</changefreq>
-        <priority>0.8</priority>
-        <xhtml:link rel="alternate" hreflang="ko-KR" href="https://resume.jclee.me#infra-metrics"/>
-        <xhtml:link rel="alternate" hreflang="en-US" href="https://resume.jclee.me/en/#infra-metrics"/>
-    </url>
-
-    <!-- API & Metrics Endpoints -->
-    <url>
-        <loc>https://resume.jclee.me/health</loc>
-        <lastmod>2026-01-15</lastmod>
-        <changefreq>hourly</changefreq>
-        <priority>0.6</priority>
-    </url>
-
-    <url>
-        <loc>https://resume.jclee.me/metrics</loc>
-        <lastmod>2026-01-15</lastmod>
-        <changefreq>hourly</changefreq>
-        <priority>0.6</priority>
-    </url>
-
-    <!-- External Resources (Infrastructure) -->
-    <url>
-        <loc>https://grafana.jclee.me</loc>
-        <lastmod>2026-01-15</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.7</priority>
-    </url>
-
-    <url>
-        <loc>https://gitlab.jclee.me</loc>
-        <lastmod>2026-01-15</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.7</priority>
-    </url>
-
-    <url>
-        <loc>https://n8n.jclee.me</loc>
-        <lastmod>2026-01-15</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.7</priority>
     </url>
 
 </urlset>

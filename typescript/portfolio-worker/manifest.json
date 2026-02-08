@@ -1,7 +1,7 @@
 {
-  "name": "이재철 - AIOps & Observability Engineer",
+  "name": "이재철 - Infrastructure Engineer",
   "short_name": "JC Lee Resume",
-  "description": "AIOps & Observability 엔지니어 포트폴리오",
+  "description": "인프라 엔지니어 포트폴리오",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0f0f23",
@@ -39,21 +39,21 @@
       "short_name": "Resume",
       "description": "View resume section",
       "url": "/#resume",
-      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+      "icons": [{ "src": "/assets/icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "Projects",
       "short_name": "Projects",
       "description": "View projects portfolio",
       "url": "/#projects",
-      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+      "icons": [{ "src": "/assets/icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "Contact",
       "short_name": "Contact",
       "description": "Contact information",
       "url": "/#contact",
-      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+      "icons": [{ "src": "/assets/icon-192.png", "sizes": "192x192" }]
     }
   ],
   "related_applications": [],

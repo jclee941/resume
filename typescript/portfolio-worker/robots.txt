@@ -35,10 +35,10 @@ Crawl-delay: 0
 
 # ChatGPT and AI bots
 User-agent: ChatGPT-User
-Allow: /
+Disallow: /
 
 User-agent: GPTBot
-Allow: /
+Disallow: /
 
 User-agent: Applebot
 Allow: /

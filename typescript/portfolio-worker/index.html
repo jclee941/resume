@@ -249,14 +249,20 @@
                   ><span class="cmd-path">resume</span><span class="cmd-symbol">$</span>
                   <span class="cmd-input">whoami</span>
                 </div>
-                <h1 class="hero-title glitch" data-text="이재철">
+                <h1 class="hero-title glitch" data-text="이재철" aria-label="이재철">
                   <span class="typing-text glow-cyan">이재철</span><span class="cursor"></span>
                 </h1>
                 <div class="cmd-output">보안 인프라 · Observability · 자동화</div>
               </div>
             </section>
 
-            <section id="about" class="section-about reveal">
+            <section
+              id="about"
+              class="section-about reveal"
+              role="region"
+              aria-labelledby="about-heading"
+            >
+              <h2 id="about-heading" class="sr-only">소개</h2>
               <div class="section-cmd">
                 <span class="section-cmd__command">cat about.txt</span>
               </div>
@@ -270,7 +276,13 @@
               </div>
             </section>
 
-            <section id="status" class="section-status reveal">
+            <section
+              id="status"
+              class="section-status reveal"
+              role="region"
+              aria-labelledby="status-heading"
+            >
+              <h2 id="status-heading" class="sr-only">상태</h2>
               <div class="section-cmd">
                 <span class="section-cmd__command">systemctl status services</span>
               </div>
@@ -333,7 +345,13 @@
               </ul>
             </section>
 
-            <section id="skills" class="section-skills reveal">
+            <section
+              id="skills"
+              class="section-skills reveal"
+              role="region"
+              aria-labelledby="skills-heading"
+            >
+              <h2 id="skills-heading" class="sr-only">기술</h2>
               <div class="section-cmd">
                 <span class="section-cmd__command">cat skills.json</span>
               </div>

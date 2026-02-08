@@ -238,6 +238,14 @@ const _N8N_WEBHOOK_BASE = process.env.N8N_WEBHOOK_BASE || 'https://n8n.jclee.me/
   // Generate dynamic HTML content (with caching)
   const resumeCardsHtml = generateResumeCards(projectData.resume, dataHash);
   const projectCardsHtml = generateProjectCards(projectData.projects, dataHash);
+  const resumeCardsEnHtml = generateResumeCards(
+    projectData.resumeEn || projectData.resume,
+    `${dataHash}:en-resume`
+  );
+  const projectCardsEnHtml = generateProjectCards(
+    projectData.projectsEn || projectData.projects,
+    `${dataHash}:en-projects`
+  );
   const certCardsHtml = generateCertificationCards(projectData.certifications, dataHash);
   const skillsHtml = generateSkillsList(projectData.skills, dataHash);
   const heroContentHtml = generateHeroContent(projectData.hero);
@@ -279,8 +287,8 @@ const _N8N_WEBHOOK_BASE = process.env.N8N_WEBHOOK_BASE || 'https://n8n.jclee.me/
     .replace('<!-- CSS_PLACEHOLDER -->', cssContent)
     .replace('<!-- HERO_CONTENT_PLACEHOLDER -->', heroContentHtml)
     .replace('<!-- RESUME_DESCRIPTION_PLACEHOLDER -->', resumeDescriptionHtml)
-    .replace('<!-- RESUME_CARDS_PLACEHOLDER -->', resumeCardsHtml)
-    .replace('<!-- PROJECT_CARDS_PLACEHOLDER -->', projectCardsHtml)
+    .replace('<!-- RESUME_CARDS_PLACEHOLDER -->', resumeCardsEnHtml)
+    .replace('<!-- PROJECT_CARDS_PLACEHOLDER -->', projectCardsEnHtml)
     .replace('<!-- INFRASTRUCTURE_CARDS_PLACEHOLDER -->', infrastructureCardsHtml)
     .replace('<!-- CERTIFICATION_CARDS_PLACEHOLDER -->', certCardsHtml)
     .replace('<!-- SKILLS_LIST_PLACEHOLDER -->', skillsHtml)
@@ -992,7 +1000,14 @@ export default {
 
       // 404 Not Found
       metrics.requests_error++;
-      return new Response('Not Found', { status: 404 });
+      return new Response('Not Found', {
+        status: 404,
+        headers: {
+          ...SECURITY_HEADERS,
+          'Content-Type': 'text/plain',
+          'Cache-Control': 'no-cache, no-store, must-revalidate'
+        }
+      });
 
     } catch (err) {
       metrics.requests_error++;
@@ -1001,7 +1016,14 @@ export default {
         method: request.method
       }));
 
-      return new Response('Internal Server Error', { status: 500 });
+      return new Response('Internal Server Error', {
+        status: 500,
+        headers: {
+          ...SECURITY_HEADERS,
+          'Content-Type': 'text/plain',
+          'Cache-Control': 'no-cache, no-store, must-revalidate'
+        }
+      });
     }
   }
 };
