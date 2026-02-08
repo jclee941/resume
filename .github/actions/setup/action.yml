@@ -21,10 +21,6 @@ inputs:
   node-version:
     description: 'Node.js version'
     default: '22'
-  playwright-version:
-    description: 'Playwright version for cache key'
-    default: '1.58.1'
-
 runs:
   using: 'composite'
   steps:
@@ -39,13 +35,20 @@ runs:
       shell: bash
 
     # Playwright browser caching (~500MB savings per cache hit)
+    # Version is auto-detected from installed package to prevent cache staleness
+    - name: Detect Playwright version
+      if: inputs.install-playwright == 'true'
+      id: pw-version
+      run: echo "version=$(node -p 'require("@playwright/test/package.json").version')" >> $GITHUB_OUTPUT
+      shell: bash
+
     - name: Cache Playwright browsers
       if: inputs.install-playwright == 'true'
       uses: actions/cache@v4
       id: playwright-cache
       with:
         path: ~/.cache/ms-playwright
-        key: playwright-${{ inputs.playwright-version }}-${{ runner.os }}
+        key: playwright-${{ steps.pw-version.outputs.version }}-${{ runner.os }}
 
     - name: Install Playwright browsers (full)
       if: inputs.install-playwright == 'true' && steps.playwright-cache.outputs.cache-hit != 'true'
