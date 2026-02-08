@@ -32,7 +32,7 @@ The following keys were found exposed in `.env` or history and MUST be rotated i
 
 ## 2. Hardcoded Passwords (Fixed)
 
-- ✅ `apps/job-automation/scripts/*.js`: Hardcoded password replaced with `process.env.WANTED_PASSWORD`.
+- ✅ `typescript/job-automation/scripts/*.js`: Hardcoded password replaced with `process.env.WANTED_PASSWORD`.
 - **Action**: Ensure `WANTED_PASSWORD` is set in your environment variables (e.g., `~/.bashrc` or CI secrets).
 
 ## 3. Deployment Security
