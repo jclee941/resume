@@ -4,7 +4,7 @@ import {
   logError as esLogError,
   flush,
   generateRequestId,
-} from '../../utils/es-logger.js';
+} from '../../../lib/es-logger.js';
 
 export class RequestContext {
   constructor(requestId, method, pathname, startTime) {
