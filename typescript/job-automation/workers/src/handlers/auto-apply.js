@@ -392,6 +392,8 @@ export class AutoApplyHandler {
                 `[AutoApply] Apply failed for ${job.source}/${job.sourceId}:`,
                 normalized.message
               );
+              searchResults.errors++;
+              await this.recordApplication(job, job.source, 'error', { error: normalized.message });
             }
           } else {
             await this.recordApplication(job, job.source, 'pending');
