@@ -166,7 +166,17 @@ jobs:
           terraform_version: ${{ env.TF_VERSION }}
 
       - name: Terraform Init
-        run: terraform init
+        run: |
+          for i in 1 2 3; do
+            if terraform init -input=false; then
+              echo "✅ terraform init succeeded"
+              exit 0
+            fi
+            echo "::warning::terraform init attempt $i/3 failed, retrying in ${i}0s..."
+            sleep ${i}0
+          done
+          echo "::error::terraform init failed after 3 attempts"
+          exit 1
         working-directory: ${{ env.TF_WORKING_DIR }}
 
       - name: Check for Drift
