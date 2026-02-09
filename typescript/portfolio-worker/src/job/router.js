@@ -1,4 +1,4 @@
-import { HttpError, normalizeError } from '../../../job-automation/src/shared/errors/index.js';
+import { HttpError, normalizeError } from './lib/errors.js';
 
 export class Router {
   constructor() {

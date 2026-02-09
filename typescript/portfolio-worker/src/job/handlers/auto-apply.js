@@ -1,7 +1,7 @@
 import { WantedClient } from '../services/wanted-client.js';
 import { LinkedInClient } from '../services/linkedin-client.js';
 import { RememberClient } from '../services/remember-client.js';
-import { normalizeError } from '../../../../job-automation/src/shared/errors/index.js';
+import { normalizeError } from '../lib/errors.js';
 
 const DEFAULT_KEYWORDS = ['DevOps', 'SRE', 'Platform Engineer', '보안'];
 const SUPPORTED_PLATFORMS = ['wanted', 'linkedin', 'remember'];
