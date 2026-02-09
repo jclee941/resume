@@ -39,8 +39,12 @@ describe('Config Module', () => {
       expect(CONFIG.CARD_CLASSES).toHaveProperty('PROJECT_CARD');
     });
 
-    test('DOC_CARD_HIGHLIGHT should include DOC_CARD', () => {
-      expect(CONFIG.CARD_CLASSES.DOC_CARD_HIGHLIGHT).toContain(CONFIG.CARD_CLASSES.DOC_CARD);
+    test('DOC_CARD_HIGHLIGHT should include all DOC_CARD classes', () => {
+      const highlightClasses = CONFIG.CARD_CLASSES.DOC_CARD_HIGHLIGHT.split(' ');
+      const docCardClasses = CONFIG.CARD_CLASSES.DOC_CARD.split(' ');
+      docCardClasses.forEach((cls) => {
+        expect(highlightClasses).toContain(cls);
+      });
     });
   });
 

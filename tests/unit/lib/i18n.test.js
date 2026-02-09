@@ -14,7 +14,10 @@ const {
 describe('i18n Module', () => {
   describe('detectLanguage', () => {
     it('should return default language when navigator is undefined', () => {
+      const originalNavigator = global.navigator;
+      delete global.navigator;
       const result = detectLanguage();
+      global.navigator = originalNavigator;
       expect(result).toBe(DEFAULT_LANGUAGE);
     });
 

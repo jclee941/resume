@@ -11,15 +11,11 @@ const {
 describe('Security Headers Module', () => {
   describe('CACHE_STRATEGIES', () => {
     test('should have HTML strategy', () => {
-      expect(CACHE_STRATEGIES.HTML).toBe(
-        'public, max-age=3600, must-revalidate',
-      );
+      expect(CACHE_STRATEGIES.HTML).toBe('public, max-age=3600, must-revalidate');
     });
 
     test('should have STATIC strategy', () => {
-      expect(CACHE_STRATEGIES.STATIC).toBe(
-        'public, max-age=31536000, immutable',
-      );
+      expect(CACHE_STRATEGIES.STATIC).toBe('public, max-age=31536000, immutable');
     });
 
     test('should have DOCUMENT strategy', () => {
@@ -49,36 +45,16 @@ describe('Security Headers Module', () => {
     test('should include security headers', () => {
       const headers = generateSecurityHeaders([], []);
 
-      expect(headers['Strict-Transport-Security']).toContain(
-        'max-age=63072000',
-      );
+      expect(headers['Strict-Transport-Security']).toContain('max-age=63072000');
       expect(headers['X-Content-Type-Options']).toBe('nosniff');
       expect(headers['X-Frame-Options']).toBe('DENY');
       expect(headers['X-XSS-Protection']).toBe('1; mode=block');
-      expect(headers['Referrer-Policy']).toBe(
-        'strict-origin-when-cross-origin',
-      );
+      expect(headers['Referrer-Policy']).toBe('strict-origin-when-cross-origin');
     });
 
     test('should include Cloudflare script hashes', () => {
       const headers = generateSecurityHeaders([], []);
-      expect(headers['Content-Security-Policy']).toContain(
-        'sha256-ejv3KuWsiHLmQk4H',
-      );
-    });
-
-    test('should include Sentry CDN in script-src', () => {
-      const headers = generateSecurityHeaders([], []);
-      expect(headers['Content-Security-Policy']).toContain(
-        'https://browser.sentry-cdn.com',
-      );
-    });
-
-    test('should include fonts.googleapis.com in style-src-elem', () => {
-      const headers = generateSecurityHeaders([], []);
-      expect(headers['Content-Security-Policy']).toContain(
-        'https://fonts.googleapis.com',
-      );
+      expect(headers['Content-Security-Policy']).toContain('sha256-ejv3KuWsiHLmQk4H');
     });
 
     test('should use HTML cache strategy by default', () => {

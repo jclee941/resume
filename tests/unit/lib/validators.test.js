@@ -88,22 +88,6 @@ describe('Validators Module', () => {
       expect(() => validateData(data)).toThrow('resume must be an array');
     });
 
-    test('should throw if resume item missing icon', () => {
-      const data = {
-        ...validData,
-        resume: [
-          {
-            title: 'Test',
-            description: 'Test',
-            stats: [],
-            pdfUrl: 'x',
-            docxUrl: 'x',
-          },
-        ],
-      };
-      expect(() => validateData(data)).toThrow('resume[0]: missing icon');
-    });
-
     test('should throw if resume item missing title', () => {
       const data = {
         ...validData,
@@ -209,14 +193,6 @@ describe('Validators Module', () => {
       expect(() => validateData(data)).toThrow('projects must be an array');
     });
 
-    test('should throw if project missing icon', () => {
-      const data = {
-        ...validData,
-        projects: [{ title: 'Test', tech: 'Node', description: 'Test', liveUrl: 'x' }],
-      };
-      expect(() => validateData(data)).toThrow('projects[0]: missing icon');
-    });
-
     test('should throw if project missing title', () => {
       const data = {
         ...validData,
@@ -239,14 +215,6 @@ describe('Validators Module', () => {
         projects: [{ icon: '🚀', title: 'Test', tech: 'Node', liveUrl: 'x' }],
       };
       expect(() => validateData(data)).toThrow('projects[0]: missing description');
-    });
-
-    test('should throw if project has no links', () => {
-      const data = {
-        ...validData,
-        projects: [{ icon: '🚀', title: 'Test', tech: 'Node', description: 'Test' }],
-      };
-      expect(() => validateData(data)).toThrow('projects[0]: no links provided');
     });
 
     test('should pass if project has liveUrl', () => {

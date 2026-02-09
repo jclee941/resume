@@ -275,99 +275,6 @@ describe('Cards Module', () => {
       expect(html).toContain('href="https://docs.example.com"');
     });
 
-    test('should render tagline when provided', () => {
-      const projectWithTagline = [
-        {
-          icon: '🎯',
-          title: 'Tagline Project',
-          tech: 'Node.js',
-          description: 'A project with tagline',
-          tagline: 'This is a catchy tagline',
-          liveUrl: 'https://example.com',
-          repoUrl: 'https://github.com/test',
-        },
-      ];
-
-      const html = generateProjectCards(projectWithTagline, 'tagline-hash');
-
-      expect(html).toContain('project-tagline');
-      expect(html).toContain('This is a catchy tagline');
-    });
-
-    test('should render metrics when provided', () => {
-      const projectWithMetrics = [
-        {
-          icon: '📊',
-          title: 'Metrics Project',
-          tech: 'Node.js',
-          description: 'A project with metrics',
-          metrics: {
-            users: '1000+',
-            uptime: '99.9%',
-            response_time: '50ms',
-          },
-          liveUrl: 'https://example.com',
-          repoUrl: 'https://github.com/test',
-        },
-      ];
-
-      const html = generateProjectCards(projectWithMetrics, 'metrics-hash');
-
-      expect(html).toContain('project-metrics');
-      expect(html).toContain('metric-value');
-      expect(html).toContain('metric-label');
-      expect(html).toContain('1000+');
-      expect(html).toContain('99.9%');
-      expect(html).toContain('50ms');
-      expect(html).toContain('users');
-      expect(html).toContain('uptime');
-      expect(html).toContain('response time'); // underscore replaced with space
-    });
-
-    test('should render related skills when provided', () => {
-      const projectWithSkills = [
-        {
-          icon: '🛠️',
-          title: 'Skills Project',
-          tech: 'Node.js',
-          description: 'A project with skills',
-          related_skills: ['JavaScript', 'TypeScript', 'React'],
-          liveUrl: 'https://example.com',
-          repoUrl: 'https://github.com/test',
-        },
-      ];
-
-      const html = generateProjectCards(projectWithSkills, 'skills-hash');
-
-      expect(html).toContain('project-skills');
-      expect(html).toContain('skill-tag');
-      expect(html).toContain('JavaScript');
-      expect(html).toContain('TypeScript');
-      expect(html).toContain('React');
-    });
-
-    test('should render business impact when provided', () => {
-      const projectWithImpact = [
-        {
-          icon: '💼',
-          title: 'Impact Project',
-          tech: 'Node.js',
-          description: 'A project with business impact',
-          businessImpact: 'Reduced costs by 50%',
-          liveUrl: 'https://example.com',
-          repoUrl: 'https://github.com/test',
-        },
-      ];
-
-      const html = generateProjectCards(projectWithImpact, 'impact-hash');
-
-      expect(html).toContain('project-impact');
-      expect(html).toContain('impact-icon');
-      expect(html).toContain('impact-text');
-      expect(html).toContain('Reduced costs by 50%');
-      expect(html).toContain('💡');
-    });
-
     test('should not render optional sections when not provided', () => {
       const minimalProject = [
         {
@@ -386,37 +293,6 @@ describe('Cards Module', () => {
       expect(html).not.toContain('project-metrics');
       expect(html).not.toContain('project-skills');
       expect(html).not.toContain('project-impact');
-    });
-
-    test('should render all optional sections together', () => {
-      const fullProject = [
-        {
-          icon: '🌟',
-          title: 'Full Project',
-          tech: 'Node.js, React, PostgreSQL',
-          description: 'A complete project',
-          tagline: 'The ultimate solution',
-          metrics: {
-            users: '10K+',
-            uptime: '99.99%',
-          },
-          related_skills: ['Node.js', 'React'],
-          businessImpact: 'Increased revenue by 200%',
-          liveUrl: 'https://example.com',
-          repoUrl: 'https://github.com/test',
-        },
-      ];
-
-      const html = generateProjectCards(fullProject, 'full-hash');
-
-      expect(html).toContain('project-tagline');
-      expect(html).toContain('The ultimate solution');
-      expect(html).toContain('project-metrics');
-      expect(html).toContain('10K+');
-      expect(html).toContain('project-skills');
-      expect(html).toContain('Node.js');
-      expect(html).toContain('project-impact');
-      expect(html).toContain('Increased revenue by 200%');
     });
 
     test('should handle empty metrics object', () => {

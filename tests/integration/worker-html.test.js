@@ -6,7 +6,7 @@ describe('Worker-HTML Integration', () => {
 
   beforeAll(() => {
     // Read generated worker
-    const workerPath = path.join(__dirname, '../../web/worker.js');
+    const workerPath = path.join(__dirname, '../../typescript/portfolio-worker/worker.js');
     workerCode = fs.readFileSync(workerPath, 'utf-8');
   });
 
@@ -28,8 +28,7 @@ describe('Worker-HTML Integration', () => {
       if (indexMatch) {
         const embeddedIndex = indexMatch[1];
         // Should not have unescaped ${ patterns
-        const unescapedDollarBraces = (embeddedIndex.match(/[^\\]\$\{/g) || [])
-          .length;
+        const unescapedDollarBraces = (embeddedIndex.match(/[^\\]\$\{/g) || []).length;
         expect(unescapedDollarBraces).toBe(0);
       }
     });
@@ -56,12 +55,7 @@ describe('Worker-HTML Integration', () => {
   describe('Content Integrity', () => {
     test('embedded index.html should contain key portfolio elements', () => {
       // Check if worker contains critical content from index.html
-      const criticalContent = [
-        'Infrastructure',
-        'Security',
-        'Engineer',
-        'project-card',
-      ];
+      const criticalContent = ['Infrastructure', 'Security', 'Engineer', 'project-card'];
 
       criticalContent.forEach((content) => {
         expect(workerCode).toContain(content);
@@ -94,8 +88,8 @@ describe('Worker-HTML Integration', () => {
 
       // Read newly generated worker
       const newWorkerCode = fs.readFileSync(
-        path.join(__dirname, '../../web/worker.js'),
-        'utf-8',
+        path.join(__dirname, '../../typescript/portfolio-worker/worker.js'),
+        'utf-8'
       );
 
       // Length should be consistent (some variance allowed for timestamps if any)
