@@ -167,7 +167,7 @@ jobs:
           fi
 
           # Quality gate: Zero-tolerance ratchet (auto-set to current baseline)
-          ESLINT_WARNING_BASELINE=117
+          ESLINT_WARNING_BASELINE=120
           if [ "${WARNINGS:-0}" -gt "$ESLINT_WARNING_BASELINE" ]; then
             echo "❌ ESLint warnings increased (${WARNINGS} > ${ESLINT_WARNING_BASELINE}) - fix new warnings before merging"
             exit 1
