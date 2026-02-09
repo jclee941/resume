@@ -48,6 +48,10 @@ env:
   # Cloudflare provider configuration
   CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
   CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+  # Terraform S3 backend (Cloudflare R2)
+  AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+  AWS_ENDPOINT_URL_S3: https://${{ secrets.CLOUDFLARE_ACCOUNT_ID }}.r2.cloudflarestorage.com
 
 # Prevent concurrent Terraform operations
 concurrency:
@@ -82,13 +86,7 @@ jobs:
 
       - name: Terraform Init
         id: init
-        run: |
-          terraform init \
-            -backend-config="address=${{ secrets.TF_STATE_URL }}" \
-            -backend-config="lock_address=${{ secrets.TF_STATE_URL }}/lock" \
-            -backend-config="unlock_address=${{ secrets.TF_STATE_URL }}/lock" \
-            -backend-config="username=${{ secrets.TF_STATE_USERNAME }}" \
-            -backend-config="password=${{ secrets.TF_STATE_PASSWORD }}"
+        run: terraform init
         working-directory: ${{ env.TF_WORKING_DIR }}
 
       - name: Terraform Validate
@@ -204,13 +202,7 @@ jobs:
           path: ${{ env.TF_WORKING_DIR }}
 
       - name: Terraform Init
-        run: |
-          terraform init \
-            -backend-config="address=${{ secrets.TF_STATE_URL }}" \
-            -backend-config="lock_address=${{ secrets.TF_STATE_URL }}/lock" \
-            -backend-config="unlock_address=${{ secrets.TF_STATE_URL }}/lock" \
-            -backend-config="username=${{ secrets.TF_STATE_USERNAME }}" \
-            -backend-config="password=${{ secrets.TF_STATE_PASSWORD }}"
+        run: terraform init
         working-directory: ${{ env.TF_WORKING_DIR }}
 
       - name: Terraform Apply
