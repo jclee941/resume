@@ -18,7 +18,6 @@ output "dns_records" {
     resume  = cloudflare_record.resume.hostname
     job     = cloudflare_record.job.hostname
     grafana = cloudflare_record.grafana.hostname
-    gitlab  = cloudflare_record.gitlab.hostname
   }
   description = "DNS records created"
 }

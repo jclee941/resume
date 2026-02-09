@@ -25,11 +25,3 @@ resource "cloudflare_record" "grafana" {
   ttl     = 3600
 }
 
-resource "cloudflare_record" "gitlab" {
-  zone_id = data.cloudflare_zone.main.id
-  name    = "gitlab"
-  content = "192.168.50.102"
-  type    = "A"
-  proxied = false
-  ttl     = 3600
-}

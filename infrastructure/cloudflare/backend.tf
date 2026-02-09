@@ -1,10 +1,14 @@
 terraform {
-  backend "http" {
-    address        = "https://gitlab.jclee.me/api/v4/projects/1/terraform/state/cloudflare"
-    lock_address   = "https://gitlab.jclee.me/api/v4/projects/1/terraform/state/cloudflare/lock"
-    unlock_address = "https://gitlab.jclee.me/api/v4/projects/1/terraform/state/cloudflare/lock"
-    lock_method    = "POST"
-    unlock_method  = "DELETE"
-    retry_wait_min = 5
+  backend "s3" {
+    bucket = "terraform-state"
+    key    = "resume/cloudflare/terraform.tfstate"
+    region = "auto"
+
+    skip_credentials_validation = true
+    skip_metadata_api_check     = true
+    skip_region_validation      = true
+    skip_requesting_account_id  = true
+    skip_s3_checksum            = true
+    use_path_style              = true
   }
 }
