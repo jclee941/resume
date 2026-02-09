@@ -32,9 +32,9 @@ typescript/data/
 
 ## CONVENTIONS
 
-- **Data-Driven Automation**: `resume_data.json` is the authoritative source for `apps/portfolio` and `apps/job-automation`.
+- **Data-Driven Automation**: `resume_data.json` is the authoritative source for `typescript/portfolio-worker` and `typescript/job-automation`.
 - **Markdown Authority**: All PDF/DOCX artifacts must be derived from `.md` sources. Never edit PDFs directly.
-- **Synchronization**: Run `npm run sync:data` from root to propagate JSON changes to `apps/portfolio/data.json`.
+- **Synchronization**: Run `npm run sync:data` from root to propagate JSON changes to `typescript/portfolio-worker/data.json`.
 - **Versioning**: Released artifacts follow `resume_{type}_vX.Y.Z.pdf` naming in `master/`.
 - **Isolation**: Keep technical project documentation (e.g., Nextrade) strictly in `technical/{project}/`.
 - **Skills Format**: Skills in `resume_data.json` use `{name, level}` objects (not plain strings). All consumers (validators, cards, sync) must handle this structured format.

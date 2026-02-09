@@ -45,11 +45,11 @@ job-automation/
 
 ## ENTRY POINTS
 
-| Component  | Entry                    | Purpose                    |
-| ---------- | ------------------------ | -------------------------- |
-| MCP Server | `src/index.js`           | Fastify HTTP + MCP tools   |
-| Worker     | `workers/src/index.js`   | Dashboard (job.jclee.me)   |
-| Auth       | `scripts/quick-login.js` | Session cookie acquisition |
+| Component  | Entry                    | Purpose                            |
+| ---------- | ------------------------ | ---------------------------------- |
+| MCP Server | `src/index.js`           | Fastify HTTP + MCP tools           |
+| Worker     | `workers/src/index.js`   | Dashboard (resume.jclee.me/job/\*) |
+| Auth       | `scripts/quick-login.js` | Session cookie acquisition         |
 
 ## WHERE TO LOOK
 

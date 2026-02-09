@@ -19,6 +19,9 @@ workers/
 │   │   ├── api.js           # /api/* endpoints
 │   │   ├── auth.js          # Authentication handlers
 │   │   └── pages.js         # HTML page handlers
+│   ├── utils/               # Shared utilities
+│   │   ├── crypto.js        # Encryption/decryption helpers
+│   │   └── validators.js    # Input validation
 │   └── workflows/           # Cloudflare Workflows (8 total)
 │       ├── index.js          # Barrel exports
 │       ├── health-check.js   # HealthCheckWorkflow (*/5 * * * *)

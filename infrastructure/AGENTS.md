@@ -13,12 +13,14 @@ Infrastructure as Code (IaC) for Cloudflare + Observability stack (Grafana/Loki/
 ```
 infrastructure/
 ├── cloudflare/              # Terraform IaC for Cloudflare
-│   ├── versions.tf          # Provider requirements (cloudflare ~> 4.0)
-│   ├── variables.tf         # Input variables (account_id, zone_id, api_token)
-│   ├── workers.tf           # Worker scripts and routes
+│   ├── backend.tf           # State backend configuration
+│   ├── d1.tf                # D1 database data sources (read-only)
 │   ├── dns.tf               # DNS records (A, CNAME, TXT)
 │   ├── kv.tf                # KV namespace data sources (read-only)
-│   └── d1.tf                # D1 database data sources (read-only)
+│   ├── outputs.tf           # Output values
+│   ├── variables.tf         # Input variables (account_id, zone_id, api_token)
+│   ├── versions.tf          # Provider requirements (cloudflare ~> 4.0)
+│   └── workers.tf           # Worker scripts and routes
 ├── monitoring/              # Grafana JSON dashboards
 ├── automation/              # systemd timers, crontab
 ├── n8n/                     # n8n JSON workflow exports

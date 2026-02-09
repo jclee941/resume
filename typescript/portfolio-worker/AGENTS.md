@@ -17,12 +17,18 @@ portfolio-worker/
 ├── worker.js            # GENERATED - NEVER EDIT
 ├── data.json            # Build-time resume data snapshot (synced from SSoT)
 ├── wrangler.toml        # Cloudflare Worker config
-├── lib/                 # Stateless modules
-│   ├── security-headers.js  # CSP baseline, HSTS, X-* headers
+├── lib/                 # Stateless modules (11 files)
+│   ├── auth.js              # Authentication helpers
+│   ├── cards.js             # Card rendering
+│   ├── config.js            # Configuration management
+│   ├── env.js               # Environment variable helpers
 │   ├── es-logger.js         # ECS-format logging
+│   ├── i18n.js              # Internationalization
 │   ├── metrics.js           # Prometheus metrics
-│   ├── ab-testing.js        # Feature flag experiments
-│   └── templates.js         # HTML generation helpers
+│   ├── security-headers.js  # CSP baseline, HSTS, X-* headers
+│   ├── templates.js         # HTML generation helpers
+│   ├── utils.js             # General utilities
+│   └── validators.js        # Input validation
 ├── src/
 │   ├── job/             # ⚠️ FULL MINI-APP (DUPLICATED from workers/)
 │   │   ├── index.js         # Job dashboard entry, router.js
@@ -35,12 +41,12 @@ portfolio-worker/
 │   └── styles/          # Modular CSS (8 files)
 │       ├── animations.css   # Typing effects, glitch, fade
 │       ├── base.css         # Root variables, reset
-│       ├── cli.css          # CLI input/output styles
 │       ├── components.css   # Cards, buttons, sections
 │       ├── layout.css       # Grid, flex, positioning
-│       ├── responsive.css   # Mobile breakpoints
-│       ├── terminal.css     # Terminal window chrome
-│       └── typography.css   # Fonts, text styles
+│       ├── main.css         # Main stylesheet entry
+│       ├── media.css        # Mobile breakpoints
+│       ├── utilities.css    # Utility classes
+│       └── variables.css    # CSS custom properties
 ```
 
 ## BUILD PIPELINE
@@ -90,11 +96,17 @@ Commands defined in `index.html` within `terminalCommands` object.
 
 | Module                | Purpose                          |
 | --------------------- | -------------------------------- |
-| `security-headers.js` | CSP, HSTS, X-Frame-Options       |
+| `auth.js`             | Authentication helpers           |
+| `cards.js`            | Card rendering                   |
+| `config.js`           | Configuration management         |
+| `env.js`              | Environment variable helpers     |
 | `es-logger.js`        | ECS-format structured logging    |
+| `i18n.js`             | Internationalization             |
 | `metrics.js`          | Prometheus endpoint (`/metrics`) |
-| `ab-testing.js`       | Feature flag experiments         |
+| `security-headers.js` | CSP, HSTS, X-Frame-Options       |
 | `templates.js`        | HTML generation utilities        |
+| `utils.js`            | General utilities                |
+| `validators.js`       | Input validation                 |
 
 **Conventions for lib/**:
 
