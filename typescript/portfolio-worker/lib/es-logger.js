@@ -3,6 +3,7 @@ const logger = require('../logger');
 const DEFAULT_TIMEOUT_MS = 5000;
 const BATCH_SIZE = 10;
 const BATCH_FLUSH_MS = 1000;
+const MAX_QUEUE_SIZE = 1000;
 
 let logQueue = [];
 let flushTimer = null;
@@ -90,6 +91,11 @@ async function logToElasticsearch(env, message, level = 'INFO', labels = {}, opt
       clearTimeout(timeoutId);
     }
     return;
+  }
+
+  // Prevent unbounded memory growth if ES is unreachable
+  if (logQueue.length >= MAX_QUEUE_SIZE) {
+    logQueue.splice(0, logQueue.length - MAX_QUEUE_SIZE + 1);
   }
 
   logQueue.push(doc);

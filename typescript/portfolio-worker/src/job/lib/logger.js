@@ -1,6 +1,7 @@
 const BATCH_SIZE = 10;
 const BATCH_FLUSH_MS = 1000;
 const DEFAULT_TIMEOUT_MS = 5000;
+const MAX_QUEUE_SIZE = 1000;
 
 let logQueue = [];
 let flushTimer = null;
@@ -46,6 +47,10 @@ async function sendToElasticsearch(env, documents) {
 
 async function logToEs(env, message, level, labels = {}) {
   const doc = buildEcsDocument(message, level, labels);
+  // Prevent unbounded memory growth if ES is unreachable
+  if (logQueue.length >= MAX_QUEUE_SIZE) {
+    logQueue.splice(0, logQueue.length - MAX_QUEUE_SIZE + 1);
+  }
   logQueue.push(doc);
   if (logQueue.length >= BATCH_SIZE) {
     const batch = logQueue.splice(0);
