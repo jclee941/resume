@@ -27,6 +27,24 @@ import { existsSync, readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
+/**
+ * Structured stderr logger for MCP server.
+ * stdout is reserved for JSON-RPC protocol — all logging goes to stderr.
+ * @param {'debug'|'info'|'warn'|'error'} level
+ * @param {string} message
+ * @param {Record<string, unknown>} [context]
+ */
+function logToStderr(level, message, context = {}) {
+  const entry = {
+    '@timestamp': new Date().toISOString(),
+    'log.level': level,
+    message,
+    'service.name': 'mcp-server',
+    ...context,
+  };
+  process.stderr.write(JSON.stringify(entry) + '\n');
+}
+
 import searchJobsTool from './tools/search-jobs.js';
 import searchKeywordTool from './tools/search-keyword.js';
 import getJobDetailTool from './tools/get-job-detail.js';
@@ -123,7 +141,7 @@ const server = new Server(
       resources: {},
       prompts: {},
     },
-  },
+  }
 );
 
 // Handle list tools request
@@ -143,11 +161,14 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
   const tool = tools[name];
   if (!tool) {
+    logToStderr('warn', `Unknown tool requested: ${name}`, { tool: name });
     throw new Error(`Unknown tool: ${name}`);
   }
 
   try {
+    logToStderr('debug', `Executing tool: ${name}`, { tool: name, args: Object.keys(args || {}) });
     const result = await tool.execute(args || {});
+    logToStderr('debug', `Tool completed: ${name}`, { tool: name, success: true });
     return {
       content: [
         {
@@ -157,6 +178,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       ],
     };
   } catch (error) {
+    logToStderr('error', `Tool failed: ${name}`, {
+      tool: name,
+      'error.type': error.constructor.name,
+      'error.message': error.message,
+      'error.stack_trace': (error.stack || '').slice(0, 2000),
+    });
     return {
       content: [
         {
@@ -167,7 +194,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
               error: error.message,
             },
             null,
-            2,
+            2
           ),
         },
       ],
@@ -193,9 +220,7 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
         const allSessions = JSON.parse(readFileSync(SESSION_FILE, 'utf-8'));
         const data = allSessions.wanted || {}; // Access 'wanted' key for unified format
 
-        const expiresAt = data.timestamp
-          ? new Date(data.timestamp + 24 * 60 * 60 * 1000)
-          : null;
+        const expiresAt = data.timestamp ? new Date(data.timestamp + 24 * 60 * 60 * 1000) : null;
         const isValid = expiresAt && expiresAt > new Date();
 
         sessionData = {
@@ -206,6 +231,10 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
           hasCookies: !!data.cookies,
         };
       } catch (e) {
+        logToStderr('warn', 'Failed to read session file', {
+          'error.message': e.message,
+          file: SESSION_FILE,
+        });
         sessionData.error = e.message;
       }
     }
@@ -316,12 +345,14 @@ Steps:
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-
-  // Log to stderr (not stdout - breaks MCP JSON-RPC)
-  console.error('Wanted MCP Server started');
+  logToStderr('info', 'Wanted MCP Server started', { version: '1.2.0' });
 }
 
 main().catch((error) => {
-  console.error('Server error:', error);
+  logToStderr('error', 'Server fatal error', {
+    'error.type': error.constructor.name,
+    'error.message': error.message,
+    'error.stack_trace': (error.stack || '').slice(0, 2000),
+  });
   process.exit(1);
 });

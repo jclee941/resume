@@ -1,6 +1,7 @@
 import { WantedClient } from '../services/wanted-client.js';
 import { LinkedInClient } from '../services/linkedin-client.js';
 import { RememberClient } from '../services/remember-client.js';
+import { normalizeError } from '../../../src/shared/errors/index.js';
 
 const DEFAULT_KEYWORDS = ['DevOps', 'SRE', 'Platform Engineer', '보안'];
 const SUPPORTED_PLATFORMS = ['wanted', 'linkedin', 'remember'];
@@ -50,7 +51,7 @@ export class AutoApplyHandler {
         email,
         expires_at: expiresAt,
         updated_at: new Date().toISOString(),
-      }),
+      })
     );
     return true;
   }
@@ -72,7 +73,7 @@ export class AutoApplyHandler {
         'auto_apply_enabled',
         'max_daily_applications',
         'min_match_score',
-        'auto_apply_keywords',
+        'auto_apply_keywords'
       )
       .all();
 
@@ -103,8 +104,7 @@ export class AutoApplyHandler {
         'SELECT COUNT(*) as count FROM applications WHERE DATE(created_at) = ? AND source = ?';
       params = [today, platform];
     } else {
-      query =
-        'SELECT COUNT(*) as count FROM applications WHERE DATE(created_at) = ?';
+      query = 'SELECT COUNT(*) as count FROM applications WHERE DATE(created_at) = ?';
       params = [today];
     }
 
@@ -140,7 +140,7 @@ export class AutoApplyHandler {
         ON CONFLICT(id) DO UPDATE SET 
           status = excluded.status,
           updated_at = excluded.updated_at,
-          applied_at = excluded.applied_at`,
+          applied_at = excluded.applied_at`
       )
       .bind(
         appId,
@@ -156,7 +156,7 @@ export class AutoApplyHandler {
         result ? JSON.stringify(result) : null,
         now,
         now,
-        status === 'applied' ? now : null,
+        status === 'applied' ? now : null
       )
       .run();
   }
@@ -168,7 +168,7 @@ export class AutoApplyHandler {
     const descLower = (job.description || '').toLowerCase();
     const techStack = job.techStack || job.skills || [];
     const skillsLower = techStack.map((s) =>
-      (typeof s === 'string' ? s : s.name || '').toLowerCase(),
+      (typeof s === 'string' ? s : s.name || '').toLowerCase()
     );
 
     for (const keyword of keywords) {
@@ -195,10 +195,7 @@ export class AutoApplyHandler {
       'linux',
     ];
     for (const skill of preferredSkills) {
-      if (
-        titleLower.includes(skill) ||
-        skillsLower.some((s) => s.includes(skill))
-      ) {
+      if (titleLower.includes(skill) || skillsLower.some((s) => s.includes(skill))) {
         score += 5;
       }
     }
@@ -224,20 +221,18 @@ export class AutoApplyHandler {
           error: 'Auto-apply is disabled',
           hint: 'Enable via PUT /api/config with auto_apply_enabled=true',
         },
-        400,
+        400
       );
     }
 
-    const activePlatforms = platforms.filter((p) =>
-      SUPPORTED_PLATFORMS.includes(p),
-    );
+    const activePlatforms = platforms.filter((p) => SUPPORTED_PLATFORMS.includes(p));
     if (activePlatforms.length === 0) {
       return this.jsonResponse(
         {
           success: false,
           error: `No valid platforms. Supported: ${SUPPORTED_PLATFORMS.join(', ')}`,
         },
-        400,
+        400
       );
     }
 
@@ -304,9 +299,15 @@ export class AutoApplyHandler {
               }
             }
           } catch (err) {
+            const normalized = normalizeError(err, {
+              handler: 'AutoApply',
+              action: 'search',
+              platform,
+              keyword,
+            });
             console.error(
-              `${platform} search failed for "${keyword}":`,
-              err.message,
+              `[AutoApply] ${platform} search failed for "${keyword}":`,
+              normalized.message
             );
           }
         }
@@ -335,10 +336,7 @@ export class AutoApplyHandler {
       for (const job of matchedJobs) {
         if (appliedCount >= remaining) break;
 
-        const alreadyApplied = await this.isAlreadyApplied(
-          job.sourceId || job.id,
-          job.source,
-        );
+        const alreadyApplied = await this.isAlreadyApplied(job.sourceId || job.id, job.source);
         if (alreadyApplied) {
           searchResults.skipped++;
           continue;
@@ -368,9 +366,7 @@ export class AutoApplyHandler {
                 continue;
               }
               this.clients.wanted.setCookies(cookies);
-              const result = await this.clients.wanted.apply(
-                job.sourceId || job.id,
-              );
+              const result = await this.clients.wanted.apply(job.sourceId || job.id);
               await this.recordApplication(job, job.source, 'applied', result);
               searchResults.jobs.push({
                 id: job.sourceId || job.id,
@@ -386,13 +382,15 @@ export class AutoApplyHandler {
                 searchResults.byPlatform[job.source].applied++;
               }
             } catch (err) {
-              searchResults.errors++;
-              await this.recordApplication(job, job.source, 'error', {
-                error: err.message,
+              const normalized = normalizeError(err, {
+                handler: 'AutoApply',
+                action: 'apply',
+                platform: job.source,
+                jobId: job.sourceId,
               });
               console.error(
-                `Apply failed for ${job.source}/${job.sourceId}:`,
-                err.message,
+                `[AutoApply] Apply failed for ${job.source}/${job.sourceId}:`,
+                normalized.message
               );
             }
           } else {
@@ -430,14 +428,19 @@ export class AutoApplyHandler {
         results: searchResults,
       });
     } catch (error) {
-      console.error('Auto-apply error:', error);
+      const normalized = normalizeError(error, {
+        handler: 'AutoApply',
+        action: 'executeAutoApply',
+      });
+      console.error('[AutoApply] Auto-apply error:', normalized.message, normalized.context);
       return this.jsonResponse(
         {
           success: false,
-          error: error.message,
+          error: normalized.message,
+          errorCode: normalized.errorCode,
           results: searchResults,
         },
-        500,
+        500
       );
     }
   }
@@ -494,7 +497,7 @@ export class AutoApplyHandler {
     for (const [key, value] of updates) {
       await this.db
         .prepare(
-          'INSERT INTO config (key, value, updated_at) VALUES (?, ?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at',
+          'INSERT INTO config (key, value, updated_at) VALUES (?, ?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at'
         )
         .bind(key, value, now)
         .run();

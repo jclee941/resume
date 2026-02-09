@@ -1,12 +1,12 @@
+import { HttpError, normalizeError } from '../../../job-automation/src/shared/errors/index.js';
+
 export class Router {
   constructor() {
     this.routes = [];
   }
 
   add(method, pattern, handler) {
-    const regex = new RegExp(
-      '^' + pattern.replace(/:(\w+)/g, '(?<$1>[^/]+)') + '$',
-    );
+    const regex = new RegExp('^' + pattern.replace(/:(\w+)/g, '(?<$1>[^/]+)') + '$');
     this.routes.push({ method, pattern, regex, handler });
   }
 
@@ -23,7 +23,14 @@ export class Router {
     this.add('DELETE', pattern, handler);
   }
 
-  async handle(request, url) {
+  /**
+   * Route the request, wrapping each handler in an error boundary.
+   * @param {Request} request
+   * @param {URL} url
+   * @param {import('../../../job-automation/src/shared/logger/index.js').default} [logger]
+   * @returns {Promise<Response|null>}
+   */
+  async handle(request, url, logger) {
     const method = request.method;
     const pathname = url.pathname;
 
@@ -34,7 +41,20 @@ export class Router {
       if (match) {
         request.params = match.groups || {};
         request.query = Object.fromEntries(url.searchParams);
-        return await route.handler(request);
+        try {
+          return await route.handler(request);
+        } catch (err) {
+          const normalized = normalizeError(err, { route: route.pattern, method });
+          if (normalized instanceof HttpError) {
+            logger?.warn(`Route error: ${normalized.message}`, {
+              route: route.pattern,
+              statusCode: normalized.statusCode,
+            });
+            return normalized.toResponse();
+          }
+          logger?.error(normalized, { route: route.pattern });
+          throw normalized;
+        }
       }
     }
 

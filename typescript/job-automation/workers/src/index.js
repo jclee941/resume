@@ -5,7 +5,8 @@ import { AuthHandler } from './handlers/auth.js';
 import { WebhookHandler } from './handlers/webhooks.js';
 import { AutoApplyHandler } from './handlers/auto-apply.js';
 import { jsonResponse, corsHeaders, addCorsHeaders } from './middleware/cors.js';
-import { logRequest, logError } from './utils/es-logger.js';
+import Logger, { RequestContext } from '../../src/shared/logger/index.js';
+import { HttpError, normalizeError } from '../../src/shared/errors/index.js';
 import {
   requiresAuth,
   requiresWebhookSignature,
@@ -54,9 +55,11 @@ export default {
     url.pathname = pathname;
 
     const router = new Router();
+    const logger = Logger.create(env, { service: 'job-worker' });
+    const reqCtx = RequestContext.fromRequest(request, url);
+    const log = logger.withRequest(reqCtx);
 
-    // Log request to Loki (waitUntil ensures completion)
-    ctx.waitUntil(logRequest(env, request, url));
+    ctx.waitUntil(log.logRequest(request, url));
 
     const origin = request.headers.get('Origin') || '';
 
@@ -296,8 +299,7 @@ export default {
     });
 
     try {
-      // Router-first: try all registered routes
-      const response = await router.handle(request, url);
+      const response = await router.handle(request, url, log);
       if (response) {
         const withCsrf = addCsrfCookie(response, request);
         return addRateLimitHeaders(addCorsHeaders(withCsrf, origin), rateResult.headers);
@@ -312,15 +314,20 @@ export default {
 
       // API route not found
       return addCorsHeaders(jsonResponse({ error: 'Not found' }, 404), origin);
-    } catch (error) {
-      console.error('Worker error:', error);
-      ctx.waitUntil(logError(env, error, { path: url.pathname, method: request.method }));
+    } catch (err) {
+      const error = normalizeError(err, { path: url.pathname, method: request.method });
+      ctx.waitUntil(log.error('Unhandled worker error', error));
+
+      if (error instanceof HttpError) {
+        return addCorsHeaders(error.toResponse(), origin);
+      }
       return addCorsHeaders(jsonResponse({ error: 'Internal server error' }, 500), origin);
     }
   },
 
   async scheduled(event, env, ctx) {
-    console.log(`Cron triggered: ${event.cron}`);
+    const logger = Logger.create(env, { service: 'job-worker' });
+    logger.info(`Cron triggered: ${event.cron}`, { trigger: 'cron', cron: event.cron });
 
     const isJobSearchCron = event.cron === '0 0 * * 1-5';
     const isDailyReportCron = event.cron === '0 9 * * *';
@@ -333,16 +340,16 @@ export default {
             dryRun: false,
           },
         });
-        console.log(`Job crawling workflow started: ${instance.id}`);
+        logger.info(`Job crawling workflow started: ${instance.id}`);
       } else if (isDailyReportCron) {
         const instance = await env.DAILY_REPORT_WORKFLOW.create({
           params: { type: 'daily' },
         });
-        console.log(`Daily report workflow started: ${instance.id}`);
+        logger.info(`Daily report workflow started: ${instance.id}`);
       }
-    } catch (error) {
-      console.error('Cron error:', error.message);
-      ctx.waitUntil(logError(env, error, { trigger: 'cron', cron: event.cron }));
+    } catch (err) {
+      const error = normalizeError(err, { trigger: 'cron', cron: event.cron });
+      ctx.waitUntil(logger.error('Cron execution failed', error));
 
       await sendSlackMessage(env, {
         text: `❌ Cron Error: ${event.cron}\n\`\`\`${error.message}\`\`\``,
