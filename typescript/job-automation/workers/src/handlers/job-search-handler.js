@@ -1,4 +1,5 @@
 import { BaseHandler } from './base-handler.js';
+import { normalizeError } from '../../../src/shared/errors/index.js';
 
 /**
  * Handler for job search operations.
@@ -116,7 +117,12 @@ export class JobSearchHandler extends BaseHandler {
         details: { keywords: cleanedKeywords, maxTotal },
       });
     } catch (error) {
-      return this.jsonResponse({ success: false, error: error.message }, 500);
+      const normalized = normalizeError(error, {
+        handler: 'JobSearchHandler',
+        action: 'triggerJobSearch',
+      });
+      console.error('Job search failed:', normalized);
+      return this.jsonResponse({ success: false, error: normalized.message }, 500);
     }
   }
 

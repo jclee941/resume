@@ -1,4 +1,5 @@
 import { BaseHandler } from './base-handler.js';
+import { normalizeError } from '../../../src/shared/errors/index.js';
 
 /**
  * Handler for Slack notification and interaction operations.
@@ -61,7 +62,9 @@ export class SlackHandler extends BaseHandler {
 
       return this.jsonResponse({ success: response.ok });
     } catch (error) {
-      return this.jsonResponse({ success: false, error: error.message }, 500);
+      const normalized = normalizeError(error, { handler: 'SlackHandler', action: 'notifySlack' });
+      console.error('Slack notification failed:', normalized);
+      return this.jsonResponse({ success: false, error: normalized.message }, 500);
     }
   }
 

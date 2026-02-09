@@ -1,5 +1,6 @@
 import { BaseHandler } from './base-handler.js';
 import { sendSlackMessage } from '../services/slack.js';
+import { normalizeError } from '../../../src/shared/errors/index.js';
 
 /**
  * Handler for report generation operations.
@@ -149,7 +150,12 @@ export class ReportHandler extends BaseHandler {
         report,
       });
     } catch (error) {
-      return this.jsonResponse({ success: false, error: error.message }, 500);
+      const normalized = normalizeError(error, {
+        handler: 'ReportHandler',
+        action: 'triggerDailyReport',
+      });
+      console.error('Daily report generation failed:', normalized);
+      return this.jsonResponse({ success: false, error: normalized.message }, 500);
     }
   }
 }

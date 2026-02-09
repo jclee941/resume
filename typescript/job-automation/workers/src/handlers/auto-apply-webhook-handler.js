@@ -1,5 +1,6 @@
 import { BaseHandler } from './base-handler.js';
 import { sendSlackMessage } from '../services/slack.js';
+import { normalizeError } from '../../../src/shared/errors/index.js';
 
 /**
  * Handler for auto-apply operations.
@@ -147,11 +148,17 @@ export class AutoApplyWebhookHandler extends BaseHandler {
             });
           }
         } catch (applyError) {
+          const normalized = normalizeError(applyError, {
+            handler: 'AutoApplyWebhookHandler',
+            action: 'applyToJob',
+            jobId: job.id,
+            company: job.company,
+          });
           results.failed.push({
             id: job.id,
             company: job.company,
             position: job.position,
-            error: applyError.message,
+            error: normalized.message,
           });
         }
 
@@ -194,7 +201,12 @@ export class AutoApplyWebhookHandler extends BaseHandler {
         details: results,
       });
     } catch (error) {
-      return this.jsonResponse({ success: false, error: error.message }, 500);
+      const normalized = normalizeError(error, {
+        handler: 'AutoApplyWebhookHandler',
+        action: 'triggerAutoApply',
+      });
+      console.error('Auto-apply webhook failed:', normalized);
+      return this.jsonResponse({ success: false, error: normalized.message }, 500);
     }
   }
 }

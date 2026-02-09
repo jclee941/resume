@@ -1,5 +1,6 @@
 import { BaseHandler } from './base-handler.js';
 import { sendSlackMessage } from '../services/slack.js';
+import { normalizeError } from '../../../src/shared/errors/index.js';
 
 /**
  * Handler for profile sync operations.
@@ -160,7 +161,12 @@ export class ProfileSyncHandler extends BaseHandler {
         platformResults: results,
       });
     } catch (error) {
-      return this.jsonResponse({ success: false, error: error.message }, 500);
+      const normalized = normalizeError(error, {
+        handler: 'ProfileSyncHandler',
+        action: 'triggerProfileSync',
+      });
+      console.error('Profile sync failed:', normalized);
+      return this.jsonResponse({ success: false, error: normalized.message }, 500);
     }
   }
 
@@ -238,9 +244,13 @@ export class ProfileSyncHandler extends BaseHandler {
         await client.updateProfile({ description: profileData.headline });
         syncResults.updated.push('profile_headline');
       } catch (err) {
+        const normalized = normalizeError(err, {
+          handler: 'ProfileSyncHandler',
+          action: 'updateProfile',
+        });
         syncResults.failed.push({
           section: 'profile_headline',
-          error: err.message,
+          error: normalized.message,
         });
       }
 
@@ -250,7 +260,12 @@ export class ProfileSyncHandler extends BaseHandler {
         await client.saveResume(resumeId);
         syncResults.updated.push('resume_pdf');
       } catch (err) {
-        syncResults.failed.push({ section: 'resume_pdf', error: err.message });
+        const normalized = normalizeError(err, {
+          handler: 'ProfileSyncHandler',
+          action: 'saveResume',
+          resumeId,
+        });
+        syncResults.failed.push({ section: 'resume_pdf', error: normalized.message });
       }
 
       return {
@@ -262,10 +277,14 @@ export class ProfileSyncHandler extends BaseHandler {
         message: `Synced ${syncResults.updated.length} sections, ${syncResults.failed.length} failed`,
       };
     } catch (error) {
+      const normalized = normalizeError(error, {
+        handler: 'ProfileSyncHandler',
+        action: '_syncWantedProfile',
+      });
       return {
         method: 'chaos_api',
         authenticated: true,
-        error: error.message,
+        error: normalized.message,
       };
     }
   }
@@ -337,7 +356,13 @@ export class ProfileSyncHandler extends BaseHandler {
         },
       });
     } catch (error) {
-      return this.jsonResponse({ success: false, error: error.message }, 500);
+      const normalized = normalizeError(error, {
+        handler: 'ProfileSyncHandler',
+        action: 'getProfileSyncStatus',
+        syncId,
+      });
+      console.error('Get profile sync status failed:', normalized);
+      return this.jsonResponse({ success: false, error: normalized.message }, 500);
     }
   }
 
@@ -379,7 +404,13 @@ export class ProfileSyncHandler extends BaseHandler {
         status,
       });
     } catch (error) {
-      return this.jsonResponse({ success: false, error: error.message }, 500);
+      const normalized = normalizeError(error, {
+        handler: 'ProfileSyncHandler',
+        action: 'updateProfileSyncStatus',
+        syncId,
+      });
+      console.error('Update profile sync status failed:', normalized);
+      return this.jsonResponse({ success: false, error: normalized.message }, 500);
     }
   }
 }

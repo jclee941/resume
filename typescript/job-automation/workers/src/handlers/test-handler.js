@@ -1,4 +1,5 @@
 import { BaseHandler } from './base-handler.js';
+import { normalizeError } from '../../../src/shared/errors/index.js';
 
 /**
  * Handler for test/debug operations.
@@ -66,11 +67,15 @@ export class TestHandler extends BaseHandler {
         })),
       });
     } catch (error) {
+      const normalized = normalizeError(error, {
+        handler: 'TestHandler',
+        action: 'testChaosResumes',
+      });
+      console.error('Chaos resume test failed:', normalized);
       return this.jsonResponse(
         {
           success: false,
-          error: error.message,
-          stack: error.stack?.split('\n').slice(0, 3).join(' | '),
+          error: normalized.message,
         },
         500
       );

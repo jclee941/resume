@@ -1,4 +1,5 @@
 import { BaseHandler } from './base-handler.js';
+import { normalizeError } from '../../../src/shared/errors/index.js';
 
 /**
  * Handler for resume sync operations.
@@ -60,7 +61,12 @@ export class ResumeSyncHandler extends BaseHandler {
         resume: resumeData,
       });
     } catch (error) {
-      return this.jsonResponse({ success: false, error: error.message }, 500);
+      const normalized = normalizeError(error, {
+        handler: 'ResumeSyncHandler',
+        action: 'triggerResumeSync',
+      });
+      console.error('Resume sync failed:', normalized);
+      return this.jsonResponse({ success: false, error: normalized.message }, 500);
     }
   }
 }
