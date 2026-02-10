@@ -45,7 +45,7 @@ async function extractCookies(platformKey) {
   // Navigate to trigger cookie loading
   try {
     await page.goto(platform.testUrl, { waitUntil: 'domcontentloaded', timeout: 10000 });
-  } catch (_e) {
+  } catch {
     // Ignore navigation errors, we just need the cookies
   }
 

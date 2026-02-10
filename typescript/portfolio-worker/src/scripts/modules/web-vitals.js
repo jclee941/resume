@@ -9,7 +9,7 @@ const observeLCP = () => {
       webVitals.lcp = Math.round(lastEntry.renderTime || lastEntry.loadTime);
     });
     po.observe({ type: 'largest-contentful-paint', buffered: true });
-  } catch (e) {
+  } catch {
     // LCP not supported
   }
 };
@@ -19,12 +19,10 @@ const observeFID = () => {
   try {
     const po = new PerformanceObserver((entryList) => {
       const firstInput = entryList.getEntries()[0];
-      webVitals.fid = Math.round(
-        firstInput.processingStart - firstInput.startTime,
-      );
+      webVitals.fid = Math.round(firstInput.processingStart - firstInput.startTime);
     });
     po.observe({ type: 'first-input', buffered: true });
-  } catch (e) {
+  } catch {
     // FID not supported
   }
 };
@@ -42,7 +40,7 @@ const observeCLS = () => {
       webVitals.cls = Math.round(clsValue * 1000) / 1000;
     });
     po.observe({ type: 'layout-shift', buffered: true });
-  } catch (e) {
+  } catch {
     // CLS not supported
   }
 };
@@ -59,7 +57,7 @@ const observeFCP = () => {
       }
     });
     po.observe({ type: 'paint', buffered: true });
-  } catch (e) {
+  } catch {
     // FCP not supported
   }
 };
@@ -69,11 +67,9 @@ const observeTTFB = () => {
   try {
     const navEntry = performance.getEntriesByType('navigation')[0];
     if (navEntry) {
-      webVitals.ttfb = Math.round(
-        navEntry.responseStart - navEntry.requestStart,
-      );
+      webVitals.ttfb = Math.round(navEntry.responseStart - navEntry.requestStart);
     }
-  } catch (e) {
+  } catch {
     // TTFB not supported
   }
 };

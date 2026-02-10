@@ -38,7 +38,7 @@ async function _findAndClick(_page, _selectors, _description) {
         console.log(`✅ Clicked ${_description}: ${selector}`);
         return true;
       }
-    } catch (_e) {}
+    } catch {}
   }
 
   // Try text-based search
@@ -54,7 +54,7 @@ async function _findAndClick(_page, _selectors, _description) {
         console.log(`✅ Clicked ${_description} with text: ${text}`);
         return true;
       }
-    } catch (_e) {}
+    } catch {}
   }
 
   console.log(`⚠️ Could not find ${_description}, continuing...`);
@@ -68,7 +68,7 @@ async function findAndType(page, selectors, value, description) {
       await page.type(selector, value, { delay: 50 });
       console.log(`✅ Typed in ${description}: ${selector}`);
       return true;
-    } catch (_e) {}
+    } catch {}
   }
 
   // Try input by type
@@ -81,7 +81,7 @@ async function findAndType(page, selectors, value, description) {
       console.log(`✅ Typed in ${description} (generic input)`);
       return true;
     }
-  } catch (_e) {}
+  } catch {}
 
   throw new Error(`Could not find ${description}`);
 }
@@ -177,7 +177,7 @@ async function main() {
     // Wait for redirect or cookie
     try {
       await page.waitForNavigation({ timeout: 15000 });
-    } catch (e) {
+    } catch {
       // Maybe already redirected
     }
 

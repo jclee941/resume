@@ -1,4 +1,3 @@
-import { API_CONTRACTS } from '../../shared/contracts/api.js';
 import { getApplicationService } from '../../shared/services/applications/application-service.js';
 
 const appService = getApplicationService();

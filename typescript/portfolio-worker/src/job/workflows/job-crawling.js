@@ -228,7 +228,7 @@ export class JobCrawlingWorkflow extends WorkflowEntrypoint {
     return await crawler();
   }
 
-  async crawlWanted(criteria) {
+  async crawlWanted(_criteria) {
     // Wanted.co.kr API crawling
     const session = await this.env.SESSIONS.get('auth:wanted');
     if (!session) return { jobs: [], error: 'No session' };
@@ -262,7 +262,7 @@ export class JobCrawlingWorkflow extends WorkflowEntrypoint {
     }
   }
 
-  async crawlLinkedIn(criteria) {
+  async crawlLinkedIn(_criteria) {
     // LinkedIn Jobs API (requires different auth)
     const session = await this.env.SESSIONS.get('auth:linkedin');
     if (!session) return { jobs: [], error: 'No session' };
@@ -271,7 +271,7 @@ export class JobCrawlingWorkflow extends WorkflowEntrypoint {
     return { jobs: [], message: 'LinkedIn crawling placeholder' };
   }
 
-  async crawlRemember(criteria) {
+  async crawlRemember(_criteria) {
     // Remember.co.kr API
     const session = await this.env.SESSIONS.get('auth:remember');
     if (!session) return { jobs: [], error: 'No session' };

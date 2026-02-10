@@ -125,7 +125,7 @@ export class RememberClient {
     return { experienceMin, experienceMax };
   }
 
-  normalizeJob(rawJob, isDetail = false) {
+  normalizeJob(rawJob, _isDetail = false) {
     const expStr = rawJob.experience || rawJob.career_period || '';
     const { experienceMin, experienceMax } = this.parseExperience(expStr);
 
@@ -141,11 +141,7 @@ export class RememberClient {
         rawJob.company_name ||
         rawJob.company ||
         '',
-      companyId:
-        rawJob.organization?.company_id ||
-        rawJob.company?.id ||
-        rawJob.company_id ||
-        '',
+      companyId: rawJob.organization?.company_id || rawJob.company?.id || rawJob.company_id || '',
       location: rawJob.normalized_address
         ? `${rawJob.normalized_address.level1}/${rawJob.normalized_address.level2}`
         : rawJob.location || rawJob.region || '',

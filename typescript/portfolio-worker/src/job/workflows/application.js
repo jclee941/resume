@@ -296,7 +296,7 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
     return `I am excited to apply for the ${job.position} position at ${job.company}.`;
   }
 
-  async formatResumeForPlatform(resume, platform, job) {
+  async formatResumeForPlatform(resume, _platform, _job) {
     // Platform-specific resume formatting
     return resume;
   }
@@ -350,12 +350,12 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
     return { success: true, platformResponse: await response.json() };
   }
 
-  async submitToLinkedIn(jobId, resume, coverLetter) {
+  async submitToLinkedIn(_jobId, _resume, _coverLetter) {
     // LinkedIn Easy Apply - requires browser automation
     return { success: false, error: 'LinkedIn submission requires browser automation' };
   }
 
-  async submitToRemember(jobId, resume, coverLetter) {
+  async submitToRemember(_jobId, _resume, _coverLetter) {
     // Remember.co.kr application
     return { success: false, error: 'Remember submission not implemented' };
   }

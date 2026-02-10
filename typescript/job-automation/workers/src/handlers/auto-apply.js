@@ -447,7 +447,7 @@ export class AutoApplyHandler {
     }
   }
 
-  async status(request) {
+  async status(_request) {
     const config = await this.getConfig();
     const todayCount = await this.getTodayApplicationCount();
     const cookies = await this.getWantedSession();

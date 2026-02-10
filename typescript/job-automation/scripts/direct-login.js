@@ -50,7 +50,7 @@ async function saveSession(cookies, email, accessToken = null) {
     if (fs.existsSync(SESSION_FILE)) {
       existingSessions = JSON.parse(fs.readFileSync(SESSION_FILE, 'utf8'));
     }
-  } catch (e) {
+  } catch {
     console.log('Creating new sessions file');
   }
 
@@ -120,7 +120,7 @@ async function loginDirect() {
         if (emailBtn) emailBtn.click();
       });
       await sleep(1500);
-    } catch (_e) {
+    } catch {
       console.log('ℹ️ Email button not found, checking for email input directly...');
     }
 
@@ -208,7 +208,7 @@ async function loginDirect() {
         try {
           const token = source();
           if (token) return token;
-        } catch (_e) {}
+        } catch {}
       }
       return null;
     });
@@ -240,7 +240,7 @@ async function loginDirect() {
             waitUntil: 'networkidle0',
             timeout: 10000,
           });
-        } catch (_e) {}
+        } catch {}
 
         page.off('request', handler);
         await sleep(1000);

@@ -43,7 +43,7 @@ async function saveSession(cookies, email) {
     if (fs.existsSync(SESSION_FILE)) {
       existingSessions = JSON.parse(fs.readFileSync(SESSION_FILE, 'utf8'));
     }
-  } catch (_e) {
+  } catch {
     console.log('No existing sessions file, creating new one');
   }
 

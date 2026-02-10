@@ -70,7 +70,7 @@ export class AuthService {
         audience: this.#config.googleClientId,
       });
       payload = ticket.getPayload();
-    } catch (error) {
+    } catch {
       return { success: false, error: 'Invalid token', statusCode: 401 };
     }
 

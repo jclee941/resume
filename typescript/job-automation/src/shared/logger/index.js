@@ -14,11 +14,10 @@
 
 import {
   logToElasticsearch,
-  logError as esLogError,
   flush as esFlush,
   generateRequestId,
 } from '../clients/elasticsearch/index.js';
-import { AppError, HttpError, normalizeError } from '../errors/index.js';
+import { HttpError, normalizeError } from '../errors/index.js';
 
 /** @enum {string} */
 const LogLevel = {

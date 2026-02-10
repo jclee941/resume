@@ -1,4 +1,3 @@
-import { API_CONTRACTS } from '../../shared/contracts/api.js';
 import { getApplicationService } from '../../shared/services/applications/application-service.js';
 import { getStatsService } from '../../shared/services/stats/stats-service.js';
 

@@ -1,10 +1,5 @@
-import { HttpClient, WantedAPIError } from './http-client.js';
-import { JOB_CATEGORIES } from './types.js';
-import {
-  JobsEndpoint,
-  CompaniesEndpoint,
-  AuthEndpoint,
-} from './endpoints/jobs.js';
+import { HttpClient } from './http-client.js';
+import { JobsEndpoint, CompaniesEndpoint, AuthEndpoint } from './endpoints/jobs.js';
 import {
   ProfileEndpoint,
   ExperienceEndpoint,

@@ -51,7 +51,7 @@ async function extractCookies(platforms) {
   try {
     wsUrl = await getWebSocketUrl();
     console.log('✓ Connected to Chrome DevTools');
-  } catch (_e) {
+  } catch {
     console.error('✗ Chrome DevTools not available');
     console.log('\nStart Chrome with remote debugging:');
     console.log(`  google-chrome --remote-debugging-port=${CHROME_DEBUG_PORT}\n`);

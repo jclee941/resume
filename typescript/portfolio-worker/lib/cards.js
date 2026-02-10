@@ -60,7 +60,7 @@ function generateProjectCards(projectsData, dataHash) {
     .map((project) => {
       const hasLink = project.liveUrl || project.repoUrl;
       const link = project.liveUrl || project.repoUrl;
-      const linkText = project.liveUrl ? 'Live Demo' : project.repoUrl ? 'GitHub' : '';
+      const _linkText = project.liveUrl ? 'Live Demo' : project.repoUrl ? 'GitHub' : '';
 
       // Render as anchor tag only if link exists, otherwise use div
       const titleContent = `${escapeHtml(project.title)}<span class="arrow">↗</span>`;
@@ -93,7 +93,7 @@ function generateProjectCards(projectsData, dataHash) {
  * @param {string} dataHash - Hash of the data for cache validation
  * @returns {string} HTML string for certification cards
  */
-function generateCertificationCards(certData, dataHash) {
+function generateCertificationCards(certData, _dataHash) {
   // Minimal or empty
   if (!certData || certData.length === 0) return '';
 

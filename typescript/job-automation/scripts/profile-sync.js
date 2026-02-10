@@ -122,7 +122,7 @@ function toE164(phone) {
   return phone;
 }
 
-function toKoreanPhone(_phone) {
+function _toKoreanPhone(_phone) {
   if (!_phone) return '';
   let digits = _phone.replace(/^\+82/, '0').replace(/\D/g, '');
   if (digits.length === 11) {

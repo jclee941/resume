@@ -18,9 +18,7 @@
  * Histogram bucket boundaries in seconds (Prometheus standard)
  * @type {number[]}
  */
-const HISTOGRAM_BUCKETS = [
-  0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10,
-];
+const HISTOGRAM_BUCKETS = [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10];
 
 /**
  * Initialize empty histogram buckets
@@ -75,15 +73,13 @@ function generateHistogramLines(name, buckets, labels = '') {
  * @param {Object} [requestInfo] - Current request info for labels
  * @returns {string}
  */
-function generateMetrics(metrics, requestInfo = {}) {
+function generateMetrics(metrics, _requestInfo = {}) {
   const avgResponseTime =
     metrics.requests_total > 0
       ? (metrics.response_time_sum / metrics.requests_total).toFixed(2)
       : 0;
 
-  const uptimeSeconds = Math.floor(
-    (Date.now() - metrics.worker_start_time) / 1000,
-  );
+  const uptimeSeconds = Math.floor((Date.now() - metrics.worker_start_time) / 1000);
   const errorRate =
     metrics.requests_total > 0
       ? ((metrics.requests_error / metrics.requests_total) * 100).toFixed(2)
@@ -108,12 +104,11 @@ function generateMetrics(metrics, requestInfo = {}) {
   const ttfbMs = webVitals.ttfb ?? 0;
 
   // Generate histogram for response times
-  const histogramBuckets =
-    metrics.response_time_buckets || initHistogramBuckets();
+  const histogramBuckets = metrics.response_time_buckets || initHistogramBuckets();
   const histogramLines = generateHistogramLines(
     'http_request_duration_seconds_bucket',
     histogramBuckets,
-    'job="resume"',
+    'job="resume"'
   );
 
   // Calculate histogram sum and count
@@ -267,8 +262,7 @@ function createMetricsCollector() {
  * @param {number} [options.cpuTimeMs] - CPU time used for this request
  */
 function recordRequest(collector, options) {
-  const { responseTimeMs, status, country, colo, cacheHit, cpuTimeMs } =
-    options;
+  const { responseTimeMs, status, country, colo, cacheHit, cpuTimeMs } = options;
 
   // Update request counts
   collector.requests_total++;
@@ -288,8 +282,7 @@ function recordRequest(collector, options) {
       (collector.geo_metrics.by_country[country] || 0) + 1;
   }
   if (colo) {
-    collector.geo_metrics.by_colo[colo] =
-      (collector.geo_metrics.by_colo[colo] || 0) + 1;
+    collector.geo_metrics.by_colo[colo] = (collector.geo_metrics.by_colo[colo] || 0) + 1;
   }
 
   // Update cache metrics
@@ -299,12 +292,9 @@ function recordRequest(collector, options) {
     } else {
       collector.cf_metrics.cache_misses++;
     }
-    const total =
-      collector.cf_metrics.cache_hits + collector.cf_metrics.cache_misses;
-    collector.cf_metrics.cache_hit_ratio =
-      total > 0 ? collector.cf_metrics.cache_hits / total : 0;
-    collector.cf_metrics.cache_bypass_ratio =
-      1 - collector.cf_metrics.cache_hit_ratio;
+    const total = collector.cf_metrics.cache_hits + collector.cf_metrics.cache_misses;
+    collector.cf_metrics.cache_hit_ratio = total > 0 ? collector.cf_metrics.cache_hits / total : 0;
+    collector.cf_metrics.cache_bypass_ratio = 1 - collector.cf_metrics.cache_hit_ratio;
   }
 
   // Update CPU time (running average)

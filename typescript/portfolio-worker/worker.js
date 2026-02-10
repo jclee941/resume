@@ -1,5 +1,5 @@
 // Cloudflare Worker - Auto-generated (IMPROVED VERSION)
-// Generated: 2026-02-10T02:23:08.218Z
+// Generated: 2026-02-10T04:35:18.661Z
 // Features: Template caching, JSDoc types, link helper, constants, rate limiting
 
 const INDEX_HTML = `<!doctype html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>이재철 - Infrastructure Engineer</title><meta name="description" content="이재철 - 인프라 엔지니어 | 금융·공공 분야 보안 인프라 및 관측성 설계·운영"><meta name="keywords" content="Infrastructure, Observability, Grafana, Prometheus, Loki, Splunk, 자동화, 인프라, 이재철"><meta name="author" content="이재철 (Jaecheol Lee)"><meta name="robots" content="index, follow"><meta name="google-site-verification" content="2a5f8c3b7d4e9a1f6c2b5e8d1a4f7c0b9e3d6a9f2c5"><script async src="https://www.googletagmanager.com/gtag/js?id=G-P9E8XY5K2L"></script><script>function gtag(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],gtag("js",new Date),gtag("config","G-P9E8XY5K2L",{page_path:window.location.pathname,language:"ko"})</script><link rel="canonical" href="https://resume.jclee.me"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="alternate" hreflang="ko-KR" href="https://resume.jclee.me"><link rel="alternate" hreflang="en-US" href="https://resume.jclee.me/en/"><link rel="alternate" hreflang="x-default" href="https://resume.jclee.me"><meta property="og:type" content="profile"><meta property="og:url" content="https://resume.jclee.me"><meta property="og:title" content="이재철 - Infrastructure Engineer"><meta property="og:description" content="인프라 엔지니어 | 금융·공공 분야 보안 인프라 및 관측성 설계·운영"><meta property="og:image" content="https://resume.jclee.me/og-image.webp"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:type" content="image/webp"><meta property="og:image:alt" content="Jaecheol Lee - Infrastructure Engineer Portfolio"><meta property="og:site_name" content="Jaecheol Lee Resume"><meta property="og:locale" content="ko_KR"><meta property="og:locale:alternate" content="en_US"><meta property="profile:first_name" content="Jaecheol"><meta property="profile:last_name" content="Lee"><meta property="profile:username" content="qws941"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:url" content="https://resume.jclee.me"><meta name="twitter:title" content="이재철 - Infrastructure Engineer"><meta name="twitter:description" content="인프라 엔지니어 | 금융·공공 분야 보안 인프라 및 관측성 설계·운영"><meta name="twitter:image" content="https://resume.jclee.me/og-image.webp"><meta name="twitter:creator" content="@qws941"><meta name="twitter:site" content="@qws941"><script type="application/ld+json">{
@@ -478,9 +478,9 @@ const metrics = {
   "requests_error": 0,
   "response_time_sum": 0,
   "vitals_received": 0,
-  "worker_start_time": 1770690188218,
+  "worker_start_time": 1770698118661,
   "version": "1.0.128",
-  "deployed_at": "2026-02-10T02:23:08.218Z"
+  "deployed_at": "2026-02-10T04:35:18.661Z"
 };
 
 // Histogram bucket boundaries (Prometheus standard)
@@ -507,15 +507,13 @@ function generateHistogramLines(name, buckets, labels = '') {
   return lines;
 }
 
-function generateMetrics(metrics, requestInfo = {}) {
+function generateMetrics(metrics, _requestInfo = {}) {
   const avgResponseTime =
     metrics.requests_total > 0
       ? (metrics.response_time_sum / metrics.requests_total).toFixed(2)
       : 0;
 
-  const uptimeSeconds = Math.floor(
-    (Date.now() - metrics.worker_start_time) / 1000,
-  );
+  const uptimeSeconds = Math.floor((Date.now() - metrics.worker_start_time) / 1000);
   const errorRate =
     metrics.requests_total > 0
       ? ((metrics.requests_error / metrics.requests_total) * 100).toFixed(2)
@@ -540,12 +538,11 @@ function generateMetrics(metrics, requestInfo = {}) {
   const ttfbMs = webVitals.ttfb ?? 0;
 
   // Generate histogram for response times
-  const histogramBuckets =
-    metrics.response_time_buckets || initHistogramBuckets();
+  const histogramBuckets = metrics.response_time_buckets || initHistogramBuckets();
   const histogramLines = generateHistogramLines(
     'http_request_duration_seconds_bucket',
     histogramBuckets,
-    'job="resume"',
+    'job="resume"'
   );
 
   // Calculate histogram sum and count
@@ -1103,7 +1100,7 @@ export default {
         const health = {
           status: 'healthy',
           version: '1.0.128',
-          deployed_at: '2026-02-10T02:23:08.218Z',
+          deployed_at: '2026-02-10T04:35:18.661Z',
           uptime_seconds: uptime,
           metrics: {
             requests_total: metrics.requests_total,

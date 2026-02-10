@@ -1,8 +1,7 @@
-import { API_CONTRACTS } from '../../shared/contracts/api.js';
 import { ApplicationManager } from '../../auto-apply/application-manager.js';
 import { getSlackService } from '../../shared/services/slack/index.js';
 
-const appManager = new ApplicationManager();
+const _appManager = new ApplicationManager();
 
 export default async function slackRoutes(fastify) {
   const slack = getSlackService();
@@ -23,11 +22,7 @@ export default async function slackRoutes(fastify) {
 
       switch (type) {
         case 'high_match_job':
-          result = await slack.notifyHighMatchJob(
-            data.job,
-            data.matchScore,
-            data.channel,
-          );
+          result = await slack.notifyHighMatchJob(data.job, data.matchScore, data.channel);
           break;
         case 'status_change':
           result = await slack.notifyStatusChange(
@@ -35,29 +30,17 @@ export default async function slackRoutes(fastify) {
             data.oldStatus,
             data.newStatus,
             data.note,
-            data.channel,
+            data.channel
           );
           break;
         case 'daily_report':
-          result = await slack.notifyDailyReport(
-            data.stats,
-            data.date,
-            data.channel,
-          );
+          result = await slack.notifyDailyReport(data.stats, data.date, data.channel);
           break;
         case 'search_results':
-          result = await slack.notifySearchResults(
-            data.jobs,
-            data.query,
-            data.channel,
-          );
+          result = await slack.notifySearchResults(data.jobs, data.query, data.channel);
           break;
         case 'auto_apply_result':
-          result = await slack.notifyAutoApplyResult(
-            data.results,
-            data.dryRun,
-            data.channel,
-          );
+          result = await slack.notifyAutoApplyResult(data.results, data.dryRun, data.channel);
           break;
         default:
           result = await slack.send(
@@ -65,7 +48,7 @@ export default async function slackRoutes(fastify) {
               text: data.text || 'No message',
               ...data,
             },
-            data.channel,
+            data.channel
           );
       }
       return { success: result?.ok, result };

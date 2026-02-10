@@ -202,20 +202,13 @@ export const API_CONTRACTS = {
 };
 
 export const COMMON_STATUSES = {
-  APPLICATION: [
-    'applied',
-    'screening',
-    'interview',
-    'offer',
-    'rejected',
-    'withdrawn',
-  ],
+  APPLICATION: ['applied', 'screening', 'interview', 'offer', 'rejected', 'withdrawn'],
   PLATFORM: ['wanted', 'jobkorea', 'saramin', 'linkedin', 'remember', 'manual'],
 };
 
 export function validateResponse(contract, response) {
   const errors = [];
-  for (const [key, type] of Object.entries(contract.response)) {
+  for (const [key, _type] of Object.entries(contract.response)) {
     if (!(key in response)) {
       errors.push(`Missing field: ${key}`);
     }

@@ -12,7 +12,7 @@ export class ReportHandler extends BaseHandler {
    * @param {Request} request
    * @returns {Promise<Response>}
    */
-  async triggerDailyReport(request) {
+  async triggerDailyReport(_request) {
     const db = this.env?.DB;
     if (!db) {
       return this.jsonResponse({ success: false, error: 'Database not configured' }, 503);

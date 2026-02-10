@@ -133,7 +133,7 @@ export class DailyReportWorkflow extends WorkflowEntrypoint {
     };
   }
 
-  async getApplicationStats(type, date) {
+  async getApplicationStats(type, _date) {
     const dateFilter = type === 'weekly' ? "date('now', '-7 days')" : "date('now', '-1 day')";
 
     const stats = await this.env.DB.prepare(
@@ -160,7 +160,7 @@ export class DailyReportWorkflow extends WorkflowEntrypoint {
     };
   }
 
-  async getPlatformStats(type, date) {
+  async getPlatformStats(type, _date) {
     const dateFilter = type === 'weekly' ? "date('now', '-7 days')" : "date('now', '-1 day')";
 
     const results = await this.env.DB.prepare(
@@ -188,7 +188,7 @@ export class DailyReportWorkflow extends WorkflowEntrypoint {
     return platforms;
   }
 
-  async getSearchStats(type, date) {
+  async getSearchStats(type, _date) {
     const dateFilter = type === 'weekly' ? "date('now', '-7 days')" : "date('now', '-1 day')";
 
     const stats = await this.env.DB.prepare(
@@ -295,7 +295,7 @@ ${statusEmoji.pending} 대기: ${applications.pending}건`,
     };
   }
 
-  async sendSlackReport(content, type) {
+  async sendSlackReport(content, _type) {
     const blocks = [
       {
         type: 'header',

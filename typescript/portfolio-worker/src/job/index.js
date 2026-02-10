@@ -4,7 +4,7 @@ import { StatsHandler } from './handlers/stats.js';
 import { AuthHandler } from './handlers/auth.js';
 import { WebhookHandler } from './handlers/webhooks.js';
 import { AutoApplyHandler } from './handlers/auto-apply.js';
-import { jsonResponse, corsHeaders, addCorsHeaders } from './middleware/cors.js';
+import { jsonResponse, addCorsHeaders } from './middleware/cors.js';
 import Logger, { RequestContext } from './lib/logger.js';
 import { HttpError, normalizeError } from './lib/errors.js';
 import {
@@ -326,7 +326,7 @@ export default {
     }
   },
 
-  async scheduled(event, env, ctx) {
+  async scheduled(event, env, _ctx) {
     const logger = Logger.create(env, { service: 'job-worker' });
     logger.info('Cron triggered', { cron: event.cron });
 

@@ -18,7 +18,7 @@ export class MockWantedAPI {
           is_current: true,
         },
       ],
-      skills: [{id: 101, name: 'JavaScript'}],
+      skills: [{ id: 101, name: 'JavaScript' }],
     };
   }
 
@@ -45,7 +45,7 @@ export class MockWantedAPI {
       careers: [
         {
           id: 10,
-          company: {name: 'Mock Company'},
+          company: { name: 'Mock Company' },
           job_role: 'Backend Developer',
           employment_type: 'FULL_TIME',
           start_time: '2020-01-01',
@@ -61,15 +61,15 @@ export class MockWantedAPI {
     };
   }
 
-  async updateResumeCareer(resumeId, careerId, data) {
-    return {id: careerId, ...data};
+  async updateResumeCareer(_resumeId, careerId, data) {
+    return { id: careerId, ...data };
   }
 
-  async addResumeCareer(resumeId, data) {
-    return {id: 999, ...data};
+  async addResumeCareer(_resumeId, data) {
+    return { id: 999, ...data };
   }
 
-  async deleteResumeCareer(resumeId, careerId) {
+  async deleteResumeCareer(_resumeId, _careerId) {
     return true;
   }
 
@@ -77,7 +77,7 @@ export class MockWantedAPI {
     return true;
   }
   async addCareerProject() {
-    return {id: 888};
+    return { id: 888 };
   }
   async deleteCareerProject() {
     return true;

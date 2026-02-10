@@ -1,5 +1,4 @@
 import config from '../config/index.js';
-import { SessionManager } from '../../shared/services/session/index.js';
 
 export default async function dashboardRoutes(fastify) {
   // Cloudflare Analytics
@@ -10,7 +9,7 @@ export default async function dashboardRoutes(fastify) {
       return reply.status(401).send({ error: 'Unauthorized' });
     }
 
-    const { accountId, apiKey } = config.cloudflare;
+    const { accountId: _accountId, apiKey: _apiKey } = config.cloudflare;
     // ... Implement CF logic here or import from lib
     // For now, returning mock/empty or implementing the graphql call
     return { stats: [] };
@@ -28,7 +27,7 @@ export default async function dashboardRoutes(fastify) {
   });
 
   // Web Vitals Receiver
-  fastify.post('/vitals', async (request, reply) => {
+  fastify.post('/vitals', async (request, _reply) => {
     const vitals = request.body;
     // Log to Loki or store
     request.log.info({ vitals }, 'Web Vitals received');

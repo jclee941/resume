@@ -11,10 +11,8 @@ import { SessionManager } from '../shared/services/session/index.js';
 
 // Re-export for tests
 export { SessionManager };
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
-import { join, dirname } from 'path';
+import { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { homedir } from 'os';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -168,7 +166,7 @@ Session stored in: job-automation-mcp/.data/wanted-session.json (24hr expiry)`,
         const session = SessionManager.load();
         if (session && (session.token || session.cookies)) {
           const expiresIn = Math.round(
-            (24 * 60 * 60 * 1000 - (Date.now() - session.timestamp)) / 60000,
+            (24 * 60 * 60 * 1000 - (Date.now() - session.timestamp)) / 60000
           );
           return {
             success: true,

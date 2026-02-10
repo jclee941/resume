@@ -10,7 +10,7 @@ const createMockHttpClient = () => ({
 });
 
 describe('HttpClient', async () => {
-  const { HttpClient, WantedAPIError } = await import('../http-client.js');
+  const { HttpClient } = await import('../http-client.js');
 
   describe('constructor', () => {
     it('initializes with null cookies by default', () => {

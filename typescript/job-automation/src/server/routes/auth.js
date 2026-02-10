@@ -1,4 +1,3 @@
-import { API_CONTRACTS } from '../../shared/contracts/api.js';
 import { getAuthService } from '../../shared/services/auth/auth-service.js';
 import config from '../config/index.js';
 
@@ -12,7 +11,7 @@ export default async function authRoutes(fastify) {
     {
       sessions: fastify.sessions,
       csrfTokens: fastify.csrfTokens,
-    },
+    }
   );
 
   fastify.post('/google', {

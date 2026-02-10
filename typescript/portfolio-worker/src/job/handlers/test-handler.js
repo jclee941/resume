@@ -12,7 +12,7 @@ export class TestHandler extends BaseHandler {
    * @param {Request} request
    * @returns {Promise<Response>}
    */
-  async testChaosResumes(request) {
+  async testChaosResumes(_request) {
     try {
       const cookies = await this.env?.SESSIONS?.get('wanted:session');
       if (!cookies) {

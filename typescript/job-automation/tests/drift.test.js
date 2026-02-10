@@ -1,7 +1,4 @@
-import {
-  API_CONTRACTS,
-  validateResponse,
-} from '../src/shared/contracts/index.js';
+import { API_CONTRACTS } from '../src/shared/contracts/index.js';
 
 const FASTIFY_URL = process.env.FASTIFY_URL || 'http://localhost:3000';
 const WORKER_URL = process.env.WORKER_URL || 'https://job.jclee.me';

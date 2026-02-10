@@ -319,12 +319,12 @@ export class ResumeSyncWorkflow extends WorkflowEntrypoint {
     }
   }
 
-  async exportFromLinkedIn(resumeId) {
+  async exportFromLinkedIn(_resumeId) {
     // LinkedIn profile export
     return { careers: [], educations: [], skills: [] };
   }
 
-  async exportFromRemember(resumeId) {
+  async exportFromRemember(_resumeId) {
     // Remember profile export
     return { careers: [], educations: [], skills: [] };
   }
@@ -488,15 +488,15 @@ export class ResumeSyncWorkflow extends WorkflowEntrypoint {
     return response.json();
   }
 
-  async syncToLinkedIn(resumeId, diff) {
+  async syncToLinkedIn(_resumeId, _diff) {
     return { success: false, error: 'LinkedIn sync not implemented' };
   }
 
-  async syncToRemember(resumeId, diff) {
+  async syncToRemember(_resumeId, _diff) {
     return { success: false, error: 'Remember sync not implemented' };
   }
 
-  async notifyPreview(sync, diffs) {
+  async notifyPreview(sync, _diffs) {
     const summary = Object.entries(sync.changes)
       .map(
         ([platform, changes]) =>

@@ -38,7 +38,7 @@ async function saveSession(cookies, email) {
     if (fs.existsSync(SESSION_FILE)) {
       existingSessions = JSON.parse(fs.readFileSync(SESSION_FILE, 'utf8'));
     }
-  } catch (_e) {}
+  } catch {}
 
   const mergedSessions = { ...existingSessions, ...session };
   fs.mkdirSync(path.dirname(SESSION_FILE), { recursive: true });

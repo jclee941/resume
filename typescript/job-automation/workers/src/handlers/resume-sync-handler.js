@@ -11,7 +11,7 @@ export class ResumeSyncHandler extends BaseHandler {
    * @param {Request} request
    * @returns {Promise<Response>}
    */
-  async triggerResumeSync(request) {
+  async triggerResumeSync(_request) {
     try {
       const cookies = await this.auth.getCookies('wanted');
       if (!cookies) {
