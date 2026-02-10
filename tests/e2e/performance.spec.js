@@ -67,7 +67,7 @@ test.describe('Performance & Core Web Vitals', () => {
   });
 
   // TODO: CLS slightly exceeds 0.1 threshold (0.113) after neon redesign - needs CSS investigation
-  test.skip('should have low Cumulative Layout Shift (CLS)', async ({ page }) => {
+  test('should have low Cumulative Layout Shift (CLS)', async ({ page }) => {
     await page.goto('/');
 
     // Wait for page to settle

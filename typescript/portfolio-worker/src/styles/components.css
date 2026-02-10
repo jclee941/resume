@@ -88,6 +88,7 @@
   border: 1px solid rgba(0, 240, 255, 0.3);
   border-radius: 8px;
   overflow: hidden;
+  contain: layout;
   box-shadow:
     0 0 40px rgba(0, 240, 255, 0.15),
     0 0 80px rgba(0, 240, 255, 0.08),
@@ -151,6 +152,7 @@
 .terminal-body {
   padding: var(--space-6);
   min-height: 200px;
+  contain: layout;
 }
 
 /* ========================================
