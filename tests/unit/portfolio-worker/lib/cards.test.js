@@ -5,8 +5,8 @@
 const {
   generateResumeCards,
   generateProjectCards,
-} = require('../../../typescript/portfolio-worker/lib/cards');
-const { TEMPLATE_CACHE } = require('../../../typescript/portfolio-worker/lib/config');
+} = require('../../../../typescript/portfolio-worker/lib/cards');
+const { TEMPLATE_CACHE } = require('../../../../typescript/portfolio-worker/lib/config');
 
 describe('Cards Module', () => {
   // Reset cache before each test

@@ -34,7 +34,7 @@ describe('Logger Module', () => {
   describe('in test environment', () => {
     beforeEach(() => {
       process.env.NODE_ENV = 'test';
-      logger = require('../../../typescript/portfolio-worker/logger');
+      logger = require('../../../../typescript/portfolio-worker/logger');
     });
 
     test('log should be suppressed', () => {
@@ -62,7 +62,7 @@ describe('Logger Module', () => {
   describe('in production environment', () => {
     beforeEach(() => {
       process.env.NODE_ENV = 'production';
-      logger = require('../../../typescript/portfolio-worker/logger');
+      logger = require('../../../../typescript/portfolio-worker/logger');
     });
 
     test('log should output messages', () => {
@@ -110,7 +110,7 @@ describe('Logger Module', () => {
       process.env.DEBUG = 'true';
       // Re-import to pick up new env
       jest.resetModules();
-      const debugLogger = require('../../../typescript/portfolio-worker/logger');
+      const debugLogger = require('../../../../typescript/portfolio-worker/logger');
       debugLogger.debug('debug message');
       expect(consoleSpy.debug).toHaveBeenCalledWith('debug message');
     });
@@ -119,7 +119,7 @@ describe('Logger Module', () => {
   describe('edge cases', () => {
     beforeEach(() => {
       process.env.NODE_ENV = 'production';
-      logger = require('../../../typescript/portfolio-worker/logger');
+      logger = require('../../../../typescript/portfolio-worker/logger');
     });
 
     test('should handle empty arguments', () => {
@@ -145,7 +145,7 @@ describe('Logger Module', () => {
       process.env.NODE_ENV = 'production';
       process.env.VERBOSE = 'true';
       jest.resetModules();
-      logger = require('../../../typescript/portfolio-worker/logger');
+      logger = require('../../../../typescript/portfolio-worker/logger');
     });
 
     test('verbose should output with VERBOSE env set', () => {
@@ -166,7 +166,7 @@ describe('Logger Module', () => {
     test('verbose should be suppressed in test environment', () => {
       process.env.NODE_ENV = 'test';
       jest.resetModules();
-      const testLogger = require('../../../typescript/portfolio-worker/logger');
+      const testLogger = require('../../../../typescript/portfolio-worker/logger');
       testLogger.verbose('verbose message');
       expect(consoleSpy.log).not.toHaveBeenCalled();
     });
@@ -179,7 +179,7 @@ describe('Logger Module', () => {
       process.env.VERBOSE = 'true';
       jest.resetModules();
       consoleSpy.trace = jest.spyOn(console, 'trace').mockImplementation();
-      logger = require('../../../typescript/portfolio-worker/logger');
+      logger = require('../../../../typescript/portfolio-worker/logger');
     });
 
     afterEach(() => {
@@ -197,7 +197,7 @@ describe('Logger Module', () => {
     test('trace should be suppressed without DEBUG', () => {
       delete process.env.DEBUG;
       jest.resetModules();
-      const noDebugLogger = require('../../../typescript/portfolio-worker/logger');
+      const noDebugLogger = require('../../../../typescript/portfolio-worker/logger');
       noDebugLogger.trace('trace message');
       expect(consoleSpy.trace).not.toHaveBeenCalled();
     });
@@ -205,7 +205,7 @@ describe('Logger Module', () => {
     test('trace should be suppressed without VERBOSE', () => {
       delete process.env.VERBOSE;
       jest.resetModules();
-      const noVerboseLogger = require('../../../typescript/portfolio-worker/logger');
+      const noVerboseLogger = require('../../../../typescript/portfolio-worker/logger');
       noVerboseLogger.trace('trace message');
       expect(consoleSpy.trace).not.toHaveBeenCalled();
     });
@@ -213,7 +213,7 @@ describe('Logger Module', () => {
     test('trace should be suppressed in test environment', () => {
       process.env.NODE_ENV = 'test';
       jest.resetModules();
-      const testLogger = require('../../../typescript/portfolio-worker/logger');
+      const testLogger = require('../../../../typescript/portfolio-worker/logger');
       testLogger.trace('trace message');
       expect(consoleSpy.trace).not.toHaveBeenCalled();
     });

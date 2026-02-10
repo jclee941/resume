@@ -9,7 +9,7 @@ const {
   isLanguageSupported,
   getSupportedLanguages,
   DEFAULT_LANGUAGE,
-} = require('../../../typescript/portfolio-worker/lib/i18n');
+} = require('../../../../typescript/portfolio-worker/lib/i18n');
 
 describe('i18n Module', () => {
   describe('detectLanguage', () => {

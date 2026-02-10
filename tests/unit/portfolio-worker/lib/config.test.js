@@ -6,7 +6,7 @@ const {
   CONFIG,
   ESCAPE_PATTERNS,
   TEMPLATE_CACHE,
-} = require('../../../typescript/portfolio-worker/lib/config');
+} = require('../../../../typescript/portfolio-worker/lib/config');
 
 describe('Config Module', () => {
   describe('CONFIG', () => {

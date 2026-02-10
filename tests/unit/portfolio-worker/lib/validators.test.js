@@ -2,7 +2,7 @@
  * Unit tests for web/lib/validators.js
  */
 
-const { validateData } = require('../../../typescript/portfolio-worker/lib/validators');
+const { validateData } = require('../../../../typescript/portfolio-worker/lib/validators');
 
 describe('Validators Module', () => {
   // Suppress console.log during tests

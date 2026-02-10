@@ -5,7 +5,7 @@
 const {
   generateLink,
   extractInlineHashes,
-} = require('../../../typescript/portfolio-worker/lib/templates');
+} = require('../../../../typescript/portfolio-worker/lib/templates');
 
 describe('Templates Module', () => {
   describe('generateLink', () => {

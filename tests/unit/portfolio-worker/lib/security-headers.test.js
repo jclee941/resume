@@ -6,7 +6,7 @@ const {
   generateSecurityHeaders,
   getCacheHeaders,
   CACHE_STRATEGIES,
-} = require('../../../typescript/portfolio-worker/lib/security-headers');
+} = require('../../../../typescript/portfolio-worker/lib/security-headers');
 
 describe('Security Headers Module', () => {
   describe('CACHE_STRATEGIES', () => {

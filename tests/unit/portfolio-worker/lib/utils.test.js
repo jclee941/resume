@@ -11,7 +11,7 @@ const {
   safeParseJSON,
   sanitizeForTemplate,
   FileOperationError,
-} = require('../../../typescript/portfolio-worker/lib/utils');
+} = require('../../../../typescript/portfolio-worker/lib/utils');
 
 describe('Utils Module', () => {
   describe('safeReadFile', () => {
@@ -242,7 +242,7 @@ describe('Utils Module', () => {
   describe('escapeHtml', () => {
     const {
       escapeHtml,
-    } = require('../../../typescript/portfolio-worker/lib/utils');
+    } = require('../../../../typescript/portfolio-worker/lib/utils');
 
     test('should escape < and > characters', () => {
       const result = escapeHtml('<script>alert("xss")</script>');

@@ -5,7 +5,7 @@
 const {
   validateEnv,
   getEnv,
-} = require('../../../typescript/portfolio-worker/lib/env');
+} = require('../../../../typescript/portfolio-worker/lib/env');
 
 describe('Environment Module', () => {
   const originalEnv = process.env;

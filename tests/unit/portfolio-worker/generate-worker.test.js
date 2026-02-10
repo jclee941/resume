@@ -7,7 +7,7 @@ describe('Worker Generator', () => {
 
   beforeAll(() => {
     // Run generate-worker.js before tests
-    require('../../typescript/portfolio-worker/generate-worker.js');
+    require('../../../typescript/portfolio-worker/generate-worker.js');
   });
 
   describe('worker.js generation', () => {
