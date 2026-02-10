@@ -6,6 +6,7 @@
   "workspaces": [
     "typescript/portfolio-worker",
     "typescript/job-automation",
+    "typescript/job-automation/workers",
     "typescript/cli",
     "typescript/data"
   ],
