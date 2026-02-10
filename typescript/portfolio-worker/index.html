@@ -293,13 +293,58 @@
                 <ul class="status-list" id="status-list">
                   <li class="status-item" data-url="https://resume.jclee.me">
                     <span class="status-dot"></span>
-                    <span class="status-name">resume.jclee.me</span>
+                    <span class="status-name">☁️ Cloudflare Workers</span>
                     <span class="status-state">checking...</span>
                   </li>
-                  <li class="status-item" data-url="https://resume.jclee.me/job">
+                  <li class="status-item" data-url="https://grafana.jclee.me">
                     <span class="status-dot"></span>
-                    <span class="status-name">resume.jclee.me/job</span>
+                    <span class="status-name">📊 Grafana + Prometheus + Loki</span>
                     <span class="status-state">checking...</span>
+                  </li>
+                  <li class="status-item online" data-static="true">
+                    <span class="status-dot"></span>
+                    <span class="status-name">🖥️ Proxmox VE</span>
+                    <span class="status-state">running</span>
+                  </li>
+                  <li class="status-item online" data-static="true">
+                    <span class="status-dot"></span>
+                    <span class="status-name">🔍 ELK Stack</span>
+                    <span class="status-state">running</span>
+                  </li>
+                  <li class="status-item online" data-static="true">
+                    <span class="status-dot"></span>
+                    <span class="status-name">🔄 n8n Automation</span>
+                    <span class="status-state">running</span>
+                  </li>
+                  <li class="status-item online" data-static="true">
+                    <span class="status-dot"></span>
+                    <span class="status-name">🔀 Traefik Proxy</span>
+                    <span class="status-state">running</span>
+                  </li>
+                  <li class="status-item online" data-static="true">
+                    <span class="status-dot"></span>
+                    <span class="status-name">🗄️ Supabase</span>
+                    <span class="status-state">running</span>
+                  </li>
+                  <li class="status-item online" data-static="true">
+                    <span class="status-dot"></span>
+                    <span class="status-name">💾 MinIO Object Storage</span>
+                    <span class="status-state">running</span>
+                  </li>
+                  <li class="status-item online" data-static="true">
+                    <span class="status-dot"></span>
+                    <span class="status-name">🤖 MCP Server</span>
+                    <span class="status-state">running</span>
+                  </li>
+                  <li class="status-item online" data-static="true">
+                    <span class="status-dot"></span>
+                    <span class="status-name">🏗️ Terraform IaC</span>
+                    <span class="status-state">running</span>
+                  </li>
+                  <li class="status-item online" data-static="true">
+                    <span class="status-dot"></span>
+                    <span class="status-name">⚡ GitHub Actions</span>
+                    <span class="status-state">running</span>
                   </li>
                 </ul>
               </div>
@@ -867,7 +912,8 @@
         if (!statusList) return;
 
         var items = statusList.querySelectorAll('.status-item');
-        var pendingChecks = items.length;
+        var dynamicItems = statusList.querySelectorAll('.status-item[data-url]');
+        var pendingChecks = dynamicItems.length;
         var allOnline = true;
 
         function updateMainIndicator() {
@@ -878,7 +924,12 @@
           }
         }
 
-        items.forEach(function (item) {
+        if (dynamicItems.length === 0 && mainIndicator) {
+          mainIndicator.classList.remove('status-loading');
+          mainIndicator.classList.add('status-ok');
+        }
+
+        dynamicItems.forEach(function (item) {
           var url = item.getAttribute('data-url');
           var stateEl = item.querySelector('.status-state');
           var isSameOrigin = url.indexOf(window.location.origin) === 0;

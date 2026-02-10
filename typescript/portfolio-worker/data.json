@@ -602,7 +602,7 @@
     {
       "icon": "🖥️",
       "title": "Proxmox VE",
-      "description": "가상화 플랫폼 (3 VMs, 11 LXC)",
+      "description": "가상화 플랫폼",
       "status": "running"
     },
     {
@@ -622,8 +622,7 @@
       "icon": "🔄",
       "title": "n8n",
       "description": "워크플로우 자동화",
-      "status": "running",
-      "url": "https://n8n.jclee.me"
+      "status": "running"
     },
     {
       "icon": "🌐",
