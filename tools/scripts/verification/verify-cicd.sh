@@ -68,19 +68,16 @@ check_npm_script() {
 echo "📁 1. 워크플로우 파일 확인"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 check_file ".github/workflows/ci.yml" "CI 워크플로우"
-check_file ".github/workflows/deploy.yml" "기존 Deploy 워크플로우"
-check_file ".github/workflows/deploy-enhanced.yml" "향상된 Deploy 워크플로우"
-check_file ".github/workflows/lighthouse-ci.yml" "Lighthouse CI 워크플로우"
 echo ""
 
 echo "📚 2. 문서 파일 확인"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-check_file "docs/CI_CD_AUTOMATION.md" "CI/CD 자동화 가이드"
-check_file "CI_CD_IMPLEMENTATION_SUMMARY.md" "구현 요약"
-check_file "VERIFICATION_REPORT.md" "검증 보고서"
-check_file "AUTO_OPTIMIZATION_REPORT_2025-12-23.md" "최적화 보고서"
-check_file "FINAL_DEPLOYMENT_CHECKLIST.md" "배포 체크리스트"
-check_file "SESSION_SUMMARY.md" "세션 요약"
+check_file "docs/guides/CI_CD_AUTOMATION.md" "CI/CD 자동화 가이드"
+check_file "docs/guides/CI_CD_IMPLEMENTATION_SUMMARY.md" "구현 요약"
+check_file "docs/reports/VERIFICATION_REPORT.md" "검증 보고서"
+check_file "docs/reports/AUTO_OPTIMIZATION_REPORT_2025-12-23.md" "최적화 보고서"
+check_file "docs/guides/FINAL_DEPLOYMENT_CHECKLIST.md" "배포 체크리스트"
+check_file "docs/reports/SESSION_SUMMARY.md" "세션 요약"
 echo ""
 
 echo "🔧 3. 필수 도구 확인"
@@ -128,8 +125,8 @@ fi
 
 # 빌드 실행
 if npm run build > /dev/null 2>&1; then
-    if [ -f "web/worker.js" ]; then
-        FILE_SIZE=$(stat -c%s "web/worker.js" 2>/dev/null || stat -f%z "web/worker.js" 2>/dev/null)
+    if [ -f "typescript/portfolio-worker/worker.js" ]; then
+        FILE_SIZE=$(stat -c%s "typescript/portfolio-worker/worker.js" 2>/dev/null || stat -f%z "typescript/portfolio-worker/worker.js" 2>/dev/null)
         echo -e "${GREEN}✅${NC} 빌드 성공 (worker.js: ${FILE_SIZE} bytes)"
         ((PASS++))
     else

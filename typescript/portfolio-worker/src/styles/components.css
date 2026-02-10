@@ -836,3 +836,64 @@
     flex-direction: column;
   }
 }
+
+/* ========================================
+   SCROLL-TO-TOP BUTTON STYLES
+   ======================================== */
+.back-to-top {
+  position: fixed;
+  bottom: var(--space-4);
+  right: var(--space-4);
+  min-width: 44px;
+  min-height: 44px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 1.25rem;
+  font-weight: bold;
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 300ms ease, visibility 300ms ease, transform 200ms ease;
+  z-index: 999;
+  will-change: opacity, visibility;
+}
+
+.back-to-top:hover {
+  background-color: var(--bg-tertiary);
+  border-color: var(--cyber-cyan);
+  transform: translateY(-2px);
+}
+
+.back-to-top:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--cyber-cyan);
+}
+
+.back-to-top:focus-visible {
+  outline: 2px solid var(--cyber-cyan);
+  outline-offset: 2px;
+}
+
+.back-to-top:active {
+  transform: translateY(0);
+}
+
+.back-to-top.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+@media (max-width: 640px) {
+  .back-to-top {
+    bottom: var(--space-3);
+    right: var(--space-3);
+  }
+}
