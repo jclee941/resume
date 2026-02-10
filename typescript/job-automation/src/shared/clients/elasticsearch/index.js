@@ -16,7 +16,7 @@ const MAX_QUEUE_SIZE = 1000;
 let logQueue = [];
 let flushTimer = null;
 
-function generateRequestId() {
+export function generateRequestId() {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 9)}`;
 }
 
