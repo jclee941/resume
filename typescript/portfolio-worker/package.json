@@ -1,5 +1,5 @@
 {
-  "name": "portfolio-worker",
+  "name": "@resume/portfolio-worker",
   "version": "1.0.0",
   "description": "Edge-deployed portfolio (resume.jclee.me)",
   "private": true,

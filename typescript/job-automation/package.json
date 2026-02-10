@@ -1,5 +1,5 @@
 {
-  "name": "job-automation-mcp",
+  "name": "@resume/job-automation",
   "version": "1.4.0",
   "description": "MCP Server for Wanted Korea job platform (원티드)",
   "main": "src/index.js",
