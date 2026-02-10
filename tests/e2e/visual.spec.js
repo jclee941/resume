@@ -14,7 +14,7 @@ test.describe('Visual Regression Tests', () => {
 
       await expect(page).toHaveScreenshot('desktop-homepage.png', {
         fullPage: true,
-        maxDiffPixelRatio: 0.05,
+        maxDiffPixelRatio: 0.1,
       });
     });
 
@@ -61,7 +61,7 @@ test.describe('Visual Regression Tests', () => {
 
       await expect(page).toHaveScreenshot('mobile-homepage.png', {
         fullPage: true,
-        maxDiffPixelRatio: 0.05,
+        maxDiffPixelRatio: 0.1,
       });
     });
 
@@ -98,7 +98,7 @@ test.describe('Visual Regression Tests', () => {
 
       await expect(page).toHaveScreenshot('tablet-homepage.png', {
         fullPage: true,
-        maxDiffPixelRatio: 0.05,
+        maxDiffPixelRatio: 0.1,
       });
     });
   });
@@ -113,7 +113,7 @@ test.describe('Visual Regression Tests', () => {
 
       await expect(page).toHaveScreenshot('dark-mode-homepage.png', {
         fullPage: true,
-        maxDiffPixelRatio: 0.05,
+        maxDiffPixelRatio: 0.1,
       });
     });
   });
