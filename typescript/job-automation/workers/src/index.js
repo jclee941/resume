@@ -29,6 +29,7 @@ import {
   BackupWorkflow,
   CleanupWorkflow,
 } from './workflows/index.js';
+import { BrowserSessionDO } from './durable-objects/browser-session-do.js';
 
 export {
   JobCrawlingWorkflow,
@@ -38,6 +39,7 @@ export {
   HealthCheckWorkflow,
   BackupWorkflow,
   CleanupWorkflow,
+  BrowserSessionDO,
 };
 
 export default {
