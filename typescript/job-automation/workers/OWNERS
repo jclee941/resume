@@ -1,0 +1,7 @@
+# Job Automation - Dashboard Worker
+# Cloudflare Worker and Workflows for resume.jclee.me/job/*
+
+jclee@jclee.me
+
+# Workflow changes require review
+per-file src/workflows/** = jclee@jclee.me

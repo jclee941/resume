@@ -1,0 +1,61 @@
+# Job Automation - MCP Server Core
+# Crawlers, services, tools, and auto-apply logic
+
+package(default_visibility = ["//typescript/job-automation:__subpackages__"])
+
+filegroup(
+    name = "sources",
+    srcs = glob(
+        ["**/*.js", "**/*.json"],
+        allow_empty = True,
+        exclude = ["node_modules/**"],
+    ),
+)
+
+# Crawlers (Puppeteer/Playwright based, stealth-enabled)
+filegroup(
+    name = "crawlers",
+    srcs = glob(["crawlers/*.js"], allow_empty = True),
+)
+
+# Auto-apply automation (Playwright form submission)
+filegroup(
+    name = "auto_apply",
+    srcs = glob(["auto-apply/*.js"], allow_empty = True),
+)
+
+# Shared business logic (services)
+filegroup(
+    name = "services",
+    srcs = glob(["shared/services/**/*.js"], allow_empty = True),
+)
+
+# Shared adapters (external clients)
+filegroup(
+    name = "clients",
+    srcs = glob(["shared/clients/**/*.js"], allow_empty = True),
+)
+
+# Shared utilities
+filegroup(
+    name = "utils",
+    srcs = glob(["shared/utils/*.js"], allow_empty = True),
+)
+
+# Shared validation
+filegroup(
+    name = "validation",
+    srcs = glob(["shared/validation/*.js"], allow_empty = True),
+)
+
+# MCP tool implementations
+filegroup(
+    name = "tools",
+    srcs = glob(["tools/*.js"], allow_empty = True),
+)
+
+# Server routes
+filegroup(
+    name = "routes",
+    srcs = glob(["server/routes/*.js"], allow_empty = True),
+)

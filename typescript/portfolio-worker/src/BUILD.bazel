@@ -1,0 +1,49 @@
+# Portfolio Worker - Job/Dashboard Module
+load("@rules_shell//shell:sh_binary.bzl", "sh_binary")
+
+package(default_visibility = ["//typescript/portfolio-worker:__subpackages__"])
+
+filegroup(
+    name = "sources",
+    srcs = glob(
+        ["**/*.js", "**/*.html", "**/*.css", "**/*.json"],
+        allow_empty = True,
+        exclude = ["node_modules/**"],
+    ),
+)
+
+# Route handlers
+filegroup(
+    name = "handlers",
+    srcs = glob(["handlers/*.js"], allow_empty = True),
+)
+
+# Middleware
+filegroup(
+    name = "middleware",
+    srcs = glob(["middleware/*.js"], allow_empty = True),
+)
+
+# Services
+filegroup(
+    name = "services",
+    srcs = glob(["services/*.js"], allow_empty = True),
+)
+
+# Views (UI components)
+filegroup(
+    name = "views",
+    srcs = glob(["views/*.js"], allow_empty = True),
+)
+
+# Utilities
+filegroup(
+    name = "utils",
+    srcs = glob(["utils/*.js"], allow_empty = True),
+)
+
+# Workflows
+filegroup(
+    name = "workflows",
+    srcs = glob(["workflows/*.js"], allow_empty = True),
+)

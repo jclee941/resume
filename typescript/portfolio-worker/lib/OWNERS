@@ -1,0 +1,7 @@
+# Portfolio Worker - Library Modules
+# Security headers, logging, metrics, utilities
+
+jclee@jclee.me
+
+# Security module changes require review
+per-file security-headers.js = jclee@jclee.me

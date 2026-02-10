@@ -1,0 +1,13 @@
+# Resume CLI - Binary Entry Point
+# Commander.js CLI tool for deployment management
+
+load("@rules_shell//shell:sh_binary.bzl", "sh_binary")
+
+package(default_visibility = ["//typescript/cli:__subpackages__"])
+
+# CLI binary
+sh_binary(
+    name = "resume_cli",
+    srcs = ["run.js"],
+    data = ["//typescript/cli/src:sources"],
+)

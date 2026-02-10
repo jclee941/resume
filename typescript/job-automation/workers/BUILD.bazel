@@ -1,0 +1,49 @@
+# Job Automation - Dashboard Worker
+# Cloudflare Worker serving resume.jclee.me/job/* with Workflows
+
+package(default_visibility = ["//typescript/job-automation:__subpackages__"])
+
+filegroup(
+    name = "sources",
+    srcs = glob(
+        ["src/**/*.js", "src/**/*.json", "wrangler.toml"],
+        allow_empty = True,
+        exclude = ["node_modules/**"],
+    ),
+)
+
+# Worker main entry point
+filegroup(
+    name = "worker",
+    srcs = glob(["src/index.js"], allow_empty = True),
+)
+
+# Route handlers
+filegroup(
+    name = "handlers",
+    srcs = glob(["src/handlers/*.js"], allow_empty = True),
+)
+
+# Middleware
+filegroup(
+    name = "middleware",
+    srcs = glob(["src/middleware/*.js"], allow_empty = True),
+)
+
+# Services
+filegroup(
+    name = "services",
+    srcs = glob(["src/services/*.js"], allow_empty = True),
+)
+
+# Cloudflare Workflows (8 scheduled automation workflows)
+filegroup(
+    name = "workflows",
+    srcs = glob(["src/workflows/*.js"], allow_empty = True),
+)
+
+# Configuration
+filegroup(
+    name = "config",
+    srcs = ["wrangler.toml"],
+)

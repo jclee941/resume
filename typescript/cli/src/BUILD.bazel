@@ -1,0 +1,24 @@
+# Resume CLI - Commands Package
+# Deployment orchestration and production verification
+
+package(default_visibility = ["//typescript/cli:__subpackages__"])
+
+filegroup(
+    name = "sources",
+    srcs = glob(
+        ["**/*.js"],
+        allow_empty = True,
+    ),
+)
+
+# Deploy command
+filegroup(
+    name = "deploy_command",
+    srcs = glob(["commands/deploy.js"], allow_empty = True),
+)
+
+# Verify command
+filegroup(
+    name = "verify_command",
+    srcs = glob(["commands/verify.js"], allow_empty = True),
+)
