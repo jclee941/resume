@@ -76,7 +76,7 @@ function validateData(data) {
     data.certifications.forEach((item, idx) => {
       if (!item.name) errors.push(`certifications[${idx}]: missing name`);
       if (!item.issuer) errors.push(`certifications[${idx}]: missing issuer`);
-      if (!item.date) errors.push(`certifications[${idx}]: missing date`);
+      if (!item.date && !item.status) errors.push(`certifications[${idx}]: missing date`);
     });
   }
 

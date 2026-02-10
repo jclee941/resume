@@ -5,7 +5,7 @@
     "email": "qws941@kakao.com",
     "phone": "010-5757-9592",
     "address": "경기도 시흥시 장현천로61, 307동 1301호",
-    "github": "github.com/qws941"
+    "github": "https://github.com/qws941"
   },
   "education": {
     "school": "한양사이버대학교",
@@ -186,6 +186,24 @@
       "name": "리눅스마스터 2급",
       "issuer": "한국정보통신진흥협회",
       "date": "2019.01"
+    },
+    {
+      "name": "CISSP",
+      "issuer": "ISC²",
+      "date": null,
+      "status": "준비중"
+    },
+    {
+      "name": "CISM",
+      "issuer": "ISACA",
+      "date": null,
+      "status": "준비중"
+    },
+    {
+      "name": "AWS Solutions Architect",
+      "issuer": "Amazon Web Services",
+      "date": null,
+      "status": "준비중"
     }
   ],
   "skills": {
@@ -247,6 +265,22 @@
         { "name": "Splunk", "level": "expert" },
         { "name": "NAC", "level": "advanced" },
         { "name": "DLP", "level": "intermediate" }
+      ]
+    },
+    "programming": {
+      "title": "Programming",
+      "icon": "Code",
+      "items": [
+        { "name": "Node.js", "level": "intermediate" },
+        { "name": "TypeScript", "level": "intermediate" }
+      ]
+    },
+    "compliance": {
+      "title": "Compliance",
+      "icon": "FileCheck",
+      "items": [
+        { "name": "ISMS-P", "level": "advanced" },
+        { "name": "ISO 27001", "level": "advanced" }
       ]
     }
   },
@@ -335,12 +369,14 @@
   },
   "achievements": [
     "넥스트레이드 ATS 보안 인프라 설계 (금융위 본인가 통과)",
-    "보안 인프라 자동화 도입을 통해 운영 시간 40% 절감 (넥스트레이드)",
-    "WAF/IPS 정책 최적화 및 정교화로 오탐률 30% 감소 (넥스트레이드)",
+    "Splunk-FortiNet 통합 모니터링 체계 구축 (방화벽 중앙 관리 및 정책 배포 자동화)",
+    "보안 인프라 자동화 도입을 통한 운영 효율화 (넥스트레이드)",
+    "WAF/IPS 정책 최적화를 통한 오탐률 개선 (넥스트레이드)",
+    "Grafana/Prometheus/Loki 기반 Observability 플랫폼 구축 및 운영",
+    "n8n 워크플로우 자동화 플랫폼 구축 (반복 운영 업무 자동화)",
+    "Claude AI 기반 보안 위협 분석 자동화 도입",
     "로보어드바이저 테스트베드 심사 보안 지원 (콴텍)",
-    "클라우드 마이그레이션 프로젝트 리드 및 3개월 내 완수 (조인트리)",
-    "Grafana/Prometheus/Loki 모니터링 스택 구축 및 운영",
-    "Ansible/n8n 기반 보안 운영 프로세스 자동화 구현",
+    "클라우드 마이그레이션 프로젝트 수행 (조인트리)",
     "대규모 재택근무 환경을 위한 VPN 보안 인프라 구축 (메타넷)"
   ],
   "infrastructure": [
