@@ -983,6 +983,177 @@
     {
       "collapsed": false,
       "gridPos": { "h": 1, "w": 24, "x": 0, "y": 38 },
+      "id": 106,
+      "panels": [],
+      "title": "🏥 Infrastructure Health",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "P80D1C387F02F2311" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 1 },
+              { "color": "red", "value": 5 }
+            ]
+          },
+          "unit": "percent",
+          "decimals": 2,
+          "max": 100,
+          "min": 0
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 5, "w": 6, "x": 0, "y": 39 },
+      "id": 30,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "P80D1C387F02F2311" },
+          "expr": "error_rate{job=\"resume-portfolio\"} * 100",
+          "refId": "A"
+        }
+      ],
+      "title": "Error Rate %",
+      "description": "Current error rate percentage",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "P80D1C387F02F2311" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "yellow", "value": 3600 },
+              { "color": "green", "value": 86400 }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 5, "w": 6, "x": 6, "y": 39 },
+      "id": 31,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "P80D1C387F02F2311" },
+          "expr": "worker_uptime_seconds{job=\"resume-portfolio\"}",
+          "refId": "A"
+        }
+      ],
+      "title": "Worker Uptime",
+      "description": "Time since last worker restart",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "P80D1C387F02F2311" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 800 },
+              { "color": "red", "value": 1800 }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 5, "w": 6, "x": 12, "y": 39 },
+      "id": 32,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["mean"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "P80D1C387F02F2311" },
+          "expr": "web_vitals_fcp_ms{job=\"resume-portfolio\"}",
+          "refId": "A"
+        }
+      ],
+      "title": "FCP (First Contentful Paint)",
+      "description": "Good: <1.8s, Needs Improvement: 1.8-3s, Poor: >3s",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "P80D1C387F02F2311" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 800 },
+              { "color": "red", "value": 1800 }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 5, "w": 6, "x": 18, "y": 39 },
+      "id": 33,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["mean"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "P80D1C387F02F2311" },
+          "expr": "web_vitals_ttfb_ms{job=\"resume-portfolio\"}",
+          "refId": "A"
+        }
+      ],
+      "title": "TTFB (Time to First Byte)",
+      "description": "Good: <800ms, Needs Improvement: 800-1800ms, Poor: >1800ms",
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 44 },
       "id": 105,
       "panels": [],
       "title": "📝 Logs",
@@ -990,7 +1161,7 @@
     },
     {
       "datasource": { "type": "loki", "uid": "cfakfiakcs0zka" },
-      "gridPos": { "h": 4, "w": 24, "x": 0, "y": 39 },
+      "gridPos": { "h": 4, "w": 24, "x": 0, "y": 45 },
       "id": 20,
       "options": {
         "dedupStrategy": "none",

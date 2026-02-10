@@ -668,11 +668,31 @@ export default {
 
       if (url.pathname === '/health') {
         const uptime = Math.floor((Date.now() - metrics.worker_start_time) / 1000);
+
+        const bindings = { d1: { healthy: false }, kv: { healthy: false } };
+        try {
+          const d1Start = Date.now();
+          await env.DB.prepare('SELECT 1 AS ok').first();
+          bindings.d1 = { healthy: true, latency_ms: Date.now() - d1Start };
+        } catch (e) {
+          bindings.d1 = { healthy: false, error: e.message };
+        }
+        try {
+          const kvStart = Date.now();
+          await env.SESSIONS.put('_health_check', Date.now().toString());
+          await env.SESSIONS.get('_health_check');
+          bindings.kv = { healthy: true, latency_ms: Date.now() - kvStart };
+        } catch (e) {
+          bindings.kv = { healthy: false, error: e.message };
+        }
+
+        const allHealthy = bindings.d1.healthy && bindings.kv.healthy;
         const health = {
-          status: 'healthy',
+          status: allHealthy ? 'healthy' : 'degraded',
           version: '${VERSION}',
           deployed_at: '${deployedAt}',
           uptime_seconds: uptime,
+          bindings,
           metrics: {
             requests_total: metrics.requests_total,
             requests_success: metrics.requests_success,
@@ -922,6 +942,56 @@ export default {
       }
 
 
+      if (url.pathname === '/api/metrics/snapshot' && request.method === 'POST') {
+        try {
+          const uptime = Math.floor((Date.now() - metrics.worker_start_time) / 1000);
+          const errorRate = metrics.requests_total > 0
+            ? (metrics.requests_error / metrics.requests_total * 100)
+            : 0;
+          const avgResponseTime = metrics.response_times.length > 0
+            ? Math.round(metrics.response_times.reduce((a, b) => a + b) / metrics.response_times.length)
+            : 0;
+          const cacheHitRatio = metrics.cache_hits + metrics.cache_misses > 0
+            ? (metrics.cache_hits / (metrics.cache_hits + metrics.cache_misses) * 100)
+            : 0;
+
+          const topCountries = JSON.stringify(
+            Object.entries(metrics.geo_countries || {}).sort((a, b) => b[1] - a[1]).slice(0, 10)
+          );
+          const topColos = JSON.stringify(
+            Object.entries(metrics.geo_colos || {}).sort((a, b) => b[1] - a[1]).slice(0, 10)
+          );
+
+          await env.DB.prepare(
+            'INSERT INTO metrics_snapshots (total_requests, successful_requests, error_requests, avg_response_time_ms, cache_hit_ratio, web_vitals_lcp, web_vitals_inp, web_vitals_cls, web_vitals_fcp, web_vitals_ttfb, error_rate, uptime_seconds, top_countries, top_colos) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+          ).bind(
+            metrics.requests_total,
+            metrics.requests_success,
+            metrics.requests_error,
+            avgResponseTime,
+            cacheHitRatio,
+            metrics.vitals_received > 0 ? Math.round(metrics.vitals_sum.lcp / metrics.vitals_received) : null,
+            metrics.vitals_received > 0 ? Math.round((metrics.vitals_sum.fid || 0) / metrics.vitals_received) : null,
+            metrics.vitals_received > 0 ? (metrics.vitals_sum.cls / metrics.vitals_received) : null,
+            null,
+            null,
+            errorRate,
+            uptime,
+            topCountries,
+            topColos
+          ).run();
+
+          return new Response(JSON.stringify({ status: 'ok', snapshot: 'saved' }), {
+            headers: { ...SECURITY_HEADERS, 'Content-Type': 'application/json' }
+          });
+        } catch (err) {
+          return new Response(JSON.stringify({ error: err.message }), {
+            status: 500,
+            headers: { ...SECURITY_HEADERS, 'Content-Type': 'application/json' }
+          });
+        }
+      }
+
       if (url.pathname === '/robots.txt') {
         metrics.requests_success++;
         return new Response(ROBOTS_TXT, {
@@ -996,6 +1066,24 @@ export default {
         path: url.pathname,
         method: request.method
       }));
+
+      ctx.waitUntil((async () => {
+        try {
+          await env.DB.prepare(
+            'INSERT INTO error_logs (message, stack, url, method, status_code, client_ip, country, colo, worker_version) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
+          ).bind(
+            err.message || 'Unknown error',
+            err.stack || '',
+            url.pathname,
+            request.method,
+            500,
+            clientIp,
+            request.cf?.country || '',
+            request.cf?.colo || '',
+            '${VERSION}'
+          ).run();
+        } catch {}
+      })());
 
       return new Response('Internal Server Error', {
         status: 500,
