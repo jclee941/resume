@@ -325,7 +325,7 @@ ${statusEmoji.pending} 대기: ${applications.pending}건`,
         elements: [
           {
             type: 'mrkdwn',
-            text: `<https://job.jclee.me|대시보드 보기> | 총 ${content.summary.total}건 지원`,
+            text: `<https://resume.jclee.me/job|대시보드 보기> | 총 ${content.summary.total}건 지원`,
           },
         ],
       }

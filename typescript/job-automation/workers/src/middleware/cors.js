@@ -1,8 +1,4 @@
-const ALLOWED_ORIGINS = [
-  'https://job.jclee.me',
-  'https://resume.jclee.me',
-  'http://localhost:3456',
-];
+const ALLOWED_ORIGINS = ['https://resume.jclee.me', 'http://localhost:3456'];
 
 export function corsHeaders(origin) {
   // Deny by default - only return CORS headers for allowed origins
@@ -23,17 +19,14 @@ export function addCorsHeaders(response, origin) {
     headers.set(key, value);
   });
   // Security headers
-  headers.set(
-    'Strict-Transport-Security',
-    'max-age=63072000; includeSubDomains; preload',
-  );
+  headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
   headers.set('X-Content-Type-Options', 'nosniff');
   headers.set('X-Frame-Options', 'SAMEORIGIN');
   headers.set('X-XSS-Protection', '1; mode=block');
   headers.set('Referrer-Policy', 'same-origin');
   headers.set(
     'Permissions-Policy',
-    'accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()',
+    'accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()'
   );
   // Cache control for API responses
   headers.set('Cache-Control', 'private, no-store');

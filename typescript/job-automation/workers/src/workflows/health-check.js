@@ -7,13 +7,13 @@ import { WorkflowEntrypoint } from 'cloudflare:workers';
  * Parallel health checks with latency tracking and degradation detection.
  *
  * @param {Object} params
- * @param {string[]} params.services - URLs to check (defaults to resume.jclee.me and job.jclee.me)
+ * @param {string[]} params.services - URLs to check (defaults to resume.jclee.me and resume.jclee.me/job)
  * @param {string} params.slackWebhook - Optional Slack webhook override
  */
 export class HealthCheckWorkflow extends WorkflowEntrypoint {
   async run(event, step) {
     const {
-      services = ['https://resume.jclee.me/health', 'https://job.jclee.me/health'],
+      services = ['https://resume.jclee.me/health', 'https://resume.jclee.me/job/health'],
       slackWebhook = null,
     } = event.payload || {};
 

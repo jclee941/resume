@@ -7,7 +7,7 @@
 
 | Component          | Status        | Details                                             |
 | ------------------ | ------------- | --------------------------------------------------- |
-| **Dashboard**      | ✅ Active     | `https://job.jclee.me` (Tunnel -> Docker)           |
+| **Dashboard**      | ✅ Active     | `https://resume.jclee.me/job` (Cloudflare Worker)   |
 | **Infrastructure** | ✅ Dockerized | `resume-dashboard` (App), `resume-tunnel` (Network) |
 | **Persistence**    | ✅ Enabled    | Docker `restart: unless-stopped`                    |
 
@@ -27,7 +27,7 @@
 
 ## 🚀 Usage
 
-1. **Access**: Go to [https://job.jclee.me](https://job.jclee.me)
+1. **Access**: Go to [https://resume.jclee.me/job](https://resume.jclee.me/job)
 2. **Login**: Use Google OAuth (`qwer941a@gmail.com`)
 3. **Inject Cookies**:
    - Run `npm run login` locally to sync cookies

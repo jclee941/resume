@@ -29,9 +29,7 @@ async function buildServer() {
   const fastify = Fastify({
     logger: {
       level: isDev ? 'debug' : 'info',
-      transport: isDev
-        ? { target: 'pino-pretty', options: { colorize: true } }
-        : undefined,
+      transport: isDev ? { target: 'pino-pretty', options: { colorize: true } } : undefined,
     },
     trustProxy: true,
     bodyLimit: config.limits.maxBodySize,
@@ -67,13 +65,12 @@ async function buildServer() {
     openapi: {
       info: {
         title: 'Job Automation API',
-        description:
-          'REST API for job search, application tracking, and auto-apply',
+        description: 'REST API for job search, application tracking, and auto-apply',
         version: '1.4.0',
       },
       servers: [
         { url: 'http://localhost:3000', description: 'Local' },
-        { url: 'https://job.jclee.me', description: 'Production' },
+        { url: 'https://resume.jclee.me/job', description: 'Production' },
       ],
       tags: [
         { name: 'Health', description: 'Service health' },
@@ -145,7 +142,7 @@ async function start() {
   try {
     await server.listen({ port: config.port, host: config.host });
     console.log(
-      `job.jclee.me Backend v2.0.0 | http://localhost:${config.port} | ${config.nodeEnv}`,
+      `resume.jclee.me/job Backend v2.0.0 | http://localhost:${config.port} | ${config.nodeEnv}`
     );
   } catch (err) {
     server.log.error(err);

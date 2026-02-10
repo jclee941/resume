@@ -25,7 +25,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const CONFIG = {
   USER_DATA_DIR: path.join(process.env.HOME || '/tmp', '.opencode/browser-data'),
   SESSION_DIR: path.join(process.env.HOME || '/tmp', '.opencode/data'),
-  JOB_WORKER_URL: process.env.JOB_WORKER_URL || 'https://job.jclee.me',
+  JOB_WORKER_URL: process.env.JOB_WORKER_URL || 'https://resume.jclee.me/job',
   AUTH_SYNC_SECRET: process.env.AUTH_SYNC_SECRET,
 };
 

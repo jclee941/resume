@@ -9,17 +9,16 @@ async function swaggerPlugin(fastify) {
       openapi: '3.0.3',
       info: {
         title: 'Job Automation API',
-        description:
-          'API for job search, application tracking, and AI matching',
+        description: 'API for job search, application tracking, and AI matching',
         version: config.version,
         contact: {
           name: 'jclee',
-          url: 'https://job.jclee.me',
+          url: 'https://resume.jclee.me/job',
         },
       },
       servers: [
         {
-          url: 'https://job.jclee.me',
+          url: 'https://resume.jclee.me/job',
           description: 'Production',
         },
         {

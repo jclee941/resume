@@ -51,7 +51,7 @@ npx wrangler deploy
 
 echo ""
 echo "=== Deployment Complete ==="
-echo "Dashboard: https://job.jclee.me"
+echo "Dashboard: https://resume.jclee.me/job"
 echo ""
 echo "To set secrets:"
 echo "  npx wrangler secret put SLACK_WEBHOOK_URL"

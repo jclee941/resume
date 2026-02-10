@@ -16,7 +16,7 @@
  *
  * Environment:
  *   WANTED_EMAIL / WANTED_PASSWORD   - Wanted direct login
- *   JOB_WORKER_URL                   - Worker URL (default: https://job.jclee.me)
+ *   JOB_WORKER_URL                   - Worker URL (default: https://resume.jclee.me/job)
  *   AUTH_SYNC_SECRET                 - Secret for sync endpoint
  *
  * Note: JobKorea/Saramin require manual Google OAuth login due to bot detection.
@@ -41,7 +41,7 @@ const CONFIG = {
   GOOGLE_EMAIL: process.env.GOOGLE_EMAIL,
   GOOGLE_PASSWORD: process.env.GOOGLE_PASSWORD,
   // Worker
-  JOB_WORKER_URL: process.env.JOB_WORKER_URL || 'https://job.jclee.me',
+  JOB_WORKER_URL: process.env.JOB_WORKER_URL || 'https://resume.jclee.me/job',
   AUTH_SYNC_SECRET: process.env.AUTH_SYNC_SECRET,
   // Paths
   SESSION_DIR: path.join(process.env.HOME || '/tmp', '.opencode/data'),

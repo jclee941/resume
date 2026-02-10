@@ -14,7 +14,7 @@ puppeteer.use(StealthPlugin());
 
 const EMAIL = process.env.WANTED_EMAIL || 'qws941@kakao.com';
 const PASSWORD = process.env.WANTED_PASSWORD;
-const JOB_WORKER_URL = process.env.JOB_WORKER_URL || 'https://job.jclee.me';
+const JOB_WORKER_URL = process.env.JOB_WORKER_URL || 'https://resume.jclee.me/job';
 const AUTH_SYNC_SECRET = process.env.AUTH_SYNC_SECRET;
 
 if (!PASSWORD) {

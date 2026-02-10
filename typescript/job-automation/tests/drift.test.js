@@ -1,7 +1,7 @@
 import { API_CONTRACTS } from '../src/shared/contracts/index.js';
 
 const FASTIFY_URL = process.env.FASTIFY_URL || 'http://localhost:3000';
-const WORKER_URL = process.env.WORKER_URL || 'https://job.jclee.me';
+const WORKER_URL = process.env.WORKER_URL || 'https://resume.jclee.me/job';
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN;
 
 async function fetchEndpoint(baseUrl, contract, options = {}) {

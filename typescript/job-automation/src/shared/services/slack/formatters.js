@@ -17,8 +17,7 @@ const STATUS_COLORS = {
 };
 
 export function formatHighMatchJob(job, matchScore) {
-  const scoreColor =
-    matchScore >= 85 ? '#10b981' : matchScore >= 70 ? '#f59e0b' : '#6b7280';
+  const scoreColor = matchScore >= 85 ? '#10b981' : matchScore >= 70 ? '#f59e0b' : '#6b7280';
 
   return {
     blocks: [
@@ -174,7 +173,7 @@ export function formatDailyReport(stats, date) {
           {
             type: 'button',
             text: { type: 'plain_text', text: '📋 대시보드 열기', emoji: true },
-            url: 'https://job.jclee.me',
+            url: 'https://resume.jclee.me/job',
             action_id: 'open_dashboard',
           },
         ],
@@ -222,9 +221,7 @@ export function formatSearchResults(jobs, query) {
         ? [
             {
               type: 'context',
-              elements: [
-                { type: 'mrkdwn', text: `...외 ${jobs.length - 5}건` },
-              ],
+              elements: [{ type: 'mrkdwn', text: `...외 ${jobs.length - 5}건` }],
             },
           ]
         : []),
@@ -269,9 +266,7 @@ export function formatAutoApplyResult(results, dryRun) {
         ? [
             {
               type: 'context',
-              elements: [
-                { type: 'mrkdwn', text: `...외 ${results.length - 3}건` },
-              ],
+              elements: [{ type: 'mrkdwn', text: `...외 ${results.length - 3}건` }],
             },
           ]
         : []),

@@ -16,7 +16,7 @@ job-automation/
 │   ├── index.js                 # MCP server entry (Fastify + MCP tools)
 │   ├── server/routes/           # 13 Fastify route modules
 │   ├── crawlers/                # BaseCrawler + platform implementations
-│   │   └── base-crawler.js      # CRITICAL: Stealth base class
+│   │   └── base-crawler.js      # HTTP fetch base (randomized UA, no browser)
 │   ├── auto-apply/              # AutoApplier, ApplicationManager
 │   ├── shared/
 │   │   ├── services/            # Pure business logic (10 services)
@@ -66,7 +66,7 @@ job-automation/
 
 | Class/Module         | Location                                | Purpose                         |
 | -------------------- | --------------------------------------- | ------------------------------- |
-| `BaseCrawler`        | `src/crawlers/base-crawler.js`          | Stealth Puppeteer base          |
+| `BaseCrawler`        | `src/crawlers/base-crawler.js`          | HTTP fetch base (randomized UA) |
 | `UnifiedApplySystem` | `src/shared/services/apply/`            | Centralized job application     |
 | `SessionManager`     | `src/shared/services/session/`          | Cookie persistence              |
 | `JobMatcher`         | `src/shared/services/matching/`         | Skill-to-job matching           |
@@ -77,12 +77,13 @@ job-automation/
 
 ## PLATFORM CRAWLERS
 
-| Platform | Tech                       | Notes                       |
-| -------- | -------------------------- | --------------------------- |
-| Wanted   | playwright-extra + stealth | Heavy WAF, frequent changes |
-| JobKorea | Cheerio (static HTML)      | Simpler anti-bot            |
-| Saramin  | playwright-extra + stealth | Dynamic content             |
-| LinkedIn | Strict detection           | Use with caution            |
+| Platform | Tech                       | Notes                                      |
+| -------- | -------------------------- | ------------------------------------------ |
+| Wanted   | Fetch API (JSON)           | API-only, no browser needed                |
+| JobKorea | Puppeteer (no stealth yet) | Naked browser, needs StealthBrowserCrawler |
+| Saramin  | Puppeteer (no stealth yet) | Naked browser, needs StealthBrowserCrawler |
+| LinkedIn | Fetch + regex parsing      | Fragile HTML scraping                      |
+| Remember | Puppeteer (no stealth yet) | Naked browser, needs StealthBrowserCrawler |
 
 ## API NOTES (CRITICAL)
 
@@ -118,18 +119,18 @@ job-automation/
 
 ## ANTI-PATTERNS
 
-| Anti-Pattern                               | Why                                     | Do Instead                               |
-| ------------------------------------------ | --------------------------------------- | ---------------------------------------- |
-| Naked Playwright/Puppeteer                 | Bot detection                           | Extend `BaseCrawler`                     |
-| Fixed User-Agent strings                   | Fingerprinting                          | Use randomized UA from BaseCrawler       |
-| Aggressive polling                         | Rate limits/bans                        | Use jitter + backoff                     |
-| Skills v2 API                              | Server bugs                             | Use Skills v1 with `text` field          |
-| Links API                                  | 500 errors                              | Skip until fixed                         |
-| Direct state in services                   | Testing nightmare                       | Use SessionManager/DI                    |
-| Cross-client imports                       | Circular deps                           | Each client isolated                     |
-| Hardcoded credentials                      | Security                                | Use `.env` or Vault                      |
-| Hardcoded `~/dev/resume` paths             | Breaks portability                      | Use `getResumeBasePath()` from paths.js  |
-| Duplicate workers/↔portfolio/src/job/ code | styles.js, resume-sync.js exist in both | Single source in workers/, copy on build |
+| Anti-Pattern                               | Why                                     | Do Instead                                                                        |
+| ------------------------------------------ | --------------------------------------- | --------------------------------------------------------------------------------- |
+| Naked Playwright/Puppeteer                 | Bot detection                           | Use `StealthBrowserCrawler` (CF Workers) or `puppeteer-extra` + stealth (Node.js) |
+| Fixed User-Agent strings                   | Fingerprinting                          | BaseCrawler now uses randomized UA pool                                           |
+| Aggressive polling                         | Rate limits/bans                        | Use jitter + backoff                                                              |
+| Skills v2 API                              | Server bugs                             | Use Skills v1 with `text` field                                                   |
+| Links API                                  | 500 errors                              | Skip until fixed                                                                  |
+| Direct state in services                   | Testing nightmare                       | Use SessionManager/DI                                                             |
+| Cross-client imports                       | Circular deps                           | Each client isolated                                                              |
+| Hardcoded credentials                      | Security                                | Use `.env` or Vault                                                               |
+| Hardcoded `~/dev/resume` paths             | Breaks portability                      | Use `getResumeBasePath()` from paths.js                                           |
+| Duplicate workers/↔portfolio/src/job/ code | styles.js, resume-sync.js exist in both | Single source in workers/, copy on build                                          |
 
 ## COMMANDS
 

@@ -9,7 +9,7 @@ info:
 servers:
   - url: http://localhost:3000
     description: Local development
-  - url: https://job.jclee.me
+  - url: https://resume.jclee.me/job
     description: Production (Cloudflare Worker)
 
 tags:
@@ -30,24 +30,24 @@ paths:
       tags: [Health]
       summary: Health check
       responses:
-        "200":
+        '200':
           description: Service healthy
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HealthResponse"
+                $ref: '#/components/schemas/HealthResponse'
 
   /api/health:
     get:
       tags: [Health]
       summary: API health check
       responses:
-        "200":
+        '200':
           description: API healthy
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HealthResponse"
+                $ref: '#/components/schemas/HealthResponse'
 
   /api/applications:
     get:
@@ -70,7 +70,7 @@ paths:
             type: integer
             default: 0
       responses:
-        "200":
+        '200':
           description: Application list
           content:
             application/json:
@@ -80,7 +80,7 @@ paths:
                   applications:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Application"
+                      $ref: '#/components/schemas/Application'
                   total:
                     type: integer
                   limit:
@@ -99,16 +99,16 @@ paths:
               type: object
               properties:
                 job:
-                  $ref: "#/components/schemas/Job"
+                  $ref: '#/components/schemas/Job'
                 options:
                   type: object
       responses:
-        "201":
+        '201':
           description: Application created
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Application"
+                $ref: '#/components/schemas/Application'
 
   /api/applications/{id}:
     parameters:
@@ -122,13 +122,13 @@ paths:
       tags: [Applications]
       summary: Get application by ID
       responses:
-        "200":
+        '200':
           description: Application details
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Application"
-        "404":
+                $ref: '#/components/schemas/Application'
+        '404':
           description: Not found
 
     put:
@@ -139,9 +139,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ApplicationUpdate"
+              $ref: '#/components/schemas/ApplicationUpdate'
       responses:
-        "200":
+        '200':
           description: Updated
           content:
             application/json:
@@ -151,13 +151,13 @@ paths:
                   success:
                     type: boolean
                   application:
-                    $ref: "#/components/schemas/Application"
+                    $ref: '#/components/schemas/Application'
 
     delete:
       tags: [Applications]
       summary: Delete application
       responses:
-        "200":
+        '200':
           description: Deleted
 
   /api/applications/{id}/status:
@@ -179,22 +179,14 @@ paths:
               properties:
                 status:
                   type: string
-                  enum:
-                    [
-                      pending,
-                      applied,
-                      interviewing,
-                      rejected,
-                      offered,
-                      withdrawn,
-                    ]
+                  enum: [pending, applied, interviewing, rejected, offered, withdrawn]
                 note:
                   type: string
                 notifyN8n:
                   type: boolean
                   default: true
       responses:
-        "200":
+        '200':
           description: Status updated
 
   /api/search:
@@ -223,12 +215,12 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: Search results
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/SearchResult"
+                $ref: '#/components/schemas/SearchResult'
 
   /api/search/batch:
     post:
@@ -257,7 +249,7 @@ paths:
                   type: integer
                   default: 60
       responses:
-        "200":
+        '200':
           description: Batch search results
           content:
             application/json:
@@ -267,7 +259,7 @@ paths:
                   results:
                     type: array
                     items:
-                      $ref: "#/components/schemas/SearchResult"
+                      $ref: '#/components/schemas/SearchResult'
                   totalJobs:
                     type: integer
 
@@ -276,24 +268,24 @@ paths:
       tags: [Stats]
       summary: Get application statistics
       responses:
-        "200":
+        '200':
           description: Statistics
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Stats"
+                $ref: '#/components/schemas/Stats'
 
   /api/stats/weekly:
     get:
       tags: [Stats]
       summary: Get weekly report
       responses:
-        "200":
+        '200':
           description: Weekly report
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/WeeklyReport"
+                $ref: '#/components/schemas/WeeklyReport'
 
   /api/report:
     get:
@@ -306,7 +298,7 @@ paths:
             type: string
             format: date
       responses:
-        "200":
+        '200':
           description: Daily report
 
   /api/report/weekly:
@@ -314,7 +306,7 @@ paths:
       tags: [Stats]
       summary: Get weekly report (alias)
       responses:
-        "200":
+        '200':
           description: Weekly report
 
   /api/cleanup:
@@ -322,7 +314,7 @@ paths:
       tags: [Stats]
       summary: Cleanup old applications
       responses:
-        "200":
+        '200':
           description: Cleanup result
 
   /api/auto-apply/status:
@@ -330,12 +322,12 @@ paths:
       tags: [AutoApply]
       summary: Get auto-apply status
       responses:
-        "200":
+        '200':
           description: Auto-apply status
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AutoApplyStatus"
+                $ref: '#/components/schemas/AutoApplyStatus'
 
   /api/auto-apply/run:
     post:
@@ -359,7 +351,7 @@ paths:
                 maxApplications:
                   type: integer
       responses:
-        "202":
+        '202':
           description: Auto-apply started
           content:
             application/json:
@@ -413,7 +405,7 @@ components:
         id:
           type: string
         job:
-          $ref: "#/components/schemas/Job"
+          $ref: '#/components/schemas/Job'
         status:
           type: string
           enum: [pending, applied, interviewing, rejected, offered, withdrawn]
@@ -443,7 +435,7 @@ components:
         jobs:
           type: array
           items:
-            $ref: "#/components/schemas/Job"
+            $ref: '#/components/schemas/Job'
         totalJobs:
           type: integer
         keyword:
