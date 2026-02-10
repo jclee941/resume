@@ -1,5 +1,6 @@
 // @ts-check
 const { test, expect } = require('@playwright/test');
+const { executeCliCommand, focusElement, navigateToSection } = require('./fixtures/helpers');
 
 /**
  * Terminal CLI E2E Tests
@@ -13,35 +14,27 @@ test.describe('Terminal CLI - Command Execution', () => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
   });
 
-  /**
-   * Helper to type a command and submit it
-   */
-  async function executeCommand(page, command) {
-    const cliInput = page.locator('#cli-input');
-    await cliInput.fill(command);
-    await cliInput.press('Enter');
-    // Wait for output to appear
-    await page.waitForTimeout(300);
-  }
-
   test('should have CLI input focused or focusable', async ({ page }) => {
     const cliInput = page.locator('#cli-input');
     await expect(cliInput).toBeVisible();
 
     // Focus the input
-    await cliInput.focus();
-    await expect(cliInput).toBeFocused();
+    await focusElement(page, '#cli-input');
   });
 
   test('should execute help command', async ({ page }) => {
-    await executeCommand(page, 'help');
+    await executeCliCommand(page, 'help', {
+      expectedOutput: /help|commands|available/i
+    });
 
     const cliOutput = page.locator('#cli-output');
     await expect(cliOutput).toContainText(/help|commands|available/i);
   });
 
   test('should execute neofetch command', async ({ page }) => {
-    await executeCommand(page, 'neofetch');
+    await executeCliCommand(page, 'neofetch', {
+      expectedOutput: /Role:|Infrastructure Engineer/i
+    });
 
     const cliOutput = page.locator('#cli-output');
     // neofetch should show ASCII art and info
@@ -50,14 +43,14 @@ test.describe('Terminal CLI - Command Execution', () => {
 
   test('should execute clear command', async ({ page }) => {
     // First execute a command to have output
-    await executeCommand(page, 'help');
+    await executeCliCommand(page, 'help');
 
     const cliOutput = page.locator('#cli-output');
     const initialText = await cliOutput.textContent();
     expect(initialText?.length).toBeGreaterThan(0);
 
     // Now clear
-    await executeCommand(page, 'clear');
+    await executeCliCommand(page, 'clear');
 
     // Output should be empty or minimal
     await page.waitForTimeout(100);
@@ -66,7 +59,9 @@ test.describe('Terminal CLI - Command Execution', () => {
   });
 
   test('should show error for unknown command', async ({ page }) => {
-    await executeCommand(page, 'unknowncommand12345');
+    await executeCliCommand(page, 'unknowncommand12345', {
+      expectedOutput: /not found|unknown|command not recognized/i
+    });
 
     const cliOutput = page.locator('#cli-output');
     // Should show some form of "not found" or "unknown" message
@@ -88,15 +83,10 @@ test.describe('Terminal CLI - Easter Eggs', () => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
   });
 
-  async function executeCommand(page, command) {
-    const cliInput = page.locator('#cli-input');
-    await cliInput.fill(command);
-    await cliInput.press('Enter');
-    await page.waitForTimeout(300);
-  }
-
   test('should execute sudo hire-me command', async ({ page }) => {
-    await executeCommand(page, 'sudo hire-me');
+    await executeCliCommand(page, 'sudo hire-me', {
+      expectedOutput: /access granted|contact|qws941/i
+    });
 
     const cliOutput = page.locator('#cli-output');
     // Should show hire-me easter egg response
@@ -104,7 +94,7 @@ test.describe('Terminal CLI - Easter Eggs', () => {
   });
 
   test('should execute rm -rf doubt command', async ({ page }) => {
-    await executeCommand(page, 'rm -rf doubt');
+    await executeCliCommand(page, 'rm -rf doubt');
 
     const cliOutput = page.locator('#cli-output');
     await expect(cliOutput.getByText('✓ All doubts successfully removed.')).toBeVisible();

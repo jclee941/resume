@@ -1,5 +1,6 @@
 // @ts-check
 const { test, expect } = require('@playwright/test');
+const { navigateToSection, waitForAnimation } = require('./fixtures/helpers');
 
 // Test Constants
 const SELECTORS = {
@@ -22,8 +23,7 @@ const REGEX_PATTERNS = {
 
 // Helper Functions
 async function navigateToHome(page) {
-  await page.goto('/');
-  await page.waitForLoadState('domcontentloaded');
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
 }
 
 async function checkElementVisible(page, selector) {
@@ -84,15 +84,12 @@ test.describe('Responsive Design', () => {
     await expect(firstCard).toBeVisible();
     await expect(secondCard).toBeVisible();
 
-    // Wait for grid layout to compute bounding boxes
-    await page.waitForFunction(() => {
-      const cards = document.querySelectorAll('#projects .project-list li.project-item');
-      if (cards.length < 2) return false;
-      const box1 = cards[0].getBoundingClientRect();
-      const box2 = cards[1].getBoundingClientRect();
-      return box1.height > 0 && box2.height > 0;
-    });
+    // Wait for layout animation to complete before measuring bounding boxes
+    // This prevents race conditions where bounding boxes are captured mid-animation
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(500); // Wait for CSS grid layout calculations
 
+    // Now safely get bounding boxes after layout is stable
     const firstCardBox = await firstCard.boundingBox();
     const secondCardBox = await secondCard.boundingBox();
 
@@ -107,7 +104,7 @@ test.describe('Responsive Design', () => {
 
   test('should be mobile responsive (Samsung Galaxy S20)', async ({ page }) => {
     await page.setViewportSize({ width: 360, height: 800 });
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
 
     // Check content visibility
     await checkElementVisible(page, SELECTORS.HERO_TITLE);
@@ -123,7 +120,7 @@ test.describe('Responsive Design', () => {
 
   test('should be mobile responsive (iPhone 12 Pro)', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
 
     // Check font sizes are readable on mobile
     const heroTitle = page.locator('.hero-title');
@@ -134,7 +131,7 @@ test.describe('Responsive Design', () => {
 
   test('should be tablet responsive (iPad)', async ({ page }) => {
     await page.setViewportSize({ width: 768, height: 1024 });
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
 
     const projectCards = page.locator(SELECTORS.PROJECT_CARD);
     await expect(projectCards).toHaveCount(EXPECTED_COUNTS.PROJECTS);
@@ -152,7 +149,7 @@ test.describe('Responsive Design', () => {
 
   test('should be tablet responsive (iPad Pro)', async ({ page }) => {
     await page.setViewportSize({ width: 1024, height: 1366 });
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
 
     await checkElementVisible(page, SELECTORS.HERO_TITLE);
     const projectCards = page.locator(SELECTORS.PROJECT_CARD);
@@ -162,7 +159,7 @@ test.describe('Responsive Design', () => {
   test('should handle orientation changes', async ({ page }) => {
     // Portrait
     await page.setViewportSize({ width: 375, height: 667 });
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
     await checkElementVisible(page, SELECTORS.HERO_TITLE);
 
     // Landscape
@@ -174,7 +171,7 @@ test.describe('Responsive Design', () => {
 
   test('should have readable content on small screens', async ({ page }) => {
     await page.setViewportSize({ width: 320, height: 568 }); // Smallest supported
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
 
     // Check content doesn't overflow
     const body = page.locator('body');

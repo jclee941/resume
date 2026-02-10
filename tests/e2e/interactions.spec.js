@@ -1,22 +1,25 @@
 // @ts-check
 const { test, expect } = require('@playwright/test');
+const { navigateToSection } = require('./fixtures/helpers');
 
 test.describe('Smooth Scroll Behavior', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
-    await page.waitForLoadState('domcontentloaded');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
   });
 
   test('clicking nav links should scroll to sections', async ({ page }) => {
+    // Navigate to resume section
     await page.click('a[href="#resume"]');
     await expect(page.locator('#resume')).toBeInViewport({ timeout: 2000 });
 
+    // Reset to top and navigate to projects
     await page.evaluate(() => window.scrollTo(0, 0));
-    await page.waitForLoadState('domcontentloaded');
+    await page.waitForTimeout(300); // Wait for scroll animation
 
     await page.click('a[href="#projects"]');
     await expect(page.locator('#projects')).toBeInViewport({ timeout: 2000 });
 
+    // Navigate to contact
     await page.click('a[href="#contact"]');
     await expect(page.locator('#contact')).toBeInViewport({ timeout: 2000 });
   });
@@ -30,14 +33,14 @@ test.describe('Smooth Scroll Behavior', () => {
     expect(href === '/' || href === '#').toBeTruthy();
 
     await logo.click();
-    await page.waitForLoadState('domcontentloaded');
+    await page.waitForTimeout(300); // Wait for navigation/scroll
     await expect(logo).toBeVisible();
   });
 });
 
 test.describe('Link Hover States', () => {
   test('nav links should have hover effect', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
 
     const navLink = page.locator('.nav-links a').first();
     await navLink.evaluate((el) => window.getComputedStyle(el).color); // Check initial color
@@ -55,7 +58,7 @@ test.describe('Link Hover States', () => {
   });
 
   test('project card links should be clickable', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
 
     const projectLinks = page.locator('#projects a.project-link-title');
     const count = await projectLinks.count();
@@ -69,7 +72,7 @@ test.describe('Link Hover States', () => {
 
 test.describe('Skip Link Interaction', () => {
   test('skip link should become visible on focus', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
 
     const skipLink = page.locator('.skip-link');
 
@@ -89,7 +92,7 @@ test.describe('Skip Link Interaction', () => {
   });
 
   test('activating skip link should focus main content', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
 
     // Tab to skip link
     await page.keyboard.press('Tab');
@@ -106,14 +109,14 @@ test.describe('Skip Link Interaction', () => {
 
 test.describe('Contact Links Interaction', () => {
   test('email link should have mailto protocol', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
 
     const emailLink = page.locator('a[href^="mailto:"]');
     await expect(emailLink).toHaveAttribute('href', 'mailto:qws941@kakao.com');
   });
 
   test('external links should open in new tab', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
 
     const githubLink = page
       .locator('.contact-grid a, .contact-links a')
@@ -125,7 +128,7 @@ test.describe('Contact Links Interaction', () => {
 
 test.describe('Card Interactions', () => {
   test('resume cards should be hoverable', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
 
     const card = page.locator('#resume .resume-list li').first();
     await card.hover();
@@ -137,7 +140,7 @@ test.describe('Card Interactions', () => {
   });
 
   test('project cards should be hoverable', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
 
     const card = page.locator('#projects .project-list li.project-item').first();
     await card.hover();
@@ -147,7 +150,7 @@ test.describe('Card Interactions', () => {
   });
 
   test('project card links should be distinguishable', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
 
     const projectLinks = page.locator('#projects a.project-link-title');
     const projectLinksCount = await projectLinks.count();
@@ -170,27 +173,24 @@ test.describe('Card Interactions', () => {
 
 test.describe('URL Hash Navigation', () => {
   test('should scroll to resume section on hash navigation', async ({ page }) => {
-    await page.goto('/#resume');
-    await page.waitForLoadState('domcontentloaded');
-    await page.waitForTimeout(500);
+    await page.goto('/#resume', { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(500); // Wait for scroll animation to complete
 
     const resumeSection = page.locator('#resume');
     await expect(resumeSection).toBeInViewport();
   });
 
   test('should scroll to projects section on hash navigation', async ({ page }) => {
-    await page.goto('/#projects');
-    await page.waitForLoadState('domcontentloaded');
-    await page.waitForTimeout(500);
+    await page.goto('/#projects', { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(500); // Wait for scroll animation to complete
 
     const projectsSection = page.locator('#projects');
     await expect(projectsSection).toBeInViewport();
   });
 
   test('should scroll to contact section on hash navigation', async ({ page }) => {
-    await page.goto('/#contact');
-    await page.waitForLoadState('domcontentloaded');
-    await page.waitForTimeout(500);
+    await page.goto('/#contact', { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(500); // Wait for scroll animation to complete
 
     const contactSection = page.locator('#contact');
     await expect(contactSection).toBeInViewport();
