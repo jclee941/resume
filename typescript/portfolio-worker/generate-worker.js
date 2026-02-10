@@ -403,6 +403,7 @@ function buildEcsDocument(message, level, labels, job) {
 const DEFAULT_TIMEOUT_MS = 5000;
 const BATCH_SIZE = 10;
 const BATCH_FLUSH_MS = 1000;
+const MAX_QUEUE_SIZE = 1000;
 let logQueue = [];
 let flushTimer = null;
 
