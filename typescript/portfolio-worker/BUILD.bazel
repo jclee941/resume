@@ -8,6 +8,7 @@ filegroup(
     srcs = glob(
         ["**/*.js", "**/*.html", "**/*.css", "**/*.json"],
         exclude = ["node_modules/**", "worker.js"],
+        allow_empty = True,
     ),
 )
 

@@ -5,7 +5,7 @@
  * - career-api.rememberapp.co.kr/job_postings/search
  * - career-api.rememberapp.co.kr/job_postings/curations
  *
- * Fallback: puppeteer-extra + stealth for DOM scraping
+ * Fallback: rebrowser-puppeteer for DOM scraping (stealth CDP patches)
  */
 
 import { BaseCrawler } from '../../src/crawlers/base-crawler.js';
@@ -18,8 +18,7 @@ export class RememberCrawler extends BaseCrawler {
       rateLimit: 1000,
       ...options,
     });
-    this.apiBaseUrl =
-      options.apiBaseUrl || 'https://career-api.rememberapp.co.kr';
+    this.apiBaseUrl = options.apiBaseUrl || 'https://career-api.rememberapp.co.kr';
   }
 
   buildSearchQuery(params) {
@@ -100,11 +99,7 @@ export class RememberCrawler extends BaseCrawler {
   async searchWithBrowser(params = {}) {
     let browser = null;
     try {
-      const puppeteer = await import('puppeteer-extra').then((m) => m.default);
-      const StealthPlugin = await import('puppeteer-extra-plugin-stealth').then(
-        (m) => m.default,
-      );
-      puppeteer.use(StealthPlugin());
+      const puppeteer = await import('puppeteer').then((m) => m.default);
 
       browser = await puppeteer.launch({
         headless: 'new',
@@ -120,15 +115,11 @@ export class RememberCrawler extends BaseCrawler {
       const page = await browser.newPage();
       await page.setUserAgent(this.headers['User-Agent']);
 
-      const query = params.keyword
-        ? `?search=${encodeURIComponent(params.keyword)}`
-        : '';
+      const query = params.keyword ? `?search=${encodeURIComponent(params.keyword)}` : '';
       const url = `${this.baseUrl}/job/postings${query}`;
 
       await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
-      await page
-        .waitForSelector('a[href*="/job/posting/"]', { timeout: 10000 })
-        .catch(() => {});
+      await page.waitForSelector('a[href*="/job/posting/"]', { timeout: 10000 }).catch(() => {});
 
       const jobs = await page.evaluate((limit) => {
         const results = [];
@@ -212,11 +203,7 @@ export class RememberCrawler extends BaseCrawler {
   async getJobDetailWithBrowser(jobId) {
     let browser = null;
     try {
-      const puppeteer = await import('puppeteer-extra').then((m) => m.default);
-      const StealthPlugin = await import('puppeteer-extra-plugin-stealth').then(
-        (m) => m.default,
-      );
-      puppeteer.use(StealthPlugin());
+      const puppeteer = await import('puppeteer').then((m) => m.default);
 
       browser = await puppeteer.launch({
         headless: 'new',
@@ -228,15 +215,11 @@ export class RememberCrawler extends BaseCrawler {
       await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
 
       const job = await page.evaluate((jid) => {
-        const getText = (sel) =>
-          document.querySelector(sel)?.textContent?.trim() || '';
+        const getText = (sel) => document.querySelector(sel)?.textContent?.trim() || '';
         const title = getText('h1') || getText('[class*="title"]');
-        const company =
-          getText('[class*="company"]') || getText('[class*="CompanyName"]');
+        const company = getText('[class*="company"]') || getText('[class*="CompanyName"]');
         const description =
-          getText('[class*="description"]') ||
-          getText('[class*="content"]') ||
-          getText('main');
+          getText('[class*="description"]') || getText('[class*="content"]') || getText('main');
 
         return {
           id: jid,
@@ -284,11 +267,7 @@ export class RememberCrawler extends BaseCrawler {
         rawJob.company_name ||
         rawJob.company ||
         '',
-      companyId:
-        rawJob.organization?.company_id ||
-        rawJob.company?.id ||
-        rawJob.company_id ||
-        '',
+      companyId: rawJob.organization?.company_id || rawJob.company?.id || rawJob.company_id || '',
       location: rawJob.normalized_address
         ? `${rawJob.normalized_address.level1}/${rawJob.normalized_address.level2}`
         : rawJob.location || rawJob.region || '',
@@ -315,8 +294,7 @@ export class RememberCrawler extends BaseCrawler {
     if (!this.cookies) {
       return {
         success: false,
-        error:
-          'Authentication required. Login to career.rememberapp.co.kr and provide cookies.',
+        error: 'Authentication required. Login to career.rememberapp.co.kr and provide cookies.',
       };
     }
     return { success: true, profile: { name: null, careers: [], skills: [] } };

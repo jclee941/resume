@@ -1,87 +1,75 @@
-# Portfolio Worker Library Modules
-# 
-# This package contains utility modules used by the portfolio worker:
-# - cards.js: Resume card generation (education, experience, skills)
-# - validators.js: Input validation (security, data integrity)
-# - templates.js: HTML template rendering
-# - i18n.js: Internationalization (ko/en support)
-# - metrics.js: Performance monitoring (Prometheus integration)
-# - security-headers.js: CSP, HSTS, X-Frame-Options
-# - cache-headers.js: Cache-Control, ETag, Vary headers
-# - compression.js: Brotli/Gzip compression
-# - ab-testing.js: A/B test variant assignment
-# - loki-logger.js: Structured logging to Grafana Loki
-# - performance-metrics.js: Web Vitals (LCP, FID, CLS)
-# - env.js: Environment variable validation
-# - config.js: Runtime configuration
-# - utils.js: Shared utilities
+# Portfolio Worker - Library Modules
+# Stateless security, logging, metrics modules for edge deployment
 
-package(default_visibility = ["//typescript/portfolio-worker:__pkg__"])
+package(default_visibility = ["//typescript/portfolio-worker:__subpackages__"])
 
-# All library modules as a filegroup
-# Used by generate-worker.js during build process
 filegroup(
     name = "sources",
-    srcs = glob([
-        "*.js",
-    ], exclude = [
-        "*.test.js",
-    ]),
+    srcs = glob(["*.js"]),
 )
 
-# Individual modules for fine-grained dependency tracking
+# Security module (CSP headers, HSTS, X-Frame-Options)
 filegroup(
-    name = "cards",
-    srcs = ["cards.js"],
+    name = "security",
+    srcs = ["security-headers.js"],
 )
 
+# Logging module (ECS-format structured logging)
 filegroup(
-    name = "validators",
-    srcs = ["validators.js"],
+    name = "logging",
+    srcs = ["es-logger.js"],
 )
 
+# Metrics module (Prometheus endpoint)
 filegroup(
-    name = "templates",
-    srcs = ["templates.js"],
+    name = "metrics",
+    srcs = ["metrics.js"],
 )
 
+# Configuration module
+filegroup(
+    name = "config",
+    srcs = ["config.js"],
+)
+
+# Environment module
+filegroup(
+    name = "env",
+    srcs = ["env.js"],
+)
+
+# Internationalization module
 filegroup(
     name = "i18n",
     srcs = ["i18n.js"],
 )
 
-filegroup(
-    name = "metrics",
-    srcs = [
-        "metrics.js",
-        "performance-metrics.js",
-        "loki-logger.js",
-    ],
-)
-
-filegroup(
-    name = "security",
-    srcs = [
-        "security-headers.js",
-        "cache-headers.js",
-    ],
-)
-
-filegroup(
-    name = "compression",
-    srcs = ["compression.js"],
-)
-
-filegroup(
-    name = "ab_testing",
-    srcs = ["ab-testing.js"],
-)
-
+# Utilities module
 filegroup(
     name = "utils",
-    srcs = [
-        "utils.js",
-        "env.js",
-        "config.js",
-    ],
+    srcs = ["utils.js"],
+)
+
+# Validation module
+filegroup(
+    name = "validation",
+    srcs = ["validators.js"],
+)
+
+# Templates module (HTML generation)
+filegroup(
+    name = "templates",
+    srcs = ["templates.js"],
+)
+
+# Cards rendering module
+filegroup(
+    name = "cards",
+    srcs = ["cards.js"],
+)
+
+# Authentication helpers module
+filegroup(
+    name = "auth",
+    srcs = ["auth.js"],
 )

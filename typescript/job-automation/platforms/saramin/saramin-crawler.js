@@ -1,6 +1,6 @@
 /**
  * Saramin Crawler - 사람인 채용공고 크롤러
- * puppeteer-extra + stealth 사용
+ * rebrowser-puppeteer 사용 (stealth CDP patches)
  */
 
 import { BaseCrawler } from '../../src/crawlers/base-crawler.js';
@@ -81,11 +81,7 @@ export class SaraminCrawler extends BaseCrawler {
   async searchWithBrowser(params) {
     let browser = null;
     try {
-      const puppeteer = await import('puppeteer-extra').then((m) => m.default);
-      const StealthPlugin = await import('puppeteer-extra-plugin-stealth').then(
-        (m) => m.default,
-      );
-      puppeteer.use(StealthPlugin());
+      const puppeteer = await import('puppeteer').then((m) => m.default);
 
       browser = await puppeteer.launch({
         headless: 'new',
@@ -100,7 +96,7 @@ export class SaraminCrawler extends BaseCrawler {
 
       const page = await browser.newPage();
       await page.setUserAgent(
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
       );
 
       const query = this.buildSearchQuery(params);
@@ -115,19 +111,13 @@ export class SaraminCrawler extends BaseCrawler {
 
       const jobs = await page.evaluate(() => {
         const results = [];
-        const items = document.querySelectorAll(
-          '.item_recruit, [class*="job_item"], article',
-        );
+        const items = document.querySelectorAll('.item_recruit, [class*="job_item"], article');
 
         items.forEach((item) => {
           const linkEl = item.querySelector('a[href*="rec_idx"]');
           const titleEl = item.querySelector('.job_tit, [class*="title"]');
-          const companyEl = item.querySelector(
-            '.corp_name, [class*="company"]',
-          );
-          const locationEl = item.querySelector(
-            '.job_condition span, [class*="location"]',
-          );
+          const companyEl = item.querySelector('.corp_name, [class*="company"]');
+          const locationEl = item.querySelector('.job_condition span, [class*="location"]');
 
           if (linkEl && titleEl) {
             const href = linkEl.getAttribute('href') || '';
@@ -138,9 +128,7 @@ export class SaraminCrawler extends BaseCrawler {
               position: titleEl.textContent?.trim() || '',
               company: companyEl?.textContent?.trim() || '',
               location: locationEl?.textContent?.trim() || '',
-              url: href.startsWith('http')
-                ? href
-                : `https://www.saramin.co.kr${href}`,
+              url: href.startsWith('http') ? href : `https://www.saramin.co.kr${href}`,
             });
           }
         });
@@ -157,11 +145,7 @@ export class SaraminCrawler extends BaseCrawler {
   async getJobDetail(jobId) {
     let browser = null;
     try {
-      const puppeteer = await import('puppeteer-extra').then((m) => m.default);
-      const StealthPlugin = await import('puppeteer-extra-plugin-stealth').then(
-        (m) => m.default,
-      );
-      puppeteer.use(StealthPlugin());
+      const puppeteer = await import('puppeteer').then((m) => m.default);
 
       browser = await puppeteer.launch({
         headless: 'new',
@@ -173,15 +157,10 @@ export class SaraminCrawler extends BaseCrawler {
       await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
 
       const job = await page.evaluate((jid) => {
-        const title =
-          document.querySelector('.tit_job, h1')?.textContent?.trim() || '';
-        const company =
-          document.querySelector('[class*="company"]')?.textContent?.trim() ||
-          '';
+        const title = document.querySelector('.tit_job, h1')?.textContent?.trim() || '';
+        const company = document.querySelector('[class*="company"]')?.textContent?.trim() || '';
         const description =
-          document
-            .querySelector('.job_contents, [class*="content"]')
-            ?.textContent?.trim() || '';
+          document.querySelector('.job_contents, [class*="content"]')?.textContent?.trim() || '';
 
         return { id: jid, position: title, company, description };
       }, jobId);
@@ -218,9 +197,7 @@ export class SaraminCrawler extends BaseCrawler {
       id: `saramin_${rawJob.id}`,
       sourceId: rawJob.id,
       source: 'saramin',
-      sourceUrl:
-        rawJob.url ||
-        `${this.baseUrl}/zf_user/jobs/relay/view?rec_idx=${rawJob.id}`,
+      sourceUrl: rawJob.url || `${this.baseUrl}/zf_user/jobs/relay/view?rec_idx=${rawJob.id}`,
       position: rawJob.position || '',
       company: rawJob.company || '',
       companyId: rawJob.companyId || '',

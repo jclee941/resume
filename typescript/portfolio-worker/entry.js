@@ -7,7 +7,7 @@ import jobHandler, {
   HealthCheckWorkflow,
   BackupWorkflow,
   CleanupWorkflow,
-} from './src/job/index.js';
+} from '../job-automation/workers/src/index.js';
 
 export {
   JobCrawlingWorkflow,

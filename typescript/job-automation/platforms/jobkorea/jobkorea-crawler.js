@@ -1,6 +1,6 @@
 /**
  * JobKorea Crawler - 잡코리아 채용공고 크롤러
- * Next.js SPA 전환으로 인해 puppeteer-extra + stealth 사용
+ * Next.js SPA 전환으로 인해 rebrowser-puppeteer 사용 (stealth CDP patches)
  */
 
 import { BaseCrawler } from '../../src/crawlers/base-crawler.js';
@@ -80,11 +80,7 @@ export class JobKoreaCrawler extends BaseCrawler {
   async searchWithBrowser(params) {
     let browser = null;
     try {
-      const puppeteer = await import('puppeteer-extra').then((m) => m.default);
-      const StealthPlugin = await import('puppeteer-extra-plugin-stealth').then(
-        (m) => m.default,
-      );
-      puppeteer.use(StealthPlugin());
+      const puppeteer = await import('puppeteer').then((m) => m.default);
 
       browser = await puppeteer.launch({
         headless: 'new',
@@ -99,7 +95,7 @@ export class JobKoreaCrawler extends BaseCrawler {
 
       const page = await browser.newPage();
       await page.setUserAgent(
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
       );
 
       const query = this.buildSearchQuery(params);
@@ -163,11 +159,7 @@ export class JobKoreaCrawler extends BaseCrawler {
   async getJobDetail(jobId) {
     let browser = null;
     try {
-      const puppeteer = await import('puppeteer-extra').then((m) => m.default);
-      const StealthPlugin = await import('puppeteer-extra-plugin-stealth').then(
-        (m) => m.default,
-      );
-      puppeteer.use(StealthPlugin());
+      const puppeteer = await import('puppeteer').then((m) => m.default);
 
       browser = await puppeteer.launch({
         headless: 'new',
@@ -179,12 +171,8 @@ export class JobKoreaCrawler extends BaseCrawler {
       await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
 
       const job = await page.evaluate((jid) => {
-        const title =
-          document.querySelector('[class*="title"], h1')?.textContent?.trim() ||
-          '';
-        const company =
-          document.querySelector('[class*="company"]')?.textContent?.trim() ||
-          '';
+        const title = document.querySelector('[class*="title"], h1')?.textContent?.trim() || '';
+        const company = document.querySelector('[class*="company"]')?.textContent?.trim() || '';
         const description =
           document
             .querySelector('[class*="description"], [class*="content"]')

@@ -1,4 +1,12 @@
 import { WorkflowEntrypoint } from 'cloudflare:workers';
+import {
+  getMasterResumeData,
+  exportFromPlatform,
+  calculateDiff,
+  syncToPlatform,
+  notifyPreview,
+  sendSlackNotification,
+} from './resume-sync-helpers.js';
 
 /**
  * Resume Sync Workflow
@@ -35,7 +43,7 @@ export class ResumeSyncWorkflow extends WorkflowEntrypoint {
       },
       async () => {
         // Master resume data from local JSON (SSoT)
-        const data = await this.getMasterResumeData(resumeId);
+        const data = await getMasterResumeData(this.env, resumeId);
         if (!data) {
           throw new Error(`Master resume not found: ${resumeId}`);
         }
@@ -55,7 +63,7 @@ export class ResumeSyncWorkflow extends WorkflowEntrypoint {
           timeout: '2 minutes',
         },
         async () => {
-          return await this.exportFromPlatform(platform, resumeId);
+          return await exportFromPlatform(this.env, platform, resumeId);
         }
       );
 
@@ -78,7 +86,7 @@ export class ResumeSyncWorkflow extends WorkflowEntrypoint {
           timeout: '1 minute',
         },
         async () => {
-          return this.calculateDiff(masterData, platformStates[platform], sections);
+          return calculateDiff(masterData, platformStates[platform], sections);
         }
       );
 
@@ -96,7 +104,7 @@ export class ResumeSyncWorkflow extends WorkflowEntrypoint {
       sync.status = 'preview';
       sync.completedAt = new Date().toISOString();
 
-      await this.notifyPreview(sync, diffs);
+      await notifyPreview(this.env, sync, diffs);
 
       return {
         success: true,
@@ -145,7 +153,7 @@ export class ResumeSyncWorkflow extends WorkflowEntrypoint {
           timeout: '5 minutes',
         },
         async () => {
-          return await this.syncToPlatform(platform, resumeId, diff);
+          return await syncToPlatform(this.env, platform, resumeId, diff);
         }
       );
 
@@ -177,8 +185,8 @@ export class ResumeSyncWorkflow extends WorkflowEntrypoint {
             continue;
           }
 
-          const currentState = await this.exportFromPlatform(platform, resumeId);
-          const verifyDiff = this.calculateDiff(masterData, currentState, sections);
+          const currentState = await exportFromPlatform(this.env, platform, resumeId);
+          const verifyDiff = calculateDiff(masterData, currentState, sections);
 
           results[platform] = {
             verified:
@@ -239,7 +247,7 @@ export class ResumeSyncWorkflow extends WorkflowEntrypoint {
           })
           .join('\n');
 
-        await this.sendSlackNotification({
+        await sendSlackNotification(this.env, {
           text: '✅ Resume Sync Complete',
           blocks: [
             {
@@ -266,270 +274,5 @@ export class ResumeSyncWorkflow extends WorkflowEntrypoint {
       sync,
       verification,
     };
-  }
-
-  async getMasterResumeData(resumeId) {
-    // Get from SSoT (resume_data.json)
-    // In production, this would read from D1 or KV
-    const data = await this.env.DB.prepare('SELECT data FROM resumes WHERE id = ?')
-      .bind(resumeId)
-      .first();
-
-    return data?.data ? JSON.parse(data.data) : null;
-  }
-
-  async exportFromPlatform(platform, resumeId) {
-    const exporters = {
-      wanted: () => this.exportFromWanted(resumeId),
-      linkedin: () => this.exportFromLinkedIn(resumeId),
-      remember: () => this.exportFromRemember(resumeId),
-    };
-
-    const exporter = exporters[platform];
-    if (!exporter) {
-      throw new Error(`Unknown platform: ${platform}`);
-    }
-
-    return await exporter();
-  }
-
-  async exportFromWanted(resumeId) {
-    const session = await this.env.SESSIONS.get('auth:wanted');
-    if (!session) {
-      throw new Error('No Wanted session');
-    }
-
-    try {
-      const response = await fetch(`https://www.wanted.co.kr/api/chaos/resumes/v1/${resumeId}`, {
-        headers: {
-          Cookie: session,
-          'User-Agent':
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`Wanted API error: ${response.status}`);
-      }
-
-      const data = await response.json();
-      return this.normalizeWantedResume(data);
-    } catch (error) {
-      throw new Error(`Wanted export failed: ${error.message}`);
-    }
-  }
-
-  async exportFromLinkedIn(_resumeId) {
-    // LinkedIn profile export
-    return { careers: [], educations: [], skills: [] };
-  }
-
-  async exportFromRemember(_resumeId) {
-    // Remember profile export
-    return { careers: [], educations: [], skills: [] };
-  }
-
-  normalizeWantedResume(data) {
-    // Normalize Wanted resume format to standard format
-    return {
-      careers: data.careers || [],
-      educations: data.educations || [],
-      skills: data.skills || [],
-      activities: data.activities || [],
-      language_certs: data.language_certs || [],
-      links: data.links || [],
-    };
-  }
-
-  calculateDiff(master, platform, sections = []) {
-    const diff = {
-      additions: [],
-      updates: [],
-      deletions: [],
-    };
-
-    const sectionsToCompare =
-      sections.length > 0
-        ? sections
-        : ['careers', 'educations', 'skills', 'activities', 'language_certs'];
-
-    for (const section of sectionsToCompare) {
-      const masterItems = master[section] || [];
-      const platformItems = platform[section] || [];
-
-      // Find additions and updates
-      for (const masterItem of masterItems) {
-        const key = this.getItemKey(section, masterItem);
-        const platformItem = platformItems.find((p) => this.getItemKey(section, p) === key);
-
-        if (!platformItem) {
-          diff.additions.push({ section, item: masterItem });
-        } else if (!this.itemsEqual(masterItem, platformItem)) {
-          diff.updates.push({ section, item: masterItem, existing: platformItem });
-        }
-      }
-
-      // Find deletions
-      for (const platformItem of platformItems) {
-        const key = this.getItemKey(section, platformItem);
-        const masterItem = masterItems.find((m) => this.getItemKey(section, m) === key);
-
-        if (!masterItem) {
-          diff.deletions.push({ section, item: platformItem });
-        }
-      }
-    }
-
-    return diff;
-  }
-
-  getItemKey(section, item) {
-    switch (section) {
-      case 'careers':
-        return `${item.company_name || item.company}:${item.title}`;
-      case 'educations':
-        return `${item.school_name}:${item.major}`;
-      case 'skills':
-        return item.text || item.name;
-      default:
-        return item.id || JSON.stringify(item);
-    }
-  }
-
-  itemsEqual(a, b) {
-    // Simple deep equality check
-    return JSON.stringify(a) === JSON.stringify(b);
-  }
-
-  async syncToPlatform(platform, resumeId, diff) {
-    const syncers = {
-      wanted: () => this.syncToWanted(resumeId, diff),
-      linkedin: () => this.syncToLinkedIn(resumeId, diff),
-      remember: () => this.syncToRemember(resumeId, diff),
-    };
-
-    const syncer = syncers[platform];
-    if (!syncer) {
-      return { success: false, error: `Unknown platform: ${platform}` };
-    }
-
-    try {
-      return await syncer();
-    } catch (error) {
-      return { success: false, error: error.message };
-    }
-  }
-
-  async syncToWanted(resumeId, diff) {
-    const session = await this.env.SESSIONS.get('auth:wanted');
-    if (!session) {
-      return { success: false, error: 'No Wanted session' };
-    }
-
-    const results = { additions: 0, updates: 0, deletions: 0, errors: [] };
-
-    // Apply additions
-    for (const add of diff.additions) {
-      try {
-        await this.wantedApiRequest(
-          'POST',
-          `resumes/v2/${resumeId}/${add.section}`,
-          add.item,
-          session
-        );
-        results.additions++;
-      } catch (error) {
-        results.errors.push({ action: 'add', section: add.section, error: error.message });
-      }
-    }
-
-    // Apply updates
-    for (const update of diff.updates) {
-      try {
-        const id = update.existing.id;
-        await this.wantedApiRequest(
-          'PATCH',
-          `resumes/v2/${resumeId}/${update.section}/${id}`,
-          update.item,
-          session
-        );
-        results.updates++;
-      } catch (error) {
-        results.errors.push({ action: 'update', section: update.section, error: error.message });
-      }
-    }
-
-    // Apply deletions (skip by default for safety)
-    // for (const del of diff.deletions) { ... }
-
-    return {
-      success: results.errors.length === 0,
-      ...results,
-    };
-  }
-
-  async wantedApiRequest(method, path, body, session) {
-    const response = await fetch(`https://www.wanted.co.kr/api/chaos/${path}`, {
-      method,
-      headers: {
-        Cookie: session,
-        'Content-Type': 'application/json',
-        'User-Agent':
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-      },
-      body: JSON.stringify(body),
-    });
-
-    if (!response.ok) {
-      const error = await response.text();
-      throw new Error(`API error ${response.status}: ${error}`);
-    }
-
-    return response.json();
-  }
-
-  async syncToLinkedIn(_resumeId, _diff) {
-    return { success: false, error: 'LinkedIn sync not implemented' };
-  }
-
-  async syncToRemember(_resumeId, _diff) {
-    return { success: false, error: 'Remember sync not implemented' };
-  }
-
-  async notifyPreview(sync, _diffs) {
-    const summary = Object.entries(sync.changes)
-      .map(
-        ([platform, changes]) =>
-          `*${platform}*: +${changes.additions} ~${changes.updates} -${changes.deletions}`
-      )
-      .join('\n');
-
-    await this.sendSlackNotification({
-      text: '👀 Resume Sync Preview',
-      blocks: [
-        {
-          type: 'header',
-          text: { type: 'plain_text', text: '👀 Resume Sync Preview (Dry Run)' },
-        },
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: `*Resume*: ${sync.resumeId}\n*Platforms*:\n${summary}`,
-          },
-        },
-      ],
-    });
-  }
-
-  async sendSlackNotification(message) {
-    const webhookUrl = this.env.SLACK_WEBHOOK_URL;
-    if (!webhookUrl) return;
-
-    await fetch(webhookUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(message),
-    });
   }
 }
