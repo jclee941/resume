@@ -3,27 +3,16 @@
  * 모든 채용 사이트를 통합하여 검색
  */
 
-import {
-  WantedCrawler,
-  WANTED_CATEGORIES,
-} from '../../platforms/wanted/wanted-crawler.js';
-import {
-  JobKoreaCrawler,
-  JOBKOREA_CATEGORIES,
-} from '../../platforms/jobkorea/jobkorea-crawler.js';
-import {
-  SaraminCrawler,
-  SARAMIN_CATEGORIES,
-} from '../../platforms/saramin/saramin-crawler.js';
-import {
-  LinkedInCrawler,
-  LINKEDIN_FILTERS,
-} from '../../platforms/linkedin/linkedin-crawler.js';
+import { WantedCrawler, WANTED_CATEGORIES } from '../../platforms/wanted/wanted-crawler.js';
+import { JobKoreaCrawler, JOBKOREA_CATEGORIES } from '../../platforms/jobkorea/jobkorea-crawler.js';
+import { SaraminCrawler, SARAMIN_CATEGORIES } from '../../platforms/saramin/saramin-crawler.js';
+import { LinkedInCrawler, LINKEDIN_FILTERS } from '../../platforms/linkedin/linkedin-crawler.js';
 import { RememberCrawler } from '../../platforms/remember/remember-crawler.js';
-import {
-  filterAndRankJobs,
-  prioritizeApplications,
-} from '../shared/services/matching/index.js';
+import { RocketPunchCrawler } from '../../platforms/rocketpunch/rocketpunch-crawler.js';
+import { ProgrammersCrawler } from '../../platforms/programmers/programmers-crawler.js';
+import { JumpitCrawler } from '../../platforms/jumpit/jumpit-crawler.js';
+import { RallitCrawler } from '../../platforms/rallit/rallit-crawler.js';
+import { filterAndRankJobs, prioritizeApplications } from '../shared/services/matching/index.js';
 import { SessionManager } from '../shared/services/session/index.js';
 
 export class UnifiedJobCrawler {
@@ -34,6 +23,10 @@ export class UnifiedJobCrawler {
       saramin: new SaraminCrawler(options.saramin),
       linkedin: new LinkedInCrawler(options.linkedin),
       remember: new RememberCrawler(options.remember),
+      rocketpunch: new RocketPunchCrawler(options.rocketpunch),
+      programmers: new ProgrammersCrawler(options.programmers),
+      jumpit: new JumpitCrawler(options.jumpit),
+      rallit: new RallitCrawler(options.rallit),
     };
 
     this.loadPlatformSessions();
@@ -44,6 +37,10 @@ export class UnifiedJobCrawler {
       'saramin',
       'linkedin',
       'remember',
+      'rocketpunch',
+      'programmers',
+      'jumpit',
+      'rallit',
     ];
     this.resumePath = options.resumePath;
   }
@@ -78,8 +75,8 @@ export class UnifiedJobCrawler {
           experience,
           location,
           limit,
-        }),
-      ),
+        })
+      )
     );
 
     // 결과 통합
@@ -97,8 +94,7 @@ export class UnifiedJobCrawler {
       } else {
         sourceStats[source] = {
           success: false,
-          error:
-            result.reason?.message || result.value?.error || 'Unknown error',
+          error: result.reason?.message || result.value?.error || 'Unknown error',
         };
       }
     });
@@ -264,8 +260,8 @@ export class UnifiedJobCrawler {
           experience: options.experience || 8,
           limit: 10,
           sources: options.sources || ['wanted', 'linkedin'],
-        }),
-      ),
+        })
+      )
     );
 
     // 결과 통합
@@ -333,6 +329,11 @@ export {
   JobKoreaCrawler,
   SaraminCrawler,
   LinkedInCrawler,
+  RememberCrawler,
+  RocketPunchCrawler,
+  ProgrammersCrawler,
+  JumpitCrawler,
+  RallitCrawler,
   WANTED_CATEGORIES,
   JOBKOREA_CATEGORIES,
   SARAMIN_CATEGORIES,

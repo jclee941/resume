@@ -1,0 +1,346 @@
+# Docker Compose Configuration for Job Automation System
+#
+# This configuration provides a local development environment for the job-automation MCP server.
+#
+# ARCHITECTURE:
+# - MCP Server: Fastify-based Node.js application (port 3456)
+# - Queue System: In-memory JobQueue with priority (urgent/normal/low)
+#   → Supports Cloudflare Queues in production via CF Workers
+#   → Supports local dequeue/processing for server-side workers
+#   → Exponential backoff with jitter (max 5 attempts)
+#
+# - Cache System: Tiered cache manager (hot/warm/cold)
+#   → Hot tier: KV (not available locally, would use in production)
+#   → Warm tier: D1 SQLite (queryable cache, persists in ./data/cache.db)
+#   → Cold tier: R2 (not available locally, would use in production)
+#   → Auto-promotes lower-tier cache hits to faster tiers
+#
+# SERVICES:
+# ┌─────────────────────────────────────────────────────────────┐
+# │ job-automation                                              │
+# │ - Fastify HTTP server on port 3456                          │
+# │ - MCP tools for job search, profile, resume management      │
+# │ - Anti-bot stealth crawlers (randomized UA, jitter delays)  │
+# │ - Cookie persistence via SessionManager                     │
+# │ - Chromium browser (pre-installed in image)                 │
+# │ - Data persistence: ./data/cache.db, ./data/sessions/       │
+# └─────────────────────────────────────────────────────────────┘
+#
+# EXTERNAL DEPENDENCIES (Production):
+# - Cloudflare D1: Database for warm-tier cache + job data
+# - Cloudflare KV: Hot-tier cache (low latency)
+# - Cloudflare R2: Cold-tier cache (durable storage)
+# - Cloudflare Queues: Distributed job queue
+#
+# NOTE: Docker is for LOCAL DEVELOPMENT ONLY.
+# Production uses Cloudflare Workers with D1/KV/R2/Queues bindings.
+#
+# DEVELOPMENT WORKFLOW:
+# 1. Start services: docker-compose up -d
+# 2. Check health: curl http://localhost:3456/api/health
+# 3. View logs: docker-compose logs -f job-automation
+# 4. Stop services: docker-compose down
+#
+# COMMANDS:
+#   docker-compose up -d              # Start in background
+#   docker-compose logs -f             # Follow logs (all services)
+#   docker-compose logs -f <service>   # Follow logs for specific service
+#   docker-compose exec <service> sh   # Execute shell in service
+#   docker-compose down                # Stop and remove containers
+#   docker-compose down -v             # Stop, remove, and delete volumes
+
+version: '3.8'
+
+services:
+  # Job Automation MCP Server
+  # Fastify-based Node.js application that provides 9 MCP tools for job automation
+  job-automation:
+    # Build from local Dockerfile
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    # Container name for easy reference
+    container_name: job-automation-server
+
+    # Service restart policy
+    restart: unless-stopped
+
+    # Port mapping: Host:Container
+    ports:
+      - '3456:3456'
+
+    # Environment variables
+    # Production uses Cloudflare secrets; local development uses placeholders
+    environment:
+      # Node.js runtime
+      NODE_ENV: production
+      PORT: 3456
+      LOG_LEVEL: info
+
+      # Job Queue Configuration (local in-memory mode)
+      # In production: Uses Cloudflare Queues
+      QUEUE_MAX_CONCURRENT_WORKERS: 4
+      QUEUE_MAX_RETRIES: 5
+      QUEUE_BASE_DELAY_MS: 250
+      QUEUE_MAX_DELAY_MS: 30000
+      QUEUE_ENABLE_JITTER: 'true'
+
+      # Cache Configuration (local D1 SQLite mode)
+      # Warm tier: D1 SQLite database at ./data/cache.db
+      # Tiers auto-select based on TTL thresholds
+      CACHE_NAMESPACE: job_automation
+      CACHE_DEFAULT_TTL_SECONDS: 300
+      CACHE_HOT_TTL_THRESHOLD_SECONDS: 300 # ≤5min → hot (KV in prod)
+      CACHE_WARM_TTL_THRESHOLD_SECONDS: 86400 # ≤24h → warm (D1)
+      CACHE_TABLE_NAME: cache_entries
+
+      # Session Management
+      # SessionManager persists cookies in ./data/sessions/ directory
+      # 24-hour expiration on cookies (local file-based in dev, Cloudflare KV in prod)
+      SESSION_DIR: /app/data/sessions
+      SESSION_COOKIE_EXPIRES_HOURS: 24
+
+      # Authentication & Secrets (PLACEHOLDER - USE .env FILE IN PRODUCTION)
+      # Do NOT commit real secrets to git
+      WANTED_API_KEY: '${WANTED_API_KEY:-placeholder-api-key}'
+      ENCRYPTION_KEY: '${ENCRYPTION_KEY:-placeholder-encryption-key}'
+      AUTH_SYNC_SECRET: '${AUTH_SYNC_SECRET:-placeholder-sync-secret}'
+
+      # Resume Data Path
+      # Resolves to /app/data/resumes/master/resume_data.json inside container
+      RESUME_BASE_PATH: '/app/data'
+
+      # Chromium Browser Configuration (for stealth crawlers)
+      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
+      PUPPETEER_EXECUTABLE_PATH: '/usr/bin/chromium-browser'
+
+      # Platform API Endpoints (public Wanted.co.kr APIs)
+      WANTED_API_URL: 'https://www.wanted.co.kr/api'
+      WANTED_SNS_API_URL: 'https://www.wanted.co.kr/sns-api'
+      WANTED_CHAOS_API_URL: 'https://www.wanted.co.kr/api/chaos'
+
+      # Logging & Observability
+      SENTRY_DSN: '${SENTRY_DSN:-}'
+      SLACK_WEBHOOK_URL: '${SLACK_WEBHOOK_URL:-}'
+      METRICS_ENABLED: 'true'
+
+    # Volume mounts for data persistence
+    volumes:
+      # Data directory: cache.db, sessions/, resume data
+      # Persists across container restarts
+      - ./data:/app/data
+
+      # Optional: Cache npm packages between builds
+      - node_modules:/app/node_modules
+
+    # Healthcheck configuration
+    # Verifies server is responding on /api/health endpoint
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "require('http').get('http://localhost:3456/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1); }).on('error', () => process.exit(1));",
+        ]
+      interval: 30s # Check every 30 seconds
+      timeout: 10s # Wait max 10 seconds for response
+      retries: 3 # Mark unhealthy after 3 failures
+      start_period: 40s # Wait 40s before first check (app startup time)
+
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          # Memory limit: 2GB for Chromium + Node.js runtime
+          # Chromium with stealth plugins can use 500MB-1GB
+          memory: 2G
+          # CPU limit: 2 CPUs for job processing + browser automation
+          cpus: '2.0'
+        reservations:
+          # Reserved resources (guaranteed available)
+          memory: 1G
+          cpus: '1.0'
+
+    # Network configuration
+    # Use bridge mode for local development
+    networks:
+      - job-automation-network
+
+    # Logging configuration
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
+
+    # Depends on nothing locally (Cloudflare services in prod)
+    # Could add Redis/PostgreSQL dependencies here if needed
+
+# Named volume for npm dependencies
+# Improves build performance by caching node_modules between runs
+volumes:
+  node_modules:
+    driver: local
+
+# Named network for service communication
+networks:
+  job-automation-network:
+    driver: bridge
+
+# ────────────────────────────────────────────────────────────────
+# QUEUE SYSTEM ARCHITECTURE
+# ────────────────────────────────────────────────────────────────
+#
+# The JobQueue class (typescript/job-automation/src/shared/services/queue/index.js)
+# implements a priority-based job queue with exponential backoff retry logic.
+#
+# KEY FEATURES:
+#
+# 1. PRIORITY LEVELS:
+#    - urgent (priority 0): Processed first, for critical operations
+#    - normal  (priority 1): Default, for regular job searches/applications
+#    - low     (priority 2): Processed last, for background cleanup
+#
+# 2. LOCAL QUEUE STORAGE:
+#    - In-memory queues by priority (not persisted across restarts)
+#    - Separate FIFO queue for each priority level
+#    - Available jobs determined by availableAt timestamp (delayed jobs)
+#
+# 3. RETRY STRATEGY:
+#    - Max attempts: 5 (configurable via QUEUE_MAX_RETRIES)
+#    - Exponential backoff: baseDelay * 2^(attempt-1)
+#    - Base delay: 250ms (QUEUE_BASE_DELAY_MS)
+#    - Max delay: 30s (QUEUE_MAX_DELAY_MS) - prevents infinite backoff
+#    - Jitter: ±25% random variance (QUEUE_ENABLE_JITTER=true)
+#      → Prevents thundering herd problem when multiple jobs retry
+#    - Example: attempt 1→250ms, 2→500ms, 3→1s, 4→2s, 5→fails
+#
+# 4. CONCURRENCY CONTROL:
+#    - Max concurrent workers: 4 (QUEUE_MAX_CONCURRENT_WORKERS)
+#    - Each worker processes jobs from the queue independently
+#    - Workers compete fairly for available jobs across all priorities
+#
+# 5. JOB METADATA:
+#    - id: UUID or custom identifier
+#    - payload: Job data (job listing, application params, etc.)
+#    - priority: urgent/normal/low
+#    - attempts: Current retry count (0 = first attempt)
+#    - createdAt: Unix timestamp when job was enqueued
+#    - availableAt: Unix timestamp when job becomes available (delay support)
+#    - source: Optional identifier for job origin (e.g., "wanted-crawler", "manual")
+#
+# 6. CLOUDFLARE QUEUES INTEGRATION:
+#    In production on CF Workers, the JobQueue can push to CF Queues:
+#    ```javascript
+#    const queue = new JobQueue({
+#      queue: env.JOB_QUEUE,  // CF Queues producer
+#      maxConcurrentWorkers: 4,
+#    });
+#
+#    await queue.enqueue(jobPayload, { priority: 'normal', delayMs: 1000 });
+#    const summary = await queue.process(handler);
+#    ```
+#    CF Queues then handles distributed persistence and retries.
+#
+# 7. TYPICAL WORKFLOW:
+#    1. Job searches return multiple jobs → enqueue job applications
+#    2. Each job application enqueued with priority based on match score
+#    3. ApplicationManager processes queue with concurrent workers
+#    4. Failed applications (network errors, validation) are retried
+#    5. After 5 failures, job is marked as failed and logged
+#
+# ────────────────────────────────────────────────────────────────
+#
+# CACHE SYSTEM ARCHITECTURE
+# ────────────────────────────────────────────────────────────────
+#
+# The CacheManager class (typescript/job-automation/src/shared/services/cache/index.js)
+# implements a three-tier cache strategy optimized for Cloudflare services.
+#
+# TIER SELECTION (based on TTL):
+#
+# ┌─────────────────────────────────────────────────────────────┐
+# │ CACHE TIER SELECTION BY TTL                                │
+# ├─────────────────────────────────────────────────────────────┤
+# │ TTL ≤ 5 minutes      → HOT TIER   (KV)                     │
+# │ TTL ≤ 24 hours      → WARM TIER  (D1 SQLite)             │
+# │ TTL > 24 hours      → COLD TIER  (R2 object storage)     │
+# └─────────────────────────────────────────────────────────────┘
+#
+# 1. HOT TIER (KV in production, N/A locally):
+#    - Technology: Cloudflare KV (edge-replicated key-value store)
+#    - Best for: Short-lived data (API responses, session cache)
+#    - TTL: 5 minutes default
+#    - Access pattern: O(1) per KV namespace
+#    - Use case: Job search results, company info (frequently accessed)
+#    - Note: Not available in local docker; would use external KV
+#
+# 2. WARM TIER (D1 SQLite, persisted locally):
+#    - Technology: SQLite database (./data/cache.db)
+#    - Best for: Medium-lived, queryable data
+#    - TTL: 5 minutes - 24 hours
+#    - Access pattern: SQL queries, indexed lookups
+#    - Use case: Resume data, application history
+#    - Schema: Automatic via ensureD1Schema()
+#    - Persistence: Survives container restarts via volume mount
+#    - Features: Expiration index for cleanup, UPSERT on conflict
+#
+# 3. COLD TIER (R2 in production, N/A locally):
+#    - Technology: Cloudflare R2 (S3-compatible object storage)
+#    - Best for: Long-lived, infrequently accessed data
+#    - TTL: > 24 hours
+#    - Access pattern: Object key lookups
+#    - Use case: Backup resumes, application screenshots
+#    - Note: Not available in local docker; would use external R2
+#
+# PROMOTION LOGIC (intelligent tier movement):
+#
+# When a cache miss occurs in hot/warm tiers and data exists in cold tier:
+# - The entry is automatically promoted to a faster tier
+# - Promotion tier selected based on remaining TTL
+# - Example:
+#   • App looks for "company:12345" in KV (miss)
+#   • Checks D1 (miss)
+#   • Finds in R2 with 18 hours remaining TTL
+#   • Promotes to D1 (warm tier, since 18h > 5m threshold)
+#   • Next lookup hits D1 (faster than R2)
+#
+# CLOUDFLARE BINDINGS (Production):
+#
+# CacheManager constructor takes optional bindings:
+# ```javascript
+# const cache = new CacheManager({
+#   kv: env.JOB_CACHE_KV,           // KV namespace for hot tier
+#   d1: env.JOB_CACHE_DB,           // D1 database for warm tier
+#   r2: env.JOB_CACHE_R2,           // R2 bucket for cold tier
+#   namespace: 'job_automation',    // Key/object prefix
+#   defaultTtlSeconds: 300,         // 5 minutes default
+#   hotTtlThresholdSeconds: 300,    // ≤5min → hot
+#   warmTtlThresholdSeconds: 86400, // ≤24h → warm
+# });
+# ```
+#
+# TYPICAL WORKFLOW:
+#
+# 1. Application manager searches for jobs on Wanted.co.kr
+# 2. Results cached with TTL=1 hour (warm tier)
+# 3. User views results → cache hit, no API call
+# 4. 1 hour later → cache expires, new search hits API
+# 5. Company info cached with TTL=30 days (cold tier)
+# 6. Used only for occasional lookups (resume, profile building)
+#
+# PERSISTENCE IN DOCKER:
+#
+# - D1 SQLite: Persisted via volume mount to ./data/cache.db
+# - Schema created on first write: CREATE TABLE cache_entries
+# - Columns: cache_key, value, expires_at, created_at, updated_at, last_accessed_at
+# - Index on expires_at for efficient cleanup queries
+#
+# LOCAL DEVELOPMENT:
+#
+# When CacheManager initialized without bindings:
+# - All methods return null/no-op (cache disabled)
+# - Good for testing without external dependencies
+# - Enable by passing docker environment variables to Node.js
