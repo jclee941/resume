@@ -419,26 +419,20 @@
     {
       "icon": "🖥️",
       "title": "Proxmox VE",
-      "description": "가상화 플랫폼",
+      "description": "가상화 플랫폼 (7 VM/CT 운영)",
       "status": "running"
     },
     {
       "icon": "📊",
-      "title": "Grafana + Prometheus + Loki",
-      "description": "Observability 스택",
+      "title": "Grafana + Prometheus",
+      "description": "Observability 스택 (메트릭 수집/시각화)",
       "status": "running",
       "url": "https://grafana.jclee.me/public-dashboards/8c91649fe829cb4905edf4a60579d0a0"
     },
     {
       "icon": "📋",
-      "title": "ELK Stack",
-      "description": "로그 분석 (Elasticsearch, Logstash, Kibana)",
-      "status": "running"
-    },
-    {
-      "icon": "🔄",
-      "title": "n8n",
-      "description": "워크플로우 자동화",
+      "title": "Elasticsearch",
+      "description": "로그 수집/분석 클러스터",
       "status": "running"
     },
     {
@@ -461,8 +455,20 @@
     },
     {
       "icon": "🤖",
-      "title": "MCP Server",
-      "description": "AI 에이전트 도구 서버",
+      "title": "MCP Server Hub",
+      "description": "AI 에이전트 도구 서버 (17개 MCP)",
+      "status": "running"
+    },
+    {
+      "icon": "🔐",
+      "title": "HashiCorp Vault",
+      "description": "시크릿 관리 / PKI",
+      "status": "running"
+    },
+    {
+      "icon": "🐛",
+      "title": "GlitchTip",
+      "description": "에러 트래킹 (Sentry 대체)",
       "status": "running"
     },
     {

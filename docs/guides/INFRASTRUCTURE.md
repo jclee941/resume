@@ -2,8 +2,8 @@
 
 **Resume Portfolio System** - Production Infrastructure Documentation
 
-**Last Updated**: 2026-01-24
-**Version**: 1.1.0
+**Last Updated**: 2026-02-11
+**Version**: 1.2.0
 **Environment**: Production
 
 ## 🏗️ Infrastructure Overview
@@ -173,11 +173,11 @@ global:
   evaluation_interval: 30s
 
 scrape_configs:
-  - job_name: "resume"
+  - job_name: 'resume'
     scrape_interval: 30s
-    metrics_path: "/metrics"
+    metrics_path: '/metrics'
     static_configs:
-      - targets: ["resume.jclee.me:443"]
+      - targets: ['resume.jclee.me:443']
     scheme: https
 ```
 
