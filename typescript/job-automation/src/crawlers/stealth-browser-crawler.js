@@ -115,7 +115,18 @@ export class StealthBrowserCrawler extends BaseCrawler {
         return page;
       }
 
-      return await page.content();
+      const html = await page.content();
+
+      // Detect CAPTCHA in rendered HTML
+      const captchaResult = this.captchaDetector.detectInHtml(html, url);
+      if (captchaResult.detected) {
+        this.emit('captcha:detected', captchaResult);
+        if (this.captchaDetector.shouldPause()) {
+          this.emit('captcha:paused', { url, crawler: this.name });
+        }
+      }
+
+      return html;
     } catch (err) {
       this.emit('page:error', { url, error: err.message, crawler: this.name });
 
@@ -125,8 +136,8 @@ export class StealthBrowserCrawler extends BaseCrawler {
           const key = `error/${this.name}/${Date.now()}.jpg`;
           await this.env.SCREENSHOTS.put(key, screenshot);
           this.emit('screenshot:saved', { key });
-        } catch {
-          // noop
+        } catch (screenshotErr) {
+          this.emit('screenshot:error', { error: screenshotErr.message, crawler: this.name });
         }
       }
 
@@ -165,7 +176,7 @@ export class StealthBrowserCrawler extends BaseCrawler {
    */
   async _enforceRateLimit() {
     const jitter = Math.random() * 500;
-    const delay = this.options.rateLimit + jitter;
+    const delay = this.rateLimit + jitter;
     await new Promise((resolve) => setTimeout(resolve, delay));
   }
 

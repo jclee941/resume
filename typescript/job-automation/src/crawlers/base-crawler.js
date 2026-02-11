@@ -6,6 +6,7 @@
  */
 
 import { EventEmitter } from 'events';
+import { HumanizedTimer, CookieJar, CaptchaDetector } from '../shared/services/stealth/index.js';
 
 /**
  * Randomized modern Chrome User-Agent pool (Chrome 128-131).
@@ -95,6 +96,15 @@ export class BaseCrawler extends EventEmitter {
       nonRetryableFailures: 0,
       lastRetryAt: null,
     };
+
+    /** @type {HumanizedTimer} */
+    this.timer = new HumanizedTimer(options.timing);
+
+    /** @type {CookieJar} */
+    this.cookieJar = new CookieJar();
+
+    /** @type {CaptchaDetector} */
+    this.captchaDetector = new CaptchaDetector(options.captcha);
   }
 
   /**
@@ -140,25 +150,24 @@ export class BaseCrawler extends EventEmitter {
    * @returns {Promise<Response>}
    */
   async rateLimitedFetch(url, options = {}) {
-    const now = Date.now();
-    const timeSinceLastRequest = now - this.lastRequestTime;
-
-    if (timeSinceLastRequest < this.rateLimit) {
-      await this.sleep(this.rateLimit - timeSinceLastRequest);
-    }
-
+    // Humanized timing — replaces simple rate-limit sleep
+    await this.timer.wait();
     this.lastRequestTime = Date.now();
 
     // Separate retry overrides from fetch options
     const { retry: retryOverride, ...restOptions } = options;
     const retryConfig = { ...this.retryConfig, ...retryOverride };
 
+    // Merge manual cookies with cookie jar
+    const jarCookies = this.cookieJar.getCookieHeader(url);
+    const combinedCookies = [this.cookies, jarCookies].filter(Boolean).join('; ');
+
     const fetchOptions = {
       method: restOptions.method || 'GET',
       headers: {
         ...this.headers,
         ...restOptions.headers,
-        ...(this.cookies ? { Cookie: this.cookies } : {}),
+        ...(combinedCookies ? { Cookie: combinedCookies } : {}),
       },
       signal: AbortSignal.timeout(this.timeout),
       ...restOptions,
@@ -196,6 +205,26 @@ export class BaseCrawler extends EventEmitter {
             maxRetries: retryConfig.maxRetries,
             crawler: this.name,
           });
+        }
+
+        // Store response cookies in jar
+        const setCookieHeader = response.headers.get('Set-Cookie');
+        if (setCookieHeader) {
+          this.cookieJar.setCookiesFromHeader(setCookieHeader, url);
+        }
+
+        // Detect CAPTCHA from response status/headers
+        const captchaResult = this.captchaDetector.detectFromStatusCode(
+          response.status,
+          response.headers,
+          url
+        );
+        if (captchaResult.detected) {
+          this.emit('captcha:detected', captchaResult);
+          if (this.captchaDetector.shouldPause()) {
+            this.emit('captcha:paused', { url, crawler: this.name });
+            await this.sleep(30000);
+          }
         }
 
         return response;

@@ -57,13 +57,32 @@ export function getRandomViewport() {
  */
 /**
  * Generate a consistent fingerprint for a browser session.
- * @returns {{ ua: string, viewport: { width: number, height: number }, acceptLanguage: string }}
+ * @returns {{ ua: string, viewport: { width: number, height: number }, acceptLanguage: string, platform: string, hardwareConcurrency: number, deviceMemory: number, screenResolution: { width: number, height: number }, colorDepth: number }}
  */
 export function generateFingerprint() {
+  const ua = getRandomUA();
+  const viewport = getRandomViewport();
+
+  // Derive platform from UA OS string for fingerprint consistency
+  let platform = 'Win32';
+  if (ua.includes('Macintosh')) {
+    platform = 'MacIntel';
+  } else if (ua.includes('Linux')) {
+    platform = 'Linux x86_64';
+  }
+
+  const concurrencyOptions = [4, 8, 12, 16];
+  const memoryOptions = [4, 8, 16];
+
   return {
-    ua: getRandomUA(),
-    viewport: getRandomViewport(),
+    ua,
+    viewport,
     acceptLanguage: 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7',
+    platform,
+    hardwareConcurrency: concurrencyOptions[randomInt(0, concurrencyOptions.length - 1)],
+    deviceMemory: memoryOptions[randomInt(0, memoryOptions.length - 1)],
+    screenResolution: { width: viewport.width, height: viewport.height },
+    colorDepth: 24,
   };
 }
 
@@ -83,7 +102,7 @@ export async function humanDelay(page, min = 500, max = 2000) {
  * Apply anti-fingerprinting patches before document scripts run.
  *
  * @param {import('@cloudflare/puppeteer').Page} page
- * @param {{ ua?: string, viewport?: { width: number, height: number }, acceptLanguage?: string }} [fingerprint]
+ * @param {{ ua?: string, viewport?: { width: number, height: number }, acceptLanguage?: string, platform?: string, hardwareConcurrency?: number, deviceMemory?: number, screenResolution?: { width: number, height: number }, colorDepth?: number }} [fingerprint]
  */
 export async function applyStealthPatches(page, fingerprint) {
   if (fingerprint?.ua) {
@@ -232,4 +251,34 @@ export async function applyStealthPatches(page, fingerprint) {
       return data;
     };
   });
+
+  // Fingerprint consistency patches — navigator/screen properties
+  if (fingerprint) {
+    await page.evaluateOnNewDocument((fp) => {
+      const patchProp = (obj, key, getter) => {
+        Object.defineProperty(obj, key, {
+          configurable: true,
+          enumerable: true,
+          get: getter,
+        });
+      };
+
+      if (fp.platform) {
+        patchProp(navigator, 'platform', () => fp.platform);
+      }
+      if (fp.hardwareConcurrency) {
+        patchProp(navigator, 'hardwareConcurrency', () => fp.hardwareConcurrency);
+      }
+      if (fp.deviceMemory) {
+        patchProp(navigator, 'deviceMemory', () => fp.deviceMemory);
+      }
+      if (fp.screenResolution) {
+        patchProp(screen, 'width', () => fp.screenResolution.width);
+        patchProp(screen, 'height', () => fp.screenResolution.height);
+      }
+      if (fp.colorDepth) {
+        patchProp(screen, 'colorDepth', () => fp.colorDepth);
+      }
+    }, fingerprint);
+  }
 }
