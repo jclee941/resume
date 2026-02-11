@@ -26,7 +26,9 @@ test.beforeAll(async ({ request }) => {
     // /health returns 200 even when D1/KV are unavailable; probe a real API
     // endpoint that touches the database layer to detect true availability.
     const response = await request.get(`${DASHBOARD_BASE}/api/auth/status`);
-    backendAvailable = response.status() < 500;
+    // 403 typically means Cloudflare Bot Fight Mode is blocking CI IPs,
+    // not a real backend response — treat as unavailable
+    backendAvailable = response.status() < 500 && response.status() !== 403;
   } catch {
     backendAvailable = false;
   }

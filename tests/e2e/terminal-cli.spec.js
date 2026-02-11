@@ -1,6 +1,6 @@
 // @ts-check
 const { test, expect } = require('@playwright/test');
-const { executeCliCommand, focusElement, navigateToSection } = require('./fixtures/helpers');
+const { executeCliCommand, focusElement } = require('./fixtures/helpers');
 
 /**
  * Terminal CLI E2E Tests

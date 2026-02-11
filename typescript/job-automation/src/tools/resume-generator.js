@@ -123,7 +123,7 @@ export const resumeGeneratorTool = {
         }))
         .sort((a, b) => b.score - a.score)
         .slice(0, 4)
-        .map(({ score, ...experience }) => experience);
+        .map(({ score: _score, ...experience }) => experience);
 
       const topProjects = projects
         .map((project) => ({
@@ -140,7 +140,7 @@ export const resumeGeneratorTool = {
         }))
         .sort((a, b) => b.score - a.score)
         .slice(0, 4)
-        .map(({ score, ...project }) => project);
+        .map(({ score: _score, ...project }) => project);
 
       const matchedKeywordSet = new Set();
       [

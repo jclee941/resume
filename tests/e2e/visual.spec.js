@@ -1,6 +1,8 @@
 // @ts-check
 const { test, expect } = require('@playwright/test');
 
+test.skip(!!process.env.CI, 'Visual regression tests require local snapshot baselines');
+
 test.describe('Visual Regression Tests', () => {
   test.describe('Desktop Screenshots', () => {
     test.beforeEach(async ({ page }) => {

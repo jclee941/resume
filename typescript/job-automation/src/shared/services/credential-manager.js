@@ -7,7 +7,7 @@ import { createHash, createCipheriv, createDecipheriv, randomBytes } from 'crypt
 
 const ALGORITHM = 'aes-256-gcm';
 const IV_LENGTH = 16;
-const AUTH_TAG_LENGTH = 16;
+const _AUTH_TAG_LENGTH = 16; // Used implicitly by AES-256-GCM
 
 /** @type {Map<string, {encrypted: Buffer, iv: Buffer, tag: Buffer}>} */
 const credentialStore = new Map();

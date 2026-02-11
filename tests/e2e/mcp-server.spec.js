@@ -20,9 +20,9 @@ const { test, expect } = require('@playwright/test');
 const { spawn } = require('child_process');
 const path = require('path');
 
-// Get the MCP server path
-const MCP_SERVER_PATH = '/home/jclee/dev/resume/typescript/job-automation/src/index.js';
-const PROJECT_ROOT = '/home/jclee/dev/resume';
+// Get the MCP server path (resolve relative to this file so it works in CI)
+const PROJECT_ROOT = path.resolve(__dirname, '../..');
+const MCP_SERVER_PATH = path.resolve(PROJECT_ROOT, 'typescript/job-automation/src/index.js');
 
 let mcpAvailable = false;
 
