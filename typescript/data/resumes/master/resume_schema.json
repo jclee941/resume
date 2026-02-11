@@ -269,7 +269,7 @@
       "description": "Professional certifications",
       "items": {
         "type": "object",
-        "required": ["name", "issuer", "date"],
+        "required": ["name", "issuer"],
         "properties": {
           "name": {
             "type": "string",
@@ -282,9 +282,24 @@
             "description": "Issuing organization"
           },
           "date": {
-            "type": "string",
+            "type": ["string", "null"],
             "pattern": "^\\d{4}\\.\\d{2}$",
-            "description": "Issue date in YYYY.MM format"
+            "description": "Issue date in YYYY.MM format (null if not yet obtained)"
+          },
+          "expirationDate": {
+            "type": ["string", "null"],
+            "pattern": "^\\d{4}\\.\\d{2}$",
+            "description": "Expiration date in YYYY.MM format (null if non-expiring or not yet obtained)"
+          },
+          "credentialUrl": {
+            "type": ["string", "null"],
+            "format": "uri",
+            "description": "URL to verify the credential (null if not available)"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "expired", "준비중"],
+            "description": "Certification status"
           }
         },
         "additionalProperties": true
@@ -294,6 +309,35 @@
       "type": "object",
       "description": "Skills grouped by category",
       "properties": {
+        "observability": {
+          "anyOf": [
+            { "type": "array", "items": { "type": "string" } },
+            {
+              "type": "object",
+              "properties": {
+                "title": { "type": "string" },
+                "icon": { "type": "string" },
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "anyOf": [
+                      { "type": "string" },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "name": { "type": "string" },
+                          "level": { "type": "string" }
+                        },
+                        "required": ["name"]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ],
+          "description": "Observability and monitoring skills"
+        },
         "cloud": {
           "anyOf": [
             { "type": "array", "items": { "type": "string" } },

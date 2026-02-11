@@ -40,7 +40,7 @@
     <link rel="alternate" hreflang="x-default" href="https://resume.jclee.me" />
 
     <!-- Open Graph -->
-    <meta property="og:type" content="profile" />
+    <meta property="og:type" content="website" />
     <meta property="og:url" content="https://resume.jclee.me" />
     <meta property="og:title" content="이재철 - Infrastructure Engineer" />
     <meta
@@ -79,22 +79,13 @@
         "@id": "https://resume.jclee.me/#person",
         "name": "이재철",
         "alternateName": "Jaecheol Lee",
-        "jobTitle": "Infrastructure Engineer",
-        "description": "8년차 인프라 엔지니어. 금융·공공 분야 보안 인프라, Observability, 자동화 설계·운영",
+        "jobTitle": "보안운영 담당",
+        "description": "8년차 인프라 엔지니어로 금융·공공 분야에서 보안 인프라 설계와 운영을 담당했습니다. Observability 체계 구축과 운영 자동화를 수행하고 있습니다.",
         "url": "https://resume.jclee.me",
         "email": "qws941@kakao.com",
         "telephone": "+82-10-5757-9592",
-        "sameAs": ["https://github.com/qws941"],
-        "knowsAbout": [
-          "Observability",
-          "Grafana",
-          "Prometheus",
-          "Loki",
-          "Splunk",
-          "n8n",
-          "자동화",
-          "인프라"
-        ],
+        "sameAs": ["https://github.com/qws941", "https://resume.jclee.me"],
+        "knowsAbout": ["Observability", "보안 인프라", "자동화"],
         "worksFor": {
           "@type": "Organization",
           "name": "(주)아이티센 CTS"
@@ -107,9 +98,9 @@
       {
         "@context": "https://schema.org",
         "@type": "WebSite",
-        "name": "이재철 이력서",
+        "name": "이재철 - Infrastructure Engineer",
         "url": "https://resume.jclee.me",
-        "description": "Senior DevSecOps Engineer 이재철의 이력서 및 포트폴리오",
+        "description": "8년차 인프라 엔지니어로 금융·공공 분야에서 보안 인프라 설계와 운영을 담당했습니다. Observability 체계 구축과 운영 자동화를 수행하고 있습니다.",
         "inLanguage": "ko-KR"
       }
     </script>
@@ -621,6 +612,147 @@
       })();
 
       // Interactive Terminal Commands (preparation for Phase 2)
+      window.__RESUME_CHAT_DATA__ = /* RESUME_CHAT_DATA_PLACEHOLDER */ {};
+
+      function escapeHtml(value) {
+        return String(value || '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function normalizeText(value) {
+        return String(value || '')
+          .toLowerCase()
+          .replace(/[^a-z0-9가-힣\s]/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim();
+      }
+
+      function toList(value) {
+        return Array.isArray(value) ? value : [];
+      }
+
+      function getSkillItems(skills) {
+        if (!skills || typeof skills !== 'object') return [];
+        return Object.values(skills).flatMap(function (category) {
+          return toList(category && category.items).map(function (item) {
+            return {
+              name: item.name,
+              level: item.level,
+              category: category.title,
+            };
+          });
+        });
+      }
+
+      function findChatIntent(question) {
+        var q = normalizeText(question);
+        var intents = [
+          {
+            name: 'contact',
+            keywords: ['contact', 'email', 'phone', 'github', '연락', '이메일', '전화'],
+          },
+          {
+            name: 'skills',
+            keywords: ['skill', 'stack', 'tech', '기술', '스킬', '역량', 'tool'],
+          },
+          {
+            name: 'projects',
+            keywords: ['project', 'portfolio', '사이드', '프로젝트'],
+          },
+          {
+            name: 'certifications',
+            keywords: ['certificate', 'cert', '자격증', '인증'],
+          },
+          {
+            name: 'experience',
+            keywords: ['experience', 'career', 'work', '경력', '경험', '회사', '업무'],
+          },
+        ];
+
+        var best = { name: 'experience', score: 0 };
+        intents.forEach(function (intent) {
+          var score = intent.keywords.reduce(function (acc, keyword) {
+            return acc + (q.indexOf(keyword) !== -1 ? 1 : 0);
+          }, 0);
+          if (score > best.score) {
+            best = { name: intent.name, score: score };
+          }
+        });
+
+        return best.score > 0 ? best.name : 'fallback';
+      }
+
+      function buildLocalChatResponse(question) {
+        var data = window.__RESUME_CHAT_DATA__ || {};
+        var intent = findChatIntent(question);
+        var experiences = toList(data.resume);
+        var projects = toList(data.projects);
+        var certifications = toList(data.certifications);
+        var skills = getSkillItems(data.skills);
+        var contact = data.contact || {};
+
+        if (intent === 'experience' && experiences.length > 0) {
+          var topExperience = experiences.slice(0, 3).map(function (item) {
+            return item.title + ' (' + item.period + ')';
+          });
+          return (
+            'Top experience:\n- ' +
+            escapeHtml(topExperience.join('\n- ')) +
+            '\n\nCurrent focus: ' +
+            escapeHtml(
+              (data.hero && data.hero.subtitle) || 'Security infrastructure and observability'
+            )
+          );
+        }
+
+        if (intent === 'skills' && skills.length > 0) {
+          var topSkills = skills
+            .slice(0, 10)
+            .map(function (item) {
+              return item.name + (item.level ? ' (' + item.level + ')' : '');
+            })
+            .join(', ');
+          return 'Key skills: ' + escapeHtml(topSkills);
+        }
+
+        if (intent === 'projects' && projects.length > 0) {
+          var topProjects = projects.slice(0, 3).map(function (item) {
+            return item.title + ': ' + item.description;
+          });
+          return 'Featured projects:\n- ' + escapeHtml(topProjects.join('\n- '));
+        }
+
+        if (intent === 'certifications' && certifications.length > 0) {
+          var activeCerts = certifications
+            .filter(function (cert) {
+              return cert.status === 'active';
+            })
+            .map(function (cert) {
+              return cert.name;
+            });
+          var certLine = activeCerts.length > 0 ? activeCerts.join(', ') : certifications[0].name;
+          return 'Certifications: ' + escapeHtml(certLine);
+        }
+
+        if (intent === 'contact' && contact.email) {
+          return (
+            'Contact info:\n' +
+            'Email: ' +
+            escapeHtml(contact.email) +
+            '\nPhone: ' +
+            escapeHtml(contact.phone || 'N/A') +
+            '\nGitHub: ' +
+            escapeHtml(contact.github || 'N/A')
+          );
+        }
+
+        return 'I can tell you about my experience, skills, projects, certifications, or contact info';
+      }
+
       window.terminalCommands = {
         neofetch: function () {
           return (
@@ -692,6 +824,32 @@
           return '<span class="matrix-msg">// Matrix rain intensified for 5 seconds</span>';
         },
 
+        chat: async function (question) {
+          var userQuestion = (question || '').trim();
+          if (!userQuestion) {
+            return 'Usage: chat <your question>\nExample: chat tell me about your security experience';
+          }
+
+          try {
+            var response = await fetch('/api/chat', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ question: userQuestion }),
+            });
+
+            if (response.ok) {
+              var payload = await response.json();
+              if (payload && payload.answer) {
+                return escapeHtml(payload.answer);
+              }
+            }
+          } catch (_) {
+            // Fall through to local response.
+          }
+
+          return buildLocalChatResponse(userQuestion);
+        },
+
         help: function () {
           return (
             '<div class="help-output">' +
@@ -700,6 +858,7 @@
             '  <span class="cmd-name">resume</span>     - View career experience\\n' +
             '  <span class="cmd-name">projects</span>   - List side projects\\n' +
             '  <span class="cmd-name">skills</span>     - Show tech stack\\n' +
+            '  <span class="cmd-name">chat</span>       - Ask resume questions\\n' +
             '  <span class="cmd-name">contact</span>    - Contact information\\n' +
             '  <span class="cmd-name">theme</span>      - Switch terminal theme\\n' +
             '  <span class="cmd-name">clear</span>      - Clear terminal' +
@@ -864,7 +1023,7 @@
           return files[args] || 'cat: ' + args + ': No such file or directory';
         };
 
-        function executeCommand(cmd) {
+        async function executeCommand(cmd) {
           cmd = cmd.trim();
           if (!cmd) return '';
 
@@ -875,10 +1034,10 @@
           var result;
           var found = false;
           if (window.terminalCommands[cmd]) {
-            result = window.terminalCommands[cmd]();
+            result = await window.terminalCommands[cmd]();
             found = true;
           } else if (window.terminalCommands[command]) {
-            result = window.terminalCommands[command](args);
+            result = await window.terminalCommands[command](args);
             found = true;
           } else {
             result = 'command not found: ' + command + '. Type "help" for available commands.';
@@ -907,14 +1066,14 @@
           cliOutput.scrollTop = cliOutput.scrollHeight;
         }
 
-        cliInput.addEventListener('keydown', function (e) {
+        cliInput.addEventListener('keydown', async function (e) {
           if (e.key === 'Enter') {
             var cmd = cliInput.value;
             if (cmd.trim()) {
               history.push(cmd);
               historyIndex = history.length;
             }
-            var result = executeCommand(cmd);
+            var result = await executeCommand(cmd);
             addOutput(cmd, result);
             cliInput.value = '';
           } else if (e.key === 'ArrowUp') {

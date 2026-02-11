@@ -364,49 +364,73 @@
     {
       "name": "CCNP",
       "issuer": "Cisco Systems",
-      "date": "2020.08"
+      "date": "2020.08",
+      "expirationDate": "2023.08",
+      "credentialUrl": null,
+      "status": "expired"
     },
     {
       "name": "RHCSA",
       "issuer": "Red Hat",
-      "date": "2019.01"
+      "date": "2019.01",
+      "expirationDate": "2022.01",
+      "credentialUrl": null,
+      "status": "expired"
     },
     {
       "name": "CompTIA Linux+",
       "issuer": "CompTIA",
-      "date": "2019.02"
+      "date": "2019.02",
+      "expirationDate": null,
+      "credentialUrl": null,
+      "status": "active"
     },
     {
       "name": "LPIC Level 1",
       "issuer": "Linux Professional Institute",
-      "date": "2019.02"
+      "date": "2019.02",
+      "expirationDate": null,
+      "credentialUrl": null,
+      "status": "active"
     },
     {
       "name": "사무자동화산업기사",
       "issuer": "한국산업인력공단",
-      "date": "2019.12"
+      "date": "2019.12",
+      "expirationDate": null,
+      "credentialUrl": null,
+      "status": "active"
     },
     {
       "name": "리눅스마스터 2급",
       "issuer": "한국정보통신진흥협회",
-      "date": "2019.01"
+      "date": "2019.01",
+      "expirationDate": null,
+      "credentialUrl": null,
+      "status": "active"
     },
     {
       "name": "CISSP",
       "issuer": "ISC²",
       "date": null,
+      "expirationDate": null,
+      "credentialUrl": null,
       "status": "준비중"
     },
     {
       "name": "CISM",
       "issuer": "ISACA",
       "date": null,
+      "expirationDate": null,
+      "credentialUrl": null,
       "status": "준비중"
     },
     {
       "name": "AWS Solutions Architect",
       "issuer": "Amazon Web Services",
       "date": null,
+      "expirationDate": null,
+      "credentialUrl": null,
       "status": "준비중"
     }
   ],
