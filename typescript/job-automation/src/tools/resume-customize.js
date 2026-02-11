@@ -485,7 +485,7 @@ export const resumeCustomizeTool = {
 
         if (output_format === 'markdown' || output_format === 'both') {
           const md = generateATSMarkdown(resumeData, customization);
-          const mdPath = join(outputDir, `resume_customized.md`);
+          const mdPath = join(outputDir, 'resume_customized.md');
           await writeFile(mdPath, md, 'utf-8');
           result.savedFiles.push(mdPath);
           result.markdown = md;
@@ -493,7 +493,7 @@ export const resumeCustomizeTool = {
 
         if (output_format === 'json' || output_format === 'both') {
           const json = generateCustomizedJSON(resumeData, customization);
-          const jsonPath = join(outputDir, `resume_customized.json`);
+          const jsonPath = join(outputDir, 'resume_customized.json');
           await writeFile(jsonPath, JSON.stringify(json, null, 2), 'utf-8');
           result.savedFiles.push(jsonPath);
           result.customizedData = json;

@@ -166,7 +166,7 @@ export async function migrate(options = {}) {
         executeD1(recordSql, options);
       }
 
-      console.log(chalk.green(`    ✅ Applied successfully`));
+      console.log(chalk.green('    ✅ Applied successfully'));
     } catch (err) {
       console.error(chalk.red(`    ❌ Failed: ${err.message}`));
       console.error(chalk.red('\n⛔ Migration aborted. Fix the error and retry.\n'));
@@ -217,7 +217,7 @@ export async function rollback(options = {}) {
         executeD1(`DELETE FROM _migrations WHERE name = '${name}'`, options);
       }
 
-      console.log(chalk.green(`    ✅ Rolled back successfully`));
+      console.log(chalk.green('    ✅ Rolled back successfully'));
     } catch (err) {
       console.error(chalk.red(`    ❌ Failed: ${err.message}`));
       process.exit(1);
@@ -293,14 +293,14 @@ export async function seed(options = {}) {
     console.log(chalk.cyan(`  ▶ Seeding: ${file}`));
     try {
       executeD1File(join(SEEDS_DIR, file), options);
-      console.log(chalk.green(`    ✅ Done`));
+      console.log(chalk.green('    ✅ Done'));
     } catch (err) {
       console.error(chalk.red(`    ❌ Failed: ${err.message}`));
       process.exit(1);
     }
   }
 
-  console.log(chalk.green(`\n✅ Seed data applied\n`));
+  console.log(chalk.green('\n✅ Seed data applied\n'));
 }
 
 /**
@@ -343,7 +343,7 @@ export async function create(name) {
     `-- Rollback: ${nextNum}_${sanitized}\n-- Created: ${new Date().toISOString()}\n\n`
   );
 
-  console.log(chalk.green(`\n✅ Created migration files:`));
+  console.log(chalk.green('\n✅ Created migration files:'));
   console.log(chalk.cyan(`  Up:   ${upFile}`));
   console.log(chalk.cyan(`  Down: ${downFile}\n`));
 }

@@ -8,6 +8,7 @@
 | **목적**     | 개인 포트폴리오 사이트 - Cyberpunk 터미널 UI |
 | **플랫폼**   | Cloudflare Workers (Edge-deployed)           |
 | **작성일**   | 2026-02-05                                   |
+| **개정일**   | 2026-02-11                                   |
 | **상태**     | 운영 중                                      |
 
 ---
@@ -136,6 +137,20 @@
 | F8.7 | About 섹션 확장        | 경력 하이라이트, 기술 철학, 관심 분야 추가               | 60%       | ❌   |
 | F8.8 | OSS 기여 표시          | 오픈소스 컨트리뷰션 이력 섹션 추가                       | -         | ❌   |
 
+### F9. Job Dashboard 통합
+
+> 2026-02-11 추가. portfolio-worker와 job-automation 워커 간 통합 라우팅.
+> entry.js 통합 디스패처를 통해 /job/\* 경로를 단일 도메인에서 서비스.
+
+| ID   | 기능                 | 설명                                                | 구현 |
+| ---- | -------------------- | --------------------------------------------------- | ---- |
+| F9.1 | Unified Router       | entry.js 통합 디스패처 — portfolio + /job/\* 라우팅 | ✅   |
+| F9.2 | /job/\* Path Routing | /job/ 하위 경로를 job-automation 워커로 프록시      | ✅   |
+| F9.3 | Dashboard Worker     | /job/dashboard UI 페이지 (ESLint 에러 수정 완료)    | ❌   |
+| F9.4 | /job/health Endpoint | job-automation 헬스체크 엔드포인트 (HTTP 200 정상)  | ✅   |
+| F9.5 | Job API Routes       | /job/api/\* REST 엔드포인트 구현                    | ❌   |
+| F9.6 | Dashboard Auth       | 대시보드 접근 제어 (인증/인가)                      | ❌   |
+
 ---
 
 ## 비기능 요구사항 체크리스트
@@ -212,26 +227,74 @@
 | NF5.9  | Geographic Metrics | 국가/Colo별 요청 분포               | ✅   |
 | NF5.10 | Health Endpoint    | /health JSON 상태 응답              | ✅   |
 
+### NF6. CI/CD 파이프라인
+
+> 2026-02-11 추가. GitHub Actions CI/CD 감사 결과 반영.
+> ci.yml (898줄) 메인 파이프라인 기반. 보안 및 안정성 개선 항목 포함.
+
+| ID    | 요구사항              | 설명                                               | 우선순위 | 구현 |
+| ----- | --------------------- | -------------------------------------------------- | -------- | ---- |
+| NF6.1 | GitHub Actions CI     | ci.yml 메인 파이프라인 (lint, test, build, deploy) | -        | ✅   |
+| NF6.2 | Staging Deploy        | 스테이징 환경 자동 배포                            | -        | ✅   |
+| NF6.3 | Auto-Rollback         | 배포 실패 시 자동 롤백 메커니즘                    | -        | ✅   |
+| NF6.4 | PR Preview            | PR별 프리뷰 배포 환경                              | -        | ✅   |
+| NF6.5 | Composite Actions     | .github/actions/setup/ 재사용 가능 액션            | -        | ✅   |
+| NF6.6 | permissions Block     | ci.yml 최소 권한 원칙 적용 (L45-49)                | P0       | ✅   |
+| NF6.7 | Security Scan 강화    | security-scan `continue-on-error` 제거 완료        | P0       | ✅   |
+| NF6.8 | ESLint Threshold 감소 | warning 임계값 120 적용 완료 (L170)                | P1       | ✅   |
+| NF6.9 | Deploy Timeout        | 배포 타임아웃 15분 설정 완료 (L353)                | P1       | ✅   |
+
+### NF7. 테스트 인프라
+
+> 2026-02-11 추가. Jest 단위 테스트 + Playwright E2E 테스트 프레임워크.
+> 데드 테스트 정리 및 테스트 안정성 개선 항목 포함.
+
+| ID    | 요구사항            | 설명                                        | 구현 |
+| ----- | ------------------- | ------------------------------------------- | ---- |
+| NF7.1 | Jest Unit Tests     | 단위 테스트 프레임워크 구성 및 실행         | ✅   |
+| NF7.2 | Playwright E2E      | E2E 테스트 프레임워크 구성 (Chromium)       | ✅   |
+| NF7.3 | Dead Test Cleanup   | 사용하지 않는 테스트 파일 정리 완료         | ✅   |
+| NF7.4 | auth.js Restoration | 테스트 인증 모듈 복원 (삭제 후 재생성)      | ✅   |
+| NF7.5 | Sentry DSN 설정     | Sentry 연동 미설정으로 7개 테스트 skip 상태 | ❌   |
+| NF7.6 | Visual Regression   | 비주얼 리그레션 테스트 추가 (스크린샷 비교) | ❌   |
+| NF7.7 | CSP Hash Validation | 빌드 시 CSP 해시 불일치 자동 감지 테스트    | ❌   |
+
+### NF8. 코드 품질 및 문서화
+
+> 2026-02-11 추가. 코드 품질 도구 및 프로젝트 문서화 현황.
+
+| ID    | 요구사항           | 설명                                        | 구현 |
+| ----- | ------------------ | ------------------------------------------- | ---- |
+| NF8.1 | ESLint Flat Config | eslint.config.cjs 통합 설정 (flat config)   | ✅   |
+| NF8.2 | AGENTS.md 계층     | 27개 AGENTS.md 파일 계층 구조 (전 디렉토리) | ✅   |
+| NF8.3 | CONTRIBUTING.md    | 기여 가이드라인 문서                        | ✅   |
+| NF8.4 | CODEOWNERS         | .github/CODEOWNERS PR 리뷰어 자동 지정      | ✅   |
+| NF8.5 | JSDoc Coverage     | 공개 API JSDoc 문서화 (현재 부분적)         | ❌   |
+
 ---
 
 ## 요약
 
-| 카테고리                 | 총 항목 | 완료    | 완료율  |
-| ------------------------ | ------- | ------- | ------- |
-| F1. UI 컴포넌트          | 14      | 14      | 100%    |
-| F2. 인터랙티브 기능      | 20      | 20      | 100%    |
-| F3. 네비게이션/레이아웃  | 6       | 6       | 100%    |
-| F4. SEO/메타데이터       | 13      | 13      | 100%    |
-| F5. 다국어 지원          | 4       | 4       | 100%    |
-| F6. PWA 기능             | 5       | 5       | 100%    |
-| **F7. SSoT 데이터 품질** | **6**   | **2**   | **33%** |
-| **F8. 콘텐츠 확장**      | **8**   | **0**   | **0%**  |
-| NF1. 빌드 파이프라인     | 8       | 8       | 100%    |
-| NF2. API 엔드포인트      | 9       | 9       | 100%    |
-| NF3. 보안                | 11      | 11      | 100%    |
-| NF4. 성능                | 9       | 9       | 100%    |
-| NF5. 관측성              | 10      | 10      | 100%    |
-| **총합**                 | **123** | **111** | **90%** |
+| 카테고리                   | 총 항목 | 완료    | 완료율   |
+| -------------------------- | ------- | ------- | -------- |
+| F1. UI 컴포넌트            | 14      | 14      | 100%     |
+| F2. 인터랙티브 기능        | 20      | 20      | 100%     |
+| F3. 네비게이션/레이아웃    | 6       | 6       | 100%     |
+| F4. SEO/메타데이터         | 13      | 13      | 100%     |
+| F5. 다국어 지원            | 4       | 4       | 100%     |
+| F6. PWA 기능               | 5       | 5       | 100%     |
+| **F7. SSoT 데이터 품질**   | **6**   | **2**   | **33%**  |
+| **F8. 콘텐츠 확장**        | **8**   | **0**   | **0%**   |
+| **F9. Job Dashboard 통합** | **6**   | **2**   | **33%**  |
+| NF1. 빌드 파이프라인       | 8       | 8       | 100%     |
+| NF2. API 엔드포인트        | 9       | 9       | 100%     |
+| NF3. 보안                  | 11      | 11      | 100%     |
+| NF4. 성능                  | 9       | 9       | 100%     |
+| NF5. 관측성                | 10      | 10      | 100%     |
+| **NF6. CI/CD 파이프라인**  | **9**   | **9**   | **100%** |
+| **NF7. 테스트 인프라**     | **7**   | **4**   | **57%**  |
+| **NF8. 코드 품질/문서화**  | **5**   | **4**   | **80%**  |
+| **총합**                   | **150** | **131** | **87%**  |
 
 ---
 
@@ -256,6 +319,14 @@ curl -s https://resume.jclee.me/health | jq
 curl -s https://resume.jclee.me/metrics
 ```
 
+## 변경 이력
+
+| 날짜       | 버전 | 변경 내용                                                       |
+| ---------- | ---- | --------------------------------------------------------------- |
+| 2026-02-05 | 1.0  | 초기 작성 (F1–F6, NF1–NF5: 109항목)                             |
+| 2026-02-09 | 1.1  | F7 SSoT 데이터 품질, F8 콘텐츠 확장 추가 (123항목)              |
+| 2026-02-11 | 2.0  | F9 Job Dashboard 통합, NF6–NF8 추가, 48세션 감사 반영 (150항목) |
+
 ---
 
 ## 관련 문서
@@ -263,3 +334,4 @@ curl -s https://resume.jclee.me/metrics
 - [AGENTS.md](../AGENTS.md) - 프로젝트 개요
 - [typescript/portfolio-worker/AGENTS.md](../typescript/portfolio-worker/AGENTS.md) - 빌드 파이프라인
 - [cloudflare-workflows-requirements.md](./cloudflare-workflows-requirements.md) - Job Automation 요구사항
+- [planning/milestones.md](./planning/milestones.md) - 마일스톤 로드맵
