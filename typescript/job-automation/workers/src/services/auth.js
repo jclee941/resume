@@ -31,10 +31,10 @@ export function requiresWebhookSignature(pathname) {
   return WEBHOOK_ROUTES.some((route) => pathname.startsWith(route));
 }
 
-/**
- * Constant-time string comparison to prevent timing attacks
- */
-function constantTimeCompare(a, b) {
+export function constantTimeCompare(a, b) {
+  if (typeof a !== 'string' || typeof b !== 'string') {
+    return false;
+  }
   if (a.length !== b.length) {
     return false;
   }
@@ -43,6 +43,13 @@ function constantTimeCompare(a, b) {
     mismatch |= a.charCodeAt(i) ^ b.charCodeAt(i);
   }
   return mismatch === 0;
+}
+
+export function verifySecret(provided, expected) {
+  if (!provided || !expected) {
+    return false;
+  }
+  return constantTimeCompare(provided, expected);
 }
 
 /**
@@ -87,7 +94,7 @@ export function verifyAdminAuth(request, env) {
     return { ok: false, status: 401, error: 'Unauthorized' };
   }
 
-  if (!constantTimeCompare(token, env.ADMIN_TOKEN)) {
+  if (!verifySecret(token, env.ADMIN_TOKEN)) {
     return { ok: false, status: 401, error: 'Unauthorized' };
   }
 

@@ -55,6 +55,8 @@ import platformAuthTool from './tools/auth-integrated.js';
 import profileTool from './tools/profile.js';
 import resumeTool from './tools/resume.js';
 import resumeSyncTool from './tools/resume-sync.js';
+import resumeGeneratorTool from './tools/resume-generator.js';
+import jobMatcherTool from './tools/job-matcher.js';
 
 // Tool registry
 const tools = {
@@ -70,6 +72,8 @@ const tools = {
   [profileTool.name]: profileTool,
   [resumeTool.name]: resumeTool,
   [resumeSyncTool.name]: resumeSyncTool,
+  [resumeGeneratorTool.name]: resumeGeneratorTool,
+  [jobMatcherTool.name]: jobMatcherTool,
 };
 
 const __dirname = dirname(fileURLToPath(import.meta.url));

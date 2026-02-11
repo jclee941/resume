@@ -16,7 +16,7 @@ const {
 describe('Utils Module', () => {
   describe('safeReadFile', () => {
     test('should read existing file', () => {
-      const filePath = path.join(__dirname, '../../../package.json');
+      const filePath = path.join(__dirname, '../../../../package.json');
       const content = safeReadFile(filePath, 'utf-8');
       expect(content).toContain('"name"');
       expect(content).toContain('resume');
@@ -34,7 +34,7 @@ describe('Utils Module', () => {
 
     test('should read binary file with null encoding', () => {
       // Use a small known file
-      const filePath = path.join(__dirname, '../../../package.json');
+      const filePath = path.join(__dirname, '../../../../package.json');
       const content = safeReadFile(filePath, null);
       expect(Buffer.isBuffer(content)).toBe(true);
     });
@@ -134,12 +134,12 @@ describe('Utils Module', () => {
     test('should read multiple files', () => {
       const files = [
         {
-          path: path.join(__dirname, '../../../package.json'),
+          path: path.join(__dirname, '../../../../package.json'),
           encoding: 'utf-8',
           name: 'pkg',
         },
         {
-          path: path.join(__dirname, '../../../README.md'),
+          path: path.join(__dirname, '../../../../README.md'),
           encoding: 'utf-8',
           name: 'readme',
         },
@@ -152,7 +152,7 @@ describe('Utils Module', () => {
     test('should throw error if any file is missing', () => {
       const files = [
         {
-          path: path.join(__dirname, '../../../package.json'),
+          path: path.join(__dirname, '../../../../package.json'),
           encoding: 'utf-8',
           name: 'pkg',
         },

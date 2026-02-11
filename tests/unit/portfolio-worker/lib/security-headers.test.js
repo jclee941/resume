@@ -40,6 +40,7 @@ describe('Security Headers Module', () => {
       expect(headers['Content-Type']).toBe('text/html;charset=UTF-8');
       expect(headers['Content-Security-Policy']).toContain("'sha256-abc123'");
       expect(headers['Content-Security-Policy']).toContain("'sha256-def456'");
+      expect(headers['Content-Security-Policy']).toContain("'strict-dynamic'");
     });
 
     test('should include security headers', () => {
@@ -66,6 +67,20 @@ describe('Security Headers Module', () => {
       const headers = generateSecurityHeaders([], []);
       expect(headers['Permissions-Policy']).toContain('camera=()');
       expect(headers['Permissions-Policy']).toContain('microphone=()');
+      expect(headers['Permissions-Policy']).toContain('geolocation=()');
+    });
+
+    test('should include modern cross-origin hardening headers', () => {
+      const headers = generateSecurityHeaders([], []);
+      expect(headers['Cross-Origin-Opener-Policy']).toBe('same-origin');
+      expect(headers['Cross-Origin-Resource-Policy']).toBe('same-origin');
+      expect(headers['Origin-Agent-Cluster']).toBe('?1');
+    });
+
+    test('should restrict framing and script origins', () => {
+      const headers = generateSecurityHeaders([], []);
+      expect(headers['Content-Security-Policy']).toContain("frame-src 'none'");
+      expect(headers['Content-Security-Policy']).toContain('https://accounts.google.com');
     });
   });
 

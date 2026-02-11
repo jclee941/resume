@@ -1,4 +1,5 @@
 import { encrypt, decrypt } from '../utils/crypto.js';
+import { verifySecret } from '../services/auth.js';
 import { normalizeError } from '../../../src/shared/errors/index.js';
 
 export class AuthHandler {
@@ -177,7 +178,7 @@ export class AuthHandler {
   async syncFromScript(request) {
     // Verify secret
     const secret = request.headers.get('X-Auth-Sync-Secret');
-    if (!secret || secret !== this.env.AUTH_SYNC_SECRET) {
+    if (!verifySecret(secret, this.env.AUTH_SYNC_SECRET)) {
       return this.jsonResponse({ error: 'Unauthorized' }, 401);
     }
 

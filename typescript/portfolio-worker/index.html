@@ -179,7 +179,7 @@
     </style>
 
     <style>
-      <!-- CSS_PLACEHOLDER -->
+      /* CSS_PLACEHOLDER */
     </style>
 
     <!-- Cloudflare Web Analytics -->
@@ -612,7 +612,13 @@
       })();
 
       // Interactive Terminal Commands (preparation for Phase 2)
-      window.__RESUME_CHAT_DATA__ = /* RESUME_CHAT_DATA_PLACEHOLDER */ {};
+      window.__RESUME_CHAT_DATA__ = (function () {
+        try {
+          return JSON.parse(atob(/* RESUME_CHAT_DATA_B64_PLACEHOLDER */ ''));
+        } catch (_) {
+          return {};
+        }
+      })();
 
       function escapeHtml(value) {
         return String(value || '')

@@ -163,14 +163,22 @@
         overflow: hidden;
         border-right: 3px solid var(--cyber-cyan);
         white-space: nowrap;
-        animation: typing 2s steps(20) forwards, blink 0.7s step-end infinite;
+        animation:
+          typing 2s steps(20) forwards,
+          blink 0.7s step-end infinite;
       }
       @keyframes typing {
-        from { width: 0; }
-        to { width: 100%; }
+        from {
+          width: 0;
+        }
+        to {
+          width: 100%;
+        }
       }
       @keyframes blink {
-        50% { border-color: transparent; }
+        50% {
+          border-color: transparent;
+        }
       }
       .terminal-prompt {
         color: var(--cyber-green, #00ff88);

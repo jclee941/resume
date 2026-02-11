@@ -110,7 +110,7 @@ function generateChatRoute(opts) {
             });
           }
 
-          const resumeData = ${opts.resumeChatDataJson};
+          const resumeData = JSON.parse(atob('${opts.resumeChatDataBase64}'));
 
           const normalize = (value) =>
             String(value || '')
@@ -180,7 +180,7 @@ function generateChatRoute(opts) {
           let answer = localAnswer;
           if (env?.AI?.run) {
             try {
-              const model = ${opts.aiModelJson};
+              const model = '${opts.aiModel}';
               const contextJson = JSON.stringify(resumeData);
               const systemPrompt =
                 'You are a resume assistant for Jaecheol Lee. Answer only using the resume context. Keep answers concise and factual. ' +

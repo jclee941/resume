@@ -60,8 +60,8 @@ OPENROUTER_API_KEY=[REDACTED_ROTATE_REQUIRED]
 
 **Location:**
 
-- `wanted-mcp/scripts/quick-login.js:36` - `'bingogo1l7!'`
-- `wanted-mcp/scripts/auto-login.js:224` - `'bingogo1l7!'`
+- `wanted-mcp/scripts/quick-login.js:36` - `[REDACTED_ROTATE_REQUIRED]`
+- `wanted-mcp/scripts/auto-login.js:224` - `[REDACTED_ROTATE_REQUIRED]`
 
 **Fix:**
 

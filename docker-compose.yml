@@ -1,99 +1,32 @@
-version: "3.8"
 services:
-  resume:
+  mcp-server:
+    container_name: resume-mcp-server
     build:
       context: .
       dockerfile: Dockerfile
-    image: resume:latest
-    container_name: resume-service
-    ports:
-      - ${PORT:-3000}:3000
+    env_file:
+      - .env
     environment:
-      - NODE_ENV=${NODE_ENV:-production}
-      - PORT=3000
-      - npm_package_version=${npm_package_version:-1.0.30}
+      NODE_ENV: production
+      PORT: 3000
+    ports:
+      - '3000:3000'
     volumes:
-      - ./web:/app/web:ro
-    restart: unless-stopped
+      - job_automation_data:/app/typescript/job-automation/.data
     healthcheck:
       test:
-        - CMD
-        - wget
-        - --no-verbose
-        - --tries=1
-        - --spider
-        - http://localhost:3000/health
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://127.0.0.1:3000/health').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
       interval: 30s
-      timeout: 10s
+      timeout: 5s
       retries: 3
-      start_period: 10s
-    networks:
-      - resume-network
-    env_file:
-      - /home/jclee/infra/infisical/agent-output/infisical-secrets.env
-  job-dashboard:
-    build:
-      context: ./job-automation-mcp
-      dockerfile: Dockerfile
-    image: job-dashboard:latest
-    container_name: job-dashboard
-    ports:
-      - 3456:3456
-    environment:
-      - NODE_ENV=production
-      - PORT=3456
-      - RESUME_BASE_PATH=/app
-    volumes:
-      - ~/.claude/data:/root/.claude/data
-      - ~/.OpenCode/data:/root/.OpenCode/data
-      - ./resumes:/app/resumes:ro
+      start_period: 20s
     restart: unless-stopped
-    healthcheck:
-      test:
-        - CMD-SHELL
-        - wget --quiet --tries=1 --spider http://localhost:3456/api/health || exit 1
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
-    networks:
-      - resume-network
-    env_file:
-      - /home/jclee/infra/infisical/agent-output/infisical-secrets.env
-  nginx:
-    image: nginx:alpine
-    container_name: resume-nginx
-    ports:
-      - 80:80
-      - 443:443
-    volumes:
-      - ./infrastructure/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./infrastructure/nginx/ssl:/etc/nginx/ssl:ro
-      - ./web:/var/www/resume:ro
-    depends_on:
-      - resume
-    networks:
-      - resume-network
-    profiles:
-      - production
-    restart: unless-stopped
-    env_file:
-      - /home/jclee/infra/infisical/agent-output/infisical-secrets.env
-  job-tunnel:
-    image: cloudflare/cloudflared:latest
-    container_name: job-tunnel
-    restart: unless-stopped
-    command: tunnel --config /etc/cloudflared/config.yml run
-    volumes:
-      - /home/jclee/.cloudflared/config.yml:/etc/cloudflared/config.yml:ro
-      - /home/jclee/.cloudflared/c808594a-0589-45be-a297-28da15f6d2a1.json:/etc/cloudflared/credentials.json:ro
-    network_mode: host
-    depends_on:
-      - job-dashboard
 
-networks:
-  resume-network:
-    driver: bridge
 volumes:
-  logs:
+  job_automation_data:
     driver: local

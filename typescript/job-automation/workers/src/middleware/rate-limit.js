@@ -1,92 +1,142 @@
-/**
- * Rate limiting middleware using KV token bucket algorithm
- * Limits requests per IP + route group
- */
-
-const RATE_LIMITS = {
-  admin: { tokens: 60, interval: 60 }, // 60 requests per minute
-  webhook: { tokens: 30, interval: 60 }, // 30 requests per minute
-  auth: { tokens: 10, interval: 60 }, // 10 requests per minute (stricter)
+const RATE_LIMIT_POLICIES = {
+  auth: { limit: 10, windowSec: 60 },
+  webhook: { limit: 20, windowSec: 60 },
+  api: { limit: 80, windowSec: 60 },
+  dashboard: { limit: 180, windowSec: 60 },
 };
 
-/**
- * Get rate limit group for a pathname
- * @param {string} pathname
- * @returns {string|null}
- */
-function getRateLimitGroup(pathname) {
-  if (pathname.startsWith('/api/auth')) return 'auth';
-  if (pathname.startsWith('/api/slack/interactions')) {
-    return 'webhook';
-  }
-  if (pathname.startsWith('/api/')) return 'admin';
-  return null;
+const STRIKE_TTL_SEC = 300;
+const BLOCK_TTL_SEC = 60;
+
+function getClientIp(request) {
+  const cfIp = request.headers.get('cf-connecting-ip');
+  if (cfIp) return cfIp;
+
+  const forwarded = request.headers.get('x-forwarded-for');
+  if (forwarded) return forwarded.split(',')[0].trim();
+
+  return 'unknown';
 }
 
-/**
- * Check rate limit using KV token bucket
- * @param {Request} request
- * @param {string} pathname
- * @param {Object} env - Must have RATE_LIMIT_KV binding
- * @returns {Promise<{ok: boolean, status?: number, error?: string, headers?: Object}>}
- */
-export async function checkRateLimit(request, pathname, env) {
-  const group = getRateLimitGroup(pathname);
-  if (!group) return { ok: true };
+function getRateLimitPolicy(pathname) {
+  if (pathname.startsWith('/api/auth')) return ['auth', RATE_LIMIT_POLICIES.auth];
+  if (pathname.startsWith('/api/slack/interactions')) {
+    return ['webhook', RATE_LIMIT_POLICIES.webhook];
+  }
+  if (pathname.startsWith('/api/')) return ['api', RATE_LIMIT_POLICIES.api];
+  return ['dashboard', RATE_LIMIT_POLICIES.dashboard];
+}
 
-  // Skip if KV not configured (graceful degradation)
+function normalizeEndpoint(pathname) {
+  const normalized = pathname
+    .replace(/[0-9a-f]{8}-[0-9a-f-]{27,}/gi, ':id')
+    .replace(/\/\d+(?=\/|$)/g, '/:id');
+  return normalized || '/';
+}
+
+function getHeaderSet(policy, remaining, resetAt) {
+  return {
+    'X-RateLimit-Limit': String(policy.limit),
+    'X-RateLimit-Remaining': String(Math.max(remaining, 0)),
+    'X-RateLimit-Reset': String(resetAt),
+  };
+}
+
+export async function checkRateLimit(request, pathname, env) {
   if (!env?.RATE_LIMIT_KV) {
     return { ok: true };
   }
 
-  const limit = RATE_LIMITS[group];
-  const ip =
-    request.headers.get('cf-connecting-ip') ||
-    request.headers.get('x-forwarded-for') ||
-    'unknown';
-  const key = `ratelimit:${group}:${ip}`;
+  const [policyName, policy] = getRateLimitPolicy(pathname);
+  const endpoint = normalizeEndpoint(pathname);
+  const ip = getClientIp(request);
+  const baseKey = `ratelimit:v2:${policyName}:${ip}:${endpoint}`;
 
   try {
     const now = Math.floor(Date.now() / 1000);
-    const windowStart = Math.floor(now / limit.interval) * limit.interval;
-    const windowKey = `${key}:${windowStart}`;
+    const blockKey = `${baseKey}:block`;
+    const blockState = await env.RATE_LIMIT_KV.get(blockKey, { type: 'json' });
 
-    // Get current count
+    if (blockState?.until && blockState.until > now) {
+      const retryAfter = blockState.until - now;
+      return {
+        ok: false,
+        status: 429,
+        error: 'Too many requests - temporarily blocked',
+        headers: {
+          'Retry-After': String(retryAfter),
+          ...getHeaderSet(policy, 0, blockState.until),
+          'X-RateLimit-Blocked': 'true',
+          'X-RateLimit-Violation': '3',
+        },
+      };
+    }
+
+    const windowStart = Math.floor(now / policy.windowSec) * policy.windowSec;
+    const resetAt = windowStart + policy.windowSec;
+    const windowKey = `${baseKey}:window:${windowStart}`;
     const current = await env.RATE_LIMIT_KV.get(windowKey, { type: 'json' });
     const count = current?.count || 0;
 
-    if (count >= limit.tokens) {
-      const retryAfter = windowStart + limit.interval - now;
+    if (count + 1 <= policy.limit) {
+      await env.RATE_LIMIT_KV.put(windowKey, JSON.stringify({ count: count + 1 }), {
+        expirationTtl: policy.windowSec + 5,
+      });
+
+      return {
+        ok: true,
+        headers: getHeaderSet(policy, policy.limit - count - 1, resetAt),
+      };
+    }
+
+    const strikeKey = `${baseKey}:strikes`;
+    const strikeState = await env.RATE_LIMIT_KV.get(strikeKey, { type: 'json' });
+    const strikes = (strikeState?.count || 0) + 1;
+    await env.RATE_LIMIT_KV.put(strikeKey, JSON.stringify({ count: strikes }), {
+      expirationTtl: STRIKE_TTL_SEC,
+    });
+
+    if (strikes === 1) {
+      return {
+        ok: true,
+        headers: {
+          ...getHeaderSet(policy, 0, resetAt),
+          'X-RateLimit-Warn': 'true',
+          'X-RateLimit-Violation': '1',
+        },
+      };
+    }
+
+    if (strikes === 2) {
       return {
         ok: false,
         status: 429,
         error: 'Too many requests',
         headers: {
-          'Retry-After': String(retryAfter),
-          'X-RateLimit-Limit': String(limit.tokens),
-          'X-RateLimit-Remaining': '0',
-          'X-RateLimit-Reset': String(windowStart + limit.interval),
+          'Retry-After': String(resetAt - now),
+          ...getHeaderSet(policy, 0, resetAt),
+          'X-RateLimit-Violation': '2',
         },
       };
     }
 
-    // Increment count
-    await env.RATE_LIMIT_KV.put(
-      windowKey,
-      JSON.stringify({ count: count + 1 }),
-      { expirationTtl: limit.interval + 10 }, // TTL slightly longer than window
-    );
+    const blockedUntil = now + BLOCK_TTL_SEC;
+    await env.RATE_LIMIT_KV.put(blockKey, JSON.stringify({ until: blockedUntil }), {
+      expirationTtl: BLOCK_TTL_SEC,
+    });
 
     return {
-      ok: true,
+      ok: false,
+      status: 429,
+      error: 'Too many requests - temporarily blocked',
       headers: {
-        'X-RateLimit-Limit': String(limit.tokens),
-        'X-RateLimit-Remaining': String(limit.tokens - count - 1),
-        'X-RateLimit-Reset': String(windowStart + limit.interval),
+        'Retry-After': String(BLOCK_TTL_SEC),
+        ...getHeaderSet(policy, 0, blockedUntil),
+        'X-RateLimit-Blocked': 'true',
+        'X-RateLimit-Violation': '3',
       },
     };
   } catch (error) {
-    // On KV error, allow request (fail-open for availability)
     console.error('Rate limit KV error:', error);
     return { ok: true };
   }

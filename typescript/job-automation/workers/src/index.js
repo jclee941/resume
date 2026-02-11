@@ -12,6 +12,7 @@ import {
   requiresWebhookSignature,
   verifyAdminAuth,
   verifyWebhookSignature,
+  verifySecret,
   createAuthCookie,
   clearAuthCookie,
 } from './services/auth.js';
@@ -183,7 +184,7 @@ export default {
       try {
         const body = await req.json();
         const { token } = body;
-        if (!token || token !== env.ADMIN_TOKEN) {
+        if (!verifySecret(token || null, env.ADMIN_TOKEN)) {
           return jsonResponse({ error: 'Invalid token' }, 401);
         }
         const response = jsonResponse({ success: true });

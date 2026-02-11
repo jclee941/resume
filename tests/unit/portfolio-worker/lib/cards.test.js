@@ -1,5 +1,9 @@
 /**
  * Unit tests for web/lib/cards.js
+ *
+ * Updated to match current cards.js HTML output structure:
+ * - Resume cards: resume-item card, resume-title, resume-period, resume-tags, tag spans
+ * - Project cards: project-item card, project-title, project-link-title with ↗ arrow, project-tech
  */
 
 const {
@@ -25,73 +29,75 @@ describe('Cards Module', () => {
   describe('generateResumeCards', () => {
     const validResumeData = [
       {
-        icon: '📄',
         title: 'Test Resume',
+        period: '2024-01 ~ Present',
         description: 'Test description',
         stats: ['Stat1', 'Stat2'],
-        pdfUrl: 'https://example.com/test.pdf',
-        docxUrl: 'https://example.com/test.docx',
       },
     ];
 
     test('should generate HTML for resume card', () => {
       const html = generateResumeCards(validResumeData, 'testhash');
 
-      expect(html).toContain('doc-card');
-      expect(html).toContain('📄');
+      expect(html).toContain('resume-item card');
+      expect(html).toContain('resume-title');
       expect(html).toContain('Test Resume');
       expect(html).toContain('Test description');
     });
 
-    test('should include stats', () => {
+    test('should include period in header', () => {
+      const html = generateResumeCards(validResumeData, 'testhash');
+
+      expect(html).toContain('resume-period');
+      expect(html).toContain('2024-01 ~ Present');
+    });
+
+    test('should include stats as tags', () => {
       const html = generateResumeCards(validResumeData, 'testhash');
 
       expect(html).toContain('Stat1');
       expect(html).toContain('Stat2');
-      expect(html).toContain('doc-stat');
+      expect(html).toContain('resume-tags');
+      expect(html).toContain('class="tag"');
     });
 
-    test('should include PDF and DOCX links for non-highlighted card', () => {
-      const html = generateResumeCards(validResumeData, 'testhash');
-
-      expect(html).toContain('href="https://example.com/test.pdf"');
-      expect(html).toContain('href="https://example.com/test.docx"');
-      expect(html).toContain('PDF');
-      expect(html).toContain('DOCX');
-    });
-
-    test('should generate highlighted card with Complete PDF link', () => {
-      const highlightedData = [
+    test('should not render tags section when stats are empty', () => {
+      const noStatsData = [
         {
-          icon: '⭐',
-          title: 'Highlighted Resume',
-          description: 'Important resume',
-          stats: ['Key', 'Skills'],
-          highlight: true,
-          completePdfUrl: 'https://example.com/complete.pdf',
+          title: 'No Stats Resume',
+          period: '2024',
+          description: 'No stats here',
+          stats: [],
         },
       ];
 
-      const html = generateResumeCards(highlightedData, 'highlight-hash');
+      const html = generateResumeCards(noStatsData, 'no-stats-hash');
 
-      expect(html).toContain('doc-card-highlight');
-      expect(html).toContain('href="https://example.com/complete.pdf"');
-      expect(html).toContain('Complete PDF');
+      expect(html).not.toContain('resume-tags');
     });
 
-    test('should include accessibility attributes', () => {
+    test('should render correct list item structure', () => {
       const html = generateResumeCards(validResumeData, 'testhash');
 
-      expect(html).toContain('aria-hidden="true"');
-      expect(html).toContain('role="list"');
-      expect(html).toContain('role="listitem"');
-      expect(html).toContain('aria-label');
+      expect(html).toContain('<li class="resume-item card">');
+      expect(html).toContain('<div class="resume-header">');
+      expect(html).toContain('<h3 class="resume-title">');
+      expect(html).toContain('<p class="resume-description">');
     });
 
-    test('should generate HTML comment with project title', () => {
-      const html = generateResumeCards(validResumeData, 'testhash');
+    test('should convert newlines to br tags in description', () => {
+      const dataWithNewlines = [
+        {
+          title: 'Newline Test',
+          period: '2024',
+          description: 'Line 1\nLine 2',
+          stats: [],
+        },
+      ];
 
-      expect(html).toContain('<!-- Project: Test Resume -->');
+      const html = generateResumeCards(dataWithNewlines, 'newline-hash');
+
+      expect(html).toContain('Line 1<br>Line 2');
     });
 
     test('should use cache on repeated calls with same hash', () => {
@@ -112,20 +118,16 @@ describe('Cards Module', () => {
     test('should generate multiple cards', () => {
       const multipleData = [
         {
-          icon: '📄',
           title: 'Resume 1',
+          period: '2024',
           description: 'Desc 1',
           stats: [],
-          pdfUrl: 'a',
-          docxUrl: 'b',
         },
         {
-          icon: '📋',
           title: 'Resume 2',
+          period: '2023',
           description: 'Desc 2',
           stats: [],
-          pdfUrl: 'c',
-          docxUrl: 'd',
         },
       ];
 
@@ -133,14 +135,29 @@ describe('Cards Module', () => {
 
       expect(html).toContain('Resume 1');
       expect(html).toContain('Resume 2');
-      expect((html.match(/doc-card/g) || []).length).toBeGreaterThanOrEqual(2);
+      expect((html.match(/resume-item card/g) || []).length).toBeGreaterThanOrEqual(2);
+    });
+
+    test('should escape HTML in title and description', () => {
+      const xssData = [
+        {
+          title: '<script>alert("xss")</script>',
+          period: '2024',
+          description: 'Safe <b>content</b>',
+          stats: ['<img onerror=alert(1)>'],
+        },
+      ];
+
+      const html = generateResumeCards(xssData, 'xss-hash');
+
+      expect(html).not.toContain('<script>');
+      expect(html).toContain('&lt;script&gt;');
     });
   });
 
   describe('generateProjectCards', () => {
     const validProjectData = [
       {
-        icon: '🚀',
         title: 'Test Project',
         tech: 'Node.js, React',
         description: 'A test project',
@@ -152,20 +169,19 @@ describe('Cards Module', () => {
     test('should generate HTML for project card', () => {
       const html = generateProjectCards(validProjectData, 'testhash');
 
-      expect(html).toContain('project-card');
-      expect(html).toContain('🚀');
+      expect(html).toContain('project-item card');
+      expect(html).toContain('project-title');
       expect(html).toContain('Test Project');
       expect(html).toContain('Node.js, React');
       expect(html).toContain('A test project');
     });
 
-    test('should include Live Demo and GitHub links', () => {
+    test('should include link with arrow when liveUrl exists', () => {
       const html = generateProjectCards(validProjectData, 'testhash');
 
       expect(html).toContain('href="https://example.com"');
-      expect(html).toContain('href="https://github.com/test"');
-      expect(html).toContain('Live Demo');
-      expect(html).toContain('GitHub');
+      expect(html).toContain('project-link-title');
+      expect(html).toContain('<span class="arrow">↗</span>');
     });
 
     test('should set external link attributes', () => {
@@ -175,44 +191,48 @@ describe('Cards Module', () => {
       expect(html).toContain('rel="noopener noreferrer"');
     });
 
-    test('should generate Grafana project with dashboards', () => {
-      const grafanaProject = [
+    test('should use repoUrl when liveUrl is not available', () => {
+      const repoOnlyProject = [
         {
-          icon: '📊',
-          title: 'Grafana Dashboards',
-          tech: 'Prometheus, Grafana',
-          description: 'Monitoring dashboards',
-          dashboards: [
-            {
-              name: 'Main Dashboard',
-              url: 'https://grafana.example.com/d/main',
-            },
-            { name: 'Grafana Home', url: 'https://grafana.example.com' },
-          ],
-          documentationUrl: 'https://docs.example.com',
+          title: 'Repo Only',
+          tech: 'Python',
+          description: 'Repo only project',
+          repoUrl: 'https://github.com/test/repo',
         },
       ];
 
-      const html = generateProjectCards(grafanaProject, 'grafana-hash');
+      const html = generateProjectCards(repoOnlyProject, 'repo-only-hash');
 
-      expect(html).toContain('href="https://grafana.example.com/d/main"');
-      expect(html).toContain('Main Dashboard');
-      expect(html).toContain('href="https://docs.example.com"');
-      expect(html).toContain('Documentation');
+      expect(html).toContain('href="https://github.com/test/repo"');
+      expect(html).toContain('project-link-title');
     });
 
-    test('should include accessibility attributes', () => {
-      const html = generateProjectCards(validProjectData, 'testhash');
+    test('should render as div when no link exists', () => {
+      const noLinkProject = [
+        {
+          title: 'No Link Project',
+          tech: 'Bash',
+          description: 'No URLs',
+        },
+      ];
 
-      expect(html).toContain('aria-hidden="true"');
-      expect(html).toContain('role="group"');
-      expect(html).toContain('aria-label');
+      const html = generateProjectCards(noLinkProject, 'no-link-hash');
+
+      expect(html).toContain('<div class="project-link-title">');
+      expect(html).not.toContain('<a ');
     });
 
-    test('should generate HTML comment with project title', () => {
+    test('should include aria-label for accessibility', () => {
       const html = generateProjectCards(validProjectData, 'testhash');
 
-      expect(html).toContain('<!-- Project: Test Project -->');
+      expect(html).toContain('aria-label="View Test Project project"');
+    });
+
+    test('should render project-tech section', () => {
+      const html = generateProjectCards(validProjectData, 'testhash');
+
+      expect(html).toContain('<div class="project-tech">');
+      expect(html).toContain('Node.js, React');
     });
 
     test('should use cache on repeated calls with same hash', () => {
@@ -233,7 +253,6 @@ describe('Cards Module', () => {
     test('should generate multiple project cards', () => {
       const multipleProjects = [
         {
-          icon: '🚀',
           title: 'Project 1',
           tech: 'Tech 1',
           description: 'Desc 1',
@@ -241,7 +260,6 @@ describe('Cards Module', () => {
           repoUrl: 'b',
         },
         {
-          icon: '💻',
           title: 'Project 2',
           tech: 'Tech 2',
           description: 'Desc 2',
@@ -254,31 +272,12 @@ describe('Cards Module', () => {
 
       expect(html).toContain('Project 1');
       expect(html).toContain('Project 2');
-      expect((html.match(/project-card/g) || []).length).toBeGreaterThanOrEqual(2);
-    });
-
-    test('should handle project with only documentation URL', () => {
-      const docOnlyProject = [
-        {
-          icon: '📖',
-          title: 'Doc Project',
-          tech: 'Markdown',
-          description: 'Documentation only',
-          dashboards: [{ name: 'Home', url: 'https://example.com' }],
-          documentationUrl: 'https://docs.example.com',
-        },
-      ];
-
-      const html = generateProjectCards(docOnlyProject, 'doc-only-hash');
-
-      expect(html).toContain('Documentation');
-      expect(html).toContain('href="https://docs.example.com"');
+      expect((html.match(/project-item card/g) || []).length).toBeGreaterThanOrEqual(2);
     });
 
     test('should not render optional sections when not provided', () => {
       const minimalProject = [
         {
-          icon: '📦',
           title: 'Minimal Project',
           tech: 'Node.js',
           description: 'A minimal project',
@@ -298,7 +297,6 @@ describe('Cards Module', () => {
     test('should handle empty metrics object', () => {
       const projectWithEmptyMetrics = [
         {
-          icon: '📦',
           title: 'Empty Metrics Project',
           tech: 'Node.js',
           description: 'A project with empty metrics',
@@ -316,7 +314,6 @@ describe('Cards Module', () => {
     test('should handle empty skills array', () => {
       const projectWithEmptySkills = [
         {
-          icon: '📦',
           title: 'Empty Skills Project',
           tech: 'Node.js',
           description: 'A project with empty skills',
@@ -329,6 +326,24 @@ describe('Cards Module', () => {
       const html = generateProjectCards(projectWithEmptySkills, 'empty-skills-hash');
 
       expect(html).not.toContain('project-skills');
+    });
+
+    test('should escape HTML in project data', () => {
+      const xssProject = [
+        {
+          title: '<img src=x onerror=alert(1)>',
+          tech: '<script>evil</script>',
+          description: 'Normal description',
+          liveUrl: 'https://example.com',
+        },
+      ];
+
+      const html = generateProjectCards(xssProject, 'xss-project-hash');
+
+      expect(html).not.toContain('<img src=x');
+      expect(html).not.toContain('<script>evil');
+      expect(html).toContain('&lt;img');
+      expect(html).toContain('&lt;script&gt;');
     });
   });
 });

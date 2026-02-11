@@ -34,6 +34,8 @@ async function runWorkerBuild({ baseDir, version, allowedEmails, logger }) {
   } = await readBuildInputs({ baseDir, logger });
 
   const { projectData, templates } = processProjectData({ projectDataRaw, logger });
+  const resumeChatDataBase64Literal = `'${Buffer.from(JSON.stringify(projectData), 'utf-8').toString('base64')}'`;
+  const workerAiModel = '@cf/meta/llama-2-7b-chat-int8';
   const { ogImageBase64, ogImageEnBase64, resumePdfBase64 } = encodeBinaryAssets({
     ogImageBuffer,
     ogImageEnBuffer,
@@ -62,6 +64,7 @@ async function runWorkerBuild({ baseDir, version, allowedEmails, logger }) {
     resumePdfUrl: projectData.resumeDownload.pdfUrl,
     resumeDocxUrl: projectData.resumeDownload.docxUrl,
     resumeMdUrl: projectData.resumeDownload.mdUrl,
+    resumeChatDataBase64: resumeChatDataBase64Literal,
   });
   logger.log('✓ HTML minified\n');
 
@@ -78,6 +81,7 @@ async function runWorkerBuild({ baseDir, version, allowedEmails, logger }) {
     resumePdfUrl: projectData.resumeDownload.pdfUrl,
     resumeDocxUrl: projectData.resumeDownload.docxUrl,
     resumeMdUrl: projectData.resumeDownload.mdUrl,
+    resumeChatDataBase64: resumeChatDataBase64Literal,
   });
   logger.log('✓ English HTML processed\n');
 
@@ -125,6 +129,8 @@ async function runWorkerBuild({ baseDir, version, allowedEmails, logger }) {
     metrics,
     rateLimitConfig,
     allowedEmails,
+    resumeChatDataBase64: Buffer.from(JSON.stringify(projectData), 'utf-8').toString('base64'),
+    aiModel: workerAiModel,
     version,
   });
 

@@ -25,6 +25,7 @@
     "test": "cd typescript/job-automation && npm test",
     "test:coverage": "cd typescript/job-automation && c8 npm test",
     "test:e2e": "playwright test",
+    "security:audit": "npm audit --audit-level=high",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "lint:agents": "bash tools/scripts/verification/verify-agents-compliance.sh",

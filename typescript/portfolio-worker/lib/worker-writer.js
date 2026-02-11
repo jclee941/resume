@@ -22,6 +22,7 @@ const {
 const {
   generateAuthRoutes,
   generateControlRoutes,
+  generateChatRoute,
   generateCfStatsRoute,
   generateVitalsRoute,
   generateTrackRoute,
@@ -65,6 +66,10 @@ function buildWorkerCode(options) {
     generatePageRoutes() +
     generateAuthRoutes({ allowedEmailsJson: JSON.stringify(options.allowedEmails) }) +
     generateControlRoutes() +
+    generateChatRoute({
+      resumeChatDataBase64: options.resumeChatDataBase64,
+      aiModel: options.aiModel,
+    }) +
     generateCfStatsRoute() +
     generateStaticRoutes() +
     generateHealthRoute({ version: options.version, deployedAt: options.deployedAt }) +

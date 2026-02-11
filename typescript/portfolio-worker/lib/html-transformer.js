@@ -5,6 +5,23 @@
 
 const { minify } = require('html-minifier-terser');
 
+const EXTERNAL_SRI = {
+  GA_GTAG: 'sha384-D95pSxlR5vSF2Mt3lH3SvKEs9L5+WTLM53Lx1o515ZXOlyejGODwfb4YPse/qZk9',
+  GOOGLE_GSI: 'sha384-Li3+JwrJUjnnr4ZvOP9SRczNCfPkOLWRVCzUTrD2TOhgQLBfRKs5Q5/lxh2tWguw',
+};
+
+function applyExternalSri(html) {
+  return html
+    .replace(
+      /<script\s+async\s+src="https:\/\/www\.googletagmanager\.com\/gtag\/js\?id=G-P9E8XY5K2L"><\/script>/g,
+      `<script async src="https://www.googletagmanager.com/gtag/js?id=G-P9E8XY5K2L" integrity="${EXTERNAL_SRI.GA_GTAG}" crossorigin="anonymous" referrerpolicy="no-referrer"></script>`
+    )
+    .replace(
+      /<script\s+src="https:\/\/accounts\.google\.com\/gsi\/client"\s+async\s+defer><\/script>/g,
+      `<script src="https://accounts.google.com/gsi/client" async defer integrity="${EXTERNAL_SRI.GOOGLE_GSI}" crossorigin="anonymous" referrerpolicy="no-referrer"></script>`
+    );
+}
+
 /**
  * Replace known HTML placeholders.
  * @param {string} html - Raw HTML template.
@@ -21,11 +38,12 @@ const { minify } = require('html-minifier-terser');
  * @param {string} options.resumePdfUrl - Resume PDF URL.
  * @param {string} options.resumeDocxUrl - Resume DOCX URL.
  * @param {string} options.resumeMdUrl - Resume markdown URL.
- * @param {string} [options.resumeChatDataJson] - Serialized resume JSON for client chat.
+ * @param {string} [options.resumeChatDataBase64] - Base64-encoded resume JSON for client chat.
  * @returns {string} HTML with placeholders replaced.
  */
 function injectPlaceholders(html, options) {
   return html
+    .replace('/* CSS_PLACEHOLDER */', options.cssContent)
     .replace('<!-- CSS_PLACEHOLDER -->', options.cssContent)
     .replace('<!-- HERO_CONTENT_PLACEHOLDER -->', options.heroContentHtml)
     .replace('<!-- RESUME_DESCRIPTION_PLACEHOLDER -->', options.resumeDescriptionHtml)
@@ -38,7 +56,7 @@ function injectPlaceholders(html, options) {
     .replace('<!-- RESUME_PDF_URL -->', options.resumePdfUrl)
     .replace('<!-- RESUME_DOCX_URL -->', options.resumeDocxUrl)
     .replace('<!-- RESUME_MD_URL -->', options.resumeMdUrl)
-    .replace('/* RESUME_CHAT_DATA_PLACEHOLDER */ {}', options.resumeChatDataJson || '{}');
+    .replace("/* RESUME_CHAT_DATA_B64_PLACEHOLDER */ ''", options.resumeChatDataBase64 || "''");
 }
 
 /**
@@ -77,7 +95,7 @@ function escapeForTemplateLiteral(html, escapePatterns) {
  */
 async function buildLocalizedHtml(html, options) {
   const injected = injectPlaceholders(html, options);
-  return minifyHtml(injected);
+  return minifyHtml(applyExternalSri(injected));
 }
 
 module.exports = {

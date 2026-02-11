@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 describe('Worker Generator', () => {
-  const webDir = path.join(__dirname, '../../web');
+  const webDir = path.join(__dirname, '../../../typescript/portfolio-worker');
   const workerPath = path.join(webDir, 'worker.js');
 
   beforeAll(() => {
@@ -42,9 +42,7 @@ describe('Worker Generator', () => {
 
       // Should not contain unescaped backticks within template literals
       // This is a simplified check - actual implementation may vary
-      const templateLiteralMatches = workerContent.match(
-        /const INDEX_HTML = `[\s\S]*?`;/g,
-      );
+      const templateLiteralMatches = workerContent.match(/const INDEX_HTML = `[\s\S]*?`;/g);
 
       if (templateLiteralMatches) {
         templateLiteralMatches.forEach((match) => {

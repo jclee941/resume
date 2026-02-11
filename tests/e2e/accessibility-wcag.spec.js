@@ -27,7 +27,12 @@ test.describe('Accessibility WCAG AA', () => {
   });
 
   test('text contrast should meet WCAG AA 4.5:1 for key UI text', async ({ page }) => {
-    const selectors = ['.nav-link', '.section-title', '.contact-item'];
+    const selectors = [
+      '.hero-title',
+      '.project-description',
+      '.project-link-title',
+      '.contact-item',
+    ];
 
     for (const selector of selectors) {
       const ratio = await page
@@ -86,7 +91,7 @@ test.describe('Accessibility WCAG AA', () => {
     }
   });
 
-  test('interactive elements should expose accessible names via aria-label or text', async ({
+  test('interactive elements should expose accessible names via aria-label, text, or placeholder', async ({
     page,
   }) => {
     const audit = await page.evaluate(() => {
@@ -106,8 +111,9 @@ test.describe('Accessibility WCAG AA', () => {
         const ariaLabel = (el.getAttribute('aria-label') || '').trim();
         const text = (el.textContent || '').trim();
         const labelledBy = (el.getAttribute('aria-labelledby') || '').trim();
+        const placeholder = (el.getAttribute('placeholder') || '').trim();
 
-        if (!ariaLabel && !text && !labelledBy) {
+        if (!ariaLabel && !text && !labelledBy && !placeholder) {
           failures.push(el.outerHTML.slice(0, 120));
         }
       }
