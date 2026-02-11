@@ -390,8 +390,8 @@
     },
     {
       "name": "HYCU FSDS 자율주행",
-      "period": "2025.03 ~ 2025.06",
-      "description": "Formula Student Driverless Simulator 기반 자율주행 시스템. Docker + ROS 환경에서 AirSim 시뮬레이터를 활용한 자율주행 구현. 한양사이버대학교 제출, 우수상 수상.",
+      "period": "2025.11 ~ 2026.02",
+      "description": "Formula Student Driverless Simulator 기반 자율주행 시스템. LiDAR 콘 검출(Grid BFS) + Pure Pursuit 경로 추종, 3-tier 상태머신 안전 제어. 한양사이버대학교 포뮬러 경진대회 우수상 수상.",
       "technologies": ["Python", "ROS", "Docker", "AirSim"],
       "icon": "🏎️",
       "tagline": "자율주행 시뮬레이션",
