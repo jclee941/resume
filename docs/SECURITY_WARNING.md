@@ -5,7 +5,7 @@
 
 ## 1. API Key Rotation (Immediate)
 
-The following keys were found exposed in `.env` or history and MUST be rotated immediately.
+The following secrets were exposed in project history/docs and MUST be rotated immediately.
 
 | Service        | Key Name             | Action            | Status     |
 | -------------- | -------------------- | ----------------- | ---------- |
@@ -17,6 +17,24 @@ The following keys were found exposed in `.env` or history and MUST be rotated i
 | **OpenRouter** | `OPENROUTER_API_KEY` | Revoke & Re-issue | 🔴 Pending |
 | **Infisical**  | `INFISICAL_JWT...`   | Revoke & Re-issue | 🔴 Pending |
 | **HYCU DB**    | `HYCU_DB_PASSWORD`   | Change Password   | 🔴 Pending |
+
+### Confirmed Exposure Inventory (Issue #22)
+
+The exposed values were found in historical report content and are now treated as compromised:
+
+| Secret Name                          | Category    | Exposure Source                      | Rotation Required |
+| ------------------------------------ | ----------- | ------------------------------------ | ----------------- |
+| `GRAFANA_API_KEY`                    | API Key     | `docs/reports/ALL_SYSTEMS_REPORT.md` | Yes               |
+| `SLACK_APP_TOKEN`                    | API Token   | `docs/reports/ALL_SYSTEMS_REPORT.md` | Yes               |
+| `N8N_API_KEY`                        | API Token   | `docs/reports/ALL_SYSTEMS_REPORT.md` | Yes               |
+| `EVOLUTION_API_KEY`                  | API Key     | `docs/reports/ALL_SYSTEMS_REPORT.md` | Yes               |
+| `MORPH_API_KEY`                      | API Key     | `docs/reports/ALL_SYSTEMS_REPORT.md` | Yes               |
+| `OPENROUTER_API_KEY`                 | API Key     | `docs/reports/ALL_SYSTEMS_REPORT.md` | Yes               |
+| `INFISICAL_JWT_PROVIDER_AUTH_SECRET` | JWT Secret  | `docs/reports/ALL_SYSTEMS_REPORT.md` | Yes               |
+| `HYCU_DB_PASSWORD`                   | DB Password | `docs/reports/ALL_SYSTEMS_REPORT.md` | Yes               |
+| `GITLAB_TOKEN`                       | API Token   | `docs/reports/ALL_SYSTEMS_REPORT.md` | Yes               |
+
+All literal values must remain redacted in repository files.
 
 ### How to Fix
 

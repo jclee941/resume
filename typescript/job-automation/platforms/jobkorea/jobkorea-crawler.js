@@ -4,6 +4,7 @@
  */
 
 import { BaseCrawler } from '../../src/crawlers/base-crawler.js';
+import { withStealthBrowser } from '../../src/crawlers/browser-utils.js';
 
 export class JobKoreaCrawler extends BaseCrawler {
   constructor(options = {}) {
@@ -12,7 +13,6 @@ export class JobKoreaCrawler extends BaseCrawler {
       rateLimit: 2000,
       ...options,
     });
-    this.browser = null;
   }
 
   buildSearchQuery(params) {
@@ -78,26 +78,7 @@ export class JobKoreaCrawler extends BaseCrawler {
   }
 
   async searchWithBrowser(params) {
-    let browser = null;
-    try {
-      const puppeteer = await import('puppeteer').then((m) => m.default);
-
-      browser = await puppeteer.launch({
-        headless: 'new',
-        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
-        args: [
-          '--no-sandbox',
-          '--disable-setuid-sandbox',
-          '--disable-dev-shm-usage',
-          '--disable-gpu',
-        ],
-      });
-
-      const page = await browser.newPage();
-      await page.setUserAgent(
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-      );
-
+    return withStealthBrowser(async (page) => {
       const query = this.buildSearchQuery(params);
       const url = `${this.baseUrl}/Search/?${query}`;
       await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
@@ -151,35 +132,26 @@ export class JobKoreaCrawler extends BaseCrawler {
       });
 
       return jobs.map((job) => this.normalizeJob(job));
-    } finally {
-      if (browser) await browser.close();
-    }
+    });
   }
 
   async getJobDetail(jobId) {
-    let browser = null;
     try {
-      const puppeteer = await import('puppeteer').then((m) => m.default);
+      const job = await withStealthBrowser(async (page) => {
+        const url = `${this.baseUrl}/Recruit/GI_Read/${jobId}`;
+        await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
 
-      browser = await puppeteer.launch({
-        headless: 'new',
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+        return page.evaluate((jid) => {
+          const title = document.querySelector('[class*="title"], h1')?.textContent?.trim() || '';
+          const company = document.querySelector('[class*="company"]')?.textContent?.trim() || '';
+          const description =
+            document
+              .querySelector('[class*="description"], [class*="content"]')
+              ?.textContent?.trim() || '';
+
+          return { id: jid, position: title, company, description };
+        }, jobId);
       });
-
-      const page = await browser.newPage();
-      const url = `${this.baseUrl}/Recruit/GI_Read/${jobId}`;
-      await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
-
-      const job = await page.evaluate((jid) => {
-        const title = document.querySelector('[class*="title"], h1')?.textContent?.trim() || '';
-        const company = document.querySelector('[class*="company"]')?.textContent?.trim() || '';
-        const description =
-          document
-            .querySelector('[class*="description"], [class*="content"]')
-            ?.textContent?.trim() || '';
-
-        return { id: jid, position: title, company, description };
-      }, jobId);
 
       return {
         success: true,
@@ -192,8 +164,6 @@ export class JobKoreaCrawler extends BaseCrawler {
         source: 'jobkorea',
         error: error.message,
       };
-    } finally {
-      if (browser) await browser.close();
     }
   }
 

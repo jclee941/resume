@@ -16,8 +16,7 @@
       }
 
       body {
-        font-family:
-          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: #333;
         min-height: 100vh;
@@ -443,9 +442,7 @@
     <div id="login-overlay" class="login-overlay">
       <div class="login-card">
         <h1>🔐 접근 제한</h1>
-        <p style="margin-bottom: 20px; color: #666">
-          인가된 사용자만 접근할 수 있습니다.
-        </p>
+        <p style="margin-bottom: 20px; color: #666">인가된 사용자만 접근할 수 있습니다.</p>
         <div
           id="g_id_onload"
           data-client_id="270835336667-1n57053075675546.apps.googleusercontent.com"
@@ -464,11 +461,7 @@
       </div>
     </div>
 
-    <div
-      class="container"
-      id="main-content"
-      style="filter: blur(5px); pointer-events: none"
-    >
+    <div class="container" id="main-content" style="filter: blur(5px); pointer-events: none">
       <div class="header">
         <h1>🤖 AI 자동화 채용 지원 시스템</h1>
         <p>실시간 모니터링 및 지능형 매칭 대시보드</p>
@@ -484,17 +477,11 @@
       <div class="status-grid">
         <div class="status-card" style="border-left: 4px solid #f59e0b">
           <h3>
-            <span
-              class="status-indicator status-operational"
-              id="portfolio-status"
-            ></span>
+            <span class="status-indicator status-operational" id="portfolio-status"></span>
             포트폴리오 (Cloudflare)
           </h3>
           <div id="portfolio-stats-text">로딩 중...</div>
-          <div
-            style="font-size: 0.8em; margin-top: 5px; color: #666"
-            id="portfolio-details"
-          ></div>
+          <div style="font-size: 0.8em; margin-top: 5px; color: #666" id="portfolio-details"></div>
         </div>
 
         <div class="status-card">
@@ -507,10 +494,7 @@
 
         <div class="status-card">
           <h3>
-            <span
-              class="status-indicator status-unknown"
-              id="crawler-status"
-            ></span>
+            <span class="status-indicator status-unknown" id="crawler-status"></span>
             크롤러 시스템
           </h3>
           <div id="crawler-status-text">확인 중...</div>
@@ -562,20 +546,12 @@
 
           <div class="form-group">
             <label for="company">회사명</label>
-            <input
-              type="text"
-              id="company"
-              placeholder="예: Tech Company"
-              value="테크 회사"
-            />
+            <input type="text" id="company" placeholder="예: Tech Company" value="테크 회사" />
           </div>
 
           <div class="form-group">
             <label for="job-description">채용 공고 내용</label>
-            <textarea
-              id="job-description"
-              placeholder="채용 공고의 주요 내용을 입력하세요..."
-            >
+            <textarea id="job-description" placeholder="채용 공고의 주요 내용을 입력하세요...">
 DevSecOps 엔지니어 포지션입니다. 보안과 DevOps 경험을 보유한 분을 찾습니다. AWS, Kubernetes, CI/CD 파이프라인 구축 경험 필수입니다.</textarea
             >
           </div>
@@ -608,64 +584,25 @@ DevSecOps 엔지니어 포지션입니다. 보안과 DevOps 경험을 보유한 
 
           <div class="control-group">
             <label for="auto-max-apps">최대 지원 수</label>
-            <input
-              type="number"
-              id="auto-max-apps"
-              value="3"
-              min="1"
-              max="10"
-            />
+            <input type="number" id="auto-max-apps" value="3" min="1" max="10" />
           </div>
 
           <div class="control-group">
             <label for="auto-platforms">대상 플랫폼</label>
-            <div
-              style="display: flex; gap: 10px; flex-wrap: wrap; padding: 5px"
-            >
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; padding: 5px">
+              <label><input type="checkbox" name="platform" value="wanted" checked /> 원티드</label>
               <label
-                ><input
-                  type="checkbox"
-                  name="platform"
-                  value="wanted"
-                  checked
-                />
-                원티드</label
+                ><input type="checkbox" name="platform" value="saramin" checked /> 사람인</label
               >
               <label
-                ><input
-                  type="checkbox"
-                  name="platform"
-                  value="saramin"
-                  checked
-                />
-                사람인</label
+                ><input type="checkbox" name="platform" value="jobkorea" checked /> 잡코리아</label
               >
               <label
-                ><input
-                  type="checkbox"
-                  name="platform"
-                  value="jobkorea"
-                  checked
-                />
-                잡코리아</label
+                ><input type="checkbox" name="platform" value="linkedin" checked /> 링크드인</label
               >
               <label
-                ><input
-                  type="checkbox"
-                  name="platform"
-                  value="linkedin"
-                  checked
-                />
-                링크드인</label
-              >
-              <label
-                ><input
-                  type="checkbox"
-                  name="platform"
-                  value="remember"
-                  disabled
-                />
-                리멤버 (준비중)</label
+                ><input type="checkbox" name="platform" value="remember" disabled /> 리멤버
+                (준비중)</label
               >
             </div>
           </div>
@@ -680,17 +617,11 @@ DevSecOps 엔지니어 포지션입니다. 보안과 DevOps 경험을 보유한 
         </div>
 
         <div style="display: flex; gap: 10px; flex-wrap: wrap">
-          <button class="btn btn-primary" id="run-ai-system">
-            🚀 AI 시스템 실행
-          </button>
+          <button class="btn btn-primary" id="run-ai-system">🚀 AI 시스템 실행</button>
 
-          <button class="btn btn-secondary" id="run-basic-system">
-            🔄 기본 시스템 실행
-          </button>
+          <button class="btn btn-secondary" id="run-basic-system">🔄 기본 시스템 실행</button>
 
-          <button class="btn btn-secondary" id="refresh-stats">
-            📊 통계 새로고침
-          </button>
+          <button class="btn btn-secondary" id="refresh-stats">📊 통계 새로고침</button>
         </div>
       </div>
 
@@ -737,30 +668,19 @@ DevSecOps 엔지니어 포지션입니다. 보안과 DevOps 경험을 보유한 
               <label for="auth-cookies">Cookie Header String</label>
               <textarea
                 id="auth-cookies"
-                style="
-                  width: 100%;
-                  height: 150px;
-                  font-family: monospace;
-                  font-size: 12px;
-                "
+                style="width: 100%; height: 150px; font-family: monospace; font-size: 12px"
               ></textarea>
               <p style="font-size: 11px; color: #666; margin-top: 5px">
-                브라우저 개발자 도구(F12) -> Network -> API 요청 클릭 -> Request
-                Headers의 Cookie 값을 복사해 붙여넣으세요.
+                브라우저 개발자 도구(F12) -> Network -> API 요청 클릭 -> Request Headers의 Cookie
+                값을 복사해 붙여넣으세요.
               </p>
             </div>
             <div class="form-group" style="margin: 15px 0">
               <label for="auth-email">계정 이메일 (선택)</label>
-              <input
-                type="email"
-                id="auth-email"
-                placeholder="user@example.com"
-              />
+              <input type="email" id="auth-email" placeholder="user@example.com" />
             </div>
             <div style="display: flex; gap: 10px; justify-content: flex-end">
-              <button class="btn btn-secondary" id="close-auth-modal">
-                취소
-              </button>
+              <button class="btn btn-secondary" id="close-auth-modal">취소</button>
               <button class="btn btn-primary" id="save-auth">저장하기</button>
             </div>
           </div>
@@ -791,19 +711,10 @@ DevSecOps 엔지니어 포지션입니다. 보안과 DevOps 경험을 보유한 
             "
           >
             <h3 style="margin: 0; font-size: 1.1em">기본 정보 (Unified)</h3>
-            <span
-              style="font-size: 0.8em; color: #666"
-              id="profile-last-updated"
-              >업데이트: -</span
-            >
+            <span style="font-size: 0.8em; color: #666" id="profile-last-updated">업데이트: -</span>
           </div>
           <div
-            style="
-              display: grid;
-              grid-template-columns: 100px 1fr;
-              gap: 15px;
-              align-items: center;
-            "
+            style="display: grid; grid-template-columns: 100px 1fr; gap: 15px; align-items: center"
           >
             <div style="text-align: center">
               <div
@@ -830,15 +741,10 @@ DevSecOps 엔지니어 포지션입니다. 보안과 DevOps 경험을 보유한 
               >
                 -
               </div>
-              <div
-                id="profile-headline"
-                style="color: #555; font-size: 0.9em; margin-bottom: 5px"
-              >
+              <div id="profile-headline" style="color: #555; font-size: 0.9em; margin-bottom: 5px">
                 -
               </div>
-              <div id="profile-email" style="color: #777; font-size: 0.9em">
-                -
-              </div>
+              <div id="profile-email" style="color: #777; font-size: 0.9em">-</div>
             </div>
           </div>
         </div>
@@ -847,9 +753,7 @@ DevSecOps 엔지니어 포지션입니다. 보안과 DevOps 경험을 보유한 
       <div class="recent-applications">
         <h2>📋 최근 지원 현황</h2>
         <div class="applications-list" id="applications-list">
-          <div style="text-align: center; color: #666; padding: 40px">
-            데이터를 불러오는 중...
-          </div>
+          <div style="text-align: center; color: #666; padding: 40px">데이터를 불러오는 중...</div>
         </div>
       </div>
     </div>
@@ -1305,7 +1209,7 @@ DevSecOps 엔지니어 포지션입니다. 보안과 DevOps 경험을 보유한 
 
         if (profile.basic.avatar) {
           document.getElementById("profile-avatar").innerHTML =
-            `<img src="${profile.basic.avatar}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+            `<img src="${profile.basic.avatar}" alt="Profile avatar" loading="lazy" decoding="async" width="80" height="80" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
         }
 
         // Sync Status Grid

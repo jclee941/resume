@@ -123,9 +123,7 @@ describe('Utils Module', () => {
     test('should handle complex nested structures', () => {
       const data = {
         resume: [{ icon: '📄', title: 'Test', stats: ['A', 'B'] }],
-        projects: [
-          { icon: '🚀', title: 'Project', dashboards: [{ name: 'D1' }] },
-        ],
+        projects: [{ icon: '🚀', title: 'Project', dashboards: [{ name: 'D1' }] }],
       };
       const hash = calculateDataHash(data);
       expect(hash).toMatch(/^[a-f0-9]{32}$/);
@@ -171,9 +169,7 @@ describe('Utils Module', () => {
     });
 
     test('should throw error for invalid JSON', () => {
-      expect(() => safeParseJSON('invalid json', 'test')).toThrow(
-        /Invalid JSON in test/,
-      );
+      expect(() => safeParseJSON('invalid json', 'test')).toThrow(/Invalid JSON in test/);
     });
 
     test('should handle arrays', () => {
@@ -216,11 +212,7 @@ describe('Utils Module', () => {
 
   describe('FileOperationError', () => {
     test('should create error with correct properties', () => {
-      const error = new FileOperationError(
-        'Test error',
-        '/path/to/file',
-        'read',
-      );
+      const error = new FileOperationError('Test error', '/path/to/file', 'read');
       expect(error.message).toBe('Test error');
       expect(error.filePath).toBe('/path/to/file');
       expect(error.operation).toBe('read');
@@ -229,26 +221,17 @@ describe('Utils Module', () => {
 
     test('should include cause if provided', () => {
       const cause = new Error('Original error');
-      const error = new FileOperationError(
-        'Test error',
-        '/path',
-        'read',
-        cause,
-      );
+      const error = new FileOperationError('Test error', '/path', 'read', cause);
       expect(error.cause).toBe(cause);
     });
   });
 
   describe('escapeHtml', () => {
-    const {
-      escapeHtml,
-    } = require('../../../../typescript/portfolio-worker/lib/utils');
+    const { escapeHtml } = require('../../../../typescript/portfolio-worker/lib/utils');
 
     test('should escape < and > characters', () => {
       const result = escapeHtml('<script>alert("xss")</script>');
-      expect(result).toBe(
-        '&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;',
-      );
+      expect(result).toBe('&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;');
     });
 
     test('should escape ampersand', () => {
@@ -289,8 +272,37 @@ describe('Utils Module', () => {
     test('should handle mixed XSS payload', () => {
       const result = escapeHtml('<img src="x" onerror="alert(\'XSS\')">');
       expect(result).toBe(
-        '&lt;img src=&quot;x&quot; onerror=&quot;alert(&#039;XSS&#039;)&quot;&gt;',
+        '&lt;img src=&quot;x&quot; onerror=&quot;alert(&#039;XSS&#039;)&quot;&gt;'
       );
+    });
+
+    test('should neutralize javascript: URI payloads', () => {
+      const result = escapeHtml('javascript:alert(1)" onclick="alert(2)');
+      expect(result).toBe('javascript:alert(1)&quot; onclick=&quot;alert(2)');
+    });
+
+    test('should neutralize data URI payloads with script tag content', () => {
+      const input = 'data:text/html,<script>alert(1)</script>';
+      const result = escapeHtml(input);
+      expect(result).toBe('data:text/html,&lt;script&gt;alert(1)&lt;/script&gt;');
+    });
+
+    test('should preserve unicode while escaping HTML control characters', () => {
+      const input = 'Hello 한글 😀 <b>bold</b> & "quoted"';
+      const result = escapeHtml(input);
+      expect(result).toBe('Hello 한글 😀 &lt;b&gt;bold&lt;/b&gt; &amp; &quot;quoted&quot;');
+    });
+
+    test('should escape already escaped entities again (nested escaping)', () => {
+      const onceEscaped = '&lt;script&gt;';
+      const result = escapeHtml(onceEscaped);
+      expect(result).toBe('&amp;lt;script&amp;gt;');
+    });
+
+    test('should neutralize onclick attribute injection in quoted context', () => {
+      const payload = '" onclick="javascript:alert(1)';
+      const result = escapeHtml(payload);
+      expect(result).toBe('&quot; onclick=&quot;javascript:alert(1)');
     });
 
     test('should preserve safe characters', () => {
@@ -302,9 +314,7 @@ describe('Utils Module', () => {
   describe('Edge Cases', () => {
     test('should handle permission errors', () => {
       // Try to read a file that requires elevated permissions
-      expect(() => safeReadFile('/root/.ssh/id_rsa')).toThrow(
-        FileOperationError,
-      );
+      expect(() => safeReadFile('/root/.ssh/id_rsa')).toThrow(FileOperationError);
     });
 
     test('should throw on invalid JSON', () => {
@@ -328,9 +338,7 @@ describe('Utils Module', () => {
 
     test('should include context in JSON error', () => {
       const invalidJson = '{"key": "value", invalid}';
-      expect(() => safeParseJSON(invalidJson, 'test-source')).toThrow(
-        /test-source/,
-      );
+      expect(() => safeParseJSON(invalidJson, 'test-source')).toThrow(/test-source/);
     });
   });
 });

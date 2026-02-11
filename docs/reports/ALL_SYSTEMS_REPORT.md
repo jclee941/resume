@@ -31,15 +31,15 @@ Your resume portfolio project is **technically excellent** (93.96% test coverage
 **Exposed Credentials:**
 
 ```
-HYCU_DB_PASSWORD=hycu_secure_pass_prod_2024
-GRAFANA_API_KEY=glsa_39K1QJDsQcXM2f0PAUeKpYGzkmG9Aw6b_8452d32c
-INFISICAL_JWT_PROVIDER_AUTH_SECRET=51837d969e93dcad079ef4c8b8fc1ab36d12ab3a981f3d1d30984b63be756ff0
-GITLAB_TOKEN=glpat-dYEw2H3hF3KEYq3eps8z
-SLACK_APP_TOKEN=xapp-1-A09TER0TF5Y-10022641763313-513b0d085088c1078c1ee0628c88b59b6a0f6f61fc1ba40efafd0de907fea6f4
-N8N_API_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-EVOLUTION_API_KEY=f71058e01d92f1fa49debc59169377c707cf6622ac1f52b5f30f9cc32e1a14b6
-MORPH_API_KEY=morph_f51DkV4BZpFLrvJVjtqeyt
-OPENROUTER_API_KEY=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
+HYCU_DB_PASSWORD=[REDACTED_ROTATE_REQUIRED]
+GRAFANA_API_KEY=[REDACTED_ROTATE_REQUIRED]
+INFISICAL_JWT_PROVIDER_AUTH_SECRET=[REDACTED_ROTATE_REQUIRED]
+GITLAB_TOKEN=[REDACTED_ROTATE_REQUIRED]
+SLACK_APP_TOKEN=[REDACTED_ROTATE_REQUIRED]
+N8N_API_KEY=[REDACTED_ROTATE_REQUIRED]
+EVOLUTION_API_KEY=[REDACTED_ROTATE_REQUIRED]
+MORPH_API_KEY=[REDACTED_ROTATE_REQUIRED]
+OPENROUTER_API_KEY=[REDACTED_ROTATE_REQUIRED]
 ```
 
 **Action Plan:**
@@ -70,7 +70,7 @@ OPENROUTER_API_KEY=sk-or-v1-0d3863107ac693339eab66384a943183c34cc76405523ba4eb1a
 const password =
   process.env.WANTED_PASSWORD ||
   (() => {
-    throw new Error("WANTED_PASSWORD not set in environment");
+    throw new Error('WANTED_PASSWORD not set in environment');
   })();
 await page.type('input[type="password"]', password, { delay: 30 });
 ```
@@ -89,11 +89,11 @@ await page.type('input[type="password"]', password, { delay: 30 });
 
 ```javascript
 const headers = {
-  "Content-Type": "application/json",
+  'Content-Type': 'application/json',
   Authorization: `Bearer ${LOKI_API_KEY}`, // Use Cloudflare Worker secret
 };
-await fetch("https://grafana.jclee.me/loki/api/v1/push", {
-  method: "POST",
+await fetch('https://grafana.jclee.me/loki/api/v1/push', {
+  method: 'POST',
   headers,
   body: JSON.stringify(payload),
 });
@@ -169,13 +169,7 @@ npx purgecss --content web/index.html --css web/styles.css --output web/styles.m
   href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap"
   as="style"
 />
-<link
-  rel="preload"
-  href="/path/to/inter-400.woff2"
-  as="font"
-  type="font/woff2"
-  crossorigin
-/>
+<link rel="preload" href="/path/to/inter-400.woff2" as="font" type="font/woff2" crossorigin />
 ```
 
 **Timeline:** 15 minutes

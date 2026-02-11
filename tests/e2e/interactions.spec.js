@@ -14,7 +14,7 @@ test.describe('Smooth Scroll Behavior', () => {
 
     // Reset to top and navigate to projects
     await page.evaluate(() => window.scrollTo(0, 0));
-    await page.waitForTimeout(300); // Wait for scroll animation
+    await expect(page.locator('.nav-logo')).toBeInViewport({ timeout: 2000 });
 
     await page.click('a[href="#projects"]');
     await expect(page.locator('#projects')).toBeInViewport({ timeout: 2000 });
@@ -33,8 +33,7 @@ test.describe('Smooth Scroll Behavior', () => {
     expect(href === '/' || href === '#').toBeTruthy();
 
     await logo.click();
-    await page.waitForTimeout(300); // Wait for navigation/scroll
-    await expect(logo).toBeVisible();
+    await expect(logo).toBeInViewport({ timeout: 2000 });
   });
 });
 
@@ -47,7 +46,6 @@ test.describe('Link Hover States', () => {
 
     // Hover over link
     await navLink.hover();
-    await page.waitForTimeout(100);
 
     await navLink.evaluate((el) => window.getComputedStyle(el).color); // Check hover color
 
@@ -99,7 +97,6 @@ test.describe('Skip Link Interaction', () => {
 
     // Activate skip link
     await page.keyboard.press('Enter');
-    await page.waitForTimeout(100);
 
     // Main content should be in view
     const mainContent = page.locator('#main-content');
@@ -174,25 +171,22 @@ test.describe('Card Interactions', () => {
 test.describe('URL Hash Navigation', () => {
   test('should scroll to resume section on hash navigation', async ({ page }) => {
     await page.goto('/#resume', { waitUntil: 'domcontentloaded' });
-    await page.waitForTimeout(500); // Wait for scroll animation to complete
 
     const resumeSection = page.locator('#resume');
-    await expect(resumeSection).toBeInViewport();
+    await expect(resumeSection).toBeInViewport({ timeout: 2000 });
   });
 
   test('should scroll to projects section on hash navigation', async ({ page }) => {
     await page.goto('/#projects', { waitUntil: 'domcontentloaded' });
-    await page.waitForTimeout(500); // Wait for scroll animation to complete
 
     const projectsSection = page.locator('#projects');
-    await expect(projectsSection).toBeInViewport();
+    await expect(projectsSection).toBeInViewport({ timeout: 2000 });
   });
 
   test('should scroll to contact section on hash navigation', async ({ page }) => {
     await page.goto('/#contact', { waitUntil: 'domcontentloaded' });
-    await page.waitForTimeout(500); // Wait for scroll animation to complete
 
     const contactSection = page.locator('#contact');
-    await expect(contactSection).toBeInViewport();
+    await expect(contactSection).toBeInViewport({ timeout: 2000 });
   });
 });

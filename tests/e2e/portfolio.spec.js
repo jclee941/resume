@@ -86,7 +86,6 @@ test.describe('Responsive Design', () => {
 
     // Wait for layout animation to complete before measuring bounding boxes
     // This prevents race conditions where bounding boxes are captured mid-animation
-    await page.waitForLoadState('networkidle');
     await page.waitForTimeout(500); // Wait for CSS grid layout calculations
 
     // Now safely get bounding boxes after layout is stable

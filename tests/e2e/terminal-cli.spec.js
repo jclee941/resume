@@ -24,7 +24,7 @@ test.describe('Terminal CLI - Command Execution', () => {
 
   test('should execute help command', async ({ page }) => {
     await executeCliCommand(page, 'help', {
-      expectedOutput: /help|commands|available/i
+      expectedOutput: /help|commands|available/i,
     });
 
     const cliOutput = page.locator('#cli-output');
@@ -33,7 +33,7 @@ test.describe('Terminal CLI - Command Execution', () => {
 
   test('should execute neofetch command', async ({ page }) => {
     await executeCliCommand(page, 'neofetch', {
-      expectedOutput: /Role:|Infrastructure Engineer/i
+      expectedOutput: /Role:|Infrastructure Engineer/i,
     });
 
     const cliOutput = page.locator('#cli-output');
@@ -53,14 +53,15 @@ test.describe('Terminal CLI - Command Execution', () => {
     await executeCliCommand(page, 'clear');
 
     // Output should be empty or minimal
-    await page.waitForTimeout(100);
-    const clearedText = await cliOutput.textContent();
-    expect(clearedText?.trim().length).toBeLessThan(initialText?.length || 0);
+    await expect(async () => {
+      const clearedText = await cliOutput.textContent();
+      expect(clearedText?.trim().length).toBeLessThan(initialText?.length || 0);
+    }).toPass({ timeout: 5000 });
   });
 
   test('should show error for unknown command', async ({ page }) => {
     await executeCliCommand(page, 'unknowncommand12345', {
-      expectedOutput: /not found|unknown|command not recognized/i
+      expectedOutput: /not found|unknown|command not recognized/i,
     });
 
     const cliOutput = page.locator('#cli-output');
@@ -85,7 +86,7 @@ test.describe('Terminal CLI - Easter Eggs', () => {
 
   test('should execute sudo hire-me command', async ({ page }) => {
     await executeCliCommand(page, 'sudo hire-me', {
-      expectedOutput: /access granted|contact|qws941/i
+      expectedOutput: /access granted|contact|qws941/i,
     });
 
     const cliOutput = page.locator('#cli-output');
@@ -113,11 +114,9 @@ test.describe('Terminal CLI - Keyboard Shortcuts', () => {
     // Type something first
     await cliInput.fill('help');
     await cliInput.press('Enter');
-    await page.waitForTimeout(200);
 
     // Try Ctrl+L
     await cliInput.press('Control+l');
-    await page.waitForTimeout(200);
 
     // If clear is implemented, output should be cleared
     // This is a soft test - just verify the page doesn't crash
@@ -131,14 +130,13 @@ test.describe('Terminal CLI - Keyboard Shortcuts', () => {
     // Execute a command
     await cliInput.fill('help');
     await cliInput.press('Enter');
-    await page.waitForTimeout(200);
+    await expect(page.locator('#cli-output')).not.toBeEmpty();
 
     // Clear input
     await cliInput.fill('');
 
     // Press up arrow to recall last command
     await cliInput.press('ArrowUp');
-    await page.waitForTimeout(100);
 
     // If history is implemented, input should have the previous command
     // This is a soft test - page should remain functional

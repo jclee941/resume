@@ -130,7 +130,7 @@ test.describe('Security Headers & CSP', () => {
       document.head.appendChild(script);
     });
 
-    await page.waitForTimeout(2000);
+    await page.waitForLoadState('load');
 
     // Check that malicious script did NOT execute
     scriptExecuted = await page.evaluate(() => window.maliciousScriptExecuted);

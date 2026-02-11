@@ -61,7 +61,7 @@ test.describe('Mobile Responsiveness', () => {
         const elementText = await element.textContent();
         console.warn(
           `Touch target too small: ${elementText?.trim().substring(0, 30)} ` +
-            `(${Math.round(box.width)}x${Math.round(box.height)}px)`,
+            `(${Math.round(box.width)}x${Math.round(box.height)}px)`
         );
         tooSmallCount++;
       }
@@ -84,7 +84,7 @@ test.describe('Mobile Responsiveness', () => {
         document.documentElement.scrollWidth,
         document.documentElement.offsetWidth,
         document.body.scrollWidth,
-        document.body.offsetWidth,
+        document.body.offsetWidth
       );
     });
 
@@ -98,9 +98,7 @@ test.describe('Mobile Responsiveness', () => {
 
     // Check main body text is at least 14px (minimum readable)
     const bodyTexts = await page
-      .locator(
-        'p:not(small):not(sub):not(sup), li, span:not(small):not(sub):not(sup)',
-      )
+      .locator('p:not(small):not(sub):not(sup), li, span:not(small):not(sub):not(sup)')
       .all();
 
     if (bodyTexts.length > 0) {
@@ -170,9 +168,7 @@ test.describe('Mobile Responsiveness', () => {
   test('should have proper viewport meta tag', async ({ page }) => {
     await page.goto('/');
 
-    const viewportMeta = await page
-      .locator('meta[name="viewport"]')
-      .getAttribute('content');
+    const viewportMeta = await page.locator('meta[name="viewport"]').getAttribute('content');
 
     expect(viewportMeta).toBeTruthy();
     expect(viewportMeta).toContain('width=device-width');
@@ -192,12 +188,12 @@ test.describe('Mobile Responsiveness', () => {
 
       // Scroll down
       await page.mouse.wheel(0, 500);
-      await page.waitForTimeout(300);
 
-      const finalScroll = await page.evaluate(() => window.scrollY);
-
-      // Should have scrolled
-      expect(finalScroll).toBeGreaterThan(initialScroll);
+      // Wait for scroll to complete using polling assertion
+      await expect(async () => {
+        const currentScroll = await page.evaluate(() => window.scrollY);
+        expect(currentScroll).toBeGreaterThan(initialScroll);
+      }).toPass({ timeout: 2000 });
     }
   });
 
@@ -207,9 +203,7 @@ test.describe('Mobile Responsiveness', () => {
 
     // Find a clickable element (button or link), excluding skip-link which is hidden
     // Skip-links are positioned off-screen and cannot be scrolled to on mobile
-    const clickable = page
-      .locator('button:not(.skip-link), a[href]:not(.skip-link)')
-      .first();
+    const clickable = page.locator('button:not(.skip-link), a[href]:not(.skip-link)').first();
 
     if ((await clickable.count()) > 0) {
       // Should be able to tap/click
@@ -256,19 +250,14 @@ test.describe('Tablet Features', () => {
       height: viewport.width,
     });
 
-    await page.waitForTimeout(500);
-
-    // Check page still renders correctly
+    // Check page still renders correctly (auto-retries)
     const mainContent = page.locator('#main-content, main, body').first();
     await expect(mainContent).toBeVisible();
 
     // No horizontal overflow in landscape
     const newViewportWidth = page.viewportSize()?.width || 0;
     const documentWidth = await page.evaluate(() => {
-      return Math.max(
-        document.documentElement.scrollWidth,
-        document.body.scrollWidth,
-      );
+      return Math.max(document.documentElement.scrollWidth, document.body.scrollWidth);
     });
 
     expect(documentWidth).toBeLessThanOrEqual(newViewportWidth + 1);

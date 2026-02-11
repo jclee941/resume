@@ -165,10 +165,9 @@ test.describe('Keyboard Navigation', () => {
     await navLink.focus();
     await page.keyboard.press('Enter');
 
-    await page.waitForTimeout(1000);
-    const resumeSection = page.locator('#resume');
-    // Account for fixed nav header by checking if section is visible
-    await expect(resumeSection).toBeVisible();
+    const aboutSection = page.locator('#about');
+    // Wait for scroll to target section after Enter key press
+    await expect(aboutSection).toBeInViewport({ timeout: 2000 });
   });
 });
 

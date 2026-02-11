@@ -22,7 +22,13 @@ test.describe('Performance & Core Web Vitals', () => {
 
     // Wait for LCP to be measured
     await page.waitForLoadState('load');
-    await page.waitForTimeout(1000);
+    await page.waitForFunction(
+      () =>
+        performance.getEntriesByType('largest-contentful-paint').length > 0 ||
+        (performance.getEntriesByType('navigation')[0] &&
+          performance.getEntriesByType('navigation')[0].loadEventEnd > 0),
+      { timeout: 5000 }
+    );
 
     const lcp = await page.evaluate(() => {
       return new Promise((resolve) => {
@@ -70,9 +76,8 @@ test.describe('Performance & Core Web Vitals', () => {
   test('should have low Cumulative Layout Shift (CLS)', async ({ page }) => {
     await page.goto('/');
 
-    // Wait for page to settle
-    await page.waitForLoadState('domcontentloaded');
-    await page.waitForTimeout(2000);
+    // Wait for page to fully load and settle
+    await page.waitForLoadState('load');
 
     const cls = await page.evaluate(() => {
       return new Promise((resolve) => {
@@ -101,8 +106,10 @@ test.describe('Performance & Core Web Vitals', () => {
     await page.goto('/');
     await page.waitForLoadState('domcontentloaded');
 
-    // Give browser time to record paint metrics
-    await page.waitForTimeout(1000);
+    // Wait for paint metrics to be recorded
+    await page.waitForFunction(() => performance.getEntriesByType('paint').length > 0, {
+      timeout: 5000,
+    });
 
     const metrics = await page.evaluate(() => {
       // Direct access to paint entries via Performance Timeline API
@@ -163,17 +170,21 @@ test.describe('Performance & Core Web Vitals', () => {
       }
     });
 
-    await page.goto('/');
+    // Set up request promise before navigation
+    const vitalsRequestPromise = page.waitForRequest(
+      (request) => request.url().includes('/api/vitals'),
+      { timeout: 15000 }
+    );
 
-    // Wait for vitals to be collected (10 second timeout in HTML)
-    await page.waitForTimeout(11000);
+    await page.goto('/');
 
     // Trigger page hide event (should send vitals)
     await page.evaluate(() => {
       window.dispatchEvent(new Event('visibilitychange'));
     });
 
-    await page.waitForTimeout(500);
+    // Wait for the vitals request
+    await vitalsRequestPromise;
 
     // Should have sent vitals data
     expect(vitalsRequests.length).toBeGreaterThan(0);
@@ -188,12 +199,11 @@ test.describe('Performance & Core Web Vitals', () => {
   });
 
   test('should have optimized resource loading', async ({ page }) => {
-    await page.goto('/');
-
-    // Check number of network requests
+    // Set up request listener BEFORE navigation
     const requests = [];
     page.on('request', (request) => requests.push(request));
 
+    await page.goto('/');
     await page.waitForLoadState('domcontentloaded');
 
     // Should not have excessive requests
@@ -248,7 +258,7 @@ test.describe('Performance & Core Web Vitals', () => {
 
     const hasFontLinks = await page.locator('link[href*="fonts"]').count();
 
-    expect(hasInlinedFonts || hasFontLinks >= 0).toBe(true);
+    expect(hasInlinedFonts || hasFontLinks > 0).toBe(true);
   });
 
   test('should load critical CSS inline', async ({ page }) => {

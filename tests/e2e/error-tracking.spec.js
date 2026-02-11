@@ -21,35 +21,30 @@ test.describe('Error Tracking (Sentry)', () => {
 
   // Sentry initialization test - requires live DSN
   test('should initialize Sentry with correct configuration', async ({ page }) => {
-    await page.waitForTimeout(1000);
+    const sentryLoaded = (await page.locator('script[src*="sentry-cdn.com"]').count()) > 0;
 
-    const sentryExists = await page.evaluate(() => {
-      return typeof /** @type {any} */ (window).Sentry !== 'undefined';
-    });
-
-    test.skip(!sentryExists, 'Requires live Sentry DSN configuration in worker');
+    test.skip(!sentryLoaded, 'Requires live Sentry DSN configuration in worker');
 
     const sentryInitialized = await page.evaluate(() => {
       const hub = /** @type {any} */ (window).Sentry.getCurrentHub();
       return hub && hub.getClient() !== null;
     });
 
-    test.skip(!sentryInitialized, 'Requires live Sentry DSN configuration in worker');
     expect(sentryInitialized).toBe(true);
   });
 
   // Sentry environment test - requires live DSN
   test('should have correct Sentry environment', async ({ page }) => {
-    await page.waitForTimeout(1000);
+    const sentryLoaded = (await page.locator('script[src*="sentry-cdn.com"]').count()) > 0;
+
+    test.skip(!sentryLoaded, 'Requires live Sentry DSN configuration in worker');
 
     const environment = await page.evaluate(() => {
-      if (typeof /** @type {any} */ (window).Sentry === 'undefined') return null;
       const client = /** @type {any} */ (window).Sentry.getCurrentHub().getClient();
       return client ? client.getOptions().environment : null;
     });
 
-    test.skip(environment === null, 'Requires live Sentry DSN configuration in worker');
-
+    test.skip(environment === null, 'Sentry client not initialized');
     expect(environment).toMatch(/^(production|development)$/);
   });
 
@@ -63,7 +58,7 @@ test.describe('Error Tracking (Sentry)', () => {
       }
     });
 
-    await page.waitForTimeout(2000);
+    await page.waitForLoadState('load');
 
     const sentryViolations = cspViolations.filter((violation) => {
       return violation.includes('sentry') || violation.includes('Sentry');
@@ -102,10 +97,11 @@ test.describe('Error Tracking (Sentry)', () => {
 
   // Sentry error ignoring test - requires live DSN
   test('should configure Sentry to ignore browser extension errors', async ({ page }) => {
-    await page.waitForTimeout(1000);
+    const sentryLoaded = (await page.locator('script[src*="sentry-cdn.com"]').count()) > 0;
+
+    test.skip(!sentryLoaded, 'Requires live Sentry DSN configuration in worker');
 
     const ignoresExtensions = await page.evaluate(() => {
-      if (typeof /** @type {any} */ (window).Sentry === 'undefined') return null;
       const client = /** @type {any} */ (window).Sentry.getCurrentHub().getClient();
       if (!client) return null;
 
@@ -119,17 +115,17 @@ test.describe('Error Tracking (Sentry)', () => {
       );
     });
 
-    test.skip(ignoresExtensions === null, 'Requires live Sentry DSN configuration in worker');
-
+    test.skip(ignoresExtensions === null, 'Sentry client not initialized');
     expect(ignoresExtensions).toBe(true);
   });
 
   // Sentry PII filter test - requires live DSN
   test('should configure Sentry to filter PII', async ({ page }) => {
-    await page.waitForTimeout(1000);
+    const sentryLoaded = (await page.locator('script[src*="sentry-cdn.com"]').count()) > 0;
+
+    test.skip(!sentryLoaded, 'Requires live Sentry DSN configuration in worker');
 
     const hasPIIFilter = await page.evaluate(() => {
-      if (typeof /** @type {any} */ (window).Sentry === 'undefined') return null;
       const client = /** @type {any} */ (window).Sentry.getCurrentHub().getClient();
       if (!client) return null;
 
@@ -137,17 +133,17 @@ test.describe('Error Tracking (Sentry)', () => {
       return typeof options.beforeSend === 'function';
     });
 
-    test.skip(hasPIIFilter === null, 'Requires live Sentry DSN configuration in worker');
-
+    test.skip(hasPIIFilter === null, 'Sentry client not initialized');
     expect(hasPIIFilter).toBe(true);
   });
 
   // Sentry user ID test - requires live DSN
   test('should set anonymous user ID in Sentry', async ({ page }) => {
-    await page.waitForTimeout(1000);
+    const sentryLoaded = (await page.locator('script[src*="sentry-cdn.com"]').count()) > 0;
+
+    test.skip(!sentryLoaded, 'Requires live Sentry DSN configuration in worker');
 
     const userId = await page.evaluate(() => {
-      if (typeof /** @type {any} */ (window).Sentry === 'undefined') return null;
       const hub = /** @type {any} */ (window).Sentry.getCurrentHub();
       const client = hub.getClient();
       if (!client) return null;
@@ -159,17 +155,17 @@ test.describe('Error Tracking (Sentry)', () => {
       return user ? user.id : null;
     });
 
-    test.skip(userId === null, 'Requires live Sentry DSN configuration in worker');
-
+    test.skip(userId === null, 'Sentry client not initialized');
     expect(userId).toBe('anonymous');
   });
 
   // Sentry error handlers test - requires live DSN
   test('should have global error handlers registered', async ({ page }) => {
-    await page.waitForTimeout(1000);
+    const sentryLoaded = (await page.locator('script[src*="sentry-cdn.com"]').count()) > 0;
+
+    test.skip(!sentryLoaded, 'Requires live Sentry DSN configuration in worker');
 
     const result = await page.evaluate(() => {
-      if (typeof /** @type {any} */ (window).Sentry === 'undefined') return { initialized: false };
       const client = /** @type {any} */ (window).Sentry.getCurrentHub().getClient();
       if (!client) return { initialized: false };
 
@@ -178,8 +174,7 @@ test.describe('Error Tracking (Sentry)', () => {
       return { initialized: true, hasHandlers: hasErrorHandler };
     });
 
-    test.skip(!result.initialized, 'Requires live Sentry DSN configuration in worker');
-
+    test.skip(!result.initialized, 'Sentry client not initialized');
     expect(result.hasHandlers).toBe(true);
   });
 });

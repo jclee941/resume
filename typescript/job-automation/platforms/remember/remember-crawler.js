@@ -9,6 +9,7 @@
  */
 
 import { BaseCrawler } from '../../src/crawlers/base-crawler.js';
+import { withStealthBrowser } from '../../src/crawlers/browser-utils.js';
 
 export class RememberCrawler extends BaseCrawler {
   constructor(options = {}) {
@@ -97,24 +98,7 @@ export class RememberCrawler extends BaseCrawler {
   }
 
   async searchWithBrowser(params = {}) {
-    let browser = null;
-    try {
-      const puppeteer = await import('puppeteer').then((m) => m.default);
-
-      browser = await puppeteer.launch({
-        headless: 'new',
-        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
-        args: [
-          '--no-sandbox',
-          '--disable-setuid-sandbox',
-          '--disable-dev-shm-usage',
-          '--disable-gpu',
-        ],
-      });
-
-      const page = await browser.newPage();
-      await page.setUserAgent(this.headers['User-Agent']);
-
+    return withStealthBrowser(async (page) => {
       const query = params.keyword ? `?search=${encodeURIComponent(params.keyword)}` : '';
       const url = `${this.baseUrl}/job/postings${query}`;
 
@@ -166,9 +150,7 @@ export class RememberCrawler extends BaseCrawler {
         hasMore: jobs.length >= (params.limit || 20),
         jobs: jobs.map((job) => this.normalizeJob(job)),
       };
-    } finally {
-      if (browser) await browser.close();
-    }
+    });
   }
 
   async getJobDetail(jobId) {
@@ -201,20 +183,11 @@ export class RememberCrawler extends BaseCrawler {
   }
 
   async getJobDetailWithBrowser(jobId) {
-    let browser = null;
-    try {
-      const puppeteer = await import('puppeteer').then((m) => m.default);
-
-      browser = await puppeteer.launch({
-        headless: 'new',
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
-      });
-
-      const page = await browser.newPage();
+    const job = await withStealthBrowser(async (page) => {
       const url = `${this.baseUrl}/job/posting/${jobId}`;
       await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
 
-      const job = await page.evaluate((jid) => {
+      return page.evaluate((jid) => {
         const getText = (sel) => document.querySelector(sel)?.textContent?.trim() || '';
         const title = getText('h1') || getText('[class*="title"]');
         const company = getText('[class*="company"]') || getText('[class*="CompanyName"]');
@@ -228,15 +201,13 @@ export class RememberCrawler extends BaseCrawler {
           description: description.substring(0, 5000),
         };
       }, jobId);
+    });
 
-      return {
-        success: true,
-        source: 'remember',
-        job: this.normalizeJob(job, true),
-      };
-    } finally {
-      if (browser) await browser.close();
-    }
+    return {
+      success: true,
+      source: 'remember',
+      job: this.normalizeJob(job, true),
+    };
   }
 
   normalizeJob(rawJob, _isDetail = false) {

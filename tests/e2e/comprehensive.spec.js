@@ -34,19 +34,16 @@ test.describe('Navigation', () => {
 
   test('navigation links should scroll to sections', async ({ page }) => {
     await page.click('a[href="#resume"]');
-    await page.waitForTimeout(500);
     const resumeSection = page.locator('#resume');
-    await expect(resumeSection).toBeInViewport();
+    await expect(resumeSection).toBeInViewport({ timeout: 2000 });
 
     await page.click('a[href="#projects"]');
-    await page.waitForTimeout(500);
     const projectsSection = page.locator('#projects');
-    await expect(projectsSection).toBeInViewport();
+    await expect(projectsSection).toBeInViewport({ timeout: 2000 });
 
     await page.click('a[href="#contact"]');
-    await page.waitForTimeout(500);
     const contactSection = page.locator('#contact');
-    await expect(contactSection).toBeInViewport();
+    await expect(contactSection).toBeInViewport({ timeout: 2000 });
   });
 });
 
@@ -209,7 +206,6 @@ test.describe('CLI Terminal', () => {
     await cliInput.fill('help');
     await cliInput.press('Enter');
 
-    await page.waitForTimeout(300);
     const cliOutput = page.locator('#cli-container');
     await expect(cliOutput).toContainText('Available commands');
   });

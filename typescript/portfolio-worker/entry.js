@@ -9,6 +9,20 @@ import jobHandler, {
   CleanupWorkflow,
 } from '../job-automation/workers/src/index.js';
 
+const SITEMAP_XML = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://resume.jclee.me/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://resume.jclee.me/job/dashboard</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+</urlset>`;
+
 export {
   JobCrawlingWorkflow,
   ApplicationWorkflow,
@@ -24,6 +38,15 @@ export default {
     const url = new URL(request.url);
 
     try {
+      if (url.pathname === '/sitemap.xml') {
+        return new Response(SITEMAP_XML, {
+          headers: {
+            'Content-Type': 'application/xml; charset=UTF-8',
+            'Cache-Control': 'public, max-age=3600',
+          },
+        });
+      }
+
       if (url.pathname.startsWith('/job')) {
         return jobHandler.fetch(request, env, ctx);
       }

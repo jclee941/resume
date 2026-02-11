@@ -10,11 +10,11 @@ test.describe('Visual Regression Tests', () => {
     test('homepage full page screenshot', async ({ page }) => {
       await page.goto('/');
       await page.waitForLoadState('domcontentloaded');
-      await page.waitForTimeout(500);
 
       await expect(page).toHaveScreenshot('desktop-homepage.png', {
         fullPage: true,
         maxDiffPixelRatio: 0.1,
+        animations: 'disabled',
       });
     });
 
@@ -57,11 +57,11 @@ test.describe('Visual Regression Tests', () => {
     test('mobile homepage screenshot', async ({ page }) => {
       await page.goto('/');
       await page.waitForLoadState('domcontentloaded');
-      await page.waitForTimeout(500);
 
       await expect(page).toHaveScreenshot('mobile-homepage.png', {
         fullPage: true,
         maxDiffPixelRatio: 0.1,
+        animations: 'disabled',
       });
     });
 
@@ -94,11 +94,11 @@ test.describe('Visual Regression Tests', () => {
     test('tablet homepage screenshot', async ({ page }) => {
       await page.goto('/');
       await page.waitForLoadState('domcontentloaded');
-      await page.waitForTimeout(500);
 
       await expect(page).toHaveScreenshot('tablet-homepage.png', {
         fullPage: true,
         maxDiffPixelRatio: 0.1,
+        animations: 'disabled',
       });
     });
   });
@@ -109,11 +109,11 @@ test.describe('Visual Regression Tests', () => {
       await page.setViewportSize({ width: 1280, height: 720 });
       await page.goto('/');
       await page.waitForLoadState('domcontentloaded');
-      await page.waitForTimeout(500);
 
       await expect(page).toHaveScreenshot('dark-mode-homepage.png', {
         fullPage: true,
         maxDiffPixelRatio: 0.1,
+        animations: 'disabled',
       });
     });
   });
