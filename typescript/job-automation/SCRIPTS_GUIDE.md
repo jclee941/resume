@@ -1,6 +1,6 @@
 # Job Automation Scripts Guide
 
-This guide documents all 25 utility scripts in the `scripts/` directory. Scripts are organized by category (Authentication, Session Management, Utility) with usage examples, security considerations, and recommended approaches.
+This guide documents all 26 scripts (25 .js + 1 .sh) in the `scripts/` directory. Scripts are organized by category (Authentication, Session Management, Utility) with usage examples, security considerations, and recommended approaches.
 
 **Last Updated**: 2026-02-11  
 **Total Scripts**: 26 (25 .js + 1 .sh)
