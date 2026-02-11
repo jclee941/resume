@@ -5,6 +5,9 @@
   "compatibility_date": "2024-10-03",
   "compatibility_flags": ["nodejs_compat_v2"],
   // account_id sourced from CLOUDFLARE_ACCOUNT_ID env var or wrangler-action accountId
+  "ai": {
+    "binding": "AI",
+  },
   "browser": {
     "binding": "MYBROWSER",
   },
@@ -90,6 +93,9 @@
         "ENVIRONMENT": "production",
       },
       "routes": [{ "pattern": "resume.jclee.me/job/*", "zone_name": "jclee.me" }],
+      "ai": {
+        "binding": "AI",
+      },
       "browser": {
         "binding": "MYBROWSER",
       },
