@@ -2,6 +2,8 @@
 gha-creds-*.json
 .env
 .dev.vars
+*.tfvars
+!*.tfvars.example
 .claude.json
 data/
 # Exception: allow i18n translations
