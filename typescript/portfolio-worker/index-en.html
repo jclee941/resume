@@ -190,19 +190,6 @@
       }
       <!-- CSS_PLACEHOLDER -->
     </style>
-
-    <!-- Sentry/GlitchTip Error Tracking -->
-    <script
-      src="https://browser.sentry-cdn.com/7.120.3/bundle.tracing.min.js"
-      integrity="sha384-xeXUc9z8cJbRsjOleYBHEV9rZIBCcyXc8fd62MHA/aosms+xLqnFIIQPTmGNCUm3"
-      crossorigin="anonymous"
-    ></script>
-    <!-- Cloudflare Web Analytics -->
-    <script
-      defer
-      src="https://static.cloudflareinsights.com/beacon.min.js"
-      data-cf-beacon='{"token":"8c92c40a4f374cde9c3b7f8a1e9b5c2d"}'
-    ></script>
   </head>
   <body class="minimal-theme">
     <canvas id="matrix-bg"></canvas>
@@ -523,23 +510,59 @@
       })();
     </script>
     <script>
-      Sentry.init({
-        dsn: 'https://aac5a1e6273a481ea754e3dccb54f4e8@glitchtip.jclee.me/1',
-        environment: 'production',
-        tracesSampleRate: 0.1,
-        ignoreErrors: [/chrome-extension/, /moz-extension/],
-        beforeSend: function (event) {
-          if (event.request && event.request.cookies) {
-            delete event.request.cookies;
-          }
-          if (event.user) {
-            delete event.user.email;
-            delete event.user.ip_address;
-          }
-          return event;
-        },
-      });
-      Sentry.setUser({ id: 'anonymous' });
+      (function () {
+        var s = document.createElement('script');
+        s.src = 'https://browser.sentry-cdn.com/7.120.3/bundle.min.js';
+        s.integrity = 'sha384-QhNWP5Exx8ZPPgZF2s+nKw/cl8cah1/6MVdZfR8a22f2KO0OsBNonujHvYJlrWIP';
+        s.crossOrigin = 'anonymous';
+        s.onload = function () {
+          Sentry.init({
+            dsn: 'https://aac5a1e6273a481ea754e3dccb54f4e8@glitchtip.jclee.me/1',
+            environment: location.hostname === 'resume.jclee.me' ? 'production' : 'development',
+            ignoreErrors: [
+              /chrome-extension/,
+              /moz-extension/,
+              /ResizeObserver loop/,
+              'Script error.',
+              'Network request failed',
+              'Load failed',
+              'Failed to fetch',
+            ],
+            denyUrls: [/extensions\//i, /^chrome:\/\//i, /^moz-extension:\/\//i],
+            beforeSend: function (event) {
+              if (event.request) {
+                delete event.request.cookies;
+                delete event.request.headers;
+                if (event.request.url) {
+                  event.request.url = event.request.url.split('?')[0];
+                }
+              }
+              if (event.user) {
+                delete event.user.email;
+                delete event.user.ip_address;
+              }
+              if (event.extra) {
+                delete event.extra;
+              }
+              return event;
+            },
+            beforeBreadcrumb: function (breadcrumb) {
+              if (breadcrumb.category === 'xhr' || breadcrumb.category === 'fetch') {
+                if (breadcrumb.data && breadcrumb.data.url) {
+                  breadcrumb.data.url = breadcrumb.data.url.split('?')[0];
+                }
+              }
+              return breadcrumb;
+            },
+          });
+          Sentry.setUser({ id: 'anonymous' });
+        };
+        document.head.appendChild(s);
+        var cf = document.createElement('script');
+        cf.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+        cf.dataset.cfBeacon = '{"token":"8c92c40a4f374cde9c3b7f8a1e9b5c2d"}';
+        document.head.appendChild(cf);
+      })();
     </script>
   </body>
 </html>
