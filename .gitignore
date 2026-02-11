@@ -89,6 +89,7 @@ infrastructure/todo/
 # Infisical (keep .infisical.json for project config, exclude secrets)
 .env.infisical
 secrets.env
+.env.secrets
 
 # Session reports
 docs/sessions/*.md
