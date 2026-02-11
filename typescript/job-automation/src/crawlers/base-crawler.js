@@ -1,5 +1,8 @@
 /**
  * Base Crawler - 채용 사이트 크롤러 기본 클래스
+ *
+ * Provides configurable retry with exponential backoff, jitter,
+ * status-code-aware retry decisions, and Retry-After header support.
  */
 
 import { EventEmitter } from 'events';
@@ -28,6 +31,38 @@ function getRandomUA() {
   return CHROME_USER_AGENTS[Math.floor(Math.random() * CHROME_USER_AGENTS.length)];
 }
 
+/**
+ * Default retry configuration for all crawlers.
+ * Override per-instance via `options.retry` or per-request via `rateLimitedFetch(url, { retry })`.
+ *
+ * @type {RetryConfig}
+ */
+const DEFAULT_RETRY_CONFIG = {
+  maxRetries: 3,
+  baseDelay: 1000,
+  maxDelay: 30000,
+  jitterFactor: 0.3,
+  retryableStatuses: [429, 500, 502, 503, 504],
+};
+
+/**
+ * @typedef {object} RetryConfig
+ * @property {number} maxRetries    - Maximum retry attempts (default: 3)
+ * @property {number} baseDelay     - Base delay in ms for exponential backoff (default: 1000)
+ * @property {number} maxDelay      - Maximum delay cap in ms (default: 30000)
+ * @property {number} jitterFactor  - Random jitter multiplier 0-1 (default: 0.3)
+ * @property {number[]} retryableStatuses - HTTP status codes eligible for retry
+ */
+
+/**
+ * @typedef {object} RetryMetrics
+ * @property {number} totalRetries        - Total retry attempts across all requests
+ * @property {number} successAfterRetry   - Requests that succeeded after at least one retry
+ * @property {number} exhaustedRetries    - Requests that failed after all retries exhausted
+ * @property {number} nonRetryableFailures - Requests that failed with non-retryable status
+ * @property {Date|null} lastRetryAt      - Timestamp of the most recent retry
+ */
+
 export class BaseCrawler extends EventEmitter {
   constructor(name, options = {}) {
     super();
@@ -44,10 +79,65 @@ export class BaseCrawler extends EventEmitter {
     };
     this.cookies = options.cookies || '';
     this.lastRequestTime = 0;
+
+    /** @type {RetryConfig} */
+    this.retryConfig = {
+      ...DEFAULT_RETRY_CONFIG,
+      maxRetries: this.maxRetries,
+      ...options.retry,
+    };
+
+    /** @type {RetryMetrics} */
+    this.retryMetrics = {
+      totalRetries: 0,
+      successAfterRetry: 0,
+      exhaustedRetries: 0,
+      nonRetryableFailures: 0,
+      lastRetryAt: null,
+    };
   }
 
   /**
-   * Rate limiting을 적용한 fetch
+   * Calculate exponential backoff delay with jitter.
+   *
+   * Formula: min(baseDelay * 2^(attempt-1), maxDelay) * (1 + random * jitterFactor)
+   *
+   * @param {number} attempt - Current attempt number (1-based)
+   * @param {RetryConfig} config - Retry configuration
+   * @returns {number} Delay in milliseconds
+   */
+  _calculateBackoff(attempt, config) {
+    const exponentialDelay = config.baseDelay * Math.pow(2, attempt - 1);
+    const cappedDelay = Math.min(exponentialDelay, config.maxDelay);
+    const jitter = 1 + Math.random() * config.jitterFactor;
+    return Math.round(cappedDelay * jitter);
+  }
+
+  /**
+   * Determine whether a given HTTP status code is retryable.
+   *
+   * - `null` (network error, no response) is always retryable.
+   * - 4xx errors (except 429 Too Many Requests) are NOT retryable.
+   * - Retryable statuses are checked against `config.retryableStatuses`.
+   *
+   * @param {number|null} statusCode - HTTP status code or null for network errors
+   * @param {RetryConfig} config - Retry configuration
+   * @returns {boolean}
+   */
+  _isRetryable(statusCode, config) {
+    if (statusCode === null) return true; // network errors are retryable
+    return config.retryableStatuses.includes(statusCode);
+  }
+
+  /**
+   * Rate-limited fetch with configurable exponential backoff and retry.
+   *
+   * Supports per-request retry overrides via `options.retry`.
+   * Emits events: `retry`, `retry:success`, `retry:non-retryable`, `retry:exhausted`.
+   *
+   * @param {string} url - Request URL
+   * @param {object} [options={}] - Fetch options + optional `retry` overrides
+   * @returns {Promise<Response>}
    */
   async rateLimitedFetch(url, options = {}) {
     const now = Date.now();
@@ -59,36 +149,104 @@ export class BaseCrawler extends EventEmitter {
 
     this.lastRequestTime = Date.now();
 
+    // Separate retry overrides from fetch options
+    const { retry: retryOverride, ...restOptions } = options;
+    const retryConfig = { ...this.retryConfig, ...retryOverride };
+
     const fetchOptions = {
-      method: options.method || 'GET',
+      method: restOptions.method || 'GET',
       headers: {
         ...this.headers,
-        ...options.headers,
+        ...restOptions.headers,
         ...(this.cookies ? { Cookie: this.cookies } : {}),
       },
       signal: AbortSignal.timeout(this.timeout),
-      ...options,
+      ...restOptions,
     };
 
     let lastError;
-    for (let attempt = 1; attempt <= this.maxRetries; attempt++) {
+    for (let attempt = 1; attempt <= retryConfig.maxRetries; attempt++) {
       try {
         const response = await fetch(url, fetchOptions);
 
         if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          const error = new Error(`HTTP ${response.status}: ${response.statusText}`);
+          error.statusCode = response.status;
+
+          // Parse Retry-After header for 429 responses
+          if (response.status === 429) {
+            const retryAfter = response.headers.get('Retry-After');
+            if (retryAfter) {
+              const parsed = Number(retryAfter);
+              if (!Number.isNaN(parsed)) {
+                error.retryAfter = parsed * 1000; // convert seconds to ms
+              }
+            }
+          }
+
+          throw error;
+        }
+
+        // Success after retry — track metrics
+        if (attempt > 1) {
+          this.retryMetrics.successAfterRetry++;
+          this.emit('retry:success', {
+            url,
+            attempt,
+            maxRetries: retryConfig.maxRetries,
+            crawler: this.name,
+          });
         }
 
         return response;
       } catch (error) {
         lastError = error;
-        this.emit('retry', { url, attempt, error: error.message });
+        const statusCode = error.statusCode || null;
 
-        if (attempt < this.maxRetries) {
-          await this.sleep(this.rateLimit * attempt);
+        // Non-retryable error — fail immediately
+        if (!this._isRetryable(statusCode, retryConfig)) {
+          this.retryMetrics.nonRetryableFailures++;
+          this.emit('retry:non-retryable', {
+            url,
+            attempt,
+            maxRetries: retryConfig.maxRetries,
+            statusCode,
+            error: error.message,
+            crawler: this.name,
+          });
+          throw error;
+        }
+
+        // Retryable — emit event and wait before next attempt
+        this.retryMetrics.totalRetries++;
+        this.retryMetrics.lastRetryAt = new Date();
+
+        const delay = error.retryAfter || this._calculateBackoff(attempt, retryConfig);
+
+        this.emit('retry', {
+          url,
+          attempt,
+          maxRetries: retryConfig.maxRetries,
+          delay,
+          statusCode,
+          error: error.message,
+          crawler: this.name,
+        });
+
+        if (attempt < retryConfig.maxRetries) {
+          await this.sleep(delay);
         }
       }
     }
+
+    // All retries exhausted
+    this.retryMetrics.exhaustedRetries++;
+    this.emit('retry:exhausted', {
+      url,
+      maxRetries: retryConfig.maxRetries,
+      error: lastError.message,
+      crawler: this.name,
+    });
 
     throw lastError;
   }
@@ -126,6 +284,27 @@ export class BaseCrawler extends EventEmitter {
    */
   sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  /**
+   * Get current retry metrics snapshot.
+   * @returns {RetryMetrics}
+   */
+  getRetryMetrics() {
+    return { ...this.retryMetrics };
+  }
+
+  /**
+   * Reset retry metrics to zero.
+   */
+  resetRetryMetrics() {
+    this.retryMetrics = {
+      totalRetries: 0,
+      successAfterRetry: 0,
+      exhaustedRetries: 0,
+      nonRetryableFailures: 0,
+      lastRetryAt: null,
+    };
   }
 
   /**
@@ -196,4 +375,5 @@ export const NormalizedJobSchema = {
   crawledAt: null, // 크롤링 시간
 };
 
+export { DEFAULT_RETRY_CONFIG };
 export default BaseCrawler;
