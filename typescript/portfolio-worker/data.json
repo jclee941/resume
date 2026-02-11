@@ -267,6 +267,25 @@
         "Next.js",
         "PostgreSQL"
       ]
+    },
+    {
+      "icon": "🏎️",
+      "title": "HYCU FSDS 자율주행",
+      "tech": "Python, ROS, Docker, AirSim",
+      "description": "Formula Student Driverless Simulator 기반 자율주행 시스템. Docker + ROS 환경에서 AirSim 시뮬레이터를 활용한 자율주행 구현. 한양사이버대학교 제출, 우수상 수상.",
+      "tagline": "자율주행 시뮬레이션",
+      "metrics": {
+        "award": "우수상 (Excellence Award)",
+        "platform": "Formula Student Driverless Simulator",
+        "stack": "ROS + Docker + AirSim"
+      },
+      "related_skills": [
+        "Python",
+        "ROS",
+        "Docker",
+        "AirSim"
+      ],
+      "liveUrl": "https://github.com/qws941/hycu_fsds"
     }
   ],
   "projectsEn": [
@@ -358,6 +377,25 @@
         "Next.js",
         "PostgreSQL"
       ]
+    },
+    {
+      "icon": "🏎️",
+      "title": "HYCU FSDS 자율주행",
+      "tech": "Python, ROS, Docker, AirSim",
+      "description": "Formula Student Driverless Simulator 기반 자율주행 시스템. Docker + ROS 환경에서 AirSim 시뮬레이터를 활용한 자율주행 구현. 한양사이버대학교 제출, 우수상 수상.",
+      "tagline": "자율주행 시뮬레이션",
+      "metrics": {
+        "award": "우수상 (Excellence Award)",
+        "platform": "Formula Student Driverless Simulator",
+        "stack": "ROS + Docker + AirSim"
+      },
+      "related_skills": [
+        "Python",
+        "ROS",
+        "Docker",
+        "AirSim"
+      ],
+      "liveUrl": "https://github.com/qws941/hycu_fsds"
     }
   ],
   "certifications": [
