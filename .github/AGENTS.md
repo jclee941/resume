@@ -45,14 +45,14 @@ Plus: `deploy-preview` (PR ephemeral worker) and `cleanup-preview` (PR close).
 
 ### maintenance.yml — Scheduled Maintenance
 
-**4 cron jobs for operational upkeep.**
+**4 jobs for operational upkeep (1 scheduled, 3 manual).**
 
-| Job             | Schedule           | Purpose                                |
-| --------------- | ------------------ | -------------------------------------- |
-| auth-refresh    | Weekdays 00:00 UTC | Refresh auth tokens via n8n webhook    |
-| profile-sync    | Monday 02:00 UTC   | Sync profiles from SSoT                |
-| drift-detection | Monday 06:00 UTC   | Terraform plan against R2-backed state |
-| cache-cleanup   | Daily 04:00 UTC    | Purge stale KV/R2 cache entries        |
+| Job             | Schedule          | Purpose                                |
+| --------------- | ----------------- | -------------------------------------- |
+| auth-refresh    | Manual (dispatch) | Refresh auth tokens via n8n webhook    |
+| profile-sync    | Manual (dispatch) | Sync profiles from SSoT                |
+| drift-detection | Monday 06:00 UTC  | Terraform plan against R2-backed state |
+| cache-cleanup   | Manual (dispatch) | Purge stale KV/R2 cache entries        |
 
 **drift-detection specifics:**
 
@@ -66,7 +66,7 @@ Plus: `deploy-preview` (PR ephemeral worker) and `cleanup-preview` (PR close).
 | Trigger                                    | Behavior                                        |
 | ------------------------------------------ | ----------------------------------------------- |
 | PR (paths: `infrastructure/cloudflare/**`) | `terraform plan` + PR comment                   |
-| Push to `master`                           | `terraform apply -auto-approve`                 |
+| Push to `master`                           | `terraform plan` (review via dispatch apply)    |
 | `workflow_dispatch`                        | Plan, apply, or destroy with optional `-target` |
 
 ### release.yml — Auto Release

@@ -7,7 +7,7 @@ on:
       - '.github/workflows/vault-test.yml'
 
 env:
-  VAULT_ADDR: http://192.168.50.101:8200
+  VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
 
 jobs:
   test-vault-oidc:
@@ -26,7 +26,7 @@ jobs:
           url: ${{ env.VAULT_ADDR }}
           method: jwt
           role: github-actions
-          jwtGithubAudience: "https://github.com/qws941"
+          jwtGithubAudience: 'https://github.com/qws941'
           secrets: |
             secret/data/mcp/test api_key | MCP_API_KEY
             secret/data/mcp/test service_name | MCP_SERVICE
@@ -40,7 +40,7 @@ jobs:
           echo "MCP_SERVICE: $MCP_SERVICE"
           echo "INFRA_PASSWORD is set: ${INFRA_PASSWORD:+YES}"
           echo "INFRA_ENV: $INFRA_ENV"
-          
+
           if [ -n "$MCP_API_KEY" ] && [ -n "$INFRA_PASSWORD" ]; then
             echo "✅ All secrets fetched successfully!"
             exit 0

@@ -130,7 +130,7 @@ jobs:
         run: mkdir -p .affected && touch .affected/.keep
 
       - name: Upload affected analysis
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: affected-targets
           path: .affected/
@@ -179,7 +179,7 @@ jobs:
 
       - name: Upload lint results
         if: failure()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: eslint-results
           path: eslint-results.txt
@@ -236,7 +236,7 @@ jobs:
           node tools/ci/run-affected.js test:coverage || npm test
 
       - name: Upload coverage
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-report
           path: coverage/
@@ -257,6 +257,9 @@ jobs:
         with:
           install-playwright: 'true'
 
+      # NOTE: Intentionally duplicates sync:data + build from the build job.
+      # E2E tests need a local build for Playwright; depending on the build job
+      # would add coupling and sequential wait time for ~2min savings.
       - name: Sync resume data
         run: npm run sync:data
 
@@ -271,7 +274,7 @@ jobs:
 
       - name: Upload Playwright report
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-report
           path: playwright-report/
@@ -328,7 +331,7 @@ jobs:
         working-directory: typescript/portfolio-worker
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: portfolio-worker
           path: typescript/portfolio-worker/worker.js

@@ -19,17 +19,13 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
+      - name: Setup
+        uses: ./.github/actions/setup
         with:
-          node-version: '22'
-          cache: 'npm'
+          install-playwright: 'true'
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Install Playwright browsers
-        run: npx playwright install chromium --with-deps
+      - name: Sync resume data
+        run: npm run sync:data
 
       - name: Build portfolio
         run: npm run build
