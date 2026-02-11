@@ -31,6 +31,7 @@ import {
   CleanupWorkflow,
 } from './workflows/index.js';
 import { BrowserSessionDO } from './durable-objects/browser-session-do.js';
+import { QueueConsumer, enqueueTask, MESSAGE_TYPES, PRIORITY } from './queue-consumer.js';
 
 export {
   JobCrawlingWorkflow,
@@ -238,6 +239,45 @@ export default {
 
     router.post('/api/cleanup', (req) => apps.cleanupExpired(req));
 
+    router.post('/api/queue/enqueue', async (req) => {
+      try {
+        const body = await req.json();
+        const { type, payload, priority, delaySeconds } = body;
+
+        if (!type || !payload) {
+          return jsonResponse({ error: 'Missing required fields: type, payload' }, 400);
+        }
+
+        const validTypes = Object.values(MESSAGE_TYPES);
+        if (!validTypes.includes(type)) {
+          return jsonResponse(
+            { error: `Invalid type. Must be one of: ${validTypes.join(', ')}` },
+            400
+          );
+        }
+
+        await enqueueTask(
+          env,
+          { type, payload, priority: priority || PRIORITY.BACKGROUND },
+          { delaySeconds: delaySeconds || 0 }
+        );
+
+        return jsonResponse({ success: true, type, priority: priority || PRIORITY.BACKGROUND });
+      } catch (err) {
+        log.error('Queue enqueue failed', { error: err.message });
+        return jsonResponse({ error: 'Failed to enqueue task' }, 500);
+      }
+    });
+
+    router.get('/api/queue/status', async () => {
+      return jsonResponse({
+        status: 'ok',
+        queue: 'crawl-tasks',
+        types: Object.values(MESSAGE_TYPES),
+        priorities: Object.values(PRIORITY),
+      });
+    });
+
     router.post('/api/workflows/job-crawling', async (req) => {
       const body = await req.json().catch(() => ({}));
       const instance = await env.JOB_CRAWLING_WORKFLOW.create({ params: body });
@@ -358,5 +398,11 @@ export default {
         text: `❌ Cron Error: ${event.cron}\n\`\`\`${error.message}\`\`\``,
       });
     }
+  },
+
+  async queue(batch, env, ctx) {
+    const logger = Logger.create(env, { service: 'job-worker' });
+    const consumer = new QueueConsumer(env, logger);
+    await consumer.processBatch(batch, ctx);
   },
 };

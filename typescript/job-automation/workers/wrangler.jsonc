@@ -70,6 +70,19 @@
   "triggers": {
     "crons": ["0 0 * * 1-5", "0 9 * * *", "*/5 * * * *", "0 3 * * *", "0 4 * * SUN"],
   },
+  "queues": {
+    "producers": [{ "queue": "crawl-tasks", "binding": "CRAWL_TASKS" }],
+    "consumers": [
+      {
+        "queue": "crawl-tasks",
+        "max_batch_size": 10,
+        "max_batch_timeout": 30,
+        "max_retries": 5,
+        "dead_letter_queue": "crawl-tasks-dlq",
+        "max_concurrency": 3,
+      },
+    ],
+  },
   // Production environment overrides
   "env": {
     "production": {
@@ -133,6 +146,19 @@
           "class_name": "CleanupWorkflow",
         },
       ],
+      "queues": {
+        "producers": [{ "queue": "crawl-tasks", "binding": "CRAWL_TASKS" }],
+        "consumers": [
+          {
+            "queue": "crawl-tasks",
+            "max_batch_size": 10,
+            "max_batch_timeout": 30,
+            "max_retries": 5,
+            "dead_letter_queue": "crawl-tasks-dlq",
+            "max_concurrency": 3,
+          },
+        ],
+      },
     },
   },
 }
