@@ -36,11 +36,11 @@ const CACHE_STRATEGIES = {
 function generateSecurityHeaders(scriptHashes, styleHashes) {
   const cspDirectives = [
     "default-src 'none'",
-    `script-src 'self' 'strict-dynamic' ${scriptHashes.join(' ')} ${CLOUDFLARE_SCRIPT_HASHES.join(' ')} https://www.googletagmanager.com ${CLOUDFLARE_ANALYTICS.script} https://accounts.google.com`,
+    `script-src 'self' 'strict-dynamic' ${scriptHashes.join(' ')} ${CLOUDFLARE_SCRIPT_HASHES.join(' ')} https://www.googletagmanager.com ${CLOUDFLARE_ANALYTICS.script} https://accounts.google.com https://browser.sentry-cdn.com`,
     `style-src 'self' ${styleHashes.join(' ')}`,
     `style-src-elem 'self' ${styleHashes.join(' ')}`,
     "style-src-attr 'unsafe-inline'",
-    `connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://oauth2.googleapis.com ${CLOUDFLARE_ANALYTICS.connect}`,
+    `connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://oauth2.googleapis.com ${CLOUDFLARE_ANALYTICS.connect} https://glitchtip.jclee.me`,
     "img-src 'self' data:",
     "font-src 'self'",
     "manifest-src 'self'",

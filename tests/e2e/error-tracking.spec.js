@@ -88,11 +88,11 @@ test.describe('Error Tracking (Sentry)', () => {
     const csp = headers['content-security-policy'] || '';
 
     test.skip(
-      !csp.includes('ingest.sentry.io'),
-      'Requires live Sentry DSN configuration in worker'
+      !csp.includes('glitchtip.jclee.me'),
+      'Requires live GlitchTip DSN configuration in worker'
     );
 
-    expect(csp).toContain('ingest.sentry.io');
+    expect(csp).toContain('glitchtip.jclee.me');
   });
 
   // Sentry error ignoring test - requires live DSN

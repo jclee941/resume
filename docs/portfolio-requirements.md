@@ -249,15 +249,15 @@
 > 2026-02-11 추가. Jest 단위 테스트 + Playwright E2E 테스트 프레임워크.
 > 데드 테스트 정리 및 테스트 안정성 개선 항목 포함.
 
-| ID    | 요구사항            | 설명                                        | 구현 |
-| ----- | ------------------- | ------------------------------------------- | ---- |
-| NF7.1 | Jest Unit Tests     | 단위 테스트 프레임워크 구성 및 실행         | ✅   |
-| NF7.2 | Playwright E2E      | E2E 테스트 프레임워크 구성 (Chromium)       | ✅   |
-| NF7.3 | Dead Test Cleanup   | 사용하지 않는 테스트 파일 정리 완료         | ✅   |
-| NF7.4 | auth.js Restoration | 테스트 인증 모듈 복원 (삭제 후 재생성)      | ✅   |
-| NF7.5 | Sentry DSN 설정     | Sentry 연동 미설정으로 7개 테스트 skip 상태 | ❌   |
-| NF7.6 | Visual Regression   | 비주얼 리그레션 테스트 추가 (스크린샷 비교) | ✅   |
-| NF7.7 | CSP Hash Validation | 빌드 시 CSP 해시 불일치 자동 감지 테스트    | ✅   |
+| ID    | 요구사항            | 설명                                                    | 구현 |
+| ----- | ------------------- | ------------------------------------------------------- | ---- |
+| NF7.1 | Jest Unit Tests     | 단위 테스트 프레임워크 구성 및 실행                     | ✅   |
+| NF7.2 | Playwright E2E      | E2E 테스트 프레임워크 구성 (Chromium)                   | ✅   |
+| NF7.3 | Dead Test Cleanup   | 사용하지 않는 테스트 파일 정리 완료                     | ✅   |
+| NF7.4 | auth.js Restoration | 테스트 인증 모듈 복원 (삭제 후 재생성)                  | ✅   |
+| NF7.5 | Sentry DSN 설정     | GlitchTip DSN 연동 완료 (Sentry SDK 7.120.3 + PII 필터) | ✅   |
+| NF7.6 | Visual Regression   | 비주얼 리그레션 테스트 추가 (스크린샷 비교)             | ✅   |
+| NF7.7 | CSP Hash Validation | 빌드 시 CSP 해시 불일치 자동 감지 테스트                | ✅   |
 
 ### NF8. 코드 품질 및 문서화
 

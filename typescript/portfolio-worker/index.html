@@ -182,6 +182,12 @@
       /* CSS_PLACEHOLDER */
     </style>
 
+    <!-- Sentry/GlitchTip Error Tracking -->
+    <script
+      src="https://browser.sentry-cdn.com/7.120.3/bundle.tracing.min.js"
+      integrity="sha384-xeXUc9z8cJbRsjOleYBHEV9rZIBCcyXc8fd62MHA/aosms+xLqnFIIQPTmGNCUm3"
+      crossorigin="anonymous"
+    ></script>
     <!-- Cloudflare Web Analytics -->
     <script
       defer
@@ -1195,6 +1201,25 @@
             .finally(updateMainIndicator);
         });
       })();
+    </script>
+    <script>
+      Sentry.init({
+        dsn: 'https://aac5a1e6273a481ea754e3dccb54f4e8@glitchtip.jclee.me/1',
+        environment: 'production',
+        tracesSampleRate: 0.1,
+        ignoreErrors: [/chrome-extension/, /moz-extension/],
+        beforeSend: function (event) {
+          if (event.request && event.request.cookies) {
+            delete event.request.cookies;
+          }
+          if (event.user) {
+            delete event.user.email;
+            delete event.user.ip_address;
+          }
+          return event;
+        },
+      });
+      Sentry.setUser({ id: 'anonymous' });
     </script>
   </body>
 </html>
