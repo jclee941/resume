@@ -254,10 +254,31 @@
                 <span class="section-cmd__command">cat about.txt</span>
               </div>
               <div class="about-content">
-                <p>
-                  Security Infrastructure / Observability / Automation. 8 years in finance and
-                  public sector. Design, operate, improve.
-                </p>
+                <div class="about-block">
+                  <span class="about-label">&gt; career_highlights</span>
+                  <ul class="cmd-output about-list">
+                    <li>8 years in finance & public-sector security infrastructure</li>
+                    <li>Built unified observability platforms (Splunk/ELK/Grafana)</li>
+                    <li>Designed FortiGate/FortiAnalyzer API automation systems</li>
+                    <li>Security operations automation via n8n workflows</li>
+                  </ul>
+                </div>
+                <div class="about-block">
+                  <span class="about-label">&gt; tech_philosophy</span>
+                  <ul class="cmd-output about-list">
+                    <li>"If it's not observable, it's not operable"</li>
+                    <li>Manual repetition → automated pipelines</li>
+                    <li>Infrastructure as Code, declarative-first</li>
+                  </ul>
+                </div>
+                <div class="about-block">
+                  <span class="about-label">&gt; current_focus</span>
+                  <ul class="cmd-output about-list">
+                    <li>ITCEN CTS Security Operations</li>
+                    <li>Cloud-native observability expansion</li>
+                    <li>AI/MCP-driven security automation R&D</li>
+                  </ul>
+                </div>
               </div>
             </section>
 
@@ -383,6 +404,23 @@
               </div>
               <ul class="skill-list-minimal">
                 <!-- SKILLS_LIST_PLACEHOLDER -->
+              </ul>
+            </section>
+
+            <section
+              id="infrastructure"
+              class="section-infrastructure reveal"
+              role="region"
+              aria-labelledby="infrastructure-heading"
+            >
+              <h2 id="infrastructure-heading" class="sr-only">Infrastructure</h2>
+              <div class="section-cmd">
+                <span class="section-cmd__command"
+                  >docker ps --format "table {{.Names}}\t{{.Status}}"</span
+                >
+              </div>
+              <ul class="infra-grid">
+                <!-- INFRASTRUCTURE_CARDS_PLACEHOLDER -->
               </ul>
             </section>
 

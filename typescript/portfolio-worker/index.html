@@ -258,11 +258,31 @@
                 <span class="section-cmd__command">cat about.txt</span>
               </div>
               <div class="about-content">
-                <p class="cmd-output">
-                  보안 인프라 / 관측성 / 자동화<br />
-                  금융·공공 중심 8년차, 설계-운영-개선<br />
-                  ITCEN CTS (현재)
-                </p>
+                <div class="about-block">
+                  <span class="about-label">&gt; career_highlights</span>
+                  <ul class="cmd-output about-list">
+                    <li>금융·공공 보안 인프라 8년 경력</li>
+                    <li>Splunk/ELK/Grafana 기반 통합 관측 플랫폼 구축</li>
+                    <li>FortiGate/FortiAnalyzer API 자동화 체계 설계</li>
+                    <li>n8n 워크플로우 기반 보안 운영 자동화</li>
+                  </ul>
+                </div>
+                <div class="about-block">
+                  <span class="about-label">&gt; tech_philosophy</span>
+                  <ul class="cmd-output about-list">
+                    <li>"관측 가능하지 않으면, 운영할 수 없다"</li>
+                    <li>수작업 반복 → 자동화 파이프라인 전환</li>
+                    <li>Infrastructure as Code, 선언적 구성 지향</li>
+                  </ul>
+                </div>
+                <div class="about-block">
+                  <span class="about-label">&gt; current_focus</span>
+                  <ul class="cmd-output about-list">
+                    <li>ITCEN CTS 보안관제팀</li>
+                    <li>클라우드 네이티브 관측성 확장</li>
+                    <li>AI/MCP 기반 보안 자동화 연구</li>
+                  </ul>
+                </div>
               </div>
             </section>
 
@@ -392,6 +412,23 @@
               </div>
               <ul class="skill-list-minimal">
                 <!-- SKILLS_LIST_PLACEHOLDER -->
+              </ul>
+            </section>
+
+            <section
+              id="infrastructure"
+              class="section-infrastructure reveal"
+              role="region"
+              aria-labelledby="infrastructure-heading"
+            >
+              <h2 id="infrastructure-heading" class="sr-only">인프라</h2>
+              <div class="section-cmd">
+                <span class="section-cmd__command"
+                  >docker ps --format "table {{.Names}}\t{{.Status}}"</span
+                >
+              </div>
+              <ul class="infra-grid">
+                <!-- INFRASTRUCTURE_CARDS_PLACEHOLDER -->
               </ul>
             </section>
 

@@ -89,118 +89,121 @@
 - Wanted, Saramin, Jobkorea 크롤러 통합
 - 세션 관리, 쿠키 퍼시스턴스
 
-### M7. CI/CD Pipeline Foundation ✅ (부분)
+### M7. CI/CD Pipeline Foundation ✅
 
 | 항목         | 내용                                      |
 | ------------ | ----------------------------------------- |
 | **기간**     | 2026-02-08 ~ 2026-02-11                   |
-| **요구사항** | NF6 (9) — 5항목 완료, 4항목 미완료        |
+| **요구사항** | NF6 (9) — 9항목 전체 완료                 |
 | **산출물**   | ci.yml, staging deploy, composite actions |
 
 - ci.yml 메인 파이프라인 (lint, test, build, deploy)
 - 스테이징 환경 자동 배포
 - Auto-rollback, PR preview
 - Composite actions (.github/actions/setup/)
-- **미완료**: permissions block(P0), security scan 강화(P0), ESLint threshold(P1), deploy timeout(P1)
+- permissions block 최소 권한 적용, security-scan 강화
+- ESLint warning 임계값 설정, 배포 작업 타임아웃 적용
 
 ### M8. Test Infrastructure & Cleanup ✅ (부분)
 
 | 항목         | 내용                                     |
 | ------------ | ---------------------------------------- |
-| **기간**     | 2026-02-09 ~ 2026-02-11                  |
-| **요구사항** | NF7 (7) — 4항목 완료, 3항목 미완료       |
+| **기간**     | 2026-02-09 ~ 2026-02-12                  |
+| **요구사항** | NF7 (7) — 6항목 완료, 1항목 미완료       |
 | **산출물**   | Jest + Playwright 설정, 데드 테스트 정리 |
 
 - Jest 단위 테스트 프레임워크
 - Playwright E2E 테스트 (Chromium)
 - 데드 테스트 파일 정리, auth.js 복원
-- **미완료**: Sentry DSN(7 tests skipped), visual regression, CSP hash validation
+- 비주얼 리그레션 테스트 (11개 스냅샷 베이스라인, desktop+mobile)
+- CSP 해시 불일치 자동 감지 테스트
+- **미완료**: NF7.5 Sentry DSN (7 tests skipped — DSN 미발급, 차단됨)
 
 ### M9. Documentation ✅
 
-| 항목         | 내용                                        |
-| ------------ | ------------------------------------------- |
-| **기간**     | 2026-02-09 ~ 2026-02-11                     |
-| **요구사항** | NF8 (5) — 4항목 완료, 1항목 미완료          |
-| **산출물**   | 27개 AGENTS.md, CONTRIBUTING.md, CODEOWNERS |
+| 항목         | 내용                                               |
+| ------------ | -------------------------------------------------- |
+| **기간**     | 2026-02-09 ~ 2026-02-12                            |
+| **요구사항** | NF8 (5) — 5항목 전체 완료                          |
+| **산출물**   | 27개 AGENTS.md, CONTRIBUTING.md, CODEOWNERS, JSDoc |
 
 - 27개 AGENTS.md 계층 구조 (전 디렉토리 커버)
 - CONTRIBUTING.md 기여 가이드라인
 - .github/CODEOWNERS PR 리뷰어 자동 지정
 - ESLint flat config (eslint.config.cjs)
-- **미완료**: JSDoc 공개 API 문서화
+- JSDoc 공개 API 문서화 (portfolio-worker/lib/ 5개 모듈)
 
 ---
 
-## 진행중 마일스톤
+### M10. SSoT Data Quality ✅
 
-### M10. SSoT Data Quality 🔄
+| 항목         | 내용                              |
+| ------------ | --------------------------------- |
+| **기간**     | 2026-02-09 ~ 2026-02-12           |
+| **요구사항** | F7 (6) — 6항목 전체 완료          |
+| **산출물**   | resume_data.json 데이터 품질 정비 |
 
-| 항목         | 내용                         |
-| ------------ | ---------------------------- |
-| **요구사항** | F7 (6) — 2항목 완료 (33%)    |
-| **차단요소** | 없음 — 수동 데이터 정비 작업 |
+- MD↔JSON 동기화, 검증불가 수치 제거
+- 스킬 숙련도 proficiency 필드 추가 (8카테고리 정합)
+- 경력 프로젝트 7건 metrics 보강
+- 자격증 credentialId 필드 추가
+- GitHub URL https:// 프로토콜 정규화 확인
 
-**완료**: MD↔JSON 동기화, 검증불가 수치 제거
-**미완료**:
+### M11. Job Dashboard Integration ✅
 
-- F7.2: 스킬 숙련도 레벨 (8 vs 6 카테고리 불일치)
-- F7.3: 프로젝트 메트릭 보강
-- F7.4: 자격증 상세 정보 (만료일, 자격번호)
-- F7.5: GitHub URL 정규화
+| 항목         | 내용                                                |
+| ------------ | --------------------------------------------------- |
+| **기간**     | 2026-02-11 ~ 2026-02-12                             |
+| **요구사항** | F9 (6) — 6항목 전체 완료                            |
+| **산출물**   | entry.js 통합 라우터, Dashboard SPA, REST API, Auth |
 
-### M11. Job Dashboard Integration 🔄
-
-| 항목         | 내용                                     |
-| ------------ | ---------------------------------------- |
-| **요구사항** | F9 (6) — 2항목 완료 (33%)                |
-| **차단요소** | ESLint 에러로 dashboard worker 배포 차단 |
-
-**완료**: Unified router (entry.js), /job/\* path routing
-**미완료**:
-
-- F9.3: Dashboard worker (ESLint blocker)
-- F9.4: /job/health endpoint (404 반환)
-- F9.5: Job API routes
-- F9.6: Dashboard auth
+- Unified router (entry.js), /job/\* path routing
+- Dashboard worker SPA (dashboard.js — 자동화, 통계, CRUD 모달)
+- 14개 API 핸들러, 40+ REST 엔드포인트
+- Bearer+cookie 인증, CSRF, rate-limit, webhook 서명 검증
+- /job/health 헬스체크 엔드포인트
 
 ---
 
 ## 미시작 마일스톤
 
-### M12. Content Expansion 📋
+### M12. Content Expansion ✅
 
-| 항목         | 내용                               |
-| ------------ | ---------------------------------- |
-| **요구사항** | F8 (8) — 0항목 완료 (0%)           |
-| **의존성**   | F7 SSoT 데이터 품질 개선 선행 권장 |
+| 항목         | 내용                                             |
+| ------------ | ------------------------------------------------ |
+| **기간**     | 2026-02-12                                       |
+| **요구사항** | F8 (8) — 8항목 전체 완료                         |
+| **산출물**   | cards.js 확장, About 섹션 확장, OSS 플레이스홀더 |
 
-- GitHub 저장소 쇼케이스, 역할별 임팩트 메트릭
-- 프로젝트 라이브 링크, 스킬 숙련도 시각화
-- 자격증 뱃지, 소셜 링크 확장, About 섹션 확장, OSS 기여 표시
+- GitHub 저장소 쇼케이스 (stars/language/forks 렌더링)
+- 경력 카드 임팩트 메트릭 [METRICS] 표시
+- 프로젝트 GitHub/Demo 링크 버튼
+- 스킬 숙련도 [95] 뱃지 시각화 (8카테고리)
+- 자격증 [ACTIVE]/[EXPIRED] 상태 뱃지
+- LinkedIn 소셜 링크 확장
+- About 섹션 3블록 확장 (career/philosophy/focus)
+- ossContributions 플레이스홀더 구조
 
-### M13. CI/CD Hardening 📋
+### M13. CI/CD Hardening ✅
 
-| 항목         | 내용                                        |
-| ------------ | ------------------------------------------- |
-| **요구사항** | NF6.6–NF6.9 — 4항목 미완료                  |
-| **우선순위** | P0 2건 (permissions, security-scan), P1 2건 |
+| 항목         | 내용                                                      |
+| ------------ | --------------------------------------------------------- |
+| **기간**     | 2026-02-11                                                |
+| **요구사항** | NF6.6–NF6.9 — 4항목 전체 완료                             |
+| **산출물**   | permissions block, security-scan, ESLint 임계값, 타임아웃 |
 
 - ci.yml permissions block 최소 권한 적용
 - security-scan continue-on-error 제거
 - ESLint warning 임계값 138→120 감소
 - 배포 작업 타임아웃 설정
 
-### M14. Sentry & Visual Regression 📋
+### M14. Sentry Integration 📋
 
-| 항목         | 내용                              |
-| ------------ | --------------------------------- |
-| **요구사항** | NF7.5–NF7.7, NF8.5 — 4항목 미완료 |
+| 항목         | 내용                          |
+| ------------ | ----------------------------- |
+| **요구사항** | NF7.5 — 1항목 미완료 (차단됨) |
 
-- Sentry DSN 설정 (현재 7개 테스트 skip)
-- 비주얼 리그레션 테스트 (스크린샷 비교)
-- CSP 해시 불일치 자동 감지
-- JSDoc 공개 API 문서화
+- NF7.5: Sentry DSN 설정 (현재 7개 테스트 skip — DSN 미발급, 차단됨)
 
 ---
 
@@ -208,9 +211,8 @@
 
 | 상태      | 마일스톤 수 | 항목 수 |
 | --------- | ----------- | ------- |
-| ✅ 완료   | 9           | 126     |
-| 🔄 진행중 | 2           | 4/12    |
-| 📋 미시작 | 3           | 0/16    |
+| ✅ 완료   | 13          | 149     |
+| 📋 미시작 | 1           | 0/1     |
 | **총합**  | **14**      | **150** |
 
 ---
