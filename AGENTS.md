@@ -1,7 +1,7 @@
 # PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-02-09
-**Commit:** 29d46c2
+**Generated:** 2026-02-11
+**Commit:** 941e396
 **Branch:** master
 **Build System:** Bazel + npm (Google3-style hybrid)
 
@@ -86,31 +86,15 @@ resume/
 | `Workflows`           | `typescript/job-automation/workers/src/workflows/`       | 8 Cloudflare Workflows                 |
 | `entry.js`            | `typescript/portfolio-worker/entry.js`                   | Unified dispatcher: /job/\*→jobHandler |
 
-## BAZEL TARGETS
+## BUILD COMMANDS
 
 ```bash
-# Query all targets
-bazel query "//..."
-
-# Build portfolio (triggers npm under hood)
-bazel build //typescript/portfolio-worker:build
-
-# Run tests
-bazel build //typescript/job-automation:test
-
-# Deploy all applications
-bazel build //tools:deploy
-
-# Find affected targets (CI)
-./tools/ci/affected.sh origin/master
-```
-
-**Note:** Bazel wraps npm scripts. For direct execution:
-
-```bash
-npm run build:all     # Build all
-npm run test:unit     # Run unit tests
-npm run sync:data     # Propagate SSoT changes
+bazel build //typescript/portfolio-worker:build   # Build portfolio
+bazel build //typescript/job-automation:test       # Run tests
+bazel build //tools:deploy                        # Deploy all
+npm run build:all                                 # Direct npm (Bazel wraps these)
+npm run test:unit                                 # Jest unit tests
+npm run sync:data                                 # Propagate SSoT
 ```
 
 ## ANTI-PATTERNS
@@ -124,19 +108,19 @@ npm run sync:data     # Propagate SSoT changes
 | Hardcode secrets               | Security violation          | Use `.env` or `wrangler secret`                    |
 | Skip OWNERS review             | Breaks code ownership       | Get OWNERS approval                                |
 | Edit resume in multiple places | Data inconsistency          | Edit only `resume_data.json` (SSoT)                |
-| Duplicate shared code          | workers/ vs shared/ drift   | Keep business logic in shared/                     |
 | Duplicate shared↔workers code  | workers/ vs shared/ drift   | Keep business logic in shared/, import in workers/ |
 | Ignore SECURITY_WARNING.md     | Contains 8 exposed API keys | Read and act on warnings                           |
 
 ## REFACTORING CANDIDATES
 
-| File                 | Lines | Issue                | Recommended Fix                      |
-| -------------------- | ----- | -------------------- | ------------------------------------ |
-| `resume-sync.js`     | 535   | Complex switch logic | Command pattern                      |
-| `generate-worker.js` | 1041  | Monolithic build     | Extract CSP/routing modules          |
-| `worker.js`          | 1435  | Generated monolith   | Modularize generate-worker.js output |
-| `dashboard.html`     | 1386  | Inline everything    | Extract JS/CSS into separate files   |
-| `profile-sync.js`    | 966   | Complex sync logic   | Split into validators + transformers |
+| File                   | Lines | Issue              | Recommended Fix                    |
+| ---------------------- | ----- | ------------------ | ---------------------------------- |
+| `profile-sync.js`      | 966   | 21 fn, 3 platforms | Command pattern per platform       |
+| `resume.js` (MCP tool) | 869   | 23 switch cases    | Command pattern                    |
+| `cli.js`               | 672   | 12 switch stmts    | Extract handler classes            |
+| `worker-api-routes.js` | 566   | 10 mixed routes    | Split csp.js/metrics.js/vitals.js  |
+| `generate-worker.js`   | 1041  | Monolithic build   | Extract CSP/routing modules        |
+| `dashboard.html`       | 1386  | Inline everything  | Extract JS/CSS into separate files |
 
 ## BUILD PIPELINE
 
@@ -152,159 +136,26 @@ typescript/portfolio-worker/worker.js  (NEVER EDIT)
 resume.jclee.me (Cloudflare Edge)
 ```
 
-### Job Automation
-
-```
-MCP Server: src/index.js → Fastify HTTP + MCP tools
-    ├── Crawlers: BaseCrawler → platform-specific (Wanted, Saramin, etc.)
-    └── Services: UnifiedApplySystem → SessionManager → Clients
-
-Dashboard Worker: workers/src/index.js → Cloudflare Worker
-    ├── resume.jclee.me/job/* (strips /job prefix internally)
-    ├── Bindings: D1 (job_dashboard), KV (JOB_CACHE), R2 (job-screenshots)
-    └── 8 Cloudflare Workflows (see CLOUDFLARE WORKFLOWS section)
-```
-
-## CLOUDFLARE WORKFLOWS
-
-| Workflow            | File                      | Schedule       | Purpose                                |
-| ------------------- | ------------------------- | -------------- | -------------------------------------- |
-| HealthCheckWorkflow | workflows/health-check.js | _/5 _ \* \* \* | 5-min uptime monitoring + Slack alerts |
-| BackupWorkflow      | workflows/backup.js       | 0 3 \* \* \*   | Daily D1 → KV backup, 7-day retention  |
-| CleanupWorkflow     | workflows/cleanup.js      | 0 4 \* \* 0    | Weekly expired session/log cleanup     |
-| DailyReportWorkflow | workflows/daily-report.js | 0 9 \* \* \*   | Daily job stats aggregation            |
-| AuthRefreshWorkflow | workflows/auth-refresh.js | 0 0 \* \* 1-5  | Weekday auth token refresh             |
-| ProfileSyncWorkflow | workflows/profile-sync.js | 0 2 \* \* 1    | Weekly profile sync from SSoT          |
-| ResumeSyncWorkflow  | workflows/resume-sync.js  | 0 1 \* \* \*   | Daily resume data propagation          |
-| CacheWarmupWorkflow | workflows/cache-warmup.js | 0 6 \* \* \*   | Daily cache pre-warming                |
-
-## CI/CD PIPELINE
-
-**GitHub Actions** (`.github/workflows/ci.yml` v2.0):
-
-| Trigger               | Action                                                          |
-| --------------------- | --------------------------------------------------------------- |
-| Push to `master`      | Analyze → Lint/Test → Build → Deploy → Verify                   |
-| Deploy/verify failure | Auto-rollback via `wrangler rollback`                           |
-| PR opened/updated     | Ephemeral preview worker (`resume-pr-{N}`)                      |
-| PR to `master`        | Analyze → Lint/Test → Build → Preview comment                   |
-| `workflow_dispatch`   | Manual deploy with `force_deploy`/`dry_run`/`skip_tests` inputs |
-
-**Pipeline Architecture (13 jobs):**
-
-```
-analyze → lint ──────────────────┐
-        → typecheck ─────────────┤
-        → test-unit ─────────────┤→ build → deploy → verify → notify
-        → test-e2e ──────────────┤              ↓ (on failure)
-        → security-scan ─────────┘          rollback
-```
-
-| Job               | Purpose                                                     |
-| ----------------- | ----------------------------------------------------------- |
-| `analyze`         | Affected target detection via `affected.sh`                 |
-| `lint`            | ESLint flat config                                          |
-| `typecheck`       | TypeScript type checking                                    |
-| `test-unit`       | Jest unit tests (skippable via `skip_tests`)                |
-| `test-e2e`        | Playwright E2E (skippable, browser cached ~500MB)           |
-| `security-scan`   | npm audit + secret detection                                |
-| `build`           | `generate-worker.js` → `worker.js` (strict gate)            |
-| `deploy`          | `wrangler deploy --env production` + GitHub Deployments API |
-| `verify`          | CF API age check + HTTP health (`/` and `/job/health`)      |
-| `rollback`        | `wrangler rollback` on deploy/verify failure                |
-| `notify`          | Slack notification on deploy outcome                        |
-| `deploy-preview`  | PR ephemeral worker (`resume-pr-{N}`)                       |
-| `cleanup-preview` | Cleanup preview workers on PR close                         |
-
-**Key Design Decisions:**
-
-- **Composite Action** (`.github/actions/setup/action.yml`): Eliminates 6x Node/npm setup duplication
-- **Strict Deploy Gate**: `success()` (not `always()&&!failure()&&!cancelled()`) with `force_deploy` bypass
-- **Separated Concurrency**: PR gets `pr-{N}` (cancel-in-progress), deploy gets `deploy-production` (queue)
-- **Playwright Cache**: Browser binaries cached via composite action (~500MB/run savings)
-- **Verify Strategy**: CF API worker age as primary check; HTTP health as warning-only (Bot Fight Mode blocks CI IPs)
-
-**Deployed Target:**
-
-- Single worker "resume" → `resume.jclee.me` (serves both portfolio and `/job/*` dashboard)
-
-**Required Secrets:** `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `AUTH_SYNC_SECRET`, `ENCRYPTION_KEY`
-
-**Manual Deployment (Fallback):**
-
-```bash
-source ~/.env && cd typescript/portfolio-worker && \
-  CLOUDFLARE_API_KEY="$CLOUDFLARE_API_KEY" \
-  CLOUDFLARE_EMAIL="$CLOUDFLARE_EMAIL" \
-  npx wrangler deploy --env production
-```
-
-## TESTING
-
-| Type   | Framework  | Location      | Coverage Floor |
-| ------ | ---------- | ------------- | -------------- |
-| Unit   | Jest       | `tests/unit/` | 90%            |
-| E2E    | Playwright | `tests/e2e/`  | Critical paths |
-| Visual | Playwright | `*.spec.js`   | 5% pixel diff  |
-
-**Special Requirements:**
-
-- `generate-worker.js` requires 100% coverage
-- All tests data-driven from `typescript/data` SSoT
-- E2E defaults to production URL
-- E2E uses `domcontentloaded` wait strategy for portfolio
-
 ## CONVENTIONS
 
-### Google3 Style
-
-- **Language Directories**: `typescript/`, not `apps/` or `packages/`
-- **OWNERS Files**: Every package has code ownership
-- **BUILD.bazel**: Explicit dependency declarations
-- **Visibility**: Default private, explicit exports
-
-### Code Style
-
-- ESM modules (`type: "module"` in package.json)
-- ESLint flat config (`eslint.config.cjs`), no Prettier
-- JSDoc for public APIs
-
-### Scripts
-
-- All scripts assume `pwd` is project root
-- Use `npm run <script>` from root, not subdirectories
-
-## FILES
-
-| File                       | Purpose                                   |
-| -------------------------- | ----------------------------------------- |
-| `MODULE.bazel`             | Bzlmod deps (rules_shell)                 |
-| `WORKSPACE`                | Legacy Bazel compat                       |
-| `.bazelrc`                 | Build configurations                      |
-| `BUILD.bazel`              | Package build rules (root aliases)        |
-| `OWNERS`                   | Root code ownership                       |
-| `package.json`             | npm workspaces root                       |
-| `eslint.config.cjs`        | ESLint flat config (117-warning baseline) |
-| `docs/SECURITY_WARNING.md` | Exposed API key warnings                  |
-| `.github/CODEOWNERS`       | PR auto-reviewer assignment (from OWNERS) |
-| `.github/dependabot.yml`   | Automated npm dependency updates          |
-| `.github/labeler.yml`      | PR auto-labeling by path                  |
+- **Google3**: Language dirs (`typescript/`), OWNERS files, BUILD.bazel, default-private visibility
+- **ESM** modules, ESLint flat config (`eslint.config.cjs`), no Prettier, JSDoc for public APIs
+- **Scripts**: Always `pwd` = project root, use `npm run <script>` from root
 
 ## AGENTS.MD HIERARCHY
 
 Subdirectory AGENTS.md files provide domain-specific context:
 
-| Path                                          | Focus                                       |
-| --------------------------------------------- | ------------------------------------------- |
-| `typescript/cli/AGENTS.md`                    | CLI tool usage, Wrangler wrapper            |
-| `typescript/data/AGENTS.md`                   | SSoT schema, sync process                   |
-| `typescript/job-automation/AGENTS.md`         | MCP server, crawlers, workers               |
-| `typescript/job-automation/workers/AGENTS.md` | Dashboard worker, workflows, D1/KV bindings |
-| `typescript/portfolio-worker/AGENTS.md`       | Terminal UI, CLI, build pipeline, CSP       |
-| `tests/AGENTS.md`                             | Test patterns, coverage reqs, wait strategy |
-| `tools/AGENTS.md`                             | Build scripts, CI utilities                 |
-| `infrastructure/AGENTS.md`                    | Observability stack (Grafana)               |
-| `docs/AGENTS.md`                              | Documentation hub, \_vendor/bmad warning    |
-| `third_party/AGENTS.md`                       | npm deps, One Version Rule                  |
-
-See subdirectory AGENTS.md for deeper context on each component.
+| Path                                          | Focus                                        |
+| --------------------------------------------- | -------------------------------------------- |
+| `typescript/portfolio-worker/AGENTS.md`       | Terminal UI, build pipeline, CSP             |
+| `typescript/job-automation/AGENTS.md`         | MCP server, crawlers, shared services        |
+| `typescript/job-automation/workers/AGENTS.md` | Dashboard worker, workflows, D1/KV bindings  |
+| `typescript/cli/AGENTS.md`                    | CLI tool usage, Wrangler wrapper             |
+| `typescript/data/AGENTS.md`                   | SSoT schema, sync process                    |
+| `tests/AGENTS.md`                             | Test patterns, coverage reqs, wait strategy  |
+| `tools/AGENTS.md`                             | Build scripts, CI utilities                  |
+| `.github/AGENTS.md`                           | CI/CD pipeline, PR workflows, actions        |
+| `infrastructure/AGENTS.md`                    | Observability stack (Grafana/ELK/Prometheus) |
+| `docs/AGENTS.md`                              | Documentation hub                            |
+| `third_party/AGENTS.md`                       | npm deps, One Version Rule                   |
