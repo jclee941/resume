@@ -108,6 +108,7 @@ todo/
 # Root-level temp docs (session/task/deployment)
 SESSION_*.md
 TASK_*.md
+!typescript/job-automation/workers/DEPLOYMENT_GUIDE.md
 DEPLOYMENT_*.md
 PHASE_*.md
 ANALYSIS_*.md
