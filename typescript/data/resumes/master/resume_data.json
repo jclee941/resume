@@ -508,7 +508,7 @@
     {
       "icon": "🖥️",
       "title": "Proxmox VE",
-      "description": "가상화 플랫폼 (7 VM/CT 운영)",
+      "description": "가상화 플랫폼 (8 VM/CT 운영: 3 VM + 5 LXC)",
       "status": "running"
     },
     {
@@ -546,7 +546,7 @@
     {
       "icon": "🤖",
       "title": "MCP Server Hub",
-      "description": "AI 에이전트 도구 서버 (17개 MCP)",
+      "description": "AI 에이전트 도구 서버 (13개 MCP)",
       "status": "running"
     },
     {
