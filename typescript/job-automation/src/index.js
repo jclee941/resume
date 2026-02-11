@@ -53,7 +53,7 @@ import getCompanyTool from './tools/get-company.js';
 import authTool from './tools/auth.js';
 import platformAuthTool from './tools/auth-integrated.js';
 import profileTool from './tools/profile.js';
-import resumeTool from './tools/resume.js';
+import resumeTool from './tools/resume/index.js';
 import resumeSyncTool from './tools/resume-sync.js';
 import resumeGeneratorTool from './tools/resume-generator.js';
 import jobMatcherTool from './tools/job-matcher.js';

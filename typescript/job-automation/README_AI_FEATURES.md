@@ -174,26 +174,26 @@ const advice = await getAICareerAdvice(
 
 #### `ai_search` - AI-Powered Search
 ```bash
-node src/auto-apply/cli.js ai_search "DevSecOps" 30
+node src/auto-apply/cli/index.js ai_search "DevSecOps" 30
 ```
 
 #### `unified` - Unified System Execution
 ```bash
 # Dry-run
-node src/auto-apply/cli.js unified --max=10
+node src/auto-apply/cli/index.js unified --max=10
 
 # Real applications
-node src/auto-apply/cli.js unified --apply --max=5
+node src/auto-apply/cli/index.js unified --apply --max=5
 ```
 
 #### `ai_unified` - AI-Powered Unified System
 ```bash
-node src/auto-apply/cli.js ai_unified --apply --max=3
+node src/auto-apply/cli/index.js ai_unified --apply --max=3
 ```
 
 #### `advice` - AI Career Advice
 ```bash
-node src/auto-apply/cli.js advice
+node src/auto-apply/cli/index.js advice
 ```
 
 ---
@@ -284,7 +284,7 @@ export LINKEDIN_PASSWORD="your_password"
 ./auto-daily-run.sh
 
 # Review results
-node src/auto-apply/cli.js list --limit=10
+node src/auto-apply/cli/index.js list --limit=10
 
 # Then apply
 ./auto-daily-run.sh --apply --max=3
@@ -296,7 +296,7 @@ node src/auto-apply/cli.js list --limit=10
 ./auto-monitor.sh
 
 # Check stats
-node src/auto-apply/cli.js stats
+node src/auto-apply/cli/index.js stats
 ```
 
 ### 3. Maintain System
@@ -311,13 +311,13 @@ ls -la backups/
 ### 4. Use AI Wisely
 ```bash
 # Test AI matching first
-node src/auto-apply/cli.js ai_search "DevSecOps" 10
+node src/auto-apply/cli/index.js ai_search "DevSecOps" 10
 
 # Get career advice
-node src/auto-apply/cli.js advice
+node src/auto-apply/cli/index.js advice
 
 # Then use unified system
-node src/auto-apply/cli.js ai_unified --max=5
+node src/auto-apply/cli/index.js ai_unified --max=5
 ```
 
 ---
@@ -368,10 +368,10 @@ cp .env.example .env
 ### 2. Test AI Features
 ```bash
 # Test AI matching
-node src/auto-apply/cli.js ai_search "DevSecOps" 10
+node src/auto-apply/cli/index.js ai_search "DevSecOps" 10
 
 # Get career advice
-node src/auto-apply/cli.js advice
+node src/auto-apply/cli/index.js advice
 ```
 
 ### 3. Run Automation
@@ -433,7 +433,7 @@ crontab -l
 
 ### Issues
 - Check logs: `wanted-mcp/logs/`
-- Review stats: `node src/auto-apply/cli.js stats`
+- Review stats: `node src/auto-apply/cli/index.js stats`
 - Monitor system: `./auto-monitor.sh`
 
 ### Getting Help

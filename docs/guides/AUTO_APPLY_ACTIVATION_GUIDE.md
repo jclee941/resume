@@ -52,7 +52,7 @@ curl http://localhost:3456/api/stats
 npm run auto-apply:dry
 
 # 또는 직접 실행
-node src/auto-apply/cli.js apply --max=3
+node src/auto-apply/cli/index.js apply --max=3
 ```
 
 **API로 테스트:**
@@ -73,7 +73,7 @@ curl -X POST http://localhost:3456/api/auto-apply/run \
 
 ```bash
 # 실제 지원 실행 (주의!)
-node src/auto-apply/cli.js apply --apply --max=5
+node src/auto-apply/cli/index.js apply --apply --max=5
 ```
 
 **API로 실행:**
@@ -190,13 +190,13 @@ curl -X PUT http://localhost:3456/api/applications/{id}/status \
 
 ```bash
 # 키워드 검색
-node src/auto-apply/cli.js search "DevOps 엔지니어" 20
+node src/auto-apply/cli/index.js search "DevOps 엔지니어" 20
 
 # 보안 엔지니어 검색
-node src/auto-apply/cli.js search "보안 엔지니어" 10
+node src/auto-apply/cli/index.js search "보안 엔지니어" 10
 
 # 인프라 엔지니어 검색
-node src/auto-apply/cli.js search "인프라" 15
+node src/auto-apply/cli/index.js search "인프라" 15
 ```
 
 **출력 예시:**
@@ -225,22 +225,22 @@ node src/auto-apply/cli.js search "인프라" 15
 **Dry Run (테스트):**
 ```bash
 # 기본 (최대 5개)
-node src/auto-apply/cli.js apply
+node src/auto-apply/cli/index.js apply
 
 # 최대 개수 지정
-node src/auto-apply/cli.js apply --max=3
+node src/auto-apply/cli/index.js apply --max=3
 
 # 매칭 점수 조정
-node src/auto-apply/cli.js apply --max=5 --min-score=80
+node src/auto-apply/cli/index.js apply --max=5 --min-score=80
 ```
 
 **실제 지원:**
 ```bash
 # 실제 지원 실행 (주의!)
-node src/auto-apply/cli.js apply --apply --max=5
+node src/auto-apply/cli/index.js apply --apply --max=5
 
 # 우선순위 높은 회사만
-node src/auto-apply/cli.js apply --apply --max=3 --priority=high
+node src/auto-apply/cli/index.js apply --apply --max=3 --priority=high
 ```
 
 ---
@@ -249,16 +249,16 @@ node src/auto-apply/cli.js apply --apply --max=3 --priority=high
 
 ```bash
 # 전체 목록
-node src/auto-apply/cli.js list
+node src/auto-apply/cli/index.js list
 
 # 상태별 필터
-node src/auto-apply/cli.js list --status=pending
-node src/auto-apply/cli.js list --status=applied
-node src/auto-apply/cli.js list --status=interview
+node src/auto-apply/cli/index.js list --status=pending
+node src/auto-apply/cli/index.js list --status=applied
+node src/auto-apply/cli/index.js list --status=interview
 
 # 소스별 필터
-node src/auto-apply/cli.js list --source=wanted
-node src/auto-apply/cli.js list --source=linkedin
+node src/auto-apply/cli/index.js list --source=wanted
+node src/auto-apply/cli/index.js list --source=linkedin
 ```
 
 ---
@@ -267,13 +267,13 @@ node src/auto-apply/cli.js list --source=linkedin
 
 ```bash
 # 전체 통계
-node src/auto-apply/cli.js stats
+node src/auto-apply/cli/index.js stats
 
 # 일일 리포트
-node src/auto-apply/cli.js report
+node src/auto-apply/cli/index.js report
 
 # 특정 날짜 리포트
-node src/auto-apply/cli.js report 2025-12-23
+node src/auto-apply/cli/index.js report 2025-12-23
 ```
 
 ---
@@ -282,13 +282,13 @@ node src/auto-apply/cli.js report 2025-12-23
 
 ```bash
 # 면접 예정으로 변경
-node src/auto-apply/cli.js update app_123 interview "1차 면접 예정"
+node src/auto-apply/cli/index.js update app_123 interview "1차 면접 예정"
 
 # 불합격 처리
-node src/auto-apply/cli.js update app_123 rejected "서류 불합격"
+node src/auto-apply/cli/index.js update app_123 rejected "서류 불합격"
 
 # 합격 처리
-node src/auto-apply/cli.js update app_123 accepted "최종 합격"
+node src/auto-apply/cli/index.js update app_123 accepted "최종 합격"
 ```
 
 ---
@@ -640,7 +640,7 @@ curl http://localhost:3456/api/metrics
 **실행:**
 ```bash
 # Cron 등록
-0 9 * * * cd /home/jclee/apps/resume/wanted-mcp && node src/auto-apply/cli.js apply --apply --max=5
+0 9 * * * cd /home/jclee/apps/resume/wanted-mcp && node src/auto-apply/cli/index.js apply --apply --max=5
 ```
 
 ---
@@ -658,7 +658,7 @@ curl http://localhost:3456/api/metrics
 
 **실행:**
 ```bash
-node src/auto-apply/cli.js apply --apply --max=10 --priority=high
+node src/auto-apply/cli/index.js apply --apply --max=10 --priority=high
 ```
 
 ---
@@ -676,10 +676,10 @@ node src/auto-apply/cli.js apply --apply --max=10 --priority=high
 **실행:**
 ```bash
 # 주간 리포트
-node src/auto-apply/cli.js report --weekly
+node src/auto-apply/cli/index.js report --weekly
 
 # Slack 전송
-node src/auto-apply/cli.js report --weekly --slack
+node src/auto-apply/cli/index.js report --weekly --slack
 ```
 
 ---
@@ -702,7 +702,7 @@ curl http://localhost:3456/api/auth/status
 node scripts/get-cookies.js
 
 # 키워드 변경
-node src/auto-apply/cli.js search "DevOps" 20
+node src/auto-apply/cli/index.js search "DevOps" 20
 ```
 
 ---
@@ -720,10 +720,10 @@ node src/auto-apply/cli.js search "DevOps" 20
 tail -f ~/.OpenCode/data/wanted-logs/errors-$(date +%Y-%m-%d).log
 
 # Dry Run 테스트
-node src/auto-apply/cli.js apply --max=1
+node src/auto-apply/cli/index.js apply --max=1
 
 # 수동 지원 테스트
-node src/auto-apply/cli.js search "DevOps" 1
+node src/auto-apply/cli/index.js search "DevOps" 1
 ```
 
 ---

@@ -9,6 +9,7 @@
 MCP Server + Cloudflare Worker for stealth job automation. Hexagonal architecture: `shared/services/` (business logic) and `shared/clients/` (adapters). Dashboard served at **resume.jclee.me/job/\***.
 
 **Architecture Components**:
+
 - **Crawlers Layer**: HTTP-based job fetching with anti-detection (UA rotation, rate limiting, jitter)
 - **Services Layer**: Pure business logic via dependency injection (10+ stateless services)
 - **Client Adapters**: Platform-specific integrations (Wanted, JobKorea, Saramin, LinkedIn, Remember)
@@ -49,7 +50,7 @@ job-automation/
 ├── scripts/                     # 25 utility scripts (auth, session, monitoring)
 │   ├── extract-cookies-cdp.js   # ⭐ CDP extraction (recommended)
 │   ├── auth-sync.js             # ⭐ Multi-platform auth sync
-│   ├── profile-sync.js          # ⭐ Sync resume_data.json to platforms
+│   ├── profile-sync/             # ⭐ Sync resume_data.json to platforms (8 modules)
 │   ├── auto-all.js              # ⭐ Full automation pipeline
 │   ├── quick-login.js           # ⚠️ Legacy Puppeteer login
 │   └── 20 legacy scripts        # Old auth/extraction variants
@@ -61,12 +62,12 @@ job-automation/
 
 ## ENTRY POINTS
 
-| Component  | Entry                    | Purpose                                |
-| ---------- | ------------------------ | -------------------------------------- |
-| MCP Server | `src/index.js`           | Fastify HTTP + MCP tools (9 tools)     |
-| Worker     | `workers/src/index.js`   | Dashboard (resume.jclee.me/job/\*)     |
-| Auth       | `scripts/extract-cookies-cdp.js` | Session cookie extraction (recommended) |
-| Orchestrate | `scripts/auto-all.js`    | Full automation pipeline               |
+| Component   | Entry                            | Purpose                                 |
+| ----------- | -------------------------------- | --------------------------------------- |
+| MCP Server  | `src/index.js`                   | Fastify HTTP + MCP tools (9 tools)      |
+| Worker      | `workers/src/index.js`           | Dashboard (resume.jclee.me/job/\*)      |
+| Auth        | `scripts/extract-cookies-cdp.js` | Session cookie extraction (recommended) |
+| Orchestrate | `scripts/auto-all.js`            | Full automation pipeline                |
 
 ---
 
@@ -77,25 +78,25 @@ job-automation/
 | Add Fastify route    | `src/server/routes/`   | Pattern: `export default async function(fastify)` |
 | Add crawler          | `src/crawlers/`        | Extend `BaseCrawler` (UA rotation, delay+jitter)  |
 | Add business logic   | `src/shared/services/` | Pure, stateless, DI-friendly                      |
-| Add external adapter | `src/shared/clients/`  | Isolated per client (no cross-imports)             |
-| Add MCP tool         | `src/tools/`           | Follow existing tool structure (9 patterns)        |
-| Modify Worker        | `workers/src/`         | D1/KV/R2 bindings available, 8 workflows           |
-| Configure scripts    | `scripts/`             | See SCRIPTS_GUIDE.md for all 25 scripts            |
+| Add external adapter | `src/shared/clients/`  | Isolated per client (no cross-imports)            |
+| Add MCP tool         | `src/tools/`           | Follow existing tool structure (9 patterns)       |
+| Modify Worker        | `workers/src/`         | D1/KV/R2 bindings available, 8 workflows          |
+| Configure scripts    | `scripts/`             | See SCRIPTS_GUIDE.md for all 25 scripts           |
 
 ---
 
 ## CODE MAP
 
-| Class/Module         | Location                                | Purpose                         |
-| -------------------- | --------------------------------------- | ------------------------------- |
-| `BaseCrawler`        | `src/crawlers/base-crawler.js`          | HTTP fetch (UA rotation, delay) |
-| `UnifiedApplySystem` | `src/shared/services/apply/`            | Centralized job application     |
-| `SessionManager`     | `src/shared/services/session/`          | Cookie persistence (24h TTL)    |
-| `JobMatcher`         | `src/shared/services/matching/`         | 2-tier scoring (60/75 threshold)|
-| `WantedClient`       | `src/shared/clients/wanted/`            | Wanted API (40+ methods)        |
-| `AutoApplier`        | `src/auto-apply/auto-applier.js`        | Playwright form submission      |
-| `ApplicationManager` | `src/auto-apply/application-manager.js` | Application status tracking     |
-| `getResumeBasePath`  | `src/shared/utils/paths.js`             | Portable path resolution        |
+| Class/Module         | Location                                | Purpose                          |
+| -------------------- | --------------------------------------- | -------------------------------- |
+| `BaseCrawler`        | `src/crawlers/base-crawler.js`          | HTTP fetch (UA rotation, delay)  |
+| `UnifiedApplySystem` | `src/shared/services/apply/`            | Centralized job application      |
+| `SessionManager`     | `src/shared/services/session/`          | Cookie persistence (24h TTL)     |
+| `JobMatcher`         | `src/shared/services/matching/`         | 2-tier scoring (60/75 threshold) |
+| `WantedClient`       | `src/shared/clients/wanted/`            | Wanted API (40+ methods)         |
+| `AutoApplier`        | `src/auto-apply/auto-applier.js`        | Playwright form submission       |
+| `ApplicationManager` | `src/auto-apply/application-manager.js` | Application status tracking      |
+| `getResumeBasePath`  | `src/shared/utils/paths.js`             | Portable path resolution         |
 
 ---
 
@@ -106,6 +107,7 @@ job-automation/
 **Location**: `src/crawlers/base-crawler.js` (130+ lines)
 
 **Features**:
+
 - **UA Rotation**: 12 Chrome versions (v120-v131) randomized per request
 - **Rate Limiting**: 1s minimum delay + 0-500ms jitter
 - **Retry Strategy**: 3 attempts with exponential backoff (2s, 4s, 8s)
@@ -114,27 +116,29 @@ job-automation/
 - **Session Support**: Cookie persistence via SessionManager
 
 **Usage**:
+
 ```javascript
 const crawler = new BaseCrawler(sessionManager);
 const html = await crawler.fetch('https://api.wanted.co.kr/v4/jobs', {
-  headers: { 'Accept': 'application/json' },
+  headers: { Accept: 'application/json' },
   cookies: sessionManager.getCookies('wanted'),
   method: 'POST',
-  body: JSON.stringify({ ...params })
+  body: JSON.stringify({ ...params }),
 });
 ```
 
 ### Platform Crawlers (Specialized)
 
-| Platform | Type | Tech | Status | Notes |
-|----------|------|------|--------|-------|
-| **Wanted** | API-only | Fetch API + JSON | ✅ Active | BaseCrawler sufficient |
-| **JobKorea** | Browser-based | Puppeteer (no stealth) | ⚠️ Bot-prone | Needs `puppeteer-extra` + stealth |
-| **Saramin** | Browser-based | Puppeteer (no stealth) | ⚠️ Bot-prone | Needs `puppeteer-extra` + stealth |
-| **LinkedIn** | Web scraping | Fetch + regex | ⚠️ Fragile | HTML parsing fragile, Easy Apply support |
-| **Remember** | Browser-based | Puppeteer (no stealth) | ⚠️ Bot-prone | Needs `puppeteer-extra` + stealth |
+| Platform     | Type          | Tech                   | Status       | Notes                                    |
+| ------------ | ------------- | ---------------------- | ------------ | ---------------------------------------- |
+| **Wanted**   | API-only      | Fetch API + JSON       | ✅ Active    | BaseCrawler sufficient                   |
+| **JobKorea** | Browser-based | Puppeteer (no stealth) | ⚠️ Bot-prone | Needs `puppeteer-extra` + stealth        |
+| **Saramin**  | Browser-based | Puppeteer (no stealth) | ⚠️ Bot-prone | Needs `puppeteer-extra` + stealth        |
+| **LinkedIn** | Web scraping  | Fetch + regex          | ⚠️ Fragile   | HTML parsing fragile, Easy Apply support |
+| **Remember** | Browser-based | Puppeteer (no stealth) | ⚠️ Bot-prone | Needs `puppeteer-extra` + stealth        |
 
 **Anti-Detection Patterns**:
+
 - **UA Rotation**: Randomize on each request (not cached)
 - **Request Delay**: Minimum 1000ms + 0-500ms jitter between requests
 - **Exponential Backoff**: 2s → 4s → 8s → fail
@@ -150,6 +154,7 @@ const html = await crawler.fetch('https://api.wanted.co.kr/v4/jobs', {
 **Location**: `src/shared/services/` (10+ services)
 
 **Architecture Pattern**: Hexagonal with Dependency Injection
+
 - Services are **pure, stateless** - no local state
 - Dependencies injected via constructor
 - SessionManager handles all state persistence
@@ -157,28 +162,31 @@ const html = await crawler.fetch('https://api.wanted.co.kr/v4/jobs', {
 
 ### Core Services
 
-| Service | Location | Purpose | Stateless |
-|---------|----------|---------|-----------|
-| `UnifiedApplySystem` | `src/shared/services/apply/` | Orchestrate multi-job application flow | ✅ Yes |
-| `SessionManager` | `src/shared/services/session/` | Persistent cookie storage (24h TTL) | ✅ Yes |
-| `JobMatcher` | `src/shared/services/matching/` | 2-tier job scoring system | ✅ Yes |
-| `SlackService` | `src/shared/services/slack/` | Webhook-based notifications | ✅ Yes |
-| `LoggerService` | `src/shared/services/` | ECS-format structured logging | ✅ Yes |
+| Service              | Location                        | Purpose                                | Stateless |
+| -------------------- | ------------------------------- | -------------------------------------- | --------- |
+| `UnifiedApplySystem` | `src/shared/services/apply/`    | Orchestrate multi-job application flow | ✅ Yes    |
+| `SessionManager`     | `src/shared/services/session/`  | Persistent cookie storage (24h TTL)    | ✅ Yes    |
+| `JobMatcher`         | `src/shared/services/matching/` | 2-tier job scoring system              | ✅ Yes    |
+| `SlackService`       | `src/shared/services/slack/`    | Webhook-based notifications            | ✅ Yes    |
+| `LoggerService`      | `src/shared/services/`          | ECS-format structured logging          | ✅ Yes    |
 
 ### JobMatcher (2-Tier Scoring System)
 
 **Thresholds**:
+
 - **< 60**: Skip job (auto-skip)
 - **60-74**: REVIEW (show to user)
 - **≥ 75**: AUTO_APPLY (submit automatically)
 
 **Tier 1 (Fast, Local)**:
+
 - Keyword matching against job title/description
 - Experience level compatibility
 - Company size/industry match
 - Location preferences
 
 **Tier 2 (AI-Based)**:
+
 - Claude semantic analysis (if score 60-74)
 - Natural language understanding
 - Context-aware skill matching
@@ -193,6 +201,7 @@ const html = await crawler.fetch('https://api.wanted.co.kr/v4/jobs', {
 **Location**: `src/shared/clients/` (5 isolated client adapters)
 
 **Design Principles**:
+
 - Each client is **completely isolated** (no cross-imports)
 - No shared code between clients (per platform differences)
 - Clients expose consistent interface for services
@@ -203,6 +212,7 @@ const html = await crawler.fetch('https://api.wanted.co.kr/v4/jobs', {
 **Location**: `src/shared/clients/wanted/` (500+ lines across 6 files)
 
 **Organization**:
+
 ```
 wanted/
 ├── index.js           # Main export + DI setup
@@ -214,6 +224,7 @@ wanted/
 ```
 
 **API Methods**: 40+ across Wanted v4, SNS API, Chaos API:
+
 - **Search**: Jobs, skills, companies, categories
 - **Profile**: Email, phone, headline, introduction
 - **Resume**: Create, read, update (careers, educations, skills, activities, language_certs)
@@ -228,36 +239,39 @@ wanted/
 **Location**: `src/tools/` (9 tools, 30+ actions total)
 
 **Tool Pattern**:
+
 ```javascript
 export default {
   name: 'tool-name',
   description: 'Human-readable description',
   inputSchema: {
     type: 'object',
-    properties: { /* JSDoc input params */ },
-    required: ['required_param']
+    properties: {
+      /* JSDoc input params */
+    },
+    required: ['required_param'],
   },
   async handle(request, { sessionManager, wantedClient, logger }) {
     // Pure function - no side effects except logging
     // Validate input → Call service/client → Format response
     // Throw DomainError on business logic failures
-  }
+  },
 };
 ```
 
 ### Tool Catalog
 
-| Tool | Actions | Auth | Purpose |
-|------|---------|------|---------|
-| `search-jobs` | 1 | ❌ No | Search by category/keyword/filters |
-| `search-keyword` | 1 | ❌ No | Keyword search (companies, skills) |
-| `get-job-detail` | 1 | ❌ No | Fetch job posting detail |
-| `get-categories` | 1 | ❌ No | List job categories for filtering |
-| `get-company` | 1 | ❌ No | Company info + open positions |
-| `auth` | 3 | ✅ Yes | Login/logout/status |
-| `profile` | 4 | ✅ Yes | View/update headline, email, phone |
-| `resume` | 20 | ✅ Yes | Resume CRUD (careers, skills, etc.) |
-| `resume-sync` | 12 | ✅ Yes | Automation pipeline (export/sync/diff) |
+| Tool             | Actions | Auth   | Purpose                                |
+| ---------------- | ------- | ------ | -------------------------------------- |
+| `search-jobs`    | 1       | ❌ No  | Search by category/keyword/filters     |
+| `search-keyword` | 1       | ❌ No  | Keyword search (companies, skills)     |
+| `get-job-detail` | 1       | ❌ No  | Fetch job posting detail               |
+| `get-categories` | 1       | ❌ No  | List job categories for filtering      |
+| `get-company`    | 1       | ❌ No  | Company info + open positions          |
+| `auth`           | 3       | ✅ Yes | Login/logout/status                    |
+| `profile`        | 4       | ✅ Yes | View/update headline, email, phone     |
+| `resume`         | 20      | ✅ Yes | Resume CRUD (careers, skills, etc.)    |
+| `resume-sync`    | 12      | ✅ Yes | Automation pipeline (export/sync/diff) |
 
 **Total**: 11 public + 20 auth-required = **31 actions**
 
@@ -270,6 +284,7 @@ export default {
 **Location**: `src/server/routes/` (13+ modules)
 
 **Route Pattern**:
+
 ```javascript
 // Pattern: named export + async function
 export default async function autoApplyRoute(fastify) {
@@ -283,21 +298,22 @@ export default async function autoApplyRoute(fastify) {
 
 ### Route Catalog
 
-| Route | Method | Purpose | Auth |
-|-------|--------|---------|------|
-| `/api/auto-apply` | POST | Trigger job auto-application | ✅ Token |
-| `/api/applications` | GET | List user applications | ✅ Token |
-| `/api/stats` | GET | Application statistics | ✅ Token |
-| `/api/profile` | GET/PUT | View/update profile | ✅ Token |
-| `/api/resume` | GET/PUT | Resume management | ✅ Token |
-| `/api/search` | GET | Job search | ❌ No |
-| `/api/health` | GET | Service health | ❌ No |
-| `/api/metrics` | GET | Prometheus metrics | ❌ No |
-| `/api/sync-auth` | POST | Distribute cookies to Worker | ✅ Secret |
-| `/api/sync-profile` | POST | Sync profile to platforms | ✅ Secret |
-| `/*` | ALL | 404 + CORS | ❌ No |
+| Route               | Method  | Purpose                      | Auth      |
+| ------------------- | ------- | ---------------------------- | --------- |
+| `/api/auto-apply`   | POST    | Trigger job auto-application | ✅ Token  |
+| `/api/applications` | GET     | List user applications       | ✅ Token  |
+| `/api/stats`        | GET     | Application statistics       | ✅ Token  |
+| `/api/profile`      | GET/PUT | View/update profile          | ✅ Token  |
+| `/api/resume`       | GET/PUT | Resume management            | ✅ Token  |
+| `/api/search`       | GET     | Job search                   | ❌ No     |
+| `/api/health`       | GET     | Service health               | ❌ No     |
+| `/api/metrics`      | GET     | Prometheus metrics           | ❌ No     |
+| `/api/sync-auth`    | POST    | Distribute cookies to Worker | ✅ Secret |
+| `/api/sync-profile` | POST    | Sync profile to platforms    | ✅ Secret |
+| `/*`                | ALL     | 404 + CORS                   | ❌ No     |
 
 **Middleware Stack**:
+
 - **Error Handler**: Catch all errors, format response, log (no credentials)
 - **CSRF Protection**: Verify request token
 - **Rate Limiting**: Token bucket algorithm (60 req/min per IP)
@@ -393,6 +409,7 @@ MCP Response → Claude
 ### CloudFront WAF Bypass
 
 Wanted blocks headless browsers:
+
 - **Current**: `puppeteer-extra` + stealth plugins (works but slow)
 - **Recommended**: Manual cookie extraction via Chrome DevTools Protocol
 - **Fallback**: `extract-cookies-cdp.js` (fast, reliable, no bot detection)
@@ -401,58 +418,58 @@ Wanted blocks headless browsers:
 
 ## ANTI-PATTERNS
 
-| Anti-Pattern | Why | Do Instead |
-|-------------|-----|-----------|
-| Naked Playwright/Puppeteer | Bot detection | Use `puppeteer-extra` + stealth |
-| Fixed UA strings | Fingerprinting | BaseCrawler randomizes per request |
-| Aggressive polling | Rate limits/bans | Use jitter + exponential backoff |
-| Skills v2 API | Server bugs | Use Skills v1 with `text` field |
-| Links API | 500 errors | Skip until fixed |
-| Direct state in services | Testing nightmare | Use SessionManager/DI |
-| Cross-client imports | Circular deps | Each client isolated |
-| Hardcoded credentials | Security | Use `.env` or `wrangler secret` |
-| Hardcoded `~/dev/resume` paths | Breaks portability | Use `getResumeBasePath()` |
-| Duplicate workers/job code | Code drift | Single source in workers/, copy on build |
+| Anti-Pattern                   | Why                | Do Instead                               |
+| ------------------------------ | ------------------ | ---------------------------------------- |
+| Naked Playwright/Puppeteer     | Bot detection      | Use `puppeteer-extra` + stealth          |
+| Fixed UA strings               | Fingerprinting     | BaseCrawler randomizes per request       |
+| Aggressive polling             | Rate limits/bans   | Use jitter + exponential backoff         |
+| Skills v2 API                  | Server bugs        | Use Skills v1 with `text` field          |
+| Links API                      | 500 errors         | Skip until fixed                         |
+| Direct state in services       | Testing nightmare  | Use SessionManager/DI                    |
+| Cross-client imports           | Circular deps      | Each client isolated                     |
+| Hardcoded credentials          | Security           | Use `.env` or `wrangler secret`          |
+| Hardcoded `~/dev/resume` paths | Breaks portability | Use `getResumeBasePath()`                |
+| Duplicate workers/job code     | Code drift         | Single source in workers/, copy on build |
 
 ---
 
 ## PLATFORM CRAWLERS
 
-| Platform | Tech | Status | Recommendation |
-|----------|------|--------|-----------------|
-| Wanted | Fetch API (JSON) | ✅ Works | Use API directly (no browser) |
+| Platform | Tech              | Status       | Recommendation                  |
+| -------- | ----------------- | ------------ | ------------------------------- |
+| Wanted   | Fetch API (JSON)  | ✅ Works     | Use API directly (no browser)   |
 | JobKorea | Puppeteer (naked) | ⚠️ Bot-prone | Add `puppeteer-extra` + stealth |
-| Saramin | Puppeteer (naked) | ⚠️ Bot-prone | Add `puppeteer-extra` + stealth |
-| LinkedIn | Fetch + regex | ⚠️ Fragile | Fragile HTML parsing |
+| Saramin  | Puppeteer (naked) | ⚠️ Bot-prone | Add `puppeteer-extra` + stealth |
+| LinkedIn | Fetch + regex     | ⚠️ Fragile   | Fragile HTML parsing            |
 | Remember | Puppeteer (naked) | ⚠️ Bot-prone | Add `puppeteer-extra` + stealth |
 
 ---
 
 ## API NOTES (CRITICAL)
 
-| API | Status | Notes |
-|-----|--------|-------|
-| Skills v1 | WORKING | Use `text` field only, v2 has bugs |
-| Skills v2 | BROKEN | Server error when toggling highlights |
-| Links API | BROKEN | 500 error on update |
-| SNS API | WORKING | Profile data (email, phone, headline) |
-| Chaos API v1 | WORKING | Skills CRUD |
+| API          | Status  | Notes                                           |
+| ------------ | ------- | ----------------------------------------------- |
+| Skills v1    | WORKING | Use `text` field only, v2 has bugs              |
+| Skills v2    | BROKEN  | Server error when toggling highlights           |
+| Links API    | BROKEN  | 500 error on update                             |
+| SNS API      | WORKING | Profile data (email, phone, headline)           |
+| Chaos API v1 | WORKING | Skills CRUD                                     |
 | Chaos API v2 | WORKING | Careers, educations, activities, language_certs |
 
 ---
 
 ## CLOUDFLARE WORKFLOWS
 
-| Workflow | File | Schedule | Purpose |
-|----------|------|----------|---------|
+| Workflow            | File            | Schedule       | Purpose                     |
+| ------------------- | --------------- | -------------- | --------------------------- |
 | HealthCheckWorkflow | health-check.js | _/5 _ \* \* \* | 5-min uptime + Slack alerts |
-| BackupWorkflow | backup.js | 0 3 \* \* \* | Daily D1→KV backup |
-| CleanupWorkflow | cleanup.js | 0 4 \* \* 0 | Weekly cleanup |
-| DailyReportWorkflow | daily-report.js | 0 9 \* \* \* | Daily application stats |
-| AuthRefreshWorkflow | auth-refresh.js | 0 0 \* \* 1-5 | Monday-Friday auth refresh |
-| ProfileSyncWorkflow | profile-sync.js | 0 2 \* \* 1 | Weekly Monday profile sync |
-| ResumeSyncWorkflow | resume-sync.js | 0 1 \* \* \* | Daily resume sync |
-| CacheWarmupWorkflow | cache-warmup.js | 0 6 \* \* \* | Pre-warm job cache |
+| BackupWorkflow      | backup.js       | 0 3 \* \* \*   | Daily D1→KV backup          |
+| CleanupWorkflow     | cleanup.js      | 0 4 \* \* 0    | Weekly cleanup              |
+| DailyReportWorkflow | daily-report.js | 0 9 \* \* \*   | Daily application stats     |
+| AuthRefreshWorkflow | auth-refresh.js | 0 0 \* \* 1-5  | Monday-Friday auth refresh  |
+| ProfileSyncWorkflow | profile-sync.js | 0 2 \* \* 1    | Weekly Monday profile sync  |
+| ResumeSyncWorkflow  | resume-sync.js  | 0 1 \* \* \*   | Daily resume sync           |
+| CacheWarmupWorkflow | cache-warmup.js | 0 6 \* \* \*   | Pre-warm job cache          |
 
 ---
 
@@ -462,15 +479,15 @@ Wanted blocks headless browsers:
 
 ### Recommended Scripts
 
-| Script | Status | Type | Purpose |
-|--------|--------|------|---------|
-| `extract-cookies-cdp.js` | ✅ Active | Auth | Fast CDP cookie extraction |
-| `auth-sync.js` | ✅ Active | Auth | Multi-platform auth sync |
-| `auth-persistent.js` | ✅ Active | Auth | Long-running persistent auth |
-| `profile-sync.js` | ✅ Active | Sync | Sync resume_data.json to platforms |
-| `auto-all.js` | ✅ Active | Orchestrate | Full automation pipeline |
-| `skill-tag-map.js` | ✅ Active | Utility | SSOT skill mapping |
-| `metrics-exporter.js` | ✅ Active | Monitor | Prometheus metrics export |
+| Script                   | Status    | Type        | Purpose                            |
+| ------------------------ | --------- | ----------- | ---------------------------------- |
+| `extract-cookies-cdp.js` | ✅ Active | Auth        | Fast CDP cookie extraction         |
+| `auth-sync.js`           | ✅ Active | Auth        | Multi-platform auth sync           |
+| `auth-persistent.js`     | ✅ Active | Auth        | Long-running persistent auth       |
+| `profile-sync.js`        | ✅ Active | Sync        | Sync resume_data.json to platforms |
+| `auto-all.js`            | ✅ Active | Orchestrate | Full automation pipeline           |
+| `skill-tag-map.js`       | ✅ Active | Utility     | SSOT skill mapping                 |
+| `metrics-exporter.js`    | ✅ Active | Monitor     | Prometheus metrics export          |
 
 ### Legacy Scripts (Do Not Use)
 
@@ -483,12 +500,12 @@ Wanted blocks headless browsers:
 
 ## WORKER BINDINGS
 
-| Binding | Type | Name | Purpose |
-|---------|------|------|---------|
-| `DB` | D1 | job_dashboard | Application tracking database |
-| `SESSIONS` | KV | JOB_CACHE | Session + job cache (1h TTL) |
-| `RATE_LIMIT_KV` | KV | JOB_RATE_LIMIT | Request rate limiting |
-| `SCREENSHOTS` | R2 | job-screenshots | Screenshot storage |
+| Binding         | Type | Name            | Purpose                       |
+| --------------- | ---- | --------------- | ----------------------------- |
+| `DB`            | D1   | job_dashboard   | Application tracking database |
+| `SESSIONS`      | KV   | JOB_CACHE       | Session + job cache (1h TTL)  |
+| `RATE_LIMIT_KV` | KV   | JOB_RATE_LIMIT  | Request rate limiting         |
+| `SCREENSHOTS`   | R2   | job-screenshots | Screenshot storage            |
 
 ---
 
@@ -508,13 +525,13 @@ Wanted blocks headless browsers:
 
 ## DOCUMENTATION
 
-| File | Purpose | Audience |
-|------|---------|----------|
-| `ARCHITECTURE.md` | Internal structure + patterns | Developers |
-| `ANTI_DETECTION.md` | Security + stealth techniques | Security-conscious devs |
-| `DATA_FLOW.md` | Request/response cycles + diagrams | Architects |
-| `SCRIPTS_GUIDE.md` | All 25 scripts with examples | DevOps/Operators |
-| `AGENTS.md` (this file) | Quick reference + entry points | All agents |
+| File                    | Purpose                            | Audience                |
+| ----------------------- | ---------------------------------- | ----------------------- |
+| `ARCHITECTURE.md`       | Internal structure + patterns      | Developers              |
+| `ANTI_DETECTION.md`     | Security + stealth techniques      | Security-conscious devs |
+| `DATA_FLOW.md`          | Request/response cycles + diagrams | Architects              |
+| `SCRIPTS_GUIDE.md`      | All 25 scripts with examples       | DevOps/Operators        |
+| `AGENTS.md` (this file) | Quick reference + entry points     | All agents              |
 
 ---
 
@@ -539,7 +556,7 @@ node scripts/auth-persistent.js        # Long-running auth
 
 # Automation
 node scripts/auto-all.js --all         # Full pipeline
-node scripts/profile-sync.js --apply   # Sync resume to platforms
+node scripts/profile-sync/index.js --apply   # Sync resume to platforms
 
 # Monitoring
 node scripts/metrics-exporter.js       # Export Prometheus metrics
@@ -550,13 +567,13 @@ curl http://localhost:9090/metrics     # Scrape metrics
 
 ## REFACTORING CANDIDATES
 
-| File | Lines | Issue | Recommended Fix |
-|------|-------|-------|-----------------|
-| `profile-sync.js` | 966 | 21 fn, 3 platforms | Command pattern per platform |
-| `resume.js` (MCP tool) | 869 | 23 switch cases | Command pattern |
-| `cli.js` | 672 | 12 switch stmts | Extract handler classes |
-| `worker-api-routes.js` | 566 | 10 mixed routes | Split csp.js/metrics.js/vitals.js |
-| `generate-worker.js` | 1041 | Monolithic build | Extract CSP/routing modules |
+| File                   | Lines   | Issue            | Recommended Fix                              |
+| ---------------------- | ------- | ---------------- | -------------------------------------------- |
+| ~~`profile-sync.js`~~  | ~~966~~ | ✅ Refactored    | Split to `scripts/profile-sync/` (8 modules) |
+| `resume.js` (MCP tool) | 869     | 23 switch cases  | Command pattern                              |
+| ~~`cli.js`~~           | ~~672~~ | ✅ Refactored    | Split to `auto-apply/cli/` (6 modules)       |
+| `worker-api-routes.js` | 566     | 10 mixed routes  | Split csp.js/metrics.js/vitals.js            |
+| `generate-worker.js`   | 1041    | Monolithic build | Extract CSP/routing modules                  |
 
 ---
 
@@ -570,4 +587,3 @@ curl http://localhost:9090/metrics     # Scrape metrics
 6. **API Constraints**: Skills v1 only, Links API broken, use SNS API for profile
 7. **Anti-Detection**: UA rotation automatic in BaseCrawler, add jitter to polling
 8. **Worker Access**: D1/KV/R2 bindings via `env` parameter in handlers
-

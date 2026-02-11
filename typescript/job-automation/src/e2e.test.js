@@ -1,5 +1,5 @@
 import { SessionManager } from './tools/auth.js';
-import { resumeTool } from './tools/resume.js';
+import { resumeTool } from './tools/resume/index.js';
 
 const RESUME_ID = 'AwcICwcLBAFIAgcDCwUAB01F';
 
@@ -39,9 +39,7 @@ async function runTests() {
   }
 
   if (!validSession) {
-    console.log(
-      '\n⚠️  No valid session found. Switching to MOCK MODE for testing.',
-    );
+    console.log('\n⚠️  No valid session found. Switching to MOCK MODE for testing.');
     process.env.MOCK_WANTED_API = 'true';
   }
 
@@ -53,8 +51,7 @@ async function runTests() {
   await test('list_resumes action', async () => {
     const result = await resumeTool.execute({ action: 'list_resumes' });
     if (!result.success) throw new Error(result.error);
-    if (!result.resumes || !result.resumes.data)
-      throw new Error('No resumes data returned');
+    if (!result.resumes || !result.resumes.data) throw new Error('No resumes data returned');
     console.log(`(found ${result.resumes.data.length} resumes)`);
   });
 
@@ -64,8 +61,7 @@ async function runTests() {
       resume_id: RESUME_ID,
     });
     if (!result.success) throw new Error(result.error);
-    if (!result.resume || !result.resume.title)
-      throw new Error('No resume title');
+    if (!result.resume || !result.resume.title) throw new Error('No resume title');
     if (!result.resume.careers) throw new Error('No careers data');
     console.log(`(${result.resume.careers.length} careers)`);
   });
@@ -80,8 +76,7 @@ async function runTests() {
     if (!career.id) throw new Error('Career missing id');
     if (!career.company) throw new Error('Career missing company');
     // job_role is the actual position field (title is legacy and usually null)
-    const displayTitle =
-      career.job_role || career.title || career.employment_type || 'N/A';
+    const displayTitle = career.job_role || career.title || career.employment_type || 'N/A';
     console.log(`(career: ${displayTitle} @ ${career.company})`);
   });
 
@@ -102,8 +97,7 @@ async function runTests() {
   await test('get_resume without resume_id fails', async () => {
     const result = await resumeTool.execute({ action: 'get_resume' });
     if (result.success) throw new Error('Should have failed');
-    if (!result.error.includes('resume_id'))
-      throw new Error('Wrong error message');
+    if (!result.error.includes('resume_id')) throw new Error('Wrong error message');
   });
 
   await test('update_career without career_id fails', async () => {
@@ -113,8 +107,7 @@ async function runTests() {
       career: { title: 'Test' },
     });
     if (result.success) throw new Error('Should have failed');
-    if (!result.error.includes('career_id'))
-      throw new Error('Wrong error message');
+    if (!result.error.includes('career_id')) throw new Error('Wrong error message');
   });
 
   await test('get_resume returns skills', async () => {

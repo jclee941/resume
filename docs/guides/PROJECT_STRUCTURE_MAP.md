@@ -36,7 +36,7 @@ Fastify-based REST API for Dashboard & Webhooks.
 | **AI**        | `routes/ai.js`        | LLM-based operations     |
 | **Webhooks**  | `routes/n8n.js`       | n8n automation triggers  |
 
-### CLI (`src/auto-apply/cli.js`)
+### CLI (`src/auto-apply/cli/index.js`)
 
 Command-line interface for automation pipelines.
 

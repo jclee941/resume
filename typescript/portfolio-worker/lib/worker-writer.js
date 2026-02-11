@@ -30,7 +30,7 @@ const {
   generateMetricsPostRoute,
   generateMetricsGetRoute,
   generateMetricsSnapshotRoute,
-} = require('./worker-api-routes');
+} = require('./routes');
 
 /**
  * Build complete worker source code.

@@ -70,8 +70,8 @@ npm install
 #### 메모리 설정 (고성능 AI 처리용)
 ```bash
 # package.json scripts에 추가
-"ai-search": "node --max-old-space-size=4096 src/auto-apply/cli.js ai_search",
-"ai-unified": "node --max-old-space-size=4096 src/auto-apply/cli.js ai_unified"
+"ai-search": "node --max-old-space-size=4096 src/auto-apply/cli/index.js ai_search",
+"ai-unified": "node --max-old-space-size=4096 src/auto-apply/cli/index.js ai_unified"
 ```
 
 ## AI 기능 사용법
@@ -81,7 +81,7 @@ npm install
 #### 기본 AI 검색
 ```bash
 # AI 기반 지능형 검색
-node src/auto-apply/cli.js ai_search "DevSecOps" 10
+node src/auto-apply/cli/index.js ai_search "DevSecOps" 10
 
 # 더 자세한 분석을 위해 메모리 증가
 npm run ai-search "보안 엔지니어" 5
@@ -109,10 +109,10 @@ npm run ai-search "보안 엔지니어" 5
 #### AI 강화 자동 지원
 ```bash
 # AI 기반 통합 워크플로우
-node src/auto-apply/cli.js ai_unified --max=3
+node src/auto-apply/cli/index.js ai_unified --max=3
 
 # 실제 지원 실행
-node src/auto-apply/cli.js ai_unified --apply --max=5
+node src/auto-apply/cli/index.js ai_unified --apply --max=5
 ```
 
 #### AI 분석 결과
@@ -140,7 +140,7 @@ node src/auto-apply/cli.js ai_unified --apply --max=5
 #### 개인화된 조언 받기
 ```bash
 # 특정 채용 공고에 대한 AI 조언
-node src/auto-apply/cli.js advice "https://www.wanted.co.kr/wd/12345"
+node src/auto-apply/cli/index.js advice "https://www.wanted.co.kr/wd/12345"
 ```
 
 #### AI 조언 결과 예시
@@ -209,7 +209,7 @@ if (aiCache.has(jobPosting.url)) {
 ### 배치 처리
 ```bash
 # 여러 채용 공고 일괄 AI 분석
-node src/auto-apply/cli.js ai_search "DevSecOps" 50
+node src/auto-apply/cli/index.js ai_search "DevSecOps" 50
 
 # 배치 모드에서 메모리 사용량 모니터링
 htop  # 또는 top 명령어로 모니터링
@@ -233,19 +233,19 @@ curl -H "x-api-key: $ANTHROPIC_API_KEY" \
 #### Q: AI 분석이 너무 느림
 ```bash
 # 메모리 증가
-node --max-old-space-size=8192 src/auto-apply/cli.js ai_search "keyword" 5
+node --max-old-space-size=8192 src/auto-apply/cli/index.js ai_search "keyword" 5
 
 # 분석 범위 축소
-node src/auto-apply/cli.js ai_search "keyword" 3
+node src/auto-apply/cli/index.js ai_search "keyword" 3
 ```
 
 #### Q: AI 분석 결과가 부정확함
 ```bash
 # 기본 매칭으로 폴백
-node src/auto-apply/cli.js search "keyword" 10
+node src/auto-apply/cli/index.js search "keyword" 10
 
 # AI 분석 로그 확인
-DEBUG=ai* node src/auto-apply/cli.js ai_search "keyword" 5
+DEBUG=ai* node src/auto-apply/cli/index.js ai_search "keyword" 5
 ```
 
 #### Q: API 사용량 초과

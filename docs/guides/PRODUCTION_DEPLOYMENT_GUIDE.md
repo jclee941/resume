@@ -124,10 +124,10 @@ npm run test:e2e
 cd wanted-mcp
 
 # CLI 테스트
-node src/auto-apply/cli.js help
+node src/auto-apply/cli/index.js help
 
 # 드라이런 테스트
-node src/auto-apply/cli.js unified --max=1
+node src/auto-apply/cli/index.js unified --max=1
 
 # 모니터링 테스트
 ./auto-monitor.sh
@@ -139,10 +139,10 @@ node src/auto-apply/cli.js unified --max=1
 ### 3단계: 플랫폼 연결 테스트
 ```bash
 # 각 플랫폼 로그인 테스트
-node src/auto-apply/cli.js search "test" 1
+node src/auto-apply/cli/index.js search "test" 1
 
 # 실제 검색 테스트
-node src/auto-apply/cli.js search "DevSecOps" 5
+node src/auto-apply/cli/index.js search "DevSecOps" 5
 ```
 
 ## 5. 프로덕션 배포
@@ -341,7 +341,7 @@ curl -X GET "https://api.cloudflare.com/client/v4/user/tokens/verify" \
 grep -E "(EMAIL|PASSWORD)" wanted-mcp/.env
 
 # 수동 로그인 테스트
-node src/auto-apply/cli.js search "test" 1
+node src/auto-apply/cli/index.js search "test" 1
 ```
 
 #### Q: 메모리 부족

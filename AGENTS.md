@@ -113,14 +113,14 @@ npm run sync:data                                 # Propagate SSoT
 
 ## REFACTORING CANDIDATES
 
-| File                   | Lines | Issue              | Recommended Fix                    |
-| ---------------------- | ----- | ------------------ | ---------------------------------- |
-| `profile-sync.js`      | 966   | 21 fn, 3 platforms | Command pattern per platform       |
-| `resume.js` (MCP tool) | 869   | 23 switch cases    | Command pattern                    |
-| `cli.js`               | 672   | 12 switch stmts    | Extract handler classes            |
-| `worker-api-routes.js` | 566   | 10 mixed routes    | Split csp.js/metrics.js/vitals.js  |
-| `generate-worker.js`   | 1041  | Monolithic build   | Extract CSP/routing modules        |
-| `dashboard.html`       | 1386  | Inline everything  | Extract JS/CSS into separate files |
+| File                       | Lines   | Issue             | Recommended Fix                              |
+| -------------------------- | ------- | ----------------- | -------------------------------------------- |
+| ~~`profile-sync.js`~~      | ~~966~~ | ✅ Refactored     | Split to `scripts/profile-sync/` (8 modules) |
+| ~~`resume.js`~~ (MCP)      | ~~869~~ | ✅ Refactored     | Split to `tools/resume/` (9 modules)         |
+| ~~`cli.js`~~               | ~~672~~ | ✅ Refactored     | Split to `auto-apply/cli/` (6 modules)       |
+| ~~`worker-api-routes.js`~~ | ~~566~~ | ✅ Refactored     | Split to `lib/routes/` (5 modules)           |
+| `generate-worker.js`       | 1041    | Monolithic build  | Extract CSP/routing modules                  |
+| `dashboard.html`           | 1386    | Inline everything | Extract JS/CSS into separate files           |
 
 ## BUILD PIPELINE
 
