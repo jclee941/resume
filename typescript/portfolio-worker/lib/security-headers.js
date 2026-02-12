@@ -44,7 +44,7 @@ function generateSecurityHeaders(scriptHashes, styleHashes) {
     `style-src 'self' ${styleHashes.join(' ')} ${CLOUDFLARE_STYLE_HASHES.join(' ')}`,
     `style-src-elem 'self' ${styleHashes.join(' ')} ${CLOUDFLARE_STYLE_HASHES.join(' ')}`,
     "style-src-attr 'unsafe-inline'",
-    `connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://oauth2.googleapis.com ${CLOUDFLARE_ANALYTICS.connect} https://glitchtip.jclee.me https://grafana.jclee.me`,
+    `connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://oauth2.googleapis.com ${CLOUDFLARE_ANALYTICS.connect} https://glitchtip.jclee.me`,
     "img-src 'self' data:",
     "font-src 'self'",
     "manifest-src 'self'",
