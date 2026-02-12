@@ -68,7 +68,7 @@ jobs:
       should_deploy: ${{ steps.deploy-decision.outputs.should_deploy }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -146,7 +146,7 @@ jobs:
     needs: [analyze]
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup
         uses: ./.github/actions/setup
@@ -191,7 +191,7 @@ jobs:
     needs: [analyze]
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup
         uses: ./.github/actions/setup
@@ -218,7 +218,7 @@ jobs:
     if: ${{ !inputs.skip_tests }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup
         uses: ./.github/actions/setup
@@ -250,7 +250,7 @@ jobs:
     if: ${{ !inputs.skip_tests }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup
         uses: ./.github/actions/setup
@@ -287,7 +287,7 @@ jobs:
     needs: [analyze]
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -318,7 +318,7 @@ jobs:
       (!failure() || inputs.force_deploy == true)
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup
         uses: ./.github/actions/setup
@@ -359,14 +359,14 @@ jobs:
       url: ${{ env.PORTFOLIO_URL }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup
         uses: ./.github/actions/setup
 
       - name: Create GitHub Deployment
         id: deployment
-        uses: actions/github-script@v8
+        uses: actions/github-script@v7
         with:
           script: |
             const deployment = await github.rest.repos.createDeployment({
@@ -397,7 +397,7 @@ jobs:
 
       - name: Update Deployment Status
         if: always()
-        uses: actions/github-script@v8
+        uses: actions/github-script@v7
         with:
           script: |
             const deploymentId = ${{ steps.deployment.outputs.id }};
@@ -511,7 +511,7 @@ jobs:
       name: production
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Rollback to previous version
         uses: cloudflare/wrangler-action@v3
@@ -627,7 +627,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup
         uses: ./.github/actions/setup
@@ -648,7 +648,7 @@ jobs:
           command: deploy --name resume-pr-${{ github.event.pull_request.number }}
 
       - name: Post Preview URL Comment
-        uses: actions/github-script@v8
+        uses: actions/github-script@v7
         with:
           script: |
             const prNumber = context.payload.pull_request.number;
@@ -697,7 +697,7 @@ jobs:
     if: ${{ github.event_name == 'pull_request' && github.event.action == 'closed' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Delete Preview Worker
         uses: cloudflare/wrangler-action@v3
@@ -708,7 +708,7 @@ jobs:
           command: delete --name resume-pr-${{ github.event.pull_request.number }} --force
 
       - name: Post Cleanup Comment
-        uses: actions/github-script@v8
+        uses: actions/github-script@v7
         with:
           script: |
             const prNumber = context.payload.pull_request.number;
