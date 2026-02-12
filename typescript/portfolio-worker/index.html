@@ -17,7 +17,6 @@
     <meta name="google-site-verification" content="2a5f8c3b7d4e9a1f6c2b5e8d1a4f7c0b9e3d6a9f2c5" />
 
     <!-- Google Analytics 4 -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-P9E8XY5K2L"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag() {
@@ -28,6 +27,10 @@
         page_path: window.location.pathname,
         language: 'ko',
       });
+      var _gs = document.createElement('script');
+      _gs.src = 'https://www.googletagmanager.com/gtag/js?id=G-P9E8XY5K2L';
+      _gs.async = true;
+      document.head.appendChild(_gs);
     </script>
 
     <link rel="canonical" href="https://resume.jclee.me" />
@@ -107,7 +110,6 @@
 
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#0c0c12" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="JC Lee Resume" />
     <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
@@ -467,7 +469,13 @@
     </div>
 
     <!-- Scripts -->
-    <script src="/main.js" defer></script>
+    <script>
+      (function () {
+        var s = document.createElement('script');
+        s.src = '/main.js';
+        document.body.appendChild(s);
+      })();
+    </script>
     <script>
       (function () {
         var c = document.getElementById('matrix-bg');
@@ -1169,9 +1177,9 @@
           var stateEl = item.querySelector('.status-state');
           var isSameOrigin = url.indexOf(window.location.origin) === 0;
 
-          fetch(url + '/health', { method: 'GET', mode: isSameOrigin ? 'same-origin' : 'cors' })
+          fetch(url + '/health', { method: 'GET', mode: isSameOrigin ? 'same-origin' : 'no-cors' })
             .then(function (response) {
-              if (response.ok) {
+              if (response.type === 'opaque' || response.ok) {
                 item.classList.add('online');
                 stateEl.textContent = 'operational';
               } else {

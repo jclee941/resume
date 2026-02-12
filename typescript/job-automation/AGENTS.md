@@ -41,6 +41,8 @@ job-automation/
 │   │   ├── utils/paths.js       # getResumeBasePath (no hardcoded paths)
 │   │   └── validation/          # Input validators
 │   └── tools/                   # 9 MCP tool implementations
+│       ├── resume/              # Resume tools (split from resume.js)
+│       └── commands/            # Command pattern implementations
 ├── workers/                     # Dashboard Cloudflare Worker
 │   ├── src/
 │   │   ├── index.js             # Worker entry (strips /job prefix, routes /api/*)
@@ -567,13 +569,13 @@ curl http://localhost:9090/metrics     # Scrape metrics
 
 ## REFACTORING CANDIDATES
 
-| File                   | Lines   | Issue            | Recommended Fix                              |
-| ---------------------- | ------- | ---------------- | -------------------------------------------- |
-| ~~`profile-sync.js`~~  | ~~966~~ | ✅ Refactored    | Split to `scripts/profile-sync/` (8 modules) |
-| `resume.js` (MCP tool) | 869     | 23 switch cases  | Command pattern                              |
-| ~~`cli.js`~~           | ~~672~~ | ✅ Refactored    | Split to `auto-apply/cli/` (6 modules)       |
-| `worker-api-routes.js` | 566     | 10 mixed routes  | Split csp.js/metrics.js/vitals.js            |
-| `generate-worker.js`   | 1041    | Monolithic build | Extract CSP/routing modules                  |
+| File                     | Lines   | Issue            | Recommended Fix                              |
+| ------------------------ | ------- | ---------------- | -------------------------------------------- |
+| ~~`profile-sync.js`~~    | ~~966~~ | ✅ Refactored    | Split to `scripts/profile-sync/` (8 modules) |
+| ~~`resume.js` (MCP tool) | 869     | 23 switch cases  | Command pattern                              |
+| ~~`cli.js`~~             | ~~672~~ | ✅ Refactored    | Split to `auto-apply/cli/` (6 modules)       |
+| `worker-api-routes.js`   | 566     | 10 mixed routes  | Split csp.js/metrics.js/vitals.js            |
+| `generate-worker.js`     | 1041    | Monolithic build | Extract CSP/routing modules                  |
 
 ---
 

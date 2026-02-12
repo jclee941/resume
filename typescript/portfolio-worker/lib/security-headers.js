@@ -4,6 +4,9 @@ const CLOUDFLARE_SCRIPT_HASHES = [
   "'sha256-aqgtbzDOW7zHIbhXqXNSxzAlXB8Psw8OG18Wht/X/n0='",
 ];
 
+// Cloudflare-injected inline style hashes (e.g., Web Analytics beacon)
+const CLOUDFLARE_STYLE_HASHES = ["'sha256-b/NzXPDoe2isM/MKIj3ExOIXdb0mbKWzX0VnJlT7jvY='"];
+
 // Cloudflare Web Analytics domains
 const CLOUDFLARE_ANALYTICS = {
   script: 'https://static.cloudflareinsights.com',
@@ -37,10 +40,11 @@ function generateSecurityHeaders(scriptHashes, styleHashes) {
   const cspDirectives = [
     "default-src 'none'",
     `script-src 'self' 'strict-dynamic' ${scriptHashes.join(' ')} ${CLOUDFLARE_SCRIPT_HASHES.join(' ')} https://www.googletagmanager.com ${CLOUDFLARE_ANALYTICS.script} https://accounts.google.com https://browser.sentry-cdn.com`,
-    `style-src 'self' ${styleHashes.join(' ')}`,
-    `style-src-elem 'self' ${styleHashes.join(' ')}`,
+    `script-src-elem 'self' ${scriptHashes.join(' ')} ${CLOUDFLARE_SCRIPT_HASHES.join(' ')} https://www.googletagmanager.com ${CLOUDFLARE_ANALYTICS.script} https://accounts.google.com https://browser.sentry-cdn.com`,
+    `style-src 'self' ${styleHashes.join(' ')} ${CLOUDFLARE_STYLE_HASHES.join(' ')}`,
+    `style-src-elem 'self' ${styleHashes.join(' ')} ${CLOUDFLARE_STYLE_HASHES.join(' ')}`,
     "style-src-attr 'unsafe-inline'",
-    `connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://oauth2.googleapis.com ${CLOUDFLARE_ANALYTICS.connect} https://glitchtip.jclee.me`,
+    `connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://oauth2.googleapis.com ${CLOUDFLARE_ANALYTICS.connect} https://glitchtip.jclee.me https://grafana.jclee.me`,
     "img-src 'self' data:",
     "font-src 'self'",
     "manifest-src 'self'",
@@ -67,7 +71,7 @@ function generateSecurityHeaders(scriptHashes, styleHashes) {
     'Origin-Agent-Cluster': '?1',
     'Cache-Control': CACHE_STRATEGIES.HTML,
     'Permissions-Policy':
-      'accelerometer=(), ambient-light-sensor=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), interest-cohort=()',
+      'accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), interest-cohort=()',
   };
 }
 
