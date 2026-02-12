@@ -130,7 +130,7 @@ jobs:
         run: mkdir -p .affected && touch .affected/.keep
 
       - name: Upload affected analysis
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: affected-targets
           path: .affected/
@@ -179,7 +179,7 @@ jobs:
 
       - name: Upload lint results
         if: failure()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: eslint-results
           path: eslint-results.txt
@@ -197,7 +197,7 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Download affected analysis
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v4
         with:
           name: affected-targets
           path: .affected/
@@ -224,7 +224,7 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Download affected analysis
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v4
         with:
           name: affected-targets
           path: .affected/
@@ -236,7 +236,7 @@ jobs:
           node tools/ci/run-affected.js test:coverage || npm test
 
       - name: Upload coverage
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: coverage/
@@ -274,7 +274,7 @@ jobs:
 
       - name: Upload Playwright report
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: playwright-report
           path: playwright-report/
@@ -331,7 +331,7 @@ jobs:
         working-directory: typescript/portfolio-worker
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: portfolio-worker
           path: typescript/portfolio-worker/worker.js
@@ -381,7 +381,7 @@ jobs:
             core.setOutput('id', deployment.data.id);
 
       - name: Download build artifacts
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v4
         with:
           name: portfolio-worker
           path: typescript/portfolio-worker/
@@ -633,7 +633,7 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Download build artifacts
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v4
         with:
           name: portfolio-worker
           path: typescript/portfolio-worker/
