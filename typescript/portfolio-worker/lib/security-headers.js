@@ -39,7 +39,7 @@ const CACHE_STRATEGIES = {
 function generateSecurityHeaders(scriptHashes, styleHashes) {
   const cspDirectives = [
     "default-src 'none'",
-    `script-src 'self' 'strict-dynamic' ${scriptHashes.join(' ')} ${CLOUDFLARE_SCRIPT_HASHES.join(' ')} https://www.googletagmanager.com ${CLOUDFLARE_ANALYTICS.script} https://accounts.google.com https://browser.sentry-cdn.com`,
+    `script-src 'self' ${scriptHashes.join(' ')} ${CLOUDFLARE_SCRIPT_HASHES.join(' ')} https://www.googletagmanager.com ${CLOUDFLARE_ANALYTICS.script} https://accounts.google.com https://browser.sentry-cdn.com`,
     `script-src-elem 'self' ${scriptHashes.join(' ')} ${CLOUDFLARE_SCRIPT_HASHES.join(' ')} https://www.googletagmanager.com ${CLOUDFLARE_ANALYTICS.script} https://accounts.google.com https://browser.sentry-cdn.com`,
     `style-src 'self' ${styleHashes.join(' ')} ${CLOUDFLARE_STYLE_HASHES.join(' ')}`,
     `style-src-elem 'self' ${styleHashes.join(' ')} ${CLOUDFLARE_STYLE_HASHES.join(' ')}`,
@@ -63,7 +63,7 @@ function generateSecurityHeaders(scriptHashes, styleHashes) {
     'Strict-Transport-Security': 'max-age=63072000; includeSubDomains; preload',
     'X-Content-Type-Options': 'nosniff',
     'X-Frame-Options': 'DENY',
-    'X-XSS-Protection': '1; mode=block',
+    'X-XSS-Protection': '0',
 
     'Referrer-Policy': 'strict-origin-when-cross-origin',
     'Cross-Origin-Opener-Policy': 'same-origin',
@@ -71,7 +71,7 @@ function generateSecurityHeaders(scriptHashes, styleHashes) {
     'Origin-Agent-Cluster': '?1',
     'Cache-Control': CACHE_STRATEGIES.HTML,
     'Permissions-Policy':
-      'accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), interest-cohort=()',
+      'accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()',
   };
 }
 

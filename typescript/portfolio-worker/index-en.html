@@ -17,7 +17,6 @@
     <meta name="google-site-verification" content="2a5f8c3b7d4e9a1f6c2b5e8d1a4f7c0b9e3d6a9f2c5" />
 
     <!-- Google Analytics 4 -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-P9E8XY5K2L"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag() {
@@ -28,6 +27,10 @@
         page_path: window.location.pathname,
         language: 'en',
       });
+      var _gs = document.createElement('script');
+      _gs.src = 'https://www.googletagmanager.com/gtag/js?id=G-P9E8XY5K2L';
+      _gs.async = true;
+      document.head.appendChild(_gs);
     </script>
 
     <link rel="canonical" href="https://resume.jclee.me/en/" />
@@ -295,10 +298,10 @@
                     <span class="status-name">☁️ Cloudflare Workers</span>
                     <span class="status-state">checking...</span>
                   </li>
-                  <li class="status-item" data-url="https://grafana.jclee.me">
+                  <li class="status-item online" data-static="true">
                     <span class="status-dot"></span>
                     <span class="status-name">📊 Grafana + Prometheus + Loki</span>
-                    <span class="status-state">checking...</span>
+                    <span class="status-state">running</span>
                   </li>
                   <li class="status-item online" data-static="true">
                     <span class="status-dot"></span>
@@ -443,7 +446,13 @@
     </div>
 
     <!-- Scripts -->
-    <script src="/main.js" defer></script>
+    <script>
+      (function () {
+        var s = document.createElement('script');
+        s.src = '/main.js';
+        document.body.appendChild(s);
+      })();
+    </script>
     <script>
       (function () {
         var c = document.getElementById('matrix-bg');
@@ -561,6 +570,50 @@
         cf.src = 'https://static.cloudflareinsights.com/beacon.min.js';
         cf.dataset.cfBeacon = '{"token":"8c92c40a4f374cde9c3b7f8a1e9b5c2d"}';
         document.head.appendChild(cf);
+      })();
+    </script>
+    <script>
+      (function () {
+        var statusList = document.getElementById('status-list');
+        var mainIndicator = document.querySelector('.status-indicator');
+        if (!statusList) return;
+        var items = statusList.querySelectorAll('.status-item');
+        var dynamicItems = statusList.querySelectorAll('.status-item[data-url]');
+        var pendingChecks = dynamicItems.length;
+        var allOnline = true;
+        function updateMainIndicator() {
+          pendingChecks--;
+          if (pendingChecks === 0 && mainIndicator) {
+            mainIndicator.classList.remove('status-loading');
+            mainIndicator.classList.add(allOnline ? 'status-ok' : 'status-error');
+          }
+        }
+        if (dynamicItems.length === 0 && mainIndicator) {
+          mainIndicator.classList.remove('status-loading');
+          mainIndicator.classList.add('status-ok');
+        }
+        dynamicItems.forEach(function (item) {
+          var url = item.getAttribute('data-url');
+          var stateEl = item.querySelector('.status-state');
+          var isSameOrigin = url.indexOf(window.location.origin) === 0;
+          fetch(url + '/health', { method: 'GET', mode: isSameOrigin ? 'same-origin' : 'no-cors' })
+            .then(function (response) {
+              if (response.type === 'opaque' || response.ok) {
+                item.classList.add('online');
+                stateEl.textContent = 'operational';
+              } else {
+                item.classList.add('offline');
+                stateEl.textContent = 'degraded (' + response.status + ')';
+                allOnline = false;
+              }
+            })
+            .catch(function () {
+              item.classList.add('offline');
+              stateEl.textContent = 'unreachable';
+              allOnline = false;
+            })
+            .finally(updateMainIndicator);
+        });
       })();
     </script>
   </body>
