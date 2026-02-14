@@ -1,0 +1,21 @@
+{
+  "cachePolicy": "resume-multi-region-cache",
+  "regions": {
+    "apac": {
+      "defaultTtlSeconds": 120,
+      "staticTtlSeconds": 86400,
+      "htmlTtlSeconds": 60
+    },
+    "eu": {
+      "defaultTtlSeconds": 180,
+      "staticTtlSeconds": 86400,
+      "htmlTtlSeconds": 90
+    },
+    "us": {
+      "defaultTtlSeconds": 240,
+      "staticTtlSeconds": 86400,
+      "htmlTtlSeconds": 120
+    }
+  },
+  "bypassPaths": ["/health", "/healthz", "/metrics", "/job/api/health"]
+}

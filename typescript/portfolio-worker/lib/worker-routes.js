@@ -20,26 +20,31 @@ export default {
 
     metrics.requests_total++;
 
-    // Apply Rate Limiting to sensitive endpoints
-    if (url.pathname.startsWith('/api/') || url.pathname === '/health' || url.pathname === '/metrics') {
-      const now = Date.now();
-      const clientData = ipCache.get(clientIp) || { count: 0, startTime: now };
+    const rateLimitStatus = checkRateLimit(clientIp, url.pathname);
+    const rateLimitHeaders = getRateLimitHeaders(rateLimitStatus);
+    const corsHeaders = getCorsHeaders(request, url.pathname);
 
-      if (now - clientData.startTime > RATE_LIMIT_CONFIG.windowSize) {
-        clientData.count = 1;
-        clientData.startTime = now;
-      } else {
-        clientData.count++;
-      }
+    const preflightResponse = createPreflightResponse(request, url.pathname);
+    if (preflightResponse) {
+      const preflightHeaders = new Headers(preflightResponse.headers);
+      Object.entries(rateLimitHeaders).forEach(([name, value]) => preflightHeaders.set(name, value));
+      return new Response(preflightResponse.body, {
+        status: preflightResponse.status,
+        headers: preflightHeaders,
+      });
+    }
 
-      ipCache.set(clientIp, clientData);
-
-      if (clientData.count > RATE_LIMIT_CONFIG.maxRequests) {
+    if (!rateLimitStatus.allowed) {
         return new Response(JSON.stringify({ error: 'Too Many Requests' }), {
           status: 429,
-          headers: { ...SECURITY_HEADERS, 'Content-Type': 'application/json' }
+          headers: {
+            ...SECURITY_HEADERS,
+            ...rateLimitHeaders,
+            ...corsHeaders,
+            'Content-Type': 'application/json',
+            'Retry-After': getRetryAfterSeconds(rateLimitStatus.resetAt),
+          }
         });
-      }
     }
 
     try {`;
@@ -55,13 +60,27 @@ function generatePageRoutes() {
       if (url.pathname.startsWith('/assets/') && env.ASSETS) {
         const assetPath = url.pathname.replace('/assets/', '/');
         const assetUrl = new URL(assetPath, request.url);
-        return env.ASSETS.fetch(new Request(assetUrl, request));
+        const assetResponse = await env.ASSETS.fetch(new Request(assetUrl, request));
+        const headers = new Headers(assetResponse.headers);
+        Object.entries(CACHE_POLICIES.static).forEach(([name, value]) => headers.set(name, value));
+        Object.entries(rateLimitHeaders).forEach(([name, value]) => headers.set(name, value));
+        return new Response(assetResponse.body, {
+          status: assetResponse.status,
+          statusText: assetResponse.statusText,
+          headers,
+        });
       }
 
        // Routing
 
       if (url.pathname === '/') {
-        const response = new Response(INDEX_HTML, { headers: SECURITY_HEADERS });
+        const response = new Response(INDEX_HTML, {
+          headers: {
+            ...SECURITY_HEADERS,
+            ...CACHE_POLICIES.html,
+            ...rateLimitHeaders
+          }
+        });
         metrics.requests_success++;
         metrics.response_time_sum += (Date.now() - startTime);
 
@@ -75,7 +94,13 @@ function generatePageRoutes() {
 
       // English version route
       if (url.pathname === '/en/' || url.pathname === '/en') {
-        const response = new Response(INDEX_EN_HTML, { headers: SECURITY_HEADERS });
+        const response = new Response(INDEX_EN_HTML, {
+          headers: {
+            ...SECURITY_HEADERS,
+            ...CACHE_POLICIES.html,
+            ...rateLimitHeaders
+          }
+        });
         metrics.requests_success++;
         metrics.response_time_sum += (Date.now() - startTime);
 
@@ -99,6 +124,8 @@ function generateStaticRoutes() {
         return new Response(MANIFEST_JSON, {
           headers: {
             ...SECURITY_HEADERS,
+            ...CACHE_POLICIES.static,
+            ...rateLimitHeaders,
             'Content-Type': 'application/json'
           }
         });
@@ -109,8 +136,9 @@ function generateStaticRoutes() {
         return new Response(SERVICE_WORKER, {
           headers: {
             ...SECURITY_HEADERS,
+            ...CACHE_POLICIES.static,
+            ...rateLimitHeaders,
             'Content-Type': 'application/javascript',
-            'Cache-Control': 'max-age=0, must-revalidate',
             'Service-Worker-Allowed': '/'
           }
         });
@@ -121,6 +149,8 @@ function generateStaticRoutes() {
         return new Response(MAIN_JS, {
           headers: {
             ...SECURITY_HEADERS,
+            ...CACHE_POLICIES.static,
+            ...rateLimitHeaders,
             'Content-Type': 'application/javascript'
           }
         });
@@ -175,8 +205,9 @@ function generateHealthRoute(opts) {
         return new Response(JSON.stringify(health, null, 2), {
           headers: {
             ...SECURITY_HEADERS,
+            ...rateLimitHeaders,
             'Content-Type': 'application/json',
-            'Cache-Control': 'no-cache, no-store, must-revalidate'
+            ...CACHE_POLICIES.api
           }
         });
       }`;
@@ -193,8 +224,9 @@ function generateMetricsRoute() {
         return new Response(generateMetrics(metrics), {
           headers: {
             ...SECURITY_HEADERS,
+            ...rateLimitHeaders,
             'Content-Type': 'text/plain; version=0.0.4; charset=utf-8',
-            'Cache-Control': 'no-cache, no-store, must-revalidate'
+            ...CACHE_POLICIES.api
           }
         });
       }`;
@@ -211,6 +243,8 @@ function generateSeoRoutes() {
         return new Response(ROBOTS_TXT, {
           headers: {
             ...SECURITY_HEADERS,
+            ...CACHE_POLICIES.static,
+            ...rateLimitHeaders,
             'Content-Type': 'text/plain'
           }
         });
@@ -221,6 +255,8 @@ function generateSeoRoutes() {
         return new Response(SITEMAP_XML, {
           headers: {
             ...SECURITY_HEADERS,
+            ...CACHE_POLICIES.static,
+            ...rateLimitHeaders,
             'Content-Type': 'application/xml'
           }
         });
@@ -232,8 +268,9 @@ function generateSeoRoutes() {
         return new Response(imageBuffer, {
           headers: {
             ...SECURITY_HEADERS,
+            ...CACHE_POLICIES.static,
+            ...rateLimitHeaders,
             'Content-Type': 'image/webp',
-            'Cache-Control': 'public, max-age=31536000, immutable'
           }
         });
       }
@@ -244,8 +281,9 @@ function generateSeoRoutes() {
         return new Response(imageBuffer, {
           headers: {
             ...SECURITY_HEADERS,
+            ...CACHE_POLICIES.static,
+            ...rateLimitHeaders,
             'Content-Type': 'image/webp',
-            'Cache-Control': 'public, max-age=31536000, immutable'
           }
         });
       }
@@ -256,9 +294,10 @@ function generateSeoRoutes() {
         return new Response(pdfBuffer, {
           headers: {
             ...SECURITY_HEADERS,
+            ...CACHE_POLICIES.static,
+            ...rateLimitHeaders,
             'Content-Type': 'application/pdf',
-            'Content-Disposition': 'inline; filename="resume_jclee.pdf"',
-            'Cache-Control': 'public, max-age=86400'
+            'Content-Disposition': 'inline; filename="resume_jclee.pdf"'
           }
         });
       }`;
@@ -276,8 +315,9 @@ function generate404() {
         status: 404,
         headers: {
           ...SECURITY_HEADERS,
+          ...rateLimitHeaders,
           'Content-Type': 'text/plain',
-          'Cache-Control': 'no-cache, no-store, must-revalidate'
+          ...CACHE_POLICIES.api
         }
       });`;
 }
@@ -321,8 +361,9 @@ function generateErrorHandler(opts) {
         status: 500,
         headers: {
           ...SECURITY_HEADERS,
+          ...rateLimitHeaders,
           'Content-Type': 'text/plain',
-          'Cache-Control': 'no-cache, no-store, must-revalidate'
+          ...CACHE_POLICIES.api
         }
       });
     }

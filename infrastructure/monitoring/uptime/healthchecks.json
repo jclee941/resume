@@ -1,0 +1,22 @@
+{
+  "checks": [
+    {
+      "name": "portfolio-healthz",
+      "service": "portfolio",
+      "url": "https://resume.jclee.me/healthz",
+      "method": "GET",
+      "intervalSeconds": 60,
+      "timeoutSeconds": 10,
+      "expectedStatus": [200]
+    },
+    {
+      "name": "dashboard-api-health",
+      "service": "dashboard",
+      "url": "https://resume.jclee.me/job/api/health",
+      "method": "GET",
+      "intervalSeconds": 60,
+      "timeoutSeconds": 10,
+      "expectedStatus": [200]
+    }
+  ]
+}

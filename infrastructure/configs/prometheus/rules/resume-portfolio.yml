@@ -1,6 +1,26 @@
-# Prometheus Recording & Alerting Rules for Resume Portfolio
-# Part of Issue #90: Alerting rules implementation
-# These rules provide Prometheus-native alerting alongside Grafana managed alerts.
+# Prometheus Recording Rules for Resume Portfolio
+# Part of Issue #90: Observability implementation
+#
+# ALERTING POLICY:
+#   Alerting is managed exclusively by Grafana Managed Alerts.
+#   See: infrastructure/configs/grafana/alert-rules.yaml
+#   This file contains ONLY recording rules (pre-computed metrics).
+#
+# WHY SINGLE ALERTING PLANE:
+#   Previously, 9 Prometheus alerting rules duplicated 7 of 11 Grafana alerts
+#   with identical conditions/thresholds. Consolidating to Grafana as the single
+#   alerting plane eliminates duplicate notifications and provides:
+#   - Unified alert management UI (Grafana)
+#   - Loki-based log alerts (not possible in Prometheus)
+#   - Multi-datasource correlation (Prometheus + Loki + CF analytics)
+#   - Severity-routed Slack notifications via contact points
+#
+# NOTE ON METRICS AVAILABILITY:
+#   The CF Worker exposes /metrics in Prometheus text format, but Prometheus
+#   currently only performs blackbox probes (up{job="resume"}). Metrics like
+#   http_requests_total{job="resume"} are NOT scraped into Prometheus.
+#   These recording rules will produce data only once push-based metrics
+#   or direct scraping is configured. See P0-M1 in docs/ for the roadmap.
 
 groups:
   # ========================================
@@ -40,125 +60,3 @@ groups:
           sum(rate(workflow_executions_failed_total{job="job-automation"}[30m]))
           /
           (sum(rate(workflow_executions_total{job="job-automation"}[30m])) > 0)
-
-  # ========================================
-  # Alerting Rules
-  # ========================================
-  - name: resume_critical_alerts
-    rules:
-      # P0: Service completely down
-      - alert: ResumeServiceDown
-        expr: up{job="resume"} == 0
-        for: 1m
-        labels:
-          severity: critical
-          priority: P0
-          service: resume-portfolio
-          team: infrastructure
-        annotations:
-          summary: 'Resume portfolio service is DOWN'
-          description: 'The resume portfolio at resume.jclee.me has been unreachable for more than 1 minute.'
-          runbook_url: 'https://github.com/qws941/resume/wiki/runbooks/service-down'
-          dashboard_url: 'https://grafana.jclee.me/d/resume-portfolio'
-
-      # P1: Error rate exceeds 5% for 5 minutes
-      - alert: ResumeHighErrorRate
-        expr: resume:http_error_rate:ratio_rate5m > 0.05
-        for: 5m
-        labels:
-          severity: critical
-          priority: P1
-          service: resume-portfolio
-          team: infrastructure
-        annotations:
-          summary: 'Resume portfolio error rate above 5%'
-          description: 'Error rate is {{ $value | humanizePercentage }} (threshold: 5%) over 5-minute window.'
-          dashboard_url: 'https://grafana.jclee.me/d/resume-portfolio'
-
-      # P1: Availability below 99.9% over rolling 1 hour
-      - alert: ResumeAvailabilityLow
-        expr: resume:availability:ratio_rate1h < 0.999
-        for: 5m
-        labels:
-          severity: critical
-          priority: P1
-          service: resume-portfolio
-          team: infrastructure
-          slo: availability
-        annotations:
-          summary: 'Resume portfolio availability below 99.9% SLO'
-          description: 'Rolling 1-hour availability is {{ $value | humanizePercentage }} (SLO: 99.9%).'
-          runbook_url: 'https://github.com/qws941/resume/wiki/runbooks/availability'
-          dashboard_url: 'https://grafana.jclee.me/d/resume-portfolio'
-
-  - name: resume_warning_alerts
-    rules:
-      # P2: P95 latency above 500ms for 10 minutes
-      - alert: ResumeHighLatency
-        expr: http_response_time_seconds{job="resume"} > 0.5
-        for: 10m
-        labels:
-          severity: warning
-          priority: P2
-          service: resume-portfolio
-          team: infrastructure
-        annotations:
-          summary: 'Resume portfolio P95 latency above 500ms'
-          description: 'Response time is {{ $value }}s (threshold: 0.5s) for more than 10 minutes.'
-          dashboard_url: 'https://grafana.jclee.me/d/resume-portfolio'
-
-      # P2: Workflow failure rate above 10%
-      - alert: ResumeWorkflowFailureHigh
-        expr: resume:workflow_failure_rate:ratio_rate30m > 0.10
-        for: 15m
-        labels:
-          severity: warning
-          priority: P2
-          service: job-automation
-          team: infrastructure
-        annotations:
-          summary: 'Job automation workflow failure rate above 10%'
-          description: 'Workflow failure rate is {{ $value | humanizePercentage }} over 30-minute window (threshold: 10%).'
-          dashboard_url: 'https://grafana.jclee.me/d/resume-portfolio'
-
-      # P2: No traffic for 15 minutes
-      - alert: ResumeNoTraffic
-        expr: resume:http_requests:rate5m == 0
-        for: 15m
-        labels:
-          severity: warning
-          priority: P2
-          service: resume-portfolio
-          team: infrastructure
-        annotations:
-          summary: 'Resume portfolio receiving no traffic'
-          description: 'Zero requests to resume.jclee.me for 15 minutes.'
-          dashboard_url: 'https://grafana.jclee.me/d/resume-portfolio'
-
-  - name: resume_info_alerts
-    rules:
-      # P3: Poor LCP web vitals
-      - alert: ResumePoorWebVitals
-        expr: avg(web_vitals_lcp_ms{job="resume"}) > 4000
-        for: 1h
-        labels:
-          severity: info
-          priority: P3
-          service: resume-portfolio
-          team: infrastructure
-        annotations:
-          summary: 'Resume portfolio LCP above 4s (poor UX)'
-          description: 'Average LCP is {{ $value }}ms. Target: <2500ms for good, <4000ms for needs improvement.'
-
-      # P3: Low cache hit rate
-      - alert: ResumeLowCacheHitRate
-        expr: avg(cloudflare_cache_hit_ratio{job="resume"}) < 0.7
-        for: 30m
-        labels:
-          severity: info
-          priority: P3
-          service: resume-portfolio
-          team: infrastructure
-        annotations:
-          summary: 'Resume portfolio cache hit rate below 70%'
-          description: 'Cache hit rate is {{ $value | humanizePercentage }}. Check for cache bypass or misconfiguration.'

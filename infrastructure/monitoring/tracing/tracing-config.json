@@ -1,0 +1,28 @@
+{
+  "tracing": {
+    "enabled": true,
+    "format": "w3c-trace-context",
+    "headers": {
+      "traceparent": true,
+      "tracestate": true
+    },
+    "sampling": {
+      "defaultRate": 1.0,
+      "healthRouteRate": 0.1
+    },
+    "propagation": {
+      "incoming": ["traceparent", "tracestate"],
+      "outgoing": ["traceparent", "tracestate"]
+    },
+    "spanFields": [
+      "traceId",
+      "spanId",
+      "parentSpanId",
+      "route",
+      "method",
+      "statusCode",
+      "durationMs",
+      "startedAt"
+    ]
+  }
+}

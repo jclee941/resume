@@ -6,7 +6,15 @@ function generateCfStatsRoute() {
       if (url.pathname === '/api/cf/stats') {
         const session = await verifySession(request, env);
         if (!session) {
-          return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: {'Content-Type': 'application/json'} });
+          return new Response(JSON.stringify({ error: "Unauthorized" }), {
+            status: 401,
+            headers: {
+              ...SECURITY_HEADERS,
+              ...rateLimitHeaders,
+              ...corsHeaders,
+              'Content-Type': 'application/json'
+            }
+          });
         }
 
         // Use env vars from Cloudflare Worker runtime (Security: Do not inject build-time secrets)
@@ -15,13 +23,26 @@ function generateCfStatsRoute() {
 
         const zoneId = await getCFZoneId(cfApiKey, cfEmail);
         if (!zoneId) {
-          return new Response(JSON.stringify({ error: "Zone not found" }), { status: 404, headers: {'Content-Type': 'application/json'} });
+          return new Response(JSON.stringify({ error: "Zone not found" }), {
+            status: 404,
+            headers: {
+              ...SECURITY_HEADERS,
+              ...rateLimitHeaders,
+              ...corsHeaders,
+              'Content-Type': 'application/json'
+            }
+          });
         }
 
         const stats = await getCFStats(zoneId, cfApiKey, cfEmail);
         metrics.requests_success++;
         return new Response(JSON.stringify({ stats }), {
-          headers: { 'Content-Type': 'application/json' }
+          headers: {
+            ...SECURITY_HEADERS,
+            ...rateLimitHeaders,
+            ...corsHeaders,
+            'Content-Type': 'application/json'
+          }
         });
       }`;
 }
@@ -32,6 +53,18 @@ function generateVitalsRoute() {
       // ============================================================
       if (url.pathname === '/api/vitals' && request.method === 'POST') {
         try {
+          if (!hasJsonContentType(request)) {
+            return new Response(JSON.stringify({ error: 'Content-Type must be application/json' }), {
+              status: 415,
+              headers: {
+                ...SECURITY_HEADERS,
+                ...rateLimitHeaders,
+                ...corsHeaders,
+                'Content-Type': 'application/json'
+              }
+            });
+          }
+
           const vitals = await request.json();
 
           // Validate vitals data structure
@@ -60,6 +93,8 @@ function generateVitalsRoute() {
           return new Response(JSON.stringify({ status: 'ok' }), {
             headers: {
               ...SECURITY_HEADERS,
+              ...rateLimitHeaders,
+              ...corsHeaders,
               'Content-Type': 'application/json',
               'Cache-Control': 'no-cache, no-store, must-revalidate'
             }
@@ -70,6 +105,8 @@ function generateVitalsRoute() {
             status: 400,
             headers: {
               ...SECURITY_HEADERS,
+              ...rateLimitHeaders,
+              ...corsHeaders,
               'Content-Type': 'application/json',
               'Cache-Control': 'no-cache, no-store, must-revalidate'
             }
@@ -84,6 +121,18 @@ function generateTrackRoute() {
       // ============================================================
       if (url.pathname === '/api/track' && request.method === 'POST') {
         try {
+          if (!hasJsonContentType(request)) {
+            return new Response(JSON.stringify({ error: 'Content-Type must be application/json' }), {
+              status: 415,
+              headers: {
+                ...SECURITY_HEADERS,
+                ...rateLimitHeaders,
+                ...corsHeaders,
+                'Content-Type': 'application/json'
+              }
+            });
+          }
+
           const trackingData = await request.json();
           
           // Validate tracking data structure
@@ -104,10 +153,24 @@ function generateTrackRoute() {
           }));
           
           metrics.requests_success++;
-          return new Response('', { status: 204 }); // No Content (fire-and-forget)
+          return new Response('', {
+            status: 204,
+            headers: {
+              ...SECURITY_HEADERS,
+              ...rateLimitHeaders,
+              ...corsHeaders,
+            }
+          }); // No Content (fire-and-forget)
         } catch (err) {
           ctx.waitUntil(logToElasticsearch(env, \`Tracking error: \${err.message}\`, 'ERROR'));
-          return new Response('', { status: 204 }); // Still return 204 for fire-and-forget
+          return new Response('', {
+            status: 204,
+            headers: {
+              ...SECURITY_HEADERS,
+              ...rateLimitHeaders,
+              ...corsHeaders,
+            }
+          }); // Still return 204 for fire-and-forget
         }
       }`;
 }
@@ -118,6 +181,18 @@ function generateAnalyticsRoute() {
       // ============================================================
       if (url.pathname === '/api/analytics' && request.method === 'POST') {
         try {
+          if (!hasJsonContentType(request)) {
+            return new Response(JSON.stringify({ error: 'Content-Type must be application/json' }), {
+              status: 415,
+              headers: {
+                ...SECURITY_HEADERS,
+                ...rateLimitHeaders,
+                ...corsHeaders,
+                'Content-Type': 'application/json'
+              }
+            });
+          }
+
           const analyticsData = await request.json();
 
           // Validate analytics data
@@ -137,6 +212,8 @@ function generateAnalyticsRoute() {
           return new Response(JSON.stringify({ status: 'ok' }), {
             headers: {
               ...SECURITY_HEADERS,
+              ...rateLimitHeaders,
+              ...corsHeaders,
               'Content-Type': 'application/json',
               'Cache-Control': 'no-cache, no-store, must-revalidate'
             }
@@ -147,6 +224,8 @@ function generateAnalyticsRoute() {
             status: 400,
             headers: {
               ...SECURITY_HEADERS,
+              ...rateLimitHeaders,
+              ...corsHeaders,
               'Content-Type': 'application/json'
             }
           });

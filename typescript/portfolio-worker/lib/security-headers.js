@@ -4,6 +4,11 @@ const CLOUDFLARE_SCRIPT_HASHES = [
   "'sha256-aqgtbzDOW7zHIbhXqXNSxzAlXB8Psw8OG18Wht/X/n0='",
 ];
 
+// SRI status:
+// - The portfolio is mostly inline-script/style at build time, so SRI does not apply to those blocks.
+// - External Sentry bundle in index.html/index-en.html uses pinned SRI + crossorigin.
+// - Dynamic GA/Cloudflare beacon scripts are versionless third-party loaders and are constrained by CSP.
+
 // Cloudflare-injected inline style hashes (e.g., Web Analytics beacon)
 const CLOUDFLARE_STYLE_HASHES = ["'sha256-b/NzXPDoe2isM/MKIj3ExOIXdb0mbKWzX0VnJlT7jvY='"];
 

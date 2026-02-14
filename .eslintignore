@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+wanted-mcp/node_modules/
+
+# Build outputs
+web/worker.js
+web/sw.js
+web/sentry-config.js
+dist/
+build/
+
+# Test coverage
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Temporary files
+.tmp/
+tmp/
+
+# Specific files with intentional unused vars
+wanted-mcp/scripts/auto-login.js
+wanted-mcp/scripts/get-cookies.js
+wanted-mcp/scripts/metrics-exporter.js

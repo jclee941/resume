@@ -1,0 +1,34 @@
+name: Refactoring proposal
+description: Propose a structural improvement without changing behavior.
+title: '[Refactor]: '
+labels:
+  - refactor
+body:
+  - type: textarea
+    id: area
+    attributes:
+      label: Area
+      description: Files, modules, or subsystems in scope.
+    validations:
+      required: true
+  - type: textarea
+    id: current-state
+    attributes:
+      label: Current state
+      description: Current design, pain points, and constraints.
+    validations:
+      required: true
+  - type: textarea
+    id: proposed-change
+    attributes:
+      label: Proposed change
+      description: Refactoring strategy and expected improvements.
+    validations:
+      required: true
+  - type: textarea
+    id: risk-assessment
+    attributes:
+      label: Risk assessment
+      description: Risks, migration concerns, and mitigation plan.
+    validations:
+      required: true

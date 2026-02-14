@@ -4,6 +4,18 @@ function generateMetricsPostRoute() {
       // ============================================================
       if (url.pathname === '/api/metrics' && request.method === 'POST') {
         try {
+          if (!hasJsonContentType(request)) {
+            return new Response(JSON.stringify({ error: 'Content-Type must be application/json' }), {
+              status: 415,
+              headers: {
+                ...SECURITY_HEADERS,
+                ...rateLimitHeaders,
+                ...corsHeaders,
+                'Content-Type': 'application/json'
+              }
+            });
+          }
+
           const metricsData = await request.json();
 
           // Validate metrics data
@@ -21,6 +33,8 @@ function generateMetricsPostRoute() {
           return new Response(JSON.stringify({ status: 'ok' }), {
             headers: {
               ...SECURITY_HEADERS,
+              ...rateLimitHeaders,
+              ...corsHeaders,
               'Content-Type': 'application/json',
               'Cache-Control': 'no-cache, no-store, must-revalidate'
             }
@@ -31,6 +45,8 @@ function generateMetricsPostRoute() {
             status: 400,
             headers: {
               ...SECURITY_HEADERS,
+              ...rateLimitHeaders,
+              ...corsHeaders,
               'Content-Type': 'application/json'
             }
           });
@@ -84,6 +100,8 @@ function generateMetricsGetRoute() {
           return new Response(JSON.stringify(metricsResponse), {
             headers: {
               ...SECURITY_HEADERS,
+              ...rateLimitHeaders,
+              ...corsHeaders,
               'Content-Type': 'application/json',
               'Cache-Control': 'public, max-age=60'
             }
@@ -94,6 +112,8 @@ function generateMetricsGetRoute() {
             status: 500,
             headers: {
               ...SECURITY_HEADERS,
+              ...rateLimitHeaders,
+              ...corsHeaders,
               'Content-Type': 'application/json'
             }
           });
@@ -105,6 +125,18 @@ function generateMetricsSnapshotRoute() {
   return `
       if (url.pathname === '/api/metrics/snapshot' && request.method === 'POST') {
         try {
+          if (!hasJsonContentType(request)) {
+            return new Response(JSON.stringify({ error: 'Content-Type must be application/json' }), {
+              status: 415,
+              headers: {
+                ...SECURITY_HEADERS,
+                ...rateLimitHeaders,
+                ...corsHeaders,
+                'Content-Type': 'application/json'
+              }
+            });
+          }
+
           const uptime = Math.floor((Date.now() - metrics.worker_start_time) / 1000);
           const errorRate = metrics.requests_total > 0
             ? (metrics.requests_error / metrics.requests_total * 100)
@@ -143,12 +175,22 @@ function generateMetricsSnapshotRoute() {
           ).run();
 
           return new Response(JSON.stringify({ status: 'ok', snapshot: 'saved' }), {
-            headers: { ...SECURITY_HEADERS, 'Content-Type': 'application/json' }
+            headers: {
+              ...SECURITY_HEADERS,
+              ...rateLimitHeaders,
+              ...corsHeaders,
+              'Content-Type': 'application/json'
+            }
           });
         } catch (err) {
           return new Response(JSON.stringify({ error: err.message }), {
             status: 500,
-            headers: { ...SECURITY_HEADERS, 'Content-Type': 'application/json' }
+            headers: {
+              ...SECURITY_HEADERS,
+              ...rateLimitHeaders,
+              ...corsHeaders,
+              'Content-Type': 'application/json'
+            }
           });
         }
       }`;

@@ -19,6 +19,23 @@ scrape_configs:
     static_configs:
       - targets: ['localhost:9100']
 
+  # Resume portfolio worker application metrics
+  # Scrapes the /metrics endpoint exposed by the Cloudflare Worker.
+  # CAVEAT: CF Workers are stateless — counters reset on cold start, and
+  # Bot Fight Mode may intermittently block scrape requests. Treat these
+  # metrics as best-effort; blackbox probes below remain the reliability
+  # signal. If scrape failures exceed 50%, consider switching to push-based
+  # metrics (e.g., Prometheus Pushgateway or Grafana Cloud OTLP).
+  - job_name: 'resume'
+    scrape_interval: 30s
+    scrape_timeout: 10s
+    metrics_path: /metrics
+    scheme: https
+    static_configs:
+      - targets: ['resume.jclee.me']
+        labels:
+          environment: 'production'
+
   # Blackbox exporter HTTP probes
   - job_name: 'blackbox-http'
     metrics_path: /probe

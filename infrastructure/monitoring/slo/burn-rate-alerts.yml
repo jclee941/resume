@@ -1,0 +1,41 @@
+groups:
+  - name: resume-slo-burn-rate
+    interval: 30s
+    rules:
+      - alert: ResumeAvailabilityBurnRateCritical
+        expr: |
+          (
+            sum(rate(http_requests_error{job="resume-portfolio",status=~"5.."}[1h]))
+            /
+            clamp_min(sum(rate(http_requests_total{job="resume-portfolio"}[1h])), 1)
+          )
+          /
+          (1 - 0.999)
+          > 14.4
+        for: 5m
+        labels:
+          severity: critical
+          slo: availability
+          window: 1h
+        annotations:
+          summary: 'Availability error budget burning too fast (1h)'
+          description: '1h burn rate > 14.4x for availability SLO (99.9%).'
+
+      - alert: ResumeAvailabilityBurnRateWarning
+        expr: |
+          (
+            sum(rate(http_requests_error{job="resume-portfolio",status=~"5.."}[6h]))
+            /
+            clamp_min(sum(rate(http_requests_total{job="resume-portfolio"}[6h])), 1)
+          )
+          /
+          (1 - 0.999)
+          > 6
+        for: 10m
+        labels:
+          severity: warning
+          slo: availability
+          window: 6h
+        annotations:
+          summary: 'Availability error budget burn elevated (6h)'
+          description: '6h burn rate > 6x for availability SLO (99.9%).'

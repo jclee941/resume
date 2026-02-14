@@ -1,0 +1,25 @@
+{
+  "ruleset": "resume-geo-routing",
+  "description": "Route traffic to nearest healthy regional service endpoint",
+  "defaultRegion": "apac",
+  "rules": [
+    {
+      "match": {
+        "continents": ["AS", "OC"]
+      },
+      "targetRegion": "apac"
+    },
+    {
+      "match": {
+        "continents": ["EU", "AF"]
+      },
+      "targetRegion": "eu"
+    },
+    {
+      "match": {
+        "continents": ["NA", "SA"]
+      },
+      "targetRegion": "us"
+    }
+  ]
+}

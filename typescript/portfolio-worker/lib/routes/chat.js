@@ -2,12 +2,41 @@ function generateChatRoute(opts) {
   return `
       if (url.pathname === '/api/chat' && request.method === 'POST') {
         try {
+          if (!hasJsonContentType(request)) {
+            return new Response(JSON.stringify({ error: 'Content-Type must be application/json' }), {
+              status: 415,
+              headers: {
+                ...SECURITY_HEADERS,
+                ...rateLimitHeaders,
+                ...corsHeaders,
+                'Content-Type': 'application/json',
+              },
+            });
+          }
+
           const body = await request.json();
           const question = (body?.question || '').toString().trim();
           if (!question) {
             return new Response(JSON.stringify({ error: 'question is required' }), {
               status: 400,
-              headers: { ...SECURITY_HEADERS, 'Content-Type': 'application/json' },
+              headers: {
+                ...SECURITY_HEADERS,
+                ...rateLimitHeaders,
+                ...corsHeaders,
+                'Content-Type': 'application/json',
+              },
+            });
+          }
+
+          if (question.length > 500) {
+            return new Response(JSON.stringify({ error: 'question exceeds 500 characters' }), {
+              status: 400,
+              headers: {
+                ...SECURITY_HEADERS,
+                ...rateLimitHeaders,
+                ...corsHeaders,
+                'Content-Type': 'application/json',
+              },
             });
           }
 
@@ -119,6 +148,8 @@ function generateChatRoute(opts) {
           return new Response(JSON.stringify({ answer }), {
             headers: {
               ...SECURITY_HEADERS,
+              ...rateLimitHeaders,
+              ...corsHeaders,
               'Content-Type': 'application/json',
               'Cache-Control': 'no-cache, no-store, must-revalidate',
             },
@@ -133,6 +164,8 @@ function generateChatRoute(opts) {
             status: 400,
             headers: {
               ...SECURITY_HEADERS,
+              ...rateLimitHeaders,
+              ...corsHeaders,
               'Content-Type': 'application/json',
               'Cache-Control': 'no-cache, no-store, must-revalidate',
             },

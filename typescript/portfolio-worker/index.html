@@ -30,6 +30,8 @@
       var _gs = document.createElement('script');
       _gs.src = 'https://www.googletagmanager.com/gtag/js?id=G-P9E8XY5K2L';
       _gs.async = true;
+      _gs.integrity = 'sha384-ZXsMWzL9jNkfVeDNiKiKlvdyvBmUvt8YMS2PljnnNk8cVfKES+GLjaItoIy8iwNi';
+      _gs.crossOrigin = 'anonymous';
       document.head.appendChild(_gs);
     </script>
 
@@ -37,6 +39,9 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://www.googletagmanager.com" />
+    <link rel="preconnect" href="https://browser.sentry-cdn.com" crossorigin />
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin />
 
     <link rel="alternate" hreflang="ko-KR" href="https://resume.jclee.me" />
     <link rel="alternate" hreflang="en-US" href="https://resume.jclee.me/en/" />
@@ -87,12 +92,35 @@
         "url": "https://resume.jclee.me",
         "email": "qws941@kakao.com",
         "telephone": "+82-10-5757-9592",
-        "sameAs": ["https://github.com/qws941", "https://resume.jclee.me"],
-        "knowsAbout": ["Observability", "보안 인프라", "자동화"],
+        "sameAs": ["https://github.com/qws941"],
+        "knowsAbout": [
+          "Kubernetes",
+          "Terraform",
+          "Cloudflare Workers",
+          "Proxmox",
+          "Observability",
+          "보안 인프라",
+          "자동화"
+        ],
         "worksFor": {
           "@type": "Organization",
           "name": "(주)아이티센 CTS"
         }
+      }
+    </script>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "홈",
+            "item": "https://resume.jclee.me/"
+          }
+        ]
       }
     </script>
 
@@ -116,18 +144,19 @@
     <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
+    <link rel="preload" href="/assets/favicon-32x32.png" as="image" type="image/png" />
 
     <!-- Preload Critical Font -->
     <link
       rel="preload"
-      href="/fonts/inter-v13-latin-regular.woff2"
+      href="/assets/fonts/inter-v13-latin-regular.woff2"
       as="font"
       type="font/woff2"
       crossorigin
     />
     <link
       rel="preload"
-      href="/fonts/inter-v13-latin-700.woff2"
+      href="/assets/fonts/inter-v13-latin-700.woff2"
       as="font"
       type="font/woff2"
       crossorigin
@@ -138,16 +167,23 @@
         font-style: normal;
         font-weight: 400;
         font-display: swap;
-        src: url('/fonts/inter-v13-latin-regular.woff2') format('woff2');
+        unicode-range:
+          U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F,
+          U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        src: url('/assets/fonts/inter-v13-latin-regular.woff2') format('woff2');
       }
       @font-face {
         font-family: 'Inter';
         font-style: normal;
         font-weight: 700;
         font-display: swap;
-        src: url('/fonts/inter-v13-latin-700.woff2') format('woff2');
+        unicode-range:
+          U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F,
+          U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        src: url('/assets/fonts/inter-v13-latin-700.woff2') format('woff2');
       }
     </style>
+    <!-- Image optimization N/A: no <img> elements are used; content is text/canvas/self-hosted assets. -->
     <style>
       .typing-text {
         display: inline-block;
@@ -188,10 +224,10 @@
   <body class="minimal-theme">
     <canvas id="matrix-bg"></canvas>
     <div class="crt-overlay"></div>
-    <a href="#main-content" class="skip-link">본문으로 건너뛰기</a>
+    <a href="#terminal-input" class="skip-link">터미널로 건너뛰기</a>
 
     <div class="container-narrow">
-      <div class="terminal-window">
+      <div class="terminal-window" role="application" aria-label="Cyberpunk terminal portfolio">
         <div class="terminal-titlebar">
           <div class="terminal-buttons">
             <span class="terminal-btn terminal-btn--close"></span>
@@ -420,7 +456,8 @@
               <h2 id="infrastructure-heading" class="sr-only">인프라</h2>
               <div class="section-cmd">
                 <span class="section-cmd__command"
-                  >docker ps --format "table {{.Names}}\t{{.Status}}"</span
+                  >docker ps --format "table
+                  &#123;&#123;.Names&#125;&#125;\t&#123;&#123;.Status&#125;&#125;"</span
                 >
               </div>
               <ul class="infra-grid">
@@ -452,16 +489,17 @@
           </footer>
 
           <div id="cli-container" class="cli-container">
-            <div id="cli-output" class="cli-output"></div>
+            <div id="cli-output" class="cli-output" aria-live="polite"></div>
             <div class="cli-input-line">
               <span class="cli-prompt">jclee@resume:~$ </span>
               <input
                 type="text"
-                id="cli-input"
+                id="terminal-input"
                 class="cli-input"
                 autocomplete="off"
                 spellcheck="false"
                 placeholder="type 'help' for commands..."
+                aria-label="Terminal command input"
               />
             </div>
           </div>
@@ -474,6 +512,7 @@
       (function () {
         var s = document.createElement('script');
         s.src = '/main.js';
+        s.defer = true;
         document.body.appendChild(s);
       })();
     </script>
@@ -494,7 +533,7 @@
           h = c.height = window.innerHeight;
           cols = Math.floor(w / 20);
           drops = [];
-          for (var i = 0; i < cols; i++) drops[i] = Math.random() * -100;
+          for (let i = 0; i < cols; i++) drops[i] = Math.random() * -100;
         }
 
         function draw() {
@@ -502,8 +541,8 @@
           ctx.fillRect(0, 0, w, h);
           ctx.fillStyle = '#00ff88';
           ctx.font = '15px monospace';
-          for (var i = 0; i < cols; i++) {
-            var char = chars[Math.floor(Math.random() * chars.length)];
+          for (let i = 0; i < cols; i++) {
+            const char = chars[Math.floor(Math.random() * chars.length)];
             ctx.fillText(char, i * 20, drops[i] * 20);
             if (drops[i] * 20 > h && Math.random() > 0.975) drops[i] = 0;
             drops[i]++;
@@ -577,7 +616,7 @@
             entries.forEach(function (e) {
               if (e.isIntersecting) {
                 e.target.classList.add('revealed');
-                var id = e.target.id || e.target.getAttribute('data-section');
+                const id = e.target.id || e.target.getAttribute('data-section');
                 if (id && !tracked[id]) {
                   tracked[id] = true;
                   if (typeof gtag === 'function') {
@@ -668,6 +707,20 @@
           .replace(/'/g, '&#39;');
       }
 
+      function sanitize(value) {
+        return escapeHtml(value);
+      }
+
+      function sanitizeCommandInput(value) {
+        return String(value || '').slice(0, 500);
+      }
+
+      function sanitizeInput(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+      }
+
       function normalizeText(value) {
         return String(value || '')
           .toLowerCase()
@@ -741,7 +794,7 @@
         var contact = data.contact || {};
 
         if (intent === 'experience' && experiences.length > 0) {
-          var topExperience = experiences.slice(0, 3).map(function (item) {
+          const topExperience = experiences.slice(0, 3).map(function (item) {
             return item.title + ' (' + item.period + ')';
           });
           return (
@@ -755,7 +808,7 @@
         }
 
         if (intent === 'skills' && skills.length > 0) {
-          var topSkills = skills
+          const topSkills = skills
             .slice(0, 10)
             .map(function (item) {
               return item.name + (item.level ? ' (' + item.level + ')' : '');
@@ -765,21 +818,21 @@
         }
 
         if (intent === 'projects' && projects.length > 0) {
-          var topProjects = projects.slice(0, 3).map(function (item) {
+          const topProjects = projects.slice(0, 3).map(function (item) {
             return item.title + ': ' + item.description;
           });
           return 'Featured projects:\n- ' + escapeHtml(topProjects.join('\n- '));
         }
 
         if (intent === 'certifications' && certifications.length > 0) {
-          var activeCerts = certifications
+          const activeCerts = certifications
             .filter(function (cert) {
               return cert.status === 'active';
             })
             .map(function (cert) {
               return cert.name;
             });
-          var certLine = activeCerts.length > 0 ? activeCerts.join(', ') : certifications[0].name;
+          const certLine = activeCerts.length > 0 ? activeCerts.join(', ') : certifications[0].name;
           return 'Certifications: ' + escapeHtml(certLine);
         }
 
@@ -870,20 +923,20 @@
         },
 
         chat: async function (question) {
-          var userQuestion = (question || '').trim();
+          var userQuestion = sanitizeCommandInput(question).trim();
           if (!userQuestion) {
             return 'Usage: chat <your question>\nExample: chat tell me about your security experience';
           }
 
           try {
-            var response = await fetch('/api/chat', {
+            const response = await fetch('/api/chat', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ question: userQuestion }),
             });
 
             if (response.ok) {
-              var payload = await response.json();
+              const payload = await response.json();
               if (payload && payload.answer) {
                 return escapeHtml(payload.answer);
               }
@@ -902,6 +955,10 @@
             '  <span class="cmd-name">about</span>      - Show profile summary\\n' +
             '  <span class="cmd-name">resume</span>     - View career experience\\n' +
             '  <span class="cmd-name">projects</span>   - List side projects\\n' +
+            '  <span class="cmd-name">social</span>     - Show social links\\n' +
+            '  <span class="cmd-name">download</span>   - Download resume PDF\\n' +
+            '  <span class="cmd-name">history</span>    - Show command history\\n' +
+            '  <span class="cmd-name">print</span>      - Open print dialog\\n' +
             '  <span class="cmd-name">skills</span>     - Show tech stack\\n' +
             '  <span class="cmd-name">chat</span>       - Ask resume questions\\n' +
             '  <span class="cmd-name">contact</span>    - Contact information\\n' +
@@ -958,9 +1015,9 @@
           }
 
           function update() {
-            var head = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
+            const head = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
             if (head.x < 0 || head.x >= 200 || head.y < 0 || head.y >= 200) return endGame();
-            for (var i = 0; i < snake.length; i++) {
+            for (let i = 0; i < snake.length; i++) {
               if (snake[i].x === head.x && snake[i].y === head.y) return endGame();
             }
             snake.unshift(head);
@@ -1028,17 +1085,32 @@
       })();
 
       (function () {
-        var cliInput = document.getElementById('cli-input');
+        var cliInput = document.getElementById('terminal-input');
         var cliOutput = document.getElementById('cli-output');
-        var history = [];
+        var commandHistory = [];
         var historyIndex = -1;
 
         if (!cliInput || !cliOutput) return;
 
+        function clearCliOutput() {
+          while (cliOutput.firstChild) {
+            cliOutput.removeChild(cliOutput.firstChild);
+          }
+        }
+
         window.terminalCommands.clear = function () {
-          cliOutput.innerHTML = '';
+          clearCliOutput();
           return '';
         };
+
+        function isWhitelistedCommandName(input) {
+          var raw = sanitizeCommandInput(input).trim();
+          if (!raw) return false;
+          var parts = raw.split(/\s+/);
+          var command = parts[0] || '';
+          var whitelist = new Set(Object.keys(window.terminalCommands));
+          return whitelist.has(raw) || whitelist.has(command);
+        }
 
         window.terminalCommands.whoami = function () {
           return 'jclee - Infrastructure Engineer';
@@ -1080,7 +1152,59 @@
 
         terminalCommands['projects'] = function () {
           document.getElementById('projects').scrollIntoView({ behavior: 'smooth' });
-          return '> 6 projects indexed.\\n> Scrolling to #projects...';
+          var projects = toList((window.__RESUME_CHAT_DATA__ || {}).projects);
+          if (!projects.length) {
+            return '> No project entries found.\\n> Scrolling to #projects...';
+          }
+          var projectLines = projects.slice(0, 6).map(function (project) {
+            return '- ' + (project.title || project.name || 'Untitled project');
+          });
+          return (
+            '> Personal projects:\\n' + projectLines.join('\\n') + '\\n> Scrolling to #projects...'
+          );
+        };
+
+        terminalCommands['social'] = function () {
+          var contact = (window.__RESUME_CHAT_DATA__ || {}).contact || {};
+          var links = [];
+          if (contact.github) links.push('GitHub: ' + contact.github);
+          if (contact.linkedin) links.push('LinkedIn: ' + contact.linkedin);
+          if (contact.website) links.push('Website: ' + contact.website);
+          if (!links.length) {
+            links.push('GitHub: https://github.com/qws941');
+            links.push('LinkedIn: N/A');
+          }
+          return '> Social links:\\n' + links.join('\\n');
+        };
+
+        terminalCommands['download'] = function () {
+          var pdfLink = document.querySelector(
+            '.hero-download a[download], .resume-download a[download]'
+          );
+          var url = pdfLink && pdfLink.getAttribute('href');
+          if (!url || url.indexOf('<!--') !== -1) {
+            return '> Resume PDF URL is not available yet.';
+          }
+          window.open(url, '_blank', 'noopener,noreferrer');
+          return '> Opening resume PDF in a new tab...';
+        };
+
+        terminalCommands['print'] = function () {
+          window.print();
+          return '> Print dialog opened.';
+        };
+
+        terminalCommands['history'] = function () {
+          if (!commandHistory.length) {
+            return '> No command history yet.';
+          }
+          var start = Math.max(commandHistory.length - 20, 0);
+          var recent = commandHistory.slice(start);
+          return recent
+            .map(function (item, idx) {
+              return String(start + idx + 1).padStart(2, '0') + '  ' + item;
+            })
+            .join('\\n');
         };
 
         terminalCommands['skills'] = function () {
@@ -1094,12 +1218,18 @@
         };
 
         async function executeCommand(cmd) {
-          cmd = cmd.trim();
+          cmd = sanitizeCommandInput(cmd).trim();
           if (!cmd) return '';
 
-          var parts = cmd.split(' ');
+          var parts = cmd.split(/\s+/);
           var command = parts[0];
           var args = parts.slice(1).join(' ');
+
+          if (!isWhitelistedCommandName(cmd)) {
+            return (
+              'command not allowed: ' + sanitize(command) + '. Type "help" for available commands.'
+            );
+          }
 
           var result;
           var found = false;
@@ -1126,50 +1256,75 @@
 
         function addOutput(cmd, result) {
           var entry = document.createElement('div');
+          var resultNode;
           entry.className = 'cli-entry';
-          entry.innerHTML =
-            '<div class="cli-cmd">jclee@resume:~$ ' +
-            cmd +
-            '</div>' +
-            (result ? '<div class="cli-result">' + result + '</div>' : '');
+
+          var cmdNode = document.createElement('div');
+          cmdNode.className = 'cli-cmd';
+          cmdNode.innerHTML = 'jclee@resume:~$ ' + sanitizeInput(sanitizeCommandInput(cmd));
+          entry.appendChild(cmdNode);
+
+          if (result) {
+            resultNode = document.createElement('div');
+            resultNode.className = 'cli-result';
+            resultNode.textContent = sanitize(result);
+            entry.appendChild(resultNode);
+          }
+
           cliOutput.appendChild(entry);
           cliOutput.scrollTop = cliOutput.scrollHeight;
+          return resultNode;
         }
 
         cliInput.addEventListener('keydown', async function (e) {
           if (e.key === 'Enter') {
-            var cmd = cliInput.value;
-            if (cmd.trim()) {
-              history.push(cmd);
-              historyIndex = history.length;
+            if (cliInput.value.length > 500) {
+              addOutput('validation', 'Input too long. Maximum command length is 500 characters.');
+              cliInput.value = '';
+              return;
             }
-            var result = await executeCommand(cmd);
-            addOutput(cmd, result);
+            const cmd = sanitizeCommandInput(cliInput.value);
+            if (cmd.trim()) {
+              commandHistory.push(cmd);
+              historyIndex = commandHistory.length;
+            }
+            const pendingNode = addOutput(cmd, 'Processing...');
+            if (pendingNode) {
+              pendingNode.innerHTML = '<span class="terminal-loading">Processing...</span>';
+            }
+            const result = await executeCommand(cmd);
+            if (pendingNode) {
+              pendingNode.textContent = sanitize(result);
+              cliOutput.scrollTop = cliOutput.scrollHeight;
+            }
             cliInput.value = '';
           } else if (e.key === 'ArrowUp') {
             e.preventDefault();
             if (historyIndex > 0) {
               historyIndex--;
-              cliInput.value = history[historyIndex];
+              cliInput.value = commandHistory[historyIndex];
             }
           } else if (e.key === 'ArrowDown') {
             e.preventDefault();
-            if (historyIndex < history.length - 1) {
+            if (historyIndex < commandHistory.length - 1) {
               historyIndex++;
-              cliInput.value = history[historyIndex];
+              cliInput.value = commandHistory[historyIndex];
             } else {
-              historyIndex = history.length;
+              historyIndex = commandHistory.length;
               cliInput.value = '';
             }
           } else if (e.key === 'Tab') {
             e.preventDefault();
-            var val = cliInput.value;
-            var cmds = Object.keys(window.terminalCommands);
-            var matches = cmds.filter(function (c) {
-              return c.startsWith(val);
+            const val = cliInput.value.trimStart();
+            const parts = val.split(/\s+/);
+            const prefix = parts[0] || '';
+            const cmds = Object.keys(window.terminalCommands);
+            const matches = cmds.filter(function (c) {
+              return c.startsWith(prefix);
             });
             if (matches.length === 1) {
-              cliInput.value = matches[0];
+              const rest = parts.slice(1).join(' ');
+              cliInput.value = rest ? matches[0] + ' ' + rest : matches[0];
             }
           }
         });
@@ -1227,6 +1382,7 @@
       (function () {
         var s = document.createElement('script');
         s.src = 'https://browser.sentry-cdn.com/7.120.3/bundle.min.js';
+        s.async = true;
         s.integrity = 'sha384-QhNWP5Exx8ZPPgZF2s+nKw/cl8cah1/6MVdZfR8a22f2KO0OsBNonujHvYJlrWIP';
         s.crossOrigin = 'anonymous';
         s.onload = function () {
@@ -1272,10 +1428,6 @@
           Sentry.setUser({ id: 'anonymous' });
         };
         document.head.appendChild(s);
-        var cf = document.createElement('script');
-        cf.src = 'https://static.cloudflareinsights.com/beacon.min.js';
-        cf.dataset.cfBeacon = '{"token":"8c92c40a4f374cde9c3b7f8a1e9b5c2d"}';
-        document.head.appendChild(cf);
       })();
     </script>
   </body>

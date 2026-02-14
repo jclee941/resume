@@ -30,6 +30,8 @@
       var _gs = document.createElement('script');
       _gs.src = 'https://www.googletagmanager.com/gtag/js?id=G-P9E8XY5K2L';
       _gs.async = true;
+      _gs.integrity = 'sha384-ZXsMWzL9jNkfVeDNiKiKlvdyvBmUvt8YMS2PljnnNk8cVfKES+GLjaItoIy8iwNi';
+      _gs.crossOrigin = 'anonymous';
       document.head.appendChild(_gs);
     </script>
 
@@ -37,6 +39,9 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://www.googletagmanager.com" />
+    <link rel="preconnect" href="https://browser.sentry-cdn.com" crossorigin />
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin />
 
     <link rel="alternate" hreflang="ko-KR" href="https://resume.jclee.me" />
     <link rel="alternate" hreflang="en-US" href="https://resume.jclee.me/en/" />
@@ -80,30 +85,48 @@
         "@context": "https://schema.org",
         "@type": "Person",
         "@id": "https://resume.jclee.me/#person",
-        "name": "Jaecheol Lee",
-        "alternateName": "이재철",
+        "name": "이재철",
+        "alternateName": "Jaecheol Lee",
         "jobTitle": "Infrastructure Engineer",
-        "description": "Infrastructure Engineer, Observability stack design, AI agent operations, financial infrastructure",
+        "description": "8-year infrastructure engineer focused on security infrastructure design and operations in finance and public sectors.",
         "url": "https://resume.jclee.me",
         "email": "qws941@kakao.com",
         "telephone": "+82-10-5757-9592",
         "sameAs": ["https://github.com/qws941"],
         "knowsAbout": [
+          "Kubernetes",
+          "Terraform",
+          "Cloudflare Workers",
+          "Proxmox",
           "Observability",
-          "ML Platform",
-          "Grafana",
-          "Prometheus",
-          "Loki",
-          "Splunk",
-          "n8n",
-          "Automation",
-          "AIOps",
-          "Financial Infrastructure"
+          "Security Infrastructure",
+          "Automation"
         ],
         "worksFor": {
           "@type": "Organization",
-          "name": "ITCEN CTS"
+          "name": "(주)아이티센 CTS"
         }
+      }
+    </script>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://resume.jclee.me/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "English",
+            "item": "https://resume.jclee.me/en"
+          }
+        ]
       }
     </script>
 
@@ -113,8 +136,8 @@
         "@context": "https://schema.org",
         "@type": "WebSite",
         "name": "Jaecheol Lee Resume",
-        "url": "https://resume.jclee.me/en/",
-        "description": "Infrastructure Engineer Jaecheol Lee - Resume and Portfolio",
+        "url": "https://resume.jclee.me",
+        "description": "Jaecheol Lee - Infrastructure Engineer portfolio and resume.",
         "inLanguage": "en-US"
       }
     </script>
@@ -126,18 +149,19 @@
     <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
+    <link rel="preload" href="/assets/favicon-32x32.png" as="image" type="image/png" />
 
     <!-- Preload Critical Font -->
     <link
       rel="preload"
-      href="/fonts/inter-v13-latin-regular.woff2"
+      href="/assets/fonts/inter-v13-latin-regular.woff2"
       as="font"
       type="font/woff2"
       crossorigin
     />
     <link
       rel="preload"
-      href="/fonts/inter-v13-latin-700.woff2"
+      href="/assets/fonts/inter-v13-latin-700.woff2"
       as="font"
       type="font/woff2"
       crossorigin
@@ -148,17 +172,16 @@
         font-style: normal;
         font-weight: 400;
         font-display: swap;
-        src: url('/fonts/inter-v13-latin-regular.woff2') format('woff2');
+        src: url('/assets/fonts/inter-v13-latin-regular.woff2') format('woff2');
       }
       @font-face {
         font-family: 'Inter';
         font-style: normal;
         font-weight: 700;
         font-display: swap;
-        src: url('/fonts/inter-v13-latin-700.woff2') format('woff2');
+        src: url('/assets/fonts/inter-v13-latin-700.woff2') format('woff2');
       }
     </style>
-
     <style>
       .typing-text {
         display: inline-block;
@@ -190,16 +213,16 @@
       .hero--terminal {
         text-align: left;
       }
-      <!-- CSS_PLACEHOLDER -->
+      /* CSS_PLACEHOLDER */
     </style>
   </head>
   <body class="minimal-theme">
     <canvas id="matrix-bg"></canvas>
     <div class="crt-overlay"></div>
-    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <a href="#terminal-input" class="skip-link">Skip to terminal</a>
 
     <div class="container-narrow">
-      <div class="terminal-window">
+      <div class="terminal-window" role="application" aria-label="Cyberpunk terminal portfolio">
         <div class="terminal-titlebar">
           <div class="terminal-buttons">
             <span class="terminal-btn terminal-btn--close"></span>
@@ -411,7 +434,8 @@
               <h2 id="infrastructure-heading" class="sr-only">Infrastructure</h2>
               <div class="section-cmd">
                 <span class="section-cmd__command"
-                  >docker ps --format "table {{.Names}}\t{{.Status}}"</span
+                  >docker ps --format "table
+                  &#123;&#123;.Names&#125;&#125;\t&#123;&#123;.Status&#125;&#125;"</span
                 >
               </div>
               <ul class="infra-grid">
@@ -441,6 +465,22 @@
               <span style="color: var(--text-muted); margin-left: 1rem">Connection closed.</span>
             </div>
           </footer>
+
+          <div id="cli-container" class="cli-container">
+            <div id="cli-output" class="cli-output" aria-live="polite"></div>
+            <div class="cli-input-line">
+              <span class="cli-prompt">jclee@resume:~$ </span>
+              <input
+                type="text"
+                id="terminal-input"
+                class="cli-input"
+                autocomplete="off"
+                spellcheck="false"
+                placeholder="type 'help' for commands..."
+                aria-label="Terminal command input"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -450,6 +490,7 @@
       (function () {
         var s = document.createElement('script');
         s.src = '/main.js';
+        s.defer = true;
         document.body.appendChild(s);
       })();
     </script>
@@ -470,7 +511,7 @@
           h = c.height = window.innerHeight;
           cols = Math.floor(w / 20);
           drops = [];
-          for (var i = 0; i < cols; i++) drops[i] = Math.random() * -100;
+          for (let i = 0; i < cols; i++) drops[i] = Math.random() * -100;
         }
 
         function draw() {
@@ -478,8 +519,8 @@
           ctx.fillRect(0, 0, w, h);
           ctx.fillStyle = '#00ff88';
           ctx.font = '15px monospace';
-          for (var i = 0; i < cols; i++) {
-            var char = chars[Math.floor(Math.random() * chars.length)];
+          for (let i = 0; i < cols; i++) {
+            const char = chars[Math.floor(Math.random() * chars.length)];
             ctx.fillText(char, i * 20, drops[i] * 20);
             if (drops[i] * 20 > h && Math.random() > 0.975) drops[i] = 0;
             drops[i]++;
@@ -516,11 +557,193 @@
           obs.observe(el);
         });
       })();
+
+      window.terminalCommands = {
+        help: function () {
+          return (
+            '<div class="help-output">' +
+            'Available commands:\\n' +
+            '  <span class="cmd-name">about</span>      - Scroll to about\\n' +
+            '  <span class="cmd-name">resume</span>     - Scroll to experience\\n' +
+            '  <span class="cmd-name">projects</span>   - List personal projects\\n' +
+            '  <span class="cmd-name">social</span>     - Show social links\\n' +
+            '  <span class="cmd-name">download</span>   - Download resume PDF\\n' +
+            '  <span class="cmd-name">history</span>    - Show command history\\n' +
+            '  <span class="cmd-name">print</span>      - Open print dialog\\n' +
+            '  <span class="cmd-name">skills</span>     - Scroll to skills\\n' +
+            '  <span class="cmd-name">contact</span>    - Scroll to contact\\n' +
+            '  <span class="cmd-name">clear</span>      - Clear terminal' +
+            '</div>'
+          );
+        },
+      };
+
+      (function () {
+        var cmdStyle = document.createElement('style');
+        cmdStyle.textContent =
+          '.help-output{white-space:pre-wrap}.cmd-name{color:#0ff}.cli-container{position:fixed;bottom:0;left:0;right:0;background:rgba(12,12,18,0.95);border-top:1px solid #00ff88;padding:1rem;font-family:monospace;z-index:1000;max-height:40vh;overflow-y:auto}.cli-output{margin-bottom:0.5rem;color:#00ff88;font-size:0.9rem;max-height:30vh;overflow-y:auto}.cli-input-line{display:flex;align-items:center}.cli-prompt{color:#00ff88;margin-right:0.5rem;flex-shrink:0}.cli-input{flex:1;background:transparent;border:none;color:#0ff;font-family:monospace;font-size:1rem;outline:none;caret-color:#0ff}.cli-input::placeholder{color:#444}.cli-entry{margin-bottom:0.5rem}.cli-cmd{color:#0ff}.cli-result{margin-left:1rem;white-space:pre-wrap}';
+        document.head.appendChild(cmdStyle);
+      })();
+
+      (function () {
+        var cliInput = document.getElementById('terminal-input');
+        var cliOutput = document.getElementById('cli-output');
+        var commandHistory = [];
+        var historyIndex = -1;
+
+        if (!cliInput || !cliOutput) return;
+
+        window.terminalCommands.clear = function () {
+          cliOutput.innerHTML = '';
+          return '';
+        };
+
+        window.terminalCommands.about = function () {
+          document.getElementById('about').scrollIntoView({ behavior: 'smooth' });
+          return '> Scrolling to #about...';
+        };
+
+        window.terminalCommands.resume = function () {
+          document.getElementById('resume').scrollIntoView({ behavior: 'smooth' });
+          return '> Scrolling to #resume...';
+        };
+
+        window.terminalCommands.projects = function () {
+          document.getElementById('projects').scrollIntoView({ behavior: 'smooth' });
+          var titles = Array.prototype.slice
+            .call(document.querySelectorAll('.project-title'))
+            .map(function (el) {
+              return '- ' + el.textContent.trim();
+            })
+            .slice(0, 6);
+          if (!titles.length) return '> No project entries found.\\n> Scrolling to #projects...';
+          return '> Personal projects:\\n' + titles.join('\\n') + '\\n> Scrolling to #projects...';
+        };
+
+        window.terminalCommands.skills = function () {
+          document.getElementById('skills').scrollIntoView({ behavior: 'smooth' });
+          return '> Scrolling to #skills...';
+        };
+
+        window.terminalCommands.contact = function () {
+          document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
+          return '> Scrolling to #contact...';
+        };
+
+        window.terminalCommands.social = function () {
+          var links = Array.prototype.slice.call(
+            document.querySelectorAll('#contact a[href], .contact-links a[href]')
+          );
+          if (!links.length) return '> Social links are not available.';
+          return (
+            '> Social links:\\n' +
+            links
+              .slice(0, 6)
+              .map(function (a) {
+                return '- ' + a.textContent.trim() + ': ' + a.getAttribute('href');
+              })
+              .join('\\n')
+          );
+        };
+
+        window.terminalCommands.download = function () {
+          var pdfLink = document.querySelector(
+            '.hero-download a[download], .resume-download a[download]'
+          );
+          var url = pdfLink && pdfLink.getAttribute('href');
+          if (!url || url.indexOf('<!--') !== -1) {
+            return '> Resume PDF URL is not available yet.';
+          }
+          window.open(url, '_blank', 'noopener,noreferrer');
+          return '> Opening resume PDF in a new tab...';
+        };
+
+        window.terminalCommands.print = function () {
+          window.print();
+          return '> Print dialog opened.';
+        };
+
+        window.terminalCommands.history = function () {
+          if (!commandHistory.length) return '> No command history yet.';
+          var start = Math.max(commandHistory.length - 20, 0);
+          return commandHistory
+            .slice(start)
+            .map(function (item, idx) {
+              return String(start + idx + 1).padStart(2, '0') + '  ' + item;
+            })
+            .join('\\n');
+        };
+
+        function executeCommand(cmd) {
+          var input = cmd.trim();
+          if (!input) return '';
+          var parts = input.split(' ');
+          var command = parts[0];
+          var args = parts.slice(1).join(' ');
+
+          if (window.terminalCommands[input]) return window.terminalCommands[input]();
+          if (window.terminalCommands[command]) return window.terminalCommands[command](args);
+          return 'command not found: ' + command + '. Type "help" for available commands.';
+        }
+
+        function addOutput(cmd, result) {
+          var entry = document.createElement('div');
+          entry.className = 'cli-entry';
+          entry.innerHTML =
+            '<div class="cli-cmd">jclee@resume:~$ ' +
+            cmd +
+            '</div>' +
+            (result ? '<div class="cli-result">' + result + '</div>' : '');
+          cliOutput.appendChild(entry);
+          cliOutput.scrollTop = cliOutput.scrollHeight;
+        }
+
+        cliInput.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') {
+            const cmd = cliInput.value;
+            if (cmd.trim()) {
+              commandHistory.push(cmd);
+              historyIndex = commandHistory.length;
+            }
+            addOutput(cmd, executeCommand(cmd));
+            cliInput.value = '';
+          } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (historyIndex > 0) {
+              historyIndex--;
+              cliInput.value = commandHistory[historyIndex];
+            }
+          } else if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (historyIndex < commandHistory.length - 1) {
+              historyIndex++;
+              cliInput.value = commandHistory[historyIndex];
+            } else {
+              historyIndex = commandHistory.length;
+              cliInput.value = '';
+            }
+          } else if (e.key === 'Tab') {
+            e.preventDefault();
+            const val = cliInput.value.trimStart();
+            const parts = val.split(/\s+/);
+            const prefix = parts[0] || '';
+            const cmds = Object.keys(window.terminalCommands);
+            const matches = cmds.filter(function (c) {
+              return c.startsWith(prefix);
+            });
+            if (matches.length === 1) {
+              const rest = parts.slice(1).join(' ');
+              cliInput.value = rest ? matches[0] + ' ' + rest : matches[0];
+            }
+          }
+        });
+      })();
     </script>
     <script>
       (function () {
         var s = document.createElement('script');
         s.src = 'https://browser.sentry-cdn.com/7.120.3/bundle.min.js';
+        s.async = true;
         s.integrity = 'sha384-QhNWP5Exx8ZPPgZF2s+nKw/cl8cah1/6MVdZfR8a22f2KO0OsBNonujHvYJlrWIP';
         s.crossOrigin = 'anonymous';
         s.onload = function () {
@@ -566,10 +789,6 @@
           Sentry.setUser({ id: 'anonymous' });
         };
         document.head.appendChild(s);
-        var cf = document.createElement('script');
-        cf.src = 'https://static.cloudflareinsights.com/beacon.min.js';
-        cf.dataset.cfBeacon = '{"token":"8c92c40a4f374cde9c3b7f8a1e9b5c2d"}';
-        document.head.appendChild(cf);
       })();
     </script>
     <script>

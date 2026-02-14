@@ -1,0 +1,123 @@
+{
+  "uid": "resume-tracing",
+  "title": "Resume Platform - Tracing",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "30s",
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "tags": ["resume", "tracing", "apm", "cloudflare"],
+  "panels": [
+    {
+      "id": 1,
+      "type": "timeseries",
+      "title": "Span Duration p95 (ms)",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P80D1C387F02F2311"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "histogram_quantile(0.95, sum(rate(trace_span_duration_ms_bucket{service=\"resume\"}[5m])) by (le, route))",
+          "legendFormat": "{{route}}"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "timeseries",
+      "title": "Spans per Second",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P80D1C387F02F2311"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum(rate(trace_spans_total{service=\"resume\"}[1m])) by (route)",
+          "legendFormat": "{{route}}"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Trace Error Rate",
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 0,
+        "y": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P80D1C387F02F2311"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "(sum(rate(trace_spans_total{service=\"resume\", status=~\"5..\"}[5m])) / clamp_min(sum(rate(trace_spans_total{service=\"resume\"}[5m])), 1)) * 100"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 1
+              },
+              {
+                "color": "red",
+                "value": 5
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 4,
+      "type": "table",
+      "title": "Recent Slow Traces",
+      "gridPos": {
+        "h": 6,
+        "w": 16,
+        "x": 8,
+        "y": 8
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "cfakfiakcs0zka"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "{job=\"resume-worker\"} |= \"traceId\" |= \"durationMs\""
+        }
+      ]
+    }
+  ]
+}

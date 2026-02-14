@@ -1,0 +1,19 @@
+{
+  "version": "1",
+  "objects": [
+    {
+      "type": "index-pattern",
+      "id": "resume-logs-pattern",
+      "attributes": {
+        "title": "resume-logs-*",
+        "timeFieldName": "@timestamp",
+        "allowNoIndex": true,
+        "fields": "[]",
+        "fieldAttrs": "{}",
+        "runtimeFieldMap": "{}",
+        "sourceFilters": "[]"
+      },
+      "references": []
+    }
+  ]
+}

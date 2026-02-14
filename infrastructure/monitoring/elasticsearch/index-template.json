@@ -1,0 +1,55 @@
+{
+  "index_patterns": ["resume-logs-*"],
+  "priority": 500,
+  "template": {
+    "settings": {
+      "index": {
+        "number_of_shards": 1,
+        "number_of_replicas": 1,
+        "refresh_interval": "30s"
+      }
+    },
+    "mappings": {
+      "dynamic": true,
+      "properties": {
+        "@timestamp": {
+          "type": "date"
+        },
+        "timestamp": {
+          "type": "date"
+        },
+        "level": {
+          "type": "keyword"
+        },
+        "message": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 1024
+            }
+          }
+        },
+        "correlationId": {
+          "type": "keyword"
+        },
+        "service": {
+          "type": "keyword"
+        },
+        "route": {
+          "type": "keyword"
+        },
+        "statusCode": {
+          "type": "integer"
+        },
+        "duration": {
+          "type": "float"
+        }
+      }
+    }
+  },
+  "_meta": {
+    "description": "Index template for resume structured logs",
+    "owner": "infrastructure/monitoring"
+  }
+}

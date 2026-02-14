@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "BazelBuild.vscode-bazel",
+    "ms-playwright.playwright",
+    "EditorConfig.EditorConfig"
+  ],
+  "unwantedRecommendations": ["esbenp.prettier-vscode"]
+}

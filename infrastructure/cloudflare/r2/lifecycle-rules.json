@@ -1,0 +1,12 @@
+{
+  "rules": [
+    {
+      "id": "temp-files-cleanup-90d",
+      "enabled": true,
+      "prefix": "temp/",
+      "action": "delete",
+      "afterDays": 90,
+      "description": "Automatically delete temporary files older than 90 days"
+    }
+  ]
+}

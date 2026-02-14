@@ -1,0 +1,38 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build",
+      "type": "shell",
+      "command": "npm run build",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "test:unit",
+      "type": "shell",
+      "command": "npm run test:unit",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "test:e2e",
+      "type": "shell",
+      "command": "npm run test:e2e",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "sync:data",
+      "type": "shell",
+      "command": "npm run sync:data",
+      "problemMatcher": []
+    },
+    {
+      "label": "deploy",
+      "type": "shell",
+      "command": "npm run deploy",
+      "problemMatcher": []
+    }
+  ]
+}

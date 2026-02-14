@@ -817,7 +817,7 @@
     {
       "icon": "🤖",
       "title": "MCP Server Hub",
-      "description": "AI 에이전트 도구 서버 (13개 MCP)",
+      "description": "AI 에이전트 도구 서버 (17개 MCP)",
       "status": "running"
     },
     {
@@ -831,6 +831,13 @@
       "title": "GlitchTip",
       "description": "에러 트래킹 (Sentry 대체)",
       "status": "running"
+    },
+    {
+      "icon": "🔄",
+      "title": "n8n",
+      "description": "워크플로우 자동화 (15+ 워크플로우, 일 200+ 실행)",
+      "status": "running",
+      "url": "https://n8n.jclee.me"
     },
     {
       "icon": "⚡",

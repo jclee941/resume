@@ -1,0 +1,23 @@
+{
+  "name": "Resume Platform Status",
+  "slug": "resume-platform",
+  "refreshSeconds": 60,
+  "services": [
+    {
+      "id": "portfolio",
+      "name": "Portfolio",
+      "url": "https://resume.jclee.me/healthz"
+    },
+    {
+      "id": "dashboard",
+      "name": "Job Dashboard API",
+      "url": "https://resume.jclee.me/job/api/health"
+    }
+  ],
+  "incidentTemplate": {
+    "title": "[{severity}] {service} degraded",
+    "fields": ["summary", "impact", "startedAt", "detectedBy", "mitigation", "nextUpdateAt"],
+    "defaultSeverity": "major",
+    "defaultStatus": "investigating"
+  }
+}

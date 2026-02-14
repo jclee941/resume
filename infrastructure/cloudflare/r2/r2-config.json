@@ -1,0 +1,16 @@
+{
+  "bucket": {
+    "name": "resume-assets",
+    "publicAccess": false,
+    "description": "Asset storage for resume PDFs, screenshots, and generated media",
+    "allowedPrefixes": ["pdf/", "screenshots/", "temp/"],
+    "cors": [
+      {
+        "allowedOrigins": ["https://resume.jclee.me"],
+        "allowedMethods": ["GET", "PUT", "HEAD"],
+        "allowedHeaders": ["*"],
+        "maxAgeSeconds": 3600
+      }
+    ]
+  }
+}

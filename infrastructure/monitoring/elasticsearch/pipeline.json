@@ -1,0 +1,100 @@
+{
+  "name": "resume-workers-json-pipeline",
+  "description": "Normalizes Cloudflare Worker and edge logs into structured fields for resume-logs-*",
+  "version": 1,
+  "inputs": {
+    "source": "filebeat",
+    "format": "json",
+    "expected_fields": [
+      "@timestamp",
+      "level",
+      "message",
+      "correlationId",
+      "service",
+      "route",
+      "statusCode",
+      "duration"
+    ]
+  },
+  "filebeat": {
+    "enabled": true,
+    "json.keys_under_root": true,
+    "json.overwrite_keys": true,
+    "json.add_error_key": true,
+    "processors": [
+      {
+        "add_fields": {
+          "target": "event",
+          "fields": {
+            "module": "resume",
+            "dataset": "resume.logs"
+          }
+        }
+      },
+      {
+        "drop_fields": {
+          "fields": ["host", "agent", "ecs"],
+          "ignore_missing": true
+        }
+      }
+    ],
+    "output.elasticsearch": {
+      "index": "resume-logs-%{+yyyy.MM.dd}",
+      "pipeline": "resume-logs-ingest"
+    }
+  },
+  "elasticsearch_ingest_pipeline": {
+    "id": "resume-logs-ingest",
+    "processors": [
+      {
+        "set": {
+          "field": "event.dataset",
+          "value": "resume.logs"
+        }
+      },
+      {
+        "set": {
+          "field": "service.name",
+          "value": "resume",
+          "override": false
+        }
+      },
+      {
+        "rename": {
+          "field": "correlationId",
+          "target_field": "trace.correlation_id",
+          "ignore_missing": true
+        }
+      },
+      {
+        "convert": {
+          "field": "statusCode",
+          "type": "long",
+          "ignore_missing": true
+        }
+      },
+      {
+        "convert": {
+          "field": "duration",
+          "type": "float",
+          "ignore_missing": true
+        }
+      },
+      {
+        "date": {
+          "field": "@timestamp",
+          "formats": ["ISO8601"],
+          "ignore_failure": true
+        }
+      }
+    ],
+    "on_failure": [
+      {
+        "set": {
+          "field": "error.message",
+          "value": "Failed to process resume log event"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+# Cloudflare Worker local environment template
+# Copy to .dev.vars and fill values for local development only.
+
+NODE_ENV=development
+SIGNING_SECRET=replace-with-local-secret
+CF_API_KEY=replace-with-api-key
+CF_EMAIL=replace-with-email
+N8N_WEBHOOK_BASE=https://n8n.example.local/webhook
+ELASTICSEARCH_URL=https://elasticsearch.example.local
+ELASTICSEARCH_API_KEY=replace-with-es-api-key
+ELASTICSEARCH_INDEX=resume-logs-local

@@ -8,6 +8,7 @@ html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -30,9 +31,51 @@ body {
   line-height: var(--leading-relaxed);
   color: var(--text-primary);
   background: var(--bg-primary);
+  overflow-x: hidden;
+  min-height: 100vh;
   transition:
     background-color var(--transition-base),
     color var(--transition-base);
+}
+
+@media (max-width: 375px) {
+  body {
+    font-size: 0.95rem;
+  }
+
+  .container-narrow {
+    padding: var(--space-4) var(--space-3);
+  }
+
+  .terminal-body {
+    padding: var(--space-4);
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    font-size: 1rem;
+  }
+
+  .container-narrow {
+    max-width: 100%;
+    padding: var(--space-5) var(--space-4);
+  }
+
+  .terminal-window {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+@media (min-width: 1440px) {
+  .container-narrow {
+    max-width: 1120px;
+  }
+
+  .terminal-body {
+    padding: var(--space-8);
+  }
 }
 
 a {

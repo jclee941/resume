@@ -439,6 +439,45 @@ jobs:
             });
 
   # ===========================================================================
+  # STAGE: LIGHTHOUSE - Performance & Accessibility Audit
+  # ===========================================================================
+  lighthouse:
+    name: Lighthouse
+    runs-on: ubuntu-latest
+    needs: [deploy]
+    if: ${{ needs.deploy.result == 'success' }}
+    # Lighthouse results are informational — Bot Fight Mode may degrade scores.
+    # Failures here do NOT block deployment or trigger rollback.
+    continue-on-error: true
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Wait for deployment propagation
+        run: sleep 15
+
+      - name: Install Lighthouse CI
+        run: npm install -g @lhci/cli@0.14.x
+
+      - name: Run Lighthouse CI
+        run: lhci autorun --config=tools/lighthouserc.json
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Lighthouse reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-report
+          path: .lighthouseci/
+          retention-days: 14
+          if-no-files-found: ignore
+
+  # ===========================================================================
   # STAGE: VERIFY
   # ===========================================================================
   verify:

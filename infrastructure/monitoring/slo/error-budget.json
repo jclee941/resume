@@ -1,0 +1,31 @@
+{
+  "service": "resume-platform",
+  "period": "monthly",
+  "resetPolicy": {
+    "type": "calendar",
+    "timezone": "Asia/Seoul",
+    "resetAt": "00:00:00",
+    "resetDay": 1
+  },
+  "budget": {
+    "availabilityTarget": 99.9,
+    "totalMinutesPerMonth": 43800,
+    "errorBudgetMinutes": 43.8
+  },
+  "calculation": {
+    "consumedMinutesFormula": "(5xx_requests / total_requests) * totalMinutesPerMonth",
+    "remainingMinutesFormula": "errorBudgetMinutes - consumedMinutes",
+    "consumptionPercentFormula": "(consumedMinutes / errorBudgetMinutes) * 100"
+  },
+  "tracking": {
+    "fields": [
+      "month",
+      "requestsTotal",
+      "requests5xx",
+      "consumedMinutes",
+      "remainingMinutes",
+      "consumptionPercent",
+      "updatedAt"
+    ]
+  }
+}
