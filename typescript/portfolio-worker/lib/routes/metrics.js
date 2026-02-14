@@ -56,7 +56,7 @@ function generateMetricsGetRoute() {
               error_rate: metrics.requests_total > 0 
                 ? (metrics.requests_error / metrics.requests_total * 100).toFixed(2) + '%'
                 : '0%',
-              response_time_ms: metrics.response_times.length > 0 
+              response_time_ms: (metrics.response_times || []).length > 0 
                 ? Math.round(metrics.response_times.reduce((a, b) => a + b) / metrics.response_times.length)
                 : 0
             },
@@ -64,9 +64,9 @@ function generateMetricsGetRoute() {
             // Web Vitals Stats
             vitals: metrics.vitals_received > 0 ? {
               count: metrics.vitals_received,
-              avg_lcp_ms: metrics.vitals_received > 0 ? Math.round(metrics.vitals_sum.lcp / metrics.vitals_received) : 0,
-              avg_fid_ms: metrics.vitals_received > 0 ? Math.round(metrics.vitals_sum.fid / metrics.vitals_received) : 0,
-              avg_cls: metrics.vitals_received > 0 ? (metrics.vitals_sum.cls / metrics.vitals_received).toFixed(3) : '0'
+              avg_lcp_ms: Math.round((metrics.vitals_sum?.lcp || 0) / metrics.vitals_received),
+              avg_fid_ms: Math.round((metrics.vitals_sum?.fid || 0) / metrics.vitals_received),
+              avg_cls: ((metrics.vitals_sum?.cls || 0) / metrics.vitals_received).toFixed(3)
             } : null,
             
             // Tracking Events Summary
