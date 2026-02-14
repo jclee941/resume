@@ -258,8 +258,11 @@ jobs:
           install-playwright: 'true'
 
       # NOTE: Intentionally duplicates sync:data + build from the build job.
-      # E2E tests need a local build for Playwright; depending on the build job
-      # would add coupling and sequential wait time for ~2min savings.
+      # E2E tests need a running local dev server (via wrangler/miniflare) for
+      # Playwright to hit, so they MUST build locally — downloading the build
+      # artifact alone is not sufficient. This trades ~2min CI time for pipeline
+      # parallelism (E2E runs alongside lint/typecheck/unit, not after build).
+      # See: playwright.config.js webServer config.
       - name: Sync resume data
         run: npm run sync:data
 
@@ -386,13 +389,34 @@ jobs:
           name: portfolio-worker
           path: typescript/portfolio-worker/
 
-      - name: Deploy to Cloudflare Workers
+      - name: Warn if security gate bypassed
+        if: ${{ inputs.skip_security_gate == true }}
+        run: |
+          echo "::warning::⚠️ SECURITY GATE BYPASSED — skip_security_gate was enabled for this deploy"
+          echo "## ⚠️ Security Gate Bypassed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "This deployment was made with \`skip_security_gate: true\`." >> $GITHUB_STEP_SUMMARY
+          echo "Security scan results were **not** enforced as a deploy gate." >> $GITHUB_STEP_SUMMARY
+          echo "Triggered by: @${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+      - name: Deploy Portfolio Worker to Cloudflare
         id: wrangler-deploy
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: typescript/portfolio-worker
+          command: deploy --env production
+
+      - name: Deploy Job Automation Worker to Cloudflare
+        id: wrangler-deploy-job
+        if: ${{ needs.analyze.outputs.job_dashboard_affected == 'true' || inputs.force_deploy == true }}
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: typescript/job-automation/workers
           command: deploy --env production
 
       - name: Update Deployment Status
@@ -402,7 +426,9 @@ jobs:
           script: |
             const deploymentId = ${{ steps.deployment.outputs.id }};
             if (!deploymentId) return;
-            const state = '${{ steps.wrangler-deploy.outcome }}' === 'success' ? 'success' : 'failure';
+            const state = '${{ steps.wrangler-deploy.outcome }}' === 'success' &&
+              ('${{ steps.wrangler-deploy-job.outcome }}' === 'success' || '${{ steps.wrangler-deploy-job.outcome }}' === 'skipped')
+              ? 'success' : 'failure';
             await github.rest.repos.createDeploymentStatus({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -487,17 +513,54 @@ jobs:
           done
           echo "ℹ️ Job Dashboard HTTP checks are informational only (Bot Fight Mode may block CI IPs)"
 
-      - name: Verify Security Headers (informational)
+      - name: Verify Security Headers
+        id: security-headers
         continue-on-error: true
         run: |
-          HEADERS=$(curl -sI -A "resume-ci/1.0" "${{ env.PORTFOLIO_URL }}" || true)
+          echo "=== Security Headers Verification ==="
+          HEADERS=$(curl -sI -A "resume-ci/1.0" "${{ env.PORTFOLIO_URL }}" 2>/dev/null || true)
+          FAILURES=0
+
+          if [ -z "$HEADERS" ]; then
+            echo "⚠️ Could not fetch headers (Bot Fight Mode may block CI IPs)"
+            echo "headers_fetched=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          echo "headers_fetched=true" >> $GITHUB_OUTPUT
+
+          # Hard-fail checks: these headers MUST be present
           if ! echo "$HEADERS" | grep -qi "content-security-policy"; then
-            echo "⚠️ Missing CSP header"
+            echo "❌ FAIL: Missing Content-Security-Policy header"
+            FAILURES=$((FAILURES + 1))
+          else
+            echo "✅ Content-Security-Policy present"
           fi
+
           if ! echo "$HEADERS" | grep -qi "x-frame-options"; then
-            echo "⚠️ Missing X-Frame-Options header"
+            echo "❌ FAIL: Missing X-Frame-Options header"
+            FAILURES=$((FAILURES + 1))
+          else
+            echo "✅ X-Frame-Options present"
           fi
-          echo "✅ Verification completed"
+
+          if ! echo "$HEADERS" | grep -qi "x-content-type-options"; then
+            echo "❌ FAIL: Missing X-Content-Type-Options header"
+            FAILURES=$((FAILURES + 1))
+          else
+            echo "✅ X-Content-Type-Options present"
+          fi
+
+          if ! echo "$HEADERS" | grep -qi "strict-transport-security"; then
+            echo "⚠️ WARN: Missing Strict-Transport-Security header"
+          else
+            echo "✅ Strict-Transport-Security present"
+          fi
+
+          if [ "$FAILURES" -gt 0 ]; then
+            echo "❌ $FAILURES critical security header(s) missing"
+            exit 1
+          fi
+          echo "✅ All critical security headers verified"
 
   # ===========================================================================
   # STAGE: ROLLBACK (on verify failure)

@@ -77,7 +77,7 @@ function generateProjectCards(projectsData, dataHash) {
       // Render as anchor tag only if link exists, otherwise use div
       const titleContent = `${escapeHtml(project.title)}<span class="arrow">↗</span>`;
       const titleElement = hasLink
-        ? `<a href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer" class="project-link-title" aria-label="View ${escapeHtml(project.title)} project">${titleContent}</a>`
+        ? `<a href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer" class="project-link-title" aria-label="View ${escapeHtml(project.title)} project (opens in new tab)">${titleContent}</a>`
         : `<div class="project-link-title">${titleContent}</div>`;
 
       const stars = Number.isFinite(project.stars) ? project.stars : null;
@@ -94,12 +94,12 @@ function generateProjectCards(projectsData, dataHash) {
           ? `<div class="project-links">
               ${
                 githubUrl
-                  ? `<a href="${escapeHtml(githubUrl)}" target="_blank" rel="noopener noreferrer" class="project-link-btn" aria-label="Open ${escapeHtml(project.title)} GitHub repository">[GitHub]</a>`
+                  ? `<a href="${escapeHtml(githubUrl)}" target="_blank" rel="noopener noreferrer" class="project-link-btn" aria-label="Open ${escapeHtml(project.title)} GitHub repository (opens in new tab)">[GitHub]</a>`
                   : ''
               }
               ${
                 demoUrl
-                  ? `<a href="${escapeHtml(demoUrl)}" target="_blank" rel="noopener noreferrer" class="project-link-btn" aria-label="Open ${escapeHtml(project.title)} demo">[Demo]</a>`
+                  ? `<a href="${escapeHtml(demoUrl)}" target="_blank" rel="noopener noreferrer" class="project-link-btn" aria-label="Open ${escapeHtml(project.title)} demo (opens in new tab)">[Demo]</a>`
                   : ''
               }
             </div>`

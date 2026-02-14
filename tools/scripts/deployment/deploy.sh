@@ -1,36 +1,46 @@
 #!/bin/bash
-# Quick Deploy Script for Resume
+# ⚠️ DEPRECATED — This script is no longer maintained.
+# Use quick-deploy.sh instead, which includes auth validation and post-deploy verification.
+#
+# This wrapper exists to prevent accidental use of the old deploy flow.
 
-set -e
+set -euo pipefail
 
-cd ~/apps/resume
+RED='\033[0;31m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
 
-echo "🚀 Resume 배포 스크립트"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo -e "${RED}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${RED}  ⚠️  DEPRECATED: deploy.sh is no longer maintained${NC}"
+echo -e "${RED}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo ""
+echo -e "${YELLOW}This script had hardcoded paths and insecure credential handling.${NC}"
+echo -e "${YELLOW}Use the replacement instead:${NC}"
+echo ""
+echo -e "  ${YELLOW}./tools/scripts/deployment/quick-deploy.sh${NC}"
+echo ""
+echo -e "${YELLOW}Or deploy via CI/CD by pushing to master.${NC}"
 echo ""
 
-# 환경변수 로드
-export CLOUDFLARE_API_TOKEN=$(grep CLOUDFLARE_API_TOKEN ~/.env | cut -d= -f2)
-export CLOUDFLARE_ACCOUNT_ID=$(grep CLOUDFLARE_ACCOUNT_ID ~/.env | cut -d= -f2)
+# Forward to quick-deploy.sh if --force flag is passed
+if [[ "${1:-}" == "--force" ]]; then
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    exec "$SCRIPT_DIR/quick-deploy.sh"
+fi
 
-# 빌드
-echo "📦 빌드 중..."
-npm run build
+exit 1
+echo -e "${YELLOW}This script had hardcoded paths and insecure credential handling.${NC}"
+echo -e "${YELLOW}Use the replacement instead:${NC}"
+echo ""
+echo -e "  ${YELLOW}./tools/scripts/deployment/quick-deploy.sh${NC}"
+echo ""
+echo -e "${YELLOW}Or deploy via CI/CD by pushing to master.${NC}"
 echo ""
 
-# 배포
-echo "🌐 Cloudflare Workers에 배포 중..."
-npx wrangler deploy web/worker.js --name resume --env=""
-echo ""
+# Forward to quick-deploy.sh if --force flag is passed
+if [[ "${1:-}" == "--force" ]]; then
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    exec "$SCRIPT_DIR/quick-deploy.sh"
+fi
 
-# 확인
-echo "✅ 배포 완료!"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo ""
-echo "🔗 URLs:"
-echo "  Production: https://resume.jclee.me"
-echo "  Workers: https://resume.jclee.workers.dev"
-echo ""
-echo "📊 배포 이력 확인:"
-echo "  npx wrangler deployments list --name resume"
-echo ""
+exit 1

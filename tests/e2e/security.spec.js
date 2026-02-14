@@ -13,7 +13,7 @@ test.describe('Security Headers & CSP', () => {
     // Check security headers
     expect(response.headers()['x-content-type-options']).toBe('nosniff');
     expect(response.headers()['x-frame-options']).toMatch(/SAMEORIGIN|DENY/);
-    expect(response.headers()['x-xss-protection']).toBe('1; mode=block');
+    expect(response.headers()['x-xss-protection']).toBe('0');
     expect(response.headers()['referrer-policy']).toMatch(
       /same-origin|strict-origin-when-cross-origin/
     );
