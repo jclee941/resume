@@ -312,7 +312,9 @@ function generateErrorHandler(opts) {
             request.cf?.colo || '',
             '${opts.version}'
           ).run();
-        } catch {}
+        } catch (dbErr) {
+          console.error('[D1] Error log INSERT failed:', dbErr.message || dbErr);
+        }
       })());
 
       return new Response('Internal Server Error', {

@@ -114,7 +114,8 @@ async function flushLogs(env, index) {
       body: bulkBody,
     });
   } catch (err) {
-    // Silently fail in worker - no logger dependency
+    metrics.requests_error++;
+    console.error('[ES] Bulk flush failed:', err.message || err);
   } finally {
     clearTimeout(timeoutId);
   }

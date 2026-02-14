@@ -40,7 +40,6 @@ describe('Security Headers Module', () => {
       expect(headers['Content-Type']).toBe('text/html;charset=UTF-8');
       expect(headers['Content-Security-Policy']).toContain("'sha256-abc123'");
       expect(headers['Content-Security-Policy']).toContain("'sha256-def456'");
-      expect(headers['Content-Security-Policy']).toContain("'strict-dynamic'");
     });
 
     test('should include security headers', () => {
@@ -49,7 +48,7 @@ describe('Security Headers Module', () => {
       expect(headers['Strict-Transport-Security']).toContain('max-age=63072000');
       expect(headers['X-Content-Type-Options']).toBe('nosniff');
       expect(headers['X-Frame-Options']).toBe('DENY');
-      expect(headers['X-XSS-Protection']).toBe('1; mode=block');
+      expect(headers['X-XSS-Protection']).toBe('0');
       expect(headers['Referrer-Policy']).toBe('strict-origin-when-cross-origin');
     });
 

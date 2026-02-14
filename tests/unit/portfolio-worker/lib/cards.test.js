@@ -225,7 +225,7 @@ describe('Cards Module', () => {
     test('should include aria-label for accessibility', () => {
       const html = generateProjectCards(validProjectData, 'testhash');
 
-      expect(html).toContain('aria-label="View Test Project project"');
+      expect(html).toContain('aria-label="View Test Project project (opens in new tab)"');
     });
 
     test('should render project-tech section', () => {

@@ -57,56 +57,66 @@ async function flushLogs(env, index) {
     });
   } catch (err) {
     logger.warn('ES bulk flush failed:', err.message);
+    // Fallback: attempt console.error for observability when ES is unreachable
+    try {
+      console.error('[ES] Bulk flush failed:', err.message, `(${logs.length} logs lost)`);
+    } catch {}
   } finally {
     clearTimeout(timeoutId);
   }
 }
 
 async function logToElasticsearch(env, message, level = 'INFO', labels = {}, options = {}) {
-  const job = 'resume-worker';
-  const index = options.index || env?.ELASTICSEARCH_INDEX || `logs-${job}`;
-  const doc = buildEcsDocument(message, level, labels, job);
+  try {
+    const job = 'resume-worker';
+    const index = options.index || env?.ELASTICSEARCH_INDEX || `logs-${job}`;
+    const doc = buildEcsDocument(message, level, labels, job);
 
-  if (options.immediate) {
-    const esUrl = env?.ELASTICSEARCH_URL;
-    const apiKey = env?.ELASTICSEARCH_API_KEY;
-    if (!esUrl || !apiKey) return;
+    if (options.immediate) {
+      const esUrl = env?.ELASTICSEARCH_URL;
+      const apiKey = env?.ELASTICSEARCH_API_KEY;
+      if (!esUrl || !apiKey) return;
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), options.timeout || DEFAULT_TIMEOUT_MS);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), options.timeout || DEFAULT_TIMEOUT_MS);
 
-    try {
-      await fetch(`${esUrl}/${index}/_doc`, {
-        method: 'POST',
-        signal: controller.signal,
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `ApiKey ${apiKey}`,
-        },
-        body: JSON.stringify(doc),
-      });
-    } catch (err) {
-      logger.warn('ES log failed:', err.message);
-    } finally {
-      clearTimeout(timeoutId);
+      try {
+        await fetch(`${esUrl}/${index}/_doc`, {
+          method: 'POST',
+          signal: controller.signal,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `ApiKey ${apiKey}`,
+          },
+          body: JSON.stringify(doc),
+        });
+      } catch (err) {
+        logger.warn('ES log failed:', err.message);
+        console.error('[ES] Immediate log failed:', err.message);
+      } finally {
+        clearTimeout(timeoutId);
+      }
+      return;
     }
-    return;
-  }
 
-  // Prevent unbounded memory growth if ES is unreachable
-  if (logQueue.length >= MAX_QUEUE_SIZE) {
-    logQueue.splice(0, logQueue.length - MAX_QUEUE_SIZE + 1);
-  }
+    // Prevent unbounded memory growth if ES is unreachable
+    if (logQueue.length >= MAX_QUEUE_SIZE) {
+      logQueue.splice(0, logQueue.length - MAX_QUEUE_SIZE + 1);
+    }
 
-  logQueue.push(doc);
+    logQueue.push(doc);
 
-  if (logQueue.length >= BATCH_SIZE) {
-    await flushLogs(env, index);
-  } else if (!flushTimer) {
-    flushTimer = setTimeout(async () => {
-      flushTimer = null;
+    if (logQueue.length >= BATCH_SIZE) {
       await flushLogs(env, index);
-    }, BATCH_FLUSH_MS);
+    } else if (!flushTimer) {
+      flushTimer = setTimeout(async () => {
+        flushTimer = null;
+        await flushLogs(env, index);
+      }, BATCH_FLUSH_MS);
+    }
+  } catch (outerErr) {
+    // Never-reject guarantee: logToElasticsearch must not throw
+    console.error('[ES] logToElasticsearch failed:', outerErr.message || outerErr);
   }
 }
 
