@@ -125,3 +125,9 @@ DOCUMENTATION_INDEX.md
 .google_oath2.json
 .venv/
 .tmp/
+
+# Bazel output directories
+bazel-bin
+bazel-out
+bazel-resume
+bazel-testlogs

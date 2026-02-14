@@ -8,13 +8,25 @@ filegroup(
     srcs = glob(
         ["**/*.js", "**/*.json"],
         exclude = ["node_modules/**"],
+        allow_empty = True,
     ),
+    visibility = [
+        "//tools:__pkg__",
+        "//typescript:__subpackages__",
+    ],
 )
 
 # Test target
 sh_binary(
     name = "test",
     srcs = ["//tools/scripts/bazel:test_job_automation.sh"],
+    data = [":sources"],
+)
+
+# Build target
+sh_binary(
+    name = "build",
+    srcs = ["//tools/scripts/bazel:build_job_automation.sh"],
     data = [":sources"],
 )
 

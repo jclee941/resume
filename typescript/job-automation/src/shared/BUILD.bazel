@@ -12,36 +12,31 @@ package(default_visibility = ["//typescript/job-automation:__subpackages__"])
 # Adapters (platform-specific logic)
 filegroup(
     name = "adapters",
-    srcs = glob(["adapters/*.js"]),
+    srcs = glob(["adapters/*.js"], allow_empty = True),
 )
 
 # HTTP clients
 filegroup(
     name = "clients",
-    srcs = glob(["clients/**/*.js"]),
+    srcs = glob(["clients/**/*.js"], allow_empty = True),
 )
 
 # Data contracts
 filegroup(
     name = "contracts",
-    srcs = glob(["contracts/*.js"]),
+    srcs = glob(["contracts/*.js"], allow_empty = True),
 )
 
 # Business services
 filegroup(
     name = "services",
-    srcs = glob(["services/**/*.js"]),
-    deps = [
-        ":adapters",
-        ":clients",
-        ":contracts",
-    ],
+    srcs = glob(["services/**/*.js"], allow_empty = True),
 )
 
 # Testing utilities
 filegroup(
     name = "testing",
-    srcs = glob(["testing/*.js"]),
+    srcs = glob(["testing/*.js"], allow_empty = True),
 )
 
 # All shared code (convenience target)

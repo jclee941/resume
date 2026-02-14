@@ -17,7 +17,7 @@ filegroup(
 
 sh_binary(
     name = "build",
-    srcs = ["scripts/bazel/build.sh"],
+    srcs = ["//tools/scripts/bazel:build.sh"],
     data = [
         "//typescript/portfolio-worker:sources",
         "//typescript/data:sources",
@@ -26,7 +26,7 @@ sh_binary(
 
 sh_binary(
     name = "test",
-    srcs = ["scripts/bazel/test.sh"],
+    srcs = ["//tools/scripts/bazel:test.sh"],
     data = [
         "//typescript/job-automation:sources",
     ],
@@ -34,7 +34,7 @@ sh_binary(
 
 sh_binary(
     name = "deploy",
-    srcs = ["scripts/bazel/deploy.sh"],
+    srcs = ["//tools/scripts/bazel:deploy.sh"],
     data = [
         "//typescript/portfolio-worker:sources",
         "//typescript/job-automation:sources",

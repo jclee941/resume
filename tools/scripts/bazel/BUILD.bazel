@@ -1,0 +1,11 @@
+# Bazel wrapper scripts
+# These shell scripts coordinate npm builds via Bazel (Google3 facade pattern)
+
+package(default_visibility = ["//visibility:public"])
+
+exports_files(glob(["*.sh"]))
+
+filegroup(
+    name = "all",
+    srcs = glob(["*.sh"]),
+)

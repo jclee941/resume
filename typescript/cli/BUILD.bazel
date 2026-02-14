@@ -1,6 +1,4 @@
 # Resume CLI - Deployment Tool
-load("@rules_shell//shell:sh_binary.bzl", "sh_binary")
-
 package(default_visibility = ["//typescript:__subpackages__"])
 
 filegroup(
@@ -11,9 +9,8 @@ filegroup(
     ),
 )
 
-# CLI binary
-sh_binary(
+# CLI binary (delegates to subpackage)
+alias(
     name = "cli",
-    srcs = ["bin/run.js"],
-    data = [":sources"],
+    actual = "//typescript/cli/bin:resume_cli",
 )

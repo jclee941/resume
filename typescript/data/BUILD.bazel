@@ -17,3 +17,12 @@ filegroup(
     name = "schemas",
     srcs = glob(["schema/**/*.json"], allow_empty = True),
 )
+
+# Validate resume data
+load("@rules_shell//shell:sh_binary.bzl", "sh_binary")
+
+sh_binary(
+    name = "validate",
+    srcs = ["//tools/scripts/bazel:validate_data.sh"],
+    data = [":resume_data"],
+)

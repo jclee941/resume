@@ -1,14 +1,19 @@
 # Job Automation - MCP Tools
 #
 # This package contains MCP tool implementations:
-# - auth.js: Authentication management
-# - resume.js: Resume CRUD operations
+# - auth.js, auth-integrated.js: Authentication management
+# - resume/: Resume CRUD operations (refactored from resume.js)
 # - resume-sync.js: Platform-specific resume sync
 # - unified-resume-sync.js: Unified sync orchestration
-# - search-jobs.js: Job search across platforms
+# - resume-customize.js: Resume customization
+# - resume-generator.js: Resume generation
+# - search-jobs.js, search-keyword.js: Job search across platforms
 # - get-job-detail.js: Job posting detail retrieval
+# - get-categories.js, get-company.js: Category/company lookups
+# - job-matcher.js: Job matching scoring
 # - profile.js: User profile management
 # - optimize-resume.js: AI resume optimization
+# - commands/: Command pattern implementations
 
 package(default_visibility = ["//typescript/job-automation/src:__pkg__"])
 
@@ -21,14 +26,18 @@ filegroup(
     ],
 )
 
-# Resume management tools
+# Resume management tools (resume.js refactored to resume/ directory)
 filegroup(
     name = "resume",
     srcs = [
-        "resume.js",
         "resume-sync.js",
         "unified-resume-sync.js",
-    ],
+        "resume-customize.js",
+        "resume-generator.js",
+    ] + glob(
+        ["resume/**/*.js"],
+        allow_empty = True,
+    ),
     data = [
         "//typescript/data:resume_data",
     ],
@@ -43,6 +52,7 @@ filegroup(
         "get-job-detail.js",
         "get-categories.js",
         "get-company.js",
+        "job-matcher.js",
     ],
 )
 
@@ -55,6 +65,15 @@ filegroup(
     ],
 )
 
+# Command pattern implementations
+filegroup(
+    name = "commands",
+    srcs = glob(
+        ["commands/**/*.js"],
+        allow_empty = True,
+    ),
+)
+
 # All tools (convenience target)
 filegroup(
     name = "all",
@@ -63,5 +82,6 @@ filegroup(
         ":resume",
         ":search",
         ":profile",
+        ":commands",
     ],
 )

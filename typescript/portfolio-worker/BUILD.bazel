@@ -10,6 +10,10 @@ filegroup(
         exclude = ["node_modules/**", "worker.js"],
         allow_empty = True,
     ),
+    visibility = [
+        "//tools:__pkg__",
+        "//typescript:__subpackages__",
+    ],
 )
 
 # Build target (wrapper for generate-worker.js)

@@ -45,5 +45,5 @@ filegroup(
 # Configuration
 filegroup(
     name = "config",
-    srcs = ["wrangler.toml"],
+    srcs = ["wrangler.jsonc"],
 )
