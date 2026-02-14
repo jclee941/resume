@@ -1,47 +1,43 @@
-# ⚠️ SECURITY ACTION PLAN
+# SECURITY ACTION PLAN
 
 **Date:** 2026-01-25
-**Status:** 🔴 CRITICAL ACTIONS REQUIRED
+**Updated:** 2026-02-12
+**Status:** 🟡 MANUAL KEY ROTATION REQUIRED (CI protections in place)
 
-## 1. API Key Rotation (Immediate)
+## 0. CI Secret Scanning (Active)
 
-The following secrets were exposed in project history/docs and MUST be rotated immediately.
+- ✅ **Gitleaks** runs on every push/PR via `security-scan` job in CI pipeline
+- ✅ **Configuration**: `.gitleaks.toml` with allowlists for redacted docs and placeholder patterns
+- ✅ **npm audit**: Runs alongside gitleaks in `security-scan` job
+- ✅ **Docs redacted**: All secret values in `docs/reports/ALL_SYSTEMS_REPORT.md` replaced with `[REDACTED_ROTATE_REQUIRED]`
+- ✅ **`.env` files gitignored**: `.env`, `.env.secrets`, `.env.local`, `.dev.vars` all in `.gitignore`
 
-| Service        | Key Name             | Action            | Status     |
-| -------------- | -------------------- | ----------------- | ---------- |
-| **Grafana**    | `GRAFANA_API_KEY`    | Revoke & Re-issue | 🔴 Pending |
-| **Slack**      | `SLACK_APP_TOKEN`    | Revoke & Re-issue | 🔴 Pending |
-| **n8n**        | `N8N_API_KEY`        | Revoke & Re-issue | 🔴 Pending |
-| **Evolution**  | `EVOLUTION_API_KEY`  | Revoke & Re-issue | 🔴 Pending |
-| **Morph**      | `MORPH_API_KEY`      | Revoke & Re-issue | 🔴 Pending |
-| **OpenRouter** | `OPENROUTER_API_KEY` | Revoke & Re-issue | 🔴 Pending |
-| **Infisical**  | `INFISICAL_JWT...`   | Revoke & Re-issue | 🔴 Pending |
-| **HYCU DB**    | `HYCU_DB_PASSWORD`   | Change Password   | 🔴 Pending |
+## 1. API Key Rotation (Manual Action Required)
+
+The following secrets were exposed in project history/docs and MUST be rotated on each provider's dashboard.
+
+| Service        | Key Name             | Action            | Status                  |
+| -------------- | -------------------- | ----------------- | ----------------------- |
+| **Grafana**    | `GRAFANA_API_KEY`    | Revoke & Re-issue | 🟡 Redacted, rotate key |
+| **Slack**      | `SLACK_APP_TOKEN`    | Revoke & Re-issue | 🟡 Redacted, rotate key |
+| **n8n**        | `N8N_API_KEY`        | Revoke & Re-issue | 🟡 Redacted, rotate key |
+| **Evolution**  | `EVOLUTION_API_KEY`  | Revoke & Re-issue | 🟡 Redacted, rotate key |
+| **Morph**      | `MORPH_API_KEY`      | Revoke & Re-issue | 🟡 Redacted, rotate key |
+| **OpenRouter** | `OPENROUTER_API_KEY` | Revoke & Re-issue | 🟡 Redacted, rotate key |
+| **Infisical**  | `INFISICAL_JWT...`   | Revoke & Re-issue | 🟡 Redacted, rotate key |
+| **HYCU DB**    | `HYCU_DB_PASSWORD`   | Change Password   | 🟡 Redacted, rotate key |
+| **GitLab**     | `GITLAB_TOKEN`       | Revoke & Re-issue | 🟡 Redacted, rotate key |
 
 ### Confirmed Exposure Inventory (Issue #22)
 
-The exposed values were found in historical report content and are now treated as compromised:
+Exposed values found in historical report content. All literal values are now redacted in repo files with `[REDACTED_ROTATE_REQUIRED]` placeholders, but the keys themselves must still be rotated on each provider.
 
-| Secret Name                          | Category    | Exposure Source                      | Rotation Required |
-| ------------------------------------ | ----------- | ------------------------------------ | ----------------- |
-| `GRAFANA_API_KEY`                    | API Key     | `docs/reports/ALL_SYSTEMS_REPORT.md` | Yes               |
-| `SLACK_APP_TOKEN`                    | API Token   | `docs/reports/ALL_SYSTEMS_REPORT.md` | Yes               |
-| `N8N_API_KEY`                        | API Token   | `docs/reports/ALL_SYSTEMS_REPORT.md` | Yes               |
-| `EVOLUTION_API_KEY`                  | API Key     | `docs/reports/ALL_SYSTEMS_REPORT.md` | Yes               |
-| `MORPH_API_KEY`                      | API Key     | `docs/reports/ALL_SYSTEMS_REPORT.md` | Yes               |
-| `OPENROUTER_API_KEY`                 | API Key     | `docs/reports/ALL_SYSTEMS_REPORT.md` | Yes               |
-| `INFISICAL_JWT_PROVIDER_AUTH_SECRET` | JWT Secret  | `docs/reports/ALL_SYSTEMS_REPORT.md` | Yes               |
-| `HYCU_DB_PASSWORD`                   | DB Password | `docs/reports/ALL_SYSTEMS_REPORT.md` | Yes               |
-| `GITLAB_TOKEN`                       | API Token   | `docs/reports/ALL_SYSTEMS_REPORT.md` | Yes               |
-
-All literal values must remain redacted in repository files.
-
-### How to Fix
+### How to Rotate
 
 1. Login to each provider's dashboard.
 2. Revoke the existing key.
 3. Generate a new key.
-4. **DO NOT** save it in `.env`.
+4. **DO NOT** save it in `.env` or commit to repo.
 5. Use **Cloudflare Secrets** for Workers:
    ```bash
    npx wrangler secret put KEY_NAME

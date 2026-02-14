@@ -1,6 +1,52 @@
-# Gitleaks configuration - allowlist for documentation files containing example API keys
+# Gitleaks configuration for resume monorepo
+# See: https://github.com/gitleaks/gitleaks#configuration
+
+title = "Resume Monorepo Gitleaks Config"
+
 [allowlist]
+  description = "Global allowlist for known-safe patterns"
+
+  # Documentation and reports (secrets already redacted with [REDACTED_ROTATE_REQUIRED])
   paths = [
     '''docs/.*''',
-    '''README\.md'''
+    '''README\.md''',
+    '''\.env\.example''',
+    '''infrastructure/.*\.example''',
+    '''infrastructure/.*\.sample''',
   ]
+
+  # Known-safe placeholder patterns
+  regexes = [
+    '''REDACTED_ROTATE_REQUIRED''',
+    '''_replace_me''',
+    '''your[-_](api[-_])?key''',
+    '''changeme''',
+    '''placeholder''',
+  ]
+
+# Allowlist Cloudflare wrangler.toml account/zone IDs (not secrets)
+[[rules]]
+  id = "cloudflare-account-id"
+  description = "Cloudflare account/zone IDs are not secrets"
+  regex = '''account_id\s*=\s*"[a-f0-9]{32}"'''
+  [rules.allowlist]
+    regexTarget = "match"
+    regexes = ['''account_id''']
+
+# Allowlist D1 database IDs in wrangler configs
+[[rules]]
+  id = "d1-database-id"
+  description = "D1 database IDs are not secrets"
+  regex = '''database_id\s*=\s*"[a-f0-9-]{36}"'''
+  [rules.allowlist]
+    regexTarget = "match"
+    regexes = ['''database_id''']
+
+# Allowlist Google site verification tokens (public by design)
+[[rules]]
+  id = "google-site-verification"
+  description = "Google site verification tokens are public meta tags"
+  regex = '''google-site-verification'''
+  [rules.allowlist]
+    regexTarget = "match"
+    regexes = ['''google-site-verification''']
