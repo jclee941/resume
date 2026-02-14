@@ -24,11 +24,12 @@ groups:
         execErrState: Alerting
         for: 1m
         annotations:
-          description: "Resume portfolio service is not responding to health checks"
-          summary: "🚨 CRITICAL: Resume portfolio service is DOWN"
-          runbook_url: "https://github.com/YOUR_ORG/resume/wiki/Runbook-Service-Down"
+          description: 'Resume portfolio service is not responding to health checks'
+          summary: '🚨 CRITICAL: Resume portfolio service is DOWN'
+          runbook_url: 'https://github.com/YOUR_ORG/resume/wiki/Runbook-Service-Down'
         labels:
           severity: critical
+          priority: P0
           service: resume-portfolio
           team: infrastructure
           escalation: primary
@@ -84,10 +85,11 @@ groups:
         for: 5m
         annotations:
           description: 'Error rate for resume portfolio is {{ printf "%.2f" $values.C.Value }}% (threshold: 5%)'
-          summary: "🔴 High error rate detected in resume portfolio"
-          grafana_dashboard: "https://grafana.jclee.me/d/resume-portfolio"
+          summary: '🔴 High error rate detected in resume portfolio'
+          grafana_dashboard: 'https://grafana.jclee.me/d/resume-portfolio'
         labels:
           severity: critical
+          priority: P1
           service: resume-portfolio
           team: infrastructure
           escalation: primary
@@ -109,10 +111,11 @@ groups:
         execErrState: OK
         for: 3m
         annotations:
-          description: "More than 50 error logs detected in the last 5 minutes"
-          summary: "🔴 Error log spike in resume portfolio"
+          description: 'More than 50 error logs detected in the last 5 minutes'
+          summary: '🔴 Error log spike in resume portfolio'
         labels:
           severity: critical
+          priority: P1
           service: resume-portfolio
           team: infrastructure
           escalation: primary
@@ -130,16 +133,18 @@ groups:
               to: 0
             datasourceUid: prometheus
             model:
-              expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job="resume"}[5m])) > 0.3
+              expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job="resume"}[5m])) > 0.5
               refId: A
         noDataState: OK
         execErrState: OK
         for: 10m
         annotations:
-          description: "p95 response time is above 300ms threshold for 10 minutes"
-          summary: "🟡 High latency detected in resume portfolio"
+          description: 'p95 response time is above 500ms threshold for 10 minutes'
+          summary: '🟡 P2: High latency detected in resume portfolio'
+          grafana_dashboard: 'https://grafana.jclee.me/d/resume-portfolio'
         labels:
           severity: warning
+          priority: P2
           service: resume-portfolio
           team: infrastructure
           escalation: secondary
@@ -161,10 +166,11 @@ groups:
         execErrState: OK
         for: 15m
         annotations:
-          description: "Worker CPU time averaging above 40ms (limit: 50ms for free tier)"
-          summary: "🟡 Worker CPU approaching limit"
+          description: 'Worker CPU time averaging above 40ms (limit: 50ms for free tier)'
+          summary: '🟡 Worker CPU approaching limit'
         labels:
           severity: warning
+          priority: P2
           service: resume-portfolio
           team: infrastructure
           escalation: secondary
@@ -187,9 +193,10 @@ groups:
         for: 30m
         annotations:
           description: 'Cache hit rate below 70% for 30 minutes (current: {{ printf "%.1f" $values.A.Value }}%)'
-          summary: "🟡 Low cache hit rate - possible cache bypass or misconfiguration"
+          summary: '🟡 Low cache hit rate - possible cache bypass or misconfiguration'
         labels:
           severity: warning
+          priority: P3
           service: resume-portfolio
           team: infrastructure
           escalation: secondary
@@ -211,10 +218,11 @@ groups:
         execErrState: OK
         for: 15m
         annotations:
-          description: "Resume portfolio has received zero requests in the last 15 minutes"
-          summary: "🟡 No traffic to resume portfolio"
+          description: 'Resume portfolio has received zero requests in the last 15 minutes'
+          summary: '🟡 No traffic to resume portfolio'
         labels:
           severity: warning
+          priority: P2
           service: resume-portfolio
           team: infrastructure
           escalation: secondary
@@ -238,13 +246,106 @@ groups:
         execErrState: OK
         for: 1h
         annotations:
-          description: "LCP (Largest Contentful Paint) averaging above 4 seconds - poor user experience"
-          summary: "📊 Poor Web Vitals LCP score"
+          description: 'LCP (Largest Contentful Paint) averaging above 4 seconds - poor user experience'
+          summary: '📊 Poor Web Vitals LCP score'
         labels:
           severity: info
+          priority: P3
           service: resume-portfolio
           team: infrastructure
           escalation: none
+        isPaused: false
+
+      # ===== AVAILABILITY & WORKFLOW ALERTS (Issue #90) =====
+
+      - uid: resume_availability_low
+        title: Availability Below 99.9% - Resume Portfolio
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 3600
+              to: 0
+            datasourceUid: prometheus
+            model:
+              expr: sum(rate(http_requests_success{job="resume"}[1h]))
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 3600
+              to: 0
+            datasourceUid: prometheus
+            model:
+              expr: sum(rate(http_requests_total{job="resume"}[1h]))
+              refId: B
+          - refId: C
+            relativeTimeRange:
+              from: 3600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              type: math
+              expression: ($B > 0) && (($A / $B) < 0.999)
+              refId: C
+        noDataState: OK
+        execErrState: OK
+        for: 5m
+        annotations:
+          description: 'Rolling 1-hour availability is below 99.9% SLO (current: {{ printf "%.3f" $values.C.Value }})'
+          summary: '🔴 P1: Availability SLO breach - resume portfolio'
+          grafana_dashboard: 'https://grafana.jclee.me/d/resume-portfolio'
+          runbook_url: 'https://github.com/qws941/resume/wiki/runbooks/availability'
+        labels:
+          severity: critical
+          priority: P1
+          service: resume-portfolio
+          team: infrastructure
+          escalation: primary
+          slo: availability
+        isPaused: false
+
+      - uid: resume_workflow_failure_rate
+        title: High Workflow Failure Rate - Job Automation
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 1800
+              to: 0
+            datasourceUid: prometheus
+            model:
+              expr: sum(rate(workflow_executions_failed_total{job="job-automation"}[30m]))
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 1800
+              to: 0
+            datasourceUid: prometheus
+            model:
+              expr: sum(rate(workflow_executions_total{job="job-automation"}[30m]))
+              refId: B
+          - refId: C
+            relativeTimeRange:
+              from: 1800
+              to: 0
+            datasourceUid: __expr__
+            model:
+              type: math
+              expression: ($B > 0) && (($A / $B) > 0.10)
+              refId: C
+        noDataState: OK
+        execErrState: OK
+        for: 15m
+        annotations:
+          description: 'Workflow failure rate exceeds 10% over 30-minute window (current: {{ printf "%.1f" $values.C.Value }}%)'
+          summary: '🟡 P2: High workflow failure rate in job automation'
+          grafana_dashboard: 'https://grafana.jclee.me/d/resume-portfolio'
+        labels:
+          severity: warning
+          priority: P2
+          service: job-automation
+          team: infrastructure
+          escalation: secondary
         isPaused: false
 
 contactPoints:
@@ -255,8 +356,8 @@ contactPoints:
         type: slack
         settings:
           url: ${SLACK_WEBHOOK_URL}
-          recipient: "#alerts-critical"
-          title: "{{ .CommonLabels.severity | toUpper }}: {{ .CommonAnnotations.summary }}"
+          recipient: '#alerts-critical'
+          title: '{{ .CommonLabels.severity | toUpper }}: {{ .CommonAnnotations.summary }}'
           text: |
             {{ .CommonAnnotations.description }}
 
@@ -279,8 +380,8 @@ contactPoints:
         type: slack
         settings:
           url: ${SLACK_WEBHOOK_URL}
-          recipient: "#alerts-warning"
-          title: "{{ .CommonLabels.severity | toUpper }}: {{ .CommonAnnotations.summary }}"
+          recipient: '#alerts-warning'
+          title: '{{ .CommonLabels.severity | toUpper }}: {{ .CommonAnnotations.summary }}'
           text: |
             {{ .CommonAnnotations.description }}
 
@@ -296,9 +397,9 @@ contactPoints:
         type: slack
         settings:
           url: ${SLACK_WEBHOOK_URL}
-          recipient: "#alerts-info"
-          title: "ℹ️ {{ .CommonAnnotations.summary }}"
-          text: "{{ .CommonAnnotations.description }}"
+          recipient: '#alerts-info'
+          title: 'ℹ️ {{ .CommonAnnotations.summary }}'
+          text: '{{ .CommonAnnotations.description }}'
         disableResolveMessage: false
 
 policies:
