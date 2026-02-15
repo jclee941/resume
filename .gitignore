@@ -86,7 +86,8 @@ infrastructure/todo/
 # Docker environment
 .docker.env
 
-# Infisical (keep .infisical.json for project config, exclude secrets)
+# Infisical
+.infisical.json
 .env.infisical
 secrets.env
 .env.secrets
@@ -101,7 +102,9 @@ docs/sessions/*.md
 .playwright-mcp/
 .sisyphus/
 .affected/
+_bmad/
 _bmad-output/
+docs/_vendor/
 todo/
 .opencode-scan-state
 .env.local
@@ -131,3 +134,17 @@ bazel-bin
 bazel-out
 bazel-resume
 bazel-testlogs
+
+# Local binaries
+bin/
+
+# GitLab CI (project uses GitHub Actions)
+.gitlab-ci.yml
+.gitlab/
+
+# Legacy standalone configs
+job-automation-mcp/
+lighthouserc.js
+
+# Logs directory
+logs/
