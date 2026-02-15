@@ -82,7 +82,7 @@ test.describe('Mobile - CLI', () => {
   });
 
   test('should be able to interact with CLI on mobile', async ({ page }) => {
-    const cliInput = page.locator('#cli-input');
+    const cliInput = page.locator('#terminal-input');
 
     await cliInput.focus();
     await expect(cliInput).toBeFocused();

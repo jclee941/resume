@@ -195,14 +195,14 @@ test.describe('CLI Terminal', () => {
 
   test('should have input field', async ({ page }) => {
     await page.goto('/');
-    const cliInput = page.locator('#cli-input');
+    const cliInput = page.locator('#terminal-input');
     await expect(cliInput).toBeVisible();
     await expect(cliInput).toBeEditable();
   });
 
   test('help command should show available commands', async ({ page }) => {
     await page.goto('/');
-    const cliInput = page.locator('#cli-input');
+    const cliInput = page.locator('#terminal-input');
     await cliInput.fill('help');
     await cliInput.press('Enter');
 
@@ -217,7 +217,7 @@ test.describe.skip('Theme via CLI', () => {
     await page.goto('/');
 
     const html = page.locator('html');
-    const cliInput = page.locator('#cli-input');
+    const cliInput = page.locator('#terminal-input');
 
     await cliInput.fill('theme dark');
     await cliInput.press('Enter');

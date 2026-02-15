@@ -15,11 +15,11 @@ test.describe('Terminal CLI - Command Execution', () => {
   });
 
   test('should have CLI input focused or focusable', async ({ page }) => {
-    const cliInput = page.locator('#cli-input');
+    const cliInput = page.locator('#terminal-input');
     await expect(cliInput).toBeVisible();
 
     // Focus the input
-    await focusElement(page, '#cli-input');
+    await focusElement(page, '#terminal-input');
   });
 
   test('should execute help command', async ({ page }) => {
@@ -70,7 +70,7 @@ test.describe('Terminal CLI - Command Execution', () => {
   });
 
   test('should handle empty command gracefully', async ({ page }) => {
-    const cliInput = page.locator('#cli-input');
+    const cliInput = page.locator('#terminal-input');
     await cliInput.focus();
     await cliInput.press('Enter');
 
@@ -108,7 +108,7 @@ test.describe('Terminal CLI - Keyboard Shortcuts', () => {
   });
 
   test('should support Ctrl+L to clear (if implemented)', async ({ page }) => {
-    const cliInput = page.locator('#cli-input');
+    const cliInput = page.locator('#terminal-input');
     await cliInput.focus();
 
     // Type something first
@@ -124,7 +124,7 @@ test.describe('Terminal CLI - Keyboard Shortcuts', () => {
   });
 
   test('should support command history with arrow keys (if implemented)', async ({ page }) => {
-    const cliInput = page.locator('#cli-input');
+    const cliInput = page.locator('#terminal-input');
     await cliInput.focus();
 
     // Execute a command
@@ -150,7 +150,7 @@ test.describe('Terminal CLI - Accessibility', () => {
   });
 
   test('should have accessible CLI input', async ({ page }) => {
-    const cliInput = page.locator('#cli-input');
+    const cliInput = page.locator('#terminal-input');
 
     // Input should be type text
     await expect(cliInput).toHaveAttribute('type', 'text');
@@ -165,6 +165,6 @@ test.describe('Terminal CLI - Accessibility', () => {
   test('should have skip link for accessibility', async ({ page }) => {
     const skipLink = page.locator('.skip-link');
     await expect(skipLink).toBeAttached();
-    await expect(skipLink).toHaveAttribute('href', '#main-content');
+    await expect(skipLink).toHaveAttribute('href', '#terminal-input');
   });
 });

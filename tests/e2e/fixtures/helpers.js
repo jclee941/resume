@@ -20,20 +20,19 @@ const { expect } = require('@playwright/test');
  */
 async function executeCliCommand(page, command, options = {}) {
   const { timeout = 500, expectedOutput } = options;
-  
-  const cliInput = page.locator('#cli-input');
+
+  const cliInput = page.locator('#terminal-input');
   await cliInput.fill(command);
   await cliInput.press('Enter');
-  
+
   // Wait for output to appear
   await page.waitForTimeout(timeout);
-  
+
   // Validate output if pattern provided
   if (expectedOutput) {
     const cliOutput = page.locator('#cli-output');
-    const pattern = typeof expectedOutput === 'string'
-      ? new RegExp(expectedOutput, 'i')
-      : expectedOutput;
+    const pattern =
+      typeof expectedOutput === 'string' ? new RegExp(expectedOutput, 'i') : expectedOutput;
     await expect(cliOutput).toContainText(pattern);
   }
 }
@@ -49,10 +48,10 @@ async function executeCliCommand(page, command, options = {}) {
  */
 async function navigateToSection(page, sectionId, options = {}) {
   const { timeout = 2000 } = options;
-  
+
   const link = page.locator(`a[href="#${sectionId}"]`);
   await link.click();
-  
+
   const section = page.locator(`#${sectionId}`);
   await expect(section).toBeInViewport({ timeout });
 }
@@ -68,22 +67,22 @@ async function navigateToSection(page, sectionId, options = {}) {
  */
 async function validateLinks(page, selector, options = {}) {
   const { urlPattern } = options;
-  
+
   const links = await page.locator(selector).all();
-  
+
   for (const link of links) {
     const href = await link.getAttribute('href');
-    
+
     // Skip anchor/relative links
     if (!href || href.startsWith('#')) {
       continue;
     }
-    
+
     // Validate against pattern if provided
     if (urlPattern && !urlPattern.test(href)) {
       throw new Error(`Link "${href}" doesn't match expected pattern`);
     }
-    
+
     // Check that link is not broken (has href attribute)
     expect(href).toBeTruthy();
   }
@@ -101,18 +100,18 @@ async function validateLinks(page, selector, options = {}) {
  */
 async function waitForAnimation(page, selector, options = {}) {
   const { duration = 500, tolerance = 100 } = options;
-  
+
   const element = page.locator(selector);
-  
+
   // Wait for element to be visible
   await expect(element).toBeVisible();
-  
+
   // Wait for animation to potentially start (small delay)
   await page.waitForTimeout(50);
-  
+
   // Wait for animation to complete with tolerance
   await page.waitForTimeout(duration + tolerance);
-  
+
   // Verify element is still in valid state after animation
   await expect(element).toBeVisible();
 }
@@ -129,7 +128,7 @@ async function waitForAnimation(page, selector, options = {}) {
  */
 async function setViewportAndVerify(page, options = {}) {
   const { width, height, breakpointName = 'custom' } = options;
-  
+
   await page.setViewportSize({ width, height });
   await page.waitForTimeout(100); // Wait for layout to recalculate
 }
@@ -171,7 +170,7 @@ async function focusElement(page, selector) {
  */
 async function waitForText(page, selector, text, options = {}) {
   const { timeout = 3000 } = options;
-  
+
   const element = page.locator(selector);
   await expect(element).toContainText(text, { timeout });
 }
@@ -188,7 +187,7 @@ async function waitForText(page, selector, text, options = {}) {
 async function verifyDynamicCount(page, selector, expectedCount) {
   const countText = await page.locator(selector).textContent();
   const count = parseInt(countText || '0', 10);
-  
+
   expect(count).toBe(expectedCount);
 }
 
