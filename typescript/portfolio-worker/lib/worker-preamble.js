@@ -79,52 +79,18 @@ function buildDocument(message, level, labels, job) {
   };
 }
 
-// ES Logger module-level state (inlined from lib/es-logger.js)
-const DEFAULT_TIMEOUT_MS = 5000;
-const BATCH_SIZE = 10;
-const BATCH_FLUSH_MS = 1000;
-const MAX_QUEUE_SIZE = 1000;
-let logQueue = [];
-let flushTimer = null;
-
-async function flushLogs(env, index) {
-  if (logQueue.length === 0) return;
-
-  const logs = logQueue.splice(0, logQueue.length);
-  const esUrl = env?.ELASTICSEARCH_URL;
+function buildEsHeaders(env) {
+  const headers = { 'Content-Type': 'application/x-ndjson' };
+  const cfId = env?.CF_ACCESS_CLIENT_ID;
+  const cfSecret = env?.CF_ACCESS_CLIENT_SECRET;
+  if (cfId) headers['CF-Access-Client-Id'] = cfId;
+  if (cfSecret) headers['CF-Access-Client-Secret'] = cfSecret;
   const apiKey = env?.ELASTICSEARCH_API_KEY;
-
-  if (!esUrl || !apiKey) return;
-
-  const bulkBody =
-    logs
-      .map((doc) => {
-        const action = JSON.stringify({ index: { _index: index } });
-        const document = JSON.stringify(doc);
-        return \`\${action}\\n\${document}\`;
-      })
-      .join('\\n') + '\\n';
-
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), DEFAULT_TIMEOUT_MS);
-
-  try {
-    await fetch(\`\${esUrl}/_bulk\`, {
-      method: 'POST',
-      signal: controller.signal,
-      headers: {
-        'Content-Type': 'application/x-ndjson',
-        Authorization: \`ApiKey \${apiKey}\`,
-      },
-      body: bulkBody,
-    });
-  } catch (err) {
-    metrics.requests_error++;
-    console.error('[ES] Bulk flush failed:', err.message || err);
-  } finally {
-    clearTimeout(timeoutId);
-  }
+  if (apiKey) headers['Authorization'] = \`ApiKey \${apiKey}\`;
+  return headers;
 }
+
+const DEFAULT_TIMEOUT_MS = 5000;
 
 ${opts.logToElasticsearchStr}
 

@@ -19,9 +19,10 @@ import jobHandler, {
 async function logEntryError(env, message, meta = {}) {
   try {
     const esUrl = env?.ELASTICSEARCH_URL;
-    const apiKey = env?.ELASTICSEARCH_API_KEY;
+    const cfId = env?.CF_ACCESS_CLIENT_ID;
+    const cfSecret = env?.CF_ACCESS_CLIENT_SECRET;
     const index = env?.ELASTICSEARCH_INDEX || 'resume-logs-worker';
-    if (!esUrl || !apiKey) return;
+    if (!esUrl || !cfId) return;
 
     const doc = {
       '@timestamp': new Date().toISOString(),
@@ -31,16 +32,19 @@ async function logEntryError(env, message, meta = {}) {
       ...meta,
     };
 
+    const headers = { 'Content-Type': 'application/json' };
+    if (cfId) headers['CF-Access-Client-Id'] = cfId;
+    if (cfSecret) headers['CF-Access-Client-Secret'] = cfSecret;
+    const apiKey = env?.ELASTICSEARCH_API_KEY;
+    if (apiKey) headers['Authorization'] = `ApiKey ${apiKey}`;
+
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 3000);
 
     await fetch(`${esUrl}/${index}/_doc`, {
       method: 'POST',
       signal: controller.signal,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `ApiKey ${apiKey}`,
-      },
+      headers,
       body: JSON.stringify(doc),
     });
 

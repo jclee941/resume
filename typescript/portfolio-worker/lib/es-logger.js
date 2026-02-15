@@ -1,12 +1,4 @@
-const logger = require('../logger');
-
 const DEFAULT_TIMEOUT_MS = 5000;
-const BATCH_SIZE = 10;
-const BATCH_FLUSH_MS = 1000;
-const MAX_QUEUE_SIZE = 1000;
-
-let logQueue = [];
-let flushTimer = null;
 
 function generateRequestId() {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 9)}`;
@@ -23,46 +15,15 @@ function buildDocument(message, level, labels, job) {
   };
 }
 
-async function flushLogs(env, index) {
-  if (logQueue.length === 0) return;
-
-  const logs = logQueue.splice(0, logQueue.length);
-  const esUrl = env?.ELASTICSEARCH_URL;
+function buildEsHeaders(env) {
+  const headers = { 'Content-Type': 'application/x-ndjson' };
+  const cfId = env?.CF_ACCESS_CLIENT_ID;
+  const cfSecret = env?.CF_ACCESS_CLIENT_SECRET;
+  if (cfId) headers['CF-Access-Client-Id'] = cfId;
+  if (cfSecret) headers['CF-Access-Client-Secret'] = cfSecret;
   const apiKey = env?.ELASTICSEARCH_API_KEY;
-
-  if (!esUrl || !apiKey) return;
-
-  const bulkBody =
-    logs
-      .map((doc) => {
-        const action = JSON.stringify({ index: { _index: index } });
-        const document = JSON.stringify(doc);
-        return `${action}\n${document}`;
-      })
-      .join('\n') + '\n';
-
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), DEFAULT_TIMEOUT_MS);
-
-  try {
-    await fetch(`${esUrl}/_bulk`, {
-      method: 'POST',
-      signal: controller.signal,
-      headers: {
-        'Content-Type': 'application/x-ndjson',
-        Authorization: `ApiKey ${apiKey}`,
-      },
-      body: bulkBody,
-    });
-  } catch (err) {
-    logger.warn('ES bulk flush failed:', err.message);
-    // Fallback: attempt console.error for observability when ES is unreachable
-    try {
-      console.error('[ES] Bulk flush failed:', err.message, `(${logs.length} logs lost)`);
-    } catch {}
-  } finally {
-    clearTimeout(timeoutId);
-  }
+  if (apiKey) headers['Authorization'] = `ApiKey ${apiKey}`;
+  return headers;
 }
 
 async function logToElasticsearch(env, message, level = 'INFO', labels = {}, options = {}) {
@@ -71,47 +32,25 @@ async function logToElasticsearch(env, message, level = 'INFO', labels = {}, opt
     const index = options.index || env?.ELASTICSEARCH_INDEX || 'resume-logs-worker';
     const doc = buildDocument(message, level, labels, job);
 
-    if (options.immediate) {
-      const esUrl = env?.ELASTICSEARCH_URL;
-      const apiKey = env?.ELASTICSEARCH_API_KEY;
-      if (!esUrl || !apiKey) return;
+    // Always use immediate mode — batch/setTimeout is unreliable in Cloudflare Workers
+    const esUrl = env?.ELASTICSEARCH_URL;
+    const cfId = env?.CF_ACCESS_CLIENT_ID;
+    if (!esUrl || !cfId) return;
 
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), options.timeout || DEFAULT_TIMEOUT_MS);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), options.timeout || DEFAULT_TIMEOUT_MS);
 
-      try {
-        await fetch(`${esUrl}/${index}/_doc`, {
-          method: 'POST',
-          signal: controller.signal,
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `ApiKey ${apiKey}`,
-          },
-          body: JSON.stringify(doc),
-        });
-      } catch (err) {
-        logger.warn('ES log failed:', err.message);
-        console.error('[ES] Immediate log failed:', err.message);
-      } finally {
-        clearTimeout(timeoutId);
-      }
-      return;
-    }
-
-    // Prevent unbounded memory growth if ES is unreachable
-    if (logQueue.length >= MAX_QUEUE_SIZE) {
-      logQueue.splice(0, logQueue.length - MAX_QUEUE_SIZE + 1);
-    }
-
-    logQueue.push(doc);
-
-    if (logQueue.length >= BATCH_SIZE) {
-      await flushLogs(env, index);
-    } else if (!flushTimer) {
-      flushTimer = setTimeout(async () => {
-        flushTimer = null;
-        await flushLogs(env, index);
-      }, BATCH_FLUSH_MS);
+    try {
+      await fetch(`${esUrl}/${index}/_doc`, {
+        method: 'POST',
+        signal: controller.signal,
+        headers: { ...buildEsHeaders(env), 'Content-Type': 'application/json' },
+        body: JSON.stringify(doc),
+      });
+    } catch (err) {
+      console.error('[ES] Log failed:', err.message);
+    } finally {
+      clearTimeout(timeoutId);
     }
   } catch (outerErr) {
     // Never-reject guarantee: logToElasticsearch must not throw
@@ -138,18 +77,8 @@ async function logResponse(env, request, response, options = {}) {
   );
 }
 
-async function flush(env, options = {}) {
-  if (flushTimer) {
-    clearTimeout(flushTimer);
-    flushTimer = null;
-  }
-  const index = options.index || env?.ELASTICSEARCH_INDEX || 'resume-logs-worker';
-  await flushLogs(env, index);
-}
-
 module.exports = {
   logToElasticsearch,
   logResponse,
-  flush,
   generateRequestId,
 };

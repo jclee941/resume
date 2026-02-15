@@ -1,5 +1,5 @@
 // Cloudflare Worker - Auto-generated (IMPROVED VERSION)
-// Generated: 2026-02-15T19:30:04.734Z
+// Generated: 2026-02-15T20:05:26.460Z
 // Features: Template caching, JSDoc types, link helper, constants, rate limiting
 
 const INDEX_HTML = `<!doctype html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>이재철 - Infrastructure Engineer</title><meta name="description" content="이재철 - 인프라 엔지니어 | 금융·공공 분야 보안 인프라 및 관측성 설계·운영"><meta name="keywords" content="Infrastructure, Observability, Grafana, Prometheus, Loki, Splunk, 자동화, 인프라, 이재철"><meta name="author" content="이재철 (Jaecheol Lee)"><meta name="robots" content="index, follow"><meta name="google-site-verification" content="2a5f8c3b7d4e9a1f6c2b5e8d1a4f7c0b9e3d6a9f2c5"><script>function gtag(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],gtag("js",new Date),gtag("config","G-P9E8XY5K2L",{page_path:window.location.pathname,language:"ko"});var _gs=document.createElement("script");_gs.src="https://www.googletagmanager.com/gtag/js?id=G-P9E8XY5K2L",_gs.async=!0,_gs.integrity="sha384-ZXsMWzL9jNkfVeDNiKiKlvdyvBmUvt8YMS2PljnnNk8cVfKES+GLjaItoIy8iwNi",_gs.crossOrigin="anonymous",document.head.appendChild(_gs)</script><link rel="canonical" href="https://resume.jclee.me"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://browser.sentry-cdn.com" crossorigin><link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin><link rel="alternate" hreflang="ko-KR" href="https://resume.jclee.me"><link rel="alternate" hreflang="en-US" href="https://resume.jclee.me/en/"><link rel="alternate" hreflang="x-default" href="https://resume.jclee.me"><meta property="og:type" content="profile"><meta property="og:url" content="https://resume.jclee.me"><meta property="og:title" content="이재철 - Infrastructure Engineer"><meta property="og:description" content="인프라 엔지니어 | 금융·공공 분야 보안 인프라 및 관측성 설계·운영"><meta property="og:image" content="https://resume.jclee.me/og-image.webp"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:type" content="image/webp"><meta property="og:image:alt" content="Jaecheol Lee - Infrastructure Engineer Portfolio"><meta property="og:site_name" content="Jaecheol Lee Resume"><meta property="og:locale" content="ko_KR"><meta property="og:locale:alternate" content="en_US"><meta property="profile:first_name" content="Jaecheol"><meta property="profile:last_name" content="Lee"><meta property="profile:username" content="qws941"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:url" content="https://resume.jclee.me"><meta name="twitter:title" content="이재철 - Infrastructure Engineer"><meta name="twitter:description" content="인프라 엔지니어 | 금융·공공 분야 보안 인프라 및 관측성 설계·운영"><meta name="twitter:image" content="https://resume.jclee.me/og-image.webp"><meta name="twitter:creator" content="@qws941"><meta name="twitter:site" content="@qws941"><script type="application/ld+json">{
@@ -422,9 +422,9 @@ const metrics = {
   "cache_misses": 0,
   "geo_countries": {},
   "geo_colos": {},
-  "worker_start_time": 1771183804734,
+  "worker_start_time": 1771185926460,
   "version": "1.0.128",
-  "deployed_at": "2026-02-15T19:30:04.734Z"
+  "deployed_at": "2026-02-15T20:05:26.460Z"
 };
 
 // Histogram bucket boundaries (Prometheus standard)
@@ -602,52 +602,18 @@ function buildDocument(message, level, labels, job) {
   };
 }
 
-// ES Logger module-level state (inlined from lib/es-logger.js)
-const DEFAULT_TIMEOUT_MS = 5000;
-const BATCH_SIZE = 10;
-const BATCH_FLUSH_MS = 1000;
-const MAX_QUEUE_SIZE = 1000;
-let logQueue = [];
-let flushTimer = null;
-
-async function flushLogs(env, index) {
-  if (logQueue.length === 0) return;
-
-  const logs = logQueue.splice(0, logQueue.length);
-  const esUrl = env?.ELASTICSEARCH_URL;
+function buildEsHeaders(env) {
+  const headers = { 'Content-Type': 'application/x-ndjson' };
+  const cfId = env?.CF_ACCESS_CLIENT_ID;
+  const cfSecret = env?.CF_ACCESS_CLIENT_SECRET;
+  if (cfId) headers['CF-Access-Client-Id'] = cfId;
+  if (cfSecret) headers['CF-Access-Client-Secret'] = cfSecret;
   const apiKey = env?.ELASTICSEARCH_API_KEY;
-
-  if (!esUrl || !apiKey) return;
-
-  const bulkBody =
-    logs
-      .map((doc) => {
-        const action = JSON.stringify({ index: { _index: index } });
-        const document = JSON.stringify(doc);
-        return `${action}\n${document}`;
-      })
-      .join('\n') + '\n';
-
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), DEFAULT_TIMEOUT_MS);
-
-  try {
-    await fetch(`${esUrl}/_bulk`, {
-      method: 'POST',
-      signal: controller.signal,
-      headers: {
-        'Content-Type': 'application/x-ndjson',
-        Authorization: `ApiKey ${apiKey}`,
-      },
-      body: bulkBody,
-    });
-  } catch (err) {
-    metrics.requests_error++;
-    console.error('[ES] Bulk flush failed:', err.message || err);
-  } finally {
-    clearTimeout(timeoutId);
-  }
+  if (apiKey) headers['Authorization'] = `ApiKey ${apiKey}`;
+  return headers;
 }
+
+const DEFAULT_TIMEOUT_MS = 5000;
 
 async function logToElasticsearch(env, message, level = 'INFO', labels = {}, options = {}) {
   try {
@@ -655,47 +621,25 @@ async function logToElasticsearch(env, message, level = 'INFO', labels = {}, opt
     const index = options.index || env?.ELASTICSEARCH_INDEX || 'resume-logs-worker';
     const doc = buildDocument(message, level, labels, job);
 
-    if (options.immediate) {
-      const esUrl = env?.ELASTICSEARCH_URL;
-      const apiKey = env?.ELASTICSEARCH_API_KEY;
-      if (!esUrl || !apiKey) return;
+    // Always use immediate mode — batch/setTimeout is unreliable in Cloudflare Workers
+    const esUrl = env?.ELASTICSEARCH_URL;
+    const cfId = env?.CF_ACCESS_CLIENT_ID;
+    if (!esUrl || !cfId) return;
 
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), options.timeout || DEFAULT_TIMEOUT_MS);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), options.timeout || DEFAULT_TIMEOUT_MS);
 
-      try {
-        await fetch(`${esUrl}/${index}/_doc`, {
-          method: 'POST',
-          signal: controller.signal,
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `ApiKey ${apiKey}`,
-          },
-          body: JSON.stringify(doc),
-        });
-      } catch (err) {
-        logger.warn('ES log failed:', err.message);
-        console.error('[ES] Immediate log failed:', err.message);
-      } finally {
-        clearTimeout(timeoutId);
-      }
-      return;
-    }
-
-    // Prevent unbounded memory growth if ES is unreachable
-    if (logQueue.length >= MAX_QUEUE_SIZE) {
-      logQueue.splice(0, logQueue.length - MAX_QUEUE_SIZE + 1);
-    }
-
-    logQueue.push(doc);
-
-    if (logQueue.length >= BATCH_SIZE) {
-      await flushLogs(env, index);
-    } else if (!flushTimer) {
-      flushTimer = setTimeout(async () => {
-        flushTimer = null;
-        await flushLogs(env, index);
-      }, BATCH_FLUSH_MS);
+    try {
+      await fetch(`${esUrl}/${index}/_doc`, {
+        method: 'POST',
+        signal: controller.signal,
+        headers: { ...buildEsHeaders(env), 'Content-Type': 'application/json' },
+        body: JSON.stringify(doc),
+      });
+    } catch (err) {
+      console.error('[ES] Log failed:', err.message);
+    } finally {
+      clearTimeout(timeoutId);
     }
   } catch (outerErr) {
     // Never-reject guarantee: logToElasticsearch must not throw
@@ -1059,7 +1003,7 @@ export default {
 
         ctx.waitUntil(logToElasticsearch(env, `Request: ${request.method} ${url.pathname}`, 'INFO', {
           route: url.pathname
-        }));
+        }, { immediate: true }));
 
         return response;
       }
@@ -1078,7 +1022,7 @@ export default {
 
         ctx.waitUntil(logToElasticsearch(env, `Request: ${request.method} ${url.pathname}`, 'INFO', {
           route: url.pathname
-        }));
+        }, { immediate: true }));
 
         return response;
       }
@@ -1521,7 +1465,7 @@ export default {
         const health = {
           status: allHealthy ? 'healthy' : 'degraded',
           version: '1.0.128',
-          deployed_at: '2026-02-15T19:30:04.734Z',
+          deployed_at: '2026-02-15T20:05:26.460Z',
           uptime_seconds: uptime,
           bindings,
           metrics: {
@@ -1991,7 +1935,7 @@ export default {
       metrics.requests_error++;
       ctx.waitUntil(logToElasticsearch(env, `Error: ${err.message}`, 'ERROR', {
         route: url.pathname
-      }));
+      }, { immediate: true }));
 
       ctx.waitUntil((async () => {
         try {

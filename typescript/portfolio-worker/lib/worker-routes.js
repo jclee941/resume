@@ -86,7 +86,7 @@ function generatePageRoutes() {
 
         ctx.waitUntil(logToElasticsearch(env, \`Request: \${request.method} \${url.pathname}\`, 'INFO', {
           route: url.pathname
-        }));
+        }, { immediate: true }));
 
         return response;
       }
@@ -105,7 +105,7 @@ function generatePageRoutes() {
 
         ctx.waitUntil(logToElasticsearch(env, \`Request: \${request.method} \${url.pathname}\`, 'INFO', {
           route: url.pathname
-        }));
+        }, { immediate: true }));
 
         return response;
       }`;
@@ -332,7 +332,7 @@ function generateErrorHandler(opts) {
       metrics.requests_error++;
       ctx.waitUntil(logToElasticsearch(env, \`Error: \${err.message}\`, 'ERROR', {
         route: url.pathname
-      }));
+      }, { immediate: true }));
 
       ctx.waitUntil((async () => {
         try {
