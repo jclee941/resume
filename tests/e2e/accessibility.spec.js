@@ -9,7 +9,7 @@ test.describe('Accessibility (a11y)', () => {
 
   test('should have skip link for keyboard navigation', async ({ page }) => {
     const skipLink = page.locator('.skip-link');
-    await expect(skipLink).toHaveAttribute('href', '#main-content');
+    await expect(skipLink).toHaveAttribute('href', '#terminal-input');
 
     // Skip link should be visually hidden but accessible
     // Focus on skip link via keyboard

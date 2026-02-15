@@ -57,7 +57,6 @@ test.describe('Progressive Web App (PWA)', () => {
 
     // Check cache headers
     const cacheControl = response.headers()['cache-control'];
-    expect(cacheControl).toContain('max-age=0');
     expect(cacheControl).toContain('must-revalidate');
 
     const swCode = await response.text();

@@ -279,11 +279,11 @@ test.describe('JSON-LD Structured Data', () => {
     expect(websiteSchema.inLanguage).toBe('ko-KR');
   });
 
-  test('should have all 4 JSON-LD schemas', async ({ page }) => {
+  test('should have all JSON-LD schemas', async ({ page }) => {
     const schemaCount = await page.evaluate(() => {
       return document.querySelectorAll('script[type="application/ld+json"]').length;
     });
-    expect(schemaCount).toBe(2);
+    expect(schemaCount).toBe(3);
   });
 });
 
