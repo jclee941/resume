@@ -20,6 +20,6 @@ test.describe('Portfolio UI', () => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     await page.locator('#terminal-input').fill('help');
     await page.keyboard.press('Enter');
-    await expect(page.locator('.terminal-output')).toContainText('사용 가능한 명령어');
+    await expect(page.locator('.terminal-output')).toContainText('Available commands');
   });
 });

@@ -342,7 +342,11 @@ test.describe('Resource Hints', () => {
 
 test.describe('SEO Routes', () => {
   test('should serve robots.txt', async ({ request }) => {
-    const response = await request.get('/robots.txt');
+    let response = await request.get('/robots.txt');
+    if (response.status() === 429) {
+      await new Promise((r) => setTimeout(r, 1000));
+      response = await request.get('/robots.txt');
+    }
     expect(response.status()).toBe(200);
 
     const content = await response.text();
@@ -364,7 +368,11 @@ test.describe('SEO Routes', () => {
   });
 
   test('should serve og-image.webp', async ({ request }) => {
-    const response = await request.get('/og-image.webp');
+    let response = await request.get('/og-image.webp');
+    if (response.status() === 429) {
+      await new Promise((r) => setTimeout(r, 1000));
+      response = await request.get('/og-image.webp');
+    }
     expect(response.status()).toBe(200);
 
     const contentType = response.headers()['content-type'];

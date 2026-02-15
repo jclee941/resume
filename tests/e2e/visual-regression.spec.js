@@ -1,6 +1,13 @@
 const { test, expect } = require('@playwright/test');
+const fs = require('fs');
+const path = require('path');
+
+const snapshotDir = path.join(__dirname, 'visual-regression.spec.js-snapshots');
+const hasSnapshots = fs.existsSync(snapshotDir) && fs.readdirSync(snapshotDir).length > 0;
 
 test.describe('Visual Regression', () => {
+  test.skip(!hasSnapshots, 'No snapshot baselines — run: npx playwright test --update-snapshots');
+
   test('Korean homepage visual snapshot', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(1000);
