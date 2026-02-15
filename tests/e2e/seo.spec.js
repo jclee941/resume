@@ -341,11 +341,12 @@ test.describe('Resource Hints', () => {
 });
 
 test.describe('SEO Routes', () => {
+  const isLocalhost = !process.env.SKIP_WEBSERVER;
+
   test('should serve robots.txt', async ({ request }) => {
-    let response = await request.get('/robots.txt');
-    for (let i = 0; i < 2 && response.status() === 429; i++) {
-      await new Promise((r) => setTimeout(r, 2000));
-      response = await request.get('/robots.txt');
+    const response = await request.get('/robots.txt');
+    if (isLocalhost && response.status() === 429) {
+      test.skip(true, 'Rate-limited by local wrangler dev server');
     }
     expect(response.status()).toBe(200);
 
@@ -356,6 +357,9 @@ test.describe('SEO Routes', () => {
 
   test('should serve sitemap.xml', async ({ request }) => {
     const response = await request.get('/sitemap.xml');
+    if (isLocalhost && response.status() === 429) {
+      test.skip(true, 'Rate-limited by local wrangler dev server');
+    }
     expect(response.status()).toBe(200);
 
     const contentType = response.headers()['content-type'];
@@ -368,10 +372,9 @@ test.describe('SEO Routes', () => {
   });
 
   test('should serve og-image.webp', async ({ request }) => {
-    let response = await request.get('/og-image.webp');
-    for (let i = 0; i < 2 && response.status() === 429; i++) {
-      await new Promise((r) => setTimeout(r, 2000));
-      response = await request.get('/og-image.webp');
+    const response = await request.get('/og-image.webp');
+    if (isLocalhost && response.status() === 429) {
+      test.skip(true, 'Rate-limited by local wrangler dev server');
     }
     expect(response.status()).toBe(200);
 
