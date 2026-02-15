@@ -20,7 +20,7 @@ jobs:
       contains(github.event.pull_request.labels.*.name, 'auto-merge')
     steps:
       - name: Enable auto-merge (squash)
-        run: gh pr merge "$PR_NUMBER" --squash --auto
+        run: gh pr merge "$PR_NUMBER" --squash --auto --repo "$GITHUB_REPOSITORY"
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

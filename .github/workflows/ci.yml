@@ -725,7 +725,8 @@ jobs:
     if: >-
       github.event_name == 'pull_request' &&
       github.event.action != 'closed' &&
-      needs.build.result == 'success'
+      needs.build.result == 'success' &&
+      github.actor != 'dependabot[bot]'
     timeout-minutes: 15
     steps:
       - name: Checkout
