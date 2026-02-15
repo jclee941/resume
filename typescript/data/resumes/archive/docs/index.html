@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이재철 - Infrastructure & Security Engineer | 8년+ 경력 포트폴리오</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="8년 이상 경력 인프라·보안 엔지니어 이재철의 포트폴리오. 15종 이상 보안 솔루션 운영, 업무 자동화 50~95% 시간 단축, 프로덕션 시스템 99.9% 가용성 달성.">
+    <meta name="keywords" content="인프라 엔지니어, 보안 엔지니어, DevOps, 클라우드, Docker, Kubernetes, Python, 자동화, 포트폴리오">
+    <meta name="author" content="이재철 (Jaecheol Lee)">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="이재철 - Infrastructure & Security Engineer">
+    <meta property="og:description" content="8년 이상 경력 인프라·보안 엔지니어. 복잡한 인프라를 단순하게, 반복 업무를 자동화로.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://resume.jclee.me">
+    <meta property="og:site_name" content="이재철 포트폴리오">
+    <meta property="og:locale" content="ko_KR">
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="이재철 - Infrastructure & Security Engineer">
+    <meta name="twitter:description" content="8년 이상 경력 인프라·보안 엔지니어 포트폴리오">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://resume.jclee.me">
+
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://github.com">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #fafbfc;
+            --bg-hero: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4c1d95 100%);
+            --bg-footer: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4c1d95 100%);
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-tertiary: #64748b;
+            --text-hero: #ffffff;
+            --text-hero-sub: #cbd5e1;
+            --text-hero-desc: #e2e8f0;
+            --border-color: #e2e8f0;
+            --card-bg: #ffffff;
+            --card-hover-shadow: rgba(0,0,0,0.12);
+            --gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            --accent-primary: #6366f1;
+            --accent-secondary: #8b5cf6;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #111827;
+            --bg-secondary: #1f2937;
+            --bg-hero: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            --bg-footer: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            --text-primary: #f9fafb;
+            --text-secondary: #d1d5db;
+            --text-tertiary: #9ca3af;
+            --text-hero: #ffffff;
+            --text-hero-sub: #d1d5db;
+            --text-hero-desc: #e5e7eb;
+            --border-color: #374151;
+            --card-bg: #1f2937;
+            --card-hover-shadow: rgba(0,0,0,0.3);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Pretendard', 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+            min-height: 100vh;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Dark Mode Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 1000;
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .theme-toggle-icon {
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .theme-toggle:hover .theme-toggle-icon {
+            transform: rotate(20deg);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 24px;
+            background: var(--bg-hero);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            max-width: 1000px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-title {
+            font-size: 5rem;
+            font-weight: 900;
+            color: var(--text-hero);
+            margin-bottom: 24px;
+            letter-spacing: -0.05em;
+            line-height: 1.1;
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-subtitle {
+            font-size: 1.875rem;
+            color: var(--text-hero-sub);
+            margin-bottom: 40px;
+            font-weight: 500;
+            letter-spacing: -0.02em;
+        }
+
+        .hero-description {
+            font-size: 1.25rem;
+            color: var(--text-hero-desc);
+            line-height: 1.75;
+            max-width: 750px;
+            margin-bottom: 56px;
+            font-weight: 400;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .cta-button {
+            padding: 16px 40px;
+            border-radius: 12px;
+            font-size: 1.0625rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #ffffff;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .cta-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .cta-primary:hover::before {
+            left: 100%;
+        }
+
+        .cta-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(102, 126, 234, 0.5);
+        }
+
+        .cta-secondary {
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .cta-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Projects Section */
+        .projects-section {
+            padding: 120px 24px;
+            background: var(--bg-secondary);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .section-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-tertiary);
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 2.75rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            letter-spacing: -0.03em;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-description {
+            font-size: 1.125rem;
+            color: var(--text-tertiary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Project Cards */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 32px;
+        }
+
+        .project-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
+            position: relative;
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+
+        .project-card:hover::before {
+            opacity: 1;
+        }
+
+        .project-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 48px rgba(0,0,0,0.12), 0 8px 16px rgba(0,0,0,0.08);
+            border-color: rgba(102, 126, 234, 0.4);
+        }
+
+        .project-image {
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-card:nth-child(1) .project-image {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .project-card:nth-child(2) .project-image {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .project-card:nth-child(3) .project-image {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .project-card:nth-child(4) .project-image {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .project-card:nth-child(5) .project-image {
+            background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+        }
+
+        .project-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 30% 40%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 70%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+        }
+
+        .project-icon {
+            font-size: 3.5rem;
+            color: rgba(255, 255, 255, 1);
+            z-index: 1;
+            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.2));
+        }
+
+        .project-content {
+            padding: 28px;
+        }
+
+        .project-header {
+            margin-bottom: 16px;
+        }
+
+        .project-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+            letter-spacing: -0.02em;
+        }
+
+        .project-tech {
+            font-size: 0.85rem;
+            color: #3b82f6;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        .project-description {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+
+        .project-features {
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .feature-item {
+            font-size: 0.8rem;
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .project-links {
+            display: flex;
+            gap: 10px;
+        }
+
+        .project-link {
+            padding: 11px 24px;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            flex: 1;
+            text-align: center;
+        }
+
+        .link-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .link-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .link-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+
+        .link-secondary:hover {
+            background: var(--card-bg);
+            border-color: var(--text-tertiary);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        /* Skills Section */
+        .skills-section {
+            padding: 100px 24px;
+            background: var(--bg-primary);
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .skill-category {
+            background: var(--card-bg);
+            padding: 32px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .skill-category:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px var(--card-hover-shadow);
+        }
+
+        .skill-category-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .skill-category-icon {
+            font-size: 1.5rem;
+        }
+
+        .skill-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .skill-tag {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            background: var(--bg-secondary);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .skill-tag:hover {
+            background: var(--gradient-primary);
+            color: #ffffff;
+            transform: scale(1.05);
+        }
+
+        /* Footer */
+        .footer {
+            padding: 80px 24px;
+            background: var(--bg-footer);
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .footer-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 16px;
+        }
+
+        .footer-text {
+            font-size: 1.125rem;
+            color: #9ca3af;
+            margin-bottom: 32px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            margin-bottom: 32px;
+        }
+
+        .footer-link {
+            color: #d1d5db;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .footer-link:hover {
+            color: #ffffff;
+        }
+
+        .footer-copyright {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .projects-grid {
+                grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+                gap: 28px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .hero-title {
+                font-size: 3.5rem;
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+
+            .project-card {
+                max-width: 600px;
+                margin: 0 auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                padding: 60px 20px;
+                min-height: 90vh;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+                margin-bottom: 12px;
+            }
+
+            .hero-subtitle {
+                font-size: 1.25rem;
+                margin-bottom: 24px;
+            }
+
+            .hero-description {
+                font-size: 1rem;
+                line-height: 1.7;
+                margin-bottom: 40px;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .section-description {
+                font-size: 1rem;
+            }
+
+            .hero-cta {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .cta-button {
+                width: 100%;
+                text-align: center;
+                padding: 16px 32px;
+            }
+
+            .projects-section {
+                padding: 80px 20px;
+            }
+
+            .section-header {
+                margin-bottom: 48px;
+            }
+
+            .project-image {
+                height: 160px;
+            }
+
+            .project-icon {
+                font-size: 3rem;
+            }
+
+            .footer {
+                padding: 60px 20px;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 16px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .hero {
+                padding: 50px 16px;
+            }
+
+            .hero-title {
+                font-size: 2rem;
+                letter-spacing: -0.03em;
+            }
+
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .hero-description {
+                font-size: 0.95rem;
+                line-height: 1.6;
+            }
+
+            .section-title {
+                font-size: 1.75rem;
+            }
+
+            .section-label {
+                font-size: 0.8rem;
+            }
+
+            .projects-section {
+                padding: 60px 16px;
+            }
+
+            .project-content {
+                padding: 20px;
+            }
+
+            .project-title {
+                font-size: 1.2rem;
+            }
+
+            .project-tech {
+                font-size: 0.8rem;
+            }
+
+            .project-description {
+                font-size: 0.9rem;
+                line-height: 1.6;
+            }
+
+            .feature-item {
+                font-size: 0.75rem;
+                padding: 5px 12px;
+            }
+
+            .project-links {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .project-link {
+                width: 100%;
+                text-align: center;
+                padding: 12px 20px;
+                font-size: 0.85rem;
+            }
+
+            .footer {
+                padding: 50px 16px;
+            }
+
+            .footer-title {
+                font-size: 1.5rem;
+            }
+
+            .footer-text {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 375px) {
+            .hero-title {
+                font-size: 1.75rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .project-image {
+                height: 140px;
+            }
+
+            .project-icon {
+                font-size: 2.5rem;
+            }
+        }
+
+        /* Touch device optimizations */
+        @media (hover: none) and (pointer: coarse) {
+            .cta-button,
+            .project-link,
+            .footer-link {
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .project-card:hover {
+                transform: none;
+            }
+
+            .project-card:active {
+                transform: scale(0.98);
+                transition: transform 0.1s ease;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            .hero,
+            .footer {
+                background: white;
+                color: black;
+            }
+
+            .cta-button,
+            .project-link {
+                border: 1px solid #333;
+                color: #333;
+                background: white;
+            }
+        }
+
+        /* Scroll Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+                        transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .fade-in-delay-1 {
+            transition-delay: 0.1s;
+        }
+
+        .fade-in-delay-2 {
+            transition-delay: 0.2s;
+        }
+
+        .fade-in-delay-3 {
+            transition-delay: 0.3s;
+        }
+
+        /* Smooth scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    </style>
+    <script>
+        // Scroll animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, observerOptions);
+
+            // Observe all fade-in elements
+            document.querySelectorAll('.fade-in').forEach(el => {
+                observer.observe(el);
+            });
+
+            // Dark mode toggle
+            const themeToggle = document.querySelector('.theme-toggle');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+
+            // Load saved theme or use system preference
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+                updateThemeIcon(savedTheme);
+            } else if (prefersDark.matches) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                updateThemeIcon('dark');
+            }
+
+            if (themeToggle) {
+                themeToggle.addEventListener('click', () => {
+                    const currentTheme = document.documentElement.getAttribute('data-theme');
+                    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+                    document.documentElement.setAttribute('data-theme', newTheme);
+                    localStorage.setItem('theme', newTheme);
+                    updateThemeIcon(newTheme);
+                });
+            }
+
+            function updateThemeIcon(theme) {
+                const icon = document.querySelector('.theme-toggle-icon');
+                if (icon) {
+                    icon.textContent = theme === 'dark' ? '☀️' : '🌙';
+                }
+            }
+        });
+    </script>
+</head>
+<body>
+    <!-- Dark Mode Toggle -->
+    <button class="theme-toggle" id="themeToggle" aria-label="다크모드 토글">
+        <span class="theme-toggle-icon" id="themeIcon">🌙</span>
+    </button>
+
+    <!-- Hero Section -->
+    <section class="hero" aria-label="소개">
+        <div class="hero-content">
+            <h1 class="hero-title">Infrastructure<br>& Security Engineer</h1>
+            <p class="hero-subtitle">Jaecheol Lee · 8+ Years Experience</p>
+            <p class="hero-description">
+                복잡한 인프라를 단순하게, 반복 업무를 자동화로. 8년 이상 금융·교육·제조 산업에서 업무 시간 50~95% 단축 달성,
+                15종 이상 보안 솔루션 통합 운영 및 프로덕션 시스템 99.9% 가용성 유지.
+            </p>
+            <nav class="hero-cta" aria-label="주요 링크">
+                <a href="resume.html" class="cta-button cta-primary" aria-label="이력서 보기">📋 Resume</a>
+                <a href="https://github.com/qws941" target="_blank" rel="noopener noreferrer" class="cta-button cta-secondary" aria-label="GitHub 프로필 방문">GitHub</a>
+                <a href="mailto:qws941@kakao.com" class="cta-button cta-secondary" aria-label="이메일 연락하기">Contact</a>
+            </nav>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section class="projects-section" aria-label="프로젝트">
+        <div class="container">
+            <header class="section-header fade-in">
+                <p class="section-label">Featured Work</p>
+                <h2 class="section-title">Production Systems</h2>
+                <p class="section-description">
+                    실제 운영 중인 프로덕션 시스템 · 검증된 성과와 비즈니스 임팩트
+                </p>
+            </header>
+
+            <div class="projects-grid" role="list">
+                <!-- Splunk Project -->
+                <article class="project-card fade-in" role="listitem">
+                    <div class="project-image" role="img" aria-label="Splunk-FortiNet Integration 프로젝트 아이콘">
+                        <div class="project-icon" aria-hidden="true">🛡️</div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-header">
+                            <h3 class="project-title">Splunk-FortiNet Integration</h3>
+                            <p class="project-tech">Node.js · Cloudflare Workers · Domain-Driven Design</p>
+                        </div>
+                        <p class="project-description">
+                            80대 방화벽 실시간 중앙관리 플랫폼. DDD Level 3로 9개 도메인 분리 설계, FortiManager/FortiAnalyzer 직접 API 연동. 초당 10만 이벤트 처리 가능, 75,000% 확장 여유로 엔터프라이즈 검증 완료.
+                        </p>
+                        <div class="project-features">
+                            <span class="feature-item">100K+ Events/Sec</span>
+                            <span class="feature-item">AI Threat Analysis</span>
+                            <span class="feature-item">80+ Device Management</span>
+                            <span class="feature-item">9 Domain Architecture</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="https://splunk.jclee.me" target="_blank" class="project-link link-primary">Live Demo</a>
+                            <a href="https://github.com/qws941/splunk" target="_blank" class="project-link link-secondary">GitHub</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SafeWork Project -->
+                <div class="project-card fade-in">
+                    <div class="project-image">
+                        <div class="project-icon">🏥</div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-header">
+                            <h3 class="project-title">SafeWork Industrial Health Platform</h3>
+                            <p class="project-tech">Flask 3.0 · PostgreSQL 15 · Redis 7 · Cloudflare Workers</p>
+                        </div>
+                        <p class="project-description">
+                            산업보건 설문조사 SaaS 플랫폼. Cloudflare Workers Edge API로 전국 동시 접속 처리, Flask 3.0 하이브리드 아키텍처. 종이 설문 디지털 전환으로 집계 오류 100% 제거, 다수 중소기업 실운영 중.
+                        </p>
+                        <div class="project-features">
+                            <span class="feature-item">Hybrid Architecture</span>
+                            <span class="feature-item">Edge Processing</span>
+                            <span class="feature-item">Zero Error Rate</span>
+                            <span class="feature-item">Real-time Analytics</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="https://safework.jclee.me" target="_blank" class="project-link link-primary">Live Demo</a>
+                            <a href="https://github.com/qws941/safework" target="_blank" class="project-link link-secondary">GitHub</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Blacklist Project -->
+                <div class="project-card fade-in">
+                    <div class="project-image">
+                        <div class="project-icon">🔒</div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-header">
+                            <h3 class="project-title">REGTECH Threat Intelligence</h3>
+                            <p class="project-tech">Flask · PostgreSQL 15 · Redis 7 · Portainer API</p>
+                        </div>
+                        <p class="project-description">
+                            금융보안원 IP 블랙리스트 자동수집·관리 시스템. Claude AI 통합 CI/CD로 배포 자동화, Portainer API 기반 무중단 배포 및 자동 롤백. 수동 수집 대비 95% 시간 단축 (1시간 → 3분), 99.9% 가용성 달성.
+                        </p>
+                        <div class="project-features">
+                            <span class="feature-item">95% Time Reduction</span>
+                            <span class="feature-item">Auto-Rollback</span>
+                            <span class="feature-item">99.9% Uptime</span>
+                            <span class="feature-item">AI CI/CD</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="https://blacklist.jclee.me" target="_blank" class="project-link link-primary">Live Demo</a>
+                            <a href="https://github.com/qws941/blacklist" target="_blank" class="project-link link-secondary">GitHub</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fortinet Project -->
+                <div class="project-card fade-in">
+                    <div class="project-image">
+                        <div class="project-icon">🔥</div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-header">
+                            <h3 class="project-title">FortiGate Policy Orchestration</h3>
+                            <p class="project-tech">Flask · FortiManager JSON-RPC · Portainer · GitHub Actions</p>
+                        </div>
+                        <p class="project-description">
+                            FortiGate 방화벽 정책 통합 모니터링 및 자동배포. 3-Port 배포 전략(7777/7778/7779)으로 고가용성 보장, FortiManager API 직접 연동. 정책 검증 시간 80% 단축, 서비스 중단 0건 달성.
+                        </p>
+                        <div class="project-features">
+                            <span class="feature-item">3-Port HA</span>
+                            <span class="feature-item">80% Time Saved</span>
+                            <span class="feature-item">Zero Downtime</span>
+                            <span class="feature-item">API Integration</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="https://fortinet.jclee.me" target="_blank" class="project-link link-primary">Live Demo</a>
+                            <a href="https://github.com/qws941/fortinet" target="_blank" class="project-link link-secondary">GitHub</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grafana Project -->
+                <div class="project-card fade-in">
+                    <div class="project-image">
+                        <div class="project-icon">📊</div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-header">
+                            <h3 class="project-title">Enterprise Observability Platform</h3>
+                            <p class="project-tech">Grafana Stack · Prometheus · Loki · Tempo · Traefik · Docker</p>
+                        </div>
+                        <p class="project-description">
+                            엔터프라이즈 통합 관측성 플랫폼. 13개 프로덕션 서비스 24/7 모니터링, 30일 메트릭·로그·트레이스 통합 저장. Traefik 리버스 프록시 SSL 자동화, Prometheus 15개 타겟 수집, Loki 실시간 로그 집계.
+                        </p>
+                        <div class="project-features">
+                            <span class="feature-item">13 Services Monitored</span>
+                            <span class="feature-item">30-Day Retention</span>
+                            <span class="feature-item">Real-time Alerting</span>
+                            <span class="feature-item">SSL Auto-Renewal</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="https://grafana.jclee.me" target="_blank" class="project-link link-primary">Live Demo</a>
+                            <a href="https://github.com/qws941/grafana" target="_blank" class="project-link link-secondary">GitHub</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section class="skills-section" aria-label="기술 스택">
+        <div class="container">
+            <header class="section-header fade-in">
+                <p class="section-label">Tech Stack</p>
+                <h2 class="section-title">Core Skills</h2>
+                <p class="section-description">
+                    8년 이상 축적한 인프라·보안 기술 스택
+                </p>
+            </header>
+
+            <div class="skills-grid">
+                <!-- Security Solutions -->
+                <div class="skill-category">
+                    <h3 class="skill-category-title">
+                        <span class="skill-category-icon">🛡️</span>
+                        Security Solutions
+                    </h3>
+                    <div class="skill-list">
+                        <span class="skill-tag">Fortigate</span>
+                        <span class="skill-tag">Palo Alto</span>
+                        <span class="skill-tag">NAC</span>
+                        <span class="skill-tag">DLP</span>
+                        <span class="skill-tag">EDR/EPP</span>
+                        <span class="skill-tag">APT</span>
+                        <span class="skill-tag">WAF</span>
+                        <span class="skill-tag">IPS/IDS</span>
+                        <span class="skill-tag">SIEM</span>
+                        <span class="skill-tag">Splunk</span>
+                    </div>
+                </div>
+
+                <!-- Cloud & Virtualization -->
+                <div class="skill-category">
+                    <h3 class="skill-category-title">
+                        <span class="skill-category-icon">☁️</span>
+                        Cloud & Virtualization
+                    </h3>
+                    <div class="skill-list">
+                        <span class="skill-tag">AWS</span>
+                        <span class="skill-tag">Docker</span>
+                        <span class="skill-tag">Kubernetes</span>
+                        <span class="skill-tag">VMware vSphere</span>
+                        <span class="skill-tag">NSX-T</span>
+                        <span class="skill-tag">Portainer</span>
+                    </div>
+                </div>
+
+                <!-- Automation & Development -->
+                <div class="skill-category">
+                    <h3 class="skill-category-title">
+                        <span class="skill-category-icon">⚙️</span>
+                        Automation & Development
+                    </h3>
+                    <div class="skill-list">
+                        <span class="skill-tag">Python</span>
+                        <span class="skill-tag">Node.js</span>
+                        <span class="skill-tag">Shell Script</span>
+                        <span class="skill-tag">Ansible</span>
+                        <span class="skill-tag">Terraform</span>
+                        <span class="skill-tag">GitHub Actions</span>
+                        <span class="skill-tag">GitLab CI</span>
+                    </div>
+                </div>
+
+                <!-- Monitoring & Observability -->
+                <div class="skill-category">
+                    <h3 class="skill-category-title">
+                        <span class="skill-category-icon">📊</span>
+                        Monitoring & Observability
+                    </h3>
+                    <div class="skill-list">
+                        <span class="skill-tag">Grafana</span>
+                        <span class="skill-tag">Prometheus</span>
+                        <span class="skill-tag">Loki</span>
+                        <span class="skill-tag">Tempo</span>
+                        <span class="skill-tag">ELK Stack</span>
+                        <span class="skill-tag">Wazuh</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <h2 class="footer-title">Let's Build Something Great</h2>
+            <p class="footer-text">
+                복잡한 인프라 문제를 자동화로 해결하고, 팀의 생산성을 극대화합니다.
+            </p>
+            <div class="footer-links">
+                <a href="mailto:qws941@kakao.com" class="footer-link">Email</a>
+                <a href="https://github.com/qws941" target="_blank" class="footer-link">GitHub</a>
+                <a href="tel:010-5757-9592" class="footer-link">Phone</a>
+            </div>
+            <p class="footer-copyright">
+                © 2024 Jaecheol Lee. All rights reserved.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Dark Mode Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const html = document.documentElement;
+
+        // Check for saved theme preference or default to 'light' mode
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        html.setAttribute('data-theme', currentTheme);
+        themeIcon.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+
+        // Theme toggle function
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            themeIcon.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        });
+
+        // Smooth scroll for internal links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Fade-in animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all project cards
+        document.querySelectorAll('.project-card').forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = `opacity 0.6s ease ${index * 0.1}s, transform 0.6s ease ${index * 0.1}s`;
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>

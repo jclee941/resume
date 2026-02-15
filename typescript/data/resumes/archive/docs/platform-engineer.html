@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="이재철 - Server Developer 이력서 | Python/Node.js 기반 7년 경력 | AI 자동화 전문">
+    <meta name="keywords" content="이재철, Server Developer, Python, Node.js, AI, 자동화, DevOps, 토스">
+    <meta property="og:title" content="이재철 | Server Developer">
+    <meta property="og:description" content="7년간 대규모 인프라 운영 및 Python 자동화 전문 | AI 기반 장애 분석 시스템 구축">
+    <meta property="og:type" content="profile">
+    <meta property="og:url" content="https://resume.jclee.me">
+    <title>이재철 | Server Developer - 이력서</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 1.8em;
+            color: #2c3e50;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            border-left: 5px solid #3498db;
+            padding-left: 15px;
+        }
+
+        h3 {
+            font-size: 1.3em;
+            color: #34495e;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+
+        ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            line-height: 1.7;
+        }
+
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #ecf0f1;
+            margin: 30px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        td {
+            padding: 12px;
+            border: 1px solid #ddd;
+        }
+
+        tr:first-child td {
+            background: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Header section */
+        .header-info {
+            font-size: 1.1em;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+                padding: 20px;
+                max-width: 100%;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.4em;
+                page-break-after: avoid;
+            }
+
+            h3 {
+                font-size: 1.2em;
+                page-break-after: avoid;
+            }
+
+            .no-print {
+                display: none;
+            }
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            h2 {
+                font-size: 1.4em;
+            }
+        }
+
+        /* Print button */
+        .print-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #3498db;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: 1em;
+        }
+
+        .print-button:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+        }
+
+        @media print {
+            .print-button {
+                display: none;
+            }
+
+            .back-button {
+                display: none;
+            }
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #667eea;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .back-button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-button">← Back to Main</a>
+    <div class="container">
+        <h1>이재철 (Jaecheol Lee)</h1>
+<p><strong>Platform Engineer <tr><td>DevOps Engineer</td></tr> Infrastructure & Security</strong></p>
+<p>📱 010-5757-9592 <tr><td>📧 qws941@kakao.com</td></tr> 🏠 경기 시흥시 능곡동
+💻 GitHub: <a href="https://github.com/qws941" target="_blank">github.com/qws941</a> | 🌐 Portfolio: <a href="https://resume.jclee.me" target="_blank">resume.jclee.me</a> |
+<button onclick="window.print()" style="padding:8px 16px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;border:none;border-radius:6px;font-weight:600;cursor:pointer;margin-left:10px;">📄 PDF 다운로드</button></p>
+<hr>
+<h2>💡 경력 요약</h2>
+<p><strong>총 경력</strong>: 7년 8개월 (2017.02 ~ 현재, 공백 제외)</p>
+<h3>핵심 역량</h3>
+<ul><li><strong>Platform Engineering</strong>: Monitoring (Prometheus, Grafana, Loki), Container Orchestration (Docker, Kubernetes POC)</li></ul>
+<ul><li><strong>DevOps & Automation</strong>: CI/CD (GitHub Actions), IaC (Ansible, Docker Compose), Python/Shell Automation</li></ul>
+<ul><li><strong>Security Solutions</strong>: 15종+ 통합 운영 (DDoS, IPS, WAF, NAC, DLP, EDR, APT)</li></ul>
+<ul><li><strong>Cloud Infrastructure</strong>: AWS (EC2, VPC, IAM, CloudTrail, GuardDuty)</li></ul>
+<ul><li><strong>Database & Caching</strong>: PostgreSQL, Redis (Production 운영 경험)</li></ul>
+<h3>검증된 성과</h3>
+<ul><li>✅ <strong>99.9% 가용성 달성</strong> (연간 다운타임 < 9시간)</li></ul>
+<ul><li>✅ <strong>MTTR 70% 개선</strong> (평균 60분 → 18분)</li></ul>
+<ul><li>✅ <strong>초당 10만 이벤트 처리</strong> (100,000 events/sec 검증)</li></ul>
+<ul><li>✅ <strong>자동화로 업무 시간 50~95% 단축</strong> (Python/Shell)</li></ul>
+<ul><li>✅ <strong>대규모 인프라 운영</strong> (단말 1,000대+, 서버 150대+)</li></ul>
+<hr>
+<h2>🚀 주요 프로젝트 (Production)</h2>
+<h3>1. Splunk-FortiNet Integration Platform (2024 ~ 현재)</h3>
+<strong>Production | 초당 10만 이벤트 처리</strong>
+<p>#### 기술스택
+<ul><li><strong>Backend</strong>: Python Flask</li></ul>
+<ul><li><strong>Integration</strong>: Splunk API, FortiManager JSON-RPC</li></ul>
+<ul><li><strong>Edge API</strong>: Cloudflare Workers (Edge Computing)</li></ul>
+<ul><li><strong>Cache</strong>: Redis 7</li></ul>
+<ul><li><strong>Container</strong>: Docker, GitHub Actions</li></ul></p>
+<p>#### 대용량 트래픽 처리 성과
+<ul><li>✅ <strong>초당 10만 이벤트 처리 검증</strong> (100,000 events/sec)</li></ul>
+<ul><li>✅ <strong>75,000% 확장 여유 확보</strong> (엔터프라이즈 규모 대응 가능)</li></ul>
+<ul><li>✅ <strong>80대 방화벽 동시 관리</strong> (실시간 정책 동기화)</li></ul>
+<ul><li>✅ <strong>API 응답 시간 < 100ms</strong> (p99 latency 유지)</li></ul>
+<ul><li>✅ <strong>무중단 운영 365일</strong> (Zero Downtime)</li></ul></p>
+<p><strong>🔗 GitHub</strong>: <a href="https://github.com/qws941/splunk-fortinet" target="_blank">github.com/qws941/splunk-fortinet</a>
+<strong>🔗 Live Demo</strong>: <a href="https://splunk.jclee.me" target="_blank">splunk.jclee.me</a></p>
+<hr>
+<h3>2. REGTECH Blacklist Intelligence Platform (2024 ~ 현재)</h3>
+<strong>Production | 99.9% 가용성</strong>
+<p>#### 기술스택
+<ul><li><strong>Backend</strong>: Python Flask, Node.js</li></ul>
+<ul><li><strong>Database</strong>: PostgreSQL 15, Redis 7 (Caching & Pub/Sub)</li></ul>
+<ul><li><strong>Container</strong>: Docker, Portainer API</li></ul>
+<ul><li><strong>CI/CD</strong>: GitHub Actions, AI 기반 자동 배포</li></ul>
+<ul><li><strong>Monitoring</strong>: Prometheus + Grafana</li></ul></p>
+<p>#### 안정성 & 장애 복구 성과
+<ul><li>✅ <strong>99.9% 가용성 달성</strong> (연간 다운타임 < 9시간)</li></ul>
+<ul><li>✅ <strong>MTTR 70% 개선</strong> (평균 60분 → 18분)</li></ul>
+<ul><li>✅ <strong>자동 롤백 시스템</strong>: 배포 실패 시 < 30초 내 자동 복구</li></ul>
+<ul><li>✅ <strong>AI 기반 장애 분석</strong>: 로그 패턴 인식 및 자동 대응</li></ul>
+<ul><li>✅ <strong>무중단 배포</strong>: Blue-Green Deployment (Portainer API)</li></ul></p>
+<p><strong>🔗 GitHub</strong>: <a href="https://github.com/qws941/blacklist" target="_blank">github.com/qws941/blacklist</a>
+<strong>🔗 Live Demo</strong>: <a href="https://blacklist.jclee.me" target="_blank">blacklist.jclee.me</a></p>
+<hr>
+<h3>3. FortiGate Policy Orchestration Platform (2024 ~ 현재)</h3>
+<strong>Production | 3-Port 고가용성 배포</strong>
+<p>#### 기술스택
+<ul><li><strong>Backend</strong>: Python Flask</li></ul>
+<ul><li><strong>API</strong>: FortiManager JSON-RPC</li></ul>
+<ul><li><strong>Container</strong>: Docker, Portainer, GitHub Actions</li></ul>
+<ul><li><strong>Deployment</strong>: 3-Port 배포 전략 (7777/7778/7779)</li></ul></p>
+<p>#### 핵심 성과
+<ul><li>✅ <strong>정책 검증 시간 80% 단축</strong> (자동 검증)</li></ul>
+<ul><li>✅ <strong>서비스 중단 0건</strong> (3-Port HA 아키텍처)</li></ul>
+<ul><li>✅ <strong>감사 대응 시간 90% 절감</strong> (변경 이력 자동 추적)</li></ul>
+<ul><li>✅ <strong>무중단 배포</strong> (Production/Backup/Development 동시 운영)</li></ul></p>
+<p><strong>🔗 GitHub</strong>: <a href="https://github.com/qws941/fortinet" target="_blank">github.com/qws941/fortinet</a>
+<strong>🔗 Live Demo</strong>: <a href="https://fortinet.jclee.me" target="_blank">fortinet.jclee.me</a></p>
+<hr>
+<h3>4. Full-Stack Observability Platform (2024 ~ 현재)</h3>
+<strong>Production | 11개 대시보드 운영</strong>
+<p>#### 기술스택
+<ul><li><strong>Prometheus</strong>: 메트릭 수집 및 알림</li></ul>
+<ul><li><strong>Loki</strong>: 로그 집계 시스템</li></ul>
+<ul><li><strong>Grafana</strong>: 통합 대시보드 및 시각화 (11개 대시보드)</li></ul>
+<ul><li><strong>Tempo</strong>: 분산 트레이싱</li></ul>
+<ul><li><strong>Promtail</strong>: 로그 수집 에이전트</li></ul>
+<ul><li><strong>Traefik</strong>: Reverse Proxy, SSL 자동화</li></ul>
+<ul><li><strong>Docker Compose</strong>: Container Orchestration</li></ul></p>
+<p>#### Monitoring & Observability 성과
+<ul><li>✅ <strong>Prometheus</strong>: 5개 Production 시스템 실시간 메트릭 수집</li></ul>
+<ul><li>✅ <strong>Loki</strong>: 초당 10만+ 로그 이벤트 처리 (15개 AI Agent 포함)</li></ul>
+<ul><li>✅ <strong>Grafana</strong>: <strong>11개 대시보드 운영</strong> (총 121개 패널), 24/7 모니터링</li></ul>
+<ul><li>✅ <strong>Alertmanager</strong>: 실시간 알림 (Slack, Email 통합)</li></ul>
+<ul><li>✅ <strong>Tempo</strong>: 분산 트레이싱 (마이크로서비스 성능 분석)</li></ul></p>
+<p>#### 11개 운영 대시보드 세부사항
+<tr><td>대시보드</td><td>패널 수</td><td>목적</td></tr>
+<tr><td>---------</td><td>---------</td><td>------</td></tr>
+<tr><td><strong>1. Agent Activity</strong></td><td>14</td><td>15개 AI Agent 실시간 모니터링</td></tr>
+<tr><td><strong>2. CI/CD Pipeline</strong></td><td>15</td><td>Guardian Protocol 5-phase 파이프라인</td></tr>
+<tr><td><strong>3. Infrastructure Health</strong></td><td>16</td><td>Container 상태, Core 라이브러리, 시스템 리소스</td></tr>
+<tr><td><strong>4. Performance</strong></td><td>4</td><td>실시간 성능 메트릭 (CPU, Memory, I/O)</td></tr>
+<tr><td><strong>5. System Performance</strong></td><td>13</td><td>15개 AI Agent 인프라 성능</td></tr>
+<tr><td><strong>6. Portfolio</strong></td><td>16</td><td>DevOps 포트폴리오 메트릭</td></tr>
+<tr><td><strong>7. Security & Compliance</strong></td><td>16</td><td>Constitutional Compliance (28 checks, 100% 달성)</td></tr>
+<tr><td><strong>8. Test & Code Quality</strong></td><td>16</td><td>Jest 73.8% 커버리지, ESLint 9.x</td></tr>
+<tr><td><strong>9. Claude Tasks</strong></td><td>7</td><td>Background 작업 모니터링</td></tr>
+<tr><td><strong>10. Compliance</strong></td><td>4</td><td>Constitutional Compliance 요약</td></tr>
+<tr><td><strong>11. Project Health</strong></td><td>10</td><td>전체 프로젝트 건강 상태</td></tr>
+<tr><td><strong>총 합계</strong></td><td><strong>121 패널</strong></td><td><strong>종합 Observability</strong></td></tr></p>
+<p><strong>🔗 GitHub</strong>: <a href="https://github.com/qws941/grafana" target="_blank">github.com/qws941/grafana</a>
+<strong>🔗 Live Demo</strong>: <a href="https://grafana.jclee.me" target="_blank">grafana.jclee.me</a></p>
+<hr>
+<h3>5. SafeWork Industrial Health Platform (2024 ~ 현재)</h3>
+<strong>Production | Edge Processing & Hybrid Architecture</strong>
+<p>#### 기술스택
+<ul><li><strong>Backend</strong>: Flask 3.0, PostgreSQL 15, Redis 7</li></ul>
+<ul><li><strong>Edge API</strong>: Cloudflare Workers</li></ul>
+<ul><li><strong>Architecture</strong>: Hybrid (Monolithic + Microservices)</li></ul></p>
+<p>#### 핵심 성과
+<ul><li>✅ <strong>전국 동시 접속 처리</strong> (Edge API)</li></ul>
+<ul><li>✅ <strong>집계 오류 100% 제거</strong> (디지털 전환)</li></ul>
+<ul><li>✅ <strong>다수 중소기업 실운영</strong> (SaaS 플랫폼)</li></ul>
+<ul><li>✅ <strong>실시간 분석</strong> (Real-time Analytics)</li></ul></p>
+<p><strong>🔗 GitHub</strong>: <a href="https://github.com/qws941/safework" target="_blank">github.com/qws941/safework</a>
+<strong>🔗 Live Demo</strong>: <a href="https://safework.jclee.me" target="_blank">safework.jclee.me</a></p>
+<hr>
+<h2>🛠 기술 스택</h2>
+<h3>Platform & Infrastructure ⭐⭐⭐⭐⭐ (Production 실전 경험)</h3>
+<ul><li><strong>Container</strong>: Docker ✅ (5개 Production 시스템), Kubernetes (POC 경험)</li></ul>
+<ul><li><strong>Monitoring</strong>: Prometheus ✅, Grafana ✅, Loki ✅, Tempo ✅</li></ul>
+<ul><li><strong>Proxy & Gateway</strong>: Traefik ✅, Cloudflare Workers ✅</li></ul>
+<ul><li><strong>Automation</strong>: Ansible ✅, Docker Compose ✅</li></ul>
+<h3>Backend & Database ⭐⭐⭐⭐☆ (Production 운영)</h3>
+<ul><li><strong>Language</strong>: Python ✅, Node.js ✅, Shell Script ✅</li></ul>
+<ul><li><strong>Framework</strong>: Flask ✅, Express.js ✅</li></ul>
+<ul><li><strong>Database</strong>: PostgreSQL 15 ✅, Redis 7 ✅</li></ul>
+<ul><li><strong>API</strong>: REST API ✅, JSON-RPC ✅</li></ul>
+<h3>DevOps & Automation ⭐⭐⭐⭐☆ (자동화 실전 경험)</h3>
+<ul><li><strong>CI/CD</strong>: GitHub Actions ✅ (5개 파이프라인 운영)</li></ul>
+<ul><li><strong>IaC</strong>: Ansible ✅ (1,000대 VPN 배포), Docker Compose ✅</li></ul>
+<ul><li><strong>Scripting</strong>: Python ✅ (업무 시간 50~95% 단축), Bash ✅</li></ul>
+<h3>Security ⭐⭐⭐⭐⭐ (금융권 실전 경험)</h3>
+<ul><li><strong>Solutions</strong>: DDoS, IPS, WAF, NAC, DLP, EDR, APT (15종+ 통합 운영)</li></ul>
+<ul><li><strong>Compliance</strong>: ISMS-P, ISO27001, 금융감독원 감사 통과</li></ul>
+<ul><li><strong>Network</strong>: Fortigate ✅, VPN ✅, SSL ✅, 망분리 ✅</li></ul>
+<hr>
+<h2>💼 경력사항</h2>
+<h3>㈜아이티센 CTS | 정보보안 운영 엔지니어</h3>
+<strong>2025.03 ~ 현재 (7개월)</strong> | 넥스트레이드 운영SM (정보보안팀)
+<p>#### 주요 업무
+<ul><li>금융위원회 본인가 이후 운영 보안 체계 안정화</li></ul>
+<ul><li>15종 이상 보안 솔루션 통합 운영 및 정책 최적화</li></ul>
+<ul><li>보안 이벤트 모니터링 및 장애 대응 (24/7)</li></ul>
+<ul><li>정기 보안 점검 및 취약점 관리</li></ul></p>
+<p>#### 주요 성과
+<ul><li>✅ <strong>안정성 개선</strong>: 보안 솔루션 튜닝으로 장애율 35% 감소 (월 8건 → 5건)</li></ul>
+<ul><li>✅ <strong>대응 효율화</strong>: 보안 이벤트 대응 시간 40% 단축 (평균 45분 → 27분)</li></ul>
+<ul><li>✅ <strong>규제 대응</strong>: 금융감독원 정기 감사 대응, 지적사항 0건 달성 (2회 연속)</li></ul>
+<ul><li>✅ <strong>운영 최적화</strong>: 보안 정책 재설계로 오탐률 50% 감소 (일 200건 → 100건)</li></ul></p>
+<hr>
+<h3>㈜가온누리정보시스템 | 프리랜서 인프라 엔지니어</h3>
+<strong>2024.03 ~ 2025.02 (11개월)</strong> | 넥스트레이드(다자간매매체결회사) 구축 프로젝트
+<p>#### 주요 업무
+<ul><li>금융위원회 본인가 대비 망분리 및 보안 체계 구축</li></ul>
+<ul><li>DDoS, IPS, WAF, VPN, WIPS 등 15종 이상 보안 솔루션 통합 운영</li></ul>
+<ul><li>NAC, DLP, SSL 복호화, APT 솔루션 도입 및 최적화</li></ul></p>
+<p>#### 주요 성과
+<ul><li>✅ <strong>방화벽 자동화</strong>: Python으로 정책 100건+ 일괄 배포, 작업시간 50% 단축 (8시간 → 4시간)</li></ul>
+<ul><li>✅ <strong>에이전트 최적화</strong>: EPP/CPP-DLP 충돌 해결, 단말 CPU 사용률 30% 개선 (60% → 42%)</li></ul>
+<ul><li>✅ <strong>보안 사고 예방</strong>: 망분리 구축 후 내부정보 유출사고 0건 유지 (12개월)</li></ul>
+<ul><li>✅ <strong>규제 준수</strong>: 금융규제 요건 100% 충족, 본인가 심사 보안 측면 이슈 0건</li></ul></p>
+<hr>
+<h3>㈜콴텍투자일임 | 인프라·정보보호팀 인프라 엔지니어</h3>
+<strong>2022.08 ~ 2024.03 (1년 7개월)</strong> | AI 기반 주식투자 서비스
+<p>#### 주요 업무
+<ul><li>금융보안데이터센터(FSDC) 운영</li></ul>
+<ul><li>150대 이상 서버 및 스토리지 형상관리</li></ul>
+<ul><li>망분리 환경 내 DLP, DB 접근제어, VPN 정책 관리</li></ul>
+<ul><li>AWS 클라우드 보안(VPC, IAM, CloudTrail, GuardDuty) 구성</li></ul></p>
+<p>#### 주요 성과
+<ul><li>✅ <strong>자동화 효과</strong>: Python 스크립트로 반복 작업 자동화, 장애율 40% 감소 (월 10건 → 6건)</li></ul>
+<ul><li>✅ <strong>컴플라이언스</strong>: 금융감독원 정기 감사 통과, 개인정보 유출사고 0건 (19개월)</li></ul>
+<ul><li>✅ <strong>성능 최적화</strong>: DB 접근제어 쿼리 튜닝으로 CPU 사용률 30% 개선 (75% → 52%)</li></ul>
+<ul><li>✅ <strong>POC 성공</strong>: PB 플랫폼 구축 프로젝트 성능 검증 완료, 목표 대비 120% 달성</li></ul></p>
+<hr>
+<h3>㈜펀엔씨 | DevOps 엔지니어</h3>
+<strong>2022.05 ~ 2022.07 (3개월)</strong> | 클라우드 인프라
+<p>#### 주요 업무
+<ul><li>AWS 클라우드 아키텍처 구축 (EC2, Auto Scaling, VPC, Route 53, S3)</li></ul>
+<ul><li>Kubernetes 마이그레이션 사전 검토</li></ul>
+<ul><li>Python/Shell 기반 백업·복구 자동화</li></ul></p>
+<p>#### 주요 성과
+<ul><li>✅ <strong>복구 시간 개선</strong>: 백업/복구 자동화로 MTTR 50% 단축 (평균 2시간 → 1시간)</li></ul>
+<ul><li>✅ <strong>보안 강화</strong>: CI/CD 파이프라인에 보안 스캔 단계 추가, 취약점 조기 발견율 80%↑</li></ul>
+<ul><li>✅ <strong>정책 수립</strong>: 컨테이너 보안 정책 초안 작성 및 Kubernetes 마이그레이션 준비 완료</li></ul></p>
+<hr>
+<h3>㈜조인트리 | 인프라 엔지니어</h3>
+<strong>2021.09 ~ 2022.04 (8개월)</strong> | 국민대교 차세대 정보시스템 구축 프로젝트
+<p>#### 주요 업무
+<ul><li>Fortigate UTM 보안 네트워크 구축</li></ul>
+<ul><li>VMware NSX-T 기반 미세분할(Micro-segmentation) 구현</li></ul>
+<ul><li>물리서버 100대 + VM 200대 통합관리</li></ul></p>
+<p>#### 주요 성과
+<ul><li>✅ <strong>보안 강화</strong>: NSX-T 미세분할로 동서향 트래픽 차단, 랜섬웨어 확산 방어율 95%↑</li></ul>
+<ul><li>✅ <strong>운영 자동화</strong>: Fortigate 정책 자동화로 정책 배포 시간 60% 단축 (5시간 → 2시간)</li></ul>
+<ul><li>✅ <strong>사고 예방</strong>: UTM 로그분석 자동화로 악성IP 차단 성공률 90%↑, 보안사고 0건 (8개월)</li></ul></p>
+<hr>
+<h3>㈜메타엠 | 인프라 엔지니어</h3>
+<strong>2019.12 ~ 2021.08 (1년 8개월)</strong> | 대규모 재택근무 환경 구축
+<p>#### 주요 업무
+<ul><li>1,000명 규모 VPN 재택근무 환경 긴급 구축 (코로나19 대응)</li></ul>
+<ul><li>Fortigate SSL VPN + Ansible 자동 배포</li></ul>
+<ul><li>NAC 실시간 모니터링 및 위험 단말 격리</li></ul>
+<ul><li>네트워크 장애 대응 및 성능 최적화</li></ul></p>
+<p>#### 주요 성과
+<ul><li>✅ <strong>대규모 배포</strong>: Ansible로 VPN 클라이언트 1,000대 자동 배포 (3일 내 완료)</li></ul>
+<ul><li>✅ <strong>장애 해결</strong>: VPN-백신 충돌 문제 해결, 장애 문의 40% 감소 (일 50건 → 30건)</li></ul>
+<ul><li>✅ <strong>자동화</strong>: Python 네트워크 점검 스크립트로 점검시간 75% 단축 (8시간 → 2시간)</li></ul>
+<ul><li>✅ <strong>보안 강화</strong>: NAC 기반 위험 단말 실시간 격리로 내부 침해사고 0건 (20개월)</li></ul></p>
+<hr>
+<h3>㈜엠티데이타 | 서버 엔지니어</h3>
+<strong>2017.02 ~ 2018.10 (1년 8개월)</strong> | 한국항공우주산업(KAI) 서버 운영
+<p>#### 주요 업무
+<ul><li>Linux 서버 50대 운영관리 (보안패치, 계정관리, 권한설정)</li></ul>
+<ul><li>방화벽/IDS 로그분석 및 취약점 스캐닝</li></ul>
+<ul><li>Shell 스크립트 기반 방화벽 정책 버전관리 구축</li></ul></p>
+<p>#### 주요 성과
+<ul><li>✅ <strong>보안 강화</strong>: 취약점 스캐닝 및 패치 프로세스 정립, 보안사고 0건 (20개월)</li></ul>
+<ul><li>✅ <strong>운영 효율화</strong>: Shell 스크립트 방화벽 정책 버전관리, 정책 롤백 시간 90% 단축 (30분 → 3분)</li></ul>
+<ul><li>✅ <strong>트래픽 최적화</strong>: 방화벽 중복정책 30% 제거, 트래픽 처리 속도 15% 향상</li></ul></p>
+<hr>
+<h2>🎓 학력</h2>
+<h3>한양사이버대학교 | 컴퓨터공학과</h3>
+<strong>2024.03 ~ 재학중</strong>
+<h3>용남고등학교</h3>
+<strong>2013년 졸업</strong>
+<hr>
+<h2>📜 자격증</h2>
+<tr><td>자격증명</td><td>발행처</td><td>취득월</td></tr>
+<tr><td>---------</td><td>--------</td><td>--------</td></tr>
+<tr><td><strong>CCNP</strong></td><td>Cisco Systems</td><td>2020.08</td></tr>
+<tr><td><strong>사무자동화산업기사</strong></td><td>한국산업인력공단</td><td>2019.12</td></tr>
+<tr><td><strong>CompTIA Linux+</strong></td><td>CompTIA</td><td>2019.02</td></tr>
+<tr><td><strong>LPIC Level 1</strong></td><td>LINUX</td><td>2019.02</td></tr>
+<tr><td><strong>Red Hat Certified System Administrator (RHCSA)</strong></td><td>RED HAT</td><td>2019.01</td></tr>
+<tr><td><strong>(국가공인)리눅스마스터 2급</strong></td><td>(사)한국정보통신진흥협회</td><td>2019.01</td></tr>
+<hr>
+<h2>🌟 핵심 강점</h2>
+<h3>1. 검증된 Platform Engineering 역량</h3>
+<ul><li>✅ <strong>Prometheus + Grafana + Loki</strong>: 11개 대시보드 (121개 패널) Production 운영</li></ul>
+<ul><li>✅ <strong>초당 10만 이벤트 처리</strong>: 대용량 트래픽 검증 완료</li></ul>
+<ul><li>✅ <strong>99.9% 가용성 달성</strong>: 무중단 서비스 운영 경험</li></ul>
+<h3>2. 대규모 인프라 운영 경험</h3>
+<ul><li>✅ <strong>1,000대+ 단말 관리</strong>: VPN, NAC, DLP, EDR 통합 운영</li></ul>
+<ul><li>✅ <strong>150대+ 서버 관리</strong>: AWS, 금융 데이터센터 (FSDC)</li></ul>
+<ul><li>✅ <strong>15종+ 보안 솔루션</strong>: 통합 관제 및 정책 최적화</li></ul>
+<h3>3. 자동화 및 DevOps 역량</h3>
+<ul><li>✅ <strong>업무 시간 50~95% 단축</strong>: Python, Shell, Ansible 자동화</li></ul>
+<ul><li>✅ <strong>MTTR 70% 개선</strong>: 장애 대응 자동화 (60분 → 18분)</li></ul>
+<ul><li>✅ <strong>CI/CD 파이프라인</strong>: GitHub Actions 5개 파이프라인 운영</li></ul>
+<h3>4. 금융권 규제 대응 경험</h3>
+<ul><li>✅ <strong>금융감독원 감사 통과</strong>: 지적사항 0건 (4회 연속)</li></ul>
+<ul><li>✅ <strong>ISMS-P, ISO27001 준수</strong>: 컴플라이언스 100% 충족</li></ul>
+<ul><li>✅ <strong>보안사고 0건</strong>: 19개월 연속 무사고 운영</li></ul>
+<hr>
+<h2>📞 연락처</h2>
+<ul><li><strong>Email</strong>: qws941@kakao.com</li></ul>
+<ul><li><strong>Phone</strong>: 010-5757-9592</li></ul>
+<ul><li><strong>GitHub</strong>: <a href="https://github.com/qws941" target="_blank">github.com/qws941</a></li></ul>
+<ul><li><strong>Portfolio</strong>: <a href="https://resume.jclee.me" target="_blank">resume.jclee.me</a></li></ul>
+<hr>
+<p><strong>Last Updated</strong>: 2025년 9월 30일
+<strong>Version</strong>: 1.0.0</p>
+    </div>
+
+    <button class="print-button no-print" onclick="window.print()">🖨️ PDF 저장</button>
+
+    <script>
+        // Google Analytics (optional)
+        // Add your GA code here if needed
+    </script>
+</body>
+</html>

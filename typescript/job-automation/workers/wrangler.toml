@@ -1,0 +1,91 @@
+name = "job"
+main = "src/index.js"
+compatibility_date = "2024-10-03"
+account_id = "a8d9c67f586acdd15eebcc65ca3aa5bb"
+
+# D1 Database binding
+[[d1_databases]]
+binding = "DB"
+database_name = "job-dashboard-db"
+database_id = "c858dda6-b752-4e12-b60c-2886e9483cc7"
+
+# KV Namespace for sessions and cache
+[[kv_namespaces]]
+binding = "SESSIONS"
+id = "2b81b9b02dc34f518d2ca9552804bfef"
+
+# KV Namespace for rate limiting
+[[kv_namespaces]]
+binding = "RATE_LIMIT_KV"
+id = "fe51b0f1c2c44841b4895e8747cb408a"
+
+# KV Namespace for webhook nonce replay protection
+[[kv_namespaces]]
+binding = "NONCE_KV"
+id = "3e282b1b906c474aadcc947a06f0c1ad"
+
+# Environment variables
+[vars]
+ENVIRONMENT = "production"
+LOKI_URL = "https://grafana.jclee.me/api/datasources/proxy/uid/cfakfiakcs0zka/loki/api/v1/push"
+
+# Secrets (set via wrangler secret put)
+# ANTHROPIC_API_KEY
+# SLACK_TOKEN
+
+# Production routes
+[env.production]
+routes = [
+  { pattern = "job.jclee.me/*", zone_name = "jclee.me" }
+]
+
+[env.production.triggers]
+# 0 0 * * 1-5 = 00:00 UTC Mon-Fri = 09:00 KST (Job search + auto-apply)
+# 0 9 * * * = 09:00 UTC Daily = 18:00 KST (Daily report)
+crons = ["0 0 * * 1-5", "0 9 * * *"]
+
+[env.production.vars]
+ENVIRONMENT = "production"
+LOKI_URL = "https://grafana.jclee.me/api/datasources/proxy/uid/cfakfiakcs0zka/loki/api/v1/push"
+SLACK_CHANNEL = "C09TJUXC7Q8"
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "job-dashboard-db"
+database_id = "c858dda6-b752-4e12-b60c-2886e9483cc7"
+
+[[env.production.kv_namespaces]]
+binding = "SESSIONS"
+id = "2b81b9b02dc34f518d2ca9552804bfef"
+
+[[env.production.kv_namespaces]]
+binding = "RATE_LIMIT_KV"
+id = "fe51b0f1c2c44841b4895e8747cb408a"
+
+[[env.production.kv_namespaces]]
+binding = "NONCE_KV"
+id = "3e282b1b906c474aadcc947a06f0c1ad"
+
+# Staging environment
+[env.staging]
+name = "job-dashboard-staging"
+
+[env.staging.vars]
+ENVIRONMENT = "staging"
+
+[[env.staging.d1_databases]]
+binding = "DB"
+database_name = "job-dashboard-db"
+database_id = "c858dda6-b752-4e12-b60c-2886e9483cc7"
+
+[[env.staging.kv_namespaces]]
+binding = "SESSIONS"
+id = "2b81b9b02dc34f518d2ca9552804bfef"
+
+[[env.staging.kv_namespaces]]
+binding = "RATE_LIMIT_KV"
+id = "fe51b0f1c2c44841b4895e8747cb408a"
+
+[[env.staging.kv_namespaces]]
+binding = "NONCE_KV"
+id = "3e282b1b906c474aadcc947a06f0c1ad"
