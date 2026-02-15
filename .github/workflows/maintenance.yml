@@ -136,7 +136,7 @@ jobs:
     runs-on: ubuntu-latest
     if: inputs.job == 'drift-detection' || inputs.job == 'all' || github.event_name == 'schedule'
     env:
-      TF_VERSION: '1.6.0'
+      TF_VERSION: '1.10.5'
       TF_WORKING_DIR: 'infrastructure/cloudflare'
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
