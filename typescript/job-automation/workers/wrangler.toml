@@ -24,6 +24,16 @@ id = "fe51b0f1c2c44841b4895e8747cb408a"
 binding = "NONCE_KV"
 id = "3e282b1b906c474aadcc947a06f0c1ad"
 
+# Queue bindings for async task processing
+[[queues.producers]]
+binding = "CRAWL_TASKS"
+queue = "crawl-tasks"
+
+[[queues.consumers]]
+queue = "crawl-tasks"
+max_batch_size = 10
+max_retries = 5
+
 # Environment variables
 [vars]
 ENVIRONMENT = "production"
@@ -66,6 +76,15 @@ id = "fe51b0f1c2c44841b4895e8747cb408a"
 binding = "NONCE_KV"
 id = "3e282b1b906c474aadcc947a06f0c1ad"
 
+[[env.production.queues.producers]]
+binding = "CRAWL_TASKS"
+queue = "crawl-tasks"
+
+[[env.production.queues.consumers]]
+queue = "crawl-tasks"
+max_batch_size = 10
+max_retries = 5
+
 # Staging environment
 [env.staging]
 name = "job-dashboard-staging"
@@ -89,3 +108,12 @@ id = "fe51b0f1c2c44841b4895e8747cb408a"
 [[env.staging.kv_namespaces]]
 binding = "NONCE_KV"
 id = "3e282b1b906c474aadcc947a06f0c1ad"
+
+[[env.staging.queues.producers]]
+binding = "CRAWL_TASKS"
+queue = "crawl-tasks"
+
+[[env.staging.queues.consumers]]
+queue = "crawl-tasks"
+max_batch_size = 10
+max_retries = 5
