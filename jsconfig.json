@@ -47,7 +47,6 @@
     "typescript/portfolio-worker/src/scripts/modules/**",
     "typescript/job-automation/platforms/**",
     "tests/**",
-    ".wrangler",
-    "wanted-mcp"
+    ".wrangler"
   ]
 }

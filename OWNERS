@@ -5,7 +5,6 @@
 jclee@jclee.me
 
 # Build & Deploy
-per-file .gitlab-ci.yml = jclee@jclee.me
 per-file package.json = jclee@jclee.me
 per-file WORKSPACE = jclee@jclee.me
 per-file BUILD.bazel = jclee@jclee.me

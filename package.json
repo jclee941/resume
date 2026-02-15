@@ -11,7 +11,7 @@
     "typescript/data"
   ],
   "scripts": {
-    "strip-exif": "exiftool -all= -overwrite_original web/*.png web/*.webp 2>/dev/null || echo 'exiftool not found - skipping'",
+    "strip-exif": "exiftool -all= -overwrite_original typescript/portfolio-worker/src/images/*.png typescript/portfolio-worker/src/images/*.webp 2>/dev/null || echo 'exiftool not found - skipping'",
     "sync:data": "node tools/scripts/utils/sync-resume-data.js",
     "sync:pptx": "python3 tools/scripts/build/generate_shinhan_pptx.py",
     "sync:all": "npm run sync:data && npm run sync:pptx",
@@ -34,11 +34,11 @@
     "format:check": "prettier --check .",
     "dev": "miniflare --config tools/scripts/dev/miniflare.config.js",
     "dev:wrangler": "wrangler dev",
-    "deploy:wrangler": "npm run version:bump && npm run build:full && cd web && wrangler deploy",
+    "deploy:wrangler": "npm run version:bump && npm run build:full && cd typescript/portfolio-worker && wrangler deploy",
     "cli:install": "echo 'CLI is available via npm workspace. No action needed.'",
     "docker:build:dev": "docker build --target builder -t resume:dev .",
     "docker:run": "docker run -p 3000:3000 --env-file .docker.env resume:latest",
-    "docker:run:dev": "docker run -p 3000:3000 -e NODE_ENV=development -v $(pwd)/web:/app/web resume:latest",
+    "docker:run:dev": "docker run -p 3000:3000 -e NODE_ENV=development -v $(pwd)/typescript:/app/typescript resume:latest",
     "docker:compose": "docker-compose up -d",
     "docker:compose:dev": "NODE_ENV=development docker-compose up",
     "docker:compose:prod": "docker-compose --profile production up -d",

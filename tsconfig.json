@@ -18,5 +18,5 @@
     "noImplicitReturns": false,
     "noFallthroughCasesInSwitch": true
   },
-  "exclude": ["node_modules", "wanted-mcp/node_modules", "dist", "build", "coverage"]
+  "exclude": ["node_modules", "dist", "build", "coverage"]
 }

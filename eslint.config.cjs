@@ -47,15 +47,10 @@ module.exports = [
     ignores: [
       // Dependencies
       'node_modules/**',
-      'wanted-mcp/node_modules/**',
-      'eslint-results.txt',
 
       // Build outputs
       'typescript/portfolio-worker/worker.js', // Generated file (NEVER EDIT)
       'typescript/data/resumes/archive/docs/worker.js', // Legacy archive
-      'web/worker.js', // Old path (keep for compat)
-      'web/sentry-config.js', // Browser-embedded JavaScript
-      'web/sw.js', // Service worker
       '*.min.js',
       'dist/**',
       'build/**',
@@ -71,12 +66,8 @@ module.exports = [
       '**/.tmp/**',
       '**/tmp/**',
 
-      // Legacy/archive
-      'resumes/archive/**',
-
       // Wrangler
       '**/.wrangler/**',
-      '**/web/.wrangler/**',
 
       // Test artifacts
       'playwright-report/**',
@@ -87,11 +78,6 @@ module.exports = [
       '.cache/**',
       '**/pyright/**', // Python type checker
       '.serena/**', // Serena LSP
-
-      // Scripts with intentional unused vars
-      'wanted-mcp/scripts/auto-login.js',
-      'wanted-mcp/scripts/get-cookies.js',
-      'wanted-mcp/scripts/metrics-exporter.js',
     ],
   },
 ];
