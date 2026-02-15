@@ -65,7 +65,7 @@
     "puppeteer": "npm:rebrowser-puppeteer@^24.37.2"
   },
   "optionalDependencies": {
-    "@cloudflare/puppeteer": "^0.0.15"
+    "@cloudflare/puppeteer": "^1.0.6"
   },
   "devDependencies": {
     "better-sqlite3": "^12.6.0",
