@@ -18,8 +18,10 @@ test.describe('Portfolio UI', () => {
 
   test('should execute help command', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-    await page.locator('#terminal-input').fill('help');
-    await page.keyboard.press('Enter');
-    await expect(page.locator('.terminal-output')).toContainText('Available commands');
+    const cliInput = page.locator('#terminal-input');
+    await cliInput.fill('help');
+    await cliInput.press('Enter');
+    await page.waitForTimeout(500);
+    await expect(page.locator('#cli-output')).toContainText('Available commands');
   });
 });
