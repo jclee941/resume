@@ -60,7 +60,7 @@
     "mailparser": "^3.9.3",
     "node-fetch": "^3.3.2",
     "nodemailer": "^8.0.1",
-    "pino": "^10.3.0",
+    "pino": "^10.3.1",
     "pino-pretty": "^13.0.0",
     "puppeteer": "npm:rebrowser-puppeteer@^24.37.2"
   },
