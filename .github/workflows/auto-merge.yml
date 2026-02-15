@@ -1,0 +1,26 @@
+# Auto-merge: Enable squash auto-merge on PRs that pass required CI checks.
+# Covers: dependabot updates, owner PRs, and any PR with the 'auto-merge' label.
+# Requires branch protection rules with required status checks to gate the merge.
+name: Auto-Merge
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, labeled]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-merge:
+    runs-on: ubuntu-latest
+    if: >-
+      github.actor == 'dependabot[bot]' ||
+      github.actor == github.repository_owner ||
+      contains(github.event.pull_request.labels.*.name, 'auto-merge')
+    steps:
+      - name: Enable auto-merge (squash)
+        run: gh pr merge "$PR_NUMBER" --squash --auto
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

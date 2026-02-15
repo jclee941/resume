@@ -89,6 +89,30 @@ Runs on `self-hosted` (proxmox). Tests HashiCorp Vault OIDC JWT auth against 4 s
 
 Uses `actions/labeler@v6` with sync-labels. Triggers on PR open/sync/reopen.
 
+### auto-merge.yml — Auto-Merge
+
+Enables squash auto-merge on PRs from:
+
+- **dependabot[bot]** — Automated dependency updates
+- **Repository owner** — Owner PRs
+- **`auto-merge` label** — Any PR with the label
+
+**Requires branch protection** with required status checks to gate merges. Without it, PRs merge immediately.
+
+#### Branch Protection Setup (ONE-TIME, manual)
+
+Go to **GitHub → Settings → Branches → Add branch protection rule**:
+
+| Setting                           | Value                                                |
+| --------------------------------- | ---------------------------------------------------- |
+| Branch name pattern               | `master`                                             |
+| Require status checks             | ✅ `lint`, `typecheck`, `test-unit`, `security-scan` |
+| Require branches to be up-to-date | ✅                                                   |
+| Require conversation resolution   | Optional                                             |
+| Allow auto-merge                  | ✅ (already enabled at repo level)                   |
+| Allow force pushes                | ❌                                                   |
+| Allow deletions                   | ❌                                                   |
+
 ## COMPOSITE ACTION
 
 ### actions/setup/action.yml
@@ -143,17 +167,18 @@ Weekly updates (Monday, Asia/Seoul TZ):
 
 ## FILES
 
-| File                             | Purpose                            |
-| -------------------------------- | ---------------------------------- |
-| `workflows/ci.yml`               | Primary CI/CD pipeline (13 jobs)   |
-| `workflows/maintenance.yml`      | 4 scheduled maintenance jobs       |
-| `workflows/terraform.yml`        | IaC plan/apply/destroy             |
-| `workflows/release.yml`          | Auto semver release                |
-| `workflows/verify.yml`           | Deployment health check            |
-| `workflows/update-snapshots.yml` | Playwright visual snapshot update  |
-| `workflows/vault-test.yml`       | Vault OIDC integration test        |
-| `workflows/pr-labeler.yml`       | Auto PR labeling                   |
-| `actions/setup/action.yml`       | Composite: Node + npm + Playwright |
-| `CODEOWNERS`                     | PR reviewer assignment             |
-| `labeler.yml`                    | Path-based label rules             |
-| `dependabot.yml`                 | Dependency update config           |
+| File                             | Purpose                              |
+| -------------------------------- | ------------------------------------ |
+| `workflows/ci.yml`               | Primary CI/CD pipeline (13 jobs)     |
+| `workflows/maintenance.yml`      | 4 scheduled maintenance jobs         |
+| `workflows/terraform.yml`        | IaC plan/apply/destroy               |
+| `workflows/release.yml`          | Auto semver release                  |
+| `workflows/verify.yml`           | Deployment health check              |
+| `workflows/update-snapshots.yml` | Playwright visual snapshot update    |
+| `workflows/vault-test.yml`       | Vault OIDC integration test          |
+| `workflows/pr-labeler.yml`       | Auto PR labeling                     |
+| `workflows/auto-merge.yml`       | Squash auto-merge for CI-passing PRs |
+| `actions/setup/action.yml`       | Composite: Node + npm + Playwright   |
+| `CODEOWNERS`                     | PR reviewer assignment               |
+| `labeler.yml`                    | Path-based label rules               |
+| `dependabot.yml`                 | Dependency update config             |
