@@ -86,7 +86,7 @@ test.describe('Dashboard - Authentication', () => {
     expect(json).toHaveProperty('error');
   });
 
-  test('POST /api/auth/logout should clear auth cookie', async ({ request, context }) => {
+  test('POST /api/auth/logout should clear auth cookie', async ({ request, context: _context }) => {
     test.skip(!backendAvailable, 'Dashboard backend unavailable');
     const response = await request.post(`${DASHBOARD_BASE}/api/auth/logout`);
     expect(response.status()).toBe(200);

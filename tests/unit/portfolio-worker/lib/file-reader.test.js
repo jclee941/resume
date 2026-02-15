@@ -3,7 +3,7 @@
  * @description Tests for getFilesToRead, bundleMainScript, bundleCss, readBuildInputs
  */
 
-const path = require('path');
+const _path = require('path');
 
 // Mock esbuild
 jest.mock('esbuild', () => ({

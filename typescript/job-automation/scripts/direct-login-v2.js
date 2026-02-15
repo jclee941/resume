@@ -15,11 +15,8 @@ const PASSWORD = process.env.WANTED_PASSWORD;
 if (!PASSWORD) {
   throw new Error('WANTED_PASSWORD environment variable is not set');
 }
-const SESSION_FILE = path.join(
-  process.env.HOME,
-  '.opencode/data/sessions.json',
-);
-const SCREENSHOT_DIR = '/tmp';
+const SESSION_FILE = path.join(process.env.HOME, '.opencode/data/sessions.json');
+const _SCREENSHOT_DIR = '/tmp';
 
 async function sleep(ms) {
   const random = Math.floor(Math.random() * 500);
@@ -42,7 +39,7 @@ async function saveSession(cookies, email) {
     if (fs.existsSync(SESSION_FILE)) {
       existingSessions = JSON.parse(fs.readFileSync(SESSION_FILE, 'utf8'));
     }
-  } catch (e) {}
+  } catch (_e) {}
 
   const mergedSessions = { ...existingSessions, ...session };
   fs.mkdirSync(path.dirname(SESSION_FILE), { recursive: true });
@@ -89,17 +86,15 @@ async function run() {
     try {
       const emailBtn = await page.waitForSelector(
         'button[data-testid*="email"], button:has-text("이메일")',
-        { timeout: 5000 },
+        { timeout: 5000 }
       );
       if (emailBtn) {
         console.log('Found Email button, clicking...');
         await emailBtn.click();
         await sleep(2000);
       }
-    } catch (e) {
-      console.log(
-        'Email button not found, checking if input is already present...',
-      );
+    } catch (_e) {
+      console.log('Email button not found, checking if input is already present...');
     }
 
     // 2. Type Email slowly
@@ -151,7 +146,7 @@ async function run() {
     } else {
       console.error('⚠️ Login might have failed. Check screenshot.');
     }
-  } catch (e) {
+  } catch (_e) {
     console.error('❌ Error:', e);
     await page.screenshot({ path: '/tmp/wanted-v2-error.png' });
   } finally {

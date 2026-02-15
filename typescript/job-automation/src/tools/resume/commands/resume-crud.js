@@ -1,4 +1,4 @@
-export async function list_resumes(api, params) {
+export async function list_resumes(api, _params) {
   const resumes = await api.getResumeList();
   return { success: true, resumes };
 }

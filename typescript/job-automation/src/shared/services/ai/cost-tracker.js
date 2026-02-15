@@ -6,7 +6,7 @@
  * @module ai/cost-tracker
  */
 
-const COST_PREFIX = 'ai-cost:';
+const _COST_PREFIX = 'ai-cost:';
 const DAILY_KEY_FORMAT = 'ai-cost:daily:';
 const MONTHLY_KEY_FORMAT = 'ai-cost:monthly:';
 
@@ -78,7 +78,7 @@ export class CostTracker {
    * Persist usage to KV and check budget alerts.
    * @private
    */
-  async _persistAndCheck(cost, tokens, provider, model) {
+  async _persistAndCheck(cost, tokens, provider, _model) {
     const now = new Date();
     const dailyKey = `${DAILY_KEY_FORMAT}${now.toISOString().slice(0, 10)}`;
     const monthlyKey = `${MONTHLY_KEY_FORMAT}${now.toISOString().slice(0, 7)}`;

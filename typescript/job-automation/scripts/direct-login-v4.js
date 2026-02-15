@@ -16,10 +16,7 @@ if (!PASSWORD) {
   throw new Error('WANTED_PASSWORD environment variable is not set');
 }
 console.log(`📧 Using email: ${EMAIL}`);
-const SESSION_FILE = path.join(
-  process.env.HOME,
-  '.opencode/data/sessions.json',
-);
+const SESSION_FILE = path.join(process.env.HOME, '.opencode/data/sessions.json');
 
 async function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -41,7 +38,7 @@ async function saveSession(cookies, email) {
     if (fs.existsSync(SESSION_FILE)) {
       existingSessions = JSON.parse(fs.readFileSync(SESSION_FILE, 'utf8'));
     }
-  } catch (e) {}
+  } catch (_e) {}
 
   const mergedSessions = { ...existingSessions, ...session };
   fs.mkdirSync(path.dirname(SESSION_FILE), { recursive: true });
@@ -69,7 +66,7 @@ async function run() {
 
     // Set standard User Agent
     await page.setUserAgent(
-      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
     );
 
     console.log('📍 Navigating...');
@@ -87,8 +84,7 @@ async function run() {
       const emailBtnFound = await page.evaluate(() => {
         const buttons = Array.from(document.querySelectorAll('button'));
         const target = buttons.find(
-          (b) =>
-            b.innerText.includes('이메일') || b.innerText.includes('Email'),
+          (b) => b.innerText.includes('이메일') || b.innerText.includes('Email')
         );
         if (target) {
           target.click();
@@ -101,9 +97,7 @@ async function run() {
         console.log('✅ Clicked "이메일" button');
         await sleep(2000);
       } else {
-        console.log(
-          '⚠️ "이메일" button not found, checking if input is already visible...',
-        );
+        console.log('⚠️ "이메일" button not found, checking if input is already visible...');
       }
     } catch (e) {
       console.log('Error clicking button:', e.message);

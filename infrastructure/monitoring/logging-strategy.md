@@ -42,8 +42,8 @@ Two logging backends operate in parallel with overlapping responsibilities:
 
 ### Migration Steps
 
-1. **Audit all `logToLoki()` call sites** — determine if they duplicate ES writes
-2. **Remove duplicate Loki writes** from application routes (keep ES as single app log sink)
+1. ~~**Audit all `logToLoki()` call sites**~~ ✅ Done (2026-02-16): `logToLoki()` was never called from any route. Dead code.
+2. ~~**Remove duplicate Loki writes**~~ ✅ Done (2026-02-16): Deleted `loki-logger.js` (dead code). ES is sole app log sink.
 3. **Ensure traceId** is present in ALL ES log entries (enables Trace-to-Logs)
 4. **Configure Grafana Explore** to query both ES and Loki with traceId correlation
 5. **Update Grafana alert rules** that query Loki for app logs → point to ES instead
@@ -51,8 +51,8 @@ Two logging backends operate in parallel with overlapping responsibilities:
 
 ### Success Criteria
 
-- [ ] Zero dual-write log events (each event goes to exactly ONE backend)
+- [x] Zero dual-write log events (each event goes to exactly ONE backend)
 - [ ] All application logs in ES with traceId field
 - [ ] Grafana Explore can jump from trace → ES log → Loki infra log
 - [ ] `resume_error_log_spike` alert queries ES (not Loki) for app errors
-- [ ] Loki receives only infrastructure/ops logs (not application request logs)
+- [x] Loki receives only infrastructure/ops logs (not application request logs)

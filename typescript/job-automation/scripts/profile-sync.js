@@ -29,14 +29,8 @@ import WantedClient from '../workers/src/services/wanted-client.js';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const CONFIG = {
-  SSOT_PATH: path.resolve(
-    __dirname,
-    '../../data/resumes/master/resume_data.json',
-  ),
-  USER_DATA_DIR: path.join(
-    process.env.HOME || '/tmp',
-    '.opencode/browser-data',
-  ),
+  SSOT_PATH: path.resolve(__dirname, '../../data/resumes/master/resume_data.json'),
+  USER_DATA_DIR: path.join(process.env.HOME || '/tmp', '.opencode/browser-data'),
   SESSION_DIR: path.join(process.env.HOME || '/tmp', '.opencode/data'),
   HEADLESS: process.argv.includes('--headless'),
   APPLY: process.argv.includes('--apply'),
@@ -102,9 +96,7 @@ const PLATFORMS = {
 
 function log(msg, type = 'info', platform = null) {
   const prefix =
-    { info: 'INFO', success: 'OK', warn: 'WARN', error: 'ERR', diff: 'DIFF' }[
-      type
-    ] || 'LOG';
+    { info: 'INFO', success: 'OK', warn: 'WARN', error: 'ERR', diff: 'DIFF' }[type] || 'LOG';
   const tag = platform ? `[${platform.toUpperCase()}]` : '';
   console.log(`${new Date().toISOString()} [${prefix}] ${tag} ${msg}`);
 }
@@ -130,7 +122,7 @@ function toE164(phone) {
   return phone;
 }
 
-function toKoreanPhone(phone) {
+function _toKoreanPhone(phone) {
   if (!phone) return '';
   let digits = phone.replace(/^\+82/, '0').replace(/\D/g, '');
   if (digits.length === 11) {
@@ -252,7 +244,7 @@ async function applyChanges(page, platform, changes) {
 
     // Look for save button
     const saveButton = await page.$(
-      'button[type="submit"], .btn-save, .save-btn, [data-testid="save"]',
+      'button[type="submit"], .btn-save, .save-btn, [data-testid="save"]'
     );
     if (saveButton) {
       await saveButton.click();
@@ -308,15 +300,11 @@ async function syncWantedSkills(api, ssot, profile) {
   log(
     `Skills: ${diff.unchanged.length} unchanged, ${diff.toAdd.length} to add, ${diff.toDelete.length} to delete`,
     'info',
-    'wanted',
+    'wanted'
   );
 
   if (diff.unmapped.length > 0) {
-    log(
-      `Unmapped skills (no tagTypeId): ${diff.unmapped.join(', ')}`,
-      'warn',
-      'wanted',
-    );
+    log(`Unmapped skills (no tagTypeId): ${diff.unmapped.join(', ')}`, 'warn', 'wanted');
   }
 
   if (!CONFIG.APPLY || CONFIG.DIFF_ONLY) {
@@ -429,13 +417,12 @@ function mapCareerToWanted(career) {
   const { startsAt, endsAt } = parsePeriod(career.period);
 
   // Lookup job_category_id from mapping
-  const jobCategoryId =
-    JOB_CATEGORY_MAPPING[career.role] || DEFAULT_JOB_CATEGORY;
+  const jobCategoryId = JOB_CATEGORY_MAPPING[career.role] || DEFAULT_JOB_CATEGORY;
   if (!JOB_CATEGORY_MAPPING[career.role]) {
     console.log(
       chalk.yellow(
-        `⚠️  Unknown role "${career.role}" - using default category ${DEFAULT_JOB_CATEGORY}`,
-      ),
+        `⚠️  Unknown role "${career.role}" - using default category ${DEFAULT_JOB_CATEGORY}`
+      )
     );
   }
 
@@ -475,7 +462,7 @@ async function syncWantedCareers(client, ssot, profile, resumeId) {
   log(
     `Careers: SSOT has ${ssotCareers.length}, Wanted has ${wantedCareers.length}`,
     'info',
-    'wanted',
+    'wanted'
   );
 
   const toUpdate = [];
@@ -483,9 +470,7 @@ async function syncWantedCareers(client, ssot, profile, resumeId) {
   const matched = new Set();
 
   for (const ssotCareer of ssotCareers) {
-    const ssotCompanyNormalized = ssotCareer.company
-      .replace(/\(주\)/g, '')
-      .trim();
+    const ssotCompanyNormalized = ssotCareer.company.replace(/\(주\)/g, '').trim();
 
     const wantedCareer = wantedCareers.find((w) => {
       const companyName = w.company?.name || '';
@@ -506,11 +491,7 @@ async function syncWantedCareers(client, ssot, profile, resumeId) {
     }
   }
 
-  log(
-    `Careers: ${toUpdate.length} to override, ${toAdd.length} to add`,
-    'info',
-    'wanted',
-  );
+  log(`Careers: ${toUpdate.length} to override, ${toAdd.length} to add`, 'info', 'wanted');
 
   if (!CONFIG.APPLY || CONFIG.DIFF_ONLY) {
     for (const item of toUpdate) {
@@ -534,11 +515,7 @@ async function syncWantedCareers(client, ssot, profile, resumeId) {
       log(`Updated career: ${item.ssot.company}`, 'success', 'wanted');
       updated++;
     } catch (e) {
-      log(
-        `Failed to update ${item.ssot.company}: ${e.message}`,
-        'error',
-        'wanted',
-      );
+      log(`Failed to update ${item.ssot.company}: ${e.message}`, 'error', 'wanted');
     }
   }
 
@@ -549,11 +526,7 @@ async function syncWantedCareers(client, ssot, profile, resumeId) {
       log(`Added career: ${item.ssot.company}`, 'success', 'wanted');
       added++;
     } catch (e) {
-      log(
-        `Failed to add ${item.ssot.company}: ${e.message}`,
-        'error',
-        'wanted',
-      );
+      log(`Failed to add ${item.ssot.company}: ${e.message}`, 'error', 'wanted');
     }
   }
 
@@ -571,16 +544,10 @@ async function syncWantedEducations(client, ssot, profile, resumeId) {
   const ssotEducation = ssot.education;
   const wantedEducations = profile.educations || [];
 
-  log(
-    `Education: SSOT has 1, Wanted has ${wantedEducations.length}`,
-    'info',
-    'wanted',
-  );
+  log(`Education: SSOT has 1, Wanted has ${wantedEducations.length}`, 'info', 'wanted');
 
   // Find matching education by school name
-  const wantedEdu = wantedEducations.find(
-    (w) => w.name && w.name.includes(ssotEducation.school),
-  );
+  const wantedEdu = wantedEducations.find((w) => w.name && w.name.includes(ssotEducation.school));
 
   const ssotData = {
     school_name: ssotEducation.school,
@@ -628,7 +595,7 @@ async function syncWantedActivities(client, ssot, profile, resumeId) {
   log(
     `Activities: SSOT has ${ssotCerts.length} certs, Wanted has ${wantedActivities.length}`,
     'info',
-    'wanted',
+    'wanted'
   );
 
   const toAdd = [];
@@ -636,9 +603,7 @@ async function syncWantedActivities(client, ssot, profile, resumeId) {
 
   for (const cert of ssotCerts) {
     // Find matching activity by title
-    const existing = wantedActivities.find(
-      (w) => w.title && w.title.includes(cert.name),
-    );
+    const existing = wantedActivities.find((w) => w.title && w.title.includes(cert.name));
 
     if (existing) {
       matched.add(existing.id);
@@ -655,11 +620,7 @@ async function syncWantedActivities(client, ssot, profile, resumeId) {
     }
   }
 
-  log(
-    `Activities: ${matched.size} matched, ${toAdd.length} to add`,
-    'info',
-    'wanted',
-  );
+  log(`Activities: ${matched.size} matched, ${toAdd.length} to add`, 'info', 'wanted');
 
   if (!CONFIG.APPLY || CONFIG.DIFF_ONLY) {
     for (const item of toAdd) {
@@ -699,7 +660,7 @@ async function syncWantedAbout(client, ssot, resumeDetail, resumeId) {
   log(
     `About: "${wantedAbout.slice(0, 30)}..." -> "${ssotAbout.slice(0, 30)}..."`,
     'diff',
-    'wanted',
+    'wanted'
   );
 
   if (!CONFIG.APPLY || CONFIG.DIFF_ONLY) {
@@ -767,11 +728,7 @@ async function syncWantedViaAPI(ssot) {
 
   const cookieString = loadWantedSession();
   if (!cookieString) {
-    log(
-      'No saved session - run auth-persistent.js wanted first',
-      'error',
-      'wanted',
-    );
+    log('No saved session - run auth-persistent.js wanted first', 'error', 'wanted');
     return { success: false, changes: [] };
   }
 
@@ -833,12 +790,7 @@ async function syncWantedViaAPI(ssot) {
         });
       }
 
-      const careersResult = await syncWantedCareers(
-        client,
-        ssot,
-        profile,
-        resumeId,
-      );
+      const careersResult = await syncWantedCareers(client, ssot, profile, resumeId);
       if (careersResult.added > 0 || careersResult.updated > 0) {
         changes.push({
           field: 'careers',
@@ -847,12 +799,7 @@ async function syncWantedViaAPI(ssot) {
         });
       }
 
-      const educationsResult = await syncWantedEducations(
-        client,
-        ssot,
-        profile,
-        resumeId,
-      );
+      const educationsResult = await syncWantedEducations(client, ssot, profile, resumeId);
       if (educationsResult.added > 0 || educationsResult.updated > 0) {
         changes.push({
           field: 'educations',
@@ -861,12 +808,7 @@ async function syncWantedViaAPI(ssot) {
         });
       }
 
-      const activitiesResult = await syncWantedActivities(
-        client,
-        ssot,
-        profile,
-        resumeId,
-      );
+      const activitiesResult = await syncWantedActivities(client, ssot, profile, resumeId);
       if (activitiesResult.added > 0 || activitiesResult.updated > 0) {
         changes.push({
           field: 'activities',
@@ -877,12 +819,7 @@ async function syncWantedViaAPI(ssot) {
 
       const resumeDetail = await client.getResumeDetail(resumeId);
 
-      const aboutResult = await syncWantedAbout(
-        client,
-        ssot,
-        resumeDetail?.resume,
-        resumeId,
-      );
+      const aboutResult = await syncWantedAbout(client, ssot, resumeDetail?.resume, resumeId);
       if (aboutResult.updated > 0) {
         changes.push({ field: 'about', from: 'old', to: 'updated' });
       }
@@ -891,17 +828,13 @@ async function syncWantedViaAPI(ssot) {
         client,
         ssot,
         resumeDetail?.resume,
-        resumeId,
+        resumeId
       );
       if (contactResult.updated > 0) {
         changes.push({ field: 'contact', from: 'old', to: 'updated' });
       }
     } else {
-      log(
-        'No resumeId found - skipping career/education/activity sync',
-        'warn',
-        'wanted',
-      );
+      log('No resumeId found - skipping career/education/activity sync', 'warn', 'wanted');
     }
 
     const dryRun = !CONFIG.APPLY || CONFIG.DIFF_ONLY;
@@ -917,11 +850,7 @@ async function syncPlatformViaBrowser(platformKey, ssot) {
 
   const userDataDir = path.join(CONFIG.USER_DATA_DIR, platformKey);
   if (!fs.existsSync(userDataDir)) {
-    log(
-      `No saved session - run auth-persistent.js ${platformKey} first`,
-      'error',
-      platformKey,
-    );
+    log(`No saved session - run auth-persistent.js ${platformKey} first`, 'error', platformKey);
     return { success: false, changes: [] };
   }
 
@@ -1023,9 +952,7 @@ async function main() {
     const status = result.success ? 'OK' : 'FAIL';
     const changes = result.changes?.length || 0;
     const mode = result.dryRun ? '(dry-run)' : '';
-    console.log(
-      `  ${platform.padEnd(12)} ${status.padEnd(6)} ${changes} changes ${mode}`,
-    );
+    console.log(`  ${platform.padEnd(12)} ${status.padEnd(6)} ${changes} changes ${mode}`);
   }
 
   if (!CONFIG.APPLY) {

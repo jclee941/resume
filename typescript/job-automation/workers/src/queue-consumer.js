@@ -1,4 +1,3 @@
-import Logger from '../../src/shared/logger/index.js';
 import { normalizeError } from '../../src/shared/errors/index.js';
 
 /**
@@ -176,7 +175,7 @@ export class QueueConsumer {
    * @param {import('@cloudflare/workers-types').ExecutionContext} ctx
    * @private
    */
-  async _handleCrawl(payload, ctx) {
+  async _handleCrawl(payload, _ctx) {
     const instance = await this.env.JOB_CRAWLING_WORKFLOW.create({
       params: {
         platforms: payload.platforms || ['wanted'],
@@ -199,7 +198,7 @@ export class QueueConsumer {
    * @param {import('@cloudflare/workers-types').ExecutionContext} ctx
    * @private
    */
-  async _handleApply(payload, ctx) {
+  async _handleApply(payload, _ctx) {
     const instance = await this.env.APPLICATION_WORKFLOW.create({
       params: {
         jobId: payload.jobId,
@@ -223,7 +222,7 @@ export class QueueConsumer {
    * @param {import('@cloudflare/workers-types').ExecutionContext} ctx
    * @private
    */
-  async _handleSync(payload, ctx) {
+  async _handleSync(payload, _ctx) {
     const instance = await this.env.RESUME_SYNC_WORKFLOW.create({
       params: {
         sections: payload.sections || ['all'],
@@ -244,7 +243,7 @@ export class QueueConsumer {
    * @param {import('@cloudflare/workers-types').ExecutionContext} ctx
    * @private
    */
-  async _handleReport(payload, ctx) {
+  async _handleReport(payload, _ctx) {
     const instance = await this.env.DAILY_REPORT_WORKFLOW.create({
       params: {
         type: payload.reportType || 'daily',
@@ -265,7 +264,7 @@ export class QueueConsumer {
    * @param {import('@cloudflare/workers-types').ExecutionContext} ctx
    * @private
    */
-  async _handleCleanup(payload, ctx) {
+  async _handleCleanup(payload, _ctx) {
     const instance = await this.env.CLEANUP_WORKFLOW.create({
       params: {
         retentionDays: payload.retentionDays || 30,

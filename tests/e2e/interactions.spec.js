@@ -1,6 +1,6 @@
 // @ts-check
 const { test, expect } = require('@playwright/test');
-const { navigateToSection } = require('./fixtures/helpers');
+require('./fixtures/helpers');
 
 test.describe('Smooth Scroll Behavior', () => {
   test.beforeEach(async ({ page }) => {

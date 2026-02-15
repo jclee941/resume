@@ -127,7 +127,7 @@ async function waitForAnimation(page, selector, options = {}) {
  * @returns {Promise<void>}
  */
 async function setViewportAndVerify(page, options = {}) {
-  const { width, height, breakpointName = 'custom' } = options;
+  const { width, height, breakpointName: _breakpointName = 'custom' } = options;
 
   await page.setViewportSize({ width, height });
   await page.waitForTimeout(100); // Wait for layout to recalculate

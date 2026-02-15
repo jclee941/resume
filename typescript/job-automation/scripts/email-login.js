@@ -16,17 +16,11 @@ puppeteer.use(StealthPlugin());
 // Configuration
 const CONFIG = {
   email: 'qwer941a@gmail.com',
-  password: (process.env.GOOGLE_APP_PASSWORD || 'pijjtjqoxfpghckk').replace(
-    /\s/g,
-    '',
-  ),
+  password: (process.env.GOOGLE_APP_PASSWORD || 'pijjtjqoxfpghckk').replace(/\s/g, ''),
   sessionFile: path.join(process.env.HOME, '.opencode/data/sessions.json'),
   imap: {
     user: 'qwer941a@gmail.com',
-    password: (process.env.GOOGLE_APP_PASSWORD || 'pijjtjqoxfpghckk').replace(
-      /\s/g,
-      '',
-    ),
+    password: (process.env.GOOGLE_APP_PASSWORD || 'pijjtjqoxfpghckk').replace(/\s/g, ''),
     host: 'imap.gmail.com',
     port: 993,
     tls: true,
@@ -34,13 +28,13 @@ const CONFIG = {
   },
 };
 
-const SCREENSHOT_DIR = '/tmp';
+const _SCREENSHOT_DIR = '/tmp';
 
 async function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function getLatestEmailLink() {
+async function _getLatestEmailLink() {
   console.log('📧 Connecting to Gmail IMAP...');
   const connection = await imaps.connect(CONFIG.imap);
 
@@ -124,9 +118,7 @@ async function getMagicLink() {
         const from = header.body.from ? header.body.from[0] : '';
         const subject = header.body.subject ? header.body.subject[0] : '';
         return (
-          from.includes('wanted') ||
-          subject.includes('인증') ||
-          subject.includes('Verification')
+          from.includes('wanted') || subject.includes('인증') || subject.includes('Verification')
         );
       });
 
@@ -136,19 +128,14 @@ async function getMagicLink() {
         const latest = wantedMessages[wantedMessages.length - 1];
 
         // Fetch full body
-        const parts = await connection.getParts(
-          latest.attributes.uid,
-          ['TEXT'],
-          { markSeen: true },
-        );
+        const _parts = await connection.getParts(latest.attributes.uid, ['TEXT'], {
+          markSeen: true,
+        });
         // Depending on structure, might be parts[0].body
         // Use simpleParser to be sure if we fetch whole source
 
         // Let's fetch the WHOLE message for the latest one to parse properly
-        const fullMsg = await connection.search(
-          [['UID', latest.attributes.uid]],
-          { bodies: [''] },
-        );
+        const fullMsg = await connection.search([['UID', latest.attributes.uid]], { bodies: [''] });
         const raw = fullMsg[0].parts[0].body;
 
         const parsed = await simpleParser(raw);
@@ -157,9 +144,7 @@ async function getMagicLink() {
         // Look for the verification button link
         // Usually https://id.wanted.jobs/verify/... or similar
         // Or "로그인하기" link
-        const linkMatch = text.match(
-          /https:\/\/id\.wanted\.jobs\/verify[^\s"']+/,
-        );
+        const linkMatch = text.match(/https:\/\/id\.wanted\.jobs\/verify[^\s"']+/);
 
         if (linkMatch) {
           console.log('🔗 Extracted Link:', linkMatch[0]);
@@ -176,7 +161,7 @@ async function getMagicLink() {
 
     connection.end();
     throw new Error('Timeout waiting for email');
-  } catch (e) {
+  } catch (_e) {
     console.error('IMAP Error:', e);
     throw e;
   }
@@ -197,11 +182,9 @@ async function saveSession(cookies, email) {
   let existingSessions = {};
   try {
     if (fs.existsSync(CONFIG.sessionFile)) {
-      existingSessions = JSON.parse(
-        fs.readFileSync(CONFIG.sessionFile, 'utf8'),
-      );
+      existingSessions = JSON.parse(fs.readFileSync(CONFIG.sessionFile, 'utf8'));
     }
-  } catch (e) {}
+  } catch (_e) {}
 
   const mergedSessions = { ...existingSessions, ...session };
 
@@ -239,7 +222,7 @@ async function run() {
     // 2. Click "Continue with Email"
     console.log('🖱️ Clicking "Continue with Email"...');
     // The button might have text "이메일로 계속하기" or similar
-    const emailBtnSelector =
+    const _emailBtnSelector =
       'button[data-testid="email-login"], button:has-text("이메일"), [id*="email"]';
 
     // Wait and Click
@@ -258,7 +241,7 @@ async function run() {
         }
       }
       if (!clicked) throw new Error('Email button not found');
-    } catch (e) {
+    } catch (_e) {
       console.log('Fallback selector for email button');
       await page.click('button:last-child'); // Fallback: usually the last option
     }

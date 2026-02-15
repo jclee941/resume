@@ -1,0 +1,21 @@
+# Elasticsearch datasource for Resume Worker application logs
+# Index pattern: resume-logs-* (flat schema, NOT ECS)
+#
+# To apply: Copy to Grafana provisioning directory
+#   cp elasticsearch-resume.yml /path/to/grafana/provisioning/datasources/
+#   Restart Grafana to pick up changes
+apiVersion: 1
+
+datasources:
+  - name: Elasticsearch-Resume
+    type: elasticsearch
+    access: proxy
+    url: http://192.168.50.105:9200
+    database: resume-logs-*
+    isDefault: false
+    jsonData:
+      esVersion: '8.0.0'
+      logLevelField: level
+      logMessageField: message
+      timeField: '@timestamp'
+    editable: true

@@ -4,10 +4,7 @@
 (function initSentry() {
   // Sentry DSN - replace with your actual DSN from sentry.io
   // For now, using a placeholder (set SENTRY_DSN in environment)
-  const SENTRY_DSN =
-    typeof SENTRY_DSN_PLACEHOLDER !== 'undefined'
-      ? SENTRY_DSN_PLACEHOLDER
-      : null;
+  const SENTRY_DSN = typeof SENTRY_DSN_PLACEHOLDER !== 'undefined' ? SENTRY_DSN_PLACEHOLDER : null;
 
   if (!SENTRY_DSN) {
     console.log('Sentry DSN not configured - error tracking disabled');
@@ -22,8 +19,7 @@
     environment: (() => {
       const hostname = window.location.hostname;
       if (hostname === 'resume.jclee.me') return 'production';
-      if (hostname.includes('staging') || hostname.includes('workers.dev'))
-        return 'staging';
+      if (hostname.includes('staging') || hostname.includes('workers.dev')) return 'staging';
       return 'development';
     })(),
 
@@ -54,15 +50,10 @@
     ],
 
     // Deny URLs (don't report errors from these sources)
-    denyUrls: [
-      /extensions\//i,
-      /^chrome:\/\//i,
-      /^moz-extension:\/\//i,
-      /cloudflare\.com/i,
-    ],
+    denyUrls: [/extensions\//i, /^chrome:\/\//i, /^moz-extension:\/\//i, /cloudflare\.com/i],
 
     // Before send hook - filter out PII
-    beforeSend(event, hint) {
+    beforeSend(event, _hint) {
       // Remove user IP address
       if (event.user) {
         delete event.user.ip_address;

@@ -29,7 +29,7 @@ export default class BrowserHandler {
    * @param {import('playwright').Page} page - Playwright page
    * @returns {Promise<Object|null>} Profile data or null if failed
    */
-  async extractProfile(page) {
+  async extractProfile(_page) {
     throw new Error(`extractProfile() must be overridden by ${this.platformKey} handler`);
   }
 

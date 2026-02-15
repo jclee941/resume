@@ -6,12 +6,12 @@
 
 ## OVERVIEW
 
-High-performance, stateless modules for the Portfolio build engine and edge runtime. Handles static asset inlining, security (CSP), observability (Loki/Prometheus), and experiment orchestration (A/B testing).
+High-performance, stateless modules for the Portfolio build engine and edge runtime. Handles static asset inlining, security (CSP), observability (ES/Prometheus), and experiment orchestration (A/B testing).
 
 ## STRUCTURE
 
 - `security-headers.js`: HSTS, XSS protection, and dynamic CSP generation with SHA-256 hashes.
-- `loki-logger.js`: Lightweight JSON logger for Grafana Loki integration (fire-and-forget).
+- `es-logger.js`: Flat-schema Elasticsearch logger via CF Access auth (fire-and-forget, always-immediate).
 - `metrics.js` / `performance-metrics.js`: Prometheus exposition and Core Web Vitals tracking.
 - `ab-testing.js`: Persistent variant assignment and conversion tracking.
 - `cards.js` / `templates.js`: HTML generation with regex-based asset injection.
@@ -20,20 +20,20 @@ High-performance, stateless modules for the Portfolio build engine and edge runt
 
 ## WHERE TO LOOK
 
-| Task                | Location              | Notes                                      |
-| ------------------- | --------------------- | ------------------------------------------ |
-| **Update CSP**      | `security-headers.js` | Add SHA hashes or external domains here    |
-| **New Log Event**   | `loki-logger.js`      | `logToLoki(env, msg, level, labels)`       |
-| **A/B Test Logic**  | `ab-testing.js`       | Manage `TESTS` registry and storage prefix |
-| **Build Constants** | `config.js`           | Labels, link types, and template cache     |
-| **Data Integrity**  | `validators.js`       | Enforce `resume_data.json` structure       |
+| Task                | Location              | Notes                                         |
+| ------------------- | --------------------- | --------------------------------------------- |
+| **Update CSP**      | `security-headers.js` | Add SHA hashes or external domains here       |
+| **New Log Event**   | `es-logger.js`        | `logToElasticsearch(env, msg, level, labels)` |
+| **A/B Test Logic**  | `ab-testing.js`       | Manage `TESTS` registry and storage prefix    |
+| **Build Constants** | `config.js`           | Labels, link types, and template cache        |
+| **Data Integrity**  | `validators.js`       | Enforce `resume_data.json` structure          |
 
 ## CONVENTIONS
 
 - **Stateless Logic**: Export pure functions. Avoid module-level side effects.
 - **Worker Compatibility**: Use `env` object for secrets/bindings (not `process.env`).
 - **CSP Safety**: NEVER trim scripts before hashing in `templates.js`.
-- **Fault Tolerance**: Fire-and-forget for telemetry (Loki/Metrics) to prevent blocking response.
+- **Fault Tolerance**: Fire-and-forget for telemetry (ES/Metrics) to prevent blocking response.
 - **Regex Extraction**: Use non-greedy patterns in `templates.js` for asset matching.
 
 ## ANTI-PATTERNS

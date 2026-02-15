@@ -3,15 +3,23 @@
  * Extract cookies by connecting to existing Chrome profile.
  * This reuses your logged-in Chrome session.
  */
-import {chromium} from 'playwright';
-import {SessionManager} from '../src/shared/services/session/index.js';
-import {homedir} from 'os';
-import {join} from 'path';
+import { chromium } from 'playwright';
+import { SessionManager } from '../src/shared/services/session/index.js';
+import { homedir } from 'os';
+import { join } from 'path';
 
 const PLATFORMS = {
-  wanted: {name: 'Wanted', domain: 'wanted.co.kr', testUrl: 'https://www.wanted.co.kr/api/chaos/me'},
-  jobkorea: {name: 'JobKorea', domain: 'jobkorea.co.kr', testUrl: 'https://www.jobkorea.co.kr'},
-  remember: {name: 'Remember', domain: 'rememberapp.co.kr', testUrl: 'https://www.rememberapp.co.kr'},
+  wanted: {
+    name: 'Wanted',
+    domain: 'wanted.co.kr',
+    testUrl: 'https://www.wanted.co.kr/api/chaos/me',
+  },
+  jobkorea: { name: 'JobKorea', domain: 'jobkorea.co.kr', testUrl: 'https://www.jobkorea.co.kr' },
+  remember: {
+    name: 'Remember',
+    domain: 'rememberapp.co.kr',
+    testUrl: 'https://www.rememberapp.co.kr',
+  },
 };
 
 async function extractCookies(platformKey) {
@@ -33,16 +41,16 @@ async function extractCookies(platformKey) {
   });
 
   const page = await context.newPage();
-  
+
   // Navigate to trigger cookie loading
   try {
-    await page.goto(platform.testUrl, {waitUntil: 'domcontentloaded', timeout: 10000});
-  } catch (e) {
+    await page.goto(platform.testUrl, { waitUntil: 'domcontentloaded', timeout: 10000 });
+  } catch (_e) {
     // Ignore navigation errors, we just need the cookies
   }
 
   const cookies = await context.cookies();
-  const domainCookies = cookies.filter(c => c.domain.includes(platform.domain));
+  const domainCookies = cookies.filter((c) => c.domain.includes(platform.domain));
 
   await context.close();
 
@@ -52,20 +60,20 @@ async function extractCookies(platformKey) {
   }
 
   // Check for auth token
-  const authCookie = domainCookies.find(c => 
-    c.name.includes('TOKEN') || c.name.includes('session') || c.name.includes('auth')
+  const authCookie = domainCookies.find(
+    (c) => c.name.includes('TOKEN') || c.name.includes('session') || c.name.includes('auth')
   );
 
   const session = {
     platform: platformKey,
     cookies: domainCookies,
-    cookieString: domainCookies.map(c => `${c.name}=${c.value}`).join('; '),
+    cookieString: domainCookies.map((c) => `${c.name}=${c.value}`).join('; '),
     extractedAt: new Date().toISOString(),
     expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
   };
 
   SessionManager.save(platformKey, session);
-  
+
   console.log(`✅ Saved ${domainCookies.length} cookies for ${platform.name}`);
   if (authCookie) {
     console.log(`   Auth: ${authCookie.name} (${authCookie.value.length} chars)`);
@@ -74,7 +82,7 @@ async function extractCookies(platformKey) {
 }
 
 const platform = process.argv[2] || 'wanted';
-extractCookies(platform).catch(e => {
+extractCookies(platform).catch((e) => {
   console.error('Error:', e.message);
   process.exit(1);
 });

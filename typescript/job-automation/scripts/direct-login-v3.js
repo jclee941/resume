@@ -15,10 +15,7 @@ const PASSWORD = process.env.WANTED_PASSWORD;
 if (!PASSWORD) {
   throw new Error('WANTED_PASSWORD environment variable is not set');
 }
-const SESSION_FILE = path.join(
-  process.env.HOME,
-  '.opencode/data/sessions.json',
-);
+const SESSION_FILE = path.join(process.env.HOME, '.opencode/data/sessions.json');
 
 async function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -40,7 +37,7 @@ async function saveSession(cookies, email) {
     if (fs.existsSync(SESSION_FILE)) {
       existingSessions = JSON.parse(fs.readFileSync(SESSION_FILE, 'utf8'));
     }
-  } catch (e) {}
+  } catch (_e) {}
 
   const mergedSessions = { ...existingSessions, ...session };
   fs.mkdirSync(path.dirname(SESSION_FILE), { recursive: true });
@@ -79,9 +76,7 @@ async function run() {
     // Use evaluate to find the button by text
     const emailBtnHandle = await page.evaluateHandle(() => {
       const buttons = Array.from(document.querySelectorAll('button'));
-      return buttons.find(
-        (b) => b.innerText.includes('이메일') || b.innerText.includes('Email'),
-      );
+      return buttons.find((b) => b.innerText.includes('이메일') || b.innerText.includes('Email'));
     });
 
     if (emailBtnHandle && emailBtnHandle.asElement()) {

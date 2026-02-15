@@ -23,7 +23,7 @@ import { EventEmitter } from 'events';
 import { ResourcePool } from './resource-pool.js';
 import { RateLimiter } from './rate-limiter.js';
 import { ProgressTracker } from './progress-tracker.js';
-import { withStealthBrowser } from '../../../crawlers/browser-utils.js';
+// import { withStealthBrowser } from '../../../crawlers/browser-utils.js';
 
 /**
  * Default orchestrator configuration.
@@ -312,7 +312,7 @@ export class CrawlOrchestrator extends EventEmitter {
    * @returns {Promise<PlatformResult>}
    * @private
    */
-  async _crawlPlatform(platform, searchParams, taskId, opts) {
+  async _crawlPlatform(platform, searchParams, taskId, _opts) {
     const startTime = Date.now();
     this.progressTracker.startTask(taskId);
     this.emit('platform:start', { platform, taskId });

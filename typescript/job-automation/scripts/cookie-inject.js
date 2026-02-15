@@ -14,10 +14,7 @@
 import fs from 'fs';
 import path from 'path';
 
-const SESSION_FILE = path.join(
-  process.env.HOME,
-  '.opencode/data/sessions.json',
-);
+const SESSION_FILE = path.join(process.env.HOME, '.opencode/data/sessions.json');
 
 function parseCookieString(cookieStr) {
   return cookieStr
@@ -31,9 +28,7 @@ function parseCookieString(cookieStr) {
 
 function saveSession(cookies, email = 'qwer941a@gmail.com') {
   const cookieString =
-    typeof cookies === 'string'
-      ? cookies
-      : cookies.map((c) => `${c.name}=${c.value}`).join('; ');
+    typeof cookies === 'string' ? cookies : cookies.map((c) => `${c.name}=${c.value}`).join('; ');
 
   const session = {
     wanted: {
@@ -49,7 +44,7 @@ function saveSession(cookies, email = 'qwer941a@gmail.com') {
     if (fs.existsSync(SESSION_FILE)) {
       existingSessions = JSON.parse(fs.readFileSync(SESSION_FILE, 'utf8'));
     }
-  } catch (e) {
+  } catch (_e) {
     console.log('Creating new sessions file');
   }
 
@@ -59,10 +54,7 @@ function saveSession(cookies, email = 'qwer941a@gmail.com') {
   fs.writeFileSync(SESSION_FILE, JSON.stringify(mergedSessions, null, 2));
 
   console.log('✅ Session saved to:', SESSION_FILE);
-  console.log(
-    '📅 Expires at:',
-    new Date(session.wanted.expires_at).toLocaleString(),
-  );
+  console.log('📅 Expires at:', new Date(session.wanted.expires_at).toLocaleString());
 
   return cookieString;
 }
@@ -128,14 +120,8 @@ Wanted Cookie Injection Tool
   console.log(`✅ Saved ${cookies.length} cookies`);
 
   // Verify important cookies
-  const importantCookies = [
-    'WWW_ONEID_ACCESS_TOKEN',
-    'WWW_ONEID_REFRESH_TOKEN',
-    'ONEID_SESSION',
-  ];
-  const found = cookies.filter((c) =>
-    importantCookies.some((name) => c.name.includes(name)),
-  );
+  const importantCookies = ['WWW_ONEID_ACCESS_TOKEN', 'WWW_ONEID_REFRESH_TOKEN', 'ONEID_SESSION'];
+  const found = cookies.filter((c) => importantCookies.some((name) => c.name.includes(name)));
 
   if (found.length > 0) {
     console.log('🔑 Auth cookies found:', found.map((c) => c.name).join(', '));

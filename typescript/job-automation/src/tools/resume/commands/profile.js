@@ -1,6 +1,4 @@
-import { SessionManager } from '../../auth.js';
-
-export async function view(api, params) {
+export async function view(api, _params) {
   const profile = await api.getProfile();
   return {
     success: true,

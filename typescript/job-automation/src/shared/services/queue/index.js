@@ -139,7 +139,6 @@ export class JobQueue {
    * @param {{ processed: number, succeeded: number, failed: number, retries: number }} summary
    */
   async runWorker(handler, summary) {
-    // eslint-disable-next-line no-constant-condition
     while (true) {
       const job = await this.dequeue();
       if (!job) {

@@ -15,13 +15,11 @@ puppeteer.use(StealthPlugin());
 
 // Configuration
 const GOOGLE_EMAIL = 'qwer941a@gmail.com';
-const GOOGLE_APP_PASSWORD = (
-  process.env.GOOGLE_APP_PASSWORD || 'pijjtjqoxfpghckk'
-).replace(/\s/g, '');
-const SESSION_FILE = path.join(
-  process.env.HOME,
-  '.opencode/data/sessions.json',
+const GOOGLE_APP_PASSWORD = (process.env.GOOGLE_APP_PASSWORD || 'pijjtjqoxfpghckk').replace(
+  /\s/g,
+  ''
 );
+const SESSION_FILE = path.join(process.env.HOME, '.opencode/data/sessions.json');
 const SCREENSHOT_DIR = '/tmp';
 
 async function sleep(ms) {
@@ -45,7 +43,7 @@ async function saveSession(cookies, email) {
     if (fs.existsSync(SESSION_FILE)) {
       existingSessions = JSON.parse(fs.readFileSync(SESSION_FILE, 'utf8'));
     }
-  } catch (e) {
+  } catch (_e) {
     console.log('No existing sessions file, creating new one');
   }
 
@@ -101,9 +99,7 @@ async function loginWithGoogle() {
       pageTitle.includes('Forbidden') ||
       pageTitle.includes('Access Denied')
     ) {
-      throw new Error(
-        'CloudFront WAF blocked access - stealth may not be working',
-      );
+      throw new Error('CloudFront WAF blocked access - stealth may not be working');
     }
 
     // Step 2: Click Google login button
@@ -125,9 +121,7 @@ async function loginWithGoogle() {
     // Method 2: class contains google
     if (!clicked) {
       try {
-        const googleBtns = await page.$$(
-          '[class*="google"], [class*="Google"]',
-        );
+        const googleBtns = await page.$$('[class*="google"], [class*="Google"]');
         if (googleBtns.length > 0) {
           await googleBtns[0].click();
           clicked = true;
@@ -251,7 +245,7 @@ async function loginWithGoogle() {
       () =>
         window.location.href.includes('wanted.co.kr') ||
         window.location.href.includes('wanted.jobs'),
-      { timeout: 30000 },
+      { timeout: 30000 }
     );
     await sleep(3000);
     await page.screenshot({
@@ -282,8 +276,7 @@ async function loginWithGoogle() {
     console.log('Extracting cookies...');
     const cookies = await page.cookies();
     const wantedCookies = cookies.filter(
-      (c) =>
-        c.domain.includes('wanted.co.kr') || c.domain.includes('wanted.jobs'),
+      (c) => c.domain.includes('wanted.co.kr') || c.domain.includes('wanted.jobs')
     );
 
     console.log(`Got ${wantedCookies.length} Wanted cookies`);

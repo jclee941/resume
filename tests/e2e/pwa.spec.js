@@ -112,7 +112,7 @@ test.describe('Progressive Web App (PWA)', () => {
       );
 
       swRegistered = true;
-    } catch (error) {
+    } catch (_error) {
       // Service Worker might not be registered, that's OK in some environments
       // Log diagnostic info
       console.log('Service Worker registration diagnostic:');

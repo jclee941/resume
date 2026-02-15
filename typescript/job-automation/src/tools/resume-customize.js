@@ -9,7 +9,7 @@
  */
 
 import { readFile, writeFile, mkdir } from 'fs/promises';
-import { join, dirname } from 'path';
+import { join } from 'path';
 import { getResumeMasterDataPath, getOptimizedResumesDir } from '../shared/utils/paths.js';
 
 const STOPWORDS = new Set([
@@ -280,7 +280,7 @@ function generateATSMarkdown(resumeData, customization) {
 
   // Experience (ranked by relevance)
   lines.push('## Professional Experience');
-  for (const { career, score, matched } of rankedCareers) {
+  for (const { career, score: _score, matched } of rankedCareers) {
     lines.push(`### ${career.role} | ${career.company}`);
     lines.push(`${career.period} (${career.duration})`);
     lines.push(`*${career.project}*`);
@@ -298,7 +298,7 @@ function generateATSMarkdown(resumeData, customization) {
 
   // Projects (ranked by relevance)
   lines.push('## Key Projects');
-  for (const { project, score, matched } of rankedProjects.slice(0, 5)) {
+  for (const { project, score: _score2, matched: _matched } of rankedProjects.slice(0, 5)) {
     const techs = (project.technologies || []).join(', ');
     lines.push(`### ${project.name} | ${project.client || ''}`);
     lines.push(`${project.period} | ${project.role}`);

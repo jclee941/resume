@@ -1,6 +1,6 @@
 // @ts-check
 const { test, expect } = require('@playwright/test');
-const { navigateToSection, waitForAnimation } = require('./fixtures/helpers');
+require('./fixtures/helpers');
 
 // Test Constants
 const SELECTORS = {
