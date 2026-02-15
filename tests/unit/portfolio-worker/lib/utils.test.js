@@ -340,5 +340,65 @@ describe('Utils Module', () => {
       const invalidJson = '{"key": "value", invalid}';
       expect(() => safeParseJSON(invalidJson, 'test-source')).toThrow(/test-source/);
     });
+
+    test('should rethrow non-SyntaxError from JSON.parse', () => {
+      const origParse = JSON.parse;
+      JSON.parse = () => {
+        throw new TypeError('unexpected type');
+      };
+      try {
+        expect(() => safeParseJSON('{}')).toThrow(TypeError);
+        expect(() => safeParseJSON('{}')).toThrow('unexpected type');
+      } finally {
+        JSON.parse = origParse;
+      }
+    });
+  });
+
+  describe('safeReadFile - edge cases', () => {
+    test('should warn on large files (>5MB)', () => {
+      const fs = require('fs');
+      const logger = require('../../../../typescript/portfolio-worker/logger');
+      const warnSpy = jest.spyOn(logger, 'warn').mockImplementation();
+      const origExistsSync = fs.existsSync;
+      const origStatSync = fs.statSync;
+      const origReadFileSync = fs.readFileSync;
+
+      fs.existsSync = jest.fn().mockReturnValue(true);
+      fs.statSync = jest.fn().mockReturnValue({ size: 6 * 1024 * 1024 });
+      fs.readFileSync = jest.fn().mockReturnValue('file content');
+
+      try {
+        const result = safeReadFile('/some/large-file.txt');
+        expect(result).toBe('file content');
+        expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('Large file detected'));
+      } finally {
+        fs.existsSync = origExistsSync;
+        fs.statSync = origStatSync;
+        fs.readFileSync = origReadFileSync;
+        warnSpy.mockRestore();
+      }
+    });
+
+    test('should throw FileOperationError when readFileSync fails', () => {
+      const fs = require('fs');
+      const origExistsSync = fs.existsSync;
+      const origStatSync = fs.statSync;
+      const origReadFileSync = fs.readFileSync;
+
+      fs.existsSync = jest.fn().mockReturnValue(true);
+      fs.statSync = jest.fn().mockReturnValue({ size: 1024 });
+      fs.readFileSync = jest.fn().mockImplementation(() => {
+        throw new Error('EACCES: permission denied');
+      });
+
+      try {
+        expect(() => safeReadFile('/some/file.txt')).toThrow(/Failed to read/);
+      } finally {
+        fs.existsSync = origExistsSync;
+        fs.statSync = origStatSync;
+        fs.readFileSync = origReadFileSync;
+      }
+    });
   });
 });

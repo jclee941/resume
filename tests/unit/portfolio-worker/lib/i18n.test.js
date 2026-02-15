@@ -179,4 +179,82 @@ describe('i18n Module', () => {
       expect(enTrans['aria.viewProject']).toBeDefined();
     });
   });
+
+  describe('getTranslations - no argument', () => {
+    it('should use detectLanguage when no language argument provided', () => {
+      const translations = getTranslations();
+      expect(translations).toBeDefined();
+      expect(Object.keys(translations).length).toBeGreaterThan(0);
+      expect(translations['hero.title']).toBeDefined();
+    });
+
+    it('should use detectLanguage when undefined is passed', () => {
+      const translations = getTranslations(undefined);
+      expect(translations).toBeDefined();
+      expect(translations['hero.title']).toBeDefined();
+    });
+  });
+
+  describe('detectLanguage - both language props undefined', () => {
+    it('should throw TypeError when both navigator.language and userLanguage are undefined', () => {
+      const origNavigator = global.navigator;
+      Object.defineProperty(global, 'navigator', {
+        value: {},
+        writable: true,
+        configurable: true,
+      });
+
+      try {
+        expect(() => detectLanguage()).toThrow(TypeError);
+      } finally {
+        Object.defineProperty(global, 'navigator', {
+          value: origNavigator,
+          writable: true,
+          configurable: true,
+        });
+      }
+    });
+  });
+
+  describe('detectLanguage - userLanguage fallback', () => {
+    it('should use navigator.userLanguage when navigator.language is undefined', () => {
+      const origNavigator = global.navigator;
+      Object.defineProperty(global, 'navigator', {
+        value: { userLanguage: 'ko-KR' },
+        writable: true,
+        configurable: true,
+      });
+
+      try {
+        const result = detectLanguage();
+        expect(result).toBe('ko');
+      } finally {
+        Object.defineProperty(global, 'navigator', {
+          value: origNavigator,
+          writable: true,
+          configurable: true,
+        });
+      }
+    });
+
+    it('should use navigator.userLanguage when navigator.language is empty string', () => {
+      const origNavigator = global.navigator;
+      Object.defineProperty(global, 'navigator', {
+        value: { language: '', userLanguage: 'en-US' },
+        writable: true,
+        configurable: true,
+      });
+
+      try {
+        const result = detectLanguage();
+        expect(result).toBe('en');
+      } finally {
+        Object.defineProperty(global, 'navigator', {
+          value: origNavigator,
+          writable: true,
+          configurable: true,
+        });
+      }
+    });
+  });
 });

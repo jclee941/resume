@@ -290,5 +290,198 @@ describe('Validators Module', () => {
       expect(() => validateData(data)).toThrow(/Missing resumeDownload\.pdfUrl/);
       expect(() => validateData(data)).toThrow(/resume must be an array/);
     });
+
+    // --- Certification validation ---
+    test('should throw if certifications is not an array', () => {
+      const data = { ...validData, certifications: 'not array' };
+      expect(() => validateData(data)).toThrow('certifications must be an array');
+    });
+
+    test('should throw if certification missing name', () => {
+      const data = {
+        ...validData,
+        certifications: [{ issuer: 'AWS', date: '2025-01' }],
+      };
+      expect(() => validateData(data)).toThrow('certifications[0]: missing name');
+    });
+
+    test('should throw if certification missing issuer', () => {
+      const data = {
+        ...validData,
+        certifications: [{ name: 'CKA', date: '2025-01' }],
+      };
+      expect(() => validateData(data)).toThrow('certifications[0]: missing issuer');
+    });
+
+    test('should throw if certification missing both date and status', () => {
+      const data = {
+        ...validData,
+        certifications: [{ name: 'CKA', issuer: 'CNCF' }],
+      };
+      expect(() => validateData(data)).toThrow('certifications[0]: missing date');
+    });
+
+    test('should pass if certification has date but no status', () => {
+      const data = {
+        ...validData,
+        certifications: [{ name: 'CKA', issuer: 'CNCF', date: '2025-01' }],
+      };
+      expect(() => validateData(data)).not.toThrow();
+    });
+
+    test('should pass if certification has status but no date', () => {
+      const data = {
+        ...validData,
+        certifications: [{ name: 'CKA', issuer: 'CNCF', status: 'active' }],
+      };
+      expect(() => validateData(data)).not.toThrow();
+    });
+
+    // --- Skills validation ---
+    test('should throw if skills is not an object', () => {
+      const data = { ...validData, skills: 'not object' };
+      expect(() => validateData(data)).toThrow('skills must be an object');
+    });
+
+    test('should throw if skills is null', () => {
+      const data = { ...validData, skills: null };
+      expect(() => validateData(data)).toThrow('skills must be an object');
+    });
+
+    test('should pass with simple array format skills (strings)', () => {
+      const data = {
+        ...validData,
+        skills: { security: ['IAM', 'OAuth'], cloud: ['AWS', 'GCP'] },
+      };
+      expect(() => validateData(data)).not.toThrow();
+    });
+
+    test('should pass with simple array format skills ({name, level} objects)', () => {
+      const data = {
+        ...validData,
+        skills: {
+          security: [
+            { name: 'IAM', level: 90 },
+            { name: 'OAuth', level: 80 },
+          ],
+        },
+      };
+      expect(() => validateData(data)).not.toThrow();
+    });
+
+    test('should throw if array format has invalid items', () => {
+      const data = {
+        ...validData,
+        skills: { security: [42, true] },
+      };
+      expect(() => validateData(data)).toThrow(
+        'skills.security array items must be strings or {name, level} objects'
+      );
+    });
+
+    test('should pass with object format skills having items array', () => {
+      const data = {
+        ...validData,
+        skills: {
+          security: { title: 'Security', icon: 'lock', items: ['IAM', 'OAuth'] },
+        },
+      };
+      expect(() => validateData(data)).not.toThrow();
+    });
+
+    test('should throw if object format missing items array', () => {
+      const data = {
+        ...validData,
+        skills: { security: { title: 'Security', icon: 'lock' } },
+      };
+      expect(() => validateData(data)).toThrow('skills.security.items must be an array');
+    });
+
+    test('should throw if object format items has invalid entries', () => {
+      const data = {
+        ...validData,
+        skills: {
+          security: { title: 'Security', items: [42, false] },
+        },
+      };
+      expect(() => validateData(data)).toThrow(
+        'skills.security.items must contain strings or {name, level} objects'
+      );
+    });
+
+    test('should throw if skill category value is neither array nor object', () => {
+      const data = {
+        ...validData,
+        skills: { security: 'invalid' },
+      };
+      expect(() => validateData(data)).toThrow(
+        'skills.security must be an array or object with items'
+      );
+    });
+
+    test('should throw if skill category value is a number', () => {
+      const data = {
+        ...validData,
+        skills: { security: 42 },
+      };
+      expect(() => validateData(data)).toThrow(
+        'skills.security must be an array or object with items'
+      );
+    });
+
+    test('should pass with empty skills array', () => {
+      const data = {
+        ...validData,
+        skills: { security: [] },
+      };
+      expect(() => validateData(data)).not.toThrow();
+    });
+
+    test('should pass with object format having empty items array', () => {
+      const data = {
+        ...validData,
+        skills: { security: { title: 'Security', items: [] } },
+      };
+      expect(() => validateData(data)).not.toThrow();
+    });
+
+    test('should pass with mixed string and object items in array format', () => {
+      const data = {
+        ...validData,
+        skills: {
+          security: ['IAM', { name: 'OAuth', level: 80 }],
+        },
+      };
+      expect(() => validateData(data)).not.toThrow();
+    });
+
+    test('should pass with object format items containing valid {name, level} objects', () => {
+      const data = {
+        ...validData,
+        skills: {
+          security: {
+            title: 'Security',
+            items: [
+              { name: 'AWS IAM', level: 90 },
+              { name: 'OAuth2', level: 80 },
+            ],
+          },
+        },
+      };
+      expect(() => validateData(data)).not.toThrow();
+    });
+
+    test('should pass with mixed strings and objects in object format items', () => {
+      const data = {
+        ...validData,
+        skills: {
+          security: {
+            title: 'Security',
+            items: ['IAM', { name: 'OAuth', level: 80 }, 'RBAC'],
+          },
+        },
+      };
+      expect(() => validateData(data)).not.toThrow();
+    });
   });
 });
