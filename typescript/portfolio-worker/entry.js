@@ -20,15 +20,14 @@ async function logEntryError(env, message, meta = {}) {
   try {
     const esUrl = env?.ELASTICSEARCH_URL;
     const apiKey = env?.ELASTICSEARCH_API_KEY;
-    const index = env?.ELASTICSEARCH_INDEX || 'logs-resume-worker';
+    const index = env?.ELASTICSEARCH_INDEX || 'resume-logs-worker';
     if (!esUrl || !apiKey) return;
 
     const doc = {
       '@timestamp': new Date().toISOString(),
       message,
-      log: { level: 'error' },
-      service: { name: 'resume-worker-entry' },
-      ecs: { version: '8.11' },
+      level: 'error',
+      service: 'resume-worker-entry',
       ...meta,
     };
 
@@ -183,9 +182,9 @@ export default {
       console.error('[entry] Unhandled error:', error?.message || error);
       ctx.waitUntil(
         logEntryError(env, `[entry] Unhandled: ${error?.message || error}`, {
-          error: { message: error?.message, stack: error?.stack },
-          url: { path: url.pathname },
-          http: { request: { method: request.method } },
+          route: url.pathname,
+          errorMessage: error?.message,
+          errorStack: error?.stack,
         })
       );
       return new Response(JSON.stringify({ error: 'Internal server error' }), {
@@ -202,8 +201,9 @@ export default {
       console.error('[entry] Scheduled handler error:', error?.message || error);
       ctx.waitUntil(
         logEntryError(env, `[entry] Scheduled error: ${error?.message || error}`, {
-          error: { message: error?.message, stack: error?.stack },
-          event: { cron: event?.cron },
+          errorMessage: error?.message,
+          errorStack: error?.stack,
+          cron: event?.cron,
         })
       );
     }

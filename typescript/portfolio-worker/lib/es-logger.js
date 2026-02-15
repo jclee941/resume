@@ -12,14 +12,13 @@ function generateRequestId() {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 9)}`;
 }
 
-function buildEcsDocument(message, level, labels, job) {
+function buildDocument(message, level, labels, job) {
   const now = new Date();
   return {
     '@timestamp': now.toISOString(),
     message,
-    log: { level: level.toLowerCase() },
-    service: { name: job },
-    ecs: { version: '8.11' },
+    level: level.toLowerCase(),
+    service: job,
     ...labels,
   };
 }
@@ -69,8 +68,8 @@ async function flushLogs(env, index) {
 async function logToElasticsearch(env, message, level = 'INFO', labels = {}, options = {}) {
   try {
     const job = 'resume-worker';
-    const index = options.index || env?.ELASTICSEARCH_INDEX || `logs-${job}`;
-    const doc = buildEcsDocument(message, level, labels, job);
+    const index = options.index || env?.ELASTICSEARCH_INDEX || 'resume-logs-worker';
+    const doc = buildDocument(message, level, labels, job);
 
     if (options.immediate) {
       const esUrl = env?.ELASTICSEARCH_URL;
@@ -130,14 +129,10 @@ async function logResponse(env, request, response, options = {}) {
     `${request.method} ${response.status} ${durationMs}ms`,
     response.status >= 400 ? 'ERROR' : 'INFO',
     {
-      http: {
-        request: { method: request.method, id: requestId },
-        response: { status_code: response.status },
-      },
-      event: {
-        duration: durationMs * 1_000_000,
-        outcome: response.status < 400 ? 'success' : 'failure',
-      },
+      correlationId: requestId,
+      route: new URL(request.url).pathname,
+      statusCode: response.status,
+      duration: durationMs,
     },
     { ...options, immediate: true }
   );
@@ -148,7 +143,7 @@ async function flush(env, options = {}) {
     clearTimeout(flushTimer);
     flushTimer = null;
   }
-  const index = options.index || env?.ELASTICSEARCH_INDEX || 'logs-resume-worker';
+  const index = options.index || env?.ELASTICSEARCH_INDEX || 'resume-logs-worker';
   await flushLogs(env, index);
 }
 

@@ -10,7 +10,7 @@ binding = "ASSETS"
 
 [env.production]
 name = "resume"
-vars = { ENVIRONMENT = "production" }
+vars = { ENVIRONMENT = "production", ELASTICSEARCH_INDEX = "resume-logs-worker" }
 routes = [
   { pattern = "resume.jclee.me", custom_domain = true }
 ]

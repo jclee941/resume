@@ -85,8 +85,7 @@ function generatePageRoutes() {
         metrics.response_time_sum += (Date.now() - startTime);
 
         ctx.waitUntil(logToElasticsearch(env, \`Request: \${request.method} \${url.pathname}\`, 'INFO', {
-          path: url.pathname,
-          method: request.method
+          route: url.pathname
         }));
 
         return response;
@@ -105,8 +104,7 @@ function generatePageRoutes() {
         metrics.response_time_sum += (Date.now() - startTime);
 
         ctx.waitUntil(logToElasticsearch(env, \`Request: \${request.method} \${url.pathname}\`, 'INFO', {
-          path: url.pathname,
-          method: request.method
+          route: url.pathname
         }));
 
         return response;
@@ -333,8 +331,7 @@ function generateErrorHandler(opts) {
     } catch (err) {
       metrics.requests_error++;
       ctx.waitUntil(logToElasticsearch(env, \`Error: \${err.message}\`, 'ERROR', {
-        path: url.pathname,
-        method: request.method
+        route: url.pathname
       }));
 
       ctx.waitUntil((async () => {

@@ -68,14 +68,13 @@ ${opts.generateHistogramLinesStr}
 
 ${opts.generateMetricsStr}
 
-function buildEcsDocument(message, level, labels, job) {
+function buildDocument(message, level, labels, job) {
   const now = new Date();
   return {
     '@timestamp': now.toISOString(),
     message,
-    log: { level: level.toLowerCase() },
-    service: { name: job },
-    ecs: { version: '8.11' },
+    level: level.toLowerCase(),
+    service: job,
     ...labels,
   };
 }
