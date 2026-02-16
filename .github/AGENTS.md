@@ -73,7 +73,7 @@ Plus: `deploy-preview` (PR ephemeral worker) and `cleanup-preview` (PR close).
 
 ### release.yml — Auto Release
 
-Triggers after CI succeeds on `master`. Uses conventional commits for semver tagging (`mathieudutour/github-tag-action`). Creates GitHub Release with changelog.
+Triggers after CI succeeds on `master` (via `workflow_run`) or manually (via `workflow_dispatch`). Uses conventional commits for semver tagging (`mathieudutour/github-tag-action`). Creates GitHub Release with changelog.
 
 ### verify.yml — Deployment Verification
 
@@ -191,15 +191,26 @@ Weekly updates (Monday, Asia/Seoul TZ):
 
 **Missing (needed for drift-detection):** `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`
 
+## KNOWN ISSUES & FIXES (2026-02-16)
+
+| Issue                              | Root Cause                                                                                 | Fix                                                                      |
+| ---------------------------------- | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------ |
+| ESLint errors never caught in CI   | Regex `\(\K[0-9]+(?= errors?\))` didn't match ESLint output format `(1 error, 0 warnings)` | Changed to `errors?[,)]` in ci.yml line 159                              |
+| Lighthouse CI failing on `/health` | `/health` returns `application/json`, Lighthouse rejects `NOT_HTML`                        | Removed `/health` from `lighthouserc.json` URL list                      |
+| Webhook notify shell injection     | Commit messages with `(`, `)`, `\|` break curl JSON payload                                | Both notify + rollback-notify now use `jq -n` for safe JSON construction |
+| Release workflow `startup_failure` | Transient GitHub platform issue with `workflow_run` triggers                               | Added `workflow_dispatch` as manual fallback trigger                     |
+| ESLint warning baseline stale      | `ESLINT_WARNING_BASELINE=120` but actual count is 0                                        | Ratcheted down to 0                                                      |
+
 ## ANTI-PATTERNS
 
-| Anti-Pattern                       | Why                        | Do Instead                                               |
-| ---------------------------------- | -------------------------- | -------------------------------------------------------- |
-| Skip composite action setup        | Duplicates Node/npm config | Use `actions/setup`                                      |
-| `always()` in deploy conditions    | Deploys on test failures   | Use `success()` with `force_deploy`                      |
-| Hardcode Node version in workflows | Version drift              | Reference `NODE_VERSION` env or composite action default |
-| Push terraform changes without PR  | No plan review             | Use terraform.yml PR workflow                            |
-| Add secrets to workflow files      | Security violation         | Use GitHub Secrets + environment variables               |
+| Anti-Pattern                        | Why                        | Do Instead                                               |
+| ----------------------------------- | -------------------------- | -------------------------------------------------------- |
+| Skip composite action setup         | Duplicates Node/npm config | Use `actions/setup`                                      |
+| `always()` in deploy conditions     | Deploys on test failures   | Use `success()` with `force_deploy`                      |
+| Hardcode Node version in workflows  | Version drift              | Reference `NODE_VERSION` env or composite action default |
+| Push terraform changes without PR   | No plan review             | Use terraform.yml PR workflow                            |
+| Add secrets to workflow files       | Security violation         | Use GitHub Secrets + environment variables               |
+| Interpolate git data into curl JSON | Shell injection risk       | Use `jq -n --arg` to construct JSON payloads safely      |
 
 ## FILES
 

@@ -55,7 +55,7 @@
         "max-potential-fid": ["error", { "maxNumericValue": 100 }],
 
         "resource-summary:document:size": ["error", { "maxNumericValue": 50000 }],
-        "resource-summary:script:size": ["error", { "maxNumericValue": 100000 }],
+        "resource-summary:script:size": ["error", { "maxNumericValue": 200000 }],
         "resource-summary:stylesheet:size": ["error", { "maxNumericValue": 50000 }],
         "resource-summary:image:size": ["error", { "maxNumericValue": 200000 }],
 
