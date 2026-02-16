@@ -1,0 +1,66 @@
+# Grafana provisioned datasources
+# Deployed to: LXC 104 (192.168.50.100) → /opt/grafana/provisioning/datasources/datasources.yml
+# Docker Compose: /opt/grafana/docker-compose.yml (mounts ./provisioning:/etc/grafana/provisioning:ro)
+#
+# To apply changes:
+#   1. Edit this file
+#   2. SCP to LXC: ssh root@192.168.50.100 'pct exec 104 -- tee /opt/grafana/provisioning/datasources/datasources.yml' < this-file
+#   3. Restart: ssh root@192.168.50.100 'pct exec 104 -- bash -c "cd /opt/grafana && docker compose restart grafana"'
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: false
+
+  - name: Elasticsearch
+    type: elasticsearch
+    access: proxy
+    url: http://192.168.50.105:9200
+    database: 'logs-*'
+    jsonData:
+      esVersion: '8.0.0'
+      timeField: '@timestamp'
+      logMessageField: 'message'
+      logLevelField: 'log.level'
+    editable: false
+
+  - name: Elasticsearch-Filebeat
+    type: elasticsearch
+    access: proxy
+    url: http://192.168.50.105:9200
+    database: 'filebeat-*'
+    jsonData:
+      esVersion: '8.0.0'
+      timeField: '@timestamp'
+      logMessageField: 'message'
+      logLevelField: 'log.level'
+    editable: false
+
+  - name: SafeWork2 Logs
+    type: elasticsearch
+    access: proxy
+    url: http://192.168.50.105:9200
+    database: 'safework2-logs-*'
+    jsonData:
+      esVersion: '8.0.0'
+      timeField: '@timestamp'
+      logMessageField: 'message'
+      logLevelField: 'level'
+    editable: false
+
+  - name: Elasticsearch-Resume
+    type: elasticsearch
+    access: proxy
+    url: http://192.168.50.105:9200
+    database: 'resume-logs-*'
+    jsonData:
+      esVersion: '8.0.0'
+      timeField: '@timestamp'
+      logMessageField: 'message'
+      logLevelField: 'level'
+    isDefault: false
+    editable: true
