@@ -13,9 +13,12 @@
 name: Maintenance
 
 on:
-  schedule:
-    # Weekly drift detection: Monday 6:00 UTC (15:00 KST)
-    - cron: '0 6 * * 1'
+  # NOTE: Scheduled drift-detection disabled until R2_ACCESS_KEY_ID and
+  # R2_SECRET_ACCESS_KEY secrets are provisioned in GitHub.
+  # Re-enable: uncomment the schedule block below.
+  # schedule:
+  #   # Weekly drift detection: Monday 6:00 UTC (15:00 KST)
+  #   - cron: '0 6 * * 1'
   workflow_dispatch:
     inputs:
       job:

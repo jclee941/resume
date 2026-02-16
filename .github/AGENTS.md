@@ -46,19 +46,20 @@ Plus: `deploy-preview` (PR ephemeral worker) and `cleanup-preview` (PR close).
 
 ### maintenance.yml — Scheduled Maintenance
 
-**4 jobs for operational upkeep (1 scheduled, 3 manual).**
+**4 jobs for operational upkeep (all manual until R2 secrets are provisioned).**
 
-| Job             | Schedule          | Purpose                                |
-| --------------- | ----------------- | -------------------------------------- |
-| auth-refresh    | Manual (dispatch) | Refresh auth tokens via n8n webhook    |
-| profile-sync    | Manual (dispatch) | Sync profiles from SSoT                |
-| drift-detection | Monday 06:00 UTC  | Terraform plan against R2-backed state |
-| cache-cleanup   | Manual (dispatch) | Purge stale KV/R2 cache entries        |
+| Job             | Schedule                    | Purpose                                |
+| --------------- | --------------------------- | -------------------------------------- |
+| auth-refresh    | Manual (dispatch)           | Refresh auth tokens via n8n webhook    |
+| profile-sync    | Manual (dispatch)           | Sync profiles from SSoT                |
+| drift-detection | DISABLED (needs R2 secrets) | Terraform plan against R2-backed state |
+| cache-cleanup   | Manual (dispatch)           | Purge stale KV/R2 cache entries        |
 
 **drift-detection specifics:**
 
-- Terraform 1.6.0, working dir: `infrastructure/cloudflare/`
+- Terraform 1.10.5, working dir: `infrastructure/cloudflare/`
 - S3 backend → Cloudflare R2 (via `AWS_ENDPOINT_URL_S3` env var)
+- Requires `R2_ACCESS_KEY_ID` and `R2_SECRET_ACCESS_KEY` secrets (not yet provisioned)
 - Terraform init has retry with backoff (3 attempts: 10s, 20s, 30s)
 - Creates/updates GitHub issue on drift detection
 
@@ -173,6 +174,22 @@ Weekly updates (Monday, Asia/Seoul TZ):
 
 - **npm**: Groups minor+patch together. PR limit: 10. Reviewer: `qws941`
 - **github-actions**: PR limit: 5. Reviewer: `qws941`
+
+## SECRETS INVENTORY
+
+7 active secrets configured in GitHub Actions:
+
+| Secret                  | Used By                       | Purpose                       |
+| ----------------------- | ----------------------------- | ----------------------------- |
+| `CLOUDFLARE_API_TOKEN`  | ci.yml, terraform.yml, maint. | Cloudflare API (scoped token) |
+| `CLOUDFLARE_ACCOUNT_ID` | ci.yml, terraform.yml, maint. | Cloudflare account identifier |
+| `N8N_WEBHOOK_URL`       | ci.yml, maintenance.yml       | Failure notification webhook  |
+| `AUTH_SYNC_SECRET`      | maintenance.yml               | Job dashboard auth refresh    |
+| `ADMIN_TOKEN`           | maintenance.yml               | Profile sync endpoint auth    |
+| `ENCRYPTION_KEY`        | maintenance.yml               | Session encryption            |
+| `GEMINI_API_KEY`        | job-automation                | Gemini AI API access          |
+
+**Missing (needed for drift-detection):** `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`
 
 ## ANTI-PATTERNS
 
