@@ -6,9 +6,10 @@ GitHub Actions CI/CD, repository automation, and developer tooling.
 
 | Category          | Files                           | Purpose                           |
 | ----------------- | ------------------------------- | --------------------------------- |
-| Workflows         | 8 YAML files                    | CI/CD, IaC, maintenance, releases |
+| Workflows         | 10 YAML files                   | CI/CD, IaC, security, maintenance |
 | Composite Actions | `actions/setup/`                | Shared Node/npm/Playwright setup  |
 | Repo Config       | CODEOWNERS, labeler, dependabot | Automation & governance           |
+| Rulesets          | 2 active                        | Branch protection, tag protection |
 
 ## WORKFLOWS
 
@@ -89,6 +90,18 @@ Runs on `self-hosted` (proxmox). Tests HashiCorp Vault OIDC JWT auth against 4 s
 
 Uses `actions/labeler@v6` with sync-labels. Triggers on PR open/sync/reopen.
 
+### codeql.yml — CodeQL SAST
+
+Static Application Security Testing via GitHub CodeQL.
+
+| Trigger                     | Behavior                             |
+| --------------------------- | ------------------------------------ |
+| Push to `master`            | Analyze JS/TS for security + quality |
+| PR to `master`              | Same analysis, results in PR         |
+| Schedule (Monday 04:00 UTC) | Weekly deep scan                     |
+
+Uses `security-and-quality` query suite. Results appear in GitHub Security tab.
+
 ### auto-merge.yml — Auto-Merge
 
 Enables squash auto-merge on PRs from:
@@ -97,21 +110,27 @@ Enables squash auto-merge on PRs from:
 - **Repository owner** — Owner PRs
 - **`auto-merge` label** — Any PR with the label
 
-**Requires branch protection** with required status checks to gate merges. Without it, PRs merge immediately.
+**Gated by `default-branch-rules` ruleset** with required status checks (`lint`, `typecheck`, `test-unit`, `security-scan`). Without passing checks, PRs cannot merge.
 
-#### Branch Protection Setup (ONE-TIME, manual)
+## RULESETS
 
-Go to **GitHub → Settings → Branches → Add branch protection rule**:
+Branch/tag protection is managed via **GitHub Rulesets** (not legacy branch protection).
 
-| Setting                           | Value                                                |
-| --------------------------------- | ---------------------------------------------------- |
-| Branch name pattern               | `master`                                             |
-| Require status checks             | ✅ `lint`, `typecheck`, `test-unit`, `security-scan` |
-| Require branches to be up-to-date | ✅                                                   |
-| Require conversation resolution   | Optional                                             |
-| Allow auto-merge                  | ✅ (already enabled at repo level)                   |
-| Allow force pushes                | ❌                                                   |
-| Allow deletions                   | ❌                                                   |
+### default-branch-rules (ID: 12843367)
+
+| Rule                   | Configuration                                              |
+| ---------------------- | ---------------------------------------------------------- |
+| Target                 | Default branch (`master`)                                  |
+| Pull request required  | 1 approving review, squash/rebase merge only               |
+| Required status checks | `lint`, `typecheck`, `test-unit`, `security-scan` (strict) |
+| Update protection      | Enabled (no force push via update)                         |
+| Deletion protection    | Enabled                                                    |
+| Non-fast-forward       | Blocked                                                    |
+| Bypass                 | Repository admin (RepositoryRole ID 5)                     |
+
+### tag-protection (ID: 12843390)
+
+Protects release tags from deletion/modification.
 
 ## COMPOSITE ACTION
 
@@ -170,6 +189,7 @@ Weekly updates (Monday, Asia/Seoul TZ):
 | File                             | Purpose                              |
 | -------------------------------- | ------------------------------------ |
 | `workflows/ci.yml`               | Primary CI/CD pipeline (13 jobs)     |
+| `workflows/codeql.yml`           | CodeQL SAST (JS/TS security scan)    |
 | `workflows/maintenance.yml`      | 4 scheduled maintenance jobs         |
 | `workflows/terraform.yml`        | IaC plan/apply/destroy               |
 | `workflows/release.yml`          | Auto semver release                  |

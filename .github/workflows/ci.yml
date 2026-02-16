@@ -389,17 +389,6 @@ jobs:
           name: portfolio-worker
           path: typescript/portfolio-worker/
 
-      - name: Warn if security gate bypassed
-        if: ${{ inputs.skip_security_gate == true }}
-        run: |
-          echo "::warning::⚠️ SECURITY GATE BYPASSED — skip_security_gate was enabled for this deploy"
-          echo "## ⚠️ Security Gate Bypassed" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "This deployment was made with \`skip_security_gate: true\`." >> $GITHUB_STEP_SUMMARY
-          echo "Security scan results were **not** enforced as a deploy gate." >> $GITHUB_STEP_SUMMARY
-          echo "Triggered by: @${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-
       - name: Deploy Portfolio Worker to Cloudflare
         id: wrangler-deploy
         uses: cloudflare/wrangler-action@v3
