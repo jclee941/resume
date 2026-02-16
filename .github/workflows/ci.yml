@@ -635,17 +635,18 @@ jobs:
         env:
           N8N_WEBHOOK_URL: ${{ secrets.N8N_WEBHOOK_URL }}
         run: |
+          PAYLOAD=$(jq -n \
+            --arg status "rollback" \
+            --arg repo "${{ github.repository }}" \
+            --arg branch "${{ github.ref_name }}" \
+            --arg commit "${{ github.sha }}" \
+            --arg actor "${{ github.actor }}" \
+            --arg run_url "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            --arg msg "Auto-rollback triggered after failed post-deploy verification" \
+            '{status: $status, repository: $repo, branch: $branch, commit: $commit, actor: $actor, run_url: $run_url, message: $msg}')
           curl -X POST "$N8N_WEBHOOK_URL" \
             -H "Content-Type: application/json" \
-            -d '{
-              "status": "rollback",
-              "repository": "${{ github.repository }}",
-              "branch": "${{ github.ref_name }}",
-              "commit": "${{ github.sha }}",
-              "actor": "${{ github.actor }}",
-              "run_url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
-              "message": "Auto-rollback triggered after failed post-deploy verification"
-            }' || echo "Rollback notification failed (non-critical)"
+            -d "$PAYLOAD" || echo "Rollback notification failed (non-critical)"
 
   # ===========================================================================
   # STAGE: NOTIFY
@@ -674,20 +675,22 @@ jobs:
         if: ${{ env.N8N_WEBHOOK_URL != '' }}
         env:
           N8N_WEBHOOK_URL: ${{ secrets.N8N_WEBHOOK_URL }}
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
         run: |
+          PAYLOAD=$(jq -n \
+            --arg status "${{ steps.status.outputs.status }}" \
+            --arg repo "${{ github.repository }}" \
+            --arg branch "${{ github.ref_name }}" \
+            --arg commit "${{ github.sha }}" \
+            --arg msg "$COMMIT_MSG" \
+            --arg actor "${{ github.actor }}" \
+            --arg run_url "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            --arg portfolio "${{ env.PORTFOLIO_URL }}" \
+            --arg dashboard "${{ env.JOB_DASHBOARD_URL }}" \
+            '{status: $status, repository: $repo, branch: $branch, commit: $commit, commit_message: $msg, actor: $actor, run_url: $run_url, portfolio_url: $portfolio, job_dashboard_url: $dashboard}')
           curl -X POST "$N8N_WEBHOOK_URL" \
             -H "Content-Type: application/json" \
-            -d '{
-              "status": "${{ steps.status.outputs.status }}",
-              "repository": "${{ github.repository }}",
-              "branch": "${{ github.ref_name }}",
-              "commit": "${{ github.sha }}",
-              "commit_message": "${{ github.event.head_commit.message }}",
-              "actor": "${{ github.actor }}",
-              "run_url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
-              "portfolio_url": "${{ env.PORTFOLIO_URL }}",
-              "job_dashboard_url": "${{ env.JOB_DASHBOARD_URL }}"
-            }' || echo "Webhook notification failed (non-critical)"
+            -d "$PAYLOAD" || echo "Webhook notification failed (non-critical)"
 
       - name: Post summary
         run: |
