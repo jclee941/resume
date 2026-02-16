@@ -50,7 +50,7 @@ function generateSecurityHeaders(scriptHashes, styleHashes) {
     `style-src-elem 'self' ${styleHashes.join(' ')} ${CLOUDFLARE_STYLE_HASHES.join(' ')}`,
     `connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://oauth2.googleapis.com ${CLOUDFLARE_ANALYTICS.connect} https://glitchtip.jclee.me`,
     "img-src 'self' https:",
-    "report-uri /api/csp-violation",
+    'report-uri /api/csp-violation',
     "font-src 'self'",
     "manifest-src 'self'",
     "worker-src 'self'",

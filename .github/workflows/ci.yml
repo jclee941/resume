@@ -156,7 +156,7 @@ jobs:
           echo "=== Running ESLint ==="
           npm run lint 2>&1 | tee eslint-results.txt || true
 
-          ERRORS=$(grep -oP '\(\K[0-9]+(?= errors?\))' eslint-results.txt | tail -1 || echo "0")
+          ERRORS=$(grep -oP '\(\K[0-9]+(?= errors?[,)])' eslint-results.txt | tail -1 || echo "0")
           WARNINGS=$(grep -oP '[0-9]+(?= warnings?\))' eslint-results.txt | tail -1 || echo "0")
 
           echo "Lint: ${ERRORS:-0} errors, ${WARNINGS:-0} warnings"
@@ -167,7 +167,7 @@ jobs:
           fi
 
           # Quality gate: Zero-tolerance ratchet (auto-set to current baseline)
-          ESLINT_WARNING_BASELINE=120
+          ESLINT_WARNING_BASELINE=0
           if [ "${WARNINGS:-0}" -gt "$ESLINT_WARNING_BASELINE" ]; then
             echo "❌ ESLint warnings increased (${WARNINGS} > ${ESLINT_WARNING_BASELINE}) - fix new warnings before merging"
             exit 1
