@@ -1,7 +1,7 @@
 # PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-02-11
-**Commit:** 941e396
+**Generated:** 2026-02-16
+**Commit:** 6d59e14
 **Branch:** master
 **Build System:** Bazel + npm (Google3-style hybrid)
 
@@ -37,9 +37,9 @@ resume/
 │   │   └── workers/               # Dashboard Cloudflare Worker
 │   │       └── src/workflows/     # Cloudflare Workflow definitions
 │   └── portfolio-worker/          # Edge portfolio worker
-│       ├── lib/                   # Stateless modules (security-headers.js)
-│       ├── src/job/               # Job-related modules
+│       ├── lib/                   # Stateless modules (25 JS files incl. routes/)
 │       ├── src/styles/            # Modular CSS (animations, components)
+│       ├── dashboard.html         # Job dashboard UI (1290 lines)
 │       └── data.json              # Build-time resume data snapshot
 ├── tools/                         # Build, deploy, CI scripts
 │   ├── scripts/build/             # npm script wrappers
@@ -83,7 +83,7 @@ resume/
 | `sync-resume-data.js` | `tools/scripts/utils/sync-resume-data.js`                | SSoT propagation script                |
 | `getResumeBasePath`   | `typescript/job-automation/src/shared/utils/paths.js`    | Replaces hardcoded ~/dev/resume paths  |
 | `terminalCommands`    | `typescript/portfolio-worker/index.html`                 | Interactive CLI commands               |
-| `Workflows`           | `typescript/job-automation/workers/src/workflows/`       | 8 Cloudflare Workflows                 |
+| `Workflows`           | `typescript/job-automation/workers/src/workflows/`       | 7 Cloudflare Workflows                 |
 | `entry.js`            | `typescript/portfolio-worker/entry.js`                   | Unified dispatcher: /job/\*→jobHandler |
 
 ## BUILD COMMANDS
@@ -99,28 +99,28 @@ npm run sync:data                                 # Propagate SSoT
 
 ## ANTI-PATTERNS
 
-| Anti-Pattern                   | Why                         | Do Instead                                         |
-| ------------------------------ | --------------------------- | -------------------------------------------------- |
-| Edit `worker.js` directly      | Regenerated on build        | Edit `generate-worker.js` or HTML                  |
-| `trim()` before CSP hash       | Whitespace affects SHA-256  | Hash exact source string                           |
-| Naked Puppeteer/Playwright     | Bot detection               | Use `BaseCrawler` with stealth                     |
-| Cross-client imports           | Circular dependencies       | Each client isolated in own dir                    |
-| Hardcode secrets               | Security violation          | Use `.env` or `wrangler secret`                    |
-| Skip OWNERS review             | Breaks code ownership       | Get OWNERS approval                                |
-| Edit resume in multiple places | Data inconsistency          | Edit only `resume_data.json` (SSoT)                |
-| Duplicate shared↔workers code  | workers/ vs shared/ drift   | Keep business logic in shared/, import in workers/ |
-| Ignore SECURITY_WARNING.md     | Contains 8 exposed API keys | Read and act on warnings                           |
+| Anti-Pattern                   | Why                         | Do Instead                                           |
+| ------------------------------ | --------------------------- | ---------------------------------------------------- |
+| Edit `worker.js` directly      | Regenerated on build        | Edit `generate-worker.js` or HTML                    |
+| `trim()` before CSP hash       | Whitespace affects SHA-256  | Hash exact source string                             |
+| Naked Puppeteer/Playwright     | Bot detection               | Use `BaseCrawler` with stealth                       |
+| Cross-client imports           | Circular dependencies       | Each client isolated in own dir                      |
+| Hardcode secrets               | Security violation          | Use `.env` or `wrangler secret`                      |
+| Skip OWNERS review             | Breaks code ownership       | Get OWNERS approval                                  |
+| Edit resume in multiple places | Data inconsistency          | Edit only `resume_data.json` (SSoT)                  |
+| Duplicate shared↔workers code  | workers/ vs shared/ drift   | ✅ Resolved: src/job/ deleted. Keep logic in shared/ |
+| Ignore SECURITY_WARNING.md     | Contains 8 exposed API keys | Read and act on warnings                             |
 
 ## REFACTORING CANDIDATES
 
-| File                       | Lines   | Issue             | Recommended Fix                              |
-| -------------------------- | ------- | ----------------- | -------------------------------------------- |
-| ~~`profile-sync.js`~~      | ~~966~~ | ✅ Refactored     | Split to `scripts/profile-sync/` (8 modules) |
-| ~~`resume.js`~~ (MCP)      | ~~869~~ | ✅ Refactored     | Split to `tools/resume/` (9 modules)         |
-| ~~`cli.js`~~               | ~~672~~ | ✅ Refactored     | Split to `auto-apply/cli/` (6 modules)       |
-| ~~`worker-api-routes.js`~~ | ~~566~~ | ✅ Refactored     | Split to `lib/routes/` (5 modules)           |
-| `generate-worker.js`       | 1041    | Monolithic build  | Extract CSP/routing modules                  |
-| `dashboard.html`           | 1386    | Inline everything | Extract JS/CSS into separate files           |
+| File                       | Lines    | Issue             | Recommended Fix                                                    |
+| -------------------------- | -------- | ----------------- | ------------------------------------------------------------------ |
+| ~~`profile-sync.js`~~      | ~~966~~  | ✅ Refactored     | Split to `scripts/profile-sync/` (8 modules)                       |
+| ~~`resume.js`~~ (MCP)      | ~~869~~  | ✅ Refactored     | Split to `tools/resume/` (9 modules)                               |
+| ~~`cli.js`~~               | ~~672~~  | ✅ Refactored     | Split to `auto-apply/cli/` (6 modules)                             |
+| ~~`worker-api-routes.js`~~ | ~~566~~  | ✅ Refactored     | Split to `lib/routes/` (5 modules)                                 |
+| ~~`generate-worker.js`~~   | ~~1041~~ | ✅ Refactored     | Split to `generate-worker.js` (47) + `build-orchestrator.js` (163) |
+| `dashboard.html`           | 1290     | Inline everything | Extract JS/CSS into separate files                                 |
 
 ## BUILD PIPELINE
 

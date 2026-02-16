@@ -1,8 +1,8 @@
 # JOB AUTOMATION KNOWLEDGE BASE
 
-**Generated:** 2026-02-11  
-**Commit:** cdb3786  
-**Branch:** docs/job-automation-architecture
+**Generated:** 2026-02-16  
+**Commit:** 6d59e14  
+**Branch:** master
 
 ## OVERVIEW
 
@@ -11,11 +11,11 @@ MCP Server + Cloudflare Worker for stealth job automation. Hexagonal architectur
 **Architecture Components**:
 
 - **Crawlers Layer**: HTTP-based job fetching with anti-detection (UA rotation, rate limiting, jitter)
-- **Services Layer**: Pure business logic via dependency injection (10+ stateless services)
-- **Client Adapters**: Platform-specific integrations (Wanted, JobKorea, Saramin, LinkedIn, Remember)
+- **Services Layer**: Pure business logic via dependency injection (17 stateless services)
+- **Client Adapters**: Platform-specific integrations (wanted, d1, elasticsearch, secrets)
 - **MCP Tools**: 9 tools exposing 30+ actions to Claude AI
 - **Server Routes**: 13 Fastify routes for Worker/API integration
-- **Worker Layer**: Cloudflare Worker with D1 database, KV cache, R2 storage, 8 Workflows
+- **Worker Layer**: Cloudflare Worker with D1 database, KV cache, R2 storage, 7 Workflows
 
 ---
 
@@ -30,12 +30,12 @@ job-automation/
 │   │   └── base-crawler.js      # HTTP fetch base (UA rotation, delay+jitter, 3 retries)
 │   ├── auto-apply/              # AutoApplier, ApplicationManager
 │   ├── shared/
-│   │   ├── services/            # 10 stateless services (DI pattern)
+│   │   ├── services/            # 17 stateless services (DI pattern)
 │   │   │   ├── apply/           # UnifiedApplySystem, ApplyOrchestrator
 │   │   │   ├── session/         # SessionManager (24h TTL, per-platform isolation)
 │   │   │   ├── matching/        # JobMatcher (2-tier scoring: 60/75 thresholds)
 │   │   │   └── slack/           # SlackService (webhook notifications)
-│   │   ├── clients/             # 5 adapters (Wanted, JobKorea, Saramin, LinkedIn, Remember)
+│   │   ├── clients/             # 4 adapters (wanted, d1, elasticsearch, secrets)
 │   │   │   └── wanted/          # Wanted.co.kr API (40+ methods across 6 domain files)
 │   │   ├── contracts/           # API/auth/session schemas
 │   │   ├── utils/paths.js       # getResumeBasePath (no hardcoded paths)
@@ -46,10 +46,10 @@ job-automation/
 ├── workers/                     # Dashboard Cloudflare Worker
 │   ├── src/
 │   │   ├── index.js             # Worker entry (strips /job prefix, routes /api/*)
-│   │   ├── handlers/            # 10+ API route handlers (class-based pattern)
-│   │   └── workflows/           # 8 Cloudflare Workflows (cron-triggered)
+│   │   ├── handlers/            # 13 API route handlers (class-based pattern)
+│   │   └── workflows/           # 7 Cloudflare Workflows (cron-triggered)
 │   └── wrangler.toml            # Worker config + D1/KV/R2 bindings
-├── scripts/                     # 25 utility scripts (auth, session, monitoring)
+├── scripts/                     # 28 utility scripts (auth, session, monitoring)
 │   ├── extract-cookies-cdp.js   # ⭐ CDP extraction (recommended)
 │   ├── auth-sync.js             # ⭐ Multi-platform auth sync
 │   ├── profile-sync/             # ⭐ Sync resume_data.json to platforms (8 modules)
@@ -82,8 +82,8 @@ job-automation/
 | Add business logic   | `src/shared/services/` | Pure, stateless, DI-friendly                      |
 | Add external adapter | `src/shared/clients/`  | Isolated per client (no cross-imports)            |
 | Add MCP tool         | `src/tools/`           | Follow existing tool structure (9 patterns)       |
-| Modify Worker        | `workers/src/`         | D1/KV/R2 bindings available, 8 workflows          |
-| Configure scripts    | `scripts/`             | See SCRIPTS_GUIDE.md for all 25 scripts           |
+| Modify Worker        | `workers/src/`         | D1/KV/R2 bindings available, 7 workflows          |
+| Configure scripts    | `scripts/`             | See SCRIPTS_GUIDE.md for all 28 scripts           |
 
 ---
 
@@ -153,7 +153,7 @@ const html = await crawler.fetch('https://api.wanted.co.kr/v4/jobs', {
 
 ### Service Layer Overview
 
-**Location**: `src/shared/services/` (10+ services)
+**Location**: `src/shared/services/` (17 services: ai, analytics, applications, apply, auth, cache, matching, migration, orchestrator, profile, queue, resume, scheduler, session, slack, stats, stealth)
 
 **Architecture Pattern**: Hexagonal with Dependency Injection
 
@@ -200,7 +200,7 @@ const html = await crawler.fetch('https://api.wanted.co.kr/v4/jobs', {
 
 ### Isolation Pattern
 
-**Location**: `src/shared/clients/` (5 isolated client adapters)
+**Location**: `src/shared/clients/` (4 client adapters: wanted, d1, elasticsearch, secrets)
 
 **Design Principles**:
 
@@ -468,16 +468,15 @@ Wanted blocks headless browsers:
 | BackupWorkflow      | backup.js       | 0 3 \* \* \*   | Daily D1→KV backup          |
 | CleanupWorkflow     | cleanup.js      | 0 4 \* \* 0    | Weekly cleanup              |
 | DailyReportWorkflow | daily-report.js | 0 9 \* \* \*   | Daily application stats     |
-| AuthRefreshWorkflow | auth-refresh.js | 0 0 \* \* 1-5  | Monday-Friday auth refresh  |
-| ProfileSyncWorkflow | profile-sync.js | 0 2 \* \* 1    | Weekly Monday profile sync  |
 | ResumeSyncWorkflow  | resume-sync.js  | 0 1 \* \* \*   | Daily resume sync           |
-| CacheWarmupWorkflow | cache-warmup.js | 0 6 \* \* \*   | Pre-warm job cache          |
+| JobCrawlingWorkflow | job-crawling.js | 0 0 \* \* 1-5  | Job search + scoring        |
+| ApplicationWorkflow | application.js  | on-demand      | Application submission      |
 
 ---
 
 ## SCRIPTS GUIDE
 
-**Location**: `SCRIPTS_GUIDE.md` (detailed documentation of all 25 scripts)
+**Location**: `SCRIPTS_GUIDE.md` (detailed documentation of all 28 scripts)
 
 ### Recommended Scripts
 
@@ -532,7 +531,7 @@ Wanted blocks headless browsers:
 | `ARCHITECTURE.md`       | Internal structure + patterns      | Developers              |
 | `ANTI_DETECTION.md`     | Security + stealth techniques      | Security-conscious devs |
 | `DATA_FLOW.md`          | Request/response cycles + diagrams | Architects              |
-| `SCRIPTS_GUIDE.md`      | All 25 scripts with examples       | DevOps/Operators        |
+| `SCRIPTS_GUIDE.md`      | All 28 scripts with examples       | DevOps/Operators        |
 | `AGENTS.md` (this file) | Quick reference + entry points     | All agents              |
 
 ---
@@ -569,13 +568,13 @@ curl http://localhost:9090/metrics     # Scrape metrics
 
 ## REFACTORING CANDIDATES
 
-| File                     | Lines   | Issue            | Recommended Fix                              |
-| ------------------------ | ------- | ---------------- | -------------------------------------------- |
-| ~~`profile-sync.js`~~    | ~~966~~ | ✅ Refactored    | Split to `scripts/profile-sync/` (8 modules) |
-| ~~`resume.js` (MCP tool) | 869     | 23 switch cases  | Command pattern                              |
-| ~~`cli.js`~~             | ~~672~~ | ✅ Refactored    | Split to `auto-apply/cli/` (6 modules)       |
-| `worker-api-routes.js`   | 566     | 10 mixed routes  | Split csp.js/metrics.js/vitals.js            |
-| `generate-worker.js`     | 1041    | Monolithic build | Extract CSP/routing modules                  |
+| File                       | Lines    | Issue         | Recommended Fix                                                    |
+| -------------------------- | -------- | ------------- | ------------------------------------------------------------------ |
+| ~~`profile-sync.js`~~      | ~~966~~  | ✅ Refactored | Split to `scripts/profile-sync/` (8 modules)                       |
+| ~~`resume.js`~~ (MCP)      | ~~869~~  | ✅ Refactored | Split to `tools/resume/` (9 modules)                               |
+| ~~`cli.js`~~               | ~~672~~  | ✅ Refactored | Split to `auto-apply/cli/` (6 modules)                             |
+| ~~`worker-api-routes.js`~~ | ~~566~~  | ✅ Refactored | Split to `lib/routes/` (5 modules)                                 |
+| ~~`generate-worker.js`~~   | ~~1041~~ | ✅ Refactored | Split to `generate-worker.js` (47) + `build-orchestrator.js` (163) |
 
 ---
 

@@ -1,7 +1,7 @@
 # JOB DASHBOARD WORKER
 
-**Generated:** 2026-02-11
-**Commit:** 941e396
+**Generated:** 2026-02-16
+**Commit:** 6d59e14
 **Branch:** master
 
 ## OVERVIEW
@@ -17,7 +17,7 @@ Strips `/job` prefix internally so handlers use root-relative paths.
 workers/
 ├── src/
 │   ├── index.js            # Worker entry point (fetch handler + workflow exports)
-│   ├── handlers/            # API route handlers (10+ class-based handlers)
+│   ├── handlers/            # API route handlers (13 class-based handlers)
 │   │   ├── BaseHandler.js   # Base class (validateRequest, validateAuth)
 │   │   ├── ApplicationsHandler.js  # CRUD: list, create, get, update, delete, updateStatus, cleanupExpired
 │   │   ├── StatsHandler.js  # Stats: getStats, getWeeklyStats, getDailyReport, getWeeklyReport
@@ -49,16 +49,16 @@ workers/
 │   │   ├── dashboard.html   # Dashboard UI (React app inline)
 │   │   ├── styles.css       # Global styles + responsive design
 │   │   └── scripts.js       # Dashboard JavaScript
-│   └── workflows/           # Cloudflare Workflows (8 total)
-│       ├── index.js          # Barrel exports (all 8 workflows)
-│       ├── JobCrawlingWorkflow.js   # Job crawling pipeline
-│       ├── ApplicationWorkflow.js   # Application submission
-│       ├── ResumeSyncWorkflow.js    # Resume sync (0 1 * * *)
-│       ├── DailyReportWorkflow.js   # Daily report (0 9 * * *)
-│       ├── HealthCheckWorkflow.js   # Health checks (*/5 * * * *)
-│       ├── BackupWorkflow.js        # D1→KV backup (0 3 * * *)
-│       ├── CleanupWorkflow.js       # Data cleanup (0 4 * * 0)
-│       └── AuthRefreshWorkflow.js   # Auth refresh (0 0 * * 1-5)
+│   └── workflows/           # Cloudflare Workflows (7 total)
+│       ├── index.js              # Barrel exports (all workflows)
+│       ├── job-crawling.js       # Job crawling pipeline
+│       ├── application.js        # Application submission
+│       ├── resume-sync.js        # Resume sync (0 1 * * *)
+│       ├── resume-sync-helpers.js # Resume sync utilities
+│       ├── daily-report.js       # Daily report (0 9 * * *)
+│       ├── health-check.js       # Health checks (*/5 * * * *)
+│       ├── backup.js             # D1→KV backup (0 3 * * *)
+│       └── cleanup.js            # Data cleanup (0 4 * * 0)
 ├── wrangler.toml             # Worker config, routes, bindings, crons
 └── package.json              # Worker dependencies
 ```
@@ -66,6 +66,7 @@ workers/
 ### Handler Classes
 
 **Base Pattern** (`BaseHandler`):
+
 ```javascript
 export class BaseHandler {
   constructor(db, cache = null, env = null) {
@@ -73,50 +74,49 @@ export class BaseHandler {
     this.cache = cache;
     this.env = env;
   }
-  
+
   async validateRequest(request) {
     // Input validation + parsing
   }
-  
+
   async validateAuth(request, requiredRole = null) {
     // Auth check + role validation
   }
 }
 ```
 
-**Handler Catalog** (10+ handlers):
+**Handler Catalog** (13 handlers):
 
-| Handler | Methods | Purpose |
-|---------|---------|---------|
+| Handler               | Methods                                                         | Purpose                              |
+| --------------------- | --------------------------------------------------------------- | ------------------------------------ |
 | `ApplicationsHandler` | list, create, get, update, delete, updateStatus, cleanupExpired | CRUD operations for job applications |
-| `StatsHandler` | getStats, getWeeklyStats, getDailyReport, getWeeklyReport | Application statistics + reporting |
-| `AuthHandler` | getStatus, setAuth, syncFromScript, clearAuth, getProfile | Session management + auth flow |
-| `WebhookHandler` | 10+ methods | Slack, automation, sync callbacks |
-| `AutoApplyHandler` | status, run, configure | Auto-apply workflow orchestration |
-| `HealthHandler` | checks, status, dependencies | Health checks + uptime monitoring |
-| `ConfigHandler` | get, set, validate | Configuration management |
-| `WorkflowHandler` | trigger, status, list, getDetail | Workflow management + monitoring |
-| `CleanupHandler` | expiredApplications, oldLogs, purgeCache | Data cleanup operations |
+| `StatsHandler`        | getStats, getWeeklyStats, getDailyReport, getWeeklyReport       | Application statistics + reporting   |
+| `AuthHandler`         | getStatus, setAuth, syncFromScript, clearAuth, getProfile       | Session management + auth flow       |
+| `WebhookHandler`      | 10+ methods                                                     | Slack, automation, sync callbacks    |
+| `AutoApplyHandler`    | status, run, configure                                          | Auto-apply workflow orchestration    |
+| `HealthHandler`       | checks, status, dependencies                                    | Health checks + uptime monitoring    |
+| `ConfigHandler`       | get, set, validate                                              | Configuration management             |
+| `WorkflowHandler`     | trigger, status, list, getDetail                                | Workflow management + monitoring     |
+| `CleanupHandler`      | expiredApplications, oldLogs, purgeCache                        | Data cleanup operations              |
 
-### Cloudflare Workflows (8 Total)
+### Cloudflare Workflows (7 Total)
 
-| Workflow | Schedule | Steps | Purpose |
-|----------|----------|-------|---------|
-| `JobCrawlingWorkflow` | 0 0 * * 1-5 | fetch-cookies, search, score, cache | Job search + scoring |
-| `ApplicationWorkflow` | on-demand | validate, submit, track, notify | Auto-submit jobs |
-| `ResumeSyncWorkflow` | 0 1 * * * | fetch, parse, update-platforms | Daily sync resume_data.json |
-| `DailyReportWorkflow` | 0 9 * * * | aggregate, generate, send | Daily stats report |
-| `HealthCheckWorkflow` | */5 * * * * | check-db, check-kv, check-r2 | Uptime monitoring |
-| `BackupWorkflow` | 0 3 * * * | read-d1, write-kv, verify | Daily D1→KV backup |
-| `CleanupWorkflow` | 0 4 * * 0 | identify-expired, delete, log | Weekly cleanup |
-| `AuthRefreshWorkflow` | 0 0 * * 1-5 | validate-session, refresh, log | Session refresh |
+| Workflow              | Schedule       | Steps                               | Purpose                     |
+| --------------------- | -------------- | ----------------------------------- | --------------------------- |
+| `JobCrawlingWorkflow` | 0 0 \* \* 1-5  | fetch-cookies, search, score, cache | Job search + scoring        |
+| `ApplicationWorkflow` | on-demand      | validate, submit, track, notify     | Auto-submit jobs            |
+| `ResumeSyncWorkflow`  | 0 1 \* \* \*   | fetch, parse, update-platforms      | Daily sync resume_data.json |
+| `DailyReportWorkflow` | 0 9 \* \* \*   | aggregate, generate, send           | Daily stats report          |
+| `HealthCheckWorkflow` | _/5 _ \* \* \* | check-db, check-kv, check-r2        | Uptime monitoring           |
+| `BackupWorkflow`      | 0 3 \* \* \*   | read-d1, write-kv, verify           | Daily D1→KV backup          |
+| `CleanupWorkflow`     | 0 4 \* \* 0    | identify-expired, delete, log       | Weekly cleanup              |
 
 ## ENTRY POINTS
 
 | Component | File                   | Notes                                |
 | --------- | ---------------------- | ------------------------------------ |
 | Worker    | src/index.js           | Fetch handler + re-exports workflows |
-| Workflows | src/workflows/index.js | 8 workflow class exports             |
+| Workflows | src/workflows/index.js | 7 workflow class exports             |
 | Config    | wrangler.toml          | Routes, bindings, cron triggers      |
 
 ## BINDINGS
@@ -131,91 +131,91 @@ export class BaseHandler {
 
 ### Health & Status (3)
 
-| Method | Path          | Handler         | Purpose                 |
-|--------|---------------|-----------------|-------------------------|
-| GET    | /job/health   | HealthHandler   | Service health (JSON)   |
-| GET    | /job/readiness | HealthHandler  | Readiness check (deps)  |
-| GET    | /job/status   | HealthHandler   | Status + metrics        |
+| Method | Path           | Handler       | Purpose                |
+| ------ | -------------- | ------------- | ---------------------- |
+| GET    | /job/health    | HealthHandler | Service health (JSON)  |
+| GET    | /job/readiness | HealthHandler | Readiness check (deps) |
+| GET    | /job/status    | HealthHandler | Status + metrics       |
 
 ### Statistics (4)
 
 | Method | Path                  | Handler      | Purpose                 |
-|--------|----------------------|--------------|-------------------------|
-| GET    | /job/api/stats       | StatsHandler | Total + by-status stats |
-| GET    | /job/api/stats/weekly | StatsHandler | Weekly aggregation     |
-| GET    | /job/api/stats/daily | StatsHandler | Daily breakdown        |
-| GET    | /job/api/report      | StatsHandler | HTML daily report      |
+| ------ | --------------------- | ------------ | ----------------------- |
+| GET    | /job/api/stats        | StatsHandler | Total + by-status stats |
+| GET    | /job/api/stats/weekly | StatsHandler | Weekly aggregation      |
+| GET    | /job/api/stats/daily  | StatsHandler | Daily breakdown         |
+| GET    | /job/api/report       | StatsHandler | HTML daily report       |
 
 ### Authentication (7)
 
-| Method | Path                   | Handler     | Purpose                |
-|--------|----------------------|-------------|------------------------|
-| POST   | /job/api/auth/login   | AuthHandler | Set cookies/token      |
-| POST   | /job/api/auth/logout  | AuthHandler | Clear session          |
-| GET    | /job/api/auth/status  | AuthHandler | Check auth + TTL       |
-| POST   | /job/api/auth/sync    | AuthHandler | Sync cookies from script|
-| POST   | /job/api/auth/validate | AuthHandler | Validate token         |
-| POST   | /job/api/auth/refresh | AuthHandler | Refresh expired        |
-| GET    | /job/api/auth/profile | AuthHandler | Get user profile       |
+| Method | Path                   | Handler     | Purpose                  |
+| ------ | ---------------------- | ----------- | ------------------------ |
+| POST   | /job/api/auth/login    | AuthHandler | Set cookies/token        |
+| POST   | /job/api/auth/logout   | AuthHandler | Clear session            |
+| GET    | /job/api/auth/status   | AuthHandler | Check auth + TTL         |
+| POST   | /job/api/auth/sync     | AuthHandler | Sync cookies from script |
+| POST   | /job/api/auth/validate | AuthHandler | Validate token           |
+| POST   | /job/api/auth/refresh  | AuthHandler | Refresh expired          |
+| GET    | /job/api/auth/profile  | AuthHandler | Get user profile         |
 
 ### Applications CRUD (6)
 
-| Method | Path                        | Handler              | Purpose                |
-|--------|---------------------------|----------------------|------------------------|
-| GET    | /job/api/applications     | ApplicationsHandler  | List all + filter      |
-| POST   | /job/api/applications     | ApplicationsHandler  | Add new application    |
-| GET    | /job/api/applications/:id | ApplicationsHandler  | Get detail             |
-| PUT    | /job/api/applications/:id | ApplicationsHandler  | Update full record     |
-| DELETE | /job/api/applications/:id | ApplicationsHandler  | Delete application     |
-| PATCH  | /job/api/applications/:id/status | ApplicationsHandler | Update status only     |
+| Method | Path                             | Handler             | Purpose             |
+| ------ | -------------------------------- | ------------------- | ------------------- |
+| GET    | /job/api/applications            | ApplicationsHandler | List all + filter   |
+| POST   | /job/api/applications            | ApplicationsHandler | Add new application |
+| GET    | /job/api/applications/:id        | ApplicationsHandler | Get detail          |
+| PUT    | /job/api/applications/:id        | ApplicationsHandler | Update full record  |
+| DELETE | /job/api/applications/:id        | ApplicationsHandler | Delete application  |
+| PATCH  | /job/api/applications/:id/status | ApplicationsHandler | Update status only  |
 
 ### Webhooks & Automation (9)
 
-| Method | Path                              | Handler         | Purpose                |
-|--------|----------------------------------|-----------------|------------------------|
-| POST   | /job/webhooks/slack              | WebhookHandler  | Slack notifications    |
-| POST   | /job/webhooks/auto-apply         | WebhookHandler  | Auto-apply triggers    |
-| POST   | /job/webhooks/sync-start         | WebhookHandler  | Sync initiation        |
-| POST   | /job/webhooks/sync-complete      | WebhookHandler  | Sync completion        |
-| POST   | /job/webhooks/job-found          | WebhookHandler  | New job found alert    |
-| POST   | /job/webhooks/application-status | WebhookHandler  | Status change notif    |
-| POST   | /job/webhooks/error              | WebhookHandler  | Error logging webhook  |
-| POST   | /job/webhooks/crawl-complete     | WebhookHandler  | Crawl completion       |
-| POST   | /job/webhooks/daily-report       | WebhookHandler  | Report delivery        |
+| Method | Path                             | Handler        | Purpose               |
+| ------ | -------------------------------- | -------------- | --------------------- |
+| POST   | /job/webhooks/slack              | WebhookHandler | Slack notifications   |
+| POST   | /job/webhooks/auto-apply         | WebhookHandler | Auto-apply triggers   |
+| POST   | /job/webhooks/sync-start         | WebhookHandler | Sync initiation       |
+| POST   | /job/webhooks/sync-complete      | WebhookHandler | Sync completion       |
+| POST   | /job/webhooks/job-found          | WebhookHandler | New job found alert   |
+| POST   | /job/webhooks/application-status | WebhookHandler | Status change notif   |
+| POST   | /job/webhooks/error              | WebhookHandler | Error logging webhook |
+| POST   | /job/webhooks/crawl-complete     | WebhookHandler | Crawl completion      |
+| POST   | /job/webhooks/daily-report       | WebhookHandler | Report delivery       |
 
 ### Auto-Apply (3)
 
-| Method | Path                      | Handler            | Purpose                |
-|--------|--------------------------|-------------------|------------------------|
-| GET    | /job/api/auto-apply/status | AutoApplyHandler  | Enable/disable status  |
-| POST   | /job/api/auto-apply/run    | AutoApplyHandler  | Trigger run            |
-| PUT    | /job/api/auto-apply/config | AutoApplyHandler  | Update settings        |
+| Method | Path                       | Handler          | Purpose               |
+| ------ | -------------------------- | ---------------- | --------------------- |
+| GET    | /job/api/auto-apply/status | AutoApplyHandler | Enable/disable status |
+| POST   | /job/api/auto-apply/run    | AutoApplyHandler | Trigger run           |
+| PUT    | /job/api/auto-apply/config | AutoApplyHandler | Update settings       |
 
 ### Workflows (7)
 
-| Method | Path                              | Handler          | Purpose                |
-|--------|----------------------------------|-----------------|------------------------|
-| POST   | /job/api/workflows/job-crawling/run | WorkflowHandler | Trigger search         |
-| POST   | /job/api/workflows/application/run  | WorkflowHandler | Trigger auto-apply     |
-| POST   | /job/api/workflows/resume-sync/run  | WorkflowHandler | Trigger sync           |
-| POST   | /job/api/workflows/daily-report/run | WorkflowHandler | Trigger report         |
-| POST   | /job/api/workflows/health-check/run | WorkflowHandler | Trigger check          |
-| POST   | /job/api/workflows/backup/run       | WorkflowHandler | Trigger backup         |
-| GET    | /job/api/workflows/:instanceId/status | WorkflowHandler | Get execution status   |
+| Method | Path                                  | Handler         | Purpose              |
+| ------ | ------------------------------------- | --------------- | -------------------- |
+| POST   | /job/api/workflows/job-crawling/run   | WorkflowHandler | Trigger search       |
+| POST   | /job/api/workflows/application/run    | WorkflowHandler | Trigger auto-apply   |
+| POST   | /job/api/workflows/resume-sync/run    | WorkflowHandler | Trigger sync         |
+| POST   | /job/api/workflows/daily-report/run   | WorkflowHandler | Trigger report       |
+| POST   | /job/api/workflows/health-check/run   | WorkflowHandler | Trigger check        |
+| POST   | /job/api/workflows/backup/run         | WorkflowHandler | Trigger backup       |
+| GET    | /job/api/workflows/:instanceId/status | WorkflowHandler | Get execution status |
 
 ### Config (2)
 
-| Method | Path         | Handler       | Purpose                |
-|--------|-------------|---------------|------------------------|
-| GET    | /job/api/config | ConfigHandler | View all settings      |
-| PUT    | /job/api/config | ConfigHandler | Update settings        |
+| Method | Path            | Handler       | Purpose           |
+| ------ | --------------- | ------------- | ----------------- |
+| GET    | /job/api/config | ConfigHandler | View all settings |
+| PUT    | /job/api/config | ConfigHandler | Update settings   |
 
 ### Testing & Cleanup (2)
 
-| Method | Path                            | Handler      | Purpose                |
-|--------|--------------------------------|--------------|------------------------|
-| POST   | /job/api/test/webhook          | StatsHandler | Send test webhook      |
-| POST   | /job/api/cleanup/expired       | CleanupHandler | Delete old records     |
+| Method | Path                     | Handler        | Purpose            |
+| ------ | ------------------------ | -------------- | ------------------ |
+| POST   | /job/api/test/webhook    | StatsHandler   | Send test webhook  |
+| POST   | /job/api/cleanup/expired | CleanupHandler | Delete old records |
 
 **Note:** All paths include `/job` prefix externally. Worker strips prefix before routing.
 
@@ -289,6 +289,7 @@ CREATE TABLE sync_logs (
 **Example Key**: `session:wanted`
 
 **Value Schema**:
+
 ```json
 {
   "cookies": {
@@ -315,6 +316,7 @@ CREATE TABLE sync_logs (
 **Example Key**: `ratelimit:192.168.1.1:/api/applications`
 
 **Value Schema**:
+
 ```json
 {
   "tokens": 45,
@@ -333,6 +335,7 @@ CREATE TABLE sync_logs (
 **Example Key**: `cache:wanted:123456`
 
 **Value Schema**:
+
 ```json
 {
   "id": "123456",
@@ -367,6 +370,7 @@ CREATE TABLE sync_logs (
 **Implementation**: Token bucket algorithm
 
 **Configuration**:
+
 - Max tokens: 60 per minute
 - Refill rate: 1 token per second
 - Tracked by: IP + endpoint
@@ -374,6 +378,7 @@ CREATE TABLE sync_logs (
 - TTL: 60 seconds
 
 **Headers**:
+
 ```
 X-RateLimit-Limit: 60
 X-RateLimit-Remaining: 45
@@ -382,7 +387,8 @@ X-RateLimit-Reset: 1739327125
 
 ### CORS Configuration
 
-**Allowed Origins**: 
+**Allowed Origins**:
+
 - `https://resume.jclee.me`
 - `https://grafana.jclee.me`
 - `http://localhost:3000` (dev)
@@ -396,6 +402,7 @@ X-RateLimit-Reset: 1739327125
 **Strategy**: Double-submit cookie
 
 **Implementation**:
+
 1. Generate CSRF token on GET requests
 2. Require token in X-CSRF-Token header for state-changing requests
 3. Validate token against cookie value
