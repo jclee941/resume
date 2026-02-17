@@ -693,7 +693,10 @@
       window.__RESUME_CHAT_DATA__ = (function () {
         try {
           return JSON.parse(atob(/* RESUME_CHAT_DATA_B64_PLACEHOLDER */ ''));
-        } catch (_) {
+        } catch (resumeDataError) {
+          if (typeof console !== 'undefined' && console.warn) {
+            console.warn('Failed to parse embedded resume chat data', resumeDataError);
+          }
           return {};
         }
       })();
@@ -925,7 +928,11 @@
         chat: async function (question) {
           var userQuestion = sanitizeCommandInput(question).trim();
           if (!userQuestion) {
-            return 'Usage: chat <your question>\nExample: chat tell me about your security experience';
+            return (
+              'Chat mode enabled. Ask resume-related questions and press Enter.\n' +
+              'Type "exit" to leave chat mode.\n' +
+              'Example: tell me about your security experience'
+            );
           }
 
           try {
@@ -941,11 +948,22 @@
                 return escapeHtml(payload.answer);
               }
             }
-          } catch (_) {
-            // Fall through to local response.
+          } catch (chatError) {
+            if (typeof gtag === 'function') {
+              gtag('event', 'chat_api_error', {
+                event_category: 'error',
+                error_message: String(
+                  chatError && chatError.message ? chatError.message : chatError
+                ),
+              });
+            }
           }
 
           return buildLocalChatResponse(userQuestion);
+        },
+
+        ai: async function (question) {
+          return window.terminalCommands.chat(question);
         },
 
         help: function () {
@@ -960,7 +978,8 @@
             '  <span class="cmd-name">history</span>    - Show command history\\n' +
             '  <span class="cmd-name">print</span>      - Open print dialog\\n' +
             '  <span class="cmd-name">skills</span>     - Show tech stack\\n' +
-            '  <span class="cmd-name">chat</span>       - Ask resume questions\\n' +
+            '  <span class="cmd-name">chat</span>       - Enter interactive resume chat mode\\n' +
+            '  <span class="cmd-name">ai</span>         - Alias for chat command\\n' +
             '  <span class="cmd-name">contact</span>    - Contact information\\n' +
             '  <span class="cmd-name">theme</span>      - Switch terminal theme\\n' +
             '  <span class="cmd-name">clear</span>      - Clear terminal' +
@@ -1089,6 +1108,7 @@
         var cliOutput = document.getElementById('cli-output');
         var commandHistory = [];
         var historyIndex = -1;
+        var isInteractiveChatMode = false;
 
         if (!cliInput || !cliOutput) return;
 
@@ -1218,8 +1238,22 @@
         };
 
         async function executeCommand(cmd) {
+          var lowered;
+          var chatResult;
           cmd = sanitizeCommandInput(cmd).trim();
           if (!cmd) return '';
+
+          if (isInteractiveChatMode) {
+            lowered = cmd.toLowerCase();
+            if (lowered === 'exit' || lowered === 'quit') {
+              isInteractiveChatMode = false;
+              cliInput.placeholder = "type 'help' for commands...";
+              return 'Chat mode disabled. Back to terminal commands.';
+            }
+
+            chatResult = await window.terminalCommands.chat(cmd);
+            return '[chat] ' + chatResult;
+          }
 
           var parts = cmd.split(/\s+/);
           var command = parts[0];
@@ -1239,6 +1273,10 @@
           } else if (window.terminalCommands[command]) {
             result = await window.terminalCommands[command](args);
             found = true;
+            if ((command === 'chat' || command === 'ai') && !args.trim()) {
+              isInteractiveChatMode = true;
+              cliInput.placeholder = 'chat mode: ask resume questions, type "exit" to quit';
+            }
           } else {
             result = 'command not found: ' + command + '. Type "help" for available commands.';
           }

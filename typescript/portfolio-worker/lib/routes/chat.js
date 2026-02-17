@@ -104,11 +104,126 @@ function generateChatRoute(opts) {
               );
             }
 
-            return 'I can tell you about my experience, skills, projects, certifications, or contact info';
+            return null;
           })();
 
           let answer = localAnswer;
-          if (env?.AI?.run) {
+          if (!answer && env?.GEMINI_API_KEY) {
+            const ipHeader =
+              request.headers.get('CF-Connecting-IP') || request.headers.get('x-forwarded-for') || 'unknown';
+            const clientIp = ipHeader.split(',')[0].trim() || 'unknown';
+            const aiRateLimitStateKey = '__resume_chat_ai_rate_limit_state__';
+            const aiRateLimitState =
+              globalThis[aiRateLimitStateKey] instanceof Map
+                ? globalThis[aiRateLimitStateKey]
+                : (globalThis[aiRateLimitStateKey] = new Map());
+
+            const now = Date.now();
+            const windowMs = 60 * 1000;
+            const maxAiCallsPerMinute = 10;
+            const previous = aiRateLimitState.get(clientIp) || { windowStart: now, count: 0 };
+            const sameWindow = now - previous.windowStart < windowMs;
+            const next = sameWindow
+              ? { windowStart: previous.windowStart, count: previous.count + 1 }
+              : { windowStart: now, count: 1 };
+            aiRateLimitState.set(clientIp, next);
+
+            if (aiRateLimitState.size > 1024) {
+              for (const [trackedIp, state] of aiRateLimitState.entries()) {
+                if (now - state.windowStart > windowMs * 2) {
+                  aiRateLimitState.delete(trackedIp);
+                }
+              }
+            }
+
+            if (next.count <= maxAiCallsPerMinute) {
+              const controller = new AbortController();
+              const timeoutId = setTimeout(() => controller.abort(), 3000);
+
+              const systemPrompt =
+                'You are a helpful assistant for Jaecheol Lee\\'s resume portfolio. ' +
+                'Answer only questions directly related to the resume data. ' +
+                'If a question is unrelated, say you can only answer resume-related questions ' +
+                'about experience, skills, projects, certifications, and contact info. ' +
+                'Do not invent facts and keep answers concise.';
+
+              const contextJson = JSON.stringify(resumeData).slice(0, 2000);
+
+              try {
+                const aiResponse = await fetch(
+                  'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' +
+                    env.GEMINI_API_KEY,
+                  {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    signal: controller.signal,
+                    body: JSON.stringify({
+                      contents: [
+                        {
+                          parts: [
+                            {
+                              text:
+                                systemPrompt +
+                                '\\n\\nResume context JSON:\\n' +
+                                contextJson +
+                                '\\n\\nQuestion: ' +
+                                question,
+                            },
+                          ],
+                        },
+                      ],
+                      generationConfig: { maxOutputTokens: 200, temperature: 0.3 },
+                    }),
+                  }
+                );
+
+                if (aiResponse.ok) {
+                  const aiResult = await aiResponse.json();
+                  const aiText = aiResult?.candidates?.[0]?.content?.parts?.[0]?.text;
+                  if (typeof aiText === 'string' && aiText.trim()) {
+                    answer = aiText.trim();
+                  }
+                } else {
+                  const aiErrorText = await aiResponse.text();
+                  ctx.waitUntil(
+                    logToElasticsearch(env, 'Gemini API non-OK response', 'WARN', {
+                      path: '/api/chat',
+                      method: 'POST',
+                      status: aiResponse.status,
+                      clientIp,
+                      response: aiErrorText.slice(0, 300),
+                    })
+                  );
+                }
+              } catch (aiError) {
+                const message = aiError instanceof Error ? aiError.message : String(aiError);
+                ctx.waitUntil(
+                  logToElasticsearch(env, 'Gemini API unavailable: ' + message, 'WARN', {
+                    path: '/api/chat',
+                    method: 'POST',
+                    clientIp,
+                  })
+                );
+              } finally {
+                clearTimeout(timeoutId);
+              }
+            } else {
+              ctx.waitUntil(
+                logToElasticsearch(env, 'Gemini API rate limit exceeded', 'WARN', {
+                  path: '/api/chat',
+                  method: 'POST',
+                  clientIp,
+                })
+              );
+            }
+          }
+
+          if (!answer) {
+            answer =
+              'I can tell you about my experience, skills, projects, certifications, or contact info';
+          }
+
+          if (!localAnswer && !env?.GEMINI_API_KEY && env?.AI?.run) {
             try {
               const model = '${opts.aiModel}';
               const contextJson = JSON.stringify(resumeData);
@@ -133,7 +248,7 @@ function generateChatRoute(opts) {
                 aiResult?.text ||
                 (Array.isArray(aiResult) ? aiResult[0] : null);
 
-              if (typeof aiAnswer === 'string' && aiAnswer.trim()) {
+              if (!localAnswer && typeof aiAnswer === 'string' && aiAnswer.trim()) {
                 answer = aiAnswer.trim();
               }
             } catch (aiError) {
