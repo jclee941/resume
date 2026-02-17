@@ -43,6 +43,19 @@ module.exports = [
       'no-console': 'off',
       semi: ['error', 'always'],
       quotes: ['error', 'single', { avoidEscape: true }],
+
+      // Strictness improvements (#52)
+      'no-var': 'error',
+      'prefer-const': 'warn',
+      eqeqeq: ['error', 'always', { null: 'ignore' }],
+      'no-eval': 'error',
+      'no-implied-eval': 'error',
+      'no-new-func': 'error',
+      'no-unreachable': 'error',
+      'no-unused-expressions': ['warn', { allowShortCircuit: true, allowTernary: true }],
+      'no-throw-literal': 'error',
+      'object-shorthand': ['warn', 'always'],
+      'prefer-template': 'warn',
     },
   },
   {
@@ -82,5 +95,12 @@ module.exports = [
       '**/pyright/**', // Python type checker
       '.serena/**', // Serena LSP
     ],
+  },
+  {
+    // Test files: allow new Function() for syntax validation of generated code
+    files: ['tests/**/*.test.js', 'tests/**/*.spec.js'],
+    rules: {
+      'no-new-func': 'off',
+    },
   },
 ];

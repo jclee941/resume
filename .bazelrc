@@ -60,5 +60,18 @@ build:local --disk_cache=~/.cache/bazel
 build:local --color=yes
 build:local --curses=yes
 
+# =============================================================================
+# REMOTE CACHE (BuildBuddy)
+# =============================================================================
+# BuildBuddy community tier remote cache for CI builds.
+# Local builds use disk cache by default (see build:local).
+build:remote-cache --remote_cache=grpcs://remote.buildbuddy.io
+build:remote-cache --remote_timeout=3600
+build:remote-cache --experimental_remote_cache_compression
+build:remote-cache --remote_upload_local_results=true
+
+# Authenticated remote cache (set BUILDBUDDY_API_KEY in CI secrets)
+# build:remote-cache --remote_header=x-buildbuddy-api-key=${BUILDBUDDY_API_KEY}
+
 # Try importing local overrides
 try-import %workspace%/.bazelrc.local
