@@ -1,14 +1,15 @@
 const fs = require('fs');
 const { validateResumeDataFile, formatErrors } = require('./validate-resume-data.js');
-const { SOURCE_PATH, SCHEMA_PATH, WEB_DATA_PATH } = require('./resume-data-paths.js');
+const { LANGUAGE_SOURCES, SCHEMA_PATH } = require('./resume-data-paths.js');
 const { generateWebData } = require('./resume-web-data-generator.js');
 
 /**
- * Load master resume source file.
+ * Load resume source file.
+ * @param {string} sourcePath - Source JSON path
  * @returns {Object} Parsed source data.
  */
-function loadSource() {
-  const raw = fs.readFileSync(SOURCE_PATH, 'utf-8');
+function loadSource(sourcePath) {
+  const raw = fs.readFileSync(sourcePath, 'utf-8');
   return JSON.parse(raw);
 }
 
@@ -16,29 +17,42 @@ function loadSource() {
  * Execute sync-resume-data workflow.
  */
 function runSync() {
-  console.log('📋 Validating resume data against schema...');
-  const validation = validateResumeDataFile(SOURCE_PATH, SCHEMA_PATH);
+  console.log('📋 Validating multilingual resume data against schema...');
 
-  if (!validation.valid) {
-    console.error('❌ Resume data validation FAILED:');
-    console.error(formatErrors(validation.errors));
-    console.error('\n⚠️  Fix the errors above and try again.');
-    process.exit(1);
+  for (const source of LANGUAGE_SOURCES) {
+    const validation = validateResumeDataFile(source.sourcePath, SCHEMA_PATH);
+    if (!validation.valid) {
+      console.error(`❌ Resume data validation FAILED (${source.language}):`);
+      console.error(formatErrors(validation.errors));
+      console.error('\n⚠️  Fix the errors above and try again.');
+      process.exit(1);
+    }
   }
+
   console.log('✅ Resume data validation passed\n');
 
-  console.log('📄 Loading source: resumes/master/resume_data.json');
-  const source = loadSource();
+  const summary = [];
 
-  console.log('🔄 Generating web/data.json...');
-  const webData = generateWebData(source);
-  fs.writeFileSync(WEB_DATA_PATH, JSON.stringify(webData, null, 2) + '\n');
-  console.log('✅ web/data.json updated');
+  for (const source of LANGUAGE_SOURCES) {
+    console.log(`📄 Loading source (${source.language}): ${source.sourcePath}`);
+    const sourceData = loadSource(source.sourcePath);
+
+    console.log(`🔄 Generating ${source.webDataPath}...`);
+    const webData = generateWebData(sourceData);
+    fs.writeFileSync(source.webDataPath, JSON.stringify(webData, null, 2) + '\n');
+    console.log(`✅ ${source.webDataPath} updated`);
+
+    summary.push({ language: source.language, sourceData, webData });
+  }
 
   console.log('\n📊 Summary:');
-  console.log(`   - Resume entries: ${webData.resume.length}`);
-  console.log(`   - Project entries: ${webData.projects.length}`);
-  console.log(`   - Source: ${source.personal.name} (${source.summary.totalExperience})`);
+  for (const item of summary) {
+    console.log(`   - [${item.language}] Resume entries: ${item.webData.resume.length}`);
+    console.log(`   - [${item.language}] Project entries: ${item.webData.projects.length}`);
+    console.log(
+      `   - [${item.language}] Source: ${item.sourceData.personal.name} (${item.sourceData.summary.totalExperience})`
+    );
+  }
 }
 
 module.exports = {

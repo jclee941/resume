@@ -56,6 +56,16 @@ async function logEntryError(env, message, meta = {}) {
 
 const LAST_MODIFIED = 'Sun, 15 Feb 2026 00:00:00 GMT';
 const SITEMAP_ETAG = 'W/"resume-sitemap-2026-02-15"';
+const DEFAULT_LANGUAGE = 'ko';
+const SUPPORTED_LANGUAGES = ['ko', 'en', 'ja'];
+const LOCALE_ROUTES = new Set(['/', '/ko', '/ko/', '/en', '/en/', '/ja', '/ja/']);
+
+const HREFLANG_LINKS = [
+  '<link rel="alternate" hreflang="ko-KR" href="https://resume.jclee.me/" />',
+  '<link rel="alternate" hreflang="en-US" href="https://resume.jclee.me/en/" />',
+  '<link rel="alternate" hreflang="ja-JP" href="https://resume.jclee.me/ja/" />',
+  '<link rel="alternate" hreflang="x-default" href="https://resume.jclee.me/" />',
+].join('\n    ');
 
 const SITEMAP_XML = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -67,6 +77,12 @@ const SITEMAP_XML = `<?xml version="1.0" encoding="UTF-8"?>
   </url>
   <url>
     <loc>https://resume.jclee.me/en</loc>
+    <lastmod>2026-02-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://resume.jclee.me/ja</loc>
     <lastmod>2026-02-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -90,6 +106,159 @@ const SITEMAP_XML = `<?xml version="1.0" encoding="UTF-8"?>
     <priority>0.3</priority>
   </url>
 </urlset>`;
+
+function getLocaleFromPath(pathname) {
+  const segment = pathname.split('/').filter(Boolean)[0];
+  if (!segment) {
+    return null;
+  }
+
+  return SUPPORTED_LANGUAGES.includes(segment) ? segment : null;
+}
+
+function parseAcceptLanguageHeader(headerValue) {
+  if (!headerValue) {
+    return null;
+  }
+
+  const ranked = headerValue
+    .split(',')
+    .map((entry, index) => {
+      const [rawRange, ...params] = entry.trim().split(';');
+      if (!rawRange) {
+        return null;
+      }
+
+      let quality = 1;
+      for (const param of params) {
+        const trimmed = param.trim();
+        if (!trimmed.startsWith('q=')) {
+          continue;
+        }
+
+        const parsed = Number.parseFloat(trimmed.slice(2));
+        if (Number.isFinite(parsed)) {
+          quality = parsed;
+        }
+      }
+
+      return {
+        index,
+        quality,
+        code: rawRange.toLowerCase(),
+      };
+    })
+    .filter((item) => item && item.quality > 0)
+    .sort((a, b) => {
+      if (b.quality !== a.quality) {
+        return b.quality - a.quality;
+      }
+
+      return a.index - b.index;
+    });
+
+  for (const candidate of ranked) {
+    const [baseCode] = candidate.code.split('-');
+    if (SUPPORTED_LANGUAGES.includes(baseCode)) {
+      return baseCode;
+    }
+  }
+
+  return null;
+}
+
+function detectRequestLanguage(request, pathname) {
+  const pathLanguage = getLocaleFromPath(pathname);
+  if (pathLanguage) {
+    return {
+      language: pathLanguage,
+      source: 'path',
+    };
+  }
+
+  const headerLanguage = parseAcceptLanguageHeader(request.headers.get('Accept-Language'));
+  if (headerLanguage) {
+    return {
+      language: headerLanguage,
+      source: 'accept-language',
+    };
+  }
+
+  return {
+    language: DEFAULT_LANGUAGE,
+    source: 'default',
+  };
+}
+
+function getPortfolioTargetPath(pathname, language) {
+  if (pathname === '/en' || pathname === '/en/') {
+    return '/en/';
+  }
+
+  if (pathname === '/ko' || pathname === '/ko/' || pathname === '/ja' || pathname === '/ja/') {
+    return '/';
+  }
+
+  if (pathname === '/') {
+    if (language === 'en') {
+      return '/en/';
+    }
+
+    return '/';
+  }
+
+  return pathname;
+}
+
+function mergeVaryHeader(existingValue, valuesToAdd) {
+  const merged = new Set(
+    String(existingValue || '')
+      .split(',')
+      .map((item) => item.trim())
+      .filter(Boolean)
+  );
+
+  for (const value of valuesToAdd) {
+    merged.add(value);
+  }
+
+  return Array.from(merged).join(', ');
+}
+
+function localizeHtmlDocument(html, language) {
+  const localized = SUPPORTED_LANGUAGES.includes(language) ? language : DEFAULT_LANGUAGE;
+  const htmlWithLang = /<html[^>]*\slang=["'][^"']*["'][^>]*>/i.test(html)
+    ? html.replace(/(<html[^>]*\slang=["'])[^"']*(["'][^>]*>)/i, `$1${localized}$2`)
+    : html.replace(/<html([^>]*)>/i, `<html lang="${localized}"$1>`);
+
+  const htmlWithoutAlternates = htmlWithLang.replace(
+    /\s*<link\s+rel=["']alternate["'][^>]*>/gi,
+    ''
+  );
+
+  if (htmlWithoutAlternates.includes('</head>')) {
+    return htmlWithoutAlternates.replace('</head>', `    ${HREFLANG_LINKS}\n  </head>`);
+  }
+
+  return htmlWithoutAlternates;
+}
+
+function isHtmlResponse(response) {
+  const contentType = response.headers.get('Content-Type') || '';
+  return contentType.includes('text/html');
+}
+
+async function localizeHtmlResponse(response, language) {
+  const html = await response.text();
+  const headers = new Headers(response.headers);
+  const localizedHtml = localizeHtmlDocument(html, language);
+
+  return new Response(localizedHtml, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
 
 function getCacheControlForPath(pathname) {
   if (pathname === '/healthz' || pathname === '/metrics') {
@@ -116,10 +285,19 @@ function getCacheControlForPath(pathname) {
   return 'public, max-age=0, must-revalidate';
 }
 
-function applyResponseHeaders(response, pathname) {
+function applyResponseHeaders(response, pathname, requestContext = {}) {
   const headers = new Headers(response.headers);
   headers.set('Cache-Control', getCacheControlForPath(pathname));
-  headers.set('Vary', 'Accept-Encoding');
+  const varyValues = ['Accept-Encoding'];
+  if (requestContext.varyAcceptLanguage) {
+    varyValues.push('Accept-Language');
+  }
+  headers.set('Vary', mergeVaryHeader(headers.get('Vary'), varyValues));
+
+  if (requestContext.language) {
+    headers.set('X-Detected-Language', requestContext.language);
+    headers.set('X-Language-Source', requestContext.source || 'default');
+  }
 
   if (!headers.has('Last-Modified')) {
     headers.set('Last-Modified', LAST_MODIFIED);
@@ -150,6 +328,7 @@ export {
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    const languageContext = detectRequestLanguage(request, url.pathname);
 
     try {
       if (url.pathname === '/sitemap.xml') {
@@ -180,8 +359,32 @@ export default {
         return applyResponseHeaders(response, url.pathname);
       }
 
+      if (LOCALE_ROUTES.has(url.pathname)) {
+        const targetPath = getPortfolioTargetPath(url.pathname, languageContext.language);
+        const targetUrl = new URL(request.url);
+        targetUrl.pathname = targetPath;
+
+        const localizedRequest = new Request(targetUrl.toString(), request);
+        localizedRequest.headers.set('X-Detected-Language', languageContext.language);
+        localizedRequest.headers.set('X-Language-Source', languageContext.source);
+
+        let response = await portfolioWorker.fetch(localizedRequest, env, ctx);
+        if (isHtmlResponse(response)) {
+          response = await localizeHtmlResponse(response, languageContext.language);
+        }
+
+        return applyResponseHeaders(response, url.pathname, {
+          language: languageContext.language,
+          source: languageContext.source,
+          varyAcceptLanguage: url.pathname === '/' && languageContext.source === 'accept-language',
+        });
+      }
+
       const response = await portfolioWorker.fetch(request, env, ctx);
-      return applyResponseHeaders(response, url.pathname);
+      return applyResponseHeaders(response, url.pathname, {
+        language: languageContext.language,
+        source: languageContext.source,
+      });
     } catch (error) {
       console.error('[entry] Unhandled error:', error?.message || error);
       ctx.waitUntil(

@@ -1,0 +1,781 @@
+{
+  "personal": {
+    "name": "Jaecheol Lee",
+    "birthDate": "1994.10.17",
+    "email": "qws941@kakao.com",
+    "phone": "010-5757-9592",
+    "address": "경기도 시흥시 장현천로61, 307동 1301호",
+    "github": "https://github.com/qws941"
+  },
+  "education": {
+    "school": "Hanyang Cyber University",
+    "major": "Department of Computer Engineering",
+    "startDate": "2024.03",
+    "status": "재학중",
+    "highSchool": "Yongnam High School",
+    "highSchoolGraduation": "2013"
+  },
+  "languages": [
+    {
+      "name": "Korean",
+      "level": "Native"
+    },
+    {
+      "name": "English",
+      "level": "Professional working proficiency"
+    }
+  ],
+  "military": {
+    "status": "Social Service Agent (Industrial Technical Personnel)",
+    "period": "2018.11 - 2019.11"
+  },
+  "summary": {
+    "totalExperience": "8 years",
+    "experienceStart": "2017.02",
+    "grade": null,
+    "expertise": [
+      "Observability",
+      "Security Infrastructure",
+      "Automation"
+    ],
+    "profileStatement": "Infrastructure engineer with 8 years of experience, responsible for security infrastructure design and operations in finance and public sectors. Currently focused on building observability systems and automating operations."
+  },
+  "current": {
+    "company": "ITCEN CTS Co., Ltd.",
+    "department": "Information Security Team",
+    "position": "Security Operations Engineer",
+    "startDate": "2025.03",
+    "participationMonths": 10,
+    "participationRate": null
+  },
+  "careers": [
+    {
+      "company": "ITCEN CTS Co., Ltd.",
+      "period": "2025.03 ~ 현재",
+      "duration": "10 months",
+      "project": "Nextrade Trading Execution System Security Operations SM",
+      "role": "Security Operations Engineer",
+      "client": "Nextrade",
+      "description": "Security operations managed service for Nextrade and support for the Information Security Team\n• Advanced Splunk-based security log analysis and real-time threat monitoring\n• Optimized FortiGate firewall policies and automated access-control operations\n• Strengthened infrastructure resilience through vulnerability checks and monthly security reporting\n• Technology: Splunk, FortiGate, Python, Linux"
+    },
+    {
+      "company": "Gaonnuri Information Systems Co., Ltd.",
+      "period": "2024.03 ~ 2025.02",
+      "duration": "1 year",
+      "project": "Nextrade Trading Execution System Build",
+      "role": "Infrastructure Engineer",
+      "client": "Nextrade",
+      "description": "Designed and implemented security infrastructure for the Nextrade trading execution platform\n• Supported technical responses for Financial Services Commission production authorization review and established the security architecture\n• Designed network segmentation and access-control policies to satisfy security compliance requirements\n• Built FortiGate HA architecture and formalized disaster recovery procedures\n• Technology: FortiGate, FortiManager, Linux, VMware"
+    },
+    {
+      "company": "Quant Investment Management Co., Ltd.",
+      "period": "2022.08 ~ 2024.02",
+      "duration": "1 year 7 months",
+      "project": "AI Equity Investment Service Security Operations",
+      "role": "Information Security Team",
+      "description": "Operated cloud infrastructure security for an AI asset management platform\n• Managed and enhanced AWS security controls including IAM, Security Groups, and WAF\n• Conducted regular vulnerability assessments and supported robo-advisor testbed security review readiness\n• Built and operated Prometheus/Grafana-based security metrics dashboards\n• Technology: AWS, Terraform, Prometheus, Grafana"
+    },
+    {
+      "company": "FunNC Co., Ltd.",
+      "period": "2022.05 ~ 2022.07",
+      "duration": "3 months",
+      "project": "Cloud Infrastructure",
+      "role": "Infrastructure Engineer",
+      "description": "Led cloud migration and security hardening for an e-commerce service\n• Designed migration from on-premises environments to AWS VPC-based cloud architecture\n• Established EKS cluster security configurations and container vulnerability review processes\n• Automated security review stages in GitLab CI/CD pipelines\n• Technology: AWS, Kubernetes, Docker, GitLab CI"
+    },
+    {
+      "company": "Jointree Co., Ltd.",
+      "period": "2021.09 ~ 2022.04",
+      "duration": "8 months",
+      "project": "Kookmin University Next-Generation Information System",
+      "role": "Systems Engineer",
+      "description": "Advanced the security infrastructure for Kookmin University's next-generation information system\n• Strengthened internal network security with VMware NSX-T micro-segmentation architecture\n• Built integrated security controls and policies, including firewall, NAC, and DLP\n• Supported network security architecture for hybrid cloud transition\n• Technology: VMware NSX-T, Network Security, NAC"
+    },
+    {
+      "company": "Metanet M Platform Co., Ltd.",
+      "period": "2019.12 ~ 2021.08",
+      "duration": "1 year 9 months",
+      "project": "Contact Center Infrastructure",
+      "role": "Systems Engineer",
+      "description": "Operated and automated large-scale contact center IT infrastructure\n• Rapidly built and operated VPN infrastructure to support mass remote work during COVID-19\n• Improved operational efficiency by automating server provisioning and repetitive tasks with Ansible\n• Built real-time monitoring and incident response workflows using Zabbix and PRTG\n• Technology: Ansible, VPN, Zabbix, Python"
+    },
+    {
+      "company": "MT Data Co., Ltd.",
+      "period": "2017.02 ~ 2018.10",
+      "duration": "1 year 9 months",
+      "project": "Korea Aerospace Industries (KAI)",
+      "role": "IT Support / OA Operations",
+      "description": "Provided on-site IT infrastructure operations support in a defense industry environment\n• Performed recurring inspections and maintenance for servers and client infrastructure in an isolated network\n• Managed infrastructure assets and applied security patches in line with internal security policies\n• Maintained stable business operations through technical support and incident response\n• Technology: Windows Server, Linux, Helpdesk"
+    }
+  ],
+  "projects": [
+    {
+      "period": "2025.03 ~ 현재",
+      "name": "Nextrade Security Operations",
+      "client": "Nextrade",
+      "technologies": [
+        "Python",
+        "Splunk",
+        "n8n",
+        "Fortinet"
+      ],
+      "os": "Linux, Docker",
+      "role": "Security Operations Engineer",
+      "description": "Automated security operations with Splunk ES and FortiGate APIs\n• Integrated n8n workflows to deliver real-time Slack alerts when security events are detected\n• Built an automated firewall policy lookup tool using FortiManager API",
+      "metrics": {
+        "detectionRules": "32 active detection rules",
+        "responseTime": "Security alert delivered within 30 seconds",
+        "automation": "Automated firewall policy lookup"
+      }
+    },
+    {
+      "period": "2024.03 ~ 2025.02",
+      "name": "Nextrade Security Infrastructure Build",
+      "client": "Nextrade",
+      "technologies": [
+        "Python",
+        "FortiManager API",
+        "Ansible"
+      ],
+      "os": "Linux, VMware",
+      "role": "Security Infrastructure Design",
+      "description": "Designed a high-availability security architecture for a securities trading platform\n• Implemented Active-Passive HA with FGCP (FortiGate Clustering Protocol)\n• Standardized initial device setup and policy deployment with reusable Ansible roles",
+      "metrics": {
+        "availability": "Designed for HA 99.99% availability",
+        "compliance": "Passed FSC production authorization review",
+        "automation": "Standardized policy deployment with Ansible"
+      }
+    },
+    {
+      "period": "2022.08 ~ 2024.02",
+      "name": "AI Investment Service Security Operations",
+      "client": "Quant Investment Management",
+      "technologies": [
+        "AWS",
+        "IAM",
+        "Security Group",
+        "Prometheus",
+        "Grafana"
+      ],
+      "os": "Linux, AWS",
+      "role": "Information Security Team",
+      "description": "Managed AWS security infrastructure using IaC and improved observability\n• Managed VPC, subnet, and security group resources as code with Terraform\n• Consolidated AWS CloudTrail and GuardDuty logs in CloudWatch for unified analysis",
+      "metrics": {
+        "iac": "VPC/Subnet/SG managed as Terraform code",
+        "monitoring": "Integrated analysis of CloudTrail and GuardDuty",
+        "audit": "Supported robo-advisor testbed security review"
+      }
+    },
+    {
+      "period": "2022.05 ~ 2022.07",
+      "name": "Cloud Infrastructure Build",
+      "client": "FunNC",
+      "technologies": [
+        "AWS",
+        "Kubernetes",
+        "Docker",
+        "GitLab CI/CD"
+      ],
+      "os": "Linux, AWS",
+      "role": "Infrastructure Build",
+      "description": "Built EKS-based container orchestration and CI/CD\n• Automated application deployment and operations with Helm charts\n• Built container image build and static-analysis pipelines with GitLab Runner",
+      "metrics": {
+        "stack": "Automated deployment with EKS + Helm",
+        "cicd": "GitLab CI/CD static-analysis pipeline",
+        "migration": "On-premises to AWS cloud migration"
+      }
+    },
+    {
+      "period": "2021.09 ~ 2022.04",
+      "name": "Kookmin University Next-Generation Information System",
+      "client": "Kookmin University",
+      "technologies": [
+        "VMware NSX-T",
+        "Firewall",
+        "NAC"
+      ],
+      "os": "Linux, vSphere",
+      "role": "Network Virtualization",
+      "description": "Implemented SDN-based network virtualization and micro-segmentation\n• Controlled east-west traffic with VMware NSX-T Distributed Firewall (DFW)\n• Centralized network security policies at the VDS layer",
+      "metrics": {
+        "segmentation": "Applied NSX-T micro-segmentation",
+        "policy": "DFW-based traffic control policy",
+        "centralization": "Centralized VDS-level security policy management"
+      }
+    },
+    {
+      "period": "2019.12 ~ 2021.08",
+      "name": "Contact Center Remote Work Infrastructure",
+      "client": "Metanet M Platform",
+      "technologies": [
+        "Ansible",
+        "Python",
+        "VPN",
+        "NAC"
+      ],
+      "os": "Linux",
+      "role": "Remote Work Infrastructure",
+      "description": "Designed and automated VPN infrastructure for large-scale remote access\n• Synchronized configurations across 500+ servers with Python and Ansible\n• Built dashboards for VPN session monitoring and anomaly detection",
+      "metrics": {
+        "scale": "Synchronized configuration across 500+ servers",
+        "automation": "Automated provisioning with Ansible + Python",
+        "monitoring": "VPN session monitoring dashboard"
+      }
+    },
+    {
+      "period": "2017.02 ~ 2018.10",
+      "name": "KAI Infrastructure Operations",
+      "client": "Korea Aerospace Industries (KAI)",
+      "technologies": [
+        "Linux",
+        "Shell",
+        "Firewall"
+      ],
+      "os": "Linux",
+      "role": "Systems Operations",
+      "description": "Ensured stable availability for closed-network security infrastructure\n• Proactively identified hardware failure signs through periodic system log analysis\n• Complied with internal security audit standards for system configuration",
+      "metrics": {
+        "environment": "Operated closed-network security infrastructure",
+        "maintenance": "Routine checks and proactive incident response",
+        "compliance": "Complied with security audit guidelines"
+      }
+    }
+  ],
+  "careerGap": {
+    "period": "2018.11 ~ 2019.11",
+    "reason": "Focused on Linux systems training and earned multiple related certifications.",
+    "result": "Earned RHCSA, CompTIA Linux+, LPIC-1, and Linux Master Level 2"
+  },
+  "certifications": [
+    {
+      "name": "CCNP",
+      "issuer": "Cisco Systems",
+      "date": "2020.08",
+      "expirationDate": "2023.08",
+      "credentialId": null,
+      "credentialUrl": null,
+      "status": "expired"
+    },
+    {
+      "name": "RHCSA",
+      "issuer": "Red Hat",
+      "date": "2019.01",
+      "expirationDate": "2022.01",
+      "credentialId": null,
+      "credentialUrl": null,
+      "status": "expired"
+    },
+    {
+      "name": "CompTIA Linux+",
+      "issuer": "CompTIA",
+      "date": "2019.02",
+      "expirationDate": null,
+      "credentialId": null,
+      "credentialUrl": null,
+      "status": "active"
+    },
+    {
+      "name": "LPIC Level 1",
+      "issuer": "Linux Professional Institute",
+      "date": "2019.02",
+      "expirationDate": null,
+      "credentialId": null,
+      "credentialUrl": null,
+      "status": "active"
+    },
+    {
+      "name": "Office Automation Industrial Engineer",
+      "issuer": "Human Resources Development Service of Korea",
+      "date": "2019.12",
+      "expirationDate": null,
+      "credentialId": null,
+      "credentialUrl": null,
+      "status": "active"
+    },
+    {
+      "name": "Linux Master Level 2",
+      "issuer": "Korea Information and Communication Promotion Association",
+      "date": "2019.01",
+      "expirationDate": null,
+      "credentialId": null,
+      "credentialUrl": null,
+      "status": "active"
+    },
+    {
+      "name": "CISSP",
+      "issuer": "ISC²",
+      "date": null,
+      "expirationDate": null,
+      "credentialId": null,
+      "credentialUrl": null,
+      "status": "준비중"
+    },
+    {
+      "name": "CISM",
+      "issuer": "ISACA",
+      "date": null,
+      "expirationDate": null,
+      "credentialId": null,
+      "credentialUrl": null,
+      "status": "준비중"
+    },
+    {
+      "name": "AWS Solutions Architect",
+      "issuer": "Amazon Web Services",
+      "date": null,
+      "expirationDate": null,
+      "credentialId": null,
+      "credentialUrl": null,
+      "status": "준비중"
+    }
+  ],
+  "skills": {
+    "observability": {
+      "title": "Observability",
+      "icon": "Activity",
+      "items": [
+        {
+          "name": "Grafana",
+          "level": "expert",
+          "proficiency": 95
+        },
+        {
+          "name": "Prometheus",
+          "level": "expert",
+          "proficiency": 95
+        },
+        {
+          "name": "Loki",
+          "level": "advanced",
+          "proficiency": 80
+        },
+        {
+          "name": "Splunk",
+          "level": "expert",
+          "proficiency": 95
+        }
+      ]
+    },
+    "cloud": {
+      "title": "Cloud & Infrastructure",
+      "icon": "Cloud",
+      "items": [
+        {
+          "name": "AWS (EC2, VPC, EKS, S3)",
+          "level": "advanced",
+          "proficiency": 80
+        },
+        {
+          "name": "Docker",
+          "level": "expert",
+          "proficiency": 95
+        },
+        {
+          "name": "Kubernetes",
+          "level": "intermediate",
+          "proficiency": 60
+        },
+        {
+          "name": "Linux",
+          "level": "expert",
+          "proficiency": 95
+        }
+      ]
+    },
+    "devops": {
+      "title": "DevOps",
+      "icon": "GitBranch",
+      "items": [
+        {
+          "name": "GitLab CI/CD",
+          "level": "advanced",
+          "proficiency": 80
+        },
+        {
+          "name": "GitHub Actions",
+          "level": "expert",
+          "proficiency": 95
+        },
+        {
+          "name": "Ansible",
+          "level": "advanced",
+          "proficiency": 80
+        },
+        {
+          "name": "Terraform",
+          "level": "advanced",
+          "proficiency": 80
+        }
+      ]
+    },
+    "automation": {
+      "title": "Automation",
+      "icon": "Zap",
+      "items": [
+        {
+          "name": "Python",
+          "level": "advanced",
+          "proficiency": 80
+        },
+        {
+          "name": "Shell",
+          "level": "expert",
+          "proficiency": 95
+        },
+        {
+          "name": "n8n",
+          "level": "expert",
+          "proficiency": 95
+        }
+      ]
+    },
+    "database": {
+      "title": "Databases",
+      "icon": "Database",
+      "items": [
+        {
+          "name": "PostgreSQL",
+          "level": "advanced",
+          "proficiency": 80
+        },
+        {
+          "name": "MySQL",
+          "level": "intermediate",
+          "proficiency": 60
+        },
+        {
+          "name": "Redis",
+          "level": "intermediate",
+          "proficiency": 60
+        }
+      ]
+    },
+    "security": {
+      "title": "Security",
+      "icon": "Shield",
+      "items": [
+        {
+          "name": "FortiGate",
+          "level": "expert",
+          "proficiency": 95
+        },
+        {
+          "name": "FortiManager",
+          "level": "expert",
+          "proficiency": 95
+        },
+        {
+          "name": "FortiAnalyzer",
+          "level": "advanced",
+          "proficiency": 80
+        },
+        {
+          "name": "Splunk",
+          "level": "expert",
+          "proficiency": 95
+        },
+        {
+          "name": "NAC",
+          "level": "advanced",
+          "proficiency": 80
+        },
+        {
+          "name": "DLP",
+          "level": "intermediate",
+          "proficiency": 60
+        }
+      ]
+    },
+    "programming": {
+      "title": "Programming",
+      "icon": "Code",
+      "items": [
+        {
+          "name": "Node.js",
+          "level": "intermediate",
+          "proficiency": 60
+        },
+        {
+          "name": "TypeScript",
+          "level": "intermediate",
+          "proficiency": 60
+        }
+      ]
+    },
+    "compliance": {
+      "title": "Compliance",
+      "icon": "FileCheck",
+      "items": [
+        {
+          "name": "ISMS-P",
+          "level": "advanced",
+          "proficiency": 80
+        },
+        {
+          "name": "ISO 27001",
+          "level": "advanced",
+          "proficiency": 80
+        }
+      ]
+    }
+  },
+  "personalProjects": [
+    {
+      "name": "Observability Platform",
+      "period": "2024.06 ~ 현재",
+      "description": "Homelab infrastructure monitoring platform with Prometheus metrics collection, Loki log aggregation, and Grafana visualization.",
+      "technologies": [
+        "Grafana",
+        "Prometheus",
+        "Loki",
+        "Blackbox Exporter",
+        "Docker"
+      ],
+      "icon": "📊",
+      "tagline": "Monitoring Platform",
+      "stars": 0,
+      "language": "PromQL",
+      "forks": 0,
+      "githubUrl": null,
+      "demoUrl": "https://grafana.jclee.me",
+      "metrics": {
+        "dashboards": "12+",
+        "datasources": "Prometheus, Loki, Elasticsearch",
+        "uptime": "99.5%",
+        "targets": "50+ metrics endpoints"
+      }
+    },
+    {
+      "name": "n8n Automation",
+      "period": "2024.01 ~ 현재",
+      "description": "Automated workflows for alerting, deployment, and data collection.",
+      "technologies": [
+        "n8n",
+        "PostgreSQL",
+        "Docker"
+      ],
+      "icon": "🔄",
+      "tagline": "Workflow Automation",
+      "stars": 0,
+      "language": "JavaScript",
+      "forks": 0,
+      "githubUrl": null,
+      "demoUrl": "https://n8n.jclee.me",
+      "metrics": {
+        "workflows": "15+",
+        "executions": "200+ runs/day",
+        "integrations": "Slack, GitHub, Cloudflare, Grafana"
+      }
+    },
+    {
+      "name": "Fortinet API Client",
+      "period": "2025.01 ~ 현재",
+      "description": "Python library for querying FortiManager policies/routes and collecting FortiAnalyzer log statistics.",
+      "technologies": [
+        "Python",
+        "FortiManager",
+        "FortiAnalyzer"
+      ],
+      "icon": "🛡️",
+      "tagline": "Security Device API Automation",
+      "stars": 0,
+      "language": "Python",
+      "forks": 0,
+      "githubUrl": "https://github.com/qws941/splunk",
+      "demoUrl": "https://splunk.jclee.me",
+      "metrics": {
+        "endpoints": "FortiManager, FortiAnalyzer REST API",
+        "features": "Policy lookup, route management, and log statistics",
+        "automation": "80% time reduction compared to manual operations"
+      }
+    },
+    {
+      "name": "Security Alert System",
+      "period": "2025.01 ~ 현재",
+      "description": "Detects FortiGate events in Splunk and sends alerts through Slack Block Kit. Operates 32 detection rules.",
+      "technologies": [
+        "Splunk",
+        "Python",
+        "Slack"
+      ],
+      "icon": "🔔",
+      "tagline": "Security Alert Automation",
+      "stars": 0,
+      "language": "Python",
+      "forks": 0,
+      "githubUrl": "https://github.com/qws941/splunk",
+      "demoUrl": "https://splunk.jclee.me",
+      "metrics": {
+        "detectionRules": "32 rules",
+        "alertChannels": "Slack Block Kit",
+        "sources": "FortiGate syslog → Splunk",
+        "responseTime": "Alert within 30 seconds after event detection"
+      }
+    },
+    {
+      "name": "IP Blacklist Platform",
+      "period": "2024.12 ~ 현재",
+      "description": "Collects and analyzes malicious IP intelligence, then provides dashboards. Built with Flask API and Next.js frontend.",
+      "technologies": [
+        "Flask",
+        "Next.js",
+        "PostgreSQL"
+      ],
+      "icon": "🚫",
+      "tagline": "Threat Intelligence",
+      "stars": 0,
+      "language": "Python",
+      "forks": 0,
+      "githubUrl": "https://github.com/qws941/blacklist",
+      "demoUrl": "https://blacklist.jclee.me",
+      "metrics": {
+        "feeds": "3+ threat intelligence feeds",
+        "stack": "Flask REST API + Next.js Dashboard",
+        "storage": "PostgreSQL with GeoIP enrichment"
+      }
+    },
+    {
+      "name": "HYCU FSDS Autonomous Driving",
+      "period": "2025.11 ~ 2026.02",
+      "description": "Autonomous driving system based on Formula Student Driverless Simulator. Uses LiDAR cone detection (Grid BFS), Pure Pursuit path tracking, and three-tier safety state machine control. Received an Excellence Award at Hanyang Cyber University Formula Competition.",
+      "technologies": [
+        "Python",
+        "ROS",
+        "Docker",
+        "AirSim"
+      ],
+      "icon": "🏎️",
+      "tagline": "Autonomous Driving Simulation",
+      "url": "https://github.com/qws941/hycu_fsds",
+      "stars": 0,
+      "language": "Python",
+      "forks": 0,
+      "githubUrl": "https://github.com/qws941/hycu_fsds",
+      "demoUrl": null,
+      "metrics": {
+        "award": "Excellence Award",
+        "platform": "Formula Student Driverless Simulator",
+        "stack": "ROS + Docker + AirSim"
+      }
+    }
+  ],
+  "ossContributions": [],
+  "hero": {
+    "badge": "Infrastructure Engineer",
+    "title": "Jaecheol Lee",
+    "titleEn": "Jaecheol Lee",
+    "subtitle": "Security Infrastructure Design · Observability · Automation"
+  },
+  "sectionDescriptions": {
+    "resume": "8 years of infrastructure experience",
+    "projects": "Side projects",
+    "infrastructure": "Services in operation",
+    "skills": "Technology stack",
+    "certifications": "Certifications",
+    "contact": "Contact"
+  },
+  "achievements": [
+    "Designed Nextrade ATS security infrastructure (passed Financial Services Commission production authorization)",
+    "Built integrated Splunk-FortiNet monitoring system (central firewall management and automated policy rollout)",
+    "Improved operations by introducing security infrastructure automation (Nextrade)",
+    "Reduced false positives through WAF/IPS policy optimization (Nextrade)",
+    "Built and operated an Observability platform with Grafana, Prometheus, and Loki",
+    "Built n8n workflow automation platform for repetitive operational tasks",
+    "Introduced Claude AI-based security threat analysis automation",
+    "Supported security readiness for robo-advisor testbed evaluation (Quant)",
+    "Delivered cloud migration projects (Jointree)",
+    "Built VPN security infrastructure for large-scale remote work environments (Metanet)"
+  ],
+  "infrastructure": [
+    {
+      "icon": "🖥️",
+      "title": "Proxmox VE",
+      "description": "Virtualization platform (8 VM/CT instances: 3 VMs + 5 LXCs)",
+      "status": "running"
+    },
+    {
+      "icon": "📊",
+      "title": "Grafana + Prometheus",
+      "description": "Observability stack (metrics collection and visualization)",
+      "status": "running",
+      "url": "https://grafana.jclee.me/public-dashboards/8c91649fe829cb4905edf4a60579d0a0"
+    },
+    {
+      "icon": "🔍",
+      "title": "ELK Stack",
+      "description": "Log collection, analysis, and visualization (Elasticsearch + Kibana)",
+      "status": "running",
+      "url": "https://elk.jclee.me"
+    },
+    {
+      "icon": "🌐",
+      "title": "Traefik",
+      "description": "Reverse proxy / ingress",
+      "status": "running"
+    },
+    {
+      "icon": "🗄️",
+      "title": "Supabase",
+      "description": "BaaS (PostgreSQL + Auth)",
+      "status": "running"
+    },
+    {
+      "icon": "💾",
+      "title": "MinIO",
+      "description": "Object storage / cache",
+      "status": "running"
+    },
+    {
+      "icon": "🤖",
+      "title": "MCP Server Hub",
+      "description": "AI agent tooling server (17 MCP servers)",
+      "status": "running"
+    },
+    {
+      "icon": "🔐",
+      "title": "HashiCorp Vault",
+      "description": "Secrets management / PKI",
+      "status": "running"
+    },
+    {
+      "icon": "🐛",
+      "title": "GlitchTip",
+      "description": "Error tracking (Sentry alternative)",
+      "status": "running"
+    },
+    {
+      "icon": "🔄",
+      "title": "n8n",
+      "description": "Workflow automation (15+ workflows, 200+ runs/day)",
+      "status": "running",
+      "url": "https://n8n.jclee.me"
+    },
+    {
+      "icon": "⚡",
+      "title": "Cloudflare Workers",
+      "description": "Edge deployment",
+      "status": "running",
+      "url": "https://resume.jclee.me"
+    },
+    {
+      "icon": "🏗️",
+      "title": "Terraform",
+      "description": "IaC (DNS/Workers/Proxmox)",
+      "status": "running"
+    },
+    {
+      "icon": "🏃",
+      "title": "GitHub Actions Runner",
+      "description": "Self-hosted CI/CD",
+      "status": "running"
+    }
+  ],
+  "contact": {
+    "email": "qws941@kakao.com",
+    "phone": "010-5757-9592",
+    "github": "https://github.com/qws941",
+    "linkedin": "https://linkedin.com/in/jclee0109",
+    "website": "https://resume.jclee.me",
+    "monitoring": "https://grafana.jclee.me/public-dashboards/8c91649fe829cb4905edf4a60579d0a0"
+  }
+}

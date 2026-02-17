@@ -119,7 +119,7 @@ describe('i18n Module', () => {
 
     it('should return false for unsupported language', () => {
       expect(isLanguageSupported('fr')).toBe(false);
-      expect(isLanguageSupported('ja')).toBe(false);
+      expect(isLanguageSupported('ja')).toBe(true);
     });
   });
 
@@ -131,9 +131,10 @@ describe('i18n Module', () => {
       expect(languages).toContain('en');
     });
 
-    it('should return exactly 2 languages', () => {
+    it('should return exactly 3 languages (ko, en, ja)', () => {
       const languages = getSupportedLanguages();
-      expect(languages.length).toBe(2);
+      expect(languages.length).toBe(3);
+      expect(languages).toContain('ja');
     });
   });
 

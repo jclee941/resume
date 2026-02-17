@@ -7,7 +7,7 @@
 
 /**
  * Supported languages
- * @typedef {'ko' | 'en'} Language
+ * @typedef {'ko' | 'en' | 'ja'} Language
  */
 
 /**
@@ -18,15 +18,16 @@ const TRANSLATIONS = {
   ko: {
     // Navigation
     'nav.home': '홈',
+    'nav.about': '소개',
     'nav.projects': '프로젝트',
+    'nav.experience': '경력',
     'nav.resume': '이력서',
     'nav.contact': '연락처',
 
     // Hero section
     'hero.title': '이재철',
     'hero.subtitle': 'DevOps & Security Engineer',
-    'hero.description':
-      '보안 자동화와 인프라 최적화를 통해 안전하고 효율적인 시스템을 구축합니다',
+    'hero.description': '보안 자동화와 인프라 최적화를 통해 안전하고 효율적인 시스템을 구축합니다',
     'hero.download.complete': '완전한 이력서 다운로드',
     'hero.download.pdf': 'PDF',
     'hero.download.docx': 'DOCX',
@@ -59,7 +60,9 @@ const TRANSLATIONS = {
   en: {
     // Navigation
     'nav.home': 'Home',
+    'nav.about': 'About',
     'nav.projects': 'Projects',
+    'nav.experience': 'Experience',
     'nav.resume': 'Resume',
     'nav.contact': 'Contact',
 
@@ -96,6 +99,49 @@ const TRANSLATIONS = {
     'common.error': 'An error occurred',
     'common.retry': 'Retry',
   },
+
+  ja: {
+    // Navigation
+    'nav.home': 'ホーム',
+    'nav.about': '紹介',
+    'nav.projects': 'プロジェクト',
+    'nav.experience': '経歴',
+    'nav.resume': '履歴書',
+    'nav.contact': '連絡先',
+
+    // Hero section
+    'hero.title': 'イ・ジェチョル',
+    'hero.subtitle': 'DevOps・セキュリティエンジニア',
+    'hero.description':
+      'セキュリティ自動化とインフラ最適化を通じて、安全で効率的なシステムを構築します',
+    'hero.download.complete': '完全版履歴書をダウンロード',
+    'hero.download.pdf': 'PDF',
+    'hero.download.docx': 'DOCX',
+
+    // Projects section
+    'projects.title': '主要プロジェクト',
+    'projects.subtitle': '実運用環境で稼働しているプロジェクト',
+    'projects.viewMore': 'もっと見る',
+
+    // Resume section
+    'resume.title': '履歴書',
+    'resume.subtitle': '複数形式で提供',
+    'resume.download': 'ダウンロード',
+
+    // Footer
+    'footer.copyright': '© 2025 Jaecheol Lee. All rights reserved.',
+    'footer.builtWith': 'Built with',
+
+    // Accessibility
+    'aria.toggleTheme': 'ダークモードを切り替え',
+    'aria.downloadResume': '履歴書をダウンロード',
+    'aria.viewProject': 'プロジェクトを表示',
+
+    // Common
+    'common.loading': '読み込み中...',
+    'common.error': 'エラーが発生しました',
+    'common.retry': '再試行',
+  },
 };
 
 /**
@@ -113,11 +159,18 @@ function detectLanguage() {
     return DEFAULT_LANGUAGE;
   }
 
-  const browserLang =
-    navigator.language || /** @type {any} */ (navigator).userLanguage;
+  const browserLang = navigator.language || /** @type {any} */ (navigator).userLanguage;
   const langCode = browserLang.split('-')[0].toLowerCase();
 
-  return langCode === 'en' ? 'en' : 'ko';
+  if (langCode === 'en') {
+    return 'en';
+  }
+
+  if (langCode === 'ja') {
+    return 'ja';
+  }
+
+  return 'ko';
 }
 
 /**
