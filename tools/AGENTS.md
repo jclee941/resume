@@ -44,7 +44,6 @@ tools/
 | `scripts/deployment/quick-deploy.sh`        | Atomic deploy with rollback          |
 | `scripts/utils/sync-resume-data.js`         | Propagate SSoT changes               |
 | `scripts/verification/verify-deployment.sh` | 7-point health check                 |
-| `ci/run-affected.js`                        | Bazel→npm target bridge              |
 
 ## BUILD SCRIPTS (scripts/build/)
 

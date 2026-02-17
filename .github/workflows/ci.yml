@@ -126,17 +126,6 @@ jobs:
             echo "⏭️ Deploy: NO (PR or non-master)"
           fi
 
-      - name: Ensure artifact directory exists
-        run: mkdir -p .affected && touch .affected/.keep
-
-      - name: Upload affected analysis
-        uses: actions/upload-artifact@v6
-        with:
-          name: affected-targets
-          path: .affected/
-          retention-days: 1
-          if-no-files-found: ignore
-
   # ===========================================================================
   # STAGE: VALIDATE - Linting & Type Checking
   # ===========================================================================
@@ -179,7 +168,7 @@ jobs:
 
       - name: Upload lint results
         if: failure()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: eslint-results
           path: eslint-results.txt
@@ -196,17 +185,10 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
 
-      - name: Download affected analysis
-        uses: actions/download-artifact@v7
-        with:
-          name: affected-targets
-          path: .affected/
-        continue-on-error: true
-
-      - name: Run TypeScript check (affected)
+      - name: Run TypeScript check
         run: |
           echo "=== Running TypeScript Check ==="
-          node tools/ci/run-affected.js typecheck || npm run typecheck
+          npm run typecheck
 
   # ===========================================================================
   # STAGE: TEST - Unit & E2E Tests
@@ -223,20 +205,13 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
 
-      - name: Download affected analysis
-        uses: actions/download-artifact@v7
-        with:
-          name: affected-targets
-          path: .affected/
-        continue-on-error: true
-
       - name: Run unit tests
         run: |
           echo "=== Running Unit Tests ==="
-          node tools/ci/run-affected.js test:coverage || npm test
+          npm test
 
       - name: Upload coverage
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-report
           path: coverage/
@@ -277,7 +252,7 @@ jobs:
 
       - name: Upload Playwright report
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-report
           path: playwright-report/
@@ -334,7 +309,7 @@ jobs:
         working-directory: typescript/portfolio-worker
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: portfolio-worker
           path: typescript/portfolio-worker/worker.js
@@ -459,7 +434,7 @@ jobs:
 
       - name: Upload Lighthouse reports
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: lighthouse-report
           path: .lighthouseci/

@@ -200,6 +200,7 @@ Weekly updates (Monday, Asia/Seoul TZ):
 | Webhook notify shell injection     | Commit messages with `(`, `)`, `\|` break curl JSON payload                                | Both notify + rollback-notify now use `jq -n` for safe JSON construction |
 | Release workflow `startup_failure` | Transient GitHub platform issue with `workflow_run` triggers                               | Added `workflow_dispatch` as manual fallback trigger                     |
 | ESLint warning baseline stale      | `ESLINT_WARNING_BASELINE=120` but actual count is 0                                        | Ratcheted down to 0                                                      |
+| Artifact warnings every CI run     | `affected-targets` artifact upload/download was dead code (no Bazel in CI)                 | Removed artifact steps and `run-affected.js`; run npm directly           |
 
 ## ANTI-PATTERNS
 
