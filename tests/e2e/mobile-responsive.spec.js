@@ -19,7 +19,7 @@ test.describe('Mobile - Layout', () => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
   });
 
-  test.skip('should display terminal window on mobile', async ({ page }) => {
+  test('should display terminal window on mobile', async ({ page }) => {
     const terminal = page.locator('.terminal-window').first();
     await expect(terminal).toBeAttached();
 
@@ -63,7 +63,7 @@ test.describe('Mobile - Navigation', () => {
     await expect(nav).toBeAttached();
   });
 
-  test.skip('should be able to navigate to sections on mobile', async ({ page }) => {
+  test('should be able to navigate to sections on mobile', async ({ page }) => {
     // Click on about link
     const aboutLink = page.locator('a[href="#about"]').first();
     await aboutLink.click();
@@ -100,7 +100,7 @@ test.describe('Mobile - Touch Interactions', () => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
   });
 
-  test.skip('should support touch scrolling', async ({ page }) => {
+  test('should support touch scrolling', async ({ page }) => {
     // Get initial scroll position
     const initialScroll = await page.evaluate(() => window.scrollY);
 
@@ -113,7 +113,7 @@ test.describe('Mobile - Touch Interactions', () => {
     expect(newScroll).toBeGreaterThan(initialScroll);
   });
 
-  test.skip('should support clicking navigation links', async ({ page }) => {
+  test('should support clicking navigation links', async ({ page }) => {
     const aboutLink = page.locator('a[href="#about"]').first();
     await aboutLink.click();
 

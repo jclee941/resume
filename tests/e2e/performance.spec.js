@@ -277,7 +277,7 @@ test.describe('Performance & Core Web Vitals', () => {
     expect(hasCriticalCSS).toBe(true);
   });
 
-  test.skip('should not block rendering with scripts', async ({ page }) => {
+  test('should not block rendering with scripts', async ({ page }) => {
     await page.goto('/');
 
     // All scripts should be at bottom of body or async/defer

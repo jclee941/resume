@@ -200,61 +200,6 @@ test.describe('JSON-LD Structured Data', () => {
     expect(personSchema.knowsAbout).toBeInstanceOf(Array);
   });
 
-  test.skip('should have BreadcrumbList schema', async ({ page }) => {
-    const breadcrumbSchema = await page.evaluate(() => {
-      const scripts = document.querySelectorAll('script[type="application/ld+json"]');
-      for (const script of scripts) {
-        try {
-          const data = JSON.parse(script.textContent || '');
-          if (data['@type'] === 'BreadcrumbList') {
-            return data;
-          }
-        } catch {
-          /* skip invalid JSON-LD */
-        }
-      }
-      return null;
-    });
-
-    expect(breadcrumbSchema).toBeTruthy();
-    expect(breadcrumbSchema['@context']).toBe('https://schema.org');
-    expect(breadcrumbSchema.itemListElement).toBeInstanceOf(Array);
-    expect(breadcrumbSchema.itemListElement.length).toBeGreaterThanOrEqual(2);
-
-    // Verify structure
-    const firstItem = breadcrumbSchema.itemListElement[0];
-    expect(firstItem['@type']).toBe('ListItem');
-    expect(firstItem.position).toBe(1);
-    expect(firstItem.name).toBeTruthy();
-    expect(firstItem.item).toBeTruthy();
-  });
-
-  test.skip('should have CollectionPage schema', async ({ page }) => {
-    const collectionSchema = await page.evaluate(() => {
-      const scripts = document.querySelectorAll('script[type="application/ld+json"]');
-      for (const script of scripts) {
-        try {
-          const data = JSON.parse(script.textContent || '');
-          if (data['@type'] === 'CollectionPage') {
-            return data;
-          }
-        } catch {
-          /* skip invalid JSON-LD */
-        }
-      }
-      return null;
-    });
-
-    expect(collectionSchema).toBeTruthy();
-    expect(collectionSchema['@context']).toBe('https://schema.org');
-    expect(collectionSchema.name).toBeTruthy();
-    expect(collectionSchema.description).toBeTruthy();
-    expect(collectionSchema.url).toBe('https://resume.jclee.me');
-    expect(collectionSchema.author).toBeTruthy();
-    expect(collectionSchema.mainEntity).toBeTruthy();
-    expect(collectionSchema.mainEntity.itemListElement).toBeInstanceOf(Array);
-  });
-
   test('should have WebSite schema', async ({ page }) => {
     const websiteSchema = await page.evaluate(() => {
       const scripts = document.querySelectorAll('script[type="application/ld+json"]');
@@ -323,12 +268,6 @@ test.describe('Resource Hints', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('domcontentloaded');
-  });
-
-  test.skip('should have dns-prefetch for external domains', async ({ page }) => {
-    const dnsPrefetch = page.locator('link[rel="dns-prefetch"]');
-    const count = await dnsPrefetch.count();
-    expect(count).toBeGreaterThan(0);
   });
 
   test('should have resource hints for external services', async ({ page }) => {

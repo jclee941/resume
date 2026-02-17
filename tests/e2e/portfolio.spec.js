@@ -6,7 +6,6 @@ require('./fixtures/helpers');
 const SELECTORS = {
   HERO_TITLE: '.hero-title',
   PROJECT_CARD: '#projects .project-list li.project-item',
-  STAT_CARD: '.stat-card',
   PROJECT_LINK_PRIMARY: '#projects .project-link-title[href]',
 };
 
@@ -14,7 +13,6 @@ const SELECTORS = {
 const projectData = require('../../typescript/portfolio-worker/data.json');
 const EXPECTED_COUNTS = {
   PROJECTS: projectData.projects.length,
-  STATS: 0, // Stats section removed in redesign
 };
 
 const REGEX_PATTERNS = {
@@ -47,12 +45,6 @@ test.describe('Portfolio Homepage', () => {
   test('should display project cards', async ({ page }) => {
     const projectCards = page.locator(SELECTORS.PROJECT_CARD);
     await expect(projectCards).toHaveCount(EXPECTED_COUNTS.PROJECTS);
-  });
-
-  // Stats section removed in redesign - test skipped
-  test.skip('should display statistics section', async ({ page }) => {
-    const statCards = page.locator(SELECTORS.STAT_CARD);
-    await expect(statCards).toHaveCount(EXPECTED_COUNTS.STATS);
   });
 
   test('project links should be valid', async ({ page }) => {

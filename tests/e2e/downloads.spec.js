@@ -52,113 +52,6 @@ test.describe('Download Functionality', () => {
     });
   });
 
-  // Resume cards section removed in redesign - tests skipped
-  test.describe.skip('Resume Cards Download Links', () => {
-    test('should have Nextrade complete PDF download', async ({ page }) => {
-      // Highlighted card should have "Complete PDF" link
-      const nextradeCard = page.locator('.doc-card-highlight');
-      await expect(nextradeCard).toBeVisible();
-
-      const completePdfLink = nextradeCard.getByRole('link', {
-        name: /complete pdf/i,
-      });
-      await expect(completePdfLink).toBeVisible();
-
-      const href = await completePdfLink.getAttribute('href');
-      expect(href).toMatch(/raw\.githubusercontent\.com/);
-      expect(href).toContain('Nextrade_Full_Documentation.pdf');
-    });
-
-    test('should have PDF and DOCX downloads for standard resume cards', async ({ page }) => {
-      // Find all standard (non-highlighted) resume cards
-      const standardCards = page.locator('.doc-card:not(.doc-card-highlight)');
-      const count = await standardCards.count();
-
-      expect(count).toBeGreaterThanOrEqual(4); // Quantec, KMU, Telecom, KAI
-
-      // Each card should have download links (some may be missing if no docs exist)
-      for (let i = 0; i < count; i++) {
-        const card = standardCards.nth(i);
-        const pdfLink = card.getByRole('link', { name: /pdf$/i });
-        const docxLink = card.getByRole('link', { name: /docx$/i });
-
-        // Check PDF link if present with valid URL
-        if ((await pdfLink.count()) > 0) {
-          const pdfHref = await pdfLink.getAttribute('href');
-          if (pdfHref && pdfHref !== 'undefined' && !pdfHref.includes('undefined')) {
-            await expect(pdfLink).toBeVisible();
-            expect(pdfHref).toMatch(/raw\.githubusercontent\.com/);
-          }
-        }
-
-        // Check DOCX link if present with valid URL
-        if ((await docxLink.count()) > 0) {
-          const docxHref = await docxLink.getAttribute('href');
-          if (docxHref && docxHref !== 'undefined' && !docxHref.includes('undefined')) {
-            await expect(docxLink).toBeVisible();
-            expect(docxHref).toMatch(/raw\.githubusercontent\.com/);
-          }
-        }
-      }
-    });
-
-    test('should have proper ARIA labels on download links', async ({ page }) => {
-      const downloadLinks = page.locator('a[download]');
-      const count = await downloadLinks.count();
-
-      expect(count).toBeGreaterThan(0);
-
-      // Verify all download links have aria-label
-      for (let i = 0; i < count; i++) {
-        const link = downloadLinks.nth(i);
-        const ariaLabel = await link.getAttribute('aria-label');
-        expect(ariaLabel).toBeTruthy();
-        expect(ariaLabel).toContain('Download');
-      }
-    });
-  });
-
-  // Doc-links section removed in redesign - tests skipped
-  test.describe.skip('Download Link Accessibility', () => {
-    test('should have role="group" on download link containers', async ({ page }) => {
-      const downloadGroups = page
-        .locator('[role="group"]')
-        .filter({ has: page.locator('a[download]') });
-      const count = await downloadGroups.count();
-
-      expect(count).toBeGreaterThanOrEqual(5); // At least 5 resume cards
-    });
-
-    test('should have descriptive aria-label on download groups', async ({ page }) => {
-      const downloadGroups = page.locator('.doc-links[role="group"]');
-      const count = await downloadGroups.count();
-
-      for (let i = 0; i < count; i++) {
-        const group = downloadGroups.nth(i);
-        const ariaLabel = await group.getAttribute('aria-label');
-        expect(ariaLabel).toBeTruthy();
-        expect(ariaLabel).toMatch(/download options/i);
-      }
-    });
-
-    test('download links should be keyboard accessible', async ({ page }) => {
-      const firstDownloadLink = page.locator('a[download]').first();
-
-      // Focus on the link
-      await firstDownloadLink.focus();
-
-      // Verify it's focused
-      await expect(firstDownloadLink).toBeFocused();
-
-      // Tab to next download link
-      await page.keyboard.press('Tab');
-
-      // Should focus next interactive element
-      const activeElement = page.locator(':focus');
-      await expect(activeElement).toBeVisible();
-    });
-  });
-
   test.describe('Download Link Validation', () => {
     test('all download URLs should follow correct patterns', async ({ page }) => {
       const allDownloadLinks = page.locator('a[download]');
@@ -192,9 +85,8 @@ test.describe('Download Functionality', () => {
   });
 
   test.describe('Network Request Validation (Optional)', () => {
-    test.skip('download links should return 200 OK', async ({ page, request }) => {
-      // This test requires GitLab to be publicly accessible
-      // Skip by default, enable manually when testing
+    test('download links should return 200 OK', async ({ page, request }) => {
+      // Requires external hosting (raw.githubusercontent.com) to be reachable
       const downloadLinks = page.locator('a[download]');
       const firstLink = await downloadLinks.first().getAttribute('href');
 
