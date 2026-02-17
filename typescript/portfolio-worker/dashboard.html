@@ -837,7 +837,7 @@ DevSecOps 엔지니어 포지션입니다. 보안과 DevOps 경험을 보유한 
         return classes[status] || "status-pending";
       }
 
-      function escapeHtml(str) {
+      function sanitizeHtml(str) {
         if (str == null) return "";
         return String(str).replace(
           /[&<>"']/g,
@@ -861,8 +861,8 @@ DevSecOps 엔지니어 포지션입니다. 보안과 DevOps 경험을 보유한 
           if (data.stats && data.stats.length > 0) {
             const today = data.stats[data.stats.length - 1].sum;
             document.getElementById("portfolio-stats-text").innerHTML = `
-              <strong>${today.requests.toLocaleString()}</strong> 요청 /
-              <strong>${today.pageViews.toLocaleString()}</strong> 뷰
+              <strong>${sanitizeHtml(today.requests.toLocaleString())}</strong> 요청 /
+              <strong>${sanitizeHtml(today.pageViews.toLocaleString())}</strong> 뷰
             `;
             document.getElementById("portfolio-details").textContent =
               `최근 7일: ${data.stats.reduce((acc, cur) => acc + cur.sum.requests, 0).toLocaleString()} 요청`;
@@ -940,23 +940,23 @@ DevSecOps 엔지니어 포지션입니다. 보안과 DevOps 경험을 보유한 
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <h3 style="margin: 0;">
                             <span class="status-indicator ${status.authenticated ? "status-operational" : "status-error"}"></span>
-                            ${escapeHtml(status.platform).toUpperCase()}
+                            ${sanitizeHtml(status.platform).toUpperCase()}
                         </h3>
                         <div style="font-size: 11px; color: #666;">
-                            ${status.lastUpdated ? "업데이트: " + new Date(status.lastUpdated).toLocaleDateString() : "인증 정보 없음"}
+                            ${status.lastUpdated ? "업데이트: " + sanitizeHtml(new Date(status.lastUpdated).toLocaleDateString()) : "인증 정보 없음"}
                         </div>
                     </div>
                     <div style="margin: 15px 0; font-size: 14px;">
-                        ${status.authenticated ? `✅ 계정: ${escapeHtml(status.email) || "인증됨"}` : "❌ 로그인이 필요합니다"}
+                        ${status.authenticated ? `✅ 계정: ${sanitizeHtml(status.email) || "인증됨"}` : "❌ 로그인이 필요합니다"}
                     </div>
                     <div style="display: flex; gap: 8px;">
-                        <button class="btn btn-secondary" style="padding: 8px 12px; font-size: 12px;" onclick="openAuthModal('${escapeHtml(status.platform)}')">
+                        <button class="btn btn-secondary" style="padding: 8px 12px; font-size: 12px;" onclick="openAuthModal('${sanitizeHtml(status.platform)}')">
                             ${status.authenticated ? "쿠키 갱신" : "인증 설정"}
                         </button>
                         ${
                           status.authenticated
                             ? `
-                            <button class="btn btn-secondary" style="padding: 8px 12px; font-size: 12px; color: #ef4444; border-color: #fecaca;" onclick="logout('${status.platform}')">
+                            <button class="btn btn-secondary" style="padding: 8px 12px; font-size: 12px; color: #ef4444; border-color: #fecaca;" onclick="logout('${sanitizeHtml(status.platform)}')">
                                 로그아웃
                             </button>
                         `
@@ -1045,8 +1045,13 @@ DevSecOps 엔지니어 포지션입니다. 보안과 DevOps 경험을 보유한 
         const listElement = document.getElementById("applications-list");
 
         if (applications.length === 0) {
-          listElement.innerHTML =
-            '<div style="text-align: center; color: #666; padding: 40px;">지원 내역이 없습니다.</div>';
+          listElement.textContent = "";
+          const emptyMessage = document.createElement("div");
+          emptyMessage.style.textAlign = "center";
+          emptyMessage.style.color = "#666";
+          emptyMessage.style.padding = "40px";
+          emptyMessage.textContent = "지원 내역이 없습니다.";
+          listElement.appendChild(emptyMessage);
           return;
         }
 
@@ -1056,14 +1061,14 @@ DevSecOps 엔지니어 포지션입니다. 보안과 DevOps 경험을 보유한 
                 <div class="application-item">
                     <div class="application-header">
                         <div class="application-title">
-                            ${getPlatformBadge(app.source)}
-                            ${escapeHtml(app.position) || "포지션"} @ ${escapeHtml(app.company) || "회사"}
+                            ${getPlatformBadge(sanitizeHtml(app.source))}
+                            ${sanitizeHtml(app.position) || "포지션"} @ ${sanitizeHtml(app.company) || "회사"}
                         </div>
-                        <div class="application-status ${getStatusClass(app.status)}">${escapeHtml(app.status) || "pending"}</div>
+                        <div class="application-status ${getStatusClass(app.status)}">${sanitizeHtml(app.status) || "pending"}</div>
                     </div>
                     <div class="application-meta">
-                        ${formatDate(app.createdAt)} • 매칭: ${Number(app.matchScore) || 0}%
-                        ${app.notes ? `<br><span style="color:#888; font-size:12px;">Memo: ${escapeHtml(app.notes)}</span>` : ""}
+                        ${sanitizeHtml(formatDate(app.createdAt))} • 매칭: ${sanitizeHtml(Number(app.matchScore) || 0)}%
+                        ${app.notes ? `<br><span style="color:#888; font-size:12px;">Memo: ${sanitizeHtml(app.notes)}</span>` : ""}
                     </div>
                 </div>
             `,
@@ -1109,9 +1114,9 @@ DevSecOps 엔지니어 포지션입니다. 보안과 DevOps 경험을 보유한 
 
               matchDetails.innerHTML = `
                         <p><strong>매칭 유형:</strong> ${data.match.type === "ai" ? "🤖 AI 매칭" : "🔍 기본 매칭"}</p>
-                        <p><strong>신뢰도:</strong> ${escapeHtml(data.match.confidence) || "N/A"}</p>
-                        <p><strong>합격 확률:</strong> ${data.match.successProbability ? escapeHtml(data.match.successProbability) + "%" : "N/A"}</p>
-                        ${data.match.reasoning ? `<p><strong>분석:</strong> ${escapeHtml(data.match.reasoning)}</p>` : ""}
+                        <p><strong>신뢰도:</strong> ${sanitizeHtml(data.match.confidence) || "N/A"}</p>
+                        <p><strong>합격 확률:</strong> ${data.match.successProbability ? sanitizeHtml(data.match.successProbability) + "%" : "N/A"}</p>
+                        ${data.match.reasoning ? `<p><strong>분석:</strong> ${sanitizeHtml(data.match.reasoning)}</p>` : ""}
                         ${!data.aiEnabled ? '<p style="color: #f59e0b;">⚠️ AI가 비활성화되어 기본 매칭으로 분석되었습니다.</p>' : ""}
                     `;
 
@@ -1208,8 +1213,20 @@ DevSecOps 엔지니어 포지션입니다. 보안과 DevOps 경험을 보유한 
           `업데이트: ${new Date(profile.meta.lastUpdated).toLocaleDateString()}`;
 
         if (profile.basic.avatar) {
-          document.getElementById("profile-avatar").innerHTML =
-            `<img src="${profile.basic.avatar}" alt="Profile avatar" loading="lazy" decoding="async" width="80" height="80" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+          const avatarElement = document.getElementById("profile-avatar");
+          avatarElement.textContent = "";
+          const avatarImage = document.createElement("img");
+          avatarImage.src = profile.basic.avatar;
+          avatarImage.alt = "Profile avatar";
+          avatarImage.loading = "lazy";
+          avatarImage.decoding = "async";
+          avatarImage.width = 80;
+          avatarImage.height = 80;
+          avatarImage.style.width = "100%";
+          avatarImage.style.height = "100%";
+          avatarImage.style.borderRadius = "50%";
+          avatarImage.style.objectFit = "cover";
+          avatarElement.appendChild(avatarImage);
         }
 
         // Sync Status Grid
@@ -1233,12 +1250,12 @@ DevSecOps 엔지니어 포지션입니다. 보안과 DevOps 경험을 보유한 
             return `
                     <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e5e7eb;">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
-                            <span style="font-weight:600; text-transform:uppercase;">${platform}</span>
-                            <span style="width:8px; height:8px; border-radius:50%; background:${statusColor};"></span>
+                            <span style="font-weight:600; text-transform:uppercase;">${sanitizeHtml(platform)}</span>
+                            <span style="width:8px; height:8px; border-radius:50%; background:${sanitizeHtml(statusColor)};"></span>
                         </div>
-                        <div style="font-size:12px; color:${statusColor};">${statusText}</div>
+                        <div style="font-size:12px; color:${sanitizeHtml(statusColor)};">${sanitizeHtml(statusText)}</div>
                         <div style="font-size:11px; color:#888; margin-top:3px;">
-                            ${status.lastSync ? new Date(status.lastSync).toLocaleDateString() : "-"}
+                            ${status.lastSync ? sanitizeHtml(new Date(status.lastSync).toLocaleDateString()) : "-"}
                         </div>
                     </div>
                 `;
