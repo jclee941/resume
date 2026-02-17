@@ -1,0 +1,62 @@
+========================================================================
+  PPTX 검증 리포트
+  대상: 5개 파일  |  기준일: 2026-02-12
+========================================================================
+
+[Phase 1] 데이터 추출
+----------------------------------------
+  ✓ 2.pptx: 5 tables, profile=True, companies=4
+  ✓ lee_jaecheol_profile_ta.pptx: 2 tables, profile=True, companies=0
+  ✓ lee_jaecheol_ta.pptx: 2 tables, profile=True, companies=0
+  ✓ lee_jaecheol_ta_profile.pptx: 2 tables, profile=True, companies=0
+  ✓ ta.pptx: 5 tables, profile=True, companies=7
+
+========================================================================
+[Phase 2] 파일 간 일관성 비교
+----------------------------------------
+  성명: {'이재철', '소속'} — ✗ 불일치
+  소속회사: ✗ 불일치
+    - 2.pptx: 가온누리정보시스템
+    - ta.pptx: 아이티센 CTS
+  IT경력: ✗ 불일치
+    - 2.pptx: 8년 8개월
+    - ta.pptx: 7년 4개월
+  회사이력: ✗ 파일별 수 불일치
+    - 2.pptx: 4개사
+    - lee_jaecheol_profile_ta.pptx: 0개사
+    - lee_jaecheol_ta.pptx: 0개사
+    - lee_jaecheol_ta_profile.pptx: 0개사
+    - ta.pptx: 7개사
+  생년월일: {'1994.10.17'} — ✓ 일치
+
+========================================================================
+[Phase 3] 경력 데이터 정합성 검증
+----------------------------------------
+  Ground truth 경력: 7년 4개월 (88개월)
+  타임라인: 2018.10 ~ 현재
+
+  2.pptx: 기재 '8년 8개월' (104개월) — ✗ +16개월 차이
+  ta.pptx: 기재 '7년 4개월' (88개월) — ✓ 정확
+
+  회사이력 누락 검증:
+    2.pptx: ✗ 누락 3개 — 국민대학교, 메타넷엠플랫폼, 한국항공우주산업(KAI)
+    lee_jaecheol_profile_ta.pptx: 회사이력 테이블 없음 (또는 빈 테이블)
+    lee_jaecheol_ta.pptx: 회사이력 테이블 없음 (또는 빈 테이블)
+    lee_jaecheol_ta_profile.pptx: 회사이력 테이블 없음 (또는 빈 테이블)
+    ta.pptx: ✓ 전체 포함 (7개사)
+
+  경력 공백 기간:
+    ⚠ 한국항공우주산업(KAI) → 메타넷엠플랫폼: 2개월 공백 (2019.10 ~ 2019.12)
+    ↔ 콴텍투자일임 → 가온누리정보시스템: 중복/연속
+
+========================================================================
+[요약]
+----------------------------------------
+  ✗ 6개 이슈 발견:
+    1. 성명 불일치: {'2.pptx': '이재철', 'lee_jaecheol_profile_ta.pptx': '소속', 'lee_jaecheol_ta.pptx': '소속', 'lee_jaecheol_ta_profile.pptx': '소속', 'ta.pptx': '이재철'}
+    2. 소속회사 불일치: {'2.pptx': '가온누리정보시스템', 'lee_jaecheol_profile_ta.pptx': 'N/A', 'lee_jaecheol_ta.pptx': 'N/A', 'lee_jaecheol_ta_profile.pptx': 'N/A', 'ta.pptx': '아이티센 CTS'}
+    3. IT경력 불일치: {'2.pptx': '8년 8개월', 'lee_jaecheol_profile_ta.pptx': None, 'lee_jaecheol_ta.pptx': None, 'lee_jaecheol_ta_profile.pptx': None, 'ta.pptx': '7년 4개월'}
+    4. 회사이력 수 불일치: {'2.pptx': 4, 'lee_jaecheol_profile_ta.pptx': 0, 'lee_jaecheol_ta.pptx': 0, 'lee_jaecheol_ta_profile.pptx': 0, 'ta.pptx': 7}
+    5. 2.pptx: IT경력 +16개월 오차 (기재=8년 8개월, 실제=7년 4개월)
+    6. 2.pptx: 회사이력 누락 — {'한국항공우주산업(KAI)', '메타넷엠플랫폼', '국민대학교'}
+========================================================================
