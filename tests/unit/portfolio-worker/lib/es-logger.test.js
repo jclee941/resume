@@ -6,12 +6,6 @@ describe('es-logger', () => {
   beforeEach(() => {
     jest.resetModules();
     jest.useFakeTimers();
-    jest.mock('../../../../typescript/portfolio-worker/logger', () => ({
-      warn: jest.fn(),
-      log: jest.fn(),
-      debug: jest.fn(),
-      error: jest.fn(),
-    }));
     global.fetch = jest.fn(() => Promise.resolve({ ok: true }));
     global.AbortController = class {
       constructor() {
@@ -48,129 +42,188 @@ describe('es-logger', () => {
   describe('logToElasticsearch', () => {
     const mockEnv = {
       ELASTICSEARCH_URL: 'https://es.example.com',
+      CF_ACCESS_CLIENT_ID: 'cf-id',
+      CF_ACCESS_CLIENT_SECRET: 'cf-secret',
       ELASTICSEARCH_API_KEY: 'test-api-key',
       ELASTICSEARCH_INDEX: 'test-index',
     };
 
-    it('should not throw even on errors', async () => {
+    it('should not throw even on fetch errors', async () => {
       global.fetch = jest.fn(() => Promise.reject(new Error('network error')));
       await expect(
-        esLogger.logToElasticsearch(mockEnv, 'test message', 'ERROR', {}, { immediate: true })
+        esLogger.logToElasticsearch(mockEnv, 'test message', 'ERROR')
       ).resolves.not.toThrow();
     });
 
     it('should handle missing ES URL gracefully', async () => {
-      await esLogger.logToElasticsearch({}, 'test message', 'INFO', {}, { immediate: true });
+      await esLogger.logToElasticsearch({ CF_ACCESS_CLIENT_ID: 'id' }, 'test message', 'INFO');
       expect(global.fetch).not.toHaveBeenCalled();
     });
 
-    it('should handle missing API key gracefully', async () => {
+    it('should handle missing CF_ACCESS_CLIENT_ID gracefully', async () => {
       await esLogger.logToElasticsearch(
         { ELASTICSEARCH_URL: 'https://es.example.com' },
         'test',
-        'INFO',
-        {},
-        { immediate: true }
+        'INFO'
       );
       expect(global.fetch).not.toHaveBeenCalled();
     });
 
-    describe('immediate mode', () => {
-      it('should call fetch directly with POST', async () => {
-        await esLogger.logToElasticsearch(mockEnv, 'test msg', 'INFO', {}, { immediate: true });
-        expect(global.fetch).toHaveBeenCalledTimes(1);
-        const [url, opts] = global.fetch.mock.calls[0];
-        expect(url).toContain('es.example.com');
-        expect(url).toContain('_doc');
-        expect(opts.method).toBe('POST');
-      });
-
-      it('should include API key in headers', async () => {
-        await esLogger.logToElasticsearch(mockEnv, 'test', 'INFO', {}, { immediate: true });
-        const [, opts] = global.fetch.mock.calls[0];
-        expect(opts.headers).toHaveProperty('Authorization', 'ApiKey test-api-key');
-      });
-
-      it('should send ECS-formatted document', async () => {
-        await esLogger.logToElasticsearch(
-          mockEnv,
-          'hello',
-          'WARN',
-          { custom: 'label' },
-          { immediate: true }
-        );
-        const [, opts] = global.fetch.mock.calls[0];
-        const body = JSON.parse(opts.body);
-        expect(body).toHaveProperty('message', 'hello');
-        expect(body).toHaveProperty('log');
-        expect(body.log).toHaveProperty('level', 'warn');
-        expect(body).toHaveProperty('@timestamp');
-        expect(body).toHaveProperty('ecs');
-      });
+    it('should call fetch with POST to _doc endpoint', async () => {
+      await esLogger.logToElasticsearch(mockEnv, 'test msg', 'INFO');
+      expect(global.fetch).toHaveBeenCalledTimes(1);
+      const [url, opts] = global.fetch.mock.calls[0];
+      expect(url).toBe('https://es.example.com/test-index/_doc');
+      expect(opts.method).toBe('POST');
     });
 
-    describe('batch mode', () => {
-      it('should queue messages and not flush immediately', async () => {
-        await esLogger.logToElasticsearch(mockEnv, 'batch msg');
-        expect(global.fetch).not.toHaveBeenCalled();
-      });
-
-      it('should flush when batch size is reached', async () => {
-        for (let i = 0; i < 10; i++) {
-          await esLogger.logToElasticsearch(mockEnv, `msg ${i}`);
-        }
-        await jest.advanceTimersByTimeAsync(0);
-        expect(global.fetch).toHaveBeenCalled();
-      });
-
-      it('should flush after BATCH_FLUSH_MS timeout', async () => {
-        await esLogger.logToElasticsearch(mockEnv, 'delayed msg');
-        expect(global.fetch).not.toHaveBeenCalled();
-
-        await jest.advanceTimersByTimeAsync(1100);
-        expect(global.fetch).toHaveBeenCalled();
-      });
+    it('should include CF-Access headers when credentials are present', async () => {
+      await esLogger.logToElasticsearch(mockEnv, 'test', 'INFO');
+      const [, opts] = global.fetch.mock.calls[0];
+      expect(opts.headers).toHaveProperty('CF-Access-Client-Id', 'cf-id');
+      expect(opts.headers).toHaveProperty('CF-Access-Client-Secret', 'cf-secret');
     });
 
-    it('should use default level INFO', async () => {
-      await esLogger.logToElasticsearch(
-        mockEnv,
-        'default level',
-        undefined,
-        {},
-        { immediate: true }
-      );
+    it('should include API key in Authorization header', async () => {
+      await esLogger.logToElasticsearch(mockEnv, 'test', 'INFO');
+      const [, opts] = global.fetch.mock.calls[0];
+      expect(opts.headers).toHaveProperty('Authorization', 'ApiKey test-api-key');
+    });
+
+    it('should send flat-schema document with correct fields', async () => {
+      await esLogger.logToElasticsearch(mockEnv, 'hello', 'WARN', { custom: 'label' });
       const [, opts] = global.fetch.mock.calls[0];
       const body = JSON.parse(opts.body);
-      expect(body.log.level).toBe('info');
+      expect(body).toHaveProperty('message', 'hello');
+      expect(body).toHaveProperty('level', 'warn');
+      expect(body).toHaveProperty('service', 'resume-worker');
+      expect(body).toHaveProperty('@timestamp');
+      expect(body).toHaveProperty('custom', 'label');
+    });
+
+    it('should use default level INFO when level is undefined', async () => {
+      await esLogger.logToElasticsearch(mockEnv, 'default level');
+      const [, opts] = global.fetch.mock.calls[0];
+      const body = JSON.parse(opts.body);
+      expect(body.level).toBe('info');
     });
 
     it('should use custom index from options', async () => {
-      await esLogger.logToElasticsearch(
-        mockEnv,
-        'test',
-        'INFO',
-        {},
-        { immediate: true, index: 'custom-index' }
-      );
+      await esLogger.logToElasticsearch(mockEnv, 'test', 'INFO', {}, { index: 'custom-index' });
       const [url] = global.fetch.mock.calls[0];
       expect(url).toContain('custom-index');
+    });
+
+    it('should use env ELASTICSEARCH_INDEX when no options.index', async () => {
+      await esLogger.logToElasticsearch(mockEnv, 'test', 'INFO');
+      const [url] = global.fetch.mock.calls[0];
+      expect(url).toContain('test-index');
+    });
+
+    it('should fallback to default index when env has no ELASTICSEARCH_INDEX', async () => {
+      const envNoIndex = {
+        ELASTICSEARCH_URL: 'https://es.example.com',
+        CF_ACCESS_CLIENT_ID: 'cf-id',
+      };
+      await esLogger.logToElasticsearch(envNoIndex, 'test', 'INFO');
+      const [url] = global.fetch.mock.calls[0];
+      expect(url).toContain('resume-logs-worker');
+    });
+
+    it('should include abort signal in fetch options', async () => {
+      await esLogger.logToElasticsearch(mockEnv, 'test', 'INFO');
+      const [, opts] = global.fetch.mock.calls[0];
+      expect(opts).toHaveProperty('signal');
+    });
+
+    it('should use custom timeout from options', async () => {
+      const setTimeoutSpy = jest.spyOn(global, 'setTimeout');
+      await esLogger.logToElasticsearch(mockEnv, 'test', 'INFO', {}, { timeout: 3000 });
+      const timeoutCalls = setTimeoutSpy.mock.calls.filter(([, ms]) => ms === 3000);
+      expect(timeoutCalls.length).toBe(1);
+      setTimeoutSpy.mockRestore();
+    });
+
+    it('should use default timeout of 5000ms when not specified', async () => {
+      const setTimeoutSpy = jest.spyOn(global, 'setTimeout');
+      await esLogger.logToElasticsearch(mockEnv, 'test', 'INFO');
+      const timeoutCalls = setTimeoutSpy.mock.calls.filter(([, ms]) => ms === 5000);
+      expect(timeoutCalls.length).toBe(1);
+      setTimeoutSpy.mockRestore();
+    });
+
+    it('should clear timeout after fetch completes', async () => {
+      const clearTimeoutSpy = jest.spyOn(global, 'clearTimeout');
+      await esLogger.logToElasticsearch(mockEnv, 'test', 'INFO');
+      expect(clearTimeoutSpy).toHaveBeenCalled();
+      clearTimeoutSpy.mockRestore();
+    });
+
+    it('should clear timeout even when fetch rejects', async () => {
+      const clearTimeoutSpy = jest.spyOn(global, 'clearTimeout');
+      global.fetch = jest.fn(() => Promise.reject(new Error('fail')));
+      await esLogger.logToElasticsearch(mockEnv, 'test', 'INFO');
+      expect(clearTimeoutSpy).toHaveBeenCalled();
+      clearTimeoutSpy.mockRestore();
+    });
+
+    it('should log error to console when fetch fails', async () => {
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+      global.fetch = jest.fn(() => Promise.reject(new Error('network down')));
+      await esLogger.logToElasticsearch(mockEnv, 'test', 'INFO');
+      expect(consoleSpy).toHaveBeenCalledWith('[ES] Log failed:', 'network down');
+      consoleSpy.mockRestore();
+    });
+
+    it('should handle null env gracefully', async () => {
+      await expect(esLogger.logToElasticsearch(null, 'test', 'INFO')).resolves.not.toThrow();
+      expect(global.fetch).not.toHaveBeenCalled();
+    });
+
+    it('should handle undefined env gracefully', async () => {
+      await expect(esLogger.logToElasticsearch(undefined, 'test', 'INFO')).resolves.not.toThrow();
+      expect(global.fetch).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('buildEsHeaders coverage', () => {
+    const baseEnv = {
+      ELASTICSEARCH_URL: 'https://es.example.com',
+      CF_ACCESS_CLIENT_ID: 'cf-id',
+    };
+
+    it('should omit CF-Access-Client-Secret when not provided', async () => {
+      await esLogger.logToElasticsearch(baseEnv, 'test', 'INFO');
+      const [, opts] = global.fetch.mock.calls[0];
+      expect(opts.headers).not.toHaveProperty('CF-Access-Client-Secret');
+    });
+
+    it('should omit Authorization when ELASTICSEARCH_API_KEY is not provided', async () => {
+      await esLogger.logToElasticsearch(baseEnv, 'test', 'INFO');
+      const [, opts] = global.fetch.mock.calls[0];
+      expect(opts.headers).not.toHaveProperty('Authorization');
+    });
+
+    it('should always include Content-Type application/json', async () => {
+      await esLogger.logToElasticsearch(baseEnv, 'test', 'INFO');
+      const [, opts] = global.fetch.mock.calls[0];
+      expect(opts.headers['Content-Type']).toBe('application/json');
     });
   });
 
   describe('logResponse', () => {
     const mockEnv = {
       ELASTICSEARCH_URL: 'https://es.example.com',
+      CF_ACCESS_CLIENT_ID: 'cf-id',
       ELASTICSEARCH_API_KEY: 'test-api-key',
     };
 
     const mockRequest = {
       method: 'GET',
-      url: 'https://resume.jclee.me/',
-      headers: new Map([['user-agent', 'test']]),
+      url: 'https://resume.jclee.me/about',
     };
 
-    it('should call logToElasticsearch with immediate mode', async () => {
+    it('should call fetch for successful responses', async () => {
       const mockResponse = { status: 200 };
       await esLogger.logResponse(mockEnv, mockRequest, mockResponse);
       expect(global.fetch).toHaveBeenCalled();
@@ -181,7 +234,7 @@ describe('es-logger', () => {
       await esLogger.logResponse(mockEnv, mockRequest, mockResponse);
       const [, opts] = global.fetch.mock.calls[0];
       const body = JSON.parse(opts.body);
-      expect(body.log.level).toBe('error');
+      expect(body.level).toBe('error');
     });
 
     it('should use INFO level for successful responses', async () => {
@@ -189,15 +242,33 @@ describe('es-logger', () => {
       await esLogger.logResponse(mockEnv, mockRequest, mockResponse);
       const [, opts] = global.fetch.mock.calls[0];
       const body = JSON.parse(opts.body);
-      expect(body.log.level).toBe('info');
+      expect(body.level).toBe('info');
     });
 
-    it('should include HTTP context in labels', async () => {
+    it('should include correlationId in labels', async () => {
       const mockResponse = { status: 200 };
       await esLogger.logResponse(mockEnv, mockRequest, mockResponse);
       const [, opts] = global.fetch.mock.calls[0];
       const body = JSON.parse(opts.body);
-      expect(body).toHaveProperty('http');
+      expect(body).toHaveProperty('correlationId');
+    });
+
+    it('should include route from URL', async () => {
+      const mockResponse = { status: 200 };
+      await esLogger.logResponse(mockEnv, mockRequest, mockResponse);
+      const [, opts] = global.fetch.mock.calls[0];
+      const body = JSON.parse(opts.body);
+      expect(body).toHaveProperty('route', '/about');
+    });
+
+    it('should include statusCode and duration', async () => {
+      const mockResponse = { status: 404 };
+      await esLogger.logResponse(mockEnv, mockRequest, mockResponse);
+      const [, opts] = global.fetch.mock.calls[0];
+      const body = JSON.parse(opts.body);
+      expect(body).toHaveProperty('statusCode', 404);
+      expect(body).toHaveProperty('duration');
+      expect(typeof body.duration).toBe('number');
     });
 
     it('should use provided requestId', async () => {
@@ -207,188 +278,93 @@ describe('es-logger', () => {
       });
       const [, opts] = global.fetch.mock.calls[0];
       const body = JSON.parse(opts.body);
-      expect(JSON.stringify(body)).toContain('custom-id-123');
+      expect(body.correlationId).toBe('custom-id-123');
+    });
+
+    it('should generate requestId when not provided', async () => {
+      const mockResponse = { status: 200 };
+      await esLogger.logResponse(mockEnv, mockRequest, mockResponse);
+      const [, opts] = global.fetch.mock.calls[0];
+      const body = JSON.parse(opts.body);
+      expect(body.correlationId).toBeTruthy();
+      expect(body.correlationId).toContain('-');
+    });
+
+    it('should use provided startTime for duration calculation', async () => {
+      const mockResponse = { status: 200 };
+      const startTime = Date.now() - 150;
+      await esLogger.logResponse(mockEnv, mockRequest, mockResponse, { startTime });
+      const [, opts] = global.fetch.mock.calls[0];
+      const body = JSON.parse(opts.body);
+      expect(body.duration).toBeGreaterThanOrEqual(150);
+    });
+
+    it('should format message as "METHOD STATUS DURATIONms"', async () => {
+      const mockResponse = { status: 200 };
+      await esLogger.logResponse(mockEnv, mockRequest, mockResponse);
+      const [, opts] = global.fetch.mock.calls[0];
+      const body = JSON.parse(opts.body);
+      expect(body.message).toMatch(/^GET 200 \d+ms$/);
     });
   });
 
-  describe('flush', () => {
+  describe('abort timeout', () => {
     const mockEnv = {
       ELASTICSEARCH_URL: 'https://es.example.com',
-      ELASTICSEARCH_API_KEY: 'test-api-key',
+      CF_ACCESS_CLIENT_ID: 'cf-id',
     };
 
-    it('should flush queued messages', async () => {
-      await esLogger.logToElasticsearch(mockEnv, 'queued msg 1');
-      await esLogger.logToElasticsearch(mockEnv, 'queued msg 2');
-      expect(global.fetch).not.toHaveBeenCalled();
+    it('should set up abort timeout callback', () => {
+      let timeoutCallback;
+      const origSetTimeout = global.setTimeout;
+      global.setTimeout = jest.fn((cb, ms) => {
+        timeoutCallback = cb;
+        return origSetTimeout(cb, ms);
+      });
 
-      await esLogger.flush(mockEnv);
-      expect(global.fetch).toHaveBeenCalled();
-    });
+      let abortFn;
+      global.AbortController = class {
+        constructor() {
+          this.signal = {};
+          this.abort = jest.fn();
+          abortFn = this.abort;
+        }
+      };
+      global.fetch = jest.fn(() => Promise.resolve({ ok: true }));
 
-    it('should not call fetch if queue is empty', async () => {
-      await esLogger.flush(mockEnv);
-      expect(global.fetch).not.toHaveBeenCalled();
-    });
+      esLogger.logToElasticsearch(mockEnv, 'test', 'INFO', {}, { timeout: 100 });
 
-    it('should accept custom index from options', async () => {
-      await esLogger.logToElasticsearch(mockEnv, 'test');
-      await esLogger.flush(mockEnv, { index: 'custom-flush-index' });
-      if (global.fetch.mock.calls.length > 0) {
-        const [url] = global.fetch.mock.calls[0];
-        expect(url).toContain('_bulk');
-      }
-    });
+      const abortCallback = global.setTimeout.mock.calls.find(([, ms]) => ms === 100);
+      expect(abortCallback).toBeDefined();
+      abortCallback[0]();
+      expect(abortFn).toHaveBeenCalled();
 
-    it('should handle flush failure gracefully', async () => {
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
-      jest.resetModules();
-      global.fetch = jest.fn().mockResolvedValue({ ok: true });
-      const loggerMod = require('../../../../typescript/portfolio-worker/lib/es-logger');
-
-      // Queue a message in batch mode
-      await loggerMod.logToElasticsearch(mockEnv, 'queued msg');
-      // Make fetch reject on flush
-      global.fetch = jest.fn().mockRejectedValue(new Error('Network failure'));
-
-      await loggerMod.flush(mockEnv);
-      expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Bulk flush failed'),
-        expect.anything(),
-        expect.anything()
-      );
-      consoleSpy.mockRestore();
+      global.setTimeout = origSetTimeout;
     });
   });
 
   describe('edge cases', () => {
-    it('should handle outer catch in logToElasticsearch when level is null', async () => {
+    const mockEnv = {
+      ELASTICSEARCH_URL: 'https://es.test.com',
+      CF_ACCESS_CLIENT_ID: 'cf-id',
+      ELASTICSEARCH_API_KEY: 'test-key',
+    };
+
+    it('should handle outer catch when level is null', async () => {
       const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
-      jest.resetModules();
-      global.fetch = jest.fn().mockResolvedValue({ ok: true });
-      const loggerMod = require('../../../../typescript/portfolio-worker/lib/es-logger');
-      const env = {
-        ELASTICSEARCH_URL: 'https://es.test.com',
-        ELASTICSEARCH_API_KEY: 'test-key',
-      };
-
-      // Pass null as level — buildEcsDocument calls level.toLowerCase() which throws TypeError
-      await loggerMod.logToElasticsearch(env, 'test message', null);
-
-      expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('[ES] logToElasticsearch failed'),
-        expect.anything()
-      );
+      await esLogger.logToElasticsearch(mockEnv, 'test message', null);
+      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('[ES]'), expect.anything());
       consoleSpy.mockRestore();
     });
-  });
 
-  describe('flushLogs early return when credentials missing', () => {
-    let loggerMod;
-
-    beforeEach(() => {
-      jest.resetModules();
-      jest.mock('../../../../typescript/portfolio-worker/logger', () => ({
-        warn: jest.fn(),
-        log: jest.fn(),
-        debug: jest.fn(),
-        error: jest.fn(),
-      }));
-      global.fetch = jest.fn(() => Promise.resolve({ ok: true }));
-      loggerMod = require('../../../../typescript/portfolio-worker/lib/es-logger');
-    });
-
-    it('returns early in flushLogs when ELASTICSEARCH_URL is missing', async () => {
-      // Queue with valid credentials
-      const validEnv = {
-        ELASTICSEARCH_URL: 'https://es.example.com',
-        ELASTICSEARCH_API_KEY: 'test-api-key',
-      };
-      await loggerMod.logToElasticsearch(validEnv, 'queued msg');
-      // Flush with missing URL — triggers L34 early return
-      await loggerMod.flush({});
-      // fetch should NOT be called for the flush (only potentially for batch auto-flush)
-      // The key is that flush({}) does not throw
-    });
-
-    it('returns early in flushLogs when ELASTICSEARCH_API_KEY is missing', async () => {
-      const validEnv = {
-        ELASTICSEARCH_URL: 'https://es.example.com',
-        ELASTICSEARCH_API_KEY: 'test-api-key',
-      };
-      await loggerMod.logToElasticsearch(validEnv, 'queued msg');
-      await loggerMod.flush({ ELASTICSEARCH_URL: 'https://es.example.com' });
-      // Should not throw
-    });
-  });
-
-  describe('flush timer deduplication', () => {
-    const mockEnv = {
-      ELASTICSEARCH_URL: 'https://es.example.com',
-      ELASTICSEARCH_API_KEY: 'test-api-key',
-      ES_BATCH_MODE: 'true',
-    };
-
-    let loggerMod;
-
-    beforeEach(() => {
-      jest.resetModules();
-      jest.mock('../../../../typescript/portfolio-worker/logger', () => ({
-        warn: jest.fn(),
-        log: jest.fn(),
-        debug: jest.fn(),
-        error: jest.fn(),
-      }));
-      global.fetch = jest.fn(() => Promise.resolve({ ok: true }));
-      loggerMod = require('../../../../typescript/portfolio-worker/lib/es-logger');
-    });
-
-    it('does not create a second timer when one already exists', async () => {
-      const timeoutSpy = jest.spyOn(global, 'setTimeout');
-
-      await loggerMod.logToElasticsearch(mockEnv, 'first queued message');
-      await loggerMod.logToElasticsearch(mockEnv, 'second queued message');
-
-      expect(timeoutSpy).toHaveBeenCalledTimes(1);
-      timeoutSpy.mockRestore();
-    });
-  });
-
-  describe('flushLogs inner catch', () => {
-    const mockEnv = {
-      ELASTICSEARCH_URL: 'https://es.example.com',
-      ELASTICSEARCH_API_KEY: 'test-api-key',
-    };
-
-    let loggerMod;
-    let loggerMock;
-
-    beforeEach(() => {
-      jest.resetModules();
-      jest.mock('../../../../typescript/portfolio-worker/logger', () => ({
-        warn: jest.fn(),
-        log: jest.fn(),
-        debug: jest.fn(),
-        error: jest.fn(),
-      }));
-      global.fetch = jest.fn().mockRejectedValue(new Error('bulk unavailable'));
-      loggerMod = require('../../../../typescript/portfolio-worker/lib/es-logger');
-      loggerMock = require('../../../../typescript/portfolio-worker/logger');
-    });
-
-    it('silently catches when console.error throws during bulk flush failure', async () => {
+    it('should propagate if console.error throws in outer catch', async () => {
       const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {
-        throw new Error('console write failed');
+        throw new Error('console broken');
       });
-
-      try {
-        await loggerMod.logToElasticsearch(mockEnv, 'queued before failing flush');
-        await loggerMod.flush(mockEnv);
-      } finally {
-        consoleSpy.mockRestore();
-      }
-
-      expect(loggerMock.warn).toHaveBeenCalledWith('ES bulk flush failed:', 'bulk unavailable');
+      await expect(esLogger.logToElasticsearch(mockEnv, 'test', null)).rejects.toThrow(
+        'console broken'
+      );
+      consoleSpy.mockRestore();
     });
   });
 });

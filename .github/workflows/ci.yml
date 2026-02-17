@@ -205,10 +205,15 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
 
-      - name: Run unit tests
+      - name: Run all unit tests (Jest + node:test)
         run: |
-          echo "=== Running Unit Tests ==="
+          echo "=== Running All Unit Tests ==="
           npm test
+
+      - name: Generate coverage reports
+        run: |
+          echo "=== Generating Coverage ==="
+          npm run test:coverage
 
       - name: Upload coverage
         uses: actions/upload-artifact@v6
