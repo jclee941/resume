@@ -29,6 +29,7 @@
     "test:coverage:jest": "jest --coverage",
     "test:coverage:node": "c8 --check-coverage --lines 60 --functions 55 --branches 70 node --test 'typescript/job-automation/src/shared/**/*.test.js'",
     "test:e2e": "playwright test",
+    "lighthouse:ci": "lhci autorun --config=tools/lighthouserc.json",
     "security:audit": "npm audit --audit-level=high",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -62,6 +63,8 @@
     "express": "^5.2.1"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.11.1",
+    "@lhci/cli": "^0.15.1",
     "@playwright/test": "^1.58.2",
     "@sentry/browser": "^10.38.0",
     "@sentry/cli": "^3.2.0",

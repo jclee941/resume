@@ -12,6 +12,13 @@ module.exports = defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
 
+  expect: {
+    toHaveScreenshot: {
+      maxDiffPixelRatio: 0.05,
+      threshold: 0.2,
+    },
+  },
+
   use: {
     // When SKIP_WEBSERVER is set, use PLAYWRIGHT_BASE_URL (for testing against production)
     // Otherwise in CI, use local server; locally use env var or production

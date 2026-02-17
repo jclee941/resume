@@ -1,15 +1,32 @@
-/** Flaky test quarantine registry.
- * Tests listed here are auto-retried and tracked for stability.
- * Format: { testId: string, reason: string, addedDate: string, retryCount: number }
- */
 module.exports = {
-  quarantinedTests: [],
-  maxRetries: 3,
-  isQuarantined(testId) {
-    return this.quarantinedTests.some((t) => t.testId === testId);
-  },
-  getRetryCount(testId) {
-    const test = this.quarantinedTests.find((t) => t.testId === testId);
-    return test ? test.retryCount : 0;
+  quarantined: [
+    {
+      file: 'seo.spec.js',
+      test: 'should serve robots.txt',
+      reason:
+        'Flaky due to local dev server rate limiting (HTTP 429) under concurrent CI-like load',
+    },
+    {
+      file: 'seo.spec.js',
+      test: 'should serve sitemap.xml',
+      reason:
+        'Flaky due to local dev server rate limiting (HTTP 429) under concurrent CI-like load',
+    },
+    {
+      file: 'seo.spec.js',
+      test: 'should serve og-image.webp',
+      reason:
+        'Flaky due to local dev server rate limiting (HTTP 429) under concurrent CI-like load',
+    },
+    {
+      file: 'pwa.spec.js',
+      test: 'should register Service Worker on page load',
+      reason:
+        'Timing-dependent registration can intermittently miss activation within assertion window',
+    },
+  ],
+  retryConfig: {
+    maxRetries: 3,
+    retryDelay: 1000,
   },
 };

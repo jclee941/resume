@@ -11,7 +11,7 @@
     "build": "echo 'Pure ESM - no build required'",
     "start": "node src/index.js",
     "dev": "node --watch src/index.js",
-    "test": "node --test 'src/shared/**/*.test.js'",
+    "test": "node --test 'src/shared/**/*.test.js' 'src/tools/__tests__/*.test.js'",
     "test:all": "node --test 'src/**/*.test.js'",
     "test:coverage": "node --test --experimental-test-coverage 'src/shared/**/*.test.js'",
     "test:e2e": "node src/e2e.test.js",
