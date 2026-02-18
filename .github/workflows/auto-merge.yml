@@ -1,7 +1,13 @@
-# Auto-merge: Enable squash auto-merge on PRs that pass required CI checks.
-# Covers: dependabot updates, owner PRs, and any PR with the 'auto-merge' label.
-# Requires branch protection rules with required status checks to gate the merge.
-name: Auto-Merge
+# Auto-merge for Dependabot and owner PRs
+# SSoT: qws941/.github — synced to all repos (except terraform)
+# Synced via: .github/sync.yml → Group 2
+#
+# Triggers:
+#   - Dependabot PRs (auto-merge with squash)
+#   - Repository owner PRs (auto-merge with squash)
+#   - PRs with 'auto-merge' label
+
+name: Auto Merge
 
 on:
   pull_request_target:
@@ -19,12 +25,12 @@ jobs:
       github.actor == github.repository_owner ||
       contains(github.event.pull_request.labels.*.name, 'auto-merge')
     steps:
-      - name: Enable auto-merge (squash)
-        run: |
-          gh pr merge "$PR_NUMBER" --squash --auto --repo "$GITHUB_REPOSITORY" || {
-            echo "::warning::Auto-merge could not be enabled for PR #$PR_NUMBER (likely modifies workflow files requiring manual merge)"
-            exit 0
-          }
+      - name: Enable auto-merge
         env:
-          PR_NUMBER: ${{ github.event.pull_request.number }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          gh pr merge "$PR_NUMBER" \
+            --repo "${{ github.repository }}" \
+            --squash \
+            --auto || echo "Auto-merge already enabled or not mergeable"
