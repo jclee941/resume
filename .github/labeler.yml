@@ -1,50 +1,76 @@
-# PR Auto-Labeler configuration
-# https://github.com/actions/labeler
+# Auto-label configuration for actions/labeler
+# Maps file path patterns to PR labels
+# This is a GENERIC config — repos can override with their own .github/labeler.yml
 
-portfolio:
+# Documentation changes
+documentation:
   - changed-files:
       - any-glob-to-any-file:
-          - typescript/portfolio-worker/**
+          - '**/*.md'
+          - 'docs/**'
+          - 'README*'
+          - 'CHANGELOG*'
 
-job-automation:
-  - changed-files:
-      - any-glob-to-any-file:
-          - typescript/job-automation/**
-
-cli:
-  - changed-files:
-      - any-glob-to-any-file:
-          - typescript/cli/**
-
-data:
-  - changed-files:
-      - any-glob-to-any-file:
-          - typescript/data/**
-
+# CI/CD changes
 ci:
   - changed-files:
       - any-glob-to-any-file:
-          - .github/**
+          - '.github/**'
+          - '*.yml'
+          - '*.yaml'
+          - 'Makefile'
 
-infrastructure:
+# Infrastructure / Terraform
+terraform:
   - changed-files:
       - any-glob-to-any-file:
-          - infrastructure/**
+          - '**/*.tf'
+          - '**/*.tfvars'
+          - '**/.terraform.lock.hcl'
 
-tests:
+# Docker changes
+docker:
   - changed-files:
       - any-glob-to-any-file:
-          - tests/**
+          - '**/Dockerfile*'
+          - '**/docker-compose*.yml'
+          - '**/.dockerignore'
 
-docs:
+# Python changes
+python:
   - changed-files:
       - any-glob-to-any-file:
-          - docs/**
-          - '**/*.md'
+          - '**/*.py'
+          - 'requirements*.txt'
+          - 'pyproject.toml'
+          - 'setup.py'
+          - 'setup.cfg'
 
-build:
+# TypeScript / JavaScript changes
+typescript:
   - changed-files:
       - any-glob-to-any-file:
-          - BUILD.bazel
-          - MODULE.bazel
-          - tools/**
+          - '**/*.ts'
+          - '**/*.tsx'
+          - '**/*.js'
+          - '**/*.jsx'
+          - 'package.json'
+          - 'tsconfig*.json'
+
+# Shell scripts
+shell:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*.sh'
+          - '**/*.bash'
+
+# Configuration files
+config:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*.json'
+          - '**/*.toml'
+          - '**/*.ini'
+          - '**/*.cfg'
+          - '.editorconfig'
+          - '.gitignore'
