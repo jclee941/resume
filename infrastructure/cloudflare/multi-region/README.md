@@ -24,6 +24,6 @@ This directory contains baseline configuration for Cloudflare-based multi-region
 
 ## Notes
 
-- Keep `/healthz` and `/metrics` uncached for accurate monitoring.
+- Keep `/health`, `/job/health`, and `/metrics` uncached for accurate monitoring.
 - Align health check thresholds with `infrastructure/monitoring/uptime/healthchecks.json`.
 - Validate routing rules in staging before production rollout.

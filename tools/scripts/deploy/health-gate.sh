@@ -7,8 +7,8 @@ RETRIES="${RETRIES:-3}"
 SLEEP_SECONDS="${SLEEP_SECONDS:-5}"
 
 ENDPOINTS=(
-  "https://resume.jclee.me/healthz"
-  "https://resume.jclee.me/job/api/health"
+  "https://resume.jclee.me/health"
+  "https://resume.jclee.me/job/health"
 )
 
 check_endpoint() {

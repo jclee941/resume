@@ -6,12 +6,12 @@
     {
       "id": "portfolio",
       "name": "Portfolio",
-      "url": "https://resume.jclee.me/healthz"
+      "url": "https://resume.jclee.me/health"
     },
     {
       "id": "dashboard",
       "name": "Job Dashboard API",
-      "url": "https://resume.jclee.me/job/api/health"
+      "url": "https://resume.jclee.me/job/health"
     }
   ],
   "incidentTemplate": {

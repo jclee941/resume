@@ -4,8 +4,8 @@ set -euo pipefail
 
 TIMEOUT_SECONDS="${TIMEOUT_SECONDS:-10}"
 ENDPOINTS=(
-  "https://resume.jclee.me/healthz|portfolio"
-  "https://resume.jclee.me/job/api/health|dashboard"
+  "https://resume.jclee.me/health|portfolio"
+  "https://resume.jclee.me/job/health|dashboard"
 )
 
 failures=0

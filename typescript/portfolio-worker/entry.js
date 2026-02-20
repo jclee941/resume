@@ -100,7 +100,7 @@ const SITEMAP_XML = `<?xml version="1.0" encoding="UTF-8"?>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://resume.jclee.me/healthz</loc>
+    <loc>https://resume.jclee.me/health</loc>
     <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
@@ -261,7 +261,7 @@ async function localizeHtmlResponse(response, language) {
 }
 
 function getCacheControlForPath(pathname) {
-  if (pathname === '/healthz' || pathname === '/metrics') {
+  if (pathname === '/health' || pathname === '/healthz' || pathname === '/metrics') {
     return 'no-cache, no-store, must-revalidate';
   }
   if (pathname.startsWith('/api/')) {

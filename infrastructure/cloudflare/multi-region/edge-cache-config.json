@@ -17,5 +17,5 @@
       "htmlTtlSeconds": 120
     }
   },
-  "bypassPaths": ["/health", "/healthz", "/metrics", "/job/api/health"]
+  "bypassPaths": ["/health", "/metrics", "/job/health", "/job/api/health"]
 }

@@ -5,21 +5,21 @@
     {
       "name": "apac",
       "priority": 1,
-      "healthEndpoint": "https://resume.jclee.me/healthz",
+      "healthEndpoint": "https://resume.jclee.me/health",
       "failureThreshold": 3,
       "recoveryThreshold": 2
     },
     {
       "name": "eu",
       "priority": 2,
-      "healthEndpoint": "https://resume.jclee.me/healthz",
+      "healthEndpoint": "https://resume.jclee.me/health",
       "failureThreshold": 3,
       "recoveryThreshold": 2
     },
     {
       "name": "us",
       "priority": 3,
-      "healthEndpoint": "https://resume.jclee.me/healthz",
+      "healthEndpoint": "https://resume.jclee.me/health",
       "failureThreshold": 3,
       "recoveryThreshold": 2
     }
