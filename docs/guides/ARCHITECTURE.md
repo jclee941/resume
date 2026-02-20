@@ -38,7 +38,7 @@ Source files (HTML/CSS/JSON) are transformed into a single deployable `worker.js
 
 1. **Edit Content**: Modify `web/data.json` (project data) OR `web/index.html` (structure) OR `web/styles.css` (styling)
 2. **Generate Worker**: Run `npm run build` (performs 6 transformations)
-3. **Deploy**: Push to `master` branch (GitHub Actions auto-deploys) OR run `wrangler deploy` manually
+3. **Deploy**: Push to `master` branch (GitHub Actions auto-deploys) OR run `npx wrangler deploy --config typescript/portfolio-worker/wrangler.toml --env production` manually
 
 ### 6 Critical Transformations
 

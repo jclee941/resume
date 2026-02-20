@@ -69,7 +69,7 @@ index.html (edit this)
         - Inline resume data from data.json
     ↓
 worker.js (NEVER EDIT - regenerated on build)
-    ↓ wrangler deploy
+    ↓ wrangler deploy --config typescript/portfolio-worker/wrangler.toml --env production
 resume.jclee.me (Cloudflare Edge)
 ```
 
@@ -160,7 +160,7 @@ node generate-worker.js
 source ~/.env && \
   CLOUDFLARE_API_KEY="$CLOUDFLARE_API_KEY" \
   CLOUDFLARE_EMAIL="$CLOUDFLARE_EMAIL" \
-  npx wrangler deploy --env production
+  npx wrangler deploy --config typescript/portfolio-worker/wrangler.toml --env production
 
 # Local dev
 npx wrangler dev

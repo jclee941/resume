@@ -77,9 +77,8 @@ npm run test:e2e
 cd typescript/portfolio-worker
 node generate-worker.js
 
-# Deploy to Cloudflare Workers
-source ~/.env && CLOUDFLARE_API_KEY="$CLOUDFLARE_API_KEY" \
-  CLOUDFLARE_EMAIL="$CLOUDFLARE_EMAIL" npx wrangler deploy --env production
+# Deploy to Cloudflare Workers (root-safe)
+npx wrangler deploy --config typescript/portfolio-worker/wrangler.toml --env production
 ```
 
 ## Deployment
@@ -88,10 +87,7 @@ source ~/.env && CLOUDFLARE_API_KEY="$CLOUDFLARE_API_KEY" \
 
 ```bash
 # From project root
-source ~/.env && cd typescript/portfolio-worker && \
-  CLOUDFLARE_API_KEY="$CLOUDFLARE_API_KEY" \
-  CLOUDFLARE_EMAIL="$CLOUDFLARE_EMAIL" \
-  npx wrangler deploy --env production
+npx wrangler deploy --config typescript/portfolio-worker/wrangler.toml --env production
 
 # Verify deployment
 curl -I https://resume.jclee.me/health
@@ -252,6 +248,7 @@ Automated performance testing on every deployment:
 - **Infrastructure Architecture**: `docs/guides/INFRASTRUCTURE.md`
 - **Monitoring Setup**: `docs/guides/MONITORING_SETUP.md`
 - **Manual Deployment**: `docs/guides/MANUAL_DEPLOYMENT_GUIDE.md`
+- **Git Auto-Deploy**: `docs/guides/CLOUDFLARE_GITHUB_AUTO_DEPLOY.md`
 
 ### AGENTS.md Hierarchy
 

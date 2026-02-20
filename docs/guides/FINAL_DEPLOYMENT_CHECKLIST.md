@@ -9,6 +9,7 @@
 ## ✅ Pre-Deployment Verification
 
 ### 1. Build Status ✅
+
 ```bash
 ✓ Build completed successfully
 ✓ Worker size: 292.58 KB
@@ -18,6 +19,7 @@
 ```
 
 ### 2. Test Status ✅
+
 ```bash
 ✓ Total tests: 274
 ✓ Passing: 274 (100%)
@@ -26,6 +28,7 @@
 ```
 
 ### 3. Code Coverage ✅
+
 ```bash
 ✓ Statements: 93.96% (threshold: 90%)
 ✓ Branches: 90.04% (threshold: 90%)
@@ -34,6 +37,7 @@
 ```
 
 ### 4. Code Quality ✅
+
 ```bash
 ✓ ESLint errors: 0
 ✓ ESLint warnings: 38 (non-critical)
@@ -42,6 +46,7 @@
 ```
 
 ### 5. Documentation ✅
+
 ```bash
 ✓ VERIFICATION_REPORT.md
 ✓ AUTO_OPTIMIZATION_REPORT_2025-12-23.md
@@ -55,6 +60,7 @@
 ## 🚀 Deployment Steps
 
 ### Step 1: Final Verification
+
 ```bash
 # Run all tests
 npm test
@@ -73,6 +79,7 @@ npm run build
 ```
 
 ### Step 2: Pre-deployment Tests
+
 ```bash
 # Test worker.js locally
 node web/worker.js
@@ -85,15 +92,17 @@ npm run lighthouse
 ```
 
 ### Step 3: Deploy
+
 ```bash
 # Deploy to Cloudflare Workers
-npm run deploy
+npm run deploy:wrangler:root
 
 # Or use wrangler directly
-wrangler deploy
+npx wrangler deploy --config typescript/portfolio-worker/wrangler.toml --env production
 ```
 
 ### Step 4: Post-deployment Verification
+
 ```bash
 # Check deployment status
 curl https://resume.jclee.me/health
@@ -110,17 +119,20 @@ npm run lighthouse -- https://resume.jclee.me
 ## 📊 Deployment Metrics
 
 ### Performance Targets
+
 - **LCP**: < 2.5s ✅
 - **FID**: < 100ms ✅
 - **CLS**: < 0.1 ✅
 - **TTFB**: < 600ms ✅
 
 ### Availability Targets
+
 - **Uptime**: 99.9% ✅
 - **Response Time**: < 200ms ✅
 - **Error Rate**: < 0.1% ✅
 
 ### Quality Targets
+
 - **Test Coverage**: > 90% ✅
 - **Lighthouse Score**: > 95 ✅
 - **Accessibility**: 100 ✅
@@ -131,6 +143,7 @@ npm run lighthouse -- https://resume.jclee.me
 ## 🔍 Post-Deployment Monitoring
 
 ### Immediate (First Hour)
+
 - [ ] Check error logs in Sentry
 - [ ] Verify all pages load correctly
 - [ ] Test i18n functionality
@@ -138,6 +151,7 @@ npm run lighthouse -- https://resume.jclee.me
 - [ ] Check performance metrics
 
 ### Short-term (First Day)
+
 - [ ] Monitor error rates
 - [ ] Check performance trends
 - [ ] Verify A/B test data collection
@@ -145,6 +159,7 @@ npm run lighthouse -- https://resume.jclee.me
 - [ ] Check analytics
 
 ### Long-term (First Week)
+
 - [ ] Analyze A/B test results
 - [ ] Review performance trends
 - [ ] Check i18n usage
@@ -156,6 +171,7 @@ npm run lighthouse -- https://resume.jclee.me
 ## 🎯 Feature Verification
 
 ### Core Features
+
 - [x] Resume display
 - [x] Project cards
 - [x] Download functionality
@@ -163,6 +179,7 @@ npm run lighthouse -- https://resume.jclee.me
 - [x] Dark mode support
 
 ### New Features
+
 - [x] i18n support (en, ko, ja)
 - [x] Performance monitoring
 - [x] A/B testing framework
@@ -172,6 +189,7 @@ npm run lighthouse -- https://resume.jclee.me
 - [x] PDF generation
 
 ### Automation
+
 - [x] Automated testing
 - [x] Automated builds
 - [x] Automated deployment
@@ -185,6 +203,7 @@ npm run lighthouse -- https://resume.jclee.me
 ### If Issues Occur
 
 #### Minor Issues (Non-critical)
+
 1. Monitor and log the issue
 2. Create hotfix branch
 3. Fix and test
@@ -192,6 +211,7 @@ npm run lighthouse -- https://resume.jclee.me
 5. Verify fix
 
 #### Major Issues (Critical)
+
 1. **Immediate**: Rollback to previous version
    ```bash
    wrangler rollback
@@ -202,6 +222,7 @@ npm run lighthouse -- https://resume.jclee.me
 5. **Redeploy**: Deploy fixed version
 
 ### Rollback Commands
+
 ```bash
 # List deployments
 wrangler deployments list
@@ -230,6 +251,7 @@ wrangler rollback --version-id <VERSION_ID>
 ## 📈 Success Criteria
 
 ### Technical
+
 - ✅ All tests passing
 - ✅ Code coverage > 90%
 - ✅ Zero critical errors
@@ -237,6 +259,7 @@ wrangler rollback --version-id <VERSION_ID>
 - ✅ Performance targets met
 
 ### Business
+
 - ✅ All features functional
 - ✅ User experience optimized
 - ✅ Multi-language support
@@ -244,6 +267,7 @@ wrangler rollback --version-id <VERSION_ID>
 - ✅ Monitoring in place
 
 ### Quality
+
 - ✅ Documentation complete
 - ✅ Code quality high
 - ✅ Automated QA active
@@ -255,6 +279,7 @@ wrangler rollback --version-id <VERSION_ID>
 ## 🎉 Deployment Approval
 
 ### Checklist Complete
+
 - ✅ All pre-deployment checks passed
 - ✅ All tests passing
 - ✅ Code coverage above threshold
@@ -264,6 +289,7 @@ wrangler rollback --version-id <VERSION_ID>
 - ✅ Monitoring configured
 
 ### Approval Status
+
 **Status**: ✅ **APPROVED FOR DEPLOYMENT**
 
 **Approved by**: Auto Agent  
@@ -276,7 +302,7 @@ wrangler rollback --version-id <VERSION_ID>
 
 All systems are go. The project is ready for production deployment.
 
-**Next Action**: Execute deployment with `npm run deploy`
+**Next Action**: Execute deployment with `npm run deploy:wrangler:root`
 
 ---
 
@@ -290,6 +316,7 @@ All systems are go. The project is ready for production deployment.
 ## 📞 Emergency Contacts
 
 **If deployment issues occur:**
+
 1. Check Sentry dashboard for errors
 2. Review Cloudflare Workers logs
 3. Check GitHub Actions for CI/CD status

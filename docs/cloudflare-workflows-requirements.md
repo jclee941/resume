@@ -140,11 +140,9 @@
 ## 배포 명령어
 
 ```bash
-# Job Automation Worker
-cd typescript/job-automation/workers
-npx wrangler deploy --env production
+# Build (repo root)
+npm run build
 
-# Portfolio Worker
-cd typescript/portfolio-worker
-npx wrangler deploy --env production
+# Deploy (repo root, explicit config)
+npx wrangler deploy --config typescript/portfolio-worker/wrangler.toml --env production
 ```

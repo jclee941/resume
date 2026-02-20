@@ -547,7 +547,7 @@ npm test                 # Run tests
 
 # Worker
 cd workers
-wrangler deploy          # Deploy to Cloudflare
+npx wrangler deploy --config wrangler.toml --env production  # Deploy to Cloudflare
 wrangler d1 execute JOB_AUTOMATION_DB --file=migrations/*.sql
 
 # Authentication

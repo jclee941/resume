@@ -456,7 +456,7 @@ cd typescript/job-automation/workers
 npx wrangler dev
 
 # Deploy
-npx wrangler deploy --env production
+npx wrangler deploy --config typescript/job-automation/workers/wrangler.toml --env production
 
 # Tail logs
 npx wrangler tail --env production

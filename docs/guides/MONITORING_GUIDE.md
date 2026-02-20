@@ -14,6 +14,7 @@ The resume portfolio includes tmux-based deployment monitoring for real-time vis
 ```
 
 This will:
+
 1. Create tmux session `resume-deploy`
 2. Build worker.js
 3. Run tests
@@ -28,6 +29,7 @@ This will:
 ```
 
 Choose from 4 monitoring modes:
+
 1. **Attach to session** (interactive)
 2. **Stream output** (2-second refresh)
 3. **Get status snapshot**
@@ -143,7 +145,7 @@ The monitoring script tracks these steps:
   └─ Checks for "Tests:.*passed"
 
 [3/4] Deploying to Cloudflare
-  ├─ cd web && wrangler deploy
+  ├─ npx wrangler deploy --config typescript/portfolio-worker/wrangler.toml --env production
   └─ Checks for "Published|Deployed|Success"
 
 [4/4] Verifying deployment
@@ -190,6 +192,7 @@ The monitoring script tracks these steps:
 ### Local Development
 
 Use tmux monitoring for:
+
 - Testing deployment workflow locally
 - Debugging deployment issues
 - Monitoring resource usage
@@ -197,6 +200,7 @@ Use tmux monitoring for:
 ### GitHub Actions
 
 GitHub Actions provides its own logging. Tmux monitoring is for:
+
 - **Local deployments**
 - **Development workflow**
 - **Debugging before pushing**

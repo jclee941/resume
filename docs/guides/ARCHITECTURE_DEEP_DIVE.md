@@ -156,13 +156,13 @@ export default {
 
     // Route handling
     switch (url.pathname) {
-      case "/":
+      case '/':
         return serveHTML(indexHtml, securityHeaders);
-      case "/health":
+      case '/health':
         return serveHealth(metrics);
-      case "/metrics":
+      case '/metrics':
         return servePrometheus(metrics);
-      case "/api/vitals":
+      case '/api/vitals':
         return handleVitals(request);
       default:
         return serveStatic(url.pathname);
@@ -187,7 +187,7 @@ export default {
 
 ```javascript
 const securityHeaders = {
-  "Content-Security-Policy": `
+  'Content-Security-Policy': `
     default-src 'self';
     script-src 'self' 'sha256-...' https://browser.sentry-cdn.com;
     style-src 'self' 'sha256-...' https://fonts.googleapis.com;
@@ -195,11 +195,11 @@ const securityHeaders = {
     img-src 'self' data:;
     connect-src 'self' https://grafana.jclee.me https://*.sentry.io;
   `,
-  "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-  "X-Content-Type-Options": "nosniff",
-  "X-Frame-Options": "DENY",
-  "X-XSS-Protection": "1; mode=block",
-  "Referrer-Policy": "strict-origin-when-cross-origin",
+  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
+  'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'DENY',
+  'X-XSS-Protection': '1; mode=block',
+  'Referrer-Policy': 'strict-origin-when-cross-origin',
 };
 ```
 
@@ -276,14 +276,10 @@ HTML Cards (embedded in worker.js)
 ```javascript
 // web/lib/cache-headers.js
 function getCacheHeaders(pathname) {
-  if (pathname === "/sw.js") {
+  if (pathname === '/sw.js') {
     return CACHE_HEADERS.SERVICE_WORKER;
   }
-  if (
-    pathname.startsWith("/api/") ||
-    pathname === "/health" ||
-    pathname === "/metrics"
-  ) {
+  if (pathname.startsWith('/api/') || pathname === '/health' || pathname === '/metrics') {
     return CACHE_HEADERS.API;
   }
   if (/\.(pdf|docx)$/i.test(pathname)) {
@@ -334,7 +330,7 @@ function extractCSPHashes(html) {
   let match;
   while ((match = scriptRegex.exec(html)) !== null) {
     const content = match[1]; // NO .trim() - browsers use exact whitespace
-    const hash = crypto.createHash("sha256").update(content).digest("base64");
+    const hash = crypto.createHash('sha256').update(content).digest('base64');
     scriptHashes.push(`'sha256-${hash}'`);
   }
 
@@ -474,7 +470,7 @@ resume_error_rate{job="resume"} 0.002
 │                    GitHub Actions                                │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────────┐  │
 │  │   Build     │→ │    Test     │→ │       Deploy            │  │
-│  │ npm run     │  │ npm test    │  │ wrangler deploy         │  │
+│  │ npm run     │  │ npm test    │  │ wrangler deploy --config│  │
 │  │   build     │  │ npm run     │  │                         │  │
 │  │             │  │  test:e2e   │  │                         │  │
 │  └─────────────┘  └─────────────┘  └─────────────────────────┘  │

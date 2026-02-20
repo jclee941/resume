@@ -136,7 +136,7 @@ git ls-remote https://github.com/qws941/resume.git
 #### Step 3: Push to GitHub
 
 ```bash
-cd /home/jclee/applications/resume
+cd /home/jclee/dev/resume
 
 # Push to GitHub via HTTPS
 git push github-https master
@@ -205,7 +205,7 @@ Use this if you need immediate deployment without fixing GitHub auth.
 #### Step 3: Configure Wrangler
 
 ```bash
-cd /home/jclee/applications/resume
+cd /home/jclee/dev/resume
 
 # Option A: Interactive login (opens browser)
 npx wrangler login
@@ -223,13 +223,13 @@ source ~/.bashrc
 #### Step 4: Deploy
 
 ```bash
-cd /home/jclee/applications/resume
+cd /home/jclee/dev/resume
 
 # Rebuild worker.js with latest timestamp
 npm run build
 
-# Deploy to Cloudflare Workers
-cd web && npx wrangler deploy
+# Deploy to Cloudflare Workers (root-safe)
+npx wrangler deploy --config typescript/portfolio-worker/wrangler.toml --env production
 
 # Expected output:
 # ⛅️ wrangler 4.43.0
@@ -302,7 +302,7 @@ ssh -T git@github.com
 #### Step 5: Push to GitHub
 
 ```bash
-cd /home/jclee/applications/resume
+cd /home/jclee/dev/resume
 
 # Push to GitHub via SSH
 git push github master
@@ -477,17 +477,17 @@ npx wrangler deployments list  # Get deployment ID
 **Solution**:
 
 ```bash
-cd /home/jclee/applications/resume
+cd /home/jclee/dev/resume
 
 # Regenerate worker.js
 npm run build
 
 # Check if OG_IMAGE_BASE64 exists in worker.js
-grep "OG_IMAGE_BASE64" web/worker.js | head -1
+grep "OG_IMAGE_BASE64" typescript/portfolio-worker/worker.js | head -1
 # Expected: const OG_IMAGE_BASE64 = 'iVBORw0KGgo...'
 
 # Redeploy
-npm run deploy  # Or use wrangler deploy
+npm run deploy:wrangler:root
 ```
 
 ### Issue: "Web Vitals not being logged"

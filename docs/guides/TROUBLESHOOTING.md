@@ -93,7 +93,7 @@ npm run build
 grep "sha256-" web/worker.js | head -5
 
 # Deploy with new hashes
-npm run deploy
+npm run deploy:wrangler:root
 ```
 
 **Root Cause:** The build script was using `.trim()` on script content before hashing, but browsers hash the exact content including whitespace.
@@ -141,14 +141,14 @@ Error: Authentication error (code: 10001)
 
 ```bash
 # Option 1: Use REST API deployment (recommended)
-npm run deploy
+npm run deploy:wrangler:root
 
 # Option 2: Re-authenticate Wrangler
 wrangler login
 
 # Option 3: Set API token directly
 export CLOUDFLARE_API_TOKEN=your_token
-wrangler deploy
+npx wrangler deploy --config typescript/portfolio-worker/wrangler.toml --env production
 ```
 
 **See:** `docs/CLOUDFLARE_TOKEN_SETUP.md` for token configuration.
@@ -164,10 +164,10 @@ wrangler deploy
 ```bash
 # Rebuild and redeploy
 npm run build
-npm run deploy
+npm run deploy:wrangler:root
 
 # Or use the combined command
-npm run build && npm run deploy
+npm run build && npm run deploy:wrangler:root
 ```
 
 **Prevention:** Always run `npm run build` after editing source files.
@@ -452,7 +452,7 @@ Refused to load script from 'https://example.com'
 
 # Rebuild and deploy
 npm run build
-npm run deploy
+npm run deploy:wrangler:root
 ```
 
 ---
@@ -494,9 +494,9 @@ Access to fetch has been blocked by CORS policy
 ```javascript
 // Add CORS headers for API endpoints
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type",
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
 };
 ```
 

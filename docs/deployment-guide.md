@@ -66,7 +66,7 @@ The deployment process follows a strict unidirectional data flow:
    - Computes SHA-256 hashes for all inline scripts to build a strict Content Security Policy (CSP).
    - Escapes backticks for injection into a template literal.
 4. **Artifact Creation**: `worker.js` is created as a single self-contained script.
-5. **Deployment**: `wrangler deploy` uploads the artifact to the Cloudflare network.
+5. **Deployment**: `npx wrangler deploy --config typescript/portfolio-worker/wrangler.toml --env production` uploads the artifact to the Cloudflare network.
 
 ### 2.4 Architecture Diagram
 
@@ -337,23 +337,27 @@ The worker includes 5 scheduled triggers for operational tasks:
 - **Wrangler Login Issues**:
   - _Symptom_: Deploy fails with authentication error.
   - _Fix_: Run `rm -rf ~/.wrangler` and re-authenticate with `npx wrangler login`.
+- **Missing entry-point to Worker script**:
+  - _Symptom_: `npx wrangler deploy` fails from repo root with entry-point error.
+  - _Fix_: Use explicit config path: `npx wrangler deploy --config typescript/portfolio-worker/wrangler.toml --env production`.
 
 ---
 
 ## 8. Useful Commands Reference
 
-| Command                 | Workspace | Description                           |
-| ----------------------- | --------- | ------------------------------------- |
-| `npm run sync:data`     | Root      | Propagates SSoT to data snapshots     |
-| `npm run build:all`     | Root      | Full build (Data Sync + Generation)   |
-| `npm run deploy`        | Root      | Full production release cycle         |
-| `npm run test:unit`     | Root      | Run all Jest unit tests               |
-| `npm run test:e2e`      | Root      | Run Playwright browser tests          |
-| `npm run lint`          | Root      | Lint entire codebase                  |
-| `npx wrangler dev`      | -         | Start local development worker        |
-| `npx wrangler tail`     | -         | Stream live logs from production      |
-| `npx wrangler rollback` | -         | Revert to previous production version |
-| `bazel build //...`     | Root      | Google3-style full workspace build    |
+| Command                        | Workspace | Description                                               |
+| ------------------------------ | --------- | --------------------------------------------------------- |
+| `npm run sync:data`            | Root      | Propagates SSoT to data snapshots                         |
+| `npm run build:all`            | Root      | Full build (Data Sync + Generation)                       |
+| `npm run deploy`               | Root      | Full production release cycle                             |
+| `npm run test:unit`            | Root      | Run all Jest unit tests                                   |
+| `npm run test:e2e`             | Root      | Run Playwright browser tests                              |
+| `npm run lint`                 | Root      | Lint entire codebase                                      |
+| `npx wrangler dev`             | -         | Start local development worker                            |
+| `npm run deploy:wrangler:root` | Root      | Root-safe production deploy with explicit wrangler config |
+| `npx wrangler tail`            | -         | Stream live logs from production                          |
+| `npx wrangler rollback`        | -         | Revert to previous production version                     |
+| `bazel build //...`            | Root      | Google3-style full workspace build                        |
 
 ---
 

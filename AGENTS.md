@@ -132,7 +132,7 @@ typescript/data/resumes/master/resume_data.json  (SSoT)
 typescript/portfolio-worker/index.html
     ↓ generate-worker.js (escape backticks, compute CSP hashes)
 typescript/portfolio-worker/worker.js  (NEVER EDIT)
-    ↓ wrangler deploy
+    ↓ wrangler deploy --config typescript/portfolio-worker/wrangler.toml --env production
 resume.jclee.me (Cloudflare Edge)
 ```
 

@@ -46,9 +46,9 @@ npm run test:e2e
 npm run deploy
 
 # Or step by step:
-npm run build              # Generate worker.js
-wrangler deploy            # Deploy to Cloudflare
-resume-cli verify          # Health check
+npm run build                                                      # Generate worker.js
+npx wrangler deploy --config typescript/portfolio-worker/wrangler.toml --env production
+resume-cli verify                                                  # Health check
 ```
 
 ## Build Pipeline

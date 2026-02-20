@@ -653,7 +653,7 @@ npm run build
 
 ```bash
 # Deploy to staging environment
-wrangler deploy --env staging
+wrangler deploy --config typescript/job-automation/workers/wrangler.toml --env staging
 
 # Output will show:
 # ✨ Uploaded job-dashboard-staging
@@ -677,7 +677,7 @@ curl https://staging.jclee.me/job/api/test/db-connection
 
 ```bash
 # Deploy to production
-wrangler deploy --env production
+wrangler deploy --config typescript/job-automation/workers/wrangler.toml --env production
 
 # Output will show:
 # ✨ Uploaded job-dashboard

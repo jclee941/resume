@@ -302,15 +302,13 @@
 
 ```bash
 # Portfolio Worker 빌드
-cd typescript/portfolio-worker
-node generate-worker.js
+npm run build
 
 # 로컬 개발
 npm run dev
 
-# Production 배포
-source ~/.env && CLOUDFLARE_API_KEY="$CLOUDFLARE_API_KEY" \
-  CLOUDFLARE_EMAIL="$CLOUDFLARE_EMAIL" npx wrangler deploy --env production
+# Production 배포 (root-safe)
+npx wrangler deploy --config typescript/portfolio-worker/wrangler.toml --env production
 
 # 헬스체크 확인
 curl -s https://resume.jclee.me/health | jq
