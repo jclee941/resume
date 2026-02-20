@@ -22,7 +22,7 @@ on:
   workflow_dispatch:
     inputs:
       force_deploy:
-        description: 'Force deploy (bypass test/lint failures)'
+        description: 'Force deploy (does not bypass security scan)'
         required: false
         default: false
         type: boolean
@@ -36,6 +36,16 @@ on:
         required: false
         default: false
         type: boolean
+      gradual_rollout:
+        description: 'Use gradual rollout with workers versions'
+        required: false
+        default: false
+        type: boolean
+      canary_percentage:
+        description: 'Canary traffic percent for gradual rollout (1-99)'
+        required: false
+        default: 5
+        type: number
 
 env:
   NODE_VERSION: '22'
@@ -69,7 +79,7 @@ jobs:
       should_deploy: ${{ steps.deploy-decision.outputs.should_deploy }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -130,13 +140,34 @@ jobs:
   # ===========================================================================
   # STAGE: VALIDATE - Linting & Type Checking
   # ===========================================================================
+  validate-cloudflare:
+    name: Cloudflare Native Validation
+    runs-on: ubuntu-latest
+    needs: [analyze]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate Cloudflare native structure
+        run: |
+          chmod +x tools/ci/validate-cloudflare-native.sh
+          ./tools/ci/validate-cloudflare-native.sh
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Validate wrangler types generation
+        run: |
+          npx wrangler types /tmp/portfolio-worker-types.d.ts --config typescript/portfolio-worker/wrangler.toml --env production
+          npx wrangler types /tmp/job-dashboard-worker-types.d.ts --config typescript/job-automation/workers/wrangler.toml --env production
+
   lint:
     name: ESLint
     runs-on: ubuntu-latest
     needs: [analyze]
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup
         uses: ./.github/actions/setup
@@ -169,7 +200,7 @@ jobs:
 
       - name: Upload lint results
         if: failure()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v4
         with:
           name: eslint-results
           path: eslint-results.txt
@@ -181,7 +212,7 @@ jobs:
     needs: [analyze]
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup
         uses: ./.github/actions/setup
@@ -201,7 +232,7 @@ jobs:
     if: ${{ !inputs.skip_tests }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup
         uses: ./.github/actions/setup
@@ -217,7 +248,7 @@ jobs:
           npm run test:coverage
 
       - name: Upload coverage
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: coverage/
@@ -229,10 +260,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: [analyze]
     if: ${{ !inputs.skip_tests }}
-    continue-on-error: true
+    continue-on-error: false
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup
         uses: ./.github/actions/setup
@@ -259,7 +290,7 @@ jobs:
 
       - name: Upload Playwright report
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v4
         with:
           name: playwright-report
           path: playwright-report/
@@ -272,7 +303,7 @@ jobs:
     needs: [analyze]
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -296,14 +327,14 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    needs: [lint, typecheck, test-unit]
+    needs: [lint, typecheck, test-unit, validate-cloudflare]
     # Strict gate: all upstream must succeed (skipped tests OK), force_deploy overrides
     if: >-
       !cancelled() &&
       (!failure() || inputs.force_deploy == true)
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup
         uses: ./.github/actions/setup
@@ -316,7 +347,7 @@ jobs:
         working-directory: typescript/portfolio-worker
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v4
         with:
           name: portfolio-worker
           path: typescript/portfolio-worker/worker.js
@@ -334,7 +365,7 @@ jobs:
       needs.build.result == 'success' &&
       needs.analyze.outputs.should_deploy == 'true' &&
       !inputs.dry_run &&
-      (needs.security-scan.result != 'failure' || inputs.force_deploy == true)
+      needs.security-scan.result == 'success'
     timeout-minutes: 15
     concurrency:
       group: deploy-production
@@ -344,7 +375,7 @@ jobs:
       url: ${{ env.PORTFOLIO_URL }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup
         uses: ./.github/actions/setup
@@ -366,19 +397,55 @@ jobs:
             core.setOutput('id', deployment.data.id);
 
       - name: Download build artifacts
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v4
         with:
           name: portfolio-worker
           path: typescript/portfolio-worker/
 
       - name: Deploy Portfolio Worker to Cloudflare
         id: wrangler-deploy
-        uses: cloudflare/wrangler-action@v3
+        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.gradual_rollout == true) }}
+        uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: typescript/portfolio-worker
           command: deploy --config wrangler.toml --env production
+
+      - name: Upload deployable version for gradual rollout
+        id: wrangler-gradual-upload
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.gradual_rollout == true }}
+        run: npx wrangler versions upload --config wrangler.toml --env production --message "CI gradual upload ${GITHUB_SHA::7}"
+        working-directory: typescript/portfolio-worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Deploy gradual rollout
+        id: wrangler-gradual-deploy
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.gradual_rollout == true }}
+        run: |
+          CANARY=${{ inputs.canary_percentage }}
+          if [ "$CANARY" -lt 1 ] || [ "$CANARY" -gt 99 ]; then
+            echo "canary_percentage must be between 1 and 99"
+            exit 1
+          fi
+
+          STABLE=$((100 - CANARY))
+          VERSIONS_JSON=$(npx wrangler versions list --config wrangler.toml --env production --json)
+          NEW_VERSION_ID=$(echo "$VERSIONS_JSON" | jq -r '.[0].id // empty')
+          STABLE_VERSION_ID=$(echo "$VERSIONS_JSON" | jq -r '.[1].id // empty')
+
+          if [ -z "$NEW_VERSION_ID" ] || [ -z "$STABLE_VERSION_ID" ]; then
+            echo "could not determine both new and stable version IDs"
+            exit 1
+          fi
+
+          npx wrangler versions deploy "${NEW_VERSION_ID}@${CANARY}" "${STABLE_VERSION_ID}@${STABLE}" --config wrangler.toml --env production --message "CI gradual deploy ${GITHUB_SHA::7} (${CANARY}% canary)" --yes
+        working-directory: typescript/portfolio-worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
       - name: Update Deployment Status
         if: always()
@@ -387,7 +454,7 @@ jobs:
           script: |
             const deploymentId = ${{ steps.deployment.outputs.id }};
             if (!deploymentId) return;
-            const state = '${{ steps.wrangler-deploy.outcome }}' === 'success'
+            const state = ('${{ steps.wrangler-deploy.outcome }}' === 'success' || '${{ steps.wrangler-gradual-deploy.outcome }}' === 'success')
               ? 'success' : 'failure';
             await github.rest.repos.createDeploymentStatus({
               owner: context.repo.owner,
@@ -412,7 +479,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup
         uses: ./.github/actions/setup
@@ -430,7 +497,7 @@ jobs:
 
       - name: Upload Lighthouse reports
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v4
         with:
           name: lighthouse-report
           path: .lighthouseci/
@@ -573,10 +640,10 @@ jobs:
       name: production
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Rollback to previous version
-        uses: cloudflare/wrangler-action@v3
+        uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -693,25 +760,25 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup
         uses: ./.github/actions/setup
 
       - name: Download build artifacts
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v4
         with:
           name: portfolio-worker
           path: typescript/portfolio-worker/
 
       - name: Deploy Preview Worker
         id: deploy-preview
-        uses: cloudflare/wrangler-action@v3
+        uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: typescript/portfolio-worker
-          command: deploy --config wrangler.toml --name resume-pr-${{ github.event.pull_request.number }}
+          command: deploy --config wrangler.toml --env preview --name resume-pr-${{ github.event.pull_request.number }}
 
       - name: Post Preview URL Comment
         uses: actions/github-script@v8
@@ -763,15 +830,15 @@ jobs:
     if: ${{ github.event_name == 'pull_request' && github.event.action == 'closed' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Delete Preview Worker
-        uses: cloudflare/wrangler-action@v3
+        uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: typescript/portfolio-worker
-          command: delete --name resume-pr-${{ github.event.pull_request.number }} --force
+          command: delete --env preview --name resume-pr-${{ github.event.pull_request.number }} --force
 
       - name: Post Cleanup Comment
         uses: actions/github-script@v8
