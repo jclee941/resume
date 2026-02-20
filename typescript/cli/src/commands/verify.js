@@ -6,7 +6,7 @@ export async function verify() {
 
   const endpoints = [
     { name: 'Resume Portfolio', url: 'https://resume.jclee.me' },
-    { name: 'Job Automation', url: 'https://job.jclee.me' },
+    { name: 'Job Automation', url: 'https://resume.jclee.me/job' },
   ];
 
   let failed = false;

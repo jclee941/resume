@@ -41,6 +41,7 @@ env:
   NODE_VERSION: '22'
   PORTFOLIO_URL: 'https://resume.jclee.me'
   JOB_DASHBOARD_URL: 'https://resume.jclee.me/job'
+  PORTFOLIO_WORKER_SCRIPT: 'resume'
 
 permissions:
   contents: read
@@ -378,16 +379,6 @@ jobs:
           workingDirectory: typescript/portfolio-worker
           command: deploy --env production
 
-      - name: Deploy Job Automation Worker to Cloudflare
-        id: wrangler-deploy-job
-        if: ${{ needs.analyze.outputs.job_dashboard_affected == 'true' || inputs.force_deploy == true }}
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          workingDirectory: typescript/job-automation/workers
-          command: deploy --env production
-
       - name: Update Deployment Status
         if: always()
         uses: actions/github-script@v8
@@ -395,8 +386,7 @@ jobs:
           script: |
             const deploymentId = ${{ steps.deployment.outputs.id }};
             if (!deploymentId) return;
-            const state = '${{ steps.wrangler-deploy.outcome }}' === 'success' &&
-              ('${{ steps.wrangler-deploy-job.outcome }}' === 'success' || '${{ steps.wrangler-deploy-job.outcome }}' === 'skipped')
+            const state = '${{ steps.wrangler-deploy.outcome }}' === 'success'
               ? 'success' : 'failure';
             await github.rest.repos.createDeploymentStatus({
               owner: context.repo.owner,
@@ -459,7 +449,7 @@ jobs:
         run: |
           echo "=== Primary: Cloudflare API Verification ==="
           DEPLOY_RESPONSE=$(curl -s -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
-            "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/workers/scripts/resume/deployments")
+            "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/workers/scripts/${{ env.PORTFOLIO_WORKER_SCRIPT }}/deployments")
 
           DEPLOY_SUCCESS=$(echo "$DEPLOY_RESPONSE" | jq -r '.success')
           if [ "$DEPLOY_SUCCESS" != "true" ]; then
@@ -598,7 +588,7 @@ jobs:
           sleep 10
 
           DEPLOY_RESPONSE=$(curl -s -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
-            "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/workers/scripts/resume/deployments")
+            "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/workers/scripts/${{ env.PORTFOLIO_WORKER_SCRIPT }}/deployments")
 
           DEPLOY_SUCCESS=$(echo "$DEPLOY_RESPONSE" | jq -r '.success')
           if [ "$DEPLOY_SUCCESS" = "true" ]; then

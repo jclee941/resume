@@ -23,7 +23,7 @@ NC='\033[0m'
 
 # Configuration
 PORTFOLIO_URL="${PORTFOLIO_URL:-https://resume.jclee.me}"
-JOB_DASHBOARD_URL="${JOB_DASHBOARD_URL:-https://job.jclee.me}"
+JOB_DASHBOARD_URL="${JOB_DASHBOARD_URL:-https://resume.jclee.me/job}"
 MODE="${1:-full}"
 OUTPUT_FORMAT="${2:-text}"
 

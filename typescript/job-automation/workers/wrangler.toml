@@ -46,7 +46,7 @@ LOKI_URL = "https://grafana.jclee.me/api/datasources/proxy/uid/cfakfiakcs0zka/lo
 # Production routes
 [env.production]
 routes = [
-  { pattern = "job.jclee.me/*", zone_name = "jclee.me" }
+  { pattern = "resume.jclee.me/job/*", zone_name = "jclee.me" }
 ]
 
 [env.production.triggers]

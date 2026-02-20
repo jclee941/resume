@@ -9,8 +9,8 @@ const config = {
 
   slackSigningSecret: process.env.SLACK_SIGNING_SECRET || '',
   corsOrigins: [
-    'https://job.jclee.me',
     'https://resume.jclee.me',
+    'https://resume.jclee.me/job',
     'http://localhost:3456',
     'http://127.0.0.1:3456',
   ],
@@ -28,12 +28,10 @@ const config = {
 
   paths: {
     public: new URL('../../dashboard/public', import.meta.url).pathname,
-    data:
-      process.env.DATA_DIR || new URL('../../../../', import.meta.url).pathname,
+    data: process.env.DATA_DIR || new URL('../../../../', import.meta.url).pathname,
     resume:
       process.env.RESUME_PATH ||
-      new URL('../../../data/resumes/master/resume_master.md', import.meta.url)
-        .pathname,
+      new URL('../../../data/resumes/master/resume_master.md', import.meta.url).pathname,
   },
 
   limits: {
