@@ -1,6 +1,21 @@
 import { execSync } from 'child_process';
 import chalk from 'chalk';
+import fs from 'fs';
 import path from 'path';
+
+function resolveWranglerConfigPath(baseDir) {
+  const tomlPath = path.join(baseDir, 'wrangler.toml');
+  if (fs.existsSync(tomlPath)) {
+    return tomlPath;
+  }
+
+  const jsoncPath = path.join(baseDir, 'wrangler.jsonc');
+  if (fs.existsSync(jsoncPath)) {
+    return jsoncPath;
+  }
+
+  throw new Error(`No Wrangler config found in ${baseDir}`);
+}
 
 export async function deploy(options) {
   console.log(chalk.blue('🚀 Starting deployment...'));
@@ -15,8 +30,9 @@ export async function deploy(options) {
     if (workerFile) {
       console.log(chalk.yellow(`📦 Deploying worker file: ${workerFile}`));
       const workerDir = path.dirname(workerFile);
+      const wranglerConfig = resolveWranglerConfigPath(workerDir);
 
-      const cmd = `npx wrangler deploy --env ${env}`;
+      const cmd = `npx wrangler deploy --config ${JSON.stringify(wranglerConfig)} --env ${env}`;
       console.log(chalk.gray(`Running: ${cmd} in ${workerDir}`));
 
       execSync(cmd, {
@@ -28,7 +44,8 @@ export async function deploy(options) {
 
     if (dir) {
       console.log(chalk.yellow(`📦 Deploying directory: ${dir}`));
-      const cmd = `npx wrangler deploy --env ${env}`;
+      const wranglerConfig = resolveWranglerConfigPath(dir);
+      const cmd = `npx wrangler deploy --config ${JSON.stringify(wranglerConfig)} --env ${env}`;
       console.log(chalk.gray(`Running: ${cmd} in ${dir}`));
 
       execSync(cmd, {

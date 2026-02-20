@@ -5,6 +5,8 @@ set -euo pipefail
 
 SESSION_NAME="resume-deploy"
 WINDOW_NAME="main"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_ROOT="$(cd "${SCRIPT_DIR}/../../.." && pwd)"
 
 # Colors
 GREEN='\033[0;32m'
@@ -38,7 +40,7 @@ echo ""
 
 # Step 1: Build
 echo -e "${BLUE}[1/4] Building worker.js...${NC}"
-tmux send-keys -t "${SESSION_NAME}:${WINDOW_NAME}" "cd /home/jclee/app/resume && npm run build" C-m
+tmux send-keys -t "${SESSION_NAME}:${WINDOW_NAME}" "cd ${PROJECT_ROOT} && npm run build" C-m
 
 # Wait for build to complete
 sleep 2
@@ -63,7 +65,7 @@ fi
 
 # Step 3: Deploy
 echo -e "${BLUE}[3/4] Deploying to Cloudflare Workers...${NC}"
-tmux send-keys -t "${SESSION_NAME}:${WINDOW_NAME}" "cd web && wrangler deploy" C-m
+tmux send-keys -t "${SESSION_NAME}:${WINDOW_NAME}" "cd ${PROJECT_ROOT} && npx wrangler deploy --config typescript/portfolio-worker/wrangler.toml --env production" C-m
 
 sleep 5
 DEPLOY_OUTPUT=$(tmux capture-pane -t "${SESSION_NAME}:${WINDOW_NAME}" -p | tail -10)

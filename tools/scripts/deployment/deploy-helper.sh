@@ -12,7 +12,8 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Project root
-PROJECT_ROOT="/home/jclee/applications/resume"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_ROOT="$(cd "${SCRIPT_DIR}/../../.." && pwd)"
 cd "$PROJECT_ROOT"
 
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
@@ -77,7 +78,7 @@ build_worker() {
     export DEPLOYED_AT
 
     if npm run build > /dev/null 2>&1; then
-        WORKER_SIZE=$(stat -c%s web/worker.js)
+        WORKER_SIZE=$(stat -c%s typescript/portfolio-worker/worker.js)
         WORKER_SIZE_KB=$(echo "scale=2; $WORKER_SIZE / 1024" | bc)
         echo -e "${GREEN}✓ Worker generated:${NC} ${WORKER_SIZE_KB} KB"
         echo -e "${GREEN}✓ Deployment timestamp:${NC} $DEPLOYED_AT"
@@ -127,15 +128,13 @@ deploy_cloudflare() {
         exit 1
     fi
 
-    cd web
-    if npx wrangler deploy; then
+    if npx wrangler deploy --config "${PROJECT_ROOT}/typescript/portfolio-worker/wrangler.toml" --env production; then
         echo -e "${GREEN}✓ Deployed successfully${NC}"
     else
         echo -e "${RED}✗ Deployment failed${NC}"
         echo -e "${YELLOW}→ Check logs: ~/.config/.wrangler/logs/${NC}"
         exit 1
     fi
-    cd ..
 
     echo ""
 }

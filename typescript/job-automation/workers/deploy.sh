@@ -47,7 +47,7 @@ echo "4. Applying D1 schema..."
 npx wrangler d1 execute job-dashboard-db --file=schema.sql
 
 echo "5. Deploying worker..."
-npx wrangler deploy
+npx wrangler deploy --config wrangler.toml --env production
 
 echo ""
 echo "=== Deployment Complete ==="
