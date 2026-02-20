@@ -59,7 +59,7 @@ All technical work for GitHub Actions CI/CD migration is **COMPLETE** and **VALI
 ### Infrastructure Readiness - VERIFIED ✅
 
 - ✅ Cloudflare Workers account active
-- ✅ Domain configured: resume.jclee.me, job.jclee.me
+- ✅ Domain configured: resume.jclee.me (job dashboard path-routed at /job)
 - ✅ DNS records in place
 - ✅ Previous deployments successful
 
@@ -180,7 +180,7 @@ Secrets Configuration:
 ### ⏳ Infrastructure Verification (Ready)
 
 - [x] Cloudflare account active
-- [x] Domains registered: resume.jclee.me, job.jclee.me
+- [x] Domains registered: resume.jclee.me (job dashboard served at /job)
 - [x] DNS configured
 - [x] Previous deployments verified successful
 - [ ] GitHub Actions deployment verified (after secrets)
@@ -303,16 +303,16 @@ curl https://resume.jclee.me/health
 # Expected: {"status":"ok","version":"1.0.121"}
 
 # Test Job Dashboard Service
-curl -I https://job.jclee.me
+curl -I https://resume.jclee.me/job
 # Expected: HTTP/1.1 200 OK
 
 # Test Job Dashboard Health
-curl https://job.jclee.me/api/health
+curl https://resume.jclee.me/job/health
 # Expected: {"status":"ok","version":"1.0.121"}
 
 # View in browser
 open https://resume.jclee.me
-open https://job.jclee.me
+open https://resume.jclee.me/job
 ```
 
 **Visual Verification**:
@@ -343,7 +343,7 @@ cat > docs/MIGRATION_COMPLETION_REPORT.md << 'EOF'
 ## Deployment Target
 
 - Portfolio: https://resume.jclee.me ✅
-- Job Dashboard: https://job.jclee.me ✅
+- Job Dashboard: https://resume.jclee.me/job ✅
 - Version deployed: [commit SHA]
 
 ## Services Verified

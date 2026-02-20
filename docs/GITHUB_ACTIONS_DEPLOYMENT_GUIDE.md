@@ -9,6 +9,7 @@
 ## 📋 Current Status
 
 ### ✅ Completed
+
 - All 4 GitHub Actions workflows created and validated
 - Workflows committed to `master` branch (commit: `e08ffb5a`)
 - All YAML syntax validated
@@ -16,12 +17,14 @@
 - Local `act` testing tool installed
 
 ### ⏳ Next Steps (Manual - Requires GitHub Web UI)
+
 1. Verify workflows are visible on GitHub repository
 2. Configure GitHub repository secrets
 3. Trigger first deployment test
 4. Verify services are live
 
 ### ❌ Not Yet Done
+
 - GitHub repository secrets configuration (manual UI step)
 - First GitHub Actions workflow execution
 - Deployment verification
@@ -44,8 +47,10 @@
 ### CRITICAL SECRETS (Required for Deployment)
 
 #### 1. `CLOUDFLARE_API_TOKEN`
+
 **Purpose**: Authentication for Cloudflare API operations
 **How to get**:
+
 1. Go to https://dash.cloudflare.com/profile/api-tokens
 2. Click "Create Token"
 3. Use template: "Edit Cloudflare Workers"
@@ -56,6 +61,7 @@
 5. Copy the token value
 
 **Validation**:
+
 ```bash
 # After adding secret, you can validate it with:
 curl -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
@@ -64,14 +70,17 @@ curl -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
 ```
 
 #### 2. `CLOUDFLARE_ACCOUNT_ID`
+
 **Purpose**: Identifies your Cloudflare account
 **How to get**:
+
 1. Go to https://dash.cloudflare.com/
 2. Click on any domain or account
 3. URL will show: `https://dash.cloudflare.com/[ACCOUNT_ID]/`
 4. Copy the ACCOUNT_ID value
 
 **Alternative**:
+
 ```bash
 curl -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
   https://api.cloudflare.com/client/v4/accounts \
@@ -85,13 +94,16 @@ curl -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
 All workflows are in: `.github/workflows/`
 
 ### 1. **ci.yml** (545 lines)
+
 **Purpose**: Main CI/CD pipeline
 **Triggers**:
+
 - On push to `master` or `develop` branches
 - On pull requests to `master`
 - Manual workflow dispatch
 
 **Jobs** (in order):
+
 1. `analyze` - Detect affected targets
 2. `lint` - ESLint validation
 3. `typecheck` - TypeScript compilation
@@ -102,35 +114,41 @@ All workflows are in: `.github/workflows/`
 8. `build-portfolio` - Build portfolio worker
 9. `build-job-dashboard` - Build job dashboard worker
 10. `deploy-portfolio` - Deploy to resume.jclee.me
-11. `deploy-job-dashboard` - Deploy to job.jclee.me
+11. `deploy-job-dashboard` - Deploy to resume.jclee.me/job
 12. `verify-deployment` - Run health checks
 13. `notify` - Send notifications
 
 **Success Criteria**: All jobs pass (or are skipped based on changes)
 
 ### 2. **maintenance.yml** (343 lines)
+
 **Purpose**: Scheduled maintenance tasks
 **Triggers**: Cron schedule + manual dispatch
 
 **Jobs**:
+
 1. `auth-refresh` - Every 6 hours
 2. `profile-sync` - Daily at 00:00 UTC
 3. `drift-detection` - Weekly on Sundays at 02:00 UTC
 
 ### 3. **terraform.yml** (301 lines)
+
 **Purpose**: Infrastructure as Code management
 **Triggers**: Manual dispatch only (workflow_dispatch)
 
 **Jobs**:
+
 1. `plan` - Preview infrastructure changes
 2. `apply` - Apply infrastructure changes
 3. `destroy` - Tear down infrastructure
 
 ### 4. **verify.yml** (636 lines)
+
 **Purpose**: Deployment verification
 **Triggers**: Manual dispatch + called from ci.yml
 
 **Checks**:
+
 - Service health endpoints
 - Worker deployment status
 - API functionality
@@ -144,6 +162,7 @@ All workflows are in: `.github/workflows/`
 ### Phase 1: Verify Workflows on GitHub (5 minutes)
 
 1. **Go to your GitHub repository**:
+
    ```
    https://github.com/qws941/resume
    ```
@@ -159,6 +178,7 @@ All workflows are in: `.github/workflows/`
 ### Phase 2: Configure GitHub Secrets (15 minutes)
 
 1. **Navigate to Secrets Settings**:
+
    ```
    https://github.com/qws941/resume/settings/secrets/actions
    ```
@@ -181,6 +201,7 @@ All workflows are in: `.github/workflows/`
 ### Phase 3: Trigger First Deployment (2 minutes)
 
 1. **Go to Actions tab**:
+
    ```
    https://github.com/qws941/resume/actions
    ```
@@ -204,6 +225,7 @@ All workflows are in: `.github/workflows/`
 ### Phase 4: Verify Deployment Success (5 minutes)
 
 **Check Portfolio Service**:
+
 ```bash
 curl -I https://resume.jclee.me
 # Expected: HTTP/1.1 200 OK
@@ -213,11 +235,12 @@ curl https://resume.jclee.me/health
 ```
 
 **Check Job Dashboard Service**:
+
 ```bash
-curl -I https://job.jclee.me
+curl -I https://resume.jclee.me/job
 # Expected: HTTP/1.1 200 OK
 
-curl https://job.jclee.me/api/health
+curl https://resume.jclee.me/job/health
 # Expected: {"status": "ok", "version": "..."}
 ```
 
@@ -228,9 +251,11 @@ curl https://job.jclee.me/api/health
 ### How to Monitor Workflows
 
 1. **GitHub Actions Tab**:
+
    ```
    https://github.com/qws941/resume/actions
    ```
+
    Shows all workflow runs with status indicators
 
 2. **Specific Workflow Run**:
@@ -259,6 +284,7 @@ curl https://job.jclee.me/api/health
 **Symptoms**: Actions tab is empty or shows "No workflows found"
 
 **Solution**:
+
 1. Go to Settings → General
 2. Ensure "Actions" is enabled under "Features"
 3. Verify `.github/workflows/` directory exists and has `.yml` files
@@ -269,6 +295,7 @@ curl https://job.jclee.me/api/health
 **Symptoms**: "Error: CLOUDFLARE_API_TOKEN is not defined"
 
 **Solution**:
+
 1. Go to Settings → Secrets and variables → Actions
 2. Verify both `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` are listed
 3. If missing, add them following "Phase 2" above
@@ -276,13 +303,15 @@ curl https://job.jclee.me/api/health
 
 ### Issue 3: Deployment Succeeds But Services Not Responding
 
-**Symptoms**: 
+**Symptoms**:
+
 ```bash
 curl https://resume.jclee.me
 # Returns: Connection refused or timeout
 ```
 
 **Solution**:
+
 1. Check GitHub Actions logs for actual error messages
 2. Verify Cloudflare account is active
 3. Check Cloudflare Workers are deployed:
@@ -297,6 +326,7 @@ curl https://resume.jclee.me
 **Symptoms**: Workflow takes >10 minutes or shows timeout error
 
 **Solution**:
+
 1. Check GitHub status page: https://www.githubstatus.com/
 2. Reduce test scope (skip e2e tests temporarily)
 3. Check for network connectivity issues
@@ -307,6 +337,7 @@ curl https://resume.jclee.me
 **Symptoms**: Deploy jobs fail with "Permission denied" or "Unauthorized"
 
 **Solution**:
+
 1. Verify Cloudflare API token has correct permissions:
    - Should include: Workers KV Edit, Workers Scripts Edit
 2. Verify Account ID matches the token's account
@@ -321,12 +352,12 @@ curl https://resume.jclee.me
 
 These are automatically available in all jobs:
 
-| Variable | Value | Usage |
-|----------|-------|-------|
-| `GITHUB_TOKEN` | Auto-provided | Git operations, artifact uploads |
-| `GITHUB_REF` | Branch name | Conditional job execution |
-| `GITHUB_SHA` | Commit hash | Build versioning |
-| `GITHUB_RUN_ID` | Run number | Build artifact naming |
+| Variable        | Value         | Usage                            |
+| --------------- | ------------- | -------------------------------- |
+| `GITHUB_TOKEN`  | Auto-provided | Git operations, artifact uploads |
+| `GITHUB_REF`    | Branch name   | Conditional job execution        |
+| `GITHUB_SHA`    | Commit hash   | Build versioning                 |
+| `GITHUB_RUN_ID` | Run number    | Build artifact naming            |
 
 ### Configuration Files
 
@@ -340,6 +371,7 @@ These are automatically available in all jobs:
 ### Cache Configuration
 
 Workflows use caching for:
+
 - npm dependencies (`node_modules/`)
 - Build artifacts
 - Test results
@@ -349,17 +381,17 @@ Workflows use caching for:
 
 ## 🔗 Useful Links
 
-| Resource | URL |
-|----------|-----|
-| **GitHub Repository** | https://github.com/qws941/resume |
-| **GitHub Actions Documentation** | https://docs.github.com/en/actions |
-| **GitHub Secrets Settings** | https://github.com/qws941/resume/settings/secrets/actions |
-| **GitHub Actions Logs** | https://github.com/qws941/resume/actions |
-| **Cloudflare API Tokens** | https://dash.cloudflare.com/profile/api-tokens |
-| **Cloudflare Dashboard** | https://dash.cloudflare.com |
-| **Cloudflare Workers** | https://dash.cloudflare.com/account/workers/overview |
-| **Portfolio Service** | https://resume.jclee.me |
-| **Job Dashboard Service** | https://job.jclee.me |
+| Resource                         | URL                                                       |
+| -------------------------------- | --------------------------------------------------------- |
+| **GitHub Repository**            | https://github.com/qws941/resume                          |
+| **GitHub Actions Documentation** | https://docs.github.com/en/actions                        |
+| **GitHub Secrets Settings**      | https://github.com/qws941/resume/settings/secrets/actions |
+| **GitHub Actions Logs**          | https://github.com/qws941/resume/actions                  |
+| **Cloudflare API Tokens**        | https://dash.cloudflare.com/profile/api-tokens            |
+| **Cloudflare Dashboard**         | https://dash.cloudflare.com                               |
+| **Cloudflare Workers**           | https://dash.cloudflare.com/account/workers/overview      |
+| **Portfolio Service**            | https://resume.jclee.me                                   |
+| **Job Dashboard Service**        | https://resume.jclee.me/job                               |
 
 ---
 
@@ -371,8 +403,8 @@ After triggering first deployment, verify:
 - [ ] No job failures or errors in logs
 - [ ] Portfolio service responds at https://resume.jclee.me
 - [ ] Portfolio health endpoint returns 200: `curl https://resume.jclee.me/health`
-- [ ] Job Dashboard service responds at https://job.jclee.me
-- [ ] Job Dashboard health endpoint returns 200: `curl https://job.jclee.me/api/health`
+- [ ] Job Dashboard service responds at https://resume.jclee.me/job
+- [ ] Job Dashboard health endpoint returns 200: `curl https://resume.jclee.me/job/health`
 - [ ] Both services show correct version numbers
 - [ ] Recent git commits appear in GitHub
 - [ ] Cloudflare Workers dashboard shows latest deployments
@@ -383,6 +415,7 @@ After triggering first deployment, verify:
 ## 📚 Additional Documentation
 
 For more details, see:
+
 - `docs/GITHUB_ACTIONS_SECRETS.md` - Detailed secrets configuration
 - `.github/workflows/deploy.yml` - Original GitHub Actions configuration (for reference)
 - `.github/workflows/` - All workflow definitions

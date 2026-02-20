@@ -12,7 +12,7 @@ Base URL: `https://resume.jclee.me`
 | ------ | ---------------- | --------------------------------------------- |
 | GET    | `/`              | Primary portfolio page (default language).    |
 | GET    | `/en`            | English portfolio page.                       |
-| GET    | `/healthz`       | Health endpoint for service checks.           |
+| GET    | `/health`        | Health endpoint for service checks.           |
 | GET    | `/metrics`       | Prometheus-style metrics endpoint.            |
 | GET    | `/sitemap.xml`   | XML sitemap for search engines.               |
 | GET    | `/robots.txt`    | Robots policy for crawlers.                   |

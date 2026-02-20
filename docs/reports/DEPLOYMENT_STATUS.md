@@ -34,7 +34,7 @@
 - **상태**: ✅ 정상 (HTTP 200)
 - **플랫폼**: Cloudflare Workers
 - **내용**: 채용 자동화 관리 대시보드
-- **특징**: `job.jclee.me` 도메인 통합, `/job/*` 경로 기반 라우팅
+- **특징**: `resume.jclee.me/job` 경로 기반 통합 라우팅
 
 ### 3. MCP Server
 - **상태**: ✅ 정상 (로컬 실행 중)
@@ -74,7 +74,7 @@
 ## 🗑️ 제거 및 감가상각 (Deprecated)
 - **SafeWork System**: 서비스 중단 및 컨테이너 제거 완료
 - **Blacklist System**: 서비스 중단 및 컨테이너 제거 완료
-- **job.jclee.me**: `resume.jclee.me/job`으로 도메인 통합 완료
+- **Job Dashboard**: `resume.jclee.me/job` 경로 통합 완료
 
 ---
 
@@ -105,7 +105,7 @@
 
 ### 2026-02-08
 - **도메인 통합 및 구조 개편**:
-  - `job.jclee.me`를 `resume.jclee.me/job/*`로 통합 (Cloudflare Routing)
+- 전용 서브도메인 없이 `resume.jclee.me/job/*` 경로로 통합 (Cloudflare Routing)
   - Portfolio Worker 내에 Job Dashboard 통합 및 경로 스트리핑 로직 적용
 - **자동화 고도화 (Workflows)**:
   - 8종의 Cloudflare Workflows 구축 완료 (HealthCheck, Backup, Sync 등)

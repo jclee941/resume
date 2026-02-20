@@ -58,7 +58,7 @@
 ### 2. Wanted MCP Dashboard (구인 자동화)
 
 - **위치**: `apps/job-automation/workers/src/views/dashboard.js`
-- **URL**: `https://job.jclee.me`
+- **URL**: `https://resume.jclee.me/job`
 - **기능**:
   - 구인 공고 관리
   - 지원 현황 추적
@@ -128,8 +128,8 @@ curl https://resume.jclee.me/metrics
 
 ```javascript
 // web/lib/performance-metrics.js
-fetch("/api/vitals", {
-  method: "POST",
+fetch('/api/vitals', {
+  method: 'POST',
   body: JSON.stringify({ lcp, fid, cls, fcp }),
 });
 ```

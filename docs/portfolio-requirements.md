@@ -56,7 +56,7 @@
 | F2.16 | Command History   | ↑/↓ 키로 명령어 히스토리 탐색         | ✅   |
 | F2.17 | Tab Completion    | Tab 키로 명령어 자동완성              | ✅   |
 | F2.18 | Konami Code       | ↑↑↓↓←→←→BA → Hack Mode 활성화         | ✅   |
-| F2.19 | Status Check      | resume/job.jclee.me 헬스체크 자동실행 | ✅   |
+| F2.19 | Status Check      | resume.jclee.me/job 헬스체크 자동실행 | ✅   |
 | F2.20 | Reveal Animation  | IntersectionObserver 기반 섹션 등장   | ✅   |
 
 ### F3. 네비게이션 및 레이아웃
@@ -189,7 +189,7 @@
 | NF3.1  | CSP default-src        | 'none' 기본값                                | ✅   |
 | NF3.2  | CSP script-src         | 'self' + SHA-256 해시 (8개)                  | ✅   |
 | NF3.3  | CSP style-src-elem     | 'unsafe-inline' (동적 스타일 허용)           | ✅   |
-| NF3.4  | CSP connect-src        | 허용 도메인 명시 (GA, job.jclee.me)          | ✅   |
+| NF3.4  | CSP connect-src        | 허용 도메인 명시 (GA, resume.jclee.me/job)   | ✅   |
 | NF3.5  | CSP frame-ancestors    | 'none' (iframe 삽입 차단)                    | ✅   |
 | NF3.6  | HSTS                   | max-age=63072000, includeSubDomains, preload | ✅   |
 | NF3.7  | X-Frame-Options        | DENY                                         | ✅   |
