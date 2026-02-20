@@ -377,7 +377,7 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: typescript/portfolio-worker
-          command: deploy --env production
+          command: deploy --config wrangler.toml --env production
 
       - name: Update Deployment Status
         if: always()
@@ -710,7 +710,7 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: typescript/portfolio-worker
-          command: deploy --name resume-pr-${{ github.event.pull_request.number }}
+          command: deploy --config wrangler.toml --name resume-pr-${{ github.event.pull_request.number }}
 
       - name: Post Preview URL Comment
         uses: actions/github-script@v8

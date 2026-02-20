@@ -1,0 +1,73 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "resume",
+  "main": "typescript/portfolio-worker/entry.js",
+  "compatibility_date": "2024-10-03",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": "typescript/portfolio-worker/assets",
+    "binding": "ASSETS",
+  },
+  "vars": {
+    "ENVIRONMENT": "production",
+    "ELASTICSEARCH_INDEX": "resume-logs-worker",
+  },
+  "routes": [{ "pattern": "resume.jclee.me", "custom_domain": true }],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "resume-prod-db",
+      "database_id": "6c723024-2527-490d-8ffd-38604b923166",
+    },
+    {
+      "binding": "JOB_DB",
+      "database_name": "job-dashboard-db",
+      "database_id": "c858dda6-b752-4e12-b60c-2886e9483cc7",
+    },
+  ],
+  "kv_namespaces": [
+    { "binding": "SESSIONS", "id": "2b81b9b02dc34f518d2ca9552804bfef" },
+    { "binding": "RATE_LIMIT_KV", "id": "fe51b0f1c2c44841b4895e8747cb408a" },
+    { "binding": "NONCE_KV", "id": "3e282b1b906c474aadcc947a06f0c1ad" },
+  ],
+  "workflows": [
+    {
+      "name": "job-crawling-workflow",
+      "binding": "JOB_CRAWLING_WORKFLOW",
+      "class_name": "JobCrawlingWorkflow",
+    },
+    {
+      "name": "application-workflow",
+      "binding": "APPLICATION_WORKFLOW",
+      "class_name": "ApplicationWorkflow",
+    },
+    {
+      "name": "resume-sync-workflow",
+      "binding": "RESUME_SYNC_WORKFLOW",
+      "class_name": "ResumeSyncWorkflow",
+    },
+    {
+      "name": "daily-report-workflow",
+      "binding": "DAILY_REPORT_WORKFLOW",
+      "class_name": "DailyReportWorkflow",
+    },
+    {
+      "name": "health-check-workflow",
+      "binding": "HEALTH_CHECK_WORKFLOW",
+      "class_name": "HealthCheckWorkflow",
+    },
+    {
+      "name": "backup-workflow",
+      "binding": "BACKUP_WORKFLOW",
+      "class_name": "BackupWorkflow",
+    },
+    {
+      "name": "cleanup-workflow",
+      "binding": "CLEANUP_WORKFLOW",
+      "class_name": "CleanupWorkflow",
+    },
+  ],
+  "triggers": {
+    "crons": ["0 0 * * 1-5", "0 9 * * *", "*/5 * * * *", "0 3 * * *", "0 4 * * SUN"],
+  },
+}
