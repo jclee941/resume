@@ -1,7 +1,6 @@
 name = "job"
 main = "src/index.js"
-compatibility_date = "2024-10-03"
-account_id = "a8d9c67f586acdd15eebcc65ca3aa5bb"
+compatibility_date = "2026-02-21"
 
 # D1 Database binding
 [[d1_databases]]
