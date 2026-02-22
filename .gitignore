@@ -143,7 +143,6 @@ bin/
 .gitlab/
 
 # Legacy standalone configs
-job-automation-mcp/
 lighthouserc.js
 
 # Logs directory
