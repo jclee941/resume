@@ -1,5 +1,5 @@
 // Cloudflare Worker - Auto-generated (IMPROVED VERSION)
-// Generated: 2026-02-22T04:43:52.439Z
+// Generated: 2026-02-22T13:45:26.563Z
 // Features: Template caching, JSDoc types, link helper, constants, rate limiting
 
 const INDEX_HTML = `<!doctype html><html lang="ko" data-theme="dark"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>이재철 - Infrastructure Engineer</title><meta name="description" content="이재철 - 인프라 엔지니어 | 금융·공공 분야 보안 인프라 및 관측성 설계·운영"><meta name="keywords" content="Infrastructure, Observability, Grafana, Prometheus, Loki, Splunk, 자동화, 인프라, 이재철"><meta name="author" content="이재철 (Jaecheol Lee)"><meta name="robots" content="index, follow"><meta name="google-site-verification" content="2a5f8c3b7d4e9a1f6c2b5e8d1a4f7c0b9e3d6a9f2c5"><script>function gtag(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],gtag("js",new Date),gtag("config","G-P9E8XY5K2L",{page_path:window.location.pathname,language:"ko"});var _gs=document.createElement("script");_gs.src="https://www.googletagmanager.com/gtag/js?id=G-P9E8XY5K2L",_gs.async=!0,_gs.integrity="sha384-ZXsMWzL9jNkfVeDNiKiKlvdyvBmUvt8YMS2PljnnNk8cVfKES+GLjaItoIy8iwNi",_gs.crossOrigin="anonymous",document.head.appendChild(_gs)</script><link rel="canonical" href="https://resume.jclee.me"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://browser.sentry-cdn.com" crossorigin><link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin><link rel="alternate" hreflang="ko-KR" href="https://resume.jclee.me"><link rel="alternate" hreflang="en-US" href="https://resume.jclee.me/en/"><link rel="alternate" hreflang="x-default" href="https://resume.jclee.me"><meta property="og:type" content="profile"><meta property="og:url" content="https://resume.jclee.me"><meta property="og:title" content="이재철 - Infrastructure Engineer"><meta property="og:description" content="인프라 엔지니어 | 금융·공공 분야 보안 인프라 및 관측성 설계·운영"><meta property="og:image" content="https://resume.jclee.me/og-image.webp"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:type" content="image/webp"><meta property="og:image:alt" content="Jaecheol Lee - Infrastructure Engineer Portfolio"><meta property="og:site_name" content="Jaecheol Lee Resume"><meta property="og:locale" content="ko_KR"><meta property="og:locale:alternate" content="en_US"><meta property="profile:first_name" content="Jaecheol"><meta property="profile:last_name" content="Lee"><meta property="profile:username" content="qws941"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:url" content="https://resume.jclee.me"><meta name="twitter:title" content="이재철 - Infrastructure Engineer"><meta name="twitter:description" content="인프라 엔지니어 | 금융·공공 분야 보안 인프라 및 관측성 설계·운영"><meta name="twitter:image" content="https://resume.jclee.me/og-image.webp"><meta name="twitter:creator" content="@qws941"><meta name="twitter:site" content="@qws941"><script type="application/ld+json">{
@@ -422,9 +422,9 @@ const metrics = {
   "cache_misses": 0,
   "geo_countries": {},
   "geo_colos": {},
-  "worker_start_time": 1771735432439,
+  "worker_start_time": 1771767926563,
   "version": "1.0.128",
-  "deployed_at": "2026-02-22T04:43:52.439Z"
+  "deployed_at": "2026-02-22T13:45:26.563Z"
 };
 
 // Histogram bucket boundaries (Prometheus standard)
@@ -1624,7 +1624,7 @@ export default {
         const health = {
           status: allHealthy ? 'healthy' : 'degraded',
           version: '1.0.128',
-          deployed_at: '2026-02-22T04:43:52.439Z',
+          deployed_at: '2026-02-22T13:45:26.563Z',
           uptime_seconds: uptime,
           bindings,
           metrics: {

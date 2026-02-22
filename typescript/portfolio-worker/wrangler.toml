@@ -4,6 +4,21 @@ compatibility_date = "2026-02-21"
 compatibility_flags = ["nodejs_compat"]
 # account_id sourced from CLOUDFLARE_ACCOUNT_ID env var or wrangler-action accountId
 
+[observability]
+enabled = false
+head_sampling_rate = 1
+
+[observability.logs]
+enabled = false
+head_sampling_rate = 1
+persist = true
+invocation_logs = true
+
+[observability.traces]
+enabled = true
+persist = true
+head_sampling_rate = 1
+
 [assets]
 directory = "./assets"
 binding = "ASSETS"

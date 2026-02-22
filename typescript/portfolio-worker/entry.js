@@ -21,8 +21,10 @@ async function logEntryError(env, message, meta = {}) {
     const esUrl = env?.ELASTICSEARCH_URL;
     const cfId = env?.CF_ACCESS_CLIENT_ID;
     const cfSecret = env?.CF_ACCESS_CLIENT_SECRET;
+    const apiKey = env?.ELASTICSEARCH_API_KEY;
     const index = env?.ELASTICSEARCH_INDEX || 'resume-logs-worker';
-    if (!esUrl || !cfId) return;
+    const hasAuth = Boolean(apiKey);
+    if (!esUrl || !hasAuth) return;
 
     const doc = {
       '@timestamp': new Date().toISOString(),
@@ -35,20 +37,21 @@ async function logEntryError(env, message, meta = {}) {
     const headers = { 'Content-Type': 'application/json' };
     if (cfId) headers['CF-Access-Client-Id'] = cfId;
     if (cfSecret) headers['CF-Access-Client-Secret'] = cfSecret;
-    const apiKey = env?.ELASTICSEARCH_API_KEY;
     if (apiKey) headers['Authorization'] = `ApiKey ${apiKey}`;
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 3000);
 
-    await fetch(`${esUrl}/${index}/_doc`, {
-      method: 'POST',
-      signal: controller.signal,
-      headers,
-      body: JSON.stringify(doc),
-    });
-
-    clearTimeout(timeoutId);
+    try {
+      await fetch(`${esUrl}/${index}/_doc`, {
+        method: 'POST',
+        signal: controller.signal,
+        headers,
+        body: JSON.stringify(doc),
+      });
+    } finally {
+      clearTimeout(timeoutId);
+    }
   } catch {
     // Best-effort: if ES is down, console.error is our only fallback
   }

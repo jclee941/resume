@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
             () => {
               registration.update();
             },
-            60 * 60 * 1000,
+            60 * 60 * 1000
           ); // Check every hour
         })
         .catch((error) => {

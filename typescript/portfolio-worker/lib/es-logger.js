@@ -30,12 +30,52 @@ async function logToElasticsearch(env, message, level = 'INFO', labels = {}, opt
   try {
     const job = 'resume-worker';
     const index = options.index || env?.ELASTICSEARCH_INDEX || 'resume-logs-worker';
-    const doc = buildDocument(message, level, labels, job);
+
+    const requestHeaders = options.request?.headers;
+    const headerTraceparent =
+      requestHeaders && requestHeaders.get ? requestHeaders.get('traceparent') : null;
+    const headerTracestate =
+      requestHeaders && requestHeaders.get ? requestHeaders.get('tracestate') : null;
+
+    const traceparent =
+      typeof labels.traceparent === 'string' && labels.traceparent
+        ? labels.traceparent
+        : headerTraceparent || null;
+    const tracestate =
+      typeof labels.tracestate === 'string' && labels.tracestate
+        ? labels.tracestate
+        : headerTracestate || null;
+
+    let traceIdFromParent = null;
+    if (traceparent) {
+      const parts = String(traceparent).trim().split('-');
+      if (parts.length === 4 && /^[0-9a-f]{32}$/i.test(parts[1])) {
+        traceIdFromParent = parts[1].toLowerCase();
+      }
+    }
+
+    const explicitTraceId =
+      typeof labels.traceId === 'string' && labels.traceId ? labels.traceId.toLowerCase() : null;
+    const explicitCorrelationId =
+      typeof labels.correlationId === 'string' && labels.correlationId
+        ? labels.correlationId.toLowerCase()
+        : null;
+    const traceId = explicitTraceId || traceIdFromParent || explicitCorrelationId || null;
+
+    const enrichedLabels = {
+      ...labels,
+      ...(traceId ? { traceId, correlationId: labels.correlationId || traceId } : {}),
+      ...(traceparent ? { traceparent } : {}),
+      ...(tracestate ? { tracestate } : {}),
+      ...(traceId ? { trace: { id: traceId } } : {}),
+    };
+
+    const doc = buildDocument(message, level, enrichedLabels, job);
 
     // Always use immediate mode — batch/setTimeout is unreliable in Cloudflare Workers
     const esUrl = env?.ELASTICSEARCH_URL;
-    const cfId = env?.CF_ACCESS_CLIENT_ID;
-    if (!esUrl || !cfId) return;
+    const apiKey = env?.ELASTICSEARCH_API_KEY;
+    if (!esUrl || !apiKey) return;
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), options.timeout || DEFAULT_TIMEOUT_MS);
