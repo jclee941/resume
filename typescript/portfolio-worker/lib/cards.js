@@ -226,6 +226,7 @@ function generateSkillsList(skillsData, dataHash) {
               : name;
           })
           .join(', ')}</span>
+        <div class="skill-bar-container"><div class="skill-bar" style="width:${averageLevel}%"></div></div>
       </li>`;
     })
     .join('\n');
