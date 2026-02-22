@@ -21,6 +21,7 @@ on:
 
 env:
   NODE_VERSION: '22'
+  GITLEAKS_VERSION: '8.22.1'
 
 permissions:
   contents: read
@@ -141,13 +142,13 @@ jobs:
             exit 1
           fi
 
-          # Quality gate: Zero-tolerance ratchet (auto-set to current baseline)
-          ESLINT_WARNING_BASELINE=69
+          # Quality gate: Zero-tolerance ratchet (baseline in .eslint-baseline file)
+          ESLINT_WARNING_BASELINE=$(cat .eslint-baseline 2>/dev/null || echo 0)
           if [ "${WARNINGS:-0}" -gt "$ESLINT_WARNING_BASELINE" ]; then
             echo "❌ ESLint warnings increased (${WARNINGS} > ${ESLINT_WARNING_BASELINE}) - fix new warnings before merging"
             exit 1
           elif [ "${WARNINGS:-0}" -lt "$ESLINT_WARNING_BASELINE" ]; then
-            echo "🎉 Warnings decreased (${WARNINGS} < ${ESLINT_WARNING_BASELINE}) - update ESLINT_WARNING_BASELINE to ${WARNINGS}"
+            echo "🎉 Warnings decreased! Update baseline: echo ${WARNINGS} > .eslint-baseline"
           fi
 
           echo "✅ Lint passed"
@@ -263,7 +264,7 @@ jobs:
 
       - name: Install gitleaks
         run: |
-          curl -sSfL https://github.com/gitleaks/gitleaks/releases/download/v8.18.4/gitleaks_8.18.4_linux_x64.tar.gz | tar xz
+          curl -sSfL https://github.com/gitleaks/gitleaks/releases/download/v${{ env.GITLEAKS_VERSION }}/gitleaks_${{ env.GITLEAKS_VERSION }}_linux_x64.tar.gz | tar xz
           sudo mv gitleaks /usr/local/bin/
 
       - name: Run gitleaks
