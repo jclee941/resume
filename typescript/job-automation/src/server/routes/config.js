@@ -18,7 +18,7 @@ function getDefaultConfig() {
       slack: { enabled: false, webhookUrl: '' },
       email: { enabled: false, address: '' },
     },
-    schedule: { enabled: false, cron: '0 9 * * 1-5' },
+    schedule: { enabled: false },
   };
 }
 

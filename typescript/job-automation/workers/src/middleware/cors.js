@@ -1,8 +1,22 @@
-const ALLOWED_ORIGINS = ['https://resume.jclee.me', 'http://localhost:3456'];
+const DEFAULT_ORIGINS = ['https://resume.jclee.me', 'http://localhost:3456'];
 
-export function corsHeaders(origin) {
+function getAllowedOrigins(env) {
+  if (env?.CORS_ALLOWED_ORIGINS) {
+    try {
+      return JSON.parse(env.CORS_ALLOWED_ORIGINS);
+    } catch {
+      return env.CORS_ALLOWED_ORIGINS.split(',').map((s) => s.trim());
+    }
+  }
+  return DEFAULT_ORIGINS;
+}
+
+export function corsHeaders(request, env) {
+  const origin = request instanceof Request ? request.headers.get('Origin') : request;
+  const allowedOrigins = getAllowedOrigins(env);
+
   // Deny by default - only return CORS headers for allowed origins
-  if (!origin || !ALLOWED_ORIGINS.includes(origin)) {
+  if (!origin || !allowedOrigins.includes(origin)) {
     return {};
   }
   return {
@@ -13,9 +27,9 @@ export function corsHeaders(origin) {
   };
 }
 
-export function addCorsHeaders(response, origin) {
+export function addCorsHeaders(response, request, env) {
   const headers = new Headers(response.headers);
-  Object.entries(corsHeaders(origin)).forEach(([key, value]) => {
+  Object.entries(corsHeaders(request, env)).forEach(([key, value]) => {
     headers.set(key, value);
   });
   // Security headers

@@ -20,7 +20,7 @@ import { checkRateLimit, addRateLimitHeaders } from './middleware/rate-limit.js'
 import { validateCsrf, addCsrfCookie } from './middleware/csrf.js';
 import { getConfig, saveConfig } from './services/config.js';
 import { serveStatic } from './views/dashboard.js';
-import { sendSlackMessage } from './services/slack.js';
+
 import {
   JobCrawlingWorkflow,
   ApplicationWorkflow,
@@ -65,10 +65,8 @@ export default {
 
     ctx.waitUntil(log.logRequest(request, url));
 
-    const origin = request.headers.get('Origin') || '';
-
     if (request.method === 'OPTIONS') {
-      return addCorsHeaders(new Response(null, { status: 204 }), origin);
+      return addCorsHeaders(new Response(null, { status: 204 }), request, env);
     }
 
     const rateResult = await checkRateLimit(request, url.pathname, env);
@@ -78,21 +76,30 @@ export default {
           jsonResponse({ error: rateResult.error }, rateResult.status),
           rateResult.headers
         ),
-        origin
+        request,
+        env
       );
     }
 
     if (requiresAuth(url.pathname)) {
       const authResult = verifyAdminAuth(request, env);
       if (!authResult.ok) {
-        return addCorsHeaders(jsonResponse({ error: authResult.error }, authResult.status), origin);
+        return addCorsHeaders(
+          jsonResponse({ error: authResult.error }, authResult.status),
+          request,
+          env
+        );
       }
     }
 
     if (requiresWebhookSignature(url.pathname)) {
       const sigResult = await verifyWebhookSignature(request, env);
       if (!sigResult.ok) {
-        return addCorsHeaders(jsonResponse({ error: sigResult.error }, sigResult.status), origin);
+        return addCorsHeaders(
+          jsonResponse({ error: sigResult.error }, sigResult.status),
+          request,
+          env
+        );
       }
     }
 
@@ -104,7 +111,11 @@ export default {
     if (!skipCsrf) {
       const csrfResult = validateCsrf(request);
       if (!csrfResult.ok) {
-        return addCorsHeaders(jsonResponse({ error: csrfResult.error }, csrfResult.status), origin);
+        return addCorsHeaders(
+          jsonResponse({ error: csrfResult.error }, csrfResult.status),
+          request,
+          env
+        );
       }
     }
 
@@ -222,7 +233,7 @@ export default {
 
     router.get('/api/auto-apply/status', (req) => autoApply.status(req));
     router.post('/api/auto-apply/run', (req) => autoApply.run(req));
-    router.put('/api/auto-apply/config', (req) => autoApply.configure(req));
+    router.get('/api/auto-apply/config', (req) => autoApply.configure(req));
 
     // Profile sync endpoints
     router.post('/api/automation/profile-sync', (req) => webhooks.triggerProfileSync(req));
@@ -345,58 +356,26 @@ export default {
       const response = await router.handle(request, url, log);
       if (response) {
         const withCsrf = addCsrfCookie(response, request);
-        return addRateLimitHeaders(addCorsHeaders(withCsrf, origin), rateResult.headers);
+        return addRateLimitHeaders(addCorsHeaders(withCsrf, request, env), rateResult.headers);
       }
 
       // Static fallback: serve dashboard for non-API routes
       if (!url.pathname.startsWith('/api/')) {
         const staticResponse = serveStatic(url.pathname);
         const withCsrf = addCsrfCookie(staticResponse, request);
-        return addCorsHeaders(withCsrf, origin);
+        return addCorsHeaders(withCsrf, request, env);
       }
 
       // API route not found
-      return addCorsHeaders(jsonResponse({ error: 'Not found' }, 404), origin);
+      return addCorsHeaders(jsonResponse({ error: 'Not found' }, 404), request, env);
     } catch (err) {
       const error = normalizeError(err, { path: url.pathname, method: request.method });
       ctx.waitUntil(log.error('Unhandled worker error', error));
 
       if (error instanceof HttpError) {
-        return addCorsHeaders(error.toResponse(), origin);
+        return addCorsHeaders(error.toResponse(), request, env);
       }
-      return addCorsHeaders(jsonResponse({ error: 'Internal server error' }, 500), origin);
-    }
-  },
-
-  async scheduled(event, env, ctx) {
-    const logger = Logger.create(env, { service: 'job-worker' });
-    logger.info(`Cron triggered: ${event.cron}`, { trigger: 'cron', cron: event.cron });
-
-    const isJobSearchCron = event.cron === '0 0 * * 1-5';
-    const isDailyReportCron = event.cron === '0 9 * * *';
-
-    try {
-      if (isJobSearchCron) {
-        const instance = await env.JOB_CRAWLING_WORKFLOW.create({
-          params: {
-            platforms: ['wanted', 'linkedin', 'remember'],
-            dryRun: false,
-          },
-        });
-        logger.info(`Job crawling workflow started: ${instance.id}`);
-      } else if (isDailyReportCron) {
-        const instance = await env.DAILY_REPORT_WORKFLOW.create({
-          params: { type: 'daily' },
-        });
-        logger.info(`Daily report workflow started: ${instance.id}`);
-      }
-    } catch (err) {
-      const error = normalizeError(err, { trigger: 'cron', cron: event.cron });
-      ctx.waitUntil(logger.error('Cron execution failed', error));
-
-      await sendSlackMessage(env, {
-        text: `❌ Cron Error: ${event.cron}\n\`\`\`${error.message}\`\`\``,
-      });
+      return addCorsHeaders(jsonResponse({ error: 'Internal server error' }, 500), request, env);
     }
   },
 
