@@ -3,6 +3,8 @@
  * Pure fetch-based, no external dependencies
  */
 
+import { DEFAULT_USER_AGENT } from '../utils/user-agents.js';
+
 const BASE_URL = 'https://www.wanted.co.kr/api/v4';
 const CHAOS_BASE_URL = 'https://www.wanted.co.kr/api/chaos';
 const SNS_BASE_URL = 'https://www.wanted.co.kr/api/sns-api';
@@ -58,7 +60,7 @@ export class WantedClient {
       Accept: 'application/json',
       'Content-Type': 'application/json',
       'User-Agent':
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        DEFAULT_USER_AGENT,
       'Accept-Language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7',
       Referer: 'https://www.wanted.co.kr/',
       Origin: 'https://www.wanted.co.kr',
@@ -156,7 +158,7 @@ export class WantedClient {
           'Content-Type': 'application/json',
           Cookie: this.cookies,
           'User-Agent':
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+            DEFAULT_USER_AGENT,
           Referer: `https://www.wanted.co.kr/wd/${jobId}`,
           Origin: 'https://www.wanted.co.kr',
         },
@@ -194,7 +196,7 @@ export class WantedClient {
           Accept: 'application/json',
           Cookie: this.cookies,
           'User-Agent':
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+            DEFAULT_USER_AGENT,
         },
       },
     );

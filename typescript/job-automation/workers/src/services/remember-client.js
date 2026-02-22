@@ -1,3 +1,5 @@
+import { DEFAULT_USER_AGENT } from '../utils/user-agents.js';
+
 export class RememberClient {
   constructor(env) {
     this.env = env;
@@ -28,7 +30,7 @@ export class RememberClient {
             'Content-Type': 'application/x-www-form-urlencoded',
             Accept: 'application/json',
             'User-Agent':
-              'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+              DEFAULT_USER_AGENT,
             Origin: this.baseUrl,
             Referer: `${this.baseUrl}/job/postings`,
           },
@@ -41,7 +43,7 @@ export class RememberClient {
           headers: {
             Accept: 'application/json',
             'User-Agent':
-              'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+              DEFAULT_USER_AGENT,
           },
         };
       }
@@ -83,7 +85,7 @@ export class RememberClient {
         headers: {
           Accept: 'application/json',
           'User-Agent':
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            DEFAULT_USER_AGENT,
         },
       });
 

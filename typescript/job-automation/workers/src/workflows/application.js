@@ -1,4 +1,5 @@
 import { WorkflowEntrypoint } from 'cloudflare:workers';
+import { DEFAULT_USER_AGENT } from '../utils/user-agents.js';
 
 /**
  * Application Workflow
@@ -334,7 +335,7 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
         Cookie: session,
         'Content-Type': 'application/json',
         'User-Agent':
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          DEFAULT_USER_AGENT,
       },
       body: JSON.stringify({
         resume_id: resume.id,

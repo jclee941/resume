@@ -28,6 +28,8 @@ import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { DEFAULT_USER_AGENT } from '../workers/src/utils/user-agents.js';
+
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -124,7 +126,7 @@ class AuthSync {
     this.page = await this.browser.newPage();
 
     await this.page.setUserAgent(
-      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+      DEFAULT_USER_AGENT
     );
 
     await this.page.evaluateOnNewDocument(() => {
