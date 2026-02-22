@@ -1,6 +1,7 @@
 import { UnifiedApplySystem } from '../../../shared/services/apply/index.js';
 import { ApplicationManager } from '../../application-manager.js';
 import { UnifiedJobCrawler } from '../../../crawlers/index.js';
+import { getResumeMasterMarkdownPath } from '../../../shared/utils/paths.js';
 
 export async function runAutoApply(args) {
   const dryRun = !args.includes('--apply');
@@ -48,8 +49,7 @@ export async function runUnifiedSystem(args) {
 
   console.log(`\n🚀 Unified Apply System ${dryRun ? '(DRY RUN)' : ''}\n`);
 
-  const basePath = process.env.RESUME_BASE_PATH || process.env.HOME + '/dev/resume';
-  const resumePath = basePath + '/typescript/data/resumes/master/resume_master.md';
+  const resumePath = getResumeMasterMarkdownPath();
 
   const enabledPlatforms = ['wanted', 'jobkorea', 'saramin'];
   const keywords = ['시니어 엔지니어', '클라우드 엔지니어', 'SRE', 'DevOps'];

@@ -37,6 +37,7 @@ max_retries = 5
 [vars]
 ENVIRONMENT = "production"
 LOKI_URL = "https://grafana.jclee.me/api/datasources/proxy/uid/cfakfiakcs0zka/loki/api/v1/push"
+ELASTICSEARCH_INDEX = "resume-logs-job-worker"
 
 # Secrets (set via wrangler secret put)
 # ANTHROPIC_API_KEY
@@ -56,6 +57,7 @@ crons = ["0 0 * * 1-5", "0 9 * * *"]
 [env.production.vars]
 ENVIRONMENT = "production"
 LOKI_URL = "https://grafana.jclee.me/api/datasources/proxy/uid/cfakfiakcs0zka/loki/api/v1/push"
+ELASTICSEARCH_INDEX = "resume-logs-job-worker"
 SLACK_CHANNEL = "C09TJUXC7Q8"
 
 [[env.production.d1_databases]]
@@ -90,6 +92,7 @@ name = "job-dashboard-staging"
 
 [env.staging.vars]
 ENVIRONMENT = "staging"
+ELASTICSEARCH_INDEX = "resume-logs-job-worker-staging"
 
 [[env.staging.d1_databases]]
 binding = "DB"

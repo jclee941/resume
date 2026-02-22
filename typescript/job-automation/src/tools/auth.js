@@ -40,7 +40,7 @@ Alternative - JWT Token:
 2. Find 'wanted_access_token' or similar
 3. Use: wanted_auth({ action: "set_token", token: "jwt_token_here" })
 
-Session stored in: job-automation-mcp/.data/wanted-session.json (24hr expiry)`,
+Session stored in: typescript/job-automation/.data/wanted-session.json (24hr expiry)`,
 
   inputSchema: {
     type: 'object',

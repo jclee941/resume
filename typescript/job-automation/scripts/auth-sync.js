@@ -114,7 +114,7 @@ class AuthSync {
         '--no-sandbox',
         '--disable-setuid-sandbox',
         '--disable-blink-features=AutomationControlled',
-        '--disable-web-security',
+        '--disable-dev-shm-usage',
         '--disable-features=VizDisplayCompositor',
         '--window-size=1280,800',
       ],

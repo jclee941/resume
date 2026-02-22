@@ -2,7 +2,7 @@
  * Indeed Korea Crawler - 인디드 채용공고 크롤러
  *
  * Scrapes Indeed Korea (kr.indeed.com) job listings via their
- * public web interface. Uses HTML parsing since Indeed does not
+ * public typescript/portfolio-worker interface. Uses HTML parsing since Indeed does not
  * expose a public JSON API.
  *
  * Anti-detection: inherits UA rotation, rate limiting, and retry

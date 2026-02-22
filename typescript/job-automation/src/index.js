@@ -138,7 +138,7 @@ const prompts = [
 // Create MCP server
 const server = new Server(
   {
-    name: 'wanted-mcp',
+    name: 'typescript/job-automation',
     version: '1.2.0',
   },
   {

@@ -36,6 +36,20 @@ const LEVEL_PRIORITY = {
   [LogLevel.FATAL]: 4,
 };
 
+function parseTraceId(traceparent) {
+  if (typeof traceparent !== 'string') {
+    return null;
+  }
+
+  const parts = traceparent.trim().split('-');
+  if (parts.length !== 4) {
+    return null;
+  }
+
+  const traceId = parts[1];
+  return /^[0-9a-f]{32}$/i.test(traceId) ? traceId.toLowerCase() : null;
+}
+
 /**
  * Immutable request context that flows through the handler chain.
  * Created once at the entry point, passed to all handlers.
@@ -58,6 +72,9 @@ export class RequestContext {
     this.path = options.path || '';
     this.userAgent = options.userAgent || '';
     this.geo = options.geo || null;
+    this.traceparent = options.traceparent || '';
+    this.tracestate = options.tracestate || '';
+    this.traceId = options.traceId || parseTraceId(this.traceparent) || '';
     this.extra = options.extra || {};
     Object.freeze(this);
   }
@@ -81,6 +98,8 @@ export class RequestContext {
             asn: request.cf.asn,
           }
         : null,
+      traceparent: request.headers.get('traceparent') || '',
+      tracestate: request.headers.get('tracestate') || '',
     });
   }
 
@@ -108,6 +127,17 @@ export class RequestContext {
         },
         as: { number: this.geo.asn },
       };
+    }
+    if (this.traceId) {
+      labels.traceId = this.traceId;
+      labels.correlationId = this.traceId;
+      labels.trace = { id: this.traceId };
+    }
+    if (this.traceparent) {
+      labels.traceparent = this.traceparent;
+    }
+    if (this.tracestate) {
+      labels.tracestate = this.tracestate;
     }
     return labels;
   }

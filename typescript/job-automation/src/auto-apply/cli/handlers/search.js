@@ -1,11 +1,11 @@
 import { UnifiedJobCrawler, WANTED_CATEGORIES } from '../../../crawlers/index.js';
 import { matchJobsWithAI } from '../../../shared/services/matching/index.js';
+import { getResumeMasterMarkdownPath } from '../../../shared/utils/paths.js';
 
 export async function searchJobs(args) {
   const keyword = args[0] || '시니어 엔지니어';
   const limit = parseInt(args[1]) || 20;
-  const basePath = process.env.RESUME_BASE_PATH || process.env.HOME + '/dev/resume';
-  const resumePath = basePath + '/typescript/data/resumes/master/resume_master.md';
+  const resumePath = getResumeMasterMarkdownPath();
 
   console.log(`\n🔍 Searching for: ${keyword}\n`);
 
@@ -72,15 +72,11 @@ export async function aiSearchJobs(args) {
   console.log(`📊 기본 검색 완료: ${searchResult.jobs.length}개 공고 발견`);
   console.log('🧠 AI 기반 재매칭 시작...\n');
 
-  const aiResult = await matchJobsWithAI(
-    '../../../data/resumes/master/resume_master.md',
-    searchResult.jobs,
-    {
-      minScore: 70,
-      maxResults: limit,
-      useAI: true,
-    }
-  );
+  const aiResult = await matchJobsWithAI(getResumeMasterMarkdownPath(), searchResult.jobs, {
+    minScore: 70,
+    maxResults: limit,
+    useAI: true,
+  });
 
   if (!aiResult.success && aiResult.jobs.length === 0) {
     console.log('⚠️ AI 매칭 실패, 기본 결과 표시\n');

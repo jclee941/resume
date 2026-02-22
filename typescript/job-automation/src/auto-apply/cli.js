@@ -5,17 +5,12 @@
  */
 
 import { UnifiedApplySystem } from '../shared/services/apply/index.js';
-import {
-  ApplicationManager,
-  APPLICATION_STATUS,
-} from './application-manager.js';
+import { ApplicationManager, APPLICATION_STATUS } from './application-manager.js';
 import { UnifiedJobCrawler, WANTED_CATEGORIES } from '../crawlers/index.js';
-import {
-  matchJobsWithAI,
-  getAICareerAdvice,
-} from '../shared/services/matching/index.js';
+import { matchJobsWithAI, getAICareerAdvice } from '../shared/services/matching/index.js';
 import { AutoApplier } from './auto-applier.js';
 import { SlackService } from '../shared/services/slack/index.js';
+import { getResumeMasterMarkdownPath } from '../shared/utils/paths.js';
 
 const _COMMANDS = {
   search: '채용공고 검색 (통합 시스템)',
@@ -78,10 +73,7 @@ async function main() {
 async function searchJobs(args) {
   const keyword = args[0] || '시니어 엔지니어';
   const limit = parseInt(args[1]) || 20;
-  const basePath =
-    process.env.RESUME_BASE_PATH || process.env.HOME + '/dev/resume';
-  const resumePath =
-    basePath + '/typescript/data/resumes/master/resume_master.md';
+  const resumePath = getResumeMasterMarkdownPath();
 
   console.log(`\n🔍 Searching for: ${keyword}\n`);
 
@@ -117,9 +109,7 @@ async function searchJobs(args) {
   console.log('\n--- Recent Jobs ---\n');
 
   for (const job of jobs.slice(0, 10)) {
-    console.log(
-      `[${job.matchPercentage || job.score || 0}%] ${job.position || job.title}`,
-    );
+    console.log(`[${job.matchPercentage || job.score || 0}%] ${job.position || job.title}`);
     console.log(`   🏢 ${job.company} | 📍 ${job.location || 'N/A'}`);
     console.log(`   🔗 ${job.sourceUrl || job.url || 'N/A'}`);
     console.log(`   Source: ${job.source || 'unknown'}`);
@@ -132,12 +122,9 @@ async function searchJobs(args) {
  */
 async function runAutoApply(args) {
   const dryRun = !args.includes('--apply');
-  const maxApps =
-    parseInt(args.find((a) => a.startsWith('--max='))?.split('=')[1]) || 5;
+  const maxApps = parseInt(args.find((a) => a.startsWith('--max='))?.split('=')[1]) || 5;
 
-  console.log(
-    `\n🤖 Auto Apply ${dryRun ? '(DRY RUN)' : ''} (Unified System)\n`,
-  );
+  console.log(`\n🤖 Auto Apply ${dryRun ? '(DRY RUN)' : ''} (Unified System)\n`);
 
   const system = new UnifiedApplySystem({
     dryRun,
@@ -178,15 +165,11 @@ async function runAutoApply(args) {
  */
 async function runUnifiedSystem(args) {
   const dryRun = !args.includes('--apply');
-  const maxApps =
-    parseInt(args.find((a) => a.startsWith('--max='))?.split('=')[1]) || 3;
+  const maxApps = parseInt(args.find((a) => a.startsWith('--max='))?.split('=')[1]) || 3;
 
   console.log(`\n🚀 Unified Apply System ${dryRun ? '(DRY RUN)' : ''}\n`);
 
-  const basePath =
-    process.env.RESUME_BASE_PATH || process.env.HOME + '/dev/resume';
-  const resumePath =
-    basePath + '/typescript/data/resumes/master/resume_master.md';
+  const resumePath = getResumeMasterMarkdownPath();
 
   const enabledPlatforms = ['wanted', 'jobkorea', 'saramin'];
   const keywords = ['시니어 엔지니어', '클라우드 엔지니어', 'SRE', 'DevOps'];
@@ -238,21 +221,13 @@ async function runUnifiedSystem(args) {
   console.log('📊 Summary:');
   console.log(`   Searched: ${result.phases?.search?.found || 0} jobs`);
   console.log(`   Matched: ${result.phases?.filter?.output || 0} jobs`);
-  console.log(
-    `   Applied: ${result.phases?.apply?.succeeded || 0} applications`,
-  );
-  console.log(
-    `   Skipped: ${result.phases?.apply?.skipped || result.stats?.skipped || 0} jobs`,
-  );
-  console.log(
-    `   Failed: ${result.phases?.apply?.failed || result.stats?.failed || 0} attempts`,
-  );
+  console.log(`   Applied: ${result.phases?.apply?.succeeded || 0} applications`);
+  console.log(`   Skipped: ${result.phases?.apply?.skipped || result.stats?.skipped || 0} jobs`);
+  console.log(`   Failed: ${result.phases?.apply?.failed || result.stats?.failed || 0} attempts`);
 
   if (result.results?.phase1_search?.platformStats) {
     console.log('\n📋 Platform Breakdown:');
-    for (const [platform, stats] of Object.entries(
-      result.results.phase1_search.platformStats,
-    )) {
+    for (const [platform, stats] of Object.entries(result.results.phase1_search.platformStats)) {
       console.log(`   ${platform}: ${stats.totalJobs || 0} jobs found`);
     }
   }
@@ -269,8 +244,7 @@ async function runUnifiedSystem(args) {
  */
 async function listApplications(args) {
   const status = args.find((a) => a.startsWith('--status='))?.split('=')[1];
-  const limit =
-    parseInt(args.find((a) => a.startsWith('--limit='))?.split('=')[1]) || 20;
+  const limit = parseInt(args.find((a) => a.startsWith('--limit='))?.split('=')[1]) || 20;
 
   const manager = new ApplicationManager();
   const apps = manager.listApplications({ status, limit });
@@ -286,9 +260,7 @@ async function listApplications(args) {
     const statusEmoji = getStatusEmoji(app.status);
     console.log(`${statusEmoji} [${app.matchScore}%] ${app.position}`);
     console.log(`   🏢 ${app.company} | 📍 ${app.location}`);
-    console.log(
-      `   Status: ${app.status} | Created: ${app.createdAt.split('T')[0]}`,
-    );
+    console.log(`   Status: ${app.status} | Created: ${app.createdAt.split('T')[0]}`);
     console.log(`   ID: ${app.id}`);
     console.log('');
   }
@@ -440,7 +412,7 @@ async function aiSearchJobs(args) {
       minScore: 70,
       maxResults: limit,
       useAI: true,
-    },
+    }
   );
 
   if (!aiResult.success && aiResult.jobs.length === 0) {
@@ -463,16 +435,12 @@ async function aiSearchJobs(args) {
     const matchType = job.matchType === 'ai' ? '🤖 AI 매칭' : '🔍 기본 매칭';
     const confidence = job.confidence ? ` (신뢰도: ${job.confidence})` : '';
 
-    console.log(
-      `[${job.matchPercentage}%] ${job.position} ${matchType}${confidence}`,
-    );
+    console.log(`[${job.matchPercentage}%] ${job.position} ${matchType}${confidence}`);
     console.log(`   🏢 ${job.company} | 📍 ${job.location}`);
     console.log(`   🔗 ${job.sourceUrl}`);
 
     if (job.aiAnalysis?.matchDetails?.reasoning) {
-      console.log(
-        `   💡 ${job.aiAnalysis.matchDetails.reasoning.substring(0, 100)}...`,
-      );
+      console.log(`   💡 ${job.aiAnalysis.matchDetails.reasoning.substring(0, 100)}...`);
     }
 
     if (job.aiAnalysis?.successPrediction) {
@@ -485,9 +453,7 @@ async function aiSearchJobs(args) {
 
   console.log('📈 분석 결과:');
   console.log(`   AI 매칭: ${aiResult.resumeAnalysis?.aiMatchCount || 0}개`);
-  console.log(
-    `   기본 매칭: ${aiResult.resumeAnalysis?.basicMatchCount || 0}개`,
-  );
+  console.log(`   기본 매칭: ${aiResult.resumeAnalysis?.basicMatchCount || 0}개`);
 }
 
 /**
@@ -495,8 +461,7 @@ async function aiSearchJobs(args) {
  */
 async function runAIUnifiedSystem(args) {
   const dryRun = !args.includes('--apply');
-  const maxApps =
-    parseInt(args.find((a) => a.startsWith('--max='))?.split('=')[1]) || 2;
+  const maxApps = parseInt(args.find((a) => a.startsWith('--max='))?.split('=')[1]) || 2;
 
   console.log(`🚀 AI 기반 통합 시스템 ${dryRun ? '(DRY RUN)' : ''}\n`);
 
@@ -559,9 +524,7 @@ async function runAIUnifiedSystem(args) {
 
   if (result.results?.phase1_search?.platformStats) {
     console.log('\n📋 플랫폼별 AI 분석:');
-    for (const [platform, stats] of Object.entries(
-      result.results.phase1_search.platformStats,
-    )) {
+    for (const [platform, stats] of Object.entries(result.results.phase1_search.platformStats)) {
       console.log(`   ${platform}: ${stats.totalJobs || 0}건 검색`);
     }
   }
@@ -574,9 +537,7 @@ async function runAIUnifiedSystem(args) {
   }
 
   if (dryRun) {
-    console.log(
-      '\n⚠️ 드라이런 모드였습니다. 실제 지원을 위해 --apply 플래그를 사용하세요.',
-    );
+    console.log('\n⚠️ 드라이런 모드였습니다. 실제 지원을 위해 --apply 플래그를 사용하세요.');
   } else {
     console.log('\n✅ AI 기반 지원이 완료되었습니다!');
   }
@@ -603,14 +564,13 @@ async function showAICareerAdvice(args) {
       url: jobUrl,
       title: 'DevSecOps Engineer',
       company: '테크 회사',
-      description:
-        'DevSecOps 엔지니어 포지션입니다. 보안과 DevOps 경험을 보유한 분을 찾습니다.',
+      description: 'DevSecOps 엔지니어 포지션입니다. 보안과 DevOps 경험을 보유한 분을 찾습니다.',
       requirements: '3년 이상 DevOps 경험, 보안 지식 보유',
     };
 
     const advice = await getAICareerAdvice(
       '../../../data/resumes/master/resume_master.md',
-      jobPosting,
+      jobPosting
     );
 
     if (!advice) {
