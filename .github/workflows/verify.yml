@@ -6,6 +6,7 @@
 name: Verify Deployment
 
 on:
+  deployment_status:
   workflow_dispatch:
     inputs:
       environment:
@@ -51,8 +52,13 @@ permissions:
   contents: read
   actions: read
 
+env:
+  PORTFOLIO_URL: https://resume.jclee.me
+  JOB_DASHBOARD_URL: https://resume.jclee.me/job
+
 jobs:
   verify-portfolio:
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || (github.event_name == 'deployment_status' && github.event.deployment_status.state == 'success')
     name: Verify Portfolio (${{ matrix.check }})
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -76,8 +82,8 @@ jobs:
         id: urls
         shell: bash
         run: |
-          PORTFOLIO_URL="${{ inputs.portfolio_url || 'https://resume.jclee.me' }}"
-          JOB_DASHBOARD_URL="${{ inputs.job_dashboard_url || 'https://resume.jclee.me/job' }}"
+          PORTFOLIO_URL="${{ inputs.portfolio_url || github.event.inputs.portfolio_url || env.PORTFOLIO_URL }}"
+          JOB_DASHBOARD_URL="${{ inputs.job_dashboard_url || github.event.inputs.job_dashboard_url || env.JOB_DASHBOARD_URL }}"
           TIMEOUT="${{ inputs.timeout_seconds || '30' }}"
 
           echo "portfolio_url=$PORTFOLIO_URL" >> $GITHUB_OUTPUT
@@ -503,6 +509,7 @@ jobs:
           fi
 
   verify-job-dashboard:
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || (github.event_name == 'deployment_status' && github.event.deployment_status.state == 'success')
     name: Verify Job Dashboard (${{ matrix.check }})
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -517,7 +524,7 @@ jobs:
         id: urls
         shell: bash
         run: |
-          JOB_DASHBOARD_URL="${{ inputs.job_dashboard_url || 'https://resume.jclee.me/job' }}"
+          JOB_DASHBOARD_URL="${{ inputs.job_dashboard_url || github.event.inputs.job_dashboard_url || env.JOB_DASHBOARD_URL }}"
           TIMEOUT="${{ inputs.timeout_seconds || '30' }}"
 
           echo "job_dashboard_url=$JOB_DASHBOARD_URL" >> $GITHUB_OUTPUT
@@ -609,9 +616,9 @@ jobs:
           fi
 
   summary:
+    if: (github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || (github.event_name == 'deployment_status' && github.event.deployment_status.state == 'success')) && always()
     name: Verification Summary
     runs-on: ubuntu-latest
-    if: always()
     needs: [verify-portfolio, verify-job-dashboard]
     steps:
       - name: Check Status
@@ -634,3 +641,37 @@ jobs:
             echo "⚠️  Some verification checks failed or were skipped"
             exit 1
           fi
+
+  e2e-deploy-verify:
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || (github.event_name == 'deployment_status' && github.event.deployment_status.state == 'success')
+    name: E2E Deploy Verification
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [summary]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Run deploy verification E2E
+        run: SKIP_WEBSERVER=1 PLAYWRIGHT_BASE_URL=https://resume.jclee.me npx playwright test deploy-verification --project=chromium
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+          if-no-files-found: ignore
