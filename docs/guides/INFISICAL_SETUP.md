@@ -7,12 +7,12 @@
 
 ## 📋 마이그레이션 대상 시크릿
 
-| 시크릿 이름 | 현재 위치 | 상태 |
-|------------|----------|------|
-| `CLOUDFLARE_API_TOKEN` | `.dev.vars` | ⚠️ 폐기 필요 |
-| `CLOUDFLARE_ACCOUNT_ID` | `.dev.vars` | 🔄 마이그레이션 |
-| `GRAFANA_API_KEY` | `opencode.json` | ✅ 환경변수로 변경됨 |
-| `SARAMIN_API_KEY` | `~/.env` | 🔄 마이그레이션 |
+| 시크릿 이름             | 현재 위치       | 상태                 |
+| ----------------------- | --------------- | -------------------- |
+| `CLOUDFLARE_API_TOKEN`  | `.dev.vars`     | ⚠️ 폐기 필요         |
+| `CLOUDFLARE_ACCOUNT_ID` | `.dev.vars`     | 🔄 마이그레이션      |
+| `GRAFANA_API_KEY`       | `opencode.json` | ✅ 환경변수로 변경됨 |
+| `SARAMIN_API_KEY`       | `~/.env`        | 🔄 마이그레이션      |
 
 ---
 
@@ -31,7 +31,7 @@ export INFISICAL_TOKEN="your-service-token"
 ### 2. 프로젝트 초기화
 
 ```bash
-cd /home/jclee/apps/resume
+cd /home/jclee/dev/resume
 
 # 프로젝트 연결 (대화형)
 infisical init
@@ -93,7 +93,7 @@ infisical secrets generate-example-env --env=prod > .env.infisical
 ### GitHub Actions 연동
 
 ```yaml
-# .github/workflows/deploy.yml
+# .github/workflows/ci.yml
 variables:
   INFISICAL_TOKEN: $INFISICAL_SERVICE_TOKEN
 

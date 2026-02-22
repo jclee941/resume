@@ -84,8 +84,8 @@ Uncaught SyntaxError: Unexpected token 'export' at worker.js:200
 ## 📝 Files Created/Modified
 
 ### Source Files (Modified)
-1. **web/data.json**: Added 2 project entries (Ansible + NAS)
-2. **web/worker.js**: Regenerated (155.96 KB → 160 KB)
+1. **typescript/portfolio-worker/data.json**: Added 2 project entries (Ansible + NAS)
+2. **typescript/portfolio-worker/worker.js**: Regenerated (155.96 KB → 160 KB)
 3. **master/resume_master.md**: Added detailed project descriptions (lines 347-361)
 4. **master/resume_final.md**: Synchronized with master
 
@@ -207,7 +207,7 @@ CLOUDFLARE_API_TOKEN=<your_token_here>
 CLOUDFLARE_ACCOUNT_ID=a8d9c67f586acdd15eebcc65ca3aa5bb
 
 # Step 4: Deploy with Wrangler (will use token)
-cd /home/jclee/applications/resume && npm run deploy
+cd /home/jclee/dev/resume && npm run deploy
 ```
 
 **Benefits**:
@@ -240,7 +240,7 @@ Consider updating `package.json` to use the new API deployment method:
 {
   "scripts": {
     "deploy": "npm run build && ./scripts/deployment/deploy-via-api.sh",
-    "deploy:wrangler": "cd web && wrangler deploy"
+    "deploy:wrangler:root": "npm run build:full && wrangler deploy --config typescript/portfolio-worker/wrangler.toml --env production"
   }
 }
 ```

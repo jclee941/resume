@@ -35,7 +35,7 @@
 export ANTHROPIC_API_KEY="your_claude_api_key_here"
 export CLAUDE_API_KEY="your_claude_api_key_here"  # 호환성을 위해 둘 다 설정
 
-# 또는 .env 파일 생성 (wanted-mcp/.env)
+# 또는 .env 파일 생성 (typescript/job-automation/.env)
 ANTHROPIC_API_KEY=your_claude_api_key_here
 CLAUDE_API_KEY=your_claude_api_key_here
 ```
@@ -63,7 +63,7 @@ node --version  # 20.0.0 이상 권장
 
 #### 의존성 설치
 ```bash
-cd wanted-mcp
+cd typescript/job-automation
 npm install
 ```
 
@@ -176,7 +176,7 @@ node src/auto-apply/cli/index.js advice "https://www.wanted.co.kr/wd/12345"
 
 ### AI 모델 선택
 ```javascript
-// wanted-mcp/config/ai-config.json
+// typescript/job-automation/config/ai-config.json
 {
   "OpenCode": {
     "model": "OpenCode-3-5-sonnet-20241022",

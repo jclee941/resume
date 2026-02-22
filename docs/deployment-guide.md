@@ -140,10 +140,10 @@ Your `.env` file contains 6 primary sections:
 
 ### 3.3 Wrangler Configuration
 
-The monorepo uses two separate Wrangler configuration files:
+The monorepo uses two active Wrangler configuration files:
 
 1. `typescript/portfolio-worker/wrangler.toml`: Uses TOML format for the main site.
-2. `typescript/job-automation/workers/wrangler.jsonc`: Uses JSONC (JSON with Comments) for the dashboard worker.
+2. `typescript/job-automation/workers/wrangler.toml`: Uses TOML format for the dashboard worker.
 
 ### 3.4 Managing Production Secrets
 
@@ -151,7 +151,7 @@ Secrets are **not** stored in git. You must push them to Cloudflare using the CL
 
 ```bash
 # Example: Setting the admin token for the dashboard
-npx wrangler secret put ADMIN_TOKEN --config typescript/job-automation/workers/wrangler.jsonc
+npx wrangler secret put ADMIN_TOKEN --config typescript/job-automation/workers/wrangler.toml
 ```
 
 **Detailed Secret Descriptions:**
@@ -170,7 +170,7 @@ npx wrangler secret put ADMIN_TOKEN --config typescript/job-automation/workers/w
 
 ### 3.5 Cloudflare Bindings
 
-Ensure your Cloudflare account has the following resources created and bound to the worker environments. These IDs are referenced in `wrangler.toml` and `wrangler.jsonc`.
+Ensure your Cloudflare account has the following resources created and bound to the worker environments. These IDs are referenced in the worker `wrangler.toml` files.
 
 **D1 Relational Databases:**
 

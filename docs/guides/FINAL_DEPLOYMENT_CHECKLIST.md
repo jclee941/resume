@@ -82,7 +82,7 @@ npm run build
 
 ```bash
 # Test worker.js locally
-node web/worker.js
+node typescript/portfolio-worker/worker.js
 
 # Run E2E tests
 npm run test:e2e

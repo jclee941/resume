@@ -88,7 +88,7 @@ Executed complete analysis, optimization, and maintenance across all project sys
 1. ✅ **WebP Image Conversion** (DONE)
    - blacklist-dashboard.png: 307KB → 72KB
    - **Savings: 235KB (76.5% reduction)**
-   - File: `web/assets/dashboards/blacklist-dashboard.webp`
+   - File: `typescript/portfolio-worker/assets/dashboards/blacklist-dashboard.webp`
 
 2. ✅ **Font Preload Added** (DONE)
    - Added preload for Inter font (primary weight)

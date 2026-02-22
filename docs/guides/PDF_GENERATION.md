@@ -117,7 +117,7 @@ Markdown Source Files
          ├─ Check dependencies (Pandoc/Docker)
          ├─ Read version from package.json
          ├─ Generate PDF with metadata
-         └─ Copy to web/downloads/
+         └─ Copy to typescript/portfolio-worker/downloads/
          │
          ▼
   Generated PDFs (with version)
@@ -250,7 +250,7 @@ readonly LINESTRETCH="1.3"     # Line spacing (1.0-2.0)
 sudo yum install git-lfs
 
 # Initialize in repository
-cd /home/jclee/apps/resume
+cd /home/jclee/dev/resume
 git lfs install
 
 # Track PDF files (.gitattributes already configured)
@@ -331,7 +331,7 @@ git push origin master
 
 ### Automated Workflow (Proposed)
 
-**Add to `.github/workflows/deploy.yml/deploy.yml`**:
+**Add to `.github/workflows/ci.yml`**:
 
 ```yaml
 name: Deploy Resume Portfolio
@@ -340,9 +340,9 @@ on:
   push:
     branches: [master]
     paths:
-      - "master/*.md"
-      - "toss/*.md"
-      - "resume/nextrade/*.md"
+      - 'master/*.md'
+      - 'toss/*.md'
+      - 'resume/nextrade/*.md'
 
 jobs:
   generate-pdfs:

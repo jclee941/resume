@@ -329,7 +329,7 @@ node src/cli.js pipeline run {resume_id}
 총 JS 파일: 2,760개
 총 코드량: 약 50,000줄 (추정)
 
-wanted-mcp/
+typescript/job-automation/
 ├── src/                    # 핵심 코드
 │   ├── crawlers/          # 2,526줄 (4개 플랫폼)
 │   ├── auto-apply/        # 약 1,500줄

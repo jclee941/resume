@@ -168,9 +168,9 @@ services:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
       - '--storage.tsdb.retention.time=30d'
-      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
-      - '--web.console.templates=/usr/share/prometheus/consoles'
-      - '--web.enable-lifecycle'
+      - '--typescript/portfolio-worker.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--typescript/portfolio-worker.console.templates=/usr/share/prometheus/consoles'
+      - '--typescript/portfolio-worker.enable-lifecycle'
     networks:
       - monitoring
 
@@ -323,7 +323,7 @@ providers:
 
 **Copy Dashboard**:
 ```bash
-cp /home/jclee/apps/resume/monitoring/grafana-dashboard-resume-portfolio.json \
+cp /home/jclee/dev/resume/monitoring/grafana-dashboard-resume-portfolio.json \
    /volume1/docker/grafana/provisioning/dashboards/
 ```
 
@@ -537,7 +537,7 @@ export N8N_URL="https://n8n.jclee.me"
 
 ```bash
 # Navigate to n8n directory
-cd /home/jclee/apps/resume/n8n
+cd /home/jclee/dev/resume/n8n
 
 # Deploy workflow
 ./deploy-workflow.sh resume-healthcheck-oauth2.json
@@ -553,7 +553,7 @@ cd /home/jclee/apps/resume/n8n
 
 ### Configure Slack OAuth2
 
-Follow steps in `/home/jclee/apps/resume/n8n/SLACK_OAUTH2_SETUP.md`:
+Follow steps in `/home/jclee/dev/resume/n8n/SLACK_OAUTH2_SETUP.md`:
 
 1. Create Slack App
 2. Enable OAuth & Permissions
@@ -826,7 +826,7 @@ curl -X POST "https://n8n.jclee.me/api/v1/workflows/123/execute" \
 - [Grafana Provisioning](https://grafana.com/docs/grafana/latest/administration/provisioning/)
 - [Loki Configuration](https://grafana.com/docs/loki/latest/configuration/)
 - [n8n API Documentation](https://docs.n8n.io/api/)
-- [Nginx Reverse Proxy Guide](https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/)
+- [Nginx Reverse Proxy Guide](https://docs.nginx.com/nginx/admin-guide/typescript/portfolio-worker-server/reverse-proxy/)
 
 ## 📝 Next Steps
 

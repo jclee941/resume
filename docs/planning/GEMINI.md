@@ -9,8 +9,8 @@
 ## 🔑 주요 파일
 
 -   **`master/resume_master.md`**: 모든 경력, 프로젝트, 기술 스택을 상세히 포함하는 최종 버전의 이력서입니다. 모든 콘텐츠 업데이트는 이 파일을 대상으로 이루어져야 합니다.
--   **`web/index.html`**: 현대적이고 반응형이며 SEO에 최적화된 단일 페이지 웹 포트폴리오입니다. Cloudflare Pages를 통해 호스팅되는 정적 HTML 파일로, 마스터 이력서의 요약본, 주요 프로젝트 및 기술을 강조하여 보여줍니다.
--   **`web/src/index.js`**: 현재 "Hello World"를 반환하는 간단한 Cloudflare Worker 스크립트입니다. 직접적으로 `index.html`을 제공하지는 않지만, `web/wrangler.toml`에 메인 워커 스크립트로 설정되어 있어 향후 동적 기능을 추가할 수 있습니다.
+-   **`typescript/portfolio-worker/index.html`**: 현대적이고 반응형이며 SEO에 최적화된 단일 페이지 웹 포트폴리오입니다. Cloudflare Pages를 통해 호스팅되는 정적 HTML 파일로, 마스터 이력서의 요약본, 주요 프로젝트 및 기술을 강조하여 보여줍니다.
+-   **`typescript/portfolio-worker/src/index.js`**: 현재 "Hello World"를 반환하는 간단한 Cloudflare Worker 스크립트입니다. 직접적으로 `index.html`을 제공하지는 않지만, `typescript/portfolio-worker/wrangler.toml`에 메인 워커 스크립트로 설정되어 있어 향후 동적 기능을 추가할 수 있습니다.
 -   **`.github/workflows/deploy.yml`**: `master` 브랜치에 푸시가 발생하면 웹 포트폴리오(Cloudflare Worker 및 정적 콘텐츠)를 자동으로 배포하는 GitHub Actions 워크플로우입니다.
 
 ## ⚙️ 사용법 및 자동화
@@ -42,7 +42,7 @@ cd company-specific
 
 ```bash
 # 웹 디렉토리로 이동
-cd web
+cd typescript/portfolio-worker
 
 # 서버 시작
 python3 -m http.server 8000

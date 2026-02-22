@@ -6,28 +6,28 @@
 
 #### `/health` - 헬스 체크
 
-- **위치**: `web/generate-worker.js:261`
+- **위치**: `typescript/portfolio-worker/generate-worker.js:261`
 - **메서드**: GET
 - **응답**: JSON 상태 정보
 - **용도**: 서비스 가용성 확인
 
 #### `/metrics` - 메트릭 수집
 
-- **위치**: `web/generate-worker.js:284`
+- **위치**: `typescript/portfolio-worker/generate-worker.js:284`
 - **메서드**: GET
 - **응답**: 시스템 메트릭 데이터
 - **용도**: Prometheus 스크래핑
 
 #### `/api/vitals` - Core Web Vitals
 
-- **위치**: `web/generate-worker.js:293`
+- **위치**: `typescript/portfolio-worker/generate-worker.js:293`
 - **메서드**: POST
 - **용도**: FCP, LCP, CLS, FID 실시간 수집
-- **클라이언트**: `web/lib/performance-metrics.js`
+- **클라이언트**: `typescript/portfolio-worker/lib/performance-metrics.js`
 
 #### `/api/analytics` - A/B 테스팅 분석
 
-- **위치**: `web/lib/ab-testing.js:176`
+- **위치**: `typescript/portfolio-worker/lib/ab-testing.js:176`
 - **메서드**: POST
 - **용도**: 실험 결과 분석
 
@@ -57,7 +57,7 @@
 
 ### 2. Wanted MCP Dashboard (구인 자동화)
 
-- **위치**: `apps/job-automation/workers/src/views/dashboard.js`
+- **위치**: `typescript/job-automation/workers/src/views/dashboard.js`
 - **URL**: `https://resume.jclee.me/job`
 - **기능**:
   - 구인 공고 관리
@@ -127,7 +127,7 @@ curl https://resume.jclee.me/metrics
 ### Core Web Vitals (클라이언트)
 
 ```javascript
-// web/lib/performance-metrics.js
+// typescript/portfolio-worker/lib/performance-metrics.js
 fetch('/api/vitals', {
   method: 'POST',
   body: JSON.stringify({ lcp, fid, cls, fcp }),

@@ -39,6 +39,7 @@ npm run build && npm test && npm run test:e2e
 Validates critical worker generation logic:
 
 **1. Worker.js Generation**:
+
 ```javascript
 // Tests worker.js is created and contains expected content
 expect(fs.existsSync(workerPath)).toBe(true);
@@ -47,6 +48,7 @@ expect(workerContent).toContain('<!DOCTYPE html>');
 ```
 
 **2. Minification**:
+
 ```javascript
 // Validates HTML minification (15% size reduction)
 const originalSize = htmlContent.length;
@@ -55,6 +57,7 @@ expect(minifiedSize).toBeLessThan(originalSize);
 ```
 
 **3. Template Literal Escaping**:
+
 ```javascript
 // Ensures backticks and $ are properly escaped
 expect(workerContent).not.toContain('`'); // Backticks escaped
@@ -62,6 +65,7 @@ expect(workerContent).toMatch(/\\\$/); // Dollar signs escaped
 ```
 
 **4. CSP Hash Generation**:
+
 ```javascript
 // Verifies SHA-256 hashes for inline scripts/styles
 expect(workerContent).toMatch(/script-src[^;]*'sha256-[A-Za-z0-9+/=]+'/);
@@ -69,6 +73,7 @@ expect(workerContent).toMatch(/style-src[^;]*'sha256-[A-Za-z0-9+/=]+'/);
 ```
 
 **5. Security Headers**:
+
 ```javascript
 // Checks all security headers are present
 expect(workerContent).toContain('Content-Security-Policy');
@@ -77,6 +82,7 @@ expect(workerContent).toContain('Strict-Transport-Security');
 ```
 
 **6. Routing Logic**:
+
 ```javascript
 // Tests URL routing patterns
 expect(workerContent).toContain('/health');
@@ -120,10 +126,11 @@ npm run test:coverage
 ### Key Test: `portfolio.spec.js`
 
 **CRITICAL: Test Expectations** (line 13):
+
 ```javascript
 const EXPECTED_COUNTS = {
-  RESUME_CARDS: 5,    // Must match data.json "resume" array length
-  PROJECTS: 11        // Must match data.json "projects" array length
+  RESUME_CARDS: 5, // Must match data.json "resume" array length
+  PROJECTS: 11, // Must match data.json "projects" array length
 };
 ```
 
@@ -132,6 +139,7 @@ const EXPECTED_COUNTS = {
 ### Test Categories
 
 **1. Basic Functionality** (7 tests):
+
 - Page loads successfully
 - Page title correct
 - Main sections present (hero, resume, projects, contact)
@@ -139,6 +147,7 @@ const EXPECTED_COUNTS = {
 - Footer present
 
 **2. Content Validation** (8 tests):
+
 ```javascript
 // Resume cards count
 const resumeCards = await page.locator('.doc-card').count();
@@ -153,11 +162,13 @@ expect(await page.locator('h1').textContent()).toContain('Infrastructure');
 ```
 
 **3. Dark Mode** (3 tests):
+
 - Toggle button works
 - Theme persists (localStorage)
 - CSS variables change
 
 **4. Responsive Design** (5 tests):
+
 - Mobile viewport (375px)
 - Tablet viewport (768px)
 - Desktop viewport (1200px)
@@ -165,18 +176,21 @@ expect(await page.locator('h1').textContent()).toContain('Infrastructure');
 - Touch targets >= 44px
 
 **5. Performance** (4 tests):
+
 - Page load time < 3s
 - LCP (Largest Contentful Paint) < 2.5s
 - CLS (Cumulative Layout Shift) < 0.1
 - No console errors
 
 **6. Accessibility** (4 tests):
+
 - ARIA labels present
 - Semantic HTML structure
 - Keyboard navigation works
 - Color contrast ratios meet WCAG AA
 
 **7. Security** (3 tests):
+
 - CSP headers present
 - HTTPS redirect
 - No inline scripts (except with valid CSP hash)
@@ -208,11 +222,13 @@ npm run test:e2e -- --grep "dark mode"
 ### Debugging E2E Tests
 
 **Interactive UI Mode** (recommended for debugging):
+
 ```bash
 npm run test:e2e:ui
 ```
 
 **Features**:
+
 - Visual test runner
 - Time-travel debugging
 - Step-by-step execution
@@ -220,11 +236,13 @@ npm run test:e2e:ui
 - Video recording
 
 **Headed Mode** (visible browser):
+
 ```bash
 npm run test:e2e:headed
 ```
 
 **Trace Viewer** (after failure):
+
 ```bash
 npx playwright show-trace test-results/path-to-trace.zip
 ```
@@ -232,9 +250,11 @@ npx playwright show-trace test-results/path-to-trace.zip
 ## Integration Tests
 
 ### Location
+
 `tests/integration/`
 
 ### Focus Areas
+
 - Worker HTML serving
 - Routing logic
 - Health endpoints
@@ -245,15 +265,17 @@ npx playwright show-trace test-results/path-to-trace.zip
 
 ### Lighthouse CI
 
-**Configuration**: `.github/workflows/deploy.yml/lighthouse-ci.yml`
+**Configuration**: `.github/workflows/ci.yml` (lighthouse job)
 
 **Budgets**:
+
 - Performance: ≥90 score
 - Accessibility: ≥95 score
 - Best Practices: ≥95 score
 - SEO: ≥95 score
 
 **Web Vitals Targets**:
+
 - LCP (Largest Contentful Paint): <2.5s
 - FID (First Input Delay): <100ms
 - CLS (Cumulative Layout Shift): <0.1
@@ -302,6 +324,7 @@ GitHub Actions runs tests automatically:
 3. **Lighthouse** → Warning only (doesn't block)
 
 **View Results**:
+
 - GitHub Actions tab
 - PR status checks
 - Deployment logs
@@ -315,9 +338,10 @@ GitHub Actions runs tests automatically:
 **Cause**: Added/removed projects in `data.json` but didn't update test expectations
 
 **Solution**:
+
 ```bash
 # 1. Count projects
-jq '.projects | length' web/data.json
+jq '.projects | length' typescript/portfolio-worker/data.json
 
 # 2. Update tests/e2e/portfolio.spec.js line 13
 const EXPECTED_COUNTS = {
@@ -334,12 +358,14 @@ npm run build && npm run test:e2e
 **Cause**: Worker.js not rebuilt before running tests
 
 **Solution**:
+
 ```bash
 # Always build before E2E tests
 npm run build && npm run test:e2e
 ```
 
 **CI Fix**: Ensure GitHub Actions workflow includes build step:
+
 ```yaml
 - name: Generate Worker
   run: npm run build
@@ -352,11 +378,13 @@ npm run build && npm run test:e2e
 **Symptoms**: Tests pass/fail randomly
 
 **Common Causes**:
+
 1. Network timeout (API calls)
 2. Animation timing
 3. Race conditions
 
 **Solutions**:
+
 ```javascript
 // Add explicit waits
 await page.waitForSelector('.project-card', { timeout: 5000 });
@@ -375,6 +403,7 @@ await page.waitForTimeout(300);
 **Cause**: CSP hash mismatch after HTML/CSS changes
 
 **Solution**:
+
 ```bash
 # Rebuild (recalculates CSP hashes)
 npm run build
@@ -393,6 +422,7 @@ npm run deploy
 Location: `tests/fixtures/`
 
 **Example**:
+
 ```javascript
 // tests/fixtures/mock-data.json
 {
@@ -428,11 +458,13 @@ test('generates cards from mock data', () => {
 ### Adding New Tests
 
 **When to add tests**:
+
 1. New feature → Unit + E2E tests
 2. Bug fix → Regression test
 3. Refactoring → Maintain coverage
 
 **Example**:
+
 ```javascript
 // New feature: Add GitHub stars counter
 describe('GitHub Stars Counter', () => {
@@ -449,7 +481,7 @@ describe('GitHub Stars Counter', () => {
 - **Jest Documentation**: https://jestjs.io/docs/getting-started
 - **Playwright Documentation**: https://playwright.dev/
 - **Lighthouse CI**: https://github.com/GoogleChrome/lighthouse-ci
-- **Web Vitals**: https://web.dev/vitals/
+- **Web Vitals**: https://typescript/portfolio-worker.dev/vitals/
 
 ---
 

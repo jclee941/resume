@@ -98,11 +98,12 @@ echo "Token length: ${#CLOUDFLARE_API_TOKEN}"
 # 출력: Token length: 40 (정상적인 길이)
 
 # 배포 실행 (자동화 스크립트)
-cd /home/jclee/applications/resume
+cd /home/jclee/dev/resume
 ./scripts/deployment/quick-deploy.sh
 ```
 
 **실행 결과**:
+
 - ✓ Prerequisites 체크
 - ✓ Tests 실행 (10/10)
 - ✓ Worker 빌드
@@ -116,18 +117,20 @@ cd /home/jclee/applications/resume
 배포 전 토큰이 유효한지 확인:
 
 ```bash
-cd /home/jclee/applications/resume/web
+cd /home/jclee/dev/resume/typescript/portfolio-worker
 source ~/.env
 npx wrangler whoami
 ```
 
 **성공 시 출력**:
+
 ```
 Getting User settings...
 👋 You are logged in with an API Token, associated with the email 'your@email.com'!
 ```
 
 **실패 시**:
+
 - "Invalid request headers" → 토큰 형식 오류
 - "Unable to authenticate" → 토큰 만료 또는 권한 부족
 
@@ -159,6 +162,7 @@ Getting User settings...
 ### 토큰 생성 시 "Edit Cloudflare Workers" 템플릿이 없어요
 
 **해결**:
+
 1. "Create Custom Token" 클릭
 2. 다음 권한 수동 추가:
    - Account - Workers Scripts - Edit
@@ -172,6 +176,7 @@ Getting User settings...
 **원인**: 토큰에 공백 또는 잘못된 문자 포함
 
 **해결**:
+
 ```bash
 # .env 파일 확인
 cat ~/.env | grep CLOUDFLARE_API_TOKEN
@@ -188,6 +193,7 @@ cat ~/.env | grep CLOUDFLARE_API_TOKEN
 **원인**: .env 파일 권한 또는 심볼릭 링크 문제
 
 **해결**:
+
 ```bash
 # .env 파일 권한 확인
 ls -la ~/.env
@@ -208,6 +214,7 @@ readlink -f ~/.env
 **원인 1**: 환경 변수가 로드되지 않음
 
 **해결**:
+
 ```bash
 source ~/.env
 npx wrangler whoami
@@ -216,6 +223,7 @@ npx wrangler whoami
 **원인 2**: 토큰 만료 또는 권한 부족
 
 **해결**:
+
 1. Dashboard에서 토큰 확인
 2. 만료됐으면 새 토큰 생성
 3. 권한 부족하면 권한 추가
@@ -224,15 +232,15 @@ npx wrangler whoami
 
 ## 📚 추가 리소스
 
-| 리소스 | 링크 |
-|--------|------|
-| **시각적 배포 가이드** ⭐ NEW | docs/DEPLOYMENT_VISUAL_GUIDE.md |
-| **인증 방법 비교** ⭐ NEW | docs/CLOUDFLARE_AUTH_METHODS.md |
-| Cloudflare API Tokens 문서 | https://developers.cloudflare.com/fundamentals/api/get-started/create-token/ |
-| Workers 배포 가이드 | https://developers.cloudflare.com/workers/get-started/guide/ |
-| Wrangler 문서 | https://developers.cloudflare.com/workers/wrangler/ |
-| 프로젝트 배포 가이드 | docs/MANUAL_DEPLOYMENT_GUIDE.md |
-| 자동화 스크립트 가이드 | scripts/README.md |
+| 리소스                        | 링크                                                                         |
+| ----------------------------- | ---------------------------------------------------------------------------- |
+| **시각적 배포 가이드** ⭐ NEW | docs/DEPLOYMENT_VISUAL_GUIDE.md                                              |
+| **인증 방법 비교** ⭐ NEW     | docs/CLOUDFLARE_AUTH_METHODS.md                                              |
+| Cloudflare API Tokens 문서    | https://developers.cloudflare.com/fundamentals/api/get-started/create-token/ |
+| Workers 배포 가이드           | https://developers.cloudflare.com/workers/get-started/guide/                 |
+| Wrangler 문서                 | https://developers.cloudflare.com/workers/wrangler/                          |
+| 프로젝트 배포 가이드          | docs/MANUAL_DEPLOYMENT_GUIDE.md                                              |
+| 자동화 스크립트 가이드        | scripts/README.md                                                            |
 
 ---
 
@@ -251,9 +259,10 @@ npx wrangler whoami
 ---
 
 **다음 단계**:
+
 ```bash
 source ~/.env
-cd /home/jclee/applications/resume
+cd /home/jclee/dev/resume
 ./scripts/deployment/quick-deploy.sh
 ```
 

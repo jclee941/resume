@@ -29,7 +29,7 @@ Error: Parse Error: <0.1%</span>
 
 ```bash
 # Find problematic values in data.json
-grep -n '<' web/data.json | grep -v 'http'
+grep -n '<' typescript/portfolio-worker/data.json | grep -v 'http'
 
 # Replace < with Korean text or HTML entity
 # Before: "error_rate": "<0.1%"
@@ -54,12 +54,12 @@ Error: Worker size (1.2MB) exceeds Cloudflare limit (1MB)
 
 ```bash
 # Check current worker size
-ls -lh web/worker.js
+ls -lh typescript/portfolio-worker/worker.js
 
 # Identify large components
 node -e "
 const fs = require('fs');
-const worker = fs.readFileSync('web/worker.js', 'utf8');
+const worker = fs.readFileSync('typescript/portfolio-worker/worker.js', 'utf8');
 console.log('Total:', (worker.length / 1024).toFixed(2), 'KB');
 "
 
@@ -90,7 +90,7 @@ Refused to execute inline script because it violates CSP
 npm run build
 
 # Verify hashes are generated
-grep "sha256-" web/worker.js | head -5
+grep "sha256-" typescript/portfolio-worker/worker.js | head -5
 
 # Deploy with new hashes
 npm run deploy:wrangler:root
@@ -116,11 +116,11 @@ SyntaxError: Unexpected token '`'
 
 ```bash
 # Check for unescaped characters
-grep -n '`' web/index.html
-grep -n '\$' web/index.html
+grep -n '`' typescript/portfolio-worker/index.html
+grep -n '\$' typescript/portfolio-worker/index.html
 
 # The build script should escape these automatically
-# If not, check web/lib/utils.js escapeTemplateLiterals function
+# If not, check typescript/portfolio-worker/lib/utils.js escapeTemplateLiterals function
 ```
 
 ---
@@ -238,7 +238,7 @@ Cannot log after tests are done. Did you forget to wait for something async?
 # After:  logger.log('message');
 
 # The logger is silent during tests
-# See: web/logger.js
+# See: typescript/portfolio-worker/logger.js
 ```
 
 ---
@@ -362,10 +362,10 @@ wrangler tail
 
 ```bash
 # Check PDF file exists
-ls -la web/downloads/*.pdf
+ls -la typescript/portfolio-worker/downloads/*.pdf
 
 # Verify data.json paths
-grep "pdfUrl" web/data.json
+grep "pdfUrl" typescript/portfolio-worker/data.json
 
 # Ensure paths match actual file locations
 ```
@@ -446,7 +446,7 @@ Refused to load script from 'https://example.com'
 **Solution:**
 
 ```bash
-# Add domain to CSP in web/lib/security-headers.js
+# Add domain to CSP in typescript/portfolio-worker/lib/security-headers.js
 # script-src: add 'https://example.com'
 # style-src: add 'https://example.com'
 
@@ -471,10 +471,10 @@ Mixed Content: The page was loaded over HTTPS, but requested an insecure resourc
 
 ```bash
 # Find HTTP URLs
-grep -r "http://" web/
+grep -r "http://" typescript/portfolio-worker/
 
 # Replace with HTTPS
-sed -i 's|http://|https://|g' web/data.json
+sed -i 's|http://|https://|g' typescript/portfolio-worker/data.json
 ```
 
 ---
@@ -512,7 +512,7 @@ npm run build && echo "Build OK" || echo "Build FAILED"
 npm test && echo "Tests OK" || echo "Tests FAILED"
 
 # Check worker size
-ls -lh web/worker.js
+ls -lh typescript/portfolio-worker/worker.js
 
 # Check deployment status
 curl -I https://resume.jclee.me

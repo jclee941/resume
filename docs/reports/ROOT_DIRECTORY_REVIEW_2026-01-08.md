@@ -6,8 +6,8 @@
 
 Clean, standard polyglot monorepo structure. Separation of concerns is clear:
 
-- `web/`: Portfolio frontend (Cloudflare Worker)
-- `job-automation-mcp/`: Backend automation (Node.js)
+- `typescript/portfolio-worker/`: Portfolio frontend (Cloudflare Worker)
+- `typescript/job-automation/`: Backend automation (Node.js)
 - `cmd/`: Ops tooling (Go)
 - `scripts/`: Shared utilities
 
@@ -15,8 +15,8 @@ Clean, standard polyglot monorepo structure. Separation of concerns is clear:
 
 | Directory             | Purpose            | Status     | Action       |
 | --------------------- | ------------------ | ---------- | ------------ |
-| `web/`                | Portfolio Frontend | ✅ Clean   | None         |
-| `job-automation-mcp/` | Automation Server  | ✅ Clean   | None         |
+| `typescript/portfolio-worker/`                | Portfolio Frontend | ✅ Clean   | None         |
+| `typescript/job-automation/` | Automation Server  | ✅ Clean   | None         |
 | `cmd/`                | Go CLI             | ✅ Clean   | None         |
 | `infrastructure/`     | Infra Configs      | ✅ Clean   | None         |
 | `resumes/`            | Content            | ✅ Clean   | None         |

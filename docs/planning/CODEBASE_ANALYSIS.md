@@ -39,7 +39,7 @@ resume/
 │   ├── e2e/            # Playwright E2E tests
 │   └── unit/           # Jest unit tests
 ├── toss/               # Toss-specific application materials
-└── web/                # Main web portfolio
+└── typescript/portfolio-worker/                # Main typescript/portfolio-worker portfolio
     ├── src/            # Source files (minimal)
     └── tests/          # Additional test organization
 ```
@@ -54,19 +54,19 @@ resume/
 
 **Opportunities**:
 - `/resume/` and `/master/` have overlapping purposes - consider consolidation
-- `/web/tests/` mirrors `/tests/` - redundant structure
+- `/typescript/portfolio-worker/tests/` mirrors `/tests/` - redundant structure
 - 41 total directories may be excessive for a single-person project
 
 ### 1.2 Module/Package Layout
 
-**Entry Point**: `web/worker.js` (auto-generated)
-**Build Script**: `web/generate-worker.js`
+**Entry Point**: `typescript/portfolio-worker/worker.js` (auto-generated)
+**Build Script**: `typescript/portfolio-worker/generate-worker.js`
 **Package Manager**: npm
 **Module System**: ES Modules (ESM) with CommonJS config files
 
 **Key Modules**:
 ```
-web/
+typescript/portfolio-worker/
 ├── generate-worker.js     # Worker generator (46 lines)
 ├── worker.js              # Generated Cloudflare Worker (auto)
 ├── index.html             # Main portfolio
@@ -143,9 +143,9 @@ web/
 **Source Code Breakdown**:
 ```
 JavaScript Source (excluding generated):
-- web/generate-worker.js:     46 lines
-- web/generate-icons.js:       ~80 lines
-- web/convert-icons-to-png.js: ~60 lines
+- typescript/portfolio-worker/generate-worker.js:     46 lines
+- typescript/portfolio-worker/generate-icons.js:       ~80 lines
+- typescript/portfolio-worker/convert-icons-to-png.js: ~60 lines
 - Other utilities:             ~300 lines
 - Generated worker.js:         2,400+ lines (auto-generated, should be ignored)
 - Test files:                  ~300 lines
@@ -193,8 +193,8 @@ Actual handwritten JS: ~500 lines (excluding tests and generated code)
 **Findings**:
 ```bash
 # Checked for duplicated functions/patterns
-grep -r "function" web --include="*.js" | wc -l  # 12 functions
-grep -r "const.*=.*=>" web --include="*.js" | wc -l  # 3 arrow functions
+grep -r "function" typescript/portfolio-worker --include="*.js" | wc -l  # 12 functions
+grep -r "const.*=.*=>" typescript/portfolio-worker --include="*.js" | wc -l  # 3 arrow functions
 ```
 
 **Results**:
@@ -419,9 +419,9 @@ company-specific/11번가_resume.md
 | Layer | Responsibility | Files | Assessment |
 |-------|----------------|-------|------------|
 | **Content** | Resume data (Markdown) | `master/*.md` | ✅ Clear |
-| **Presentation** | HTML templates | `web/*.html` | ✅ Separated |
-| **Build** | Code generation | `web/generate-worker.js` | ✅ Isolated |
-| **Deployment** | Worker serving | `web/worker.js` | ✅ Generated |
+| **Presentation** | HTML templates | `typescript/portfolio-worker/*.html` | ✅ Separated |
+| **Build** | Code generation | `typescript/portfolio-worker/generate-worker.js` | ✅ Isolated |
+| **Deployment** | Worker serving | `typescript/portfolio-worker/worker.js` | ✅ Generated |
 | **Testing** | Quality assurance | `tests/**/*.js` | ✅ Separate |
 | **CI/CD** | Automation | `.github/workflows/` | ✅ External |
 
@@ -484,12 +484,12 @@ Result: 0
 **Manual Analysis**:
 
 **Potential Dead Code**:
-1. `web/src/index.js` (120 lines)
+1. `typescript/portfolio-worker/src/index.js` (120 lines)
    - Sample Cloudflare Worker
    - NOT used in production (worker.js is generated)
    - **Status**: ⚠️ Educational/example code, consider moving to docs
 
-2. `web/tests/` directory structure
+2. `typescript/portfolio-worker/tests/` directory structure
    - Mirrors `/tests/` at root level
    - **Status**: ⚠️ Redundant structure, consolidate to root `/tests/`
 
@@ -503,7 +503,7 @@ Result: 0
 ```bash
 # Move example to docs
 mkdir -p docs/examples
-mv web/src/index.js docs/examples/worker-sample.js
+mv typescript/portfolio-worker/src/index.js docs/examples/worker-sample.js
 
 # Consolidate test directories
 # (Already handled - tests/ is primary location)
@@ -541,7 +541,7 @@ fetch()               ⚠️ Not used (static HTML only)
 
 **1. Magic Strings in Routing** ⚠️
 ```javascript
-// web/worker.js (generated)
+// typescript/portfolio-worker/worker.js (generated)
 if (url.pathname === '/resume') {  // Magic string
   return new Response(RESUME_HTML, { headers: SECURITY_HEADERS });
 }
@@ -562,7 +562,7 @@ company-specific/toss_resume.md (derived)
 
 **3. Generated File in Git** ⚠️
 ```bash
-web/worker.js  # Generated, but tracked in git
+typescript/portfolio-worker/worker.js  # Generated, but tracked in git
 ```
 **Issue**: Generated artifacts should be .gitignored
 **Impact**: Low (necessary for Cloudflare deployment)
@@ -585,13 +585,13 @@ npm test -- --coverage
 **Manual Coverage Analysis**:
 
 **Files with Tests**:
-- `web/generate-worker.js` → `tests/unit/generate-worker.test.js` ✅
-- `web/index.html` → `tests/e2e/portfolio.spec.js` ✅
-- `web/resume.html` → (implicitly tested in E2E) ✅
+- `typescript/portfolio-worker/generate-worker.js` → `tests/unit/generate-worker.test.js` ✅
+- `typescript/portfolio-worker/index.html` → `tests/e2e/portfolio.spec.js` ✅
+- `typescript/portfolio-worker/resume.html` → (implicitly tested in E2E) ✅
 
 **Files without Tests**:
-- `web/generate-icons.js` ❌
-- `web/convert-icons-to-png.js` ❌
+- `typescript/portfolio-worker/generate-icons.js` ❌
+- `typescript/portfolio-worker/convert-icons-to-png.js` ❌
 - `scripts/*.sh` ❌ (shell scripts)
 - `data/extracted/extract_resume.py` ❌ (utility script)
 
@@ -607,9 +607,9 @@ npm test -- --coverage
 
 **Source Code Lines** (excluding generated):
 ```
-web/generate-worker.js:          46
-web/generate-icons.js:           ~80
-web/convert-icons-to-png.js:     ~60
+typescript/portfolio-worker/generate-worker.js:          46
+typescript/portfolio-worker/generate-icons.js:           ~80
+typescript/portfolio-worker/convert-icons-to-png.js:     ~60
 Other utilities:                 ~300
 ─────────────────────────────────────
 Total:                           ~500 lines
@@ -647,7 +647,7 @@ module.exports = {
   testEnvironment: 'node',
   testMatch: ['**/tests/**/*.test.js'],
   coverageDirectory: 'coverage',
-  collectCoverageFrom: ['web/**/*.js', '!web/worker.js'],
+  collectCoverageFrom: ['typescript/portfolio-worker/**/*.js', '!typescript/portfolio-worker/worker.js'],
 };
 
 // playwright.config.js (ESM)
@@ -698,15 +698,15 @@ export default {
 ### 7.1 High Priority (Immediate)
 
 **1. Remove Dead Code** 🔴
-- **Issue**: `web/src/index.js` is unused example code
+- **Issue**: `typescript/portfolio-worker/src/index.js` is unused example code
 - **Action**: Move to `docs/examples/worker-sample.js`
 - **Impact**: Reduces codebase size by 4%
 - **Effort**: 5 minutes
 
 ```bash
 mkdir -p docs/examples
-mv web/src/index.js docs/examples/worker-sample.js
-echo "# Example Worker Implementation\nSee docs/examples/worker-sample.js" > web/src/README.md
+mv typescript/portfolio-worker/src/index.js docs/examples/worker-sample.js
+echo "# Example Worker Implementation\nSee docs/examples/worker-sample.js" > typescript/portfolio-worker/src/README.md
 ```
 
 **2. Add Test Coverage for Icon Generation** 🟡
@@ -741,7 +741,7 @@ echo "# Example Worker Implementation\nSee docs/examples/worker-sample.js" > web
 - **Effort**: 3 hours
 
 **6. Refactor Test Directory Structure** 🟢
-- **Issue**: `/web/tests/` mirrors `/tests/` (redundant)
+- **Issue**: `/typescript/portfolio-worker/tests/` mirrors `/tests/` (redundant)
 - **Action**: Consolidate all tests to root `/tests/`
 - **Impact**: Clearer project structure
 - **Effort**: 30 minutes

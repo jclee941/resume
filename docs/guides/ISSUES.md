@@ -13,11 +13,11 @@
 **Priority**: P0  
 **Files Modified**:
 
-- `web/generate-worker.js` (19 → logger.log, 2 → logger.error)
-- `web/lib/validators.js` (1 → logger.log)
-- `web/lib/cards.js` (2 → logger.log)
-- `web/generate-og-image.js` (4 → logger.log, 1 → logger.error)
-- `web/worker.js`, `web/sw.js`, `web/sentry-config.js` (auto-generated, will fix on next build)
+- `typescript/portfolio-worker/generate-worker.js` (19 → logger.log, 2 → logger.error)
+- `typescript/portfolio-worker/lib/validators.js` (1 → logger.log)
+- `typescript/portfolio-worker/lib/cards.js` (2 → logger.log)
+- `typescript/portfolio-worker/generate-og-image.js` (4 → logger.log, 1 → logger.error)
+- `typescript/portfolio-worker/worker.js`, `typescript/portfolio-worker/sw.js`, `typescript/portfolio-worker/sentry-config.js` (auto-generated, will fix on next build)
 
 **Problem**:
 
@@ -26,15 +26,15 @@
   Attempted to log "🔐 Generated CSP hashes from minified HTML:".
 ```
 
-**Solution** (web/logger.js already exists!):
+**Solution** (typescript/portfolio-worker/logger.js already exists!):
 
 ```bash
 # Replace all console.log/error/warn with logger equivalents
-find web -name "*.js" -not -path "*/node_modules/*" -exec \
+find typescript/portfolio-worker -name "*.js" -not -path "*/node_modules/*" -exec \
   sed -i 's/console\.log(/logger.log(/g; s/console\.error(/logger.error(/g; s/console\.warn(/logger.warn(/g' {} \;
 
 # Add logger import to files
-# Update package.json: "build:quiet": "cd web && VERBOSE=false node generate-worker.js"
+# Update package.json: "build:quiet": "cd typescript/portfolio-worker && VERBOSE=false node generate-worker.js"
 ```
 
 **Verification**:
@@ -137,14 +137,14 @@ ls resumes/generated/  # nextrade.md, general.md, short.md
 
 ```javascript
 // tests/e2e/mobile.spec.js
-const { test, expect, devices } = require("@playwright/test");
+const { test, expect, devices } = require('@playwright/test');
 
-for (const deviceName of ["iPhone SE", "iPhone 12 Pro", "Pixel 5", "iPad"]) {
+for (const deviceName of ['iPhone SE', 'iPhone 12 Pro', 'Pixel 5', 'iPad']) {
   test.describe(`Mobile - ${deviceName}`, () => {
     test.use({ ...devices[deviceName] });
 
-    test("should have touch-friendly buttons", async ({ page }) => {
-      await page.goto("/");
+    test('should have touch-friendly buttons', async ({ page }) => {
+      await page.goto('/');
       const buttons = await page.locator('button, a[role="button"]').all();
       for (const btn of buttons) {
         const box = await btn.boundingBox();
@@ -161,7 +161,7 @@ for (const deviceName of ["iPhone SE", "iPhone 12 Pro", "Pixel 5", "iPad"]) {
 ### H2: Accessibility Compliance (2 hours)
 
 **Status**: ⚠️ PARTIAL  
-**Files**: `web/index.html`, `tests/e2e/accessibility.spec.js`
+**Files**: `typescript/portfolio-worker/index.html`, `tests/e2e/accessibility.spec.js`
 
 **Issues**:
 
@@ -177,12 +177,7 @@ for (const deviceName of ["iPhone SE", "iPhone 12 Pro", "Pixel 5", "iPad"]) {
 <button id="theme-toggle">🌙</button>
 
 <!-- AFTER -->
-<button
-  id="theme-toggle"
-  aria-label="Toggle dark mode"
-  aria-pressed="false"
-  type="button"
->
+<button id="theme-toggle" aria-label="Toggle dark mode" aria-pressed="false" type="button">
   🌙
 </button>
 ```
@@ -190,11 +185,11 @@ for (const deviceName of ["iPhone SE", "iPhone 12 Pro", "Pixel 5", "iPad"]) {
 **Test**:
 
 ```javascript
-test("keyboard navigation", async ({ page }) => {
-  await page.goto("/");
-  await page.keyboard.press("Tab");
+test('keyboard navigation', async ({ page }) => {
+  await page.goto('/');
+  await page.keyboard.press('Tab');
   const focused = await page.evaluate(() => document.activeElement.tagName);
-  expect(["BUTTON", "A"]).toContain(focused);
+  expect(['BUTTON', 'A']).toContain(focused);
 });
 ```
 
@@ -202,7 +197,7 @@ test("keyboard navigation", async ({ page }) => {
 
 ### H3: Improve Project Card Descriptions (1 hour)
 
-**Files**: `web/data.json`, `web/lib/cards.js`
+**Files**: `typescript/portfolio-worker/data.json`, `typescript/portfolio-worker/lib/cards.js`
 
 Add "tagline" + "metrics" fields:
 
@@ -222,7 +217,7 @@ Add "tagline" + "metrics" fields:
 
 ### H4: Expand Meta Tags & Structured Data (1 hour)
 
-**Files**: `web/index.html`
+**Files**: `typescript/portfolio-worker/index.html`
 
 **Add**:
 
@@ -237,7 +232,7 @@ Add "tagline" + "metrics" fields:
 
 ### H5: Internal Linking Strategy (1 hour)
 
-**Files**: `web/data.json`
+**Files**: `typescript/portfolio-worker/data.json`
 
 Link related skills in project cards:
 
@@ -316,7 +311,7 @@ Add business impact to each technology
 
 ## ⚡ Quick Wins (Can Do Today - < 1 hour each)
 
-1. **C1: Remove console logging** (30m) → Use existing `web/logger.js`
+1. **C1: Remove console logging** (30m) → Use existing `typescript/portfolio-worker/logger.js`
 2. **M5: Keyword optimization** (30m) → Update meta tags
 3. **M1: Design tokens doc** (1h) → Extract CSS variables
 
@@ -483,7 +478,7 @@ npm run test:e2e:headed
 - ✅ 213 unit tests, 98% coverage
 - ✅ TypeScript type checking (jsconfig.json)
 - ✅ ESLint 9 + Prettier formatting
-- ✅ Modular architecture (web/lib/)
+- ✅ Modular architecture (typescript/portfolio-worker/lib/)
 
 #### Performance
 

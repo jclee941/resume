@@ -243,7 +243,7 @@ All 10 tested external links returned **200 OK**:
 ✅ Valid manifest served  
 ✅ PWA meta tags present  
 ✅ Theme color defined  
-✅ Apple mobile web app tags  
+✅ Apple mobile typescript/portfolio-worker app tags  
 ✅ Shortcuts defined  
 ✅ Installable configuration
 
@@ -414,9 +414,9 @@ All 10 tested external links returned **200 OK**:
 
 ### Assets
 
-- **Worker Bundle:** `web/worker.js` (generated)
-- **Service Worker:** `web/sw.js` (generated)
-- **Manifest:** `web/manifest.json`
+- **Worker Bundle:** `typescript/portfolio-worker/worker.js` (generated)
+- **Service Worker:** `typescript/portfolio-worker/sw.js` (generated)
+- **Manifest:** `typescript/portfolio-worker/manifest.json`
 - **Icons:** PNG and SVG formats
 - **OG Image:** WebP format (optimized)
 

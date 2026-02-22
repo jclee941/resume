@@ -140,7 +140,7 @@ await Edit("master/resume_master.md", /* changes based on analysis */);
 
 ### 2. Portfolio Architecture Decisions
 
-**Task**: Evaluate web portfolio structure and content organization
+**Task**: Evaluate typescript/portfolio-worker portfolio structure and content organization
 
 ```javascript
 // Grok evaluates architectural choices

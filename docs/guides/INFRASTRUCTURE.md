@@ -109,7 +109,7 @@ GET  /og-image.png        Social media preview
 **Worker Configuration**:
 
 ```toml
-# web/wrangler.toml
+# typescript/portfolio-worker/wrangler.toml
 name = "resume"
 main = "worker.js"
 compatibility_date = "2024-01-01"
@@ -402,8 +402,8 @@ npm run deploy
 # Build only
 npm run build
 
-# Deploy with Wrangler
-npm run deploy:wrangler
+# Deploy with Wrangler (root-safe)
+npm run deploy:wrangler:root
 ```
 
 **Version Management**:

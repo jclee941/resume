@@ -99,12 +99,12 @@ Shadows: Enhanced opacity (0.15-0.3) for premium depth
 ## 🔧 Technical Implementation
 
 ### Files Modified
-1. **web/index.html** (1,330 lines added)
+1. **typescript/portfolio-worker/index.html** (1,330 lines added)
    - Added 90 lines of CSS for new sections
    - Added 240 lines of HTML content
    - Updated navigation with 3 new links
 
-2. **web/worker.js** (auto-generated)
+2. **typescript/portfolio-worker/worker.js** (auto-generated)
    - Embedded updated HTML content
    - Preserved security headers
    - Maintained routing logic
@@ -165,7 +165,7 @@ Shadows: Enhanced opacity (0.15-0.3) for premium depth
 ### Git Workflow
 ```bash
 # 1. Stage changes
-git add web/index.html web/worker.js
+git add typescript/portfolio-worker/index.html typescript/portfolio-worker/worker.js
 
 # 2. Commit with detailed message
 git commit -m "feat: Add comprehensive portfolio sections..."

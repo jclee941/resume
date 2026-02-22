@@ -8,13 +8,13 @@ Last Updated: 2025-11-13
 ## 🔴 CRITICAL (Do First - High Impact)
 
 ### C1: Remove Console Logging from Build
-- [ ] Create `web/logger.js` with conditional logging
-- [ ] Update `web/generate-worker.js` to use logger
+- [ ] Create `typescript/portfolio-worker/logger.js` with conditional logging
+- [ ] Update `typescript/portfolio-worker/generate-worker.js` to use logger
 - [ ] Replace all `console.log()` with `logger.log()`
 - [ ] Add `build:quiet` npm script for CI/CD
 - [ ] Test: `npm test` should show zero "Cannot log" errors
 - [ ] Time: 30 minutes
-- [ ] File: `web/generate-worker.js`, `web/logger.js`
+- [ ] File: `typescript/portfolio-worker/generate-worker.js`, `typescript/portfolio-worker/logger.js`
 
 ### C2: Fix Resume Content Redundancy
 - [ ] Consolidate into single `resume_master.md`
@@ -54,24 +54,24 @@ Last Updated: 2025-11-13
 - [ ] Verify WCAG AA color contrast
 - [ ] Test with screen readers (NVDA/JAWS if possible)
 - [ ] Time: 2 hours
-- [ ] Files: `web/index.html`, `tests/e2e/accessibility.spec.js`, `web/styles.css`
+- [ ] Files: `typescript/portfolio-worker/index.html`, `tests/e2e/accessibility.spec.js`, `typescript/portfolio-worker/styles.css`
 
 ### H3: Improve Project Card Descriptions
-- [ ] Update `web/data.json` with "tagline" field
+- [ ] Update `typescript/portfolio-worker/data.json` with "tagline" field
 - [ ] Add 3-4 more differentiating details per project
 - [ ] Update `generateProjectCards()` function
 - [ ] Add "metrics" object for impact statements
 - [ ] Time: 1 hour
-- [ ] File: `web/data.json`, `web/generate-worker.js`
+- [ ] File: `typescript/portfolio-worker/data.json`, `typescript/portfolio-worker/generate-worker.js`
 
 ### H4: Expand Meta Tags & Structured Data
-- [ ] Add BreadcrumbList schema to `web/index.html`
+- [ ] Add BreadcrumbList schema to `typescript/portfolio-worker/index.html`
 - [ ] Add CollectionPage schema for portfolio
 - [ ] Add language and locale tags
 - [ ] Add og:image:alt text
 - [ ] Verify with schema.org validator
 - [ ] Time: 1 hour
-- [ ] File: `web/index.html`
+- [ ] File: `typescript/portfolio-worker/index.html`
 
 ### H5: Implement Internal Linking Strategy
 - [ ] Add "Related Skills" section to project cards
@@ -79,7 +79,7 @@ Last Updated: 2025-11-13
 - [ ] Create navigation hierarchy
 - [ ] Update `generateProjectCards()` to include links
 - [ ] Time: 1 hour
-- [ ] Files: `web/data.json`, `web/generate-worker.js`
+- [ ] Files: `typescript/portfolio-worker/data.json`, `typescript/portfolio-worker/generate-worker.js`
 
 ### H6: Add Career Narrative Section
 - [ ] Create "경력 경로 분석" section
@@ -98,9 +98,9 @@ Last Updated: 2025-11-13
 - [ ] Document color palette with contrast levels
 - [ ] Define typography scale
 - [ ] Create spacing scale (8px base)
-- [ ] Update `web/styles.css` to use CSS variables
+- [ ] Update `typescript/portfolio-worker/styles.css` to use CSS variables
 - [ ] Time: 1 hour
-- [ ] Files: `docs/DESIGN_SYSTEM_TOKENS.md`, `web/styles.css`
+- [ ] Files: `docs/DESIGN_SYSTEM_TOKENS.md`, `typescript/portfolio-worker/styles.css`
 
 ### M2: Add Security & Performance Tests
 - [ ] Create `tests/unit/security.test.js`
@@ -117,7 +117,7 @@ Last Updated: 2025-11-13
 - [ ] Monitor size breakdown in CI/CD
 - [ ] Set alerts for > 60KB
 - [ ] Time: 45 minutes
-- [ ] Files: `web/generate-worker.js`, `.github/workflows/deploy.yml`
+- [ ] Files: `typescript/portfolio-worker/generate-worker.js`, `.github/workflows/deploy.yml`
 
 ### M4: Improve Build Pipeline Reliability
 - [ ] Add file existence validation
@@ -133,7 +133,7 @@ Last Updated: 2025-11-13
 - [ ] Improve meta description
 - [ ] Add location-specific keywords (Korean market)
 - [ ] Time: 30 minutes
-- [ ] File: `web/index.html`
+- [ ] File: `typescript/portfolio-worker/index.html`
 
 ### M6: Expand Technical Stack Presentation
 - [ ] Add business impact to each technology
@@ -176,15 +176,15 @@ Last Updated: 2025-11-13
 - [ ] Add CreativeWork schema for projects
 - [ ] Test with Google Rich Results
 - [ ] Time: 1.5 hours
-- [ ] File: `web/index.html`
+- [ ] File: `typescript/portfolio-worker/index.html`
 
 ### L5: Document CSS Codebase
-- [ ] Add section comments to `web/styles.css`
+- [ ] Add section comments to `typescript/portfolio-worker/styles.css`
 - [ ] Document breakpoints and transitions
 - [ ] Explain animation keyframes
 - [ ] Link to design system
 - [ ] Time: 1 hour
-- [ ] File: `web/styles.css`
+- [ ] File: `typescript/portfolio-worker/styles.css`
 
 ---
 

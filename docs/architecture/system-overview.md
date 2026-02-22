@@ -1,7 +1,7 @@
 # Project Overview: resume
 
 ## Purpose
-A comprehensive resume and portfolio management system, featuring a high-performance web presence and automated tooling for generation and deployment.
+A comprehensive resume and portfolio management system, featuring a high-performance typescript/portfolio-worker presence and automated tooling for generation and deployment.
 
 ## Architecture Summary
 The project follows a multi-part architecture:
@@ -10,7 +10,7 @@ The project follows a multi-part architecture:
 - **Automation Pipeline**: A robust set of scripts and CI/CD configurations for automated testing, building, and deployment.
 
 ## Key Components
-- `web/`: Core web application logic and assets.
+- `typescript/portfolio-worker/`: Core typescript/portfolio-worker application logic and assets.
 - `cmd/resume-cli/`: Go source for the management CLI.
 - `scripts/`: Operational automation and deployment helpers.
 - `tests/`: Multi-layered testing suite (Unit, Integration, E2E).

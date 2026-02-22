@@ -92,10 +92,10 @@ const html = await minify(indexHtml, {
 npm install sharp
 node -e "
 const sharp = require('sharp');
-sharp('web/og-image.webp')
+sharp('typescript/portfolio-worker/og-image.webp')
   .resize(1200, 630, { fit: 'cover' })
   .webp({ quality: 80, effort: 6 })
-  .toFile('web/og-image-optimized.webp');
+  .toFile('typescript/portfolio-worker/og-image-optimized.webp');
 "
 ```
 
@@ -109,7 +109,7 @@ sharp('web/og-image.webp')
 
 **현재**:
 ```javascript
-// web/generate-worker.js:100
+// typescript/portfolio-worker/generate-worker.js:100
 const projectData = JSON.parse(
   safeReadFile(path.join(__dirname, 'data.json'), 'utf-8')
 );
@@ -146,7 +146,7 @@ try {
     "noEmit": true,
     "strict": true
   },
-  "include": ["web/**/*.js", "tests/**/*.js"]
+  "include": ["typescript/portfolio-worker/**/*.js", "tests/**/*.js"]
 }
 
 # package.json에 추가
@@ -168,7 +168,7 @@ try {
 
 **개선안**:
 ```javascript
-// web/lib/env.js (신규)
+// typescript/portfolio-worker/lib/env.js (신규)
 function validateEnv() {
   const required = ['NODE_ENV'];
   const missing = required.filter(key => !process.env[key]);
@@ -188,7 +188,7 @@ module.exports = { validateEnv };
 #### 3.1 문서화 개선
 
 **추가 필요**:
-- `web/lib/README.md` - 모듈 구조 설명
+- `typescript/portfolio-worker/lib/README.md` - 모듈 구조 설명
 - `ARCHITECTURE.md` - 전체 아키텍처 다이어그램
 - `DEPLOYMENT.md` - 배포 프로세스 상세
 
@@ -206,7 +206,7 @@ performance-test:
   script:
     - npm run build
     - |
-      WORKER_SIZE=$(stat -c%s web/worker.js)
+      WORKER_SIZE=$(stat -c%s typescript/portfolio-worker/worker.js)
       if [ $WORKER_SIZE -gt 900000 ]; then
         echo "Worker size ${WORKER_SIZE} exceeds 900KB limit"
         exit 1
@@ -274,7 +274,7 @@ const metrics = {
 ## 📝 참고 자료
 
 - [Cloudflare Workers Best Practices](https://developers.cloudflare.com/workers/platform/best-practices/)
-- [Web Vitals](https://web.dev/vitals/)
+- [Web Vitals](https://typescript/portfolio-worker.dev/vitals/)
 - [Lighthouse Performance](https://developer.chrome.com/docs/lighthouse/performance/)
 
 ---

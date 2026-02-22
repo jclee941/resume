@@ -32,11 +32,11 @@
 
 ## 🟡 Medium Issues (5)
 
-7. **`web/generate-worker.js:187-396`** - Large assets embedded (900KB+)
+7. **`typescript/portfolio-worker/generate-worker.js:187-396`** - Large assets embedded (900KB+)
    - **Status**: ⚠️ PENDING - Current size 292KB (acceptable)
    - **Fix**: Use Cloudflare R2/KV for assets if needed
 
-8. **`web/worker.js:668,674`** - Incomplete input validation
+8. **`typescript/portfolio-worker/worker.js:668,674`** - Incomplete input validation
    - **Status**: ⚠️ PENDING
    - **Fix**: Add range checks for Web Vitals
 
@@ -48,7 +48,7 @@
     - **Status**: ⚠️ PENDING
     - **Fix**: Validate session before job application
 
-11. **`web/lib/loki-logger.js:28-32`** - No fetch timeout
+11. **`typescript/portfolio-worker/lib/loki-logger.js:28-32`** - No fetch timeout
     - **Status**: ✅ ALREADY FIXED
     - **Fix**: Already has 5s timeout with AbortController
 
@@ -57,7 +57,7 @@
 12. **`scripts/utils/auto-job-search.sh:348,343`** - Duplicate menu options
     - **Status**: ✅ FIXED (2025-12-22)
     
-13. **`web/lib/utils.js:17-23`** - Missing JSDoc, error handling
+13. **`typescript/portfolio-worker/lib/utils.js:17-23`** - Missing JSDoc, error handling
     - **Status**: ⚠️ PENDING
 
 14. **`cmd/resume-cli/internal/saramin/client.go:35-62`** - Hardcoded timeout
@@ -96,7 +96,7 @@
 2. **Setup Infisical**:
    ```bash
    infisical login
-   cd /home/jclee/apps/resume
+   cd /home/jclee/dev/resume
    infisical init
    infisical secrets set CLOUDFLARE_API_TOKEN="new_token" --env=prod
    infisical secrets set GRAFANA_API_KEY="new_key" --env=prod

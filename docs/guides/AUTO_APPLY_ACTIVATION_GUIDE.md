@@ -30,7 +30,7 @@
 ### Step 1: 대시보드 실행
 
 ```bash
-cd wanted-mcp
+cd typescript/job-automation
 npm run dashboard
 ```
 
@@ -640,7 +640,7 @@ curl http://localhost:3456/api/metrics
 **실행:**
 ```bash
 # Cron 등록
-0 9 * * * cd /home/jclee/apps/resume/wanted-mcp && node src/auto-apply/cli/index.js apply --apply --max=5
+0 9 * * * cd /home/jclee/dev/resume/typescript/job-automation && node src/auto-apply/cli/index.js apply --apply --max=5
 ```
 
 ---

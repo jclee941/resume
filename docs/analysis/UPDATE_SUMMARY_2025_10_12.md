@@ -84,9 +84,9 @@ npm run build
 npm run lint
 ```
 **Result**: ✅ Working (4 warnings - non-blocking)
-- `web/convert-icons-to-png.js`: unused 'fs' variable
-- `web/generate-icons.js`: unused icon variables
-- `web/src/index.js`: unused 'request' parameter
+- `typescript/portfolio-worker/convert-icons-to-png.js`: unused 'fs' variable
+- `typescript/portfolio-worker/generate-icons.js`: unused icon variables
+- `typescript/portfolio-worker/src/index.js`: unused 'request' parameter
 
 ### Test Suite
 ```bash

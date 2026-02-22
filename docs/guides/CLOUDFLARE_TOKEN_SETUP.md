@@ -1,6 +1,7 @@
 # Cloudflare API Token Setup for Wrangler Deployment
 
 ## Issue
+
 Wrangler v4 deployment failing with authentication error (code: 10001, 6111)
 
 **Root Cause**: `.env` file uses deprecated Global API Key method. Wrangler v4 requires scoped API tokens.
@@ -17,6 +18,7 @@ Wrangler v4 deployment failing with authentication error (code: 10001, 6111)
 Choose **"Edit Cloudflare Workers"** template (recommended)
 
 OR create custom token with these permissions:
+
 - **Account** → **Cloudflare Workers Scripts** → **Edit**
 - **Account** → **Account Settings** → **Read** (optional, for `wrangler whoami`)
 - **Zone** → **Workers Routes** → **Edit** (if using custom domains)
@@ -62,18 +64,20 @@ npx wrangler whoami
 ### Step 7: Deploy
 
 ```bash
-cd /home/jclee/applications/resume
+cd /home/jclee/dev/resume
 npm run deploy
 ```
 
 ## Verification
 
 1. Check deployment timestamp:
+
 ```bash
 curl -s https://resume.jclee.me/health | jq -r '.deployed_at'
 ```
 
 2. Verify 14 projects visible:
+
 ```bash
 curl -s https://resume.jclee.me | grep -o '"title":' | wc -l
 # Should return: 14
@@ -87,7 +91,7 @@ If API token creation is not possible:
 2. Navigate to **Workers & Pages**
 3. Select **"resume"** worker
 4. Click **"Quick Edit"** or **"Upload"**
-5. Replace content with `/home/jclee/applications/resume/web/worker.js` (155.96 KB)
+5. Replace content with `/home/jclee/dev/resume/typescript/portfolio-worker/worker.js` (155.96 KB)
 6. Click **"Save and Deploy"**
 
 ## Security Notes
@@ -100,14 +104,17 @@ If API token creation is not possible:
 ## Troubleshooting
 
 ### Error: "Invalid request headers [code: 6003]"
+
 - Token not set in environment
 - Run: `source ~/.env && echo $CLOUDFLARE_API_TOKEN`
 
 ### Error: "Unauthorized [code: 10000]"
+
 - Token lacks Workers edit permissions
 - Recreate token with "Edit Cloudflare Workers" template
 
 ### Error: "Account ID mismatch"
+
 - Verify `wrangler.toml` has correct `account_id = "a8d9c67f586acdd15eebcc65ca3aa5bb"`
 
 ---

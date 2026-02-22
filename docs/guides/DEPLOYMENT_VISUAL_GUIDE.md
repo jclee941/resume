@@ -406,7 +406,7 @@
 │  Step 2: Load and Verify                                      │
 │  ┌────────────────────────────────────────────────────────┐  │
 │  │  $ source ~/.env                                       │  │
-│  │  $ cd web && npx wrangler whoami                       │  │
+│  │  $ cd typescript/portfolio-worker && npx wrangler whoami                       │  │
 │  │                                                        │  │
 │  │  👋 You are logged in with an API Key!                │  │
 │  │  Email: qws941@kakao.com                              │  │
@@ -417,7 +417,7 @@
 ┌──────────────────────────────────────────────────────────────┐
 │  Step 3: Deploy                                               │
 │  ┌────────────────────────────────────────────────────────┐  │
-│  │  $ cd /home/jclee/applications/resume                  │  │
+│  │  $ cd /home/jclee/dev/resume                  │  │
 │  │  $ ./scripts/deployment/quick-deploy.sh                           │  │
 │  │                                                        │  │
 │  │  ✓ Authentication: Global API Key                     │  │
@@ -485,7 +485,7 @@ LOCAL DEVELOPMENT                 PRODUCTION
 ## 📚 참고 문서 (Reference Docs)
 
 ```
-/home/jclee/applications/resume/docs/
+/home/jclee/dev/resume/docs/
 │
 ├── CLOUDFLARE_AUTH_METHODS.md      ⭐ 인증 방법 상세 비교
 │   • API Token vs Global API Key
@@ -530,13 +530,13 @@ vim ~/.env
 source ~/.env
 
 # 3️⃣ 배포 실행
-cd /home/jclee/applications/resume && ./scripts/deployment/quick-deploy.sh
+cd /home/jclee/dev/resume && ./scripts/deployment/quick-deploy.sh
 ```
 
 ### 인증 확인하기
 
 ```bash
-source ~/.env && cd web && npx wrangler whoami
+source ~/.env && cd typescript/portfolio-worker && npx wrangler whoami
 ```
 
 ### 배포 검증하기

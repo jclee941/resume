@@ -76,7 +76,7 @@
 
 #### 6. **sharp** (^0.34.4)
 - **Purpose**: Image processing (SVG to PNG conversion)
-- **Usage**: `web/convert-icons-to-png.js` script
+- **Usage**: `typescript/portfolio-worker/convert-icons-to-png.js` script
 - **Status**: Current version is fine
 - **Breaking Changes**: No
 - **Recommendation**: Update when needed
@@ -202,7 +202,7 @@ npm run test:coverage
 
 ## 📊 Dependency Size Analysis
 
-**Current install size**: ~500MB (typical for modern web dev stack)
+**Current install size**: ~500MB (typical for modern typescript/portfolio-worker dev stack)
 
 **Major contributors**:
 - Playwright (~200MB) - includes browser binaries

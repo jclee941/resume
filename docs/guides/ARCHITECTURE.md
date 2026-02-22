@@ -24,25 +24,25 @@ Source files (HTML/CSS/JSON) are transformed into a single deployable `worker.js
 
 **Phase 1: CSS Separation** (Completed 2025-11-07)
 
-- `web/styles.css` contains all CSS (758 lines)
-- `web/index.html` has CSS placeholder: `<!-- CSS_PLACEHOLDER -->`
+- `typescript/portfolio-worker/styles.css` contains all CSS (758 lines)
+- `typescript/portfolio-worker/index.html` has CSS placeholder: `<!-- CSS_PLACEHOLDER -->`
 - Build script injects CSS at build time
 
 **Phase 2: Data-Driven Templates** (Completed 2025-11-07)
 
-- `web/data.json` contains all project data (resume cards + project cards)
-- `web/index.html` has placeholders: `<!-- RESUME_CARDS_PLACEHOLDER -->` and `<!-- PROJECT_CARDS_PLACEHOLDER -->`
+- `typescript/portfolio-worker/data.json` contains all project data (resume cards + project cards)
+- `typescript/portfolio-worker/index.html` has placeholders: `<!-- RESUME_CARDS_PLACEHOLDER -->` and `<!-- PROJECT_CARDS_PLACEHOLDER -->`
 - Build script generates HTML from JSON at build time
 
 ### Build Pipeline (3 phases)
 
-1. **Edit Content**: Modify `web/data.json` (project data) OR `web/index.html` (structure) OR `web/styles.css` (styling)
+1. **Edit Content**: Modify `typescript/portfolio-worker/data.json` (project data) OR `typescript/portfolio-worker/index.html` (structure) OR `typescript/portfolio-worker/styles.css` (styling)
 2. **Generate Worker**: Run `npm run build` (performs 6 transformations)
 3. **Deploy**: Push to `master` branch (GitHub Actions auto-deploys) OR run `npx wrangler deploy --config typescript/portfolio-worker/wrangler.toml --env production` manually
 
 ### 6 Critical Transformations
 
-`web/generate-worker.js` performs these operations:
+`typescript/portfolio-worker/generate-worker.js` performs these operations:
 
 1. **CSS Injection**: Reads `styles.css`, replaces `<!-- CSS_PLACEHOLDER -->` (758 lines → inline CSS)
 2. **Data Injection**: Reads `data.json`, generates HTML cards from templates (resume + projects)
@@ -60,7 +60,7 @@ Source files (HTML/CSS/JSON) are transformed into a single deployable `worker.js
 
 ### Template Functions
 
-`web/generate-worker.js` contains:
+`typescript/portfolio-worker/generate-worker.js` contains:
 
 - `generateResumeCards(data)`: Creates resume project cards from `data.resume` array
 - `generateProjectCards(data)`: Creates portfolio project cards from `data.projects` array
@@ -84,18 +84,18 @@ Source files (HTML/CSS/JSON) are transformed into a single deployable `worker.js
 - **master/resume_master.md**: Single source of truth (complete career history)
 - **master/resume_final.md**: Compressed submission version (downloadable from portfolio)
 - **company-specific/**: Tailored resumes derived from master
-- **web/data.json**: Portfolio project data (resume cards + project cards)
-- **web/styles.css**: All CSS styles (758 lines)
-- **web/index.html**: HTML structure with placeholders (200 lines)
+- **typescript/portfolio-worker/data.json**: Portfolio project data (resume cards + project cards)
+- **typescript/portfolio-worker/styles.css**: All CSS styles (758 lines)
+- **typescript/portfolio-worker/index.html**: HTML structure with placeholders (200 lines)
 - **resume/nextrade/**: Technical documentation (Architecture, DR, SOC) for download
 
 ### Generated Files (do not edit directly)
 
-- **web/worker.js**: Cloudflare Worker with embedded HTML (30.57 KB, auto-generated)
+- **typescript/portfolio-worker/worker.js**: Cloudflare Worker with embedded HTML (30.57 KB, auto-generated)
 
 ### Data Structure
 
-`web/data.json` format:
+`typescript/portfolio-worker/data.json` format:
 
 ```json
 {
@@ -255,7 +255,7 @@ Content-Security-Policy:
 - `jest.config.cjs`: Jest 30 CommonJS configuration
 - `eslint.config.cjs`: ESLint 9 flat config (modern syntax)
 - `playwright.config.js`: Playwright E2E test configuration
-- `web/wrangler.toml`: Cloudflare Workers deployment config
+- `typescript/portfolio-worker/wrangler.toml`: Cloudflare Workers deployment config
 
 ## Git Repository
 
@@ -276,35 +276,31 @@ git push origin master  # GitHub
 **IMPORTANT - GitHub Private Repository**:
 
 - GitHub repository is PRIVATE (since 2025-11-18)
-- Raw file URLs (in `web/data.json`) still work for authenticated users
+- Raw file URLs (in `typescript/portfolio-worker/data.json`) still work for authenticated users
 - Public resume site (https://resume.jclee.me) works via Cloudflare Workers
 - PDF/DOCX download links in portfolio require GitHub authentication
 - Alternative: Consider hosting resume files on Cloudflare R2 for public access
 
 ## CI/CD Pipeline
 
-### GitHub Actions (`.github/workflows/deploy.yml/deploy.yml`)
+### GitHub Actions (`.github/workflows/ci.yml`)
 
-**Trigger**: Push to `master` branch on GitHub
+**Trigger**: Push to `master`, pull request, and `workflow_dispatch`
 
-**Workflow**:
+**Workflow highlights**:
 
-1. **deploy-worker**:
-   - Checkout code
-   - Install Node.js 20 and Wrangler
-   - Set `DEPLOYED_AT` environment variable (ISO 8601 UTC timestamp)
-   - Generate worker.js with embedded timestamp
-   - Deploy using `cloudflare/wrangler-action@v3`
-
-2. **generate-deployment-notes**:
-   - Fetch latest commit message
-   - Call Gemini API to summarize commit for deployment log
-   - Print concise 1-2 sentence summary
-
-3. **notify-slack** (optional, if `SLACK_WEBHOOK_URL` secret exists):
-   - Send rich Slack notification with deployment status
-   - Include commit info, links to live site and workflow
-   - Uses Slack Block Kit for formatting
+1. Validate + quality gates:
+   - Cloudflare native structure validation
+   - Wrangler type generation checks for both workers
+   - ESLint + typecheck + unit/E2E tests
+2. Build + deploy:
+   - Build `typescript/portfolio-worker/worker.js`
+   - Deploy with `cloudflare/wrangler-action@v4`
+   - Optional gradual rollout via `wrangler versions upload/list/deploy`
+3. Verify + rollback + notify:
+   - Cloudflare API deployment verification and HTTP checks
+   - Automatic rollback job on verification failure
+   - Summary/notification stage
 
 **Required Secrets**:
 
@@ -313,9 +309,10 @@ git push origin master  # GitHub
 - `GEMINI_API_KEY`
 - `SLACK_WEBHOOK_URL` (optional)
 
-### GitHub Actions (`.github/workflows/deploy.yml`)
+### Preview Environment
 
-**Trigger**: Tag creation (semantic versioning: `v1.0.0`)
+- PR preview deploy uses `--env preview` with isolated Worker config.
+- Cleanup job removes preview worker on PR close.
 
 **Pipeline** (Release-Only):
 

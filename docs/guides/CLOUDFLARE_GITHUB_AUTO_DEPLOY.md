@@ -4,22 +4,21 @@ This runbook makes deployment automatic after `resume.git` push events.
 
 ## Current Repo Behavior (Already Enabled)
 
-- GitHub Actions auto-deploys on push to `master` via `.github/workflows/ci.yml`.
-- Trigger: `push` on `master`.
-- Deploy step uses `cloudflare/wrangler-action@v3`.
-- Required GitHub secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`.
+- Deployment is handled by Cloudflare Workers Builds Git integration.
+- GitHub Actions `.github/workflows/ci.yml` is validation-only (lint/test/build/security checks).
+- Worker deploy/promotion is managed in Cloudflare Dashboard Builds settings.
 
-## Option A: GitHub Actions Auto-Deploy (Recommended for this repo)
+## Option A: GitHub Actions Auto-Deploy (Legacy)
 
 1. Confirm repository remote points to `resume.git`.
 2. Ensure GitHub Actions secrets are set:
    - `CLOUDFLARE_API_TOKEN`
    - `CLOUDFLARE_ACCOUNT_ID`
 3. Push to `master`.
-4. Verify workflow run in GitHub Actions.
-5. Confirm production health endpoint returns `200`.
+4. Use only for temporary fallback.
+5. Keep disabled in normal operation.
 
-## Option B: Cloudflare Workers Builds Git Integration
+## Option B: Cloudflare Workers Builds Git Integration (Primary)
 
 Official docs:
 
@@ -38,9 +37,15 @@ Dashboard setup:
    - Deploy command: `npx wrangler deploy --config typescript/portfolio-worker/wrangler.toml --env production`
 5. Save and trigger with a new commit push.
 
+Recommended deploy command for Builds:
+
+- Active deploy: `npx wrangler deploy --config typescript/portfolio-worker/wrangler.toml --env production`
+- Build-only (version upload): `npx wrangler versions upload --config typescript/portfolio-worker/wrangler.toml --env production`
+
 ## Monorepo Notes
 
 - Always keep deploy commands explicit with `--config` to avoid root discovery issues.
+- PR preview deploy uses `--env preview` to keep preview config isolated from production env.
 - Use build watch paths if multiple Workers are connected to the same repo.
 - Keep worker `name` in Wrangler config aligned with dashboard Worker name.
 

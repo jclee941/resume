@@ -5,7 +5,7 @@
 **Style**: Modern Glassmorphism  
 **Primary Font**: Inter  
 **Color Palette**: Purple, Cyan, Blue, Indigo, Gold + Full Gray Scale  
-**CSS File**: `web/styles.css`
+**CSS File**: `typescript/portfolio-worker/styles.css`
 
 ---
 
@@ -610,7 +610,7 @@ All color combinations meet WCAG AA standards (4.5:1 for normal text, 3:1 for la
 
 - [Web Content Accessibility Guidelines (WCAG)](https://www.w3.org/WAI/WCAG21/quickref/)
 - [Material Design Motion System](https://material.io/design/motion/speed.html)
-- [CSS Custom Properties Best Practices](https://web.dev/css-custom-properties/)
+- [CSS Custom Properties Best Practices](https://typescript/portfolio-worker.dev/css-custom-properties/)
 - [Glassmorphism UI Trend](https://uxdesign.cc/glassmorphism-in-user-interfaces-1f39bb1308c9)
 - [Inter Font Variable](https://rsms.me/inter/)
 

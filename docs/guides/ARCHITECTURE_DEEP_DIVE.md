@@ -131,7 +131,7 @@ Complete technical architecture documentation for the Resume Portfolio System.
 ### Module Structure
 
 ```
-web/lib/
+typescript/portfolio-worker/lib/
 ├── config.js          # Configuration constants, cache
 ├── cards.js           # Card generation (resume, project)
 ├── templates.js       # Link generation helpers
@@ -274,7 +274,7 @@ HTML Cards (embedded in worker.js)
 ### Implementation
 
 ```javascript
-// web/lib/cache-headers.js
+// typescript/portfolio-worker/lib/cache-headers.js
 function getCacheHeaders(pathname) {
   if (pathname === '/sw.js') {
     return CACHE_HEADERS.SERVICE_WORKER;
@@ -544,5 +544,5 @@ resume_error_rate{job="resume"} 0.002
 
 - [Cloudflare Workers Documentation](https://developers.cloudflare.com/workers/)
 - [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)
-- [Web Vitals](https://web.dev/vitals/)
+- [Web Vitals](https://typescript/portfolio-worker.dev/vitals/)
 - [Prometheus Exposition Format](https://prometheus.io/docs/instrumenting/exposition_formats/)

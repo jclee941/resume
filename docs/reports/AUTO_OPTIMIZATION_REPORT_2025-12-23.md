@@ -130,7 +130,7 @@ npm run pdf:all          # All formats
 
 ### 6. Internationalization (i18n) ✅
 **Files Created:**
-- `web/lib/i18n.js` (180 lines)
+- `typescript/portfolio-worker/lib/i18n.js` (180 lines)
 - `tests/unit/lib/i18n.test.js` (180 lines)
 
 **Features:**
@@ -153,7 +153,7 @@ npm run pdf:all          # All formats
 
 ### 7. Performance Monitoring ✅
 **Files Created:**
-- `web/lib/performance-metrics.js` (280 lines)
+- `typescript/portfolio-worker/lib/performance-metrics.js` (280 lines)
 - `scripts/monitoring/setup-monitoring.sh`
 
 **npm Scripts:**
@@ -176,7 +176,7 @@ npm run monitoring:setup
 
 ### 8. A/B Testing Framework ✅
 **Files Created:**
-- `web/lib/ab-testing.js` (280 lines)
+- `typescript/portfolio-worker/lib/ab-testing.js` (280 lines)
 - `tests/unit/lib/ab-testing.test.js` (300+ lines)
 
 **npm Scripts:**
@@ -215,9 +215,9 @@ npm run ab-test:clear     # Clear data
 4. Enhanced `scripts/build/pdf-generator.sh`
 
 **Libraries (3):**
-1. `web/lib/i18n.js` (180 lines)
-2. `web/lib/performance-metrics.js` (280 lines)
-3. `web/lib/ab-testing.js` (280 lines)
+1. `typescript/portfolio-worker/lib/i18n.js` (180 lines)
+2. `typescript/portfolio-worker/lib/performance-metrics.js` (280 lines)
+3. `typescript/portfolio-worker/lib/ab-testing.js` (280 lines)
 
 **Tests (2):**
 1. `tests/unit/lib/i18n.test.js` (180 lines)
@@ -242,7 +242,7 @@ npm run ab-test:clear     # Clear data
 5. `tests/unit/lib/ab-testing.test.js` - Enhanced coverage
 6. `demo/README.md` - Updated documentation
 7. `AGENTS.md` - Updated agent guidelines
-8. Various wanted-mcp files (separate project)
+8. Various typescript/job-automation files (separate project)
 
 ---
 
@@ -291,9 +291,9 @@ npm run ab-test:clear     # Clear data
   "pdf:generate": "bash scripts/build/pdf-generator.sh",
   "pdf:all": "bash scripts/build/pdf-generator.sh all",
   "monitoring:setup": "bash scripts/monitoring/setup-monitoring.sh",
-  "ab-test:init": "node -e \"require('./web/lib/ab-testing.js').initABTesting()\"",
-  "ab-test:report": "node -e \"console.log(JSON.stringify(require('./web/lib/ab-testing.js').getTestSummary(), null, 2))\"",
-  "ab-test:clear": "node -e \"require('./web/lib/ab-testing.js').clearAllTests()\""
+  "ab-test:init": "node -e \"require('./typescript/portfolio-worker/lib/ab-testing.js').initABTesting()\"",
+  "ab-test:report": "node -e \"console.log(JSON.stringify(require('./typescript/portfolio-worker/lib/ab-testing.js').getTestSummary(), null, 2))\"",
+  "ab-test:clear": "node -e \"require('./typescript/portfolio-worker/lib/ab-testing.js').clearAllTests()\""
 }
 ```
 
@@ -304,7 +304,7 @@ npm run ab-test:clear     # Clear data
 ### Minor (Non-blocking)
 1. **ESLint Warnings**: 38 warnings
    - 5 in test files (unused variables)
-   - 32 in wanted-mcp directory (separate project)
+   - 32 in typescript/job-automation directory (separate project)
    - 1 in performance-metrics.js (false positive)
 
 2. **TypeScript E2E Errors**: ~80 errors
@@ -319,7 +319,7 @@ npm run ab-test:clear     # Clear data
 
 ### Recommendations
 1. Add Playwright type definitions for E2E tests
-2. Clean up unused variables in wanted-mcp
+2. Clean up unused variables in typescript/job-automation
 3. Add more edge case tests for ab-testing.js
 
 ---
@@ -371,7 +371,7 @@ npm run ab-test:clear     # Clear data
 ## 📝 Next Steps
 
 ### Immediate (Optional)
-1. Clean up ESLint warnings in wanted-mcp
+1. Clean up ESLint warnings in typescript/job-automation
 2. Add Playwright type definitions
 3. Improve ab-testing.js branch coverage to 90%
 

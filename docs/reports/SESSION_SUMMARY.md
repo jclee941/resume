@@ -70,9 +70,9 @@ Implement and verify a comprehensive automated testing and optimization system f
 - Enhanced `scripts/build/pdf-generator.sh`
 
 **Libraries (3):**
-- `web/lib/i18n.js` (180 lines)
-- `web/lib/performance-metrics.js` (280 lines)
-- `web/lib/ab-testing.js` (280 lines)
+- `typescript/portfolio-worker/lib/i18n.js` (180 lines)
+- `typescript/portfolio-worker/lib/performance-metrics.js` (280 lines)
+- `typescript/portfolio-worker/lib/ab-testing.js` (280 lines)
 
 **Tests (2):**
 - `tests/unit/lib/i18n.test.js` (180 lines)
@@ -97,9 +97,9 @@ Implement and verify a comprehensive automated testing and optimization system f
   "pdf:generate": "bash scripts/build/pdf-generator.sh",
   "pdf:all": "bash scripts/build/pdf-generator.sh all",
   "monitoring:setup": "bash scripts/monitoring/setup-monitoring.sh",
-  "ab-test:init": "node -e \"require('./web/lib/ab-testing.js').initABTesting()\"",
-  "ab-test:report": "node -e \"console.log(JSON.stringify(require('./web/lib/ab-testing.js').getTestSummary(), null, 2))\"",
-  "ab-test:clear": "node -e \"require('./web/lib/ab-testing.js').clearAllTests()\""
+  "ab-test:init": "node -e \"require('./typescript/portfolio-worker/lib/ab-testing.js').initABTesting()\"",
+  "ab-test:report": "node -e \"console.log(JSON.stringify(require('./typescript/portfolio-worker/lib/ab-testing.js').getTestSummary(), null, 2))\"",
+  "ab-test:clear": "node -e \"require('./typescript/portfolio-worker/lib/ab-testing.js').clearAllTests()\""
 }
 ```
 
@@ -201,7 +201,7 @@ Implement and verify a comprehensive automated testing and optimization system f
 ## 📝 Next Steps
 
 ### Immediate (Optional)
-1. Clean up ESLint warnings in wanted-mcp
+1. Clean up ESLint warnings in typescript/job-automation
 2. Add Playwright type definitions
 3. Improve ab-testing.js branch coverage
 

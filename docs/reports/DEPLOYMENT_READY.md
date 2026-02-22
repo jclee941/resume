@@ -50,7 +50,7 @@
 export CLOUDFLARE_API_TOKEN=your_token_here
 
 # 2. Deploy with one command
-cd /home/jclee/applications/resume
+cd /home/jclee/dev/resume
 ./scripts/deployment/quick-deploy.sh
 ```
 
@@ -85,13 +85,13 @@ git push github-https master
 **Prerequisites**: Wrangler authentication
 
 ```bash
-cd /home/jclee/applications/resume
+cd /home/jclee/dev/resume
 
 # Build
 DEPLOYED_AT=$(date -u +'%Y-%m-%dT%H:%M:%SZ') npm run build
 
 # Deploy
-cd web && npx wrangler deploy
+cd typescript/portfolio-worker && npx wrangler deploy
 ```
 
 ---
@@ -126,7 +126,7 @@ After deployment, run comprehensive verification:
 
 #### Interactive Login (Easiest)
 ```bash
-cd web
+cd typescript/portfolio-worker
 npx wrangler login
 # Opens browser for authentication
 ```

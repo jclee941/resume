@@ -14,6 +14,7 @@ Visual regression testing ensures UI consistency across deployments by comparing
 ### Test Suite: `tests/e2e/visual.spec.js`
 
 **Coverage**: 14 visual regression tests
+
 - Desktop screenshots (5 tests)
 - Mobile screenshots (3 tests)
 - Tablet screenshots (1 test)
@@ -65,7 +66,7 @@ playwright test tests/e2e/visual.spec.js --update-snapshots
 Visual regression tests run automatically in CI/CD pipeline:
 
 ```yaml
-# .github/workflows/deploy.yml
+# .github/workflows/ci.yml
 test:e2e:
   script:
     - npm run test:e2e
@@ -83,16 +84,16 @@ test:e2e:
 
 ### Viewport Sizes
 
-| Device | Width | Height | Tests |
-|--------|-------|--------|-------|
-| Desktop | 1280 | 720 | 5 |
-| Mobile | 375 | 667 | 3 |
-| Tablet | 768 | 1024 | 1 |
+| Device  | Width | Height | Tests |
+| ------- | ----- | ------ | ----- |
+| Desktop | 1280  | 720    | 5     |
+| Mobile  | 375   | 667    | 3     |
+| Tablet  | 768   | 1024   | 1     |
 
 ### Tolerance Settings
 
 ```javascript
-maxDiffPixelRatio: 0.05  // 5% pixel difference allowed
+maxDiffPixelRatio: 0.05; // 5% pixel difference allowed
 ```
 
 This allows for minor rendering differences across environments while catching significant visual changes.
@@ -117,6 +118,7 @@ test('homepage full page screenshot', async ({ page }) => {
 ```
 
 **Covers**:
+
 - Full homepage
 - Hero section
 - Projects section
@@ -138,6 +140,7 @@ test('mobile homepage screenshot', async ({ page }) => {
 ```
 
 **Covers**:
+
 - Mobile homepage
 - Mobile hero section
 - Mobile project card
@@ -172,6 +175,7 @@ test('single project card screenshot', async ({ page }) => {
 ```
 
 **Covers**:
+
 - Footer
 - Download buttons
 - Project card
@@ -184,6 +188,7 @@ test('single project card screenshot', async ({ page }) => {
 ### When to Update
 
 Update snapshots when:
+
 - ✅ Intentional UI changes (new design, layout updates)
 - ✅ CSS modifications
 - ✅ Component refactoring
@@ -215,6 +220,7 @@ git commit -m "chore: update visual regression snapshots"
 **Cause**: Font rendering, OS differences, browser versions
 
 **Solution**:
+
 ```javascript
 // Use consistent viewport and wait for fonts
 await page.setViewportSize({ width: 1280, height: 720 });
@@ -227,10 +233,11 @@ await page.waitForTimeout(500); // Wait for fonts to load
 **Cause**: CSS animations, transitions
 
 **Solution**:
+
 ```javascript
 // Disable animations in test
 await page.addStyleTag({
-  content: '* { animation: none !important; transition: none !important; }'
+  content: '* { animation: none !important; transition: none !important; }',
 });
 ```
 
@@ -239,6 +246,7 @@ await page.addStyleTag({
 **Current**: ~5.7 MB total
 
 **Optimization**:
+
 - Use component-level snapshots instead of full-page
 - Compress PNG files with `pngquant`
 - Consider WebP format for smaller sizes
@@ -258,17 +266,18 @@ await page.waitForTimeout(500); // Extra buffer
 
 ```javascript
 // Good
-'desktop-homepage.png'
-'mobile-project-card.png'
+'desktop-homepage.png';
+'mobile-project-card.png';
 
 // Bad
-'test1.png'
-'screenshot.png'
+'test1.png';
+'screenshot.png';
 ```
 
 ### 3. Test Critical UI Components
 
 Focus on:
+
 - Homepage (first impression)
 - Project cards (main content)
 - Resume section (key information)
@@ -314,13 +323,13 @@ stages:
 
 ## Metrics
 
-| Metric | Value |
-|--------|-------|
-| Total Tests | 14 |
-| Snapshot Size | 5.7 MB |
-| Test Duration | ~30 seconds |
-| Coverage | Desktop, Mobile, Tablet, Dark Mode |
-| Max Diff Ratio | 5% |
+| Metric         | Value                              |
+| -------------- | ---------------------------------- |
+| Total Tests    | 14                                 |
+| Snapshot Size  | 5.7 MB                             |
+| Test Duration  | ~30 seconds                        |
+| Coverage       | Desktop, Mobile, Tablet, Dark Mode |
+| Max Diff Ratio | 5%                                 |
 
 ---
 
@@ -329,18 +338,21 @@ stages:
 ### Planned Improvements
 
 1. **Percy Integration** (Cloud-based visual testing)
+
    ```bash
    npm install --save-dev @percy/playwright
    ```
 
 2. **Chromatic Integration** (Storybook visual testing)
+
    ```bash
    npm install --save-dev chromatic
    ```
 
 3. **Automated Snapshot Updates** (on approved PRs)
+
    ```yaml
-   # .github/workflows/deploy.yml
+   # .github/workflows/update-snapshots.yml
    update-snapshots:
      only:
        - merge_requests
@@ -349,11 +361,7 @@ stages:
 
 4. **Cross-browser Testing** (Firefox, Safari)
    ```javascript
-   projects: [
-     { name: 'chromium' },
-     { name: 'firefox' },
-     { name: 'webkit' },
-   ]
+   projects: [{ name: 'chromium' }, { name: 'firefox' }, { name: 'webkit' }];
    ```
 
 ---

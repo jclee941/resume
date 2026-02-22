@@ -442,7 +442,7 @@ curl -I https://resume.jclee.me | grep "Content-Security-Policy"
 # Go to: https://github.com/qws941/resume/actions
 
 # If no workflow run:
-# 1. Check if .github/workflows/deploy.yml exists in repo
+# 1. Check if .github/workflows/ci.yml exists in repo
 # 2. Verify push reached GitHub: git log origin/master
 # 3. Check GitHub Actions enabled: Settings → Actions → General
 ```
@@ -537,15 +537,15 @@ curl -X POST https://resume.jclee.me/api/vitals \
 
 **GitHub Actions Workflow**:
 
-- File: `.github/workflows/deploy.yml`
-- Jobs: test → build → deploy-worker → verify-deployment
+- File: `.github/workflows/ci.yml`
+- Jobs: analyze → validate/test/build → deploy → verify → rollback → notify
 - Secrets required: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`
 
 **Worker Generation**:
 
-- Script: `web/generate-worker.js`
-- Input: `web/index.html`, `web/styles.css`, `web/data.json`, `web/og-image.png`
-- Output: `web/worker.js` (150.06 KB)
+- Script: `typescript/portfolio-worker/generate-worker.js`
+- Input: `typescript/portfolio-worker/index.html`, `typescript/portfolio-worker/styles.css`, `typescript/portfolio-worker/data.json`, `typescript/portfolio-worker/og-image.png`
+- Output: `typescript/portfolio-worker/worker.js` (150.06 KB)
 - Process: CSS injection, data injection, OG embedding, minification, CSP hashing
 
 **Commits**:

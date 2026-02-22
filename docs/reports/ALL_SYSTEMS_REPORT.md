@@ -60,8 +60,8 @@ OPENROUTER_API_KEY=[REDACTED_ROTATE_REQUIRED]
 
 **Location:**
 
-- `wanted-mcp/scripts/quick-login.js:36` - `[REDACTED_ROTATE_REQUIRED]`
-- `wanted-mcp/scripts/auto-login.js:224` - `[REDACTED_ROTATE_REQUIRED]`
+- `typescript/job-automation/scripts/quick-login.js:36` - `[REDACTED_ROTATE_REQUIRED]`
+- `typescript/job-automation/scripts/auto-login.js:224` - `[REDACTED_ROTATE_REQUIRED]`
 
 **Fix:**
 
@@ -83,7 +83,7 @@ await page.type('input[type="password"]', password, { delay: 30 });
 
 **Issue:** Logging endpoint accepts unauthenticated requests, allowing log injection attacks.
 
-**Location:** `web/worker.js:594`
+**Location:** `typescript/portfolio-worker/worker.js:594`
 
 **Fix:**
 
@@ -118,7 +118,7 @@ await fetch('https://grafana.jclee.me/loki/api/v1/push', {
 3. Minify inlined HTML more aggressively (-8KB)
 4. Total reduction: **-20KB**
 
-**Files:** `web/generate-worker.js`
+**Files:** `typescript/portfolio-worker/generate-worker.js`
 
 ---
 
@@ -131,8 +131,8 @@ await fetch('https://grafana.jclee.me/loki/api/v1/push', {
 **Command:**
 
 ```bash
-cwebp -q 85 web/assets/dashboards/blacklist-dashboard.png \
-  -o web/assets/dashboards/blacklist-dashboard.webp
+cwebp -q 85 typescript/portfolio-worker/assets/dashboards/blacklist-dashboard.png \
+  -o typescript/portfolio-worker/assets/dashboards/blacklist-dashboard.webp
 ```
 
 **Timeline:** 30 minutes
@@ -149,7 +149,7 @@ cwebp -q 85 web/assets/dashboards/blacklist-dashboard.png \
 
 ```bash
 npm install -D purgecss
-npx purgecss --content web/index.html --css web/styles.css --output web/styles.min.css
+npx purgecss --content typescript/portfolio-worker/index.html --css typescript/portfolio-worker/styles.css --output typescript/portfolio-worker/styles.min.css
 ```
 
 **Timeline:** 1-2 hours

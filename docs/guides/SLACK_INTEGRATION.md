@@ -7,6 +7,7 @@ The resume portfolio now includes Slack notifications for deployment events via 
 ## Features
 
 ### Deployment Notifications
+
 - ✅ Success/failure status
 - 📝 Commit information (SHA, author, message)
 - 🔗 Direct links to live site and workflow
@@ -55,7 +56,9 @@ Author: Jaecheol Lee
 
 Commit Message:
 ```
+
 feat: Add Slack integration for deployments
+
 ```
 
 [View Live Site] [View Workflow]
@@ -74,17 +77,19 @@ jobs:
 
   notify-slack:
     needs: [deploy-worker, generate-deployment-notes]
-    if: always()  # Runs even if previous jobs fail
+    if: always() # Runs even if previous jobs fail
     # ... sends Slack notification
 ```
 
 ## Customization
 
 ### Change Notification Channel
+
 Modify the webhook URL to point to a different channel.
 
 ### Add More Information
-Edit `.github/workflows/deploy.yml/deploy.yml` and add fields to the `slack_payload.json`:
+
+Edit `.github/workflows/ci.yml` and add fields to the `slack_payload.json`:
 
 ```json
 {
@@ -99,11 +104,12 @@ Edit `.github/workflows/deploy.yml/deploy.yml` and add fields to the `slack_payl
 ```
 
 ### Conditional Notifications
+
 Only notify on failures:
 
 ```yaml
 - name: Send Slack notification
-  if: failure()  # Only runs if deployment failed
+  if: failure() # Only runs if deployment failed
 ```
 
 ## Troubleshooting

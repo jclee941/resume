@@ -497,7 +497,7 @@ echo "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms" | wc -c
 ```bash
 # Verify you're in project root
 pwd
-# Should be: /home/jclee/apps/resume
+# Should be: /home/jclee/dev/resume
 
 # Check template files exist
 ls -l n8n-workflows/*.json

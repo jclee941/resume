@@ -27,7 +27,7 @@ The resume portfolio project demonstrates **excellent overall health** with:
 
 **Metrics:**
 - Total Files: 147
-- Lines of Code (web/): 2,441
+- Lines of Code (typescript/portfolio-worker/): 2,441
 - Test Files: 3 (unit + integration)
 - Test Coverage: 100% (24/24 passing)
 - Dependencies: 509 total, 0 vulnerabilities
@@ -115,7 +115,7 @@ generate-worker.js  11KB
 
 **Structure:**
 ```
-web/
+typescript/portfolio-worker/
 ├── index.html (34KB) - Portfolio landing page
 ├── resume.html (28KB) - Resume detail page
 ├── generate-worker.js (11KB) - Build script
@@ -162,7 +162,7 @@ const ROUTES = {
 **Effort:** 0.5 hours
 
 ```javascript
-// In web/worker.js, add to SECURITY_HEADERS:
+// In typescript/portfolio-worker/worker.js, add to SECURITY_HEADERS:
 const SECURITY_HEADERS = {
   'Content-Type': 'text/html;charset=UTF-8',
   'Cache-Control': 'public, max-age=3600',
@@ -187,7 +187,7 @@ curl -I https://resume.jclee.me | grep -i strict-transport
 **Effort:** 0.25 hours
 
 ```javascript
-// In web/generate-worker.js, remove or mark as utility:
+// In typescript/portfolio-worker/generate-worker.js, remove or mark as utility:
 // Option 1: Delete lines 56-78 (readAndEscapeHtml function)
 // Option 2: Export with JSDoc if intentional API surface
 ```
@@ -202,7 +202,7 @@ npm install --save-dev html-minifier-terser
 ```
 
 ```javascript
-// In web/generate-worker.js:
+// In typescript/portfolio-worker/generate-worker.js:
 const { minify } = require('html-minifier-terser');
 
 const indexHtmlOriginal = minify(
@@ -228,7 +228,7 @@ const indexHtmlOriginal = minify(
 **Effort:** 1.5 hours
 
 ```javascript
-// In web/worker.js, add Cloudflare KV-based rate limiting:
+// In typescript/portfolio-worker/worker.js, add Cloudflare KV-based rate limiting:
 const RATE_LIMIT = 100; // requests per minute per IP
 
 async function checkRateLimit(request, env) {
@@ -324,7 +324,7 @@ test('homepage visual regression', async ({ page }) => {
 
 ```bash
 # Check for external resources without SRI
-grep -r "https://" web/*.html | grep -v "integrity="
+grep -r "https://" typescript/portfolio-worker/*.html | grep -v "integrity="
 
 # If found, generate SRI hashes:
 curl -s https://fonts.googleapis.com/... | openssl dgst -sha384 -binary | base64

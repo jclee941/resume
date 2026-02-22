@@ -49,10 +49,10 @@ To go live with the full system, perform these one-time setup steps:
     npx wrangler d1 create resume-prod-db
     ```
 2.  **Update Config**:
-    Copy the `database_id` from the output into `web/wrangler.toml`.
+    Copy the `database_id` from the output into `typescript/portfolio-worker/wrangler.toml`.
 3.  **Deploy**:
     ```bash
-    npm run deploy:wrangler
+    npm run deploy:wrangler:root
     ```
 4.  **Set Secrets**:
     Add `CLAUDE_API_KEY` and platform credentials to `~/.env`.

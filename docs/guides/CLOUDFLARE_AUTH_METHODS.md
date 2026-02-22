@@ -14,6 +14,7 @@ Cloudflare supports **two different authentication methods** for Wrangler CLI:
 **What it is**: Scoped permission token with limited access
 
 **Advantages**:
+
 - ✅ **Secure**: Only has permissions you explicitly grant
 - ✅ **Best practice**: Recommended by Cloudflare
 - ✅ **Granular**: Can limit to specific zones/accounts
@@ -22,6 +23,7 @@ Cloudflare supports **two different authentication methods** for Wrangler CLI:
 **Where to find**: https://dash.cloudflare.com/profile/api-tokens
 
 **Required environment variable**:
+
 ```bash
 CLOUDFLARE_API_TOKEN=your_40_character_token_here
 ```
@@ -35,10 +37,12 @@ CLOUDFLARE_API_TOKEN=your_40_character_token_here
 **What it is**: Master key with **full account access**
 
 **Advantages**:
+
 - ✅ **Simple**: No permission configuration needed
 - ✅ **Universal**: Works for all Cloudflare API operations
 
 **Disadvantages**:
+
 - ⚠️ **Security risk**: Full account access (DNS, SSL, Workers, everything)
 - ⚠️ **Legacy**: Cloudflare recommends using API Tokens instead
 - ⚠️ **No scoping**: Cannot limit permissions
@@ -46,6 +50,7 @@ CLOUDFLARE_API_TOKEN=your_40_character_token_here
 **Where to find**: https://dash.cloudflare.com/profile
 
 **Required environment variables** (need BOTH):
+
 ```bash
 CLOUDFLARE_API_KEY=your_global_api_key_here
 CLOUDFLARE_EMAIL=your_cloudflare_email@example.com
@@ -57,14 +62,14 @@ CLOUDFLARE_EMAIL=your_cloudflare_email@example.com
 
 ## 🆚 Quick Comparison
 
-| Feature | API Token | Global API Key |
-|---------|-----------|----------------|
-| **Security** | ✅ Scoped permissions | ⚠️ Full account access |
-| **Setup** | 1 environment variable | 2 environment variables |
-| **Recommended** | ✅ Yes (by Cloudflare) | ❌ No (legacy) |
-| **Expires** | Optional expiration | Never expires |
-| **Revocable** | ✅ Easy | ⚠️ Affects all services |
-| **Format** | 40+ chars | 37 chars (hex) |
+| Feature         | API Token              | Global API Key          |
+| --------------- | ---------------------- | ----------------------- |
+| **Security**    | ✅ Scoped permissions  | ⚠️ Full account access  |
+| **Setup**       | 1 environment variable | 2 environment variables |
+| **Recommended** | ✅ Yes (by Cloudflare) | ❌ No (legacy)          |
+| **Expires**     | Optional expiration    | Never expires           |
+| **Revocable**   | ✅ Easy                | ⚠️ Affects all services |
+| **Format**      | 40+ chars              | 37 chars (hex)          |
 
 ---
 
@@ -73,6 +78,7 @@ CLOUDFLARE_EMAIL=your_cloudflare_email@example.com
 ### Option 1: API Token (Recommended)
 
 #### Step 1: Generate Token
+
 1. Go to https://dash.cloudflare.com/profile/api-tokens
 2. Click **"Create Token"**
 3. Use template: **"Edit Cloudflare Workers"**
@@ -84,6 +90,7 @@ CLOUDFLARE_EMAIL=your_cloudflare_email@example.com
 6. **Copy token immediately** (shown only once!)
 
 #### Step 2: Configure Environment
+
 ```bash
 # Edit .env file
 vim ~/.env
@@ -96,8 +103,9 @@ source ~/.env
 ```
 
 #### Step 3: Verify
+
 ```bash
-cd /home/jclee/applications/resume/web
+cd /home/jclee/dev/resume/typescript/portfolio-worker
 npx wrangler whoami
 
 # Expected output:
@@ -109,6 +117,7 @@ npx wrangler whoami
 ### Option 2: Global API Key
 
 #### Step 1: Get Global API Key
+
 1. Go to https://dash.cloudflare.com/profile
 2. Scroll to **"API Keys"** section
 3. Find **"Global API Key"** → Click **"View"**
@@ -116,6 +125,7 @@ npx wrangler whoami
 5. **Copy the key**
 
 #### Step 2: Configure Environment
+
 ```bash
 # Edit .env file
 vim ~/.env
@@ -129,8 +139,9 @@ source ~/.env
 ```
 
 #### Step 3: Verify
+
 ```bash
-cd /home/jclee/applications/resume/web
+cd /home/jclee/dev/resume/typescript/portfolio-worker
 npx wrangler whoami
 
 # Expected output:
@@ -144,7 +155,7 @@ npx wrangler whoami
 **No manual token/key needed** - uses OAuth browser authentication
 
 ```bash
-cd /home/jclee/applications/resume/web
+cd /home/jclee/dev/resume/typescript/portfolio-worker
 npx wrangler login
 
 # Browser opens automatically
@@ -153,11 +164,13 @@ npx wrangler login
 ```
 
 **Advantages**:
+
 - ✅ No manual token management
 - ✅ Most secure (OAuth-based)
 - ✅ Works immediately
 
 **Disadvantage**:
+
 - ❌ Not suitable for CI/CD automation
 
 ---
@@ -174,7 +187,7 @@ export CLOUDFLARE_API_TOKEN=your_token_here
 source ~/.env
 
 # Deploy
-cd /home/jclee/applications/resume
+cd /home/jclee/dev/resume
 ./scripts/deployment/quick-deploy.sh
 ```
 
@@ -189,7 +202,7 @@ export CLOUDFLARE_EMAIL=your@email.com
 source ~/.env
 
 # Deploy (scripts now support both methods)
-cd /home/jclee/applications/resume
+cd /home/jclee/dev/resume
 ./scripts/deployment/quick-deploy.sh
 ```
 
@@ -197,11 +210,11 @@ cd /home/jclee/applications/resume
 
 ```bash
 # Login once (persists across sessions)
-cd /home/jclee/applications/resume/web
+cd /home/jclee/dev/resume/typescript/portfolio-worker
 npx wrangler login
 
 # Then deploy (no environment variables needed)
-cd /home/jclee/applications/resume
+cd /home/jclee/dev/resume
 ./scripts/deployment/quick-deploy.sh
 ```
 
@@ -210,12 +223,14 @@ cd /home/jclee/applications/resume
 ## 🚨 Current Issue: Invalid Token in .env
 
 **Problem detected**:
+
 ```bash
 $ cat ~/.env
 CLOUDFLARE_API_TOKEN=00ceb252a1a463c9c69a9f5a9f97e5d112bb9
 ```
 
 **Issues**:
+
 1. **Token length**: 37 characters (invalid - should be 40+)
 2. **Format looks like Global API Key** (37-char hex) but stored as `CLOUDFLARE_API_TOKEN`
 3. **Error**: "Invalid format for Authorization header [code: 6111]"
@@ -236,7 +251,7 @@ vim ~/.env
 
 # 3. Test
 source ~/.env
-cd /home/jclee/applications/resume/web
+cd /home/jclee/dev/resume/typescript/portfolio-worker
 npx wrangler whoami
 ```
 
@@ -260,7 +275,7 @@ CLOUDFLARE_EMAIL=your_cloudflare_email@example.com
 
 # 3. Test
 source ~/.env
-cd /home/jclee/applications/resume/web
+cd /home/jclee/dev/resume/typescript/portfolio-worker
 npx wrangler whoami
 ```
 
@@ -270,7 +285,7 @@ npx wrangler whoami
 
 ```bash
 # Bypass .env entirely
-cd /home/jclee/applications/resume/web
+cd /home/jclee/dev/resume/typescript/portfolio-worker
 npx wrangler login
 
 # Browser opens, click Allow, done!
@@ -288,11 +303,12 @@ npx wrangler login
 source ~/.env
 
 # Test with wrangler
-cd /home/jclee/applications/resume/web
+cd /home/jclee/dev/resume/typescript/portfolio-worker
 npx wrangler whoami
 ```
 
 **Success output (API Token)**:
+
 ```
 👋 You are logged in with an API Token, associated with the email 'your@email.com'!
 Account Name: Your Account Name
@@ -300,6 +316,7 @@ Account ID: 1234567890abcdef1234567890abcdef
 ```
 
 **Success output (Global API Key)**:
+
 ```
 👋 You are logged in with an API Key, associated with the email 'your@email.com'!
 Account Name: Your Account Name
@@ -307,6 +324,7 @@ Account ID: 1234567890abcdef1234567890abcdef
 ```
 
 **Failure output**:
+
 ```
 ✘ [ERROR] A request to the Cloudflare API (/user/tokens/verify) failed.
 Invalid format for Authorization header [code: 6111]
@@ -316,13 +334,13 @@ Invalid format for Authorization header [code: 6111]
 
 ## 📚 References
 
-| Resource | URL |
-|----------|-----|
-| **API Token Creation** | https://dash.cloudflare.com/profile/api-tokens |
-| **Global API Key** | https://dash.cloudflare.com/profile (scroll to "API Keys") |
-| **Wrangler Docs** | https://developers.cloudflare.com/workers/wrangler/commands/ |
-| **Authentication Guide** | https://developers.cloudflare.com/fundamentals/api/get-started/ |
-| **Project Deployment Guide** | docs/MANUAL_DEPLOYMENT_GUIDE.md |
+| Resource                     | URL                                                             |
+| ---------------------------- | --------------------------------------------------------------- |
+| **API Token Creation**       | https://dash.cloudflare.com/profile/api-tokens                  |
+| **Global API Key**           | https://dash.cloudflare.com/profile (scroll to "API Keys")      |
+| **Wrangler Docs**            | https://developers.cloudflare.com/workers/wrangler/commands/    |
+| **Authentication Guide**     | https://developers.cloudflare.com/fundamentals/api/get-started/ |
+| **Project Deployment Guide** | docs/MANUAL_DEPLOYMENT_GUIDE.md                                 |
 
 ---
 
@@ -331,12 +349,14 @@ Invalid format for Authorization header [code: 6111]
 **For this project**: Use **API Token** (Option 1)
 
 **Why**:
+
 1. ✅ More secure (scoped permissions)
 2. ✅ Best practice (recommended by Cloudflare)
 3. ✅ Easier to rotate (doesn't affect other services)
 4. ✅ Works with deployment automation scripts
 
 **Current action needed**:
+
 1. Generate new API Token at https://dash.cloudflare.com/profile/api-tokens
 2. Use "Edit Cloudflare Workers" template
 3. Update `~/.env` with new token

@@ -352,7 +352,7 @@ Components
 
 ## 9. Export Settings
 
-**For web developers**:
+**For typescript/portfolio-worker developers**:
 
 1. Select component
 2. **Export Settings**:
