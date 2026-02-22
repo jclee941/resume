@@ -1,5 +1,5 @@
 /**
- * Unit tests for web/lib/validators.js
+ * Unit tests for typescript/portfolio-worker/lib/validators.js
  */
 
 const { validateData } = require('../../../../typescript/portfolio-worker/lib/validators');

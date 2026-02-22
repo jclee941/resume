@@ -1,5 +1,5 @@
 /**
- * Unit tests for web/lib/security-headers.js
+ * Unit tests for typescript/portfolio-worker/lib/security-headers.js
  */
 
 const {

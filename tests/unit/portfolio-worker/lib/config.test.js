@@ -1,5 +1,5 @@
 /**
- * Unit tests for web/lib/config.js
+ * Unit tests for typescript/portfolio-worker/lib/config.js
  */
 
 const {

@@ -1,5 +1,5 @@
 /**
- * Unit tests for web/lib/utils.js
+ * Unit tests for typescript/portfolio-worker/lib/utils.js
  */
 
 const path = require('path');

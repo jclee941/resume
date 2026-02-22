@@ -1,5 +1,5 @@
 /**
- * Unit tests for web/lib/cards.js
+ * Unit tests for typescript/portfolio-worker/lib/cards.js
  *
  * Updated to match current cards.js HTML output structure:
  * - Resume cards: resume-item card, resume-title, resume-period, resume-tags, tag spans

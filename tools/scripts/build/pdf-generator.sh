@@ -215,11 +215,11 @@ generate_all_resumes() {
         echo -e "${RED}✗ Failed: ${failed}${NC}"
     fi
 
-    # Copy to web downloads
-    if [ -d "${PROJECT_ROOT}/web/downloads" ]; then
+    # Copy to typescript/portfolio-worker downloads
+    if [ -d "${PROJECT_ROOT}/typescript/portfolio-worker/downloads" ]; then
         echo ""
-        echo "Copying to web/downloads/..."
-        cp -f "${PROJECT_ROOT}"/resume/nextrade/exports/*.pdf "${PROJECT_ROOT}/web/downloads/" 2>/dev/null || true
+        echo "Copying to typescript/portfolio-worker/downloads/..."
+        cp -f "${PROJECT_ROOT}"/resume/nextrade/exports/*.pdf "${PROJECT_ROOT}/typescript/portfolio-worker/downloads/" 2>/dev/null || true
         echo -e "${GREEN}✓ Web downloads updated${NC}"
     fi
 }

@@ -1,5 +1,5 @@
 /**
- * Unit tests for web/lib/env.js
+ * Unit tests for typescript/portfolio-worker/lib/env.js
  */
 
 const {

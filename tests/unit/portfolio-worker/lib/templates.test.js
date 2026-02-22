@@ -1,5 +1,5 @@
 /**
- * Unit tests for web/lib/templates.js
+ * Unit tests for typescript/portfolio-worker/lib/templates.js
  */
 
 const {

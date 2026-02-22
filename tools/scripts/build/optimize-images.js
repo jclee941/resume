@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Optimize images for web deployment
+ * Optimize images for typescript/portfolio-worker deployment
  * Reduces file sizes while maintaining quality
  */
 
@@ -8,7 +8,7 @@ const sharp = require('sharp');
 const fs = require('fs');
 const path = require('path');
 
-const WEB_DIR = path.join(__dirname, '../../web');
+const WEB_DIR = path.join(__dirname, '../../../typescript/portfolio-worker');
 
 async function optimizeImage(inputPath, outputPath, options = {}) {
   const {width = null, height = null, quality = 80, effort = 6} = options;

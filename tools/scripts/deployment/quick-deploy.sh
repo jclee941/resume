@@ -41,7 +41,7 @@ else
     echo -e "  $0"
     echo ""
     echo -e "Option 3: Interactive login (opens browser)"
-    echo -e "  cd web && npx wrangler login"
+    echo -e "  cd typescript/portfolio-worker && npx wrangler login"
     echo ""
     echo -e "${BLUE}→ See detailed guide: docs/CLOUDFLARE_AUTH_METHODS.md${NC}"
     echo -e "${BLUE}→ See token guide: docs/GET_CLOUDFLARE_API_TOKEN.md${NC}"

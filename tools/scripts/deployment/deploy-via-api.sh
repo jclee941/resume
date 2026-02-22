@@ -10,7 +10,7 @@ echo ""
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-WEB_DIR="${SCRIPT_DIR}/../../web"
+WEB_DIR="${SCRIPT_DIR}/../../typescript/portfolio-worker"
 WORKER_FILE="${WEB_DIR}/worker.js"
 
 # Load environment variables

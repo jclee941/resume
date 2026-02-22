@@ -60,9 +60,47 @@ describe('es-logger', () => {
       expect(global.fetch).not.toHaveBeenCalled();
     });
 
-    it('should handle missing CF_ACCESS_CLIENT_ID gracefully', async () => {
+    it('should handle missing auth credentials gracefully', async () => {
       await esLogger.logToElasticsearch(
         { ELASTICSEARCH_URL: 'https://es.example.com' },
+        'test',
+        'INFO'
+      );
+      expect(global.fetch).not.toHaveBeenCalled();
+    });
+
+    it('should allow API key-only auth when CF Access credentials are missing', async () => {
+      await esLogger.logToElasticsearch(
+        {
+          ELASTICSEARCH_URL: 'https://es.example.com',
+          ELASTICSEARCH_API_KEY: 'api-key-only',
+        },
+        'test',
+        'INFO'
+      );
+      expect(global.fetch).toHaveBeenCalledTimes(1);
+    });
+
+    it('should allow sending when API key exists even if CF Access is partially configured', async () => {
+      await esLogger.logToElasticsearch(
+        {
+          ELASTICSEARCH_URL: 'https://es.example.com',
+          ELASTICSEARCH_API_KEY: 'api-key',
+          CF_ACCESS_CLIENT_ID: 'cf-id-only',
+        },
+        'test',
+        'INFO'
+      );
+      expect(global.fetch).toHaveBeenCalledTimes(1);
+    });
+
+    it('should skip sending when CF Access credentials exist but API key is missing', async () => {
+      await esLogger.logToElasticsearch(
+        {
+          ELASTICSEARCH_URL: 'https://es.example.com',
+          CF_ACCESS_CLIENT_ID: 'cf-id',
+          CF_ACCESS_CLIENT_SECRET: 'cf-secret',
+        },
         'test',
         'INFO'
       );
@@ -101,6 +139,26 @@ describe('es-logger', () => {
       expect(body).toHaveProperty('custom', 'label');
     });
 
+    it('should derive trace fields from traceparent header', async () => {
+      const request = {
+        headers: new Headers({
+          traceparent: '00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01',
+          tracestate: 'vendorA=abc',
+        }),
+      };
+
+      await esLogger.logToElasticsearch(mockEnv, 'trace test', 'INFO', {}, { request });
+
+      const [, opts] = global.fetch.mock.calls[0];
+      const body = JSON.parse(opts.body);
+      expect(body).toHaveProperty('traceId', '4bf92f3577b34da6a3ce929d0e0e4736');
+      expect(body).toHaveProperty('correlationId', '4bf92f3577b34da6a3ce929d0e0e4736');
+      expect(body).toHaveProperty('traceparent');
+      expect(body).toHaveProperty('tracestate', 'vendorA=abc');
+      expect(body).toHaveProperty('trace');
+      expect(body.trace).toHaveProperty('id', '4bf92f3577b34da6a3ce929d0e0e4736');
+    });
+
     it('should use default level INFO when level is undefined', async () => {
       await esLogger.logToElasticsearch(mockEnv, 'default level');
       const [, opts] = global.fetch.mock.calls[0];
@@ -123,7 +181,7 @@ describe('es-logger', () => {
     it('should fallback to default index when env has no ELASTICSEARCH_INDEX', async () => {
       const envNoIndex = {
         ELASTICSEARCH_URL: 'https://es.example.com',
-        CF_ACCESS_CLIENT_ID: 'cf-id',
+        ELASTICSEARCH_API_KEY: 'test-api-key',
       };
       await esLogger.logToElasticsearch(envNoIndex, 'test', 'INFO');
       const [url] = global.fetch.mock.calls[0];
@@ -192,20 +250,25 @@ describe('es-logger', () => {
       CF_ACCESS_CLIENT_ID: 'cf-id',
     };
 
+    const baseEnvWithApiKey = {
+      ELASTICSEARCH_URL: 'https://es.example.com',
+      CF_ACCESS_CLIENT_ID: 'cf-id',
+      ELASTICSEARCH_API_KEY: 'test-api-key',
+    };
+
     it('should omit CF-Access-Client-Secret when not provided', async () => {
-      await esLogger.logToElasticsearch(baseEnv, 'test', 'INFO');
+      await esLogger.logToElasticsearch(baseEnvWithApiKey, 'test', 'INFO');
       const [, opts] = global.fetch.mock.calls[0];
       expect(opts.headers).not.toHaveProperty('CF-Access-Client-Secret');
     });
 
-    it('should omit Authorization when ELASTICSEARCH_API_KEY is not provided', async () => {
+    it('should skip send when ELASTICSEARCH_API_KEY is not provided', async () => {
       await esLogger.logToElasticsearch(baseEnv, 'test', 'INFO');
-      const [, opts] = global.fetch.mock.calls[0];
-      expect(opts.headers).not.toHaveProperty('Authorization');
+      expect(global.fetch).not.toHaveBeenCalled();
     });
 
     it('should always include Content-Type application/json', async () => {
-      await esLogger.logToElasticsearch(baseEnv, 'test', 'INFO');
+      await esLogger.logToElasticsearch(baseEnvWithApiKey, 'test', 'INFO');
       const [, opts] = global.fetch.mock.calls[0];
       expect(opts.headers['Content-Type']).toBe('application/json');
     });
@@ -312,6 +375,7 @@ describe('es-logger', () => {
     const mockEnv = {
       ELASTICSEARCH_URL: 'https://es.example.com',
       CF_ACCESS_CLIENT_ID: 'cf-id',
+      ELASTICSEARCH_API_KEY: 'test-api-key',
     };
 
     it('should set up abort timeout callback', () => {

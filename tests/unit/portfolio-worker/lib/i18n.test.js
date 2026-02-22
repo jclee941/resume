@@ -1,5 +1,5 @@
 /**
- * Unit tests for web/lib/i18n.js
+ * Unit tests for typescript/portfolio-worker/lib/i18n.js
  */
 
 const {

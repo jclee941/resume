@@ -1,9 +1,9 @@
 /**
- * Resume web data transformation utilities.
+ * Resume typescript/portfolio-worker data transformation utilities.
  */
 
 /**
- * Generate portfolio web data from master resume source data.
+ * Generate portfolio typescript/portfolio-worker data from master resume source data.
  * @param {Object} source - Master resume data.
  * @returns {Object} Portfolio data.json payload.
  */

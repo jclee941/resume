@@ -94,7 +94,7 @@ export CLOUDFLARE_API_TOKEN=your_token_here
 ### Option 1: Interactive Login (Easiest)
 
 ```bash
-cd web
+cd typescript/portfolio-worker
 npx wrangler login
 # Opens browser for authentication
 ```
@@ -165,7 +165,7 @@ npm run test:e2e  # Run E2E tests
 
 - Timestamp not recent? Wait a few minutes for propagation
 - OG image 404? Check if `npm run build` was run
-- Missing meta tags? Check `web/index.html` has OG tags
+- Missing meta tags? Check `typescript/portfolio-worker/index.html` has OG tags
 - Vitals endpoint failing? Check worker routing in `generate-worker.js`
 
 ## Full Deployment Guide
