@@ -469,8 +469,8 @@ ssh trade-router-dr-01
 systemctl start order-router
 systemctl status order-router
 
-# 2. Start web portal and API gateway
-ansible-playbook /opt/ansible/start-web-tier.yml --limit "dr-site"
+# 2. Start typescript/portfolio-worker portal and API gateway
+ansible-playbook /opt/ansible/start-typescript/portfolio-worker-tier.yml --limit "dr-site"
 
 # 3. Verify application health
 curl -f http://trade-match-dr-01:8080/health  # HTTP 200

@@ -461,7 +461,7 @@ proofpoint-cli delete-email --message-id "$EMAIL_ID" --all-recipients
 # 7b. Block sender on email gateway
 proofpoint-cli block-sender --email "$SENDER" --reason "phishing"
 
-# 7c. Block URLs on web proxy
+# 7c. Block URLs on typescript/portfolio-worker proxy
 while read URL; do
   zscaler-cli block-url --url "$URL" --category "phishing" --duration "permanent"
 done < /tmp/phishing-urls.txt

@@ -304,7 +304,7 @@ typescript/portfolio-worker/
 - [Google Search Console](https://search.google.com/search-console)
 - [Structured Data Testing Tool](https://schema.org/docs/structured-data-testing-tool)
 - [Mobile-Friendly Test](https://search.google.com/test/mobile-friendly)
-- [Page Speed Insights](https://pagespeed.web.dev/)
+- [Page Speed Insights](https://pagespeed.typescript/portfolio-worker.dev/)
 
 ## 🎯 Next Steps
 

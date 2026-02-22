@@ -5,7 +5,7 @@
 ## 📁 모듈 구조
 
 ```
-web/lib/
+typescript/portfolio-worker/lib/
 ├── cache-headers.js    # 캐시 헤더 설정
 ├── cards.js            # Resume/Project 카드 HTML 생성
 ├── compression.js      # HTML/데이터 압축 유틸리티

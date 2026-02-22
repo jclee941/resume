@@ -41,9 +41,9 @@ Use `.env.example` as template.
 # Edit master resume
 vim master/resume_master.md
 
-# Update web portfolio
-vim web/index.html
-vim web/resume.html
+# Update typescript/portfolio-worker portfolio
+vim typescript/portfolio-worker/index.html
+vim typescript/portfolio-worker/resume.html
 ```
 
 ### Step 2: Generate Worker
@@ -51,7 +51,7 @@ vim web/resume.html
 **⚠️ CRITICAL**: Must run before deployment
 
 ```bash
-cd web
+cd typescript/portfolio-worker
 node generate-worker.js
 ```
 
@@ -65,7 +65,7 @@ This script:
 ### Step 3: Deploy to Cloudflare
 
 ```bash
-cd web
+cd typescript/portfolio-worker
 wrangler deploy
 ```
 
@@ -89,9 +89,9 @@ Push to `master` branch auto-deploys via `.github/workflows/ci.yml`
 
 1. **Checkout code**: `actions/checkout@v4`
 2. **Setup Node.js**: `actions/setup-node@v4` (v20)
-3. **Install Wrangler**: `npm install -g wrangler`
-4. **Deploy Worker**: `cloudflare/wrangler-action@v3`
-5. **Generate Deployment Notes**: Gemini API summarizes commit
+3. **Validate Cloudflare config**: native checks + `wrangler types` generation in CI
+4. **Deploy Worker**: `cloudflare/wrangler-action@v4`
+5. **Verify + rollback**: Cloudflare API verification and rollback job on failure
 
 ### Required GitHub Secrets
 
@@ -118,7 +118,7 @@ wrangler rollback
 git revert HEAD
 
 # Regenerate worker
-cd web && node generate-worker.js
+cd typescript/portfolio-worker && node generate-worker.js
 
 # Redeploy
 wrangler deploy
@@ -130,37 +130,31 @@ wrangler deploy
 2. Select `resume` worker
 3. Click "Rollback" on deployments tab
 
-## Build Pipeline Enhancement
+## Build Pipeline (Current)
 
-### Current Issue
+`worker.js` generation is already integrated in CI build stage.
 
-Manual step required: `node generate-worker.js`
-
-### Recommended Fix
-
-Update `.github/workflows/ci.yml`:
+Reference deploy shape in `.github/workflows/ci.yml`:
 
 ```yaml
 jobs:
-  deploy-worker:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+      - uses: ./.github/actions/setup
+      - run: npm run build
 
-      # ADD THIS STEP
-      - name: Generate Worker
-        run: cd web && node generate-worker.js
-
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
       - name: Deploy
-        uses: cloudflare/wrangler-action@v3
+        uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy
-          workingDirectory: web
+          command: deploy --config wrangler.toml --env production
+          workingDirectory: typescript/portfolio-worker
 ```
 
 ## Multi-Environment Setup
@@ -249,7 +243,7 @@ html-minifier --collapse-whitespace \
   --remove-comments \
   --minify-css true \
   --minify-js true \
-  web/index.html -o web/index.min.html
+  typescript/portfolio-worker/index.html -o typescript/portfolio-worker/index.min.html
 
 # Update generate-worker.js to use minified version
 ```
@@ -319,8 +313,8 @@ kv_namespaces = [
 
 - [ ] Update `master/resume_master.md`
 - [ ] Derive company-specific versions
-- [ ] Update `web/index.html` if needed
-- [ ] **Run `node web/generate-worker.js`** ⚠️
+- [ ] Update `typescript/portfolio-worker/index.html` if needed
+- [ ] **Run `node typescript/portfolio-worker/generate-worker.js`** ⚠️
 - [ ] Test locally: `wrangler dev`
 - [ ] Deploy: `wrangler deploy`
 - [ ] Verify: `curl https://resume.jclee.me`
@@ -331,13 +325,13 @@ kv_namespaces = [
 
 ```bash
 # Local development
-cd web && wrangler dev
+cd typescript/portfolio-worker && wrangler dev
 
 # Generate worker (REQUIRED before deploy)
-cd web && node generate-worker.js
+cd typescript/portfolio-worker && node generate-worker.js
 
 # Deploy to production
-cd web && wrangler deploy
+cd typescript/portfolio-worker && wrangler deploy
 
 # Tail logs
 wrangler tail

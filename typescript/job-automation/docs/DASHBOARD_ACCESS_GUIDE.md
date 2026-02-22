@@ -15,8 +15,8 @@
 ### 1. Start Dashboard Server
 
 ```bash
-# Navigate to job-automation-mcp directory
-cd job-automation-mcp
+# Navigate to typescript/job-automation directory
+cd typescript/job-automation
 
 # Start dashboard server
 npm run dashboard
@@ -175,7 +175,7 @@ SLACK_WEBHOOK_URL=your_webhook_url
 
 ### ✅ Automation Control
 
-- Direct execution from web UI
+- Direct execution from typescript/portfolio-worker UI
 - Dry-run mode support
 - Real-time notifications
 
@@ -261,13 +261,13 @@ DASHBOARD_PORT=8080 npm run dashboard
 
 ```bash
 # Build Docker image
-docker build -t job-automation-mcp-dashboard .
+docker build -t typescript/job-automation-dashboard .
 
 # Run container
 docker run -p 3456:3456 \
   -e DASHBOARD_PORT=3456 \
   -e N8N_WEBHOOK_URL=https://n8n.jclee.me/webhook \
-  job-automation-mcp-dashboard
+  typescript/job-automation-dashboard
 ```
 
 ### Reverse Proxy (Nginx)
@@ -291,8 +291,8 @@ server {
 
 Dashboard screenshots:
 
-- `web/assets/dashboards/blacklist-dashboard.png` (307KB)
-- `web/assets/dashboards/blacklist-dashboard.webp` (72KB) ✅ Optimized
+- `typescript/portfolio-worker/assets/dashboards/blacklist-dashboard.png` (307KB)
+- `typescript/portfolio-worker/assets/dashboards/blacklist-dashboard.webp` (72KB) ✅ Optimized
 
 ---
 
@@ -310,7 +310,7 @@ Dashboard screenshots:
 **Ready to use immediately!**
 
 ```bash
-cd job-automation-mcp
+cd typescript/job-automation
 npm run dashboard
 # Access http://localhost:3456 in browser
 ```

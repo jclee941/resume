@@ -13,7 +13,7 @@ Personal portfolio site deployed to Cloudflare's edge network. All assets inline
 ## Structure
 
 ```
-web/
+typescript/portfolio-worker/
 ├── index.html          # Source of Truth - main portfolio
 ├── styles.css          # Global styles (inlined at build)
 ├── generate-worker.js  # Build engine - asset inlining + CSP hash generation

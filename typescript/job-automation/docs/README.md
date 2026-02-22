@@ -51,7 +51,7 @@ MCP Server for searching jobs and managing resume on Wanted Korea platform.
 ## Installation
 
 ```bash
-cd job-automation-mcp
+cd typescript/job-automation
 npm install
 ```
 
@@ -67,7 +67,7 @@ Already configured in `~/.OpenCode/.mcp.json`:
     "wanted": {
       "description": "Wanted Korea job search - 8 tools",
       "command": "node",
-      "args": ["/home/jclee/apps/resume/job-automation-mcp/src/index.js"],
+      "args": ["/home/jclee/dev/resume/typescript/job-automation/src/index.js"],
       "disabled": false,
       "enabled": true
     }
@@ -574,7 +574,7 @@ curl -X POST https://n8n.jclee.me/webhook/job-search-trigger \
 ## Files
 
 ```
-job-automation-mcp/
+typescript/job-automation/
 ├── src/
 │   ├── index.js              # MCP server entry (9 tools, 1 resource, 3 prompts)
 │   ├── cli.js                # CLI for pipeline operations

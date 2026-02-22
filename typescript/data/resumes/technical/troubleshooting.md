@@ -17,7 +17,7 @@
 
 ```bash
 # ALWAYS run this before deploying
-cd web
+cd typescript/portfolio-worker
 node generate-worker.js
 
 # Then deploy
@@ -28,7 +28,7 @@ wrangler deploy
 
 ```yaml
 - name: Generate Worker
-  run: cd web && node generate-worker.js
+  run: cd typescript/portfolio-worker && node generate-worker.js
 ```
 
 ---
@@ -52,7 +52,7 @@ html-minifier --collapse-whitespace \
   --remove-comments \
   --minify-css true \
   --minify-js true \
-  web/index.html -o web/index.min.html
+  typescript/portfolio-worker/index.html -o typescript/portfolio-worker/index.min.html
 ```
 
 **Solution 2 - Extract CSS**:
@@ -106,7 +106,7 @@ Error: Cannot find module 'fs'
 
 ```bash
 # Ensure running with Node.js
-node web/generate-worker.js
+node typescript/portfolio-worker/generate-worker.js
 
 # NOT: browser console or Deno
 ```
@@ -135,7 +135,7 @@ SyntaxError: Unexpected token
 
 ```bash
 # Search for unescaped backticks
-grep -n '`' web/worker.js | grep -v '\\'
+grep -n '`' typescript/portfolio-worker/worker.js | grep -v '\\'
 ```
 
 ---
@@ -187,7 +187,7 @@ localStorage.clear();
 window.location.reload();
 ```
 
-**Current Implementation**: Working via `web/index.html` line 1100+ ✅
+**Current Implementation**: Working via `typescript/portfolio-worker/index.html` line 1100+ ✅
 
 ---
 
@@ -282,8 +282,8 @@ wrangler dev
 npm install -g nodemon
 
 # Auto-regenerate on HTML changes
-nodemon --watch web/index.html --watch web/resume.html \
-  --exec "node web/generate-worker.js && wrangler dev"
+nodemon --watch typescript/portfolio-worker/index.html --watch typescript/portfolio-worker/resume.html \
+  --exec "node typescript/portfolio-worker/generate-worker.js && wrangler dev"
 ```
 
 ---
@@ -424,26 +424,26 @@ wrangler tail --format pretty
 ### Test worker locally
 
 ```bash
-cd web && wrangler dev
+cd typescript/portfolio-worker && wrangler dev
 # Visit http://localhost:8787
 ```
 
 ### Validate worker.js syntax
 
 ```bash
-node -c web/worker.js
+node -c typescript/portfolio-worker/worker.js
 ```
 
 ### Check HTML size
 
 ```bash
-wc -c web/index.html web/resume.html
+wc -c typescript/portfolio-worker/index.html typescript/portfolio-worker/resume.html
 ```
 
 ### Verify UTF-8 encoding
 
 ```bash
-file -bi web/index.html
+file -bi typescript/portfolio-worker/index.html
 # Should show: text/html; charset=utf-8
 ```
 
@@ -492,7 +492,7 @@ wrangler rollback
 
 # Method 2: Git revert
 git revert HEAD
-cd web && node generate-worker.js
+cd typescript/portfolio-worker && node generate-worker.js
 wrangler deploy
 
 # Method 3: Cloudflare Dashboard

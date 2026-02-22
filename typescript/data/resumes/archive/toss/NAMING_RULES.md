@@ -134,7 +134,7 @@ master_{문서타입}.md
 ├── master_resume_integration.md
 ├── docs/
 │   └── index.html
-├── web/
+├── typescript/portfolio-worker/
 │   └── index.html
 └── toss/
     ├── README.md

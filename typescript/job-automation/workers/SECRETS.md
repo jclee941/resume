@@ -52,7 +52,7 @@ openssl rand -base64 32
 ### Via Wrangler CLI
 
 ```bash
-cd job-automation-mcp/workers
+cd typescript/job-automation/workers
 
 # Set each secret (interactive prompt)
 npx wrangler secret put ADMIN_TOKEN

@@ -6,23 +6,23 @@
 # ===========================================
 
 # 매일 오전 9시: 자동화된 채용 지원 실행 (드라이런)
-0 9 * * 1-5 cd /home/jclee/dev/apps/resume/job-automation-mcp && ./auto-daily-run.sh
+0 9 * * 1-5 cd /home/jclee/dev/resume/typescript/job-automation && ./auto-daily-run.sh
 
 # 매일 오후 2시: 실제 지원 실행 (조심해서 사용!)
-0 14 * * 1-5 cd /home/jclee/dev/apps/resume/job-automation-mcp && ./auto-daily-run.sh --apply --max=5
+0 14 * * 1-5 cd /home/jclee/dev/resume/typescript/job-automation && ./auto-daily-run.sh --apply --max=5
 
 # 매일 오후 6시: 시스템 모니터링 및 상태 보고
-0 18 * * 1-5 cd /home/jclee/dev/apps/resume/job-automation-mcp && ./auto-monitor.sh
+0 18 * * 1-5 cd /home/jclee/dev/resume/typescript/job-automation && ./auto-monitor.sh
 
 # ===========================================
 # 추가 자동화 작업들
 # ===========================================
 
 # 매주 월요일 오전 8시: 시스템 전체 점검 및 정리
-0 8 * * 1 cd /home/jclee/dev/apps/resume/job-automation-mcp && ./auto-maintenance.sh
+0 8 * * 1 cd /home/jclee/dev/resume/typescript/job-automation && ./auto-maintenance.sh
 
 # 매일 자정: 로그 파일 정리 (30일 이상 된 로그 삭제)
-0 0 * * * find /home/jclee/dev/apps/resume/job-automation-mcp/logs -name "*.log" -mtime +30 -delete
+0 0 * * * find /home/jclee/dev/resume/typescript/job-automation/logs -name "*.log" -mtime +30 -delete
 
 # ===========================================
 # 크론잡 설치/관리 명령어

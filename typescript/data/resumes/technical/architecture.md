@@ -20,8 +20,8 @@ This is a static site resume management system with multi-format output capabili
 │              Derivation Layer                        │
 │  ┌──────────────────────────────────────────────┐  │
 │  │  • company-specific/*.md (tailored versions) │  │
-│  │  • web/index.html (portfolio)                │  │
-│  │  • web/resume.html (web resume)              │  │
+│  │  • typescript/portfolio-worker/index.html (portfolio)                │  │
+│  │  • typescript/portfolio-worker/resume.html (typescript/portfolio-worker resume)              │  │
 │  │  • toss/*.md (job applications)              │  │
 │  └──────────────────┬───────────────────────────┘  │
 └─────────────────────┼──────────────────────────────┘
@@ -99,7 +99,7 @@ resume/
 │   ├── resume_master.md    # Complete career history
 │   └── resume_final.md     # Compressed version
 ├── company-specific/    # Tailored versions
-├── web/                 # Production site
+├── typescript/portfolio-worker/                 # Production site
 │   ├── index.html          # Portfolio page
 │   ├── resume.html         # Resume page
 │   ├── generate-worker.js  # Build script
@@ -117,8 +117,8 @@ resume/
 
 1. **Content Creation**: Update `master/resume_master.md`
 2. **Derivation**: Create company-specific versions
-3. **Web Generation**: Update `web/index.html` manually
-4. **Build**: Run `node web/generate-worker.js`
+3. **Web Generation**: Update `typescript/portfolio-worker/index.html` manually
+4. **Build**: Run `node typescript/portfolio-worker/generate-worker.js`
 5. **Deploy**: `wrangler deploy` or push to master (auto-deploy)
 6. **Serve**: Cloudflare Workers edge network
 

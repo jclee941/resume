@@ -8,7 +8,7 @@
 
 ## 🎯 Overview
 
-The wanted-mcp system has been upgraded with advanced AI capabilities, unified platform support, and comprehensive automation features.
+The typescript/job-automation system has been upgraded with advanced AI capabilities, unified platform support, and comprehensive automation features.
 
 ---
 
@@ -117,10 +117,10 @@ const advice = await getAICareerAdvice(
 **Cron Schedule**:
 ```cron
 # Daily at 9 AM (dry-run)
-0 9 * * 1-5 cd /path/to/wanted-mcp && ./auto-daily-run.sh
+0 9 * * 1-5 cd /path/to/typescript/job-automation && ./auto-daily-run.sh
 
 # Daily at 2 PM (real applications)
-0 14 * * 1-5 cd /path/to/wanted-mcp && ./auto-daily-run.sh --apply --max=5
+0 14 * * 1-5 cd /path/to/typescript/job-automation && ./auto-daily-run.sh --apply --max=5
 ```
 
 #### `auto-monitor.sh` (System Monitoring)
@@ -141,7 +141,7 @@ const advice = await getAICareerAdvice(
 **Cron Schedule**:
 ```cron
 # Daily at 6 PM
-0 18 * * 1-5 cd /path/to/wanted-mcp && ./auto-monitor.sh
+0 18 * * 1-5 cd /path/to/typescript/job-automation && ./auto-monitor.sh
 ```
 
 #### `auto-maintenance.sh` (System Maintenance)
@@ -163,7 +163,7 @@ const advice = await getAICareerAdvice(
 **Cron Schedule**:
 ```cron
 # Weekly on Monday at 8 AM
-0 8 * * 1 cd /path/to/wanted-mcp && ./auto-maintenance.sh
+0 8 * * 1 cd /path/to/typescript/job-automation && ./auto-maintenance.sh
 ```
 
 ---
@@ -325,14 +325,14 @@ node src/auto-apply/cli/index.js ai_unified --max=5
 ## 📚 Documentation
 
 ### Related Docs
-- **Main README**: `wanted-mcp/README.md`
+- **Main README**: `typescript/job-automation/README.md`
 - **API Guide**: `docs/AI_ADVANCED_MATCHING_GUIDE.md`
 - **Deployment**: `docs/PRODUCTION_DEPLOYMENT_GUIDE.md`
 - **Roadmap**: `docs/NEXT_STEPS_ROADMAP.md`
 
 ### Code Structure
 ```
-wanted-mcp/
+typescript/job-automation/
 ├── src/
 │   ├── unified-apply-system.js    # Main unified system
 │   ├── lib/
@@ -355,7 +355,7 @@ wanted-mcp/
 
 ### 1. Setup
 ```bash
-cd wanted-mcp
+cd typescript/job-automation
 
 # Install dependencies
 npm install
@@ -432,7 +432,7 @@ crontab -l
 ## 📞 Support
 
 ### Issues
-- Check logs: `wanted-mcp/logs/`
+- Check logs: `typescript/job-automation/logs/`
 - Review stats: `node src/auto-apply/cli/index.js stats`
 - Monitor system: `./auto-monitor.sh`
 

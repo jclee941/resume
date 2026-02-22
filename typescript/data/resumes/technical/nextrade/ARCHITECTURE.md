@@ -285,7 +285,7 @@ ANY           Trading-Core    ANY         ANY       DENY (default)
 #### Data Loss Prevention (DLP)
 - **Product**: Symantec DLP
 - **Coverage**:
-  - Network DLP: Email, web, file transfer
+  - Network DLP: Email, typescript/portfolio-worker, file transfer
   - Endpoint DLP: USB, screen capture, clipboard, printing
   - Database DLP: SQL query analysis
 - **Policies**:
@@ -1136,7 +1136,7 @@ splunk search 'index=windows_events EventCode=4663 User=compromised_user | table
 ## Check email
 splunk search 'index=email sender=compromised_user has_attachment=true | table _time, recipient, attachment'
 
-## Check web uploads
+## Check typescript/portfolio-worker uploads
 splunk search 'index=proxy user=compromised_user url=*upload* OR url=*dropbox* OR url=*drive.google.com*'
 
 ## Check USB usage

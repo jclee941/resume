@@ -16,7 +16,7 @@ if ! command -v pandoc &> /dev/null; then
 fi
 
 # PDF Conversion
-cd /home/jclee/apps/resume/toss
+cd /home/jclee/dev/resume/toss
 
 pandoc "toss_commerce_server_developer_platform_resume.md" \
   -o "lee_jaecheol_toss_commerce_resume.pdf" \

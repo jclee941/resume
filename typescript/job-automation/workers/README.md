@@ -69,7 +69,7 @@ npx wrangler secret put JWT_SECRET
 {
   "name": "job", // Worker name
   "main": "src/index.js", // Entry point
-  "compatibility_date": "2024-10-03", // Compatibility version
+  "compatibility_date": "2026-02-21", // Compatibility version
 
   // Bindings
   "d1_databases": [

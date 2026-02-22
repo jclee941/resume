@@ -25,7 +25,7 @@
 - **Platforms**: Wanted, JobKorea, Saramin, LinkedIn
 - **AI Integration**: OpenCode 3.5 Sonnet (85-95% accuracy)
 - **Automation**: Cron-based daily execution
-- **Dashboard**: Real-time web UI (Port 3456)
+- **Dashboard**: Real-time typescript/portfolio-worker UI (Port 3456)
 
 ### Architecture
 
@@ -138,7 +138,7 @@
 
 ### 4. Dashboard Server (Express)
 
-**Real-time web dashboard**
+**Real-time typescript/portfolio-worker dashboard**
 
 **Technical Stack**:
 
@@ -468,8 +468,8 @@ LOG_LEVEL=info
 ### 1. Installation
 
 ```bash
-# Navigate to job-automation-mcp directory
-cd job-automation-mcp
+# Navigate to typescript/job-automation directory
+cd typescript/job-automation
 
 # Install dependencies
 npm install
