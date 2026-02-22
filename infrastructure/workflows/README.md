@@ -252,7 +252,7 @@ sheetName: 'Deployment Log'; // Sheet gid=2
 
 ```bash
 # Simulate downtime (modify worker.js temporarily)
-cd ~/apps/resume/web
+cd ~/apps/resume/typescript/portfolio-worker
 # Edit worker.js: Change status "healthy" → "down"
 npm run deploy
 
@@ -260,7 +260,7 @@ npm run deploy
 # Expected: Slack alert in #infra-alerts + Google Sheets log
 
 # Restore
-git checkout web/worker.js
+git checkout typescript/portfolio-worker/worker.js
 npm run deploy
 ```
 
@@ -409,7 +409,7 @@ curl -X POST https://n8n.jclee.me/webhook/resume-deploy \
 
 - `docs/N8N-MONITORING-WORKFLOWS.md` - Detailed workflow guide
 - `.github/workflows/deploy.yml/deploy.yml` - GitHub Actions integration
-- `web/generate-worker.js` - Worker build script
+- `typescript/portfolio-worker/generate-worker.js` - Worker build script
 
 ---
 

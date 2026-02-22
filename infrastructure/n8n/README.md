@@ -380,7 +380,7 @@ npm test && npm run test:e2e
 
 ```bash
 # Ensure n8n has access to repository
-sudo chown -R n8n:n8n /home/jclee/apps/resume
+sudo chown -R n8n:n8n /home/jclee/dev/resume
 
 # Or run n8n as jclee user
 # Configure in docker-compose.yml:
@@ -437,7 +437,7 @@ Add rollback node after deployment failure:
 ```json
 {
   "parameters": {
-    "command": "cd /home/jclee/apps/resume && git reset --hard HEAD~1 && npm run deploy"
+    "command": "cd /home/jclee/dev/resume && git reset --hard HEAD~1 && npm run deploy"
   },
   "name": "Rollback Deployment",
   "type": "n8n-nodes-base.executeCommand"

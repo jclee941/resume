@@ -33,6 +33,25 @@
         "correlationId": {
           "type": "keyword"
         },
+        "traceId": {
+          "type": "keyword"
+        },
+        "traceparent": {
+          "type": "keyword"
+        },
+        "tracestate": {
+          "type": "keyword"
+        },
+        "trace": {
+          "properties": {
+            "id": {
+              "type": "keyword"
+            },
+            "correlation_id": {
+              "type": "keyword"
+            }
+          }
+        },
         "service": {
           "type": "keyword"
         },

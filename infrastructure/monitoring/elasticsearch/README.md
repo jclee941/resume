@@ -18,6 +18,10 @@ Expected log payload fields:
   "level": "INFO",
   "message": "GET /healthz 200 18ms",
   "correlationId": "a97c0f3f4f8b4f61bde3cb7a67f48b31",
+  "traceId": "a97c0f3f4f8b4f61bde3cb7a67f48b31",
+  "traceparent": "00-a97c0f3f4f8b4f61bde3cb7a67f48b31-00f067aa0ba902b7-01",
+  "tracestate": "vendor=value",
+  "trace": { "id": "a97c0f3f4f8b4f61bde3cb7a67f48b31" },
   "service": "portfolio-worker",
   "route": "/healthz",
   "statusCode": 200,
@@ -26,6 +30,15 @@ Expected log payload fields:
 ```
 
 ## Setup
+
+Quick apply helper:
+
+```bash
+chmod +x infrastructure/monitoring/elasticsearch/apply-assets.sh
+ELASTICSEARCH_URL="https://your-es-endpoint" \
+ELASTICSEARCH_API_KEY="your_api_key" \
+  infrastructure/monitoring/elasticsearch/apply-assets.sh
+```
 
 1. **Create ingest pipeline in Elasticsearch**
    - Extract `elasticsearch_ingest_pipeline` from `pipeline.json`.
@@ -60,5 +73,6 @@ Expected log payload fields:
 
 - Keep logs as newline-delimited JSON.
 - Include a `correlationId` per request for cross-service tracing.
+- Include W3C trace context fields (`traceId`, `traceparent`, `tracestate`) when available.
 - Use async fire-and-forget log delivery to avoid request latency impact.
 - Do not include secrets or user PII in log payloads.

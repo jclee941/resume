@@ -67,6 +67,29 @@
         }
       },
       {
+        "rename": {
+          "field": "traceId",
+          "target_field": "trace.id",
+          "ignore_missing": true
+        }
+      },
+      {
+        "set": {
+          "field": "trace.id",
+          "copy_from": "trace.correlation_id",
+          "override": false,
+          "ignore_empty_value": true
+        }
+      },
+      {
+        "set": {
+          "field": "correlationId",
+          "copy_from": "trace.id",
+          "override": false,
+          "ignore_empty_value": true
+        }
+      },
+      {
         "convert": {
           "field": "statusCode",
           "type": "long",

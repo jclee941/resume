@@ -88,7 +88,7 @@ curl -X POST https://grafana.jclee.me/api/dashboards/db \
   -d @infrastructure/monitoring/grafana-dashboard-resume-portfolio.json
 
 # Run tests
-cd /home/jclee/apps/resume
+cd /home/jclee/dev/resume
 npm run build && npm test && npm run test:e2e
 
 # Deploy application
