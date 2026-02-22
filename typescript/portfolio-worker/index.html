@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko">
+<html lang="ko" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -566,35 +566,6 @@
         requestAnimationFrame(animate);
       })();
 
-      // Theme Toggle with aria-pressed support
-      (function () {
-        var toggle = document.querySelector('.theme-toggle');
-        if (!toggle) return;
-
-        function setTheme(dark) {
-          document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
-          toggle.setAttribute('aria-pressed', dark ? 'true' : 'false');
-        }
-
-        // Initialize from localStorage or system preference
-        var stored = localStorage.getItem('theme');
-        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        var isDark = stored ? stored === 'dark' : prefersDark;
-        setTheme(isDark);
-
-        toggle.addEventListener('click', function () {
-          var currentlyDark = document.documentElement.getAttribute('data-theme') === 'dark';
-          setTheme(!currentlyDark);
-          localStorage.setItem('theme', !currentlyDark ? 'dark' : 'light');
-        });
-
-        toggle.addEventListener('keydown', function (e) {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            toggle.click();
-          }
-        });
-      })();
 
       (function () {
         document.querySelectorAll('.nav-link').forEach(function (link) {

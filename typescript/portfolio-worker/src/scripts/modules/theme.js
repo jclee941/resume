@@ -1,59 +1,16 @@
-const themeToggle = document.querySelector('.theme-toggle');
-const sunIcon = document.querySelector('.sun-icon');
-const moonIcon = document.querySelector('.moon-icon');
-const html = document.documentElement;
+/**
+ * Theme module - dark mode only
+ * Portfolio is permanently dark-themed (neon/cyberpunk aesthetic).
+ */
+(function () {
+  // Force dark theme immediately to prevent flash
+  document.documentElement.setAttribute('data-theme', 'dark');
 
-export function initTheme() {
-  // Load saved theme or respect system preference
-  const savedTheme = localStorage.getItem('theme');
-  const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
-
-  html.setAttribute('data-theme', theme);
-  updateIcons(theme);
-
-  // Initialize aria-pressed based on theme
-  themeToggle.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
-
-  // Listen for system theme changes (only if no user preference saved)
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-    if (!localStorage.getItem('theme')) {
-      const newTheme = e.matches ? 'dark' : 'light';
-      html.setAttribute('data-theme', newTheme);
-      updateIcons(newTheme);
-      themeToggle.setAttribute('aria-pressed', newTheme === 'dark' ? 'true' : 'false');
+  // Hide theme toggle button if present (legacy UI element)
+  document.addEventListener('DOMContentLoaded', function () {
+    const toggle = document.querySelector('.theme-toggle');
+    if (toggle) {
+      toggle.style.display = 'none';
     }
   });
-
-  // Click event
-  themeToggle.addEventListener('click', toggleTheme);
-
-  // Keyboard navigation support (Space and Enter keys)
-  themeToggle.addEventListener('keydown', (e) => {
-    if (e.key === ' ' || e.key === 'Enter') {
-      e.preventDefault();
-      toggleTheme();
-    }
-  });
-}
-
-function toggleTheme() {
-  const currentTheme = html.getAttribute('data-theme');
-  const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-
-  html.setAttribute('data-theme', newTheme);
-  localStorage.setItem('theme', newTheme);
-  themeToggle.setAttribute('aria-pressed', newTheme === 'dark' ? 'true' : 'false');
-  updateIcons(newTheme);
-}
-
-function updateIcons(theme) {
-  // Use CSS classes instead of inline styles for CSP compliance
-  if (theme === 'dark') {
-    sunIcon.classList.add('hidden');
-    moonIcon.classList.remove('hidden');
-  } else {
-    sunIcon.classList.remove('hidden');
-    moonIcon.classList.add('hidden');
-  }
-}
+})();
