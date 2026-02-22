@@ -1,63 +1,39 @@
-# AUTOMATION SCRIPTS (scripts/)
+# SCRIPTS KNOWLEDGE BASE
 
-**Generated:** 2026-01-30
-**Commit:** 0b7a931e
+**Generated:** 2026-02-22 22:30:00 KST
+**Commit:** 623fd03
+**Branch:** master
 
 ## OVERVIEW
 
-25 utility scripts for authentication, cookie management, and data synchronization.
-Most scripts are experimental iterations toward stealth auth (CloudFront WAF evasion).
+25 utility scripts for authentication, data sync, and metrics. Run from project root.
 
-## CATEGORIES
+## KEY SCRIPTS
 
-| Category          | Count | Active                   | Notes                   |
-| ----------------- | ----- | ------------------------ | ----------------------- |
-| Auth/Login        | 10    | `quick-login.js`         | OAuth + email flows     |
-| Cookie Extraction | 6     | `extract-cookies-cdp.js` | CDP, SQLite, Playwright |
-| Sync              | 3     | `auth-sync.js`           | Session → Worker sync   |
-| Utilities         | 6     | `metrics-exporter.js`    | Prometheus, debug       |
+| Script                   | Purpose                           |
+| ------------------------ | --------------------------------- |
+| `quick-login.js`         | current auth method (recommended) |
+| `extract-cookies-cdp.js` | CDP cookie extraction             |
+| `auth-sync.js`           | cookies → worker KV (846 lines)   |
+| `profile-sync.js`        | resume → API sync (966 lines)     |
+| `metrics-exporter.js`    | Prometheus metrics export         |
 
-## WHERE TO LOOK
+## AUTH EVOLUTION
 
-| Task                     | Script                     | Notes                        |
-| ------------------------ | -------------------------- | ---------------------------- |
-| **Quick Auth**           | `quick-login.js`           | Current recommended approach |
-| **Cookie → Worker**      | `auth-sync.js`             | Syncs cookies to CF Worker   |
-| **Profile Sync**         | `profile-sync.js`          | Resume data → Wanted API     |
-| **Export Metrics**       | `metrics-exporter.js`      | Prometheus format export     |
-| **Manual Cookie Import** | `import-cookies-manual.js` | DevTools copy/paste method   |
+`direct-login v1-v5` → `quick-login.js` (current).
 
-## SCRIPT EVOLUTION (Login)
+## COOKIE EXTRACTION PRIORITY
 
-```
-direct-login.js → v2 → v3 → v4 → v5 → quick-login.js (current)
-     ↓
-email-login.js / google-oauth-login.js (alternative flows)
-     ↓
-auth-persistent.js (session persistence layer)
-```
-
-## COOKIE EXTRACTION METHODS
-
-| Script                            | Method       | Success Rate | Notes                 |
-| --------------------------------- | ------------ | ------------ | --------------------- |
-| `extract-cookies-cdp.js`          | CDP Protocol | High         | Recommended           |
-| `extract-cookies-playwright.js`   | Playwright   | Medium       | Browser context       |
-| `extract-cookies-sqlite.js`       | SQLite DB    | Low          | Chrome profile access |
-| `extract-cookies-from-profile.js` | Profile dir  | Low          | Encrypted cookies     |
-| `get-cookies.js`                  | Simple       | Medium       | Basic extraction      |
-
-## ANTI-PATTERNS
-
-| Anti-Pattern         | Why                        | Do Instead                  |
-| -------------------- | -------------------------- | --------------------------- |
-| Use deprecated v1-v4 | WAF blocks them            | Use `quick-login.js`        |
-| Hardcode credentials | Security violation         | Use `.env.local` or prompts |
-| Skip stealth headers | 403 Forbidden              | Use BaseCrawler or CDP      |
-| Direct SQLite access | Encrypted in modern Chrome | Use CDP extraction          |
+CDP (recommended) > Playwright > SQLite > Profile.
 
 ## CONVENTIONS
 
-- All scripts run from project root: `node typescript/job-automation/scripts/...`
-- Credentials via `.env.local` or interactive prompts
-- Output cookies to `~/.OpenCode/data/wanted-session.json`
+- All scripts run from project root.
+- Use `quick-login.js` for new auth flows.
+- `profile-sync/` subdirectory has 8 helper modules.
+
+## ANTI-PATTERNS
+
+- Never commit cookies or session files.
+- Never use deprecated `direct-login` scripts.
+- Never hardcode paths — use config.

@@ -1,38 +1,43 @@
-# MCP TOOLS (`typescript/job-automation/src/tools/`)
+# MCP TOOLS KNOWLEDGE BASE
 
-> Parent: [../AGENTS.md](../AGENTS.md)
-
-**Generated:** 2026-01-30
+**Generated:** 2026-02-22 22:30:00 KST
+**Commit:** 623fd03
+**Branch:** master
 
 ## OVERVIEW
 
-9 atomic MCP tool implementations for Wanted Korea interactions. Each file exports a single tool definition with input schema and handler logic.
+9 MCP tool definitions exposing 32 actions for job automation.
 
-## WHERE TO LOOK
+## TOOLS
 
-| Tool              | File                | Role                                                    |
-| ----------------- | ------------------- | ------------------------------------------------------- |
-| **Resume CRUD**   | `resume.js`         | 20+ actions. Careers/Edu (v2), Skills (v1).             |
-| **Sync Pipeline** | `resume-sync.js`    | Local JSON ↔ Remote sync. Diff/Merge logic.             |
-| **Auth**          | `auth.js`           | Session manager. Manual cookie injection required.      |
-| **Profile**       | `profile.js`        | Read-only profile/application status (SNS API).         |
-| **Search**        | `search-jobs.js`    | Filter-based job search (Category/Location).            |
-| **Keywords**      | `search-keyword.js` | Free-text search (Company/Stack).                       |
-| **Details**       | `get-*.js`          | Atomic fetchers: `job-detail`, `company`, `categories`. |
+| Tool                | Actions | Notes                     |
+| ------------------- | ------- | ------------------------- |
+| `resume.js`         | 20+     | Chaos v2 except Skills v1 |
+| `resume-sync.js`    | 12      | state machine sync        |
+| `auth.js`           | varies  | session management        |
+| `profile.js`        | varies  | SNS read-only             |
+| `search-jobs.js`    | varies  | job search                |
+| `search-keyword.js` | varies  | keyword search            |
+| `get-*.js`          | varies  | data retrieval tools      |
+
+## EXPORT PATTERN
+
+```javascript
+export const {name}Tool = {
+  name: '...',
+  description: '...',
+  inputSchema: { ... },
+  handler: async (params) => { ... }
+};
+```
 
 ## CONVENTIONS
 
-- **Export Pattern**: `export const {toolName}Tool = { ... }`.
-- **API Segmentation**:
-  - `SNS API`: Profile read/write (`profile.js`).
-  - `Chaos API v2`: Careers, Education, Activities (`resume.js`).
-  - `Chaos API v1`: **Skills only** (uses `text` not `name`).
-- **Broken Features**: Links API returns 500. Do not implement.
-- **Auth Strategy**: `auth.js` manages `.data/wanted-session.json` (project-local).
-- **Parameter Validation**: Strict schema validation in `inputSchema`.
-- **Error Handling**: Catch `AxiosError`, return human-readable `content: [{ type: "text", text: ... }]`.
+- Tools are thin wrappers around `shared/services/`.
+- Skills v1 only (v2 broken). Links API broken (500).
+- Each tool in its own file with `__tests__/` alongside.
 
-## UNIQUE STYLES
+## ANTI-PATTERNS
 
-- **Monolithic Resume Tool**: `resume.js` handles 20+ sub-actions via `action` parameter switch.
-- **Sync Logic**: `resume-sync.js` implements a full state machine (Export -> Diff -> Sync).
+- Never put business logic in tool handlers — delegate to services.
+- Never call clients directly from tools — use services.

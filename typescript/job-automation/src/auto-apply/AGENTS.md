@@ -1,51 +1,38 @@
-# AUTO-APPLY MODULE
+# AUTO-APPLY KNOWLEDGE BASE
 
-> Parent: [../AGENTS.md](../AGENTS.md)
+**Generated:** 2026-02-22 22:30:00 KST
+**Commit:** 623fd03
+**Branch:** master
 
-**Updated:** 2026-01-30
+## OVERVIEW
 
-## PURPOSE
+Playwright-based stealth auto-submission system with rate limiting and tracking.
 
-Automated job application submission via Playwright browser automation.
+## STRUCTURE
 
-## FILES
-
-| File                     | Role                                               |
-| ------------------------ | -------------------------------------------------- |
-| `auto-applier.js`        | Playwright submission logic, form filling, stealth |
-| `application-manager.js` | Status tracking, retry logic, rate limiting        |
-| `cli.js`                 | CLI interface for manual triggering                |
-| `index.js`               | Barrel exports                                     |
-
-## EXPORTS
-
-```javascript
-import {
-  AutoApplier,
-  ApplicationManager,
-  APPLICATION_STATUS,
-} from "./auto-apply";
-```
-
-## STATUS ENUM
-
-```javascript
-APPLICATION_STATUS = {
-  PENDING: "pending",
-  SUBMITTED: "submitted",
-  FAILED: "failed",
-  DUPLICATE: "duplicate",
-};
+```text
+auto-apply/
+├── auto-applier.js         # UnifiedApplySystem (form fill + stealth)
+├── application-manager.js  # tracking, retry, rate limiting
+├── cli.js                  # CLI interface
+└── index.js                # barrel export
 ```
 
 ## DEPENDENCIES
 
-- `playwright-extra` + stealth plugin (required for anti-bot)
-- Session cookies from `SessionManager`
-- Job data from `matching/` service
+- `playwright-extra` + stealth plugin (required).
+- `SessionManager` for cookie injection.
+- `JobMatcher` scoring data for application decisions.
+
+## CONVENTIONS
+
+- Stealth-first: UA rotation, mouse jitter, human-like delays.
+- Rate limiting enforced per platform per time window.
+- Application tracking with retry logic (3 max).
 
 ## ANTI-PATTERNS
 
-- **Direct playwright import**: Use `playwright-extra` with stealth
-- **Skipping rate limits**: Platforms ban aggressive automation
-- **Storing credentials**: Use session cookies from SessionManager
+- Never use naked Playwright — always stealth plugin.
+- Never skip rate limiting.
+- Never bypass matching score gates.
+- Never submit without valid session cookies.

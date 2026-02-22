@@ -1,233 +1,97 @@
-# .github — CI/CD & Repository Configuration
+# GITHUB AUTOMATION KNOWLEDGE BASE
+
+**Generated:** 2026-02-22 22:30:00 KST
+**Commit:** 623fd03
+**Branch:** master
 
 ## OVERVIEW
 
-GitHub Actions CI/CD, repository automation, and developer tooling.
+10 workflows, 1 composite action, branch rulesets, auto-labeling. CI is validation-only — production deployment via Cloudflare Workers Builds.
 
-| Category          | Files                           | Purpose                           |
-| ----------------- | ------------------------------- | --------------------------------- |
-| Workflows         | 10 YAML files                   | CI/CD, IaC, security, maintenance |
-| Composite Actions | `actions/setup/`                | Shared Node/npm/Playwright setup  |
-| Repo Config       | CODEOWNERS, labeler, dependabot | Automation & governance           |
-| Rulesets          | 2 active                        | Branch protection, tag protection |
+## STRUCTURE
 
-## WORKFLOWS
-
-### ci.yml — CI/CD Pipeline v2.0
-
-**Primary pipeline. Deploys to production.**
-
-| Trigger             | Behavior                                                     |
-| ------------------- | ------------------------------------------------------------ |
-| Push to `master`    | Full pipeline: analyze → lint/test → build → deploy → verify |
-| PR to `master`      | Analyze → lint/test → build → preview deploy                 |
-| `workflow_dispatch` | Manual with `force_deploy`, `dry_run`, `skip_tests` inputs   |
-
-**13 Jobs (dependency chain):**
-
-```
-analyze → lint ──────────────────┐
-        → typecheck ─────────────┤
-        → test-unit ─────────────┤→ build → deploy → verify → notify
-        → test-e2e ──────────────┤              ↓ (on failure)
-        → security-scan ─────────┘          rollback
+```text
+.github/
+├── workflows/
+│   ├── ci.yml                # main validation pipeline (8 jobs)
+│   ├── maintenance.yml       # scheduled cleanup (4 jobs)
+│   ├── terraform.yml         # IaC plan/apply
+│   ├── release.yml           # conventional commit → semver tag
+│   ├── verify.yml            # post-deploy health check
+│   ├── update-snapshots.yml  # Playwright snapshot refresh
+│   ├── vault-test.yml        # OIDC vault integration
+│   ├── pr-labeler.yml        # auto-label PRs by path
+│   ├── codeql.yml            # weekly + push security scan
+│   └── auto-merge.yml        # dependabot auto-merge
+├── actions/
+│   └── setup/                # composite: Node 22 + npm ci + Playwright
+├── CODEOWNERS
+├── labeler.yml               # 9 path-based label rules
+├── dependabot.yml
+└── rulesets/                  # branch protection rules
 ```
 
-Plus: `deploy-preview` (PR ephemeral worker) and `cleanup-preview` (PR close).
+## WHERE TO LOOK
 
-**Key Design Decisions:**
+| Task              | Location                  | Notes                          |
+| ----------------- | ------------------------- | ------------------------------ |
+| CI pipeline       | `workflows/ci.yml`        | 8 jobs, validation-only        |
+| Setup action      | `actions/setup/`          | Node 22, npm ci, Playwright    |
+| Label rules       | `labeler.yml`             | 9 auto-labels by path          |
+| Branch protection | `rulesets/`               | squash/rebase, required checks |
+| Terraform CI      | `workflows/terraform.yml` | plan on PR, apply on dispatch  |
 
-- Strict deploy gate: `success()` not `always()&&!failure()` — with `force_deploy` bypass
-- Separated concurrency: PR = `pr-{N}` (cancel-in-progress), deploy = `deploy-production` (queue)
-- Rollback: `wrangler rollback` on deploy/verify failure
-- Verify: CF API worker age check + HTTP health (warning-only due to Bot Fight Mode)
+## CI PIPELINE (`ci.yml`)
 
-**Secrets:** `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `N8N_WEBHOOK_URL`
+```
+analyze → validate-cf ─┐
+         lint ──────────┤
+         typecheck ─────┤→ build
+         test-unit ─────┤
+         test-e2e ──────┤
+         security-scan ─┘
+```
 
-### maintenance.yml — Scheduled Maintenance
-
-**4 jobs for operational upkeep (all manual until R2 secrets are provisioned).**
-
-| Job             | Schedule                    | Purpose                                |
-| --------------- | --------------------------- | -------------------------------------- |
-| auth-refresh    | Manual (dispatch)           | Refresh auth tokens via n8n webhook    |
-| profile-sync    | Manual (dispatch)           | Sync profiles from SSoT                |
-| drift-detection | DISABLED (needs R2 secrets) | Terraform plan against R2-backed state |
-| cache-cleanup   | Manual (dispatch)           | Purge stale KV/R2 cache entries        |
-
-**drift-detection specifics:**
-
-- Terraform 1.10.5, working dir: `infrastructure/cloudflare/`
-- S3 backend → Cloudflare R2 (via `AWS_ENDPOINT_URL_S3` env var)
-- Requires `R2_ACCESS_KEY_ID` and `R2_SECRET_ACCESS_KEY` secrets (not yet provisioned)
-- Terraform init has retry with backoff (3 attempts: 10s, 20s, 30s)
-- Creates/updates GitHub issue on drift detection
-
-### terraform.yml — IaC Pipeline
-
-| Trigger                                    | Behavior                                        |
-| ------------------------------------------ | ----------------------------------------------- |
-| PR (paths: `infrastructure/cloudflare/**`) | `terraform plan` + PR comment                   |
-| Push to `master`                           | `terraform plan` (review via dispatch apply)    |
-| `workflow_dispatch`                        | Plan, apply, or destroy with optional `-target` |
-
-### release.yml — Auto Release
-
-Triggers after CI succeeds on `master` (via `workflow_run`) or manually (via `workflow_dispatch`). Uses conventional commits for semver tagging (`mathieudutour/github-tag-action`). Creates GitHub Release with changelog.
-
-### verify.yml — Deployment Verification
-
-Standalone verification (manual + `workflow_call`). Checks production/staging URLs with configurable timeout.
-
-### update-snapshots.yml — Visual Regression
-
-Manual dispatch. Runs Playwright to update visual snapshots. Creates PR with changes. Requires typing "update" to confirm.
-
-### vault-test.yml — Vault OIDC Test
-
-Runs on `self-hosted` (proxmox). Tests HashiCorp Vault OIDC JWT auth against 4 secret paths.
-
-### pr-labeler.yml — Auto Labeling
-
-Uses `actions/labeler@v6` with sync-labels. Triggers on PR open/sync/reopen.
-
-### codeql.yml — CodeQL SAST
-
-Static Application Security Testing via GitHub CodeQL.
-
-| Trigger                     | Behavior                             |
-| --------------------------- | ------------------------------------ |
-| Push to `master`            | Analyze JS/TS for security + quality |
-| PR to `master`              | Same analysis, results in PR         |
-| Schedule (Monday 04:00 UTC) | Weekly deep scan                     |
-
-Uses `security-and-quality` query suite. Results appear in GitHub Security tab.
-
-### auto-merge.yml — Auto-Merge
-
-Enables squash auto-merge on PRs from:
-
-- **dependabot[bot]** — Automated dependency updates
-- **Repository owner** — Owner PRs
-- **`auto-merge` label** — Any PR with the label
-
-**Gated by `default-branch-rules` ruleset** with required status checks (`lint`, `typecheck`, `test-unit`, `security-scan`). Without passing checks, PRs cannot merge.
+- **analyze**: detect affected packages via `tools/ci/affected.sh`
+- **validate-cf**: `wrangler types` + `validate-cloudflare-native.sh`
+- **lint**: ESLint with 69-warning ratchet baseline
+- **typecheck**: `tsc --noEmit`
+- **test-unit**: Jest with 90% coverage thresholds
+- **test-e2e**: Playwright (5 device projects)
+- **security-scan**: gitleaks + npm audit
+- **build**: `generate-worker.js` + wrangler build check
+- Supports `workflow_dispatch` with `gradual_rollout` and `canary_percentage` inputs
 
 ## RULESETS
 
-Branch/tag protection is managed via **GitHub Rulesets** (not legacy branch protection).
+- **default-branch-rules**: squash/rebase merge only, required checks: lint, typecheck, test-unit, security-scan
+- **tag-protection**: version tags protected
 
-### default-branch-rules (ID: 12843367)
+## RELEASE FLOW
 
-| Rule                   | Configuration                                              |
-| ---------------------- | ---------------------------------------------------------- |
-| Target                 | Default branch (`master`)                                  |
-| Pull request required  | 1 approving review, squash/rebase merge only               |
-| Required status checks | `lint`, `typecheck`, `test-unit`, `security-scan` (strict) |
-| Update protection      | Enabled (no force push via update)                         |
-| Deletion protection    | Enabled                                                    |
-| Non-fast-forward       | Blocked                                                    |
-| Bypass                 | Repository admin (RepositoryRole ID 5)                     |
+Conventional commits → `mathieudutour/github-tag-action` → semver bump → GitHub Release with changelog.
 
-### tag-protection (ID: 12843390)
+## CONVENTIONS
 
-Protects release tags from deletion/modification.
-
-## COMPOSITE ACTION
-
-### actions/setup/action.yml
-
-Eliminates Node/npm setup duplication across workflows.
-
-| Input                | Default | Purpose                                              |
-| -------------------- | ------- | ---------------------------------------------------- |
-| `install-playwright` | `false` | Install + cache Playwright browsers (~500MB savings) |
-| `node-version`       | `22`    | Node.js version                                      |
-
-**Steps:** Setup Node → npm ci → (optional) detect Playwright version → restore/save browser cache → install browsers.
-
-## REPOSITORY CONFIG
-
-### CODEOWNERS
-
-All files default to `@qws941`. Specific sections mirror directory structure but all map to same owner.
-
-### labeler.yml
-
-9 auto-labels by path:
-
-| Label          | Paths                                     |
-| -------------- | ----------------------------------------- |
-| portfolio      | `typescript/portfolio-worker/**`          |
-| job-automation | `typescript/job-automation/**`            |
-| cli            | `typescript/cli/**`                       |
-| data           | `typescript/data/**`                      |
-| ci             | `.github/**`                              |
-| infrastructure | `infrastructure/**`                       |
-| tests          | `tests/**`                                |
-| docs           | `**/*.md`                                 |
-| build          | `BUILD.bazel`, `MODULE.bazel`, `tools/**` |
-
-### dependabot.yml
-
-Weekly updates (Monday, Asia/Seoul TZ):
-
-- **npm**: Groups minor+patch together. PR limit: 10. Reviewer: `qws941`
-- **github-actions**: PR limit: 5. Reviewer: `qws941`
-
-## SECRETS INVENTORY
-
-7 active secrets configured in GitHub Actions:
-
-| Secret                  | Used By                       | Purpose                       |
-| ----------------------- | ----------------------------- | ----------------------------- |
-| `CLOUDFLARE_API_TOKEN`  | ci.yml, terraform.yml, maint. | Cloudflare API (scoped token) |
-| `CLOUDFLARE_ACCOUNT_ID` | ci.yml, terraform.yml, maint. | Cloudflare account identifier |
-| `N8N_WEBHOOK_URL`       | ci.yml, maintenance.yml       | Failure notification webhook  |
-| `AUTH_SYNC_SECRET`      | maintenance.yml               | Job dashboard auth refresh    |
-| `ADMIN_TOKEN`           | maintenance.yml               | Profile sync endpoint auth    |
-| `ENCRYPTION_KEY`        | maintenance.yml               | Session encryption            |
-| `GEMINI_API_KEY`        | job-automation                | Gemini AI API access          |
-
-**Missing (needed for drift-detection):** `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`
-
-## KNOWN ISSUES & FIXES (2026-02-16)
-
-| Issue                              | Root Cause                                                                                 | Fix                                                                      |
-| ---------------------------------- | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------ |
-| ESLint errors never caught in CI   | Regex `\(\K[0-9]+(?= errors?\))` didn't match ESLint output format `(1 error, 0 warnings)` | Changed to `errors?[,)]` in ci.yml line 159                              |
-| Lighthouse CI failing on `/health` | `/health` returns `application/json`, Lighthouse rejects `NOT_HTML`                        | Removed `/health` from `lighthouserc.json` URL list                      |
-| Webhook notify shell injection     | Commit messages with `(`, `)`, `\|` break curl JSON payload                                | Both notify + rollback-notify now use `jq -n` for safe JSON construction |
-| Release workflow `startup_failure` | Transient GitHub platform issue with `workflow_run` triggers                               | Added `workflow_dispatch` as manual fallback trigger                     |
-| ESLint warning baseline stale      | `ESLINT_WARNING_BASELINE=120` but actual count is 0                                        | Ratcheted down to 0                                                      |
-| Artifact warnings every CI run     | `affected-targets` artifact upload/download was dead code (no Bazel in CI)                 | Removed artifact steps and `run-affected.js`; run npm directly           |
+- Pin action versions to commit SHAs, not mutable tags.
+- Use composite `actions/setup` for consistent environment.
+- CI never deploys — Cloudflare Workers Builds has deploy authority.
+- `continue-on-error: false` for E2E tests (blocking).
+- Minimum required `permissions` per job.
 
 ## ANTI-PATTERNS
 
-| Anti-Pattern                        | Why                        | Do Instead                                               |
-| ----------------------------------- | -------------------------- | -------------------------------------------------------- |
-| Skip composite action setup         | Duplicates Node/npm config | Use `actions/setup`                                      |
-| `always()` in deploy conditions     | Deploys on test failures   | Use `success()` with `force_deploy`                      |
-| Hardcode Node version in workflows  | Version drift              | Reference `NODE_VERSION` env or composite action default |
-| Push terraform changes without PR   | No plan review             | Use terraform.yml PR workflow                            |
-| Add secrets to workflow files       | Security violation         | Use GitHub Secrets + environment variables               |
-| Interpolate git data into curl JSON | Shell injection risk       | Use `jq -n --arg` to construct JSON payloads safely      |
+- Never treat GitHub Actions as production deploy authority.
+- Never use `permissions: write-all`.
+- Never skip security scan for production.
+- Never use `networkidle` in Playwright CI — use `domcontentloaded`.
 
-## FILES
+## SECRETS (7)
 
-| File                             | Purpose                              |
-| -------------------------------- | ------------------------------------ |
-| `workflows/ci.yml`               | Primary CI/CD pipeline (13 jobs)     |
-| `workflows/codeql.yml`           | CodeQL SAST (JS/TS security scan)    |
-| `workflows/maintenance.yml`      | 4 scheduled maintenance jobs         |
-| `workflows/terraform.yml`        | IaC plan/apply/destroy               |
-| `workflows/release.yml`          | Auto semver release                  |
-| `workflows/verify.yml`           | Deployment health check              |
-| `workflows/update-snapshots.yml` | Playwright visual snapshot update    |
-| `workflows/vault-test.yml`       | Vault OIDC integration test          |
-| `workflows/pr-labeler.yml`       | Auto PR labeling                     |
-| `workflows/auto-merge.yml`       | Squash auto-merge for CI-passing PRs |
-| `actions/setup/action.yml`       | Composite: Node + npm + Playwright   |
-| `CODEOWNERS`                     | PR reviewer assignment               |
-| `labeler.yml`                    | Path-based label rules               |
-| `dependabot.yml`                 | Dependency update config             |
+`CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `GITLEAKS_LICENSE`, `SLACK_WEBHOOK_URL`, `ANTHROPIC_API_KEY`, `CF_ACCESS_CLIENT_ID`, `CF_ACCESS_CLIENT_SECRET`.
+
+## KNOWN ISSUES
+
+- ESLint baseline ratcheted to 69 warnings (regex fix pending).
+- Lighthouse `/health` endpoint removed from verification.
+- Release workflow needs dispatch fallback for tag creation.

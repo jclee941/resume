@@ -1,44 +1,46 @@
-# SHARED DOMAIN KNOWLEDGE BASE
+# SHARED LAYER KNOWLEDGE BASE
 
-**Generated:** 2026-01-30
-**Reason:** Core business logic
+**Generated:** 2026-02-22 22:30:00 KST
+**Commit:** 623fd03
+**Branch:** master
 
 ## OVERVIEW
 
-The heart of the Job Automation engine. Implements the Hexagonal Architecture (Ports & Adapters) to decouple business logic from infrastructure (Wanted API, D1, Browser).
+Hexagonal architecture core. Services hold domain logic; clients are external adapters.
 
 ## STRUCTURE
 
+```text
+shared/
+├── services/         # 10 domain service directories
+│   ├── apply/        # application submission
+│   ├── matching/     # job scoring + gates
+│   ├── session/      # cookie/token management
+│   ├── applications/ # CRUD + analytics
+│   ├── analytics/    # usage tracking
+│   ├── slack/        # notifications
+│   ├── profile/      # user profile
+│   ├── auth/         # authentication
+│   ├── resume/       # resume operations
+│   └── stats/        # statistics
+├── clients/          # external adapters
+│   ├── wanted/       # Wanted API (40+ methods)
+│   ├── d1/           # D1 REST client
+│   └── secrets/      # Vault/env secrets
+└── tools/            # shared tool utilities
 ```
-typescript/job-automation/src/shared/
-├── services/           # CORE: Business logic (Pure & Testable)
-│   ├── apply/          # UnifiedApplySystem (Orchestrator)
-│   ├── session/        # SessionManager (Auth rotation)
-│   └── matching/       # Keyword scoring engine
-├── clients/            # ADAPTERS: External interfaces
-│   ├── wanted/         # Wanted API v1/v2 wrappers
-│   └── database/       # D1 / SQLite repositories
-└── tools/              # UTILS: Shared helpers
-```
-
-## WHERE TO LOOK
-
-| Task                | Location                         | Notes                               |
-| ------------------- | -------------------------------- | ----------------------------------- |
-| **Job Application** | `services/apply/UnifiedApply.js` | Main flow: Search -> Score -> Apply |
-| **Auth Handling**   | `services/session/Session.js`    | Token refresh & cookie management   |
-| **API Integration** | `clients/wanted/WantedClient.js` | REST implementation                 |
-| **State Storage**   | `clients/database/`              | Persistence layer                   |
 
 ## CONVENTIONS
 
-- **Dependency Injection**: Services receive clients via constructor (e.g., `new ApplyService(apiClient)`).
-- **Stateless Services**: Logic should not hold state between requests; use D1 for persistence.
-- **Error Handling**: Use typed errors from `shared/errors/` for predictable control flow.
-- **Interface Segregation**: Clients implement specific interfaces (IJobProvider, IAuthProvider).
+- DI via constructor injection — no global state.
+- Services are stateless — inject dependencies.
+- Typed errors for domain failures.
+- Interface segregation — small focused interfaces.
+- Internal imports use relative paths.
 
 ## ANTI-PATTERNS
 
-- **Global State**: Avoid singletons for stateful logic; breaks parallelism.
-- **Leaky Abstractions**: Do not expose API-specific types (e.g., AxiosResponse) in Service layer.
-- **Direct DB Access**: Services must use Repositories, not SQL directly.
+- No global state or singletons.
+- No leaky abstractions — clients don't expose transport details.
+- No direct DB access from services — use client adapters.
+- No circular dependencies between services.

@@ -1,53 +1,44 @@
-# CRAWLERS KNOWLEDGE BASE (`typescript/job-automation/src/crawlers/`)
+# CRAWLERS KNOWLEDGE BASE
 
-> Parent: [../AGENTS.md](../AGENTS.md)
-
-**Generated:** 2026-01-30
-**Reason:** High complexity (Anti-bot evasion)
+**Generated:** 2026-02-22 22:30:00 KST
+**Commit:** 623fd03
+**Branch:** master
 
 ## OVERVIEW
 
-Stealth-hardened browser automation layer using Playwright.
-Implements evasive maneuvers (user-agent rotation, header injection, behavior mimicry) to bypass CloudFront WAF and platform-specific anti-bot protections.
+Stealth Playwright crawling layer. BaseCrawler provides anti-detection; platform subclasses implement scraping logic.
 
 ## STRUCTURE
 
-```
+```text
 crawlers/
-├── index.js            # Factory: Returns specific crawler instance
-├── base-crawler.js     # BASE CLASS: Stealth patches, session management
-├── wanted-crawler.js   # Wanted: Chaos API + DOM fallback
-├── saramin-crawler.js  # Saramin: Job search & application
-├── jobkorea-crawler.js # JobKorea: Mobile view emulation
-└── linkedin-crawler.js # LinkedIn: Easy Apply automation
+├── base-crawler.js     # stealth patches, UA rotation, 1s+ jitter
+├── index.js            # factory (createCrawler)
+├── wanted/             # Wanted Korea crawler
+├── saramin/            # Saramin crawler
+├── jobkorea/           # JobKorea crawler
+└── linkedin/           # LinkedIn crawler (fragile)
 ```
 
-## WHERE TO LOOK
+## STEALTH STACK
 
-| Task                 | Location            | Notes                                |
-| -------------------- | ------------------- | ------------------------------------ |
-| **Stealth Logic**    | `base-crawler.js`   | `_applyStealth()` method is critical |
-| **Wanted Specifics** | `wanted-crawler.js` | Handles "Chaos" API token extraction |
-| **Session State**    | `~/.OpenCode/data/` | Cookies stored per platform          |
-| **Factory Logic**    | `index.js`          | Resolves crawler by platform string  |
+- `playwright-extra` + stealth plugin.
+- UA rotation from curated pool.
+- WebDriver property stripping.
+- Mouse jitter + human-like delays.
+- TLS fingerprint for CloudFront bypass.
+- Lazy browser launch, headless hybrid mode.
 
 ## CONVENTIONS
 
-- **Inheritance**: ALL crawlers MUST extend `BaseCrawler`.
-- **Lazy Launch**: Browser is only launched on first action, not instantiation.
-- **Headless Hybrid**: Run headless by default, but support `HEADLESS=false` for debugging.
-- **Selectors**: Use semantic locators (`getByRole`) over brittle CSS/XPath where possible.
-- **Cookie Persistence**: Always load cookies on init; save on successful login.
+- 1s+ jitter between requests, 3 retries max.
+- Semantic locators (text, role) over CSS selectors.
+- Cookie persistence via SessionManager.
+- Factory pattern: `createCrawler(platform)` in `index.js`.
 
 ## ANTI-PATTERNS
 
-- **Naked Playwright**: NEVER use `chromium.launch()` directly. Use `this.browser` from Base.
-- **Fixed User-Agent**: Always use the randomized UA provided by BaseCrawler.
-- **Aggressive Polling**: Respect `minWait` delays to avoid rate limiting.
-- **Ignoring WAF**: If 403/429 occurs, assume detection and halt; do not retry immediately.
-
-## STRATEGIES
-
-- **CloudFront Bypass**: Matches TLS fingerprinting via specific browser args.
-- **WebDriver Strip**: Removes `navigator.webdriver` property.
-- **Mouse Movement**: Simulates human-like jitter before clicks.
+- Never use naked Playwright/Puppeteer.
+- Never use fixed UA strings.
+- Never aggressive polling — always jitter.
+- Never hardcode selectors — use semantic locators.

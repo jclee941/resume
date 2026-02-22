@@ -1,45 +1,37 @@
-# DOMAIN SERVICES (shared/services/)
+# SERVICES KNOWLEDGE BASE
 
-> Parent: [../AGENTS.md](../AGENTS.md)
+**Generated:** 2026-02-22 22:30:00 KST
+**Commit:** 623fd03
+**Branch:** master
 
 ## OVERVIEW
 
-Core domain logic layer implementing the "Services" part of the Ports-and-Adapters architecture. These services are stateless, testable, and handle business rules independent of the delivery mechanism (MCP/HTTP/CLI).
+10 domain service directories. Stateless, DI-based, domain-focused.
 
-## STRUCTURE
+## SERVICES
 
-- `apply/`: Multi-platform application orchestrator and job filters.
-- `matching/`: Heuristic (`JobMatcher`) and AI (`AIMatcher`) matching engines.
-- `session/`: Persistence and rotation of authentication sessions.
-- `applications/`: Management of the local application tracking store.
-- `analytics/`: Business intelligence and daily/weekly reporting.
-- `slack/`: Notification orchestration and template formatting.
-- `profile/`: Aggregation of user profiles across different platforms.
-- `auth/`: Shared authentication logic and token management.
-- `resume/`: Resume data optimization and platform-specific mapping.
-- `stats/`: System-wide performance and activity metrics.
-
-## WHERE TO LOOK
-
-| Service         | Primary Class        | Role                                              |
-| --------------- | -------------------- | ------------------------------------------------- |
-| **Application** | `ApplyOrchestrator`  | Orchestrates search -> match -> apply flow.       |
-| **Session**     | `SessionManager`     | Singleton handling cookie persistence & rotation. |
-| **Matching**    | `JobMatcher`         | Keyword-based heuristic scoring engine.           |
-| **Tracking**    | `ApplicationService` | CRUD for `applications.json` data store.          |
-| **Notifier**    | `SlackService`       | High-level API for structured Slack alerts.       |
+| Service         | Key Class/Function    | Role                             |
+| --------------- | --------------------- | -------------------------------- |
+| `apply/`        | ApplyService          | application submission           |
+| `matching/`     | JobMatcher, AIMatcher | <60 skip, 60-74 review, ≥75 auto |
+| `session/`      | SessionManager        | 24h TTL, cookie persistence      |
+| `applications/` | ApplicationService    | CRUD + analytics                 |
+| `analytics/`    | AnalyticsService      | usage tracking                   |
+| `slack/`        | SlackService          | notification delivery            |
+| `profile/`      | ProfileService        | user profile operations          |
+| `auth/`         | AuthService           | authentication flows             |
+| `resume/`       | ResumeService         | resume operations                |
+| `stats/`        | StatsService          | statistics aggregation           |
 
 ## CONVENTIONS
 
-- **Dependency Injection**: Services MUST receive dependencies (Clients/Other Services) via constructors.
-- **Statelessness**: No module-level global state. Use instance properties initialized in `src/server/plugins/services.js`.
-- **Contracts**: Use shared schemas in `../contracts/` for all cross-service data exchange.
-- **Domain Barrels**: Each directory must have an `index.js` as the sole entry point for other layers.
-- **Internal Imports**: Use same-layer relative paths (e.g., `import { X } from "../session/index.js"`) for resilience.
+- DI via constructor — inject clients, not instantiate.
+- Stateless — no module-level mutable state.
+- Domain barrel exports per directory.
+- Internal imports use relative paths only.
 
 ## ANTI-PATTERNS
 
-- **Direct Infrastructure**: Never use raw `fetch` or `sqlite`. Use `shared/clients/` adapters.
-- **Sibling Coupling**: Avoid direct circular dependencies between services. Use orchestrators or events.
-- **Business Logic in Tools**: MCP tools in `src/tools/` should only be thin wrappers around these services.
-- **Hardcoded Logic**: Extract configurable business rules (e.g., matching thresholds) into `config.js` or constructor options.
+- Never use raw fetch/sqlite — go through clients.
+- Never create circular dependencies between services.
+- Tools are thin wrappers — logic lives here.

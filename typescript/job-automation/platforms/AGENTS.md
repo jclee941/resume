@@ -1,39 +1,31 @@
-# JOB PLATFORMS KNOWLEDGE BASE
+# PLATFORMS KNOWLEDGE BASE
 
-> Parent: [../AGENTS.md](../AGENTS.md)
-
-**Generated:** 2026-01-30
+**Generated:** 2026-02-22 22:30:00 KST
+**Commit:** 623fd03
+**Branch:** master
 
 ## OVERVIEW
 
-Platform-specific stealth crawlers and automation logic for Wanted, JobKorea, Saramin, LinkedIn, and Remember.
+Platform-specific crawler implementations. Each platform has unique anti-detection requirements.
 
-## STRUCTURE
+## PLATFORMS
 
-```
-platforms/
-├── wanted/          # WAF-heavy, requires manual auth
-├── jobkorea/        # Legacy HTML structure
-├── saramin/         # Complex dynamic loading
-├── linkedin/        # Strict bot detection
-└── remember/        # Mobile-first API
-```
-
-## WHERE TO LOOK
-
-| Platform     | Location                       | Notes                               |
-| ------------ | ------------------------------ | ----------------------------------- |
-| **Wanted**   | `wanted/wanted-crawler.js`     | Uses `WantedAPI` + Cookie Injection |
-| **JobKorea** | `jobkorea/jobkorea-crawler.js` | Cheerio-based parsing               |
-| **Saramin**  | `saramin/saramin-crawler.js`   | Playwright with stealth plugin      |
+| Platform    | Method             | Detection | Notes                 |
+| ----------- | ------------------ | --------- | --------------------- |
+| `wanted/`   | WAF + manual auth  | Medium    | stealth required      |
+| `jobkorea/` | Cheerio            | Low       | HTML parsing          |
+| `saramin/`  | Playwright+stealth | Medium    | bot detection active  |
+| `linkedin/` | strict detection   | High      | fragile, rate-limited |
+| `remember/` | mobile API         | Low       | planned               |
 
 ## CONVENTIONS
 
-- **Stealth First**: Always use `playwright-extra` with stealth plugin.
-- **Cookie Auth**: Prefer session persistence over login forms.
-- **Rate Limiting**: Respect `robots.txt` delays (min 1s between requests).
+- Stealth-first approach for all Playwright platforms.
+- Cookie-based authentication.
+- Rate limiting per platform.
 
 ## ANTI-PATTERNS
 
-- **Headless Mode**: Detected by Wanted/LinkedIn. Use `headless: false` or stealth.
-- **Aggressive Scraping**: Triggers IP bans. Use exponential backoff.
+- Never use headless-only for Wanted/LinkedIn (detected).
+- Never aggressive scraping — triggers permanent bans.
+- Never share cookies across platforms.

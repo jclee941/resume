@@ -1,91 +1,43 @@
 # INFRASTRUCTURE KNOWLEDGE BASE
 
-**Generated:** 2026-02-09
-**Commit:** 29d46c2
+**Generated:** 2026-02-22 22:30:00 KST
+**Commit:** 623fd03
 **Branch:** master
 
 ## OVERVIEW
 
-Infrastructure as Code (IaC) for Cloudflare + Observability stack (Grafana/Loki/Prometheus) + Automation (n8n).
+IaC for Cloudflare resources, monitoring (Grafana/Loki/Prometheus), n8n automation, and database migrations.
 
 ## STRUCTURE
 
-```
+```text
 infrastructure/
-├── cloudflare/              # Terraform IaC for Cloudflare
-│   ├── backend.tf           # State backend configuration
-│   ├── d1.tf                # D1 database data sources (read-only)
-│   ├── dns.tf               # DNS records (A, CNAME, TXT)
-│   ├── kv.tf                # KV namespace data sources (read-only)
-│   ├── outputs.tf           # Output values
-│   ├── variables.tf         # Input variables (account_id, zone_id, api_token)
-│   ├── versions.tf          # Provider requirements (cloudflare ~> 4.0)
-│   └── workers.tf           # Worker scripts and routes
-├── monitoring/              # Grafana JSON dashboards
-├── automation/              # systemd timers, crontab
-├── n8n/                     # n8n JSON workflow exports
-├── configs/                 # Alert rules, datasources
-├── database/                # D1 migration SQL
-└── nginx/                   # Proxy: SSL termination, CSP
+├── cloudflare/           # Terraform for CF resources (see cloudflare/AGENTS.md)
+├── monitoring/           # Grafana dashboard JSON
+├── automation/           # systemd service files
+├── n8n/                  # workflow export JSON
+├── configs/              # alert configurations
+├── database/             # D1 migration SQL files
+└── nginx/                # proxy + CSP config
 ```
 
-## WHERE TO LOOK
+## RESPONSIBILITY DIVISION
 
-| Task                | Location               | Notes                          |
-| ------------------- | ---------------------- | ------------------------------ |
-| Terraform resources | `cloudflare/*.tf`      | DNS, Worker routes, KV/D1 refs |
-| Dashboards          | `monitoring/`          | Export JSON from Grafana UI    |
-| Workflows           | `n8n/`, `automation/`  | n8n JSON, systemd templates    |
-| Alert Rules         | `configs/grafana/`     | Edit alert-rules.yaml          |
-| DB Schema           | `database/migrations/` | XXXX_name.sql patterns         |
-| Proxy Config        | `nginx/nginx.conf`     | Security headers (HSTS, CSP)   |
+| Scope                   | Authority  |
+| ----------------------- | ---------- |
+| DNS, routes, page rules | Terraform  |
+| Worker code, KV data    | Wrangler   |
+| D1 schema               | Migrations |
+| Monitoring dashboards   | Grafana UI |
 
 ## CONVENTIONS
 
-- **GitOps**: All changes via PR; UI edits (Grafana/n8n) must be exported to Git.
-- **No SSH Drift**: Direct NAS edits forbidden. Use Git.
-- **Secret Masking**: Use `.env` or Vault; never commit credentials.
-- **D1 Versioning**: Use migration scripts for DB updates.
-
-### Terraform-Specific
-
-- **Import First**: Existing resources must be imported before managing.
-- **Read-Only Resources**: KV/D1 managed by Wrangler; Terraform only reads.
-- **State Lock**: Use Terraform Cloud or local state with locking.
+- GitOps: all config in git, applied via CI.
+- Import-first for existing resources.
+- KV/D1 are read-only in Terraform — manage via Wrangler.
 
 ## ANTI-PATTERNS
 
-| Anti-Pattern                  | Why                        | Do Instead                          |
-| ----------------------------- | -------------------------- | ----------------------------------- |
-| Create KV/D1 in Terraform     | Wrangler creates these     | Use `data` sources only             |
-| Skip terraform import         | Duplicate resource errors  | Import existing before apply        |
-| Manual DNS edits in dashboard | Drift from Terraform state | Edit `dns.tf` and apply             |
-| UI-Only Grafana fixes         | Forgetting to export JSON  | Export and commit after UI changes  |
-| Direct SQL in D1 console      | No version control         | Use migration scripts               |
-| Hardcode secrets              | Security violation         | Use `terraform.tfvars` (gitignored) |
-
-## COMMANDS
-
-```bash
-# Terraform
-cd infrastructure/cloudflare
-terraform init
-terraform plan
-terraform apply
-terraform import cloudflare_workers_script.portfolio $ACCOUNT_ID/resume-portfolio
-
-# Health/Metrics
-curl -s https://resume.jclee.me/health
-curl -s https://resume.jclee.me/metrics
-```
-
-## DIVISION OF RESPONSIBILITY
-
-| Layer         | Managed By | Changes Via              |
-| ------------- | ---------- | ------------------------ |
-| DNS records   | Terraform  | `dns.tf` + GitHub PR     |
-| Worker routes | Terraform  | `workers.tf` + GitHub PR |
-| Job routes    | Terraform  | `resume.jclee.me/job/*`  |
-| Worker code   | Wrangler   | `npm run deploy`         |
-| KV namespaces | Wrangler   | Create only              |
-| D1 databases  | Wrangler   | Create only              |
+- Never apply Terraform locally against production.
+- Never manage worker code via Terraform.
+- Never hardcode resource IDs — use variables.

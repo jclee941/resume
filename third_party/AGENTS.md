@@ -1,35 +1,22 @@
-# PROJECT KNOWLEDGE BASE
+# THIRD PARTY KNOWLEDGE BASE
 
-**Generated:** 2026-02-09
-**Commit:** 29d46c2
+**Generated:** 2026-02-22 22:30:00 KST
+**Commit:** 623fd03
 **Branch:** master
-**Build System:** Bazel + npm (Google3-style)
 
 ## OVERVIEW
 
-External dependencies managed via npm and coordinated through Bazel.
-Follows the "One Version Rule" where each library has a single version across the entire monorepo.
-
-## STRUCTURE
-
-```
-third_party/
-├── BUILD.bazel              # Centralized dependency declarations
-├── OWNERS                   # Dependency management owners
-├── README.md                # Usage instructions
-└── licenses/                # License files for auditing
-```
+Bazel dependency coordination layer. One Version Rule enforced.
 
 ## CONVENTIONS
 
-- **One Version Rule**: Only one version of any library is allowed.
-- **npm Managed**: Dependencies are defined in the root `package.json` but exposed to Bazel via `third_party/BUILD.bazel`.
-- **Explicit Visibility**: Dependencies must be explicitly exported to be used by other packages.
-- **Security**: All production dependencies must have OSS-compatible licenses. No GPL dependencies in `typescript/` packages.
+- One Version Rule: single version per dependency across workspace.
+- npm-managed dependencies (not Bazel-managed).
+- Explicit visibility declarations.
+- OSS licenses required — no GPL in `typescript/`.
 
 ## ANTI-PATTERNS
 
-- **Direct npm imports**: Avoid importing from `node_modules` directly if a Bazel target exists.
-- **Multiple Versions**: Never introduce a second version of an existing library.
-- **Missing Licenses**: Critical dependencies require license documentation in `third_party/licenses/`.
-- **Skip Review**: Critical dependencies require security review by OWNERS.
+- Never introduce conflicting dependency versions.
+- Never use GPL-licensed packages in `typescript/`.
+- Never bypass explicit visibility rules.

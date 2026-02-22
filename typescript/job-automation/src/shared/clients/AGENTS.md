@@ -1,36 +1,39 @@
-# API CLIENTS
+# CLIENTS KNOWLEDGE BASE
 
-**Parent**: [`../AGENTS.md`](../AGENTS.md)
+**Generated:** 2026-02-22 22:30:00 KST
+**Commit:** 623fd03
+**Branch:** master
 
 ## OVERVIEW
 
-External API client modules for job-automation. Each subdirectory is an isolated client with its own types and tests.
+3 external adapter clients following hexagonal architecture.
 
 ## CLIENTS
 
-| Client     | Purpose                       | Pattern              |
-| ---------- | ----------------------------- | -------------------- |
-| `d1/`      | Cloudflare D1 database client | SQL via REST API     |
-| `secrets/` | Secret management (Vault/env) | Sync secret fetching |
-| `wanted/`  | Wanted.co.kr job platform API | HTTP client + types  |
+| Client     | Location | Role                     |
+| ---------- | -------- | ------------------------ |
+| `wanted/`  | 6 files  | Wanted API (40+ methods) |
+| `d1/`      | index.js | D1 REST adapter          |
+| `secrets/` | index.js | Vault/env secrets        |
 
-## STRUCTURE (per client)
+## PER-CLIENT STRUCTURE
 
-```
-{client}/
-├── index.js         # Public exports
-├── http-client.js   # HTTP layer (if applicable)
-├── types.js         # TypeScript-like JSDoc types
-└── __tests__/       # Jest unit tests
+```text
+client/
+├── index.js          # factory function
+├── http-client.js    # transport layer
+├── types.js          # type definitions
+└── __tests__/        # unit tests
 ```
 
 ## CONVENTIONS
 
-- Clients export factory functions, not singletons
-- All HTTP clients accept base URL from config (no hardcoded URLs)
-- Types use JSDoc for TypeScript compatibility
+- Factory functions, not singletons.
+- Each client self-contained with own types.
+- No cross-client imports (d1 ↛ wanted ↛ secrets).
 
 ## ANTI-PATTERNS
 
-- **NEVER** import across client boundaries (each client is isolated)
-- **NEVER** store credentials in client code - use `secrets/` client
+- Never import one client from another.
+- Never expose transport details to services.
+- Never use singletons — use factory pattern.

@@ -1,43 +1,34 @@
-# SCRIPTS KNOWLEDGE BASE
+# AUTOMATION SCRIPTS KNOWLEDGE BASE
 
-**Generated:** 2026-01-30
-**Reason:** Shared automation
+**Generated:** 2026-02-22 22:30:00 KST
+**Commit:** 623fd03
+**Branch:** master
 
 ## OVERVIEW
 
-Centralized automation suite for monorepo operations, build pipelines, and infrastructure management.
-Ensures consistency across PDF generation, Cloudflare deployments, and observability provisioning.
+Automation suite for build, deployment, monitoring, and verification.
 
 ## STRUCTURE
 
-- `build/`: Content generation (PDF, PPTX), icon processing, and image optimization.
-- `deployment/`: Shipping artifacts to Cloudflare and provisioning Grafana configurations.
-- `monitoring/`: Production service monitoring and deployment tracking.
-- `setup/`: Bootstrapping infrastructure (GitLab CI/CD, n8n workflows).
-- `utils/`: Data synchronization, versioning, and job search automation logic.
-- `verification/`: Post-deployment health checks and compliance verification.
-
-## WHERE TO LOOK
-
-| Task                    | Location                                       | Notes                              |
-| ----------------------- | ---------------------------------------------- | ---------------------------------- |
-| **PDF Generation**      | `scripts/build/pdf-generator.sh`               | Main resume/doc generator          |
-| **Full Deployment**     | **`scripts/deployment/quick-deploy.sh`**       | Atomic test, build, deploy, verify |
-| **Grafana Sync**        | `scripts/deployment/deploy-grafana-configs.sh` | Updates dashboards/alerts via API  |
-| **Resume Sync**         | `scripts/utils/sync-resume-data.js`            | Syncs master JSON to derived apps  |
-| **CI/CD Setup**         | `scripts/setup/auto-setup-gitlab-cicd.sh`      | Configures LXC 101 runners         |
-| **Health Verification** | `scripts/verification/verify-deployment.sh`    | Checks headers, metrics, and OG    |
+```text
+scripts/
+├── build/              # asset generation (PDF, PPTX, icons, screenshots)
+├── deployment/         # quick-deploy.sh, grafana helpers
+├── monitoring/         # observability scripts
+├── setup/              # gitlab-ci setup
+├── utils/              # sync-resume-data.js, shared helpers
+└── verification/       # verify-deployment.sh (7-point check)
+```
 
 ## CONVENTIONS
 
-- **Root Context**: All scripts MUST be executed from the project root.
-- **Robust Bash**: Use `set -euo pipefail` and validate required environment variables.
-- **Idempotency**: Check for existing resources before creation to allow safe re-runs.
-- **Logging**: Use descriptive stdout for progress and detailed stderr for failures.
+- Run from project root context.
+- `set -euo pipefail` in all shell scripts.
+- Idempotent — safe to re-run.
 
 ## ANTI-PATTERNS
 
-- **Hardcoded Secrets**: Never embed tokens; strictly use `.env` or system env vars.
-- **Bypassing Verification**: Never skip `verify-deployment.sh` after shipping changes.
-- **Manual Artifact Edits**: `worker.js` and resume PDFs are artifacts; edit sources instead.
-- **Absolute Paths**: Avoid machine-specific paths; use project-relative references.
+- Never hardcode secrets in scripts.
+- Never bypass verification steps.
+- Never edit generated artifacts manually.
+- Never use absolute paths.
