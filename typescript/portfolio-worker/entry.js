@@ -404,18 +404,4 @@ export default {
     }
   },
 
-  async scheduled(event, env, ctx) {
-    try {
-      return jobHandler.scheduled(event, env, ctx);
-    } catch (error) {
-      console.error('[entry] Scheduled handler error:', error?.message || error);
-      ctx.waitUntil(
-        logEntryError(env, `[entry] Scheduled error: ${error?.message || error}`, {
-          errorMessage: error?.message,
-          errorStack: error?.stack,
-          cron: event?.cron,
-        })
-      );
-    }
-  },
 };

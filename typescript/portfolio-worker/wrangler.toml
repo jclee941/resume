@@ -102,6 +102,3 @@ name = "cleanup-workflow"
 binding = "CLEANUP_WORKFLOW"
 class_name = "CleanupWorkflow"
 
-# Job Dashboard Cron Triggers
-[env.production.triggers]
-crons = ["0 0 * * 1-5", "0 9 * * *", "*/5 * * * *", "0 3 * * *", "0 4 * * SUN"]
