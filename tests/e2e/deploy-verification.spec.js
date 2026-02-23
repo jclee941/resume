@@ -1,6 +1,15 @@
 import { test, expect } from '@playwright/test';
 
 const TITLE_PATTERN = /이재철|Jaecheol|Resume|Portfolio/i;
+const PROBE_HEADERS = {
+  'user-agent':
+    'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36',
+  'accept-language': 'en-US,en;q=0.9,ko;q=0.8',
+};
+
+function withProbeHeaders(extraHeaders = {}) {
+  return { ...PROBE_HEADERS, ...extraHeaders };
+}
 
 function getBaseUrl(testInfo) {
   const configured = testInfo.project?.use?.baseURL || process.env.PLAYWRIGHT_BASE_URL;
@@ -16,7 +25,10 @@ function toAbsoluteUrl(baseURL, maybeRelativeUrl) {
 }
 
 async function getHomeResponse(request) {
-  return request.get('/', { failOnStatusCode: false });
+  return request.get('/', {
+    failOnStatusCode: false,
+    headers: withProbeHeaders(),
+  });
 }
 
 async function getHomeHeaders(request) {
@@ -26,7 +38,10 @@ async function getHomeHeaders(request) {
 
 test.describe('@deploy-verify Service Health', () => {
   test('portfolio health endpoint returns healthy JSON', async ({ request }) => {
-    const response = await request.get('/health', { failOnStatusCode: false });
+    const response = await request.get('/health', {
+      failOnStatusCode: false,
+      headers: withProbeHeaders(),
+    });
     expect(response.status()).toBe(200);
 
     const payload = await response.json();
@@ -37,7 +52,10 @@ test.describe('@deploy-verify Service Health', () => {
   });
 
   test('job dashboard health endpoint is accessible when available', async ({ request }) => {
-    const response = await request.get('/job/api/health', { failOnStatusCode: false });
+    const response = await request.get('/job/api/health', {
+      failOnStatusCode: false,
+      headers: withProbeHeaders(),
+    });
     if ([404, 405, 501, 502, 503].includes(response.status())) {
       test.skip(true, 'Job dashboard health endpoint is optional in this environment');
     }
@@ -54,7 +72,10 @@ test.describe('@deploy-verify Service Health', () => {
 
   test('homepage response time stays under 3000ms', async ({ request }) => {
     const start = Date.now();
-    const response = await request.get('/', { failOnStatusCode: false });
+    const response = await request.get('/', {
+      failOnStatusCode: false,
+      headers: withProbeHeaders(),
+    });
     const elapsedMs = Date.now() - start;
 
     expect(response.status()).toBe(200);
@@ -133,13 +154,19 @@ test.describe('@deploy-verify Content Integrity', () => {
     expect(ogImageContent).toBeTruthy();
 
     const ogImageUrl = toAbsoluteUrl(baseURL, ogImageContent || '/og-image.webp');
-    const ogImageResponse = await request.get(ogImageUrl, { failOnStatusCode: false });
+    const ogImageResponse = await request.get(ogImageUrl, {
+      failOnStatusCode: false,
+      headers: withProbeHeaders(),
+    });
     expect(ogImageResponse.status()).toBe(200);
     expect(ogImageResponse.headers()['content-type'] || '').toMatch(/^image\//);
   });
 
   test('locale variant /en responds with English-oriented content', async ({ request }) => {
-    const response = await request.get('/en', { failOnStatusCode: false });
+    const response = await request.get('/en', {
+      failOnStatusCode: false,
+      headers: withProbeHeaders(),
+    });
     expect(response.status()).toBe(200);
 
     const body = await response.text();
@@ -149,7 +176,10 @@ test.describe('@deploy-verify Content Integrity', () => {
 
 test.describe('@deploy-verify Performance', () => {
   test('metrics endpoint returns Prometheus-compatible text', async ({ request }) => {
-    const response = await request.get('/metrics', { failOnStatusCode: false });
+    const response = await request.get('/metrics', {
+      failOnStatusCode: false,
+      headers: withProbeHeaders(),
+    });
     expect(response.status()).toBe(200);
 
     const body = await response.text();
@@ -161,7 +191,7 @@ test.describe('@deploy-verify Performance', () => {
   test('response indicates transfer/compression behavior in headers', async ({ request }) => {
     const response = await request.get('/', {
       failOnStatusCode: false,
-      headers: { 'accept-encoding': 'br, gzip' },
+      headers: withProbeHeaders({ 'accept-encoding': 'br, gzip' }),
     });
 
     expect(response.status()).toBe(200);
@@ -200,6 +230,7 @@ test.describe('@deploy-verify Performance', () => {
 
     const response = await request.get(candidateAsset || '/og-image.webp', {
       failOnStatusCode: false,
+      headers: withProbeHeaders(),
     });
     expect(response.status()).toBe(200);
 
@@ -210,14 +241,20 @@ test.describe('@deploy-verify Performance', () => {
 
 test.describe('@deploy-verify API Endpoints', () => {
   test('robots.txt returns 200 and includes User-agent', async ({ request }) => {
-    const response = await request.get('/robots.txt', { failOnStatusCode: false });
+    const response = await request.get('/robots.txt', {
+      failOnStatusCode: false,
+      headers: withProbeHeaders(),
+    });
     expect(response.status()).toBe(200);
     const body = await response.text();
     expect(body).toMatch(/user-agent/i);
   });
 
   test('sitemap.xml returns 200 with valid sitemap root', async ({ request }) => {
-    const response = await request.get('/sitemap.xml', { failOnStatusCode: false });
+    const response = await request.get('/sitemap.xml', {
+      failOnStatusCode: false,
+      headers: withProbeHeaders(),
+    });
     expect(response.status()).toBe(200);
 
     const body = await response.text();
@@ -225,7 +262,10 @@ test.describe('@deploy-verify API Endpoints', () => {
   });
 
   test('metrics endpoint is reachable as API surface', async ({ request }) => {
-    const response = await request.get('/metrics', { failOnStatusCode: false });
+    const response = await request.get('/metrics', {
+      failOnStatusCode: false,
+      headers: withProbeHeaders(),
+    });
     expect(response.status()).toBe(200);
 
     const contentType = response.headers()['content-type'] || '';
@@ -237,6 +277,7 @@ test.describe('@deploy-verify API Endpoints', () => {
   test('POST to unknown endpoint does not return 500', async ({ request }) => {
     const response = await request.post('/api/does-not-exist', {
       failOnStatusCode: false,
+      headers: withProbeHeaders(),
       data: { probe: true },
     });
 
