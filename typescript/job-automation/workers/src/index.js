@@ -103,7 +103,6 @@ export default {
       }
     }
 
-    // Skip CSRF for webhook routes, server-to-server sync, and auto-apply (cron/API)
     const skipCsrf =
       url.pathname.startsWith('/api/webhooks/') ||
       url.pathname.startsWith('/api/auto-apply/') ||

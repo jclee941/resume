@@ -19,12 +19,14 @@ The typescript/job-automation system has been upgraded with advanced AI capabili
 **693 lines** | **Multi-platform support**
 
 #### Supported Platforms
+
 - ✅ **Wanted** - Korean job platform
 - ✅ **JobKorea** - Major Korean job site
 - ✅ **Saramin** - Popular Korean recruitment
 - ✅ **LinkedIn** - Global professional network
 
 #### Key Features
+
 - **Unified Search**: Search across all platforms simultaneously
 - **Smart Matching**: AI-powered job-resume matching
 - **Auto-Apply**: Automated application submission
@@ -33,6 +35,7 @@ The typescript/job-automation system has been upgraded with advanced AI capabili
 - **Error Recovery**: Automatic retry with exponential backoff
 
 #### Usage
+
 ```javascript
 import { UnifiedApplySystem } from './src/unified-apply-system.js';
 
@@ -41,7 +44,7 @@ const system = new UnifiedApplySystem({
   keywords: ['DevSecOps', 'Security Engineer'],
   maxDailyApplications: 10,
   minMatchScore: 70,
-  dryRun: false
+  dryRun: false,
 });
 
 // Search jobs across all platforms
@@ -58,6 +61,7 @@ const applied = await system.autoApply({ maxApplications: 5 });
 **383 lines** | **OpenCode AI integration**
 
 #### AI Capabilities
+
 - **Semantic Matching**: Deep understanding of job requirements
 - **Skill Extraction**: Automatic skill identification
 - **Success Prediction**: Probability of application success
@@ -65,27 +69,22 @@ const applied = await system.autoApply({ maxApplications: 5 });
 - **Korean NLP**: Advanced Korean text processing
 
 #### Features
+
 - **OpenCode 3.5 Sonnet**: Latest AI model
 - **Fallback Mode**: Works without API key
 - **Caching**: Efficient API usage
 - **Batch Processing**: Multiple jobs at once
 
 #### Usage
+
 ```javascript
 import { matchJobsWithAI, getAICareerAdvice } from './src/lib/ai-matcher.js';
 
 // AI-powered matching
-const matches = await matchJobsWithAI(
-  'path/to/resume.md',
-  jobs,
-  { useAI: true, maxResults: 10 }
-);
+const matches = await matchJobsWithAI('path/to/resume.md', jobs, { useAI: true, maxResults: 10 });
 
 // Get career advice
-const advice = await getAICareerAdvice(
-  'path/to/resume.md',
-  { focusArea: 'DevSecOps' }
-);
+const advice = await getAICareerAdvice('path/to/resume.md', { focusArea: 'DevSecOps' });
 ```
 
 ---
@@ -93,9 +92,11 @@ const advice = await getAICareerAdvice(
 ### 3. Automation Scripts
 
 #### `auto-daily-run.sh` (Daily Automation)
+
 **Purpose**: Automated daily job search and application
 
 **Features**:
+
 - Dry-run mode (default)
 - Real application mode (`--apply`)
 - Configurable max applications
@@ -103,6 +104,7 @@ const advice = await getAICareerAdvice(
 - Daily reports
 
 **Usage**:
+
 ```bash
 # Dry-run (search only)
 ./auto-daily-run.sh
@@ -114,19 +116,19 @@ const advice = await getAICareerAdvice(
 ./auto-daily-run.sh --apply --max=10
 ```
 
-**Cron Schedule**:
-```cron
-# Daily at 9 AM (dry-run)
-0 9 * * 1-5 cd /path/to/typescript/job-automation && ./auto-daily-run.sh
+**Event Trigger Examples**:
 
-# Daily at 2 PM (real applications)
-0 14 * * 1-5 cd /path/to/typescript/job-automation && ./auto-daily-run.sh --apply --max=5
+```bash
+curl -X POST https://resume.jclee.me/job/api/workflows/job-crawling/run
+node src/cli.js pipeline run <resume_id>
 ```
 
 #### `auto-monitor.sh` (System Monitoring)
+
 **Purpose**: Monitor system health and activity
 
 **Features**:
+
 - System status check
 - Activity analysis
 - Warning detection
@@ -134,20 +136,23 @@ const advice = await getAICareerAdvice(
 - Resource monitoring
 
 **Usage**:
+
 ```bash
 ./auto-monitor.sh
 ```
 
-**Cron Schedule**:
-```cron
-# Daily at 6 PM
-0 18 * * 1-5 cd /path/to/typescript/job-automation && ./auto-monitor.sh
+**Event Trigger Example**:
+
+```bash
+curl -X POST https://resume.jclee.me/job/api/workflows/health-check/run
 ```
 
 #### `auto-maintenance.sh` (System Maintenance)
+
 **Purpose**: Automated system cleanup and backup
 
 **Features**:
+
 - Log file cleanup (7+ days)
 - Cache cleanup
 - Temp file removal
@@ -156,14 +161,15 @@ const advice = await getAICareerAdvice(
 - Disk usage monitoring
 
 **Usage**:
+
 ```bash
 ./auto-maintenance.sh
 ```
 
-**Cron Schedule**:
-```cron
-# Weekly on Monday at 8 AM
-0 8 * * 1 cd /path/to/typescript/job-automation && ./auto-maintenance.sh
+**Event Trigger Example**:
+
+```bash
+curl -X POST https://resume.jclee.me/job/api/workflows/cleanup/run
 ```
 
 ---
@@ -173,11 +179,13 @@ const advice = await getAICareerAdvice(
 ### New Commands
 
 #### `ai_search` - AI-Powered Search
+
 ```bash
 node src/auto-apply/cli/index.js ai_search "DevSecOps" 30
 ```
 
 #### `unified` - Unified System Execution
+
 ```bash
 # Dry-run
 node src/auto-apply/cli/index.js unified --max=10
@@ -187,11 +195,13 @@ node src/auto-apply/cli/index.js unified --apply --max=5
 ```
 
 #### `ai_unified` - AI-Powered Unified System
+
 ```bash
 node src/auto-apply/cli/index.js ai_unified --apply --max=3
 ```
 
 #### `advice` - AI Career Advice
+
 ```bash
 node src/auto-apply/cli/index.js advice
 ```
@@ -240,17 +250,20 @@ export LINKEDIN_PASSWORD="your_password"
 ## 📈 Performance Metrics
 
 ### AI Matching Accuracy
+
 - **With AI**: 85-95% accuracy
 - **Without AI**: 60-70% accuracy
 - **Speed**: ~2-3 seconds per job (with AI)
 
 ### Platform Coverage
+
 - **Wanted**: 100% coverage
 - **LinkedIn**: 90% coverage
 - **JobKorea**: 85% coverage
 - **Saramin**: 80% coverage
 
 ### Automation Efficiency
+
 - **Search Speed**: 50+ jobs in <30 seconds
 - **Application Speed**: 5-10 applications in <5 minutes
 - **Success Rate**: 70-80% (with proper matching)
@@ -260,16 +273,19 @@ export LINKEDIN_PASSWORD="your_password"
 ## 🔒 Safety Features
 
 ### Rate Limiting
+
 - **Per Platform**: Max 10 requests/minute
 - **Daily Limit**: Configurable (default: 10 applications)
 - **Exponential Backoff**: Automatic retry with delays
 
 ### Dry-Run Mode
+
 - **Default**: Always dry-run unless `--apply` flag
 - **Logging**: All actions logged
 - **Verification**: Manual review before real applications
 
 ### Error Handling
+
 - **Automatic Retry**: Up to 3 retries
 - **Graceful Degradation**: Falls back to basic matching
 - **Notifications**: Alerts on critical errors
@@ -279,6 +295,7 @@ export LINKEDIN_PASSWORD="your_password"
 ## 🎯 Best Practices
 
 ### 1. Start with Dry-Run
+
 ```bash
 # Always test first
 ./auto-daily-run.sh
@@ -291,6 +308,7 @@ node src/auto-apply/cli/index.js list --limit=10
 ```
 
 ### 2. Monitor Regularly
+
 ```bash
 # Daily monitoring
 ./auto-monitor.sh
@@ -300,6 +318,7 @@ node src/auto-apply/cli/index.js stats
 ```
 
 ### 3. Maintain System
+
 ```bash
 # Weekly maintenance
 ./auto-maintenance.sh
@@ -309,6 +328,7 @@ ls -la backups/
 ```
 
 ### 4. Use AI Wisely
+
 ```bash
 # Test AI matching first
 node src/auto-apply/cli/index.js ai_search "DevSecOps" 10
@@ -325,12 +345,14 @@ node src/auto-apply/cli/index.js ai_unified --max=5
 ## 📚 Documentation
 
 ### Related Docs
+
 - **Main README**: `typescript/job-automation/README.md`
 - **API Guide**: `docs/AI_ADVANCED_MATCHING_GUIDE.md`
 - **Deployment**: `docs/PRODUCTION_DEPLOYMENT_GUIDE.md`
 - **Roadmap**: `docs/NEXT_STEPS_ROADMAP.md`
 
 ### Code Structure
+
 ```
 typescript/job-automation/
 ├── src/
@@ -346,7 +368,6 @@ typescript/job-automation/
 ├── auto-daily-run.sh              # Daily automation
 ├── auto-monitor.sh                # System monitoring
 ├── auto-maintenance.sh            # System maintenance
-└── auto-cron-jobs.txt             # Cron configuration
 ```
 
 ---
@@ -354,6 +375,7 @@ typescript/job-automation/
 ## 🚀 Quick Start
 
 ### 1. Setup
+
 ```bash
 cd typescript/job-automation
 
@@ -366,6 +388,7 @@ cp .env.example .env
 ```
 
 ### 2. Test AI Features
+
 ```bash
 # Test AI matching
 node src/auto-apply/cli/index.js ai_search "DevSecOps" 10
@@ -375,6 +398,7 @@ node src/auto-apply/cli/index.js advice
 ```
 
 ### 3. Run Automation
+
 ```bash
 # Dry-run
 ./auto-daily-run.sh
@@ -383,13 +407,14 @@ node src/auto-apply/cli/index.js advice
 ./auto-daily-run.sh --apply --max=3
 ```
 
-### 4. Set Up Cron
-```bash
-# Install cron jobs
-crontab auto-cron-jobs.txt
+### 4. Run with Event Triggers
 
-# Verify
-crontab -l
+```bash
+# On-demand pipeline run
+node src/cli.js pipeline run <resume_id>
+
+# Or trigger workflow via dashboard API
+curl -X POST https://resume.jclee.me/job/api/workflows/resume-sync/run
 ```
 
 ---
@@ -397,16 +422,19 @@ crontab -l
 ## ⚠️ Important Notes
 
 ### API Keys
+
 - **OpenCode AI**: Required for AI features
 - **Platform Credentials**: Required for auto-apply
 - **Slack Webhook**: Optional for notifications
 
 ### Rate Limits
+
 - **Respect platform limits**: Don't abuse APIs
 - **Start small**: Max 3-5 applications per day initially
 - **Monitor closely**: Check for errors and blocks
 
 ### Legal Compliance
+
 - **Terms of Service**: Comply with platform ToS
 - **Privacy**: Handle credentials securely
 - **Transparency**: Be honest in applications
@@ -416,6 +444,7 @@ crontab -l
 ## 🎉 Success Stories
 
 ### Metrics (Example)
+
 - **Jobs Searched**: 500+
 - **Applications Sent**: 50+
 - **Interviews**: 15+
@@ -423,6 +452,7 @@ crontab -l
 - **Success Rate**: 6%
 
 ### Time Saved
+
 - **Manual Search**: 2-3 hours/day
 - **Automated Search**: 5 minutes/day
 - **Time Saved**: 95%+
@@ -432,11 +462,13 @@ crontab -l
 ## 📞 Support
 
 ### Issues
+
 - Check logs: `typescript/job-automation/logs/`
 - Review stats: `node src/auto-apply/cli/index.js stats`
 - Monitor system: `./auto-monitor.sh`
 
 ### Getting Help
+
 1. Check documentation
 2. Review error logs
 3. Test in dry-run mode

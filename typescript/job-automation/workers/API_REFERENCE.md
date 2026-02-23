@@ -31,6 +31,7 @@
 ## Overview
 
 The Job Automation Dashboard Worker exposes **30+ REST API endpoints** for:
+
 - **Authentication**: Session management, token validation, cookie synchronization
 - **Application Tracking**: CRUD operations for job applications
 - **Analytics**: Statistics, reporting, weekly/daily breakdowns
@@ -38,10 +39,11 @@ The Job Automation Dashboard Worker exposes **30+ REST API endpoints** for:
 - **Configuration**: Settings management, feature flags, deployment validation
 
 **Tech Stack**:
+
 - **Runtime**: Cloudflare Workers (global edge deployment)
 - **Database**: D1 (SQLite serverless)
 - **Cache**: KV namespace (session, rate limit, CSRF tokens)
-- **Workflows**: Cloudflare Workflows (8 cron-triggered + on-demand)
+- **Workflows**: Cloudflare Workflows (event-triggered + on-demand)
 
 ---
 
@@ -57,6 +59,7 @@ curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIs..." \
 ```
 
 **Token Format**:
+
 - **Type**: JWT (JSON Web Token)
 - **Algorithm**: HS256
 - **Expiry**: 24 hours
@@ -71,6 +74,7 @@ Cookie: session=abc123; sessionId=def456; auth=ghi789
 ```
 
 **Session Lifecycle**:
+
 1. Client calls `/api/auth/login` with platform credentials
 2. Worker generates JWT token + session cookie
 3. Token stored in KV with 24h TTL
@@ -120,6 +124,7 @@ X-Webhook-Signature: <hmac>   # For webhook verification
 ### Response Headers
 
 All responses include:
+
 ```
 X-RateLimit-Limit: 60
 X-RateLimit-Remaining: 45
@@ -153,18 +158,18 @@ HTTP/1.1 400 Bad Request
 
 ### HTTP Status Codes
 
-| Code | Meaning | Example |
-|------|---------|---------|
-| **200** | OK | Successful GET request |
-| **201** | Created | Application added successfully |
-| **204** | No Content | Successful DELETE (no response body) |
-| **400** | Bad Request | Invalid input (missing fields, type mismatch) |
-| **401** | Unauthorized | Missing or invalid authentication token |
-| **403** | Forbidden | Insufficient permissions for operation |
-| **404** | Not Found | Resource does not exist |
-| **429** | Too Many Requests | Rate limit exceeded |
-| **500** | Internal Server Error | Database error, service unavailable |
-| **503** | Service Unavailable | Maintenance or worker restart |
+| Code    | Meaning               | Example                                       |
+| ------- | --------------------- | --------------------------------------------- |
+| **200** | OK                    | Successful GET request                        |
+| **201** | Created               | Application added successfully                |
+| **204** | No Content            | Successful DELETE (no response body)          |
+| **400** | Bad Request           | Invalid input (missing fields, type mismatch) |
+| **401** | Unauthorized          | Missing or invalid authentication token       |
+| **403** | Forbidden             | Insufficient permissions for operation        |
+| **404** | Not Found             | Resource does not exist                       |
+| **429** | Too Many Requests     | Rate limit exceeded                           |
+| **500** | Internal Server Error | Database error, service unavailable           |
+| **503** | Service Unavailable   | Maintenance or worker restart                 |
 
 ---
 
@@ -173,6 +178,7 @@ HTTP/1.1 400 Bad Request
 ### Token Bucket Algorithm
 
 **Configuration**:
+
 - **Max Tokens**: 60 per minute per IP address
 - **Refill Rate**: 1 token per second
 - **Window**: 60 seconds (rolling)
@@ -211,8 +217,9 @@ HTTP/1.1 429 Too Many Requests
 ```
 
 **Recommendation**: Implement exponential backoff when receiving 429:
+
 ```javascript
-const delay = 1000 * Math.pow(2, retryCount);  // 1s, 2s, 4s, 8s...
+const delay = 1000 * Math.pow(2, retryCount); // 1s, 2s, 4s, 8s...
 ```
 
 ---
@@ -226,11 +233,13 @@ const delay = 1000 * Math.pow(2, retryCount);  // 1s, 2s, 4s, 8s...
 Health check endpoint (no auth required).
 
 **Request**:
+
 ```bash
 curl https://resume.jclee.me/job/health
 ```
 
 **Response** (200 OK):
+
 ```json
 {
   "status": "healthy",
@@ -252,11 +261,13 @@ curl https://resume.jclee.me/job/health
 Readiness check for load balancers (all dependencies must be UP).
 
 **Request**:
+
 ```bash
 curl https://resume.jclee.me/job/readiness
 ```
 
 **Response** (200 OK):
+
 ```json
 {
   "ready": true,
@@ -278,6 +289,7 @@ curl https://resume.jclee.me/job/readiness
 ```
 
 **Response** (503 Service Unavailable):
+
 ```json
 {
   "ready": false,
@@ -297,11 +309,13 @@ curl https://resume.jclee.me/job/readiness
 Full service status with metrics.
 
 **Request**:
+
 ```bash
 curl https://resume.jclee.me/job/status
 ```
 
 **Response** (200 OK):
+
 ```json
 {
   "status": "operational",
@@ -335,6 +349,7 @@ curl https://resume.jclee.me/job/status
 Overall application statistics.
 
 **Request**:
+
 ```bash
 curl https://resume.jclee.me/job/api/stats \
   -H "Authorization: Bearer <token>"
@@ -348,6 +363,7 @@ curl https://resume.jclee.me/job/api/stats \
 | `dateTo` | ISO8601 | No | Filter to date (2026-02-11) |
 
 **Response** (200 OK):
+
 ```json
 {
   "success": true,
@@ -379,6 +395,7 @@ curl https://resume.jclee.me/job/api/stats \
 Weekly statistics breakdown.
 
 **Request**:
+
 ```bash
 curl "https://resume.jclee.me/job/api/stats/weekly?weeks=4" \
   -H "Authorization: Bearer <token>"
@@ -390,6 +407,7 @@ curl "https://resume.jclee.me/job/api/stats/weekly?weeks=4" \
 | `weeks` | integer | 4 | Number of weeks to include |
 
 **Response** (200 OK):
+
 ```json
 {
   "success": true,
@@ -420,6 +438,7 @@ curl "https://resume.jclee.me/job/api/stats/weekly?weeks=4" \
 Daily statistics breakdown.
 
 **Request**:
+
 ```bash
 curl "https://resume.jclee.me/job/api/stats/daily?days=7" \
   -H "Authorization: Bearer <token>"
@@ -431,6 +450,7 @@ curl "https://resume.jclee.me/job/api/stats/daily?days=7" \
 | `days` | integer | 7 | Number of days to include |
 
 **Response** (200 OK):
+
 ```json
 {
   "success": true,
@@ -462,6 +482,7 @@ curl "https://resume.jclee.me/job/api/stats/daily?days=7" \
 Set session cookies and generate authentication token.
 
 **Request**:
+
 ```bash
 curl -X POST https://resume.jclee.me/job/api/auth/login \
   -H "Content-Type: application/json" \
@@ -472,6 +493,7 @@ curl -X POST https://resume.jclee.me/job/api/auth/login \
 ```
 
 **Response** (201 Created):
+
 ```json
 {
   "success": true,
@@ -491,12 +513,14 @@ curl -X POST https://resume.jclee.me/job/api/auth/login \
 Check current authentication status.
 
 **Request**:
+
 ```bash
 curl https://resume.jclee.me/job/api/auth/status \
   -H "Authorization: Bearer <token>"
 ```
 
 **Response** (200 OK):
+
 ```json
 {
   "success": true,
@@ -518,6 +542,7 @@ curl https://resume.jclee.me/job/api/auth/status \
 List all applications with optional filtering.
 
 **Request**:
+
 ```bash
 curl "https://resume.jclee.me/job/api/applications?status=applied&limit=20" \
   -H "Authorization: Bearer <token>"
@@ -532,6 +557,7 @@ curl "https://resume.jclee.me/job/api/applications?status=applied&limit=20" \
 | `offset` | integer | 0 | Pagination offset |
 
 **Response** (200 OK):
+
 ```json
 {
   "success": true,
@@ -566,6 +592,7 @@ curl "https://resume.jclee.me/job/api/applications?status=applied&limit=20" \
 Add new application (manual entry).
 
 **Request**:
+
 ```bash
 curl -X POST https://resume.jclee.me/job/api/applications \
   -H "Authorization: Bearer <token>" \
@@ -581,6 +608,7 @@ curl -X POST https://resume.jclee.me/job/api/applications \
 ```
 
 **Response** (201 Created):
+
 ```json
 {
   "success": true,
@@ -603,6 +631,7 @@ curl -X POST https://resume.jclee.me/job/api/applications \
 Update status only (quick update).
 
 **Request**:
+
 ```bash
 curl -X PATCH https://resume.jclee.me/job/api/applications/app_123/status \
   -H "Authorization: Bearer <token>" \
@@ -611,6 +640,7 @@ curl -X PATCH https://resume.jclee.me/job/api/applications/app_123/status \
 ```
 
 **Response** (200 OK):
+
 ```json
 {
   "success": true,
@@ -630,12 +660,14 @@ curl -X PATCH https://resume.jclee.me/job/api/applications/app_123/status \
 Delete application.
 
 **Request**:
+
 ```bash
 curl -X DELETE https://resume.jclee.me/job/api/applications/app_123 \
   -H "Authorization: Bearer <token>"
 ```
 
 **Response** (204 No Content):
+
 ```
 (empty response body)
 ```
@@ -649,6 +681,7 @@ curl -X DELETE https://resume.jclee.me/job/api/applications/app_123 \
 Trigger a named workflow.
 
 **Request**:
+
 ```bash
 curl -X POST https://resume.jclee.me/job/api/workflows/job-crawling/run \
   -H "Authorization: Bearer <token>"
@@ -660,6 +693,7 @@ curl -X POST https://resume.jclee.me/job/api/workflows/job-crawling/run \
 | `:name` | job-crawling, application, resume-sync, daily-report, health-check, backup, cleanup |
 
 **Response** (202 Accepted):
+
 ```json
 {
   "success": true,
@@ -679,12 +713,14 @@ curl -X POST https://resume.jclee.me/job/api/workflows/job-crawling/run \
 Get workflow execution status.
 
 **Request**:
+
 ```bash
 curl https://resume.jclee.me/job/api/workflows/wf_abc123def456/status \
   -H "Authorization: Bearer <token>"
 ```
 
 **Response** (200 OK - Running):
+
 ```json
 {
   "success": true,
@@ -699,6 +735,7 @@ curl https://resume.jclee.me/job/api/workflows/wf_abc123def456/status \
 ```
 
 **Response** (200 OK - Completed):
+
 ```json
 {
   "success": true,
@@ -759,16 +796,16 @@ All error responses follow this format:
 
 ## Common Error Codes
 
-| Code | Status | Description | Solution |
-|------|--------|-------------|----------|
-| `INVALID_INPUT` | 400 | Missing or malformed input | Check request body |
-| `INVALID_TOKEN` | 401 | Token missing, invalid, or expired | Re-authenticate |
-| `TOKEN_EXPIRED` | 401 | Token has expired | Call `POST /api/auth/refresh` |
-| `INSUFFICIENT_PERMS` | 403 | User lacks permissions | Contact administrator |
-| `NOT_FOUND` | 404 | Resource does not exist | Verify resource ID exists |
-| `RATE_LIMIT_EXCEEDED` | 429 | Too many requests | Wait and retry with backoff |
-| `DB_ERROR` | 500 | Database connection failed | Retry after a delay |
-| `SERVICE_UNAVAILABLE` | 503 | Worker temporarily unavailable | Retry with backoff |
+| Code                  | Status | Description                        | Solution                      |
+| --------------------- | ------ | ---------------------------------- | ----------------------------- |
+| `INVALID_INPUT`       | 400    | Missing or malformed input         | Check request body            |
+| `INVALID_TOKEN`       | 401    | Token missing, invalid, or expired | Re-authenticate               |
+| `TOKEN_EXPIRED`       | 401    | Token has expired                  | Call `POST /api/auth/refresh` |
+| `INSUFFICIENT_PERMS`  | 403    | User lacks permissions             | Contact administrator         |
+| `NOT_FOUND`           | 404    | Resource does not exist            | Verify resource ID exists     |
+| `RATE_LIMIT_EXCEEDED` | 429    | Too many requests                  | Wait and retry with backoff   |
+| `DB_ERROR`            | 500    | Database connection failed         | Retry after a delay           |
+| `SERVICE_UNAVAILABLE` | 503    | Worker temporarily unavailable     | Retry with backoff            |
 
 ---
 
@@ -777,11 +814,13 @@ All error responses follow this format:
 Endpoints returning lists support pagination:
 
 **Query Parameters**:
+
 ```
 ?limit=20&offset=0
 ```
 
 **Response**:
+
 ```json
 {
   "data": {

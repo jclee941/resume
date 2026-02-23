@@ -90,16 +90,7 @@ npx wrangler secret put JWT_SECRET
   // Routes
   "routes": [{ "pattern": "resume.jclee.me/job/*", "zone_name": "jclee.me" }],
 
-  // Scheduled crons
-  "triggers": {
-    "crons": [
-      "*/5 * * * *", // Health check (every 5 min)
-      "0 0 * * 1-5", // Auth refresh (midnight Mon-Fri)
-      "0 1 * * *", // Resume sync (01:00 daily)
-      "0 3 * * *", // Backup (03:00 daily)
-      "0 4 * * 0", // Cleanup (04:00 Sunday)
-    ],
-  },
+  // Workflows are event-triggered via API/CI
 
   // Workflows
   "workflows": [
@@ -498,20 +489,20 @@ const image = await env.R2.get(`screenshots/2026-02-11/123.png`);
 
 ## Cloudflare Workflows
 
-**Status**: 8 workflows, cron-triggered + on-demand
+**Status**: workflows are event-triggered + on-demand
 
 ### Active Workflows
 
-| Workflow              | Schedule       | Purpose                        |
-| --------------------- | -------------- | ------------------------------ |
-| `JobCrawlingWorkflow` | On-demand      | Search jobs on all platforms   |
-| `ApplicationWorkflow` | On-demand      | Auto-submit job applications   |
-| `ResumeSyncWorkflow`  | 0 1 \* \* \*   | Daily resume sync to platforms |
-| `DailyReportWorkflow` | 0 9 \* \* \*   | Daily stats report to Slack    |
-| `HealthCheckWorkflow` | _/5 _ \* \* \* | 5-min uptime monitoring        |
-| `BackupWorkflow`      | 0 3 \* \* \*   | Daily D1→KV backup             |
-| `CleanupWorkflow`     | 0 4 \* \* 0    | Weekly old data cleanup        |
-| (8th workflow)        | TBD            | TBD                            |
+| Workflow              | Schedule      | Purpose                      |
+| --------------------- | ------------- | ---------------------------- |
+| `JobCrawlingWorkflow` | On-demand     | Search jobs on all platforms |
+| `ApplicationWorkflow` | On-demand     | Auto-submit job applications |
+| `ResumeSyncWorkflow`  | Event trigger | Resume sync to platforms     |
+| `DailyReportWorkflow` | Event trigger | Stats report to Slack        |
+| `HealthCheckWorkflow` | Event trigger | Health monitoring            |
+| `BackupWorkflow`      | Event trigger | D1→KV backup                 |
+| `CleanupWorkflow`     | Event trigger | Stale data cleanup           |
+| (8th workflow)        | TBD           | TBD                          |
 
 ### Example: Trigger Resume Sync
 

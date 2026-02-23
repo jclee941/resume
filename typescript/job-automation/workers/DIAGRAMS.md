@@ -83,28 +83,33 @@ graph TB
 ### Component Descriptions
 
 **Client Layer**:
+
 - **Browser**: Frontend dashboard accessing `/job/*` routes
 - **MCP Server**: Tool interface for job application automation
 - **CLI Tool**: Command-line deployment and management
 
 **Cloudflare Worker**:
+
 - **Fetch Handler**: Entry point, strips `/job` prefix, dispatches to routing
 - **Middleware Stack**: 7 layers (logger, CORS, rate limit, CSRF, auth, handler, response)
 - **Router**: Maps 30+ API endpoints to appropriate handlers
 - **Handler Classes**: 8 handler classes (Applications, Auth, Stats, Webhooks, etc.)
 
 **Service Layer**:
+
 - **AuthService**: JWT generation, token validation, session management
 - **StatsService**: Statistics aggregation, report generation
 - **ApplicationsService**: Job application CRUD operations
 - **WorkflowService**: Workflow triggering and monitoring
 
 **Storage**:
+
 - **D1 Database**: applications, job_cache, sync_logs tables
 - **KV Storage**: SESSIONS (24h TTL), RATE_LIMIT_KV (60s TTL), NONCE_KV (24h TTL)
 - **R2 Bucket**: Screenshot storage for job listings
 
 **External Services**:
+
 - **Slack**: Error notifications, status reports
 - **Cloudflare API**: Direct API access for advanced operations
 - **Webhooks**: Outbound notifications for external integrations
@@ -196,7 +201,7 @@ timeline
     title Workflow Execution: Daily Report (0 9 * * *)
 
     section Schedule
-        09:00 UTC : Cron trigger fires
+        09:00 UTC : Event trigger fires
         09:00:100ms : Workflow instance created
         09:00:200ms : Load workflow definition
         09:00:300ms : Authenticate workflow
@@ -230,31 +235,37 @@ timeline
 ### Timeline Breakdown
 
 **Schedule Phase** (300ms):
-- Cron job triggers at scheduled time
+
+- Workflow trigger fires at scheduled time
 - Workflow infrastructure initializes
 - Authentication tokens validated
 
 **Execution Phase 1** (200ms):
+
 - Fetch statistics from D1
 - Count applications by status
 - Calculate totals and percentages
 
 **Execution Phase 2** (200ms):
+
 - Format data into report template
 - Add charts/graphs (if applicable)
 - Prepare for transmission
 
 **Execution Phase 3** (600ms):
+
 - Call Slack API webhook
 - Slack server processes message
 - Confirm delivery (200ms, mostly network latency)
 
 **Completion Phase** (200ms):
+
 - Store execution record in D1
 - Log success event
 - Update workflow status
 
 **Error Handling** (varies):
+
 - If any step fails, catch handler triggers
 - Send error notification to Slack
 - Mark workflow as failed
@@ -318,18 +329,21 @@ graph TD
 ### Authentication Details
 
 **Session Storage** (KV):
+
 - Key: `session:{user_id}:{random_token}`
 - Value: `{user_id, username, roles, created_at, expires_at}`
 - TTL: 24 hours (auto-expiration)
 - Location: `SESSIONS` KV namespace
 
 **JWT Token**:
+
 - Payload: `{user_id, username, roles, iat, exp}`
 - Signature Algorithm: HS256 (HMAC-SHA256)
 - Secret: `env.JWT_SECRET` (stored securely)
 - Expiration: 24 hours from issue
 
 **Cookie Settings**:
+
 - Name: `session_token`
 - HttpOnly: true (JavaScript cannot access)
 - Secure: true (HTTPS only)
@@ -338,6 +352,7 @@ graph TD
 - Domain: `resume.jclee.me`
 
 **Refresh Flow**:
+
 - Client checks token expiration
 - If expiring within 1 hour, calls `/api/auth/refresh`
 - Server validates old token and issues new one
@@ -389,12 +404,14 @@ graph TD
 ### Rate Limiting Details
 
 **Token Bucket Algorithm**:
+
 - **Capacity**: 60 tokens (60 requests/minute)
 - **Refill Rate**: 1 token per second
 - **Cost per Request**: 1 token
 - **Reset**: Automatic after 60 seconds (TTL in KV)
 
 **KV Storage**:
+
 - **Key**: `rate-limit:{client_ip}`
 - **Value**: `{tokens: number, last_refill: timestamp}`
 - **TTL**: 60 seconds (expires after 60s inactivity)
@@ -402,18 +419,19 @@ graph TD
 
 **Example Timeline** (60-second window):
 
-| Time | Event | Tokens | Status |
-|------|-------|--------|--------|
-| 0s | Initial request | 60 | ✅ Allow |
-| 0.1s | Request 2 | 59 | ✅ Allow |
-| 0.2s | Request 3 | 58 | ✅ Allow |
-| ... | ... | ... | ... |
-| 50s | Request 50 | 10 | ✅ Allow |
-| 60s | Bucket refills | 10 + 60 = 70 → 60 (capped) | ✅ Allow |
-| 60.5s | Request 51 | 59 | ✅ Allow |
-| Burst | 61 requests in 1s | 0 | ❌ Reject (429) |
+| Time  | Event             | Tokens                     | Status          |
+| ----- | ----------------- | -------------------------- | --------------- |
+| 0s    | Initial request   | 60                         | ✅ Allow        |
+| 0.1s  | Request 2         | 59                         | ✅ Allow        |
+| 0.2s  | Request 3         | 58                         | ✅ Allow        |
+| ...   | ...               | ...                        | ...             |
+| 50s   | Request 50        | 10                         | ✅ Allow        |
+| 60s   | Bucket refills    | 10 + 60 = 70 → 60 (capped) | ✅ Allow        |
+| 60.5s | Request 51        | 59                         | ✅ Allow        |
+| Burst | 61 requests in 1s | 0                          | ❌ Reject (429) |
 
 **Response Headers**:
+
 ```
 X-RateLimit-Limit: 60
 X-RateLimit-Remaining: 45
@@ -421,6 +439,7 @@ X-RateLimit-Reset: 1708000060
 ```
 
 **When Limit Exceeded** (429 Too Many Requests):
+
 ```
 HTTP/1.1 429 Too Many Requests
 Content-Type: application/json
@@ -471,14 +490,14 @@ Retry-After: 60
 
 ### Typical Response Times
 
-| Operation | Time | Bottleneck |
-|-----------|------|-----------|
-| Rate limit check | 5ms | KV read |
-| JWT validation | 2ms | Crypto |
-| Single row query | 4ms | D1 network |
-| Multi-row query (50) | 15ms | D1 network |
-| Slack notification | 600ms | Slack API |
-| Full request cycle | 12ms | D1 query |
+| Operation            | Time  | Bottleneck |
+| -------------------- | ----- | ---------- |
+| Rate limit check     | 5ms   | KV read    |
+| JWT validation       | 2ms   | Crypto     |
+| Single row query     | 4ms   | D1 network |
+| Multi-row query (50) | 15ms  | D1 network |
+| Slack notification   | 600ms | Slack API  |
+| Full request cycle   | 12ms  | D1 query   |
 
 ### Throughput Limits
 

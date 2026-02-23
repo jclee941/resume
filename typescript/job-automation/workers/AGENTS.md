@@ -41,13 +41,13 @@ ApplicationsHandler (7 methods), StatsHandler (4), AuthHandler (5), WebhookHandl
 
 | Workflow    | Schedule        | Purpose                  |
 | ----------- | --------------- | ------------------------ |
-| JobCrawling | Mon-Fri cron    | crawl job platforms      |
+| JobCrawling | event-triggered | crawl job platforms      |
 | Application | on-demand       | process applications     |
-| ResumeSync  | daily 01:00 KST | sync resume data         |
-| DailyReport | daily 09:00 KST | Slack summary            |
-| HealthCheck | \*/5 min        | system health monitoring |
-| Backup      | daily 03:00 KST | D1 backup                |
-| Cleanup     | weekly Sun      | stale data removal       |
+| ResumeSync  | event-triggered | sync resume data         |
+| DailyReport | event-triggered | Slack summary            |
+| HealthCheck | event-triggered | system health monitoring |
+| Backup      | event-triggered | D1 backup                |
+| Cleanup     | event-triggered | stale data removal       |
 
 ## MIDDLEWARE STACK
 

@@ -9,6 +9,7 @@
 **n8n Server**: https://n8n.jclee.me (✅ Healthy)
 
 **Current Metrics**:
+
 - Requests Total: 1
 - Requests Success: 0
 - Requests Error: 0
@@ -28,6 +29,7 @@
 **n8n Template Reference**: [Health Check Websites with Google Sheets & Telegram Alerts](https://n8n.io/workflows/3352) (ID: 3352)
 
 **Nodes**:
+
 1. **Schedule Trigger** (Every 5 minutes)
 2. **HTTP Request** → `GET https://resume.jclee.me/health`
 3. **IF** (Check `status !== "healthy"`)
@@ -35,6 +37,7 @@
 5. **Google Sheets** (Log downtime event)
 
 **Configuration**:
+
 ```javascript
 // HTTP Request Node
 {
@@ -79,6 +82,7 @@ Metrics:
 **n8n Template Reference**: Custom webhook processing based on [Building Your First WhatsApp Chatbot](https://n8n.io/workflows/2465) pattern
 
 **Nodes**:
+
 1. **Webhook** (POST /resume-deploy)
 2. **Set** (Extract deployment data)
 3. **HTTP Request** (Fetch GitHub Actions run details)
@@ -86,6 +90,7 @@ Metrics:
 5. **HTTP Request** (Send logs to Loki)
 
 **Configuration**:
+
 ```javascript
 // Webhook Node
 {
@@ -115,6 +120,7 @@ Time: {{ $json.deployed_at }}
 ```
 
 **GitHub Actions Integration** (`.github/workflows/deploy.yml/deploy.yml`):
+
 ```yaml
 - name: Notify n8n
   if: always()
@@ -138,6 +144,7 @@ Time: {{ $json.deployed_at }}
 **n8n Template Reference**: [Daily Personalized Air & Pollen Health Alerts](https://n8n.io/workflows/3699) pattern (data aggregation)
 
 **Nodes**:
+
 1. **Webhook** (POST /api/vitals-proxy)
 2. **Code** (Parse Web Vitals JSON)
 3. **IF** (Check if LCP > 2.5s || CLS > 0.1)
@@ -146,6 +153,7 @@ Time: {{ $json.deployed_at }}
 6. **Google Sheets** (Daily aggregation)
 
 **Configuration**:
+
 ```javascript
 // Code Node (Parse Web Vitals)
 const vitals = $input.first().json;
@@ -178,19 +186,20 @@ Time: {{ $json.timestamp }}
 ```
 
 **Frontend Integration** (`typescript/portfolio-worker/index.html`):
+
 ```javascript
 // Add to existing Web Vitals script
 fetch('/api/vitals', {
   method: 'POST',
-  headers: {'Content-Type': 'application/json'},
-  body: JSON.stringify({lcp, fid, cls, fcp, ttfb, userAgent: navigator.userAgent})
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ lcp, fid, cls, fcp, ttfb, userAgent: navigator.userAgent }),
 });
 
 // Also send to n8n for analytics
 fetch('https://n8n.jclee.me/webhook/vitals-proxy', {
   method: 'POST',
-  headers: {'Content-Type': 'application/json'},
-  body: JSON.stringify({lcp, fid, cls, fcp, ttfb, userAgent: navigator.userAgent})
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ lcp, fid, cls, fcp, ttfb, userAgent: navigator.userAgent }),
 }).catch(() => {}); // Fail silently
 ```
 
@@ -203,6 +212,7 @@ fetch('https://n8n.jclee.me/webhook/vitals-proxy', {
 **n8n Template Reference**: [Monitor Server Uptime & Get Email Alerts](https://n8n.io/workflows/3880) pattern
 
 **Nodes**:
+
 1. **Schedule Trigger** (Daily at 09:00 KST)
 2. **HTTP Request** (Fetch Prometheus metrics)
 3. **Google Sheets** (Query last 24h vitals)
@@ -210,6 +220,7 @@ fetch('https://n8n.jclee.me/webhook/vitals-proxy', {
 5. **Gmail** (Send daily report)
 
 **Configuration**:
+
 ```javascript
 // Schedule Trigger
 {
@@ -279,16 +290,18 @@ return [{json: {
 ## 🔧 Available n8n Nodes for Resume Monitoring
 
 ### Core Nodes Used
+
 1. **HTTP Request** (`nodes-base.httpRequest`) - API calls to `/health`, `/metrics`, `/api/vitals`
 2. **Slack** (`nodes-base.slack`) - Alert notifications
 3. **Google Sheets** (`nodes-base.googleSheets`) - Data logging and aggregation
-4. **Schedule Trigger** (`nodes-base.scheduleTrigger`) - Cron-based automation
+4. **Schedule Trigger** (`nodes-base.scheduleTrigger`) - Time-based automation
 5. **Webhook** (`nodes-base.webhook`) - Receive GitHub Actions events
 6. **Gmail** (`nodes-base.gmail`) - Daily reports
 7. **Code** (`nodes-base.code`) - Custom JavaScript for data processing
 8. **IF** (`nodes-base.if`) - Conditional branching
 
 ### Integration Pattern
+
 ```
 External Event (GitHub/Browser)
   ↓
@@ -310,6 +323,7 @@ Conditional Logic (IF Node)
 ## 🚀 Implementation Roadmap
 
 ### Phase 1: Basic Monitoring (Week 1)
+
 - [ ] Create Workflow 1 (Site Health Monitor)
 - [ ] Set up Google Sheets for downtime logs
 - [ ] Configure Slack webhook for `#infra-alerts`
@@ -318,6 +332,7 @@ Conditional Logic (IF Node)
 **Success Criteria**: Receive Slack alert within 5 minutes of site down.
 
 ### Phase 2: Deployment Integration (Week 2)
+
 - [ ] Create Workflow 2 (GitHub Deployment Webhook)
 - [ ] Update `.github/workflows/deploy.yml/deploy.yml` with n8n webhook
 - [ ] Add deployment notifications to Slack `#deployments`
@@ -326,6 +341,7 @@ Conditional Logic (IF Node)
 **Success Criteria**: Slack notification on every GitHub Actions deployment.
 
 ### Phase 3: Performance Analytics (Week 3)
+
 - [ ] Create Workflow 3 (Web Vitals Analytics)
 - [ ] Update `typescript/portfolio-worker/index.html` to POST vitals to n8n
 - [ ] Set up Google Sheets for daily vitals aggregation
@@ -334,6 +350,7 @@ Conditional Logic (IF Node)
 **Success Criteria**: Receive performance alert when LCP exceeds 2.5s.
 
 ### Phase 4: Reporting Automation (Week 4)
+
 - [ ] Create Workflow 4 (Daily Performance Report)
 - [ ] Design HTML email template
 - [ ] Schedule daily reports at 09:00 KST
@@ -346,12 +363,14 @@ Conditional Logic (IF Node)
 ## 📈 Expected Outcomes
 
 **Before Automation**:
+
 - ❌ Manual health checks via `curl`
 - ❌ No deployment notifications
 - ❌ Zero Web Vitals collection
 - ❌ No performance trend analysis
 
 **After Automation**:
+
 - ✅ Automated 5-minute health checks
 - ✅ Real-time deployment notifications
 - ✅ Web Vitals collection and alerting
@@ -359,6 +378,7 @@ Conditional Logic (IF Node)
 - ✅ Centralized observability in Grafana
 
 **Projected Metrics** (After 1 month):
+
 - Health checks: ~8,640 (5-min intervals × 30 days)
 - Web Vitals samples: ~500+ (depends on traffic)
 - Downtime alerts: <5 (target: 99.9% uptime)
@@ -369,6 +389,7 @@ Conditional Logic (IF Node)
 ## 🔗 Resources
 
 **n8n Templates Used**:
+
 1. [Health Check with Google Sheets & Telegram](https://n8n.io/workflows/3352)
 2. [Multiple Websites Monitoring](https://n8n.io/workflows/4833)
 3. [Server Uptime Monitoring](https://n8n.io/workflows/3880)
@@ -378,6 +399,7 @@ Conditional Logic (IF Node)
 **Grafana Dashboard**: https://grafana.jclee.me/d/resume (to be created)
 
 **Node Documentation**:
+
 ```bash
 # Search available nodes
 mcp__n8n-mcp__search_nodes({ query: "http request" })

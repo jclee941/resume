@@ -12,7 +12,7 @@ Complete step-by-step instructions for deploying the job-automation dashboard wo
 6. [KV Namespace Creation](#kv-namespace-creation)
 7. [R2 Bucket Setup](#r2-bucket-setup)
 8. [Additional Bindings](#additional-bindings)
-9. [Workflows & Cron Configuration](#workflows--cron-configuration)
+9. [Workflows & Event Trigger Configuration](#workflows--event-trigger-configuration)
 10. [Deployment Steps](#deployment-steps)
 11. [Post-Deployment Verification](#post-deployment-verification)
 12. [Monitoring & Logging](#monitoring--logging)
@@ -523,7 +523,7 @@ environment = "production"
 
 ---
 
-## Workflows & Cron Configuration
+## Workflows & Event Trigger Configuration
 
 Cloudflare Workflows enable scheduled and event-driven jobs. Update `wrangler.toml` with workflow definitions:
 
@@ -573,32 +573,17 @@ main = "src/workflows/cleanup.js"
 binding = "CLEANUP_WORKFLOW"
 ```
 
-### Cron Triggers
+### Event Triggers
 
-Configure cron schedules in `wrangler.toml`:
+Use Cloudflare Workflows and API-triggered runs from dashboard/CI endpoints.
 
-```toml
-[triggers]
-crons = [
-  "*/5 * * * *",      # Health check: every 5 minutes
-  "0 0 * * 1-5",      # Job crawling: midnight Mon-Fri (UTC)
-  "0 1 * * *",        # Resume sync: 01:00 UTC daily
-  "0 3 * * *",        # Backup: 03:00 UTC daily
-  "0 4 * * 0"         # Cleanup: 04:00 UTC Sunday
-]
+```bash
+# Trigger health check workflow
+curl -X POST https://resume.jclee.me/job/api/workflows/health-check/run
+
+# Trigger resume sync workflow
+curl -X POST https://resume.jclee.me/job/api/workflows/resume-sync/run
 ```
-
-### Cron Schedule Reference
-
-Convert UTC times to your timezone (e.g., KST = UTC+9):
-
-| Cron Schedule | Frequency | UTC Time | KST Time (UTC+9) |
-|---|---|---|---|
-| `*/5 * * * *` | Every 5 min | 00:00, 00:05, ... | 09:00, 09:05, ... |
-| `0 0 * * 1-5` | Mon-Fri | 00:00 | 09:00 |
-| `0 1 * * *` | Daily | 01:00 | 10:00 |
-| `0 3 * * *` | Daily | 03:00 | 12:00 |
-| `0 4 * * 0` | Sunday | 04:00 | 13:00 |
 
 ---
 
@@ -1026,24 +1011,14 @@ wrangler dev --port 8788
 
 ### Issue: "Workflow not triggering on schedule"
 
-**Symptom**: Cron jobs not executing at scheduled times
+**Symptom**: Scheduled automation not executing
 
 **Solutions**:
-1. Verify cron schedule in `wrangler.toml`:
-   ```toml
-   [triggers]
-   crons = ["0 0 * * *"]  # Midnight UTC
-   ```
+1. Verify workflow bindings in `wrangler.toml` and worker deployment state.
 
-2. Check cron syntax (5 fields: minute, hour, day, month, day-of-week)
+2. Trigger workflow manually through API to validate end-to-end path.
 
-3. Convert UTC to your timezone:
-   ```
-   UTC: 0 0 * * * (midnight UTC)
-   KST: 0 9 * * * (9 AM KST = midnight UTC + 9 hours)
-   ```
-
-4. View workflow execution logs:
+3. View workflow execution logs:
    ```bash
    wrangler tail --env production
    # Filter for workflow execution logs
@@ -1125,7 +1100,7 @@ Before deploying to production:
 - [ ] KV namespaces created and tested
 - [ ] R2 bucket created
 - [ ] Workflows defined in `wrangler.toml`
-- [ ] Cron schedules configured (with UTC times)
+- [ ] Event triggers configured and tested
 - [ ] Local tests passing (`npm test`)
 - [ ] TypeScript compilation clean (`tsc --noEmit`)
 - [ ] Code reviewed and approved

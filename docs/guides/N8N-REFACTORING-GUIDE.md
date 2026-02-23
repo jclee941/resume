@@ -11,28 +11,32 @@
 ### Problem Statement (Before Refactoring)
 
 **Manual configuration process**:
+
 1. User had to manually find and replace 10+ hardcoded values in JSON files
 2. Risk of typos and missed replacements
 3. No validation of configuration values
 4. Difficult to maintain multiple environments (dev/staging/prod)
 
 **Hardcoded values** scattered across 2 workflow files:
+
 - Slack channel IDs: `C07XXXXXXXX`, `C07YYYYYYYY`
 - Google Sheets ID: `GOOGLE_SHEET_ID`
 - Monitoring URLs: `https://resume.jclee.me/*`
-- Cron expressions, timeouts, retry counts
+- Schedule expressions, timeouts, retry counts
 
 **Setup time**: 30 minutes (error-prone)
 
 ### Solution (After Refactoring)
 
 **Centralized configuration**:
+
 1. Single `config.json` file with all customizable values
 2. Automated script applies configuration to workflow templates
 3. JSON schema validation ensures correct format
 4. Easy to maintain and version control
 
 **New workflow**:
+
 ```bash
 # 1. Copy example config
 cp config.example.json config.json
@@ -105,10 +109,11 @@ scripts/
 ```
 
 **Validation rules**:
+
 - ✅ Slack channel ID format: `C[A-Z0-9]{10}` (e.g., C07ABC12345)
 - ✅ Google Sheets ID: 44 characters (e.g., 1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms)
 - ✅ URLs: HTTPS only
-- ✅ Cron expressions: Valid 5-field format
+- ✅ Schedule expressions: Valid 5-field format
 - ✅ Timeouts: 1000-60000ms range
 
 ---
@@ -146,6 +151,7 @@ node scripts/setup/configure-n8n-workflows.js --help
 ### Transformation Examples
 
 **Before** (template):
+
 ```json
 {
   "channelId": {
@@ -155,6 +161,7 @@ node scripts/setup/configure-n8n-workflows.js --help
 ```
 
 **Config**:
+
 ```json
 {
   "slack": {
@@ -164,6 +171,7 @@ node scripts/setup/configure-n8n-workflows.js --help
 ```
 
 **After** (configured):
+
 ```json
 {
   "channelId": {
@@ -174,15 +182,15 @@ node scripts/setup/configure-n8n-workflows.js --help
 
 ### Replaced Placeholders
 
-| Placeholder | Config Key | Example Value |
-|-------------|-----------|---------------|
-| `C07XXXXXXXX` | `slack.infra_alerts_channel_id` | `C07ABC12345` |
-| `C07YYYYYYYY` | `slack.deployments_channel_id` | `C07XYZ67890` |
-| `GOOGLE_SHEET_ID` | `google_sheets.spreadsheet_id` | `1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms` |
-| `https://resume.jclee.me/health` | `monitoring.health_endpoint` | `https://resume.jclee.me/health` |
-| `*/5 * * * *` | `monitoring.health_check_interval` | `*/10 * * * *` |
-| `10000` (timeout) | `monitoring.http_timeout` | `15000` |
-| `3` (max retries) | `monitoring.http_retry_max_tries` | `5` |
+| Placeholder                      | Config Key                         | Example Value                                  |
+| -------------------------------- | ---------------------------------- | ---------------------------------------------- |
+| `C07XXXXXXXX`                    | `slack.infra_alerts_channel_id`    | `C07ABC12345`                                  |
+| `C07YYYYYYYY`                    | `slack.deployments_channel_id`     | `C07XYZ67890`                                  |
+| `GOOGLE_SHEET_ID`                | `google_sheets.spreadsheet_id`     | `1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms` |
+| `https://resume.jclee.me/health` | `monitoring.health_endpoint`       | `https://resume.jclee.me/health`               |
+| `*/5 * * * *`                    | `monitoring.health_check_interval` | `*/10 * * * *`                                 |
+| `10000` (timeout)                | `monitoring.http_timeout`          | `15000`                                        |
+| `3` (max retries)                | `monitoring.http_retry_max_tries`  | `5`                                            |
 
 ---
 
@@ -205,11 +213,11 @@ vim n8n-workflows/config.json
 ```json
 {
   "slack": {
-    "infra_alerts_channel_id": "C07ABC12345",  // Your actual channel ID
-    "deployments_channel_id": "C07XYZ67890"   // Your actual channel ID
+    "infra_alerts_channel_id": "C07ABC12345", // Your actual channel ID
+    "deployments_channel_id": "C07XYZ67890" // Your actual channel ID
   },
   "google_sheets": {
-    "spreadsheet_id": "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms"  // Your spreadsheet ID
+    "spreadsheet_id": "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms" // Your spreadsheet ID
   }
 }
 ```
@@ -217,6 +225,7 @@ vim n8n-workflows/config.json
 **How to get values**:
 
 **Slack Channel IDs**:
+
 ```bash
 # In Slack:
 # 1. Right-click channel → View channel details
@@ -225,6 +234,7 @@ vim n8n-workflows/config.json
 ```
 
 **Google Sheets Spreadsheet ID**:
+
 ```bash
 # From spreadsheet URL:
 # https://docs.google.com/spreadsheets/d/SPREADSHEET_ID/edit
@@ -243,6 +253,7 @@ node scripts/setup/configure-n8n-workflows.js
 ```
 
 **Expected output**:
+
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 🔧 n8n Workflow Configuration
@@ -296,6 +307,7 @@ node scripts/setup/configure-n8n-workflows.js --validate-only
 ```
 
 **Validation checks**:
+
 - ✅ Required keys present (`slack`, `google_sheets`, `monitoring`)
 - ✅ Slack channel IDs match pattern `C[A-Z0-9]{10}`
 - ✅ Google Sheets ID is 44 characters
@@ -336,12 +348,14 @@ configured/
 ```
 
 **Safe to commit**:
+
 - ✅ `config.template.json` (schema definition)
 - ✅ `config.example.json` (example with placeholders)
 - ✅ `01-site-health-monitor.json` (template with placeholders)
 - ✅ `02-github-deployment-webhook.json` (template with placeholders)
 
 **Never commit**:
+
 - ❌ `config.json` (contains actual channel IDs and spreadsheet ID)
 - ❌ `configured/*.json` (contains actual values)
 
@@ -364,6 +378,7 @@ configured/
 ### Multiple Environments
 
 **Development**:
+
 ```bash
 # Create dev config
 cp config.example.json config.dev.json
@@ -374,6 +389,7 @@ node scripts/setup/configure-n8n-workflows.js --config config.dev.json
 ```
 
 **Production**:
+
 ```bash
 # Create prod config
 cp config.example.json config.prod.json
@@ -386,6 +402,7 @@ node scripts/setup/configure-n8n-workflows.js --config config.prod.json
 ### Custom Monitoring Intervals
 
 **High-frequency monitoring** (every 1 minute):
+
 ```json
 {
   "monitoring": {
@@ -395,6 +412,7 @@ node scripts/setup/configure-n8n-workflows.js --config config.prod.json
 ```
 
 **Low-frequency monitoring** (every 30 minutes):
+
 ```json
 {
   "monitoring": {
@@ -406,21 +424,23 @@ node scripts/setup/configure-n8n-workflows.js --config config.prod.json
 ### Custom Timeouts and Retries
 
 **Slow network** (increase timeout and retries):
+
 ```json
 {
   "monitoring": {
-    "http_timeout": 30000,        // 30 seconds
-    "http_retry_max_tries": 5     // 5 attempts
+    "http_timeout": 30000, // 30 seconds
+    "http_retry_max_tries": 5 // 5 attempts
   }
 }
 ```
 
 **Fast network** (decrease timeout):
+
 ```json
 {
   "monitoring": {
-    "http_timeout": 5000,         // 5 seconds
-    "http_retry_max_tries": 2     // 2 attempts
+    "http_timeout": 5000, // 5 seconds
+    "http_retry_max_tries": 2 // 2 attempts
   }
 }
 ```
@@ -431,23 +451,23 @@ node scripts/setup/configure-n8n-workflows.js --config config.prod.json
 
 ### Before Refactoring
 
-| Metric | Value |
-|--------|-------|
-| Setup Time | 30 minutes |
-| Manual Edits | 10+ replacements |
-| Error Rate | ~20% (typos, missed values) |
-| Validation | None (manual review) |
+| Metric            | Value                         |
+| ----------------- | ----------------------------- |
+| Setup Time        | 30 minutes                    |
+| Manual Edits      | 10+ replacements              |
+| Error Rate        | ~20% (typos, missed values)   |
+| Validation        | None (manual review)          |
 | Multi-env Support | Difficult (copy-paste errors) |
 
 ### After Refactoring
 
-| Metric | Value |
-|--------|-------|
-| Setup Time | 10 minutes |
-| Manual Edits | 3 required values |
-| Error Rate | <1% (automated validation) |
-| Validation | Built-in (JSON schema) |
-| Multi-env Support | Easy (separate configs) |
+| Metric            | Value                      |
+| ----------------- | -------------------------- |
+| Setup Time        | 10 minutes                 |
+| Manual Edits      | 3 required values          |
+| Error Rate        | <1% (automated validation) |
+| Validation        | Built-in (JSON schema)     |
+| Multi-env Support | Easy (separate configs)    |
 
 ### Time Savings
 
@@ -465,6 +485,7 @@ node scripts/setup/configure-n8n-workflows.js --config config.prod.json
 **Error**: `Invalid Slack infra_alerts_channel_id`
 
 **Solution**:
+
 ```bash
 # Verify channel ID format
 echo "C07ABC12345" | grep -E '^C[A-Z0-9]{10}$'
@@ -479,6 +500,7 @@ echo "C07ABC12345" | grep -E '^C[A-Z0-9]{10}$'
 **Error**: `Invalid Google Sheets spreadsheet_id`
 
 **Solution**:
+
 ```bash
 # Verify spreadsheet ID length
 echo "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms" | wc -c
@@ -494,6 +516,7 @@ echo "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms" | wc -c
 **Error**: `Template not found: 01-site-health-monitor.json`
 
 **Solution**:
+
 ```bash
 # Verify you're in project root
 pwd
@@ -509,6 +532,7 @@ ls -l n8n-workflows/*.json
 **Error**: `node: command not found`
 
 **Solution**:
+
 ```bash
 # Install Node.js (≥20.0.0)
 node --version
@@ -525,7 +549,7 @@ nvm use 20
 
 - **JSON Schema**: http://json-schema.org/draft-07/schema
 - **n8n Workflow Structure**: https://docs.n8n.io/workflows/
-- **Cron Expression Syntax**: https://crontab.guru/
+- **Schedule Expression Syntax**: https://n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.scheduletrigger/
 
 ---
 
@@ -534,6 +558,7 @@ nvm use 20
 If you already configured workflows manually:
 
 **Step 1: Extract current values**
+
 ```bash
 # Get Slack channel ID
 grep -o 'C07[A-Z0-9]\{10\}' n8n-workflows/01-site-health-monitor.json
@@ -543,12 +568,14 @@ grep -o 'documentId.*value' n8n-workflows/01-site-health-monitor.json
 ```
 
 **Step 2: Create config.json with extracted values**
+
 ```bash
 cp config.example.json config.json
 # Edit config.json with extracted values
 ```
 
 **Step 3: Regenerate workflows**
+
 ```bash
 # Backup current workflows
 cp n8n-workflows/*.json backups/

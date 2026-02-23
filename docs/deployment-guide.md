@@ -100,7 +100,7 @@ The deployment process follows a strict unidirectional data flow:
       +-------------------+                    +-----------------+   +-----------------+
                 ^                                       ^                     ^
                 |                                       |                     |
-                +------------------- [ Workflows / Crons ] --------------------+
+                +------------------ [ Workflows / Schedules ] ------------------+
 ```
 
 ### 2.5 Job Automation Crawlers
@@ -309,9 +309,9 @@ Our GitHub Actions pipeline (`ci.yml`) is a 13-job dependency chain ensuring zer
 13. **Cleanup-Preview**:
     - (PR Only) Deletes the ephemeral worker once the PR is closed or merged.
 
-### 6.3 Automated Maintenance (Crons)
+### 6.3 Automated Maintenance (Schedules)
 
-The worker includes 5 scheduled triggers for operational tasks:
+The worker includes 5 scheduled workflow triggers for operational tasks:
 
 - `*/5 * * * *`: **Health Check** - Pings all dependencies and logs uptime.
 - `0 0 * * 1-5`: **Auth Refresh** - Rotates platform session cookies.

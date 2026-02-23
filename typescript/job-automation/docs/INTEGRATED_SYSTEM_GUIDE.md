@@ -24,7 +24,7 @@
 - **MCP Tools**: 9 tools with 32 actions
 - **Platforms**: Wanted, JobKorea, Saramin, LinkedIn
 - **AI Integration**: OpenCode 3.5 Sonnet (85-95% accuracy)
-- **Automation**: Cron-based daily execution
+- **Automation**: Event-based daily execution
 - **Dashboard**: Real-time typescript/portfolio-worker UI (Port 3456)
 
 ### Architecture
@@ -39,7 +39,7 @@
 ┌───────▼────────┐              ┌──────▼──────┐
 │  Dashboard     │              │  Automation  │
 │  (Port 3456)   │              │  Scripts     │
-│  - Chart.js    │              │  - Cron Jobs │
+│  - Chart.js    │              │  - Workflows │
 │  - Express     │              │  - n8n       │
 └────────────────┘              └──────────────┘
         │                               │
@@ -233,14 +233,14 @@ GET  /api/health  - Health check
 ./auto-daily-run.sh --apply --keywords="DevOps,Security" --max=5
 ```
 
-**Cron Schedule**:
+**Event Trigger Examples**:
 
-```cron
-# Dry-run at 9 AM on weekdays
-0 9 * * 1-5 /path/to/auto-daily-run.sh
+```bash
+# Dashboard/API trigger
+curl -X POST https://resume.jclee.me/job/api/workflows/job-crawling/run
 
-# Actual application at 2 PM (5 applications)
-0 14 * * 1-5 /path/to/auto-daily-run.sh --apply --max=5
+# CLI trigger
+node src/cli.js pipeline run <resume_id>
 ```
 
 ### 2. auto-monitor.sh
@@ -261,11 +261,10 @@ GET  /api/health  - Health check
 ./auto-monitor.sh
 ```
 
-**Cron Schedule**:
+**Event Trigger Example**:
 
-```cron
-# Daily monitoring at 6 PM on weekdays
-0 18 * * 1-5 /path/to/auto-monitor.sh
+```bash
+curl -X POST https://resume.jclee.me/job/api/workflows/health-check/run
 ```
 
 ### 3. auto-maintenance.sh
@@ -286,11 +285,10 @@ GET  /api/health  - Health check
 ./auto-maintenance.sh
 ```
 
-**Cron Schedule**:
+**Event Trigger Example**:
 
-```cron
-# Weekly maintenance every Monday at 8 AM
-0 8 * * 1 /path/to/auto-maintenance.sh
+```bash
+curl -X POST https://resume.jclee.me/job/api/workflows/cleanup/run
 ```
 
 ---
@@ -371,8 +369,7 @@ Endpoints:
     }
   },
   "schedule": {
-    "cron": "0 9 * * 1-5",
-    "timezone": "Asia/Seoul"
+    "enabled": false
   },
   "ai": {
     "provider": "opencode",

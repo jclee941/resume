@@ -41,7 +41,7 @@ Complete documentation of all data flows in the job-automation system: MCP reque
                 │   Cloudflare Worker (D1/KV)   │  │External │
                 │   - Dashboard /job/*          │  │ APIs    │
                 │   - 8 Workflows               │  │ (Wanted)│
-                │   - Cron triggers             │  └─────────┘
+│   - Event triggers            │  └─────────┘
                 └───────────────────────────────┘
 ```
 
@@ -270,7 +270,7 @@ User Initiates: "Apply to all 80+ jobs"
     Wanted API      Form Fill     POST to
     (15 jobs)       Submit        resume.jclee.me/
                                   webhooks/apply-report
-    
+
     Cache results   Update D1
     in KV           Database
     (1h TTL)        (Stats row)
@@ -687,7 +687,7 @@ Application Submitted
 ### Daily Report Workflow (Cloudflare)
 
 ```
-Daily Report Trigger (9 AM UTC, cron)
+Daily Report Trigger (event/API)
          │
          ▼
 ┌──────────────────────────┐
@@ -749,7 +749,7 @@ Error Occurs (any layer)
     ┌────────┴──────────────────────────┐
     │                                   │
     ▼ (Retryable)              ▼ (Fatal)
-    
+
     ┌──────────────────┐    ┌──────────────────┐
     │ Exponential      │    │ Log Error (ECS)  │
     │ Backoff:         │    │ No sensitive data│
@@ -777,24 +777,23 @@ Error Occurs (any layer)
 
 ## Performance Characteristics
 
-| Operation | Duration | Bottleneck | Cache |
-|-----------|----------|-----------|-------|
-| Fetch jobs | 500-800ms | Wanted API | KV (1h) |
-| Score jobs (Tier 1) | 50-100ms | CPU (local) | Memory |
-| Score jobs (Tier 2) | 2-5s | Claude API | None |
-| Auto-apply (one job) | 10-20s | Form fill + submit | None |
-| Sync profile (all 3) | 30-60s | Browser nav + submit | None |
-| Extract cookies (CDP) | 3-5s | Chrome DevTools | None |
+| Operation             | Duration  | Bottleneck           | Cache   |
+| --------------------- | --------- | -------------------- | ------- |
+| Fetch jobs            | 500-800ms | Wanted API           | KV (1h) |
+| Score jobs (Tier 1)   | 50-100ms  | CPU (local)          | Memory  |
+| Score jobs (Tier 2)   | 2-5s      | Claude API           | None    |
+| Auto-apply (one job)  | 10-20s    | Form fill + submit   | None    |
+| Sync profile (all 3)  | 30-60s    | Browser nav + submit | None    |
+| Extract cookies (CDP) | 3-5s      | Chrome DevTools      | None    |
 
 ---
 
 ## Data Consistency Guarantees
 
-| Component | Consistency | Mechanism |
-|-----------|-------------|-----------|
-| Session cookies | Per-platform | 24h TTL, immutable |
-| D1 applications | Transaction | SQL ACID properties |
-| KV cache | Eventual | TTL-based invalidation |
-| Job cache | LRU | KV with 1h TTL |
-| MCP response | Request | Sent with request ID |
-
+| Component       | Consistency  | Mechanism              |
+| --------------- | ------------ | ---------------------- |
+| Session cookies | Per-platform | 24h TTL, immutable     |
+| D1 applications | Transaction  | SQL ACID properties    |
+| KV cache        | Eventual     | TTL-based invalidation |
+| Job cache       | LRU          | KV with 1h TTL         |
+| MCP response    | Request      | Sent with request ID   |

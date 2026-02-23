@@ -123,7 +123,7 @@ All workflows are in: `.github/workflows/`
 ### 2. **maintenance.yml** (343 lines)
 
 **Purpose**: Scheduled maintenance tasks
-**Triggers**: Cron schedule + manual dispatch
+**Triggers**: Scheduled trigger + manual dispatch
 
 **Jobs**:
 

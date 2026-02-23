@@ -83,7 +83,7 @@
 | ----- | -------------------- | ----------------------------------- | ---------- |
 | NF1.1 | Cloudflare Workflows | 네이티브 Workflows 사용             | ✅         |
 | NF1.2 | Worker 이름 정규화   | production/staging 동일 이름        | ✅         |
-| NF1.3 | wrangler.toml 설정   | [[workflows]] 바인딩 구성           | ✅         |
+| NF1.3 | wrangler.toml 설정   | \[\[workflows\]\] 바인딩 구성       | ✅         |
 | NF1.4 | 클래스 Export        | index.js에서 Workflow 클래스 export | ✅         |
 | NF1.5 | 빌드 성공            | wrangler deploy --dry-run 통과      | ✅         |
 | NF1.6 | 번들 크기            | 500KB 미만                          | ✅ (204KB) |
@@ -96,7 +96,7 @@
 | NF2.2 | 상태 조회 API     | GET /api/workflows/{type}/{id}               | ✅   |
 | NF2.3 | 승인 API          | POST /api/workflows/application/{id}/approve | ✅   |
 | NF2.4 | 거절 API          | POST /api/workflows/application/{id}/reject  | ✅   |
-| NF2.5 | Cron 통합         | scheduled()에서 Workflow 트리거              | ✅   |
+| NF2.5 | 스케줄 통합       | scheduled()에서 Workflow 트리거              | ✅   |
 | NF2.6 | 월-금 크롤링      | 0 0 \* \* 1-5 → JobCrawlingWorkflow          | ✅   |
 | NF2.7 | 일일 리포트       | 0 9 \* \* \* → DailyReportWorkflow           | ✅   |
 

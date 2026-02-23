@@ -30,12 +30,14 @@ Complete guide for local development, testing, debugging, and extending the job-
 ### System Requirements
 
 - **Node.js** 18.0.0 or higher (LTS)
+
   ```bash
   node --version
   npm --version  # Should be 8.0.0+
   ```
 
 - **Git** 2.30.0 or higher
+
   ```bash
   git --version
   ```
@@ -267,7 +269,7 @@ export class CustomHandler extends BaseHandler {
     // Validate request
     const { data } = await this.validateRequest(request, {
       method: ['GET', 'POST'],
-      body: true,  // Require request body
+      body: true, // Require request body
     });
 
     // Validate authentication
@@ -311,7 +313,7 @@ export default {
     }
 
     // ... rest of routing
-  }
+  },
 };
 ```
 
@@ -346,7 +348,7 @@ describe('CustomHandler', () => {
 
 Add to [API_REFERENCE.md](./API_REFERENCE.md):
 
-```markdown
+````markdown
 ### Custom Endpoint
 
 **Endpoint**: `POST /api/custom`
@@ -354,20 +356,24 @@ Add to [API_REFERENCE.md](./API_REFERENCE.md):
 **Rate Limit**: 60 requests/minute
 
 **Request**:
+
 ```json
 {
   "data": "value"
 }
 ```
+````
 
 **Response**:
+
 ```json
 {
   "result": "success",
   "id": "123"
 }
 ```
-```
+
+````
 
 ---
 
@@ -404,7 +410,7 @@ export class MyHandler extends BaseHandler {
     return this.errorResponse(error.message, 500);
   }
 }
-```
+````
 
 ### Best Practices
 
@@ -433,13 +439,11 @@ export class JobsHandler extends BaseHandler {
       const offset = (page - 1) * limit;
 
       // Query database
-      const jobs = await env.DB.prepare(
-        'SELECT * FROM jobs LIMIT ? OFFSET ?'
-      ).bind(limit, offset).all();
+      const jobs = await env.DB.prepare('SELECT * FROM jobs LIMIT ? OFFSET ?')
+        .bind(limit, offset)
+        .all();
 
-      const total = await env.DB.prepare(
-        'SELECT COUNT(*) as count FROM jobs'
-      ).first();
+      const total = await env.DB.prepare('SELECT COUNT(*) as count FROM jobs').first();
 
       // Return paginated response
       return this.successResponse({
@@ -497,13 +501,7 @@ import { rateLimitMiddleware } from './rate-limit.js';
 import { customMiddleware } from './custom-middleware.js';
 
 export function buildMiddlewareStack(handler) {
-  return loggerMiddleware(
-    corsMiddleware(
-      rateLimitMiddleware(
-        customMiddleware(handler)
-      )
-    )
-  );
+  return loggerMiddleware(corsMiddleware(rateLimitMiddleware(customMiddleware(handler))));
 }
 ```
 
@@ -635,7 +633,7 @@ await batch;
 await env.SESSIONS.put(
   'session:user-123',
   JSON.stringify({ user: 'john', exp: 1708000000 }),
-  { expirationTtl: 86400 }  // 24 hours
+  { expirationTtl: 86400 } // 24 hours
 );
 
 // Get value
@@ -660,7 +658,7 @@ await env.RATE_LIMIT_KV.put(
   'rate-limit:203.0.113.42',
   JSON.stringify({ tokens: 60, timestamp: Date.now() }),
   {
-    expirationTtl: 60,  // Auto-delete after 60 seconds
+    expirationTtl: 60, // Auto-delete after 60 seconds
   }
 );
 
@@ -693,14 +691,8 @@ const userId = '123';
 const key = `user:${userId}:settings`;
 
 // Batch operations
-const keys = [
-  'session:user-1',
-  'session:user-2',
-  'session:user-3',
-];
-const values = await Promise.all(
-  keys.map(k => env.SESSIONS.get(k, 'json'))
-);
+const keys = ['session:user-1', 'session:user-2', 'session:user-3'];
+const values = await Promise.all(keys.map((k) => env.SESSIONS.get(k, 'json')));
 
 // List keys (use cautiously - can be slow)
 const listResult = await env.SESSIONS.list({
@@ -764,7 +756,7 @@ describe('CustomHandler', () => {
   test('should handle request successfully', async () => {
     const request = new Request('http://localhost/api/custom', {
       method: 'GET',
-      headers: { 'Authorization': 'Bearer valid-token' },
+      headers: { Authorization: 'Bearer valid-token' },
     });
 
     const response = await handler.handleEndpoint(request, mockEnv, {});
@@ -776,7 +768,7 @@ describe('CustomHandler', () => {
   test('should reject unauthorized requests', async () => {
     const request = new Request('http://localhost/api/custom', {
       method: 'GET',
-      headers: {},  // No Authorization
+      headers: {}, // No Authorization
     });
 
     const response = await handler.handleEndpoint(request, mockEnv, {});
@@ -794,9 +786,7 @@ import { rateLimitMiddleware } from '../../../src/middleware/rate-limit.js';
 
 describe('Rate Limit Middleware', () => {
   test('should allow requests under limit', async () => {
-    const mockHandler = jest.fn().mockResolvedValue(
-      new Response('OK', { status: 200 })
-    );
+    const mockHandler = jest.fn().mockResolvedValue(new Response('OK', { status: 200 }));
 
     const middleware = rateLimitMiddleware(mockHandler);
 
@@ -843,7 +833,7 @@ test.describe('Job Dashboard API', () => {
 
   test('should fetch applications list', async () => {
     const response = await fetch(`${baseUrl}/api/applications`, {
-      headers: { 'Authorization': `Bearer ${authToken}` },
+      headers: { Authorization: `Bearer ${authToken}` },
     });
 
     expect(response.status).toBe(200);
@@ -860,7 +850,7 @@ test.describe('Job Dashboard API', () => {
         company: 'Test Corp',
       }),
       headers: {
-        'Authorization': `Bearer ${authToken}`,
+        Authorization: `Bearer ${authToken}`,
         'Content-Type': 'application/json',
       },
     });
@@ -884,7 +874,7 @@ function logECS(level, message, extra = {}) {
   const log = {
     '@timestamp': new Date().toISOString(),
     'log.level': level,
-    'message': message,
+    message: message,
     ...extra,
   };
   console.log(JSON.stringify(log));
@@ -961,8 +951,8 @@ try {
 } finally {
   const duration = Date.now() - startTime;
   logECS('info', 'Query completed', {
-    'event.duration': duration * 1000000,  // Convert to nanoseconds
-    'duration_ms': duration,
+    'event.duration': duration * 1000000, // Convert to nanoseconds
+    duration_ms: duration,
   });
 }
 ```
@@ -973,14 +963,17 @@ try {
 // Log slow queries
 async function queryWithTiming(db, query, params, slowThreshold = 50) {
   const start = Date.now();
-  const result = await db.prepare(query).bind(...params).all();
+  const result = await db
+    .prepare(query)
+    .bind(...params)
+    .all();
   const duration = Date.now() - start;
 
   if (duration > slowThreshold) {
     logECS('warn', 'Slow query detected', {
       'database.query': query,
-      'duration_ms': duration,
-      'rows_affected': result.count,
+      duration_ms: duration,
+      rows_affected: result.count,
     });
   }
 
@@ -1024,15 +1017,13 @@ export class MyWorkflow extends WorkflowEntrypoint {
     try {
       // Step 1: Fetch data
       const data = await step.do('fetch-data', async () => {
-        const result = await env.DB.prepare(
-          'SELECT * FROM applications'
-        ).all();
+        const result = await env.DB.prepare('SELECT * FROM applications').all();
         return result.results;
       });
 
       // Step 2: Process data
       const processed = await step.do('process', async () => {
-        return data.map(item => ({
+        return data.map((item) => ({
           ...item,
           processed_at: Date.now(),
         }));
@@ -1086,14 +1077,11 @@ async function handleWorkflowTrigger(request, env) {
 }
 ```
 
-### Cron Triggers
+### Event Triggers
 
-Add to `wrangler.toml`:
+Configure workflows in `wrangler.toml` and trigger from API/CI:
 
 ```toml
-[triggers]
-crons = ["0 0 * * *"]  # Daily at midnight UTC
-
 [[workflows]]
 name = "daily-report-workflow"
 main = "src/workflows/daily-report.js"
@@ -1219,7 +1207,9 @@ async function handleListApplications(request, env) {
   params.push(limit, (page - 1) * limit);
 
   // Execute query
-  const result = await env.DB.prepare(query).bind(...params).all();
+  const result = await env.DB.prepare(query)
+    .bind(...params)
+    .all();
 
   return successResponse({
     applications: result.results,
@@ -1232,8 +1222,8 @@ async function handleListApplications(request, env) {
 
 ```javascript
 // In rate-limit middleware
-const RATE_LIMIT = 60;  // Change this value
-const RATE_LIMIT_WINDOW = 60;  // seconds
+const RATE_LIMIT = 60; // Change this value
+const RATE_LIMIT_WINDOW = 60; // seconds
 
 // Or make it configurable
 const RATE_LIMIT = parseInt(env.RATE_LIMIT || '60');
@@ -1246,7 +1236,7 @@ const RATE_LIMIT_WINDOW = parseInt(env.RATE_LIMIT_WINDOW || '60');
 const ALLOWED_ORIGINS = [
   'https://resume.jclee.me',
   'https://*.jclee.me',
-  'http://localhost:3000',  // Local dev
+  'http://localhost:3000', // Local dev
 ];
 
 function getCORSHeaders(origin) {
@@ -1310,6 +1300,7 @@ async function sendWebhook(url, data, secret) {
 **Symptom**: `Error: Cannot find module 'x'`
 
 **Solutions**:
+
 1. Check file path is correct
 2. Ensure `.js` extension is included
 3. Run `npm install` to install dependencies
@@ -1320,6 +1311,7 @@ async function sendWebhook(url, data, secret) {
 **Symptom**: `CORS policy: No 'Access-Control-Allow-Origin' header`
 
 **Solutions**:
+
 1. Add CORS headers in middleware
 2. Check allowed origins list
 3. Verify request method is in allowed methods
@@ -1329,8 +1321,9 @@ async function sendWebhook(url, data, secret) {
 **Symptom**: `Error: Database operation timed out`
 
 **Solutions**:
+
 1. Add index on frequently queried column
-2. Optimize query (avoid SELECT *)
+2. Optimize query (avoid SELECT \*)
 3. Check database connection pool
 
 ### Issue: "Rate limit false positives"
@@ -1338,6 +1331,7 @@ async function sendWebhook(url, data, secret) {
 **Symptom**: Legitimate requests rejected with 429
 
 **Solutions**:
+
 1. Check rate limit configuration
 2. Consider higher limit for authenticated users
 3. Clear rate limit KV manually
@@ -1404,7 +1398,7 @@ async function handleCreateApplication(request, env) {
 // ❌ WRONG - Don't log sensitive data
 logECS('info', 'User login', {
   'user.username': username,
-  'user.password': password,  // NEVER!
+  'user.password': password, // NEVER!
 });
 
 // ✅ CORRECT - Only log non-sensitive info
@@ -1422,7 +1416,7 @@ await env.KV.put(key, value);
 
 // ✅ CORRECT - Always set TTL
 await env.KV.put(key, value, {
-  expirationTtl: 86400,  // 24 hours
+  expirationTtl: 86400, // 24 hours
 });
 ```
 
@@ -1439,8 +1433,8 @@ async function handler(request, env) {
 // ❌ LESS PREFERRED - Promise chains harder to debug
 function handler(request, env) {
   return fetch(url)
-    .then(data => process(data))
-    .then(result => result);
+    .then((data) => process(data))
+    .then((result) => result);
 }
 ```
 
@@ -1459,12 +1453,14 @@ const apiKey = 'sk_live_1234567890';
 ## Performance Optimization Tips
 
 1. **Index Frequently Queried Columns**
+
    ```sql
    CREATE INDEX idx_status ON applications(status);
    CREATE INDEX idx_created ON applications(created_at DESC);
    ```
 
 2. **Batch Database Operations**
+
    ```javascript
    // Better than individual queries
    const batch = env.DB.batch([query1, query2, query3]);
@@ -1472,6 +1468,7 @@ const apiKey = 'sk_live_1234567890';
    ```
 
 3. **Cache Static Data in KV**
+
    ```javascript
    const cacheKey = 'config:v1';
    let config = await env.CONFIG_KV.get(cacheKey, 'json');
@@ -1484,6 +1481,7 @@ const apiKey = 'sk_live_1234567890';
    ```
 
 4. **Minimize Response Size**
+
    ```javascript
    // Only return required fields
    SELECT id, title, company FROM applications  // Good

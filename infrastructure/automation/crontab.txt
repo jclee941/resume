@@ -1,5 +1,0 @@
-# Resume Platform Sync - runs daily at 9 AM
-# Add with: crontab -e
-# Or: (crontab -l 2>/dev/null; cat crontab.txt) | crontab -
-
-0 9 * * * cd /home/jclee/dev/resume/typescript/job-automation && /usr/bin/node scripts/auto-all.js --sync >> /var/log/resume-sync.log 2>&1

@@ -22,9 +22,5 @@
       "enabled": false,
       "address": ""
     }
-  },
-  "schedule": {
-    "enabled": true,
-    "cron": "0 9 * * 1-5"
   }
 }
