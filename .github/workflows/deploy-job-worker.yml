@@ -39,7 +39,7 @@ jobs:
           fi
 
       - name: Sync worker triggers
-        run: npx wrangler triggers deploy --config typescript/job-automation/workers/wrangler.toml --env production
+        run: npx wrangler triggers deploy --config typescript/job-automation/workers/wrangler.toml
 
       - name: Post summary
         run: |
