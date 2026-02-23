@@ -48,7 +48,7 @@ jobs:
               continue
             fi
 
-            MATCH=$(echo "${SCHEDULES}" | jq --argjson target "${TARGET}" '[.result[].cron as $c | $target[] | select(.==$c)] | length')
+            MATCH=$(echo "${SCHEDULES}" | jq --argjson target "${TARGET}" '[.result[] | (if type=="object" then .cron else . end) as $c | $target[] | select(.==$c)] | length')
             if [ "${MATCH}" = "0" ]; then
               continue
             fi
@@ -73,7 +73,7 @@ jobs:
 
           for SCRIPT_NAME in ${SCRIPTS}; do
             SCHEDULES=$(curl -fsS -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" -H "Content-Type: application/json" "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/workers/scripts/${SCRIPT_NAME}/schedules")
-            MATCH=$(echo "${SCHEDULES}" | jq --argjson target "${TARGET}" '[.result[].cron as $c | $target[] | select(.==$c)] | length')
+            MATCH=$(echo "${SCHEDULES}" | jq --argjson target "${TARGET}" '[.result[] | (if type=="object" then .cron else . end) as $c | $target[] | select(.==$c)] | length')
             if [ "${MATCH}" != "0" ]; then
               echo "::error::Target schedules still remain on ${SCRIPT_NAME}"
               exit 1
