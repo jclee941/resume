@@ -1,0 +1,5 @@
+name = "job"
+main = "src/index.js"
+compatibility_date = "2026-02-21"
+
+routes = [{ pattern = "resume.jclee.me/job/*", zone_name = "jclee.me" }]
