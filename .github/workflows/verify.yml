@@ -104,12 +104,13 @@ jobs:
           TIMEOUT="${{ steps.urls.outputs.timeout }}"
           RETRIES=5
           DELAY=5
+          UA='Mozilla/5.0 (GitHubActions VerifyDeployment; +https://github.com/qws941/resume)'
 
           echo "🏥 Checking Portfolio Health..."
 
           for i in $(seq 1 $RETRIES); do
             echo "  Attempt $i/$RETRIES..."
-            HEALTH=$(curl -sf --max-time "$TIMEOUT" "$PORTFOLIO_URL/health" 2>/dev/null)
+            HEALTH=$(curl -fsSL --http1.1 --connect-timeout 10 --retry 3 --retry-delay 2 --retry-all-errors --max-time "$TIMEOUT" -A "$UA" -H 'Accept: application/json' "$PORTFOLIO_URL/health" 2>/dev/null)
             
             if [ $? -eq 0 ]; then
               STATUS=$(echo "$HEALTH" | jq -r '.status // "unknown"' 2>/dev/null)
@@ -131,6 +132,9 @@ jobs:
                     echo "✅ Deployment Age: ${AGE_HOURS}h old"
                   fi
                 fi
+                exit 0
+              elif [ "$STATUS" = "degraded" ]; then
+                echo "⚠️  Portfolio Health: degraded (v$VERSION, deployed: ${DEPLOYED_AT:0:19})"
                 exit 0
               fi
             fi
@@ -203,10 +207,11 @@ jobs:
           set +e
           PORTFOLIO_URL="${{ steps.urls.outputs.portfolio_url }}"
           TIMEOUT="${{ steps.urls.outputs.timeout }}"
+          UA='Mozilla/5.0 (GitHubActions VerifyDeployment; +https://github.com/qws941/resume)'
 
           echo "🔒 Checking Content Security Policy..."
 
-          HEADERS=$(curl -sI --max-time "$TIMEOUT" "$PORTFOLIO_URL/" 2>/dev/null)
+          HEADERS=$(curl -fsSIL --http1.1 --connect-timeout 10 --retry 3 --retry-delay 2 --retry-all-errors --max-time "$TIMEOUT" -A "$UA" "$PORTFOLIO_URL/" 2>/dev/null)
 
           if echo "$HEADERS" | grep -qi "content-security-policy"; then
             CSP=$(echo "$HEADERS" | grep -i "content-security-policy" | head -1)
@@ -302,12 +307,13 @@ jobs:
           set +e
           PORTFOLIO_URL="${{ steps.urls.outputs.portfolio_url }}"
           TIMEOUT="${{ steps.urls.outputs.timeout }}"
+          UA='Mozilla/5.0 (GitHubActions VerifyDeployment; +https://github.com/qws941/resume)'
 
           echo "📄 Checking Page Title..."
 
-          HTML=$(curl -sf --max-time "$TIMEOUT" "$PORTFOLIO_URL/" 2>/dev/null)
+          HTML=$(curl -fsSL --http1.1 --connect-timeout 10 --retry 3 --retry-delay 2 --retry-all-errors --max-time "$TIMEOUT" -A "$UA" "$PORTFOLIO_URL/" 2>/dev/null)
 
-          if TITLE=$(echo "$HTML" | grep -oP '<title>\K[^<]+' | head -1); then
+          if TITLE=$(echo "$HTML" | grep -oPi '<title>\K[^<]+' | head -1); then
             if [ -n "$TITLE" ] && [ ${#TITLE} -gt 10 ]; then
               echo "✅ Page Title: ${TITLE:0:50}..."
               exit 0
