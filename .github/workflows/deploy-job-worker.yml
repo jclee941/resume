@@ -38,12 +38,12 @@ jobs:
             exit 1
           fi
 
-      - name: Deploy worker
-        run: npx wrangler deploy --config typescript/job-automation/workers/wrangler.toml
+      - name: Sync worker triggers
+        run: npx wrangler triggers deploy --config typescript/job-automation/workers/wrangler.toml --env production
 
       - name: Post summary
         run: |
-          echo "## Deploy Job Worker Complete" >> $GITHUB_STEP_SUMMARY
+          echo "## Job Worker Trigger Sync Complete" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "- Worker: job" >> $GITHUB_STEP_SUMMARY
           echo "- Environment: production" >> $GITHUB_STEP_SUMMARY
