@@ -23,14 +23,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '22'
-
-      - name: Install dependencies
-        run: npm ci
-
       - name: Verify required secrets
         run: |
           if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
@@ -38,12 +30,52 @@ jobs:
             exit 1
           fi
 
-      - name: Sync worker triggers
-        run: npx wrangler triggers deploy --config typescript/job-automation/workers/wrangler.triggers.toml
+      - name: Resolve job worker script name
+        id: resolve-script
+        run: |
+          set -euo pipefail
+          ZONE_ID=$(curl -fsS -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" -H "Content-Type: application/json" "https://api.cloudflare.com/client/v4/zones?name=jclee.me&status=active" | jq -r '.result[0].id')
+          if [ -z "${ZONE_ID}" ] || [ "${ZONE_ID}" = "null" ]; then
+            echo "::error::Unable to resolve zone id for jclee.me"
+            exit 1
+          fi
+
+          SCRIPT_NAME=$(curl -fsS -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" -H "Content-Type: application/json" "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/workers/routes" | jq -r '.result[] | select(.pattern=="resume.jclee.me/job/*") | .script' | head -1)
+          if [ -z "${SCRIPT_NAME}" ] || [ "${SCRIPT_NAME}" = "null" ]; then
+            echo "::error::Unable to find worker script for route resume.jclee.me/job/*"
+            exit 1
+          fi
+
+          echo "zone_id=${ZONE_ID}" >> "$GITHUB_OUTPUT"
+          echo "script_name=${SCRIPT_NAME}" >> "$GITHUB_OUTPUT"
+
+      - name: Show existing schedules
+        run: |
+          set -euo pipefail
+          SCRIPT_NAME="${{ steps.resolve-script.outputs.script_name }}"
+          curl -fsS -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" -H "Content-Type: application/json" "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/workers/scripts/${SCRIPT_NAME}/schedules" | jq
+
+      - name: Remove all schedules
+        run: |
+          set -euo pipefail
+          SCRIPT_NAME="${{ steps.resolve-script.outputs.script_name }}"
+          curl -fsS -X PUT -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" -H "Content-Type: application/json" "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/workers/scripts/${SCRIPT_NAME}/schedules" --data '[]' | jq
+
+      - name: Verify schedules removed
+        run: |
+          set -euo pipefail
+          SCRIPT_NAME="${{ steps.resolve-script.outputs.script_name }}"
+          COUNT=$(curl -fsS -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" -H "Content-Type: application/json" "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/workers/scripts/${SCRIPT_NAME}/schedules" | jq '.result | length')
+          echo "remaining_schedules=${COUNT}" >> "$GITHUB_OUTPUT"
+          if [ "${COUNT}" != "0" ]; then
+            echo "::error::Schedules still remain on worker ${SCRIPT_NAME}: ${COUNT}"
+            exit 1
+          fi
 
       - name: Post summary
         run: |
-          echo "## Job Worker Trigger Sync Complete" >> $GITHUB_STEP_SUMMARY
+          echo "## Job Worker Schedule Removal Complete" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "- Worker: job" >> $GITHUB_STEP_SUMMARY
+          echo "- Worker: ${{ steps.resolve-script.outputs.script_name }}" >> $GITHUB_STEP_SUMMARY
           echo "- Environment: production" >> $GITHUB_STEP_SUMMARY
+          echo "- Remaining schedules: 0" >> $GITHUB_STEP_SUMMARY
