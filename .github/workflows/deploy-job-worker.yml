@@ -30,52 +30,60 @@ jobs:
             exit 1
           fi
 
-      - name: Resolve job worker script name
-        id: resolve-script
+      - name: Remove target cron schedules from account workers
+        id: remove-target-schedules
         run: |
           set -euo pipefail
-          ZONE_ID=$(curl -fsS -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" -H "Content-Type: application/json" "https://api.cloudflare.com/client/v4/zones?name=jclee.me&status=active" | jq -r '.result[0].id')
-          if [ -z "${ZONE_ID}" ] || [ "${ZONE_ID}" = "null" ]; then
-            echo "::error::Unable to resolve zone id for jclee.me"
-            exit 1
+          TARGET='["*/5 * * * *","0 9 * * *","0 4 * * SUN","0 3 * * *","0 0 * * 1-5"]'
+          REMOVED=0
+          rm -f removed-scripts.txt
+
+          SCRIPTS=$(curl -fsS -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" -H "Content-Type: application/json" "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/workers/scripts" | jq -r '.result[].id')
+
+          for SCRIPT_NAME in ${SCRIPTS}; do
+            SCHEDULES=$(curl -fsS -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" -H "Content-Type: application/json" "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/workers/scripts/${SCRIPT_NAME}/schedules")
+            COUNT=$(echo "${SCHEDULES}" | jq '.result | length')
+
+            if [ "${COUNT}" = "0" ]; then
+              continue
+            fi
+
+            MATCH=$(echo "${SCHEDULES}" | jq --argjson target "${TARGET}" '[.result[].cron as $c | $target[] | select(.==$c)] | length')
+            if [ "${MATCH}" = "0" ]; then
+              continue
+            fi
+
+            curl -fsS -X PUT -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" -H "Content-Type: application/json" "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/workers/scripts/${SCRIPT_NAME}/schedules" --data '[]' > /dev/null
+            echo "${SCRIPT_NAME}" >> removed-scripts.txt
+            REMOVED=$((REMOVED + 1))
+          done
+
+          echo "removed_count=${REMOVED}" >> "$GITHUB_OUTPUT"
+          if [ -f removed-scripts.txt ]; then
+            echo "removed_scripts=$(paste -sd ',' removed-scripts.txt)" >> "$GITHUB_OUTPUT"
+          else
+            echo "removed_scripts=" >> "$GITHUB_OUTPUT"
           fi
 
-          SCRIPT_NAME=$(curl -fsS -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" -H "Content-Type: application/json" "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/workers/routes" | jq -r '.result[] | select(.pattern=="resume.jclee.me/job/*") | .script' | head -1)
-          if [ -z "${SCRIPT_NAME}" ] || [ "${SCRIPT_NAME}" = "null" ]; then
-            echo "::error::Unable to find worker script for route resume.jclee.me/job/*"
-            exit 1
-          fi
-
-          echo "zone_id=${ZONE_ID}" >> "$GITHUB_OUTPUT"
-          echo "script_name=${SCRIPT_NAME}" >> "$GITHUB_OUTPUT"
-
-      - name: Show existing schedules
+      - name: Verify target schedules removed
         run: |
           set -euo pipefail
-          SCRIPT_NAME="${{ steps.resolve-script.outputs.script_name }}"
-          curl -fsS -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" -H "Content-Type: application/json" "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/workers/scripts/${SCRIPT_NAME}/schedules" | jq
+          TARGET='["*/5 * * * *","0 9 * * *","0 4 * * SUN","0 3 * * *","0 0 * * 1-5"]'
+          SCRIPTS=$(curl -fsS -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" -H "Content-Type: application/json" "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/workers/scripts" | jq -r '.result[].id')
 
-      - name: Remove all schedules
-        run: |
-          set -euo pipefail
-          SCRIPT_NAME="${{ steps.resolve-script.outputs.script_name }}"
-          curl -fsS -X PUT -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" -H "Content-Type: application/json" "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/workers/scripts/${SCRIPT_NAME}/schedules" --data '[]' | jq
-
-      - name: Verify schedules removed
-        run: |
-          set -euo pipefail
-          SCRIPT_NAME="${{ steps.resolve-script.outputs.script_name }}"
-          COUNT=$(curl -fsS -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" -H "Content-Type: application/json" "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/workers/scripts/${SCRIPT_NAME}/schedules" | jq '.result | length')
-          echo "remaining_schedules=${COUNT}" >> "$GITHUB_OUTPUT"
-          if [ "${COUNT}" != "0" ]; then
-            echo "::error::Schedules still remain on worker ${SCRIPT_NAME}: ${COUNT}"
-            exit 1
-          fi
+          for SCRIPT_NAME in ${SCRIPTS}; do
+            SCHEDULES=$(curl -fsS -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" -H "Content-Type: application/json" "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/workers/scripts/${SCRIPT_NAME}/schedules")
+            MATCH=$(echo "${SCHEDULES}" | jq --argjson target "${TARGET}" '[.result[].cron as $c | $target[] | select(.==$c)] | length')
+            if [ "${MATCH}" != "0" ]; then
+              echo "::error::Target schedules still remain on ${SCRIPT_NAME}"
+              exit 1
+            fi
+          done
 
       - name: Post summary
         run: |
           echo "## Job Worker Schedule Removal Complete" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "- Worker: ${{ steps.resolve-script.outputs.script_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Removed scripts: ${{ steps.remove-target-schedules.outputs.removed_scripts }}" >> $GITHUB_STEP_SUMMARY
           echo "- Environment: production" >> $GITHUB_STEP_SUMMARY
-          echo "- Remaining schedules: 0" >> $GITHUB_STEP_SUMMARY
+          echo "- Removed count: ${{ steps.remove-target-schedules.outputs.removed_count }}" >> $GITHUB_STEP_SUMMARY
