@@ -62,32 +62,36 @@ export default {
     const logger = Logger.create(env, { service: 'job-worker' });
     const reqCtx = RequestContext.fromRequest(request, url);
     const log = logger.withRequest(reqCtx);
+    const respond = (response) => {
+      ctx.waitUntil(log.logResponse(response));
+      return response;
+    };
 
     ctx.waitUntil(log.logRequest(request, url));
 
     if (request.method === 'OPTIONS') {
-      return addCorsHeaders(new Response(null, { status: 204 }), request, env);
+      return respond(addCorsHeaders(new Response(null, { status: 204 }), request, env));
     }
 
     const rateResult = await checkRateLimit(request, url.pathname, env);
     if (!rateResult.ok) {
-      return addCorsHeaders(
-        addRateLimitHeaders(
-          jsonResponse({ error: rateResult.error }, rateResult.status),
-          rateResult.headers
-        ),
-        request,
-        env
+      return respond(
+        addCorsHeaders(
+          addRateLimitHeaders(
+            jsonResponse({ error: rateResult.error }, rateResult.status),
+            rateResult.headers
+          ),
+          request,
+          env
+        )
       );
     }
 
     if (requiresAuth(url.pathname)) {
       const authResult = verifyAdminAuth(request, env);
       if (!authResult.ok) {
-        return addCorsHeaders(
-          jsonResponse({ error: authResult.error }, authResult.status),
-          request,
-          env
+        return respond(
+          addCorsHeaders(jsonResponse({ error: authResult.error }, authResult.status), request, env)
         );
       }
     }
@@ -95,10 +99,8 @@ export default {
     if (requiresWebhookSignature(url.pathname)) {
       const sigResult = await verifyWebhookSignature(request, env);
       if (!sigResult.ok) {
-        return addCorsHeaders(
-          jsonResponse({ error: sigResult.error }, sigResult.status),
-          request,
-          env
+        return respond(
+          addCorsHeaders(jsonResponse({ error: sigResult.error }, sigResult.status), request, env)
         );
       }
     }
@@ -110,10 +112,8 @@ export default {
     if (!skipCsrf) {
       const csrfResult = validateCsrf(request);
       if (!csrfResult.ok) {
-        return addCorsHeaders(
-          jsonResponse({ error: csrfResult.error }, csrfResult.status),
-          request,
-          env
+        return respond(
+          addCorsHeaders(jsonResponse({ error: csrfResult.error }, csrfResult.status), request, env)
         );
       }
     }
@@ -355,26 +355,30 @@ export default {
       const response = await router.handle(request, url, log);
       if (response) {
         const withCsrf = addCsrfCookie(response, request);
-        return addRateLimitHeaders(addCorsHeaders(withCsrf, request, env), rateResult.headers);
+        return respond(
+          addRateLimitHeaders(addCorsHeaders(withCsrf, request, env), rateResult.headers)
+        );
       }
 
       // Static fallback: serve dashboard for non-API routes
       if (!url.pathname.startsWith('/api/')) {
         const staticResponse = serveStatic(url.pathname);
         const withCsrf = addCsrfCookie(staticResponse, request);
-        return addCorsHeaders(withCsrf, request, env);
+        return respond(addCorsHeaders(withCsrf, request, env));
       }
 
       // API route not found
-      return addCorsHeaders(jsonResponse({ error: 'Not found' }, 404), request, env);
+      return respond(addCorsHeaders(jsonResponse({ error: 'Not found' }, 404), request, env));
     } catch (err) {
       const error = normalizeError(err, { path: url.pathname, method: request.method });
       ctx.waitUntil(log.error('Unhandled worker error', error));
 
       if (error instanceof HttpError) {
-        return addCorsHeaders(error.toResponse(), request, env);
+        return respond(addCorsHeaders(error.toResponse(), request, env));
       }
-      return addCorsHeaders(jsonResponse({ error: 'Internal server error' }, 500), request, env);
+      return respond(
+        addCorsHeaders(jsonResponse({ error: 'Internal server error' }, 500), request, env)
+      );
     }
   },
 
