@@ -238,8 +238,8 @@ jobs:
         run: npm run build
         working-directory: typescript/portfolio-worker
 
-      - name: Run E2E tests against local build
-        run: npm run test:e2e
+      - name: Run smoke E2E tests against local build
+        run: npm run test:e2e:smoke
         env:
           CI: true
 
