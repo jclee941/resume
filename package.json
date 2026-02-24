@@ -15,6 +15,8 @@
     "sync:data": "node tools/scripts/utils/sync-resume-data.js",
     "sync:pptx": "python3 tools/scripts/build/generate_shinhan_pptx.py",
     "sync:all": "npm run sync:data && npm run sync:pptx",
+    "automate:ssot": "npm run sync:data && npm run build && npm run typecheck && npm run test:node",
+    "automate:full": "npm run sync:all && npm run lint && npm run typecheck && npm run test && npm run build && bash tools/ci/validate-cloudflare-native.sh",
     "build": "cd typescript/portfolio-worker && node generate-worker.js",
     "build:full": "npm run build && npm run cli:build",
     "build:all": "npm run build:full",

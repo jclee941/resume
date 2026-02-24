@@ -8,20 +8,48 @@ Each handler function receives (table, source) and fills the table cells.
 from pathlib import Path
 from pptx.util import Pt
 
-from pptx_engine import TemplateSpec, get_current_age
-from pptx_utils import set_cell_text, join_truncate, truncate, resize_table_text, hide_empty_rows
+try:
+    from .pptx_engine import TemplateSpec, get_current_age
+    from .pptx_utils import (
+        set_cell_text,
+        join_truncate,
+        truncate,
+        resize_table_text,
+        hide_empty_rows,
+    )
+except ImportError:
+    import importlib
+    import sys
 
-ROOT = Path(__file__).parent.parent.parent
+    build_dir = Path(__file__).resolve().parent
+    if str(build_dir) not in sys.path:
+        sys.path.insert(0, str(build_dir))
+
+    _pptx_engine = importlib.import_module("pptx_engine")
+    _pptx_utils = importlib.import_module("pptx_utils")
+
+    TemplateSpec = _pptx_engine.TemplateSpec
+    get_current_age = _pptx_engine.get_current_age
+    set_cell_text = _pptx_utils.set_cell_text
+    join_truncate = _pptx_utils.join_truncate
+    truncate = _pptx_utils.truncate
+    resize_table_text = _pptx_utils.resize_table_text
+    hide_empty_rows = _pptx_utils.hide_empty_rows
+
+ROOT = Path(__file__).parent.parent.parent.parent
 
 
 # =============================================================================
 # TA Template Handlers (15x8 profile + 12x6 projects)
 # =============================================================================
 
+
 def handle_ta_profile(tbl, source):
     """TA 기본사항 (15x8): 인적사항 + 경력사항 + 자격증"""
-    resize_table_text(tbl, header_rows=2, header_cols=1, header_size_pt=14, body_size_pt=14)
-    
+    resize_table_text(
+        tbl, header_rows=2, header_cols=1, header_size_pt=14, body_size_pt=14
+    )
+
     # Force Title Cell (0,0) to 24pt
     if tbl.cell(0, 0).text_frame.text.strip():
         for p in tbl.cell(0, 0).text_frame.paragraphs:
@@ -31,7 +59,7 @@ def handle_ta_profile(tbl, source):
     p = source["personal"]
     e = source["education"]
     s = source["summary"]
-    
+
     # Row 2: 이름, 소속, 직위, 등급, 학력, 전공
     set_cell_text(tbl.cell(2, 0), p["name"])
     set_cell_text(tbl.cell(2, 1), source["current"]["company"].replace("(주)", ""))
@@ -39,16 +67,16 @@ def handle_ta_profile(tbl, source):
     set_cell_text(tbl.cell(2, 4), s["grade"])
     set_cell_text(tbl.cell(2, 5), f"{e['school']}({e['status']})")
     set_cell_text(tbl.cell(2, 6), e["major"])
-    
+
     # Row 3: 나이, 총경력
     age = get_current_age(p["birthDate"])
     set_cell_text(tbl.cell(3, 1), f"만   {age} 세")
     set_cell_text(tbl.cell(3, 4), s["totalExperience"])
-    
+
     # Row 2 Col 7: 전문분야
     expertise_text = ", ".join(s.get("expertise", []))
     set_cell_text(tbl.cell(2, 7), expertise_text)
-    
+
     # 경력사항 (Row 8~14)
     rows = len(tbl.rows)
     careers = source["careers"][:7]
@@ -57,8 +85,10 @@ def handle_ta_profile(tbl, source):
         if row_idx < rows:
             set_cell_text(tbl.cell(row_idx, 0), truncate(career["company"], "company"))
             set_cell_text(tbl.cell(row_idx, 1), career["period"])
-            set_cell_text(tbl.cell(row_idx, 4), truncate(career["description"], "description"))
-    
+            set_cell_text(
+                tbl.cell(row_idx, 4), truncate(career["description"], "description")
+            )
+
     # 자격증 (Row 8~14, Col 5=자격증명, Col 7=취득일)
     certs = source.get("certifications", [])[:7]
     for i, cert in enumerate(certs):
@@ -71,7 +101,7 @@ def handle_ta_profile(tbl, source):
 def handle_ta_projects(tbl, source):
     """TA 프로젝트 참여이력 (12x6)"""
     resize_table_text(tbl, header_rows=2, header_size_pt=14, body_size_pt=14)
-    
+
     # Force Title Cell (0,0) to 24pt
     if tbl.cell(0, 0).text_frame.text.strip():
         for p in tbl.cell(0, 0).text_frame.paragraphs:
@@ -86,10 +116,13 @@ def handle_ta_projects(tbl, source):
             set_cell_text(tbl.cell(row_idx, 0), truncate(proj["name"], "project_name"))
             set_cell_text(tbl.cell(row_idx, 1), proj["role"])
             set_cell_text(tbl.cell(row_idx, 2), proj.get("description", ""))
-            set_cell_text(tbl.cell(row_idx, 3), join_truncate(proj["technologies"], "technologies", max_items=3))
+            set_cell_text(
+                tbl.cell(row_idx, 3),
+                join_truncate(proj["technologies"], "technologies", max_items=3),
+            )
             set_cell_text(tbl.cell(row_idx, 4), proj["period"].replace(" ~ ", "~"))
             set_cell_text(tbl.cell(row_idx, 5), proj["client"])
-    
+
     hide_empty_rows(tbl, start_row=2, check_col=0)
 
 
@@ -97,10 +130,11 @@ def handle_ta_projects(tbl, source):
 # Shinhan Template Handlers
 # =============================================================================
 
+
 def handle_shinhan_profile(tbl, source):
     """신한 기본사항 (5x9)"""
     resize_table_text(tbl, header_cols=1, header_size_pt=14, body_size_pt=12)
-    
+
     p = source["personal"]
     c = source["current"]
     e = source["education"]
@@ -124,7 +158,7 @@ def handle_shinhan_profile(tbl, source):
 def handle_shinhan_careers(tbl, source):
     """신한 경력사항 (5x3)"""
     resize_table_text(tbl, header_rows=1, header_size_pt=14, body_size_pt=12)
-    
+
     for i, career in enumerate(source["careers"][:4]):
         set_cell_text(tbl.cell(i + 1, 0), career["company"])
         set_cell_text(tbl.cell(i + 1, 1), career["period"].replace(" ~ ", "~"))
@@ -134,7 +168,7 @@ def handle_shinhan_careers(tbl, source):
 def handle_shinhan_certs_small(tbl, source):
     """신한 자격증 (5x2)"""
     resize_table_text(tbl, header_rows=1, header_size_pt=14, body_size_pt=12)
-    
+
     certs = source["certifications"][:4]
     for i, cert in enumerate(certs):
         set_cell_text(tbl.cell(i + 1, 0), cert["name"])
@@ -144,7 +178,7 @@ def handle_shinhan_certs_small(tbl, source):
 def handle_shinhan_certs_large(tbl, source):
     """신한 자격증 (7x2)"""
     resize_table_text(tbl, header_rows=1, header_size_pt=14, body_size_pt=12)
-    
+
     rows = len(tbl.rows)
     certs = source["certifications"][:6]
     for i, cert in enumerate(certs):
@@ -156,14 +190,16 @@ def handle_shinhan_certs_large(tbl, source):
 def handle_shinhan_projects(tbl, source):
     """신한 프로젝트 (9x6)"""
     resize_table_text(tbl, header_rows=2, header_size_pt=14, body_size_pt=11)
-    
+
     rows = len(tbl.rows)
     for i, proj in enumerate(source["projects"][:7]):
         if i + 2 < rows:
             set_cell_text(tbl.cell(i + 2, 0), proj["period"].replace(" ~ ", "~"))
             set_cell_text(tbl.cell(i + 2, 1), proj["name"])
             set_cell_text(tbl.cell(i + 2, 2), proj["client"])
-            set_cell_text(tbl.cell(i + 2, 3), join_truncate(proj["technologies"], "technologies"))
+            set_cell_text(
+                tbl.cell(i + 2, 3), join_truncate(proj["technologies"], "technologies")
+            )
             set_cell_text(tbl.cell(i + 2, 4), proj["os"])
             set_cell_text(tbl.cell(i + 2, 5), proj["role"])
 
@@ -171,7 +207,7 @@ def handle_shinhan_projects(tbl, source):
 def handle_shinhan_personal_projects(tbl, source):
     """신한 개인프로젝트 (11x6)"""
     resize_table_text(tbl, header_rows=2, header_size_pt=14, body_size_pt=11)
-    
+
     rows = len(tbl.rows)
     extras = source.get("personalProjects", [])
     for i, proj in enumerate(extras[:5]):
@@ -179,7 +215,9 @@ def handle_shinhan_personal_projects(tbl, source):
             set_cell_text(tbl.cell(i + 2, 0), proj["period"].replace(" ~ ", "~"))
             set_cell_text(tbl.cell(i + 2, 1), proj["name"])
             set_cell_text(tbl.cell(i + 2, 2), "개인")
-            set_cell_text(tbl.cell(i + 2, 3), join_truncate(proj["technologies"], "technologies"))
+            set_cell_text(
+                tbl.cell(i + 2, 3), join_truncate(proj["technologies"], "technologies")
+            )
             set_cell_text(tbl.cell(i + 2, 4), "Docker")
             set_cell_text(tbl.cell(i + 2, 5), "설계/개발")
 

@@ -57,6 +57,9 @@ resume/
 # Install dependencies
 npm install
 
+# End-to-end automation check (SSOT sync + lint + test + build + CF-native validation)
+npm run automate:full
+
 # Serve portfolio locally
 cd typescript/portfolio-worker
 npm run dev
@@ -70,27 +73,46 @@ npm run test:e2e
 
 ### Worker Generation
 
-**CRITICAL**: After editing HTML files, regenerate `worker.js`:
+**CRITICAL**: After editing HTML files, regenerate `worker.js` (or run `npm run automate:ssot` from root):
 
 ```bash
 # Generate worker.js from HTML (extracts CSP hashes from both KO + EN)
 cd typescript/portfolio-worker
 node generate-worker.js
 
-# Deploy to Cloudflare Workers (root-safe)
-npx wrangler deploy --config typescript/portfolio-worker/wrangler.toml --env production
+# Fast SSOT validation/build pipeline from project root
+cd ../..
+npm run automate:ssot
 ```
 
 ## Deployment
 
-### Manual Deployment
+### Automated Deployment
+
+Production deployment authority is Cloudflare Workers Builds (git push to protected branch). Local `wrangler deploy` is not the default production path.
 
 ```bash
-# From project root
-npx wrangler deploy --config typescript/portfolio-worker/wrangler.toml --env production
+# From project root: validate everything before pushing
+npm run automate:full
 
-# Verify deployment
-curl -I https://resume.jclee.me/health
+# Then push branch/commit to trigger automated deployment pipeline
+git push
+```
+
+### Single Worker Resume Sync API
+
+`resume` worker now exposes direct (no `/job` prefix) aliases for JobKorea/Wanted profile sync automation:
+
+```bash
+# Trigger profile sync (defaults to platforms: wanted, jobkorea)
+curl -X POST https://resume.jclee.me/api/automation/resume-update \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <admin-token>" \
+  -d '{"ssotData": {"personal": {"name": "..."}}, "dryRun": true}'
+
+# Check sync status
+curl -H "Authorization: Bearer <admin-token>" \
+  https://resume.jclee.me/api/automation/resume-update/<syncId>
 ```
 
 ### Environment Variables
