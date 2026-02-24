@@ -19,7 +19,7 @@ datasources:
   - name: Elasticsearch
     type: elasticsearch
     access: proxy
-    url: http://192.168.50.105:9200
+    url: ${ELASTICSEARCH_URL}
     database: 'logs-*'
     jsonData:
       esVersion: '8.0.0'
@@ -31,7 +31,7 @@ datasources:
   - name: Elasticsearch-Filebeat
     type: elasticsearch
     access: proxy
-    url: http://192.168.50.105:9200
+    url: ${ELASTICSEARCH_URL}
     database: 'filebeat-*'
     jsonData:
       esVersion: '8.0.0'
@@ -43,7 +43,7 @@ datasources:
   - name: SafeWork2 Logs
     type: elasticsearch
     access: proxy
-    url: http://192.168.50.105:9200
+    url: ${ELASTICSEARCH_URL}
     database: 'safework2-logs-*'
     jsonData:
       esVersion: '8.0.0'
@@ -55,7 +55,7 @@ datasources:
   - name: Elasticsearch-Resume
     type: elasticsearch
     access: proxy
-    url: http://192.168.50.105:9200
+    url: ${ELASTICSEARCH_URL}
     database: 'resume-logs-*'
     jsonData:
       esVersion: '8.0.0'
