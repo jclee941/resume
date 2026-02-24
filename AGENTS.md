@@ -1,7 +1,7 @@
 # PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-02-22 22:30:00 KST
-**Commit:** 623fd03
+**Generated:** 2026-02-23 12:12:31 KST
+**Commit:** 5830ceb
 **Branch:** master
 
 ## OVERVIEW
@@ -32,7 +32,7 @@ resume/
 ├── .github/                       # workflows, composite actions, rulesets
 ├── third_party/                   # Bazel dependency coordination
 ├── BUILD.bazel / MODULE.bazel     # Bazel facade layer
-└── AGENTS.md hierarchy            # root + 28 domain guides
+└── AGENTS.md hierarchy            # root + 30 domain guides
 ```
 
 ## WHERE TO LOOK
@@ -140,7 +140,9 @@ npm run sync:data
 | `tools/scripts/AGENTS.md`                                 | automation script suite          |
 | `tools/scripts/build/AGENTS.md`                           | asset generation scripts         |
 | `tests/AGENTS.md`                                         | test strategy and gotchas        |
+| `tests/e2e/AGENTS.md`                                     | Playwright E2E conventions       |
 | `.github/AGENTS.md`                                       | workflow/repo automation         |
+| `.github/workflows/AGENTS.md`                             | workflow-level patterns/guards   |
 | `docs/AGENTS.md`                                          | documentation hub                |
 | `infrastructure/AGENTS.md`                                | IaC + monitoring                 |
 | `infrastructure/cloudflare/AGENTS.md`                     | Terraform for CF resources       |
