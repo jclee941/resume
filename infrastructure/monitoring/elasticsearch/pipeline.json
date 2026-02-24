@@ -60,6 +60,38 @@
         }
       },
       {
+        "set": {
+          "field": "log.level",
+          "copy_from": "level",
+          "override": false,
+          "ignore_empty_value": true
+        }
+      },
+      {
+        "set": {
+          "field": "level",
+          "copy_from": "log.level",
+          "override": false,
+          "ignore_empty_value": true
+        }
+      },
+      {
+        "set": {
+          "field": "service.name",
+          "copy_from": "serviceName",
+          "override": false,
+          "ignore_empty_value": true
+        }
+      },
+      {
+        "set": {
+          "field": "serviceName",
+          "copy_from": "service.name",
+          "override": false,
+          "ignore_empty_value": true
+        }
+      },
+      {
         "rename": {
           "field": "correlationId",
           "target_field": "trace.correlation_id",

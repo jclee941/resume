@@ -6,7 +6,8 @@
       "index": {
         "number_of_shards": 1,
         "number_of_replicas": 1,
-        "refresh_interval": "30s"
+        "refresh_interval": "30s",
+        "default_pipeline": "resume-logs-ingest"
       }
     },
     "mappings": {
@@ -20,6 +21,13 @@
         },
         "level": {
           "type": "keyword"
+        },
+        "log": {
+          "properties": {
+            "level": {
+              "type": "keyword"
+            }
+          }
         },
         "message": {
           "type": "text",
@@ -53,7 +61,21 @@
           }
         },
         "service": {
+          "properties": {
+            "name": {
+              "type": "keyword"
+            }
+          }
+        },
+        "serviceName": {
           "type": "keyword"
+        },
+        "ecs": {
+          "properties": {
+            "version": {
+              "type": "keyword"
+            }
+          }
         },
         "route": {
           "type": "keyword"
