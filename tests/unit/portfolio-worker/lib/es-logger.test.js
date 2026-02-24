@@ -134,7 +134,10 @@ describe('es-logger', () => {
       const body = JSON.parse(opts.body);
       expect(body).toHaveProperty('message', 'hello');
       expect(body).toHaveProperty('level', 'warn');
-      expect(body).toHaveProperty('service', 'resume-worker');
+      expect(body).toHaveProperty('log.level', 'warn');
+      expect(body).toHaveProperty('service.name', 'resume-worker');
+      expect(body).toHaveProperty('serviceName', 'resume-worker');
+      expect(body).toHaveProperty('ecs.version', '8.11');
       expect(body).toHaveProperty('@timestamp');
       expect(body).toHaveProperty('custom', 'label');
     });

@@ -106,7 +106,7 @@ function generateMetrics(metrics, _requestInfo = {}) {
   // Generate histogram for response times
   const histogramBuckets = metrics.response_time_buckets || initHistogramBuckets();
   const histogramLines = generateHistogramLines(
-    'http_request_duration_seconds_bucket',
+    'http_request_duration_seconds',
     histogramBuckets,
     'job="resume"'
   );

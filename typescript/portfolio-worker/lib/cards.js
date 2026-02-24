@@ -297,10 +297,10 @@ function generateInfrastructureCards(infraData) {
  */
 function generateContactGrid(contactData) {
   return `
-        <a href="${escapeHtml(contactData.github)}" target="_blank" rel="noopener noreferrer" class="contact-item" role="listitem" aria-label="View GitHub profile (opens in new tab)">GitHub</a>
-        <a href="${escapeHtml(contactData.linkedin)}" target="_blank" rel="noopener noreferrer" class="contact-item" role="listitem" aria-label="View LinkedIn profile (opens in new tab)">LinkedIn</a>
-        <a href="mailto:${escapeHtml(contactData.email)}" class="contact-item" role="listitem" aria-label="Send email to ${escapeHtml(contactData.email)}">Email</a>
-        <a href="${escapeHtml(contactData.website)}" target="_blank" rel="noopener noreferrer" class="contact-item" role="listitem" aria-label="Visit portfolio website (opens in new tab)">Website</a>
+        <a href="${escapeHtml(contactData.github)}" target="_blank" rel="noopener noreferrer" class="contact-item" aria-label="View GitHub profile (opens in new tab)">GitHub</a>
+        <a href="${escapeHtml(contactData.linkedin)}" target="_blank" rel="noopener noreferrer" class="contact-item" aria-label="View LinkedIn profile (opens in new tab)">LinkedIn</a>
+        <a href="mailto:${escapeHtml(contactData.email)}" class="contact-item" aria-label="Send email to ${escapeHtml(contactData.email)}">Email</a>
+        <a href="${escapeHtml(contactData.website)}" target="_blank" rel="noopener noreferrer" class="contact-item" aria-label="Visit portfolio website (opens in new tab)">Website</a>
   `;
 }
 

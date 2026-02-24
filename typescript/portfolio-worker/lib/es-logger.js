@@ -6,11 +6,15 @@ function generateRequestId() {
 
 function buildDocument(message, level, labels, job) {
   const now = new Date();
+  const normalizedLevel = level.toLowerCase();
   return {
     '@timestamp': now.toISOString(),
     message,
-    level: level.toLowerCase(),
-    service: job,
+    level: normalizedLevel,
+    log: { level: normalizedLevel },
+    service: { name: job },
+    serviceName: job,
+    ecs: { version: '8.11' },
     ...labels,
   };
 }
