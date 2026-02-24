@@ -694,11 +694,10 @@ describe('Cards Module', () => {
       expect(html).toContain('target="_blank"');
     });
 
-    test('should include role listitem', () => {
+    test('should not include role listitem (a elements use implicit link role)', () => {
       const contactData = { github: 'https://github.com/test' };
       const html = generateContactGrid(contactData);
-
-      expect(html).toContain('role="listitem"');
+      expect(html).not.toContain('role="listitem"');
     });
 
     test('should generate all contact links when all provided', () => {
