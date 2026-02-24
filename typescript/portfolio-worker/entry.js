@@ -61,6 +61,7 @@ const LAST_MODIFIED = 'Sun, 15 Feb 2026 00:00:00 GMT';
 const SITEMAP_ETAG = 'W/"resume-sitemap-2026-02-15"';
 const DEFAULT_LANGUAGE = 'ko';
 const SUPPORTED_LANGUAGES = ['ko', 'en', 'ja'];
+const SINGLE_WORKER_PROFILE_SYNC_PATH = '/api/automation/resume-update';
 const LOCALE_ROUTES = new Set(['/', '/ko', '/ko/', '/en', '/en/', '/ja', '/ja/']);
 
 const HREFLANG_LINKS = [
@@ -318,6 +319,45 @@ function applyResponseHeaders(response, pathname, requestContext = {}) {
   });
 }
 
+async function createSingleWorkerProfileSyncRequest(request) {
+  const body = await request
+    .clone()
+    .json()
+    .catch(() => ({}));
+
+  const normalizedPlatforms =
+    Array.isArray(body.platforms) && body.platforms.length > 0
+      ? body.platforms
+      : ['wanted', 'jobkorea'];
+
+  const payload = {
+    ...body,
+    platforms: normalizedPlatforms,
+  };
+
+  const targetUrl = new URL(request.url);
+  targetUrl.pathname = '/api/automation/profile-sync';
+
+  const headers = new Headers(request.headers);
+  headers.set('Content-Type', 'application/json');
+
+  return new Request(targetUrl.toString(), {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(payload),
+  });
+}
+
+function createSingleWorkerProfileSyncStatusRequest(request, syncId) {
+  const targetUrl = new URL(request.url);
+  targetUrl.pathname = `/api/automation/profile-sync/${syncId}`;
+
+  return new Request(targetUrl.toString(), {
+    method: 'GET',
+    headers: new Headers(request.headers),
+  });
+}
+
 export {
   JobCrawlingWorkflow,
   ApplicationWorkflow,
@@ -355,6 +395,22 @@ export default {
             Vary: 'Accept-Encoding',
           },
         });
+      }
+
+      if (url.pathname === SINGLE_WORKER_PROFILE_SYNC_PATH && request.method === 'POST') {
+        const syncRequest = await createSingleWorkerProfileSyncRequest(request);
+        const response = await jobHandler.fetch(syncRequest, env, ctx);
+        return applyResponseHeaders(response, url.pathname);
+      }
+
+      const profileSyncStatusMatch = url.pathname.match(
+        /^\/api\/automation\/resume-update\/([^/]+)$/
+      );
+      if (profileSyncStatusMatch && request.method === 'GET') {
+        const syncId = profileSyncStatusMatch[1];
+        const statusRequest = createSingleWorkerProfileSyncStatusRequest(request, syncId);
+        const response = await jobHandler.fetch(statusRequest, env, ctx);
+        return applyResponseHeaders(response, url.pathname);
       }
 
       if (url.pathname.startsWith('/job')) {
@@ -403,5 +459,4 @@ export default {
       });
     }
   },
-
 };
