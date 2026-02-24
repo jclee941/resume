@@ -412,8 +412,8 @@
       "stars": 0,
       "language": "Python",
       "forks": 0,
-      "githubUrl": "https://github.com/qws941/splunk",
-      "demoUrl": "https://splunk.jclee.me",
+      "githubUrl": "https://github.com/qws941/splunk-fortinet",
+      "demoUrl": null,
       "metrics": {
         "endpoints": "FortiManager, FortiAnalyzer REST API",
         "features": "정책 조회, 라우트 관리, 로그 통계",
