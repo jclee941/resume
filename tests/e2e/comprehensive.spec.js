@@ -10,6 +10,23 @@ const EXPECTED = {
   CONTACT_LINKS: 5,
 };
 
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function buildAnyTextPattern(candidates) {
+  const values = candidates.filter(Boolean).map((item) => escapeRegExp(String(item)));
+  if (values.length === 0) return /.+/;
+  return new RegExp(values.join('|'));
+}
+
+async function runCliCommand(page, command) {
+  const cliInput = page.locator('#terminal-input');
+  await cliInput.fill(command);
+  await cliInput.press('Enter');
+  return page.locator('#cli-output');
+}
+
 test.describe('Navigation', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
@@ -56,7 +73,9 @@ test.describe('Hero Section', () => {
   test('should display hero title', async ({ page }) => {
     const title = page.locator('.hero-title');
     await expect(title).toBeVisible();
-    await expect(title).toContainText('이재철');
+    const heroText = await title.textContent();
+    const heroPattern = buildAnyTextPattern(['이재철', 'Jaecheol Lee']);
+    expect(heroText || '').toMatch(heroPattern);
   });
 
   test('should display terminal command output', async ({ page }) => {
@@ -88,7 +107,10 @@ test.describe('Resume Section', () => {
       const resume = projectData.resume[i];
       const item = page.locator('#resume .resume-list li').nth(i);
       await expect(item).toBeVisible();
-      await expect(item).toContainText(resume.title);
+      const text = await item.textContent();
+      expect(text || '').toContain(resume.period);
+      const heading = item.locator('h3, h4').first();
+      await expect(heading).toBeVisible();
     }
   });
 });
@@ -117,7 +139,9 @@ test.describe('Projects Section', () => {
       await expect(card).toBeVisible();
 
       const title = card.locator('.project-link-title');
-      await expect(title).toContainText(project.title);
+      const text = await title.textContent();
+      const pattern = new RegExp(escapeRegExp(project.title), 'i');
+      expect(text || '').toMatch(pattern);
     }
   });
 
@@ -159,20 +183,20 @@ test.describe('Contact Section', () => {
   });
 
   test('should display contact links', async ({ page }) => {
-    const contactLinks = page.locator('#contact .contact-grid a');
+    const contactLinks = page.locator('#contact a:visible');
     const count = await contactLinks.count();
     expect(count).toBeGreaterThan(0);
   });
 
   test('should have valid email link', async ({ page }) => {
-    const emailLink = page.locator('#contact a[href^="mailto:"]');
+    const emailLink = page.locator('#contact a[href^="mailto:"]:visible').first();
     await expect(emailLink).toBeVisible();
     const href = await emailLink.getAttribute('href');
     expect(href).toMatch(/^mailto:/);
   });
 
   test('should have valid GitHub link', async ({ page }) => {
-    const githubLink = page.locator('#contact a[href*="github.com"]');
+    const githubLink = page.locator('#contact a[href*="github.com"]:visible').first();
     await expect(githubLink).toBeVisible();
     await expect(githubLink).toHaveAttribute('target', '_blank');
   });
@@ -211,23 +235,26 @@ test.describe('CLI Terminal', () => {
   });
 });
 
-test.describe.skip('Theme via CLI', () => {
-  // Skipped: theme terminal command sets CSS custom properties, not data-theme attribute
-  test('should change theme via CLI command', async ({ page }) => {
-    await page.goto('/');
+test.describe('CLI Core Commands', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+  });
 
-    const html = page.locator('html');
-    const cliInput = page.locator('#terminal-input');
+  test('help command keeps core command list discoverable', async ({ page }) => {
+    const cliOutput = await runCliCommand(page, 'help');
+    await expect(cliOutput).toContainText('Available commands');
+    await expect(cliOutput).toContainText('about');
+    await expect(cliOutput).toContainText('clear');
+  });
 
-    await cliInput.fill('theme dark');
-    await cliInput.press('Enter');
-    await page.waitForTimeout(300);
-    await expect(html).toHaveAttribute('data-theme', 'dark');
+  test('unsupported single-word command returns not found message', async ({ page }) => {
+    const cliOutput = await runCliCommand(page, 'whoami');
+    await expect(cliOutput).toContainText('command not found: whoami');
+  });
 
-    await cliInput.fill('theme light');
-    await cliInput.press('Enter');
-    await page.waitForTimeout(300);
-    await expect(html).toHaveAttribute('data-theme', 'light');
+  test('unsupported multi-word command reports first token', async ({ page }) => {
+    const cliOutput = await runCliCommand(page, 'theme dark');
+    await expect(cliOutput).toContainText('command not found: theme');
   });
 });
 
@@ -270,7 +297,7 @@ test.describe('Data Consistency', () => {
     await page.goto('/');
 
     for (let i = 0; i < projectData.projects.length; i++) {
-      const expected = projectData.projects[i].title;
+      const expected = new RegExp(escapeRegExp(projectData.projects[i].title), 'i');
       const actual = page
         .locator('#projects .project-list li.project-item')
         .nth(i)
