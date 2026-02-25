@@ -1,5 +1,5 @@
 # See https://www.kubernetes.dev/docs/guide/owners/
-# Governance: https://github.com/qws941/.github/blob/main/CONTRIBUTING.md#9-owners-and-governance
+# Governance: https://github.com/qws941/.github/blob/master/CONTRIBUTING.md#9-owners-and-governance
 approvers:
   - qws941
 reviewers:
