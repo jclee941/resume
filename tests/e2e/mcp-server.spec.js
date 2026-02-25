@@ -59,7 +59,7 @@ async function startMCPServer() {
   const send = (message) => {
     const id = ++messageId;
     const request = { jsonrpc: '2.0', id, ...message };
-    proc.stdin.write(JSON.stringify(request) + '\n');
+    proc.stdin.write(`${JSON.stringify(request)  }\n`);
     return new Promise((resolve, reject) => {
       const timer = setTimeout(() => {
         if (pendingRequests.has(id)) {

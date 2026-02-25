@@ -114,17 +114,17 @@ function toE164(phone) {
   if (!phone) return '';
   const digits = phone.replace(/\D/g, '');
   if (digits.startsWith('0')) {
-    return '+82' + digits.slice(1);
+    return `+82${  digits.slice(1)}`;
   }
   if (digits.startsWith('82')) {
-    return '+' + digits;
+    return `+${  digits}`;
   }
   return phone;
 }
 
 function _toKoreanPhone(phone) {
   if (!phone) return '';
-  let digits = phone.replace(/^\+82/, '0').replace(/\D/g, '');
+  const digits = phone.replace(/^\+82/, '0').replace(/\D/g, '');
   if (digits.length === 11) {
     return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
   }
@@ -365,10 +365,10 @@ async function syncWantedSkills(api, ssot, profile) {
  */
 function parsePeriod(period) {
   const parts = period.split('~').map((p) => p.trim());
-  const startsAt = parts[0].replace('.', '-') + '-01';
+  const startsAt = `${parts[0].replace('.', '-')  }-01`;
   let endsAt = null;
   if (parts[1] && parts[1] !== '현재') {
-    endsAt = parts[1].replace('.', '-') + '-01';
+    endsAt = `${parts[1].replace('.', '-')  }-01`;
   }
   return { startsAt, endsAt };
 }
@@ -552,7 +552,7 @@ async function syncWantedEducations(client, ssot, profile, resumeId) {
   const ssotData = {
     school_name: ssotEducation.school,
     major: ssotEducation.major,
-    start_time: ssotEducation.startDate.replace('.', '-') + '-01',
+    start_time: `${ssotEducation.startDate.replace('.', '-')  }-01`,
     end_time: null, // 재학중
     degree: '학사',
   };
@@ -612,7 +612,7 @@ async function syncWantedActivities(client, ssot, profile, resumeId) {
         data: {
           title: cert.name,
           description: `${cert.issuer} | ${cert.date}`,
-          start_time: cert.date.replace('.', '-') + '-01',
+          start_time: `${cert.date.replace('.', '-')  }-01`,
           activity_type: 'CERTIFICATE',
         },
         cert,
@@ -939,12 +939,12 @@ async function main() {
       continue;
     }
 
-    console.log('\n' + '='.repeat(40));
+    console.log(`\n${  '='.repeat(40)}`);
     results[platform] = await syncPlatform(platform, ssot);
   }
 
   // Summary
-  console.log('\n' + '='.repeat(60));
+  console.log(`\n${  '='.repeat(60)}`);
   console.log('SUMMARY');
   console.log('='.repeat(60));
 

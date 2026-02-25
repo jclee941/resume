@@ -67,7 +67,7 @@ function main() {
   packageJson.version = newVersion;
   fs.writeFileSync(
     PACKAGE_JSON_PATH,
-    JSON.stringify(packageJson, null, 2) + '\n'
+    `${JSON.stringify(packageJson, null, 2)  }\n`
   );
 
   console.log(

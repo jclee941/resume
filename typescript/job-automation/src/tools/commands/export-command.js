@@ -22,7 +22,7 @@ export class ExportCommand extends BaseCommand {
 
     const exportData = {
       exported_at: new Date().toISOString(),
-      resume_id: resume_id,
+      resume_id,
       resume: data.resume,
       careers: data.careers,
       educations: data.educations,

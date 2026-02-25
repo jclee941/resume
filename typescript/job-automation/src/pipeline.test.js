@@ -173,7 +173,7 @@ async function runTests() {
     if (result.section !== 'educations') throw new Error('Wrong section');
   });
 
-  console.log('\n' + '='.repeat(60));
+  console.log(`\n${  '='.repeat(60)}`);
   console.log(`Results: ${results.passed} passed, ${results.failed} failed`);
   console.log('='.repeat(60));
 

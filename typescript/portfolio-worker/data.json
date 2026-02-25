@@ -237,8 +237,8 @@
       "stars": 0,
       "language": "Python",
       "forks": 0,
-      "githubUrl": "https://github.com/qws941/splunk",
-      "demoUrl": "https://splunk.jclee.me",
+      "githubUrl": "https://github.com/qws941/splunk-fortinet",
+      "demoUrl": null,
       "metrics": {
         "endpoints": "FortiManager, FortiAnalyzer REST API",
         "features": "정책 조회, 라우트 관리, 로그 통계",
@@ -249,8 +249,7 @@
         "FortiManager",
         "FortiAnalyzer"
       ],
-      "liveUrl": "https://splunk.jclee.me",
-      "repoUrl": "https://github.com/qws941/splunk"
+      "repoUrl": "https://github.com/qws941/splunk-fortinet"
     },
     {
       "icon": "🔔",
@@ -386,8 +385,8 @@
       "stars": 0,
       "language": "Python",
       "forks": 0,
-      "githubUrl": "https://github.com/qws941/splunk",
-      "demoUrl": "https://splunk.jclee.me",
+      "githubUrl": "https://github.com/qws941/splunk-fortinet",
+      "demoUrl": null,
       "metrics": {
         "endpoints": "FortiManager, FortiAnalyzer REST API",
         "features": "Policy retrieval, route management, log statistics",
@@ -398,8 +397,7 @@
         "FortiManager",
         "FortiAnalyzer"
       ],
-      "liveUrl": "https://splunk.jclee.me",
-      "repoUrl": "https://github.com/qws941/splunk"
+      "repoUrl": "https://github.com/qws941/splunk-fortinet"
     },
     {
       "icon": "🔔",

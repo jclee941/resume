@@ -20,7 +20,7 @@ async function injectSchemas(htmlFile) {
     schemas.forEach((schema, idx) => {
       schemasHtml += `    <!-- Project ${idx + 1}: ${schema.name} -->\n`;
       schemasHtml += '    <script type="application/ld+json">\n';
-      schemasHtml += '    ' + JSON.stringify(schema) + '\n';
+      schemasHtml += `    ${  JSON.stringify(schema)  }\n`;
       schemasHtml += '    </script>\n\n';
     });
 

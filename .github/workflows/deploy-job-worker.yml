@@ -1,89 +1,17 @@
-name: Deploy Job Worker
+name: Deprecated Job Worker Deploy
 
 on:
   workflow_dispatch:
 
-concurrency:
-  group: deploy-job-worker-production
-  cancel-in-progress: false
-
 jobs:
-  deploy:
-    name: Deploy job worker (production)
+  deprecated:
+    name: Single-worker architecture notice
     runs-on: ubuntu-latest
-    environment:
-      name: production
     permissions:
       contents: read
-    timeout-minutes: 15
-    env:
-      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Verify required secrets
+      - name: Print deprecation notice
         run: |
-          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
-            echo "::error::Missing Cloudflare deployment secrets"
-            exit 1
-          fi
-
-      - name: Remove target cron schedules from account workers
-        id: remove-target-schedules
-        run: |
-          set -euo pipefail
-          TARGET='["*/5 * * * *","0 9 * * *","0 4 * * SUN","0 3 * * *","0 0 * * 1-5"]'
-          REMOVED=0
-          rm -f removed-scripts.txt
-
-          SCRIPTS=$(curl -fsS -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" -H "Content-Type: application/json" "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/workers/scripts" | jq -r '.result[].id')
-
-          for SCRIPT_NAME in ${SCRIPTS}; do
-            SCHEDULES=$(curl -fsS -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" -H "Content-Type: application/json" "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/workers/scripts/${SCRIPT_NAME}/schedules")
-            COUNT=$(echo "${SCHEDULES}" | jq '.result | length')
-
-            if [ "${COUNT}" = "0" ]; then
-              continue
-            fi
-
-            MATCH=$(echo "${SCHEDULES}" | jq --argjson target "${TARGET}" '[.result[] | (if type=="object" then .cron else . end) as $c | $target[] | select(.==$c)] | length')
-            if [ "${MATCH}" = "0" ]; then
-              continue
-            fi
-
-            curl -fsS -X PUT -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" -H "Content-Type: application/json" "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/workers/scripts/${SCRIPT_NAME}/schedules" --data '[]' > /dev/null
-            echo "${SCRIPT_NAME}" >> removed-scripts.txt
-            REMOVED=$((REMOVED + 1))
-          done
-
-          echo "removed_count=${REMOVED}" >> "$GITHUB_OUTPUT"
-          if [ -f removed-scripts.txt ]; then
-            echo "removed_scripts=$(paste -sd ',' removed-scripts.txt)" >> "$GITHUB_OUTPUT"
-          else
-            echo "removed_scripts=" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Verify target schedules removed
-        run: |
-          set -euo pipefail
-          TARGET='["*/5 * * * *","0 9 * * *","0 4 * * SUN","0 3 * * *","0 0 * * 1-5"]'
-          SCRIPTS=$(curl -fsS -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" -H "Content-Type: application/json" "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/workers/scripts" | jq -r '.result[].id')
-
-          for SCRIPT_NAME in ${SCRIPTS}; do
-            SCHEDULES=$(curl -fsS -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" -H "Content-Type: application/json" "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/workers/scripts/${SCRIPT_NAME}/schedules")
-            MATCH=$(echo "${SCHEDULES}" | jq --argjson target "${TARGET}" '[.result[] | (if type=="object" then .cron else . end) as $c | $target[] | select(.==$c)] | length')
-            if [ "${MATCH}" != "0" ]; then
-              echo "::error::Target schedules still remain on ${SCRIPT_NAME}"
-              exit 1
-            fi
-          done
-
-      - name: Post summary
-        run: |
-          echo "## Job Worker Schedule Removal Complete" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "- Removed scripts: ${{ steps.remove-target-schedules.outputs.removed_scripts }}" >> $GITHUB_STEP_SUMMARY
-          echo "- Environment: production" >> $GITHUB_STEP_SUMMARY
-          echo "- Removed count: ${{ steps.remove-target-schedules.outputs.removed_count }}" >> $GITHUB_STEP_SUMMARY
+          echo "Job worker standalone deployment is deprecated."
+          echo "Production runtime is single-worker (resume)."
+          echo "Use CI Validation + Cloudflare Workers Builds on master branch."

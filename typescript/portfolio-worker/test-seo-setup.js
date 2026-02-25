@@ -25,7 +25,7 @@ function log(color, message) {
 }
 
 function logSection(title) {
-  console.log('\n' + '='.repeat(60));
+  console.log(`\n${  '='.repeat(60)}`);
   log(COLORS.cyan, title);
   console.log('='.repeat(60));
 }

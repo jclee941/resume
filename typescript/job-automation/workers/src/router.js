@@ -6,7 +6,7 @@ export class Router {
   }
 
   add(method, pattern, handler) {
-    const regex = new RegExp('^' + pattern.replace(/:(\w+)/g, '(?<$1>[^/]+)') + '$');
+    const regex = new RegExp(`^${  pattern.replace(/:(\w+)/g, '(?<$1>[^/]+)')  }$`);
     this.routes.push({ method, pattern, regex, handler });
   }
 

@@ -19,7 +19,7 @@ function loadEnv() {
       });
       console.log('✅ Loaded .env file manually');
     } else {
-      console.log('⚠️ .env file not found at ' + envPath);
+      console.log(`⚠️ .env file not found at ${  envPath}`);
     }
   } catch (e) {
     console.error('⚠️ Failed to parse .env:', e.message);

@@ -352,8 +352,8 @@ function buildRecommendations(score, gapKeywords, matchedSkills, detailedScore) 
 
   if (gapKeywords.length > 0) {
     recommendations.push(
-      'Add quantified experience bullets that include these keywords: ' +
-        gapKeywords.slice(0, 8).join(', ')
+      `Add quantified experience bullets that include these keywords: ${ 
+        gapKeywords.slice(0, 8).join(', ')}`
     );
   }
 

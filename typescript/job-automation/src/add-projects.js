@@ -85,7 +85,7 @@ async function addProjects() {
     console.log(`  ❌ Error: ${err.message}`);
   }
 
-  console.log('\n' + '='.repeat(60));
+  console.log(`\n${  '='.repeat(60)}`);
   console.log('DONE');
 }
 

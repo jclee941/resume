@@ -65,7 +65,7 @@ async function postMRComment(body) {
 
 function formatDiffForReview(diffText) {
   if (diffText.length > CONFIG.maxDiffSize) {
-    return diffText.slice(0, CONFIG.maxDiffSize) + '\n\n*[Diff truncated due to size]*\n';
+    return `${diffText.slice(0, CONFIG.maxDiffSize)  }\n\n*[Diff truncated due to size]*\n`;
   }
   return diffText;
 }

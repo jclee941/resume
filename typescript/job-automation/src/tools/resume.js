@@ -315,7 +315,7 @@ Use wanted_auth with action="set_cookies" first if not logged in.`,
           const resumes = await api.getResumeList();
           return {
             success: true,
-            resumes: resumes,
+            resumes,
           };
         }
 

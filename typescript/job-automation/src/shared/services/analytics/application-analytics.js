@@ -191,9 +191,9 @@ export class ApplicationAnalytics {
       summary: {
         totalApplications: total,
         interviewRate: total
-          ? ((interviews / total) * 100).toFixed(1) + '%'
+          ? `${((interviews / total) * 100).toFixed(1)  }%`
           : '0%',
-        offerRate: total ? ((offers / total) * 100).toFixed(1) + '%' : '0%',
+        offerRate: total ? `${((offers / total) * 100).toFixed(1)  }%` : '0%',
       },
       bySource,
       byMatchScore: byScore,

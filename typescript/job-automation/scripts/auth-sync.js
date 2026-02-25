@@ -825,7 +825,7 @@ const sync = new AuthSync(options);
 sync
   .run()
   .then((results) => {
-    console.log('\n' + '='.repeat(50));
+    console.log(`\n${  '='.repeat(50)}`);
     console.log('📊 Authentication Sync Results');
     console.log('='.repeat(50));
 

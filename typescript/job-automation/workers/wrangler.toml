@@ -1,4 +1,4 @@
-name = "job"
+name = "job-internal"
 main = "src/index.js"
 compatibility_date = "2026-02-21"
 
@@ -47,7 +47,6 @@ ELASTICSEARCH_INDEX = "resume-logs-job-worker"
 # --- Production environment ---
 # D1/KV/Queue bindings inherited from top-level (no need to redeclare).
 [env.production]
-routes = [{ pattern = "resume.jclee.me/job/*", zone_name = "jclee.me" }]
 
 
 [env.production.vars]

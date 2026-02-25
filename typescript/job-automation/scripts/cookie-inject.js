@@ -33,7 +33,7 @@ function saveSession(cookies, email = 'qwer941a@gmail.com') {
   const session = {
     wanted: {
       cookies: cookieString,
-      email: email,
+      email,
       expires_at: Date.now() + 24 * 60 * 60 * 1000,
       created_at: new Date().toISOString(),
     },

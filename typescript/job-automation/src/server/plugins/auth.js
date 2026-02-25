@@ -108,7 +108,7 @@ async function authPlugin(fastify) {
     const path = request.url.split('?')[0];
     const method = request.method;
 
-    if (PUBLIC_PATHS.some((p) => path === p || path.startsWith(p + '/')))
+    if (PUBLIC_PATHS.some((p) => path === p || path.startsWith(`${p  }/`)))
       return;
     if (!path.startsWith('/api/')) return;
 
@@ -120,7 +120,7 @@ async function authPlugin(fastify) {
     if (request.authMethod === 'bearer') return;
 
     const isCsrfExempt = CSRF_EXEMPT_PATHS.some(
-      (p) => path === p || path.startsWith(p + '/'),
+      (p) => path === p || path.startsWith(`${p  }/`),
     );
     if (
       STATE_CHANGING_METHODS.includes(method) &&

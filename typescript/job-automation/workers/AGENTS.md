@@ -62,6 +62,12 @@ ApplicationsHandler (7 methods), StatsHandler (4), AuthHandler (5), WebhookHandl
 
 Health (3), Stats (4), Auth (7), Applications CRUD (6), Webhooks (9), Auto-apply (3), Workflows (7), Config (2), Testing (2).
 
+## CHILD GUIDES
+
+- `src/handlers/AGENTS.md` owns handler-level contracts, route-to-handler responsibilities, and common handler anti-patterns.
+- `src/workflows/AGENTS.md` owns workflow trigger semantics, step boundaries, and idempotency constraints.
+- `src/middleware/AGENTS.md` owns middleware ordering, auth/rate-limit behavior, and response safety rules.
+
 ## CONVENTIONS
 
 - All handlers extend `BaseHandler(db, cache, env)`.

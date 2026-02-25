@@ -1,8 +1,10 @@
-# Job Automation Dashboard Worker
+# Job Automation Dashboard Runtime (Embedded)
 
 **Location**: `typescript/job-automation/workers/`
 
-**Description**: Cloudflare Worker serving the job automation dashboard at `resume.jclee.me/job/*`
+**Description**: Embedded runtime modules served by the `resume` worker at `resume.jclee.me/job/*`
+
+**Architecture**: Single-worker production runtime (`resume`).
 
 **Status**: ✅ Production-ready | 8 workflows | 30+ API endpoints | D1 + KV + R2 bindings
 
@@ -36,6 +38,8 @@ npx wrangler dev
 - Health check: http://localhost:8787/job/health
 
 ### Deploy to Cloudflare
+
+Standalone production deployment is deprecated in single-worker architecture.
 
 ```bash
 # Deploy to production environment

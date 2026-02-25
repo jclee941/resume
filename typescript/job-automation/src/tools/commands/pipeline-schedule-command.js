@@ -15,7 +15,7 @@ export class PipelineScheduleCommand extends BaseCommand {
 
     const configFile = join(DATA_DIR, 'pipeline-config.json');
     this.writeJsonFile(configFile, {
-      webhook_url: webhook_url,
+      webhook_url,
       resume_id,
       configured_at: new Date().toISOString(),
     });
@@ -23,7 +23,7 @@ export class PipelineScheduleCommand extends BaseCommand {
     return {
       success: true,
       message: 'Pipeline scheduled',
-      webhook_url: webhook_url,
+      webhook_url,
       config_file: configFile,
       hint: 'Configure workflow to call this MCP tool periodically',
     };

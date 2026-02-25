@@ -130,7 +130,7 @@ async function runTests() {
     console.log(`(${result.resume.educations.length} educations)`);
   });
 
-  console.log('\n' + '='.repeat(60));
+  console.log(`\n${  '='.repeat(60)}`);
   console.log(`Results: ${results.passed} passed, ${results.failed} failed`);
   console.log('='.repeat(60));
 

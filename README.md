@@ -18,9 +18,9 @@ resume/
 │   │   ├── index.html             # KO portfolio template
 │   │   ├── index-en.html          # EN portfolio template
 │   │   └── generate-worker.js     # Build engine → worker.js
-│   ├── job-automation/            # MCP Server + Dashboard
+│   ├── job-automation/            # MCP Server + Automation runtime
 │   │   ├── src/                   # Core: crawlers, services, tools
-│   │   └── workers/               # Dashboard Cloudflare Worker
+│   │   └── workers/               # Embedded dashboard runtime (served by resume worker)
 │   ├── cli/                       # Deployment CLI (Commander.js)
 │   └── data/                      # SSoT: Resume JSONs & schemas
 │       └── resumes/master/        # resume_data.json (canonical)

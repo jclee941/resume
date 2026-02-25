@@ -34,10 +34,10 @@ export function toE164(phone) {
   if (!phone) return '';
   const digits = phone.replace(/\D/g, '');
   if (digits.startsWith('0')) {
-    return '+82' + digits.slice(1);
+    return `+82${  digits.slice(1)}`;
   }
   if (digits.startsWith('82')) {
-    return '+' + digits;
+    return `+${  digits}`;
   }
   return phone;
 }
@@ -89,10 +89,10 @@ export function computeDiff(current, target) {
  */
 export function parsePeriod(period) {
   const parts = period.split('~').map((p) => p.trim());
-  const startsAt = parts[0].replace('.', '-') + '-01';
+  const startsAt = `${parts[0].replace('.', '-')  }-01`;
   let endsAt = null;
   if (parts[1] && parts[1] !== '현재') {
-    endsAt = parts[1].replace('.', '-') + '-01';
+    endsAt = `${parts[1].replace('.', '-')  }-01`;
   }
   return { startsAt, endsAt };
 }

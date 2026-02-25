@@ -73,7 +73,7 @@ async function testProjectAPI() {
     }
   }
 
-  console.log('\n' + '='.repeat(60));
+  console.log(`\n${  '='.repeat(60)}`);
 }
 
 testProjectAPI().catch((err) => {

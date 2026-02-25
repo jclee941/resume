@@ -114,7 +114,6 @@ jobs:
       - name: Validate wrangler types generation
         run: |
           npx wrangler types /tmp/portfolio-worker-types.d.ts --config typescript/portfolio-worker/wrangler.toml --env production
-          npx wrangler types /tmp/job-dashboard-worker-types.d.ts --config typescript/job-automation/workers/wrangler.toml --env production
 
   lint:
     name: ESLint

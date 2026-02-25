@@ -1,12 +1,12 @@
 # SERVICES KNOWLEDGE BASE
 
-**Generated:** 2026-02-22 22:30:00 KST
-**Commit:** 623fd03
+**Generated:** 2026-02-24 12:34:06 KST
+**Commit:** 055bcc5
 **Branch:** master
 
 ## OVERVIEW
 
-10 domain service directories. Stateless, DI-based, domain-focused.
+10 domain service directories. Stateless, DI-based, domain-focused. Matching has a dedicated child AGENTS for scoring/AI details.
 
 ## SERVICES
 
@@ -23,12 +23,17 @@
 | `resume/`       | ResumeService         | resume operations                |
 | `stats/`        | StatsService          | statistics aggregation           |
 
+## CHILD GUIDES
+
+- `matching/AGENTS.md` owns threshold, weighting, and AI fallback rules for this domain.
+
 ## CONVENTIONS
 
 - DI via constructor — inject clients, not instantiate.
 - Stateless — no module-level mutable state.
 - Domain barrel exports per directory.
 - Internal imports use relative paths only.
+- Keep service-level AGENTS concise; deep behavior belongs in child guides.
 
 ## ANTI-PATTERNS
 

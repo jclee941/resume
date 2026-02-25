@@ -55,7 +55,7 @@ async function analyzeFields() {
       console.log('   - title:', c.projects[0].title);
       console.log(
         '   - description:',
-        c.projects[0].description?.substring(0, 100) + '...',
+        `${c.projects[0].description?.substring(0, 100)  }...`,
       );
       console.log('   - order:', c.projects[0].order);
       console.log('   - start_time:', c.projects[0].start_time);
@@ -108,7 +108,7 @@ async function analyzeFields() {
   });
 
   // 6. Test API endpoints
-  console.log('\n' + '='.repeat(60));
+  console.log(`\n${  '='.repeat(60)}`);
   console.log('API ENDPOINT AVAILABILITY TEST');
   console.log('='.repeat(60));
 
@@ -152,7 +152,7 @@ async function analyzeFields() {
     console.log(`   ${ep.method.padEnd(6)} ${ep.path}`);
   });
 
-  console.log('\n' + '='.repeat(60));
+  console.log(`\n${  '='.repeat(60)}`);
 }
 
 analyzeFields().catch((err) => {

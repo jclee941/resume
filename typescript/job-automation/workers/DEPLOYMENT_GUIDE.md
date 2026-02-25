@@ -1,6 +1,8 @@
 # Deployment Guide
 
-Complete step-by-step instructions for deploying the job-automation dashboard worker to Cloudflare Workers.
+Complete step-by-step instructions for local/runtime module validation.
+
+Production deploy path is single-worker (`resume`) via Cloudflare Workers Builds.
 
 ## Table of Contents
 

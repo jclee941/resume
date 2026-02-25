@@ -13,7 +13,7 @@ const BATCH_SIZE = 10;
 const BATCH_FLUSH_MS = 1000;
 const MAX_QUEUE_SIZE = 1000;
 
-let logQueue = [];
+const logQueue = [];
 let flushTimer = null;
 
 export function generateRequestId() {
@@ -42,13 +42,13 @@ async function flushLogs(env, index) {
   if (!esUrl || !apiKey) return;
 
   const bulkBody =
-    logs
+    `${logs
       .map((doc) => {
         const action = JSON.stringify({ index: { _index: index } });
         const document = JSON.stringify(doc);
         return `${action}\n${document}`;
       })
-      .join('\n') + '\n';
+      .join('\n')  }\n`;
 
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), DEFAULT_TIMEOUT_MS);

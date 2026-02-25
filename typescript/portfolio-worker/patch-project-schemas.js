@@ -22,7 +22,7 @@ async function generateProjectSchemasHtml() {
 // Modify generate-worker.js to inject project schemas
 async function _patchGenerateWorker() {
   const generateWorkerPath = './generate-worker.js';
-  let _content = fs.readFileSync(generateWorkerPath, 'utf-8');
+  const _content = fs.readFileSync(generateWorkerPath, 'utf-8');
 
   // Find the line that processes index.html and add schema injection
   // Look for where INDEX_HTML_RAW is processed

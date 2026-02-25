@@ -42,7 +42,7 @@ function logToStderr(level, message, context = {}) {
     'service.name': 'mcp-server',
     ...context,
   };
-  process.stderr.write(JSON.stringify(entry) + '\n');
+  process.stderr.write(`${JSON.stringify(entry)  }\n`);
 }
 
 import searchJobsTool from './tools/search-jobs.js';

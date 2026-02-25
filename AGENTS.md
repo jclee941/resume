@@ -1,12 +1,12 @@
 # PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-02-23 12:12:31 KST
-**Commit:** 5830ceb
+**Generated:** 2026-02-24 12:34:06 KST
+**Commit:** 055bcc5
 **Branch:** master
 
 ## OVERVIEW
 
-Google3-style monorepo for a Cloudflare-hosted portfolio site and a job-automation platform (MCP server + dashboard worker). CI validates code; Cloudflare Workers Builds handles production deployment.
+Google3-style monorepo for a Cloudflare-hosted portfolio site and job-automation platform (single `resume` worker runtime). CI validates code; Cloudflare Workers Builds handles production deployment.
 
 ## STRUCTURE
 
@@ -18,7 +18,7 @@ resume/
 │   │   └── src/                   # source HTML/CSS/theme
 │   ├── job-automation/            # MCP server + dashboard worker
 │   │   ├── src/                   # MCP server core (hexagonal arch)
-│   │   ├── workers/               # CF Worker dashboard API
+│   │   ├── workers/               # embedded dashboard runtime modules (served by resume worker)
 │   │   ├── scripts/               # auth/sync utility scripts
 │   │   └── platforms/             # platform-specific crawlers
 │   ├── cli/                       # resume-cli (Commander.js)
@@ -32,7 +32,7 @@ resume/
 ├── .github/                       # workflows, composite actions, rulesets
 ├── third_party/                   # Bazel dependency coordination
 ├── BUILD.bazel / MODULE.bazel     # Bazel facade layer
-└── AGENTS.md hierarchy            # root + 30 domain guides
+└── AGENTS.md hierarchy            # root + 31 domain guides
 ```
 
 ## WHERE TO LOOK
@@ -44,7 +44,7 @@ resume/
 | Portfolio runtime modules | `typescript/portfolio-worker/lib/`                | 25 stateless JS modules           |
 | Portfolio source styles   | `typescript/portfolio-worker/src/`                | CSS variables, dark-only theme    |
 | Job automation MCP server | `typescript/job-automation/src/`                  | hexagonal: services/clients/tools |
-| Job dashboard worker APIs | `typescript/job-automation/workers/`              | `/job/*` routes + 7 workflows     |
+| Job dashboard runtime     | `typescript/job-automation/workers/`              | embedded `/job/*` runtime modules |
 | Job crawlers (stealth)    | `typescript/job-automation/src/crawlers/`         | Playwright + stealth patches      |
 | Auto-apply system         | `typescript/job-automation/src/auto-apply/`       | form fill + rate limiting         |
 | Auth/sync scripts         | `typescript/job-automation/scripts/`              | quick-login, cookie extraction    |
@@ -60,7 +60,7 @@ resume/
 | ---------------- | -------- | --------------------------------------------------------- | -------------------------------- |
 | `main`           | function | `typescript/job-automation/src/index.js`                  | MCP server bootstrap (Fastify)   |
 | default `fetch`  | handler  | `typescript/portfolio-worker/entry.js`                    | unified edge router              |
-| default `fetch`  | handler  | `typescript/job-automation/workers/src/index.js`          | job dashboard API gateway        |
+| default `fetch`  | handler  | `typescript/job-automation/workers/src/index.js`          | embedded dashboard API handler   |
 | `run`            | function | `typescript/cli/bin/run.js`                               | CLI entrypoint (Commander)       |
 | generator flow   | script   | `typescript/portfolio-worker/generate-worker.js`          | HTML/CSS/data → worker.js        |
 | `WantedAPI`      | class    | `typescript/job-automation/src/shared/clients/wanted/`    | 40+ methods, 6 files             |
@@ -72,7 +72,7 @@ resume/
 ## CONVENTIONS
 
 - Bazel is a coordination facade; everyday commands are npm scripts.
-- Keep worker runtime config in per-worker `wrangler.toml` files.
+- Keep production runtime centered on `typescript/portfolio-worker/wrangler.toml`.
 - ESM JavaScript with ESLint flat config (`eslint.config.cjs`), 69-warning ratchet baseline.
 - Prettier: printWidth 100, singleQuote, trailingComma es5.
 - tsconfig: NOT strict (`noImplicitAny` false, `strictNullChecks` false).
@@ -115,43 +115,52 @@ npm run sync:data
 
 ## AGENTS HIERARCHY
 
-| Path                                                      | Focus                            |
-| --------------------------------------------------------- | -------------------------------- |
-| `typescript/portfolio-worker/AGENTS.md`                   | portfolio runtime/build pipeline |
-| `typescript/portfolio-worker/src/AGENTS.md`               | source HTML/CSS/theme rules      |
-| `typescript/portfolio-worker/lib/AGENTS.md`               | 25 build/runtime modules         |
-| `typescript/job-automation/AGENTS.md`                     | MCP server app domain            |
-| `typescript/job-automation/src/AGENTS.md`                 | MCP server core architecture     |
-| `typescript/job-automation/src/tools/AGENTS.md`           | 9 MCP tool definitions           |
-| `typescript/job-automation/src/server/routes/AGENTS.md`   | 13 Fastify route modules         |
-| `typescript/job-automation/src/shared/AGENTS.md`          | hexagonal arch core              |
-| `typescript/job-automation/src/shared/clients/AGENTS.md`  | API client adapters              |
-| `typescript/job-automation/src/shared/services/AGENTS.md` | 10 domain service dirs           |
-| `typescript/job-automation/src/auto-apply/AGENTS.md`      | stealth auto-submission          |
-| `typescript/job-automation/src/crawlers/AGENTS.md`        | stealth Playwright crawlers      |
-| `typescript/job-automation/workers/AGENTS.md`             | dashboard worker domain          |
-| `typescript/job-automation/scripts/AGENTS.md`             | auth/sync utility scripts        |
-| `typescript/job-automation/platforms/AGENTS.md`           | platform-specific crawlers       |
-| `typescript/cli/AGENTS.md`                                | CLI wrappers                     |
-| `typescript/data/AGENTS.md`                               | resume SSoT and schema flow      |
-| `typescript/data/resumes/technical/nextrade/AGENTS.md`    | Nextrade project docs            |
-| `tools/AGENTS.md`                                         | build/deploy script layer        |
-| `tools/ci/AGENTS.md`                                      | CI helper scripts and guards     |
-| `tools/scripts/AGENTS.md`                                 | automation script suite          |
-| `tools/scripts/build/AGENTS.md`                           | asset generation scripts         |
-| `tests/AGENTS.md`                                         | test strategy and gotchas        |
-| `tests/e2e/AGENTS.md`                                     | Playwright E2E conventions       |
-| `.github/AGENTS.md`                                       | workflow/repo automation         |
-| `.github/workflows/AGENTS.md`                             | workflow-level patterns/guards   |
-| `docs/AGENTS.md`                                          | documentation hub                |
-| `infrastructure/AGENTS.md`                                | IaC + monitoring                 |
-| `infrastructure/cloudflare/AGENTS.md`                     | Terraform for CF resources       |
-| `third_party/AGENTS.md`                                   | Bazel dependency policy          |
+| Path                                                               | Focus                             |
+| ------------------------------------------------------------------ | --------------------------------- |
+| `typescript/portfolio-worker/AGENTS.md`                            | portfolio runtime/build pipeline  |
+| `typescript/portfolio-worker/src/AGENTS.md`                        | source HTML/CSS/theme rules       |
+| `typescript/portfolio-worker/lib/AGENTS.md`                        | 25 build/runtime modules          |
+| `typescript/job-automation/AGENTS.md`                              | MCP server app domain             |
+| `typescript/job-automation/src/AGENTS.md`                          | MCP server core architecture      |
+| `typescript/job-automation/src/tools/AGENTS.md`                    | 9 MCP tool definitions            |
+| `typescript/job-automation/src/server/routes/AGENTS.md`            | 13 Fastify route modules          |
+| `typescript/job-automation/src/shared/AGENTS.md`                   | hexagonal arch core               |
+| `typescript/job-automation/src/shared/clients/AGENTS.md`           | API client adapters               |
+| `typescript/job-automation/src/shared/services/AGENTS.md`          | 10 domain service dirs            |
+| `typescript/job-automation/src/shared/services/matching/AGENTS.md` | matching thresholds + AI fallback |
+| `typescript/job-automation/src/auto-apply/AGENTS.md`               | stealth auto-submission           |
+| `typescript/job-automation/src/crawlers/AGENTS.md`                 | stealth Playwright crawlers       |
+| `typescript/job-automation/workers/AGENTS.md`                      | dashboard worker domain           |
+| `typescript/job-automation/workers/src/handlers/AGENTS.md`         | worker handler contracts          |
+| `typescript/job-automation/workers/src/workflows/AGENTS.md`        | workflow modules and triggers     |
+| `typescript/job-automation/workers/src/middleware/AGENTS.md`       | request middleware rules          |
+| `typescript/job-automation/scripts/AGENTS.md`                      | auth/sync utility scripts         |
+| `typescript/job-automation/platforms/AGENTS.md`                    | platform-specific crawlers        |
+| `typescript/cli/AGENTS.md`                                         | CLI wrappers                      |
+| `typescript/data/AGENTS.md`                                        | resume SSoT and schema flow       |
+| `typescript/data/resumes/technical/nextrade/AGENTS.md`             | Nextrade project docs             |
+| `tools/AGENTS.md`                                                  | build/deploy script layer         |
+| `tools/ci/AGENTS.md`                                               | CI helper scripts and guards      |
+| `tools/scripts/AGENTS.md`                                          | automation script suite           |
+| `tools/scripts/build/AGENTS.md`                                    | asset generation scripts          |
+| `tools/scripts/utils/AGENTS.md`                                    | shared utility scripts            |
+| `tools/scripts/deployment/AGENTS.md`                               | deployment helper scripts         |
+| `tools/scripts/bazel/AGENTS.md`                                    | bazel facade shell scripts        |
+| `tests/AGENTS.md`                                                  | test strategy and gotchas         |
+| `tests/e2e/AGENTS.md`                                              | Playwright E2E conventions        |
+| `tests/unit/AGENTS.md`                                             | Jest unit test conventions        |
+| `tests/integration/AGENTS.md`                                      | integration test conventions      |
+| `.github/AGENTS.md`                                                | workflow/repo automation          |
+| `.github/workflows/AGENTS.md`                                      | workflow-level patterns/guards    |
+| `docs/AGENTS.md`                                                   | documentation hub                 |
+| `infrastructure/AGENTS.md`                                         | IaC + monitoring                  |
+| `infrastructure/cloudflare/AGENTS.md`                              | Terraform for CF resources        |
+| `third_party/AGENTS.md`                                            | Bazel dependency policy           |
 
 ## NOTES
 
 - 73K+ lines of source code across 5 npm workspaces.
-- Worker names: `resume` (portfolio), `job` (dashboard). D1: `resume-prod-db`, `job-dashboard-db`.
+- Production worker name: `resume`. D1: `resume-prod-db`, `job-dashboard-db`.
 - KV bindings: `SESSIONS`, `RATE_LIMIT_KV`, `NONCE_KV`. Queue: `crawl-tasks`.
 - 7 Cloudflare Workflows: job-crawling, application, resume-sync, daily-report, health-check, backup, cleanup.
 - Skills v2 API and Links API on Wanted are broken — use v1 only.

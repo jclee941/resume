@@ -193,7 +193,7 @@ function truncateContent(content, maxLength) {
     return truncated.substring(0, lastSection);
   }
 
-  return truncated + '\n\n---\n\n*(Resume truncated for brevity)*';
+  return `${truncated  }\n\n---\n\n*(Resume truncated for brevity)*`;
 }
 
 /**
@@ -205,7 +205,7 @@ async function generateVariant(name, config, sections) {
 
   try {
     // Filter sections
-    let filtered = filterSections(sections, config);
+    const filtered = filterSections(sections, config);
 
     // Convert to string
     let content = Object.values(filtered).join('\n\n---\n\n');
@@ -351,7 +351,7 @@ async function main() {
     }
 
     // Summary
-    console.log('\n' + '='.repeat(60));
+    console.log(`\n${  '='.repeat(60)}`);
     console.log('✅ Generation complete!');
     console.log('='.repeat(60));
     console.log(`\n📊 Generated ${results.length} variant(s):\n`);

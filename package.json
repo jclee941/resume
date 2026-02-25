@@ -21,7 +21,7 @@
     "build:full": "npm run build && npm run cli:build",
     "build:all": "npm run build:full",
     "version:bump": "npm version patch --no-git-tag-version",
-    "deploy": "npm run version:bump && npm run build:full && node typescript/cli/bin/run.js deploy --worker-file typescript/portfolio-worker/worker.js --dir typescript/job-automation/workers --env production",
+    "deploy": "node -e \"console.error('Manual deploy is disabled. Use git push to master for Cloudflare Workers Builds.'); process.exit(1)\"",
     "cli:build": "echo 'No build needed for Node CLI'",
     "cli:verify": "node typescript/cli/bin/run.js verify",
     "test": "npm run test:jest && npm run test:node",

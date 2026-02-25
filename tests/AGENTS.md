@@ -35,6 +35,12 @@ tests/
 - `maxDiffPixelRatio: 0.05` for visual snapshots.
 - Fixtures: `executeCliCommand`, `navigateToSection`, `validateLinks`, `waitForAnimation`.
 
+## CHILD GUIDES
+
+- `e2e/AGENTS.md` owns Playwright-specific runtime, fixture, and snapshot constraints.
+- `unit/AGENTS.md` owns deterministic module-test conventions and unit boundary rules.
+- `integration/AGENTS.md` owns cross-module contract and boundary-failure test rules.
+
 ## NAMING CONVENTION
 
 - `*.test.js` = unit/integration tests (Jest).

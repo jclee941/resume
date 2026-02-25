@@ -57,12 +57,12 @@ async function main() {
       continue;
     }
 
-    console.log('\n' + '='.repeat(40));
+    console.log(`\n${  '='.repeat(40)}`);
     results[platform] = await handler.sync(ssot);
   }
 
   // Summary
-  console.log('\n' + '='.repeat(60));
+  console.log(`\n${  '='.repeat(60)}`);
   console.log('SUMMARY');
   console.log('='.repeat(60));
 

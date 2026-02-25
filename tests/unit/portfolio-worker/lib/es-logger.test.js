@@ -382,10 +382,10 @@ describe('es-logger', () => {
     };
 
     it('should set up abort timeout callback', () => {
-      let timeoutCallback;
+      let _timeoutCallback;
       const origSetTimeout = global.setTimeout;
       global.setTimeout = jest.fn((cb, ms) => {
-        timeoutCallback = cb;
+        _timeoutCallback = cb;
         return origSetTimeout(cb, ms);
       });
 

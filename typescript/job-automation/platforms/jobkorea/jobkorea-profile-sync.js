@@ -35,7 +35,7 @@ function parseCookieString(cookieString, domain = '.jobkorea.co.kr') {
       return {
         name: name.trim(),
         value: valueParts.join('=').trim(), // Handle values with '=' in them
-        domain: domain,
+        domain,
         path: '/',
         httpOnly: false,
         secure: true,

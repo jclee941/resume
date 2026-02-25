@@ -138,7 +138,7 @@ export async function syncWantedEducations(client, ssot, profile, resumeId) {
   const ssotData = {
     school_name: ssotEducation.school,
     major: ssotEducation.major,
-    start_time: ssotEducation.startDate.replace('.', '-') + '-01',
+    start_time: `${ssotEducation.startDate.replace('.', '-')  }-01`,
     end_time: null,
     degree: '학사',
   };
@@ -177,7 +177,7 @@ export async function syncWantedActivities(client, ssot, profile, resumeId) {
       data: {
         title: cert.name,
         description: `${cert.issuer} | ${cert.date}`,
-        start_time: cert.date.replace('.', '-') + '-01',
+        start_time: `${cert.date.replace('.', '-')  }-01`,
         activity_type: 'CERTIFICATE',
       },
       cert,

@@ -20,6 +20,13 @@ scripts/
 └── verification/       # verify-deployment.sh (7-point check)
 ```
 
+## CHILD GUIDES
+
+- `build/AGENTS.md` owns generation pipeline guardrails for artifacts and snapshots.
+- `utils/AGENTS.md` owns shared utility conventions and SSoT-safe helper patterns.
+- `deployment/AGENTS.md` owns deploy helper safety constraints and preflight checks.
+- `bazel/AGENTS.md` owns Bazel facade shell entrypoints and script boundaries.
+
 ## CONVENTIONS
 
 - Run from project root context.

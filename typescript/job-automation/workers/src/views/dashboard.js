@@ -180,7 +180,7 @@ async function computeStyleHash(content) {
   const encoder = new TextEncoder();
   const data = encoder.encode(content);
   const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-  return 'sha256-' + btoa(String.fromCharCode(...new Uint8Array(hashBuffer)));
+  return `sha256-${  btoa(String.fromCharCode(...new Uint8Array(hashBuffer)))}`;
 }
 
 /**

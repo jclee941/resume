@@ -184,7 +184,7 @@ async function generateScreenshots() {
   generateIndexFile(outputDir);
 
   // Summary
-  console.log('\n' + '='.repeat(60));
+  console.log(`\n${  '='.repeat(60)}`);
   console.log('📊 Screenshot Generation Summary');
   console.log('='.repeat(60));
   console.log(`✅ Success: ${successCount}`);
@@ -199,7 +199,7 @@ async function generateScreenshots() {
     totalSize += stats.size;
   });
   console.log(`💾 Total size: ${(totalSize / 1024 / 1024).toFixed(2)} MB`);
-  console.log('='.repeat(60) + '\n');
+  console.log(`${'='.repeat(60)  }\n`);
 }
 
 /**

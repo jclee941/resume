@@ -78,7 +78,7 @@ test.describe('Progressive Web App (PWA)', () => {
     // Use Playwright's built-in waitForFunction instead of polling loop
     // This is more reliable and doesn't block the test
     let swRegistered = false;
-    let registrationErrors = [];
+    const registrationErrors = [];
 
     try {
       // Wait for Service Worker registration using Playwright's timeout mechanism

@@ -4,7 +4,7 @@ function assignVariant(config) {
 
   // Check if already assigned
   if (persistent && typeof localStorage !== 'undefined') {
-    const stored = localStorage.getItem('ab_test_' + id);
+    const stored = localStorage.getItem(`ab_test_${  id}`);
     if (stored) {
       try {
         const test = JSON.parse(stored);
@@ -22,7 +22,7 @@ function assignVariant(config) {
   if (persistent && typeof localStorage !== 'undefined') {
     try {
       const test = { id, variant, timestamp: Date.now() };
-      localStorage.setItem('ab_test_' + id, JSON.stringify(test));
+      localStorage.setItem(`ab_test_${  id}`, JSON.stringify(test));
     } catch (e) {
       console.warn('Failed to store A/B test:', e);
     }
@@ -36,7 +36,7 @@ function getVariant(testId) {
     return null;
   }
 
-  const stored = localStorage.getItem('ab_test_' + testId);
+  const stored = localStorage.getItem(`ab_test_${  testId}`);
   if (stored) {
     try {
       const test = JSON.parse(stored);
@@ -53,7 +53,7 @@ function trackConversion(testId, eventName, metadata = {}) {
   const variant = getVariant(testId);
 
   if (!variant) {
-    console.warn('No variant assigned for test: ' + testId);
+    console.warn(`No variant assigned for test: ${  testId}`);
     return;
   }
 
