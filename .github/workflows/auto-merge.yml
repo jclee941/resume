@@ -1,4 +1,4 @@
-# Auto-merge for Dependabot and owner PRs
+# Auto-merge for Dependabot, owner, and Codex PRs
 # SSoT: qws941/.github — synced to all repos (except terraform)
 # Synced via: .github/sync.yml → Group 2
 #
@@ -6,6 +6,7 @@
 #   - Dependabot PRs (auto-merge with squash)
 #   - Repository owner PRs (auto-merge with squash)
 #   - PRs with 'auto-merge' label
+#   - Codex PRs (by 'codex' label or bot author)
 
 name: Auto Merge
 
@@ -23,8 +24,24 @@ jobs:
     if: >-
       github.actor == 'dependabot[bot]' ||
       github.actor == github.repository_owner ||
-      contains(github.event.pull_request.labels.*.name, 'auto-merge')
+      contains(github.event.pull_request.labels.*.name, 'auto-merge') ||
+      contains(github.event.pull_request.labels.*.name, 'codex')
     steps:
+      - name: Check Codex PR
+        id: codex
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          AUTHOR=$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" \
+            --json author --jq '.author.login')
+          # Codex bot login is 'Codex' (type: Bot), not '[bot]' suffix
+          if [ "$AUTHOR" = "Codex" ]; then
+            echo "codex=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "codex=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Enable auto-merge
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
