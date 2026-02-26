@@ -1,167 +1,220 @@
 # PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-02-24 12:34:06 KST
-**Commit:** 055bcc5
+**Generated:** 2026-02-26
+**Commit:** c6ea65a
 **Branch:** master
 
 ## OVERVIEW
 
-Google3-style monorepo for a Cloudflare-hosted portfolio site and job-automation platform (single `resume` worker runtime). CI validates code; Cloudflare Workers Builds handles production deployment.
+GitHub community health files **Single Source of Truth (SSoT)** for all `qws941` repositories. Contains governance files, reusable CI/CD workflows, issue templates, and label definitions that auto-sync to 10+ downstream repos. No application code — config and policy only.
 
 ## STRUCTURE
 
 ```text
-resume/
-├── typescript/
-│   ├── portfolio-worker/          # portfolio edge app + static generator
-│   │   ├── lib/                   # 25 build/runtime JS modules
-│   │   └── src/                   # source HTML/CSS/theme
-│   ├── job-automation/            # MCP server + dashboard worker
-│   │   ├── src/                   # MCP server core (hexagonal arch)
-│   │   ├── workers/               # embedded dashboard runtime modules (served by resume worker)
-│   │   ├── scripts/               # auth/sync utility scripts
-│   │   └── platforms/             # platform-specific crawlers
-│   ├── cli/                       # resume-cli (Commander.js)
-│   └── data/                      # SSoT resume data and schemas
-├── tools/                         # CI/build/deploy scripts
-│   ├── ci/                        # affected.sh, validate-cloudflare-native.sh
-│   └── scripts/                   # build, deployment, monitoring, utils
-├── tests/                         # unit (Jest) / e2e (Playwright) / integration
-├── infrastructure/                # Terraform + monitoring + D1 migrations
-├── docs/                          # architecture, guides, planning
-├── .github/                       # workflows, composite actions, rulesets
-├── third_party/                   # Bazel dependency coordination
-├── BUILD.bazel / MODULE.bazel     # Bazel facade layer
-└── AGENTS.md hierarchy            # root + 31 domain guides
+./
+├── .github/
+│   ├── workflows/
+│   │   ├── _ci-node.yml            # Reusable Node.js CI (workflow_call)
+│   │   ├── _ci-python.yml          # Reusable Python CI (workflow_call)
+│   │   ├── _deploy-cf-worker.yml   # Reusable CF Worker deploy (workflow_call)
+│   │   ├── auto-merge.yml          # Dependabot + owner auto-merge (synced)
+│   │   ├── labeler.yml             # PR auto-labeling workflow (synced)
+│   │   ├── stale.yml               # Stale issue cleanup 14d+5d (synced)
+│   │   └── sync-files.yml          # File sync orchestrator (push to master)
+│   ├── ISSUE_TEMPLATE/
+│   │   ├── bug_report.yml          # Structured bug report form
+│   │   ├── feature_request.yml     # Structured feature request form
+│   │   └── config.yml              # Blank issues disabled, security redirect
+│   ├── CODEOWNERS                  # * @qws941
+│   ├── FUNDING.yml                 # github: qws941
+│   ├── PULL_REQUEST_TEMPLATE.md    # What/Why/Kind/Changes/Testing/Checklist
+│   ├── copilot-instructions.md     # SSoT context, 5 rules, key file table
+│   ├── dependabot.yml              # Weekly github-actions updates
+│   ├── labeler.yml                 # PR auto-label path rules
+│   └── sync.yml                    # Sync target config: 2 groups, 10 repos
+├── scripts/
+│   ├── labels.yml                  # 17 standard labels (type:*/priority:*/status:*)
+│   └── sync-labels.sh              # gh CLI label sync script
+├── profile/
+│   └── README.md                   # GitHub profile page content
+├── .editorconfig                   # 2-space JS/TS/YAML, 4-space Python, tabs Makefile
+├── CODE_OF_CONDUCT.md              # Contributor Covenant v2.1
+├── CONTRIBUTING.md                 # Trunk-based dev, conventional commits, review policy
+├── LICENSE                         # MIT
+├── OWNERS                          # Google3-style: approvers + reviewers = qws941
+└── SECURITY.md                     # Security policy: security@jclee.me, 48h SLA
 ```
 
 ## WHERE TO LOOK
 
-| Task                      | Location                                          | Notes                             |
-| ------------------------- | ------------------------------------------------- | --------------------------------- |
-| Portfolio worker behavior | `typescript/portfolio-worker/`                    | `worker.js` is generated          |
-| Portfolio build pipeline  | `typescript/portfolio-worker/generate-worker.js`  | HTML→CSP→inline→worker.js         |
-| Portfolio runtime modules | `typescript/portfolio-worker/lib/`                | 25 stateless JS modules           |
-| Portfolio source styles   | `typescript/portfolio-worker/src/`                | CSS variables, dark-only theme    |
-| Job automation MCP server | `typescript/job-automation/src/`                  | hexagonal: services/clients/tools |
-| Job dashboard runtime     | `typescript/job-automation/workers/`              | embedded `/job/*` runtime modules |
-| Job crawlers (stealth)    | `typescript/job-automation/src/crawlers/`         | Playwright + stealth patches      |
-| Auto-apply system         | `typescript/job-automation/src/auto-apply/`       | form fill + rate limiting         |
-| Auth/sync scripts         | `typescript/job-automation/scripts/`              | quick-login, cookie extraction    |
-| Canonical resume data     | `typescript/data/resumes/master/resume_data.json` | SSoT                              |
-| CI validation rules       | `.github/workflows/ci.yml`, `tools/ci/`           | validation-only pipeline          |
-| Deployment policy         | `docs/guides/CLOUDFLARE_GITHUB_AUTO_DEPLOY.md`    | Cloudflare Builds authority       |
-| Infrastructure as Code    | `infrastructure/cloudflare/`                      | Terraform for CF resources        |
-| Test suites               | `tests/`                                          | unit/e2e/integration hub          |
-
-## CODE MAP
-
-| Symbol           | Type     | Location                                                  | Role                             |
-| ---------------- | -------- | --------------------------------------------------------- | -------------------------------- |
-| `main`           | function | `typescript/job-automation/src/index.js`                  | MCP server bootstrap (Fastify)   |
-| default `fetch`  | handler  | `typescript/portfolio-worker/entry.js`                    | unified edge router              |
-| default `fetch`  | handler  | `typescript/job-automation/workers/src/index.js`          | embedded dashboard API handler   |
-| `run`            | function | `typescript/cli/bin/run.js`                               | CLI entrypoint (Commander)       |
-| generator flow   | script   | `typescript/portfolio-worker/generate-worker.js`          | HTML/CSS/data → worker.js        |
-| `WantedAPI`      | class    | `typescript/job-automation/src/shared/clients/wanted/`    | 40+ methods, 6 files             |
-| `BaseCrawler`    | class    | `typescript/job-automation/src/crawlers/base-crawler.js`  | stealth patches, UA rotation     |
-| `JobMatcher`     | class    | `typescript/job-automation/src/shared/services/matching/` | <60 skip, 60-74 review, ≥75 auto |
-| `SessionManager` | class    | `typescript/job-automation/src/shared/services/session/`  | 24h TTL, cookie persistence      |
-| `BaseHandler`    | class    | `typescript/job-automation/workers/src/handlers/`         | 13 handler subclasses            |
+| Task                          | Location                           | Notes                                                      |
+| ----------------------------- | ---------------------------------- | ---------------------------------------------------------- |
+| Add/modify synced files       | `.github/sync.yml`                 | Defines file mappings and target repos                     |
+| Add a new sync target repo    | `.github/sync.yml` → `repos:`      | Add to both Group 1 and Group 2 (unless custom auto-merge) |
+| Reusable CI workflows         | `.github/workflows/_*.yml`         | `_` prefix = `workflow_call` only, not synced              |
+| Synced workflows              | `.github/workflows/{name}.yml`     | No `_` prefix = synced to downstream repos                 |
+| Issue templates               | `.github/ISSUE_TEMPLATE/`          | Bug report + feature request forms                         |
+| PR template                   | `.github/PULL_REQUEST_TEMPLATE.md` | What/Why/Kind/Changes/Testing/Checklist format             |
+| Standard labels               | `scripts/labels.yml`               | 17 labels: `type:*`, `priority:*`, `status:*`              |
+| Label sync to repos           | `scripts/sync-labels.sh`           | Uses `gh` CLI, run manually                                |
+| Contribution rules            | `CONTRIBUTING.md`                  | Trunk-based dev, conventional commits, review SLA          |
+| Security reports              | `SECURITY.md`                      | Email security@jclee.me, 48h response SLA                  |
+| GitHub profile page           | `profile/README.md`                | Rendered at github.com/qws941                              |
+| Editor formatting             | `.editorconfig`                    | Synced to all repos                                        |
+| Copilot context for this repo | `.github/copilot-instructions.md`  | SSoT-specific rules, NOT synced                            |
 
 ## CONVENTIONS
 
-- Bazel is a coordination facade; everyday commands are npm scripts.
-- Keep production runtime centered on `typescript/portfolio-worker/wrangler.toml`.
-- ESM JavaScript with ESLint flat config (`eslint.config.cjs`), 69-warning ratchet baseline.
-- Prettier: printWidth 100, singleQuote, trailingComma es5.
-- tsconfig: NOT strict (`noImplicitAny` false, `strictNullChecks` false).
-- Node 22 (`.nvmrc`). 5 npm workspaces.
-- Root and domain ownership enforced (`OWNERS`, `.github/CODEOWNERS`).
-- CI is validation-only; production deploy via Cloudflare Workers Builds (git-push).
-- Use child AGENTS as deltas; avoid duplicating root guidance.
+### SSoT Sync Model
+
+This repo is the canonical source. Changes propagate automatically:
+
+- **Sync trigger**: Push to `master` on paths: `OWNERS`, `LICENSE`, `.editorconfig`, `AGENTS.md`, `.github/sync.yml`, `.github/workflows/codex-triage.yml`
+- **Sync engine**: `BetaHuhn/repo-file-sync-action` via `.github/workflows/sync-files.yml`
+- **Sync PRs**: Prefixed `chore: `, labeled `sync`, assigned to `qws941`
+
+**Synced files** (must remain generic, no repo-specific content):
+
+| File                               | Targets                                 |
+| ---------------------------------- | --------------------------------------- |
+| `OWNERS`                           | All 10 repos                            |
+| `LICENSE`                          | All 10 repos                            |
+| `.editorconfig`                    | All 10 repos                            |
+| `.github/labeler.yml`              | All 10 repos                            |
+| `.github/workflows/stale.yml`      | All 10 repos                            |
+| `.github/workflows/labeler.yml`    | All 10 repos                            |
+| `.github/workflows/auto-merge.yml` | 9 repos (excludes `terraform` — custom) |
+| `AGENTS.md`                        | All 10 repos                            |
+| `.github/workflows/codex-triage.yml`| All 10 repos                            |
+
+**NOT synced** (repo-specific by design):
+
+- `.github/dependabot.yml` — different ecosystems per repo
+- `.github/CODEOWNERS` — terraform has custom path rules
+- `.github/copilot-instructions.md` — repo-specific context
+
+### Sync Target Repos
+
+`blacklist`, `hycu_fsds`, `propose`, `qws941`, `resume`, `safetywallet`, `splunk`, `terraform`, `tmux`, `youtube`
+
+### Reusable Workflows
+
+Three `workflow_call` workflows prefixed with `_` (not synced, called via `uses:`):
+
+| Workflow                | Purpose                      | Key Inputs                                           |
+| ----------------------- | ---------------------------- | ---------------------------------------------------- |
+| `_ci-node.yml`          | Node.js CI (lint/type/test)  | `node-version`, `turbo`, `run-lint`, `run-test`      |
+| `_ci-python.yml`        | Python CI (ruff/mypy/pytest) | `python-version`, `run-mypy`, `run-test`, `src-dirs` |
+| `_deploy-cf-worker.yml` | Cloudflare Worker deploy     | `working-directory`, `environment`, `deploy-command` |
+
+Usage pattern in consuming repos:
+
+```yaml
+jobs:
+  ci:
+    uses: qws941/.github/.github/workflows/_ci-node.yml@master
+    with:
+      node-version: "20"
+    secrets: inherit
+```
+
+### GitHub Actions
+
+- SHA-pin all actions with `# vN` version comment suffix
+- Never use mutable tags (`@v4`) — always full commit SHA
+
+### Commit and PR Conventions
+
+- **Conventional Commits**: `type(scope): imperative summary` (≤72 chars, lowercase)
+- **Types**: `feat`, `fix`, `docs`, `refactor`, `test`, `ci`, `chore`, `perf`, `build`, `revert`
+- **Branch naming**: `type/description` (e.g., `feat/add-metrics-export`)
+- **PR size**: ~200 LOC max
+- **Merge policy**: Squash merge only. Merge commits disabled.
+- **Review SLA**: 24 hours. `nit:` prefix for non-blocking feedback.
+- **PR body format**: What / Why / Testing sections
+
+### Labels
+
+17 standard labels across all repos, defined in `scripts/labels.yml`:
+
+- `type:bug`, `type:feature`, `type:docs`, `type:refactor`, `type:ci`, `type:chore`, `type:security`, `type:test`, `type:infra`
+- `priority:critical`, `priority:high`, `priority:medium`, `priority:low`
+- `status:blocked`, `status:in-progress`, `status:needs-review`, `status:wontfix`, `status:duplicate`
+
+### Governance
+
+- **OWNERS** (Google3/K8s-style): Defines approvers and reviewers. Hierarchical. Synced.
+- **CODEOWNERS** (GitHub-native): Enforces required reviews. NOT synced (repo-specific).
+- Both set to `qws941` at root level.
+
+### Codex Integration
+
+`chatgpt-codex-connector` GitHub App is installed with access to all repositories.
+
+**Triggers:**
+
+| Trigger | Action | Context |
+| ------- | ------ | ------- |
+| `@codex review` in PR comment | Code review using AGENTS.md conventions | PR diff + repo context |
+| `@codex <task>` in PR comment | Execute arbitrary task (fix, refactor, test) | PR context |
+| `@codex` in issue comment | Investigate and propose fix, create PR | Issue context |
+| Automatic review (if enabled) | Review every new PR without @mention | Per-repo Codex setting |
+
+**Configuration:**
+
+- Codex reads `AGENTS.md` at repo root automatically — no additional config needed.
+- `## Review guidelines` section (below) customizes review behavior.
+- Enable automatic reviews per-repo at `chatgpt.com/codex/settings/code-review`.
+- AGENTS.md is synced to all 10 repos via `sync.yml` Group 1.
+
+## Review guidelines
+
+- Enforce conventional commit format in PR titles: `type(scope): summary`.
+- All GitHub Actions must be SHA-pinned with `# vN` version comment — flag any mutable tag (`@v4`).
+- Never approve PRs that add `as any`, `@ts-ignore`, `@ts-expect-error`, or empty `catch {}` blocks.
+- Never approve PRs that hardcode IPs, secrets, or credentials.
+- Synced files (OWNERS, LICENSE, .editorconfig, AGENTS.md, labeler.yml, workflow files) must remain generic — flag any repo-specific content.
+- PR size should be ~200 LOC max. Flag PRs exceeding 400 LOC.
+- Squash merge only — flag merge commits or rebase merges.
+- Trunk-based development — flag long-lived feature branches.
+- Review SLA context: non-blocking feedback uses `nit:` prefix.
+- For Terraform changes: verify no hardcoded IPs, use variables/env vars.
+- For workflow changes: verify SHA-pinned actions, correct `workflow_call` inputs, proper permissions scoping.
 
 ## ANTI-PATTERNS (THIS PROJECT)
 
-- Never edit `typescript/portfolio-worker/worker.js` directly (generated).
-- Never `trim()` inline scripts before CSP hash generation.
-- Never bypass SSoT by editing derived resume artifacts.
-- Never treat GitHub Actions as production deploy authority.
-- Never hardcode env-specific resource names across docs/scripts.
-- Never use naked Puppeteer — always stealth plugins + UA rotation.
-- Never aggressive polling on job platforms (1s+ jitter between requests).
-- Never cross-client imports in job-automation shared layer.
-- Never store credentials in client code or commit cookies.
+- Never put repo-specific content in synced files — they propagate to all repos.
+- Never sync `dependabot.yml` or `CODEOWNERS` — they vary per repo.
+- Never use mutable action tags (`@v4`) — always SHA-pin with version comment.
+- Never hardcode IPs or secrets — use Terraform variables or env vars.
+- Never suppress type errors (`as any`, `@ts-ignore`) or delete failing tests.
+- Never use merge commits — squash merge only.
+- Never create long-lived feature branches — trunk-based development only.
+
+## UNIQUE STYLES
+
+- Config-only repo: no application code, no build system, no tests.
+- Dual governance: OWNERS (intent/policy) + CODEOWNERS (GitHub enforcement) coexist.
+- Reusable workflow naming: `_` prefix distinguishes callable workflows from synced workflows.
+- Sync groups: Group 1 (governance + workflows → all repos) vs Group 2 (auto-merge → excludes terraform).
+- GitHub auto-inherits: `CONTRIBUTING.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md` apply to all repos without syncing.
 
 ## COMMANDS
 
 ```bash
-# core validation
-npm run lint
-npm run typecheck
-npm run build
-bash tools/ci/validate-cloudflare-native.sh
+# Sync labels to all repos (requires gh CLI auth)
+bash scripts/sync-labels.sh
 
-# test suites
-npm run test:jest
-npm run test:e2e
-
-# portfolio generator
-cd typescript/portfolio-worker && node generate-worker.js
-
-# data sync
-npm run sync:data
+# File sync happens automatically on push to master
+# Manual trigger available via workflow_dispatch on sync-files.yml
 ```
-
-## AGENTS HIERARCHY
-
-| Path                                                               | Focus                             |
-| ------------------------------------------------------------------ | --------------------------------- |
-| `typescript/portfolio-worker/AGENTS.md`                            | portfolio runtime/build pipeline  |
-| `typescript/portfolio-worker/src/AGENTS.md`                        | source HTML/CSS/theme rules       |
-| `typescript/portfolio-worker/lib/AGENTS.md`                        | 25 build/runtime modules          |
-| `typescript/job-automation/AGENTS.md`                              | MCP server app domain             |
-| `typescript/job-automation/src/AGENTS.md`                          | MCP server core architecture      |
-| `typescript/job-automation/src/tools/AGENTS.md`                    | 9 MCP tool definitions            |
-| `typescript/job-automation/src/server/routes/AGENTS.md`            | 13 Fastify route modules          |
-| `typescript/job-automation/src/shared/AGENTS.md`                   | hexagonal arch core               |
-| `typescript/job-automation/src/shared/clients/AGENTS.md`           | API client adapters               |
-| `typescript/job-automation/src/shared/services/AGENTS.md`          | 10 domain service dirs            |
-| `typescript/job-automation/src/shared/services/matching/AGENTS.md` | matching thresholds + AI fallback |
-| `typescript/job-automation/src/auto-apply/AGENTS.md`               | stealth auto-submission           |
-| `typescript/job-automation/src/crawlers/AGENTS.md`                 | stealth Playwright crawlers       |
-| `typescript/job-automation/workers/AGENTS.md`                      | dashboard worker domain           |
-| `typescript/job-automation/workers/src/handlers/AGENTS.md`         | worker handler contracts          |
-| `typescript/job-automation/workers/src/workflows/AGENTS.md`        | workflow modules and triggers     |
-| `typescript/job-automation/workers/src/middleware/AGENTS.md`       | request middleware rules          |
-| `typescript/job-automation/scripts/AGENTS.md`                      | auth/sync utility scripts         |
-| `typescript/job-automation/platforms/AGENTS.md`                    | platform-specific crawlers        |
-| `typescript/cli/AGENTS.md`                                         | CLI wrappers                      |
-| `typescript/data/AGENTS.md`                                        | resume SSoT and schema flow       |
-| `typescript/data/resumes/technical/nextrade/AGENTS.md`             | Nextrade project docs             |
-| `tools/AGENTS.md`                                                  | build/deploy script layer         |
-| `tools/ci/AGENTS.md`                                               | CI helper scripts and guards      |
-| `tools/scripts/AGENTS.md`                                          | automation script suite           |
-| `tools/scripts/build/AGENTS.md`                                    | asset generation scripts          |
-| `tools/scripts/utils/AGENTS.md`                                    | shared utility scripts            |
-| `tools/scripts/deployment/AGENTS.md`                               | deployment helper scripts         |
-| `tools/scripts/bazel/AGENTS.md`                                    | bazel facade shell scripts        |
-| `tests/AGENTS.md`                                                  | test strategy and gotchas         |
-| `tests/e2e/AGENTS.md`                                              | Playwright E2E conventions        |
-| `tests/unit/AGENTS.md`                                             | Jest unit test conventions        |
-| `tests/integration/AGENTS.md`                                      | integration test conventions      |
-| `.github/AGENTS.md`                                                | workflow/repo automation          |
-| `.github/workflows/AGENTS.md`                                      | workflow-level patterns/guards    |
-| `docs/AGENTS.md`                                                   | documentation hub                 |
-| `infrastructure/AGENTS.md`                                         | IaC + monitoring                  |
-| `infrastructure/cloudflare/AGENTS.md`                              | Terraform for CF resources        |
-| `third_party/AGENTS.md`                                            | Bazel dependency policy           |
 
 ## NOTES
 
-- 73K+ lines of source code across 5 npm workspaces.
-- Production worker name: `resume`. D1: `resume-prod-db`, `job-dashboard-db`.
-- KV bindings: `SESSIONS`, `RATE_LIMIT_KV`, `NONCE_KV`. Queue: `crawl-tasks`.
-- 7 Cloudflare Workflows: job-crawling, application, resume-sync, daily-report, health-check, backup, cleanup.
-- Skills v2 API and Links API on Wanted are broken — use v1 only.
-- Test E2E uses `domcontentloaded` not `networkidle` (terminal animations cause timeouts).
+- This is a personal account `.github` repo, not a GitHub Organization `.github` repo. GitHub still honors community health file inheritance for the account's repos.
+- `profile/README.md` renders as the GitHub profile page at `github.com/qws941`.
+- Reusable workflows are consumed via `uses: qws941/.github/.github/workflows/_ci-node.yml@master` — note the double `.github` path segment.
+- The `terraform` repo has custom auto-merge (risk-based) and custom CODEOWNERS, which is why those files are excluded from sync Group 2 / not synced respectively.
+- Secrets required: `GH_PAT` for sync-files workflow, `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID` for CF Worker deploy workflow.
+- `chatgpt-codex-connector` GitHub App installed with all-repo access. `@codex review` works in any repo PR. `@codex` works in issue comments to investigate and propose fixes.
+- AGENTS.md is synced to all downstream repos — Codex reads it automatically for review context in every repo.

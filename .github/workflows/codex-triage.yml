@@ -1,0 +1,40 @@
+name: Codex Triage
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  issues: write
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    if: >-
+      contains(github.event.issue.title, 'failed') ||
+      contains(github.event.issue.title, 'failure') ||
+      contains(github.event.issue.title, 'Failed') ||
+      contains(github.event.issue.title, 'Failure') ||
+      contains(github.event.issue.title, '[Deploy') ||
+      contains(github.event.issue.title, '[Build') ||
+      contains(github.event.issue.title, '[Docker') ||
+      contains(github.event.issue.title, 'Apply failed')
+    steps:
+      - name: Request Codex investigation
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: [
+                '@codex Investigate this failure.',
+                '',
+                'Steps:',
+                '1. Check the workflow run logs linked in this issue',
+                '2. Identify the root cause of the failure',
+                '3. If the issue is code-related, create a fix PR',
+                '4. If it is a credential, infrastructure, or transient issue, summarize findings and recommended next steps',
+              ].join('\n'),
+            });
