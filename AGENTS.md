@@ -75,7 +75,7 @@ GitHub community health files **Single Source of Truth (SSoT)** for all `qws941`
 | PR quality gates            | `.github/workflows/{commitlint,pr-size}.yml`    | Conventional commit enforcement + size labeling  |
 | Release management          | `.github/workflows/release-drafter.yml`         | Auto-draft release notes from merged PRs         |
 | Release drafter config      | `.github/release-drafter.yml`                   | PR category → changelog section mapping          |
-| Ruleset sync to repos       | `scripts/sync-rulesets.sh`                      | 3 rulesets + repo settings to all non-archived repos |
+| Ruleset sync to repos       | `scripts/sync-rulesets.sh`                      | 3 rulesets + repo settings to all non-archived repos, zero-base rebuild support |
 | Auto-merge workflow         | `.github/workflows/auto-merge.yml`              | GH_PAT admin bypass merge, no approval step  |
 
 ## CONVENTIONS
@@ -242,21 +242,25 @@ Path-based labels defined in `.github/labeler.yml`:
 
 ### Repository Rulesets
 
-Three standard rulesets applied to all non-archived repos via `scripts/sync-rulesets.sh`:
+Three standard rulesets applied to all non-archived repos (except `terraform`) via `scripts/sync-rulesets.sh`:
 
 | Ruleset | Target | Scope | Key Rules |
 | --- | --- | --- | --- |
-| `default-branch-rules` | Default branch | All repos | PR required (1 approval; 0 for config-only repos), dismiss stale reviews, require thread resolution, linear history, squash+rebase merge only, non-fast-forward, admin bypass (RepositoryRole 5) |
+| `default-branch-protection` | Default branch | All repos | PR required (1 approval; 0 for config-only repos), dismiss stale reviews, last push approval, thread resolution, linear history, squash+rebase merge only, block update/deletion/non-fast-forward. Admin bypass (RepositoryRole 5). |
 | `code-scanning` | All branches | All repos | CodeQL required — security alerts ≥ high, code alerts ≥ errors. May fail on private repos without GHAS. |
-| `tag-protection` | `v*` tags | All repos | Prevents creation, update, deletion, non-fast-forward of version tags. Admin bypass only. |
+| `tag-protection` | `refs/tags/v*` tags | All repos | Blocks creation, update, deletion, non-fast-forward of version tags. Admin bypass only. |
 
 **Repo settings** applied alongside rulesets:
 - Auto-merge enabled, delete branch on merge
 - Squash merge enabled (PR_TITLE + PR_BODY), merge commits disabled, rebase enabled
 
-**Config-only repos** (`.github`, `qws941`): 0 required approvals (no CI, no code to review).
+**Config-only repos** (`.github`, `qws941`): 0 required approvals, last push approval disabled.
 
-**Status check preservation**: The script preserves existing `required_status_checks` rules in `default-branch-rules` — it reads the current ruleset before updating and merges existing checks into the payload.
+**Status check preservation**: The script preserves existing `required_status_checks` rules in `default-branch-protection` — it reads the current ruleset before updating and merges existing checks into the payload.
+
+**Bypass actors**: Admin only (`RepositoryRole` id 5, `bypass_mode: always`). Integration actors (GitHub Actions, Dependabot) are org-only and cannot be used on personal accounts.
+
+**Zero-base rebuild**: `--delete-all` flag deletes all existing rulesets before recreating. Status checks are preserved across rebuilds.
 
 ## Review guidelines
 
@@ -310,6 +314,9 @@ bash scripts/sync-rulesets.sh
 
 # Dry-run ruleset sync
 bash scripts/sync-rulesets.sh --dry-run
+
+# Zero-base rebuild (delete all rulesets, then recreate)
+bash scripts/sync-rulesets.sh --delete-all
 
 # Sync rulesets to specific repo only
 bash scripts/sync-rulesets.sh --repo qws941/terraform
