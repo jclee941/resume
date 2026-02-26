@@ -112,7 +112,7 @@ This repo is the canonical source. Changes propagate automatically:
 | `.github/ISSUE_TEMPLATE/bug_report.yml` | All 12 repos                            |
 | `.github/ISSUE_TEMPLATE/feature_request.yml` | All 12 repos                       |
 | `.github/ISSUE_TEMPLATE/config.yml`     | All 12 repos                            |
-| `.github/workflows/auto-merge.yml`      | 11 repos (excludes `terraform` — custom)|
+| `.github/workflows/auto-merge.yml`      | All 12 repos                            |
 
 **NOT synced** (repo-specific by design):
 
@@ -126,7 +126,7 @@ Three sync groups covering 12 repositories:
 | Group | Content                              | Targets                                           |
 | ----- | ------------------------------------ | ------------------------------------------------- |
 | 1     | Governance + core workflows          | All 12 repos                                      |
-| 2     | `auto-merge.yml`                     | 11 repos (excludes `terraform` — risk-based merge)|
+| 2     | `auto-merge.yml`                     | All 12 repos                                      |
 | 3     | `codex-auto-issue.yml`               | All 12 repos                                      |
 
 **Target repos**: `aimo3-prize`, `blacklist`, `hycu_fsds`, `opencode`, `propose`, `qws941`, `resume`, `safetywallet`, `splunk`, `terraform`, `tmux`, `youtube`
@@ -271,7 +271,7 @@ Three standard rulesets applied to all non-archived repos via `scripts/sync-rule
 - Config-only repo: no application code, no build system, no tests.
 - Dual governance: OWNERS (intent/policy) + CODEOWNERS (GitHub enforcement) coexist.
 - Reusable workflow naming: `_` prefix distinguishes callable workflows from synced workflows.
-- Sync groups: Group 1 (governance + core workflows → all repos) vs Group 2 (auto-merge → excludes terraform) vs Group 3 (codex-auto-issue → all repos).
+- Sync groups: Group 1 (governance + core workflows → all repos) vs Group 2 (auto-merge → all repos) vs Group 3 (codex-auto-issue → all repos).
 - GitHub auto-inherits: `CONTRIBUTING.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md` apply to all repos without syncing.
 
 ## COMMANDS
@@ -304,7 +304,7 @@ bash scripts/sync-rulesets.sh --repo qws941/terraform
 - This is a personal account `.github` repo, not a GitHub Organization `.github` repo. GitHub still honors community health file inheritance for the account's repos.
 - `profile/README.md` renders as the GitHub profile page at `github.com/qws941`.
 - Reusable workflows are consumed via `uses: qws941/.github/.github/workflows/_ci-node.yml@master` — note the double `.github` path segment.
-- The `terraform` repo has custom auto-merge (risk-based) and custom CODEOWNERS, which is why those files are excluded from sync Group 2 / not synced respectively.
+- The `terraform` repo has custom CODEOWNERS (path-specific rules), which is why that file is not synced. Auto-merge is now standardized across all repos including terraform.
 - Secrets required: `GH_PAT` for sync-files workflow, `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID` for CF Worker deploy workflow, `ELASTICSEARCH_URL` + optional `ELASTICSEARCH_API_KEY` for ELK ingest workflow.
 - `chatgpt-codex-connector` GitHub App installed with all-repo access. `@codex review` works in any repo PR. `@codex` works in issue comments to investigate and propose fixes.
 - AGENTS.md is synced to all downstream repos — Codex reads it automatically for review context in every repo.
