@@ -1,12 +1,12 @@
 # PROJECT KNOWLEDGE BASE
 
 **Generated:** 2026-02-26
-**Commit:** 5f2aef1
+**Commit:** 66a81b4
 **Branch:** master
 
 ## OVERVIEW
 
-GitHub community health files **Single Source of Truth (SSoT)** for all `qws941` repositories. Contains governance files, reusable CI/CD workflows, issue templates, and label definitions that auto-sync to 12 downstream repos. No application code — config and policy only.
+GitHub community health files **Single Source of Truth (SSoT)** for all `qws941` repositories. Contains governance files, reusable CI/CD workflows, issue templates, label definitions, and repository rulesets that auto-sync to downstream repos. No application code — config and policy only.
 
 ## STRUCTURE
 
@@ -18,7 +18,7 @@ GitHub community health files **Single Source of Truth (SSoT)** for all `qws941`
 │   │   ├── _ci-python.yml          # Reusable Python CI (workflow_call)
 │   │   ├── _deploy-cf-worker.yml   # Reusable CF Worker deploy (workflow_call)
 │   │   ├── _elk-ingest.yml         # Reusable ELK ingest (workflow_call)
-│   │   ├── auto-merge.yml          # Dependabot + owner + Codex auto-merge (synced)
+│   │   ├── auto-merge.yml          # Dependabot + owner + Codex auto-merge via admin bypass (synced)
 │   │   ├── codex-auto-issue.yml    # Codex auto-issue on label (synced)
 │   │   ├── codex-triage.yml        # Codex auto-triage on issue open (synced)
 │   │   ├── commitlint.yml          # Conventional commit PR title check (synced)
@@ -42,7 +42,8 @@ GitHub community health files **Single Source of Truth (SSoT)** for all `qws941`
 │   └── sync.yml                    # Sync target config: 3 groups, 12 repos
 ├── scripts/
 │   ├── labels.yml                  # 26 standard labels (type:*/priority:*/status:*/size:*)
-│   └── sync-labels.sh              # gh CLI label sync script
+│   ├── sync-labels.sh              # gh CLI label sync script
+│   └── sync-rulesets.sh            # gh CLI ruleset + repo settings sync script
 ├── profile/
 │   └── README.md                   # GitHub profile page content
 ├── .editorconfig                   # 2-space JS/TS/YAML, 4-space Python, tabs Makefile
@@ -74,6 +75,8 @@ GitHub community health files **Single Source of Truth (SSoT)** for all `qws941`
 | PR quality gates            | `.github/workflows/{commitlint,pr-size}.yml`    | Conventional commit enforcement + size labeling  |
 | Release management          | `.github/workflows/release-drafter.yml`         | Auto-draft release notes from merged PRs         |
 | Release drafter config      | `.github/release-drafter.yml`                   | PR category → changelog section mapping          |
+| Ruleset sync to repos       | `scripts/sync-rulesets.sh`                      | 3 rulesets + repo settings to all non-archived repos |
+| Auto-merge workflow         | `.github/workflows/auto-merge.yml`              | GH_PAT admin bypass merge, no approval step  |
 
 ## CONVENTIONS
 
@@ -221,6 +224,24 @@ Path-based labels defined in `.github/labeler.yml`:
 - **CODEOWNERS** (GitHub-native): Enforces required reviews. NOT synced (repo-specific).
 - Both set to `qws941` at root level.
 
+### Repository Rulesets
+
+Three standard rulesets applied to all non-archived repos via `scripts/sync-rulesets.sh`:
+
+| Ruleset | Target | Scope | Key Rules |
+| --- | --- | --- | --- |
+| `default-branch-rules` | Default branch | All repos | PR required (1 approval; 0 for config-only repos), dismiss stale reviews, require thread resolution, linear history, squash+rebase merge only, non-fast-forward, admin bypass (RepositoryRole 5) |
+| `code-scanning` | All branches | All repos | CodeQL required — security alerts ≥ high, code alerts ≥ errors. May fail on private repos without GHAS. |
+| `tag-protection` | `v*` tags | All repos | Prevents creation, update, deletion, non-fast-forward of version tags. Admin bypass only. |
+
+**Repo settings** applied alongside rulesets:
+- Auto-merge enabled, delete branch on merge
+- Squash merge enabled (PR_TITLE + PR_BODY), merge commits disabled, rebase enabled
+
+**Config-only repos** (`.github`, `qws941`): 0 required approvals (no CI, no code to review).
+
+**Status check preservation**: The script preserves existing `required_status_checks` rules in `default-branch-rules` — it reads the current ruleset before updating and merges existing checks into the payload.
+
 ## Review guidelines
 
 - Enforce conventional commit format in PR titles: `type(scope): summary`.
@@ -267,6 +288,15 @@ bash scripts/sync-labels.sh --repo qws941/terraform
 
 # File sync happens automatically on push to master
 # Manual trigger available via workflow_dispatch on sync-files.yml
+
+# Sync rulesets + repo settings to all repos (requires gh CLI auth)
+bash scripts/sync-rulesets.sh
+
+# Dry-run ruleset sync
+bash scripts/sync-rulesets.sh --dry-run
+
+# Sync rulesets to specific repo only
+bash scripts/sync-rulesets.sh --repo qws941/terraform
 ```
 
 ## NOTES
@@ -278,4 +308,4 @@ bash scripts/sync-labels.sh --repo qws941/terraform
 - Secrets required: `GH_PAT` for sync-files workflow, `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID` for CF Worker deploy workflow, `ELASTICSEARCH_URL` + optional `ELASTICSEARCH_API_KEY` for ELK ingest workflow.
 - `chatgpt-codex-connector` GitHub App installed with all-repo access. `@codex review` works in any repo PR. `@codex` works in issue comments to investigate and propose fixes.
 - AGENTS.md is synced to all downstream repos — Codex reads it automatically for review context in every repo.
-- GH_PAT is used in `auto-merge.yml` for self-approval (GITHUB_TOKEN cannot approve its own PRs).
+- GH_PAT is used in `auto-merge.yml` for admin bypass merge (repository rulesets allow RepositoryRole 5 to bypass branch protection).
