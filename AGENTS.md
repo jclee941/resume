@@ -163,7 +163,7 @@ jobs:
 | ------- | ------ | ------- |
 | `@codex review` in PR comment | Code review using AGENTS.md conventions | PR diff + repo context |
 | `@codex <task>` in PR comment | Execute arbitrary task (fix, refactor, test) | PR context |
-| `@codex` in issue comment | ⚠️ Not functional — bot does not respond to issue mentions | Requires Codex Environment per repo |
+| `@codex` in issue comment | Investigate issue and respond (requires Codex Environment) | Issue context |
 | Automatic review (if enabled) | Review every new PR without @mention | Per-repo Codex setting |
 
 **Automated workflows:**
@@ -180,7 +180,7 @@ jobs:
 - Enable automatic reviews per-repo at `chatgpt.com/codex/settings/code-review`.
 - AGENTS.md is synced to all 12 repos via `sync.yml` Group 1.
 - Codex Environment must be created per-repo at `chatgpt.com/codex/settings/environments` (web UI only, no API).
-- **Known limitation**: `@codex` mentions on issues do not trigger investigation — only PR reviews and PR-context tasks work.
+- **Known limitation**: Rapid-fire `@codex` mentions (multiple within seconds) may hit rate limits and receive no response. Space out mentions or retry individually.
 
 **Native GitHub Coding Agents (separate from connector app):**
 
@@ -189,12 +189,12 @@ GitHub offers native third-party coding agents (OpenAI Codex, Anthropic Claude) 
 | Feature | `chatgpt-codex-connector` App | Native Copilot Coding Agents |
 | --- | --- | --- |
 | PR code review | ✅ Works via `@codex review` | ✅ Assignable to PRs |
-| Issue investigation | ❌ Does not respond | ✅ Assignable to issues (creates PRs) |
+| Issue investigation | ✅ Works via `@codex` mention (requires Environment) | ✅ Assignable to issues (creates PRs) |
 | Requirement | App installation only | Copilot Pro+ or Enterprise plan |
 | Cost | Free | GitHub Actions minutes + Copilot premium requests |
 | Enable | App installed globally | Copilot policy settings (individual or org) |
 
-The `codex-triage.yml` and `codex-auto-issue.yml` workflows post `@codex` comments on issues, but the connector app cannot respond to issue-context mentions. These workflows are only effective if native Copilot coding agents are enabled.
+The `codex-triage.yml` and `codex-auto-issue.yml` workflows post `@codex` comments on issues. The connector app responds when a Codex Environment is configured for the repo. Rapid-fire mentions across multiple issues may hit rate limits — the bot silently drops responses in that case.
 
 ### GitHub Actions
 
