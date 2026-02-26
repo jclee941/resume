@@ -246,9 +246,9 @@ Three standard rulesets applied to all non-archived repos (except `terraform`) v
 
 | Ruleset | Target | Scope | Key Rules |
 | --- | --- | --- | --- |
-| `default-branch-protection` | Default branch | All repos | PR required (1 approval; 0 for config-only repos), dismiss stale reviews, last push approval, thread resolution, linear history, squash+rebase merge only, block update/deletion/non-fast-forward. Admin bypass (RepositoryRole 5). |
+| `default-branch-protection` | Default branch | All repos | PR required (1 approval; 0 for config-only repos), dismiss stale reviews, last push approval, thread resolution, linear history, squash+rebase merge only, block update/deletion/non-fast-forward. Admin + App bypass. |
 | `code-scanning` | All branches | All repos | CodeQL required — security alerts ≥ high, code alerts ≥ errors. May fail on private repos without GHAS. |
-| `tag-protection` | `refs/tags/v*` tags | All repos | Blocks creation, update, deletion, non-fast-forward of version tags. Admin bypass only. |
+| `tag-protection` | `refs/tags/v*` tags | All repos | Blocks creation, update, deletion, non-fast-forward of version tags. Admin + App bypass. |
 
 **Repo settings** applied alongside rulesets:
 - Auto-merge enabled, delete branch on merge
@@ -258,7 +258,7 @@ Three standard rulesets applied to all non-archived repos (except `terraform`) v
 
 **Status check preservation**: The script preserves existing `required_status_checks` rules in `default-branch-protection` — it reads the current ruleset before updating and merges existing checks into the payload.
 
-**Bypass actors**: Admin only (`RepositoryRole` id 5, `bypass_mode: always`). Integration actors (GitHub Actions, Dependabot) are org-only and cannot be used on personal accounts.
+**Bypass actors**: Admin (`RepositoryRole` id 5), OpenAI Codex connector (`Integration` id 1144995), OpenCode agent (`Integration` id 1549082). All `bypass_mode: always`. Note: GitHub Actions and Dependabot Integration actors are org-only and cannot be used on personal accounts.
 
 **Zero-base rebuild**: `--delete-all` flag deletes all existing rulesets before recreating. Status checks are preserved across rebuilds.
 
