@@ -1,7 +1,7 @@
 # PROJECT KNOWLEDGE BASE
 
 **Generated:** 2026-02-26
-**Commit:** dca2d23
+**Commit:** 591edc3
 **Branch:** master
 
 ## OVERVIEW
@@ -163,7 +163,7 @@ jobs:
 | ------- | ------ | ------- |
 | `@codex review` in PR comment | Code review using AGENTS.md conventions | PR diff + repo context |
 | `@codex <task>` in PR comment | Execute arbitrary task (fix, refactor, test) | PR context |
-| `@codex` in issue comment | Investigate and propose fix, create PR | Issue context |
+| `@codex` in issue comment | ⚠️ Not functional — bot does not respond to issue mentions | Requires Codex Environment per repo |
 | Automatic review (if enabled) | Review every new PR without @mention | Per-repo Codex setting |
 
 **Automated workflows:**
@@ -179,6 +179,8 @@ jobs:
 - `## Review guidelines` section (below) customizes review behavior.
 - Enable automatic reviews per-repo at `chatgpt.com/codex/settings/code-review`.
 - AGENTS.md is synced to all 12 repos via `sync.yml` Group 1.
+- Codex Environment must be created per-repo at `chatgpt.com/codex/settings/environments` (web UI only, no API).
+- **Known limitation**: `@codex` mentions on issues do not trigger investigation — only PR reviews and PR-context tasks work.
 
 ### GitHub Actions
 
@@ -306,6 +308,6 @@ bash scripts/sync-rulesets.sh --repo qws941/terraform
 - Reusable workflows are consumed via `uses: qws941/.github/.github/workflows/_ci-node.yml@master` — note the double `.github` path segment.
 - The `terraform` repo has custom CODEOWNERS (path-specific rules), which is why that file is not synced. Auto-merge is now standardized across all repos including terraform.
 - Secrets required: `GH_PAT` for sync-files workflow, `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID` for CF Worker deploy workflow, `ELASTICSEARCH_URL` + optional `ELASTICSEARCH_API_KEY` for ELK ingest workflow.
-- `chatgpt-codex-connector` GitHub App installed with all-repo access. `@codex review` works in any repo PR. `@codex` works in issue comments to investigate and propose fixes.
+- `chatgpt-codex-connector` GitHub App installed with all-repo access. `@codex review` works in any repo PR. Issue-context `@codex` mentions do not trigger responses (known limitation).
 - AGENTS.md is synced to all downstream repos — Codex reads it automatically for review context in every repo.
 - GH_PAT is used in `auto-merge.yml` for admin bypass merge (repository rulesets allow RepositoryRole 5 to bypass branch protection).
