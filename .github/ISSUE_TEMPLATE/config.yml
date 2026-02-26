@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security Vulnerability
+    url: https://github.com/qws941/.github/blob/master/SECURITY.md
+    about: Report security vulnerabilities via the organization-wide security policy (security@jclee.me, 48h SLA).
+  - name: Template / Governance Issue
+    url: https://github.com/qws941/.github/issues/new/choose
+    about: Report issues with shared templates, workflows, labels, or governance files (managed in the .github repo).

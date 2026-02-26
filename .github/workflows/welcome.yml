@@ -1,0 +1,29 @@
+# Welcome first-time contributors
+# SSoT: qws941/.github — synced to all repos
+# Synced via: .github/sync.yml → Group 1
+
+name: Welcome
+
+on:
+  issues:
+    types: [opened]
+  pull_request_target:
+    types: [opened]
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  welcome:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/first-interaction@fb2402657b4a28582200150d0a145671d0e50597 # v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          issue-message: |
+            Welcome! 👋 Thanks for opening your first issue in this repository.
+            A maintainer will review it shortly.
+          pr-message: |
+            Welcome! 👋 Thanks for your first pull request to this repository.
+            A maintainer will review it shortly. Please make sure your PR follows the [contributing guidelines](../blob/master/CONTRIBUTING.md).

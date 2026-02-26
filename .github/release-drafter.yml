@@ -1,0 +1,60 @@
+# Release Drafter configuration
+# Categorizes PRs by label into release note sections
+
+name-template: v$RESOLVED_VERSION
+tag-template: v$RESOLVED_VERSION
+
+categories:
+  - title: 🚀 Features
+    labels:
+      - type:feature
+      - feat
+  - title: 🐛 Bug Fixes
+    labels:
+      - type:bug
+      - fix
+  - title: 📖 Documentation
+    labels:
+      - type:docs
+      - documentation
+  - title: 🔧 Maintenance
+    labels:
+      - type:chore
+      - type:refactor
+      - type:ci
+      - type:infra
+  - title: 🔒 Security
+    labels:
+      - type:security
+  - title: ✅ Tests
+    labels:
+      - type:test
+
+change-template: "- $TITLE (#$NUMBER) @$AUTHOR"
+change-title-escapes: '\<*_&'
+no-changes-template: No changes since last release.
+
+version-resolver:
+  major:
+    labels:
+      - major
+      - breaking
+  minor:
+    labels:
+      - type:feature
+      - feat
+  patch:
+    labels:
+      - type:bug
+      - fix
+      - type:chore
+      - type:docs
+      - type:refactor
+  default: patch
+
+template: |
+  ## What Changed
+
+  $CHANGES
+
+  **Full Changelog**: https://github.com/$OWNER/$REPOSITORY/compare/$PREVIOUS_TAG...v$RESOLVED_VERSION
