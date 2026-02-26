@@ -35,7 +35,11 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_PAT }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::error::GH_PAT secret is not set — see qws941/.github README"
+            exit 1
+          fi
           gh pr merge "$PR_NUMBER" \
             --repo "${{ github.repository }}" \
             --squash \
-            --auto || echo "Auto-merge already enabled or not mergeable"
+            --auto
