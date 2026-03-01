@@ -32,6 +32,17 @@ function buildEcsDocument(message, level, labels, job) {
   };
 }
 
+function buildHeaders(env, contentType = 'application/json') {
+  const headers = { 'Content-Type': contentType };
+  const cfId = env?.CF_ACCESS_CLIENT_ID;
+  const cfSecret = env?.CF_ACCESS_CLIENT_SECRET;
+  if (cfId) headers['CF-Access-Client-Id'] = cfId;
+  if (cfSecret) headers['CF-Access-Client-Secret'] = cfSecret;
+  const apiKey = env?.ELASTICSEARCH_API_KEY;
+  if (apiKey) headers['Authorization'] = `ApiKey ${apiKey}`;
+  return headers;
+}
+
 async function flushLogs(env, index) {
   if (logQueue.length === 0) return;
 
@@ -57,10 +68,7 @@ async function flushLogs(env, index) {
     await fetch(`${esUrl}/_bulk`, {
       method: 'POST',
       signal: controller.signal,
-      headers: {
-        'Content-Type': 'application/x-ndjson',
-        Authorization: `ApiKey ${apiKey}`,
-      },
+      headers: buildHeaders(env, 'application/x-ndjson'),
       body: bulkBody,
     });
   } catch {
@@ -87,10 +95,7 @@ export async function logToElasticsearch(env, message, level = 'INFO', labels = 
       await fetch(`${esUrl}/${index}/_doc`, {
         method: 'POST',
         signal: controller.signal,
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `ApiKey ${apiKey}`,
-        },
+        headers: buildHeaders(env),
         body: JSON.stringify(doc),
       });
     } catch {

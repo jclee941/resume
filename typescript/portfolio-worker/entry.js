@@ -47,7 +47,7 @@ async function logEntryError(env, message, meta = {}) {
       '@timestamp': new Date().toISOString(),
       message,
       level: 'error',
-      service: 'resume-worker-entry',
+      service: { name: 'resume-worker-entry' },
       ...meta,
     };
 
