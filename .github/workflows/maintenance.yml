@@ -45,7 +45,7 @@ jobs:
     if: inputs.job == 'auth-refresh' || inputs.job == 'all'
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
       - name: Setup
         uses: ./.github/actions/setup
@@ -92,7 +92,7 @@ jobs:
     if: inputs.job == 'profile-sync' || inputs.job == 'all'
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
       - name: Setup
         uses: ./.github/actions/setup
@@ -149,10 +149,10 @@ jobs:
       AWS_ENDPOINT_URL_S3: https://${{ secrets.CLOUDFLARE_ACCOUNT_ID }}.r2.cloudflarestorage.com
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
+        uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd # v3
         with:
           terraform_version: ${{ env.TF_VERSION }}
 
@@ -188,7 +188,7 @@ jobs:
 
       - name: Create Issue for Drift
         if: steps.drift.outputs.drift_detected == 'true'
-        uses: actions/github-script@v8
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         with:
           script: |
             const fs = require('fs');
@@ -264,7 +264,7 @@ jobs:
       (github.event_name == 'workflow_dispatch' && (inputs.job == 'cache-cleanup' || inputs.job == 'all'))
     steps:
       - name: Cleanup old caches
-        uses: actions/github-script@v8
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         with:
           script: |
             const caches = await github.rest.actions.getActionsCacheList({
