@@ -46,3 +46,15 @@ jobs:
           body: ${{ steps.tag.outputs.changelog }}
           token: ${{ secrets.GITHUB_TOKEN }}
           generateReleaseNotes: true
+
+  elk-ingest:
+    name: ELK Ingest
+    needs: [release]
+    if: always() && !cancelled()
+    uses: qws941/.github/.github/workflows/_elk-ingest.yml@master
+    with:
+      conclusion: ${{ needs.release.result }}
+      index-prefix: github-actions
+      service: resume
+      extra-fields: '{"workflow_type": "release"}'
+    secrets: inherit

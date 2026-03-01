@@ -305,3 +305,22 @@ jobs:
           name: portfolio-worker
           path: typescript/portfolio-worker/worker.js
           retention-days: 7
+
+  # ===========================================================================
+  # STAGE: OBSERVABILITY - ELK Ingest
+  # ===========================================================================
+  elk-ingest:
+    name: ELK Ingest
+    needs: [analyze, validate-cloudflare, lint, typecheck, test-unit, test-e2e, security-scan, build]
+    if: always() && !cancelled()
+    uses: qws941/.github/.github/workflows/_elk-ingest.yml@master
+    with:
+      conclusion: >-
+        ${{
+          contains(needs.*.result, 'failure') && 'failure' ||
+          contains(needs.*.result, 'cancelled') && 'cancelled' ||
+          'success'
+        }}
+      index-prefix: github-actions
+      service: resume
+    secrets: inherit
