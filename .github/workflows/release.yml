@@ -16,5 +16,13 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Bump version and push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@a22cf08638b34d5badda920f9daf6e72c477b07b # v6.2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          release_branches: master
+          default_bump: patch
+
       - name: Diagnostic
-        run: echo "Checkout succeeded"
+        run: echo "Tag step succeeded - ${{ steps.tag_version.outputs.new_tag }}"
