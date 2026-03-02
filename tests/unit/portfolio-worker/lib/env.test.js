@@ -1,11 +1,11 @@
 /**
- * Unit tests for typescript/portfolio-worker/lib/env.js
+ * Unit tests for apps/portfolio/lib/env.js
  */
 
 const {
   validateEnv,
   getEnv,
-} = require('../../../../typescript/portfolio-worker/lib/env');
+} = require('../../../../apps/portfolio/lib/env');
 
 describe('Environment Module', () => {
   const originalEnv = process.env;

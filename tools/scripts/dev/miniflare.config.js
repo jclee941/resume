@@ -1,5 +1,5 @@
 module.exports = {
-  scriptPath: 'typescript/portfolio-worker/worker.js',
+  scriptPath: 'apps/portfolio/worker.js',
   port: 8787,
   modules: true,
   compatibilityDate: '2026-02-15',

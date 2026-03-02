@@ -80,7 +80,7 @@ module.exports = defineConfig({
     ? {}
     : {
         webServer: {
-          command: 'npm run start --workspace=typescript/portfolio-worker -- --port 8787',
+          command: 'npm run start --workspace=apps/portfolio -- --port 8787',
           port: 8787,
           reuseExistingServer: !process.env.CI,
           timeout: 120 * 1000,

@@ -9,7 +9,7 @@ function readWorkerFile(relPath) {
 describe('Network Failure Scenarios', () => {
   test('D1 unavailable should return graceful 503 in auto-apply webhook', () => {
     const source = readWorkerFile(
-      'typescript/job-automation/workers/src/handlers/auto-apply-webhook-handler.js'
+      'apps/job-dashboard/src/handlers/auto-apply-webhook-handler.js'
     );
 
     expect(source).toContain('if (!db)');
@@ -18,7 +18,7 @@ describe('Network Failure Scenarios', () => {
   });
 
   test('KV unavailable should fail-open for rate limiting', () => {
-    const source = readWorkerFile('typescript/job-automation/workers/src/middleware/rate-limit.js');
+    const source = readWorkerFile('apps/job-dashboard/src/middleware/rate-limit.js');
 
     expect(source).toContain('if (!env?.RATE_LIMIT_KV)');
     expect(source).toContain('return { ok: true };');
@@ -27,7 +27,7 @@ describe('Network Failure Scenarios', () => {
 
   test('R2 screenshot writes should be guarded by binding availability', () => {
     const source = readWorkerFile(
-      'typescript/job-automation/src/crawlers/stealth-browser-crawler.js'
+      'apps/job-server/src/crawlers/stealth-browser-crawler.js'
     );
 
     expect(source).toContain('this.screenshotOnError && this.env.SCREENSHOTS');
@@ -36,10 +36,10 @@ describe('Network Failure Scenarios', () => {
 
   test('timeout handling should use AbortSignal timeout in webhook handlers', () => {
     const resumeSync = readWorkerFile(
-      'typescript/job-automation/workers/src/handlers/resume-sync-handler.js'
+      'apps/job-dashboard/src/handlers/resume-sync-handler.js'
     );
     const autoApply = readWorkerFile(
-      'typescript/job-automation/workers/src/handlers/auto-apply-webhook-handler.js'
+      'apps/job-dashboard/src/handlers/auto-apply-webhook-handler.js'
     );
 
     expect(resumeSync).toContain('AbortSignal.timeout(10000)');
@@ -49,10 +49,10 @@ describe('Network Failure Scenarios', () => {
 
   test('error response format should be structured JSON with success=false and error', () => {
     const resumeSync = readWorkerFile(
-      'typescript/job-automation/workers/src/handlers/resume-sync-handler.js'
+      'apps/job-dashboard/src/handlers/resume-sync-handler.js'
     );
     const autoApply = readWorkerFile(
-      'typescript/job-automation/workers/src/handlers/auto-apply-webhook-handler.js'
+      'apps/job-dashboard/src/handlers/auto-apply-webhook-handler.js'
     );
 
     expect(resumeSync).toContain(

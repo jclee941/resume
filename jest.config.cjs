@@ -4,12 +4,12 @@ module.exports = {
   testMatch: ['**/tests/unit/**/*.test.js', '**/tests/integration/**/*.test.js'],
   testPathIgnorePatterns: ['/node_modules/', 'resume-sync-validation.test.js'],
   collectCoverageFrom: [
-    'typescript/portfolio-worker/lib/**/*.js', // Core testable modules
-    'typescript/portfolio-worker/logger.js', // Logger utility
-    '!typescript/portfolio-worker/lib/entry-router-utils.js', // ESM-only helper covered by runtime tests
-    '!typescript/portfolio-worker/lib/loki-logger.js', // Runtime-only (Cloudflare Worker)
-    '!typescript/portfolio-worker/lib/metrics.js', // Runtime-only (Cloudflare Worker)
-    '!typescript/portfolio-worker/lib/performance-metrics.js', // Browser-only (requires jsdom)
+    'apps/portfolio/lib/**/*.js', // Core testable modules
+    'apps/portfolio/logger.js', // Logger utility
+    '!apps/portfolio/lib/entry-router-utils.js', // ESM-only helper covered by runtime tests
+    '!apps/portfolio/lib/loki-logger.js', // Runtime-only (Cloudflare Worker)
+    '!apps/portfolio/lib/metrics.js', // Runtime-only (Cloudflare Worker)
+    '!apps/portfolio/lib/performance-metrics.js', // Browser-only (requires jsdom)
     '!**/node_modules/**',
   ],
   coverageThreshold: {

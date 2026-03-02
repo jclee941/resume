@@ -125,8 +125,8 @@ fi
 
 # 빌드 실행
 if npm run build > /dev/null 2>&1; then
-    if [ -f "typescript/portfolio-worker/worker.js" ]; then
-        FILE_SIZE=$(stat -c%s "typescript/portfolio-worker/worker.js" 2>/dev/null || stat -f%z "typescript/portfolio-worker/worker.js" 2>/dev/null)
+    if [ -f "apps/portfolio/worker.js" ]; then
+        FILE_SIZE=$(stat -c%s "apps/portfolio/worker.js" 2>/dev/null || stat -f%z "apps/portfolio/worker.js" 2>/dev/null)
         echo -e "${GREEN}✅${NC} 빌드 성공 (worker.js: ${FILE_SIZE} bytes)"
         ((PASS++))
     else

@@ -109,7 +109,7 @@ GET  /og-image.png        Social media preview
 **Worker Configuration**:
 
 ```toml
-# typescript/portfolio-worker/wrangler.toml
+# apps/portfolio/wrangler.toml
 name = "resume"
 main = "worker.js"
 compatibility_date = "2024-01-01"

@@ -185,7 +185,7 @@ User Agent: {{ $json.user_agent }}
 Time: {{ $json.timestamp }}
 ```
 
-**Frontend Integration** (`typescript/portfolio-worker/index.html`):
+**Frontend Integration** (`apps/portfolio/index.html`):
 
 ```javascript
 // Add to existing Web Vitals script
@@ -343,7 +343,7 @@ Conditional Logic (IF Node)
 ### Phase 3: Performance Analytics (Week 3)
 
 - [ ] Create Workflow 3 (Web Vitals Analytics)
-- [ ] Update `typescript/portfolio-worker/index.html` to POST vitals to n8n
+- [ ] Update `apps/portfolio/index.html` to POST vitals to n8n
 - [ ] Set up Google Sheets for daily vitals aggregation
 - [ ] Configure performance alerts (LCP > 2.5s)
 

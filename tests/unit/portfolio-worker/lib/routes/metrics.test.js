@@ -7,7 +7,7 @@ const {
   generateMetricsPostRoute,
   generateMetricsGetRoute,
   generateMetricsSnapshotRoute,
-} = require('../../../../../typescript/portfolio-worker/lib/routes/metrics');
+} = require('../../../../../apps/portfolio/lib/routes/metrics');
 
 describe('routes/metrics', () => {
   describe('generateMetricsPostRoute', () => {

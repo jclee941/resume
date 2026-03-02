@@ -10,12 +10,12 @@ const {
   startRouteSpan,
   finishRouteSpan,
   withRouteSpan,
-} = require('../../../../typescript/portfolio-worker/lib/tracing');
+} = require('../../../../apps/portfolio/lib/tracing');
 
 function loadInternalResolveContextFromHeaders() {
   const tracingPath = path.resolve(
     __dirname,
-    '../../../../typescript/portfolio-worker/lib/tracing.js'
+    '../../../../apps/portfolio/lib/tracing.js'
   );
   const source = fs.readFileSync(tracingPath, 'utf8');
   const module = { exports: {} };
@@ -372,7 +372,7 @@ describe('tracing', () => {
 
       try {
         jest.resetModules();
-        const tracingFallback = require('../../../../typescript/portfolio-worker/lib/tracing');
+        const tracingFallback = require('../../../../apps/portfolio/lib/tracing');
         const traceId = tracingFallback.generateTraceId();
         const spanId = tracingFallback.generateSpanId();
 
@@ -419,7 +419,7 @@ describe('tracing', () => {
 
       try {
         jest.resetModules();
-        const tracingFallback = require('../../../../typescript/portfolio-worker/lib/tracing');
+        const tracingFallback = require('../../../../apps/portfolio/lib/tracing');
         const traceId = tracingFallback.generateTraceId();
         const spanId = tracingFallback.generateSpanId();
 
@@ -437,7 +437,7 @@ describe('tracing', () => {
 
       try {
         jest.resetModules();
-        const tracingFallback = require('../../../../typescript/portfolio-worker/lib/tracing');
+        const tracingFallback = require('../../../../apps/portfolio/lib/tracing');
         const ids = new Set();
         for (let i = 0; i < 20; i++) {
           ids.add(tracingFallback.generateTraceId());

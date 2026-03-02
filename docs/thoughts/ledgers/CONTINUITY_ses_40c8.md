@@ -20,7 +20,7 @@ Generate hierarchical AGENTS.md files for the resume project using the `/init-de
 - [x] Fired 6 parallel explore agents for discovery phase
 - [x] Collected findings from all 6 agents:
   - **Structure**: Monorepo with `/typescript/`, `/infrastructure/`, `/tools/`, `/docs/`, `/tests/`
-  - **Entry points**: CLI (`typescript/cli/bin/run.js`), Portfolio Worker (`typescript/portfolio-worker/worker.js`), Job Automation MCP Server (`typescript/job-automation/src/index.js`)
+  - **Entry points**: CLI (`packages/cli/bin/run.js`), Portfolio Worker (`apps/portfolio/worker.js`), Job Automation MCP Server (`apps/job-server/src/index.js`)
   - **Conventions**: ESM with explicit extensions, kebab-case files, UPPER_SNAKE_CASE constants, JSDoc typing
   - **Anti-patterns**: Never edit `worker.js` directly (generated), avoid cross-package imports, use `BaseCrawler` for automation
   - **Build/CI**: Bazel orchestrates npm, GitHub Actions with 7 stages, Cloudflare Workers deployment
@@ -34,7 +34,7 @@ Generate hierarchical AGENTS.md files for the resume project using the `/init-de
 
 ## Key Decisions
 - **Bazel as thin wrapper**: Project uses Bazel for queryability/affected-target analysis but npm for actual execution
-- **SSoT pattern**: All resume data in `typescript/data/`, consumed by other packages
+- **SSoT pattern**: All resume data in `packages/data/`, consumed by other packages
 
 ## Next Steps
 1. Run bash structural analysis (directory depth, file counts, code concentration)
@@ -46,13 +46,13 @@ Generate hierarchical AGENTS.md files for the resume project using the `/init-de
 
 ## Critical Context
 - **Key directories for potential AGENTS.md**:
-  - `/typescript/portfolio-worker` - Cloudflare Worker, generated worker.js
-  - `/typescript/job-automation` - MCP Server, crawlers, stealth automation
-  - `/typescript/data` - SSoT for resume content
-  - `/typescript/cli` - Deployment CLI
+  - `/apps/portfolio` - Cloudflare Worker, generated worker.js
+  - `/apps/job-server` - MCP Server, crawlers, stealth automation
+  - `/packages/data` - SSoT for resume content
+  - `/packages/cli` - Deployment CLI
   - `/infrastructure/` - Grafana, n8n workflows
   - `/tools/` - Bazel wrapper scripts, CI scripts
-- **Generated files to never edit**: `worker.js`, `typescript/data/resumes/generated/*`, `in-memoria.db`
+- **Generated files to never edit**: `worker.js`, `packages/data/resumes/generated/*`, `in-memoria.db`
 - **Security gotcha**: CSP hashes require rebuild when changing inline scripts
 
 ## File Operations

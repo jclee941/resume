@@ -1,14 +1,14 @@
 'use strict';
 
-jest.mock('../../../../typescript/portfolio-worker/lib/validators', () => ({
+jest.mock('../../../../apps/portfolio/lib/validators', () => ({
   validateData: jest.fn(),
 }));
 
-jest.mock('../../../../typescript/portfolio-worker/lib/utils', () => ({
+jest.mock('../../../../apps/portfolio/lib/utils', () => ({
   calculateDataHash: jest.fn(() => 'mock-hash-abc123'),
 }));
 
-jest.mock('../../../../typescript/portfolio-worker/lib/cards', () => ({
+jest.mock('../../../../apps/portfolio/lib/cards', () => ({
   generateResumeCards: jest.fn(() => '<div class="resume">cards</div>'),
   generateProjectCards: jest.fn(() => '<div class="projects">cards</div>'),
   generateCertificationCards: jest.fn(() => '<div class="certs">cards</div>'),
@@ -19,14 +19,14 @@ jest.mock('../../../../typescript/portfolio-worker/lib/cards', () => ({
   generateContactGrid: jest.fn(() => '<div class="contact">grid</div>'),
 }));
 
-const { TEMPLATE_CACHE } = require('../../../../typescript/portfolio-worker/lib/config');
-const { validateData } = require('../../../../typescript/portfolio-worker/lib/validators');
-const { calculateDataHash } = require('../../../../typescript/portfolio-worker/lib/utils');
-const cards = require('../../../../typescript/portfolio-worker/lib/cards');
+const { TEMPLATE_CACHE } = require('../../../../apps/portfolio/lib/config');
+const { validateData } = require('../../../../apps/portfolio/lib/validators');
+const { calculateDataHash } = require('../../../../apps/portfolio/lib/utils');
+const cards = require('../../../../apps/portfolio/lib/cards');
 const {
   processProjectData,
   encodeBinaryAssets,
-} = require('../../../../typescript/portfolio-worker/lib/data-processor');
+} = require('../../../../apps/portfolio/lib/data-processor');
 
 const mockLogger = {
   log: jest.fn(),

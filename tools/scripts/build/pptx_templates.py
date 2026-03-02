@@ -229,9 +229,9 @@ def handle_shinhan_personal_projects(tbl, source):
 TEMPLATES = {
     "ta": TemplateSpec(
         name="TA형 이력서",
-        source_path=ROOT / "typescript/data/resumes/master/resume_data.json",
-        template_path=ROOT / "typescript/data/resumes/generated/ta.pptx",
-        output_path=ROOT / "typescript/data/resumes/generated/ta_filled.pptx",
+        source_path=ROOT / "packages/data/resumes/master/resume_data.json",
+        template_path=ROOT / "packages/data/resumes/generated/ta.pptx",
+        output_path=ROOT / "packages/data/resumes/generated/ta_filled.pptx",
         table_handlers={
             (15, 8): handle_ta_profile,
             (12, 6): handle_ta_projects,
@@ -239,9 +239,9 @@ TEMPLATES = {
     ),
     "shinhan": TemplateSpec(
         name="신한형 이력서",
-        source_path=ROOT / "typescript/data/resumes/master/shinhan_resume_data.json",
-        template_path=ROOT / "typescript/data/resumes/archive/기타/shinhan.pptx",
-        output_path=ROOT / "typescript/data/resumes/generated/shinhan_filled.pptx",
+        source_path=ROOT / "packages/data/resumes/master/shinhan_resume_data.json",
+        template_path=ROOT / "packages/data/resumes/archive/기타/shinhan.pptx",
+        output_path=ROOT / "packages/data/resumes/generated/shinhan_filled.pptx",
         table_handlers={
             (5, 9): handle_shinhan_profile,
             (5, 3): handle_shinhan_careers,

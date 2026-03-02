@@ -1,5 +1,5 @@
 /**
- * Unit tests for typescript/portfolio-worker/lib/utils.js
+ * Unit tests for apps/portfolio/lib/utils.js
  */
 
 const path = require('path');
@@ -11,7 +11,7 @@ const {
   safeParseJSON,
   sanitizeForTemplate,
   FileOperationError,
-} = require('../../../../typescript/portfolio-worker/lib/utils');
+} = require('../../../../apps/portfolio/lib/utils');
 
 describe('Utils Module', () => {
   describe('safeReadFile', () => {
@@ -227,7 +227,7 @@ describe('Utils Module', () => {
   });
 
   describe('escapeHtml', () => {
-    const { escapeHtml } = require('../../../../typescript/portfolio-worker/lib/utils');
+    const { escapeHtml } = require('../../../../apps/portfolio/lib/utils');
 
     test('should escape < and > characters', () => {
       const result = escapeHtml('<script>alert("xss")</script>');
@@ -358,7 +358,7 @@ describe('Utils Module', () => {
   describe('safeReadFile - edge cases', () => {
     test('should warn on large files (>5MB)', () => {
       const fs = require('fs');
-      const logger = require('../../../../typescript/portfolio-worker/logger');
+      const logger = require('../../../../apps/portfolio/logger');
       const warnSpy = jest.spyOn(logger, 'warn').mockImplementation();
       const origExistsSync = fs.existsSync;
       const origStatSync = fs.statSync;

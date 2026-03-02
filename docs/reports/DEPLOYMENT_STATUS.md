@@ -94,8 +94,8 @@
 ---
 
 ## 📝 참고 문서
-- [Portfolio Worker Config](typescript/portfolio-worker/wrangler.toml)
-- [Job Automation Docs](typescript/job-automation/README.md)
+- [Portfolio Worker Config](apps/portfolio/wrangler.toml)
+- [Job Automation Docs](apps/job-server/README.md)
 - [Infrastructure Guide](docs/guides/INFRASTRUCTURE.md)
 - [CI/CD Workflow](.github/workflows/ci.yml)
 

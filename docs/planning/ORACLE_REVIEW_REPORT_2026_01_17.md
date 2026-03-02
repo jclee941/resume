@@ -5,11 +5,11 @@
 
 ## 1. Executive Summary
 
-The refactoring initiative to align `typescript/job-automation` with Ports-and-Adapters architecture and modularize the `resume-cli` Go application has made significant progress. Key structural changes have been implemented, and legacy monolithic files have been decomposed.
+The refactoring initiative to align `apps/job-server` with Ports-and-Adapters architecture and modularize the `resume-cli` Go application has made significant progress. Key structural changes have been implemented, and legacy monolithic files have been decomposed.
 
 ## 2. Key Accomplishments
 
-### 2.1. Node.js Architecture (typescript/job-automation)
+### 2.1. Node.js Architecture (apps/job-server)
 
 - **Service Migration**: Successfully migrated core logic from `src/lib/` to `src/shared/services/`.
   - `SessionManager` → `src/shared/services/session/`
@@ -57,7 +57,7 @@ The refactoring initiative to align `typescript/job-automation` with Ports-and-A
 ## 4. Next Steps
 
 1. **Environment Fix**: Restore Go binary access to verify `resume-cli` build.
-2. **Deployment**: Deploy the refactored `typescript/job-automation` to Cloudflare Workers.
+2. **Deployment**: Deploy the refactored `apps/job-server` to Cloudflare Workers.
 3. **Documentation**: Continued updates to internal wikis.
 
 ## 5. Conclusion

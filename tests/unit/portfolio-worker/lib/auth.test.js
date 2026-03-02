@@ -8,7 +8,7 @@ const {
   getCFZoneId,
   getCFStats,
   generateAuthHelpers,
-} = require('../../../../typescript/portfolio-worker/lib/auth');
+} = require('../../../../apps/portfolio/lib/auth');
 
 describe('auth', () => {
   describe('verifyGoogleToken', () => {

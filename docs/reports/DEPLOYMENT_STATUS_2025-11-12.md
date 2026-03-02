@@ -84,8 +84,8 @@ Uncaught SyntaxError: Unexpected token 'export' at worker.js:200
 ## 📝 Files Created/Modified
 
 ### Source Files (Modified)
-1. **typescript/portfolio-worker/data.json**: Added 2 project entries (Ansible + NAS)
-2. **typescript/portfolio-worker/worker.js**: Regenerated (155.96 KB → 160 KB)
+1. **apps/portfolio/data.json**: Added 2 project entries (Ansible + NAS)
+2. **apps/portfolio/worker.js**: Regenerated (155.96 KB → 160 KB)
 3. **master/resume_master.md**: Added detailed project descriptions (lines 347-361)
 4. **master/resume_final.md**: Synchronized with master
 
@@ -240,7 +240,7 @@ Consider updating `package.json` to use the new API deployment method:
 {
   "scripts": {
     "deploy": "npm run build && ./scripts/deployment/deploy-via-api.sh",
-    "deploy:wrangler:root": "npm run build:full && wrangler deploy --config typescript/portfolio-worker/wrangler.toml --env production"
+    "deploy:wrangler:root": "npm run build:full && wrangler deploy --config apps/portfolio/wrangler.toml --env production"
   }
 }
 ```

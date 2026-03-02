@@ -406,7 +406,7 @@
 │  Step 2: Load and Verify                                      │
 │  ┌────────────────────────────────────────────────────────┐  │
 │  │  $ source ~/.env                                       │  │
-│  │  $ cd typescript/portfolio-worker && npx wrangler whoami                       │  │
+│  │  $ cd apps/portfolio && npx wrangler whoami                       │  │
 │  │                                                        │  │
 │  │  👋 You are logged in with an API Key!                │  │
 │  │  Email: qws941@kakao.com                              │  │
@@ -536,7 +536,7 @@ cd /home/jclee/dev/resume && ./scripts/deployment/quick-deploy.sh
 ### 인증 확인하기
 
 ```bash
-source ~/.env && cd typescript/portfolio-worker && npx wrangler whoami
+source ~/.env && cd apps/portfolio && npx wrangler whoami
 ```
 
 ### 배포 검증하기

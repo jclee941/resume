@@ -26,10 +26,10 @@ docs/
 
 | Component            | Location                          | Notes                      |
 | -------------------- | --------------------------------- | -------------------------- |
-| **Portfolio Worker** | `typescript/portfolio-worker/`    | Edge-deployed Cloudflare   |
-| **Job Automation**   | `typescript/job-automation/`      | MCP server + dashboard     |
-| **CLI Tool**         | `typescript/cli/`                 | Deployment orchestration   |
-| **Resume Data**      | `typescript/data/resumes/master/` | SSoT: resume_data.json     |
+| **Portfolio Worker** | `apps/portfolio/`    | Edge-deployed Cloudflare   |
+| **Job Automation**   | `apps/job-server/`      | MCP server + dashboard     |
+| **CLI Tool**         | `packages/cli/`                 | Deployment orchestration   |
+| **Resume Data**      | `packages/data/resumes/master/` | SSoT: resume_data.json     |
 | **Infrastructure**   | `infrastructure/`                 | Grafana, Loki, n8n configs |
 
 ## Key Documentation

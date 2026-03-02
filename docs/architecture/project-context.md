@@ -40,7 +40,7 @@ _This file contains critical rules and patterns that AI agents must follow when 
 
 - **The "Snake" Standard**: All Cloudflare D1 table/column names and API JSON keys MUST be `snake_case`.
 - **Go-JSON Mapping**: In Go, use explicit `json:"field_name"` tags matching the `snake_case` standard.
-- **Asset Inlining**: NEVER edit `typescript/portfolio-worker/worker.js` manually. All changes to the portfolio UI must be made in `typescript/portfolio-worker/index.html` or `typescript/portfolio-worker/app.js` and built using `npm run build`.
+- **Asset Inlining**: NEVER edit `apps/portfolio/worker.js` manually. All changes to the portfolio UI must be made in `apps/portfolio/index.html` or `apps/portfolio/app.js` and built using `npm run build`.
 
 ### Testing & Quality
 

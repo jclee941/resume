@@ -7,7 +7,7 @@
 
 ## Executive Summary
 
-Your resume management system is well-structured with excellent deployment infrastructure, but has opportunities for improvement across content strategy, typescript/portfolio-worker UX, technical debt, and SEO optimization. The system demonstrates strong technical foundations (Cloudflare Workers, CI/CD, monitoring) but needs refinement in content presentation, code maintainability, and discoverability.
+Your resume management system is well-structured with excellent deployment infrastructure, but has opportunities for improvement across content strategy, apps/portfolio UX, technical debt, and SEO optimization. The system demonstrates strong technical foundations (Cloudflare Workers, CI/CD, monitoring) but needs refinement in content presentation, code maintainability, and discoverability.
 
 **Current Strengths**:
 - ✅ Robust deployment pipeline (GitHub Actions + Cloudflare)
@@ -336,7 +336,7 @@ Then update CSS:
 ```
 
 **Action Steps**:
-1. Update `typescript/portfolio-worker/data.json` with 3-4 more differentiating details per project
+1. Update `apps/portfolio/data.json` with 3-4 more differentiating details per project
 2. Add "tagline" field for one-liner impact statement
 3. Update `generateProjectCards()` to display tagline prominently
 
@@ -417,12 +417,12 @@ test.describe('Accessibility', () => {
     Attempted to log "🔐 Generated CSP hashes from minified HTML:".
 ```
 
-**Cause**: Lines 173-182 in `typescript/portfolio-worker/generate-worker.js` log during build, but tests capture stdout incorrectly.
+**Cause**: Lines 173-182 in `apps/portfolio/generate-worker.js` log during build, but tests capture stdout incorrectly.
 
 **Solution**:
 
 ```javascript
-// typescript/portfolio-worker/generate-worker.js - BEFORE
+// apps/portfolio/generate-worker.js - BEFORE
 console.log('🔐 Generated CSP hashes from minified HTML:');
 console.log(`  Script hashes: ${allScriptHashes.length}`);
 console.log(`  Style hashes: ${allStyleHashes.length}`);
@@ -437,8 +437,8 @@ log('🔐 Generated CSP hashes from minified HTML:');
 log(`  Script hashes: ${allScriptHashes.length}`);
 
 // In package.json:
-"build": "cd typescript/portfolio-worker && VERBOSE=true node generate-worker.js",
-"build:quiet": "cd typescript/portfolio-worker && node generate-worker.js"
+"build": "cd apps/portfolio && VERBOSE=true node generate-worker.js",
+"build:quiet": "cd apps/portfolio && node generate-worker.js"
 
 // In CI/CD (.github/workflows/deploy.yml):
 - name: Generate Worker
@@ -448,7 +448,7 @@ log(`  Script hashes: ${allScriptHashes.length}`);
 **Or Better Yet** - Use proper logging:
 
 ```javascript
-// Create typescript/portfolio-worker/logger.js
+// Create apps/portfolio/logger.js
 class Logger {
   constructor(verbose = false) {
     this.verbose = verbose;
@@ -471,7 +471,7 @@ module.exports = new Logger(process.env.VERBOSE === 'true');
 ```
 
 **Action Steps**:
-1. Create `typescript/portfolio-worker/logger.js` with conditional logging
+1. Create `apps/portfolio/logger.js` with conditional logging
 2. Update all `console.log()` calls in `generate-worker.js` to use logger
 3. Update CI/CD to use `build:quiet` during tests
 4. Verify: `npm test` should not show any "Cannot log after tests" errors
@@ -572,7 +572,7 @@ test.describe('Performance', () => {
 
 **Recommendation**:
 ```javascript
-// typescript/portfolio-worker/generate-worker.js - Review minification options
+// apps/portfolio/generate-worker.js - Review minification options
 const minifyOptions = {
   removeComments: true,          // ✅ Enabled
   removeEmptyAttributes: true,   // ✅ Enabled
@@ -598,7 +598,7 @@ console.log(`HTML: ${htmlSize}B, CSS: ${cssSize}B, JS: ${jsSize}B`);
 # .github/workflows/deploy.yml
 - name: Check Worker Size
   run: |
-    SIZE=$(wc -c < typescript/portfolio-worker/worker.js | awk '{print $1}')
+    SIZE=$(wc -c < apps/portfolio/worker.js | awk '{print $1}')
     echo "Worker size: ${SIZE} bytes"
     if [ $SIZE -gt 60000 ]; then
       echo "⚠️  Warning: Worker exceeds 60KB"
@@ -630,19 +630,19 @@ console.log(`HTML: ${htmlSize}B, CSS: ${cssSize}B, JS: ${jsSize}B`);
     npm run build
     
     # Validate generated file
-    if [ ! -f "typescript/portfolio-worker/worker.js" ]; then
+    if [ ! -f "apps/portfolio/worker.js" ]; then
       echo "❌ worker.js not generated"
       exit 1
     fi
     
-    SIZE=$(wc -c < typescript/portfolio-worker/worker.js)
+    SIZE=$(wc -c < apps/portfolio/worker.js)
     if [ $SIZE -lt 10000 ] || [ $SIZE -gt 100000 ]; then
       echo "❌ worker.js size unexpected: ${SIZE} bytes"
       exit 1
     fi
     
     # Verify critical content
-    if ! grep -q "export default" typescript/portfolio-worker/worker.js; then
+    if ! grep -q "export default" apps/portfolio/worker.js; then
       echo "❌ worker.js missing export"
       exit 1
     fi
@@ -923,13 +923,13 @@ npm test -- --watch
 3. Verify: \`npm test\`
 
 ### Change Portfolio Projects
-1. Edit \`typescript/portfolio-worker/data.json\`
+1. Edit \`apps/portfolio/data.json\`
 2. Rebuild worker: \`npm run build\`
 3. Preview: \`npm run dev\`
 4. Test: \`npm run test:e2e\`
 
 ### Change Styling
-1. Edit \`typescript/portfolio-worker/styles.css\`
+1. Edit \`apps/portfolio/styles.css\`
 2. Rebuild worker: \`npm run build\`
 3. Preview: \`npm run dev\`
 
@@ -992,8 +992,8 @@ npm run dev
 ┌─────────────────────────────────┐
 │   GitHub (Source Repository)    │
 │  - master/resume_*.md           │
-│  - typescript/portfolio-worker/{index.html,styles.css}  │
-│  - typescript/portfolio-worker/data.json                │
+│  - apps/portfolio/{index.html,styles.css}  │
+│  - apps/portfolio/data.json                │
 └──────────┬──────────────────────┘
            │
            ├─→ npm run build ─┐
@@ -1002,7 +1002,7 @@ npm run dev
            │                 │   - Generate HTML from JSON
            │                 │   - Calculate CSP hashes
            │                 │   - Escape backticks & $
-           │                 └─→ typescript/portfolio-worker/worker.js (53KB)
+           │                 └─→ apps/portfolio/worker.js (53KB)
            │
            ├─→ npm test (Jest + Playwright)
            │

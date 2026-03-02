@@ -45,9 +45,9 @@ Deploy the resume monorepo to production (Cloudflare Workers)
 
 - **GitHub Actions deploy commands**:
   - Portfolio: `npm run deploy:wrangler:root`
-  - Job: `npx wrangler deploy --config typescript/job-automation/workers/wrangler.toml --env production`
+  - Job: `npx wrangler deploy --config apps/job-dashboard/wrangler.toml --env production`
 - **Bazel target**: `//tools:deploy` (may also work)
-- **resume-cli**: `typescript/cli/bin/run.js` - Go-based CLI for deployments
+- **resume-cli**: `packages/cli/bin/run.js` - Go-based CLI for deployments
 - **Verify endpoints**: `/health`, content checks, security headers
 - **Rollback**: `wrangler rollback --env production`
 

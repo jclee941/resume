@@ -46,7 +46,7 @@ Exposed values found in historical report content. All literal values are now re
 
 ## 2. Hardcoded Passwords (Fixed)
 
-- ✅ `typescript/job-automation/scripts/*.js`: Hardcoded password replaced with `process.env.WANTED_PASSWORD`.
+- ✅ `apps/job-server/scripts/*.js`: Hardcoded password replaced with `process.env.WANTED_PASSWORD`.
 - **Action**: Ensure `WANTED_PASSWORD` is set in your environment variables (e.g., `~/.bashrc` or CI secrets).
 
 ## 3. Deployment Security

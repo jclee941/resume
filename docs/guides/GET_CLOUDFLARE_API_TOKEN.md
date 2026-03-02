@@ -117,7 +117,7 @@ cd /home/jclee/dev/resume
 배포 전 토큰이 유효한지 확인:
 
 ```bash
-cd /home/jclee/dev/resume/typescript/portfolio-worker
+cd /home/jclee/dev/resume/apps/portfolio
 source ~/.env
 npx wrangler whoami
 ```

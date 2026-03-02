@@ -13,11 +13,11 @@
 **Priority**: P0  
 **Files Modified**:
 
-- `typescript/portfolio-worker/generate-worker.js` (19 → logger.log, 2 → logger.error)
-- `typescript/portfolio-worker/lib/validators.js` (1 → logger.log)
-- `typescript/portfolio-worker/lib/cards.js` (2 → logger.log)
-- `typescript/portfolio-worker/generate-og-image.js` (4 → logger.log, 1 → logger.error)
-- `typescript/portfolio-worker/worker.js`, `typescript/portfolio-worker/sw.js`, `typescript/portfolio-worker/sentry-config.js` (auto-generated, will fix on next build)
+- `apps/portfolio/generate-worker.js` (19 → logger.log, 2 → logger.error)
+- `apps/portfolio/lib/validators.js` (1 → logger.log)
+- `apps/portfolio/lib/cards.js` (2 → logger.log)
+- `apps/portfolio/generate-og-image.js` (4 → logger.log, 1 → logger.error)
+- `apps/portfolio/worker.js`, `apps/portfolio/sw.js`, `apps/portfolio/sentry-config.js` (auto-generated, will fix on next build)
 
 **Problem**:
 
@@ -26,15 +26,15 @@
   Attempted to log "🔐 Generated CSP hashes from minified HTML:".
 ```
 
-**Solution** (typescript/portfolio-worker/logger.js already exists!):
+**Solution** (apps/portfolio/logger.js already exists!):
 
 ```bash
 # Replace all console.log/error/warn with logger equivalents
-find typescript/portfolio-worker -name "*.js" -not -path "*/node_modules/*" -exec \
+find apps/portfolio -name "*.js" -not -path "*/node_modules/*" -exec \
   sed -i 's/console\.log(/logger.log(/g; s/console\.error(/logger.error(/g; s/console\.warn(/logger.warn(/g' {} \;
 
 # Add logger import to files
-# Update package.json: "build:quiet": "cd typescript/portfolio-worker && VERBOSE=false node generate-worker.js"
+# Update package.json: "build:quiet": "cd apps/portfolio && VERBOSE=false node generate-worker.js"
 ```
 
 **Verification**:
@@ -161,7 +161,7 @@ for (const deviceName of ['iPhone SE', 'iPhone 12 Pro', 'Pixel 5', 'iPad']) {
 ### H2: Accessibility Compliance (2 hours)
 
 **Status**: ⚠️ PARTIAL  
-**Files**: `typescript/portfolio-worker/index.html`, `tests/e2e/accessibility.spec.js`
+**Files**: `apps/portfolio/index.html`, `tests/e2e/accessibility.spec.js`
 
 **Issues**:
 
@@ -197,7 +197,7 @@ test('keyboard navigation', async ({ page }) => {
 
 ### H3: Improve Project Card Descriptions (1 hour)
 
-**Files**: `typescript/portfolio-worker/data.json`, `typescript/portfolio-worker/lib/cards.js`
+**Files**: `apps/portfolio/data.json`, `apps/portfolio/lib/cards.js`
 
 Add "tagline" + "metrics" fields:
 
@@ -217,7 +217,7 @@ Add "tagline" + "metrics" fields:
 
 ### H4: Expand Meta Tags & Structured Data (1 hour)
 
-**Files**: `typescript/portfolio-worker/index.html`
+**Files**: `apps/portfolio/index.html`
 
 **Add**:
 
@@ -232,7 +232,7 @@ Add "tagline" + "metrics" fields:
 
 ### H5: Internal Linking Strategy (1 hour)
 
-**Files**: `typescript/portfolio-worker/data.json`
+**Files**: `apps/portfolio/data.json`
 
 Link related skills in project cards:
 
@@ -311,7 +311,7 @@ Add business impact to each technology
 
 ## ⚡ Quick Wins (Can Do Today - < 1 hour each)
 
-1. **C1: Remove console logging** (30m) → Use existing `typescript/portfolio-worker/logger.js`
+1. **C1: Remove console logging** (30m) → Use existing `apps/portfolio/logger.js`
 2. **M5: Keyword optimization** (30m) → Update meta tags
 3. **M1: Design tokens doc** (1h) → Extract CSS variables
 
@@ -478,7 +478,7 @@ npm run test:e2e:headed
 - ✅ 213 unit tests, 98% coverage
 - ✅ TypeScript type checking (jsconfig.json)
 - ✅ ESLint 9 + Prettier formatting
-- ✅ Modular architecture (typescript/portfolio-worker/lib/)
+- ✅ Modular architecture (apps/portfolio/lib/)
 
 #### Performance
 

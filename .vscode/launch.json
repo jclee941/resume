@@ -25,7 +25,7 @@
       "name": "Wrangler Dev",
       "runtimeExecutable": "npx",
       "runtimeArgs": ["wrangler", "dev"],
-      "cwd": "${workspaceFolder}/typescript/portfolio-worker",
+      "cwd": "${workspaceFolder}/apps/portfolio",
       "console": "integratedTerminal"
     }
   ]

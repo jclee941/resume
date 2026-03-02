@@ -47,5 +47,5 @@ npm_translate_lock(
 ## Security
 
 - All production dependencies must have OSS-compatible licenses
-- No GPL dependencies in `typescript/` packages
+- No GPL dependencies in application packages
 - Critical deps require security review (see OWNERS)

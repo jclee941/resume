@@ -65,8 +65,8 @@ module.exports = [
       'node_modules/**',
 
       // Build outputs
-      'typescript/portfolio-worker/worker.js', // Generated file (NEVER EDIT)
-      'typescript/data/resumes/archive/docs/worker.js', // Legacy archive
+      'apps/portfolio/worker.js', // Generated file (NEVER EDIT)
+      'packages/data/resumes/archive/docs/worker.js', // Legacy archive
       '*.min.js',
       'dist/**',
       'build/**',

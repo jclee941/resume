@@ -341,7 +341,7 @@ GitHub Actions runs tests automatically:
 
 ```bash
 # 1. Count projects
-jq '.projects | length' typescript/portfolio-worker/data.json
+jq '.projects | length' apps/portfolio/data.json
 
 # 2. Update tests/e2e/portfolio.spec.js line 13
 const EXPECTED_COUNTS = {
@@ -481,7 +481,7 @@ describe('GitHub Stars Counter', () => {
 - **Jest Documentation**: https://jestjs.io/docs/getting-started
 - **Playwright Documentation**: https://playwright.dev/
 - **Lighthouse CI**: https://github.com/GoogleChrome/lighthouse-ci
-- **Web Vitals**: https://typescript/portfolio-worker.dev/vitals/
+- **Web Vitals**: https://apps/portfolio.dev/vitals/
 
 ---
 

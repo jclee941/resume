@@ -1,5 +1,5 @@
 /**
- * Unit tests for typescript/portfolio-worker/lib/cards.js
+ * Unit tests for apps/portfolio/lib/cards.js
  *
  * Updated to match current cards.js HTML output structure:
  * - Resume cards: resume-item card, resume-title, resume-period, resume-tags, tag spans
@@ -9,8 +9,8 @@
 const {
   generateResumeCards,
   generateProjectCards,
-} = require('../../../../typescript/portfolio-worker/lib/cards');
-const { TEMPLATE_CACHE } = require('../../../../typescript/portfolio-worker/lib/config');
+} = require('../../../../apps/portfolio/lib/cards');
+const { TEMPLATE_CACHE } = require('../../../../apps/portfolio/lib/config');
 
 describe('Cards Module', () => {
   // Reset cache before each test
@@ -350,7 +350,7 @@ describe('Cards Module', () => {
   describe('generateCertificationCards', () => {
     const {
       generateCertificationCards,
-    } = require('../../../../typescript/portfolio-worker/lib/cards');
+    } = require('../../../../apps/portfolio/lib/cards');
 
     test('should return empty string for null certData', () => {
       expect(generateCertificationCards(null, 'hash')).toBe('');
@@ -444,7 +444,7 @@ describe('Cards Module', () => {
   });
 
   describe('generateSkillsList', () => {
-    const { generateSkillsList } = require('../../../../typescript/portfolio-worker/lib/cards');
+    const { generateSkillsList } = require('../../../../apps/portfolio/lib/cards');
 
     beforeEach(() => {
       TEMPLATE_CACHE.skillsHtml = null;
@@ -555,7 +555,7 @@ describe('Cards Module', () => {
   });
 
   describe('generateHeroContent', () => {
-    const { generateHeroContent } = require('../../../../typescript/portfolio-worker/lib/cards');
+    const { generateHeroContent } = require('../../../../apps/portfolio/lib/cards');
 
     test('should generate hero with titleEn and subtitle', () => {
       const heroData = {
@@ -589,7 +589,7 @@ describe('Cards Module', () => {
   describe('generateResumeDescription', () => {
     const {
       generateResumeDescription,
-    } = require('../../../../typescript/portfolio-worker/lib/cards');
+    } = require('../../../../apps/portfolio/lib/cards');
 
     test('should return empty string', () => {
       expect(generateResumeDescription()).toBe('');
@@ -599,7 +599,7 @@ describe('Cards Module', () => {
   describe('generateInfrastructureCards', () => {
     const {
       generateInfrastructureCards,
-    } = require('../../../../typescript/portfolio-worker/lib/cards');
+    } = require('../../../../apps/portfolio/lib/cards');
 
     test('should return empty string for null infraData', () => {
       expect(generateInfrastructureCards(null, 'hash')).toBe('');
@@ -660,7 +660,7 @@ describe('Cards Module', () => {
   });
 
   describe('generateContactGrid', () => {
-    const { generateContactGrid } = require('../../../../typescript/portfolio-worker/lib/cards');
+    const { generateContactGrid } = require('../../../../apps/portfolio/lib/cards');
 
     test('should generate github link', () => {
       const contactData = { github: 'https://github.com/testuser' };
@@ -837,7 +837,7 @@ describe('Cards Module', () => {
   });
 
   describe('generateSkillsList - edge cases', () => {
-    const { generateSkillsList } = require('../../../../typescript/portfolio-worker/lib/cards');
+    const { generateSkillsList } = require('../../../../apps/portfolio/lib/cards');
 
     beforeEach(() => {
       TEMPLATE_CACHE.skillsHtml = null;

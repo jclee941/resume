@@ -36,9 +36,9 @@
 ### 2. ✅ New Features & Modules
 
 #### Web Modules
-- **`typescript/portfolio-worker/lib/i18n.js`** (180 lines) - Internationalization support
-- **`typescript/portfolio-worker/lib/ab-testing.js`** (282 lines) - A/B testing framework
-- **`typescript/portfolio-worker/lib/performance-metrics.js`** (271 lines) - Performance monitoring
+- **`apps/portfolio/lib/i18n.js`** (180 lines) - Internationalization support
+- **`apps/portfolio/lib/ab-testing.js`** (282 lines) - A/B testing framework
+- **`apps/portfolio/lib/performance-metrics.js`** (271 lines) - Performance monitoring
 
 #### Automation Scripts
 - **`scripts/utils/record-demo-video.js`** (200 lines) - Automated demo recording
@@ -94,7 +94,7 @@
 25 new files
 - 2 GitHub Actions workflows
 - 4 automation scripts
-- 3 typescript/portfolio-worker modules
+- 3 apps/portfolio modules
 - 2 test files
 - 9 documentation files
 - 5 summary/report files

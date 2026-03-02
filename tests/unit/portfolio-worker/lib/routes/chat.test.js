@@ -3,7 +3,7 @@
  * @description Tests for generateChatRoute code generator
  */
 
-const { generateChatRoute } = require('../../../../../typescript/portfolio-worker/lib/routes/chat');
+const { generateChatRoute } = require('../../../../../apps/portfolio/lib/routes/chat');
 
 describe('routes/chat', () => {
   describe('generateChatRoute', () => {

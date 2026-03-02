@@ -1,11 +1,11 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "resume",
-  "main": "typescript/portfolio-worker/entry.js",
+  "main": "apps/portfolio/entry.js",
   "compatibility_date": "2026-02-21",
   "compatibility_flags": ["nodejs_compat"],
   "assets": {
-    "directory": "typescript/portfolio-worker/assets",
+    "directory": "apps/portfolio/assets",
     "binding": "ASSETS",
   },
   "vars": {
@@ -14,7 +14,7 @@
   },
   "routes": [{ "pattern": "resume.jclee.me", "custom_domain": true }],
   // Portfolio D1 Database only — job-specific bindings live in
-  // typescript/job-automation/workers/wrangler.toml (canonical per-worker config).
+  // apps/job-dashboard/wrangler.toml (canonical per-worker config).
   "d1_databases": [
     {
       "binding": "DB",

@@ -1,12 +1,12 @@
 /**
- * Unit tests for typescript/portfolio-worker/lib/security-headers.js
+ * Unit tests for apps/portfolio/lib/security-headers.js
  */
 
 const {
   generateSecurityHeaders,
   getCacheHeaders,
   CACHE_STRATEGIES,
-} = require('../../../../typescript/portfolio-worker/lib/security-headers');
+} = require('../../../../apps/portfolio/lib/security-headers');
 
 describe('Security Headers Module', () => {
   describe('CACHE_STRATEGIES', () => {

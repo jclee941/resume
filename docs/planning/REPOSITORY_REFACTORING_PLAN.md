@@ -42,7 +42,7 @@ Current Structure:
 ├── scripts/           # Automation scripts
 ├── tests/             # Test suites
 ├── toss/              # Toss-specific content
-└── typescript/portfolio-worker/               # Web portfolio (main development)
+└── apps/portfolio/               # Web portfolio (main development)
 ```
 
 **Problems**:
@@ -78,7 +78,7 @@ Current Structure:
 │   ├── companies/              # → Rename company-specific/
 │   ├── technical/              # → Move resume/ here
 │   └── archive/                # → Move from root
-├── typescript/portfolio-worker/                        # Web portfolio (unchanged)
+├── apps/portfolio/                        # Web portfolio (unchanged)
 │   ├── lib/                    # Modular build system
 │   ├── assets/
 │   ├── downloads/
@@ -138,7 +138,7 @@ echo "infrastructure/monitoring/*.log" >> .gitignore
 **Files affected**: Update paths in:
 - `.github/workflows/deploy.yml` (CI/CD pipeline)
 - `scripts/deployment/deploy-*.sh` (deployment scripts)
-- `typescript/portfolio-worker/generate-worker.js` (if it references configs)
+- `apps/portfolio/generate-worker.js` (if it references configs)
 
 ### Phase 3: Resume Content Restructuring (P1)
 
@@ -182,7 +182,7 @@ test-results/
 .playwright-mcp/
 
 # Build artifacts
-typescript/portfolio-worker/.wrangler/
+apps/portfolio/.wrangler/
 EOF
 
 # Remove demo/ if unused
@@ -199,7 +199,7 @@ EOF
 3. `README.md` - Link updates
 4. `scripts/*.sh` - Script path references
 5. `package.json` - Test/build script paths
-6. `typescript/portfolio-worker/data.json` - Download URLs (if local paths used)
+6. `apps/portfolio/data.json` - Download URLs (if local paths used)
 
 **Example updates**:
 ```yaml
@@ -220,7 +220,7 @@ CONFIG_DIR="infrastructure/configs"  # Was: configs/
 ### High Risk
 - ❌ **Breaking CI/CD**: .github/workflows/deploy.yml path changes
 - ❌ **Breaking deployments**: scripts/ path references
-- ❌ **Breaking builds**: typescript/portfolio-worker/generate-worker.js if it reads configs
+- ❌ **Breaking builds**: apps/portfolio/generate-worker.js if it reads configs
 
 ### Medium Risk
 - ⚠️ **Documentation links**: Broken internal links
@@ -240,7 +240,7 @@ Before merging refactoring:
 - [ ] `npm run build` succeeds
 - [ ] `npm test` passes (23/23 tests)
 - [ ] `npm run test:e2e` passes (34/34 tests)
-- [ ] `typescript/portfolio-worker/worker.js` generates correctly
+- [ ] `apps/portfolio/worker.js` generates correctly
 
 **Deployment**:
 - [ ] `npm run deploy` succeeds

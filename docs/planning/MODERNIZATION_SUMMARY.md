@@ -199,11 +199,11 @@ Monitoring
 
 ### Worker Generation Flow
 ```
-1. Edit HTML files (typescript/portfolio-worker/index.html, typescript/portfolio-worker/resume.html)
+1. Edit HTML files (apps/portfolio/index.html, apps/portfolio/resume.html)
 2. Run: npm run build
    → node generate-worker.js
    → Escapes backticks and $ for template literals
-   → Generates typescript/portfolio-worker/worker.js
+   → Generates apps/portfolio/worker.js
 3. Deploy: npm run deploy or git push (auto-deploy)
 ```
 

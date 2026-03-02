@@ -34,13 +34,13 @@ Dashboard setup:
    - Production branch: `master`
    - Root directory: `/`
    - Build command: `npm run build`
-   - Deploy command: `npx wrangler deploy --config typescript/portfolio-worker/wrangler.toml --env production`
+   - Deploy command: `npx wrangler deploy --config apps/portfolio/wrangler.toml --env production`
 5. Save and trigger with a new commit push.
 
 Recommended deploy command for Builds:
 
-- Active deploy: `npx wrangler deploy --config typescript/portfolio-worker/wrangler.toml --env production`
-- Build-only (version upload): `npx wrangler versions upload --config typescript/portfolio-worker/wrangler.toml --env production`
+- Active deploy: `npx wrangler deploy --config apps/portfolio/wrangler.toml --env production`
+- Build-only (version upload): `npx wrangler versions upload --config apps/portfolio/wrangler.toml --env production`
 
 ## Monorepo Notes
 

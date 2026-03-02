@@ -82,7 +82,7 @@ npm run build
 
 ```bash
 # Test worker.js locally
-node typescript/portfolio-worker/worker.js
+node apps/portfolio/worker.js
 
 # Run E2E tests
 npm run test:e2e
@@ -98,7 +98,7 @@ npm run lighthouse
 npm run deploy:wrangler:root
 
 # Or use wrangler directly
-npx wrangler deploy --config typescript/portfolio-worker/wrangler.toml --env production
+npx wrangler deploy --config apps/portfolio/wrangler.toml --env production
 ```
 
 ### Step 4: Post-deployment Verification

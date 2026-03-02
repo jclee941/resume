@@ -6,9 +6,9 @@
  * - resumes/master/resume_data_ja.json
  *
  * Generates:
- * - typescript/portfolio-worker/data.json (Korean portfolio data)
- * - typescript/portfolio-worker/data_en.json (English portfolio data)
- * - typescript/portfolio-worker/data_ja.json (Japanese portfolio data)
+ * - apps/portfolio/data.json (Korean portfolio data)
+ * - apps/portfolio/data_en.json (English portfolio data)
+ * - apps/portfolio/data_ja.json (Japanese portfolio data)
  * - shinhan_filled.pptx (proposal format)
  */
 

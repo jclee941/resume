@@ -9,11 +9,11 @@ The project combines a portfolio worker, job automation worker, MCP server, data
 
 ## Decision
 
-Adopt a Google3-style monorepo structure with language-first directories (`typescript/`), repository governance (`OWNERS`, `CODEOWNERS`), and Bazel metadata (`BUILD.bazel`, `MODULE.bazel`) as the build orchestration facade.
+Adopt a Google3-style monorepo structure with layer-based directories (`apps/`, `packages/`), repository governance (`OWNERS`, `CODEOWNERS`), and Bazel metadata (`BUILD.bazel`, `MODULE.bazel`) as the build orchestration facade.
 
 ## Consequences
 
 - Positive: Consistent repository navigation, enforceable ownership, and scalable build targeting.
-- Positive: Clear separation between source domains (`typescript/`, `tools/`, `tests/`, `infrastructure/`).
+- Positive: Clear separation between source domains (`apps/`, `packages/`, `tools/`, `tests/`, `infrastructure/`).
 - Negative: Higher onboarding complexity compared to a single-package layout.
 - Follow-up: Keep new components aligned with language-first hierarchy and ownership files.

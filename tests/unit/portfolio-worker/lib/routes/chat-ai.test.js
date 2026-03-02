@@ -1,4 +1,4 @@
-const { generateChatRoute } = require('../../../../../typescript/portfolio-worker/lib/routes/chat');
+const { generateChatRoute } = require('../../../../../apps/portfolio/lib/routes/chat');
 
 describe('routes/chat Gemini fallback', () => {
   const opts = {

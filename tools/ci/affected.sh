@@ -64,20 +64,20 @@ if ! command -v bazel &> /dev/null; then
     # Fallback: path-based analysis
     AFFECTED_PATHS=""
     
-    if echo "$CHANGED_FILES" | grep -qE "^typescript/portfolio-worker/"; then
-        AFFECTED_PATHS="$AFFECTED_PATHS //typescript/portfolio-worker:all"
+    if echo "$CHANGED_FILES" | grep -qE "^apps/portfolio/"; then
+        AFFECTED_PATHS="$AFFECTED_PATHS //apps/portfolio:all"
     fi
     
-    if echo "$CHANGED_FILES" | grep -qE "^typescript/job-automation/"; then
-        AFFECTED_PATHS="$AFFECTED_PATHS //typescript/job-automation:all"
+    if echo "$CHANGED_FILES" | grep -qE "^apps/job-server/"; then
+        AFFECTED_PATHS="$AFFECTED_PATHS //apps/job-server:all"
     fi
     
-    if echo "$CHANGED_FILES" | grep -qE "^typescript/data/"; then
-        AFFECTED_PATHS="$AFFECTED_PATHS //typescript/data:all //typescript/portfolio-worker:all"
+    if echo "$CHANGED_FILES" | grep -qE "^packages/data/"; then
+        AFFECTED_PATHS="$AFFECTED_PATHS //packages/data:all //apps/portfolio:all"
     fi
     
-    if echo "$CHANGED_FILES" | grep -qE "^typescript/cli/"; then
-        AFFECTED_PATHS="$AFFECTED_PATHS //typescript/cli:all"
+    if echo "$CHANGED_FILES" | grep -qE "^packages/cli/"; then
+        AFFECTED_PATHS="$AFFECTED_PATHS //packages/cli:all"
     fi
     
     if echo "$CHANGED_FILES" | grep -qE "^tools/"; then
@@ -93,11 +93,11 @@ if ! command -v bazel &> /dev/null; then
     echo "$AFFECTED_PATHS" | tr ' ' '\n' | sort -u | grep -v '^$' > "$OUTPUT_DIR/affected_targets.txt"
     
     # Generate JSON output with boolean flags for CI
-    PORTFOLIO=$(echo "$CHANGED_FILES" | grep -qE "^typescript/portfolio-worker/|^typescript/data/" && echo "true" || echo "false")
-    JOB_DASHBOARD=$(echo "$CHANGED_FILES" | grep -qE "^typescript/job-automation/" && echo "true" || echo "false")
-    DATA=$(echo "$CHANGED_FILES" | grep -qE "^typescript/data/" && echo "true" || echo "false")
+    PORTFOLIO=$(echo "$CHANGED_FILES" | grep -qE "^apps/portfolio/|^packages/data/" && echo "true" || echo "false")
+    JOB_DASHBOARD=$(echo "$CHANGED_FILES" | grep -qE "^apps/job-server/" && echo "true" || echo "false")
+    DATA=$(echo "$CHANGED_FILES" | grep -qE "^packages/data/" && echo "true" || echo "false")
     INFRA=$(echo "$CHANGED_FILES" | grep -qE "^infrastructure/" && echo "true" || echo "false")
-    CLI=$(echo "$CHANGED_FILES" | grep -qE "^typescript/cli/" && echo "true" || echo "false")
+    CLI=$(echo "$CHANGED_FILES" | grep -qE "^packages/cli/" && echo "true" || echo "false")
     AFFECTED_COUNT=$(echo "$AFFECTED_PATHS" | tr ' ' '\n' | grep -v '^$' | sort -u | wc -l)
     
     cat > "$OUTPUT_DIR/affected_targets.json" <<EOF
@@ -143,11 +143,11 @@ echo "Test targets: $(wc -l < "$OUTPUT_DIR/test_targets.txt" 2>/dev/null || echo
 echo ""
 echo "Output saved to: $OUTPUT_DIR/"
 
-PORTFOLIO=$(echo "$CHANGED_FILES" | grep -qE "^typescript/portfolio-worker/|^typescript/data/" && echo "true" || echo "false")
-JOB_DASHBOARD=$(echo "$CHANGED_FILES" | grep -qE "^typescript/job-automation/" && echo "true" || echo "false")
-DATA=$(echo "$CHANGED_FILES" | grep -qE "^typescript/data/" && echo "true" || echo "false")
+PORTFOLIO=$(echo "$CHANGED_FILES" | grep -qE "^apps/portfolio/|^packages/data/" && echo "true" || echo "false")
+JOB_DASHBOARD=$(echo "$CHANGED_FILES" | grep -qE "^apps/job-server/" && echo "true" || echo "false")
+DATA=$(echo "$CHANGED_FILES" | grep -qE "^packages/data/" && echo "true" || echo "false")
 INFRA=$(echo "$CHANGED_FILES" | grep -qE "^infrastructure/" && echo "true" || echo "false")
-CLI=$(echo "$CHANGED_FILES" | grep -qE "^typescript/cli/" && echo "true" || echo "false")
+CLI=$(echo "$CHANGED_FILES" | grep -qE "^packages/cli/" && echo "true" || echo "false")
 
 cat > "$OUTPUT_DIR/affected_targets.json" << EOF
 {

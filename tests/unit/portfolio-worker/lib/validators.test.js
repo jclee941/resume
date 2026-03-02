@@ -1,8 +1,8 @@
 /**
- * Unit tests for typescript/portfolio-worker/lib/validators.js
+ * Unit tests for apps/portfolio/lib/validators.js
  */
 
-const { validateData } = require('../../../../typescript/portfolio-worker/lib/validators');
+const { validateData } = require('../../../../apps/portfolio/lib/validators');
 
 describe('Validators Module', () => {
   // Suppress console.log during tests

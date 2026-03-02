@@ -105,7 +105,7 @@ source ~/.env
 #### Step 3: Verify
 
 ```bash
-cd /home/jclee/dev/resume/typescript/portfolio-worker
+cd /home/jclee/dev/resume/apps/portfolio
 npx wrangler whoami
 
 # Expected output:
@@ -141,7 +141,7 @@ source ~/.env
 #### Step 3: Verify
 
 ```bash
-cd /home/jclee/dev/resume/typescript/portfolio-worker
+cd /home/jclee/dev/resume/apps/portfolio
 npx wrangler whoami
 
 # Expected output:
@@ -155,7 +155,7 @@ npx wrangler whoami
 **No manual token/key needed** - uses OAuth browser authentication
 
 ```bash
-cd /home/jclee/dev/resume/typescript/portfolio-worker
+cd /home/jclee/dev/resume/apps/portfolio
 npx wrangler login
 
 # Browser opens automatically
@@ -210,7 +210,7 @@ cd /home/jclee/dev/resume
 
 ```bash
 # Login once (persists across sessions)
-cd /home/jclee/dev/resume/typescript/portfolio-worker
+cd /home/jclee/dev/resume/apps/portfolio
 npx wrangler login
 
 # Then deploy (no environment variables needed)
@@ -251,7 +251,7 @@ vim ~/.env
 
 # 3. Test
 source ~/.env
-cd /home/jclee/dev/resume/typescript/portfolio-worker
+cd /home/jclee/dev/resume/apps/portfolio
 npx wrangler whoami
 ```
 
@@ -275,7 +275,7 @@ CLOUDFLARE_EMAIL=your_cloudflare_email@example.com
 
 # 3. Test
 source ~/.env
-cd /home/jclee/dev/resume/typescript/portfolio-worker
+cd /home/jclee/dev/resume/apps/portfolio
 npx wrangler whoami
 ```
 
@@ -285,7 +285,7 @@ npx wrangler whoami
 
 ```bash
 # Bypass .env entirely
-cd /home/jclee/dev/resume/typescript/portfolio-worker
+cd /home/jclee/dev/resume/apps/portfolio
 npx wrangler login
 
 # Browser opens, click Allow, done!
@@ -303,7 +303,7 @@ npx wrangler login
 source ~/.env
 
 # Test with wrangler
-cd /home/jclee/dev/resume/typescript/portfolio-worker
+cd /home/jclee/dev/resume/apps/portfolio
 npx wrangler whoami
 ```
 

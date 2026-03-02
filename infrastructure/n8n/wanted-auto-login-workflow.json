@@ -87,7 +87,7 @@
       "typeVersion": 1,
       "position": [1150, 300],
       "parameters": {
-        "command": "cd /home/jclee/dev/resume/typescript/job-automation && xvfb-run -a /home/jclee/.nvm/versions/node/v20.19.6/bin/node scripts/auto-login.js 2>&1 | tail -10"
+        "command": "cd /home/jclee/dev/resume/apps/job-server && xvfb-run -a /home/jclee/.nvm/versions/node/v20.19.6/bin/node scripts/auto-login.js 2>&1 | tail -10"
       }
     },
     {

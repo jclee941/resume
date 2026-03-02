@@ -1,6 +1,6 @@
 'use strict';
 
-const { generateWorkerPreamble } = require('../../typescript/portfolio-worker/lib/worker-preamble');
+const { generateWorkerPreamble } = require('../../apps/portfolio/lib/worker-preamble');
 
 describe('Worker Preamble', () => {
   const defaultOpts = {

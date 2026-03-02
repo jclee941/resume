@@ -3,13 +3,13 @@
 ## Core Parts
 | Part | Path | Type | Description |
 |------|------|------|-------------|
-| Web Worker | `typescript/portfolio-worker/` | Web/Backend | Cloudflare Worker serving the resume site. |
+| Web Worker | `apps/portfolio/` | Web/Backend | Cloudflare Worker serving the resume site. |
 | Resume CLI | `cmd/resume-cli/` | CLI | Go tool for deployment and verification. |
 | Automation | `scripts/` | Tooling/Ops | Deployment and maintenance scripts. |
 
 ## Key Files & Directories
-- `typescript/portfolio-worker/worker.js`: Main entry point for the typescript/portfolio-worker application.
-- `typescript/portfolio-worker/generate-worker.js`: Build script for inlining assets and calculating CSP.
+- `apps/portfolio/worker.js`: Main entry point for the apps/portfolio application.
+- `apps/portfolio/generate-worker.js`: Build script for inlining assets and calculating CSP.
 - `cmd/resume-cli/main.go`: Entry point for the Go CLI.
 - `scripts/quick-deploy.sh`: Primary deployment entry point.
 - `tests/e2e/`: Playwright end-to-end tests.

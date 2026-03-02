@@ -75,9 +75,9 @@ jobs:
             INFRA=$(jq -r '.infra // false' .affected/affected_targets.json)
           else
             CHANGED_FILES=$(git diff --name-only "$BASE_REF"...HEAD 2>/dev/null || git diff --name-only HEAD~1)
-            PORTFOLIO=$(echo "$CHANGED_FILES" | grep -q "typescript/portfolio-worker\|typescript/data" && echo "true" || echo "false")
-            JOB_DASHBOARD=$(echo "$CHANGED_FILES" | grep -q "typescript/job-automation" && echo "true" || echo "false")
-            DATA=$(echo "$CHANGED_FILES" | grep -q "typescript/data" && echo "true" || echo "false")
+            PORTFOLIO=$(echo "$CHANGED_FILES" | grep -q "apps/portfolio\|packages/data" && echo "true" || echo "false")
+            JOB_DASHBOARD=$(echo "$CHANGED_FILES" | grep -q "apps/job-server" && echo "true" || echo "false")
+            DATA=$(echo "$CHANGED_FILES" | grep -q "packages/data" && echo "true" || echo "false")
             INFRA=$(echo "$CHANGED_FILES" | grep -q "infrastructure/" && echo "true" || echo "false")
           fi
 
@@ -113,7 +113,7 @@ jobs:
 
       - name: Validate wrangler types generation
         run: |
-          npx wrangler types /tmp/portfolio-worker-types.d.ts --config typescript/portfolio-worker/wrangler.toml --env production
+          npx wrangler types /tmp/portfolio-worker-types.d.ts --config apps/portfolio/wrangler.toml --env production
 
   lint:
     name: ESLint
@@ -235,7 +235,7 @@ jobs:
 
       - name: Build portfolio worker
         run: npm run build
-        working-directory: typescript/portfolio-worker
+        working-directory: apps/portfolio
 
       - name: Run smoke E2E tests against local build
         run: npm run test:e2e:smoke
@@ -297,13 +297,13 @@ jobs:
 
       - name: Build portfolio worker
         run: npm run build
-        working-directory: typescript/portfolio-worker
+        working-directory: apps/portfolio
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: portfolio-worker
-          path: typescript/portfolio-worker/worker.js
+          path: apps/portfolio/worker.js
           retention-days: 7
 
   # ===========================================================================

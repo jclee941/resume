@@ -58,7 +58,7 @@ Successfully implemented a complete CI/CD automation system for the resume proje
 
 ### 2. New Web Modules
 
-#### Internationalization (`typescript/portfolio-worker/lib/i18n.js`)
+#### Internationalization (`apps/portfolio/lib/i18n.js`)
 **180 lines** | **100% tested**
 
 **Features**:
@@ -75,7 +75,7 @@ i18n.t('welcome.message'); // "Welcome!"
 i18n.setLocale('ko');
 ```
 
-#### A/B Testing (`typescript/portfolio-worker/lib/ab-testing.js`)
+#### A/B Testing (`apps/portfolio/lib/ab-testing.js`)
 **282 lines** | **100% tested**
 
 **Features**:
@@ -93,7 +93,7 @@ const variant = test.getVariant();
 test.trackEvent('click');
 ```
 
-#### Performance Metrics (`typescript/portfolio-worker/lib/performance-metrics.js`)
+#### Performance Metrics (`apps/portfolio/lib/performance-metrics.js`)
 **271 lines**
 
 **Features**:

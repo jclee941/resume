@@ -1235,7 +1235,7 @@
   "refresh": "30s",
   "schemaVersion": 38,
   "style": "dark",
-  "tags": ["resume", "cloudflare", "workers", "portfolio", "production", "typescript/portfolio-worker-vitals"],
+  "tags": ["resume", "cloudflare", "workers", "portfolio", "production", "apps/portfolio-vitals"],
   "templating": {
     "list": [
       {

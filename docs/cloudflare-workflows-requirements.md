@@ -144,5 +144,5 @@
 npm run build
 
 # Deploy (repo root, explicit config)
-npx wrangler deploy --config typescript/portfolio-worker/wrangler.toml --env production
+npx wrangler deploy --config apps/portfolio/wrangler.toml --env production
 ```

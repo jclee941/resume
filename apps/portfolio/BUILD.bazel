@@ -1,0 +1,34 @@
+# Portfolio Worker - Cloudflare Edge
+load("@rules_shell//shell:sh_binary.bzl", "sh_binary")
+
+package(default_visibility = ["//typescript:__subpackages__"])
+
+filegroup(
+    name = "sources",
+    srcs = glob(
+        ["**/*.js", "**/*.html", "**/*.css", "**/*.json"],
+        exclude = ["node_modules/**", "worker.js"],
+        allow_empty = True,
+    ),
+    visibility = [
+        "//tools:__pkg__",
+        "//typescript:__subpackages__",
+    ],
+)
+
+# Build target (wrapper for generate-worker.js)
+sh_binary(
+    name = "build",
+    srcs = ["//tools/scripts/bazel:build_portfolio.sh"],
+    data = [
+        ":sources",
+        "//packages/data:sources",
+    ],
+)
+
+# Deploy target
+sh_binary(
+    name = "deploy",
+    srcs = ["//tools/scripts/bazel:deploy_portfolio.sh"],
+    data = [":sources"],
+)

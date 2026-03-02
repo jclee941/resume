@@ -1,11 +1,11 @@
 /**
- * Unit tests for typescript/portfolio-worker/lib/templates.js
+ * Unit tests for apps/portfolio/lib/templates.js
  */
 
 const {
   generateLink,
   extractInlineHashes,
-} = require('../../../../typescript/portfolio-worker/lib/templates');
+} = require('../../../../apps/portfolio/lib/templates');
 
 describe('Templates Module', () => {
   describe('generateLink', () => {

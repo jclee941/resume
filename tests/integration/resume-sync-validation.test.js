@@ -94,7 +94,7 @@ const INVALID_RESUME_WRONG_TYPES = {
 // Test: Validation Adapter Module
 test('Validation Adapter - should import validation adapter successfully', async () => {
   const validation = await import(
-    join(PROJECT_ROOT, 'typescript/job-automation/src/shared/validation/index.js')
+    join(PROJECT_ROOT, 'apps/job-server/src/shared/validation/index.js')
   );
 
   strictEqual(typeof validation.masterSchema, 'object', 'masterSchema should be exported');
@@ -112,7 +112,7 @@ test('Validation Adapter - should import validation adapter successfully', async
 
 test('Validation Adapter - should have masterSchema with required properties', async () => {
   const { masterSchema } = await import(
-    join(PROJECT_ROOT, 'typescript/job-automation/src/shared/validation/index.js')
+    join(PROJECT_ROOT, 'apps/job-server/src/shared/validation/index.js')
   );
 
   strictEqual(masterSchema.type, 'object', 'masterSchema should be object type');
@@ -123,7 +123,7 @@ test('Validation Adapter - should have masterSchema with required properties', a
 // Test: Validation Logic
 test('Validation Logic - should validate correct resume data', async () => {
   const { masterSchema, validateResumeData } = await import(
-    join(PROJECT_ROOT, 'typescript/job-automation/src/shared/validation/index.js')
+    join(PROJECT_ROOT, 'apps/job-server/src/shared/validation/index.js')
   );
 
   const validation = validateResumeData(VALID_RESUME_DATA, masterSchema);
@@ -133,7 +133,7 @@ test('Validation Logic - should validate correct resume data', async () => {
 
 test('Validation Logic - should reject resume missing required fields', async () => {
   const { masterSchema, validateResumeData } = await import(
-    join(PROJECT_ROOT, 'typescript/job-automation/src/shared/validation/index.js')
+    join(PROJECT_ROOT, 'apps/job-server/src/shared/validation/index.js')
   );
 
   const validation = validateResumeData(INVALID_RESUME_MISSING_REQUIRED, masterSchema);
@@ -143,7 +143,7 @@ test('Validation Logic - should reject resume missing required fields', async ()
 
 test('Validation Logic - should reject resume with wrong types', async () => {
   const { masterSchema, validateResumeData } = await import(
-    join(PROJECT_ROOT, 'typescript/job-automation/src/shared/validation/index.js')
+    join(PROJECT_ROOT, 'apps/job-server/src/shared/validation/index.js')
   );
 
   const validation = validateResumeData(INVALID_RESUME_WRONG_TYPES, masterSchema);
@@ -158,7 +158,7 @@ test('Validation Logic - should reject resume with wrong types', async () => {
 // Test: MCP Error Formatting
 test('MCP Error Formatting - should format validation errors for MCP response', async () => {
   const { validateResumeData, formatErrorsForMCP, masterSchema } = await import(
-    join(PROJECT_ROOT, 'typescript/job-automation/src/shared/validation/index.js')
+    join(PROJECT_ROOT, 'apps/job-server/src/shared/validation/index.js')
   );
 
   const validation = validateResumeData(INVALID_RESUME_MISSING_REQUIRED, masterSchema);
@@ -176,7 +176,7 @@ test('MCP Error Formatting - should format validation errors for MCP response', 
 
 test('MCP Error Formatting - should return empty array for valid data', async () => {
   const { validateResumeData, formatErrorsForMCP, masterSchema } = await import(
-    join(PROJECT_ROOT, 'typescript/job-automation/src/shared/validation/index.js')
+    join(PROJECT_ROOT, 'apps/job-server/src/shared/validation/index.js')
   );
 
   const validation = validateResumeData(VALID_RESUME_DATA, masterSchema);
@@ -188,7 +188,7 @@ test('MCP Error Formatting - should return empty array for valid data', async ()
 // Test: Resume-Sync Import Tests
 test('Resume-Sync Import - should import resume-sync.js successfully with validation', async () => {
   const resumeSync = await import(
-    join(PROJECT_ROOT, 'typescript/job-automation/src/tools/resume-sync.js')
+    join(PROJECT_ROOT, 'apps/job-server/src/tools/resume-sync.js')
   );
 
   strictEqual(typeof resumeSync.default, 'object', 'resume-sync should export an object');
@@ -198,7 +198,7 @@ test('Resume-Sync Import - should import resume-sync.js successfully with valida
 });
 
 test('Resume-Sync Import - should have validation blocks in resume-sync.js', async () => {
-  const filePath = join(PROJECT_ROOT, 'typescript/job-automation/src/tools/resume-sync.js');
+  const filePath = join(PROJECT_ROOT, 'apps/job-server/src/tools/resume-sync.js');
   const content = readFileSync(filePath, 'utf-8');
 
   strictEqual(
@@ -210,7 +210,7 @@ test('Resume-Sync Import - should have validation blocks in resume-sync.js', asy
 });
 
 test('Resume-Sync Import - should have validation imports in resume-sync.js', async () => {
-  const filePath = join(PROJECT_ROOT, 'typescript/job-automation/src/tools/resume-sync.js');
+  const filePath = join(PROJECT_ROOT, 'apps/job-server/src/tools/resume-sync.js');
   const content = readFileSync(filePath, 'utf-8');
 
   strictEqual(
@@ -227,7 +227,7 @@ test('Resume-Sync Import - should have validation imports in resume-sync.js', as
 
 // Test: Block Placement and Syntax
 test('Block Placement - should have export validation block', async () => {
-  const filePath = join(PROJECT_ROOT, 'typescript/job-automation/src/tools/resume-sync.js');
+  const filePath = join(PROJECT_ROOT, 'apps/job-server/src/tools/resume-sync.js');
   const content = readFileSync(filePath, 'utf-8');
 
   // Check export action has validation
@@ -238,7 +238,7 @@ test('Block Placement - should have export validation block', async () => {
 });
 
 test('Block Placement - should have import validation block', async () => {
-  const filePath = join(PROJECT_ROOT, 'typescript/job-automation/src/tools/resume-sync.js');
+  const filePath = join(PROJECT_ROOT, 'apps/job-server/src/tools/resume-sync.js');
   const content = readFileSync(filePath, 'utf-8');
 
   // Check import action has validation
@@ -249,7 +249,7 @@ test('Block Placement - should have import validation block', async () => {
 });
 
 test('Block Placement - should have sync validation block', async () => {
-  const filePath = join(PROJECT_ROOT, 'typescript/job-automation/src/tools/resume-sync.js');
+  const filePath = join(PROJECT_ROOT, 'apps/job-server/src/tools/resume-sync.js');
   const content = readFileSync(filePath, 'utf-8');
 
   // Check sync action has validation
@@ -262,7 +262,7 @@ test('Block Placement - should have sync validation block', async () => {
 // Test: Error Format Compliance
 test('Error Format Compliance - should return MCP-compliant error object for export', async () => {
   const resumeSync = await import(
-    join(PROJECT_ROOT, 'typescript/job-automation/src/tools/resume-sync.js')
+    join(PROJECT_ROOT, 'apps/job-server/src/tools/resume-sync.js')
   );
 
   const _mcpTools = resumeSync.default;
@@ -282,7 +282,7 @@ test('Error Format Compliance - should return MCP-compliant error object for exp
 
 test('Error Format Compliance - should include validation errors in response', async () => {
   const { validateResumeData, formatErrorsForMCP, masterSchema } = await import(
-    join(PROJECT_ROOT, 'typescript/job-automation/src/shared/validation/index.js')
+    join(PROJECT_ROOT, 'apps/job-server/src/shared/validation/index.js')
   );
 
   const validation = validateResumeData(INVALID_RESUME_MISSING_REQUIRED, masterSchema);
@@ -304,7 +304,7 @@ test('Error Format Compliance - should include validation errors in response', a
 // Test: Syntax Validation
 test('Syntax Validation - should have valid JavaScript syntax in validation module', async () => {
   try {
-    await import(join(PROJECT_ROOT, 'typescript/job-automation/src/shared/validation/index.js'));
+    await import(join(PROJECT_ROOT, 'apps/job-server/src/shared/validation/index.js'));
     // If we get here, syntax is valid
     strictEqual(true, true, 'Validation module has valid syntax');
   } catch (err) {
@@ -314,7 +314,7 @@ test('Syntax Validation - should have valid JavaScript syntax in validation modu
 
 test('Syntax Validation - should have valid JavaScript syntax in resume-sync module', async () => {
   try {
-    await import(join(PROJECT_ROOT, 'typescript/job-automation/src/tools/resume-sync.js'));
+    await import(join(PROJECT_ROOT, 'apps/job-server/src/tools/resume-sync.js'));
     // If we get here, syntax is valid
     strictEqual(true, true, 'Resume-sync module has valid syntax');
   } catch (err) {

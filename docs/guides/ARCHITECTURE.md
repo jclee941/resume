@@ -24,25 +24,25 @@ Source files (HTML/CSS/JSON) are transformed into a single deployable `worker.js
 
 **Phase 1: CSS Separation** (Completed 2025-11-07)
 
-- `typescript/portfolio-worker/styles.css` contains all CSS (758 lines)
-- `typescript/portfolio-worker/index.html` has CSS placeholder: `<!-- CSS_PLACEHOLDER -->`
+- `apps/portfolio/styles.css` contains all CSS (758 lines)
+- `apps/portfolio/index.html` has CSS placeholder: `<!-- CSS_PLACEHOLDER -->`
 - Build script injects CSS at build time
 
 **Phase 2: Data-Driven Templates** (Completed 2025-11-07)
 
-- `typescript/portfolio-worker/data.json` contains all project data (resume cards + project cards)
-- `typescript/portfolio-worker/index.html` has placeholders: `<!-- RESUME_CARDS_PLACEHOLDER -->` and `<!-- PROJECT_CARDS_PLACEHOLDER -->`
+- `apps/portfolio/data.json` contains all project data (resume cards + project cards)
+- `apps/portfolio/index.html` has placeholders: `<!-- RESUME_CARDS_PLACEHOLDER -->` and `<!-- PROJECT_CARDS_PLACEHOLDER -->`
 - Build script generates HTML from JSON at build time
 
 ### Build Pipeline (3 phases)
 
-1. **Edit Content**: Modify `typescript/portfolio-worker/data.json` (project data) OR `typescript/portfolio-worker/index.html` (structure) OR `typescript/portfolio-worker/styles.css` (styling)
+1. **Edit Content**: Modify `apps/portfolio/data.json` (project data) OR `apps/portfolio/index.html` (structure) OR `apps/portfolio/styles.css` (styling)
 2. **Generate Worker**: Run `npm run build` (performs 6 transformations)
-3. **Deploy**: Push to `master` branch (GitHub Actions auto-deploys) OR run `npx wrangler deploy --config typescript/portfolio-worker/wrangler.toml --env production` manually
+3. **Deploy**: Push to `master` branch (GitHub Actions auto-deploys) OR run `npx wrangler deploy --config apps/portfolio/wrangler.toml --env production` manually
 
 ### 6 Critical Transformations
 
-`typescript/portfolio-worker/generate-worker.js` performs these operations:
+`apps/portfolio/generate-worker.js` performs these operations:
 
 1. **CSS Injection**: Reads `styles.css`, replaces `<!-- CSS_PLACEHOLDER -->` (758 lines → inline CSS)
 2. **Data Injection**: Reads `data.json`, generates HTML cards from templates (resume + projects)
@@ -60,7 +60,7 @@ Source files (HTML/CSS/JSON) are transformed into a single deployable `worker.js
 
 ### Template Functions
 
-`typescript/portfolio-worker/generate-worker.js` contains:
+`apps/portfolio/generate-worker.js` contains:
 
 - `generateResumeCards(data)`: Creates resume project cards from `data.resume` array
 - `generateProjectCards(data)`: Creates portfolio project cards from `data.projects` array
@@ -84,18 +84,18 @@ Source files (HTML/CSS/JSON) are transformed into a single deployable `worker.js
 - **master/resume_master.md**: Single source of truth (complete career history)
 - **master/resume_final.md**: Compressed submission version (downloadable from portfolio)
 - **company-specific/**: Tailored resumes derived from master
-- **typescript/portfolio-worker/data.json**: Portfolio project data (resume cards + project cards)
-- **typescript/portfolio-worker/styles.css**: All CSS styles (758 lines)
-- **typescript/portfolio-worker/index.html**: HTML structure with placeholders (200 lines)
+- **apps/portfolio/data.json**: Portfolio project data (resume cards + project cards)
+- **apps/portfolio/styles.css**: All CSS styles (758 lines)
+- **apps/portfolio/index.html**: HTML structure with placeholders (200 lines)
 - **resume/nextrade/**: Technical documentation (Architecture, DR, SOC) for download
 
 ### Generated Files (do not edit directly)
 
-- **typescript/portfolio-worker/worker.js**: Cloudflare Worker with embedded HTML (30.57 KB, auto-generated)
+- **apps/portfolio/worker.js**: Cloudflare Worker with embedded HTML (30.57 KB, auto-generated)
 
 ### Data Structure
 
-`typescript/portfolio-worker/data.json` format:
+`apps/portfolio/data.json` format:
 
 ```json
 {
@@ -255,7 +255,7 @@ Content-Security-Policy:
 - `jest.config.cjs`: Jest 30 CommonJS configuration
 - `eslint.config.cjs`: ESLint 9 flat config (modern syntax)
 - `playwright.config.js`: Playwright E2E test configuration
-- `typescript/portfolio-worker/wrangler.toml`: Cloudflare Workers deployment config
+- `apps/portfolio/wrangler.toml`: Cloudflare Workers deployment config
 
 ## Git Repository
 
@@ -276,7 +276,7 @@ git push origin master  # GitHub
 **IMPORTANT - GitHub Private Repository**:
 
 - GitHub repository is PRIVATE (since 2025-11-18)
-- Raw file URLs (in `typescript/portfolio-worker/data.json`) still work for authenticated users
+- Raw file URLs (in `apps/portfolio/data.json`) still work for authenticated users
 - Public resume site (https://resume.jclee.me) works via Cloudflare Workers
 - PDF/DOCX download links in portfolio require GitHub authentication
 - Alternative: Consider hosting resume files on Cloudflare R2 for public access
@@ -294,7 +294,7 @@ git push origin master  # GitHub
    - Wrangler type generation checks for both workers
    - ESLint + typecheck + unit/E2E tests
 2. Build + deploy:
-   - Build `typescript/portfolio-worker/worker.js`
+   - Build `apps/portfolio/worker.js`
    - Deploy with `cloudflare/wrangler-action@v4`
    - Optional gradual rollout via `wrangler versions upload/list/deploy`
 3. Verify + rollback + notify:

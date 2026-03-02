@@ -6,7 +6,7 @@ describe('Worker-HTML Integration', () => {
 
   beforeAll(() => {
     // Read generated worker
-    const workerPath = path.join(__dirname, '../../typescript/portfolio-worker/worker.js');
+    const workerPath = path.join(__dirname, '../../apps/portfolio/worker.js');
     workerCode = fs.readFileSync(workerPath, 'utf-8');
   });
 
@@ -84,11 +84,11 @@ describe('Worker-HTML Integration', () => {
   describe('Build Reproducibility', () => {
     test('regenerating worker should produce consistent output', () => {
       // Run generate-worker.js (side effect: regenerates worker.js)
-      require('../../typescript/portfolio-worker/generate-worker.js');
+      require('../../apps/portfolio/generate-worker.js');
 
       // Read newly generated worker
       const newWorkerCode = fs.readFileSync(
-        path.join(__dirname, '../../typescript/portfolio-worker/worker.js'),
+        path.join(__dirname, '../../apps/portfolio/worker.js'),
         'utf-8'
       );
 

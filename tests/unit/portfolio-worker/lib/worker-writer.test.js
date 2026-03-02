@@ -8,25 +8,25 @@ jest.mock('fs', () => ({
   writeFileSync: jest.fn(),
 }));
 
-jest.mock('../../../../typescript/portfolio-worker/lib/metrics', () => ({
+jest.mock('../../../../apps/portfolio/lib/metrics', () => ({
   initHistogramBuckets: jest.fn(function initHistogramBuckets() {}),
   generateHistogramLines: jest.fn(function generateHistogramLines() {}),
   generateMetrics: jest.fn(function generateMetrics() {}),
 }));
 
-jest.mock('../../../../typescript/portfolio-worker/lib/es-logger', () => ({
+jest.mock('../../../../apps/portfolio/lib/es-logger', () => ({
   logToElasticsearch: jest.fn(async function logToElasticsearch() {}),
 }));
 
-jest.mock('../../../../typescript/portfolio-worker/lib/auth', () => ({
+jest.mock('../../../../apps/portfolio/lib/auth', () => ({
   generateAuthHelpers: jest.fn(() => '// generated auth helpers'),
 }));
 
-jest.mock('../../../../typescript/portfolio-worker/lib/worker-preamble', () => ({
+jest.mock('../../../../apps/portfolio/lib/worker-preamble', () => ({
   generateWorkerPreamble: jest.fn(() => '/* preamble */\n'),
 }));
 
-jest.mock('../../../../typescript/portfolio-worker/lib/worker-routes', () => ({
+jest.mock('../../../../apps/portfolio/lib/worker-routes', () => ({
   generateFetchAndRateLimit: jest.fn(() => '/* fetch-rate-limit */\n'),
   generatePageRoutes: jest.fn(() => '/* page-routes */\n'),
   generateStaticRoutes: jest.fn(() => '/* static-routes */\n'),
@@ -37,7 +37,7 @@ jest.mock('../../../../typescript/portfolio-worker/lib/worker-routes', () => ({
   generateErrorHandler: jest.fn(() => '/* error-handler */\n'),
 }));
 
-jest.mock('../../../../typescript/portfolio-worker/lib/routes', () => ({
+jest.mock('../../../../apps/portfolio/lib/routes', () => ({
   generateAuthRoutes: jest.fn(() => '/* auth-routes */\n'),
   generateControlRoutes: jest.fn(() => '/* control-routes */\n'),
   generateChatRoute: jest.fn(() => '/* chat-route */\n'),
@@ -55,12 +55,12 @@ const {
   buildWorkerCode,
   writeWorkerFile,
   buildAndWriteWorker,
-} = require('../../../../typescript/portfolio-worker/lib/worker-writer');
+} = require('../../../../apps/portfolio/lib/worker-writer');
 const {
   generateWorkerPreamble,
-} = require('../../../../typescript/portfolio-worker/lib/worker-preamble');
-const workerRoutes = require('../../../../typescript/portfolio-worker/lib/worker-routes');
-const routes = require('../../../../typescript/portfolio-worker/lib/routes');
+} = require('../../../../apps/portfolio/lib/worker-preamble');
+const workerRoutes = require('../../../../apps/portfolio/lib/worker-routes');
+const routes = require('../../../../apps/portfolio/lib/routes');
 
 function createMinimalOptions(overrides = {}) {
   return {

@@ -3,7 +3,7 @@ const {
   minifyHtml,
   escapeForTemplateLiteral,
   buildLocalizedHtml,
-} = require('../../../../typescript/portfolio-worker/lib/html-transformer');
+} = require('../../../../apps/portfolio/lib/html-transformer');
 
 describe('html-transformer', () => {
   describe('injectPlaceholders', () => {

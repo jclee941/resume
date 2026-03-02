@@ -1,7 +1,7 @@
 // @ts-check
 const { test, expect } = require('@playwright/test');
 
-const projectData = require('../../typescript/portfolio-worker/data.json');
+const projectData = require('../../apps/portfolio/data.json');
 
 const EXPECTED = {
   RESUMES: projectData.resume.length,

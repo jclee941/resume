@@ -78,7 +78,7 @@ build_worker() {
     export DEPLOYED_AT
 
     if npm run build > /dev/null 2>&1; then
-        WORKER_SIZE=$(stat -c%s typescript/portfolio-worker/worker.js)
+        WORKER_SIZE=$(stat -c%s apps/portfolio/worker.js)
         WORKER_SIZE_KB=$(echo "scale=2; $WORKER_SIZE / 1024" | bc)
         echo -e "${GREEN}✓ Worker generated:${NC} ${WORKER_SIZE_KB} KB"
         echo -e "${GREEN}✓ Deployment timestamp:${NC} $DEPLOYED_AT"
@@ -128,7 +128,7 @@ deploy_cloudflare() {
         exit 1
     fi
 
-    if npx wrangler deploy --config "${PROJECT_ROOT}/typescript/portfolio-worker/wrangler.toml" --env production; then
+    if npx wrangler deploy --config "${PROJECT_ROOT}/apps/portfolio/wrangler.toml" --env production; then
         echo -e "${GREEN}✓ Deployed successfully${NC}"
     else
         echo -e "${RED}✗ Deployment failed${NC}"

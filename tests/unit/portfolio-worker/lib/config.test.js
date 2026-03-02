@@ -1,12 +1,12 @@
 /**
- * Unit tests for typescript/portfolio-worker/lib/config.js
+ * Unit tests for apps/portfolio/lib/config.js
  */
 
 const {
   CONFIG,
   ESCAPE_PATTERNS,
   TEMPLATE_CACHE,
-} = require('../../../../typescript/portfolio-worker/lib/config');
+} = require('../../../../apps/portfolio/lib/config');
 
 describe('Config Module', () => {
   describe('CONFIG', () => {

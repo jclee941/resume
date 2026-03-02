@@ -328,7 +328,7 @@ if (require.main === module) {
 
   if (args.length === 0) {
     console.error('Usage: node validate-resume-data.js <data-file> [schema-file]');
-    console.error('Example: node validate-resume-data.js typescript/data/resumes/master/resume_data.json');
+    console.error('Example: node validate-resume-data.js packages/data/resumes/master/resume_data.json');
     process.exit(1);
   }
 

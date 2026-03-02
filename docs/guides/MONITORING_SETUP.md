@@ -168,9 +168,9 @@ services:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
       - '--storage.tsdb.retention.time=30d'
-      - '--typescript/portfolio-worker.console.libraries=/usr/share/prometheus/console_libraries'
-      - '--typescript/portfolio-worker.console.templates=/usr/share/prometheus/consoles'
-      - '--typescript/portfolio-worker.enable-lifecycle'
+      - '--apps/portfolio.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--apps/portfolio.console.templates=/usr/share/prometheus/consoles'
+      - '--apps/portfolio.enable-lifecycle'
     networks:
       - monitoring
 
@@ -826,7 +826,7 @@ curl -X POST "https://n8n.jclee.me/api/v1/workflows/123/execute" \
 - [Grafana Provisioning](https://grafana.com/docs/grafana/latest/administration/provisioning/)
 - [Loki Configuration](https://grafana.com/docs/loki/latest/configuration/)
 - [n8n API Documentation](https://docs.n8n.io/api/)
-- [Nginx Reverse Proxy Guide](https://docs.nginx.com/nginx/admin-guide/typescript/portfolio-worker-server/reverse-proxy/)
+- [Nginx Reverse Proxy Guide](https://docs.nginx.com/nginx/admin-guide/apps/portfolio-server/reverse-proxy/)
 
 ## 📝 Next Steps
 

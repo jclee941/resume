@@ -3,7 +3,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/../../.."
 
-DATA_FILE="typescript/data/resumes/master/resume_data.json"
+DATA_FILE="packages/data/resumes/master/resume_data.json"
 
 # Validate JSON syntax
 if ! node -e "JSON.parse(require('fs').readFileSync('$DATA_FILE', 'utf8'))" 2>/dev/null; then

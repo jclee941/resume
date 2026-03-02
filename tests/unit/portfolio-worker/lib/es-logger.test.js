@@ -13,7 +13,7 @@ describe('es-logger', () => {
         this.abort = jest.fn();
       }
     };
-    esLogger = require('../../../../typescript/portfolio-worker/lib/es-logger');
+    esLogger = require('../../../../apps/portfolio/lib/es-logger');
   });
 
   afterEach(() => {

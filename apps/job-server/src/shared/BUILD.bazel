@@ -1,0 +1,51 @@
+# Job Automation - Shared Services & Adapters
+#
+# This package contains shared business logic:
+# - adapters/: Platform adapters (Wanted, JobKorea, etc.)
+# - clients/: HTTP clients for external APIs
+# - contracts/: Data contracts and DTOs
+# - services/: Business logic (apply, session, auth, etc.)
+# - testing/: Shared test utilities
+
+package(default_visibility = ["//apps/job-server:__subpackages__"])
+
+# Adapters (platform-specific logic)
+filegroup(
+    name = "adapters",
+    srcs = glob(["adapters/*.js"], allow_empty = True),
+)
+
+# HTTP clients
+filegroup(
+    name = "clients",
+    srcs = glob(["clients/**/*.js"], allow_empty = True),
+)
+
+# Data contracts
+filegroup(
+    name = "contracts",
+    srcs = glob(["contracts/*.js"], allow_empty = True),
+)
+
+# Business services
+filegroup(
+    name = "services",
+    srcs = glob(["services/**/*.js"], allow_empty = True),
+)
+
+# Testing utilities
+filegroup(
+    name = "testing",
+    srcs = glob(["testing/*.js"], allow_empty = True),
+)
+
+# All shared code (convenience target)
+filegroup(
+    name = "all",
+    srcs = [
+        ":adapters",
+        ":clients",
+        ":contracts",
+        ":services",
+    ],
+)

@@ -23,17 +23,17 @@
     "sourceMap": false,
     "baseUrl": ".",
     "paths": {
-      "@lib/*": ["typescript/portfolio-worker/lib/*"],
+      "@lib/*": ["apps/portfolio/lib/*"],
       "@tests/*": ["tests/*"]
     },
     "types": ["node", "jest", "@playwright/test"]
   },
   "include": [
-    "typescript/cli/**/*.js",
-    "typescript/portfolio-worker/lib/**/*.js",
-    "typescript/portfolio-worker/src/**/*.js",
-    "typescript/job-automation/src/**/*.js",
-    "typescript/data/**/*.js",
+    "packages/cli/**/*.js",
+    "apps/portfolio/lib/**/*.js",
+    "apps/portfolio/src/**/*.js",
+    "apps/job-server/src/**/*.js",
+    "packages/data/**/*.js",
     "tools/scripts/**/*.js"
   ],
   "exclude": [
@@ -41,11 +41,11 @@
     "coverage",
     "playwright-report",
     "test-results",
-    "typescript/portfolio-worker/worker.js",
-    "typescript/portfolio-worker/sw.js",
-    "typescript/portfolio-worker/sentry-config.js",
-    "typescript/portfolio-worker/src/scripts/modules/**",
-    "typescript/job-automation/platforms/**",
+    "apps/portfolio/worker.js",
+    "apps/portfolio/sw.js",
+    "apps/portfolio/sentry-config.js",
+    "apps/portfolio/src/scripts/modules/**",
+    "apps/job-server/platforms/**",
     "tests/**",
     ".wrangler"
   ]

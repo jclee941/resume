@@ -53,20 +53,20 @@ bazel run //:deploy
 //:test               → alias → //tools:test
 //:deploy             → alias → //tools:deploy
 
-//typescript/cli:cli
-//typescript/cli:sources
+//packages/cli:cli
+//packages/cli:sources
 
-//typescript/data:sources
-//typescript/data:resume_data
-//typescript/data:schemas
+//packages/data:sources
+//packages/data:resume_data
+//packages/data:schemas
 
-//typescript/job-automation:sources
-//typescript/job-automation:test
-//typescript/job-automation:deploy
+//apps/job-server:sources
+//apps/job-server:test
+//apps/job-server:deploy
 
-//typescript/portfolio-worker:sources
-//typescript/portfolio-worker:build
-//typescript/portfolio-worker:deploy
+//apps/portfolio:sources
+//apps/portfolio:build
+//apps/portfolio:deploy
 
 //tools:build
 //tools:test
@@ -85,13 +85,13 @@ bazel run //:deploy
 bazel query "//..."
 
 # Targets in a package
-bazel query "//typescript/job-automation:*"
+bazel query "//apps/job-server:*"
 
 # Dependencies of a target
-bazel query "deps(//typescript/portfolio-worker:build)"
+bazel query "deps(//apps/portfolio:build)"
 
 # Reverse dependencies (what depends on this)
-bazel query "rdeps(//..., //typescript/data:sources)"
+bazel query "rdeps(//..., //packages/data:sources)"
 
 # Find targets affected by changes
 ./tools/ci/affected.sh origin/master
@@ -101,7 +101,7 @@ bazel query "rdeps(//..., //typescript/data:sources)"
 
 ```bash
 # Build specific target
-bazel build //typescript/portfolio-worker:build
+bazel build //apps/portfolio:build
 
 # Build with CI config
 bazel build --config=ci //...
@@ -182,7 +182,7 @@ analyze:affected:
 ### 1. Create Directory Structure
 
 ```
-typescript/new-package/
+apps/new-app/          # or packages/new-package/
 ├── BUILD.bazel
 ├── OWNERS
 ├── README.md

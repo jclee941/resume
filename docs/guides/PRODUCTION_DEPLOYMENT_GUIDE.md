@@ -33,7 +33,7 @@ CLOUDFLARE_ACCOUNT_ID=your_account_id
 ### 채용 플랫폼 인증 정보
 
 ```bash
-# typescript/job-automation/.env 파일
+# apps/job-server/.env 파일
 WANTED_EMAIL=your_email@wanted.co.kr
 WANTED_PASSWORD=your_password
 
@@ -66,7 +66,7 @@ npm install
 ### 2단계: 자동화 시스템 설정
 
 ```bash
-cd typescript/job-automation
+cd apps/job-server
 npm install
 
 # 설정 파일 복사 및 수정
@@ -80,7 +80,7 @@ nano .env
 ### 3단계: 설정 파일 구성
 
 ```json
-// typescript/job-automation/config/auto-apply.json
+// apps/job-server/config/auto-apply.json
 {
   "enabled": true,
   "maxDailyApplications": 5,
@@ -126,7 +126,7 @@ npm run test:e2e
 ### 2단계: 자동화 시스템 테스트
 
 ```bash
-cd typescript/job-automation
+cd apps/job-server
 
 # CLI 테스트
 node src/auto-apply/cli/index.js help
@@ -166,7 +166,7 @@ npm run verify:cli
 ### 자동화 시스템 배포
 
 ```bash
-cd typescript/job-automation
+cd apps/job-server
 
 # 프로덕션용 PM2 설정 (선택사항)
 npm install -g pm2
@@ -184,11 +184,11 @@ sudo systemctl start auto-apply
 
 ```bash
 # 로그 디렉토리 생성
-mkdir -p typescript/job-automation/logs
+mkdir -p apps/job-server/logs
 
 # 로그 로테이션 설정
 cat > /etc/logrotate.d/auto-apply << EOF
-/home/jclee/dev/resume/typescript/job-automation/logs/*.log {
+/home/jclee/dev/resume/apps/job-server/logs/*.log {
     daily
     rotate 30
     compress
@@ -231,14 +231,14 @@ BACKUP_DIR="/var/backups/auto-apply/$(date +%Y%m%d_%H%M%S)"
 mkdir -p "$BACKUP_DIR"
 
 # 설정 파일 백업
-cp -r typescript/job-automation/config "$BACKUP_DIR/"
-cp typescript/job-automation/.env "$BACKUP_DIR/"
+cp -r apps/job-server/config "$BACKUP_DIR/"
+cp apps/job-server/.env "$BACKUP_DIR/"
 
 # 데이터베이스 백업 (있는 경우)
 # pg_dump auto_apply > "$BACKUP_DIR/database.sql"
 
 # 통계 백업
-typescript/job-automation/auto-monitor.sh > "$BACKUP_DIR/system_status.txt"
+apps/job-server/auto-monitor.sh > "$BACKUP_DIR/system_status.txt"
 
 echo "백업 완료: $BACKUP_DIR"
 EOF
@@ -268,13 +268,13 @@ chmod +x backup-auto-apply.sh
 
 ```bash
 # 민감한 파일 권한 제한
-chmod 600 typescript/job-automation/.env
-chmod 600 typescript/job-automation/config/auto-apply.json
+chmod 600 apps/job-server/.env
+chmod 600 apps/job-server/config/auto-apply.json
 
 # 실행 파일 권한 설정
-chmod 755 typescript/job-automation/auto-daily-run.sh
-chmod 755 typescript/job-automation/auto-monitor.sh
-chmod 755 typescript/job-automation/auto-maintenance.sh
+chmod 755 apps/job-server/auto-daily-run.sh
+chmod 755 apps/job-server/auto-monitor.sh
+chmod 755 apps/job-server/auto-maintenance.sh
 ```
 
 ### 방화벽 설정
@@ -357,7 +357,7 @@ curl -X GET "https://api.cloudflare.com/client/v4/user/tokens/verify" \
 
 ```bash
 # 크레덴셜 확인
-grep -E "(EMAIL|PASSWORD)" typescript/job-automation/.env
+grep -E "(EMAIL|PASSWORD)" apps/job-server/.env
 
 # 수동 로그인 테스트
 node src/auto-apply/cli/index.js search "test" 1
@@ -409,7 +409,7 @@ const matchScore = await aiMatcher.calculateMatch(resume, jobPosting);
 
 문제가 발생하거나 도움이 필요한 경우:
 
-1. 로그 파일 확인: `typescript/job-automation/logs/`
+1. 로그 파일 확인: `apps/job-server/logs/`
 2. 모니터링 실행: `./auto-monitor.sh`
 3. 문서 참조: `docs/AUTO_APPLY_ACTIVATION_GUIDE.md`
 4. 이슈 리포트: GitHub Issues
@@ -421,6 +421,6 @@ const matchScore = await aiMatcher.calculateMatch(resume, jobPosting);
 - [ ] 시스템 상태: `./auto-monitor.sh`
 - [ ] 자동화 실행: `./auto-daily-run.sh`
 - [ ] 워크플로우 실행 확인: `/job/api/workflows/*/run` 호출 결과 점검
-- [ ] 로그 모니터링: `tail -f typescript/job-automation/logs/*.log`
+- [ ] 로그 모니터링: `tail -f apps/job-server/logs/*.log`
 
 **🎉 프로덕션 환경 설정 완료!**

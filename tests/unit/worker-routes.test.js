@@ -9,7 +9,7 @@ const {
   generateSeoRoutes,
   generate404,
   generateErrorHandler,
-} = require('../../typescript/portfolio-worker/lib/worker-routes');
+} = require('../../apps/portfolio/lib/worker-routes');
 
 describe('Worker Routes', () => {
   describe('generateFetchAndRateLimit', () => {

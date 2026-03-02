@@ -4,7 +4,7 @@ const fs = require('fs');
 function loadEntryRouterUtils() {
   const modulePath = path.resolve(
     __dirname,
-    '../../../../typescript/portfolio-worker/lib/entry-router-utils.js'
+    '../../../../apps/portfolio/lib/entry-router-utils.js'
   );
   const source = fs.readFileSync(modulePath, 'utf8');
 

@@ -1,23 +1,23 @@
 FROM node:22-alpine AS builder
 
-WORKDIR /app/typescript/job-automation
+WORKDIR /app/job-server
 
-COPY typescript/job-automation/package*.json ./
+COPY apps/job-server/package*.json ./
 RUN npm ci
 
-COPY typescript/job-automation/ ./
+COPY apps/job-server/ ./
 RUN npm run build
 
 FROM node:22-alpine AS runtime
 
-WORKDIR /app/typescript/job-automation
+WORKDIR /app/job-server
 ENV NODE_ENV=production
 ENV PORT=3000
 
-COPY --from=builder /app/typescript/job-automation/package*.json ./
+COPY --from=builder /app/job-server/package*.json ./
 RUN npm ci --omit=dev
 
-COPY --from=builder /app/typescript/job-automation/ ./
+COPY --from=builder /app/job-server/ ./
 
 EXPOSE 3000
 

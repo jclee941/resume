@@ -313,12 +313,12 @@ docs/
 **Validation**:
 ```bash
 # Simulate downtime (modify worker.js temporarily)
-cd ~/apps/resume/typescript/portfolio-worker
+cd ~/apps/resume/apps/portfolio
 # Edit worker.js: Change status "healthy" → "down"
 npm run deploy
 
 # Wait 5 minutes → Expect Slack alert in #infra-alerts
-# Restore: git checkout typescript/portfolio-worker/worker.js && npm run deploy
+# Restore: git checkout apps/portfolio/worker.js && npm run deploy
 ```
 
 ### Phase 2: Deployment Tracking (Week 2)

@@ -37,20 +37,20 @@ The project is structured as a **Google3-style monorepo**, emphasizing a **Singl
 
 ### 2.1 Core Components
 
-- **Portfolio Worker** (`typescript/portfolio-worker/`):
+- **Portfolio Worker** (`apps/portfolio/`):
   - Domain: `resume.jclee.me`
   - Function: Serves a high-performance, edge-deployed portfolio with a cyberpunk terminal UI. It inlines all assets (CSS, JS, JSON) at build time for zero-latency delivery.
-- **Job Dashboard Worker** (`typescript/job-automation/workers/`):
+- **Job Dashboard Worker** (`apps/job-dashboard/`):
   - Domain: `resume.jclee.me/job/*`
   - Function: A full-stack mini-app managing job applications, automation status, and analytics. It interfaces with D1, KV, and R2.
 - **Unified Routing**:
-  - Implementation: `typescript/portfolio-worker/entry.js`
+  - Implementation: `apps/portfolio/entry.js`
   - Routing Logic: Any request starting with `/job/` is dispatched to the Job Dashboard. All other requests are handled by the Portfolio Worker.
 
 ### 2.2 SSoT: Single Source of Truth
 
 All resume data is managed in a single JSON file:
-`typescript/data/resumes/master/resume_data.json`
+`packages/data/resumes/master/resume_data.json`
 
 This file is synced to various platforms and inlined into the portfolio. **NEVER** edit the generated `data.json` or `worker.js` files directly.
 
@@ -59,14 +59,14 @@ This file is synced to various platforms and inlined into the portfolio. **NEVER
 The deployment process follows a strict unidirectional data flow:
 
 1. **Data Update**: Modify `resume_data.json`.
-2. **Sync**: Run `npm run sync:data`. This propagates the JSON to `typescript/portfolio-worker/data.json`.
+2. **Sync**: Run `npm run sync:data`. This propagates the JSON to `apps/portfolio/data.json`.
 3. **Generation**: `node generate-worker.js` runs. It:
    - Reads `index.html`.
    - Inlines all modular CSS from `src/styles/`.
    - Computes SHA-256 hashes for all inline scripts to build a strict Content Security Policy (CSP).
    - Escapes backticks for injection into a template literal.
 4. **Artifact Creation**: `worker.js` is created as a single self-contained script.
-5. **Deployment**: `npx wrangler deploy --config typescript/portfolio-worker/wrangler.toml --env production` uploads the artifact to the Cloudflare network.
+5. **Deployment**: `npx wrangler deploy --config apps/portfolio/wrangler.toml --env production` uploads the artifact to the Cloudflare network.
 
 ### 2.4 Architecture Diagram
 
@@ -79,7 +79,7 @@ The deployment process follows a strict unidirectional data flow:
                                          v
                           +-----------------------------+
                           |      Portfolio Worker       |
-                          | (typescript/portfolio-worker)|
+                          | (apps/portfolio)|
                           +--------------+--------------+
                                          |
                 +------------------------+------------------------+
@@ -142,8 +142,8 @@ Your `.env` file contains 6 primary sections:
 
 The monorepo uses two active Wrangler configuration files:
 
-1. `typescript/portfolio-worker/wrangler.toml`: Uses TOML format for the main site.
-2. `typescript/job-automation/workers/wrangler.toml`: Uses TOML format for the dashboard worker.
+1. `apps/portfolio/wrangler.toml`: Uses TOML format for the main site.
+2. `apps/job-dashboard/wrangler.toml`: Uses TOML format for the dashboard worker.
 
 ### 3.4 Managing Production Secrets
 
@@ -151,7 +151,7 @@ Secrets are **not** stored in git. You must push them to Cloudflare using the CL
 
 ```bash
 # Example: Setting the admin token for the dashboard
-npx wrangler secret put ADMIN_TOKEN --config typescript/job-automation/workers/wrangler.toml
+npx wrangler secret put ADMIN_TOKEN --config apps/job-dashboard/wrangler.toml
 ```
 
 **Detailed Secret Descriptions:**
@@ -203,7 +203,7 @@ The dashboard worker exports several workflow classes that must be bound to thei
 To preview the main portfolio site:
 
 ```bash
-cd typescript/portfolio-worker
+cd apps/portfolio
 npx wrangler dev
 ```
 
@@ -214,7 +214,7 @@ The site will be available at `http://localhost:8787`.
 To develop the dashboard and API:
 
 ```bash
-cd typescript/job-automation/workers
+cd apps/job-dashboard
 npx wrangler dev
 ```
 
@@ -222,7 +222,7 @@ Note: Local development uses a local SQLite version of D1 by default.
 
 ### 4.3 Data Synchronization (SSoT)
 
-If you change the content in `typescript/data/resumes/master/resume_data.json`, you must run:
+If you change the content in `packages/data/resumes/master/resume_data.json`, you must run:
 
 ```bash
 npm run sync:data
@@ -339,7 +339,7 @@ The worker includes 5 scheduled workflow triggers for operational tasks:
   - _Fix_: Run `rm -rf ~/.wrangler` and re-authenticate with `npx wrangler login`.
 - **Missing entry-point to Worker script**:
   - _Symptom_: `npx wrangler deploy` fails from repo root with entry-point error.
-  - _Fix_: Use explicit config path: `npx wrangler deploy --config typescript/portfolio-worker/wrangler.toml --env production`.
+  - _Fix_: Use explicit config path: `npx wrangler deploy --config apps/portfolio/wrangler.toml --env production`.
 
 ---
 

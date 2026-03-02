@@ -26,7 +26,7 @@ Base URL: `https://resume.jclee.me`
 
 ## MCP Server (Job Automation)
 
-Source: `typescript/job-automation/src/tools`
+Source: `apps/job-server/src/tools`
 
 ### Tool Modules (Top-Level Entries)
 
@@ -71,7 +71,7 @@ Base URL (routed through portfolio): `https://resume.jclee.me/job`
 
 ## CLI Reference
 
-Binary: `resume-cli` (entrypoint: `typescript/cli/bin/run.js`)
+Binary: `resume-cli` (entrypoint: `packages/cli/bin/run.js`)
 
 ### Commands
 

@@ -91,7 +91,7 @@ If API token creation is not possible:
 2. Navigate to **Workers & Pages**
 3. Select **"resume"** worker
 4. Click **"Quick Edit"** or **"Upload"**
-5. Replace content with `/home/jclee/dev/resume/typescript/portfolio-worker/worker.js` (155.96 KB)
+5. Replace content with `/home/jclee/dev/resume/apps/portfolio/worker.js` (155.96 KB)
 6. Click **"Save and Deploy"**
 
 ## Security Notes

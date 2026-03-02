@@ -12,7 +12,7 @@ Sync portfolio data with SSoT (resume_data.json) and deploy resume.jclee.me to p
 ## Constraints & Preferences
 
 - Google3 monorepo structure: `typescript/` for apps, `tools/` for scripts
-- SSoT for resume data: `typescript/data/resumes/master/resume_data.json`
+- SSoT for resume data: `packages/data/resumes/master/resume_data.json`
 - Node.js v20+ required for Wrangler v4.54.0 deployments
 - Production path: `/home/jclee/dev/resume`
 - Deploy command requires nvm: `source ~/.nvm/nvm.sh && nvm use 22 && npm run deploy`
@@ -59,12 +59,12 @@ Sync portfolio data with SSoT (resume_data.json) and deploy resume.jclee.me to p
 
 ### Read
 
-- `/home/jclee/dev/resume/typescript/data/resumes/master/resume_data.json` (SSoT)
-- `/home/jclee/dev/resume/typescript/portfolio-worker/data.json` (portfolio)
+- `/home/jclee/dev/resume/packages/data/resumes/master/resume_data.json` (SSoT)
+- `/home/jclee/dev/resume/apps/portfolio/data.json` (portfolio)
 - `/home/jclee/dev/resume/tools/scripts/utils/sync-resume-data.js` (sync script)
 
 ### Modified
 
 - `/home/jclee/dev/resume/package.json` - version bumped to 1.0.74
-- `/home/jclee/dev/resume/typescript/portfolio-worker/data.json` - synced from SSoT
-- `/home/jclee/dev/resume/typescript/portfolio-worker/worker.js` - regenerated and deployed
+- `/home/jclee/dev/resume/apps/portfolio/data.json` - synced from SSoT
+- `/home/jclee/dev/resume/apps/portfolio/worker.js` - regenerated and deployed

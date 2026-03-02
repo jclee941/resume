@@ -6,7 +6,7 @@
 const {
   generateAuthRoutes,
   generateControlRoutes,
-} = require('../../../../../typescript/portfolio-worker/lib/routes/auth');
+} = require('../../../../../apps/portfolio/lib/routes/auth');
 
 describe('routes/auth', () => {
   describe('generateAuthRoutes', () => {

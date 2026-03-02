@@ -41,7 +41,7 @@ This document now tracks the finalized architecture after decommissioning the le
 
 ## References
 
-- `typescript/job-automation/workers/wrangler.toml`
-- `typescript/job-automation/workers/wrangler.jsonc`
+- `apps/job-dashboard/wrangler.toml`
+- `apps/job-dashboard/wrangler.jsonc`
 - `.github/workflows/ci.yml`
 - `docs/deployment-guide.md`

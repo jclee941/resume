@@ -85,7 +85,7 @@ npm audit: 0 vulnerabilities (Critical: 0, High: 0, Moderate: 0, Low: 0)
 
 ```
 /home/jclee/app/resume/
-├── typescript/portfolio-worker/                    # Portfolio application
+├── apps/portfolio/                    # Portfolio application
 │   ├── index.html          # Homepage (36KB)
 │   ├── resume.html         # Resume page (28KB)
 │   ├── worker.js           # Generated Cloudflare Worker (64KB)
@@ -108,7 +108,7 @@ npm audit: 0 vulnerabilities (Critical: 0, High: 0, Moderate: 0, Low: 0)
 ### Code Quality Highlights
 
 **✅ Best Practices**:
-- Clear separation of concerns (typescript/portfolio-worker/, master/, company-specific/)
+- Clear separation of concerns (apps/portfolio/, master/, company-specific/)
 - Build tool pattern (HTML → escape → worker.js)
 - Error handling in generate-worker.js (file existence checks, try-catch)
 - Consistent naming conventions
@@ -350,7 +350,7 @@ jobs:
 
 1. **Modular Route Handlers**
    ```javascript
-   // typescript/portfolio-worker/routes/index.js
+   // apps/portfolio/routes/index.js
    export const routes = {
      '/': require('./handlers/home'),
      '/resume': require('./handlers/resume'),
@@ -362,7 +362,7 @@ jobs:
 
 2. **Middleware Pattern**
    ```javascript
-   // typescript/portfolio-worker/middleware/security.js
+   // apps/portfolio/middleware/security.js
    export function applySecurityHeaders(response) {
      return new Response(response.body, {
        headers: {...response.headers, ...SECURITY_HEADERS}
@@ -647,7 +647,7 @@ Status: ✅ Configured
    ```html
    <!-- In index.html and resume.html -->
    <script type="module">
-     import {onLCP, onFID, onCLS} from 'https://unpkg.com/typescript/portfolio-worker-vitals@4?module';
+     import {onLCP, onFID, onCLS} from 'https://unpkg.com/apps/portfolio-vitals@4?module';
 
      function sendToGrafana(metric) {
        const body = JSON.stringify({
@@ -768,11 +768,11 @@ jobs:
 | H2 | **Self-Hosted Fonts** | 🟢 200-300ms performance gain | 2-3h | ⭐⭐⭐⭐ |
 | H3 | **Advanced E2E Tests** | 🟡 Prevent broken links/downloads | 2-3h | ⭐⭐⭐ |
 
-**H1**: See "6. Observability Analysis" (RUM section) for typescript/portfolio-worker-vitals implementation.
+**H1**: See "6. Observability Analysis" (RUM section) for apps/portfolio-vitals implementation.
 
 **H2**: Self-host Inter font (woff2)
 - Download from Google Fonts
-- Store in `typescript/portfolio-worker/fonts/` or Workers KV
+- Store in `apps/portfolio/fonts/` or Workers KV
 - Update CSS to `@font-face` declarations
 - Remove external Google Fonts link
 - **Expected**: FCP -200ms, LCP -150ms, zero third-party requests

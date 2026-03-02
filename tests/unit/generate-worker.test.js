@@ -2,12 +2,12 @@ const fs = require('fs');
 const path = require('path');
 
 describe('Worker Generator', () => {
-  const webDir = path.join(__dirname, '../../typescript/portfolio-worker');
+  const webDir = path.join(__dirname, '../../apps/portfolio');
   const workerPath = path.join(webDir, 'worker.js');
 
   beforeAll(() => {
     // Run generate-worker.js before tests
-    require('../../typescript/portfolio-worker/generate-worker.js');
+    require('../../apps/portfolio/generate-worker.js');
   });
 
   describe('worker.js generation', () => {

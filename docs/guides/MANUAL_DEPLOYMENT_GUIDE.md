@@ -229,7 +229,7 @@ cd /home/jclee/dev/resume
 npm run build
 
 # Deploy to Cloudflare Workers (root-safe)
-npx wrangler deploy --config typescript/portfolio-worker/wrangler.toml --env production
+npx wrangler deploy --config apps/portfolio/wrangler.toml --env production
 
 # Expected output:
 # ⛅️ wrangler 4.43.0
@@ -483,7 +483,7 @@ cd /home/jclee/dev/resume
 npm run build
 
 # Check if OG_IMAGE_BASE64 exists in worker.js
-grep "OG_IMAGE_BASE64" typescript/portfolio-worker/worker.js | head -1
+grep "OG_IMAGE_BASE64" apps/portfolio/worker.js | head -1
 # Expected: const OG_IMAGE_BASE64 = 'iVBORw0KGgo...'
 
 # Redeploy
@@ -543,9 +543,9 @@ curl -X POST https://resume.jclee.me/api/vitals \
 
 **Worker Generation**:
 
-- Script: `typescript/portfolio-worker/generate-worker.js`
-- Input: `typescript/portfolio-worker/index.html`, `typescript/portfolio-worker/styles.css`, `typescript/portfolio-worker/data.json`, `typescript/portfolio-worker/og-image.png`
-- Output: `typescript/portfolio-worker/worker.js` (150.06 KB)
+- Script: `apps/portfolio/generate-worker.js`
+- Input: `apps/portfolio/index.html`, `apps/portfolio/styles.css`, `apps/portfolio/data.json`, `apps/portfolio/og-image.png`
+- Output: `apps/portfolio/worker.js` (150.06 KB)
 - Process: CSS injection, data injection, OG embedding, minification, CSP hashing
 
 **Commits**:

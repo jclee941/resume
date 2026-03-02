@@ -18,7 +18,7 @@ This repo now uses a split model:
 3. Ensure deploy command uses explicit config:
 
 ```bash
-npx wrangler deploy --config typescript/portfolio-worker/wrangler.toml --env production
+npx wrangler deploy --config apps/portfolio/wrangler.toml --env production
 ```
 
 4. Push to `master` to trigger build/deploy via Cloudflare.
@@ -47,7 +47,7 @@ Deploy/rollback/preview deploy jobs are disabled to avoid dual-deployer drift.
 To let Cloudflare Builds create versions without promoting active deployment, set deploy command to:
 
 ```bash
-npx wrangler versions upload --config typescript/portfolio-worker/wrangler.toml --env production
+npx wrangler versions upload --config apps/portfolio/wrangler.toml --env production
 ```
 
 ## Required Secrets
@@ -69,4 +69,4 @@ curl -i https://resume.jclee.me/job/health
 
 - Keep only one active deploy authority (Cloudflare Builds) to prevent race conditions.
 - Keep `--config` explicit in all build/deploy commands.
-- `typescript/portfolio-worker/worker.js` is generated; do not hand-edit.
+- `apps/portfolio/worker.js` is generated; do not hand-edit.

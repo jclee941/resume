@@ -32,7 +32,7 @@
 ### Step 1: 대시보드 실행
 
 ```bash
-cd typescript/job-automation
+cd apps/job-server
 npm run dashboard
 ```
 
@@ -662,7 +662,7 @@ curl http://localhost:3456/api/metrics
 
 ```bash
 # 스케줄 등록
-0 9 * * * cd /home/jclee/dev/resume/typescript/job-automation && node src/auto-apply/cli/index.js apply --apply --max=5
+0 9 * * * cd /home/jclee/dev/resume/apps/job-server && node src/auto-apply/cli/index.js apply --apply --max=5
 ```
 
 ---

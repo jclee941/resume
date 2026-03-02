@@ -50,9 +50,11 @@ npm run test:e2e     # Run E2E tests (requires Playwright browsers)
 
 ```
 resume/
-├── typescript/                 # Language-based source directory
-│   ├── portfolio-worker/       # Edge-deployed portfolio (resume.jclee.me)
-│   ├── job-automation/         # MCP Server + stealth crawlers
+├── apps/                       # Deployable applications
+│   ├── portfolio/              # Edge-deployed portfolio (resume.jclee.me)
+│   ├── job-server/             # MCP Server + stealth crawlers
+│   └── job-dashboard/          # Job dashboard worker
+├── packages/                   # Shared packages
 │   ├── cli/                    # Deployment CLI (Commander.js)
 │   └── data/                   # SSoT resume data & schemas
 ├── tools/                      # Build, deploy, CI scripts
@@ -161,7 +163,7 @@ docs(workers): enhance AGENTS.md with handler classes and workflows
 All resume data flows from a single canonical source:
 
 ```
-typescript/data/resumes/master/resume_data.json
+packages/data/resumes/master/resume_data.json
 ```
 
 - **Never** edit resume data in multiple places.

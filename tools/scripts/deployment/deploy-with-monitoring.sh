@@ -65,7 +65,7 @@ fi
 
 # Step 3: Deploy
 echo -e "${BLUE}[3/4] Deploying to Cloudflare Workers...${NC}"
-tmux send-keys -t "${SESSION_NAME}:${WINDOW_NAME}" "cd ${PROJECT_ROOT} && npx wrangler deploy --config typescript/portfolio-worker/wrangler.toml --env production" C-m
+tmux send-keys -t "${SESSION_NAME}:${WINDOW_NAME}" "cd ${PROJECT_ROOT} && npx wrangler deploy --config apps/portfolio/wrangler.toml --env production" C-m
 
 sleep 5
 DEPLOY_OUTPUT=$(tmux capture-pane -t "${SESSION_NAME}:${WINDOW_NAME}" -p | tail -10)

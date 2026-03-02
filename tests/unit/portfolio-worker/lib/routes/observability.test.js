@@ -8,7 +8,7 @@ const {
   generateVitalsRoute,
   generateTrackRoute,
   generateAnalyticsRoute,
-} = require('../../../../../typescript/portfolio-worker/lib/routes/observability');
+} = require('../../../../../apps/portfolio/lib/routes/observability');
 
 describe('routes/observability', () => {
   describe('generateCfStatsRoute', () => {

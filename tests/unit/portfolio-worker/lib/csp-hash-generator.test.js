@@ -9,9 +9,9 @@ const {
   extractAllHashes,
   mergeHashes,
   validateHashFormat,
-} = require('../../../../typescript/portfolio-worker/lib/csp-hash-generator');
+} = require('../../../../apps/portfolio/lib/csp-hash-generator');
 
-const { generateHash } = require('../../../../typescript/portfolio-worker/lib/utils');
+const { generateHash } = require('../../../../apps/portfolio/lib/utils');
 
 describe('csp-hash-generator', () => {
   describe('extractScriptHashes', () => {

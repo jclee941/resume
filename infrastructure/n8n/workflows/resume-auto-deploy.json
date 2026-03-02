@@ -75,7 +75,7 @@
     },
     {
       "parameters": {
-        "command": "cd /home/jclee/dev/resume/typescript/portfolio-worker && wrangler deploy"
+        "command": "cd /home/jclee/dev/resume/apps/portfolio && wrangler deploy"
       },
       "id": "wrangler-deploy",
       "name": "Deploy to Cloudflare",

@@ -1,0 +1,75 @@
+# Portfolio Worker - Library Modules
+# Stateless security, logging, metrics modules for edge deployment
+
+package(default_visibility = ["//apps/portfolio:__subpackages__"])
+
+filegroup(
+    name = "sources",
+    srcs = glob(["*.js"]),
+)
+
+# Security module (CSP headers, HSTS, X-Frame-Options)
+filegroup(
+    name = "security",
+    srcs = ["security-headers.js"],
+)
+
+# Logging module (ECS-format structured logging)
+filegroup(
+    name = "logging",
+    srcs = ["es-logger.js"],
+)
+
+# Metrics module (Prometheus endpoint)
+filegroup(
+    name = "metrics",
+    srcs = ["metrics.js"],
+)
+
+# Configuration module
+filegroup(
+    name = "config",
+    srcs = ["config.js"],
+)
+
+# Environment module
+filegroup(
+    name = "env",
+    srcs = ["env.js"],
+)
+
+# Internationalization module
+filegroup(
+    name = "i18n",
+    srcs = ["i18n.js"],
+)
+
+# Utilities module
+filegroup(
+    name = "utils",
+    srcs = ["utils.js"],
+)
+
+# Validation module
+filegroup(
+    name = "validation",
+    srcs = ["validators.js"],
+)
+
+# Templates module (HTML generation)
+filegroup(
+    name = "templates",
+    srcs = ["templates.js"],
+)
+
+# Cards rendering module
+filegroup(
+    name = "cards",
+    srcs = ["cards.js"],
+)
+
+# Authentication helpers module
+filegroup(
+    name = "auth",
+    srcs = ["auth.js"],
+)

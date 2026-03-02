@@ -91,7 +91,7 @@ cd /home/jclee/dev/resume
 DEPLOYED_AT=$(date -u +'%Y-%m-%dT%H:%M:%SZ') npm run build
 
 # Deploy
-cd typescript/portfolio-worker && npx wrangler deploy
+cd apps/portfolio && npx wrangler deploy
 ```
 
 ---
@@ -126,7 +126,7 @@ After deployment, run comprehensive verification:
 
 #### Interactive Login (Easiest)
 ```bash
-cd typescript/portfolio-worker
+cd apps/portfolio
 npx wrangler login
 # Opens browser for authentication
 ```

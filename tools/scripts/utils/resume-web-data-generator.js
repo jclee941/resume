@@ -1,9 +1,9 @@
 /**
- * Resume typescript/portfolio-worker data transformation utilities.
+ * Resume apps/portfolio data transformation utilities.
  */
 
 /**
- * Generate portfolio typescript/portfolio-worker data from master resume source data.
+ * Generate portfolio apps/portfolio data from master resume source data.
  * @param {Object} source - Master resume data.
  * @returns {Object} Portfolio data.json payload.
  */
@@ -109,7 +109,7 @@ function generateWebData(source) {
 
     if (idx === 0) {
       entry.completePdfUrl =
-        'https://raw.githubusercontent.com/jclee-homelab/resume/master/typescript/data/resumes/technical/nextrade/exports/Nextrade_Full_Documentation.pdf';
+        'https://raw.githubusercontent.com/jclee-homelab/resume/master/packages/data/resumes/technical/nextrade/exports/Nextrade_Full_Documentation.pdf';
     }
 
     return entry;
@@ -139,7 +139,7 @@ function generateWebData(source) {
 
     if (idx === 0) {
       entry.completePdfUrl =
-        'https://raw.githubusercontent.com/jclee-homelab/resume/master/typescript/data/resumes/technical/nextrade/exports/Nextrade_Full_Documentation.pdf';
+        'https://raw.githubusercontent.com/jclee-homelab/resume/master/packages/data/resumes/technical/nextrade/exports/Nextrade_Full_Documentation.pdf';
     }
 
     return entry;
@@ -193,9 +193,9 @@ function generateWebData(source) {
     resumeDownload: {
       pdfUrl: 'https://resume.jclee.me/resume.pdf',
       docxUrl:
-        'https://raw.githubusercontent.com/jclee-homelab/resume/master/typescript/data/resumes/archive/versions/resume_final.docx',
+        'https://raw.githubusercontent.com/jclee-homelab/resume/master/packages/data/resumes/archive/versions/resume_final.docx',
       mdUrl:
-        'https://raw.githubusercontent.com/jclee-homelab/resume/master/typescript/data/resumes/master/resume_final.md',
+        'https://raw.githubusercontent.com/jclee-homelab/resume/master/packages/data/resumes/master/resume_final.md',
     },
     resume,
     resumeEn,

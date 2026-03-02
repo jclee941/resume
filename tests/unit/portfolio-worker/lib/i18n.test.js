@@ -1,5 +1,5 @@
 /**
- * Unit tests for typescript/portfolio-worker/lib/i18n.js
+ * Unit tests for apps/portfolio/lib/i18n.js
  */
 
 const {
@@ -9,7 +9,7 @@ const {
   isLanguageSupported,
   getSupportedLanguages,
   DEFAULT_LANGUAGE,
-} = require('../../../../typescript/portfolio-worker/lib/i18n');
+} = require('../../../../apps/portfolio/lib/i18n');
 
 describe('i18n Module', () => {
   describe('detectLanguage', () => {

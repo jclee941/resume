@@ -11,16 +11,17 @@ Personal resume and portfolio management system built with modern web technologi
 
 ```
 resume/
-├── typescript/                    # Language-based source directory
-│   ├── portfolio-worker/          # Edge portfolio (resume.jclee.me)
+├── apps/                          # Deployable applications
+│   ├── portfolio/                 # Edge portfolio (resume.jclee.me)
 │   │   ├── lib/                   # Build utilities, security headers
 │   │   ├── assets/                # Fonts, images (inlined at build)
 │   │   ├── index.html             # KO portfolio template
 │   │   ├── index-en.html          # EN portfolio template
 │   │   └── generate-worker.js     # Build engine → worker.js
-│   ├── job-automation/            # MCP Server + Automation runtime
-│   │   ├── src/                   # Core: crawlers, services, tools
-│   │   └── workers/               # Embedded dashboard runtime (served by resume worker)
+│   ├── job-server/                # MCP Server + Automation runtime
+│   │   └── src/                   # Core: crawlers, services, tools
+│   └── job-dashboard/             # Dashboard runtime (served by resume worker)
+├── packages/                      # Shared packages
 │   ├── cli/                       # Deployment CLI (Commander.js)
 │   └── data/                      # SSoT: Resume JSONs & schemas
 │       └── resumes/master/        # resume_data.json (canonical)
@@ -61,7 +62,7 @@ npm install
 npm run automate:full
 
 # Serve portfolio locally
-cd typescript/portfolio-worker
+cd apps/portfolio
 npm run dev
 
 # Run tests
@@ -77,7 +78,7 @@ npm run test:e2e
 
 ```bash
 # Generate worker.js from HTML (extracts CSP hashes from both KO + EN)
-cd typescript/portfolio-worker
+cd apps/portfolio
 node generate-worker.js
 
 # Fast SSOT validation/build pipeline from project root
@@ -278,10 +279,10 @@ Domain-specific context in subdirectory AGENTS.md files:
 
 | Path                                    | Focus                |
 | --------------------------------------- | -------------------- |
-| `typescript/portfolio-worker/AGENTS.md` | Build pipeline, CSP  |
-| `typescript/job-automation/AGENTS.md`   | MCP server, crawlers |
-| `typescript/data/AGENTS.md`             | SSoT schema, sync    |
-| `typescript/cli/AGENTS.md`              | CLI tool usage       |
+| `apps/portfolio/AGENTS.md` | Build pipeline, CSP  |
+| `apps/job-server/AGENTS.md`   | MCP server, crawlers |
+| `packages/data/AGENTS.md`             | SSoT schema, sync    |
+| `packages/cli/AGENTS.md`              | CLI tool usage       |
 | `tests/AGENTS.md`                       | Test patterns        |
 
 ## Portfolio Features

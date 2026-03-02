@@ -5,7 +5,7 @@ Use this template when configuring Cloudflare Workers Builds for this monorepo.
 ## Standard Fields
 
 - Build command: `npm run build`
-- Deploy command: `npx wrangler deploy --config typescript/portfolio-worker/wrangler.toml --env production`
+- Deploy command: `npx wrangler deploy --config apps/portfolio/wrangler.toml --env production`
 - Root directory: `/`
 - Build token name: `resume build token`
 - Environment variables: none
@@ -14,7 +14,7 @@ Use this template when configuring Cloudflare Workers Builds for this monorepo.
 ## Why This Template
 
 - Running `npx wrangler deploy` at repo root without `--config` causes `Missing entry-point to Worker script or to assets directory`.
-- The Worker config for production is in `typescript/portfolio-worker/wrangler.toml`.
+- The Worker config for production is in `apps/portfolio/wrangler.toml`.
 - Explicit `--config` makes monorepo deploy behavior deterministic in local, CI, and Cloudflare Builds.
 
 ## Validation Commands
@@ -23,7 +23,7 @@ Run from repository root:
 
 ```bash
 npm run build
-npx wrangler deploy --config typescript/portfolio-worker/wrangler.toml --env production --dry-run
+npx wrangler deploy --config apps/portfolio/wrangler.toml --env production --dry-run
 ```
 
 ## Equivalent npm Scripts

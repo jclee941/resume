@@ -12,7 +12,7 @@ services:
     ports:
       - '3000:3000'
     volumes:
-      - job_automation_data:/app/typescript/job-automation/.data
+      - job_automation_data:/app/apps/job-server/.data
     healthcheck:
       test:
         [

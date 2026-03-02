@@ -4,52 +4,52 @@
  */
 
 // Mock all dependencies using the CORRECT module paths
-jest.mock('../../../../typescript/portfolio-worker/lib/file-reader', () => ({
+jest.mock('../../../../apps/portfolio/lib/file-reader', () => ({
   readBuildInputs: jest.fn(),
 }));
-jest.mock('../../../../typescript/portfolio-worker/lib/data-processor', () => ({
+jest.mock('../../../../apps/portfolio/lib/data-processor', () => ({
   processProjectData: jest.fn(),
   encodeBinaryAssets: jest.fn(),
 }));
-jest.mock('../../../../typescript/portfolio-worker/lib/html-transformer', () => ({
+jest.mock('../../../../apps/portfolio/lib/html-transformer', () => ({
   buildLocalizedHtml: jest.fn(),
   escapeForTemplateLiteral: jest.fn(),
 }));
-jest.mock('../../../../typescript/portfolio-worker/lib/csp-hash-generator', () => ({
+jest.mock('../../../../apps/portfolio/lib/csp-hash-generator', () => ({
   extractScriptHashes: jest.fn(),
   extractStyleHashes: jest.fn(),
   mergeHashes: jest.fn(),
 }));
-jest.mock('../../../../typescript/portfolio-worker/lib/security-headers', () => ({
+jest.mock('../../../../apps/portfolio/lib/security-headers', () => ({
   generateSecurityHeaders: jest.fn(),
 }));
-jest.mock('../../../../typescript/portfolio-worker/lib/worker-writer', () => ({
+jest.mock('../../../../apps/portfolio/lib/worker-writer', () => ({
   buildAndWriteWorker: jest.fn(),
 }));
 
-const { readBuildInputs } = require('../../../../typescript/portfolio-worker/lib/file-reader');
+const { readBuildInputs } = require('../../../../apps/portfolio/lib/file-reader');
 const {
   processProjectData,
   encodeBinaryAssets,
-} = require('../../../../typescript/portfolio-worker/lib/data-processor');
+} = require('../../../../apps/portfolio/lib/data-processor');
 const {
   buildLocalizedHtml,
   escapeForTemplateLiteral,
-} = require('../../../../typescript/portfolio-worker/lib/html-transformer');
+} = require('../../../../apps/portfolio/lib/html-transformer');
 const {
   extractScriptHashes,
   extractStyleHashes,
   mergeHashes,
-} = require('../../../../typescript/portfolio-worker/lib/csp-hash-generator');
+} = require('../../../../apps/portfolio/lib/csp-hash-generator');
 const {
   generateSecurityHeaders,
-} = require('../../../../typescript/portfolio-worker/lib/security-headers');
+} = require('../../../../apps/portfolio/lib/security-headers');
 const {
   buildAndWriteWorker,
-} = require('../../../../typescript/portfolio-worker/lib/worker-writer');
+} = require('../../../../apps/portfolio/lib/worker-writer');
 const {
   runWorkerBuild,
-} = require('../../../../typescript/portfolio-worker/lib/build-orchestrator');
+} = require('../../../../apps/portfolio/lib/build-orchestrator');
 
 describe('build-orchestrator', () => {
   const mockLogger = { log: jest.fn(), debug: jest.fn(), warn: jest.fn(), error: jest.fn() };
@@ -200,7 +200,7 @@ describe('build-orchestrator', () => {
     });
 
     it('logs template cache as Empty when dataHash is null', async () => {
-      const { TEMPLATE_CACHE } = require('../../../../typescript/portfolio-worker/lib/config');
+      const { TEMPLATE_CACHE } = require('../../../../apps/portfolio/lib/config');
       TEMPLATE_CACHE.dataHash = null;
 
       await runWorkerBuild(buildOpts);
@@ -208,7 +208,7 @@ describe('build-orchestrator', () => {
     });
 
     it('logs template cache as Active when dataHash is set', async () => {
-      const { TEMPLATE_CACHE } = require('../../../../typescript/portfolio-worker/lib/config');
+      const { TEMPLATE_CACHE } = require('../../../../apps/portfolio/lib/config');
       TEMPLATE_CACHE.dataHash = 'abc123';
 
       await runWorkerBuild(buildOpts);

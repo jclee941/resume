@@ -15,14 +15,14 @@ This document catalogs **forbidden patterns**, **deprecated practices**, and **c
 ### 1. NEVER Edit Generated Artifacts
 
 **Affected Files**:
-- `typescript/portfolio-worker/worker.js` (deployable Cloudflare Worker)
+- `apps/portfolio/worker.js` (deployable Cloudflare Worker)
 
 **Rule**: This file is **auto-generated** from `index.html` by `generate-worker.js`. Manual edits are **lost on next build**.
 
 **Why It Breaks**:
 ```bash
 # ❌ WRONG WORKFLOW
-vim typescript/portfolio-worker/worker.js  # Manual edit
+vim apps/portfolio/worker.js  # Manual edit
 npm run deploy                              # Deploys manual changes
 # ... later ...
 npm run build                               # OVERWRITES manual changes!
@@ -31,13 +31,13 @@ npm run build                               # OVERWRITES manual changes!
 **Correct Workflow**:
 ```bash
 # ✅ CORRECT
-vim typescript/portfolio-worker/index.html  # Edit source HTML
+vim apps/portfolio/index.html  # Edit source HTML
 npm run build                               # Regenerate worker.js
 npm run deploy                              # Deploy generated artifact
 ```
 
 **References**:
-- `typescript/portfolio-worker/AGENTS.md:19`
+- `apps/portfolio/AGENTS.md:19`
 - `docs/guides/QUICK_START.md:29`
 
 ---
@@ -45,8 +45,8 @@ npm run deploy                              # Deploy generated artifact
 ### 2. NEVER Trim Before CSP Hash Calculation
 
 **Affected Files**:
-- `typescript/portfolio-worker/lib/templates.js:41,54`
-- `typescript/portfolio-worker/generate-worker.js:109`
+- `apps/portfolio/lib/templates.js:41,54`
+- `apps/portfolio/generate-worker.js:109`
 
 **Rule**: Do NOT use `.trim()` on extracted inline scripts/styles before calculating SHA-256 hashes for Content Security Policy (CSP).
 
@@ -84,14 +84,14 @@ SHA256("console.log('hello');")  // Different hash!
 
 **References**:
 - `docs/guides/ARCHITECTURE.md:76`
-- `typescript/portfolio-worker/lib/templates.js:41,54`
+- `apps/portfolio/lib/templates.js:41,54`
 
 ---
 
 ### 3. NEVER Use Naked Playwright/Puppeteer
 
 **Affected Files**:
-- `typescript/job-automation/src/crawlers/*`
+- `apps/job-server/src/crawlers/*`
 
 **Rule**: Always use `BaseCrawler` class instead of direct `chromium.launch()` or `puppeteer.launch()`.
 
@@ -122,15 +122,15 @@ class WantedCrawler extends BaseCrawler {
 - Cookie persistence via `SessionManager`
 
 **References**:
-- `typescript/job-automation/src/crawlers/AGENTS.md:44`
-- `typescript/job-automation/src/AGENTS.md:92`
+- `apps/job-server/src/crawlers/AGENTS.md:44`
+- `apps/job-server/src/AGENTS.md:92`
 
 ---
 
 ### 4. NEVER Cross Client Boundaries
 
 **Affected Files**:
-- `typescript/job-automation/src/shared/clients/*`
+- `apps/job-server/src/shared/clients/*`
 
 **Rule**: Each client (`wanted/`, `saramin/`, `jobkorea/`) is **isolated**. Do NOT import across client directories.
 
@@ -140,11 +140,11 @@ Creates circular dependencies and violates separation of concerns:
 
 ```javascript
 // ❌ WRONG - Violates isolation
-// File: typescript/job-automation/src/shared/clients/wanted/api.js
+// File: apps/job-server/src/shared/clients/wanted/api.js
 import { saraminLogin } from '../saramin/auth.js';  // Cross-boundary import
 
 // ✅ CORRECT - Use shared services
-// File: typescript/job-automation/src/shared/clients/wanted/api.js
+// File: apps/job-server/src/shared/clients/wanted/api.js
 import { SessionManager } from '../../services/session/index.js';
 ```
 
@@ -158,14 +158,14 @@ clients/
 ```
 
 **References**:
-- `typescript/job-automation/src/shared/clients/AGENTS.md:35-36`
+- `apps/job-server/src/shared/clients/AGENTS.md:35-36`
 
 ---
 
 ### 5. NEVER Store Credentials in Client Code
 
 **Affected Files**:
-- `typescript/job-automation/src/shared/clients/secrets/*`
+- `apps/job-server/src/shared/clients/secrets/*`
 
 **Rule**: Credentials (cookies, tokens, API keys) MUST go in `secrets/` directory, never in client implementation files.
 
@@ -175,13 +175,13 @@ Security risk + merge conflicts + accidental commits:
 
 ```javascript
 // ❌ WRONG - Credentials in code
-// File: typescript/job-automation/src/shared/clients/wanted/api.js
+// File: apps/job-server/src/shared/clients/wanted/api.js
 const cookies = [
   { name: '_wts', value: 'abc123...' }  // SECURITY RISK!
 ];
 
 // ✅ CORRECT - Use SessionManager
-// File: typescript/job-automation/src/shared/clients/wanted/api.js
+// File: apps/job-server/src/shared/clients/wanted/api.js
 import { SessionManager } from '../../services/session/index.js';
 
 const session = await SessionManager.load('wanted');
@@ -189,8 +189,8 @@ const cookies = session.cookies;
 ```
 
 **References**:
-- `typescript/job-automation/src/shared/clients/AGENTS.md:36`
-- `typescript/job-automation/src/AGENTS.md:93`
+- `apps/job-server/src/shared/clients/AGENTS.md:36`
+- `apps/job-server/src/AGENTS.md:93`
 
 ---
 
@@ -227,7 +227,7 @@ echo "CLOUDFLARE_API_TOKEN=abc123..." >> .env.local
 ### 7. NEVER Instantiate Services Directly in Routes
 
 **Affected Files**:
-- `typescript/job-automation/src/server/routes/*`
+- `apps/job-server/src/server/routes/*`
 
 **Rule**: Use Fastify decorators for services, never `new Service()` in route handlers.
 
@@ -237,14 +237,14 @@ Breaks dependency injection and makes testing impossible:
 
 ```javascript
 // ❌ WRONG - Direct instantiation
-// File: typescript/job-automation/src/server/routes/jobs.js
+// File: apps/job-server/src/server/routes/jobs.js
 fastify.get('/jobs', async (request, reply) => {
   const jobService = new JobService();  // New instance every request!
   return jobService.getJobs();
 });
 
 // ✅ CORRECT - Use decorated service
-// File: typescript/job-automation/src/server/routes/jobs.js
+// File: apps/job-server/src/server/routes/jobs.js
 fastify.get('/jobs', async (request, reply) => {
   return request.server.jobService.getJobs();  // Shared instance
 });
@@ -252,12 +252,12 @@ fastify.get('/jobs', async (request, reply) => {
 
 **Setup** (in server initialization):
 ```javascript
-// File: typescript/job-automation/src/server/index.js
+// File: apps/job-server/src/server/index.js
 fastify.decorate('jobService', new JobService());
 ```
 
 **References**:
-- `typescript/job-automation/src/server/routes/AGENTS.md:44`
+- `apps/job-server/src/server/routes/AGENTS.md:44`
 
 ---
 
@@ -275,14 +275,14 @@ Breaks on CI/CD and other developers' machines:
 ```bash
 # ❌ WRONG - Absolute path
 #!/bin/bash
-cd /home/jclee/dev/resume/typescript/portfolio-worker
+cd /home/jclee/dev/resume/apps/portfolio
 npm run build
 
 # ✅ CORRECT - Relative from project root
 #!/bin/bash
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
-cd "$PROJECT_ROOT/typescript/portfolio-worker"
+cd "$PROJECT_ROOT/apps/portfolio"
 npm run build
 ```
 
@@ -294,7 +294,7 @@ npm run build
 ### 9. NEVER Skip Data Sync After Resume Changes
 
 **Affected Files**:
-- `typescript/data/resumes/master/resume_data.json`
+- `packages/data/resumes/master/resume_data.json`
 
 **Rule**: After editing `resume_data.json`, always run `npm run sync:data` before building applications.
 
@@ -304,12 +304,12 @@ Applications use **copied** resume data. Skipping sync means stale data in produ
 
 ```bash
 # ❌ WRONG - Stale data deployed
-vim typescript/data/resumes/master/resume_data.json
+vim packages/data/resumes/master/resume_data.json
 npm run build:all  # Uses OLD data!
 npm run deploy
 
 # ✅ CORRECT - Fresh data deployed
-vim typescript/data/resumes/master/resume_data.json
+vim packages/data/resumes/master/resume_data.json
 npm run sync:data  # Copies to all apps
 npm run build:all
 npm run deploy
@@ -318,15 +318,15 @@ npm run deploy
 **What `sync:data` Does**:
 ```bash
 # Copies master resume to all consumers
-cp typescript/data/resumes/master/resume_data.json \
-   typescript/portfolio-worker/data/resume.json
+cp packages/data/resumes/master/resume_data.json \
+   apps/portfolio/data/resume.json
 
-cp typescript/data/resumes/master/resume_data.json \
-   typescript/cli/data/resume.json
+cp packages/data/resumes/master/resume_data.json \
+   packages/cli/data/resume.json
 ```
 
 **References**:
-- `typescript/data/AGENTS.md:19`
+- `packages/data/AGENTS.md:19`
 
 ---
 
@@ -394,11 +394,11 @@ done
 
 Before deploying changes, verify:
 
-- [ ] No manual edits to `typescript/portfolio-worker/worker.js`
+- [ ] No manual edits to `apps/portfolio/worker.js`
 - [ ] Resume data changes synced with `npm run sync:data`
 - [ ] No `.trim()` calls before CSP hash calculations
 - [ ] All new crawlers extend `BaseCrawler`
-- [ ] No cross-client imports in `typescript/job-automation/src/shared/clients/`
+- [ ] No cross-client imports in `apps/job-server/src/shared/clients/`
 - [ ] Secrets in `.env.local`, not `.env`
 - [ ] Build scripts use relative paths
 - [ ] Affected Bazel targets tested
@@ -420,7 +420,7 @@ Before deploying changes, verify:
 ### Issue: SessionStorage Admin Token (Security Risk)
 
 **Status**: Open  
-**Location**: `typescript/portfolio-worker/worker.js` (inferred from session notes)
+**Location**: `apps/portfolio/worker.js` (inferred from session notes)
 
 **Problem**: Admin tokens stored in sessionStorage are vulnerable to XSS attacks.
 

@@ -9,7 +9,7 @@ Resume data is consumed by portfolio rendering, automation workflows, and extern
 
 ## Decision
 
-Establish `typescript/data/resumes/master/resume_data.json` as the canonical source of truth. All downstream representations must be generated or synchronized from this file.
+Establish `packages/data/resumes/master/resume_data.json` as the canonical source of truth. All downstream representations must be generated or synchronized from this file.
 
 ## Consequences
 

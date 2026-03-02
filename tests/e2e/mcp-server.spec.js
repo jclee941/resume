@@ -22,7 +22,7 @@ const path = require('path');
 
 // Get the MCP server path (resolve relative to this file so it works in CI)
 const PROJECT_ROOT = path.resolve(__dirname, '../..');
-const MCP_SERVER_PATH = path.resolve(PROJECT_ROOT, 'typescript/job-automation/src/index.js');
+const MCP_SERVER_PATH = path.resolve(PROJECT_ROOT, 'apps/job-server/src/index.js');
 
 let mcpAvailable = false;
 

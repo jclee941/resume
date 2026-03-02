@@ -10,7 +10,7 @@ const SELECTORS = {
 };
 
 // Dynamically load project counts from data.json (auto-sync)
-const projectData = require('../../typescript/portfolio-worker/data.json');
+const projectData = require('../../apps/portfolio/data.json');
 const EXPECTED_COUNTS = {
   PROJECTS: projectData.projects.length,
 };

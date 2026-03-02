@@ -117,7 +117,7 @@ Markdown Source Files
          ├─ Check dependencies (Pandoc/Docker)
          ├─ Read version from package.json
          ├─ Generate PDF with metadata
-         └─ Copy to typescript/portfolio-worker/downloads/
+         └─ Copy to apps/portfolio/downloads/
          │
          ▼
   Generated PDFs (with version)

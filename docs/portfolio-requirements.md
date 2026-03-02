@@ -308,7 +308,7 @@ npm run build
 npm run dev
 
 # Production 배포 (root-safe)
-npx wrangler deploy --config typescript/portfolio-worker/wrangler.toml --env production
+npx wrangler deploy --config apps/portfolio/wrangler.toml --env production
 
 # 헬스체크 확인
 curl -s https://resume.jclee.me/health | jq
@@ -331,6 +331,6 @@ curl -s https://resume.jclee.me/metrics
 ## 관련 문서
 
 - [AGENTS.md](../AGENTS.md) - 프로젝트 개요
-- [typescript/portfolio-worker/AGENTS.md](../typescript/portfolio-worker/AGENTS.md) - 빌드 파이프라인
+- [apps/portfolio/AGENTS.md](../apps/portfolio/AGENTS.md) - 빌드 파이프라인
 - [cloudflare-workflows-requirements.md](./cloudflare-workflows-requirements.md) - Job Automation 요구사항
 - [planning/milestones.md](./planning/milestones.md) - 마일스톤 로드맵
