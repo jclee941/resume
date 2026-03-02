@@ -7,7 +7,7 @@ import jobHandler, {
   HealthCheckWorkflow,
   BackupWorkflow,
   CleanupWorkflow,
-} from '../job-automation/workers/src/index.js';
+} from '../job-dashboard/src/index.js';
 import {
   DEFAULT_LANGUAGE,
   JOB_ROUTE_PREFIX,
