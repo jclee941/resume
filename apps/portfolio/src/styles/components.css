@@ -1098,7 +1098,7 @@
   margin-bottom: 1rem;
 }
 .about-label {
-  color: var(--neon-green, #0f0);
+  color: var(--cyber-green, #00ff88);
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.85rem;
   display: block;
@@ -1111,7 +1111,7 @@
 }
 .about-list li::before {
   content: '- ';
-  color: var(--neon-green, #0f0);
+  color: var(--cyber-green, #00ff88);
 }
 
 /* ========================================
@@ -1203,10 +1203,6 @@
   animation: typing 3.5s steps(40, end), blink-cursor 0.75s step-end infinite;
 }
 
-@keyframes typing {
-  from { width: 0; }
-  to { width: 100%; }
-}
 
 @keyframes blink-cursor {
   from, to { border-color: transparent; }

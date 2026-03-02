@@ -166,7 +166,7 @@ html {
   white-space: nowrap;
   animation:
     typing 1.5s steps(10) forwards,
-    blink 0.7s step-end infinite;
+    blink-border 0.7s step-end infinite;
 }
 
 @keyframes typing {
@@ -178,7 +178,7 @@ html {
   }
 }
 
-@keyframes blink {
+@keyframes blink-border {
   50% {
     border-color: transparent;
   }
