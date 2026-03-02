@@ -162,8 +162,99 @@
 }
 
 /* Responsive */
+.nav-toggle {
+  display: none;
+}
+
 @media (max-width: 640px) {
+  .minimal-nav {
+    position: relative;
+  }
+
+  .nav-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 50;
+  }
+
+  .hamburger {
+    display: block;
+    position: relative;
+    width: 20px;
+    height: 2px;
+    background: var(--cyber-green);
+    transition: background 0.2s ease-out;
+  }
+
+  .hamburger::before,
+  .hamburger::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--cyber-green);
+    transition: transform 0.2s ease-out;
+  }
+
+  .hamburger::before {
+    transform: translateY(-6px);
+  }
+
+  .hamburger::after {
+    transform: translateY(6px);
+  }
+
+  .nav-toggle[aria-expanded="true"] .hamburger {
+    background: transparent;
+  }
+
+  .nav-toggle[aria-expanded="true"] .hamburger::before {
+    transform: rotate(45deg);
+  }
+
+  .nav-toggle[aria-expanded="true"] .hamburger::after {
+    transform: rotate(-45deg);
+  }
+
   .nav-links {
-    display: none; /* Or use a hamburger if needed, but for minimal resume, maybe just stack or hide */
+    display: flex;
+    position: absolute;
+    top: calc(100% + var(--space-4));
+    left: 0;
+    width: 100%;
+    flex-direction: column;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-top: none;
+    z-index: 40;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+  }
+
+  .nav-links.open {
+    max-height: 400px;
+    opacity: 1;
+    border-top: 1px solid var(--border-primary);
+  }
+
+  .nav-links a {
+    width: 100%;
+    min-height: 44px;
+    padding: var(--space-4);
+    border-bottom: 1px solid var(--border-primary);
+  }
+
+  .nav-links a:last-child {
+    border-bottom: none;
   }
 }

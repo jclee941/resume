@@ -4,6 +4,7 @@ export function initUI() {
   initScrollReveal();
   initScrollProgress();
   initBackToTop();
+  initMobileNav();
 }
 
 function initSmoothScroll() {
@@ -105,4 +106,35 @@ function initBackToTop() {
 
   window.addEventListener('scroll', toggleVisibility, { passive: true });
   toggleVisibility();
+}
+
+
+function initMobileNav() {
+  const toggle = document.querySelector('.nav-toggle');
+  if (!toggle) return;
+  const navLinks = document.querySelector('.nav-links');
+  if (!navLinks) return;
+
+  toggle.addEventListener('click', () => {
+    const expanded = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', String(!expanded));
+    navLinks.classList.toggle('open');
+  });
+
+  // Close menu when a nav link is clicked
+  navLinks.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      toggle.setAttribute('aria-expanded', 'false');
+      navLinks.classList.remove('open');
+    });
+  });
+
+  // Close on Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && navLinks.classList.contains('open')) {
+      toggle.setAttribute('aria-expanded', 'false');
+      navLinks.classList.remove('open');
+      toggle.focus();
+    }
+  });
 }
