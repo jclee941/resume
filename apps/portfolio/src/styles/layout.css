@@ -237,14 +237,15 @@
     z-index: 40;
     max-height: 0;
     overflow: hidden;
-    opacity: 0;
-    transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+    visibility: hidden;
+    transition: max-height 0.3s ease-out, visibility 0s 0.3s;
   }
 
   .nav-links.open {
     max-height: 400px;
-    opacity: 1;
+    visibility: visible;
     border-top: 1px solid var(--border-primary);
+    transition: max-height 0.3s ease-out, visibility 0s 0s;
   }
 
   .nav-links a {
