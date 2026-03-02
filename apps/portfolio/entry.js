@@ -55,13 +55,16 @@ async function postToEs(env, doc) {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 3000);
   try {
-    await fetch(`${esUrl}/${index}/_doc`, {
+    const resp = await fetch(`${esUrl}/${index}/_doc`, {
       method: 'POST',
       signal: controller.signal,
       headers: buildEsHeaders(env),
       body: JSON.stringify(doc),
     });
-  } catch { /* silent */ } finally {
+    // Best-effort — ignore response
+  } catch (err) {
+    console.error('[postToEs] ERROR:', err?.message || err, 'index:', env?.ELASTICSEARCH_INDEX);
+  } finally {
     clearTimeout(timeoutId);
   }
 }
@@ -115,8 +118,8 @@ async function logRequest(env, request, response, pathname, startTime) {
       duration,
       user_agent: { original: request?.headers?.get?.('user-agent') || '' },
     });
-  } catch {
-    // Best-effort
+  } catch (err) {
+    console.error('[logRequest] ERROR:', err?.message || err, 'path:', pathname);
   }
 }
 
