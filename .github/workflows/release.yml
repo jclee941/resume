@@ -1,6 +1,10 @@
 name: Release
 
 on:
+  workflow_run:
+    workflows: ['CI Validation Pipeline']
+    types: [completed]
+    branches: [master]
   workflow_dispatch:
 
 permissions:
@@ -10,6 +14,9 @@ jobs:
   release:
     name: Tag and Release
     runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -18,11 +25,76 @@ jobs:
 
       - name: Bump version and push tag
         id: tag_version
-        uses: mathieudutour/github-tag-action@v6.2
+        uses: mathieudutour/github-tag-action@a22cf08638b34d5badda920f9daf6e72c477b07b # v6.2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           release_branches: master
           default_bump: patch
 
-      - name: Diagnostic
-        run: echo "Tag step succeeded - ${{ steps.tag_version.outputs.new_tag }}"
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@b7eabc95ff50cbeeedec83973935c8f306dfcd0b # v1.20.0
+        with:
+          tag: ${{ steps.tag_version.outputs.new_tag }}
+          name: ${{ steps.tag_version.outputs.new_tag }}
+          body: ${{ steps.tag_version.outputs.changelog }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  # Inlined: cross-repo reusable workflows unsupported under workflow_run trigger
+  elk-ingest:
+    name: ELK Ingest
+    needs: [release]
+    runs-on: ubuntu-latest
+    if: always() && !cancelled()
+    steps:
+      - name: Determine conclusion
+        id: conclusion
+        run: |
+          if [ "${{ needs.release.result }}" = "failure" ]; then
+            echo "result=failure" >> "$GITHUB_OUTPUT"
+          elif [ "${{ needs.release.result }}" = "cancelled" ]; then
+            echo "result=cancelled" >> "$GITHUB_OUTPUT"
+          else
+            echo "result=success" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Ingest to Elasticsearch
+        if: vars.ELASTICSEARCH_URL != ''
+        run: |
+          PAYLOAD=$(jq -n \
+            --arg repo "${{ github.repository }}" \
+            --arg workflow "${{ github.workflow }}" \
+            --arg run_id "${{ github.run_id }}" \
+            --arg run_number "${{ github.run_number }}" \
+            --arg conclusion "${{ steps.conclusion.outputs.result }}" \
+            --arg branch "${{ github.ref_name }}" \
+            --arg sha "${{ github.sha }}" \
+            --arg actor "${{ github.actor }}" \
+            --arg service "resume" \
+            --arg timestamp "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            '{
+              "@timestamp": $timestamp,
+              "repository": $repo,
+              "workflow": $workflow,
+              "run_id": ($run_id | tonumber),
+              "run_number": ($run_number | tonumber),
+              "conclusion": $conclusion,
+              "branch": $branch,
+              "commit_sha": $sha,
+              "actor": $actor,
+              "service": $service
+            }')
+
+          CURL_ARGS=(-s -w "\n%{http_code}" -X POST \
+            "${{ vars.ELASTICSEARCH_URL }}/github-actions-_ds/_doc" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD")
+
+          if [ -n "$ELASTICSEARCH_API_KEY" ]; then
+            CURL_ARGS+=(-H "Authorization: ApiKey $ELASTICSEARCH_API_KEY")
+          fi
+
+          RESPONSE=$(curl "${CURL_ARGS[@]}")
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          echo "ELK ingest response: $HTTP_CODE"
+        env:
+          ELASTICSEARCH_API_KEY: ${{ secrets.ELASTICSEARCH_API_KEY }}
