@@ -43,7 +43,7 @@ jobs:
   elk-ingest:
     name: ELK Ingest
     needs: [release]
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.RUNNER || 'ubuntu-latest' }}
     if: always() && !cancelled()
     steps:
       - name: Determine conclusion
