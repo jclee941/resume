@@ -11,7 +11,7 @@ env:
 
 jobs:
   test-vault-oidc:
-    runs-on: [self-hosted, linux, x64, proxmox]
+    runs-on: [self-hosted, linux, x64, homelab]
     permissions:
       id-token: write
       contents: read
