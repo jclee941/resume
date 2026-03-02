@@ -15,7 +15,7 @@ Workflow-level CI/CD validation logic for this monorepo. This directory owns job
 | Release automation             | `release.yml`                                                  | tag/version release mechanics               |
 | Infra plan/apply               | `terraform.yml`                                                | infra workflow gates                        |
 | Repo hygiene automation        | `labeler.yml`, `pr-labeler.yml`, `stale.yml`, `auto-merge.yml` | labeling and lifecycle controls             |
-| Maintenance jobs               | `maintenance.yml`, `update-snapshots.yml`, `vault-test.yml`    | scheduled/utility checks                    |
+| Maintenance jobs               | `maintenance.yml`, `update-snapshots.yml`                      | scheduled/utility checks                    |
 
 ## CONVENTIONS
 

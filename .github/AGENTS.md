@@ -19,7 +19,6 @@
 │   ├── release.yml           # conventional commit → semver tag
 │   ├── verify.yml            # post-deploy health check
 │   ├── update-snapshots.yml  # Playwright snapshot refresh
-│   ├── vault-test.yml        # OIDC vault integration
 │   ├── pr-labeler.yml        # auto-label PRs by path
 │   ├── codeql.yml            # weekly + push security scan
 │   └── auto-merge.yml        # dependabot auto-merge

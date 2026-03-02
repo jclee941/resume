@@ -125,7 +125,7 @@ ELK ingest uses reusable workflow `qws941/.github/.github/workflows/_elk-ingest.
 
 ### Repo-Specific Workflows
 
-`ci`, `codeql`, `maintenance`, `release`, `terraform`, `update-snapshots`, `vault-test`, `verify`
+`ci`, `codeql`, `maintenance`, `release`, `terraform`, `update-snapshots`, `verify`
 
 ## CONVENTIONS
 
