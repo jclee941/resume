@@ -11,7 +11,7 @@ Cloudflare Worker serving a cyberpunk terminal-style portfolio. Zero runtime I/O
 ## STRUCTURE
 
 ```text
-portfolio-worker/
+portfolio/
 ├── index.html              # source HTML (hand-edited)
 ├── generate-worker.js      # build compiler
 ├── worker.js               # GENERATED — never edit

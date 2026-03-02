@@ -12,8 +12,8 @@ Centralized test hub. Jest (unit/integration) + Playwright (E2E).
 
 ```text
 tests/
-├── unit/                   # Jest, mirrors portfolio-worker/lib
-│   └── portfolio-worker/
+├── unit/                   # Jest, mirrors apps/portfolio/lib
+│   └── portfolio/
 │       └── lib/            # 18 .test.js files
 ├── e2e/                    # Playwright, 23 .spec.js files
 │   ├── fixtures/           # helpers.js (shared utilities)

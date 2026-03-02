@@ -11,7 +11,7 @@ MCP Server + Cloudflare Worker for stealth job automation on Korean job platform
 ## STRUCTURE
 
 ```text
-job-automation/
+job-server/
 ├── src/                    # MCP server core
 │   ├── index.js            # Fastify MCP bootstrap
 │   ├── cli.js              # job CLI entry
@@ -21,7 +21,7 @@ job-automation/
 │   ├── crawlers/           # stealth Playwright crawlers
 │   ├── auto-apply/         # form fill + rate limiting
 │   └── lib/                # utility wrappers (deprecated)
-├── workers/                # CF Worker dashboard (see workers/AGENTS.md)
+├── scripts/                # auth/sync utilities (see scripts/AGENTS.md)
 ├── scripts/                # auth/sync utilities (see scripts/AGENTS.md)
 ├── platforms/              # platform-specific crawlers (see platforms/AGENTS.md)
 ├── config.json             # runtime config

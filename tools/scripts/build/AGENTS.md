@@ -22,7 +22,7 @@ Asset generation scripts for PDF, PPTX, icons, screenshots, and Docker images.
 
 ## OUTPUT LOCATIONS
 
-`portfolio-worker/assets/` or `data/resumes/generated/`.
+`apps/portfolio/assets/` or `packages/data/resumes/generated/`.
 
 ## ANTI-PATTERNS
 

@@ -8,8 +8,8 @@ Unit tests validate module-level behavior with deterministic inputs/outputs for 
 
 ```text
 unit/
-├── portfolio-worker/     # worker/lib unit tests
-├── job-automation/       # automation module unit tests
+├── portfolio/            # worker/lib unit tests
+├── job-server/           # automation module unit tests
 ├── cli/                  # CLI unit tests
 ├── data/                 # resume data/schema unit tests
 ├── generate-worker.test.js

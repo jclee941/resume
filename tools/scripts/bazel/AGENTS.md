@@ -11,13 +11,13 @@ bazel/
 ├── BUILD.bazel                # Bazel package definition
 ├── build.sh                   # facade build wrapper
 ├── build_portfolio.sh         # portfolio build wrapper
-├── build_job_automation.sh    # job-automation build wrapper
+├── build_job_automation.sh    # job-server build wrapper
 ├── test.sh                    # facade test wrapper
-├── test_job_automation.sh     # job-automation test wrapper
+├── test_job_automation.sh     # job-server test wrapper
 ├── validate_data.sh           # data validation wrapper
 ├── deploy.sh                  # facade deploy wrapper
 ├── deploy_portfolio.sh        # portfolio deploy wrapper
-└── deploy_job_automation.sh   # job-automation deploy wrapper
+└── deploy_job_automation.sh   # job-server deploy wrapper
 ```
 
 ## CONVENTIONS
