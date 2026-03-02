@@ -233,9 +233,60 @@ function generateAnalyticsRoute() {
       }`;
 }
 
+function generateCspViolationRoute() {
+  return `
+      // CSP VIOLATION REPORT ENDPOINT
+      // ============================================================
+      if (url.pathname === '/api/csp-violation' && request.method === 'POST') {
+        try {
+          if (!hasJsonContentType(request)) {
+            return new Response('', {
+              status: 204,
+              headers: {
+                ...SECURITY_HEADERS,
+                ...rateLimitHeaders,
+                ...corsHeaders,
+              }
+            });
+          }
+
+          const report = await request.json();
+
+          ctx.waitUntil(logToElasticsearch(env, \`CSP Violation: \${report['csp-report']?.['violated-directive'] || report?.violatedDirective || 'unknown'}\`, 'WARN', {
+            path: '/api/csp-violation',
+            blockedUri: report['csp-report']?.['blocked-uri'] || report?.blockedURL || '',
+            violatedDirective: report['csp-report']?.['violated-directive'] || report?.violatedDirective || '',
+            documentUri: report['csp-report']?.['document-uri'] || report?.documentURL || '',
+            sourceFile: report['csp-report']?.['source-file'] || report?.sourceFile || '',
+          }));
+
+          metrics.requests_success++;
+          return new Response('', {
+            status: 204,
+            headers: {
+              ...SECURITY_HEADERS,
+              ...rateLimitHeaders,
+              ...corsHeaders,
+            }
+          });
+        } catch (err) {
+          ctx.waitUntil(logToElasticsearch(env, \`CSP report error: \${err.message}\`, 'ERROR'));
+          return new Response('', {
+            status: 204,
+            headers: {
+              ...SECURITY_HEADERS,
+              ...rateLimitHeaders,
+              ...corsHeaders,
+            }
+          });
+        }
+      }`;
+}
+
 module.exports = {
   generateCfStatsRoute,
   generateVitalsRoute,
   generateTrackRoute,
   generateAnalyticsRoute,
+  generateCspViolationRoute,
 };

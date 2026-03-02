@@ -45,6 +45,7 @@ jest.mock('../../../../apps/portfolio/lib/routes', () => ({
   generateVitalsRoute: jest.fn(() => '/* vitals-route */\n'),
   generateTrackRoute: jest.fn(() => '/* track-route */\n'),
   generateAnalyticsRoute: jest.fn(() => '/* analytics-route */\n'),
+  generateCspViolationRoute: jest.fn(() => '/* csp-violation-route */\n'),
   generateMetricsPostRoute: jest.fn(() => '/* metrics-post-route */\n'),
   generateMetricsGetRoute: jest.fn(() => '/* metrics-get-route */\n'),
   generateMetricsSnapshotRoute: jest.fn(() => '/* metrics-snapshot-route */\n'),
@@ -111,6 +112,7 @@ describe('worker-writer', () => {
       expect(result).toContain('/* vitals-route */');
       expect(result).toContain('/* track-route */');
       expect(result).toContain('/* analytics-route */');
+      expect(result).toContain('/* csp-violation-route */');
       expect(result).toContain('/* metrics-post-route */');
       expect(result).toContain('/* metrics-get-route */');
       expect(result).toContain('/* metrics-snapshot-route */');
@@ -205,6 +207,9 @@ describe('worker-writer', () => {
       expect(routes.generateVitalsRoute).toHaveBeenCalledTimes(1);
       expect(routes.generateTrackRoute).toHaveBeenCalledTimes(1);
       expect(routes.generateAnalyticsRoute).toHaveBeenCalledTimes(1);
+      expect(routes.generateCspViolationRoute).toHaveBeenCalledTimes(1);
+      expect(routes.generateMetricsPostRoute).toHaveBeenCalledTimes(1);
+      expect(routes.generateMetricsGetRoute).toHaveBeenCalledTimes(1);
       expect(routes.generateMetricsPostRoute).toHaveBeenCalledTimes(1);
       expect(routes.generateMetricsGetRoute).toHaveBeenCalledTimes(1);
       expect(routes.generateMetricsSnapshotRoute).toHaveBeenCalledTimes(1);

@@ -1,6 +1,6 @@
 /**
  * @file Unit tests for routes/observability.js
- * @description Tests for generateCfStatsRoute, generateVitalsRoute, generateTrackRoute, generateAnalyticsRoute
+ * @description Tests for generateCfStatsRoute, generateVitalsRoute, generateTrackRoute, generateAnalyticsRoute, generateCspViolationRoute
  */
 
 const {
@@ -8,6 +8,7 @@ const {
   generateVitalsRoute,
   generateTrackRoute,
   generateAnalyticsRoute,
+  generateCspViolationRoute,
 } = require('../../../../../apps/portfolio/lib/routes/observability');
 
 describe('routes/observability', () => {
@@ -168,6 +169,35 @@ describe('routes/observability', () => {
     it('returns status ok', () => {
       const result = generateAnalyticsRoute();
       expect(result).toContain('ok');
+    });
+  });
+
+  describe('generateCspViolationRoute', () => {
+    it('returns a string', () => {
+      const result = generateCspViolationRoute();
+      expect(typeof result).toBe('string');
+    });
+
+    it('contains /api/csp-violation route', () => {
+      const result = generateCspViolationRoute();
+      expect(result).toContain('/api/csp-violation');
+    });
+
+    it('returns 204 status', () => {
+      const result = generateCspViolationRoute();
+      expect(result).toContain('204');
+    });
+
+    it('logs to Elasticsearch with WARN level', () => {
+      const result = generateCspViolationRoute();
+      expect(result).toContain('WARN');
+    });
+
+    it('handles both legacy and modern CSP report formats', () => {
+      const result = generateCspViolationRoute();
+      expect(result).toContain('csp-report');
+      expect(result).toContain('violated-directive');
+      expect(result).toContain('blocked-uri');
     });
   });
 });

@@ -10,6 +10,7 @@ const {
   generateVitalsRoute,
   generateTrackRoute,
   generateAnalyticsRoute,
+  generateCspViolationRoute,
 } = require('./observability');
 
 module.exports = {
@@ -20,6 +21,7 @@ module.exports = {
   generateVitalsRoute,
   generateTrackRoute,
   generateAnalyticsRoute,
+  generateCspViolationRoute,
   generateMetricsPostRoute,
   generateMetricsGetRoute,
   generateMetricsSnapshotRoute,

@@ -27,6 +27,7 @@ const {
   generateVitalsRoute,
   generateTrackRoute,
   generateAnalyticsRoute,
+  generateCspViolationRoute,
   generateMetricsPostRoute,
   generateMetricsGetRoute,
   generateMetricsSnapshotRoute,
@@ -77,6 +78,7 @@ function buildWorkerCode(options) {
     generateVitalsRoute() +
     generateTrackRoute() +
     generateAnalyticsRoute() +
+    generateCspViolationRoute() +
     generateMetricsPostRoute() +
     generateMetricsGetRoute() +
     generateMetricsSnapshotRoute() +
