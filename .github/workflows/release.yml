@@ -1,134 +1,13 @@
-# Auto Release & Tagging
-# Triggers after CI/CD Pipeline succeeds on master.
-# Analyzes conventional commits since last tag → semver bump → GitHub Release.
+# Minimal release workflow - diagnostic test
 name: Release
 
 on:
-  workflow_run:
-    workflows: ['CI Validation Pipeline']
-    types: [completed]
-    branches: [master]
   workflow_dispatch:
 
-permissions:
-  contents: write
-
 jobs:
-  release:
-    name: Create Release
+  test:
+    name: Diagnostic
     runs-on: ubuntu-latest
-    if: >-
-      github.event_name == 'workflow_dispatch' ||
-      github.event.workflow_run.conclusion == 'success'
     steps:
-      - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
-        with:
-          fetch-depth: 0
-
-      - name: Bump version and push tag
-        id: tag
-        uses: mathieudutour/github-tag-action@a22cf08638b34d5badda920f9daf6e72c477b07b # v6.2
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          default_bump: patch
-          tag_prefix: v
-          # Conventional commit mapping:
-          # feat: → minor, fix: → patch, BREAKING CHANGE → major
-          custom_release_rules: chore:patch:Chores,refactor:patch:Refactoring,perf:minor:Performance
-
-      - name: Create GitHub Release
-        if: steps.tag.outputs.new_tag
-        uses: ncipollo/release-action@b7eabc95ff50cbeeedec83973935c8f306dfcd0b # v1
-        with:
-          tag: ${{ steps.tag.outputs.new_tag }}
-          name: ${{ steps.tag.outputs.new_tag }}
-          body: ${{ steps.tag.outputs.changelog }}
-          token: ${{ secrets.GITHUB_TOKEN }}
-          generateReleaseNotes: true
-
-  elk-ingest:
-    name: ELK Ingest
-    needs: [release]
-    if: always() && !cancelled()
-    runs-on: ${{ vars.RUNNER || 'ubuntu-latest' }}
-    timeout-minutes: 2
-    steps:
-      - name: Index event to Elasticsearch
-        continue-on-error: true
-        env:
-          ELASTICSEARCH_URL: ${{ vars.ELASTICSEARCH_URL }}
-          ELASTICSEARCH_API_KEY: ${{ secrets.ELASTICSEARCH_API_KEY }}
-          INPUT_CONCLUSION: ${{ needs.release.result }}
-          INPUT_INDEX_PREFIX: github-actions
-          INPUT_SERVICE: resume
-          INPUT_EXTRA_FIELDS: '{"workflow_type": "release"}'
-          GH_REPO: ${{ github.repository }}
-          GH_WORKFLOW: ${{ github.workflow }}
-          GH_RUN_ID: ${{ github.run_id }}
-          GH_RUN_NUMBER: ${{ github.run_number }}
-          GH_RUN_URL: "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          GH_REF_NAME: ${{ github.ref_name }}
-          GH_SHA: ${{ github.sha }}
-          GH_ACTOR: ${{ github.actor }}
-          GH_EVENT: ${{ github.event_name }}
-        run: |
-          if [ -z "$ELASTICSEARCH_URL" ]; then
-            echo "::warning::ELASTICSEARCH_URL not configured — skipping ELK ingest"
-            exit 0
-          fi
-
-          SERVICE="${INPUT_SERVICE:-${GH_REPO##*/}}"
-          INDEX="${INPUT_INDEX_PREFIX}-$(date -u +%Y.%m.%d)"
-
-          PAYLOAD=$(jq -n \
-            --arg ts "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
-            --arg repo "$GH_REPO" \
-            --arg workflow "$GH_WORKFLOW" \
-            --arg run_id "$GH_RUN_ID" \
-            --arg run_number "$GH_RUN_NUMBER" \
-            --arg run_url "$GH_RUN_URL" \
-            --arg conclusion "$INPUT_CONCLUSION" \
-            --arg branch "$GH_REF_NAME" \
-            --arg sha "$GH_SHA" \
-            --arg actor "$GH_ACTOR" \
-            --arg event "$GH_EVENT" \
-            --arg service "$SERVICE" \
-            --argjson extra "$INPUT_EXTRA_FIELDS" \
-            '{
-              "@timestamp": $ts,
-              "service": $service,
-              "github": {
-                "repository": $repo,
-                "workflow": $workflow,
-                "run_id": ($run_id | tonumber),
-                "run_number": ($run_number | tonumber),
-                "run_url": $run_url,
-                "conclusion": $conclusion,
-                "branch": $branch,
-                "sha": $sha,
-                "sha_short": ($sha | .[0:7]),
-                "actor": $actor,
-                "event": $event
-              }
-            } + $extra')
-
-          CURL_ARGS=(-s -o /tmp/es-response.json -w "%{http_code}" \
-            -X POST "${ELASTICSEARCH_URL}/${INDEX}/_doc" \
-            -H "Content-Type: application/json")
-
-          if [ -n "$ELASTICSEARCH_API_KEY" ]; then
-            CURL_ARGS+=(-H "Authorization: ApiKey ${ELASTICSEARCH_API_KEY}")
-          fi
-
-          CURL_ARGS+=(-d "$PAYLOAD")
-
-          HTTP_CODE=$(curl "${CURL_ARGS[@]}")
-
-          if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ]; then
-            DOC_ID=$(jq -r '._id // empty' /tmp/es-response.json)
-            echo "Indexed to ${INDEX} (HTTP ${HTTP_CODE}, doc: ${DOC_ID})"
-          else
-            echo "::warning::ELK ingest failed (HTTP ${HTTP_CODE})"
-            cat /tmp/es-response.json 2>/dev/null || true
-          fi
+      - name: Echo
+        run: echo "Release workflow works"
