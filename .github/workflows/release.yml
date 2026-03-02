@@ -1,13 +1,39 @@
-# Minimal release workflow - diagnostic test
 name: Release
 
 on:
+  workflow_run:
+    workflows: ['CI Validation Pipeline']
+    types: [completed]
+    branches: [master]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
-  test:
-    name: Diagnostic
+  release:
+    name: Tag and Release
     runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
     steps:
-      - name: Echo
-        run: echo "Release workflow works"
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          fetch-depth: 0
+
+      - name: Bump version and push tag
+        id: tag
+        uses: mathieudutour/github-tag-action@a22cf08638b34d5badda920f9daf6e72c477b07b # v6.2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          default_bump: patch
+
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@b7eabc95ff50cbeeedec83973935c8f306dfcd0b # v1.20.0
+        with:
+          tag: ${{ steps.tag.outputs.new_tag }}
+          name: ${{ steps.tag.outputs.new_tag }}
+          body: ${{ steps.tag.outputs.changelog }}
+          generateReleaseNotes: true
