@@ -70,13 +70,19 @@ jobs:
           export-env: true
         env:
           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
-          CLOUDFLARE_API_TOKEN: op://homelab/cloudflare/api_token
+          CLOUDFLARE_API_TOKEN: op://homelab/cloudflare/password
           CLOUDFLARE_ACCOUNT_ID: op://homelab/cloudflare/account_id
-          AWS_ACCESS_KEY_ID: op://homelab/cloudflare/r2_access_key_id
-          AWS_SECRET_ACCESS_KEY: op://homelab/cloudflare/r2_secret_access_key
 
-      - name: Set R2 endpoint URL
-        run: echo "AWS_ENDPOINT_URL_S3=https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com" >> "$GITHUB_ENV"
+      - name: Set R2 backend credentials
+        run: |
+          {
+            echo "AWS_ACCESS_KEY_ID=${R2_ACCESS_KEY_ID}"
+            echo "AWS_SECRET_ACCESS_KEY=${R2_SECRET_ACCESS_KEY}"
+            echo "AWS_ENDPOINT_URL_S3=https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com"
+          } >> "$GITHUB_ENV"
+        env:
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@5e8dbf3c6d9deaf4193ca7a8fb23f2ac83bb6c85 # v4.0.0
@@ -202,13 +208,19 @@ jobs:
           export-env: true
         env:
           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
-          CLOUDFLARE_API_TOKEN: op://homelab/cloudflare/api_token
+          CLOUDFLARE_API_TOKEN: op://homelab/cloudflare/password
           CLOUDFLARE_ACCOUNT_ID: op://homelab/cloudflare/account_id
-          AWS_ACCESS_KEY_ID: op://homelab/cloudflare/r2_access_key_id
-          AWS_SECRET_ACCESS_KEY: op://homelab/cloudflare/r2_secret_access_key
 
-      - name: Set R2 endpoint URL
-        run: echo "AWS_ENDPOINT_URL_S3=https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com" >> "$GITHUB_ENV"
+      - name: Set R2 backend credentials
+        run: |
+          {
+            echo "AWS_ACCESS_KEY_ID=${R2_ACCESS_KEY_ID}"
+            echo "AWS_SECRET_ACCESS_KEY=${R2_SECRET_ACCESS_KEY}"
+            echo "AWS_ENDPOINT_URL_S3=https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com"
+          } >> "$GITHUB_ENV"
+        env:
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@5e8dbf3c6d9deaf4193ca7a8fb23f2ac83bb6c85 # v4.0.0
