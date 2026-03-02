@@ -1,5 +1,5 @@
 import { BaseHandler } from './base-handler.js';
-import { normalizeError } from '../../../src/shared/errors/index.js';
+import { normalizeError } from '../../../job-server/src/shared/errors/index.js';
 
 /**
  * Handler for test/debug operations.

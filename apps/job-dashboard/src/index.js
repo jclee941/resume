@@ -5,8 +5,8 @@ import { AuthHandler } from './handlers/auth.js';
 import { WebhookHandler } from './handlers/webhooks.js';
 import { AutoApplyHandler } from './handlers/auto-apply.js';
 import { jsonResponse, addCorsHeaders } from './middleware/cors.js';
-import Logger, { RequestContext } from '../../src/shared/logger/index.js';
-import { HttpError, normalizeError } from '../../src/shared/errors/index.js';
+import Logger, { RequestContext } from '../../job-server/src/shared/logger/index.js';
+import { HttpError, normalizeError } from '../../job-server/src/shared/errors/index.js';
 import {
   requiresAuth,
   requiresWebhookSignature,

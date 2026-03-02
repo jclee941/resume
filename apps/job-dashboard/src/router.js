@@ -1,4 +1,4 @@
-import { HttpError, normalizeError } from '../../src/shared/errors/index.js';
+import { HttpError, normalizeError } from '../../job-server/src/shared/errors/index.js';
 
 export class Router {
   constructor() {
@@ -30,7 +30,7 @@ export class Router {
    * - Normalizes unknown errors and re-throws for top-level handling
    * @param {Request} request
    * @param {URL} url
-   * @param {import('../../src/shared/logger/index.js').Logger} [logger]
+   * @param {import('../../job-server/src/shared/logger/index.js').Logger} [logger]
    * @returns {Promise<Response|null>}
    */
   async handle(request, url, logger) {
