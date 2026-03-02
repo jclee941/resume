@@ -42,13 +42,13 @@ function initScrollReveal() {
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   if (prefersReducedMotion) {
-    document.querySelectorAll('.reveal-on-scroll').forEach((el) => {
+    document.querySelectorAll('.reveal').forEach((el) => {
       el.classList.add('revealed');
     });
     return;
   }
 
-  const revealElements = document.querySelectorAll('.reveal-on-scroll');
+  const revealElements = document.querySelectorAll('.reveal');
   if (revealElements.length === 0) return;
 
   const observer = new IntersectionObserver(

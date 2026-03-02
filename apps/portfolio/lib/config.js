@@ -29,9 +29,9 @@ const CONFIG = {
 
   // Card Classes
   CARD_CLASSES: {
-    DOC_CARD: 'doc-card reveal-on-scroll',
-    DOC_CARD_HIGHLIGHT: 'doc-card doc-card-highlight reveal-on-scroll',
-    PROJECT_CARD: 'project-card reveal-on-scroll',
+    DOC_CARD: 'doc-card reveal',
+    DOC_CARD_HIGHLIGHT: 'doc-card doc-card-highlight reveal',
+    PROJECT_CARD: 'project-card reveal',
   },
 };
 
