@@ -117,7 +117,7 @@ push/PR → ci.yml (8 jobs) → release.yml (auto-release) → CF Workers Builds
 7. `security-scan` — security audit
 8. `build` → `elk-ingest` — build portfolio worker + log to ELK
 
-ELK ingest uses reusable workflow `qws941/.github/.github/workflows/_elk-ingest.yml@master`.
+ELK ingest is inlined in `release.yml` (not a reusable workflow) because `workflow_run` triggers don't support cross-repo `uses:`. Uses 1Password for secrets and `vars.RUNNER` for self-hosted runner access.
 
 ### Synced Workflows (from qws941/.github SSoT)
 

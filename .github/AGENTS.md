@@ -68,7 +68,7 @@ analyze → validate-cf ─┐
 
 ## RELEASE FLOW
 
-Conventional commits → `mathieudutour/github-tag-action` → semver bump → GitHub Release with changelog.
+Conventional commits → `mathieudutour/github-tag-action` → semver bump → GitHub Release with changelog. Uses `GH_PAT` (not default `GITHUB_TOKEN`) to bypass tag-protection rulesets. ELK ingest job is inlined (not a reusable workflow) because `workflow_run` triggers don't support cross-repo reusable workflows.
 
 ## CONVENTIONS
 
@@ -85,12 +85,11 @@ Conventional commits → `mathieudutour/github-tag-action` → semver bump → G
 - Never skip security scan for production.
 - Never use `networkidle` in Playwright CI — use `domcontentloaded`.
 
-## SECRETS (7)
+## SECRETS (9)
 
-`CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `GITLEAKS_LICENSE`, `SLACK_WEBHOOK_URL`, `ANTHROPIC_API_KEY`, `CF_ACCESS_CLIENT_ID`, `CF_ACCESS_CLIENT_SECRET`.
+`CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `GH_PAT`, `OP_SERVICE_ACCOUNT_TOKEN`, `GITLEAKS_LICENSE`, `SLACK_WEBHOOK_URL`, `ANTHROPIC_API_KEY`, `CF_ACCESS_CLIENT_ID`, `CF_ACCESS_CLIENT_SECRET`.
 
 ## KNOWN ISSUES
 
 - ESLint baseline ratcheted to 69 warnings (regex fix pending).
 - Lighthouse `/health` endpoint removed from verification.
-- Release workflow needs dispatch fallback for tag creation.

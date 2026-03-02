@@ -37,3 +37,7 @@ Workflow-level CI/CD validation logic for this monorepo. This directory owns job
 
 - This folder is a high-change hotspot; update related docs when gate semantics change.
 - `verify.yml` recently hardened health/title/CSP checks; preserve retry/robust parsing behavior when editing.
+- `release.yml` ELK ingest is inlined (not a reusable workflow) because `workflow_run` triggers don't support cross-repo `uses:`.
+- `release.yml` uses 1Password (`1password/load-secrets-action`) to load `ELASTICSEARCH_API_KEY` at runtime via `OP_SERVICE_ACCOUNT_TOKEN`.
+- `elk-ingest` job uses `vars.RUNNER` (self-hosted runner) for Elasticsearch network access; falls back to `ubuntu-latest`.
+- `deploy-job-worker.yml` is stale — job server deploys via Docker, not GitHub Actions.
