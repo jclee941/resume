@@ -24,6 +24,18 @@ const DEFAULT_OPTIONS = {
  * @property {CacheTier} tier
  */
 
+import {
+  readHot,
+  readWarm,
+  readCold,
+  writeHot,
+  writeWarm,
+  writeCold,
+  deleteHot,
+  deleteWarm,
+  deleteCold,
+} from './tier-operations.js';
+
 /**
  * Tiered cache manager for Cloudflare KV (hot), D1 (warm), and R2 (cold).
  *
@@ -56,8 +68,6 @@ export class CacheManager {
       ...DEFAULT_OPTIONS,
       ...options,
     };
-
-    this.schemaReady = false;
   }
 
   /**
@@ -73,19 +83,21 @@ export class CacheManager {
    */
   async get(key) {
     const now = Date.now();
+    const tieredKey = this.makeTieredKey(key);
 
-    const hot = await this.readHot(key, now);
+    const hot = await readHot(this.kv, tieredKey, now, this.logger);
     if (hot) {
       return /** @type {T} */ (hot.value);
     }
 
-    const warm = await this.readWarm(key, now);
+    const warm = await readWarm(this.d1, tieredKey, now, this.options.tableName, this.logger);
     if (warm) {
       await this.promoteFrom(WARM_TIER, key, warm, now);
       return /** @type {T} */ (warm.value);
     }
 
-    const cold = await this.readCold(key, now);
+    const objectKey = this.makeR2ObjectKey(key);
+    const cold = await readCold(this.r2, objectKey, now, this.logger);
     if (cold) {
       await this.promoteFrom(COLD_TIER, key, cold, now);
       return /** @type {T} */ (cold.value);
@@ -112,19 +124,21 @@ export class CacheManager {
     const tier = this.selectTier(ttlSeconds);
 
     const envelope = this.createEnvelope(value, tier, now, expiresAt);
+    const tieredKey = this.makeTieredKey(key);
+    const objectKey = this.makeR2ObjectKey(key);
 
     if (tier === HOT_TIER) {
-      await this.writeHot(key, envelope, ttlSeconds);
-      await this.deleteWarm(key);
-      await this.deleteCold(key);
+      await writeHot(this.kv, tieredKey, envelope, ttlSeconds, this.logger);
+      await deleteWarm(this.d1, tieredKey, this.options.tableName, this.logger);
+      await deleteCold(this.r2, objectKey, this.logger);
     } else if (tier === WARM_TIER) {
-      await this.writeWarm(key, envelope);
-      await this.deleteHot(key);
-      await this.deleteCold(key);
+      await writeWarm(this.d1, tieredKey, envelope, this.options.tableName, this.logger);
+      await deleteHot(this.kv, tieredKey, this.logger);
+      await deleteCold(this.r2, objectKey, this.logger);
     } else {
-      await this.writeCold(key, envelope);
-      await this.deleteHot(key);
-      await this.deleteWarm(key);
+      await writeCold(this.r2, objectKey, envelope, this.logger);
+      await deleteHot(this.kv, tieredKey, this.logger);
+      await deleteWarm(this.d1, tieredKey, this.options.tableName, this.logger);
     }
 
     return { tier, expiresAt };
@@ -136,7 +150,13 @@ export class CacheManager {
    * @returns {Promise<void>}
    */
   async delete(key) {
-    await Promise.allSettled([this.deleteHot(key), this.deleteWarm(key), this.deleteCold(key)]);
+    const tieredKey = this.makeTieredKey(key);
+    const objectKey = this.makeR2ObjectKey(key);
+    await Promise.allSettled([
+      deleteHot(this.kv, tieredKey, this.logger),
+      deleteWarm(this.d1, tieredKey, this.options.tableName, this.logger),
+      deleteCold(this.r2, objectKey, this.logger),
+    ]);
   }
 
   /**
@@ -193,23 +213,26 @@ export class CacheManager {
       lastAccessedAt: now,
     };
 
+    const tieredKey = this.makeTieredKey(key);
+    const objectKey = this.makeR2ObjectKey(key);
+
     if (nextTier === HOT_TIER) {
-      await this.writeHot(key, promoted, ttlSeconds);
+      await writeHot(this.kv, tieredKey, promoted, ttlSeconds, this.logger);
       if (sourceTier === COLD_TIER) {
-        await this.deleteCold(key);
+        await deleteCold(this.r2, objectKey, this.logger);
       }
       return;
     }
 
     if (nextTier === WARM_TIER) {
-      await this.writeWarm(key, promoted);
+      await writeWarm(this.d1, tieredKey, promoted, this.options.tableName, this.logger);
       if (sourceTier === COLD_TIER) {
-        await this.deleteCold(key);
+        await deleteCold(this.r2, objectKey, this.logger);
       }
       return;
     }
 
-    await this.writeCold(key, promoted);
+    await writeCold(this.r2, objectKey, promoted, this.logger);
   }
 
   /**
@@ -226,290 +249,6 @@ export class CacheManager {
    */
   makeR2ObjectKey(key) {
     return `${this.options.namespace}/${encodeURIComponent(key)}.json`;
-  }
-
-  /**
-   * @private
-   * @param {string} key
-   * @param {number} now
-   * @returns {Promise<CacheEnvelope|null>}
-   */
-  async readHot(key, now) {
-    if (!this.kv) {
-      return null;
-    }
-
-    try {
-      const raw = await this.kv.get(this.makeTieredKey(key), 'json');
-      if (!raw || typeof raw !== 'object') {
-        return null;
-      }
-
-      const envelope = /** @type {CacheEnvelope} */ (raw);
-      if (envelope.expiresAt <= now) {
-        await this.deleteHot(key);
-        return null;
-      }
-
-      return envelope;
-    } catch (error) {
-      this.logger.warn?.(`[CacheManager] hot read failed for ${key}: ${error.message}`);
-      return null;
-    }
-  }
-
-  /**
-   * @private
-   * @param {string} key
-   * @param {number} now
-   * @returns {Promise<CacheEnvelope|null>}
-   */
-  async readWarm(key, now) {
-    if (!this.d1) {
-      return null;
-    }
-
-    try {
-      await this.ensureD1Schema();
-      const row = await this.d1
-        .prepare(
-          `SELECT value, expires_at, created_at, updated_at, last_accessed_at
-           FROM ${this.options.tableName}
-           WHERE cache_key = ?1`
-        )
-        .bind(this.makeTieredKey(key))
-        .first();
-
-      if (!row) {
-        return null;
-      }
-
-      const expiresAt = Number(row.expires_at);
-      if (expiresAt <= now) {
-        await this.deleteWarm(key);
-        return null;
-      }
-
-      const envelope = {
-        value: JSON.parse(String(row.value)),
-        tier: WARM_TIER,
-        expiresAt,
-        createdAt: Number(row.created_at),
-        updatedAt: Number(row.updated_at),
-        lastAccessedAt: Number(row.last_accessed_at),
-      };
-
-      await this.d1
-        .prepare(`UPDATE ${this.options.tableName} SET last_accessed_at = ?1 WHERE cache_key = ?2`)
-        .bind(now, this.makeTieredKey(key))
-        .run();
-
-      return envelope;
-    } catch (error) {
-      this.logger.warn?.(`[CacheManager] warm read failed for ${key}: ${error.message}`);
-      return null;
-    }
-  }
-
-  /**
-   * @private
-   * @param {string} key
-   * @param {number} now
-   * @returns {Promise<CacheEnvelope|null>}
-   */
-  async readCold(key, now) {
-    if (!this.r2) {
-      return null;
-    }
-
-    try {
-      const object = await this.r2.get(this.makeR2ObjectKey(key));
-      if (!object) {
-        return null;
-      }
-
-      const payload = await object.json();
-      const envelope = /** @type {CacheEnvelope} */ (payload);
-
-      if (envelope.expiresAt <= now) {
-        await this.deleteCold(key);
-        return null;
-      }
-
-      return {
-        ...envelope,
-        tier: COLD_TIER,
-      };
-    } catch (error) {
-      this.logger.warn?.(`[CacheManager] cold read failed for ${key}: ${error.message}`);
-      return null;
-    }
-  }
-
-  /**
-   * @private
-   * @param {string} key
-   * @param {CacheEnvelope} envelope
-   * @param {number} ttlSeconds
-   */
-  async writeHot(key, envelope, ttlSeconds) {
-    if (!this.kv) {
-      return;
-    }
-
-    try {
-      await this.kv.put(this.makeTieredKey(key), JSON.stringify(envelope), {
-        expirationTtl: ttlSeconds,
-      });
-    } catch (error) {
-      this.logger.warn?.(`[CacheManager] hot write failed for ${key}: ${error.message}`);
-    }
-  }
-
-  /**
-   * @private
-   * @param {string} key
-   * @param {CacheEnvelope} envelope
-   */
-  async writeWarm(key, envelope) {
-    if (!this.d1) {
-      return;
-    }
-
-    try {
-      await this.ensureD1Schema();
-      await this.d1
-        .prepare(
-          `INSERT INTO ${this.options.tableName}
-             (cache_key, value, expires_at, created_at, updated_at, last_accessed_at)
-           VALUES (?1, ?2, ?3, ?4, ?5, ?6)
-           ON CONFLICT(cache_key) DO UPDATE SET
-             value = excluded.value,
-             expires_at = excluded.expires_at,
-             updated_at = excluded.updated_at,
-             last_accessed_at = excluded.last_accessed_at`
-        )
-        .bind(
-          this.makeTieredKey(key),
-          JSON.stringify(envelope.value),
-          envelope.expiresAt,
-          envelope.createdAt,
-          envelope.updatedAt,
-          envelope.lastAccessedAt
-        )
-        .run();
-    } catch (error) {
-      this.logger.warn?.(`[CacheManager] warm write failed for ${key}: ${error.message}`);
-    }
-  }
-
-  /**
-   * @private
-   * @param {string} key
-   * @param {CacheEnvelope} envelope
-   */
-  async writeCold(key, envelope) {
-    if (!this.r2) {
-      return;
-    }
-
-    try {
-      await this.r2.put(this.makeR2ObjectKey(key), JSON.stringify(envelope), {
-        httpMetadata: {
-          contentType: 'application/json',
-        },
-        customMetadata: {
-          expiresAt: String(envelope.expiresAt),
-          namespace: this.options.namespace,
-        },
-      });
-    } catch (error) {
-      this.logger.warn?.(`[CacheManager] cold write failed for ${key}: ${error.message}`);
-    }
-  }
-
-  /**
-   * @private
-   * @param {string} key
-   */
-  async deleteHot(key) {
-    if (!this.kv) {
-      return;
-    }
-
-    try {
-      await this.kv.delete(this.makeTieredKey(key));
-    } catch (error) {
-      this.logger.warn?.(`[CacheManager] hot delete failed for ${key}: ${error.message}`);
-    }
-  }
-
-  /**
-   * @private
-   * @param {string} key
-   */
-  async deleteWarm(key) {
-    if (!this.d1) {
-      return;
-    }
-
-    try {
-      await this.ensureD1Schema();
-      await this.d1
-        .prepare(`DELETE FROM ${this.options.tableName} WHERE cache_key = ?1`)
-        .bind(this.makeTieredKey(key))
-        .run();
-    } catch (error) {
-      this.logger.warn?.(`[CacheManager] warm delete failed for ${key}: ${error.message}`);
-    }
-  }
-
-  /**
-   * @private
-   * @param {string} key
-   */
-  async deleteCold(key) {
-    if (!this.r2) {
-      return;
-    }
-
-    try {
-      await this.r2.delete(this.makeR2ObjectKey(key));
-    } catch (error) {
-      this.logger.warn?.(`[CacheManager] cold delete failed for ${key}: ${error.message}`);
-    }
-  }
-
-  /**
-   * @private
-   * @returns {Promise<void>}
-   */
-  async ensureD1Schema() {
-    if (this.schemaReady || !this.d1) {
-      return;
-    }
-
-    await this.d1
-      .prepare(
-        `CREATE TABLE IF NOT EXISTS ${this.options.tableName} (
-          cache_key TEXT PRIMARY KEY,
-          value TEXT NOT NULL,
-          expires_at INTEGER NOT NULL,
-          created_at INTEGER NOT NULL,
-          updated_at INTEGER NOT NULL,
-          last_accessed_at INTEGER NOT NULL
-        )`
-      )
-      .run();
-
-    await this.d1
-      .prepare(
-        `CREATE INDEX IF NOT EXISTS idx_${this.options.tableName}_expires_at
-         ON ${this.options.tableName}(expires_at)`
-      )
-      .run();
-
-    this.schemaReady = true;
   }
 }
 
