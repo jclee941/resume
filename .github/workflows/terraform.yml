@@ -44,13 +44,6 @@ on:
 env:
   TF_VERSION: '1.10.5'
   TF_WORKING_DIR: 'infrastructure/cloudflare'
-  # Cloudflare provider configuration
-  CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-  CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-  # Terraform S3 backend (Cloudflare R2)
-  AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-  AWS_ENDPOINT_URL_S3: https://${{ secrets.CLOUDFLARE_ACCOUNT_ID }}.r2.cloudflarestorage.com
 
 # Prevent concurrent Terraform operations
 concurrency:
@@ -70,6 +63,20 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Load secrets from 1Password
+        uses: 1password/load-secrets-action@8d0d610af187e78a2772c2d18d627f4c52d3fbfb # v3.1.0
+        with:
+          export-env: true
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          CLOUDFLARE_API_TOKEN: op://homelab/cloudflare/api_token
+          CLOUDFLARE_ACCOUNT_ID: op://homelab/cloudflare/account_id
+          AWS_ACCESS_KEY_ID: op://homelab/cloudflare/r2_access_key_id
+          AWS_SECRET_ACCESS_KEY: op://homelab/cloudflare/r2_secret_access_key
+
+      - name: Set R2 endpoint URL
+        run: echo "AWS_ENDPOINT_URL_S3=https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com" >> "$GITHUB_ENV"
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@5e8dbf3c6d9deaf4193ca7a8fb23f2ac83bb6c85 # v4.0.0
@@ -188,6 +195,20 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Load secrets from 1Password
+        uses: 1password/load-secrets-action@8d0d610af187e78a2772c2d18d627f4c52d3fbfb # v3.1.0
+        with:
+          export-env: true
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          CLOUDFLARE_API_TOKEN: op://homelab/cloudflare/api_token
+          CLOUDFLARE_ACCOUNT_ID: op://homelab/cloudflare/account_id
+          AWS_ACCESS_KEY_ID: op://homelab/cloudflare/r2_access_key_id
+          AWS_SECRET_ACCESS_KEY: op://homelab/cloudflare/r2_secret_access_key
+
+      - name: Set R2 endpoint URL
+        run: echo "AWS_ENDPOINT_URL_S3=https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com" >> "$GITHUB_ENV"
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@5e8dbf3c6d9deaf4193ca7a8fb23f2ac83bb6c85 # v4.0.0
