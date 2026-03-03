@@ -206,12 +206,16 @@ function mapToplatformFormat(source, platform) {
 }
 
 function mapToWantedFormat(source) {
+  const currentPosition = source.current?.position || source.careers?.[0]?.role || '';
+  const totalExperience = source.summary?.totalExperience || '';
+  const expertise = source.summary?.expertise || [];
+
   return {
     profile: {
-      headline: `${source.current.position} | ${source.summary.totalExperience}`,
-      description: source.summary.expertise.join(', '),
+      headline: currentPosition ? `${currentPosition} | ${totalExperience}` : totalExperience,
+      description: expertise.join(', '),
     },
-    careers: source.careers.map((c) => ({
+    careers: (source.careers || []).map((c) => ({
       company_name: c.company,
       title: c.role,
       start_time: parseDate(c.period.split(' ~ ')[0]),
@@ -221,17 +225,17 @@ function mapToWantedFormat(source) {
     })),
     educations: [
       {
-        school_name: source.education.school,
-        major: source.education.major,
+        school_name: source.education?.school,
+        major: source.education?.major,
         degree: 'BACHELOR',
-        start_time: parseDate(source.education.startDate),
+        start_time: parseDate(source.education?.startDate),
         end_time: null,
-        status: source.education.status === '재학중' ? 'ENROLLED' : 'GRADUATED',
+        status: source.education?.status === '재학중' ? 'ENROLLED' : 'GRADUATED',
       },
     ],
-    skills: (source.skills.security?.items || source.skills.security || [])
-      .concat(source.skills.cloud?.items || source.skills.cloud || [])
-      .concat(source.skills.automation?.items || source.skills.automation || [])
+    skills: (source.skills?.security?.items || [])
+      .concat(source.skills?.cloud?.items || [])
+      .concat(source.skills?.automation?.items || [])
       .map((s) => (typeof s === 'string' ? s : s.name))
       .slice(0, 20),
   };
