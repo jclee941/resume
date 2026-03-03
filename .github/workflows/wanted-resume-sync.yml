@@ -1,82 +1,50 @@
-# =============================================================================
-# WANTED RESUME SYNC - Weekly Resume Data Sync to Wanted Korea
-# =============================================================================
-# Authenticates with Wanted API and syncs resume_data.json (SSoT) to Wanted.
-# Uses job-server's unified-resume-sync tool via HTTP API.
-# =============================================================================
-
-name: Wanted Resume Sync
-
-on:
-  schedule:
-    - cron: '0 3 * * 0' # Weekly Sunday 03:00 UTC = 12:00 KST
-  workflow_dispatch:
-    inputs:
-      dry_run:
-        description: 'Preview changes without applying'
-        type: boolean
-        default: false
-      resume_id:
-        description: 'Wanted resume ID to sync'
-        type: string
-        required: false
-
-permissions:
-  contents: read
-
-concurrency:
-  group: wanted-resume-sync
-  cancel-in-progress: true
-
-env:
-  NODE_VERSION: '22'
-
-jobs:
-  sync-resume:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
-
-      - name: Setup
-        uses: ./.github/actions/setup
-
-      - name: Start job server
-        run: |
-          npm run server -w @resume/job-automation &
-          sleep 5
-        env:
-          WANTED_EMAIL: ${{ secrets.WANTED_EMAIL }}
-          WANTED_PASSWORD: ${{ secrets.WANTED_PASSWORD }}
-          WANTED_COOKIES: ${{ secrets.WANTED_COOKIES }}
-
-      - name: Set Wanted auth cookies
-        run: |
-          curl -sf -X POST http://localhost:3000/api/auth/set \
-            -H 'Content-Type: application/json' \
-            -d '{"platform": "wanted", "cookies": "'"$WANTED_COOKIES"'", "email": "${{ secrets.WANTED_EMAIL }}"}'
-
-      - name: Sync resume to Wanted
-        run: |
-          RESUME_ID="${{ inputs.resume_id || vars.WANTED_RESUME_ID }}"
-          DRY_RUN="${{ inputs.dry_run || 'false' }}"
-
-          if [ -z "$RESUME_ID" ]; then
-            echo "::error::WANTED_RESUME_ID not configured. Set it as a repository variable."
-            exit 1
-          fi
-
-          RESULT=$(curl -sf -X POST http://localhost:3000/api/resume-sync/sync \
-            -H 'Content-Type: application/json' \
-            -d "{\"platforms\": [\"wanted\"], \"resume_id\": \"$RESUME_ID\", \"dry_run\": $DRY_RUN}")
-
-          echo "$RESULT" | jq .
-          echo "## Sync Result" >> $GITHUB_STEP_SUMMARY
-          echo '```json' >> $GITHUB_STEP_SUMMARY
-          echo "$RESULT" | jq . >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-
-          # Check for errors
-          if echo "$RESULT" | jq -e '.results.wanted.errors | length > 0' > /dev/null 2>&1; then
-            echo "::warning::Sync completed with errors"
-          fi
+#BY|# =============================================================================
+#BK|# WANTED RESUME SYNC - Weekly Resume Data Sync to Wanted Korea
+#HQ|# =============================================================================
+#NX|# Authenticates with Wanted API and syncs resume_data.json (SSoT) to Wanted.
+#VV|# Uses job-server's unified-resume-sync tool via direct import.
+#XY|# =============================================================================
+#HN|
+#TW|name: Wanted Resume Sync
+#JT|
+#PQ|on:
+#QK|  schedule:
+#PM|    - cron: '0 3 * * 0' # Weekly Sunday 03:00 UTC = 12:00 KST
+#XV|  workflow_dispatch:
+#MK|    inputs:
+#HT|      dry_run:
+#TS|        description: 'Preview changes without applying'
+#BS|        type: boolean
+#PQ|        default: false
+#YS|      resume_id:
+#VZ|        description: 'Wanted resume ID to sync'
+#PJ|        type: string
+#RQ|        required: false
+#NV|
+#PR|permissions:
+#XX|  contents: read
+#HK|
+#ZY|concurrency:
+#YN|  group: wanted-resume-sync
+#WB|  cancel-in-progress: true
+#ZM|
+#JR|env:
+#HJ|  NODE_VERSION: '22'
+#QY|
+#WW|jobs:
+#PV|  sync-resume:
+#ZV|    runs-on: ubuntu-latest
+#TR|    steps:
+#NZ|      - name: Checkout
+#NP|        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+#ZK|
+#PS|      - name: Setup
+#ZH|        uses: ./.github/actions/setup
+#QB|
+#NV|      - name: Sync resume to Wanted
+#TP|        run: node apps/job-server/scripts/ci-resume-sync.js
+#JR|        env:
+#ZM|          WANTED_COOKIES: ${{ secrets.WANTED_COOKIES }}
+#JY|          WANTED_EMAIL: ${{ secrets.WANTED_EMAIL }}
+#BX|          WANTED_RESUME_ID: ${{ inputs.resume_id || vars.WANTED_RESUME_ID }}
+#TB|          DRY_RUN: ${{ inputs.dry_run }}
