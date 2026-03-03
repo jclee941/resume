@@ -4,6 +4,7 @@ import { StatsHandler } from './handlers/stats.js';
 import { AuthHandler } from './handlers/auth.js';
 import { WebhookHandler } from './handlers/webhooks.js';
 import { AutoApplyHandler } from './handlers/auto-apply.js';
+import { DiagnosticsHandler } from './handlers/diagnostics.js';
 import { jsonResponse, addCorsHeaders } from './middleware/cors.js';
 import Logger, { RequestContext } from '../../job-server/src/shared/logger/index.js';
 import { HttpError, normalizeError } from '../../job-server/src/shared/errors/index.js';
@@ -123,6 +124,7 @@ export default {
     const auth = new AuthHandler(env.DB, env.SESSIONS, env);
     const webhooks = new WebhookHandler(env, auth);
     const autoApply = new AutoApplyHandler(env);
+    const diagnostics = new DiagnosticsHandler(env);
 
     // Health endpoint at root (for portfolio status checks with CORS)
     router.get('/health', async () => {
@@ -181,6 +183,8 @@ export default {
       }
       return jsonResponse(status);
     });
+
+    router.get('/api/diagnostics/bindings', (req) => diagnostics.checkBindings(req));
 
     router.get('/api/stats', (req) => stats.getStats(req));
     router.get('/api/stats/weekly', (req) => stats.getWeeklyStats(req));
