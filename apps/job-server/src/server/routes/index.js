@@ -1,3 +1,4 @@
+import resumeSyncRoutes from './resume-sync.js';
 import authRoutes from './auth.js';
 import applicationsRoutes from './applications.js';
 import searchRoutes from './search.js';
@@ -21,4 +22,5 @@ export {
   d1Routes,
   autoApplyRoutes,
   profileRoutes,
+  resumeSyncRoutes,
 };

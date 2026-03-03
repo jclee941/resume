@@ -326,6 +326,7 @@ async function syncToWanted(data, params) {
 
   const results = { updated: [], errors: [] };
 
+  // Sync profile (existing)
   try {
     await api.updateProfile({
       headline: data.profile.headline,
@@ -334,6 +335,76 @@ async function syncToWanted(data, params) {
     results.updated.push('profile');
   } catch (e) {
     results.errors.push({ section: 'profile', error: e.message });
+  }
+
+  // Fetch resume detail once for careers/educations/skills matching
+  let resumeDetail;
+  try {
+    resumeDetail = await api.getResumeDetail(params.resume_id);
+  } catch (e) {
+    results.errors.push({ section: 'resume_detail', error: e.message });
+    return results;
+  }
+
+  // Sync careers
+  try {
+    const remoteCareers = resumeDetail.careers || [];
+    const localCareers = data.careers || [];
+
+    for (const career of localCareers) {
+      const matchedCareer = remoteCareers.find(
+        (rc) => rc.company?.name === career.company_name
+      );
+
+      if (matchedCareer) {
+        await api.resumeCareer.update(params.resume_id, matchedCareer.id, career);
+      } else {
+        await api.resumeCareer.add(params.resume_id, career);
+      }
+    }
+    results.updated.push('careers');
+  } catch (e) {
+    results.errors.push({ section: 'careers', error: e.message });
+  }
+
+  // Sync educations
+  try {
+    const remoteEducations = resumeDetail.educations || [];
+    const localEducations = data.educations || [];
+
+    for (const edu of localEducations) {
+      const matchedEdu = remoteEducations.find(
+        (re) => re.school?.name === edu.school_name
+      );
+
+      if (matchedEdu) {
+        await api.resumeEducation.update(params.resume_id, matchedEdu.id, edu);
+      } else {
+        await api.resumeEducation.add(params.resume_id, edu);
+      }
+    }
+    results.updated.push('educations');
+  } catch (e) {
+    results.errors.push({ section: 'educations', error: e.message });
+  }
+
+  // Sync skills (additive only - no deletions)
+  try {
+    const remoteSkills = resumeDetail.skills || [];
+    const localSkills = data.skills || [];
+
+    for (const skillName of localSkills) {
+      const skillExists = remoteSkills.some(
+        (rs) => rs.name === skillName || rs.text === skillName
+      );
+
+      if (!skillExists) {
+        await api.resumeSkills.add(params.resume_id, { text: skillName });
+      }
+    }
+    results.updated.push('skills');
+  } catch (e) {
+    results.errors.push({ section: 'skills', error: e.message });
   }
 
   return results;

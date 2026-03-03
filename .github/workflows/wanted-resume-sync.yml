@@ -1,0 +1,81 @@
+# =============================================================================
+# WANTED RESUME SYNC - Weekly Resume Data Sync to Wanted Korea
+# =============================================================================
+# Authenticates with Wanted API and syncs resume_data.json (SSoT) to Wanted.
+# Uses job-server's unified-resume-sync tool via HTTP API.
+# =============================================================================
+
+name: Wanted Resume Sync
+
+on:
+  schedule:
+    - cron: '0 3 * * 0' # Weekly Sunday 03:00 UTC = 12:00 KST
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Preview changes without applying'
+        type: boolean
+        default: false
+      resume_id:
+        description: 'Wanted resume ID to sync'
+        type: string
+        required: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: wanted-resume-sync
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '22'
+
+jobs:
+  sync-resume:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Start job server
+        run: |
+          npm run dev -w @resume/job-automation &
+          sleep 5
+        env:
+          WANTED_EMAIL: ${{ secrets.WANTED_EMAIL }}
+          WANTED_PASSWORD: ${{ secrets.WANTED_PASSWORD }}
+
+      - name: Login to Wanted
+        run: |
+          curl -sf -X POST http://localhost:3000/job/api/auth/set \
+            -H 'Content-Type: application/json' \
+            -d '{"platform": "wanted", "email": "${{ secrets.WANTED_EMAIL }}", "password": "${{ secrets.WANTED_PASSWORD }}"}'
+
+      - name: Sync resume to Wanted
+        run: |
+          RESUME_ID="${{ inputs.resume_id || vars.WANTED_RESUME_ID }}"
+          DRY_RUN="${{ inputs.dry_run || 'false' }}"
+
+          if [ -z "$RESUME_ID" ]; then
+            echo "::error::WANTED_RESUME_ID not configured. Set it as a repository variable."
+            exit 1
+          fi
+
+          RESULT=$(curl -sf -X POST http://localhost:3000/job/api/resume-sync/sync \
+            -H 'Content-Type: application/json' \
+            -d "{\"platforms\": [\"wanted\"], \"resume_id\": \"$RESUME_ID\", \"dry_run\": $DRY_RUN}")
+
+          echo "$RESULT" | jq .
+          echo "## Sync Result" >> $GITHUB_STEP_SUMMARY
+          echo '```json' >> $GITHUB_STEP_SUMMARY
+          echo "$RESULT" | jq . >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+          # Check for errors
+          if echo "$RESULT" | jq -e '.results.wanted.errors | length > 0' > /dev/null 2>&1; then
+            echo "::warning::Sync completed with errors"
+          fi

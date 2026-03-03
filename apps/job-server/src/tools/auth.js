@@ -25,6 +25,7 @@ export const authTool = {
 Actions:
 - set_cookies: Set auth cookies from browser (recommended)
 - set_token: Set JWT token directly
+- login: Login with email/password (via Wanted API)
 - status: Check current login status
 - logout: Clear saved session
 
@@ -40,14 +41,17 @@ Alternative - JWT Token:
 2. Find 'wanted_access_token' or similar
 3. Use: wanted_auth({ action: "set_token", token: "jwt_token_here" })
 
-Session stored in: apps/job-server/.data/wanted-session.json (24hr expiry)`,
+Alternative - Email/Password Login:
+1. Use: wanted_auth({ action: "login", email: "user@example.com", password: "password" })
+
+Session stored in: ~/.opencode/data/sessions.json (24hr expiry)`,
 
   inputSchema: {
     type: 'object',
     properties: {
       action: {
         type: 'string',
-        enum: ['set_cookies', 'set_token', 'status', 'logout'],
+        enum: ['set_cookies', 'set_token', 'login', 'status', 'logout'],
         description: 'Authentication action',
       },
       cookies: {
@@ -58,12 +62,20 @@ Session stored in: apps/job-server/.data/wanted-session.json (24hr expiry)`,
         type: 'string',
         description: 'JWT auth token (for set_token)',
       },
+      email: {
+        type: 'string',
+        description: 'Email address (for login)',
+      },
+      password: {
+        type: 'string',
+        description: 'Password (for login)',
+      },
     },
     required: ['action'],
   },
 
   async execute(params) {
-    const { action, token, cookies } = params;
+    const { action, token, cookies, email, password } = params;
 
     switch (action) {
       case 'set_cookies': {
@@ -87,7 +99,11 @@ Session stored in: apps/job-server/.data/wanted-session.json (24hr expiry)`,
           const profile = await api.getProfile();
 
           if (profile && (profile.id || profile.email || profile.name)) {
-            SessionManager.save(null, profile.email || 'unknown', cookies);
+            SessionManager.save('wanted', {
+              token: null,
+              email: profile.email || 'unknown',
+              cookies,
+            });
             return {
               success: true,
               message: 'Cookies saved and validated',
@@ -135,7 +151,11 @@ Session stored in: apps/job-server/.data/wanted-session.json (24hr expiry)`,
           const profile = await api.getProfile();
 
           if (profile && (profile.id || profile.email || profile.name)) {
-            SessionManager.save(token, profile.email || 'unknown');
+            SessionManager.save('wanted', {
+              token,
+              email: profile.email || 'unknown',
+              cookies: null,
+            });
             return {
               success: true,
               message: 'Token saved and validated',
@@ -162,8 +182,65 @@ Session stored in: apps/job-server/.data/wanted-session.json (24hr expiry)`,
         }
       }
 
+      case 'login': {
+        if (!email || !password) {
+          return {
+            success: false,
+            error: 'Email and password are required',
+            instructions: [
+              '1. Provide email and password parameters',
+              '2. Example: wanted_auth({ action: "login", email: "user@example.com", password: "password" })',
+            ],
+          };
+        }
+
+        // Login via Wanted API
+        const api = new WantedAPI();
+        try {
+          const loginResult = await api.auth.login(email, password);
+
+          // After login, validate by getting profile
+          const profile = await api.getProfile();
+
+          if (profile && (profile.id || profile.email || profile.name)) {
+            // Extract token from login result if available
+            const sessionToken = loginResult?.access_token || loginResult?.token || null;
+            const userEmail = profile.email || email;
+
+            SessionManager.save('wanted', {
+              token: sessionToken,
+              email: userEmail,
+              cookies: null,
+            });
+
+            return {
+              success: true,
+              message: 'Login successful',
+              user: {
+                id: profile.id,
+                email: profile.email,
+                name: profile.name,
+              },
+              hint: 'Use wanted_profile or wanted_resume to manage your account',
+            };
+          } else {
+            return {
+              success: false,
+              error: 'Login succeeded but could not fetch profile',
+              hint: 'Session may be invalid. Try set_cookies instead.',
+            };
+          }
+        } catch (error) {
+          return {
+            success: false,
+            error: `Login failed: ${error.message}`,
+            hint: 'Check your email/password or try set_cookies method instead',
+          };
+        }
+      }
+
       case 'status': {
-        const session = SessionManager.load();
+        const session = SessionManager.load('wanted');
         if (session && (session.token || session.cookies)) {
           const expiresIn = Math.round(
             (24 * 60 * 60 * 1000 - (Date.now() - session.timestamp)) / 60000
@@ -186,7 +263,7 @@ Session stored in: apps/job-server/.data/wanted-session.json (24hr expiry)`,
       }
 
       case 'logout': {
-        SessionManager.clear();
+        SessionManager.clear('wanted');
         return {
           success: true,
           message: 'Session cleared successfully',
@@ -197,7 +274,7 @@ Session stored in: apps/job-server/.data/wanted-session.json (24hr expiry)`,
         return {
           success: false,
           error: `Unknown action: ${action}`,
-          available_actions: ['set_cookies', 'set_token', 'status', 'logout'],
+          available_actions: ['set_cookies', 'set_token', 'login', 'status', 'logout'],
         };
     }
   },
