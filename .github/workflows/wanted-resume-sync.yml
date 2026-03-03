@@ -43,7 +43,7 @@ jobs:
 
       - name: Start job server
         run: |
-          npm run dev -w @resume/job-automation &
+          npm run server -w @resume/job-automation &
           sleep 5
         env:
           WANTED_EMAIL: ${{ secrets.WANTED_EMAIL }}
