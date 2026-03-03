@@ -1,9 +1,10 @@
 import { readFileSync, existsSync } from 'fs';
-import { join } from 'path';
-import { homedir } from 'os';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 import { SessionManager } from './auth.js';
 
-const PROJECT_ROOT = join(homedir(), 'dev/resume');
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const PROJECT_ROOT = join(__dirname, '..', '..', '..', '..');
 const RESUME_DATA_PATH = join(PROJECT_ROOT, 'packages/data/resumes/master/resume_data.json');
 
 export const unifiedResumeSyncTool = {
