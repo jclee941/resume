@@ -15,7 +15,7 @@
  * @param {string} [options.dsn] - GlitchTip DSN (falls back to GLITCHTIP_DSN env var)
  * @param {string} [options.environment] - Environment name (default: 'production')
  * @param {string} [options.release] - Release version
- * @returns {{ captureException: (err: Error, context?: object) => void, captureMessage: (msg: string, level?: string) => void, flush: () => Promise<void> }}
+ * @returns {Promise<{ captureException: (err: Error, context?: object) => void, captureMessage: (msg: string, level?: string) => void, flush: () => Promise<void> }>}
  */
 export async function initErrorTracking({ dsn, environment = 'production', release } = {}) {
   const resolvedDsn = dsn || process.env.GLITCHTIP_DSN;
@@ -76,15 +76,15 @@ export async function initErrorTracking({ dsn, environment = 'production', relea
       Sentry.captureException(err, context ? { extra: context } : undefined);
     },
     captureMessage: (msg, level = 'info') => {
-      Sentry.captureMessage(msg, level);
+      Sentry.captureMessage(msg, /** @type {*} */ (level));
     },
-    flush: () => Sentry.close(2000),
+    flush: async () => { await Sentry.close(2000); },
   };
 }
 
 /**
  * Create a Fastify error handler plugin that reports errors to GlitchTip.
- * @param {ReturnType<typeof initErrorTracking>} tracker
+ * @param {Awaited<ReturnType<typeof initErrorTracking>>} tracker
  * @returns {import('fastify').FastifyPluginCallback}
  */
 export function errorTrackingPlugin(tracker) {
