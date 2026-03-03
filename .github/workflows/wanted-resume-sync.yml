@@ -48,12 +48,13 @@ jobs:
         env:
           WANTED_EMAIL: ${{ secrets.WANTED_EMAIL }}
           WANTED_PASSWORD: ${{ secrets.WANTED_PASSWORD }}
+          WANTED_COOKIES: ${{ secrets.WANTED_COOKIES }}
 
-      - name: Login to Wanted
+      - name: Set Wanted auth cookies
         run: |
-          curl -sf -X POST http://localhost:3000/job/api/auth/set \
+          curl -sf -X POST http://localhost:3000/api/auth/set \
             -H 'Content-Type: application/json' \
-            -d '{"platform": "wanted", "email": "${{ secrets.WANTED_EMAIL }}", "password": "${{ secrets.WANTED_PASSWORD }}"}'
+            -d '{"platform": "wanted", "cookies": "'"$WANTED_COOKIES"'", "email": "${{ secrets.WANTED_EMAIL }}"}'
 
       - name: Sync resume to Wanted
         run: |
@@ -65,7 +66,7 @@ jobs:
             exit 1
           fi
 
-          RESULT=$(curl -sf -X POST http://localhost:3000/job/api/resume-sync/sync \
+          RESULT=$(curl -sf -X POST http://localhost:3000/api/resume-sync/sync \
             -H 'Content-Type: application/json' \
             -d "{\"platforms\": [\"wanted\"], \"resume_id\": \"$RESUME_ID\", \"dry_run\": $DRY_RUN}")
 

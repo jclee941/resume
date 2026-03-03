@@ -22,6 +22,7 @@ import configRoutes from './routes/config.js';
 import d1Routes from './routes/d1.js';
 import autoApplyRoutes from './routes/auto-apply.js';
 import analyticsRoutes from './routes/analytics.js';
+import resumeSyncRoutes from './routes/resume-sync.js';
 
 const isDev = config.nodeEnv === 'development';
 
@@ -124,6 +125,7 @@ async function buildServer() {
   await fastify.register(d1Routes, { prefix: '/api/d1' });
   await fastify.register(autoApplyRoutes, { prefix: '/api/auto-apply' });
   await fastify.register(analyticsRoutes);
+  await fastify.register(resumeSyncRoutes, { prefix: '/api/resume-sync' });
 
   fastify.setNotFoundHandler((req, reply) => {
     if (req.url.startsWith('/api/')) {
