@@ -1,0 +1,66 @@
+# =============================================================================
+# AUTO-SYNC - Daily Resume Data Synchronization
+# =============================================================================
+# Syncs resume data from packages/data/ (SSoT) to apps/portfolio/ data files.
+# Commits directly to master if data changed — CF Workers Builds auto-deploys.
+# =============================================================================
+
+name: Auto Sync
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Daily at 00:00 UTC = 09:00 KST
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: auto-sync
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '22'
+
+jobs:
+  sync-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          token: ${{ secrets.GH_PAT }}
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Sync resume data
+        run: npm run sync:data
+
+      - name: Check for changes
+        id: check-changes
+        run: |
+          if git diff --quiet apps/portfolio/data.json apps/portfolio/data_en.json apps/portfolio/data_ja.json; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and push changes
+        if: steps.check-changes.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add apps/portfolio/data*.json
+          git commit -m "chore(data): sync resume data from SSoT"
+          git push origin master
+
+      - name: No changes
+        if: steps.check-changes.outputs.changed == 'false'
+        run: echo "No data changes detected"
+
+      - name: Summary
+        run: |
+          echo "## Sync Status" >> $GITHUB_STEP_SUMMARY
+          echo "- Changed: ${{ steps.check-changes.outputs.changed }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Timestamp: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> $GITHUB_STEP_SUMMARY

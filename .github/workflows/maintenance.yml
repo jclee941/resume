@@ -1,5 +1,5 @@
 # =============================================================================
-# MAINTENANCE - MANUAL JOBS
+# MAINTENANCE - SCHEDULED & MANUAL JOBS
 # =============================================================================
 # Handles:
 #   - Auth session refresh for job platforms
@@ -7,18 +7,22 @@
 #   - Infrastructure drift detection
 #   - Cache cleanup
 #
-# Trigger: Manual workflow_dispatch only
+# Trigger: Scheduled cron + manual workflow_dispatch
 # =============================================================================
 
 name: Maintenance
 
 on:
-  # NOTE: Scheduled drift-detection disabled until R2_ACCESS_KEY_ID and
-  # R2_SECRET_ACCESS_KEY secrets are provisioned in GitHub.
-  # Re-enable: uncomment the schedule block below.
-  # schedule:
-  #   # Weekly drift detection: Monday 6:00 UTC (15:00 KST)
-  #   - cron: '0 6 * * 1'
+  # Schedule: drift-detection weekly Monday, auth-refresh daily, profile-sync weekly Sunday
+  schedule:
+    # Auth refresh: daily 3:00 UTC (12:00 KST)
+    - cron: '0 3 * * *'
+    # Profile sync: weekly Sunday 6:00 UTC (15:00 KST)
+    - cron: '0 6 * * 0'
+    # Drift detection: weekly Monday 6:00 UTC (15:00 KST)
+    - cron: '0 6 * * 1'
+    # Cache cleanup: weekly Saturday 6:00 UTC (15:00 KST)
+    - cron: '0 6 * * 6'
   workflow_dispatch:
     inputs:
       job:
@@ -42,7 +46,7 @@ jobs:
   auth-refresh:
     name: Auth Session Refresh
     runs-on: ubuntu-latest
-    if: inputs.job == 'auth-refresh' || inputs.job == 'all'
+    if: inputs.job == 'auth-refresh' || inputs.job == 'all' || github.event.schedule == '0 3 * * *'
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -89,7 +93,7 @@ jobs:
   profile-sync:
     name: Profile Data Sync
     runs-on: ubuntu-latest
-    if: inputs.job == 'profile-sync' || inputs.job == 'all'
+    if: inputs.job == 'profile-sync' || inputs.job == 'all' || github.event.schedule == '0 6 * * 0'
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -137,7 +141,7 @@ jobs:
   drift-detection:
     name: Infrastructure Drift Detection
     runs-on: ubuntu-latest
-    if: inputs.job == 'drift-detection' || inputs.job == 'all' || github.event_name == 'schedule'
+    if: inputs.job == 'drift-detection' || inputs.job == 'all' || github.event.schedule == '0 6 * * 1'
     env:
       TF_VERSION: '1.10.5'
       TF_WORKING_DIR: 'infrastructure/cloudflare'
@@ -275,7 +279,7 @@ jobs:
     name: Cache Cleanup
     runs-on: ubuntu-latest
     if: |
-      (github.event_name == 'workflow_dispatch' && (inputs.job == 'cache-cleanup' || inputs.job == 'all'))
+      (github.event_name == 'workflow_dispatch' && (inputs.job == 'cache-cleanup' || inputs.job == 'all')) || github.event.schedule == '0 6 * * 6'
     steps:
       - name: Cleanup old caches
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
