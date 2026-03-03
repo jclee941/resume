@@ -1,0 +1,235 @@
+#VS|{
+#RZ|  "name": "Resume Data - Daily Sync Trigger",
+#BR|  "nodes": [
+#MR|    {
+#RR|      "parameters": {
+#HM|        "rule": {
+#PK|          "interval": [
+#TJ|            {
+#JB|              "field": "cronExpression",
+#QZ|              "cronExpression": "0 0 * * *"
+#RP|            }
+#BP|          ]
+#QN|        }
+#BK|      },
+#WZ|      "id": "schedule-trigger",
+#WH|      "name": "Daily 9AM KST",
+#VM|      "type": "n8n-nodes-base.scheduleTrigger",
+#TZ|      "typeVersion": 1.3,
+#JM|      "position": [250, 300]
+#JR|    },
+#ZP|    {
+#RR|      "parameters": {
+#JS|        "url": "https://resume.jclee.me/job/api/automation/resume-sync",
+#XJ|        "method": "POST",
+#ZQ|        "sendBody": true,
+#WP|        "contentType": "json",
+#NQ|        "jsonBody": "{\"dryRun\": false, \"source\": \"n8n-scheduled\"}",
+#PB|        "options": {
+#PK|          "timeout": 60000
+#PK|        }
+#MP|      },
+#BP|      "id": "http-trigger-sync",
+#SW|      "name": "Trigger Resume Sync",
+#BJ|      "type": "n8n-nodes-base.httpRequest",
+#JY|      "typeVersion": 4.3,
+#JJ|      "position": [450, 300],
+#TP|      "continueOnFail": true
+#TB|    },
+#XS|    {
+#RR|      "parameters": {
+#WM|        "conditions": {
+#ZQ|          "options": {
+#MB|            "combineOperation": "any"
+#QP|          },
+#VS|          "conditions": [
+#SW|            {
+#KB|              "id": "condition-status",
+#TX|              "leftValue": "={{ $json.statusCode }}",
+#XH|              "rightValue": 200,
+#QZ|              "operator": {
+#NK|                "type": "number",
+#QQ|                "operation": "notEquals"
+#TR|              }
+#BR|            },
+#QT|            {
+#NQ|              "id": "condition-error",
+#BV|              "leftValue": "={{ $json.error }}",
+#TW|              "rightValue": "",
+#QZ|              "operator": {
+#KV|                "type": "string",
+#JP|                "operation": "notEmpty"
+#PY|              }
+#MK|            }
+#VZ|          ]
+#MW|        },
+#VP|        "options": {}
+#RK|      },
+#XW|      "id": "if-error",
+#NQ|      "name": "Sync Failed?",
+#VB|      "type": "n8n-nodes-base.if",
+#KH|      "typeVersion": 2,
+#JB|      "position": [650, 300]
+#NM|    },
+#KG|    {
+#RR|      "parameters": {
+#HR|        "assignments": {
+#XZ|          "assignments": [
+#QX|            {
+#PT|              "id": "webhook-url",
+#ZP|              "name": "webhookUrl",
+#WR|              "value": "https://hooks.slack.com/services/YOUR_WEBHOOK_URL",
+#MS|              "type": "string"
+#XP|            }
+#MN|          ]
+#PN|        },
+#VP|        "options": {}
+#WZ|      },
+#KZ|      "id": "set-webhook-fail",
+#PR|      "name": "Set Slack Webhook URL",
+#ZJ|      "type": "n8n-nodes-base.set",
+#VR|      "typeVersion": 3.4,
+#VQ|      "position": [850, 200],
+#BY|      "notes": "⚠️ REQUIRED: Update with your registered Slack Webhook URL from n8n credentials"
+#JN|    },
+#TV|    {
+#RR|      "parameters": {
+#PP|        "url": "={{ $('Set Slack Webhook URL').item.json.webhookUrl }}",
+#HW|        "method": "POST",
+#YH|        "sendBody": true,
+#WP|        "contentType": "json",
+#NQ|        "jsonBody": "={\n  \"text\": \"🚨 Resume Sync Alert\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \"🚨 Resume Sync Failed\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Status:*\\n{{ $('Trigger Resume Sync').item.json.statusCode || 'Timeout' }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Time:*\\n{{ $now.toISO() }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Error:*\\n{{ $('Trigger Resume Sync').item.json.error || 'HTTP ' + $('Trigger Resume Sync').item.json.statusCode }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"Triggered by n8n Daily Resume Sync\"\n        }\n      ]\n    }\n  ]\n}",
+#VP|        "options": {}
+#TV|      },
+#QS|      "id": "slack-fail",
+#JZ|      "name": "Send Failure Alert",
+#BJ|      "type": "n8n-nodes-base.httpRequest",
+#JY|      "typeVersion": 4.3,
+#YQ|      "position": [1050, 200]
+#YH|    },
+#KM|    {
+#RR|      "parameters": {
+#HR|        "assignments": {
+#XZ|          "assignments": [
+#QX|            {
+#PT|              "id": "webhook-url",
+#ZP|              "name": "webhookUrl",
+#WR|              "value": "https://hooks.slack.com/services/YOUR_WEBHOOK_URL",
+#MS|              "type": "string"
+#XP|            }
+#MN|          ]
+#PN|        },
+#VP|        "options": {}
+#WZ|      },
+#KM|      "id": "set-webhook-success",
+#PR|      "name": "Set Success Webhook URL",
+#ZJ|      "type": "n8n-nodes-base.set",
+#VR|      "typeVersion": 3.4,
+#VQ|      "position": [850, 400],
+#BY|      "notes": "⚠️ REQUIRED: Update with your registered Slack Webhook URL from n8n credentials"
+#JN|    },
+#HB|    {
+#RR|      "parameters": {
+#PP|        "url": "={{ $('Set Success Webhook URL').item.json.webhookUrl }}",
+#HW|        "method": "POST",
+#YH|        "sendBody": true,
+#WP|        "contentType": "json",
+#NQ|        "jsonBody": "={\n  \"text\": \"✅ Resume Sync Complete\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \"✅ Resume Sync Complete\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Status:*\\nSuccess\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Time:*\\n{{ $now.toISO() }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Details:*\\n{{ JSON.stringify($('Trigger Resume Sync').item.json) }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"Triggered by n8n Daily Resume Sync\"\n        }\n      ]\n    }\n  ]\n}",
+#VP|        "options": {}
+#TV|      },
+#RX|      "id": "slack-success",
+#PG|      "name": "Send Success Notice",
+#BJ|      "type": "n8n-nodes-base.httpRequest",
+#JY|      "typeVersion": 4.3,
+#YQ|      "position": [1050, 400]
+#YH|    }
+#QB|  ],
+#MW|  "connections": {
+#PY|    "Daily 9AM KST": {
+#JT|      "main": [
+#TY|        [
+#HX|          {
+#TJ|            "node": "Trigger Resume Sync",
+#SW|            "type": "main",
+#JN|            "index": 0
+#HQ|          }
+#TW|        ]
+#BM|      ]
+#YS|    },
+#NW|    "Trigger Resume Sync": {
+#JT|      "main": [
+#SX|        [
+#PP|          {
+#NX|            "node": "Sync Failed?",
+#SW|            "type": "main",
+#JN|            "index": 0
+#JH|          }
+#BY|        ]
+#ZB|      ]
+#QY|    },
+#RJ|    "Sync Failed?": {
+#JT|      "main": [
+#BX|        [
+#ZK|          {
+#XZ|            "node": "Set Slack Webhook URL",
+#SW|            "type": "main",
+#JN|            "index": 0
+#YP|          }
+#SS|        ],
+#KM|        [
+#ZK|          {
+#XZ|            "node": "Set Success Webhook URL",
+#SW|            "type": "main",
+#JN|            "index": 0
+#YP|          }
+#SS|        ]
+#WY|      ]
+#NJ|    },
+#NW|    "Set Slack Webhook URL": {
+#JT|      "main": [
+#TP|        [
+#NJ|          {
+#HZ|            "node": "Send Failure Alert",
+#SW|            "type": "main",
+#JN|            "index": 0
+#QW|          }
+#SQ|        ]
+#QH|      ]
+#VW|    },
+#NW|    "Set Success Webhook URL": {
+#JT|      "main": [
+#TP|        [
+#NJ|          {
+#HZ|            "node": "Send Success Notice",
+#SW|            "type": "main",
+#JN|            "index": 0
+#QW|          }
+#SQ|        ]
+#QH|      ]
+#VW|    }
+#MP|  },
+#PW|  "pinData": {},
+#TS|  "settings": {
+#RP|    "executionOrder": "v1"
+#RX|  },
+#HM|  "staticData": null,
+#SX|  "tags": [
+#KP|    {
+#KW|      "name": "automation",
+#ZB|      "createdAt": "2025-01-20T00:00:00.000Z",
+#PZ|      "updatedAt": "2025-01-20T00:00:00.000Z",
+#SP|      "id": "3"
+#BZ|    },
+#SM|    {
+#QJ|      "name": "resume",
+#ZB|      "createdAt": "2025-01-20T00:00:00.000Z",
+#PZ|      "updatedAt": "2025-01-20T00:00:00.000Z",
+#MX|      "id": "2"
+#SW|    }
+#WR|  ],
+#PR|  "meta": {
+#BX|    "instanceId": "n8n-resume-sync"
+#JW|  },
+#QW|  "id": "resume-sync-trigger",
+#PY|  "versionId": "1.0.0"
+#XK|}

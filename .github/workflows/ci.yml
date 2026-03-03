@@ -176,6 +176,31 @@ jobs:
           echo "=== Running TypeScript Check ==="
           npm run typecheck
 
+
+  data-drift:
+    name: Data Drift Check
+    runs-on: ubuntu-latest
+    needs: [analyze]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Sync resume data
+        run: npm run sync:data
+
+      - name: Check for data drift
+        run: |
+          echo "=== Checking SSoT ↔ Portfolio data drift ==="
+          if ! git diff --exit-code apps/portfolio/data.json apps/portfolio/data_en.json apps/portfolio/data_ja.json; then
+            echo "❌ Data drift detected: portfolio data files are out of sync with SSoT"
+            echo "Run 'npm run sync:data' locally and commit the changes"
+            exit 1
+          fi
+          echo "✅ No data drift detected"
+
   # ===========================================================================
   # STAGE: TEST - Unit & E2E Tests
   # ===========================================================================
@@ -281,7 +306,7 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    needs: [lint, typecheck, test-unit, validate-cloudflare]
+    needs: [lint, typecheck, test-unit, validate-cloudflare, data-drift]
     if: >-
       !cancelled() &&
       !failure()
@@ -311,7 +336,7 @@ jobs:
   # ===========================================================================
   elk-ingest:
     name: ELK Ingest
-    needs: [analyze, validate-cloudflare, lint, typecheck, test-unit, test-e2e, security-scan, build]
+    needs: [analyze, validate-cloudflare, lint, typecheck, test-unit, test-e2e, security-scan, build, data-drift]
     if: always() && !cancelled()
     uses: qws941/.github/.github/workflows/_elk-ingest.yml@master
     with:
