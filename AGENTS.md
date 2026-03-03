@@ -6,7 +6,7 @@
 
 ## OVERVIEW
 
-Personal resume management system with multi-format output. Layer-based npm workspaces monorepo hosting 3 deployable Cloudflare Workers/servers and 2 shared packages. Serves a cyberpunk terminal portfolio at `resume.jclee.me` and automates Korean job platform workflows via MCP server + dashboard API.
+Personal resume management system with multi-format output. Layer-based npm workspaces monorepo hosting 2 deployable services (1 Cloudflare Worker + 1 server) and 2 shared packages. Serves a cyberpunk terminal portfolio at `resume.jclee.me` (including job dashboard API at `/job/*`) and automates Korean job platform workflows via MCP server.
 
 ## STRUCTURE
 
@@ -15,7 +15,7 @@ Personal resume management system with multi-format output. Layer-based npm work
 ├── apps/
 │   ├── portfolio/              # CF Worker: cyberpunk terminal portfolio (resume.jclee.me)
 │   ├── job-server/             # MCP Server + Fastify for job platform automation
-│   └── job-dashboard/          # CF Worker: dashboard API (resume.jclee.me/job/*)
+│   └── job-dashboard/          # Dashboard API source (routed via portfolio worker)
 ├── packages/
 │   ├── cli/                    # Commander.js CLI for resume operations
 │   └── data/                   # SSoT for resume variants (master JSON)
@@ -40,7 +40,7 @@ Personal resume management system with multi-format output. Layer-based npm work
 │   ├── workflows/              # 19 CI/CD workflows
 │   └── actions/setup/          # Composite setup action (Node 22 + npm ci)
 ├── package.json                # Root workspace config (v1.0.128)
-├── wrangler.jsonc              # Portfolio worker config (resume.jclee.me)
+├── wrangler.jsonc              # Unified worker config (resume.jclee.me + /job/*)
 ├── jsconfig.json               # TypeScript checking config
 ├── eslint.config.cjs           # ESLint flat config
 ├── jest.config.cjs             # Jest test config
@@ -65,9 +65,9 @@ Personal resume management system with multi-format output. Layer-based npm work
 | E2E tests                 | `tests/e2e/`                        | Playwright, 24 test files                |
 | CI pipeline               | `.github/workflows/ci.yml`          | 8-job validation pipeline                |
 | Auto-release              | `.github/workflows/release.yml`     | Triggers on CI completion                |
-| Post-deploy verification  | `.github/workflows/verify.yml`      | Portfolio + dashboard health checks      |
-| Worker config (portfolio) | `wrangler.jsonc`                    | Routes, D1/KV bindings, assets           |
-| Worker config (dashboard) | `apps/job-dashboard/wrangler.toml`  | D1/KV/Queue bindings, environments       |
+| Post-deploy verification  | `.github/workflows/verify.yml`      | Portfolio health checks                  |
+| Worker config             | `wrangler.jsonc`                    | Unified: routes, D1/KV/Queue bindings    |
+| Worker config (env)       | `apps/portfolio/wrangler.toml`      | Production env overrides, workflows      |
 
 ## WORKSPACES
 
@@ -75,29 +75,29 @@ Personal resume management system with multi-format output. Layer-based npm work
 | ------------------------------ | --------------------- | ------- | ------------------------------ |
 | `@resume/portfolio-worker`     | `apps/portfolio/`     | App     | CF Worker: cyberpunk portfolio |
 | `@resume/job-automation`       | `apps/job-server/`    | App     | MCP Server + Fastify (ESM)     |
-| `@resume/job-dashboard-worker` | `apps/job-dashboard/` | App     | CF Worker: dashboard API (ESM) |
+| `@resume/job-dashboard-worker` | `apps/job-dashboard/` | App     | Dashboard API source (unified worker)  |
 | `@resume/cli`                  | `packages/cli/`       | Package | Commander.js CLI (ESM)         |
 | `@resume/data`                 | `packages/data/`      | Package | Resume data SSoT               |
 
 ## DEPLOYMENTS
 
-| App           | Domain                  | Platform           | Deploy Method                |
-| ------------- | ----------------------- | ------------------ | ---------------------------- |
-| Portfolio     | `resume.jclee.me`       | Cloudflare Workers | CF Workers Builds (git push) |
-| Job Dashboard | `resume.jclee.me/job/*` | Cloudflare Workers | CF Workers Builds (git push) |
-| Job Server    | Local / Docker          | Node.js + Fastify  | Docker / manual              |
+| App           | Domain                           | Platform           | Deploy Method                |
+| ------------- | -------------------------------- | ------------------ | ---------------------------- |
+| Resume Worker | `resume.jclee.me` + `/job/*`     | Cloudflare Workers | CF Workers Builds (git push) |
+| Job Server    | Local / Docker                   | Node.js + Fastify  | Docker / manual              |
 
 **Deploy authority**: Cloudflare Workers Builds deploys on push to `master`. GitHub Actions is CI only — never deploy authority.
 
 ## STORAGE BINDINGS
 
-| Binding          | Type  | Used By               | Purpose                            |
-| ---------------- | ----- | --------------------- | ---------------------------------- |
-| `resume-prod-db` | D1    | Portfolio + Dashboard | Applications, job cache, sync logs |
-| `SESSIONS`       | KV    | Portfolio + Dashboard | Session storage                    |
-| `RATE_LIMIT_KV`  | KV    | Portfolio + Dashboard | Rate limiting                      |
-| `NONCE_KV`       | KV    | Portfolio             | CSP nonce tracking                 |
-| `crawl-tasks`    | Queue | Dashboard             | Crawl job queue                    |
+| Binding          | Type  | Used By        | Purpose                            |
+| ---------------- | ----- | -------------- | ---------------------------------- |
+| `DB`             | D1    | Resume Worker  | Applications, portfolio data       |
+| `JOB_DB`         | D1    | Resume Worker  | Job cache, sync logs               |
+| `SESSIONS`       | KV    | Resume Worker  | Session storage                    |
+| `RATE_LIMIT_KV`  | KV    | Resume Worker  | Rate limiting                      |
+| `NONCE_KV`       | KV    | Resume Worker  | CSP nonce tracking                 |
+| `crawl-tasks`    | Queue | Resume Worker  | Crawl job queue                    |
 
 ## CI/CD PIPELINE
 
@@ -230,7 +230,7 @@ npm run dev -w @resume/job-automation    # Job server dev (watch mode)
 - Multi-language resume: `data.json` (ko), `data_en.json`, `data_ja.json`.
 - Stealth crawling: UA rotation, 1s+ jitter, rebrowser-puppeteer for anti-detection.
 - Bazel facade: BUILD.bazel files exist but primary build is npm scripts.
-- Dual worker entry: `apps/portfolio/entry.js` routes to both portfolio and job-dashboard.
+- Unified worker entry: `apps/portfolio/entry.js` routes both portfolio and job-dashboard, exports workflow classes, and handles queue consumption.
 - Child AGENTS.md files in ~40 subdirectories for domain-specific knowledge.
 
 ## NOTES

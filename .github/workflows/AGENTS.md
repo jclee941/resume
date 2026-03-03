@@ -41,3 +41,4 @@ Workflow-level CI/CD validation logic for this monorepo. This directory owns job
 - `release.yml` uses 1Password (`1password/load-secrets-action`) to load `ELASTICSEARCH_API_KEY` at runtime via `OP_SERVICE_ACCOUNT_TOKEN`.
 - `elk-ingest` job uses `vars.RUNNER` (self-hosted runner) for Elasticsearch network access; falls back to `ubuntu-latest`.
 - `deploy-job-worker.yml` is stale — job server deploys via Docker, not GitHub Actions.
+- `terraform.yml` uses 1Password for all credentials: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` from `op://homelab/cloudflare/*`, R2 backend (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`) from `op://homelab/cloudflare-r2/*`.

@@ -37,6 +37,7 @@ vars = { ENVIRONMENT = "production", ELASTICSEARCH_INDEX = "resume-logs-worker" 
 routes = [
   { pattern = "resume.jclee.me", custom_domain = true }
 ]
+
 [env.production.assets]
 directory = "./assets"
 binding = "ASSETS"
@@ -53,7 +54,7 @@ binding = "JOB_DB"
 database_name = "job-dashboard-db"
 database_id = "c858dda6-b752-4e12-b60c-2886e9483cc7"
 
-# Job Dashboard KV Namespaces
+# KV Namespaces
 [[env.production.kv_namespaces]]
 binding = "SESSIONS"
 id = "2b81b9b02dc34f518d2ca9552804bfef"
@@ -66,7 +67,7 @@ id = "fe51b0f1c2c44841b4895e8747cb408a"
 binding = "NONCE_KV"
 id = "3e282b1b906c474aadcc947a06f0c1ad"
 
-# Job Dashboard Workflows
+# Workflows
 [[env.production.workflows]]
 name = "job-crawling-workflow"
 binding = "JOB_CRAWLING_WORKFLOW"
@@ -102,3 +103,12 @@ name = "cleanup-workflow"
 binding = "CLEANUP_WORKFLOW"
 class_name = "CleanupWorkflow"
 
+# Queue Bindings
+[[env.production.queues.producers]]
+binding = "CRAWL_TASKS"
+queue = "crawl-tasks"
+
+[[env.production.queues.consumers]]
+queue = "crawl-tasks"
+max_batch_size = 10
+max_retries = 5

@@ -21,10 +21,6 @@ on:
         description: 'Portfolio URL to verify (default: https://resume.jclee.me)'
         required: false
         default: 'https://resume.jclee.me'
-      job_dashboard_url:
-        description: 'Job Dashboard URL to verify (default: https://resume.jclee.me/job)'
-        required: false
-        default: 'https://resume.jclee.me/job'
       timeout_seconds:
         description: 'Timeout for each curl request in seconds'
         required: false
@@ -37,11 +33,6 @@ on:
         required: false
         type: string
         default: 'https://resume.jclee.me'
-      job_dashboard_url:
-        description: 'Job Dashboard URL to verify'
-        required: false
-        type: string
-        default: 'https://resume.jclee.me/job'
       timeout_seconds:
         description: 'Timeout for each curl request'
         required: false
@@ -54,7 +45,6 @@ permissions:
 
 env:
   PORTFOLIO_URL: https://resume.jclee.me
-  JOB_DASHBOARD_URL: https://resume.jclee.me/job
 
 jobs:
   verify-portfolio:
@@ -515,119 +505,11 @@ jobs:
             echo "⚠️  sitemap.xml: Missing or invalid"
             exit 0
           fi
-
-  verify-job-dashboard:
-    if: github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || (github.event_name == 'deployment_status' && github.event.deployment_status.state == 'success')
-    name: Verify Job Dashboard (${{ matrix.check }})
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    strategy:
-      fail-fast: false
-      matrix:
-        check:
-          - health
-          - endpoints
-    steps:
-      - name: Set URLs
-        id: urls
-        shell: bash
-        run: |
-          JOB_DASHBOARD_URL="${{ inputs.job_dashboard_url || github.event.inputs.job_dashboard_url || env.JOB_DASHBOARD_URL }}"
-          TIMEOUT="${{ inputs.timeout_seconds || '30' }}"
-
-          echo "job_dashboard_url=$JOB_DASHBOARD_URL" >> $GITHUB_OUTPUT
-          echo "timeout=$TIMEOUT" >> $GITHUB_OUTPUT
-
-          echo "📍 Job Dashboard URL: $JOB_DASHBOARD_URL"
-          echo "📍 Timeout: ${TIMEOUT}s"
-
-      - name: 'Check: Job Dashboard Health'
-        if: matrix.check == 'health'
-        shell: bash
-        run: |
-          set +e
-          JOB_DASHBOARD_URL="${{ steps.urls.outputs.job_dashboard_url }}"
-          TIMEOUT="${{ steps.urls.outputs.timeout }}"
-          RETRIES=5
-          DELAY=5
-
-          echo "🏥 Checking Job Dashboard Health..."
-
-          for i in $(seq 1 $RETRIES); do
-            echo "  Attempt $i/$RETRIES..."
-            if JOB_HEALTH=$(curl -sf --max-time "$TIMEOUT" "$JOB_DASHBOARD_URL/api/health" 2>/dev/null); then
-              JOB_STATUS=$(echo "$JOB_HEALTH" | jq -r '.status // "unknown"' 2>/dev/null)
-              JOB_VERSION=$(echo "$JOB_HEALTH" | jq -r '.version // "unknown"' 2>/dev/null)
-              DB_STATUS=$(echo "$JOB_HEALTH" | jq -r '.database // "unknown"' 2>/dev/null)
-              
-              if [ "$JOB_STATUS" = "ok" ]; then
-                echo "✅ Job Dashboard Health: $JOB_STATUS (v$JOB_VERSION, DB: $DB_STATUS)"
-                exit 0
-              fi
-            fi
-            
-            if [ $i -lt $RETRIES ]; then
-              echo "  Retrying in ${DELAY}s..."
-              sleep $DELAY
-            fi
-          done
-
-          echo "⚠️  Job Dashboard Health: May be offline or still starting"
-          exit 0
-
-      - name: 'Check: Response Time'
-        if: matrix.check == 'health'
-        shell: bash
-        run: |
-          set +e
-          JOB_DASHBOARD_URL="${{ steps.urls.outputs.job_dashboard_url }}"
-          TIMEOUT="${{ steps.urls.outputs.timeout }}"
-
-          echo "⏱️  Measuring Response Time..."
-
-          RESPONSE_TIME=$(curl -sf -o /dev/null -w "%{time_total}" --max-time "$TIMEOUT" "$JOB_DASHBOARD_URL/" 2>/dev/null || echo "0")
-          RESPONSE_MS=$(echo "$RESPONSE_TIME * 1000" | bc | cut -d. -f1)
-
-          if [ "$RESPONSE_MS" -lt 500 ]; then
-            echo "✅ Response Time: ${RESPONSE_MS}ms (<500ms)"
-            exit 0
-          elif [ "$RESPONSE_MS" -lt 1000 ]; then
-            echo "⚠️  Response Time: ${RESPONSE_MS}ms (500-1000ms)"
-            exit 0
-          else
-            echo "❌ Response Time: ${RESPONSE_MS}ms (>1000ms)"
-            exit 1
-          fi
-
-      - name: 'Check: API Endpoints'
-        if: matrix.check == 'endpoints'
-        shell: bash
-        run: |
-          set +e
-          JOB_DASHBOARD_URL="${{ steps.urls.outputs.job_dashboard_url }}"
-          TIMEOUT="${{ steps.urls.outputs.timeout }}"
-
-          echo "🔗 Checking API Endpoints..."
-
-          # Check main endpoint
-          if curl -sf --max-time "$TIMEOUT" -o /dev/null "$JOB_DASHBOARD_URL/" 2>/dev/null; then
-            echo "✅ Main Endpoint: HTTP 200"
-          else
-            echo "⚠️  Main Endpoint: Not accessible"
-          fi
-
-          # Check jobs endpoint
-          if curl -sf --max-time "$TIMEOUT" -o /dev/null "$JOB_DASHBOARD_URL/api/jobs" 2>/dev/null; then
-            echo "✅ Jobs API Endpoint: HTTP 200"
-          else
-            echo "⚠️  Jobs API Endpoint: Not accessible"
-          fi
-
   summary:
     if: (github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || (github.event_name == 'deployment_status' && github.event.deployment_status.state == 'success')) && always()
     name: Verification Summary
     runs-on: ubuntu-latest
-    needs: [verify-portfolio, verify-job-dashboard]
+    needs: [verify-portfolio]
     steps:
       - name: Check Status
         shell: bash
@@ -636,14 +518,10 @@ jobs:
           echo "======================="
           echo ""
           echo "Portfolio Verification: ${{ needs.verify-portfolio.result }}"
-          echo "Job Dashboard Verification: ${{ needs.verify-job-dashboard.result }}"
           echo ""
 
-          if [ "${{ needs.verify-portfolio.result }}" = "success" ] && [ "${{ needs.verify-job-dashboard.result }}" = "success" ]; then
+          if [ "${{ needs.verify-portfolio.result }}" = "success" ]; then
             echo "✅ All verification checks passed!"
-            exit 0
-          elif [ "${{ needs.verify-portfolio.result }}" = "success" ]; then
-            echo "⚠️  Portfolio verified, but Job Dashboard may have issues"
             exit 0
           else
             echo "⚠️  Some verification checks failed or were skipped"

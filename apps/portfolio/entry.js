@@ -55,13 +55,12 @@ async function postToEs(env, doc) {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 3000);
   try {
-    const resp = await fetch(`${esUrl}/${index}/_doc`, {
+    await fetch(`${esUrl}/${index}/_doc`, {
       method: 'POST',
       signal: controller.signal,
       headers: buildEsHeaders(env),
       body: JSON.stringify(doc),
     });
-    // Best-effort — ignore response
   } catch (err) {
     console.error('[postToEs] ERROR:', err?.message || err, 'index:', env?.ELASTICSEARCH_INDEX);
   } finally {
@@ -226,5 +225,9 @@ export default {
 
     ctx.waitUntil(logRequest(env, request, response, url.pathname, startTime));
     return response;
+  },
+
+  async queue(batch, env, ctx) {
+    return jobHandler.queue(batch, env, ctx);
   },
 };
