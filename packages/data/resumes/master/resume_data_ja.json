@@ -40,19 +40,12 @@
     ],
     "profileStatement": "金融・公共分野でセキュリティ基盤の設計と運用を担当してきた、8年目のインフラエンジニアです。Observability 体制の構築と運用自動化に取り組んでいます。"
   },
-  "current": {
-    "company": "ITCEN CTS",
-    "department": "情報セキュリティチーム",
-    "position": "セキュリティ運用担当",
-    "startDate": "2025.03",
-    "participationMonths": 10,
-    "participationRate": null
-  },
+  "current": null,
   "careers": [
     {
       "company": "ITCEN CTS",
-      "period": "2025.03 ~ 현재",
-      "duration": "10か月",
+      "period": "2025.03 ~ 2026.02",
+      "duration": "1年",
       "project": "ネクストレード売買約定システム セキュリティ運用SM",
       "role": "セキュリティ運用担当",
       "client": "ネクストレード",

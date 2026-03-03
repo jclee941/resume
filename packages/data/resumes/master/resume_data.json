@@ -16,8 +16,14 @@
     "highSchoolGraduation": "2013"
   },
   "languages": [
-    { "name": "Korean", "level": "Native" },
-    { "name": "English", "level": "Professional working proficiency" }
+    {
+      "name": "Korean",
+      "level": "Native"
+    },
+    {
+      "name": "English",
+      "level": "Professional working proficiency"
+    }
   ],
   "military": {
     "status": "사회복무요원 (산업기능요원)",
@@ -27,22 +33,19 @@
     "totalExperience": "8년",
     "experienceStart": "2017.02",
     "grade": null,
-    "expertise": ["Observability", "보안 인프라", "자동화"],
+    "expertise": [
+      "Observability",
+      "보안 인프라",
+      "자동화"
+    ],
     "profileStatement": "8년차 인프라 엔지니어로 금융·공공 분야에서 보안 인프라 설계와 운영을 담당했습니다. Observability 체계 구축과 운영 자동화를 수행하고 있습니다."
   },
-  "current": {
-    "company": "(주)아이티센 CTS",
-    "department": "정보보안팀",
-    "position": "보안운영 담당",
-    "startDate": "2025.03",
-    "participationMonths": 10,
-    "participationRate": null
-  },
+  "current": null,
   "careers": [
     {
       "company": "(주)아이티센 CTS",
-      "period": "2025.03 ~ 현재",
-      "duration": "10개월",
+      "period": "2025.03 ~ 2026.02",
+      "duration": "1년",
       "project": "넥스트레이드 매매체결시스템 보안운영SM",
       "role": "보안운영 담당",
       "client": "넥스트레이드",
@@ -103,7 +106,12 @@
       "period": "2025.03 ~ 현재",
       "name": "넥스트레이드 보안운영",
       "client": "넥스트레이드",
-      "technologies": ["Python", "Splunk", "n8n", "Fortinet"],
+      "technologies": [
+        "Python",
+        "Splunk",
+        "n8n",
+        "Fortinet"
+      ],
       "os": "Linux, Docker",
       "role": "보안운영 담당",
       "description": "Splunk ES 및 FortiGate API를 활용한 보안 운영 자동화\n• n8n 워크플로우를 연동하여 보안 이벤트 탐지 시 실시간 Slack 알림 연동\n• FortiManager API를 이용한 방화벽 정책 자동 조회 툴 개발",
@@ -117,7 +125,11 @@
       "period": "2024.03 ~ 2025.02",
       "name": "넥스트레이드 보안인프라 구축",
       "client": "넥스트레이드",
-      "technologies": ["Python", "FortiManager API", "Ansible"],
+      "technologies": [
+        "Python",
+        "FortiManager API",
+        "Ansible"
+      ],
       "os": "Linux, VMware",
       "role": "보안 인프라 설계",
       "description": "고가용성 기반 증권 매매 시스템 보안 아키텍처 설계\n• FGCP(FortiGate Clustering Protocol) 기반 Active-Passive HA 구성\n• Ansible Role을 활용한 보안 장비 초기 설정 및 정책 배포 표준화",
@@ -131,7 +143,13 @@
       "period": "2022.08 ~ 2024.02",
       "name": "AI투자서비스 보안운영",
       "client": "콴텍투자일임",
-      "technologies": ["AWS", "IAM", "Security Group", "Prometheus", "Grafana"],
+      "technologies": [
+        "AWS",
+        "IAM",
+        "Security Group",
+        "Prometheus",
+        "Grafana"
+      ],
       "os": "Linux, AWS",
       "role": "정보보호팀",
       "description": "IaC 기반 AWS 보안 인프라 관리 및 관측성 확보\n• Terraform을 사용한 VPC, Subnet, 보안 그룹의 코드 기반 관리\n• AWS CloudTrail 및 GuardDuty 로그를 CloudWatch로 통합 분석",
@@ -145,7 +163,12 @@
       "period": "2022.05 ~ 2022.07",
       "name": "클라우드 인프라 구축",
       "client": "펀엔씨",
-      "technologies": ["AWS", "Kubernetes", "Docker", "GitLab CI/CD"],
+      "technologies": [
+        "AWS",
+        "Kubernetes",
+        "Docker",
+        "GitLab CI/CD"
+      ],
       "os": "Linux, AWS",
       "role": "인프라 구축",
       "description": "EKS 기반 컨테이너 오케스트레이션 및 CI/CD 구축\n• Helm Chart를 활용한 어플리케이션 배포 자동화 및 관리\n• GitLab Runner를 활용한 컨테이너 이미지 빌드 및 정적 분석 파이프라인 구축",
@@ -159,7 +182,11 @@
       "period": "2021.09 ~ 2022.04",
       "name": "국민대 차세대 정보시스템",
       "client": "국민대학교",
-      "technologies": ["VMware NSX-T", "Firewall", "NAC"],
+      "technologies": [
+        "VMware NSX-T",
+        "Firewall",
+        "NAC"
+      ],
       "os": "Linux, vSphere",
       "role": "네트워크 가상화",
       "description": "SDN 기반 네트워크 가상화 및 마이크로세그멘테이션 구현\n• VMware NSX-T 분산 방화벽(DFW)을 활용한 서버 간 트래픽 제어\n• 가상 스위치(VDS) 레벨의 네트워크 보안 정책 중앙 집중화",
@@ -173,7 +200,12 @@
       "period": "2019.12 ~ 2021.08",
       "name": "컨택센터 원격근무 인프라",
       "client": "메타넷엠플랫폼",
-      "technologies": ["Ansible", "Python", "VPN", "NAC"],
+      "technologies": [
+        "Ansible",
+        "Python",
+        "VPN",
+        "NAC"
+      ],
       "os": "Linux",
       "role": "원격근무 인프라",
       "description": "대규모 원격 접속을 위한 VPN 인프라 설계 및 자동화\n• Python 스크립트와 Ansible을 연동하여 500대 이상의 서버 설정 동기화\n• VPN 세션 모니터링 및 비정상 접근 탐지 대시보드 구축",
@@ -187,7 +219,11 @@
       "period": "2017.02 ~ 2018.10",
       "name": "KAI 인프라 운영",
       "client": "한국항공우주산업",
-      "technologies": ["Linux", "Shell", "Firewall"],
+      "technologies": [
+        "Linux",
+        "Shell",
+        "Firewall"
+      ],
       "os": "Linux",
       "role": "시스템 운영",
       "description": "폐쇄망 보안 인프라의 안정적인 가용성 확보\n• 서버 시스템 로그 주기적 분석을 통한 하드웨어 장애 징후 선제적 파악\n• 내부 보안 감사 기준에 따른 시스템 설정 보안 가이드라인 준수",
@@ -291,76 +327,188 @@
       "title": "Observability",
       "icon": "Activity",
       "items": [
-        { "name": "Grafana", "level": "expert", "proficiency": 95 },
-        { "name": "Prometheus", "level": "expert", "proficiency": 95 },
-        { "name": "Loki", "level": "advanced", "proficiency": 80 },
-        { "name": "Splunk", "level": "expert", "proficiency": 95 }
+        {
+          "name": "Grafana",
+          "level": "expert",
+          "proficiency": 95
+        },
+        {
+          "name": "Prometheus",
+          "level": "expert",
+          "proficiency": 95
+        },
+        {
+          "name": "Loki",
+          "level": "advanced",
+          "proficiency": 80
+        },
+        {
+          "name": "Splunk",
+          "level": "expert",
+          "proficiency": 95
+        }
       ]
     },
     "cloud": {
       "title": "Cloud & Infra",
       "icon": "Cloud",
       "items": [
-        { "name": "AWS (EC2, VPC, EKS, S3)", "level": "advanced", "proficiency": 80 },
-        { "name": "Docker", "level": "expert", "proficiency": 95 },
-        { "name": "Kubernetes", "level": "intermediate", "proficiency": 60 },
-        { "name": "Linux", "level": "expert", "proficiency": 95 }
+        {
+          "name": "AWS (EC2, VPC, EKS, S3)",
+          "level": "advanced",
+          "proficiency": 80
+        },
+        {
+          "name": "Docker",
+          "level": "expert",
+          "proficiency": 95
+        },
+        {
+          "name": "Kubernetes",
+          "level": "intermediate",
+          "proficiency": 60
+        },
+        {
+          "name": "Linux",
+          "level": "expert",
+          "proficiency": 95
+        }
       ]
     },
     "devops": {
       "title": "DevOps",
       "icon": "GitBranch",
       "items": [
-        { "name": "GitLab CI/CD", "level": "advanced", "proficiency": 80 },
-        { "name": "GitHub Actions", "level": "expert", "proficiency": 95 },
-        { "name": "Ansible", "level": "advanced", "proficiency": 80 },
-        { "name": "Terraform", "level": "advanced", "proficiency": 80 }
+        {
+          "name": "GitLab CI/CD",
+          "level": "advanced",
+          "proficiency": 80
+        },
+        {
+          "name": "GitHub Actions",
+          "level": "expert",
+          "proficiency": 95
+        },
+        {
+          "name": "Ansible",
+          "level": "advanced",
+          "proficiency": 80
+        },
+        {
+          "name": "Terraform",
+          "level": "advanced",
+          "proficiency": 80
+        }
       ]
     },
     "automation": {
       "title": "Automation",
       "icon": "Zap",
       "items": [
-        { "name": "Python", "level": "advanced", "proficiency": 80 },
-        { "name": "Shell", "level": "expert", "proficiency": 95 },
-        { "name": "n8n", "level": "expert", "proficiency": 95 }
+        {
+          "name": "Python",
+          "level": "advanced",
+          "proficiency": 80
+        },
+        {
+          "name": "Shell",
+          "level": "expert",
+          "proficiency": 95
+        },
+        {
+          "name": "n8n",
+          "level": "expert",
+          "proficiency": 95
+        }
       ]
     },
     "database": {
       "title": "Database",
       "icon": "Database",
       "items": [
-        { "name": "PostgreSQL", "level": "advanced", "proficiency": 80 },
-        { "name": "MySQL", "level": "intermediate", "proficiency": 60 },
-        { "name": "Redis", "level": "intermediate", "proficiency": 60 }
+        {
+          "name": "PostgreSQL",
+          "level": "advanced",
+          "proficiency": 80
+        },
+        {
+          "name": "MySQL",
+          "level": "intermediate",
+          "proficiency": 60
+        },
+        {
+          "name": "Redis",
+          "level": "intermediate",
+          "proficiency": 60
+        }
       ]
     },
     "security": {
       "title": "Security",
       "icon": "Shield",
       "items": [
-        { "name": "FortiGate", "level": "expert", "proficiency": 95 },
-        { "name": "FortiManager", "level": "expert", "proficiency": 95 },
-        { "name": "FortiAnalyzer", "level": "advanced", "proficiency": 80 },
-        { "name": "Splunk", "level": "expert", "proficiency": 95 },
-        { "name": "NAC", "level": "advanced", "proficiency": 80 },
-        { "name": "DLP", "level": "intermediate", "proficiency": 60 }
+        {
+          "name": "FortiGate",
+          "level": "expert",
+          "proficiency": 95
+        },
+        {
+          "name": "FortiManager",
+          "level": "expert",
+          "proficiency": 95
+        },
+        {
+          "name": "FortiAnalyzer",
+          "level": "advanced",
+          "proficiency": 80
+        },
+        {
+          "name": "Splunk",
+          "level": "expert",
+          "proficiency": 95
+        },
+        {
+          "name": "NAC",
+          "level": "advanced",
+          "proficiency": 80
+        },
+        {
+          "name": "DLP",
+          "level": "intermediate",
+          "proficiency": 60
+        }
       ]
     },
     "programming": {
       "title": "Programming",
       "icon": "Code",
       "items": [
-        { "name": "Node.js", "level": "intermediate", "proficiency": 60 },
-        { "name": "TypeScript", "level": "intermediate", "proficiency": 60 }
+        {
+          "name": "Node.js",
+          "level": "intermediate",
+          "proficiency": 60
+        },
+        {
+          "name": "TypeScript",
+          "level": "intermediate",
+          "proficiency": 60
+        }
       ]
     },
     "compliance": {
       "title": "Compliance",
       "icon": "FileCheck",
       "items": [
-        { "name": "ISMS-P", "level": "advanced", "proficiency": 80 },
-        { "name": "ISO 27001", "level": "advanced", "proficiency": 80 }
+        {
+          "name": "ISMS-P",
+          "level": "advanced",
+          "proficiency": 80
+        },
+        {
+          "name": "ISO 27001",
+          "level": "advanced",
+          "proficiency": 80
+        }
       ]
     }
   },
@@ -369,7 +517,13 @@
       "name": "Observability Platform",
       "period": "2024.06 ~ 현재",
       "description": "홈랩 인프라 모니터링. Prometheus 메트릭 수집, Loki 로그 집계, Grafana 시각화.",
-      "technologies": ["Grafana", "Prometheus", "Loki", "Blackbox Exporter", "Docker"],
+      "technologies": [
+        "Grafana",
+        "Prometheus",
+        "Loki",
+        "Blackbox Exporter",
+        "Docker"
+      ],
       "icon": "📊",
       "tagline": "모니터링 플랫폼",
       "stars": 0,
@@ -388,7 +542,11 @@
       "name": "n8n Automation",
       "period": "2024.01 ~ 현재",
       "description": "알림, 배포, 데이터 수집 워크플로우 자동화.",
-      "technologies": ["n8n", "PostgreSQL", "Docker"],
+      "technologies": [
+        "n8n",
+        "PostgreSQL",
+        "Docker"
+      ],
       "icon": "🔄",
       "tagline": "워크플로우 자동화",
       "stars": 0,
@@ -406,7 +564,11 @@
       "name": "FortiNet API Client",
       "period": "2025.01 ~ 현재",
       "description": "FortiManager 정책/라우트 조회, FortiAnalyzer 로그 통계 수집용 Python 라이브러리.",
-      "technologies": ["Python", "FortiManager", "FortiAnalyzer"],
+      "technologies": [
+        "Python",
+        "FortiManager",
+        "FortiAnalyzer"
+      ],
       "icon": "🛡️",
       "tagline": "보안장비 API 자동화",
       "stars": 0,
@@ -424,7 +586,11 @@
       "name": "Security Alert System",
       "period": "2025.01 ~ 현재",
       "description": "FortiGate 이벤트를 Splunk에서 탐지, Slack Block Kit으로 알림. 32개 탐지 룰 운영.",
-      "technologies": ["Splunk", "Python", "Slack"],
+      "technologies": [
+        "Splunk",
+        "Python",
+        "Slack"
+      ],
       "icon": "🔔",
       "tagline": "보안 알림 자동화",
       "stars": 0,
@@ -443,7 +609,11 @@
       "name": "IP Blacklist Platform",
       "period": "2024.12 ~ 현재",
       "description": "악성 IP 수집, 분석, 대시보드 제공. Flask API + Next.js 프론트엔드.",
-      "technologies": ["Flask", "Next.js", "PostgreSQL"],
+      "technologies": [
+        "Flask",
+        "Next.js",
+        "PostgreSQL"
+      ],
       "icon": "🚫",
       "tagline": "위협 인텔리전스",
       "stars": 0,
@@ -461,7 +631,12 @@
       "name": "HYCU FSDS 자율주행",
       "period": "2025.11 ~ 2026.02",
       "description": "Formula Student Driverless Simulator 기반 자율주행 시스템. LiDAR 콘 검출(Grid BFS) + Pure Pursuit 경로 추종, 3-tier 상태머신 안전 제어. 한양사이버대학교 포뮬러 경진대회 우수상 수상.",
-      "technologies": ["Python", "ROS", "Docker", "AirSim"],
+      "technologies": [
+        "Python",
+        "ROS",
+        "Docker",
+        "AirSim"
+      ],
       "icon": "🏎️",
       "tagline": "자율주행 시뮬레이션",
       "url": "https://github.com/qws941/hycu_fsds",

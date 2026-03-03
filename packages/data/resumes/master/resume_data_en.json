@@ -40,19 +40,12 @@
     ],
     "profileStatement": "Infrastructure engineer with 8 years of experience, responsible for security infrastructure design and operations in finance and public sectors. Currently focused on building observability systems and automating operations."
   },
-  "current": {
-    "company": "ITCEN CTS Co., Ltd.",
-    "department": "Information Security Team",
-    "position": "Security Operations Engineer",
-    "startDate": "2025.03",
-    "participationMonths": 10,
-    "participationRate": null
-  },
+  "current": null,
   "careers": [
     {
       "company": "ITCEN CTS Co., Ltd.",
-      "period": "2025.03 ~ 현재",
-      "duration": "10 months",
+      "period": "2025.03 ~ 2026.02",
+      "duration": "1 year",
       "project": "Nextrade Trading Execution System Security Operations SM",
       "role": "Security Operations Engineer",
       "client": "Nextrade",

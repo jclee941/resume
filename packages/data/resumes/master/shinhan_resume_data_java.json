@@ -19,21 +19,18 @@
     "totalExperience": "8년 11개월",
     "experienceStart": "2017.02",
     "grade": "중급",
-    "expertise": ["금융보안", "Java/Spring 인프라", "DevSecOps"]
+    "expertise": [
+      "금융보안",
+      "Java/Spring 인프라",
+      "DevSecOps"
+    ]
   },
-  "current": {
-    "company": "(주)아이티센 CTS",
-    "department": "정보보안팀",
-    "position": "보안운영 엔지니어",
-    "startDate": "2025.03",
-    "participationMonths": 10,
-    "participationRate": "-"
-  },
+  "current": null,
   "careers": [
     {
       "company": "(주)아이티센 CTS",
-      "period": "2025.03 ~ 현재",
-      "duration": "10개월",
+      "period": "2025.03 ~ 2026.02",
+      "duration": "1년",
       "project": "NEXTRADE 운영SM",
       "role": "정보보안 운영 엔지니어",
       "description": "Java/Spring 기반 보안업무개발, 보안솔루션 관제, 인시던트 대응"
@@ -92,7 +89,12 @@
       "period": "2025.03 ~ 현재",
       "name": "NEXTRADE 보안운영",
       "client": "Nextrade",
-      "technologies": ["Java", "Spring Boot", "Splunk", "FortiNet"],
+      "technologies": [
+        "Java",
+        "Spring Boot",
+        "Splunk",
+        "FortiNet"
+      ],
       "os": "Linux, Docker",
       "role": "보안운영"
     },
@@ -100,7 +102,12 @@
       "period": "2024.03 ~ 2025.02",
       "name": "Nextrade 보안인프라 구축",
       "client": "Nextrade",
-      "technologies": ["Java", "Spring Security", "JPA", "REST API"],
+      "technologies": [
+        "Java",
+        "Spring Security",
+        "JPA",
+        "REST API"
+      ],
       "os": "Linux, VMware",
       "role": "설계/구축"
     },
@@ -108,7 +115,12 @@
       "period": "2022.08 ~ 2024.03",
       "name": "AI투자서비스 보안운영",
       "client": "콴텍투자일임",
-      "technologies": ["Java", "Spring", "AWS", "JVM"],
+      "technologies": [
+        "Java",
+        "Spring",
+        "AWS",
+        "JVM"
+      ],
       "os": "Linux, AWS",
       "role": "인프라운영"
     },
@@ -116,7 +128,11 @@
       "period": "2021.09 ~ 2022.04",
       "name": "국민대 차세대 정보시스템",
       "client": "국민대학교",
-      "technologies": ["Java", "Tomcat", "VMware NSX-T"],
+      "technologies": [
+        "Java",
+        "Tomcat",
+        "VMware NSX-T"
+      ],
       "os": "Linux, vSphere",
       "role": "보안통합"
     },
@@ -124,7 +140,12 @@
       "period": "2019.12 ~ 2021.08",
       "name": "콜센터 원격근무 인프라",
       "client": "메타넷엠플랫폼",
-      "technologies": ["Ansible", "Python", "VPN", "NAC"],
+      "technologies": [
+        "Ansible",
+        "Python",
+        "VPN",
+        "NAC"
+      ],
       "os": "Linux",
       "role": "VPN/NAC"
     },
@@ -132,15 +153,31 @@
       "period": "2017.02 ~ 2018.10",
       "name": "KAI 인프라 운영",
       "client": "한국항공우주산업",
-      "technologies": ["Linux", "Tomcat", "Shell"],
+      "technologies": [
+        "Linux",
+        "Tomcat",
+        "Shell"
+      ],
       "os": "Linux",
       "role": "서버운영"
     }
   ],
   "certifications": [
-    { "name": "CCNP", "issuer": "Cisco Systems", "date": "2020.08" },
-    { "name": "RHCSA", "issuer": "Red Hat", "date": "2019.01" },
-    { "name": "CompTIA Linux+", "issuer": "CompTIA", "date": "2019.02" },
+    {
+      "name": "CCNP",
+      "issuer": "Cisco Systems",
+      "date": "2020.08"
+    },
+    {
+      "name": "RHCSA",
+      "issuer": "Red Hat",
+      "date": "2019.01"
+    },
+    {
+      "name": "CompTIA Linux+",
+      "issuer": "CompTIA",
+      "date": "2019.02"
+    },
     {
       "name": "LPIC Level 1",
       "issuer": "Linux Professional Institute",
@@ -176,30 +213,66 @@
       "EDR",
       "Splunk SIEM"
     ],
-    "cloud": ["AWS EC2", "VPC", "IAM", "S3", "Docker", "Kubernetes"],
-    "automation": ["Python", "Shell", "Ansible", "Terraform"],
-    "monitoring": ["Grafana", "Prometheus", "Loki", "APM"],
-    "compliance": ["금융감독원 감사 대응", "ISMS-P", "ISO27001", "FSC 본인가"]
+    "cloud": [
+      "AWS EC2",
+      "VPC",
+      "IAM",
+      "S3",
+      "Docker",
+      "Kubernetes"
+    ],
+    "automation": [
+      "Python",
+      "Shell",
+      "Ansible",
+      "Terraform"
+    ],
+    "monitoring": [
+      "Grafana",
+      "Prometheus",
+      "Loki",
+      "APM"
+    ],
+    "compliance": [
+      "금융감독원 감사 대응",
+      "ISMS-P",
+      "ISO27001",
+      "FSC 본인가"
+    ]
   },
   "personalProjects": [
     {
       "name": "AI Agent Orchestration Platform",
       "period": "2024.09 ~ 현재",
       "description": "Spring Boot 기반 백엔드, MCP 연동, 관찰성 구성",
-      "technologies": ["Java", "Spring Boot", "Docker", "REST API"],
+      "technologies": [
+        "Java",
+        "Spring Boot",
+        "Docker",
+        "REST API"
+      ],
       "url": "https://resume.jclee.me"
     },
     {
       "name": "보안 통합 관리 플랫폼",
       "period": "2024.09 ~ 현재",
       "description": "방화벽 중앙관리, 정책 검증 자동화",
-      "technologies": ["Java", "Spring", "REST API", "JPA"]
+      "technologies": [
+        "Java",
+        "Spring",
+        "REST API",
+        "JPA"
+      ]
     },
     {
       "name": "Full-Stack Observability Platform",
       "period": "2024.06 ~ 현재",
       "description": "JVM 기반 서비스 통합 모니터링",
-      "technologies": ["Grafana", "Prometheus", "Micrometer"],
+      "technologies": [
+        "Grafana",
+        "Prometheus",
+        "Micrometer"
+      ],
       "url": "https://grafana.jclee.me"
     }
   ]

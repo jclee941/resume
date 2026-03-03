@@ -11,7 +11,7 @@ function generateWebData(source) {
   const careerEnMap = {
     '(주)아이티센 CTS': {
       title: 'ITCEN CTS Co., Ltd.',
-      period: '2025.03 ~ Present',
+      period: '2025.03 ~ 2026.02',
       description:
         'Nextrade security operations managed service and support for the Information Security Team\n• Enhanced Splunk-based security log analysis and real-time threat monitoring\n• Optimized FortiGate firewall policies and automated access-control operations\n• Strengthened infrastructure stability through vulnerability assessments and monthly security reporting\n• Tech: Splunk, FortiGate, Python, Linux',
     },
