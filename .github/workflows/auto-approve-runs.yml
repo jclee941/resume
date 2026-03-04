@@ -1,0 +1,24 @@
+# Auto Approve Runs
+# SSoT: qws941/.github — synced to all repos
+# Synced via: .github/sync.yml
+# Template: _auto-approve-runs.yml
+#
+# Event-driven: fires on sync PR events + manual dispatch.
+#
+# Required secrets:
+#   - GH_PAT: GitHub Personal Access Token with actions:write
+
+name: Auto Approve Runs
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+permissions:
+  actions: write
+
+jobs:
+  approve:
+    uses: qws941/.github/.github/workflows/_auto-approve-runs.yml@master
+    secrets: inherit
