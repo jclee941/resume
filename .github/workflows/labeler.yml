@@ -1,7 +1,9 @@
-# Auto-label PRs by file paths
-# Pattern: actions/starter-workflows
-# Requires: .github/labeler.yml config file in each repo
-name: 'Auto-label PRs'
+# PR Labeler
+# SSoT: qws941/.github — synced to all repos
+# Synced via: .github/sync.yml
+# Template: _labeler.yml
+
+name: PR Labeler
 
 on:
   pull_request_target:
@@ -12,10 +14,5 @@ permissions:
   pull-requests: write
 
 jobs:
-  label:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/labeler@634933edcd8ababfe52f92936142cc22ac488b1b # v6.0.1
-        with:
-          repo-token: '${{ secrets.GITHUB_TOKEN }}'
-          sync-labels: true
+  labeler:
+    uses: qws941/.github/.github/workflows/_labeler.yml@master

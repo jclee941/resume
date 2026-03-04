@@ -1,5 +1,5 @@
-name: Bug Report
-description: Report a bug or unexpected behavior
+name: "🐛 Bug Report"
+description: Report an issue with enough context for quick triage and resolution.
 labels: ["type:bug"]
 body:
   - type: markdown
@@ -56,6 +56,19 @@ body:
         - Critical — Data loss, security issue, or system outage
     validations:
       required: true
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How urgently does this need attention?
+      options:
+        - P0 - Critical (service down)
+        - P1 - High (degraded)
+        - P2 - Medium (workaround exists)
+        - P3 - Low (cosmetic)
+    validations:
+      required: true
+
 
   - type: textarea
     id: environment

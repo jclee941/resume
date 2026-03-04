@@ -1,12 +1,18 @@
-# Stale Issue/PR Management
-# Pattern: Microsoft/.github (adapted for personal account)
-# Auto-closes issues/PRs after 14 days stale + 5 day grace period
-name: 'Stale issue/PR cleanup'
+# Stale Issues and PRs
+# SSoT: qws941/.github — synced to all repos
+# Synced via: .github/sync.yml
+# Template: _stale.yml
+
+name: Stale
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: '30 2 * * *'  # Daily at 02:30 UTC
+    - cron: '30 2 * * *'
+
+concurrency:
+  group: stale-cleanup
+  cancel-in-progress: true
 
 permissions:
   issues: write
@@ -14,26 +20,4 @@ permissions:
 
 jobs:
   stale:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/stale@b5d41d4e1d5dceea10e7104786b73624c18a190f # v9
-        with:
-          stale-issue-message: >
-            This issue has been automatically marked as stale because
-            it has had no activity for 14 days.
-
-            It will be closed in 5 days if no further activity occurs.
-            Remove the `stale` label or comment to keep it open.
-          stale-pr-message: >
-            This PR has been automatically marked as stale because
-            it has had no activity for 14 days.
-
-            It will be closed in 5 days if no further activity occurs.
-            Remove the `stale` label, comment, or merge to keep it open.
-          days-before-stale: 14
-          days-before-close: 5
-          exempt-issue-labels: 'keep-open,pinned,security'
-          exempt-pr-labels: 'keep-open,pinned,security'
-          stale-issue-label: 'stale'
-          stale-pr-label: 'stale'
-          remove-stale-when-updated: true
+    uses: qws941/.github/.github/workflows/_stale.yml@master

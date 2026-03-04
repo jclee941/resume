@@ -1,5 +1,5 @@
-name: Feature Request
-description: Suggest a new feature or improvement
+name: "✨ Feature Request"
+description: Propose an improvement with clear value, scope, and desired outcome.
 labels: ["type:feature"]
 body:
   - type: markdown
@@ -20,6 +20,19 @@ body:
         - Developer experience — Tooling, CI/CD, or workflow improvement
     validations:
       required: true
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this feature relative to ongoing work?
+      options:
+        - P0 - Critical (service down)
+        - P1 - High (degraded)
+        - P2 - Medium (workaround exists)
+        - P3 - Low (cosmetic)
+    validations:
+      required: true
+
 
   - type: textarea
     id: summary

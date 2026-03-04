@@ -1,11 +1,9 @@
-# Enforce conventional commit format on PR titles
+# Commit Lint
 # SSoT: qws941/.github — synced to all repos
-# Synced via: .github/sync.yml → Group 1
-#
-# PR titles must match: type(scope): summary
-# Types: feat, fix, docs, refactor, test, ci, chore, perf, build, revert
+# Synced via: .github/sync.yml
+# Template: _commitlint.yml
 
-name: Commitlint
+name: Commit Lint
 
 on:
   pull_request_target:
@@ -15,26 +13,5 @@ permissions:
   pull-requests: read
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: amannn/action-semantic-pull-request@48f256284bd46cdaab1048c3721360e808335d50 # v6.1.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          types: |
-            feat
-            fix
-            docs
-            refactor
-            test
-            ci
-            chore
-            perf
-            build
-            revert
-          requireScope: false
-          subjectPattern: ^.+$
-          subjectPatternError: |
-            PR title must follow conventional commits: type(scope): summary
-            Example: feat(auth): add login endpoint
+  commitlint:
+    uses: qws941/.github/.github/workflows/_commitlint.yml@master

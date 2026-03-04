@@ -1,36 +1,19 @@
-# Lock closed issues and PRs after 30 days of inactivity
+# Lock Threads
 # SSoT: qws941/.github — synced to all repos
-# Synced via: .github/sync.yml → Group 1
+# Synced via: .github/sync.yml
+# Template: _lock-threads.yml
 
 name: Lock Threads
 
 on:
   schedule:
-    - cron: "0 6 * * *"
+    - cron: '0 6 * * *'
   workflow_dispatch:
 
 permissions:
   issues: write
   pull-requests: write
 
-concurrency:
-  group: lock-threads
-  cancel-in-progress: false
-
 jobs:
   lock:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: dessant/lock-threads@7266a7ce5c1df01b1c6db85bf8cd86c737dadbe7 # v6.0.0
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          issue-inactive-days: 30
-          issue-lock-reason: resolved
-          issue-comment: >
-            This issue has been automatically locked since there has been
-            no activity for 30 days. Please open a new issue for related concerns.
-          pr-inactive-days: 30
-          pr-lock-reason: resolved
-          pr-comment: >
-            This pull request has been automatically locked since there has been
-            no activity for 30 days. Please open a new issue for related concerns.
+    uses: qws941/.github/.github/workflows/_lock-threads.yml@master

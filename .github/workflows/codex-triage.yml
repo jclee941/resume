@@ -1,40 +1,21 @@
+# Codex Triage
+# SSoT: qws941/.github — synced to all repos
+# Synced via: .github/sync.yml
+# Template: _codex-triage.yml
+
 name: Codex Triage
 
 on:
   issues:
-    types: [opened]
+    types: [opened, labeled]
 
 permissions:
   issues: write
 
+concurrency:
+  group: codex-triage-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
 jobs:
   triage:
-    runs-on: ubuntu-latest
-    if: >-
-      contains(github.event.issue.title, 'failed') ||
-      contains(github.event.issue.title, 'failure') ||
-      contains(github.event.issue.title, 'Failed') ||
-      contains(github.event.issue.title, 'Failure') ||
-      contains(github.event.issue.title, '[Deploy') ||
-      contains(github.event.issue.title, '[Build') ||
-      contains(github.event.issue.title, '[Docker') ||
-      contains(github.event.issue.title, 'Apply failed')
-    steps:
-      - name: Request Codex investigation
-        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
-        with:
-          script: |
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body: [
-                '@codex Investigate this failure.',
-                '',
-                'Steps:',
-                '1. Check the workflow run logs linked in this issue',
-                '2. Identify the root cause of the failure',
-                '3. If the issue is code-related, create a fix PR',
-                '4. If it is a credential, infrastructure, or transient issue, summarize findings and recommended next steps',
-              ].join('\n'),
-            });
+    uses: qws941/.github/.github/workflows/_codex-triage.yml@master

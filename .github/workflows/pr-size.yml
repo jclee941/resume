@@ -1,6 +1,7 @@
-# Label PRs by diff size (xs/s/m/l/xl)
+# PR Size Labeler
 # SSoT: qws941/.github — synced to all repos
-# Synced via: .github/sync.yml → Group 1
+# Synced via: .github/sync.yml
+# Template: _pr-size.yml
 
 name: PR Size
 
@@ -12,25 +13,5 @@ permissions:
   pull-requests: write
 
 jobs:
-  size:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: CodelyTV/pr-size-labeler@4ec67706cd878fbc1c8db0a5dcd28b6bb412e85a # v1
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          xs_label: size/xs
-          xs_max_size: 10
-          s_label: size/s
-          s_max_size: 100
-          m_label: size/m
-          m_max_size: 200
-          l_label: size/l
-          l_max_size: 500
-          xl_label: size/xl
-          fail_if_xl: false
-          files_to_ignore: |
-            package-lock.json
-            yarn.lock
-            pnpm-lock.yaml
-            go.sum
-            *.lock
+  pr-size:
+    uses: qws941/.github/.github/workflows/_pr-size.yml@master

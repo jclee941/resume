@@ -1,6 +1,7 @@
-# Codex Auto-Issue: trigger Codex on issues with 'codex' label
+# Codex Auto-Issue
 # SSoT: qws941/.github — synced to all repos
-# Synced via: .github/sync.yml → Group 3
+# Synced via: .github/sync.yml
+# Template: _codex-auto-issue.yml
 
 name: Codex Auto-Issue
 
@@ -11,30 +12,6 @@ on:
 permissions:
   issues: write
 
-concurrency:
-  group: codex-issue-${{ github.event.issue.number }}
-  cancel-in-progress: false
-
 jobs:
-  codex-trigger:
-    if: github.event.label.name == 'codex'
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - name: Trigger Codex on issue
-        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
-        with:
-          script: |
-            const issue = context.payload.issue;
-            const body = [
-              `@codex ${issue.title}`,
-              '',
-              issue.body || ''
-            ].join('\n').trim();
-
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: issue.number,
-              body: body
-            });
+  codex:
+    uses: qws941/.github/.github/workflows/_codex-auto-issue.yml@master

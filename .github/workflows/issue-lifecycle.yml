@@ -1,0 +1,21 @@
+name: Issue Lifecycle
+
+on:
+  pull_request:
+    types: [opened, edited, closed]
+  issues:
+    types: [opened, closed]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: issue-lifecycle-${{ github.event.pull_request.number || github.event.issue.number }}
+  cancel-in-progress: true
+
+jobs:
+  issue-lifecycle:
+    uses: qws941/.github/.github/workflows/_issue-lifecycle.yml@master
+    secrets: inherit
