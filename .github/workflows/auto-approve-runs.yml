@@ -3,7 +3,7 @@
 # Synced via: .github/sync.yml
 # Template: _auto-approve-runs.yml
 #
-# Event-driven: fires on sync PR events + manual dispatch.
+# Event-driven + scheduled: fires on PR events, cron sweep, and manual dispatch.
 #
 # Required secrets:
 #   - GH_PAT: GitHub Personal Access Token with actions:write
@@ -13,6 +13,8 @@ name: Auto Approve Runs
 on:
   pull_request_target:
     types: [opened, synchronize, reopened]
+  schedule:
+    - cron: '0 */6 * * *'
   workflow_dispatch:
 
 permissions:
