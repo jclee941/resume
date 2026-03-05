@@ -1,0 +1,261 @@
+{
+  "name": "Grafana Alert → GitHub Issue",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "grafana-alert",
+        "responseMode": "onReceived",
+        "responseData": "allEntries"
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [260, 300]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "alertName",
+              "value": "={{ $json.body.title || $json.body.alerts?.[0]?.labels?.alertname || 'Unknown Alert' }}"
+            },
+            {
+              "name": "alertStatus",
+              "value": "={{ $json.body.status || $json.body.alerts?.[0]?.status || 'firing' }}"
+            },
+            {
+              "name": "alertMessage",
+              "value": "={{ $json.body.message || $json.body.alerts?.[0]?.annotations?.summary || 'No details provided' }}"
+            },
+            {
+              "name": "severity",
+              "value": "={{ $json.body.alerts?.[0]?.labels?.severity || 'warning' }}"
+            },
+            {
+              "name": "fingerprint",
+              "value": "={{ $json.body.alerts?.[0]?.fingerprint || '' }}"
+            }
+          ]
+        }
+      },
+      "id": "extract-fields",
+      "name": "Extract Alert Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [480, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.alertStatus }}",
+              "value2": "firing",
+              "operation": "equals"
+            }
+          ]
+        }
+      },
+      "id": "is-firing",
+      "name": "Is Firing?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [700, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.github.com/repos/qws941/resume/issues?labels=grafana-alert,automated&state=open",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": false
+            }
+          }
+        }
+      },
+      "id": "check-existing",
+      "name": "Check Existing Issues",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [920, 200],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "GITHUB_TOKEN_CREDENTIAL_ID",
+          "name": "GitHub Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $json.length || 0 }}",
+              "value2": 0,
+              "operation": "equal"
+            }
+          ]
+        }
+      },
+      "id": "has-existing",
+      "name": "Has Existing Issue?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1140, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.github.com/repos/qws941/resume/issues",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "title",
+              "value": "=🔶 Grafana: {{ $('Extract Alert Fields').item.json.alertName }}"
+            },
+            {
+              "name": "body",
+              "value": "=## Grafana Alert\n\n| Field | Value |\n|-------|-------|\n| **Alert** | {{ $('Extract Alert Fields').item.json.alertName }} |\n| **Severity** | {{ $('Extract Alert Fields').item.json.severity }} |\n| **Message** | {{ $('Extract Alert Fields').item.json.alertMessage }} |\n| **Fingerprint** | `{{ $('Extract Alert Fields').item.json.fingerprint }}` |\n| **Time** | {{ $now.toISO() }} |\n\n---\n*Created automatically by n8n Grafana→GitHub integration. Close when resolved.*"
+            },
+            {
+              "name": "labels",
+              "value": "=[\"grafana-alert\", \"automated\"]"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "create-issue",
+      "name": "Create Issue",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1360, 100],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "GITHUB_TOKEN_CREDENTIAL_ID",
+          "name": "GitHub Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.github.com/repos/qws941/resume/issues/{{ $('Check Existing Issues').item.json[0].number }}/comments",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "body",
+              "value": "=## 🔶 Alert Recurrence ({{ $now.toISO() }})\n\n| Field | Value |\n|-------|-------|\n| **Alert** | {{ $('Extract Alert Fields').item.json.alertName }} |\n| **Severity** | {{ $('Extract Alert Fields').item.json.severity }} |\n| **Message** | {{ $('Extract Alert Fields').item.json.alertMessage }} |"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "comment-existing",
+      "name": "Comment Existing Issue",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1360, 300],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "GITHUB_TOKEN_CREDENTIAL_ID",
+          "name": "GitHub Token"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Extract Alert Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Alert Fields": {
+      "main": [
+        [
+          {
+            "node": "Is Firing?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Firing?": {
+      "main": [
+        [
+          {
+            "node": "Check Existing Issues",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Existing Issues": {
+      "main": [
+        [
+          {
+            "node": "Has Existing Issue?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Existing Issue?": {
+      "main": [
+        [
+          {
+            "node": "Create Issue",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Comment Existing Issue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "monitoring",
+      "id": "monitoring-tag"
+    },
+    {
+      "name": "github",
+      "id": "github-tag"
+    }
+  ],
+  "meta": {
+    "instanceId": ""
+  }
+}

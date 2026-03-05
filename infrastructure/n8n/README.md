@@ -164,6 +164,60 @@ Periodic health monitoring for resume.jclee.me.
 - Error conditions: Non-200 status code OR timeout
 - Alert format: Slack Block Kit with status, time, error details
 
+### 4. Grafana Alert → GitHub Issue
+
+Creates GitHub issues from Grafana alert webhooks with label-based dedup.
+
+**Workflow File**: `grafana-github-issue-workflow.json`
+
+**Features**:
+
+- Webhook trigger for Grafana alert notifications
+- Label-based dedup: searches `grafana-alert,automated` open issues before creating
+- Comments on existing issue if alert already tracked
+- Only fires on `alerting` state (ignores resolved)
+
+**Setup**:
+
+1. Import workflow to n8n.jclee.me
+2. Create `httpHeaderAuth` credential with GitHub PAT (`repo` scope)
+3. Update credential ID in workflow nodes (replace `GITHUB_TOKEN_CREDENTIAL_ID`)
+4. Add Grafana contact point (see below)
+5. Activate workflow
+
+**Grafana Contact Point Setup** (UI-managed, no file provisioning):
+
+1. Navigate to Grafana → Alerting → Contact points
+2. Click **Add contact point**
+3. Configure:
+   - Name: `GitHub Issue via n8n`
+   - Type: `Webhook`
+   - URL: `https://n8n.jclee.me/webhook/<webhook-path-from-workflow>`
+   - HTTP Method: `POST`
+4. Add to notification policy or assign to specific alert rules
+5. Test with **Send test notification** button
+
+### 5. GlitchTip Error → GitHub Issue
+
+Creates GitHub issues from GlitchTip error webhooks with fingerprint-based dedup.
+
+**Workflow File**: `glitchtip-github-issue-workflow.json`
+
+**Features**:
+
+- Webhook trigger for GlitchTip error notifications
+- Fingerprint-based dedup: searches GitHub issues by error fingerprint
+- Comments on existing issue if error already tracked
+- Only fires on `error` level events
+
+**Setup**:
+
+1. Import workflow to n8n.jclee.me
+2. Create `httpHeaderAuth` credential with GitHub PAT (`repo` scope)
+3. Update credential ID in workflow nodes (replace `GITHUB_TOKEN_CREDENTIAL_ID`)
+4. In GlitchTip → Project Settings → Notifications → Add webhook:
+   - URL: `https://n8n.jclee.me/webhook/<webhook-path-from-workflow>`
+5. Activate workflow
 ### 3. Health Check Monitor (OAuth2) ⭐ RECOMMENDED
 
 OAuth2-based health monitoring with secure credential management.

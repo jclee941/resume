@@ -1,12 +1,12 @@
 # GITHUB AUTOMATION KNOWLEDGE BASE
 
-**Generated:** 2026-02-22 22:30:00 KST
-**Commit:** 623fd03
+**Generated:** 2026-03-04
+**Commit:** 05a787b
 **Branch:** master
 
 ## OVERVIEW
 
-10 workflows, 1 composite action, branch rulesets, auto-labeling. CI is validation-only — production deployment via Cloudflare Workers Builds.
+21 workflows, 1 composite action, branch rulesets, auto-labeling. CI is validation-only — production deployment via Cloudflare Workers Builds.
 
 ## STRUCTURE
 
@@ -22,6 +22,7 @@
 │   ├── pr-labeler.yml        # auto-label PRs by path
 │   ├── codeql.yml            # weekly + push security scan
 │   └── auto-merge.yml        # dependabot auto-merge
+│   ├── auto-issue-on-failure.yml # auto-create issues on CI/deploy failure
 ├── actions/
 │   └── setup/                # composite: Node 22 + npm ci + Playwright
 ├── CODEOWNERS

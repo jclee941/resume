@@ -1,0 +1,97 @@
+# =============================================================================
+# AUTO ISSUE ON FAILURE
+# =============================================================================
+# Creates/updates GitHub issues when CI, deployment verification, or release
+# workflows fail. Uses label-based deduplication to avoid duplicate issues.
+#
+# Trigger: workflow_run completion (failure only)
+# =============================================================================
+
+name: Auto Issue on Failure
+
+on:
+  workflow_run:
+    workflows:
+      - 'CI Validation Pipeline'
+      - 'Verify Deployment'
+      - 'Release'
+    types:
+      - completed
+
+permissions:
+  issues: write
+  actions: read
+
+jobs:
+  create-issue:
+    if: github.event.workflow_run.conclusion == 'failure'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create or update failure issue
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
+        with:
+          script: |
+            const workflow = context.payload.workflow_run;
+            const workflowName = workflow.name;
+            const runUrl = workflow.html_url;
+            const branch = workflow.head_branch;
+            const sha = workflow.head_sha.substring(0, 7);
+            const actor = workflow.actor?.login || 'unknown';
+            const runId = workflow.id;
+
+            // Map workflow names to labels for dedup
+            const labelMap = {
+              'CI Validation Pipeline': 'ci-failure',
+              'Verify Deployment': 'deploy-failure',
+              'Release': 'release-failure'
+            };
+            const workflowLabel = labelMap[workflowName] || 'workflow-failure';
+            const labels = [workflowLabel, 'automated'];
+
+            // Dedup: check for existing open issue with same workflow label
+            const existing = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: labels.join(','),
+              state: 'open'
+            });
+
+            const timestamp = new Date().toISOString();
+            const failureBody = [
+              `| Field | Value |`,
+              `|-------|-------|`,
+              `| **Workflow** | ${workflowName} |`,
+              `| **Branch** | \`${branch}\` |`,
+              `| **Commit** | \`${sha}\` |`,
+              `| **Triggered by** | @${actor} |`,
+              `| **Run** | [#${runId}](${runUrl}) |`,
+              `| **Time** | ${timestamp} |`
+            ].join('\n');
+
+            if (existing.data.length > 0) {
+              // Update existing issue with new failure occurrence
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.data[0].number,
+                body: `## 🔴 Failure Recurrence (${timestamp})\n\n${failureBody}`
+              });
+              core.info(`Commented on existing issue #${existing.data[0].number}`);
+            } else {
+              // Create new issue
+              const issue = await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `🔴 ${workflowName} failed on \`${branch}\``,
+                body: [
+                  `## Workflow Failure`,
+                  ``,
+                  failureBody,
+                  ``,
+                  `---`,
+                  `*Created automatically by [auto-issue-on-failure](${context.payload.repository?.html_url || ''}/actions/workflows/auto-issue-on-failure.yml). Close this issue once resolved.*`
+                ].join('\n'),
+                labels
+              });
+              core.info(`Created issue #${issue.data.number}`);
+            }
