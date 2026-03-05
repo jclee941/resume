@@ -9,6 +9,10 @@ on:
   pull_request_target:
     types: [opened, synchronize]
 
+concurrency:
+  group: pr-size-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 permissions:
   pull-requests: write
 

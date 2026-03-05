@@ -3,12 +3,8 @@
 # Synced via: .github/sync.yml
 # Template: _auto-approve-runs.yml
 #
-# Event-driven: fires on workflow_run requested/completed events.
-# When a bot actor (Codex, Dependabot) triggers a workflow run,
-# this workflow detects action_required runs and reruns them.
-#
-# workflow_run triggers execute in default branch context — immune to
-# the action_required deadlock that blocks pull_request workflows.
+# Manual fallback trigger for rerunning action_required/failed workflow runs.
+# Primary automation is handled by n8n webhook (event-driven, external).
 #
 # Required secrets:
 #   - GH_PAT: GitHub Personal Access Token with actions:write
@@ -16,17 +12,6 @@
 name: Auto Approve Runs
 
 on:
-  workflow_run:
-    workflows:
-      - CI
-      - Commit Lint
-      - PR Size
-      - PR Labeler
-      - Issue Lifecycle
-      - Codex PR Review
-      - Codex PR Normalize
-      - Auto Merge
-    types: [requested, completed]
   workflow_dispatch:
 
 permissions:
@@ -34,14 +19,5 @@ permissions:
 
 jobs:
   approve:
-    # Bot-actor gate: only fire for bot-triggered runs or manual dispatch.
-    # The template handles listing action_required/failed runs and rerunning.
-    if: >-
-      github.event_name == 'workflow_dispatch' ||
-      github.event.workflow_run.conclusion == 'action_required' ||
-      (
-        contains('chatgpt-codex-connector[bot] openai-code-agent[bot] dependabot[bot]', github.event.workflow_run.actor.login) &&
-        (github.event.action == 'requested' || github.event.workflow_run.conclusion == 'failure')
-      )
     uses: qws941/.github/.github/workflows/_auto-approve-runs.yml@master
     secrets: inherit

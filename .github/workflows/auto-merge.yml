@@ -12,6 +12,10 @@ on:
   pull_request_target:
     types: [opened, synchronize, reopened, labeled]
 
+concurrency:
+  group: auto-merge-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 permissions:
   contents: write
   pull-requests: write
