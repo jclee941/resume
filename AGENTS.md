@@ -72,7 +72,8 @@ GitHub community health files **Single Source of Truth (SSoT)** for all `qws941`
 │   └── sync.yml                    # Sync target config: 1 group, 13 repos
 ├── scripts/
 │   ├── labels.yml                  # 26 standard labels (type:*/priority:*/status:*/size:*)
-│   └── sync-labels.sh              # gh CLI label sync script
+│   ├── onboard-repo.go             # Automated repo onboarding (sync, labels, webhooks, dependabot)
+│   └── sync-labels.go              # Go label sync (parallel, delete-stale, summary table)
 ├── profile/
 │   └── README.md                   # GitHub profile page content
 ├── .editorconfig                   # 2-space JS/TS/YAML, 4-space Python, tabs Makefile
@@ -94,7 +95,7 @@ GitHub community health files **Single Source of Truth (SSoT)** for all `qws941`
 | Issue templates               | `.github/ISSUE_TEMPLATE/`          | Bug report, feature request, and general issue forms       |
 | PR template                   | `.github/PULL_REQUEST_TEMPLATE.md` | What/Why/Kind/Changes/Testing/Checklist format             |
 | Standard labels               | `scripts/labels.yml`               | 26 labels: `type:*`, `priority:*`, `status:*`, `size/*`    |
-| Label sync to repos           | `scripts/sync-labels.sh`           | Uses `gh` CLI + python3/pyyaml, run manually               |
+| Label sync to repos           | `scripts/sync-labels.go`           | Go CLI, parallel sync with `--delete-stale`, `--dry-run`   |
 | Contribution rules            | `CONTRIBUTING.md`                  | Trunk-based dev, conventional commits, review SLA          |
 | Security reports              | `SECURITY.md`                      | Email security@jclee.me, 48h response SLA                  |
 | GitHub profile page           | `profile/README.md`                | Rendered at github.com/qws941                              |
@@ -349,14 +350,23 @@ Path-based labels defined in `.github/labeler.yml`:
 ## COMMANDS
 
 ```bash
-# Sync labels to all repos (requires gh CLI auth + python3/pyyaml)
-bash scripts/sync-labels.sh
+# Sync labels to all repos (requires gh CLI auth)
+go run scripts/sync-labels.go
 
 # Dry-run label sync
-bash scripts/sync-labels.sh --dry-run
+go run scripts/sync-labels.go --dry-run
 
 # Sync to specific repo only
-bash scripts/sync-labels.sh --repo qws941/terraform
+go run scripts/sync-labels.go --repo qws941/terraform
+
+# Delete stale labels not in labels.yml
+go run scripts/sync-labels.go --delete-stale
+
+# Onboard a new repo (sync + labels + webhooks + dependabot)
+go run scripts/onboard-repo.go --repo qws941/new-repo
+
+# Dry-run onboarding
+go run scripts/onboard-repo.go --repo qws941/new-repo --dry-run
 
 # File sync happens automatically on push to master
 # Manual trigger available via workflow_dispatch on sync-files.yml
