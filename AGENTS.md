@@ -1,7 +1,7 @@
 # PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-02-26
-**Commit:** f9451e1
+**Generated:** 2026-03-05
+**Commit:** _(auto-updated on push)_
 **Branch:** master
 
 ## OVERVIEW
@@ -106,7 +106,7 @@ GitHub community health files **Single Source of Truth (SSoT)** for all `qws941`
 | Release management          | `.github/workflows/release-drafter.yml`         | Auto-draft release notes from merged PRs         |
 | Release drafter config      | `.github/release-drafter.yml`                   | PR category → changelog section mapping          |
 | Auto-merge workflow         | `.github/workflows/auto-merge.yml`              | Approve + queue squash merge pending CI pass |
-| Auto-approve runs         | `.github/workflows/auto-approve-runs.yml`       | Event-driven rerun of action_required runs |
+| Auto-approve runs         | `.github/workflows/auto-approve-runs.yml`       | Rerun action_required runs (workflow_dispatch)   |
 | Issue lifecycle           | `.github/workflows/issue-lifecycle.yml`         | Link PRs to issues, auto-close on merge          |
 | Branch cleanup            | `.github/workflows/branch-cleanup.yml`          | Delete merged PR branches                         |
 | CI failure notification   | `.github/workflows/ci-notify-failure.yml`       | Notify + assign Codex bot on CI failure            |
@@ -118,45 +118,45 @@ GitHub community health files **Single Source of Truth (SSoT)** for all `qws941`
 
 This repo is the canonical source. Changes propagate automatically:
 
-- **Sync trigger**: Push to `master` on paths: `OWNERS`, `AGENTS.md`, `LICENSE`, `.editorconfig`, `.github/sync.yml`, `.github/labeler.yml`, `.github/release-drafter.yml`, `.github/FUNDING.yml`, `.github/PULL_REQUEST_TEMPLATE.md`, `.github/ISSUE_TEMPLATE/*`, `.github/workflows/{stale,labeler,auto-merge,auto-approve-runs,codex-triage,codex-auto-issue,welcome,lock-threads,commitlint,pr-size,release-drafter,issue-lifecycle,ci-notify-failure,dependabot-auto-fix,codex-pr-normalize,codex-issue-timeout,branch-cleanup,codex-pr-review,issue-label}.yml`; manual `workflow_dispatch` available via `sync-files.yml`
+- **Sync trigger**: Push to `master` on paths: `OWNERS`, `AGENTS.md`, `LICENSE`, `.editorconfig`, `.github/sync.yml`, `.github/FUNDING.yml`, `.github/PULL_REQUEST_TEMPLATE.md`, `.github/labeler.yml`, `.github/release-drafter.yml`, `.github/ISSUE_TEMPLATE/*`, `.github/workflows/{auto-approve-runs,auto-merge,branch-cleanup,ci-notify-failure,codex-auto-issue,codex-issue-timeout,codex-pr-normalize,codex-pr-review,codex-triage,commitlint,dependabot-auto-fix,issue-label,issue-lifecycle,labeler,lock-threads,pr-size,release-drafter,stale,welcome}.yml`; manual `workflow_dispatch` available via `sync-files.yml`
 - **Sync engine**: `BetaHuhn/repo-file-sync-action` via `.github/workflows/sync-files.yml`
 - **Sync PRs**: Prefixed `chore: `, labeled `sync`, assigned to `qws941`
 
 **Synced files** (must remain generic, no repo-specific content):
 
-| File                                    | Targets                                 |
-| --------------------------------------- | --------------------------------------- |
-| `OWNERS`                                | All 13 repos                            |
-| `LICENSE`                               | All 13 repos                            |
-| `.editorconfig`                         | All 13 repos                            |
-| `.github/labeler.yml`                   | All 13 repos                            |
-| `.github/release-drafter.yml`           | All 13 repos                            |
-| `.github/workflows/stale.yml`           | All 13 repos                            |
-| `.github/workflows/labeler.yml`         | All 13 repos                            |
-| `.github/workflows/codex-triage.yml`    | All 13 repos                            |
-| `.github/workflows/codex-auto-issue.yml`| All 13 repos                            |
-| `.github/workflows/welcome.yml`         | All 13 repos                            |
-| `.github/workflows/lock-threads.yml`    | All 13 repos                            |
-| `.github/workflows/commitlint.yml`      | All 13 repos                            |
-| `.github/workflows/pr-size.yml`         | All 13 repos                            |
-| `.github/workflows/release-drafter.yml` | All 13 repos                            |
-| `AGENTS.md`                             | All 13 repos                            |
-| `.github/FUNDING.yml`                   | All 13 repos                            |
-| `.github/PULL_REQUEST_TEMPLATE.md`      | All 13 repos                            |
-| `.github/ISSUE_TEMPLATE/bug_report.yml` | All 13 repos                            |
-| `.github/ISSUE_TEMPLATE/feature_request.yml` | All 13 repos                       |
-| `.github/ISSUE_TEMPLATE/config.yml`     | All 13 repos                            |
-| `.github/workflows/auto-merge.yml`      | All 13 repos                            |
-| `.github/workflows/dependabot-auto-fix.yml` | All 13 repos                      |
-| `.github/workflows/auto-approve-runs.yml` | All 13 repos                      |
-| `.github/ISSUE_TEMPLATE/issue-form.yml` | All 13 repos                            |
-| `.github/workflows/issue-lifecycle.yml` | All 13 repos                            |
-| `.github/workflows/ci-notify-failure.yml` | All 13 repos                          |
-| `.github/workflows/codex-pr-normalize.yml` | All 13 repos                         |
-| `.github/workflows/codex-issue-timeout.yml` | All 13 repos                        |
-| `.github/workflows/branch-cleanup.yml`  | All 13 repos                            |
-| `.github/workflows/codex-pr-review.yml` | All 13 repos                            |
-| `.github/workflows/issue-label.yml` | All 13 repos                            |
+| File                                         | Targets      |
+| -------------------------------------------- | ------------ |
+| `OWNERS`                                     | All 13 repos |
+| `LICENSE`                                     | All 13 repos |
+| `.editorconfig`                               | All 13 repos |
+| `AGENTS.md`                                   | All 13 repos |
+| `.github/FUNDING.yml`                         | All 13 repos |
+| `.github/PULL_REQUEST_TEMPLATE.md`            | All 13 repos |
+| `.github/labeler.yml`                         | All 13 repos |
+| `.github/release-drafter.yml`                 | All 13 repos |
+| `.github/ISSUE_TEMPLATE/bug_report.yml`       | All 13 repos |
+| `.github/ISSUE_TEMPLATE/config.yml`           | All 13 repos |
+| `.github/ISSUE_TEMPLATE/feature_request.yml`  | All 13 repos |
+| `.github/ISSUE_TEMPLATE/issue-form.yml`       | All 13 repos |
+| `.github/workflows/auto-approve-runs.yml`     | All 13 repos |
+| `.github/workflows/auto-merge.yml`            | All 13 repos |
+| `.github/workflows/branch-cleanup.yml`        | All 13 repos |
+| `.github/workflows/ci-notify-failure.yml`     | All 13 repos |
+| `.github/workflows/codex-auto-issue.yml`      | All 13 repos |
+| `.github/workflows/codex-issue-timeout.yml`   | All 13 repos |
+| `.github/workflows/codex-pr-normalize.yml`    | All 13 repos |
+| `.github/workflows/codex-pr-review.yml`       | All 13 repos |
+| `.github/workflows/codex-triage.yml`          | All 13 repos |
+| `.github/workflows/commitlint.yml`            | All 13 repos |
+| `.github/workflows/dependabot-auto-fix.yml`   | All 13 repos |
+| `.github/workflows/issue-label.yml`           | All 13 repos |
+| `.github/workflows/issue-lifecycle.yml`       | All 13 repos |
+| `.github/workflows/labeler.yml`               | All 13 repos |
+| `.github/workflows/lock-threads.yml`          | All 13 repos |
+| `.github/workflows/pr-size.yml`               | All 13 repos |
+| `.github/workflows/release-drafter.yml`       | All 13 repos |
+| `.github/workflows/stale.yml`                 | All 13 repos |
+| `.github/workflows/welcome.yml`               | All 13 repos |
 
 **NOT synced** (repo-specific by design):
 
@@ -360,8 +360,7 @@ bash scripts/sync-labels.sh --repo qws941/terraform
 
 # File sync happens automatically on push to master
 # Manual trigger available via workflow_dispatch on sync-files.yml
-
-
+```
 ## NOTES
 
 - This is a personal account `.github` repo, not a GitHub Organization `.github` repo. GitHub still honors community health file inheritance for the account's repos.
