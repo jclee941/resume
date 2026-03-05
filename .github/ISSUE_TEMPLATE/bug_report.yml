@@ -1,6 +1,7 @@
 name: "🐛 Bug Report"
 description: Report an issue with enough context for quick triage and resolution.
 labels: ["type:bug"]
+assignees: [qws941]
 body:
   - type: markdown
     attributes:

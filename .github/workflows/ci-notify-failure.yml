@@ -10,7 +10,7 @@ name: CI Notify Failure
 
 on:
   workflow_run:
-    workflows: ['CI', 'CI Validation Pipeline', 'Node.js CI', 'Agents League CI']
+    workflows: ['CI']
     types: [completed]
 
 permissions:

@@ -1,0 +1,26 @@
+# OpenCode Agent
+# SSoT: qws941/.github — synced to all repos
+# Synced via: .github/sync.yml
+# Template: _opencode.yml
+#
+# Required secrets:
+#   - ANTHROPIC_API_KEY: API key for the AI model
+
+name: OpenCode
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  opencode:
+    uses: qws941/.github/.github/workflows/_opencode.yml@master
+    secrets: inherit
