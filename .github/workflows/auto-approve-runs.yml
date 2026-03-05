@@ -3,8 +3,10 @@
 # Synced via: .github/sync.yml
 # Template: _auto-approve-runs.yml
 #
-# Event-driven: fires on PR events, workflow pushes, manual dispatch,
-# and cron schedule (breaks approval deadlock on public repos).
+# Event-driven: fires on workflow_run completion so action_required runs
+# from external actors (Codex bot) are rerun immediately.
+# workflow_run triggers execute in default branch context — immune to
+# the action_required deadlock that blocks pull_request_target workflows.
 #
 # Required secrets:
 #   - GH_PAT: GitHub Personal Access Token with actions:write
@@ -12,13 +14,17 @@
 name: Auto Approve Runs
 
 on:
-  pull_request_target:
-    types: [opened, synchronize, reopened]
-  push:
-    branches: [master, main]
-    paths: ['.github/workflows/**']
-  schedule:
-    - cron: '25 */4 * * *'
+  workflow_run:
+    workflows:
+      - CI
+      - Commit Lint
+      - PR Size
+      - PR Labeler
+      - Issue Lifecycle
+      - Codex PR Review
+      - Codex PR Normalize
+      - Auto Merge
+    types: [completed]
   workflow_dispatch:
 
 permissions:
@@ -26,5 +32,9 @@ permissions:
 
 jobs:
   approve:
+    # Only run when a workflow completed with action_required, or manual dispatch
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'action_required'
     uses: qws941/.github/.github/workflows/_auto-approve-runs.yml@master
     secrets: inherit
