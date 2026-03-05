@@ -20,6 +20,7 @@ GitHub community health files **Single Source of Truth (SSoT)** for all `qws941`
 │   │   ├── _codex-auto-issue.yml   # Reusable Codex auto-issue (workflow_call)
 │   │   ├── _codex-triage.yml       # Reusable Codex triage (workflow_call)
 │   │   ├── _commitlint.yml         # Reusable commit lint (workflow_call)
+│   │   ├── _dependabot-auto-fix.yml # Reusable Dependabot auto-fix (workflow_call)
 │   │   ├── _deploy-cf-worker.yml   # Reusable CF Worker deploy (workflow_call)
 │   │   ├── _elk-ingest.yml         # Reusable ELK ingest (workflow_call)
 │   │   ├── _labeler.yml            # Reusable PR labeler (workflow_call)
@@ -33,6 +34,7 @@ GitHub community health files **Single Source of Truth (SSoT)** for all `qws941`
 │   │   ├── codex-auto-issue.yml    # Thin caller → _codex-auto-issue.yml (synced)
 │   │   ├── codex-triage.yml        # Thin caller → _codex-triage.yml (synced)
 │   │   ├── commitlint.yml          # Thin caller → _commitlint.yml (synced)
+│   │   ├── dependabot-auto-fix.yml  # Thin caller → _dependabot-auto-fix.yml (synced)
 │   │   ├── labeler.yml             # Thin caller → _labeler.yml (synced)
 │   │   ├── lock-threads.yml        # Thin caller → _lock-threads.yml (synced)
 │   │   ├── opencode.yml            # Thin caller → _opencode.yml (synced)
@@ -84,6 +86,7 @@ GitHub community health files **Single Source of Truth (SSoT)** for all `qws941`
 | Editor formatting             | `.editorconfig`                    | Synced to all repos                                        |
 | Codex automation              | `.github/workflows/codex-*.yml`    | Triage on issue open + auto-issue on label                 |
 | Community automation        | `.github/workflows/{welcome,lock-threads}.yml` | First-time greeting + thread locking             |
+| Dependabot auto-fix         | `.github/workflows/dependabot-auto-fix.yml`             | Weekly Dependabot alert → Codex issue pipeline   |
 | PR quality gates            | `.github/workflows/{commitlint,pr-size}.yml`    | Conventional commit enforcement + size labeling  |
 | Release management          | `.github/workflows/release-drafter.yml`         | Auto-draft release notes from merged PRs         |
 | Release drafter config      | `.github/release-drafter.yml`                   | PR category → changelog section mapping          |
@@ -127,6 +130,7 @@ This repo is the canonical source. Changes propagate automatically:
 | `.github/ISSUE_TEMPLATE/config.yml`     | All 12 repos                            |
 | `.github/workflows/auto-merge.yml`      | All 12 repos                            |
 | `.github/workflows/opencode.yml`    | All 12 repos                            |
+| `.github/workflows/dependabot-auto-fix.yml` | All 12 repos                      |
 
 **NOT synced** (repo-specific by design):
 
@@ -160,6 +164,7 @@ Single consolidated sync group covering 12 repositories. All governance files, w
 | `_codex-auto-issue.yml`   | Post @codex on `codex`-labeled issues | —               |
 | `_codex-triage.yml`       | Auto-triage issues with keywords   | —                    |
 | `_commitlint.yml`         | Conventional commit PR title check | —                    |
+| `_dependabot-auto-fix.yml` | Dependabot alert → codex-labeled issue | —                    |
 | `_labeler.yml`            | PR auto-labeling by file paths     | —                    |
 | `_lock-threads.yml`       | Lock closed issues/PRs after 30d   | —                    |
 | `_opencode.yml`           | OpenCode agent on `/oc` comments   | `ANTHROPIC_API_KEY`  |
@@ -200,6 +205,7 @@ jobs:
 | --- | --- | --- |
 | `codex-triage.yml` | `issues: opened` | Filters title for failure/deploy/build/docker keywords → posts `@codex` investigate comment |
 | `codex-auto-issue.yml` | `issues: labeled` with `codex` label | Posts `@codex` comment with issue title and body context |
+| `dependabot-auto-fix.yml` | `schedule` (Monday 03:00 UTC) + `workflow_dispatch` | Fetches open Dependabot alerts, deduplicates, creates codex-labeled issues → triggers codex-auto-issue pipeline |
 
 **Configuration:**
 
