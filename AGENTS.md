@@ -6,7 +6,7 @@
 
 ## OVERVIEW
 
-GitHub community health files **Single Source of Truth (SSoT)** for all `qws941` repositories. Contains governance files, reusable CI/CD workflows, issue templates, label definitions, and repository rulesets that auto-sync to downstream repos. No application code — config and policy only.
+GitHub community health files **Single Source of Truth (SSoT)** for all `qws941` repositories. Contains governance files, reusable CI/CD workflows, issue templates, and label definitions that auto-sync to downstream repos. No application code — config and policy only.
 
 ## STRUCTURE
 
@@ -25,7 +25,6 @@ GitHub community health files **Single Source of Truth (SSoT)** for all `qws941`
 │   │   ├── _elk-ingest.yml         # Reusable ELK ingest (workflow_call)
 │   │   ├── _labeler.yml            # Reusable PR labeler (workflow_call)
 │   │   ├── _lock-threads.yml       # Reusable lock threads (workflow_call)
-│   │   ├── _opencode.yml           # Reusable OpenCode agent (workflow_call)
 │   │   ├── _pr-size.yml            # Reusable PR size labeler (workflow_call)
 │   │   ├── _release-drafter.yml    # Reusable release drafter (workflow_call)
 │   │   ├── _stale.yml              # Reusable stale cleanup (workflow_call)
@@ -37,7 +36,6 @@ GitHub community health files **Single Source of Truth (SSoT)** for all `qws941`
 │   │   ├── dependabot-auto-fix.yml  # Thin caller → _dependabot-auto-fix.yml (synced)
 │   │   ├── labeler.yml             # Thin caller → _labeler.yml (synced)
 │   │   ├── lock-threads.yml        # Thin caller → _lock-threads.yml (synced)
-│   │   ├── opencode.yml            # Thin caller → _opencode.yml (synced)
 │   │   ├── pr-size.yml             # Thin caller → _pr-size.yml (synced)
 │   │   ├── release-drafter.yml     # Thin caller → _release-drafter.yml (synced)
 │   │   ├── stale.yml               # Thin caller → _stale.yml (synced)
@@ -56,8 +54,7 @@ GitHub community health files **Single Source of Truth (SSoT)** for all `qws941`
 │   └── sync.yml                    # Sync target config: 1 group, 12 repos
 ├── scripts/
 │   ├── labels.yml                  # 26 standard labels (type:*/priority:*/status:*/size:*)
-│   ├── sync-labels.sh              # gh CLI label sync script
-│   └── sync-rulesets.sh            # gh CLI ruleset + repo settings sync script
+│   └── sync-labels.sh              # gh CLI label sync script
 ├── profile/
 │   └── README.md                   # GitHub profile page content
 ├── .editorconfig                   # 2-space JS/TS/YAML, 4-space Python, tabs Makefile
@@ -90,9 +87,7 @@ GitHub community health files **Single Source of Truth (SSoT)** for all `qws941`
 | PR quality gates            | `.github/workflows/{commitlint,pr-size}.yml`    | Conventional commit enforcement + size labeling  |
 | Release management          | `.github/workflows/release-drafter.yml`         | Auto-draft release notes from merged PRs         |
 | Release drafter config      | `.github/release-drafter.yml`                   | PR category → changelog section mapping          |
-| Ruleset sync to repos       | `scripts/sync-rulesets.sh`                      | 3 rulesets + repo settings to all non-archived repos, zero-base rebuild support |
-| Auto-merge workflow         | `.github/workflows/auto-merge.yml`              | GH_PAT admin bypass merge, no approval step  |
-| OpenCode agent workflow  | `.github/workflows/opencode.yml`                | Comment-triggered `/oc` or `/opencode` in issues/PRs |
+| Auto-merge workflow         | `.github/workflows/auto-merge.yml`              | Approve + queue squash merge pending CI pass |
 
 ## CONVENTIONS
 
@@ -100,7 +95,7 @@ GitHub community health files **Single Source of Truth (SSoT)** for all `qws941`
 
 This repo is the canonical source. Changes propagate automatically:
 
-- **Sync trigger**: Push to `master` on paths: `OWNERS`, `AGENTS.md`, `LICENSE`, `.editorconfig`, `.github/sync.yml`, `.github/labeler.yml`, `.github/release-drafter.yml`, `.github/FUNDING.yml`, `.github/PULL_REQUEST_TEMPLATE.md`, `.github/ISSUE_TEMPLATE/*`, `.github/workflows/{stale,labeler,auto-merge,codex-triage,codex-auto-issue,opencode,welcome,lock-threads,commitlint,pr-size,release-drafter}.yml`
+- **Sync trigger**: Push to `master` on paths: `OWNERS`, `AGENTS.md`, `LICENSE`, `.editorconfig`, `.github/sync.yml`, `.github/labeler.yml`, `.github/release-drafter.yml`, `.github/FUNDING.yml`, `.github/PULL_REQUEST_TEMPLATE.md`, `.github/ISSUE_TEMPLATE/*`, `.github/workflows/{stale,labeler,auto-merge,codex-triage,codex-auto-issue,welcome,lock-threads,commitlint,pr-size,release-drafter}.yml`
 - **Sync engine**: `BetaHuhn/repo-file-sync-action` via `.github/workflows/sync-files.yml`
 - **Sync PRs**: Prefixed `chore: `, labeled `sync`, assigned to `qws941`
 
@@ -129,7 +124,6 @@ This repo is the canonical source. Changes propagate automatically:
 | `.github/ISSUE_TEMPLATE/feature_request.yml` | All 12 repos                       |
 | `.github/ISSUE_TEMPLATE/config.yml`     | All 12 repos                            |
 | `.github/workflows/auto-merge.yml`      | All 12 repos                            |
-| `.github/workflows/opencode.yml`    | All 12 repos                            |
 | `.github/workflows/dependabot-auto-fix.yml` | All 12 repos                      |
 
 **NOT synced** (repo-specific by design):
@@ -145,7 +139,7 @@ Single consolidated sync group covering 12 repositories. All governance files, w
 
 ### Reusable Workflows
 
-15 `workflow_call` workflows prefixed with `_` (not synced, called cross-repo via `uses:`):
+14 `workflow_call` workflows prefixed with `_` (not synced, called cross-repo via `uses:`):
 
 **CI/CD Templates** (parameterized, used by repo-specific CI workflows):
 
@@ -160,14 +154,13 @@ Single consolidated sync group covering 12 repositories. All governance files, w
 
 | Workflow                  | Purpose                            | Secrets Required     |
 | ------------------------- | ---------------------------------- | -------------------- |
-| `_auto-merge.yml`         | Admin bypass squash merge          | `GH_PAT`            |
+| `_auto-merge.yml`         | Approve + queue squash merge       | `GH_PAT`            |
 | `_codex-auto-issue.yml`   | Post @codex on `codex`-labeled issues | —               |
 | `_codex-triage.yml`       | Auto-triage issues with keywords   | —                    |
 | `_commitlint.yml`         | Conventional commit PR title check | —                    |
 | `_dependabot-auto-fix.yml` | Dependabot alert → codex-labeled issue | —                    |
 | `_labeler.yml`            | PR auto-labeling by file paths     | —                    |
 | `_lock-threads.yml`       | Lock closed issues/PRs after 30d   | —                    |
-| `_opencode.yml`           | OpenCode agent on `/oc` comments   | `ANTHROPIC_API_KEY`  |
 | `_pr-size.yml`            | PR diff size labeling xs-xl        | —                    |
 | `_release-drafter.yml`    | Auto-draft release notes on merge  | —                    |
 | `_stale.yml`              | Close stale issues/PRs (14d+5d)    | —                    |
@@ -230,34 +223,6 @@ GitHub offers native third-party coding agents (OpenAI Codex, Anthropic Claude) 
 
 The `codex-triage.yml` and `codex-auto-issue.yml` workflows post `@codex` comments on issues. The connector app responds when a Codex Environment is configured for the repo. Rapid-fire mentions across multiple issues may hit rate limits — the bot silently drops responses in that case.
 
-### OpenCode Integration
-
-OpenCode agent runs inside GitHub Actions, triggered by comments in issues and PRs.
-
-**Triggers:**
-
-| Trigger | Action | Context |
-| --- | --- | --- |
-| `/oc` or `/opencode` in issue comment | Investigate issue, implement fix, create PR | Issue context |
-| `/oc` or `/opencode` in PR comment | Code review, implement changes, respond | PR diff + repo context |
-| `/oc` or `/opencode` in PR review comment | Address review feedback | PR review context |
-
-**Configuration:**
-
-- Workflow: `.github/workflows/opencode.yml` — synced to all 12 repos via Group 1.
-- Model: `anthropic/claude-sonnet-4-20250514`.
-- Uses `GITHUB_TOKEN` directly (`use_github_token: true`) — no separate GitHub App required.
-- Sessions are private (`share: false`).
-- Required secret: `ANTHROPIC_API_KEY` — must be set in each repo or at org/account level.
-- Action: `anomalyco/opencode/github@latest` — no SHA-pinned release available (tracked as TODO).
-
-**Capabilities:**
-
-- Issue triage and investigation
-- Code fixes and implementation (creates branch → implements → opens PR)
-- Code review on pull requests
-- Reads `AGENTS.md` for repo-specific context and conventions
-
 ### GitHub Actions
 
 - SHA-pin all actions with `# vN` version comment suffix
@@ -302,27 +267,6 @@ Path-based labels defined in `.github/labeler.yml`:
 - **CODEOWNERS** (GitHub-native): Enforces required reviews. NOT synced (repo-specific).
 - Both set to `qws941` at root level.
 
-### Repository Rulesets
-
-Three standard rulesets applied to all non-archived repos (except `terraform`) via `scripts/sync-rulesets.sh`:
-
-| Ruleset | Target | Scope | Key Rules |
-| --- | --- | --- | --- |
-| `default-branch-protection` | Default branch | All repos | PR required (1 approval; 0 for config-only repos), dismiss stale reviews, last push approval, thread resolution, linear history, squash+rebase merge only, block update/deletion/non-fast-forward. Admin + App bypass. |
-| `code-scanning` | All branches | All repos | CodeQL required — security alerts ≥ high, code alerts ≥ errors. May fail on private repos without GHAS. |
-| `tag-protection` | `refs/tags/v*` tags | All repos | Blocks creation, update, deletion, non-fast-forward of version tags. Admin + App bypass. |
-
-**Repo settings** applied alongside rulesets:
-- Auto-merge enabled, delete branch on merge
-- Squash merge enabled (PR_TITLE + PR_BODY), merge commits disabled, rebase enabled
-
-**Config-only repos** (`.github`, `qws941`): 0 required approvals, last push approval disabled.
-
-**Status check preservation**: The script preserves existing `required_status_checks` rules in `default-branch-protection` — it reads the current ruleset before updating and merges existing checks into the payload.
-
-**Bypass actors**: Admin (`RepositoryRole` id 5), OpenAI Codex connector (`Integration` id 1144995), OpenCode agent (`Integration` id 1549082). All `bypass_mode: always`. Note: GitHub Actions and Dependabot Integration actors are org-only and cannot be used on personal accounts.
-
-**Zero-base rebuild**: `--delete-all` flag deletes all existing rulesets before recreating. Status checks are preserved across rebuilds.
 
 ## Review guidelines
 
@@ -371,18 +315,6 @@ bash scripts/sync-labels.sh --repo qws941/terraform
 # File sync happens automatically on push to master
 # Manual trigger available via workflow_dispatch on sync-files.yml
 
-# Sync rulesets + repo settings to all repos (requires gh CLI auth)
-bash scripts/sync-rulesets.sh
-
-# Dry-run ruleset sync
-bash scripts/sync-rulesets.sh --dry-run
-
-# Zero-base rebuild (delete all rulesets, then recreate)
-bash scripts/sync-rulesets.sh --delete-all
-
-# Sync rulesets to specific repo only
-bash scripts/sync-rulesets.sh --repo qws941/terraform
-```
 
 ## NOTES
 
@@ -390,7 +322,7 @@ bash scripts/sync-rulesets.sh --repo qws941/terraform
 - `profile/README.md` renders as the GitHub profile page at `github.com/qws941`.
 - Reusable workflows are consumed via `uses: qws941/.github/.github/workflows/_ci-node.yml@master` — note the double `.github` path segment.
 - The `terraform` repo has custom CODEOWNERS (path-specific rules), which is why that file is not synced. Auto-merge is now standardized across all repos including terraform.
-- Secrets required: `GH_PAT` for sync-files workflow, `ANTHROPIC_API_KEY` for OpenCode agent workflow, `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID` for CF Worker deploy workflow, `ELASTICSEARCH_URL` + optional `ELASTICSEARCH_API_KEY` for ELK ingest workflow.
+- Secrets required: `GH_PAT` for sync-files workflow, `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID` for CF Worker deploy workflow, `ELASTICSEARCH_URL` + optional `ELASTICSEARCH_API_KEY` for ELK ingest workflow.
 - `chatgpt-codex-connector` GitHub App installed with all-repo access. `@codex review` works in any repo PR. Issue-context `@codex` mentions do not trigger responses (known limitation).
 - AGENTS.md is synced to all downstream repos — Codex reads it automatically for review context in every repo.
-- GH_PAT is used in `auto-merge.yml` for admin bypass merge (repository rulesets allow RepositoryRole 5 to bypass branch protection).
+- GH_PAT is used in `auto-merge.yml` for PR approval and auto-merge queueing (waits for CI to pass before merging).
