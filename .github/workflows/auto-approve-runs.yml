@@ -3,7 +3,8 @@
 # Synced via: .github/sync.yml
 # Template: _auto-approve-runs.yml
 #
-# Event-driven: fires on PR events, workflow pushes, and manual dispatch.
+# Event-driven: fires on PR events, workflow pushes, manual dispatch,
+# and cron schedule (breaks approval deadlock on public repos).
 #
 # Required secrets:
 #   - GH_PAT: GitHub Personal Access Token with actions:write
@@ -16,6 +17,8 @@ on:
   push:
     branches: [master, main]
     paths: ['.github/workflows/**']
+  schedule:
+    - cron: '25 */4 * * *'
   workflow_dispatch:
 
 permissions:
