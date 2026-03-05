@@ -121,7 +121,7 @@ This repo is the canonical source. Changes propagate automatically:
 
 - **Sync trigger**: Push to `master` on paths: `OWNERS`, `AGENTS.md`, `LICENSE`, `.editorconfig`, `.github/sync.yml`, `.github/FUNDING.yml`, `.github/PULL_REQUEST_TEMPLATE.md`, `.github/labeler.yml`, `.github/release-drafter.yml`, `.github/ISSUE_TEMPLATE/*`, `.github/workflows/{auto-approve-runs,auto-merge,branch-cleanup,ci-notify-failure,codex-auto-issue,codex-issue-timeout,codex-pr-normalize,codex-pr-review,codex-triage,commitlint,dependabot-auto-fix,issue-label,issue-lifecycle,labeler,lock-threads,pr-size,release-drafter,stale,welcome}.yml`; manual `workflow_dispatch` available via `sync-files.yml`
 - **Sync engine**: `BetaHuhn/repo-file-sync-action` via `.github/workflows/sync-files.yml`
-- **Sync PRs**: Prefixed `chore: `, labeled `sync`, assigned to `qws941`
+- **Sync mode**: Direct push (`SKIP_PR: true`), commit prefix `chore: `, no PR created
 
 **Synced files** (must remain generic, no repo-specific content):
 
@@ -299,21 +299,20 @@ The `codex-triage.yml` and `codex-auto-issue.yml` workflows post `@codex` commen
 
 Path-based labels defined in `.github/labeler.yml`:
 
-- `documentation` — `*.md`, `docs/`
-- `ci` — `.github/`, `*.yml`
-- `terraform` — `*.tf`
-- `docker` — `Dockerfile*`
-- `python` — `*.py`
-- `typescript` — `*.ts`, `*.tsx`
-- `shell` — `*.sh`
-- `config` — `*.json`, `*.toml`, `.editorconfig`
+- `documentation` — `*.md`, `docs/**`, `README*`, `CHANGELOG*`
+- `ci` — `.github/**`, `*.yml`, `*.yaml`, `Makefile`
+- `terraform` — `*.tf`, `*.tfvars`, `.terraform.lock.hcl`
+- `docker` — `Dockerfile*`, `docker-compose*.yml`, `.dockerignore`
+- `python` — `*.py`, `requirements*.txt`, `pyproject.toml`
+- `typescript` — `*.ts`, `*.tsx`, `*.js`, `*.jsx`, `package.json`, `tsconfig*.json`
+- `shell` — `*.sh`, `*.bash`
+- `config` — `*.json`, `*.toml`, `*.ini`, `*.cfg`, `.editorconfig`, `.gitignore`
 
 ### Governance
 
 - **OWNERS** (Google3/K8s-style): Defines approvers and reviewers. Hierarchical. Synced.
 - **CODEOWNERS** (GitHub-native): Enforces required reviews. NOT synced (repo-specific).
 - Both set to `qws941` at root level.
-
 
 ## Review guidelines
 
@@ -371,13 +370,15 @@ go run scripts/onboard-repo.go --repo qws941/new-repo --dry-run
 # File sync happens automatically on push to master
 # Manual trigger available via workflow_dispatch on sync-files.yml
 ```
+
 ## NOTES
 
 - This is a personal account `.github` repo, not a GitHub Organization `.github` repo. GitHub still honors community health file inheritance for the account's repos.
 - `profile/README.md` renders as the GitHub profile page at `github.com/qws941`.
 - Reusable workflows are consumed via `uses: qws941/.github/.github/workflows/_ci-node.yml@master` — note the double `.github` path segment.
 - The `terraform` repo has custom CODEOWNERS (path-specific rules), which is why that file is not synced. Auto-merge is now standardized across all repos including terraform.
-- Secrets required: `GH_PAT` for sync-files workflow, `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID` for CF Worker deploy workflow, `ELASTICSEARCH_URL` + optional `ELASTICSEARCH_API_KEY` for ELK ingest workflow.
+- Secrets required: `GH_PAT` for sync-files and auto-merge workflows, `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID` for CF Worker deploy workflow.
+- Variables required: `ELASTICSEARCH_URL` (repo variable) for ELK ingest workflow. Optional secret: `ELASTICSEARCH_API_KEY`.
 - `chatgpt-codex-connector` GitHub App installed with all-repo access. `@codex review` works in any repo PR. Issue-context `@codex` mentions require a Codex Environment configured per-repo at `chatgpt.com/codex/settings/environments`. Rapid-fire mentions may hit rate limits.
 - AGENTS.md is synced to all downstream repos — Codex reads it automatically for review context in every repo.
 - GH_PAT is used in `auto-merge.yml` for PR approval and auto-merge queueing (waits for CI to pass before merging).
