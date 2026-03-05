@@ -29,7 +29,9 @@ GitHub community health files **Single Source of Truth (SSoT)** for all `qws941`
 │   │   ├── _release-drafter.yml    # Reusable release drafter (workflow_call)
 │   │   ├── _stale.yml              # Reusable stale cleanup (workflow_call)
 │   │   ├── _welcome.yml            # Reusable first interaction (workflow_call)
+│   │   ├── _auto-approve-runs.yml  # Reusable auto-approve runs (workflow_call)
 │   │   ├── auto-merge.yml          # Thin caller → _auto-merge.yml (synced)
+│   │   ├── auto-approve-runs.yml   # Thin caller → _auto-approve-runs.yml (synced)
 │   │   ├── codex-auto-issue.yml    # Thin caller → _codex-auto-issue.yml (synced)
 │   │   ├── codex-triage.yml        # Thin caller → _codex-triage.yml (synced)
 │   │   ├── commitlint.yml          # Thin caller → _commitlint.yml (synced)
@@ -88,6 +90,7 @@ GitHub community health files **Single Source of Truth (SSoT)** for all `qws941`
 | Release management          | `.github/workflows/release-drafter.yml`         | Auto-draft release notes from merged PRs         |
 | Release drafter config      | `.github/release-drafter.yml`                   | PR category → changelog section mapping          |
 | Auto-merge workflow         | `.github/workflows/auto-merge.yml`              | Approve + queue squash merge pending CI pass |
+| Auto-approve runs         | `.github/workflows/auto-approve-runs.yml`       | Event-driven rerun of action_required runs |
 
 ## CONVENTIONS
 
@@ -95,7 +98,7 @@ GitHub community health files **Single Source of Truth (SSoT)** for all `qws941`
 
 This repo is the canonical source. Changes propagate automatically:
 
-- **Sync trigger**: Push to `master` on paths: `OWNERS`, `AGENTS.md`, `LICENSE`, `.editorconfig`, `.github/sync.yml`, `.github/labeler.yml`, `.github/release-drafter.yml`, `.github/FUNDING.yml`, `.github/PULL_REQUEST_TEMPLATE.md`, `.github/ISSUE_TEMPLATE/*`, `.github/workflows/{stale,labeler,auto-merge,codex-triage,codex-auto-issue,welcome,lock-threads,commitlint,pr-size,release-drafter}.yml`
+- **Sync trigger**: Push to `master` on paths: `OWNERS`, `AGENTS.md`, `LICENSE`, `.editorconfig`, `.github/sync.yml`, `.github/labeler.yml`, `.github/release-drafter.yml`, `.github/FUNDING.yml`, `.github/PULL_REQUEST_TEMPLATE.md`, `.github/ISSUE_TEMPLATE/*`, `.github/workflows/{stale,labeler,auto-merge,auto-approve-runs,codex-triage,codex-auto-issue,welcome,lock-threads,commitlint,pr-size,release-drafter}.yml`
 - **Sync engine**: `BetaHuhn/repo-file-sync-action` via `.github/workflows/sync-files.yml`
 - **Sync PRs**: Prefixed `chore: `, labeled `sync`, assigned to `qws941`
 
@@ -125,6 +128,7 @@ This repo is the canonical source. Changes propagate automatically:
 | `.github/ISSUE_TEMPLATE/config.yml`     | All 12 repos                            |
 | `.github/workflows/auto-merge.yml`      | All 12 repos                            |
 | `.github/workflows/dependabot-auto-fix.yml` | All 12 repos                      |
+| `.github/workflows/auto-approve-runs.yml` | All 13 repos                      |
 
 **NOT synced** (repo-specific by design):
 
@@ -165,6 +169,7 @@ Single consolidated sync group covering 12 repositories. All governance files, w
 | `_release-drafter.yml`    | Auto-draft release notes on merge  | —                    |
 | `_stale.yml`              | Close stale issues/PRs (14d+5d)    | —                    |
 | `_welcome.yml`            | Greet first-time contributors      | —                    |
+| `_auto-approve-runs.yml`    | Rerun action_required + stale failures | `GH_PAT`            |
 
 **Architecture**: Synced workflow files (e.g., `stale.yml`) are thin callers (~15 lines) that reference the template via `uses: qws941/.github/.github/workflows/_stale.yml@master`. Templates contain all logic; callers only define triggers and permissions.
 
@@ -326,3 +331,4 @@ bash scripts/sync-labels.sh --repo qws941/terraform
 - `chatgpt-codex-connector` GitHub App installed with all-repo access. `@codex review` works in any repo PR. Issue-context `@codex` mentions do not trigger responses (known limitation).
 - AGENTS.md is synced to all downstream repos — Codex reads it automatically for review context in every repo.
 - GH_PAT is used in `auto-merge.yml` for PR approval and auto-merge queueing (waits for CI to pass before merging).
+- `auto-approve-runs.yml` is event-driven (workflow_run: requested/completed). Detects action_required runs from Codex/bot PRs and reruns them via API. No cron or external polling needed.
