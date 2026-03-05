@@ -1,0 +1,20 @@
+# Codex PR Review: auto-trigger Codex review on new/updated PRs
+# Requires: Codex GitHub App installed with OAuth
+name: Codex PR Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: codex-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  codex-review:
+    uses: qws941/.github/.github/workflows/_codex-pr-review.yml@master
+    secrets: inherit  # pragma: allowlist secret

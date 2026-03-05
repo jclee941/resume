@@ -1,0 +1,17 @@
+name: Branch Cleanup
+
+on:
+  pull_request:
+    types: [closed]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: branch-cleanup-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  cleanup:
+    uses: qws941/.github/.github/workflows/_branch-cleanup.yml@master
+    secrets: inherit  # pragma: allowlist secret
