@@ -14,38 +14,52 @@ GitHub community health files **Single Source of Truth (SSoT)** for all `qws941`
 ./
 ├── .github/
 │   ├── workflows/
+│   │   ├── _auto-approve-runs.yml  # Reusable auto-approve runs (workflow_call)
 │   │   ├── _auto-merge.yml         # Reusable auto-merge (workflow_call)
+│   │   ├── _branch-cleanup.yml     # Reusable branch cleanup (workflow_call)
 │   │   ├── _ci-node.yml            # Reusable Node.js CI (workflow_call)
+│   │   ├── _ci-notify-failure.yml  # Reusable CI failure notification (workflow_call)
 │   │   ├── _ci-python.yml          # Reusable Python CI (workflow_call)
 │   │   ├── _codex-auto-issue.yml   # Reusable Codex auto-issue (workflow_call)
+│   │   ├── _codex-issue-timeout.yml # Reusable Codex issue timeout (workflow_call)
+│   │   ├── _codex-pr-normalize.yml # Reusable Codex PR normalize (workflow_call)
+│   │   ├── _codex-pr-review.yml    # Reusable Codex PR review (workflow_call)
 │   │   ├── _codex-triage.yml       # Reusable Codex triage (workflow_call)
 │   │   ├── _commitlint.yml         # Reusable commit lint (workflow_call)
 │   │   ├── _dependabot-auto-fix.yml # Reusable Dependabot auto-fix (workflow_call)
 │   │   ├── _deploy-cf-worker.yml   # Reusable CF Worker deploy (workflow_call)
 │   │   ├── _elk-ingest.yml         # Reusable ELK ingest (workflow_call)
+│   │   ├── _issue-lifecycle.yml    # Reusable issue lifecycle (workflow_call)
 │   │   ├── _labeler.yml            # Reusable PR labeler (workflow_call)
 │   │   ├── _lock-threads.yml       # Reusable lock threads (workflow_call)
 │   │   ├── _pr-size.yml            # Reusable PR size labeler (workflow_call)
 │   │   ├── _release-drafter.yml    # Reusable release drafter (workflow_call)
 │   │   ├── _stale.yml              # Reusable stale cleanup (workflow_call)
 │   │   ├── _welcome.yml            # Reusable first interaction (workflow_call)
-│   │   ├── _auto-approve-runs.yml  # Reusable auto-approve runs (workflow_call)
-│   │   ├── auto-merge.yml          # Thin caller → _auto-merge.yml (synced)
 │   │   ├── auto-approve-runs.yml   # Thin caller → _auto-approve-runs.yml (synced)
+│   │   ├── auto-merge.yml          # Thin caller → _auto-merge.yml (synced)
+│   │   ├── branch-cleanup.yml      # Thin caller → _branch-cleanup.yml (synced)
+│   │   ├── ci-notify-failure.yml   # Thin caller → _ci-notify-failure.yml (synced)
 │   │   ├── codex-auto-issue.yml    # Thin caller → _codex-auto-issue.yml (synced)
+│   │   ├── codex-issue-timeout.yml # Thin caller → _codex-issue-timeout.yml (synced)
+│   │   ├── codex-pr-normalize.yml  # Thin caller → _codex-pr-normalize.yml (synced)
+│   │   ├── codex-pr-review.yml     # Thin caller → _codex-pr-review.yml (synced)
 │   │   ├── codex-triage.yml        # Thin caller → _codex-triage.yml (synced)
 │   │   ├── commitlint.yml          # Thin caller → _commitlint.yml (synced)
-│   │   ├── dependabot-auto-fix.yml  # Thin caller → _dependabot-auto-fix.yml (synced)
+│   │   ├── dependabot-auto-fix.yml # Thin caller → _dependabot-auto-fix.yml (synced)
+│   │   ├── issue-lifecycle.yml     # Thin caller → _issue-lifecycle.yml (synced)
 │   │   ├── labeler.yml             # Thin caller → _labeler.yml (synced)
 │   │   ├── lock-threads.yml        # Thin caller → _lock-threads.yml (synced)
 │   │   ├── pr-size.yml             # Thin caller → _pr-size.yml (synced)
 │   │   ├── release-drafter.yml     # Thin caller → _release-drafter.yml (synced)
 │   │   ├── stale.yml               # Thin caller → _stale.yml (synced)
-│   │   ├── welcome.yml             # Thin caller → _welcome.yml (synced)
-│   │   └── sync-files.yml          # File sync orchestrator (push to master + workflow_dispatch)
+│   │   ├── sync-files.yml          # File sync orchestrator (push to master + workflow_dispatch)
+│   │   ├── sync-labels.yml         # Label sync orchestrator (workflow_dispatch)
+│   │   └── welcome.yml             # Thin caller → _welcome.yml (synced)
 │   ├── ISSUE_TEMPLATE/
 │   │   ├── bug_report.yml          # Structured bug report form
 │   │   ├── feature_request.yml     # Structured feature request form
+│   │   ├── issue-form.yml          # General issue form (Korean)
 │   │   └── config.yml              # Blank issues disabled, security redirect
 │   ├── CODEOWNERS                  # * @qws941, /.github/ @qws941
 │   ├── FUNDING.yml                 # github: qws941
@@ -75,7 +89,7 @@ GitHub community health files **Single Source of Truth (SSoT)** for all `qws941`
 | Add a new sync target repo    | `.github/sync.yml` → `repos:`      | Add to the repos: list in the single sync group     |
 | Reusable CI workflows         | `.github/workflows/_*.yml`         | `_` prefix = `workflow_call` only, not synced              |
 | Synced workflows              | `.github/workflows/{name}.yml`     | No `_` prefix = synced to downstream repos                 |
-| Issue templates               | `.github/ISSUE_TEMPLATE/`          | Bug report + feature request forms                         |
+| Issue templates               | `.github/ISSUE_TEMPLATE/`          | Bug report, feature request, and general issue forms       |
 | PR template                   | `.github/PULL_REQUEST_TEMPLATE.md` | What/Why/Kind/Changes/Testing/Checklist format             |
 | Standard labels               | `scripts/labels.yml`               | 26 labels: `type:*`, `priority:*`, `status:*`, `size/*`    |
 | Label sync to repos           | `scripts/sync-labels.sh`           | Uses `gh` CLI + python3/pyyaml, run manually               |
@@ -83,7 +97,7 @@ GitHub community health files **Single Source of Truth (SSoT)** for all `qws941`
 | Security reports              | `SECURITY.md`                      | Email security@jclee.me, 48h response SLA                  |
 | GitHub profile page           | `profile/README.md`                | Rendered at github.com/qws941                              |
 | Editor formatting             | `.editorconfig`                    | Synced to all repos                                        |
-| Codex automation              | `.github/workflows/codex-*.yml`    | Triage on issue open + auto-issue on label                 |
+| Codex automation              | `.github/workflows/codex-*.yml`    | Triage, auto-issue, PR review, PR normalize, issue timeout |
 | Community automation        | `.github/workflows/{welcome,lock-threads}.yml` | First-time greeting + thread locking             |
 | Dependabot auto-fix         | `.github/workflows/dependabot-auto-fix.yml`             | Weekly Dependabot alert → Codex issue pipeline   |
 | PR quality gates            | `.github/workflows/{commitlint,pr-size}.yml`    | Conventional commit enforcement + size labeling  |
@@ -91,6 +105,9 @@ GitHub community health files **Single Source of Truth (SSoT)** for all `qws941`
 | Release drafter config      | `.github/release-drafter.yml`                   | PR category → changelog section mapping          |
 | Auto-merge workflow         | `.github/workflows/auto-merge.yml`              | Approve + queue squash merge pending CI pass |
 | Auto-approve runs         | `.github/workflows/auto-approve-runs.yml`       | Event-driven rerun of action_required runs |
+| Issue lifecycle           | `.github/workflows/issue-lifecycle.yml`         | Link PRs to issues, auto-close on merge          |
+| Branch cleanup            | `.github/workflows/branch-cleanup.yml`          | Delete merged PR branches                         |
+| CI failure notification   | `.github/workflows/ci-notify-failure.yml`       | Notify + assign Codex bot on CI failure            |
 
 ## CONVENTIONS
 
@@ -98,7 +115,7 @@ GitHub community health files **Single Source of Truth (SSoT)** for all `qws941`
 
 This repo is the canonical source. Changes propagate automatically:
 
-- **Sync trigger**: Push to `master` on paths: `OWNERS`, `AGENTS.md`, `LICENSE`, `.editorconfig`, `.github/sync.yml`, `.github/labeler.yml`, `.github/release-drafter.yml`, `.github/FUNDING.yml`, `.github/PULL_REQUEST_TEMPLATE.md`, `.github/ISSUE_TEMPLATE/*`, `.github/workflows/{stale,labeler,auto-merge,auto-approve-runs,codex-triage,codex-auto-issue,welcome,lock-threads,commitlint,pr-size,release-drafter}.yml`; manual `workflow_dispatch` available via `sync-files.yml`
+- **Sync trigger**: Push to `master` on paths: `OWNERS`, `AGENTS.md`, `LICENSE`, `.editorconfig`, `.github/sync.yml`, `.github/labeler.yml`, `.github/release-drafter.yml`, `.github/FUNDING.yml`, `.github/PULL_REQUEST_TEMPLATE.md`, `.github/ISSUE_TEMPLATE/*`, `.github/workflows/{stale,labeler,auto-merge,auto-approve-runs,codex-triage,codex-auto-issue,welcome,lock-threads,commitlint,pr-size,release-drafter,issue-lifecycle,ci-notify-failure,dependabot-auto-fix,codex-pr-normalize,codex-issue-timeout,branch-cleanup,codex-pr-review}.yml`; manual `workflow_dispatch` available via `sync-files.yml`
 - **Sync engine**: `BetaHuhn/repo-file-sync-action` via `.github/workflows/sync-files.yml`
 - **Sync PRs**: Prefixed `chore: `, labeled `sync`, assigned to `qws941`
 
@@ -129,6 +146,13 @@ This repo is the canonical source. Changes propagate automatically:
 | `.github/workflows/auto-merge.yml`      | All 13 repos                            |
 | `.github/workflows/dependabot-auto-fix.yml` | All 13 repos                      |
 | `.github/workflows/auto-approve-runs.yml` | All 13 repos                      |
+| `.github/ISSUE_TEMPLATE/issue-form.yml` | All 13 repos                            |
+| `.github/workflows/issue-lifecycle.yml` | All 13 repos                            |
+| `.github/workflows/ci-notify-failure.yml` | All 13 repos                          |
+| `.github/workflows/codex-pr-normalize.yml` | All 13 repos                         |
+| `.github/workflows/codex-issue-timeout.yml` | All 13 repos                        |
+| `.github/workflows/branch-cleanup.yml`  | All 13 repos                            |
+| `.github/workflows/codex-pr-review.yml` | All 13 repos                            |
 
 **NOT synced** (repo-specific by design):
 
@@ -143,7 +167,7 @@ Single consolidated sync group covering 13 repositories. All governance files, w
 
 ### Reusable Workflows
 
-14 `workflow_call` workflows prefixed with `_` (not synced, called cross-repo via `uses:`):
+22 `workflow_call` workflows prefixed with `_` (not synced, called cross-repo via `uses:`):
 
 **CI/CD Templates** (parameterized, used by repo-specific CI workflows):
 
@@ -156,20 +180,26 @@ Single consolidated sync group covering 13 repositories. All governance files, w
 
 **Community & Automation Templates** (zero-config, called by synced thin callers):
 
-| Workflow                  | Purpose                            | Secrets Required     |
-| ------------------------- | ---------------------------------- | -------------------- |
-| `_auto-merge.yml`         | Approve + queue squash merge       | `GH_PAT`            |
-| `_codex-auto-issue.yml`   | Post @codex on `codex`-labeled issues | —               |
-| `_codex-triage.yml`       | Auto-triage issues with keywords   | —                    |
-| `_commitlint.yml`         | Conventional commit PR title check | —                    |
-| `_dependabot-auto-fix.yml` | Dependabot alert → codex-labeled issue | —                    |
-| `_labeler.yml`            | PR auto-labeling by file paths     | —                    |
-| `_lock-threads.yml`       | Lock closed issues/PRs after 30d   | —                    |
-| `_pr-size.yml`            | PR diff size labeling xs-xl        | —                    |
-| `_release-drafter.yml`    | Auto-draft release notes on merge  | —                    |
-| `_stale.yml`              | Close stale issues/PRs (14d+5d)    | —                    |
-| `_welcome.yml`            | Greet first-time contributors      | —                    |
-| `_auto-approve-runs.yml`    | Rerun action_required + stale failures | `GH_PAT`            |
+| Workflow                    | Purpose                              | Secrets Required     |
+| --------------------------- | ------------------------------------ | -------------------- |
+| `_auto-merge.yml`           | Approve + queue squash merge         | `GH_PAT`             |
+| `_auto-approve-runs.yml`    | Rerun action_required + stale failures | `GH_PAT`           |
+| `_branch-cleanup.yml`       | Delete merged PR branches            | —                    |
+| `_ci-notify-failure.yml`    | Notify on CI failure, assign Codex   | —                    |
+| `_codex-auto-issue.yml`     | Post @codex on `codex`-labeled issues | —                   |
+| `_codex-issue-timeout.yml`  | Close stale Codex-assigned issues    | —                    |
+| `_codex-pr-normalize.yml`   | Normalize PR title/labels, undraft   | —                    |
+| `_codex-pr-review.yml`      | Auto-review PRs via @codex           | —                    |
+| `_codex-triage.yml`         | Auto-triage issues with keywords     | —                    |
+| `_commitlint.yml`           | Conventional commit PR title check   | —                    |
+| `_dependabot-auto-fix.yml`  | Dependabot alert → codex-labeled issue | —                  |
+| `_issue-lifecycle.yml`      | Link PRs to issues, manage state     | —                    |
+| `_labeler.yml`              | PR auto-labeling by file paths       | —                    |
+| `_lock-threads.yml`         | Lock closed issues/PRs after 30d     | —                    |
+| `_pr-size.yml`              | PR diff size labeling xs-xl          | —                    |
+| `_release-drafter.yml`      | Auto-draft release notes on merge    | —                    |
+| `_stale.yml`                | Close stale issues/PRs (14d+5d)      | —                    |
+| `_welcome.yml`              | Greet first-time contributors        | —                    |
 
 **Architecture**: Synced workflow files (e.g., `stale.yml`) are thin callers (~15 lines) that reference the template via `uses: qws941/.github/.github/workflows/_stale.yml@master`. Templates contain all logic; callers only define triggers and permissions.
 
@@ -204,6 +234,12 @@ jobs:
 | `codex-triage.yml` | `issues: opened` | Filters title for failure/deploy/build/docker keywords → posts `@codex` investigate comment |
 | `codex-auto-issue.yml` | `issues: labeled` with `codex` label | Posts `@codex` comment with issue title and body context |
 | `dependabot-auto-fix.yml` | `schedule` (Monday 03:00 UTC) + `workflow_dispatch` | Fetches open Dependabot alerts, deduplicates, creates codex-labeled issues → triggers codex-auto-issue pipeline |
+| `codex-pr-normalize.yml` | `pull_request_target: opened, edited` | Normalizes Codex PR title to conventional commit, adds labels, undrafts |
+| `codex-pr-review.yml` | `pull_request_target: opened, synchronize` | Auto-reviews PRs via @codex |
+| `codex-issue-timeout.yml` | `schedule` + `workflow_dispatch` | Closes stale Codex-assigned issues after timeout |
+| `issue-lifecycle.yml` | `pull_request` + `issues` events | Links PRs to issues via keywords, manages issue state on close |
+| `ci-notify-failure.yml` | `workflow_run: completed` | Notifies on CI failures, assigns Codex bot for auto-fix |
+| `branch-cleanup.yml` | `pull_request: closed` (merged) | Deletes merged PR branches |
 
 **Configuration:**
 
