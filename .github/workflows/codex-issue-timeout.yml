@@ -1,0 +1,19 @@
+# Codex Issue Timeout
+# SSoT: qws941/.github — synced to all repos
+# Synced via: .github/sync.yml
+# Template: _codex-issue-timeout.yml
+
+name: Codex Issue Timeout
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  pull-requests: read
+
+jobs:
+  timeout:
+    uses: qws941/.github/.github/workflows/_codex-issue-timeout.yml@master

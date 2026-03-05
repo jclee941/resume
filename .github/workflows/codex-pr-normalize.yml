@@ -1,0 +1,22 @@
+# Codex PR Normalize
+# SSoT: qws941/.github — synced to all repos
+# Synced via: .github/sync.yml
+# Template: _codex-pr-normalize.yml
+
+name: Codex PR Normalize
+
+on:
+  pull_request_target:
+    types: [opened, edited]
+
+permissions:
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: codex-normalize-${{ github.event.pull_request.number }}
+
+jobs:
+  normalize:
+    uses: qws941/.github/.github/workflows/_codex-pr-normalize.yml@master
+    secrets: inherit
