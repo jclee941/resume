@@ -1,7 +1,6 @@
 name: "📋 이슈 등록"
 description: 버그, 기능 요청, 유지보수, 문서 등 모든 이슈를 등록합니다.
 labels: []
-assignees: [qws941]
 body:
   - type: markdown
     attributes:

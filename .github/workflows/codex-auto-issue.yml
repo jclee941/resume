@@ -15,3 +15,4 @@ permissions:
 jobs:
   codex:
     uses: qws941/.github/.github/workflows/_codex-auto-issue.yml@master
+    secrets: inherit

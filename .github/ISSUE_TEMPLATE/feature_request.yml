@@ -1,7 +1,6 @@
 name: "✨ Feature Request"
 description: Propose an improvement with clear value, scope, and desired outcome.
 labels: ["type:feature"]
-assignees: [qws941]
 body:
   - type: markdown
     attributes:

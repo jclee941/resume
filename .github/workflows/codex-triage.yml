@@ -19,3 +19,4 @@ concurrency:
 jobs:
   triage:
     uses: qws941/.github/.github/workflows/_codex-triage.yml@master
+    secrets: inherit

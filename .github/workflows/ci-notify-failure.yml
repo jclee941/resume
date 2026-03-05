@@ -10,7 +10,7 @@ name: CI Notify Failure
 
 on:
   workflow_run:
-    workflows: ['CI']
+    workflows: ['CI', 'CI Validation Pipeline', 'Node.js CI', 'Agents League CI']
     types: [completed]
 
 permissions:
@@ -20,3 +20,4 @@ jobs:
   notify:
     if: github.event.workflow_run.conclusion == 'failure'
     uses: qws941/.github/.github/workflows/_ci-notify-failure.yml@master
+    secrets: inherit
