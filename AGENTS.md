@@ -69,7 +69,7 @@ GitHub community health files **Single Source of Truth (SSoT)** for all `qws941`
 │   ├── dependabot.yml              # Weekly github-actions updates
 │   ├── labeler.yml                 # PR auto-label path rules (8 labels)
 │   ├── release-drafter.yml         # Release drafter category config
-│   └── sync.yml                    # Sync target config: 1 group, 15 repos
+│   └── sync.yml                    # Sync target config: 1 group, 14 repos
 ├── scripts/
 │   ├── labels.yml                  # 26 standard labels (type:*/priority:*/status:*/size:*)
 │   ├── onboard-repo.go             # Automated repo onboarding (sync, labels, webhooks, dependabot)
@@ -127,37 +127,37 @@ This repo is the canonical source. Changes propagate automatically:
 
 | File                                         | Targets      |
 | -------------------------------------------- | ------------ |
-| `OWNERS`                                     | All 15 repos |
-| `LICENSE`                                     | All 15 repos |
-| `.editorconfig`                               | All 15 repos |
-| `AGENTS.md`                                   | All 15 repos |
-| `.github/FUNDING.yml`                         | All 15 repos |
-| `.github/PULL_REQUEST_TEMPLATE.md`            | All 15 repos |
-| `.github/labeler.yml`                         | All 15 repos |
-| `.github/release-drafter.yml`                 | All 15 repos |
-| `.github/ISSUE_TEMPLATE/bug_report.yml`       | All 15 repos |
-| `.github/ISSUE_TEMPLATE/config.yml`           | All 15 repos |
-| `.github/ISSUE_TEMPLATE/feature_request.yml`  | All 15 repos |
-| `.github/ISSUE_TEMPLATE/issue-form.yml`       | All 15 repos |
-| `.github/workflows/auto-approve-runs.yml`     | All 15 repos |
-| `.github/workflows/auto-merge.yml`            | All 15 repos |
-| `.github/workflows/branch-cleanup.yml`        | All 15 repos |
-| `.github/workflows/ci-notify-failure.yml`     | All 15 repos |
-| `.github/workflows/codex-auto-issue.yml`      | All 15 repos |
-| `.github/workflows/codex-issue-timeout.yml`   | All 15 repos |
-| `.github/workflows/codex-pr-normalize.yml`    | All 15 repos |
-| `.github/workflows/codex-pr-review.yml`       | All 15 repos |
-| `.github/workflows/codex-triage.yml`          | All 15 repos |
-| `.github/workflows/commitlint.yml`            | All 15 repos |
-| `.github/workflows/dependabot-auto-fix.yml`   | All 15 repos |
-| `.github/workflows/issue-label.yml`           | All 15 repos |
-| `.github/workflows/issue-lifecycle.yml`       | All 15 repos |
-| `.github/workflows/labeler.yml`               | All 15 repos |
-| `.github/workflows/lock-threads.yml`          | All 15 repos |
-| `.github/workflows/pr-size.yml`               | All 15 repos |
-| `.github/workflows/release-drafter.yml`       | All 15 repos |
-| `.github/workflows/stale.yml`                 | All 15 repos |
-| `.github/workflows/welcome.yml`               | All 15 repos |
+| `OWNERS`                                     | All 14 repos |
+| `LICENSE`                                     | All 14 repos |
+| `.editorconfig`                               | All 14 repos |
+| `AGENTS.md`                                   | All 14 repos |
+| `.github/FUNDING.yml`                         | All 14 repos |
+| `.github/PULL_REQUEST_TEMPLATE.md`            | All 14 repos |
+| `.github/labeler.yml`                         | All 14 repos |
+| `.github/release-drafter.yml`                 | All 14 repos |
+| `.github/ISSUE_TEMPLATE/bug_report.yml`       | All 14 repos |
+| `.github/ISSUE_TEMPLATE/config.yml`           | All 14 repos |
+| `.github/ISSUE_TEMPLATE/feature_request.yml`  | All 14 repos |
+| `.github/ISSUE_TEMPLATE/issue-form.yml`       | All 14 repos |
+| `.github/workflows/auto-approve-runs.yml`     | All 14 repos |
+| `.github/workflows/auto-merge.yml`            | All 14 repos |
+| `.github/workflows/branch-cleanup.yml`        | All 14 repos |
+| `.github/workflows/ci-notify-failure.yml`     | All 14 repos |
+| `.github/workflows/codex-auto-issue.yml`      | All 14 repos |
+| `.github/workflows/codex-issue-timeout.yml`   | All 14 repos |
+| `.github/workflows/codex-pr-normalize.yml`    | All 14 repos |
+| `.github/workflows/codex-pr-review.yml`       | All 14 repos |
+| `.github/workflows/codex-triage.yml`          | All 14 repos |
+| `.github/workflows/commitlint.yml`            | All 14 repos |
+| `.github/workflows/dependabot-auto-fix.yml`   | All 14 repos |
+| `.github/workflows/issue-label.yml`           | All 14 repos |
+| `.github/workflows/issue-lifecycle.yml`       | All 14 repos |
+| `.github/workflows/labeler.yml`               | All 14 repos |
+| `.github/workflows/lock-threads.yml`          | All 14 repos |
+| `.github/workflows/pr-size.yml`               | All 14 repos |
+| `.github/workflows/release-drafter.yml`       | All 14 repos |
+| `.github/workflows/stale.yml`                 | All 14 repos |
+| `.github/workflows/welcome.yml`               | All 14 repos |
 
 **NOT synced** (repo-specific by design):
 
@@ -166,7 +166,7 @@ This repo is the canonical source. Changes propagate automatically:
 
 ### Sync Groups and Target Repos
 
-Single consolidated sync group covering 15 repositories. All governance files, workflow callers, and community health files are synced together.
+Single consolidated sync group covering 14 repositories. All governance files, workflow callers, and community health files are synced together.
 
 **Target repos**: `aimo3-prize`, `blacklist`, `hycu`, `hycu_fsds`, `opencode`, `propose`, `qws941`, `resume`, `safetywallet`, `slack-opencode-bridge`, `splunk`, `terraform`, `tmux`, `youtube`
 
@@ -252,7 +252,7 @@ jobs:
 - Codex reads `AGENTS.md` at repo root automatically — no additional config needed.
 - `## Review guidelines` section (below) customizes review behavior.
 - Enable automatic reviews per-repo at `chatgpt.com/codex/settings/code-review`.
-- AGENTS.md is synced to all 15 repos via `sync.yml` Group 1.
+- AGENTS.md is synced to all 14 repos via `sync.yml` Group 1.
 - Codex Environment must be created per-repo at `chatgpt.com/codex/settings/environments` (web UI only, no API).
 - **Known limitation**: Rapid-fire `@codex` mentions (multiple within seconds) may hit rate limits and receive no response. Space out mentions or retry individually.
 
@@ -344,7 +344,7 @@ Path-based labels defined in `.github/labeler.yml`:
 - Config-only repo: no application code, no build system, no tests.
 - Dual governance: OWNERS (intent/policy) + CODEOWNERS (GitHub enforcement) coexist.
 - Reusable workflow naming: `_` prefix distinguishes callable workflows from synced workflows.
-- Sync groups: Single consolidated group syncs all governance + thin caller workflows to all 15 repos.
+- Sync groups: Single consolidated group syncs all governance + thin caller workflows to all 14 repos.
 - GitHub auto-inherits: `CONTRIBUTING.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md` apply to all repos without syncing.
 
 ## COMMANDS
@@ -378,7 +378,7 @@ go run scripts/onboard-repo.go --repo qws941/new-repo --dry-run
 - Reusable workflows are consumed via `uses: qws941/.github/.github/workflows/_ci-node.yml@master` — note the double `.github` path segment.
 - The `terraform` repo has custom CODEOWNERS (path-specific rules), which is why that file is not synced. Auto-merge is now standardized across all repos including terraform.
 - Secrets required: `GH_PAT` for sync-files workflow, `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID` for CF Worker deploy workflow, `ELASTICSEARCH_URL` + optional `ELASTICSEARCH_API_KEY` for ELK ingest workflow.
-- `chatgpt-codex-connector` GitHub App installed with all-repo access. `@codex review` works in any repo PR. Issue-context `@codex` mentions do not trigger responses (known limitation).
+- `chatgpt-codex-connector` GitHub App installed with all-repo access. `@codex review` works in any repo PR. Issue-context `@codex` mentions require a Codex Environment configured per-repo at `chatgpt.com/codex/settings/environments`. Rapid-fire mentions may hit rate limits.
 - AGENTS.md is synced to all downstream repos — Codex reads it automatically for review context in every repo.
 - GH_PAT is used in `auto-merge.yml` for PR approval and auto-merge queueing (waits for CI to pass before merging).
 - `auto-approve-runs.yml` is triggered via `workflow_dispatch` only. Detects action_required runs from Codex/bot PRs and reruns them via API. No cron or external polling needed.
