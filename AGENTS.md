@@ -42,7 +42,7 @@ GitHub community health files **Single Source of Truth (SSoT)** for all `qws941`
 │   │   ├── release-drafter.yml     # Thin caller → _release-drafter.yml (synced)
 │   │   ├── stale.yml               # Thin caller → _stale.yml (synced)
 │   │   ├── welcome.yml             # Thin caller → _welcome.yml (synced)
-│   │   └── sync-files.yml          # File sync orchestrator (push to master)
+│   │   └── sync-files.yml          # File sync orchestrator (push to master + workflow_dispatch)
 │   ├── ISSUE_TEMPLATE/
 │   │   ├── bug_report.yml          # Structured bug report form
 │   │   ├── feature_request.yml     # Structured feature request form
@@ -98,7 +98,7 @@ GitHub community health files **Single Source of Truth (SSoT)** for all `qws941`
 
 This repo is the canonical source. Changes propagate automatically:
 
-- **Sync trigger**: Push to `master` on paths: `OWNERS`, `AGENTS.md`, `LICENSE`, `.editorconfig`, `.github/sync.yml`, `.github/labeler.yml`, `.github/release-drafter.yml`, `.github/FUNDING.yml`, `.github/PULL_REQUEST_TEMPLATE.md`, `.github/ISSUE_TEMPLATE/*`, `.github/workflows/{stale,labeler,auto-merge,auto-approve-runs,codex-triage,codex-auto-issue,welcome,lock-threads,commitlint,pr-size,release-drafter}.yml`
+- **Sync trigger**: Push to `master` on paths: `OWNERS`, `AGENTS.md`, `LICENSE`, `.editorconfig`, `.github/sync.yml`, `.github/labeler.yml`, `.github/release-drafter.yml`, `.github/FUNDING.yml`, `.github/PULL_REQUEST_TEMPLATE.md`, `.github/ISSUE_TEMPLATE/*`, `.github/workflows/{stale,labeler,auto-merge,auto-approve-runs,codex-triage,codex-auto-issue,welcome,lock-threads,commitlint,pr-size,release-drafter}.yml`; manual `workflow_dispatch` available via `sync-files.yml`
 - **Sync engine**: `BetaHuhn/repo-file-sync-action` via `.github/workflows/sync-files.yml`
 - **Sync PRs**: Prefixed `chore: `, labeled `sync`, assigned to `qws941`
 
