@@ -53,7 +53,7 @@ GitHub community health files **Single Source of Truth (SSoT)** for all `qws941`
 │   ├── dependabot.yml              # Weekly github-actions updates
 │   ├── labeler.yml                 # PR auto-label path rules (8 labels)
 │   ├── release-drafter.yml         # Release drafter category config
-│   └── sync.yml                    # Sync target config: 1 group, 12 repos
+│   └── sync.yml                    # Sync target config: 1 group, 13 repos
 ├── scripts/
 │   ├── labels.yml                  # 26 standard labels (type:*/priority:*/status:*/size:*)
 │   └── sync-labels.sh              # gh CLI label sync script
@@ -106,28 +106,28 @@ This repo is the canonical source. Changes propagate automatically:
 
 | File                                    | Targets                                 |
 | --------------------------------------- | --------------------------------------- |
-| `OWNERS`                                | All 12 repos                            |
-| `LICENSE`                               | All 12 repos                            |
-| `.editorconfig`                         | All 12 repos                            |
-| `.github/labeler.yml`                   | All 12 repos                            |
-| `.github/release-drafter.yml`           | All 12 repos                            |
-| `.github/workflows/stale.yml`           | All 12 repos                            |
-| `.github/workflows/labeler.yml`         | All 12 repos                            |
-| `.github/workflows/codex-triage.yml`    | All 12 repos                            |
-| `.github/workflows/codex-auto-issue.yml`| All 12 repos                            |
-| `.github/workflows/welcome.yml`         | All 12 repos                            |
-| `.github/workflows/lock-threads.yml`    | All 12 repos                            |
-| `.github/workflows/commitlint.yml`      | All 12 repos                            |
-| `.github/workflows/pr-size.yml`         | All 12 repos                            |
-| `.github/workflows/release-drafter.yml` | All 12 repos                            |
-| `AGENTS.md`                             | All 12 repos                            |
-| `.github/FUNDING.yml`                   | All 12 repos                            |
-| `.github/PULL_REQUEST_TEMPLATE.md`      | All 12 repos                            |
-| `.github/ISSUE_TEMPLATE/bug_report.yml` | All 12 repos                            |
-| `.github/ISSUE_TEMPLATE/feature_request.yml` | All 12 repos                       |
-| `.github/ISSUE_TEMPLATE/config.yml`     | All 12 repos                            |
-| `.github/workflows/auto-merge.yml`      | All 12 repos                            |
-| `.github/workflows/dependabot-auto-fix.yml` | All 12 repos                      |
+| `OWNERS`                                | All 13 repos                            |
+| `LICENSE`                               | All 13 repos                            |
+| `.editorconfig`                         | All 13 repos                            |
+| `.github/labeler.yml`                   | All 13 repos                            |
+| `.github/release-drafter.yml`           | All 13 repos                            |
+| `.github/workflows/stale.yml`           | All 13 repos                            |
+| `.github/workflows/labeler.yml`         | All 13 repos                            |
+| `.github/workflows/codex-triage.yml`    | All 13 repos                            |
+| `.github/workflows/codex-auto-issue.yml`| All 13 repos                            |
+| `.github/workflows/welcome.yml`         | All 13 repos                            |
+| `.github/workflows/lock-threads.yml`    | All 13 repos                            |
+| `.github/workflows/commitlint.yml`      | All 13 repos                            |
+| `.github/workflows/pr-size.yml`         | All 13 repos                            |
+| `.github/workflows/release-drafter.yml` | All 13 repos                            |
+| `AGENTS.md`                             | All 13 repos                            |
+| `.github/FUNDING.yml`                   | All 13 repos                            |
+| `.github/PULL_REQUEST_TEMPLATE.md`      | All 13 repos                            |
+| `.github/ISSUE_TEMPLATE/bug_report.yml` | All 13 repos                            |
+| `.github/ISSUE_TEMPLATE/feature_request.yml` | All 13 repos                       |
+| `.github/ISSUE_TEMPLATE/config.yml`     | All 13 repos                            |
+| `.github/workflows/auto-merge.yml`      | All 13 repos                            |
+| `.github/workflows/dependabot-auto-fix.yml` | All 13 repos                      |
 | `.github/workflows/auto-approve-runs.yml` | All 13 repos                      |
 
 **NOT synced** (repo-specific by design):
@@ -137,9 +137,9 @@ This repo is the canonical source. Changes propagate automatically:
 
 ### Sync Groups and Target Repos
 
-Single consolidated sync group covering 12 repositories. All governance files, workflow callers, and community health files are synced together.
+Single consolidated sync group covering 13 repositories. All governance files, workflow callers, and community health files are synced together.
 
-**Target repos**: `aimo3-prize`, `blacklist`, `hycu_fsds`, `opencode`, `propose`, `qws941`, `resume`, `safetywallet`, `splunk`, `terraform`, `tmux`, `youtube`
+**Target repos**: `aimo3-prize`, `blacklist`, `hycu_fsds`, `opencode`, `propose`, `qws941`, `resume`, `safetywallet`, `slack-opencode-bridge`, `splunk`, `terraform`, `tmux`, `youtube`
 
 ### Reusable Workflows
 
@@ -210,7 +210,7 @@ jobs:
 - Codex reads `AGENTS.md` at repo root automatically — no additional config needed.
 - `## Review guidelines` section (below) customizes review behavior.
 - Enable automatic reviews per-repo at `chatgpt.com/codex/settings/code-review`.
-- AGENTS.md is synced to all 12 repos via `sync.yml` Group 1.
+- AGENTS.md is synced to all 13 repos via `sync.yml` Group 1.
 - Codex Environment must be created per-repo at `chatgpt.com/codex/settings/environments` (web UI only, no API).
 - **Known limitation**: Rapid-fire `@codex` mentions (multiple within seconds) may hit rate limits and receive no response. Space out mentions or retry individually.
 
@@ -302,7 +302,7 @@ Path-based labels defined in `.github/labeler.yml`:
 - Config-only repo: no application code, no build system, no tests.
 - Dual governance: OWNERS (intent/policy) + CODEOWNERS (GitHub enforcement) coexist.
 - Reusable workflow naming: `_` prefix distinguishes callable workflows from synced workflows.
-- Sync groups: Single consolidated group syncs all governance + thin caller workflows to all 12 repos.
+- Sync groups: Single consolidated group syncs all governance + thin caller workflows to all 13 repos.
 - GitHub auto-inherits: `CONTRIBUTING.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md` apply to all repos without syncing.
 
 ## COMMANDS
@@ -331,4 +331,4 @@ bash scripts/sync-labels.sh --repo qws941/terraform
 - `chatgpt-codex-connector` GitHub App installed with all-repo access. `@codex review` works in any repo PR. Issue-context `@codex` mentions do not trigger responses (known limitation).
 - AGENTS.md is synced to all downstream repos — Codex reads it automatically for review context in every repo.
 - GH_PAT is used in `auto-merge.yml` for PR approval and auto-merge queueing (waits for CI to pass before merging).
-- `auto-approve-runs.yml` is event-driven (workflow_run: requested/completed). Detects action_required runs from Codex/bot PRs and reruns them via API. No cron or external polling needed.
+- `auto-approve-runs.yml` is triggered via `workflow_dispatch` only. Detects action_required runs from Codex/bot PRs and reruns them via API. No cron or external polling needed.
