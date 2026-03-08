@@ -74,7 +74,7 @@
     "@lhci/cli": "^0.15.1",
     "@playwright/test": "^1.58.2",
     "@sentry/browser": "^10.42.0",
-    "@sentry/cli": "^3.2.2",
+    "@sentry/cli": "^3.3.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^25.3.5",
     "c8": "^11.0.0",
