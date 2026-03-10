@@ -10,21 +10,14 @@
 name: Auto Approve Runs
 
 on:
-  workflow_run:
-    workflows:
-      - 'Auto Merge'
-      - 'Codex PR Normalize'
-      - 'Codex PR Review'
-      - 'Commit Lint'
-      - 'Issue Lifecycle'
-      - 'PR Labeler'
-      - 'PR Size'
-      - 'Welcome'
-    types: [requested, completed]
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review]
+  schedule:
+    - cron: '*/30 * * * *'
   workflow_dispatch:
 
 concurrency:
-  group: auto-approve-runs-${{ github.event.workflow_run.id || github.run_id }}
+  group: auto-approve-runs-${{ github.event.pull_request.number || github.run_id }}
   cancel-in-progress: true
 
 permissions:
@@ -32,6 +25,6 @@ permissions:
 
 jobs:
   approve:
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.action == 'requested' || github.event.workflow_run.conclusion == 'action_required' || github.event.workflow_run.conclusion == 'failure' }}
+    if: ${{ github.event_name != 'pull_request_target' || github.event.pull_request.draft == false }}
     uses: qws941/.github/.github/workflows/_auto-approve-runs.yml@master
     secrets: inherit
