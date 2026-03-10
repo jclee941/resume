@@ -13,6 +13,13 @@ on:
   workflow_run:
     workflows:
       - 'Auto Merge'
+      - 'Codex PR Normalize'
+      - 'Codex PR Review'
+      - 'Commit Lint'
+      - 'Issue Lifecycle'
+      - 'PR Labeler'
+      - 'PR Size'
+      - 'Welcome'
     types: [requested, completed]
   workflow_dispatch:
 
