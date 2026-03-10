@@ -41,5 +41,5 @@ jobs:
       title-prefix: ${{ vars.AUTOMATION_HEALTH_TITLE_PREFIX != '' && vars.AUTOMATION_HEALTH_TITLE_PREFIX || '[Automation Health] degraded' }}
       issue-labels: ${{ vars.AUTOMATION_HEALTH_ISSUE_LABELS != '' && vars.AUTOMATION_HEALTH_ISSUE_LABELS || 'type:ci,priority:medium' }}
       unhealthy-conclusions: ${{ vars.AUTOMATION_HEALTH_UNHEALTHY_CONCLUSIONS != '' && vars.AUTOMATION_HEALTH_UNHEALTHY_CONCLUSIONS || 'failure,timed_out,action_required,cancelled' }}
-      treat-missing-as-unhealthy: ${{ vars.AUTOMATION_HEALTH_TREAT_MISSING_AS_UNHEALTHY != '' && vars.AUTOMATION_HEALTH_TREAT_MISSING_AS_UNHEALTHY || true }}
+      treat-missing-as-unhealthy: ${{ vars.AUTOMATION_HEALTH_TREAT_MISSING_AS_UNHEALTHY != '' && vars.AUTOMATION_HEALTH_TREAT_MISSING_AS_UNHEALTHY || false }}
     secrets: inherit
