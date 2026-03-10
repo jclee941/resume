@@ -3,8 +3,6 @@
 # Synced via: .github/sync.yml
 # Template: _auto-approve-runs.yml
 #
-# Manual fallback trigger for rerunning action_required/failed workflow runs.
-# Primary automation is handled by n8n webhook (event-driven, external).
 #
 # Required secrets:
 #   - GH_PAT: GitHub Personal Access Token with actions:write
@@ -12,12 +10,21 @@
 name: Auto Approve Runs
 
 on:
+  workflow_run:
+    workflows:
+      - 'Auto Merge'
+    types: [requested, completed]
   workflow_dispatch:
+
+concurrency:
+  group: auto-approve-runs-${{ github.event.workflow_run.id || github.run_id }}
+  cancel-in-progress: true
 
 permissions:
   actions: write
 
 jobs:
   approve:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.action == 'requested' || github.event.workflow_run.conclusion == 'action_required' || github.event.workflow_run.conclusion == 'failure' }}
     uses: qws941/.github/.github/workflows/_auto-approve-runs.yml@master
     secrets: inherit
