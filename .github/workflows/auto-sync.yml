@@ -2,18 +2,16 @@
 # AUTO-SYNC - Daily Resume Data Synchronization
 # =============================================================================
 # Syncs resume data from packages/data/ (SSoT) to apps/portfolio/ data files.
-# Commits directly to master if data changed — CF Workers Builds auto-deploys.
 # =============================================================================
 
 name: Auto Sync
 
 on:
-  schedule:
-    - cron: '0 0 * * *' # Daily at 00:00 UTC = 09:00 KST
   workflow_dispatch:
 
 permissions:
   contents: write
+  pull-requests: write
 
 concurrency:
   group: auto-sync
@@ -46,14 +44,45 @@ jobs:
             echo "changed=true" >> $GITHUB_OUTPUT
           fi
 
-      - name: Commit and push changes
+      - name: Run validation bundle
         if: steps.check-changes.outputs.changed == 'true'
+        run: |
+          npm run automate:ssot
+          bash tools/ci/validate-cloudflare-native.sh
+          git restore apps/portfolio/worker.js
+
+      - name: Create branch and commit changes
+        if: steps.check-changes.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          BRANCH_NAME="chore/auto-sync-data-$(date +%Y%m%d-%H%M%S)"
+          git checkout -b "$BRANCH_NAME"
           git add apps/portfolio/data*.json
           git commit -m "chore(data): sync resume data from SSoT"
-          git push origin master
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_ENV
+
+      - name: Push branch and create PR
+        if: steps.check-changes.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          git push -u origin "$branch_name"
+          cat > /tmp/auto-sync-pr.md <<EOF
+          ## Summary
+          Automated resume data sync from SSoT to portfolio snapshots.
+
+          ### Verification
+          - [x] npm run automate:ssot
+          - [x] bash tools/ci/validate-cloudflare-native.sh
+          EOF
+
+          gh pr create \
+            --title "chore(data): sync resume data from SSoT" \
+            --body-file /tmp/auto-sync-pr.md \
+            --label "sync"
 
       - name: No changes
         if: steps.check-changes.outputs.changed == 'false'
