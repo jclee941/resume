@@ -5,6 +5,7 @@ import { AuthHandler } from './handlers/auth.js';
 import { WebhookHandler } from './handlers/webhooks.js';
 import { AutoApplyHandler } from './handlers/auto-apply.js';
 import { DiagnosticsHandler } from './handlers/diagnostics.js';
+import { ResumeMasterHandler } from './handlers/resume-master-handler.js';
 import { jsonResponse, addCorsHeaders } from './middleware/cors.js';
 import Logger, { RequestContext } from '../../job-server/src/shared/logger/index.js';
 import { HttpError, normalizeError } from '../../job-server/src/shared/errors/index.js';
@@ -125,6 +126,7 @@ export default {
     const webhooks = new WebhookHandler(env, auth);
     const autoApply = new AutoApplyHandler(env);
     const diagnostics = new DiagnosticsHandler(env);
+    const resumeMaster = new ResumeMasterHandler(env, auth);
 
     // Health endpoint at root (for portfolio status checks with CORS)
     router.get('/health', async () => {
@@ -240,10 +242,16 @@ export default {
 
     // Profile sync endpoints
     router.post('/api/automation/profile-sync', (req) => webhooks.triggerProfileSync(req));
+    router.get('/api/automation/profile-sync/history', (req) =>
+      resumeMaster.listResumeSyncHistory(req)
+    );
     router.get('/api/automation/profile-sync/:syncId', (req) => webhooks.getProfileSyncStatus(req));
     router.post('/api/automation/profile-sync/callback', (req) =>
       webhooks.updateProfileSyncStatus(req)
     );
+
+    router.get('/api/resume/master', (req) => resumeMaster.getMasterResume(req));
+    router.put('/api/resume/master', (req) => resumeMaster.uploadMasterResume(req));
 
     // Test endpoints for Chaos API integration
     router.get('/api/test/chaos-resumes', (req) => webhooks.testChaosResumes(req));

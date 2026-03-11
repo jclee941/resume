@@ -76,3 +76,29 @@ CREATE TABLE IF NOT EXISTS profile_syncs (
 
 CREATE INDEX IF NOT EXISTS idx_profile_syncs_status ON profile_syncs(status);
 CREATE INDEX IF NOT EXISTS idx_profile_syncs_created_at ON profile_syncs(created_at);
+
+CREATE TABLE IF NOT EXISTS resumes (
+  id TEXT PRIMARY KEY,
+  target_resume_id TEXT,
+  source TEXT NOT NULL DEFAULT 'dashboard',
+  data TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_resumes_updated_at ON resumes(updated_at);
+
+CREATE TABLE IF NOT EXISTS resume_sync_history (
+  id TEXT PRIMARY KEY,
+  resume_id TEXT NOT NULL,
+  platforms TEXT NOT NULL,
+  changes TEXT,
+  status TEXT NOT NULL,
+  backup_id TEXT,
+  error TEXT,
+  dry_run INTEGER DEFAULT 1,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_resume_sync_history_created_at ON resume_sync_history(created_at);
