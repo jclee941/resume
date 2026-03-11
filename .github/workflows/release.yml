@@ -44,7 +44,7 @@ jobs:
     name: ELK Ingest
     needs: [release]
     runs-on: ${{ vars.RUNNER || 'ubuntu-latest' }}
-    if: always() && !cancelled()
+    if: always() && !cancelled() && needs.release.result != 'skipped'
     steps:
       - name: Determine conclusion
         id: conclusion
@@ -53,11 +53,35 @@ jobs:
             echo "result=failure" >> "$GITHUB_OUTPUT"
           elif [ "${{ needs.release.result }}" = "cancelled" ]; then
             echo "result=cancelled" >> "$GITHUB_OUTPUT"
+          elif [ "${{ needs.release.result }}" = "skipped" ]; then
+            echo "result=skipped" >> "$GITHUB_OUTPUT"
           else
             echo "result=success" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Check ELK ingest configuration
+        id: elk_config
+        env:
+          ELASTICSEARCH_URL: ${{ vars.ELASTICSEARCH_URL }}
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+        run: |
+          if [ -z "$ELASTICSEARCH_URL" ]; then
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "load_secret=false" >> "$GITHUB_OUTPUT"
+            echo "Skipping ELK ingest: ELASTICSEARCH_URL is not set"
+          elif [ -z "$OP_SERVICE_ACCOUNT_TOKEN" ]; then
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "load_secret=false" >> "$GITHUB_OUTPUT"
+            echo "Skipping ELK ingest: OP_SERVICE_ACCOUNT_TOKEN is not set"
+          else
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+            echo "load_secret=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Load secrets from 1Password
+        id: elk_secret
+        if: steps.elk_config.outputs.load_secret == 'true'
+        continue-on-error: true
         uses: 1password/load-secrets-action@dafbe7cb03502b260e2b2893c753c352eee545bf # v3.2.1
         with:
           export-env: true
@@ -65,8 +89,35 @@ jobs:
           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
           ELASTICSEARCH_API_KEY: op://homelab/elk-es-api-key-resume-github-actions/password
 
+      - name: Finalize ELK ingest availability
+        id: elk_ready
+        env:
+          CONFIG_ENABLED: ${{ steps.elk_config.outputs.enabled }}
+          LOAD_SECRET: ${{ steps.elk_config.outputs.load_secret }}
+          SECRET_OUTCOME: ${{ steps.elk_secret.outcome }}
+        run: |
+          if [ "$CONFIG_ENABLED" != "true" ]; then
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if [ "$LOAD_SECRET" = "true" ] && [ "$SECRET_OUTCOME" != "success" ]; then
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "Skipping ELK ingest: 1Password secret load failed"
+            exit 0
+          fi
+
+          if [ -z "$ELASTICSEARCH_API_KEY" ]; then
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "Skipping ELK ingest: ELASTICSEARCH_API_KEY is unavailable"
+            exit 0
+          fi
+
+          echo "enabled=true" >> "$GITHUB_OUTPUT"
+
       - name: Ingest to Elasticsearch
-        if: vars.ELASTICSEARCH_URL != ''
+        if: steps.elk_ready.outputs.enabled == 'true'
+        continue-on-error: true
         run: |
           PAYLOAD=$(jq -n \
             --arg repo "${{ github.repository }}" \
