@@ -14,35 +14,49 @@ resume_data.json (SSoT) → mapToWantedFormat() → Wanted API (Chaos)
 
 ## Credentials
 
-| Secret             | Source             | Where                          |
-| ------------------ | ------------------ | ------------------------------ |
-| `WANTED_EMAIL`     | `qws941@kakao.com` | GitHub Secrets (via 1Password) |
-| `WANTED_PASSWORD`  | 1Password vault    | GitHub Secrets (via 1Password) |
-| `WANTED_RESUME_ID` | Wanted platform    | GitHub Repository Variable     |
+| Secret             | Source                | Where                      |
+| ------------------ | --------------------- | -------------------------- |
+| `WANTED_EMAIL`     | `qws941@kakao.com`    | GitHub Secret              |
+| `WANTED_COOKIES`   | Browser Cookie header | GitHub Secret (optional)   |
+| `WANTED_PASSWORD`  | Wanted OneID password | GitHub Secret (fallback)   |
+| `WANTED_RESUME_ID` | Wanted platform       | GitHub Repository Variable |
 
 ### Setup Steps
 
-1. Store credentials in 1Password vault `homelab` as item `wanted-credentials`
-2. Add GitHub Secrets: `WANTED_EMAIL`, `WANTED_PASSWORD`
-3. Get resume ID: run `wanted_auth({ action: 'login', email: '...', password: '...' })` then `unified_resume_sync({ action: 'status', platforms: ['wanted'] })` to list resume IDs
-4. Set GitHub variable: `WANTED_RESUME_ID` = the target resume ID
+1. Add GitHub Secret `WANTED_EMAIL` and GitHub variable `WANTED_RESUME_ID`.
+2. Choose one auth mode:
+   - Preferred: add `WANTED_COOKIES` with the full browser `Cookie` header copied from an authenticated Wanted request.
+   - Fallback: add `WANTED_PASSWORD` and let the CI script mint `WWW_ONEID_ACCESS_TOKEN` automatically.
+3. For local verification, either set a cookie session with `wanted_auth({ action: 'set_cookies', cookies: '...' })` or use the same email/password against Wanted OneID before running sync.
+4. Run `unified_resume_sync({ action: 'status', platforms: ['wanted'] })` to list resume IDs if you need to discover the target resume.
 
 ## Usage
 
 ### Manual (MCP)
 
 ```
-wanted_auth({ action: 'login', email: 'qws941@kakao.com', password: '...' })
+wanted_auth({ action: 'set_cookies', cookies: 'cookie_string_here' })
 unified_resume_sync({ action: 'sync', platforms: ['wanted'], resume_id: '...' })
 ```
+
+### Automatic Cookie Minting
+
+- If `WANTED_COOKIES` is set, the automation uses it as-is.
+- If `WANTED_COOKIES` is not set but `WANTED_PASSWORD` is present, the CI script requests a fresh OneID token from `https://id-api.wanted.co.kr/v1/auth/token` and converts it to `WWW_ONEID_ACCESS_TOKEN=...` before syncing.
+- If neither `WANTED_COOKIES` nor `WANTED_PASSWORD` is present, the workflow fails during configuration validation.
 
 ### Manual (HTTP API)
 
 ```bash
-# Login
-curl -X POST http://localhost:3000/job/api/auth/set -H 'Content-Type: application/json' -d '{"platform":"wanted","email":"...","password":"..."}'
-# Sync
-curl -X POST http://localhost:3000/job/api/resume-sync/sync -H 'Content-Type: application/json' -d '{"platforms":["wanted"],"resume_id":"..."}'
+# Trigger single-worker profile sync alias
+curl -X POST https://resume.jclee.me/api/automation/resume-update \
+  -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer <admin-token>' \
+  -d '{"platforms":["wanted"],"resume_id":"...","dryRun":true}'
+
+# Poll sync status
+curl -H 'Authorization: Bearer <admin-token>' \
+  https://resume.jclee.me/api/automation/resume-update/<syncId>
 ```
 
 ### Automated (GitHub Actions)
@@ -50,6 +64,7 @@ curl -X POST http://localhost:3000/job/api/resume-sync/sync -H 'Content-Type: ap
 - Workflow: `.github/workflows/wanted-resume-sync.yml`
 - Schedule: Weekly Sunday 12:00 KST
 - Manual trigger: `workflow_dispatch` with optional `dry_run` and `resume_id`
+- Required configuration: `WANTED_EMAIL`, `WANTED_RESUME_ID`, and either `WANTED_COOKIES` or `WANTED_PASSWORD`
 
 ## Synced Sections
 
@@ -64,4 +79,4 @@ curl -X POST http://localhost:3000/job/api/resume-sync/sync -H 'Content-Type: ap
 
 - Skills sync is additive only (does not delete remote skills not in SSoT)
 - JobKorea and Remember require browser automation (not implemented)
-- Wanted API login may have rate limits or CAPTCHA triggers
+- Cookie-based auth can still fail when the OneID password changes or additional verification is required

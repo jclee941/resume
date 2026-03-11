@@ -8,8 +8,9 @@
  *   node apps/job-server/scripts/ci-resume-sync.js
  *
  * Required env vars:
- *   WANTED_COOKIES   - Wanted authentication cookies
  *   WANTED_EMAIL     - Wanted account email
+ *   WANTED_COOKIES   - Wanted authentication cookies (preferred)
+ *   WANTED_PASSWORD  - Wanted password for automatic cookie minting fallback
  *   WANTED_RESUME_ID - Wanted resume ID to sync
  *   DRY_RUN          - 'true' for preview only
  */
@@ -17,20 +18,80 @@
 import { SessionManager } from '../src/tools/auth.js';
 import { unifiedResumeSyncTool } from '../src/tools/unified-resume-sync.js';
 
-const envVars = ['WANTED_COOKIES', 'WANTED_EMAIL', 'WANTED_RESUME_ID'];
-const missing = envVars.filter((v) => !process.env[v]);
+const ONEID_CLIENT_ID = 'AhWBZolyUalsuJpHVRDrE4Px';
+const ONEID_LOGIN_URL =
+  'https://id.wanted.co.kr/login?service=wanted&before_url=https%3A%2F%2Fwww.wanted.co.kr%2F&client_id=AhWBZolyUalsuJpHVRDrE4Px';
+
+const requiredEnvVars = ['WANTED_EMAIL', 'WANTED_RESUME_ID'];
+const missing = requiredEnvVars.filter((name) => !process.env[name]);
+
+if (!process.env.WANTED_COOKIES && !process.env.WANTED_PASSWORD) {
+  missing.push('WANTED_COOKIES or WANTED_PASSWORD');
+}
 
 if (missing.length > 0) {
   console.error(`Error: Missing required environment variables: ${missing.join(', ')}`);
+  console.error('Wanted sync automation requires:');
+  console.error('- WANTED_EMAIL: account email used for traceability');
+  console.error('- WANTED_COOKIES: browser Cookie header copied from wanted.co.kr');
+  console.error('- WANTED_PASSWORD: fallback for automatic cookie issuance');
+  console.error('- WANTED_RESUME_ID: target Wanted resume ID');
   process.exit(1);
 }
 
-const wantedCookies = process.env.WANTED_COOKIES;
 const wantedEmail = process.env.WANTED_EMAIL;
+const wantedPassword = process.env.WANTED_PASSWORD;
 const wantedResumeId = process.env.WANTED_RESUME_ID;
 const dryRun = process.env.DRY_RUN === 'true';
 
+async function mintWantedCookies(email, password) {
+  const response = await fetch('https://id-api.wanted.co.kr/v1/auth/token', {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Origin: 'https://id.wanted.co.kr',
+      Referer: ONEID_LOGIN_URL,
+      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+      'oneid-agent': 'web',
+    },
+    body: JSON.stringify({
+      grant_type: 'password',
+      email,
+      password,
+      client_id: ONEID_CLIENT_ID,
+      beforeUrl: 'https://www.wanted.co.kr/',
+      redirect_url: null,
+      stay_signed_in: true,
+    }),
+  });
+
+  if (!response.ok) {
+    const body = await response.text().catch(() => '');
+    throw new Error(`OneID token request failed (${response.status}): ${body.slice(0, 300)}`);
+  }
+
+  const payload = await response.json();
+  const token = payload?.token;
+  if (typeof token !== 'string' || token.length === 0) {
+    throw new Error('OneID token response did not include a usable token');
+  }
+
+  return `WWW_ONEID_ACCESS_TOKEN=${token}`;
+}
+
 try {
+  let wantedCookies = process.env.WANTED_COOKIES;
+
+  if (!wantedCookies) {
+    console.log('No WANTED_COOKIES provided. Minting a fresh Wanted session cookie from OneID.');
+    wantedCookies = await mintWantedCookies(wantedEmail, wantedPassword);
+  }
+
+  console.log(
+    `Starting Wanted resume sync (${dryRun ? 'dry-run' : 'apply'}) for resume ${wantedResumeId}`
+  );
+
   // Step 1: Save session
   SessionManager.save('wanted', {
     email: wantedEmail,

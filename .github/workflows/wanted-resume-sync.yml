@@ -38,6 +38,29 @@ jobs:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
+      - name: Validate Wanted sync configuration
+        env:
+          WANTED_COOKIES: ${{ secrets.WANTED_COOKIES }}
+          WANTED_EMAIL: ${{ secrets.WANTED_EMAIL }}
+          WANTED_PASSWORD: ${{ secrets.WANTED_PASSWORD }}
+          WANTED_RESUME_ID: ${{ inputs.resume_id || vars.WANTED_RESUME_ID }}
+        run: |
+          missing=()
+
+          [ -n "$WANTED_EMAIL" ] || missing+=("WANTED_EMAIL")
+          [ -n "$WANTED_RESUME_ID" ] || missing+=("WANTED_RESUME_ID")
+
+          if [ -z "$WANTED_COOKIES" ] && [ -z "$WANTED_PASSWORD" ]; then
+            missing+=("WANTED_COOKIES or WANTED_PASSWORD")
+          fi
+
+          if [ ${#missing[@]} -gt 0 ]; then
+            echo "::error::Missing required Wanted sync configuration: ${missing[*]}"
+            echo "Secrets: WANTED_EMAIL plus either WANTED_COOKIES or WANTED_PASSWORD"
+            echo "Variable/Input: WANTED_RESUME_ID"
+            exit 1
+          fi
+
       - name: Setup
         uses: ./.github/actions/setup
 
@@ -46,5 +69,6 @@ jobs:
         env:
           WANTED_COOKIES: ${{ secrets.WANTED_COOKIES }}
           WANTED_EMAIL: ${{ secrets.WANTED_EMAIL }}
+          WANTED_PASSWORD: ${{ secrets.WANTED_PASSWORD }}
           WANTED_RESUME_ID: ${{ inputs.resume_id || vars.WANTED_RESUME_ID }}
           DRY_RUN: ${{ inputs.dry_run }}
