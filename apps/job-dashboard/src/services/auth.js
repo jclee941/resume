@@ -4,6 +4,7 @@ const ADMIN_ROUTES = [
   '/api/auth',
   '/api/config',
   '/api/cleanup',
+  '/api/resume',
   '/api/workflows',
 
   '/api/slack/notify',

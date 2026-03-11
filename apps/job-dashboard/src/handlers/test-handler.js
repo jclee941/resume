@@ -14,7 +14,7 @@ export class TestHandler extends BaseHandler {
    */
   async testChaosResumes(_request) {
     try {
-      const cookies = await this.env?.SESSIONS?.get('wanted:session');
+      const cookies = await this.auth.getCookies('wanted');
       if (!cookies) {
         return this.jsonResponse({
           success: false,

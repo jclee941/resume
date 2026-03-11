@@ -61,6 +61,21 @@ export class AuthHandler {
       await this.kv.put(`session:${platform}`, encryptedCookies, {
         expirationTtl: 86400,
       });
+      await this.kv.put(`auth:${platform}`, cookies, {
+        expirationTtl: 86400,
+      });
+      if (platform === 'wanted') {
+        await this.kv.put(
+          'wanted:session',
+          JSON.stringify({
+            cookies,
+            email: email || null,
+            expires_at: expiresAt,
+            updated_at: now,
+          }),
+          { expirationTtl: 86400 }
+        );
+      }
     }
 
     return this.jsonResponse({
@@ -76,6 +91,10 @@ export class AuthHandler {
 
     if (this.kv) {
       await this.kv.delete(`session:${platform}`);
+      await this.kv.delete(`auth:${platform}`);
+      if (platform === 'wanted') {
+        await this.kv.delete('wanted:session');
+      }
     }
 
     return this.jsonResponse({
@@ -216,6 +235,21 @@ export class AuthHandler {
       await this.kv.put(`session:${platform}`, encryptedCookies, {
         expirationTtl: Math.floor(ttl / 1000),
       });
+      await this.kv.put(`auth:${platform}`, cookies, {
+        expirationTtl: Math.floor(ttl / 1000),
+      });
+      if (platform === 'wanted') {
+        await this.kv.put(
+          'wanted:session',
+          JSON.stringify({
+            cookies,
+            email: email || null,
+            expires_at: expiresAt,
+            updated_at: now,
+          }),
+          { expirationTtl: Math.floor(ttl / 1000) }
+        );
+      }
     }
 
     return this.jsonResponse({
