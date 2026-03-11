@@ -43,6 +43,7 @@ jobs:
           WANTED_COOKIES: ${{ secrets.WANTED_COOKIES }}
           WANTED_EMAIL: ${{ secrets.WANTED_EMAIL }}
           WANTED_PASSWORD: ${{ secrets.WANTED_PASSWORD }}
+          WANTED_ONEID_CLIENT_ID: ${{ vars.WANTED_ONEID_CLIENT_ID }}
           WANTED_RESUME_ID: ${{ inputs.resume_id || vars.WANTED_RESUME_ID }}
         run: |
           missing=()
@@ -54,10 +55,14 @@ jobs:
             missing+=("WANTED_COOKIES or WANTED_PASSWORD")
           fi
 
+          if [ -z "$WANTED_COOKIES" ] && [ -n "$WANTED_PASSWORD" ] && [ -z "$WANTED_ONEID_CLIENT_ID" ]; then
+            missing+=("WANTED_ONEID_CLIENT_ID")
+          fi
+
           if [ ${#missing[@]} -gt 0 ]; then
             echo "::error::Missing required Wanted sync configuration: ${missing[*]}"
             echo "Secrets: WANTED_EMAIL plus either WANTED_COOKIES or WANTED_PASSWORD"
-            echo "Variable/Input: WANTED_RESUME_ID"
+            echo "Variables/Inputs: WANTED_RESUME_ID, WANTED_ONEID_CLIENT_ID (required for password fallback)"
             exit 1
           fi
 
@@ -70,5 +75,6 @@ jobs:
           WANTED_COOKIES: ${{ secrets.WANTED_COOKIES }}
           WANTED_EMAIL: ${{ secrets.WANTED_EMAIL }}
           WANTED_PASSWORD: ${{ secrets.WANTED_PASSWORD }}
+          WANTED_ONEID_CLIENT_ID: ${{ vars.WANTED_ONEID_CLIENT_ID }}
           WANTED_RESUME_ID: ${{ inputs.resume_id || vars.WANTED_RESUME_ID }}
           DRY_RUN: ${{ inputs.dry_run }}
