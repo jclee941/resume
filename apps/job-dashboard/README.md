@@ -6,7 +6,7 @@
 
 **Architecture**: Single-worker production runtime (`resume`).
 
-**Status**: ✅ Production-ready | 8 workflows | 30+ API endpoints | D1 + KV + R2 bindings
+**Status**: ✅ Production-ready | 7 workflows | 30+ API endpoints | D1 + KV + R2 bindings
 
 ---
 
@@ -14,7 +14,7 @@
 
 ### Prerequisites
 
-- Node.js >= 18
+- Node.js >= 22
 - Wrangler CLI (`npm install -g wrangler`)
 - Cloudflare account with Workers enabled
 - Valid `CLOUDFLARE_ACCOUNT_ID` environment variable
@@ -22,13 +22,11 @@
 ### Local Development
 
 ```bash
-# Install dependencies
+# Install dependencies from repo root
 npm install
 
 # Start dev server (http://localhost:8787)
-npm run dev
-# or
-npx wrangler dev
+npm run dev --workspace @resume/job-dashboard-worker
 ```
 
 **Available Endpoints** (local):
@@ -43,10 +41,10 @@ Standalone production deployment is deprecated in single-worker architecture.
 
 ```bash
 # Deploy to production environment
-npx wrangler deploy --config apps/job-dashboard/wrangler.toml --env production
+npm run deploy --workspace @resume/job-dashboard-worker
 
 # View live logs
-npx wrangler tail --env production
+npm run tail --workspace @resume/job-dashboard-worker
 
 # View deployment history
 npx wrangler deployments list
@@ -67,7 +65,7 @@ npx wrangler secret put CLOUDFLARE_API_TOKEN
 npx wrangler secret put JWT_SECRET
 ```
 
-### wrangler.toml Structure
+### wrangler.jsonc Structure
 
 ```jsonc
 {
@@ -138,7 +136,7 @@ npx wrangler secret put JWT_SECRET
 ```
 Browser/API Client
     ↓
-route.jclee.me/job/* (Cloudflare route)
+resume.jclee.me/job/* (Cloudflare route)
     ↓
 Worker fetch() handler
     ↓ (strip /job prefix)
@@ -228,7 +226,7 @@ workers/
 │       ├── health-check.js         # Health monitoring (*/5 * * * *)
 │       ├── backup.js               # D1→KV backup (0 3 * * *)
 │       └── cleanup.js              # Data cleanup (0 4 * * 0)
-├── wrangler.toml                   # Worker config
+├── wrangler.jsonc                  # Worker config
 ├── package.json                    # Dependencies (minimal)
 └── README.md                        # This file
 ```
@@ -773,6 +771,6 @@ For issues or questions:
 
 ---
 
-**Last Updated**: 2026-02-11
+**Last Updated**: 2026-03-11
 **Version**: 1.0.0
 **Status**: ✅ Production-ready

@@ -3,5 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Job automation dashboard Cloudflare Worker"
+  "description": "Job automation dashboard Cloudflare Worker",
+  "scripts": {
+    "dev": "wrangler dev --config wrangler.jsonc",
+    "deploy": "wrangler deploy --config wrangler.jsonc --env production",
+    "tail": "wrangler tail --config wrangler.jsonc --env production"
+  }
 }
