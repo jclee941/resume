@@ -38,15 +38,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
+      - name: Load Wanted secrets from 1Password
+        uses: 1password/load-secrets-action@dafbe7cb03502b260e2b2893c753c352eee545bf # v3.2.1
+        with:
+          export-env: true
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          WANTED_EMAIL: op://homelab/resume/Section_2ahribgqu73szm665jlmu2lb3m/username
+          WANTED_PASSWORD: op://homelab/resume/password
+          WANTED_RESUME_ID: op://homelab/resume/Section_2ahribgqu73szm665jlmu2lb3m/wanted_resume_id
+          WANTED_ONEID_CLIENT_ID: op://homelab/resume/Section_2ahribgqu73szm665jlmu2lb3m/wanted_oneid_client_id
+
       - name: Validate Wanted sync configuration
         env:
           WANTED_COOKIES: ${{ secrets.WANTED_COOKIES }}
-          WANTED_EMAIL: ${{ secrets.WANTED_EMAIL }}
-          WANTED_PASSWORD: ${{ secrets.WANTED_PASSWORD }}
-          WANTED_ONEID_CLIENT_ID: ${{ vars.WANTED_ONEID_CLIENT_ID }}
-          WANTED_RESUME_ID: ${{ inputs.resume_id || vars.WANTED_RESUME_ID }}
+          WANTED_RESUME_ID_OVERRIDE: ${{ inputs.resume_id }}
         run: |
           missing=()
+          if [ -n "$WANTED_RESUME_ID_OVERRIDE" ]; then
+            export WANTED_RESUME_ID="$WANTED_RESUME_ID_OVERRIDE"
+          fi
 
           [ -n "$WANTED_EMAIL" ] || missing+=("WANTED_EMAIL")
           [ -n "$WANTED_RESUME_ID" ] || missing+=("WANTED_RESUME_ID")
@@ -61,8 +72,8 @@ jobs:
 
           if [ ${#missing[@]} -gt 0 ]; then
             echo "::error::Missing required Wanted sync configuration: ${missing[*]}"
-            echo "Secrets: WANTED_EMAIL plus either WANTED_COOKIES or WANTED_PASSWORD"
-            echo "Variables/Inputs: WANTED_RESUME_ID, WANTED_ONEID_CLIENT_ID (required for password fallback)"
+            echo "1Password item: homelab/resume must provide WANTED_EMAIL, WANTED_PASSWORD, WANTED_RESUME_ID, WANTED_ONEID_CLIENT_ID"
+            echo "GitHub: OP_SERVICE_ACCOUNT_TOKEN secret required; WANTED_COOKIES remains optional override"
             exit 1
           fi
 
@@ -70,11 +81,13 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Sync resume to Wanted
-        run: node apps/job-server/scripts/ci-resume-sync.js
         env:
           WANTED_COOKIES: ${{ secrets.WANTED_COOKIES }}
-          WANTED_EMAIL: ${{ secrets.WANTED_EMAIL }}
-          WANTED_PASSWORD: ${{ secrets.WANTED_PASSWORD }}
-          WANTED_ONEID_CLIENT_ID: ${{ vars.WANTED_ONEID_CLIENT_ID }}
-          WANTED_RESUME_ID: ${{ inputs.resume_id || vars.WANTED_RESUME_ID }}
+          WANTED_RESUME_ID_OVERRIDE: ${{ inputs.resume_id }}
           DRY_RUN: ${{ inputs.dry_run }}
+        shell: bash
+        run: |
+          if [ -n "$WANTED_RESUME_ID_OVERRIDE" ]; then
+            export WANTED_RESUME_ID="$WANTED_RESUME_ID_OVERRIDE"
+          fi
+          node apps/job-server/scripts/ci-resume-sync.js
