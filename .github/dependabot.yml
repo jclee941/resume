@@ -2,39 +2,4 @@
 # https://docs.github.com/en/code-security/dependabot/dependabot-version-updates
 version: 2
 
-updates:
-  # npm dependencies (workspaces auto-discovered from root package.json)
-  - package-ecosystem: npm
-    directory: /
-    schedule:
-      interval: weekly
-      day: monday
-      timezone: Asia/Seoul
-    groups:
-      minor-and-patch:
-        update-types:
-          - minor
-          - patch
-    commit-message:
-      prefix: 'chore(deps)'
-    labels:
-      - dependencies
-    open-pull-requests-limit: 10
-    reviewers:
-      - qws941
-
-  # GitHub Actions versions
-  - package-ecosystem: github-actions
-    directory: /
-    schedule:
-      interval: weekly
-      day: monday
-      timezone: Asia/Seoul
-    commit-message:
-      prefix: 'chore(deps)'
-    labels:
-      - dependencies
-      - ci
-    open-pull-requests-limit: 5
-    reviewers:
-      - qws941
+updates: []
