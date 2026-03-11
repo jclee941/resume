@@ -7,10 +7,43 @@ let deleteId = null;
 let isLoading = false;
 let lastError = null;
 let kbdHelpVisible = localStorage.getItem('kbdHelpVisible') === 'true';
+let currentMasterResume = null;
 
 const statusLabels = {
   saved: '저장됨', applied: '지원완료', interview: '면접', offer: '합격', rejected: '불합격'
 };
+
+function getCookieValue(name) {
+  const prefix = name + '=';
+  const cookie = document.cookie
+    .split('; ')
+    .find((entry) => entry.startsWith(prefix));
+  return cookie ? decodeURIComponent(cookie.slice(prefix.length)) : '';
+}
+
+async function apiFetch(url, options = {}) {
+  const method = (options.method || 'GET').toUpperCase();
+  const headers = new Headers(options.headers || {});
+  let body = options.body;
+
+  if (body && typeof body === 'object' && !(body instanceof FormData)) {
+    headers.set('Content-Type', 'application/json');
+    body = JSON.stringify(body);
+  }
+
+  if (!['GET', 'HEAD', 'OPTIONS'].includes(method)) {
+    const csrfToken = getCookieValue('csrf_token');
+    if (csrfToken) headers.set('X-CSRF-Token', csrfToken);
+  }
+
+  return fetch(url, {
+    ...options,
+    method,
+    headers,
+    body,
+    credentials: options.credentials || 'include'
+  });
+}
 
 function showLoading(message = '로딩 중...') {
   isLoading = true;
@@ -94,20 +127,179 @@ async function promptForToken() {
   const token = prompt('Admin Token을 입력하세요:');
   if (token) {
     try {
-      const res = await fetch('/api/auth/login', {
+      const res = await apiFetch('/api/auth/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ token })
+        body: { token }
       });
       if (res.ok) {
         loadDashboard();
+        loadResumeSyncState();
       } else {
         showToast('인증 실패', true);
       }
     } catch (e) {
       showToast('인증 오류: ' + e.message, true);
     }
+  }
+}
+
+function formatResumeJson(data) {
+  return JSON.stringify(data, null, 2);
+}
+
+function parseResumePayload() {
+  const raw = document.getElementById('resumePayload').value.trim();
+  if (!raw) throw new Error('이력서 JSON을 입력하세요.');
+  return JSON.parse(raw);
+}
+
+function renderResumeSyncHistory(history) {
+  const container = document.getElementById('resumeSyncHistory');
+  if (!history || history.length === 0) {
+    container.innerHTML = '<div class="empty-state">동기화 이력이 없습니다.</div>';
+    return;
+  }
+
+  container.innerHTML = history.map((item) => {
+    const summary = item.result?.wanted?.message || item.result?.wanted?.error || '-';
+    return '<div class="stat">'
+      + '<div class="stat-value">' + escapeHtml(item.status || '-') + '</div>'
+      + '<div class="stat-label">' + escapeHtml((item.platforms || []).join(', ') || 'wanted') + '</div>'
+      + '<div class="stat-label">' + escapeHtml(formatDate(item.updatedAt || item.createdAt)) + '</div>'
+      + '<div class="stat-label">' + escapeHtml(summary) + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+function renderResumeSessionState(sessionStatus) {
+  const container = document.getElementById('resumeSessionState');
+  const wanted = sessionStatus?.wanted;
+  if (!wanted) {
+    container.innerHTML = '<div class="empty-state">Wanted 세션이 없습니다. 먼저 인증을 동기화하세요.</div>';
+    return;
+  }
+
+  const authText = wanted.authenticated ? 'authenticated' : 'missing';
+  container.innerHTML = '<div class="stat">'
+    + '<div class="stat-value">' + escapeHtml(authText) + '</div>'
+    + '<div class="stat-label">' + escapeHtml(wanted.email || '-') + '</div>'
+    + '<div class="stat-label">' + escapeHtml(formatDate(wanted.updatedAt || wanted.updated_at || '')) + '</div>'
+    + '</div>';
+}
+
+function showResumeSyncStatus(message, type = 'info') {
+  const container = document.getElementById('resumeSyncStatus');
+  const target = document.getElementById('resumeSyncMessage');
+  container.style.display = 'block';
+  target.textContent = message;
+  container.style.borderLeft = type === 'success' ? '3px solid #10b981'
+    : type === 'error' ? '3px solid #ef4444'
+    : '3px solid #3b82f6';
+}
+
+async function loadResumeSyncState() {
+  try {
+    const resumeId = document.getElementById('masterResumeId')?.value || 'master';
+    const [masterRes, historyRes, authRes] = await Promise.all([
+      fetch('/api/resume/master?resumeId=' + encodeURIComponent(resumeId), { credentials: 'include' }),
+      fetch('/api/automation/profile-sync/history?limit=10', { credentials: 'include' }),
+      fetch('/api/auth/status', { credentials: 'include' })
+    ]);
+
+    if (masterRes.ok) {
+      const master = await masterRes.json();
+      currentMasterResume = master.resume;
+      document.getElementById('resumePayload').value = formatResumeJson(master.resume);
+      document.getElementById('targetResumeId').value = master.meta?.targetResumeId || '';
+    }
+
+    if (historyRes.ok) {
+      const history = await historyRes.json();
+      renderResumeSyncHistory(history.history || []);
+    }
+
+    if (authRes.ok) {
+      const authState = await authRes.json();
+      renderResumeSessionState(authState.status || {});
+    }
+  } catch (e) {
+    showResumeSyncStatus('❌ 동기화 상태 로딩 실패: ' + e.message, 'error');
+  }
+}
+
+async function saveResumeMaster() {
+  const btn = document.getElementById('saveResumeBtn');
+  const originalText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = '저장 중...';
+
+  try {
+    const ssotData = parseResumePayload();
+    const resumeId = document.getElementById('masterResumeId').value.trim() || 'master';
+    const targetResumeId = document.getElementById('targetResumeId').value.trim();
+    const res = await apiFetch('/api/resume/master', {
+      method: 'PUT',
+      body: { resumeId, targetResumeId, ssotData, source: 'dashboard' }
+    });
+    if (res.status === 401) { promptForToken(); return; }
+    const data = await res.json();
+    if (!res.ok || !data.success) throw new Error(data.error || '저장 실패');
+    currentMasterResume = ssotData;
+    showResumeSyncStatus('✅ 마스터 이력서 저장 완료', 'success');
+    showToast('이력서 저장 완료');
+    await loadResumeSyncState();
+  } catch (e) {
+    showResumeSyncStatus('❌ 저장 실패: ' + e.message, 'error');
+    showToast('이력서 저장 실패', true);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalText;
+  }
+}
+
+async function triggerProfileSyncFromDashboard(dryRun) {
+  const btn = dryRun ? document.getElementById('resumeDryRunBtn') : document.getElementById('resumeSyncBtn');
+  const originalText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = dryRun ? '미리보기 중...' : '업로드 중...';
+
+  try {
+    const ssotData = parseResumePayload();
+    const resumeId = document.getElementById('masterResumeId').value.trim() || 'master';
+    const targetResumeId = document.getElementById('targetResumeId').value.trim();
+    const res = await apiFetch('/api/automation/profile-sync', {
+      method: 'POST',
+      body: { resumeId, targetResumeId, dryRun, platforms: ['wanted'], ssotData }
+    });
+    if (res.status === 401) { promptForToken(); return; }
+    const data = await res.json();
+    if (!res.ok || !data.success) throw new Error(data.error || '동기화 실패');
+    const wantedMessage = data.platformResults?.wanted?.message || (dryRun ? '미리보기 완료' : '업로드 완료');
+    showResumeSyncStatus('✅ ' + wantedMessage, 'success');
+    showToast(dryRun ? '동기화 미리보기 완료' : '실제 업로드 완료');
+    await loadResumeSyncState();
+  } catch (e) {
+    showResumeSyncStatus('❌ 동기화 실패: ' + e.message, 'error');
+    showToast('이력서 동기화 실패', true);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalText;
+  }
+}
+
+async function handleResumeFileUpload(event) {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+
+  try {
+    const text = await file.text();
+    const parsed = JSON.parse(text);
+    document.getElementById('resumePayload').value = formatResumeJson(parsed);
+    currentMasterResume = parsed;
+    showResumeSyncStatus('✅ JSON 파일을 불러왔습니다. 저장 또는 동기화를 실행하세요.', 'success');
+  } catch (e) {
+    showResumeSyncStatus('❌ JSON 파일 파싱 실패: ' + e.message, 'error');
+    showToast('JSON 파일 읽기 실패', true);
   }
 }
 
@@ -258,11 +450,9 @@ async function updateStatus(id, status) {
   const originalValue = select?.dataset?.original || status;
   try {
     if (select) select.disabled = true;
-    const res = await fetch(\`/api/applications/\${id}/status\`, {
+    const res = await apiFetch(\`/api/applications/\${id}/status\`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({ status })
+      body: { status }
     });
     if (res.status === 401) { promptForToken(); return; }
     if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -279,7 +469,7 @@ async function updateStatus(id, status) {
 async function deleteApplication(id) {
   showLoading('삭제 중...');
   try {
-    const res = await fetch(\`/api/applications/\${id}\`, { method: 'DELETE', credentials: 'include' });
+    const res = await apiFetch(\`/api/applications/\${id}\`, { method: 'DELETE' });
     if (res.status === 401) { hideLoading(); promptForToken(); return; }
     if (!res.ok) throw new Error('HTTP ' + res.status);
     closeDeleteModal();
@@ -313,18 +503,14 @@ document.getElementById('appForm').addEventListener('submit', async (e) => {
   try {
     let res;
     if (editingId) {
-      res = await fetch(\`/api/applications/\${editingId}\`, {
+      res = await apiFetch(\`/api/applications/\${editingId}\`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(data)
+        body: data
       });
     } else {
-      res = await fetch('/api/applications', {
+      res = await apiFetch('/api/applications', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(data)
+        body: data
       });
     }
     if (res.status === 401) { submitBtn.disabled = false; submitBtn.textContent = originalText; promptForToken(); return; }
@@ -408,6 +594,8 @@ function toggleTheme() {
 initTheme();
 initKbdHelp();
 loadDashboard();
+loadResumeSyncState();
+document.getElementById('resumeUploadFile').addEventListener('change', handleResumeFileUpload);
 
 async function triggerJobSearch() {
   const btn = document.getElementById('searchBtn');
@@ -416,11 +604,9 @@ async function triggerJobSearch() {
   showAutomationStatus('🔍 채용공고 검색 트리거 중...');
   
   try {
-    const res = await fetch('/api/automation/search', {
+    const res = await apiFetch('/api/automation/search', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({ keywords: 'DevOps,SRE,Platform,Security', minScore: 70 })
+      body: { keywords: 'DevOps,SRE,Platform,Security', minScore: 70 }
     });
     if (res.status === 401) { promptForToken(); return; }
     const data = await res.json();
@@ -447,11 +633,9 @@ async function triggerAutoApply(dryRun) {
   showAutomationStatus(dryRun ? '🧪 자동지원 테스트 실행 중...' : '🚀 자동지원 실행 중...');
   
   try {
-    const res = await fetch('/api/automation/apply', {
+    const res = await apiFetch('/api/automation/apply', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({ dryRun, maxApplications: 5 })
+      body: { dryRun, maxApplications: 5 }
     });
     if (res.status === 401) { promptForToken(); return; }
     const data = await res.json();
@@ -473,7 +657,7 @@ async function triggerAutoApply(dryRun) {
 async function triggerDailyReport() {
   showAutomationStatus('📊 일일 리포트 생성 중...');
   try {
-    const res = await fetch('/api/automation/report', { method: 'POST', credentials: 'include' });
+    const res = await apiFetch('/api/automation/report', { method: 'POST' });
     if (res.status === 401) { promptForToken(); return; }
     const data = await res.json();
     if (data.success) {

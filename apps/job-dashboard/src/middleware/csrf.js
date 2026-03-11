@@ -8,13 +8,7 @@ export function generateCsrfToken() {
 }
 
 export function csrfCookie(token, isSecure = true) {
-  const flags = [
-    `${CSRF_COOKIE}=${token}`,
-    'Path=/',
-    'HttpOnly',
-    'SameSite=Strict',
-    'Max-Age=3600',
-  ];
+  const flags = [`${CSRF_COOKIE}=${token}`, 'Path=/', 'SameSite=Strict', 'Max-Age=3600'];
   if (isSecure) flags.push('Secure');
   return flags.join('; ');
 }

@@ -32,7 +32,53 @@ const DASHBOARD_HTML_TEMPLATE = `<!DOCTYPE html>
     </div>
     <span id="automation-desc" class="sr-only">새로운 채용공고를 검색하고 자동으로 지원합니다</span>
   </section>
-  
+
+  <section class="card" aria-labelledby="resume-sync-heading">
+    <h2 id="resume-sync-heading">
+      <span>이력서 동기화</span>
+      <div class="toolbar" role="toolbar" aria-label="이력서 동기화 도구">
+        <button class="btn btn-secondary" onclick="loadResumeSyncState()">새로고침</button>
+        <button class="btn btn-primary" onclick="saveResumeMaster()" id="saveResumeBtn">업로드 저장</button>
+        <button class="btn btn-secondary" onclick="triggerProfileSyncFromDashboard(true)" id="resumeDryRunBtn">🧪 미리보기</button>
+        <button class="btn btn-danger" onclick="triggerProfileSyncFromDashboard(false)" id="resumeSyncBtn">⬆️ 실제 업로드</button>
+      </div>
+    </h2>
+
+    <div class="form-group">
+      <label for="masterResumeId">Master Resume Key</label>
+      <input type="text" id="masterResumeId" value="master" autocomplete="off">
+    </div>
+
+    <div class="form-group">
+      <label for="targetResumeId">Wanted Resume ID</label>
+      <input type="text" id="targetResumeId" placeholder="예: 3558323" autocomplete="off">
+    </div>
+
+    <div class="form-group">
+      <label for="resumeSessionState">Wanted 인증 상태</label>
+      <div id="resumeSessionState" class="stats"></div>
+    </div>
+
+    <div class="form-group">
+      <label for="resumeUploadFile">SSoT JSON 업로드</label>
+      <input type="file" id="resumeUploadFile" accept=".json,application/json">
+    </div>
+
+    <div class="form-group">
+      <label for="resumePayload">SSoT JSON</label>
+      <textarea id="resumePayload" rows="12" placeholder="resume_data.json 내용을 붙여넣거나 파일을 선택하세요"></textarea>
+    </div>
+
+    <div id="resumeSyncStatus" class="automation-status" role="status" aria-live="polite" style="display:none;">
+      <div id="resumeSyncMessage"></div>
+    </div>
+
+    <div class="form-group">
+      <label for="resumeSyncHistory">최근 동기화 이력</label>
+      <div id="resumeSyncHistory" class="stats"></div>
+    </div>
+  </section>
+
   <section class="card" aria-labelledby="stats-heading">
     <h2 id="stats-heading">통계</h2>
     <div id="stats" class="stats" role="region" aria-label="지원 현황 통계">
@@ -180,7 +226,7 @@ async function computeStyleHash(content) {
   const encoder = new TextEncoder();
   const data = encoder.encode(content);
   const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-  return `sha256-${  btoa(String.fromCharCode(...new Uint8Array(hashBuffer)))}`;
+  return `sha256-${btoa(String.fromCharCode(...new Uint8Array(hashBuffer)))}`;
 }
 
 /**
@@ -189,8 +235,7 @@ async function computeStyleHash(content) {
  * @returns {Promise<Response>}
  */
 export async function serveStatic(pathname) {
-  const path =
-    pathname === '/' || pathname === '/dashboard' ? '/index.html' : pathname;
+  const path = pathname === '/' || pathname === '/dashboard' ? '/index.html' : pathname;
 
   if (path === '/index.html') {
     const nonce = crypto.randomUUID().replace(/-/g, '');
