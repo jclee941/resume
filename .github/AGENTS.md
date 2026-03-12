@@ -52,8 +52,8 @@ analyze → validate-cf ─┐
          security-scan ─┘
 ```
 
-- **analyze**: detect affected packages via `tools/ci/affected.sh`
-- **validate-cf**: `wrangler types` + `validate-cloudflare-native.sh`
+- **analyze**: detect affected packages via `tools/ci/affected.go`
+- **validate-cf**: `wrangler types` + `validate-cloudflare-native.go`
 - **lint**: ESLint with 69-warning ratchet baseline
 - **typecheck**: `tsc --noEmit`
 - **test-unit**: Jest with 90% coverage thresholds

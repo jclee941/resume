@@ -12,35 +12,36 @@ Project documentation hub for the Resume Portfolio system. Contains deployment g
 
 ```
 docs/
+├── adr/                 # Numbered architecture decision records
+├── architecture/        # Current system shape and implementation docs
 ├── guides/              # Step-by-step deployment & setup guides
-├── architecture/        # System design, ADRs, technical decisions
-├── analysis/            # Code analysis, performance reports
-├── reports/             # Generated reports, audits
-├── planning/            # Project planning, roadmaps
-├── sessions/            # Development session notes
-├── thoughts/            # AI session ledgers
-└── _vendor/             # Third-party documentation (bmad, etc.)
+├── analysis/            # Code analysis, generated deep reviews
+├── reports/             # Historical reports and audits
+├── planning/            # Project planning and roadmaps
+├── api/                 # API-specific references
+└── thoughts/            # AI session ledgers and design notes
 ```
 
 ## Active Project Locations
 
-| Component            | Location                          | Notes                      |
-| -------------------- | --------------------------------- | -------------------------- |
-| **Portfolio Worker** | `apps/portfolio/`    | Edge-deployed Cloudflare   |
-| **Job Automation**   | `apps/job-server/`      | MCP server + dashboard     |
+| Component            | Location                        | Notes                      |
+| -------------------- | ------------------------------- | -------------------------- |
+| **Portfolio Worker** | `apps/portfolio/`               | Edge-deployed Cloudflare   |
+| **Job Automation**   | `apps/job-server/`              | MCP server + dashboard     |
 | **CLI Tool**         | `packages/cli/`                 | Deployment orchestration   |
 | **Resume Data**      | `packages/data/resumes/master/` | SSoT: resume_data.json     |
-| **Infrastructure**   | `infrastructure/`                 | Grafana, Loki, n8n configs |
+| **Infrastructure**   | `infrastructure/`               | Grafana, Loki, n8n configs |
 
 ## Key Documentation
 
-| Guide                   | Location                              | Purpose                        |
-| ----------------------- | ------------------------------------- | ------------------------------ |
-| **Infrastructure**      | `guides/INFRASTRUCTURE.md`            | Complete system topology       |
-| **Monitoring Setup**    | `guides/MONITORING_SETUP.md`          | Prometheus, Grafana, Loki, n8n |
-| **Manual Deployment**   | `guides/MANUAL_DEPLOYMENT_GUIDE.md`   | Step-by-step deploy process    |
-| **PDF Generation**      | `guides/PDF_GENERATION.md`            | Resume PDF generation          |
-| **Deployment Pipeline** | `architecture/DEPLOYMENT_PIPELINE.md` | CI/CD architecture             |
+| Guide                      | Location                              | Purpose                        |
+| -------------------------- | ------------------------------------- | ------------------------------ |
+| **Infrastructure**         | `guides/INFRASTRUCTURE.md`            | Complete system topology       |
+| **Monitoring Setup**       | `guides/MONITORING_SETUP.md`          | Prometheus, Grafana, Loki, n8n |
+| **Manual Deployment**      | `guides/MANUAL_DEPLOYMENT_GUIDE.md`   | Step-by-step deploy process    |
+| **PDF Generation**         | `guides/PDF_GENERATION.md`            | Resume PDF generation          |
+| **Deployment Pipeline**    | `architecture/DEPLOYMENT_PIPELINE.md` | CI/CD architecture             |
+| **Architecture Decisions** | `adr/0001-monorepo-structure.md`      | Durable design decisions       |
 
 ## Conventions
 
@@ -51,6 +52,6 @@ docs/
 
 ## Notes
 
-- Historical docs may reference removed GitHub Actions configuration (migrated to GitHub Actions)
-- Session notes in `sessions/` and `thoughts/` are ephemeral
-- Vendor docs in `_vendor/` are external references (bmad methodology)
+- Historical docs may reference removed GitHub Actions configuration or outdated tree layouts
+- ADRs live in `adr/`, not `architecture/`
+- Notes in `thoughts/` are ephemeral and should not be treated as canonical rules

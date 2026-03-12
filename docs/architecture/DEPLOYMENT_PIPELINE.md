@@ -58,7 +58,7 @@ npx wrangler versions upload --config apps/portfolio/wrangler.toml --env product
 ## Quick Verification
 
 ```bash
-bash tools/ci/validate-cloudflare-native.sh
+go run ./tools/ci/validate-cloudflare-native.go
 npm run typecheck
 npm run build
 curl -i https://resume.jclee.me/health

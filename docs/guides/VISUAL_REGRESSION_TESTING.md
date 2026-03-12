@@ -306,7 +306,7 @@ npm run test:e2e
 npm run test:e2e:visual
 
 # 4. Performance tests (Lighthouse)
-npx lhci autorun
+npm run lighthouse:ci
 ```
 
 ### CI/CD Pipeline

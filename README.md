@@ -27,18 +27,19 @@ resume/
 │       └── resumes/master/        # resume_data.json (canonical)
 ├── infrastructure/                # Grafana, Elasticsearch, Prometheus, n8n
 ├── docs/                          # Documentation hub
+│   ├── adr/                       # Durable architecture decisions
 │   ├── guides/                    # Deployment & setup guides
-│   └── architecture/              # ADRs, system design
+│   └── architecture/              # Current system design docs
 ├── tools/                         # Build scripts, CI utilities
 ├── tests/                         # Jest unit + Playwright E2E
-└── third_party/                   # npm deps (One Version Rule)
+└── third_party/                   # policy/docs for third-party boundaries
 ```
 
 ## Tech Stack
 
 - **Frontend**: HTML5, CSS3, Vanilla JavaScript
 - **Deployment**: Cloudflare Workers (Edge-deployed)
-- **Build System**: Bazel + npm (Google3-style hybrid)
+- **Build System**: npm workspaces + Bazel facade/query layer
 - **CI/CD**: GitHub Actions
 - **Testing**: Jest (unit), Playwright (E2E)
 - **Code Quality**: gitleaks (secret scanning)
@@ -48,7 +49,7 @@ resume/
 
 ### Prerequisites
 
-- Node.js >= 20.0.0
+- Node.js >= 22.0.0
 - npm
 - Wrangler CLI (for Cloudflare deployment)
 
@@ -277,13 +278,13 @@ Automated performance testing on every deployment:
 
 Domain-specific context in subdirectory AGENTS.md files:
 
-| Path                                    | Focus                |
-| --------------------------------------- | -------------------- |
-| `apps/portfolio/AGENTS.md` | Build pipeline, CSP  |
-| `apps/job-server/AGENTS.md`   | MCP server, crawlers |
-| `packages/data/AGENTS.md`             | SSoT schema, sync    |
-| `packages/cli/AGENTS.md`              | CLI tool usage       |
-| `tests/AGENTS.md`                       | Test patterns        |
+| Path                        | Focus                |
+| --------------------------- | -------------------- |
+| `apps/portfolio/AGENTS.md`  | Build pipeline, CSP  |
+| `apps/job-server/AGENTS.md` | MCP server, crawlers |
+| `packages/data/AGENTS.md`   | SSoT schema, sync    |
+| `packages/cli/AGENTS.md`    | CLI tool usage       |
+| `tests/AGENTS.md`           | Test patterns        |
 
 ## Portfolio Features
 

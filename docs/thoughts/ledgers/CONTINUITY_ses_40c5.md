@@ -59,7 +59,7 @@ Deploy the resume monorepo to production (Cloudflare Workers)
 - `.github/workflows/ci.yml`
 - `.github/workflows/deploy-enhanced.yml`
 - `.github/workflows/lighthouse-ci.yml`
-- `tools/ci/affected.sh`
+- `tools/ci/affected.go`
 
 ### Modified
 

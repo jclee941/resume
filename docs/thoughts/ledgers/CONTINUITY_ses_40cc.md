@@ -46,7 +46,7 @@ Sync portfolio data with SSoT (resume_data.json) and deploy resume.jclee.me to p
 
 1. Session complete - all tasks finished
 2. Future deploys: `source ~/.nvm/nvm.sh && nvm use 22 && npm run deploy`
-3. Optional: Review CI/CD setup at `tools/ci/affected.sh` for automated deployments
+3. Optional: Review CI/CD setup at `tools/ci/affected.go` for automated deployments
 
 ## Critical Context
 

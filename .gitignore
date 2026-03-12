@@ -37,6 +37,7 @@ in-memoria-vectors.db/
 
 # Generated outputs
 shinhan_filled.pptx
+ta/
 
 # resumes/generated/ churn files (keep stable exports like resume_*.pdf)
 resumes/generated/ta_filled*.pptx
@@ -102,6 +103,11 @@ docs/sessions/*.md
 .playwright-mcp/
 .sisyphus/
 .affected/
+
+# Go compiled binaries
+affected
+validate-cloudflare-native
+verify-agents-compliance
 _bmad/
 _bmad-output/
 docs/_vendor/

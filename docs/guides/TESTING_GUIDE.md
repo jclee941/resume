@@ -285,11 +285,11 @@ npx playwright show-trace test-results/path-to-trace.zip
 ### Running Lighthouse Locally
 
 ```bash
-# Install Lighthouse
-npm install -g @lhci/cli
+# Install dependencies (if needed)
+npm ci
 
 # Run audit
-lhci autorun
+npm run lighthouse:ci
 
 # Or use Chrome DevTools:
 # 1. Open https://resume.jclee.me

@@ -15,11 +15,13 @@ This document catalogs **forbidden patterns**, **deprecated practices**, and **c
 ### 1. NEVER Edit Generated Artifacts
 
 **Affected Files**:
+
 - `apps/portfolio/worker.js` (deployable Cloudflare Worker)
 
 **Rule**: This file is **auto-generated** from `index.html` by `generate-worker.js`. Manual edits are **lost on next build**.
 
 **Why It Breaks**:
+
 ```bash
 # ❌ WRONG WORKFLOW
 vim apps/portfolio/worker.js  # Manual edit
@@ -29,6 +31,7 @@ npm run build                               # OVERWRITES manual changes!
 ```
 
 **Correct Workflow**:
+
 ```bash
 # ✅ CORRECT
 vim apps/portfolio/index.html  # Edit source HTML
@@ -37,6 +40,7 @@ npm run deploy                              # Deploy generated artifact
 ```
 
 **References**:
+
 - `apps/portfolio/AGENTS.md:19`
 - `docs/guides/QUICK_START.md:29`
 
@@ -45,6 +49,7 @@ npm run deploy                              # Deploy generated artifact
 ### 2. NEVER Trim Before CSP Hash Calculation
 
 **Affected Files**:
+
 - `apps/portfolio/lib/templates.js:41,54`
 - `apps/portfolio/generate-worker.js:109`
 
@@ -57,32 +62,36 @@ Browsers calculate CSP hashes from the **exact** script/style content including 
 ```javascript
 // ❌ WRONG - Causes CSP violation
 const scriptContent = scriptMatch[1].trim();
-const hash = generateHash(scriptContent);  // Hash doesn't match browser's hash
+const hash = generateHash(scriptContent); // Hash doesn't match browser's hash
 
 // ✅ CORRECT - Preserves exact whitespace
-const scriptContent = scriptMatch[1];  // NO TRIM!
+const scriptContent = scriptMatch[1]; // NO TRIM!
 const hash = generateHash(scriptContent);
 ```
 
 **Error You'll See**:
+
 ```
-Refused to execute inline script because it violates the following 
+Refused to execute inline script because it violates the following
 Content Security Policy directive: "script-src 'sha256-abc123...'"
 ```
 
 **Technical Details**:
 
 The browser calculates:
+
 ```javascript
-SHA256("<script>\n  console.log('hello');\n</script>")
+SHA256("<script>\n  console.log('hello');\n</script>");
 ```
 
 If you trim, your hash is from:
+
 ```javascript
-SHA256("console.log('hello');")  // Different hash!
+SHA256("console.log('hello');"); // Different hash!
 ```
 
 **References**:
+
 - `docs/guides/ARCHITECTURE.md:76`
 - `apps/portfolio/lib/templates.js:41,54`
 
@@ -91,6 +100,7 @@ SHA256("console.log('hello');")  // Different hash!
 ### 3. NEVER Use Naked Playwright/Puppeteer
 
 **Affected Files**:
+
 - `apps/job-server/src/crawlers/*`
 
 **Rule**: Always use `BaseCrawler` class instead of direct `chromium.launch()` or `puppeteer.launch()`.
@@ -116,12 +126,14 @@ class WantedCrawler extends BaseCrawler {
 ```
 
 **What BaseCrawler Provides**:
+
 - User-Agent rotation
 - Fingerprint randomization
 - `playwright-stealth` plugin
 - Cookie persistence via `SessionManager`
 
 **References**:
+
 - `apps/job-server/src/crawlers/AGENTS.md:44`
 - `apps/job-server/src/AGENTS.md:92`
 
@@ -130,6 +142,7 @@ class WantedCrawler extends BaseCrawler {
 ### 4. NEVER Cross Client Boundaries
 
 **Affected Files**:
+
 - `apps/job-server/src/shared/clients/*`
 
 **Rule**: Each client (`wanted/`, `saramin/`, `jobkorea/`) is **isolated**. Do NOT import across client directories.
@@ -141,7 +154,7 @@ Creates circular dependencies and violates separation of concerns:
 ```javascript
 // ❌ WRONG - Violates isolation
 // File: apps/job-server/src/shared/clients/wanted/api.js
-import { saraminLogin } from '../saramin/auth.js';  // Cross-boundary import
+import { saraminLogin } from '../saramin/auth.js'; // Cross-boundary import
 
 // ✅ CORRECT - Use shared services
 // File: apps/job-server/src/shared/clients/wanted/api.js
@@ -149,6 +162,7 @@ import { SessionManager } from '../../services/session/index.js';
 ```
 
 **Architecture**:
+
 ```
 clients/
 ├── wanted/       # Isolated - only imports from shared/services/
@@ -158,6 +172,7 @@ clients/
 ```
 
 **References**:
+
 - `apps/job-server/src/shared/clients/AGENTS.md:35-36`
 
 ---
@@ -165,6 +180,7 @@ clients/
 ### 5. NEVER Store Credentials in Client Code
 
 **Affected Files**:
+
 - `apps/job-server/src/shared/clients/secrets/*`
 
 **Rule**: Credentials (cookies, tokens, API keys) MUST go in `secrets/` directory, never in client implementation files.
@@ -177,7 +193,7 @@ Security risk + merge conflicts + accidental commits:
 // ❌ WRONG - Credentials in code
 // File: apps/job-server/src/shared/clients/wanted/api.js
 const cookies = [
-  { name: '_wts', value: 'abc123...' }  // SECURITY RISK!
+  { name: '_wts', value: 'abc123...' }, // SECURITY RISK!
 ];
 
 // ✅ CORRECT - Use SessionManager
@@ -189,6 +205,7 @@ const cookies = session.cookies;
 ```
 
 **References**:
+
 - `apps/job-server/src/shared/clients/AGENTS.md:36`
 - `apps/job-server/src/AGENTS.md:93`
 
@@ -197,6 +214,7 @@ const cookies = session.cookies;
 ### 6. NEVER Hardcode API Keys in `.env`
 
 **Affected Files**:
+
 - `.env` (tracked in git)
 - `.env.local` (gitignored)
 
@@ -218,6 +236,7 @@ echo "CLOUDFLARE_API_TOKEN=abc123..." >> .env.local
 ```
 
 **References**:
+
 - `SECURITY_WARNING.md:27`
 
 ---
@@ -227,6 +246,7 @@ echo "CLOUDFLARE_API_TOKEN=abc123..." >> .env.local
 ### 7. NEVER Instantiate Services Directly in Routes
 
 **Affected Files**:
+
 - `apps/job-server/src/server/routes/*`
 
 **Rule**: Use Fastify decorators for services, never `new Service()` in route handlers.
@@ -239,24 +259,26 @@ Breaks dependency injection and makes testing impossible:
 // ❌ WRONG - Direct instantiation
 // File: apps/job-server/src/server/routes/jobs.js
 fastify.get('/jobs', async (request, reply) => {
-  const jobService = new JobService();  // New instance every request!
+  const jobService = new JobService(); // New instance every request!
   return jobService.getJobs();
 });
 
 // ✅ CORRECT - Use decorated service
 // File: apps/job-server/src/server/routes/jobs.js
 fastify.get('/jobs', async (request, reply) => {
-  return request.server.jobService.getJobs();  // Shared instance
+  return request.server.jobService.getJobs(); // Shared instance
 });
 ```
 
 **Setup** (in server initialization):
+
 ```javascript
 // File: apps/job-server/src/server/index.js
 fastify.decorate('jobService', new JobService());
 ```
 
 **References**:
+
 - `apps/job-server/src/server/routes/AGENTS.md:44`
 
 ---
@@ -264,6 +286,7 @@ fastify.decorate('jobService', new JobService());
 ### 8. NEVER Hardcode Paths in Build Scripts
 
 **Affected Files**:
+
 - `tools/scripts/build/*`
 
 **Rule**: Use relative paths from project root, never absolute paths.
@@ -287,6 +310,7 @@ npm run build
 ```
 
 **References**:
+
 - `tools/scripts/build/AGENTS.md:45`
 
 ---
@@ -294,6 +318,7 @@ npm run build
 ### 9. NEVER Skip Data Sync After Resume Changes
 
 **Affected Files**:
+
 - `packages/data/resumes/master/resume_data.json`
 
 **Rule**: After editing `resume_data.json`, always run `npm run sync:data` before building applications.
@@ -316,6 +341,7 @@ npm run deploy
 ```
 
 **What `sync:data` Does**:
+
 ```bash
 # Copies master resume to all consumers
 cp packages/data/resumes/master/resume_data.json \
@@ -326,6 +352,7 @@ cp packages/data/resumes/master/resume_data.json \
 ```
 
 **References**:
+
 - `packages/data/AGENTS.md:19`
 
 ---
@@ -335,6 +362,7 @@ cp packages/data/resumes/master/resume_data.json \
 ### 10. ALWAYS Use Bazel for Affected Target Analysis
 
 **Affected Files**:
+
 - `BUILD.bazel` (all packages)
 
 **Rule**: Before testing/deploying, use Bazel to find affected targets:
@@ -345,14 +373,16 @@ git diff --name-only origin/master...HEAD | \
   xargs bazel query "rdeps(//..., set($changed_files))"
 
 # Or use CI script
-./tools/ci/affected.sh origin/master
+go run ./tools/ci/affected.go origin/master
 ```
 
 **Why**:
+
 - Saves time by running only affected tests
 - Prevents missing downstream impacts
 
 **References**:
+
 - `.bazelrc`
 - `MODULE.bazel`
 
@@ -361,16 +391,19 @@ git diff --name-only origin/master...HEAD | \
 ### 11. ALWAYS Get OWNERS Approval Before Merging
 
 **Affected Files**:
+
 - `OWNERS` (all packages)
 
 **Rule**: Changes require approval from at least 1 OWNERS member of the affected directory.
 
 **Why**:
+
 - Prevents breaking changes
 - Enforces code review standards
 - Maintains architectural consistency
 
 **How to Check**:
+
 ```bash
 # Find OWNERS for changed files
 git diff --name-only origin/master...HEAD | while read file; do
@@ -386,6 +419,7 @@ done
 ```
 
 **References**:
+
 - `OWNERS` (root and package-level)
 
 ---

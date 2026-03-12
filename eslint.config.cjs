@@ -1,104 +1,114 @@
-// ESLint 9 Flat Config
+const js = require('@eslint/js');
+const tsParser = require('@typescript-eslint/parser');
+const tsPlugin = require('@typescript-eslint/eslint-plugin');
+const globals = require('globals');
+
+const browserAndWorkerGlobals = {
+  ...globals.browser,
+  ...globals.serviceworker,
+  ...globals.worker,
+  caches: 'readonly',
+};
+
+const sharedRules = {
+  'no-unused-vars': [
+    'warn',
+    { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' },
+  ],
+  'no-undef': 'off',
+  'no-empty': 'off',
+  'no-case-declarations': 'off',
+  'no-fallthrough': 'off',
+  'no-console': 'off',
+  semi: ['error', 'always'],
+  quotes: ['error', 'single', { avoidEscape: true }],
+  'no-var': 'error',
+  'prefer-const': 'warn',
+  eqeqeq: ['error', 'always', { null: 'ignore' }],
+  'no-eval': 'error',
+  'no-implied-eval': 'error',
+  'no-new-func': 'error',
+  'no-unused-expressions': ['warn', { allowShortCircuit: true, allowTernary: true }],
+  'no-throw-literal': 'error',
+  'object-shorthand': ['warn', 'always'],
+  'prefer-template': 'warn',
+};
+
+const tsFiles = ['**/*.ts', '**/*.tsx', '**/*.mts', '**/*.cts'];
+
 module.exports = [
   {
-    files: ['**/*.js'],
-    languageOptions: {
-      ecmaVersion: 'latest',
-      sourceType: 'module',
-      globals: {
-        // Node.js globals
-        console: 'readonly',
-        process: 'readonly',
-        __dirname: 'readonly',
-        __filename: 'readonly',
-        Buffer: 'readonly',
-        setTimeout: 'readonly',
-        setInterval: 'readonly',
-        clearTimeout: 'readonly',
-        clearInterval: 'readonly',
-        URL: 'readonly',
-        URLSearchParams: 'readonly',
-        // Browser globals
-        window: 'readonly',
-        document: 'readonly',
-        navigator: 'readonly',
-        fetch: 'readonly',
-        Response: 'readonly',
-        Request: 'readonly',
-        Headers: 'readonly',
-        // CommonJS
-        require: 'readonly',
-        module: 'readonly',
-        exports: 'readonly',
-        // Cloudflare Workers
-        caches: 'readonly',
-        crypto: 'readonly',
-      },
-    },
-    rules: {
-      'no-unused-vars': [
-        'warn',
-        { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' },
-      ],
-      'no-console': 'off',
-      semi: ['error', 'always'],
-      quotes: ['error', 'single', { avoidEscape: true }],
-
-      // Strictness improvements (#52)
-      'no-var': 'error',
-      'prefer-const': 'warn',
-      eqeqeq: ['error', 'always', { null: 'ignore' }],
-      'no-eval': 'error',
-      'no-implied-eval': 'error',
-      'no-new-func': 'error',
-      'no-unreachable': 'error',
-      'no-unused-expressions': ['warn', { allowShortCircuit: true, allowTernary: true }],
-      'no-throw-literal': 'error',
-      'object-shorthand': ['warn', 'always'],
-      'prefer-template': 'warn',
-    },
-  },
-  {
-    // Ignore patterns (migrated from .eslintignore)
     ignores: [
-      // Dependencies
       'node_modules/**',
-
-      // Build outputs
-      'apps/portfolio/worker.js', // Generated file (NEVER EDIT)
-      'packages/data/resumes/archive/docs/worker.js', // Legacy archive
+      'bazel-bin/**',
+      'bazel-out/**',
+      'bazel-resume/**',
+      'bazel-testlogs/**',
+      'apps/portfolio/worker.js',
+      'packages/data/resumes/archive/docs/worker.js',
       '*.min.js',
       'dist/**',
       'build/**',
-
-      // Test coverage
       'coverage/**',
-
-      // Logs
       '*.log',
       'npm-debug.log*',
-
-      // Temporary files
       '**/.tmp/**',
       '**/tmp/**',
-
-      // Wrangler
+      '.wrangler/**',
       '**/.wrangler/**',
-
-      // Test artifacts
       'playwright-report/**',
       'test-results/**',
-
-      // External/cache
-      '${HOME}/**',
       '.cache/**',
-      '**/pyright/**', // Python type checker
-      '.serena/**', // Serena LSP
+      '.opencode/**',
+      '.sisyphus/**',
+      '**/pyright/**',
+      '.serena/**',
     ],
   },
   {
-    // Test files: allow new Function() for syntax validation of generated code
-    files: ['tests/**/*.test.js', 'tests/**/*.spec.js'],
+    ...js.configs.recommended,
+    files: ['**/*.js', '**/*.mjs'],
+    languageOptions: {
+      ...js.configs.recommended.languageOptions,
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: {
+        ...globals.node,
+        ...browserAndWorkerGlobals,
+      },
+    },
+    rules: {
+      ...js.configs.recommended.rules,
+      ...sharedRules,
+    },
+  },
+  {
+    files: tsFiles,
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      parser: tsParser,
+      globals: {
+        ...globals.node,
+        ...browserAndWorkerGlobals,
+      },
+    },
+    plugins: {
+      '@typescript-eslint': tsPlugin,
+    },
+    rules: {
+      ...tsPlugin.configs['flat/eslint-recommended'].rules,
+      ...tsPlugin.configs['flat/recommended'][2].rules,
+      ...sharedRules,
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' },
+      ],
+    },
+  },
+  {
+    files: ['tests/**/*.test.js', 'tests/**/*.spec.js', 'tests/**/*.test.ts', 'tests/**/*.spec.ts'],
     rules: {
       'no-new-func': 'off',
     },

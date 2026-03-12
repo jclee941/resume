@@ -269,7 +269,7 @@ Production deployment is orchestrated by the `npm run deploy` command. This is a
 Our GitHub Actions pipeline (`ci.yml`) is a 13-job dependency chain ensuring zero-downtime and high reliability. Every push to the `master` branch or Pull Request triggers this flow:
 
 1. **Analyze**:
-   - Uses `tools/ci/affected.sh` to compare the current branch against `master`.
+   - Uses `tools/ci/affected.go` to compare the current branch against `master`.
    - Determines which workspaces (Portfolio, Job Automation, Infra) need to be tested or built.
    - Saves time by skipping unaffected targets.
 2. **Lint**:
@@ -400,7 +400,7 @@ If a D1 migration fails during deployment:
 
 If the "Analyze" job in GitHub Actions takes too long or fails:
 
-- Ensure `affected.sh` has execution permissions (`chmod +x tools/ci/affected.sh`).
+- Run `go run ./tools/ci/affected.go` directly for affected-target analysis.
 - Check if the git history is shallow; the job needs a full checkout to compare against `master`.
 
 ---
