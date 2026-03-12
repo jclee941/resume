@@ -9,7 +9,7 @@
 import {
   generateFingerprint,
   applyStealthPatches,
-} from '../../workers/src/services/browser/stealth-patches.js';
+} from '../../../job-dashboard/src/services/browser/stealth-patches.js';
 
 const LAUNCH_ARGS = [
   '--no-sandbox',

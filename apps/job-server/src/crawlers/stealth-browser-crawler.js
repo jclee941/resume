@@ -16,7 +16,7 @@
  */
 
 import { BaseCrawler } from './base-crawler.js';
-import { BrowserService } from '../../workers/src/services/browser/browser-service.js';
+import { BrowserService } from '../../../job-dashboard/src/services/browser/browser-service.js';
 
 /**
  * Browser-backed crawler with stealth capabilities.

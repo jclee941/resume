@@ -10,7 +10,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const CONFIG = {
   SSOT_PATH: path.resolve(__dirname, '../../../../packages/data/resumes/master/resume_data.json'),
   USER_DATA_DIR: path.join(process.env.HOME || '/tmp', '.opencode/browser-data'),
-  SESSION_DIR: path.join(process.env.HOME || '/tmp', '.opencode/data'),
+  SESSION_DIR: path.join(process.env.HOME || '/tmp', '.OpenCode/data'),
   HEADLESS: process.argv.includes('--headless'),
   APPLY: process.argv.includes('--apply'),
   DIFF_ONLY: process.argv.includes('--diff'),
