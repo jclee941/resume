@@ -12,8 +12,8 @@
 
 | Script                          | Purpose                        |
 | ------------------------------- | ------------------------------ |
-| `affected.sh`                   | detect changed packages for CI |
-| `validate-cloudflare-native.sh` | wrangler config guard rails    |
+| `affected.go`                   | detect changed packages for CI |
+| `validate-cloudflare-native.go` | wrangler config guard rails    |
 
 ## CONVENTIONS
 
@@ -23,5 +23,5 @@
 
 ## ANTI-PATTERNS
 
-- Never skip `affected.sh` — causes unnecessary CI work.
+- Never skip `affected.go` — causes unnecessary CI work.
 - Never treat CI as deploy authority.

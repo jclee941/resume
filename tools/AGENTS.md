@@ -13,8 +13,8 @@ Bazel facade layer + npm script automation. CI validation, build scripts, deploy
 ```text
 tools/
 ├── ci/                   # CI helper scripts
-│   ├── affected.sh       # change-impact detection
-│   └── validate-cloudflare-native.sh  # config guards
+│   ├── affected.go       # change-impact detection
+│   └── validate-cloudflare-native.go  # config guards
 ├── scripts/              # automation suite
 │   ├── build/            # asset generation
 │   ├── deployment/       # deploy helpers
@@ -29,7 +29,7 @@ tools/
 
 | Task             | Location                            | Notes                 |
 | ---------------- | ----------------------------------- | --------------------- |
-| CI validation    | `ci/`                               | affected.sh, validate |
+| CI validation    | `ci/`                               | affected.go, validate |
 | Asset generation | `scripts/build/`                    | PDF, PPTX, icons      |
 | Deploy helpers   | `scripts/deployment/`               | quick-deploy, grafana |
 | Health checks    | `scripts/verification/`             | 7-point verify        |
@@ -45,6 +45,6 @@ tools/
 ## ANTI-PATTERNS
 
 - Never run scripts from subdirectories.
-- Never skip `affected.sh` in CI.
+- Never skip `affected.go` in CI.
 - Never deploy manually — CI/CD only.
 - Never edit generated artifacts.

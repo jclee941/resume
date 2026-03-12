@@ -52,8 +52,6 @@ jobs:
       - name: Determine affected targets
         id: affected
         run: |
-          chmod +x tools/ci/affected.sh
-
           if [ "${{ github.event_name }}" = "push" ]; then
             BASE_REF="${{ github.event.before }}"
             if [ "$BASE_REF" = "0000000000000000000000000000000000000000" ]; then
@@ -66,7 +64,7 @@ jobs:
           fi
 
           echo "Using base ref: $BASE_REF"
-          ./tools/ci/affected.sh "$BASE_REF"
+          go run ./tools/ci/affected.go "$BASE_REF"
 
           if [ -f .affected/affected_targets.json ]; then
             PORTFOLIO=$(jq -r '.portfolio // false' .affected/affected_targets.json)
@@ -105,8 +103,7 @@ jobs:
 
       - name: Validate Cloudflare native structure
         run: |
-          chmod +x tools/ci/validate-cloudflare-native.sh
-          ./tools/ci/validate-cloudflare-native.sh
+          go run ./tools/ci/validate-cloudflare-native.go
 
       - name: Setup
         uses: ./.github/actions/setup
@@ -175,7 +172,6 @@ jobs:
         run: |
           echo "=== Running TypeScript Check ==="
           npm run typecheck
-
 
   data-drift:
     name: Data Drift Check
@@ -336,7 +332,18 @@ jobs:
   # ===========================================================================
   elk-ingest:
     name: ELK Ingest
-    needs: [analyze, validate-cloudflare, lint, typecheck, test-unit, test-e2e, security-scan, build, data-drift]
+    needs:
+      [
+        analyze,
+        validate-cloudflare,
+        lint,
+        typecheck,
+        test-unit,
+        test-e2e,
+        security-scan,
+        build,
+        data-drift,
+      ]
     if: always() && !cancelled()
     uses: qws941/.github/.github/workflows/_elk-ingest.yml@master
     with:
