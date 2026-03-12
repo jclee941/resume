@@ -5,10 +5,19 @@ const isCI = !!process.env.CI;
 const getMaxDiffPixelRatio = (localRatio) => (isCI ? Math.max(localRatio, 0.3) : localRatio);
 const getSnapshotName = (name) => (isCI ? name.replace('.png', '-ci.png') : name);
 
+async function resetVisualState(page) {
+  await page.context().clearCookies();
+  await page.addInitScript(() => {
+    localStorage.clear();
+    sessionStorage.clear();
+  });
+}
+
 test.describe('Visual Regression Tests', () => {
   test.describe('Desktop Screenshots', () => {
     test.beforeEach(async ({ page }) => {
       await page.setViewportSize({ width: 1280, height: 720 });
+      await resetVisualState(page);
     });
 
     test('homepage full page screenshot', async ({ page }) => {
@@ -56,6 +65,7 @@ test.describe('Visual Regression Tests', () => {
   test.describe('Mobile Screenshots', () => {
     test.beforeEach(async ({ page }) => {
       await page.setViewportSize({ width: 375, height: 667 });
+      await resetVisualState(page);
     });
 
     test('mobile homepage screenshot', async ({ page }) => {
@@ -93,6 +103,7 @@ test.describe('Visual Regression Tests', () => {
   test.describe('Tablet Screenshots', () => {
     test.beforeEach(async ({ page }) => {
       await page.setViewportSize({ width: 768, height: 1024 });
+      await resetVisualState(page);
     });
 
     test('tablet homepage screenshot', async ({ page }) => {
@@ -109,6 +120,7 @@ test.describe('Visual Regression Tests', () => {
 
   test.describe('Dark Mode Screenshots', () => {
     test('dark mode preference screenshot', async ({ page }) => {
+      await resetVisualState(page);
       await page.emulateMedia({ colorScheme: 'dark' });
       await page.setViewportSize({ width: 1280, height: 720 });
       await page.goto('/');
@@ -124,6 +136,7 @@ test.describe('Visual Regression Tests', () => {
 
   test.describe('Component Screenshots', () => {
     test('footer screenshot', async ({ page }) => {
+      await resetVisualState(page);
       await page.setViewportSize({ width: 1280, height: 720 });
       await page.goto('/');
       await page.waitForLoadState('domcontentloaded');
@@ -135,6 +148,7 @@ test.describe('Visual Regression Tests', () => {
     });
 
     test('hero download buttons screenshot', async ({ page }) => {
+      await resetVisualState(page);
       await page.setViewportSize({ width: 1280, height: 720 });
       await page.goto('/');
       await page.waitForLoadState('domcontentloaded');
@@ -151,6 +165,7 @@ test.describe('Visual Regression Tests', () => {
     });
 
     test('single project card screenshot', async ({ page }) => {
+      await resetVisualState(page);
       await page.setViewportSize({ width: 1280, height: 720 });
       await page.goto('/');
       await page.waitForLoadState('domcontentloaded');

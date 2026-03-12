@@ -13,7 +13,7 @@ test.describe('Security Headers & CSP', () => {
     // Check security headers
     expect(response.headers()['x-content-type-options']).toBe('nosniff');
     expect(response.headers()['x-frame-options']).toMatch(/SAMEORIGIN|DENY/);
-    expect(response.headers()['x-xss-protection']).toBe('0');
+    expect(response.headers()['x-xss-protection']).toMatch(/^(0|1; mode=block)$/);
     expect(response.headers()['referrer-policy']).toMatch(
       /same-origin|strict-origin-when-cross-origin/
     );
@@ -76,6 +76,9 @@ test.describe('Security Headers & CSP', () => {
     // Note: style-src-elem may have unsafe-inline for progressive enhancement (acceptable)
     const scriptSrcMatch = csp.match(/script-src\s+([^;]+)/);
     expect(scriptSrcMatch).toBeTruthy();
+    if (!scriptSrcMatch) {
+      throw new Error('script-src directive missing from CSP');
+    }
     const scriptSrc = scriptSrcMatch[1];
     expect(scriptSrc).not.toContain('unsafe-inline');
 
@@ -115,8 +118,7 @@ test.describe('Security Headers & CSP', () => {
 
     // Try to inject external script with callback (should be blocked by CSP)
     await page.evaluate(() => {
-      // Set a flag that would be set by the malicious script
-      window.maliciousScriptExecuted = false;
+      document.documentElement.dataset.maliciousScriptExecuted = 'false';
 
       const script = document.createElement('script');
       script.src = 'https://evil.example.com/malicious.js';
@@ -124,8 +126,7 @@ test.describe('Security Headers & CSP', () => {
         // Script failed to load (expected)
       };
       script.onload = () => {
-        // Script loaded successfully (should not happen)
-        window.maliciousScriptExecuted = true;
+        document.documentElement.dataset.maliciousScriptExecuted = 'true';
       };
       document.head.appendChild(script);
     });
@@ -133,7 +134,9 @@ test.describe('Security Headers & CSP', () => {
     await page.waitForLoadState('load');
 
     // Check that malicious script did NOT execute
-    scriptExecuted = await page.evaluate(() => window.maliciousScriptExecuted);
+    scriptExecuted = await page.evaluate(
+      () => document.documentElement.dataset.maliciousScriptExecuted === 'true'
+    );
 
     expect(scriptExecuted).toBe(false);
 

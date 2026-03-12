@@ -16,25 +16,6 @@
     <meta name="robots" content="index, follow" />
     <meta name="google-site-verification" content="2a5f8c3b7d4e9a1f6c2b5e8d1a4f7c0b9e3d6a9f2c5" />
 
-    <!-- Google Analytics 4 -->
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag('js', new Date());
-      gtag('config', 'G-P9E8XY5K2L', {
-        page_path: window.location.pathname,
-        language: 'en',
-      });
-      var _gs = document.createElement('script');
-      _gs.src = 'https://www.googletagmanager.com/gtag/js?id=G-P9E8XY5K2L';
-      _gs.async = true;
-      _gs.integrity = 'sha384-ZXsMWzL9jNkfVeDNiKiKlvdyvBmUvt8YMS2PljnnNk8cVfKES+GLjaItoIy8iwNi';
-      _gs.crossOrigin = 'anonymous';
-      document.head.appendChild(_gs);
-    </script>
-
     <link rel="canonical" href="https://resume.jclee.me/en/" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -209,6 +190,69 @@
         font-family: 'JetBrains Mono', monospace;
         margin-right: 0.5rem;
       }
+      .terminal-titlebar-spacer {
+        width: 52px;
+      }
+      .footer-prompt {
+        font-size: var(--text-sm);
+      }
+      .footer-status {
+        color: var(--text-muted);
+        margin-left: 1rem;
+      }
+      .help-output,
+      .cli-result {
+        white-space: pre-wrap;
+      }
+      .cmd-name,
+      .cli-cmd {
+        color: #0ff;
+      }
+      .cli-container {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(12, 12, 18, 0.95);
+        border-top: 1px solid #00ff88;
+        padding: 1rem;
+        font-family: monospace;
+        z-index: 1000;
+        max-height: 40vh;
+        overflow-y: auto;
+      }
+      .cli-output {
+        margin-bottom: 0.5rem;
+        color: #00ff88;
+        font-size: 0.9rem;
+        max-height: 30vh;
+        overflow-y: auto;
+      }
+      .cli-input-line {
+        display: flex;
+        align-items: center;
+      }
+      .cli-prompt {
+        color: #00ff88;
+        margin-right: 0.5rem;
+        flex-shrink: 0;
+      }
+      .cli-input {
+        flex: 1;
+        background: transparent;
+        border: none;
+        color: #0ff;
+        font-family: monospace;
+        font-size: 1rem;
+        outline: none;
+        caret-color: #0ff;
+      }
+      .cli-input::placeholder {
+        color: #444;
+      }
+      .cli-entry {
+        margin-bottom: 0.5rem;
+      }
       .hero--terminal {
         text-align: left;
       }
@@ -229,7 +273,7 @@
             <span class="terminal-btn terminal-btn--maximize"></span>
           </div>
           <span class="terminal-title">jclee@resume:~</span>
-          <div style="width: 52px"></div>
+          <div class="terminal-titlebar-spacer"></div>
         </div>
         <div class="terminal-body">
           <header class="site-header">
@@ -318,7 +362,7 @@
                   <span class="status-title">Service Status</span>
                 </div>
                 <ul class="status-list" id="status-list">
-                  <li class="status-item" data-url="https://resume.jclee.me">
+                  <li class="status-item" data-url="">
                     <span class="status-dot"></span>
                     <span class="status-name">☁️ Cloudflare Workers</span>
                     <span class="status-state">checking...</span>
@@ -463,8 +507,8 @@
 
           <footer class="site-footer">
             <div class="footer-content">
-              <span class="terminal-prompt" style="font-size: var(--text-sm)">logout</span>
-              <span style="color: var(--text-muted); margin-left: 1rem">Connection closed.</span>
+              <span class="terminal-prompt footer-prompt">logout</span>
+              <span class="footer-status">Connection closed.</span>
             </div>
           </footer>
 
@@ -579,13 +623,6 @@
           );
         },
       };
-
-      (function () {
-        var cmdStyle = document.createElement('style');
-        cmdStyle.textContent =
-          '.help-output{white-space:pre-wrap}.cmd-name{color:#0ff}.cli-container{position:fixed;bottom:0;left:0;right:0;background:rgba(12,12,18,0.95);border-top:1px solid #00ff88;padding:1rem;font-family:monospace;z-index:1000;max-height:40vh;overflow-y:auto}.cli-output{margin-bottom:0.5rem;color:#00ff88;font-size:0.9rem;max-height:30vh;overflow-y:auto}.cli-input-line{display:flex;align-items:center}.cli-prompt{color:#00ff88;margin-right:0.5rem;flex-shrink:0}.cli-input{flex:1;background:transparent;border:none;color:#0ff;font-family:monospace;font-size:1rem;outline:none;caret-color:#0ff}.cli-input::placeholder{color:#444}.cli-entry{margin-bottom:0.5rem}.cli-cmd{color:#0ff}.cli-result{margin-left:1rem;white-space:pre-wrap}';
-        document.head.appendChild(cmdStyle);
-      })();
 
       (function () {
         var cliInput = document.getElementById('terminal-input');
@@ -814,7 +851,7 @@
           mainIndicator.classList.add('status-ok');
         }
         dynamicItems.forEach(function (item) {
-          var url = item.getAttribute('data-url');
+          var url = item.getAttribute('data-url') || window.location.origin;
           var stateEl = item.querySelector('.status-state');
           var isSameOrigin = url.indexOf(window.location.origin) === 0;
           fetch(url + '/health', { method: 'GET', mode: isSameOrigin ? 'same-origin' : 'no-cors' })
@@ -836,6 +873,23 @@
             .finally(updateMainIndicator);
         });
       })();
+    </script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      gtag('config', 'G-P9E8XY5K2L', {
+        page_path: window.location.pathname,
+        language: 'en',
+      });
+      var _gs = document.createElement('script');
+      _gs.src = 'https://www.googletagmanager.com/gtag/js?id=G-P9E8XY5K2L';
+      _gs.async = true;
+      _gs.integrity = 'sha384-ZXsMWzL9jNkfVeDNiKiKlvdyvBmUvt8YMS2PljnnNk8cVfKES+GLjaItoIy8iwNi';
+      _gs.crossOrigin = 'anonymous';
+      document.head.appendChild(_gs);
     </script>
   </body>
 </html>

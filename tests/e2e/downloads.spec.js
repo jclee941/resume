@@ -13,27 +13,22 @@ const { test, expect } = require('@playwright/test');
 test.describe('Download Functionality', () => {
   test.beforeEach(async ({ page, baseURL }) => {
     await page.goto(baseURL || '/');
-    // Wait for download links to be fully rendered (they may be injected by JS)
     await page.waitForLoadState('domcontentloaded');
   });
 
   test.describe('Resume Download Links', () => {
     test('should have main resume download buttons', async ({ page }) => {
-      // Wait for download links to be rendered before checking
-      await page.waitForSelector('a[aria-label*="Resume"][aria-label*="PDF"]');
+      const pdfLink = page
+        .locator(
+          '.hero-download a[download], a[download][href$=".pdf"], a[download][href$="/resume.pdf"]'
+        )
+        .first();
 
-      // Check for PDF download link in hero section (DOCX/MD removed)
-      const pdfLink = page.getByRole('link', {
-        name: /resume.*pdf/i,
-      });
+      await expect(pdfLink).toBeVisible({ timeout: 10000 });
 
-      await expect(pdfLink).toBeVisible();
-
-      // Verify PDF URL
       const pdfHref = await pdfLink.getAttribute('href');
-      expect(pdfHref).toMatch(/\.(pdf)$/i);
+      expect(pdfHref).toMatch(/(\.pdf$|\/resume\.pdf$)/i);
 
-      // Should NOT contain github.com (private repo)
       expect(pdfHref).not.toContain('github.com');
     });
 

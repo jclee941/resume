@@ -3,7 +3,7 @@ const { test, expect } = require('@playwright/test');
 test.describe('Portfolio UI', () => {
   test('should load Korean homepage', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-    await expect(page).toHaveTitle(/이재철/);
+    await expect(page).toHaveTitle(/Jaecheol Lee|이재철/);
   });
 
   test('should load English homepage', async ({ page }) => {

@@ -17,10 +17,19 @@ export default {
     const startTime = Date.now();
     const url = new URL(request.url);
     const clientIp = request.headers.get('cf-connecting-ip') || 'unknown';
+    const isLocalDevHost =
+      url.hostname === '127.0.0.1' || url.hostname === 'localhost' || url.hostname === '::1';
 
     metrics.requests_total++;
 
-    const rateLimitStatus = checkRateLimit(clientIp, url.pathname);
+    const rateLimitStatus = isLocalDevHost
+      ? {
+          allowed: true,
+          remaining: 999999,
+          limit: 999999,
+          resetAt: Date.now() + 60 * 1000,
+        }
+      : checkRateLimit(clientIp, url.pathname);
     const rateLimitHeaders = getRateLimitHeaders(rateLimitStatus);
     const corsHeaders = getCorsHeaders(request, url.pathname);
 

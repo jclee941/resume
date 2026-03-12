@@ -1,4 +1,5 @@
 const webVitals = {};
+let vitalsSent = false;
 
 // Largest Contentful Paint (LCP)
 const observeLCP = () => {
@@ -75,7 +76,10 @@ const observeTTFB = () => {
 };
 
 const sendVitals = () => {
+  if (vitalsSent) return;
   if (Object.keys(webVitals).length === 0) return;
+  vitalsSent = true;
+  const isLocalTestHost = /^(127\.0\.0\.1|localhost)$/.test(window.location.hostname);
 
   const vitalsData = {
     ...webVitals,
@@ -85,7 +89,7 @@ const sendVitals = () => {
   };
 
   // Beacon API (preferred, non-blocking)
-  if (navigator.sendBeacon) {
+  if (navigator.sendBeacon && !isLocalTestHost) {
     const blob = new Blob([JSON.stringify(vitalsData)], {
       type: 'application/json',
     });
@@ -116,6 +120,8 @@ export function initWebVitals() {
       sendVitals();
     }
   });
+
+  window.addEventListener('visibilitychange', sendVitals, { once: true });
 
   // Send vitals on page unload (fallback)
   window.addEventListener('pagehide', sendVitals);

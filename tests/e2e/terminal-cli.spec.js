@@ -31,14 +31,13 @@ test.describe('Terminal CLI - Command Execution', () => {
     await expect(cliOutput).toContainText(/help|commands|available/i);
   });
 
-  test('should execute neofetch command', async ({ page }) => {
-    await executeCliCommand(page, 'neofetch', {
-      expectedOutput: /Role:|Infrastructure Engineer/i,
+  test('should execute skills command', async ({ page }) => {
+    await executeCliCommand(page, 'skills', {
+      expectedOutput: /skills|prometheus|terraform|kubernetes|grafana/i,
     });
 
     const cliOutput = page.locator('#cli-output');
-    // neofetch should show ASCII art and info
-    await expect(cliOutput).toContainText(/Role:|Infrastructure Engineer/i);
+    await expect(cliOutput).toContainText(/skills|prometheus|terraform|kubernetes|grafana/i);
   });
 
   test('should execute clear command', async ({ page }) => {
@@ -79,26 +78,26 @@ test.describe('Terminal CLI - Command Execution', () => {
   });
 });
 
-test.describe('Terminal CLI - Easter Eggs', () => {
+test.describe('Terminal CLI - Extended Commands', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
   });
 
-  test('should execute sudo hire-me command', async ({ page }) => {
-    await executeCliCommand(page, 'sudo hire-me', {
-      expectedOutput: /access granted|contact|qws941/i,
+  test('should execute contact command', async ({ page }) => {
+    await executeCliCommand(page, 'contact', {
+      expectedOutput: /contact|github|email|qws941/i,
     });
 
     const cliOutput = page.locator('#cli-output');
-    // Should show hire-me easter egg response
-    await expect(cliOutput).toContainText(/access granted|contact|qws941/i);
+    await expect(cliOutput).toContainText(/contact|github|email|qws941/i);
   });
 
-  test('should execute rm -rf doubt command', async ({ page }) => {
-    await executeCliCommand(page, 'rm -rf doubt');
+  test('should execute history command', async ({ page }) => {
+    await executeCliCommand(page, 'help');
+    await executeCliCommand(page, 'history');
 
     const cliOutput = page.locator('#cli-output');
-    await expect(cliOutput.getByText('✓ All doubts successfully removed.')).toBeVisible();
+    await expect(cliOutput).toContainText(/help|history/i);
   });
 });
 

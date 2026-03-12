@@ -226,7 +226,9 @@ function generateSkillsList(skillsData, dataHash) {
               : name;
           })
           .join(', ')}</span>
-        <div class="skill-bar-container"><div class="skill-bar" style="width:${averageLevel}%"></div></div>
+        <div class="skill-bar-container">
+          <progress class="skill-bar" max="100" value="${averageLevel}" aria-label="Average skill level ${averageLevel}%"></progress>
+        </div>
       </li>`;
     })
     .join('\n');

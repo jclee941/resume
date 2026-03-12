@@ -16,7 +16,7 @@ const EXPECTED_COUNTS = {
 };
 
 const REGEX_PATTERNS = {
-  TITLE: /이재철.*(?:AIOps|ML Platform|Engineer)/,
+  TITLE: /(?:Jaecheol Lee|이재철).*(?:AIOps|ML Platform|Engineer)/,
 };
 
 // Helper Functions

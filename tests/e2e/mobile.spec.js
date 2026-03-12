@@ -22,7 +22,7 @@ const { test, expect } = require('@playwright/test');
 test.describe('Mobile Responsiveness', () => {
   test('should load page successfully', async ({ page }) => {
     await page.goto('/');
-    await expect(page).toHaveTitle(/이재철/);
+    await expect(page).toHaveTitle(/Jaecheol Lee|이재철/);
 
     // Check main content is visible (use first() to avoid strict mode violation)
     const mainContent = page.locator('#main-content, main, body').first();

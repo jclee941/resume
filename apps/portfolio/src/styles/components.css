@@ -1200,13 +1200,19 @@
   overflow: hidden;
   white-space: nowrap;
   border-right: 2px solid var(--cyber-cyan);
-  animation: typing 3.5s steps(40, end), blink-cursor 0.75s step-end infinite;
+  animation:
+    typing 3.5s steps(40, end),
+    blink-cursor 0.75s step-end infinite;
 }
 
-
 @keyframes blink-cursor {
-  from, to { border-color: transparent; }
-  50% { border-color: var(--cyber-cyan); }
+  from,
+  to {
+    border-color: transparent;
+  }
+  50% {
+    border-color: var(--cyber-cyan);
+  }
 }
 
 /* ============================================================
@@ -1214,19 +1220,35 @@
    ============================================================ */
 .skill-bar-container {
   width: 100%;
-  background: var(--bg-secondary);
-  border-radius: 4px;
-  height: 8px;
-  overflow: hidden;
   margin-top: 0.5rem;
 }
 
 .skill-bar {
-  height: 100%;
+  width: 100%;
+  height: 8px;
+  display: block;
+  appearance: none;
+  border: none;
+  border-radius: 4px;
+  overflow: hidden;
+  background: none;
+}
+
+.skill-bar::-webkit-progress-bar {
+  background: var(--bg-secondary);
+  border-radius: 4px;
+}
+
+.skill-bar::-webkit-progress-value {
   background: linear-gradient(90deg, var(--cyber-cyan), var(--cyber-magenta));
   border-radius: 4px;
   box-shadow: var(--glow-cyan);
-  transition: width 1s ease-in-out;
+}
+
+.skill-bar::-moz-progress-bar {
+  background: linear-gradient(90deg, var(--cyber-cyan), var(--cyber-magenta));
+  border-radius: 4px;
+  box-shadow: var(--glow-cyan);
 }
 
 /* ============================================================
@@ -1239,7 +1261,9 @@
   border-radius: 4px;
   font-family: var(--font-mono);
   font-size: 0.8rem;
-  transition: box-shadow 0.3s ease, background 0.3s ease;
+  transition:
+    box-shadow 0.3s ease,
+    background 0.3s ease;
 }
 
 .skill-tag-glow:hover {
@@ -1253,7 +1277,9 @@
 .fade-in {
   opacity: 0;
   transform: translateY(20px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
 }
 
 .fade-in.visible {

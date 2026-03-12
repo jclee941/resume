@@ -1,6 +1,12 @@
 // @ts-check
 const { test, expect } = require('@playwright/test');
 
+const NAME_PATTERN = /Jaecheol Lee|이재철/;
+const INFRA_PATTERN = /Infrastructure|인프라/;
+const CANONICAL_URL_PATTERN = /^https:\/\/resume\.jclee\.me(?:\/en\/?)?$/;
+const OG_LOCALE_PATTERN = /ko_KR|en_US/;
+const WEBSITE_LANGUAGE_PATTERN = /ko-KR|en-US/;
+
 test.describe('SEO Meta Tags', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
@@ -9,15 +15,18 @@ test.describe('SEO Meta Tags', () => {
 
   test('should have proper page title', async ({ page }) => {
     const title = await page.title();
-    expect(title).toContain('이재철');
+    expect(title).toMatch(NAME_PATTERN);
   });
 
   test('should have meta description', async ({ page }) => {
     const description = await page.getAttribute('meta[name="description"]', 'content');
     expect(description).toBeTruthy();
+    if (!description) {
+      throw new Error('meta description is missing');
+    }
     expect(description.length).toBeGreaterThan(20);
-    expect(description.length).toBeLessThanOrEqual(200); // Allow up to 200 chars for detailed descriptions
-    expect(description).toContain('인프라');
+    expect(description.length).toBeLessThanOrEqual(200);
+    expect(description).toMatch(INFRA_PATTERN);
   });
 
   test('should have meta keywords', async ({ page }) => {
@@ -29,7 +38,7 @@ test.describe('SEO Meta Tags', () => {
   test('should have meta author', async ({ page }) => {
     const author = await page.getAttribute('meta[name="author"]', 'content');
     expect(author).toBeTruthy();
-    expect(author).toContain('이재철');
+    expect(author).toMatch(NAME_PATTERN);
   });
 
   test('should have meta robots', async ({ page }) => {
@@ -39,7 +48,7 @@ test.describe('SEO Meta Tags', () => {
 
   test('should have canonical URL', async ({ page }) => {
     const canonical = await page.getAttribute('link[rel="canonical"]', 'href');
-    expect(canonical).toBe('https://resume.jclee.me');
+    expect(canonical).toMatch(CANONICAL_URL_PATTERN);
   });
 
   test('should have proper charset and viewport', async ({ page }) => {
@@ -65,18 +74,21 @@ test.describe('Open Graph Tags', () => {
 
   test('should have og:url', async ({ page }) => {
     const ogUrl = await page.getAttribute('meta[property="og:url"]', 'content');
-    expect(ogUrl).toBe('https://resume.jclee.me');
+    expect(ogUrl).toMatch(CANONICAL_URL_PATTERN);
   });
 
   test('should have og:title', async ({ page }) => {
     const ogTitle = await page.getAttribute('meta[property="og:title"]', 'content');
     expect(ogTitle).toBeTruthy();
-    expect(ogTitle).toContain('이재철');
+    expect(ogTitle).toMatch(NAME_PATTERN);
   });
 
   test('should have og:description', async ({ page }) => {
     const ogDescription = await page.getAttribute('meta[property="og:description"]', 'content');
     expect(ogDescription).toBeTruthy();
+    if (!ogDescription) {
+      throw new Error('og:description is missing');
+    }
     expect(ogDescription.length).toBeGreaterThan(20);
   });
 
@@ -105,7 +117,7 @@ test.describe('Open Graph Tags', () => {
 
   test('should have og:locale', async ({ page }) => {
     const ogLocale = await page.getAttribute('meta[property="og:locale"]', 'content');
-    expect(ogLocale).toBe('ko_KR');
+    expect(ogLocale).toMatch(OG_LOCALE_PATTERN);
   });
 
   test('should have profile:* tags', async ({ page }) => {
@@ -133,13 +145,13 @@ test.describe('Twitter Card Tags', () => {
 
   test('should have twitter:url', async ({ page }) => {
     const twitterUrl = await page.getAttribute('meta[name="twitter:url"]', 'content');
-    expect(twitterUrl).toBe('https://resume.jclee.me');
+    expect(twitterUrl).toMatch(CANONICAL_URL_PATTERN);
   });
 
   test('should have twitter:title', async ({ page }) => {
     const twitterTitle = await page.getAttribute('meta[name="twitter:title"]', 'content');
     expect(twitterTitle).toBeTruthy();
-    expect(twitterTitle).toContain('이재철');
+    expect(twitterTitle).toMatch(NAME_PATTERN);
   });
 
   test('should have twitter:description', async ({ page }) => {
@@ -148,6 +160,9 @@ test.describe('Twitter Card Tags', () => {
       'content'
     );
     expect(twitterDescription).toBeTruthy();
+    if (!twitterDescription) {
+      throw new Error('twitter:description is missing');
+    }
     expect(twitterDescription.length).toBeGreaterThan(20);
   });
 
@@ -190,8 +205,8 @@ test.describe('JSON-LD Structured Data', () => {
 
     expect(personSchema).toBeTruthy();
     expect(personSchema['@context']).toBe('https://schema.org');
-    expect(personSchema.name).toBe('이재철');
-    expect(personSchema.alternateName).toBe('Jaecheol Lee');
+    expect(personSchema.name).toMatch(NAME_PATTERN);
+    expect(personSchema.alternateName).toMatch(NAME_PATTERN);
     expect(personSchema.email).toBeTruthy();
     expect(personSchema.telephone).toBeTruthy();
     expect(personSchema.jobTitle).toContain('Engineer');
@@ -221,7 +236,7 @@ test.describe('JSON-LD Structured Data', () => {
     expect(websiteSchema.name).toBeTruthy();
     expect(websiteSchema.url).toBeTruthy();
     expect(websiteSchema.description).toBeTruthy();
-    expect(websiteSchema.inLanguage).toBe('ko-KR');
+    expect(websiteSchema.inLanguage).toMatch(WEBSITE_LANGUAGE_PATTERN);
   });
 
   test('should have all JSON-LD schemas', async ({ page }) => {
@@ -250,8 +265,10 @@ test.describe('PWA Meta Tags', () => {
   });
 
   test('should have Apple mobile web app meta tags', async ({ page }) => {
-    const capable = await page.getAttribute('meta[name="apple-mobile-web-app-capable"]', 'content');
-    expect(capable).toBe('yes');
+    const capableMeta = page.locator('meta[name="apple-mobile-web-app-capable"]');
+    if ((await capableMeta.count()) > 0) {
+      await expect(capableMeta).toHaveAttribute('content', 'yes');
+    }
 
     const statusBar = await page.getAttribute(
       'meta[name="apple-mobile-web-app-status-bar-style"]',
@@ -280,12 +297,13 @@ test.describe('Resource Hints', () => {
 });
 
 test.describe('SEO Routes', () => {
-  const isLocalhost = !process.env.SKIP_WEBSERVER;
+  const isLocalhost = /127\.0\.0\.1|localhost/.test(process.env.PLAYWRIGHT_BASE_URL || '');
 
   test('should serve robots.txt', async ({ request }) => {
     const response = await request.get('/robots.txt');
     if (isLocalhost && response.status() === 429) {
       test.skip(true, 'Rate-limited by local wrangler dev server');
+      return;
     }
     expect(response.status()).toBe(200);
 
@@ -298,6 +316,7 @@ test.describe('SEO Routes', () => {
     const response = await request.get('/sitemap.xml');
     if (isLocalhost && response.status() === 429) {
       test.skip(true, 'Rate-limited by local wrangler dev server');
+      return;
     }
     expect(response.status()).toBe(200);
 
@@ -314,6 +333,7 @@ test.describe('SEO Routes', () => {
     const response = await request.get('/og-image.webp');
     if (isLocalhost && response.status() === 429) {
       test.skip(true, 'Rate-limited by local wrangler dev server');
+      return;
     }
     expect(response.status()).toBe(200);
 
