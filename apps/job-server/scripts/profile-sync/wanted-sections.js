@@ -162,7 +162,7 @@ export async function syncWantedEducations(client, ssot, profile, resumeId) {
 
 /** @param {Object} client @param {Object} ssot @param {Object} profile @param {string} resumeId @returns {Promise<Object>} */
 export async function syncWantedActivities(client, ssot, profile, resumeId) {
-  const ssotCerts = ssot.certifications || [];
+  const ssotCerts = (ssot.certifications || []).filter((c) => c.date && c.status !== '준비중');
   const wantedActivities = profile.activities || [];
 
   log(`Activities: SSOT has ${ssotCerts.length} certs, Wanted has ${wantedActivities.length}`, 'info', 'wanted');

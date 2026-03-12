@@ -70,6 +70,8 @@ export function flattenSkills(skillsObj) {
   for (const category of Object.values(skillsObj)) {
     if (Array.isArray(category)) {
       skills.push(...category);
+    } else if (category && Array.isArray(category.items)) {
+      skills.push(...category.items.map((item) => (typeof item === 'string' ? item : item.name)).filter(Boolean));
     }
   }
   return [...new Set(skills)];
