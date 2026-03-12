@@ -91,7 +91,9 @@ const advice = await getAICareerAdvice('path/to/resume.md', { focusArea: 'DevSec
 
 ### 3. Automation Scripts
 
-#### `auto-daily-run.sh` (Daily Automation)
+The browser-accessible auto-apply dashboard UI is owned by `apps/job-dashboard/` and exposed at `resume.jclee.me/job/*`. The scripts below are operator entrypoints for the automation runtime in `apps/job-server/`.
+
+#### `npm run ops:daily-run` (Daily Automation)
 
 **Purpose**: Automated daily job search and application
 
@@ -107,13 +109,13 @@ const advice = await getAICareerAdvice('path/to/resume.md', { focusArea: 'DevSec
 
 ```bash
 # Dry-run (search only)
-./auto-daily-run.sh
+npm run ops:daily-run
 
 # Real applications (max 5)
-./auto-daily-run.sh --apply --max=5
+npm run ops:daily-run -- --apply --max=5
 
 # Custom limit
-./auto-daily-run.sh --apply --max=10
+npm run ops:daily-run -- --apply --max=10
 ```
 
 **Event Trigger Examples**:
@@ -123,7 +125,7 @@ curl -X POST https://resume.jclee.me/job/api/workflows/job-crawling/run
 node src/cli.js pipeline run <resume_id>
 ```
 
-#### `auto-monitor.sh` (System Monitoring)
+#### `npm run ops:monitor` (System Monitoring)
 
 **Purpose**: Monitor system health and activity
 
@@ -138,7 +140,7 @@ node src/cli.js pipeline run <resume_id>
 **Usage**:
 
 ```bash
-./auto-monitor.sh
+npm run ops:monitor
 ```
 
 **Event Trigger Example**:
@@ -147,7 +149,7 @@ node src/cli.js pipeline run <resume_id>
 curl -X POST https://resume.jclee.me/job/api/workflows/health-check/run
 ```
 
-#### `auto-maintenance.sh` (System Maintenance)
+#### `npm run ops:maintenance` (System Maintenance)
 
 **Purpose**: Automated system cleanup and backup
 
@@ -163,7 +165,7 @@ curl -X POST https://resume.jclee.me/job/api/workflows/health-check/run
 **Usage**:
 
 ```bash
-./auto-maintenance.sh
+npm run ops:maintenance
 ```
 
 **Event Trigger Example**:

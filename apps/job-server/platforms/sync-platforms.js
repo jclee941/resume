@@ -124,7 +124,7 @@ async function getPlatformStatus(platform) {
 
     case 'jobkorea':
     case 'remember': {
-      const sessionPath = join(homedir(), `.OpenCode/data/${platform}-session.json`);
+      const sessionPath = join(homedir(), `.opencode/data/${platform}-session.json`);
       const hasSession = existsSync(sessionPath);
       return {
         authenticated: hasSession,

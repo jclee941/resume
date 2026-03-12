@@ -15,7 +15,7 @@
  * @param {string} [options.dsn] - GlitchTip DSN (falls back to GLITCHTIP_DSN env var)
  * @param {string} [options.environment] - Environment name (default: 'production')
  * @param {string} [options.release] - Release version
- * @returns {Promise<{ captureException: (err: Error, context?: object) => void, captureMessage: (msg: string, level?: string) => void, flush: () => Promise<void> }>}
+ * @returns {Promise<{ captureException: (err: Error, context?: Record<string, unknown>) => void, captureMessage: (msg: string, level?: string) => void, flush: () => Promise<void> }>}
  */
 export async function initErrorTracking({ dsn, environment = 'production', release } = {}) {
   const resolvedDsn = dsn || process.env.GLITCHTIP_DSN;
@@ -39,7 +39,9 @@ export async function initErrorTracking({ dsn, environment = 'production', relea
     // Dynamic import for graceful degradation
     Sentry = await import('@sentry/node');
   } catch {
-    console.warn('[error-tracking] @sentry/node not installed — run: npm install @sentry/node -w @resume/job-automation');
+    console.warn(
+      '[error-tracking] @sentry/node not installed — run: npm install @sentry/node -w @resume/job-automation'
+    );
     return {
       captureException: (err, context) => {
         console.error('[error-tracking:fallback] Exception:', err.message, context);
@@ -71,15 +73,29 @@ export async function initErrorTracking({ dsn, environment = 'production', relea
 
   console.log(`[error-tracking] Initialized (env: ${environment})`);
 
-  return {
-    captureException: (err, context) => {
-      Sentry.captureException(err, context ? { extra: context } : undefined);
-    },
-    captureMessage: (msg, level = 'info') => {
-      Sentry.captureMessage(msg, /** @type {*} */ (level));
-    },
-    flush: async () => { await Sentry.close(2000); },
-  };
+  /** @param {Error} err @param {Record<string, unknown>} [context] */
+  function captureException(err, context) {
+    if (!context) {
+      Sentry.captureException(err);
+      return;
+    }
+
+    Sentry.withScope((scope) => {
+      scope.setContext('details', context);
+      Sentry.captureException(err);
+    });
+  }
+
+  /** @param {string} msg @param {string} [level] */
+  function captureMessage(msg, level = 'info') {
+    Sentry.captureMessage(msg, /** @type {*} */ (level));
+  }
+
+  async function flush() {
+    await Sentry.close(2000);
+  }
+
+  return { captureException, captureMessage, flush };
 }
 
 /**

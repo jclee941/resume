@@ -136,13 +136,13 @@
 }
 ```
 
-### 4. Dashboard Server (Express)
+### 4. Embedded Dashboard Runtime
 
-**Real-time apps/portfolio dashboard**
+**Real-time dashboard runtime owned by `apps/job-dashboard/` and served at `resume.jclee.me/job/*`**
 
 **Technical Stack**:
 
-- Express.js (Port 3456)
+- Cloudflare Worker runtime (`apps/job-dashboard/src/index.js`)
 - Chart.js for visualizations
 - Real-time statistics
 - RESTful API
@@ -154,6 +154,16 @@
 - AI matching test interface
 - Automation control panel
 - Recent applications view
+
+**Canonical Location**:
+
+```text
+apps/job-dashboard/
+├── src/index.js
+├── src/handlers/auto-apply.js
+├── src/views/dashboard.js
+└── README.md
+```
 
 ---
 
@@ -208,7 +218,7 @@ GET  /api/health  - Health check
 
 ## ⚡ Automation Scripts
 
-### 1. auto-daily-run.sh
+### 1. npm run ops:daily-run
 
 **Daily automated job search and application**
 
@@ -224,13 +234,13 @@ GET  /api/health  - Health check
 
 ```bash
 # Dry-run (test mode)
-./auto-daily-run.sh
+npm run ops:daily-run
 
 # Actual application (max 10)
-./auto-daily-run.sh --apply --max=10
+npm run ops:daily-run -- --apply --max=10
 
 # With specific keywords
-./auto-daily-run.sh --apply --keywords="DevOps,Security" --max=5
+npm run ops:daily-run -- --keywords="DevOps,Security" --max=5
 ```
 
 **Event Trigger Examples**:
@@ -243,7 +253,7 @@ curl -X POST https://resume.jclee.me/job/api/workflows/job-crawling/run
 node src/cli.js pipeline run <resume_id>
 ```
 
-### 2. auto-monitor.sh
+### 2. npm run ops:monitor
 
 **System monitoring and health check**
 
@@ -258,7 +268,7 @@ node src/cli.js pipeline run <resume_id>
 **Usage**:
 
 ```bash
-./auto-monitor.sh
+npm run ops:monitor
 ```
 
 **Event Trigger Example**:
@@ -267,7 +277,7 @@ node src/cli.js pipeline run <resume_id>
 curl -X POST https://resume.jclee.me/job/api/workflows/health-check/run
 ```
 
-### 3. auto-maintenance.sh
+### 3. npm run ops:maintenance
 
 **System maintenance and cleanup**
 
@@ -282,7 +292,7 @@ curl -X POST https://resume.jclee.me/job/api/workflows/health-check/run
 **Usage**:
 
 ```bash
-./auto-maintenance.sh
+npm run ops:maintenance
 ```
 
 **Event Trigger Example**:
@@ -353,7 +363,7 @@ Endpoints:
   "autoApply": {
     "enabled": false,
     "maxDailyApplications": 5,
-    "minMatchScore": 75,
+    "minMatchScore": 60,
     "platforms": ["wanted", "jobkorea", "saramin"],
     "keywords": ["DevOps", "Security Engineer", "SRE"]
   },

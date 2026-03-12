@@ -55,7 +55,7 @@ rl.on('close', () => {
     if (authCookie) {
       console.log(`   Auth: ${authCookie.name}`);
     }
-    console.log(`   File: ~/.OpenCode/data/${platform}-session.json`);
+    console.log(`   File: ~/.opencode/data/${platform}-session.json`);
   } catch (e) {
     console.error('❌ Parse error:', e.message);
     process.exit(1);

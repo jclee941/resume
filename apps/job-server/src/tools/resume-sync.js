@@ -30,7 +30,7 @@ export const resumeSyncTool = {
 - sync_activities: Sync only activities section
 - sync_language_certs: Sync only language certificates
 
-Data files stored in: ~/.OpenCode/data/wanted-resume/ (legacy: ~/.claude/data/wanted-resume/)`,
+Data files stored in: ~/.opencode/data/wanted-resume/ (legacy: ~/.claude/data/wanted-resume/)`,
 
   inputSchema: {
     type: 'object',

@@ -8,7 +8,7 @@ const RESUME_DATA_PATH = join(
   PROJECT_ROOT,
   'packages/data/resumes/master/resume_data.json',
 );
-const SESSION_PATH = join(homedir(), '.OpenCode/data/remember-session.json');
+const SESSION_PATH = join(homedir(), '.opencode/data/remember-session.json');
 
 const REMEMBER_URLS = {
   home: 'https://career.rememberapp.co.kr',
@@ -62,7 +62,7 @@ export class RememberProfileSync {
 
     const cookies = await this.page.context().cookies();
     const fs = await import('fs/promises');
-    await fs.mkdir(join(homedir(), '.OpenCode/data'), { recursive: true });
+    await fs.mkdir(join(homedir(), '.opencode/data'), { recursive: true });
     await fs.writeFile(SESSION_PATH, JSON.stringify({ cookies }, null, 2));
 
     console.log('Login successful, session saved.');

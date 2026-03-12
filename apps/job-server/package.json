@@ -33,6 +33,9 @@
     "auto": "node scripts/auto-all.js",
     "auto:sync": "node scripts/auto-all.js --sync",
     "auto:verify": "node scripts/auto-all.js --verify",
+    "ops:daily-run": "go run ./scripts/ops/auto-daily-run/main.go",
+    "ops:monitor": "go run ./scripts/ops/auto-monitor/main.go",
+    "ops:maintenance": "go run ./scripts/ops/auto-maintenance/main.go",
     "cookies:extract": "node scripts/extract-cookies-cdp.js",
     "cookies:import": "node scripts/import-cookies-manual.js"
   },

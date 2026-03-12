@@ -1,9 +1,9 @@
 # Job Automation Scripts Guide
 
-This guide documents all 26 scripts (25 .js + 1 .sh) in the `scripts/` directory. Scripts are organized by category (Authentication, Session Management, Utility) with usage examples, security considerations, and recommended approaches.
+This guide documents the operational scripts under `scripts/`, including JavaScript automation helpers and Go-based ops entrypoints. Scripts are organized by category with usage examples, security considerations, and recommended approaches.
 
 **Last Updated**: 2026-02-11  
-**Total Scripts**: 26 (25 .js + 1 .sh)
+**Total Scripts**: 29 (25 .js + 1 legacy .sh + 3 .go ops entrypoints)
 
 ---
 
@@ -16,6 +16,9 @@ This guide documents all 26 scripts (25 .js + 1 .sh) in the `scripts/` directory
 | `auth-persistent.js`       | Auth          | ✅ Active | **YES**     | Persistent auth with browser UI                    |
 | `profile-sync/`            | Sync          | ✅ Active | **YES**     | Sync resume_data.json to job platforms (8 modules) |
 | `auto-all.js`              | Orchestration | ✅ Active | **YES**     | Run all automation tasks in sequence               |
+| `ops/auto-daily-run.go`    | Ops           | ✅ Active | **YES**     | Daily job search/application orchestration         |
+| `ops/auto-monitor.go`      | Ops           | ✅ Active | **YES**     | Health and activity monitoring                     |
+| `ops/auto-maintenance.go`  | Ops           | ✅ Active | **YES**     | Cleanup, backup, and maintenance                   |
 | `skill-tag-map.js`         | Utility       | ✅ Active | YES         | Map SSOT skills to platform skill tags             |
 | `metrics-exporter.js`      | Monitoring    | ✅ Active | YES         | Export application metrics to Prometheus           |
 | `import-cookies-manual.js` | Session       | ⚠️ Manual | NO          | Manually import cookies from file                  |
