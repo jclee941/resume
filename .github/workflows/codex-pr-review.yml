@@ -1,4 +1,8 @@
-# Codex PR Review: auto-trigger Codex review on new/updated PRs
+# Codex PR Review
+# SSoT: qws941/.github — synced to all repos
+# Synced via: .github/sync.yml
+# Template: _codex-pr-review.yml
+#
 # Requires: Codex GitHub App installed with OAuth
 name: Codex PR Review
 

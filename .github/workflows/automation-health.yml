@@ -1,3 +1,8 @@
+# Automation Health
+# SSoT: qws941/.github — synced to all repos
+# Synced via: .github/sync.yml
+# Template: _automation-health.yml
+
 name: Automation Health
 
 on:
@@ -16,6 +21,7 @@ on:
       - 'Dependabot Auto-Fix'
       - 'Issue Auto-Label'
       - 'Issue Lifecycle'
+      - 'Lock Threads'
       - 'PR Labeler'
       - 'PR Size'
       - 'Release Drafter'
@@ -37,7 +43,7 @@ jobs:
     if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion != 'skipped' }}
     uses: qws941/.github/.github/workflows/_automation-health.yml@master
     with:
-      workflow-names: ${{ vars.AUTOMATION_HEALTH_WORKFLOWS != '' && vars.AUTOMATION_HEALTH_WORKFLOWS || 'Auto Approve Runs,Auto Merge,Branch Cleanup,CI Notify Failure,Codex Auto-Issue,Codex Issue Timeout,Codex PR Normalize,Codex PR Review,Codex Triage,Commit Lint,Dependabot Auto-Fix,Issue Auto-Label,Issue Lifecycle,PR Labeler,PR Size,Release Drafter,Stale,Welcome' }}
+      workflow-names: ${{ vars.AUTOMATION_HEALTH_WORKFLOWS != '' && vars.AUTOMATION_HEALTH_WORKFLOWS || 'Auto Approve Runs,Auto Merge,Branch Cleanup,CI Notify Failure,Codex Auto-Issue,Codex Issue Timeout,Codex PR Normalize,Codex PR Review,Codex Triage,Commit Lint,Dependabot Auto-Fix,Issue Auto-Label,Issue Lifecycle,Lock Threads,PR Labeler,PR Size,Release Drafter,Stale,Welcome' }}
       title-prefix: ${{ vars.AUTOMATION_HEALTH_TITLE_PREFIX != '' && vars.AUTOMATION_HEALTH_TITLE_PREFIX || '[Automation Health] degraded' }}
       issue-labels: ${{ vars.AUTOMATION_HEALTH_ISSUE_LABELS != '' && vars.AUTOMATION_HEALTH_ISSUE_LABELS || 'type:ci,priority:medium' }}
       unhealthy-conclusions: ${{ vars.AUTOMATION_HEALTH_UNHEALTHY_CONCLUSIONS != '' && vars.AUTOMATION_HEALTH_UNHEALTHY_CONCLUSIONS || 'failure,timed_out,action_required,cancelled' }}

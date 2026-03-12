@@ -1,9 +1,10 @@
 # Auto-label configuration for actions/labeler
 # Maps file path patterns to PR labels
+# Labels MUST exist in scripts/labels.yml (SSoT) to be applied downstream
 # This is a GENERIC config — repos can override with their own .github/labeler.yml
 
 # Documentation changes
-documentation:
+type:docs:
   - changed-files:
       - any-glob-to-any-file:
           - '**/*.md'
@@ -12,7 +13,7 @@ documentation:
           - 'CHANGELOG*'
 
 # CI/CD changes
-ci:
+type:ci:
   - changed-files:
       - any-glob-to-any-file:
           - '.github/**'
@@ -20,57 +21,35 @@ ci:
           - '*.yaml'
           - 'Makefile'
 
-# Infrastructure / Terraform
-terraform:
+# Infrastructure changes (Terraform, Docker, deployment)
+type:infra:
   - changed-files:
       - any-glob-to-any-file:
           - '**/*.tf'
           - '**/*.tfvars'
           - '**/.terraform.lock.hcl'
-
-# Docker changes
-docker:
-  - changed-files:
-      - any-glob-to-any-file:
           - '**/Dockerfile*'
           - '**/docker-compose*.yml'
           - '**/.dockerignore'
 
-# Python changes
-python:
+# Security-related changes
+type:security:
   - changed-files:
       - any-glob-to-any-file:
-          - '**/*.py'
-          - 'requirements*.txt'
-          - 'pyproject.toml'
-          - 'setup.py'
-          - 'setup.cfg'
+          - 'SECURITY*'
+          - '**/security/**'
+          - '**/*secret*'
+          - '**/*credential*'
 
-# TypeScript / JavaScript changes
-typescript:
+# Test changes
+type:test:
   - changed-files:
       - any-glob-to-any-file:
-          - '**/*.ts'
-          - '**/*.tsx'
-          - '**/*.js'
-          - '**/*.jsx'
-          - 'package.json'
-          - 'tsconfig*.json'
-
-# Shell scripts
-shell:
-  - changed-files:
-      - any-glob-to-any-file:
-          - '**/*.sh'
-          - '**/*.bash'
-
-# Configuration files
-config:
-  - changed-files:
-      - any-glob-to-any-file:
-          - '**/*.json'
-          - '**/*.toml'
-          - '**/*.ini'
-          - '**/*.cfg'
-          - '.editorconfig'
-          - '.gitignore'
+          - '**/*_test.go'
+          - '**/*.test.ts'
+          - '**/*.test.js'
+          - '**/*.spec.ts'
+          - '**/*.spec.js'
+          - '**/test/**'
+          - '**/tests/**'
+          - '**/__tests__/**'

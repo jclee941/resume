@@ -1,3 +1,8 @@
+# Issue Lifecycle
+# SSoT: qws941/.github — synced to all repos
+# Synced via: .github/sync.yml
+# Template: _issue-lifecycle.yml
+
 name: Issue Lifecycle
 
 on:

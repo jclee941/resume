@@ -3,7 +3,7 @@
 # Synced via: .github/sync.yml
 # Template: _ci-notify-failure.yml
 #
-# Creates a GitHub Issue when the CI workflow fails.
+# Creates a GitHub Issue when the CI workflow ends in an unhealthy state.
 # Customize the 'workflows' list per-repo if your CI workflow has a different name.
 
 name: CI Notify Failure
@@ -18,6 +18,6 @@ permissions:
 
 jobs:
   notify:
-    if: github.event.workflow_run.conclusion == 'failure'
+    if: contains(fromJSON('["failure","timed_out","action_required","cancelled"]'), github.event.workflow_run.conclusion)
     uses: qws941/.github/.github/workflows/_ci-notify-failure.yml@master
     secrets: inherit

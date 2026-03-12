@@ -7,7 +7,7 @@ name: Codex Triage
 
 on:
   issues:
-    types: [opened, labeled]
+    types: [opened, edited, labeled]
 
 permissions:
   issues: write
