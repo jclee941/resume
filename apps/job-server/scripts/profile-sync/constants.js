@@ -10,7 +10,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const CONFIG = {
   SSOT_PATH: path.resolve(__dirname, '../../../../packages/data/resumes/master/resume_data.json'),
   USER_DATA_DIR: path.join(process.env.HOME || '/tmp', '.opencode/browser-data'),
-  SESSION_DIR: path.join(process.env.HOME || '/tmp', '.OpenCode/data'),
+  SESSION_DIR: path.join(process.env.HOME || '/tmp', '.opencode/data'),
   HEADLESS: process.argv.includes('--headless'),
   APPLY: process.argv.includes('--apply'),
   DIFF_ONLY: process.argv.includes('--diff'),
@@ -39,22 +39,8 @@ export const PLATFORMS = {
   },
   jobkorea: {
     name: 'JobKorea',
-    profileUrl: 'https://www.jobkorea.co.kr/User/Mng/Resume/ResumeList',
-    editUrl: 'https://www.jobkorea.co.kr/User/Resume/RegResume',
-    selectors: {
-      name: '#userName',
-      email: '#userEmail',
-      phone: '#userPhone',
-      headline: '#selfIntroduce',
-      skills: '.skill-tag-area',
-    },
-    mapData: (ssot) => ({
-      name: ssot.personal.name,
-      email: ssot.personal.email,
-      phone: ssot.personal.phone,
-      headline: `${ssot.current.position} | ${ssot.summary.totalExperience}`,
-      skills: ssot.summary.expertise,
-    }),
+    profileUrl: 'https://www.jobkorea.co.kr/User/Resume/View?rNo=30236578',
+    editUrl: 'https://www.jobkorea.co.kr/User/Resume/Write?Input_Type_Code=3',
   },
   saramin: {
     name: 'Saramin',

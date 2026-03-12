@@ -14,7 +14,27 @@ import fs from 'fs';
 import path from 'path';
 
 function loadWantedSession() {
+  // Try platform-specific session file first
   const sessionPath = path.join(CONFIG.SESSION_DIR, 'wanted-session.json');
+  const cookies = tryLoadSessionFile(sessionPath);
+  if (cookies) return cookies;
+
+  // Fallback: check unified sessions.json (written by SessionManager)
+  const unifiedPath = path.join(CONFIG.SESSION_DIR, 'sessions.json');
+  if (fs.existsSync(unifiedPath)) {
+    try {
+      const sessions = JSON.parse(fs.readFileSync(unifiedPath, 'utf-8'));
+      const wanted = sessions.wanted;
+      if (wanted?.cookieString) return wanted.cookieString;
+      if (wanted?.cookies && typeof wanted.cookies === 'string') return wanted.cookies;
+    } catch {
+      // ignore parse errors
+    }
+  }
+  return null;
+}
+
+function tryLoadSessionFile(sessionPath) {
   if (!fs.existsSync(sessionPath)) {
     return null;
   }

@@ -1,3 +1,10 @@
+/**
+ * @deprecated Use apps/job-server/scripts/profile-sync/jobkorea-handler.js instead.
+ * This file used CSS-selector-based form filling which no longer works.
+ * The new handler uses form serialization + $.post('/User/Resume/Save') via page.evaluate().
+ * Run: node apps/job-server/scripts/profile-sync/index.js jobkorea [--apply]
+ */
+
 import { chromium } from 'playwright';
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
@@ -8,7 +15,7 @@ const RESUME_DATA_PATH = join(
   PROJECT_ROOT,
   'packages/data/resumes/master/resume_data.json',
 );
-const SESSION_PATH = join(homedir(), '.OpenCode/data/jobkorea-session.json');
+const SESSION_PATH = join(homedir(), '.opencode/data/jobkorea-session.json');
 
 const JOBKOREA_URLS = {
   login: 'https://www.jobkorea.co.kr/Login',
@@ -105,7 +112,7 @@ export class JobKoreaProfileSync {
 
     const cookies = await this.page.context().cookies();
     const fs = await import('fs/promises');
-    await fs.mkdir(join(homedir(), '.OpenCode/data'), { recursive: true });
+    await fs.mkdir(join(homedir(), '.opencode/data'), { recursive: true });
     await fs.writeFile(SESSION_PATH, JSON.stringify({ cookies }, null, 2));
 
     console.log('Login successful, session saved.');
