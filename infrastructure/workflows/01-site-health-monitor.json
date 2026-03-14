@@ -66,28 +66,26 @@
     },
     {
       "parameters": {
-        "authentication": "oAuth2",
-        "select": "channel",
-        "channelId": {
-          "__rl": true,
-          "value": "C07XXXXXXXX",
-          "mode": "list",
-          "cachedResultName": "#infra-alerts"
+        "method": "POST",
+        "url": "={{ $env.EVOLUTION_API_URL }}/message/sendText/{{ $env.EVOLUTION_INSTANCE_NAME }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.EVOLUTION_API_KEY }}"
+            }
+          ]
         },
-        "text": "=⚠️ **Resume Site Health Alert**\n\nStatus: {{ $json.status || 'DOWN' }}\nDeployed: {{ $json.deployed_at || 'Unknown' }}\nUptime: {{ $json.uptime_seconds || 0 }}s\n\n**Metrics:**\n• Total Requests: {{ $json.metrics.requests_total || 0 }}\n• Success: {{ $json.metrics.requests_success || 0 }}\n• Errors: {{ $json.metrics.requests_error || 0 }}\n\n🔗 https://resume.jclee.me/health\n📊 https://grafana.jclee.me/d/resume",
-        "otherOptions": {}
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ number: $env.EVOLUTION_WHATSAPP_NUMBER, text: `⚠️ Resume Site Health Alert\n\nStatus: ${$json.status || 'DOWN'}\nDeployed: ${$json.deployed_at || 'Unknown'}\nUptime: ${$json.uptime_seconds || 0}s\n\n📈 Metrics\n- Total Requests: ${$json.metrics?.requests_total || 0}\n- Success: ${$json.metrics?.requests_success || 0}\n- Errors: ${$json.metrics?.requests_error || 0}\n\n🔗 https://resume.jclee.me/health\n📊 https://grafana.jclee.me/d/resume` }) }}"
       },
-      "id": "slack-alert",
-      "name": "Send Slack Alert",
-      "type": "n8n-nodes-base.slack",
-      "typeVersion": 2.2,
-      "position": [900, 180],
-      "credentials": {
-        "slackOAuth2Api": {
-          "id": "1",
-          "name": "Slack account"
-        }
-      }
+      "id": "whatsapp-alert",
+      "name": "Send WhatsApp Alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 180]
     },
     {
       "parameters": {
@@ -202,7 +200,7 @@
       "main": [
         [
           {
-            "node": "Send Slack Alert",
+            "node": "Send WhatsApp Alert",
             "type": "main",
             "index": 0
           },

@@ -70,63 +70,27 @@
     },
     {
       "parameters": {
-        "resource": "message",
-        "operation": "post",
-        "channel": "#monitoring",
-        "text": "🚨 Resume Portfolio Down",
-        "attachments": [],
-        "blocksUi": {
-          "blocksValues": [
+        "method": "POST",
+        "url": "={{ $env.EVOLUTION_API_URL }}/message/sendText/{{ $env.EVOLUTION_INSTANCE_NAME }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
             {
-              "type": "section",
-              "fields": {
-                "fieldsValues": [
-                  {
-                    "type": "markdown",
-                    "text": "=*URL:*\nhttps://resume.jclee.me"
-                  },
-                  {
-                    "type": "markdown",
-                    "text": "=*Status:*\n{{ $('Check Resume Health').item.json.statusCode || 'Timeout' }}"
-                  },
-                  {
-                    "type": "markdown",
-                    "text": "=*Time:*\n{{ $now.toISO() }}"
-                  },
-                  {
-                    "type": "markdown",
-                    "text": "=*Error:*\n{{ $('Check Resume Health').item.json.error || 'HTTP ' + $('Check Resume Health').item.json.statusCode }}"
-                  }
-                ]
-              }
-            },
-            {
-              "type": "context",
-              "elements": {
-                "elementsValues": [
-                  {
-                    "type": "markdown",
-                    "text": "Triggered by n8n Health Check Monitor"
-                  }
-                ]
-              }
+              "name": "apikey",
+              "value": "={{ $env.EVOLUTION_API_KEY }}"
             }
           ]
         },
-        "otherOptions": {}
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ number: $env.EVOLUTION_WHATSAPP_NUMBER, text: `🚨 Resume Portfolio Down\n\n🔗 URL: https://resume.jclee.me\n📟 Status: ${$('Check Resume Health').item.json.statusCode || 'Timeout'}\n🕒 Time: ${$now.toISO()}\n❗ Error: ${$('Check Resume Health').item.json.error || ('HTTP ' + $('Check Resume Health').item.json.statusCode)}` }) }}"
       },
-      "id": "slack-oauth",
-      "name": "Send Slack Alert (OAuth2)",
-      "type": "n8n-nodes-base.slack",
-      "typeVersion": 2.3,
+      "id": "whatsapp-alert",
+      "name": "Send WhatsApp Alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
       "position": [850, 200],
-      "credentials": {
-        "slackOAuth2Api": {
-          "id": "1",
-          "name": "Slack OAuth2 API"
-        }
-      },
-      "notes": "Uses Slack OAuth2 credential registered in n8n"
+      "notes": "Uses Evolution API environment variables"
     }
   ],
   "connections": {
@@ -156,7 +120,7 @@
       "main": [
         [
           {
-            "node": "Send Slack Alert (OAuth2)",
+            "node": "Send WhatsApp Alert",
             "type": "main",
             "index": 0
           }

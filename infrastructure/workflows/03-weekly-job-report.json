@@ -9,7 +9,12 @@
       "position": [240, 300],
       "parameters": {
         "rule": {
-          "interval": [{"field": "cronExpression", "expression": "0 9 * * 1"}]
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * 1"
+            }
+          ]
         }
       }
     },
@@ -27,37 +32,76 @@
     },
     {
       "id": "format-message",
-      "name": "Format Slack Message",
+      "name": "Format WhatsApp Message",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [680, 300],
       "parameters": {
-        "jsCode": "const report = $input.first().json;\nconst emoji = {applied:'📤',interview:'🎯',offer:'🎉',rejected:'❌'};\nlet status = Object.entries(report.byStatus||{}).map(([s,c])=>`${emoji[s]||'•'} ${s}: ${c}`).join('\\n');\nreturn {blocks:[{type:'header',text:{type:'plain_text',text:'📊 Weekly Report'}},{type:'section',fields:[{type:'mrkdwn',text:`*Total*\\n${report.total||0}`},{type:'mrkdwn',text:`*This Week*\\n${report.thisWeek||0}`}]},{type:'section',text:{type:'mrkdwn',text:`*Status*\\n${status||'None'}`}}]};"
+        "jsCode": "const report = $input.first().json;\nconst emoji = { applied: '📤', interview: '🎯', offer: '🎉', rejected: '❌' };\nconst status = Object.entries(report.byStatus || {})\n  .map(([s, c]) => `${emoji[s] || '•'} ${s}: ${c}`)\n  .join('\\n');\nconst text = `📊 Weekly Report\\n\\n📌 Total: ${report.total || 0}\\n🗓️ This Week: ${report.thisWeek || 0}\\n\\n📈 Status\\n${status || 'No updates'}`;\nreturn [{ json: { text } }];"
       }
     },
     {
-      "id": "send-slack",
-      "name": "Send to Slack",
-      "type": "n8n-nodes-base.slack",
-      "typeVersion": 2.1,
+      "id": "send-whatsapp",
+      "name": "Send WhatsApp Weekly Report",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
       "position": [900, 300],
       "parameters": {
-        "authentication": "oAuth2",
-        "channel": "#job-applications",
-        "blocksUi": "={{ JSON.stringify($json.blocks) }}",
-        "otherOptions": {}
-      },
-      "credentials": {
-        "slackOAuth2Api": {"id": "slack-oauth", "name": "Slack OAuth2"}
+        "method": "POST",
+        "url": "={{ $env.EVOLUTION_API_URL }}/message/sendText/{{ $env.EVOLUTION_INSTANCE_NAME }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.EVOLUTION_API_KEY }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ number: $env.EVOLUTION_WHATSAPP_NUMBER, text: $json.text }) }}"
       }
     }
   ],
   "connections": {
-    "schedule-trigger": {"main": [[{"node": "fetch-report", "type": "main", "index": 0}]]},
-    "fetch-report": {"main": [[{"node": "format-message", "type": "main", "index": 0}]]},
-    "format-message": {"main": [[{"node": "send-slack", "type": "main", "index": 0}]]}
+    "schedule-trigger": {
+      "main": [
+        [
+          {
+            "node": "fetch-report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "fetch-report": {
+      "main": [
+        [
+          {
+            "node": "format-message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "format-message": {
+      "main": [
+        [
+          {
+            "node": "send-whatsapp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
   },
-  "settings": {"executionOrder": "v1"},
-  "tags": ["automation", "reporting", "slack"],
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": ["automation", "reporting"],
   "triggerCount": 1
 }

@@ -67,28 +67,26 @@
     },
     {
       "parameters": {
-        "authentication": "oAuth2",
-        "select": "channel",
-        "channelId": {
-          "__rl": true,
-          "value": "C07YYYYYYYY",
-          "mode": "list",
-          "cachedResultName": "#deployments"
+        "method": "POST",
+        "url": "={{ $env.EVOLUTION_API_URL }}/message/sendText/{{ $env.EVOLUTION_INSTANCE_NAME }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.EVOLUTION_API_KEY }}"
+            }
+          ]
         },
-        "text": "=🚀 **Resume Site Deployed**\n\nCommit: `{{ $json.commit_sha.substring(0,7) }}`\nMessage: {{ $json.commit_message }}\nAuthor: {{ $json.author }}\nTime: {{ $json.deployed_at }}\nStatus: {{ $json.status === 'success' ? '✅' : '❌' }} {{ $json.status.toUpperCase() }}\n\n🔗 https://github.com/qws941/resume/actions/runs/{{ $json.workflow_run_id }}\n🌐 https://resume.jclee.me",
-        "otherOptions": {}
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ number: $env.EVOLUTION_WHATSAPP_NUMBER, text: `🚀 Resume Site Deployed\n\nCommit: ${$json.commit_sha.substring(0, 7)}\nMessage: ${$json.commit_message}\nAuthor: ${$json.author}\nTime: ${$json.deployed_at}\nStatus: ${$json.status === 'success' ? '✅' : '❌'} ${$json.status.toUpperCase()}\n\n🔗 https://github.com/qws941/resume/actions/runs/${$json.workflow_run_id}\n🌐 https://resume.jclee.me` }) }}"
       },
-      "id": "slack-deployment-notification",
-      "name": "Send Slack Notification",
-      "type": "n8n-nodes-base.slack",
-      "typeVersion": 2.2,
-      "position": [680, 180],
-      "credentials": {
-        "slackOAuth2Api": {
-          "id": "1",
-          "name": "Slack account"
-        }
-      }
+      "id": "whatsapp-deployment-notification",
+      "name": "Send WhatsApp Notification",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 180]
     },
     {
       "parameters": {
@@ -172,7 +170,7 @@
       "main": [
         [
           {
-            "node": "Send Slack Notification",
+            "node": "Send WhatsApp Notification",
             "type": "main",
             "index": 0
           },

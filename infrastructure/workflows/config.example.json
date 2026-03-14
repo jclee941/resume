@@ -1,9 +1,9 @@
 {
-  "slack": {
-    "infra_alerts_channel_id": "C07XXXXXXXX",
-    "deployments_channel_id": "C07YYYYYYYY",
-    "credential_id": "1",
-    "credential_name": "Slack account"
+  "evolution_api": {
+    "api_url": "https://evolution.jclee.me",
+    "api_key": "YOUR_EVOLUTION_API_KEY",
+    "instance_name": "resume-bot",
+    "whatsapp_number": "821012345678"
   },
   "google_sheets": {
     "spreadsheet_id": "GOOGLE_SHEET_ID_HERE_44_CHARS",

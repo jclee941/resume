@@ -59,12 +59,6 @@
               "name": "minExperience",
               "value": "5",
               "type": "string"
-            },
-            {
-              "id": "slack-webhook",
-              "name": "slackWebhook",
-              "value": "https://hooks.slack.com/services/YOUR_WEBHOOK_URL",
-              "type": "string"
             }
           ]
         },
@@ -75,7 +69,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [450, 400],
-      "notes": "⚠️ REQUIRED: Update categories, keywords, and Slack webhook URL"
+      "notes": "⚠️ REQUIRED: Update categories and keywords"
     },
     {
       "parameters": {
@@ -125,11 +119,20 @@
     },
     {
       "parameters": {
-        "url": "={{ $('Configuration').item.json.slackWebhook }}",
         "method": "POST",
+        "url": "={{ $env.EVOLUTION_API_URL }}/message/sendText/{{ $env.EVOLUTION_INSTANCE_NAME }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.EVOLUTION_API_KEY }}"
+            }
+          ]
+        },
         "sendBody": true,
-        "contentType": "json",
-        "jsonBody": "={\n  \"text\": \"⚠️ Wanted Auth Expired\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \"⚠️ Wanted Session Expired\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"Please run `resume-cli wanted auth --browser` to re-authenticate\"\n      }\n    }\n  ]\n}",
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ number: $env.EVOLUTION_WHATSAPP_NUMBER, text: '⚠️ Wanted Session Expired\n\nPlease run resume-cli wanted auth --browser to re-authenticate.' }) }}",
         "options": {}
       },
       "id": "notify-auth-expired",
@@ -221,25 +224,34 @@
     },
     {
       "parameters": {
-        "jsCode": "// Format job list for Slack notification\nconst jobs = $input.all().slice(0, 10);\n\nconst blocks = [\n  {\n    \"type\": \"header\",\n    \"text\": {\n      \"type\": \"plain_text\",\n      \"text\": `🔍 Found ${$input.all().length} New Jobs on Wanted`\n    }\n  },\n  {\n    \"type\": \"divider\"\n  }\n];\n\nfor (const job of jobs) {\n  const j = job.json;\n  const location = j.address?.location + (j.address?.district ? ' ' + j.address.district : '') || 'N/A';\n  const salary = j.annual_from === 0 && j.annual_to === 0 ? '회사내규' : j.annual_to ? `${j.annual_from}~${j.annual_to}만원` : `${j.annual_from}만원+`;\n  blocks.push({\n    \"type\": \"section\",\n    \"text\": {\n      \"type\": \"mrkdwn\",\n      \"text\": `*<https://www.wanted.co.kr/wd/${j.id}|${j.position}>*\\n🏢 ${j.company?.name || 'Unknown'}\\n📍 ${location}\\n💰 추천보상금: ${j.reward?.formatted_total || 'N/A'}\\n💵 연봉: ${salary}`\n    }\n  });\n  blocks.push({ \"type\": \"divider\" });\n}\n\nblocks.push({\n  \"type\": \"context\",\n  \"elements\": [\n    {\n      \"type\": \"mrkdwn\",\n      \"text\": `Searched at ${new Date().toISOString()} | Total: ${$input.all().length} jobs`\n    }\n  ]\n});\n\nreturn [{ json: { text: `🔍 Found ${$input.all().length} new jobs`, blocks } }];"
+        "jsCode": "const jobs = $input.all().slice(0, 10);\nconst total = $input.all().length;\nconst lines = [`🔍 Wanted Job Alert`, ``, `총 ${total}개 신규 공고 발견`];\n\nfor (const job of jobs) {\n  const j = job.json;\n  const location = (j.address?.location || '') + (j.address?.district ? ` ${j.address.district}` : '');\n  const safeLocation = location.trim() || 'N/A';\n  const salary = j.annual_from === 0 && j.annual_to === 0\n    ? '회사내규'\n    : j.annual_to\n      ? `${j.annual_from}~${j.annual_to}만원`\n      : `${j.annual_from}만원+`;\n\n  lines.push('');\n  lines.push(`💼 ${j.position || 'Unknown Position'}`);\n  lines.push(`🏢 ${j.company?.name || 'Unknown Company'}`);\n  lines.push(`📍 ${safeLocation}`);\n  lines.push(`💰 추천보상금: ${j.reward?.formatted_total || 'N/A'}`);\n  lines.push(`💵 연봉: ${salary}`);\n  lines.push(`🔗 https://www.wanted.co.kr/wd/${j.id}`);\n}\n\nlines.push('');\nlines.push(`🕒 검색 시각: ${new Date().toISOString()}`);\n\nreturn [{ json: { text: lines.join('\\n') } }];"
       },
-      "id": "format-slack",
-      "name": "Format Slack Message",
+      "id": "format-whatsapp",
+      "name": "Format WhatsApp Message",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [1850, 550]
     },
     {
       "parameters": {
-        "url": "={{ $('Configuration').item.json.slackWebhook }}",
         "method": "POST",
+        "url": "={{ $env.EVOLUTION_API_URL }}/message/sendText/{{ $env.EVOLUTION_INSTANCE_NAME }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.EVOLUTION_API_KEY }}"
+            }
+          ]
+        },
         "sendBody": true,
-        "contentType": "json",
-        "jsonBody": "={{ JSON.stringify($json) }}",
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ number: $env.EVOLUTION_WHATSAPP_NUMBER, text: $json.text }) }}",
         "options": {}
       },
-      "id": "slack-notify",
-      "name": "Send to Slack",
+      "id": "whatsapp-notify",
+      "name": "Send WhatsApp Notification",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [2050, 550]
@@ -411,7 +423,7 @@
       "main": [
         [
           {
-            "node": "Format Slack Message",
+            "node": "Format WhatsApp Message",
             "type": "main",
             "index": 0
           },
@@ -430,11 +442,11 @@
         ]
       ]
     },
-    "Format Slack Message": {
+    "Format WhatsApp Message": {
       "main": [
         [
           {
-            "node": "Send to Slack",
+            "node": "Send WhatsApp Notification",
             "type": "main",
             "index": 0
           }
@@ -452,7 +464,7 @@
         ]
       ]
     },
-    "Send to Slack": {
+    "Send WhatsApp Notification": {
       "main": [
         [
           {

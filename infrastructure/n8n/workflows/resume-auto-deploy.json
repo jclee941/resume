@@ -96,56 +96,48 @@
     },
     {
       "parameters": {
-        "url": "={{ $env.SLACK_WEBHOOK_URL }}",
-        "sendBody": true,
-        "bodyParameters": {
+        "method": "POST",
+        "url": "={{ $env.EVOLUTION_API_URL }}/message/sendText/{{ $env.EVOLUTION_INSTANCE_NAME }}",
+        "sendHeaders": true,
+        "headerParameters": {
           "parameters": [
             {
-              "name": "text",
-              "value": "✅ Resume deployed successfully!\n\nCommit: {{ $('GitHub Webhook').item.json.head_commit.message }}\nAuthor: {{ $('GitHub Webhook').item.json.head_commit.author.name }}\nURL: https://resume.jclee.me\nTimestamp: {{ $now.toISO() }}"
-            },
-            {
-              "name": "username",
-              "value": "Resume Deploy Bot"
-            },
-            {
-              "name": "icon_emoji",
-              "value": ":rocket:"
+              "name": "apikey",
+              "value": "={{ $env.EVOLUTION_API_KEY }}"
             }
           ]
         },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ number: $env.EVOLUTION_WHATSAPP_NUMBER, text: `✅ Resume deployed successfully!\n\nCommit: ${$('GitHub Webhook').item.json.head_commit.message}\nAuthor: ${$('GitHub Webhook').item.json.head_commit.author.name}\nURL: https://resume.jclee.me\nTimestamp: ${$now.toISO()}` }) }}",
         "options": {}
       },
-      "id": "slack-success",
-      "name": "Slack Success Notification",
+      "id": "whatsapp-success",
+      "name": "WhatsApp Success Notification",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [2010, 200]
     },
     {
       "parameters": {
-        "url": "={{ $env.SLACK_WEBHOOK_URL }}",
-        "sendBody": true,
-        "bodyParameters": {
+        "method": "POST",
+        "url": "={{ $env.EVOLUTION_API_URL }}/message/sendText/{{ $env.EVOLUTION_INSTANCE_NAME }}",
+        "sendHeaders": true,
+        "headerParameters": {
           "parameters": [
             {
-              "name": "text",
-              "value": "❌ Resume deployment failed!\n\nCommit: {{ $('GitHub Webhook').item.json.head_commit.message }}\nError: {{ $json.stderr || $json.error }}\nTimestamp: {{ $now.toISO() }}"
-            },
-            {
-              "name": "username",
-              "value": "Resume Deploy Bot"
-            },
-            {
-              "name": "icon_emoji",
-              "value": ":x:"
+              "name": "apikey",
+              "value": "={{ $env.EVOLUTION_API_KEY }}"
             }
           ]
         },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ number: $env.EVOLUTION_WHATSAPP_NUMBER, text: `❌ Resume deployment failed!\n\nCommit: ${$('GitHub Webhook').item.json.head_commit.message}\nError: ${$json.stderr || $json.error}\nTimestamp: ${$now.toISO()}` }) }}",
         "options": {}
       },
-      "id": "slack-failure",
-      "name": "Slack Failure Notification",
+      "id": "whatsapp-failure",
+      "name": "WhatsApp Failure Notification",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [2010, 400]
@@ -273,7 +265,7 @@
       "main": [
         [
           {
-            "node": "Slack Success Notification",
+            "node": "WhatsApp Success Notification",
             "type": "main",
             "index": 0
           },
@@ -285,7 +277,7 @@
         ]
       ]
     },
-    "Slack Success Notification": {
+    "WhatsApp Success Notification": {
       "main": [
         [
           {
