@@ -83,32 +83,61 @@ export class ApplyOrchestrator {
 
     const toApply = jobs.slice(0, remaining);
 
-    for (const job of toApply) {
+    // Initialize browser for real applies
+    if (!dryRun && this.#applier?.initBrowser) {
       try {
-        if (dryRun) {
-          results.push({
-            job,
-            success: true,
-            dryRun: true,
-            message: 'Would apply',
-          });
-          this.#stats.applied++;
-        } else {
-          const result = await this.#applier.apply(job);
-          results.push({ job, ...result });
+        await this.#applier.initBrowser();
+      } catch (error) {
+        return {
+          results: [],
+          applied: 0,
+          failed: toApply.length,
+          skipped: jobs.length - toApply.length,
+          error: `Browser init failed: ${error.message}`,
+        };
+      }
+    }
 
-          if (result.success) {
-            this.#appManager?.addApplication(job, { status: 'applied' });
+    try {
+      for (const job of toApply) {
+        try {
+          if (dryRun) {
+            results.push({
+              job,
+              success: true,
+              dryRun: true,
+              message: 'Would apply',
+            });
             this.#stats.applied++;
           } else {
-            this.#stats.failed++;
-          }
+            console.log(`  🎯 Applying to: ${job.company || job.title} (${job.source}) — ${job.sourceUrl}`);
+            const result = await this.#applier.applyToJob(job);
+            results.push({ job, ...result });
 
-          await this.#sleep(this.#config.delayBetweenApplies);
+            if (result.success) {
+              this.#appManager?.addApplication(job, { status: 'applied' });
+              this.#stats.applied++;
+            } else {
+              console.error(`❌ Apply failed for ${job.company || job.title}: ${result.error}`);
+              this.#stats.failed++;
+            }
+
+            await this.#sleep(this.#config.delayBetweenApplies);
+          }
+        } catch (error) {
+          console.error(`❌ Apply exception for ${job.company || job.title}: ${error.message}`);
+          results.push({ job, success: false, error: error.message });
+          this.#stats.failed++;
         }
-      } catch (error) {
-        results.push({ job, success: false, error: error.message });
-        this.#stats.failed++;
+      }
+    } finally {
+      // Cleanup browser after real applies
+      if (!dryRun && this.#applier?.closeBrowser) {
+        try {
+          await this.#applier.closeBrowser();
+        } catch {
+          // Browser cleanup failure is non-fatal
+        }
       }
     }
 

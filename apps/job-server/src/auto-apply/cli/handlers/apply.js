@@ -1,6 +1,7 @@
 import { UnifiedApplySystem } from '../../../shared/services/apply/index.js';
 import { ApplicationManager } from '../../application-manager.js';
 import { UnifiedJobCrawler } from '../../../crawlers/index.js';
+import { AutoApplier } from '../../auto-applier.js';
 import { getResumeMasterMarkdownPath } from '../../../shared/utils/paths.js';
 
 export async function runAutoApply(args) {
@@ -22,6 +23,11 @@ export async function runAutoApply(args) {
 
   const system = new UnifiedApplySystem({
     crawler,
+    applier: new AutoApplier({
+      dryRun,
+      maxDailyApplications: maxApps,
+      autoApply: !dryRun,
+    }),
     appManager,
     config: {
       dryRun,
@@ -81,6 +87,11 @@ export async function runUnifiedSystem(args) {
 
   const system = new UnifiedApplySystem({
     crawler,
+    applier: new AutoApplier({
+      dryRun,
+      maxDailyApplications: maxApps,
+      autoApply: !dryRun,
+    }),
     appManager,
     config: {
       dryRun,
