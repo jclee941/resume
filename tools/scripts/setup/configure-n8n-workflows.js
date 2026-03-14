@@ -132,30 +132,26 @@ function validateConfig(config) {
   const errors = [];
 
   // Validate required top-level keys
-  const requiredKeys = ['slack', 'google_sheets', 'monitoring'];
+  const requiredKeys = ['evolution_api', 'google_sheets', 'monitoring'];
   for (const key of requiredKeys) {
     if (!config[key]) {
       errors.push(`Missing required configuration: ${key}`);
     }
   }
 
-  // Validate Slack configuration
-  if (config.slack) {
-    if (
-      !config.slack.infra_alerts_channel_id ||
-      !/^C[A-Z0-9]{10}$/.test(config.slack.infra_alerts_channel_id)
-    ) {
-      errors.push(
-        'Invalid Slack infra_alerts_channel_id (expected format: C07XXXXXXXX)'
-      );
+  // Validate Evolution API configuration
+  if (config.evolution_api) {
+    if (!config.evolution_api.api_url || !config.evolution_api.api_url.startsWith('https://')) {
+      errors.push('Invalid evolution_api.api_url (expected HTTPS URL)');
     }
-    if (
-      !config.slack.deployments_channel_id ||
-      !/^C[A-Z0-9]{10}$/.test(config.slack.deployments_channel_id)
-    ) {
-      errors.push(
-        'Invalid Slack deployments_channel_id (expected format: C07YYYYYYYY)'
-      );
+    if (!config.evolution_api.api_key || config.evolution_api.api_key.length < 1) {
+      errors.push('Missing evolution_api.api_key');
+    }
+    if (!config.evolution_api.instance_name || !/^[a-zA-Z0-9_-]+$/.test(config.evolution_api.instance_name)) {
+      errors.push('Invalid evolution_api.instance_name (expected alphanumeric with hyphens/underscores)');
+    }
+    if (!config.evolution_api.whatsapp_number || !/^[0-9]{10,15}$/.test(config.evolution_api.whatsapp_number)) {
+      errors.push('Invalid evolution_api.whatsapp_number (expected 10-15 digit phone number)');
     }
   }
 
@@ -194,14 +190,18 @@ function validateConfig(config) {
 function applyConfiguration(workflowContent, config) {
   let content = workflowContent;
 
-  // Replace Slack channel IDs
+  // Replace Evolution API placeholders
   content = content.replace(
-    /C07XXXXXXXX/g,
-    config.slack.infra_alerts_channel_id
+    /EVOLUTION_API_URL_PLACEHOLDER/g,
+    config.evolution_api.api_url
   );
   content = content.replace(
-    /C07YYYYYYYY/g,
-    config.slack.deployments_channel_id
+    /EVOLUTION_INSTANCE_PLACEHOLDER/g,
+    config.evolution_api.instance_name
+  );
+  content = content.replace(
+    /EVOLUTION_WHATSAPP_PLACEHOLDER/g,
+    config.evolution_api.whatsapp_number
   );
 
   // Replace Google Sheets IDs

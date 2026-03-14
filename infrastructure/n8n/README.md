@@ -20,7 +20,7 @@ This workflow automates the entire resume deployment pipeline:
 5. **E2E Tests** - Runs Playwright tests
 6. **Deploy** - Deploys to Cloudflare Workers
 7. **Health Check** - Verifies deployment
-8. **Notifications** - Sends Slack alerts and logs to Loki
+23: 8. **Notifications** - Sends WhatsApp notifications and logs to Loki
 
 ## Quick Start
 
@@ -38,7 +38,10 @@ This workflow automates the entire resume deployment pipeline:
 # Add to ~/.env
 export N8N_URL="https://n8n.jclee.me"
 export N8N_API_KEY="your-api-key-here"
-export SLACK_WEBHOOK_URL="your-slack-webhook-url"
+41: export EVOLUTION_API_URL="https://evolution.jclee.me"
+42: export EVOLUTION_API_KEY="your-evolution-api-key"
+43: export EVOLUTION_INSTANCE_NAME="resume-bot"
+44: export EVOLUTION_WHATSAPP_NUMBER="821012345678"
 
 # Load environment
 source ~/.env
@@ -114,7 +117,7 @@ git push origin master
 # Check n8n dashboard
 # Visit: https://n8n.jclee.me/executions
 
-# Check Slack for notification
+117: # Check WhatsApp for notification
 # Check Loki logs
 curl https://loki.jclee.me/loki/api/v1/query \
   -G --data-urlencode 'query={job="resume-deploy"}' | jq
@@ -133,7 +136,7 @@ Automated deployment pipeline triggered by GitHub push events.
 - GitHub webhook trigger
 - Automated build and test
 - Cloudflare Workers deployment
-- Slack notifications
+136: - WhatsApp notifications
 - Loki logging
 
 ### 2. Health Check Monitor
@@ -146,14 +149,14 @@ Periodic health monitoring for resume.jclee.me.
 
 - Runs every 5 minutes
 - HTTP health check to `/health` endpoint
-- Slack alert on downtime/errors
-- Uses Slack Webhook URL
+149: - WhatsApp notifications on downtime/errors
+150: - Uses Evolution API
 
 **Quick Setup**:
 
 ```bash
 # 1. Import workflow to n8n.jclee.me
-# 2. Update "Set Slack Webhook URL" node with registered credential
+156: # 2. Update "Evolution API Success/Failure" nodes with registered credential
 # 3. Activate workflow
 ```
 
@@ -162,7 +165,7 @@ Periodic health monitoring for resume.jclee.me.
 - Health check interval: 5 minutes
 - Timeout: 10 seconds
 - Error conditions: Non-200 status code OR timeout
-- Alert format: Slack Block Kit with status, time, error details
+165: - Alert format: WhatsApp text with status, time, error details
 
 ### 4. Grafana Alert → GitHub Issue
 
@@ -218,40 +221,40 @@ Creates GitHub issues from GlitchTip error webhooks with fingerprint-based dedup
 4. In GlitchTip → Project Settings → Notifications → Add webhook:
    - URL: `https://n8n.jclee.me/webhook/<webhook-path-from-workflow>`
 5. Activate workflow
-### 3. Health Check Monitor (OAuth2) ⭐ RECOMMENDED
+221: ### 3. Health Check Monitor (Evolution API) ⭐ RECOMMENDED
 
-OAuth2-based health monitoring with secure credential management.
+223: Evolution API-based health monitoring with secure credential management.
 
-**Workflow File**: `resume-healthcheck-oauth2.json`
+225: **Workflow File**: `resume-healthcheck-evolution.json`
 
 **Workflow ID**: `yCWYRtQsXNIsENi1`
 
 **URL**: https://n8n.jclee.me/workflow/yCWYRtQsXNIsENi1
 
-**Why OAuth2?**
+231: **Why Evolution API?**
 
-- 🔒 Credentials stored securely in n8n (not in workflow JSON)
-- 🔄 Automatic token refresh
-- 🚫 No hardcoded webhook URLs
+233: - 🔒 Credentials stored securely in n8n (apikey header)
+234: - 🔄 Centralized instance management
+235: - 🚫 No hardcoded endpoints
 - ✅ Better access control and auditing
 
 **Features**:
 
 - Runs every 5 minutes
 - HTTP health check to `/health` endpoint
-- Slack alert on downtime/errors
-- **Uses Slack OAuth2 API credential** (registered in n8n)
-- Cleaner workflow (no "Set Webhook URL" node needed)
+242: - WhatsApp notifications on downtime/errors
+243: - **Uses Evolution API credential** (registered in n8n)
+244: - Cleaner workflow (no manual endpoint configuration needed)
 
 **Quick Setup**:
 
 ```bash
-# 1. Set up Slack OAuth2 credential (see SLACK_OAUTH2_SETUP.md)
+249: # 1. Set up Evolution API credential (see EVOLUTION_API_SETUP.md)
 # 2. Import workflow to n8n or use existing workflow ID
 # 3. Activate workflow via n8n UI
 ```
 
-**Credential Setup**: See [SLACK_OAUTH2_SETUP.md](SLACK_OAUTH2_SETUP.md) for detailed instructions.
+254: **Credential Setup**: See [EVOLUTION_API_SETUP.md](EVOLUTION_API_SETUP.md) for detailed instructions.
 
 **Workflow Flow**:
 
@@ -259,7 +262,7 @@ OAuth2-based health monitoring with secure credential management.
 Schedule Trigger (5 min)
   → HTTP Request (health check)
   → IF (is down?)
-  → Slack OAuth2 (send alert)
+  262:   → Evolution API (send WhatsApp notification)
 ```
 
 **Monitoring Details**:
@@ -268,12 +271,12 @@ Schedule Trigger (5 min)
 - **Frequency**: Every 5 minutes
 - **Timeout**: 10 seconds
 - **Alert Conditions**: HTTP != 200 or timeout
-- **Notification**: Slack with detailed error info
+271: - **Notification**: WhatsApp with detailed error info
 
 **Workflow Flow**:
 
 ```
-Every 5 Minutes → Check Health → Is Down? → Set Webhook → Slack Alert
+276: Every 5 Minutes → Check Health → Is Down? → Evolution API WhatsApp Notification
 ```
 
 See `resume-healthcheck-workflow.json` for full configuration.
@@ -293,8 +296,8 @@ graph LR
     F --> G[npm run test:e2e]
     G --> H[wrangler deploy]
     H --> I[Health Check]
-    I -->|Success| J[Slack ✅]
-    I -->|Failure| K[Slack ❌]
+    296:     I -->|Success| J[WhatsApp ✅]
+    297:     I -->|Failure| K[WhatsApp ❌]
     J --> L[Log to Loki]
     K --> L
     L --> M[Webhook Response]
@@ -312,8 +315,8 @@ graph LR
 | Run E2E Tests        | Execute Command    | E2E tests                  | `npm run test:e2e`                    |
 | Deploy to Cloudflare | Execute Command    | Deploy worker              | `wrangler deploy`                     |
 | Health Check         | HTTP Request       | Verify deployment          | GET `/health`                         |
-| Slack Success        | HTTP Request       | Success notification       | POST to Slack webhook                 |
-| Slack Failure        | HTTP Request       | Failure notification       | POST to Slack webhook                 |
+315: | WhatsApp Success     | HTTP Request       | Success notification       | POST to Evolution API                 |
+316: | WhatsApp Failure     | HTTP Request       | Failure notification       | POST to Evolution API                 |
 | Log to Loki          | HTTP Request       | Log to Grafana Loki        | POST to Loki API                      |
 | Webhook Response     | Respond to Webhook | Return status to GitHub    | JSON response                         |
 
@@ -322,8 +325,11 @@ graph LR
 Required in n8n settings or workflow:
 
 ```bash
-# Slack webhook (for notifications)
-SLACK_WEBHOOK_URL=https://hooks.slack.com/services/YOUR/WEBHOOK/URL
+325: # Evolution API (for WhatsApp notifications)
+326: EVOLUTION_API_URL=https://evolution.jclee.me
+327: EVOLUTION_API_KEY=your-evolution-api-key
+328: EVOLUTION_INSTANCE_NAME=resume-bot
+329: EVOLUTION_WHATSAPP_NUMBER=821012345678
 
 # GitHub credentials (if needed)
 GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
@@ -441,24 +447,23 @@ sudo chown -R n8n:n8n /home/jclee/dev/resume
 # user: "1000:1000"  # jclee UID:GID
 ```
 
-### Slack Notifications Not Sent
+444: ### WhatsApp Notifications Not Sent
 
-**Problem**: Workflow completes but no Slack notification
+446: **Problem**: Workflow completes but no WhatsApp notification
 
 **Check**:
 
 ```bash
-# Test webhook manually
-curl -X POST $SLACK_WEBHOOK_URL \
-  -H 'Content-Type: application/json' \
-  -d '{"text": "Test from n8n workflow"}'
-```
-
+451: # Test Evolution API manually
+452: curl -X POST "$EVOLUTION_API_URL/message/sendText/$EVOLUTION_INSTANCE_NAME" \
+453:   -H "apikey: $EVOLUTION_API_KEY" \
+454:   -H "Content-Type: application/json" \
+455:   -d "{\"number\": \"$EVOLUTION_WHATSAPP_NUMBER\", \"text\": \"Test from n8n workflow\"}"
 **Solution**:
 
-- Verify `SLACK_WEBHOOK_URL` is set in n8n
-- Check Slack webhook is not revoked
-- Ensure n8n can reach hooks.slack.com
+459: - Verify Evolution API variables are set in n8n
+460: - Check Evolution API key is valid
+461: - Ensure n8n can reach evolution.jclee.me
 
 ## Advanced Features
 

@@ -3,34 +3,35 @@
   "title": "n8n Resume Monitoring Configuration",
   "description": "Configuration template for n8n workflows - copy to config.json and fill in values",
   "type": "object",
-  "required": ["slack", "google_sheets", "monitoring"],
+  "required": ["evolution_api", "google_sheets", "monitoring"],
   "properties": {
-    "slack": {
+    "evolution_api": {
       "type": "object",
-      "description": "Slack integration settings",
-      "required": ["infra_alerts_channel_id", "deployments_channel_id"],
+      "description": "Evolution API (WhatsApp) integration settings",
+      "required": ["api_url", "api_key", "instance_name", "whatsapp_number"],
       "properties": {
-        "infra_alerts_channel_id": {
+        "api_url": {
           "type": "string",
-          "description": "Slack channel ID for infrastructure alerts (format: C07XXXXXXXX)",
-          "pattern": "^C[A-Z0-9]{10}$",
-          "examples": ["C07ABC12345"]
+          "format": "uri",
+          "description": "Evolution API base URL (e.g., https://evolution.example.com)",
+          "examples": ["https://evolution.jclee.me"]
         },
-        "deployments_channel_id": {
+        "api_key": {
           "type": "string",
-          "description": "Slack channel ID for deployment notifications (format: C07YYYYYYYY)",
-          "pattern": "^C[A-Z0-9]{10}$",
-          "examples": ["C07XYZ67890"]
+          "description": "Evolution API authentication key (used in apikey header)",
+          "minLength": 1
         },
-        "credential_id": {
+        "instance_name": {
           "type": "string",
-          "description": "n8n Slack OAuth2 credential ID (default: '1')",
-          "default": "1"
+          "description": "WhatsApp instance name registered in Evolution API",
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "examples": ["resume-bot"]
         },
-        "credential_name": {
+        "whatsapp_number": {
           "type": "string",
-          "description": "n8n Slack OAuth2 credential name",
-          "default": "Slack account"
+          "description": "Recipient WhatsApp phone number (full number without +, e.g., 821012345678)",
+          "pattern": "^[0-9]{10,15}$",
+          "examples": ["821012345678"]
         }
       }
     },
