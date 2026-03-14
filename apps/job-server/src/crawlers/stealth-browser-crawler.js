@@ -119,7 +119,7 @@ export class StealthBrowserCrawler extends BaseCrawler {
 
       // Detect CAPTCHA in rendered HTML
       const captchaResult = this.captchaDetector.detectInHtml(html, url);
-      if (captchaResult.detected) {
+      if (captchaResult) {
         this.emit('captcha:detected', captchaResult);
         if (this.captchaDetector.shouldPause()) {
           this.emit('captcha:paused', { url, crawler: this.name });

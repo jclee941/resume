@@ -219,7 +219,7 @@ export class BaseCrawler extends EventEmitter {
           response.headers,
           url
         );
-        if (captchaResult.detected) {
+        if (captchaResult) {
           this.emit('captcha:detected', captchaResult);
           if (this.captchaDetector.shouldPause()) {
             this.emit('captcha:paused', { url, crawler: this.name });
