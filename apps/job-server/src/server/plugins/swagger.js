@@ -32,7 +32,6 @@ async function swaggerPlugin(fastify) {
         { name: 'search', description: 'Job search' },
         { name: 'stats', description: 'Statistics and reports' },
         { name: 'ai', description: 'AI matching and analysis' },
-        { name: 'slack', description: 'Slack integration' },
         { name: 'system', description: 'System health and metrics' },
       ],
       components: {

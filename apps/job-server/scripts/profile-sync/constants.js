@@ -57,7 +57,7 @@ export const PLATFORMS = {
       name: ssot.personal.name,
       email: ssot.personal.email,
       phone: ssot.personal.phone,
-      headline: `${ssot.current.position} | ${ssot.summary.totalExperience}`,
+      headline: `${ssot.current?.position || ssot.careers?.[0]?.role || 'Engineer'} | ${ssot.summary?.totalExperience || ''}`,
       skills: ssot.summary.expertise,
     }),
   },

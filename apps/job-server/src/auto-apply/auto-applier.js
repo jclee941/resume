@@ -1,6 +1,6 @@
 /**
  * Auto Applier - 자동 지원 봇
- * Playwright 기반 자동 지원 시스템
+ * Stealth browser-based 자동 지원 시스템
  */
 
 import {
@@ -8,6 +8,7 @@ import {
   APPLICATION_STATUS,
 } from './application-manager.js';
 import { UnifiedJobCrawler } from '../crawlers/index.js';
+import { withStealthBrowser } from '../crawlers/browser-utils.js';
 
 export class AutoApplier {
   constructor(options = {}) {
@@ -17,8 +18,8 @@ export class AutoApplier {
       maxDailyApplications: options.maxDailyApplications || 10,
       reviewThreshold: options.reviewThreshold || 60,
       autoApplyThreshold: options.autoApplyThreshold || 75,
-      autoApply: options.autoApply || false,
-      dryRun: options.dryRun || true,
+      autoApply: options.autoApply !== undefined ? options.autoApply : false,
+      dryRun: options.dryRun !== undefined ? options.dryRun : true,
       delayBetweenApps: options.delayBetweenApps || 5000,
       excludeCompanies: options.excludeCompanies || [],
       preferredCompanies: options.preferredCompanies || [],
@@ -32,20 +33,17 @@ export class AutoApplier {
    * 브라우저 초기화 (Playwright)
    */
   async initBrowser() {
-    // Dynamic import for Playwright
-    const { chromium } = await import('playwright');
+    // Use stealth browser wrapper — never naked Playwright
+    await withStealthBrowser(async (page) => {
+      this.page = page;
 
-    this.browser = await chromium.launch({
-      headless: this.config.headless !== false,
-      slowMo: this.config.slowMo || 100,
+      // 쿠키 로드
+      if (this.config.cookies) {
+        await this.loadCookies(this.config.cookies);
+      }
+
+      return page;
     });
-
-    this.page = await this.browser.newPage();
-
-    // 쿠키 로드
-    if (this.config.cookies) {
-      await this.loadCookies(this.config.cookies);
-    }
 
     return this;
   }

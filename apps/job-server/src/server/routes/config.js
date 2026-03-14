@@ -15,7 +15,6 @@ function getDefaultConfig() {
       preferredCompanies: [],
     },
     notifications: {
-      slack: { enabled: false, webhookUrl: '' },
       email: { enabled: false, address: '' },
     },
     schedule: { enabled: false },

@@ -15,7 +15,6 @@ import applicationsRoutes from './routes/applications.js';
 import searchRoutes from './routes/search.js';
 import statsRoutes from './routes/stats.js';
 import aiRoutes from './routes/ai.js';
-import slackRoutes from './routes/slack.js';
 import dashboardRoutes from './routes/dashboard.js';
 
 import configRoutes from './routes/config.js';
@@ -118,7 +117,6 @@ async function buildServer() {
   await fastify.register(searchRoutes, { prefix: '/api/search' });
   await fastify.register(statsRoutes, { prefix: '/api' });
   await fastify.register(aiRoutes, { prefix: '/api/ai' });
-  await fastify.register(slackRoutes, { prefix: '/api/slack' });
   await fastify.register(dashboardRoutes, { prefix: '/api' });
 
   await fastify.register(configRoutes, { prefix: '/api/config' });

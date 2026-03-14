@@ -47,8 +47,7 @@ export class JumpitCrawler extends BaseCrawler {
     try {
       const query = this.buildSearchQuery(params);
       const url = `${this.apiBase}/api/positions?${query}`;
-      const data = await this.rateLimitedFetch(url);
-      const result = typeof data === 'string' ? JSON.parse(data) : data;
+      const result = await this.fetchJSON(url);
       const positions = result.result?.positions || result.data || [];
       const jobs = positions.map((job) => this.normalizeJob(job));
 
@@ -96,8 +95,7 @@ export class JumpitCrawler extends BaseCrawler {
     try {
       const numericId = jobId.replace('jumpit-', '');
       const url = `${this.apiBase}/api/positions/${numericId}`;
-      const data = await this.rateLimitedFetch(url);
-      const result = typeof data === 'string' ? JSON.parse(data) : data;
+      const result = await this.fetchJSON(url);
       return { success: true, job: this.normalizeJob(result.result || result.data || result) };
     } catch (error) {
       return { success: false, error: error.message };

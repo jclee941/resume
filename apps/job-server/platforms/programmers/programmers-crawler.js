@@ -48,8 +48,7 @@ export class ProgrammersCrawler extends BaseCrawler {
     try {
       const query = this.buildSearchQuery(params);
       const url = `${this.baseUrl}/api/job_positions?${query}`;
-      const data = await this.rateLimitedFetch(url);
-      const result = typeof data === 'string' ? JSON.parse(data) : data;
+      const result = await this.fetchJSON(url);
       const jobs = (result.jobPositions || result.data || []).map((job) => this.normalizeJob(job));
 
       return {
@@ -95,8 +94,7 @@ export class ProgrammersCrawler extends BaseCrawler {
     try {
       const numericId = jobId.replace('programmers-', '');
       const url = `${this.baseUrl}/api/job_positions/${numericId}`;
-      const data = await this.rateLimitedFetch(url);
-      const result = typeof data === 'string' ? JSON.parse(data) : data;
+      const result = await this.fetchJSON(url);
       return { success: true, job: this.normalizeJob(result.data || result) };
     } catch (error) {
       return { success: false, error: error.message };

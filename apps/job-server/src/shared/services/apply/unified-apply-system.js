@@ -8,13 +8,7 @@ export class UnifiedApplySystem {
   #config;
 
   constructor(dependencies = {}) {
-    const {
-      crawler,
-      applier,
-      appManager,
-      notifier,
-      config = {},
-    } = dependencies;
+    const { crawler, applier, appManager, notifier, config = {} } = dependencies;
 
     this.#config = {
       maxDailyApplications: 20,
@@ -28,19 +22,14 @@ export class UnifiedApplySystem {
       excludeCompanies: [],
       preferredCompanies: [],
       platformPriority: ['wanted', 'saramin', 'jobkorea'],
-      notifications: { slack: true, email: false },
+      notifications: { email: false },
       useAI: false,
       resumePath: null,
       ...config,
     };
 
     this.#filter = new JobFilter(this.#config);
-    this.#orchestrator = new ApplyOrchestrator(
-      crawler,
-      applier,
-      appManager,
-      this.#config,
-    );
+    this.#orchestrator = new ApplyOrchestrator(crawler, applier, appManager, this.#config);
     this.#notifier = notifier;
   }
 
@@ -53,11 +42,7 @@ export class UnifiedApplySystem {
   }
 
   async run(options = {}) {
-    const {
-      keywords = this.#config.keywords,
-      dryRun = true,
-      notify = true,
-    } = options;
+    const { keywords = this.#config.keywords, dryRun = true, notify = true } = options;
 
     const searchResult = await this.#searchPhase(keywords);
     const filterResult = await this.#filterPhase(searchResult.jobs);
@@ -67,12 +52,7 @@ export class UnifiedApplySystem {
       await this.#notifyPhase(applyResult, dryRun);
     }
 
-    return this.#generateSummary(
-      searchResult,
-      filterResult,
-      applyResult,
-      dryRun,
-    );
+    return this.#generateSummary(searchResult, filterResult, applyResult, dryRun);
   }
 
   async #searchPhase(keywords) {
@@ -96,12 +76,7 @@ export class UnifiedApplySystem {
     if (!this.#notifier) return;
 
     try {
-      if (this.#config.notifications.slack) {
-        await this.#notifier.notifyAutoApplyResult?.(
-          applyResult.results,
-          dryRun,
-        );
-      }
+      await this.#notifier.notifyAutoApplyResult?.(applyResult.results, dryRun);
     } catch {
       // Notification failure should not break the flow
     }
@@ -127,16 +102,11 @@ export class UnifiedApplySystem {
   }
 
   async searchOnly(keywords, options = {}) {
-    const searchResult = await this.#searchPhase(
-      keywords || this.#config.keywords,
-    );
+    const searchResult = await this.#searchPhase(keywords || this.#config.keywords);
     const filterResult = await this.#filterPhase(searchResult.jobs);
 
     if (options.notify && this.#notifier) {
-      await this.#notifier.notifySearchResults?.(
-        filterResult.jobs,
-        keywords?.join(', '),
-      );
+      await this.#notifier.notifySearchResults?.(filterResult.jobs, keywords?.join(', '));
     }
 
     return {

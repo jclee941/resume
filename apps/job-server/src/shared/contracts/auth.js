@@ -27,23 +27,14 @@ export const AUTH_STRATEGY = {
 
   public: ['/api/health', '/api/status', '/api/auth/status'],
 
-  admin: [
-    '/api/applications',
-    '/api/stats',
-    '/api/config',
-
-    '/api/slack/notify',
-    '/api/automation',
-    '/api/report',
-  ],
+  admin: ['/api/applications', '/api/stats', '/api/config', '/api/automation', '/api/report'],
 };
 
 export function createAuthMiddleware(env) {
   const adminToken = env?.ADMIN_TOKEN || process.env.ADMIN_TOKEN;
 
   return function verifyAuth(request) {
-    const authHeader =
-      request.headers.get?.('authorization') || request.headers?.authorization;
+    const authHeader = request.headers.get?.('authorization') || request.headers?.authorization;
 
     if (!authHeader?.startsWith('Bearer ')) {
       return { authenticated: false, error: 'Missing Bearer token' };

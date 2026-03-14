@@ -122,7 +122,6 @@ services:
 
       # Logging & Observability
       SENTRY_DSN: '${SENTRY_DSN:-}'
-      SLACK_WEBHOOK_URL: '${SLACK_WEBHOOK_URL:-}'
       METRICS_ENABLED: 'true'
 
     # Volume mounts for data persistence

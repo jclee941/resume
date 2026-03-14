@@ -184,21 +184,6 @@ export const API_CONTRACTS = {
       },
     },
   },
-
-  slack: {
-    notify: {
-      path: '/api/slack/notify',
-      method: 'POST',
-      auth: true,
-      body: {
-        message: 'string',
-        channel: 'string?',
-      },
-      response: {
-        success: 'boolean',
-      },
-    },
-  },
 };
 
 export const COMMON_STATUSES = {

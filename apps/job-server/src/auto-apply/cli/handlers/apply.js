@@ -17,7 +17,6 @@ export async function runAutoApply(args) {
     enabledPlatforms: ['wanted', 'jobkorea', 'saramin'],
     keywords: ['시니어 엔지니어', '클라우드 엔지니어', 'SRE'],
     notifications: {
-      slack: true,
       desktop: true,
     },
   });

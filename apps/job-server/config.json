@@ -7,17 +7,6 @@
     "preferredCompanies": []
   },
   "notifications": {
-    "slack": {
-      "enabled": true,
-      "webhookUrl": "",
-      "channel": "#job-alerts",
-      "notifyOn": {
-        "highMatchJob": true,
-        "statusChange": true,
-        "dailyReport": true,
-        "autoApplyResult": true
-      }
-    },
     "email": {
       "enabled": false,
       "address": ""

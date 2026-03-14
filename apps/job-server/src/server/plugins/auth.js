@@ -1,18 +1,13 @@
 import fp from 'fastify-plugin';
-import { randomBytes, createHmac, timingSafeEqual } from 'crypto';
+import { randomBytes } from 'crypto';
 import config from '../config/index.js';
 import { createAuthMiddleware } from '../../shared/contracts/auth.js';
 
 const sessions = new Map();
 const csrfTokens = new Map();
 
-const PUBLIC_PATHS = [
-  '/api/health',
-  '/api/status',
-  '/api/auth/google',
-  '/api/slack/interactions',
-];
-const CSRF_EXEMPT_PATHS = ['/api/auth/google', '/api/slack/interactions'];
+const PUBLIC_PATHS = ['/api/health', '/api/status', '/api/auth/google'];
+const CSRF_EXEMPT_PATHS = ['/api/auth/google'];
 const STATE_CHANGING_METHODS = ['POST', 'PUT', 'DELETE', 'PATCH'];
 
 async function authPlugin(fastify) {
@@ -37,27 +32,6 @@ async function authPlugin(fastify) {
     const token = randomBytes(32).toString('hex');
     csrfTokens.set(sessionId, { token, createdAt: Date.now() });
     return token;
-  });
-
-  // HMAC-SHA256 signature verification for Slack webhook security
-  fastify.decorate('verifySlackSignature', (timestamp, body, signature) => {
-    if (!config.slackSigningSecret) {
-      fastify.log.warn('SLACK_SIGNING_SECRET not set - rejecting request');
-      return false;
-    }
-    if (!timestamp || !signature) return false;
-    if (Math.abs(Date.now() / 1000 - parseInt(timestamp)) > 300) return false;
-
-    const sigBasestring = `v0:${timestamp}:${body}`;
-    const mySignature = `v0=${createHmac('sha256', config.slackSigningSecret)
-      .update(sigBasestring)
-      .digest('hex')}`;
-
-    try {
-      return timingSafeEqual(Buffer.from(mySignature), Buffer.from(signature));
-    } catch {
-      return false;
-    }
   });
 
   fastify.decorate('isAuthenticated', (request) => {
@@ -108,8 +82,7 @@ async function authPlugin(fastify) {
     const path = request.url.split('?')[0];
     const method = request.method;
 
-    if (PUBLIC_PATHS.some((p) => path === p || path.startsWith(`${p  }/`)))
-      return;
+    if (PUBLIC_PATHS.some((p) => path === p || path.startsWith(`${p}/`))) return;
     if (!path.startsWith('/api/')) return;
 
     if (!fastify.isAuthenticated(request)) {
@@ -119,9 +92,7 @@ async function authPlugin(fastify) {
     // Skip CSRF check for Bearer auth
     if (request.authMethod === 'bearer') return;
 
-    const isCsrfExempt = CSRF_EXEMPT_PATHS.some(
-      (p) => path === p || path.startsWith(`${p  }/`),
-    );
+    const isCsrfExempt = CSRF_EXEMPT_PATHS.some((p) => path === p || path.startsWith(`${p}/`));
     if (
       STATE_CHANGING_METHODS.includes(method) &&
       !isCsrfExempt &&

@@ -2,7 +2,6 @@ import { UnifiedApplySystem } from '../../shared/services/apply/index.js';
 import { ApplicationManager } from '../application-manager.js';
 import { UnifiedJobCrawler } from '../../crawlers/index.js';
 import { AutoApplier } from '../auto-applier.js';
-import { SlackService } from '../../shared/services/slack/index.js';
 import { getResumeMasterMarkdownPath } from '../../shared/utils/paths.js';
 
 export async function runAutoApply(args) {
@@ -19,7 +18,6 @@ export async function runAutoApply(args) {
     enabledPlatforms: ['wanted', 'jobkorea', 'saramin'],
     keywords: ['시니어 엔지니어', '클라우드 엔지니어', 'SRE'],
     notifications: {
-      slack: true,
       desktop: true,
     },
   });
@@ -130,13 +128,11 @@ export async function runAIUnifiedSystem(args) {
   const crawler = new UnifiedJobCrawler();
   const applier = new AutoApplier();
   const appManager = new ApplicationManager();
-  const notifier = new SlackService();
 
   const system = new UnifiedApplySystem({
     crawler,
     applier,
     appManager,
-    notifier,
     config: {
       dryRun,
       maxDailyApplications: maxApps,
@@ -148,7 +144,6 @@ export async function runAIUnifiedSystem(args) {
       experience: 8,
       location: 'seoul',
       notifications: {
-        slack: true,
         desktop: true,
       },
       autoRetry: true,

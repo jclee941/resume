@@ -7,7 +7,6 @@ const config = {
   googleClientId: process.env.GOOGLE_CLIENT_ID || '',
   sessionTTL: 24 * 60 * 60 * 1000,
 
-  slackSigningSecret: process.env.SLACK_SIGNING_SECRET || '',
   corsOrigins: [
     'https://resume.jclee.me',
     'https://resume.jclee.me/job',
@@ -31,7 +30,8 @@ const config = {
     data: process.env.DATA_DIR || new URL('../../../../', import.meta.url).pathname,
     resume:
       process.env.RESUME_PATH ||
-      new URL('../../../../../packages/data/resumes/master/resume_master.md', import.meta.url).pathname,
+      new URL('../../../../../packages/data/resumes/master/resume_master.md', import.meta.url)
+        .pathname,
   },
 
   limits: {
