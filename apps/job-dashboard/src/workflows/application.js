@@ -179,18 +179,21 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
 
       // Notify failure
       await step.do('notify-failure', async () => {
-        await this.sendSlackNotification({
-          text: `❌ Application Failed: ${validation.job.company} - ${validation.job.position}`,
-          blocks: [
-            {
-              type: 'section',
-              text: {
-                type: 'mrkdwn',
-                text: `*Error*: ${submitResult.error}\n*Platform*: ${platform}\n*Job*: ${validation.job.position}`,
+        console.log(
+          '[Notification]',
+          JSON.stringify({
+            text: `❌ Application Failed: ${validation.job.company} - ${validation.job.position}`,
+            blocks: [
+              {
+                type: 'section',
+                text: {
+                  type: 'mrkdwn',
+                  text: `*Error*: ${submitResult.error}\n*Platform*: ${platform}\n*Job*: ${validation.job.position}`,
+                },
               },
-            },
-          ],
-        });
+            ],
+          })
+        );
       });
 
       return {
@@ -240,22 +243,25 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
         timeout: '30 seconds',
       },
       async () => {
-        await this.sendSlackNotification({
-          text: `✅ Application Submitted: ${validation.job.company}`,
-          blocks: [
-            {
-              type: 'header',
-              text: { type: 'plain_text', text: '✅ Application Submitted' },
-            },
-            {
-              type: 'section',
-              text: {
-                type: 'mrkdwn',
-                text: `*Company*: ${validation.job.company}\n*Position*: ${validation.job.position}\n*Platform*: ${platform}\n*Auto-Submit*: ${autoSubmit ? 'Yes' : 'No (Approved)'}`,
+        console.log(
+          '[Notification]',
+          JSON.stringify({
+            text: `✅ Application Submitted: ${validation.job.company}`,
+            blocks: [
+              {
+                type: 'header',
+                text: { type: 'plain_text', text: '✅ Application Submitted' },
               },
-            },
-          ],
-        });
+              {
+                type: 'section',
+                text: {
+                  type: 'mrkdwn',
+                  text: `*Company*: ${validation.job.company}\n*Position*: ${validation.job.position}\n*Platform*: ${platform}\n*Auto-Submit*: ${autoSubmit ? 'Yes' : 'No (Approved)'}`,
+                },
+              },
+            ],
+          })
+        );
       }
     );
 
@@ -334,8 +340,7 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
       headers: {
         Cookie: session,
         'Content-Type': 'application/json',
-        'User-Agent':
-          DEFAULT_USER_AGENT,
+        'User-Agent': DEFAULT_USER_AGENT,
       },
       body: JSON.stringify({
         resume_id: resume.id,
@@ -362,41 +367,44 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
   }
 
   async sendApprovalRequest({ applicationId, job, platform }) {
-    await this.sendSlackNotification({
-      text: '⏳ Application Approval Required',
-      blocks: [
-        {
-          type: 'header',
-          text: { type: 'plain_text', text: '⏳ Approval Required' },
-        },
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: `*Company*: ${job.company}\n*Position*: ${job.position}\n*Platform*: ${platform}`,
+    console.log(
+      '[Notification]',
+      JSON.stringify({
+        text: '⏳ Application Approval Required',
+        blocks: [
+          {
+            type: 'header',
+            text: { type: 'plain_text', text: '⏳ Approval Required' },
           },
-        },
-        {
-          type: 'actions',
-          elements: [
-            {
-              type: 'button',
-              text: { type: 'plain_text', text: '✅ Approve' },
-              style: 'primary',
-              action_id: 'approve_application',
-              value: applicationId,
+          {
+            type: 'section',
+            text: {
+              type: 'mrkdwn',
+              text: `*Company*: ${job.company}\n*Position*: ${job.position}\n*Platform*: ${platform}`,
             },
-            {
-              type: 'button',
-              text: { type: 'plain_text', text: '❌ Reject' },
-              style: 'danger',
-              action_id: 'reject_application',
-              value: applicationId,
-            },
-          ],
-        },
-      ],
-    });
+          },
+          {
+            type: 'actions',
+            elements: [
+              {
+                type: 'button',
+                text: { type: 'plain_text', text: '✅ Approve' },
+                style: 'primary',
+                action_id: 'approve_application',
+                value: applicationId,
+              },
+              {
+                type: 'button',
+                text: { type: 'plain_text', text: '❌ Reject' },
+                style: 'danger',
+                action_id: 'reject_application',
+                value: applicationId,
+              },
+            ],
+          },
+        ],
+      })
+    );
   }
 
   async saveApplicationState(application) {
@@ -413,13 +421,6 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
   }
 
   async sendSlackNotification(message) {
-    const webhookUrl = this.env.SLACK_WEBHOOK_URL;
-    if (!webhookUrl) return;
-
-    await fetch(webhookUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(message),
-    });
+    console.log('[Notification]', JSON.stringify(message));
   }
 }

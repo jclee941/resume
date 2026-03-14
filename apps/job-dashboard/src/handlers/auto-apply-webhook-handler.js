@@ -1,5 +1,4 @@
 import { BaseHandler } from './base-handler.js';
-import { sendSlackMessage } from '../services/slack.js';
 import { normalizeError } from '../../../job-server/src/shared/errors/index.js';
 
 /**
@@ -168,24 +167,26 @@ export class AutoApplyWebhookHandler extends BaseHandler {
         }
       }
 
-      // 5. Notify via Slack
       if (!dryRun && results.applied.length > 0) {
         const appliedList = results.applied
           .map((j) => `\u2022 ${j.company} - ${j.position} (${j.matchScore}%)`)
           .join('\n');
 
-        await sendSlackMessage(this.env, {
-          text: `\u2705 Auto-Apply Complete: ${results.applied.length} applications submitted`,
-          blocks: [
-            {
-              type: 'section',
-              text: {
-                type: 'mrkdwn',
-                text: `*Auto-Apply Results*\n${appliedList}`,
+        console.log(
+          '[Notification]',
+          JSON.stringify({
+            text: `\u2705 Auto-Apply Complete: ${results.applied.length} applications submitted`,
+            blocks: [
+              {
+                type: 'section',
+                text: {
+                  type: 'mrkdwn',
+                  text: `*Auto-Apply Results*\n${appliedList}`,
+                },
               },
-            },
-          ],
-        });
+            ],
+          })
+        );
       }
 
       return this.jsonResponse({

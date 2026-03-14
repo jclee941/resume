@@ -8,12 +8,10 @@
  * - Data export: getMasterResumeData, exportFromPlatform, exportFromWanted, etc.
  * - Diff calculation: calculateDiff, getItemKey, itemsEqual
  * - Platform sync: syncToPlatform, syncToWanted, wantedApiRequest, etc.
- * - Notifications: notifyPreview, sendSlackNotification
+ * - Notifications: notifyPreview
  */
 
 import { DEFAULT_USER_AGENT } from '../utils/user-agents.js';
-
-
 
 // ============================================================
 // DATA EXPORT
@@ -52,8 +50,7 @@ export async function exportFromWanted(env, resumeId) {
     const response = await fetch(`https://www.wanted.co.kr/api/chaos/resumes/v1/${resumeId}`, {
       headers: {
         Cookie: session,
-        'User-Agent':
-          DEFAULT_USER_AGENT,
+        'User-Agent': DEFAULT_USER_AGENT,
       },
     });
 
@@ -226,8 +223,7 @@ export async function wantedApiRequest(method, path, body, session) {
     headers: {
       Cookie: session,
       'Content-Type': 'application/json',
-      'User-Agent':
-        DEFAULT_USER_AGENT,
+      'User-Agent': DEFAULT_USER_AGENT,
     },
     body: JSON.stringify(body),
   });
@@ -260,31 +256,23 @@ export async function notifyPreview(env, sync, _diffs) {
     )
     .join('\n');
 
-  await sendSlackNotification(env, {
-    text: '👀 Resume Sync Preview',
-    blocks: [
-      {
-        type: 'header',
-        text: { type: 'plain_text', text: '👀 Resume Sync Preview (Dry Run)' },
-      },
-      {
-        type: 'section',
-        text: {
-          type: 'mrkdwn',
-          text: `*Resume*: ${sync.resumeId}\n*Platforms*:\n${summary}`,
+  console.log(
+    '[Notification]',
+    JSON.stringify({
+      text: '👀 Resume Sync Preview',
+      blocks: [
+        {
+          type: 'header',
+          text: { type: 'plain_text', text: '👀 Resume Sync Preview (Dry Run)' },
         },
-      },
-    ],
-  });
-}
-
-export async function sendSlackNotification(env, message) {
-  const webhookUrl = env.SLACK_WEBHOOK_URL;
-  if (!webhookUrl) return;
-
-  await fetch(webhookUrl, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(message),
-  });
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `*Resume*: ${sync.resumeId}\n*Platforms*:\n${summary}`,
+          },
+        },
+      ],
+    })
+  );
 }

@@ -17,7 +17,6 @@ handlers/
 ├── profile-sync-handler.js       # profile sync trigger/bridge
 ├── report-handler.js             # report generation endpoints
 ├── resume-sync-handler.js        # resume sync endpoints
-├── slack-handler.js              # Slack webhook and notify bridge
 ├── stats.js                      # stats/report endpoints
 ├── test-handler.js               # test-only endpoints
 └── webhooks.js                   # webhook ingress routes

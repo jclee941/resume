@@ -5,7 +5,6 @@ import {
   calculateDiff,
   syncToPlatform,
   notifyPreview,
-  sendSlackNotification,
 } from './resume-sync-helpers.js';
 
 /**
@@ -247,22 +246,25 @@ export class ResumeSyncWorkflow extends WorkflowEntrypoint {
           })
           .join('\n');
 
-        await sendSlackNotification(this.env, {
-          text: '✅ Resume Sync Complete',
-          blocks: [
-            {
-              type: 'header',
-              text: { type: 'plain_text', text: '✅ Resume Sync Complete' },
-            },
-            {
-              type: 'section',
-              text: {
-                type: 'mrkdwn',
-                text: `*Resume*: ${resumeId}\n*Platforms*:\n${summary}\n*Backup ID*: ${backup.backupId}`,
+        console.log(
+          '[Notification]',
+          JSON.stringify({
+            text: '✅ Resume Sync Complete',
+            blocks: [
+              {
+                type: 'header',
+                text: { type: 'plain_text', text: '✅ Resume Sync Complete' },
               },
-            },
-          ],
-        });
+              {
+                type: 'section',
+                text: {
+                  type: 'mrkdwn',
+                  text: `*Resume*: ${resumeId}\n*Platforms*:\n${summary}\n*Backup ID*: ${backup.backupId}`,
+                },
+              },
+            ],
+          })
+        );
       }
     );
 

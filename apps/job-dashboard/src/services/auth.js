@@ -6,8 +6,6 @@ const ADMIN_ROUTES = [
   '/api/cleanup',
   '/api/resume',
   '/api/workflows',
-
-  '/api/slack/notify',
   '/api/stats',
   '/api/report',
 ];
@@ -19,7 +17,7 @@ const NO_AUTH_ROUTES = [
   '/api/auth/profile',
 ];
 
-const WEBHOOK_ROUTES = ['/api/slack/interactions'];
+const WEBHOOK_ROUTES = [];
 
 export function requiresAuth(pathname) {
   if (NO_AUTH_ROUTES.some((route) => pathname === route)) {

@@ -1,10 +1,9 @@
 import { BaseHandler } from './base-handler.js';
-import { sendSlackMessage } from '../services/slack.js';
 import { normalizeError } from '../../../job-server/src/shared/errors/index.js';
 
 /**
  * Handler for report generation operations.
- * Generates daily reports and sends to Slack.
+ * Generates daily reports and emits notifications.
  */
 export class ReportHandler extends BaseHandler {
   /**
@@ -108,7 +107,6 @@ export class ReportHandler extends BaseHandler {
         })),
       };
 
-      // 6. Send to Slack
       const statusLine = Object.entries(report.summary.byStatus)
         .map(([status, count]) => `${status}: ${count}`)
         .join(' | ');
@@ -120,29 +118,32 @@ export class ReportHandler extends BaseHandler {
               .join('\n')
           : 'None';
 
-      await sendSlackMessage(this.env, {
-        text: `\ud83d\udcca Daily Job Report - ${now.toISOString().split('T')[0]}`,
-        blocks: [
-          {
-            type: 'header',
-            text: { type: 'plain_text', text: '\ud83d\udcca Daily Job Report' },
-          },
-          {
-            type: 'section',
-            text: {
-              type: 'mrkdwn',
-              text: `*Summary*\nTotal: ${report.summary.total} | New Today: ${report.summary.newToday}\n${statusLine}`,
+      console.log(
+        '[Notification]',
+        JSON.stringify({
+          text: `\ud83d\udcca Daily Job Report - ${now.toISOString().split('T')[0]}`,
+          blocks: [
+            {
+              type: 'header',
+              text: { type: 'plain_text', text: '\ud83d\udcca Daily Job Report' },
             },
-          },
-          {
-            type: 'section',
-            text: {
-              type: 'mrkdwn',
-              text: `*High Priority (80%+ match)*\n${highPriorityList}`,
+            {
+              type: 'section',
+              text: {
+                type: 'mrkdwn',
+                text: `*Summary*\nTotal: ${report.summary.total} | New Today: ${report.summary.newToday}\n${statusLine}`,
+              },
             },
-          },
-        ],
-      });
+            {
+              type: 'section',
+              text: {
+                type: 'mrkdwn',
+                text: `*High Priority (80%+ match)*\n${highPriorityList}`,
+              },
+            },
+          ],
+        })
+      );
 
       return this.jsonResponse({
         success: true,

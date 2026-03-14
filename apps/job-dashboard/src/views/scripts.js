@@ -661,7 +661,7 @@ async function triggerDailyReport() {
     if (res.status === 401) { promptForToken(); return; }
     const data = await res.json();
     if (data.success) {
-      showAutomationStatus('✅ 리포트 생성 트리거됨! Slack에서 확인', 'success');
+      showAutomationStatus('✅ 리포트 생성 트리거됨! 확인', 'success');
       showToast('리포트 트리거됨');
     } else {
       throw new Error(data.error || 'Failed');

@@ -1,5 +1,4 @@
 import { BaseHandler } from './base-handler.js';
-import { sendSlackMessage } from '../services/slack.js';
 import { WantedClient } from '../services/wanted-client.js';
 import { normalizeError } from '../../../job-server/src/shared/errors/index.js';
 
@@ -536,9 +535,12 @@ export class ProfileSyncHandler extends BaseHandler {
       if (status === 'completed') {
         const platforms = result?.platforms || [];
         const successCount = platforms.filter((platform) => platform.success).length;
-        await sendSlackMessage(this.env, {
-          text: `✅ Profile Sync Complete: ${successCount}/${platforms.length} platforms updated`,
-        });
+        console.log(
+          '[Notification]',
+          JSON.stringify({
+            text: `✅ Profile Sync Complete: ${successCount}/${platforms.length} platforms updated`,
+          })
+        );
       }
 
       return this.jsonResponse({ success: true, message: 'Sync status updated', syncId, status });

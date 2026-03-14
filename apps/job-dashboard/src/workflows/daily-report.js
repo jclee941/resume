@@ -4,7 +4,7 @@ import { WorkflowEntrypoint } from 'cloudflare:workers';
  * Daily Report Workflow
  *
  * Generates and sends daily/weekly job application reports.
- * Aggregates stats, formats report, sends to Slack.
+ * Aggregates stats, formats report, and emits notifications.
  *
  * @param {Object} params
  * @param {string} params.type - Report type: 'daily' or 'weekly'
@@ -112,7 +112,6 @@ export class DailyReportWorkflow extends WorkflowEntrypoint {
       }
     );
 
-    // Step 7: Send to Slack
     await step.do(
       'send-notification',
       {
@@ -120,7 +119,10 @@ export class DailyReportWorkflow extends WorkflowEntrypoint {
         timeout: '30 seconds',
       },
       async () => {
-        await this.sendSlackReport(content, type);
+        console.log(
+          '[Notification]',
+          JSON.stringify({ type, title: content.title, date: content.date })
+        );
       }
     );
 
@@ -296,55 +298,10 @@ ${statusEmoji.pending} 대기: ${applications.pending}건`,
   }
 
   async sendSlackReport(content, _type) {
-    const blocks = [
-      {
-        type: 'header',
-        text: { type: 'plain_text', text: `📊 ${content.title}` },
-      },
-      {
-        type: 'context',
-        elements: [{ type: 'mrkdwn', text: `${content.date} | ${content.summary.trend}` }],
-      },
-      { type: 'divider' },
-    ];
-
-    for (const section of content.sections) {
-      blocks.push({
-        type: 'section',
-        text: {
-          type: 'mrkdwn',
-          text: `*${section.title}*\n${section.content}`,
-        },
-      });
-    }
-
-    blocks.push(
-      { type: 'divider' },
-      {
-        type: 'context',
-        elements: [
-          {
-            type: 'mrkdwn',
-            text: `<https://resume.jclee.me/job|대시보드 보기> | 총 ${content.summary.total}건 지원`,
-          },
-        ],
-      }
-    );
-
-    await this.sendSlackNotification({
-      text: content.title,
-      blocks,
-    });
+    console.log('[Notification]', JSON.stringify(content));
   }
 
   async sendSlackNotification(message) {
-    const webhookUrl = this.env.SLACK_WEBHOOK_URL;
-    if (!webhookUrl) return;
-
-    await fetch(webhookUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(message),
-    });
+    console.log('[Notification]', JSON.stringify(message));
   }
 }

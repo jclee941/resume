@@ -151,20 +151,14 @@ export class BackupWorkflow extends WorkflowEntrypoint {
         timeout: '30 seconds',
       },
       async () => {
-        const webhookUrl = this.env.SLACK_WEBHOOK_URL;
-        if (!webhookUrl) {
-          return { notified: false, reason: 'No webhook configured' };
-        }
-
         const tablesSummary = results.tables.map((t) => `• ${t.name}: ${t.count} rows`).join('\n');
 
         const hasErrors = results.errors.length > 0;
         const emoji = hasErrors ? '⚠️' : '✅';
 
-        await fetch(webhookUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
+        console.log(
+          '[Notification]',
+          JSON.stringify({
             text: `${emoji} Backup Complete: ${results.totalRows} rows backed up`,
             blocks: [
               {
@@ -179,8 +173,8 @@ export class BackupWorkflow extends WorkflowEntrypoint {
                 },
               },
             ],
-          }),
-        });
+          })
+        );
 
         return { notified: true };
       }

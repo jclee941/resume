@@ -228,9 +228,6 @@ export default {
     router.get('/api/report', (req) => stats.getDailyReport(req));
     router.get('/api/report/weekly', (req) => stats.getWeeklyReport(req));
 
-    router.post('/api/slack/notify', (req) => webhooks.notifySlack(req));
-    router.post('/api/slack/interactions', (req) => webhooks.handleSlackInteraction(req));
-
     router.post('/api/automation/search', (req) => webhooks.triggerJobSearch(req));
     router.post('/api/automation/apply', (req) => webhooks.triggerAutoApply(req));
     router.post('/api/automation/report', (req) => webhooks.triggerDailyReport(req));

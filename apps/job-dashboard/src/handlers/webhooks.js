@@ -2,7 +2,6 @@ import { JobSearchHandler } from './job-search-handler.js';
 import { ResumeSyncHandler } from './resume-sync-handler.js';
 import { AutoApplyWebhookHandler } from './auto-apply-webhook-handler.js';
 import { ReportHandler } from './report-handler.js';
-import { SlackHandler } from './slack-handler.js';
 import { ProfileSyncHandler } from './profile-sync-handler.js';
 import { TestHandler } from './test-handler.js';
 
@@ -15,7 +14,6 @@ export class WebhookHandler {
     this.resumeSync = new ResumeSyncHandler(env, auth);
     this.autoApply = new AutoApplyWebhookHandler(env, auth);
     this.report = new ReportHandler(env, auth);
-    this.slack = new SlackHandler(env, auth);
     this.profileSync = new ProfileSyncHandler(env, auth);
     this.test = new TestHandler(env, auth);
   }
@@ -45,14 +43,6 @@ export class WebhookHandler {
 
   triggerDailyReport(request) {
     return this.report.triggerDailyReport(request);
-  }
-
-  notifySlack(request) {
-    return this.slack.notifySlack(request);
-  }
-
-  handleSlackInteraction(request) {
-    return this.slack.handleSlackInteraction(request);
   }
 
   triggerProfileSync(request) {

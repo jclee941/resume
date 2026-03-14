@@ -8,14 +8,11 @@ import { WorkflowEntrypoint } from 'cloudflare:workers';
  *
  * @param {Object} params
  * @param {string[]} params.services - URLs to check (defaults to resume.jclee.me and resume.jclee.me/job)
- * @param {string} params.slackWebhook - Optional Slack webhook override
  */
 export class HealthCheckWorkflow extends WorkflowEntrypoint {
   async run(event, step) {
-    const {
-      services = ['https://resume.jclee.me/health', 'https://resume.jclee.me/job/health'],
-      slackWebhook = null,
-    } = event.payload || {};
+    const { services = ['https://resume.jclee.me/health', 'https://resume.jclee.me/job/health'] } =
+      event.payload || {};
 
     const startedAt = new Date().toISOString();
 
@@ -150,11 +147,6 @@ export class HealthCheckWorkflow extends WorkflowEntrypoint {
           const consecutiveFailures = await this.getConsecutiveFailures();
           const escalationLevel = this.getEscalationLevel(consecutiveFailures);
 
-          const webhookUrl = slackWebhook || this.env.SLACK_WEBHOOK_URL;
-          if (!webhookUrl) {
-            return { notified: false, reason: 'No webhook configured' };
-          }
-
           const emojiMap = { warning: '🟡', critical: '🔴', emergency: '🚨' };
           const emoji = emojiMap[escalationLevel] || '🟡';
           const affectedServices = healthEvaluation.services
@@ -197,14 +189,13 @@ export class HealthCheckWorkflow extends WorkflowEntrypoint {
             },
           ];
 
-          await fetch(webhookUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
+          console.log(
+            '[Notification]',
+            JSON.stringify({
               text: `${emoji} Health Check Alert: ${healthEvaluation.overallHealth.toUpperCase()} [${escalationLevel}]`,
               blocks,
-            }),
-          });
+            })
+          );
 
           return { notified: true, escalationLevel, consecutiveFailures: consecutiveFailures + 1 };
         }

@@ -167,22 +167,25 @@ export class JobCrawlingWorkflow extends WorkflowEntrypoint {
           .map((j) => `• ${j.company} - ${j.position} (${j.matchScore}%)`)
           .join('\n');
 
-        await this.sendSlackNotification({
-          text: `🔍 Job Search Complete: ${matchedJobs.length} matches`,
-          blocks: [
-            {
-              type: 'header',
-              text: { type: 'plain_text', text: '🔍 Job Search Results' },
-            },
-            {
-              type: 'section',
-              text: {
-                type: 'mrkdwn',
-                text: `*Platforms*: ${platforms.join(', ')}\n*Found*: ${results.totalJobs} jobs\n*Matched*: ${matchedJobs.length} jobs\n\n*Top Matches*:\n${topJobs}`,
+        console.log(
+          '[Notification]',
+          JSON.stringify({
+            text: `🔍 Job Search Complete: ${matchedJobs.length} matches`,
+            blocks: [
+              {
+                type: 'header',
+                text: { type: 'plain_text', text: '🔍 Job Search Results' },
               },
-            },
-          ],
-        });
+              {
+                type: 'section',
+                text: {
+                  type: 'mrkdwn',
+                  text: `*Platforms*: ${platforms.join(', ')}\n*Found*: ${results.totalJobs} jobs\n*Matched*: ${matchedJobs.length} jobs\n\n*Top Matches*:\n${topJobs}`,
+                },
+              },
+            ],
+          })
+        );
 
         return { notified: true };
       }
@@ -238,8 +241,7 @@ export class JobCrawlingWorkflow extends WorkflowEntrypoint {
       const response = await fetch('https://www.wanted.co.kr/api/v4/jobs', {
         headers: {
           Cookie: session,
-          'User-Agent':
-            DEFAULT_USER_AGENT,
+          'User-Agent': DEFAULT_USER_AGENT,
         },
       });
 
@@ -312,13 +314,6 @@ export class JobCrawlingWorkflow extends WorkflowEntrypoint {
   }
 
   async sendSlackNotification(message) {
-    const webhookUrl = this.env.SLACK_WEBHOOK_URL;
-    if (!webhookUrl) return;
-
-    await fetch(webhookUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(message),
-    });
+    console.log('[Notification]', JSON.stringify(message));
   }
 }

@@ -20,9 +20,6 @@ function getClientIp(request) {
 
 function getRateLimitPolicy(pathname) {
   if (pathname.startsWith('/api/auth')) return ['auth', RATE_LIMIT_POLICIES.auth];
-  if (pathname.startsWith('/api/slack/interactions')) {
-    return ['webhook', RATE_LIMIT_POLICIES.webhook];
-  }
   if (pathname.startsWith('/api/')) return ['api', RATE_LIMIT_POLICIES.api];
   return ['dashboard', RATE_LIMIT_POLICIES.dashboard];
 }
