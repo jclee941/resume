@@ -3,10 +3,7 @@
  * Stealth browser-based 자동 지원 시스템
  */
 
-import {
-  ApplicationManager,
-  APPLICATION_STATUS,
-} from './application-manager.js';
+import { ApplicationManager, APPLICATION_STATUS } from './application-manager.js';
 import { UnifiedJobCrawler } from '../crawlers/index.js';
 import { withStealthBrowser, launchStealthBrowser } from '../crawlers/browser-utils.js';
 import { SessionManager } from '../shared/services/session/index.js';
@@ -59,7 +56,7 @@ export class AutoApplier {
         return null;
       },
       tag,
-      text,
+      text
     );
     const element = handle.asElement();
     if (!element) {
@@ -113,7 +110,9 @@ export class AutoApplier {
                 session = legacyData;
                 console.log(`📂 ${platform}: loaded from legacy session file`);
               }
-            } catch { /* ignore parse errors */ }
+            } catch {
+              /* ignore parse errors */
+            }
           }
         }
 
@@ -123,7 +122,9 @@ export class AutoApplier {
             console.log(`✅ ${platform} session cookies loaded`);
           } else if (Array.isArray(session.cookies)) {
             await this.loadCookies(session.cookies);
-            console.log(`✅ ${platform} session cookies loaded (${session.cookies.length} cookies)`);
+            console.log(
+              `✅ ${platform} session cookies loaded (${session.cookies.length} cookies)`
+            );
           }
         } else {
           console.log(`⚠️ ${platform}: no valid session found`);
@@ -136,7 +137,6 @@ export class AutoApplier {
     return this;
   }
 
-
   /**
    * 쿠키 로드 (rebrowser-puppeteer compatible)
    * @param {string|Array} cookies - Cookie string or array of cookie objects
@@ -145,10 +145,13 @@ export class AutoApplier {
   async loadCookies(cookies, domain = '.wanted.co.kr') {
     if (typeof cookies === 'string') {
       // 쿠키 문자열 파싱
-      const cookieList = cookies.split(';').map((c) => {
-        const [name, ...rest] = c.trim().split('=');
-        return { name: name.trim(), value: rest.join('='), domain, path: '/' };
-      }).filter(c => c.name);
+      const cookieList = cookies
+        .split(';')
+        .map((c) => {
+          const [name, ...rest] = c.trim().split('=');
+          return { name: name.trim(), value: rest.join('='), domain, path: '/' };
+        })
+        .filter((c) => c.name);
       await this.page.setCookie(...cookieList);
     } else if (Array.isArray(cookies)) {
       await this.page.setCookie(...cookies);
@@ -218,30 +221,30 @@ export class AutoApplier {
 
       // 3. 지원 실행
       if (this.config.autoApply && !this.config.dryRun) {
-        await this.initBrowser();
+        try {
+          await this.initBrowser();
 
-        for (const job of candidates) {
-          try {
-            const appResult = await this.applyToJob(job);
+          for (const job of candidates) {
+            try {
+              const appResult = await this.applyToJob(job);
 
-            if (appResult.success) {
-              results.applied++;
-              results.applications.push(appResult.application);
-            } else {
+              if (appResult.success) {
+                results.applied++;
+                results.applications.push(appResult.application);
+              } else {
+                results.failed++;
+              }
+
+              // 딜레이
+              await this.sleep(this.config.delayBetweenApps);
+            } catch (error) {
+              console.error(`❌ Failed to apply to ${job.company}: ${error.message}`);
               results.failed++;
             }
-
-            // 딜레이
-            await this.sleep(this.config.delayBetweenApps);
-          } catch (error) {
-            console.error(
-              `❌ Failed to apply to ${job.company}: ${error.message}`,
-            );
-            results.failed++;
           }
+        } finally {
+          await this.closeBrowser();
         }
-
-        await this.closeBrowser();
       } else {
         // Dry run - 지원 대기 상태로만 등록
         for (const job of candidates) {
@@ -294,19 +297,31 @@ export class AutoApplier {
   async applyToWanted(job) {
     try {
       await this.page.goto(job.sourceUrl, { waitUntil: 'domcontentloaded' });
-      await new Promise(r => setTimeout(r, 2000));
+      await new Promise((r) => setTimeout(r, 2000));
+
+      const loginLink =
+        (await this.findByText('a', '로그인')) ||
+        (await this.findByText('a', 'Sign in')) ||
+        (await this.findByText('button', '로그인')) ||
+        (await this.findByText('button', 'Sign in'));
+      if (loginLink) {
+        return { success: false, error: 'Not logged in to Wanted' };
+      }
 
       // Try multiple selectors
-      const applyButton = await this.findByText('button', '지원하기')
-        || await this.findByText('a', '지원하기')
-        || await this.findByText('button', 'Apply');
+      const applyButton =
+        (await this.findByText('button', '지원하기')) ||
+        (await this.findByText('a', '지원하기')) ||
+        (await this.findByText('button', 'Apply'));
       if (!applyButton) {
-        try { await this.page.screenshot({ path: `/tmp/wanted-debug-${Date.now()}.png` }); } catch {}
+        try {
+          await this.page.screenshot({ path: `/tmp/wanted-debug-${Date.now()}.png` });
+        } catch {}
         return { success: false, error: 'Apply button not found' };
       }
 
       await applyButton.click();
-      await new Promise(r => setTimeout(r, 1000));
+      await new Promise((r) => setTimeout(r, 1000));
 
       // 이력서 선택 (첫 번째 이력서)
       const resumeOption = await this.page.$('.resume-item');
@@ -318,7 +333,7 @@ export class AutoApplier {
       const submitButton = await this.findByText('button', '제출');
       if (submitButton) {
         await submitButton.click();
-        await new Promise(r => setTimeout(r, 2000));
+        await new Promise((r) => setTimeout(r, 2000));
       }
 
       // 지원 완료 확인 (XPath text match)
@@ -329,7 +344,7 @@ export class AutoApplier {
         this.appManager.updateStatus(
           application.id,
           APPLICATION_STATUS.APPLIED,
-          'Auto-applied via bot',
+          'Auto-applied via bot'
         );
 
         return { success: true, application };
@@ -347,7 +362,7 @@ export class AutoApplier {
   async applyToJobKorea(job) {
     try {
       await this.page.goto(job.sourceUrl, { waitUntil: 'domcontentloaded' });
-      await new Promise(r => setTimeout(r, 2000)); // wait for JS rendering
+      await new Promise((r) => setTimeout(r, 2000)); // wait for JS rendering
 
       // Debug: log page title and URL
       const pageTitle = await this.page.title();
@@ -359,7 +374,7 @@ export class AutoApplier {
         console.log('  ⚠️ JobKorea: NOT logged in despite cookies — trying cookie refresh...');
         // Navigate to homepage first to establish cookie session, then retry
         await this.page.goto('https://www.jobkorea.co.kr', { waitUntil: 'domcontentloaded' });
-        await new Promise(r => setTimeout(r, 2000));
+        await new Promise((r) => setTimeout(r, 2000));
         const stillLoggedOut = await this.findByText('a', '로그인');
         if (stillLoggedOut) {
           console.log('  ❌ JobKorea: Login failed — cookies may be expired');
@@ -367,30 +382,33 @@ export class AutoApplier {
         }
         // Re-navigate to job page after establishing session
         await this.page.goto(job.sourceUrl, { waitUntil: 'domcontentloaded' });
-        await new Promise(r => setTimeout(r, 2000));
+        await new Promise((r) => setTimeout(r, 2000));
       }
 
       // Try multiple selectors for apply button (JobKorea uses '즉시 지원' not '입사지원')
-      const applyButton = await this.findByText('button', '즉시 지원')
-        || await this.findByText('a', '즉시 지원')
-        || await this.findByText('button', '즉시지원')
-        || await this.findByText('a', '즉시지원')
-        || await this.findByText('button', '잡코리아 즉시지원')
-        || await this.findByText('a', '잡코리아 즉시지원')
-        || await this.findByText('button', '입사지원')
-        || await this.findByText('a', '입사지원')
-        || await this.findByText('button', '지원하기')
-        || await this.findByText('a', '지원하기')
-        || await this.page.$('[class*="contained-primary"]')
-        || await this.page.$('[class*="btn_apply"]')
-        || await this.page.$('[class*="apply"]');
+      const applyButton =
+        (await this.findByText('button', '즉시 지원')) ||
+        (await this.findByText('a', '즉시 지원')) ||
+        (await this.findByText('button', '즉시지원')) ||
+        (await this.findByText('a', '즉시지원')) ||
+        (await this.findByText('button', '잡코리아 즉시지원')) ||
+        (await this.findByText('a', '잡코리아 즉시지원')) ||
+        (await this.findByText('button', '입사지원')) ||
+        (await this.findByText('a', '입사지원')) ||
+        (await this.findByText('button', '지원하기')) ||
+        (await this.findByText('a', '지원하기')) ||
+        (await this.page.$('[class*="contained-primary"]')) ||
+        (await this.page.$('[class*="btn_apply"]')) ||
+        (await this.page.$('[class*="apply"]'));
       if (!applyButton) {
         // Screenshot for debugging
-        try { await this.page.screenshot({ path: `/tmp/jobkorea-debug-${Date.now()}.png` }); } catch {}
+        try {
+          await this.page.screenshot({ path: `/tmp/jobkorea-debug-${Date.now()}.png` });
+        } catch {}
         return { success: false, error: 'Apply button not found' };
       }
       await applyButton.click();
-      await new Promise(r => setTimeout(r, 3000));
+      await new Promise((r) => setTimeout(r, 3000));
 
       // Handle JobKorea application popup/modal
       // 1. Check if already applied
@@ -400,28 +418,45 @@ export class AutoApplier {
       }
 
       // 2. Select default resume if not selected
-      const resumeSelect = await this.page.$('.resume_select')
-        || await this.page.$('.apply_resume_list');
+      const resumeSelect =
+        (await this.page.$('.resume_select')) || (await this.page.$('.apply_resume_list'));
       if (resumeSelect) {
-        const firstResume = await this.page.$('.resume_item:first-child')
-          || await this.page.$('input[type="radio"]:first-child');
+        const firstResume =
+          (await this.page.$('.resume_item:first-child')) ||
+          (await this.page.$('input[type="radio"]:first-child'));
         if (firstResume) await firstResume.click();
       }
 
       // 3. Final submission button (try CSS IDs first, then text match)
-      const finalSubmit = await this.findByText('button', '지원하기', '#btnApplyDirect')
-        || await this.page.$('.btn_apply_confirm');
+      const finalSubmit =
+        (await this.findByText('button', '지원하기', '#btnApplyDirect')) ||
+        (await this.page.$('.btn_apply_confirm'));
 
       if (finalSubmit) {
         await finalSubmit.click();
-        await new Promise(r => setTimeout(r, 3000));
+        await new Promise((r) => setTimeout(r, 3000));
+      }
+
+      const successMessage =
+        (await this.findElementWithText('지원이 완료')) ||
+        (await this.findElementWithText('지원 완료')) ||
+        (await this.findElementWithText('지원하였습니다'));
+
+      const errorMessage =
+        (await this.findElementWithText('오류')) ||
+        (await this.findElementWithText('실패')) ||
+        (await this.findElementWithText('지원할 수 없습니다'));
+
+      const successConfirmed = !!successMessage || !errorMessage;
+      if (!successConfirmed) {
+        return { success: false, error: 'Application confirmation not found' };
       }
 
       const application = this.appManager.addApplication(job);
       this.appManager.updateStatus(
         application.id,
         APPLICATION_STATUS.APPLIED,
-        'Auto-applied via bot (JobKorea)',
+        'Auto-applied via bot (JobKorea)'
       );
 
       return { success: true, application };
@@ -436,22 +471,34 @@ export class AutoApplier {
   async applyToSaramin(job) {
     try {
       await this.page.goto(job.sourceUrl, { waitUntil: 'domcontentloaded' });
-      await new Promise(r => setTimeout(r, 2000));
+      await new Promise((r) => setTimeout(r, 2000));
+
+      const loginLink =
+        (await this.findByText('a', '로그인')) ||
+        (await this.findByText('a', 'Sign in')) ||
+        (await this.findByText('button', '로그인')) ||
+        (await this.findByText('button', 'Sign in'));
+      if (loginLink) {
+        return { success: false, error: 'Not logged in to Saramin' };
+      }
 
       // Try multiple selectors
-      const applyButton = await this.findByText('a', '입사지원', 'button.btn_apply')
-        || await this.findByText('button', '입사지원')
-        || await this.findByText('a', '지원하기')
-        || await this.findByText('button', '지원하기')
-        || await this.page.$('.btn_apply')
-        || await this.page.$('[class*="apply"]');
+      const applyButton =
+        (await this.findByText('a', '입사지원', 'button.btn_apply')) ||
+        (await this.findByText('button', '입사지원')) ||
+        (await this.findByText('a', '지원하기')) ||
+        (await this.findByText('button', '지원하기')) ||
+        (await this.page.$('.btn_apply')) ||
+        (await this.page.$('[class*="apply"]'));
       if (!applyButton) {
-        try { await this.page.screenshot({ path: `/tmp/saramin-debug-${Date.now()}.png` }); } catch {}
+        try {
+          await this.page.screenshot({ path: `/tmp/saramin-debug-${Date.now()}.png` });
+        } catch {}
         return { success: false, error: 'Apply button not found' };
       }
 
       await applyButton.click();
-      await new Promise(r => setTimeout(r, 3000));
+      await new Promise((r) => setTimeout(r, 3000));
 
       // Handle Saramin application modal
       // 1. Check for 'Already Applied'
@@ -461,19 +508,35 @@ export class AutoApplier {
       }
 
       // 2. Click through agreement/resume selection if needed
-      const confirmButton = await this.findByText('button', '확인', '.btn_apply_submit')
-        || await this.findByText('button', '지원하기');
+      const confirmButton =
+        (await this.findByText('button', '확인', '.btn_apply_submit')) ||
+        (await this.findByText('button', '지원하기'));
 
       if (confirmButton) {
         await confirmButton.click();
-        await new Promise(r => setTimeout(r, 3000));
+        await new Promise((r) => setTimeout(r, 3000));
+      }
+
+      const successMessage =
+        (await this.findElementWithText('지원이 완료')) ||
+        (await this.findElementWithText('지원 완료')) ||
+        (await this.findElementWithText('지원하였습니다'));
+
+      const errorMessage =
+        (await this.findElementWithText('오류')) ||
+        (await this.findElementWithText('실패')) ||
+        (await this.findElementWithText('지원할 수 없습니다'));
+
+      const successConfirmed = !!successMessage || !errorMessage;
+      if (!successConfirmed) {
+        return { success: false, error: 'Application confirmation not found' };
       }
 
       const application = this.appManager.addApplication(job);
       this.appManager.updateStatus(
         application.id,
         APPLICATION_STATUS.APPLIED,
-        'Auto-applied via bot (Saramin)',
+        'Auto-applied via bot (Saramin)'
       );
 
       return { success: true, application };
@@ -500,7 +563,7 @@ export class AutoApplier {
       }
 
       await easyApplyButton.click();
-      await new Promise(r => setTimeout(r, 2000));
+      await new Promise((r) => setTimeout(r, 2000));
 
       // Navigate through multi-step application form
       let steps = 0;
@@ -508,12 +571,12 @@ export class AutoApplier {
 
       while (steps < MAX_STEPS) {
         // Look for 'Next' or 'Review' buttons
-        const nextButton = await this.findByText('button', 'Next')
-          || await this.findByText('button', 'Review');
+        const nextButton =
+          (await this.findByText('button', 'Next')) || (await this.findByText('button', 'Review'));
 
         if (nextButton) {
           await nextButton.click();
-          await new Promise(r => setTimeout(r, 1500));
+          await new Promise((r) => setTimeout(r, 1500));
           steps++;
           continue;
         }
@@ -523,7 +586,7 @@ export class AutoApplier {
 
         if (submitButton) {
           await submitButton.click();
-          await new Promise(r => setTimeout(r, 3000));
+          await new Promise((r) => setTimeout(r, 3000));
           break;
         }
 
@@ -531,11 +594,21 @@ export class AutoApplier {
         break;
       }
 
+      const successMessage =
+        (await this.findElementWithText('application was sent')) ||
+        (await this.findElementWithText('Application submitted')) ||
+        (await this.findElementWithText('Your application was sent')) ||
+        (await this.findElementWithText('Application sent'));
+
+      if (!successMessage) {
+        return { success: false, error: 'Application confirmation not found' };
+      }
+
       const application = this.appManager.addApplication(job);
       this.appManager.updateStatus(
         application.id,
         APPLICATION_STATUS.APPLIED,
-        'Auto-applied via LinkedIn Easy Apply',
+        'Auto-applied via LinkedIn Easy Apply'
       );
 
       return { success: true, application };

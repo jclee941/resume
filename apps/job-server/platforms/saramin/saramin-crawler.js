@@ -87,7 +87,9 @@ export class SaraminCrawler extends BaseCrawler {
 
       await page
         .waitForSelector('.item_recruit, [class*="job_item"]', { timeout: 10000 })
-        .catch(() => {});
+        .catch((err) => {
+          console.warn(`⚠️ Saramin: waitForSelector timeout — ${err.message}`);
+        });
 
       const jobs = await page.evaluate(() => {
         const results = [];

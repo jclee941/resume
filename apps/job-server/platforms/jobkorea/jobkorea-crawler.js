@@ -87,7 +87,9 @@ export class JobKoreaCrawler extends BaseCrawler {
         .waitForSelector('a[href*="/Recruit/GI_Read/"]', {
           timeout: 10000,
         })
-        .catch(() => {});
+        .catch((err) => {
+          console.warn(`⚠️ JobKorea: waitForSelector timeout — ${err.message}`);
+        });
 
       const jobs = await page.evaluate(() => {
         const results = [];
@@ -123,7 +125,7 @@ export class JobKoreaCrawler extends BaseCrawler {
         });
 
         jobMap.forEach((job) => {
-          if (job.position && job.position.length >= 5) {
+          if (job.position && job.position.length >= 2) {
             results.push(job);
           }
         });

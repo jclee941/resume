@@ -39,9 +39,7 @@ export class ApplyOrchestrator {
 
     if (this.#config.parallelSearch) {
       const results = await Promise.allSettled(
-        platforms.map((platform) =>
-          this.#crawler.search(platform, keywords, options),
-        ),
+        platforms.map((platform) => this.#crawler.search(platform, keywords, options))
       );
 
       for (const result of results) {
@@ -52,11 +50,7 @@ export class ApplyOrchestrator {
     } else {
       for (const platform of platforms) {
         try {
-          const result = await this.#crawler.search(
-            platform,
-            keywords,
-            options,
-          );
+          const result = await this.#crawler.search(platform, keywords, options);
           if (result) jobs.push(...result);
         } catch {
           continue;
@@ -110,12 +104,13 @@ export class ApplyOrchestrator {
             });
             this.#stats.applied++;
           } else {
-            console.log(`  🎯 Applying to: ${job.company || job.title} (${job.source}) — ${job.sourceUrl}`);
+            console.log(
+              `  🎯 Applying to: ${job.company || job.title} (${job.source}) — ${job.sourceUrl}`
+            );
             const result = await this.#applier.applyToJob(job);
             results.push({ job, ...result });
 
             if (result.success) {
-              this.#appManager?.addApplication(job, { status: 'applied' });
               this.#stats.applied++;
             } else {
               console.error(`❌ Apply failed for ${job.company || job.title}: ${result.error}`);
@@ -167,9 +162,7 @@ export class ApplyOrchestrator {
   getStats() {
     return {
       ...this.#stats,
-      duration: this.#stats.endTime
-        ? this.#stats.endTime - this.#stats.startTime
-        : null,
+      duration: this.#stats.endTime ? this.#stats.endTime - this.#stats.startTime : null,
     };
   }
 

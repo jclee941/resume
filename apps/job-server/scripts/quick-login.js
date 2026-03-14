@@ -1,4 +1,4 @@
-import puppeteer from 'puppeteer';
+import { launchStealthBrowser } from '../src/crawlers/browser-utils.js';
 import { SessionManager } from '../src/shared/services/session/index.js';
 import fs from 'fs';
 import path from 'path';
@@ -19,7 +19,7 @@ function loadEnv() {
       });
       console.log('✅ Loaded .env file manually');
     } else {
-      console.log(`⚠️ .env file not found at ${  envPath}`);
+      console.log(`⚠️ .env file not found at ${envPath}`);
     }
   } catch (e) {
     console.error('⚠️ Failed to parse .env:', e.message);
@@ -30,34 +30,11 @@ loadEnv();
 
 async function login() {
   console.log('🚀 Launching Headless Browser for Login...');
-  const browser = await puppeteer.launch({
-    headless: 'new', // Use new headless mode
-    executablePath: '/usr/bin/google-chrome',
-    args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-dev-shm-usage',
-      '--disable-blink-features=AutomationControlled',
-      '--window-size=1920,1080',
-    ],
-    defaultViewport: { width: 1920, height: 1080 },
-  });
-
-  const page = await browser.newPage();
-
-  // Set real User-Agent to bypass basic WAF
-  await page.setUserAgent(
-    'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-  );
-
-  // Stealth: Hide webdriver property
-  await page.evaluateOnNewDocument(() => {
-    Object.defineProperty(navigator, 'webdriver', { get: () => false });
-  });
+  const { browser, page } = await launchStealthBrowser();
 
   try {
     console.log('📱 Opening Wanted login page...');
-    await page.goto('https://www.wanted.co.kr/login', {
+    await page.goto('https://id.wanted.jobs/login', {
       waitUntil: 'networkidle2',
       timeout: 60000,
     });
@@ -68,13 +45,8 @@ async function login() {
 
     // Check for Cloudflare Challenge or WAF
     const content = await page.content();
-    if (
-      content.includes('challenge-platform') ||
-      title.includes('Just a moment')
-    ) {
-      console.warn(
-        '⚠️ Cloudflare Challenge detected! Headless login might fail.',
-      );
+    if (content.includes('challenge-platform') || title.includes('Just a moment')) {
+      console.warn('⚠️ Cloudflare Challenge detected! Headless login might fail.');
       await page.screenshot({ path: 'login_challenge.png' });
     }
 
@@ -99,9 +71,7 @@ async function login() {
       await page.keyboard.press('Enter');
 
       console.log('⏳ Waiting for navigation...');
-      await page
-        .waitForNavigation({ waitUntil: 'networkidle2', timeout: 30000 })
-        .catch(() => {});
+      await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 30000 }).catch(() => {});
     } catch (e) {
       console.error(`❌ Interaction failed: ${e.message}`);
       await page.screenshot({ path: 'login_error.png' });
@@ -110,9 +80,7 @@ async function login() {
     // Save Cookies
     const cookies = await page.cookies();
     if (cookies.length > 0) {
-      const cookieString = cookies
-        .map((c) => `${c.name}=${c.value}`)
-        .join('; ');
+      const cookieString = cookies.map((c) => `${c.name}=${c.value}`).join('; ');
       SessionManager.save('wanted', {
         email: 'qws941@kakao.com',
         cookies,

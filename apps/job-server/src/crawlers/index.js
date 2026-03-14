@@ -186,13 +186,21 @@ export class UnifiedJobCrawler {
   }
 
   async search(platform, keywords, options = {}) {
-    const keywordStr = Array.isArray(keywords) ? keywords[0] : keywords;
-    const result = await this.searchSource(platform, {
-      keyword: keywordStr,
-      limit: options.limit || 20,
-      ...options,
-    });
-    return result.success ? result.jobs : [];
+    const keywordList = Array.isArray(keywords) ? keywords : [keywords];
+    const allJobs = [];
+
+    for (const keyword of keywordList) {
+      const result = await this.searchSource(platform, {
+        keyword,
+        limit: options.limit || 20,
+        ...options,
+      });
+      if (result.success) {
+        allJobs.push(...result.jobs);
+      }
+    }
+
+    return this.deduplicateJobs(allJobs);
   }
 
   /**

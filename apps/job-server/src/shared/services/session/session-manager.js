@@ -5,7 +5,14 @@ import { homedir } from 'os';
 const SHARED_DATA_DIR = join(homedir(), '.opencode', 'data');
 const SESSION_FILE = join(SHARED_DATA_DIR, 'sessions.json');
 
-const SESSION_TTL_MS = 24 * 60 * 60 * 1000;
+const DEFAULT_TTL_MS = 24 * 60 * 60 * 1000;
+const PLATFORM_TTL_MS = {
+  jobkorea: 30 * 24 * 60 * 60 * 1000,
+  wanted: 24 * 60 * 60 * 1000,
+  saramin: 7 * 24 * 60 * 60 * 1000,
+  linkedin: 7 * 24 * 60 * 60 * 1000,
+  remember: 30 * 24 * 60 * 60 * 1000,
+};
 const PLATFORMS = ['wanted', 'saramin', 'jobkorea', 'remember', 'linkedin'];
 
 const ensureDir = (filePath) => {
@@ -22,11 +29,8 @@ export class SessionManager {
         const allSessions = JSON.parse(readFileSync(SESSION_FILE, 'utf-8'));
         if (platform) {
           const session = allSessions[platform];
-          if (
-            session &&
-            session.timestamp &&
-            Date.now() - session.timestamp < SESSION_TTL_MS
-          ) {
+          const platformTtl = PLATFORM_TTL_MS[platform] || DEFAULT_TTL_MS;
+          if (session && session.timestamp && Date.now() - session.timestamp < platformTtl) {
             return session;
           }
           return null;
@@ -91,21 +95,17 @@ export class SessionManager {
 
     return PLATFORMS.map((p) => {
       const session = sessions[p];
-      const isValid =
-        session &&
-        session.timestamp &&
-        Date.now() - session.timestamp < SESSION_TTL_MS;
+      const platformTtl = PLATFORM_TTL_MS[p] || DEFAULT_TTL_MS;
+      const isValid = session && session.timestamp && Date.now() - session.timestamp < platformTtl;
 
       return {
         platform: p,
         authenticated: !!isValid,
         email: session?.email || null,
         expiresAt: session?.timestamp
-          ? new Date(session.timestamp + SESSION_TTL_MS).toISOString()
+          ? new Date(session.timestamp + platformTtl).toISOString()
           : null,
-        lastUpdated: session?.timestamp
-          ? new Date(session.timestamp).toISOString()
-          : null,
+        lastUpdated: session?.timestamp ? new Date(session.timestamp).toISOString() : null,
       };
     });
   }
