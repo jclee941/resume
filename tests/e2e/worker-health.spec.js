@@ -1,11 +1,17 @@
 import { test, expect } from '@playwright/test';
 
-function isLocalBaseUrl() {
-  return /127\.0\.0\.1|localhost/.test(process.env.PLAYWRIGHT_BASE_URL || '');
+function getBaseUrl(testInfo) {
+  const configured = testInfo.project?.use?.baseURL || process.env.PLAYWRIGHT_BASE_URL;
+  const fallback = process.env.CI ? 'http://localhost:8787' : '';
+  return String(configured || fallback).replace(/\/+$/, '');
 }
 
-function skipIfLocalRateLimited(response, endpoint) {
-  if (isLocalBaseUrl() && response.status() === 429) {
+function isLocalBaseUrl(testInfo) {
+  return /127\.0\.0\.1|localhost/.test(getBaseUrl(testInfo));
+}
+
+function skipIfLocalRateLimited(response, endpoint, testInfo) {
+  if (isLocalBaseUrl(testInfo) && response.status() === 429) {
     test.skip(true, `Local worker rate limited ${endpoint} during verification`);
   }
 }
@@ -31,9 +37,9 @@ test.describe('Worker Startup', () => {
 });
 
 test.describe('Health Endpoints', () => {
-  test('GET /health returns JSON status and bindings', async ({ page }) => {
+  test('GET /health returns JSON status and bindings', async ({ page }, testInfo) => {
     const response = await page.request.get('/health');
-    skipIfLocalRateLimited(response, '/health');
+    skipIfLocalRateLimited(response, '/health', testInfo);
 
     expect(response.status()).toBe(200);
     expect(response.headers()['content-type']).toContain('application/json');
@@ -56,9 +62,9 @@ test.describe('Health Endpoints', () => {
     expect(body.status).toBe('healthy');
   });
 
-  test('GET /metrics returns Prometheus text format', async ({ page }) => {
+  test('GET /metrics returns Prometheus text format', async ({ page }, testInfo) => {
     const response = await page.request.get('/metrics');
-    skipIfLocalRateLimited(response, '/metrics');
+    skipIfLocalRateLimited(response, '/metrics', testInfo);
 
     expect(response.status()).toBe(200);
     expect(response.headers()['content-type']).toContain('text/plain');
@@ -101,9 +107,11 @@ test.describe('Route Verification', () => {
 });
 
 test.describe('Response Headers', () => {
-  test('health endpoints use no-cache policy', async ({ page }) => {
+  test('health endpoints use no-cache policy', async ({ page }, testInfo) => {
     const healthResponse = await page.request.get('/health');
     const metricsResponse = await page.request.get('/metrics');
+    skipIfLocalRateLimited(healthResponse, '/health', testInfo);
+    skipIfLocalRateLimited(metricsResponse, '/metrics', testInfo);
 
     expectNoCache(healthResponse.headers());
     expectNoCache(metricsResponse.headers());

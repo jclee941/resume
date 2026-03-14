@@ -53,7 +53,6 @@ job-server/
 | `JobMatcher`         | class    | `src/shared/services/matching/`     | <60 skip, 60-74 review, ≥75 auto |
 | `SessionManager`     | class    | `src/shared/services/session/`      | 24h TTL, cookie persistence      |
 | `UnifiedApplySystem` | class    | `src/auto-apply/auto-applier.js`    | stealth form submission          |
-| `SlackService`       | class    | `src/shared/services/slack/`        | notification delivery            |
 | `ApplicationService` | class    | `src/shared/services/applications/` | CRUD + analytics                 |
 
 ## CONVENTIONS

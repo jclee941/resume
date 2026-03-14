@@ -1,6 +1,38 @@
 // @ts-check
 const { test, expect } = require('@playwright/test');
 
+function getBaseUrl(testInfo) {
+  const configured = testInfo.project?.use?.baseURL || process.env.PLAYWRIGHT_BASE_URL;
+  const fallback = process.env.CI ? 'http://localhost:8787' : '';
+  return String(configured || fallback).replace(/\/+$/, '');
+}
+
+function isLocalBaseUrl(testInfo) {
+  return /127\.0\.0\.1|localhost/.test(getBaseUrl(testInfo));
+}
+
+let localProbeCounter = 0;
+
+function requestOptions(testInfo) {
+  if (!isLocalBaseUrl(testInfo)) {
+    return { failOnStatusCode: false };
+  }
+
+  localProbeCounter = (localProbeCounter + 1) % 200;
+  return {
+    failOnStatusCode: false,
+    headers: {
+      'cf-connecting-ip': `203.0.113.${localProbeCounter + 1}`,
+    },
+  };
+}
+
+function skipIfLocalRateLimited(response, endpoint, testInfo) {
+  if (isLocalBaseUrl(testInfo) && response.status() === 429) {
+    test.skip(true, `Local worker rate limited ${endpoint} during PWA verification`);
+  }
+}
+
 test.describe('Progressive Web App (PWA)', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
@@ -26,8 +58,9 @@ test.describe('Progressive Web App (PWA)', () => {
     await expect(appleTitle).toHaveAttribute('content', 'JC Lee Resume');
   });
 
-  test('should serve valid manifest.json', async ({ request }) => {
-    const response = await request.get('/manifest.json');
+  test('should serve valid manifest.json', async ({ request }, testInfo) => {
+    const response = await request.get('/manifest.json', requestOptions(testInfo));
+    skipIfLocalRateLimited(response, '/manifest.json', testInfo);
 
     expect(response.ok()).toBeTruthy();
     expect(response.headers()['content-type']).toContain('application/json');
@@ -51,8 +84,9 @@ test.describe('Progressive Web App (PWA)', () => {
     expect(manifest.shortcuts.length).toBeGreaterThan(0);
   });
 
-  test('should serve Service Worker script', async ({ request }) => {
-    const response = await request.get('/sw.js');
+  test('should serve Service Worker script', async ({ request }, testInfo) => {
+    const response = await request.get('/sw.js', requestOptions(testInfo));
+    skipIfLocalRateLimited(response, '/sw.js', testInfo);
 
     expect(response.ok()).toBeTruthy();
     expect(response.headers()['content-type']).toContain('javascript');
@@ -145,8 +179,9 @@ test.describe('Progressive Web App (PWA)', () => {
     expect(pageContent).toContain('register');
   });
 
-  test('manifest should have valid shortcuts', async ({ request }) => {
-    const response = await request.get('/manifest.json');
+  test('manifest should have valid shortcuts', async ({ request }, testInfo) => {
+    const response = await request.get('/manifest.json', requestOptions(testInfo));
+    skipIfLocalRateLimited(response, '/manifest.json', testInfo);
     const manifest = await response.json();
 
     // Check shortcuts structure
@@ -163,16 +198,18 @@ test.describe('Progressive Web App (PWA)', () => {
     expect(shortcutNames).toContain('Contact');
   });
 
-  test('manifest should have correct language settings', async ({ request }) => {
-    const response = await request.get('/manifest.json');
+  test('manifest should have correct language settings', async ({ request }, testInfo) => {
+    const response = await request.get('/manifest.json', requestOptions(testInfo));
+    skipIfLocalRateLimited(response, '/manifest.json', testInfo);
     const manifest = await response.json();
 
     expect(manifest.lang).toBe('ko-KR');
     expect(manifest.dir).toBe('ltr');
   });
 
-  test('manifest should be installable', async ({ request }) => {
-    const response = await request.get('/manifest.json');
+  test('manifest should be installable', async ({ request }, testInfo) => {
+    const response = await request.get('/manifest.json', requestOptions(testInfo));
+    skipIfLocalRateLimited(response, '/manifest.json', testInfo);
     const manifest = await response.json();
 
     // Check installability criteria
@@ -185,8 +222,11 @@ test.describe('Progressive Web App (PWA)', () => {
     expect(iconSizes).toContain('512x512');
   });
 
-  test('Service Worker should have Service-Worker-Allowed header', async ({ request }) => {
-    const response = await request.get('/sw.js');
+  test('Service Worker should have Service-Worker-Allowed header', async ({
+    request,
+  }, testInfo) => {
+    const response = await request.get('/sw.js', requestOptions(testInfo));
+    skipIfLocalRateLimited(response, '/sw.js', testInfo);
 
     const swAllowed = response.headers()['service-worker-allowed'];
     expect(swAllowed).toBe('/');

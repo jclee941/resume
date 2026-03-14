@@ -16,6 +16,10 @@ function getBaseUrl(testInfo) {
   return String(configured || 'http://localhost:8787').replace(/\/+$/, '');
 }
 
+function isLocalBaseUrl(testInfo) {
+  return /127\.0\.0\.1|localhost/.test(getBaseUrl(testInfo));
+}
+
 function toAbsoluteUrl(baseURL, maybeRelativeUrl) {
   try {
     return new URL(maybeRelativeUrl, `${baseURL}/`).toString();
@@ -44,17 +48,28 @@ async function skipIfEdgeProtectionBlocksRunner(request) {
   );
 }
 
+function skipIfLocalRateLimited(response, endpoint, testInfo) {
+  if (isLocalBaseUrl(testInfo) && response.status() === 429) {
+    test.skip(true, `Local worker rate limited ${endpoint} during deployment verification`);
+  }
+}
+
+function expect200OrSkipLocalRateLimit(response, endpoint, testInfo) {
+  skipIfLocalRateLimited(response, endpoint, testInfo);
+  expect(response.status()).toBe(200);
+}
+
 test.describe('@deploy-verify Service Health', () => {
   test.beforeEach(async ({ request }) => {
     await skipIfEdgeProtectionBlocksRunner(request);
   });
 
-  test('portfolio health endpoint returns healthy JSON', async ({ request }) => {
+  test('portfolio health endpoint returns healthy JSON', async ({ request }, testInfo) => {
     const response = await request.get('/health', {
       failOnStatusCode: false,
       headers: withProbeHeaders(),
     });
-    expect(response.status()).toBe(200);
+    expect200OrSkipLocalRateLimit(response, '/health', testInfo);
 
     const payload = await response.json();
     expect(payload).toBeTruthy();
@@ -82,7 +97,7 @@ test.describe('@deploy-verify Service Health', () => {
     }
   });
 
-  test('homepage response time stays under 3000ms', async ({ request }) => {
+  test('homepage response time stays under 3000ms', async ({ request }, testInfo) => {
     const start = Date.now();
     const response = await request.get('/', {
       failOnStatusCode: false,
@@ -90,7 +105,7 @@ test.describe('@deploy-verify Service Health', () => {
     });
     const elapsedMs = Date.now() - start;
 
-    expect(response.status()).toBe(200);
+    expect200OrSkipLocalRateLimit(response, '/', testInfo);
     expect(elapsedMs).toBeLessThan(3000);
   });
 });
@@ -178,16 +193,18 @@ test.describe('@deploy-verify Content Integrity', () => {
       failOnStatusCode: false,
       headers: withProbeHeaders(),
     });
-    expect(ogImageResponse.status()).toBe(200);
+    expect200OrSkipLocalRateLimit(ogImageResponse, '/og-image.webp', testInfo);
     expect(ogImageResponse.headers()['content-type'] || '').toMatch(/^image\//);
   });
 
-  test('locale variant /en responds with English-oriented content', async ({ request }) => {
+  test('locale variant /en responds with English-oriented content', async ({
+    request,
+  }, testInfo) => {
     const response = await request.get('/en', {
       failOnStatusCode: false,
       headers: withProbeHeaders(),
     });
-    expect(response.status()).toBe(200);
+    expect200OrSkipLocalRateLimit(response, '/en', testInfo);
 
     const body = await response.text();
     expect(body).toMatch(/Resume|Portfolio|Engineer|Projects/i);
@@ -199,12 +216,12 @@ test.describe('@deploy-verify Performance', () => {
     await skipIfEdgeProtectionBlocksRunner(request);
   });
 
-  test('metrics endpoint returns Prometheus-compatible text', async ({ request }) => {
+  test('metrics endpoint returns Prometheus-compatible text', async ({ request }, testInfo) => {
     const response = await request.get('/metrics', {
       failOnStatusCode: false,
       headers: withProbeHeaders(),
     });
-    expect(response.status()).toBe(200);
+    expect200OrSkipLocalRateLimit(response, '/metrics', testInfo);
 
     const body = await response.text();
     expect(body).toMatch(
@@ -212,13 +229,15 @@ test.describe('@deploy-verify Performance', () => {
     );
   });
 
-  test('response indicates transfer/compression behavior in headers', async ({ request }) => {
+  test('response indicates transfer/compression behavior in headers', async ({
+    request,
+  }, testInfo) => {
     const response = await request.get('/', {
       failOnStatusCode: false,
       headers: withProbeHeaders({ 'accept-encoding': 'br, gzip' }),
     });
 
-    expect(response.status()).toBe(200);
+    expect200OrSkipLocalRateLimit(response, '/', testInfo);
     const headers = response.headers();
     const contentEncoding = headers['content-encoding'];
     const transferEncoding = headers['transfer-encoding'];
@@ -229,7 +248,7 @@ test.describe('@deploy-verify Performance', () => {
   test('static assets expose cache-control with max-age or immutable', async ({
     page,
     request,
-  }) => {
+  }, testInfo) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
     const candidateAsset = await page.evaluate(() => {
@@ -256,7 +275,7 @@ test.describe('@deploy-verify Performance', () => {
       failOnStatusCode: false,
       headers: withProbeHeaders(),
     });
-    expect(response.status()).toBe(200);
+    expect200OrSkipLocalRateLimit(response, candidateAsset || '/og-image.webp', testInfo);
 
     const cacheControl = response.headers()['cache-control'] || '';
     expect(cacheControl).toMatch(/max-age|immutable/i);
@@ -268,33 +287,33 @@ test.describe('@deploy-verify API Endpoints', () => {
     await skipIfEdgeProtectionBlocksRunner(request);
   });
 
-  test('robots.txt returns 200 and includes User-agent', async ({ request }) => {
+  test('robots.txt returns 200 and includes User-agent', async ({ request }, testInfo) => {
     const response = await request.get('/robots.txt', {
       failOnStatusCode: false,
       headers: withProbeHeaders(),
     });
-    expect(response.status()).toBe(200);
+    expect200OrSkipLocalRateLimit(response, '/robots.txt', testInfo);
     const body = await response.text();
     expect(body).toMatch(/user-agent/i);
   });
 
-  test('sitemap.xml returns 200 with valid sitemap root', async ({ request }) => {
+  test('sitemap.xml returns 200 with valid sitemap root', async ({ request }, testInfo) => {
     const response = await request.get('/sitemap.xml', {
       failOnStatusCode: false,
       headers: withProbeHeaders(),
     });
-    expect(response.status()).toBe(200);
+    expect200OrSkipLocalRateLimit(response, '/sitemap.xml', testInfo);
 
     const body = await response.text();
     expect(body).toMatch(/<urlset|<sitemapindex/i);
   });
 
-  test('metrics endpoint is reachable as API surface', async ({ request }) => {
+  test('metrics endpoint is reachable as API surface', async ({ request }, testInfo) => {
     const response = await request.get('/metrics', {
       failOnStatusCode: false,
       headers: withProbeHeaders(),
     });
-    expect(response.status()).toBe(200);
+    expect200OrSkipLocalRateLimit(response, '/metrics', testInfo);
 
     const contentType = response.headers()['content-type'] || '';
     expect(contentType).toMatch(

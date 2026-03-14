@@ -297,7 +297,9 @@ test.describe('Resource Hints', () => {
 });
 
 test.describe('SEO Routes', () => {
-  const isLocalhost = /127\.0\.0\.1|localhost/.test(process.env.PLAYWRIGHT_BASE_URL || '');
+  const configuredBaseUrl =
+    process.env.PLAYWRIGHT_BASE_URL || (process.env.CI ? 'http://localhost:8787' : '');
+  const isLocalhost = /127\.0\.0\.1|localhost/.test(configuredBaseUrl);
 
   test('should serve robots.txt', async ({ request }) => {
     const response = await request.get('/robots.txt');

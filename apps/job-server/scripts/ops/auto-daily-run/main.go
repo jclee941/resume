@@ -63,10 +63,6 @@ func main() {
 	fmt.Println()
 	fmt.Printf("✅ 자동화 작업 완료 - %s\n", time.Now().Format(time.RFC3339))
 	fmt.Println("==================================================")
-
-	if os.Getenv("SLACK_WEBHOOK_URL") != "" {
-		fmt.Println("📢 Slack 알림 전송...")
-	}
 }
 
 func mustRepoRoot() string {

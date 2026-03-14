@@ -12,13 +12,12 @@ Hexagonal architecture core. Services hold domain logic; clients are external ad
 
 ```text
 shared/
-├── services/         # 10 domain service directories
+├── services/         # 9 domain service directories
 │   ├── apply/        # application submission
 │   ├── matching/     # job scoring + gates
 │   ├── session/      # cookie/token management
 │   ├── applications/ # CRUD + analytics
 │   ├── analytics/    # usage tracking
-│   ├── slack/        # notifications
 │   ├── profile/      # user profile
 │   ├── auth/         # authentication
 │   ├── resume/       # resume operations

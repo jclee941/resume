@@ -6,7 +6,7 @@
 
 ## OVERVIEW
 
-10 domain service directories. Stateless, DI-based, domain-focused. Matching has a dedicated child AGENTS for scoring/AI details.
+9 domain service directories. Stateless, DI-based, domain-focused. Matching has a dedicated child AGENTS for scoring/AI details.
 
 ## SERVICES
 
@@ -17,7 +17,6 @@
 | `session/`      | SessionManager        | 24h TTL, cookie persistence      |
 | `applications/` | ApplicationService    | CRUD + analytics                 |
 | `analytics/`    | AnalyticsService      | usage tracking                   |
-| `slack/`        | SlackService          | notification delivery            |
 | `profile/`      | ProfileService        | user profile operations          |
 | `auth/`         | AuthService           | authentication flows             |
 | `resume/`       | ResumeService         | resume operations                |

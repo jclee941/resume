@@ -88,10 +88,6 @@ func main() {
 	fmt.Println()
 	fmt.Printf("✅ 유지보수 완료 - %s\n", time.Now().Format(time.RFC3339))
 	fmt.Println("===========================================")
-
-	if os.Getenv("SLACK_WEBHOOK_URL") != "" {
-		fmt.Println("📢 유지보수 완료 알림 전송...")
-	}
 }
 
 func mustRepoRoot() string {
