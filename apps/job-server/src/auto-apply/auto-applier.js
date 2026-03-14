@@ -447,9 +447,11 @@ export class AutoApplier {
         (await this.findElementWithText('실패')) ||
         (await this.findElementWithText('지원할 수 없습니다'));
 
-      const successConfirmed = !!successMessage || !errorMessage;
-      if (!successConfirmed) {
-        return { success: false, error: 'Application confirmation not found' };
+      if (errorMessage) {
+        return { success: false, error: 'Application error detected on page' };
+      }
+      if (!successMessage) {
+        return { success: false, error: 'JobKorea application confirmation not found — no success signal detected' };
       }
 
       const application = this.appManager.addApplication(job);
@@ -527,9 +529,11 @@ export class AutoApplier {
         (await this.findElementWithText('실패')) ||
         (await this.findElementWithText('지원할 수 없습니다'));
 
-      const successConfirmed = !!successMessage || !errorMessage;
-      if (!successConfirmed) {
-        return { success: false, error: 'Application confirmation not found' };
+      if (errorMessage) {
+        return { success: false, error: 'Application error detected on page' };
+      }
+      if (!successMessage) {
+        return { success: false, error: 'Saramin application confirmation not found — no success signal detected' };
       }
 
       const application = this.appManager.addApplication(job);

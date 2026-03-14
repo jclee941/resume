@@ -106,6 +106,8 @@ describe('ApplyOrchestrator', () => {
   let mockAppManager;
 
   beforeEach(() => {
+    mock.method(console, 'log', () => {});
+    mock.method(console, 'error', () => {});
     mockCrawler = {
       search: mock.fn(async () => [
         { company: 'Test', position: 'DevOps', source: 'wanted' },
@@ -262,6 +264,8 @@ describe('UnifiedApplySystem', () => {
   let mockNotifier;
 
   beforeEach(() => {
+    mock.method(console, 'log', () => {});
+    mock.method(console, 'error', () => {});
     mockCrawler = {
       search: mock.fn(async () => [
         {
