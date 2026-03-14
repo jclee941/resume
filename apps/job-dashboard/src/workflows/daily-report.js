@@ -297,11 +297,11 @@ ${statusEmoji.pending} 대기: ${applications.pending}건`,
     };
   }
 
-  async sendSlackReport(content, _type) {
+  async sendReport(content, _type) {
     console.log('[Notification]', JSON.stringify(content));
   }
 
-  async sendSlackNotification(message) {
+  async sendNotification(message) {
     console.log('[Notification]', JSON.stringify(message));
   }
 }

@@ -313,7 +313,7 @@ export class JobCrawlingWorkflow extends WorkflowEntrypoint {
     return Math.min(100, Math.round(score));
   }
 
-  async sendSlackNotification(message) {
+  async sendNotification(message) {
     console.log('[Notification]', JSON.stringify(message));
   }
 }

@@ -420,7 +420,7 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
     return data ? JSON.parse(data) : null;
   }
 
-  async sendSlackNotification(message) {
+  async sendNotification(message) {
     console.log('[Notification]', JSON.stringify(message));
   }
 }

@@ -352,54 +352,52 @@ contactPoints:
   - orgId: 1
     name: Primary On-Call
     receivers:
-      - uid: resume_slack_critical
-        type: slack
+      - uid: resume_whatsapp_critical
+        type: webhook
         settings:
-          url: ${SLACK_WEBHOOK_URL}
-          recipient: '#alerts-critical'
-          title: '{{ .CommonLabels.severity | toUpper }}: {{ .CommonAnnotations.summary }}'
-          text: |
-            {{ .CommonAnnotations.description }}
-
-            📊 Dashboard: {{ .CommonAnnotations.grafana_dashboard }}
-            📖 Runbook: {{ .CommonAnnotations.runbook_url }}
-
-            Labels:
-            {{ range .CommonLabels.SortedPairs }}
-            • {{ .Name }}: {{ .Value }}
-            {{ end }}
-
-            ⏰ Started: {{ .StartsAt.Format "2006-01-02 15:04:05 MST" }}
-          color: '{{ if eq .CommonLabels.severity "critical" }}danger{{ else if eq .CommonLabels.severity "warning" }}warning{{ else }}good{{ end }}'
+          url: ${EVOLUTION_API_URL}/message/sendText/${EVOLUTION_INSTANCE_NAME}
+          httpMethod: POST
+          authorization_scheme: apikey
+          authorization_credentials: ${EVOLUTION_API_KEY}
+          body: |
+            {
+              "number": "${EVOLUTION_WHATSAPP_NUMBER}",
+              "text": "🚨 {{ .CommonLabels.severity | toUpper }}: {{ .CommonAnnotations.summary }}\n\n{{ .CommonAnnotations.description }}\n\n📊 Dashboard: {{ .CommonAnnotations.grafana_dashboard }}\n📖 Runbook: {{ .CommonAnnotations.runbook_url }}\n\nLabels:\n{{ range .CommonLabels.SortedPairs }}• {{ .Name }}: {{ .Value }}\n{{ end }}\n⏰ Started: {{ .StartsAt.Format \"2006-01-02 15:04:05 MST\" }}"
+            }
         disableResolveMessage: false
 
   - orgId: 1
     name: Secondary On-Call
     receivers:
-      - uid: resume_slack_warning
-        type: slack
+      - uid: resume_whatsapp_warning
+        type: webhook
         settings:
-          url: ${SLACK_WEBHOOK_URL}
-          recipient: '#alerts-warning'
-          title: '{{ .CommonLabels.severity | toUpper }}: {{ .CommonAnnotations.summary }}'
-          text: |
-            {{ .CommonAnnotations.description }}
-
-            {{ range .CommonLabels.SortedPairs }}
-            • {{ .Name }}: {{ .Value }}
-            {{ end }}
+          url: ${EVOLUTION_API_URL}/message/sendText/${EVOLUTION_INSTANCE_NAME}
+          httpMethod: POST
+          authorization_scheme: apikey
+          authorization_credentials: ${EVOLUTION_API_KEY}
+          body: |
+            {
+              "number": "${EVOLUTION_WHATSAPP_NUMBER}",
+              "text": "⚠️ {{ .CommonLabels.severity | toUpper }}: {{ .CommonAnnotations.summary }}\n\n{{ .CommonAnnotations.description }}\n\nLabels:\n{{ range .CommonLabels.SortedPairs }}• {{ .Name }}: {{ .Value }}\n{{ end }}"
+            }
         disableResolveMessage: false
 
   - orgId: 1
     name: Info Notifications
     receivers:
-      - uid: resume_slack_info
-        type: slack
+      - uid: resume_whatsapp_info
+        type: webhook
         settings:
-          url: ${SLACK_WEBHOOK_URL}
-          recipient: '#alerts-info'
-          title: 'ℹ️ {{ .CommonAnnotations.summary }}'
-          text: '{{ .CommonAnnotations.description }}'
+          url: ${EVOLUTION_API_URL}/message/sendText/${EVOLUTION_INSTANCE_NAME}
+          httpMethod: POST
+          authorization_scheme: apikey
+          authorization_credentials: ${EVOLUTION_API_KEY}
+          body: |
+            {
+              "number": "${EVOLUTION_WHATSAPP_NUMBER}",
+              "text": "ℹ️ {{ .CommonAnnotations.summary }}\n{{ .CommonAnnotations.description }}"
+            }
         disableResolveMessage: false
 
 policies:
