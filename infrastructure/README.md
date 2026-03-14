@@ -142,7 +142,7 @@ npm run deploy  # Cloudflare Workers via API
 
 **Alert Routing**:
 
-- **Receiver**: Slack webhook
+- **Receiver**: Evolution API webhook (WhatsApp)
 - **Group By**: alertname, severity
 - **Repeat Interval**: 4 hours
 
@@ -163,7 +163,7 @@ npm run deploy  # Cloudflare Workers via API
 
 - Health endpoint check every 5 minutes
 - Metrics validation (Prometheus format)
-- Slack notifications on failures
+- WhatsApp notifications on failures
 - Retry logic (3 attempts)
 
 ### 4. Additional Workflows

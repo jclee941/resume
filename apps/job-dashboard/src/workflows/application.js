@@ -1,5 +1,6 @@
 import { WorkflowEntrypoint } from 'cloudflare:workers';
 import { DEFAULT_USER_AGENT } from '../utils/user-agents.js';
+import { sendEvolutionNotification } from '../services/notification/evolution-api.js';
 
 /**
  * Application Workflow
@@ -421,6 +422,6 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
   }
 
   async sendNotification(message) {
-    console.log('[Notification]', JSON.stringify(message));
+    await sendEvolutionNotification(this.env, message);
   }
 }

@@ -28,17 +28,17 @@ const path = require('path');
 
 const DEFAULT_CONFIG_PATH = path.join(
   __dirname,
-  '..',
+  '..', '..', '..',
   'infrastructure',
   'workflows',
   'config.json'
 );
 // Schema path for future validation implementation
-// const CONFIG_SCHEMA_PATH = path.join(__dirname, '..', 'infrastructure', 'workflows', 'config.template.json');
-const WORKFLOWS_DIR = path.join(__dirname, '..', 'infrastructure', 'workflows');
+// const CONFIG_SCHEMA_PATH = path.join(__dirname, '..', '..', '..', 'infrastructure', 'workflows', 'config.template.json');
+const WORKFLOWS_DIR = path.join(__dirname, '..', '..', '..', 'infrastructure', 'workflows');
 const OUTPUT_DIR = path.join(
   __dirname,
-  '..',
+  '..', '..', '..',
   'infrastructure',
   'workflows',
   'configured'

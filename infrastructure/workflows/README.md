@@ -9,7 +9,7 @@
 **Features**:
 
 - ✅ Automated health checks via `/health` endpoint
-- ✅ Slack alerts on downtime (#infra-alerts channel)
+- ✅ WhatsApp alerts on downtime via Evolution API
 - ✅ Google Sheets logging (separate sheets for downtime/healthy status)
 - ✅ Configurable retry logic (3 attempts, 10s timeout)
 
@@ -18,7 +18,7 @@
 1. Schedule Trigger (Every 5 minutes)
 2. HTTP Request → `GET https://resume.jclee.me/health`
 3. IF → Check if status !== "healthy"
-4. Slack → Send alert (downtime branch)
+4. Evolution API → Send WhatsApp alert (downtime branch)
 5. Google Sheets → Log downtime event
 6. Google Sheets → Log healthy status
 
@@ -37,7 +37,7 @@
 **Features**:
 
 - ✅ Webhook endpoint: `POST /webhook/resume-deploy`
-- ✅ Slack deployment notifications (#deployments channel)
+- ✅ WhatsApp deployment notifications via Evolution API
 - ✅ Loki logging for centralized observability
 - ✅ Google Sheets deployment history
 
@@ -45,7 +45,7 @@
 
 1. Webhook Trigger → `/resume-deploy`
 2. Set → Extract deployment data
-3. Slack → Deployment notification
+3. Evolution API → Send WhatsApp notification
 4. HTTP Request → Log to Loki
 5. Google Sheets → Deployment history
 
@@ -84,8 +84,10 @@ cp n8n-workflows/config.example.json n8n-workflows/config.json
 # 2. Edit config.json with your values
 vim n8n-workflows/config.json
 # Required values:
-# - slack.infra_alerts_channel_id (format: C07XXXXXXXX)
-# - slack.deployments_channel_id (format: C07YYYYYYYY)
+# - evolution_api.api_url (e.g., https://evolution.jclee.me)
+# - evolution_api.api_key (YOUR_API_KEY)
+# - evolution_api.instance_name (resume-bot)
+# - evolution_api.whatsapp_number (821012345678)
 # - google_sheets.spreadsheet_id (44 characters)
 
 # 3. Generate configured workflows
@@ -118,15 +120,15 @@ node scripts/setup/configure-n8n-workflows.js
 
 | Service       | Credential Type | Usage                  |
 | ------------- | --------------- | ---------------------- |
-| Slack         | OAuth2          | Alerts & notifications |
+| Evolution API | Header API Key  | Alerts & notifications |
 | Google Sheets | OAuth2          | Data logging           |
 
 **Setup Instructions**:
 
-1. **Slack OAuth2**:
-   - Go to n8n → Credentials → New → Slack OAuth2 API
-   - Click "Connect my account" → Authorize
-   - Test connection: Send test message to #infra-alerts
+1. **Evolution API**:
+   - Go to n8n → Credentials → New → Header Auth
+   - Name: apikey, Value: YOUR_API_KEY
+   - Test connection: Send test WhatsApp message
 
 2. **Google Sheets OAuth2**:
    - Go to n8n → Credentials → New → Google Sheets OAuth2 API
@@ -139,8 +141,8 @@ node scripts/setup/configure-n8n-workflows.js
 **01-site-health-monitor.json**:
 
 ```javascript
-// Node: Send Slack Alert
-channelId: 'C07XXXXXXXX'; // Replace with your #infra-alerts channel ID
+// Node: Send WhatsApp Alert (Evolution API)
+number: '821012345678'; // Replace with your WhatsApp number
 
 // Node: Log Downtime Event
 documentId: 'GOOGLE_SHEET_ID'; // Replace with your spreadsheet ID
@@ -154,8 +156,8 @@ sheetName: 'Health Log'; // Sheet gid=1
 **02-github-deployment-webhook.json**:
 
 ```javascript
-// Node: Send Slack Notification
-channelId: 'C07YYYYYYYY'; // Replace with your #deployments channel ID
+// Node: Send WhatsApp Notification (Evolution API)
+number: '821012345678'; // Replace with your WhatsApp number
 
 // Node: Log Deployment
 documentId: 'GOOGLE_SHEET_ID'; // Same spreadsheet
@@ -199,12 +201,12 @@ sheetName: 'Deployment Log'; // Sheet gid=2
 1. **Site Health Monitor**:
    - Open workflow in n8n
    - Click "Active" toggle (top-right)
-   - Verify: Check #infra-alerts for test message within 5 minutes
+   - Verify: Check WhatsApp for test message within 5 minutes
 
 2. **GitHub Deployment Webhook**:
    - Open workflow in n8n
    - Click "Active" toggle
-   - Verify: Push a commit to master → Check #deployments
+   - Verify: Push a commit to master → Check WhatsApp
 
 ---
 
@@ -257,7 +259,7 @@ cd ~/apps/resume/apps/portfolio
 npm run deploy
 
 # Wait 5 minutes
-# Expected: Slack alert in #infra-alerts + Google Sheets log
+# Expected: WhatsApp alert via Evolution API + Google Sheets log
 
 # Restore
 git checkout apps/portfolio/worker.js
@@ -282,7 +284,7 @@ curl -X POST https://n8n.jclee.me/webhook/resume-deploy \
   }'
 
 # Expected:
-# - Slack message in #deployments
+# - WhatsApp message via Evolution API
 # - New row in Google Sheets "Deployment Log"
 # - Loki log entry (check Grafana)
 
@@ -315,22 +317,22 @@ git push origin master
 # In n8n: Open workflow → Click "Test workflow"
 ```
 
-### Issue: Slack notifications not sending
+### Issue: WhatsApp notifications not sending
 
 **Check**:
 
-1. Slack OAuth2 credential is connected
-2. Channel ID is correct (`C07XXXXXXXX` format)
-3. Bot has permission to post in channel
+1. Evolution API credential is connected
+2. WhatsApp number is correct (8210... format)
+3. Evolution API instance is connected
 
 **Solution**:
 
 ```bash
 # Get channel ID
-# Slack → Right-click channel → View channel details → Copy ID
+# Check EVOLUTION_WHATSAPP_NUMBER in n8n environment
 
 # Test credential
-# n8n → Credentials → Slack OAuth2 API → Test
+# n8n → Credentials → Evolution API Header Auth → Test
 ```
 
 ### Issue: Google Sheets not logging

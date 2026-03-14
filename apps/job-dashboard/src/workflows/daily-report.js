@@ -1,4 +1,5 @@
 import { WorkflowEntrypoint } from 'cloudflare:workers';
+import { sendEvolutionNotification } from '../services/notification/evolution-api.js';
 
 /**
  * Daily Report Workflow
@@ -298,10 +299,10 @@ ${statusEmoji.pending} 대기: ${applications.pending}건`,
   }
 
   async sendReport(content, _type) {
-    console.log('[Notification]', JSON.stringify(content));
+    await sendEvolutionNotification(this.env, content);
   }
 
   async sendNotification(message) {
-    console.log('[Notification]', JSON.stringify(message));
+    await sendEvolutionNotification(this.env, message);
   }
 }

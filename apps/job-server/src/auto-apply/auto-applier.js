@@ -8,7 +8,7 @@ import {
   APPLICATION_STATUS,
 } from './application-manager.js';
 import { UnifiedJobCrawler } from '../crawlers/index.js';
-import { withStealthBrowser } from '../crawlers/browser-utils.js';
+import { withStealthBrowser, launchStealthBrowser } from '../crawlers/browser-utils.js';
 
 export class AutoApplier {
   constructor(options = {}) {
@@ -33,20 +33,17 @@ export class AutoApplier {
    * 브라우저 초기화 (Playwright)
    */
   async initBrowser() {
-    // Use stealth browser wrapper — never naked Playwright
-    await withStealthBrowser(async (page) => {
-      this.page = page;
+    const { browser, page } = await launchStealthBrowser();
+    this.browser = browser;
+    this.page = page;
 
-      // 쿠키 로드
-      if (this.config.cookies) {
-        await this.loadCookies(this.config.cookies);
-      }
-
-      return page;
-    });
+    if (this.config.cookies) {
+      await this.loadCookies(this.config.cookies);
+    }
 
     return this;
   }
+
 
   /**
    * 쿠키 로드

@@ -45,3 +45,15 @@ export async function withStealthBrowser(action) {
     if (browser) await browser.close();
   }
 }
+export async function launchStealthBrowser() {
+  const puppeteer = await import('puppeteer').then((m) => m.default);
+  const browser = await puppeteer.launch({
+    headless: 'new',
+    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
+    args: LAUNCH_ARGS,
+  });
+  const page = await browser.newPage();
+  const fingerprint = generateFingerprint();
+  await applyStealthPatches(page, fingerprint);
+  return { browser, page };
+}

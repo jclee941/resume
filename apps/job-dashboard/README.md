@@ -60,7 +60,7 @@ Set via `wrangler.toml` or `wrangler secret`:
 
 ```bash
 # Set secrets (not visible in config files)
-npx wrangler secret put SLACK_WEBHOOK_URL
+npx wrangler secret put EVOLUTION_API_KEY
 npx wrangler secret put CLOUDFLARE_API_TOKEN
 npx wrangler secret put JWT_SECRET
 ```
@@ -160,13 +160,13 @@ Handler Classes (async methods):
 Services (Stateless DI):
   - AuthService (cookies, JWT)
   - ConfigService (settings)
-  - SlackService (webhooks)
+  - NotificationService (Evolution API)
     ↓
 External APIs:
   - D1 Database
   - KV Cache
   - R2 Storage
-  - Slack API
+  - Evolution API
     ↓
 Response (JSON):
   {
@@ -188,7 +188,7 @@ workers/
 │   │   ├── applications.js         # CRUD: list, create, update, delete
 │   │   ├── stats.js                # Analytics: stats, reports
 │   │   ├── auth.js                 # Session: login, logout, status
-│   │   ├── webhooks.js             # Callbacks: Slack, automation, sync
+│   │   ├── webhooks.js             # Callbacks: automation, sync
 │   │   ├── auto-apply.js           # Auto-apply: status, run, config
 │   │   ├── health.js               # Health: checks, readiness
 │   │   ├── config.js               # Config: get, set, validate
@@ -204,7 +204,7 @@ workers/
 │   ├── services/                   # Domain services (stateless DI)
 │   │   ├── auth.js                 # Cookie management + JWT
 │   │   ├── config.js               # Configuration loading
-│   │   ├── slack.js                # Slack webhook notifications
+│   │   ├── notification.js         # Evolution API notifications
 │   │   └── browser.js              # Browser automation (DO)
 │   ├── utils/                      # Utilities
 │   │   ├── crypto.js               # Encryption/decryption
@@ -361,8 +361,8 @@ curl https://resume.jclee.me/job/api/workflows/abc123/status \
 ### Webhooks (9 endpoints)
 
 ```bash
-# Slack notification (requires X-Webhook-Signature header)
-curl -X POST https://resume.jclee.me/job/webhooks/slack \
+# Notification webhook (requires X-Webhook-Signature header)
+curl -X POST https://resume.jclee.me/job/webhooks/notify \
   -H "X-Webhook-Signature: <hmac-sha256>" \
   -d '{"message": "Job found", "company": "TechCorp"}'
 
@@ -500,7 +500,7 @@ const image = await env.R2.get(`screenshots/2026-02-11/123.png`);
 | `JobCrawlingWorkflow` | On-demand     | Search jobs on all platforms |
 | `ApplicationWorkflow` | On-demand     | Auto-submit job applications |
 | `ResumeSyncWorkflow`  | Event trigger | Resume sync to platforms     |
-| `DailyReportWorkflow` | Event trigger | Stats report to Slack        |
+| `DailyReportWorkflow` | Event trigger | Stats report via WhatsApp    |
 | `HealthCheckWorkflow` | Event trigger | Health monitoring            |
 | `BackupWorkflow`      | Event trigger | D1→KV backup                 |
 | `CleanupWorkflow`     | Event trigger | Stale data cleanup           |
@@ -583,8 +583,8 @@ HTTP 429 Too Many Requests
 Set via `npx wrangler secret put`:
 
 ```bash
-# Slack webhook for notifications
-npx wrangler secret put SLACK_WEBHOOK_URL
+# Evolution API for notifications
+npx wrangler secret put EVOLUTION_API_KEY
 
 # JWT signing key for auth tokens
 npx wrangler secret put JWT_SECRET
@@ -650,7 +650,7 @@ npx wrangler secret list
 
 ### Error Logging
 
-All errors logged in ECS format to Slack:
+All errors logged in ECS format, alerts via WhatsApp:
 
 ```json
 {

@@ -99,8 +99,9 @@ curl -X POST "$EVOLUTION_API_URL/message/sendText/$EVOLUTION_INSTANCE_NAME" \
 ## 5단계: n8n 워크플로우 활성화
 
 1. https://n8n.jclee.me 접속
-2. `evolution-notifier` 워크플로우 확인 → Active 토글 ON
-3. `hycu-lms-attendance` 워크플로우 확인 → Active 토글 ON
+2. `resume-healthcheck-workflow` 워크플로우 확인 → Active 토글 ON
+3. `resume-sync-workflow` 워크플로우 확인 → Active 토글 ON
+4. `wanted-job-automation-workflow` 워크플로우 확인 → Active 토글 ON
 4. 테스트 실행으로 WhatsApp 메시지 수신 확인
 
 ## API 레퍼런스

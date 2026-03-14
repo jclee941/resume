@@ -22,7 +22,7 @@ crawlers/
 
 ## STEALTH STACK
 
-- `playwright-extra` + stealth plugin.
+- `rebrowser-puppeteer` + custom stealth patches.
 - UA rotation from curated pool.
 - WebDriver property stripping.
 - Mouse jitter + human-like delays.

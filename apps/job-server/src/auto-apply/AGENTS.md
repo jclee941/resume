@@ -6,7 +6,7 @@
 
 ## OVERVIEW
 
-Playwright-based stealth auto-submission system with rate limiting and tracking.
+Puppeteer-based stealth auto-submission system with rate limiting and tracking.
 
 ## STRUCTURE
 
@@ -20,7 +20,7 @@ auto-apply/
 
 ## DEPENDENCIES
 
-- `playwright-extra` + stealth plugin (required).
+- `rebrowser-puppeteer` + custom stealth patches (required).
 - `SessionManager` for cookie injection.
 - `JobMatcher` scoring data for application decisions.
 
@@ -32,7 +32,7 @@ auto-apply/
 
 ## ANTI-PATTERNS
 
-- Never use naked Playwright — always stealth plugin.
+- Never use naked Puppeteer — always stealth patches + UA rotation.
 - Never skip rate limiting.
 - Never bypass matching score gates.
 - Never submit without valid session cookies.
