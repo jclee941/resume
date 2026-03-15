@@ -1,0 +1,23 @@
+# PR Normalize
+# SSoT: qws941/.github — synced to all repos
+# Synced via: .github/sync.yml
+# Template: _pr-normalize.yml
+
+name: PR Normalize
+
+on:
+  pull_request_target:
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: pr-normalize-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  normalize:
+    uses: qws941/.github/.github/workflows/_pr-normalize.yml@master
+    secrets: inherit # pragma: allowlist secret
