@@ -1,0 +1,22 @@
+# Issue SLA Escalation
+# SSoT: qws941/.github — synced to all repos
+# Synced via: .github/sync.yml
+# Template: _issue-sla.yml
+
+name: Issue SLA
+
+on:
+  schedule:
+    - cron: '30 */6 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: issue-sla
+  cancel-in-progress: true
+
+permissions:
+  issues: write
+
+jobs:
+  sla:
+    uses: qws941/.github/.github/workflows/_issue-sla.yml@master
