@@ -1,0 +1,27 @@
+# OpenCode PR Sync
+# SSoT: qws941/.github — synced to all repos
+# Synced via: .github/sync.yml
+# Template: _opencode-dispatch.yml
+
+name: OpenCode PR Sync
+
+on:
+  pull_request:
+    types: [opened, ready_for_review, closed, reopened]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: opencode-pr-sync-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  dispatch:
+    uses: qws941/.github/.github/workflows/_opencode-dispatch.yml@master
+    secrets: inherit
+    with:
+      event_type: pr.${{ github.event.action }}
+      payload: >-
+        {"number": ${{ github.event.pull_request.number }}, "node_id": ${{ toJSON(github.event.pull_request.node_id) }}, "title": ${{ toJSON(github.event.pull_request.title) }}, "state": ${{ toJSON(github.event.pull_request.state) }}, "draft": ${{ github.event.pull_request.draft }}, "merged": ${{ github.event.pull_request.merged }}, "labels": ${{ toJSON(github.event.pull_request.labels.*.name) }}, "html_url": ${{ toJSON(github.event.pull_request.html_url) }}, "head": {"ref": ${{ toJSON(github.event.pull_request.head.ref) }}}, "base": {"ref": ${{ toJSON(github.event.pull_request.base.ref) }}}, "action": ${{ toJSON(github.event.action) }}}

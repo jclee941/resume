@@ -1,0 +1,27 @@
+# OpenCode Issue Sync
+# SSoT: qws941/.github — synced to all repos
+# Synced via: .github/sync.yml
+# Template: _opencode-dispatch.yml
+
+name: OpenCode Issue Sync
+
+on:
+  issues:
+    types: [opened, labeled, closed, reopened]
+
+permissions:
+  contents: read
+  issues: read
+
+concurrency:
+  group: opencode-issue-sync-${{ github.event.issue.number }}
+  cancel-in-progress: true
+
+jobs:
+  dispatch:
+    uses: qws941/.github/.github/workflows/_opencode-dispatch.yml@master
+    secrets: inherit
+    with:
+      event_type: issue.${{ github.event.action }}
+      payload: >-
+        {"number": ${{ github.event.issue.number }}, "node_id": ${{ toJSON(github.event.issue.node_id) }}, "title": ${{ toJSON(github.event.issue.title) }}, "state": ${{ toJSON(github.event.issue.state) }}, "labels": ${{ toJSON(github.event.issue.labels.*.name) }}, "html_url": ${{ toJSON(github.event.issue.html_url) }}, "action": ${{ toJSON(github.event.action) }}}
