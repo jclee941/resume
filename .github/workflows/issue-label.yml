@@ -7,7 +7,7 @@ name: Issue Auto-Label
 
 on:
   issues:
-    types: [opened]
+    types: [opened, edited]
 
 permissions:
   issues: write
