@@ -4,6 +4,7 @@
 # Template: _ci-notify-failure.yml
 #
 # Creates a GitHub Issue when the CI workflow ends in an unhealthy state.
+# Automatically closes the issue when the same workflow recovers (success).
 # Customize the 'workflows' list per-repo if your CI workflow has a different name.
 
 name: CI Notify Failure
@@ -13,11 +14,14 @@ on:
     workflows: ['CI', 'CI Validation Pipeline', 'Node.js CI', 'Agents League CI']
     types: [completed]
 
+concurrency:
+  group: ci-notify-failure-${{ github.event.workflow_run.name }}
+  cancel-in-progress: false
+
 permissions:
   issues: write
 
 jobs:
   notify:
-    if: contains(fromJSON('["failure","timed_out","action_required","cancelled"]'), github.event.workflow_run.conclusion)
     uses: qws941/.github/.github/workflows/_ci-notify-failure.yml@master
     secrets: inherit
