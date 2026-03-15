@@ -7,7 +7,7 @@ name: OpenCode PR Sync
 
 on:
   pull_request:
-    types: [opened, ready_for_review, closed, reopened]
+    types: [opened, edited, synchronize, ready_for_review, closed, reopened]
 
 permissions:
   contents: read

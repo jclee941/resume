@@ -1,0 +1,22 @@
+# OpenCode Agent Timeout
+# SSoT: qws941/.github — synced to all repos
+# Synced via: .github/sync.yml
+# Template: _opencode-agent-timeout.yml
+
+name: OpenCode Agent Timeout
+
+on:
+  schedule:
+    - cron: '0 */8 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: opencode-agent-timeout
+  cancel-in-progress: true
+
+permissions:
+  issues: write
+
+jobs:
+  timeout:
+    uses: qws941/.github/.github/workflows/_opencode-agent-timeout.yml@master

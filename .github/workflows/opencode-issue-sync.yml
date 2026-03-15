@@ -7,7 +7,7 @@ name: OpenCode Issue Sync
 
 on:
   issues:
-    types: [opened, labeled, closed, reopened]
+    types: [opened, edited, labeled, closed, reopened]
 
 permissions:
   contents: read
