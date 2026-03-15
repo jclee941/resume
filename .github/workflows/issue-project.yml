@@ -1,0 +1,22 @@
+# Issue Project Routing
+# SSoT: qws941/.github — synced to all repos
+# Synced via: .github/sync.yml
+# Template: _issue-project.yml
+
+name: Issue Project
+
+on:
+  issues:
+    types: [opened, labeled]
+
+concurrency:
+  group: issue-project-${{ github.event.issue.number }}
+  cancel-in-progress: true
+
+permissions:
+  issues: read
+
+jobs:
+  route:
+    uses: qws941/.github/.github/workflows/_issue-project.yml@master
+    secrets: inherit
