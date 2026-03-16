@@ -1,6 +1,6 @@
 import { WorkflowEntrypoint } from 'cloudflare:workers';
 import { DEFAULT_USER_AGENT } from '../utils/user-agents.js';
-import { sendEvolutionNotification } from '../services/notification/evolution-api.js';
+import { sendTelegramNotification, escapeHtml } from '../services/notification/telegram.js';
 
 /**
  * Application Workflow
@@ -179,22 +179,17 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
       await this.saveApplicationState(application);
 
       // Notify failure
-      await step.do('notify-failure', async () => {
-        console.log(
-          '[Notification]',
-          JSON.stringify({
-            text: `❌ Application Failed: ${validation.job.company} - ${validation.job.position}`,
-            blocks: [
-              {
-                type: 'section',
-                text: {
-                  type: 'mrkdwn',
-                  text: `*Error*: ${submitResult.error}\n*Platform*: ${platform}\n*Job*: ${validation.job.position}`,
-                },
-              },
-            ],
-          })
+      await step.do('notify-failure', {
+        retries: { limit: 2, delay: '10 seconds' },
+        timeout: '30 seconds',
+      }, async () => {
+        await sendTelegramNotification(this.env,
+          `❌ <b>Application Failed</b>\n\n` +
+          `<b>Error</b>: ${escapeHtml(submitResult.error || 'Unknown')}\n` +
+          `<b>Platform</b>: ${escapeHtml(platform)}\n` +
+          `<b>Job</b>: ${escapeHtml(validation.job.company)} - ${escapeHtml(validation.job.position)}`
         );
+        return { notified: true };
       });
 
       return {
@@ -244,25 +239,14 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
         timeout: '30 seconds',
       },
       async () => {
-        console.log(
-          '[Notification]',
-          JSON.stringify({
-            text: `✅ Application Submitted: ${validation.job.company}`,
-            blocks: [
-              {
-                type: 'header',
-                text: { type: 'plain_text', text: '✅ Application Submitted' },
-              },
-              {
-                type: 'section',
-                text: {
-                  type: 'mrkdwn',
-                  text: `*Company*: ${validation.job.company}\n*Position*: ${validation.job.position}\n*Platform*: ${platform}\n*Auto-Submit*: ${autoSubmit ? 'Yes' : 'No (Approved)'}`,
-                },
-              },
-            ],
-          })
+        await sendTelegramNotification(this.env,
+          `✅ <b>Application Submitted</b>\n\n` +
+          `<b>Company</b>: ${escapeHtml(validation.job.company)}\n` +
+          `<b>Position</b>: ${escapeHtml(validation.job.position)}\n` +
+          `<b>Platform</b>: ${escapeHtml(platform)}\n` +
+          `<b>Auto-Submit</b>: ${autoSubmit ? 'Yes' : 'No (Approved)'}`
         );
+        return { notified: true };
       }
     );
 
@@ -368,43 +352,12 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
   }
 
   async sendApprovalRequest({ applicationId, job, platform }) {
-    console.log(
-      '[Notification]',
-      JSON.stringify({
-        text: '⏳ Application Approval Required',
-        blocks: [
-          {
-            type: 'header',
-            text: { type: 'plain_text', text: '⏳ Approval Required' },
-          },
-          {
-            type: 'section',
-            text: {
-              type: 'mrkdwn',
-              text: `*Company*: ${job.company}\n*Position*: ${job.position}\n*Platform*: ${platform}`,
-            },
-          },
-          {
-            type: 'actions',
-            elements: [
-              {
-                type: 'button',
-                text: { type: 'plain_text', text: '✅ Approve' },
-                style: 'primary',
-                action_id: 'approve_application',
-                value: applicationId,
-              },
-              {
-                type: 'button',
-                text: { type: 'plain_text', text: '❌ Reject' },
-                style: 'danger',
-                action_id: 'reject_application',
-                value: applicationId,
-              },
-            ],
-          },
-        ],
-      })
+    await sendTelegramNotification(this.env, 
+      `⏳ <b>Approval Required</b>\n\n` +
+      `<b>Company</b>: ${escapeHtml(job.company)}\n` +
+      `<b>Position</b>: ${escapeHtml(job.position)}\n` +
+      `<b>Platform</b>: ${escapeHtml(platform)}\n` +
+      `<b>Application ID</b>: ${escapeHtml(applicationId)}`
     );
   }
 
@@ -422,6 +375,6 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
   }
 
   async sendNotification(message) {
-    await sendEvolutionNotification(this.env, message);
+    await sendTelegramNotification(this.env, message);
   }
 }

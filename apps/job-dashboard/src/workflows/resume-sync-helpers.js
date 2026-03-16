@@ -12,6 +12,7 @@
  */
 
 import { DEFAULT_USER_AGENT } from '../utils/user-agents.js';
+import { sendTelegramNotification, escapeHtml } from '../services/notification/telegram.js';
 
 // ============================================================
 // DATA EXPORT
@@ -252,27 +253,13 @@ export async function notifyPreview(env, sync, _diffs) {
   const summary = Object.entries(sync.changes)
     .map(
       ([platform, changes]) =>
-        `*${platform}*: +${changes.additions} ~${changes.updates} -${changes.deletions}`
+        `<b>${escapeHtml(platform)}</b>: +${changes.additions} ~${changes.updates} -${changes.deletions}`
     )
     .join('\n');
-
-  console.log(
-    '[Notification]',
-    JSON.stringify({
-      text: '👀 Resume Sync Preview',
-      blocks: [
-        {
-          type: 'header',
-          text: { type: 'plain_text', text: '👀 Resume Sync Preview (Dry Run)' },
-        },
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: `*Resume*: ${sync.resumeId}\n*Platforms*:\n${summary}`,
-          },
-        },
-      ],
-    })
+  
+  await sendTelegramNotification(env,
+    `👀 <b>Resume Sync Preview (Dry Run)</b>\n\n` +
+    `<b>Resume</b>: ${escapeHtml(sync.resumeId)}\n` +
+    `<b>Platforms</b>:\n${summary}`
   );
 }

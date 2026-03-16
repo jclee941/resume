@@ -1,3 +1,4 @@
+import { sendTelegramNotification, escapeHtml } from '../services/notification/telegram.js';
 import { WorkflowEntrypoint } from 'cloudflare:workers';
 
 /**
@@ -151,51 +152,32 @@ export class HealthCheckWorkflow extends WorkflowEntrypoint {
           const emoji = emojiMap[escalationLevel] || '🟡';
           const affectedServices = healthEvaluation.services
             .filter((s) => !s.healthy || s.latencyMs > 2000)
-            .map((s) => `• ${s.url}: ${s.status_label} (${s.latencyMs}ms)`)
+            .map((s) => `• ${escapeHtml(s.url)}: ${escapeHtml(s.status_label)} (${s.latencyMs}ms)`)
             .join('\n');
 
           const bindingStatus = [];
           if (healthEvaluation.hasBindingFailure) {
             if (!healthEvaluation.bindings.d1.healthy) {
-              bindingStatus.push(`• D1: DOWN (${healthEvaluation.bindings.d1.error})`);
+              bindingStatus.push(`• D1: DOWN (${escapeHtml(healthEvaluation.bindings.d1.error)})`);
             }
             if (!healthEvaluation.bindings.kv.healthy) {
-              bindingStatus.push(`• KV: DOWN (${healthEvaluation.bindings.kv.error})`);
+              bindingStatus.push(`• KV: DOWN (${escapeHtml(healthEvaluation.bindings.kv.error)})`);
             }
           }
 
-          const blocks = [
-            {
-              type: 'header',
-              text: {
-                type: 'plain_text',
-                text: `${emoji} Health Check: ${healthEvaluation.overallHealth.toUpperCase()} [${escalationLevel.toUpperCase()}]`,
-              },
-            },
-            {
-              type: 'section',
-              text: {
-                type: 'mrkdwn',
-                text: [
-                  `*Affected Services*:\n${affectedServices}`,
-                  bindingStatus.length ? `\n*Binding Issues*:\n${bindingStatus.join('\n')}` : '',
-                  `\n*Consecutive Failures*: ${consecutiveFailures + 1}`,
-                  `*Escalation*: ${escalationLevel}`,
-                  `*Checked at*: ${startedAt}`,
-                ]
-                  .filter(Boolean)
-                  .join('\n'),
-              },
-            },
-          ];
 
-          console.log(
-            '[Notification]',
-            JSON.stringify({
-              text: `${emoji} Health Check Alert: ${healthEvaluation.overallHealth.toUpperCase()} [${escalationLevel}]`,
-              blocks,
-            })
-          );
+          let message = `${emoji} <b>Health Check: ${healthEvaluation.overallHealth.toUpperCase()} [${escalationLevel.toUpperCase()}]</b>\n\n` +
+            `<b>Affected Services</b>:\n${affectedServices}`;
+
+          if (bindingStatus.length) {
+            message += `\n\n<b>Binding Issues</b>:\n${bindingStatus.join('\n')}`;
+          }
+
+          message += `\n\n<b>Consecutive Failures</b>: ${consecutiveFailures + 1}\n` +
+            `<b>Escalation</b>: ${escalationLevel}\n` +
+            `<b>Checked at</b>: ${startedAt}`;
+
+          await sendTelegramNotification(this.env, message);
 
           return { notified: true, escalationLevel, consecutiveFailures: consecutiveFailures + 1 };
         }
