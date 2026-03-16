@@ -91,7 +91,7 @@ function callOpenCode(prompt) {
   } finally {
     try {
       fs.unlinkSync(tmpFile);
-    } catch {}
+    } catch (e) { console.error('[oracle-review] Failed to clean temp file:', e.message); }
   }
 }
 
@@ -182,7 +182,7 @@ ${error.message}
 \`\`\`
 
 Please review manually or re-run the pipeline.`);
-    } catch {}
+    } catch (e) { console.error('[oracle-review] Failed to post review comment:', e.message); }
 
     process.exit(1);
   }

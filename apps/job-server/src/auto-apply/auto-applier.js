@@ -316,7 +316,7 @@ export class AutoApplier {
       if (!applyButton) {
         try {
           await this.page.screenshot({ path: `/tmp/wanted-debug-${Date.now()}.png` });
-        } catch {}
+        } catch (e) { console.error('[debug-screenshot] Wanted:', e.message); }
         return { success: false, error: 'Apply button not found' };
       }
 
@@ -404,7 +404,7 @@ export class AutoApplier {
         // Screenshot for debugging
         try {
           await this.page.screenshot({ path: `/tmp/jobkorea-debug-${Date.now()}.png` });
-        } catch {}
+        } catch (e) { console.error('[debug-screenshot] JobKorea:', e.message); }
         return { success: false, error: 'Apply button not found' };
       }
       await applyButton.click();
@@ -495,7 +495,7 @@ export class AutoApplier {
       if (!applyButton) {
         try {
           await this.page.screenshot({ path: `/tmp/saramin-debug-${Date.now()}.png` });
-        } catch {}
+        } catch (e) { console.error('[debug-screenshot] Saramin:', e.message); }
         return { success: false, error: 'Apply button not found' };
       }
 
