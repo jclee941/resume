@@ -61,6 +61,8 @@ resumes/generated/*_backup_*
 # Debug artifacts
 *.heapsnapshot
 Heap-*.heapsnapshot
+**/login_error.png
+**/test-og.png
 
 # Python cache
 __pycache__/
