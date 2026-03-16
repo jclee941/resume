@@ -238,11 +238,17 @@ export async function wantedApiRequest(method, path, body, session) {
 }
 
 export async function syncToLinkedIn(_resumeId, _diff) {
-  return { success: false, error: 'LinkedIn sync not implemented' };
+  return {
+    success: false,
+    error: 'LinkedIn profile sync requires browser automation — delegate to job-server',
+  };
 }
 
 export async function syncToRemember(_resumeId, _diff) {
-  return { success: false, error: 'Remember sync not implemented' };
+  return {
+    success: false,
+    error: 'Remember profile sync requires browser automation — delegate to job-server',
+  };
 }
 
 // ============================================================
@@ -256,10 +262,11 @@ export async function notifyPreview(env, sync, _diffs) {
         `<b>${escapeHtml(platform)}</b>: +${changes.additions} ~${changes.updates} -${changes.deletions}`
     )
     .join('\n');
-  
-  await sendTelegramNotification(env,
-    `👀 <b>Resume Sync Preview (Dry Run)</b>\n\n` +
-    `<b>Resume</b>: ${escapeHtml(sync.resumeId)}\n` +
-    `<b>Platforms</b>:\n${summary}`
+
+  await sendTelegramNotification(
+    env,
+    '👀 <b>Resume Sync Preview (Dry Run)</b>\n\n' +
+      `<b>Resume</b>: ${escapeHtml(sync.resumeId)}\n` +
+      `<b>Platforms</b>:\n${summary}`
   );
 }

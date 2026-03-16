@@ -161,15 +161,20 @@ export class JobCrawlingWorkflow extends WorkflowEntrypoint {
         timeout: '30 seconds',
       },
       async () => {
-        const topJobs = matchedJobs.slice(0, 5)
-          .map(j => `  • ${escapeHtml(j.company)} - ${escapeHtml(j.position)} (${j.matchScore}%)`)
-          .join('\n') || 'None';
-        await sendTelegramNotification(this.env,
-          `🔍 <b>Job Search Results</b>\n\n` +
-          `<b>Platforms</b>: ${escapeHtml(platforms.join(', '))}\n` +
-          `<b>Found</b>: ${results.totalJobs} jobs\n` +
-          `<b>Matched</b>: ${matchedJobs.length} jobs\n\n` +
-          `<b>Top Matches</b>:\n${topJobs}`
+        const topJobs =
+          matchedJobs
+            .slice(0, 5)
+            .map(
+              (j) => `  • ${escapeHtml(j.company)} - ${escapeHtml(j.position)} (${j.matchScore}%)`
+            )
+            .join('\n') || 'None';
+        await sendTelegramNotification(
+          this.env,
+          '🔍 <b>Job Search Results</b>\n\n' +
+            `<b>Platforms</b>: ${escapeHtml(platforms.join(', '))}\n` +
+            `<b>Found</b>: ${results.totalJobs} jobs\n` +
+            `<b>Matched</b>: ${matchedJobs.length} jobs\n\n` +
+            `<b>Top Matches</b>:\n${topJobs}`
         );
         return { notified: true };
       }
@@ -250,21 +255,105 @@ export class JobCrawlingWorkflow extends WorkflowEntrypoint {
   }
 
   async crawlLinkedIn(_criteria) {
-    // LinkedIn Jobs API (requires different auth)
-    const session = await this.env.SESSIONS.get('auth:linkedin');
-    if (!session) return { jobs: [], error: 'No session' };
+    try {
+      const keyword = encodeURIComponent(_criteria?.keyword || _criteria?.keywords || '');
+      const location = encodeURIComponent(_criteria?.location || '');
+      const response = await fetch(
+        `https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=${keyword}&location=${location}&f_TPR=r604800&position=0&pageNum=0`,
+        {
+          headers: {
+            'User-Agent': DEFAULT_USER_AGENT,
+          },
+        }
+      );
 
-    // LinkedIn crawling implementation
-    return { jobs: [], message: 'LinkedIn crawling placeholder' };
+      if (!response.ok) {
+        return { jobs: [], error: `API error: ${response.status}` };
+      }
+
+      const html = await response.text();
+      const jobPattern =
+        /<div[^>]*class="[^"]*base-card[^"]*"[^>]*data-entity-urn="urn:li:jobPosting:(\d+)"[^>]*>[\s\S]*?<h3[^>]*class="[^"]*base-search-card__title[^"]*"[^>]*>([^<]+)<\/h3>[\s\S]*?<h4[^>]*class="[^"]*base-search-card__subtitle[^"]*"[^>]*>[\s\S]*?<a[^>]*>([^<]+)<\/a>/gi;
+      const jobs = [];
+
+      for (;;) {
+        const match = jobPattern.exec(html);
+        if (match === null) break;
+
+        const sourceId = (match[1] || '').trim();
+        const position = (match[2] || '').trim();
+        const company = (match[3] || '').trim();
+        if (!sourceId) continue;
+
+        jobs.push({
+          id: `linkedin-${sourceId}`,
+          company,
+          position,
+          url: `https://www.linkedin.com/jobs/view/${sourceId}`,
+          location: _criteria?.location || '',
+          experience: '',
+        });
+      }
+
+      return { jobs };
+    } catch (error) {
+      return { jobs: [], error: error.message };
+    }
   }
 
   async crawlRemember(_criteria) {
-    // Remember.co.kr API
-    const session = await this.env.SESSIONS.get('auth:remember');
-    if (!session) return { jobs: [], error: 'No session' };
+    try {
+      const keyword = (_criteria?.keyword || _criteria?.keywords || '').trim();
+      const headers = {
+        Accept: 'application/json',
+        Origin: 'https://career.rememberapp.co.kr',
+        Referer: 'https://career.rememberapp.co.kr/job/postings',
+        'User-Agent': DEFAULT_USER_AGENT,
+      };
 
-    // Remember crawling implementation
-    return { jobs: [], message: 'Remember crawling placeholder' };
+      const response = keyword
+        ? await fetch('https://career-api.rememberapp.co.kr/job_postings/search', {
+            method: 'POST',
+            headers: {
+              ...headers,
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `page=1&per=20&search=${encodeURIComponent(keyword)}`,
+          })
+        : await fetch(
+            'https://career-api.rememberapp.co.kr/job_postings/curations?tab=STEP_UP&page=1&per=20',
+            {
+              method: 'GET',
+              headers,
+            }
+          );
+
+      if (!response.ok) {
+        return { jobs: [], error: `API error: ${response.status}` };
+      }
+
+      const data = await response.json();
+      const rawJobs = Array.isArray(data?.data?.job_postings)
+        ? data.data.job_postings
+        : Array.isArray(data?.data)
+          ? data.data
+          : [];
+
+      return {
+        jobs: rawJobs
+          .filter((job) => job?.id)
+          .map((job) => ({
+            id: `remember-${job.id}`,
+            company: job.organization?.name || job.company?.name || '',
+            position: job.title || '',
+            url: `https://career.rememberapp.co.kr/job/posting/${job.id}`,
+            location: job.location?.name || job.address?.full_location || '',
+            experience: job.career_period || '',
+          })),
+      };
+    } catch (error) {
+      return { jobs: [], error: error.message };
+    }
   }
 
   async getMatchingConfig() {

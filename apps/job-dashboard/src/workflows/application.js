@@ -179,18 +179,23 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
       await this.saveApplicationState(application);
 
       // Notify failure
-      await step.do('notify-failure', {
-        retries: { limit: 2, delay: '10 seconds' },
-        timeout: '30 seconds',
-      }, async () => {
-        await sendTelegramNotification(this.env,
-          `❌ <b>Application Failed</b>\n\n` +
-          `<b>Error</b>: ${escapeHtml(submitResult.error || 'Unknown')}\n` +
-          `<b>Platform</b>: ${escapeHtml(platform)}\n` +
-          `<b>Job</b>: ${escapeHtml(validation.job.company)} - ${escapeHtml(validation.job.position)}`
-        );
-        return { notified: true };
-      });
+      await step.do(
+        'notify-failure',
+        {
+          retries: { limit: 2, delay: '10 seconds' },
+          timeout: '30 seconds',
+        },
+        async () => {
+          await sendTelegramNotification(
+            this.env,
+            '❌ <b>Application Failed</b>\n\n' +
+              `<b>Error</b>: ${escapeHtml(submitResult.error || 'Unknown')}\n` +
+              `<b>Platform</b>: ${escapeHtml(platform)}\n` +
+              `<b>Job</b>: ${escapeHtml(validation.job.company)} - ${escapeHtml(validation.job.position)}`
+          );
+          return { notified: true };
+        }
+      );
 
       return {
         success: false,
@@ -239,12 +244,13 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
         timeout: '30 seconds',
       },
       async () => {
-        await sendTelegramNotification(this.env,
-          `✅ <b>Application Submitted</b>\n\n` +
-          `<b>Company</b>: ${escapeHtml(validation.job.company)}\n` +
-          `<b>Position</b>: ${escapeHtml(validation.job.position)}\n` +
-          `<b>Platform</b>: ${escapeHtml(platform)}\n` +
-          `<b>Auto-Submit</b>: ${autoSubmit ? 'Yes' : 'No (Approved)'}`
+        await sendTelegramNotification(
+          this.env,
+          '✅ <b>Application Submitted</b>\n\n' +
+            `<b>Company</b>: ${escapeHtml(validation.job.company)}\n` +
+            `<b>Position</b>: ${escapeHtml(validation.job.position)}\n` +
+            `<b>Platform</b>: ${escapeHtml(platform)}\n` +
+            `<b>Auto-Submit</b>: ${autoSubmit ? 'Yes' : 'No (Approved)'}`
         );
         return { notified: true };
       }
@@ -343,21 +349,30 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
 
   async submitToLinkedIn(_jobId, _resume, _coverLetter) {
     // LinkedIn Easy Apply - requires browser automation
-    return { success: false, error: 'LinkedIn submission requires browser automation' };
+    return {
+      success: false,
+      error:
+        'LinkedIn Easy Apply requires browser automation — delegate to job-server for submission',
+    };
   }
 
   async submitToRemember(_jobId, _resume, _coverLetter) {
     // Remember.co.kr application
-    return { success: false, error: 'Remember submission not implemented' };
+    return {
+      success: false,
+      error:
+        'Remember application submission requires browser automation — delegate to job-server for submission',
+    };
   }
 
   async sendApprovalRequest({ applicationId, job, platform }) {
-    await sendTelegramNotification(this.env, 
-      `⏳ <b>Approval Required</b>\n\n` +
-      `<b>Company</b>: ${escapeHtml(job.company)}\n` +
-      `<b>Position</b>: ${escapeHtml(job.position)}\n` +
-      `<b>Platform</b>: ${escapeHtml(platform)}\n` +
-      `<b>Application ID</b>: ${escapeHtml(applicationId)}`
+    await sendTelegramNotification(
+      this.env,
+      '⏳ <b>Approval Required</b>\n\n' +
+        `<b>Company</b>: ${escapeHtml(job.company)}\n` +
+        `<b>Position</b>: ${escapeHtml(job.position)}\n` +
+        `<b>Platform</b>: ${escapeHtml(platform)}\n` +
+        `<b>Application ID</b>: ${escapeHtml(applicationId)}`
     );
   }
 
