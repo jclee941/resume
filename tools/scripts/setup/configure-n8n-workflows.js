@@ -132,26 +132,20 @@ function validateConfig(config) {
   const errors = [];
 
   // Validate required top-level keys
-  const requiredKeys = ['evolution_api', 'google_sheets', 'monitoring'];
+  const requiredKeys = ['telegram', 'google_sheets', 'monitoring'];
   for (const key of requiredKeys) {
     if (!config[key]) {
       errors.push(`Missing required configuration: ${key}`);
     }
   }
 
-  // Validate Evolution API configuration
-  if (config.evolution_api) {
-    if (!config.evolution_api.api_url || !config.evolution_api.api_url.startsWith('https://')) {
-      errors.push('Invalid evolution_api.api_url (expected HTTPS URL)');
+  // Validate Telegram configuration
+  if (config.telegram) {
+    if (!config.telegram.bot_token || config.telegram.bot_token.length < 1) {
+      errors.push('Missing telegram.bot_token');
     }
-    if (!config.evolution_api.api_key || config.evolution_api.api_key.length < 1) {
-      errors.push('Missing evolution_api.api_key');
-    }
-    if (!config.evolution_api.instance_name || !/^[a-zA-Z0-9_-]+$/.test(config.evolution_api.instance_name)) {
-      errors.push('Invalid evolution_api.instance_name (expected alphanumeric with hyphens/underscores)');
-    }
-    if (!config.evolution_api.whatsapp_number || !/^[0-9]{10,15}$/.test(config.evolution_api.whatsapp_number)) {
-      errors.push('Invalid evolution_api.whatsapp_number (expected 10-15 digit phone number)');
+    if (!config.telegram.chat_id || !/^-?[0-9]+$/.test(config.telegram.chat_id)) {
+      errors.push('Invalid telegram.chat_id (expected numeric ID, optionally prefixed with -)');
     }
   }
 
@@ -190,19 +184,8 @@ function validateConfig(config) {
 function applyConfiguration(workflowContent, config) {
   let content = workflowContent;
 
-  // Replace Evolution API placeholders
-  content = content.replace(
-    /EVOLUTION_API_URL_PLACEHOLDER/g,
-    config.evolution_api.api_url
-  );
-  content = content.replace(
-    /EVOLUTION_INSTANCE_PLACEHOLDER/g,
-    config.evolution_api.instance_name
-  );
-  content = content.replace(
-    /EVOLUTION_WHATSAPP_PLACEHOLDER/g,
-    config.evolution_api.whatsapp_number
-  );
+  // Telegram configuration is now handled via n8n environment variables
+  // (TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID) — no template placeholders needed
 
   // Replace Google Sheets IDs
   content = content.replace(

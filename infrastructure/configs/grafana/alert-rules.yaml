@@ -352,51 +352,48 @@ contactPoints:
   - orgId: 1
     name: Primary On-Call
     receivers:
-      - uid: resume_whatsapp_critical
+      - uid: resume_telegram_critical
         type: webhook
         settings:
-          url: ${EVOLUTION_API_URL}/message/sendText/${EVOLUTION_INSTANCE_NAME}
+          url: https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage
           httpMethod: POST
-          authorization_scheme: apikey
-          authorization_credentials: ${EVOLUTION_API_KEY}
           body: |
             {
-              "number": "${EVOLUTION_WHATSAPP_NUMBER}",
-              "text": "🚨 {{ .CommonLabels.severity | toUpper }}: {{ .CommonAnnotations.summary }}\n\n{{ .CommonAnnotations.description }}\n\n📊 Dashboard: {{ .CommonAnnotations.grafana_dashboard }}\n📖 Runbook: {{ .CommonAnnotations.runbook_url }}\n\nLabels:\n{{ range .CommonLabels.SortedPairs }}• {{ .Name }}: {{ .Value }}\n{{ end }}\n⏰ Started: {{ .StartsAt.Format \"2006-01-02 15:04:05 MST\" }}"
+              "chat_id": "${TELEGRAM_CHAT_ID}",
+              "text": "🚨 {{ .CommonLabels.severity | toUpper }}: {{ .CommonAnnotations.summary }}\n\n{{ .CommonAnnotations.description }}\n\n📊 Dashboard: {{ .CommonAnnotations.grafana_dashboard }}\n📖 Runbook: {{ .CommonAnnotations.runbook_url }}\n\nLabels:\n{{ range .CommonLabels.SortedPairs }}• {{ .Name }}: {{ .Value }}\n{{ end }}\n⏰ Started: {{ .StartsAt.Format \"2006-01-02 15:04:05 MST\" }}",
+              "parse_mode": "HTML"
             }
         disableResolveMessage: false
 
   - orgId: 1
     name: Secondary On-Call
     receivers:
-      - uid: resume_whatsapp_warning
+      - uid: resume_telegram_warning
         type: webhook
         settings:
-          url: ${EVOLUTION_API_URL}/message/sendText/${EVOLUTION_INSTANCE_NAME}
+          url: https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage
           httpMethod: POST
-          authorization_scheme: apikey
-          authorization_credentials: ${EVOLUTION_API_KEY}
           body: |
             {
-              "number": "${EVOLUTION_WHATSAPP_NUMBER}",
-              "text": "⚠️ {{ .CommonLabels.severity | toUpper }}: {{ .CommonAnnotations.summary }}\n\n{{ .CommonAnnotations.description }}\n\nLabels:\n{{ range .CommonLabels.SortedPairs }}• {{ .Name }}: {{ .Value }}\n{{ end }}"
+              "chat_id": "${TELEGRAM_CHAT_ID}",
+              "text": "⚠️ {{ .CommonLabels.severity | toUpper }}: {{ .CommonAnnotations.summary }}\n\n{{ .CommonAnnotations.description }}\n\nLabels:\n{{ range .CommonLabels.SortedPairs }}• {{ .Name }}: {{ .Value }}\n{{ end }}",
+              "parse_mode": "HTML"
             }
         disableResolveMessage: false
 
   - orgId: 1
     name: Info Notifications
     receivers:
-      - uid: resume_whatsapp_info
+      - uid: resume_telegram_info
         type: webhook
         settings:
-          url: ${EVOLUTION_API_URL}/message/sendText/${EVOLUTION_INSTANCE_NAME}
+          url: https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage
           httpMethod: POST
-          authorization_scheme: apikey
-          authorization_credentials: ${EVOLUTION_API_KEY}
           body: |
             {
-              "number": "${EVOLUTION_WHATSAPP_NUMBER}",
-              "text": "ℹ️ {{ .CommonAnnotations.summary }}\n{{ .CommonAnnotations.description }}"
+              "chat_id": "${TELEGRAM_CHAT_ID}",
+              "text": "ℹ️ {{ .CommonAnnotations.summary }}\n{{ .CommonAnnotations.description }}",
+              "parse_mode": "HTML"
             }
         disableResolveMessage: false
 
