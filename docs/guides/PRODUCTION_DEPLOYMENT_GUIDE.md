@@ -47,10 +47,10 @@ LINKEDIN_EMAIL=your_email@linkedin.com
 LINKEDIN_PASSWORD=your_password
 ```
 
-### Slack 알림 설정 (선택사항)
+### Telegram 알림 설정 (선택사항)
 
 ```bash
-SLACK_WEBHOOK_URL=https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK
+TELEGRAM_BOT_TOKEN=your_bot_token_here
 ```
 
 ## 3. 프로젝트 설정
@@ -209,8 +209,8 @@ curl -X POST https://resume.jclee.me/job/api/workflows/health-check/run
 ### 알림 설정
 
 ```bash
-# Slack 웹훅 URL 설정
-export SLACK_WEBHOOK_URL="https://hooks.slack.com/services/YOUR/WEBHOOK"
+# Telegram Bot 알림 설정
+export TELEGRAM_BOT_TOKEN="your_bot_token_here"
 
 # 이메일 알림 설정 (선택사항)
 export SMTP_HOST="smtp.gmail.com"

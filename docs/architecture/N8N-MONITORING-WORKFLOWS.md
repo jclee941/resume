@@ -33,7 +33,7 @@
 1. **Schedule Trigger** (Every 5 minutes)
 2. **HTTP Request** → `GET https://resume.jclee.me/health`
 3. **IF** (Check `status !== "healthy"`)
-4. **Slack** (Send alert to `#infra-alerts`)
+4. **HTTP Request** (Send alert to Telegram chat via Bot API)
 5. **Google Sheets** (Log downtime event)
 
 **Configuration**:
@@ -54,7 +54,7 @@
 // IF Node Condition
 {{ $json.status !== "healthy" || $json.uptime_seconds < 60 }}
 
-// Slack Message
+// Telegram Message
 ⚠️ **Resume Site Health Alert**
 Status: {{ $json.status || "DOWN" }}
 Deployed: {{ $json.deployed_at }}
@@ -77,16 +77,16 @@ Metrics:
 
 ### Workflow 2: GitHub Deployment Webhook (Priority 2)
 
-**Purpose**: Receive GitHub Actions deployment notifications and broadcast to Slack/Loki.
+**Purpose**: Receive GitHub Actions deployment notifications and broadcast to Telegram/Loki.
 
-**n8n Template Reference**: Custom webhook processing based on [Building Your First WhatsApp Chatbot](https://n8n.io/workflows/2465) pattern
+**n8n Template Reference**: Custom webhook processing based on [Telegram Bot API](https://n8n.io/workflows/3352) pattern (external reference for webhook processing structure, using Telegram Bot API)
 
 **Nodes**:
 
 1. **Webhook** (POST /resume-deploy)
 2. **Set** (Extract deployment data)
 3. **HTTP Request** (Fetch GitHub Actions run details)
-4. **Slack** (Send deployment notification)
+4. **HTTP Request** (Send deployment notification to Telegram)
 5. **HTTP Request** (Send logs to Loki)
 
 **Configuration**:
@@ -108,7 +108,7 @@ Metrics:
   "workflow_run_id": "{{ $json.workflow_run.id }}"
 }
 
-// Slack Notification
+// Telegram Notification
 🚀 **Resume Site Deployed**
 Commit: `{{ $json.commit_sha.substring(0,7) }}`
 Message: {{ $json.commit_message }}
@@ -148,7 +148,7 @@ Time: {{ $json.deployed_at }}
 1. **Webhook** (POST /api/vitals-proxy)
 2. **Code** (Parse Web Vitals JSON)
 3. **IF** (Check if LCP > 2.5s || CLS > 0.1)
-4. **Slack** (Performance warning)
+4. **HTTP Request** (Performance warning via Telegram)
 5. **HTTP Request** (Forward to Loki)
 6. **Google Sheets** (Daily aggregation)
 
@@ -173,7 +173,7 @@ return [{
 // IF Condition (Performance Alert)
 {{ $json.is_slow === true }}
 
-// Slack Alert
+// Telegram Alert
 ⚠️ **Web Vitals Performance Warning**
 LCP: {{ $json.lcp }}ms (target: <2500ms)
 FID: {{ $json.fid }}ms (target: <100ms)
@@ -292,7 +292,7 @@ return [{json: {
 ### Core Nodes Used
 
 1. **HTTP Request** (`nodes-base.httpRequest`) - API calls to `/health`, `/metrics`, `/api/vitals`
-2. **Slack** (`nodes-base.slack`) - Alert notifications
+2. **HTTP Request (Telegram Bot API)** - Alert notifications
 3. **Google Sheets** (`nodes-base.googleSheets`) - Data logging and aggregation
 4. **Schedule Trigger** (`nodes-base.scheduleTrigger`) - Time-based automation
 5. **Webhook** (`nodes-base.webhook`) - Receive GitHub Actions events
@@ -311,7 +311,7 @@ Data Processing (Code Node)
   ↓
 Conditional Logic (IF Node)
   ↓
-[Branch 1: Alert] → Slack
+[Branch 1: Alert] → Telegram
   ↓
 [Branch 2: Logging] → Google Sheets
   ↓
@@ -326,19 +326,19 @@ Conditional Logic (IF Node)
 
 - [ ] Create Workflow 1 (Site Health Monitor)
 - [ ] Set up Google Sheets for downtime logs
-- [ ] Configure Slack webhook for `#infra-alerts`
+- [ ] Configure Telegram Bot API for alerts
 - [ ] Test with manual site downtime
 
-**Success Criteria**: Receive Slack alert within 5 minutes of site down.
+**Success Criteria**: Receive Telegram alert within 5 minutes of site down.
 
 ### Phase 2: Deployment Integration (Week 2)
 
 - [ ] Create Workflow 2 (GitHub Deployment Webhook)
 - [ ] Update `.github/workflows/deploy.yml/deploy.yml` with n8n webhook
-- [ ] Add deployment notifications to Slack `#deployments`
+- [ ] Add deployment notifications to Telegram
 - [ ] Forward deployment logs to Loki
 
-**Success Criteria**: Slack notification on every GitHub Actions deployment.
+**Success Criteria**: Telegram notification on every GitHub Actions deployment.
 
 ### Phase 3: Performance Analytics (Week 3)
 
@@ -403,12 +403,12 @@ Conditional Logic (IF Node)
 ```bash
 # Search available nodes
 mcp__n8n-mcp__search_nodes({ query: "http request" })
-mcp__n8n-mcp__search_nodes({ query: "slack" })
+mcp__n8n-mcp__search_nodes({ query: "telegram http" })
 mcp__n8n-mcp__search_nodes({ query: "webhook" })
 
 # Get node details
 mcp__n8n-mcp__get_node_info({ nodeType: "nodes-base.httpRequest" })
-mcp__n8n-mcp__get_node_info({ nodeType: "nodes-base.slack" })
+mcp__n8n-mcp__get_node_info({ nodeType: "nodes-base.httpRequest" })
 ```
 
 ---
