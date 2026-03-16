@@ -68,22 +68,14 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ $env.EVOLUTION_API_URL }}/message/sendText/{{ $env.EVOLUTION_INSTANCE_NAME }}",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "apikey",
-              "value": "={{ $env.EVOLUTION_API_KEY }}"
-            }
-          ]
-        },
+        "url": "https://api.telegram.org/bot{{ $env.TELEGRAM_BOT_TOKEN }}/sendMessage",
+        "sendHeaders": false,
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ number: $env.EVOLUTION_WHATSAPP_NUMBER, text: `🚀 Resume Site Deployed\n\nCommit: ${$json.commit_sha.substring(0, 7)}\nMessage: ${$json.commit_message}\nAuthor: ${$json.author}\nTime: ${$json.deployed_at}\nStatus: ${$json.status === 'success' ? '✅' : '❌'} ${$json.status.toUpperCase()}\n\n🔗 https://github.com/qws941/resume/actions/runs/${$json.workflow_run_id}\n🌐 https://resume.jclee.me` }) }}"
+        "jsonBody": "={{ JSON.stringify({ chat_id: $env.TELEGRAM_CHAT_ID, text: `🚀 Resume Site Deployed\n\nCommit: ${$json.commit_sha.substring(0, 7)}\nMessage: ${$json.commit_message}\nAuthor: ${$json.author}\nTime: ${$json.deployed_at}\nStatus: ${$json.status === 'success' ? '✅' : '❌'} ${$json.status.toUpperCase()}\n\n🔗 https://github.com/qws941/resume/actions/runs/${$json.workflow_run_id}\n🌐 https://resume.jclee.me`, parse_mode: \"HTML\" }) }}"
       },
-      "id": "whatsapp-deployment-notification",
-      "name": "Send WhatsApp Notification",
+      "id": "telegram-deployment-notification",
+      "name": "Send Telegram Notification",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [680, 180]
@@ -170,7 +162,7 @@
       "main": [
         [
           {
-            "node": "Send WhatsApp Notification",
+            "node": "Send Telegram Notification",
             "type": "main",
             "index": 0
           },
