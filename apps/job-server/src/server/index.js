@@ -8,6 +8,7 @@ import fastifySwaggerUi from '@fastify/swagger-ui';
 
 import config from './config/index.js';
 import authPlugin from './plugins/auth.js';
+import n8nWebhookPlugin from './plugins/n8n-webhook.js';
 import errorHandler from './middleware/error-handler.js';
 
 import authRoutes from './routes/auth.js';
@@ -60,6 +61,7 @@ async function buildServer() {
   });
 
   await fastify.register(authPlugin);
+  await fastify.register(n8nWebhookPlugin);
 
   await fastify.register(fastifySwagger, {
     openapi: {
