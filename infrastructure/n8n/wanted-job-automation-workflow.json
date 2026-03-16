@@ -120,19 +120,11 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ $env.EVOLUTION_API_URL }}/message/sendText/{{ $env.EVOLUTION_INSTANCE_NAME }}",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "apikey",
-              "value": "={{ $env.EVOLUTION_API_KEY }}"
-            }
-          ]
-        },
+        "url": "https://api.telegram.org/bot{{ $env.TELEGRAM_BOT_TOKEN }}/sendMessage",
+        "sendHeaders": false,
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ number: $env.EVOLUTION_WHATSAPP_NUMBER, text: '⚠️ Wanted Session Expired\n\nPlease run resume-cli wanted auth --browser to re-authenticate.' }) }}",
+        "jsonBody": "={{ JSON.stringify({ chat_id: $env.TELEGRAM_CHAT_ID, text: '⚠️ Wanted Session Expired\n\nPlease run resume-cli wanted auth --browser to re-authenticate.', parse_mode: \"HTML\" }) }}",
         "options": {}
       },
       "id": "notify-auth-expired",
@@ -226,8 +218,8 @@
       "parameters": {
         "jsCode": "const jobs = $input.all().slice(0, 10);\nconst total = $input.all().length;\nconst lines = [`🔍 Wanted Job Alert`, ``, `총 ${total}개 신규 공고 발견`];\n\nfor (const job of jobs) {\n  const j = job.json;\n  const location = (j.address?.location || '') + (j.address?.district ? ` ${j.address.district}` : '');\n  const safeLocation = location.trim() || 'N/A';\n  const salary = j.annual_from === 0 && j.annual_to === 0\n    ? '회사내규'\n    : j.annual_to\n      ? `${j.annual_from}~${j.annual_to}만원`\n      : `${j.annual_from}만원+`;\n\n  lines.push('');\n  lines.push(`💼 ${j.position || 'Unknown Position'}`);\n  lines.push(`🏢 ${j.company?.name || 'Unknown Company'}`);\n  lines.push(`📍 ${safeLocation}`);\n  lines.push(`💰 추천보상금: ${j.reward?.formatted_total || 'N/A'}`);\n  lines.push(`💵 연봉: ${salary}`);\n  lines.push(`🔗 https://www.wanted.co.kr/wd/${j.id}`);\n}\n\nlines.push('');\nlines.push(`🕒 검색 시각: ${new Date().toISOString()}`);\n\nreturn [{ json: { text: lines.join('\\n') } }];"
       },
-      "id": "format-whatsapp",
-      "name": "Format WhatsApp Message",
+      "id": "format-telegram",
+      "name": "Format Telegram Message",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [1850, 550]
@@ -235,23 +227,15 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ $env.EVOLUTION_API_URL }}/message/sendText/{{ $env.EVOLUTION_INSTANCE_NAME }}",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "apikey",
-              "value": "={{ $env.EVOLUTION_API_KEY }}"
-            }
-          ]
-        },
+        "url": "https://api.telegram.org/bot{{ $env.TELEGRAM_BOT_TOKEN }}/sendMessage",
+        "sendHeaders": false,
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ number: $env.EVOLUTION_WHATSAPP_NUMBER, text: $json.text }) }}",
+        "jsonBody": "={{ JSON.stringify({ chat_id: $env.TELEGRAM_CHAT_ID, text: $json.text, parse_mode: \"HTML\" }) }}",
         "options": {}
       },
-      "id": "whatsapp-notify",
-      "name": "Send WhatsApp Notification",
+      "id": "telegram-notify",
+      "name": "Send Telegram Notification",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [2050, 550]
@@ -423,7 +407,7 @@
       "main": [
         [
           {
-            "node": "Format WhatsApp Message",
+            "node": "Format Telegram Message",
             "type": "main",
             "index": 0
           },
@@ -442,11 +426,11 @@
         ]
       ]
     },
-    "Format WhatsApp Message": {
+    "Format Telegram Message": {
       "main": [
         [
           {
-            "node": "Send WhatsApp Notification",
+            "node": "Send Telegram Notification",
             "type": "main",
             "index": 0
           }
@@ -464,7 +448,7 @@
         ]
       ]
     },
-    "Send WhatsApp Notification": {
+    "Send Telegram Notification": {
       "main": [
         [
           {

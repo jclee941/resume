@@ -71,23 +71,15 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ $env.EVOLUTION_API_URL }}/message/sendText/{{ $env.EVOLUTION_INSTANCE_NAME }}",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "apikey",
-              "value": "={{ $env.EVOLUTION_API_KEY }}"
-            }
-          ]
-        },
+        "url": "https://api.telegram.org/bot{{ $env.TELEGRAM_BOT_TOKEN }}/sendMessage",
+        "sendHeaders": false,
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ number: $env.EVOLUTION_WHATSAPP_NUMBER, text: `🚨 Resume Portfolio Alert\n\n🔗 URL: https://resume.jclee.me\n📟 Status: ${$('Check Resume Health').item.json.statusCode || 'Timeout'}\n🕒 Time: ${$now.toISO()}\n❗ Error: ${$('Check Resume Health').item.json.error || ('HTTP ' + $('Check Resume Health').item.json.statusCode)}` }) }}",
+        "jsonBody": "={{ JSON.stringify({ chat_id: $env.TELEGRAM_CHAT_ID, text: `🚨 Resume Portfolio Alert\n\n🔗 URL: https://resume.jclee.me\n📟 Status: ${$('Check Resume Health').item.json.statusCode || 'Timeout'}\n🕒 Time: ${$now.toISO()}\n❗ Error: ${$('Check Resume Health').item.json.error || ('HTTP ' + $('Check Resume Health').item.json.statusCode)}`, parse_mode: \"HTML\" }) }}",
         "options": {}
       },
-      "id": "whatsapp-alert",
-      "name": "Send WhatsApp Alert",
+      "id": "telegram-alert",
+      "name": "Send Telegram Alert",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [850, 200]
@@ -120,7 +112,7 @@
       "main": [
         [
           {
-            "node": "Send WhatsApp Alert",
+            "node": "Send Telegram Alert",
             "type": "main",
             "index": 0
           }

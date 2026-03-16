@@ -20,7 +20,7 @@ This workflow automates the entire resume deployment pipeline:
 5. **E2E Tests** - Runs Playwright tests
 6. **Deploy** - Deploys to Cloudflare Workers
 7. **Health Check** - Verifies deployment
-23: 8. **Notifications** - Sends WhatsApp notifications and logs to Loki
+23: 8. **Notifications** - Sends Telegram notifications and logs to Loki
 
 ## Quick Start
 
@@ -38,10 +38,8 @@ This workflow automates the entire resume deployment pipeline:
 # Add to ~/.env
 export N8N_URL="https://n8n.jclee.me"
 export N8N_API_KEY="your-api-key-here"
-41: export EVOLUTION_API_URL="https://evolution.jclee.me"
-42: export EVOLUTION_API_KEY="your-evolution-api-key"
-43: export EVOLUTION_INSTANCE_NAME="resume-bot"
-44: export EVOLUTION_WHATSAPP_NUMBER="821012345678"
+41: export TELEGRAM_BOT_TOKEN="your-telegram-bot-token"
+42: export TELEGRAM_CHAT_ID="123456789"
 
 # Load environment
 source ~/.env
@@ -117,7 +115,7 @@ git push origin master
 # Check n8n dashboard
 # Visit: https://n8n.jclee.me/executions
 
-117: # Check WhatsApp for notification
+120: # Check Telegram for notification
 # Check Loki logs
 curl https://loki.jclee.me/loki/api/v1/query \
   -G --data-urlencode 'query={job="resume-deploy"}' | jq
@@ -136,7 +134,7 @@ Automated deployment pipeline triggered by GitHub push events.
 - GitHub webhook trigger
 - Automated build and test
 - Cloudflare Workers deployment
-136: - WhatsApp notifications
+139: - Telegram notifications
 - Loki logging
 
 ### 2. Health Check Monitor
@@ -149,14 +147,14 @@ Periodic health monitoring for resume.jclee.me.
 
 - Runs every 5 minutes
 - HTTP health check to `/health` endpoint
-149: - WhatsApp notifications on downtime/errors
-150: - Uses Evolution API
+152: - Telegram notifications on downtime/errors
+153: - Uses Telegram Bot API
 
 **Quick Setup**:
 
 ```bash
 # 1. Import workflow to n8n.jclee.me
-156: # 2. Update "Evolution API Success/Failure" nodes with registered credential
+159: # 2. Update "Telegram Bot API Success/Failure" nodes with registered credential
 # 3. Activate workflow
 ```
 
@@ -165,7 +163,7 @@ Periodic health monitoring for resume.jclee.me.
 - Health check interval: 5 minutes
 - Timeout: 10 seconds
 - Error conditions: Non-200 status code OR timeout
-165: - Alert format: WhatsApp text with status, time, error details
+168: - Alert format: Telegram text with status, time, error details
 
 ### 4. Grafana Alert → GitHub Issue
 
@@ -221,40 +219,40 @@ Creates GitHub issues from GlitchTip error webhooks with fingerprint-based dedup
 4. In GlitchTip → Project Settings → Notifications → Add webhook:
    - URL: `https://n8n.jclee.me/webhook/<webhook-path-from-workflow>`
 5. Activate workflow
-221: ### 3. Health Check Monitor (Evolution API) ⭐ RECOMMENDED
+224: ### 3. Health Check Monitor (Telegram Bot API) ⭐ RECOMMENDED
 
-223: Evolution API-based health monitoring with secure credential management.
+226: Telegram Bot API-based health monitoring with secure credential management.
 
-225: **Workflow File**: `resume-healthcheck-evolution.json`
+228: **Workflow File**: `telegram-notifier` (central hub workflow)
 
 **Workflow ID**: `yCWYRtQsXNIsENi1`
 
 **URL**: https://n8n.jclee.me/workflow/yCWYRtQsXNIsENi1
 
-231: **Why Evolution API?**
+234: **Why Telegram Bot API?**
 
-233: - 🔒 Credentials stored securely in n8n (apikey header)
-234: - 🔄 Centralized instance management
-235: - 🚫 No hardcoded endpoints
+236: - 🔒 Credentials stored securely in n8n (bot token)
+237: - 🔄 Simple HTTP API (no instance management)
+238: - 🚫 No hardcoded phone numbers
 - ✅ Better access control and auditing
 
 **Features**:
 
 - Runs every 5 minutes
 - HTTP health check to `/health` endpoint
-242: - WhatsApp notifications on downtime/errors
-243: - **Uses Evolution API credential** (registered in n8n)
+245: - Telegram notifications on downtime/errors
+246: - **Uses Telegram Bot API credential** (registered in n8n)
 244: - Cleaner workflow (no manual endpoint configuration needed)
 
 **Quick Setup**:
 
 ```bash
-249: # 1. Set up Evolution API credential (see EVOLUTION_API_SETUP.md)
+252: # 1. Set up Telegram Bot credentials (see 1Password `homelab` vault)
 # 2. Import workflow to n8n or use existing workflow ID
 # 3. Activate workflow via n8n UI
 ```
 
-254: **Credential Setup**: See [EVOLUTION_API_SETUP.md](EVOLUTION_API_SETUP.md) for detailed instructions.
+257: **Credential Setup**: Bot token stored in 1Password `homelab` vault as `telegram-bot-token`.
 
 **Workflow Flow**:
 
@@ -262,7 +260,7 @@ Creates GitHub issues from GlitchTip error webhooks with fingerprint-based dedup
 Schedule Trigger (5 min)
   → HTTP Request (health check)
   → IF (is down?)
-  262:   → Evolution API (send WhatsApp notification)
+  265:   → Telegram Bot API (send Telegram notification)
 ```
 
 **Monitoring Details**:
@@ -271,12 +269,12 @@ Schedule Trigger (5 min)
 - **Frequency**: Every 5 minutes
 - **Timeout**: 10 seconds
 - **Alert Conditions**: HTTP != 200 or timeout
-271: - **Notification**: WhatsApp with detailed error info
+274: - **Notification**: Telegram with detailed error info
 
 **Workflow Flow**:
 
 ```
-276: Every 5 Minutes → Check Health → Is Down? → Evolution API WhatsApp Notification
+279: Every 5 Minutes → Check Health → Is Down? → Telegram Bot API Notification
 ```
 
 See `resume-healthcheck-workflow.json` for full configuration.
@@ -296,8 +294,8 @@ graph LR
     F --> G[npm run test:e2e]
     G --> H[wrangler deploy]
     H --> I[Health Check]
-    296:     I -->|Success| J[WhatsApp ✅]
-    297:     I -->|Failure| K[WhatsApp ❌]
+    299:     I -->|Success| J[Telegram ✅]
+    300:     I -->|Failure| K[Telegram ❌]
     J --> L[Log to Loki]
     K --> L
     L --> M[Webhook Response]
@@ -315,8 +313,8 @@ graph LR
 | Run E2E Tests        | Execute Command    | E2E tests                  | `npm run test:e2e`                    |
 | Deploy to Cloudflare | Execute Command    | Deploy worker              | `wrangler deploy`                     |
 | Health Check         | HTTP Request       | Verify deployment          | GET `/health`                         |
-315: | WhatsApp Success     | HTTP Request       | Success notification       | POST to Evolution API                 |
-316: | WhatsApp Failure     | HTTP Request       | Failure notification       | POST to Evolution API                 |
+318: | Telegram Success     | HTTP Request       | Success notification       | POST to Telegram Bot API                 |
+319: | Telegram Failure     | HTTP Request       | Failure notification       | POST to Telegram Bot API                 |
 | Log to Loki          | HTTP Request       | Log to Grafana Loki        | POST to Loki API                      |
 | Webhook Response     | Respond to Webhook | Return status to GitHub    | JSON response                         |
 
@@ -325,11 +323,9 @@ graph LR
 Required in n8n settings or workflow:
 
 ```bash
-325: # Evolution API (for WhatsApp notifications)
-326: EVOLUTION_API_URL=https://evolution.jclee.me
-327: EVOLUTION_API_KEY=your-evolution-api-key
-328: EVOLUTION_INSTANCE_NAME=resume-bot
-329: EVOLUTION_WHATSAPP_NUMBER=821012345678
+328: # Telegram Bot API (for Telegram notifications)
+329: TELEGRAM_BOT_TOKEN=your-telegram-bot-token
+330: TELEGRAM_CHAT_ID=123456789
 
 # GitHub credentials (if needed)
 GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
@@ -447,23 +443,23 @@ sudo chown -R n8n:n8n /home/jclee/dev/resume
 # user: "1000:1000"  # jclee UID:GID
 ```
 
-444: ### WhatsApp Notifications Not Sent
+450: ### Telegram Notifications Not Sent
 
-446: **Problem**: Workflow completes but no WhatsApp notification
+452: **Problem**: Workflow completes but no Telegram notification
 
 **Check**:
 
 ```bash
-451: # Test Evolution API manually
-452: curl -X POST "$EVOLUTION_API_URL/message/sendText/$EVOLUTION_INSTANCE_NAME" \
-453:   -H "apikey: $EVOLUTION_API_KEY" \
-454:   -H "Content-Type: application/json" \
-455:   -d "{\"number\": \"$EVOLUTION_WHATSAPP_NUMBER\", \"text\": \"Test from n8n workflow\"}"
+457: # Test Telegram Bot API manually
+458: curl -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
+459:   -H "Content-Type: application/json" \
+460:   -d "{\"chat_id\": \"$TELEGRAM_CHAT_ID\", \"text\": \"Test from n8n workflow\"}"
+
 **Solution**:
 
-459: - Verify Evolution API variables are set in n8n
-460: - Check Evolution API key is valid
-461: - Ensure n8n can reach evolution.jclee.me
+464: - Verify Telegram Bot API variables are set in n8n
+465: - Check Telegram bot token is valid
+466: - Ensure n8n can reach api.telegram.org
 
 ## Advanced Features
 
