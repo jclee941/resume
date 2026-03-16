@@ -1,6 +1,7 @@
 import { BaseHandler } from './base-handler.js';
 import { WantedClient } from '../services/wanted-client.js';
 import { normalizeError } from '../../../job-server/src/shared/errors/index.js';
+import { sendTelegramNotification, escapeHtml } from '../services/notification/telegram.js';
 
 const JOB_CATEGORY_MAPPING = {
   '보안운영 담당': 672,
@@ -535,12 +536,9 @@ export class ProfileSyncHandler extends BaseHandler {
       if (status === 'completed') {
         const platforms = result?.platforms || [];
         const successCount = platforms.filter((platform) => platform.success).length;
-        console.log(
-          '[Notification]',
-          JSON.stringify({
-            text: `✅ Profile Sync Complete: ${successCount}/${platforms.length} platforms updated`,
-          })
-        );
+      await sendTelegramNotification(this.env,
+        `✅ <b>Profile Sync Complete</b>: ${successCount}/${platforms.length} platforms updated`
+      );
       }
 
       return this.jsonResponse({ success: true, message: 'Sync status updated', syncId, status });
