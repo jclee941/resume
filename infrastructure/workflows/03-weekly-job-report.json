@@ -32,7 +32,7 @@
     },
     {
       "id": "format-message",
-      "name": "Format WhatsApp Message",
+      "name": "Format Telegram Message",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [680, 300],
@@ -41,26 +41,18 @@
       }
     },
     {
-      "id": "send-whatsapp",
-      "name": "Send WhatsApp Weekly Report",
+      "id": "send-telegram",
+      "name": "Send Telegram Weekly Report",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [900, 300],
       "parameters": {
         "method": "POST",
-        "url": "={{ $env.EVOLUTION_API_URL }}/message/sendText/{{ $env.EVOLUTION_INSTANCE_NAME }}",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "apikey",
-              "value": "={{ $env.EVOLUTION_API_KEY }}"
-            }
-          ]
-        },
+        "url": "https://api.telegram.org/bot{{ $env.TELEGRAM_BOT_TOKEN }}/sendMessage",
+        "sendHeaders": false,
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ number: $env.EVOLUTION_WHATSAPP_NUMBER, text: $json.text }) }}"
+        "jsonBody": "={{ JSON.stringify({ chat_id: $env.TELEGRAM_CHAT_ID, text: $json.text, parse_mode: \"HTML\" }) }}"
       }
     }
   ],
@@ -91,7 +83,7 @@
       "main": [
         [
           {
-            "node": "send-whatsapp",
+            "node": "send-telegram",
             "type": "main",
             "index": 0
           }

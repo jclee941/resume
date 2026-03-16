@@ -3,35 +3,23 @@
   "title": "n8n Resume Monitoring Configuration",
   "description": "Configuration template for n8n workflows - copy to config.json and fill in values",
   "type": "object",
-  "required": ["evolution_api", "google_sheets", "monitoring"],
+  "required": ["telegram", "google_sheets", "monitoring"],
   "properties": {
-    "evolution_api": {
+    "telegram": {
       "type": "object",
-      "description": "Evolution API (WhatsApp) integration settings",
-      "required": ["api_url", "api_key", "instance_name", "whatsapp_number"],
+      "description": "Telegram Bot API notification settings",
+      "required": ["bot_token", "chat_id"],
       "properties": {
-        "api_url": {
+        "bot_token": {
           "type": "string",
-          "format": "uri",
-          "description": "Evolution API base URL (e.g., https://evolution.example.com)",
-          "examples": ["https://evolution.jclee.me"]
-        },
-        "api_key": {
-          "type": "string",
-          "description": "Evolution API authentication key (used in apikey header)",
+          "description": "Telegram Bot API token (from @BotFather)",
           "minLength": 1
         },
-        "instance_name": {
+        "chat_id": {
           "type": "string",
-          "description": "WhatsApp instance name registered in Evolution API",
-          "pattern": "^[a-zA-Z0-9_-]+$",
-          "examples": ["resume-bot"]
-        },
-        "whatsapp_number": {
-          "type": "string",
-          "description": "Recipient WhatsApp phone number (full number without +, e.g., 821012345678)",
-          "pattern": "^[0-9]{10,15}$",
-          "examples": ["821012345678"]
+          "description": "Telegram chat ID for notifications (user, group, or channel)",
+          "pattern": "^-?[0-9]+$",
+          "examples": ["5594291417", "-1001234567890"]
         }
       }
     },

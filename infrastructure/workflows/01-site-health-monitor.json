@@ -67,22 +67,14 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ $env.EVOLUTION_API_URL }}/message/sendText/{{ $env.EVOLUTION_INSTANCE_NAME }}",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "apikey",
-              "value": "={{ $env.EVOLUTION_API_KEY }}"
-            }
-          ]
-        },
+        "url": "https://api.telegram.org/bot{{ $env.TELEGRAM_BOT_TOKEN }}/sendMessage",
+        "sendHeaders": false,
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ number: $env.EVOLUTION_WHATSAPP_NUMBER, text: `⚠️ Resume Site Health Alert\n\nStatus: ${$json.status || 'DOWN'}\nDeployed: ${$json.deployed_at || 'Unknown'}\nUptime: ${$json.uptime_seconds || 0}s\n\n📈 Metrics\n- Total Requests: ${$json.metrics?.requests_total || 0}\n- Success: ${$json.metrics?.requests_success || 0}\n- Errors: ${$json.metrics?.requests_error || 0}\n\n🔗 https://resume.jclee.me/health\n📊 https://grafana.jclee.me/d/resume` }) }}"
+        "jsonBody": "={{ JSON.stringify({ chat_id: $env.TELEGRAM_CHAT_ID, text: `⚠️ Resume Site Health Alert\n\nStatus: ${$json.status || 'DOWN'}\nDeployed: ${$json.deployed_at || 'Unknown'}\nUptime: ${$json.uptime_seconds || 0}s\n\n📈 Metrics\n- Total Requests: ${$json.metrics?.requests_total || 0}\n- Success: ${$json.metrics?.requests_success || 0}\n- Errors: ${$json.metrics?.requests_error || 0}\n\n🔗 https://resume.jclee.me/health\n📊 https://grafana.jclee.me/d/resume`, parse_mode: \"HTML\" }) }}"
       },
-      "id": "whatsapp-alert",
-      "name": "Send WhatsApp Alert",
+      "id": "telegram-alert",
+      "name": "Send Telegram Alert",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [900, 180]
@@ -200,7 +192,7 @@
       "main": [
         [
           {
-            "node": "Send WhatsApp Alert",
+            "node": "Send Telegram Alert",
             "type": "main",
             "index": 0
           },

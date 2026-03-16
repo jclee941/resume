@@ -1,9 +1,7 @@
 {
-  "evolution_api": {
-    "api_url": "https://evolution.jclee.me",
-    "api_key": "YOUR_EVOLUTION_API_KEY",
-    "instance_name": "resume-bot",
-    "whatsapp_number": "821012345678"
+  "telegram": {
+    "bot_token": "YOUR_TELEGRAM_BOT_TOKEN",
+    "chat_id": "YOUR_TELEGRAM_CHAT_ID"
   },
   "google_sheets": {
     "spreadsheet_id": "GOOGLE_SHEET_ID_HERE_44_CHARS",

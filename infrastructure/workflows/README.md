@@ -9,7 +9,7 @@
 **Features**:
 
 - ✅ Automated health checks via `/health` endpoint
-- ✅ WhatsApp alerts on downtime via Evolution API
+- ✅ Telegram alerts on downtime via Telegram Bot API
 - ✅ Google Sheets logging (separate sheets for downtime/healthy status)
 - ✅ Configurable retry logic (3 attempts, 10s timeout)
 
@@ -18,7 +18,7 @@
 1. Schedule Trigger (Every 5 minutes)
 2. HTTP Request → `GET https://resume.jclee.me/health`
 3. IF → Check if status !== "healthy"
-4. Evolution API → Send WhatsApp alert (downtime branch)
+4. Telegram Bot API → Send Telegram alert (downtime branch)
 5. Google Sheets → Log downtime event
 6. Google Sheets → Log healthy status
 
@@ -37,7 +37,7 @@
 **Features**:
 
 - ✅ Webhook endpoint: `POST /webhook/resume-deploy`
-- ✅ WhatsApp deployment notifications via Evolution API
+- ✅ Telegram deployment notifications via Telegram Bot API
 - ✅ Loki logging for centralized observability
 - ✅ Google Sheets deployment history
 
@@ -45,7 +45,7 @@
 
 1. Webhook Trigger → `/resume-deploy`
 2. Set → Extract deployment data
-3. Evolution API → Send WhatsApp notification
+3. Telegram Bot API → Send Telegram notification
 4. HTTP Request → Log to Loki
 5. Google Sheets → Deployment history
 
@@ -84,10 +84,9 @@ cp n8n-workflows/config.example.json n8n-workflows/config.json
 # 2. Edit config.json with your values
 vim n8n-workflows/config.json
 # Required values:
-# - evolution_api.api_url (e.g., https://evolution.jclee.me)
-# - evolution_api.api_key (YOUR_API_KEY)
-# - evolution_api.instance_name (resume-bot)
-# - evolution_api.whatsapp_number (821012345678)
+# - telegram.bot_token (e.g., 123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11)
+# - telegram.chat_id (e.g., 123456789)
+# - telegram.bot_token (from 1Password homelab vault)
 # - google_sheets.spreadsheet_id (44 characters)
 
 # 3. Generate configured workflows
@@ -120,15 +119,15 @@ node scripts/setup/configure-n8n-workflows.js
 
 | Service       | Credential Type | Usage                  |
 | ------------- | --------------- | ---------------------- |
-| Evolution API | Header API Key  | Alerts & notifications |
+| Telegram Bot API | Header API Key  | Alerts & notifications |
 | Google Sheets | OAuth2          | Data logging           |
 
 **Setup Instructions**:
 
-1. **Evolution API**:
+1. **Telegram Bot API**:
    - Go to n8n → Credentials → New → Header Auth
    - Name: apikey, Value: YOUR_API_KEY
-   - Test connection: Send test WhatsApp message
+   - Test connection: Send test Telegram message
 
 2. **Google Sheets OAuth2**:
    - Go to n8n → Credentials → New → Google Sheets OAuth2 API
@@ -141,8 +140,8 @@ node scripts/setup/configure-n8n-workflows.js
 **01-site-health-monitor.json**:
 
 ```javascript
-// Node: Send WhatsApp Alert (Evolution API)
-number: '821012345678'; // Replace with your WhatsApp number
+// Node: Send Telegram Alert (Telegram Bot API)
+chat_id: '123456789'; // Replace with your Telegram chat ID
 
 // Node: Log Downtime Event
 documentId: 'GOOGLE_SHEET_ID'; // Replace with your spreadsheet ID
@@ -156,8 +155,8 @@ sheetName: 'Health Log'; // Sheet gid=1
 **02-github-deployment-webhook.json**:
 
 ```javascript
-// Node: Send WhatsApp Notification (Evolution API)
-number: '821012345678'; // Replace with your WhatsApp number
+// Node: Send Telegram Notification (Telegram Bot API)
+chat_id: '123456789'; // Replace with your Telegram chat ID
 
 // Node: Log Deployment
 documentId: 'GOOGLE_SHEET_ID'; // Same spreadsheet
@@ -201,12 +200,12 @@ sheetName: 'Deployment Log'; // Sheet gid=2
 1. **Site Health Monitor**:
    - Open workflow in n8n
    - Click "Active" toggle (top-right)
-   - Verify: Check WhatsApp for test message within 5 minutes
+   - Verify: Check Telegram for test message within 5 minutes
 
 2. **GitHub Deployment Webhook**:
    - Open workflow in n8n
    - Click "Active" toggle
-   - Verify: Push a commit to master → Check WhatsApp
+   - Verify: Push a commit to master → Check Telegram
 
 ---
 
@@ -259,7 +258,7 @@ cd ~/apps/resume/apps/portfolio
 npm run deploy
 
 # Wait 5 minutes
-# Expected: WhatsApp alert via Evolution API + Google Sheets log
+# Expected: Telegram alert via Telegram Bot API + Google Sheets log
 
 # Restore
 git checkout apps/portfolio/worker.js
@@ -284,8 +283,8 @@ curl -X POST https://n8n.jclee.me/webhook/resume-deploy \
   }'
 
 # Expected:
-# - WhatsApp message via Evolution API
-# - New row in Google Sheets "Deployment Log"
+# Expected:
+# - Telegram message via Telegram Bot API
 # - Loki log entry (check Grafana)
 
 # Automatic test via GitHub Actions
@@ -317,22 +316,22 @@ git push origin master
 # In n8n: Open workflow → Click "Test workflow"
 ```
 
-### Issue: WhatsApp notifications not sending
+### Issue: Telegram notifications not sending
 
 **Check**:
 
-1. Evolution API credential is connected
-2. WhatsApp number is correct (8210... format)
-3. Evolution API instance is connected
+1. Telegram Bot API credential is connected
+2. Telegram chat_id is correct
+3. Bot token is valid
 
 **Solution**:
 
 ```bash
 # Get channel ID
-# Check EVOLUTION_WHATSAPP_NUMBER in n8n environment
+# Check TELEGRAM_CHAT_ID in n8n environment
 
 # Test credential
-# n8n → Credentials → Evolution API Header Auth → Test
+# n8n → Credentials → Telegram API Header Auth → Test
 ```
 
 ### Issue: Google Sheets not logging
