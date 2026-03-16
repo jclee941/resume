@@ -7,6 +7,35 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = join(__dirname, '..', '..', '..', '..');
 const RESUME_DATA_PATH = join(PROJECT_ROOT, 'packages/data/resumes/master/resume_data.json');
 
+// Wanted skill tag_type_id mapping (from /api/v1/tags?kind=skill)
+// Skills not in this map are skipped during sync (no matching Wanted tag exists)
+const SKILL_TAG_MAP = {
+  'Python': 1554,
+  'JavaScript': 1541,
+  'TypeScript': 1564,
+  'Docker': 2217,
+  'Kubernetes': 10268,
+  'Terraform': 10498,
+  'Prometheus': 10497,
+  'Grafana': 10496,
+  'AWS': 1698,
+  'GCP': 3468,
+  'Linux': 1459,
+  'Node.js': 1547,
+  'React': 1469,
+  'PostgreSQL': 2683,
+  'Git': 1411,
+  'Jenkins': 2020,
+  'Go': 1702,
+  'Bash': 2271,
+  'Nginx': 3498,
+  'Redis': 1470,
+  'MongoDB': 1462,
+  'Azure': 1441,
+  'Helm': 10648,
+  'RabbitMQ': 3569,
+};
+
 export const unifiedResumeSyncTool = {
   name: 'unified_resume_sync',
   description: `Sync resume_data.json to multiple job platforms.
@@ -227,10 +256,13 @@ function mapToWantedFormat(source) {
       {
         school_name: source.education?.school,
         major: source.education?.major,
-        degree: 'BACHELOR',
+        degree: null,
         start_time: parseDate(source.education?.startDate),
         end_time: null,
-        status: source.education?.status === '재학중' ? 'ENROLLED' : 'GRADUATED',
+        description:
+          source.education?.status === '재학중'
+            ? `재학중 (${source.education?.startDate || ''} ~ )`
+            : null,
       },
     ],
     skills: (source.skills?.security?.items || [])
@@ -379,7 +411,7 @@ async function syncToWanted(data, params) {
 
     for (const edu of localEducations) {
       const matchedEdu = remoteEducations.find(
-        (re) => re.school?.name === edu.school_name
+        (re) => re.school_name === edu.school_name
       );
 
       if (matchedEdu) {
@@ -404,7 +436,12 @@ async function syncToWanted(data, params) {
       );
 
       if (!skillExists) {
-        await api.resumeSkills.add(params.resume_id, { text: skillName });
+        const tagTypeId = SKILL_TAG_MAP[skillName];
+        if (!tagTypeId) {
+          console.warn(`[skills] Skipping "${skillName}" - no matching Wanted tag_type_id`);
+          continue;
+        }
+        await api.resumeSkills.add(params.resume_id, { tag_type_id: tagTypeId, text: skillName });
       }
     }
     results.updated.push('skills');
