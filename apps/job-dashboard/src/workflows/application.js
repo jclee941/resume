@@ -334,8 +334,8 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
 `;
     if (resume?.experience) prompt += `- My Experience: ${resume.experience}
 `;
-    prompt += '
-Keep it professional, concise, and specific to this role.';
+    prompt += `
+Keep it professional, concise, and specific to this role.`;
 
     return prompt;
   }

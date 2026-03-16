@@ -241,6 +241,7 @@ async function main() {
         }
       }
     }
+  }
 
   // Pre-flight: warn if no platforms are authenticated
   const authCount = PLATFORMS.filter((p) => checkSession(p).valid).length;

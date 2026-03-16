@@ -92,7 +92,7 @@ export class CloudflareAnalyticsService {
         const errorText = await response.text();
         return {
           available: false,
-          reason: `Cloudflare API error: ${response.status}`,
+          reason: `Cloudflare API error: ${response.status} - ${errorText}`,
         };
       }
 
