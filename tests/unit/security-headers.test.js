@@ -1,8 +1,6 @@
 const { describe, test, expect } = require('@jest/globals');
 const {
   generateSecurityHeaders,
-  getCacheHeaders,
-  CACHE_STRATEGIES,
 } = require('../../apps/portfolio/lib/security-headers.js');
 
 describe('Security Headers', () => {

@@ -1,7 +1,7 @@
 import { BaseHandler } from './base-handler.js';
 import { WantedClient } from '../services/wanted-client.js';
 import { normalizeError } from '../../../job-server/src/shared/errors/index.js';
-import { sendTelegramNotification, escapeHtml } from '../services/notification/telegram.js';
+import { sendTelegramNotification } from '../services/notification/telegram.js';
 
 const JOB_CATEGORY_MAPPING = {
   '보안운영 담당': 672,

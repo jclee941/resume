@@ -248,7 +248,7 @@ export class ResumeSyncWorkflow extends WorkflowEntrypoint {
           .join('\n');
 
         await sendTelegramNotification(this.env,
-          `✅ <b>Resume Sync Complete</b>\n\n` +
+          '✅ <b>Resume Sync Complete</b>\n\n' +
           `<b>Resume</b>: ${escapeHtml(resumeId)}\n` +
           `<b>Platforms</b>:\n${summary}\n` +
           `<b>Backup ID</b>: ${escapeHtml(backup.backupId)}`
