@@ -362,7 +362,7 @@
     "saveDataErrorExecution": "all",
     "saveDataSuccessExecution": "all",
     "executionTimeout": 3600,
-    "timezone": "UTC",
+    "timezone": "Asia/Seoul",
     "callerPolicy": "workflowsFromSameOwner",
     "availableInMCP": false
   },

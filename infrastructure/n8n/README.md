@@ -282,7 +282,7 @@ See `resume-healthcheck-workflow.json` for full configuration.
 ### 6. Job Auto-Apply
 
 **Workflow**: `job-auto-apply` (ID: `DRHg9pwanv4pHGxV`)
-**Schedule**: Daily at 9:00 AM UTC
+**Schedule**: Daily at 9:00 AM KST (Asia/Seoul)
 **Purpose**: Automatically searches job platforms and submits applications
 
 **Features**:
@@ -295,7 +295,7 @@ See `resume-healthcheck-workflow.json` for full configuration.
 **Workflow Flow**:
 
 ```
-Daily 9am → POST /api/auto-apply/run → Wait 30s → Poll Status
+Daily 9am KST → POST /api/auto-apply/run → Wait 30s → Poll Status
   → Done? → Format Result → Reset Poll Count → Telegram Notify
   → Not Done? → Increment Poll → Timeout? → Notify Timeout
                                          → Not Timeout → Wait 30s (loop)
