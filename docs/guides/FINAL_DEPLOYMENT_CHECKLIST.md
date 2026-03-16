@@ -110,8 +110,6 @@ curl https://resume.jclee.me/health
 # Verify performance
 npm run lighthouse -- https://resume.jclee.me
 
-# Check error tracking
-# Monitor Sentry dashboard
 ```
 
 ---
@@ -144,7 +142,6 @@ npm run lighthouse -- https://resume.jclee.me
 
 ### Immediate (First Hour)
 
-- [ ] Check error logs in Sentry
 - [ ] Verify all pages load correctly
 - [ ] Test i18n functionality
 - [ ] Verify A/B tests are running
@@ -271,7 +268,6 @@ wrangler rollback --version-id <VERSION_ID>
 - ✅ Documentation complete
 - ✅ Code quality high
 - ✅ Automated QA active
-- ✅ Error tracking enabled
 - ✅ Performance monitored
 
 ---
@@ -317,7 +313,6 @@ All systems are go. The project is ready for production deployment.
 
 **If deployment issues occur:**
 
-1. Check Sentry dashboard for errors
 2. Review Cloudflare Workers logs
 3. Check GitHub Actions for CI/CD status
 4. Review deployment logs

@@ -21,7 +21,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://www.googletagmanager.com" />
-    <link rel="preconnect" href="https://browser.sentry-cdn.com" crossorigin />
     <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin />
 
     <link rel="alternate" hreflang="ko-KR" href="https://resume.jclee.me" />
@@ -1541,58 +1540,6 @@
             })
             .finally(updateMainIndicator);
         });
-      })();
-    </script>
-    <script>
-      (function () {
-        var s = document.createElement('script');
-        s.src = 'https://browser.sentry-cdn.com/7.120.3/bundle.min.js';
-        s.async = true;
-        s.integrity = 'sha384-QhNWP5Exx8ZPPgZF2s+nKw/cl8cah1/6MVdZfR8a22f2KO0OsBNonujHvYJlrWIP';
-        s.crossOrigin = 'anonymous';
-        s.onload = function () {
-          Sentry.init({
-            dsn: 'https://aac5a1e6273a481ea754e3dccb54f4e8@glitchtip.jclee.me/1',
-            environment: location.hostname === 'resume.jclee.me' ? 'production' : 'development',
-            ignoreErrors: [
-              /chrome-extension/,
-              /moz-extension/,
-              /ResizeObserver loop/,
-              'Script error.',
-              'Network request failed',
-              'Load failed',
-              'Failed to fetch',
-            ],
-            denyUrls: [/extensions\//i, /^chrome:\/\//i, /^moz-extension:\/\//i],
-            beforeSend: function (event) {
-              if (event.request) {
-                delete event.request.cookies;
-                delete event.request.headers;
-                if (event.request.url) {
-                  event.request.url = event.request.url.split('?')[0];
-                }
-              }
-              if (event.user) {
-                delete event.user.email;
-                delete event.user.ip_address;
-              }
-              if (event.extra) {
-                delete event.extra;
-              }
-              return event;
-            },
-            beforeBreadcrumb: function (breadcrumb) {
-              if (breadcrumb.category === 'xhr' || breadcrumb.category === 'fetch') {
-                if (breadcrumb.data && breadcrumb.data.url) {
-                  breadcrumb.data.url = breadcrumb.data.url.split('?')[0];
-                }
-              }
-              return breadcrumb;
-            },
-          });
-          Sentry.setUser({ id: 'anonymous' });
-        };
-        document.head.appendChild(s);
       })();
     </script>
     <script>

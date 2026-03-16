@@ -1,5 +1,5 @@
 [Unit]
-Description=Resume Platform Sync Service
+Description=Daily Job Application Automation
 After=network-online.target
 Wants=network-online.target
 
@@ -7,9 +7,12 @@ Wants=network-online.target
 Type=oneshot
 User=%i
 WorkingDirectory=/home/jclee/dev/resume/apps/job-server
-ExecStart=/usr/bin/node scripts/auto-all.js --sync
+ExecStart=/usr/local/go/bin/go run ./scripts/ops/auto-daily-run/main.go
+Environment=PATH=/usr/local/go/bin:/usr/local/bin:/usr/bin:/bin
+Environment=HOME=/home/%i
 StandardOutput=journal
 StandardError=journal
+TimeoutStartSec=600
 
 [Install]
 WantedBy=multi-user.target

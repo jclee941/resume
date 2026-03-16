@@ -8,7 +8,8 @@
     "apps/job-server",
     "apps/job-dashboard",
     "packages/cli",
-    "packages/data"
+    "packages/data",
+    "packages/shared"
   ],
   "scripts": {
     "strip-exif": "exiftool -all= -overwrite_original apps/portfolio/src/images/*.png apps/portfolio/src/images/*.webp 2>/dev/null || echo 'exiftool not found - skipping'",
@@ -77,8 +78,6 @@
     "chrome-launcher": "^1.2.1",
     "lighthouse": "^13.0.3",
     "@playwright/test": "^1.58.2",
-    "@sentry/browser": "^10.42.0",
-    "@sentry/cli": "^3.3.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^25.3.5",
     "c8": "^11.0.0",

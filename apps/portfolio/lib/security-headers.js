@@ -6,7 +6,7 @@ const CLOUDFLARE_SCRIPT_HASHES = [
 
 // SRI status:
 // - The portfolio is mostly inline-script/style at build time, so SRI does not apply to those blocks.
-// - External Sentry bundle in index.html/index-en.html uses pinned SRI + crossorigin.
+// - The portfolio is mostly inline-script/style at build time, so SRI does not apply to those blocks.
 // - Dynamic GA/Cloudflare beacon scripts are versionless third-party loaders and are constrained by CSP.
 
 // Cloudflare-injected inline style hashes (e.g., Web Analytics beacon)
@@ -44,11 +44,11 @@ const CACHE_STRATEGIES = {
 function generateSecurityHeaders(scriptHashes, styleHashes) {
   const cspDirectives = [
     "default-src 'none'",
-    `script-src 'self' ${scriptHashes.join(' ')} ${CLOUDFLARE_SCRIPT_HASHES.join(' ')} https://www.googletagmanager.com ${CLOUDFLARE_ANALYTICS.script} https://accounts.google.com https://browser.sentry-cdn.com`,
-    `script-src-elem 'self' ${scriptHashes.join(' ')} ${CLOUDFLARE_SCRIPT_HASHES.join(' ')} https://www.googletagmanager.com ${CLOUDFLARE_ANALYTICS.script} https://accounts.google.com https://browser.sentry-cdn.com`,
+    `script-src 'self' ${scriptHashes.join(' ')} ${CLOUDFLARE_SCRIPT_HASHES.join(' ')} https://www.googletagmanager.com ${CLOUDFLARE_ANALYTICS.script} https://accounts.google.com`,
+    `script-src-elem 'self' ${scriptHashes.join(' ')} ${CLOUDFLARE_SCRIPT_HASHES.join(' ')} https://www.googletagmanager.com ${CLOUDFLARE_ANALYTICS.script} https://accounts.google.com`,
     `style-src 'self' ${styleHashes.join(' ')} ${CLOUDFLARE_STYLE_HASHES.join(' ')}`,
     `style-src-elem 'self' ${styleHashes.join(' ')} ${CLOUDFLARE_STYLE_HASHES.join(' ')}`,
-    `connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://oauth2.googleapis.com ${CLOUDFLARE_ANALYTICS.connect} https://glitchtip.jclee.me`,
+    `connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://oauth2.googleapis.com ${CLOUDFLARE_ANALYTICS.connect}`,
     "img-src 'self' https:",
     'report-uri /api/csp-violation',
     "font-src 'self'",

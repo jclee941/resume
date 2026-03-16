@@ -52,7 +52,6 @@ Sync portfolio data with SSoT (resume_data.json) and deploy resume.jclee.me to p
 
 - **Worker bindings**: D1 Database `resume-prod-db`, 6 assets uploaded, Loki URL configured
 - **Build stats**: Resume cards: 7, Project cards: 7, Worker size: 353.41 KB
-- **Health check results**: HTTP/2 200, proper CSP with Sentry integration, HSTS max-age=63072000
 - **Live URL**: https://resume.jclee.me
 
 ## File Operations

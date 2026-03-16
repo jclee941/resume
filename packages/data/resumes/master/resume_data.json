@@ -30,7 +30,7 @@
     "period": "2014.12 - 2016.12"
   },
   "summary": {
-    "totalExperience": "8년",
+    "totalExperience": "9년",
     "experienceStart": "2017.02",
     "grade": null,
     "expertise": [
@@ -38,7 +38,7 @@
       "보안 인프라",
       "자동화"
     ],
-    "profileStatement": "8년차 인프라 엔지니어로 금융·공공 분야에서 보안 인프라 설계와 운영을 담당했습니다. Observability 체계 구축과 운영 자동화를 수행하고 있습니다."
+    "profileStatement": "9년차 인프라 엔지니어로 금융·공공 분야에서 보안 인프라 설계와 운영을 담당했습니다. Observability 체계 구축과 운영 자동화를 수행하고 있습니다."
   },
   "current": null,
   "careers": [
@@ -103,7 +103,7 @@
   ],
   "projects": [
     {
-      "period": "2025.03 ~ 현재",
+      "period": "2025.03 ~ 2026.02",
       "name": "넥스트레이드 보안운영",
       "client": "넥스트레이드",
       "technologies": [
@@ -660,7 +660,7 @@
     "subtitle": "보안 인프라 설계 · Observability · 자동화"
   },
   "sectionDescriptions": {
-    "resume": "8년차 인프라 경력",
+    "resume": "9년차 인프라 경력",
     "projects": "사이드 프로젝트",
     "infrastructure": "운영 중인 서비스",
     "skills": "기술 스택",
@@ -728,12 +728,6 @@
       "icon": "🔐",
       "title": "HashiCorp Vault",
       "description": "시크릿 관리 / PKI",
-      "status": "running"
-    },
-    {
-      "icon": "🐛",
-      "title": "GlitchTip",
-      "description": "에러 트래킹 (Sentry 대체)",
       "status": "running"
     },
     {

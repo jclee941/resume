@@ -290,8 +290,71 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
   }
 
   async generateCoverLetter(job) {
-    // Could integrate with AI for cover letter generation
-    return `I am excited to apply for the ${job.position} position at ${job.company}.`;
+    // Try Workers AI if available
+    if (this.env.AI) {
+      try {
+        const resume = await this.getStoredResume();
+        const prompt = this.buildCoverLetterPrompt(job, resume);
+        const response = await this.env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+          messages: [
+            {
+              role: 'system',
+              content:
+                'You are a professional cover letter writer. Write concise, compelling cover letters. Match the language of the job posting (Korean for Korean jobs, English for English jobs). Keep it under 300 words.',
+            },
+            { role: 'user', content: prompt },
+          ],
+          max_tokens: 512,
+        });
+        if (response?.response) {
+          return response.response;
+        }
+      } catch (error) {
+        console.error('Workers AI cover letter generation failed:', error.message);
+      }
+    }
+
+    // Template fallback
+    return this.getTemplateCoverLetter(job);
+  }
+
+  buildCoverLetterPrompt(job, resume) {
+    const isKorean = ['wanted', 'jobkorea', 'saramin', 'remember'].includes(job.source);
+    const lang = isKorean ? 'Korean' : 'English';
+
+    let prompt = `Write a cover letter in ${lang} for the following position:
+`;
+    prompt += `- Position: ${job.position}
+`;
+    prompt += `- Company: ${job.company}
+`;
+    if (job.description) prompt += `- Job Description: ${job.description.substring(0, 500)}
+`;
+    if (resume?.skills) prompt += `- My Skills: ${resume.skills}
+`;
+    if (resume?.experience) prompt += `- My Experience: ${resume.experience}
+`;
+    prompt += '
+Keep it professional, concise, and specific to this role.';
+
+    return prompt;
+  }
+
+  getTemplateCoverLetter(job) {
+    const isKorean = ['wanted', 'jobkorea', 'saramin', 'remember'].includes(job.source);
+    if (isKorean) {
+      return `${job.company}의 ${job.position} 포지션에 지원합니다. 해당 직무에 대한 강한 관심과 관련 경험을 바탕으로 기여하고 싶습니다.`;
+    }
+    return `I am excited to apply for the ${job.position} position at ${job.company}. I am confident my skills and experience make me a strong candidate for this role.`;
+  }
+
+  async getStoredResume() {
+    try {
+      const cached = await this.env.SESSIONS.get('resume:current', 'json');
+      return cached;
+    } catch {
+      return null;
+    }
   }
 
   async formatResumeForPlatform(resume, _platform, _job) {

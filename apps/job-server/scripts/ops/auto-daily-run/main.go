@@ -34,16 +34,20 @@ func main() {
 	fmt.Printf("🤖 자동화된 채용 지원 시스템 시작 - %s\n", time.Now().Format(time.RFC3339))
 	fmt.Println("==================================================")
 
+	// Run unified automation (auth refresh + platform sync + webhook notification)
+	fmt.Println("🔐 인증 갱신 및 플랫폼 동기화...")
+	runNodeIgnoreErr(root, "scripts/auto-all.js", "--extract", "--sync")
+	fmt.Println()
 	fmt.Println("📊 현재 상태 확인...")
-	runNode(root, "src/auto-apply/cli.js", "stats")
+	runNode(root, "src/auto-apply/cli/index.js", "stats")
 
 	fmt.Println()
 	fmt.Println("🔍 채용공고 검색 및 분석...")
-	runNode(root, "src/auto-apply/cli.js", "search", keywords, "30")
+	runNode(root, "src/auto-apply/cli/index.js", "search", keywords, "30")
 
 	fmt.Println()
 	fmt.Println("🚀 통합 지원 실행...")
-	args := []string{"src/auto-apply/cli.js", "unified", "--max=" + maxApplications}
+	args := []string{"src/auto-apply/cli/index.js", "unified", "--max=" + maxApplications}
 	if applyMode {
 		fmt.Println("⚠️  실제 지원 모드로 실행합니다!")
 		args = append(args, "--apply")
@@ -54,11 +58,11 @@ func main() {
 
 	fmt.Println()
 	fmt.Println("📊 실행 결과 보고...")
-	runNode(root, "src/auto-apply/cli.js", "stats")
+	runNode(root, "src/auto-apply/cli/index.js", "stats")
 
 	fmt.Println()
 	fmt.Println("📅 일일 보고서 생성...")
-	runNode(root, "src/auto-apply/cli.js", "report")
+	runNode(root, "src/auto-apply/cli/index.js", "report")
 
 	fmt.Println()
 	fmt.Printf("✅ 자동화 작업 완료 - %s\n", time.Now().Format(time.RFC3339))
@@ -90,5 +94,16 @@ func runNode(dir string, args ...string) {
 			os.Exit(exitErr.ExitCode())
 		}
 		panic(err)
+	}
+}
+
+// runNodeIgnoreErr runs node but does not exit on failure (best-effort)
+func runNodeIgnoreErr(dir string, args ...string) {
+	cmd := exec.Command("node", args...)
+	cmd.Dir = dir
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Run(); err != nil {
+		fmt.Fprintf(os.Stderr, "⚠️  %s (non-fatal)\n", err)
 	}
 }

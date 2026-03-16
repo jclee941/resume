@@ -181,8 +181,8 @@
       "stars": 0,
       "language": "Python",
       "forks": 0,
-      "githubUrl": "https://github.com/qws941/splunk",
-      "demoUrl": "https://splunk.jclee.me",
+      "githubUrl": "https://github.com/qws941/splunk-fortinet",
+      "demoUrl": null,
       "metrics": {
         "endpoints": "FortiManager, FortiAnalyzer REST API",
         "features": "Policy lookup, route management, and log statistics",
@@ -193,8 +193,7 @@
         "FortiManager",
         "FortiAnalyzer"
       ],
-      "liveUrl": "https://splunk.jclee.me",
-      "repoUrl": "https://github.com/qws941/splunk"
+      "repoUrl": "https://github.com/qws941/splunk-fortinet"
     },
     {
       "icon": "🔔",
@@ -330,8 +329,8 @@
       "stars": 0,
       "language": "Python",
       "forks": 0,
-      "githubUrl": "https://github.com/qws941/splunk",
-      "demoUrl": "https://splunk.jclee.me",
+      "githubUrl": "https://github.com/qws941/splunk-fortinet",
+      "demoUrl": null,
       "metrics": {
         "endpoints": "FortiManager, FortiAnalyzer REST API",
         "features": "Policy lookup, route management, and log statistics",
@@ -342,8 +341,7 @@
         "FortiManager",
         "FortiAnalyzer"
       ],
-      "liveUrl": "https://splunk.jclee.me",
-      "repoUrl": "https://github.com/qws941/splunk"
+      "repoUrl": "https://github.com/qws941/splunk-fortinet"
     },
     {
       "icon": "🔔",
@@ -482,7 +480,7 @@
       "expirationDate": null,
       "credentialId": null,
       "credentialUrl": null,
-      "status": "준비중"
+      "status": "Preparing"
     },
     {
       "name": "CISM",
@@ -491,7 +489,7 @@
       "expirationDate": null,
       "credentialId": null,
       "credentialUrl": null,
-      "status": "준비중"
+      "status": "Preparing"
     },
     {
       "name": "AWS Solutions Architect",
@@ -500,7 +498,7 @@
       "expirationDate": null,
       "credentialId": null,
       "credentialUrl": null,
-      "status": "준비중"
+      "status": "Preparing"
     }
   ],
   "skills": {
@@ -700,7 +698,7 @@
     "subtitle": "Security Infrastructure Design · Observability · Automation"
   },
   "sectionDescriptions": {
-    "resume": "8 years of infrastructure experience",
+    "resume": "9 years of infrastructure experience",
     "projects": "Side projects",
     "infrastructure": "Services in operation",
     "skills": "Technology stack",
@@ -768,12 +766,6 @@
       "icon": "🔐",
       "title": "HashiCorp Vault",
       "description": "Secrets management / PKI",
-      "status": "running"
-    },
-    {
-      "icon": "🐛",
-      "title": "GlitchTip",
-      "description": "Error tracking (Sentry alternative)",
       "status": "running"
     },
     {

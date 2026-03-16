@@ -4,14 +4,14 @@
     "birthDate": "1994.10.17",
     "email": "qws941@kakao.com",
     "phone": "010-5757-9592",
-    "address": "경기도 시흥시 장현천로61, 307동 1301호",
+    "address": "京畿道 始興市（韓国）",
     "github": "https://github.com/qws941"
   },
   "education": {
     "school": "漢陽サイバー大学",
     "major": "コンピュータ工学科",
     "startDate": "2024.03",
-    "status": "재학중",
+    "status": "在学中",
     "highSchool": "龍南高校",
     "highSchoolGraduation": "2013"
   },
@@ -30,7 +30,7 @@
     "period": "2014.12 - 2016.12"
   },
   "summary": {
-    "totalExperience": "8年",
+    "totalExperience": "9年",
     "experienceStart": "2017.02",
     "grade": null,
     "expertise": [
@@ -38,7 +38,7 @@
       "セキュリティ基盤",
       "自動化"
     ],
-    "profileStatement": "金融・公共分野でセキュリティ基盤の設計と運用を担当してきた、8年目のインフラエンジニアです。Observability 体制の構築と運用自動化に取り組んでいます。"
+    "profileStatement": "金融・公共分野でセキュリティ基盤の設計と運用を担当してきた、9年目のインフラエンジニアです。Observability 体制の構築と運用自動化に取り組んでいます。"
   },
   "current": null,
   "careers": [
@@ -103,7 +103,7 @@
   ],
   "projects": [
     {
-      "period": "2025.03 ~ 현재",
+      "period": "2025.03 ~ 2026.02",
       "name": "ネクストレード セキュリティ運用",
       "client": "ネクストレード",
       "technologies": [
@@ -301,7 +301,7 @@
       "expirationDate": null,
       "credentialId": null,
       "credentialUrl": null,
-      "status": "준비중"
+      "status": "準備中"
     },
     {
       "name": "CISM",
@@ -310,7 +310,7 @@
       "expirationDate": null,
       "credentialId": null,
       "credentialUrl": null,
-      "status": "준비중"
+      "status": "準備中"
     },
     {
       "name": "AWS Solutions Architect",
@@ -319,7 +319,7 @@
       "expirationDate": null,
       "credentialId": null,
       "credentialUrl": null,
-      "status": "준비중"
+      "status": "準備中"
     }
   ],
   "skills": {
@@ -515,7 +515,7 @@
   "personalProjects": [
     {
       "name": "Observability Platform",
-      "period": "2024.06 ~ 현재",
+      "period": "2024.06 ~ 現在",
       "description": "ホームラボ基盤モニタリング。Prometheusメトリクス収集、Lokiログ集約、Grafana可視化を実施。",
       "technologies": [
         "Grafana",
@@ -540,7 +540,7 @@
     },
     {
       "name": "n8n Automation",
-      "period": "2024.01 ~ 현재",
+      "period": "2024.01 ~ 現在",
       "description": "通知・デプロイ・データ収集ワークフローを自動化。",
       "technologies": [
         "n8n",
@@ -562,7 +562,7 @@
     },
     {
       "name": "Fortinet API Client",
-      "period": "2025.01 ~ 현재",
+      "period": "2025.01 ~ 現在",
       "description": "FortiManagerのポリシー/ルート照会と、FortiAnalyzerログ統計収集のためのPythonライブラリ。",
       "technologies": [
         "Python",
@@ -574,8 +574,8 @@
       "stars": 0,
       "language": "Python",
       "forks": 0,
-      "githubUrl": "https://github.com/qws941/splunk",
-      "demoUrl": "https://splunk.jclee.me",
+      "githubUrl": "https://github.com/qws941/splunk-fortinet",
+      "demoUrl": null,
       "metrics": {
         "endpoints": "FortiManager, FortiAnalyzer REST API",
         "features": "ポリシー照会・ルート管理・ログ統計",
@@ -584,7 +584,7 @@
     },
     {
       "name": "Security Alert System",
-      "period": "2025.01 ~ 현재",
+      "period": "2025.01 ~ 現在",
       "description": "FortiGateイベントをSplunkで検知し、Slack Block Kitで通知。32件の検知ルールを運用。",
       "technologies": [
         "Splunk",
@@ -607,7 +607,7 @@
     },
     {
       "name": "IP Blacklist Platform",
-      "period": "2024.12 ~ 현재",
+      "period": "2024.12 ~ 現在",
       "description": "悪性IPを収集・分析し、ダッシュボードを提供。Flask API + Next.jsフロントエンドで構築。",
       "technologies": [
         "Flask",
@@ -660,7 +660,7 @@
     "subtitle": "セキュリティ基盤設計 · Observability · 自動化"
   },
   "sectionDescriptions": {
-    "resume": "インフラ経験8年",
+    "resume": "インフラ経験9年",
     "projects": "サイドプロジェクト",
     "infrastructure": "運用中サービス",
     "skills": "技術スタック",
@@ -728,12 +728,6 @@
       "icon": "🔐",
       "title": "HashiCorp Vault",
       "description": "シークレット管理 / PKI",
-      "status": "running"
-    },
-    {
-      "icon": "🐛",
-      "title": "GlitchTip",
-      "description": "エラートラッキング（Sentry代替）",
       "status": "running"
     },
     {

@@ -27,7 +27,7 @@
 - **보안**: FortiGate 방화벽, DDoS, IPS, WAF, NAC, DLP, EDR, APT, Splunk SIEM (15종 운영 경험)
 - **클라우드**: AWS (EC2, VPC, IAM, S3), Docker, Kubernetes, Cloudflare Workers (Edge Computing)
 - **자동화**: Python, Shell, Ansible, Terraform, n8n (워크플로우 오케스트레이션)
-- **모니터링**: Grafana, Prometheus, Loki, Sentry (통합 관제 플랫폼)
+- **모니터링**: Grafana, Prometheus, Loki (통합 관제 플랫폼)
 - **DevOps**: GitLab EE, CI/CD, Container Registry, Docker Compose
 - **AI/ML**: Claude AI (자동화 파이프라인), ML 기반 위협 예측 및 자동 라우팅 시스템 (22 MCP 서버 통합)
 - **금융 규제**: 금융감독원 감사 대응, ISMS-P, ISO27001, FSC 본인가

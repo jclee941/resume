@@ -72,8 +72,8 @@
         },
         "status": {
           "type": "string",
-          "enum": ["재학중", "졸업", "수료", "중퇴"],
-          "description": "Education status in Korean"
+          "enum": ["재학중", "졸업", "수료", "중퇴", "Enrolled", "Graduated", "Completed", "Withdrawn", "在学中", "卒業", "修了", "中退"],
+          "description": "Education status (KO/EN/JA)"
         },
         "highSchool": {
           "type": "string",
@@ -169,8 +169,8 @@
           },
           "period": {
             "type": "string",
-            "pattern": "^\\d{4}\\.\\d{2}\\s*~\\s*(\\d{4}\\.\\d{2}|현재)$",
-            "description": "Period in format 'YYYY.MM ~ YYYY.MM' or 'YYYY.MM ~ 현재'"
+            "pattern": "^\\d{4}\\.\\d{2}\\s*~\\s*(\\d{4}\\.\\d{2}|현재|Present|現在)$",
+            "description": "Period in format 'YYYY.MM ~ YYYY.MM' or 'YYYY.MM ~ 현재/Present/現在'"
           },
           "duration": {
             "type": "string",
@@ -206,8 +206,8 @@
         "properties": {
           "period": {
             "type": "string",
-            "pattern": "^\\d{4}\\.\\d{2}\\s*~\\s*(\\d{4}\\.\\d{2}|현재)$",
-            "description": "Project period"
+            "pattern": "^\\d{4}\\.\\d{2}\\s*~\\s*(\\d{4}\\.\\d{2}|현재|Present|現在)$",
+            "description": "Project period (supports KO/EN/JA)"
           },
           "name": {
             "type": "string",
@@ -298,8 +298,8 @@
           },
           "status": {
             "type": "string",
-            "enum": ["active", "expired", "준비중"],
-            "description": "Certification status"
+            "enum": ["active", "expired", "준비중", "Preparing", "準備中"],
+            "description": "Certification status (KO/EN/JA)"
           }
         },
         "additionalProperties": true
@@ -587,8 +587,8 @@
           },
           "period": {
             "type": "string",
-            "pattern": "^\\d{4}\\.\\d{2}\\s*~\\s*(\\d{4}\\.\\d{2}|현재)$",
-            "description": "Project period"
+            "pattern": "^\\d{4}\\.\\d{2}\\s*~\\s*(\\d{4}\\.\\d{2}|현재|Present|現在)$",
+            "description": "Project period (supports KO/EN/JA)"
           },
           "description": {
             "type": "string",

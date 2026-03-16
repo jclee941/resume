@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { readFileSync, existsSync } from 'fs';
+import { execSync } from 'child_process';
 import { join } from 'path';
 import { homedir } from 'os';
 import { getResumeMasterDataPath } from '../src/shared/utils/paths.js';
@@ -177,7 +178,7 @@ async function syncToPlatform(sourceData, platform, options) {
   switch (platform) {
     case 'wanted': {
       const { SessionManager } = await import('../src/tools/auth.js');
-      const api = SessionManager.getAPI();
+      const api = await SessionManager.getAPI();
       if (!api) return { error: 'Not authenticated. Run: wanted_auth first' };
 
       if (options.dry_run) {
@@ -207,8 +208,22 @@ async function syncToPlatform(sourceData, platform, options) {
     }
 
     case 'jobkorea': {
-      const { syncToJobKorea } = await import('./jobkorea/jobkorea-profile-sync.js');
-      return await syncToJobKorea({ ...options, headless: false });
+      // Use maintained profile-sync handler (form serialization + $.post)
+      // Deprecated: ./jobkorea/jobkorea-profile-sync.js (CSS-selector based, broken)
+      try {
+        const flags = options.dry_run ? '' : '--apply';
+        const output = execSync(`node scripts/profile-sync/index.js jobkorea ${flags}`, {
+          encoding: 'utf8',
+          stdio: 'pipe',
+          timeout: 120000,
+        });
+        const hasError = output.includes('ERROR') || output.includes('Failed');
+        return hasError
+          ? { error: 'Sync encountered errors', details: output }
+          : { updated: ['profile'], output };
+      } catch (e) {
+        return { error: `JobKorea sync failed: ${e.message}` };
+      }
     }
 
     case 'remember': {

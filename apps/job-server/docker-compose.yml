@@ -121,7 +121,6 @@ services:
       WANTED_CHAOS_API_URL: 'https://www.wanted.co.kr/api/chaos'
 
       # Logging & Observability
-      SENTRY_DSN: '${SENTRY_DSN:-}'
       METRICS_ENABLED: 'true'
 
     # Volume mounts for data persistence

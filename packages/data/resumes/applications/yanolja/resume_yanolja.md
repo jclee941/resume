@@ -49,7 +49,7 @@ fontsize: 11pt
 ### Monitoring & Observability
 
 - **오픈소스**: Grafana, Prometheus, Loki 기반 모니터링 구축
-- **SIEM**: Sentry, Splunk 로그 분석 및 알림 체계 구성
+- **SIEM**: Splunk 로그 분석 및 알림 체계 구성
 - **대시보드**: 실시간 인프라 메트릭 시각화
 
 ### Infrastructure Security

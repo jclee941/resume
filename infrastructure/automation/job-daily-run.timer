@@ -1,0 +1,12 @@
+[Unit]
+Description=Daily Job Application Automation Timer
+Requires=job-daily-run.service
+
+[Timer]
+OnCalendar=*-*-* 10:00:00
+Persistent=true
+RandomizedDelaySec=600
+TimeZone=Asia/Seoul
+
+[Install]
+WantedBy=timers.target

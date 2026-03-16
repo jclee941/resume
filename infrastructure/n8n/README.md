@@ -20,7 +20,7 @@ This workflow automates the entire resume deployment pipeline:
 5. **E2E Tests** - Runs Playwright tests
 6. **Deploy** - Deploys to Cloudflare Workers
 7. **Health Check** - Verifies deployment
-23: 8. **Notifications** - Sends Telegram notifications and logs to Loki
+8. **Notifications** - Sends Telegram notifications and logs to Loki
 
 ## Quick Start
 
@@ -38,8 +38,8 @@ This workflow automates the entire resume deployment pipeline:
 # Add to ~/.env
 export N8N_URL="https://n8n.jclee.me"
 export N8N_API_KEY="your-api-key-here"
-41: export TELEGRAM_BOT_TOKEN="your-telegram-bot-token"
-42: export TELEGRAM_CHAT_ID="123456789"
+export TELEGRAM_BOT_TOKEN="your-telegram-bot-token"
+export TELEGRAM_CHAT_ID="123456789"
 
 # Load environment
 source ~/.env
@@ -115,7 +115,7 @@ git push origin master
 # Check n8n dashboard
 # Visit: https://n8n.jclee.me/executions
 
-120: # Check Telegram for notification
+# Check Telegram for notification
 # Check Loki logs
 curl https://loki.jclee.me/loki/api/v1/query \
   -G --data-urlencode 'query={job="resume-deploy"}' | jq
@@ -134,7 +134,7 @@ Automated deployment pipeline triggered by GitHub push events.
 - GitHub webhook trigger
 - Automated build and test
 - Cloudflare Workers deployment
-139: - Telegram notifications
+- Telegram notifications
 - Loki logging
 
 ### 2. Health Check Monitor
@@ -147,14 +147,14 @@ Periodic health monitoring for resume.jclee.me.
 
 - Runs every 5 minutes
 - HTTP health check to `/health` endpoint
-152: - Telegram notifications on downtime/errors
-153: - Uses Telegram Bot API
+- Telegram notifications on downtime/errors
+- Uses Telegram Bot API
 
 **Quick Setup**:
 
 ```bash
 # 1. Import workflow to n8n.jclee.me
-159: # 2. Update "Telegram Bot API Success/Failure" nodes with registered credential
+# 2. Update "Telegram Bot API Success/Failure" nodes with registered credential
 # 3. Activate workflow
 ```
 
@@ -163,7 +163,7 @@ Periodic health monitoring for resume.jclee.me.
 - Health check interval: 5 minutes
 - Timeout: 10 seconds
 - Error conditions: Non-200 status code OR timeout
-168: - Alert format: Telegram text with status, time, error details
+- Alert format: Telegram text with status, time, error details
 
 ### 4. Grafana Alert → GitHub Issue
 
@@ -198,61 +198,40 @@ Creates GitHub issues from Grafana alert webhooks with label-based dedup.
 4. Add to notification policy or assign to specific alert rules
 5. Test with **Send test notification** button
 
-### 5. GlitchTip Error → GitHub Issue
+### 3. Health Check Monitor (Telegram Bot API) ⭐ RECOMMENDED
 
-Creates GitHub issues from GlitchTip error webhooks with fingerprint-based dedup.
+Telegram Bot API-based health monitoring with secure credential management.
 
-**Workflow File**: `glitchtip-github-issue-workflow.json`
+**Workflow File**: `telegram-notifier` (central hub workflow)
 
-**Features**:
+**Workflow ID**: `PV5yLgHNzNSlCmRT`
 
-- Webhook trigger for GlitchTip error notifications
-- Fingerprint-based dedup: searches GitHub issues by error fingerprint
-- Comments on existing issue if error already tracked
-- Only fires on `error` level events
+**URL**: https://n8n.jclee.me/workflow/PV5yLgHNzNSlCmRT
 
-**Setup**:
+**Why Telegram Bot API?**
 
-1. Import workflow to n8n.jclee.me
-2. Create `httpHeaderAuth` credential with GitHub PAT (`repo` scope)
-3. Update credential ID in workflow nodes (replace `GITHUB_TOKEN_CREDENTIAL_ID`)
-4. In GlitchTip → Project Settings → Notifications → Add webhook:
-   - URL: `https://n8n.jclee.me/webhook/<webhook-path-from-workflow>`
-5. Activate workflow
-224: ### 3. Health Check Monitor (Telegram Bot API) ⭐ RECOMMENDED
-
-226: Telegram Bot API-based health monitoring with secure credential management.
-
-228: **Workflow File**: `telegram-notifier` (central hub workflow)
-
-**Workflow ID**: `yCWYRtQsXNIsENi1`
-
-**URL**: https://n8n.jclee.me/workflow/yCWYRtQsXNIsENi1
-
-234: **Why Telegram Bot API?**
-
-236: - 🔒 Credentials stored securely in n8n (bot token)
-237: - 🔄 Simple HTTP API (no instance management)
-238: - 🚫 No hardcoded phone numbers
+- 🔒 Credentials stored securely in n8n (bot token)
+- 🔄 Simple HTTP API (no instance management)
+- 🚫 No hardcoded phone numbers
 - ✅ Better access control and auditing
 
 **Features**:
 
 - Runs every 5 minutes
 - HTTP health check to `/health` endpoint
-245: - Telegram notifications on downtime/errors
-246: - **Uses Telegram Bot API credential** (registered in n8n)
-244: - Cleaner workflow (no manual endpoint configuration needed)
+- Telegram notifications on downtime/errors
+- **Uses Telegram Bot API credential** (registered in n8n)
+- Cleaner workflow (no manual endpoint configuration needed)
 
 **Quick Setup**:
 
 ```bash
-252: # 1. Set up Telegram Bot credentials (see 1Password `homelab` vault)
+# 1. Set up Telegram Bot credentials (see 1Password `homelab` vault)
 # 2. Import workflow to n8n or use existing workflow ID
 # 3. Activate workflow via n8n UI
 ```
 
-257: **Credential Setup**: Bot token stored in 1Password `homelab` vault as `telegram-bot-token`.
+**Credential Setup**: Bot token stored in 1Password `homelab` vault as `telegram-bot-token`.
 
 **Workflow Flow**:
 
@@ -260,7 +239,7 @@ Creates GitHub issues from GlitchTip error webhooks with fingerprint-based dedup
 Schedule Trigger (5 min)
   → HTTP Request (health check)
   → IF (is down?)
-  265:   → Telegram Bot API (send Telegram notification)
+  → Telegram Bot API (send Telegram notification)
 ```
 
 **Monitoring Details**:
@@ -269,12 +248,12 @@ Schedule Trigger (5 min)
 - **Frequency**: Every 5 minutes
 - **Timeout**: 10 seconds
 - **Alert Conditions**: HTTP != 200 or timeout
-274: - **Notification**: Telegram with detailed error info
+- **Notification**: Telegram with detailed error info
 
 **Workflow Flow**:
 
 ```
-279: Every 5 Minutes → Check Health → Is Down? → Telegram Bot API Notification
+Every 5 Minutes → Check Health → Is Down? → Telegram Bot API Notification
 ```
 
 See `resume-healthcheck-workflow.json` for full configuration.
@@ -311,6 +290,41 @@ Daily 9am KST → POST /api/auto-apply/run → Wait 30s → Poll Status
 
 See `job-auto-apply-workflow.json` for full configuration.
 
+### 7. Automation Webhook Receiver
+
+**Workflow**: `automation-webhook-receiver` (ID: `p2QvwPEvVR1k7Upl`)
+**Schedule**: Webhook-triggered (no schedule)
+**Purpose**: Receives automation run reports from job-server and forwards notifications via Telegram
+
+**Features**:
+- POST webhook at `/automation-run-report`
+- Parses platform results, actions, and error details from incoming payload
+- Builds structured notification shape (isSuccess, status, channel, command, duration, source)
+- Forwards notification via `telegram-notifier` sub-workflow
+- Returns immediate 200 OK response to caller
+
+**Webhook Endpoint**: `POST https://n8n.jclee.me/webhook/automation-run-report`
+
+**Workflow Flow**:
+
+```
+POST /automation-run-report → Format Payload (parse platforms/actions/errors)
+  → Notify via Telegram (telegram-notifier sub-workflow)
+  → Respond 200 OK
+```
+
+**Incoming Payload** (from `apps/job-server/scripts/auto-all.js`):
+- `event`: Event type string (e.g., `automation-run`)
+- `timestamp`: ISO 8601 timestamp
+- `platforms`: Object mapping platform names to `{ valid: boolean, cookies: number }`
+- `actions`: Object with boolean flags `{ extract, sync, verify }`
+
+**Derived Fields** (computed by Format Payload node):
+- `isSuccess`, `status`, `channel`, `command`, `duration`, `source`, `errorMessage`
+- `validPlatforms`, `invalidPlatforms`, `totalCookies`
+
+See `automation-webhook-receiver-workflow.json` for full configuration.
+
 ---
 
 ## Workflow Architecture (Auto Deploy)
@@ -326,8 +340,8 @@ graph LR
     F --> G[npm run test:e2e]
     G --> H[wrangler deploy]
     H --> I[Health Check]
-    299:     I -->|Success| J[Telegram ✅]
-    300:     I -->|Failure| K[Telegram ❌]
+    I -->|Success| J[Telegram ✅]
+    I -->|Failure| K[Telegram ❌]
     J --> L[Log to Loki]
     K --> L
     L --> M[Webhook Response]
@@ -345,8 +359,8 @@ graph LR
 | Run E2E Tests        | Execute Command    | E2E tests                  | `npm run test:e2e`                    |
 | Deploy to Cloudflare | Execute Command    | Deploy worker              | `wrangler deploy`                     |
 | Health Check         | HTTP Request       | Verify deployment          | GET `/health`                         |
-318: | Telegram Success     | HTTP Request       | Success notification       | POST to Telegram Bot API                 |
-319: | Telegram Failure     | HTTP Request       | Failure notification       | POST to Telegram Bot API                 |
+| Telegram Success     | HTTP Request       | Success notification       | POST to Telegram Bot API                 |
+| Telegram Failure     | HTTP Request       | Failure notification       | POST to Telegram Bot API                 |
 | Log to Loki          | HTTP Request       | Log to Grafana Loki        | POST to Loki API                      |
 | Webhook Response     | Respond to Webhook | Return status to GitHub    | JSON response                         |
 
@@ -355,9 +369,9 @@ graph LR
 Required in n8n settings or workflow:
 
 ```bash
-328: # Telegram Bot API (for Telegram notifications)
-329: TELEGRAM_BOT_TOKEN=your-telegram-bot-token
-330: TELEGRAM_CHAT_ID=123456789
+# Telegram Bot API (for Telegram notifications)
+TELEGRAM_BOT_TOKEN=your-telegram-bot-token
+TELEGRAM_CHAT_ID=123456789
 
 # GitHub credentials (if needed)
 GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
@@ -370,6 +384,26 @@ CLOUDFLARE_ACCOUNT_ID=your-account-id
 JOB_SERVER_URL=https://your-job-server.example.com
 JOB_SERVER_ADMIN_TOKEN=your-admin-bearer-token
 ```
+
+## Deployment Readiness
+
+### Job Auto-Apply Pipeline
+
+| Component | Status | Notes |
+|-----------|--------|-------|
+| n8n workflow (`DRHg9pwanv4pHGxV`) | ✅ Active | Daily 9am KST schedule, awaiting first trigger |
+| automation-webhook-receiver (`p2QvwPEvVR1k7Upl`) | ✅ Active | Tested — 1 successful execution |
+| Job Server API (`/api/auto-apply/run`) | ✅ Deployed | Bearer token auth required |
+| Environment variables | ✅ Configured | `JOB_SERVER_URL` and `JOB_SERVER_ADMIN_TOKEN` set in n8n |
+| Telegram notifications | ✅ Configured | Via `telegram-notifier` workflow (`PV5yLgHNzNSlCmRT`) |
+| Webhook authentication | ⚠️ Internal-only | Receiver does not verify `X-Webhook-Signature` HMAC. Trust boundary is internal network access. Sender supports signing via `N8N_WEBHOOK_SECRET` env var. |
+
+### Testing Notes
+
+- **automation-webhook-receiver**: Safe to test anytime via POST to `/webhook/automation-run-report`
+- **job-auto-apply**: ⚠️ Manual trigger submits real job applications. Use `dryRun: true` in the Trigger Auto-Apply node body for safe testing
+- Poll timeout: 40 polls × 30s = ~20 minutes max wait before timeout notification
+- **Platform support**: The workflow sends `wanted`, `jobkorea`, `saramin` but the backend currently only supports `wanted`, `linkedin`, `remember`. Only `wanted` is honored by both sides today.
 
 ## Monitoring
 
@@ -479,23 +513,23 @@ sudo chown -R n8n:n8n /home/jclee/dev/resume
 # user: "1000:1000"  # jclee UID:GID
 ```
 
-450: ### Telegram Notifications Not Sent
+### Telegram Notifications Not Sent
 
-452: **Problem**: Workflow completes but no Telegram notification
+**Problem**: Workflow completes but no Telegram notification
 
 **Check**:
 
 ```bash
-457: # Test Telegram Bot API manually
-458: curl -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
-459:   -H "Content-Type: application/json" \
-460:   -d "{\"chat_id\": \"$TELEGRAM_CHAT_ID\", \"text\": \"Test from n8n workflow\"}"
+# Test Telegram Bot API manually
+curl -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
+  -H "Content-Type: application/json" \
+  -d "{\"chat_id\": \"$TELEGRAM_CHAT_ID\", \"text\": \"Test from n8n workflow\"}"
 
 **Solution**:
 
-464: - Verify Telegram Bot API variables are set in n8n
-465: - Check Telegram bot token is valid
-466: - Ensure n8n can reach api.telegram.org
+- Verify Telegram Bot API variables are set in n8n
+- Check Telegram bot token is valid
+- Ensure n8n can reach api.telegram.org
 
 ## Advanced Features
 

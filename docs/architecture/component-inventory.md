@@ -17,7 +17,6 @@
 
 ## External Integrations
 - **Cloudflare**: Hosting and Edge computing.
-- **Sentry**: Error tracking and monitoring.
 - **Grafana/Loki**: Log aggregation and metrics.
 - **GitHub Actions**: Continuous Integration and Delivery.
 

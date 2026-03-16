@@ -754,7 +754,7 @@
     "subtitle": "보안 인프라 설계 · Observability · 자동화"
   },
   "sectionDescriptions": {
-    "resume": "8년차 인프라 경력",
+    "resume": "9년차 인프라 경력",
     "projects": "사이드 프로젝트",
     "infrastructure": "운영 중인 서비스",
     "skills": "기술 스택",
@@ -822,12 +822,6 @@
       "icon": "🔐",
       "title": "HashiCorp Vault",
       "description": "시크릿 관리 / PKI",
-      "status": "running"
-    },
-    {
-      "icon": "🐛",
-      "title": "GlitchTip",
-      "description": "에러 트래킹 (Sentry 대체)",
       "status": "running"
     },
     {

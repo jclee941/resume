@@ -17,7 +17,6 @@
 - `apps/portfolio/lib/validators.js` (1 → logger.log)
 - `apps/portfolio/lib/cards.js` (2 → logger.log)
 - `apps/portfolio/generate-og-image.js` (4 → logger.log, 1 → logger.error)
-- `apps/portfolio/worker.js`, `apps/portfolio/sw.js`, `apps/portfolio/sentry-config.js` (auto-generated, will fix on next build)
 
 **Problem**:
 

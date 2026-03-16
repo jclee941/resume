@@ -155,11 +155,11 @@ Content Security Policy with baseline directives and SHA-256 hashes:
 ```
 Content-Security-Policy:
   default-src 'none';
-  script-src 'self' 'sha256-...' https://*.sentry.io;
+  script-src 'self' 'sha256-...';
   style-src 'self' 'sha256-...' https://fonts.googleapis.com;
   font-src 'self' https://fonts.gstatic.com;
   img-src 'self' data:;
-  connect-src 'self' https://grafana.jclee.me https://*.sentry.io;
+  connect-src 'self' https://grafana.jclee.me;
   manifest-src 'self';
   worker-src 'self';
 ```

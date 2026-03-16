@@ -9,6 +9,8 @@ import configRoutes from './config.js';
 import d1Routes from './d1.js';
 import autoApplyRoutes from './auto-apply.js';
 import profileRoutes from './profile.js';
+import dashboardRoutes from './dashboard.js';
+import analyticsRoutes from './analytics.js';
 
 export {
   authRoutes,
@@ -21,4 +23,6 @@ export {
   autoApplyRoutes,
   profileRoutes,
   resumeSyncRoutes,
+  dashboardRoutes,
+  analyticsRoutes,
 };
