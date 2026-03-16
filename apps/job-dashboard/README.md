@@ -60,7 +60,7 @@ Set via `wrangler.toml` or `wrangler secret`:
 
 ```bash
 # Set secrets (not visible in config files)
-npx wrangler secret put EVOLUTION_API_KEY
+npx wrangler secret put TELEGRAM_BOT_TOKEN
 npx wrangler secret put CLOUDFLARE_API_TOKEN
 npx wrangler secret put JWT_SECRET
 ```
@@ -160,13 +160,13 @@ Handler Classes (async methods):
 Services (Stateless DI):
   - AuthService (cookies, JWT)
   - ConfigService (settings)
-  - NotificationService (Evolution API)
+  - NotificationService (Telegram Bot API)
     ↓
 External APIs:
   - D1 Database
   - KV Cache
   - R2 Storage
-  - Evolution API
+  - Telegram Bot API
     ↓
 Response (JSON):
   {
@@ -204,7 +204,7 @@ workers/
 │   ├── services/                   # Domain services (stateless DI)
 │   │   ├── auth.js                 # Cookie management + JWT
 │   │   ├── config.js               # Configuration loading
-│   │   ├── notification.js         # Evolution API notifications
+│   │   ├── telegram.js             # Telegram Bot API notifications
 │   │   └── browser.js              # Browser automation (DO)
 │   ├── utils/                      # Utilities
 │   │   ├── crypto.js               # Encryption/decryption
@@ -500,7 +500,7 @@ const image = await env.R2.get(`screenshots/2026-02-11/123.png`);
 | `JobCrawlingWorkflow` | On-demand     | Search jobs on all platforms |
 | `ApplicationWorkflow` | On-demand     | Auto-submit job applications |
 | `ResumeSyncWorkflow`  | Event trigger | Resume sync to platforms     |
-| `DailyReportWorkflow` | Event trigger | Stats report via WhatsApp    |
+| `DailyReportWorkflow` | Event trigger | Stats report via Telegram    |
 | `HealthCheckWorkflow` | Event trigger | Health monitoring            |
 | `BackupWorkflow`      | Event trigger | D1→KV backup                 |
 | `CleanupWorkflow`     | Event trigger | Stale data cleanup           |
@@ -583,8 +583,9 @@ HTTP 429 Too Many Requests
 Set via `npx wrangler secret put`:
 
 ```bash
-# Evolution API for notifications
-npx wrangler secret put EVOLUTION_API_KEY
+# Telegram Bot API for notifications
+npx wrangler secret put TELEGRAM_BOT_TOKEN
+npx wrangler secret put TELEGRAM_CHAT_ID
 
 # JWT signing key for auth tokens
 npx wrangler secret put JWT_SECRET
@@ -650,7 +651,7 @@ npx wrangler secret list
 
 ### Error Logging
 
-All errors logged in ECS format, alerts via WhatsApp:
+All errors logged in ECS format, alerts via Telegram:
 
 ```json
 {
