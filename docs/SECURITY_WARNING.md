@@ -21,7 +21,7 @@ The following secrets were exposed in project history/docs and MUST be rotated o
 | **Grafana**    | `GRAFANA_API_KEY`    | Revoke & Re-issue | 🟡 Redacted, rotate key |
 | **Slack**      | `SLACK_APP_TOKEN`    | Revoke & Re-issue | 🟡 Redacted, rotate key |
 | **n8n**        | `N8N_API_KEY`        | Revoke & Re-issue | 🟡 Redacted, rotate key |
-| **Evolution**  | `EVOLUTION_API_KEY`  | Revoke & Re-issue | 🟡 Redacted, rotate key |
+| **Telegram**   | `TELEGRAM_BOT_TOKEN` | Revoke & Re-issue | 🟡 Redacted, rotate key |
 | **Morph**      | `MORPH_API_KEY`      | Revoke & Re-issue | 🟡 Redacted, rotate key |
 | **OpenRouter** | `OPENROUTER_API_KEY` | Revoke & Re-issue | 🟡 Redacted, rotate key |
 | **Infisical**  | `INFISICAL_JWT...`   | Revoke & Re-issue | 🟡 Redacted, rotate key |
