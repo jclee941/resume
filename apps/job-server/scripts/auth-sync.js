@@ -14,7 +14,7 @@ import {
   loadSessionFromFile,
   saveSessionToFile,
 } from './auth-sync/cookie-ops.js';
-import { DEFAULT_USER_AGENT } from '../workers/src/utils/user-agents.js';
+import { DEFAULT_USER_AGENT } from '../../job-dashboard/src/utils/user-agents.js';
 
 puppeteer.use(StealthPlugin());
 
