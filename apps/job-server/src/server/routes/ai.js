@@ -1,6 +1,9 @@
 import config from '../config/index.js';
 import { matchJobsWithAI } from '../../shared/services/matching/index.js';
 import { UnifiedApplySystem } from '../../shared/services/apply/index.js';
+import { UnifiedJobCrawler } from '../../crawlers/index.js';
+import { AutoApplier } from '../../auto-apply/auto-applier.js';
+import { ApplicationManager } from '../../auto-apply/application-manager.js';
 
 export default async function aiRoutes(fastify) {
   fastify.get('/status', async () => {
@@ -33,7 +36,7 @@ export default async function aiRoutes(fastify) {
         {
           useAI: true,
           maxResults: 1,
-        },
+        }
       );
 
       const match = result.jobs[0];
@@ -46,8 +49,7 @@ export default async function aiRoutes(fastify) {
               type: match.matchType,
               confidence: match.confidence,
               reasoning: match.aiAnalysis?.matchDetails?.reasoning,
-              successProbability:
-                match.aiAnalysis?.successPrediction?.success_probability,
+              successProbability: match.aiAnalysis?.successPrediction?.success_probability,
             }
           : null,
         aiEnabled: !result.resumeAnalysis?.fallback,
@@ -66,13 +68,31 @@ export default async function aiRoutes(fastify) {
     } = request.body || {};
 
     try {
+      const enabledPlatforms = platforms || ['wanted', 'jobkorea', 'saramin'];
+
+      const crawler = new UnifiedJobCrawler({
+        sources: enabledPlatforms,
+      });
+
+      const appManager = new ApplicationManager();
+
       const system = new UnifiedApplySystem({
-        dryRun,
-        maxDailyApplications: maxApplications,
-        minMatchScore: 60, // Oracle recommendation: use reviewThreshold (60) for discovery
-        keywords,
-        useAI: true,
-        crawler: { sources: platforms },
+        crawler,
+        applier: new AutoApplier({
+          dryRun,
+          maxDailyApplications: maxApplications,
+          autoApply: !dryRun,
+        }),
+        appManager,
+        config: {
+          dryRun,
+          maxDailyApplications: maxApplications,
+          reviewThreshold: 60,
+          autoApplyThreshold: 75,
+          enabledPlatforms,
+          keywords,
+          useAI: true,
+        },
       });
 
       system.run().catch(console.error);

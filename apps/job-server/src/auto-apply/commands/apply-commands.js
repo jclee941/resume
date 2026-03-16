@@ -10,19 +10,36 @@ export async function runAutoApply(args) {
 
   console.log(`\n🤖 Auto Apply ${dryRun ? '(DRY RUN)' : ''} (Unified System)\n`);
 
+  const enabledPlatforms = ['wanted', 'jobkorea', 'saramin'];
+  const keywords = ['시니어 엔지니어', '클라우드 엔지니어', 'SRE'];
+
+  const crawler = new UnifiedJobCrawler({
+    sources: enabledPlatforms,
+  });
+
+  const appManager = new ApplicationManager();
+
   const system = new UnifiedApplySystem({
-    dryRun,
-    maxDailyApplications: maxApps,
-    reviewThreshold: 60,
-    autoApplyThreshold: 75,
-    enabledPlatforms: ['wanted', 'jobkorea', 'saramin'],
-    keywords: ['시니어 엔지니어', '클라우드 엔지니어', 'SRE'],
-    notifications: {
-      desktop: true,
+    crawler,
+    applier: new AutoApplier({
+      dryRun,
+      maxDailyApplications: maxApps,
+      autoApply: !dryRun,
+    }),
+    appManager,
+    config: {
+      dryRun,
+      maxDailyApplications: maxApps,
+      reviewThreshold: 60,
+      autoApplyThreshold: 75,
+      enabledPlatforms,
+      keywords,
     },
   });
 
-  const result = await system.runAutoApply({
+  const result = await system.run({
+    keywords,
+    dryRun,
     maxApplications: maxApps,
   });
 
@@ -32,11 +49,11 @@ export async function runAutoApply(args) {
   }
 
   console.log('\n--- Results ---\n');
-  console.log(`🔍 Searched: ${result.results.searched}`);
-  console.log(`✅ Matched: ${result.results.matched}`);
-  console.log(`📝 Applied: ${result.results.applied}`);
-  console.log(`⏭️ Skipped: ${result.results.skipped}`);
-  console.log(`❌ Failed: ${result.results.failed}`);
+  console.log(`🔍 Searched: ${result.phases?.search?.found || 0}`);
+  console.log(`✅ Matched: ${result.phases?.filter?.output || 0}`);
+  console.log(`📝 Applied: ${result.phases?.apply?.succeeded || 0}`);
+  console.log(`⏭️ Skipped: ${result.phases?.apply?.skipped || 0}`);
+  console.log(`❌ Failed: ${result.phases?.apply?.failed || 0}`);
 
   if (dryRun) {
     console.log('\n⚠️ This was a dry run. Use --apply to actually apply.');
@@ -65,6 +82,11 @@ export async function runUnifiedSystem(args) {
 
   const system = new UnifiedApplySystem({
     crawler,
+    applier: new AutoApplier({
+      dryRun,
+      maxDailyApplications: maxApps,
+      autoApply: !dryRun,
+    }),
     appManager,
     config: {
       dryRun,
@@ -163,7 +185,11 @@ export async function runAIUnifiedSystem(args) {
   console.log('   AI 매칭: 활성화');
   console.log('');
 
-  const result = await system.run({ dryRun: true });
+  const result = await system.run({
+    dryRun,
+    maxApplications: maxApps,
+    keywords: system.config.keywords,
+  });
 
   if (!result.success) {
     console.error('❌ AI 통합 시스템 실패:', result.error);
