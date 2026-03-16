@@ -279,6 +279,38 @@ Schedule Trigger (5 min)
 
 See `resume-healthcheck-workflow.json` for full configuration.
 
+### 6. Job Auto-Apply
+
+**Workflow**: `job-auto-apply` (ID: `DRHg9pwanv4pHGxV`)
+**Schedule**: Daily at 9:00 AM UTC
+**Purpose**: Automatically searches job platforms and submits applications
+
+**Features**:
+- Triggers auto-apply run via job-server REST API
+- Polls for completion with 30-second intervals (max 40 polls = ~20 min timeout)
+- Formats results and sends Telegram notification via `telegram-notifier`
+- Error handling branch for API failures
+- Timeout protection with automatic notification
+
+**Workflow Flow**:
+
+```
+Daily 9am → POST /api/auto-apply/run → Wait 30s → Poll Status
+  → Done? → Format Result → Reset Poll Count → Telegram Notify
+  → Not Done? → Increment Poll → Timeout? → Notify Timeout
+                                         → Not Timeout → Wait 30s (loop)
+  → Error? → Format Error → Telegram Notify
+```
+
+**Configuration**:
+- `JOB_SERVER_URL`: Base URL of the job automation server
+- `JOB_SERVER_ADMIN_TOKEN`: Bearer token for API authentication
+- Default platforms: Wanted, JobKorea, Saramin
+- Default keywords: 시니어 엔지니어, 클라우드 엔지니어, SRE, DevOps
+- Max applications per run: 10
+
+See `job-auto-apply-workflow.json` for full configuration.
+
 ---
 
 ## Workflow Architecture (Auto Deploy)
@@ -333,6 +365,10 @@ GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
 # Cloudflare credentials (for wrangler)
 CLOUDFLARE_API_TOKEN=your-cloudflare-api-token
 CLOUDFLARE_ACCOUNT_ID=your-account-id
+
+# Job Auto-Apply
+JOB_SERVER_URL=https://your-job-server.example.com
+JOB_SERVER_ADMIN_TOKEN=your-admin-bearer-token
 ```
 
 ## Monitoring
