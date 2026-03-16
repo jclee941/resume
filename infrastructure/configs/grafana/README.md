@@ -127,9 +127,11 @@ rate(http_requests_total{job="resume"}[5m]) == 0
    - Endpoint: https://resume.jclee.me/metrics
    - Must be scraped by Prometheus
 
-4. **Slack Integration** (Optional for alerts)
-   - Environment variable: `SLACK_WEBHOOK_URL`
-   - Required for Slack notifications
+4. **Telegram Bot Integration** (Optional for alerts)
+   - Environment variables: `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`
+   - Required for Telegram notifications
+   - Get bot token from 1Password homelab vault
+
 
 ## Installation
 
@@ -152,7 +154,7 @@ rate(http_requests_total{job="resume"}[5m]) == 0
 2. Click **New alert rule** → **Import**
 3. Upload `alert-rules.yaml`
 4. Configure contact points:
-   - Add Slack webhook URL to contact point settings
+   - Add Telegram Bot credentials to contact point settings
 5. Save
 
 ### Method 2: Automated Import via API
@@ -237,7 +239,7 @@ curl -s "${GRAFANA_URL}/api/v1/provisioning/alert-rules" \
 docker stop resume-worker
 sleep 70  # Wait for alert to fire (1m for condition + 10s group wait)
 
-# Check Slack for alert notification
+# Check Telegram for alert notification
 # Restart service
 docker start resume-worker
 ```
@@ -276,15 +278,18 @@ grep -A 5 'http_requests_total' /home/jclee/dev/resume/apps/portfolio/worker.js
 
 **Possible Causes**:
 
-1. Slack webhook URL not configured
+1. Telegram Bot credentials not configured
 2. Alert rule conditions not met
 3. Alert rule paused
 
 **Solutions**:
 
 ```bash
-# 1. Verify Slack webhook
-curl -X POST $SLACK_WEBHOOK_URL \
+# 1. Verify Telegram Bot credentials
+# curl -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
+#   -H 'Content-Type: application/json' \
+#   -d '{"chat_id": "$TELEGRAM_CHAT_ID", "text": "Test alert from Grafana"}'
+
   -H 'Content-Type: application/json' \
   -d '{"text":"Test alert from Grafana"}'
 
