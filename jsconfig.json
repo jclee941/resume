@@ -43,7 +43,6 @@
     "test-results",
     "apps/portfolio/worker.js",
     "apps/portfolio/sw.js",
-    "apps/portfolio/sentry-config.js",
     "apps/portfolio/src/scripts/modules/**",
     "apps/job-server/platforms/**",
     "tests/**",

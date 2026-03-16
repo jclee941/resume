@@ -109,6 +109,54 @@ export class SessionManager {
       };
     });
   }
+
+  /**
+   * Check if a session is expiring soon (within given threshold).
+   * @param {string} platform - Platform name
+   * @param {number} thresholdMs - Milliseconds before expiry to consider "expiring"
+   * @returns {{ valid: boolean, expiringSoon: boolean, expiresAt: Date|null }}
+   */
+  static checkHealth(platform, thresholdMs = 2 * 60 * 60 * 1000) {
+    const session = this.load(platform);
+    if (!session || !session.timestamp) {
+      return { valid: false, expiringSoon: false, expiresAt: null };
+    }
+    const ttl = PLATFORM_TTL_MS[platform] || DEFAULT_TTL_MS;
+    const expiresAt = new Date(session.timestamp + ttl);
+    const remaining = expiresAt.getTime() - Date.now();
+    return {
+      valid: remaining > 0,
+      expiringSoon: remaining > 0 && remaining < thresholdMs,
+      expiresAt,
+    };
+  }
+
+  /**
+   * Attempt to refresh a session by running CDP extraction.
+   * Returns true if session was refreshed, false otherwise.
+   * @param {string} platform - Platform to refresh
+   * @returns {Promise<boolean>}
+   */
+  static async tryRefresh(platform) {
+    const { execSync } = await import('child_process');
+    const { fileURLToPath } = await import('url');
+    const { dirname: dn, join: jn } = await import('path');
+    const __dirname = dn(fileURLToPath(import.meta.url));
+    const cdpScript = jn(__dirname, '..', '..', '..', '..', 'scripts', 'extract-cookies-cdp.js');
+
+    try {
+      execSync(`node ${cdpScript} ${platform}`, {
+        encoding: 'utf8',
+        stdio: 'pipe',
+        timeout: 15000,
+      });
+      // Check if extraction succeeded
+      const session = this.load(platform);
+      return !!(session && session.timestamp && Date.now() - session.timestamp < 60000);
+    } catch {
+      return false;
+    }
+  }
 }
 
 export default SessionManager;

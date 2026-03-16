@@ -1,0 +1,91 @@
+{
+  "name": "automation-webhook-receiver",
+  "active": true,
+  "nodes": [
+    {
+      "parameters": {
+        "path": "automation-run-report",
+        "httpMethod": "POST",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-receiver",
+      "name": "Webhook Receiver",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [100, 300],
+      "webhookId": "automation-run-report"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $input.first().json.body || $input.first().json;\nconst event = body.event || 'unknown';\nconst timestamp = body.timestamp || new Date().toISOString();\nconst platforms = body.platforms || {};\nconst actions = body.actions || {};\nconst validPlatforms = Object.entries(platforms).filter(([_, v]) => v.valid).map(([k]) => k);\nconst invalidPlatforms = Object.entries(platforms).filter(([_, v]) => !v.valid).map(([k]) => k);\nconst totalCookies = Object.values(platforms).reduce((sum, p) => sum + (p.cookies || 0), 0);\nreturn {\n  isSuccess: validPlatforms.length > 0,\n  status: validPlatforms.length > 0 ? 'completed' : 'failed',\n  channel: 'automation-runner',\n  command: `auto-all (${[actions.extract && 'extract', actions.sync && 'sync', actions.verify && 'verify'].filter(Boolean).join('+')})`,\n  duration: 0,\n  source: 'auto-all.js',\n  errorMessage: invalidPlatforms.length > 0 ? `Invalid sessions: ${invalidPlatforms.join(', ')}` : null,\n  outputUrl: null,\n  validPlatforms: validPlatforms.join(', '),\n  invalidPlatforms: invalidPlatforms.join(', '),\n  totalCookies,\n  event,\n  timestamp\n};\n"
+      },
+      "id": "format-payload",
+      "name": "Format Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [400, 300]
+    },
+    {
+      "id": "notify-telegram",
+      "name": "Notify via Telegram",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [700, 300],
+      "parameters": {
+        "workflowId": "PV5yLgHNzNSlCmRT"
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "responseCode": 200
+        },
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ received: true, event: $('Format Payload').first().json.event }) }}"
+      },
+      "id": "respond-ok",
+      "name": "Respond OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1000, 300]
+    }
+  ],
+  "connections": {
+    "Webhook Receiver": {
+      "main": [
+        [
+          {
+            "node": "Format Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Payload": {
+      "main": [
+        [
+          {
+            "node": "Notify via Telegram",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Respond OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "saveExecutionProgress": true,
+    "saveManualExecutions": true,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "executionTimeout": 3600,
+    "timezone": "Asia/Seoul"
+  }
+}

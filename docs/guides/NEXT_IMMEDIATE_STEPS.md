@@ -316,7 +316,6 @@ open https://codecov.io/gh/YOUR_USERNAME/resume
 After deployment is stable, consider these enhancements:
 
 ### Phase 1: Monitoring & Analytics (Week 1-2)
-- [ ] Set up Sentry for error tracking
 - [ ] Implement Real User Monitoring (RUM)
 - [ ] Create Grafana dashboards
 - [ ] Set up log aggregation
@@ -388,7 +387,6 @@ npm run monitor:logs
 ### Post-Deployment
 - [ ] Production URL verified
 - [ ] Performance metrics checked
-- [ ] Error tracking enabled
 - [ ] Monitoring dashboards set up
 - [ ] Team notified
 

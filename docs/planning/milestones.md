@@ -117,7 +117,6 @@
 - 데드 테스트 파일 정리, auth.js 복원
 - 비주얼 리그레션 테스트 (11개 스냅샷 베이스라인, desktop+mobile)
 - CSP 해시 불일치 자동 감지 테스트
-- ~~미완료~~ **완료**: NF7.5 GlitchTip DSN 연동 (Sentry SDK 7.120.3, PII 필터, CSP 업데이트)
 
 ### M9. Documentation ✅
 
@@ -197,18 +196,6 @@
 - ESLint warning 임계값 138→120 감소
 - 배포 작업 타임아웃 설정
 
-### M14. Sentry Integration ✅
-
-| 항목         | 내용                                                 |
-| ------------ | ---------------------------------------------------- |
-| **기간**     | 2026-02-12                                           |
-| **요구사항** | NF7.5 — 1항목 전체 완료                              |
-| **산출물**   | GlitchTip DSN 연동, Sentry SDK 7.120.3, CSP 업데이트 |
-
-- NF7.5: GlitchTip DSN 연동 완료 (self-hosted glitchtip.jclee.me)
-- Sentry SDK 7.120.3 (SRI integrity 포함)
-- beforeSend PII 필터 (cookies, email, ip_address 제거)
-- CSP script-src/connect-src 업데이트
 
 ---
 

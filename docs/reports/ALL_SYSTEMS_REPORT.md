@@ -291,7 +291,6 @@ npx purgecss --content apps/portfolio/index.html --css apps/portfolio/styles.css
 - [ ] Test CI workflow
 - [ ] Deploy to production
 - [ ] Run Lighthouse audit
-- [ ] Monitor error rates in Sentry
 
 ---
 

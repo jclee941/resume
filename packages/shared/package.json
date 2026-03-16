@@ -1,0 +1,10 @@
+{
+  "name": "@resume/shared",
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    "./errors": "./src/errors/index.js",
+    "./logger": "./src/logger/index.js",
+    "./es-client": "./src/clients/elasticsearch/index.js"
+  }
+}

@@ -4,14 +4,14 @@
     "birthDate": "1994.10.17",
     "email": "qws941@kakao.com",
     "phone": "010-5757-9592",
-    "address": "경기도 시흥시 장현천로61, 307동 1301호",
+    "address": "Siheung-si, Gyeonggi-do, South Korea",
     "github": "https://github.com/qws941"
   },
   "education": {
     "school": "Hanyang Cyber University",
     "major": "Department of Computer Engineering",
     "startDate": "2024.03",
-    "status": "재학중",
+    "status": "Enrolled",
     "highSchool": "Yongnam High School",
     "highSchoolGraduation": "2013"
   },
@@ -30,7 +30,7 @@
     "period": "2014.12 - 2016.12"
   },
   "summary": {
-    "totalExperience": "8 years",
+    "totalExperience": "9 years",
     "experienceStart": "2017.02",
     "grade": null,
     "expertise": [
@@ -38,7 +38,7 @@
       "Security Infrastructure",
       "Automation"
     ],
-    "profileStatement": "Infrastructure engineer with 8 years of experience, responsible for security infrastructure design and operations in finance and public sectors. Currently focused on building observability systems and automating operations."
+    "profileStatement": "Infrastructure engineer with 9 years of experience, responsible for security infrastructure design and operations in finance and public sectors. Currently focused on building observability systems and automating operations."
   },
   "current": null,
   "careers": [
@@ -103,7 +103,7 @@
   ],
   "projects": [
     {
-      "period": "2025.03 ~ 현재",
+      "period": "2025.03 ~ 2026.02",
       "name": "Nextrade Security Operations",
       "client": "Nextrade",
       "technologies": [
@@ -301,7 +301,7 @@
       "expirationDate": null,
       "credentialId": null,
       "credentialUrl": null,
-      "status": "준비중"
+      "status": "Preparing"
     },
     {
       "name": "CISM",
@@ -310,7 +310,7 @@
       "expirationDate": null,
       "credentialId": null,
       "credentialUrl": null,
-      "status": "준비중"
+      "status": "Preparing"
     },
     {
       "name": "AWS Solutions Architect",
@@ -319,7 +319,7 @@
       "expirationDate": null,
       "credentialId": null,
       "credentialUrl": null,
-      "status": "준비중"
+      "status": "Preparing"
     }
   ],
   "skills": {
@@ -515,7 +515,7 @@
   "personalProjects": [
     {
       "name": "Observability Platform",
-      "period": "2024.06 ~ 현재",
+      "period": "2024.06 ~ Present",
       "description": "Homelab infrastructure monitoring platform with Prometheus metrics collection, Loki log aggregation, and Grafana visualization.",
       "technologies": [
         "Grafana",
@@ -540,7 +540,7 @@
     },
     {
       "name": "n8n Automation",
-      "period": "2024.01 ~ 현재",
+      "period": "2024.01 ~ Present",
       "description": "Automated workflows for alerting, deployment, and data collection.",
       "technologies": [
         "n8n",
@@ -562,7 +562,7 @@
     },
     {
       "name": "Fortinet API Client",
-      "period": "2025.01 ~ 현재",
+      "period": "2025.01 ~ Present",
       "description": "Python library for querying FortiManager policies/routes and collecting FortiAnalyzer log statistics.",
       "technologies": [
         "Python",
@@ -574,8 +574,8 @@
       "stars": 0,
       "language": "Python",
       "forks": 0,
-      "githubUrl": "https://github.com/qws941/splunk",
-      "demoUrl": "https://splunk.jclee.me",
+      "githubUrl": "https://github.com/qws941/splunk-fortinet",
+      "demoUrl": null,
       "metrics": {
         "endpoints": "FortiManager, FortiAnalyzer REST API",
         "features": "Policy lookup, route management, and log statistics",
@@ -584,7 +584,7 @@
     },
     {
       "name": "Security Alert System",
-      "period": "2025.01 ~ 현재",
+      "period": "2025.01 ~ Present",
       "description": "Detects FortiGate events in Splunk and sends alerts through Slack Block Kit. Operates 32 detection rules.",
       "technologies": [
         "Splunk",
@@ -607,7 +607,7 @@
     },
     {
       "name": "IP Blacklist Platform",
-      "period": "2024.12 ~ 현재",
+      "period": "2024.12 ~ Present",
       "description": "Collects and analyzes malicious IP intelligence, then provides dashboards. Built with Flask API and Next.js frontend.",
       "technologies": [
         "Flask",
@@ -660,7 +660,7 @@
     "subtitle": "Security Infrastructure Design · Observability · Automation"
   },
   "sectionDescriptions": {
-    "resume": "8 years of infrastructure experience",
+    "resume": "9 years of infrastructure experience",
     "projects": "Side projects",
     "infrastructure": "Services in operation",
     "skills": "Technology stack",
@@ -728,12 +728,6 @@
       "icon": "🔐",
       "title": "HashiCorp Vault",
       "description": "Secrets management / PKI",
-      "status": "running"
-    },
-    {
-      "icon": "🐛",
-      "title": "GlitchTip",
-      "description": "Error tracking (Sentry alternative)",
       "status": "running"
     },
     {

@@ -56,11 +56,35 @@ CREATE INDEX IF NOT EXISTS idx_applications_company ON applications(company);
 CREATE INDEX IF NOT EXISTS idx_applications_created_at ON applications(created_at);
 CREATE INDEX IF NOT EXISTS idx_timeline_application_id ON application_timeline(application_id);
 
+-- Job search results (crawled job listings)
+CREATE TABLE IF NOT EXISTS job_search_results (
+  id TEXT PRIMARY KEY,
+  source TEXT NOT NULL,
+  source_url TEXT,
+  position TEXT NOT NULL,
+  company TEXT NOT NULL,
+  location TEXT,
+  description TEXT,
+  tech_stack TEXT,  -- JSON array of skills
+  experience_level TEXT,
+  match_score INTEGER DEFAULT 0,
+  status TEXT NOT NULL DEFAULT 'new',  -- new, reviewed, applied, rejected, expired
+  crawled_at TEXT NOT NULL,
+  expires_at TEXT,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_job_search_results_status ON job_search_results(status);
+CREATE INDEX IF NOT EXISTS idx_job_search_results_source ON job_search_results(source);
+CREATE INDEX IF NOT EXISTS idx_job_search_results_crawled_at ON job_search_results(crawled_at);
+
 -- Default config values
 INSERT OR IGNORE INTO config (key, value, updated_at) VALUES 
   ('auto_apply_enabled', 'false', datetime('now')),
   ('max_daily_applications', '10', datetime('now')),
-  ('min_match_score', '70', datetime('now'));
+  ('min_match_score', '70', datetime('now')),
+  ('auto_apply_config', '{"skills":[],"preferredCompanies":[],"excludeCompanies":[],"preferredLocations":[],"experienceYears":null,"minMatchScore":70}', datetime('now'));
 
 -- Profile sync tracking table
 CREATE TABLE IF NOT EXISTS profile_syncs (

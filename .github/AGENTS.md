@@ -95,4 +95,4 @@ Conventional commits → `mathieudutour/github-tag-action` → semver bump → G
 - ESLint baseline ratcheted to 69 warnings (regex fix pending).
 - Lighthouse `/health` endpoint removed from verification.
 - Terraform R2 backend credentials migrated to 1Password (`op://homelab/cloudflare-r2/*`) but vault item `cloudflare-r2` not yet created — terraform.yml will fail until created.
-- Cloudflare Access injects `cf-access-client-id` header on all outbound requests, causing CORS preflight failures for 3rd-party scripts (CF Web Analytics, GA, Sentry). CF Access policy issue, not code.
+- Cloudflare Access injects `cf-access-client-id` header on all outbound requests, causing CORS preflight failures for 3rd-party scripts (CF Web Analytics, GA). CF Access policy issue, not code.

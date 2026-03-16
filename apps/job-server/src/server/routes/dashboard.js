@@ -1,5 +1,3 @@
-import config from '../config/index.js';
-
 export default async function dashboardRoutes(fastify) {
   // Cloudflare Analytics
   fastify.get('/cf/stats', async (request, reply) => {
@@ -9,10 +7,8 @@ export default async function dashboardRoutes(fastify) {
       return reply.status(401).send({ error: 'Unauthorized' });
     }
 
-    const { accountId: _accountId, apiKey: _apiKey } = config.cloudflare;
-    // ... Implement CF logic here or import from lib
-    // For now, returning mock/empty or implementing the graphql call
-    return { stats: [] };
+    const stats = await fastify.cloudflareAnalytics.getWorkerAnalytics();
+    return { stats };
   });
 
   // System Status

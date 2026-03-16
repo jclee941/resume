@@ -6,7 +6,7 @@ Wants=network-online.target
 [Service]
 Type=oneshot
 User=%i
-WorkingDirectory=/home/jclee/dev/resume/typescript/job-automation
+WorkingDirectory=/home/jclee/dev/resume/apps/job-server
 ExecStart=/usr/bin/node scripts/auto-all.js --sync
 StandardOutput=journal
 StandardError=journal

@@ -255,7 +255,6 @@
 | NF7.2 | Playwright E2E      | E2E 테스트 프레임워크 구성 (Chromium)                   | ✅   |
 | NF7.3 | Dead Test Cleanup   | 사용하지 않는 테스트 파일 정리 완료                     | ✅   |
 | NF7.4 | auth.js Restoration | 테스트 인증 모듈 복원 (삭제 후 재생성)                  | ✅   |
-| NF7.5 | Sentry DSN 설정     | GlitchTip DSN 연동 완료 (Sentry SDK 7.120.3 + PII 필터) | ✅   |
 | NF7.6 | Visual Regression   | 비주얼 리그레션 테스트 추가 (스크린샷 비교)             | ✅   |
 | NF7.7 | CSP Hash Validation | 빌드 시 CSP 해시 불일치 자동 감지 테스트                | ✅   |
 
@@ -324,7 +323,6 @@ curl -s https://resume.jclee.me/metrics
 | 2026-02-05 | 1.0  | 초기 작성 (F1–F6, NF1–NF5: 109항목)                                     |
 | 2026-02-09 | 1.1  | F7 SSoT 데이터 품질, F8 콘텐츠 확장 추가 (123항목)                      |
 | 2026-02-11 | 2.0  | F9 Job Dashboard 통합, NF6–NF8 추가, 48세션 감사 반영 (150항목)         |
-| 2026-02-12 | 2.1  | F8 콘텐츠 확장 전체 완료, NF8.5 JSDoc 완료 (149/150, NF7.5 Sentry 차단) |
 
 ---
 

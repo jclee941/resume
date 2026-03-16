@@ -56,7 +56,6 @@ npm_package_version=${VERSION}
 
 # Add any additional environment variables here
 # API_ENDPOINTS=...
-# SENTRY_DSN=...
 EOF
 
 echo

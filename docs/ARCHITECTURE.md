@@ -31,7 +31,6 @@ The resume monorepo is a personal portfolio and job automation system built on C
 | Monitoring     | Grafana            | Metrics visualization            |
 | Monitoring     | Loki               | Log aggregation                  |
 | Monitoring     | Prometheus         | Metrics collection               |
-| Monitoring     | GlitchTip          | Error tracking                   |
 
 ## System Architecture
 

@@ -1,6 +1,7 @@
 import { WorkflowEntrypoint } from 'cloudflare:workers';
 import { DEFAULT_USER_AGENT } from '../utils/user-agents.js';
 import { sendTelegramNotification, escapeHtml } from '../services/notification/telegram.js';
+import { calculateMatchScore } from '../handlers/auto-apply/match-scoring.js';
 
 /**
  * Job Crawling Workflow
@@ -112,7 +113,7 @@ export class JobCrawlingWorkflow extends WorkflowEntrypoint {
         return processedJobs
           .map((job) => ({
             ...job,
-            matchScore: this.calculateMatchScore(job, config),
+            matchScore: calculateMatchScore(job, config),
           }))
           .filter((job) => job.matchScore >= (config.minMatchScore || 70))
           .sort((a, b) => b.matchScore - a.matchScore);
@@ -367,24 +368,6 @@ export class JobCrawlingWorkflow extends WorkflowEntrypoint {
     }
   }
 
-  calculateMatchScore(job, config) {
-    let score = 50; // Base score
-
-    // Preferred companies bonus
-    if (
-      config.preferredCompanies?.some((c) => job.company.toLowerCase().includes(c.toLowerCase()))
-    ) {
-      score += 30;
-    }
-
-    // Skills match
-    const requiredSkills = config.skills || [];
-    const jobText = `${job.position} ${job.description || ''}`.toLowerCase();
-    const matchedSkills = requiredSkills.filter((skill) => jobText.includes(skill.toLowerCase()));
-    score += (matchedSkills.length / Math.max(requiredSkills.length, 1)) * 20;
-
-    return Math.min(100, Math.round(score));
-  }
 
   async sendNotification(message) {
     await sendTelegramNotification(this.env, message);

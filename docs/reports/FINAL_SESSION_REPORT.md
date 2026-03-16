@@ -449,7 +449,6 @@ CI/CD:             ci:verify, ci:local
 
 4. **Advanced Monitoring**
    - Real User Monitoring (RUM)
-   - Error tracking (Sentry)
    - Performance analytics
 
 ---

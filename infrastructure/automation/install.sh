@@ -1,5 +1,5 @@
 #!/bin/bash
-# Install systemd timer for daily resume sync
+# Install systemd timers for resume sync and daily job automation
 
 set -e
 
@@ -15,6 +15,15 @@ sudo systemctl daemon-reload
 sudo systemctl enable "resume-sync@${USER}.timer"
 sudo systemctl start "resume-sync@${USER}.timer"
 
-echo "✓ Installed resume-sync timer"
-echo "  Check status: systemctl status resume-sync@${USER}.timer"
-echo "  View logs: journalctl -u resume-sync@${USER}.service"
+# Install job daily-run timer
+sudo cp "$SCRIPT_DIR/job-daily-run.service" /etc/systemd/system/job-daily-run@.service
+sudo cp "$SCRIPT_DIR/job-daily-run.timer" /etc/systemd/system/job-daily-run@.timer
+sudo systemctl daemon-reload
+sudo systemctl enable "job-daily-run@${USER}.timer"
+sudo systemctl start "job-daily-run@${USER}.timer"
+
+echo "✓ Installed resume-sync timer (09:00 KST daily)"
+echo "✓ Installed job-daily-run timer (10:00 KST daily)"
+echo "  Check: systemctl list-timers --all | grep -E 'resume-sync|job-daily'"
+echo "  Logs:  journalctl -u resume-sync@${USER}.service"
+echo "  Logs:  journalctl -u job-daily-run@${USER}.service"

@@ -7,6 +7,10 @@
  */
 import { execSync } from 'child_process';
 import { SessionManager } from '../src/shared/services/session/index.js';
+import WebSocket from 'ws';
+import { writeFileSync, mkdirSync, existsSync } from 'fs';
+import { join } from 'path';
+import { homedir } from 'os';
 
 const PLATFORMS = ['wanted', 'jobkorea', 'remember'];
 const CHROME_DEBUG_PORT = 9222;
@@ -53,41 +57,92 @@ async function checkChromeDevTools() {
   }
 }
 
-// Extract cookies via Chrome DevTools Protocol
-async function extractCookiesViaCDP(_platform) {
-  const _domains = {
-    wanted: ['.wanted.co.kr', 'www.wanted.co.kr'],
-    jobkorea: ['.jobkorea.co.kr', 'www.jobkorea.co.kr'],
-    remember: ['.rememberapp.co.kr', 'www.rememberapp.co.kr'],
+// Extract cookies via Chrome DevTools Protocol (WebSocket-based)
+async function extractCookiesViaCDP(platforms) {
+  const PLATFORM_DOMAINS = {
+    wanted: ['.wanted.co.kr', 'wanted.co.kr'],
+    jobkorea: ['.jobkorea.co.kr', 'jobkorea.co.kr'],
+    remember: ['.rememberapp.co.kr', 'rememberapp.co.kr'],
   };
 
   try {
-    // Get all cookies via CDP
-    const res = await fetch(`http://127.0.0.1:${CHROME_DEBUG_PORT}/json/list`);
-    const pages = await res.json();
-
-    if (pages.length === 0) {
-      log('No Chrome pages found', 'warn');
-      return null;
-    }
-
-    // Connect to first page's WebSocket
-    const wsUrl = pages[0].webSocketDebuggerUrl;
+    // Get WebSocket debugger URL from Chrome
+    const verRes = await fetch(`http://127.0.0.1:${CHROME_DEBUG_PORT}/json/version`, {
+      signal: AbortSignal.timeout(3000),
+    });
+    const { webSocketDebuggerUrl: wsUrl } = await verRes.json();
     if (!wsUrl) {
-      log('No WebSocket URL available', 'warn');
-      return null;
+      log('No WebSocket URL from Chrome DevTools', 'warn');
+      return 0;
     }
 
-    // Use CDP to get cookies (via HTTP endpoint)
-    const _cookieRes = await fetch(`http://127.0.0.1:${CHROME_DEBUG_PORT}/json/protocol`);
+    // Connect WebSocket
+    const ws = new WebSocket(wsUrl);
+    await new Promise((resolve, reject) => {
+      ws.on('open', resolve);
+      ws.on('error', reject);
+    });
 
-    // Fallback: try to get cookies from Network domain
-    // This is a simplified approach - full CDP would use WebSocket
-    log('CDP available but cookie extraction needs WebSocket client', 'warn');
-    return null;
+    // Send CDP command helper
+    const cdpSend = (method, params = {}) => new Promise((resolve, reject) => {
+      const id = Date.now() + Math.random();
+      const timeout = setTimeout(() => reject(new Error('CDP timeout')), 5000);
+      const handler = (raw) => {
+        const msg = JSON.parse(raw.toString());
+        if (msg.id === id) {
+          clearTimeout(timeout);
+          ws.off('message', handler);
+          msg.error ? reject(new Error(msg.error.message)) : resolve(msg.result);
+        }
+      };
+      ws.on('message', handler);
+      ws.send(JSON.stringify({ id, method, params }));
+    });
+
+    // Get all cookies from browser
+    const { cookies } = await cdpSend('Network.getAllCookies');
+    log(`Retrieved ${cookies.length} total cookies from Chrome`, 'ok');
+
+    let saved = 0;
+    for (const platform of platforms) {
+      const domains = PLATFORM_DOMAINS[platform];
+      if (!domains) continue;
+
+      const platformCookies = cookies.filter((c) =>
+        domains.some((d) => c.domain.includes(d.replace('.', '')))
+      );
+
+      if (platformCookies.length === 0) {
+        log(`${platform}: No cookies found (not logged in?)`, 'warn');
+        continue;
+      }
+
+      const session = {
+        platform,
+        cookies: platformCookies.map((c) => ({
+          name: c.name, value: c.value, domain: c.domain,
+          path: c.path, expires: c.expires, httpOnly: c.httpOnly,
+          secure: c.secure, sameSite: c.sameSite,
+        })),
+        cookieString: platformCookies.map((c) => `${c.name}=${c.value}`).join('; '),
+        extractedAt: new Date().toISOString(),
+      };
+
+      SessionManager.save(platform, session);
+      // Also write platform-specific session file (JobKorea/Remember read these)
+      const platformSessionDir = join(homedir(), '.opencode', 'data');
+      if (!existsSync(platformSessionDir)) mkdirSync(platformSessionDir, { recursive: true });
+      const platformSessionPath = join(platformSessionDir, `${platform}-session.json`);
+      writeFileSync(platformSessionPath, JSON.stringify(session, null, 2));
+      log(`${platform}: Saved ${platformCookies.length} cookies via CDP`, 'ok');
+      saved++;
+    }
+
+    ws.close();
+    return saved;
   } catch (e) {
-    log(`CDP error: ${e.message}`, 'err');
-    return null;
+    log(`CDP extraction error: ${e.message}`, 'err');
+    return 0;
   }
 }
 
@@ -99,7 +154,7 @@ function checkSession(platform) {
     return { valid: false, reason: 'expired' };
 
   const authCookie = session.cookies?.find(
-    (c) => c.name.includes('TOKEN') || c.name.includes('session')
+    (c) => c.name.includes('TOKEN') || c.name.includes('session') || c.name.includes('auth')
   );
   if (!authCookie) return { valid: false, reason: 'no auth cookie' };
 
@@ -149,19 +204,50 @@ async function main() {
       console.log(`   google-chrome --remote-debugging-port=${CHROME_DEBUG_PORT}`);
     }
 
+    // Check each platform status
+    const invalidPlatforms = [];
     for (const platform of PLATFORMS) {
       const status = checkSession(platform);
       if (status.valid) {
         log(`${platform}: Valid session (${status.cookies} cookies)`, 'ok');
       } else {
         log(`${platform}: ${status.reason}`, 'err');
+        invalidPlatforms.push(platform);
+      }
+    }
 
-        if (cdpAvailable) {
-          log(`Attempting CDP extraction for ${platform}...`, 'run');
-          await extractCookiesViaCDP(platform);
+    // Attempt CDP extraction for all invalid platforms at once
+    if (invalidPlatforms.length > 0 && cdpAvailable) {
+      log(`Attempting CDP extraction for: ${invalidPlatforms.join(', ')}...`, 'run');
+      const saved = await extractCookiesViaCDP(invalidPlatforms);
+      log(`Extracted cookies for ${saved} platform(s)`, saved > 0 ? 'ok' : 'warn');
+
+      // Re-check after extraction
+      for (const platform of invalidPlatforms) {
+        const recheck = checkSession(platform);
+        if (recheck.valid) {
+          log(`${platform}: Session restored (${recheck.cookies} cookies)`, 'ok');
+        }
+      }
+    } else if (invalidPlatforms.length > 0) {
+      // CDP unavailable — try SessionManager.tryRefresh() for each platform
+      log('CDP unavailable, attempting session refresh...', 'run');
+      for (const platform of invalidPlatforms) {
+        const refreshed = await SessionManager.tryRefresh(platform);
+        if (refreshed) {
+          log(`${platform}: Session refreshed via tryRefresh()`, 'ok');
+        } else {
+          log(`${platform}: Could not refresh session`, 'warn');
         }
       }
     }
+
+  // Pre-flight: warn if no platforms are authenticated
+  const authCount = PLATFORMS.filter((p) => checkSession(p).valid).length;
+  if (authCount === 0) {
+    log('WARNING: No platforms authenticated. Operations will fail.', 'err');
+    log('Run: node scripts/extract-cookies-cdp.js (with Chrome open)', 'info');
+    log('  Or: node scripts/auth-persistent.js wanted (interactive login)', 'info');
   }
 
   // Step 2: Sync Platforms
@@ -203,13 +289,46 @@ async function main() {
     }
   }
 
+  // Step 4: Summary & Notification
   header('Summary');
+  const summaryData = {};
   for (const platform of PLATFORMS) {
     const status = checkSession(platform);
     const icon = status.valid ? `${c.green}✓${c.reset}` : `${c.red}✗${c.reset}`;
     console.log(`  ${icon} ${platform}`);
+    summaryData[platform] = { valid: status.valid, cookies: status.cookies || 0 };
   }
   console.log('');
+
+  // Send n8n webhook notification if configured
+  const webhookUrl = process.env.N8N_WEBHOOK_URL || 'https://n8n.jclee.me/webhook/automation-run-report';
+  if (webhookUrl) {
+    try {
+      const payload = {
+        event: 'automation-run',
+        timestamp: new Date().toISOString(),
+        platforms: summaryData,
+        actions: { extract: doExtract, sync: doSync, verify: doVerify },
+      };
+      const headers = { 'Content-Type': 'application/json' };
+      const secret = process.env.N8N_WEBHOOK_SECRET;
+      if (secret) {
+        const { createHmac } = await import('crypto');
+        headers['X-Webhook-Signature'] = createHmac('sha256', secret)
+          .update(JSON.stringify(payload))
+          .digest('hex');
+      }
+      await fetch(webhookUrl, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(payload),
+        signal: AbortSignal.timeout(10000),
+      });
+      log('Webhook notification sent', 'ok');
+    } catch (e) {
+      log(`Webhook failed: ${e.message}`, 'warn');
+    }
+  }
 }
 
 main().catch(console.error);

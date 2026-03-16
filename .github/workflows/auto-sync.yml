@@ -1,5 +1,5 @@
 # =============================================================================
-# AUTO-SYNC - Daily Resume Data Synchronization
+# AUTO-SYNC - Weekly Resume Data Synchronization
 # =============================================================================
 # Syncs resume data from packages/data/ (SSoT) to apps/portfolio/ data files.
 # =============================================================================
@@ -7,6 +7,8 @@
 name: Auto Sync
 
 on:
+  schedule:
+    - cron: '0 0 * * 0'  # Weekly Sunday 00:00 UTC (09:00 KST)
   workflow_dispatch:
 
 permissions:

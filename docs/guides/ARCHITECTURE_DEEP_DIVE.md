@@ -189,11 +189,9 @@ export default {
 const securityHeaders = {
   'Content-Security-Policy': `
     default-src 'self';
-    script-src 'self' 'sha256-...' https://browser.sentry-cdn.com;
     style-src 'self' 'sha256-...' https://fonts.googleapis.com;
     font-src 'self' https://fonts.gstatic.com;
     img-src 'self' data:;
-    connect-src 'self' https://grafana.jclee.me https://*.sentry.io;
   `,
   'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
   'X-Content-Type-Options': 'nosniff',
@@ -303,7 +301,6 @@ Content-Security-Policy:
   default-src 'self';
   script-src 'self'
     'sha256-abc123...'  # Inline scripts (build-time hashes)
-    https://browser.sentry-cdn.com;
   style-src 'self'
     'sha256-def456...'  # Inline styles (build-time hashes)
     https://fonts.googleapis.com;
@@ -311,7 +308,6 @@ Content-Security-Policy:
   img-src 'self' data:;
   connect-src 'self'
     https://grafana.jclee.me
-    https://*.sentry.io;
   frame-ancestors 'none';
   base-uri 'self';
   form-action 'self';
