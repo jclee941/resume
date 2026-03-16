@@ -5,7 +5,7 @@
 
 import { ApplicationManager, APPLICATION_STATUS } from './application-manager.js';
 import { UnifiedJobCrawler } from '../crawlers/index.js';
-import { withStealthBrowser, launchStealthBrowser } from '../crawlers/browser-utils.js';
+import { launchStealthBrowser } from '../crawlers/browser-utils.js';
 import { SessionManager } from '../shared/services/session/index.js';
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';

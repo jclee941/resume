@@ -1,4 +1,4 @@
-const { describe, test, expect, beforeEach, afterEach } = require('@jest/globals');
+const { describe, test, expect, beforeEach } = require('@jest/globals');
 
 // Replicate telegram.js logic inline for CJS Jest compatibility
 // (source: apps/job-dashboard/src/services/notification/telegram.js)
@@ -34,7 +34,7 @@ function formatNotificationText(message) {
     text = escapeHtml(text);
   }
   if (text.length > TELEGRAM_MAX_LENGTH) {
-    text = text.slice(0, TELEGRAM_MAX_LENGTH - 20) + '\n\n[...truncated]';
+    text = `${text.slice(0, TELEGRAM_MAX_LENGTH - 20)  }\n\n[...truncated]`;
   }
   return text;
 }

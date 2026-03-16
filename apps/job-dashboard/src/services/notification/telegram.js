@@ -33,7 +33,7 @@ function formatNotificationText(message) {
 
   // Truncate to Telegram's 4096 char limit
   if (text.length > TELEGRAM_MAX_LENGTH) {
-    text = text.slice(0, TELEGRAM_MAX_LENGTH - 20) + '\n\n[...truncated]';
+    text = `${text.slice(0, TELEGRAM_MAX_LENGTH - 20)  }\n\n[...truncated]`;
   }
 
   return text;

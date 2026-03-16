@@ -26,7 +26,7 @@ const createMockSessionManager = () => ({
         return null;
       }
       return allSessions;
-    } catch (e) {
+    } catch (_e) {
       return platform ? null : {};
     }
   }),
@@ -37,7 +37,7 @@ const createMockSessionManager = () => ({
       allSessions[platform] = { ...data, timestamp: Date.now() };
       mockFs.writeFileSync(JSON.stringify(allSessions));
       return true;
-    } catch (e) {
+    } catch (_e) {
       return false;
     }
   }),

@@ -344,7 +344,7 @@ async function ensureD1Schema(d1, tableName) {
 
     initializedTables.add(tableName);
     return true;
-  } catch (error) {
+  } catch (_error) {
     return false;
   }
 }
