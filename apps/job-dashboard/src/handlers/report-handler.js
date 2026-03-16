@@ -1,5 +1,6 @@
 import { BaseHandler } from './base-handler.js';
 import { normalizeError } from '../../../job-server/src/shared/errors/index.js';
+import { sendTelegramNotification, escapeHtml } from '../services/notification/telegram.js';
 
 /**
  * Handler for report generation operations.
@@ -118,31 +119,10 @@ export class ReportHandler extends BaseHandler {
               .join('\n')
           : 'None';
 
-      console.log(
-        '[Notification]',
-        JSON.stringify({
-          text: `\ud83d\udcca Daily Job Report - ${now.toISOString().split('T')[0]}`,
-          blocks: [
-            {
-              type: 'header',
-              text: { type: 'plain_text', text: '\ud83d\udcca Daily Job Report' },
-            },
-            {
-              type: 'section',
-              text: {
-                type: 'mrkdwn',
-                text: `*Summary*\nTotal: ${report.summary.total} | New Today: ${report.summary.newToday}\n${statusLine}`,
-              },
-            },
-            {
-              type: 'section',
-              text: {
-                type: 'mrkdwn',
-                text: `*High Priority (80%+ match)*\n${highPriorityList}`,
-              },
-            },
-          ],
-        })
+      await sendTelegramNotification(this.env,
+        `📊 <b>Daily Job Report</b> - ${now.toISOString().split('T')[0]}\n\n` +
+        `<b>Summary</b>\nTotal: ${report.summary.total} | New Today: ${report.summary.newToday}\n${escapeHtml(statusLine)}\n\n` +
+        `<b>High Priority</b>\n${escapeHtml(highPriorityList)}`
       );
 
       return this.jsonResponse({
