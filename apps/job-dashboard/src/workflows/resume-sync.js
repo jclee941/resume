@@ -6,6 +6,7 @@ import {
   syncToPlatform,
   notifyPreview,
 } from './resume-sync-helpers.js';
+import { sendTelegramNotification, escapeHtml } from '../services/notification/telegram.js';
 
 /**
  * Resume Sync Workflow
@@ -242,29 +243,17 @@ export class ResumeSyncWorkflow extends WorkflowEntrypoint {
         const summary = platforms
           .map((p) => {
             const changes = sync.changes[p];
-            return `*${p}*: +${changes.additions} ~${changes.updates} -${changes.deletions}`;
+            return `<b>${escapeHtml(p)}</b>: +${changes.additions} ~${changes.updates} -${changes.deletions}`;
           })
           .join('\n');
 
-        console.log(
-          '[Notification]',
-          JSON.stringify({
-            text: '✅ Resume Sync Complete',
-            blocks: [
-              {
-                type: 'header',
-                text: { type: 'plain_text', text: '✅ Resume Sync Complete' },
-              },
-              {
-                type: 'section',
-                text: {
-                  type: 'mrkdwn',
-                  text: `*Resume*: ${resumeId}\n*Platforms*:\n${summary}\n*Backup ID*: ${backup.backupId}`,
-                },
-              },
-            ],
-          })
+        await sendTelegramNotification(this.env,
+          `✅ <b>Resume Sync Complete</b>\n\n` +
+          `<b>Resume</b>: ${escapeHtml(resumeId)}\n` +
+          `<b>Platforms</b>:\n${summary}\n` +
+          `<b>Backup ID</b>: ${escapeHtml(backup.backupId)}`
         );
+        return { notified: true };
       }
     );
 

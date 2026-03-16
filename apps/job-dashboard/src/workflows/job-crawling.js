@@ -1,6 +1,6 @@
 import { WorkflowEntrypoint } from 'cloudflare:workers';
 import { DEFAULT_USER_AGENT } from '../utils/user-agents.js';
-import { sendEvolutionNotification } from '../services/notification/evolution-api.js';
+import { sendTelegramNotification, escapeHtml } from '../services/notification/telegram.js';
 
 /**
  * Job Crawling Workflow
@@ -161,33 +161,16 @@ export class JobCrawlingWorkflow extends WorkflowEntrypoint {
         timeout: '30 seconds',
       },
       async () => {
-        if (matchedJobs.length === 0) return { notified: false };
-
-        const topJobs = matchedJobs
-          .slice(0, 5)
-          .map((j) => `• ${j.company} - ${j.position} (${j.matchScore}%)`)
-          .join('\n');
-
-        console.log(
-          '[Notification]',
-          JSON.stringify({
-            text: `🔍 Job Search Complete: ${matchedJobs.length} matches`,
-            blocks: [
-              {
-                type: 'header',
-                text: { type: 'plain_text', text: '🔍 Job Search Results' },
-              },
-              {
-                type: 'section',
-                text: {
-                  type: 'mrkdwn',
-                  text: `*Platforms*: ${platforms.join(', ')}\n*Found*: ${results.totalJobs} jobs\n*Matched*: ${matchedJobs.length} jobs\n\n*Top Matches*:\n${topJobs}`,
-                },
-              },
-            ],
-          })
+        const topJobs = matchedJobs.slice(0, 5)
+          .map(j => `  • ${escapeHtml(j.company)} - ${escapeHtml(j.position)} (${j.matchScore}%)`)
+          .join('\n') || 'None';
+        await sendTelegramNotification(this.env,
+          `🔍 <b>Job Search Results</b>\n\n` +
+          `<b>Platforms</b>: ${escapeHtml(platforms.join(', '))}\n` +
+          `<b>Found</b>: ${results.totalJobs} jobs\n` +
+          `<b>Matched</b>: ${matchedJobs.length} jobs\n\n` +
+          `<b>Top Matches</b>:\n${topJobs}`
         );
-
         return { notified: true };
       }
     );
@@ -315,6 +298,6 @@ export class JobCrawlingWorkflow extends WorkflowEntrypoint {
   }
 
   async sendNotification(message) {
-    await sendEvolutionNotification(this.env, message);
+    await sendTelegramNotification(this.env, message);
   }
 }

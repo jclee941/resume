@@ -1,5 +1,5 @@
 import { WorkflowEntrypoint } from 'cloudflare:workers';
-import { sendEvolutionNotification } from '../services/notification/evolution-api.js';
+import { sendTelegramNotification, escapeHtml } from '../services/notification/telegram.js';
 
 /**
  * Daily Report Workflow
@@ -120,10 +120,10 @@ export class DailyReportWorkflow extends WorkflowEntrypoint {
         timeout: '30 seconds',
       },
       async () => {
-        console.log(
-          '[Notification]',
-          JSON.stringify({ type, title: content.title, date: content.date })
+        await sendTelegramNotification(this.env,
+          `📊 <b>${escapeHtml(content.title)}</b>\n\nDate: ${escapeHtml(content.date)}\nType: ${escapeHtml(type)}`
         );
+        return { notified: true };
       }
     );
 
@@ -299,10 +299,10 @@ ${statusEmoji.pending} 대기: ${applications.pending}건`,
   }
 
   async sendReport(content, _type) {
-    await sendEvolutionNotification(this.env, content);
+    await sendTelegramNotification(this.env, content);
   }
 
   async sendNotification(message) {
-    await sendEvolutionNotification(this.env, message);
+    await sendTelegramNotification(this.env, message);
   }
 }
