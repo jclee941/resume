@@ -97,23 +97,15 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ $env.EVOLUTION_API_URL }}/message/sendText/{{ $env.EVOLUTION_INSTANCE_NAME }}",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "apikey",
-              "value": "={{ $env.EVOLUTION_API_KEY }}"
-            }
-          ]
-        },
+        "url": "https://api.telegram.org/bot{{ $env.TELEGRAM_BOT_TOKEN }}/sendMessage",
+        "sendHeaders": false,
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ number: $env.EVOLUTION_WHATSAPP_NUMBER, text: `✅ Resume deployed successfully!\n\nCommit: ${$('GitHub Webhook').item.json.head_commit.message}\nAuthor: ${$('GitHub Webhook').item.json.head_commit.author.name}\nURL: https://resume.jclee.me\nTimestamp: ${$now.toISO()}` }) }}",
+        "jsonBody": "={{ JSON.stringify({ chat_id: $env.TELEGRAM_CHAT_ID, text: `✅ Resume deployed successfully!\n\nCommit: ${$('GitHub Webhook').item.json.head_commit.message}\nAuthor: ${$('GitHub Webhook').item.json.head_commit.author.name}\nURL: https://resume.jclee.me\nTimestamp: ${$now.toISO()}`, parse_mode: \"HTML\" }) }}",
         "options": {}
       },
-      "id": "whatsapp-success",
-      "name": "WhatsApp Success Notification",
+      "id": "telegram-success",
+      "name": "Telegram Success Notification",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [2010, 200]
@@ -121,23 +113,15 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ $env.EVOLUTION_API_URL }}/message/sendText/{{ $env.EVOLUTION_INSTANCE_NAME }}",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "apikey",
-              "value": "={{ $env.EVOLUTION_API_KEY }}"
-            }
-          ]
-        },
+        "url": "https://api.telegram.org/bot{{ $env.TELEGRAM_BOT_TOKEN }}/sendMessage",
+        "sendHeaders": false,
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ number: $env.EVOLUTION_WHATSAPP_NUMBER, text: `❌ Resume deployment failed!\n\nCommit: ${$('GitHub Webhook').item.json.head_commit.message}\nError: ${$json.stderr || $json.error}\nTimestamp: ${$now.toISO()}` }) }}",
+        "jsonBody": "={{ JSON.stringify({ chat_id: $env.TELEGRAM_CHAT_ID, text: `❌ Resume deployment failed!\n\nCommit: ${$('GitHub Webhook').item.json.head_commit.message}\nError: ${$json.stderr || $json.error}\nTimestamp: ${$now.toISO()}`, parse_mode: \"HTML\" }) }}",
         "options": {}
       },
-      "id": "whatsapp-failure",
-      "name": "WhatsApp Failure Notification",
+      "id": "telegram-failure",
+      "name": "Telegram Failure Notification",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [2010, 400]
@@ -265,7 +249,7 @@
       "main": [
         [
           {
-            "node": "WhatsApp Success Notification",
+            "node": "Telegram Success Notification",
             "type": "main",
             "index": 0
           },
@@ -277,7 +261,7 @@
         ]
       ]
     },
-    "WhatsApp Success Notification": {
+    "Telegram Success Notification": {
       "main": [
         [
           {

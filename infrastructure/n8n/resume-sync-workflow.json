@@ -74,23 +74,15 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ $env.EVOLUTION_API_URL }}/message/sendText/{{ $env.EVOLUTION_INSTANCE_NAME }}",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "apikey",
-              "value": "={{ $env.EVOLUTION_API_KEY }}"
-            }
-          ]
-        },
+        "url": "https://api.telegram.org/bot{{ $env.TELEGRAM_BOT_TOKEN }}/sendMessage",
+        "sendHeaders": false,
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ number: $env.EVOLUTION_WHATSAPP_NUMBER, text: `🚨 Resume Sync Failed\n\n📟 Status: ${$('Trigger Resume Sync').item.json.statusCode || 'Timeout'}\n🕒 Time: ${$now.toISO()}\n❗ Error: ${$('Trigger Resume Sync').item.json.error || ('HTTP ' + $('Trigger Resume Sync').item.json.statusCode)}\n\nTriggered by n8n Daily Resume Sync` }) }}",
+        "jsonBody": "={{ JSON.stringify({ chat_id: $env.TELEGRAM_CHAT_ID, text: `🚨 Resume Sync Failed\n\n📟 Status: ${$('Trigger Resume Sync').item.json.statusCode || 'Timeout'}\n🕒 Time: ${$now.toISO()}\n❗ Error: ${$('Trigger Resume Sync').item.json.error || ('HTTP ' + $('Trigger Resume Sync').item.json.statusCode)}\n\nTriggered by n8n Daily Resume Sync`, parse_mode: \"HTML\" }) }}",
         "options": {}
       },
-      "id": "whatsapp-fail",
-      "name": "Send WhatsApp Failure Alert",
+      "id": "telegram-fail",
+      "name": "Send Telegram Failure Alert",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [1050, 200]
@@ -98,23 +90,15 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ $env.EVOLUTION_API_URL }}/message/sendText/{{ $env.EVOLUTION_INSTANCE_NAME }}",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "apikey",
-              "value": "={{ $env.EVOLUTION_API_KEY }}"
-            }
-          ]
-        },
+        "url": "https://api.telegram.org/bot{{ $env.TELEGRAM_BOT_TOKEN }}/sendMessage",
+        "sendHeaders": false,
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ number: $env.EVOLUTION_WHATSAPP_NUMBER, text: `✅ Resume Sync Complete\n\n📟 Status: Success\n🕒 Time: ${$now.toISO()}\n🧾 Details: ${JSON.stringify($('Trigger Resume Sync').item.json)}\n\nTriggered by n8n Daily Resume Sync` }) }}",
+        "jsonBody": "={{ JSON.stringify({ chat_id: $env.TELEGRAM_CHAT_ID, text: `✅ Resume Sync Complete\n\n📟 Status: Success\n🕒 Time: ${$now.toISO()}\n🧾 Details: ${JSON.stringify($('Trigger Resume Sync').item.json)}\n\nTriggered by n8n Daily Resume Sync`, parse_mode: \"HTML\" }) }}",
         "options": {}
       },
-      "id": "whatsapp-success",
-      "name": "Send WhatsApp Success Notice",
+      "id": "telegram-success",
+      "name": "Send Telegram Success Notice",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [1050, 400]
@@ -147,14 +131,14 @@
       "main": [
         [
           {
-            "node": "Send WhatsApp Failure Alert",
+            "node": "Send Telegram Failure Alert",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Send WhatsApp Success Notice",
+            "node": "Send Telegram Success Notice",
             "type": "main",
             "index": 0
           }

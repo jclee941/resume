@@ -15,7 +15,6 @@ infrastructure/n8n/
 ├── *.json                    # top-level workflow exports
 ├── workflows/                # additional workflow exports
 ├── README.md                 # operator guide + webhook/deploy flow
-├── EVOLUTION_API_SETUP.md    # Evolution API (WhatsApp) setup
 ├── SLACK_OAUTH2_SETUP.md     # Slack credential setup (deprecated)
 └── UPDATE_CREDENTIAL.md      # credential rotation notes
 ```
@@ -25,7 +24,7 @@ infrastructure/n8n/
 | Task                           | Location                                                                     | Notes                                  |
 | ------------------------------ | ---------------------------------------------------------------------------- | -------------------------------------- |
 | End-to-end deploy webhook flow | `infrastructure/n8n/README.md`                                               | GitHub push → build/test/deploy/notify |
-| Evolution API (WhatsApp) setup | `infrastructure/n8n/EVOLUTION_API_SETUP.md`                                  | Instance creation, env vars, test      |
+| Telegram Bot API setup       | `infrastructure/n8n/README.md`                                               | Credentials in 1Password `homelab` vault |
 | Slack credential setup (deprecated) | `infrastructure/n8n/SLACK_OAUTH2_SETUP.md`                              | OAuth2 redirect/scopes (legacy)        |
 | Alert-to-issue bridges         | `grafana-github-issue-workflow.json`, `glitchtip-github-issue-workflow.json` | webhook-driven issue creation          |
 | Wanted automation exports      | `wanted-*.json`                                                              | platform-specific workflow experiments |
@@ -39,7 +38,7 @@ infrastructure/n8n/
 
 ## ANTI-PATTERNS
 
-- Never commit live API keys, Evolution API tokens, webhook secrets, or credential IDs that are environment-specific.
+- Never commit live API keys, Telegram bot tokens, webhook secrets, or credential IDs that are environment-specific.
 - Never assume public reachability for internal automation hosts.
 - Never update workflow JSON without checking the paired setup doc if one exists.
 - Never describe an n8n workflow as authoritative production deploy logic if GitHub Actions or Cloudflare Builds now own that path.
