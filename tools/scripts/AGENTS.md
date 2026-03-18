@@ -1,8 +1,8 @@
 # AUTOMATION SCRIPTS KNOWLEDGE BASE
 
-**Generated:** 2026-02-22 22:30:00 KST
-**Commit:** 623fd03
-**Branch:** master
+**Generated:** 2026-03-17
+**Commit:** `882b837`
+**Branch:** `master`
 
 ## OVERVIEW
 
@@ -29,13 +29,8 @@ scripts/
 
 ## CONVENTIONS
 
-- Run from project root context.
-- `set -euo pipefail` in all shell scripts.
-- Idempotent — safe to re-run.
+- Child scripts inherit root/`tools/` conventions (project root context, `set -euo pipefail`, idempotency).
 
 ## ANTI-PATTERNS
 
-- Never hardcode secrets in scripts.
-- Never bypass verification steps.
-- Never edit generated artifacts manually.
 - Never use absolute paths.

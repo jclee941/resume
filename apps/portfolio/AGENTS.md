@@ -1,8 +1,8 @@
 # PORTFOLIO WORKER KNOWLEDGE BASE
 
-**Generated:** 2026-02-22 22:30:00 KST
-**Commit:** 623fd03
-**Branch:** master
+**Generated:** 2026-03-17
+**Commit:** `882b837`
+**Branch:** `master`
 
 ## OVERVIEW
 
@@ -13,28 +13,39 @@ Cloudflare Worker serving a cyberpunk terminal-style portfolio. Zero runtime I/O
 ```text
 portfolio/
 ├── index.html              # source HTML (hand-edited)
+├── index-en.html           # English portfolio source
 ├── generate-worker.js      # build compiler
 ├── worker.js               # GENERATED — never edit
 ├── entry.js                # unified edge router
-├── data.json               # SSoT snapshot (synced from data/)
+├── data.json               # SSoT snapshot (KO)
+├── data_en.json            # English resume data
+├── data_ja.json            # Japanese resume data
 ├── dashboard.html          # admin dashboard (1290 lines)
 ├── lib/                    # 25 build/runtime modules (see lib/AGENTS.md)
 ├── src/                    # source styles/scripts (see src/AGENTS.md)
-├── assets/                 # static files (favicon, og-image)
+├── assets/                 # static files (fonts, favicons)
+├── generate-og-image.js    # OG image generator
+├── og-image.png/webp       # Generated OG image (KO)
+├── og-image-en.png/webp    # Generated OG image (EN)
+├── generate-project-schemas.js # Schema generator
+├── sitemap.xml             # SEO sitemap
+├── robots.txt              # SEO robots config
 ├── wrangler.toml           # worker config (name: resume)
 └── validate-seo.sh         # SEO validation script
 ```
 
 ## WHERE TO LOOK
 
-| Task            | Location             | Notes                               |
-| --------------- | -------------------- | ----------------------------------- |
-| Build pipeline  | `generate-worker.js` | HTML→CSP→inline→worker.js           |
-| Source markup   | `index.html`         | hand-edited, backtick-escaped       |
-| Runtime modules | `lib/`               | 25 stateless JS modules             |
-| Source styles   | `src/styles/`        | CSS variables, dark-only theme      |
-| Edge routing    | `entry.js`           | imports both portfolio + job worker |
-| SEO assets      | `sitemap.xml`, etc.  | robots.txt, manifest.json, sw.js    |
+| Task              | Location                       | Notes                                  |
+| ----------------- | ------------------------------ | -------------------------------------- |
+| Build pipeline     | `generate-worker.js`           | HTML→CSP→inline→worker.js              |
+| Source markup      | `index.html`, `index-en.html`  | KO/EN portfolio templates               |
+| Runtime modules    | `lib/`                         | 25 stateless JS modules                |
+| Multi-language     | `i18n.js`, `data_*.json`       | KO/EN/JA support                       |
+| OG Image Gen       | `generate-og-image.js`         | Canvas-based social image generation   |
+| Project Schemas    | `*project-schemas.js`          | JSON-LD generation and injection        |
+| SEO/Metadata       | `SEO_IMPLEMENTATION.md`        | sitemap, robots, meta tags             |
+| Edge routing       | `entry.js`                     | imports both portfolio + job worker    |
 
 ## BUILD PIPELINE
 

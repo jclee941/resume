@@ -1,5 +1,9 @@
 # WORKER HANDLERS KNOWLEDGE BASE
 
+**Generated:** 2026-03-17
+**Commit:** `882b837`
+**Branch:** `master`
+
 ## OVERVIEW
 
 Handler modules are request-facing adapters for `/job/*` API routes. Keep handlers thin and delegate business logic to services.

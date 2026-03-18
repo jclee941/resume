@@ -1,5 +1,9 @@
 # PROJECT KNOWLEDGE BASE
 
+**Generated:** 2026-03-17
+**Commit:** `882b837`
+**Branch:** `master`
+
 ## OVERVIEW
 
 Playwright end-to-end test suite for portfolio, dashboard, security, accessibility, and deployment verification paths.

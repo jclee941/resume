@@ -1,8 +1,8 @@
 # JOB DASHBOARD WORKER KNOWLEDGE BASE
 
-**Generated:** 2026-02-22 22:30:00 KST
-**Commit:** 623fd03
-**Branch:** master
+**Generated:** 2026-03-17
+**Commit:** `882b837`
+**Branch:** `master`
 
 ## OVERVIEW
 
@@ -14,7 +14,7 @@ Cloudflare Worker serving the job dashboard API at `resume.jclee.me/job/*`. Clas
 workers/
 ├── src/
 │   ├── index.js              # fetch handler + workflow exports
-│   ├── handlers/             # 13 BaseHandler subclasses
+│   ├── handlers/             # 14 BaseHandler subclasses
 │   ├── workflows/            # 7 CF Workflow classes
 │   ├── middleware/            # 5-layer request pipeline
 │   ├── services/             # cache, migration, tracing, backup
@@ -28,14 +28,14 @@ workers/
 | Task               | Location                  | Notes                             |
 | ------------------ | ------------------------- | --------------------------------- |
 | Request routing    | `src/index.js`            | strips /job prefix, routes        |
-| Handler logic      | `src/handlers/`           | 13 handlers extending BaseHandler |
+| Handler logic      | `src/handlers/`           | 14 handlers extending BaseHandler |
 | Workflow schedules | `src/workflows/`          | 7 CF Workflow classes             |
 | Auth middleware    | `src/middleware/`         | 5-layer middleware stack          |
 | DB migrations      | `src/services/migration/` | D1 schema management              |
 
-## HANDLERS (13)
+## HANDLERS (14)
 
-ApplicationsHandler (7 methods), StatsHandler (4), AuthHandler (5), WebhookHandler (10+), AutoApplyHandler (3), HealthHandler, ConfigHandler, WorkflowHandler, CleanupHandler, CrawlHandler, AnalyticsHandler, ProfileHandler, ResumeHandler.
+ApplicationsHandler (7 methods), StatsHandler (4), AuthHandler (5), WebhookHandler (10+), AutoApplyHandler (3), AutoApplyWebhookHandler, DiagnosticsHandler, JobSearchHandler, ProfileSyncHandler, ReportHandler, ResumeMasterHandler, ResumeSyncHandler, TestHandler, BaseHandler.
 
 ## WORKFLOWS (7)
 
@@ -56,11 +56,15 @@ ApplicationsHandler (7 methods), StatsHandler (4), AuthHandler (5), WebhookHandl
 ## STORAGE
 
 - **D1** (`job-dashboard-db`): applications, job_cache, sync_logs tables
-- **KV patterns**: `session:{platform}`, `ratelimit:{ip}:{endpoint}`, `cache:{platform}:{jobId}`
+- **KV**: `SESSIONS`, `RATE_LIMIT_KV`, `NONCE_KV`
+- **AI**: Workers AI binding
+- **Browser**: `MYBROWSER` (Browser Rendering), `BROWSER_SESSION` (Durable Object: BrowserSessionDO)
+- **Queue**: `crawl-tasks`
+- **Workflows**: 7 (job-crawling, application, resume-sync, daily-report, health-check, backup, cleanup)
 
-## API SURFACE (43 endpoints)
+## API SURFACE (47 endpoints)
 
-Health (3), Stats (4), Auth (7), Applications CRUD (6), Webhooks (9), Auto-apply (3), Workflows (7), Config (2), Testing (2).
+Health (3), Stats (4), Auth (7), Applications CRUD (6), Webhooks (9), Auto-apply (3), Workflows (7), Config (2), Testing (2), Diagnostics (2), Reports (2).
 
 ## CHILD GUIDES
 

@@ -1,5 +1,9 @@
 # WORKER WORKFLOWS KNOWLEDGE BASE
 
+**Generated:** 2026-03-17
+**Commit:** `882b837`
+**Branch:** `master`
+
 ## OVERVIEW
 
 Workflow modules orchestrate background execution for crawling, application, resume sync, reporting, health checks, backup, and cleanup.
