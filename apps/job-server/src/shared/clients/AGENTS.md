@@ -1,8 +1,8 @@
 # CLIENTS KNOWLEDGE BASE
 
-**Generated:** 2026-02-22 22:30:00 KST
-**Commit:** 623fd03
-**Branch:** master
+**Generated:** 2026-03-17
+**Commit:** `882b837`
+**Branch:** `master`
 
 ## OVERVIEW
 

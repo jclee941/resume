@@ -1,22 +1,33 @@
 # SCRIPTS KNOWLEDGE BASE
 
-**Generated:** 2026-02-22 22:30:00 KST
-**Commit:** 623fd03
-**Branch:** master
+**Generated:** 2026-03-17
+**Commit:** `882b837`
+**Branch:** `master`
 
 ## OVERVIEW
 
-25 utility scripts for authentication, data sync, and metrics. Run from project root.
+17 utility scripts for authentication, data sync, and metrics. Run from project root.
 
 ## KEY SCRIPTS
 
-| Script                   | Purpose                           |
-| ------------------------ | --------------------------------- |
-| `quick-login.js`         | current auth method (recommended) |
-| `extract-cookies-cdp.js` | CDP cookie extraction             |
-| `auth-sync.js`           | cookies → worker KV (846 lines)   |
-| `profile-sync.js`        | resume → API sync (966 lines)     |
-| `metrics-exporter.js`    | Prometheus metrics export         |
+| Script                          | Purpose                                           |
+| ------------------------------- | ------------------------------------------------- |
+| `auth-persistent.js`            | persistent session management                     |
+| `auth-sync.js`                  | cookies → worker KV (846 lines)                   |
+| `auth-sync/`                    | auth sync helper modules                          |
+| `auto-all.js`                   | run all automation workflows                      |
+| `ci-resume-sync.js`             | CI pipeline resume sync                           |
+| `cookie-inject.js`              | inject cookies into browser                       |
+| `extract-cookies-cdp.js`        | CDP cookie extraction                             |
+| `extract-cookies-from-chrome.sh` | legacy chrome extraction script                   |
+| `get-cookies.js`                | retrieve cookies from data store                  |
+| `import-cookies-manual.js`      | manually import cookie strings                    |
+| `metrics-exporter.js`           | Prometheus metrics export                         |
+| `ops/`                          | operational helper scripts                        |
+| `profile-sync.js`               | resume → API sync (966 lines)                     |
+| `profile-sync/`                 | profile sync helper modules                       |
+| `quick-login.js`                | current auth method (recommended)                 |
+| `skill-tag-map.js`              | skill name → tag ID mapping                       |
 
 ## AUTH EVOLUTION
 

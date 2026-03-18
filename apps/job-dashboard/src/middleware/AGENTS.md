@@ -1,5 +1,9 @@
 # WORKER MIDDLEWARE KNOWLEDGE BASE
 
+**Generated:** 2026-03-17
+**Commit:** `882b837`
+**Branch:** `master`
+
 ## OVERVIEW
 
 Middleware modules enforce cross-cutting request policy (CORS, CSRF, rate limiting) before handlers run.

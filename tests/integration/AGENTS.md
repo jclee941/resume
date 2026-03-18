@@ -1,5 +1,9 @@
 # INTEGRATION TESTS KNOWLEDGE BASE
 
+**Generated:** 2026-03-17
+**Commit:** `882b837`
+**Branch:** `master`
+
 ## OVERVIEW
 
 Integration tests validate cross-module contracts, failure scenarios, and HTML/runtime interaction boundaries that are broader than unit scope but lighter than full E2E.

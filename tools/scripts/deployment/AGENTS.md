@@ -1,5 +1,9 @@
 # DEPLOYMENT SCRIPTS KNOWLEDGE BASE
 
+**Generated:** 2026-03-17
+**Commit:** `882b837`
+**Branch:** `master`
+
 ## OVERVIEW
 
 Deployment helper scripts run preflight checks, deployment wrappers, and post-deploy verification support for Cloudflare-hosted services.

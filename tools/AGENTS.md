@@ -1,8 +1,8 @@
 # TOOLS KNOWLEDGE BASE
 
-**Generated:** 2026-02-22 22:30:00 KST
-**Commit:** 623fd03
-**Branch:** master
+**Generated:** 2026-03-17
+**Commit:** `882b837`
+**Branch:** `master`
 
 ## OVERVIEW
 
@@ -47,4 +47,3 @@ tools/
 - Never run scripts from subdirectories.
 - Never skip `affected.go` in CI.
 - Never deploy manually — CI/CD only.
-- Never edit generated artifacts.

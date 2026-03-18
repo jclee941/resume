@@ -1,7 +1,7 @@
 # CLOUDFLARE TERRAFORM KNOWLEDGE BASE
 
-**Generated:** 2026-03-11
-**Commit:** `ee9300d`
+**Generated:** 2026-03-17
+**Commit:** `882b837`
 **Branch:** `master`
 
 ## OVERVIEW
@@ -12,7 +12,7 @@ Terraform IaC for Cloudflare DNS, worker routes, KV/D1 references, and related a
 
 ```text
 infrastructure/cloudflare/
-├── backend.tf              # local backend configuration
+├── backend.tf              # S3-compatible backend (bucket: terraform-state)
 ├── versions.tf             # provider/version pins
 ├── variables.tf            # input variables
 ├── dns.tf                  # DNS records
@@ -29,7 +29,7 @@ infrastructure/cloudflare/
 
 | Task                   | Location                          | Notes                                                |
 | ---------------------- | --------------------------------- | ---------------------------------------------------- |
-| Backend/state behavior | `backend.tf`                      | local backend, not GitLab HTTP                       |
+| Backend/state behavior | `backend.tf`                      | S3-compatible backend (bucket: terraform-state)  |
 | Worker route bindings  | `workers.tf`                      | Terraform manages routes, not worker source code     |
 | DNS changes            | `dns.tf`                          | GitOps through PRs                                   |
 | KV/D1 references       | `kv.tf`, `d1.tf`                  | treat as read-only resource references               |
@@ -39,7 +39,7 @@ infrastructure/cloudflare/
 ## CONVENTIONS
 
 - Import existing resources first; do not assume Terraform creates the full estate from scratch.
-- State backend is local according to `backend.tf`; update docs and workflow assumptions together if that changes.
+- State backend is S3-compatible (bucket: `terraform-state`); update docs and workflow assumptions together if that changes.
 - Worker code and data plane changes go through Wrangler / build pipelines, not Terraform.
 - Treat KV namespaces and D1 databases as referenced infrastructure, not mutable application data managed here.
 

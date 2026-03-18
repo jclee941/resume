@@ -1,12 +1,12 @@
 # GITHUB AUTOMATION KNOWLEDGE BASE
 
-**Generated:** 2026-03-04
-**Commit:** 05a787b
-**Branch:** master
+**Generated:** 2026-03-17
+**Commit:** `882b837`
+**Branch:** `master`
 
 ## OVERVIEW
 
-21 workflows, 1 composite action, branch rulesets, auto-labeling. CI is validation-only — production deployment via Cloudflare Workers Builds.
+39 workflows, 1 composite action, branch rulesets, auto-labeling, Codex/OpenCode integration. CI is validation-only — production deployment via Cloudflare Workers Builds.
 
 ## STRUCTURE
 
@@ -14,15 +14,15 @@
 .github/
 ├── workflows/
 │   ├── ci.yml                # main validation pipeline (8 jobs)
-│   ├── maintenance.yml       # scheduled cleanup (4 jobs)
+│   ├── release.yml           # automated semver release
 │   ├── terraform.yml         # IaC plan/apply
-│   ├── release.yml           # conventional commit → semver tag
-│   ├── verify.yml            # post-deploy health check
-│   ├── update-snapshots.yml  # Playwright snapshot refresh
-│   ├── pr-labeler.yml        # auto-label PRs by path
-│   ├── codeql.yml            # weekly + push security scan
-│   └── auto-merge.yml        # dependabot auto-merge
-│   ├── auto-issue-on-failure.yml # auto-create issues on CI/deploy failure
+│   ├── codex-*.yml           # Codex integration (5)
+│   ├── opencode-*.yml        # OpenCode automation (4)
+│   ├── auto-*.yml            # automation & sync (6)
+│   ├── issue-*.yml           # issue lifecycle management (5)
+│   ├── maintenance.yml       # cleanup & stale management (5)
+│   ├── pr-*.yml              # PR normalization and size (4)
+│   └── wanted-resume-sync.yml # Wanted profile sync automation
 ├── actions/
 │   └── setup/                # composite: Node 22 + npm ci + Playwright
 ├── CODEOWNERS
@@ -40,6 +40,7 @@
 | Label rules       | `labeler.yml`             | 9 auto-labels by path          |
 | Branch protection | `rulesets/`               | squash/rebase, required checks |
 | Terraform CI      | `workflows/terraform.yml` | plan on PR, apply on dispatch  |
+| Codex/OpenCode    | `workflows/`              | agent/issue/pr sync & triage   |
 
 ## CI PIPELINE (`ci.yml`)
 

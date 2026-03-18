@@ -1,5 +1,9 @@
 # BAZEL FACADE SCRIPTS KNOWLEDGE BASE
 
+**Generated:** 2026-03-17
+**Commit:** `882b837`
+**Branch:** `master`
+
 ## OVERVIEW
 
 Shell wrappers in this directory provide Bazel-oriented entrypoints for build/test/deploy validation tasks while day-to-day workflows remain npm-first.

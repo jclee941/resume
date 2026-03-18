@@ -1,7 +1,7 @@
 # PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-03-11
-**Commit:** `ee9300d`
+**Generated:** 2026-03-17
+**Commit:** `882b837`
 **Branch:** `master`
 
 ## OVERVIEW
@@ -19,10 +19,13 @@ Resume monorepo: Cloudflare Worker portfolio, job automation runtimes, dashboard
 ├── packages/
 │   ├── cli/              # resume CLI
 │   └── data/             # SSoT resumes and schemas
+│   └── shared/           # cross-package shared utilities
 ├── tools/                # CI, build, deploy, verification scripts
 ├── tests/                # Jest, integration, Playwright E2E
 ├── infrastructure/       # Cloudflare, monitoring, n8n, DB config
 ├── docs/                 # guides, ADRs, architecture, reports
+├── ta/                   # TA profile generation (Python/PPTX)
+├── third_party/          # vendored external dependencies
 ├── .github/              # CI/release/maintenance control plane
 └── package.json          # workspace root + operator scripts
 ```
@@ -41,6 +44,8 @@ Resume monorepo: Cloudflare Worker portfolio, job automation runtimes, dashboard
 | Tests by layer                | `tests/`              | `unit/`, `integration/`, `e2e/` with child guides               |
 | Monitoring and n8n automation | `infrastructure/`     | dashboards, alerting, webhook workflows                         |
 | Design/procedure docs         | `docs/`               | root docs guide plus ADR/architecture child guides              |
+| TA profile generation | `ta/` | Python PPTX scripts, not a workspace package |
+| Shared utilities | `packages/shared/` | Shared code used across internal packages |
 
 ## CONVENTIONS
 
