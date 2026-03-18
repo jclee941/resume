@@ -25,6 +25,7 @@ export const MILITARY_STAT = {
   미필: 2,
   면제: 1,
   해당없음: 5,
+  사회복무요원: 4,
 };
 
 export const MILITARY_KIND = {
@@ -44,7 +45,7 @@ export const SCHOOL_TYPE = {
   고등학교: 11,
 };
 
-function toYYYYMM(dateStr) {
+export function toYYYYMM(dateStr) {
   if (!dateStr) return '';
   return String(dateStr).replace(/\./g, '').trim();
 }
@@ -58,10 +59,12 @@ function pushField(fields, name, value) {
   fields.push({ name, value: toFieldValue(value) });
 }
 
-function parseRange(period) {
-  const parts = String(period || '')
-    .split('~')
-    .map((part) => part.trim());
+export function parseRange(period) {
+  const raw = String(period || '');
+  // Support both '~' and ' - ' separators
+  const parts = raw.includes('~')
+    ? raw.split('~').map((part) => part.trim())
+    : raw.split(' - ').map((part) => part.trim());
   const start = toYYYYMM(parts[0] || '');
   const rawEnd = parts[1] || '';
   const isCurrent = rawEnd.includes('현재');
@@ -69,53 +72,87 @@ function parseRange(period) {
   return { start, end, isCurrent };
 }
 
-function codeToMainFieldName(code) {
-  if (code === 1000238) return '보안엔지니어';
-  return '시스템엔지니어';
-}
-
 function militaryKindToCode(kind) {
   if (kind === '사회복무요원') return 7;
   return MILITARY_KIND[kind] || 8;
 }
 
-export function mapCareersToFormFields(ssot) {
+/**
+ * Map careers to JobKorea form fields.
+ * @param {object} ssot - SSOT resume data
+ * @param {string[]} [indices] - Server-generated entry indices (e.g. ['c14','c844','c845']).
+ *   When provided, these replace the default c1-cN indices so the server accepts the data.
+ */
+export function mapCareersToFormFields(ssot, indices) {
   const careers = Array.isArray(ssot?.careers) ? ssot.careers : [];
   if (careers.length === 0) return [];
 
   const fields = [];
-  const indexes = [];
+  const keys =
+    indices && indices.length >= careers.length ? indices : careers.map((_, i) => `c${i + 1}`);
 
   careers.forEach((career, idx) => {
-    const key = `c${idx + 1}`;
+    if (idx >= keys.length) return;
+    const key = keys[idx];
     const { start, end, isCurrent } = parseRange(career?.period || '');
     const code = JK_JOB_CODES[career?.role] || 1000233;
-    const roleName = codeToMainFieldName(code);
 
-    indexes.push(key);
+    pushField(fields, `Career[${key}].Index_Name`, key);
     pushField(fields, `Career[${key}].C_Name`, career?.company || '');
+    pushField(fields, `Career[${key}].Co_Code`, '');
+    pushField(fields, `Career[${key}].CName_Code`, '');
+    pushField(fields, `Career[${key}].M_MainCate`, '');
+    pushField(fields, `Career[${key}].Retire_Rsn_Code`, '');
+    pushField(fields, `Career[${key}].Retire_Rsn`, '');
+    pushField(fields, `Career[${key}].Biz_No`, '');
+    pushField(fields, `Career[${key}].NHIS_LINKED_STAT`, '');
     pushField(fields, `Career[${key}].C_Part`, career?.department || '');
     pushField(fields, `Career[${key}].CSYM`, start);
     pushField(fields, `Career[${key}].CEYM`, end);
-    pushField(fields, `Career[${key}].M_MainField`, code);
-    pushField(fields, `Career[${key}].M_MainFieldName`, roleName);
-    pushField(fields, `Career[${key}].M_Part_Code`, JK_JOB_CATEGORY);
-    pushField(fields, `Career[${key}].Prfm_Prt`, String(career?.description || '').slice(0, 500));
     pushField(fields, `Career[${key}].RetireSt`, isCurrent ? 1 : 2);
-    pushField(fields, `Career[${key}].Pos_Name`, career?.role || roleName);
+    pushField(fields, `Career[${key}].M_MainJob_Jikwi`, career?.role || '');
+    pushField(fields, `Career[${key}].Job_Type_Code`, '');
+    pushField(fields, `Career[${key}].M_MainField`, code);
+    pushField(fields, `Career[${key}].M_MainJob`, code);
+    pushField(fields, `Career[${key}].Job_Field_Direct`, '');
+    pushField(fields, `Career[${key}].M_MainPay_User`, '');
+    pushField(fields, `Career[${key}].Prfm_Prt`, String(career?.description || '').slice(0, 500));
+    pushField(fields, `Career[${key}].CNameHold`, '0');
+    pushField(fields, `Career[${key}].OpenStat`, '1');
   });
 
-  pushField(fields, 'Career.index', indexes.join(','));
+  pushField(fields, 'Career.index', keys.slice(0, careers.length).join(','));
+  pushField(fields, 'UserResume.M_Career_Text', '');
+  pushField(fields, 'UserResume.M_Career_Text_Stat', '1');
+  pushField(fields, 'InputStat.CareerInputStat', 'True');
   return fields;
 }
 
-export function mapSchoolToFormFields(ssot) {
+/**
+ * Map school/education to JobKorea form fields.
+ * @param {object} ssot - SSOT resume data
+ * @param {string} [schoolIndex] - Server-generated school entry index (e.g. 'c10').
+ */
+export function mapSchoolToFormFields(ssot, schoolIndex) {
   const education = ssot?.education;
   if (!education) return [];
 
-  const key = 'c1';
+  const key = schoolIndex || 'c1';
   const isEnrolled = education.status === '재학중';
-  const gradYM = isEnrolled ? '' : toYYYYMM(education.endDate || '');
+  // Server requires Grad_YM even for 재학중 — use endDate or estimated graduation
+  let gradYM;
+  if (isEnrolled) {
+    // Estimate: startDate + 4 years (typical Korean 4-year degree)
+    const startRaw = toYYYYMM(education.startDate || '');
+    if (startRaw.length >= 4) {
+      const startYear = parseInt(startRaw.slice(0, 4), 10);
+      gradYM = `${startYear + 4}02`; // February graduation
+    } else {
+      gradYM = '';
+    }
+  } else {
+    gradYM = toYYYYMM(education.endDate || '');
+  }
   const gradTypeCode = GRAD_TYPE[education.status] || GRAD_TYPE.재학중;
 
   return [
@@ -133,25 +170,39 @@ export function mapSchoolToFormFields(ssot) {
     },
     { name: `UnivSchool[${key}].UnivMajor[0].Major_Type_Code`, value: '1' },
     { name: 'UnivSchool.index', value: key },
+    { name: 'InputStat.SchoolInputStat', value: 'True' },
   ];
 }
 
-export function mapLicensesToFormFields(ssot) {
+/**
+ * Map certifications to JobKorea form fields.
+ * @param {object} ssot - SSOT resume data
+ * @param {string[]} [indices] - Server-generated entry indices.
+ */
+export function mapLicensesToFormFields(ssot, indices) {
   const certifications = Array.isArray(ssot?.certifications) ? ssot.certifications : [];
-  if (certifications.length === 0) return [];
+  // Filter out certs without a date (status: 준비중)
+  const validCerts = certifications.filter((cert) => cert?.date);
+  if (validCerts.length === 0) return [];
 
   const fields = [];
-  const indexes = [];
+  const keys =
+    indices && indices.length >= validCerts.length
+      ? indices
+      : validCerts.map((_, i) => `c${i + 1}`);
 
-  certifications.forEach((cert, idx) => {
-    const key = `c${idx + 1}`;
-    indexes.push(key);
+  validCerts.forEach((cert, idx) => {
+    if (idx >= keys.length) return;
+    const key = keys[idx];
+    pushField(fields, `License[${key}].Index_Name`, key);
+    pushField(fields, `License[${key}].Naver_Lcns_Linked_Stat`, '');
     pushField(fields, `License[${key}].Lc_Name`, cert?.name || '');
+    pushField(fields, `License[${key}].Lc_Code`, '');
     pushField(fields, `License[${key}].Lc_Pub`, cert?.issuer || '');
     pushField(fields, `License[${key}].Lc_YYMM`, toYYYYMM(cert?.date || ''));
   });
 
-  pushField(fields, 'License.index', indexes.join(','));
+  pushField(fields, 'License.index', keys.slice(0, validCerts.length).join(','));
   pushField(fields, 'InputStat.LicenseInputStat', 'True');
   return fields;
 }
@@ -162,7 +213,7 @@ export function mapMilitaryToFormFields(ssot) {
 
   const { start, end } = parseRange(military.period || '');
   const statCode = MILITARY_STAT[military.status] || MILITARY_STAT.해당없음;
-  const kindCode = militaryKindToCode(military.type);
+  const kindCode = militaryKindToCode(military.status);
 
   return [
     { name: 'UserAddition.Military_Stat', value: toFieldValue(statCode) },
@@ -174,22 +225,32 @@ export function mapMilitaryToFormFields(ssot) {
   ];
 }
 
-export function mapAwardToFormFields(ssot) {
+/**
+ * Map awards to JobKorea form fields.
+ * @param {object} ssot - SSOT resume data
+ * @param {string[]} [indices] - Server-generated entry indices.
+ * SSOT currently stores `achievements` as string[] and has no structured
+ * `awards` entries, so real SSOT input returns an empty field set.
+ */
+export function mapAwardToFormFields(ssot, indices) {
   const awards = Array.isArray(ssot?.awards) ? ssot.awards : [];
   if (awards.length === 0) return [];
 
   const fields = [];
-  const indexes = [];
+  const keys =
+    indices && indices.length >= awards.length ? indices : awards.map((_, i) => `c${i + 1}`);
 
   awards.forEach((award, idx) => {
-    const key = `c${idx + 1}`;
-    indexes.push(key);
-    pushField(fields, `Award[${key}].Awd_Name`, award?.name || '');
-    pushField(fields, `Award[${key}].Awd_Agency`, award?.organization || '');
-    pushField(fields, `Award[${key}].Awd_Year`, award?.year || '');
+    if (idx >= keys.length) return;
+    const key = keys[idx];
+    pushField(fields, `Award[${key}].Index_Name`, key);
+    pushField(fields, `Award[${key}].Award_Name`, award?.name || '');
+    pushField(fields, `Award[${key}].Award_Inst_Name`, award?.organization || '');
+    pushField(fields, `Award[${key}].Award_Year`, award?.year || '');
+    pushField(fields, `Award[${key}].Award_Cntnt`, '');
   });
 
-  pushField(fields, 'Award.index', indexes.join(','));
+  pushField(fields, 'Award.index', keys.slice(0, awards.length).join(','));
   pushField(fields, 'InputStat.AwardInputStat', 'True');
   return fields;
 }
@@ -205,13 +266,19 @@ export function mapHopeJobToFormFields() {
   ];
 }
 
-export function buildJobKoreaFormData(ssot) {
+/**
+ * Build complete JobKorea form data from SSOT.
+ * @param {object} ssot - SSOT resume data
+ * @param {object} [sectionIndices] - Server-generated indices per section:
+ *   { career: string[], license: string[], award: string[], school: string }
+ */
+export function buildJobKoreaFormData(ssot, sectionIndices = {}) {
   return [
-    ...mapCareersToFormFields(ssot),
-    ...mapSchoolToFormFields(ssot),
-    ...mapLicensesToFormFields(ssot),
+    ...mapCareersToFormFields(ssot, sectionIndices.career),
+    ...mapSchoolToFormFields(ssot, sectionIndices.school),
+    ...mapLicensesToFormFields(ssot, sectionIndices.license),
     ...mapMilitaryToFormFields(ssot),
-    ...mapAwardToFormFields(ssot),
+    ...mapAwardToFormFields(ssot, sectionIndices.award),
     ...mapHopeJobToFormFields(ssot),
   ];
 }

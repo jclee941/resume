@@ -185,7 +185,7 @@ async function syncToPlatform(sourceData, platform, options) {
         return {
           dry_run: true,
           would_update: {
-            headline: `${sourceData.current.position} | ${sourceData.summary.totalExperience}`,
+            headline: `${sourceData.current?.position || sourceData.careers?.[0]?.role || ''} | ${sourceData.summary.totalExperience}`,
             careers: sourceData.careers.length,
             skills:
               (sourceData.skills.security?.items || sourceData.skills.security || []).length +
@@ -197,7 +197,7 @@ async function syncToPlatform(sourceData, platform, options) {
       const results = { updated: [], errors: [] };
       try {
         await api.updateProfile({
-          headline: `${sourceData.current.position} | ${sourceData.summary.totalExperience}`,
+          headline: `${sourceData.current?.position || sourceData.careers?.[0]?.role || ''} | ${sourceData.summary.totalExperience}`,
           description: sourceData.summary.expertise.join(', '),
         });
         results.updated.push('profile');
@@ -252,7 +252,7 @@ function mapToPlatform(source, platform) {
   switch (platform) {
     case 'wanted':
       return {
-        headline: `${source.current.position} | ${source.summary.totalExperience}`,
+        headline: `${source.current?.position || source.careers?.[0]?.role || ''} | ${source.summary.totalExperience}`,
         careers: source.careers.map((c) => `${c.company} - ${c.role}`),
         skills: source.summary.expertise,
       };
@@ -266,7 +266,7 @@ function mapToPlatform(source, platform) {
 
     case 'remember':
       return {
-        headline: `${source.current.position} @ ${source.current.company}`,
+        headline: `${source.current?.position || source.careers?.[0]?.role || ''} @ ${source.current?.company || source.careers?.[0]?.company || ''}`,
         experience: source.summary.totalExperience,
         skills: source.summary.expertise,
       };
