@@ -3,7 +3,7 @@
  *
  * Updated to match current cards.js HTML output structure:
  * - Resume cards: resume-item card, resume-title, resume-period, resume-tags, tag spans
- * - Project cards: project-item card, project-title, project-link-title with ↗ arrow, project-tech
+ * - Project cards: project-item project-card card, project-title, project-link-title with ↗ arrow, project-tech
  */
 
 const {
@@ -169,7 +169,7 @@ describe('Cards Module', () => {
     test('should generate HTML for project card', () => {
       const html = generateProjectCards(validProjectData, 'testhash');
 
-      expect(html).toContain('project-item card');
+      expect(html).toContain('project-item project-card card');
       expect(html).toContain('project-title');
       expect(html).toContain('Test Project');
       expect(html).toContain('Node.js, React');
@@ -272,7 +272,7 @@ describe('Cards Module', () => {
 
       expect(html).toContain('Project 1');
       expect(html).toContain('Project 2');
-      expect((html.match(/project-item card/g) || []).length).toBeGreaterThanOrEqual(2);
+      expect((html.match(/project-item project-card card/g) || []).length).toBeGreaterThanOrEqual(2);
     });
 
     test('should not render optional sections when not provided', () => {

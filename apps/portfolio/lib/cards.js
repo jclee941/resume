@@ -106,7 +106,7 @@ function generateProjectCards(projectsData, dataHash) {
           : '';
 
       return `
-         <li class="project-item card">
+         <li class="project-item project-card card" data-tech="${escapeHtml(String(project.tech || ''))}">
              <div class="project-header">
                  <h3 class="project-title">
                      ${titleElement}
