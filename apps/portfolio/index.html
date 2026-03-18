@@ -389,6 +389,72 @@
     </style>
 
     <style>
+      /* Dark mode smooth transitions */
+      body,
+      .card,
+      .nav-logo,
+      .minimal-nav,
+      .site-footer,
+      .hero,
+      .section-title,
+      .timeline-content,
+      .skill-tag,
+      .contact-item,
+      .project-card,
+      .cert-card,
+      .infra-card {
+        transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      a, .nav-link {
+        transition: color 0.3s ease;
+      }
+
+      /* Disable transitions on initial page load to prevent flash */
+      .no-transition,
+      .no-transition * {
+        transition: none !important;
+      }
+      /* Tech Stack Filter */
+      .tech-filter-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+        justify-content: center;
+      }
+
+      .tech-filter-btn {
+        background: var(--card-bg, #fff);
+        color: var(--text-color, #333);
+        border: 1px solid var(--border-color, #ddd);
+        padding: 0.4rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-family: inherit;
+      }
+
+      .tech-filter-btn:hover {
+        background: var(--cyber-cyan, #0ff);
+        color: #000;
+        border-color: var(--cyber-cyan, #0ff);
+      }
+
+      .tech-filter-btn.active {
+        background: var(--cyber-cyan, #0ff);
+        color: #000;
+        border-color: var(--cyber-cyan, #0ff);
+      }
+
+      .project-card.filtered-out {
+        display: none;
+      }
+
+      .project-card {
+        transition: opacity 0.3s ease, transform 0.3s ease;
+      }
       /* CSS_PLACEHOLDER */
     </style>
   </head>
@@ -599,6 +665,9 @@
               <h2 id="projects-heading" class="sr-only">Projects</h2>
               <div class="section-cmd">
                 <span class="section-cmd__command">ls -la ~/projects/</span>
+              </div>
+              <div class="tech-filter-container" role="toolbar" aria-label="Filter by technology">
+                <button class="tech-filter-btn active" data-filter="all">All</button>
               </div>
               <ul class="project-list">
                 <!-- PROJECT_CARDS_PLACEHOLDER -->
@@ -1558,6 +1627,62 @@
       _gs.integrity = 'sha384-ZXsMWzL9jNkfVeDNiKiKlvdyvBmUvt8YMS2PljnnNk8cVfKES+GLjaItoIy8iwNi';
       _gs.crossOrigin = 'anonymous';
       document.head.appendChild(_gs);
+    </script>
+    <script>
+      (function() {
+        var container = document.querySelector('.tech-filter-container');
+        if (!container) return;
+        var cards = document.querySelectorAll('.project-card[data-tech]');
+        var techSet = {};
+
+        cards.forEach(function(card) {
+          var techs = (card.getAttribute('data-tech') || '').split(',');
+          techs.forEach(function(t) {
+            t = t.trim().toLowerCase();
+            if (t) techSet[t] = (techSet[t] || 0) + 1;
+          });
+        });
+
+        // Sort by frequency, then alphabetically
+        var techList = Object.keys(techSet).sort(function(a, b) {
+          return techSet[b] - techSet[a] || a.localeCompare(b);
+        });
+
+        // Create filter buttons dynamically
+        techList.forEach(function(tech) {
+          var btn = document.createElement('button');
+          btn.className = 'tech-filter-btn';
+          btn.setAttribute('data-filter', tech);
+          btn.textContent = tech.charAt(0).toUpperCase() + tech.slice(1);
+          container.appendChild(btn);
+        });
+
+        // Filter logic
+        container.addEventListener('click', function(e) {
+          var btn = e.target.closest('.tech-filter-btn');
+          if (!btn) return;
+          
+          var filter = btn.getAttribute('data-filter');
+          
+          container.querySelectorAll('.tech-filter-btn').forEach(function(b) {
+            b.classList.remove('active');
+          });
+          btn.classList.add('active');
+
+          cards.forEach(function(card) {
+            if (filter === 'all') {
+              card.classList.remove('filtered-out');
+            } else {
+              var techs = (card.getAttribute('data-tech') || '').toLowerCase();
+              if (techs.indexOf(filter) !== -1) {
+                card.classList.remove('filtered-out');
+              } else {
+                card.classList.add('filtered-out');
+              }
+            }
+          });
+        });
+      })();
     </script>
   </body>
 </html>
