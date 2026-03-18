@@ -42,7 +42,10 @@ export default class JobKoreaHandler {
       /\.C_Part$/,
       /\.CSYM$/,
       /\.CEYM$/,
-      /\.Pos_Name$/,
+      /\.M_MainJob_Jikwi$/,
+      /\.RetireSt$/,
+      /\.M_MainField$/,
+      /\.Prfm_Prt$/,
       /\.Schl_Name$/,
       /\.Entc_YM$/,
       /\.Grad_YM$/,
@@ -54,9 +57,9 @@ export default class JobKoreaHandler {
       /UserAddition\.Military_Kind$/,
       /UserAddition\.Military_SYM$/,
       /UserAddition\.Military_EYM$/,
-      /Award\[.*\]\.Awd_Name$/,
-      /Award\[.*\]\.Awd_Agency$/,
-      /Award\[.*\]\.Awd_Year$/,
+      /Award\[.*\]\.Award_Name$/,
+      /Award\[.*\]\.Award_Inst_Name$/,
+      /Award\[.*\]\.Award_Year$/,
       /HopeJob\./,
     ];
 
@@ -82,7 +85,7 @@ export default class JobKoreaHandler {
 
   describeField(name) {
     let match = name.match(
-      /^Career\[(c\d+)\]\.(C_Name|C_Part|CSYM|CEYM|Pos_Name|M_MainFieldName)$/
+      /^Career\[(c\d+)\]\.(C_Name|C_Part|CSYM|CEYM|M_MainJob_Jikwi|RetireSt|M_MainField|Prfm_Prt)$/
     );
     if (match) {
       const map = {
@@ -90,8 +93,10 @@ export default class JobKoreaHandler {
         C_Part: 'department',
         CSYM: 'start',
         CEYM: 'end',
-        Pos_Name: 'role',
-        M_MainFieldName: 'job category',
+        M_MainJob_Jikwi: 'role',
+        RetireSt: 'status',
+        M_MainField: 'job code',
+        Prfm_Prt: 'description',
       };
       return `Career ${match[1]} ${map[match[2]] || match[2]}`;
     }
@@ -122,12 +127,12 @@ export default class JobKoreaHandler {
       return `License ${match[1]} ${map[match[2]] || match[2]}`;
     }
 
-    match = name.match(/^Award\[(c\d+)\]\.(Awd_Name|Awd_Agency|Awd_Year)$/);
+    match = name.match(/^Award\[(c\d+)\]\.(Award_Name|Award_Inst_Name|Award_Year)$/);
     if (match) {
       const map = {
-        Awd_Name: 'name',
-        Awd_Agency: 'organization',
-        Awd_Year: 'year',
+        Award_Name: 'name',
+        Award_Inst_Name: 'organization',
+        Award_Year: 'year',
       };
       return `Award ${match[1]} ${map[match[2]] || match[2]}`;
     }
@@ -143,6 +148,170 @@ export default class JobKoreaHandler {
     if (name === 'HopeJob.HJ_Local_Name') return 'Hope job location';
 
     return name;
+  }
+
+  /**
+   * Read server-generated entry indices for a form section.
+   * @param {import('playwright').Page} page
+   * @param {string} prefix - Form field prefix (e.g. 'Career', 'License', 'UnivSchool')
+   * @returns {Promise<string[]>} Array of index strings like ['c14', 'c844', 'c845']
+   */
+  async readSectionIndices(page, prefix) {
+    return page.evaluate((pfx) => {
+      const indices = [];
+      const escaped = pfx.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      $('#frm1')
+        .serializeArray()
+        .forEach((f) => {
+          const m = f.name.match(new RegExp(`^${escaped}\\[(c\\d+)\\]\\.Index_Name$`));
+          if (m && !indices.includes(m[1])) indices.push(m[1]);
+        });
+      return indices;
+    }, prefix);
+  }
+
+  /**
+   * Create entry slots in the JobKorea form by clicking "추가" buttons.
+   * The server only accepts data for entries it generated — custom indices (c1-cN)
+   * are silently dropped. This method creates the needed slots and reads back
+   * the server-generated indices.
+   *
+   * @param {import('playwright').Page} page
+   * @param {object} ssot - SSOT resume data
+   * @returns {Promise<{career: string[], license: string[], award: string[], school: string}>}
+   */
+  async createEntrySlots(page, ssot) {
+    const careers = Array.isArray(ssot?.careers) ? ssot.careers : [];
+    const validCerts = (Array.isArray(ssot?.certifications) ? ssot.certifications : []).filter(
+      (c) => c?.date
+    );
+    // The server only accepts data keyed to indices IT generated.
+    // Existing entries (from previous saves) cannot be updated — only fresh "추가" entries persist.
+    const sections = [
+      { prefix: 'Career', needed: careers.length },
+      { prefix: 'License', needed: validCerts.length },
+    ];
+
+    // Track existing indices per section BEFORE "추가" clicks.
+    // Only "추가"-created entries persist via $.post — existing ones are silently dropped.
+    const existingIndices = {};
+
+    for (const { prefix, needed } of sections) {
+      if (needed <= 0) continue;
+
+      // Wait for section to have at least one entry after sidebar activation
+      try {
+        await page.waitForFunction(
+          (pfx) => {
+            return $('#frm1')
+              .serializeArray()
+              .some((f) => f.name.startsWith(`${pfx}[`));
+          },
+          prefix,
+          { timeout: 5000 }
+        );
+      } catch {
+        log(`Section ${prefix} not found in form after activation`, 'warn', 'jobkorea');
+        continue;
+      }
+
+      // Record existing indices BEFORE any "추가" clicks
+      existingIndices[prefix] = new Set(await this.readSectionIndices(page, prefix));
+
+      // Click "추가" for the FULL needed count.
+      // Existing entries can't be updated — we always create fresh ones.
+      let addedCount = 0;
+
+      while (addedCount < needed) {
+        // Find and click the section's "\ucd94\uac00" button
+        // Read count BEFORE clicking so we can detect the increment
+        const prevTotal = (await this.readSectionIndices(page, prefix)).length;
+
+        const clicked = await page.evaluate((pfx) => {
+          const sectionLabels = { Career: '\uacbd\ub825', License: '\uc790\uaca9\uc99d' };
+          const label = sectionLabels[pfx];
+          if (!label) return false;
+
+          const heading = $('h2')
+            .filter(function () {
+              return $(this).text().includes(label);
+            })
+            .first();
+          if (!heading.length) return false;
+
+          let section = heading.parent();
+          for (let i = 0; i < 5; i++) {
+            if (!section.length || section.is('form, body')) break;
+            const addBtn = section.find('button.buttonAddField').filter(function () {
+              return $(this).text().includes('\ucd94\uac00');
+            });
+            if (addBtn.length > 0) {
+              addBtn[0].click();
+              return true;
+            }
+            section = section.parent();
+          }
+          return false;
+        }, prefix);
+
+        if (!clicked) {
+          log(`"\ucd94\uac00" button not found for ${prefix}`, 'warn', 'jobkorea');
+          break;
+        }
+
+        // Wait for entry count to increase
+        try {
+          await page.waitForFunction(
+            ({ pfx, prev }) => {
+              const seen = new Set();
+              const escaped = pfx.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+              const re = new RegExp(`^${escaped}\\[(c\\d+)\\]`);
+              $('#frm1')
+                .serializeArray()
+                .forEach((f) => {
+                  const m = f.name.match(re);
+                  if (m) seen.add(m[1]);
+                });
+              return seen.size > prev;
+            },
+            { pfx: prefix, prev: prevTotal },
+            { timeout: 5000 }
+          );
+        } catch {
+          const newTotal = (await this.readSectionIndices(page, prefix)).length;
+          if (newTotal <= prevTotal) {
+            log(
+              `Timeout: ${prefix} stuck at ${addedCount}/${needed} added entries`,
+              'warn',
+              'jobkorea'
+            );
+            break;
+          }
+        }
+
+        addedCount++;
+      }
+    }
+
+    // Read final indices for all sections
+    const allCareerIndices = await this.readSectionIndices(page, 'Career');
+    const allLicenseIndices = await this.readSectionIndices(page, 'License');
+    const schoolIndices = await this.readSectionIndices(page, 'UnivSchool');
+
+    // Filter out existing entries — only "추가"-created entries persist.
+    // Existing entries (from previous saves or templates) are silently dropped by the server.
+    const filterExisting = (all, prefix) => {
+      const existing = existingIndices[prefix];
+      if (!existing || existing.size === 0) return all;
+      return all.filter((idx) => !existing.has(idx));
+    };
+
+    return {
+      career: filterExisting(allCareerIndices, 'Career'),
+      license: filterExisting(allLicenseIndices, 'License'),
+      award: [],
+      school: schoolIndices[0] || 'c1',
+    };
   }
 
   async sync(ssot) {
@@ -182,7 +351,36 @@ export default class JobKoreaHandler {
         timeout: 15000,
       });
 
-      const targetFields = buildJobKoreaFormData(ssot);
+      // Step 1: Activate required sections via sidebar "필드추가" buttons.
+      // This sets InputStat flags and creates one template entry per section.
+      await page.evaluate(() => {
+        const requiredSections = [
+          'InputStat_CareerInputStat',
+          'InputStat_LicenseInputStat',
+          'InputStat_AwardInputStat',
+        ];
+        for (const syncId of requiredSections) {
+          const btn = $(`button[data-sync_id="${syncId}"]`);
+          if (btn.length && btn.text().trim() === '필드추가') {
+            btn.click();
+          }
+        }
+      });
+      await page.waitForTimeout(1000);
+
+      // Step 2: Create entry slots for each section. The server only accepts
+      // data keyed to indices it generated — our old c1-cN were silently dropped.
+      const sectionIndices = await this.createEntrySlots(page, ssot);
+      log(
+        `Entry slots — Career: ${sectionIndices.career.length} (${sectionIndices.career.join(',')}), ` +
+          `License: ${sectionIndices.license.length} (${sectionIndices.license.join(',')}), ` +
+          `School: ${sectionIndices.school}`,
+        'info',
+        'jobkorea'
+      );
+
+      // Step 3: Build form data using server-generated indices
+      const targetFields = buildJobKoreaFormData(ssot, sectionIndices);
 
       const currentFields = await page.evaluate(() => {
         return $('#frm1').serializeArray();
@@ -203,49 +401,99 @@ export default class JobKoreaHandler {
       }
 
       if (CONFIG.APPLY && !CONFIG.DIFF_ONLY) {
-        const saveResult = await page.evaluate(async (patchFields) => {
-          const baseFields = $('#frm1').serializeArray();
-
-          const removePrefixes = ['Career[', 'UnivSchool[', 'License[', 'Award['];
-          const removeExact = new Set([
-            'Career.index',
-            'UnivSchool.index',
-            'License.index',
-            'Award.index',
-            'hdnIsCompleteSave',
-          ]);
-          const removeStartsWith = ['InputStat.', 'UserAddition.', 'HopeJob.', 'PIOfferAgree.'];
-
-          const filtered = baseFields.filter((field) => {
-            if (removeExact.has(field.name)) return false;
-            if (removePrefixes.some((prefix) => field.name.startsWith(prefix))) return false;
-            if (removeStartsWith.some((prefix) => field.name.startsWith(prefix))) return false;
-            return true;
-          });
-
-          for (const patch of patchFields) {
-            filtered.push({ name: patch.name, value: patch.value });
+        // Step 4: Remove old section entries from DOM before filling.
+        // The server validates ALL Career/License/Award fields in the form,
+        // not just those in Career.index. Stale entries cause validation errors.
+        await page.evaluate(
+          (indices) => {
+            const sections = [
+              { prefix: 'Career', keep: new Set(indices.career) },
+              { prefix: 'License', keep: new Set(indices.license) },
+              { prefix: 'Award', keep: new Set(indices.award) },
+            ];
+            for (const { prefix, keep } of sections) {
+              document.querySelectorAll(`[name^="${prefix}["]`).forEach((el) => {
+                const m = el.name.match(/\[(c\d+)\]/);
+                if (m && !keep.has(m[1])) el.remove();
+              });
+            }
+          },
+          {
+            career: sectionIndices.career,
+            license: sectionIndices.license,
+            award: sectionIndices.award,
           }
+        );
 
-          const completeIdx = filtered.findIndex((f) => f.name === 'hdnIsCompleteSave');
+        // Step 5: Fill form fields in the DOM, then serialize and POST.
+        // The save button triggers hdnIsCompleteSave=True which activates full validation.
+        // By serializing the form ourselves with hdnIsCompleteSave=False, we bypass it.
+
+        const fillStats = await page.evaluate((fields) => {
+          const form = document.getElementById('frm1');
+          let filled = 0;
+          let created = 0;
+          for (const { name, value } of fields) {
+            const els = document.getElementsByName(name);
+            if (els.length > 0) {
+              els[0].value = String(value);
+              els[0].dispatchEvent(new Event('change', { bubbles: true }));
+              filled++;
+            } else {
+              // Create hidden input for metadata fields not in DOM
+              const hidden = document.createElement('input');
+              hidden.type = 'hidden';
+              hidden.name = name;
+              hidden.value = String(value);
+              form.appendChild(hidden);
+              created++;
+            }
+          }
+          return { filled, created };
+        }, targetFields);
+
+        log(
+          `Filled ${fillStats.filled} DOM fields (${fillStats.created} created)`,
+          'info',
+          'jobkorea'
+        );
+
+        // Set hdnIsCompleteSave = False to avoid full validation
+        await page.evaluate(() => {
+          const el = document.getElementsByName('hdnIsCompleteSave');
+          if (el.length > 0) el[0].value = 'False';
+        });
+
+        // Step 5: Serialize the entire form (now with our values) and POST directly.
+        // Using $.post instead of the save button avoids full-validation mode.
+        const saveResult = await page.evaluate(async () => {
+          const formData = $('#frm1').serializeArray();
+
+          // Ensure hdnIsCompleteSave = False to skip full validation
+          const completeIdx = formData.findIndex((f) => f.name === 'hdnIsCompleteSave');
           if (completeIdx >= 0) {
-            filtered[completeIdx].value = 'False';
+            formData[completeIdx].value = 'False';
           } else {
-            filtered.push({ name: 'hdnIsCompleteSave', value: 'False' });
+            formData.push({ name: 'hdnIsCompleteSave', value: 'False' });
           }
 
           return await new Promise((resolve) => {
-            $.post(`/User/Resume/Save?_=${Date.now()}`, filtered, (result) => {
+            $.post(`/User/Resume/Save?_=${Date.now()}`, formData, (result) => {
               resolve(result?.saveResult || result);
             }).fail((xhr) => {
               resolve({ IsSuccess: false, error: xhr.statusText || 'POST failed' });
             });
           });
-        }, targetFields);
+        });
+
+        log(`Save response: ${JSON.stringify(saveResult).slice(0, 500)}`, 'info', 'jobkorea');
 
         if (saveResult?.IsSuccess === false) {
           const errorMessage =
-            saveResult?.ErrorMessage || saveResult?.error || 'Unknown save error';
+            saveResult?.ErrorMessage ||
+            saveResult?.FormError?.Message ||
+            saveResult?.error ||
+            'Unknown save error';
           log(`Save failed: ${errorMessage}`, 'error', 'jobkorea');
           return { success: false, changes, error: errorMessage };
         }

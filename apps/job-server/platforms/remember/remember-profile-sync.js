@@ -84,7 +84,7 @@ export class RememberProfileSync {
       return {
         dry_run: true,
         would_update: {
-          headline: `${sourceData.current.position} @ ${sourceData.current.company}`,
+          headline: `${sourceData.current?.position || sourceData.careers?.[0]?.role || ''} @ ${sourceData.current?.company || sourceData.careers?.[0]?.company || ''}`,
           experience: sourceData.summary.totalExperience,
           careers: sourceData.careers.length,
         },
@@ -126,7 +126,7 @@ export class RememberProfileSync {
       await this.page.waitForTimeout(500);
     }
 
-    const headline = `${sourceData.current.position} | ${sourceData.summary.totalExperience}`;
+    const headline = `${sourceData.current?.position || sourceData.careers?.[0]?.role || ''} | ${sourceData.summary.totalExperience}`;
     const headlineInput = await this.page.$(
       'input[name*="headline"], textarea[name*="intro"]',
     );

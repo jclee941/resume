@@ -300,7 +300,7 @@ function mapToJobKoreaFormat(source) {
 function mapToRememberFormat(source) {
   return {
     name: source.personal.name,
-    headline: `${source.current.position} @ ${source.current.company}`,
+    headline: `${source.current?.position || source.careers?.[0]?.role || ''} @ ${source.current?.company || source.careers?.[0]?.company || ''}`,
     experience: source.summary.totalExperience,
     careers: source.careers.map((c) => ({
       company: c.company,

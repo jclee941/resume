@@ -11,7 +11,7 @@ export const CONFIG = {
   SSOT_PATH: path.resolve(__dirname, '../../../../packages/data/resumes/master/resume_data.json'),
   USER_DATA_DIR: path.join(process.env.HOME || '/tmp', '.opencode/browser-data'),
   SESSION_DIR: path.join(process.env.HOME || '/tmp', '.opencode/data'),
-  HEADLESS: process.argv.includes('--headless'),
+  HEADLESS: !process.argv.includes('--headed'),
   APPLY: process.argv.includes('--apply'),
   DIFF_ONLY: process.argv.includes('--diff'),
 };
@@ -57,7 +57,7 @@ export const PLATFORMS = {
       name: ssot.personal.name,
       email: ssot.personal.email,
       phone: ssot.personal.phone,
-      headline: `${ssot.current?.position || ssot.careers?.[0]?.role || 'Engineer'} | ${ssot.summary?.totalExperience || ''}`,
+      headline: `${ssot.current?.position || ssot.careers?.[0]?.role || ''} | ${ssot.summary?.totalExperience || ''}`,
       skills: ssot.summary.expertise,
     }),
   },
