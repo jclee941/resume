@@ -42,7 +42,8 @@ export const authTool = {
         let validatedEmail = email || 'user@example.com';
 
         if (platform === 'wanted') {
-          const api = new WantedAPI({ cookies });
+          const cookieStr = typeof cookies === 'string' ? cookies : (Array.isArray(cookies) ? cookies.map((c) => `${c.name}=${c.value}`).join('; ') : String(cookies));
+          const api = new WantedAPI(cookieStr);
           try {
             const profile = await api.getProfile();
             if (profile && (profile.email || profile.name)) {
@@ -56,7 +57,9 @@ export const authTool = {
           }
         }
 
-        SessionManager.save(platform, { cookies, email: validatedEmail });
+        const cookieString = typeof cookies === 'string' ? cookies : (Array.isArray(cookies) ? cookies.map((c) => `${c.name}=${c.value}`).join('; ') : String(cookies));
+        const cookieCount = Array.isArray(cookies) ? cookies.length : cookieString.split(';').filter(Boolean).length;
+        SessionManager.save(platform, { cookies, cookieString, cookieCount, expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), email: validatedEmail });
 
         return {
           success: true,

@@ -94,15 +94,20 @@ Session stored in: ~/.opencode/data/sessions.json (24hr expiry)`,
         }
 
         // Test cookies by making API request
-        const api = new WantedAPI({ cookies });
+        const cookieStr = typeof cookies === 'string' ? cookies : (Array.isArray(cookies) ? cookies.map((c) => `${c.name}=${c.value}`).join('; ') : String(cookies));
+        const api = new WantedAPI(cookieStr);
         try {
           const profile = await api.getProfile();
 
           if (profile && (profile.id || profile.email || profile.name)) {
+            const cookieString = typeof cookies === 'string' ? cookies : (Array.isArray(cookies) ? cookies.map((c) => `${c.name}=${c.value}`).join('; ') : String(cookies));
             SessionManager.save('wanted', {
               token: null,
               email: profile.email || 'unknown',
               cookies,
+              cookieString,
+              cookieCount: Array.isArray(cookies) ? cookies.length : cookieString.split(';').filter(Boolean).length,
+              expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
             });
             return {
               success: true,
@@ -146,7 +151,7 @@ Session stored in: ~/.opencode/data/sessions.json (24hr expiry)`,
         }
 
         // Validate token
-        const api = new WantedAPI({ token });
+        const api = new WantedAPI(token);
         try {
           const profile = await api.getProfile();
 
@@ -155,6 +160,9 @@ Session stored in: ~/.opencode/data/sessions.json (24hr expiry)`,
               token,
               email: profile.email || 'unknown',
               cookies: null,
+              cookieString: null,
+              cookieCount: 0,
+              expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
             });
             return {
               success: true,
@@ -211,6 +219,9 @@ Session stored in: ~/.opencode/data/sessions.json (24hr expiry)`,
               token: sessionToken,
               email: userEmail,
               cookies: null,
+              cookieString: null,
+              cookieCount: 0,
+              expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
             });
 
             return {
@@ -241,7 +252,7 @@ Session stored in: ~/.opencode/data/sessions.json (24hr expiry)`,
 
       case 'status': {
         const session = SessionManager.load('wanted');
-        if (session && (session.token || session.cookies)) {
+        if (session && (session.token || session.cookies || session.cookieString)) {
           const expiresIn = Math.round(
             (24 * 60 * 60 * 1000 - (Date.now() - session.timestamp)) / 60000
           );
