@@ -52,7 +52,7 @@ export class ResumeCareerEndpoint {
 
   async update(resumeId, careerId, careerData) {
     const response = await this.#client.chaosRequest(
-      `/resumes/v1/${resumeId}/careers/${careerId}`,
+      `/resumes/v2/${resumeId}/careers/${careerId}`,
       { method: 'PUT', body: careerData },
     );
     return response;
@@ -60,7 +60,7 @@ export class ResumeCareerEndpoint {
 
   async add(resumeId, careerData) {
     const response = await this.#client.chaosRequest(
-      `/resumes/v1/${resumeId}/careers`,
+      `/resumes/v2/${resumeId}/careers`,
       { method: 'POST', body: careerData },
     );
     return response;
@@ -68,7 +68,7 @@ export class ResumeCareerEndpoint {
 
   async delete(resumeId, careerId) {
     const response = await this.#client.chaosRequest(
-      `/resumes/v1/${resumeId}/careers/${careerId}`,
+      `/resumes/v2/${resumeId}/careers/${careerId}`,
       { method: 'DELETE' },
     );
     return response;
@@ -76,7 +76,7 @@ export class ResumeCareerEndpoint {
 
   async addProject(resumeId, careerId, projectData) {
     const response = await this.#client.chaosRequest(
-      `/resumes/v1/${resumeId}/careers/${careerId}/projects`,
+      `/resumes/v2/${resumeId}/careers/${careerId}/projects`,
       { method: 'POST', body: projectData },
     );
     return response;
@@ -84,7 +84,7 @@ export class ResumeCareerEndpoint {
 
   async deleteProject(resumeId, careerId, projectId) {
     const response = await this.#client.chaosRequest(
-      `/resumes/v1/${resumeId}/careers/${careerId}/projects/${projectId}`,
+      `/resumes/v2/${resumeId}/careers/${careerId}/projects/${projectId}`,
       { method: 'DELETE' },
     );
     return response;

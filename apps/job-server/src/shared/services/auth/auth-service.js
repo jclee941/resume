@@ -114,7 +114,9 @@ export class AuthService {
       };
     }
 
-    SessionManager.save(platform, { cookies, email });
+    const cookieString = typeof cookies === 'string' ? cookies : (Array.isArray(cookies) ? cookies.map((c) => `${c.name}=${c.value}`).join('; ') : String(cookies));
+    const cookieCount = Array.isArray(cookies) ? cookies.length : cookieString.split(';').filter(Boolean).length;
+    SessionManager.save(platform, { cookies, cookieString, cookieCount, expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), email });
     return { success: true, message: `Auth saved for ${platform}` };
   }
 
