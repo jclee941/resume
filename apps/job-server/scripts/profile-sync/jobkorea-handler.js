@@ -140,7 +140,7 @@ export default class JobKoreaHandler {
 
   describeField(name) {
     let match = name.match(
-      /^Career\[(c\d+)\]\.(C_Name|C_Part|CSYM|CEYM|M_MainJob_Jikwi|RetireSt|M_MainField|Prfm_Prt)$/
+      /^Career\[([^\]]+)\]\.(C_Name|C_Part|CSYM|CEYM|M_MainJob_Jikwi|RetireSt|M_MainField|Prfm_Prt)$/
     );
     if (match) {
       const map = {
@@ -156,7 +156,7 @@ export default class JobKoreaHandler {
       return `Career ${match[1]} ${map[match[2]] || match[2]}`;
     }
 
-    match = name.match(/^UnivSchool\[(c\d+)\]\.(Schl_Name|Entc_YM|Grad_YM|Grad_Type_Code)$/);
+    match = name.match(/^UnivSchool\[([^\]]+)\]\.(Schl_Name|Entc_YM|Grad_YM|Grad_Type_Code)$/);
     if (match) {
       const map = {
         Schl_Name: 'school',
@@ -167,12 +167,12 @@ export default class JobKoreaHandler {
       return `School ${match[1]} ${map[match[2]] || match[2]}`;
     }
 
-    match = name.match(/^UnivSchool\[(c\d+)\]\.UnivMajor\[0\]\.Major_Name$/);
+    match = name.match(/^UnivSchool\[([^\]]+)\]\.UnivMajor\[0\]\.Major_Name$/);
     if (match) {
       return `School ${match[1]} major`;
     }
 
-    match = name.match(/^License\[(c\d+)\]\.(Lc_Name|Lc_Pub|Lc_YYMM)$/);
+    match = name.match(/^License\[([^\]]+)\]\.(Lc_Name|Lc_Pub|Lc_YYMM)$/);
     if (match) {
       const map = {
         Lc_Name: 'name',
@@ -182,7 +182,7 @@ export default class JobKoreaHandler {
       return `License ${match[1]} ${map[match[2]] || match[2]}`;
     }
 
-    match = name.match(/^Award\[(c\d+)\]\.(Award_Name|Award_Inst_Name|Award_Year)$/);
+    match = name.match(/^Award\[([^\]]+)\]\.(Award_Name|Award_Inst_Name|Award_Year)$/);
     if (match) {
       const map = {
         Award_Name: 'name',
@@ -478,7 +478,7 @@ export default class JobKoreaHandler {
             ];
             for (const { prefix, keep } of sections) {
               document.querySelectorAll(`[name^="${prefix}["]`).forEach((el) => {
-                const m = el.name.match(/\[(c\d+)\]/);
+                const m = el.name.match(/\[([^\]]+)\]/);
                 if (m && !keep.has(m[1])) el.remove();
               });
             }
