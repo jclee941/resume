@@ -1,11 +1,24 @@
 import { chromium } from 'playwright';
 import fs from 'fs';
 import path from 'path';
-import { CONFIG } from './constants.js';
+import { CONFIG, PLATFORMS } from './constants.js';
 import { log } from './utils.js';
 import { buildJobKoreaFormData } from './jobkorea-sections.js';
 
-const WRITE_URL = 'https://www.jobkorea.co.kr/User/Resume/Write?Input_Type_Code=3';
+/**
+ * Build Edit URL for the user's existing resume.
+ * Extracts rNo from PLATFORMS.jobkorea.profileUrl (View?rNo=XXXXX).
+ * Falls back to Write URL if rNo cannot be determined.
+ */
+function getEditUrl() {
+  const profileUrl = PLATFORMS.jobkorea?.profileUrl || '';
+  const match = profileUrl.match(/[?&]rNo=(\d+)/i);
+  if (match) {
+    return `https://www.jobkorea.co.kr/User/Resume/Edit?RNo=${match[1]}`;
+  }
+  // Fallback: Write creates a NEW resume (일반이력서) — not the user's main resume
+  return 'https://www.jobkorea.co.kr/User/Resume/Write?Input_Type_Code=3';
+}
 
 export default class JobKoreaHandler {
   loadSession() {
@@ -386,7 +399,9 @@ export default class JobKoreaHandler {
       await context.addCookies(cookies);
       const page = await context.newPage();
 
-      await page.goto(WRITE_URL, { waitUntil: 'domcontentloaded', timeout: 30000 });
+      const editUrl = getEditUrl();
+      log(`Navigating to ${editUrl}`, 'info', 'jobkorea');
+      await page.goto(editUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
 
       if (page.url().includes('/Login')) {
         log('Session expired - redirected to login page', 'error', 'jobkorea');
