@@ -48,8 +48,44 @@ export class SessionManager {
       ensureDir(SESSION_FILE);
       const allSessions = this.load() || {};
 
+      // Normalize session contract at the boundary
+      const normalized = { ...data };
+
+      // Always set platform
+      normalized.platform = platform;
+
+      // Normalize cookies: string → cookieString, cookies: null
+      if (typeof normalized.cookies === 'string') {
+        if (!normalized.cookieString) {
+          normalized.cookieString = normalized.cookies;
+        }
+        normalized.cookies = null;
+      }
+
+      // If cookies is array, compute cookieString if missing
+      if (Array.isArray(normalized.cookies) && !normalized.cookieString) {
+        normalized.cookieString = normalized.cookies.map((c) => `${c.name}=${c.value}`).join('; ');
+      }
+
+      // Set cookieCount if missing
+      if (normalized.cookieCount == null) {
+        if (Array.isArray(normalized.cookies)) {
+          normalized.cookieCount = normalized.cookies.length;
+        } else if (normalized.cookieString) {
+          normalized.cookieCount = normalized.cookieString.split(';').filter(Boolean).length;
+        } else {
+          normalized.cookieCount = 0;
+        }
+      }
+
+      // Set expiresAt if missing
+      if (!normalized.expiresAt) {
+        const ttl = PLATFORM_TTL_MS[platform] || DEFAULT_TTL_MS;
+        normalized.expiresAt = new Date(Date.now() + ttl).toISOString();
+      }
+
       allSessions[platform] = {
-        ...data,
+        ...normalized,
         timestamp: Date.now(),
       };
 
@@ -60,7 +96,6 @@ export class SessionManager {
       return false;
     }
   }
-
   static clear(platform = null) {
     try {
       if (!existsSync(SESSION_FILE)) return true;
@@ -80,13 +115,18 @@ export class SessionManager {
 
   static async getAPI(platform = 'wanted') {
     const session = this.load(platform);
-    if (!session || !session.cookies) return null;
+    if (!session) return null;
+
+    // Need either cookies/cookieString or token
+    if (!session.cookies && !session.cookieString && !session.token) return null;
 
     // Dynamic import to avoid circular dependency
-    // Returns a configured API instance with session cookies
     const WantedAPI = (await import('../../clients/wanted/index.js')).default;
     const api = new WantedAPI();
-    api.setCookies(session.cookies);
+    const cookieStr = session.cookieString || (Array.isArray(session.cookies) ? session.cookies.map((c) => `${c.name}=${c.value}`).join('; ') : session.cookies) || session.token;
+    if (cookieStr) {
+      api.setCookies(cookieStr);
+    }
     return api;
   }
 
