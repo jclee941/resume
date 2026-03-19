@@ -27,8 +27,8 @@ function loadWantedSession() {
       const wanted = sessions.wanted;
       if (wanted?.cookieString) return wanted.cookieString;
       if (wanted?.cookies && typeof wanted.cookies === 'string') return wanted.cookies;
-    } catch {
-      // ignore parse errors
+    } catch (err) {
+      console.warn('[wanted-handler] Failed to parse unified session file:', err.message);
     }
   }
   return null;
@@ -54,7 +54,8 @@ function tryLoadSessionFile(sessionPath) {
       return session.cookieString;
     }
     return null;
-  } catch {
+  } catch (err) {
+    console.warn('[wanted-handler] Failed to parse session file:', sessionPath, err.message);
     return null;
   }
 }

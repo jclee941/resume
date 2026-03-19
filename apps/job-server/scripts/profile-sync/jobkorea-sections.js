@@ -261,11 +261,34 @@ export function mapAwardToFormFields(ssot, indices) {
   return fields;
 }
 
-export function mapHopeJobToFormFields() {
+export function mapHopeJobToFormFields(ssot) {
+  // Derive hope-job codes from SSoT career roles via JK_JOB_CODES lookup.
+  // Falls back to hardcoded defaults if no matching roles found.
+  const codes = new Map(); // code -> name
+  const careers = Array.isArray(ssot?.careers) ? ssot.careers : [];
+  for (const career of careers) {
+    const role = (career?.role || career?.position || '').trim();
+    if (!role) continue;
+    for (const [label, code] of Object.entries(JK_JOB_CODES)) {
+      if (role.includes(label) || label.includes(role)) {
+        codes.set(String(code), label);
+      }
+    }
+  }
+
+  // Fallback: use default codes if no matches from SSoT careers.
+  if (codes.size === 0) {
+    codes.set('1000233', '시스템엔지니어');
+    codes.set('1000238', '보안엔지니어');
+  }
+
+  const codeValues = [...codes.keys()].join(',');
+  const nameValues = [...codes.values()].join(',');
+
   return [
-    { name: 'HopeJob.HJ_Code', value: '10031' },
-    { name: 'HopeJob.HJ_Name_Code', value: '1000233,1000238' },
-    { name: 'HopeJob.HJ_Name', value: '시스템엔지니어,보안엔지니어' },
+    { name: 'HopeJob.HJ_Code', value: String(JK_JOB_CATEGORY) },
+    { name: 'HopeJob.HJ_Name_Code', value: codeValues },
+    { name: 'HopeJob.HJ_Name', value: nameValues },
     { name: 'HopeJob.HJ_Local_Code', value: 'I000' },
     { name: 'HopeJob.HJ_Local_Name', value: '서울전체' },
     { name: 'InputStat.HopeJobInputStat', value: 'True' },

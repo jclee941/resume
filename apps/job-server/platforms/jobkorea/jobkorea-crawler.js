@@ -169,11 +169,16 @@ export class JobKoreaCrawler extends BaseCrawler {
     }
   }
 
+  /**
+   * @stub Profile fetching not yet implemented for JobKorea.
+   * Returns an empty profile placeholder.
+   */
   async getProfile() {
     if (!this.cookies) {
       return { success: false, error: 'Authentication required' };
     }
 
+    console.warn('[jobkorea-crawler] getProfile() is a stub — returns empty profile');
     return {
       success: true,
       profile: { name: null, careers: [], skills: [] },

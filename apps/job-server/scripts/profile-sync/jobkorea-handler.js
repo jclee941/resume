@@ -224,11 +224,17 @@ export default class JobKoreaHandler {
     const validCerts = (Array.isArray(ssot?.certifications) ? ssot.certifications : []).filter(
       (c) => c?.date
     );
+    // Awards: fall back to achievements[] (string[]) if awards[] absent.
+    let awardItems = Array.isArray(ssot?.awards) ? ssot.awards : [];
+    if (awardItems.length === 0 && Array.isArray(ssot?.achievements)) {
+      awardItems = ssot.achievements;
+    }
     // The server only accepts data keyed to indices IT generated.
     // Existing entries (from previous saves) cannot be updated — only fresh "추가" entries persist.
     const sections = [
       { prefix: 'Career', needed: careers.length },
       { prefix: 'License', needed: validCerts.length },
+      { prefix: 'Award', needed: awardItems.length },
     ];
 
     // Track existing indices per section BEFORE "추가" clicks.
@@ -267,7 +273,7 @@ export default class JobKoreaHandler {
         const prevTotal = (await this.readSectionIndices(page, prefix)).length;
 
         const clicked = await page.evaluate((pfx) => {
-          const sectionLabels = { Career: '\uacbd\ub825', License: '\uc790\uaca9\uc99d' };
+          const sectionLabels = { Career: '경력', License: '자격증', Award: '수상' };
           const label = sectionLabels[pfx];
           if (!label) return false;
 
@@ -335,6 +341,7 @@ export default class JobKoreaHandler {
     // Read final indices for all sections
     const allCareerIndices = await this.readSectionIndices(page, 'Career');
     const allLicenseIndices = await this.readSectionIndices(page, 'License');
+    const allAwardIndices = await this.readSectionIndices(page, 'Award');
     const schoolIndices = await this.readSectionIndices(page, 'UnivSchool');
 
     // Filter out existing entries — only "추가"-created entries persist.
@@ -348,7 +355,7 @@ export default class JobKoreaHandler {
     return {
       career: filterExisting(allCareerIndices, 'Career'),
       license: filterExisting(allLicenseIndices, 'License'),
-      award: [],
+      award: filterExisting(allAwardIndices, 'Award'),
       school: schoolIndices[0] || 'c1',
     };
   }
