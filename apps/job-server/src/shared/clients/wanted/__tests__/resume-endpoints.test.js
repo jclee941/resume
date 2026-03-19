@@ -17,7 +17,7 @@ const assertChaosCall = (mockClient, expectedPath, expectedMethod, expectedBody)
   const options = args[1];
 
   assert.strictEqual(path, expectedPath);
-  assert.ok(path.includes('/v1'));
+  assert.ok(path.includes('/v1') || path.includes('/v2'));
 
   if (expectedMethod) {
     assert.strictEqual(options.method, expectedMethod);
@@ -108,39 +108,39 @@ describe('ResumeCareerEndpoint', async () => {
     endpoint = new ResumeCareerEndpoint(mockClient);
   });
 
-  it('update() uses PUT on /resumes/v1/:resumeId/careers/:careerId with body and returns response passthrough', async () => {
+  it('update() uses PUT on /resumes/v2/:resumeId/careers/:careerId with body and returns response passthrough', async () => {
     const payload = { company: 'Wanted' };
     const response = { data: { id: 1 } };
     mockClient.chaosRequest = mock.fn(async () => response);
 
     const result = await endpoint.update(resumeId, careerId, payload);
 
-    assertChaosCall(mockClient, `/resumes/v1/${resumeId}/careers/${careerId}`, 'PUT', payload);
+    assertChaosCall(mockClient, `/resumes/v2/${resumeId}/careers/${careerId}`, 'PUT', payload);
     assert.strictEqual(result, response);
   });
 
-  it('add() uses POST on /resumes/v1/:resumeId/careers with body and returns response passthrough', async () => {
+  it('add() uses POST on /resumes/v2/:resumeId/careers with body and returns response passthrough', async () => {
     const payload = { company: 'Toss' };
     const response = { data: { id: 1 } };
     mockClient.chaosRequest = mock.fn(async () => response);
 
     const result = await endpoint.add(resumeId, payload);
 
-    assertChaosCall(mockClient, `/resumes/v1/${resumeId}/careers`, 'POST', payload);
+    assertChaosCall(mockClient, `/resumes/v2/${resumeId}/careers`, 'POST', payload);
     assert.strictEqual(result, response);
   });
 
-  it('delete() uses DELETE on /resumes/v1/:resumeId/careers/:careerId and returns response passthrough', async () => {
+  it('delete() uses DELETE on /resumes/v2/:resumeId/careers/:careerId and returns response passthrough', async () => {
     const response = { data: { id: 1 } };
     mockClient.chaosRequest = mock.fn(async () => response);
 
     const result = await endpoint.delete(resumeId, careerId);
 
-    assertChaosCall(mockClient, `/resumes/v1/${resumeId}/careers/${careerId}`, 'DELETE');
+    assertChaosCall(mockClient, `/resumes/v2/${resumeId}/careers/${careerId}`, 'DELETE');
     assert.strictEqual(result, response);
   });
 
-  it('addProject() uses POST on /resumes/v1/:resumeId/careers/:careerId/projects with body and returns response passthrough', async () => {
+  it('addProject() uses POST on /resumes/v2/:resumeId/careers/:careerId/projects with body and returns response passthrough', async () => {
     const payload = { name: 'Migration Project' };
     const response = { data: { id: 1 } };
     mockClient.chaosRequest = mock.fn(async () => response);
@@ -149,14 +149,14 @@ describe('ResumeCareerEndpoint', async () => {
 
     assertChaosCall(
       mockClient,
-      `/resumes/v1/${resumeId}/careers/${careerId}/projects`,
+      `/resumes/v2/${resumeId}/careers/${careerId}/projects`,
       'POST',
       payload
     );
     assert.strictEqual(result, response);
   });
 
-  it('deleteProject() uses DELETE on /resumes/v1/:resumeId/careers/:careerId/projects/:projectId and returns response passthrough', async () => {
+  it('deleteProject() uses DELETE on /resumes/v2/:resumeId/careers/:careerId/projects/:projectId and returns response passthrough', async () => {
     const response = { data: { id: 1 } };
     mockClient.chaosRequest = mock.fn(async () => response);
 
@@ -164,7 +164,7 @@ describe('ResumeCareerEndpoint', async () => {
 
     assertChaosCall(
       mockClient,
-      `/resumes/v1/${resumeId}/careers/${careerId}/projects/${projectId}`,
+      `/resumes/v2/${resumeId}/careers/${careerId}/projects/${projectId}`,
       'DELETE'
     );
     assert.strictEqual(result, response);

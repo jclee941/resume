@@ -253,7 +253,7 @@ describe('unifiedResumeSyncTool', () => {
     const mockApi = {
       updateProfile,
       getResumeDetail,
-      resumeCareer: { update: resumeCareerUpdate, add: resumeCareerAdd },
+      resumeCareer: { update: resumeCareerUpdate, add: resumeCareerAdd, delete: mock.fn(async () => undefined), addProject: mock.fn(async () => undefined), deleteProject: mock.fn(async () => undefined) },
       resumeEducation: { update: resumeEducationUpdate, add: resumeEducationAdd },
       resumeSkills: { add: resumeSkillsAdd },
     };
@@ -307,7 +307,7 @@ describe('unifiedResumeSyncTool', () => {
 
     const updateProfile = mock.fn(async () => undefined);
     const getResumeDetail = mock.fn(async () => ({
-      careers: [{ id: 'career-1', company: { name: 'TestCorp' } }],
+      careers: [{ id: 'career-1', company: { name: 'TestCorp' }, projects: [{ id: 'proj-1', title: 'Old Project' }] }],
       educations: [],
       skills: [{ name: 'Python' }],
     }));
@@ -320,7 +320,7 @@ describe('unifiedResumeSyncTool', () => {
     const mockApi = {
       updateProfile,
       getResumeDetail,
-      resumeCareer: { update: resumeCareerUpdate, add: resumeCareerAdd },
+      resumeCareer: { update: resumeCareerUpdate, add: resumeCareerAdd, delete: mock.fn(async () => undefined), addProject: mock.fn(async () => undefined), deleteProject: mock.fn(async () => undefined) },
       resumeEducation: { update: resumeEducationUpdate, add: resumeEducationAdd },
       resumeSkills: { add: resumeSkillsAdd },
     };
@@ -380,6 +380,9 @@ describe('unifiedResumeSyncTool', () => {
         resumeCareer: {
           update: mock.fn(async () => undefined),
           add: mock.fn(async () => undefined),
+          delete: mock.fn(async () => undefined),
+          addProject: mock.fn(async () => undefined),
+          deleteProject: mock.fn(async () => undefined),
         },
         resumeEducation: {
           update: mock.fn(async () => undefined),
@@ -404,5 +407,162 @@ describe('unifiedResumeSyncTool', () => {
     for (const [skill, expectedTag] of Object.entries(SKILL_TAG_MAP_ENTRIES)) {
       assert.strictEqual(observed.get(skill), expectedTag);
     }
+  });
+
+  it('deletes stale remote careers not in SSoT', async () => {
+    const data = clone(BASE_RESUME_DATA);
+    data.careers = [
+      {
+        company: 'TestCorp',
+        role: 'DevOps Engineer',
+        period: '2020.03 ~ 현재',
+        project: 'Platform',
+        description: 'Core platform work',
+      },
+    ];
+    mockResumeFile(data);
+
+    const resumeCareerUpdate = mock.fn(async () => undefined);
+    const resumeCareerAdd = mock.fn(async () => undefined);
+    const resumeCareerDelete = mock.fn(async () => undefined);
+
+    const mockApi = {
+      updateProfile: mock.fn(async () => undefined),
+      getResumeDetail: mock.fn(async () => ({
+        careers: [
+          { id: 'career-1', company: { name: 'TestCorp' } },
+          { id: 'career-stale', company: { name: 'StaleCorp' } },
+        ],
+        educations: [],
+        skills: [],
+      })),
+      resumeCareer: { update: resumeCareerUpdate, add: resumeCareerAdd, delete: resumeCareerDelete, addProject: mock.fn(async () => undefined), deleteProject: mock.fn(async () => undefined) },
+      resumeEducation: { update: mock.fn(async () => undefined), add: mock.fn(async () => undefined) },
+      resumeSkills: { add: mock.fn(async () => undefined) },
+    };
+
+    mock.method(SessionManager, 'getAPI', async () => mockApi);
+
+    const result = await unifiedResumeSyncTool.execute({
+      action: 'sync',
+      platforms: ['wanted'],
+      resume_id: 'resume-1',
+    });
+
+    assert.strictEqual(result.success, true);
+    assert.strictEqual(resumeCareerUpdate.mock.calls.length, 1);
+    assert.strictEqual(resumeCareerAdd.mock.calls.length, 0);
+    assert.strictEqual(resumeCareerDelete.mock.calls.length, 1);
+    assert.strictEqual(resumeCareerDelete.mock.calls[0].arguments[1], 'career-stale');
+  });
+
+  it('normalizes (주) in company names for career matching', async () => {
+    const data = clone(BASE_RESUME_DATA);
+    data.careers = [
+      {
+        company: '(주)아이티센 CTS',
+        role: '보안운영 담당',
+        period: '2025.03 ~ 2026.02',
+        project: 'Security Ops',
+        description: 'Security operations',
+      },
+    ];
+    mockResumeFile(data);
+
+    const resumeCareerUpdate = mock.fn(async () => undefined);
+    const resumeCareerAdd = mock.fn(async () => undefined);
+    const resumeCareerDelete = mock.fn(async () => undefined);
+
+    const mockApi = {
+      updateProfile: mock.fn(async () => undefined),
+      getResumeDetail: mock.fn(async () => ({
+        careers: [{ id: 'career-itcen', company: { name: '아이티센 CTS' } }],
+        educations: [],
+        skills: [],
+      })),
+      resumeCareer: { update: resumeCareerUpdate, add: resumeCareerAdd, delete: resumeCareerDelete, addProject: mock.fn(async () => undefined), deleteProject: mock.fn(async () => undefined) },
+      resumeEducation: { update: mock.fn(async () => undefined), add: mock.fn(async () => undefined) },
+      resumeSkills: { add: mock.fn(async () => undefined) },
+    };
+
+    mock.method(SessionManager, 'getAPI', async () => mockApi);
+
+    const result = await unifiedResumeSyncTool.execute({
+      action: 'sync',
+      platforms: ['wanted'],
+      resume_id: 'resume-1',
+    });
+
+    assert.strictEqual(result.success, true);
+    // Should match via normalized name, so update not add
+    assert.strictEqual(resumeCareerUpdate.mock.calls.length, 1);
+    assert.strictEqual(resumeCareerUpdate.mock.calls[0].arguments[1], 'career-itcen');
+    assert.strictEqual(resumeCareerAdd.mock.calls.length, 0);
+    assert.strictEqual(resumeCareerDelete.mock.calls.length, 0);
+  });
+
+  it('syncs career projects: deletes existing and adds SSoT project', async () => {
+    const data = clone(BASE_RESUME_DATA);
+    data.careers = [
+      {
+        company: 'TestCorp',
+        role: 'DevOps Engineer',
+        period: '2020.03 ~ 현재',
+        project: 'Platform Infrastructure',
+        description: 'Cloud infra management and CI/CD pipeline',
+      },
+    ];
+    mockResumeFile(data);
+
+    const resumeCareerUpdate = mock.fn(async () => undefined);
+    const resumeCareerAddProject = mock.fn(async () => undefined);
+    const resumeCareerDeleteProject = mock.fn(async () => undefined);
+
+    const mockApi = {
+      updateProfile: mock.fn(async () => undefined),
+      getResumeDetail: mock.fn(async () => ({
+        careers: [
+          {
+            id: 'career-1',
+            company: { name: 'TestCorp' },
+            projects: [
+              { id: 'proj-old-1', title: 'STAR Project', description: '【Situation】...' },
+              { id: 'proj-old-2', title: 'Another', description: 'AI-generated' },
+            ],
+          },
+        ],
+        educations: [],
+        skills: [],
+      })),
+      resumeCareer: {
+        update: resumeCareerUpdate,
+        add: mock.fn(async () => undefined),
+        delete: mock.fn(async () => undefined),
+        addProject: resumeCareerAddProject,
+        deleteProject: resumeCareerDeleteProject,
+      },
+      resumeEducation: { update: mock.fn(async () => undefined), add: mock.fn(async () => undefined) },
+      resumeSkills: { add: mock.fn(async () => undefined) },
+    };
+
+    mock.method(SessionManager, 'getAPI', async () => mockApi);
+
+    const result = await unifiedResumeSyncTool.execute({
+      action: 'sync',
+      platforms: ['wanted'],
+      resume_id: 'resume-1',
+    });
+
+    assert.strictEqual(result.success, true);
+    // Should delete both existing projects
+    assert.strictEqual(resumeCareerDeleteProject.mock.calls.length, 2);
+    assert.strictEqual(resumeCareerDeleteProject.mock.calls[0].arguments[2], 'proj-old-1');
+    assert.strictEqual(resumeCareerDeleteProject.mock.calls[1].arguments[2], 'proj-old-2');
+    // Should add SSoT project
+    assert.strictEqual(resumeCareerAddProject.mock.calls.length, 1);
+    assert.deepStrictEqual(resumeCareerAddProject.mock.calls[0].arguments[2], {
+      title: 'Platform Infrastructure',
+      description: 'Cloud infra management and CI/CD pipeline',
+    });
   });
 });
