@@ -40,7 +40,7 @@ export const PLATFORMS = {
   jobkorea: {
     name: 'JobKorea',
     profileUrl: 'https://www.jobkorea.co.kr/User/Resume/View?rNo=30236578',
-    editUrl: 'https://www.jobkorea.co.kr/User/Resume/Write?Input_Type_Code=3',
+    editUrl: 'https://www.jobkorea.co.kr/User/Resume/Edit?RNo=30236578',
   },
   saramin: {
     name: 'Saramin',
