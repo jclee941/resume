@@ -1,5 +1,6 @@
-import { describe, it } from 'node:test';
+import { describe, it, mock, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert';
+import fs from 'fs';
 import JobKoreaHandler from '../jobkorea-handler.js';
 
 describe('JobKoreaHandler.computeChanges', () => {
@@ -92,5 +93,140 @@ describe('JobKoreaHandler.describeField', () => {
       handler.describeField('InputStat.CareerInputStat'),
       'InputStat.CareerInputStat'
     );
+  });
+});
+
+describe('JobKoreaHandler.saveSession', () => {
+  let handler;
+  let writtenData;
+
+  beforeEach(() => {
+    handler = new JobKoreaHandler();
+    writtenData = null;
+    mock.method(fs, 'mkdirSync', () => {});
+    mock.method(fs, 'writeFileSync', (_filePath, data) => {
+      writtenData = JSON.parse(data);
+    });
+  });
+
+  afterEach(() => {
+    mock.restoreAll();
+  });
+
+  it('preserves existing session metadata when updating cookies', () => {
+    const existingSession = {
+      platform: 'jobkorea',
+      expiresAt: '2026-04-01T00:00:00.000Z',
+      cookieCount: 5,
+      extractedAt: '2026-03-15T00:00:00.000Z',
+      cookies: [{ name: 'old', value: 'cookie' }],
+      cookieString: 'old=cookie',
+    };
+    mock.method(fs, 'readFileSync', () => JSON.stringify(existingSession));
+
+    const newCookies = [
+      { name: 'ACNT_COOKIE', value: 'abc123' },
+      { name: 'SES_ID', value: 'xyz789' },
+    ];
+    handler.saveSession(newCookies);
+
+    // Metadata from auth-persistent.js preserved
+    assert.strictEqual(writtenData.platform, 'jobkorea');
+    assert.strictEqual(writtenData.expiresAt, '2026-04-01T00:00:00.000Z');
+    // Cookies updated to new values
+    assert.strictEqual(writtenData.cookies.length, 2);
+    assert.strictEqual(writtenData.cookies[0].name, 'ACNT_COOKIE');
+    assert.strictEqual(writtenData.cookieString, 'ACNT_COOKIE=abc123; SES_ID=xyz789');
+    assert.strictEqual(writtenData.cookieCount, 2);
+    // extractedAt refreshed on save
+    assert.notStrictEqual(writtenData.extractedAt, '2026-03-15T00:00:00.000Z');
+  });
+
+  it('populates defaults when no existing session file', () => {
+    mock.method(fs, 'readFileSync', () => {
+      throw new Error('ENOENT');
+    });
+
+    const cookies = [{ name: 'test', value: 'val' }];
+    handler.saveSession(cookies);
+
+    assert.strictEqual(writtenData.platform, 'jobkorea');
+    assert.ok(writtenData.expiresAt);
+    assert.strictEqual(writtenData.cookies.length, 1);
+    assert.strictEqual(writtenData.cookieString, 'test=val');
+    assert.strictEqual(writtenData.cookieCount, 1);
+    assert.ok(writtenData.extractedAt);
+  });
+
+  it('builds correct cookieString from cookie array', () => {
+    mock.method(fs, 'readFileSync', () => {
+      throw new Error('ENOENT');
+    });
+
+    const cookies = [
+      { name: 'A', value: '1' },
+      { name: 'B', value: '2' },
+      { name: 'C', value: '3' },
+    ];
+    handler.saveSession(cookies);
+
+    assert.strictEqual(writtenData.cookieString, 'A=1; B=2; C=3');
+    assert.strictEqual(writtenData.cookieCount, 3);
+  });
+
+  it('normalizes legacy array session to object with metadata', () => {
+    // loadSession() at line 22 supports legacy bare-array format
+    const legacyArray = [
+      { name: 'ACNT_COOKIE', value: 'legacy123', domain: '.jobkorea.co.kr' },
+    ];
+    mock.method(fs, 'readFileSync', () => JSON.stringify(legacyArray));
+
+    const newCookies = [
+      { name: 'ACNT_COOKIE', value: 'updated456' },
+      { name: 'SES_ID', value: 'new789' },
+    ];
+    handler.saveSession(newCookies);
+
+    // Must produce an object, not an array with attached properties
+    assert.ok(!Array.isArray(writtenData), 'saved session must be an object, not array');
+    assert.strictEqual(writtenData.platform, 'jobkorea');
+    assert.ok(writtenData.expiresAt, 'must have expiresAt default');
+    assert.strictEqual(writtenData.cookies.length, 2);
+    assert.strictEqual(writtenData.cookieString, 'ACNT_COOKIE=updated456; SES_ID=new789');
+    assert.strictEqual(writtenData.cookieCount, 2);
+    assert.ok(writtenData.extractedAt);
+  });
+});
+
+describe('JobKoreaHandler.loadSession - auth-sync compatibility', () => {
+  let handler;
+
+  beforeEach(() => {
+    handler = new JobKoreaHandler({}, {});
+    mock.restoreAll();
+  });
+
+  it('loads cookie array from auth-sync-style session (cookies as objects)', () => {
+    // auth-sync/cookie-ops.js now saves cookies as array of cookie objects
+    const authSyncSession = {
+      platform: 'jobkorea',
+      cookies: [
+        { name: 'ACNT_COOKIE', value: 'abc', domain: '.jobkorea.co.kr', path: '/' },
+        { name: 'SES_ID', value: 'xyz', domain: '.jobkorea.co.kr', path: '/' },
+      ],
+      cookieString: 'ACNT_COOKIE=abc; SES_ID=xyz',
+      cookieCount: 2,
+      extractedAt: '2026-03-18T00:00:00.000Z',
+      expiresAt: '2026-03-19T00:00:00.000Z',
+    };
+
+    mock.method(fs, 'existsSync', () => true);
+    mock.method(fs, 'readFileSync', () => JSON.stringify(authSyncSession));
+
+    const result = handler.loadSession();
+    assert.ok(Array.isArray(result), 'must return array');
+    assert.strictEqual(result.length, 2);
+    assert.strictEqual(result[0].name, 'ACNT_COOKIE');
+    assert.strictEqual(result[1].domain, '.jobkorea.co.kr');
   });
 });
