@@ -16,7 +16,6 @@ export function mapCareerToWanted(career) {
     end_time: endsAt,
     served: endsAt === null,
     employment_type: 'FULLTIME',
-    projects: [{ title: career.project, description: career.description }],
   };
 }
 
@@ -69,6 +68,30 @@ export async function syncWantedSkills(api, ssot, profile) {
   return { changes: added + deleted, added, deleted };
 }
 
+/**
+ * Sync career projects: delete existing, add SSoT project.
+ * Career PATCH ignores the `projects` field — separate DELETE/POST required.
+ */
+async function syncCareerProjects(client, resumeId, careerId, ssotCareer, existingProjects) {
+  for (const p of existingProjects) {
+    try {
+      await client.deleteProject(resumeId, careerId, p.id);
+    } catch (e) {
+      log(`Failed to delete project ${p.id}: ${e.message}`, 'error', 'wanted');
+    }
+  }
+  if (ssotCareer.project && ssotCareer.description) {
+    try {
+      await client.addProject(resumeId, careerId, {
+        title: ssotCareer.project,
+        description: ssotCareer.description,
+      });
+    } catch (e) {
+      log(`Failed to add project for ${ssotCareer.company}: ${e.message}`, 'error', 'wanted');
+    }
+  }
+}
+
 /** @param {Object} client @param {Object} ssot @param {Object} profile @param {string} resumeId @returns {Promise<Object>} */
 export async function syncWantedCareers(client, ssot, profile, resumeId) {
   const ssotCareers = ssot.careers || [];
@@ -89,24 +112,28 @@ export async function syncWantedCareers(client, ssot, profile, resumeId) {
     const mapped = mapCareerToWanted(ssotCareer);
     if (wantedCareer) {
       matched.add(wantedCareer.id);
-      toUpdate.push({ id: wantedCareer.id, data: mapped, ssot: ssotCareer });
+      toUpdate.push({ id: wantedCareer.id, data: mapped, ssot: ssotCareer, existingProjects: wantedCareer.projects || [] });
     } else {
       toAdd.push({ data: mapped, ssot: ssotCareer });
     }
   }
 
-  log(`Careers: ${toUpdate.length} to override, ${toAdd.length} to add`, 'info', 'wanted');
+  const toDelete = wantedCareers.filter((w) => !matched.has(w.id));
+
+  log(`Careers: ${toUpdate.length} to override, ${toAdd.length} to add, ${toDelete.length} to delete`, 'info', 'wanted');
 
   if (!CONFIG.APPLY || CONFIG.DIFF_ONLY) {
     for (const item of toUpdate) console.log(`  ~ ${item.ssot.company}: ${item.ssot.role}`);
     for (const item of toAdd) console.log(`  + ${item.ssot.company}: ${item.ssot.role}`);
-    return { changes: toUpdate.length + toAdd.length, updated: 0, added: 0, dryRun: true };
+    for (const career of toDelete) console.log(`  - ${career.company?.name || 'Unknown'}: ${career.job_role || 'Unknown'} (id: ${career.id})`);
+    return { changes: toUpdate.length + toAdd.length + toDelete.length, updated: 0, added: 0, deleted: 0, dryRun: true };
   }
 
   let updated = 0;
   for (const item of toUpdate) {
     try {
       await client.updateCareer(resumeId, item.id, item.data);
+      await syncCareerProjects(client, resumeId, item.id, item.ssot, item.existingProjects);
       log(`Updated career: ${item.ssot.company}`, 'success', 'wanted');
       updated++;
     } catch (e) {
@@ -117,14 +144,29 @@ export async function syncWantedCareers(client, ssot, profile, resumeId) {
   let added = 0;
   for (const item of toAdd) {
     try {
-      await client.addCareer(resumeId, item.data);
+      const result = await client.addCareer(resumeId, item.data);
+      const newCareerId = result?.data?.id || result?.id;
+      if (newCareerId) {
+        await syncCareerProjects(client, resumeId, newCareerId, item.ssot, []);
+      }
       log(`Added career: ${item.ssot.company}`, 'success', 'wanted');
       added++;
     } catch (e) {
       log(`Failed to add ${item.ssot.company}: ${e.message}`, 'error', 'wanted');
     }
   }
-  return { changes: updated + added, updated, added };
+
+  let deleted = 0;
+  for (const career of toDelete) {
+    try {
+      await client.deleteCareer(resumeId, career.id);
+      log(`Deleted career: ${career.company?.name || 'Unknown'}`, 'success', 'wanted');
+      deleted++;
+    } catch (e) {
+      log(`Failed to delete career ${career.company?.name || 'Unknown'}: ${e.message}`, 'error', 'wanted');
+    }
+  }
+  return { changes: updated + added + deleted, updated, added, deleted };
 }
 
 /** @param {Object} client @param {Object} ssot @param {Object} profile @param {string} resumeId @returns {Promise<Object>} */

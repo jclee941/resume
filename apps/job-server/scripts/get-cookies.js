@@ -83,6 +83,8 @@ async function extractCookies() {
     cookieString: sessionData.cookieString,
     email,
     timestamp: Date.now(),
+    cookieCount: cookies.length,
+    expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
   });
 
   console.log('\n🎉 Session synced for \'wanted\'');

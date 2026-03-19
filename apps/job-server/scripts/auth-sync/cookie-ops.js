@@ -46,7 +46,9 @@ export async function extractCookies(page, config) {
   const cookieString = relevantCookies.map((c) => `${c.name}=${c.value}`).join('; ');
   const session = {
     platform: platformKey,
-    cookies: cookieString,
+    cookies: relevantCookies,
+    cookieString,
+    cookieCount: relevantCookies.length,
     email: platform.authMethod === 'google' ? config.GOOGLE_EMAIL : config.WANTED_EMAIL,
     extractedAt: new Date().toISOString(),
     expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),

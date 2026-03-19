@@ -261,14 +261,13 @@ async function applyChanges(page, platform, changes) {
   }
 }
 
-function loadWantedSession() {
-  const sessionPath = path.join(CONFIG.SESSION_DIR, 'wanted-session.json');
+function tryLoadSessionFile(sessionPath) {
   if (!fs.existsSync(sessionPath)) {
     return null;
   }
   try {
     const session = JSON.parse(fs.readFileSync(sessionPath, 'utf-8'));
-    if (!session.cookies) {
+    if (!session.cookies && !session.cookieString) {
       return null;
     }
     // Handle both string format (from auth-sync.js) and array format (legacy)
@@ -278,10 +277,35 @@ function loadWantedSession() {
     if (Array.isArray(session.cookies) && session.cookies.length > 0) {
       return session.cookies.map((c) => `${c.name}=${c.value}`).join('; ');
     }
+    // Fallback to cookieString (normalized by SessionManager.save)
+    if (session.cookieString && typeof session.cookieString === 'string' && session.cookieString.length > 0) {
+      return session.cookieString;
+    }
     return null;
   } catch {
     return null;
   }
+}
+
+function loadWantedSession() {
+  // Try platform-specific session file first
+  const sessionPath = path.join(CONFIG.SESSION_DIR, 'wanted-session.json');
+  const cookies = tryLoadSessionFile(sessionPath);
+  if (cookies) return cookies;
+
+  // Fallback: check unified sessions.json (written by SessionManager)
+  const unifiedPath = path.join(CONFIG.SESSION_DIR, 'sessions.json');
+  if (fs.existsSync(unifiedPath)) {
+    try {
+      const sessions = JSON.parse(fs.readFileSync(unifiedPath, 'utf-8'));
+      const wanted = sessions.wanted;
+      if (wanted?.cookieString) return wanted.cookieString;
+      if (wanted?.cookies && typeof wanted.cookies === 'string') return wanted.cookies;
+    } catch {
+      // ignore parse errors
+    }
+  }
+  return null;
 }
 
 /**
@@ -360,11 +384,15 @@ async function syncWantedSkills(api, ssot, profile) {
 
 /**
  * Parse period string to start/end dates
- * @param {string} period - e.g., "2024.03 ~ 2025.02" or "2025.03 ~ 현재"
+ * @param {string} period - e.g., "2024.03 ~ 2025.02" or "2014.12 - 2016.12"
  * @returns {{startsAt: string, endsAt: string|null}}
  */
 function parsePeriod(period) {
-  const parts = period.split('~').map((p) => p.trim());
+  if (typeof period !== 'string' || !period.trim()) {
+    return { startsAt: '', endsAt: null };
+  }
+  const sep = period.includes('~') ? '~' : ' - ';
+  const parts = period.split(sep).map((p) => p.trim());
   const startsAt = `${parts[0].replace('.', '-')  }-01`;
   let endsAt = null;
   if (parts[1] && parts[1] !== '현재') {
@@ -384,6 +412,7 @@ const JOB_CATEGORY_MAPPING = {
   '보안 엔지니어': 672,
   보안엔지니어: 672,
   정보보안: 672,
+  정보보호팀: 672,
 
   // DevOps/Infra roles → 674 (DevOps / 시스템 관리자)
   '인프라 엔지니어': 674,
@@ -419,11 +448,7 @@ function mapCareerToWanted(career) {
   // Lookup job_category_id from mapping
   const jobCategoryId = JOB_CATEGORY_MAPPING[career.role] || DEFAULT_JOB_CATEGORY;
   if (!JOB_CATEGORY_MAPPING[career.role]) {
-    console.log(
-      chalk.yellow(
-        `⚠️  Unknown role "${career.role}" - using default category ${DEFAULT_JOB_CATEGORY}`
-      )
-    );
+    log(`Unknown role "${career.role}" - using default category ${DEFAULT_JOB_CATEGORY}`, 'warn', 'wanted');
   }
 
   return {
@@ -437,18 +462,37 @@ function mapCareerToWanted(career) {
     end_time: endsAt,
     served: endsAt === null,
     employment_type: 'FULLTIME',
-    projects: [
-      {
-        title: career.project,
-        description: career.description,
-      },
-    ],
   };
 }
 
 /**
  * Diff and sync careers from SSOT to Wanted
  * @param {WantedClient} client - Authenticated WantedClient
+/**
+ * Sync career projects: delete existing, add SSoT project.
+ * Career PATCH ignores the `projects` field — separate DELETE/POST required.
+ */
+async function syncCareerProjects(client, resumeId, careerId, ssotCareer, existingProjects) {
+  for (const p of existingProjects) {
+    try {
+      await client.deleteProject(resumeId, careerId, p.id);
+    } catch (e) {
+      log(`Failed to delete project ${p.id}: ${e.message}`, 'error', 'wanted');
+    }
+  }
+  if (ssotCareer.project && ssotCareer.description) {
+    try {
+      await client.addProject(resumeId, careerId, {
+        title: ssotCareer.project,
+        description: ssotCareer.description,
+      });
+    } catch (e) {
+      log(`Failed to add project for ${ssotCareer.company}: ${e.message}`, 'error', 'wanted');
+    }
+  }
+}
+
+/**
  * @param {Object} ssot - SSOT data
  * @param {Object} profile - Current Wanted profile
  * @param {string} resumeId - Wanted resume ID
@@ -485,13 +529,16 @@ async function syncWantedCareers(client, ssot, profile, resumeId) {
         id: wantedCareer.id,
         data: mapped,
         ssot: ssotCareer,
+        existingProjects: wantedCareer.projects || [],
       });
     } else {
       toAdd.push({ data: mapped, ssot: ssotCareer });
     }
   }
 
-  log(`Careers: ${toUpdate.length} to override, ${toAdd.length} to add`, 'info', 'wanted');
+  const toDelete = wantedCareers.filter((w) => !matched.has(w.id));
+
+  log(`Careers: ${toUpdate.length} to override, ${toAdd.length} to add, ${toDelete.length} to delete`, 'info', 'wanted');
 
   if (!CONFIG.APPLY || CONFIG.DIFF_ONLY) {
     for (const item of toUpdate) {
@@ -500,10 +547,14 @@ async function syncWantedCareers(client, ssot, profile, resumeId) {
     for (const item of toAdd) {
       console.log(`  + ${item.ssot.company}: ${item.ssot.role}`);
     }
+    for (const career of toDelete) {
+      console.log(`  - ${career.company?.name || 'Unknown'}: ${career.job_role || 'Unknown'} (id: ${career.id})`);
+    }
     return {
-      changes: toUpdate.length + toAdd.length,
+      changes: toUpdate.length + toAdd.length + toDelete.length,
       updated: 0,
       added: 0,
+      deleted: 0,
       dryRun: true,
     };
   }
@@ -512,6 +563,7 @@ async function syncWantedCareers(client, ssot, profile, resumeId) {
   for (const item of toUpdate) {
     try {
       await client.updateCareer(resumeId, item.id, item.data);
+      await syncCareerProjects(client, resumeId, item.id, item.ssot, item.existingProjects);
       log(`Updated career: ${item.ssot.company}`, 'success', 'wanted');
       updated++;
     } catch (e) {
@@ -522,7 +574,11 @@ async function syncWantedCareers(client, ssot, profile, resumeId) {
   let added = 0;
   for (const item of toAdd) {
     try {
-      await client.addCareer(resumeId, item.data);
+      const result = await client.addCareer(resumeId, item.data);
+      const newCareerId = result?.data?.id || result?.id;
+      if (newCareerId) {
+        await syncCareerProjects(client, resumeId, newCareerId, item.ssot, []);
+      }
       log(`Added career: ${item.ssot.company}`, 'success', 'wanted');
       added++;
     } catch (e) {
@@ -530,7 +586,18 @@ async function syncWantedCareers(client, ssot, profile, resumeId) {
     }
   }
 
-  return { changes: updated + added, updated, added };
+  let deleted = 0;
+  for (const career of toDelete) {
+    try {
+      await client.deleteCareer(resumeId, career.id);
+      log(`Deleted career: ${career.company?.name || 'Unknown'}`, 'success', 'wanted');
+      deleted++;
+    } catch (e) {
+      log(`Failed to delete career ${career.company?.name || 'Unknown'}: ${e.message}`, 'error', 'wanted');
+    }
+  }
+
+  return { changes: updated + added + deleted, updated, added, deleted };
 }
 
 /**
@@ -589,7 +656,7 @@ async function syncWantedEducations(client, ssot, profile, resumeId) {
  * @param {string} resumeId - Wanted resume ID
  */
 async function syncWantedActivities(client, ssot, profile, resumeId) {
-  const ssotCerts = ssot.certifications || [];
+  const ssotCerts = (ssot.certifications || []).filter((c) => c.date && c.status !== '준비중');
   const wantedActivities = profile.activities || [];
 
   log(
@@ -781,57 +848,77 @@ async function syncWantedViaAPI(ssot) {
     if (resumeId) {
       const client = new WantedClient(cookieString);
 
-      const skillsResult = await syncWantedSkills(api, ssot, profile);
-      if (skillsResult.changes > 0) {
-        changes.push({
-          field: 'skills',
-          from: `${skillsResult.deleted} skills`,
-          to: `+${skillsResult.added} skills`,
-        });
+      try {
+        const skillsResult = await syncWantedSkills(api, ssot, profile);
+        if (skillsResult.changes > 0) {
+          changes.push({
+            field: 'skills',
+            from: `${skillsResult.deleted} skills`,
+            to: `+${skillsResult.added} skills`,
+          });
+        }
+      } catch (e) {
+        log(`Skills sync failed: ${e.message}`, 'error', 'wanted');
       }
 
-      const careersResult = await syncWantedCareers(client, ssot, profile, resumeId);
-      if (careersResult.added > 0 || careersResult.updated > 0) {
-        changes.push({
-          field: 'careers',
-          from: `${careersResult.updated} updated`,
-          to: `+${careersResult.added} added`,
-        });
+      try {
+        const careersResult = await syncWantedCareers(client, ssot, profile, resumeId);
+        if (careersResult.added > 0 || careersResult.updated > 0) {
+          changes.push({
+            field: 'careers',
+            from: `${careersResult.updated} updated`,
+            to: `+${careersResult.added} added`,
+          });
+        }
+      } catch (e) {
+        log(`Careers sync failed: ${e.message}`, 'error', 'wanted');
       }
 
-      const educationsResult = await syncWantedEducations(client, ssot, profile, resumeId);
-      if (educationsResult.added > 0 || educationsResult.updated > 0) {
-        changes.push({
-          field: 'educations',
-          from: `${educationsResult.updated} updated`,
-          to: `+${educationsResult.added} added`,
-        });
+      try {
+        const educationsResult = await syncWantedEducations(client, ssot, profile, resumeId);
+        if (educationsResult.added > 0 || educationsResult.updated > 0) {
+          changes.push({
+            field: 'educations',
+            from: `${educationsResult.updated} updated`,
+            to: `+${educationsResult.added} added`,
+          });
+        }
+      } catch (e) {
+        log(`Education sync failed: ${e.message}`, 'error', 'wanted');
       }
 
-      const activitiesResult = await syncWantedActivities(client, ssot, profile, resumeId);
-      if (activitiesResult.added > 0 || activitiesResult.updated > 0) {
-        changes.push({
-          field: 'activities',
-          from: `${activitiesResult.updated} updated`,
-          to: `+${activitiesResult.added} added`,
-        });
+      try {
+        const activitiesResult = await syncWantedActivities(client, ssot, profile, resumeId);
+        if (activitiesResult.added > 0 || activitiesResult.updated > 0) {
+          changes.push({
+            field: 'activities',
+            from: `${activitiesResult.updated} updated`,
+            to: `+${activitiesResult.added} added`,
+          });
+        }
+      } catch (e) {
+        log(`Activities sync failed: ${e.message}`, 'error', 'wanted');
       }
 
-      const resumeDetail = await client.getResumeDetail(resumeId);
+      try {
+        const resumeDetail = await client.getResumeDetail(resumeId);
 
-      const aboutResult = await syncWantedAbout(client, ssot, resumeDetail?.resume, resumeId);
-      if (aboutResult.updated > 0) {
-        changes.push({ field: 'about', from: 'old', to: 'updated' });
-      }
+        const aboutResult = await syncWantedAbout(client, ssot, resumeDetail?.resume, resumeId);
+        if (aboutResult.updated > 0) {
+          changes.push({ field: 'about', from: 'old', to: 'updated' });
+        }
 
-      const contactResult = await syncWantedContactInfo(
-        client,
-        ssot,
-        resumeDetail?.resume,
-        resumeId
-      );
-      if (contactResult.updated > 0) {
-        changes.push({ field: 'contact', from: 'old', to: 'updated' });
+        const contactResult = await syncWantedContactInfo(
+          client,
+          ssot,
+          resumeDetail?.resume,
+          resumeId
+        );
+        if (contactResult.updated > 0) {
+          changes.push({ field: 'contact', from: 'old', to: 'updated' });
+        }
+      } catch (e) {
+        log(`About/Contact sync failed: ${e.message}`, 'error', 'wanted');
       }
     } else {
       log('No resumeId found - skipping career/education/activity sync', 'warn', 'wanted');

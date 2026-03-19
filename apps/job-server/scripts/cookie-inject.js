@@ -12,9 +12,7 @@
  */
 
 import fs from 'fs';
-import path from 'path';
-
-const SESSION_FILE = path.join(process.env.HOME, '.opencode/data/sessions.json');
+import { SessionManager } from '../src/shared/services/session/session-manager.js';
 
 function parseCookieString(cookieStr) {
   return cookieStr
@@ -30,31 +28,13 @@ function saveSession(cookies, email = 'qwer941a@gmail.com') {
   const cookieString =
     typeof cookies === 'string' ? cookies : cookies.map((c) => `${c.name}=${c.value}`).join('; ');
 
-  const session = {
-    wanted: {
-      cookies: cookieString,
-      email,
-      expires_at: Date.now() + 24 * 60 * 60 * 1000,
-      created_at: new Date().toISOString(),
-    },
-  };
+  SessionManager.save('wanted', {
+    cookies: cookieString,
+    email,
+  });
 
-  let existingSessions = {};
-  try {
-    if (fs.existsSync(SESSION_FILE)) {
-      existingSessions = JSON.parse(fs.readFileSync(SESSION_FILE, 'utf8'));
-    }
-  } catch (_e) {
-    console.log('Creating new sessions file');
-  }
-
-  const mergedSessions = { ...existingSessions, ...session };
-
-  fs.mkdirSync(path.dirname(SESSION_FILE), { recursive: true });
-  fs.writeFileSync(SESSION_FILE, JSON.stringify(mergedSessions, null, 2));
-
-  console.log('✅ Session saved to:', SESSION_FILE);
-  console.log('📅 Expires at:', new Date(session.wanted.expires_at).toLocaleString());
+  console.log('✅ Session saved');
+  console.log('📅 Expires at:', new Date(Date.now() + 24 * 60 * 60 * 1000).toLocaleString());
 
   return cookieString;
 }

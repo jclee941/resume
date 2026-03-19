@@ -116,6 +116,8 @@ try {
     cookies: wantedCookies,
     cookieString: wantedCookies,
     timestamp: Date.now(),
+    expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+    cookieCount: wantedCookies.split(';').filter(Boolean).length,
   });
   console.log('✅ Session saved successfully');
 
