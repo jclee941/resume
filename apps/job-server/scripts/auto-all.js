@@ -125,7 +125,9 @@ async function extractCookiesViaCDP(platforms) {
           secure: c.secure, sameSite: c.sameSite,
         })),
         cookieString: platformCookies.map((c) => `${c.name}=${c.value}`).join('; '),
+        cookieCount: platformCookies.length,
         extractedAt: new Date().toISOString(),
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
       };
 
       SessionManager.save(platform, session);
@@ -153,12 +155,15 @@ function checkSession(platform) {
   if (!session || !session.timestamp || Date.now() - session.timestamp > 24 * 60 * 60 * 1000)
     return { valid: false, reason: 'expired' };
 
-  const authCookie = session.cookies?.find(
-    (c) => c.name.includes('TOKEN') || c.name.includes('session') || c.name.includes('auth')
-  );
-  if (!authCookie) return { valid: false, reason: 'no auth cookie' };
+  const cookieArr = Array.isArray(session.cookies) ? session.cookies : [];
+  const cookieStr = session.cookieString || (typeof session.cookies === 'string' ? session.cookies : '');
 
-  return { valid: true, cookies: session.cookies.length };
+  const hasAuth = cookieArr.length > 0
+    ? cookieArr.some((c) => c.name.includes('TOKEN') || c.name.includes('session') || c.name.includes('auth'))
+    : /TOKEN|session|auth/i.test(cookieStr);
+  if (!hasAuth) return { valid: false, reason: 'no auth cookie' };
+
+  return { valid: true, cookies: session.cookieCount || cookieArr.length || cookieStr.split(';').filter(Boolean).length };
 }
 
 // Sync to platform

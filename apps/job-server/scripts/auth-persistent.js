@@ -36,6 +36,8 @@ const PLATFORMS = {
     checkUrl: 'https://www.wanted.co.kr/cv/list',
     successIndicator: '/cv/', // URL contains this when logged in
     cookieDomains: ['wanted.co.kr', 'id.wanted.jobs'],
+    // Wanted redirects to login page on auth failure — URL check is sufficient
+    verifyLogin: null,
   },
   jobkorea: {
     name: 'JobKorea',
@@ -43,6 +45,15 @@ const PLATFORMS = {
     checkUrl: 'https://www.jobkorea.co.kr/User/Mng/Resume/ResumeList',
     successIndicator: '/User/', // URL contains this when logged in
     cookieDomains: ['jobkorea.co.kr'],
+    // JobKorea serves error pages on /User/ URLs without redirect — need content check
+    verifyLogin: async (page) => {
+      return page.evaluate(() => {
+        const body = document.body?.innerText || '';
+        if (body.includes('찾을 수 없습니다') || body.includes('페이지의 주소가 변경')) return false;
+        return document.querySelector('.resumeList, .myPage, #container .user') !== null
+          || (body.includes('이력서') && !body.includes('로그인'));
+      }).catch(() => false);
+    },
   },
   saramin: {
     name: 'Saramin',
@@ -50,6 +61,8 @@ const PLATFORMS = {
     checkUrl: 'https://www.saramin.co.kr/zf_user/member/info',
     successIndicator: '/member/', // URL contains this when logged in
     cookieDomains: ['saramin.co.kr'],
+    // Saramin redirects to auth on failure — URL check is sufficient
+    verifyLogin: null,
   },
 };
 
@@ -103,7 +116,11 @@ async function runPlatform(platformKey, reset = false) {
     await sleep(3000);
 
     const currentUrl = page.url();
-    const isLoggedIn = currentUrl.includes(platform.successIndicator);
+    // Use platform-specific content verification when available (e.g. JobKorea error pages)
+    const hasUserContent = platform.verifyLogin
+      ? await platform.verifyLogin(page)
+      : true; // Platforms that redirect on auth failure need URL check only
+    const isLoggedIn = currentUrl.includes(platform.successIndicator) && hasUserContent;
 
     if (isLoggedIn) {
       log('Already logged in!', 'success', platformKey);
@@ -132,7 +149,10 @@ async function runPlatform(platformKey, reset = false) {
           });
           await sleep(2000);
 
-          if (page.url().includes(platform.successIndicator)) {
+          const postLoginContent = platform.verifyLogin
+            ? await platform.verifyLogin(page)
+            : true;
+          if (page.url().includes(platform.successIndicator) && postLoginContent) {
             log('Login successful! State saved for future runs.', 'success', platformKey);
             break;
           }
@@ -163,7 +183,8 @@ async function runPlatform(platformKey, reset = false) {
 
     const session = {
       platform: platformKey,
-      cookies: cookieString,
+      cookies: relevantCookies,
+      cookieString,
       cookieCount: relevantCookies.length,
       extractedAt: new Date().toISOString(),
       expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days
@@ -185,7 +206,7 @@ async function runPlatform(platformKey, reset = false) {
 }
 
 async function syncToWorker(session) {
-  if (!session?.cookies) return false;
+  if (!session?.cookies && !session?.cookieString) return false;
 
   log('Syncing to Worker...', 'info', session.platform);
 
@@ -198,7 +219,7 @@ async function syncToWorker(session) {
       },
       body: JSON.stringify({
         platform: session.platform,
-        cookies: session.cookies,
+        cookies: session.cookieString || (Array.isArray(session.cookies) ? session.cookies.map((c) => `${c.name}=${c.value}`).join('; ') : session.cookies),
         expiresIn: 7 * 24 * 60 * 60 * 1000, // 7 days
       }),
     });

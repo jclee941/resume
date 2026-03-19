@@ -22,10 +22,49 @@ export default class JobKoreaHandler {
       if (Array.isArray(session) && session.length > 0) {
         return session;
       }
+      // Fallback: parse cookieString into cookie objects for Playwright addCookies()
+      if (session?.cookieString && typeof session.cookieString === 'string') {
+        const parsed = session.cookieString
+          .split(';')
+          .map((p) => p.trim())
+          .filter((p) => p && p.includes('='))
+          .map((p) => {
+            const [name, ...v] = p.split('=');
+            return { name: name.trim(), value: v.join('=').trim(), domain: '.jobkorea.co.kr', path: '/', httpOnly: false, secure: true, sameSite: 'Lax' };
+          });
+        if (parsed.length > 0) return parsed;
+      }
       return null;
     } catch (error) {
       log(`Failed to parse session file: ${error.message}`, 'error', 'jobkorea');
       return null;
+    }
+  }
+
+  saveSession(cookies) {
+    const sessionPath = path.join(CONFIG.SESSION_DIR, 'jobkorea-session.json');
+    try {
+      fs.mkdirSync(path.dirname(sessionPath), { recursive: true });
+      // Merge with existing session to preserve metadata (platform, expiresAt, etc.)
+      // that auth-persistent.js --sync/--status depends on.
+      // Normalize legacy array sessions (loadSession supports bare arrays) to objects.
+      let session = {};
+      try {
+        const existing = JSON.parse(fs.readFileSync(sessionPath, 'utf8'));
+        session = Array.isArray(existing) ? {} : (existing && typeof existing === 'object' ? existing : {});
+      } catch { /* no existing session */ }
+      session.cookies = cookies;
+      session.cookieString = cookies.map((c) => `${c.name}=${c.value}`).join('; ');
+      session.cookieCount = cookies.length;
+      session.extractedAt = new Date().toISOString();
+      if (!session.platform) session.platform = 'jobkorea';
+      if (!session.expiresAt) {
+        session.expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+      }
+      fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
+      log(`Session saved (${cookies.length} cookies)`, 'info', 'jobkorea');
+    } catch (error) {
+      log(`Failed to save session: ${error.message}`, 'error', 'jobkorea');
     }
   }
 
@@ -507,6 +546,18 @@ export default class JobKoreaHandler {
       log(`Sync failed: ${error.message}`, 'error', 'jobkorea');
       return { success: false, changes: [], error: error.message };
     } finally {
+      try {
+        const allCookies = await context.cookies();
+        // Filter to jobkorea-relevant domains — matches auth-persistent.js:173 contract
+        const updatedCookies = allCookies.filter((c) =>
+          c.domain.includes('jobkorea.co.kr')
+        );
+        if (updatedCookies.length > 0) {
+          this.saveSession(updatedCookies);
+        }
+      } catch {
+        // Context may already be closed on error paths
+      }
       await browser.close();
     }
   }

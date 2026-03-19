@@ -122,7 +122,7 @@ class AuthSync {
     });
   }
   async syncToWorker(session) {
-    if (!session || !session.cookies) {
+    if (!session || (!session.cookies && !session.cookieString)) {
       return false;
     }
     this.log('Syncing to Worker', 'info', session.platform);
@@ -135,7 +135,7 @@ class AuthSync {
         },
         body: JSON.stringify({
           platform: session.platform,
-          cookies: session.cookies,
+          cookies: session.cookieString || (Array.isArray(session.cookies) ? session.cookies.map((c) => `${c.name}=${c.value}`).join('; ') : session.cookies),
           email: session.email,
           expiresIn: 24 * 60 * 60 * 1000,
         }),

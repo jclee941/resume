@@ -46,6 +46,7 @@ rl.on('close', () => {
       cookieString: normalized.map(c => `${c.name}=${c.value}`).join('; '),
       extractedAt: new Date().toISOString(),
       expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+      cookieCount: normalized.length,
     };
 
     SessionManager.save(platform, session);

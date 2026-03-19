@@ -86,6 +86,8 @@ async function login() {
         cookies,
         cookieString,
         timestamp: Date.now(),
+        cookieCount: cookies.length,
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
       });
       console.log(`✅ Success! Saved ${cookies.length} cookies.`);
     } else {
