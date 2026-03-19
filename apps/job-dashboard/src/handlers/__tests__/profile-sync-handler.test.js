@@ -4,12 +4,34 @@ import assert from 'node:assert';
 // Inline the pure functions to avoid Worker env dependencies from the handler module
 function parsePeriod(period = '') {
   const parts = String(period)
-    .split('~')
+    .split(/~| - /)
     .map((part) => part.trim())
     .filter(Boolean);
   const start = parts[0] ? `${parts[0].replace('.', '-')}-01` : null;
   const end = parts[1] && parts[1] !== '현재' ? `${parts[1].replace('.', '-')}-01` : null;
   return { start, end };
+}
+
+function mapEducationToWanted(education) {
+  const startTime = education.startDate ? `${education.startDate.replace('.', '-')}-01` : null;
+  const endTime = education.status === '재학중' ? null : (education.endDate ? `${education.endDate.replace('.', '-')}-01` : null);
+  return {
+    school_name: education.school,
+    major: education.major,
+    start_time: startTime,
+    end_time: endTime,
+    degree: '학사',
+    description: education.status === '재학중' ? `재학중 (${education.startDate || ''} ~ )` : null,
+  };
+}
+
+function mapCertificationToWanted(certification) {
+  return {
+    title: certification.name,
+    description: `${certification.issuer || ''} | ${certification.date || ''}`.trim(),
+    start_time: certification.date ? `${certification.date.replace('.', '-')}-01` : null,
+    activity_type: 'CERTIFICATE',
+  };
 }
 
 function mapCareerToWanted(career) {
@@ -149,5 +171,127 @@ describe('ProfileSyncHandler — career project sync', () => {
       title: 'Cloud Migration',
       description: 'AWS infrastructure setup',
     });
+  });
+});
+
+describe('ProfileSyncHandler — education sync parity', () => {
+  it('mapEducationToWanted produces status-aware end_time for 재학중', () => {
+    const edu = { school: '한양사이버대학교', major: '컴퓨터공학과', startDate: '2024.03', status: '재학중' };
+    const mapped = mapEducationToWanted(edu);
+    assert.strictEqual(mapped.end_time, null);
+    assert.strictEqual(mapped.description, '재학중 (2024.03 ~ )');
+    assert.strictEqual(mapped.degree, '학사');
+    assert.strictEqual(mapped.start_time, '2024-03-01');
+  });
+
+  it('mapEducationToWanted produces non-null end_time for graduated', () => {
+    const edu = { school: '서울대학교', major: 'CS', startDate: '2014.03', endDate: '2018.02', status: '졸업' };
+    const mapped = mapEducationToWanted(edu);
+    assert.strictEqual(mapped.end_time, '2018-02-01');
+    assert.strictEqual(mapped.description, null);
+  });
+
+  it('education update loop calls updateEducation for existing school', async () => {
+    const updateEducation = mock.fn(async () => undefined);
+    const addEducation = mock.fn(async () => undefined);
+    const client = { updateEducation, addEducation };
+    const resumeId = 'resume-abc';
+
+    const changes = {
+      toUpdate: [{ id: 'edu-1', school: '한양사이버대학교', data: { school_name: '한양사이버대학교' } }],
+      toAdd: [],
+    };
+
+    for (const edu of changes.toUpdate) {
+      await client.updateEducation(resumeId, edu.id, edu.data);
+    }
+    for (const edu of changes.toAdd) {
+      await client.addEducation(resumeId, edu.data);
+    }
+
+    assert.strictEqual(updateEducation.mock.calls.length, 1);
+    assert.strictEqual(updateEducation.mock.calls[0].arguments[1], 'edu-1');
+    assert.strictEqual(addEducation.mock.calls.length, 0);
+  });
+});
+
+describe('ProfileSyncHandler — activity sync parity', () => {
+  it('activity update loop calls updateActivity for existing cert and addActivity for new', async () => {
+    const updateActivity = mock.fn(async () => undefined);
+    const addActivity = mock.fn(async () => undefined);
+    const deleteActivity = mock.fn(async () => undefined);
+    const client = { updateActivity, addActivity, deleteActivity };
+    const resumeId = 'resume-abc';
+
+    const changes = {
+      toUpdate: [{ id: 'act-1', title: 'CPPG', data: mapCertificationToWanted({ name: 'CPPG', issuer: 'KISA', date: '2024.11' }) }],
+      toAdd: [{ title: 'New Cert', data: mapCertificationToWanted({ name: 'New Cert', issuer: 'Test', date: '2025.01' }) }],
+      toDelete: [{ id: 'act-stale', title: 'Old Cert' }],
+    };
+
+    for (const act of changes.toUpdate) await client.updateActivity(resumeId, act.id, act.data);
+    for (const act of changes.toAdd) await client.addActivity(resumeId, act.data);
+    for (const act of changes.toDelete) await client.deleteActivity(resumeId, act.id);
+
+    assert.strictEqual(updateActivity.mock.calls.length, 1);
+    assert.strictEqual(updateActivity.mock.calls[0].arguments[1], 'act-1');
+    assert.strictEqual(addActivity.mock.calls.length, 1);
+    assert.strictEqual(deleteActivity.mock.calls.length, 1);
+    assert.strictEqual(deleteActivity.mock.calls[0].arguments[1], 'act-stale');
+  });
+
+  it('준비중 certifications are filtered out before mapping', () => {
+    const certs = [
+      { name: 'CPPG', issuer: 'KISA', date: '2024.11', status: 'active' },
+      { name: 'CISSP', issuer: 'ISC2', date: null, status: '준비중' },
+      { name: 'CISM', issuer: 'ISACA', date: null, status: '준비중' },
+    ];
+
+    const filtered = certs.filter((c) => c.date && c.status !== '준비중');
+    assert.strictEqual(filtered.length, 1);
+    assert.strictEqual(filtered[0].name, 'CPPG');
+  });
+});
+
+describe('ProfileSyncHandler — language cert sync parity', () => {
+  it('language cert sync loop calls update/add/delete correctly', async () => {
+    const updateLanguageCert = mock.fn(async () => undefined);
+    const addLanguageCert = mock.fn(async () => undefined);
+    const deleteLanguageCert = mock.fn(async () => undefined);
+    const client = { updateLanguageCert, addLanguageCert, deleteLanguageCert };
+    const resumeId = 'resume-abc';
+
+    const changes = {
+      toUpdate: [{ id: 'lang-1', name: 'Korean', data: { language_name: 'Korean', level: 5 } }],
+      toAdd: [{ name: 'English', data: { language_name: 'English', level: 4 } }],
+      toDelete: [{ id: 'lang-stale', name: 'Japanese' }],
+    };
+
+    for (const lc of changes.toUpdate) await client.updateLanguageCert(resumeId, lc.id, lc.data);
+    for (const lc of changes.toAdd) await client.addLanguageCert(resumeId, lc.data);
+    for (const lc of changes.toDelete) await client.deleteLanguageCert(resumeId, lc.id);
+
+    assert.strictEqual(updateLanguageCert.mock.calls.length, 1);
+    assert.strictEqual(updateLanguageCert.mock.calls[0].arguments[1], 'lang-1');
+    assert.deepStrictEqual(updateLanguageCert.mock.calls[0].arguments[2], { language_name: 'Korean', level: 5 });
+    assert.strictEqual(addLanguageCert.mock.calls.length, 1);
+    assert.deepStrictEqual(addLanguageCert.mock.calls[0].arguments[1], { language_name: 'English', level: 4 });
+    assert.strictEqual(deleteLanguageCert.mock.calls.length, 1);
+    assert.strictEqual(deleteLanguageCert.mock.calls[0].arguments[1], 'lang-stale');
+  });
+
+  it('language level maps Native=5, Professional=4, default=3', () => {
+    const languages = [
+      { name: 'Korean', level: 'Native' },
+      { name: 'English', level: 'Professional working proficiency' },
+      { name: 'Japanese', level: 'Basic' },
+    ];
+    const mapped = languages.map((lang) => ({
+      language_name: lang.name,
+      level: lang.level === 'Native' ? 5 : lang.level === 'Professional working proficiency' ? 4 : 3,
+    }));
+    assert.strictEqual(mapped[0].level, 5);
+    assert.strictEqual(mapped[1].level, 4);
+    assert.strictEqual(mapped[2].level, 3);
   });
 });

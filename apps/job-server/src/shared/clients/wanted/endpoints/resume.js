@@ -100,7 +100,7 @@ export class ResumeEducationEndpoint {
 
   async update(resumeId, educationId, educationData) {
     const response = await this.#client.chaosRequest(
-      `/resumes/v1/${resumeId}/educations/${educationId}`,
+      `/resumes/v2/${resumeId}/educations/${educationId}`,
       { method: 'PUT', body: educationData },
     );
     return response;
@@ -108,7 +108,7 @@ export class ResumeEducationEndpoint {
 
   async add(resumeId, educationData) {
     const response = await this.#client.chaosRequest(
-      `/resumes/v1/${resumeId}/educations`,
+      `/resumes/v2/${resumeId}/educations`,
       { method: 'POST', body: educationData },
     );
     return response;
@@ -116,7 +116,7 @@ export class ResumeEducationEndpoint {
 
   async delete(resumeId, educationId) {
     const response = await this.#client.chaosRequest(
-      `/resumes/v1/${resumeId}/educations/${educationId}`,
+      `/resumes/v2/${resumeId}/educations/${educationId}`,
       { method: 'DELETE' },
     );
     return response;
@@ -156,7 +156,7 @@ export class ResumeActivityEndpoint {
 
   async update(resumeId, activityId, activityData) {
     const response = await this.#client.chaosRequest(
-      `/resumes/v1/${resumeId}/activities/${activityId}`,
+      `/resumes/v2/${resumeId}/activities/${activityId}`,
       { method: 'PUT', body: activityData },
     );
     return response;
@@ -164,7 +164,7 @@ export class ResumeActivityEndpoint {
 
   async add(resumeId, activityData) {
     const response = await this.#client.chaosRequest(
-      `/resumes/v1/${resumeId}/activities`,
+      `/resumes/v2/${resumeId}/activities`,
       { method: 'POST', body: activityData },
     );
     return response;
@@ -172,7 +172,7 @@ export class ResumeActivityEndpoint {
 
   async delete(resumeId, activityId) {
     const response = await this.#client.chaosRequest(
-      `/resumes/v1/${resumeId}/activities/${activityId}`,
+      `/resumes/v2/${resumeId}/activities/${activityId}`,
       { method: 'DELETE' },
     );
     return response;
@@ -188,7 +188,7 @@ export class ResumeLanguageCertEndpoint {
 
   async update(resumeId, certId, certData) {
     const response = await this.#client.chaosRequest(
-      `/resumes/v1/${resumeId}/language_certs/${certId}`,
+      `/resumes/v2/${resumeId}/language_certs/${certId}`,
       { method: 'PUT', body: certData },
     );
     return response;
@@ -196,7 +196,7 @@ export class ResumeLanguageCertEndpoint {
 
   async add(resumeId, certData) {
     const response = await this.#client.chaosRequest(
-      `/resumes/v1/${resumeId}/language_certs`,
+      `/resumes/v2/${resumeId}/language_certs`,
       { method: 'POST', body: certData },
     );
     return response;
@@ -204,7 +204,7 @@ export class ResumeLanguageCertEndpoint {
 
   async delete(resumeId, certId) {
     const response = await this.#client.chaosRequest(
-      `/resumes/v1/${resumeId}/language_certs/${certId}`,
+      `/resumes/v2/${resumeId}/language_certs/${certId}`,
       { method: 'DELETE' },
     );
     return response;

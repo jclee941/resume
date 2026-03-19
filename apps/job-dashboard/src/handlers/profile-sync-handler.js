@@ -2,30 +2,11 @@ import { BaseHandler } from './base-handler.js';
 import { WantedClient } from '../services/wanted-client.js';
 import { normalizeError } from '../../../job-server/src/shared/errors/index.js';
 import { sendTelegramNotification } from '../services/notification/telegram.js';
-
-const JOB_CATEGORY_MAPPING = {
-  '보안운영 담당': 672,
-  '보안 엔지니어': 672,
-  보안엔지니어: 672,
-  정보보안: 672,
-  정보보호팀: 672,
-  '인프라 엔지니어': 674,
-  '인프라 담당': 674,
-  DevOps: 674,
-  SRE: 674,
-  'SRE Engineer': 674,
-  '클라우드 엔지니어': 674,
-  '시스템 엔지니어': 665,
-  '네트워크 엔지니어': 665,
-  'IT지원/OA운영': 665,
-  'IT 운영': 665,
-};
-
-const DEFAULT_JOB_CATEGORY = 674;
+import { JOB_CATEGORY_MAPPING, DEFAULT_JOB_CATEGORY } from '../../../job-server/scripts/profile-sync/constants.js';
 
 function parsePeriod(period = '') {
   const parts = String(period)
-    .split('~')
+    .split(/~| - /)
     .map((part) => part.trim())
     .filter(Boolean);
   const start = parts[0] ? `${parts[0].replace('.', '-')}-01` : null;
@@ -55,12 +36,15 @@ function mapCareerToWanted(career) {
 }
 
 function mapEducationToWanted(education) {
+  const startTime = education.startDate ? `${education.startDate.replace('.', '-')}-01` : null;
+  const endTime = education.status === '재학중' ? null : (education.endDate ? `${education.endDate.replace('.', '-')}-01` : null);
   return {
     school_name: education.school,
     major: education.major,
-    start_time: education.startDate ? `${education.startDate.replace('.', '-')}-01` : null,
-    end_time: null,
+    start_time: startTime,
+    end_time: endTime,
     degree: '학사',
+    description: education.status === '재학중' ? `재학중 (${education.startDate || ''} ~ )` : null,
   };
 }
 
@@ -371,6 +355,15 @@ export class ProfileSyncHandler extends BaseHandler {
         }
       }
 
+      for (const education of changes.educations.toUpdate || []) {
+        try {
+          await client.updateEducation(resumeId, education.id, education.data);
+          syncResults.updated.push(`education_updated:${education.school}`);
+        } catch (error) {
+          syncResults.failed.push({ section: `education_update:${education.school}`, error: error.message });
+        }
+      }
+
       for (const education of changes.educations.toAdd) {
         try {
           await client.addEducation(resumeId, education.data);
@@ -383,12 +376,57 @@ export class ProfileSyncHandler extends BaseHandler {
         }
       }
 
+      for (const activity of changes.activities.toUpdate || []) {
+        try {
+          await client.updateActivity(resumeId, activity.id, activity.data);
+          syncResults.updated.push(`activity_updated:${activity.title}`);
+        } catch (error) {
+          syncResults.failed.push({ section: `activity_update:${activity.title}`, error: error.message });
+        }
+      }
+
       for (const activity of changes.activities.toAdd) {
         try {
           await client.addActivity(resumeId, activity.data);
           syncResults.updated.push(`activity:${activity.title}`);
         } catch (error) {
           syncResults.failed.push({ section: `activity:${activity.title}`, error: error.message });
+        }
+      }
+
+      for (const activity of changes.activities.toDelete || []) {
+        try {
+          await client.deleteActivity(resumeId, activity.id);
+          syncResults.updated.push(`activity_deleted:${activity.title}`);
+        } catch (error) {
+          syncResults.failed.push({ section: `activity_delete:${activity.title}`, error: error.message });
+        }
+      }
+
+      for (const lc of changes.languageCerts?.toUpdate || []) {
+        try {
+          await client.updateLanguageCert(resumeId, lc.id, lc.data);
+          syncResults.updated.push(`lang_updated:${lc.name}`);
+        } catch (error) {
+          syncResults.failed.push({ section: `lang_update:${lc.name}`, error: error.message });
+        }
+      }
+
+      for (const lc of changes.languageCerts?.toAdd || []) {
+        try {
+          await client.addLanguageCert(resumeId, lc.data);
+          syncResults.updated.push(`lang:${lc.name}`);
+        } catch (error) {
+          syncResults.failed.push({ section: `lang:${lc.name}`, error: error.message });
+        }
+      }
+
+      for (const lc of changes.languageCerts?.toDelete || []) {
+        try {
+          await client.deleteLanguageCert(resumeId, lc.id);
+          syncResults.updated.push(`lang_deleted:${lc.name}`);
+        } catch (error) {
+          syncResults.failed.push({ section: `lang_delete:${lc.name}`, error: error.message });
         }
       }
 
@@ -472,29 +510,59 @@ export class ProfileSyncHandler extends BaseHandler {
       }
     }
 
-    const educationChanges = { toAdd: [] };
+    const educationChanges = { toUpdate: [], toAdd: [] };
     if (ssotData.education?.school) {
-      const exists = currentEducations.find((item) =>
+      const mapped = mapEducationToWanted(ssotData.education);
+      const existingEdu = currentEducations.find((item) =>
         String(item.name || item.school_name || '').includes(ssotData.education.school)
       );
-      if (!exists) {
-        educationChanges.toAdd.push({
-          school: ssotData.education.school,
-          data: mapEducationToWanted(ssotData.education),
-        });
+      if (existingEdu) {
+        educationChanges.toUpdate.push({ id: existingEdu.id, school: ssotData.education.school, data: mapped });
+      } else {
+        educationChanges.toAdd.push({ school: ssotData.education.school, data: mapped });
       }
     }
 
-    const activityChanges = { toAdd: [] };
+    const activityChanges = { toUpdate: [], toAdd: [], toDelete: [] };
+    const matchedActivityIds = new Set();
     for (const certification of (ssotData.certifications || []).filter((c) => c.date && c.status !== '준비중')) {
-      const exists = currentActivities.find((item) =>
+      const mapped = mapCertificationToWanted(certification);
+      const existing = currentActivities.find((item) =>
         String(item.title || '').includes(certification.name || '')
       );
-      if (!exists) {
-        activityChanges.toAdd.push({
-          title: certification.name,
-          data: mapCertificationToWanted(certification),
-        });
+      if (existing) {
+        matchedActivityIds.add(existing.id);
+        activityChanges.toUpdate.push({ id: existing.id, title: certification.name, data: mapped });
+      } else {
+        activityChanges.toAdd.push({ title: certification.name, data: mapped });
+      }
+    }
+    // Identify stale activities for deletion
+    for (const activity of currentActivities.filter((a) => a.activity_type === 'CERTIFICATE')) {
+      if (!matchedActivityIds.has(activity.id)) {
+        activityChanges.toDelete.push({ id: activity.id, title: activity.title || 'unknown' });
+      }
+    }
+
+    // Language certificates
+    const languageCertChanges = { toUpdate: [], toAdd: [], toDelete: [] };
+    const matchedLangIds = new Set();
+    for (const lang of ssotData.languages || []) {
+      const mapped = {
+        language_name: lang.name,
+        level: lang.level === 'Native' ? 5 : lang.level === 'Professional working proficiency' ? 4 : 3,
+      };
+      const existing = (currentResume?.language_certs || []).find((rl) => rl.language_name === lang.name);
+      if (existing) {
+        matchedLangIds.add(existing.id);
+        languageCertChanges.toUpdate.push({ id: existing.id, name: lang.name, data: mapped });
+      } else {
+        languageCertChanges.toAdd.push({ name: lang.name, data: mapped });
+      }
+    }
+    for (const rl of (currentResume?.language_certs || [])) {
+      if (!matchedLangIds.has(rl.id)) {
+        languageCertChanges.toDelete.push({ id: rl.id, name: rl.language_name || 'unknown' });
       }
     }
 
@@ -511,6 +579,7 @@ export class ProfileSyncHandler extends BaseHandler {
       careers: careerChanges,
       educations: educationChanges,
       activities: activityChanges,
+      languageCerts: languageCertChanges,
     };
   }
 

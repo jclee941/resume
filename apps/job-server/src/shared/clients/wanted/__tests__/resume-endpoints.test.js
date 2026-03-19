@@ -184,7 +184,7 @@ describe('ResumeEducationEndpoint', async () => {
     endpoint = new ResumeEducationEndpoint(mockClient);
   });
 
-  it('update() uses PUT on /resumes/v1/:resumeId/educations/:educationId with body and returns response passthrough', async () => {
+  it('update() uses PUT on /resumes/v2/:resumeId/educations/:educationId with body and returns response passthrough', async () => {
     const payload = { school: 'Test University' };
     const response = { data: { id: 1 } };
     mockClient.chaosRequest = mock.fn(async () => response);
@@ -193,31 +193,31 @@ describe('ResumeEducationEndpoint', async () => {
 
     assertChaosCall(
       mockClient,
-      `/resumes/v1/${resumeId}/educations/${educationId}`,
+      `/resumes/v2/${resumeId}/educations/${educationId}`,
       'PUT',
       payload
     );
     assert.strictEqual(result, response);
   });
 
-  it('add() uses POST on /resumes/v1/:resumeId/educations with body and returns response passthrough', async () => {
+  it('add() uses POST on /resumes/v2/:resumeId/educations with body and returns response passthrough', async () => {
     const payload = { school: 'Another University' };
     const response = { data: { id: 1 } };
     mockClient.chaosRequest = mock.fn(async () => response);
 
     const result = await endpoint.add(resumeId, payload);
 
-    assertChaosCall(mockClient, `/resumes/v1/${resumeId}/educations`, 'POST', payload);
+    assertChaosCall(mockClient, `/resumes/v2/${resumeId}/educations`, 'POST', payload);
     assert.strictEqual(result, response);
   });
 
-  it('delete() uses DELETE on /resumes/v1/:resumeId/educations/:educationId and returns response passthrough', async () => {
+  it('delete() uses DELETE on /resumes/v2/:resumeId/educations/:educationId and returns response passthrough', async () => {
     const response = { data: { id: 1 } };
     mockClient.chaosRequest = mock.fn(async () => response);
 
     const result = await endpoint.delete(resumeId, educationId);
 
-    assertChaosCall(mockClient, `/resumes/v1/${resumeId}/educations/${educationId}`, 'DELETE');
+    assertChaosCall(mockClient, `/resumes/v2/${resumeId}/educations/${educationId}`, 'DELETE');
     assert.strictEqual(result, response);
   });
 });
@@ -270,35 +270,35 @@ describe('ResumeActivityEndpoint', async () => {
     endpoint = new ResumeActivityEndpoint(mockClient);
   });
 
-  it('update() uses PUT on /resumes/v1/:resumeId/activities/:activityId with body and returns response passthrough', async () => {
+  it('update() uses PUT on /resumes/v2/:resumeId/activities/:activityId with body and returns response passthrough', async () => {
     const payload = { name: 'Open Source' };
     const response = { data: { id: 1 } };
     mockClient.chaosRequest = mock.fn(async () => response);
 
     const result = await endpoint.update(resumeId, activityId, payload);
 
-    assertChaosCall(mockClient, `/resumes/v1/${resumeId}/activities/${activityId}`, 'PUT', payload);
+    assertChaosCall(mockClient, `/resumes/v2/${resumeId}/activities/${activityId}`, 'PUT', payload);
     assert.strictEqual(result, response);
   });
 
-  it('add() uses POST on /resumes/v1/:resumeId/activities with body and returns response passthrough', async () => {
+  it('add() uses POST on /resumes/v2/:resumeId/activities with body and returns response passthrough', async () => {
     const payload = { name: 'Conference Speaker' };
     const response = { data: { id: 1 } };
     mockClient.chaosRequest = mock.fn(async () => response);
 
     const result = await endpoint.add(resumeId, payload);
 
-    assertChaosCall(mockClient, `/resumes/v1/${resumeId}/activities`, 'POST', payload);
+    assertChaosCall(mockClient, `/resumes/v2/${resumeId}/activities`, 'POST', payload);
     assert.strictEqual(result, response);
   });
 
-  it('delete() uses DELETE on /resumes/v1/:resumeId/activities/:activityId and returns response passthrough', async () => {
+  it('delete() uses DELETE on /resumes/v2/:resumeId/activities/:activityId and returns response passthrough', async () => {
     const response = { data: { id: 1 } };
     mockClient.chaosRequest = mock.fn(async () => response);
 
     const result = await endpoint.delete(resumeId, activityId);
 
-    assertChaosCall(mockClient, `/resumes/v1/${resumeId}/activities/${activityId}`, 'DELETE');
+    assertChaosCall(mockClient, `/resumes/v2/${resumeId}/activities/${activityId}`, 'DELETE');
     assert.strictEqual(result, response);
   });
 });
@@ -316,35 +316,35 @@ describe('ResumeLanguageCertEndpoint', async () => {
     endpoint = new ResumeLanguageCertEndpoint(mockClient);
   });
 
-  it('update() uses PUT on /resumes/v1/:resumeId/language_certs/:certId with body and returns response passthrough', async () => {
+  it('update() uses PUT on /resumes/v2/:resumeId/language_certs/:certId with body and returns response passthrough', async () => {
     const payload = { name: 'TOEIC' };
     const response = { data: { id: 1 } };
     mockClient.chaosRequest = mock.fn(async () => response);
 
     const result = await endpoint.update(resumeId, certId, payload);
 
-    assertChaosCall(mockClient, `/resumes/v1/${resumeId}/language_certs/${certId}`, 'PUT', payload);
+    assertChaosCall(mockClient, `/resumes/v2/${resumeId}/language_certs/${certId}`, 'PUT', payload);
     assert.strictEqual(result, response);
   });
 
-  it('add() uses POST on /resumes/v1/:resumeId/language_certs with body and returns response passthrough', async () => {
+  it('add() uses POST on /resumes/v2/:resumeId/language_certs with body and returns response passthrough', async () => {
     const payload = { name: 'OPIc' };
     const response = { data: { id: 1 } };
     mockClient.chaosRequest = mock.fn(async () => response);
 
     const result = await endpoint.add(resumeId, payload);
 
-    assertChaosCall(mockClient, `/resumes/v1/${resumeId}/language_certs`, 'POST', payload);
+    assertChaosCall(mockClient, `/resumes/v2/${resumeId}/language_certs`, 'POST', payload);
     assert.strictEqual(result, response);
   });
 
-  it('delete() uses DELETE on /resumes/v1/:resumeId/language_certs/:certId and returns response passthrough', async () => {
+  it('delete() uses DELETE on /resumes/v2/:resumeId/language_certs/:certId and returns response passthrough', async () => {
     const response = { data: { id: 1 } };
     mockClient.chaosRequest = mock.fn(async () => response);
 
     const result = await endpoint.delete(resumeId, certId);
 
-    assertChaosCall(mockClient, `/resumes/v1/${resumeId}/language_certs/${certId}`, 'DELETE');
+    assertChaosCall(mockClient, `/resumes/v2/${resumeId}/language_certs/${certId}`, 'DELETE');
     assert.strictEqual(result, response);
   });
 });

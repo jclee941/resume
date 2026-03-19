@@ -2,40 +2,15 @@ import { readFileSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { SessionManager } from './auth.js';
+import { getTagTypeId, flattenSkills } from '../../scripts/skill-tag-map.js';
+import {
+  JOB_CATEGORY_MAPPING,
+  DEFAULT_JOB_CATEGORY,
+} from '../../scripts/profile-sync/constants.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = join(__dirname, '..', '..', '..', '..');
 const RESUME_DATA_PATH = join(PROJECT_ROOT, 'packages/data/resumes/master/resume_data.json');
-
-// Wanted skill tag_type_id mapping (from /api/v1/tags?kind=skill)
-// Skills not in this map are skipped during sync (no matching Wanted tag exists)
-const SKILL_TAG_MAP = {
-  'Python': 1554,
-  'JavaScript': 1541,
-  'TypeScript': 1564,
-  'Docker': 2217,
-  'Kubernetes': 10268,
-  'Terraform': 10498,
-  'Prometheus': 10497,
-  'Grafana': 10496,
-  'AWS': 1698,
-  'GCP': 3468,
-  'Linux': 1459,
-  'Node.js': 1547,
-  'React': 1469,
-  'PostgreSQL': 2683,
-  'Git': 1411,
-  'Jenkins': 2020,
-  'Go': 1702,
-  'Bash': 2271,
-  'Nginx': 3498,
-  'Redis': 1470,
-  'MongoDB': 1462,
-  'Azure': 1441,
-  'Helm': 10648,
-  'RabbitMQ': 3569,
-};
-
 export const unifiedResumeSyncTool = {
   name: 'unified_resume_sync',
   description: `Sync resume_data.json to multiple job platforms.
@@ -244,31 +219,37 @@ function mapToWantedFormat(source) {
       headline: currentPosition ? `${currentPosition} | ${totalExperience}` : totalExperience,
       description: expertise.join(', '),
     },
-    careers: (source.careers || []).map((c) => ({
-      company_name: c.company,
-      title: c.role,
-      start_time: parseDate(c.period.split(' ~ ')[0]),
-      end_time: c.period.includes('현재') ? null : parseDate(c.period.split(' ~ ')[1]),
-      served: c.period.includes('현재'),
-    })),
+    careers: (source.careers || []).map((c) => {
+      const [startStr, endStr] = (c.period || '').split(/~| - /).map((s) => s.trim());
+      const start_time = parseDate(startStr);
+      const end_time = endStr === '현재' || !endStr ? null : parseDate(endStr);
+      const jobCategoryId = JOB_CATEGORY_MAPPING[c.role] || DEFAULT_JOB_CATEGORY;
+
+      return {
+        company: { name: c.company, type: 'CUSTOM' },
+        job_role: c.role,
+        job_category_id: jobCategoryId,
+        start_time,
+        end_time,
+        served: end_time === null,
+        employment_type: 'FULLTIME',
+      };
+    }),
     educations: [
       {
         school_name: source.education?.school,
         major: source.education?.major,
-        degree: null,
+        degree: '학사',
         start_time: parseDate(source.education?.startDate),
-        end_time: null,
+        end_time:
+          source.education?.status === '재학중' ? null : parseDate(source.education?.endDate),
         description:
           source.education?.status === '재학중'
             ? `재학중 (${source.education?.startDate || ''} ~ )`
             : null,
       },
     ],
-    skills: (source.skills?.security?.items || [])
-      .concat(source.skills?.cloud?.items || [])
-      .concat(source.skills?.automation?.items || [])
-      .map((s) => (typeof s === 'string' ? s : s.name))
-      .slice(0, 20),
+    skills: flattenSkills(source.skills).slice(0, 20),
   };
 }
 
@@ -392,9 +373,10 @@ async function syncToWanted(data, params, sourceData = {}) {
     for (let i = 0; i < localCareers.length; i++) {
       const career = localCareers[i];
       const ssotCareer = ssotCareers[i] || {};
-      const normalizedName = career.company_name.replace(/\(주\)/g, '').trim();
-      const matchedCareer = remoteCareers.find(
-        (rc) => (rc.company?.name || '').includes(normalizedName)
+      const companyName = career.company?.name || career.company || '';
+      const normalizedName = companyName.replace(/\(주\)/g, '').trim();
+      const matchedCareer = remoteCareers.find((rc) =>
+        (rc.company?.name || '').includes(normalizedName)
       );
 
       if (matchedCareer) {
@@ -438,9 +420,7 @@ async function syncToWanted(data, params, sourceData = {}) {
     const localEducations = data.educations || [];
 
     for (const edu of localEducations) {
-      const matchedEdu = remoteEducations.find(
-        (re) => re.school_name === edu.school_name
-      );
+      const matchedEdu = remoteEducations.find((re) => re.school_name === edu.school_name);
 
       if (matchedEdu) {
         await api.resumeEducation.update(params.resume_id, matchedEdu.id, edu);
@@ -459,12 +439,10 @@ async function syncToWanted(data, params, sourceData = {}) {
     const localSkills = data.skills || [];
 
     for (const skillName of localSkills) {
-      const skillExists = remoteSkills.some(
-        (rs) => rs.name === skillName || rs.text === skillName
-      );
+      const skillExists = remoteSkills.some((rs) => rs.name === skillName || rs.text === skillName);
 
       if (!skillExists) {
-        const tagTypeId = SKILL_TAG_MAP[skillName];
+        const tagTypeId = getTagTypeId(skillName);
         if (!tagTypeId) {
           console.warn(`[skills] Skipping "${skillName}" - no matching Wanted tag_type_id`);
           continue;
@@ -475,6 +453,95 @@ async function syncToWanted(data, params, sourceData = {}) {
     results.updated.push('skills');
   } catch (e) {
     results.errors.push({ section: 'skills', error: e.message });
+  }
+
+  try {
+    const localActivities = (sourceData.certifications || [])
+      .filter((c) => c.date && c.status !== '준비중')
+      .map((cert) => ({
+        title: cert.name,
+        description: `${cert.issuer} | ${cert.date}`,
+        activity_type: 'CERTIFICATE',
+        start_time: parseDate(cert.date),
+      }));
+    const remoteActivities = (resumeDetail.activities || []).filter(
+      (activity) => activity.activity_type === 'CERTIFICATE'
+    );
+
+    const matchedActivityIds = new Set();
+    for (const activity of localActivities) {
+      const matchedActivity = remoteActivities.find((ra) => ra.title === activity.title);
+      if (matchedActivity) {
+        matchedActivityIds.add(matchedActivity.id);
+        await api.resumeActivity.update(params.resume_id, matchedActivity.id, activity);
+      } else {
+        await api.resumeActivity.add(params.resume_id, activity);
+      }
+    }
+
+    const toDeleteActivities = remoteActivities.filter((ra) => !matchedActivityIds.has(ra.id));
+    for (const activity of toDeleteActivities) {
+      await api.resumeActivity.delete(params.resume_id, activity.id);
+    }
+    results.updated.push('activities');
+  } catch (e) {
+    results.errors.push({ section: 'activities', error: e.message });
+  }
+
+  // Sync language certificates
+  try {
+    const localLanguages = (sourceData.languages || []).map((lang) => ({
+      language_name: lang.name,
+      level: lang.level === 'Native' ? 5 : lang.level === 'Professional working proficiency' ? 4 : 3,
+    }));
+    const remoteLanguageCerts = resumeDetail.language_certs || [];
+
+    const matchedLangIds = new Set();
+    for (const lang of localLanguages) {
+      const matchedLang = remoteLanguageCerts.find((rl) => rl.language_name === lang.language_name);
+      if (matchedLang) {
+        matchedLangIds.add(matchedLang.id);
+        await api.resumeLanguageCert.update(params.resume_id, matchedLang.id, lang);
+      } else {
+        await api.resumeLanguageCert.add(params.resume_id, lang);
+      }
+    }
+
+    const toDeleteLangs = remoteLanguageCerts.filter((rl) => !matchedLangIds.has(rl.id));
+    for (const lang of toDeleteLangs) {
+      await api.resumeLanguageCert.delete(params.resume_id, lang.id);
+    }
+    results.updated.push('language_certs');
+  } catch (e) {
+    results.errors.push({ section: 'language_certs', error: e.message });
+  }
+
+  try {
+    const profileStatement = sourceData.summary?.profileStatement;
+    if (typeof profileStatement === 'string' && profileStatement !== (resumeDetail.about || '')) {
+      await api.resume.save(params.resume_id, { about: profileStatement });
+    }
+    results.updated.push('about');
+  } catch (e) {
+    results.errors.push({ section: 'about', error: e.message });
+  }
+
+  try {
+    const personal = sourceData.personal || {};
+    const contactPayload = {};
+    if (personal.email && personal.email !== resumeDetail.email) {
+      contactPayload.email = personal.email;
+    }
+    if (personal.phone && personal.phone !== resumeDetail.mobile) {
+      contactPayload.mobile = personal.phone;
+    }
+
+    if (Object.keys(contactPayload).length > 0) {
+      await api.resume.save(params.resume_id, contactPayload);
+    }
+    results.updated.push('contact');
+  } catch (e) {
+    results.errors.push({ section: 'contact', error: e.message });
   }
 
   return results;

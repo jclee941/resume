@@ -23,8 +23,16 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import WantedAPI from '../src/shared/clients/wanted/index.js';
-import { flattenSkills, diffSkills } from './skill-tag-map.js';
 import WantedClient from '../../job-dashboard/src/services/wanted-client.js';
+import {
+  syncWantedSkills,
+  syncWantedCareers,
+  syncWantedEducations,
+  syncWantedActivities,
+  syncWantedAbout,
+  syncWantedContactInfo,
+} from './profile-sync/wanted-sections.js';
+import JobKoreaHandler from './profile-sync/jobkorea-handler.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -110,17 +118,6 @@ function loadSSOT() {
   return data;
 }
 
-function toE164(phone) {
-  if (!phone) return '';
-  const digits = phone.replace(/\D/g, '');
-  if (digits.startsWith('0')) {
-    return `+82${  digits.slice(1)}`;
-  }
-  if (digits.startsWith('82')) {
-    return `+${  digits}`;
-  }
-  return phone;
-}
 
 function _toKoreanPhone(phone) {
   if (!phone) return '';
@@ -278,7 +275,11 @@ function tryLoadSessionFile(sessionPath) {
       return session.cookies.map((c) => `${c.name}=${c.value}`).join('; ');
     }
     // Fallback to cookieString (normalized by SessionManager.save)
-    if (session.cookieString && typeof session.cookieString === 'string' && session.cookieString.length > 0) {
+    if (
+      session.cookieString &&
+      typeof session.cookieString === 'string' &&
+      session.cookieString.length > 0
+    ) {
       return session.cookieString;
     }
     return null;
@@ -306,488 +307,6 @@ function loadWantedSession() {
     }
   }
   return null;
-}
-
-/**
- * Sync skills from SSOT to Wanted resume
- * @param {WantedAPI} api - Authenticated WantedAPI instance
- * @param {Object} ssot - SSOT data from resume_data.json
- * @param {Object} profile - Current Wanted profile data
- * @returns {Object} Result with changes count, added, deleted counts
- */
-async function syncWantedSkills(api, ssot, profile) {
-  const ssotSkills = flattenSkills(ssot.skills);
-  const wantedSkills = profile.skills || [];
-
-  const diff = diffSkills(ssotSkills, wantedSkills);
-
-  log(
-    `Skills: ${diff.unchanged.length} unchanged, ${diff.toAdd.length} to add, ${diff.toDelete.length} to delete`,
-    'info',
-    'wanted'
-  );
-
-  if (diff.unmapped.length > 0) {
-    log(`Unmapped skills (no tagTypeId): ${diff.unmapped.join(', ')}`, 'warn', 'wanted');
-  }
-
-  if (!CONFIG.APPLY || CONFIG.DIFF_ONLY) {
-    // Dry run - just show diff
-    for (const skill of diff.toAdd) {
-      console.log(`  + ${skill.name} (tagTypeId: ${skill.tagTypeId})`);
-    }
-    for (const skill of diff.toDelete) {
-      console.log(`  - ${skill.name} (id: ${skill.id})`);
-    }
-    return {
-      changes: diff.toAdd.length + diff.toDelete.length,
-      added: 0,
-      deleted: 0,
-      dryRun: true,
-    };
-  }
-
-  // Get resumeId from resumes API
-  const resumes = await api.getResumeList();
-  const resumeId = resumes?.[0]?.key;
-  if (!resumeId) {
-    log('Could not get resumeId for skills sync', 'error', 'wanted');
-    return { changes: 0, added: 0, deleted: 0 };
-  }
-
-  // Add missing skills
-  let added = 0;
-  for (const skill of diff.toAdd) {
-    try {
-      await api.resumeSkills.add(resumeId, { tag_type_id: skill.tagTypeId });
-      log(`Added skill: ${skill.name}`, 'success', 'wanted');
-      added++;
-    } catch (e) {
-      log(`Failed to add ${skill.name}: ${e.message}`, 'error', 'wanted');
-    }
-  }
-
-  // Delete extra skills
-  let deleted = 0;
-  for (const skill of diff.toDelete) {
-    try {
-      await api.resumeSkills.delete(resumeId, skill.id);
-      log(`Deleted skill: ${skill.name}`, 'success', 'wanted');
-      deleted++;
-    } catch (e) {
-      log(`Failed to delete ${skill.name}: ${e.message}`, 'error', 'wanted');
-    }
-  }
-
-  return { changes: added + deleted, added, deleted };
-}
-
-/**
- * Parse period string to start/end dates
- * @param {string} period - e.g., "2024.03 ~ 2025.02" or "2014.12 - 2016.12"
- * @returns {{startsAt: string, endsAt: string|null}}
- */
-function parsePeriod(period) {
-  if (typeof period !== 'string' || !period.trim()) {
-    return { startsAt: '', endsAt: null };
-  }
-  const sep = period.includes('~') ? '~' : ' - ';
-  const parts = period.split(sep).map((p) => p.trim());
-  const startsAt = `${parts[0].replace('.', '-')  }-01`;
-  let endsAt = null;
-  if (parts[1] && parts[1] !== '현재') {
-    endsAt = `${parts[1].replace('.', '-')  }-01`;
-  }
-  return { startsAt, endsAt };
-}
-
-/**
- * Job category ID mapping for Wanted Korea
- * Maps Korean role names to Wanted job category IDs
- * @see apps/job-server/src/tools/get-categories.js
- */
-const JOB_CATEGORY_MAPPING = {
-  // Security roles → 672 (보안 엔지니어)
-  '보안운영 담당': 672,
-  '보안 엔지니어': 672,
-  보안엔지니어: 672,
-  정보보안: 672,
-  정보보호팀: 672,
-
-  // DevOps/Infra roles → 674 (DevOps / 시스템 관리자)
-  '인프라 엔지니어': 674,
-  '인프라 담당': 674,
-  DevOps: 674,
-  SRE: 674,
-  'SRE Engineer': 674,
-  '클라우드 엔지니어': 674,
-
-  // System/Network Admin → 665 (시스템,네트워크 관리자)
-  '시스템 엔지니어': 665,
-  '네트워크 엔지니어': 665,
-  'IT지원/OA운영': 665,
-  'IT 운영': 665,
-
-  // Backend → 872 (서버 개발자)
-  'Backend Developer': 872,
-  '백엔드 개발자': 872,
-  '서버 개발자': 872,
-};
-
-// Default category if role not found
-const DEFAULT_JOB_CATEGORY = 674; // DevOps / 시스템 관리자
-
-/**
- * Map SSOT career to Wanted career format
- * @param {Object} career - SSOT career object
- * @returns {Object} Wanted career format
- */
-function mapCareerToWanted(career) {
-  const { startsAt, endsAt } = parsePeriod(career.period);
-
-  // Lookup job_category_id from mapping
-  const jobCategoryId = JOB_CATEGORY_MAPPING[career.role] || DEFAULT_JOB_CATEGORY;
-  if (!JOB_CATEGORY_MAPPING[career.role]) {
-    log(`Unknown role "${career.role}" - using default category ${DEFAULT_JOB_CATEGORY}`, 'warn', 'wanted');
-  }
-
-  return {
-    company: {
-      name: career.company,
-      type: 'CUSTOM',
-    },
-    job_role: career.role,
-    job_category_id: jobCategoryId,
-    start_time: startsAt,
-    end_time: endsAt,
-    served: endsAt === null,
-    employment_type: 'FULLTIME',
-  };
-}
-
-/**
- * Diff and sync careers from SSOT to Wanted
- * @param {WantedClient} client - Authenticated WantedClient
-/**
- * Sync career projects: delete existing, add SSoT project.
- * Career PATCH ignores the `projects` field — separate DELETE/POST required.
- */
-async function syncCareerProjects(client, resumeId, careerId, ssotCareer, existingProjects) {
-  for (const p of existingProjects) {
-    try {
-      await client.deleteProject(resumeId, careerId, p.id);
-    } catch (e) {
-      log(`Failed to delete project ${p.id}: ${e.message}`, 'error', 'wanted');
-    }
-  }
-  if (ssotCareer.project && ssotCareer.description) {
-    try {
-      await client.addProject(resumeId, careerId, {
-        title: ssotCareer.project,
-        description: ssotCareer.description,
-      });
-    } catch (e) {
-      log(`Failed to add project for ${ssotCareer.company}: ${e.message}`, 'error', 'wanted');
-    }
-  }
-}
-
-/**
- * @param {Object} ssot - SSOT data
- * @param {Object} profile - Current Wanted profile
- * @param {string} resumeId - Wanted resume ID
- */
-async function syncWantedCareers(client, ssot, profile, resumeId) {
-  const ssotCareers = ssot.careers || [];
-
-  const resumeDetail = await client.getResumeDetail(resumeId);
-  const wantedCareers = resumeDetail?.careers || [];
-
-  log(
-    `Careers: SSOT has ${ssotCareers.length}, Wanted has ${wantedCareers.length}`,
-    'info',
-    'wanted'
-  );
-
-  const toUpdate = [];
-  const toAdd = [];
-  const matched = new Set();
-
-  for (const ssotCareer of ssotCareers) {
-    const ssotCompanyNormalized = ssotCareer.company.replace(/\(주\)/g, '').trim();
-
-    const wantedCareer = wantedCareers.find((w) => {
-      const companyName = w.company?.name || '';
-      return companyName.includes(ssotCompanyNormalized);
-    });
-
-    const mapped = mapCareerToWanted(ssotCareer);
-
-    if (wantedCareer) {
-      matched.add(wantedCareer.id);
-      toUpdate.push({
-        id: wantedCareer.id,
-        data: mapped,
-        ssot: ssotCareer,
-        existingProjects: wantedCareer.projects || [],
-      });
-    } else {
-      toAdd.push({ data: mapped, ssot: ssotCareer });
-    }
-  }
-
-  const toDelete = wantedCareers.filter((w) => !matched.has(w.id));
-
-  log(`Careers: ${toUpdate.length} to override, ${toAdd.length} to add, ${toDelete.length} to delete`, 'info', 'wanted');
-
-  if (!CONFIG.APPLY || CONFIG.DIFF_ONLY) {
-    for (const item of toUpdate) {
-      console.log(`  ~ ${item.ssot.company}: ${item.ssot.role}`);
-    }
-    for (const item of toAdd) {
-      console.log(`  + ${item.ssot.company}: ${item.ssot.role}`);
-    }
-    for (const career of toDelete) {
-      console.log(`  - ${career.company?.name || 'Unknown'}: ${career.job_role || 'Unknown'} (id: ${career.id})`);
-    }
-    return {
-      changes: toUpdate.length + toAdd.length + toDelete.length,
-      updated: 0,
-      added: 0,
-      deleted: 0,
-      dryRun: true,
-    };
-  }
-
-  let updated = 0;
-  for (const item of toUpdate) {
-    try {
-      await client.updateCareer(resumeId, item.id, item.data);
-      await syncCareerProjects(client, resumeId, item.id, item.ssot, item.existingProjects);
-      log(`Updated career: ${item.ssot.company}`, 'success', 'wanted');
-      updated++;
-    } catch (e) {
-      log(`Failed to update ${item.ssot.company}: ${e.message}`, 'error', 'wanted');
-    }
-  }
-
-  let added = 0;
-  for (const item of toAdd) {
-    try {
-      const result = await client.addCareer(resumeId, item.data);
-      const newCareerId = result?.data?.id || result?.id;
-      if (newCareerId) {
-        await syncCareerProjects(client, resumeId, newCareerId, item.ssot, []);
-      }
-      log(`Added career: ${item.ssot.company}`, 'success', 'wanted');
-      added++;
-    } catch (e) {
-      log(`Failed to add ${item.ssot.company}: ${e.message}`, 'error', 'wanted');
-    }
-  }
-
-  let deleted = 0;
-  for (const career of toDelete) {
-    try {
-      await client.deleteCareer(resumeId, career.id);
-      log(`Deleted career: ${career.company?.name || 'Unknown'}`, 'success', 'wanted');
-      deleted++;
-    } catch (e) {
-      log(`Failed to delete career ${career.company?.name || 'Unknown'}: ${e.message}`, 'error', 'wanted');
-    }
-  }
-
-  return { changes: updated + added + deleted, updated, added, deleted };
-}
-
-/**
- * Diff and sync education from SSOT to Wanted
- * @param {WantedClient} client - Authenticated WantedClient
- * @param {Object} ssot - SSOT data
- * @param {Object} profile - Current Wanted profile
- * @param {string} resumeId - Wanted resume ID
- */
-async function syncWantedEducations(client, ssot, profile, resumeId) {
-  const ssotEducation = ssot.education;
-  const wantedEducations = profile.educations || [];
-
-  log(`Education: SSOT has 1, Wanted has ${wantedEducations.length}`, 'info', 'wanted');
-
-  // Find matching education by school name
-  const wantedEdu = wantedEducations.find((w) => w.name && w.name.includes(ssotEducation.school));
-
-  const ssotData = {
-    school_name: ssotEducation.school,
-    major: ssotEducation.major,
-    start_time: `${ssotEducation.startDate.replace('.', '-')  }-01`,
-    end_time: null, // 재학중
-    degree: '학사',
-  };
-
-  if (!CONFIG.APPLY || CONFIG.DIFF_ONLY) {
-    if (wantedEdu) {
-      console.log(`  = ${ssotEducation.school} (already exists)`);
-    } else {
-      console.log(`  + ${ssotEducation.school}: ${ssotEducation.major}`);
-    }
-    return { changes: wantedEdu ? 0 : 1, updated: 0, added: 0, dryRun: true };
-  }
-
-  if (wantedEdu) {
-    return { changes: 0, updated: 0, added: 0 };
-  } else {
-    // Add new
-    try {
-      await client.addEducation(resumeId, ssotData);
-      log(`Added education: ${ssotEducation.school}`, 'success', 'wanted');
-      return { changes: 1, updated: 0, added: 1 };
-    } catch (e) {
-      log(`Failed to add education: ${e.message}`, 'error', 'wanted');
-      return { changes: 0, updated: 0, added: 0 };
-    }
-  }
-}
-
-/**
- * Diff and sync certifications as activities to Wanted
- * @param {WantedClient} client - Authenticated WantedClient
- * @param {Object} ssot - SSOT data
- * @param {Object} profile - Current Wanted profile
- * @param {string} resumeId - Wanted resume ID
- */
-async function syncWantedActivities(client, ssot, profile, resumeId) {
-  const ssotCerts = (ssot.certifications || []).filter((c) => c.date && c.status !== '준비중');
-  const wantedActivities = profile.activities || [];
-
-  log(
-    `Activities: SSOT has ${ssotCerts.length} certs, Wanted has ${wantedActivities.length}`,
-    'info',
-    'wanted'
-  );
-
-  const toAdd = [];
-  const matched = new Set();
-
-  for (const cert of ssotCerts) {
-    // Find matching activity by title
-    const existing = wantedActivities.find((w) => w.title && w.title.includes(cert.name));
-
-    if (existing) {
-      matched.add(existing.id);
-    } else {
-      toAdd.push({
-        data: {
-          title: cert.name,
-          description: `${cert.issuer} | ${cert.date}`,
-          start_time: `${cert.date.replace('.', '-')  }-01`,
-          activity_type: 'CERTIFICATE',
-        },
-        cert,
-      });
-    }
-  }
-
-  log(`Activities: ${matched.size} matched, ${toAdd.length} to add`, 'info', 'wanted');
-
-  if (!CONFIG.APPLY || CONFIG.DIFF_ONLY) {
-    for (const item of toAdd) {
-      console.log(`  + ${item.cert.name} (${item.cert.issuer})`);
-    }
-    return { changes: toAdd.length, added: 0, dryRun: true };
-  }
-
-  let added = 0;
-  for (const item of toAdd) {
-    try {
-      await client.addActivity(resumeId, item.data);
-      log(`Added activity: ${item.cert.name}`, 'success', 'wanted');
-      added++;
-    } catch (e) {
-      log(`Failed to add ${item.cert.name}: ${e.message}`, 'error', 'wanted');
-    }
-  }
-
-  return { changes: added, added };
-}
-
-// normalizePhone: alias for toE164 (defined at top of file)
-function normalizePhone(phone) {
-  return toE164(phone);
-}
-
-async function syncWantedAbout(client, ssot, resumeDetail, resumeId) {
-  const ssotAbout = ssot.summary?.profileStatement || '';
-  const wantedAbout = resumeDetail?.about || '';
-
-  if (ssotAbout === wantedAbout) {
-    log('About: no changes', 'info', 'wanted');
-    return { changes: 0 };
-  }
-
-  log(
-    `About: "${wantedAbout.slice(0, 30)}..." -> "${ssotAbout.slice(0, 30)}..."`,
-    'diff',
-    'wanted'
-  );
-
-  if (!CONFIG.APPLY || CONFIG.DIFF_ONLY) {
-    return { changes: 1, dryRun: true };
-  }
-
-  try {
-    await client.updateResumeFields(resumeId, { about: ssotAbout });
-    log('Updated about field', 'success', 'wanted');
-    return { changes: 1, updated: 1 };
-  } catch (e) {
-    log(`Failed to update about: ${e.message}`, 'error', 'wanted');
-    return { changes: 0 };
-  }
-}
-
-async function syncWantedContactInfo(client, ssot, resumeDetail, resumeId) {
-  const updates = {};
-  const changes = [];
-
-  if (ssot.personal?.email && ssot.personal.email !== resumeDetail?.email) {
-    updates.email = ssot.personal.email;
-    changes.push({
-      field: 'email',
-      from: resumeDetail?.email,
-      to: ssot.personal.email,
-    });
-  }
-
-  const normalizedPhone = normalizePhone(ssot.personal?.phone);
-  if (normalizedPhone && normalizedPhone !== resumeDetail?.mobile) {
-    updates.mobile = normalizedPhone;
-    changes.push({
-      field: 'mobile',
-      from: resumeDetail?.mobile,
-      to: normalizedPhone,
-    });
-  }
-
-  if (changes.length === 0) {
-    log('Contact: no changes', 'info', 'wanted');
-    return { changes: 0 };
-  }
-
-  for (const c of changes) {
-    log(`${c.field}: "${c.from}" -> "${c.to}"`, 'diff', 'wanted');
-  }
-
-  if (!CONFIG.APPLY || CONFIG.DIFF_ONLY) {
-    return { changes: changes.length, dryRun: true };
-  }
-
-  try {
-    await client.updateResumeFields(resumeId, updates);
-    log(`Updated ${Object.keys(updates).join(', ')}`, 'success', 'wanted');
-    return { changes: changes.length, updated: changes.length };
-  } catch (e) {
-    log(`Failed to update contact: ${e.message}`, 'error', 'wanted');
-    return { changes: 0 };
-  }
 }
 
 async function syncWantedViaAPI(ssot) {
@@ -998,6 +517,11 @@ async function syncPlatform(platformKey, ssot) {
     return syncWantedViaAPI(ssot);
   }
 
+  if (platformKey === 'jobkorea') {
+    const handler = new JobKoreaHandler();
+    return handler.sync(ssot);
+  }
+
   return syncPlatformViaBrowser(platformKey, ssot);
 }
 
@@ -1026,12 +550,12 @@ async function main() {
       continue;
     }
 
-    console.log(`\n${  '='.repeat(40)}`);
+    console.log(`\n${'='.repeat(40)}`);
     results[platform] = await syncPlatform(platform, ssot);
   }
 
   // Summary
-  console.log(`\n${  '='.repeat(60)}`);
+  console.log(`\n${'='.repeat(60)}`);
   console.log('SUMMARY');
   console.log('='.repeat(60));
 

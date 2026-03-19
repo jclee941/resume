@@ -56,7 +56,7 @@
       "period": "2024.03 ~ 2025.02",
       "duration": "1년",
       "project": "넥스트레이드 매매체결시스템 구축",
-      "role": "인프라 엔지니어",
+      "role": "보안구축담당",
       "client": "넥스트레이드",
       "description": "넥스트레이드 매매체결시스템 보안 인프라 설계 및 구축\n• 금융위원회 본인가 심사 기술 대응 및 보안 아키텍처 수립\n• 망 분리 및 접근통제 정책 설계를 통한 보안 컴플라이언스 준수\n• FortiGate HA 고가용성 구성 및 장애 복구 프로세스 수립\n• 기술: FortiGate, FortiManager, Linux, VMware"
     },

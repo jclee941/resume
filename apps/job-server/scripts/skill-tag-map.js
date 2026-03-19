@@ -23,6 +23,19 @@ export const SKILL_TAG_MAP = {
   PostgreSQL: 2683,
   MySQL: 1464,
   Redis: 1470,
+  JavaScript: 1541,
+  TypeScript: 1564,
+  Terraform: 10498,
+  Prometheus: 10497,
+  Grafana: 10496,
+  'Node.js': 1547,
+  React: 1469,
+  Go: 1702,
+  Nginx: 3498,
+  MongoDB: 1462,
+  Azure: 1441,
+  Helm: 10648,
+  RabbitMQ: 3569,
 };
 
 export const SKILL_ALIASES = {
