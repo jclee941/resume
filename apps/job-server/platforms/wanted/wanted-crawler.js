@@ -118,8 +118,8 @@ export class WantedCrawler extends BaseCrawler {
         source: 'wanted',
         job: {
           ...this.normalizeJob(job),
-          description: job.detail?.requirements || '',
-          requirements: job.detail?.main_tasks || '',
+          description: job.detail?.main_tasks || '',
+          requirements: job.detail?.requirements || '',
           benefits: job.detail?.benefits || '',
           preferredPoints: job.detail?.preferred_points || '',
           intro: job.detail?.intro || '',
