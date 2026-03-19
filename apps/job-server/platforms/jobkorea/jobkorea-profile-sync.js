@@ -77,17 +77,17 @@ export class JobKoreaProfileSync {
       let cookiesToAdd = [];
       if (session.cookies) {
         if (Array.isArray(session.cookies)) {
-          // Already in array format (from browser context)
           cookiesToAdd = session.cookies;
         } else if (typeof session.cookies === 'string') {
-          // String format (from auth-persistent.js) - parse it
           cookiesToAdd = parseCookieString(session.cookies);
         }
-        
-        if (cookiesToAdd.length > 0) {
-          await context.addCookies(cookiesToAdd);
-          console.log(`✅ Loaded ${cookiesToAdd.length} cookies from session`);
-        }
+      } else if (session.cookieString) {
+        cookiesToAdd = parseCookieString(session.cookieString);
+      }
+      
+      if (cookiesToAdd.length > 0) {
+        await context.addCookies(cookiesToAdd);
+        console.log(`✅ Loaded ${cookiesToAdd.length} cookies from session`);
       }
     }
 

@@ -38,8 +38,18 @@ export class RememberProfileSync {
 
     if (existsSync(SESSION_PATH)) {
       const session = JSON.parse(readFileSync(SESSION_PATH, 'utf-8'));
-      if (session.cookies) {
+      if (session.cookies && Array.isArray(session.cookies)) {
         await context.addCookies(session.cookies);
+      } else if (session.cookieString) {
+        const parsed = session.cookieString
+          .split(';')
+          .map((p) => p.trim())
+          .filter((p) => p && p.includes('='))
+          .map((p) => {
+            const [name, ...v] = p.split('=');
+            return { name: name.trim(), value: v.join('=').trim(), domain: '.rememberapp.co.kr', path: '/', httpOnly: false, secure: true, sameSite: 'Lax' };
+          });
+        if (parsed.length > 0) await context.addCookies(parsed);
       }
     }
 
