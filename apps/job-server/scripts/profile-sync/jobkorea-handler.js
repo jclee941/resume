@@ -8,16 +8,19 @@ import { buildJobKoreaFormData } from './jobkorea-sections.js';
 /**
  * Build Edit URL for the user's existing resume.
  * Extracts rNo from PLATFORMS.jobkorea.profileUrl (View?rNo=XXXXX).
- * Falls back to Write URL if rNo cannot be determined.
+ * Throws if rNo cannot be determined — falling back to Write would create
+ * a duplicate resume instead of editing the existing one.
  */
 function getEditUrl() {
   const profileUrl = PLATFORMS.jobkorea?.profileUrl || '';
   const match = profileUrl.match(/[?&]rNo=(\d+)/i);
-  if (match) {
-    return `https://www.jobkorea.co.kr/User/Resume/Edit?RNo=${match[1]}`;
+  if (!match) {
+    throw new Error(
+      `Cannot extract rNo from PLATFORMS.jobkorea.profileUrl ("${profileUrl}"). ` +
+        'Set profileUrl to https://www.jobkorea.co.kr/User/Resume/View?rNo=XXXXX'
+    );
   }
-  // Fallback: Write creates a NEW resume (일반이력서) — not the user's main resume
-  return 'https://www.jobkorea.co.kr/User/Resume/Write?Input_Type_Code=3';
+  return `https://www.jobkorea.co.kr/User/Resume/Edit?RNo=${match[1]}`;
 }
 
 export default class JobKoreaHandler {
@@ -206,7 +209,7 @@ export default class JobKoreaHandler {
    * Read server-generated entry indices for a form section.
    * @param {import('playwright').Page} page
    * @param {string} prefix - Form field prefix (e.g. 'Career', 'License', 'UnivSchool')
-   * @returns {Promise<string[]>} Array of index strings like ['c14', 'c844', 'c845']
+   * @returns {Promise<string[]>} Array of index strings like ['c14', 'c844', '1_1773933194657']
    */
   async readSectionIndices(page, prefix) {
     return page.evaluate((pfx) => {
@@ -215,7 +218,7 @@ export default class JobKoreaHandler {
       $('#frm1')
         .serializeArray()
         .forEach((f) => {
-          const m = f.name.match(new RegExp(`^${escaped}\\[(c\\d+)\\]\\.Index_Name$`));
+          const m = f.name.match(new RegExp(`^${escaped}\\[([^\\]]+)\\]\\.Index_Name$`));
           if (m && !indices.includes(m[1])) indices.push(m[1]);
         });
       return indices;
@@ -323,7 +326,7 @@ export default class JobKoreaHandler {
             ({ pfx, prev }) => {
               const seen = new Set();
               const escaped = pfx.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-              const re = new RegExp(`^${escaped}\\[(c\\d+)\\]`);
+              const re = new RegExp(`^${escaped}\\[([^\\]]+)\\]`);
               $('#frm1')
                 .serializeArray()
                 .forEach((f) => {
@@ -435,6 +438,7 @@ export default class JobKoreaHandler {
       log(
         `Entry slots — Career: ${sectionIndices.career.length} (${sectionIndices.career.join(',')}), ` +
           `License: ${sectionIndices.license.length} (${sectionIndices.license.join(',')}), ` +
+          `Award: ${sectionIndices.award.length} (${sectionIndices.award.join(',')}), ` +
           `School: ${sectionIndices.school}`,
         'info',
         'jobkorea'
