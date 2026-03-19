@@ -3,6 +3,7 @@ export const JK_JOB_CODES = {
   '보안운영 담당': 1000238,
   '보안 구축 담당': 1000238,
   정보보호팀: 1000238,
+  보안구축담당: 1000238,
   시스템엔지니어: 1000233,
   '시스템 엔지니어': 1000233,
   '인프라 담당': 1000233,
@@ -233,7 +234,12 @@ export function mapMilitaryToFormFields(ssot) {
  * `awards` entries, so real SSOT input returns an empty field set.
  */
 export function mapAwardToFormFields(ssot, indices) {
-  const awards = Array.isArray(ssot?.awards) ? ssot.awards : [];
+  // SSoT stores achievements as string[], not structured awards objects.
+  // Fall back to achievements[] if awards[] is absent/empty.
+  let awards = Array.isArray(ssot?.awards) ? ssot.awards : [];
+  if (awards.length === 0 && Array.isArray(ssot?.achievements)) {
+    awards = ssot.achievements.map((name) => ({ name }));
+  }
   if (awards.length === 0) return [];
 
   const fields = [];

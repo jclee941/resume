@@ -104,12 +104,15 @@ describe('unifiedResumeSyncTool', () => {
     assert.ok(wanted.profile.headline.includes('DevOps Engineer'));
     assert.ok(wanted.profile.headline.includes('5년'));
 
-    assert.strictEqual(wanted.careers[0].company_name, 'TestCorp');
-    assert.strictEqual(wanted.careers[0].title, 'DevOps Engineer');
+    assert.strictEqual(wanted.careers[0].company.name, 'TestCorp');
+    assert.strictEqual(wanted.careers[0].company.type, 'CUSTOM');
+    assert.strictEqual(wanted.careers[0].job_role, 'DevOps Engineer');
+    assert.strictEqual(wanted.careers[0].job_category_id, 674);
+    assert.strictEqual(wanted.careers[0].employment_type, 'FULLTIME');
     assert.strictEqual(wanted.careers[0].start_time, '2020-03-01');
     assert.strictEqual(wanted.careers[0].end_time, null);
 
-    assert.strictEqual(wanted.educations[0].degree, null);
+    assert.strictEqual(wanted.educations[0].degree, '학사');
     assert.strictEqual(wanted.educations[0].school_name, 'Test University');
     assert.ok(wanted.educations[0].description.includes('재학중'));
 
@@ -249,13 +252,30 @@ describe('unifiedResumeSyncTool', () => {
     const resumeEducationUpdate = mock.fn(async () => undefined);
     const resumeEducationAdd = mock.fn(async () => undefined);
     const resumeSkillsAdd = mock.fn(async () => undefined);
+    const resumeActivityAdd = mock.fn(async () => undefined);
+    const resumeActivityUpdate = mock.fn(async () => undefined);
+    const resumeActivityDelete = mock.fn(async () => undefined);
+    const resumeSave = mock.fn(async () => undefined);
 
     const mockApi = {
       updateProfile,
       getResumeDetail,
-      resumeCareer: { update: resumeCareerUpdate, add: resumeCareerAdd, delete: mock.fn(async () => undefined), addProject: mock.fn(async () => undefined), deleteProject: mock.fn(async () => undefined) },
+      resumeCareer: {
+        update: resumeCareerUpdate,
+        add: resumeCareerAdd,
+        delete: mock.fn(async () => undefined),
+        addProject: mock.fn(async () => undefined),
+        deleteProject: mock.fn(async () => undefined),
+      },
       resumeEducation: { update: resumeEducationUpdate, add: resumeEducationAdd },
       resumeSkills: { add: resumeSkillsAdd },
+      resumeActivity: {
+        add: resumeActivityAdd,
+        update: resumeActivityUpdate,
+        delete: resumeActivityDelete,
+      },
+      resumeLanguageCert: { add: mock.fn(async () => undefined), update: mock.fn(async () => undefined), delete: mock.fn(async () => undefined) },
+      resume: { save: resumeSave },
     };
 
     mock.method(SessionManager, 'getAPI', async () => mockApi);
@@ -277,6 +297,10 @@ describe('unifiedResumeSyncTool', () => {
     assert.strictEqual(resumeEducationUpdate.mock.calls.length, 0);
     assert.strictEqual(resumeEducationAdd.mock.calls.length, 0);
     assert.strictEqual(resumeSkillsAdd.mock.calls.length, 0);
+    assert.strictEqual(resumeActivityAdd.mock.calls.length, 0);
+    assert.strictEqual(resumeActivityUpdate.mock.calls.length, 0);
+    assert.strictEqual(resumeActivityDelete.mock.calls.length, 0);
+    assert.strictEqual(resumeSave.mock.calls.length, 0);
   });
 
   it('syncs careers, educations, and mapped skills while skipping unknown skills', async () => {
@@ -307,22 +331,54 @@ describe('unifiedResumeSyncTool', () => {
 
     const updateProfile = mock.fn(async () => undefined);
     const getResumeDetail = mock.fn(async () => ({
-      careers: [{ id: 'career-1', company: { name: 'TestCorp' }, projects: [{ id: 'proj-1', title: 'Old Project' }] }],
+      careers: [
+        {
+          id: 'career-1',
+          company: { name: 'TestCorp' },
+          projects: [{ id: 'proj-1', title: 'Old Project' }],
+        },
+      ],
       educations: [],
       skills: [{ name: 'Python' }],
+      activities: [],
+      language_certs: [],
+      about: '',
+      email: 'test@test.com',
+      mobile: '010-1234-5678',
     }));
     const resumeCareerUpdate = mock.fn(async () => undefined);
     const resumeCareerAdd = mock.fn(async () => undefined);
     const resumeEducationUpdate = mock.fn(async () => undefined);
     const resumeEducationAdd = mock.fn(async () => undefined);
     const resumeSkillsAdd = mock.fn(async () => undefined);
+    const resumeActivityAdd = mock.fn(async () => undefined);
+    const resumeActivityUpdate = mock.fn(async () => undefined);
+    const resumeActivityDelete = mock.fn(async () => undefined);
+    const resumeSave = mock.fn(async () => undefined);
 
     const mockApi = {
       updateProfile,
       getResumeDetail,
-      resumeCareer: { update: resumeCareerUpdate, add: resumeCareerAdd, delete: mock.fn(async () => undefined), addProject: mock.fn(async () => undefined), deleteProject: mock.fn(async () => undefined) },
+      resumeCareer: {
+        update: resumeCareerUpdate,
+        add: resumeCareerAdd,
+        delete: mock.fn(async () => undefined),
+        addProject: mock.fn(async () => undefined),
+        deleteProject: mock.fn(async () => undefined),
+      },
       resumeEducation: { update: resumeEducationUpdate, add: resumeEducationAdd },
       resumeSkills: { add: resumeSkillsAdd },
+      resumeActivity: {
+        add: resumeActivityAdd,
+        update: resumeActivityUpdate,
+        delete: resumeActivityDelete,
+      },
+      resumeLanguageCert: {
+        add: mock.fn(async () => undefined),
+        update: mock.fn(async () => undefined),
+        delete: mock.fn(async () => undefined),
+      },
+      resume: { save: resumeSave },
     };
 
     mock.method(SessionManager, 'getAPI', async () => mockApi);
@@ -339,6 +395,10 @@ describe('unifiedResumeSyncTool', () => {
       'careers',
       'educations',
       'skills',
+      'activities',
+      'language_certs',
+      'about',
+      'contact',
     ]);
 
     assert.strictEqual(updateProfile.mock.calls.length, 1);
@@ -376,7 +436,16 @@ describe('unifiedResumeSyncTool', () => {
 
       const mockApi = {
         updateProfile: mock.fn(async () => undefined),
-        getResumeDetail: mock.fn(async () => ({ careers: [], educations: [], skills: [] })),
+        getResumeDetail: mock.fn(async () => ({
+          careers: [],
+          educations: [],
+          skills: [],
+          activities: [],
+          language_certs: [],
+          about: '',
+          email: 'test@test.com',
+          mobile: '010-1234-5678',
+        })),
         resumeCareer: {
           update: mock.fn(async () => undefined),
           add: mock.fn(async () => undefined),
@@ -389,6 +458,13 @@ describe('unifiedResumeSyncTool', () => {
           add: mock.fn(async () => undefined),
         },
         resumeSkills: { add: resumeSkillsAdd },
+        resumeActivity: {
+          add: mock.fn(async () => undefined),
+          update: mock.fn(async () => undefined),
+          delete: mock.fn(async () => undefined),
+        },
+        resumeLanguageCert: { add: mock.fn(async () => undefined), update: mock.fn(async () => undefined), delete: mock.fn(async () => undefined) },
+        resume: { save: mock.fn(async () => undefined) },
       };
 
       mock.method(SessionManager, 'getAPI', async () => mockApi);
@@ -435,10 +511,31 @@ describe('unifiedResumeSyncTool', () => {
         ],
         educations: [],
         skills: [],
+        activities: [],
+        language_certs: [],
+        about: '',
+        email: 'test@test.com',
+        mobile: '010-1234-5678',
       })),
-      resumeCareer: { update: resumeCareerUpdate, add: resumeCareerAdd, delete: resumeCareerDelete, addProject: mock.fn(async () => undefined), deleteProject: mock.fn(async () => undefined) },
-      resumeEducation: { update: mock.fn(async () => undefined), add: mock.fn(async () => undefined) },
+      resumeCareer: {
+        update: resumeCareerUpdate,
+        add: resumeCareerAdd,
+        delete: resumeCareerDelete,
+        addProject: mock.fn(async () => undefined),
+        deleteProject: mock.fn(async () => undefined),
+      },
+      resumeEducation: {
+        update: mock.fn(async () => undefined),
+        add: mock.fn(async () => undefined),
+      },
       resumeSkills: { add: mock.fn(async () => undefined) },
+      resumeActivity: {
+        add: mock.fn(async () => undefined),
+        update: mock.fn(async () => undefined),
+        delete: mock.fn(async () => undefined),
+      },
+      resumeLanguageCert: { add: mock.fn(async () => undefined), update: mock.fn(async () => undefined), delete: mock.fn(async () => undefined) },
+      resume: { save: mock.fn(async () => undefined) },
     };
 
     mock.method(SessionManager, 'getAPI', async () => mockApi);
@@ -479,10 +576,31 @@ describe('unifiedResumeSyncTool', () => {
         careers: [{ id: 'career-itcen', company: { name: '아이티센 CTS' } }],
         educations: [],
         skills: [],
+        activities: [],
+        language_certs: [],
+        about: '',
+        email: 'test@test.com',
+        mobile: '010-1234-5678',
       })),
-      resumeCareer: { update: resumeCareerUpdate, add: resumeCareerAdd, delete: resumeCareerDelete, addProject: mock.fn(async () => undefined), deleteProject: mock.fn(async () => undefined) },
-      resumeEducation: { update: mock.fn(async () => undefined), add: mock.fn(async () => undefined) },
+      resumeCareer: {
+        update: resumeCareerUpdate,
+        add: resumeCareerAdd,
+        delete: resumeCareerDelete,
+        addProject: mock.fn(async () => undefined),
+        deleteProject: mock.fn(async () => undefined),
+      },
+      resumeEducation: {
+        update: mock.fn(async () => undefined),
+        add: mock.fn(async () => undefined),
+      },
       resumeSkills: { add: mock.fn(async () => undefined) },
+      resumeActivity: {
+        add: mock.fn(async () => undefined),
+        update: mock.fn(async () => undefined),
+        delete: mock.fn(async () => undefined),
+      },
+      resumeLanguageCert: { add: mock.fn(async () => undefined), update: mock.fn(async () => undefined), delete: mock.fn(async () => undefined) },
+      resume: { save: mock.fn(async () => undefined) },
     };
 
     mock.method(SessionManager, 'getAPI', async () => mockApi);
@@ -533,6 +651,11 @@ describe('unifiedResumeSyncTool', () => {
         ],
         educations: [],
         skills: [],
+        activities: [],
+        language_certs: [],
+        about: '',
+        email: 'test@test.com',
+        mobile: '010-1234-5678',
       })),
       resumeCareer: {
         update: resumeCareerUpdate,
@@ -541,8 +664,18 @@ describe('unifiedResumeSyncTool', () => {
         addProject: resumeCareerAddProject,
         deleteProject: resumeCareerDeleteProject,
       },
-      resumeEducation: { update: mock.fn(async () => undefined), add: mock.fn(async () => undefined) },
+      resumeEducation: {
+        update: mock.fn(async () => undefined),
+        add: mock.fn(async () => undefined),
+      },
       resumeSkills: { add: mock.fn(async () => undefined) },
+      resumeActivity: {
+        add: mock.fn(async () => undefined),
+        update: mock.fn(async () => undefined),
+        delete: mock.fn(async () => undefined),
+      },
+      resumeLanguageCert: { add: mock.fn(async () => undefined), update: mock.fn(async () => undefined), delete: mock.fn(async () => undefined) },
+      resume: { save: mock.fn(async () => undefined) },
     };
 
     mock.method(SessionManager, 'getAPI', async () => mockApi);

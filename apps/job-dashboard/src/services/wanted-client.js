@@ -355,6 +355,34 @@ export class WantedClient {
   }
 
   // ============================================================
+  // CHAOS API v2: Language Certificate CRUD
+  // ============================================================
+
+  async updateLanguageCert(resumeId, certId, certData) {
+    this._requireAuth();
+    return this.chaosRequest(
+      `/resumes/v2/${resumeId}/language_certs/${certId}`,
+      { method: 'PUT', body: certData },
+    );
+  }
+
+  async addLanguageCert(resumeId, certData) {
+    this._requireAuth();
+    return this.chaosRequest(`/resumes/v2/${resumeId}/language_certs`, {
+      method: 'POST',
+      body: certData,
+    });
+  }
+
+  async deleteLanguageCert(resumeId, certId) {
+    this._requireAuth();
+    return this.chaosRequest(
+      `/resumes/v2/${resumeId}/language_certs/${certId}`,
+      { method: 'DELETE' },
+    );
+  }
+
+  // ============================================================
   // SNS API: Profile Update
   // ============================================================
 

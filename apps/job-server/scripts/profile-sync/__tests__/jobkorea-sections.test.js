@@ -211,8 +211,12 @@ describe('mapMilitaryToFormFields', () => {
 });
 
 describe('mapAwardToFormFields', () => {
-  it('returns [] when ssot.awards is undefined (real SSOT shape)', () => {
-    assert.deepStrictEqual(mapAwardToFormFields({ achievements: ['A', 'B'] }), []);
+  it('maps achievements[] as awards fallback when ssot.awards is absent (real SSOT shape)', () => {
+    const fields = mapAwardToFormFields({ achievements: ['A', 'B'] });
+    const byName = toMap(fields);
+    assert.strictEqual(byName.get('Award[c1].Award_Name'), 'A');
+    assert.strictEqual(byName.get('Award[c2].Award_Name'), 'B');
+    assert.strictEqual(byName.get('Award.index'), 'c1,c2');
   });
 
   it('returns [] for empty awards array', () => {
@@ -296,7 +300,8 @@ describe('buildJobKoreaFormData', () => {
     assert.strictEqual(byName.get('Career[c77].Index_Name'), 'c77');
     assert.strictEqual(byName.get('UnivSchool[c88].Schl_Name'), '한양사이버대학교');
     assert.strictEqual(byName.get('License[c99].Index_Name'), 'c99');
-    assert.strictEqual(countMatching(fields, /^Award\[/), 0);
+    // achievements[] maps to awards via fallback; indices=['c55'] limits to 1 entry = 5 fields
+    assert.strictEqual(countMatching(fields, /^Award\[/), 5);
   });
 
   it('returns non-empty field list for valid SSOT', () => {
@@ -327,6 +332,7 @@ describe('dry-run smoke with real SSOT', () => {
 
     assert.strictEqual(countMatching(fields, /^Career\[c\d+\]\.C_Name$/), expectedCareerCount);
     assert.strictEqual(countMatching(fields, /^License\[c\d+\]\.Lc_Name$/), expectedLicenseCount);
-    assert.strictEqual(countMatching(fields, /^Award\[c\d+\]\./), 0);
+    const expectedAchievementCount = Array.isArray(ssot.achievements) ? ssot.achievements.length : 0;
+    assert.strictEqual(countMatching(fields, /^Award\[c\d+\]\./), expectedAchievementCount > 0 ? expectedAchievementCount * 5 : 0);
   });
 });
