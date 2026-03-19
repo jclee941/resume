@@ -8,6 +8,7 @@ const JOB_CATEGORY_MAPPING = {
   '보안 엔지니어': 672,
   보안엔지니어: 672,
   정보보안: 672,
+  정보보호팀: 672,
   '인프라 엔지니어': 674,
   '인프라 담당': 674,
   DevOps: 674,
@@ -50,7 +51,6 @@ function mapCareerToWanted(career) {
     end_time: end,
     served: end === null,
     employment_type: 'FULLTIME',
-    projects: [{ title: career.project || career.role, description: career.description || '' }],
   };
 }
 
@@ -330,6 +330,16 @@ export class ProfileSyncHandler extends BaseHandler {
       for (const career of changes.careers.toUpdate) {
         try {
           await client.updateCareer(resumeId, career.id, career.data);
+          // Sync projects (career PATCH ignores projects field)
+          for (const p of career.existingProjects || []) {
+            await client.deleteProject(resumeId, career.id, p.id);
+          }
+          if (career.ssotCareer?.project && career.ssotCareer?.description) {
+            await client.addProject(resumeId, career.id, {
+              title: career.ssotCareer.project,
+              description: career.ssotCareer.description,
+            });
+          }
           syncResults.updated.push(`career:${career.company}`);
         } catch (error) {
           syncResults.failed.push({ section: `career:${career.company}`, error: error.message });
@@ -338,10 +348,26 @@ export class ProfileSyncHandler extends BaseHandler {
 
       for (const career of changes.careers.toAdd) {
         try {
-          await client.addCareer(resumeId, career.data);
+          const result = await client.addCareer(resumeId, career.data);
+          const newCareerId = result?.data?.id || result?.id;
+          if (newCareerId && career.ssotCareer?.project && career.ssotCareer?.description) {
+            await client.addProject(resumeId, newCareerId, {
+              title: career.ssotCareer.project,
+              description: career.ssotCareer.description,
+            });
+          }
           syncResults.updated.push(`career:${career.company}`);
         } catch (error) {
           syncResults.failed.push({ section: `career:${career.company}`, error: error.message });
+        }
+      }
+
+      for (const career of changes.careers.toDelete) {
+        try {
+          await client.deleteCareer(resumeId, career.id);
+          syncResults.updated.push(`career_deleted:${career.company}`);
+        } catch (error) {
+          syncResults.failed.push({ section: `career_delete:${career.company}`, error: error.message });
         }
       }
 
@@ -414,7 +440,7 @@ export class ProfileSyncHandler extends BaseHandler {
       sections.push('mobile');
     }
 
-    const careerChanges = { toUpdate: [], toAdd: [] };
+    const careerChanges = { toUpdate: [], toAdd: [], toDelete: [] };
     for (const career of ssotData.careers || []) {
       const normalizedCompany = String(career.company || '')
         .replace(/\(주\)/g, '')
@@ -428,9 +454,21 @@ export class ProfileSyncHandler extends BaseHandler {
           id: existing.id,
           company: career.company,
           data: mapped,
+          ssotCareer: career,
+          existingProjects: existing.projects || [],
         });
       } else {
-        careerChanges.toAdd.push({ company: career.company, data: mapped });
+        careerChanges.toAdd.push({ company: career.company, data: mapped, ssotCareer: career });
+      }
+    }
+    // Identify stale Wanted careers not in SSoT for deletion
+    const matchedIds = new Set(careerChanges.toUpdate.map((c) => c.id));
+    for (const existing of currentCareers) {
+      if (!matchedIds.has(existing.id)) {
+        careerChanges.toDelete.push({
+          id: existing.id,
+          company: existing.company?.name || existing.company_name || 'unknown',
+        });
       }
     }
 
@@ -448,7 +486,7 @@ export class ProfileSyncHandler extends BaseHandler {
     }
 
     const activityChanges = { toAdd: [] };
-    for (const certification of ssotData.certifications || []) {
+    for (const certification of (ssotData.certifications || []).filter((c) => c.date && c.status !== '준비중')) {
       const exists = currentActivities.find((item) =>
         String(item.title || '').includes(certification.name || '')
       );

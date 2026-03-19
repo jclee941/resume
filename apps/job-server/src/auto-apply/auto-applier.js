@@ -101,12 +101,12 @@ export class AutoApplier {
         let session = SessionManager.load(platform);
 
         // Fallback: check legacy per-platform session files
-        if (!session?.cookies) {
+        if (!session?.cookies && !session?.cookieString) {
           const legacyFile = join(homedir(), '.opencode', 'data', `${platform}-session.json`);
           if (existsSync(legacyFile)) {
             try {
               const legacyData = JSON.parse(readFileSync(legacyFile, 'utf-8'));
-              if (legacyData?.cookies) {
+              if (legacyData?.cookies || legacyData?.cookieString) {
                 session = legacyData;
                 console.log(`📂 ${platform}: loaded from legacy session file`);
               }
@@ -116,7 +116,7 @@ export class AutoApplier {
           }
         }
 
-        if (session?.cookies) {
+        if (session?.cookies || session?.cookieString) {
           if (typeof session.cookies === 'string') {
             await this.loadCookies(session.cookies, domain);
             console.log(`✅ ${platform} session cookies loaded`);
@@ -125,6 +125,9 @@ export class AutoApplier {
             console.log(
               `✅ ${platform} session cookies loaded (${session.cookies.length} cookies)`
             );
+          } else if (session.cookieString) {
+            await this.loadCookies(session.cookieString, domain);
+            console.log(`✅ ${platform} session cookies loaded (from cookieString)`);
           }
         } else {
           console.log(`⚠️ ${platform}: no valid session found`);

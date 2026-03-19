@@ -261,6 +261,25 @@ export class WantedClient {
   }
 
   // ============================================================
+  // CHAOS API v2: Career Project CRUD
+  // ============================================================
+
+  async addProject(resumeId, careerId, projectData) {
+    this._requireAuth();
+    return this.chaosRequest(`/resumes/v2/${resumeId}/careers/${careerId}/projects`, {
+      method: 'POST',
+      body: projectData,
+    });
+  }
+
+  async deleteProject(resumeId, careerId, projectId) {
+    this._requireAuth();
+    return this.chaosRequest(`/resumes/v2/${resumeId}/careers/${careerId}/projects/${projectId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // ============================================================
   // CHAOS API v2: Education CRUD
   // ============================================================
 

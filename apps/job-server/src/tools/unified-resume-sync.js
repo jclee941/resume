@@ -162,7 +162,7 @@ async function diffAllPlatforms(sourceData, platforms, params) {
 async function diffPlatform(sourceData, platform, params) {
   switch (platform) {
     case 'wanted': {
-      const api = SessionManager.getAPI();
+      const api = await SessionManager.getAPI();
       if (!api) return { error: 'Not authenticated' };
       if (!params.resume_id) return { error: 'resume_id required' };
 
@@ -249,8 +249,7 @@ function mapToWantedFormat(source) {
       title: c.role,
       start_time: parseDate(c.period.split(' ~ ')[0]),
       end_time: c.period.includes('현재') ? null : parseDate(c.period.split(' ~ ')[1]),
-      served: !c.period.includes('현재'),
-      projects: [{ title: c.project, description: c.description }],
+      served: c.period.includes('현재'),
     })),
     educations: [
       {
@@ -337,7 +336,7 @@ async function syncPlatform(sourceData, platform, params) {
 
   switch (platform) {
     case 'wanted':
-      return await syncToWanted(mapped, params);
+      return await syncToWanted(mapped, params, sourceData);
     case 'jobkorea':
       return await syncToJobKorea(mapped, params);
     case 'remember':
@@ -347,7 +346,7 @@ async function syncPlatform(sourceData, platform, params) {
   }
 }
 
-async function syncToWanted(data, params) {
+async function syncToWanted(data, params, sourceData = {}) {
   if (!params.resume_id) {
     return { error: 'resume_id required for Wanted sync' };
   }
@@ -387,17 +386,46 @@ async function syncToWanted(data, params) {
   try {
     const remoteCareers = resumeDetail.careers || [];
     const localCareers = data.careers || [];
+    const ssotCareers = sourceData.careers || [];
 
-    for (const career of localCareers) {
+    const matchedIds = new Set();
+    for (let i = 0; i < localCareers.length; i++) {
+      const career = localCareers[i];
+      const ssotCareer = ssotCareers[i] || {};
+      const normalizedName = career.company_name.replace(/\(주\)/g, '').trim();
       const matchedCareer = remoteCareers.find(
-        (rc) => rc.company?.name === career.company_name
+        (rc) => (rc.company?.name || '').includes(normalizedName)
       );
 
       if (matchedCareer) {
+        matchedIds.add(matchedCareer.id);
         await api.resumeCareer.update(params.resume_id, matchedCareer.id, career);
+        // Sync projects (career PATCH ignores projects field)
+        for (const p of matchedCareer.projects || []) {
+          await api.resumeCareer.deleteProject(params.resume_id, matchedCareer.id, p.id);
+        }
+        if (ssotCareer.project && ssotCareer.description) {
+          await api.resumeCareer.addProject(params.resume_id, matchedCareer.id, {
+            title: ssotCareer.project,
+            description: ssotCareer.description,
+          });
+        }
       } else {
-        await api.resumeCareer.add(params.resume_id, career);
+        const result = await api.resumeCareer.add(params.resume_id, career);
+        const newId = result?.data?.id || result?.id;
+        if (newId && ssotCareer.project && ssotCareer.description) {
+          await api.resumeCareer.addProject(params.resume_id, newId, {
+            title: ssotCareer.project,
+            description: ssotCareer.description,
+          });
+        }
       }
+    }
+
+    // Delete stale remote careers not in SSoT
+    const toDelete = remoteCareers.filter((rc) => !matchedIds.has(rc.id));
+    for (const career of toDelete) {
+      await api.resumeCareer.delete(params.resume_id, career.id);
     }
     results.updated.push('careers');
   } catch (e) {
