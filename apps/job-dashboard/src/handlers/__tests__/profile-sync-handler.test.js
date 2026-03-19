@@ -1,4 +1,4 @@
-import { describe, it, beforeEach, mock } from 'node:test';
+import { describe, it, mock } from 'node:test';
 import assert from 'node:assert';
 
 // Inline the pure functions to avoid Worker env dependencies from the handler module
