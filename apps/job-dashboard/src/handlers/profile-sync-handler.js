@@ -2,7 +2,7 @@ import { BaseHandler } from './base-handler.js';
 import { WantedClient } from '../services/wanted-client.js';
 import { normalizeError } from '../../../job-server/src/shared/errors/index.js';
 import { sendTelegramNotification } from '../services/notification/telegram.js';
-import { JOB_CATEGORY_MAPPING, DEFAULT_JOB_CATEGORY } from '../../../job-server/scripts/profile-sync/constants.js';
+import { JOB_CATEGORY_MAPPING, DEFAULT_JOB_CATEGORY } from '../../../job-server/scripts/profile-sync/job-categories.js';
 
 function parsePeriod(period = '') {
   const parts = String(period)
