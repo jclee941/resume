@@ -111,16 +111,16 @@ try {
     `Starting Wanted resume sync (${dryRun ? 'dry-run' : 'apply'}) for resume ${wantedResumeId}`
   );
 
+  // Step 1: Save session
   SessionManager.save('wanted', {
     email: wantedEmail,
     cookies: wantedCookies,
     cookieString: wantedCookies,
     timestamp: Date.now(),
-    expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-    cookieCount: wantedCookies.split(';').filter(Boolean).length,
   });
   console.log('✅ Session saved successfully');
 
+  // Step 2: Sync resume to Wanted
   const result = await unifiedResumeSyncTool.execute({
     action: 'sync',
     platforms: ['wanted'],
