@@ -5,6 +5,8 @@
   "exports": {
     "./errors": "./src/errors/index.js",
     "./logger": "./src/logger/index.js",
-    "./es-client": "./src/clients/elasticsearch/index.js"
+    "./es-client": "./src/clients/elasticsearch/index.js",
+    "./ua": "./src/ua.js",
+    "./phone": "./src/phone.js"
   }
 }

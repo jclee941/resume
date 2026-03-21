@@ -22,6 +22,7 @@ import { chromium } from 'playwright';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { toKoreanPhone } from '@resume/shared/phone';
 import WantedAPI from '../src/shared/clients/wanted/index.js';
 import WantedClient from '../../job-dashboard/src/services/wanted-client.js';
 import {
@@ -116,16 +117,6 @@ function loadSSOT() {
   const data = JSON.parse(fs.readFileSync(CONFIG.SSOT_PATH, 'utf-8'));
   log(`Loaded SSOT: ${data.personal.name}`, 'success');
   return data;
-}
-
-
-function _toKoreanPhone(phone) {
-  if (!phone) return '';
-  const digits = phone.replace(/^\+82/, '0').replace(/\D/g, '');
-  if (digits.length === 11) {
-    return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
-  }
-  return digits;
 }
 
 async function getCurrentProfile(page, platform) {

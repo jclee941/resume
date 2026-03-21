@@ -1,6 +1,7 @@
 import { BaseHandler } from './base-handler.js';
 import { WantedClient } from '../services/wanted-client.js';
 import { normalizeError } from '@resume/shared/errors';
+import { normalizePhone } from '@resume/shared/phone';
 import { sendTelegramNotification } from '../services/notification/telegram.js';
 import {
   JOB_CATEGORY_MAPPING,
@@ -15,14 +16,6 @@ function parsePeriod(period = '') {
   const start = parts[0] ? `${parts[0].replace('.', '-')}-01` : null;
   const end = parts[1] && parts[1] !== '현재' ? `${parts[1].replace('.', '-')}-01` : null;
   return { start, end };
-}
-
-function normalizePhone(phone = '') {
-  const digits = String(phone).replace(/\D/g, '');
-  if (!digits) return '';
-  if (digits.startsWith('0')) return `+82${digits.slice(1)}`;
-  if (digits.startsWith('82')) return `+${digits}`;
-  return phone;
 }
 
 function mapCareerToWanted(career) {

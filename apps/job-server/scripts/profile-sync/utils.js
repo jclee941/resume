@@ -26,42 +26,7 @@ export function loadSSOT() {
   return data;
 }
 
-/**
- * @param {string} phone
- * @returns {string}
- */
-export function toE164(phone) {
-  if (!phone) return '';
-  const digits = phone.replace(/\D/g, '');
-  if (digits.startsWith('0')) {
-    return `+82${  digits.slice(1)}`;
-  }
-  if (digits.startsWith('82')) {
-    return `+${  digits}`;
-  }
-  return phone;
-}
-
-/**
- * @param {string} _phone
- * @returns {string}
- */
-export function _toKoreanPhone(_phone) {
-  if (!_phone) return '';
-  const digits = _phone.replace(/^\+82/, '0').replace(/\D/g, '');
-  if (digits.length === 11) {
-    return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
-  }
-  return digits;
-}
-
-/**
- * @param {string} phone
- * @returns {string}
- */
-export function normalizePhone(phone) {
-  return toE164(phone);
-}
+export { toE164, normalizePhone, toKoreanPhone as _toKoreanPhone } from '@resume/shared/phone';
 
 /**
  * @param {Record<string, string>} current
@@ -93,10 +58,10 @@ export function parsePeriod(period) {
   }
   const sep = period.includes('~') ? '~' : ' - ';
   const parts = period.split(sep).map((p) => p.trim());
-  const startsAt = `${parts[0].replace('.', '-')  }-01`;
+  const startsAt = `${parts[0].replace('.', '-')}-01`;
   let endsAt = null;
   if (parts[1] && parts[1] !== '현재') {
-    endsAt = `${parts[1].replace('.', '-')  }-01`;
+    endsAt = `${parts[1].replace('.', '-')}-01`;
   }
   return { startsAt, endsAt };
 }
