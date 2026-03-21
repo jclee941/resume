@@ -17,7 +17,7 @@ Playwright end-to-end test suite for portfolio, dashboard, security, accessibili
 | Security and auth checks    | `security.spec.js`, `deploy-verification.spec.js`                                  | policy and endpoint validation      |
 | Accessibility gates         | `accessibility.spec.js`, `accessibility-axe.spec.js`, `accessibility-wcag.spec.js` | a11y compliance checks              |
 | Mobile and performance      | `mobile.spec.js`, `mobile-responsive.spec.js`, `performance.spec.js`               | device and perf expectations        |
-| Visual regression           | `visual.spec.js`, `visual-regression.spec.js`, `visual.spec.js-snapshots/`         | snapshot-based UI drift detection   |
+| Visual regression           | `visual.spec.js`, `visual.spec.js-snapshots/`                                      | snapshot-based UI drift detection   |
 | Shared E2E helpers          | `fixtures/helpers.js`                                                              | common setup/helper utilities       |
 
 ## CONVENTIONS

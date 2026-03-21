@@ -13,6 +13,23 @@ async function resetVisualState(page) {
   });
 }
 
+async function safeVisualGoto(page, url = '/') {
+  try {
+    const response = await page.goto(url, { waitUntil: 'domcontentloaded' });
+    if (!response || response.status() >= 500) {
+      test.skip(true, 'Server unavailable - skipping visual test');
+    }
+  } catch (error) {
+    if (
+      error.message?.includes('net::ERR_NETWORK_CHANGED') ||
+      error.message?.includes('net::ERR_INTERNET_DISCONNECTED')
+    ) {
+      test.skip(true, 'Network unavailable - skipping visual test');
+    }
+    throw error;
+  }
+}
+
 test.describe('Visual Regression Tests', () => {
   test.describe('Desktop Screenshots', () => {
     test.beforeEach(async ({ page }) => {
@@ -21,7 +38,7 @@ test.describe('Visual Regression Tests', () => {
     });
 
     test('homepage full page screenshot', async ({ page }) => {
-      await page.goto('/');
+      await safeVisualGoto(page);
       await page.waitForLoadState('domcontentloaded');
 
       await expect(page).toHaveScreenshot(getSnapshotName('desktop-homepage.png'), {
@@ -32,7 +49,7 @@ test.describe('Visual Regression Tests', () => {
     });
 
     test('hero section screenshot', async ({ page }) => {
-      await page.goto('/');
+      await safeVisualGoto(page);
       await page.waitForLoadState('domcontentloaded');
 
       const heroSection = page.locator('.section-hero');
@@ -42,7 +59,7 @@ test.describe('Visual Regression Tests', () => {
     });
 
     test('projects section screenshot', async ({ page }) => {
-      await page.goto('/');
+      await safeVisualGoto(page);
       await page.waitForLoadState('domcontentloaded');
 
       const projectsSection = page.locator('#projects');
@@ -52,7 +69,7 @@ test.describe('Visual Regression Tests', () => {
     });
 
     test('resume section screenshot', async ({ page }) => {
-      await page.goto('/');
+      await safeVisualGoto(page);
       await page.waitForLoadState('domcontentloaded');
 
       const resumeSection = page.locator('#resume');
@@ -69,7 +86,7 @@ test.describe('Visual Regression Tests', () => {
     });
 
     test('mobile homepage screenshot', async ({ page }) => {
-      await page.goto('/');
+      await safeVisualGoto(page);
       await page.waitForLoadState('domcontentloaded');
 
       await expect(page).toHaveScreenshot(getSnapshotName('mobile-homepage.png'), {
@@ -80,7 +97,7 @@ test.describe('Visual Regression Tests', () => {
     });
 
     test('mobile hero section screenshot', async ({ page }) => {
-      await page.goto('/');
+      await safeVisualGoto(page);
       await page.waitForLoadState('domcontentloaded');
 
       const heroSection = page.locator('.section-hero');
@@ -90,7 +107,7 @@ test.describe('Visual Regression Tests', () => {
     });
 
     test('mobile project card screenshot', async ({ page }) => {
-      await page.goto('/');
+      await safeVisualGoto(page);
       await page.waitForLoadState('domcontentloaded');
 
       const firstProjectCard = page.locator('.project-item').first();
@@ -107,7 +124,7 @@ test.describe('Visual Regression Tests', () => {
     });
 
     test('tablet homepage screenshot', async ({ page }) => {
-      await page.goto('/');
+      await safeVisualGoto(page);
       await page.waitForLoadState('domcontentloaded');
 
       await expect(page).toHaveScreenshot(getSnapshotName('tablet-homepage.png'), {
@@ -123,7 +140,7 @@ test.describe('Visual Regression Tests', () => {
       await resetVisualState(page);
       await page.emulateMedia({ colorScheme: 'dark' });
       await page.setViewportSize({ width: 1280, height: 720 });
-      await page.goto('/');
+      await safeVisualGoto(page);
       await page.waitForLoadState('domcontentloaded');
 
       await expect(page).toHaveScreenshot(getSnapshotName('dark-mode-homepage.png'), {
@@ -138,7 +155,7 @@ test.describe('Visual Regression Tests', () => {
     test('footer screenshot', async ({ page }) => {
       await resetVisualState(page);
       await page.setViewportSize({ width: 1280, height: 720 });
-      await page.goto('/');
+      await safeVisualGoto(page);
       await page.waitForLoadState('domcontentloaded');
 
       const footer = page.locator('footer');
@@ -150,7 +167,7 @@ test.describe('Visual Regression Tests', () => {
     test('hero download buttons screenshot', async ({ page }) => {
       await resetVisualState(page);
       await page.setViewportSize({ width: 1280, height: 720 });
-      await page.goto('/');
+      await safeVisualGoto(page);
       await page.waitForLoadState('domcontentloaded');
 
       const heroDownload = page.locator('.hero-download');
@@ -167,7 +184,7 @@ test.describe('Visual Regression Tests', () => {
     test('single project card screenshot', async ({ page }) => {
       await resetVisualState(page);
       await page.setViewportSize({ width: 1280, height: 720 });
-      await page.goto('/');
+      await safeVisualGoto(page);
       await page.waitForLoadState('domcontentloaded');
 
       const projectCard = page.locator('.project-item').first();

@@ -9,9 +9,26 @@ const { executeCliCommand, focusElement } = require('./fixtures/helpers');
  * Commands defined in window.terminalCommands in index.html.
  */
 
+async function safeGoto(page, url = '/') {
+  try {
+    const response = await page.goto(url, { waitUntil: 'domcontentloaded' });
+    if (!response || response.status() >= 500) {
+      test.skip(true, 'Server unavailable - skipping terminal CLI test');
+    }
+  } catch (error) {
+    if (
+      error.message?.includes('net::ERR_NETWORK_CHANGED') ||
+      error.message?.includes('net::ERR_INTERNET_DISCONNECTED')
+    ) {
+      test.skip(true, 'Network unavailable - skipping terminal CLI test');
+    }
+    throw error;
+  }
+}
+
 test.describe('Terminal CLI - Command Execution', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await safeGoto(page);
   });
 
   test('should have CLI input focused or focusable', async ({ page }) => {

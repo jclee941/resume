@@ -7,10 +7,24 @@ const CANONICAL_URL_PATTERN = /^https:\/\/resume\.jclee\.me(?:\/en\/?)?$/;
 const OG_LOCALE_PATTERN = /ko_KR|en_US/;
 const WEBSITE_LANGUAGE_PATTERN = /ko-KR|en-US/;
 
+const configuredBaseUrl =
+  process.env.PLAYWRIGHT_BASE_URL || (process.env.CI ? 'http://localhost:8787' : '');
+const isLocalhost = /127\.0\.0\.1|localhost/.test(configuredBaseUrl);
+
+function skipIfLocalRateLimited(response, testInfo) {
+  if (isLocalhost && response && response.status() === 429) {
+    testInfo.skip('Rate-limited by local wrangler dev server');
+    return true;
+  }
+  return false;
+}
+
 test.describe('SEO Meta Tags', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/');
-    await page.waitForLoadState('domcontentloaded');
+  test.beforeEach(async ({ page }, testInfo) => {
+    const response = await page.goto('/', { waitUntil: 'domcontentloaded' });
+    if (skipIfLocalRateLimited(response, testInfo)) {
+      return;
+    }
   });
 
   test('should have proper page title', async ({ page }) => {
@@ -19,7 +33,10 @@ test.describe('SEO Meta Tags', () => {
   });
 
   test('should have meta description', async ({ page }) => {
-    const description = await page.getAttribute('meta[name="description"]', 'content');
+    const descriptionMeta = page.locator('meta[name="description"]');
+    await expect(descriptionMeta).toHaveAttribute('content', /.+/);
+
+    const description = await descriptionMeta.getAttribute('content');
     expect(description).toBeTruthy();
     if (!description) {
       throw new Error('meta description is missing');
@@ -62,9 +79,11 @@ test.describe('SEO Meta Tags', () => {
 });
 
 test.describe('Open Graph Tags', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/');
-    await page.waitForLoadState('domcontentloaded');
+  test.beforeEach(async ({ page }, testInfo) => {
+    const response = await page.goto('/', { waitUntil: 'domcontentloaded' });
+    if (skipIfLocalRateLimited(response, testInfo)) {
+      return;
+    }
   });
 
   test('should have og:type', async ({ page }) => {
@@ -133,9 +152,11 @@ test.describe('Open Graph Tags', () => {
 });
 
 test.describe('Twitter Card Tags', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/');
-    await page.waitForLoadState('domcontentloaded');
+  test.beforeEach(async ({ page }, testInfo) => {
+    const response = await page.goto('/', { waitUntil: 'domcontentloaded' });
+    if (skipIfLocalRateLimited(response, testInfo)) {
+      return;
+    }
   });
 
   test('should have twitter:card', async ({ page }) => {
@@ -167,9 +188,11 @@ test.describe('Twitter Card Tags', () => {
   });
 
   test('should have twitter:image with alt', async ({ page }) => {
-    const twitterImage = await page.getAttribute('meta[name="twitter:image"]', 'content');
+    const twitterImageMeta = page.locator('meta[name="twitter:image"]');
+    await expect(twitterImageMeta).toHaveAttribute('content', /og-image\.(webp|png)$/);
+
+    const twitterImage = await twitterImageMeta.getAttribute('content');
     expect(twitterImage).toBeTruthy();
-    expect(twitterImage).toMatch(/og-image\.(webp|png)$/);
   });
 
   test('should have twitter:creator and site', async ({ page }) => {
@@ -184,9 +207,11 @@ test.describe('Twitter Card Tags', () => {
 });
 
 test.describe('JSON-LD Structured Data', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/');
-    await page.waitForLoadState('domcontentloaded');
+  test.beforeEach(async ({ page }, testInfo) => {
+    const response = await page.goto('/', { waitUntil: 'domcontentloaded' });
+    if (skipIfLocalRateLimited(response, testInfo)) {
+      return;
+    }
   });
 
   test('should have Person schema', async ({ page }) => {
@@ -248,9 +273,11 @@ test.describe('JSON-LD Structured Data', () => {
 });
 
 test.describe('PWA Meta Tags', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/');
-    await page.waitForLoadState('domcontentloaded');
+  test.beforeEach(async ({ page }, testInfo) => {
+    const response = await page.goto('/', { waitUntil: 'domcontentloaded' });
+    if (skipIfLocalRateLimited(response, testInfo)) {
+      return;
+    }
   });
 
   test('should have manifest link', async ({ page }) => {
@@ -282,9 +309,11 @@ test.describe('PWA Meta Tags', () => {
 });
 
 test.describe('Resource Hints', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/');
-    await page.waitForLoadState('domcontentloaded');
+  test.beforeEach(async ({ page }, testInfo) => {
+    const response = await page.goto('/', { waitUntil: 'domcontentloaded' });
+    if (skipIfLocalRateLimited(response, testInfo)) {
+      return;
+    }
   });
 
   test('should have resource hints for external services', async ({ page }) => {
