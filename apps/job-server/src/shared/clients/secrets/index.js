@@ -2,15 +2,17 @@ const DEFAULT_BASE_URL = 'https://infisical.jclee.me/api/v3';
 const CACHE_TTL_MS = 5 * 60 * 1000;
 
 export class SecretsClient {
-  constructor(token, environment, projectID, baseURL = null) {
+  constructor(token, environment, projectID, baseURL = null, logger = null) {
     this.token = token;
     this.environment = environment;
     this.projectID = projectID;
     this.baseURL = baseURL || process.env.INFISICAL_API_URL || DEFAULT_BASE_URL;
     this.cache = new Map();
+    this.logger = logger ?? console;
   }
 
-  static fromEnv() {
+  static fromEnv(logger = null) {
+    const log = logger ?? console;
     const token = process.env.INFISICAL_TOKEN;
     if (!token) {
       return new FallbackSecretsClient();
@@ -19,13 +21,11 @@ export class SecretsClient {
     const environment = process.env.INFISICAL_ENVIRONMENT || 'prod';
     const projectID = process.env.INFISICAL_PROJECT_ID;
     if (!projectID) {
-      console.warn(
-        '[SecretsClient] INFISICAL_PROJECT_ID not set, using env fallback'
-      );
+      log.warn('[SecretsClient] INFISICAL_PROJECT_ID not set, using env fallback');
       return new FallbackSecretsClient();
     }
 
-    return new SecretsClient(token, environment, projectID);
+    return new SecretsClient(token, environment, projectID, null, logger);
   }
 
   async get(key) {
@@ -48,7 +48,7 @@ export class SecretsClient {
         return result.value;
       }
     } catch (err) {
-      console.warn(`[SecretsClient] Infisical fetch failed: ${err.message}`);
+      this.logger.warn(`[SecretsClient] Infisical fetch failed: ${err.message}`);
     }
 
     return this.fallbackToEnv(key);
