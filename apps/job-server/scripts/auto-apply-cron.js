@@ -44,7 +44,7 @@ function log(msg) {
   const ts = new Date().toISOString();
   const line = `[${ts}] ${msg}`;
   console.log(line);
-  appendFileSync(logFile, line + '\n');
+  appendFileSync(logFile, `${line}\n`);
 }
 
 function loadEnv() {
