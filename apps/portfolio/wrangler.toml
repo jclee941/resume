@@ -34,9 +34,7 @@ binding = "ASSETS"
 [env.production]
 name = "resume"
 vars = { ENVIRONMENT = "production", ELASTICSEARCH_INDEX = "resume-logs-worker" }
-routes = [
-  { pattern = "resume.jclee.me", custom_domain = true }
-]
+routes = [{ pattern = "resume.jclee.me", custom_domain = true }]
 
 [env.production.assets]
 directory = "./assets"
@@ -47,12 +45,6 @@ binding = "ASSETS"
 binding = "DB"
 database_name = "resume-prod-db"
 database_id = "6c723024-2527-490d-8ffd-38604b923166"
-
-# Job Dashboard D1 Database
-[[env.production.d1_databases]]
-binding = "JOB_DB"
-database_name = "job-dashboard-db"
-database_id = "c858dda6-b752-4e12-b60c-2886e9483cc7"
 
 # KV Namespaces
 [[env.production.kv_namespaces]]
