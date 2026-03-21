@@ -171,8 +171,8 @@ export class MigrationRunner {
         .all();
       return result.results || [];
     } catch (e) {
-      console.error('Failed to get applied migrations:', e);
-      return [];
+      this.logger(`Failed to get applied migrations: ${e?.message || e}`);
+      throw e;
     }
   }
 

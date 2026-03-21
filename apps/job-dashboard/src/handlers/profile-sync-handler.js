@@ -137,7 +137,9 @@ export class ProfileSyncHandler extends BaseHandler {
           now
         )
         .run()
-        .catch(() => {});
+        .catch((e) => {
+          console.error('[ProfileSync] Failed to create sync record:', normalizeError(e).message);
+        });
 
       const results = {};
 
@@ -222,7 +224,9 @@ export class ProfileSyncHandler extends BaseHandler {
         .prepare('UPDATE profile_syncs SET status = ?, result = ?, updated_at = ? WHERE id = ?')
         .bind(status, JSON.stringify(results), now, syncId)
         .run()
-        .catch(() => {});
+        .catch((e) => {
+          console.error('[ProfileSync] Failed to update sync status:', normalizeError(e).message);
+        });
 
       return this.jsonResponse({
         success,
