@@ -34,13 +34,15 @@ export class AIService {
    * @param {PromptCache} [options.cache] - Prompt cache
    * @param {CostTracker} [options.costTracker] - Cost tracker
    * @param {boolean} [options.enableFallback=true] - Auto-fallback on provider failure
+   * @param {object} [options.logger=console] - Logger instance (must support .warn/.error)
    */
-  constructor({ workersAI, openAI, cache, costTracker, enableFallback = true }) {
+  constructor({ workersAI, openAI, cache, costTracker, enableFallback = true, logger }) {
     this.workersAI = workersAI;
     this.openAI = openAI;
     this.cache = cache;
     this.costTracker = costTracker;
     this.enableFallback = enableFallback;
+    this.logger = logger ?? console;
   }
 
   /**
@@ -122,7 +124,7 @@ export class AIService {
       const fallback = this._getFallbackProvider(resolved.providerName);
       if (!fallback) throw primaryError;
 
-      console.warn(
+      this.logger.warn(
         `[AIService] ${resolved.providerName} failed, falling back to ${fallback.name}: ${primaryError.message}`
       );
 
@@ -144,7 +146,7 @@ export class AIService {
     if (this.costTracker && usedCatalogEntry) {
       costInfo = await this.costTracker.recordUsage(result, usedCatalogEntry.costPer1kTokens ?? 0);
       if (costInfo.alert) {
-        console.warn(`[AIService] ${costInfo.alert}`);
+        this.logger.warn(`[AIService] ${costInfo.alert}`);
       }
     }
 
@@ -303,7 +305,8 @@ export class AIService {
  * @returns {AIService}
  */
 export function createAIService(env, options = {}) {
-  const { enableCache = true, cacheTtl = 3600, budgets } = options;
+  const { enableCache = true, cacheTtl = 3600, budgets, logger } = options;
+  const log = logger ?? console;
 
   let workersAI = null;
   let openAI = null;
@@ -320,7 +323,7 @@ export function createAIService(env, options = {}) {
   }
 
   if (!workersAI && !openAI) {
-    console.warn('[AIService] No AI providers configured. AI features will be unavailable.');
+    log.warn('[AIService] No AI providers configured. AI features will be unavailable.');
   }
 
   const cache =
@@ -338,5 +341,6 @@ export function createAIService(env, options = {}) {
     openAI,
     cache,
     costTracker,
+    logger: log,
   });
 }
