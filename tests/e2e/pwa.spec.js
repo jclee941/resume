@@ -105,36 +105,38 @@ test.describe('Progressive Web App (PWA)', () => {
   });
 
   test('should register Service Worker on page load', async ({ page }) => {
-    // Listen for console messages
+    const skipSWTests = process.env.SKIP_SERVICE_WORKER_TESTS === 'true';
+
+    if (skipSWTests) {
+      test.skip(
+        true,
+        'SKIP_SERVICE_WORKER_TESTS=true: Service Worker tests skipped. ' +
+          'Set to false to enforce SW registration verification.'
+      );
+    }
+
     const consoleMessages = [];
     page.on('console', (msg) => {
       consoleMessages.push({ type: msg.type(), text: msg.text() });
     });
 
-    // Use Playwright's built-in waitForFunction instead of polling loop
-    // This is more reliable and doesn't block the test
     let swRegistered = false;
     const registrationErrors = [];
 
     try {
-      // Wait for Service Worker registration using Playwright's timeout mechanism
       await page.waitForFunction(
         async () => {
-          // Check if Service Worker API is available
           if (!('serviceWorker' in navigator)) {
             return false;
           }
 
           try {
-            // Method 1: Check if there's a controller (SW is active)
             if (navigator.serviceWorker.controller !== null) {
               return true;
             }
 
-            // Method 2: Check registrations
             const regs = await navigator.serviceWorker.getRegistrations();
             if (regs.length > 0) {
-              // Check if any registration has an active or installing worker
               return regs.some((reg) => reg.active || reg.installing || reg.waiting);
             }
 
@@ -144,39 +146,26 @@ test.describe('Progressive Web App (PWA)', () => {
             return false;
           }
         },
-        { timeout: 5000 } // 5 second timeout - reasonable for SW registration
+        { timeout: 5000 }
       );
 
       swRegistered = true;
     } catch (_error) {
-      // Service Worker might not be registered, that's OK in some environments
-      // Log diagnostic info
-      console.log('Service Worker registration diagnostic:');
-      console.log('  Registration attempt timeout after 5000ms');
-      console.log('  Errors:', registrationErrors);
-      console.log(
-        '  Console messages:',
-        consoleMessages.filter(
-          (m) => m.text.toLowerCase().includes('service') || m.text.toLowerCase().includes('worker')
-        )
+      const relevantConsoleMsgs = consoleMessages.filter(
+        (m) =>
+          m.text.toLowerCase().includes('service') ||
+          m.text.toLowerCase().includes('worker') ||
+          m.type === 'error'
       );
+
+      expect(
+        swRegistered,
+        'Service Worker not registered after 5000ms. ' +
+          `Errors: ${JSON.stringify(registrationErrors)}. ` +
+          `Console messages: ${JSON.stringify(relevantConsoleMsgs)}. ` +
+          'If this environment does not support Service Workers, set SKIP_SERVICE_WORKER_TESTS=true.'
+      ).toBeTruthy();
     }
-
-    // Service Worker should be registered (softer assertion for CI environments)
-    // Note: This test may be skipped in CI if Service Worker doesn't work properly
-    if (!swRegistered) {
-      test.skip();
-    }
-    expect(swRegistered).toBeTruthy();
-  });
-
-  test.skip('should have Service Worker registration script', async ({ page }) => {
-    // SKIP: Service Worker/PWA not yet implemented - see GitHub issue #42
-    const pageContent = await page.content();
-
-    expect(pageContent).toContain('serviceWorker');
-    expect(pageContent).toContain('/sw.js');
-    expect(pageContent).toContain('register');
   });
 
   test('manifest should have valid shortcuts', async ({ request }, testInfo) => {

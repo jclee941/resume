@@ -19,7 +19,6 @@ tests/
 │   ├── fixtures/           # helpers.js (shared utilities)
 │   └── snapshots/          # visual regression baselines
 ├── integration/            # 3 integration test files
-├── config/                 # quarantine.js
 └── n8n-webhook-test.sh     # webhook testing
 ```
 
@@ -53,7 +52,7 @@ tests/
 ## CONVENTIONS
 
 - `node:test` at depth 5+ for isolated module tests.
-- Quarantine flaky tests via `tests/config/quarantine.js`.
+- Handle flaky tests via `retries` in `playwright.config.js` (2 in CI, 0 locally).
 
 ## ANTI-PATTERNS
 

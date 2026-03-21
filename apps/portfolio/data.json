@@ -189,7 +189,7 @@
       "language": "PromQL",
       "forks": 0,
       "githubUrl": null,
-      "demoUrl": "https://grafana.jclee.me",
+      "demoUrl": "https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b",
       "metrics": {
         "dashboards": "12+",
         "datasources": "Prometheus, Loki, Elasticsearch",
@@ -203,7 +203,7 @@
         "Blackbox Exporter",
         "Docker"
       ],
-      "liveUrl": "https://grafana.jclee.me"
+      "liveUrl": "https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b"
     },
     {
       "icon": "🔄",
@@ -215,7 +215,7 @@
       "language": "JavaScript",
       "forks": 0,
       "githubUrl": null,
-      "demoUrl": "https://n8n.jclee.me",
+      "demoUrl": null,
       "metrics": {
         "workflows": "15+",
         "executions": "일 200+ 실행",
@@ -225,8 +225,7 @@
         "n8n",
         "PostgreSQL",
         "Docker"
-      ],
-      "liveUrl": "https://n8n.jclee.me"
+      ]
     },
     {
       "icon": "🛡️",
@@ -237,7 +236,7 @@
       "stars": 0,
       "language": "Python",
       "forks": 0,
-      "githubUrl": "https://github.com/qws941/splunk-fortinet",
+      "githubUrl": "https://github.com/qws941/splunk",
       "demoUrl": null,
       "metrics": {
         "endpoints": "FortiManager, FortiAnalyzer REST API",
@@ -249,7 +248,7 @@
         "FortiManager",
         "FortiAnalyzer"
       ],
-      "repoUrl": "https://github.com/qws941/splunk-fortinet"
+      "repoUrl": "https://github.com/qws941/splunk"
     },
     {
       "icon": "🔔",
@@ -261,7 +260,7 @@
       "language": "Python",
       "forks": 0,
       "githubUrl": "https://github.com/qws941/splunk",
-      "demoUrl": "https://splunk.jclee.me",
+      "demoUrl": null,
       "metrics": {
         "detectionRules": "32개",
         "alertChannels": "Slack Block Kit",
@@ -273,7 +272,6 @@
         "Python",
         "Slack"
       ],
-      "liveUrl": "https://splunk.jclee.me",
       "repoUrl": "https://github.com/qws941/splunk"
     },
     {
@@ -286,7 +284,7 @@
       "language": "Python",
       "forks": 0,
       "githubUrl": "https://github.com/qws941/blacklist",
-      "demoUrl": "https://blacklist.jclee.me",
+      "demoUrl": null,
       "metrics": {
         "feeds": "3+ threat intelligence feeds",
         "stack": "Flask REST API + Next.js Dashboard",
@@ -297,7 +295,6 @@
         "Next.js",
         "PostgreSQL"
       ],
-      "liveUrl": "https://blacklist.jclee.me",
       "repoUrl": "https://github.com/qws941/blacklist"
     },
     {
@@ -337,7 +334,7 @@
       "language": "PromQL",
       "forks": 0,
       "githubUrl": null,
-      "demoUrl": "https://grafana.jclee.me",
+      "demoUrl": "https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b",
       "metrics": {
         "dashboards": "12+",
         "datasources": "Prometheus, Loki, Elasticsearch",
@@ -351,7 +348,7 @@
         "Blackbox Exporter",
         "Docker"
       ],
-      "liveUrl": "https://grafana.jclee.me"
+      "liveUrl": "https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b"
     },
     {
       "icon": "🔄",
@@ -363,7 +360,7 @@
       "language": "JavaScript",
       "forks": 0,
       "githubUrl": null,
-      "demoUrl": "https://n8n.jclee.me",
+      "demoUrl": null,
       "metrics": {
         "workflows": "15+",
         "executions": "200+ runs/day",
@@ -373,8 +370,7 @@
         "n8n",
         "PostgreSQL",
         "Docker"
-      ],
-      "liveUrl": "https://n8n.jclee.me"
+      ]
     },
     {
       "icon": "🛡️",
@@ -385,7 +381,7 @@
       "stars": 0,
       "language": "Python",
       "forks": 0,
-      "githubUrl": "https://github.com/qws941/splunk-fortinet",
+      "githubUrl": "https://github.com/qws941/splunk",
       "demoUrl": null,
       "metrics": {
         "endpoints": "FortiManager, FortiAnalyzer REST API",
@@ -397,7 +393,7 @@
         "FortiManager",
         "FortiAnalyzer"
       ],
-      "repoUrl": "https://github.com/qws941/splunk-fortinet"
+      "repoUrl": "https://github.com/qws941/splunk"
     },
     {
       "icon": "🔔",
@@ -409,7 +405,7 @@
       "language": "Python",
       "forks": 0,
       "githubUrl": "https://github.com/qws941/splunk",
-      "demoUrl": "https://splunk.jclee.me",
+      "demoUrl": null,
       "metrics": {
         "detectionRules": "32 rules",
         "alertChannels": "Slack Block Kit",
@@ -421,7 +417,6 @@
         "Python",
         "Slack"
       ],
-      "liveUrl": "https://splunk.jclee.me",
       "repoUrl": "https://github.com/qws941/splunk"
     },
     {
@@ -434,7 +429,7 @@
       "language": "Python",
       "forks": 0,
       "githubUrl": "https://github.com/qws941/blacklist",
-      "demoUrl": "https://blacklist.jclee.me",
+      "demoUrl": null,
       "metrics": {
         "feeds": "3+ threat intelligence feeds",
         "stack": "Flask REST API + Next.js Dashboard",
@@ -445,7 +440,6 @@
         "Next.js",
         "PostgreSQL"
       ],
-      "liveUrl": "https://blacklist.jclee.me",
       "repoUrl": "https://github.com/qws941/blacklist"
     },
     {
@@ -785,7 +779,7 @@
       "title": "Grafana + Prometheus",
       "description": "Observability 스택 (메트릭 수집/시각화)",
       "status": "running",
-      "url": "https://grafana.jclee.me/public-dashboards/8c91649fe829cb4905edf4a60579d0a0"
+      "url": "https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b"
     },
     {
       "icon": "🔍",
@@ -857,6 +851,6 @@
     "github": "https://github.com/qws941",
     "linkedin": "https://linkedin.com/in/jclee0109",
     "website": "https://resume.jclee.me",
-    "monitoring": "https://grafana.jclee.me/public-dashboards/8c91649fe829cb4905edf4a60579d0a0"
+    "monitoring": "https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b"
   }
 }

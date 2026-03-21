@@ -100,7 +100,7 @@ export function normalize(value) {
 export function tokenize(text) {
   return normalize(text)
     .split(/\s+/)
-    .filter((t) => t.length >= 2 && !STOPWORDS.has(t) && !KR_STOPWORDS.has(t));
+    .filter((t) => t.length >= 2 && !STOPWORDS.has(t) && !KR_STOPWORDS.has(t) && !/^\d+$/.test(t));
 }
 
 /**

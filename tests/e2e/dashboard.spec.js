@@ -15,7 +15,7 @@
 const { test, expect } = require('@playwright/test');
 
 // Get the base URL - dashboard is served at /job/* prefix
-const BASE_URL = process.env.BASE_URL || 'https://resume.jclee.me';
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:8787';
 const DASHBOARD_BASE = `${BASE_URL}/job`;
 
 // Check if the dashboard backend is available (may be down/503 in some environments)
@@ -38,15 +38,24 @@ function skipIfTransientDashboardStatus(response, label) {
 }
 
 test.beforeAll(async ({ request }) => {
-  try {
-    const apiResponse = await request.get(`${DASHBOARD_BASE}/api/auth/status`);
-    apiAvailable = [200, 401].includes(apiResponse.status());
+  const PROBE_TIMEOUT_MS = 5000;
 
-    const uiResponse = await request.get(`${DASHBOARD_BASE}/`);
+  try {
+    const apiResponse = await request.get(`${DASHBOARD_BASE}/api/auth/status`, {
+      timeout: PROBE_TIMEOUT_MS,
+    });
+    apiAvailable = [200, 401].includes(apiResponse.status());
+  } catch {
+    apiAvailable = false;
+  }
+
+  try {
+    const uiResponse = await request.get(`${DASHBOARD_BASE}/`, {
+      timeout: PROBE_TIMEOUT_MS,
+    });
     const uiHtml = await uiResponse.text();
     uiAvailable = uiResponse.status() === 200 && /Job Dashboard/i.test(uiHtml);
   } catch {
-    apiAvailable = false;
     uiAvailable = false;
   }
 });
