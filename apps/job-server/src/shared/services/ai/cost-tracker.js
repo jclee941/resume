@@ -25,10 +25,12 @@ export class CostTracker {
    * @param {number} [options.budgets.dailyLimit=5.0] - Daily spending limit (USD)
    * @param {number} [options.budgets.monthlyLimit=50.0] - Monthly spending limit (USD)
    * @param {number} [options.budgets.alertThreshold=0.8] - Alert at this fraction of budget
+   * @param {object} [options.logger=console] - Logger instance (must support .warn)
    */
-  constructor({ kv, budgets = {} } = {}) {
+  constructor({ kv, budgets = {}, logger } = {}) {
     this.kv = kv;
     this.budgets = { ...DEFAULT_BUDGETS, ...budgets };
+    this.logger = logger ?? console;
 
     // In-memory accumulator for the current request lifecycle
     this.session = {
@@ -126,7 +128,7 @@ export class CostTracker {
         return `BUDGET_WARNING: Monthly spend at ${Math.round((monthlyData.totalCost / this.budgets.monthlyLimit) * 100)}% ($${monthlyData.totalCost.toFixed(4)}/$${this.budgets.monthlyLimit})`;
       }
     } catch (err) {
-      console.warn(`[CostTracker] Persistence error: ${err.message}`);
+      this.logger.warn(`[CostTracker] Persistence error: ${err.message}`);
     }
 
     return null;

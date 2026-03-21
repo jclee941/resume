@@ -24,12 +24,14 @@ export class PromptCache {
    * @param {object} options.kv - Cloudflare KV namespace binding (SESSIONS)
    * @param {number} [options.ttlSeconds=3600] - Cache TTL in seconds
    * @param {boolean} [options.enabled=true] - Enable/disable caching
+   * @param {object} [options.logger=console] - Logger instance (must support .warn)
    */
-  constructor({ kv, ttlSeconds = DEFAULT_TTL_SECONDS, enabled = true }) {
+  constructor({ kv, ttlSeconds = DEFAULT_TTL_SECONDS, enabled = true, logger }) {
     this.kv = kv;
     this.ttlSeconds = ttlSeconds;
     this.enabled = enabled;
     this.stats = { hits: 0, misses: 0 };
+    this.logger = logger ?? console;
   }
 
   /**
@@ -71,7 +73,7 @@ export class PromptCache {
         return { ...cached, cached: true };
       }
     } catch (err) {
-      console.warn(`[PromptCache] Read error: ${err.message}`);
+      this.logger.warn(`[PromptCache] Read error: ${err.message}`);
     }
 
     this.stats.misses++;
@@ -100,7 +102,7 @@ export class PromptCache {
         expirationTtl: this.ttlSeconds,
       });
     } catch (err) {
-      console.warn(`[PromptCache] Write error: ${err.message}`);
+      this.logger.warn(`[PromptCache] Write error: ${err.message}`);
     }
   }
 
@@ -114,7 +116,7 @@ export class PromptCache {
     try {
       await this.kv.delete(cacheKey);
     } catch (err) {
-      console.warn(`[PromptCache] Delete error: ${err.message}`);
+      this.logger.warn(`[PromptCache] Delete error: ${err.message}`);
     }
   }
 
