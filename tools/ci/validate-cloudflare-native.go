@@ -1,5 +1,3 @@
-//go:build ci_validate_cloudflare_native
-
 package main
 
 import (

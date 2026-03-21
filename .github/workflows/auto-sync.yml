@@ -48,7 +48,7 @@ jobs:
         if: steps.check-changes.outputs.changed == 'true'
         run: |
           npm run automate:ssot
-          bash tools/ci/validate-cloudflare-native.sh
+          go run ./tools/ci/validate-cloudflare-native.go
           git restore apps/portfolio/worker.js
 
       - name: Create branch and commit changes
@@ -76,7 +76,7 @@ jobs:
 
           ### Verification
           - [x] npm run automate:ssot
-          - [x] bash tools/ci/validate-cloudflare-native.sh
+          - [x] go run ./tools/ci/validate-cloudflare-native.go
           EOF
 
           gh pr create \
