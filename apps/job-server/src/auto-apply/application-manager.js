@@ -25,7 +25,8 @@ export const APPLICATION_STATUS = {
 };
 
 export class ApplicationManager {
-  constructor() {
+  constructor({ logger = console } = {}) {
+    this.logger = logger;
     this.ensureDataDir();
     this.applications = this.loadApplications();
     this.stats = this.loadStats();
@@ -48,7 +49,7 @@ export class ApplicationManager {
       try {
         return JSON.parse(readFileSync(APPLICATIONS_FILE, 'utf-8'));
       } catch (e) {
-        console.error('Failed to parse applications file:', e);
+        this.logger.error('Failed to parse applications file:', e);
         return [];
       }
     }
@@ -63,7 +64,7 @@ export class ApplicationManager {
       try {
         return JSON.parse(readFileSync(STATS_FILE, 'utf-8'));
       } catch (e) {
-        console.error('Failed to parse stats file:', e);
+        this.logger.error('Failed to parse stats file:', e);
         return this.initStats();
       }
     }

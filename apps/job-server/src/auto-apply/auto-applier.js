@@ -13,8 +13,9 @@ import { homedir } from 'os';
 
 export class AutoApplier {
   constructor(options = {}) {
+    this.logger = options.logger || console;
     this.crawler = new UnifiedJobCrawler(options.crawler);
-    this.appManager = new ApplicationManager();
+    this.appManager = new ApplicationManager({ logger: this.logger });
     this.config = {
       maxDailyApplications: options.maxDailyApplications || 10,
       reviewThreshold: options.reviewThreshold || 60,
@@ -108,10 +109,10 @@ export class AutoApplier {
               const legacyData = JSON.parse(readFileSync(legacyFile, 'utf-8'));
               if (legacyData?.cookies || legacyData?.cookieString) {
                 session = legacyData;
-                console.log(`📂 ${platform}: loaded from legacy session file`);
+                this.logger.info(`📂 ${platform}: loaded from legacy session file`);
               }
             } catch (e) {
-              console.error('Failed to parse legacy session file:', e);
+              this.logger.error('Failed to parse legacy session file:', e);
             }
           }
         }
@@ -119,21 +120,21 @@ export class AutoApplier {
         if (session?.cookies || session?.cookieString) {
           if (typeof session.cookies === 'string') {
             await this.loadCookies(session.cookies, domain);
-            console.log(`✅ ${platform} session cookies loaded`);
+            this.logger.info(`✅ ${platform} session cookies loaded`);
           } else if (Array.isArray(session.cookies)) {
             await this.loadCookies(session.cookies);
-            console.log(
+            this.logger.info(
               `✅ ${platform} session cookies loaded (${session.cookies.length} cookies)`
             );
           } else if (session.cookieString) {
             await this.loadCookies(session.cookieString, domain);
-            console.log(`✅ ${platform} session cookies loaded (from cookieString)`);
+            this.logger.info(`✅ ${platform} session cookies loaded (from cookieString)`);
           }
         } else {
-          console.log(`⚠️ ${platform}: no valid session found`);
+          this.logger.info(`⚠️ ${platform}: no valid session found`);
         }
       } catch (e) {
-        console.log(`⚠️ ${platform}: failed to load cookies - ${e.message}`);
+        this.logger.info(`⚠️ ${platform}: failed to load cookies - ${e.message}`);
       }
     }
 
@@ -195,7 +196,7 @@ export class AutoApplier {
 
     try {
       // 1. 채용공고 검색
-      console.log('🔍 Searching for jobs...');
+      this.logger.info('🔍 Searching for jobs...');
       const searchResult = await this.crawler.searchWithMatching({
         keywords,
         categories,
@@ -211,7 +212,7 @@ export class AutoApplier {
       }
 
       results.searched = searchResult.totalJobs;
-      console.log(`📋 Found ${results.searched} matching jobs`);
+      this.logger.info(`📋 Found ${results.searched} matching jobs`);
 
       // 2. 지원 대상 필터링
       const candidates = searchResult.jobs
@@ -220,7 +221,7 @@ export class AutoApplier {
         .slice(0, maxApplications);
 
       results.matched = candidates.length;
-      console.log(`✅ ${results.matched} jobs ready for application`);
+      this.logger.info(`✅ ${results.matched} jobs ready for application`);
 
       // 3. 지원 실행
       if (this.config.autoApply && !this.config.dryRun) {
@@ -241,7 +242,7 @@ export class AutoApplier {
               // 딜레이
               await this.sleep(this.config.delayBetweenApps);
             } catch (error) {
-              console.error(`❌ Failed to apply to ${job.company}: ${error.message}`);
+              this.logger.error(`❌ Failed to apply to ${job.company}: ${error.message}`);
               results.failed++;
             }
           }
@@ -320,7 +321,7 @@ export class AutoApplier {
         try {
           await this.page.screenshot({ path: `/tmp/wanted-debug-${Date.now()}.png` });
         } catch (e) {
-          console.error('[debug-screenshot] Wanted:', e.message);
+          this.logger.error('[debug-screenshot] Wanted:', e.message);
         }
         return { success: false, error: 'Apply button not found' };
       }
@@ -371,18 +372,18 @@ export class AutoApplier {
 
       // Debug: log page title and URL
       const pageTitle = await this.page.title();
-      console.log(`  📄 JobKorea page: ${pageTitle} — ${job.sourceUrl}`);
+      this.logger.info(`  📄 JobKorea page: ${pageTitle} — ${job.sourceUrl}`);
 
       // Verify login state — if '로그인' text visible, cookies aren't working
       const loginLink = await this.findByText('a', '로그인');
       if (loginLink) {
-        console.log('  ⚠️ JobKorea: NOT logged in despite cookies — trying cookie refresh...');
+        this.logger.info('  ⚠️ JobKorea: NOT logged in despite cookies — trying cookie refresh...');
         // Navigate to homepage first to establish cookie session, then retry
         await this.page.goto('https://www.jobkorea.co.kr', { waitUntil: 'domcontentloaded' });
         await new Promise((r) => setTimeout(r, 2000));
         const stillLoggedOut = await this.findByText('a', '로그인');
         if (stillLoggedOut) {
-          console.log('  ❌ JobKorea: Login failed — cookies may be expired');
+          this.logger.info('  ❌ JobKorea: Login failed — cookies may be expired');
           return { success: false, error: 'Not logged in — session cookies expired or invalid' };
         }
         // Re-navigate to job page after establishing session
@@ -410,7 +411,7 @@ export class AutoApplier {
         try {
           await this.page.screenshot({ path: `/tmp/jobkorea-debug-${Date.now()}.png` });
         } catch (e) {
-          console.error('[debug-screenshot] JobKorea:', e.message);
+          this.logger.error('[debug-screenshot] JobKorea:', e.message);
         }
         return { success: false, error: 'Apply button not found' };
       }
@@ -506,7 +507,7 @@ export class AutoApplier {
         try {
           await this.page.screenshot({ path: `/tmp/saramin-debug-${Date.now()}.png` });
         } catch (e) {
-          console.error('[debug-screenshot] Saramin:', e.message);
+          this.logger.error('[debug-screenshot] Saramin:', e.message);
         }
         return { success: false, error: 'Apply button not found' };
       }

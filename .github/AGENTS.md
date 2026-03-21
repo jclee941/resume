@@ -55,7 +55,7 @@ analyze → validate-cf ─┐
 
 - **analyze**: detect affected packages via `tools/ci/affected.go`
 - **validate-cf**: `wrangler types` + `validate-cloudflare-native.go`
-- **lint**: ESLint with 69-warning ratchet baseline
+- **lint**: ESLint with 0-warning ratchet baseline
 - **typecheck**: `tsc --noEmit`
 - **test-unit**: Jest with 90% coverage thresholds
 - **test-e2e**: Playwright (5 device projects)
@@ -93,7 +93,7 @@ Conventional commits → `mathieudutour/github-tag-action` → semver bump → G
 
 ## KNOWN ISSUES
 
-- ESLint baseline ratcheted to 69 warnings (regex fix pending).
+- ESLint baseline ratcheted to 0 warnings.
 - Lighthouse `/health` endpoint removed from verification.
 - Terraform R2 backend credentials migrated to 1Password (`op://homelab/cloudflare-r2/*`) but vault item `cloudflare-r2` not yet created — terraform.yml will fail until created.
 - Cloudflare Access injects `cf-access-client-id` header on all outbound requests, causing CORS preflight failures for 3rd-party scripts (CF Web Analytics, GA). CF Access policy issue, not code.
