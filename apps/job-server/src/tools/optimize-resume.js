@@ -31,7 +31,7 @@ export const optimizeResumeTool = {
 
   async execute(params, { logger = console } = {}) {
     try {
-      console.log(`🔍 Fetching job detail for ID: ${params.job_id}...`);
+      logger.info(`🔍 Fetching job detail for ID: ${params.job_id}...`);
       const jobResult = await getJobDetailTool.execute({
         job_id: params.job_id,
       });
@@ -43,10 +43,10 @@ export const optimizeResumeTool = {
       }
 
       const job = jobResult.job;
-      console.log(`🏢 Company: ${job.company.name}`);
-      console.log(`💼 Position: ${job.position}`);
+      logger.info(`🏢 Company: ${job.company.name}`);
+      logger.info(`💼 Position: ${job.position}`);
 
-      console.log('🤖 Analyzing job posting...');
+      logger.info('🤖 Analyzing job posting...');
       const jobAnalysis = await analyzeJobPosting(job);
       if (!jobAnalysis) {
         return {
@@ -55,10 +55,10 @@ export const optimizeResumeTool = {
         };
       }
 
-      console.log('📖 Reading master resume...');
+      logger.info('📖 Reading master resume...');
       const masterResume = await readFile(MASTER_RESUME_PATH, 'utf-8');
 
-      console.log('✨ Optimizing resume for the job...');
+      logger.info('✨ Optimizing resume for the job...');
       const optimizedResume = await optimizeResume(masterResume, jobAnalysis);
 
       // Save the optimized resume
@@ -70,7 +70,7 @@ export const optimizeResumeTool = {
       await mkdir(dirname(outputPath), { recursive: true });
       await writeFile(outputPath, optimizedResume, 'utf-8');
 
-      console.log(`✅ Optimized resume saved to: ${outputPath}`);
+      logger.info(`✅ Optimized resume saved to: ${outputPath}`);
 
       return {
         success: true,
