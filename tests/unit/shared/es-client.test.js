@@ -5,7 +5,7 @@
 let mod;
 
 beforeAll(async () => {
-  mod = await import('../../../apps/job-server/src/shared/clients/elasticsearch/index.js');
+  mod = await import('@resume/shared/es-client');
 });
 
 describe('Elasticsearch Client', () => {
@@ -206,7 +206,10 @@ describe('Elasticsearch Client', () => {
   test('constants verify via source (reasonable values)', async () => {
     const fs = await import('node:fs');
     const path = await import('node:path');
-    const sourcePath = path.resolve(__dirname, '../../../apps/job-server/src/shared/clients/elasticsearch/index.js');
+    const sourcePath = path.resolve(
+      __dirname,
+      '../../../packages/shared/src/clients/elasticsearch/index.js'
+    );
     const content = fs.readFileSync(sourcePath, 'utf8');
 
     expect(content).toContain('const DEFAULT_TIMEOUT_MS = 5000;');

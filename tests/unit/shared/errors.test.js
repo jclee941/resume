@@ -1,5 +1,3 @@
-const path = require('path');
-
 describe('Error Hierarchy Contract Tests', () => {
   let errors;
 
@@ -19,11 +17,7 @@ describe('Error Hierarchy Contract Tests', () => {
     }
 
     // Dynamic import for ESM module
-    const modulePath = path.resolve(
-      __dirname,
-      '../../../apps/job-server/src/shared/errors/index.js'
-    );
-    errors = await import(modulePath);
+    errors = await import('@resume/shared/errors');
   });
 
   test('should export exactly 12 members', () => {

@@ -10,7 +10,7 @@
 let Logger, RequestContext, LogLevel, generateRequestId;
 
 beforeAll(async () => {
-  const mod = await import('../../../apps/job-server/src/shared/logger/index.js');
+  const mod = await import('@resume/shared/logger');
   Logger = mod.Logger;
   RequestContext = mod.RequestContext;
   LogLevel = mod.LogLevel;
@@ -47,7 +47,7 @@ describe('Logger Contract Tests', () => {
     });
 
     test('default export is Logger class', async () => {
-      const mod = await import('../../../apps/job-server/src/shared/logger/index.js');
+      const mod = await import('@resume/shared/logger');
       expect(mod.default).toBe(Logger);
     });
   });
