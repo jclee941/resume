@@ -35,7 +35,7 @@ export class DiagnosticsHandler {
     };
 
     // D1 Databases
-    const d1Checks = ['DB', 'JOB_DB'];
+    const d1Checks = ['DB'];
     for (const name of d1Checks) {
       const binding = this.env[name];
       result.checks.d1[name] = await this.checkD1(binding, name);

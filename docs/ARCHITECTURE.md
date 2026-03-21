@@ -72,9 +72,9 @@ The resume monorepo is a personal portfolio and job automation system built on C
          │                   │                   │
          ▼                   ▼                   ▼
 ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
-│   packages/data  │  │    D1: JOB_DB   │  │    D1: DB       │
-│   (SSoT sync)    │  │  (Job cache,    │  │ (Applications,  │
-│                 │  │   sync logs)    │  │  portfolio data)│
+│   packages/data  │  │  External APIs  │  │    D1: DB       │
+│   (SSoT sync)    │  │  (Wanted,       │  │ (Applications,  │
+│                 │  │   JobKorea)     │  │  job data)      │
 └─────────────────┘  └─────────────────┘  └─────────────────┘
 ```
 
@@ -146,7 +146,7 @@ apps/job-server/ (crawlers, services)
 Korean job platforms (Wanted, JobKorea)
            │
            ▼ store results
-D1: JOB_DB (job cache, sync logs)
+D1: DB (applications, job cache, sync logs)
            │
            ▼ API routes
 apps/job-dashboard/ (dashboard API)
@@ -155,7 +155,7 @@ apps/job-dashboard/ (dashboard API)
 apps/portfolio/entry.js (/job/* routes)
 ```
 
-Job automation runs in the job-server application, which crawls Korean job platforms using stealth techniques (UA rotation, jitter, rebrowser-puppeteer). Results are stored in the JOB_DB D1 database. The dashboard API is served through the unified worker at `/job/*` routes.
+Job automation runs in the job-server application, which crawls Korean job platforms using stealth techniques (UA rotation, jitter, rebrowser-puppeteer). Results are stored in the DB D1 database. The dashboard API is served through the unified worker at `/job/*` routes.
 
 ### 3. CI/CD Flow
 
@@ -187,14 +187,13 @@ The CI pipeline runs eight validation jobs: analyze, validate-cf, lint, typechec
 
 ## Storage Bindings
 
-| Binding         | Type  | Used By       | Purpose                      |
-| --------------- | ----- | ------------- | ---------------------------- |
-| `DB`            | D1    | Resume Worker | Applications, portfolio data |
-| `JOB_DB`        | D1    | Resume Worker | Job cache, sync logs         |
-| `SESSIONS`      | KV    | Resume Worker | Session storage              |
-| `RATE_LIMIT_KV` | KV    | Resume Worker | Rate limiting                |
-| `NONCE_KV`      | KV    | Resume Worker | CSP nonce tracking           |
-| `crawl-tasks`   | Queue | Resume Worker | Crawl job queue              |
+| Binding         | Type  | Used By       | Purpose                           |
+| --------------- | ----- | ------------- | --------------------------------- |
+| `DB`            | D1    | Resume Worker | Applications, portfolio, job data |
+| `SESSIONS`      | KV    | Resume Worker | Session storage                   |
+| `RATE_LIMIT_KV` | KV    | Resume Worker | Rate limiting                     |
+| `NONCE_KV`      | KV    | Resume Worker | CSP nonce tracking                |
+| `crawl-tasks`   | Queue | Resume Worker | Crawl job queue                   |
 
 ## Workspaces
 

@@ -174,8 +174,7 @@ Ensure your Cloudflare account has the following resources created and bound to 
 
 **D1 Relational Databases:**
 
-- **`DB`** (ID: `6c723024...`): Stores main portfolio data, visitor logs, and basic metadata.
-- **`JOB_DB`** (ID: `c858dda6...`): Stores the `applications`, `job_cache`, and `sync_logs` tables.
+- **`DB`** (ID: `6c723024...`): Stores main portfolio data, visitor logs, applications, job cache, and sync logs.
 
 **KV Distributed Storage:**
 
