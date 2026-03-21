@@ -6,7 +6,7 @@
 
 ## OVERVIEW
 
-39 workflows, 1 composite action, branch rulesets, auto-labeling, Codex/OpenCode integration. CI is validation-only — production deployment via Cloudflare Workers Builds.
+29 workflows, 1 composite action, branch rulesets, auto-labeling. CI is validation-only — production deployment via Cloudflare Workers Builds.
 
 ## STRUCTURE
 
@@ -16,12 +16,10 @@
 │   ├── ci.yml                # main validation pipeline (8 jobs)
 │   ├── release.yml           # automated semver release
 │   ├── terraform.yml         # IaC plan/apply
-│   ├── codex-*.yml           # Codex integration (5)
-│   ├── opencode-*.yml        # OpenCode automation (4)
-│   ├── auto-*.yml            # automation & sync (6)
+│   ├── auto-*.yml            # automation & sync (5)
 │   ├── issue-*.yml           # issue lifecycle management (5)
-│   ├── maintenance.yml       # cleanup & stale management (5)
-│   ├── pr-*.yml              # PR normalization and size (4)
+│   ├── maintenance.yml       # cleanup & stale management
+│   ├── pr-*.yml              # PR normalization and size (2)
 │   └── wanted-resume-sync.yml # Wanted profile sync automation
 ├── actions/
 │   └── setup/                # composite: Node 22 + npm ci + Playwright
