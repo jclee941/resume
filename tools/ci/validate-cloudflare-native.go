@@ -67,7 +67,7 @@ func main() {
 	jsoncDocMatches := grepLike(jsoncDocTargets, jsoncDocPattern)
 	if jsoncDocMatches != "" {
 		fmt.Println("ERROR: documentation drift found for job worker config path")
-		fmt.Println("Expected active config path: apps/job-dashboard/wrangler.toml")
+		fmt.Println("Expected active config path: apps/job-dashboard/wrangler.jsonc")
 		fmt.Print(jsoncDocMatches)
 		os.Exit(1)
 	}
