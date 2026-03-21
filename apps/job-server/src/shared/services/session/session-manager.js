@@ -23,6 +23,8 @@ const ensureDir = (filePath) => {
 };
 
 export class SessionManager {
+  static logger = console;
+
   static load(platform = null) {
     try {
       if (existsSync(SESSION_FILE)) {
@@ -38,7 +40,7 @@ export class SessionManager {
         return allSessions;
       }
     } catch (e) {
-      console.error('Failed to load sessions:', e.message);
+      SessionManager.logger.error('Failed to load sessions:', e.message);
     }
     return platform ? null : {};
   }
@@ -92,7 +94,7 @@ export class SessionManager {
       writeFileSync(SESSION_FILE, JSON.stringify(allSessions, null, 2));
       return true;
     } catch (e) {
-      console.error(`Failed to save session for ${platform}:`, e.message);
+      SessionManager.logger.error(`Failed to save session for ${platform}:`, e.message);
       return false;
     }
   }
@@ -109,7 +111,7 @@ export class SessionManager {
       }
       return true;
     } catch (error) {
-      console.error('[SessionManager.clear] Failed to clear session:', error.message);
+      SessionManager.logger.error('[SessionManager.clear] Failed to clear session:', error.message);
       return false;
     }
   }
@@ -200,7 +202,10 @@ export class SessionManager {
       const session = this.load(platform);
       return !!(session && session.timestamp && Date.now() - session.timestamp < 60000);
     } catch (error) {
-      console.error('[SessionManager.tryRefresh] CDP extraction failed:', error.message);
+      SessionManager.logger.error(
+        '[SessionManager.tryRefresh] CDP extraction failed:',
+        error.message
+      );
       return false;
     }
   }

@@ -21,12 +21,12 @@ function getDefaultConfig() {
   };
 }
 
-function loadConfig() {
+function loadConfig(logger = console) {
   if (existsSync(configPath)) {
     try {
       return JSON.parse(readFileSync(configPath, 'utf-8'));
     } catch (e) {
-      console.error('Failed to parse config file:', e);
+      logger.error('Failed to parse config file:', e);
       return getDefaultConfig();
     }
   }
@@ -39,7 +39,7 @@ function saveConfig(config) {
 
 export default async function configRoutes(fastify) {
   fastify.get('/', async () => {
-    return loadConfig();
+    return loadConfig(fastify.log);
   });
 
   fastify.put('/', async (request) => {

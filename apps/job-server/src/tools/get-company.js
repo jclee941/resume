@@ -29,7 +29,7 @@ Use this to research companies before applying:
     required: ['company_id'],
   },
 
-  async execute(params) {
+  async execute(params, { logger = console } = {}) {
     const api = new WantedAPI();
 
     try {
@@ -67,7 +67,7 @@ Use this to research companies before applying:
           }));
           result.total_jobs = result.open_jobs.length;
         } catch (e) {
-          console.error('Failed to parse open jobs:', e);
+          logger.error('Failed to parse open jobs:', e);
           result.open_jobs = [];
           result.total_jobs = 0;
         }

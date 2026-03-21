@@ -46,7 +46,7 @@ export function storeCredentials(platform, credentials, encryptionSecret) {
  * @param {string} [encryptionSecret] - Optional encryption secret override
  * @returns {Object|null} Decrypted credentials or null if not found
  */
-export function getCredentials(platform, encryptionSecret) {
+export function getCredentials(platform, encryptionSecret, { logger = console } = {}) {
   const entry = credentialStore.get(platform);
   if (!entry) return null;
 
@@ -58,7 +58,7 @@ export function getCredentials(platform, encryptionSecret) {
     const decrypted = Buffer.concat([decipher.update(entry.encrypted), decipher.final()]);
     return JSON.parse(decrypted.toString('utf8'));
   } catch (e) {
-    console.error('Failed to decrypt credentials:', e);
+    logger.error('Failed to decrypt credentials:', e);
     return null;
   }
 }

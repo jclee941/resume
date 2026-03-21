@@ -70,6 +70,7 @@ export class ResourcePool extends EventEmitter {
    */
   constructor(options) {
     super();
+    this.logger = options.logger ?? console;
     this.#options = {
       maxSize: 5,
       minSize: 0,
@@ -145,7 +146,7 @@ export class ResourcePool extends EventEmitter {
             continue;
           }
         } catch (error) {
-          console.error('[ResourcePool.acquire] Validation failed:', error.message);
+          this.logger.error('[ResourcePool.acquire] Validation failed:', error.message);
           await this.#destroyResource(pooled);
           continue;
         }
@@ -401,7 +402,7 @@ export class ResourcePool extends EventEmitter {
           const valid = await this.#options.validate(pooled.resource);
           if (!valid) toRemove.push(i);
         } catch (error) {
-          console.error('[ResourcePool.healthCheck] Validation failed:', error.message);
+          this.logger.error('[ResourcePool.healthCheck] Validation failed:', error.message);
           toRemove.push(i);
         }
       }

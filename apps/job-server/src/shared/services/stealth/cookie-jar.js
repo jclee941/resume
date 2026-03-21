@@ -23,7 +23,8 @@
  * In-memory cookie jar with domain/path matching and expiry.
  */
 export class CookieJar {
-  constructor() {
+  constructor(options = {}) {
+    this.logger = options?.logger ?? console;
     /** @type {Map<string, Cookie>} key = "domain|path|name" */
     this._cookies = new Map();
   }
@@ -57,7 +58,7 @@ export class CookieJar {
     try {
       hostname = new URL(requestUrl).hostname;
     } catch (error) {
-      console.error('[CookieJar.setCookiesFromHeader] Invalid URL:', error.message);
+      this.logger.error('[CookieJar.setCookiesFromHeader] Invalid URL:', error.message);
       return;
     }
 
@@ -83,7 +84,7 @@ export class CookieJar {
       hostname = parsed.hostname;
       pathname = parsed.pathname;
     } catch (error) {
-      console.error('[CookieJar.getCookies] Invalid URL:', error.message);
+      this.logger.error('[CookieJar.getCookies] Invalid URL:', error.message);
       return [];
     }
 

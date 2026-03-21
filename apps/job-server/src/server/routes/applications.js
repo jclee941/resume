@@ -52,7 +52,7 @@ export default async function applicationsRoutes(fastify) {
           application: result.application,
         })
         .catch((e) => {
-          console.error('Failed to trigger n8n webhook:', e);
+          fastify.log.error('Failed to trigger n8n webhook:', e);
         });
     }
 
