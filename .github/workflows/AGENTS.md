@@ -8,7 +8,7 @@
 
 Workflow-level CI/CD validation logic for this monorepo. This directory owns job orchestration, gate ordering, and release/maintenance automation details.
 
-21 workflow files are maintained here.
+30 workflow files are maintained here (19 synced from `qws941/.github`, 11 repo-specific).
 
 ## WHERE TO LOOK
 
@@ -23,12 +23,17 @@ Workflow-level CI/CD validation logic for this monorepo. This directory owns job
 | Repo sync workflows            | `auto-sync.yml`, `auto-update.yml`           | cross-repo sync and scheduled updates       |
 | Repo hygiene automation        | `labeler.yml`, `stale.yml`, `auto-merge.yml` | labeling and lifecycle controls             |
 | Maintenance jobs               | `maintenance.yml`, `update-snapshots.yml`    | scheduled/utility checks                    |
-| Error→issue automation         | `auto-issue-on-failure.yml`                  | creates issues on CI/deploy/release failure  |
+| Error→issue automation         | `auto-issue-on-failure.yml`                  | creates issues on CI/deploy/release failure |
+| Issue/PR management            | `issue-*.yml`, `pr-normalize.yml`            | lifecycle, labeling, dedup, SLA, project    |
+| CI failure notification        | `ci-notify-failure.yml`                      | Slack/comment on CI failures                |
+| Automation health monitoring   | `automation-health.yml`                      | periodic workflow status check              |
 
 ## WORKFLOW INVENTORY
 
-- Synced workflows (10): `auto-merge.yml`, `codex-auto-issue.yml`, `codex-triage.yml`, `commitlint.yml`, `labeler.yml`, `lock-threads.yml`, `pr-size.yml`, `release-drafter.yml`, `stale.yml`, `welcome.yml`.
+- Synced workflows (19): `auto-approve-runs.yml`, `auto-merge.yml`, `automation-health.yml`, `branch-cleanup.yml`, `ci-notify-failure.yml`, `commitlint.yml`, `dependabot-auto-fix.yml`, `issue-duplicate.yml`, `issue-label.yml`, `issue-lifecycle.yml`, `issue-project.yml`, `issue-sla.yml`, `labeler.yml`, `lock-threads.yml`, `pr-normalize.yml`, `pr-size.yml`, `release-drafter.yml`, `stale.yml`, `welcome.yml`.
 - Repo-specific workflows (11): `auto-issue-on-failure.yml`, `auto-sync.yml`, `auto-update.yml`, `ci.yml`, `codeql.yml`, `maintenance.yml`, `release.yml`, `terraform.yml`, `update-snapshots.yml`, `verify.yml`, `wanted-resume-sync.yml`.
+- Dynamic/GitHub-managed (5, not files): CodeQL (default setup), Copilot code review, Dependabot Updates, OpenAI Codex, pages-build-deployment.
+- Disabled (1): `codeql.yml` — superseded by dynamic CodeQL default setup.
 
 ## CONVENTIONS
 
