@@ -2,7 +2,7 @@
  * AI 기반 이력서 최적화 엔진
  */
 
-import { analyzeWithClaude } from './ai-matcher.js';
+import { analyzeWithClaude } from '../matching/ai-matcher.js';
 
 /**
  * JD 분석 결과를 바탕으로 이력서를 최적화합니다.
