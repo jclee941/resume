@@ -1,4 +1,4 @@
-import { HttpError, normalizeError } from '../../job-server/src/shared/errors/index.js';
+import { HttpError, normalizeError } from '@resume/shared/errors';
 
 export class Router {
   constructor() {
@@ -6,7 +6,7 @@ export class Router {
   }
 
   add(method, pattern, handler) {
-    const regex = new RegExp(`^${  pattern.replace(/:(\w+)/g, '(?<$1>[^/]+)')  }$`);
+    const regex = new RegExp(`^${pattern.replace(/:(\w+)/g, '(?<$1>[^/]+)')}$`);
     this.routes.push({ method, pattern, regex, handler });
   }
 
@@ -30,7 +30,7 @@ export class Router {
    * - Normalizes unknown errors and re-throws for top-level handling
    * @param {Request} request
    * @param {URL} url
-   * @param {import('../../job-server/src/shared/logger/index.js').Logger} [logger]
+   * @param {import('@resume/shared/logger').Logger} [logger]
    * @returns {Promise<Response|null>}
    */
   async handle(request, url, logger) {

@@ -54,17 +54,15 @@ export async function analyzeJobPosting(jobPosting) {
 
 JSON 형식으로만 응답해주세요.`;
 
-  const analysis = await analyzeWithClaude(
-    prompt,
-    jobPosting.description || jobPosting.content,
-  );
+  const analysis = await analyzeWithClaude(prompt, jobPosting.description || jobPosting.content);
   if (!analysis) return null;
 
   try {
     const jsonMatch = analysis.match(/\{[\s\S]*\}/);
     if (!jsonMatch) return null;
     return JSON.parse(jsonMatch[0]);
-  } catch {
+  } catch (error) {
+    console.error('[analyzeJobPosting] JSON parse failed:', error.message);
     return null;
   }
 }
@@ -88,7 +86,8 @@ JSON 형식으로만 응답해주세요.`;
     const jsonMatch = analysis.match(/\{[\s\S]*\}/);
     if (!jsonMatch) return null;
     return JSON.parse(jsonMatch[0]);
-  } catch {
+  } catch (error) {
+    console.error('[analyzeResume] JSON parse failed:', error.message);
     return null;
   }
 }
@@ -121,7 +120,8 @@ JSON 형식으로 응답:
       reasoning: result.reasoning || '',
       details: result,
     };
-  } catch {
+  } catch (error) {
+    console.error('[calculateAIMatchScore] JSON parse failed:', error.message);
     return { score: 0, reasoning: '파싱 오류' };
   }
 }
@@ -141,10 +141,7 @@ export async function calculateAIMatch(resumePath, jobPosting) {
       };
     }
 
-    const matchResult = await calculateAIMatchScore(
-      resumeAnalysis,
-      jobAnalysis,
-    );
+    const matchResult = await calculateAIMatchScore(resumeAnalysis, jobAnalysis);
 
     return {
       matchScore: matchResult.score,
@@ -177,10 +174,10 @@ JSON 형식: {"keywords": [], "tech_stack": [], "importance_scores": {}}`;
 
   try {
     const jsonMatch = analysis.match(/\{[\s\S]*\}/);
-    if (!jsonMatch)
-      return { keywords: [], tech_stack: [], importance_scores: {} };
+    if (!jsonMatch) return { keywords: [], tech_stack: [], importance_scores: {} };
     return JSON.parse(jsonMatch[0]);
-  } catch {
+  } catch (error) {
+    console.error('[extractKeywordsWithAI] JSON parse failed:', error.message);
     return { keywords: [], tech_stack: [], importance_scores: {} };
   }
 }
@@ -208,10 +205,7 @@ export async function matchJobsWithAI(resumePath, jobs, options = {}) {
             const jobAnalysis = await analyzeJobPosting(job);
             if (!jobAnalysis) return null;
 
-            const matchResult = await calculateAIMatchScore(
-              resumeAnalysis,
-              jobAnalysis,
-            );
+            const matchResult = await calculateAIMatchScore(resumeAnalysis, jobAnalysis);
 
             return {
               ...job,
@@ -228,7 +222,7 @@ export async function matchJobsWithAI(resumePath, jobs, options = {}) {
             console.error(`Job analysis failed for ${job.position}:`, e);
             return null;
           }
-        }),
+        })
       );
       results.push(...batchResults.filter((r) => r !== null));
     }
@@ -258,11 +252,7 @@ export async function matchJobsWithAI(resumePath, jobs, options = {}) {
   }
 }
 
-export async function getCareerAdvice(
-  resumeAnalysis,
-  jobAnalysis,
-  matchResult,
-) {
+export async function getCareerAdvice(resumeAnalysis, jobAnalysis, matchResult) {
   const prompt = `이력서와 채용 공고 분석 결과를 바탕으로 커리어 조언을 제공해주세요.
 
 이력서: ${JSON.stringify(resumeAnalysis)}
@@ -278,7 +268,8 @@ JSON 형식: {"suitability": "", "preparation_needed": [], "interview_focus": []
     const jsonMatch = analysis.match(/\{[\s\S]*\}/);
     if (!jsonMatch) return null;
     return JSON.parse(jsonMatch[0]);
-  } catch {
+  } catch (error) {
+    console.error('[getCareerAdvice] JSON parse failed:', error.message);
     return null;
   }
 }

@@ -56,7 +56,8 @@ export class CookieJar {
     let hostname;
     try {
       hostname = new URL(requestUrl).hostname;
-    } catch {
+    } catch (error) {
+      console.error('[CookieJar.setCookiesFromHeader] Invalid URL:', error.message);
       return;
     }
 
@@ -81,7 +82,8 @@ export class CookieJar {
       const parsed = new URL(url);
       hostname = parsed.hostname;
       pathname = parsed.pathname;
-    } catch {
+    } catch (error) {
+      console.error('[CookieJar.getCookies] Invalid URL:', error.message);
       return [];
     }
 

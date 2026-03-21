@@ -4,6 +4,9 @@
   "private": true,
   "type": "module",
   "description": "Job automation dashboard Cloudflare Worker",
+  "dependencies": {
+    "@resume/shared": "*"
+  },
   "scripts": {
     "dev": "wrangler dev --config wrangler.jsonc",
     "deploy": "wrangler deploy --config wrangler.jsonc --env production",

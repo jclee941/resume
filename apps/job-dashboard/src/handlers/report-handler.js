@@ -1,5 +1,5 @@
 import { BaseHandler } from './base-handler.js';
-import { normalizeError } from '../../../job-server/src/shared/errors/index.js';
+import { normalizeError } from '@resume/shared/errors';
 import { sendTelegramNotification, escapeHtml } from '../services/notification/telegram.js';
 
 /**
@@ -119,10 +119,11 @@ export class ReportHandler extends BaseHandler {
               .join('\n')
           : 'None';
 
-      await sendTelegramNotification(this.env,
+      await sendTelegramNotification(
+        this.env,
         `📊 <b>Daily Job Report</b> - ${now.toISOString().split('T')[0]}\n\n` +
-        `<b>Summary</b>\nTotal: ${report.summary.total} | New Today: ${report.summary.newToday}\n${escapeHtml(statusLine)}\n\n` +
-        `<b>High Priority</b>\n${escapeHtml(highPriorityList)}`
+          `<b>Summary</b>\nTotal: ${report.summary.total} | New Today: ${report.summary.newToday}\n${escapeHtml(statusLine)}\n\n` +
+          `<b>High Priority</b>\n${escapeHtml(highPriorityList)}`
       );
 
       return this.jsonResponse({

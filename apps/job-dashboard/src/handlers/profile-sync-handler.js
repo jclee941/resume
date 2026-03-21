@@ -1,8 +1,11 @@
 import { BaseHandler } from './base-handler.js';
 import { WantedClient } from '../services/wanted-client.js';
-import { normalizeError } from '../../../job-server/src/shared/errors/index.js';
+import { normalizeError } from '@resume/shared/errors';
 import { sendTelegramNotification } from '../services/notification/telegram.js';
-import { JOB_CATEGORY_MAPPING, DEFAULT_JOB_CATEGORY } from '../../../job-server/scripts/profile-sync/job-categories.js';
+import {
+  JOB_CATEGORY_MAPPING,
+  DEFAULT_JOB_CATEGORY,
+} from '../../../job-server/scripts/profile-sync/job-categories.js';
 
 function parsePeriod(period = '') {
   const parts = String(period)
@@ -37,7 +40,12 @@ function mapCareerToWanted(career) {
 
 function mapEducationToWanted(education) {
   const startTime = education.startDate ? `${education.startDate.replace('.', '-')}-01` : null;
-  const endTime = education.status === '재학중' ? null : (education.endDate ? `${education.endDate.replace('.', '-')}-01` : null);
+  const endTime =
+    education.status === '재학중'
+      ? null
+      : education.endDate
+        ? `${education.endDate.replace('.', '-')}-01`
+        : null;
   return {
     school_name: education.school,
     major: education.major,
@@ -351,7 +359,10 @@ export class ProfileSyncHandler extends BaseHandler {
           await client.deleteCareer(resumeId, career.id);
           syncResults.updated.push(`career_deleted:${career.company}`);
         } catch (error) {
-          syncResults.failed.push({ section: `career_delete:${career.company}`, error: error.message });
+          syncResults.failed.push({
+            section: `career_delete:${career.company}`,
+            error: error.message,
+          });
         }
       }
 
@@ -360,7 +371,10 @@ export class ProfileSyncHandler extends BaseHandler {
           await client.updateEducation(resumeId, education.id, education.data);
           syncResults.updated.push(`education_updated:${education.school}`);
         } catch (error) {
-          syncResults.failed.push({ section: `education_update:${education.school}`, error: error.message });
+          syncResults.failed.push({
+            section: `education_update:${education.school}`,
+            error: error.message,
+          });
         }
       }
 
@@ -381,7 +395,10 @@ export class ProfileSyncHandler extends BaseHandler {
           await client.updateActivity(resumeId, activity.id, activity.data);
           syncResults.updated.push(`activity_updated:${activity.title}`);
         } catch (error) {
-          syncResults.failed.push({ section: `activity_update:${activity.title}`, error: error.message });
+          syncResults.failed.push({
+            section: `activity_update:${activity.title}`,
+            error: error.message,
+          });
         }
       }
 
@@ -399,7 +416,10 @@ export class ProfileSyncHandler extends BaseHandler {
           await client.deleteActivity(resumeId, activity.id);
           syncResults.updated.push(`activity_deleted:${activity.title}`);
         } catch (error) {
-          syncResults.failed.push({ section: `activity_delete:${activity.title}`, error: error.message });
+          syncResults.failed.push({
+            section: `activity_delete:${activity.title}`,
+            error: error.message,
+          });
         }
       }
 
@@ -517,7 +537,11 @@ export class ProfileSyncHandler extends BaseHandler {
         String(item.name || item.school_name || '').includes(ssotData.education.school)
       );
       if (existingEdu) {
-        educationChanges.toUpdate.push({ id: existingEdu.id, school: ssotData.education.school, data: mapped });
+        educationChanges.toUpdate.push({
+          id: existingEdu.id,
+          school: ssotData.education.school,
+          data: mapped,
+        });
       } else {
         educationChanges.toAdd.push({ school: ssotData.education.school, data: mapped });
       }
@@ -525,7 +549,9 @@ export class ProfileSyncHandler extends BaseHandler {
 
     const activityChanges = { toUpdate: [], toAdd: [], toDelete: [] };
     const matchedActivityIds = new Set();
-    for (const certification of (ssotData.certifications || []).filter((c) => c.date && c.status !== '준비중')) {
+    for (const certification of (ssotData.certifications || []).filter(
+      (c) => c.date && c.status !== '준비중'
+    )) {
       const mapped = mapCertificationToWanted(certification);
       const existing = currentActivities.find((item) =>
         String(item.title || '').includes(certification.name || '')
@@ -550,9 +576,12 @@ export class ProfileSyncHandler extends BaseHandler {
     for (const lang of ssotData.languages || []) {
       const mapped = {
         language_name: lang.name,
-        level: lang.level === 'Native' ? 5 : lang.level === 'Professional working proficiency' ? 4 : 3,
+        level:
+          lang.level === 'Native' ? 5 : lang.level === 'Professional working proficiency' ? 4 : 3,
       };
-      const existing = (currentResume?.language_certs || []).find((rl) => rl.language_name === lang.name);
+      const existing = (currentResume?.language_certs || []).find(
+        (rl) => rl.language_name === lang.name
+      );
       if (existing) {
         matchedLangIds.add(existing.id);
         languageCertChanges.toUpdate.push({ id: existing.id, name: lang.name, data: mapped });
@@ -560,7 +589,7 @@ export class ProfileSyncHandler extends BaseHandler {
         languageCertChanges.toAdd.push({ name: lang.name, data: mapped });
       }
     }
-    for (const rl of (currentResume?.language_certs || [])) {
+    for (const rl of currentResume?.language_certs || []) {
       if (!matchedLangIds.has(rl.id)) {
         languageCertChanges.toDelete.push({ id: rl.id, name: rl.language_name || 'unknown' });
       }
@@ -643,9 +672,10 @@ export class ProfileSyncHandler extends BaseHandler {
       if (status === 'completed') {
         const platforms = result?.platforms || [];
         const successCount = platforms.filter((platform) => platform.success).length;
-      await sendTelegramNotification(this.env,
-        `✅ <b>Profile Sync Complete</b>: ${successCount}/${platforms.length} platforms updated`
-      );
+        await sendTelegramNotification(
+          this.env,
+          `✅ <b>Profile Sync Complete</b>: ${successCount}/${platforms.length} platforms updated`
+        );
       }
 
       return this.jsonResponse({ success: true, message: 'Sync status updated', syncId, status });

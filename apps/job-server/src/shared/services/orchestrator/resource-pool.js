@@ -144,7 +144,8 @@ export class ResourcePool extends EventEmitter {
             await this.#destroyResource(pooled);
             continue;
           }
-        } catch {
+        } catch (error) {
+          console.error('[ResourcePool.acquire] Validation failed:', error.message);
           await this.#destroyResource(pooled);
           continue;
         }
@@ -399,7 +400,8 @@ export class ResourcePool extends EventEmitter {
         try {
           const valid = await this.#options.validate(pooled.resource);
           if (!valid) toRemove.push(i);
-        } catch {
+        } catch (error) {
+          console.error('[ResourcePool.healthCheck] Validation failed:', error.message);
           toRemove.push(i);
         }
       }

@@ -1,5 +1,5 @@
 import { BaseHandler } from './base-handler.js';
-import { normalizeError } from '../../../job-server/src/shared/errors/index.js';
+import { normalizeError } from '@resume/shared/errors';
 import { sendTelegramNotification, escapeHtml } from '../services/notification/telegram.js';
 
 /**
@@ -173,9 +173,10 @@ export class AutoApplyWebhookHandler extends BaseHandler {
           .map((j) => `\u2022 ${j.company} - ${j.position} (${j.matchScore}%)`)
           .join('\n');
 
-      await sendTelegramNotification(this.env,
-        `✅ <b>Auto-Apply Complete</b>: ${results.applied.length} applications submitted\n\n${escapeHtml(appliedList)}`
-      );
+        await sendTelegramNotification(
+          this.env,
+          `✅ <b>Auto-Apply Complete</b>: ${results.applied.length} applications submitted\n\n${escapeHtml(appliedList)}`
+        );
       }
 
       return this.jsonResponse({
