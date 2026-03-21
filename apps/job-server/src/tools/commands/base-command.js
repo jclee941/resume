@@ -14,8 +14,9 @@ export const DATA_DIR = join(DEFAULT_OPENCODE_DATA_DIR, 'wanted-resume');
 export const LEGACY_DATA_DIR = join(DEFAULT_CLAUDE_DATA_DIR, 'wanted-resume');
 
 export class BaseCommand {
-  constructor(api) {
+  constructor(api, { logger = console } = {}) {
     this.api = api;
+    this.logger = logger;
   }
 
   resolveResumeFilePathForRead(resumeId, filePathFromParams) {
@@ -43,7 +44,7 @@ export class BaseCommand {
     try {
       return readdirSync(DATA_DIR).filter((f) => f.endsWith('.json'));
     } catch (e) {
-      console.error('Failed to list resume files:', e);
+      this.logger.error('Failed to list resume files:', e);
       return [];
     }
   }

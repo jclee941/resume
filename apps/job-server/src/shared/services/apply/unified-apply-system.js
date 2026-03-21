@@ -28,6 +28,7 @@ export class UnifiedApplySystem {
       ...config,
     };
 
+    this.logger = dependencies.logger ?? config.logger ?? console;
     this.#filter = new JobFilter(this.#config);
     this.#orchestrator = new ApplyOrchestrator(crawler, applier, appManager, this.#config);
     this.#notifier = notifier;
@@ -78,7 +79,7 @@ export class UnifiedApplySystem {
     try {
       await this.#notifier.notifyAutoApplyResult?.(applyResult.results, dryRun);
     } catch (e) {
-      console.error('Failed to send auto-apply notification:', e);
+      this.logger.error('Failed to send auto-apply notification:', e);
     }
   }
 

@@ -7,9 +7,9 @@ const CLAUDE_CONFIG = {
   temperature: 0.1,
 };
 
-export async function analyzeWithClaude(prompt, text) {
+export async function analyzeWithClaude(prompt, text, { logger = console } = {}) {
   if (!CLAUDE_CONFIG.apiKey) {
-    console.warn('Claude API key not found, falling back to basic matching');
+    logger.warn('Claude API key not found, falling back to basic matching');
     return null;
   }
 
@@ -38,12 +38,12 @@ export async function analyzeWithClaude(prompt, text) {
     const result = await response.json();
     return result.content[0].text;
   } catch (error) {
-    console.error('Claude AI 분석 실패:', error.message);
+    logger.error('Claude AI 분석 실패:', error.message);
     return null;
   }
 }
 
-export async function analyzeJobPosting(jobPosting) {
+export async function analyzeJobPosting(jobPosting, { logger = console } = {}) {
   const prompt = `채용 공고를 분석하여 다음 정보를 JSON 형식으로 추출해주세요:
 1. 주요 요구사항 (required_skills, preferred_skills)
 2. 경력 수준 (experience_level: junior/mid/senior/lead)
@@ -54,7 +54,9 @@ export async function analyzeJobPosting(jobPosting) {
 
 JSON 형식으로만 응답해주세요.`;
 
-  const analysis = await analyzeWithClaude(prompt, jobPosting.description || jobPosting.content);
+  const analysis = await analyzeWithClaude(prompt, jobPosting.description || jobPosting.content, {
+    logger,
+  });
   if (!analysis) return null;
 
   try {
@@ -62,12 +64,12 @@ JSON 형식으로만 응답해주세요.`;
     if (!jsonMatch) return null;
     return JSON.parse(jsonMatch[0]);
   } catch (error) {
-    console.error('[analyzeJobPosting] JSON parse failed:', error.message);
+    logger.error('[analyzeJobPosting] JSON parse failed:', error.message);
     return null;
   }
 }
 
-export async function analyzeResume(resume) {
+export async function analyzeResume(resume, { logger = console } = {}) {
   const prompt = `이력서를 분석하여 다음 정보를 JSON 형식으로 추출해주세요:
 1. 보유 기술 스택 (skills)
 2. 경력 연차 (experience_years)
@@ -79,7 +81,7 @@ JSON 형식으로만 응답해주세요.`;
 
   const resumeText =
     `${resume.summary || ''} ${resume.experience || ''} ${resume.skills || ''}`.trim();
-  const analysis = await analyzeWithClaude(prompt, resumeText);
+  const analysis = await analyzeWithClaude(prompt, resumeText, { logger });
   if (!analysis) return null;
 
   try {
@@ -87,12 +89,12 @@ JSON 형식으로만 응답해주세요.`;
     if (!jsonMatch) return null;
     return JSON.parse(jsonMatch[0]);
   } catch (error) {
-    console.error('[analyzeResume] JSON parse failed:', error.message);
+    logger.error('[analyzeResume] JSON parse failed:', error.message);
     return null;
   }
 }
 
-async function calculateAIMatchScore(resumeAnalysis, jobAnalysis) {
+async function calculateAIMatchScore(resumeAnalysis, jobAnalysis, { logger = console } = {}) {
   if (!resumeAnalysis || !jobAnalysis) {
     return { score: 0, reasoning: '분석 데이터 부족' };
   }
@@ -107,7 +109,7 @@ async function calculateAIMatchScore(resumeAnalysis, jobAnalysis) {
 JSON 형식으로 응답:
 {"match_score": 85, "skill_match": 90, "experience_match": 80, "reasoning": "설명", "strengths": [], "gaps": []}`;
 
-  const analysis = await analyzeWithClaude(prompt, '');
+  const analysis = await analyzeWithClaude(prompt, '', { logger });
   if (!analysis) return { score: 0, reasoning: 'AI 분석 실패' };
 
   try {
@@ -121,16 +123,16 @@ JSON 형식으로 응답:
       details: result,
     };
   } catch (error) {
-    console.error('[calculateAIMatchScore] JSON parse failed:', error.message);
+    logger.error('[calculateAIMatchScore] JSON parse failed:', error.message);
     return { score: 0, reasoning: '파싱 오류' };
   }
 }
 
-export async function calculateAIMatch(resumePath, jobPosting) {
+export async function calculateAIMatch(resumePath, jobPosting, { logger = console } = {}) {
   try {
     const resume = loadResume(resumePath);
-    const resumeAnalysis = await analyzeResume(resume);
-    const jobAnalysis = await analyzeJobPosting(jobPosting);
+    const resumeAnalysis = await analyzeResume(resume, { logger });
+    const jobAnalysis = await analyzeJobPosting(jobPosting, { logger });
 
     if (!resumeAnalysis || !jobAnalysis) {
       return {
@@ -141,7 +143,7 @@ export async function calculateAIMatch(resumePath, jobPosting) {
       };
     }
 
-    const matchResult = await calculateAIMatchScore(resumeAnalysis, jobAnalysis);
+    const matchResult = await calculateAIMatchScore(resumeAnalysis, jobAnalysis, { logger });
 
     return {
       matchScore: matchResult.score,
@@ -155,7 +157,7 @@ export async function calculateAIMatch(resumePath, jobPosting) {
       confidence: 'medium',
     };
   } catch (error) {
-    console.error('AI 매칭 분석 중 오류:', error);
+    logger.error('AI 매칭 분석 중 오류:', error);
     return {
       matchScore: 0,
       aiAnalysis: null,
@@ -165,11 +167,11 @@ export async function calculateAIMatch(resumePath, jobPosting) {
   }
 }
 
-export async function extractKeywordsWithAI(text, category = 'general') {
+export async function extractKeywordsWithAI(text, category = 'general', { logger = console } = {}) {
   const prompt = `다음 텍스트에서 ${category} 관련 주요 키워드를 추출해주세요.
 JSON 형식: {"keywords": [], "tech_stack": [], "importance_scores": {}}`;
 
-  const analysis = await analyzeWithClaude(prompt, text);
+  const analysis = await analyzeWithClaude(prompt, text, { logger });
   if (!analysis) return { keywords: [], tech_stack: [], importance_scores: {} };
 
   try {
@@ -177,17 +179,17 @@ JSON 형식: {"keywords": [], "tech_stack": [], "importance_scores": {}}`;
     if (!jsonMatch) return { keywords: [], tech_stack: [], importance_scores: {} };
     return JSON.parse(jsonMatch[0]);
   } catch (error) {
-    console.error('[extractKeywordsWithAI] JSON parse failed:', error.message);
+    logger.error('[extractKeywordsWithAI] JSON parse failed:', error.message);
     return { keywords: [], tech_stack: [], importance_scores: {} };
   }
 }
 
 export async function matchJobsWithAI(resumePath, jobs, options = {}) {
-  const { minScore = 0, maxResults = 10 } = options;
+  const { minScore = 0, maxResults = 10, logger = console } = options;
 
   try {
     const resume = loadResume(resumePath);
-    const resumeAnalysis = await analyzeResume(resume);
+    const resumeAnalysis = await analyzeResume(resume, { logger });
 
     if (!resumeAnalysis) {
       throw new Error('Resume analysis failed');
@@ -202,10 +204,12 @@ export async function matchJobsWithAI(resumePath, jobs, options = {}) {
       const batchResults = await Promise.all(
         batch.map(async (job) => {
           try {
-            const jobAnalysis = await analyzeJobPosting(job);
+            const jobAnalysis = await analyzeJobPosting(job, { logger });
             if (!jobAnalysis) return null;
 
-            const matchResult = await calculateAIMatchScore(resumeAnalysis, jobAnalysis);
+            const matchResult = await calculateAIMatchScore(resumeAnalysis, jobAnalysis, {
+              logger,
+            });
 
             return {
               ...job,
@@ -219,7 +223,7 @@ export async function matchJobsWithAI(resumePath, jobs, options = {}) {
               },
             };
           } catch (e) {
-            console.error(`Job analysis failed for ${job.position}:`, e);
+            logger.error(`Job analysis failed for ${job.position}:`, e);
             return null;
           }
         })
@@ -242,7 +246,7 @@ export async function matchJobsWithAI(resumePath, jobs, options = {}) {
       },
     };
   } catch (error) {
-    console.error('AI Batch Match Error:', error);
+    logger.error('AI Batch Match Error:', error);
     return {
       success: false,
       error: error.message,
@@ -252,7 +256,12 @@ export async function matchJobsWithAI(resumePath, jobs, options = {}) {
   }
 }
 
-export async function getCareerAdvice(resumeAnalysis, jobAnalysis, matchResult) {
+export async function getCareerAdvice(
+  resumeAnalysis,
+  jobAnalysis,
+  matchResult,
+  { logger = console } = {}
+) {
   const prompt = `이력서와 채용 공고 분석 결과를 바탕으로 커리어 조언을 제공해주세요.
 
 이력서: ${JSON.stringify(resumeAnalysis)}
@@ -261,7 +270,7 @@ export async function getCareerAdvice(resumeAnalysis, jobAnalysis, matchResult) 
 
 JSON 형식: {"suitability": "", "preparation_needed": [], "interview_focus": [], "next_steps": []}`;
 
-  const analysis = await analyzeWithClaude(prompt, '');
+  const analysis = await analyzeWithClaude(prompt, '', { logger });
   if (!analysis) return null;
 
   try {
@@ -269,7 +278,7 @@ JSON 형식: {"suitability": "", "preparation_needed": [], "interview_focus": []
     if (!jsonMatch) return null;
     return JSON.parse(jsonMatch[0]);
   } catch (error) {
-    console.error('[getCareerAdvice] JSON parse failed:', error.message);
+    logger.error('[getCareerAdvice] JSON parse failed:', error.message);
     return null;
   }
 }

@@ -30,7 +30,7 @@ export const authTool = {
     required: ['platform', 'action'],
   },
 
-  async execute(params) {
+  async execute(params, { logger = console } = {}) {
     const { platform, action, cookies, email } = params;
 
     switch (action) {
@@ -42,7 +42,12 @@ export const authTool = {
         let validatedEmail = email || 'user@example.com';
 
         if (platform === 'wanted') {
-          const cookieStr = typeof cookies === 'string' ? cookies : (Array.isArray(cookies) ? cookies.map((c) => `${c.name}=${c.value}`).join('; ') : String(cookies));
+          const cookieStr =
+            typeof cookies === 'string'
+              ? cookies
+              : Array.isArray(cookies)
+                ? cookies.map((c) => `${c.name}=${c.value}`).join('; ')
+                : String(cookies);
           const api = new WantedAPI(cookieStr);
           try {
             const profile = await api.getProfile();
@@ -50,16 +55,26 @@ export const authTool = {
               validatedEmail = profile.email || profile.name;
             }
           } catch (e) {
-            console.warn(
-              'Wanted profile validation failed, but saving cookies anyway:',
-              e.message,
-            );
+            logger.warn('Wanted profile validation failed, but saving cookies anyway:', e.message);
           }
         }
 
-        const cookieString = typeof cookies === 'string' ? cookies : (Array.isArray(cookies) ? cookies.map((c) => `${c.name}=${c.value}`).join('; ') : String(cookies));
-        const cookieCount = Array.isArray(cookies) ? cookies.length : cookieString.split(';').filter(Boolean).length;
-        SessionManager.save(platform, { cookies, cookieString, cookieCount, expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), email: validatedEmail });
+        const cookieString =
+          typeof cookies === 'string'
+            ? cookies
+            : Array.isArray(cookies)
+              ? cookies.map((c) => `${c.name}=${c.value}`).join('; ')
+              : String(cookies);
+        const cookieCount = Array.isArray(cookies)
+          ? cookies.length
+          : cookieString.split(';').filter(Boolean).length;
+        SessionManager.save(platform, {
+          cookies,
+          cookieString,
+          cookieCount,
+          expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+          email: validatedEmail,
+        });
 
         return {
           success: true,

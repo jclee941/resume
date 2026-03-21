@@ -29,7 +29,7 @@ export const optimizeResumeTool = {
     required: ['job_id'],
   },
 
-  async execute(params) {
+  async execute(params, { logger = console } = {}) {
     try {
       console.log(`🔍 Fetching job detail for ID: ${params.job_id}...`);
       const jobResult = await getJobDetailTool.execute({
@@ -80,7 +80,7 @@ export const optimizeResumeTool = {
         matchHighlights: jobAnalysis.required_skills,
       };
     } catch (error) {
-      console.error('❌ Resume optimization failed:', error);
+      logger.error('❌ Resume optimization failed:', error);
       return { success: false, error: error.message };
     }
   },

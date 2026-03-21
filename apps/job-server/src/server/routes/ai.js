@@ -95,7 +95,7 @@ export default async function aiRoutes(fastify) {
         },
       });
 
-      system.run().catch(console.error);
+      system.run().catch((err) => fastify.log.error(err));
 
       return reply.status(202).send({
         success: true,

@@ -63,6 +63,7 @@ export class CaptchaDetector extends EventEmitter {
    */
   constructor(options = {}) {
     super();
+    this.logger = options?.logger ?? console;
     /** @type {CaptchaDetectorOptions} */
     this.options = { ...DEFAULT_OPTIONS, ...options };
 
@@ -161,7 +162,7 @@ export class CaptchaDetector extends EventEmitter {
       try {
         await this.options.notifyCallback(detection);
       } catch (e) {
-        console.error('Failed to send captcha detection notification:', e);
+        this.logger.error('Failed to send captcha detection notification:', e);
       }
     }
   }

@@ -46,6 +46,7 @@ export class AuthService {
       sessionTTL: 24 * 60 * 60 * 1000, // 24 hours default
       ...config,
     };
+    this.logger = config.logger ?? console;
     this.#googleClient = new OAuth2Client(config.googleClientId);
     this.#store = store || {
       sessions: new Map(),
@@ -71,7 +72,7 @@ export class AuthService {
       });
       payload = ticket.getPayload();
     } catch (e) {
-      console.error('Failed to verify Google ID token:', e);
+      this.logger.error('Failed to verify Google ID token:', e);
       return { success: false, error: 'Invalid token', statusCode: 401 };
     }
 

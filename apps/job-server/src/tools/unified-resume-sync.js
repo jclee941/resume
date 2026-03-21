@@ -11,6 +11,9 @@ import {
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = join(__dirname, '..', '..', '..', '..');
 const RESUME_DATA_PATH = join(PROJECT_ROOT, 'packages/data/resumes/master/resume_data.json');
+
+let logger = console;
+
 export const unifiedResumeSyncTool = {
   name: 'unified_resume_sync',
   description: `Sync resume_data.json to multiple job platforms.
@@ -50,7 +53,8 @@ export const unifiedResumeSyncTool = {
     required: ['action'],
   },
 
-  async execute(params) {
+  async execute(params, { logger: injectedLogger = console } = {}) {
+    logger = injectedLogger;
     const { action, platforms = ['wanted', 'jobkorea', 'remember'], dry_run = false } = params;
 
     if (!existsSync(RESUME_DATA_PATH)) {
@@ -444,7 +448,7 @@ async function syncToWanted(data, params, sourceData = {}) {
       if (!skillExists) {
         const tagTypeId = getTagTypeId(skillName);
         if (!tagTypeId) {
-          console.warn(`[skills] Skipping "${skillName}" - no matching Wanted tag_type_id`);
+          logger.warn(`[skills] Skipping "${skillName}" - no matching Wanted tag_type_id`);
           continue;
         }
         await api.resumeSkills.add(params.resume_id, { tag_type_id: tagTypeId, text: skillName });
@@ -492,7 +496,8 @@ async function syncToWanted(data, params, sourceData = {}) {
   try {
     const localLanguages = (sourceData.languages || []).map((lang) => ({
       language_name: lang.name,
-      level: lang.level === 'Native' ? 5 : lang.level === 'Professional working proficiency' ? 4 : 3,
+      level:
+        lang.level === 'Native' ? 5 : lang.level === 'Professional working proficiency' ? 4 : 3,
     }));
     const remoteLanguageCerts = resumeDetail.language_certs || [];
 

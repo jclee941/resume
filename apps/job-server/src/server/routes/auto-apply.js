@@ -9,6 +9,8 @@ import { ApplicationManager } from '../../auto-apply/application-manager.js';
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const statusPath = join(__dirname, '..', '..', '..', 'auto-apply-status.json');
 
+let logger = console;
+
 const autoApplyState = {
   status: 'idle',
   lastRun: null,
@@ -23,7 +25,7 @@ function loadState() {
     try {
       Object.assign(autoApplyState, JSON.parse(readFileSync(statusPath, 'utf-8')));
     } catch (err) {
-      console.error('Failed to load auto-apply state:', err.message);
+      logger.error('Failed to load auto-apply state:', err.message);
     }
   }
   return autoApplyState;
@@ -36,11 +38,12 @@ function saveState(updates) {
   try {
     writeFileSync(statusPath, JSON.stringify(autoApplyState, null, 2));
   } catch (err) {
-    console.error('Failed to save auto-apply state:', err.message);
+    logger.error('Failed to save auto-apply state:', err.message);
   }
 }
 
 export default async function autoApplyRoutes(fastify) {
+  logger = fastify.log;
   fastify.get('/status', async () => {
     loadState();
     return {
@@ -108,7 +111,7 @@ export default async function autoApplyRoutes(fastify) {
         });
 
         fastify.triggerN8nWebhook?.('auto-apply-complete', result).catch((e) => {
-          console.error('Failed to trigger auto-apply-complete webhook:', e);
+          fastify.log.error('Failed to trigger auto-apply-complete webhook:', e);
         });
       } catch (error) {
         saveState({
