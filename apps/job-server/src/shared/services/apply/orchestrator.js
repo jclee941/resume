@@ -9,6 +9,7 @@ export class ApplyOrchestrator {
     this.#crawler = crawler;
     this.#applier = applier;
     this.#appManager = appManager;
+    this.logger = config.logger ?? console;
     this.#config = {
       maxDailyApplications: config.maxDailyApplications || 20,
       enabledPlatforms: config.enabledPlatforms || ['wanted'],
@@ -53,7 +54,7 @@ export class ApplyOrchestrator {
           const result = await this.#crawler.search(platform, keywords, options);
           if (result) jobs.push(...result);
         } catch (e) {
-          console.error(`Failed to search platform ${platform}:`, e);
+          this.logger.error(`Failed to search platform ${platform}:`, e);
           continue;
         }
       }
@@ -105,7 +106,7 @@ export class ApplyOrchestrator {
             });
             this.#stats.applied++;
           } else {
-            console.log(
+            this.logger.log(
               `  🎯 Applying to: ${job.company || job.title} (${job.source}) — ${job.sourceUrl}`
             );
             const result = await this.#applier.applyToJob(job);
@@ -114,14 +115,14 @@ export class ApplyOrchestrator {
             if (result.success) {
               this.#stats.applied++;
             } else {
-              console.error(`❌ Apply failed for ${job.company || job.title}: ${result.error}`);
+              this.logger.error(`❌ Apply failed for ${job.company || job.title}: ${result.error}`);
               this.#stats.failed++;
             }
 
             await this.#sleep(this.#config.delayBetweenApplies);
           }
         } catch (error) {
-          console.error(`❌ Apply exception for ${job.company || job.title}: ${error.message}`);
+          this.logger.error(`❌ Apply exception for ${job.company || job.title}: ${error.message}`);
           results.push({ job, success: false, error: error.message });
           this.#stats.failed++;
         }
@@ -132,7 +133,7 @@ export class ApplyOrchestrator {
         try {
           await this.#applier.closeBrowser();
         } catch (e) {
-          console.error('Failed to close browser:', e);
+          this.logger.error('Failed to close browser:', e);
         }
       }
     }

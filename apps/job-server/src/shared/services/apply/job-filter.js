@@ -4,6 +4,7 @@ export class JobFilter {
   #config;
 
   constructor(config = {}) {
+    this.logger = config.logger ?? console;
     this.#config = {
       reviewThreshold: config.reviewThreshold || 60,
       autoApplyThreshold: config.autoApplyThreshold || 75,
@@ -12,11 +13,7 @@ export class JobFilter {
       excludeCompanies: config.excludeCompanies || [],
       preferredCompanies: config.preferredCompanies || [],
       keywords: config.keywords || [],
-      platformPriority: config.platformPriority || [
-        'wanted',
-        'saramin',
-        'jobkorea',
-      ],
+      platformPriority: config.platformPriority || ['wanted', 'saramin', 'jobkorea'],
       ...config,
     };
   }
@@ -72,16 +69,12 @@ export class JobFilter {
 
   #matchesExcludeKeywords(job) {
     const text = `${job.position} ${job.description || ''}`.toLowerCase();
-    return this.#config.excludeKeywords.some((kw) =>
-      text.includes(kw.toLowerCase()),
-    );
+    return this.#config.excludeKeywords.some((kw) => text.includes(kw.toLowerCase()));
   }
 
   #isExcludedCompany(job) {
     const company = (job.company || '').toLowerCase();
-    return this.#config.excludeCompanies.some((c) =>
-      company.includes(c.toLowerCase()),
-    );
+    return this.#config.excludeCompanies.some((c) => company.includes(c.toLowerCase()));
   }
 
   async #applyScoring(jobs, useAI = false, resumePath = null) {
@@ -96,7 +89,7 @@ export class JobFilter {
         if (aiResult && aiResult.jobs && !aiResult.fallback) {
           // Build AI score map by job key
           const aiScoreMap = new Map(
-            aiResult.jobs.map((j) => [this.#generateJobKey(j), j.matchScore]),
+            aiResult.jobs.map((j) => [this.#generateJobKey(j), j.matchScore])
           );
 
           // Hybrid scoring: 70% AI + 30% heuristic
@@ -105,9 +98,7 @@ export class JobFilter {
             const heuristicScore = this.#calculateHeuristicScore(job);
 
             if (aiScore !== undefined) {
-              const blendedScore = Math.round(
-                aiScore * 0.7 + heuristicScore * 0.3,
-              );
+              const blendedScore = Math.round(aiScore * 0.7 + heuristicScore * 0.3);
               return {
                 ...job,
                 matchScore: Math.min(100, blendedScore),
@@ -124,10 +115,7 @@ export class JobFilter {
           });
         }
       } catch (error) {
-        console.warn(
-          'AI scoring failed, falling back to heuristic:',
-          error.message,
-        );
+        this.logger.warn('AI scoring failed, falling back to heuristic:', error.message);
       }
     }
 
@@ -146,10 +134,9 @@ export class JobFilter {
       score += 15;
     }
 
-    const positionText =
-      `${job.position || ''} ${job.title || ''}`.toLowerCase();
+    const positionText = `${job.position || ''} ${job.title || ''}`.toLowerCase();
     const keywordMatches = this.#config.keywords.filter((kw) =>
-      positionText.includes(kw.toLowerCase()),
+      positionText.includes(kw.toLowerCase())
     );
     score += keywordMatches.length * 20;
 
@@ -163,9 +150,7 @@ export class JobFilter {
 
   #isPreferredCompany(job) {
     const company = (job.company || '').toLowerCase();
-    return this.#config.preferredCompanies.some((c) =>
-      company.includes(c.toLowerCase()),
-    );
+    return this.#config.preferredCompanies.some((c) => company.includes(c.toLowerCase()));
   }
 
   #sort(jobs) {
@@ -175,8 +160,7 @@ export class JobFilter {
       .filter((job) => job.matchScore >= reviewThreshold)
       .map((job) => ({
         ...job,
-        tier:
-          job.matchScore >= autoApplyThreshold ? 'auto-apply' : 'manual-review',
+        tier: job.matchScore >= autoApplyThreshold ? 'auto-apply' : 'manual-review',
       }))
       .sort((a, b) => b.matchScore - a.matchScore);
   }
