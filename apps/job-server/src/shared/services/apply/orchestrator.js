@@ -52,7 +52,8 @@ export class ApplyOrchestrator {
         try {
           const result = await this.#crawler.search(platform, keywords, options);
           if (result) jobs.push(...result);
-        } catch {
+        } catch (e) {
+          console.error(`Failed to search platform ${platform}:`, e);
           continue;
         }
       }
@@ -130,8 +131,8 @@ export class ApplyOrchestrator {
       if (!dryRun && this.#applier?.closeBrowser) {
         try {
           await this.#applier.closeBrowser();
-        } catch {
-          // Browser cleanup failure is non-fatal
+        } catch (e) {
+          console.error('Failed to close browser:', e);
         }
       }
     }

@@ -77,8 +77,8 @@ export class UnifiedApplySystem {
 
     try {
       await this.#notifier.notifyAutoApplyResult?.(applyResult.results, dryRun);
-    } catch {
-      // Notification failure should not break the flow
+    } catch (e) {
+      console.error('Failed to send auto-apply notification:', e);
     }
   }
 

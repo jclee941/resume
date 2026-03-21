@@ -25,7 +25,8 @@ function loadConfig() {
   if (existsSync(configPath)) {
     try {
       return JSON.parse(readFileSync(configPath, 'utf-8'));
-    } catch {
+    } catch (e) {
+      console.error('Failed to parse config file:', e);
       return getDefaultConfig();
     }
   }
