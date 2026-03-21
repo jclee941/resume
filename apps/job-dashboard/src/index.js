@@ -7,8 +7,8 @@ import { AutoApplyHandler } from './handlers/auto-apply.js';
 import { DiagnosticsHandler } from './handlers/diagnostics.js';
 import { ResumeMasterHandler } from './handlers/resume-master-handler.js';
 import { jsonResponse, addCorsHeaders } from './middleware/cors.js';
-import Logger, { RequestContext } from '../../job-server/src/shared/logger/index.js';
-import { HttpError, normalizeError } from '../../job-server/src/shared/errors/index.js';
+import Logger, { RequestContext } from '@resume/shared/logger';
+import { HttpError, normalizeError } from '@resume/shared/errors';
 import {
   requiresAuth,
   requiresWebhookSignature,

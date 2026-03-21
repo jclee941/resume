@@ -1,4 +1,4 @@
-import { normalizeError } from '../../job-server/src/shared/errors/index.js';
+import { normalizeError } from '@resume/shared/errors';
 
 /**
  * @typedef {Object} QueueMessage

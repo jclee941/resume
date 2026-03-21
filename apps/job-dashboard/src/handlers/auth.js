@@ -1,6 +1,6 @@
 import { encrypt, decrypt } from '../utils/crypto.js';
 import { verifySecret } from '../services/auth.js';
-import { normalizeError } from '../../../job-server/src/shared/errors/index.js';
+import { normalizeError } from '@resume/shared/errors';
 
 export class AuthHandler {
   constructor(db, kv, env) {

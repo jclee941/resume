@@ -108,7 +108,8 @@ export class SessionManager {
         writeFileSync(SESSION_FILE, '{}');
       }
       return true;
-    } catch {
+    } catch (error) {
+      console.error('[SessionManager.clear] Failed to clear session:', error.message);
       return false;
     }
   }
@@ -123,7 +124,12 @@ export class SessionManager {
     // Dynamic import to avoid circular dependency
     const WantedAPI = (await import('../../clients/wanted/index.js')).default;
     const api = new WantedAPI();
-    const cookieStr = session.cookieString || (Array.isArray(session.cookies) ? session.cookies.map((c) => `${c.name}=${c.value}`).join('; ') : session.cookies) || session.token;
+    const cookieStr =
+      session.cookieString ||
+      (Array.isArray(session.cookies)
+        ? session.cookies.map((c) => `${c.name}=${c.value}`).join('; ')
+        : session.cookies) ||
+      session.token;
     if (cookieStr) {
       api.setCookies(cookieStr);
     }
@@ -193,7 +199,8 @@ export class SessionManager {
       // Check if extraction succeeded
       const session = this.load(platform);
       return !!(session && session.timestamp && Date.now() - session.timestamp < 60000);
-    } catch {
+    } catch (error) {
+      console.error('[SessionManager.tryRefresh] CDP extraction failed:', error.message);
       return false;
     }
   }

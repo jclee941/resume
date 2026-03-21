@@ -1,7 +1,7 @@
 import { WantedClient } from '../services/wanted-client.js';
 import { LinkedInClient } from '../services/linkedin-client.js';
 import { RememberClient } from '../services/remember-client.js';
-import { normalizeError } from '../../../job-server/src/shared/errors/index.js';
+import { normalizeError } from '@resume/shared/errors';
 import { calculateMatchScore } from './auto-apply/match-scoring.js';
 import { getWantedSession } from './auto-apply/session-helpers.js';
 import {
