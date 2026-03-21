@@ -2,7 +2,7 @@ module.exports = {
   scriptPath: 'apps/portfolio/worker.js',
   port: 8787,
   modules: true,
-  compatibilityDate: '2026-02-15',
+  compatibilityDate: '2026-02-21',
   d1Databases: {
     DB: 'local-resume-db',
   },

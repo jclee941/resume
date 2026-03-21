@@ -41,7 +41,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "lint:agents": "go run tools/scripts/verification/verify-agents-compliance.go",
-    "typecheck": "tsc --project jsconfig.json --noEmit",
+    "typecheck": "tsc --project tsconfig.json --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "dev": "miniflare --config tools/scripts/dev/miniflare.config.js",
@@ -67,9 +67,6 @@
   ],
   "author": "Jaecheol Lee <qws941@kakao.com>",
   "license": "MIT",
-  "dependencies": {
-    "express": "^5.2.1"
-  },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
     "@axe-core/playwright": "^4.11.1",
