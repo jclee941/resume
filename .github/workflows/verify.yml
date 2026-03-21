@@ -45,6 +45,7 @@ permissions:
 
 env:
   PORTFOLIO_URL: https://resume.jclee.me
+  JOB_DASHBOARD_URL: https://resume.jclee.me/job
 
 jobs:
   verify-portfolio:

@@ -1,5 +1,3 @@
-//go:build ci_affected
-
 package main
 
 import (
