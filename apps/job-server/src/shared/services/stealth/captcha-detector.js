@@ -160,8 +160,8 @@ export class CaptchaDetector extends EventEmitter {
     if (typeof this.options.notifyCallback === 'function') {
       try {
         await this.options.notifyCallback(detection);
-      } catch {
-        // Notification failure should not break crawling
+      } catch (e) {
+        console.error('Failed to send captcha detection notification:', e);
       }
     }
   }

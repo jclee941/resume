@@ -57,7 +57,8 @@ export function getCredentials(platform, encryptionSecret) {
 
     const decrypted = Buffer.concat([decipher.update(entry.encrypted), decipher.final()]);
     return JSON.parse(decrypted.toString('utf8'));
-  } catch {
+  } catch (e) {
+    console.error('Failed to decrypt credentials:', e);
     return null;
   }
 }

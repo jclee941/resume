@@ -170,8 +170,8 @@ export class MigrationRunner {
         .prepare(`SELECT * FROM ${MIGRATIONS_TABLE} ORDER BY version ASC`)
         .all();
       return result.results || [];
-    } catch {
-      // Table doesn't exist yet
+    } catch (e) {
+      console.error('Failed to get applied migrations:', e);
       return [];
     }
   }

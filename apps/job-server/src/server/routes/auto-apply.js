@@ -107,7 +107,9 @@ export default async function autoApplyRoutes(fastify) {
           },
         });
 
-        fastify.triggerN8nWebhook?.('auto-apply-complete', result).catch(() => {});
+        fastify.triggerN8nWebhook?.('auto-apply-complete', result).catch((e) => {
+          console.error('Failed to trigger auto-apply-complete webhook:', e);
+        });
       } catch (error) {
         saveState({
           status: 'failed',
