@@ -110,8 +110,8 @@ export class AutoApplier {
                 session = legacyData;
                 console.log(`📂 ${platform}: loaded from legacy session file`);
               }
-            } catch {
-              /* ignore parse errors */
+            } catch (e) {
+              console.error('Failed to parse legacy session file:', e);
             }
           }
         }
@@ -319,7 +319,9 @@ export class AutoApplier {
       if (!applyButton) {
         try {
           await this.page.screenshot({ path: `/tmp/wanted-debug-${Date.now()}.png` });
-        } catch (e) { console.error('[debug-screenshot] Wanted:', e.message); }
+        } catch (e) {
+          console.error('[debug-screenshot] Wanted:', e.message);
+        }
         return { success: false, error: 'Apply button not found' };
       }
 
@@ -407,7 +409,9 @@ export class AutoApplier {
         // Screenshot for debugging
         try {
           await this.page.screenshot({ path: `/tmp/jobkorea-debug-${Date.now()}.png` });
-        } catch (e) { console.error('[debug-screenshot] JobKorea:', e.message); }
+        } catch (e) {
+          console.error('[debug-screenshot] JobKorea:', e.message);
+        }
         return { success: false, error: 'Apply button not found' };
       }
       await applyButton.click();
@@ -454,7 +458,10 @@ export class AutoApplier {
         return { success: false, error: 'Application error detected on page' };
       }
       if (!successMessage) {
-        return { success: false, error: 'JobKorea application confirmation not found — no success signal detected' };
+        return {
+          success: false,
+          error: 'JobKorea application confirmation not found — no success signal detected',
+        };
       }
 
       const application = this.appManager.addApplication(job);
@@ -498,7 +505,9 @@ export class AutoApplier {
       if (!applyButton) {
         try {
           await this.page.screenshot({ path: `/tmp/saramin-debug-${Date.now()}.png` });
-        } catch (e) { console.error('[debug-screenshot] Saramin:', e.message); }
+        } catch (e) {
+          console.error('[debug-screenshot] Saramin:', e.message);
+        }
         return { success: false, error: 'Apply button not found' };
       }
 
@@ -536,7 +545,10 @@ export class AutoApplier {
         return { success: false, error: 'Application error detected on page' };
       }
       if (!successMessage) {
-        return { success: false, error: 'Saramin application confirmation not found — no success signal detected' };
+        return {
+          success: false,
+          error: 'Saramin application confirmation not found — no success signal detected',
+        };
       }
 
       const application = this.appManager.addApplication(job);

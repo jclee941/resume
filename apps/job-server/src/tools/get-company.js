@@ -66,7 +66,8 @@ Use this to research companies before applying:
             url: `https://www.wanted.co.kr/wd/${job.id}`,
           }));
           result.total_jobs = result.open_jobs.length;
-        } catch {
+        } catch (e) {
+          console.error('Failed to parse open jobs:', e);
           result.open_jobs = [];
           result.total_jobs = 0;
         }

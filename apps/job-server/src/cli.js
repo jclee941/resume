@@ -221,7 +221,8 @@ async function main() {
           } else {
             files.forEach((f) => log(`   • ${f}`, 'green'));
           }
-        } catch {
+        } catch (e) {
+          console.error('Failed to read resume directory:', e);
           log('   Data directory not found. Run export first.', 'dim');
         }
         process.exit(0);

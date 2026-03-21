@@ -42,7 +42,8 @@ export class BaseCommand {
   listResumeFiles() {
     try {
       return readdirSync(DATA_DIR).filter((f) => f.endsWith('.json'));
-    } catch {
+    } catch (e) {
+      console.error('Failed to list resume files:', e);
       return [];
     }
   }

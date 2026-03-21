@@ -47,7 +47,8 @@ export class ApplicationManager {
     if (existsSync(APPLICATIONS_FILE)) {
       try {
         return JSON.parse(readFileSync(APPLICATIONS_FILE, 'utf-8'));
-      } catch {
+      } catch (e) {
+        console.error('Failed to parse applications file:', e);
         return [];
       }
     }
@@ -61,7 +62,8 @@ export class ApplicationManager {
     if (existsSync(STATS_FILE)) {
       try {
         return JSON.parse(readFileSync(STATS_FILE, 'utf-8'));
-      } catch {
+      } catch (e) {
+        console.error('Failed to parse stats file:', e);
         return this.initStats();
       }
     }
@@ -86,10 +88,7 @@ export class ApplicationManager {
    * 저장
    */
   save() {
-    writeFileSync(
-      APPLICATIONS_FILE,
-      JSON.stringify(this.applications, null, 2),
-    );
+    writeFileSync(APPLICATIONS_FILE, JSON.stringify(this.applications, null, 2));
     writeFileSync(STATS_FILE, JSON.stringify(this.stats, null, 2));
   }
 
@@ -186,7 +185,7 @@ export class ApplicationManager {
     // 회사 필터
     if (filters.company) {
       result = result.filter((a) =>
-        a.company.toLowerCase().includes(filters.company.toLowerCase()),
+        a.company.toLowerCase().includes(filters.company.toLowerCase())
       );
     }
 
@@ -256,16 +255,13 @@ export class ApplicationManager {
 
     for (const app of this.applications) {
       // 상태별
-      this.stats.byStatus[app.status] =
-        (this.stats.byStatus[app.status] || 0) + 1;
+      this.stats.byStatus[app.status] = (this.stats.byStatus[app.status] || 0) + 1;
 
       // 소스별
-      this.stats.bySource[app.source] =
-        (this.stats.bySource[app.source] || 0) + 1;
+      this.stats.bySource[app.source] = (this.stats.bySource[app.source] || 0) + 1;
 
       // 회사별
-      this.stats.byCompany[app.company] =
-        (this.stats.byCompany[app.company] || 0) + 1;
+      this.stats.byCompany[app.company] = (this.stats.byCompany[app.company] || 0) + 1;
 
       // 날짜별
       const date = app.createdAt.split('T')[0];
@@ -292,15 +288,11 @@ export class ApplicationManager {
    */
   calculateSuccessRate() {
     const completed = this.applications.filter((a) =>
-      [APPLICATION_STATUS.OFFER, APPLICATION_STATUS.REJECTED].includes(
-        a.status,
-      ),
+      [APPLICATION_STATUS.OFFER, APPLICATION_STATUS.REJECTED].includes(a.status)
     );
     if (completed.length === 0) return 0;
 
-    const offers = completed.filter(
-      (a) => a.status === APPLICATION_STATUS.OFFER,
-    ).length;
+    const offers = completed.filter((a) => a.status === APPLICATION_STATUS.OFFER).length;
     return Math.round((offers / completed.length) * 100);
   }
 
@@ -312,9 +304,7 @@ export class ApplicationManager {
     if (applied.length === 0) return 0;
 
     const responded = applied.filter(
-      (a) =>
-        a.status !== APPLICATION_STATUS.APPLIED &&
-        a.status !== APPLICATION_STATUS.PENDING,
+      (a) => a.status !== APPLICATION_STATUS.APPLIED && a.status !== APPLICATION_STATUS.PENDING
     ).length;
     return Math.round((responded / applied.length) * 100);
   }
@@ -326,9 +316,7 @@ export class ApplicationManager {
     const responded = this.applications.filter((a) => {
       if (!a.appliedAt) return false;
       const responseEvent = a.timeline.find(
-        (t) =>
-          t.status !== APPLICATION_STATUS.APPLIED &&
-          t.status !== APPLICATION_STATUS.PENDING,
+        (t) => t.status !== APPLICATION_STATUS.APPLIED && t.status !== APPLICATION_STATUS.PENDING
       );
       return !!responseEvent;
     });
@@ -338,9 +326,7 @@ export class ApplicationManager {
     const totalDays = responded.reduce((sum, app) => {
       const appliedDate = new Date(app.appliedAt);
       const responseEvent = app.timeline.find(
-        (t) =>
-          t.status !== APPLICATION_STATUS.APPLIED &&
-          t.status !== APPLICATION_STATUS.PENDING,
+        (t) => t.status !== APPLICATION_STATUS.APPLIED && t.status !== APPLICATION_STATUS.PENDING
       );
       const responseDate = new Date(responseEvent.timestamp);
       const days = (responseDate - appliedDate) / (1000 * 60 * 60 * 24);
@@ -355,21 +341,18 @@ export class ApplicationManager {
    */
   generateDailyReport(date = new Date().toISOString().split('T')[0]) {
     const dayApps = this.applications.filter(
-      (a) => a.createdAt.startsWith(date) || a.updatedAt.startsWith(date),
+      (a) => a.createdAt.startsWith(date) || a.updatedAt.startsWith(date)
     );
 
-    const applied = dayApps.filter(
-      (a) => a.appliedAt && a.appliedAt.startsWith(date),
-    ).length;
+    const applied = dayApps.filter((a) => a.appliedAt && a.appliedAt.startsWith(date)).length;
 
     const statusChanges = dayApps.filter((a) =>
-      a.timeline.some((t) => t.timestamp.startsWith(date) && t.previousStatus),
+      a.timeline.some((t) => t.timestamp.startsWith(date) && t.previousStatus)
     );
 
     return {
       date,
-      newApplications: dayApps.filter((a) => a.createdAt.startsWith(date))
-        .length,
+      newApplications: dayApps.filter((a) => a.createdAt.startsWith(date)).length,
       applied,
       statusChanges: statusChanges.length,
       pending: this.stats.byStatus[APPLICATION_STATUS.PENDING] || 0,
