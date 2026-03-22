@@ -281,6 +281,7 @@ export class ResourcePool extends EventEmitter {
     }
 
     this.emit('drain');
+    this.removeAllListeners();
   }
 
   /**

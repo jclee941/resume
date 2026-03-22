@@ -168,6 +168,9 @@ export class CrawlOrchestrator extends EventEmitter {
       await this._browserPool.drain(timeoutMs);
       this._browserPool = null;
     }
+
+    this.progressTracker?.destroy();
+    this.removeAllListeners();
   }
 
   /**

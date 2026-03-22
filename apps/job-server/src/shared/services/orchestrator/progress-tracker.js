@@ -276,6 +276,15 @@ export class ProgressTracker extends EventEmitter {
   }
 
   /**
+   * Destroys the tracker, removing all listeners and clearing state.
+   * Call this during shutdown to prevent memory leaks.
+   */
+  destroy() {
+    this.reset();
+    this.removeAllListeners();
+  }
+
+  /**
    * Get a task, throwing if not found.
    * @param {string} taskId
    * @returns {TaskState}
