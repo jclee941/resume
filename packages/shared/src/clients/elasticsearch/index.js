@@ -52,14 +52,13 @@ async function flushLogs(env, index) {
 
   if (!esUrl || !apiKey) return;
 
-  const bulkBody =
-    `${logs
-      .map((doc) => {
-        const action = JSON.stringify({ index: { _index: index } });
-        const document = JSON.stringify(doc);
-        return `${action}\n${document}`;
-      })
-      .join('\n')  }\n`;
+  const bulkBody = `${logs
+    .map((doc) => {
+      const action = JSON.stringify({ index: { _index: index } });
+      const document = JSON.stringify(doc);
+      return `${action}\n${document}`;
+    })
+    .join('\n')}\n`;
 
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), DEFAULT_TIMEOUT_MS);
@@ -214,7 +213,9 @@ export async function logEvent(env, event, data = {}, options = {}) {
       ...data,
     },
     options
-  );
+  ).catch((err) => {
+    console.warn({ err }, 'logEvent failed to write to Elasticsearch');
+  });
 }
 
 export async function flush(env, options = {}) {
