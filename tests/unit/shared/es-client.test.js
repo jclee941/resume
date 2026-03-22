@@ -175,6 +175,33 @@ describe('Elasticsearch Client', () => {
     expect(body.user_id).toBe(123);
   });
 
+  test('logEvent does not throw when logToElasticsearch rejects', async () => {
+    // Force fetch to throw synchronously to bypass the internal try/catch.
+    // This simulates an edge case where the promise chain rejects.
+    const originalFetch = global.fetch;
+    global.fetch = jest.fn().mockImplementation(() => {
+      throw new Error('ES network failure');
+    });
+
+    await expect(
+      mod.logEvent(mockEnv, 'user_login', { user_id: 123 }, { immediate: true })
+    ).resolves.not.toThrow();
+
+    global.fetch = originalFetch;
+  });
+
+  test('logEvent returns a resolved promise even when ES fails', async () => {
+    const originalFetch = global.fetch;
+    global.fetch = jest.fn().mockImplementation(() => {
+      throw new Error('timeout');
+    });
+
+    const result = mod.logEvent(mockEnv, 'test_event', {}, { immediate: true });
+    await expect(result).resolves.toBeUndefined();
+
+    global.fetch = originalFetch;
+  });
+
   test('flush clears queue via _bulk', async () => {
     // Fill queue
     for (let i = 0; i < 5; i++) {
