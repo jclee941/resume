@@ -144,7 +144,9 @@ export class BrowserService {
 
       return result;
     } finally {
-      await page.close().catch(() => {});
+      await page.close().catch(() => {
+        /* cleanup: close errors are non-fatal */
+      });
     }
   }
 
@@ -167,7 +169,9 @@ export class BrowserService {
 
       return await fn(page);
     } finally {
-      await page.close().catch(() => {});
+      await page.close().catch(() => {
+        /* cleanup: close errors are non-fatal */
+      });
     }
   }
 
@@ -177,7 +181,9 @@ export class BrowserService {
    */
   async close() {
     if (this.#browser) {
-      await this.#browser.close().catch(() => {});
+      await this.#browser.close().catch(() => {
+        /* cleanup: close errors are non-fatal */
+      });
       this.#browser = null;
       this.#fingerprint = null;
     }
