@@ -70,6 +70,7 @@ export class ResourcePool extends EventEmitter {
    */
   constructor(options) {
     super();
+    this.setMaxListeners(20);
     this.logger = options.logger ?? console;
     this.#options = {
       maxSize: 5,

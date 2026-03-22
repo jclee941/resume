@@ -44,6 +44,7 @@ const DEFAULT_RETRY_CONFIG = {
 export class BaseCrawler extends EventEmitter {
   constructor(name, options = {}) {
     super();
+    this.setMaxListeners(15);
     this.name = name;
     this.baseUrl = options.baseUrl || '';
     this.rateLimit = options.rateLimit || 1000; // ms between requests

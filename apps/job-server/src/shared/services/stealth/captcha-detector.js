@@ -63,6 +63,7 @@ export class CaptchaDetector extends EventEmitter {
    */
   constructor(options = {}) {
     super();
+    this.setMaxListeners(10);
     this.logger = options?.logger ?? console;
     /** @type {CaptchaDetectorOptions} */
     this.options = { ...DEFAULT_OPTIONS, ...options };
