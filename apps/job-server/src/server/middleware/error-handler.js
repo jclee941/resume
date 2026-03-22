@@ -9,13 +9,6 @@ export default function errorHandler(error, request, reply) {
     });
   }
 
-  if (error.statusCode) {
-    return reply.status(error.statusCode).send({
-      error: error.name || 'Error',
-      message: error.message,
-    });
-  }
-
   if (error.statusCode === 429) {
     return reply.status(429).send({
       error: 'Too Many Requests',
@@ -23,11 +16,15 @@ export default function errorHandler(error, request, reply) {
     });
   }
 
+  if (error.statusCode) {
+    return reply.status(error.statusCode).send({
+      error: error.name || 'Error',
+      message: error.message,
+    });
+  }
+
   return reply.status(500).send({
     error: 'Internal Server Error',
-    message:
-      process.env.NODE_ENV === 'development'
-        ? error.message
-        : 'Something went wrong',
+    message: process.env.NODE_ENV === 'development' ? error.message : 'Something went wrong',
   });
 }
