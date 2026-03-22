@@ -61,7 +61,7 @@ Before starting deployment, ensure you have:
 ### Project Files
 - Clean checkout of this repository
 - All dependencies installed (`npm install`)
-- `wrangler.toml` configured with valid account ID
+- `wrangler.jsonc` configured with valid account ID
 
 ---
 
@@ -84,7 +84,7 @@ wrangler login
 ### Step 2: Verify Account ID
 
 ```bash
-# Update wrangler.toml with your account ID
+# Update wrangler.jsonc with your account ID
 # Or set CLOUDFLARE_ACCOUNT_ID environment variable
 export CLOUDFLARE_ACCOUNT_ID="your-account-id-here"
 
@@ -116,7 +116,7 @@ dig jclee.me
 
 Create environment-specific configuration files:
 
-### Development Environment (`wrangler.toml`)
+### Development Environment (`wrangler.jsonc`)
 
 ```toml
 name = "job-dashboard"
@@ -133,7 +133,7 @@ routes = [
 
 ### Production Environment
 
-Edit `wrangler.toml` for production:
+Edit `wrangler.jsonc` for production:
 
 ```toml
 [env.production]
@@ -262,7 +262,7 @@ wrangler d1 create job-dashboard-db
 
 ### Step 2: Update Configuration
 
-Add D1 binding to `wrangler.toml`:
+Add D1 binding to `wrangler.jsonc`:
 
 ```toml
 [[d1_databases]]
@@ -384,12 +384,12 @@ wrangler kv:namespace create "SESSIONS" --preview false
 
 # Output will show:
 # 🌀 Creating namespace with title "job-dashboard-SESSIONS"
-# ✨ Add the following binding to your wrangler.toml:
+# ✨ Add the following binding to your wrangler.jsonc:
 # [[kv_namespaces]]
 # binding = "SESSIONS"
 # id = "2b81b9b02dc34f518d2ca9552804bfef"
 
-# Save the ID for wrangler.toml
+# Save the ID for wrangler.jsonc
 ```
 
 ### Step 2: Create RATE_LIMIT_KV Namespace
@@ -408,7 +408,7 @@ wrangler kv:namespace create "NONCE_KV" --preview false
 # Save ID: 3e282b1b906c474aadcc947a06f0c1ad (or your generated ID)
 ```
 
-### Step 4: Update `wrangler.toml`
+### Step 4: Update `wrangler.jsonc`
 
 Add all KV bindings:
 
@@ -461,7 +461,7 @@ wrangler r2 bucket create job-screenshots --preview false
 # Output will show bucket created
 ```
 
-### Step 2: Update `wrangler.toml`
+### Step 2: Update `wrangler.jsonc`
 
 Add R2 bucket binding:
 
@@ -527,7 +527,7 @@ environment = "production"
 
 ## Workflows & Event Trigger Configuration
 
-Cloudflare Workflows enable scheduled and event-driven jobs. Update `wrangler.toml` with workflow definitions:
+Cloudflare Workflows enable scheduled and event-driven jobs. Update `wrangler.jsonc` with workflow definitions:
 
 ### Workflow Definitions
 
@@ -640,7 +640,7 @@ npm run build
 
 ```bash
 # Deploy to staging environment
-wrangler deploy --config apps/job-dashboard/wrangler.toml --env staging
+wrangler deploy --config apps/job-dashboard/wrangler.jsonc --env staging
 
 # Output will show:
 # ✨ Uploaded job-dashboard-staging
@@ -664,7 +664,7 @@ curl https://staging.jclee.me/job/api/test/db-connection
 
 ```bash
 # Deploy to production
-wrangler deploy --config apps/job-dashboard/wrangler.toml --env production
+wrangler deploy --config apps/job-dashboard/wrangler.jsonc --env production
 
 # Output will show:
 # ✨ Uploaded job-dashboard
@@ -907,10 +907,10 @@ After rollback, investigate the issue:
 **Symptom**: `Error: Database job-dashboard-db not found`
 
 **Solutions**:
-1. Verify database ID in `wrangler.toml`:
+1. Verify database ID in `wrangler.jsonc`:
    ```bash
    wrangler d1 list
-   # Find correct ID and update wrangler.toml
+   # Find correct ID and update wrangler.jsonc
    ```
 
 2. Ensure database is created:
@@ -945,7 +945,7 @@ wrangler dev --port 8788
 **Symptom**: `Error: Namespace SESSIONS not found`
 
 **Solutions**:
-1. Verify KV binding in `wrangler.toml`:
+1. Verify KV binding in `wrangler.jsonc`:
    ```toml
    [[kv_namespaces]]
    binding = "SESSIONS"
@@ -1016,7 +1016,7 @@ wrangler dev --port 8788
 **Symptom**: Scheduled automation not executing
 
 **Solutions**:
-1. Verify workflow bindings in `wrangler.toml` and worker deployment state.
+1. Verify workflow bindings in `wrangler.jsonc` and worker deployment state.
 
 2. Trigger workflow manually through API to validate end-to-end path.
 
@@ -1101,7 +1101,7 @@ Before deploying to production:
 - [ ] D1 database created and schema applied
 - [ ] KV namespaces created and tested
 - [ ] R2 bucket created
-- [ ] Workflows defined in `wrangler.toml`
+- [ ] Workflows defined in `wrangler.jsonc`
 - [ ] Event triggers configured and tested
 - [ ] Local tests passing (`npm test`)
 - [ ] TypeScript compilation clean (`tsc --noEmit`)

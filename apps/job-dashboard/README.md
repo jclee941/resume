@@ -56,7 +56,7 @@ npx wrangler deployments list
 
 ### Environment Variables
 
-Set via `wrangler.toml` or `wrangler secret`:
+Set via `wrangler.jsonc` or `wrangler secret`:
 
 ```bash
 # Set secrets (not visible in config files)
@@ -603,7 +603,7 @@ npx wrangler secret put CLOUDFLARE_API_TOKEN
 # List all secrets (names only, no values)
 npx wrangler secret list
 
-# Secrets are NOT visible in wrangler.toml - security best practice
+# Secrets are NOT visible in wrangler.jsonc - security best practice
 ```
 
 ---
@@ -712,8 +712,8 @@ npx wrangler d1 info job-dashboard-db
 # List namespace contents
 npx wrangler kv:namespace list
 
-# Verify KV binding in wrangler.toml
-cat wrangler.toml | grep -A5 "kv_namespaces"
+# Verify KV binding in wrangler.jsonc
+cat wrangler.jsonc | grep -A5 "kv_namespaces"
 
 # Check KV quota usage
 npx wrangler kv:namespace describe <namespace-id>
@@ -734,7 +734,7 @@ const RATE_LIMIT = {
 Then redeploy:
 
 ```bash
-npx wrangler deploy --config apps/job-dashboard/wrangler.toml --env production
+npx wrangler deploy --config apps/job-dashboard/wrangler.jsonc --env production
 ```
 
 ### CORS Issues
