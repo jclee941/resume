@@ -144,7 +144,7 @@ export class StealthBrowserCrawler extends BaseCrawler {
       throw err;
     } finally {
       if (!options.returnPage) {
-        await page.close().catch(() => {});
+        await page.close().catch((e) => this.logger?.debug?.('Cleanup failed:', e.message));
       }
     }
   }
@@ -166,7 +166,7 @@ export class StealthBrowserCrawler extends BaseCrawler {
       this.emit('action:error', { url, error: err.message, crawler: this.name });
       throw err;
     } finally {
-      await page.close().catch(() => {});
+      await page.close().catch((e) => this.logger?.debug?.('Cleanup failed:', e.message));
     }
   }
 
