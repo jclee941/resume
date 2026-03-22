@@ -35,6 +35,11 @@ export class ProgressTracker extends EventEmitter {
   /** @type {Map<string, TaskState>} */
   #tasks = new Map();
 
+  constructor() {
+    super();
+    this.setMaxListeners(20);
+  }
+
   /** @type {{ started: number, completed: number, failed: number, cancelled: number }} */
   #counters = { started: 0, completed: 0, failed: 0, cancelled: 0 };
 

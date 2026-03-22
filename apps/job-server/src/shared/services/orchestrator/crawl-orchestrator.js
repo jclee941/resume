@@ -83,6 +83,7 @@ export class CrawlOrchestrator extends EventEmitter {
    */
   constructor(options = {}) {
     super();
+    this.setMaxListeners(20);
 
     /** @type {CrawlOrchestratorOptions} */
     this.options = { ...DEFAULT_OPTIONS, ...options };
