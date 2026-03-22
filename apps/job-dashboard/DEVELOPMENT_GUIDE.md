@@ -183,7 +183,7 @@ Wrangler automatically reloads when you save files:
 # Data is NOT persisted between server restarts
 
 # To test with persistent database:
-# 1. Add to wrangler.toml:
+# 1. Add to wrangler.jsonc:
 # [env.local]
 # d1_databases = [{ binding = "DB", database_name = "job-local", database_id = "local" }]
 
@@ -1079,7 +1079,7 @@ async function handleWorkflowTrigger(request, env) {
 
 ### Event Triggers
 
-Configure workflows in `wrangler.toml` and trigger from API/CI:
+Configure workflows in `wrangler.jsonc` and trigger from API/CI:
 
 ```toml
 [[workflows]]

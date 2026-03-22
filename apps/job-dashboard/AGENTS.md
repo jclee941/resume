@@ -19,7 +19,7 @@ workers/
 │   ├── middleware/            # 5-layer request pipeline
 │   ├── services/             # cache, migration, tracing, backup
 │   └── utils/                # helpers
-├── wrangler.toml             # worker config (name: job)
+├── wrangler.jsonc             # worker config (name: job)
 └── package.json
 ```
 

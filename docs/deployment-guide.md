@@ -143,7 +143,7 @@ Your `.env` file contains 6 primary sections:
 The monorepo uses two active Wrangler configuration files:
 
 1. `apps/portfolio/wrangler.toml`: Uses TOML format for the main site.
-2. `apps/job-dashboard/wrangler.toml`: Uses TOML format for the dashboard worker.
+2. `apps/job-dashboard/wrangler.jsonc`: Uses JSONC format for the dashboard worker.
 
 ### 3.4 Managing Production Secrets
 
@@ -151,7 +151,7 @@ Secrets are **not** stored in git. You must push them to Cloudflare using the CL
 
 ```bash
 # Example: Setting the admin token for the dashboard
-npx wrangler secret put ADMIN_TOKEN --config apps/job-dashboard/wrangler.toml
+npx wrangler secret put ADMIN_TOKEN --config apps/job-dashboard/wrangler.jsonc
 ```
 
 **Detailed Secret Descriptions:**
@@ -170,7 +170,7 @@ npx wrangler secret put ADMIN_TOKEN --config apps/job-dashboard/wrangler.toml
 
 ### 3.5 Cloudflare Bindings
 
-Ensure your Cloudflare account has the following resources created and bound to the worker environments. These IDs are referenced in the worker `wrangler.toml` files.
+Ensure your Cloudflare account has the following resources created and bound to the worker environments. These IDs are referenced in the worker configuration files.
 
 **D1 Relational Databases:**
 
@@ -329,7 +329,7 @@ The worker includes 5 scheduled workflow triggers for operational tasks:
   - _Fix_: You edited HTML or JS but didn't rebuild. Run `node generate-worker.js`.
 - **D1 Binding Error**:
   - _Symptom_: Worker returns 500 error with "DB not found".
-  - _Fix_: Check `wrangler.toml` database IDs. Ensure you are logged into Wrangler (`npx wrangler login`).
+  - _Fix_: Check wrangler config database IDs. Ensure you are logged into Wrangler (`npx wrangler login`).
 - **Secret Not Set**:
   - _Symptom_: Dashboard login fails or redirects indefinitely.
   - _Fix_: Ensure `SIGNING_SECRET` and `ENCRYPTION_KEY` are pushed to production.
