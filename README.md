@@ -20,7 +20,7 @@ resume/
 │   │   └── generate-worker.js     # Build engine → worker.js
 │   ├── job-server/                # MCP Server + Automation runtime
 │   │   └── src/                   # Core: crawlers, services, tools
-│   └── job-dashboard/             # Dashboard runtime (served by resume worker)
+│   └── job-dashboard/             # CF Worker: Job dashboard API (Service Binding)
 ├── packages/                      # Shared packages
 │   ├── cli/                       # Deployment CLI (Commander.js)
 │   └── data/                      # SSoT: Resume JSONs & schemas
@@ -101,9 +101,9 @@ npm run automate:full
 git push
 ```
 
-### Single Worker Resume Sync API
+### Resume Sync API
 
-`resume` worker now exposes direct (no `/job` prefix) aliases for JobKorea/Wanted profile sync automation:
+The portfolio worker exposes direct (no `/job` prefix) aliases for JobKorea/Wanted profile sync automation, proxied to the job-dashboard worker via Service Binding:
 
 ```bash
 # Trigger profile sync (defaults to platforms: wanted, jobkorea)

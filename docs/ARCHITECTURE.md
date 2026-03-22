@@ -64,10 +64,10 @@ The resume monorepo is a personal portfolio and job automation system built on C
          ▼                   ▼                   ▼
 ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
 │   apps/portfolio│  │ apps/job-server │  │ apps/job-dash  │
-│   (CF Worker)   │  │  (Docker/MCP)   │  │  (unified)     │
+│   (CF Worker)   │  │  (Docker/MCP)   │  │  (CF Worker)   │
 │                 │  │                 │  │                 │
 │ resume.jclee.me │  │  Local/Docker   │  │  /job/* routes │
-│   + /job/*      │  │  MCP+Fastify    │  │  via portfolio  │
+│  proxies /job/* │  │  MCP+Fastify    │  │ (Svc Binding)  │
 └────────┬────────┘  └────────┬────────┘  └────────┬────────┘
          │                   │                   │
          ▼                   ▼                   ▼
@@ -85,7 +85,7 @@ The resume monorepo is a personal portfolio and job automation system built on C
 ├── apps/
 │   ├── portfolio/              # CF Worker: cyberpunk terminal portfolio
 │   ├── job-server/             # MCP Server + Fastify for job platform automation
-│   └── job-dashboard/          # Dashboard API source (routed via portfolio)
+│   └── job-dashboard/          # CF Worker: Job dashboard API (Service Binding)
 ├── packages/
 │   ├── cli/                    # Commander.js CLI for resume operations
 │   └── data/                   # SSoT for resume variants (master JSON)
@@ -110,7 +110,7 @@ The resume monorepo is a personal portfolio and job automation system built on C
 │   ├── workflows/              # 19 CI/CD workflows
 │   └── actions/setup/          # Composite setup action
 ├── package.json                # Root workspace config (v1.0.128)
-├── wrangler.jsonc              # Unified worker config
+├── wrangler.jsonc              # Portfolio worker config (Service Binding to job-dashboard)
 ├── jsconfig.json               # TypeScript checking config
 ├── eslint.config.cjs           # ESLint flat config
 ├── jest.config.cjs             # Jest test config
@@ -155,7 +155,7 @@ apps/job-dashboard/ (dashboard API)
 apps/portfolio/entry.js (/job/* routes)
 ```
 
-Job automation runs in the job-server application, which crawls Korean job platforms using stealth techniques (UA rotation, jitter, rebrowser-puppeteer). Results are stored in the DB D1 database. The dashboard API is served through the unified worker at `/job/*` routes.
+Job automation runs in the job-server application, which crawls Korean job platforms using stealth techniques (UA rotation, jitter, rebrowser-puppeteer). Results are stored in the DB D1 database. The dashboard API is served by an independent Cloudflare Worker (`job`), proxied from the portfolio worker (`resume`) via Service Binding at `/job/*` routes.
 
 ### 3. CI/CD Flow
 
@@ -178,32 +178,34 @@ The CI pipeline runs eight validation jobs: analyze, validate-cf, lint, typechec
 
 ## Deployment
 
-| App           | Domain                       | Platform           | Deploy Method                |
-| ------------- | ---------------------------- | ------------------ | ---------------------------- |
-| Resume Worker | `resume.jclee.me` + `/job/*` | Cloudflare Workers | CF Workers Builds (git push) |
-| Job Server    | Local / Docker               | Node.js + Fastify  | Docker / manual              |
+| App              | Domain                  | Platform           | Deploy Method                |
+| ---------------- | ----------------------- | ------------------ | ---------------------------- |
+| Portfolio Worker | `resume.jclee.me`       | Cloudflare Workers | CF Workers Builds (git push) |
+| Job Dashboard    | `resume.jclee.me/job/*` | Cloudflare Workers | CF Workers Builds (git push) |
+| Job Server       | Local / Docker          | Node.js + Fastify  | Docker / manual              |
 
-**Deploy authority**: Cloudflare Workers Builds deploys on push to `master`. GitHub Actions is CI only and never deploys. Manual `npm run deploy` is blocked.
+**Deploy authority**: Cloudflare Workers Builds deploys each worker independently on push to `master`. GitHub Actions is CI only and never deploys. The portfolio worker proxies `/job/*` to the job-dashboard worker via Service Binding. See [ADR 0007](adr/0007-msa-service-split.md).
 
 ## Storage Bindings
 
-| Binding         | Type  | Used By       | Purpose                           |
-| --------------- | ----- | ------------- | --------------------------------- |
-| `DB`            | D1    | Resume Worker | Applications, portfolio, job data |
-| `SESSIONS`      | KV    | Resume Worker | Session storage                   |
-| `RATE_LIMIT_KV` | KV    | Resume Worker | Rate limiting                     |
-| `NONCE_KV`      | KV    | Resume Worker | CSP nonce tracking                |
-| `crawl-tasks`   | Queue | Resume Worker | Crawl job queue                   |
+| Binding         | Type  | Used By                    | Purpose                   |
+| --------------- | ----- | -------------------------- | ------------------------- |
+| `DB`            | D1    | Portfolio Worker           | Portfolio data            |
+| `DB`            | D1    | Job Dashboard Worker       | Applications, job data    |
+| `SESSIONS`      | KV    | Both (shared, intentional) | Session storage           |
+| `RATE_LIMIT_KV` | KV    | Both (shared, intentional) | Domain-wide rate limiting |
+| `NONCE_KV`      | KV    | Both (shared, intentional) | CSRF nonce validation     |
+| `crawl-tasks`   | Queue | Job Dashboard Worker       | Crawl job queue           |
 
 ## Workspaces
 
-| Package                        | Path                  | Type    | Description                           |
-| ------------------------------ | --------------------- | ------- | ------------------------------------- |
-| `@resume/portfolio-worker`     | `apps/portfolio/`     | App     | CF Worker: cyberpunk portfolio        |
-| `@resume/job-automation`       | `apps/job-server/`    | App     | MCP Server + Fastify (ESM)            |
-| `@resume/job-dashboard-worker` | `apps/job-dashboard/` | App     | Dashboard API source (unified worker) |
-| `@resume/cli`                  | `packages/cli/`       | Package | Commander.js CLI (ESM)                |
-| `@resume/data`                 | `packages/data/`      | Package | Resume data SSoT                      |
+| Package                        | Path                  | Type    | Description                          |
+| ------------------------------ | --------------------- | ------- | ------------------------------------ |
+| `@resume/portfolio-worker`     | `apps/portfolio/`     | App     | CF Worker: cyberpunk portfolio       |
+| `@resume/job-automation`       | `apps/job-server/`    | App     | MCP Server + Fastify (ESM)           |
+| `@resume/job-dashboard-worker` | `apps/job-dashboard/` | App     | Independent CF Worker: dashboard API |
+| `@resume/cli`                  | `packages/cli/`       | Package | Commander.js CLI (ESM)               |
+| `@resume/data`                 | `packages/data/`      | Package | Resume data SSoT                     |
 
 ## Key Design Decisions
 
@@ -219,9 +221,9 @@ The portfolio worker embeds all assets (HTML, CSS, data) at build-time rather th
 
 The job-server application follows hexagonal architecture principles. Business logic lives in `services/` (domain), while external integrations reside in `clients/` (adapters). Dependencies point inward: clients implement interfaces defined by services. This isolation enables testing without real API calls and simplifies swapping implementations.
 
-### Unified Worker Entry
+### Service Binding Architecture
 
-The `apps/portfolio/entry.js` file serves as the unified entry point routing both portfolio and job-dashboard functionality. It exports workflow classes and handles queue consumption for crawl tasks. This consolidation reduces deployment complexity by running both features from a single worker.
+The portfolio worker (`apps/portfolio/entry.js`) proxies `/job/*` requests to the independent job-dashboard worker via Cloudflare Service Binding (`env.JOB_SERVICE.fetch(request)`). Each worker deploys independently via Cloudflare Workers Builds. Shared concerns (Elasticsearch logging, auth headers, CSP config) live in `@resume/shared`. See [ADR 0007](adr/0007-msa-service-split.md) for the full architecture rationale.
 
 ### Stealth Crawling
 
