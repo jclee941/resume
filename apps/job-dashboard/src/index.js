@@ -14,14 +14,19 @@ import {
   requiresWebhookSignature,
   verifyAdminAuth,
   verifyWebhookSignature,
-  verifySecret,
-  createAuthCookie,
-  clearAuthCookie,
 } from './services/auth.js';
 import { checkRateLimit, addRateLimitHeaders } from './middleware/rate-limit.js';
 import { validateCsrf, addCsrfCookie } from './middleware/csrf.js';
-import { getConfig, saveConfig } from './services/config.js';
 import { serveStatic } from './views/dashboard.js';
+import {
+  registerHealthRoutes,
+  registerAuthRoutes,
+  registerApplicationsRoutes,
+  registerStatsRoutes,
+  registerAutomationRoutes,
+  registerWorkflowRoutes,
+  registerAdminRoutes,
+} from './routes/index.js';
 
 import {
   JobCrawlingWorkflow,
@@ -33,7 +38,7 @@ import {
   CleanupWorkflow,
 } from './workflows/index.js';
 import { BrowserSessionDO } from './durable-objects/browser-session-do.js';
-import { QueueConsumer, enqueueTask, MESSAGE_TYPES, PRIORITY } from './queue-consumer.js';
+import { QueueConsumer } from './queue-consumer.js';
 
 export {
   JobCrawlingWorkflow,
@@ -127,238 +132,24 @@ export default {
     const autoApply = new AutoApplyHandler(env);
     const diagnostics = new DiagnosticsHandler(env);
     const resumeMaster = new ResumeMasterHandler(env, auth);
-
-    // Health endpoint at root (for portfolio status checks with CORS)
-    router.get('/health', async () => {
-      const health = {
-        status: 'ok',
-        timestamp: new Date().toISOString(),
-        version: '2.0.0',
-      };
-      try {
-        if (env.DB) {
-          await env.DB.prepare('SELECT 1').first();
-          health.database = 'connected';
-        } else {
-          health.database = 'not configured';
-        }
-      } catch {
-        health.status = 'degraded';
-        health.database = 'error';
-      }
-      return jsonResponse(health);
-    });
-
-    router.get('/api/health', async () => {
-      const health = {
-        status: 'ok',
-        timestamp: new Date().toISOString(),
-        version: '2.0.0',
-      };
-      try {
-        if (env.DB) {
-          await env.DB.prepare('SELECT 1').first();
-          health.database = 'connected';
-        } else {
-          health.database = 'not configured';
-        }
-      } catch {
-        health.status = 'degraded';
-        health.database = 'error';
-      }
-      return jsonResponse(health);
-    });
-
-    router.get('/api/status', async () => {
-      const status = {
-        status: 'ok',
-        timestamp: new Date().toISOString(),
-        version: '2.0.0',
-      };
-      if (env.DB) {
-        try {
-          const result = await env.DB.prepare('SELECT COUNT(*) as count FROM applications').first();
-          status.applications = result?.count ?? 0;
-        } catch {
-          status.applications = 'error';
-        }
-      }
-      return jsonResponse(status);
-    });
-
-    router.get('/api/diagnostics/bindings', (req) => diagnostics.checkBindings(req));
-
-    router.get('/api/stats', (req) => stats.getStats(req));
-    router.get('/api/stats/weekly', (req) => stats.getWeeklyStats(req));
-
-    router.get('/api/auth/status', (req) => auth.getStatus(req));
-    router.post('/api/auth/set', (req) => auth.setAuth(req));
-    router.post('/api/auth/sync', (req) => auth.syncFromScript(req));
-    router.delete('/api/auth/:platform', (req) => auth.clearAuth(req));
-    router.get('/api/auth/profile', (req) => auth.getProfile(req));
-
-    router.post('/api/auth/login', async (req) => {
-      try {
-        const body = await req.json();
-        const { token } = body;
-        if (!verifySecret(token || null, env.ADMIN_TOKEN)) {
-          return jsonResponse({ error: 'Invalid token' }, 401);
-        }
-        const response = jsonResponse({ success: true });
-        response.headers.set('Set-Cookie', createAuthCookie(token));
-        return response;
-      } catch {
-        return jsonResponse({ error: 'Invalid request' }, 400);
-      }
-    });
-
-    router.post('/api/auth/logout', async () => {
-      const response = jsonResponse({ success: true });
-      response.headers.set('Set-Cookie', clearAuthCookie());
-      return response;
-    });
-
-    router.get('/api/applications', (req) => apps.list(req));
-    router.post('/api/applications', (req) => apps.create(req));
-    router.get('/api/applications/:id', (req) => apps.get(req));
-    router.put('/api/applications/:id', (req) => apps.update(req));
-    router.delete('/api/applications/:id', (req) => apps.delete(req));
-    router.put('/api/applications/:id/status', (req) => apps.updateStatus(req));
-
-    router.get('/api/report', (req) => stats.getDailyReport(req));
-    router.get('/api/report/weekly', (req) => stats.getWeeklyReport(req));
-
-    router.post('/api/automation/search', (req) => webhooks.triggerJobSearch(req));
-    router.post('/api/automation/apply', (req) => webhooks.triggerAutoApply(req));
-    router.post('/api/automation/report', (req) => webhooks.triggerDailyReport(req));
-    router.post('/api/automation/resume', (req) => webhooks.triggerResumeSync(req));
-
-    router.get('/api/auto-apply/status', (req) => autoApply.status(req));
-    router.post('/api/auto-apply/run', (req) => autoApply.run(req));
-    router.get('/api/auto-apply/config', (req) => autoApply.configure(req));
-
-    // Profile sync endpoints
-    router.post('/api/automation/profile-sync', (req) => webhooks.triggerProfileSync(req));
-    router.get('/api/automation/profile-sync/history', (req) =>
-      resumeMaster.listResumeSyncHistory(req)
-    );
-    router.get('/api/automation/profile-sync/:syncId', (req) => webhooks.getProfileSyncStatus(req));
-    router.post('/api/automation/profile-sync/callback', (req) =>
-      webhooks.updateProfileSyncStatus(req)
-    );
-
-    router.get('/api/resume/master', (req) => resumeMaster.getMasterResume(req));
-    router.put('/api/resume/master', (req) => resumeMaster.uploadMasterResume(req));
-
-    // Test endpoints for Chaos API integration
-    router.get('/api/test/chaos-resumes', (req) => webhooks.testChaosResumes(req));
-
-    router.get('/api/config', () => getConfig(env.DB));
-    router.put('/api/config', (req) => saveConfig(req, env.DB));
-
-    router.post('/api/cleanup', (req) => apps.cleanupExpired(req));
-
-    router.post('/api/queue/enqueue', async (req) => {
-      try {
-        const body = await req.json();
-        const { type, payload, priority, delaySeconds } = body;
-
-        if (!type || !payload) {
-          return jsonResponse({ error: 'Missing required fields: type, payload' }, 400);
-        }
-
-        const validTypes = Object.values(MESSAGE_TYPES);
-        if (!validTypes.includes(type)) {
-          return jsonResponse(
-            { error: `Invalid type. Must be one of: ${validTypes.join(', ')}` },
-            400
-          );
-        }
-
-        await enqueueTask(
-          env,
-          { type, payload, priority: priority || PRIORITY.BACKGROUND },
-          { delaySeconds: delaySeconds || 0 }
-        );
-
-        return jsonResponse({ success: true, type, priority: priority || PRIORITY.BACKGROUND });
-      } catch (err) {
-        log.error('Queue enqueue failed', { error: err.message });
-        return jsonResponse({ error: 'Failed to enqueue task' }, 500);
-      }
-    });
-
-    router.get('/api/queue/status', async () => {
-      return jsonResponse({
-        status: 'ok',
-        queue: 'crawl-tasks',
-        types: Object.values(MESSAGE_TYPES),
-        priorities: Object.values(PRIORITY),
-      });
-    });
-
-    router.post('/api/workflows/job-crawling', async (req) => {
-      const body = await req.json().catch(() => ({}));
-      const instance = await env.JOB_CRAWLING_WORKFLOW.create({ params: body });
-      return jsonResponse({ instanceId: instance.id, status: 'started' });
-    });
-
-    router.post('/api/workflows/application', async (req) => {
-      const body = await req.json().catch(() => ({}));
-      const instance = await env.APPLICATION_WORKFLOW.create({ params: body });
-      return jsonResponse({ instanceId: instance.id, status: 'started' });
-    });
-
-    router.post('/api/workflows/resume-sync', async (req) => {
-      const body = await req.json().catch(() => ({}));
-      const instance = await env.RESUME_SYNC_WORKFLOW.create({ params: body });
-      return jsonResponse({ instanceId: instance.id, status: 'started' });
-    });
-
-    router.post('/api/workflows/daily-report', async (req) => {
-      const body = await req.json().catch(() => ({}));
-      const instance = await env.DAILY_REPORT_WORKFLOW.create({ params: body });
-      return jsonResponse({ instanceId: instance.id, status: 'started' });
-    });
-
-    router.get('/api/workflows/:workflowType/:instanceId', async (req) => {
-      const { workflowType, instanceId } = req.params;
-      const workflowBindings = {
-        'job-crawling': env.JOB_CRAWLING_WORKFLOW,
-        application: env.APPLICATION_WORKFLOW,
-        'resume-sync': env.RESUME_SYNC_WORKFLOW,
-        'daily-report': env.DAILY_REPORT_WORKFLOW,
-      };
-
-      const workflow = workflowBindings[workflowType];
-      if (!workflow) {
-        return jsonResponse({ error: 'Unknown workflow type' }, 404);
-      }
-
-      const instance = await workflow.get(instanceId);
-      const status = await instance.status();
-      return jsonResponse({ instanceId, status: status.status, output: status.output });
-    });
-
-    router.post('/api/workflows/application/:instanceId/approve', async (req) => {
-      const { instanceId } = req.params;
-      await env.SESSIONS.put(
-        `workflow:application:${instanceId}:approval`,
-        JSON.stringify({ approved: true, at: new Date().toISOString() }),
-        { expirationTtl: 86400 }
-      );
-      return jsonResponse({ success: true, approved: true });
-    });
-
-    router.post('/api/workflows/application/:instanceId/reject', async (req) => {
-      const { instanceId } = req.params;
-      await env.SESSIONS.put(
-        `workflow:application:${instanceId}:approval`,
-        JSON.stringify({ approved: false, at: new Date().toISOString() }),
-        { expirationTtl: 86400 }
-      );
-      return jsonResponse({ success: true, approved: false });
-    });
+    const routeCtx = {
+      env,
+      apps,
+      stats,
+      auth,
+      webhooks,
+      autoApply,
+      diagnostics,
+      resumeMaster,
+      log,
+    };
+    registerHealthRoutes(router, routeCtx);
+    registerAuthRoutes(router, routeCtx);
+    registerApplicationsRoutes(router, routeCtx);
+    registerStatsRoutes(router, routeCtx);
+    registerAutomationRoutes(router, routeCtx);
+    registerWorkflowRoutes(router, routeCtx);
+    registerAdminRoutes(router, routeCtx);
 
     try {
       const response = await router.handle(request, url, log);

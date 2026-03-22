@@ -108,6 +108,54 @@ module.exports = [
     },
   },
   {
+    files: ['apps/job-dashboard/**/*.js', 'apps/job-dashboard/**/*.mjs'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['**/job-server/**', '**/portfolio/**'],
+              message: 'Cross-app import. Use @resume/shared/* instead.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ['apps/job-server/**/*.js', 'apps/job-server/**/*.mjs'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['**/job-dashboard/**', '**/portfolio/**'],
+              message: 'Cross-app import. Use @resume/shared/* instead.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ['apps/portfolio/**/*.js', 'apps/portfolio/**/*.mjs'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['**/job-server/**', '**/job-dashboard/**'],
+              message: 'Cross-app import. Use @resume/shared/* instead.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
     files: ['tests/**/*.test.js', 'tests/**/*.spec.js', 'tests/**/*.test.ts', 'tests/**/*.spec.ts'],
     rules: {
       'no-new-func': 'off',

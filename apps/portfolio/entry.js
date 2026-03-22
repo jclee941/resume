@@ -1,13 +1,4 @@
 import portfolioWorker from './worker.js';
-import jobHandler, {
-  JobCrawlingWorkflow,
-  ApplicationWorkflow,
-  ResumeSyncWorkflow,
-  DailyReportWorkflow,
-  HealthCheckWorkflow,
-  BackupWorkflow,
-  CleanupWorkflow,
-} from '../job-dashboard/src/index.js';
 import {
   DEFAULT_LANGUAGE,
   JOB_ROUTE_PREFIX,
@@ -28,19 +19,9 @@ import {
 import { logResponse, logError } from '@resume/shared/es-client';
 
 async function fetchJobHandlerResponse(request, env, ctx, pathname) {
-  const response = await jobHandler.fetch(request, env, ctx);
+  const response = await env.JOB_SERVICE.fetch(request);
   return applyResponseHeaders(response, pathname);
 }
-
-export {
-  JobCrawlingWorkflow,
-  ApplicationWorkflow,
-  ResumeSyncWorkflow,
-  DailyReportWorkflow,
-  HealthCheckWorkflow,
-  BackupWorkflow,
-  CleanupWorkflow,
-};
 
 export default {
   async fetch(request, env, ctx) {
@@ -142,9 +123,5 @@ export default {
       })
     );
     return response;
-  },
-
-  async queue(batch, env, ctx) {
-    return jobHandler.queue(batch, env, ctx);
   },
 };

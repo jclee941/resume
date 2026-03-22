@@ -4,6 +4,21 @@
   "main": "src/index.js",
   "compatibility_date": "2026-02-21",
   "compatibility_flags": ["nodejs_compat"],
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1,
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+      "persist": true,
+      "invocation_logs": true,
+    },
+    "traces": {
+      "enabled": true,
+      "persist": true,
+      "head_sampling_rate": 1,
+    },
+  },
   // account_id sourced from CLOUDFLARE_ACCOUNT_ID env var or wrangler-action accountId
   "ai": {
     "binding": "AI",
@@ -38,7 +53,8 @@
     { "binding": "NONCE_KV", "id": "3e282b1b906c474aadcc947a06f0c1ad" },
   ],
   "vars": {
-    "ENVIRONMENT": "development",
+    "ENVIRONMENT": "production",
+    "ELASTICSEARCH_INDEX": "job-logs-worker",
   },
   "workflows": [
     {
@@ -82,13 +98,5 @@
         "max_concurrency": 3,
       },
     ],
-  },
-  // Production environment overrides
-  "env": {
-    "production": {
-      "vars": {
-        "ENVIRONMENT": "production",
-      },
-    },
   },
 }

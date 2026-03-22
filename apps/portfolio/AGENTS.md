@@ -16,7 +16,7 @@ portfolio/
 ├── index-en.html           # English portfolio source
 ├── generate-worker.js      # build compiler
 ├── worker.js               # GENERATED — never edit
-├── entry.js                # unified edge router
+├── entry.js                # edge router (proxies /job/* via Service Binding)
 ├── data.json               # SSoT snapshot (KO)
 ├── data_en.json            # English resume data
 ├── data_ja.json            # Japanese resume data
@@ -36,16 +36,16 @@ portfolio/
 
 ## WHERE TO LOOK
 
-| Task              | Location                       | Notes                                  |
-| ----------------- | ------------------------------ | -------------------------------------- |
-| Build pipeline     | `generate-worker.js`           | HTML→CSP→inline→worker.js              |
-| Source markup      | `index.html`, `index-en.html`  | KO/EN portfolio templates               |
-| Runtime modules    | `lib/`                         | 25 stateless JS modules                |
-| Multi-language     | `i18n.js`, `data_*.json`       | KO/EN/JA support                       |
-| OG Image Gen       | `generate-og-image.js`         | Canvas-based social image generation   |
-| Project Schemas    | `*project-schemas.js`          | JSON-LD generation and injection        |
-| SEO/Metadata       | `SEO_IMPLEMENTATION.md`        | sitemap, robots, meta tags             |
-| Edge routing       | `entry.js`                     | imports both portfolio + job worker    |
+| Task            | Location                      | Notes                                                |
+| --------------- | ----------------------------- | ---------------------------------------------------- |
+| Build pipeline  | `generate-worker.js`          | HTML→CSP→inline→worker.js                            |
+| Source markup   | `index.html`, `index-en.html` | KO/EN portfolio templates                            |
+| Runtime modules | `lib/`                        | 25 stateless JS modules                              |
+| Multi-language  | `i18n.js`, `data_*.json`      | KO/EN/JA support                                     |
+| OG Image Gen    | `generate-og-image.js`        | Canvas-based social image generation                 |
+| Project Schemas | `*project-schemas.js`         | JSON-LD generation and injection                     |
+| SEO/Metadata    | `SEO_IMPLEMENTATION.md`       | sitemap, robots, meta tags                           |
+| Edge routing    | `entry.js`                    | proxies /job/\* to job-dashboard via Service Binding |
 
 ## BUILD PIPELINE
 

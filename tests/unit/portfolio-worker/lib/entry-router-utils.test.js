@@ -214,7 +214,7 @@ describe('entry-router-utils', () => {
     });
   });
 
-  describe('single-worker profile sync aliases', () => {
+  describe('profile sync aliases (Service Binding proxy)', () => {
     test('builds profile-sync request with default platforms when input is invalid', async () => {
       const request = new Request('https://resume.jclee.me/api/automation/resume-update', {
         method: 'POST',

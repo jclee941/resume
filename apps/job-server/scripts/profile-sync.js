@@ -23,7 +23,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import WantedAPI from '../src/shared/clients/wanted/index.js';
-import WantedClient from '../../job-dashboard/src/services/wanted-client.js';
+import WantedClient from '@resume/shared/wanted-client';
 import {
   syncWantedSkills,
   syncWantedCareers,

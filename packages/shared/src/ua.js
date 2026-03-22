@@ -24,3 +24,7 @@ export const CHROME_USER_AGENTS = [
 export function getRandomUA() {
   return CHROME_USER_AGENTS[Math.floor(Math.random() * CHROME_USER_AGENTS.length)];
 }
+
+/** @type {string} Deterministic Chrome UA for API calls (not stealth rotation) */
+export const DEFAULT_USER_AGENT =
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.6778.139 Safari/537.36';

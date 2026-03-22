@@ -17,9 +17,11 @@ type affectedSummary struct {
 	ChangedFilesCount    int              `json:"changed_files_count"`
 	Portfolio            bool             `json:"portfolio"`
 	JobDashboard         bool             `json:"job_dashboard"`
+	JobServer            bool             `json:"job_server"`
 	Data                 bool             `json:"data"`
 	Infra                bool             `json:"infra"`
 	CLI                  bool             `json:"cli"`
+	Shared               bool             `json:"shared"`
 	AffectedTargetsCount int              `json:"affected_targets_count"`
 	HasBuildChanges      bool             `json:"has_build_changes"`
 	Outputs              *affectedOutputs `json:"outputs,omitempty"`
@@ -65,9 +67,11 @@ func main() {
 			ChangedFilesCount:    0,
 			Portfolio:            false,
 			JobDashboard:         false,
+			JobServer:            false,
 			Data:                 false,
 			Infra:                false,
 			CLI:                  false,
+			Shared:               false,
 			AffectedTargetsCount: 0,
 			HasBuildChanges:      false,
 		}
@@ -109,14 +113,17 @@ func main() {
 		}
 		mustWriteLines(filepath.Join(outputDir, "affected_targets.txt"), affectedTargets)
 
+		sharedAffected := anyMatch(changedFiles, regexp.MustCompile(`^packages/shared/`))
 		summary := affectedSummary{
 			BaseBranch:           baseBranch,
 			ChangedFilesCount:    len(changedFiles),
-			Portfolio:            anyMatch(changedFiles, regexp.MustCompile(`^apps/portfolio/|^packages/data/`)),
-			JobDashboard:         anyMatch(changedFiles, regexp.MustCompile(`^apps/job-server/`)),
+			Portfolio:            anyMatch(changedFiles, regexp.MustCompile(`^apps/portfolio/|^packages/data/|^packages/shared/`)),
+			JobDashboard:         anyMatch(changedFiles, regexp.MustCompile(`^apps/job-dashboard/|^packages/shared/`)),
+			JobServer:            anyMatch(changedFiles, regexp.MustCompile(`^apps/job-server/`)),
 			Data:                 anyMatch(changedFiles, regexp.MustCompile(`^packages/data/`)),
 			Infra:                anyMatch(changedFiles, regexp.MustCompile(`^infrastructure/`)),
 			CLI:                  anyMatch(changedFiles, regexp.MustCompile(`^packages/cli/`)),
+			Shared:               sharedAffected,
 			AffectedTargetsCount: len(affectedTargets),
 			HasBuildChanges:      len(buildChanges) > 0,
 		}
@@ -163,14 +170,17 @@ func main() {
 	fmt.Println()
 	fmt.Printf("Output saved to: %s/\n", outputDir)
 
+	sharedAffected := anyMatch(changedFiles, regexp.MustCompile(`^packages/shared/`))
 	summary := affectedSummary{
 		BaseBranch:           baseBranch,
 		ChangedFilesCount:    len(changedFiles),
-		Portfolio:            anyMatch(changedFiles, regexp.MustCompile(`^apps/portfolio/|^packages/data/`)),
-		JobDashboard:         anyMatch(changedFiles, regexp.MustCompile(`^apps/job-server/`)),
+		Portfolio:            anyMatch(changedFiles, regexp.MustCompile(`^apps/portfolio/|^packages/data/|^packages/shared/`)),
+		JobDashboard:         anyMatch(changedFiles, regexp.MustCompile(`^apps/job-dashboard/|^packages/shared/`)),
+		JobServer:            anyMatch(changedFiles, regexp.MustCompile(`^apps/job-server/`)),
 		Data:                 anyMatch(changedFiles, regexp.MustCompile(`^packages/data/`)),
 		Infra:                anyMatch(changedFiles, regexp.MustCompile(`^infrastructure/`)),
 		CLI:                  anyMatch(changedFiles, regexp.MustCompile(`^packages/cli/`)),
+		Shared:               sharedAffected,
 		AffectedTargetsCount: len(allAffected),
 		HasBuildChanges:      len(buildChanges) > 0,
 		Outputs: &affectedOutputs{
@@ -235,11 +245,17 @@ func collectPathBasedTargets(changedFiles []string) []string {
 		switch {
 		case strings.HasPrefix(file, "apps/portfolio/"):
 			targets["//apps/portfolio:all"] = struct{}{}
+		case strings.HasPrefix(file, "apps/job-dashboard/"):
+			targets["//apps/job-dashboard:all"] = struct{}{}
 		case strings.HasPrefix(file, "apps/job-server/"):
 			targets["//apps/job-server:all"] = struct{}{}
 		case strings.HasPrefix(file, "packages/data/"):
 			targets["//packages/data:all"] = struct{}{}
 			targets["//apps/portfolio:all"] = struct{}{}
+		case strings.HasPrefix(file, "packages/shared/"):
+			targets["//packages/shared:all"] = struct{}{}
+			targets["//apps/portfolio:all"] = struct{}{}
+			targets["//apps/job-dashboard:all"] = struct{}{}
 		case strings.HasPrefix(file, "packages/cli/"):
 			targets["//packages/cli:all"] = struct{}{}
 		case strings.HasPrefix(file, "tools/"):
