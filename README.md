@@ -23,8 +23,9 @@ resume/
 │   └── job-dashboard/             # CF Worker: Job dashboard API (Service Binding)
 ├── packages/                      # Shared packages
 │   ├── cli/                       # Deployment CLI (Commander.js)
-│   └── data/                      # SSoT: Resume JSONs & schemas
-│       └── resumes/master/        # resume_data.json (canonical)
+│   ├── data/                      # SSoT: Resume JSONs & schemas
+│   │   └── resumes/master/        # resume_data.json (canonical)
+│   └── shared/                    # @resume/shared: cross-worker utilities
 ├── infrastructure/                # Grafana, Elasticsearch, Prometheus, n8n
 ├── docs/                          # Documentation hub
 │   ├── adr/                       # Durable architecture decisions

@@ -88,7 +88,8 @@ The resume monorepo is a personal portfolio and job automation system built on C
 │   └── job-dashboard/          # CF Worker: Job dashboard API (Service Binding)
 ├── packages/
 │   ├── cli/                    # Commander.js CLI for resume operations
-│   └── data/                   # SSoT for resume variants (master JSON)
+│   ├── data/                   # SSoT for resume variants (master JSON)
+│   └── shared/                 # @resume/shared: cross-worker utilities (logger, errors, ES client, etc.)
 ├── infrastructure/
 │   ├── cloudflare/             # Terraform (Cloudflare resources)
 │   ├── monitoring/             # Grafana, Loki, Prometheus configs
@@ -204,6 +205,7 @@ The CI pipeline runs eight validation jobs: analyze, validate-cf, lint, typechec
 | `@resume/portfolio-worker`     | `apps/portfolio/`     | App     | CF Worker: cyberpunk portfolio       |
 | `@resume/job-automation`       | `apps/job-server/`    | App     | MCP Server + Fastify (ESM)           |
 | `@resume/job-dashboard-worker` | `apps/job-dashboard/` | App     | Independent CF Worker: dashboard API |
+| `@resume/shared`               | `packages/shared/`    | Package | Cross-worker shared kernel           |
 | `@resume/cli`                  | `packages/cli/`       | Package | Commander.js CLI (ESM)               |
 | `@resume/data`                 | `packages/data/`      | Package | Resume data SSoT                     |
 
