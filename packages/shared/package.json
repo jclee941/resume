@@ -7,6 +7,11 @@
     "./logger": "./src/logger/index.js",
     "./es-client": "./src/clients/elasticsearch/index.js",
     "./ua": "./src/ua.js",
-    "./phone": "./src/phone.js"
+    "./phone": "./src/phone.js",
+    "./job-categories": "./src/job-categories.js",
+    "./browser": "./src/browser/index.js",
+    "./browser/stealth": "./src/browser/stealth-patches.js",
+    "./browser/service": "./src/browser/browser-service.js",
+    "./wanted-client": "./src/wanted-client.js"
   }
 }

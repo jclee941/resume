@@ -1,5 +1,5 @@
 import WantedAPI from '../../src/shared/clients/wanted/index.js';
-import WantedClient from '../../../job-dashboard/src/services/wanted-client.js';
+import WantedClient from '@resume/shared/wanted-client';
 import { CONFIG, PLATFORMS } from './constants.js';
 import { log, computeDiff } from './utils.js';
 import {
@@ -50,7 +50,11 @@ function tryLoadSessionFile(sessionPath) {
       return session.cookies.map((c) => `${c.name}=${c.value}`).join('; ');
     }
     // Fallback to cookieString (normalized by SessionManager.save)
-    if (session.cookieString && typeof session.cookieString === 'string' && session.cookieString.length > 0) {
+    if (
+      session.cookieString &&
+      typeof session.cookieString === 'string' &&
+      session.cookieString.length > 0
+    ) {
       return session.cookieString;
     }
     return null;
