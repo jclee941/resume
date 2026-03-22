@@ -3,10 +3,7 @@ import { WantedClient } from '../services/wanted-client.js';
 import { normalizeError } from '@resume/shared/errors';
 import { normalizePhone } from '@resume/shared/phone';
 import { sendTelegramNotification } from '../services/notification/telegram.js';
-import {
-  JOB_CATEGORY_MAPPING,
-  DEFAULT_JOB_CATEGORY,
-} from '../../../job-server/scripts/profile-sync/job-categories.js';
+import { JOB_CATEGORY_MAPPING, DEFAULT_JOB_CATEGORY } from '@resume/shared/job-categories';
 
 function parsePeriod(period = '') {
   const parts = String(period)
