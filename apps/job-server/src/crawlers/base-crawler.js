@@ -85,6 +85,15 @@ export class BaseCrawler extends EventEmitter {
   }
 
   /**
+   * Cleans up event listeners and child detectors.
+   * Call during shutdown to prevent memory leaks.
+   */
+  destroy() {
+    this.captchaDetector?.destroy();
+    this.removeAllListeners();
+  }
+
+  /**
    * Calculate exponential backoff delay with jitter.
    *
    * Formula: min(baseDelay * 2^(attempt-1), maxDelay) * (1 + random * jitterFactor)

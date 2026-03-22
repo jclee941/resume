@@ -182,6 +182,14 @@ export class CaptchaDetector extends EventEmitter {
     this._history = [];
   }
 
+  /**
+   * Destroys the detector, clearing history and removing all listeners.
+   */
+  destroy() {
+    this.clearHistory();
+    this.removeAllListeners();
+  }
+
   /** @returns {number} Total detections */
   get detectionCount() {
     return this._history.length;
