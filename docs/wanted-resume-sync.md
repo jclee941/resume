@@ -50,7 +50,7 @@ unified_resume_sync({ action: 'sync', platforms: ['wanted'], resume_id: '...' })
 ### Manual (HTTP API)
 
 ```bash
-# Trigger single-worker profile sync alias
+# Trigger profile sync via portfolio worker alias
 curl -X POST https://resume.jclee.me/api/automation/resume-update \
   -H 'Content-Type: application/json' \
   -H 'Authorization: Bearer <admin-token>' \

@@ -140,16 +140,16 @@
 ### F9. Job Dashboard 통합
 
 > 2026-02-11 추가. portfolio-worker와 job-automation 워커 간 통합 라우팅.
-> entry.js 통합 디스패처를 통해 /job/\* 경로를 단일 도메인에서 서비스.
+> entry.js 디스패처가 /job/\* 경로를 Service Binding을 통해 job-dashboard 워커로 프록시 (ADR-0007).
 
-| ID   | 기능                 | 설명                                                | 구현 |
-| ---- | -------------------- | --------------------------------------------------- | ---- |
-| F9.1 | Unified Router       | entry.js 통합 디스패처 — portfolio + /job/\* 라우팅 | ✅   |
-| F9.2 | /job/\* Path Routing | /job/ 하위 경로를 job-automation 워커로 프록시      | ✅   |
-| F9.3 | Dashboard Worker     | /job/dashboard UI 페이지 (ESLint 에러 수정 완료)    | ✅   |
-| F9.4 | /job/health Endpoint | job-automation 헬스체크 엔드포인트 (HTTP 200 정상)  | ✅   |
-| F9.5 | Job API Routes       | /job/api/\* REST 엔드포인트 구현                    | ✅   |
-| F9.6 | Dashboard Auth       | 대시보드 접근 제어 (인증/인가)                      | ✅   |
+| ID   | 기능                   | 설명                                                        | 구현 |
+| ---- | ---------------------- | ----------------------------------------------------------- | ---- |
+| F9.1 | Service Binding Router | entry.js 디스패처 — /job/\* → job-dashboard Service Binding | ✅   |
+| F9.2 | /job/\* Path Routing   | /job/ 하위 경로를 job-automation 워커로 프록시              | ✅   |
+| F9.3 | Dashboard Worker       | /job/dashboard UI 페이지 (ESLint 에러 수정 완료)            | ✅   |
+| F9.4 | /job/health Endpoint   | job-automation 헬스체크 엔드포인트 (HTTP 200 정상)          | ✅   |
+| F9.5 | Job API Routes         | /job/api/\* REST 엔드포인트 구현                            | ✅   |
+| F9.6 | Dashboard Auth         | 대시보드 접근 제어 (인증/인가)                              | ✅   |
 
 ---
 
@@ -249,14 +249,14 @@
 > 2026-02-11 추가. Jest 단위 테스트 + Playwright E2E 테스트 프레임워크.
 > 데드 테스트 정리 및 테스트 안정성 개선 항목 포함.
 
-| ID    | 요구사항            | 설명                                                    | 구현 |
-| ----- | ------------------- | ------------------------------------------------------- | ---- |
-| NF7.1 | Jest Unit Tests     | 단위 테스트 프레임워크 구성 및 실행                     | ✅   |
-| NF7.2 | Playwright E2E      | E2E 테스트 프레임워크 구성 (Chromium)                   | ✅   |
-| NF7.3 | Dead Test Cleanup   | 사용하지 않는 테스트 파일 정리 완료                     | ✅   |
-| NF7.4 | auth.js Restoration | 테스트 인증 모듈 복원 (삭제 후 재생성)                  | ✅   |
-| NF7.6 | Visual Regression   | 비주얼 리그레션 테스트 추가 (스크린샷 비교)             | ✅   |
-| NF7.7 | CSP Hash Validation | 빌드 시 CSP 해시 불일치 자동 감지 테스트                | ✅   |
+| ID    | 요구사항            | 설명                                        | 구현 |
+| ----- | ------------------- | ------------------------------------------- | ---- |
+| NF7.1 | Jest Unit Tests     | 단위 테스트 프레임워크 구성 및 실행         | ✅   |
+| NF7.2 | Playwright E2E      | E2E 테스트 프레임워크 구성 (Chromium)       | ✅   |
+| NF7.3 | Dead Test Cleanup   | 사용하지 않는 테스트 파일 정리 완료         | ✅   |
+| NF7.4 | auth.js Restoration | 테스트 인증 모듈 복원 (삭제 후 재생성)      | ✅   |
+| NF7.6 | Visual Regression   | 비주얼 리그레션 테스트 추가 (스크린샷 비교) | ✅   |
+| NF7.7 | CSP Hash Validation | 빌드 시 CSP 해시 불일치 자동 감지 테스트    | ✅   |
 
 ### NF8. 코드 품질 및 문서화
 
@@ -318,11 +318,11 @@ curl -s https://resume.jclee.me/metrics
 
 ## 변경 이력
 
-| 날짜       | 버전 | 변경 내용                                                               |
-| ---------- | ---- | ----------------------------------------------------------------------- |
-| 2026-02-05 | 1.0  | 초기 작성 (F1–F6, NF1–NF5: 109항목)                                     |
-| 2026-02-09 | 1.1  | F7 SSoT 데이터 품질, F8 콘텐츠 확장 추가 (123항목)                      |
-| 2026-02-11 | 2.0  | F9 Job Dashboard 통합, NF6–NF8 추가, 48세션 감사 반영 (150항목)         |
+| 날짜       | 버전 | 변경 내용                                                       |
+| ---------- | ---- | --------------------------------------------------------------- |
+| 2026-02-05 | 1.0  | 초기 작성 (F1–F6, NF1–NF5: 109항목)                             |
+| 2026-02-09 | 1.1  | F7 SSoT 데이터 품질, F8 콘텐츠 확장 추가 (123항목)              |
+| 2026-02-11 | 2.0  | F9 Job Dashboard 통합, NF6–NF8 추가, 48세션 감사 반영 (150항목) |
 
 ---
 

@@ -43,9 +43,9 @@ The project is structured as a **Google3-style monorepo**, emphasizing a **Singl
 - **Job Dashboard Worker** (`apps/job-dashboard/`):
   - Domain: `resume.jclee.me/job/*`
   - Function: A full-stack mini-app managing job applications, automation status, and analytics. It interfaces with D1, KV, and R2.
-- **Unified Routing**:
+- **Service Binding Routing**:
   - Implementation: `apps/portfolio/entry.js`
-  - Routing Logic: Any request starting with `/job/` is dispatched to the Job Dashboard. All other requests are handled by the Portfolio Worker.
+  - Routing Logic: The portfolio worker proxies `/job/*` requests to the job-dashboard worker via Cloudflare Service Binding (`env.JOB_SERVICE.fetch()`). All other requests are handled directly by the portfolio worker. See [ADR 0007](adr/0007-msa-service-split.md).
 
 ### 2.2 SSoT: Single Source of Truth
 

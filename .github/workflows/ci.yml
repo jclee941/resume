@@ -123,6 +123,11 @@ jobs:
         run: |
           npx wrangler types /tmp/portfolio-worker-types.d.ts --config apps/portfolio/wrangler.toml --env production
 
+      - name: Validate job-dashboard wrangler types generation
+        if: needs.analyze.outputs.job_dashboard_affected == 'true'
+        run: |
+          npx wrangler types /tmp/job-dashboard-worker-types.d.ts --config apps/job-dashboard/wrangler.jsonc
+
   lint:
     name: ESLint
     runs-on: ubuntu-latest
@@ -314,6 +319,10 @@ jobs:
 
   # ===========================================================================
   # STAGE: BUILD
+  # Note: Only portfolio worker has a custom build pipeline (generate-worker.js
+  # → worker.js). Job-dashboard is a standard wrangler project deployed from
+  # source — validated via wrangler types in validate-cloudflare job, built and
+  # deployed independently by Cloudflare Workers Builds. See ADR 0007.
   # ===========================================================================
   build:
     name: Build

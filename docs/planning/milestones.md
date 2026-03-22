@@ -150,13 +150,13 @@
 
 ### M11. Job Dashboard Integration ✅
 
-| 항목         | 내용                                                |
-| ------------ | --------------------------------------------------- |
-| **기간**     | 2026-02-11 ~ 2026-02-12                             |
-| **요구사항** | F9 (6) — 6항목 전체 완료                            |
-| **산출물**   | entry.js 통합 라우터, Dashboard SPA, REST API, Auth |
+| 항목         | 내용                                                                   |
+| ------------ | ---------------------------------------------------------------------- |
+| **기간**     | 2026-02-11 ~ 2026-02-12                                                |
+| **요구사항** | F9 (6) — 6항목 전체 완료                                               |
+| **산출물**   | entry.js 라우터 (→ MSA split, ADR-0007), Dashboard SPA, REST API, Auth |
 
-- Unified router (entry.js), /job/\* path routing
+- Edge router (entry.js), /job/\* routing via Service Binding (see ADR-0007)
 - Dashboard worker SPA (dashboard.js — 자동화, 통계, CRUD 모달)
 - 14개 API 핸들러, 40+ REST 엔드포인트
 - Bearer+cookie 인증, CSRF, rate-limit, webhook 서명 검증
@@ -195,7 +195,6 @@
 - security-scan continue-on-error 제거
 - ESLint warning 임계값 138→120 감소
 - 배포 작업 타임아웃 설정
-
 
 ---
 

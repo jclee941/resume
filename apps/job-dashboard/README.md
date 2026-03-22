@@ -1,10 +1,10 @@
-# Job Automation Dashboard Runtime (Embedded)
+# Job Automation Dashboard Worker
 
 **Location**: `apps/job-dashboard/`
 
-**Description**: Embedded runtime modules served by the `resume` worker at `resume.jclee.me/job/*`
+**Description**: Independent Cloudflare Worker serving the job dashboard API at `resume.jclee.me/job/*`, connected to the portfolio worker via Service Binding.
 
-**Architecture**: Single-worker production runtime (`resume`).
+**Architecture**: Independent worker (`job`), proxied from portfolio worker (`resume`) via Service Binding. See [ADR 0007](../../docs/adr/0007-msa-service-split.md).
 
 **Status**: ✅ Production-ready | 7 workflows | 30+ API endpoints | D1 + KV + R2 bindings
 
@@ -37,7 +37,7 @@ npm run dev --workspace @resume/job-dashboard-worker
 
 ### Deploy to Cloudflare
 
-Standalone production deployment is deprecated in single-worker architecture.
+Production deployment is handled by Cloudflare Workers Builds (git push triggers automatic deploy).
 
 ```bash
 # Deploy to production environment
@@ -138,7 +138,7 @@ Browser/API Client
     ↓
 resume.jclee.me/job/* (Cloudflare route)
     ↓
-Worker fetch() handler
+Portfolio Worker (resume) → Service Binding → Job Dashboard Worker (job)
     ↓ (strip /job prefix)
 Router.handle()
     ↓

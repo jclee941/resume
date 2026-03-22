@@ -1,6 +1,6 @@
 # ADR 0006: Single-Worker Architecture for Portfolio and Dashboard
 
-- Status: Accepted
+- Status: Superseded by [ADR 0007](0007-msa-service-split.md)
 - Date: 2026-03-21
 
 ## Context

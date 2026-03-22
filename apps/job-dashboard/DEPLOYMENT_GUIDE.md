@@ -2,7 +2,7 @@
 
 Complete step-by-step instructions for local/runtime module validation.
 
-Production deploy path is single-worker (`resume`) via Cloudflare Workers Builds.
+Production deploy path: independent worker (`job`) via Cloudflare Workers Builds. See [ADR 0007](../../docs/adr/0007-msa-service-split.md).
 
 ## Table of Contents
 
