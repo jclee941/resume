@@ -199,5 +199,6 @@ export class StealthBrowserCrawler extends BaseCrawler {
     if (this._browserService) {
       this._browserService = null;
     }
+    super.destroy();
   }
 }
