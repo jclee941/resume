@@ -19,6 +19,7 @@
     "automate:ssot": "npm run sync:data && npm run build && npm run typecheck && npm run test:node",
     "automate:full": "npm run sync:all && npm run lint && npm run typecheck && npm run test && npm run build && go run ./tools/ci/validate-cloudflare-native.go",
     "build": "cd apps/portfolio && node generate-worker.js",
+    "build:portfolio": "cd apps/portfolio && node generate-worker.js",
     "build:full": "npm run build && npm run cli:build",
     "build:all": "npm run build:full",
     "version:bump": "npm version patch --no-git-tag-version",

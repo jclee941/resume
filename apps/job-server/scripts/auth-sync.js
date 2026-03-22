@@ -14,7 +14,7 @@ import {
   loadSessionFromFile,
   saveSessionToFile,
 } from './auth-sync/cookie-ops.js';
-import { DEFAULT_USER_AGENT } from '../../job-dashboard/src/utils/user-agents.js';
+import { DEFAULT_USER_AGENT } from '@resume/shared/ua';
 
 puppeteer.use(StealthPlugin());
 
@@ -135,7 +135,11 @@ class AuthSync {
         },
         body: JSON.stringify({
           platform: session.platform,
-          cookies: session.cookieString || (Array.isArray(session.cookies) ? session.cookies.map((c) => `${c.name}=${c.value}`).join('; ') : session.cookies),
+          cookies:
+            session.cookieString ||
+            (Array.isArray(session.cookies)
+              ? session.cookies.map((c) => `${c.name}=${c.value}`).join('; ')
+              : session.cookies),
           email: session.email,
           expiresIn: 24 * 60 * 60 * 1000,
         }),

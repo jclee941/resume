@@ -1,10 +1,10 @@
-# Job Automation Dashboard Runtime (Embedded)
+# Job Automation Dashboard Worker
 
 **Location**: `apps/job-dashboard/`
 
-**Description**: Embedded runtime modules served by the `resume` worker at `resume.jclee.me/job/*`
+**Description**: Independent Cloudflare Worker serving the job dashboard API at `resume.jclee.me/job/*`, connected to the portfolio worker via Service Binding.
 
-**Architecture**: Single-worker production runtime (`resume`).
+**Architecture**: Independent worker (`job`), proxied from portfolio worker (`resume`) via Service Binding. See [ADR 0007](../../docs/adr/0007-msa-service-split.md).
 
 **Status**: ✅ Production-ready | 7 workflows | 30+ API endpoints | D1 + KV + R2 bindings
 
@@ -37,7 +37,7 @@ npm run dev --workspace @resume/job-dashboard-worker
 
 ### Deploy to Cloudflare
 
-Standalone production deployment is deprecated in single-worker architecture.
+Production deployment is handled by Cloudflare Workers Builds (git push triggers automatic deploy).
 
 ```bash
 # Deploy to production environment
@@ -56,7 +56,7 @@ npx wrangler deployments list
 
 ### Environment Variables
 
-Set via `wrangler.toml` or `wrangler secret`:
+Set via `wrangler.jsonc` or `wrangler secret`:
 
 ```bash
 # Set secrets (not visible in config files)
@@ -138,7 +138,7 @@ Browser/API Client
     ↓
 resume.jclee.me/job/* (Cloudflare route)
     ↓
-Worker fetch() handler
+Portfolio Worker (resume) → Service Binding → Job Dashboard Worker (job)
     ↓ (strip /job prefix)
 Router.handle()
     ↓
@@ -603,7 +603,7 @@ npx wrangler secret put CLOUDFLARE_API_TOKEN
 # List all secrets (names only, no values)
 npx wrangler secret list
 
-# Secrets are NOT visible in wrangler.toml - security best practice
+# Secrets are NOT visible in wrangler.jsonc - security best practice
 ```
 
 ---
@@ -712,8 +712,8 @@ npx wrangler d1 info job-dashboard-db
 # List namespace contents
 npx wrangler kv:namespace list
 
-# Verify KV binding in wrangler.toml
-cat wrangler.toml | grep -A5 "kv_namespaces"
+# Verify KV binding in wrangler.jsonc
+cat wrangler.jsonc | grep -A5 "kv_namespaces"
 
 # Check KV quota usage
 npx wrangler kv:namespace describe <namespace-id>
@@ -734,7 +734,7 @@ const RATE_LIMIT = {
 Then redeploy:
 
 ```bash
-npx wrangler deploy --config apps/job-dashboard/wrangler.toml --env production
+npx wrangler deploy --config apps/job-dashboard/wrangler.jsonc --env production
 ```
 
 ### CORS Issues

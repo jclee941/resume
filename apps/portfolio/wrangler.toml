@@ -59,48 +59,7 @@ id = "fe51b0f1c2c44841b4895e8747cb408a"
 binding = "NONCE_KV"
 id = "3e282b1b906c474aadcc947a06f0c1ad"
 
-# Workflows
-[[env.production.workflows]]
-name = "job-crawling-workflow"
-binding = "JOB_CRAWLING_WORKFLOW"
-class_name = "JobCrawlingWorkflow"
-
-[[env.production.workflows]]
-name = "application-workflow"
-binding = "APPLICATION_WORKFLOW"
-class_name = "ApplicationWorkflow"
-
-[[env.production.workflows]]
-name = "resume-sync-workflow"
-binding = "RESUME_SYNC_WORKFLOW"
-class_name = "ResumeSyncWorkflow"
-
-[[env.production.workflows]]
-name = "daily-report-workflow"
-binding = "DAILY_REPORT_WORKFLOW"
-class_name = "DailyReportWorkflow"
-
-[[env.production.workflows]]
-name = "health-check-workflow"
-binding = "HEALTH_CHECK_WORKFLOW"
-class_name = "HealthCheckWorkflow"
-
-[[env.production.workflows]]
-name = "backup-workflow"
-binding = "BACKUP_WORKFLOW"
-class_name = "BackupWorkflow"
-
-[[env.production.workflows]]
-name = "cleanup-workflow"
-binding = "CLEANUP_WORKFLOW"
-class_name = "CleanupWorkflow"
-
-# Queue Bindings
-[[env.production.queues.producers]]
-binding = "CRAWL_TASKS"
-queue = "crawl-tasks"
-
-[[env.production.queues.consumers]]
-queue = "crawl-tasks"
-max_batch_size = 10
-max_retries = 5
+# Service Binding to job-dashboard worker (MSA: /job/* proxy)
+[[env.production.services]]
+binding = "JOB_SERVICE"
+service = "job"
