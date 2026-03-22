@@ -223,7 +223,7 @@ The job-server application follows hexagonal architecture principles. Business l
 
 ### Service Binding Architecture
 
-The portfolio worker (`apps/portfolio/entry.js`) proxies `/job/*` requests to the independent job-dashboard worker via Cloudflare Service Binding (`env.JOB_SERVICE.fetch(request)`). Each worker deploys independently via Cloudflare Workers Builds. Shared concerns (Elasticsearch logging, auth headers, CSP config) live in `@resume/shared`. See [ADR 0007](adr/0007-msa-service-split.md) for the full architecture rationale.
+The portfolio worker (`apps/portfolio/entry.js`) proxies `/job/*` requests to the independent job-dashboard worker via Cloudflare Service Binding (`env.JOB_SERVICE.fetch(request)`). Each worker deploys independently via Cloudflare Workers Builds. Shared concerns (Elasticsearch client, Logger, error types, user-agent parsing, phone formatting, job categories, browser automation, Wanted API client) live in `@resume/shared`. See [ADR 0007](adr/0007-msa-service-split.md) for the full architecture rationale.
 
 ### Stealth Crawling
 

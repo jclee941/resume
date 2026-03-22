@@ -38,7 +38,7 @@ Splitting these into per-worker namespaces would break auth continuity and rate 
 
 ### Shared Code: `@resume/shared`
 
-Cross-cutting concerns (Elasticsearch client, Logger, auth header utils, CSP config, error types) live in `packages/shared/` and are imported by both workers. ESLint boundary rules (`no-restricted-imports`) enforce that workers never import from each other — only from `@resume/shared/*`.
+Cross-cutting concerns (Elasticsearch client, Logger, error types, user-agent parsing, phone formatting, job categories, browser automation, Wanted API client) live in `packages/shared/` and are imported by both workers. ESLint boundary rules (`no-restricted-imports`) enforce that workers never import from each other — only from `@resume/shared/*`.
 
 ### CI/CD Independence
 
