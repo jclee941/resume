@@ -143,9 +143,38 @@ async function start() {
 
   try {
     await server.listen({ port: config.port, host: config.host });
-    console.log(
+    server.log.info(
       `resume.jclee.me/job Backend v2.0.0 | http://localhost:${config.port} | ${config.nodeEnv}`
     );
+
+    let isShuttingDown = false;
+
+    async function gracefulShutdown(signal) {
+      if (isShuttingDown) {
+        return;
+      }
+      isShuttingDown = true;
+      server.log.info({ signal }, 'Received shutdown signal, closing server...');
+      try {
+        await server.close();
+        server.log.info('Server closed gracefully');
+        process.exit(0);
+      } catch (err) {
+        server.log.error({ err }, 'Error during graceful shutdown');
+        process.exit(1);
+      }
+    }
+
+    process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+    process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+    process.on('uncaughtException', (err) => {
+      server.log.error({ err }, 'Uncaught exception');
+      gracefulShutdown('uncaughtException');
+    });
+    process.on('unhandledRejection', (reason) => {
+      server.log.error({ reason }, 'Unhandled rejection');
+      gracefulShutdown('unhandledRejection');
+    });
   } catch (err) {
     server.log.error(err);
     process.exit(1);

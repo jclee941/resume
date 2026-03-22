@@ -42,7 +42,7 @@ function logToStderr(level, message, context = {}) {
     'service.name': 'mcp-server',
     ...context,
   };
-  process.stderr.write(`${JSON.stringify(entry)  }\n`);
+  process.stderr.write(`${JSON.stringify(entry)}\n`);
 }
 
 import searchJobsTool from './tools/search-jobs.js';
@@ -352,6 +352,36 @@ async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
   logToStderr('info', 'Wanted MCP Server started', { version: '1.2.0' });
+
+  let isShuttingDown = false;
+
+  async function gracefulShutdown(signal) {
+    if (isShuttingDown) {
+      return;
+    }
+    isShuttingDown = true;
+    logToStderr('info', `Received ${signal}, shutting down MCP server...`);
+    try {
+      await transport.close();
+      await server.close();
+      logToStderr('info', 'MCP server closed gracefully');
+      process.exit(0);
+    } catch (err) {
+      logToStderr('error', `Error during shutdown: ${err.message}`);
+      process.exit(1);
+    }
+  }
+
+  process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+  process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+  process.on('uncaughtException', (err) => {
+    logToStderr('error', `Uncaught exception: ${err.message}`);
+    gracefulShutdown('uncaughtException');
+  });
+  process.on('unhandledRejection', (reason) => {
+    logToStderr('error', `Unhandled rejection: ${reason}`);
+    gracefulShutdown('unhandledRejection');
+  });
 }
 
 main().catch((error) => {
