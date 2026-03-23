@@ -95,10 +95,6 @@ JSON 형식으로만 응답해주세요.`;
 }
 
 async function calculateAIMatchScore(resumeAnalysis, jobAnalysis, { logger = console } = {}) {
-  if (!resumeAnalysis || !jobAnalysis) {
-    return { score: 0, reasoning: '분석 데이터 부족' };
-  }
-
   const prompt = `이력서와 채용 공고의 매칭도를 분석해주세요.
 
 이력서: ${JSON.stringify(resumeAnalysis)}
