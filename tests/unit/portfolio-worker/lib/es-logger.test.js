@@ -1,5 +1,23 @@
 'use strict';
 
+const fs = require('fs');
+const path = require('path');
+
+function loadInternalBuildEsHeaders() {
+  const loggerPath = path.resolve(__dirname, '../../../../apps/portfolio/lib/es-logger.js');
+  const source = fs.readFileSync(loggerPath, 'utf8');
+  const module = { exports: {} };
+  const factory = new Function(
+    'require',
+    'module',
+    'exports',
+    `${source}\nmodule.exports.__buildEsHeaders = buildEsHeaders;`
+  );
+
+  factory(require, module, module.exports);
+  return module.exports.__buildEsHeaders;
+}
+
 describe('es-logger', () => {
   let esLogger;
 
@@ -128,6 +146,20 @@ describe('es-logger', () => {
       expect(opts.headers).toHaveProperty('Authorization', 'ApiKey test-api-key');
     });
 
+    it('should set Authorization ApiKey header when API key is present', async () => {
+      await esLogger.logToElasticsearch(
+        {
+          ELASTICSEARCH_URL: 'https://es.example.com',
+          ELASTICSEARCH_API_KEY: 'api-key-branch-check',
+        },
+        'auth header branch',
+        'INFO'
+      );
+
+      const [, opts] = global.fetch.mock.calls[0];
+      expect(opts.headers.Authorization).toBe('ApiKey api-key-branch-check');
+    });
+
     it('should send flat-schema document with correct fields', async () => {
       await esLogger.logToElasticsearch(mockEnv, 'hello', 'WARN', { custom: 'label' });
       const [, opts] = global.fetch.mock.calls[0];
@@ -160,6 +192,93 @@ describe('es-logger', () => {
       expect(body).toHaveProperty('tracestate', 'vendorA=abc');
       expect(body).toHaveProperty('trace');
       expect(body.trace).toHaveProperty('id', '4bf92f3577b34da6a3ce929d0e0e4736');
+    });
+
+    it('should prefer labels.traceparent over request traceparent header', async () => {
+      const request = {
+        headers: new Headers({
+          traceparent: '00-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-bbbbbbbbbbbbbbbb-01',
+        }),
+      };
+
+      await esLogger.logToElasticsearch(
+        mockEnv,
+        'trace override',
+        'INFO',
+        {
+          traceparent: '00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01',
+        },
+        { request }
+      );
+
+      const [, opts] = global.fetch.mock.calls[0];
+      const body = JSON.parse(opts.body);
+
+      expect(body.traceparent).toBe('00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01');
+      expect(body.traceId).toBe('4bf92f3577b34da6a3ce929d0e0e4736');
+      expect(body.trace.id).toBe('4bf92f3577b34da6a3ce929d0e0e4736');
+    });
+
+    it('should prefer labels.tracestate over request tracestate header', async () => {
+      const request = {
+        headers: new Headers({
+          tracestate: 'vendorHeader=from-header',
+        }),
+      };
+
+      await esLogger.logToElasticsearch(
+        mockEnv,
+        'tracestate override',
+        'INFO',
+        {
+          tracestate: 'vendorLabel=from-label',
+        },
+        { request }
+      );
+
+      const [, opts] = global.fetch.mock.calls[0];
+      const body = JSON.parse(opts.body);
+
+      expect(body.tracestate).toBe('vendorLabel=from-label');
+    });
+
+    it('should ignore invalid traceparent format from labels when parsing trace id', async () => {
+      await esLogger.logToElasticsearch(
+        mockEnv,
+        'invalid traceparent',
+        'INFO',
+        {
+          traceparent: 'invalid-traceparent-format',
+        },
+        { request: { headers: new Headers() } }
+      );
+
+      const [, opts] = global.fetch.mock.calls[0];
+      const body = JSON.parse(opts.body);
+
+      expect(body.traceparent).toBe('invalid-traceparent-format');
+      expect(body.traceId).toBeUndefined();
+      expect(body.trace).toBeUndefined();
+    });
+
+    it('should honor explicit traceId and correlationId from labels', async () => {
+      await esLogger.logToElasticsearch(
+        mockEnv,
+        'explicit ids',
+        'INFO',
+        {
+          traceId: 'ABCDEFABCDEFABCDEFABCDEFABCDEFAB',
+          correlationId: 'CORRELATION-ID-1',
+        },
+        { request: { headers: new Headers() } }
+      );
+
+      const [, opts] = global.fetch.mock.calls[0];
+      const body = JSON.parse(opts.body);
+
+      expect(body.traceId).toBe('abcdefabcdefabcdefabcdefabcdefab');
+      expect(body.correlationId).toBe('CORRELATION-ID-1');
+      expect(body.trace.id).toBe('abcdefabcdefabcdefabcdefabcdefab');
     });
 
     it('should use default level INFO when level is undefined', async () => {
@@ -274,6 +393,29 @@ describe('es-logger', () => {
       await esLogger.logToElasticsearch(baseEnvWithApiKey, 'test', 'INFO');
       const [, opts] = global.fetch.mock.calls[0];
       expect(opts.headers['Content-Type']).toBe('application/json');
+    });
+
+    it('internal buildEsHeaders omits Authorization when API key is missing', () => {
+      const buildEsHeaders = loadInternalBuildEsHeaders();
+      const headers = buildEsHeaders({ CF_ACCESS_CLIENT_ID: 'cf-id', ELASTICSEARCH_URL: 'x' });
+
+      expect(headers).not.toHaveProperty('Authorization');
+    });
+
+    it('omits Authorization when API key getter changes between validation and header build', async () => {
+      let apiKeyReads = 0;
+      const envWithFlakyApiKey = {
+        ELASTICSEARCH_URL: 'https://es.example.com',
+        get ELASTICSEARCH_API_KEY() {
+          apiKeyReads += 1;
+          return apiKeyReads === 1 ? 'first-read-key' : '';
+        },
+      };
+
+      await esLogger.logToElasticsearch(envWithFlakyApiKey, 'test', 'INFO');
+
+      const [, opts] = global.fetch.mock.calls[0];
+      expect(opts.headers).not.toHaveProperty('Authorization');
     });
   });
 
@@ -431,6 +573,19 @@ describe('es-logger', () => {
       await expect(esLogger.logToElasticsearch(mockEnv, 'test', null)).rejects.toThrow(
         'console broken'
       );
+      consoleSpy.mockRestore();
+    });
+
+    it('should use outerErr fallback when thrown value has no message', async () => {
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+      await esLogger.logToElasticsearch(mockEnv, 'test message', {
+        toLowerCase() {
+          throw 123;
+        },
+      });
+
+      expect(consoleSpy).toHaveBeenCalledWith('[ES] logToElasticsearch failed:', 123);
       consoleSpy.mockRestore();
     });
   });

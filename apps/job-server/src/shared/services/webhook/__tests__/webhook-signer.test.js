@@ -1,8 +1,12 @@
-import { describe, it } from 'node:test';
+import { describe, it, beforeEach, mock } from 'node:test';
 import assert from 'node:assert/strict';
 import { signWebhookPayload, verifyWebhookSignature } from '../webhook-signer.js';
 
 describe('webhook-signer', () => {
+  beforeEach(() => {
+    mock.timers?.reset?.();
+  });
+
   describe('signWebhookPayload()', () => {
     it('returns signature in t=<ts>,v1=<hmac> format', () => {
       const payload = JSON.stringify({ event: 'test' });
@@ -35,9 +39,28 @@ describe('webhook-signer', () => {
 
       assert.notEqual(first.signature, second.signature);
     });
+
+    it('uses current timestamp when timestamp argument is omitted', () => {
+      const before = Math.floor(Date.now() / 1000);
+      const { signature, timestamp } = signWebhookPayload('{"event":"now"}', 'secret');
+      const after = Math.floor(Date.now() / 1000);
+
+      assert.equal(timestamp >= before && timestamp <= after, true);
+      assert.match(signature, /^t=\d+,v1=[a-f0-9]{64}$/);
+    });
   });
 
   describe('verifyWebhookSignature()', () => {
+    it('rejects non-string signatures', () => {
+      const payload = JSON.stringify({ event: 'non-string' });
+
+      for (const signature of [null, undefined, 12345]) {
+        const result = verifyWebhookSignature(payload, signature, 'secret');
+        assert.equal(result.valid, false);
+        assert.equal(result.error, 'Invalid signature format');
+      }
+    });
+
     it('accepts a valid roundtrip signature', () => {
       const payload = JSON.stringify({ event: 'roundtrip', ok: true });
       const secret = 'roundtrip-secret';
@@ -85,6 +108,19 @@ describe('webhook-signer', () => {
       const { signature } = signWebhookPayload(originalPayload, secret, nowTs);
 
       const result = verifyWebhookSignature(tamperedPayload, signature, secret);
+      assert.equal(result.valid, false);
+      assert.equal(result.error, 'Invalid signature');
+    });
+
+    it('rejects signatures when v1 hash length mismatches expected length', () => {
+      const payload = JSON.stringify({ event: 'length-mismatch' });
+      const secret = 'length-secret';
+      const nowTs = Math.floor(Date.now() / 1000);
+      const { signature } = signWebhookPayload(payload, secret, nowTs);
+
+      const shortenedSignature = signature.replace(/([a-f0-9])$/, '');
+      const result = verifyWebhookSignature(payload, shortenedSignature, secret);
+
       assert.equal(result.valid, false);
       assert.equal(result.error, 'Invalid signature');
     });

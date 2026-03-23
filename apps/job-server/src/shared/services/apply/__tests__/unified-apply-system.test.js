@@ -1,5 +1,5 @@
 import { describe, it, beforeEach, mock } from 'node:test';
-import assert from 'node:assert';
+import assert from 'node:assert/strict';
 import { UnifiedApplySystem, JobFilter, ApplyOrchestrator } from '../index.js';
 
 describe('JobFilter', () => {
@@ -109,9 +109,7 @@ describe('ApplyOrchestrator', () => {
     mock.method(console, 'log', () => {});
     mock.method(console, 'error', () => {});
     mockCrawler = {
-      search: mock.fn(async () => [
-        { company: 'Test', position: 'DevOps', source: 'wanted' },
-      ]),
+      search: mock.fn(async () => [{ company: 'Test', position: 'DevOps', source: 'wanted' }]),
     };
     mockApplier = {
       applyToJob: mock.fn(async () => ({ success: true })),
@@ -124,12 +122,9 @@ describe('ApplyOrchestrator', () => {
 
   describe('searchJobs()', () => {
     it('searches across enabled platforms', async () => {
-      const orchestrator = new ApplyOrchestrator(
-        mockCrawler,
-        mockApplier,
-        mockAppManager,
-        { enabledPlatforms: ['wanted', 'saramin'] },
-      );
+      const orchestrator = new ApplyOrchestrator(mockCrawler, mockApplier, mockAppManager, {
+        enabledPlatforms: ['wanted', 'saramin'],
+      });
 
       const jobs = await orchestrator.searchJobs(['devops']);
 
@@ -141,12 +136,9 @@ describe('ApplyOrchestrator', () => {
       mockCrawler.search = mock.fn(async () => {
         throw new Error('Network error');
       });
-      const orchestrator = new ApplyOrchestrator(
-        mockCrawler,
-        mockApplier,
-        mockAppManager,
-        { parallelSearch: false },
-      );
+      const orchestrator = new ApplyOrchestrator(mockCrawler, mockApplier, mockAppManager, {
+        parallelSearch: false,
+      });
 
       const jobs = await orchestrator.searchJobs(['devops']);
 
@@ -156,11 +148,7 @@ describe('ApplyOrchestrator', () => {
 
   describe('applyToJobs()', () => {
     it('returns dry-run results without calling applier', async () => {
-      const orchestrator = new ApplyOrchestrator(
-        mockCrawler,
-        mockApplier,
-        mockAppManager,
-      );
+      const orchestrator = new ApplyOrchestrator(mockCrawler, mockApplier, mockAppManager);
       const jobs = [{ company: 'Test', position: 'DevOps' }];
 
       const result = await orchestrator.applyToJobs(jobs, true);
@@ -171,12 +159,9 @@ describe('ApplyOrchestrator', () => {
     });
 
     it('calls applier when dryRun is false', async () => {
-      const orchestrator = new ApplyOrchestrator(
-        mockCrawler,
-        mockApplier,
-        mockAppManager,
-        { delayBetweenApplies: 0 },
-      );
+      const orchestrator = new ApplyOrchestrator(mockCrawler, mockApplier, mockAppManager, {
+        delayBetweenApplies: 0,
+      });
       const jobs = [{ company: 'Test', position: 'DevOps' }];
 
       const result = await orchestrator.applyToJobs(jobs, false);
@@ -187,15 +172,10 @@ describe('ApplyOrchestrator', () => {
     });
 
     it('respects daily application limit', async () => {
-      mockAppManager.listApplications = mock.fn(() =>
-        Array(20).fill({ status: 'applied' }),
-      );
-      const orchestrator = new ApplyOrchestrator(
-        mockCrawler,
-        mockApplier,
-        mockAppManager,
-        { maxDailyApplications: 20 },
-      );
+      mockAppManager.listApplications = mock.fn(() => Array(20).fill({ status: 'applied' }));
+      const orchestrator = new ApplyOrchestrator(mockCrawler, mockApplier, mockAppManager, {
+        maxDailyApplications: 20,
+      });
       const jobs = [{ company: 'Test', position: 'DevOps' }];
 
       const result = await orchestrator.applyToJobs(jobs, false);
@@ -208,12 +188,9 @@ describe('ApplyOrchestrator', () => {
       mockApplier.applyToJob = mock.fn(async () => {
         throw new Error('Apply failed');
       });
-      const orchestrator = new ApplyOrchestrator(
-        mockCrawler,
-        mockApplier,
-        mockAppManager,
-        { delayBetweenApplies: 0 },
-      );
+      const orchestrator = new ApplyOrchestrator(mockCrawler, mockApplier, mockAppManager, {
+        delayBetweenApplies: 0,
+      });
       const jobs = [{ company: 'Test', position: 'DevOps' }];
 
       const result = await orchestrator.applyToJobs(jobs, false);
@@ -225,11 +202,7 @@ describe('ApplyOrchestrator', () => {
 
   describe('getStats()', () => {
     it('returns accumulated statistics', async () => {
-      const orchestrator = new ApplyOrchestrator(
-        mockCrawler,
-        mockApplier,
-        mockAppManager,
-      );
+      const orchestrator = new ApplyOrchestrator(mockCrawler, mockApplier, mockAppManager);
 
       await orchestrator.searchJobs(['devops']);
       const stats = orchestrator.getStats();
@@ -241,11 +214,7 @@ describe('ApplyOrchestrator', () => {
 
   describe('reset()', () => {
     it('clears statistics', async () => {
-      const orchestrator = new ApplyOrchestrator(
-        mockCrawler,
-        mockApplier,
-        mockAppManager,
-      );
+      const orchestrator = new ApplyOrchestrator(mockCrawler, mockApplier, mockAppManager);
 
       await orchestrator.searchJobs(['devops']);
       orchestrator.reset();
@@ -325,10 +294,7 @@ describe('UnifiedApplySystem', () => {
 
       await system.run({ keywords: ['devops'], notify: true, dryRun: true });
 
-      assert.strictEqual(
-        mockNotifier.notifyAutoApplyResult.mock.calls.length,
-        1,
-      );
+      assert.strictEqual(mockNotifier.notifyAutoApplyResult.mock.calls.length, 1);
     });
 
     it('skips notifications when notify is false', async () => {
@@ -341,10 +307,7 @@ describe('UnifiedApplySystem', () => {
 
       await system.run({ keywords: ['devops'], notify: false, dryRun: true });
 
-      assert.strictEqual(
-        mockNotifier.notifyAutoApplyResult.mock.calls.length,
-        0,
-      );
+      assert.strictEqual(mockNotifier.notifyAutoApplyResult.mock.calls.length, 0);
     });
 
     it('handles notifier failure gracefully', async () => {
@@ -378,6 +341,50 @@ describe('UnifiedApplySystem', () => {
       assert.ok(Array.isArray(result.jobs));
       assert.ok(result.stats.searched >= 0);
       assert.strictEqual(mockApplier.apply.mock.calls.length, 0);
+    });
+
+    it('sends search notification when notify=true and notifier exists', async () => {
+      const system = new UnifiedApplySystem({
+        crawler: mockCrawler,
+        applier: mockApplier,
+        appManager: mockAppManager,
+        notifier: mockNotifier,
+      });
+
+      await system.searchOnly(['devops'], { notify: true });
+
+      assert.strictEqual(mockNotifier.notifySearchResults.mock.calls.length, 1);
+      assert.strictEqual(mockNotifier.notifySearchResults.mock.calls[0].arguments[1], 'devops');
+    });
+
+    it('uses default keywords when searchOnly keywords argument is omitted', async () => {
+      const system = new UnifiedApplySystem({
+        crawler: mockCrawler,
+        applier: mockApplier,
+        appManager: mockAppManager,
+        config: { keywords: ['default-keyword'], reviewThreshold: 0 },
+      });
+
+      await system.searchOnly(undefined, { notify: false });
+
+      assert.strictEqual(mockCrawler.search.mock.calls.length >= 1, true);
+    });
+  });
+
+  describe('config getter', () => {
+    it('returns a shallow copy of config', () => {
+      const system = new UnifiedApplySystem({
+        crawler: mockCrawler,
+        applier: mockApplier,
+        appManager: mockAppManager,
+        config: { maxDailyApplications: 7 },
+      });
+
+      const cfg = system.config;
+      assert.strictEqual(cfg.maxDailyApplications, 7);
+
+      cfg.maxDailyApplications = 999;
+      assert.strictEqual(system.config.maxDailyApplications, 7);
     });
   });
 
@@ -424,6 +431,25 @@ describe('UnifiedApplySystem', () => {
       const stats = system.getStats();
 
       assert.strictEqual(stats.searched, 0);
+    });
+
+    it('run() applies fallback zeros when apply result omits counters', async () => {
+      const cappedAppManager = {
+        listApplications: mock.fn(() => Array(20).fill({ status: 'applied' })),
+      };
+      const system = new UnifiedApplySystem({
+        crawler: mockCrawler,
+        applier: mockApplier,
+        appManager: cappedAppManager,
+        config: { maxDailyApplications: 20, reviewThreshold: 0 },
+      });
+
+      const result = await system.run({ keywords: ['devops'], dryRun: false, notify: false });
+
+      assert.strictEqual(result.phases.apply.attempted, 0);
+      assert.strictEqual(result.phases.apply.succeeded, 0);
+      assert.strictEqual(result.phases.apply.failed, 0);
+      assert.strictEqual(result.phases.apply.skipped >= 0, true);
     });
   });
 });

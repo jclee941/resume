@@ -1,5 +1,5 @@
 import { describe, it, beforeEach, mock } from 'node:test';
-import assert from 'node:assert';
+import assert from 'node:assert/strict';
 
 const createMockHttpClient = () => ({
   request: mock.fn(),
@@ -52,6 +52,16 @@ describe('ResumeEndpoint', async () => {
     assert.strictEqual(result, response.data);
   });
 
+  it('list() returns raw response when response.data is missing', async () => {
+    const response = { plain: true };
+    mockClient.chaosRequest = mock.fn(async () => response);
+
+    const result = await endpoint.list();
+
+    assertChaosCall(mockClient, '/resumes/v1');
+    assert.strictEqual(result, response);
+  });
+
   it('getDetail() calls /resumes/v1/:id with GET semantics and returns data', async () => {
     const response = { data: { id: 1 } };
     mockClient.chaosRequest = mock.fn(async () => response);
@@ -60,6 +70,16 @@ describe('ResumeEndpoint', async () => {
 
     assertChaosCall(mockClient, `/resumes/v1/${resumeId}`);
     assert.strictEqual(result, response.data);
+  });
+
+  it('getDetail() returns raw response when response.data is missing', async () => {
+    const response = { id: resumeId, plain: true };
+    mockClient.chaosRequest = mock.fn(async () => response);
+
+    const result = await endpoint.getDetail(resumeId);
+
+    assertChaosCall(mockClient, `/resumes/v1/${resumeId}`);
+    assert.strictEqual(result, response);
   });
 
   it('save() calls /resumes/v1/:id with PUT and body, returning response passthrough', async () => {
