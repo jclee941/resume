@@ -51,6 +51,10 @@ class MockResourcePool extends EventEmitter {
   isDraining() {
     return this.#draining;
   }
+
+  get size() {
+    return this.#idle.length + this.#inUse.size;
+  }
 }
 
 class MockCrawlOrchestrator extends EventEmitter {

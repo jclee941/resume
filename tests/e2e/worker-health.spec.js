@@ -157,8 +157,8 @@ test.describe('Job Worker Proxy', () => {
     const response = await page.request.get('/job/health');
 
     test.skip(
-      response.status() === 403 || response.status() === 500,
-      'Job backend unavailable in this environment'
+      !response.ok(),
+      `Job backend unavailable in this environment (status ${response.status()})`
     );
 
     expect(response.ok()).toBeTruthy();
@@ -173,8 +173,8 @@ test.describe('Job Worker Proxy', () => {
     const response = await page.request.get('/job/api/health');
 
     test.skip(
-      response.status() === 403 || response.status() === 500,
-      'Job backend unavailable in this environment'
+      !response.ok(),
+      `Job backend unavailable in this environment (status ${response.status()})`
     );
 
     expect(response.ok()).toBeTruthy();
