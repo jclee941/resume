@@ -16,6 +16,16 @@ data/
 !typescript/data/resumes/applications/**
 # But keep generated files ignored
 typescript/data/resumes/generated/
+# Exception: allow packages/data resume content (current structure)
+!packages/data/
+!packages/data/resumes/
+!packages/data/resumes/master/
+!packages/data/resumes/applications/
+!packages/data/resumes/applications/**
+!packages/data/resumes/wishket/
+!packages/data/resumes/wishket/**
+# Keep generated files ignored
+packages/data/resumes/generated/
 
 # Legacy/AI tool metadata
 .todos.md
