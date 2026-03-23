@@ -13,10 +13,7 @@ const {
 } = require('../../../../apps/portfolio/lib/tracing');
 
 function loadInternalResolveContextFromHeaders() {
-  const tracingPath = path.resolve(
-    __dirname,
-    '../../../../apps/portfolio/lib/tracing.js'
-  );
+  const tracingPath = path.resolve(__dirname, '../../../../apps/portfolio/lib/tracing.js');
   const source = fs.readFileSync(tracingPath, 'utf8');
   const module = { exports: {} };
   const factory = new Function(
@@ -177,6 +174,18 @@ describe('tracing', () => {
       expect(undefinedContext.traceId).toMatch(/^[a-f0-9]{32}$/);
       expect(undefinedContext.parentSpanId).toBeNull();
     });
+
+    it('falls back when headers object has no get method', () => {
+      const context = resolveContextFromHeaders({
+        traceparent: '00-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-bbbbbbbbbbbbbbbb-01',
+      });
+
+      expect(context.traceId).toMatch(/^[a-f0-9]{32}$/);
+      expect(context.parentSpanId).toBeNull();
+      expect(context.tracestate).toBe('');
+      expect(context.flags).toBe('01');
+      expect(context.version).toBe('00');
+    });
   });
 
   describe('propagateTraceContext', () => {
@@ -230,6 +239,19 @@ describe('tracing', () => {
       expect(result.traceId).toBe('cccccccccccccccccccccccccccccccc');
       expect(result.spanId).toBe('dddddddddddddddd');
       expect(result.traceparent).toBe('ff-cccccccccccccccccccccccccccccccc-dddddddddddddddd-03');
+    });
+
+    it('handles plain-object headers without get method', () => {
+      const request = {
+        method: 'GET',
+        headers: { traceparent: '00-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-bbbbbbbbbbbbbbbb-01' },
+      };
+
+      const result = propagateTraceContext(request);
+
+      expect(result.traceId).toMatch(/^[a-f0-9]{32}$/);
+      expect(result.parentSpanId).toBeNull();
+      expect(result.headers.get('traceparent')).toBe(result.traceparent);
     });
   });
 
@@ -361,6 +383,18 @@ describe('tracing', () => {
       expect(result.response).toBe(response);
       expect(result.span.statusCode).toBe(200);
       expect(result.span.route).toBe('/no-callback');
+    });
+
+    it('error path rethrows when onSpanFinish is not provided', async () => {
+      const request = { method: 'POST', headers: new Headers() };
+      const error = new Error('no-callback-error');
+      const handler = jest.fn().mockRejectedValue(error);
+
+      await expect(withRouteSpan(request, '/no-callback-error', handler)).rejects.toThrow(
+        'no-callback-error'
+      );
+
+      expect(handler).toHaveBeenCalledTimes(1);
     });
   });
 

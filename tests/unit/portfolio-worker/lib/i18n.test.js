@@ -41,6 +41,16 @@ describe('i18n Module', () => {
       global.navigator = originalNavigator;
     });
 
+    it('should detect Japanese from browser language', () => {
+      const originalNavigator = global.navigator;
+      global.navigator = { language: 'ja-JP' };
+
+      const result = detectLanguage();
+      expect(result).toBe('ja');
+
+      global.navigator = originalNavigator;
+    });
+
     it('should default to Korean for unsupported languages', () => {
       const originalNavigator = global.navigator;
       global.navigator = { language: 'fr-FR' };

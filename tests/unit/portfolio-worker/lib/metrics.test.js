@@ -166,6 +166,29 @@ describe('metrics', () => {
       const result = metrics.generateHistogramLines('test_metric', buckets, '');
       expect(result).toMatch(/\n$/);
     });
+
+    test('uses default labels parameter when labels argument is omitted', () => {
+      const buckets = metrics.initHistogramBuckets();
+      const result = metrics.generateHistogramLines('test_metric', buckets);
+
+      expect(result).toContain('test_metric_bucket{le="0.005"} 0');
+      expect(result).not.toContain(',le=');
+    });
+
+    test('uses 0 for missing bucket key while preserving explicit 0 values', () => {
+      const buckets = {
+        ...metrics.initHistogramBuckets(),
+      };
+      buckets['0.1'] = 0;
+      delete buckets['0.25'];
+      buckets['+Inf'] = 0;
+
+      const result = metrics.generateHistogramLines('test_metric', buckets, '');
+
+      expect(result).toContain('test_metric_bucket{le="0.1"} 0');
+      expect(result).toContain('test_metric_bucket{le="0.25"} 0');
+      expect(result).toContain('test_metric_bucket{le="+Inf"} 0');
+    });
   });
 
   describe('createMetricsCollector()', () => {
@@ -367,6 +390,17 @@ describe('metrics', () => {
       metrics.recordRequest(collector, { responseTimeMs: 100, status: 200 });
       expect(collector.cf_metrics.cpu_time_ms).toBe(0);
     });
+
+    test('handles non-finite cache totals by taking total>0 false branch', () => {
+      const collector = metrics.createMetricsCollector();
+      collector.cf_metrics.cache_hits = NaN;
+      collector.cf_metrics.cache_misses = 0;
+
+      metrics.recordRequest(collector, { responseTimeMs: 100, status: 200, cacheHit: true });
+
+      expect(collector.cf_metrics.cache_hit_ratio).toBe(0);
+      expect(collector.cf_metrics.cache_bypass_ratio).toBe(1);
+    });
   });
 
   describe('recordWebVitals(collector, vitals)', () => {
@@ -427,6 +461,18 @@ describe('metrics', () => {
       expect(collector.web_vitals.cls).toBe(0.1);
       expect(collector.web_vitals.fcp).toBe(750);
       expect(collector.web_vitals.ttfb).toBe(150);
+    });
+
+    test('increments samples without updating vitals when payload is empty', () => {
+      const collector = metrics.createMetricsCollector();
+      metrics.recordWebVitals(collector, {});
+
+      expect(collector.web_vitals.samples).toBe(1);
+      expect(collector.web_vitals.lcp).toBe(0);
+      expect(collector.web_vitals.inp).toBe(0);
+      expect(collector.web_vitals.cls).toBe(0);
+      expect(collector.web_vitals.fcp).toBe(0);
+      expect(collector.web_vitals.ttfb).toBe(0);
     });
   });
 
@@ -559,6 +605,87 @@ describe('metrics', () => {
       const output = metrics.generateMetrics(collector, { country: 'KR' });
       // Should not crash and should still generate valid metrics
       expect(output).toContain('http_requests_total{job="resume"} 0');
+    });
+
+    test('falls back to initialized histogram when response_time_buckets is missing', () => {
+      const collector = metrics.createMetricsCollector();
+      collector.response_time_buckets = undefined;
+
+      const output = metrics.generateMetrics(collector);
+
+      expect(output).toContain('http_request_duration_seconds_bucket{job="resume",le="0.005"} 0');
+      expect(output).toContain('http_request_duration_seconds_bucket{job="resume",le="+Inf"} 0');
+    });
+
+    test('uses empty geo defaults when geo_metrics exists but has no by_country/by_colo', () => {
+      const collector = metrics.createMetricsCollector();
+      collector.geo_metrics = {};
+
+      const output = metrics.generateMetrics(collector);
+
+      expect(output).toContain('# No geographic data collected yet');
+    });
+
+    test('falls back to unknown labels when version and deployed_at are empty strings', () => {
+      const collector = metrics.createMetricsCollector();
+      collector.version = '';
+      collector.deployed_at = '';
+
+      const output = metrics.generateMetrics(collector);
+
+      expect(output).toContain(
+        'worker_info{job="resume",version="unknown",deployed_at="unknown"} 1'
+      );
+    });
+
+    test('applies default cf_metrics values when cf_metrics is empty object', () => {
+      const collector = metrics.createMetricsCollector();
+      collector.cf_metrics = {};
+
+      const output = metrics.generateMetrics(collector);
+
+      expect(output).toContain('cloudflare_cache_hit_ratio{job="resume"} 0.85');
+      expect(output).toContain('cloudflare_cache_bypass_ratio{job="resume"} 0.15');
+      expect(output).toContain('cloudflare_worker_cpu_time_ms{job="resume"} 5');
+    });
+
+    test('applies default web_vitals values when web_vitals is empty object', () => {
+      const collector = metrics.createMetricsCollector();
+      collector.web_vitals = {};
+
+      const output = metrics.generateMetrics(collector);
+
+      expect(output).toContain('web_vitals_lcp_ms{job="resume"} 0');
+      expect(output).toContain('web_vitals_inp_ms{job="resume"} 0');
+      expect(output).toContain('web_vitals_cls{job="resume"} 0');
+      expect(output).toContain('web_vitals_fcp_ms{job="resume"} 0');
+      expect(output).toContain('web_vitals_ttfb_ms{job="resume"} 0');
+    });
+
+    test('falls back to empty objects when cf_metrics and web_vitals are missing', () => {
+      const collector = metrics.createMetricsCollector();
+      collector.cf_metrics = undefined;
+      collector.web_vitals = null;
+
+      const output = metrics.generateMetrics(collector);
+
+      expect(output).toContain('cloudflare_cache_hit_ratio{job="resume"} 0.85');
+      expect(output).toContain('cloudflare_cache_bypass_ratio{job="resume"} 0.15');
+      expect(output).toContain('cloudflare_worker_cpu_time_ms{job="resume"} 5');
+      expect(output).toContain('web_vitals_lcp_ms{job="resume"} 0');
+      expect(output).toContain('web_vitals_inp_ms{job="resume"} 0');
+      expect(output).toContain('web_vitals_cls{job="resume"} 0');
+      expect(output).toContain('web_vitals_fcp_ms{job="resume"} 0');
+      expect(output).toContain('web_vitals_ttfb_ms{job="resume"} 0');
+    });
+
+    test('with empty geo_metrics objects includes fallback no-data comment', () => {
+      const collector = metrics.createMetricsCollector();
+      collector.geo_metrics = { by_country: {}, by_colo: {} };
+
+      const output = metrics.generateMetrics(collector);
+
+      expect(output).toContain('# No geographic data collected yet');
     });
   });
 });

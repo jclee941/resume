@@ -235,6 +235,32 @@ describe('Cards Module', () => {
       expect(html).toContain('Node.js, React');
     });
 
+    test('should use empty data-tech attribute when tech is null, undefined, or empty', () => {
+      const projectData = [
+        {
+          title: 'Null Tech',
+          tech: null,
+          description: 'null tech project',
+          liveUrl: 'https://example.com/null',
+        },
+        {
+          title: 'Undefined Tech',
+          description: 'undefined tech project',
+          liveUrl: 'https://example.com/undefined',
+        },
+        {
+          title: 'Empty Tech',
+          tech: '',
+          description: 'empty tech project',
+          liveUrl: 'https://example.com/empty',
+        },
+      ];
+
+      const html = generateProjectCards(projectData, 'empty-data-tech-hash');
+
+      expect((html.match(/data-tech=""/g) || []).length).toBe(3);
+    });
+
     test('should use cache on repeated calls with same hash', () => {
       const hash = 'project-cache-hash';
 
@@ -272,7 +298,9 @@ describe('Cards Module', () => {
 
       expect(html).toContain('Project 1');
       expect(html).toContain('Project 2');
-      expect((html.match(/project-item project-card card/g) || []).length).toBeGreaterThanOrEqual(2);
+      expect((html.match(/project-item project-card card/g) || []).length).toBeGreaterThanOrEqual(
+        2
+      );
     });
 
     test('should not render optional sections when not provided', () => {
@@ -348,9 +376,7 @@ describe('Cards Module', () => {
   });
 
   describe('generateCertificationCards', () => {
-    const {
-      generateCertificationCards,
-    } = require('../../../../apps/portfolio/lib/cards');
+    const { generateCertificationCards } = require('../../../../apps/portfolio/lib/cards');
 
     test('should return empty string for null certData', () => {
       expect(generateCertificationCards(null, 'hash')).toBe('');
@@ -587,9 +613,7 @@ describe('Cards Module', () => {
   });
 
   describe('generateResumeDescription', () => {
-    const {
-      generateResumeDescription,
-    } = require('../../../../apps/portfolio/lib/cards');
+    const { generateResumeDescription } = require('../../../../apps/portfolio/lib/cards');
 
     test('should return empty string', () => {
       expect(generateResumeDescription()).toBe('');
@@ -597,9 +621,7 @@ describe('Cards Module', () => {
   });
 
   describe('generateInfrastructureCards', () => {
-    const {
-      generateInfrastructureCards,
-    } = require('../../../../apps/portfolio/lib/cards');
+    const { generateInfrastructureCards } = require('../../../../apps/portfolio/lib/cards');
 
     test('should return empty string for null infraData', () => {
       expect(generateInfrastructureCards(null, 'hash')).toBe('');
@@ -864,6 +886,29 @@ describe('Cards Module', () => {
       expect(html).toContain('Docker');
     });
 
+    test('should ignore non-finite proficiency values when computing average and handle falsy item', () => {
+      const skillsData = {
+        devops: {
+          items: [
+            null,
+            { name: 'FiniteSkill', proficiency: 80 },
+            { name: 'NaNSkill', proficiency: NaN },
+            { name: 'StringSkill', proficiency: 'not-a-number' },
+            { name: 'InfinitySkill', proficiency: Infinity },
+          ],
+        },
+      };
+
+      const html = generateSkillsList(skillsData, 'non-finite-prof-hash');
+
+      expect(html).toContain('FiniteSkill[80]');
+      expect(html).toContain('NaNSkill');
+      expect(html).toContain('StringSkill');
+      expect(html).not.toContain('NaNSkill[');
+      expect(html).not.toContain('StringSkill[');
+      expect(html).toContain('<span class="htop-pct">40%</span>');
+    });
+
     test('should return empty string for empty items array in object format', () => {
       const skillsData = {
         devops: {
@@ -873,6 +918,17 @@ describe('Cards Module', () => {
       const html = generateSkillsList(skillsData, 'empty-items-hash');
       // Empty items means skills.length === 0, returns ''
       expect(html).not.toContain('devops');
+    });
+
+    test('should return empty string for object format without items property', () => {
+      const skillsData = {
+        devops: {
+          title: 'DevOps',
+        },
+      };
+
+      const html = generateSkillsList(skillsData, 'missing-items-hash');
+      expect(html.trim()).toBe('');
     });
   });
 
