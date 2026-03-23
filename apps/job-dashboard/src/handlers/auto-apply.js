@@ -1,4 +1,4 @@
-import { WantedClient } from '../services/wanted-client.js';
+import { WantedClient } from '@resume/shared/wanted-client';
 import { LinkedInClient } from '../services/linkedin-client.js';
 import { RememberClient } from '../services/remember-client.js';
 import { normalizeError } from '@resume/shared/errors';

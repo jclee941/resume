@@ -1,5 +1,5 @@
 import { BaseHandler } from './base-handler.js';
-import { WantedClient } from '../services/wanted-client.js';
+import { WantedClient } from '@resume/shared/wanted-client';
 import { normalizeError } from '@resume/shared/errors';
 import { normalizePhone } from '@resume/shared/phone';
 import { sendTelegramNotification } from '../services/notification/telegram.js';

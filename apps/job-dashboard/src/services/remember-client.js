@@ -1,4 +1,4 @@
-import { DEFAULT_USER_AGENT } from '../utils/user-agents.js';
+import { DEFAULT_USER_AGENT } from '@resume/shared/ua';
 
 export class RememberClient {
   constructor(env) {
@@ -29,8 +29,7 @@ export class RememberClient {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
             Accept: 'application/json',
-            'User-Agent':
-              DEFAULT_USER_AGENT,
+            'User-Agent': DEFAULT_USER_AGENT,
             Origin: this.baseUrl,
             Referer: `${this.baseUrl}/job/postings`,
           },
@@ -42,8 +41,7 @@ export class RememberClient {
           method: 'GET',
           headers: {
             Accept: 'application/json',
-            'User-Agent':
-              DEFAULT_USER_AGENT,
+            'User-Agent': DEFAULT_USER_AGENT,
           },
         };
       }
@@ -84,8 +82,7 @@ export class RememberClient {
       const response = await fetch(`${this.apiBaseUrl}/job_postings/${jobId}`, {
         headers: {
           Accept: 'application/json',
-          'User-Agent':
-            DEFAULT_USER_AGENT,
+          'User-Agent': DEFAULT_USER_AGENT,
         },
       });
 

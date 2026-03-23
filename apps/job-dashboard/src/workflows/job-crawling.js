@@ -1,5 +1,5 @@
 import { WorkflowEntrypoint } from 'cloudflare:workers';
-import { DEFAULT_USER_AGENT } from '../utils/user-agents.js';
+import { DEFAULT_USER_AGENT } from '@resume/shared/ua';
 import { sendTelegramNotification, escapeHtml } from '../services/notification/telegram.js';
 import { calculateMatchScore } from '../handlers/auto-apply/match-scoring.js';
 
@@ -367,7 +367,6 @@ export class JobCrawlingWorkflow extends WorkflowEntrypoint {
       return { minMatchScore: 70 };
     }
   }
-
 
   async sendNotification(message) {
     await sendTelegramNotification(this.env, message);

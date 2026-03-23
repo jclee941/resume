@@ -1,4 +1,4 @@
-import { DEFAULT_USER_AGENT } from '../utils/user-agents.js';
+import { DEFAULT_USER_AGENT } from '@resume/shared/ua';
 
 export class LinkedInClient {
   constructor(env) {
@@ -40,10 +40,8 @@ export class LinkedInClient {
     try {
       const response = await fetch(url, {
         headers: {
-          'User-Agent':
-            DEFAULT_USER_AGENT,
-          Accept:
-            'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+          'User-Agent': DEFAULT_USER_AGENT,
+          Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
           'Accept-Language': 'en-US,en;q=0.9,ko;q=0.8',
         },
       });
@@ -85,7 +83,7 @@ export class LinkedInClient {
           id: match[1],
           position: match[2].trim(),
           company: match[3].trim(),
-        }),
+        })
       );
     }
 
@@ -100,7 +98,7 @@ export class LinkedInClient {
             id: match[1],
             position: match[2].trim(),
             company: match[3].trim(),
-          }),
+          })
         );
       }
     }
@@ -114,10 +112,8 @@ export class LinkedInClient {
     try {
       const response = await fetch(url, {
         headers: {
-          'User-Agent':
-            DEFAULT_USER_AGENT,
-          Accept:
-            'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+          'User-Agent': DEFAULT_USER_AGENT,
+          Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         },
       });
 
@@ -144,16 +140,16 @@ export class LinkedInClient {
 
   parseJobDetail(html, jobId) {
     const titleMatch = html.match(
-      /<h1[^>]*class="[^"]*top-card-layout__title[^"]*"[^>]*>([^<]+)<\/h1>/i,
+      /<h1[^>]*class="[^"]*top-card-layout__title[^"]*"[^>]*>([^<]+)<\/h1>/i
     );
     const companyMatch = html.match(
-      /<a[^>]*class="[^"]*topcard__org-name-link[^"]*"[^>]*>([^<]+)<\/a>/i,
+      /<a[^>]*class="[^"]*topcard__org-name-link[^"]*"[^>]*>([^<]+)<\/a>/i
     );
     const locationMatch = html.match(
-      /<span[^>]*class="[^"]*topcard__flavor--bullet[^"]*"[^>]*>([^<]+)<\/span>/i,
+      /<span[^>]*class="[^"]*topcard__flavor--bullet[^"]*"[^>]*>([^<]+)<\/span>/i
     );
     const descMatch = html.match(
-      /<div[^>]*class="[^"]*description__text[^"]*"[^>]*>([\s\S]*?)<\/div>/i,
+      /<div[^>]*class="[^"]*description__text[^"]*"[^>]*>([\s\S]*?)<\/div>/i
     );
 
     return {

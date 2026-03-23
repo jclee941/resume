@@ -11,7 +11,7 @@
  * - Notifications: notifyPreview
  */
 
-import { DEFAULT_USER_AGENT } from '../utils/user-agents.js';
+import { DEFAULT_USER_AGENT } from '@resume/shared/ua';
 import { sendTelegramNotification, escapeHtml } from '../services/notification/telegram.js';
 
 // ============================================================
