@@ -578,14 +578,16 @@ describe('es-logger', () => {
 
     it('should use outerErr fallback when thrown value has no message', async () => {
       const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      const emptyMsgErr = new Error('');
 
       await esLogger.logToElasticsearch(mockEnv, 'test message', {
         toLowerCase() {
-          throw 123;
+          throw emptyMsgErr;
         },
       });
 
-      expect(consoleSpy).toHaveBeenCalledWith('[ES] logToElasticsearch failed:', 123);
+      // outerErr.message is '' (falsy), so outerErr.message || outerErr → outerErr
+      expect(consoleSpy).toHaveBeenCalledWith('[ES] logToElasticsearch failed:', emptyMsgErr);
       consoleSpy.mockRestore();
     });
   });
