@@ -1,5 +1,5 @@
 import { WorkflowEntrypoint } from 'cloudflare:workers';
-import { DEFAULT_USER_AGENT } from '../utils/user-agents.js';
+import { DEFAULT_USER_AGENT } from '@resume/shared/ua';
 import { sendTelegramNotification, escapeHtml } from '../services/notification/telegram.js';
 
 /**
@@ -328,11 +328,14 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
 `;
     prompt += `- Company: ${job.company}
 `;
-    if (job.description) prompt += `- Job Description: ${job.description.substring(0, 500)}
+    if (job.description)
+      prompt += `- Job Description: ${job.description.substring(0, 500)}
 `;
-    if (resume?.skills) prompt += `- My Skills: ${resume.skills}
+    if (resume?.skills)
+      prompt += `- My Skills: ${resume.skills}
 `;
-    if (resume?.experience) prompt += `- My Experience: ${resume.experience}
+    if (resume?.experience)
+      prompt += `- My Experience: ${resume.experience}
 `;
     prompt += `
 Keep it professional, concise, and specific to this role.`;
