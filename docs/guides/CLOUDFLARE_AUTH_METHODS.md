@@ -340,7 +340,7 @@ Invalid format for Authorization header [code: 6111]
 | **Global API Key**           | https://dash.cloudflare.com/profile (scroll to "API Keys")      |
 | **Wrangler Docs**            | https://developers.cloudflare.com/workers/wrangler/commands/    |
 | **Authentication Guide**     | https://developers.cloudflare.com/fundamentals/api/get-started/ |
-| **Project Deployment Guide** | docs/MANUAL_DEPLOYMENT_GUIDE.md                                 |
+| **Project Deployment Guide** | docs/guides/MANUAL_DEPLOYMENT_GUIDE.md                          |
 
 ---
 
