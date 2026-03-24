@@ -14,10 +14,8 @@ Deployment helper scripts run preflight checks, deployment wrappers, and post-de
 deployment/
 ├── quick-deploy.sh           # one-command deploy helper
 ├── deploy-helper.sh          # staged deploy helper
-├── deploy-via-api.sh         # API-driven deployment helper
 ├── deploy-with-monitoring.sh # deploy with monitoring hooks
-├── deploy-grafana-configs.sh # observability config deploy helper
-└── deploy.sh                 # generic deploy wrapper
+└── deploy-grafana-configs.sh # observability config deploy helper
 ```
 
 ## CONVENTIONS

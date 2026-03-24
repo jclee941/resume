@@ -17,22 +17,10 @@ filegroup(
 )
 
 # Test target
-sh_binary(
-    name = "test",
-    srcs = ["//tools/scripts/bazel:test_job_automation.sh"],
-    data = [":sources"],
-)
+# Bazel facade removed - use npm test instead
 
 # Build target
-sh_binary(
-    name = "build",
-    srcs = ["//tools/scripts/bazel:build_job_automation.sh"],
-    data = [":sources"],
-)
+# Bazel facade removed - use npm run build instead
 
 # Deploy workers
-sh_binary(
-    name = "deploy",
-    srcs = ["//tools/scripts/bazel:deploy_job_automation.sh"],
-    data = [":sources"],
-)
+# Bazel facade removed - use npm run deploy instead

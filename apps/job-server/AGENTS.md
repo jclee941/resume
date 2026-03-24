@@ -30,17 +30,16 @@ job-server/
 
 ## WHERE TO LOOK
 
-| Task                 | Location               | Notes                             |
-| -------------------- | ---------------------- | --------------------------------- |
-| MCP server bootstrap | `src/index.js`         | Fastify + MCP tool registration   |
-| MCP tool definitions | `src/tools/`           | 16 tools                          |
-| API routes           | `src/server/routes/`   | 13 class-based Fastify modules    |
-| Domain services      | `src/shared/services/` | 17+ service directories           |
+| Task                 | Location               | Notes                              |
+| -------------------- | ---------------------- | ---------------------------------- |
+| MCP server bootstrap | `src/index.js`         | Fastify + MCP tool registration    |
+| MCP tool definitions | `src/tools/`           | 16 tools                           |
+| API routes           | `src/server/routes/`   | 13 class-based Fastify modules     |
+| Domain services      | `src/shared/services/` | 18 service directories             |
 | API clients          | `src/shared/clients/`  | wanted, d1, elasticsearch, secrets |
-| Stealth crawlers     | `src/crawlers/`        | BaseCrawler + platform subclasses |
-| Auto-apply           | `src/auto-apply/`      | Playwright form fill              |
-| Auth scripts         | `scripts/`             | quick-login, cookie extraction    |
-| Dashboard worker     | `workers/`             | CF Worker at /job/\*              |
+| Stealth crawlers     | `src/crawlers/`        | BaseCrawler + platform subclasses  |
+| Auto-apply           | `src/auto-apply/`      | Playwright form fill               |
+| Auth scripts         | `scripts/`             | quick-login, cookie extraction     |
 
 ## CODE MAP
 
@@ -100,5 +99,5 @@ job-server/
 
 ## NOTES
 
-- See child AGENTS.md for domain-specific details (src/, workers/, scripts/, platforms/).
+- See child AGENTS.md for domain-specific details (src/, scripts/, platforms/).
 - Large files: resume.js (869 lines), profile-sync.js (966), auth-sync.js (846).

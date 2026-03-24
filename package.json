@@ -31,7 +31,7 @@
     "test:node": "cd apps/job-server && npm test",
     "test:coverage": "npm run test:coverage:jest && npm run test:coverage:node",
     "test:coverage:jest": "NODE_OPTIONS='--experimental-vm-modules' jest --coverage",
-    "test:coverage:node": "c8 --check-coverage --lines 60 --functions 55 --branches 70 node --test 'apps/job-server/src/shared/**/*.test.js'",
+    "test:coverage:node": "c8 --check-coverage --lines 60 --functions 55 --branches 70 --exclude 'apps/job-server/src/shared/testing/**' node --test 'apps/job-server/src/shared/**/*.test.js'",
     "test:e2e": "playwright test",
     "test:e2e:worker": "npx playwright test worker-health --project=chromium",
     "test:e2e:deploy": "npx playwright test deploy-verification --project=chromium",

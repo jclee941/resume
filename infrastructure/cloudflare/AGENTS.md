@@ -27,14 +27,14 @@ infrastructure/cloudflare/
 
 ## WHERE TO LOOK
 
-| Task                   | Location                          | Notes                                                |
-| ---------------------- | --------------------------------- | ---------------------------------------------------- |
-| Backend/state behavior | `backend.tf`                      | S3-compatible backend (bucket: terraform-state)  |
-| Worker route bindings  | `workers.tf`                      | Terraform manages routes, not worker source code     |
-| DNS changes            | `dns.tf`                          | GitOps through PRs                                   |
-| KV/D1 references       | `kv.tf`, `d1.tf`                  | treat as read-only resource references               |
-| Operator overview      | `README.md`                       | import flow, quick start, division of responsibility |
-| CI flow                | `.github/workflows/terraform.yml` | plan/apply/drift workflow, current authority         |
+| Task                   | Location                                | Notes                                                |
+| ---------------------- | --------------------------------------- | ---------------------------------------------------- |
+| Backend/state behavior | `backend.tf`                            | S3-compatible backend (bucket: terraform-state)      |
+| Worker route bindings  | `workers.tf`                            | Terraform manages routes, not worker source code     |
+| DNS changes            | `dns.tf`                                | GitOps through PRs                                   |
+| KV/D1 references       | `kv.tf`, `d1.tf`                        | treat as read-only resource references               |
+| Operator overview      | `README.md`                             | import flow, quick start, division of responsibility |
+| CI flow                | `../../.github/workflows/terraform.yml` | plan/apply/drift workflow, current authority         |
 
 ## CONVENTIONS
 

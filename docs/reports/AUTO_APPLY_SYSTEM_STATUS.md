@@ -100,7 +100,7 @@ Wanted, JobKorea, Saramin, LinkedIn 4개 플랫폼을 지원하는 완전 자동
 
 ```
 src/index.js              # MCP 서버 엔트리 (9 tools, 1 resource, 3 prompts)
-src/lib/wanted-api.js     # Wanted API 클라이언트 (40+ API 메서드)
+src/shared/clients/wanted/     # Wanted API 클라이언트 (40+ API 메서드)
 src/tools/resume.js       # 이력서 관리 (20 actions)
 src/tools/resume-sync.js  # 자동화 파이프라인 (12 actions)
 ```
@@ -350,7 +350,7 @@ apps/job-server/
 │   ├── crawlers/          # 2,526줄 (4개 플랫폼)
 │   ├── auto-apply/        # 약 1,500줄
 │   ├── dashboard/         # 약 800줄
-│   ├── lib/               # 약 2,000줄
+│   ├── shared/            # 약 2,000줄
 │   └── tools/             # 약 3,000줄
 ├── workflows/             # 18.6KB (4개)
 └── tests/                 # 22 tests

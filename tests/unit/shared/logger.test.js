@@ -90,6 +90,15 @@ describe('Logger Contract Tests', () => {
       expect(ctx.traceId).toBe('4bf92f3577b34da6a3ce929d0e0e4736');
     });
 
+    test('constructor handles non-string traceparent by producing empty traceId', () => {
+      const ctx = new RequestContext({
+        traceparent: 12345,
+      });
+
+      expect(ctx.traceparent).toBe(12345);
+      expect(ctx.traceId).toBe('');
+    });
+
     test('static fromRequest creates context from Request object', () => {
       const mockHeaders = new Map([
         ['user-agent', 'Mozilla/5.0'],
@@ -125,6 +134,7 @@ describe('Logger Contract Tests', () => {
         userAgent: 'UA/1.0',
         geo: { country: 'KR', city: 'Seoul', asn: 100 },
         traceparent: '00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01',
+        tracestate: 'vendor=value',
       });
       const labels = ctx.toLabels();
 
@@ -138,6 +148,7 @@ describe('Logger Contract Tests', () => {
       expect(labels.traceId).toBe('4bf92f3577b34da6a3ce929d0e0e4736');
       expect(labels.trace.id).toBe('4bf92f3577b34da6a3ce929d0e0e4736');
       expect(labels.traceparent).toBeDefined();
+      expect(labels.tracestate).toBe('vendor=value');
     });
 
     test('toLabels excludes optional fields when absent', () => {
@@ -293,6 +304,31 @@ describe('Logger Contract Tests', () => {
 
       expect(consoleSpy).toHaveBeenCalled();
       consoleSpy.mockRestore();
+    });
+
+    test('error() includes http.response.status_code when passed HttpError', async () => {
+      const esEnv = {
+        ELASTICSEARCH_URL: 'https://es.example.com',
+        ELASTICSEARCH_API_KEY: 'api-key',
+        ELASTICSEARCH_INDEX: 'logger-test-index',
+      };
+      const logger = new Logger(esEnv, { service: 'http-err-test' });
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      const fetchSpy = jest.spyOn(globalThis, 'fetch').mockResolvedValue({
+        ok: true,
+        json: jest.fn().mockResolvedValue({ result: 'created' }),
+      });
+
+      const { HttpError } = await import('@resume/shared/errors');
+      await logger.error('Request failed', new HttpError(429, 'Too Many Requests'));
+
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+      const [, init] = fetchSpy.mock.calls[0];
+      const body = JSON.parse(init.body);
+      expect(body.http.response.status_code).toBe(429);
+
+      consoleSpy.mockRestore();
+      fetchSpy.mockRestore();
     });
   });
 });

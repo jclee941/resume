@@ -77,6 +77,34 @@ describe('Error Hierarchy Contract Tests', () => {
       expect(json.timestamp).toBe(err.timestamp);
       expect(json.stack).toBeDefined();
     });
+
+    test('toJSON serializes nested AppError cause via cause.toJSON()', () => {
+      const { AppError } = errors;
+      const rootCause = new AppError('root fail', { errorCode: 'ROOT_FAIL' });
+      const err = new AppError('wrapper', { cause: rootCause });
+      const json = err.toJSON();
+
+      expect(json.cause).toBeDefined();
+      expect(json.cause.name).toBe('AppError');
+      expect(json.cause.message).toBe('root fail');
+      expect(json.cause.errorCode).toBe('ROOT_FAIL');
+    });
+
+    test('toJSON serializes native Error cause using message/name', () => {
+      const { AppError } = errors;
+      const err = new AppError('wrapper', { cause: new TypeError('bad type') });
+      const json = err.toJSON();
+
+      expect(json.cause).toEqual({ message: 'bad type', name: 'TypeError' });
+    });
+
+    test('toJSON omits cause when no cause is provided', () => {
+      const { AppError } = errors;
+      const err = new AppError('no cause');
+      const json = err.toJSON();
+
+      expect(json.cause).toBeUndefined();
+    });
   });
 
   describe('HttpError', () => {
@@ -105,6 +133,19 @@ describe('Error Hierarchy Contract Tests', () => {
         errorCode: 'HTTP_400',
         details: 'some details',
       });
+    });
+
+    test('toResponse omits details when context.details is absent', async () => {
+      const { HttpError } = errors;
+      const err = new HttpError(401, 'Unauthorized');
+      const res = err.toResponse();
+      const body = await res.json();
+
+      expect(body).toEqual({
+        error: 'Unauthorized',
+        errorCode: 'HTTP_401',
+      });
+      expect(body.details).toBeUndefined();
     });
   });
 
@@ -138,12 +179,35 @@ describe('Error Hierarchy Contract Tests', () => {
       expect(json.step).toBe('login');
     });
 
+    test('CrawlerError uses explicit errorCode and defaults unknown platform/step', () => {
+      const { CrawlerError } = errors;
+      const err = new CrawlerError('failed', { errorCode: 'CUSTOM_CRAWLER_CODE' });
+
+      expect(err.errorCode).toBe('CUSTOM_CRAWLER_CODE');
+      expect(err.platform).toBe('unknown');
+      expect(err.step).toBe('unknown');
+    });
+
+    test('CrawlerError defaults to CRAWLER_ERROR when errorCode is omitted', () => {
+      const { CrawlerError } = errors;
+      const err = new CrawlerError('failed');
+
+      expect(err.errorCode).toBe('CRAWLER_ERROR');
+    });
+
     test('AuthError', () => {
       const { AuthError, AppError } = errors;
       const err = new AuthError('failed', { provider: 'google' });
       expect(err).toBeInstanceOf(AppError);
       expect(err.provider).toBe('google');
       expect(err.toJSON().provider).toBe('google');
+    });
+
+    test('AuthError defaults provider to unknown', () => {
+      const { AuthError } = errors;
+      const err = new AuthError('failed');
+
+      expect(err.provider).toBe('unknown');
     });
 
     test('ValidationError', () => {
@@ -164,6 +228,14 @@ describe('Error Hierarchy Contract Tests', () => {
       expect(err.toJSON().service).toBe('slack');
       expect(err.toJSON().serviceStatusCode).toBe(502);
     });
+
+    test('ExternalServiceError uses defaults for errorCode and service', () => {
+      const { ExternalServiceError } = errors;
+      const err = new ExternalServiceError('failed');
+
+      expect(err.errorCode).toBe('EXTERNAL_SERVICE_ERROR');
+      expect(err.service).toBe('unknown');
+    });
   });
 
   describe('normalizeError', () => {
@@ -173,6 +245,15 @@ describe('Error Hierarchy Contract Tests', () => {
       const normalized = normalizeError(err, { extra: 'ctx' });
       expect(normalized).toBe(err);
       expect(normalized.context.extra).toBe('ctx');
+    });
+
+    test('should merge context into existing AppError when context is non-empty', () => {
+      const { normalizeError, AppError } = errors;
+      const err = new AppError('msg', { context: { existing: 'value' } });
+      const normalized = normalizeError(err, { incoming: 'ctx' });
+
+      expect(normalized).toBe(err);
+      expect(normalized.context).toEqual({ existing: 'value', incoming: 'ctx' });
     });
 
     test('should wrap Error instance', () => {

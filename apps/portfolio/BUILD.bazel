@@ -17,18 +17,7 @@ filegroup(
 )
 
 # Build target (wrapper for generate-worker.js)
-sh_binary(
-    name = "build",
-    srcs = ["//tools/scripts/bazel:build_portfolio.sh"],
-    data = [
-        ":sources",
-        "//packages/data:sources",
-    ],
-)
+# Bazel facade removed - use npm run build instead
 
 # Deploy target
-sh_binary(
-    name = "deploy",
-    srcs = ["//tools/scripts/bazel:deploy_portfolio.sh"],
-    data = [":sources"],
-)
+# Bazel facade removed - use npm run deploy instead

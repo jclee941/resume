@@ -14,29 +14,5 @@ filegroup(
 # =============================================================================
 # Build/Test/Deploy Targets
 # =============================================================================
-
-sh_binary(
-    name = "build",
-    srcs = ["//tools/scripts/bazel:build.sh"],
-    data = [
-        "//apps/portfolio:sources",
-        "//packages/data:sources",
-    ],
-)
-
-sh_binary(
-    name = "test",
-    srcs = ["//tools/scripts/bazel:test.sh"],
-    data = [
-        "//apps/job-server:sources",
-    ],
-)
-
-sh_binary(
-    name = "deploy",
-    srcs = ["//tools/scripts/bazel:deploy.sh"],
-    data = [
-        "//apps/portfolio:sources",
-        "//apps/job-server:sources",
-    ],
-)
+# Bazel facade removed - use npm scripts directly
+# npm run build, npm test, npm run deploy

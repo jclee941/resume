@@ -111,6 +111,34 @@ describe('Elasticsearch Client', () => {
     expect(global.fetch).not.toHaveBeenCalled();
   });
 
+  test('logToElasticsearch trims queue when push causes size overflow', async () => {
+    const originalPush = Array.prototype.push;
+    Array.prototype.push = function patchedPush(...items) {
+      const result = originalPush.apply(this, items);
+      if (items[0]?.service?.name === 'overflow-test') {
+        this.length = 1001;
+      }
+      return result;
+    };
+
+    try {
+      await mod.logToElasticsearch(mockEnv, 'overflow msg', 'INFO', {}, { job: 'overflow-test' });
+      expect(global.fetch).toHaveBeenCalled();
+    } finally {
+      Array.prototype.push = originalPush;
+    }
+  });
+
+  test('logToElasticsearch timer flush executes callback branch', async () => {
+    await mod.logToElasticsearch(mockEnv, 'timer msg');
+    expect(global.fetch).not.toHaveBeenCalled();
+
+    await jest.advanceTimersByTimeAsync(1000);
+
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(global.fetch.mock.calls[0][0]).toContain('_bulk');
+  });
+
   test('logRequest calls logToElasticsearch with request details', async () => {
     const mockReq = {
       method: 'GET',
@@ -200,6 +228,24 @@ describe('Elasticsearch Client', () => {
     await expect(result).resolves.toBeUndefined();
 
     global.fetch = originalFetch;
+  });
+
+  test('logEvent warns when logToElasticsearch promise rejects', async () => {
+    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    const throwingOptions = new Proxy(
+      {},
+      {
+        get() {
+          throw new Error('options getter failure');
+        },
+      }
+    );
+
+    await expect(mod.logEvent(mockEnv, 'evt', {}, throwingOptions)).resolves.toBeUndefined();
+
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+    expect(warnSpy.mock.calls[0][1]).toBe('logEvent failed to write to Elasticsearch');
+    warnSpy.mockRestore();
   });
 
   test('flush clears queue via _bulk', async () => {
