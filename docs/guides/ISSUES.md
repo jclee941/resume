@@ -61,6 +61,8 @@ npm test  # Should show ZERO "Cannot log after tests" errors
 3. Archive old resumes to `resumes/archive/pre-consolidation/`
 4. Add Git tags for version control (e.g., `v1.0-nextrade`)
 
+> **Note**: Paths above are from the original proposal. Current SSoT location: `packages/data/resumes/master/resume_data.json`. Scripts moved to `tools/scripts/`.
+
 **Verification**:
 
 ```bash

@@ -11,7 +11,7 @@ Automation scripts for deploying the resume portfolio to Cloudflare Workers.
 
 ```bash
 export CLOUDFLARE_API_TOKEN=your_token_here
-./scripts/deployment/quick-deploy.sh
+./tools/scripts/deployment/quick-deploy.sh
 ```
 
 **What it does**:
@@ -32,7 +32,7 @@ export CLOUDFLARE_API_TOKEN=your_token_here
 
 ```bash
 export CLOUDFLARE_API_TOKEN=your_token_here
-./scripts/deployment/deploy-helper.sh
+./tools/scripts/deployment/deploy-helper.sh
 ```
 
 **What it does** (6 stages):
@@ -54,7 +54,7 @@ export CLOUDFLARE_API_TOKEN=your_token_here
 **Prerequisites**: None (read-only, no credentials needed)
 
 ```bash
-./scripts/verification/verify-deployment.sh
+./tools/scripts/verification/verify-deployment.sh
 ```
 
 **What it checks** (7 tests):
@@ -83,11 +83,11 @@ export CLOUDFLARE_API_TOKEN=your_token_here
 
 ## Quick Reference
 
-| Task                   | Command                          | Requires Credentials |
-| ---------------------- | -------------------------------- | -------------------- |
-| Deploy with all checks | `./scripts/quick-deploy.sh`      | ✅ Yes (API token)   |
-| Deploy step-by-step    | `./scripts/deploy-helper.sh`     | ✅ Yes (API token)   |
-| Verify only            | `./scripts/verify-deployment.sh` | ❌ No (read-only)    |
+| Task                   | Command                                             | Requires Credentials |
+| ---------------------- | --------------------------------------------------- | -------------------- |
+| Deploy with all checks | `./tools/scripts/deployment/quick-deploy.sh`        | ✅ Yes (API token)   |
+| Deploy step-by-step    | `./tools/scripts/deployment/deploy-helper.sh`       | ✅ Yes (API token)   |
+| Verify only            | `./tools/scripts/verification/verify-deployment.sh` | ❌ No (read-only)    |
 
 ## Getting Cloudflare API Token
 
@@ -172,7 +172,7 @@ npm run test:e2e  # Run E2E tests
 
 For detailed instructions including GitHub authentication setup, SSH key configuration, and comprehensive troubleshooting, see:
 
-📘 **[Manual Deployment Guide](../docs/MANUAL_DEPLOYMENT_GUIDE.md)**
+📘 **[Manual Deployment Guide](../../docs/guides/MANUAL_DEPLOYMENT_GUIDE.md)**
 
 Includes:
 
