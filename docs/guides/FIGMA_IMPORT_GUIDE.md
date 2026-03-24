@@ -33,17 +33,18 @@ Follow the detailed steps in Section 2.
 
 **Create these color styles in Figma**:
 
-| Style Name | Hex Value | Usage |
-|------------|-----------|-------|
-| `Black` | `#000000` | Text, borders, shadows |
-| `White` | `#ffffff` | Backgrounds, button text |
-| `Cyan` | `#06b6d4` | Accents, links |
-| `Cyan Dark` | `#0891b2` | Hover states |
-| `Gray/50` | `#fafafa` | Subtle backgrounds |
-| `Gray/100` | `#f5f5f5` | Light backgrounds |
-| `Gray/500` | `#737373` | Secondary text |
+| Style Name  | Hex Value | Usage                    |
+| ----------- | --------- | ------------------------ |
+| `Black`     | `#000000` | Text, borders, shadows   |
+| `White`     | `#ffffff` | Backgrounds, button text |
+| `Cyan`      | `#06b6d4` | Accents, links           |
+| `Cyan Dark` | `#0891b2` | Hover states             |
+| `Gray/50`   | `#fafafa` | Subtle backgrounds       |
+| `Gray/100`  | `#f5f5f5` | Light backgrounds        |
+| `Gray/500`  | `#737373` | Secondary text           |
 
 **Steps**:
+
 1. Select any shape in Figma
 2. Click on the fill color
 3. Click the 4-square icon (Color Styles)
@@ -57,25 +58,27 @@ Follow the detailed steps in Section 2.
 ## 2. Text Styles
 
 **Install Inter Font First**:
+
 - Go to [Google Fonts - Inter](https://fonts.google.com/specimen/Inter)
 - Click "Get font" → "Install"
 - Or use Figma's font menu: Text → Font → Search "Inter"
 
 **Create these text styles**:
 
-| Style Name | Font | Size | Weight | Line Height | Letter Spacing |
-|------------|------|------|--------|-------------|----------------|
-| `Display/XL` | Inter | 112px | Black (900) | 100% | -4% |
-| `Display/LG` | Inter | 64px | Black (900) | 110% | -3% |
-| `Heading/XL` | Inter | 64px | Black (900) | 100% | 0% |
-| `Heading/LG` | Inter | 24px | Black (900) | Auto | -5% |
-| `Heading/MD` | Inter | 20px | Regular (400) | Auto | 0% |
-| `Body/LG` | Inter | 32px | Regular (400) | 140% | 0% |
-| `Body/MD` | Inter | 18px | Bold (700) | Auto | 0% |
-| `Body/SM` | Inter | 16px | Regular (400) | 160% | 0% |
-| `Label/MD` | Inter | 14px | Bold (700) | Auto | 5% |
+| Style Name   | Font  | Size  | Weight        | Line Height | Letter Spacing |
+| ------------ | ----- | ----- | ------------- | ----------- | -------------- |
+| `Display/XL` | Inter | 112px | Black (900)   | 100%        | -4%            |
+| `Display/LG` | Inter | 64px  | Black (900)   | 110%        | -3%            |
+| `Heading/XL` | Inter | 64px  | Black (900)   | 100%        | 0%             |
+| `Heading/LG` | Inter | 24px  | Black (900)   | Auto        | -5%            |
+| `Heading/MD` | Inter | 20px  | Regular (400) | Auto        | 0%             |
+| `Body/LG`    | Inter | 32px  | Regular (400) | 140%        | 0%             |
+| `Body/MD`    | Inter | 18px  | Bold (700)    | Auto        | 0%             |
+| `Body/SM`    | Inter | 16px  | Regular (400) | 160%        | 0%             |
+| `Label/MD`   | Inter | 14px  | Bold (700)    | Auto        | 5%             |
 
 **Steps**:
+
 1. Create a text box with "Sample Text"
 2. Set font to Inter
 3. Set size, weight, line height, letter spacing per table
@@ -91,6 +94,7 @@ Follow the detailed steps in Section 2.
 **Create these effect styles**:
 
 ### Shadow/Brutal
+
 - **Type**: Drop Shadow
 - **X**: `6px`
 - **Y**: `6px`
@@ -99,6 +103,7 @@ Follow the detailed steps in Section 2.
 - **Color**: Black (#000000), 100% opacity
 
 ### Shadow/Brutal LG
+
 - **Type**: Drop Shadow
 - **X**: `10px`
 - **Y**: `10px`
@@ -107,6 +112,7 @@ Follow the detailed steps in Section 2.
 - **Color**: Black (#000000), 100% opacity
 
 **Steps**:
+
 1. Select any shape
 2. Go to Effects panel
 3. Click "+" → Drop Shadow
@@ -126,6 +132,7 @@ Now create reusable components using the styles above.
 ### 4.1 Primary Button
 
 **Visual Reference**:
+
 ```
 ┌─────────────────────────────────┐
 │                                 │
@@ -138,6 +145,7 @@ Now create reusable components using the styles above.
 ```
 
 **Steps**:
+
 1. Create rectangle (any size)
 2. **Fill**: Black
 3. **Stroke**: 3px, Inside, Black
@@ -155,6 +163,7 @@ Now create reusable components using the styles above.
 15. Name: "Button/Primary"
 
 **Add Hover Variant**:
+
 1. Select component
 2. Click "+" in Properties panel → "Add variant"
 3. Create property "State" with values "Default", "Hover"
@@ -168,6 +177,7 @@ Now create reusable components using the styles above.
 ### 4.2 Secondary Button
 
 Same as Primary Button, but:
+
 - **Fill**: White
 - **Text Color**: Black
 - On Hover: Change fill to Cyan (#06b6d4)
@@ -175,6 +185,7 @@ Same as Primary Button, but:
 ### 4.3 Project Card
 
 **Visual Reference**:
+
 ```
 ┌─────────────────────────────────────────────────┐
 │                                                 │
@@ -190,6 +201,7 @@ Same as Primary Button, but:
 ```
 
 **Steps**:
+
 1. Create rectangle (width: 400px, height: auto)
 2. **Fill**: White
 3. **Stroke**: 3px, Inside, Black
@@ -208,11 +220,13 @@ Same as Primary Button, but:
 14. Name: "Card/Project"
 
 **Add Hover Variant**:
+
 - On Hover variant: Add Shadow/Brutal LG effect
 
 ### 4.4 Tech Badge
 
 **Visual Reference**:
+
 ```
 ┌──────────┐
 │  PYTHON  │
@@ -220,6 +234,7 @@ Same as Primary Button, but:
 ```
 
 **Steps**:
+
 1. Create text "PYTHON"
    - **Text Style**: Label/MD
    - **Text Transform**: Uppercase
@@ -232,6 +247,7 @@ Same as Primary Button, but:
 8. Name: "Badge/Tech"
 
 **Make it Dynamic**:
+
 1. Select text layer
 2. Right-click → "Create Component Property" → "Text"
 3. Name property "Label"
@@ -240,6 +256,7 @@ Same as Primary Button, but:
 ### 4.5 Nav Link
 
 **Steps**:
+
 1. Create text "Home"
    - **Text Style**: Heading/LG
    - **Color**: Black
@@ -254,6 +271,7 @@ Same as Primary Button, but:
 ## 5. Layout Grid
 
 **Desktop Grid (1400px)**:
+
 1. Create frame (W: 1400px, H: auto)
 2. Click "Layout Grid" icon (+)
 3. **Type**: Columns
@@ -263,11 +281,13 @@ Same as Primary Button, but:
 7. **Color**: Red, 10% opacity
 
 **Tablet Grid (768px)**:
+
 - **Columns**: 8
 - **Gutter**: 24px
 - **Margin**: 24px
 
 **Mobile Grid (375px)**:
+
 - **Columns**: 4
 - **Gutter**: 16px
 - **Margin**: 16px
@@ -317,6 +337,7 @@ Components
 ```
 
 **Steps**:
+
 1. In Assets panel, click "+" next to "Local components"
 2. Create folders: Button, Card, Badge, Nav
 3. Drag components into appropriate folders
@@ -344,6 +365,7 @@ Components
    - Animation: 150ms
 
 **Present Mode**:
+
 - Press "Play" button (top-right)
 - Test all interactions
 - Share link with "View only" access
@@ -363,6 +385,7 @@ Components
 **For design handoff**:
 
 Use Figma's built-in "Inspect" panel:
+
 - Developers can copy CSS directly
 - Shows spacing, colors, typography
 - Generates code snippets
@@ -383,17 +406,17 @@ Use Figma's built-in "Inspect" panel:
 
 Learn these for faster work:
 
-| Shortcut | Action |
-|----------|--------|
-| `R` | Rectangle tool |
-| `T` | Text tool |
-| `F` | Frame tool |
-| `Cmd+G` | Group selection |
-| `Cmd+Opt+G` | Frame selection |
-| `Cmd+D` | Duplicate |
-| `Cmd+Opt+C` | Copy properties |
+| Shortcut    | Action           |
+| ----------- | ---------------- |
+| `R`         | Rectangle tool   |
+| `T`         | Text tool        |
+| `F`         | Frame tool       |
+| `Cmd+G`     | Group selection  |
+| `Cmd+Opt+G` | Frame selection  |
+| `Cmd+D`     | Duplicate        |
+| `Cmd+Opt+C` | Copy properties  |
 | `Cmd+Opt+V` | Paste properties |
-| `Shift+A` | Add auto layout |
+| `Shift+A`   | Add auto layout  |
 | `Opt+Cmd+K` | Create component |
 
 ---
@@ -401,15 +424,18 @@ Learn these for faster work:
 ## 12. Resources & Next Steps
 
 **Official Figma Resources**:
+
 - [Figma Tutorial Videos](https://www.figma.com/resources/learn-design/)
 - [Component Best Practices](https://www.figma.com/best-practices/components-styles-and-shared-libraries/)
 - [Auto Layout Guide](https://help.figma.com/hc/en-us/articles/360040451373)
 
 **Community Resources**:
+
 - [Figma Community - Neu-brutalism](https://www.figma.com/community/search?model_type=files&q=neubrutalism)
 - [Design System Checklist](https://www.designsystemchecklist.com/)
 
 **Need Help?**:
+
 - Figma Community Forum: [forum.figma.com](https://forum.figma.com)
 - Design System Slack: [design-systems.slack.com](https://design-systems.slack.com)
 
@@ -516,5 +542,6 @@ Before finishing your Figma design system:
 **Last Updated**: 2025-10-16
 
 For questions or help, refer to:
-- `docs/DESIGN_SYSTEM.md` - Full design system documentation
+
+- `docs/architecture/DESIGN_SYSTEM.md` - Full design system documentation
 - `docs/figma-tokens.json` - Design tokens for Tokens Studio plugin

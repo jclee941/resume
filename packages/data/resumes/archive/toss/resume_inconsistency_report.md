@@ -1,4 +1,5 @@
 # Resume Inconsistency Report
+
 **Date**: 2025-09-30
 **Purpose**: Comprehensive analysis of inconsistencies across all resume documents
 
@@ -6,10 +7,12 @@
 
 ## 📋 Executive Summary
 
-This report identifies all inconsistencies found across 13 resume-related documents in the `/home/jclee/app/resume/toss/` directory.
+This report identifies all inconsistencies found across 13 resume-related documents in the `packages/data/resumes/archive/toss/` directory.
 
 ### Critical Issues Found: 5
+
 ### Minor Issues Found: 3
+
 ### Files Affected: 8
 
 ---
@@ -20,17 +23,18 @@ This report identifies all inconsistencies found across 13 resume-related docume
 
 **Issue**: Different duration statements for the same period
 
-| Document | Stated Duration | Actual Period |
-|----------|----------------|---------------|
-| `wanted_career_format_updated.md` | **1년** | 2024.03 ~ 2025.02 |
-| `master_resume_integration.md` | **11개월** | 2024.03 ~ 2025.02 |
-| `toss_commerce_server_developer_platform_resume.md` | **11개월** | 2024.03 ~ 2025.02 |
+| Document                                            | Stated Duration | Actual Period     |
+| --------------------------------------------------- | --------------- | ----------------- |
+| `wanted_career_format_updated.md`                   | **1년**         | 2024.03 ~ 2025.02 |
+| `master_resume_integration.md`                      | **11개월**      | 2024.03 ~ 2025.02 |
+| `toss_commerce_server_developer_platform_resume.md` | **11개월**      | 2024.03 ~ 2025.02 |
 
 **Calculation**: 2024.03 ~ 2025.02 = **12개월 = 1년** (exact)
 
 **Recommended Fix**: Use **"1년"** consistently across all documents
 
 **Affected Files**:
+
 - master_resume_integration.md (Line ~50)
 - toss_commerce_server_developer_platform_resume.md (Line ~80)
 
@@ -40,18 +44,20 @@ This report identifies all inconsistencies found across 13 resume-related docume
 
 **Issue**: Conflicting duration statements
 
-| Document | Stated Duration | Actual Period |
-|----------|----------------|---------------|
-| `wanted_career_format_updated.md` | **1년 8개월** | 2022.08 ~ 2024.03 |
-| `master_resume_integration.md` | **1년 7개월** | 2022.08 ~ 2024.03 |
+| Document                          | Stated Duration | Actual Period     |
+| --------------------------------- | --------------- | ----------------- |
+| `wanted_career_format_updated.md` | **1년 8개월**   | 2022.08 ~ 2024.03 |
+| `master_resume_integration.md`    | **1년 7개월**   | 2022.08 ~ 2024.03 |
 
 **Calculation**:
+
 - 2022.08 ~ 2024.03 = **19개월 = 1년 7개월**
 - If counting 2022.08.01 ~ 2024.03.31: **20개월 = 1년 8개월**
 
 **Recommended Fix**: Use **"1년 8개월"** (assuming full months)
 
 **Affected Files**:
+
 - master_resume_integration.md (Line ~150)
 
 ---
@@ -60,15 +66,16 @@ This report identifies all inconsistencies found across 13 resume-related docume
 
 **Issue**: Multiple different statements about total career length
 
-| Document | Statement | Context |
-|----------|-----------|---------|
-| `master_resume_integration.md` | "총 8년 8개월" | Total career including gap |
-| `master_resume_integration.md` | "실무 경력 7년 7개월" | Excluding 1yr 1mo gap |
-| `wanted_career_format_updated.md` | "총 경력 8년 8개월" | Total timeline |
-| `wanted_career_format_updated.md` | "실무 경력 7년 7개월" | Excluding gap |
-| Self-introduction text | **"8년간"** | General statement |
+| Document                          | Statement             | Context                    |
+| --------------------------------- | --------------------- | -------------------------- |
+| `master_resume_integration.md`    | "총 8년 8개월"        | Total career including gap |
+| `master_resume_integration.md`    | "실무 경력 7년 7개월" | Excluding 1yr 1mo gap      |
+| `wanted_career_format_updated.md` | "총 경력 8년 8개월"   | Total timeline             |
+| `wanted_career_format_updated.md` | "실무 경력 7년 7개월" | Excluding gap              |
+| Self-introduction text            | **"8년간"**           | General statement          |
 
 **Calculation Verification**:
+
 ```
 Total Timeline: 2017.02 ~ 2025.09 = 8년 8개월 ✓
 Career Gap: 2018.11 ~ 2019.11 = 1년 1개월 ✓
@@ -78,11 +85,13 @@ Actual Work: 8년 8개월 - 1년 1개월 = 7년 7개월 ✓
 **Issue**: Self-introduction should say "8년간" not "6년강"
 
 **Recommended Fix**:
+
 - Keep both statements but clarify context
 - Fix self-introduction to consistently use "8년간"
 - Add footnote explaining gap period
 
 **Affected Files**:
+
 - wanted_complete_application.md (self-introduction section)
 
 ---
@@ -92,20 +101,24 @@ Actual Work: 8년 8개월 - 1년 1개월 = 7년 7개월 ✓
 **Issue**: Typo in self-introduction text
 
 **Current Text** (wanted_complete_application.md):
+
 ```
 "지난 6년강 금융·제조·교육 산업에서..."
 ```
 
 **Problems**:
+
 1. **"6년강"** → should be **"8년간"** (incorrect duration + typo)
 2. Should reflect actual 8 years of experience
 
 **Recommended Fix**:
+
 ```
 "8년간 금융·제조·교육 산업에서 보안 인프라를 구축하고 운영하면서..."
 ```
 
 **Affected Files**:
+
 - wanted_complete_application.md (Line ~49)
 
 ---
@@ -115,12 +128,14 @@ Actual Work: 8년 8개월 - 1년 1개월 = 7년 7개월 ✓
 **Issue**: Different date formats used across documents
 
 **Formats Found**:
+
 1. "2025.03 ~ 현재" (master_resume_integration.md)
 2. "2025.03 ~ 현재 (7개월)" (wanted_career_format_updated.md)
 3. "2024.03 ~ 2025.02 (11개월)" (some files)
 4. "2024.03 ~ 2025.02 (1년)" (other files)
 
 **Recommended Standard**:
+
 ```
 YYYY.MM ~ YYYY.MM (X년 Y개월)
 ```
@@ -136,6 +151,7 @@ Example: `2024.03 ~ 2025.02 (1년)`
 **Status**: ✅ **VERIFIED CONSISTENT**
 
 All quantitative achievements are consistent across documents:
+
 - ✅ 50% time reduction (policy automation)
 - ✅ 40% incident decrease (VPN-backup conflict)
 - ✅ 75% efficiency improvement (8hrs→2hrs)
@@ -150,6 +166,7 @@ All quantitative achievements are consistent across documents:
 **Status**: ✅ **VERIFIED CONSISTENT**
 
 All company names are consistent:
+
 - ㈜아이티센 CTS
 - ㈜가온누리정보시스템
 - ㈜콴텍투자일임
@@ -166,15 +183,16 @@ All company names are consistent:
 
 **Issue**: Some production links are broken or inaccessible
 
-| System | URL | Status | Evidence |
-|--------|-----|--------|----------|
-| Grafana Dashboard | https://grafana.jclee.me | ✅ **Live** | Confirmed in portfolio_integration.md |
-| Splunk Integration | https://splunk.jclee.me | ⚠️ **Unknown** | Not verified |
-| Blacklist Platform | https://blacklist.jclee.me | ❌ **404** | Mentioned as "점검 중" |
-| Fortinet Automation | https://fortinet.jclee.me | ❌ **Failed** | Connection error |
-| SafeWork Platform | https://safework.jclee.me | ⚠️ **Unknown** | Not verified |
+| System              | URL                        | Status         | Evidence                              |
+| ------------------- | -------------------------- | -------------- | ------------------------------------- |
+| Grafana Dashboard   | https://grafana.jclee.me   | ✅ **Live**    | Confirmed in portfolio_integration.md |
+| Splunk Integration  | https://splunk.jclee.me    | ⚠️ **Unknown** | Not verified                          |
+| Blacklist Platform  | https://blacklist.jclee.me | ❌ **404**     | Mentioned as "점검 중"                |
+| Fortinet Automation | https://fortinet.jclee.me  | ❌ **Failed**  | Connection error                      |
+| SafeWork Platform   | https://safework.jclee.me  | ⚠️ **Unknown** | Not verified                          |
 
 **Recommended Action**:
+
 - Either fix broken services OR
 - Update portfolio_integration.md to mark as "Under Maintenance"
 - Focus on grafana.jclee.me as primary portfolio piece (73.8% test coverage)
@@ -214,6 +232,7 @@ All company names are consistent:
 ## 🔧 Recommended Fix Workflow
 
 ### Step 1: Fix Critical Career Period Errors
+
 ```bash
 # Fix 가온누리 duration (11개월 → 1년)
 sed -i 's/2024.03 ~ 2025.02 (11개월)/2024.03 ~ 2025.02 (1년)/g' \
@@ -226,24 +245,30 @@ sed -i 's/2022.08 ~ 2024.03 (1년 7개월)/2022.08 ~ 2024.03 (1년 8개월)/g' \
 ```
 
 ### Step 2: Fix Self-Introduction Typo
+
 ```bash
 # Fix typo in wanted_complete_application.md
 sed -i 's/지난 6년강/8년간/g' wanted_complete_application.md
 ```
 
 ### Step 3: Standardize Date Formats
+
 Create unified date format standard:
+
 - `YYYY.MM ~ YYYY.MM (X년)` for periods under 2 years
 - `YYYY.MM ~ YYYY.MM (X년 Y개월)` for periods with remaining months
 - `YYYY.MM ~ 현재 (Y개월)` for current position
 
 ### Step 4: Update Portfolio Links
+
 Either:
+
 - Option A: Mark unavailable services as "Under Maintenance"
 - Option B: Remove references to broken links entirely
 - Option C: Fix the services and verify accessibility
 
 ### Step 5: Generate Final Unified Document
+
 Create `resume_final_unified.md` with all corrections applied
 
 ---
@@ -269,15 +294,18 @@ After fixes are applied, verify:
 ## 📈 Impact Assessment
 
 ### High Impact (Must Fix Immediately)
+
 1. ✅ Career period errors (affects credibility)
 2. ✅ Self-introduction typo (visible to recruiter)
 3. ✅ Total career duration clarity
 
 ### Medium Impact (Should Fix Before Submission)
+
 4. ⚠️ Date format standardization
 5. ⚠️ Portfolio link status
 
 ### Low Impact (Optional)
+
 6. ℹ️ Additional formatting improvements
 
 ---

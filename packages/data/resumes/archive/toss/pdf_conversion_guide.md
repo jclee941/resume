@@ -1,6 +1,7 @@
 # 토스 커머스 이력서 PDF 변환 가이드
 
 ## 📄 변환할 파일
+
 `토스커머스_Server_Developer_Platform_이재철.md`
 
 ---
@@ -10,11 +11,13 @@
 ### A. Markdown to PDF 온라인 변환기
 
 **추천 사이트**:
+
 1. **https://www.markdowntopdf.com/** ⭐ (가장 간단)
 2. **https://md2pdf.netlify.app/**
 3. **https://cloudconvert.com/md-to-pdf**
 
 **사용 방법**:
+
 ```
 1. 위 사이트 중 하나 접속
 2. "토스커머스_Server_Developer_Platform_이재철.md" 파일 업로드
@@ -33,6 +36,7 @@ Markdown 에디터 중 가장 깔끔한 PDF 생성
 **다운로드**: https://typora.io/
 
 **사용 방법**:
+
 ```
 1. Typora 설치
 2. "토스커머스_Server_Developer_Platform_이재철.md" 파일 열기
@@ -51,6 +55,7 @@ Markdown 에디터 중 가장 깔끔한 PDF 생성
 ### Markdown PDF 확장 설치
 
 **설치 방법**:
+
 ```
 1. VS Code 열기
 2. 확장(Extensions) 검색: "Markdown PDF"
@@ -73,7 +78,7 @@ sudo apt update
 sudo apt install -y pandoc texlive-xetex texlive-fonts-recommended texlive-lang-korean
 
 # 변환 명령어
-cd /home/jclee/app/resume/company-specific
+cd packages/data/resumes/archive/toss
 pandoc 토스커머스_Server_Developer_Platform_이재철.md \
   -o 이재철_토스커머스_이력서.pdf \
   --pdf-engine=xelatex \
@@ -117,7 +122,7 @@ if ! command -v pandoc &> /dev/null; then
 fi
 
 # PDF 변환
-cd /home/jclee/app/resume/company-specific
+cd packages/data/resumes/archive/toss
 
 pandoc "토스커머스_Server_Developer_Platform_이재철.md" \
   -o "이재철_토스커머스_이력서.pdf" \
@@ -132,6 +137,7 @@ ls -lh "이재철_토스커머스_이력서.pdf"
 ```
 
 **실행 방법**:
+
 ```bash
 chmod +x pdf-convert.sh
 ./pdf-convert.sh
@@ -156,12 +162,12 @@ chmod +x pdf-convert.sh
 
 ### 상황별 추천
 
-| 상황 | 추천 방법 | 이유 |
-|------|-----------|------|
-| **급할 때** | 온라인 변환기 | 가장 빠름 (2분) |
-| **깔끔한 디자인** | Typora | 전문적인 레이아웃 |
-| **개발 환경** | VS Code 확장 | 익숙한 도구 |
-| **고급 커스터마이징** | Pandoc | 폰트, 여백 세밀 조정 |
+| 상황                  | 추천 방법     | 이유                 |
+| --------------------- | ------------- | -------------------- |
+| **급할 때**           | 온라인 변환기 | 가장 빠름 (2분)      |
+| **깔끔한 디자인**     | Typora        | 전문적인 레이아웃    |
+| **개발 환경**         | VS Code 확장  | 익숙한 도구          |
+| **고급 커스터마이징** | Pandoc        | 폰트, 여백 세밀 조정 |
 
 ---
 
@@ -170,11 +176,13 @@ chmod +x pdf-convert.sh
 ### Plan B: 직접 작성
 
 **온라인 이력서 작성 도구**:
+
 1. **Canva**: https://www.canva.com/ko_kr/templates/resume/
 2. **Notion**: Notion 페이지 → PDF 내보내기
 3. **Google Docs**: 템플릿 활용
 
 **방법**:
+
 ```
 1. 기존 Markdown 내용 복사
 2. 위 도구 중 하나에 붙여넣기
@@ -187,6 +195,7 @@ chmod +x pdf-convert.sh
 ## 📞 문의
 
 변환 중 문제 발생 시:
+
 - **이메일**: qws941@kakao.com
 - **GitHub**: https://github.com/qws941
 

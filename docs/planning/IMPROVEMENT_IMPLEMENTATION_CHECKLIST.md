@@ -8,6 +8,7 @@ Last Updated: 2025-11-13
 ## 🔴 CRITICAL (Do First - High Impact)
 
 ### C1: Remove Console Logging from Build
+
 - [ ] Create `apps/portfolio/logger.js` with conditional logging
 - [ ] Update `apps/portfolio/generate-worker.js` to use logger
 - [ ] Replace all `console.log()` with `logger.log()`
@@ -17,6 +18,7 @@ Last Updated: 2025-11-13
 - [ ] File: `apps/portfolio/generate-worker.js`, `apps/portfolio/logger.js`
 
 ### C2: Fix Resume Content Redundancy
+
 - [ ] Consolidate into single `resume_master.md`
 - [ ] Create `scripts/build/generate-resume-variants.js`
 - [ ] Implement variant templates (nextrade, general, short)
@@ -26,6 +28,7 @@ Last Updated: 2025-11-13
 - [ ] Files: `master/resume_master.md`, `scripts/build/generate-resume-variants.js`
 
 ### C3: Audit Resume Metrics
+
 - [ ] Review lines 50-86 in `master/resume_master.md`
 - [ ] Add date ranges to all time-bound claims
 - [ ] Standardize format: "X% improvement (baseline → result) over timeframe"
@@ -39,6 +42,7 @@ Last Updated: 2025-11-13
 ## 🟡 HIGH (Core Improvements)
 
 ### H1: Add Mobile Responsiveness E2E Tests
+
 - [ ] Create `tests/e2e/mobile.spec.js`
 - [ ] Test 4 viewport sizes (iPhone SE, iPhone 12, Pixel 5, iPad)
 - [ ] Verify touch targets ≥ 44px
@@ -48,6 +52,7 @@ Last Updated: 2025-11-13
 - [ ] File: `tests/e2e/mobile.spec.js`, `.github/workflows/deploy.yml`
 
 ### H2: Enhance Accessibility Compliance
+
 - [ ] Add ARIA labels to all interactive elements
 - [ ] Fix theme toggle: aria-label + aria-pressed
 - [ ] Add keyboard navigation tests
@@ -57,6 +62,7 @@ Last Updated: 2025-11-13
 - [ ] Files: `apps/portfolio/index.html`, `tests/e2e/accessibility.spec.js`, `apps/portfolio/styles.css`
 
 ### H3: Improve Project Card Descriptions
+
 - [ ] Update `apps/portfolio/data.json` with "tagline" field
 - [ ] Add 3-4 more differentiating details per project
 - [ ] Update `generateProjectCards()` function
@@ -65,6 +71,7 @@ Last Updated: 2025-11-13
 - [ ] File: `apps/portfolio/data.json`, `apps/portfolio/generate-worker.js`
 
 ### H4: Expand Meta Tags & Structured Data
+
 - [ ] Add BreadcrumbList schema to `apps/portfolio/index.html`
 - [ ] Add CollectionPage schema for portfolio
 - [ ] Add language and locale tags
@@ -74,6 +81,7 @@ Last Updated: 2025-11-13
 - [ ] File: `apps/portfolio/index.html`
 
 ### H5: Implement Internal Linking Strategy
+
 - [ ] Add "Related Skills" section to project cards
 - [ ] Link resume sections together
 - [ ] Create navigation hierarchy
@@ -82,6 +90,7 @@ Last Updated: 2025-11-13
 - [ ] Files: `apps/portfolio/data.json`, `apps/portfolio/generate-worker.js`
 
 ### H6: Add Career Narrative Section
+
 - [ ] Create "경력 경로 분석" section
 - [ ] Document 3 phases of career evolution
 - [ ] Add skill progression table
@@ -94,15 +103,17 @@ Last Updated: 2025-11-13
 ## 🟠 MEDIUM (Polish & Optimization)
 
 ### M1: Create Design System Tokens
-- [ ] Create `docs/DESIGN_SYSTEM_TOKENS.md`
+
+- [ ] Create `docs/architecture/DESIGN_SYSTEM.md`
 - [ ] Document color palette with contrast levels
 - [ ] Define typography scale
 - [ ] Create spacing scale (8px base)
 - [ ] Update `apps/portfolio/styles.css` to use CSS variables
 - [ ] Time: 1 hour
-- [ ] Files: `docs/DESIGN_SYSTEM_TOKENS.md`, `apps/portfolio/styles.css`
+- [ ] Files: `docs/architecture/DESIGN_SYSTEM.md`, `apps/portfolio/styles.css`
 
 ### M2: Add Security & Performance Tests
+
 - [ ] Create `tests/unit/security.test.js`
 - [ ] Create `tests/e2e/performance.spec.js`
 - [ ] Verify CSP headers (no unsafe-inline)
@@ -112,6 +123,7 @@ Last Updated: 2025-11-13
 - [ ] Files: `tests/unit/security.test.js`, `tests/e2e/performance.spec.js`
 
 ### M3: Optimize Worker Size
+
 - [ ] Audit current minification options
 - [ ] Check if removeURLs minification enabled
 - [ ] Monitor size breakdown in CI/CD
@@ -120,6 +132,7 @@ Last Updated: 2025-11-13
 - [ ] Files: `apps/portfolio/generate-worker.js`, `.github/workflows/deploy.yml`
 
 ### M4: Improve Build Pipeline Reliability
+
 - [ ] Add file existence validation
 - [ ] Add size range checks
 - [ ] Add content validation (export default)
@@ -128,6 +141,7 @@ Last Updated: 2025-11-13
 - [ ] File: `.github/workflows/deploy.yml`
 
 ### M5: Keyword Optimization
+
 - [ ] Research long-tail keywords for hiring
 - [ ] Update meta keywords tag
 - [ ] Improve meta description
@@ -136,6 +150,7 @@ Last Updated: 2025-11-13
 - [ ] File: `apps/portfolio/index.html`
 
 ### M6: Expand Technical Stack Presentation
+
 - [ ] Add business impact to each technology
 - [ ] Include automation/outcome metrics
 - [ ] Link to specific projects
@@ -147,31 +162,35 @@ Last Updated: 2025-11-13
 ## 🟢 LOW (Enhancement & Documentation)
 
 ### L1: Create GET_STARTED.md Guide
+
 - [ ] Document prerequisites
 - [ ] Add step-by-step local setup
 - [ ] Include content editing instructions
 - [ ] Add testing procedures
 - [ ] Include common troubleshooting
 - [ ] Time: 1 hour
-- [ ] File: `docs/GET_STARTED.md`
+- [ ] File: `docs/guides/QUICK_START.md`
 
 ### L2: Write Architecture Deep Dive
+
 - [ ] Document build pipeline (7 phases)
 - [ ] Create system architecture diagram (ASCII)
 - [ ] Explain deployment process
 - [ ] Document monitoring pipeline
 - [ ] Time: 2 hours
-- [ ] File: `docs/ARCHITECTURE_DEEP_DIVE.md`
+- [ ] File: `docs/guides/ARCHITECTURE_DEEP_DIVE.md`
 
 ### L3: Expand Troubleshooting Guide
+
 - [ ] Document "Cannot log after tests" issue
 - [ ] Add Cloudflare token troubleshooting
 - [ ] Add worker.js regeneration issues
 - [ ] Add performance debugging steps
 - [ ] Time: 1 hour
-- [ ] File: `docs/TROUBLESHOOTING.md`
+- [ ] File: `docs/guides/TROUBLESHOOTING.md`
 
 ### L4: Add Comprehensive Schema Markup
+
 - [ ] Add JobPosting schema (if looking for work)
 - [ ] Add CreativeWork schema for projects
 - [ ] Test with Google Rich Results
@@ -179,6 +198,7 @@ Last Updated: 2025-11-13
 - [ ] File: `apps/portfolio/index.html`
 
 ### L5: Document CSS Codebase
+
 - [ ] Add section comments to `apps/portfolio/styles.css`
 - [ ] Document breakpoints and transitions
 - [ ] Explain animation keyframes
@@ -193,18 +213,21 @@ Last Updated: 2025-11-13
 ### Recommended Implementation Order
 
 **Week 1: Critical Issues (6 hours)**
+
 1. C1: Remove console logging (0.5h)
 2. C3: Audit metrics (1.5h)
 3. C2: Resume consolidation (2h)
 4. H1: Mobile E2E tests (1.5h)
 
 **Week 2: UX & Accessibility (5 hours)**
+
 1. H2: Accessibility compliance (2h)
 2. H3: Project card descriptions (1h)
 3. H4: Meta tags & structured data (1h)
 4. M1: Design tokens (1h)
 
 **Week 3: SEO & Optimization (4.5 hours)**
+
 1. H5: Internal linking (1h)
 2. H6: Career narrative (1h)
 3. M5: Keyword optimization (0.5h)
@@ -212,6 +235,7 @@ Last Updated: 2025-11-13
 5. M3: Worker optimization (0.5h)
 
 **Week 4: Documentation (5 hours)**
+
 1. L1: GET_STARTED.md (1h)
 2. L2: Architecture deep dive (2h)
 3. L3: Troubleshooting expansion (1h)
@@ -235,6 +259,7 @@ Last Updated: 2025-11-13
 After completing each section:
 
 ### C1: Console Logging
+
 ```bash
 npm run build:quiet
 npm test
@@ -242,6 +267,7 @@ npm test
 ```
 
 ### C2: Resume Consolidation
+
 ```bash
 npm run generate:resumes
 # ✅ 3 variants generated
@@ -249,6 +275,7 @@ npm run generate:resumes
 ```
 
 ### H1: Mobile Tests
+
 ```bash
 npm run test:e2e -- --project=mobile
 # ✅ All 4 viewports pass
@@ -256,6 +283,7 @@ npm run test:e2e -- --project=mobile
 ```
 
 ### H2: Accessibility
+
 ```bash
 npm run test:e2e:headed
 # ✅ Tab navigation works
@@ -264,6 +292,7 @@ npm run test:e2e:headed
 ```
 
 ### H4: SEO/Schema
+
 ```bash
 # Validate at: https://validator.schema.org
 # Copy HTML from: https://resume.jclee.me
@@ -285,13 +314,13 @@ npm run test:e2e:headed
 
 ## Dependencies & Blockers
 
-| Item | Depends On | Status |
-|------|-----------|--------|
-| C2 (Resume consolidation) | C1 (console logging) | Can start after C1 ✓ |
-| H1 (Mobile tests) | None | Independent |
-| H2 (Accessibility) | H1 (should be complete) | Ready after H1 |
-| H4 (SEO) | None | Independent |
-| L1-L5 (Documentation) | All improvements | Start after week 2 |
+| Item                      | Depends On              | Status               |
+| ------------------------- | ----------------------- | -------------------- |
+| C2 (Resume consolidation) | C1 (console logging)    | Can start after C1 ✓ |
+| H1 (Mobile tests)         | None                    | Independent          |
+| H2 (Accessibility)        | H1 (should be complete) | Ready after H1       |
+| H4 (SEO)                  | None                    | Independent          |
+| L1-L5 (Documentation)     | All improvements        | Start after week 2   |
 
 ---
 

@@ -328,7 +328,7 @@ Create migration completion report:
 
 ```bash
 # In terminal
-cat > docs/MIGRATION_COMPLETION_REPORT.md << 'EOF'
+cat > docs/reports/MIGRATION_COMPLETION_REPORT.md << 'EOF'
 # GitHub Actions Migration - Completion Report
 
 **Date**: [YYYY-MM-DD]  

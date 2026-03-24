@@ -265,7 +265,7 @@ Add "경력 경로 분석" section documenting 3 career phases:
 
 ### M1: Design System Tokens (1 hour) ⚡ QUICK WIN
 
-Create `docs/DESIGN_SYSTEM.md`:
+Create `docs/architecture/DESIGN_SYSTEM.md`:
 
 ```css
 :root {
@@ -459,7 +459,7 @@ npm run test:e2e:headed
 
 #### Medium Priority (6/6)
 
-- ✅ M1: Design System v2.0 → docs/DESIGN_SYSTEM.md (644 lines)
+- ✅ M1: Design System v2.0 → docs/architecture/DESIGN_SYSTEM.md (644 lines)
 - ✅ M2: Security & Performance Tests → CSP, HSTS, Lighthouse CI
 - ✅ M3: Worker Size Optimization → 292KB (under 500KB budget)
 - ✅ M4: Build Pipeline Reliability → validation, error handling
@@ -472,7 +472,7 @@ npm run test:e2e:headed
 - ✅ L2: ARCHITECTURE_DEEP_DIVE.md → docs/guides/ARCHITECTURE_DEEP_DIVE.md
 - ✅ L3: TROUBLESHOOTING.md → docs/guides/TROUBLESHOOTING.md
 - ✅ L4: Schema Markup → 4 JSON-LD schemas (Person, Breadcrumb, Collection, WebSite)
-- ✅ L5: CSS Documentation → docs/DESIGN_SYSTEM.md (comprehensive)
+- ✅ L5: CSS Documentation → docs/architecture/DESIGN_SYSTEM.md (comprehensive)
 
 ### Improvements Summary (2025-12-22)
 

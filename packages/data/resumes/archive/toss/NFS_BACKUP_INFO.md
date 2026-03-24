@@ -3,6 +3,7 @@
 ## NFS 마운트 설정
 
 ### Synology NAS
+
 - **NAS IP**: 192.168.50.215
 - **NFS Share**: /volume1/app
 - **로컬 마운트**: /home/jclee/synology
@@ -10,6 +11,7 @@
 - **권한**: rw (읽기/쓰기)
 
 ### 마운트 상태 확인
+
 ```bash
 mount | grep nfs
 # 192.168.50.215:/volume1/app on /home/jclee/synology type nfs4 (rw,relatime,vers=4.1,...)
@@ -28,16 +30,18 @@ mount | grep nfs
 ## 백업 명령어
 
 ### 수동 백업
+
 ```bash
 # 토스 이력서 백업
-cp /home/jclee/app/resume/toss/*.pdf /home/jclee/synology/resume/toss/
-cp /home/jclee/app/resume/toss/*.md /home/jclee/synology/resume/toss/
+cp packages/data/resumes/archive/toss/*.pdf /home/jclee/synology/resume/toss/
+cp packages/data/resumes/archive/toss/*.md /home/jclee/synology/resume/toss/
 ```
 
 ### 전체 이력서 백업
+
 ```bash
 # 전체 resume 폴더 동기화
-rsync -avh --progress /home/jclee/app/resume/ /home/jclee/synology/resume/
+rsync -avh --progress ./ /home/jclee/synology/resume/
 ```
 
 ## 자동 백업 스크립트
@@ -46,7 +50,7 @@ rsync -avh --progress /home/jclee/app/resume/ /home/jclee/synology/resume/
 #!/bin/bash
 # NFS 자동 백업 스크립트
 
-SOURCE="/home/jclee/app/resume/toss"
+SOURCE="packages/data/resumes/archive/toss"
 DEST="/home/jclee/synology/resume/toss"
 
 # 디렉토리 생성
@@ -77,6 +81,7 @@ touch /home/jclee/synology/test.txt && rm /home/jclee/synology/test.txt
 ## 문제 해결
 
 ### NFS 마운트 재연결
+
 ```bash
 # 마운트 해제
 sudo umount /home/jclee/synology
@@ -86,6 +91,7 @@ sudo mount -t nfs4 192.168.50.215:/volume1/app /home/jclee/synology
 ```
 
 ### 권한 문제
+
 ```bash
 # NFS 서버(Synology)에서 설정:
 # - NFS 권한: Squash: Map all users to admin
