@@ -6,8 +6,8 @@ Automated resume deployment workflow using n8n (https://n8n.jclee.me).
 
 > **📖 See also**:
 >
-> - **[Infrastructure Architecture](../docs/guides/INFRASTRUCTURE.md#5-n8n-workflow-automation)** - n8n service details, configuration, and deployment workflow
-> - **[Monitoring Setup Guide](../docs/guides/MONITORING_SETUP.md)** - Integration with Prometheus, Grafana, and Loki
+> - **[Infrastructure Architecture](../../docs/guides/INFRASTRUCTURE.md#5-n8n-workflow-automation)** - n8n service details, configuration, and deployment workflow
+> - **[Monitoring Setup Guide](../../docs/guides/MONITORING_SETUP.md)** - Integration with Prometheus, Grafana, and Loki
 
 ## Overview
 
@@ -48,9 +48,9 @@ source ~/.env
 ### 3. Deploy Workflow
 
 ```bash
-cd ~/apps/resume
-chmod +x n8n/deploy-workflow.sh
-./n8n/deploy-workflow.sh
+cd ~/dev/resume
+chmod +x infrastructure/n8n/deploy-workflow.sh
+./infrastructure/n8n/deploy-workflow.sh
 ```
 
 **Expected output:**
@@ -265,6 +265,7 @@ See `resume-healthcheck-workflow.json` for full configuration.
 **Purpose**: Automatically searches job platforms and submits applications
 
 **Features**:
+
 - Triggers auto-apply run via job-server REST API
 - Polls for completion with 30-second intervals (max 40 polls = ~20 min timeout)
 - Formats results and sends Telegram notification via `telegram-notifier`
@@ -282,6 +283,7 @@ Daily 9am KST → POST /api/auto-apply/run → Wait 30s → Poll Status
 ```
 
 **Configuration**:
+
 - `JOB_SERVER_URL`: Base URL of the job automation server
 - `JOB_SERVER_ADMIN_TOKEN`: Bearer token for API authentication
 - Default platforms: Wanted, JobKorea, Saramin
@@ -297,6 +299,7 @@ See `job-auto-apply-workflow.json` for full configuration.
 **Purpose**: Receives automation run reports from job-server and forwards notifications via Telegram
 
 **Features**:
+
 - POST webhook at `/automation-run-report`
 - Parses platform results, actions, and error details from incoming payload
 - Builds structured notification shape (isSuccess, status, channel, command, duration, source)
@@ -314,12 +317,14 @@ POST /automation-run-report → Format Payload (parse platforms/actions/errors)
 ```
 
 **Incoming Payload** (from `apps/job-server/scripts/auto-all.js`):
+
 - `event`: Event type string (e.g., `automation-run`)
 - `timestamp`: ISO 8601 timestamp
 - `platforms`: Object mapping platform names to `{ valid: boolean, cookies: number }`
 - `actions`: Object with boolean flags `{ extract, sync, verify }`
 
 **Derived Fields** (computed by Format Payload node):
+
 - `isSuccess`, `status`, `channel`, `command`, `duration`, `source`, `errorMessage`
 - `validPlatforms`, `invalidPlatforms`, `totalCookies`
 
@@ -359,8 +364,8 @@ graph LR
 | Run E2E Tests        | Execute Command    | E2E tests                  | `npm run test:e2e`                    |
 | Deploy to Cloudflare | Execute Command    | Deploy worker              | `wrangler deploy`                     |
 | Health Check         | HTTP Request       | Verify deployment          | GET `/health`                         |
-| Telegram Success     | HTTP Request       | Success notification       | POST to Telegram Bot API                 |
-| Telegram Failure     | HTTP Request       | Failure notification       | POST to Telegram Bot API                 |
+| Telegram Success     | HTTP Request       | Success notification       | POST to Telegram Bot API              |
+| Telegram Failure     | HTTP Request       | Failure notification       | POST to Telegram Bot API              |
 | Log to Loki          | HTTP Request       | Log to Grafana Loki        | POST to Loki API                      |
 | Webhook Response     | Respond to Webhook | Return status to GitHub    | JSON response                         |
 
@@ -389,14 +394,14 @@ JOB_SERVER_ADMIN_TOKEN=your-admin-bearer-token
 
 ### Job Auto-Apply Pipeline
 
-| Component | Status | Notes |
-|-----------|--------|-------|
-| n8n workflow (`DRHg9pwanv4pHGxV`) | ✅ Active | Daily 9am KST schedule, awaiting first trigger |
-| automation-webhook-receiver (`p2QvwPEvVR1k7Upl`) | ✅ Active | Tested — 1 successful execution |
-| Job Server API (`/api/auto-apply/run`) | ✅ Deployed | Bearer token auth required |
-| Environment variables | ✅ Configured | `JOB_SERVER_URL` and `JOB_SERVER_ADMIN_TOKEN` set in n8n |
-| Telegram notifications | ✅ Configured | Via `telegram-notifier` workflow (`PV5yLgHNzNSlCmRT`) |
-| Webhook authentication | ⚠️ Internal-only | Receiver does not verify `X-Webhook-Signature` HMAC. Trust boundary is internal network access. Sender supports signing via `N8N_WEBHOOK_SECRET` env var. |
+| Component                                        | Status           | Notes                                                                                                                                                     |
+| ------------------------------------------------ | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| n8n workflow (`DRHg9pwanv4pHGxV`)                | ✅ Active        | Daily 9am KST schedule, awaiting first trigger                                                                                                            |
+| automation-webhook-receiver (`p2QvwPEvVR1k7Upl`) | ✅ Active        | Tested — 1 successful execution                                                                                                                           |
+| Job Server API (`/api/auto-apply/run`)           | ✅ Deployed      | Bearer token auth required                                                                                                                                |
+| Environment variables                            | ✅ Configured    | `JOB_SERVER_URL` and `JOB_SERVER_ADMIN_TOKEN` set in n8n                                                                                                  |
+| Telegram notifications                           | ✅ Configured    | Via `telegram-notifier` workflow (`PV5yLgHNzNSlCmRT`)                                                                                                     |
+| Webhook authentication                           | ⚠️ Internal-only | Receiver does not verify `X-Webhook-Signature` HMAC. Trust boundary is internal network access. Sender supports signing via `N8N_WEBHOOK_SECRET` env var. |
 
 ### Testing Notes
 
@@ -487,7 +492,7 @@ curl https://n8n.jclee.me/webhook/resume-deploy
 # Visit: https://n8n.jclee.me/executions/{execution-id}
 
 # Test locally
-cd ~/apps/resume
+cd ~/dev/resume
 npm run build
 npm test && npm run test:e2e
 ```
@@ -519,7 +524,7 @@ sudo chown -R n8n:n8n /home/jclee/dev/resume
 
 **Check**:
 
-```bash
+````bash
 # Test Telegram Bot API manually
 curl -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
   -H "Content-Type: application/json" \
@@ -553,7 +558,7 @@ Modify workflow to deploy to different environments based on branch:
   "name": "Check Branch",
   "type": "n8n-nodes-base.switch"
 }
-```
+````
 
 ### Rollback on Failure
 
@@ -669,6 +674,6 @@ curl -X DELETE https://n8n.jclee.me/api/v1/workflows/{workflow-id} \
 ## Support
 
 - **n8n Instance**: https://n8n.jclee.me
-- **Documentation**: ~/apps/resume/docs/
+- **Documentation**: ~/dev/resume/docs/
 - **Issues**: https://github.com/qws941/resume/issues
 - **Contact**: qws941@kakao.com

@@ -395,7 +395,7 @@ Conditional Logic (IF Node)
 3. [Server Uptime Monitoring](https://n8n.io/workflows/3880)
 
 **n8n Server**: https://n8n.jclee.me
-**Documentation**: `~/apps/resume/docs/`
+**Documentation**: `~/dev/resume/docs/`
 **Grafana Dashboard**: https://grafana.jclee.me/d/resume (to be created)
 
 **Node Documentation**:

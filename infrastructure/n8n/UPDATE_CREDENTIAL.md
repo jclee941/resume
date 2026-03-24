@@ -30,10 +30,10 @@
 워크플로우 JSON 파일을 수정하여 배포:
 
 ```bash
-cd ~/apps/resume
+cd ~/dev/resume
 
 # 1. OAuth2 워크플로우 파일 편집
-vim n8n/resume-healthcheck-oauth2.json
+vim infrastructure/n8n/resume-healthcheck-oauth2.json
 
 # 2. Slack 노드의 credentials 섹션 찾기 (line 123-128)
 # "credentials": {
@@ -44,7 +44,7 @@ vim n8n/resume-healthcheck-oauth2.json
 # }
 
 # 3. 저장 후 재배포
-cat n8n/resume-healthcheck-oauth2.json | \
+cat infrastructure/n8n/resume-healthcheck-oauth2.json | \
   jq 'del(.id, .versionId, .meta, .tags, .pinData)' > /tmp/workflow-oauth2-clean.json
 
 # 4. 기존 워크플로우 업데이트 (PUT)
