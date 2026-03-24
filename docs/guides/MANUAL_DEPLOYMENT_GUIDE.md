@@ -37,7 +37,7 @@
 
 ```bash
 # One-command deployment with all checks
-./scripts/deployment/quick-deploy.sh
+./tools/scripts/deployment/quick-deploy.sh
 ```
 
 - Checks prerequisites (Node.js, npm, git)
@@ -51,7 +51,7 @@
 
 ```bash
 # Step-by-step deployment with progress indicators
-./scripts/deployment/deploy-helper.sh
+./tools/scripts/deployment/deploy-helper.sh
 ```
 
 - 6-stage deployment pipeline
@@ -64,7 +64,7 @@
 
 ```bash
 # Verify existing deployment (7 comprehensive checks)
-./scripts/verification/verify-deployment.sh
+./tools/scripts/verification/verify-deployment.sh
 ```
 
 - Deployment timestamp check
@@ -83,10 +83,10 @@
 export CLOUDFLARE_API_TOKEN=your_token_here
 
 # Deploy with one command
-./scripts/deployment/quick-deploy.sh
+./tools/scripts/deployment/quick-deploy.sh
 
 # Or verify existing deployment
-./scripts/verification/verify-deployment.sh
+./tools/scripts/verification/verify-deployment.sh
 ```
 
 ---
