@@ -450,7 +450,7 @@ LOCAL DEVELOPMENT                 PRODUCTION
    (150 KB)                      │  │  (84 KB PNG) │
        │                         │  └──────────────┘
        │                         │
-       │ ./scripts/              │  ┌──────────────┐
+        │ ./tools/scripts/          │  ┌──────────────┐
        │ quick-deploy.sh         │  │ Web Vitals   │
        │                         │  │   Tracking   │
        └─────────────────────────┼─▶└──────────────┘
