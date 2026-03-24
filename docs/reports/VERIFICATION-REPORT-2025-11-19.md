@@ -12,14 +12,14 @@ All automated setup and validation tasks for n8n monitoring integration have bee
 
 ### Quick Stats
 
-| Metric | Value | Status |
-|--------|-------|--------|
-| Test Coverage | 8/8 tests | ✅ 100% Pass |
-| Workflow Files | 2 JSON files | ✅ Validated |
-| Documentation | 3 files (36 KB) | ✅ Complete |
-| GitHub Integration | webhook step added | ✅ Verified |
-| n8n Server | https://n8n.jclee.me | ✅ Healthy |
-| Resume Site | https://resume.jclee.me | ✅ Healthy (uptime: 14h 52m) |
+| Metric             | Value                   | Status                       |
+| ------------------ | ----------------------- | ---------------------------- |
+| Test Coverage      | 8/8 tests               | ✅ 100% Pass                 |
+| Workflow Files     | 2 JSON files            | ✅ Validated                 |
+| Documentation      | 3 files (36 KB)         | ✅ Complete                  |
+| GitHub Integration | webhook step added      | ✅ Verified                  |
+| n8n Server         | https://n8n.jclee.me    | ✅ Healthy                   |
+| Resume Site        | https://resume.jclee.me | ✅ Healthy (uptime: 14h 52m) |
 
 ---
 
@@ -49,6 +49,7 @@ All automated setup and validation tasks for n8n monitoring integration have bee
 ### Test 2: Required Fields Validation ✅
 
 **Validated Fields**:
+
 - ✅ `commit_sha`: 7ae6deb
 - ✅ `commit_message`: test: n8n webhook integration verification
 - ✅ `author`: OpenCode
@@ -79,6 +80,7 @@ All automated setup and validation tasks for n8n monitoring integration have bee
 ```
 
 **Analysis**:
+
 - Site status: healthy
 - Uptime: 14h 54m 35s
 - Deployment: 7 hours ago (2025-11-18 08:40 UTC)
@@ -93,6 +95,7 @@ All automated setup and validation tasks for n8n monitoring integration have bee
 **Endpoint**: https://resume.jclee.me/metrics
 
 **Prometheus Metrics Available**:
+
 ```
 # HELP http_requests_total Total HTTP requests
 # TYPE http_requests_total counter
@@ -117,7 +120,7 @@ http_requests_error{job="resume"} 0
 **Endpoint**: https://n8n.jclee.me/healthz
 
 ```json
-{"status":"ok"}
+{ "status": "ok" }
 ```
 
 **Result**: n8n server accessible and healthy
@@ -127,11 +130,13 @@ http_requests_error{job="resume"} 0
 ### Test 6: Workflow JSON Validation ✅
 
 **File 1**: `n8n-workflows/01-site-health-monitor.json`
+
 - Workflow name: Resume Site Health Monitor
 - Node count: 6
 - Nodes: Every 5 Minutes, Check Health Endpoint, Site Down?, Send Slack Alert, Log Downtime Event, Log Healthy Status
 
 **File 2**: `n8n-workflows/02-github-deployment-webhook.json`
+
 - Workflow name: GitHub Deployment Webhook
 - Node count: 5
 - Nodes: Webhook, Extract Deployment Data, Send Slack Notification, Log to Loki, Log Deployment
@@ -145,6 +150,7 @@ http_requests_error{job="resume"} 0
 **File**: `.github/workflows/deploy.yml`
 
 **Verified**:
+
 - ✅ `N8N_WEBHOOK_URL` secret configured
 - ✅ "Notify n8n Webhook" step present (lines 149-180)
 - ✅ Graceful fallback if secret not set
@@ -216,12 +222,12 @@ http_requests_error{job="resume"} 0
 
 ### Expected Traffic (1 Month)
 
-| Component | Frequency | Monthly Total |
-|-----------|-----------|---------------|
-| Health Checks | Every 5 min | 8,640 checks |
-| Deployment Webhooks | ~1/day | ~30 notifications |
-| Slack Alerts | On downtime | <5 alerts (target: 99.9% uptime) |
-| Google Sheets Logs | Every check + deploy | ~8,670 rows |
+| Component           | Frequency            | Monthly Total                    |
+| ------------------- | -------------------- | -------------------------------- |
+| Health Checks       | Every 5 min          | 8,640 checks                     |
+| Deployment Webhooks | ~1/day               | ~30 notifications                |
+| Slack Alerts        | On downtime          | <5 alerts (target: 99.9% uptime) |
+| Google Sheets Logs  | Every check + deploy | ~8,670 rows                      |
 
 ---
 
@@ -306,14 +312,16 @@ docs/
 ### Phase 1: Health Monitoring (Week 1)
 
 **Completion Criteria**:
+
 1. ✅ Slack alert received within 5 minutes of site downtime
 2. ✅ Google Sheets populated with health check logs (288/day)
 3. ✅ Downtime detected and notified automatically
 
 **Validation**:
+
 ```bash
 # Simulate downtime (modify worker.js temporarily)
-cd ~/apps/resume/apps/portfolio
+cd ~/dev/resume/apps/portfolio
 # Edit worker.js: Change status "healthy" → "down"
 npm run deploy
 
@@ -324,11 +332,13 @@ npm run deploy
 ### Phase 2: Deployment Tracking (Week 2)
 
 **Completion Criteria**:
+
 1. ✅ GitHub deployment triggers n8n webhook
 2. ✅ Slack notification appears in #deployments
 3. ✅ Deployment logged to Google Sheets and Loki
 
 **Validation**:
+
 ```bash
 # Automatic test via GitHub Actions
 git commit --allow-empty -m "test: n8n webhook integration"
@@ -344,13 +354,13 @@ git push origin master
 
 ### Overall Success Metrics (1 Month)
 
-| Metric | Target | Measurement |
-|--------|--------|-------------|
-| Uptime % | ≥99.9% | Google Sheets Health Log |
-| Automated Checks | 8,640/month | n8n execution history |
-| Downtime Alerts | <5 alerts | Slack #infra-alerts |
-| Deployments Tracked | ~30/month | Google Sheets Deployment Log |
-| False Positives | <1% | Manual review |
+| Metric              | Target      | Measurement                  |
+| ------------------- | ----------- | ---------------------------- |
+| Uptime %            | ≥99.9%      | Google Sheets Health Log     |
+| Automated Checks    | 8,640/month | n8n execution history        |
+| Downtime Alerts     | <5 alerts   | Slack #infra-alerts          |
+| Deployments Tracked | ~30/month   | Google Sheets Deployment Log |
+| False Positives     | <1%         | Manual review                |
 
 ---
 
@@ -394,6 +404,7 @@ git push origin master
 **Goal**: Collect and analyze Core Web Vitals from `/api/vitals` endpoint
 
 **Metrics to Track**:
+
 - LCP (Largest Contentful Paint): Target <2.5s
 - FID (First Input Delay): Target <100ms
 - CLS (Cumulative Layout Shift): Target <0.1
@@ -401,6 +412,7 @@ git push origin master
 - TTFB (Time to First Byte): Target <0.8s
 
 **n8n Workflow Design**:
+
 - Webhook trigger: POST `/api/vitals`
 - Validation: Check thresholds (alert if LCP >2.5s)
 - Slack notification: Performance degradation alerts
@@ -413,6 +425,7 @@ git push origin master
 **Goal**: Automated daily summary email at 09:00 KST
 
 **Report Contents**:
+
 - 24h uptime percentage
 - Total deployments
 - Average response time
@@ -420,6 +433,7 @@ git push origin master
 - Incidents and resolutions
 
 **n8n Workflow Design**:
+
 - Schedule trigger: Daily at 09:00 KST
 - Google Sheets aggregation: Previous 24h data
 - Email composition: Formatted HTML report
@@ -433,12 +447,12 @@ git push origin master
 
 ### Quick Reference
 
-| Document | Purpose | Lines/Size |
-|----------|---------|------------|
-| `n8n-workflows/README.md` | Setup guide | 364 lines (9.8 KB) |
-| `docs/N8N-MONITORING-WORKFLOWS.md` | Detailed design | 276 lines (12 KB) |
-| `docs/DEPLOYMENT-SUMMARY-2025-11-18.md` | Executive summary | 289 lines (13 KB) |
-| `tests/n8n-webhook-test.sh` | Verification script | 187 lines (executable) |
+| Document                                | Purpose             | Lines/Size             |
+| --------------------------------------- | ------------------- | ---------------------- |
+| `n8n-workflows/README.md`               | Setup guide         | 364 lines (9.8 KB)     |
+| `docs/N8N-MONITORING-WORKFLOWS.md`      | Detailed design     | 276 lines (12 KB)      |
+| `docs/DEPLOYMENT-SUMMARY-2025-11-18.md` | Executive summary   | 289 lines (13 KB)      |
+| `tests/n8n-webhook-test.sh`             | Verification script | 187 lines (executable) |
 
 ### External Resources
 
@@ -468,6 +482,7 @@ git push origin master
 **Estimated Setup Time**: 30 minutes of user manual configuration
 
 **Breakdown**:
+
 - Import workflows (5 min)
 - Configure credentials (10 min)
 - Update parameters (5 min)

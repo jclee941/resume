@@ -49,7 +49,7 @@ Last Updated: 2025-11-13
 - [ ] Check no horizontal overflow
 - [ ] Add to CI/CD pipeline
 - [ ] Time: 1.5 hours
-- [ ] File: `tests/e2e/mobile.spec.js`, `.github/workflows/deploy.yml`
+- [ ] File: `tests/e2e/mobile.spec.js`, `.github/workflows/ci.yml`
 
 ### H2: Enhance Accessibility Compliance
 
@@ -129,7 +129,7 @@ Last Updated: 2025-11-13
 - [ ] Monitor size breakdown in CI/CD
 - [ ] Set alerts for > 60KB
 - [ ] Time: 45 minutes
-- [ ] Files: `apps/portfolio/generate-worker.js`, `.github/workflows/deploy.yml`
+- [ ] Files: `apps/portfolio/generate-worker.js`, `.github/workflows/ci.yml`
 
 ### M4: Improve Build Pipeline Reliability
 
@@ -138,7 +138,7 @@ Last Updated: 2025-11-13
 - [ ] Add content validation (export default)
 - [ ] Add timeout and retry logic
 - [ ] Time: 1 hour
-- [ ] File: `.github/workflows/deploy.yml`
+- [ ] File: `.github/workflows/ci.yml`
 
 ### M5: Keyword Optimization
 
@@ -305,7 +305,7 @@ npm run test:e2e:headed
 ## Notes
 
 - **Parallel Work**: Can work on C1, H1, H4 simultaneously
-- **CI/CD Integration**: Update `.github/workflows/deploy.yml` after each build change
+- **CI/CD Integration**: Update `.github/workflows/ci.yml` after each build change
 - **Testing**: Run full test suite after each major change: `npm run test:all`
 - **Documentation**: Link each new doc to README.md
 - **Git Commits**: One commit per improvement type (C1, H2, etc.)

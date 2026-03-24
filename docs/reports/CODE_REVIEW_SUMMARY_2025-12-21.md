@@ -12,7 +12,7 @@
    - **Action**: Changed to `{env:GRAFANA_API_KEY}`
    - **Next**: Revoke old key at Grafana, add new key to Infisical
 
-3. **`cmd/resume-cli/main.go:36,436,464`** - Saramin API Key in plaintext
+3. **`packages/cli/main.go:36,436,464`** - Saramin API Key in plaintext
    - **Status**: ⚠️ PENDING - stored in ~/.env
    - **Fix**: Migrate to Infisical
 
@@ -26,7 +26,7 @@
    - **Status**: ✅ ALREADY FIXED
    - **Fix**: Already using `mktemp` with unique suffixes
 
-6. **`cmd/resume-cli/main.go:441-468`** - Insecure .env parsing
+6. **`packages/cli/main.go:441-468`** - Insecure .env parsing
    - **Status**: ⚠️ PENDING
    - **Fix**: Validate file permissions (0600), add length limits
 
@@ -40,11 +40,11 @@
    - **Status**: ⚠️ PENDING
    - **Fix**: Add range checks for Web Vitals
 
-9. **`cmd/resume-cli/main.go:421-439`** - Unsafe file read
+9. **`packages/cli/main.go:421-439`** - Unsafe file read
    - **Status**: ⚠️ PENDING
    - **Fix**: Check file permissions before reading
 
-10. **`cmd/resume-cli/main.go:2000-2027`** - Missing auth check
+10. **`packages/cli/main.go:2000-2027`** - Missing auth check
     - **Status**: ⚠️ PENDING
     - **Fix**: Validate session before job application
 
@@ -56,25 +56,24 @@
 
 12. **`scripts/utils/auto-job-search.sh:348,343`** - Duplicate menu options
     - **Status**: ✅ FIXED (2025-12-22)
-    
 13. **`apps/portfolio/lib/utils.js:17-23`** - Missing JSDoc, error handling
     - **Status**: ⚠️ PENDING
 
-14. **`cmd/resume-cli/internal/saramin/client.go:35-62`** - Hardcoded timeout
+14. **`packages/cli/internal/saramin/client.go:35-62`** - Hardcoded timeout
     - **Status**: ⚠️ PENDING
 
-15. **`cmd/resume-cli/main.go:1129-1134`** - Error lacks context
+15. **`packages/cli/main.go:1129-1134`** - Error lacks context
     - **Status**: ⚠️ PENDING
 
 ## 📊 Statistics
 
-| Category | Total | Fixed | Pending |
-|----------|-------|-------|---------|
-| Critical | 3 | 1 | 2 (user action) |
-| High | 3 | 2 | 1 |
-| Medium | 5 | 1 | 4 |
-| Low | 4 | 1 | 3 |
-| **Total** | **15** | **5** | **10** |
+| Category  | Total  | Fixed | Pending         |
+| --------- | ------ | ----- | --------------- |
+| Critical  | 3      | 1     | 2 (user action) |
+| High      | 3      | 2     | 1               |
+| Medium    | 5      | 1     | 4               |
+| Low       | 4      | 1     | 3               |
+| **Total** | **15** | **5** | **10**          |
 
 ## ✅ Completed Actions (2025-12-22)
 
@@ -94,6 +93,7 @@
    - Grafana: https://grafana.jclee.me/org/apikeys
 
 2. **Setup Infisical**:
+
    ```bash
    infisical login
    cd /home/jclee/dev/resume

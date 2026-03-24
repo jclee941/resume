@@ -12,18 +12,19 @@
 
 ### Overall Health Score: **92/100** 🟢
 
-| Category | Score | Status |
-|----------|-------|--------|
-| Code Quality | 95/100 | ✅ Excellent |
-| Security | 90/100 | ✅ Strong |
-| Performance | 88/100 | 🟡 Good |
-| Architecture | 93/100 | ✅ Excellent |
-| Testing | 85/100 | 🟡 Good |
+| Category      | Score  | Status               |
+| ------------- | ------ | -------------------- |
+| Code Quality  | 95/100 | ✅ Excellent         |
+| Security      | 90/100 | ✅ Strong            |
+| Performance   | 88/100 | 🟡 Good              |
+| Architecture  | 93/100 | ✅ Excellent         |
+| Testing       | 85/100 | 🟡 Good              |
 | Observability | 60/100 | 🔴 Needs Improvement |
 
 ### Key Findings
 
 **✅ Strengths**:
+
 - Zero npm vulnerabilities (0 critical, 0 high, 0 moderate, 0 low)
 - Modern tech stack (Node.js 20+, Wrangler 4, Jest 30, Playwright, ESLint 9)
 - 100% test pass rate (24/24 tests passing)
@@ -32,6 +33,7 @@
 - Live deployment with CI/CD automation
 
 **⚠️ Gaps**:
+
 - Missing Grafana observability integration (Constitutional Framework violation)
 - No performance budgets or regression testing
 - Limited E2E test coverage (~60% of critical user journeys)
@@ -39,6 +41,7 @@
 - No real user monitoring (RUM)
 
 **🚀 Opportunities**:
+
 - Grafana integration for portfolio showcase
 - Performance optimization (200-300ms improvement potential)
 - Advanced testing (95% E2E coverage achievable)
@@ -51,16 +54,16 @@
 
 ### Project Metrics
 
-| Metric | Value | Benchmark |
-|--------|-------|-----------|
-| Total Files | 5,339 | - |
-| JavaScript LOC | 546,949 | - |
-| HTML LOC | 9,982 | - |
-| CSS LOC | 1,901 | - |
-| Test Files | 3 unit tests | ✅ Present |
-| Worker Bundle | 64KB | 🟡 Acceptable |
-| Dependencies | 6 dev deps | ✅ Minimal |
-| Node.js Version | >=20.0.0 | ✅ Modern |
+| Metric          | Value        | Benchmark     |
+| --------------- | ------------ | ------------- |
+| Total Files     | 5,339        | -             |
+| JavaScript LOC  | 546,949      | -             |
+| HTML LOC        | 9,982        | -             |
+| CSS LOC         | 1,901        | -             |
+| Test Files      | 3 unit tests | ✅ Present    |
+| Worker Bundle   | 64KB         | 🟡 Acceptable |
+| Dependencies    | 6 dev deps   | ✅ Minimal    |
+| Node.js Version | >=20.0.0     | ✅ Modern     |
 
 ### Dependency Health
 
@@ -69,6 +72,7 @@ npm audit: 0 vulnerabilities (Critical: 0, High: 0, Moderate: 0, Low: 0)
 ```
 
 **Key Dependencies** (all latest versions as of 2025-10-12):
+
 - `@playwright/test`: ^1.56.0 (E2E testing)
 - `wrangler`: ^4.42.2 (Cloudflare Workers CLI)
 - `jest`: ^30.2.0 (unit testing)
@@ -77,6 +81,7 @@ npm audit: 0 vulnerabilities (Critical: 0, High: 0, Moderate: 0, Low: 0)
 - `sharp`: ^0.34.4 (image processing)
 
 **Modernization Status**: Repository recently modernized (2025-10-13)
+
 - ESLint 8 → 9 (flat config: `eslint.config.cjs`)
 - Jest 29 → 30 (CommonJS config: `jest.config.cjs`)
 - Wrangler 3 → 4 (major upgrade)
@@ -84,7 +89,7 @@ npm audit: 0 vulnerabilities (Critical: 0, High: 0, Moderate: 0, Low: 0)
 ### Code Structure
 
 ```
-/home/jclee/app/resume/
+./
 ├── apps/portfolio/                    # Portfolio application
 │   ├── index.html          # Homepage (36KB)
 │   ├── resume.html         # Resume page (28KB)
@@ -108,6 +113,7 @@ npm audit: 0 vulnerabilities (Critical: 0, High: 0, Moderate: 0, Low: 0)
 ### Code Quality Highlights
 
 **✅ Best Practices**:
+
 - Clear separation of concerns (apps/portfolio/, master/, company-specific/)
 - Build tool pattern (HTML → escape → worker.js)
 - Error handling in generate-worker.js (file existence checks, try-catch)
@@ -115,6 +121,7 @@ npm audit: 0 vulnerabilities (Critical: 0, High: 0, Moderate: 0, Low: 0)
 - Version-controlled configuration
 
 **🟡 Improvements Needed**:
+
 - Worker bundle size optimization (64KB → 45-50KB via HTML minification)
 - Modular route handlers (currently monolithic worker.js)
 - Code duplication in HTML files (index.html vs resume.html)
@@ -126,11 +133,13 @@ npm audit: 0 vulnerabilities (Critical: 0, High: 0, Moderate: 0, Low: 0)
 ### Vulnerability Scan
 
 **npm audit**: ✅ **0 vulnerabilities**
+
 ```
 Total: 0, Critical: 0, High: 0, Moderate: 0, Low: 0
 ```
 
 **Hardcoded Secrets**: ✅ **None found**
+
 - All secrets managed via GitHub Secrets (CLOUDFLARE_API_TOKEN, GEMINI_API_KEY, SLACK_WEBHOOK_URL)
 - No API keys, passwords, or tokens in source code
 - Environment variables properly externalized
@@ -149,6 +158,7 @@ cache-control: public, max-age=3600
 ```
 
 **Analysis**:
+
 - ✅ X-Frame-Options: DENY (prevents clickjacking)
 - ✅ X-Content-Type-Options: nosniff (prevents MIME sniffing)
 - ✅ X-XSS-Protection: 1; mode=block (XSS protection)
@@ -160,28 +170,34 @@ cache-control: public, max-age=3600
 **HIGH Priority**:
 
 1. **Enhanced CSP (Remove 'unsafe-inline')**
+
    ```javascript
    // Generate SHA-256 hashes for inline scripts/styles
    const CSP = {
-     "default-src": "'none'",
-     "script-src": "'self' 'sha256-[hash]'",  // Remove 'unsafe-inline'
-     "style-src": "'self' 'sha256-[hash]'",   // Remove 'unsafe-inline'
-     "font-src": "'self'",                    // Remove external fonts
-     "img-src": "'self' data:",
-     "connect-src": "'self' https://grafana.jclee.me",
-     "base-uri": "'self'",
-     "form-action": "'none'",
-     "frame-ancestors": "'none'"
+     'default-src': "'none'",
+     'script-src': "'self' 'sha256-[hash]'", // Remove 'unsafe-inline'
+     'style-src': "'self' 'sha256-[hash]'", // Remove 'unsafe-inline'
+     'font-src': "'self'", // Remove external fonts
+     'img-src': "'self' data:",
+     'connect-src': "'self' https://grafana.jclee.me",
+     'base-uri': "'self'",
+     'form-action': "'none'",
+     'frame-ancestors': "'none'",
    };
    ```
+
    **Impact**: Eliminates XSS attack surface, demonstrates security-first mindset
 
 2. **Subresource Integrity (SRI) for External Fonts**
+
    ```html
-   <link href="https://fonts.googleapis.com/..."
-         integrity="sha384-[hash]"
-         crossorigin="anonymous">
+   <link
+     href="https://fonts.googleapis.com/..."
+     integrity="sha384-[hash]"
+     crossorigin="anonymous"
+   />
    ```
+
    **Better**: Self-host fonts to eliminate external dependency (see Performance section)
 
 3. **Rate Limiting**
@@ -192,6 +208,7 @@ cache-control: public, max-age=3600
 ### Client-Side Storage
 
 **Analysis**: ✅ **No localStorage/sessionStorage/cookie usage**
+
 - Zero client-side data storage found
 - No privacy concerns
 - GDPR-friendly (no tracking, no user identification)
@@ -202,53 +219,61 @@ cache-control: public, max-age=3600
 
 ### Core Metrics
 
-| Metric | Value | Benchmark | Status |
-|--------|-------|-----------|--------|
-| Page Load Time | 0.505s | <2s | ✅ Excellent |
-| Page Size (compressed) | 34KB | <100KB | ✅ Excellent |
-| Worker Bundle | 64KB | <1MB | ✅ Good |
-| External Dependencies | Google Fonts only | Minimal | 🟡 Can improve |
-| HTTP Requests | ~5 (estimated) | <20 | ✅ Excellent |
+| Metric                 | Value             | Benchmark | Status         |
+| ---------------------- | ----------------- | --------- | -------------- |
+| Page Load Time         | 0.505s            | <2s       | ✅ Excellent   |
+| Page Size (compressed) | 34KB              | <100KB    | ✅ Excellent   |
+| Worker Bundle          | 64KB              | <1MB      | ✅ Good        |
+| External Dependencies  | Google Fonts only | Minimal   | 🟡 Can improve |
+| HTTP Requests          | ~5 (estimated)    | <20       | ✅ Excellent   |
 
 ### Web Vitals (Estimated)
 
 **Note**: No live RUM data available. Estimates based on Lighthouse best practices.
 
-| Metric | Estimated | Target | Status |
-|--------|-----------|--------|--------|
-| LCP (Largest Contentful Paint) | ~1.2s | <2.5s | ✅ Good |
-| FID (First Input Delay) | ~50ms | <100ms | ✅ Excellent |
-| CLS (Cumulative Layout Shift) | ~0.05 | <0.1 | ✅ Excellent |
-| FCP (First Contentful Paint) | ~0.8s | <1.8s | ✅ Excellent |
-| TTFB (Time to First Byte) | ~200ms | <600ms | ✅ Excellent |
+| Metric                         | Estimated | Target | Status       |
+| ------------------------------ | --------- | ------ | ------------ |
+| LCP (Largest Contentful Paint) | ~1.2s     | <2.5s  | ✅ Good      |
+| FID (First Input Delay)        | ~50ms     | <100ms | ✅ Excellent |
+| CLS (Cumulative Layout Shift)  | ~0.05     | <0.1   | ✅ Excellent |
+| FCP (First Contentful Paint)   | ~0.8s     | <1.8s  | ✅ Excellent |
+| TTFB (Time to First Byte)      | ~200ms    | <600ms | ✅ Excellent |
 
 **Why Estimates**: No real user monitoring (RUM) implemented yet.
 
 ### Performance Bottlenecks
 
 **1. External Font Loading** (200-300ms impact)
+
 ```html
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+  rel="stylesheet"
+/>
 ```
 
 **Issue**:
+
 - External DNS lookup: ~50-100ms
 - Font download: ~150-250ms
 - Third-party dependency (privacy leak)
 
 **Solution**: Self-host Inter font (woff2 format)
+
 - Expected improvement: **~85-90% faster** (~15-30ms vs. ~200-350ms)
 - File size: ~120KB total (all weights)
 - Storage: Embed in worker.js or use Cloudflare Workers KV
 
 **2. No Performance Budgets**
+
 - No Lighthouse CI enforcement
 - No regression testing
 - Risk of performance degradation over time
 
 **Solution**: Implement Lighthouse CI with budgets
+
 ```json
 {
   "performance": 90,
@@ -260,10 +285,12 @@ cache-control: public, max-age=3600
 ```
 
 **3. HTML Minification Not Applied**
+
 - Current: 36KB (index.html) + 28KB (resume.html) = 64KB (raw)
 - Potential: ~45-50KB after minification (~22-30% reduction)
 
 **Implementation**:
+
 ```javascript
 // In generate-worker.js
 const htmlMinifier = require('html-minifier-terser');
@@ -271,23 +298,20 @@ const minified = htmlMinifier.minify(html, {
   collapseWhitespace: true,
   removeComments: true,
   minifyCSS: true,
-  minifyJS: true
+  minifyJS: true,
 });
 ```
 
 ### Performance Recommendations
 
 **CRITICAL Priority**:
+
 1. **Lighthouse CI Enforcement** (prevents regression)
 2. **Real User Monitoring (RUM)** (understand actual user experience)
 
-**HIGH Priority**:
-3. **Self-Hosted Fonts** (200-300ms improvement)
-4. **HTML Minification** (22-30% bundle size reduction)
+**HIGH Priority**: 3. **Self-Hosted Fonts** (200-300ms improvement) 4. **HTML Minification** (22-30% bundle size reduction)
 
-**MEDIUM Priority**:
-5. **Critical CSS Extraction** (faster FCP)
-6. **PWA Service Worker** (offline support, instant repeat visits)
+**MEDIUM Priority**: 5. **Critical CSS Extraction** (faster FCP) 6. **PWA Service Worker** (offline support, instant repeat visits)
 
 ---
 
@@ -298,19 +322,23 @@ const minified = htmlMinifier.minify(html, {
 **✅ Current Architecture**:
 
 1. **Worker Generation Pattern**
+
    ```
    HTML Files → Escape (`, $) → Template Literals → worker.js
    ```
+
    - **Pros**: Single deployment artifact, edge caching, fast serving
    - **Cons**: Bundle size grows with content, build step required
 
 2. **Static Route Mapping**
+
    ```javascript
    const ROUTES = {
      '/': INDEX_HTML,
      '/resume': RESUME_HTML,
    };
    ```
+
    - **Pros**: Simple, fast, no database needed
    - **Cons**: Monolithic, not scalable for many routes
 
@@ -322,6 +350,7 @@ const minified = htmlMinifier.minify(html, {
      // ...
    };
    ```
+
    - **Pros**: Centralized security policy
    - **Cons**: No per-route customization
 
@@ -331,12 +360,13 @@ const minified = htmlMinifier.minify(html, {
 
 ```yaml
 jobs:
-  deploy-worker:          # Deploy to Cloudflare Workers
-  generate-deployment-notes:  # AI-powered commit summaries (Gemini)
-  notify-slack:           # Slack notifications (optional)
+  deploy-worker: # Deploy to Cloudflare Workers
+  generate-deployment-notes: # AI-powered commit summaries (Gemini)
+  notify-slack: # Slack notifications (optional)
 ```
 
 **Features**:
+
 - ✅ Auto-deploy on `master` push
 - ✅ Gemini API integration for deployment notes
 - ✅ Slack notifications (if webhook configured)
@@ -349,6 +379,7 @@ jobs:
 **HIGH Priority**:
 
 1. **Modular Route Handlers**
+
    ```javascript
    // apps/portfolio/routes/index.js
    export const routes = {
@@ -356,16 +387,17 @@ jobs:
      '/resume': require('./handlers/resume'),
      '/health': require('./handlers/health'),
      '/api/vitals': require('./handlers/vitals'),
-     '/metrics': require('./handlers/metrics')
+     '/metrics': require('./handlers/metrics'),
    };
    ```
 
 2. **Middleware Pattern**
+
    ```javascript
    // apps/portfolio/middleware/security.js
    export function applySecurityHeaders(response) {
      return new Response(response.body, {
-       headers: {...response.headers, ...SECURITY_HEADERS}
+       headers: { ...response.headers, ...SECURITY_HEADERS },
      });
    }
    ```
@@ -377,7 +409,9 @@ jobs:
        this.url = new URL(request.url);
        this.startTime = Date.now();
      }
-     duration() { return Date.now() - this.startTime; }
+     duration() {
+       return Date.now() - this.startTime;
+     }
    }
    ```
 
@@ -390,15 +424,18 @@ jobs:
 ### Scalability Assessment
 
 **Current Capacity**:
+
 - Cloudflare Workers: 10k+ requests/sec/instance
 - Static content serving: Excellent (edge caching)
 - Global latency: <50ms (Cloudflare edge network)
 
 **Bottlenecks**:
+
 - Worker bundle size limit: 1MB (currently 64KB, safe margin)
 - Route count: No limit (but monolithic design limits maintainability)
 
 **Recommendations for Growth**:
+
 - If >20 routes: Migrate to Workers KV for HTML storage
 - If dynamic content needed: Add Cloudflare D1 (SQLite at edge)
 - If high traffic: No changes needed (Workers auto-scale)
@@ -410,6 +447,7 @@ jobs:
 ### Current Test Coverage
 
 **Unit Tests** (Jest):
+
 ```
 Test Files: 3
 Location: tests/unit/
@@ -418,6 +456,7 @@ Status: ✅ All tests passing
 ```
 
 **E2E Tests** (Playwright):
+
 ```
 Test Files: Unknown (not visible in analysis)
 Browsers: Chromium, Firefox, WebKit, Mobile Chrome, Mobile Safari
@@ -426,6 +465,7 @@ Status: ✅ Configured
 ```
 
 **Key Test**: `tests/unit/generate-worker.test.js`
+
 - ✅ Worker generation validation
 - ✅ Backtick and `$` escaping
 - ✅ Security headers presence
@@ -521,6 +561,7 @@ Status: ✅ Configured
 > **Status**: ❌ NOT INTEGRATED
 
 **Missing Components**:
+
 1. ❌ No Prometheus metrics endpoint (`/metrics`)
 2. ❌ No Loki log shipping (docker logs not forwarded)
 3. ❌ No Grafana dashboard
@@ -533,12 +574,14 @@ Status: ✅ Configured
 ### Impact
 
 **Portfolio Gap**:
+
 - Infrastructure engineer without observability showcase is a **red flag**
 - No public Grafana dashboard to demonstrate DevOps/SRE skills
 - Cannot prove 99.9% uptime claims
 - No real-time metrics for interview discussions
 
 **Operational Gap**:
+
 - No visibility into:
   - Request rate, error rate, latency
   - Geographic distribution
@@ -547,6 +590,7 @@ Status: ✅ Configured
   - User journey tracking
 
 **Constitutional Compliance**:
+
 - Violates OpenCode.md v11.11 mandatory observability requirement
 - Fails Phase 0 Integrity Audit (Tier 1 CRITICAL)
 
@@ -557,6 +601,7 @@ Status: ✅ Configured
 1. **Grafana Integration** (6-8 hours)
 
    **Step 1: Prometheus Metrics Endpoint**
+
    ```javascript
    // In worker.js, add /metrics route
    export default {
@@ -565,12 +610,12 @@ Status: ✅ Configured
 
        if (url.pathname === '/metrics') {
          return new Response(generatePrometheusMetrics(), {
-           headers: { 'Content-Type': 'text/plain' }
+           headers: { 'Content-Type': 'text/plain' },
          });
        }
 
        // Existing routing...
-     }
+     },
    };
 
    function generatePrometheusMetrics() {
@@ -578,7 +623,7 @@ Status: ✅ Configured
    # HELP http_requests_total Total HTTP requests
    # TYPE http_requests_total counter
    http_requests_total{job="resume-worker",status="200"} 12345
-
+   
    # HELP http_request_duration_seconds HTTP request latency
    # TYPE http_request_duration_seconds histogram
    http_request_duration_seconds_bucket{le="0.1"} 9000
@@ -589,30 +634,35 @@ Status: ✅ Configured
    ```
 
    **Step 2: Loki Log Shipping**
+
    ```javascript
    // Log all requests to Grafana Loki
    async function logToLoki(request, response, duration) {
      const logEntry = {
-       streams: [{
-         stream: { job: 'resume-worker', level: 'INFO' },
-         values: [[
-           String(Date.now() * 1000000),  // Nanoseconds
-           JSON.stringify({
-             method: request.method,
-             url: request.url,
-             status: response.status,
-             duration_ms: duration,
-             user_agent: request.headers.get('User-Agent'),
-             country: request.cf?.country
-           })
-         ]]
-       }]
+       streams: [
+         {
+           stream: { job: 'resume-worker', level: 'INFO' },
+           values: [
+             [
+               String(Date.now() * 1000000), // Nanoseconds
+               JSON.stringify({
+                 method: request.method,
+                 url: request.url,
+                 status: response.status,
+                 duration_ms: duration,
+                 user_agent: request.headers.get('User-Agent'),
+                 country: request.cf?.country,
+               }),
+             ],
+           ],
+         },
+       ],
      };
 
      await fetch('https://grafana.jclee.me/loki/api/v1/push', {
        method: 'POST',
        headers: { 'Content-Type': 'application/json' },
-       body: JSON.stringify(logEntry)
+       body: JSON.stringify(logEntry),
      });
    }
    ```
@@ -632,6 +682,7 @@ Status: ✅ Configured
      - Uptime < 99.9%
 
    **Step 4: README Update**
+
    ```markdown
    ## Observability
 
@@ -647,14 +698,14 @@ Status: ✅ Configured
    ```html
    <!-- In index.html and resume.html -->
    <script type="module">
-     import {onLCP, onFID, onCLS} from 'https://unpkg.com/apps/portfolio-vitals@4?module';
+     import { onLCP, onFID, onCLS } from 'https://unpkg.com/apps/portfolio-vitals@4?module';
 
      function sendToGrafana(metric) {
        const body = JSON.stringify({
          name: metric.name,
          value: metric.value,
          rating: metric.rating,
-         page: window.location.pathname
+         page: window.location.pathname,
        });
        navigator.sendBeacon('/api/vitals', body);
      }
@@ -666,6 +717,7 @@ Status: ✅ Configured
    ```
 
    **Worker endpoint** (`/api/vitals`):
+
    ```javascript
    if (url.pathname === '/api/vitals') {
      const vitals = await request.json();
@@ -678,7 +730,7 @@ Status: ✅ Configured
 
    ```yaml
    slo:
-     availability: 99.9%  # 43.2 min/month downtime allowed
+     availability: 99.9% # 43.2 min/month downtime allowed
      latency_p95: <500ms
      error_rate: <0.1%
 
@@ -689,6 +741,7 @@ Status: ✅ Configured
    ```
 
    **Grafana Panel** (Error Budget):
+
    ```promql
    (1 - (1 - availability_sli) / (1 - 0.999)) * 100
    # Shows % of error budget remaining
@@ -697,6 +750,7 @@ Status: ✅ Configured
 ### Expected Outcomes
 
 **After Implementation**:
+
 - ✅ Public Grafana dashboard live
 - ✅ Real-time metrics (request rate, errors, latency)
 - ✅ Web Vitals tracking (LCP, FID, CLS)
@@ -706,6 +760,7 @@ Status: ✅ Configured
 - ✅ Portfolio differentiation (unique among candidates)
 
 **Interview Benefits**:
+
 - Show live dashboard during interview
 - Discuss SLO/SLI trade-offs
 - Explain observability architecture
@@ -717,14 +772,15 @@ Status: ✅ Configured
 
 ### CRITICAL Priority (Immediate Action)
 
-| ID | Recommendation | Impact | Effort | ROI |
-|----|----------------|--------|--------|-----|
-| C1 | **Grafana Observability Integration** | 🔴 Constitutional violation, portfolio gap | 6-8h | ⭐⭐⭐⭐⭐ |
-| C2 | **Lighthouse CI Enforcement** | 🟡 Performance regression prevention | 1-2h | ⭐⭐⭐⭐ |
+| ID  | Recommendation                        | Impact                                     | Effort | ROI        |
+| --- | ------------------------------------- | ------------------------------------------ | ------ | ---------- |
+| C1  | **Grafana Observability Integration** | 🔴 Constitutional violation, portfolio gap | 6-8h   | ⭐⭐⭐⭐⭐ |
+| C2  | **Lighthouse CI Enforcement**         | 🟡 Performance regression prevention       | 1-2h   | ⭐⭐⭐⭐   |
 
 **C1 Details**: See "6. Observability Analysis" above for full implementation guide.
 
 **C2 Implementation**:
+
 ```yaml
 # .github/workflows/lighthouse-ci.yml
 name: Lighthouse CI
@@ -742,16 +798,17 @@ jobs:
 ```
 
 **Budgets** (`lighthouserc.json`):
+
 ```json
 {
   "ci": {
     "assert": {
       "assertions": {
-        "categories:performance": ["error", {"minScore": 0.9}],
-        "categories:accessibility": ["error", {"minScore": 0.95}],
-        "first-contentful-paint": ["error", {"maxNumericValue": 1500}],
-        "largest-contentful-paint": ["error", {"maxNumericValue": 2500}],
-        "cumulative-layout-shift": ["error", {"maxNumericValue": 0.1}]
+        "categories:performance": ["error", { "minScore": 0.9 }],
+        "categories:accessibility": ["error", { "minScore": 0.95 }],
+        "first-contentful-paint": ["error", { "maxNumericValue": 1500 }],
+        "largest-contentful-paint": ["error", { "maxNumericValue": 2500 }],
+        "cumulative-layout-shift": ["error", { "maxNumericValue": 0.1 }]
       }
     }
   }
@@ -762,15 +819,16 @@ jobs:
 
 ### HIGH Priority (Within 1 Week)
 
-| ID | Recommendation | Impact | Effort | ROI |
-|----|----------------|--------|--------|-----|
-| H1 | **Real User Monitoring (RUM)** | 🟡 Understand actual user experience | 3-4h | ⭐⭐⭐⭐ |
-| H2 | **Self-Hosted Fonts** | 🟢 200-300ms performance gain | 2-3h | ⭐⭐⭐⭐ |
-| H3 | **Advanced E2E Tests** | 🟡 Prevent broken links/downloads | 2-3h | ⭐⭐⭐ |
+| ID  | Recommendation                 | Impact                               | Effort | ROI      |
+| --- | ------------------------------ | ------------------------------------ | ------ | -------- |
+| H1  | **Real User Monitoring (RUM)** | 🟡 Understand actual user experience | 3-4h   | ⭐⭐⭐⭐ |
+| H2  | **Self-Hosted Fonts**          | 🟢 200-300ms performance gain        | 2-3h   | ⭐⭐⭐⭐ |
+| H3  | **Advanced E2E Tests**         | 🟡 Prevent broken links/downloads    | 2-3h   | ⭐⭐⭐   |
 
 **H1**: See "6. Observability Analysis" (RUM section) for apps/portfolio-vitals implementation.
 
 **H2**: Self-host Inter font (woff2)
+
 - Download from Google Fonts
 - Store in `apps/portfolio/fonts/` or Workers KV
 - Update CSS to `@font-face` declarations
@@ -783,11 +841,11 @@ jobs:
 
 ### MEDIUM Priority (Within 1 Month)
 
-| ID | Recommendation | Impact | Effort | ROI |
-|----|----------------|--------|--------|-----|
-| M1 | **PWA Support** | 🟢 Offline support, installation | 3-4h | ⭐⭐⭐ |
-| M2 | **Structured Data (Schema.org)** | 🟢 SEO, rich snippets | 1-2h | ⭐⭐⭐ |
-| M3 | **Deployment Rollback Automation** | 🟡 MTTR <2 min | 2-3h | ⭐⭐⭐ |
+| ID  | Recommendation                     | Impact                           | Effort | ROI    |
+| --- | ---------------------------------- | -------------------------------- | ------ | ------ |
+| M1  | **PWA Support**                    | 🟢 Offline support, installation | 3-4h   | ⭐⭐⭐ |
+| M2  | **Structured Data (Schema.org)**   | 🟢 SEO, rich snippets            | 1-2h   | ⭐⭐⭐ |
+| M3  | **Deployment Rollback Automation** | 🟡 MTTR <2 min                   | 2-3h   | ⭐⭐⭐ |
 
 **M1**: Service worker for offline support, installable PWA
 **M2**: JSON-LD for Person, ProfessionalService schemas
@@ -797,11 +855,11 @@ jobs:
 
 ### LOW Priority (Nice-to-Have)
 
-| ID | Recommendation | Impact | Effort | ROI |
-|----|----------------|--------|--------|-----|
-| L1 | **A/B Testing Framework** | 🟢 Content optimization | 4-5h | ⭐⭐ |
-| L2 | **Multi-Language Support** | 🟢 International opportunities | 6-8h | ⭐⭐ |
-| L3 | **Blog/Case Studies** | 🟢 Thought leadership | 10-15h | ⭐ |
+| ID  | Recommendation             | Impact                         | Effort | ROI  |
+| --- | -------------------------- | ------------------------------ | ------ | ---- |
+| L1  | **A/B Testing Framework**  | 🟢 Content optimization        | 4-5h   | ⭐⭐ |
+| L2  | **Multi-Language Support** | 🟢 International opportunities | 6-8h   | ⭐⭐ |
+| L3  | **Blog/Case Studies**      | 🟢 Thought leadership          | 10-15h | ⭐   |
 
 **Defer to future iterations** (focus on high-ROI items first).
 
@@ -921,39 +979,39 @@ verification:
 
 ### Quantitative KPIs
 
-| Category | Metric | Current | Target | Status |
-|----------|--------|---------|--------|--------|
-| **Performance** | Lighthouse Score | ~90-95 (est) | 95+ | 🟡 |
-| | LCP | ~1.2s (est) | <2.5s | ✅ |
-| | FID | ~50ms (est) | <100ms | ✅ |
-| | CLS | ~0.05 (est) | <0.1 | ✅ |
-| | Bundle Size | 64KB | <50KB | 🟡 |
-| **Reliability** | Uptime | Unknown | 99.9% | 🔴 |
-| | Error Rate | Unknown | <0.1% | 🔴 |
-| | MTTR | 10-30min (manual) | <5min | 🔴 |
-| | Deploy Success | Unknown | >99% | 🟡 |
-| **Testing** | Unit Coverage | 80%+ | 80%+ | ✅ |
-| | E2E Coverage | ~60% | 95% | 🟡 |
-| | Mutation Score | Unknown | 75%+ | 🔴 |
-| | External Links | Manual | Daily auto-check | 🔴 |
-| **Observability** | Grafana Dashboard | ❌ None | ✅ Public | 🔴 |
-| | Loki Logs | ❌ None | ✅ Shipped | 🔴 |
-| | Prometheus Metrics | ❌ None | ✅ Scraped | 🔴 |
-| | Alerts | ❌ None | 3+ rules | 🔴 |
+| Category          | Metric             | Current           | Target           | Status |
+| ----------------- | ------------------ | ----------------- | ---------------- | ------ |
+| **Performance**   | Lighthouse Score   | ~90-95 (est)      | 95+              | 🟡     |
+|                   | LCP                | ~1.2s (est)       | <2.5s            | ✅     |
+|                   | FID                | ~50ms (est)       | <100ms           | ✅     |
+|                   | CLS                | ~0.05 (est)       | <0.1             | ✅     |
+|                   | Bundle Size        | 64KB              | <50KB            | 🟡     |
+| **Reliability**   | Uptime             | Unknown           | 99.9%            | 🔴     |
+|                   | Error Rate         | Unknown           | <0.1%            | 🔴     |
+|                   | MTTR               | 10-30min (manual) | <5min            | 🔴     |
+|                   | Deploy Success     | Unknown           | >99%             | 🟡     |
+| **Testing**       | Unit Coverage      | 80%+              | 80%+             | ✅     |
+|                   | E2E Coverage       | ~60%              | 95%              | 🟡     |
+|                   | Mutation Score     | Unknown           | 75%+             | 🔴     |
+|                   | External Links     | Manual            | Daily auto-check | 🔴     |
+| **Observability** | Grafana Dashboard  | ❌ None           | ✅ Public        | 🔴     |
+|                   | Loki Logs          | ❌ None           | ✅ Shipped       | 🔴     |
+|                   | Prometheus Metrics | ❌ None           | ✅ Scraped       | 🔴     |
+|                   | Alerts             | ❌ None           | 3+ rules         | 🔴     |
 
 ### Qualitative KPIs
 
-| Category | Goal | Status |
-|----------|------|--------|
-| **Constitutional Compliance** | 0 CLASS_1_CRITICAL violations | 🔴 Grafana missing |
-| | 0 CLASS_2_MAJOR violations | ✅ Compliant |
-| **Portfolio Showcase** | Public observability dashboard | 🔴 Not implemented |
-| | Sub-2s load time | ✅ Achieved (0.5s) |
-| | Enhanced CSP | 🟡 Has 'unsafe-inline' |
-| | 95% test coverage | 🟡 ~60% E2E |
-| **DevOps Maturity** | CI/CD automation | ✅ Implemented |
-| | Auto-rollback | 🔴 Not implemented |
-| | SLO/SLI tracking | 🔴 Not implemented |
+| Category                      | Goal                           | Status                 |
+| ----------------------------- | ------------------------------ | ---------------------- |
+| **Constitutional Compliance** | 0 CLASS_1_CRITICAL violations  | 🔴 Grafana missing     |
+|                               | 0 CLASS_2_MAJOR violations     | ✅ Compliant           |
+| **Portfolio Showcase**        | Public observability dashboard | 🔴 Not implemented     |
+|                               | Sub-2s load time               | ✅ Achieved (0.5s)     |
+|                               | Enhanced CSP                   | 🟡 Has 'unsafe-inline' |
+|                               | 95% test coverage              | 🟡 ~60% E2E            |
+| **DevOps Maturity**           | CI/CD automation               | ✅ Implemented         |
+|                               | Auto-rollback                  | 🔴 Not implemented     |
+|                               | SLO/SLI tracking               | 🔴 Not implemented     |
 
 ---
 
@@ -961,21 +1019,21 @@ verification:
 
 ### Implementation Risks
 
-| Risk | Probability | Impact | Mitigation |
-|------|-------------|--------|------------|
-| **Grafana integration complexity** | Medium | High | Start with Loki logs only, add Prometheus later |
-| **Worker bundle size >1MB** | Low | Medium | Use Workers KV for fonts if needed |
-| **Service worker bugs** | Medium | High | Cache versioning + kill switch |
-| **CSP breaks inline scripts** | Low | Medium | SHA-256 hash generation |
-| **Performance budgets too strict** | Medium | Low | Set at 110% of current performance |
+| Risk                               | Probability | Impact | Mitigation                                      |
+| ---------------------------------- | ----------- | ------ | ----------------------------------------------- |
+| **Grafana integration complexity** | Medium      | High   | Start with Loki logs only, add Prometheus later |
+| **Worker bundle size >1MB**        | Low         | Medium | Use Workers KV for fonts if needed              |
+| **Service worker bugs**            | Medium      | High   | Cache versioning + kill switch                  |
+| **CSP breaks inline scripts**      | Low         | Medium | SHA-256 hash generation                         |
+| **Performance budgets too strict** | Medium      | Low    | Set at 110% of current performance              |
 
 ### Operational Risks
 
-| Risk | Probability | Impact | Mitigation |
-|------|-------------|--------|------------|
-| **Alert fatigue** | Medium | Medium | Start with critical alerts only (<5% noise) |
-| **Over-engineering** | Low | Low | Prioritize by impact/effort, defer low-ROI items |
-| **Maintenance burden** | Low | Low | Use IaC (Terraform), max 2h/month |
+| Risk                   | Probability | Impact | Mitigation                                       |
+| ---------------------- | ----------- | ------ | ------------------------------------------------ |
+| **Alert fatigue**      | Medium      | Medium | Start with critical alerts only (<5% noise)      |
+| **Over-engineering**   | Low         | Low    | Prioritize by impact/effort, defer low-ROI items |
+| **Maintenance burden** | Low         | Low    | Use IaC (Terraform), max 2h/month                |
 
 ---
 
@@ -983,27 +1041,28 @@ verification:
 
 ### Implementation Costs
 
-| Phase | Engineering Time | Financial Cost | Tools |
-|-------|------------------|----------------|-------|
-| Phase 1 (Critical) | 8-12 hours | $0 | Free tier (Cloudflare, Grafana, GitHub) |
-| Phase 2 (High) | 12-16 hours | $0 | Free tier |
-| Phase 3 (Medium) | 10-14 hours | $0 | Free tier |
-| Phase 4 (Ongoing) | 4-6 hours/month | $0 | Free tier |
-| **Total** | **30-42 hours** (one-time) | **$0** | - |
+| Phase              | Engineering Time           | Financial Cost | Tools                                   |
+| ------------------ | -------------------------- | -------------- | --------------------------------------- |
+| Phase 1 (Critical) | 8-12 hours                 | $0             | Free tier (Cloudflare, Grafana, GitHub) |
+| Phase 2 (High)     | 12-16 hours                | $0             | Free tier                               |
+| Phase 3 (Medium)   | 10-14 hours                | $0             | Free tier                               |
+| Phase 4 (Ongoing)  | 4-6 hours/month            | $0             | Free tier                               |
+| **Total**          | **30-42 hours** (one-time) | **$0**         | -                                       |
 
 ### Operational Costs
 
-| Service | Monthly Cost | Notes |
-|---------|--------------|-------|
-| Cloudflare Workers | $0 | Free tier (100k requests/day) |
-| Cloudflare KV | $0 | Free tier (1GB, 100k reads/day) |
-| GitHub Actions | $0 | Free tier (2000 min/month) |
-| Grafana | $0 | Self-hosted (grafana.jclee.me) |
-| **Total** | **$0/month** | All free tier |
+| Service            | Monthly Cost | Notes                           |
+| ------------------ | ------------ | ------------------------------- |
+| Cloudflare Workers | $0           | Free tier (100k requests/day)   |
+| Cloudflare KV      | $0           | Free tier (1GB, 100k reads/day) |
+| GitHub Actions     | $0           | Free tier (2000 min/month)      |
+| Grafana            | $0           | Self-hosted (grafana.jclee.me)  |
+| **Total**          | **$0/month** | All free tier                   |
 
 ### ROI Analysis
 
 **Benefits**:
+
 1. **Portfolio Differentiation**: Public Grafana dashboard (unique among candidates)
    - Estimated: +20-30% interview conversion rate
 2. **Maintainability**: 6-10 hours/month time savings (automated testing, faster debugging)
@@ -1046,6 +1105,7 @@ verification:
 ## 13. Conclusion
 
 현재 resume 포트폴리오는 **강력한 기반**을 갖추고 있습니다:
+
 - ✅ Zero vulnerabilities
 - ✅ 100% test pass rate
 - ✅ Modern tech stack
@@ -1054,18 +1114,21 @@ verification:
 그러나 **infrastructure engineer 포지션**에 최적화하려면 **observability 통합이 필수**입니다:
 
 **핵심 전략**:
+
 1. **Grafana 우선**: Public dashboard로 DevOps/SRE 역량 시연
 2. **Performance Excellence**: Lighthouse CI + RUM으로 frontend 전문성 증명
 3. **Quality Assurance**: 95% E2E coverage로 production-grade 품질 보장
 4. **Security-First**: Enhanced CSP로 defense-in-depth 자세 입증
 
 **Next Steps**:
+
 1. ✅ Phase 1 구현 시작 (Grafana + Lighthouse CI)
 2. ✅ Public dashboard 공개 후 README 업데이트
 3. ✅ 이력서에 "Real-time observability dashboard" 문구 추가
 4. ✅ 면접 시 live metrics로 기술 역량 시연
 
 **Expected Outcome**:
+
 - 📊 Public Grafana dashboard: https://grafana.jclee.me/d/resume-portfolio
 - 🚀 Performance: 95+ Lighthouse score, <500ms p95 latency
 - 🔒 Security: Enhanced CSP, zero 'unsafe-inline'

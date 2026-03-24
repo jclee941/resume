@@ -21,7 +21,7 @@ The refactoring initiative to align `apps/job-server` with Ports-and-Adapters ar
   - Implemented `matchJobsWithAI` in `src/shared/services/matching/ai-matcher.js` to support batch processing with concurrency limits.
   - Exposed all necessary functions via `src/shared/services/matching/index.js`.
 
-### 2.2. Go CLI Modularization (cmd/resume-cli)
+### 2.2. Go CLI Modularization (packages/cli)
 
 - **Command Splitting**: The monolithic `wanted.go` has been successfully refactored into a thin wrapper pattern.
   - `wanted.go`: Now acts solely as the command registrar.

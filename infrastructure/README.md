@@ -39,11 +39,12 @@ infrastructure/
 │       ├── resume-auto-deploy.json
 │       └── resume-deploy-optimized.json
 └── workflows/                         # Additional automation workflows
-    ├── configured/
-    │   ├── 01-site-health-monitor.json
-    │   └── 02-github-deployment-webhook.json
+    ├── 01-site-health-monitor.json
+    ├── 02-github-deployment-webhook.json
+    ├── 03-weekly-job-report.json
     ├── config.template.json
-    └── config.example.json
+    ├── config.example.json
+    └── README.md
 ```
 
 ---
