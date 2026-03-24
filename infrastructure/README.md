@@ -148,7 +148,7 @@ npm run deploy  # Cloudflare Workers via API
 
 ### 3. n8n Workflows
 
-**Directory**: `n8n/workflows/`
+**Directory**: `infrastructure/n8n/`
 
 **Available Workflows**:
 

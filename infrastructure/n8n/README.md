@@ -58,7 +58,7 @@ chmod +x infrastructure/n8n/deploy-workflow.sh
 ```
 [INFO] === n8n Workflow Deployment ===
 [INFO] Target: https://n8n.jclee.me
-[INFO] Workflow: n8n/workflows/resume-auto-deploy.json
+[INFO] Workflow: infrastructure/n8n/workflows/resume-auto-deploy.json
 
 [INFO] Testing n8n API connection...
 [INFO] Connection successful!
