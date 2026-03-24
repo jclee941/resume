@@ -235,7 +235,7 @@ npm run deploy     # Deploy with new hashes
 - **Issues**: https://github.com/qws941/resume/issues
 - **Architecture**: `docs/guides/ARCHITECTURE.md`
 - **Testing**: `docs/guides/TESTING_GUIDE.md`
-- **Deployment**: `docs/deployment/README.md` (coming soon)
+- **Deployment**: `docs/guides/PRODUCTION_DEPLOYMENT_GUIDE.md`
 
 ---
 

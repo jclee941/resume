@@ -346,7 +346,6 @@ The following scripts are legacy attempts or experiments. **Do not use in produc
 - `cookie-inject.js` - Cookie context injection
 - `debug-login.js` - Debug script
 - `extract-token-debug.js` - Token debugging
-- `extract-cookies-from-chrome.sh` - Shell script (deprecated)
 
 ---
 

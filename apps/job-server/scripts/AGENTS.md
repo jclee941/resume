@@ -10,24 +10,23 @@
 
 ## KEY SCRIPTS
 
-| Script                          | Purpose                                           |
-| ------------------------------- | ------------------------------------------------- |
-| `auth-persistent.js`            | persistent session management                     |
-| `auth-sync.js`                  | cookies → worker KV (846 lines)                   |
-| `auth-sync/`                    | auth sync helper modules                          |
-| `auto-all.js`                   | run all automation workflows                      |
-| `ci-resume-sync.js`             | CI pipeline resume sync                           |
-| `cookie-inject.js`              | inject cookies into browser                       |
-| `extract-cookies-cdp.js`        | CDP cookie extraction                             |
-| `extract-cookies-from-chrome.sh` | legacy chrome extraction script                   |
-| `get-cookies.js`                | retrieve cookies from data store                  |
-| `import-cookies-manual.js`      | manually import cookie strings                    |
-| `metrics-exporter.js`           | Prometheus metrics export                         |
-| `ops/`                          | operational helper scripts                        |
-| `profile-sync.js`               | resume → API sync (966 lines)                     |
-| `profile-sync/`                 | profile sync helper modules                       |
-| `quick-login.js`                | current auth method (recommended)                 |
-| `skill-tag-map.js`              | skill name → tag ID mapping                       |
+| Script                     | Purpose                           |
+| -------------------------- | --------------------------------- |
+| `auth-persistent.js`       | persistent session management     |
+| `auth-sync.js`             | cookies → worker KV (846 lines)   |
+| `auth-sync/`               | auth sync helper modules          |
+| `auto-all.js`              | run all automation workflows      |
+| `ci-resume-sync.js`        | CI pipeline resume sync           |
+| `cookie-inject.js`         | inject cookies into browser       |
+| `extract-cookies-cdp.js`   | CDP cookie extraction             |
+| `get-cookies.js`           | retrieve cookies from data store  |
+| `import-cookies-manual.js` | manually import cookie strings    |
+| `metrics-exporter.js`      | Prometheus metrics export         |
+| `ops/`                     | operational helper scripts        |
+| `profile-sync.js`          | resume → API sync (966 lines)     |
+| `profile-sync/`            | profile sync helper modules       |
+| `quick-login.js`           | current auth method (recommended) |
+| `skill-tag-map.js`         | skill name → tag ID mapping       |
 
 ## AUTH EVOLUTION
 
