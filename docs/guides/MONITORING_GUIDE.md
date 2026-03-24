@@ -10,7 +10,7 @@ The resume portfolio includes tmux-based deployment monitoring for real-time vis
 
 ```bash
 # Start deployment in monitored tmux session
-./scripts/deployment/deploy-with-monitoring.sh
+./tools/scripts/deployment/deploy-with-monitoring.sh
 ```
 
 This will:
@@ -25,7 +25,7 @@ This will:
 
 ```bash
 # Monitor running deployment
-./scripts/monitoring/monitor-deployment.sh
+./tools/scripts/monitoring/monitor-deployment.sh
 ```
 
 Choose from 4 monitoring modes:
@@ -40,7 +40,7 @@ Choose from 4 monitoring modes:
 ### 1. Interactive Mode (Attach)
 
 ```bash
-./scripts/monitoring/monitor-deployment.sh
+./tools/scripts/monitoring/monitor-deployment.sh
 # Choose: 1
 
 # Inside tmux session:
@@ -53,7 +53,7 @@ Choose from 4 monitoring modes:
 ### 2. Stream Mode
 
 ```bash
-./scripts/monitoring/monitor-deployment.sh
+./tools/scripts/monitoring/monitor-deployment.sh
 # Choose: 2
 
 # Output updates every 2 seconds
@@ -65,7 +65,7 @@ Choose from 4 monitoring modes:
 ### 3. Snapshot Mode
 
 ```bash
-./scripts/monitoring/monitor-deployment.sh
+./tools/scripts/monitoring/monitor-deployment.sh
 # Choose: 3
 
 # Shows last 50 lines of session
@@ -76,7 +76,7 @@ Choose from 4 monitoring modes:
 ### 4. Error Search
 
 ```bash
-./scripts/monitoring/monitor-deployment.sh
+./tools/scripts/monitoring/monitor-deployment.sh
 # Choose: 4
 
 # Searches for:
@@ -217,7 +217,7 @@ which tmux
 tmux list-sessions
 
 # Restart deployment
-./scripts/deployment/deploy-with-monitoring.sh
+./tools/scripts/deployment/deploy-with-monitoring.sh
 ```
 
 ### Permission denied

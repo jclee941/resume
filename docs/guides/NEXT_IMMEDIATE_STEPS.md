@@ -351,7 +351,7 @@ After deployment is stable, consider these enhancements:
 ### Quick Commands
 ```bash
 # Verify setup
-./scripts/verification/verify-cicd.sh
+./tools/scripts/verification/verify-cicd.sh
 
 # Run tests
 npm test

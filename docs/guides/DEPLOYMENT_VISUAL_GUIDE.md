@@ -31,7 +31,7 @@
 └──────────────────────────┼──────────────────────────────────────┘
                            │
                            │ wrangler deploy --config ... --env production
-                           │ (scripts/deployment/quick-deploy.sh)
+                           │ (tools/scripts/deployment/quick-deploy.sh)
                            ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │              Cloudflare Workers (Production)                     │
@@ -294,7 +294,7 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│  scripts/verification/verify-deployment.sh                                │
+│  tools/scripts/verification/verify-deployment.sh                          │
 └─────────────────────────────────────────────────────────────┘
                            │
               ┌────────────┴────────────┐
@@ -418,7 +418,7 @@
 │  Step 3: Deploy                                               │
 │  ┌────────────────────────────────────────────────────────┐  │
 │  │  $ cd /home/jclee/dev/resume                  │  │
-│  │  $ ./scripts/deployment/quick-deploy.sh                           │  │
+│  │  $ ./tools/scripts/deployment/quick-deploy.sh                      │  │
 │  │                                                        │  │
 │  │  ✓ Authentication: Global API Key                     │  │
 │  │  ✓ Prerequisites check passed                         │  │
@@ -530,7 +530,7 @@ vim ~/.env
 source ~/.env
 
 # 3️⃣ 배포 실행
-cd /home/jclee/dev/resume && ./scripts/deployment/quick-deploy.sh
+cd /home/jclee/dev/resume && ./tools/scripts/deployment/quick-deploy.sh
 ```
 
 ### 인증 확인하기
@@ -542,7 +542,7 @@ source ~/.env && cd apps/portfolio && npx wrangler whoami
 ### 배포 검증하기
 
 ```bash
-./scripts/verification/verify-deployment.sh
+./tools/scripts/verification/verify-deployment.sh
 ```
 
 ---

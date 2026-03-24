@@ -77,13 +77,13 @@
 
 ```bash
 # 모니터링 인프라 설치
-./scripts/monitoring/setup-monitoring.sh
+./tools/scripts/monitoring/setup-monitoring.sh
 
 # Grafana 대시보드 배포
-./scripts/deployment/deploy-grafana-configs.sh
+./tools/scripts/deployment/deploy-grafana-configs.sh
 
 # 모니터링 포함 배포
-./scripts/deployment/deploy-with-monitoring.sh
+./tools/scripts/deployment/deploy-with-monitoring.sh
 ```
 
 ---

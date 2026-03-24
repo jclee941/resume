@@ -37,15 +37,15 @@ Resume monorepo: Cloudflare Worker portfolio, job automation runtimes, dashboard
 | Portfolio build/runtime       | `apps/portfolio/`     | `worker.js` is generated; edit source/build pipeline instead    |
 | Wanted/job automation         | `apps/job-server/`    | API clients, crawlers, MCP tools, sync/auth scripts             |
 | Dashboard/API workflows       | `apps/job-dashboard/` | handlers, middleware, Cloudflare workflows                      |
-| Authoritative resume content  | `packages/data/`      | `resumes/master/resume_data.json` is the SSoT                   |
+| Authoritative resume content  | `packages/data/`      | `packages/data/resumes/master/resume_data.json` is the SSoT     |
 | Workspace commands            | `package.json`        | `automate:ssot`, `automate:full`, `build`, `test`               |
 | CI/release behavior           | `.github/workflows/`  | `ci.yml`, `verify.yml`, `release.yml`, `wanted-resume-sync.yml` |
 | Shared operational scripts    | `tools/scripts/`      | build, deployment, verification, sync utilities                 |
 | Tests by layer                | `tests/`              | `unit/`, `integration/`, `e2e/` with child guides               |
 | Monitoring and n8n automation | `infrastructure/`     | dashboards, alerting, webhook workflows                         |
 | Design/procedure docs         | `docs/`               | root docs guide plus ADR/architecture child guides              |
-| TA profile generation | `ta/` | Python PPTX scripts, not a workspace package |
-| Shared utilities | `packages/shared/` | Shared code used across internal packages |
+| TA profile generation         | `ta/`                 | Python PPTX scripts, not a workspace package                    |
+| Shared utilities              | `packages/shared/`    | Shared code used across internal packages                       |
 
 ## CONVENTIONS
 
