@@ -32,6 +32,9 @@ psql "$DATABASE_URL" -f migrations/0002_create_rls_policies.sql
 
 # 3. Add indexes and updated_at triggers
 psql "$DATABASE_URL" -f migrations/0003_create_indexes_and_triggers.sql
+
+# 4. Restrict anon/authenticated to SELECT-only
+psql "$DATABASE_URL" -f migrations/0004_tighten_grants.sql
 ```
 
 ### Rollback
@@ -39,6 +42,7 @@ psql "$DATABASE_URL" -f migrations/0003_create_indexes_and_triggers.sql
 Down migrations reverse each step:
 
 ```bash
+psql "$DATABASE_URL" -f migrations/0004_tighten_grants.down.sql
 psql "$DATABASE_URL" -f migrations/0003_create_indexes_and_triggers.down.sql
 psql "$DATABASE_URL" -f migrations/0002_create_rls_policies.down.sql
 psql "$DATABASE_URL" -f migrations/0001_create_resume_tables.down.sql
@@ -60,7 +64,7 @@ node seed-resume-data.mjs --dry-run
 psql "$DATABASE_URL" -f seed/seed.sql
 ```
 
-The generated SQL uses `ON CONFLICT ... DO UPDATE` for safe re-runs and deterministic UUIDs for stable row identities.
+The generated SQL uses `ON CONFLICT ... DO UPDATE` for safe re-runs, deterministic content-based UUIDs for stable row identities, and `DELETE ... WHERE id NOT IN (...)` for orphan row cleanup when items are removed from the JSON source.
 
 ## Connection
 
@@ -83,7 +87,9 @@ export DATABASE_URL=$(op read "op://homelab/supabase/Connection/url")
 - **Collection data normalized**: Careers, projects, skills, etc. are separate tables with FK to `resume_profiles` for query flexibility and ordering.
 - **CHECK constraints over enums**: `status` and `level` columns use `CHECK` constraints instead of `CREATE TYPE ... AS ENUM` for simpler migrations.
 - **GIN indexes on JSONB**: Enable efficient `@>`, `?`, and `?|` queries on JSONB columns.
-- **Deterministic UUIDs**: Seed script generates content-based UUIDs for idempotent re-seeding.
+- **Deterministic UUIDs**: Seed script generates content-based UUIDs (e.g., `career-<company>`, `cert-<name>`) for idempotent re-seeding that survives array reordering.
+- **Orphan cleanup**: Seed script emits `DELETE ... NOT IN (...)` after each section to remove rows no longer present in the JSON source.
+- **SELECT-only grants**: `anon` and `authenticated` roles have SELECT-only access; `service_role` retains ALL for admin operations.
 
 ## File Structure
 
@@ -96,7 +102,9 @@ supabase/
 │   ├── 0002_create_rls_policies.sql             # RLS + public read policies
 │   ├── 0002_create_rls_policies.down.sql        # Drop policies + disable RLS
 │   ├── 0003_create_indexes_and_triggers.sql     # Indexes + updated_at triggers
-│   └── 0003_create_indexes_and_triggers.down.sql
+│   ├── 0003_create_indexes_and_triggers.down.sql
+│   ├── 0004_tighten_grants.sql                  # SELECT-only for anon/authenticated
+│   └── 0004_tighten_grants.down.sql
 └── seed/
     ├── seed-resume-data.mjs                     # JSON → SQL generator
     └── seed.sql                                 # Generated output (re-generate after data changes)
