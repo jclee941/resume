@@ -825,7 +825,7 @@ npm run dashboard
 
 - 📧 Email: qws941@gmail.com
 - 💬 Slack: #job-applications
-- 📚 문서: `docs/AUTO_APPLY_SYSTEM_STATUS.md`
+- 📚 문서: `docs/reports/AUTO_APPLY_SYSTEM_STATUS.md`
 
 ---
 

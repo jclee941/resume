@@ -95,19 +95,19 @@ Manual cookie extraction required:
 
 // 5. Set cookies
 wanted_auth({
-  action: "set_cookies",
-  cookies: "your_cookie_string_here",
+  action: 'set_cookies',
+  cookies: 'your_cookie_string_here',
 });
 
 // 6. Check status
-wanted_auth({ action: "status" });
+wanted_auth({ action: 'status' });
 
 // 7. Use auth-required tools
-wanted_profile({ view: "overview" });
-wanted_resume({ action: "view" });
+wanted_profile({ view: 'overview' });
+wanted_resume({ action: 'view' });
 
 // 8. Logout
-wanted_auth({ action: "logout" });
+wanted_auth({ action: 'logout' });
 ```
 
 **Session Storage**: `~/.OpenCode/data/wanted-session.json` (24시간 유효)
@@ -118,18 +118,18 @@ wanted_auth({ action: "logout" });
 
 ```javascript
 // View current profile
-wanted_resume({ action: "view" });
+wanted_resume({ action: 'view' });
 
 // Update headline (description)
 wanted_resume({
-  action: "update_headline",
-  text: "DevSecOps Engineer | 8년차 | 보안/인프라",
+  action: 'update_headline',
+  text: 'DevSecOps Engineer | 8년차 | 보안/인프라',
 });
 
 // Update introduction
 wanted_resume({
-  action: "update_intro",
-  text: "DevSecOps Engineer | 보안 전문가",
+  action: 'update_intro',
+  text: 'DevSecOps Engineer | 보안 전문가',
 });
 ```
 
@@ -137,13 +137,13 @@ wanted_resume({
 
 ```javascript
 // List all resumes
-wanted_resume({ action: "list_resumes" });
+wanted_resume({ action: 'list_resumes' });
 
 // Get specific resume detail
-wanted_resume({ action: "get_resume", resume_id: "AwcIAQMKDgtIAgcDCwUAB01F" });
+wanted_resume({ action: 'get_resume', resume_id: 'AwcIAQMKDgtIAgcDCwUAB01F' });
 
 // Save resume and regenerate PDF
-wanted_resume({ action: "save_resume", resume_id: "AwcICwcLBAFIAgcDCwUAB01F" });
+wanted_resume({ action: 'save_resume', resume_id: 'AwcICwcLBAFIAgcDCwUAB01F' });
 ```
 
 ### Career Management (Chaos API v2)
@@ -151,16 +151,16 @@ wanted_resume({ action: "save_resume", resume_id: "AwcICwcLBAFIAgcDCwUAB01F" });
 ```javascript
 // Update career
 wanted_resume({
-  action: "update_career",
-  resume_id: "AwcICwcLBAFIAgcDCwUAB01F",
+  action: 'update_career',
+  resume_id: 'AwcICwcLBAFIAgcDCwUAB01F',
   career_id: 5941540,
   career: {
-    title: "DevSecOps Engineer",
-    employment_type: "FULLTIME",
+    title: 'DevSecOps Engineer',
+    employment_type: 'FULLTIME',
     projects: [
       {
-        title: "보안 인프라 구축",
-        description: "- Kubernetes 보안 강화\n- CI/CD 파이프라인 보안 자동화",
+        title: '보안 인프라 구축',
+        description: '- Kubernetes 보안 강화\n- CI/CD 파이프라인 보안 자동화',
       },
     ],
   },
@@ -168,23 +168,23 @@ wanted_resume({
 
 // Add career
 wanted_resume({
-  action: "add_career",
-  resume_id: "AwcICwcLBAFIAgcDCwUAB01F",
+  action: 'add_career',
+  resume_id: 'AwcICwcLBAFIAgcDCwUAB01F',
   career: {
-    title: "DevSecOps Engineer",
-    company_name: "회사명",
-    employment_type: "FULLTIME",
-    start_time: "2024-01-01",
-    end_time: "2024-12-31",
+    title: 'DevSecOps Engineer',
+    company_name: '회사명',
+    employment_type: 'FULLTIME',
+    start_time: '2024-01-01',
+    end_time: '2024-12-31',
     served: false,
-    projects: [{ title: "프로젝트명", description: "업무 내용" }],
+    projects: [{ title: '프로젝트명', description: '업무 내용' }],
   },
 });
 
 // Delete career
 wanted_resume({
-  action: "delete_career",
-  resume_id: "...",
+  action: 'delete_career',
+  resume_id: '...',
   career_id: 5941540,
 });
 ```
@@ -223,13 +223,13 @@ wanted_resume({ action: "delete_education", resume_id: "...", education_id: 1234
 ```javascript
 // Add skill (requires tag_type_id from Wanted skill database)
 wanted_resume({
-  action: "add_skill",
-  resume_id: "AwcICwcLBAFIAgcDCwUAB01F",
+  action: 'add_skill',
+  resume_id: 'AwcICwcLBAFIAgcDCwUAB01F',
   tag_type_id: 674, // DevOps tag ID
 });
 
 // Delete skill
-wanted_resume({ action: "delete_skill", resume_id: "...", skill_id: 12345 });
+wanted_resume({ action: 'delete_skill', resume_id: '...', skill_id: 12345 });
 ```
 
 ### Activity Management (Chaos API v2) ✅ NEW
@@ -287,25 +287,25 @@ wanted_resume({ action: "delete_language_cert", resume_id: "...", cert_id: 456 }
 
 ```javascript
 // 1. Export: 현재 이력서를 JSON 파일로 내보내기
-wanted_resume_sync({ action: "export", resume_id: "AwcICwcLBAFIAgcDCwUAB01F" });
+wanted_resume_sync({ action: 'export', resume_id: 'AwcICwcLBAFIAgcDCwUAB01F' });
 // → ~/.OpenCode/data/wanted-resume/{resume_id}.json
 
 // 2. Diff: 로컬 파일과 원격 이력서 비교
-wanted_resume_sync({ action: "diff", resume_id: "AwcICwcLBAFIAgcDCwUAB01F" });
+wanted_resume_sync({ action: 'diff', resume_id: 'AwcICwcLBAFIAgcDCwUAB01F' });
 
 // 3. Sync: 로컬 변경사항을 원격에 적용
-wanted_resume_sync({ action: "sync", resume_id: "...", dry_run: true }); // 미리보기
-wanted_resume_sync({ action: "sync", resume_id: "..." }); // 실제 적용
+wanted_resume_sync({ action: 'sync', resume_id: '...', dry_run: true }); // 미리보기
+wanted_resume_sync({ action: 'sync', resume_id: '...' }); // 실제 적용
 
 // 4. Import: JSON 파일에서 이력서 가져오기
-wanted_resume_sync({ action: "import", resume_id: "...", dry_run: true });
+wanted_resume_sync({ action: 'import', resume_id: '...', dry_run: true });
 
 // 5. Section-specific Sync: 특정 섹션만 동기화
-wanted_resume_sync({ action: "sync_careers", resume_id: "...", dry_run: true });
-wanted_resume_sync({ action: "sync_skills", resume_id: "...", dry_run: true });
+wanted_resume_sync({ action: 'sync_careers', resume_id: '...', dry_run: true });
+wanted_resume_sync({ action: 'sync_skills', resume_id: '...', dry_run: true });
 wanted_resume_sync({
-  action: "sync_educations",
-  resume_id: "...",
+  action: 'sync_educations',
+  resume_id: '...',
   dry_run: true,
 });
 ```
@@ -314,16 +314,16 @@ wanted_resume_sync({
 
 ```javascript
 // 파이프라인 상태 확인
-wanted_resume_sync({ action: "pipeline_status" });
+wanted_resume_sync({ action: 'pipeline_status' });
 
 // 전체 파이프라인 실행 (백업 → 업데이트 적용 → PDF 재생성)
-wanted_resume_sync({ action: "pipeline_run", resume_id: "..." });
+wanted_resume_sync({ action: 'pipeline_run', resume_id: '...' });
 
 // n8n 웹훅으로 스케줄링
 wanted_resume_sync({
-  action: "pipeline_schedule",
-  resume_id: "...",
-  webhook_url: "https://n8n.jclee.me/webhook/wanted-resume-sync",
+  action: 'pipeline_schedule',
+  resume_id: '...',
+  webhook_url: 'https://n8n.jclee.me/webhook/wanted-resume-sync',
 });
 ```
 
@@ -387,8 +387,8 @@ curl -X POST https://n8n.jclee.me/api/v1/workflows \
 wanted_search_jobs({ tag_type_ids: [674], limit: 10 });
 
 // Search by keyword
-wanted_search_keyword({ query: "토스", limit: 10 });
-wanted_search_keyword({ query: "kubernetes", limit: 10 });
+wanted_search_keyword({ query: '토스', limit: 10 });
+wanted_search_keyword({ query: 'kubernetes', limit: 10 });
 
 // Get job detail
 wanted_get_job_detail({ job_id: 325174 });
@@ -582,9 +582,9 @@ apps/job-server/
 │   ├── cli.js                # CLI for pipeline operations
 │   ├── e2e.test.js           # E2E tests (10 tests)
 │   ├── pipeline.test.js      # Pipeline tests (12 tests)
-│   ├── lib/
-│   │   ├── wanted-api.js     # Wanted API client (40+ API methods)
-│   │   └── job-matcher.js    # Job matching engine
+│   ├── shared/
+│   │   ├── clients/          # External API clients (wanted, d1, elasticsearch, secrets)
+│   │   └── services/         # Domain services (matching, session, applications, etc.)
 │   ├── crawlers/
 │   │   ├── index.js          # Unified crawler
 │   │   ├── base-crawler.js   # Base crawler class
@@ -597,10 +597,10 @@ apps/job-server/
 │   │   ├── auto-applier.js   # Playwright-based auto applier
 │   │   ├── application-manager.js  # Application tracking
 │   │   └── cli.js            # Auto-apply CLI
-│   ├── dashboard/
-│   │   ├── server.js         # Dashboard HTTP server
-│   │   └── public/
-│   │       └── index.html    # Dashboard UI
+│   ├── server/
+│   │   ├── index.js          # Fastify server bootstrap
+│   │   ├── routes/           # 13 Fastify route modules
+│   │   └── middleware/       # Request middleware
 │   └── tools/
 │       ├── search-jobs.js    # Category search
 │       ├── search-keyword.js # Keyword search
