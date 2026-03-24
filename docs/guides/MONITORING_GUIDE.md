@@ -224,7 +224,7 @@ tmux list-sessions
 
 ```bash
 # Make scripts executable
-chmod +x scripts/*.sh
+chmod +x tools/scripts/*.sh
 ```
 
 ### Session hangs

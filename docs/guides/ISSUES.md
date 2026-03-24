@@ -79,7 +79,7 @@ ls resumes/generated/  # nextrade.md, general.md, short.md
 **Priority**: P0  
 **Files**: `resumes/master/resume_master.md` (lines 68-186)
 
-**Issues Identified**:
+> **Note**: Path above is from the original proposal. Current SSoT location: `packages/data/resumes/master/resume_data.json`.
 
 - "정책 배포 시간 단축" - No Before/After metrics
 - "평균 복구 시간 단축" - No baseline/timeframe
@@ -250,6 +250,8 @@ Link related skills in project cards:
 ### H6: Career Narrative Section (1 hour)
 
 **Files**: `resumes/master/resume_master.md`
+
+> **Note**: Path above is from the original proposal. Current SSoT location: `packages/data/resumes/master/resume_data.json`.
 
 Add "경력 경로 분석" section documenting 3 career phases:
 

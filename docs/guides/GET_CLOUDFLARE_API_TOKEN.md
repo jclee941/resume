@@ -240,7 +240,7 @@ npx wrangler whoami
 | Workers 배포 가이드           | https://developers.cloudflare.com/workers/get-started/guide/                 |
 | Wrangler 문서                 | https://developers.cloudflare.com/workers/wrangler/                          |
 | 프로젝트 배포 가이드          | docs/MANUAL_DEPLOYMENT_GUIDE.md                                              |
-| 자동화 스크립트 가이드        | scripts/README.md                                                            |
+| 자동화 스크립트 가이드        | tools/scripts/README.md                                                      |
 
 ---
 
