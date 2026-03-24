@@ -17,6 +17,25 @@ function deterministicUuid(seed) {
 
 const PROFILE_ID = deterministicUuid('resume-profile-ko-jclee');
 
+const usedSeeds = new Map();
+
+function trackSeed(seed, context) {
+  if (usedSeeds.has(seed)) {
+    const prev = usedSeeds.get(seed);
+    throw new Error(
+      'Duplicate content key detected: "' +
+        seed +
+        '" used by both ' +
+        prev +
+        ' and ' +
+        context +
+        '. Each item must have a unique content key to avoid ID collisions.'
+    );
+  }
+  usedSeeds.set(seed, context);
+  return deterministicUuid(seed);
+}
+
 function escapeSql(str) {
   if (str === null || str === undefined) return 'NULL';
   return "'" + String(str).replace(/'/g, "''") + "'";
@@ -100,6 +119,14 @@ function buildUpsert(table, columns, values, conflictTarget, updateAssignments) 
   ].join('\n');
 }
 
+function buildDeleteOrphans(table, whereClause, ids) {
+  const idList = ids.map((id) => escapeSql(id)).join(', ');
+  if (ids.length === 0) {
+    return 'DELETE FROM ' + table + ' WHERE ' + whereClause + ';';
+  }
+  return 'DELETE FROM ' + table + ' WHERE ' + whereClause + ' AND id NOT IN (' + idList + ');';
+}
+
 function buildResumeProfileStatement(data) {
   const columns = [
     'id',
@@ -148,7 +175,8 @@ function buildResumeProfileStatement(data) {
 }
 
 function buildCareerStatements(careers) {
-  return ensureArray(careers).map((career, index) => {
+  const results = ensureArray(careers).map((career, index) => {
+    const id = trackSeed('career-' + career.company, 'career: ' + career.company);
     const dates = parsePeriod(career.period);
     const columns = [
       'id',
@@ -165,7 +193,7 @@ function buildCareerStatements(careers) {
       'display_order',
     ];
     const values = [
-      escapeSql(deterministicUuid('career-' + index)),
+      escapeSql(id),
       escapeSql(PROFILE_ID),
       escapeSql(career.company),
       escapeSql(career.period),
@@ -191,12 +219,20 @@ function buildCareerStatements(careers) {
       'description',
       'display_order',
     ]);
-    return buildUpsert('resume_careers', columns, values, '(id)', updateAssignments);
+    return {
+      statement: buildUpsert('resume_careers', columns, values, '(id)', updateAssignments),
+      id,
+    };
   });
+  return { statements: results.map((r) => r.statement), ids: results.map((r) => r.id) };
 }
 
 function buildProjectStatements(projects) {
-  return ensureArray(projects).map((project, index) => {
+  const results = ensureArray(projects).map((project, index) => {
+    const id = trackSeed(
+      'project-' + (project.name || String(index)),
+      'project: ' + (project.name || String(index))
+    );
     const dates = parsePeriod(project.period);
     const columns = [
       'id',
@@ -215,7 +251,7 @@ function buildProjectStatements(projects) {
       'display_order',
     ];
     const values = [
-      escapeSql(deterministicUuid('project-' + index)),
+      escapeSql(id),
       escapeSql(PROFILE_ID),
       'NULL',
       escapeSql(project.period),
@@ -245,12 +281,20 @@ function buildProjectStatements(projects) {
       'metrics',
       'display_order',
     ]);
-    return buildUpsert('resume_projects', columns, values, '(id)', updateAssignments);
+    return {
+      statement: buildUpsert('resume_projects', columns, values, '(id)', updateAssignments),
+      id,
+    };
   });
+  return { statements: results.map((r) => r.statement), ids: results.map((r) => r.id) };
 }
 
 function buildCertificationStatements(certifications) {
-  return ensureArray(certifications).map((certification, index) => {
+  const results = ensureArray(certifications).map((certification, index) => {
+    const id = trackSeed(
+      'cert-' + (certification.name || String(index)),
+      'certification: ' + (certification.name || String(index))
+    );
     const columns = [
       'id',
       'resume_id',
@@ -264,7 +308,7 @@ function buildCertificationStatements(certifications) {
       'display_order',
     ];
     const values = [
-      escapeSql(deterministicUuid('cert-' + index)),
+      escapeSql(id),
       escapeSql(PROFILE_ID),
       escapeSql(certification.name),
       escapeSql(certification.issuer),
@@ -286,13 +330,17 @@ function buildCertificationStatements(certifications) {
       'status',
       'display_order',
     ]);
-    return buildUpsert('resume_certifications', columns, values, '(id)', updateAssignments);
+    return {
+      statement: buildUpsert('resume_certifications', columns, values, '(id)', updateAssignments),
+      id,
+    };
   });
+  return { statements: results.map((r) => r.statement), ids: results.map((r) => r.id) };
 }
 
 function buildSkillCategoryRows(skills) {
   return Object.entries(skills || {}).map(([key, value], index) => ({
-    id: deterministicUuid('skill-cat-' + key),
+    id: trackSeed('skill-cat-' + key, 'skill-category: ' + key),
     key,
     title: value?.title ?? null,
     icon: value?.icon ?? null,
@@ -302,7 +350,7 @@ function buildSkillCategoryRows(skills) {
 }
 
 function buildSkillCategoryStatements(rows) {
-  return rows.map((row) => {
+  const results = rows.map((row) => {
     const columns = ['id', 'resume_id', 'key', 'title', 'icon', 'display_order'];
     const values = [
       escapeSql(row.id),
@@ -319,17 +367,25 @@ function buildSkillCategoryStatements(rows) {
       'icon',
       'display_order',
     ]);
-    return buildUpsert('resume_skill_categories', columns, values, '(id)', updateAssignments);
+    return {
+      statement: buildUpsert('resume_skill_categories', columns, values, '(id)', updateAssignments),
+      id: row.id,
+    };
   });
+  return { statements: results.map((r) => r.statement), ids: results.map((r) => r.id) };
 }
 
 function buildSkillStatements(categoryRows) {
-  const statements = [];
+  const results = [];
   for (const categoryRow of categoryRows) {
     categoryRow.items.forEach((item, itemIndex) => {
+      const id = trackSeed(
+        'skill-' + categoryRow.key + '-' + (item.name || String(itemIndex)),
+        'skill: ' + categoryRow.key + '/' + (item.name || String(itemIndex))
+      );
       const columns = ['id', 'category_id', 'name', 'level', 'proficiency', 'display_order'];
       const values = [
-        escapeSql(deterministicUuid('skill-' + categoryRow.key + '-' + itemIndex)),
+        escapeSql(id),
         escapeSql(categoryRow.id),
         escapeSql(item.name),
         escapeSql(item.level || 'intermediate'),
@@ -343,14 +399,21 @@ function buildSkillStatements(categoryRows) {
         'proficiency',
         'display_order',
       ]);
-      statements.push(buildUpsert('resume_skills', columns, values, '(id)', updateAssignments));
+      results.push({
+        statement: buildUpsert('resume_skills', columns, values, '(id)', updateAssignments),
+        id,
+      });
     });
   }
-  return statements;
+  return { statements: results.map((r) => r.statement), ids: results.map((r) => r.id) };
 }
 
 function buildPersonalProjectStatements(projects) {
-  return ensureArray(projects).map((project, index) => {
+  const results = ensureArray(projects).map((project, index) => {
+    const id = trackSeed(
+      'personal-project-' + (project.name || String(index)),
+      'personal-project: ' + (project.name || String(index))
+    );
     const columns = [
       'id',
       'resume_id',
@@ -369,7 +432,7 @@ function buildPersonalProjectStatements(projects) {
       'display_order',
     ];
     const values = [
-      escapeSql(deterministicUuid('personal-project-' + index)),
+      escapeSql(id),
       escapeSql(PROFILE_ID),
       escapeSql(project.name),
       escapeSql(project.period),
@@ -401,15 +464,29 @@ function buildPersonalProjectStatements(projects) {
       'metrics',
       'display_order',
     ]);
-    return buildUpsert('resume_personal_projects', columns, values, '(id)', updateAssignments);
+    return {
+      statement: buildUpsert(
+        'resume_personal_projects',
+        columns,
+        values,
+        '(id)',
+        updateAssignments
+      ),
+      id,
+    };
   });
+  return { statements: results.map((r) => r.statement), ids: results.map((r) => r.id) };
 }
 
 function buildLanguageStatements(languages) {
-  return ensureArray(languages).map((language, index) => {
+  const results = ensureArray(languages).map((language, index) => {
+    const id = trackSeed(
+      'language-' + (language.name || String(index)),
+      'language: ' + (language.name || String(index))
+    );
     const columns = ['id', 'resume_id', 'name', 'level', 'display_order'];
     const values = [
-      escapeSql(deterministicUuid('language-' + index)),
+      escapeSql(id),
       escapeSql(PROFILE_ID),
       escapeSql(language.name),
       escapeSql(language.level),
@@ -421,12 +498,20 @@ function buildLanguageStatements(languages) {
       'level',
       'display_order',
     ]);
-    return buildUpsert('resume_languages', columns, values, '(id)', updateAssignments);
+    return {
+      statement: buildUpsert('resume_languages', columns, values, '(id)', updateAssignments),
+      id,
+    };
   });
+  return { statements: results.map((r) => r.statement), ids: results.map((r) => r.id) };
 }
 
 function buildInfrastructureStatements(items) {
-  return ensureArray(items).map((item, index) => {
+  const results = ensureArray(items).map((item, index) => {
+    const id = trackSeed(
+      'infra-' + (item.title || String(index)),
+      'infrastructure: ' + (item.title || String(index))
+    );
     const columns = [
       'id',
       'resume_id',
@@ -438,7 +523,7 @@ function buildInfrastructureStatements(items) {
       'display_order',
     ];
     const values = [
-      escapeSql(deterministicUuid('infra-' + index)),
+      escapeSql(id),
       escapeSql(PROFILE_ID),
       escapeSql(item.icon),
       escapeSql(item.title),
@@ -456,12 +541,32 @@ function buildInfrastructureStatements(items) {
       'url',
       'display_order',
     ]);
-    return buildUpsert('resume_infrastructure', columns, values, '(id)', updateAssignments);
+    return {
+      statement: buildUpsert('resume_infrastructure', columns, values, '(id)', updateAssignments),
+      id,
+    };
   });
+  return { statements: results.map((r) => r.statement), ids: results.map((r) => r.id) };
 }
 
 function generateSql(data) {
   const categoryRows = buildSkillCategoryRows(data.skills);
+
+  const careers = buildCareerStatements(data.careers);
+  const projects = buildProjectStatements(data.projects);
+  const certifications = buildCertificationStatements(data.certifications);
+  const skillCategories = buildSkillCategoryStatements(categoryRows);
+  const skills = buildSkillStatements(categoryRows);
+  const personalProjects = buildPersonalProjectStatements(data.personalProjects);
+  const languages = buildLanguageStatements(data.languages);
+  const infrastructure = buildInfrastructureStatements(data.infrastructure);
+
+  const profileWhere = 'resume_id = ' + escapeSql(PROFILE_ID);
+  const skillsWhere =
+    'category_id IN (SELECT id FROM resume_skill_categories WHERE resume_id = ' +
+    escapeSql(PROFILE_ID) +
+    ')';
+
   const sections = [
     {
       comment: '-- resume_profiles',
@@ -469,39 +574,66 @@ function generateSql(data) {
     },
     {
       comment: '-- resume_careers',
-      statements: buildCareerStatements(data.careers),
+      statements: [
+        ...careers.statements,
+        buildDeleteOrphans('resume_careers', profileWhere, careers.ids),
+      ],
     },
     {
       comment: '-- resume_projects',
-      statements: buildProjectStatements(data.projects),
+      statements: [
+        ...projects.statements,
+        buildDeleteOrphans('resume_projects', profileWhere, projects.ids),
+      ],
     },
     {
       comment: '-- resume_certifications',
-      statements: buildCertificationStatements(data.certifications),
+      statements: [
+        ...certifications.statements,
+        buildDeleteOrphans('resume_certifications', profileWhere, certifications.ids),
+      ],
     },
     {
       comment: '-- resume_skill_categories',
-      statements: buildSkillCategoryStatements(categoryRows),
+      statements: skillCategories.statements,
     },
     {
       comment: '-- resume_skills',
-      statements: buildSkillStatements(categoryRows),
+      statements: [
+        ...skills.statements,
+        buildDeleteOrphans('resume_skills', skillsWhere, skills.ids),
+      ],
+    },
+    {
+      comment: '-- resume_skill_categories (orphan cleanup)',
+      statements: [
+        buildDeleteOrphans('resume_skill_categories', profileWhere, skillCategories.ids),
+      ],
     },
     {
       comment: '-- resume_personal_projects',
-      statements: buildPersonalProjectStatements(data.personalProjects),
+      statements: [
+        ...personalProjects.statements,
+        buildDeleteOrphans('resume_personal_projects', profileWhere, personalProjects.ids),
+      ],
     },
     {
       comment: '-- resume_languages',
-      statements: buildLanguageStatements(data.languages),
+      statements: [
+        ...languages.statements,
+        buildDeleteOrphans('resume_languages', profileWhere, languages.ids),
+      ],
     },
     {
       comment: '-- resume_infrastructure',
-      statements: buildInfrastructureStatements(data.infrastructure),
+      statements: [
+        ...infrastructure.statements,
+        buildDeleteOrphans('resume_infrastructure', profileWhere, infrastructure.ids),
+      ],
     },
     {
       comment: '-- resume_oss_contributions',
-      statements: ['-- resume_oss_contributions: no rows'],
+      statements: [buildDeleteOrphans('resume_oss_contributions', profileWhere, [])],
     },
   ];
 
