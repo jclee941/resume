@@ -10,7 +10,7 @@
  *   node scripts/utils/record-demo-video.js demo/resume-demo.webm
  */
 
-const {chromium} = require('@playwright/test');
+const { chromium } = require('@playwright/test');
 const path = require('path');
 const fs = require('fs');
 
@@ -23,7 +23,7 @@ async function recordDemo() {
 
   // Ensure output directory exists
   if (!fs.existsSync(outputDir)) {
-    fs.mkdirSync(outputDir, {recursive: true});
+    fs.mkdirSync(outputDir, { recursive: true });
   }
 
   console.log('🎬 Starting demo video recording...');
@@ -35,10 +35,10 @@ async function recordDemo() {
   });
 
   const context = await browser.newContext({
-    viewport: {width: 1920, height: 1080},
+    viewport: { width: 1920, height: 1080 },
     recordVideo: {
       dir: outputDir,
-      size: {width: 1920, height: 1080},
+      size: { width: 1920, height: 1080 },
     },
   });
 
@@ -48,7 +48,7 @@ async function recordDemo() {
     // Scene 1: Homepage Load (5 seconds)
     console.log('📍 Scene 1: Loading homepage...');
     await page.goto(BASE_URL);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(3000);
 
     // Scene 2: Scroll to Projects (3 seconds)
@@ -91,7 +91,7 @@ async function recordDemo() {
 
     // Scene 8: Scroll back to top (2 seconds)
     console.log('📍 Scene 8: Scrolling to top...');
-    await page.evaluate(() => window.scrollTo({top: 0, behavior: 'smooth'}));
+    await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'smooth' }));
     await page.waitForTimeout(2000);
 
     console.log('\n✅ Recording complete!');
@@ -104,9 +104,7 @@ async function recordDemo() {
     await browser.close();
 
     // Move video to final location
-    const videoFiles = fs
-      .readdirSync(outputDir)
-      .filter(f => f.endsWith('.webm'));
+    const videoFiles = fs.readdirSync(outputDir).filter((f) => f.endsWith('.webm'));
     if (videoFiles.length > 0) {
       const tempVideo = path.join(outputDir, videoFiles[0]);
       fs.renameSync(tempVideo, outputPath);
@@ -124,7 +122,7 @@ async function recordMobileDemo() {
   const outputDir = path.dirname(outputPath);
 
   if (!fs.existsSync(outputDir)) {
-    fs.mkdirSync(outputDir, {recursive: true});
+    fs.mkdirSync(outputDir, { recursive: true });
   }
 
   console.log('📱 Starting mobile demo video recording...');
@@ -136,13 +134,12 @@ async function recordMobileDemo() {
   });
 
   const context = await browser.newContext({
-    viewport: {width: 375, height: 667},
+    viewport: { width: 375, height: 667 },
     recordVideo: {
       dir: outputDir,
-      size: {width: 375, height: 667},
+      size: { width: 375, height: 667 },
     },
-    userAgent:
-      'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15',
+    userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15',
   });
 
   const page = await context.newPage();
@@ -150,7 +147,7 @@ async function recordMobileDemo() {
   try {
     console.log('📍 Scene 1: Loading homepage...');
     await page.goto(BASE_URL);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(3000);
 
     console.log('📍 Scene 2: Scrolling through content...');
@@ -168,7 +165,7 @@ async function recordMobileDemo() {
     await page.waitForTimeout(1500);
 
     console.log('📍 Scene 4: Scrolling to top...');
-    await page.evaluate(() => window.scrollTo({top: 0, behavior: 'smooth'}));
+    await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'smooth' }));
     await page.waitForTimeout(2000);
 
     console.log('\n✅ Mobile recording complete!');
@@ -179,9 +176,7 @@ async function recordMobileDemo() {
     await context.close();
     await browser.close();
 
-    const videoFiles = fs
-      .readdirSync(outputDir)
-      .filter(f => f.endsWith('.webm'));
+    const videoFiles = fs.readdirSync(outputDir).filter((f) => f.endsWith('.webm'));
     if (videoFiles.length > 0) {
       const tempVideo = path.join(outputDir, videoFiles[0]);
       fs.renameSync(tempVideo, outputPath);

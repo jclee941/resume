@@ -6,6 +6,7 @@ module.exports = {
   collectCoverageFrom: [
     'apps/portfolio/lib/**/*.js', // Core testable modules
     'apps/portfolio/logger.js', // Logger utility
+    'packages/shared/src/**/*.js', // Shared package utilities
     '!apps/portfolio/lib/entry-router-utils.js', // ESM-only helper covered by runtime tests
     '!apps/portfolio/lib/loki-logger.js', // Runtime-only (Cloudflare Worker)
     '!apps/portfolio/lib/performance-metrics.js', // Browser-only (requires jsdom)

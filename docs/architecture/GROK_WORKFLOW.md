@@ -20,9 +20,11 @@ This document describes the Grok AI workflow integration for the resume portfoli
 ```
 
 ### Stage 1: Task Understanding (OpenCode)
+
 **Token Cost**: ~5k | **Duration**: 1-3 tool calls
 
 OpenCode reads files, gathers context, performs simple operations:
+
 ```bash
 # Example: Resume content review request
 Read master/resume_master.md
@@ -31,9 +33,11 @@ Check existing content structure
 ```
 
 ### Stage 2: Deep Reasoning (Grok)
+
 **Token Cost**: ~3k | **Duration**: 1 API call
 
 Grok analyzes architecture, evaluates trade-offs, makes decisions:
+
 ```bash
 # Using Grok MCP tool
 mcp__grok__chat_completion({
@@ -55,21 +59,25 @@ mcp__grok__chat_completion({
 ```
 
 **When to Use Grok**:
+
 - ✅ Architecture decisions (resume structure, content organization)
 - ✅ Content review (fact-checking, language appropriateness)
 - ✅ Complex analysis (career progression, skill assessment)
 - ✅ Trade-off evaluation (detail level, formatting choices)
 
 **Skip for**:
+
 - ❌ Simple file operations (Read, Write, Edit)
 - ❌ Testing and verification
 - ❌ Documentation updates
 - ❌ Routine automation tasks
 
 ### Stage 3: Execution (OpenCode)
+
 **Token Cost**: ~5k | **Duration**: 3-10 tool calls
 
 OpenCode implements Grok's recommendations, writes code, runs tests:
+
 ```bash
 # Based on Grok's analysis
 Edit master/resume_master.md  # Apply content improvements
@@ -79,6 +87,7 @@ npm run deploy                 # Deploy if approved
 ```
 
 ### Total Workflow Cost
+
 **~13k tokens** (3-stage) vs. **~25k tokens** (OpenCode-only brute force)
 **48% token reduction** while maintaining high-quality reasoning
 
@@ -87,6 +96,7 @@ npm run deploy                 # Deploy if approved
 **Status**: ✅ Enabled and configured
 
 **Configuration** (`.OpenCode.json`):
+
 ```json
 {
   "grok": {
@@ -102,6 +112,7 @@ npm run deploy                 # Deploy if approved
 ```
 
 **Available Tools**:
+
 1. `mcp__grok__chat_completion` - Text chat and reasoning
 2. `mcp__grok__image_understanding` - Image analysis (vision)
 3. `mcp__grok__function_calling` - Function execution
@@ -114,13 +125,14 @@ npm run deploy                 # Deploy if approved
 
 ```javascript
 // Stage 1: OpenCode reads content
-const resumeContent = await Read("master/resume_master.md");
+const resumeContent = await Read('master/resume_master.md');
 
 // Stage 2: Grok analyzes
 const analysis = await mcp__grok__chat_completion({
-  messages: [{
-    role: "user",
-    content: `Analyze this resume for:
+  messages: [
+    {
+      role: 'user',
+      content: `Analyze this resume for:
     1. Factual accuracy (no exaggerations)
     2. Conservative language (avoid marketing terms)
     3. Specific achievements (with metrics when appropriate)
@@ -129,13 +141,14 @@ const analysis = await mcp__grok__chat_completion({
     Resume content:
     ${resumeContent}
 
-    Provide specific feedback on any problematic sections.`
-  }],
-  model: "grok-2-latest"
+    Provide specific feedback on any problematic sections.`,
+    },
+  ],
+  model: 'grok-2-latest',
 });
 
 // Stage 3: OpenCode applies recommendations
-await Edit("master/resume_master.md", /* changes based on analysis */);
+await Edit('master/resume_master.md' /* changes based on analysis */);
 ```
 
 ### 2. Portfolio Architecture Decisions
@@ -145,9 +158,10 @@ await Edit("master/resume_master.md", /* changes based on analysis */);
 ```javascript
 // Grok evaluates architectural choices
 const decision = await mcp__grok__chat_completion({
-  messages: [{
-    role: "user",
-    content: `Evaluate portfolio architecture:
+  messages: [
+    {
+      role: 'user',
+      content: `Evaluate portfolio architecture:
 
     Current structure:
     - Resume cards: 5 highlighted projects
@@ -158,9 +172,10 @@ const decision = await mcp__grok__chat_completion({
     1. Is this the optimal organization?
     2. Should we add/remove sections?
     3. How to balance detail vs. brevity?
-    4. SEO considerations for content structure?`
-  }],
-  model: "grok-2-latest"
+    4. SEO considerations for content structure?`,
+    },
+  ],
+  model: 'grok-2-latest',
 });
 ```
 
@@ -170,11 +185,12 @@ const decision = await mcp__grok__chat_completion({
 
 ```javascript
 const recommendation = await mcp__grok__chat_completion({
-  messages: [{
-    role: "user",
-    content: `Evaluate deployment strategies for Cloudflare Workers:
+  messages: [
+    {
+      role: 'user',
+      content: `Evaluate deployment strategies for Cloudflare Workers:
 
-    Option 1: REST API (deploy-via-api.sh)
+    Option 1: REST API
     - Uses Global API Key
     - Direct HTTP requests
     - No Wrangler dependency
@@ -185,19 +201,22 @@ const recommendation = await mcp__grok__chat_completion({
     - More features (dev server, logs)
 
     Context: GitHub Actions deployment, need reliability.
-    Recommend best approach and explain trade-offs.`
-  }],
-  model: "grok-2-latest"
+    Recommend best approach and explain trade-offs.`,
+    },
+  ],
+  model: 'grok-2-latest',
 });
 ```
 
 ## 🎯 Best Practices
 
 ### 1. Use Grok for High-Level Decisions
+
 - ❌ Don't: Use Grok for simple file reads or edits
 - ✅ Do: Use Grok for content strategy, architecture, trade-offs
 
 ### 2. Provide Context
+
 ```javascript
 // Bad: Vague question
 "Is my resume good?"
@@ -211,9 +230,10 @@ const recommendation = await mcp__grok__chat_completion({
 ```
 
 ### 3. Iterative Refinement
+
 ```javascript
 // First pass: Get initial analysis
-const analysis1 = await grok("Analyze resume content...");
+const analysis1 = await grok('Analyze resume content...');
 
 // Second pass: Refine based on findings
 const analysis2 = await grok(`Based on your previous analysis:
@@ -224,18 +244,21 @@ Are the claims verifiable and appropriately scoped?`);
 ```
 
 ### 4. Combine with Other Tools
+
 ```javascript
 // Use sequential-thinking for complex analysis
 await mcp__sequential_thinking__sequentialthinking({
-  thought: "Breaking down resume analysis into steps",
+  thought: 'Breaking down resume analysis into steps',
   thoughtNumber: 1,
   totalThoughts: 5,
-  nextThoughtNeeded: true
+  nextThoughtNeeded: true,
 });
 
 // Then use Grok for final decision
 await mcp__grok__chat_completion({
-  messages: [/* analysis results */]
+  messages: [
+    /* analysis results */
+  ],
 });
 ```
 
@@ -244,6 +267,7 @@ await mcp__grok__chat_completion({
 **Instrumentation**: Grok calls are logged to `/tmp/grok-mcp-instrumented.log`
 
 **Check usage**:
+
 ```bash
 # View recent Grok calls
 tail -f /tmp/grok-mcp-instrumented.log
@@ -253,6 +277,7 @@ grep "$(date +%Y-%m-%d)" /tmp/grok-mcp-instrumented.log | wc -l
 ```
 
 **Environment**:
+
 ```bash
 # Verify API key is set
 echo $GROK_API_KEY | cut -c1-20  # First 20 chars only
@@ -286,6 +311,7 @@ npx -y @modelcontextprotocol/server-grok
 ```
 
 **Expected Results**:
+
 - Resume claims are factual and verifiable
 - Language is conservative and professional
 - Achievements are specific with appropriate metrics
@@ -294,16 +320,19 @@ npx -y @modelcontextprotocol/server-grok
 ## 📚 Reference
 
 **Models Available**:
+
 - `grok-2-latest` - Latest Grok 2 (default, recommended)
 - `grok-3` - Grok 3 (if available)
 - `grok-2-vision-latest` - Vision capabilities
 
 **API Limits**:
+
 - Rate limit: Check xAI dashboard
 - Token limit: 128k context window
 - Cost: Track via instrumented logs
 
 **Documentation**:
+
 - xAI Grok API: https://docs.x.ai/api
 - MCP Grok Server: https://github.com/modelcontextprotocol/servers/tree/main/src/grok
 - Parent OpenCode.md: ~/.OpenCode/OpenCode.md (Section: "Optimal Workflow Pattern")
@@ -311,6 +340,7 @@ npx -y @modelcontextprotocol/server-grok
 ## 🚀 Quick Start
 
 **Verify Grok is available**:
+
 ```bash
 # Check MCP configuration
 cat .OpenCode.json | jq '.mcpServers.grok'
@@ -323,6 +353,7 @@ cat .OpenCode.json | jq '.mcpServers.grok'
 ```
 
 **First Grok call example**:
+
 ```javascript
 // In OpenCode, use the Grok MCP tool
 await mcp__grok__chat_completion({

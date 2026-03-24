@@ -11,7 +11,7 @@ Cloudflare Worker serving the job dashboard API at `resume.jclee.me/job/*`. Clas
 ## STRUCTURE
 
 ```text
-workers/
+job-dashboard/
 ├── src/
 │   ├── index.js              # fetch handler + workflow exports
 │   ├── handlers/             # 14 BaseHandler subclasses
