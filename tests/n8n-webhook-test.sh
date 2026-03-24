@@ -24,7 +24,8 @@ AUTHOR="Claude Code"
 DEPLOYED_AT=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
 STATUS="success"
 
-PAYLOAD=$(cat <<EOF
+PAYLOAD=$(
+  cat <<EOF
 {
   "commit_sha": "$COMMIT_SHA",
   "commit_message": "$COMMIT_MESSAGE",
@@ -47,13 +48,13 @@ echo "📋 Test 2: Required Fields Validation"
 REQUIRED_FIELDS=("commit_sha" "commit_message" "author" "deployed_at" "status")
 
 for field in "${REQUIRED_FIELDS[@]}"; do
-    value=$(echo "$PAYLOAD" | jq -r ".$field")
-    if [ -z "$value" ] || [ "$value" == "null" ]; then
-        echo "   ❌ Missing required field: $field"
-        exit 1
-    else
-        echo "   ✅ $field: $value"
-    fi
+  value=$(echo "$PAYLOAD" | jq -r ".$field")
+  if [ -z "$value" ] || [ "$value" == "null" ]; then
+    echo "   ❌ Missing required field: $field"
+    exit 1
+  else
+    echo "   ✅ $field: $value"
+  fi
 done
 echo ""
 
@@ -63,11 +64,11 @@ HEALTH_RESPONSE=$(curl -s https://resume.jclee.me/health)
 STATUS_CHECK=$(echo "$HEALTH_RESPONSE" | jq -r '.status')
 
 if [ "$STATUS_CHECK" == "healthy" ]; then
-    echo "   ✅ Site is healthy"
-    echo "$HEALTH_RESPONSE" | jq .
+  echo "   ✅ Site is healthy"
+  echo "$HEALTH_RESPONSE" | jq .
 else
-    echo "   ❌ Site unhealthy: $STATUS_CHECK"
-    exit 1
+  echo "   ❌ Site unhealthy: $STATUS_CHECK"
+  exit 1
 fi
 echo ""
 
@@ -76,12 +77,12 @@ echo "📋 Test 4: Metrics Endpoint Validation"
 METRICS=$(curl -s https://resume.jclee.me/metrics)
 
 if echo "$METRICS" | grep -q "http_requests_total"; then
-    echo "   ✅ Prometheus metrics available"
-    echo "$METRICS" | head -5
-    echo "   ..."
+  echo "   ✅ Prometheus metrics available"
+  echo "$METRICS" | head -5
+  echo "   ..."
 else
-    echo "   ❌ Metrics endpoint not working"
-    exit 1
+  echo "   ❌ Metrics endpoint not working"
+  exit 1
 fi
 echo ""
 
@@ -90,74 +91,74 @@ echo "📋 Test 5: n8n Server Connectivity"
 N8N_HEALTH=$(curl -s https://n8n.jclee.me/healthz)
 
 if [ -n "$N8N_HEALTH" ]; then
-    echo "   ✅ n8n server is accessible"
-    echo "   Response: $N8N_HEALTH"
+  echo "   ✅ n8n server is accessible"
+  echo "   Response: $N8N_HEALTH"
 else
-    echo "   ❌ n8n server not accessible"
-    exit 1
+  echo "   ❌ n8n server not accessible"
+  exit 1
 fi
 echo ""
 
 # Test 6: Workflow JSON validation
 echo "📋 Test 6: Workflow JSON Validation"
 WORKFLOWS=(
-    "infrastructure/workflows/01-site-health-monitor.json"
-    "infrastructure/workflows/02-github-deployment-webhook.json"
+  "infrastructure/workflows/01-site-health-monitor.json"
+  "infrastructure/workflows/02-github-deployment-webhook.json"
 )
 
 for workflow in "${WORKFLOWS[@]}"; do
-    if [ ! -f "$workflow" ]; then
-        echo "   ❌ Workflow not found: $workflow"
-        exit 1
-    fi
+  if [ ! -f "$workflow" ]; then
+    echo "   ❌ Workflow not found: $workflow"
+    exit 1
+  fi
 
-    WORKFLOW_NAME=$(jq -r '.name' "$workflow")
-    NODE_COUNT=$(jq '.nodes | length' "$workflow")
+  WORKFLOW_NAME=$(jq -r '.name' "$workflow")
+  NODE_COUNT=$(jq '.nodes | length' "$workflow")
 
-    if [ -n "$WORKFLOW_NAME" ] && [ "$NODE_COUNT" -gt 0 ]; then
-        echo "   ✅ $WORKFLOW_NAME ($NODE_COUNT nodes)"
-    else
-        echo "   ❌ Invalid workflow: $workflow"
-        exit 1
-    fi
+  if [ -n "$WORKFLOW_NAME" ] && [ "$NODE_COUNT" -gt 0 ]; then
+    echo "   ✅ $WORKFLOW_NAME ($NODE_COUNT nodes)"
+  else
+    echo "   ❌ Invalid workflow: $workflow"
+    exit 1
+  fi
 done
 echo ""
 
 # Test 7: GitHub Actions integration check
 echo "📋 Test 7: GitHub Actions Integration"
-DEPLOY_YAML=".github/workflows/deploy.yml"
+DEPLOY_YAML=".github/workflows/release.yml"
 
 if grep -q "N8N_WEBHOOK_URL" "$DEPLOY_YAML"; then
-    echo "   ✅ N8N_WEBHOOK_URL configured in deploy.yml"
+  echo "   ✅ N8N_WEBHOOK_URL configured in release.yml"
 else
-    echo "   ❌ N8N_WEBHOOK_URL not found in deploy.yml"
-    exit 1
+  echo "   ❌ N8N_WEBHOOK_URL not found in release.yml"
+  exit 1
 fi
 
 if grep -q "Notify n8n Webhook" "$DEPLOY_YAML"; then
-    echo "   ✅ Webhook notification step present"
+  echo "   ✅ Webhook notification step present"
 else
-    echo "   ❌ Webhook notification step not found"
-    exit 1
+  echo "   ❌ Webhook notification step not found"
+  exit 1
 fi
 echo ""
 
 # Test 8: Documentation completeness
 echo "📋 Test 8: Documentation Completeness"
 DOCS=(
-    "docs/N8N-MONITORING-WORKFLOWS.md"
-    "infrastructure/workflows/README.md"
-    "docs/DEPLOYMENT-SUMMARY-2025-11-18.md"
+  "docs/N8N-MONITORING-WORKFLOWS.md"
+  "infrastructure/workflows/README.md"
+  "docs/DEPLOYMENT-SUMMARY-2025-11-18.md"
 )
 
 for doc in "${DOCS[@]}"; do
-    if [ -f "$doc" ]; then
-        SIZE=$(du -h "$doc" | cut -f1)
-        echo "   ✅ $doc ($SIZE)"
-    else
-        echo "   ❌ Missing documentation: $doc"
-        exit 1
-    fi
+  if [ -f "$doc" ]; then
+    SIZE=$(du -h "$doc" | cut -f1)
+    echo "   ✅ $doc ($SIZE)"
+  else
+    echo "   ❌ Missing documentation: $doc"
+    exit 1
+  fi
 done
 echo ""
 

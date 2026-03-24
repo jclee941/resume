@@ -194,38 +194,40 @@ job-dashboard/
 │   │   ├── config.js               # Config: get, set, validate
 │   │   ├── workflows.js            # Workflows: trigger, status
 │   │   └── cleanup.js              # Cleanup: expired, logs
-│   ├── middleware/                 # Request/response middleware (7 layers)
-│   │   ├── logger.js               # ECS-format request logging
+│   ├── middleware/                 # Request/response middleware (4 layers)
 │   │   ├── cors.js                 # CORS headers + origin validation
-│   │   ├── rate-limit.js           # Token bucket (60 req/min/IP)
 │   │   ├── csrf.js                 # Double-submit cookie protection
-│   │   ├── auth.js                 # Bearer token + JWT validation
-│   │   └── error-handler.js        # Centralized error handling
+│   │   ├── rate-limit.js           # Token bucket (60 req/min/IP)
+│   │   └── rate-limit.test.js      # Rate limit tests
 │   ├── services/                   # Domain services (stateless DI)
 │   │   ├── auth.js                 # Cookie management + JWT
+│   │   ├── browser/                # Browser automation (DO)
 │   │   ├── config.js               # Configuration loading
-│   │   ├── telegram.js             # Telegram Bot API notifications
-│   │   └── browser.js              # Browser automation (DO)
+│   │   ├── linkedin-client.js     # LinkedIn API client
+│   │   ├── notification/           # Notification services
+│   │   └── remember-client.js      # Remember API client
 │   ├── utils/                      # Utilities
 │   │   ├── crypto.js               # Encryption/decryption
 │   │   ├── validators.js           # Input validation schemas
 │   │   ├── logger.js               # ECS logging helpers
 │   │   └── errors.js               # Domain error classes
 │   ├── views/                      # Static assets
-│   │   ├── dashboard.html          # React dashboard (inline)
-│   │   ├── styles.css              # Global styles + responsive
-│   │   └── scripts.js              # Dashboard JS
+│   │   ├── dashboard.js            # React dashboard (inline)
+│   │   ├── scripts.js              # Dashboard JS
+│   │   ├── styles.js               # Global styles + responsive
+│   │   └── styles/                 # Styles directory
 │   ├── durable-objects/            # Durable Objects (persistent state)
 │   │   └── browser-session-do.js   # Browser session persistence
-│   └── workflows/                  # Cloudflare Workflows (8 total)
+│   └── workflows/                  # Cloudflare Workflows (7 workflow classes)
 │       ├── index.js                # Barrel exports
 │       ├── job-crawling.js         # Job search pipeline
 │       ├── application.js          # Auto-apply submission
-│       ├── resume-sync.js          # Daily sync (0 1 * * *)
-│       ├── daily-report.js         # Daily report (0 9 * * *)
-│       ├── health-check.js         # Health monitoring (*/5 * * * *)
-│       ├── backup.js               # D1→KV backup (0 3 * * *)
-│       └── cleanup.js              # Data cleanup (0 4 * * 0)
+│       ├── resume-sync.js          # Daily sync
+│       ├── resume-sync-helpers.js  # Resume sync helpers
+│       ├── daily-report.js         # Daily report
+│       ├── health-check.js         # Health monitoring
+│       ├── backup.js               # D1→KV backup
+│       └── cleanup.js              # Data cleanup
 ├── wrangler.jsonc                  # Worker config
 ├── package.json                    # Dependencies (minimal)
 └── README.md                        # This file

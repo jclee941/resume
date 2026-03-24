@@ -417,7 +417,7 @@ After triggering first deployment, verify:
 For more details, see:
 
 - `docs/GITHUB_ACTIONS_SECRETS.md` - Detailed secrets configuration
-- `.github/workflows/deploy.yml` - Original GitHub Actions configuration (for reference)
+- `.github/workflows/release.yml` - Release and deployment workflow
 - `.github/workflows/` - All workflow definitions
 
 ---

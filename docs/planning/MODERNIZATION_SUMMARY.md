@@ -134,7 +134,7 @@ ts sync
    - Created `docs/guides/MONITORING_GUIDE.md`
    - Created `scripts/deployment/deploy-with-monitoring.sh`
    - Created `scripts/monitoring/monitor-deployment.sh`
-   - Updated `.github/workflows/deploy.yml`
+   - Updated `.github/workflows/release.yml`
 
 ---
 

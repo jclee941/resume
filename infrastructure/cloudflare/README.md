@@ -44,7 +44,7 @@ terraform import cloudflare_workers_route.job_dashboard $ZONE_ID/<route-id>
 
 ## CI/CD Integration
 
-Pipeline jobs defined in `.github/workflows/deploy.yml`:
+Pipeline jobs defined in `.github/workflows/release.yml`:
 
 - **terraform:plan** - Runs on MRs, shows diff
 - **terraform:apply** - Runs on master, auto-applies

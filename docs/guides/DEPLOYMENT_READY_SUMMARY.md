@@ -10,14 +10,14 @@
 ### 1. ✅ CI/CD Automation (100% Complete)
 
 #### GitHub Actions Workflows
-- **`.github/workflows/deploy.yml/ci.yml`** (342 lines)
+- **`.github/workflows/ci.yml`** (342 lines)
   - Automated testing on PR and develop branch
   - Lint, TypeCheck, Unit Tests, E2E Tests
   - Coverage validation (90%+ threshold)
   - Security audit
   - Parallel execution for speed
 
-- **`.github/workflows/deploy.yml/deploy-enhanced.yml`** (402 lines)
+- **`.github/workflows/release.yml`** (402 lines)
   - Automated deployment to Cloudflare Workers
   - Comprehensive post-deployment verification
   - Health checks, performance tests, security validation

@@ -8,7 +8,6 @@ This directory contains all automated tests for the resume project.
 tests/
 ├── unit/           # Unit tests (Jest)
 ├── e2e/            # End-to-end tests (Playwright)
-├── visual/         # Visual regression tests (future)
 └── README.md       # This file
 ```
 
@@ -112,7 +111,7 @@ test('should load page', async ({ page }) => {
 
 ### GitHub Actions
 
-Add to `.github/workflows/deploy.yml/test.yml`:
+Add to `.github/workflows/release.yml` or `.github/workflows/ci.yml` as appropriate:
 
 ```yaml
 name: Tests
