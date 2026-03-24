@@ -349,9 +349,9 @@ node src/auto-apply/cli/index.js ai_unified --max=5
 ### Related Docs
 
 - **Main README**: `apps/job-server/README.md`
-- **API Guide**: `docs/AI_ADVANCED_MATCHING_GUIDE.md`
-- **Deployment**: `docs/PRODUCTION_DEPLOYMENT_GUIDE.md`
-- **Roadmap**: `docs/NEXT_STEPS_ROADMAP.md`
+- **API Guide**: `docs/guides/AI_ADVANCED_MATCHING_GUIDE.md`
+- **Deployment**: `docs/guides/PRODUCTION_DEPLOYMENT_GUIDE.md`
+- **Roadmap**: `docs/planning/NEXT_STEPS_ROADMAP.md`
 
 ### Code Structure
 

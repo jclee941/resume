@@ -66,11 +66,11 @@
 ### 4. ✅ Documentation
 
 #### Comprehensive Guides
-- **`docs/CI_CD_AUTOMATION.md`** (463 lines) - CI/CD setup and usage
-- **`docs/PRODUCTION_DEPLOYMENT_GUIDE.md`** (403 lines) - Deployment procedures
-- **`docs/AI_ADVANCED_MATCHING_GUIDE.md`** (339 lines) - AI matching system
+- **`docs/guides/CI_CD_AUTOMATION.md`** (463 lines) - CI/CD setup and usage
+- **`docs/guides/PRODUCTION_DEPLOYMENT_GUIDE.md`** (403 lines) - Deployment procedures
+- **`docs/guides/AI_ADVANCED_MATCHING_GUIDE.md`** (339 lines) - AI matching system
 - **`docs/guides/VISUAL_REGRESSION_TESTING.md`** (372 lines) - Visual testing
-- **`docs/NEXT_STEPS_ROADMAP.md`** (104 lines) - Future roadmap
+- **`docs/planning/NEXT_STEPS_ROADMAP.md`** (104 lines) - Future roadmap
 
 #### Summary Reports
 - **`CI_CD_IMPLEMENTATION_SUMMARY.md`** (328 lines)
@@ -216,9 +216,9 @@
 ## 📞 Support
 
 ### Documentation
-- **CI/CD Setup**: `docs/CI_CD_AUTOMATION.md`
-- **Deployment Guide**: `docs/PRODUCTION_DEPLOYMENT_GUIDE.md`
-- **Troubleshooting**: `FINAL_DEPLOYMENT_CHECKLIST.md`
+- **CI/CD Setup**: `docs/guides/CI_CD_AUTOMATION.md`
+- **Deployment Guide**: `docs/guides/PRODUCTION_DEPLOYMENT_GUIDE.md`
+- **Troubleshooting**: `docs/guides/FINAL_DEPLOYMENT_CHECKLIST.md`
 
 ### Verification
 ```bash

@@ -411,7 +411,7 @@ const matchScore = await aiMatcher.calculateMatch(resume, jobPosting);
 
 1. 로그 파일 확인: `apps/job-server/logs/`
 2. 모니터링 실행: `./auto-monitor.sh`
-3. 문서 참조: `docs/AUTO_APPLY_ACTIVATION_GUIDE.md`
+3. 문서 참조: `docs/guides/AUTO_APPLY_ACTIVATION_GUIDE.md`
 4. 이슈 리포트: GitHub Issues
 
 ---

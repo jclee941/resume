@@ -343,10 +343,10 @@ After deployment is stable, consider these enhancements:
 ## 📞 Support & Resources
 
 ### Documentation
-- **CI/CD Guide**: `docs/CI_CD_AUTOMATION.md`
-- **Deployment Guide**: `docs/PRODUCTION_DEPLOYMENT_GUIDE.md`
-- **Troubleshooting**: `FINAL_DEPLOYMENT_CHECKLIST.md`
-- **Roadmap**: `docs/NEXT_STEPS_ROADMAP.md`
+- **CI/CD Guide**: `docs/guides/CI_CD_AUTOMATION.md`
+- **Deployment Guide**: `docs/guides/PRODUCTION_DEPLOYMENT_GUIDE.md`
+- **Troubleshooting**: `docs/guides/FINAL_DEPLOYMENT_CHECKLIST.md`
+- **Roadmap**: `docs/planning/NEXT_STEPS_ROADMAP.md`
 
 ### Quick Commands
 ```bash
