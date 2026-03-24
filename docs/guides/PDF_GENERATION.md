@@ -23,10 +23,10 @@ Automated PDF generation system supporting multiple resume variants and technica
 
 ```bash
 # Make script executable (first time only)
-chmod +x scripts/build/pdf-generator.sh
+chmod +x tools/scripts/build/pdf-generator.sh
 
 # Generate all resume and documentation PDFs
-./scripts/build/pdf-generator.sh all
+./tools/scripts/build/pdf-generator.sh all
 ```
 
 **Output**:
@@ -53,14 +53,14 @@ Technical documentation:
 
 ```bash
 # Resume variants
-./scripts/build/pdf-generator.sh master      # Master resume
-./scripts/build/pdf-generator.sh final       # Final submission resume
-./scripts/build/pdf-generator.sh toss        # Toss-specific resume
+./tools/scripts/build/pdf-generator.sh master      # Master resume
+./tools/scripts/build/pdf-generator.sh final       # Final submission resume
+./tools/scripts/build/pdf-generator.sh toss        # Toss-specific resume
 
 # Technical documentation
-./scripts/build/pdf-generator.sh nextrade_arch   # Architecture document
-./scripts/build/pdf-generator.sh nextrade_dr     # DR plan
-./scripts/build/pdf-generator.sh nextrade_soc    # SOC runbook
+./tools/scripts/build/pdf-generator.sh nextrade_arch   # Architecture document
+./tools/scripts/build/pdf-generator.sh nextrade_dr     # DR plan
+./tools/scripts/build/pdf-generator.sh nextrade_soc    # SOC runbook
 ```
 
 ## 📋 Prerequisites
@@ -112,7 +112,7 @@ Markdown Source Files
   └── resume/nextrade/*.md
          │
          ▼
-  scripts/build/pdf-generator.sh
+  tools/scripts/build/pdf-generator.sh
          │
          ├─ Check dependencies (Pandoc/Docker)
          ├─ Read version from package.json
@@ -132,7 +132,7 @@ Markdown Source Files
 
 ### Resume Variants
 
-Configured in `scripts/build/pdf-generator.sh`:
+Configured in `tools/scripts/build/pdf-generator.sh`:
 
 ```bash
 # Resume variants (line 28-32)
@@ -181,7 +181,7 @@ LINESTRETCH="1.3"                   # Line spacing
 
 ### Adding New Resume Variant
 
-**Edit `scripts/build/pdf-generator.sh`** (line 28-32):
+**Edit `tools/scripts/build/pdf-generator.sh`** (line 28-32):
 
 ```bash
 declare -A RESUME_VARIANTS=(
@@ -193,7 +193,7 @@ declare -A RESUME_VARIANTS=(
 **Generate**:
 
 ```bash
-./scripts/build/pdf-generator.sh company
+./tools/scripts/build/pdf-generator.sh company
 ```
 
 ### Customizing PDF Appearance
@@ -274,7 +274,7 @@ Tracking "*.docx"
 
 ```bash
 # Generate PDFs
-./scripts/build/pdf-generator.sh all
+./tools/scripts/build/pdf-generator.sh all
 
 # Stage files (LFS-tracked)
 git add master/*.pdf toss/*.pdf resume/nextrade/exports/*.pdf
@@ -321,7 +321,7 @@ git lfs fetch --recent    # Download recent LFS objects
 vim master/resume_master.md
 
 # 2. Generate PDFs
-./scripts/build/pdf-generator.sh all
+./tools/scripts/build/pdf-generator.sh all
 
 # 3. Commit and push
 git add master/*.pdf
@@ -359,8 +359,8 @@ jobs:
 
       - name: Generate PDFs
         run: |
-          chmod +x scripts/build/pdf-generator.sh
-          ./scripts/build/pdf-generator.sh all
+          chmod +x tools/scripts/build/pdf-generator.sh
+          ./tools/scripts/build/pdf-generator.sh all
 
       - name: Commit PDFs
         run: |
@@ -377,7 +377,7 @@ jobs:
 
 ```bash
 # Generate
-./scripts/build/pdf-generator.sh master
+./tools/scripts/build/pdf-generator.sh master
 
 # Check file
 ls -lh master/resume_master_v1.0.3.pdf
@@ -394,7 +394,7 @@ pdfinfo master/resume_master_v1.0.3.pdf
 
 ```bash
 # Generate all
-./scripts/build/pdf-generator.sh all
+./tools/scripts/build/pdf-generator.sh all
 
 # Check all generated PDFs
 find . -name "*_v1.0.3.pdf" -type f -exec ls -lh {} \;
@@ -410,7 +410,7 @@ find . -name "*.pdf" -type f -exec pdfinfo {} \; > /dev/null
 sudo mv /usr/bin/pandoc /usr/bin/pandoc.bak
 
 # Should use Docker automatically
-./scripts/build/pdf-generator.sh master
+./tools/scripts/build/pdf-generator.sh master
 
 # Restore Pandoc
 sudo mv /usr/bin/pandoc.bak /usr/bin/pandoc
@@ -427,7 +427,7 @@ Version is automatically read from `package.json`:
 npm run version:bump
 
 # Generate with new version
-./scripts/build/pdf-generator.sh all
+./tools/scripts/build/pdf-generator.sh all
 ```
 
 ### Adding New Font
@@ -449,7 +449,7 @@ fc-list | grep -i "newfont"
 **Use in script**:
 
 ```bash
-# Edit scripts/build/pdf-generator.sh
+# Edit tools/scripts/build/pdf-generator.sh
 readonly FONT_NEW="NewFont"
 
 # Add to variant
@@ -519,6 +519,6 @@ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook \
 ## 📞 Support
 
 - **Documentation**: This guide
-- **Script Issues**: Check `scripts/build/pdf-generator.sh` comments
+- **Script Issues**: Check `tools/scripts/build/pdf-generator.sh` comments
 - **Questions**: qws941@kakao.com
 - **Repository**: https://github.com/qws941/resume

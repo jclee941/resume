@@ -188,7 +188,7 @@ source ~/.env
 
 # Deploy
 cd /home/jclee/dev/resume
-./scripts/deployment/quick-deploy.sh
+./tools/scripts/deployment/quick-deploy.sh
 ```
 
 ### With Global API Key
@@ -203,7 +203,7 @@ source ~/.env
 
 # Deploy (scripts now support both methods)
 cd /home/jclee/dev/resume
-./scripts/deployment/quick-deploy.sh
+./tools/scripts/deployment/quick-deploy.sh
 ```
 
 ### With Interactive Login
@@ -215,7 +215,7 @@ npx wrangler login
 
 # Then deploy (no environment variables needed)
 cd /home/jclee/dev/resume
-./scripts/deployment/quick-deploy.sh
+./tools/scripts/deployment/quick-deploy.sh
 ```
 
 ---
@@ -360,7 +360,7 @@ Invalid format for Authorization header [code: 6111]
 1. Generate new API Token at https://dash.cloudflare.com/profile/api-tokens
 2. Use "Edit Cloudflare Workers" template
 3. Update `~/.env` with new token
-4. Run `./scripts/deployment/quick-deploy.sh`
+4. Run `./tools/scripts/deployment/quick-deploy.sh`
 
 ---
 
