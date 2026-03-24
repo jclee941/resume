@@ -117,10 +117,10 @@ node scripts/setup/configure-n8n-workflows.js
 
 **Required Credentials**:
 
-| Service       | Credential Type | Usage                  |
-| ------------- | --------------- | ---------------------- |
+| Service          | Credential Type | Usage                  |
+| ---------------- | --------------- | ---------------------- |
 | Telegram Bot API | Header API Key  | Alerts & notifications |
-| Google Sheets | OAuth2          | Data logging           |
+| Google Sheets    | OAuth2          | Data logging           |
 
 **Setup Instructions**:
 
@@ -253,7 +253,7 @@ sheetName: 'Deployment Log'; // Sheet gid=2
 
 ```bash
 # Simulate downtime (modify worker.js temporarily)
-cd ~/apps/resume/apps/portfolio
+cd ~/dev/resume/apps/portfolio
 # Edit worker.js: Change status "healthy" → "down"
 npm run deploy
 

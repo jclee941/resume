@@ -6,18 +6,19 @@
 
 ## 🔐 API Token vs API Key
 
-| 방식 | 변수명 | 권한 | 사용처 |
-|------|--------|------|--------|
-| **API Token** | `CLOUDFLARE_API_TOKEN` | 세밀한 권한 제어 | Wrangler (권장) |
-| **API Key** | `CLOUDFLARE_API_KEY` + `CLOUDFLARE_EMAIL` | 전체 권한 | Legacy |
+| 방식          | 변수명                                    | 권한             | 사용처          |
+| ------------- | ----------------------------------------- | ---------------- | --------------- |
+| **API Token** | `CLOUDFLARE_API_TOKEN`                    | 세밀한 권한 제어 | Wrangler (권장) |
+| **API Key**   | `CLOUDFLARE_API_KEY` + `CLOUDFLARE_EMAIL` | 전체 권한        | Legacy          |
 
 ---
 
 ## ✅ 해결 방법 (3가지)
 
 ### Option 1: Wrangler Login (가장 간단)
+
 ```bash
-cd ~/apps/resume
+cd ~/dev/resume
 npx wrangler login
 # → 브라우저에서 Cloudflare 로그인
 # → OAuth 토큰 자동 저장 (~/.wrangler/config/)
@@ -31,11 +32,13 @@ npx wrangler login
 ### Option 2: API Token 생성 (권장)
 
 **1단계: Cloudflare Dashboard 접속**
+
 ```
 https://dash.cloudflare.com/profile/api-tokens
 ```
 
 **2단계: Create Token**
+
 - Template: "Edit Cloudflare Workers" 선택
 - Permissions:
   - Account / Workers Scripts / Edit
@@ -45,6 +48,7 @@ https://dash.cloudflare.com/profile/api-tokens
 - Zone Resources: All zones
 
 **3단계: Copy Token**
+
 ```bash
 # 생성된 토큰을 ~/.env에 추가
 echo "CLOUDFLARE_API_TOKEN=<your-token>" >> ~/.env
@@ -54,8 +58,9 @@ openctl infisical set CLOUDFLARE_API_TOKEN "<your-token>"
 ```
 
 **4단계: 테스트**
+
 ```bash
-cd ~/apps/resume
+cd ~/dev/resume
 npx wrangler whoami
 # → 성공하면 계정 정보 표시
 ```
@@ -65,6 +70,7 @@ npx wrangler whoami
 ### Option 3: API Key 사용 (비권장)
 
 **현재 설정 활용**:
+
 ```bash
 # Infisical에 이미 있는 API Key 사용
 export CLOUDFLARE_API_KEY=$(grep CLOUDFLARE_API_KEY /home/jclee/infra/infisical/agent-output/infisical-secrets.env | cut -d= -f2)
