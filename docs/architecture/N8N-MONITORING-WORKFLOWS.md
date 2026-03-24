@@ -119,7 +119,7 @@ Time: {{ $json.deployed_at }}
 🌐 https://resume.jclee.me
 ```
 
-**GitHub Actions Integration** (`.github/workflows/deploy.yml/deploy.yml`):
+**GitHub Actions Integration** (`.github/workflows/release.yml`):
 
 ```yaml
 - name: Notify n8n
@@ -334,7 +334,7 @@ Conditional Logic (IF Node)
 ### Phase 2: Deployment Integration (Week 2)
 
 - [ ] Create Workflow 2 (GitHub Deployment Webhook)
-- [ ] Update `.github/workflows/deploy.yml/deploy.yml` with n8n webhook
+- [ ] Update `.github/workflows/release.yml` with n8n webhook
 - [ ] Add deployment notifications to Telegram
 - [ ] Forward deployment logs to Loki
 

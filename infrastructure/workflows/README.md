@@ -50,7 +50,7 @@
 5. Google Sheets → Deployment history
 
 **GitHub Actions Integration**:
-See updated `.github/workflows/deploy.yml/deploy.yml` (lines 149-180)
+See `.github/workflows/release.yml` for CI/release integration
 
 **Webhook Payload**:
 
@@ -408,8 +408,8 @@ curl -X POST https://n8n.jclee.me/webhook/resume-deploy \
 
 **Related Documentation**:
 
-- `docs/N8N-MONITORING-WORKFLOWS.md` - Detailed workflow guide
-- `.github/workflows/deploy.yml/deploy.yml` - GitHub Actions integration
+- `docs/architecture/N8N-MONITORING-WORKFLOWS.md` - Detailed workflow guide
+- `.github/workflows/release.yml` - GitHub Actions CI/release integration
 - `apps/portfolio/generate-worker.js` - Worker build script
 
 ---

@@ -108,8 +108,8 @@ groups:
           severity: warning
           service: resume-portfolio
         annotations:
-          summary: "High error rate detected"
-          description: "Error rate is {{ $value | humanize }}% (threshold: 5%)"
+          summary: 'High error rate detected'
+          description: 'Error rate is {{ $value | humanize }}% (threshold: 5%)'
 
       # Service down alert
       - alert: ServiceDown
@@ -119,8 +119,8 @@ groups:
           severity: critical
           service: resume-portfolio
         annotations:
-          summary: "Resume portfolio is down"
-          description: "The resume portfolio service has been down for more than 2 minutes"
+          summary: 'Resume portfolio is down'
+          description: 'The resume portfolio service has been down for more than 2 minutes'
 
       # Slow response time alert
       - alert: SlowResponseTime
@@ -130,8 +130,8 @@ groups:
           severity: warning
           service: resume-portfolio
         annotations:
-          summary: "Slow response time detected"
-          description: "Average response time is {{ $value }}s (threshold: 0.5s)"
+          summary: 'Slow response time detected'
+          description: 'Average response time is {{ $value }}s (threshold: 0.5s)'
 
       # Low request rate (possible issue)
       - alert: LowRequestRate
@@ -141,8 +141,8 @@ groups:
           severity: info
           service: resume-portfolio
         annotations:
-          summary: "Unusually low request rate"
-          description: "Request rate is {{ $value | humanize }} req/s"
+          summary: 'Unusually low request rate'
+          description: 'Request rate is {{ $value | humanize }} req/s'
 ```
 
 ### Docker Compose
@@ -159,7 +159,7 @@ services:
     restart: unless-stopped
     user: root
     ports:
-      - "9090:9090"
+      - '9090:9090'
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - ./alerts.yml:/etc/prometheus/alerts.yml:ro
@@ -322,6 +322,7 @@ providers:
 ```
 
 **Copy Dashboard**:
+
 ```bash
 cp /home/jclee/dev/resume/monitoring/grafana-dashboard-resume-portfolio.json \
    /volume1/docker/grafana/provisioning/dashboards/
@@ -341,7 +342,7 @@ services:
     restart: unless-stopped
     user: root
     ports:
-      - "3000:3000"
+      - '3000:3000'
     volumes:
       - ./grafana.ini:/etc/grafana/grafana.ini:ro
       - ./provisioning:/etc/grafana/provisioning:ro
@@ -437,7 +438,7 @@ compactor:
   retention_delete_worker_count: 150
 
 limits_config:
-  retention_period: 168h  # 7 days
+  retention_period: 168h # 7 days
   reject_old_samples: true
   reject_old_samples_max_age: 168h
   ingestion_rate_mb: 4
@@ -465,7 +466,7 @@ services:
     restart: unless-stopped
     user: root
     ports:
-      - "3100:3100"
+      - '3100:3100'
     volumes:
       - ./loki-config.yml:/etc/loki/local-config.yaml:ro
       - ./data:/loki
@@ -553,7 +554,7 @@ cd /home/jclee/dev/resume/n8n
 
 ### Configure Slack OAuth2
 
-Follow steps in `/home/jclee/dev/resume/n8n/SLACK_OAUTH2_SETUP.md`:
+Follow steps in `infrastructure/n8n/SLACK_OAUTH2_SETUP.md`:
 
 1. Create Slack App
 2. Enable OAuth & Permissions
