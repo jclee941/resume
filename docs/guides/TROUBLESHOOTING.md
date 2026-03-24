@@ -151,7 +151,7 @@ export CLOUDFLARE_API_TOKEN=your_token
 npx wrangler deploy --config apps/portfolio/wrangler.toml --env production
 ```
 
-**See:** `docs/CLOUDFLARE_TOKEN_SETUP.md` for token configuration.
+**See:** `docs/guides/CLOUDFLARE_TOKEN_SETUP.md` for token configuration.
 
 ---
 

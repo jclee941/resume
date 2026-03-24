@@ -147,7 +147,7 @@
 
 ### 문서 (1개)
 
-1. `docs/CI_CD_AUTOMATION.md` (500+ 줄)
+1. `docs/guides/CI_CD_AUTOMATION.md` (500+ 줄)
    - 완전한 가이드
    - 문제 해결 방법
    - 베스트 프랙티스
@@ -285,7 +285,7 @@ wrangler rollback
 
 ### 생성된 문서
 
-1. **CI/CD 자동화 가이드** (`docs/CI_CD_AUTOMATION.md`)
+1. **CI/CD 자동화 가이드** (`docs/guides/CI_CD_AUTOMATION.md`)
    - 워크플로우 구조
    - 설정 방법
    - 문제 해결
