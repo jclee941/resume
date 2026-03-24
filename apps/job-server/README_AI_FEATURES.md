@@ -56,7 +56,7 @@ const applied = await system.autoApply({ maxApplications: 5 });
 
 ---
 
-### 2. AI Matcher (`src/lib/ai-matcher.js`)
+### 2. AI Matcher (`src/shared/services/matching/ai-matcher.js`)
 
 **383 lines** | **OpenCode AI integration**
 
@@ -78,7 +78,7 @@ const applied = await system.autoApply({ maxApplications: 5 });
 #### Usage
 
 ```javascript
-import { matchJobsWithAI, getAICareerAdvice } from './src/lib/ai-matcher.js';
+import { matchJobsWithAI, getAICareerAdvice } from './src/shared/services/matching/ai-matcher.js';
 
 // AI-powered matching
 const matches = await matchJobsWithAI('path/to/resume.md', jobs, { useAI: true, maxResults: 10 });

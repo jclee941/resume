@@ -431,7 +431,7 @@ GET /job/api/applications
          │
          ▼
 ┌──────────────────────────────────┐
-│ Worker Entry (workers/src/index) │
+│ Worker Entry (src/index)         │
 │ 1. Parse URL path: /job/api/...  │
 │ 2. Strip /job prefix             │
 │ 3. Route to handler: /api/...    │
