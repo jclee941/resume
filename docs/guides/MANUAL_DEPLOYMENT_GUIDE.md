@@ -588,7 +588,7 @@ curl -X POST https://resume.jclee.me/api/vitals \
 1. **Check deployment status**:
 
    ```bash
-   cat docs/DEPLOYMENT_STATUS.md
+   cat docs/reports/DEPLOYMENT_STATUS.md
    ```
 
 2. **Review error logs**:

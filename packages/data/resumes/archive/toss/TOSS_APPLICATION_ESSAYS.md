@@ -31,7 +31,7 @@ Splunk-FortiManager 통합 플랫폼을 구축할 때, 80대의 방화벽에서 
 
 ## 제출 파일
 
-**이력서 PDF**: `/home/jclee/app/resume/toss/lee_jaecheol_toss_commerce_server_final.pdf`
+**이력서 PDF**: `packages/data/resumes/archive/toss/lee_jaecheol_toss_commerce_server_final.pdf`
 
 ---
 

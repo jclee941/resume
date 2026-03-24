@@ -63,7 +63,7 @@ Resume monorepo: Cloudflare Worker portfolio, job automation runtimes, dashboard
 - Never hardcode credentials, resume IDs, worker bindings, or Cloudflare resource IDs.
 - Never use `networkidle` as a required Playwright load state for terminal-animation pages; use `domcontentloaded` or explicit waits.
 - Never bypass CI/security/verification gates to make deploy or release look green.
-- Never add new logic under deprecated wrappers like `apps/job-server/src/lib/`.
+- Never add new logic under deprecated wrapper modules; import from `apps/job-server/src/shared/` directly.
 - Never treat docs under `analysis/` or `reports/` as normative rules; canonical rules live in AGENTS or focused guide files.
 
 ## UNIQUE STYLES
