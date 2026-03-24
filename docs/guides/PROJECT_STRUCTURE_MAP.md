@@ -50,15 +50,15 @@ AI Agent interfaces for Model Context Protocol.
 | **Sync**   | `resume-sync.js` | Pipeline orchestration |
 | **Auth**   | `auth.js`        | Session control        |
 
-## 3. Infrastructure & Utilities (`src/lib/`)
+## 3. Infrastructure & Clients (`src/shared/clients/`)
 
-Low-level infrastructure code (to be migrated).
+External API clients and infrastructure wrappers.
 
-| Component    | File                  | Purpose                       |
-| :----------- | :-------------------- | :---------------------------- |
-| **Database** | `d1-client.js`        | Cloudflare D1 query wrapper   |
-| **Secrets**  | `secrets-client.js`   | Infisical/Env secrets manager |
-| **AI Opt**   | `resume-optimizer.js` | Resume tailoring logic        |
+| Component   | Path       | Purpose                       |
+| :---------- | :--------- | :---------------------------- |
+| **D1**      | `d1/`      | Cloudflare D1 query wrapper   |
+| **Secrets** | `secrets/` | Infisical/Env secrets manager |
+| **Wanted**  | `wanted/`  | Wanted Korea API client       |
 
 ## 4. Automation Engines
 
@@ -82,13 +82,11 @@ Submission automation logic.
 | **Applier** | `auto-applier.js`        | Browser interaction logic |
 | **Manager** | `application-manager.js` | State tracking            |
 
-## 5. Go Operations CLI (`cmd/resume-cli/`)
+## 5. Resume CLI (`packages/cli/`)
 
-DevOps & Orchestration tool.
+Workspace CLI package for resume operations.
 
-| Command Group | Files                  | Purpose               |
-| :------------ | :--------------------- | :-------------------- |
-| **Wanted**    | `commands/wanted_*.go` | Wanted API wrapper    |
-| **Core**      | `commands/root.go`     | Entry point           |
-| **Deploy**    | `commands/deploy.go`   | Deployment automation |
-| **Verify**    | `commands/verify.go`   | Health checks         |
+| Component     | File           | Purpose               |
+| :------------ | :------------- | :-------------------- |
+| **CLI Entry** | `src/index.js` | CLI commands          |
+| **Build**     | `src/build.js` | Resume build pipeline |

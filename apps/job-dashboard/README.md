@@ -179,7 +179,7 @@ Response (JSON):
 ### Directory Structure
 
 ```
-workers/
+job-dashboard/
 ├── src/
 │   ├── index.js                    # Entry point (fetch handler + exports)
 │   ├── router.js                   # Route matching + dispatch

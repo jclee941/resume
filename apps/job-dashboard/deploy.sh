@@ -29,8 +29,8 @@ fi
 
 echo "   D1 ID: $D1_ID"
 
-echo "2. Updating wrangler.toml..."
-sed -i "s/REPLACE_AFTER_CREATE/$D1_ID/" wrangler.toml
+echo "2. Updating wrangler.jsonc..."
+sed -i "s/REPLACE_AFTER_CREATE/$D1_ID/" wrangler.jsonc
 
 echo "3. Creating KV namespace..."
 KV_OUTPUT=$(npx wrangler kv namespace create SESSIONS 2>&1 || true)
@@ -41,13 +41,13 @@ if [ -z "$KV_ID" ]; then
 fi
 
 echo "   KV ID: $KV_ID"
-sed -i "s/id = \"REPLACE_AFTER_CREATE\"/id = \"$KV_ID\"/" wrangler.toml
+sed -i "s/id = \"REPLACE_AFTER_CREATE\"/id = \"$KV_ID\"/" wrangler.jsonc
 
 echo "4. Applying D1 schema..."
 npx wrangler d1 execute job-dashboard-db --file=schema.sql
 
 echo "5. Deploying worker..."
-npx wrangler deploy --config wrangler.toml --env production
+npx wrangler deploy --config wrangler.jsonc --env production
 
 echo ""
 echo "=== Deployment Complete ==="
