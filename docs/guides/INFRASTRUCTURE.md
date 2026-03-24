@@ -254,7 +254,7 @@ web_vitals_received{job="resume"}
 **Location**: Proxmox pve3 (192.168.50.100)
 **Purpose**: Health monitoring and alerting
 
-> **📖 For detailed workflow documentation**, see [n8n/README.md](../../n8n/README.md) for:
+> **📖 For detailed workflow documentation**, see [infrastructure/n8n/README.md](../../infrastructure/n8n/README.md) for:
 >
 > - Complete workflow setup guides
 > - GitHub webhook integration
