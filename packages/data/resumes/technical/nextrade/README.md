@@ -43,18 +43,21 @@ Complete technical details with code examples (~60 pages each):
 ## Key Achievements
 
 **Security**:
+
 - 19 months zero breaches, zero data leaks
 - 3 consecutive FSC audits with zero findings
 - 98% vulnerability SLA compliance
 - MTTD 3.2min, MTTR 27min (50% better than industry avg)
 
 **Operations**:
+
 - 99.98% trading platform availability (target 99.95%)
 - 461 hours/year automated
 - 45% false positive reduction
 - DR test 37% faster than target (2.5hr vs 4hr)
 
 **Business Value**:
+
 - $188K annual recurring savings
 - $600K-$1.5M cost avoidance (incidents prevented)
 - 20% below industry TCO benchmark
@@ -79,11 +82,12 @@ sudo apt-get install pandoc texlive-xetex texlive-fonts-recommended texlive-late
 Run the conversion script:
 
 ```bash
-cd /home/jclee/app/resume/resume/nextrade
+cd /home/jclee/dev/resume/packages/data/resumes/technical/nextrade
 ./convert-to-pdf-docx.sh
 ```
 
 **Output** (created in `exports/` directory):
+
 - `ARCHITECTURE_COMPACT.pdf` / `.docx`
 - `DR_PLAN_COMPACT.pdf` / `.docx`
 - `SOC_RUNBOOK_COMPACT.pdf` / `.docx`
@@ -124,16 +128,19 @@ pandoc SOC_RUNBOOK_COMPACT.md -o SOC_RUNBOOK_COMPACT.docx --toc --number-section
 ## Use Cases
 
 ### For Job Applications
+
 - Use **compact versions** (PDF/DOCX) as portfolio attachments
 - Highlight specific achievements from executive summaries
 - Reference detailed metrics and quantified results
 
 ### For Technical Interviews
+
 - Bring **full versions** for deep technical discussions
 - Reference specific playbooks and procedures
 - Demonstrate automation frameworks and code examples
 
 ### For Resume Updates
+
 - Extract quantified achievements from executive summaries
 - Use specific metrics (0 breaches, 99.98% uptime, $188K savings)
 - Reference compliance certifications (FSC, ISMS-P, ISO)
@@ -142,15 +149,18 @@ pandoc SOC_RUNBOOK_COMPACT.md -o SOC_RUNBOOK_COMPACT.docx --toc --number-section
 
 **Duration**: March 2024 ~ Present (19 months)
 **Phases**:
+
 - Construction (2024.03-2025.02, 11 months) - 가온누리정보시스템
 - Operations (2025.03-Present, 8 months) - 아이티센 CTS
 
 **Scale**:
+
 - Infrastructure: 300+ endpoints, 150+ servers, 80+ network devices
 - Daily volume: 100K+ orders, 10TB+ data
 - Users: 200+ employees, 50K+ registered traders
 
 **Role**:
+
 - Construction: Security Infrastructure Lead & Automation Engineer
 - Operations: Information Security Operations Engineer
 

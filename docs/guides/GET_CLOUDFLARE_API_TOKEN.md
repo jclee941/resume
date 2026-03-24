@@ -234,12 +234,12 @@ npx wrangler whoami
 
 | 리소스                        | 링크                                                                         |
 | ----------------------------- | ---------------------------------------------------------------------------- |
-| **시각적 배포 가이드** ⭐ NEW | docs/DEPLOYMENT_VISUAL_GUIDE.md                                              |
-| **인증 방법 비교** ⭐ NEW     | docs/CLOUDFLARE_AUTH_METHODS.md                                              |
+| **시각적 배포 가이드** ⭐ NEW | docs/guides/DEPLOYMENT_VISUAL_GUIDE.md                                       |
+| **인증 방법 비교** ⭐ NEW     | docs/guides/CLOUDFLARE_AUTH_METHODS.md                                       |
 | Cloudflare API Tokens 문서    | https://developers.cloudflare.com/fundamentals/api/get-started/create-token/ |
 | Workers 배포 가이드           | https://developers.cloudflare.com/workers/get-started/guide/                 |
 | Wrangler 문서                 | https://developers.cloudflare.com/workers/wrangler/                          |
-| 프로젝트 배포 가이드          | docs/MANUAL_DEPLOYMENT_GUIDE.md                                              |
+| 프로젝트 배포 가이드          | docs/guides/MANUAL_DEPLOYMENT_GUIDE.md                                       |
 | 자동화 스크립트 가이드        | tools/scripts/README.md                                                      |
 
 ---

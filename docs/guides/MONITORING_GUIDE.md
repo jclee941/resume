@@ -129,7 +129,7 @@ The deployment session uses:
 - **Session name**: `resume-deploy`
 - **Window name**: `main`
 - **Scrollback limit**: 50,000 lines
-- **Working directory**: `/home/jclee/app/resume`
+- **Working directory**: `/home/jclee/dev/resume`
 
 ## Deployment Steps
 

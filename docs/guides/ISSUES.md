@@ -88,7 +88,7 @@ ls resumes/generated/  # nextrade.md, general.md, short.md
 
 **Action Taken**:
 
-- ✅ Created `docs/METRICS_IMPROVEMENT_GUIDE.md` with templates and examples
+- ✅ Created `docs/guides/METRICS_IMPROVEMENT_GUIDE.md` with templates and examples
 - ⏭️ **Next**: User must fill in actual metrics from Grafana/Splunk/JIRA
 
 **Solution**:
@@ -446,7 +446,7 @@ npm run test:e2e:headed
 
 - ✅ C1: Console Logging → logger.js 사용
 - ✅ C2: Resume Content Consolidation → master/resume_master.md
-- ✅ C3: Metrics Guide → docs/METRICS_IMPROVEMENT_GUIDE.md
+- ✅ C3: Metrics Guide → docs/guides/METRICS_IMPROVEMENT_GUIDE.md
 
 #### High Priority (6/6)
 

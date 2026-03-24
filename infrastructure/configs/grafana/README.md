@@ -132,7 +132,6 @@ rate(http_requests_total{job="resume"}[5m]) == 0
    - Required for Telegram notifications
    - Get bot token from 1Password homelab vault
 
-
 ## Installation
 
 ### Method 1: Manual Import via Grafana UI
@@ -196,8 +195,8 @@ curl -X POST "${GRAFANA_URL}/api/v1/provisioning/alert-rules" \
    apiVersion: 1
 
    providers:
-     - name: "Resume Portfolio"
-       folder: "Production"
+     - name: 'Resume Portfolio'
+       folder: 'Production'
        type: file
        options:
          path: /var/lib/grafana/provisioning/dashboards
@@ -407,7 +406,7 @@ When updating the dashboard:
 - [Grafana Dashboard Documentation](https://grafana.com/docs/grafana/latest/dashboards/)
 - [Prometheus Query Language (PromQL)](https://prometheus.io/docs/prometheus/latest/querying/basics/)
 - [Grafana Alerting Documentation](https://grafana.com/docs/grafana/latest/alerting/)
-- [POST_DEPLOYMENT_ANALYSIS.md](/home/jclee/app/resume/docs/analysis/POST_DEPLOYMENT_ANALYSIS_2025_10_17.md)
+- [POST_DEPLOYMENT_ANALYSIS.md](../../../docs/analysis/POST_DEPLOYMENT_ANALYSIS_2025_10_17.md)
 
 ## Support
 
