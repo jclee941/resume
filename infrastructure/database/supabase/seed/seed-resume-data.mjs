@@ -15,8 +15,6 @@ function deterministicUuid(seed) {
   ].join('-');
 }
 
-const PROFILE_ID = deterministicUuid('resume-profile-ko-jclee');
-
 const usedSeeds = new Map();
 
 function trackSeed(seed, context) {
@@ -35,6 +33,8 @@ function trackSeed(seed, context) {
   usedSeeds.set(seed, context);
   return deterministicUuid(seed);
 }
+
+const PROFILE_ID = trackSeed('resume-profile-ko-jclee', 'profile: ko-jclee');
 
 function escapeSql(str) {
   if (str === null || str === undefined) return 'NULL';
