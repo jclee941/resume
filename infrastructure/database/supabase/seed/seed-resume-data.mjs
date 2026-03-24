@@ -229,10 +229,11 @@ function buildCareerStatements(careers) {
 
 function buildProjectStatements(projects) {
   const results = ensureArray(projects).map((project, index) => {
-    const id = trackSeed(
-      'project-' + (project.name || String(index)),
-      'project: ' + (project.name || String(index))
-    );
+    if (!project.name)
+      throw new Error(
+        'project at index ' + index + ' missing "name" — content-based ID requires a stable key'
+      );
+    const id = trackSeed('project-' + project.name, 'project: ' + project.name);
     const dates = parsePeriod(project.period);
     const columns = [
       'id',
@@ -291,10 +292,13 @@ function buildProjectStatements(projects) {
 
 function buildCertificationStatements(certifications) {
   const results = ensureArray(certifications).map((certification, index) => {
-    const id = trackSeed(
-      'cert-' + (certification.name || String(index)),
-      'certification: ' + (certification.name || String(index))
-    );
+    if (!certification.name)
+      throw new Error(
+        'certification at index ' +
+          index +
+          ' missing "name" — content-based ID requires a stable key'
+      );
+    const id = trackSeed('cert-' + certification.name, 'certification: ' + certification.name);
     const columns = [
       'id',
       'resume_id',
@@ -379,9 +383,17 @@ function buildSkillStatements(categoryRows) {
   const results = [];
   for (const categoryRow of categoryRows) {
     categoryRow.items.forEach((item, itemIndex) => {
+      if (!item.name)
+        throw new Error(
+          'skill item at index ' +
+            itemIndex +
+            ' in category "' +
+            categoryRow.key +
+            '" missing "name" — content-based ID requires a stable key'
+        );
       const id = trackSeed(
-        'skill-' + categoryRow.key + '-' + (item.name || String(itemIndex)),
-        'skill: ' + categoryRow.key + '/' + (item.name || String(itemIndex))
+        'skill-' + categoryRow.key + '-' + item.name,
+        'skill: ' + categoryRow.key + '/' + item.name
       );
       const columns = ['id', 'category_id', 'name', 'level', 'proficiency', 'display_order'];
       const values = [
@@ -410,10 +422,13 @@ function buildSkillStatements(categoryRows) {
 
 function buildPersonalProjectStatements(projects) {
   const results = ensureArray(projects).map((project, index) => {
-    const id = trackSeed(
-      'personal-project-' + (project.name || String(index)),
-      'personal-project: ' + (project.name || String(index))
-    );
+    if (!project.name)
+      throw new Error(
+        'personal project at index ' +
+          index +
+          ' missing "name" — content-based ID requires a stable key'
+      );
+    const id = trackSeed('personal-project-' + project.name, 'personal-project: ' + project.name);
     const columns = [
       'id',
       'resume_id',
@@ -480,10 +495,11 @@ function buildPersonalProjectStatements(projects) {
 
 function buildLanguageStatements(languages) {
   const results = ensureArray(languages).map((language, index) => {
-    const id = trackSeed(
-      'language-' + (language.name || String(index)),
-      'language: ' + (language.name || String(index))
-    );
+    if (!language.name)
+      throw new Error(
+        'language at index ' + index + ' missing "name" — content-based ID requires a stable key'
+      );
+    const id = trackSeed('language-' + language.name, 'language: ' + language.name);
     const columns = ['id', 'resume_id', 'name', 'level', 'display_order'];
     const values = [
       escapeSql(id),
@@ -508,10 +524,13 @@ function buildLanguageStatements(languages) {
 
 function buildInfrastructureStatements(items) {
   const results = ensureArray(items).map((item, index) => {
-    const id = trackSeed(
-      'infra-' + (item.title || String(index)),
-      'infrastructure: ' + (item.title || String(index))
-    );
+    if (!item.title)
+      throw new Error(
+        'infrastructure item at index ' +
+          index +
+          ' missing "title" — content-based ID requires a stable key'
+      );
+    const id = trackSeed('infra-' + item.title, 'infrastructure: ' + item.title);
     const columns = [
       'id',
       'resume_id',
