@@ -6,7 +6,7 @@ package(default_visibility = ["//apps/job-server:__subpackages__"])
 filegroup(
     name = "sources",
     srcs = glob(
-        ["src/**/*.js", "src/**/*.json", "wrangler.toml"],
+        ["src/**/*.js", "src/**/*.json", "wrangler.jsonc"],
         allow_empty = True,
         exclude = ["node_modules/**"],
     ),
