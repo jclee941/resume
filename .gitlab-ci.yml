@@ -19,9 +19,6 @@ stages:
 variables:
   NODE_VERSION: "22.13.0"
   NPM_CONFIG_CACHE: "$CI_PROJECT_DIR/.npm"
-  NODE_VERSION: "22.13.0"
-  NODE_VERSION: "22"
-  NPM_CONFIG_CACHE: "$CI_PROJECT_DIR/.npm"
   # Cloudflare credentials for validation only (not deployment)
   CF_API_TOKEN: "$CLOUDFLARE_API_TOKEN"
   CF_ACCOUNT_ID: "$CLOUDFLARE_ACCOUNT_ID"
@@ -109,23 +106,6 @@ validate:wrangler-types:
         - apps/portfolio/wrangler.toml
         - apps/portfolio/lib/**/*
         - apps/portfolio/src/**/*
-  stage: validate
-  script:
-    - npm install -g wrangler@3.100.0
-    - cd apps/portfolio && wrangler types --include-env=false
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      changes:
-        - apps/portfolio/index.html
-        - apps/portfolio/index-en.html
-        - apps/portfolio/generate-worker.js
-        - apps/portfolio/wrangler.toml
-    - if: $CI_COMMIT_BRANCH == "master"
-      changes:
-        - apps/portfolio/index.html
-        - apps/portfolio/index-en.html
-        - apps/portfolio/generate-worker.js
-        - apps/portfolio/wrangler.toml
 
 # =============================================================================
 # LINT STAGE
