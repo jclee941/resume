@@ -192,6 +192,18 @@ func main() {
 	}
 	mustWriteJSON(filepath.Join(outputDir, "affected_targets.json"), summary)
 
+	// Write dotenv file for GitLab CI
+	mustWriteEnv(filepath.Join(outputDir, "affected.env"), map[string]string{
+		"PORTFOLIO_AFFECTED":     fmt.Sprintf("%t", summary.Portfolio),
+		"JOB_DASHBOARD_AFFECTED": fmt.Sprintf("%t", summary.JobDashboard),
+		"JOB_SERVER_AFFECTED":    fmt.Sprintf("%t", summary.JobServer),
+		"DATA_AFFECTED":          fmt.Sprintf("%t", summary.Data),
+		"INFRA_AFFECTED":         fmt.Sprintf("%t", summary.Infra),
+		"CLI_AFFECTED":           fmt.Sprintf("%t", summary.CLI),
+		"SHARED_AFFECTED":        fmt.Sprintf("%t", summary.Shared),
+		"AFFECTED_COUNT":         fmt.Sprintf("%d", summary.AffectedTargetsCount),
+	})
+
 	fmt.Println("Analysis complete")
 }
 
@@ -292,6 +304,19 @@ func mustWriteJSON(path string, v any) {
 	}
 	data = append(data, '\n')
 	if err := os.WriteFile(path, data, 0o644); err != nil {
+		fmt.Fprintf(os.Stderr, "failed to write %s: %v\n", path, err)
+		os.Exit(1)
+	}
+}
+
+func mustWriteEnv(path string, vars map[string]string) {
+	var lines []string
+	for key, value := range vars {
+		lines = append(lines, fmt.Sprintf("%s=%s", key, value))
+	}
+	sort.Strings(lines)
+	content := strings.Join(lines, "\n") + "\n"
+	if err := os.WriteFile(path, []byte(content), 0o644); err != nil {
 		fmt.Fprintf(os.Stderr, "failed to write %s: %v\n", path, err)
 		os.Exit(1)
 	}

@@ -1,0 +1,286 @@
+# GitLab CI/CD Configuration
+# Mirrors GitHub Actions workflows for resume repository
+# Target: Self-hosted GitLab at http://192.168.50.215:8929
+
+stages:
+  - analyze
+  - validate
+  - lint
+  - typecheck
+  - test
+  - security
+  - build
+  - deploy
+  - verify
+
+variables:
+  NODE_VERSION: "22"
+  NPM_CONFIG_CACHE: "$CI_PROJECT_DIR/.npm"
+  CF_API_KEY: "$CLOUDFLARE_API_KEY"
+  CF_EMAIL: "$CLOUDFLARE_EMAIL"
+  CF_ACCOUNT_ID: "$CLOUDFLARE_ACCOUNT_ID"
+
+# Cache configuration
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .npm/
+    - node_modules/
+    - apps/*/node_modules/
+    - packages/*/node_modules/
+
+# Default job configuration (Node.js jobs)
+default:
+  image: node:${NODE_VERSION}
+  before_script:
+    - npm ci --prefer-offline
+
+# =============================================================================
+# ANALYZE STAGE
+# =============================================================================
+
+analyze:affected:
+  stage: analyze
+  image: golang:1.23
+  before_script: []
+  script:
+    - go run tools/ci/affected.go HEAD~1 .affected
+  artifacts:
+    reports:
+      dotenv: .affected/affected.env
+    paths:
+      - .affected/affected_targets.json
+      - .affected/changed_files.txt
+    expire_in: 1 day
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "master"
+
+# =============================================================================
+# VALIDATE STAGE
+# =============================================================================
+
+validate:cloudflare:
+  stage: validate
+  image: golang:latest
+  before_script: []
+  script:
+    - go run ./tools/ci/validate-cloudflare-native.go
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "master"
+
+# =============================================================================
+# LINT STAGE
+# =============================================================================
+
+lint:eslint:
+  stage: lint
+  script:
+    - npm run lint
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "master"
+
+# =============================================================================
+# TYPECHECK STAGE
+# =============================================================================
+
+typecheck:typescript:
+  stage: typecheck
+  script:
+    - npx tsc --noEmit -p tsconfig.json
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "master"
+
+# =============================================================================
+# TEST STAGE
+# =============================================================================
+
+test:jest:
+  stage: test
+  script:
+    - npm run test:jest -- --coverage --coverageReporters=text-summary --coverageReporters=cobertura --coverageReporters=html
+  coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/cobertura-coverage.xml
+    paths:
+      - coverage/
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "master"
+
+test:e2e:
+  stage: test
+  image: mcr.microsoft.com/playwright:v1.58.2-jammy
+  script:
+    - npm ci
+    - npx playwright install --with-deps
+    - npm run test:e2e
+  artifacts:
+    when: always
+    paths:
+      - playwright-report/
+      - test-results/
+    reports:
+      junit: test-results/junit.xml
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "master"
+
+# =============================================================================
+# SECURITY STAGE
+# =============================================================================
+
+security:gitleaks:
+  stage: security
+  image: zricethezav/gitleaks:v8.21.2
+  before_script: []
+  script:
+    - gitleaks detect --source . --verbose --redact
+  allow_failure: false
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "master"
+
+security:npm-audit:
+  stage: security
+  script:
+    - npm audit --audit-level=high
+  allow_failure: true
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "master"
+
+# =============================================================================
+# BUILD STAGE
+# =============================================================================
+
+build:portfolio:
+  stage: build
+  script:
+    - npm run build
+    - cd apps/portfolio && node generate-worker.js
+  artifacts:
+    paths:
+      - apps/portfolio/worker.js
+      - dist/
+    expire_in: 1 day
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+# =============================================================================
+# DEPLOY STAGE
+# =============================================================================
+
+deploy:cloudflare:
+  stage: deploy
+  image: node:${NODE_VERSION}
+  before_script:
+    - npm ci
+    - npm install -g wrangler
+  script:
+    - cd apps/portfolio
+    - wrangler deploy --env production
+  environment:
+    name: production
+    url: https://resume.jclee.me
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+      when: on_success
+  needs:
+    - build:portfolio
+    - test:jest
+    - test:e2e
+    - security:gitleaks
+
+# =============================================================================
+# VERIFY STAGE
+# =============================================================================
+
+verify:deployment:
+  stage: verify
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache curl jq
+  script:
+    - |
+      echo "Verifying deployment..."
+      curl -sf https://resume.jclee.me/health | jq -e '.status == "healthy"' || exit 1
+      echo "Health check passed!"
+      
+      curl -sf https://resume.jclee.me/metrics | grep -q "http_requests_total" || exit 1
+      echo "Metrics endpoint verified!"
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+  needs:
+    - deploy:cloudflare
+
+verify:csp:
+  stage: verify
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache curl
+  script:
+    - |
+      echo "Verifying CSP headers..."
+      CSP=$(curl -sI https://resume.jclee.me | grep -i "content-security-policy")
+      echo "CSP Header: $CSP"
+      echo "$CSP" | grep -q "default-src" || exit 1
+      echo "CSP headers verified!"
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+  needs:
+    - deploy:cloudflare
+
+# =============================================================================
+# TERRAFORM (Infrastructure)
+# =============================================================================
+
+.terraform: &terraform
+  image: hashicorp/terraform:latest
+  before_script:
+    - cd infrastructure/cloudflare
+    - terraform init
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+      changes:
+        - infrastructure/cloudflare/**/*
+
+terraform:plan:
+  <<: *terraform
+  stage: validate
+  script:
+    - terraform plan -out=tfplan
+  artifacts:
+    paths:
+      - infrastructure/cloudflare/tfplan
+
+terraform:apply:
+  <<: *terraform
+  stage: deploy
+  script:
+    - terraform apply -auto-approve tfplan
+  when: manual
+  environment:
+    name: terraform
+  needs:
+    - terraform:plan
+
+# =============================================================================
+# RELEASE
+# =============================================================================
+
+release:semantic:
+  stage: deploy
+  script:
+    - npm install -g semantic-release @semantic-release/gitlab
+    - npx semantic-release
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+  when: manual
