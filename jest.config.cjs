@@ -2,7 +2,7 @@
 module.exports = {
   testEnvironment: 'node',
   testMatch: ['**/tests/unit/**/*.test.js', '**/tests/integration/**/*.test.js'],
-  testPathIgnorePatterns: ['/node_modules/', 'resume-sync-validation.test.js'],
+  testPathIgnorePatterns: ['/node_modules/'],
   collectCoverageFrom: [
     'apps/portfolio/lib/**/*.js', // Core testable modules
     'apps/portfolio/logger.js', // Logger utility

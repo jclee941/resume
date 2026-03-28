@@ -47,10 +47,72 @@ source ~/.env
 
 ### 3. Deploy Workflow
 
+## Cloudflare Access Authentication
+
+The n8n instance at `n8n.jclee.me` is protected by Cloudflare Access. The deployment script now supports three authentication methods:
+
+### Method 1: Service Tokens (Recommended)
+
+**Get credentials from Cloudflare Dashboard:**
+1. Go to https://dash.cloudflare.com → Access → Service Auth → Service Tokens
+2. Create a new token for `n8n.jclee.me`
+3. Copy Client ID and Client Secret
+
+**Set environment variables:**
+```bash
+export N8N_API_KEY="your-n8n-api-key"
+export CF_ACCESS_CLIENT_ID="your-client-id@your-account.cloudflareaccess.com"
+export CF_ACCESS_CLIENT_SECRET="your-client-secret"
+```
+
+### Method 2: Browser Session Cookies
+
+**Use browser automation to get cookies:**
+```bash
+# Install Playwright if not already installed
+npm install -g playwright
+
+# Run browser auth (opens browser for manual login)
+go run infrastructure/n8n/n8n-browser-auth.go
+
+# Copy the cookie string from output
+export CF_ACCESS_COOKIE="CF_Authorization=xxx; CF_Access=yyy"
+```
+
+### Method 3: SSH Tunnel (Bypass Cloudflare)
+
+**Connect directly to internal n8n:**
+```bash
+# Create SSH tunnel
+ssh -f -N -L 15678:192.168.50.100:5678 root@192.168.50.100
+
+# Use localhost instead of n8n.jclee.me
+export N8N_URL="http://localhost:15678"
+export N8N_API_KEY="your-n8n-api-key"
+
+# Deploy
+go run infrastructure/n8n/deploy-workflow.go
+```
+
+### Test Authentication
+
+```bash
+# Test with curl (Method 1)
+curl -s "https://n8n.jclee.me/api/v1/workflows" \
+  -H "X-N8N-API-KEY: $N8N_API_KEY" \
+  -H "CF-Access-Client-Id: $CF_ACCESS_CLIENT_ID" \
+  -H "CF-Access-Client-Secret: $CF_ACCESS_CLIENT_SECRET" | jq
+
+# Test with curl (Method 2)
+curl -s "https://n8n.jclee.me/api/v1/workflows" \
+  -H "X-N8N-API-KEY: $N8N_API_KEY" \
+  -H "Cookie: $CF_ACCESS_COOKIE" | jq
+```
+
 ```bash
 cd ~/dev/resume
-chmod +x infrastructure/n8n/deploy-workflow.sh
-./infrastructure/n8n/deploy-workflow.sh
+chmod +x infrastructure/n8n/deploy-workflow.go
+./infrastructure/n8n/deploy-workflow.go
 ```
 
 **Expected output:**
@@ -342,7 +404,8 @@ graph LR
     C -->|No| Z[Skip]
     D --> E[npm run build]
     E --> F[npm test]
-    F --> G[npm run test:e2e]
+    G --> H[Build Complete]
+    H --> I[Health Check]
     G --> H[wrangler deploy]
     H --> I[Health Check]
     I -->|Success| J[Telegram ✅]
@@ -362,6 +425,7 @@ graph LR
 | Build Worker         | Execute Command    | Generate worker.js         | `npm run build`                       |
 | Run Tests            | Execute Command    | Unit tests                 | `npm test`                            |
 | Run E2E Tests        | Execute Command    | E2E tests                  | `npm run test:e2e`                    |
+| Build Complete       | Notification       | Build artifact ready       | Cloudflare Workers Builds deploys     |
 | Deploy to Cloudflare | Execute Command    | Deploy worker              | `wrangler deploy`                     |
 | Health Check         | HTTP Request       | Verify deployment          | GET `/health`                         |
 | Telegram Success     | HTTP Request       | Success notification       | POST to Telegram Bot API              |

@@ -188,19 +188,75 @@ export class UnifiedJobCrawler {
   async search(platform, keywords, options = {}) {
     const keywordList = Array.isArray(keywords) ? keywords : [keywords];
     const allJobs = [];
+    const maxConcurrency = Math.max(1, options.maxConcurrency || keywordList.length);
+    const rateLimiter = options.rateLimiter;
+    const jobDeduplicator = options.jobDeduplicator;
 
-    for (const keyword of keywordList) {
-      const result = await this.searchSource(platform, {
-        keyword,
-        limit: options.limit || 20,
-        ...options,
+    // Process keywords in batches with concurrency limit
+    for (let i = 0; i < keywordList.length; i += maxConcurrency) {
+      const batch = keywordList.slice(i, i + maxConcurrency);
+      
+      // Create search promises for this batch
+      const searchPromises = batch.map(async (keyword) => {
+        try {
+          // Acquire rate limiter permit if provided
+          if (rateLimiter) {
+            await rateLimiter.acquire(platform);
+          }
+          
+          const result = await this.searchSource(platform, {
+            keyword,
+            limit: options.limit || 20,
+            ...options,
+          });
+          
+          // Record rate limiter response if provided
+          if (rateLimiter) {
+            const statusCode = result.success ? 200 : (result.error?.status || 500);
+            rateLimiter.recordResponse(platform, { statusCode });
+          }
+          
+          if (result.success && result.jobs) {
+            // Filter out duplicates using jobDeduplicator
+            const newJobs = [];
+            for (const job of result.jobs) {
+              const isDup = jobDeduplicator ? jobDeduplicator.isDuplicate(job) : false;
+              if (!isDup) {
+                newJobs.push(job);
+                if (jobDeduplicator) {
+                  jobDeduplicator.markSeen(job);
+                }
+              }
+            }
+            return newJobs;
+          }
+          return [];
+        } catch (error) {
+          console.error(`[search] Keyword "${keyword}" failed:`, error.message);
+          // Record failure in rate limiter if provided
+          if (rateLimiter) {
+            rateLimiter.recordResponse(platform, { statusCode: error.statusCode || 500 });
+          }
+          return [];
+        }
       });
-      if (result.success) {
-        allJobs.push(...result.jobs);
+      
+      // Wait for all promises in this batch to settle
+      const batchResults = await Promise.allSettled(searchPromises);
+      
+      // Collect successful results
+      for (const result of batchResults) {
+        if (result.status === 'fulfilled') {
+          allJobs.push(...result.value);
+        }
       }
     }
 
-    return this.deduplicateJobs(allJobs);
+    // Apply default deduplication if no jobDeduplicator provided
+    if (!jobDeduplicator) {
+      return this.deduplicateJobs(allJobs);
+    }
+    return allJobs;
   }
 
   /**

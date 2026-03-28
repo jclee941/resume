@@ -1,7 +1,7 @@
 # GitLab CI/CD Configuration
 # Mirrors GitHub Actions workflows for resume repository
-# Target: Self-hosted GitLab at http://192.168.50.215:8929
-# 
+# Target: Self-hosted GitLab at http://gitlab.jclee.me
+#
 # IMPORTANT: This CI is validation-only per repo policy.
 # Production deployment authority is Cloudflare Workers Builds.
 # See: tools/ci/AGENTS.md
@@ -15,6 +15,7 @@ stages:
   - security
   - build
   - verify
+  - oauth
 
 variables:
   NODE_VERSION: "22.13.0"
@@ -22,6 +23,12 @@ variables:
   # Cloudflare credentials for validation only (not deployment)
   CF_API_TOKEN: "$CLOUDFLARE_API_TOKEN"
   CF_ACCOUNT_ID: "$CLOUDFLARE_ACCOUNT_ID"
+  # n8n credentials for automation
+  N8N_URL: "https://n8n.jclee.me"
+  N8N_API_KEY: "$N8N_API_KEY"
+  GITLAB_URL: "http://gitlab.jclee.me"
+  GITLAB_OAUTH_APP_ID: "$GITLAB_OAUTH_APP_ID"
+  GITLAB_OAUTH_CLIENT_SECRET: "$GITLAB_OAUTH_CLIENT_SECRET"
 
 # Cache configuration
 cache:
@@ -223,7 +230,7 @@ verify:production-health:
       echo "Verifying production deployment..."
       curl -sf https://resume.jclee.me/health | jq -e '.status == "healthy"' || exit 1
       echo "Health check passed!"
-      
+
       curl -sf https://resume.jclee.me/metrics | grep -q "http_requests_total" || exit 1
       echo "Metrics endpoint verified!"
   rules:
@@ -269,4 +276,82 @@ terraform:plan:
     - terraform plan -out=tfplan
   artifacts:
     paths:
-      - infrastructure/cloudflare/tfplan
+
+# =============================================================================
+# N8N AUTOMATION STAGE
+# Trigger n8n workflows after successful build
+# =============================================================================
+trigger-n8n-deploy:
+  stage: oauth
+  image: alpine:3.21
+  before_script:
+    - apk add --no-cache curl jq
+  script:
+    - |
+      echo "Triggering n8n deployment workflow..."
+      curl -sf -X POST "${N8N_URL}/api/v1/workflows/trigger" \
+        -H "X-N8N-API-KEY: ${N8N_API_KEY}" \
+        -H "Content-Type: application/json" \
+        -d '{"workflow": "resume-auto-deploy"}' || exit 1
+      echo "n8n workflow triggered successfully!"
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+
+notify-n8n:
+  stage: oauth
+  image: alpine:3.21
+  dependencies: [trigger-n8n-deploy]
+  before_script:
+    - apk add --no-cache curl jq
+  script:
+    - |
+      echo "Sending notification to n8n..."
+      curl -sf -X POST "${N8N_URL}/webhook/automation-run-report" \
+        -H "Content-Type: application/json" \
+        -d '{"event": "ci-cd-complete", "status": "success"}' || exit 1
+      echo "Notification sent!"
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+# OAUTH STAGE
+# =============================================================================
+fetch-oauth-token:
+  stage: oauth
+  image: alpine:3.21
+  script:
+    - apk add --no-cache curl jq
+    - |
+      echo "Fetching OAuth token from GitLab..."
+      TOKEN_RESPONSE=$(curl -sf -X POST "${GITLAB_URL}/oauth/token" \
+        -d "grant_type=client_credentials" \
+        -d "client_id=${GITLAB_OAUTH_APP_ID}" \
+        -d "client_secret=${GITLAB_OAUTH_CLIENT_SECRET}" \
+        -d "scope=api")
+      echo "Token fetched successfully"
+      ACCESS_TOKEN=$(echo "$TOKEN_RESPONSE" | jq -r '.access_token')
+      echo "$ACCESS_TOKEN" > oauth_token.txt
+  artifacts:
+    paths:
+      - oauth_token.txt
+    expire_in: 1 hour
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+oauth-automation-demo:
+  stage: oauth
+  image: alpine:3.21
+  dependencies:
+    - fetch-oauth-token
+  before_script:
+    - apk add --no-cache curl jq
+  script:
+    - |
+      echo "Using OAuth token to call GitLab API..."
+      TOKEN=$(cat oauth_token.txt)
+      # Test API access with OAuth token
+      curl -sf -H "Authorization: Bearer $TOKEN" \
+        "${GITLAB_URL}/api/v4/user" | jq -e '.id' || exit 1
+      echo "OAuth token is valid and working!"
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"

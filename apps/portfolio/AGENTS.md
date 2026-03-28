@@ -31,7 +31,7 @@ portfolio/
 ├── sitemap.xml             # SEO sitemap
 ├── robots.txt              # SEO robots config
 ├── wrangler.toml           # worker config (name: resume)
-└── validate-seo.sh         # SEO validation script
+└── validate-seo.go         # SEO validation script
 ```
 
 ## WHERE TO LOOK

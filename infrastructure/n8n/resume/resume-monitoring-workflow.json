@@ -1,0 +1,236 @@
+{
+  "name": "Resume Infrastructure Monitoring",
+  "nodes": [
+    {
+      "id": "monitor-trigger",
+      "name": "[Monitor] Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [200, 200],
+      "parameters": {}
+    },
+    {
+      "id": "monitor-schedule",
+      "name": "[Monitor] Hourly Schedule",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [200, 400],
+      "parameters": {
+        "rule": {
+          "interval": [{ "field": "hours", "hoursInterval": 1 }]
+        },
+        "timezone": "Asia/Seoul"
+      }
+    },
+    {
+      "id": "test-health",
+      "name": "[Test] Health Check via SSH",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [500, 200],
+      "continueOnFail": true,
+      "credentials": {
+        "sshPrivateKey": {
+          "id": "<SSH_CREDENTIAL_ID>",
+          "name": "jclee-dev SSH"
+        }
+      },
+      "parameters": {
+        "authentication": "privateKey",
+        "command": "curl -s -w '\\n%{http_code}' --max-time 10 https://resume.jclee.me/health 2>&1"
+      }
+    },
+    {
+      "id": "test-metrics",
+      "name": "[Test] Metrics via SSH",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [500, 400],
+      "continueOnFail": true,
+      "credentials": {
+        "sshPrivateKey": {
+          "id": "<SSH_CREDENTIAL_ID>",
+          "name": "jclee-dev SSH"
+        }
+      },
+      "parameters": {
+        "authentication": "privateKey",
+        "command": "curl -s -w '\\n%{http_code}' --max-time 10 https://resume.jclee.me/metrics 2>&1"
+      }
+    },
+    {
+      "id": "test-ssh",
+      "name": "[Test] SSH Connectivity",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [500, 600],
+      "continueOnFail": true,
+      "credentials": {
+        "sshPrivateKey": {
+          "id": "<SSH_CREDENTIAL_ID>",
+          "name": "jclee-dev SSH"
+        }
+      },
+      "parameters": {
+        "authentication": "privateKey",
+        "command": "echo 'SSH connectivity test'"
+      }
+    },
+    {
+      "id": "parse-health",
+      "name": "[Parse] Health Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [700, 200],
+      "parameters": {
+        "jsCode": "const stdout = $input.first().json.stdout || '';\nconst lines = stdout.trim().split('\\n');\nconst statusCode = parseInt(lines.pop(), 10) || 0;\nlet body = {};\ntry { body = JSON.parse(lines.join('\\n')); } catch(e) {}\nreturn [{\n  json: {\n    test: 'health',\n    pass: statusCode === 200 && body.status === 'healthy',\n    statusCode: statusCode,\n    body: body\n  }\n}];"
+      }
+    },
+    {
+      "id": "parse-metrics",
+      "name": "[Parse] Metrics Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [700, 400],
+      "parameters": {
+        "jsCode": "const stdout = $input.first().json.stdout || '';\nconst lines = stdout.trim().split('\\n');\nconst statusCode = parseInt(lines.pop(), 10) || 0;\nconst hasMetrics = stdout.includes('http_requests_total');\nreturn [{\n  json: {\n    test: 'metrics',\n    pass: statusCode === 200 && hasMetrics,\n    statusCode: statusCode,\n    hasMetrics: hasMetrics\n  }\n}];"
+      }
+    },
+    {
+      "id": "parse-ssh",
+      "name": "[Parse] SSH Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [700, 600],
+      "parameters": {
+        "jsCode": "const input = $input.first().json;\nconst error = input.error || '';\nconst stdout = input.stdout || '';\nconst exitCode = input.exitCode !== undefined ? input.exitCode : (error ? 1 : 0);\nreturn [{\n  json: {\n    test: 'ssh',\n    pass: exitCode === 0 && !error,\n    exitCode: exitCode,\n    error: error\n  }\n}];"
+      }
+    },
+    {
+      "id": "aggregate-results",
+      "name": "[Monitor] Aggregate Results",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [900, 400],
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "position"
+      }
+    },
+    {
+      "id": "format-report",
+      "name": "[Monitor] Format Report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 400],
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst tests = items.map(item => item.json).filter(j => j.test);\nconst passed = tests.filter(t => t.pass).length;\nconst total = tests.length;\nconst score = total > 0 ? passed / total : 0;\nconst nowKst = new Date().toLocaleString('sv-SE', { timeZone: 'Asia/Seoul' }) + '+09:00';\nreturn [{\n  json: {\n    run_at: nowKst,\n    overall_pass: score >= 0.8,\n    overall_score: score.toFixed(2),\n    tests_passed: passed,\n    tests_total: total,\n    tests: tests\n  }\n}];"
+      }
+    },
+    {
+      "id": "check-passed",
+      "name": "[Monitor] All Passed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1300, 400],
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "typeValidation": "strict" },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.overall_pass }}",
+              "rightValue": true,
+              "operator": { "type": "boolean", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "notify-success",
+      "name": "[Monitor] Telegram Success",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1500, 300],
+      "parameters": {
+        "chatId": "<TELEGRAM_CHAT_ID>",
+        "text": "=✅ Resume Monitoring Passed\n\nScore: {{ $json.overall_score }} ({{ $json.tests_passed }}/{{ $json.tests_total }} tests)\nTime(KST): {{ $json.run_at }}\n\nAll systems operational!"
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "<TELEGRAM_CREDENTIAL_ID>",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "id": "notify-fail",
+      "name": "[Monitor] Telegram Alert",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1500, 500],
+      "parameters": {
+        "chatId": "<TELEGRAM_CHAT_ID>",
+        "text": "=⚠️ Resume Monitoring Failed\n\nScore: {{ $json.overall_score }} ({{ $json.tests_passed }}/{{ $json.tests_total }} tests)\nTime(KST): {{ $json.run_at }}\n\nFailed Tests:\n{{ $json.tests.filter(t => !t.pass).map(t => `• ${t.test}`).join('\\n') }}"
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "<TELEGRAM_CREDENTIAL_ID>",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "[Monitor] Manual Trigger": {
+      "main": [
+        [{ "node": "[Test] Health Check via SSH", "type": "main", "index": 0 }],
+        [{ "node": "[Test] Metrics via SSH", "type": "main", "index": 0 }],
+        [{ "node": "[Test] SSH Connectivity", "type": "main", "index": 0 }]
+      ]
+    },
+    "[Monitor] Hourly Schedule": {
+      "main": [
+        [{ "node": "[Test] Health Check via SSH", "type": "main", "index": 0 }],
+        [{ "node": "[Test] Metrics via SSH", "type": "main", "index": 0 }],
+        [{ "node": "[Test] SSH Connectivity", "type": "main", "index": 0 }]
+      ]
+    },
+    "[Test] Health Check via SSH": {
+      "main": [[{ "node": "[Parse] Health Result", "type": "main", "index": 0 }]]
+    },
+    "[Test] Metrics via SSH": {
+      "main": [[{ "node": "[Parse] Metrics Result", "type": "main", "index": 0 }]]
+    },
+    "[Test] SSH Connectivity": {
+      "main": [[{ "node": "[Parse] SSH Result", "type": "main", "index": 0 }]]
+    },
+    "[Parse] Health Result": {
+      "main": [[{ "node": "[Monitor] Aggregate Results", "type": "main", "index": 0 }]]
+    },
+    "[Parse] Metrics Result": {
+      "main": [[{ "node": "[Monitor] Aggregate Results", "type": "main", "index": 1 }]]
+    },
+    "[Parse] SSH Result": {
+      "main": [[{ "node": "[Monitor] Aggregate Results", "type": "main", "index": 2 }]]
+    },
+    "[Monitor] Aggregate Results": {
+      "main": [[{ "node": "[Monitor] Format Report", "type": "main", "index": 0 }]]
+    },
+    "[Monitor] Format Report": {
+      "main": [[{ "node": "[Monitor] All Passed?", "type": "main", "index": 0 }]]
+    },
+    "[Monitor] All Passed?": {
+      "main": [
+        [{ "node": "[Monitor] Telegram Success", "type": "main", "index": 0 }],
+        [{ "node": "[Monitor] Telegram Alert", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Seoul",
+    "saveManualExecutions": true
+  }
+}

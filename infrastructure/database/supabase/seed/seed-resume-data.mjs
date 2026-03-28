@@ -9,7 +9,7 @@ function deterministicUuid(seed) {
   return [
     hash.slice(0, 8),
     hash.slice(8, 12),
-    '4' + hash.slice(13, 16),
+    `4${  hash.slice(13, 16)}`,
     ((parseInt(hash.slice(16, 17), 16) & 0x3) | 0x8).toString(16) + hash.slice(17, 20),
     hash.slice(20, 32),
   ].join('-');
@@ -21,13 +21,13 @@ function trackSeed(seed, context) {
   if (usedSeeds.has(seed)) {
     const prev = usedSeeds.get(seed);
     throw new Error(
-      'Duplicate content key detected: "' +
-        seed +
-        '" used by both ' +
-        prev +
-        ' and ' +
-        context +
-        '. Each item must have a unique content key to avoid ID collisions.'
+      `Duplicate content key detected: "${ 
+        seed 
+        }" used by both ${ 
+        prev 
+        } and ${ 
+        context 
+        }. Each item must have a unique content key to avoid ID collisions.`
     );
   }
   usedSeeds.set(seed, context);
@@ -38,17 +38,17 @@ const PROFILE_ID = trackSeed('resume-profile-ko-jclee', 'profile: ko-jclee');
 
 function escapeSql(str) {
   if (str === null || str === undefined) return 'NULL';
-  return "'" + String(str).replace(/'/g, "''") + "'";
+  return `'${  String(str).replace(/'/g, "''")  }'`;
 }
 
 function escapeJsonb(obj) {
   if (obj === null || obj === undefined) return 'NULL';
-  return "'" + JSON.stringify(obj).replace(/'/g, "''") + "'::jsonb";
+  return `'${  JSON.stringify(obj).replace(/'/g, "''")  }'::jsonb`;
 }
 
 function escapeArray(arr) {
   if (!arr || arr.length === 0) return "'{}'";
-  return 'ARRAY[' + arr.map((item) => escapeSql(item)).join(', ') + ']';
+  return `ARRAY[${  arr.map((item) => escapeSql(item)).join(', ')  }]`;
 }
 
 function escapeInteger(value) {
@@ -75,7 +75,7 @@ function parseMonthValue(value) {
   if (!trimmed || trimmed === '현재') return null;
   const match = trimmed.match(/^(\d{4})\.(\d{2})$/);
   if (!match) return null;
-  return match[1] + '-' + match[2] + '-01';
+  return `${match[1]  }-${  match[2]  }-01`;
 }
 
 function parsePeriod(period) {
@@ -107,24 +107,24 @@ function normalizeCertificationStatus(status) {
 }
 
 function buildUpdateAssignments(columns) {
-  return columns.map((column) => column + ' = EXCLUDED.' + column).concat(['updated_at = now()']);
+  return columns.map((column) => `${column  } = EXCLUDED.${  column}`).concat(['updated_at = now()']);
 }
 
 function buildUpsert(table, columns, values, conflictTarget, updateAssignments) {
   return [
-    'INSERT INTO ' + table + ' (' + columns.join(', ') + ')',
-    'VALUES (' + values.join(', ') + ')',
-    'ON CONFLICT ' + conflictTarget + ' DO UPDATE SET',
-    '  ' + updateAssignments.join(',\n  ') + ';',
+    `INSERT INTO ${  table  } (${  columns.join(', ')  })`,
+    `VALUES (${  values.join(', ')  })`,
+    `ON CONFLICT ${  conflictTarget  } DO UPDATE SET`,
+    `  ${  updateAssignments.join(',\n  ')  };`,
   ].join('\n');
 }
 
 function buildDeleteOrphans(table, whereClause, ids) {
   const idList = ids.map((id) => escapeSql(id)).join(', ');
   if (ids.length === 0) {
-    return 'DELETE FROM ' + table + ' WHERE ' + whereClause + ';';
+    return `DELETE FROM ${  table  } WHERE ${  whereClause  };`;
   }
-  return 'DELETE FROM ' + table + ' WHERE ' + whereClause + ' AND id NOT IN (' + idList + ');';
+  return `DELETE FROM ${  table  } WHERE ${  whereClause  } AND id NOT IN (${  idList  });`;
 }
 
 function buildResumeProfileStatement(data) {
@@ -176,7 +176,7 @@ function buildResumeProfileStatement(data) {
 
 function buildCareerStatements(careers) {
   const results = ensureArray(careers).map((career, index) => {
-    const id = trackSeed('career-' + career.company, 'career: ' + career.company);
+    const id = trackSeed(`career-${  career.company}`, `career: ${  career.company}`);
     const dates = parsePeriod(career.period);
     const columns = [
       'id',
@@ -231,9 +231,9 @@ function buildProjectStatements(projects) {
   const results = ensureArray(projects).map((project, index) => {
     if (!project.name)
       throw new Error(
-        'project at index ' + index + ' missing "name" — content-based ID requires a stable key'
+        `project at index ${  index  } missing "name" — content-based ID requires a stable key`
       );
-    const id = trackSeed('project-' + project.name, 'project: ' + project.name);
+    const id = trackSeed(`project-${  project.name}`, `project: ${  project.name}`);
     const dates = parsePeriod(project.period);
     const columns = [
       'id',
@@ -294,11 +294,11 @@ function buildCertificationStatements(certifications) {
   const results = ensureArray(certifications).map((certification, index) => {
     if (!certification.name)
       throw new Error(
-        'certification at index ' +
-          index +
-          ' missing "name" — content-based ID requires a stable key'
+        `certification at index ${ 
+          index 
+          } missing "name" — content-based ID requires a stable key`
       );
-    const id = trackSeed('cert-' + certification.name, 'certification: ' + certification.name);
+    const id = trackSeed(`cert-${  certification.name}`, `certification: ${  certification.name}`);
     const columns = [
       'id',
       'resume_id',
@@ -344,7 +344,7 @@ function buildCertificationStatements(certifications) {
 
 function buildSkillCategoryRows(skills) {
   return Object.entries(skills || {}).map(([key, value], index) => ({
-    id: trackSeed('skill-cat-' + key, 'skill-category: ' + key),
+    id: trackSeed(`skill-cat-${  key}`, `skill-category: ${  key}`),
     key,
     title: value?.title ?? null,
     icon: value?.icon ?? null,
@@ -385,15 +385,15 @@ function buildSkillStatements(categoryRows) {
     categoryRow.items.forEach((item, itemIndex) => {
       if (!item.name)
         throw new Error(
-          'skill item at index ' +
-            itemIndex +
-            ' in category "' +
-            categoryRow.key +
-            '" missing "name" — content-based ID requires a stable key'
+          `skill item at index ${ 
+            itemIndex 
+            } in category "${ 
+            categoryRow.key 
+            }" missing "name" — content-based ID requires a stable key`
         );
       const id = trackSeed(
-        'skill-' + categoryRow.key + '-' + item.name,
-        'skill: ' + categoryRow.key + '/' + item.name
+        `skill-${  categoryRow.key  }-${  item.name}`,
+        `skill: ${  categoryRow.key  }/${  item.name}`
       );
       const columns = ['id', 'category_id', 'name', 'level', 'proficiency', 'display_order'];
       const values = [
@@ -424,11 +424,11 @@ function buildPersonalProjectStatements(projects) {
   const results = ensureArray(projects).map((project, index) => {
     if (!project.name)
       throw new Error(
-        'personal project at index ' +
-          index +
-          ' missing "name" — content-based ID requires a stable key'
+        `personal project at index ${ 
+          index 
+          } missing "name" — content-based ID requires a stable key`
       );
-    const id = trackSeed('personal-project-' + project.name, 'personal-project: ' + project.name);
+    const id = trackSeed(`personal-project-${  project.name}`, `personal-project: ${  project.name}`);
     const columns = [
       'id',
       'resume_id',
@@ -497,9 +497,9 @@ function buildLanguageStatements(languages) {
   const results = ensureArray(languages).map((language, index) => {
     if (!language.name)
       throw new Error(
-        'language at index ' + index + ' missing "name" — content-based ID requires a stable key'
+        `language at index ${  index  } missing "name" — content-based ID requires a stable key`
       );
-    const id = trackSeed('language-' + language.name, 'language: ' + language.name);
+    const id = trackSeed(`language-${  language.name}`, `language: ${  language.name}`);
     const columns = ['id', 'resume_id', 'name', 'level', 'display_order'];
     const values = [
       escapeSql(id),
@@ -526,11 +526,11 @@ function buildInfrastructureStatements(items) {
   const results = ensureArray(items).map((item, index) => {
     if (!item.title)
       throw new Error(
-        'infrastructure item at index ' +
-          index +
-          ' missing "title" — content-based ID requires a stable key'
+        `infrastructure item at index ${ 
+          index 
+          } missing "title" — content-based ID requires a stable key`
       );
-    const id = trackSeed('infra-' + item.title, 'infrastructure: ' + item.title);
+    const id = trackSeed(`infra-${  item.title}`, `infrastructure: ${  item.title}`);
     const columns = [
       'id',
       'resume_id',
@@ -580,11 +580,11 @@ function generateSql(data) {
   const languages = buildLanguageStatements(data.languages);
   const infrastructure = buildInfrastructureStatements(data.infrastructure);
 
-  const profileWhere = 'resume_id = ' + escapeSql(PROFILE_ID);
+  const profileWhere = `resume_id = ${  escapeSql(PROFILE_ID)}`;
   const skillsWhere =
-    'category_id IN (SELECT id FROM resume_skill_categories WHERE resume_id = ' +
-    escapeSql(PROFILE_ID) +
-    ')';
+    `category_id IN (SELECT id FROM resume_skill_categories WHERE resume_id = ${ 
+    escapeSql(PROFILE_ID) 
+    })`;
 
   const sections = [
     {
@@ -669,7 +669,7 @@ function generateSql(data) {
     resume_oss_contributions: ensureArray(data.ossContributions).length,
   };
 
-  const parts = ['-- Generated by seed-resume-data.mjs at ' + new Date().toISOString(), 'BEGIN;'];
+  const parts = [`-- Generated by seed-resume-data.mjs at ${  new Date().toISOString()}`, 'BEGIN;'];
 
   sections.forEach((section) => {
     parts.push(section.comment);
@@ -681,7 +681,7 @@ function generateSql(data) {
   parts.push('COMMIT;');
 
   return {
-    sql: parts.join('\n\n') + '\n',
+    sql: `${parts.join('\n\n')  }\n`,
     counts,
   };
 }
@@ -689,16 +689,16 @@ function generateSql(data) {
 function formatSummary(counts) {
   return [
     'Seed SQL generated: seed.sql',
-    '  resume_profiles: ' + counts.resume_profiles + ' row',
-    '  resume_careers: ' + counts.resume_careers + ' rows',
-    '  resume_projects: ' + counts.resume_projects + ' rows',
-    '  resume_certifications: ' + counts.resume_certifications + ' rows',
-    '  resume_skill_categories: ' + counts.resume_skill_categories + ' rows',
-    '  resume_skills: ' + counts.resume_skills + ' rows',
-    '  resume_personal_projects: ' + counts.resume_personal_projects + ' rows',
-    '  resume_languages: ' + counts.resume_languages + ' rows',
-    '  resume_infrastructure: ' + counts.resume_infrastructure + ' rows',
-    '  resume_oss_contributions: ' + counts.resume_oss_contributions + ' rows',
+    `  resume_profiles: ${  counts.resume_profiles  } row`,
+    `  resume_careers: ${  counts.resume_careers  } rows`,
+    `  resume_projects: ${  counts.resume_projects  } rows`,
+    `  resume_certifications: ${  counts.resume_certifications  } rows`,
+    `  resume_skill_categories: ${  counts.resume_skill_categories  } rows`,
+    `  resume_skills: ${  counts.resume_skills  } rows`,
+    `  resume_personal_projects: ${  counts.resume_personal_projects  } rows`,
+    `  resume_languages: ${  counts.resume_languages  } rows`,
+    `  resume_infrastructure: ${  counts.resume_infrastructure  } rows`,
+    `  resume_oss_contributions: ${  counts.resume_oss_contributions  } rows`,
   ].join('\n');
 }
 

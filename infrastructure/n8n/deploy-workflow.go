@@ -23,10 +23,13 @@ const (
 )
 
 var (
-	n8nURL       = getenvOrDefault("N8N_URL", "https://n8n.jclee.me")
-	n8nAPIKey    = os.Getenv("N8N_API_KEY")
-	workflowFile = "resume/resume-unified-workflow.json"
-	httpClient   = &http.Client{Timeout: 30 * time.Second}
+	n8nURL           = getenvOrDefault("N8N_URL", "https://n8n.jclee.me")
+	n8nAPIKey        = os.Getenv("N8N_API_KEY")
+	cfAccessClientID = os.Getenv("CF_ACCESS_CLIENT_ID")
+	cfAccessSecret   = os.Getenv("CF_ACCESS_CLIENT_SECRET")
+	cfAccessCookie   = os.Getenv("CF_ACCESS_COOKIE")
+	workflowFile     = "resume/resume-unified-workflow.json"
+	httpClient       = &http.Client{Timeout: 30 * time.Second}
 )
 
 type workflowsResponse struct {
@@ -262,8 +265,17 @@ func apiRequest(method, path string, payload []byte) ([]byte, int, error) {
 	}
 
 	req.Header.Set("X-N8N-API-KEY", n8nAPIKey)
+	if cfAccessClientID != "" {
+		req.Header.Set("CF-Access-Client-Id", cfAccessClientID)
+	}
+	if cfAccessSecret != "" {
+		req.Header.Set("CF-Access-Client-Secret", cfAccessSecret)
+	}
 	if payload != nil {
 		req.Header.Set("Content-Type", "application/json")
+	}
+	if cfAccessCookie != "" {
+		req.Header.Set("Cookie", cfAccessCookie)
 	}
 
 	resp, err := httpClient.Do(req)

@@ -13,11 +13,11 @@ Automation suite for build, deployment, monitoring, and verification.
 ```text
 scripts/
 ├── build/              # asset generation (PDF, PPTX, icons, screenshots)
-├── deployment/         # quick-deploy.sh, grafana helpers
+├── deployment/         # quick-deploy.go, grafana helpers
 ├── monitoring/         # observability scripts
 ├── setup/              # gitlab-ci setup
 ├── utils/              # sync-resume-data.js, shared helpers
-└── verification/       # verify-deployment.sh (7-point check)
+└── verification/       # verify-deployment.go (7-point check)
 ```
 
 ## CHILD GUIDES
