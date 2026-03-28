@@ -90,11 +90,15 @@ validate:wrangler-types:
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       changes:
-        - apps/portfolio/worker.js
+        - apps/portfolio/index.html
+        - apps/portfolio/index-en.html
+        - apps/portfolio/generate-worker.js
         - apps/portfolio/wrangler.toml
     - if: $CI_COMMIT_BRANCH == "master"
       changes:
-        - apps/portfolio/worker.js
+        - apps/portfolio/index.html
+        - apps/portfolio/index-en.html
+        - apps/portfolio/generate-worker.js
         - apps/portfolio/wrangler.toml
 
 # =============================================================================
@@ -238,7 +242,8 @@ verify:csp:
 
 # =============================================================================
 # TERRAFORM (Infrastructure)
-# Note: Plan-only, apply is manual
+# Note: Plan-only for validation. Apply is NOT included in validation-only CI.
+# Infrastructure changes are deployed separately via authorized operations.
 # =============================================================================
 
 .terraform: &terraform
@@ -259,30 +264,3 @@ terraform:plan:
   artifacts:
     paths:
       - infrastructure/cloudflare/tfplan
-
-terraform:apply:
-  <<: *terraform
-  stage: verify
-  script:
-    - terraform apply -auto-approve tfplan
-  when: manual
-  environment:
-    name: terraform
-  needs:
-    - terraform:plan
-
-# =============================================================================
-# RELEASE
-# Note: Manual semantic-release for GitLab
-# =============================================================================
-
-release:semantic:
-  stage: verify
-  image: node:22.13.0
-  before_script:
-    - npm install -g semantic-release@24.0.0 @semantic-release/gitlab@13.2.0
-  script:
-    - npx semantic-release
-  rules:
-    - if: $CI_COMMIT_BRANCH == "master"
-  when: manual
