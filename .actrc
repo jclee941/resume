@@ -1,0 +1,28 @@
+# act configuration for local GitHub Actions testing
+# https://github.com/nektos/act
+
+# Use medium size runner (ubuntu-latest equivalent)
+-P ubuntu-latest=catthehacker/ubuntu:act-latest
+
+# Use custom image for Node 22 compatibility
+-P ubuntu-22.04=catthehacker/ubuntu:act-22.04
+
+# Secrets for local testing (use with act -s SECRET_NAME=value)
+# Set these via command line or .secrets file:
+# - CLOUDFLARE_API_TOKEN
+# - CLOUDFLARE_ACCOUNT_ID
+# - GH_PAT
+# - SLACK_WEBHOOK_URL
+
+# Artifacts path
+--artifact-server-path /tmp/act-artifacts
+
+# Default event
+--event push
+
+# Container options
+--container-architecture linux/amd64
+
+# Environment variables
+--env CI=true
+--env NODE_ENV=test
