@@ -99,7 +99,7 @@ echo "Token length: ${#CLOUDFLARE_API_TOKEN}"
 
 # 배포 실행 (자동화 스크립트)
 cd /home/jclee/dev/resume
-./tools/scripts/deployment/quick-deploy.sh
+go run ./tools/scripts/deployment/quick-deploy.go
 ```
 
 **실행 결과**:
@@ -263,7 +263,7 @@ npx wrangler whoami
 ```bash
 source ~/.env
 cd /home/jclee/dev/resume
-./tools/scripts/deployment/quick-deploy.sh
+go run ./tools/scripts/deployment/quick-deploy.go
 ```
 
 ---

@@ -10,7 +10,7 @@ The resume portfolio includes tmux-based deployment monitoring for real-time vis
 
 ```bash
 # Start deployment in monitored tmux session
-./tools/scripts/deployment/deploy-with-monitoring.sh
+go run ./tools/scripts/deployment/deploy-with-monitoring.go
 ```
 
 This will:
@@ -25,7 +25,7 @@ This will:
 
 ```bash
 # Monitor running deployment
-./tools/scripts/monitoring/monitor-deployment.sh
+go run ./tools/scripts/monitoring/monitor-deployment.go
 ```
 
 Choose from 4 monitoring modes:
@@ -40,7 +40,7 @@ Choose from 4 monitoring modes:
 ### 1. Interactive Mode (Attach)
 
 ```bash
-./tools/scripts/monitoring/monitor-deployment.sh
+go run ./tools/scripts/monitoring/monitor-deployment.go
 # Choose: 1
 
 # Inside tmux session:
@@ -53,7 +53,7 @@ Choose from 4 monitoring modes:
 ### 2. Stream Mode
 
 ```bash
-./tools/scripts/monitoring/monitor-deployment.sh
+go run ./tools/scripts/monitoring/monitor-deployment.go
 # Choose: 2
 
 # Output updates every 2 seconds
@@ -65,7 +65,7 @@ Choose from 4 monitoring modes:
 ### 3. Snapshot Mode
 
 ```bash
-./tools/scripts/monitoring/monitor-deployment.sh
+go run ./tools/scripts/monitoring/monitor-deployment.go
 # Choose: 3
 
 # Shows last 50 lines of session
@@ -76,7 +76,7 @@ Choose from 4 monitoring modes:
 ### 4. Error Search
 
 ```bash
-./tools/scripts/monitoring/monitor-deployment.sh
+go run ./tools/scripts/monitoring/monitor-deployment.go
 # Choose: 4
 
 # Searches for:
@@ -217,14 +217,14 @@ which tmux
 tmux list-sessions
 
 # Restart deployment
-./tools/scripts/deployment/deploy-with-monitoring.sh
+go run ./tools/scripts/deployment/deploy-with-monitoring.go
 ```
 
 ### Permission denied
 
 ```bash
-# Make scripts executable
-chmod +x tools/scripts/*.sh
+# Go scripts run with go run, so no chmod step is required
+go version
 ```
 
 ### Session hangs

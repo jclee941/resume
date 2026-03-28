@@ -18,11 +18,11 @@
 
 ## 🟠 High Security Issues (3)
 
-4. **`scripts/utils/auto-job-search.sh:110,125,140,154`** - Command injection risk
+4. **`tools/scripts/utils/auto-job-search.go:110,125,140,154`** - Command injection risk
    - **Status**: ✅ FIXED (2025-12-22)
    - **Fix**: Added input validation, proper quoting, mktemp for temp files
 
-5. **`scripts/utils/auto-job-search.sh:88-90,119-125`** - Race condition on temp files
+5. **`tools/scripts/utils/auto-job-search.go:88-90,119-125`** - Race condition on temp files
    - **Status**: ✅ ALREADY FIXED
    - **Fix**: Already using `mktemp` with unique suffixes
 
@@ -54,7 +54,7 @@
 
 ## 🟢 Low Priority Issues (4)
 
-12. **`scripts/utils/auto-job-search.sh:348,343`** - Duplicate menu options
+12. **`tools/scripts/utils/auto-job-search.go:348,343`** - Duplicate menu options
     - **Status**: ✅ FIXED (2025-12-22)
 13. **`apps/portfolio/lib/utils.js:17-23`** - Missing JSDoc, error handling
     - **Status**: ⚠️ PENDING
@@ -82,7 +82,7 @@
 3. ✅ `.gitignore` updated with sensitive file patterns
 4. ✅ `.infisical.json` created for Infisical integration
 5. ✅ `docs/guides/INFISICAL_SETUP.md` created with migration guide
-6. ✅ `scripts/utils/auto-job-search.sh` syntax errors fixed
+6. ✅ `tools/scripts/utils/auto-job-search.go` syntax errors fixed
 7. ✅ All tests passing (223/223)
 8. ✅ Build successful (292KB worker)
 
@@ -104,7 +104,7 @@
 
 3. **Commit changes**:
    ```bash
-   git add .gitignore opencode.json .infisical.json docs/guides/INFISICAL_SETUP.md scripts/utils/auto-job-search.sh
+   git add .gitignore opencode.json .infisical.json docs/guides/INFISICAL_SETUP.md tools/scripts/utils/auto-job-search.go
    git commit -m "security: migrate secrets to Infisical, fix script vulnerabilities"
    ```
 

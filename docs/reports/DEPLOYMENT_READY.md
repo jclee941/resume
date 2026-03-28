@@ -20,10 +20,10 @@
    - Logs to Grafana Loki
 
 3. **Deployment Automation** (Commit: 634c44d)
-   - `quick-deploy.sh`: One-command deployment
-   - `deploy-helper.sh`: 6-stage pipeline
-   - `verify-deployment.sh`: 7-check verification
-   - Complete documentation in `scripts/README.md`
+   - `quick-deploy.go`: One-command deployment
+   - `deploy-helper.go`: 6-stage pipeline
+   - `verify-deployment.go`: 7-check verification
+   - Complete documentation in `tools/scripts/README.md`
 
 ### ✅ Quality Assurance
 - **Unit Tests**: ✅ All passing
@@ -51,7 +51,7 @@ export CLOUDFLARE_API_TOKEN=your_token_here
 
 # 2. Deploy with one command
 cd /home/jclee/dev/resume
-./scripts/deployment/quick-deploy.sh
+go run ./tools/scripts/deployment/quick-deploy.go
 ```
 
 **What happens**:
@@ -101,7 +101,7 @@ cd apps/portfolio && npx wrangler deploy
 After deployment, run comprehensive verification:
 
 ```bash
-./scripts/verification/verify-deployment.sh
+go run ./tools/scripts/verification/verify-deployment.go
 ```
 
 **7 Automated Checks**:
@@ -233,7 +233,7 @@ All development, testing, and automation was completed without user intervention
 1. **Quick Deploy** (2 minutes):
    ```bash
    export CLOUDFLARE_API_TOKEN=your_token
-   ./scripts/deployment/quick-deploy.sh
+   go run ./tools/scripts/deployment/quick-deploy.go
    ```
 
 2. **GitHub Auto-Deploy** (5 minutes):
@@ -247,7 +247,7 @@ All development, testing, and automation was completed without user intervention
 
 ### Post-Deployment
 
-1. ✅ Run verification: `./scripts/verification/verify-deployment.sh`
+1. ✅ Run verification: `go run ./tools/scripts/verification/verify-deployment.go`
 2. ✅ Test social media previews (3 platforms)
 3. ✅ Monitor Web Vitals in Grafana
 4. ✅ Check GitHub Actions workflow (if used)
@@ -271,7 +271,7 @@ Based on Grok AI analysis of resume content:
 | **CLOUDFLARE_AUTH_METHODS.md** | Authentication methods comparison ⭐ NEW |
 | **GET_CLOUDFLARE_API_TOKEN.md** | Step-by-step token generation |
 | **MANUAL_DEPLOYMENT_GUIDE.md** | Comprehensive troubleshooting (517 lines) |
-| **scripts/README.md** | Automation scripts reference |
+| **tools/scripts/README.md** | Automation scripts reference |
 | **DEPLOYMENT_STATUS.md** | Historical deployment tracking |
 | **OpenCode.md** | Project architecture and commands |
 
@@ -291,7 +291,7 @@ Based on Grok AI analysis of resume content:
 
 **If deployment fails**:
 1. Check `~/.config/.wrangler/logs/` for error details
-2. Run `./scripts/verification/verify-deployment.sh` to diagnose
+2. Run `go run ./tools/scripts/verification/verify-deployment.go` to diagnose
 3. See troubleshooting in `MANUAL_DEPLOYMENT_GUIDE.md`
 4. Check GitHub Actions logs: https://github.com/qws941/resume/actions
 
@@ -306,7 +306,7 @@ Based on Grok AI analysis of resume content:
 **Confidence Level**: HIGH (100% tests passing, 3 automation options)
 **Estimated Time**: 2-5 minutes depending on method
 
-**Just run**: `./scripts/deployment/quick-deploy.sh` (after setting `CLOUDFLARE_API_TOKEN`)
+**Just run**: `go run ./tools/scripts/deployment/quick-deploy.go` (after setting `CLOUDFLARE_API_TOKEN`)
 
 ---
 

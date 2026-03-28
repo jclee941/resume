@@ -340,8 +340,8 @@ web_vitals_received{job="resume"}
 
 ```bash
 # Deploy workflow to n8n
-cd n8n
-./deploy-workflow.sh resume-healthcheck-oauth2.json
+cd infrastructure/n8n
+go run ./deploy-workflow.go resume-healthcheck-oauth2.json
 
 # Check workflow status
 curl -X GET "https://n8n.jclee.me/api/v1/workflows" \
@@ -431,8 +431,8 @@ sudo vim /volume1/docker/prometheus/prometheus.yml
 sudo systemctl restart prometheus
 
 # Update n8n workflow
-cd n8n
-./deploy-workflow.sh resume-healthcheck-oauth2.json
+cd infrastructure/n8n
+go run ./deploy-workflow.go resume-healthcheck-oauth2.json
 ```
 
 ### Backup Strategy

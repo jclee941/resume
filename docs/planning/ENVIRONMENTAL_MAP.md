@@ -138,7 +138,7 @@ pdf_generation:
       dependencies: ['markdown', 'weasyprint', 'beautifulsoup4']
 
     pandoc:
-      command: 'cd toss && ./pdf-convert.sh'
+      command: 'cd toss && go run ./pdf-convert.go'
       dependencies: ['pandoc', 'texlive-xetex', 'texlive-lang-korean']
 ```
 

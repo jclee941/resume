@@ -538,10 +538,10 @@ export N8N_URL="https://n8n.jclee.me"
 
 ```bash
 # Navigate to n8n directory
-cd /home/jclee/dev/resume/n8n
+cd /home/jclee/dev/resume/infrastructure/n8n
 
 # Deploy workflow
-./deploy-workflow.sh resume-healthcheck-oauth2.json
+go run ./deploy-workflow.go resume-healthcheck-oauth2.json
 
 # Expected output:
 # ✓ Reading workflow file...

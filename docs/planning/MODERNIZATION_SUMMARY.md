@@ -132,8 +132,8 @@ ts sync
 3. **dee66ab** - feat: Add Slack integration and deployment monitoring
    - Created `docs/guides/SLACK_INTEGRATION.md`
    - Created `docs/guides/MONITORING_GUIDE.md`
-   - Created `scripts/deployment/deploy-with-monitoring.sh`
-   - Created `scripts/monitoring/monitor-deployment.sh`
+   - Created `tools/scripts/deployment/deploy-with-monitoring.go`
+   - Created `tools/scripts/monitoring/monitor-deployment.go`
    - Updated `.github/workflows/release.yml`
 
 ---

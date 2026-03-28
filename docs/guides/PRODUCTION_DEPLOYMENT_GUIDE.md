@@ -135,10 +135,10 @@ node src/auto-apply/cli/index.js help
 node src/auto-apply/cli/index.js unified --max=1
 
 # 모니터링 테스트
-./auto-monitor.sh
+go run ./apps/job-server/scripts/ops/auto-monitor/main.go
 
 # 유지보수 테스트
-./auto-maintenance.sh
+go run ./apps/job-server/scripts/ops/auto-maintenance/main.go
 ```
 
 ### 3단계: 플랫폼 연결 테스트
@@ -238,7 +238,7 @@ cp apps/job-server/.env "$BACKUP_DIR/"
 # pg_dump auto_apply > "$BACKUP_DIR/database.sql"
 
 # 통계 백업
-apps/job-server/auto-monitor.sh > "$BACKUP_DIR/system_status.txt"
+go run ./apps/job-server/scripts/ops/auto-monitor/main.go > "$BACKUP_DIR/system_status.txt"
 
 echo "백업 완료: $BACKUP_DIR"
 EOF
@@ -256,10 +256,10 @@ chmod +x backup-auto-apply.sh
 ./backup-auto-apply.sh restore /path/to/backup
 
 # 데이터 검증
-./auto-monitor.sh
+go run ./apps/job-server/scripts/ops/auto-monitor/main.go
 
 # 기능 테스트
-./auto-daily-run.sh
+go run ./apps/job-server/scripts/ops/auto-daily-run/main.go
 ```
 
 ## 8. 보안 설정
@@ -271,10 +271,7 @@ chmod +x backup-auto-apply.sh
 chmod 600 apps/job-server/.env
 chmod 600 apps/job-server/config/auto-apply.json
 
-# 실행 파일 권한 설정
-chmod 755 apps/job-server/auto-daily-run.sh
-chmod 755 apps/job-server/auto-monitor.sh
-chmod 755 apps/job-server/auto-maintenance.sh
+# Go source scripts run via go run; no chmod step is required
 ```
 
 ### 방화벽 설정
@@ -325,8 +322,8 @@ pm2 monit
 
 ### 정기 점검 항목
 
-- [ ] 매일: 시스템 상태 모니터링 (`./auto-monitor.sh`)
-- [ ] 매주: 전체 시스템 점검 (`./auto-maintenance.sh`)
+- [ ] 매일: 시스템 상태 모니터링 (`go run ./apps/job-server/scripts/ops/auto-monitor/main.go`)
+- [ ] 매주: 전체 시스템 점검 (`go run ./apps/job-server/scripts/ops/auto-maintenance/main.go`)
 - [ ] 매월: 성능 분석 및 최적화
 - [ ] 분기별: 보안 업데이트 및 패치 적용
 
@@ -335,7 +332,7 @@ pm2 monit
 ```bash
 # Grafana + Prometheus 설정 (선택사항)
 # 또는 간단한 모니터링 스크립트 사용
-watch -n 300 './auto-monitor.sh'
+watch -n 300 'go run ./apps/job-server/scripts/ops/auto-monitor/main.go'
 ```
 
 ## 11. 문제 해결
@@ -410,7 +407,7 @@ const matchScore = await aiMatcher.calculateMatch(resume, jobPosting);
 문제가 발생하거나 도움이 필요한 경우:
 
 1. 로그 파일 확인: `apps/job-server/logs/`
-2. 모니터링 실행: `./auto-monitor.sh`
+2. 모니터링 실행: `go run ./apps/job-server/scripts/ops/auto-monitor/main.go`
 3. 문서 참조: `docs/guides/AUTO_APPLY_ACTIVATION_GUIDE.md`
 4. 이슈 리포트: GitHub Issues
 
@@ -418,8 +415,8 @@ const matchScore = await aiMatcher.calculateMatch(resume, jobPosting);
 
 **배포 완료 후 확인사항:**
 
-- [ ] 시스템 상태: `./auto-monitor.sh`
-- [ ] 자동화 실행: `./auto-daily-run.sh`
+- [ ] 시스템 상태: `go run ./apps/job-server/scripts/ops/auto-monitor/main.go`
+- [ ] 자동화 실행: `go run ./apps/job-server/scripts/ops/auto-daily-run/main.go`
 - [ ] 워크플로우 실행 확인: `/job/api/workflows/*/run` 호출 결과 점검
 - [ ] 로그 모니터링: `tail -f apps/job-server/logs/*.log`
 
