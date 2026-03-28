@@ -36,24 +36,20 @@ class FileOperationError extends Error {
  */
 function safeReadFile(filePath, encoding = 'utf-8') {
   const fileName = path.basename(filePath);
-  
+
   // Check if file exists first
   if (!fs.existsSync(filePath)) {
-    throw new FileOperationError(
-      `File not found: ${fileName}`,
-      filePath,
-      'read'
-    );
+    throw new FileOperationError(`File not found: ${fileName}`, filePath, 'read');
   }
-  
+
   try {
     const stats = fs.statSync(filePath);
-    
+
     // Warn if file is unusually large (> 5MB)
     if (stats.size > 5 * 1024 * 1024) {
       logger.warn(`Large file detected: ${fileName} (${(stats.size / 1024 / 1024).toFixed(2)}MB)`);
     }
-    
+
     return fs.readFileSync(filePath, encoding);
   } catch (err) {
     throw new FileOperationError(
@@ -80,9 +76,7 @@ function generateHash(content) {
  * @returns {string} MD5 hash
  */
 function calculateDataHash(data) {
-  return crypto.createHash('md5')
-    .update(JSON.stringify(data), 'utf-8')
-    .digest('hex');
+  return crypto.createHash('md5').update(JSON.stringify(data), 'utf-8').digest('hex');
 }
 
 /**
@@ -94,7 +88,7 @@ function calculateDataHash(data) {
 function readAllFiles(files) {
   const contents = {};
   const errors = [];
-  
+
   for (const file of files) {
     try {
       contents[file.name] = safeReadFile(file.path, file.encoding);
@@ -102,17 +96,17 @@ function readAllFiles(files) {
       errors.push(err);
     }
   }
-  
+
   // Report all errors at once for better debugging
   if (errors.length > 0) {
-    const errorMessages = errors.map(e => e.message).join('\n  - ');
+    const errorMessages = errors.map((e) => e.message).join('\n  - ');
     throw new FileOperationError(
       `Failed to read ${errors.length} file(s):\n  - ${errorMessages}`,
       errors[0].filePath,
       'readAll'
     );
   }
-  
+
   return contents;
 }
 
@@ -131,10 +125,13 @@ function safeParseJSON(jsonString, source = 'unknown') {
       // Try to find the error location
       const match = err.message.match(/position (\d+)/);
       const position = match ? parseInt(match[1], 10) : -1;
-      const context = position > 0 
-        ? `...${jsonString.substring(Math.max(0, position - 20), position + 20)}...`
-        : '';
-      throw new Error(`Invalid JSON in ${source}: ${err.message}${context ? ` near: ${context}` : ''}`);
+      const context =
+        position > 0
+          ? `...${jsonString.substring(Math.max(0, position - 20), position + 20)}...`
+          : '';
+      throw new Error(
+        `Invalid JSON in ${source}: ${err.message}${context ? ` near: ${context}` : ''}`
+      );
     }
     throw err;
   }
@@ -146,10 +143,7 @@ function safeParseJSON(jsonString, source = 'unknown') {
  * @returns {string} Sanitized string
  */
 function sanitizeForTemplate(str) {
-  return str
-    .replace(/\\/g, '\\\\')
-    .replace(/`/g, '\\`')
-    .replace(/\$/g, '\\$');
+  return str.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$/g, '\\$');
 }
 
 /**
@@ -172,6 +166,44 @@ function escapeHtml(unsafe) {
     .replace(/'/g, '&#039;');
 }
 
+/**
+ * Sanitize a URL for safe use in href attributes.
+ * Blocks dangerous protocols (javascript:, data:, vbscript:) while allowing
+ * http:, https:, mailto:, tel:, and relative paths.
+ * @param {string} url - URL to sanitize
+ * @returns {string} Safe URL or empty string if dangerous
+ */
+function sanitizeHref(url) {
+  if (typeof url !== 'string') return '';
+  const trimmed = url.trim();
+  if (!trimmed) return '';
+  // Block control characters (null-byte injection, tab/newline smuggling)
+  // eslint-disable-next-line no-control-regex
+  if (/[\u0000-\u001F\u007F]/.test(trimmed)) return '';
+  // Block protocol-relative URLs (//evil.com)
+  if (trimmed.startsWith('//')) return '';
+  // Relative paths are safe — but only single slash
+  // eslint-disable-next-line no-control-regex
+  if (/[\u0000-\u001F\u007F]/.test(trimmed)) return '';
+  // Relative paths are safe — but reject protocol-relative URLs (//evil.com)
+  if (
+    (trimmed.startsWith('/') && !trimmed.startsWith('//')) ||
+    trimmed.startsWith('#') ||
+    trimmed.startsWith('.')
+  )
+    return trimmed;
+  // Allow only safe protocols
+  const safeProtocols = ['https:', 'http:', 'mailto:', 'tel:'];
+  try {
+    const parsed = new URL(trimmed);
+    if (safeProtocols.includes(parsed.protocol)) return trimmed;
+  } catch (_e) {
+    // Not a valid URL — if it has no colon before first slash, treat as relative
+    if (!trimmed.includes(':') || trimmed.indexOf('/') < trimmed.indexOf(':')) return trimmed;
+  }
+  return '';
+}
+
 module.exports = {
   safeReadFile,
   generateHash,
@@ -180,5 +212,6 @@ module.exports = {
   safeParseJSON,
   sanitizeForTemplate,
   escapeHtml,
+  sanitizeHref,
   FileOperationError,
 };
