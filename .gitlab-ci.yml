@@ -1,6 +1,10 @@
 # GitLab CI/CD Configuration
 # Mirrors GitHub Actions workflows for resume repository
 # Target: Self-hosted GitLab at http://192.168.50.215:8929
+# 
+# IMPORTANT: This CI is validation-only per repo policy.
+# Production deployment authority is Cloudflare Workers Builds.
+# See: tools/ci/AGENTS.md
 
 stages:
   - analyze
@@ -10,14 +14,13 @@ stages:
   - test
   - security
   - build
-  - deploy
   - verify
 
 variables:
   NODE_VERSION: "22"
   NPM_CONFIG_CACHE: "$CI_PROJECT_DIR/.npm"
-  CF_API_KEY: "$CLOUDFLARE_API_KEY"
-  CF_EMAIL: "$CLOUDFLARE_EMAIL"
+  # Cloudflare credentials for validation only (not deployment)
+  CF_API_TOKEN: "$CLOUDFLARE_API_TOKEN"
   CF_ACCOUNT_ID: "$CLOUDFLARE_ACCOUNT_ID"
 
 # Cache configuration
@@ -41,10 +44,19 @@ default:
 
 analyze:affected:
   stage: analyze
-  image: golang:1.23
+  image: golang:1.23.5
   before_script: []
   script:
-    - go run tools/ci/affected.go HEAD~1 .affected
+    # Calculate base ref: use MR target branch or default to HEAD~1
+    - |
+      if [ -n "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" ]; then
+        BASE_REF="origin/${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}"
+        git fetch origin ${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}
+      else
+        BASE_REF="HEAD~1"
+      fi
+      echo "Base ref: $BASE_REF"
+    - go run tools/ci/affected.go "$BASE_REF" .affected
   artifacts:
     reports:
       dotenv: .affected/affected.env
@@ -62,13 +74,28 @@ analyze:affected:
 
 validate:cloudflare:
   stage: validate
-  image: golang:latest
+  image: golang:1.23.5
   before_script: []
   script:
     - go run ./tools/ci/validate-cloudflare-native.go
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH == "master"
+
+validate:wrangler-types:
+  stage: validate
+  script:
+    - npm install -g wrangler@3.100.0
+    - cd apps/portfolio && wrangler types --include-env=false
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - apps/portfolio/worker.js
+        - apps/portfolio/wrangler.toml
+    - if: $CI_COMMIT_BRANCH == "master"
+      changes:
+        - apps/portfolio/worker.js
+        - apps/portfolio/wrangler.toml
 
 # =============================================================================
 # LINT STAGE
@@ -119,7 +146,6 @@ test:e2e:
   image: mcr.microsoft.com/playwright:v1.58.2-jammy
   script:
     - npm ci
-    - npx playwright install --with-deps
     - npm run test:e2e
   artifacts:
     when: always
@@ -164,10 +190,8 @@ build:portfolio:
   stage: build
   script:
     - npm run build
-    - cd apps/portfolio && node generate-worker.js
   artifacts:
     paths:
-      - apps/portfolio/worker.js
       - dist/
     expire_in: 1 day
   rules:
@@ -175,42 +199,18 @@ build:portfolio:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
 
 # =============================================================================
-# DEPLOY STAGE
-# =============================================================================
-
-deploy:cloudflare:
-  stage: deploy
-  image: node:${NODE_VERSION}
-  before_script:
-    - npm ci
-    - npm install -g wrangler
-  script:
-    - cd apps/portfolio
-    - wrangler deploy --env production
-  environment:
-    name: production
-    url: https://resume.jclee.me
-  rules:
-    - if: $CI_COMMIT_BRANCH == "master"
-      when: on_success
-  needs:
-    - build:portfolio
-    - test:jest
-    - test:e2e
-    - security:gitleaks
-
-# =============================================================================
 # VERIFY STAGE
+# Note: Verification against production (not deployment)
 # =============================================================================
 
-verify:deployment:
+verify:production-health:
   stage: verify
-  image: alpine:latest
+  image: alpine:3.21
   before_script:
     - apk add --no-cache curl jq
   script:
     - |
-      echo "Verifying deployment..."
+      echo "Verifying production deployment..."
       curl -sf https://resume.jclee.me/health | jq -e '.status == "healthy"' || exit 1
       echo "Health check passed!"
       
@@ -218,12 +218,11 @@ verify:deployment:
       echo "Metrics endpoint verified!"
   rules:
     - if: $CI_COMMIT_BRANCH == "master"
-  needs:
-    - deploy:cloudflare
+  when: manual
 
 verify:csp:
   stage: verify
-  image: alpine:latest
+  image: alpine:3.21
   before_script:
     - apk add --no-cache curl
   script:
@@ -235,15 +234,15 @@ verify:csp:
       echo "CSP headers verified!"
   rules:
     - if: $CI_COMMIT_BRANCH == "master"
-  needs:
-    - deploy:cloudflare
+  when: manual
 
 # =============================================================================
 # TERRAFORM (Infrastructure)
+# Note: Plan-only, apply is manual
 # =============================================================================
 
 .terraform: &terraform
-  image: hashicorp/terraform:latest
+  image: hashicorp/terraform:1.10.3
   before_script:
     - cd infrastructure/cloudflare
     - terraform init
@@ -263,7 +262,7 @@ terraform:plan:
 
 terraform:apply:
   <<: *terraform
-  stage: deploy
+  stage: verify
   script:
     - terraform apply -auto-approve tfplan
   when: manual
@@ -274,12 +273,15 @@ terraform:apply:
 
 # =============================================================================
 # RELEASE
+# Note: Manual semantic-release for GitLab
 # =============================================================================
 
 release:semantic:
-  stage: deploy
+  stage: verify
+  image: node:22.13.0
+  before_script:
+    - npm install -g semantic-release@24.0.0 @semantic-release/gitlab@13.2.0
   script:
-    - npm install -g semantic-release @semantic-release/gitlab
     - npx semantic-release
   rules:
     - if: $CI_COMMIT_BRANCH == "master"
