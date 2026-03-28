@@ -107,14 +107,18 @@ func allStageDefinitions() map[string]stageDefinition {
 		"analyze": {
 			Name:         "analyze",
 			ExpectedJobs: []string{"analyze"},
-			Commands:     [][]string{{"go", "run", "tools/ci/affected.go"}},
+			Commands:     [][]string{{"go", "run", "./tools/ci/affected.go"}},
 			Description:  "Analyze affected targets",
 		},
 		"validate": {
 			Name:         "validate",
 			ExpectedJobs: []string{"validate-cloudflare"},
-			Commands:     [][]string{{"go", "run", "tools/ci/validate-cloudflare-native.go"}},
-			Description:  "Validate Cloudflare-native structure",
+			Commands: [][]string{
+				{"go", "run", "./tools/ci/validate-cloudflare-native.go"},
+				{"npx", "wrangler", "types", "/tmp/portfolio-worker-types.d.ts", "--config", "apps/portfolio/wrangler.toml", "--env", "production"},
+				{"npx", "wrangler", "types", "/tmp/job-dashboard-worker-types.d.ts", "--config", "apps/job-dashboard/wrangler.jsonc"},
+			},
+			Description: "Validate Cloudflare-native structure",
 		},
 		"lint": {
 			Name:         "lint",
@@ -128,32 +132,50 @@ func allStageDefinitions() map[string]stageDefinition {
 			Commands:     [][]string{{"npm", "run", "typecheck"}},
 			Description:  "Run TypeScript type checks",
 		},
+		"data-drift": {
+			Name:         "data-drift",
+			ExpectedJobs: []string{"data-drift"},
+			Commands: [][]string{
+				{"npm", "run", "sync:data"},
+				{"git", "diff", "--exit-code", "apps/portfolio/data.json", "apps/portfolio/data_en.json", "apps/portfolio/data_ja.json"},
+			},
+			Description: "Check for SSoT to portfolio data drift",
+		},
 		"test": {
 			Name:         "test",
 			ExpectedJobs: []string{"test-unit", "test-e2e"},
 			Commands: [][]string{
-				{"npm", "run", "test:jest"},
-				{"npm", "run", "test:e2e"},
+				{"npm", "test"},
+				{"npm", "run", "test:coverage"},
+				{"npm", "run", "sync:data"},
+				{"npm", "--prefix", "apps/portfolio", "run", "build"},
+				{"npm", "run", "test:e2e:smoke"},
 			},
 			Description: "Run unit and E2E tests",
 		},
 		"security": {
 			Name:         "security",
 			ExpectedJobs: []string{"security-scan"},
-			Commands:     [][]string{{"npm", "audit", "--audit-level=moderate"}},
-			Description:  "Run security checks",
+			Commands: [][]string{
+				{"gitleaks", "detect", "--source", ".", "--config", ".gitleaks.toml", "--verbose", "--no-git"},
+				{"npm", "audit", "--audit-level=high"},
+			},
+			Description: "Run security checks",
 		},
 		"build": {
 			Name:         "build",
 			ExpectedJobs: []string{"build"},
-			Commands:     [][]string{{"npm", "run", "build"}},
-			Description:  "Build workspace artifacts",
+			Commands: [][]string{
+				{"npm", "run", "sync:data"},
+				{"npm", "--prefix", "apps/portfolio", "run", "build"},
+			},
+			Description: "Build workspace artifacts",
 		},
 	}
 }
 
 func selectStages(stageFlag string, defs map[string]stageDefinition) ([]string, error) {
-	ordered := []string{"analyze", "validate", "lint", "typecheck", "test", "security", "build"}
+	ordered := []string{"analyze", "validate", "lint", "typecheck", "data-drift", "test", "security", "build"}
 	if strings.TrimSpace(stageFlag) == "" {
 		return ordered, nil
 	}
