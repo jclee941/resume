@@ -88,18 +88,6 @@ func main() {
 			"AFFECTED_COUNT":         "0",
 		})
 		os.Exit(0)
-		mustWriteEnv(filepath.Join(outputDir, "affected.env"), map[string]string{
-			"PORTFOLIO_AFFECTED":     "false",
-			"JOB_DASHBOARD_AFFECTED": "false",
-			"JOB_SERVER_AFFECTED":    "false",
-			"DATA_AFFECTED":          "false",
-			"INFRA_AFFECTED":         "false",
-			"CLI_AFFECTED":           "false",
-			"SHARED_AFFECTED":        "false",
-			"AFFECTED_COUNT":         "0",
-		})
-		os.Exit(0)
-		os.Exit(0)
 	}
 
 	fmt.Println("=== Changed Files ===")

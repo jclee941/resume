@@ -17,6 +17,7 @@ stages:
   - verify
 
 variables:
+  NODE_VERSION: "22.13.0"
   NODE_VERSION: "22"
   NPM_CONFIG_CACHE: "$CI_PROJECT_DIR/.npm"
   # Cloudflare credentials for validation only (not deployment)
