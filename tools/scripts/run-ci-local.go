@@ -132,7 +132,7 @@ func allStageDefinitions() map[string]stageDefinition {
 			Name:         "test",
 			ExpectedJobs: []string{"test-unit", "test-e2e"},
 			Commands: [][]string{
-				{"npm", "run", "test:unit"},
+				{"npm", "run", "test:jest"},
 				{"npm", "run", "test:e2e"},
 			},
 			Description: "Run unit and E2E tests",
