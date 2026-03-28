@@ -35,6 +35,7 @@ type serviceSpec struct {
 	Args          []string
 	Color         string
 	HealthTimeout time.Duration
+	Env           []string
 }
 
 type serviceProcess struct {
@@ -197,6 +198,7 @@ func buildServiceSpecs(repoRoot string, withPortfolio, withJobServer, withN8N, w
 				Args:          args,
 				Color:         ldColorYellow,
 				HealthTimeout: 90 * time.Second,
+				Env:           []string{"N8N_WEBHOOK_URL=http://host.docker.internal:15678"},
 			})
 		}
 	}
@@ -233,6 +235,9 @@ func startSelectedServices(specs []serviceSpec, printer *linePrinter) ([]*servic
 func startAndWaitHealthy(spec serviceSpec, printer *linePrinter) (*serviceProcess, error) {
 	cmd := exec.Command(spec.Command, spec.Args...)
 	cmd.Dir = spec.Workdir
+	if len(spec.Env) > 0 {
+		cmd.Env = append(os.Environ(), spec.Env...)
+	}
 	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 
 	stdoutPipe, err := cmd.StdoutPipe()
