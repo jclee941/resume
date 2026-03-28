@@ -34,16 +34,16 @@ Current `scripts/` has 26 files. Recommendation: split into functional subdirect
 scripts/
 ├── deploy/              # Deployment scripts
 │   ├── deploy.sh
-│   ├── deploy-helper.sh
-│   ├── quick-deploy.sh
-│   ├── deploy-with-monitoring.sh
-│   └── deploy-grafana-configs.sh
+│   ├── deploy-helper.go
+│   ├── quick-deploy.go
+│   ├── deploy-with-monitoring.go
+│   └── deploy-grafana-configs.go
 ├── ci/                  # CI/CD & Quality
 │   ├── setup-github-actions.sh
 │   ├── auto-setup-github-actions.sh
-│   ├── verify-cicd.sh
-│   ├── verify-deployment.sh
-│   └── monitor-deployment.sh
+│   ├── verify-cicd.go
+│   ├── verify-deployment.go
+│   └── monitor-deployment.go
 ├── assets/              # Asset generation
 │   ├── generate-icons.js
 │   ├── generate-resume-variants.js
@@ -51,13 +51,13 @@ scripts/
 │   ├── generate_shinhan_pptx.py
 │   ├── convert-icons-to-png.js
 │   ├── optimize-images.js
-│   └── pdf-generator.sh
+│   └── pdf-generator.go
 └── utils/               # General utilities
     ├── sync-resume-data.js
     ├── bump-version.js
     ├── record-demo-video.js
     ├── configure-n8n-workflows.js
-    └── setup-monitoring.sh
+    └── setup-monitoring.go
 ```
 
 ## ACTION ITEMS

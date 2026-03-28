@@ -24,14 +24,14 @@
 
 ### PDF 이력서 생성
 
-`pandoc`을 사용하여 마크다운 이력서를 PDF 형식으로 변환하는 셸 스크립트가 제공됩니다.
+`pandoc`을 사용하여 마크다운 이력서를 PDF 형식으로 변환하는 Go 스크립트가 제공됩니다.
 
 ```bash
 # 스크립트가 있는 디렉토리로 이동
 cd company-specific
 
 # 변환 스크립트 실행
-./pdf-convert.sh
+go run ./pdf-convert.go
 ```
 
 **참고:** 이 스크립트를 실행하려면 `pandoc`과 LaTeX 엔진이 설치되어 있어야 합니다.

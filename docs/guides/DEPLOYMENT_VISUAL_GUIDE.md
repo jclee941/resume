@@ -31,7 +31,7 @@
 └──────────────────────────┼──────────────────────────────────────┘
                            │
                            │ wrangler deploy --config ... --env production
-                           │ (tools/scripts/deployment/quick-deploy.sh)
+                           │ (tools/scripts/deployment/quick-deploy.go)
                            ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │              Cloudflare Workers (Production)                     │
@@ -294,7 +294,7 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│  tools/scripts/verification/verify-deployment.sh                          │
+│  tools/tools/scripts/verification/verify-deployment.go                          │
 └─────────────────────────────────────────────────────────────┘
                            │
               ┌────────────┴────────────┐
@@ -418,7 +418,7 @@
 │  Step 3: Deploy                                               │
 │  ┌────────────────────────────────────────────────────────┐  │
 │  │  $ cd /home/jclee/dev/resume                  │  │
-│  │  $ ./tools/scripts/deployment/quick-deploy.sh                      │  │
+│  │  $ go run ./tools/scripts/deployment/quick-deploy.go                      │  │
 │  │                                                        │  │
 │  │  ✓ Authentication: Global API Key                     │  │
 │  │  ✓ Prerequisites check passed                         │  │
@@ -451,7 +451,7 @@ LOCAL DEVELOPMENT                 PRODUCTION
        │                         │  └──────────────┘
        │                         │
         │ ./tools/scripts/          │  ┌──────────────┐
-       │ quick-deploy.sh         │  │ Web Vitals   │
+       │ quick-deploy.go         │  │ Web Vitals   │
        │                         │  │   Tracking   │
        └─────────────────────────┼─▶└──────────────┘
                                  │
@@ -530,7 +530,7 @@ vim ~/.env
 source ~/.env
 
 # 3️⃣ 배포 실행
-cd /home/jclee/dev/resume && ./tools/scripts/deployment/quick-deploy.sh
+cd /home/jclee/dev/resume && go run ./tools/scripts/deployment/quick-deploy.go
 ```
 
 ### 인증 확인하기
@@ -542,7 +542,7 @@ source ~/.env && cd apps/portfolio && npx wrangler whoami
 ### 배포 검증하기
 
 ```bash
-./tools/scripts/verification/verify-deployment.sh
+go run ./tools/scripts/verification/verify-deployment.go
 ```
 
 ---

@@ -25,7 +25,7 @@
   - Manual trigger support (production/staging)
 
 #### Verification Script
-- **`tools/scripts/verification/verify-cicd.sh`** (279 lines)
+- **`tools/tools/scripts/verification/verify-cicd.go`** (279 lines)
   - Validates CI/CD configuration
   - Checks all prerequisites
   - Verifies GitHub Secrets
@@ -43,7 +43,7 @@
 #### Automation Scripts
 - **`tools/scripts/utils/record-demo-video.js`** (200 lines) - Automated demo recording
 - **`tools/scripts/build/generate-screenshots.js`** (258 lines) - Screenshot generation
-- **`tools/scripts/monitoring/setup-monitoring.sh`** (359 lines) - Monitoring setup
+- **`tools/tools/scripts/monitoring/setup-monitoring.go`** (359 lines) - Monitoring setup
 
 ---
 
@@ -223,7 +223,7 @@
 ### Verification
 ```bash
 # Verify CI/CD setup
-./tools/scripts/verification/verify-cicd.sh
+go run ./tools/scripts/verification/verify-cicd.go
 
 # Run tests locally
 npm test

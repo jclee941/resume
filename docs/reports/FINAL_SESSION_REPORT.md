@@ -144,7 +144,7 @@ npm run demo:record
 npm run screenshots:generate
 ```
 
-#### Monitoring Setup (`scripts/monitoring/setup-monitoring.sh`)
+#### Monitoring Setup (`tools/scripts/monitoring/setup-monitoring.go`)
 **359 lines**
 
 **Features**:
@@ -156,10 +156,10 @@ npm run screenshots:generate
 
 **Usage**:
 ```bash
-./scripts/monitoring/setup-monitoring.sh
+go run ./tools/scripts/monitoring/setup-monitoring.go
 ```
 
-#### CI/CD Verification (`scripts/verification/verify-cicd.sh`)
+#### CI/CD Verification (`tools/scripts/verification/verify-cicd.go`)
 **279 lines**
 
 **Features**:
@@ -171,7 +171,7 @@ npm run screenshots:generate
 
 **Usage**:
 ```bash
-./scripts/verification/verify-cicd.sh
+go run ./tools/scripts/verification/verify-cicd.go
 ```
 
 ---
@@ -464,7 +464,7 @@ CI/CD:             ci:verify, ci:local
 ### Verification Commands
 ```bash
 # Verify CI/CD setup
-./scripts/verification/verify-cicd.sh
+go run ./tools/scripts/verification/verify-cicd.go
 
 # Run all tests
 npm test

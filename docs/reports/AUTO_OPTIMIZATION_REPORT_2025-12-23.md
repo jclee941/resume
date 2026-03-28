@@ -108,7 +108,7 @@ npm run screenshots:generate
 
 ### 5. PDF Generation Enhancement ✅
 **Files Modified:**
-- `scripts/build/pdf-generator.sh` (enhanced)
+- `tools/scripts/build/pdf-generator.go` (enhanced)
 
 **npm Scripts:**
 ```bash
@@ -154,7 +154,7 @@ npm run pdf:all          # All formats
 ### 7. Performance Monitoring ✅
 **Files Created:**
 - `apps/portfolio/lib/performance-metrics.js` (280 lines)
-- `scripts/monitoring/setup-monitoring.sh`
+- `tools/scripts/monitoring/setup-monitoring.go`
 
 **npm Scripts:**
 ```bash
@@ -211,8 +211,8 @@ npm run ab-test:clear     # Clear data
 **Scripts (4):**
 1. `scripts/utils/record-demo-video.js` (250 lines)
 2. `scripts/build/generate-screenshots.js` (280 lines)
-3. `scripts/monitoring/setup-monitoring.sh` (new)
-4. Enhanced `scripts/build/pdf-generator.sh`
+3. `tools/scripts/monitoring/setup-monitoring.go` (new)
+4. Enhanced `tools/scripts/build/pdf-generator.go`
 
 **Libraries (3):**
 1. `apps/portfolio/lib/i18n.js` (180 lines)
@@ -288,9 +288,9 @@ npm run ab-test:clear     # Clear data
 {
   "demo:record": "node scripts/utils/record-demo-video.js",
   "screenshots:generate": "node scripts/build/generate-screenshots.js",
-  "pdf:generate": "bash scripts/build/pdf-generator.sh",
-  "pdf:all": "bash scripts/build/pdf-generator.sh all",
-  "monitoring:setup": "bash scripts/monitoring/setup-monitoring.sh",
+  "pdf:generate": "bash tools/scripts/build/pdf-generator.go",
+  "pdf:all": "bash tools/scripts/build/pdf-generator.go all",
+  "monitoring:setup": "bash tools/scripts/monitoring/setup-monitoring.go",
   "ab-test:init": "node -e \"require('./apps/portfolio/lib/ab-testing.js').initABTesting()\"",
   "ab-test:report": "node -e \"console.log(JSON.stringify(require('./apps/portfolio/lib/ab-testing.js').getTestSummary(), null, 2))\"",
   "ab-test:clear": "node -e \"require('./apps/portfolio/lib/ab-testing.js').clearAllTests()\""

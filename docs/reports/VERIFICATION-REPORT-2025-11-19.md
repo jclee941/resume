@@ -452,7 +452,7 @@ git push origin master
 | `n8n-workflows/README.md`               | Setup guide         | 364 lines (9.8 KB)     |
 | `docs/N8N-MONITORING-WORKFLOWS.md`      | Detailed design     | 276 lines (12 KB)      |
 | `docs/DEPLOYMENT-SUMMARY-2025-11-18.md` | Executive summary   | 289 lines (13 KB)      |
-| `tests/n8n-webhook-test.sh`             | Verification script | 187 lines (executable) |
+| `tests/n8n-webhook-test.go`             | Verification script | 187 lines (executable) |
 
 ### External Resources
 

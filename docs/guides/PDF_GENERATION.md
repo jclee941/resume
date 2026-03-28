@@ -22,11 +22,8 @@ Automated PDF generation system supporting multiple resume variants and technica
 ### Generate All PDFs
 
 ```bash
-# Make script executable (first time only)
-chmod +x tools/scripts/build/pdf-generator.sh
-
 # Generate all resume and documentation PDFs
-./tools/scripts/build/pdf-generator.sh all
+go run ./tools/scripts/build/pdf-generator.go all
 ```
 
 **Output**:
@@ -53,14 +50,14 @@ Technical documentation:
 
 ```bash
 # Resume variants
-./tools/scripts/build/pdf-generator.sh master      # Master resume
-./tools/scripts/build/pdf-generator.sh final       # Final submission resume
-./tools/scripts/build/pdf-generator.sh toss        # Toss-specific resume
+go run ./tools/scripts/build/pdf-generator.go master      # Master resume
+go run ./tools/scripts/build/pdf-generator.go final       # Final submission resume
+go run ./tools/scripts/build/pdf-generator.go toss        # Toss-specific resume
 
 # Technical documentation
-./tools/scripts/build/pdf-generator.sh nextrade_arch   # Architecture document
-./tools/scripts/build/pdf-generator.sh nextrade_dr     # DR plan
-./tools/scripts/build/pdf-generator.sh nextrade_soc    # SOC runbook
+go run ./tools/scripts/build/pdf-generator.go nextrade_arch   # Architecture document
+go run ./tools/scripts/build/pdf-generator.go nextrade_dr     # DR plan
+go run ./tools/scripts/build/pdf-generator.go nextrade_soc    # SOC runbook
 ```
 
 ## 📋 Prerequisites
@@ -112,7 +109,7 @@ Markdown Source Files
   └── resume/nextrade/*.md
          │
          ▼
-  tools/scripts/build/pdf-generator.sh
+  tools/scripts/build/pdf-generator.go
          │
          ├─ Check dependencies (Pandoc/Docker)
          ├─ Read version from package.json
@@ -132,7 +129,7 @@ Markdown Source Files
 
 ### Resume Variants
 
-Configured in `tools/scripts/build/pdf-generator.sh`:
+Configured in `tools/tools/scripts/build/pdf-generator.go`:
 
 ```bash
 # Resume variants (line 28-32)
@@ -181,7 +178,7 @@ LINESTRETCH="1.3"                   # Line spacing
 
 ### Adding New Resume Variant
 
-**Edit `tools/scripts/build/pdf-generator.sh`** (line 28-32):
+**Edit `tools/tools/scripts/build/pdf-generator.go`** (line 28-32):
 
 ```bash
 declare -A RESUME_VARIANTS=(
@@ -193,7 +190,7 @@ declare -A RESUME_VARIANTS=(
 **Generate**:
 
 ```bash
-./tools/scripts/build/pdf-generator.sh company
+go run ./tools/scripts/build/pdf-generator.go company
 ```
 
 ### Customizing PDF Appearance
@@ -274,7 +271,7 @@ Tracking "*.docx"
 
 ```bash
 # Generate PDFs
-./tools/scripts/build/pdf-generator.sh all
+go run ./tools/scripts/build/pdf-generator.go all
 
 # Stage files (LFS-tracked)
 git add master/*.pdf toss/*.pdf resume/nextrade/exports/*.pdf
@@ -321,7 +318,7 @@ git lfs fetch --recent    # Download recent LFS objects
 vim master/resume_master.md
 
 # 2. Generate PDFs
-./tools/scripts/build/pdf-generator.sh all
+go run ./tools/scripts/build/pdf-generator.go all
 
 # 3. Commit and push
 git add master/*.pdf
@@ -359,8 +356,7 @@ jobs:
 
       - name: Generate PDFs
         run: |
-          chmod +x tools/scripts/build/pdf-generator.sh
-          ./tools/scripts/build/pdf-generator.sh all
+          go run ./tools/scripts/build/pdf-generator.go all
 
       - name: Commit PDFs
         run: |
@@ -377,7 +373,7 @@ jobs:
 
 ```bash
 # Generate
-./tools/scripts/build/pdf-generator.sh master
+go run ./tools/scripts/build/pdf-generator.go master
 
 # Check file
 ls -lh master/resume_master_v1.0.3.pdf
@@ -394,7 +390,7 @@ pdfinfo master/resume_master_v1.0.3.pdf
 
 ```bash
 # Generate all
-./tools/scripts/build/pdf-generator.sh all
+go run ./tools/scripts/build/pdf-generator.go all
 
 # Check all generated PDFs
 find . -name "*_v1.0.3.pdf" -type f -exec ls -lh {} \;
@@ -410,7 +406,7 @@ find . -name "*.pdf" -type f -exec pdfinfo {} \; > /dev/null
 sudo mv /usr/bin/pandoc /usr/bin/pandoc.bak
 
 # Should use Docker automatically
-./tools/scripts/build/pdf-generator.sh master
+go run ./tools/scripts/build/pdf-generator.go master
 
 # Restore Pandoc
 sudo mv /usr/bin/pandoc.bak /usr/bin/pandoc
@@ -427,7 +423,7 @@ Version is automatically read from `package.json`:
 npm run version:bump
 
 # Generate with new version
-./tools/scripts/build/pdf-generator.sh all
+go run ./tools/scripts/build/pdf-generator.go all
 ```
 
 ### Adding New Font
@@ -449,7 +445,7 @@ fc-list | grep -i "newfont"
 **Use in script**:
 
 ```bash
-# Edit tools/scripts/build/pdf-generator.sh
+# Edit tools/scripts/build/pdf-generator.go
 readonly FONT_NEW="NewFont"
 
 # Add to variant
@@ -519,6 +515,6 @@ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook \
 ## 📞 Support
 
 - **Documentation**: This guide
-- **Script Issues**: Check `tools/scripts/build/pdf-generator.sh` comments
+- **Script Issues**: Check `tools/tools/scripts/build/pdf-generator.go` comments
 - **Questions**: qws941@kakao.com
 - **Repository**: https://github.com/qws941/resume

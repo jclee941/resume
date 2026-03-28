@@ -66,8 +66,8 @@ Implement and verify a comprehensive automated testing and optimization system f
 **Scripts (4):**
 - `scripts/utils/record-demo-video.js` (250 lines)
 - `scripts/build/generate-screenshots.js` (280 lines)
-- `scripts/monitoring/setup-monitoring.sh` (new)
-- Enhanced `scripts/build/pdf-generator.sh`
+- `tools/scripts/monitoring/setup-monitoring.go` (new)
+- Enhanced `tools/scripts/build/pdf-generator.go`
 
 **Libraries (3):**
 - `apps/portfolio/lib/i18n.js` (180 lines)
@@ -94,9 +94,9 @@ Implement and verify a comprehensive automated testing and optimization system f
 {
   "demo:record": "node scripts/utils/record-demo-video.js",
   "screenshots:generate": "node scripts/build/generate-screenshots.js",
-  "pdf:generate": "bash scripts/build/pdf-generator.sh",
-  "pdf:all": "bash scripts/build/pdf-generator.sh all",
-  "monitoring:setup": "bash scripts/monitoring/setup-monitoring.sh",
+  "pdf:generate": "bash tools/scripts/build/pdf-generator.go",
+  "pdf:all": "bash tools/scripts/build/pdf-generator.go all",
+  "monitoring:setup": "bash tools/scripts/monitoring/setup-monitoring.go",
   "ab-test:init": "node -e \"require('./apps/portfolio/lib/ab-testing.js').initABTesting()\"",
   "ab-test:report": "node -e \"console.log(JSON.stringify(require('./apps/portfolio/lib/ab-testing.js').getTestSummary(), null, 2))\"",
   "ab-test:clear": "node -e \"require('./apps/portfolio/lib/ab-testing.js').clearAllTests()\""

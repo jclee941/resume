@@ -4,35 +4,35 @@ Automation scripts for deploying the resume portfolio to Cloudflare Workers.
 
 ## Scripts Overview
 
-### `quick-deploy.sh` ⭐ RECOMMENDED
+### `quick-deploy.go` ⭐ RECOMMENDED
 
 **Purpose**: One-command deployment with all checks
 **Prerequisites**: `CLOUDFLARE_API_TOKEN` environment variable
 
 ```bash
 export CLOUDFLARE_API_TOKEN=your_token_here
-./tools/scripts/deployment/quick-deploy.sh
+go run ./tools/scripts/deployment/quick-deploy.go
 ```
 
 **What it does**:
 
 1. Validates `CLOUDFLARE_API_TOKEN` is set
-2. Runs `deploy-helper.sh` for deployment
-3. Runs `verify-deployment.sh` for validation
+2. Runs `deploy-helper.go` for deployment
+3. Runs `verify-deployment.go` for validation
 4. Shows production URLs and next steps
 
 **Use when**: You want the simplest, most automated deployment experience
 
 ---
 
-### `deploy-helper.sh`
+### `deploy-helper.go`
 
 **Purpose**: Step-by-step deployment with progress indicators
 **Prerequisites**: `CLOUDFLARE_API_TOKEN` environment variable
 
 ```bash
 export CLOUDFLARE_API_TOKEN=your_token_here
-./tools/scripts/deployment/deploy-helper.sh
+go run ./tools/scripts/deployment/deploy-helper.go
 ```
 
 **What it does** (6 stages):
@@ -48,13 +48,13 @@ export CLOUDFLARE_API_TOKEN=your_token_here
 
 ---
 
-### `verify-deployment.sh`
+### `verify-deployment.go`
 
 **Purpose**: Comprehensive deployment verification (7 checks)
 **Prerequisites**: None (read-only, no credentials needed)
 
 ```bash
-./tools/scripts/verification/verify-deployment.sh
+go run ./tools/scripts/verification/verify-deployment.go
 ```
 
 **What it checks** (7 tests):
@@ -85,9 +85,9 @@ export CLOUDFLARE_API_TOKEN=your_token_here
 
 | Task                   | Command                                             | Requires Credentials |
 | ---------------------- | --------------------------------------------------- | -------------------- |
-| Deploy with all checks | `./tools/scripts/deployment/quick-deploy.sh`        | ✅ Yes (API token)   |
-| Deploy step-by-step    | `./tools/scripts/deployment/deploy-helper.sh`       | ✅ Yes (API token)   |
-| Verify only            | `./tools/scripts/verification/verify-deployment.sh` | ❌ No (read-only)    |
+| Deploy with all checks | `go run ./tools/scripts/deployment/quick-deploy.go`        | ✅ Yes (API token)   |
+| Deploy step-by-step    | `go run ./tools/scripts/deployment/deploy-helper.go`       | ✅ Yes (API token)   |
+| Verify only            | `go run ./tools/scripts/verification/verify-deployment.go` | ❌ No (read-only)    |
 
 ## Getting Cloudflare API Token
 
@@ -161,7 +161,7 @@ npm run test:e2e  # Run E2E tests
 
 ### Verification checks failing
 
-**Solution**: Check specific failure in `verify-deployment.sh` output
+**Solution**: Check specific failure in `verify-deployment.go` output
 
 - Timestamp not recent? Wait a few minutes for propagation
 - OG image 404? Check if `npm run build` was run
