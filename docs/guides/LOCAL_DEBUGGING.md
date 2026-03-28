@@ -136,7 +136,7 @@ go run tools/scripts/local-dev-up.go --portfolio --n8n=false
 
 | Flag           | Default | Description                                                     |
 | -------------- | ------- | --------------------------------------------------------------- |
-| `--portfolio`  | `false` | Start portfolio dev server (`npm run dev` in `apps/portfolio/`) |
+| `--portfolio`  | `false` | Start portfolio dev server (`npm start` in `apps/portfolio/`) |
 | `--job-server` | `false` | Start job-server via docker-compose (`apps/job-server/`)        |
 | `--n8n`        | `true`  | Start n8n mock server                                           |
 | `--all`        | `false` | Enable all services                                             |
@@ -146,7 +146,7 @@ go run tools/scripts/local-dev-up.go --portfolio --n8n=false
 | Service    | URL                      | Health Endpoint | Health Timeout | Command                                                       |
 | ---------- | ------------------------ | --------------- | -------------- | ------------------------------------------------------------- |
 | n8n-mock   | `http://localhost:15678` | `/health`       | 25s            | `go run infrastructure/mocks/n8n-mock-server.go --port 15678` |
-| portfolio  | `http://localhost:8787`  | `/`             | 40s            | `npm run dev` (in `apps/portfolio/`)                          |
+| portfolio  | `http://localhost:8787`  | `/`             | 40s            | `npm start` (in `apps/portfolio/`)                          |
 | job-server | `http://localhost:3456`  | `/health`       | 90s            | `docker-compose up` (in `apps/job-server/`)                   |
 
 #### Features

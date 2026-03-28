@@ -172,7 +172,7 @@ func buildServiceSpecs(repoRoot string, withPortfolio, withJobServer, withN8N, w
 			HealthURL:     "http://localhost:8787",
 			Workdir:       filepath.Join(repoRoot, "apps", "portfolio"),
 			Command:       "npm",
-			Args:          []string{"run", "dev"},
+			Args:          []string{"start"},
 			Color:         ldColorBlue,
 			HealthTimeout: 40 * time.Second,
 		})
