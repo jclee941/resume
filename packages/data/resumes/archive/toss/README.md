@@ -60,7 +60,7 @@ lee_jaecheol_toss_platform_resume_final_v3.pdf  # 165KB
 # https://www.markdowntopdf.com/
 
 # Or use Pandoc
-./pdf-convert.sh
+./pdf-convert.go
 ```
 
 ### 4. Interview preparation

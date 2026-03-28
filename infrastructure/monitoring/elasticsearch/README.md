@@ -36,10 +36,10 @@ Expected log payload fields:
 Quick apply helper:
 
 ```bash
-chmod +x infrastructure/monitoring/elasticsearch/apply-assets.sh
+chmod +x infrastructure/monitoring/elasticsearch/apply-assets.go
 ELASTICSEARCH_URL="https://your-es-endpoint" \
 ELASTICSEARCH_API_KEY="your_api_key" \
-  infrastructure/monitoring/elasticsearch/apply-assets.sh
+  infrastructure/monitoring/elasticsearch/apply-assets.go
 ```
 
 1. **Create ingest pipeline in Elasticsearch**

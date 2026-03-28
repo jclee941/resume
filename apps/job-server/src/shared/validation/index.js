@@ -107,12 +107,106 @@ export function validateResumeData(data, schema) {
     });
   }
   
-  // Validate skills is array if present
-  if (data.skills && !Array.isArray(data.skills)) {
+  // Validate skills is object if present
+  if (data.skills && typeof data.skills !== 'object') {
     errors.push({
       path: 'skills',
-      message: "Field 'skills' must be an array"
+      message: "Field 'skills' must be an object"
     });
+  }
+
+  // Validate summary fields
+  if (data.summary) {
+    if (typeof data.summary !== 'object') {
+      errors.push({
+        path: 'summary',
+        message: "Field 'summary' must be an object"
+      });
+    } else {
+      // Validate expertise is array if present
+      if (data.summary.expertise && !Array.isArray(data.summary.expertise)) {
+        errors.push({
+          path: 'summary.expertise',
+          message: "Field 'summary.expertise' must be an array"
+        });
+      }
+    }
+  }
+
+  // Validate current is object or null
+  if (data.current !== undefined && data.current !== null) {
+    if (typeof data.current !== 'object') {
+      errors.push({
+        path: 'current',
+        message: "Field 'current' must be an object or null"
+      });
+    }
+  }
+
+  // Validate careers array items
+  if (data.careers && Array.isArray(data.careers)) {
+    for (let i = 0; i < data.careers.length; i++) {
+      const career = data.careers[i];
+      if (typeof career !== 'object' || career === null) {
+        errors.push({
+          path: `careers[${i}]`,
+          message: `Career item at index ${i} must be an object`
+        });
+      } else {
+        if (!career.company) {
+          errors.push({
+            path: `careers[${i}].company`,
+            message: `Career item at index ${i} is missing required field: company`
+          });
+        }
+        if (!career.period) {
+          errors.push({
+            path: `careers[${i}].period`,
+            message: `Career item at index ${i} is missing required field: period`
+          });
+        }
+        if (!career.role) {
+          errors.push({
+            path: `careers[${i}].role`,
+            message: `Career item at index ${i} is missing required field: role`
+          });
+        }
+      }
+    }
+  }
+
+  // Validate personal.phone format (XXX-XXXX-XXXX)
+  if (data.personal && data.personal.phone) {
+    const phonePattern = /^\d{3}-\d{4}-\d{4}$/;
+    if (!phonePattern.test(data.personal.phone)) {
+      errors.push({
+        path: 'personal.phone',
+        message: "Field 'personal.phone' must match format XXX-XXXX-XXXX"
+      });
+    }
+  }
+
+  // Validate skills category structure
+  if (data.skills && typeof data.skills === 'object') {
+    for (const [category, value] of Object.entries(data.skills)) {
+      if (value && typeof value === 'object') {
+        // Check if it has the structured format with title/icon/items
+        if (value.items && !Array.isArray(value.items)) {
+          errors.push({
+            path: `skills.${category}.items`,
+            message: `Field 'skills.${category}.items' must be an array`
+          });
+        }
+      } else if (Array.isArray(value)) {
+        // Array format is also valid per schema
+        // No additional validation needed
+      } else if (value !== null && value !== undefined) {
+        errors.push({
+          path: `skills.${category}`,
+          message: `Field 'skills.${category}' must be an object or array`
+        });
+      }
+    }
   }
   
   return {

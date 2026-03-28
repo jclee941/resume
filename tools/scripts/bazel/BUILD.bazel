@@ -3,9 +3,9 @@
 
 package(default_visibility = ["//visibility:public"])
 
-exports_files(glob(["*.sh"]))
+exports_files(glob(["*.go"]))
 
 filegroup(
     name = "all",
-    srcs = glob(["*.sh"]),
+    srcs = glob(["*.go"]),
 )

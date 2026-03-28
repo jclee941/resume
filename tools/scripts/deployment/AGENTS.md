@@ -12,10 +12,10 @@ Deployment helper scripts run preflight checks, deployment wrappers, and post-de
 
 ```text
 deployment/
-├── quick-deploy.sh           # one-command deploy helper
-├── deploy-helper.sh          # staged deploy helper
-├── deploy-with-monitoring.sh # deploy with monitoring hooks
-└── deploy-grafana-configs.sh # observability config deploy helper
+├── quick-deploy.go           # one-command deploy helper
+├── deploy-helper.go          # staged deploy helper
+├── deploy-with-monitoring.go # deploy with monitoring hooks
+└── deploy-grafana-configs.go # observability config deploy helper
 ```
 
 ## CONVENTIONS

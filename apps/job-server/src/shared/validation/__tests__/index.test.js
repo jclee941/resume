@@ -67,7 +67,7 @@ describe('validateResumeData', () => {
       summary: { totalExperience: '5 years', expertise: ['JavaScript'] },
       current: { company: 'Test Co', position: 'Developer' },
       careers: [{ company: 'Test Co', period: '2020.01 ~ 2023.01', role: 'Dev' }],
-      skills: ['JavaScript', 'Node.js'],
+      skills: { languages: [{ name: 'JavaScript', level: 'expert' }] },
     };
     const result = validateResumeData(validData, masterSchema);
     assert.strictEqual(result.valid, true);

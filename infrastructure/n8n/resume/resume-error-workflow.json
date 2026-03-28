@@ -1,0 +1,48 @@
+{
+  "id": "resume-error-handler",
+  "name": "Resume Automation Error Handler",
+  "nodes": [
+    {
+      "id": "error-trigger",
+      "name": "[Error] Workflow Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [240, 260],
+      "parameters": {}
+    },
+    {
+      "id": "error-telegram",
+      "name": "[Error] Telegram Alert",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [480, 260],
+      "parameters": {
+        "chatId": "<TELEGRAM_CHAT_ID>",
+        "text": "=🚨 Resume Workflow Error Detected\\n\\nWorkflow: {{ $json.workflow?.name || $json.workflowName || 'unknown' }}\\nNode: {{ $json.execution?.lastNodeExecuted || $json.node?.name || $json.nodeName || 'unknown' }}\\nMessage: {{ String($json.error?.message || $json.error?.description || 'unknown error').slice(0, 3000) }}\\nTime(KST): {{ $now.setZone('Asia/Seoul').toISO() }}\\nExecutionId: {{ $json.execution?.id || $json.executionId || 'n/a' }}"
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "<TELEGRAM_CREDENTIAL_ID>",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "[Error] Workflow Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "[Error] Telegram Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Seoul"
+  }
+}

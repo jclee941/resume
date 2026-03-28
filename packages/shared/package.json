@@ -12,6 +12,9 @@
     "./browser": "./src/browser/index.js",
     "./browser/stealth": "./src/browser/stealth-patches.js",
     "./browser/service": "./src/browser/browser-service.js",
-    "./wanted-client": "./src/wanted-client.js"
+    "./wanted-client": "./src/wanted-client.js",
+    "./clients/gitlab": "./src/clients/gitlab/index.js",
+    "./clients/gitlab/http-client": "./src/clients/gitlab/http-client.js",
+    "./clients/gitlab/gitlab-api": "./src/clients/gitlab/gitlab-api.js"
   }
 }

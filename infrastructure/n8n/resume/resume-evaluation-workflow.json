@@ -1,0 +1,224 @@
+{
+  "name": "Resume Workflow Evaluation",
+  "nodes": [
+    {
+      "id": "evaluation-trigger",
+      "name": "Evaluation Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [200, 200],
+      "parameters": {}
+    },
+    {
+      "id": "health-check",
+      "name": "Health Check",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [400, 200],
+      "parameters": {
+        "method": "GET",
+        "url": "https://resume.jclee.me/health",
+        "timeout": 10000
+      }
+    },
+    {
+      "id": "metrics-check",
+      "name": "Metrics Check",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [400, 350],
+      "parameters": {
+        "method": "GET",
+        "url": "https://resume.jclee.me/metrics",
+        "timeout": 10000
+      }
+    },
+    {
+      "id": "evaluate-health",
+      "name": "Evaluate Health",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [600, 200],
+      "parameters": {
+        "jsCode": "const healthResponse = $input.first().json;\nconst isHealthy = healthResponse.statusCode === 200 && healthResponse.body?.status === 'healthy';\nreturn [{\n  json: {\n    check: 'health',\n    passed: isHealthy,\n    statusCode: healthResponse.statusCode,\n    body: healthResponse.body\n  }\n}];"
+      }
+    },
+    {
+      "id": "evaluate-metrics",
+      "name": "Evaluate Metrics",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [600, 350],
+      "parameters": {
+        "jsCode": "const metricsText = $input.first().json.body;\nconst checks = {\n  hasRequests: metricsText.includes('http_requests_total'),\n  hasErrors: metricsText.includes('http_requests_error'),\n  hasTiming: metricsText.includes('http_response_time_seconds')\n};\nconst allPassed = Object.values(checks).every(v => v);\nreturn [{\n  json: {\n    check: 'metrics',\n    passed: allPassed,\n    details: checks\n  }\n}];"
+      }
+    },
+    {
+      "id": "summary",
+      "name": "Evaluation Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [800, 275],
+      "parameters": {
+        "jsCode": "const health = $('Evaluate Health').first().json;\nconst metrics = $('Evaluate Metrics').first().json;\nconst allPassed = health.passed && metrics.passed;\nreturn [{\n  json: {\n    timestamp: new Date().toISOString(),\n    overall: allPassed ? 'PASS' : 'FAIL',\n    checks: [health, metrics],\n    summary: {\n      total: 2,\n      passed: [health, metrics].filter(c => c.passed).length,\n      failed: [health, metrics].filter(c => !c.passed).length\n    }\n  }\n}];"
+      }
+    },
+    {
+      "id": "telegram-success",
+      "name": "Telegram Success",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [1000, 200],
+      "parameters": {
+        "chatId": "={{ $credentials.telegramBotApi.chatId }}",
+        "text": "=✅ Resume Evaluation PASSED\n\nTimestamp: {{ $json.timestamp }}\nChecks: {{ $json.summary.passed }}/{{ $json.summary.total }}\n\nAll systems operational."
+      },
+      "credentials": {
+        "telegramBotApi": {
+          "id": "telegram-bot-api",
+          "name": "Telegram Bot API"
+        }
+      }
+    },
+    {
+      "id": "telegram-failure",
+      "name": "Telegram Failure",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [1000, 350],
+      "parameters": {
+        "chatId": "={{ $credentials.telegramBotApi.chatId }}",
+        "text": "=❌ Resume Evaluation FAILED\n\nTimestamp: {{ $json.timestamp }}\nPassed: {{ $json.summary.passed }}/{{ $json.summary.total }}\nFailed: {{ $json.summary.failed }}\n\nCheck details: {{ JSON.stringify($json.checks, null, 2) }}"
+      },
+      "credentials": {
+        "telegramBotApi": {
+          "id": "telegram-bot-api",
+          "name": "Telegram Bot API"
+        }
+      }
+    },
+    {
+      "id": "if-passed",
+      "name": "All Passed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [900, 275],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "overall-pass",
+              "leftValue": "={{ $json.overall }}",
+              "rightValue": "PASS",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Evaluation Trigger": {
+      "main": [
+        [
+          {
+            "node": "Health Check",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Metrics Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Health Check": {
+      "main": [
+        [
+          {
+            "node": "Evaluate Health",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Metrics Check": {
+      "main": [
+        [
+          {
+            "node": "Evaluate Metrics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evaluate Health": {
+      "main": [
+        [
+          {
+            "node": "Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evaluate Metrics": {
+      "main": [
+        [
+          {
+            "node": "Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summary": {
+      "main": [
+        [
+          {
+            "node": "All Passed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "All Passed?": {
+      "main": [
+        [
+          {
+            "node": "Telegram Success",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram Failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": ["resume", "evaluation", "monitoring"]
+}

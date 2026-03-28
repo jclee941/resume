@@ -73,11 +73,13 @@
       "typeVersion": 1,
       "position": [1350, 300]
     },
-    {
+      "parameters": {
+        "command": "cd /home/jclee/dev/resume/apps/portfolio && echo 'Building for Cloudflare Workers Builds...' && npm run build && echo '✅ Build complete. Cloudflare Workers Builds will handle deployment.'"
+      },
       "parameters": {
         "command": "cd /home/jclee/dev/resume/apps/portfolio && wrangler deploy"
       },
-      "id": "wrangler-deploy",
+      "name": "Build for Cloudflare Workers",
       "name": "Deploy to Cloudflare",
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,

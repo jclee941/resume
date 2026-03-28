@@ -1,0 +1,218 @@
+{
+  "name": "GitLab Pipeline Webhook Handler",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "gitlab-pipeline",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "gitlab-webhook-trigger",
+      "name": "GitLab Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 300],
+      "webhookId": "gitlab-pipeline"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "combineOperation": "any"
+          },
+          "conditions": [
+            {
+              "id": "object-kind",
+              "leftValue": "={{ $json.object_kind }}",
+              "rightValue": "pipeline",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ]
+        }
+      },
+      "id": "is-pipeline-event",
+      "name": "Is Pipeline Event?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "combineOperation": "any"
+          },
+          "conditions": [
+            {
+              "id": "status-success",
+              "leftValue": "={{ $json.pipeline.status }}",
+              "rightValue": "success",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "status-failed",
+              "leftValue": "={{ $json.pipeline.status }}",
+              "rightValue": "failed",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ]
+        }
+      },
+      "id": "check-pipeline-status",
+      "name": "Check Pipeline Status",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.telegram.org/bot{{ $env.TELEGRAM_BOT_TOKEN }}/sendMessage",
+        "sendHeaders": false,
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ chat_id: $env.TELEGRAM_CHAT_ID, text: `✅ GitLab Pipeline Success\n\n📦 Project: ${$json.project.name}\n🔢 Pipeline: #${$json.pipeline.id}\n🌿 Branch: ${$json.pipeline.ref}\n👤 User: ${$json.user?.name || 'Unknown'}\n🔗 URL: ${$json.pipeline.web_url}`, parse_mode: \"HTML\" }) }}",
+        "options": {}
+      },
+      "id": "telegram-success",
+      "name": "Telegram Success",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [850, 150]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.telegram.org/bot{{ $env.TELEGRAM_BOT_TOKEN }}/sendMessage",
+        "sendHeaders": false,
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ chat_id: $env.TELEGRAM_CHAT_ID, text: `❌ GitLab Pipeline Failed\n\n📦 Project: ${$json.project.name}\n🔢 Pipeline: #${$json.pipeline.id}\n🌿 Branch: ${$json.pipeline.ref}\n👤 User: ${$json.user?.name || 'Unknown'}\n🔗 URL: ${$json.pipeline.web_url}`, parse_mode: \"HTML\" }) }}",
+        "options": {}
+      },
+      "id": "telegram-failure",
+      "name": "Telegram Failure",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [850, 450]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://loki.jclee.me/loki/api/v1/push",
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ streams: [{ stream: { job: \"gitlab-pipeline\", event: $json.object_kind, project: $json.project?.name, status: $json.pipeline?.status }, values: [[Date.now().toString(), JSON.stringify($json)]] }] }) }}",
+        "options": {
+          "timeout": 5000
+        }
+      },
+      "id": "log-to-loki",
+      "name": "Log to Loki",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.telegram.org/bot{{ $env.TELEGRAM_BOT_TOKEN }}/sendMessage",
+        "sendHeaders": false,
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ chat_id: $env.TELEGRAM_CHAT_ID, text: `⚠️ GitLab Pipeline Update\n\n📦 Project: ${$json.project?.name || 'Unknown'}\n🔢 Pipeline: #${$json.pipeline?.id || 'N/A'}\n🌿 Status: ${$json.pipeline?.status || 'unknown'}\n🔗 URL: ${$json.pipeline?.web_url || 'N/A'}`, parse_mode: \"HTML\" }) }}",
+        "options": {}
+      },
+      "id": "telegram-other",
+      "name": "Telegram Other Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [650, 150]
+    }
+  ],
+  "connections": {
+    "GitLab Webhook": {
+      "main": [
+        [
+          {
+            "node": "Is Pipeline Event?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Pipeline Event?": {
+      "main": [
+        [
+          {
+            "node": "Check Pipeline Status",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log to Loki",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Pipeline Status": {
+      "main": [
+        [
+          {
+            "node": "Telegram Success",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Log to Loki",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Telegram Failure",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Log to Loki",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticFlags": {
+    "distinctPieChartConnection": false
+  }
+}

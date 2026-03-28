@@ -1,0 +1,13 @@
+{
+  "base_branch": "HEAD",
+  "changed_files_count": 0,
+  "portfolio": false,
+  "job_dashboard": false,
+  "job_server": false,
+  "data": false,
+  "infra": false,
+  "cli": false,
+  "shared": false,
+  "affected_targets_count": 0,
+  "has_build_changes": false
+}

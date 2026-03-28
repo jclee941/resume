@@ -1,0 +1,2320 @@
+{
+  "name": "Resume Automation (Unified)",
+  "nodes": [
+    {
+      "id": "health-trigger",
+      "name": "[Health] Every 5 Minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        200,
+        200
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 5
+            }
+          ]
+        },
+        "timezone": "Asia/Seoul"
+      }
+    },
+    {
+      "id": "health-check",
+      "name": "[Health] Check Resume Health",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        400,
+        200
+      ],
+      "continueOnFail": true,
+      "credentials": {
+        "sshPrivateKey": {
+          "id": "&lt;SSH_CREDENTIAL_ID&gt;",
+          "name": "jclee-dev SSH"
+        }
+      },
+      "parameters": {
+        "authentication": "privateKey",
+        "command": "curl -s -w '\\n%{http_code}' --max-time 10 https://resume.jclee.me/health 2>&1"
+      }
+    },
+    {
+      "id": "health-parse",
+      "name": "[Health] Parse Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        500,
+        200
+      ],
+      "parameters": {
+        "jsCode": "const stdout = $input.first().json.stdout || '';\nconst stderr = $input.first().json.stderr || '';\nconst error = $input.first().json.error || '';\nif (error) return [{ json: { statusCode: 0, body: null, error } }];\nconst lines = stdout.trim().split('\\n');\nconst statusCode = parseInt(lines.pop(), 10) || 0;\nlet body = null;\ntry { body = JSON.parse(lines.join('\\n')); } catch {}\nreturn [{ json: { statusCode, body, error: stderr || '' } }];"
+      }
+    },
+    {
+      "id": "health-if",
+      "name": "[Health] Is Down?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        600,
+        200
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "health-status-not-healthy",
+              "leftValue": "={{ $json.body?.status || '' }}",
+              "rightValue": "healthy",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "health-http-not-200",
+              "leftValue": "={{ $json.statusCode || 0 }}",
+              "rightValue": 200,
+              "operator": {
+                "type": "number",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "health-has-error",
+              "leftValue": "={{ $json.error || '' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "health-notify",
+      "name": "[Health] Telegram Alert",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        800,
+        200
+      ],
+      "parameters": {
+        "chatId": "<TELEGRAM_CHAT_ID>",
+        "text": "=\u26a0\ufe0f Resume Portfolio DOWN\n\nStatus: {{ $json.body?.status || 'unknown' }}\nTime(KST): {{ $now.setZone('Asia/Seoul').toISO() }}\nError: {{ String($json.error || $json.body?.error || ('HTTP ' + ($json.statusCode || 'N/A'))).slice(0, 3000) }}"
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "<TELEGRAM_CREDENTIAL_ID>",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "id": "sync-trigger",
+      "name": "[Sync] Daily 9:00 AM KST",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        200,
+        600
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * *"
+            }
+          ]
+        },
+        "timezone": "Asia/Seoul"
+      }
+    },
+    {
+      "id": "sync-api",
+      "name": "[Sync] Trigger Resume Update",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        400,
+        600
+      ],
+      "continueOnFail": true,
+      "credentials": {
+        "sshPrivateKey": {
+          "id": "<SSH_CREDENTIAL_ID>",
+          "name": "jclee-dev SSH"
+        }
+      },
+      "parameters": {
+        "authentication": "privateKey",
+        "command": "cd /home/jclee/dev/resume/apps/job-server && export $(grep -v \"^#\" .env | xargs) && node scripts/ci-resume-sync.js 2>&1; echo \"\n$?\""
+      }
+    },
+    {
+      "id": "sync-parse",
+      "name": "[Sync] Parse Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        500,
+        600
+      ],
+      "parameters": {
+        "jsCode": "const stdout = $input.first().json.stdout || '';\nconst stderr = $input.first().json.stderr || '';\nconst error = $input.first().json.error || '';\nif (error) return [{ json: { statusCode: 0, body: null, error } }];\nconst lines = stdout.trim().split('\\n');\nconst exitCode = parseInt(lines.pop(), 10);\nconst output = lines.join('\\n');\nlet body = null;\ntry { body = JSON.parse(output); } catch {}\nconst statusCode = (exitCode === 0) ? 200 : 500;\nreturn [{ json: { statusCode, body, error: (exitCode !== 0) ? output : '' } }];"
+      }
+    },
+    {
+      "id": "sync-if",
+      "name": "[Sync] Failed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        600,
+        600
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "sync-status-not-200",
+              "leftValue": "={{ $json.statusCode || 0 }}",
+              "rightValue": 200,
+              "operator": {
+                "type": "number",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "sync-error-not-empty",
+              "leftValue": "={{ $json.error || '' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "sync-notify-err",
+      "name": "[Sync] Telegram Error",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        800,
+        500
+      ],
+      "parameters": {
+        "chatId": "<TELEGRAM_CHAT_ID>",
+        "text": "=\ud83d\udea8 Resume Sync Failed\n\nStatus: {{ $json.statusCode || 'Timeout' }}\nTime(KST): {{ $now.setZone('Asia/Seoul').toISO() }}\nError: {{ $json.error || $json.body?.message || ('HTTP ' + ($json.statusCode || 'N/A')) }}",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "<TELEGRAM_CREDENTIAL_ID>",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "id": "sync-notify-ok",
+      "name": "[Sync] Telegram Success",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        800,
+        700
+      ],
+      "parameters": {
+        "chatId": "<TELEGRAM_CHAT_ID>",
+        "text": "=\u2705 Resume Sync Complete\n\nStatus: Success\nTime(KST): {{ $now.setZone('Asia/Seoul').toISO() }}\nDetails: {{ JSON.stringify($json.body || $json).slice(0, 3000) }}"
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "<TELEGRAM_CREDENTIAL_ID>",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "id": "sync-eval-build",
+      "name": "[Sync] Build Evaluation Row",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1000,
+        700
+      ],
+      "parameters": {
+        "jsCode": "const body = $input.first().json.body || {};\nconst nowKst = `${new Intl.DateTimeFormat('sv-SE', {\n  timeZone: 'Asia/Seoul',\n  year: 'numeric',\n  month: '2-digit',\n  day: '2-digit',\n  hour: '2-digit',\n  minute: '2-digit',\n  second: '2-digit',\n  hour12: false\n}).format(new Date()).replace(' ', 'T')}+09:00`;\nconst statusCode = $input.first().json.statusCode || 200;\nconst success = statusCode === 200 && !($input.first().json.error);\nreturn [{\n  json: {\n    run_at: nowKst,\n    timezone: 'Asia/Seoul',\n    source: 'n8n-sync',\n    sync_status: success ? 'success' : 'failed',\n    http_status: statusCode,\n    platform: body.platform || 'wanted',\n    message: body.message || '',\n    details: JSON.stringify(body || $input.first().json).slice(0, 3000)\n  }\n}];"
+      }
+    },
+    {
+      "id": "sync-eval-sheet",
+      "name": "[Sync] Append Evaluation (Google Sheets)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1200,
+        700
+      ],
+      "continueOnFail": true,
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "<GOOGLE_SHEETS_DOCUMENT_ID>",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Resume Evaluation",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {
+            "run_at": "={{ $json.run_at }}",
+            "timezone": "={{ $json.timezone }}",
+            "source": "={{ $json.source }}",
+            "sync_status": "={{ $json.sync_status }}",
+            "http_status": "={{ $json.http_status }}",
+            "platform": "={{ $json.platform }}",
+            "message": "={{ $json.message }}",
+            "details": "={{ $json.details }}"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "<GOOGLE_SHEETS_CREDENTIAL_ID>",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "id": "sync-eval-ensure-sheet",
+      "name": "[Sync] Ensure Evaluation Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1120,
+        700
+      ],
+      "continueOnFail": true,
+      "parameters": {
+        "resource": "sheet",
+        "operation": "create",
+        "documentId": {
+          "__rl": true,
+          "value": "<GOOGLE_SHEETS_DOCUMENT_ID>",
+          "mode": "id"
+        },
+        "title": "Resume Evaluation",
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "<GOOGLE_SHEETS_CREDENTIAL_ID>",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "id": "sync-eval-sheet-created-if",
+      "name": "[Sync] Evaluation Sheet Created?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1160,
+        700
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "sync-eval-sheet-created-no-error",
+              "leftValue": "={{ $json.error || '' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "sync-eval-header",
+      "name": "[Sync] Initialize Evaluation Header",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1260,
+        620
+      ],
+      "continueOnFail": true,
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "<GOOGLE_SHEETS_DOCUMENT_ID>",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Resume Evaluation",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "run_at": "run_at",
+            "timezone": "timezone",
+            "source": "source",
+            "sync_status": "sync_status",
+            "http_status": "http_status",
+            "platform": "platform",
+            "message": "message",
+            "details": "details"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "<GOOGLE_SHEETS_CREDENTIAL_ID>",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "id": "sync-eval-failed",
+      "name": "[Sync] Evaluation Log Failed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1400,
+        700
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "sync-eval-error-present",
+              "leftValue": "={{ $json.error || '' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "sync-eval-notify-fail",
+      "name": "[Sync] Telegram Evaluation Error",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1600,
+        600
+      ],
+      "parameters": {
+        "chatId": "<TELEGRAM_CHAT_ID>",
+        "text": "=\ud83d\udea8 Sync Evaluation Logging Failed\\n\\nTime(KST): {{ $now.setZone('Asia/Seoul').toISO() }}\\nSheet: Resume Evaluation\\nError: {{ String($json.error || JSON.stringify($json)).slice(0, 3000) }}"
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "<TELEGRAM_CREDENTIAL_ID>",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "id": "apply-trigger",
+      "name": "[Apply] Daily 9:30 AM KST",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        200,
+        3200
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "30 9 * * *"
+            }
+          ]
+        },
+        "timezone": "Asia/Seoul"
+      }
+    },
+    {
+      "id": "apply-run",
+      "name": "[Apply] Run Auto-Apply Migration",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        400,
+        3200
+      ],
+      "continueOnFail": true,
+      "parameters": {
+        "authentication": "privateKey",
+        "command": "cd /home/jclee/dev/resume/apps/job-server && node scripts/auto-apply-cron.js --apply --max=5 2>&1"
+      },
+      "credentials": {
+        "sshPrivateKey": {
+          "id": "<SSH_CREDENTIAL_ID>",
+          "name": "jclee-dev SSH"
+        }
+      }
+    },
+    {
+      "id": "apply-if-fail",
+      "name": "[Apply] Failed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        600,
+        3200
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "apply-exitcode-fail",
+              "leftValue": "={{ $json.exitCode || 0 }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "apply-error-not-empty",
+              "leftValue": "={{ $json.error || '' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "apply-notify-fail",
+      "name": "[Apply] Telegram Failure",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        800,
+        3100
+      ],
+      "parameters": {
+        "chatId": "<TELEGRAM_CHAT_ID>",
+        "text": "=\ud83d\udea8 Auto-Apply Migration Failed\\n\\nTime(KST): {{ $now.setZone('Asia/Seoul').toISO() }}\\nError: {{ String($json.error || $json.stderr || JSON.stringify($json)).slice(0, 3000) }}"
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "<TELEGRAM_CREDENTIAL_ID>",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "id": "apply-notify-ok",
+      "name": "[Apply] Telegram Success",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        800,
+        3300
+      ],
+      "parameters": {
+        "chatId": "<TELEGRAM_CHAT_ID>",
+        "text": "=\u2705 Auto-Apply Migration Complete\\n\\nTime(KST): {{ $now.setZone('Asia/Seoul').toISO() }}\\nSummary: {{ String($json.stdout || 'completed').slice(0, 3000) }}"
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "<TELEGRAM_CREDENTIAL_ID>",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "id": "deploy-webhook",
+      "name": "[Deploy] Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        200,
+        1000
+      ],
+      "webhookId": "resume-deploy",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "resume-deploy",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "id": "deploy-filter",
+      "name": "[Deploy] Master Branch?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        400,
+        1000
+      ],
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.body.ref }}",
+              "operation": "equal",
+              "value2": "refs/heads/master"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "deploy-git-pull",
+      "name": "[Deploy] Git Pull",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        600,
+        1000
+      ],
+      "continueOnFail": true,
+      "parameters": {
+        "authentication": "privateKey",
+        "command": "cd /home/jclee/dev/resume && git pull origin master 2>&1"
+      },
+      "credentials": {
+        "sshPrivateKey": {
+          "id": "<SSH_CREDENTIAL_ID>",
+          "name": "jclee-dev SSH"
+        }
+      }
+    },
+    {
+      "id": "deploy-build",
+      "name": "[Deploy] Build",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        800,
+        1000
+      ],
+      "continueOnFail": true,
+      "parameters": {
+        "authentication": "privateKey",
+        "command": "cd /home/jclee/dev/resume && npm run build 2>&1"
+      },
+      "credentials": {
+        "sshPrivateKey": {
+          "id": "<SSH_CREDENTIAL_ID>",
+          "name": "jclee-dev SSH"
+        }
+      }
+    },
+    {
+      "id": "deploy-test",
+      "name": "[Deploy] Test",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        1000,
+        1000
+      ],
+      "continueOnFail": true,
+      "parameters": {
+        "authentication": "privateKey",
+        "command": "cd /home/jclee/dev/resume && npm test 2>&1"
+      },
+      "credentials": {
+        "sshPrivateKey": {
+          "id": "<SSH_CREDENTIAL_ID>",
+          "name": "jclee-dev SSH"
+        }
+      }
+    },
+    {
+      "id": "deploy-cmd-if",
+      "name": "[Deploy] Command Failed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        1000
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "deploy-exitcode-fail",
+              "leftValue": "={{ $json.exitCode || 0 }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "deploy-error-present",
+              "leftValue": "={{ $json.error || '' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "deploy-health-check",
+      "name": "[Deploy] Health Check",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        1400,
+        900
+      ],
+      "continueOnFail": true,
+      "credentials": {
+        "sshPrivateKey": {
+          "id": "&lt;SSH_CREDENTIAL_ID&gt;",
+          "name": "jclee-dev SSH"
+        }
+      },
+      "parameters": {
+        "authentication": "privateKey",
+        "command": "curl -s -w '\\n%{http_code}' --max-time 10 https://resume.jclee.me/health 2>&1"
+      }
+    },
+    {
+      "id": "deploy-health-parse",
+      "name": "[Deploy] Parse Health",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1500,
+        900
+      ],
+      "parameters": {
+        "jsCode": "const stdout = $input.first().json.stdout || '';\nconst stderr = $input.first().json.stderr || '';\nconst error = $input.first().json.error || '';\nif (error) return [{ json: { statusCode: 0, body: null, error } }];\nconst lines = stdout.trim().split('\\n');\nconst statusCode = parseInt(lines.pop(), 10) || 0;\nlet body = null;\ntry { body = JSON.parse(lines.join('\\n')); } catch {}\nreturn [{ json: { statusCode, body, error: stderr || '' } }];"
+      }
+    },
+    {
+      "id": "deploy-health-if",
+      "name": "[Deploy] Health OK?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1600,
+        900
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "deploy-health-statuscode-ok",
+              "leftValue": "={{ $json.statusCode || 0 }}",
+              "rightValue": 200,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "deploy-health-status-ok",
+              "leftValue": "={{ $json.body?.status || '' }}",
+              "rightValue": "healthy",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "deploy-notify-success",
+      "name": "[Deploy] Telegram Success",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1800,
+        800
+      ],
+      "parameters": {
+        "chatId": "<TELEGRAM_CHAT_ID>",
+        "text": "=\u2705 Resume Deploy Success\n\nRef: {{ $json.body?.ref || 'refs/heads/master' }}\nTime(KST): {{ $now.setZone('Asia/Seoul').toISO() }}\nHealth: {{ JSON.stringify($json.body || $json) }}",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "<TELEGRAM_CREDENTIAL_ID>",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "id": "deploy-notify-failure",
+      "name": "[Deploy] Telegram Failure",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1800,
+        1100
+      ],
+      "parameters": {
+        "chatId": "<TELEGRAM_CHAT_ID>",
+        "text": "=\ud83d\udea8 Resume Deploy Failed\n\nTime(KST): {{ $now.setZone('Asia/Seoul').toISO() }}\nError: {{ String($json.error || $json.stderr || $json.body?.error || JSON.stringify($json)).slice(0, 3000) }}"
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "<TELEGRAM_CREDENTIAL_ID>",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "id": "deploy-respond-success",
+      "name": "[Deploy] Respond Success",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        2000,
+        800
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { status: 'success', message: 'Deployment completed', timestamp: $now.toISO(), health: $json.body || $json } }}"
+      }
+    },
+    {
+      "id": "deploy-respond-failure",
+      "name": "[Deploy] Respond Failure",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        2000,
+        1100
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { status: 'error', message: 'Deployment failed', timestamp: $now.toISO(), error: $json.error || $json.stderr || JSON.stringify($json) } }}",
+        "options": {
+          "responseCode": 500
+        }
+      }
+    },
+    {
+      "id": "deploy-respond-ignored",
+      "name": "[Deploy] Respond Ignored",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        600,
+        1200
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { status: 'ignored', message: 'Only refs/heads/master triggers deployment', receivedRef: $json.body?.ref || null } }}"
+      }
+    },
+    {
+      "id": "session-trigger",
+      "name": "[Session] Every 20 Hours",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        200,
+        1500
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 20
+            }
+          ]
+        },
+        "timezone": "Asia/Seoul"
+      }
+    },
+    {
+      "id": "session-check",
+      "name": "[Session] Check Session",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        400,
+        1500
+      ],
+      "continueOnFail": true,
+      "parameters": {
+        "authentication": "privateKey",
+        "command": "node /home/jclee/dev/resume/apps/job-server/scripts/ci-resume-sync.js --check-session"
+      },
+      "credentials": {
+        "sshPrivateKey": {
+          "id": "<SSH_CREDENTIAL_ID>",
+          "name": "jclee-dev SSH"
+        }
+      }
+    },
+    {
+      "id": "session-parse",
+      "name": "[Session] Parse Check Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        600,
+        1500
+      ],
+      "parameters": {
+        "jsCode": "const stdout = $input.first().json.stdout || '';\nconst stderr = $input.first().json.stderr || '';\nconst raw = `${stdout}\n${stderr}`.trim();\nlet parsed = null;\ntry { parsed = JSON.parse(stdout || '{}'); } catch {}\nconst expiredByJson = parsed?.authenticated === false || parsed?.status === 'expired' || parsed?.needsRefresh === true;\nconst expiredByText = /expired|invalid|unauth|relogin|login required/i.test(raw);\nconst hasError = !!($input.first().json.error || stderr);\nconst needsRefresh = expiredByJson || expiredByText || hasError;\nreturn [{ json: { needsRefresh, parsed, raw, hasError } }];"
+      }
+    },
+    {
+      "id": "session-if-expired",
+      "name": "[Session] Session Expired?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        800,
+        1500
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "session-needs-refresh",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              },
+              "leftValue": "={{ $json.needsRefresh }}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "session-login",
+      "name": "[Session] Run Login",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        1000,
+        1400
+      ],
+      "continueOnFail": true,
+      "parameters": {
+        "authentication": "privateKey",
+        "command": "cd /home/jclee/dev/resume/apps/job-server && xvfb-run -a /home/jclee/.nvm/versions/node/v20.19.6/bin/node scripts/auto-login.js 2>&1 | tail -20"
+      },
+      "credentials": {
+        "sshPrivateKey": {
+          "id": "<SSH_CREDENTIAL_ID>",
+          "name": "jclee-dev SSH"
+        }
+      }
+    },
+    {
+      "id": "session-parse-login",
+      "name": "[Session] Parse Login Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        1400
+      ],
+      "parameters": {
+        "jsCode": "const stdout = $input.first().json.stdout || '';\nconst stderr = $input.first().json.stderr || '';\nconst error = $input.first().json.error || '';\nconst raw = `${stdout}\n${stderr}\n${error}`;\nconst success = /success|authenticated|login complete|session.*valid/i.test(raw) && !/fail|error|exception/i.test(raw);\nreturn [{ json: { success, raw } }];"
+      }
+    },
+    {
+      "id": "session-notify",
+      "name": "[Session] Telegram Result",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1400,
+        1400
+      ],
+      "parameters": {
+        "chatId": "<TELEGRAM_CHAT_ID>",
+        "text": "={{ $json.success ? '\u2705 Wanted session refresh complete' : '\ud83d\udea8 Wanted session refresh failed' }}\n\nTime(KST): {{ $now.setZone('Asia/Seoul').toISO() }}\nSummary: {{ ($json.raw || '').slice(0, 1200) }}",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "<TELEGRAM_CREDENTIAL_ID>",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "id": "session-valid-skip",
+      "name": "[Session] Valid (Skip)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1000,
+        1600
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "jobs-trigger",
+      "name": "[Jobs] Every 6 Hours",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        200,
+        1900
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 6
+            }
+          ]
+        },
+        "timezone": "Asia/Seoul"
+      }
+    },
+    {
+      "id": "jobs-check-auth",
+      "name": "[Jobs] Check Auth",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        400,
+        1900
+      ],
+      "continueOnFail": true,
+      "parameters": {
+        "authentication": "privateKey",
+        "command": "resume-cli wanted status --json 2>/dev/null || echo '{\"authenticated\": false}'"
+      },
+      "credentials": {
+        "sshPrivateKey": {
+          "id": "<SSH_CREDENTIAL_ID>",
+          "name": "jclee-dev SSH"
+        }
+      }
+    },
+    {
+      "id": "jobs-parse-auth",
+      "name": "[Jobs] Parse Auth",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        600,
+        1900
+      ],
+      "parameters": {
+        "jsCode": "const output = $input.first().json.stdout || '{}';\nlet status = {};\ntry { status = JSON.parse(output); } catch {}\nconst authenticated = status.authenticated === true;\nreturn [{ json: { authenticated, status, raw: output, error: $input.first().json.error || '' } }];"
+      }
+    },
+    {
+      "id": "jobs-if-auth-valid",
+      "name": "[Jobs] Auth Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        800,
+        1900
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "jobs-auth-true",
+              "leftValue": "={{ $json.authenticated }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "jobs-notify-auth-expired",
+      "name": "[Jobs] Telegram Auth Expired",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1000,
+        1800
+      ],
+      "parameters": {
+        "chatId": "<TELEGRAM_CHAT_ID>",
+        "text": "=\u26a0\ufe0f Wanted Session Expired\n\nPlease run resume-cli wanted auth --browser to re-authenticate.\nTime(KST): {{ $now.setZone('Asia/Seoul').toISO() }}",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "<TELEGRAM_CREDENTIAL_ID>",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "id": "jobs-search",
+      "name": "[Jobs] Search Jobs",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        1000,
+        2000
+      ],
+      "continueOnFail": true,
+      "parameters": {
+        "authentication": "privateKey",
+        "command": "resume-cli wanted search --tags 674 --limit 30 --json"
+      },
+      "credentials": {
+        "sshPrivateKey": {
+          "id": "<SSH_CREDENTIAL_ID>",
+          "name": "jclee-dev SSH"
+        }
+      }
+    },
+    {
+      "id": "jobs-search-if-fail",
+      "name": "[Jobs] Search Failed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        1900
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "jobs-search-exitcode-fail",
+              "leftValue": "={{ $json.exitCode || 0 }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "jobs-search-error-not-empty",
+              "leftValue": "={{ $json.error || '' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "jobs-search-notify-fail",
+      "name": "[Jobs] Telegram Search Failure",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1400,
+        1800
+      ],
+      "parameters": {
+        "chatId": "<TELEGRAM_CHAT_ID>",
+        "text": "=\ud83d\udea8 Wanted Job Search Failed\n\nTime(KST): {{ $now.setZone('Asia/Seoul').toISO() }}\nError: {{ String($json.error || $json.stderr || ('exitCode=' + ($json.exitCode || 'N/A'))).slice(0, 3000) }}"
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "<TELEGRAM_CREDENTIAL_ID>",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "id": "jobs-parse-dedupe",
+      "name": "[Jobs] Parse & Dedupe",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        2000
+      ],
+      "parameters": {
+        "jsCode": "let jobs = [];\ntry {\n  jobs = JSON.parse($input.first().json.stdout || '[]');\n  if (!Array.isArray(jobs)) jobs = [];\n} catch {\n  jobs = [];\n}\nconst seen = new Set();\nconst deduped = jobs.filter((job) => {\n  const key = String(job.id || `${job.company?.name || ''}-${job.position || ''}`);\n  if (seen.has(key)) return false;\n  seen.add(key);\n  return true;\n});\nreturn deduped.map((job) => ({ json: job }));"
+      }
+    },
+    {
+      "id": "jobs-if-new",
+      "name": "[Jobs] New Jobs?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1400,
+        2000
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "jobs-count-gt-0",
+              "leftValue": "={{ $input.all().length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "jobs-format-msg",
+      "name": "[Jobs] Format Telegram",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1600,
+        2000
+      ],
+      "parameters": {
+        "jsCode": "const jobs = $input.all();\nconst total = jobs.length;\nconst top = jobs.slice(0, 10);\nconst nowKst = `${new Intl.DateTimeFormat('sv-SE', {\n  timeZone: 'Asia/Seoul',\n  year: 'numeric',\n  month: '2-digit',\n  day: '2-digit',\n  hour: '2-digit',\n  minute: '2-digit',\n  second: '2-digit',\n  hour12: false\n}).format(new Date()).replace(' ', 'T')}+09:00`;\nconst lines = ['\ud83d\udd0d Wanted Job Alert', '', `\ucd1d ${total}\uac1c \uc2e0\uaddc \uacf5\uace0 \ubc1c\uacac`];\nfor (const item of top) {\n  const j = item.json;\n  lines.push('');\n  lines.push(`\ud83d\udcbc ${j.position || 'Unknown Position'}`);\n  lines.push(`\ud83c\udfe2 ${j.company?.name || 'Unknown Company'}`);\n  lines.push(`\ud83d\udd17 https://www.wanted.co.kr/wd/${j.id}`);\n}\nlines.push('');\nlines.push(`\ud83d\udd52 \uac80\uc0c9 \uc2dc\uac01: ${nowKst}`);\nreturn [{ json: { text: lines.join('\\n').slice(0, 3000) } }];"
+      }
+    },
+    {
+      "id": "jobs-notify",
+      "name": "[Jobs] Telegram Notification",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1800,
+        2000
+      ],
+      "parameters": {
+        "chatId": "<TELEGRAM_CHAT_ID>",
+        "text": "={{ $json.text }}",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "<TELEGRAM_CREDENTIAL_ID>",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "id": "receiver-webhook",
+      "name": "[Receiver] Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        200,
+        2300
+      ],
+      "webhookId": "automation-run-report",
+      "parameters": {
+        "path": "automation-run-report",
+        "httpMethod": "POST",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "id": "receiver-format",
+      "name": "[Receiver] Format Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        2300
+      ],
+      "parameters": {
+        "jsCode": "const body = $input.first().json.body || $input.first().json;\nconst event = body.event || 'unknown';\nconst timestamp = body.timestamp || new Date().toISOString();\nconst platforms = body.platforms || {};\nconst actions = body.actions || {};\nconst validPlatforms = Object.entries(platforms).filter(([_, v]) => v.valid).map(([k]) => k);\nconst invalidPlatforms = Object.entries(platforms).filter(([_, v]) => !v.valid).map(([k]) => k);\nconst totalCookies = Object.values(platforms).reduce((sum, p) => sum + (p.cookies || 0), 0);\nreturn [{ json: {\n  isSuccess: validPlatforms.length > 0,\n  status: validPlatforms.length > 0 ? 'completed' : 'failed',\n  channel: 'automation-runner',\n  command: `auto-all (${[actions.extract && 'extract', actions.sync && 'sync', actions.verify && 'verify'].filter(Boolean).join('+')})`,\n  duration: 0,\n  source: 'auto-all.js',\n  errorMessage: invalidPlatforms.length > 0 ? `Invalid sessions: ${invalidPlatforms.join(', ')}` : null,\n  outputUrl: null,\n  validPlatforms: validPlatforms.join(', '),\n  invalidPlatforms: invalidPlatforms.join(', '),\n  totalCookies,\n  event,\n  timestamp\n} }];"
+      }
+    },
+    {
+      "id": "receiver-notify",
+      "name": "[Receiver] Telegram Notification",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        600,
+        2300
+      ],
+      "parameters": {
+        "chatId": "<TELEGRAM_CHAT_ID>",
+        "text": "=\ud83d\udce3 Automation Run Report\n\nEvent: {{ $json.event }}\nStatus: {{ $json.status }}\nValid: {{ $json.validPlatforms || 'none' }}\nInvalid: {{ $json.invalidPlatforms || 'none' }}\nCookies: {{ $json.totalCookies }}\nTime: {{ $json.timestamp }}",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "<TELEGRAM_CREDENTIAL_ID>",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "id": "receiver-respond",
+      "name": "[Receiver] Respond 200",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        800,
+        2300
+      ],
+      "parameters": {
+        "options": {
+          "responseCode": 200
+        },
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ received: true, event: $json.event }) }}"
+      }
+    },
+    {
+      "id": "grafana-webhook",
+      "name": "[Grafana] Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        200,
+        2700
+      ],
+      "webhookId": "grafana-alert",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "grafana-alert",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "id": "grafana-extract",
+      "name": "[Grafana] Extract Alert Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        400,
+        2700
+      ],
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "alert-name",
+              "name": "alertName",
+              "type": "string",
+              "value": "={{ $json.body.title || $json.body.alerts?.[0]?.labels?.alertname || 'Unknown Alert' }}"
+            },
+            {
+              "id": "alert-state",
+              "name": "alertState",
+              "type": "string",
+              "value": "={{ $json.body.state || $json.body.status || $json.body.alerts?.[0]?.status || 'alerting' }}"
+            },
+            {
+              "id": "alert-message",
+              "name": "alertMessage",
+              "type": "string",
+              "value": "={{ $json.body.message || $json.body.alerts?.[0]?.annotations?.summary || 'No details provided' }}"
+            },
+            {
+              "id": "alert-severity",
+              "name": "severity",
+              "type": "string",
+              "value": "={{ $json.body.alerts?.[0]?.labels?.severity || 'warning' }}"
+            },
+            {
+              "id": "alert-fingerprint",
+              "name": "fingerprint",
+              "type": "string",
+              "value": "={{ $json.body.alerts?.[0]?.fingerprint || '' }}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "grafana-if-alerting",
+      "name": "[Grafana] State Alerting?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        600,
+        2700
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "grafana-state-alerting",
+              "leftValue": "={{ $json.alertState }}",
+              "rightValue": "alerting",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "grafana-search-issues",
+      "name": "[Grafana] Search Existing Issues",
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1,
+      "position": [
+        800,
+        2600
+      ],
+      "parameters": {
+        "owner": "qws941",
+        "repository": "resume",
+        "resource": "issue",
+        "operation": "getAll",
+        "returnAll": false,
+        "limit": 10,
+        "filters": {
+          "state": "open",
+          "labels": "grafana-alert,automated"
+        }
+      },
+      "credentials": {
+        "githubApi": {
+          "id": "<GITHUB_CREDENTIAL_ID>",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "id": "grafana-if-existing",
+      "name": "[Grafana] Existing Issue?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1000,
+        2600
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "grafana-has-issues",
+              "leftValue": "={{ $input.all().length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "grafana-comment-issue",
+      "name": "[Grafana] Comment Existing Issue",
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        2500
+      ],
+      "parameters": {
+        "owner": "qws941",
+        "repository": "resume",
+        "resource": "issue",
+        "operation": "createComment",
+        "issueNumber": "={{ $input.first().json.number }}",
+        "body": "=## \ud83d\udd36 Alert Recurrence ({{ $now.toISO() }})\n\n| Field | Value |\n|-------|-------|\n| **Alert** | {{ $('[Grafana] Extract Alert Data').item.json.alertName }} |\n| **Severity** | {{ $('[Grafana] Extract Alert Data').item.json.severity }} |\n| **Message** | {{ $('[Grafana] Extract Alert Data').item.json.alertMessage }} |"
+      },
+      "credentials": {
+        "githubApi": {
+          "id": "<GITHUB_CREDENTIAL_ID>",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "id": "grafana-create-issue",
+      "name": "[Grafana] Create Issue",
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        2700
+      ],
+      "parameters": {
+        "owner": "qws941",
+        "repository": "resume",
+        "resource": "issue",
+        "operation": "create",
+        "title": "=\ud83d\udd36 Grafana: {{ $('[Grafana] Extract Alert Data').item.json.alertName }}",
+        "body": "=## Grafana Alert\n\n| Field | Value |\n|-------|-------|\n| **Alert** | {{ $('[Grafana] Extract Alert Data').item.json.alertName }} |\n| **Severity** | {{ $('[Grafana] Extract Alert Data').item.json.severity }} |\n| **Message** | {{ $('[Grafana] Extract Alert Data').item.json.alertMessage }} |\n| **Fingerprint** | `{{ $('[Grafana] Extract Alert Data').item.json.fingerprint }}` |\n| **Time** | {{ $now.toISO() }} |\n\n---\n*Created automatically by n8n Grafana\u2192GitHub integration. Close when resolved.*",
+        "labels": [
+          "grafana-alert",
+          "automated"
+        ]
+      },
+      "credentials": {
+        "githubApi": {
+          "id": "<GITHUB_CREDENTIAL_ID>",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "id": "grafana-respond-done",
+      "name": "[Grafana] Respond Done",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1400,
+        2600
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { status: 'ok', alertState: $json.alertState, alertName: $json.alertName, timestamp: $now.toISO() } }}"
+      }
+    },
+    {
+      "id": "grafana-respond-ignored",
+      "name": "[Grafana] Respond Ignored",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        800,
+        2850
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { status: 'ignored', reason: 'alert state is not alerting', alertState: $json.alertState } }}"
+      }
+    }
+  ],
+  "connections": {
+    "[Health] Every 5 Minutes": {
+      "main": [
+        [
+          {
+            "node": "[Health] Check Resume Health",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Health] Check Resume Health": {
+      "main": [
+        [
+          {
+            "node": "[Health] Parse Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Health] Parse Result": {
+      "main": [
+        [
+          {
+            "node": "[Health] Is Down?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Health] Is Down?": {
+      "main": [
+        [
+          {
+            "node": "[Health] Telegram Alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "[Sync] Daily 9:00 AM KST": {
+      "main": [
+        [
+          {
+            "node": "[Sync] Trigger Resume Update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Sync] Trigger Resume Update": {
+      "main": [
+        [
+          {
+            "node": "[Sync] Parse Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Sync] Parse Result": {
+      "main": [
+        [
+          {
+            "node": "[Sync] Failed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Sync] Failed?": {
+      "main": [
+        [
+          {
+            "node": "[Sync] Telegram Error",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "[Sync] Build Evaluation Row",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "[Sync] Telegram Success",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "[Sync] Build Evaluation Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Sync] Build Evaluation Row": {
+      "main": [
+        [
+          {
+            "node": "[Sync] Ensure Evaluation Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Sync] Ensure Evaluation Sheet": {
+      "main": [
+        [
+          {
+            "node": "[Sync] Evaluation Sheet Created?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Sync] Evaluation Sheet Created?": {
+      "main": [
+        [
+          {
+            "node": "[Sync] Initialize Evaluation Header",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "[Sync] Append Evaluation (Google Sheets)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Sync] Initialize Evaluation Header": {
+      "main": [
+        [
+          {
+            "node": "[Sync] Append Evaluation (Google Sheets)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Sync] Append Evaluation (Google Sheets)": {
+      "main": [
+        [
+          {
+            "node": "[Sync] Evaluation Log Failed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Sync] Evaluation Log Failed?": {
+      "main": [
+        [
+          {
+            "node": "[Sync] Telegram Evaluation Error",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "[Deploy] Webhook": {
+      "main": [
+        [
+          {
+            "node": "[Deploy] Master Branch?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Deploy] Master Branch?": {
+      "main": [
+        [
+          {
+            "node": "[Deploy] Git Pull",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "[Deploy] Respond Ignored",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Deploy] Git Pull": {
+      "main": [
+        [
+          {
+            "node": "[Deploy] Build",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Deploy] Build": {
+      "main": [
+        [
+          {
+            "node": "[Deploy] Test",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Deploy] Test": {
+      "main": [
+        [
+          {
+            "node": "[Deploy] Command Failed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Deploy] Command Failed?": {
+      "main": [
+        [
+          {
+            "node": "[Deploy] Telegram Failure",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "[Deploy] Health Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Deploy] Health Check": {
+      "main": [
+        [
+          {
+            "node": "[Deploy] Parse Health",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Deploy] Parse Health": {
+      "main": [
+        [
+          {
+            "node": "[Deploy] Health OK?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Deploy] Health OK?": {
+      "main": [
+        [
+          {
+            "node": "[Deploy] Telegram Success",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "[Deploy] Telegram Failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Deploy] Telegram Success": {
+      "main": [
+        [
+          {
+            "node": "[Deploy] Respond Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Deploy] Telegram Failure": {
+      "main": [
+        [
+          {
+            "node": "[Deploy] Respond Failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Session] Every 20 Hours": {
+      "main": [
+        [
+          {
+            "node": "[Session] Check Session",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Session] Check Session": {
+      "main": [
+        [
+          {
+            "node": "[Session] Parse Check Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Session] Parse Check Result": {
+      "main": [
+        [
+          {
+            "node": "[Session] Session Expired?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Session] Session Expired?": {
+      "main": [
+        [
+          {
+            "node": "[Session] Run Login",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "[Session] Valid (Skip)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Session] Run Login": {
+      "main": [
+        [
+          {
+            "node": "[Session] Parse Login Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Session] Parse Login Result": {
+      "main": [
+        [
+          {
+            "node": "[Session] Telegram Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Jobs] Every 6 Hours": {
+      "main": [
+        [
+          {
+            "node": "[Jobs] Check Auth",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Jobs] Check Auth": {
+      "main": [
+        [
+          {
+            "node": "[Jobs] Parse Auth",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Jobs] Parse Auth": {
+      "main": [
+        [
+          {
+            "node": "[Jobs] Auth Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Jobs] Auth Valid?": {
+      "main": [
+        [
+          {
+            "node": "[Jobs] Search Jobs",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "[Jobs] Telegram Auth Expired",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Jobs] Search Jobs": {
+      "main": [
+        [
+          {
+            "node": "[Jobs] Search Failed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Jobs] Search Failed?": {
+      "main": [
+        [
+          {
+            "node": "[Jobs] Telegram Search Failure",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "[Jobs] Parse & Dedupe",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Jobs] Parse & Dedupe": {
+      "main": [
+        [
+          {
+            "node": "[Jobs] New Jobs?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Jobs] New Jobs?": {
+      "main": [
+        [
+          {
+            "node": "[Jobs] Format Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "[Jobs] Format Telegram": {
+      "main": [
+        [
+          {
+            "node": "[Jobs] Telegram Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Receiver] Webhook": {
+      "main": [
+        [
+          {
+            "node": "[Receiver] Format Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Receiver] Format Payload": {
+      "main": [
+        [
+          {
+            "node": "[Receiver] Telegram Notification",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "[Receiver] Respond 200",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Grafana] Webhook": {
+      "main": [
+        [
+          {
+            "node": "[Grafana] Extract Alert Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Grafana] Extract Alert Data": {
+      "main": [
+        [
+          {
+            "node": "[Grafana] State Alerting?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Grafana] State Alerting?": {
+      "main": [
+        [
+          {
+            "node": "[Grafana] Search Existing Issues",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "[Grafana] Respond Ignored",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Grafana] Search Existing Issues": {
+      "main": [
+        [
+          {
+            "node": "[Grafana] Existing Issue?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Grafana] Existing Issue?": {
+      "main": [
+        [
+          {
+            "node": "[Grafana] Comment Existing Issue",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "[Grafana] Create Issue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Grafana] Comment Existing Issue": {
+      "main": [
+        [
+          {
+            "node": "[Grafana] Respond Done",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Grafana] Create Issue": {
+      "main": [
+        [
+          {
+            "node": "[Grafana] Respond Done",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Apply] Daily 9:30 AM KST": {
+      "main": [
+        [
+          {
+            "node": "[Apply] Run Auto-Apply Migration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Apply] Run Auto-Apply Migration": {
+      "main": [
+        [
+          {
+            "node": "[Apply] Failed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Apply] Failed?": {
+      "main": [
+        [
+          {
+            "node": "[Apply] Telegram Failure",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "[Apply] Telegram Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Seoul",
+    "errorWorkflow": "resume-error-handler"
+  }
+}

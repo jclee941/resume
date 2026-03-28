@@ -83,7 +83,7 @@ Run the conversion script:
 
 ```bash
 cd /home/jclee/dev/resume/packages/data/resumes/technical/nextrade
-./convert-to-pdf-docx.sh
+./convert-to-pdf-docx.go
 ```
 
 **Output** (created in `exports/` directory):

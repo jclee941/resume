@@ -12,12 +12,12 @@ Asset generation scripts for PDF, PPTX, icons, screenshots, and Docker images.
 
 | Script                       | Tool          | Output                    |
 | ---------------------------- | ------------- | ------------------------- |
-| `pdf-generator.sh`           | Puppeteer     | resume PDF                |
+| `pdf-generator.go`           | Puppeteer     | resume PDF                |
 | `pptx_engine.py`             | python-pptx   | presentation slides       |
 | `generate-icons.js`          | Sharp         | favicon variants          |
 | `generate-screenshots.js`    | Playwright    | portfolio screenshots     |
 | `generate-resume-variants.js`| Node          | role-specific resumes     |
-| `docker-build.sh`            | Docker        | container images          |
+| `docker-build.go`            | Docker        | container images          |
 | `optimize-images.js`         | Sharp         | image compression         |
 
 ## OUTPUT LOCATIONS
