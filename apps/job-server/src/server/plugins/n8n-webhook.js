@@ -2,7 +2,7 @@ import fp from 'fastify-plugin';
 import { signWebhookPayload } from '../../shared/services/webhook/webhook-signer.js';
 
 async function n8nWebhookPlugin(fastify) {
-  const webhookUrl = process.env.N8N_WEBHOOK_URL;
+  const webhookUrl = process.env.N8N_URL || process.env.N8N_WEBHOOK_URL;
   const webhookSecret = process.env.N8N_WEBHOOK_SECRET;
 
   if (!webhookUrl) {

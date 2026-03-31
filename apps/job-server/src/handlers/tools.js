@@ -18,6 +18,7 @@ import resumeGeneratorTool from '../tools/resume-generator.js';
 import jobMatcherTool from '../tools/job-matcher.js';
 import coverLetterTool from '../tools/cover-letter.js';
 
+import autoApplyTool from '../tools/auto-apply.js';
 /**
  * Tool registry
  */
@@ -37,6 +38,7 @@ export const tools = {
   [resumeGeneratorTool.name]: resumeGeneratorTool,
   [jobMatcherTool.name]: jobMatcherTool,
   [coverLetterTool.name]: coverLetterTool,
+  [autoApplyTool.name]: autoApplyTool,
 };
 
 /**

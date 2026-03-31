@@ -17,6 +17,9 @@ describe('stealth barrel', () => {
   it('exports ProxyRotator', () => {
     assert.equal(typeof mod.ProxyRotator, 'function');
   });
+  it('exports TLSFingerprintManager', () => {
+    assert.equal(typeof mod.TLSFingerprintManager, 'function');
+  });
   it('exports CookieJar', () => {
     assert.equal(typeof mod.CookieJar, 'function');
   });
