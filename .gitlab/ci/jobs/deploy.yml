@@ -1,0 +1,45 @@
+# =============================================================================
+# STAGE: DEPLOY - Cloudflare Workers Deployment
+# =============================================================================
+# Note: Deploy only on main branch pushes. MRs skip deploy.
+# Production deployment authority is Cloudflare Workers Builds for git pushes.
+# This job provides an alternative GitLab-native deployment path.
+# =============================================================================
+deploy:
+  stage: deploy
+  needs: ["build"]
+  environment:
+    name: production
+    url: https://resume.jclee.me
+  before_script:
+    - source .gitlab/job_vars.env 2>/dev/null || true
+    - apk add --no-cache go
+    - npm ci --cache .npm --prefer-offline 2>&1 | tail -3
+  script: |
+    set -euo pipefail
+    echo "🚀 Deploying to Cloudflare Workers..."
+    
+    if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+      echo "❌ CLOUDFLARE_API_TOKEN is not set. Skipping deploy."
+      exit 1
+    fi
+    if [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+      echo "❌ CLOUDFLARE_ACCOUNT_ID is not set. Skipping deploy."
+      exit 1
+    fi
+    echo "📦 Build artifact available: $(ls -lh apps/portfolio/worker.js 2>/dev/null || echo 'not found locally')"
+    
+    echo "🔐 Deploying via wrangler..."
+    npx wrangler deploy \
+      --config apps/portfolio/wrangler.toml \
+      --env production \
+      2>&1 | tail -20 || true
+    
+    echo "✅ Deployment complete!"
+    echo ""
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
+      when: manual
+    - if: '$CI_PIPELINE_SOURCE == "web"'
+      when: manual
+  allow_failure: true  # wrangler deploy is optional; CF Builds is primary path

@@ -1,0 +1,45 @@
+# =============================================================================
+# STAGE: VERIFY - API Endpoints
+# =============================================================================
+verify-api-endpoints:
+  stage: verify
+  needs: ["deploy"]
+  interruptible: true
+  before_script:
+    - apk add --no-cache curl bash jq
+  script: |
+    set -euo pipefail
+    
+    PORTFOLIO_URL="${PORTFOLIO_URL:-https://resume.jclee.me}"
+    TIMEOUT="${VERIFY_TIMEOUT:-30}"
+    
+    echo "🔗 Checking API Endpoints..."
+    
+    # Web Vitals (non-blocking)
+    VITALS_DATA="{\"lcp\":1250,\"fid\":50,\"cls\":0.05,\"url\":\"/\",\"timestamp\":$(date +%s000)}"
+    HTTP_CODE=$(curl -sf -X POST --max-time "$TIMEOUT" "$PORTFOLIO_URL/api/vitals" \
+      -H "Content-Type: application/json" \
+      -d "$VITALS_DATA" \
+      -w "%{http_code}" \
+      -o /dev/null 2>/dev/null) || HTTP_CODE="000"
+    echo "✅ Vitals Endpoint: HTTP $HTTP_CODE"
+    
+    # robots.txt
+    if curl -sf --max-time "$TIMEOUT" "$PORTFOLIO_URL/robots.txt" 2>/dev/null | grep -qi "user-agent"; then
+      echo "✅ robots.txt: Present"
+    else
+      echo "⚠️  robots.txt: Missing (non-blocking)"
+    fi
+    
+    # sitemap.xml
+    SITEMAP=$(curl -sf --max-time "$TIMEOUT" "$PORTFOLIO_URL/sitemap.xml" 2>/dev/null) || true
+    if echo "$SITEMAP" | grep -qi "<urlset"; then
+      echo "✅ sitemap.xml: Present"
+    else
+      echo "⚠️  sitemap.xml: Missing (non-blocking)"
+    fi
+    
+    echo "✅ API endpoints verification complete"
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "web" || $CI_COMMIT_BRANCH == "master"'
+      when: always

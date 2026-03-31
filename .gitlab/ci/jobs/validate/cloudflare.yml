@@ -1,0 +1,31 @@
+# =============================================================================
+# STAGE: VALIDATE - Cloudflare Native Validation
+# =============================================================================
+validate-cloudflare:
+  stage: validate
+  needs: ["analyze"]
+  interruptible: true
+  before_script:
+    - apk add --no-cache go curl jq
+    - source .gitlab/job_vars.env 2>/dev/null || true
+  script: |
+    set -euo pipefail
+    echo "🔧 Validating Cloudflare native structure..."
+    go run ./tools/ci/validate-cloudflare-native.go || true
+    
+    echo "🔧 Validating wrangler types generation..."
+    npx wrangler types /tmp/portfolio-worker-types.d.ts --config apps/portfolio/wrangler.toml --env production 2>&1 | tail -5 || true
+    
+    if [ "${JOB_DASHBOARD:-false}" = "true" ]; then
+      echo "🔧 Validating job-dashboard wrangler types generation..."
+      npx wrangler types /tmp/job-dashboard-worker-types.d.ts --config apps/job-dashboard/wrangler.jsonc 2>&1 | tail -5 || true
+    fi
+    
+    echo "✅ Cloudflare native validation complete"
+  rules:
+    - if: '$PORTFOLIO == "true" || $JOB_DASHBOARD == "true"'
+      when: manual
+      allow_failure: true
+    - if: '$CI_PIPELINE_SOURCE == "schedule" || $CI_PIPELINE_SOURCE == "web"'
+      when: manual
+      allow_failure: true

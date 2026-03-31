@@ -1,0 +1,39 @@
+# =============================================================================
+# STAGE: BUILD
+# =============================================================================
+# Note: Only portfolio worker has a custom build pipeline (generate-worker.js
+# → worker.js). Job-dashboard is a standard wrangler project validated via
+# wrangler types in validate-cloudflare job, built/deployed independently by
+# Cloudflare Workers Builds. See ADR 0007.
+# =============================================================================
+build:
+  stage: build
+  needs:
+    - job: analyze
+      artifacts: true
+    - lint
+    - typecheck
+    - test-unit
+    - validate-cloudflare
+    - data-drift
+  interruptible: true
+  before_script:
+    - source .gitlab/job_vars.env 2>/dev/null || true
+  script: |
+    set -euo pipefail
+    echo "🔄 Syncing resume data..."
+    npm ci --cache .npm --prefer-offline 2>&1 | tail -3
+    npm run sync:data
+    echo "🏗️ Building portfolio worker..."
+    npm run build
+    echo "✅ Build complete"
+  artifacts:
+    paths:
+      - apps/portfolio/worker.js
+    expire_in: 7 days
+    when: always
+  rules:
+    - if: '$PORTFOLIO == "true" && $CI_PIPELINE_SOURCE != "merge_request_event"'
+      when: on_success
+    - if: '$CI_PIPELINE_SOURCE == "web"'
+      when: on_success
