@@ -1,5 +1,5 @@
 import { APPLICATION_STATUS } from '../application-manager.js';
-import { n8n } from '../../shared/services/n8n/index.js';
+import { notifications } from '../../shared/services/notifications/index.js';
 
 export async function applyToWanted(job) {
   try {
@@ -52,25 +52,21 @@ export async function applyToWanted(job) {
         'Auto-applied via bot'
       );
 
-      n8n.notifyApplySuccess(job.company, job.title, job.sourceUrl, 'wanted').catch(() => {});
+      notifications.notifyApplySuccess(job.company, job.title, job.sourceUrl, 'wanted').catch(() => {});
 
       return { success: true, application };
     }
 
-    n8n
-      .notifyApplyFailed(
+      notifications.notifyApplyFailed(
         job.company,
         job.title,
         job.sourceUrl,
         'Application confirmation not found',
         'wanted'
-      )
-      .catch(() => {});
+      ).catch(() => {});
     return { success: false, error: 'Application confirmation not found' };
   } catch (error) {
-    n8n
-      .notifyApplyFailed(job.company, job.title, job.sourceUrl, error.message, 'wanted')
-      .catch(() => {});
+    notifications.notifyApplyFailed(job.company, job.title, job.sourceUrl, error.message, 'wanted').catch(() => {});
     return { success: false, error: error.message };
   }
 }
