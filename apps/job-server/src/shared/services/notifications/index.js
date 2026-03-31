@@ -8,7 +8,7 @@ import { n8n } from '../n8n/index.js';
 
 class NotificationService {
   constructor() {
-    this.enabled = !!process.env.N8N_WEBHOOK_URL;
+    this.enabled = !!(process.env.N8N_URL || process.env.N8N_WEBHOOK_URL);
   }
 
   /**

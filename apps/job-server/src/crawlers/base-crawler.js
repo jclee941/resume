@@ -6,7 +6,13 @@
  */
 
 import { EventEmitter } from 'events';
-import { HumanizedTimer, CookieJar, CaptchaDetector } from '../shared/services/stealth/index.js';
+import {
+  HumanizedTimer,
+  CookieJar,
+  CaptchaDetector,
+  ProxyRotator,
+  TLSFingerprintManager,
+} from '../shared/services/stealth/index.js';
 import { getRandomUA } from '@resume/shared/ua';
 
 /**
@@ -83,6 +89,28 @@ export class BaseCrawler extends EventEmitter {
 
     /** @type {CaptchaDetector} */
     this.captchaDetector = new CaptchaDetector(options.captcha);
+
+    this.proxyRotator =
+      options.proxyRotator ||
+      new ProxyRotator(Array.isArray(options.proxies) ? options.proxies : []);
+    this.tlsFingerprintManager = options.tlsFingerprintManager || new TLSFingerprintManager();
+    this.tlsOptions = {
+      enabled: options.tlsFingerprint?.enabled ?? true,
+      rotatePerRequest: options.tlsFingerprint?.rotatePerRequest ?? true,
+      platform: options.tlsFingerprint?.platform,
+      browser: options.tlsFingerprint?.browser,
+    };
+    this.currentProxy = null;
+    this.currentFingerprint = this.tlsFingerprintManager.getRandomFingerprint({
+      platform: this.tlsOptions.platform,
+      browser: this.tlsOptions.browser,
+    });
+    if (!options.userAgent && this.currentFingerprint?.userAgent) {
+      this.headers['User-Agent'] = this.currentFingerprint.userAgent;
+    }
+    this._dispatchers = new Map();
+    this._undici = null;
+    this._undiciLoadFailed = false;
   }
 
   /**
@@ -91,7 +119,84 @@ export class BaseCrawler extends EventEmitter {
    */
   destroy() {
     this.captchaDetector?.destroy();
+    for (const dispatcher of this._dispatchers.values()) {
+      dispatcher?.destroy?.();
+    }
+    this._dispatchers.clear();
     this.removeAllListeners();
+  }
+
+  async _loadUndici() {
+    if (this._undici || this._undiciLoadFailed) return this._undici;
+    try {
+      this._undici = await import('undici');
+      return this._undici;
+    } catch {
+      this._undiciLoadFailed = true;
+      return null;
+    }
+  }
+
+  _resolveFingerprint(proxyUrl) {
+    if (!this.tlsOptions.enabled) return this.currentFingerprint;
+
+    const forceRotate = this.tlsOptions.rotatePerRequest || proxyUrl !== this.currentProxy;
+
+    if (proxyUrl) {
+      this.currentFingerprint = this.tlsFingerprintManager.getForProxy(proxyUrl, {
+        platform: this.tlsOptions.platform,
+        browser: this.tlsOptions.browser,
+        forceRotate,
+      });
+    } else if (forceRotate || !this.currentFingerprint) {
+      this.currentFingerprint = this.tlsFingerprintManager.rotateFingerprint({
+        platform: this.tlsOptions.platform,
+        browser: this.tlsOptions.browser,
+      });
+    }
+
+    if (this.currentFingerprint?.userAgent) {
+      this.headers['User-Agent'] = this.currentFingerprint.userAgent;
+    }
+
+    this.currentProxy = proxyUrl;
+    return this.currentFingerprint;
+  }
+
+  async _resolveDispatcher(proxyUrl, fingerprint) {
+    if (!this.tlsOptions.enabled) return null;
+
+    const undici = await this._loadUndici();
+    if (!undici) return null;
+
+    const key = `${proxyUrl || 'direct'}::${fingerprint?.id || 'none'}`;
+    if (this._dispatchers.has(key)) {
+      return this._dispatchers.get(key);
+    }
+
+    const connect = this.tlsFingerprintManager.buildTlsConnectOptions(fingerprint);
+    let dispatcher = null;
+
+    if (proxyUrl && undici.ProxyAgent) {
+      dispatcher = new undici.ProxyAgent({
+        uri: proxyUrl,
+        requestTls: connect,
+      });
+    } else if (undici.Agent) {
+      dispatcher = new undici.Agent({
+        connect,
+        keepAliveTimeout: 5000,
+        keepAliveMaxTimeout: 15000,
+        connections: 10,
+        pipelining: 0,
+      });
+    }
+
+    if (dispatcher) {
+      this._dispatchers.set(key, dispatcher);
+    }
+
+    return dispatcher;
   }
 
   /**
@@ -149,17 +254,24 @@ export class BaseCrawler extends EventEmitter {
     const jarCookies = this.cookieJar.getCookieHeader(url);
     const combinedCookies = [this.cookies, jarCookies].filter(Boolean).join('; ');
 
+    const proxyUrl = this.proxyRotator.getNext({ excludeRecent: this.currentProxy });
+    const fingerprint = this._resolveFingerprint(proxyUrl);
+    const dispatcher = await this._resolveDispatcher(proxyUrl, fingerprint);
+
     const fetchOptions = {
       method: restOptions.method || 'GET',
       headers: {
         ...this.headers,
+        ...(fingerprint?.userAgent ? { 'User-Agent': fingerprint.userAgent } : {}),
         ...restOptions.headers,
         ...(combinedCookies ? { Cookie: combinedCookies } : {}),
       },
       signal: AbortSignal.timeout(this.timeout),
       ...restOptions,
+      ...(dispatcher ? { dispatcher } : {}),
     };
 
+    const requestStart = Date.now();
     let lastError;
     for (let attempt = 1; attempt <= retryConfig.maxRetries; attempt++) {
       try {
@@ -200,6 +312,10 @@ export class BaseCrawler extends EventEmitter {
           this.cookieJar.setCookiesFromHeader(setCookieHeader, url);
         }
 
+        if (proxyUrl) {
+          this.proxyRotator.markSuccess(proxyUrl, Date.now() - requestStart);
+        }
+
         // Detect CAPTCHA from response status/headers
         const captchaResult = this.captchaDetector.detectFromStatusCode(
           response.status,
@@ -218,6 +334,10 @@ export class BaseCrawler extends EventEmitter {
       } catch (error) {
         lastError = error;
         const statusCode = error.statusCode || null;
+
+        if (proxyUrl) {
+          this.proxyRotator.markFailure(proxyUrl, error);
+        }
 
         // Non-retryable error — fail immediately
         if (!this._isRetryable(statusCode, retryConfig)) {

@@ -1,5 +1,5 @@
 import { APPLICATION_STATUS } from '../application-manager.js';
-import { n8n } from '../../shared/services/n8n/index.js';
+import { notifications } from '../../shared/services/notifications/index.js';
 
 export async function applyToLinkedIn(job) {
   try {
@@ -48,13 +48,13 @@ export async function applyToLinkedIn(job) {
       (await this.findElementWithText('Application sent'));
 
     if (!successMessage) {
-      n8n
+      notifications
         .notifyApplyFailed(
           job.company,
           job.title,
           job.sourceUrl,
           'Application confirmation not found',
-          'wanted'
+          'linkedin'
         )
         .catch(() => {});
       return { success: false, error: 'Application confirmation not found' };
@@ -69,8 +69,8 @@ export async function applyToLinkedIn(job) {
 
     return { success: true, application };
   } catch (error) {
-    n8n
-      .notifyApplyFailed(job.company, job.title, job.sourceUrl, error.message, 'wanted')
+    notifications
+      .notifyApplyFailed(job.company, job.title, job.sourceUrl, error.message, 'linkedin')
       .catch(() => {});
     return { success: false, error: error.message };
   }

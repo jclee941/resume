@@ -6,7 +6,7 @@
 
 class N8NWebhookService {
   constructor() {
-    this.baseUrl = process.env.N8N_URL || 'https://n8n.jclee.me';
+    this.baseUrl = process.env.N8N_URL || process.env.N8N_WEBHOOK_URL?.replace(/\/webhook.*/, '') || 'https://n8n.jclee.me';
     this.webhookPaths = {
       default: '/webhook/job-automation',
       wanted: '/webhook/job-automation',

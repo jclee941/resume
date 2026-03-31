@@ -126,3 +126,95 @@ CREATE TABLE IF NOT EXISTS resume_sync_history (
 );
 
 CREATE INDEX IF NOT EXISTS idx_resume_sync_history_created_at ON resume_sync_history(created_at);
+
+
+-- ============================================================================
+-- Application Workflow Tables
+-- ============================================================================
+
+-- Workflow execution tracking
+CREATE TABLE IF NOT EXISTS application_workflows (
+  id TEXT PRIMARY KEY,
+  status TEXT NOT NULL DEFAULT 'running', -- running, completed, failed
+  trigger_type TEXT NOT NULL DEFAULT 'manual', -- cron, manual, event
+  jobs_found INTEGER DEFAULT 0,
+  jobs_approved INTEGER DEFAULT 0,
+  jobs_applied INTEGER DEFAULT 0,
+  jobs_failed INTEGER DEFAULT 0,
+  started_at TEXT NOT NULL,
+  completed_at TEXT,
+  data TEXT, -- JSON: steps, errors, stats
+  created_at TEXT NOT NULL DEFAULT datetime('now'),
+  updated_at TEXT NOT NULL DEFAULT datetime('now')
+);
+
+CREATE INDEX IF NOT EXISTS idx_application_workflows_status ON application_workflows(status);
+CREATE INDEX IF NOT EXISTS idx_application_workflows_trigger ON application_workflows(trigger_type);
+CREATE INDEX IF NOT EXISTS idx_application_workflows_started ON application_workflows(started_at);
+
+-- Approval requests for manual review
+CREATE TABLE IF NOT EXISTS approval_requests (
+  id TEXT PRIMARY KEY,
+  workflow_id TEXT NOT NULL,
+  job_id TEXT NOT NULL,
+  job_title TEXT NOT NULL,
+  company TEXT NOT NULL,
+  platform TEXT NOT NULL,
+  match_score INTEGER NOT NULL,
+  status TEXT NOT NULL DEFAULT 'pending', -- pending, approved, auto-approved, rejected, timeout
+  reviewed_by TEXT, -- user who approved/rejected
+  reviewed_at TEXT,
+  notes TEXT,
+  created_at TEXT NOT NULL DEFAULT datetime('now'),
+  updated_at TEXT NOT NULL DEFAULT datetime('now'),
+  FOREIGN KEY (workflow_id) REFERENCES application_workflows(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_approval_requests_workflow ON approval_requests(workflow_id);
+CREATE INDEX IF NOT EXISTS idx_approval_requests_status ON approval_requests(status);
+CREATE INDEX IF NOT EXISTS idx_approval_requests_job ON approval_requests(job_id);
+CREATE INDEX IF NOT EXISTS idx_approval_requests_created ON approval_requests(created_at);
+
+-- Workflow step execution logs
+CREATE TABLE IF NOT EXISTS workflow_logs (
+  id TEXT PRIMARY KEY,
+  workflow_id TEXT NOT NULL,
+  step_name TEXT NOT NULL,
+  status TEXT NOT NULL, -- completed, failed, retry
+  details TEXT, -- JSON with step-specific data
+  created_at TEXT NOT NULL DEFAULT datetime('now'),
+  FOREIGN KEY (workflow_id) REFERENCES application_workflows(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_workflow_logs_workflow ON workflow_logs(workflow_id);
+CREATE INDEX IF NOT EXISTS idx_workflow_logs_step ON workflow_logs(step_name);
+CREATE INDEX IF NOT EXISTS idx_workflow_logs_created ON workflow_logs(created_at);
+
+-- Add workflow_id to applications table for tracking
+ALTER TABLE applications ADD COLUMN workflow_id TEXT REFERENCES application_workflows(id);
+CREATE INDEX IF NOT EXISTS idx_applications_workflow ON applications(workflow_id);
+
+-- ============================================================================
+-- Notification History Table
+-- ============================================================================
+
+-- Notification history for audit and tracking
+CREATE TABLE IF NOT EXISTS notification_history (
+  id TEXT PRIMARY KEY,
+  event_type TEXT NOT NULL,
+  data TEXT NOT NULL, -- JSON: notification payload (sanitized)
+  channels TEXT NOT NULL, -- JSON: array of channels used
+  timestamp TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'pending', -- pending, success, partial, failed
+  results TEXT, -- JSON: results from each channel
+  created_at TEXT NOT NULL DEFAULT datetime('now')
+);
+
+CREATE INDEX IF NOT EXISTS idx_notification_history_event_type ON notification_history(event_type);
+CREATE INDEX IF NOT EXISTS idx_notification_history_timestamp ON notification_history(timestamp);
+CREATE INDEX IF NOT EXISTS idx_notification_history_status ON notification_history(status);
+CREATE INDEX IF NOT EXISTS idx_notification_history_created ON notification_history(created_at);
+
+-- Add approved_at and rejected_at to applications for approval tracking
+ALTER TABLE applications ADD COLUMN approved_at TEXT;
+ALTER TABLE applications ADD COLUMN rejected_at TEXT;

@@ -1,0 +1,38 @@
+
+홍길동 (Hong Gil-dong)
+Software Engineer
+
+📧 hong.gildong@example.com | 📱 010-1234-5678
+
+경력 (Experience)
+===============
+2022 - 현재: Senior Software Engineer @ Tech Corp
+- Kubernetes 기반 클라우드 인프라 관리
+- CI/CD 파이프라인 자동화 (GitHub Actions, ArgoCD)
+- 보안 취약점 스캐닝 및 패치 관리
+
+2020 - 2022: DevOps Engineer @ StartupXYZ
+- AWS 기반 마이크로서비스 아키텍처 구축
+- Terraform을 통한 인프라 코드화 (IaC)
+- Prometheus + Grafana 모니터링 시스템 구축
+
+학력 (Education)
+===============
+2016 - 2020: 컴퓨터공학 학사, 한국대학교
+- GPA: 3.8/4.5
+- 졸업논문: 클라우드 환경에서의 보안 정책 자동화
+
+기술 스택 (Tech Stack)
+====================
+- Languages: JavaScript, Python, Go, Bash
+- Cloud: AWS, GCP, Cloudflare
+- Containers: Docker, Kubernetes, Helm
+- CI/CD: GitHub Actions, Jenkins, ArgoCD
+- Monitoring: Prometheus, Grafana, ELK Stack
+- Security: Trivy, Snyk, OWASP ZAP
+
+자격증 (Certifications)
+=====================
+- AWS Solutions Architect Professional (2023)
+- CKA (Certified Kubernetes Administrator) (2023)
+- OSCP (Offensive Security Certified Professional) (2022)
