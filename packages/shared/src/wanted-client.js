@@ -1,9 +1,9 @@
-/**
- * WantedClient for Cloudflare Workers
- * Pure fetch-based, no external dependencies
- */
-
+// WantedClient — core class + job search/apply/profile.
+// Domain methods composed from wanted-resume-api, wanted-skill-api, wanted-profile-api.
 import { DEFAULT_USER_AGENT } from './ua.js';
+import { resumeApiMethods } from './wanted-resume-api.js';
+import { skillApiMethods } from './wanted-skill-api.js';
+import { profileApiMethods } from './wanted-profile-api.js';
 
 const BASE_URL = 'https://www.wanted.co.kr/api/v4';
 const CHAOS_BASE_URL = 'https://www.wanted.co.kr/api/chaos';
@@ -28,33 +28,17 @@ export class WantedClient {
   }
 
   async request(endpoint, options = {}) {
-    const url = `${BASE_URL}${endpoint}`;
-    return this._fetch(url, options);
+    return this._fetch(`${BASE_URL}${endpoint}`, options);
   }
 
-  /**
-   * Chaos API request (resume management)
-   * @param {string} endpoint - API endpoint (e.g., "/resumes/v1")
-   * @param {object} options - fetch options
-   */
   async chaosRequest(endpoint, options = {}) {
-    const url = `${CHAOS_BASE_URL}${endpoint}`;
-    return this._fetch(url, options);
+    return this._fetch(`${CHAOS_BASE_URL}${endpoint}`, options);
   }
 
-  /**
-   * SNS API request (profile management)
-   * @param {string} endpoint - API endpoint (e.g., "/profile")
-   * @param {object} options - fetch options
-   */
   async snsRequest(endpoint, options = {}) {
-    const url = `${SNS_BASE_URL}${endpoint}`;
-    return this._fetch(url, options);
+    return this._fetch(`${SNS_BASE_URL}${endpoint}`, options);
   }
 
-  /**
-   * Internal fetch helper with common headers
-   */
   async _fetch(url, options = {}) {
     const headers = {
       Accept: 'application/json',
@@ -65,22 +49,17 @@ export class WantedClient {
       Origin: 'https://www.wanted.co.kr',
       ...options.headers,
     };
-
     if (this.cookies) {
       headers.Cookie = this.cookies;
     }
-
     const fetchOptions = {
       method: options.method || 'GET',
       headers,
     };
-
     if (options.body && options.method !== 'GET') {
       fetchOptions.body = JSON.stringify(options.body);
     }
-
     const response = await fetch(url, fetchOptions);
-
     if (!response.ok) {
       throw new WantedAPIError(
         `HTTP ${response.status}: ${response.statusText}`,
@@ -88,15 +67,9 @@ export class WantedClient {
         await response.text().catch(() => null)
       );
     }
-
     return response.json();
   }
 
-  /**
-   * Search jobs by keyword
-   * @param {string} keyword - Search keyword
-   * @param {object} options - { limit, offset }
-   */
   async searchJobs(keyword, options = {}) {
     const { limit = 20, offset = 0 } = options;
     const params = new URLSearchParams({
@@ -105,15 +78,10 @@ export class WantedClient {
       offset: String(offset),
       country: 'kr',
     });
-
     const data = await this.request(`/jobs?${params}`);
     return this.normalizeJobs(data?.data || []);
   }
 
-  /**
-   * Search jobs by category (tag_type_id)
-   * @param {object} options - { tagTypeIds, limit, offset }
-   */
   async searchByCategory(options = {}) {
     const { tagTypeIds = [674], limit = 20, offset = 0 } = options;
     const params = new URLSearchParams({
@@ -122,32 +90,20 @@ export class WantedClient {
       offset: String(offset),
       country: 'kr',
     });
-
     const data = await this.request(`/jobs?${params}`);
     return this.normalizeJobs(data?.data || []);
   }
 
-  /**
-   * Get job detail
-   * @param {string|number} jobId - Job ID
-   */
   async getJobDetail(jobId) {
     const data = await this.request(`/jobs/${jobId}`);
     return this.normalizeJobDetail(data?.job || data);
   }
 
-  /**
-   * Apply to a job (requires authentication)
-   * @param {string|number} jobId - Job ID
-   * @param {string} resumeId - Resume ID (optional, uses default)
-   */
   async apply(jobId, resumeId = null) {
     if (!this.cookies) {
       throw new WantedAPIError('Authentication required', 401, null);
     }
-
     const body = resumeId ? { resume_id: resumeId } : {};
-
     const response = await fetch('https://www.wanted.co.kr/api/chaos/applications/v1', {
       method: 'POST',
       headers: {
@@ -163,23 +119,17 @@ export class WantedClient {
         ...body,
       }),
     });
-
     if (!response.ok) {
       const text = await response.text().catch(() => '');
       throw new WantedAPIError(`Application failed: ${response.status}`, response.status, text);
     }
-
     return response.json();
   }
 
-  /**
-   * Get current user profile (requires authentication)
-   */
   async getProfile() {
     if (!this.cookies) {
       throw new WantedAPIError('Authentication required', 401, null);
     }
-
     const response = await fetch('https://www.wanted.co.kr/api/v4/users/status', {
       headers: {
         Accept: 'application/json',
@@ -187,209 +137,11 @@ export class WantedClient {
         'User-Agent': DEFAULT_USER_AGENT,
       },
     });
-
     if (!response.ok) {
       throw new WantedAPIError(`Profile fetch failed: ${response.status}`, response.status, null);
     }
-
     return response.json();
   }
-
-  // ============================================================
-  // CHAOS API: Resume Management
-  // ============================================================
-
-  async getResumeList() {
-    this._requireAuth();
-    const response = await this.chaosRequest('/resumes/v1');
-    return response.data || response;
-  }
-
-  async getResumeDetail(resumeId) {
-    this._requireAuth();
-    const response = await this.chaosRequest(`/resumes/v1/${resumeId}`);
-    return response.data || response;
-  }
-
-  async saveResume(resumeId) {
-    this._requireAuth();
-    return this.chaosRequest(`/resumes/${resumeId}/pdf`, { method: 'POST' });
-  }
-
-  // ============================================================
-  // CHAOS API v2: Career CRUD
-  // ============================================================
-
-  async updateCareer(resumeId, careerId, careerData) {
-    this._requireAuth();
-    return this.chaosRequest(`/resumes/v2/${resumeId}/careers/${careerId}`, {
-      method: 'PATCH',
-      body: careerData,
-    });
-  }
-
-  async addCareer(resumeId, careerData) {
-    this._requireAuth();
-    return this.chaosRequest(`/resumes/v2/${resumeId}/careers`, {
-      method: 'POST',
-      body: careerData,
-    });
-  }
-
-  async deleteCareer(resumeId, careerId) {
-    this._requireAuth();
-    return this.chaosRequest(`/resumes/v2/${resumeId}/careers/${careerId}`, {
-      method: 'DELETE',
-    });
-  }
-
-  // ============================================================
-  // CHAOS API v2: Career Project CRUD
-  // ============================================================
-
-  async addProject(resumeId, careerId, projectData) {
-    this._requireAuth();
-    return this.chaosRequest(`/resumes/v2/${resumeId}/careers/${careerId}/projects`, {
-      method: 'POST',
-      body: projectData,
-    });
-  }
-
-  async deleteProject(resumeId, careerId, projectId) {
-    this._requireAuth();
-    return this.chaosRequest(`/resumes/v2/${resumeId}/careers/${careerId}/projects/${projectId}`, {
-      method: 'DELETE',
-    });
-  }
-
-  // ============================================================
-  // CHAOS API v2: Education CRUD
-  // ============================================================
-
-  async updateEducation(resumeId, educationId, educationData) {
-    this._requireAuth();
-    return this.chaosRequest(`/resumes/v2/${resumeId}/educations/${educationId}`, {
-      method: 'PATCH',
-      body: educationData,
-    });
-  }
-
-  async addEducation(resumeId, educationData) {
-    this._requireAuth();
-    return this.chaosRequest(`/resumes/v2/${resumeId}/educations`, {
-      method: 'POST',
-      body: educationData,
-    });
-  }
-
-  async deleteEducation(resumeId, educationId) {
-    this._requireAuth();
-    return this.chaosRequest(`/resumes/v2/${resumeId}/educations/${educationId}`, {
-      method: 'DELETE',
-    });
-  }
-
-  // ============================================================
-  // CHAOS API v1: Skills CRUD (v1 only! v2 returns 404)
-  // ============================================================
-
-  async addSkill(resumeId, tagTypeId) {
-    this._requireAuth();
-    return this.chaosRequest(`/resumes/v1/${resumeId}/skills`, {
-      method: 'POST',
-      body: { tag_type_id: tagTypeId },
-    });
-  }
-
-  async deleteSkill(resumeId, skillId) {
-    this._requireAuth();
-    return this.chaosRequest(`/resumes/v1/${resumeId}/skills/${skillId}`, {
-      method: 'DELETE',
-    });
-  }
-
-  // ============================================================
-  // CHAOS API v2: Activity CRUD
-  // ============================================================
-
-  async updateActivity(resumeId, activityId, activityData) {
-    this._requireAuth();
-    return this.chaosRequest(`/resumes/v2/${resumeId}/activities/${activityId}`, {
-      method: 'PATCH',
-      body: activityData,
-    });
-  }
-
-  async addActivity(resumeId, activityData) {
-    this._requireAuth();
-    return this.chaosRequest(`/resumes/v2/${resumeId}/activities`, {
-      method: 'POST',
-      body: activityData,
-    });
-  }
-
-  async deleteActivity(resumeId, activityId) {
-    this._requireAuth();
-    return this.chaosRequest(`/resumes/v2/${resumeId}/activities/${activityId}`, {
-      method: 'DELETE',
-    });
-  }
-
-  // ============================================================
-  // CHAOS API v2: Language Certificate CRUD
-  // ============================================================
-
-  async updateLanguageCert(resumeId, certId, certData) {
-    this._requireAuth();
-    return this.chaosRequest(`/resumes/v2/${resumeId}/language_certs/${certId}`, {
-      method: 'PUT',
-      body: certData,
-    });
-  }
-
-  async addLanguageCert(resumeId, certData) {
-    this._requireAuth();
-    return this.chaosRequest(`/resumes/v2/${resumeId}/language_certs`, {
-      method: 'POST',
-      body: certData,
-    });
-  }
-
-  async deleteLanguageCert(resumeId, certId) {
-    this._requireAuth();
-    return this.chaosRequest(`/resumes/v2/${resumeId}/language_certs/${certId}`, {
-      method: 'DELETE',
-    });
-  }
-
-  // ============================================================
-  // SNS API: Profile Update
-  // ============================================================
-
-  async updateProfile(profileData) {
-    this._requireAuth();
-    return this.snsRequest('/profile', {
-      method: 'PATCH',
-      body: profileData,
-    });
-  }
-
-  /**
-   * Update resume top-level fields (about, email, mobile)
-   * @param {string} resumeId - Resume ID
-   * @param {object} fields - Fields to update (about, email, mobile)
-   */
-  async updateResumeFields(resumeId, fields) {
-    this._requireAuth();
-    return this.chaosRequest(`/resumes/v1/${resumeId}`, {
-      method: 'PUT',
-      body: fields,
-    });
-  }
-
-  // ============================================================
-  // Helper Methods
-  // ============================================================
 
   _requireAuth() {
     if (!this.cookies) {
@@ -411,9 +163,6 @@ export class WantedClient {
     }));
   }
 
-  /**
-   * Normalize job detail from API response
-   */
   normalizeJobDetail(job) {
     return {
       id: job.id,
@@ -434,5 +183,9 @@ export class WantedClient {
     };
   }
 }
+
+Object.assign(WantedClient.prototype, resumeApiMethods);
+Object.assign(WantedClient.prototype, skillApiMethods);
+Object.assign(WantedClient.prototype, profileApiMethods);
 
 export default WantedClient;

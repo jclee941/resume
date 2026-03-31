@@ -84,7 +84,7 @@ func main() {
 	}
 	fmt.Println()
 
-	// Test 6: Pipeline Trigger
+	// Test 6: Pipeline Config
 	fmt.Println("[Test 6/6] Testing pipeline configuration...")
 	if err := testPipelineConfig(); err != nil {
 		fmt.Printf("❌ FAIL: %v\n", err)
@@ -146,8 +146,8 @@ func testYAMLValidation() error {
 	if !strings.Contains(string(content), "stages:") {
 		return fmt.Errorf("missing 'stages' section")
 	}
-	if !strings.Contains(string(content), "fetch-oauth-token") {
-		return fmt.Errorf("missing 'fetch-oauth-token' job")
+	if !strings.Contains(string(content), "include:") {
+		return fmt.Errorf("missing 'include' section")
 	}
 
 	return nil
@@ -240,17 +240,27 @@ func testRunnerStatus() error {
 }
 
 func testPipelineConfig() error {
-	// Check if .gitlab-ci.yml has all required jobs
+	// Check if .gitlab-ci.yml has required includes
 	content, err := os.ReadFile(".gitlab-ci.yml")
 	if err != nil {
 		return fmt.Errorf("cannot read .gitlab-ci.yml: %v", err)
 	}
 
-	requiredJobs := []string{
-		"lint:eslint",
-		"typecheck:typescript",
-		"build:portfolio",
-		"test:jest",
-		"trigger-n8n-deploy",
-		"notify-n8n",
+	requiredIncludes := []string{
+		".gitlab/ci/jobs/analyze.yml",
+		".gitlab/ci/jobs/validate/lint.yml",
+		".gitlab/ci/jobs/validate/typecheck.yml",
+		".gitlab/ci/jobs/test/unit.yml",
+		".gitlab/ci/jobs/build.yml",
+		".gitlab/ci/jobs/deploy.yml",
 	}
+
+	contentStr := string(content)
+	for _, include := range requiredIncludes {
+		if !strings.Contains(contentStr, include) {
+			return fmt.Errorf("missing required include: %s", include)
+		}
+	}
+
+	return nil
+}

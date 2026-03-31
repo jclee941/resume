@@ -1,0 +1,440 @@
+{
+  "name": "CI Release",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ci-release",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "webhook-trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 300],
+      "webhookId": "ci-release"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-is-master",
+              "leftValue": "={{ $json.body.ref }}",
+              "rightValue": "refs/heads/master",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "is-master",
+      "name": "is-master",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\"released\": false, \"reason\": \"not master\"}",
+        "options": {}
+      },
+      "id": "respond-not-master",
+      "name": "respond-not-master",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [650, 500]
+    },
+    {
+      "parameters": {
+        "command": "git describe --tags --abbrev=0 --match \"v[0-9]*\" 2>/dev/null || echo \"v0.0.0\""
+      },
+      "id": "get-last-tag",
+      "name": "get-last-tag",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [650, 300],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "command": "={{ 'git log ' + ($json.stdout || 'v0.0.0').trim().split('\\n')[0] + '..HEAD --pretty=format:\"%s%n%b\"' }}"
+      },
+      "id": "get-commits",
+      "name": "get-commits",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [850, 300],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-has-commits",
+              "leftValue": "={{ ($json.stdout || '').trim() }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "has-commits",
+      "name": "has-commits",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1050, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\"released\": false, \"reason\": \"no new commits\"}",
+        "options": {}
+      },
+      "id": "respond-no-commits",
+      "name": "respond-no-commits",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1250, 500]
+    },
+    {
+      "parameters": {
+        "jsCode": "const commitsRaw = $input.first().json.stdout || '';\nconst commits = commitsRaw.trim();\n\nlet bump = 'patch';\nif (/BREAKING[\\s_]CHANGE/i.test(commits) || /^[\\w]+(?:\\([^)]+\\))?!:/m.test(commits)) {\n  bump = 'major';\n} else if (/^feat(?:\\([^)]+\\))?(?:!)?:/m.test(commits)) {\n  bump = 'minor';\n}\n\nreturn [{ json: { bump, commits } }];"
+      },
+      "id": "parse-conventional-commits",
+      "name": "parse-conventional-commits",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1250, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const rawTag = ($('get-last-tag').first().json.stdout || 'v0.0.0').trim().split('\\n')[0] || 'v0.0.0';\nconst lastTag = /^v\\d/.test(rawTag) ? rawTag : 'v0.0.0';\nconst { bump, commits } = $json;\n\nconst version = lastTag.replace(/^v/, '');\nconst parts = version.split('.');\nlet major = parseInt(parts[0]) || 0;\nlet minor = parseInt(parts[1]) || 0;\nlet patch = parseInt(parts[2]) || 0;\n\nif (bump === 'major') { major++; minor = 0; patch = 0; }\nelse if (bump === 'minor') { minor++; patch = 0; }\nelse { patch++; }\n\nconst newTag = `v${major}.${minor}.${patch}`;\nconst newVersion = `${major}.${minor}.${patch}`;\n\nreturn [{ json: { newTag, newVersion, lastTag, bump, commits } }];"
+      },
+      "id": "calc-new-version",
+      "name": "calc-new-version",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1450, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const { newTag, newVersion, lastTag, bump, commits } = $json;\nconst lines = commits.split('\\n').filter(l => l.trim());\n\nconst breaking = lines.filter(l => /BREAKING[\\s_]CHANGE/i.test(l) || /^[\\w]+(?:\\([^)]+\\))?!:/.test(l));\nconst features = lines.filter(l => /^feat(?:\\([^)]+\\))?(?:!)?:/.test(l));\nconst fixes = lines.filter(l => /^fix(?:\\([^)]+\\))?(?:!)?:/.test(l));\nconst others = lines.filter(l => !breaking.includes(l) && !features.includes(l) && !fixes.includes(l) && l.trim());\n\nlet changelog = `## Changes since ${lastTag}\\n`;\n\nif (breaking.length > 0) {\n  changelog += `\\n### Breaking Changes\\n`;\n  breaking.forEach(l => { changelog += `- ${l}\\n`; });\n}\n\nif (features.length > 0) {\n  changelog += `\\n### Features\\n`;\n  features.forEach(l => { changelog += `- ${l}\\n`; });\n}\n\nif (fixes.length > 0) {\n  changelog += `\\n### Fixes\\n`;\n  fixes.forEach(l => { changelog += `- ${l}\\n`; });\n}\n\nif (others.length > 0) {\n  changelog += `\\n### Other Changes\\n`;\n  others.forEach(l => { changelog += `- ${l}\\n`; });\n}\n\nreturn [{ json: { newTag, newVersion, lastTag, bump, commits, changelog } }];"
+      },
+      "id": "generate-changelog",
+      "name": "generate-changelog",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1650, 300]
+    },
+    {
+      "parameters": {
+        "command": "={{ 'git config user.email \"ci@jclee.me\" && git config user.name \"CI Bot\" && git tag -a ' + $json.newTag + ' -m \"Release ' + $json.newTag + '\" && git push origin ' + $json.newTag }}"
+      },
+      "id": "create-push-tag",
+      "name": "create-push-tag",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [1850, 300],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://gitlab.jclee.me/api/v4/projects/' + ($env.GITLAB_PROJECT_ID || '') + '/releases' }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ name: 'Release ' + $('generate-changelog').first().json.newTag, tag_name: $('generate-changelog').first().json.newTag, description: $('generate-changelog').first().json.changelog, milestones: [], assets: { links: [] } }) }}",
+        "options": {}
+      },
+      "id": "create-gitlab-release",
+      "name": "create-gitlab-release",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [2050, 300],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "gitlab-api-token",
+          "name": "gitlab-api-token"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const genData = $('generate-changelog').first().json;\nconst webhookBody = ($('webhook-trigger').first().json.body || {});\n\nreturn [{\n  json: {\n    workflow: 'release',\n    conclusion: 'success',\n    ref: genData.newTag,\n    sha: webhookBody.after || webhookBody.checkout_sha || '',\n    pipeline_id: webhookBody.pipeline_id || 0,\n    pipeline_url: '',\n    actor: webhookBody.user_username || 'ci',\n    index: 'resume-ci-logs',\n    elasticsearch_url: $env.ELASTICSEARCH_URL || '',\n    elasticsearch_api_key: $env.ELASTICSEARCH_API_KEY || ''\n  }\n}];"
+      },
+      "id": "build-elk-payload",
+      "name": "build-elk-payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2250, 300]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "CI_ELK_INGEST_WORKFLOW_ID",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "elk-ingest",
+      "name": "elk-ingest",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.1,
+      "position": [2450, 300],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const newTag = $('generate-changelog').first().json.newTag;\nreturn [{ json: { message: `\uD83C\uDF89 Release ${newTag} created` } }];"
+      },
+      "id": "format-telegram-msg",
+      "name": "format-telegram-msg",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2650, 300]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "PV5yLgHNzNSlCmRT",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "notify-telegram",
+      "name": "notify-telegram",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.1,
+      "position": [2850, 300],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ released: true, tag: $('generate-changelog').first().json.newTag }) }}",
+        "options": {}
+      },
+      "id": "respond-webhook",
+      "name": "respond-webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [3050, 300]
+    }
+  ],
+  "connections": {
+    "webhook-trigger": {
+      "main": [
+        [
+          {
+            "node": "is-master",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "is-master": {
+      "main": [
+        [
+          {
+            "node": "get-last-tag",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "respond-not-master",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-last-tag": {
+      "main": [
+        [
+          {
+            "node": "get-commits",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-commits": {
+      "main": [
+        [
+          {
+            "node": "has-commits",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "has-commits": {
+      "main": [
+        [
+          {
+            "node": "parse-conventional-commits",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "respond-no-commits",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "parse-conventional-commits": {
+      "main": [
+        [
+          {
+            "node": "calc-new-version",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "calc-new-version": {
+      "main": [
+        [
+          {
+            "node": "generate-changelog",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "generate-changelog": {
+      "main": [
+        [
+          {
+            "node": "create-push-tag",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create-push-tag": {
+      "main": [
+        [
+          {
+            "node": "create-gitlab-release",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create-gitlab-release": {
+      "main": [
+        [
+          {
+            "node": "build-elk-payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "build-elk-payload": {
+      "main": [
+        [
+          {
+            "node": "elk-ingest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "elk-ingest": {
+      "main": [
+        [
+          {
+            "node": "format-telegram-msg",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "format-telegram-msg": {
+      "main": [
+        [
+          {
+            "node": "notify-telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "notify-telegram": {
+      "main": [
+        [
+          {
+            "node": "respond-webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Seoul",
+    "continueOnFail": true
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "id": "tag-ci",
+      "name": "ci"
+    },
+    {
+      "id": "tag-release",
+      "name": "release"
+    },
+    {
+      "id": "tag-gitlab",
+      "name": "gitlab"
+    }
+  ]
+}

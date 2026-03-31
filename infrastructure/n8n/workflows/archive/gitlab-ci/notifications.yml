@@ -1,0 +1,123 @@
+# =============================================================================
+# N8N Webhook Integration for GitLab CI/CD
+# =============================================================================
+# 모든 workflow를 n8n으로 라우팅하여 중앙 집중식 관리
+# 모든 파이프라인 이벤트를 n8n 웹훅으로 전송
+# =============================================================================
+
+.n8n-notify:
+  image: alpine/curl:latest
+  variables:
+    N8N_WEBHOOK_URL: "${N8N_WEBHOOK_URL:-https://n8n.jclee.me/webhook/gitlab-ci}"
+  script:
+    - |
+      # Prepare webhook payload
+      cat > /tmp/n8n-payload.json <<EOF
+      {
+        "event": "pipeline_${N8N_EVENT_TYPE:-status}",
+        "project": "$CI_PROJECT_PATH",
+        "pipeline_id": "$CI_PIPELINE_ID",
+        "pipeline_url": "$CI_PIPELINE_URL",
+        "ref": "$CI_COMMIT_REF_NAME",
+        "sha": "$CI_COMMIT_SHA",
+        "commit_message": "$(echo "$CI_COMMIT_MESSAGE" | head -1 | sed 's/"/\\"/g')",
+        "author": "$GITLAB_USER_NAME",
+        "author_email": "$GITLAB_USER_EMAIL",
+        "status": "$CI_PIPELINE_STATUS",
+        "source": "$CI_PIPELINE_SOURCE",
+        "job_name": "$CI_JOB_NAME",
+        "job_stage": "$CI_JOB_STAGE",
+        "custom_data": $(echo "${N8N_CUSTOM_DATA:-{}}" | cat)
+      }
+      EOF
+    
+    - |
+      # Send to n8n webhook
+      if [ -n "$N8N_WEBHOOK_URL" ] && [ "$N8N_WEBHOOK_URL" != "null" ]; then
+        echo "📡 Sending webhook to n8n: $N8N_WEBHOOK_URL"
+        curl -sfSL -X POST "$N8N_WEBHOOK_URL" \
+          -H "Content-Type: application/json" \
+          -H "X-GitLab-Event: Pipeline Hook" \
+          -H "X-N8N-Source: gitlab-ci" \
+          --data @/tmp/n8n-payload.json || {
+          echo "⚠️ Webhook delivery failed (non-blocking)"
+          exit 0
+        }
+        echo "✅ Webhook delivered successfully"
+      else
+        echo "ℹ️ N8N_WEBHOOK_URL not configured, skipping webhook"
+      fi
+
+# =============================================================================
+# Telegram Notification Template
+# =============================================================================
+# 입사지원 자동화 이벤트를 텔레그램으로 알림
+# =============================================================================
+
+.telegram-notify:
+  image: alpine/curl:latest
+  variables:
+    TELEGRAM_BOT_TOKEN: ""  # Set in CI/CD variables
+    TELEGRAM_CHAT_ID: ""    # Set in CI/CD variables
+  script:
+    - |
+      # Skip if Telegram not configured
+      if [ -z "$TELEGRAM_BOT_TOKEN" ] || [ -z "$TELEGRAM_CHAT_ID" ]; then
+        echo "ℹ️ Telegram not configured, skipping notification"
+        exit 0
+      fi
+    
+    - |
+      # Prepare message based on event type
+      case "${TELEGRAM_EVENT_TYPE:-info}" in
+        apply_success)
+          MESSAGE="🎉 *입사지원 완료*\n\n"
+          MESSAGE+="📋 회사: ${COMPANY_NAME}\n"
+          MESSAGE+="💼 포지션: ${JOB_TITLE}\n"
+          MESSAGE+="🔗 링크: ${JOB_URL}\n"
+          MESSAGE+="📅 시간: $(date '+%Y-%m-%d %H:%M')\n"
+          MESSAGE+="\n✅ 자동 지원이 성공적으로 완료되었습니다."
+          ;;
+        apply_failed)
+          MESSAGE="⚠️ *입사지원 실패*\n\n"
+          MESSAGE+="📋 회사: ${COMPANY_NAME}\n"
+          MESSAGE+="💼 포지션: ${JOB_TITLE}\n"
+          MESSAGE+="❌ 오류: ${ERROR_MESSAGE}\n"
+          MESSAGE+="📅 시간: $(date '+%Y-%m-%d %H:%M')\n"
+          MESSAGE+="\n🔄 수동 확인이 필요합니다."
+          ;;
+        resume_sync)
+          MESSAGE="📝 *이력서 동기화 완료*\n\n"
+          MESSAGE+="✅ 원티드 이력서가 최신 상태로 업데이트되었습니다.\n"
+          MESSAGE+="📅 시간: $(date '+%Y-%m-%d %H:%M')"
+          ;;
+        pipeline_failed)
+          MESSAGE="🚨 *파이프라인 실패*\n\n"
+          MESSAGE+="📁 프로젝트: ${CI_PROJECT_PATH}\n"
+          MESSAGE+="🔀 브랜치: ${CI_COMMIT_REF_NAME}\n"
+          MESSAGE+="👤 작성자: ${GITLAB_USER_NAME}\n"
+          MESSAGE+="🔗 [파이프라인 보기](${CI_PIPELINE_URL})"
+          ;;
+        *)
+          MESSAGE="📢 *GitLab CI 알림*\n\n"
+          MESSAGE+="📁 ${CI_PROJECT_PATH}\n"
+          MESSAGE+="🔀 ${CI_COMMIT_REF_NAME}\n"
+          MESSAGE+="${TELEGRAM_CUSTOM_MESSAGE}"
+          ;;
+      esac
+    
+    - |
+      # Send Telegram message
+      curl -sfSL -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+        -H "Content-Type: application/json" \
+        -d "{
+          \"chat_id\": \"${TELEGRAM_CHAT_ID}\",
+          \"text\": \"$(echo "$MESSAGE" | sed 's/"/\\"/g')\",
+          \"parse_mode\": \"Markdown\",
+          \"disable_web_page_preview\": true
+        }" || {
+          echo "⚠️ Telegram notification failed (non-blocking)"
+          exit 0
+        }
+      
+      echo "✅ Telegram notification sent"

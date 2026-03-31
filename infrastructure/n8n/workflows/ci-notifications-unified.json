@@ -1,0 +1,359 @@
+{
+  "name": "CI Notifications Unified",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "gitlab-ci",
+        "responseMode": "responseNode"
+      },
+      "id": "webhook-trigger",
+      "name": "webhook-trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 400],
+      "webhookId": "gitlab-ci"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalize both payload formats:\n// Format 1 (notifications.yml .n8n-notify): { event, project, pipeline_id, pipeline_url, ref, sha, status, custom_data }\n// Format 2 (n8n-notifications.yml): { event, platform, company, title, url, status }\n// Format 3 (job-server events): { event_type, data: { company, title, url } }\n\nconst body = $json.body || $json;\n\nconst normalized = {\n  event: body.event || body.event_type || 'unknown',\n  platform: body.platform || (body.custom_data && body.custom_data.platform) || '',\n  company: body.company || (body.custom_data && body.custom_data.company) || (body.data && body.data.company) || '',\n  title: body.title || (body.custom_data && body.custom_data.title) || (body.data && body.data.title) || '',\n  url: body.url || (body.custom_data && body.custom_data.url) || (body.data && body.data.url) || '',\n  status: body.status || '',\n  project: body.project || '',\n  ref: body.ref || '',\n  pipeline_url: body.pipeline_url || '',\n  pipeline_id: body.pipeline_id || '',\n  author: body.author || '',\n  error: body.error || (body.custom_data && body.custom_data.error) || '',\n};\n\nreturn [{ json: normalized }];"
+      },
+      "id": "normalize-payload",
+      "name": "normalize-payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 400]
+    },
+    {
+      "parameters": {
+        "mode": "rules",
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "id": "cond-pipeline-started",
+                    "leftValue": "={{ $json.event }}",
+                    "rightValue": "pipeline_started",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": false
+            },
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "id": "cond-pipeline-completed",
+                    "leftValue": "={{ $json.event }}",
+                    "rightValue": "pipeline_completed",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": false
+            },
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "id": "cond-job-apply",
+                    "leftValue": "={{ $json.event }}",
+                    "rightValue": "job_apply",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": false
+            },
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "id": "cond-resume-sync",
+                    "leftValue": "={{ $json.event }}",
+                    "rightValue": "resume_sync",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": false
+            },
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "id": "cond-pipeline-status",
+                    "leftValue": "={{ $json.event }}",
+                    "rightValue": "pipeline_status",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": false
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "id": "route-by-event",
+      "name": "route-by-event",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [650, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "const d = $json;\nconst message = `🚀 파이프라인 시작: ${d.project} / ${d.ref}`;\nreturn [{ json: { ...d, message } }];"
+      },
+      "id": "format-pipeline-started",
+      "name": "format-pipeline-started",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 80]
+    },
+    {
+      "parameters": {
+        "jsCode": "const d = $json;\nlet message;\nif (d.status === 'success' || d.status === 'passed') {\n  message = `✅ 파이프라인 성공: ${d.project} / ${d.ref}`;\n} else {\n  message = `🚨 파이프라인 실패: ${d.project} / ${d.ref}\\n🔗 ${d.pipeline_url}`;\n}\nreturn [{ json: { ...d, message } }];"
+      },
+      "id": "format-pipeline-completed",
+      "name": "format-pipeline-completed",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 240]
+    },
+    {
+      "parameters": {
+        "jsCode": "const d = $json;\nlet message;\nif (d.status === 'success' || d.status === 'completed') {\n  message = `🎉 입사지원 완료\\n📋 회사: ${d.company}\\n💼 포지션: ${d.title}\\n🔗 ${d.url}`;\n} else {\n  message = `⚠️ 입사지원 실패\\n📋 회사: ${d.company}\\n❌ 오류: ${d.error}`;\n}\nreturn [{ json: { ...d, message } }];"
+      },
+      "id": "format-job-apply",
+      "name": "format-job-apply",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "const d = $json;\nconst message = `📝 이력서 동기화 완료\\n✅ ${d.platform || 'Wanted'} 이력서 최신 업데이트`;\nreturn [{ json: { ...d, message } }];"
+      },
+      "id": "format-resume-sync",
+      "name": "format-resume-sync",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 560]
+    },
+    {
+      "parameters": {
+        "jsCode": "const d = $json;\nlet message;\nif (d.status === 'success' || d.status === 'passed') {\n  message = `✅ 파이프라인 성공: ${d.project} / ${d.ref}`;\n} else if (d.status === 'failed') {\n  message = `🚨 파이프라인 실패: ${d.project} / ${d.ref}\\n🔗 ${d.pipeline_url}`;\n} else {\n  message = `🔔 파이프라인 상태: ${d.status || 'unknown'}\\n📁 ${d.project} / ${d.ref}`;\n}\nreturn [{ json: { ...d, message } }];"
+      },
+      "id": "format-pipeline-status",
+      "name": "format-pipeline-status",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 720]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "PV5yLgHNzNSlCmRT",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "send-telegram",
+      "name": "send-telegram",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.1,
+      "position": [1150, 400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\"status\": \"ok\"}",
+        "options": {}
+      },
+      "id": "respond-ok",
+      "name": "respond-ok",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1350, 400]
+    }
+  ],
+  "connections": {
+    "webhook-trigger": {
+      "main": [
+        [
+          {
+            "node": "normalize-payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "normalize-payload": {
+      "main": [
+        [
+          {
+            "node": "route-by-event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "route-by-event": {
+      "main": [
+        [
+          {
+            "node": "format-pipeline-started",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "format-pipeline-completed",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "format-job-apply",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "format-resume-sync",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "format-pipeline-status",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "respond-ok",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "format-pipeline-started": {
+      "main": [
+        [
+          {
+            "node": "send-telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "format-pipeline-completed": {
+      "main": [
+        [
+          {
+            "node": "send-telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "format-job-apply": {
+      "main": [
+        [
+          {
+            "node": "send-telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "format-resume-sync": {
+      "main": [
+        [
+          {
+            "node": "send-telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "format-pipeline-status": {
+      "main": [
+        [
+          {
+            "node": "send-telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "send-telegram": {
+      "main": [
+        [
+          {
+            "node": "respond-ok",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Seoul",
+    "continueOnFail": true
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "id": "tag-ci",
+      "name": "ci-notifications"
+    },
+    {
+      "id": "tag-telegram",
+      "name": "telegram"
+    }
+  ]
+}

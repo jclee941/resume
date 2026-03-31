@@ -1,0 +1,303 @@
+{
+  "name": "Resume Auto Deploy",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "resume-deploy",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "GitHub Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 300],
+      "webhookId": "resume-deploy-webhook"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.ref }}",
+              "operation": "equals",
+              "value2": "refs/heads/master"
+            }
+          ]
+        }
+      },
+      "id": "filter-master-branch",
+      "name": "Filter Master Branch",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "command": "cd /home/jclee/dev/resume && git pull origin master"
+      },
+      "id": "git-pull",
+      "name": "Git Pull",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [690, 300]
+    },
+    {
+      "parameters": {
+        "command": "cd /home/jclee/dev/resume && npm run build"
+      },
+      "id": "npm-build",
+      "name": "Build Worker",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [910, 300]
+    },
+    {
+      "parameters": {
+        "command": "cd /home/jclee/dev/resume && npm test"
+      },
+      "id": "npm-test",
+      "name": "Run Tests",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [1130, 300]
+    },
+    {
+      "parameters": {
+        "command": "cd /home/jclee/dev/resume && npm run test:e2e"
+      },
+      "id": "npm-test-e2e",
+      "name": "Run E2E Tests",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [1350, 300]
+    },
+      "parameters": {
+        "command": "cd /home/jclee/dev/resume/apps/portfolio && echo 'Building for Cloudflare Workers Builds...' && npm run build && echo '✅ Build complete. Cloudflare Workers Builds will handle deployment.'"
+      },
+      "parameters": {
+        "command": "cd /home/jclee/dev/resume/apps/portfolio && wrangler deploy"
+      },
+      "name": "Build for Cloudflare Workers",
+      "name": "Deploy to Cloudflare",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [1570, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://resume.jclee.me/health",
+        "options": {}
+      },
+      "id": "health-check",
+      "name": "Health Check",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1790, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.telegram.org/bot{{ $env.TELEGRAM_BOT_TOKEN }}/sendMessage",
+        "sendHeaders": false,
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ chat_id: $env.TELEGRAM_CHAT_ID, text: `✅ Resume deployed successfully!\n\nCommit: ${$('GitHub Webhook').item.json.head_commit.message}\nAuthor: ${$('GitHub Webhook').item.json.head_commit.author.name}\nURL: https://resume.jclee.me\nTimestamp: ${$now.toISO()}`, parse_mode: \"HTML\" }) }}",
+        "options": {}
+      },
+      "id": "telegram-success",
+      "name": "Telegram Success Notification",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2010, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.telegram.org/bot{{ $env.TELEGRAM_BOT_TOKEN }}/sendMessage",
+        "sendHeaders": false,
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ chat_id: $env.TELEGRAM_CHAT_ID, text: `❌ Resume deployment failed!\n\nCommit: ${$('GitHub Webhook').item.json.head_commit.message}\nError: ${$json.stderr || $json.error}\nTimestamp: ${$now.toISO()}`, parse_mode: \"HTML\" }) }}",
+        "options": {}
+      },
+      "id": "telegram-failure",
+      "name": "Telegram Failure Notification",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2010, 400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"status\": \"success\", \"message\": \"Deployment triggered\", \"commit\": $('GitHub Webhook').item.json.head_commit.id } }}"
+      },
+      "id": "webhook-response",
+      "name": "Webhook Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [2230, 200]
+    },
+    {
+      "parameters": {
+        "url": "https://loki.jclee.me/loki/api/v1/push",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "streams",
+              "value": "={{ [{ \"stream\": { \"job\": \"resume-deploy\", \"level\": \"info\" }, \"values\": [[String(Date.now() * 1000000), JSON.stringify({ commit: $('GitHub Webhook').item.json.head_commit.id, message: $('GitHub Webhook').item.json.head_commit.message, status: 'deployed' })]] }] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "loki-log",
+      "name": "Log to Loki",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2010, 300]
+    }
+  ],
+  "connections": {
+    "GitHub Webhook": {
+      "main": [
+        [
+          {
+            "node": "Filter Master Branch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Master Branch": {
+      "main": [
+        [
+          {
+            "node": "Git Pull",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Git Pull": {
+      "main": [
+        [
+          {
+            "node": "Build Worker",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Worker": {
+      "main": [
+        [
+          {
+            "node": "Run Tests",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run Tests": {
+      "main": [
+        [
+          {
+            "node": "Run E2E Tests",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run E2E Tests": {
+      "main": [
+        [
+          {
+            "node": "Deploy to Cloudflare",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Deploy to Cloudflare": {
+      "main": [
+        [
+          {
+            "node": "Health Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Health Check": {
+      "main": [
+        [
+          {
+            "node": "Telegram Success Notification",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Log to Loki",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Success Notification": {
+      "main": [
+        [
+          {
+            "node": "Webhook Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "createdAt": "2025-11-20T00:00:00.000Z",
+      "updatedAt": "2025-11-20T00:00:00.000Z",
+      "id": "1",
+      "name": "resume"
+    },
+    {
+      "createdAt": "2025-11-20T00:00:00.000Z",
+      "updatedAt": "2025-11-20T00:00:00.000Z",
+      "id": "2",
+      "name": "automation"
+    }
+  ],
+  "pinData": {},
+  "versionId": "1",
+  "triggerCount": 0,
+  "active": false
+}

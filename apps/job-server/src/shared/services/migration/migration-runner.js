@@ -1,82 +1,20 @@
-export { MigrationRunner } from './migration-runner.js';
-export {
-  computeChecksum,
-  parseMigrationFilename,
-  splitStatements,
-  discoverMigrations,
-  getAppliedMigrations,
-  getPendingMigrations,
-} from './discovery.js';
-export { validate } from './validation.js';
-export { applyMigration, rollbackMigration, MIGRATIONS_TABLE } from './execution.js';
-/** @returns {Promise<any>} */
-async function applyMigration(db, migration, dryRun, logger) {
-  const sql = await readFile(migration.upPath, 'utf-8'),
-    stmts = splitStatements(sql),
-    checksum = computeChecksum(sql);
-  if (dryRun) {
-    logger(`[dry-run] Would apply: ${migration.version}_${migration.name}`);
-    return {
-      version: migration.version,
-      name: migration.name,
-      status: 'dry_run',
-      execution_time_ms: 0,
-      statements: stmts,
-    };
-  }
-  logger(`Applying: ${migration.version}_${migration.name}`);
-  const start = Date.now();
-  for (const s of stmts) await db.exec(s);
-  const ms = Date.now() - start;
-  await db
-    .prepare(
-      `INSERT INTO ${MIGRATIONS_TABLE} (version, name, checksum, execution_time_ms) VALUES (?,?,?,?)`
-    )
-    .bind(migration.version, migration.name, checksum, ms)
-    .run();
-  logger(`Applied: ${migration.version}_${migration.name} (${ms}ms)`);
-  return {
-    version: migration.version,
-    name: migration.name,
-    status: 'applied',
-    execution_time_ms: ms,
-  };
-}
+/**
+ * D1 Database Migration Runner - Core Class
+ * @module migration/migration-runner
+ */
+import { validate } from './validation.js';
+import { applyMigration, rollbackMigration, MIGRATIONS_TABLE } from './execution.js';
+import { discoverMigrations, getAppliedMigrations, getPendingMigrations } from './discovery.js';
 
-/** @returns {Promise<any>} */
-async function rollbackMigration(db, migration, dryRun, logger) {
-  const sql = await readFile(migration.downPath, 'utf-8'),
-    stmts = splitStatements(sql);
-  if (dryRun) {
-    logger(`[dry-run] Would rollback: ${migration.version}_${migration.name}`);
-    return {
-      version: migration.version,
-      name: migration.name,
-      status: 'dry_run',
-      execution_time_ms: 0,
-      statements: stmts,
-    };
-  }
-  logger(`Rolling back: ${migration.version}_${migration.name}`);
-  const start = Date.now();
-  for (const s of stmts) await db.exec(s);
-  const ms = Date.now() - start;
-  await db
-    .prepare(`DELETE FROM ${MIGRATIONS_TABLE} WHERE version = ?`)
-    .bind(migration.version)
-    .run();
-  logger(`Rolled back: ${migration.version}_${migration.name} (${ms}ms)`);
-  return {
-    version: migration.version,
-    name: migration.name,
-    status: 'rolled_back',
-    execution_time_ms: ms,
-  };
-}
+const CREATE_MIGRATIONS_TABLE = `CREATE TABLE IF NOT EXISTS ${MIGRATIONS_TABLE} (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  version TEXT NOT NULL UNIQUE,
+  name TEXT NOT NULL,
+  applied_at TEXT NOT NULL DEFAULT (datetime('now')),
+  checksum TEXT NOT NULL,
+  execution_time_ms INTEGER NOT NULL DEFAULT 0
+);`;
 
-const CREATE_MIGRATIONS_TABLE = `CREATE TABLE IF NOT EXISTS ${MIGRATIONS_TABLE} (id INTEGER PRIMARY KEY AUTOINCREMENT, version TEXT NOT NULL UNIQUE, name TEXT NOT NULL, applied_at TEXT NOT NULL DEFAULT (datetime('now')), checksum TEXT NOT NULL, execution_time_ms INTEGER NOT NULL DEFAULT 0);`;
-
-/** D1 Migration Runner */
 export class MigrationRunner {
   constructor({ db, migrationsDir, seedsDir, dryRun = false, logger = console.log }) {
     this.db = db;
@@ -130,9 +68,9 @@ export class MigrationRunner {
       this.logger('No migrations to rollback.');
       return [];
     }
-    const all = await this.discoverMigrations(),
-      toRollback = applied.slice(-count).reverse(),
-      results = [];
+    const all = await this.discoverMigrations();
+    const toRollback = applied.slice(-count).reverse();
+    const results = [];
     for (const record of toRollback) {
       const m = all.find((m) => m.version === record.version);
       if (!m) {
@@ -161,20 +99,18 @@ export class MigrationRunner {
   }
 
   async status() {
-    const all = await this.discoverMigrations(),
-      applied = await this.getAppliedMigrations(),
-      map = new Map(applied.map((m) => [m.version, m])),
-      result = [];
+    const all = await this.discoverMigrations();
+    const applied = await this.getAppliedMigrations();
+    const map = new Map(applied.map((m) => [m.version, m]));
+    const result = [];
     for (const m of all) {
       const r = map.get(m.version);
-      const sql = await readFile(m.upPath, 'utf-8');
       result.push({
         version: m.version,
         name: m.name,
         applied: !!r,
         applied_at: r?.applied_at || null,
         has_down: !!m.downPath,
-        checksum_match: r ? r.checksum === computeChecksum(sql) : null,
       });
     }
     return {
@@ -190,6 +126,8 @@ export class MigrationRunner {
       this.logger('No seeds directory configured.');
       return [];
     }
+    const { readdir, readFile } = await import('node:fs/promises');
+    const { join } = await import('node:path');
     const files = (await readdir(this.seedsDir)).filter((f) => f.endsWith('.sql')).sort();
     if (!files.length) {
       this.logger('No seed files found.');
@@ -197,7 +135,11 @@ export class MigrationRunner {
     }
     const applied = [];
     for (const file of files) {
-      const stmts = splitStatements(await readFile(join(this.seedsDir, file), 'utf-8'));
+      const sql = await readFile(join(this.seedsDir, file), 'utf-8');
+      const stmts = sql
+        .split(';')
+        .map((s) => s.trim())
+        .filter((s) => s.length > 0 && !s.startsWith('--'));
       if (this.dryRun) {
         this.logger(`[dry-run] Would apply seed: ${file} (${stmts.length} statements)`);
         applied.push(file);

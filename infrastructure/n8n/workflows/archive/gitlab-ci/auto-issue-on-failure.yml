@@ -1,0 +1,75 @@
+# Auto-create GitLab issue on pipeline failure
+# Runs only when a pipeline fails, creates an issue with failure details
+
+auto-issue-on-failure:
+  stage: report
+  image: curlimages/curl:latest
+  script:
+    - |
+      # Check if this is a failed pipeline
+      if [ "$CI_PIPELINE_STATUS" != "failed" ]; then
+        echo "Pipeline succeeded or cancelled, no issue needed"
+        exit 0
+      fi
+
+      echo "Pipeline failed, checking for existing issue..."
+
+      # Check if an open issue already exists for this pipeline
+      EXISTING_ISSUE=$(curl -s --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+        "$CI_API_V4_URL/projects/$CI_PROJECT_ID/issues?state=opened&labels=pipeline-failure,automated" \
+        | jq -r '.[] | select(.title | contains("'$CI_PIPELINE_ID'")) | .iid' 2>/dev/null | head -1)
+
+      if [ -n "$EXISTING_ISSUE" ]; then
+        echo "Issue already exists for pipeline $CI_PIPELINE_ID (issue #${EXISTING_ISSUE}), skipping"
+        exit 0
+      fi
+
+      echo "Creating issue for failed pipeline $CI_PIPELINE_ID..."
+
+      # Build issue description with failure details
+      DESCRIPTION=$(cat << 'EOF'
+      ## Pipeline Failed
+      Pipeline failed on branch: `$CI_COMMIT_REF_NAME`
+
+      ### Commit Info
+      - Commit: `$CI_COMMIT_SHA`
+      - Author: $CI_COMMIT_AUTHOR
+      - Message: $CI_COMMIT_MESSAGE
+
+      ### Pipeline Details
+      - Pipeline ID: `$CI_PIPELINE_ID`
+      - Pipeline URL: $CI_PIPELINE_URL
+      - Job: $CI_JOB_NAME
+
+      ---
+      *This issue was automatically created by the CI pipeline failure workflow.*
+      EOF
+      )
+
+      # Create issue via GitLab API
+      RESPONSE=$(curl -s --request POST \
+        --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+        --header "Content-Type: application/json" \
+        --data "$(jq -n \
+          --arg title "Pipeline failed: $CI_PIPELINE_ID" \
+          --arg desc "$DESCRIPTION" \
+          '{title: $title, description: $desc, labels: ["pipeline-failure", "automated"]}')" \
+        "$CI_API_V4_URL/projects/$CI_PROJECT_ID/issues")
+
+      ISSUE_IID=$(echo "$RESPONSE" | jq -r '.iid // empty')
+      if [ -n "$ISSUE_IID" ]; then
+        echo "Successfully created issue #${ISSUE_IID} for pipeline failure"
+      else
+        echo "Failed to create issue: $RESPONSE"
+        exit 1
+      fi
+
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: on_failure
+    - if: $CI_PIPELINE_SOURCE == "push"
+      when: on_failure
+    - if: $CI_PIPELINE_SOURCE == "trigger"
+      when: on_failure
+    - if: $CI_PIPELINE_SOURCE == "api"
+      when: on_failure

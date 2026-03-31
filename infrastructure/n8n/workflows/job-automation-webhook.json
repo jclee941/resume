@@ -1,0 +1,274 @@
+{
+  "name": "Job Automation Webhook Handler",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "job-automation",
+        "responseMode": "responseNode"
+      },
+      "id": "webhook-node",
+      "name": "GitLab Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "job-automation"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "condition-1",
+              "leftValue": "={{ $json.body.event }}",
+              "rightValue": "apply_success",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ]
+        }
+      },
+      "id": "if-apply-success",
+      "name": "Apply Success?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [450, 200]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "condition-1",
+              "leftValue": "={{ $json.body.event }}",
+              "rightValue": "apply_failed",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ]
+        }
+      },
+      "id": "if-apply-failed",
+      "name": "Apply Failed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [450, 400]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $credentials.telegramApi.chatId }}",
+        "text": "🎉 *입사지원 완료*\n\n📋 회사: {{ $json.body.company }}\n💼 포지션: {{ $json.body.title }}\n🔗 [채용공고 보기]({{ $json.body.url }})\n📅 시간: {{ new Date().toLocaleString('ko-KR') }}\n\n✅ 자동 지원이 성공적으로 완료되었습니다.",
+        "additionalOptions": {
+          "parse_mode": "Markdown",
+          "disable_web_page_preview": true
+        }
+      },
+      "id": "telegram-success",
+      "name": "Telegram: Apply Success",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [650, 150],
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-credentials",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $credentials.telegramApi.chatId }}",
+        "text": "⚠️ *입사지원 실패*\n\n📋 회사: {{ $json.body.company }}\n💼 포지션: {{ $json.body.title }}\n🔗 [채용공고 보기]({{ $json.body.url }})\n❌ 오류: {{ $json.body.error }}\n📅 시간: {{ new Date().toLocaleString('ko-KR') }}\n\n🔄 수동 확인이 필요합니다.",
+        "additionalOptions": {
+          "parse_mode": "Markdown",
+          "disable_web_page_preview": true
+        }
+      },
+      "id": "telegram-failed",
+      "name": "Telegram: Apply Failed",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [650, 450],
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-credentials",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "condition-1",
+              "leftValue": "={{ $json.body.event }}",
+              "rightValue": "resume_sync",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ]
+        }
+      },
+      "id": "if-resume-sync",
+      "name": "Resume Sync?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [450, 600]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $credentials.telegramApi.chatId }}",
+        "text": "📝 *이력서 동기화 완료*\n\n✅ {{ $json.body.platformName || $json.body.platform }} 이력서가 최신 상태로 업데이트되었습니다.\n📅 시간: {{ new Date().toLocaleString('ko-KR') }}",
+        "additionalOptions": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "telegram-resume",
+      "name": "Telegram: Resume Sync",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [650, 600],
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-credentials",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "respond-webhook",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [850, 300]
+    }
+  ],
+  "connections": {
+    "GitLab Webhook": {
+      "main": [
+        [
+          {
+            "node": "Apply Success?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Apply Failed?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Resume Sync?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apply Success?": {
+      "main": [
+        [
+          {
+            "node": "Telegram: Apply Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apply Failed?": {
+      "main": [
+        [
+          {
+            "node": "Telegram: Apply Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resume Sync?": {
+      "main": [
+        [
+          {
+            "node": "Telegram: Resume Sync",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram: Apply Success": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram: Apply Failed": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram: Resume Sync": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "id": "tag-1",
+      "name": "job-automation"
+    },
+    {
+      "id": "tag-2",
+      "name": "telegram"
+    }
+  ]
+}
