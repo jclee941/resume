@@ -100,7 +100,7 @@ test.describe('Test A: Mock Job Site Application', () => {
       waitUntil: 'domcontentloaded',
     });
 
-    await expect(page.locator('p:text("Job ID:"))').toContainText(`Job ID: ${jobId}`);
+    await expect(page.locator('p:text("Job ID:")')).toContainText(`Job ID: ${jobId}`);
   });
 });
 
@@ -228,8 +228,7 @@ test.describe('Test C: Multi-Step Form', () => {
     await expect(page.locator('.form-step[data-step="2"]')).toHaveClass(/active/);
     await page.click('.form-step.active .btn-prev');
 
-    await expect(page.locator('.form-step[data-step="2"]')).toHaveClass(/active/);
-    await page.click('.btn-prev');
+    await expect(page.locator('.form-step[data-step="1"]')).toHaveClass(/active/);
     await expect(page.locator('.form-step[data-step="1"]')).toHaveClass(/active/);
   });
 
@@ -247,13 +246,6 @@ test.describe('Test C: Multi-Step Form', () => {
     await page.fill('input[name="major"]', education.major);
     await page.click('.form-step.active .btn-next');
 
-    await page.fill('input[name="school"]', education.school);
-    await page.fill('input[name="major"]', education.major);
-    await page.click('.btn-next');
-
-    await page.fill('input[name="company"]', experience.company);
-    await page.fill('input[name="position"]', experience.position);
-    await page.fill('input[name="skills"]', experience.skills);
     await page.fill('input[name="company"]', experience.company);
     await page.fill('input[name="position"]', experience.position);
     await page.fill('input[name="skills"]', experience.skills);
@@ -263,14 +255,10 @@ test.describe('Test C: Multi-Step Form', () => {
     await expect(page.locator('#reviewName')).toContainText(personal.name);
     await expect(page.locator('#reviewEmail')).toContainText(personal.email);
     await expect(page.locator('#reviewSchool')).toContainText(education.school);
-    await expect(page.locator('#reviewSchool')).toContainText(education.school);
     await expect(page.locator('.form-step.active .btn-submit')).toBeVisible();
 
     page.on('dialog', (dialog) => dialog.accept());
     await page.click('.form-step.active .btn-submit');
-
-    page.on('dialog', (dialog) => dialog.accept());
-    await page.click('.btn-submit');
     await page.waitForTimeout(1000);
 
     expect(getApplicationCount()).toBe(1);
@@ -282,9 +270,9 @@ test.describe('Test C: Multi-Step Form', () => {
     await page.fill('input[name="name"]', 'Test');
     await page.fill('input[name="email"]', 't@t.com');
     await page.fill('input[name="phone"]', '010-0000-0000');
-    await page.click('.btn-next');
-    await page.click('.btn-next');
-    await page.click('.btn-next');
+    await page.click('.form-step.active .btn-next');
+    await page.click('.form-step.active .btn-next');
+    await page.click('.form-step.active .btn-next');
 
     await expect(page.locator('.btn-submit')).toBeVisible();
   });
@@ -316,6 +304,10 @@ test.describe('Test D: Error Handling', () => {
   });
 
   test('should retry on transient failure', async ({ page }) => {
+    await page.goto(`${MOCK_SERVER_URL}/apply`, {
+      waitUntil: 'domcontentloaded',
+    });
+
     let attempts = 0;
     const maxRetries = 3;
 
@@ -467,7 +459,7 @@ test.describe('Test F: Full Application Flow Integration', () => {
     });
 
     await expect(page.locator('h1')).toContainText('지원하기');
-    await expect(page.locator('p')).toContainText(`Job ID: ${jobId}`);
+    await expect(page.locator('p:text("Job ID:")')).toContainText(`Job ID: ${jobId}`);
 
     const personal = SAMPLE_APPLICATION_DATA.personal;
     await page.fill('input[name="name"]', personal.name);

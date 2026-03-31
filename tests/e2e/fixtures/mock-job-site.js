@@ -423,14 +423,28 @@ function getMultiStepFormHtml() {
       btn.disabled = true;
       btn.textContent = '제출 중...';
 
-      await new Promise(r => setTimeout(r, 500));
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData);
 
-      const applicationId = 'APP-' + Date.now();
-      applications.push({ id: applicationId, step: 4, submittedAt: new Date().toISOString() });
+      try {
+        const response = await fetch('/apply/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
 
-      alert('지원이 완료되었습니다! 지원번호: ' + applicationId);
-      btn.disabled = false;
-      btn.textContent = '✅ 지원하기';
+        if (response.ok) {
+          const result = await response.json();
+          alert('지원이 완료되었습니다! 지원번호: ' + result.applicationId);
+        } else {
+          alert('제출에 실패했습니다.');
+        }
+      } catch (err) {
+        alert('네트워크 오류: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '✅ 지원하기';
+      }
     });
   </script>
 </body>
@@ -516,6 +530,7 @@ function createMockServerInternal(port = 9393) {
         const jobId = url.pathname.split('/').pop();
         res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
         res.end(getApplicationFormHtml(jobId));
+        return;
       }
 
 
@@ -590,8 +605,14 @@ function createMockServerInternal(port = 9393) {
       if (url.pathname === '/health') {
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ status: 'ok', requestCount }));
-        return;
-      }
+    }
+
+    // Favicon handler to prevent 404 errors during page load
+    if (url.pathname === '/favicon.ico' || url.pathname === '/favicon.png') {
+      res.writeHead(204);
+      res.end();
+      return;
+    }
 
       // 404 for unknown routes
       res.writeHead(404, { 'Content-Type': 'application/json' });

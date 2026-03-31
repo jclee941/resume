@@ -8,6 +8,69 @@ const TELEGRAM_MAX_LENGTH = 4096;
 const N8N_TIMEOUT_MS = 10000;
 const TELEGRAM_TIMEOUT_MS = 10000;
 
+// Rate limiting: 20 messages per minute per chat
+const RATE_LIMIT_MAX = 20;
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
+const messageTimestamps = new Map(); // chatId -> [timestamps]
+
+// Retry configuration
+const MAX_RETRIES = 3;
+const RETRY_DELAYS = [1000, 2000, 4000]; // Exponential backoff: 1s, 2s, 4s
+
+/**
+ * Check rate limit for a chat
+ */
+function checkRateLimit(chatId) {
+  const now = Date.now();
+  const timestamps = messageTimestamps.get(chatId) || [];
+  
+  // Remove timestamps outside the window
+  const validTimestamps = timestamps.filter(ts => now - ts < RATE_LIMIT_WINDOW_MS);
+  
+  if (validTimestamps.length >= RATE_LIMIT_MAX) {
+    const oldestTimestamp = validTimestamps[0];
+    const waitTime = RATE_LIMIT_WINDOW_MS - (now - oldestTimestamp);
+    return { allowed: false, waitTime };
+  }
+  
+  return { allowed: true, remaining: RATE_LIMIT_MAX - validTimestamps.length };
+}
+
+/**
+ * Record message sent for rate limiting
+ */
+function recordMessageSent(chatId) {
+  const now = Date.now();
+  const timestamps = messageTimestamps.get(chatId) || [];
+  timestamps.push(now);
+  messageTimestamps.set(chatId, timestamps);
+}
+
+/**
+ * Sleep utility for delays
+ */
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+/**
+ * Check if error is retryable
+ */
+function isRetryableError(error, status) {
+  // Network errors
+  if (error.name === 'TypeError' || error.code === 'ECONNRESET' || 
+      error.code === 'ETIMEDOUT' || error.code === 'ECONNREFUSED') {
+    return true;
+  }
+  // HTTP status codes
+  if (status === 429 || status >= 500) {
+    return true;
+  }
+  return false;
+}
+const N8N_TIMEOUT_MS = 10000;
+const TELEGRAM_TIMEOUT_MS = 10000;
+
 /**
  * Notification event types
  */
@@ -360,6 +423,119 @@ export class NotificationService {
   }
 
   /**
+   * Send Telegram notification with optional inline keyboard and retry logic
+   */
+  async sendTelegramNotification(data, options = {}) {
+    if (!this.telegramToken || !this.telegramChatId) {
+      console.log('[NotificationService] Telegram not configured');
+      return { sent: false, reason: 'not_configured' };
+    }
+
+    // Check rate limit
+    const rateCheck = checkRateLimit(this.telegramChatId);
+    if (!rateCheck.allowed) {
+      console.warn(`[NotificationService] Rate limit exceeded. Wait ${rateCheck.waitTime}ms`);
+      return { sent: false, reason: 'rate_limited', waitTime: rateCheck.waitTime };
+    }
+
+    const endpoint = `https://api.telegram.org/bot${this.telegramToken}/sendMessage`;
+
+    let body = {
+      chat_id: this.telegramChatId,
+      parse_mode: options.parse_mode || 'HTML',
+      disable_web_page_preview: true,
+    };
+
+    // Handle different message formats
+    if (options.text || typeof data === 'string') {
+      body.text = formatNotificationText(options.text || data);
+    } else if (data.text) {
+      body.text = formatNotificationText(data.text);
+    } else {
+      body.text = formatNotificationText(data);
+    }
+
+    // Add reply markup if provided
+    if (options.reply_markup || data.reply_markup) {
+      body.reply_markup = options.reply_markup || data.reply_markup;
+    }
+
+    // Retry logic
+    let lastError = null;
+    let lastStatus = null;
+    
+    for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), TELEGRAM_TIMEOUT_MS);
+
+      try {
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+          signal: controller.signal,
+        });
+
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          const errorBody = await response.text();
+          lastStatus = response.status;
+          
+          // Check if we should retry
+          if (attempt < MAX_RETRIES && (response.status === 429 || response.status >= 500)) {
+            console.warn(`[NotificationService] Telegram error ${response.status}, retrying (${attempt + 1}/${MAX_RETRIES})...`);
+            lastError = new Error(`HTTP ${response.status}: ${errorBody}`);
+            await sleep(RETRY_DELAYS[attempt]);
+            continue;
+          }
+          
+          console.error('[NotificationService] Telegram error:', response.status, errorBody);
+          return {
+            sent: false,
+            reason: 'http_error',
+            status: response.status,
+            error: errorBody,
+            attempts: attempt + 1,
+          };
+        }
+
+        const result = await response.json();
+        recordMessageSent(this.telegramChatId);
+        return {
+          sent: true,
+          messageId: result.result?.message_id,
+          attempts: attempt + 1,
+        };
+      } catch (error) {
+        clearTimeout(timeoutId);
+        lastError = error;
+        
+        // Check if we should retry
+        if (attempt < MAX_RETRIES && isRetryableError(error)) {
+          console.warn(`[NotificationService] Telegram network error, retrying (${attempt + 1}/${MAX_RETRIES})...`);
+          await sleep(RETRY_DELAYS[attempt]);
+          continue;
+        }
+        
+        console.error('[NotificationService] Telegram error:', error.message);
+        return {
+          sent: false,
+          reason: error.name === 'AbortError' ? 'timeout' : 'fetch_error',
+          error: error.message,
+          attempts: attempt + 1,
+        };
+      }
+    }
+    
+    // All retries exhausted
+    return {
+      sent: false,
+      reason: 'max_retries_exceeded',
+      error: lastError?.message || 'Unknown error',
+      attempts: MAX_RETRIES + 1,
+    };
+  }
    * Send Telegram notification with optional inline keyboard
    */
   async sendTelegramNotification(data, options = {}) {
