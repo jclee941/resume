@@ -306,10 +306,12 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
             source: 'wanted',
           };
         }
-        case 'linkedin':
-        case 'remember': {
-          // These platforms require browser automation for job details
-          // Return null to indicate fetch not supported without cache
+        case 'remember':
+        case 'jobkorea':
+        case 'saramin': {
+          // These platforms require browser automation (Puppeteer) for job details
+          // Cloudflare Workers cannot run Puppeteer, so we rely on cached data
+          // To fetch these jobs, use job-server CLI crawling first
           return null;
         }
         default:
@@ -410,9 +412,9 @@ Keep it professional, concise, and specific to this role.`;
       wanted: () => this.submitToWanted(jobId, resume, coverLetter),
       linkedin: () => this.submitToLinkedIn(jobId, resume, coverLetter),
       remember: () => this.submitToRemember(jobId, resume, coverLetter),
+      jobkorea: () => this.submitToJobKorea(jobId, resume, coverLetter),
+      saramin: () => this.submitToSaramin(jobId, resume, coverLetter),
     };
-
-    const submitter = submitters[platform];
     if (!submitter) {
       return { success: false, error: `Unknown platform: ${platform}` };
     }
@@ -491,6 +493,38 @@ Keep it professional, concise, and specific to this role.`;
         'Remember application requires browser automation (Puppeteer) which is not available in Cloudflare Workers. ' +
         'Please use job-server CLI: npm run auto-apply -- --platforms=remember --apply',
       platform: 'remember',
+      requiresJobServer: true,
+    };
+  }
+
+  async submitToJobKorea(_jobId, _resume, _coverLetter) {
+    // JobKorea application requires browser automation (Puppeteer/Playwright)
+    // Cloudflare Workers cannot run Puppeteer, so we delegate to job-server
+    //
+    // TODO: Implement job-server API call for single-job submission
+    // Current workaround: Use job-server CLI or n8n webhook trigger
+    return {
+      success: false,
+      error:
+        'JobKorea application requires browser automation (Puppeteer) which is not available in Cloudflare Workers. ' +
+        'Please use job-server CLI: npm run auto-apply -- --platforms=jobkorea --apply',
+      platform: 'jobkorea',
+      requiresJobServer: true,
+    };
+  }
+
+  async submitToSaramin(_jobId, _resume, _coverLetter) {
+    // Saramin application requires browser automation (Puppeteer/Playwright)
+    // Cloudflare Workers cannot run Puppeteer, so we delegate to job-server
+    //
+    // TODO: Implement job-server API call for single-job submission
+    // Current workaround: Use job-server CLI or n8n webhook trigger
+    return {
+      success: false,
+      error:
+        'Saramin application requires browser automation (Puppeteer) which is not available in Cloudflare Workers. ' +
+        'Please use job-server CLI: npm run auto-apply -- --platforms=saramin --apply',
+      platform: 'saramin',
       requiresJobServer: true,
     };
   }

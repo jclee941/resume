@@ -11,7 +11,7 @@ import {
   recordApplication,
 } from './auto-apply/db-helpers.js';
 
-const SUPPORTED_PLATFORMS = ['wanted', 'linkedin', 'remember'];
+const SUPPORTED_PLATFORMS = ['wanted', 'linkedin', 'remember', 'jobkorea', 'saramin'];
 
 export class AutoApplyHandler {
   constructor(env) {
