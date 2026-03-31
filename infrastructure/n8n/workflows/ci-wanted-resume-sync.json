@@ -1,0 +1,428 @@
+{
+  "name": "CI Wanted Resume Sync",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 3 * * 0"
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "schedule-trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [250, 220]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ci-wanted-resume-sync",
+        "responseMode": "immediately",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "webhook-trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 500],
+      "webhookId": "ci-wanted-resume-sync"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalize trigger params for both schedule and webhook sources.\n// Schedule trigger: $json has no query/headers fields.\n// Webhook trigger: $json has query { dryRun: 'true'|'false' } or body { dryRun: true|false }.\nconst query = $json.query || {};\nconst body = $json.body || {};\nconst dryRun = query.dryRun === 'true' || query.dryRun === true || body.dryRun === true;\nconst triggerSource = ($json.headers !== undefined || $json.query !== undefined) ? 'webhook' : 'schedule';\nreturn [{ json: { dryRun, triggerSource } }];"
+      },
+      "id": "set-trigger-params",
+      "name": "set-trigger-params",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [500, 360]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/functions/v1/get-secret",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "json",
+        "body": "{\"names\": [\"wanted/email/v1\", \"wanted/password/v1\", \"wanted/oneid_client_id/v1\", \"wanted/resume_id/v1\", \"wanted/cookies/v1\"]}",
+        "options": {}
+      },
+      "id": "fetch-secrets",
+      "name": "fetch-secrets",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [750, 360],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "supabase-service-role",
+          "name": "Supabase Service Role Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// HTTP Request node overwrites $json with the response body.\n// Recover dryRun + triggerSource from the earlier set-trigger-params node.\nconst secrets = $json.secrets || {};\nconst triggerCtx = $('set-trigger-params').item.json;\nreturn [{ json: { dryRun: triggerCtx.dryRun || false, triggerSource: triggerCtx.triggerSource || 'schedule', secrets } }];"
+      },
+      "id": "merge-context",
+      "name": "merge-context",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1000, 360]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-email",
+              "leftValue": "={{ $json.secrets['wanted/email/v1'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "cond-password",
+              "leftValue": "={{ $json.secrets['wanted/password/v1'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "cond-oneid",
+              "leftValue": "={{ $json.secrets['wanted/oneid_client_id/v1'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "cond-resume-id",
+              "leftValue": "={{ $json.secrets['wanted/resume_id/v1'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "validate-secrets",
+      "name": "validate-secrets",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1250, 360]
+    },
+    {
+      "parameters": {
+        "command": "cd /app && export WANTED_EMAIL=\"{{ $json.secrets['wanted/email/v1'] }}\" && export WANTED_PASSWORD=\"{{ $json.secrets['wanted/password/v1'] }}\" && export WANTED_ONEID_CLIENT_ID=\"{{ $json.secrets['wanted/oneid_client_id/v1'] }}\" && export WANTED_RESUME_ID=\"{{ $json.secrets['wanted/resume_id/v1'] }}\" && export WANTED_COOKIES=\"{{ $json.secrets['wanted/cookies/v1'] || '' }}\" && export DRY_RUN=\"{{ $json.dryRun ? 'true' : 'false' }}\" && node apps/job-server/scripts/ci-resume-sync.js"
+      },
+      "id": "run-sync",
+      "name": "run-sync",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [1500, 200],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-exit-code",
+              "leftValue": "={{ $json.exitCode }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "check-result",
+      "name": "check-result",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1750, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "const dryRun = $json.dryRun || false;\nconst stdout = ($json.stdout || '').trim();\nconst timestamp = new Date().toISOString();\nconst dryRunSuffix = dryRun ? ' (드라이런)' : '';\n\nconst payload = {\n  event: 'wanted-resume-sync',\n  status: 'success',\n  dryRun,\n  timestamp,\n  details: {\n    exitCode: $json.exitCode,\n    output: stdout.slice(-1000)\n  }\n};\n\nconst message = `✅ 원티드 이력서 동기화 완료${dryRunSuffix}\\n⏰ ${timestamp}`;\n\nreturn [{ json: { ...payload, message } }];"
+      },
+      "id": "format-success-payload",
+      "name": "format-success-payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2000, 80]
+    },
+    {
+      "parameters": {
+        "jsCode": "const dryRun = $json.dryRun || false;\nconst stderr = ($json.stderr || '').trim();\nconst stdout = ($json.stdout || '').trim();\nconst errorMsg = $json.errorMessage || stderr || stdout || 'Unknown error';\nconst timestamp = new Date().toISOString();\nconst dryRunSuffix = dryRun ? ' (드라이런)' : '';\n\nconst payload = {\n  event: 'wanted-resume-sync',\n  status: 'failed',\n  dryRun,\n  timestamp,\n  details: {\n    exitCode: $json.exitCode,\n    error: errorMsg.slice(-500)\n  }\n};\n\nconst message = `❌ 원티드 이력서 동기화 실패${dryRunSuffix}\\n❗ ${errorMsg.slice(0, 200)}\\n⏰ ${timestamp}`;\n\nreturn [{ json: { ...payload, message } }];"
+      },
+      "id": "format-failure-payload",
+      "name": "format-failure-payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2000, 340]
+    },
+    {
+      "parameters": {
+        "jsCode": "const dryRun = $json.dryRun || false;\nconst timestamp = new Date().toISOString();\n\nconst payload = {\n  event: 'wanted-resume-sync',\n  status: 'failed',\n  dryRun,\n  timestamp,\n  details: {\n    error: 'Required secrets missing from Supabase Vault (wanted/email/v1, wanted/password/v1, wanted/oneid_client_id/v1, wanted/resume_id/v1)'\n  }\n};\n\nconst message = `❌ 원티드 이력서 동기화 실패\\n🔐 Supabase Vault에서 필수 시크릿을 가져오지 못했습니다\\n⏰ ${timestamp}`;\n\nreturn [{ json: { ...payload, message } }];"
+      },
+      "id": "format-secret-error",
+      "name": "format-secret-error",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1500, 560]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "PV5yLgHNzNSlCmRT",
+          "mode": "id"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "message": "={{ $json.message }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "notify-success",
+      "name": "notify-success",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.1,
+      "position": [2250, 80]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "PV5yLgHNzNSlCmRT",
+          "mode": "id"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "message": "={{ $json.message }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "notify-failure",
+      "name": "notify-failure",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.1,
+      "position": [2250, 340]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "PV5yLgHNzNSlCmRT",
+          "mode": "id"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "message": "={{ $json.message }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "notify-secret-error",
+      "name": "notify-secret-error",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.1,
+      "position": [1750, 560]
+    }
+  ],
+  "connections": {
+    "schedule-trigger": {
+      "main": [
+        [
+          {
+            "node": "set-trigger-params",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "webhook-trigger": {
+      "main": [
+        [
+          {
+            "node": "set-trigger-params",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set-trigger-params": {
+      "main": [
+        [
+          {
+            "node": "fetch-secrets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "fetch-secrets": {
+      "main": [
+        [
+          {
+            "node": "merge-context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "merge-context": {
+      "main": [
+        [
+          {
+            "node": "validate-secrets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "validate-secrets": {
+      "main": [
+        [
+          {
+            "node": "run-sync",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "format-secret-error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "run-sync": {
+      "main": [
+        [
+          {
+            "node": "check-result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check-result": {
+      "main": [
+        [
+          {
+            "node": "format-success-payload",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "format-failure-payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "format-success-payload": {
+      "main": [
+        [
+          {
+            "node": "notify-success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "format-failure-payload": {
+      "main": [
+        [
+          {
+            "node": "notify-failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "format-secret-error": {
+      "main": [
+        [
+          {
+            "node": "notify-secret-error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Seoul",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "id": "tag-ci",
+      "name": "ci"
+    },
+    {
+      "id": "tag-wanted",
+      "name": "wanted"
+    },
+    {
+      "id": "tag-resume-sync",
+      "name": "resume-sync"
+    }
+  ]
+}

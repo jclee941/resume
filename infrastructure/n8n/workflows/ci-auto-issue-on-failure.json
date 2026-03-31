@@ -1,0 +1,261 @@
+{
+  "name": "CI Auto Issue on Failure",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "gitlab-pipeline-failure",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "node-webhook",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 300],
+      "webhookId": "gitlab-pipeline-failure"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-status-failed",
+              "leftValue": "={{ $json.body.object_attributes.status }}",
+              "rightValue": "failed",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "node-is-failed",
+      "name": "is-failed",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ 'https://gitlab.jclee.me/api/v4/projects/' + $('Webhook').item.json.body.project_id + '/issues?labels=pipeline-failure%2Cautomated&state=opened&search=%23' + $('Webhook').item.json.body.object_attributes.id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "node-check-existing",
+      "name": "check-existing",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [700, 150],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "gitlab-api-token",
+          "name": "gitlab-api-token"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-issue-exists",
+              "leftValue": "={{ (Array.isArray($json) ? $json : ($json ? [$json] : [])).filter(i => i.title && i.title.includes('#' + String($('Webhook').item.json.body.object_attributes.id))).length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "node-issue-exists",
+      "name": "issue-exists",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [950, 150]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://gitlab.jclee.me/api/v4/projects/' + $('Webhook').item.json.body.project_id + '/issues' }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "keypair",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "title",
+              "value": "={{ '[Pipeline Failure] #' + $('Webhook').item.json.body.object_attributes.id + ' on ' + $('Webhook').item.json.body.object_attributes.ref }}"
+            },
+            {
+              "name": "description",
+              "value": "={{ '## Pipeline Failed\\n\\nPipeline **#' + $('Webhook').item.json.body.object_attributes.id + '** failed on branch: **' + $('Webhook').item.json.body.object_attributes.ref + '**\\n\\n### Pipeline Details\\n- Pipeline URL: ' + ($('Webhook').item.json.body.object_attributes.url || 'N/A') + '\\n- Commit SHA: ' + ($('Webhook').item.json.body.object_attributes.sha || 'N/A') + '\\n- Duration: ' + ($('Webhook').item.json.body.object_attributes.duration || 'N/A') + 's\\n- Failed Jobs: ' + (($('Webhook').item.json.body.builds || []).filter(b => b.status === 'failed').map(b => b.name).join(', ') || 'N/A') + '\\n\\n### Commit Info\\n- Author: ' + ($('Webhook').item.json.body.user && $('Webhook').item.json.body.user.name || 'N/A') + '\\n\\n---\\n*This issue was automatically created by n8n CI pipeline failure workflow.*' }}"
+            },
+            {
+              "name": "labels",
+              "value": "pipeline-failure,automated"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node-create-issue",
+      "name": "create-issue",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [1200, 300],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "gitlab-api-token",
+          "name": "gitlab-api-token"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "PV5yLgHNzNSlCmRT",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "node-notify-telegram",
+      "name": "notify-telegram",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.1,
+      "position": [1450, 300]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "node-respond-webhook",
+      "name": "respond-webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1700, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "is-failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "is-failed": {
+      "main": [
+        [
+          {
+            "node": "check-existing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "respond-webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check-existing": {
+      "main": [
+        [
+          {
+            "node": "issue-exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "issue-exists": {
+      "main": [
+        [
+          {
+            "node": "respond-webhook",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "create-issue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create-issue": {
+      "main": [
+        [
+          {
+            "node": "notify-telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "notify-telegram": {
+      "main": [
+        [
+          {
+            "node": "respond-webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Seoul"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "id": "tag-ci",
+      "name": "ci"
+    },
+    {
+      "id": "tag-gitlab",
+      "name": "gitlab"
+    },
+    {
+      "id": "tag-automation",
+      "name": "automation"
+    }
+  ]
+}

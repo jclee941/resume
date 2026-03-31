@@ -33,7 +33,7 @@ function log(message, type = 'info') {
 const goScripts = [
   'setup-gitlab-oauth.go',
   'deployment/register-gitlab-runner.go',
-  'deployment/deploy-gitlab-cicd.go',
+  'deployment/gitlab/main.go',
   'verification/test-gitlab-cicd-integration.go',
 ];
 

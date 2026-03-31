@@ -1,357 +1,56 @@
-# GitLab CI/CD Configuration
-# Mirrors GitHub Actions workflows for resume repository
-# Target: Self-hosted GitLab at http://gitlab.jclee.me
+# =============================================================================
+# RESUME MONOREPO - GitLab CI/CD PIPELINE
+# Mirrors: .github/workflows/ci.yml + .github/workflows/verify.yml
+# =============================================================================
+# CI is validation-only. Production deployment authority is Cloudflare Workers
+# Builds (git push to protected branch). This pipeline adds GitLab-native
+# deploy capability as an alternative path.
 #
-# IMPORTANT: This CI is validation-only per repo policy.
-# Production deployment authority is Cloudflare Workers Builds.
-# See: tools/ci/AGENTS.md
-
+# Required CI/CD Variables (Settings > CI/CD > Variables):
+#   CLOUDFLARE_API_TOKEN      - Cloudflare API token (masked)
+#   CLOUDFLARE_ACCOUNT_ID     - Cloudflare account ID
+#   OP_SERVICE_ACCOUNT_TOKEN   - 1Password service account (optional)
+#   TELEGRAM_BOT_TOKEN        - Telegram notifications (optional)
+#   TELEGRAM_CHAT_ID          - Telegram chat ID (optional)
+#
+# Optional GitLab OAuth Variables:
+#   GITLAB_URL                - GitLab instance URL (default: http://gitlab.jclee.me)
+#   GITLAB_OAUTH_APP_ID       - OAuth application ID
+#   GITLAB_OAUTH_CLIENT_SECRET - OAuth client secret
+# =============================================================================
+#
+# Include additional CI configurations
+include:
+  # External includes
+  - local: '.gitlab/ci/onepassword.yml'
+  - local: '.gitlab/ci/notifications.yml'
+  - local: '.gitlab/ci/n8n-notifications.yml'
+  - local: '.gitlab/ci/verify.yml'
+  - local: '.gitlab/ci/release.yml'
+  - local: '.gitlab/ci/auto-sync.yml'
+  - local: '.gitlab/ci/auto-issue-on-failure.yml'
+  - local: '.gitlab/ci/wanted-resume-sync.yml'
+  # Job definitions
+  - local: '.gitlab/ci/jobs/analyze.yml'
+  - local: '.gitlab/ci/jobs/validate/cloudflare.yml'
+  - local: '.gitlab/ci/jobs/validate/lint.yml'
+  - local: '.gitlab/ci/jobs/validate/typecheck.yml'
+  - local: '.gitlab/ci/jobs/validate/data-drift.yml'
+  - local: '.gitlab/ci/jobs/test/unit.yml'
+  - local: '.gitlab/ci/jobs/test/e2e.yml'
+  - local: '.gitlab/ci/jobs/security.yml'
+  - local: '.gitlab/ci/jobs/build.yml'
+  - local: '.gitlab/ci/jobs/deploy.yml'
+#
+image: node:22-alpine
+#
 stages:
   - analyze
   - validate
-  - lint
-  - typecheck
   - test
   - security
   - build
+  - deploy
   - verify
-  - oauth
-
-variables:
-  NODE_VERSION: "22.13.0"
-  NPM_CONFIG_CACHE: "$CI_PROJECT_DIR/.npm"
-  # Cloudflare credentials for validation only (not deployment)
-  CF_API_TOKEN: "$CLOUDFLARE_API_TOKEN"
-  CF_ACCOUNT_ID: "$CLOUDFLARE_ACCOUNT_ID"
-  # n8n credentials for automation
-  N8N_URL: "https://n8n.jclee.me"
-  N8N_API_KEY: "$N8N_API_KEY"
-  GITLAB_URL: "http://gitlab.jclee.me"
-  GITLAB_OAUTH_APP_ID: "$GITLAB_OAUTH_APP_ID"
-  GITLAB_OAUTH_CLIENT_SECRET: "$GITLAB_OAUTH_CLIENT_SECRET"
-
-# Cache configuration
-cache:
-  key: ${CI_COMMIT_REF_SLUG}
-  paths:
-    - .npm/
-    - node_modules/
-    - apps/*/node_modules/
-    - packages/*/node_modules/
-
-# Default job configuration (Node.js jobs)
-default:
-  image: node:${NODE_VERSION}
-  before_script:
-    - npm ci --prefer-offline
-
-# =============================================================================
-# ANALYZE STAGE
-# =============================================================================
-
-analyze:affected:
-  stage: analyze
-  image: golang:1.23.5
-  before_script: []
-  script:
-    # Calculate base ref: use MR target branch or default to HEAD~1
-    - |
-      if [ -n "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" ]; then
-        BASE_REF="origin/${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}"
-        git fetch origin ${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}
-      else
-        BASE_REF="HEAD~1"
-      fi
-      echo "Base ref: $BASE_REF"
-    - go run tools/ci/affected.go "$BASE_REF" .affected
-  artifacts:
-    reports:
-      dotenv: .affected/affected.env
-    paths:
-      - .affected/affected_targets.json
-      - .affected/changed_files.txt
-    expire_in: 1 day
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH == "master"
-
-# =============================================================================
-# VALIDATE STAGE
-# =============================================================================
-
-validate:cloudflare:
-  stage: validate
-  image: golang:1.23.5
-  before_script: []
-  script:
-    - go run ./tools/ci/validate-cloudflare-native.go
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH == "master"
-
-validate:wrangler-types:
-  stage: validate
-  script:
-    - npm install -g wrangler@3.100.0
-    - cd apps/portfolio && wrangler types --include-env=false
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      changes:
-        - apps/portfolio/index.html
-        - apps/portfolio/index-en.html
-        - apps/portfolio/entry.js
-        - apps/portfolio/generate-worker.js
-        - apps/portfolio/wrangler.toml
-        - apps/portfolio/lib/**/*
-        - apps/portfolio/src/**/*
-    - if: $CI_COMMIT_BRANCH == "master"
-      changes:
-        - apps/portfolio/index.html
-        - apps/portfolio/index-en.html
-        - apps/portfolio/entry.js
-        - apps/portfolio/generate-worker.js
-        - apps/portfolio/wrangler.toml
-        - apps/portfolio/lib/**/*
-        - apps/portfolio/src/**/*
-
-# =============================================================================
-# LINT STAGE
-# =============================================================================
-
-lint:eslint:
-  stage: lint
-  script:
-    - npm run lint
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH == "master"
-
-# =============================================================================
-# TYPECHECK STAGE
-# =============================================================================
-
-typecheck:typescript:
-  stage: typecheck
-  script:
-    - npx tsc --noEmit -p tsconfig.json
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH == "master"
-
-# =============================================================================
-# TEST STAGE
-# =============================================================================
-
-test:jest:
-  stage: test
-  script:
-    - npm run test:jest -- --coverage --coverageReporters=text-summary --coverageReporters=cobertura --coverageReporters=html
-  coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
-  artifacts:
-    reports:
-      coverage_report:
-        coverage_format: cobertura
-        path: coverage/cobertura-coverage.xml
-    paths:
-      - coverage/
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH == "master"
-
-test:e2e:
-  stage: test
-  image: mcr.microsoft.com/playwright:v1.58.2-jammy
-  script:
-    - npm ci
-    - npm run test:e2e
-  artifacts:
-    when: always
-    paths:
-      - playwright-report/
-      - test-results/
-    reports:
-      junit: test-results/junit.xml
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH == "master"
-
-# =============================================================================
-# SECURITY STAGE
-# =============================================================================
-
-security:gitleaks:
-  stage: security
-  image: zricethezav/gitleaks:v8.21.2
-  before_script: []
-  script:
-    - gitleaks detect --source . --verbose --redact
-  allow_failure: false
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH == "master"
-
-security:npm-audit:
-  stage: security
-  script:
-    - npm audit --audit-level=high
-  allow_failure: true
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH == "master"
-
-# =============================================================================
-# BUILD STAGE
-# =============================================================================
-
-build:portfolio:
-  stage: build
-  script:
-    - npm run build
-  artifacts:
-    paths:
-      - dist/
-    expire_in: 1 day
-  rules:
-    - if: $CI_COMMIT_BRANCH == "master"
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-
-# =============================================================================
-# VERIFY STAGE
-# Note: Verification against production (not deployment)
-# =============================================================================
-
-verify:production-health:
-  stage: verify
-  image: alpine:3.21
-  before_script:
-    - apk add --no-cache curl jq
-  script:
-    - |
-      echo "Verifying production deployment..."
-      curl -sf https://resume.jclee.me/health | jq -e '.status == "healthy"' || exit 1
-      echo "Health check passed!"
-
-      curl -sf https://resume.jclee.me/metrics | grep -q "http_requests_total" || exit 1
-      echo "Metrics endpoint verified!"
-  rules:
-    - if: $CI_COMMIT_BRANCH == "master"
-  when: manual
-
-verify:csp:
-  stage: verify
-  image: alpine:3.21
-  before_script:
-    - apk add --no-cache curl
-  script:
-    - |
-      echo "Verifying CSP headers..."
-      CSP=$(curl -sI https://resume.jclee.me | grep -i "content-security-policy")
-      echo "CSP Header: $CSP"
-      echo "$CSP" | grep -q "default-src" || exit 1
-      echo "CSP headers verified!"
-  rules:
-    - if: $CI_COMMIT_BRANCH == "master"
-  when: manual
-
-# =============================================================================
-# TERRAFORM (Infrastructure)
-# Note: Plan-only for validation. Apply is NOT included in validation-only CI.
-# Infrastructure changes are deployed separately via authorized operations.
-# =============================================================================
-
-.terraform: &terraform
-  image: hashicorp/terraform:1.10.3
-  before_script:
-    - cd infrastructure/cloudflare
-    - terraform init
-  rules:
-    - if: $CI_COMMIT_BRANCH == "master"
-      changes:
-        - infrastructure/cloudflare/**/*
-
-terraform:plan:
-  <<: *terraform
-  stage: validate
-  script:
-    - terraform plan -out=tfplan
-  artifacts:
-    paths:
-
-# =============================================================================
-# N8N AUTOMATION STAGE
-# Trigger n8n workflows after successful build
-# =============================================================================
-trigger-n8n-deploy:
-  stage: oauth
-  image: alpine:3.21
-  before_script:
-    - apk add --no-cache curl jq
-  script:
-    - |
-      echo "Triggering n8n deployment workflow..."
-      curl -sf -X POST "${N8N_URL}/api/v1/workflows/trigger" \
-        -H "X-N8N-API-KEY: ${N8N_API_KEY}" \
-        -H "Content-Type: application/json" \
-        -d '{"workflow": "resume-auto-deploy"}' || exit 1
-      echo "n8n workflow triggered successfully!"
-  rules:
-    - if: $CI_COMMIT_BRANCH == "master"
-
-notify-n8n:
-  stage: oauth
-  image: alpine:3.21
-  dependencies: [trigger-n8n-deploy]
-  before_script:
-    - apk add --no-cache curl jq
-  script:
-    - |
-      echo "Sending notification to n8n..."
-      curl -sf -X POST "${N8N_URL}/webhook/automation-run-report" \
-        -H "Content-Type: application/json" \
-        -d '{"event": "ci-cd-complete", "status": "success"}' || exit 1
-      echo "Notification sent!"
-  rules:
-    - if: $CI_COMMIT_BRANCH == "master"
-# OAUTH STAGE
-# =============================================================================
-fetch-oauth-token:
-  stage: oauth
-  image: alpine:3.21
-  script:
-    - apk add --no-cache curl jq
-    - |
-      echo "Fetching OAuth token from GitLab..."
-      TOKEN_RESPONSE=$(curl -sf -X POST "${GITLAB_URL}/oauth/token" \
-        -d "grant_type=client_credentials" \
-        -d "client_id=${GITLAB_OAUTH_APP_ID}" \
-        -d "client_secret=${GITLAB_OAUTH_CLIENT_SECRET}" \
-        -d "scope=api")
-      echo "Token fetched successfully"
-      ACCESS_TOKEN=$(echo "$TOKEN_RESPONSE" | jq -r '.access_token')
-      echo "$ACCESS_TOKEN" > oauth_token.txt
-  artifacts:
-    paths:
-      - oauth_token.txt
-    expire_in: 1 hour
-  rules:
-    - if: $CI_COMMIT_BRANCH == "master"
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-
-oauth-automation-demo:
-  stage: oauth
-  image: alpine:3.21
-  dependencies:
-    - fetch-oauth-token
-  before_script:
-    - apk add --no-cache curl jq
-  script:
-    - |
-      echo "Using OAuth token to call GitLab API..."
-      TOKEN=$(cat oauth_token.txt)
-      # Test API access with OAuth token
-      curl -sf -H "Authorization: Bearer $TOKEN" \
-        "${GITLAB_URL}/api/v4/user" | jq -e '.id' || exit 1
-      echo "OAuth token is valid and working!"
-  rules:
-    - if: $CI_COMMIT_BRANCH == "master"
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  - report
+  - automation

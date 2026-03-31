@@ -1,0 +1,408 @@
+{
+  "name": "JobKorea Automation Webhook Handler",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "jobkorea-automation",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "JobKorea Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 400],
+      "webhookId": "jobkorea-automation"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "route-profile-sync-check",
+              "leftValue": "={{ $json.body.event }}",
+              "rightValue": "profile_sync",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "route-profile-sync",
+      "name": "Profile Sync?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [500, 200]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "route-job-search-check",
+              "leftValue": "={{ $json.body.event }}",
+              "rightValue": "job_search",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "route-job-search",
+      "name": "Job Search?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [500, 400]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "route-application-status-check",
+              "leftValue": "={{ $json.body.event }}",
+              "rightValue": "application_status",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "route-application-status",
+      "name": "Application Status?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [500, 600]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "profile-sync-success-check",
+              "leftValue": "={{ $json.body.success }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "check-profile-sync-status",
+      "name": "Profile Sync Success?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [750, 200]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "job-search-success-check",
+              "leftValue": "={{ $json.body.success }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "check-job-search-status",
+      "name": "Job Search Success?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [750, 400]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "application-status-success-check",
+              "leftValue": "={{ $json.body.success }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "check-application-status",
+      "name": "Application Status Success?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [750, 600]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $credentials.telegramApi.chatId }}",
+        "text": "📝 *잡코리아 프로필 동기화 완료*\n\n✅ 프로필이 성공적으로 업데이트되었습니다.\n{{ $json.body.sections ? '📋 업데이트된 섹션: ' + $json.body.sections.join(', ') : '' }}\n📅 동기화 시간: {{ new Date().toLocaleString('ko-KR') }}",
+        "additionalOptions": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "telegram-profile-success",
+      "name": "Telegram: Profile Sync Success",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [1000, 100],
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-credentials",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $credentials.telegramApi.chatId }}",
+        "text": "⚠️ *잡코리아 프로필 동기화 실패*\n\n❌ 오류: {{ $json.body.error || '알 수 없는 오류' }}\n📅 시간: {{ new Date().toLocaleString('ko-KR') }}\n\n🔄 수동 확인이 필요합니다.",
+        "additionalOptions": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "telegram-profile-failed",
+      "name": "Telegram: Profile Sync Failed",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [1000, 250],
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-credentials",
+          "name": "Telegram Bot"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $credentials.telegramApi.chatId }}",
+        "text": "🔍 *잡코리아 채용공고 검색 완료*\n\n📊 검색 결과: {{ $json.body.total || 0 }}건\n🔑 키워드: {{ $json.body.keyword || '-' }}\n📅 시간: {{ new Date().toLocaleString('ko-KR') }}",
+        "additionalOptions": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "telegram-job-search-success",
+      "name": "Telegram: Job Search Success",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [1000, 350],
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-credentials",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $credentials.telegramApi.chatId }}",
+        "text": "⚠️ *잡코리아 채용공고 검색 실패*\n\n❌ 오류: {{ $json.body.error || '알 수 없는 오류' }}\n🔑 키워드: {{ $json.body.keyword || '-' }}\n📅 시간: {{ new Date().toLocaleString('ko-KR') }}\n\n🔄 수동 확인이 필요합니다.",
+        "additionalOptions": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "telegram-job-search-failed",
+      "name": "Telegram: Job Search Failed",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [1000, 500],
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-credentials",
+          "name": "Telegram Bot"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $credentials.telegramApi.chatId }}",
+        "text": "📋 *잡코리아 지원 현황 업데이트*\n\n🏢 회사: {{ $json.body.company || '-' }}\n💼 포지션: {{ $json.body.position || '-' }}\n📊 상태: {{ $json.body.applicationStatus || '-' }}\n📅 시간: {{ new Date().toLocaleString('ko-KR') }}",
+        "additionalOptions": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "telegram-application-success",
+      "name": "Telegram: Application Status Updated",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [1000, 600],
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-credentials",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $credentials.telegramApi.chatId }}",
+        "text": "⚠️ *잡코리아 지원 현황 업데이트 실패*\n\n🏢 회사: {{ $json.body.company || '-' }}\n❌ 오류: {{ $json.body.error || '알 수 없는 오류' }}\n📅 시간: {{ new Date().toLocaleString('ko-KR') }}\n\n🔄 수동 확인이 필요합니다.",
+        "additionalOptions": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "telegram-application-failed",
+      "name": "Telegram: Application Status Failed",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [1000, 750],
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-credentials",
+          "name": "Telegram Bot"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "jsCode": "// JobKorea Error Handler with exponential backoff retry state tracking\nconst item = $input.first();\nconst retryCount = (item.json.retryCount || 0);\nconst maxRetries = 3;\nconst event = item.json.body?.event || 'unknown';\nconst error = item.json.body?.error || 'Unknown error';\nconst timestamp = new Date().toISOString();\n\nconsole.error(`[JobKorea Error Handler] event=${event} error=${error} retry=${retryCount}/${maxRetries} time=${timestamp}`);\n\nif (retryCount < maxRetries) {\n  return [{\n    json: {\n      ...item.json,\n      retryCount: retryCount + 1,\n      willRetry: true,\n      retryAfterMs: Math.pow(2, retryCount) * 1000,\n      lastError: error,\n      platform: 'jobkorea'\n    }\n  }];\n}\n\nreturn [{\n  json: {\n    ...item.json,\n    retryCount,\n    willRetry: false,\n    finalError: true,\n    loggedAt: timestamp,\n    platform: 'jobkorea',\n    summary: `JobKorea automation failed after ${maxRetries} retries: ${error}`\n  }\n}];"
+      },
+      "id": "error-handler",
+      "name": "Error Handler",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1250, 500]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ platform: 'jobkorea', event: $json.body && $json.body.event || 'unknown', processed: true, timestamp: new Date().toISOString() }) }}",
+        "options": {}
+      },
+      "id": "respond-webhook",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1500, 400]
+    }
+  ],
+  "connections": {
+    "webhook-trigger": {
+      "main": [
+        [
+          { "node": "route-profile-sync", "type": "main", "index": 0 },
+          { "node": "route-job-search", "type": "main", "index": 0 },
+          { "node": "route-application-status", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "route-profile-sync": {
+      "main": [[{ "node": "check-profile-sync-status", "type": "main", "index": 0 }]]
+    },
+    "route-job-search": {
+      "main": [[{ "node": "check-job-search-status", "type": "main", "index": 0 }]]
+    },
+    "route-application-status": {
+      "main": [[{ "node": "check-application-status", "type": "main", "index": 0 }]]
+    },
+    "check-profile-sync-status": {
+      "main": [
+        [{ "node": "telegram-profile-success", "type": "main", "index": 0 }],
+        [{ "node": "telegram-profile-failed", "type": "main", "index": 0 }]
+      ]
+    },
+    "check-job-search-status": {
+      "main": [
+        [{ "node": "telegram-job-search-success", "type": "main", "index": 0 }],
+        [{ "node": "telegram-job-search-failed", "type": "main", "index": 0 }]
+      ]
+    },
+    "check-application-status": {
+      "main": [
+        [{ "node": "telegram-application-success", "type": "main", "index": 0 }],
+        [{ "node": "telegram-application-failed", "type": "main", "index": 0 }]
+      ]
+    },
+    "telegram-profile-success": {
+      "main": [[{ "node": "respond-webhook", "type": "main", "index": 0 }]]
+    },
+    "telegram-profile-failed": {
+      "main": [[{ "node": "error-handler", "type": "main", "index": 0 }]]
+    },
+    "telegram-job-search-success": {
+      "main": [[{ "node": "respond-webhook", "type": "main", "index": 0 }]]
+    },
+    "telegram-job-search-failed": {
+      "main": [[{ "node": "error-handler", "type": "main", "index": 0 }]]
+    },
+    "telegram-application-success": {
+      "main": [[{ "node": "respond-webhook", "type": "main", "index": 0 }]]
+    },
+    "telegram-application-failed": {
+      "main": [[{ "node": "error-handler", "type": "main", "index": 0 }]]
+    },
+    "error-handler": {
+      "main": [[{ "node": "respond-webhook", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Seoul",
+    "saveManualExecutions": true
+  },
+  "staticData": null,
+  "tags": [
+    { "id": "tag-1", "name": "job-automation" },
+    { "id": "tag-2", "name": "telegram" },
+    { "id": "tag-3", "name": "jobkorea" }
+  ]
+}

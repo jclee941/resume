@@ -1,0 +1,178 @@
+{
+  "name": "CI ELK Ingest",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "elk-ingest",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "CI Event Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 300],
+      "webhookId": "elk-ingest"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $input.first().json.body || $input.first().json;\n\nconst index = body.index || 'resume-ci-logs';\nconst workflow = body.workflow || 'ci';\nconst conclusion = body.conclusion || 'unknown';\nconst ref = body.ref || '';\nconst sha = (body.sha || body.commit_sha || '').trim();\nconst pipelineId = Number(body.pipeline_id) || 0;\nconst pipelineUrl = body.pipeline_url || '';\nconst actor = body.actor || 'unknown';\n\nconst elasticsearchUrl = (body.elasticsearch_url || '').trim().replace(/\\/$/, '');\nconst apiKey = (body.elasticsearch_api_key || '').trim();\n\nconst hasCreds = elasticsearchUrl.length > 0 && apiKey.length > 0;\n\nconst payload = {\n  '@timestamp': new Date().toISOString(),\n  service: 'resume',\n  repository: 'qws941/resume',\n  workflow,\n  pipeline_id: pipelineId,\n  pipeline_url: pipelineUrl,\n  run_id: pipelineId,\n  run_number: pipelineId,\n  conclusion,\n  branch: ref,\n  commit_sha: sha,\n  actor,\n  ref\n};\n\nreturn [{\n  json: {\n    index,\n    elasticsearch_url: elasticsearchUrl,\n    api_key: apiKey,\n    hasCreds,\n    payload\n  }\n}];"
+      },
+      "id": "build-ecs-payload",
+      "name": "build-ecs-payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "creds-check",
+              "leftValue": "={{ $json.hasCreds }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "has-elk-creds",
+      "name": "has-elk-creds",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.elasticsearch_url + '/' + $json.index + '/_doc' }}",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ 'ApiKey ' + $json.api_key }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.payload) }}",
+        "options": {}
+      },
+      "id": "ingest-to-elk",
+      "name": "ingest-to-elk",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [850, 200],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\"ingested\": true}",
+        "options": {}
+      },
+      "id": "respond-ingested",
+      "name": "respond-result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1050, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\"ingested\": false}",
+        "options": {}
+      },
+      "id": "respond-skipped",
+      "name": "respond-no-creds",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [850, 450]
+    }
+  ],
+  "connections": {
+    "CI Event Webhook": {
+      "main": [
+        [
+          {
+            "node": "build-ecs-payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "build-ecs-payload": {
+      "main": [
+        [
+          {
+            "node": "has-elk-creds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "has-elk-creds": {
+      "main": [
+        [
+          {
+            "node": "ingest-to-elk",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "respond-no-creds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ingest-to-elk": {
+      "main": [
+        [
+          {
+            "node": "respond-result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "id": "tag-elk",
+      "name": "elk"
+    },
+    {
+      "id": "tag-ci",
+      "name": "ci"
+    }
+  ]
+}

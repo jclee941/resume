@@ -1,0 +1,180 @@
+{
+  "name": "CI Verify",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ci-verify",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "webhook-trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 500],
+      "webhookId": "ci-verify"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $input.item.json.body || {};\nconst PORTFOLIO_URL = body.url || 'https://resume.jclee.me';\nconst JOB_DASHBOARD_URL = body.jobDashboardUrl || 'https://resume.jclee.me/job';\nconst UA = 'Mozilla/5.0 (n8n Verify; +https://n8n.jclee.me)';\nconst TIMEOUT = 30000;\nconst result = { check: 'health', passed: false, details: {} };\ntry {\n  let healthOk = false;\n  for (let i = 1; i <= 3; i++) {\n    try {\n      const healthData = await $helpers.httpRequest({\n        method: 'GET',\n        url: PORTFOLIO_URL + '/health',\n        headers: { 'Accept': 'application/json', 'User-Agent': UA },\n        timeout: TIMEOUT\n      });\n      const status = healthData.status || 'unknown';\n      result.details.portfolio_status = status;\n      result.details.portfolio_version = healthData.version || 'unknown';\n      const deployedAt = healthData.deployed_at || null;\n      if (deployedAt) {\n        const ageHours = Math.floor((Date.now() - new Date(deployedAt).getTime()) / 3600000);\n        result.details.deployment_age_hours = ageHours;\n        result.details.deployment_fresh = ageHours < 168;\n      }\n      if (status === 'healthy' || status === 'degraded') {\n        healthOk = true;\n        result.passed = status === 'healthy';\n        break;\n      }\n    } catch (retryErr) {\n      if (i < 3) await new Promise(r => setTimeout(r, 3000));\n    }\n  }\n  if (!healthOk) {\n    result.details.portfolio_status = 'unreachable';\n    result.passed = false;\n  }\n  try {\n    const jobData = await $helpers.httpRequest({\n      method: 'GET',\n      url: JOB_DASHBOARD_URL + '/api/health',\n      headers: { 'Accept': 'application/json', 'User-Agent': UA },\n      timeout: TIMEOUT\n    });\n    result.details.dashboard_status = jobData.status || 'unknown';\n    result.details.dashboard_version = jobData.version || 'unknown';\n    result.details.dashboard_db = jobData.database || 'unknown';\n    if (jobData.status !== 'ok') result.passed = false;\n  } catch (e) {\n    result.details.dashboard_status = 'unreachable';\n    result.passed = false;\n  }\n  const start = Date.now();\n  try {\n    await $helpers.httpRequest({ method: 'GET', url: PORTFOLIO_URL + '/', headers: { 'User-Agent': UA }, timeout: TIMEOUT });\n    const ms = Date.now() - start;\n    result.details.response_time_ms = ms;\n    result.details.response_time_ok = ms < 1000;\n    if (ms >= 1000) result.passed = false;\n  } catch (e) {\n    result.details.response_time_ms = null;\n    result.passed = false;\n  }\n} catch (e) {\n  result.details.error = e.message;\n  result.passed = false;\n}\nreturn [{ json: result }];"
+      },
+      "id": "check-health",
+      "name": "check-health",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [550, 100],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $input.item.json.body || {};\nconst PORTFOLIO_URL = body.url || 'https://resume.jclee.me';\nconst UA = 'Mozilla/5.0 (n8n Verify; +https://n8n.jclee.me)';\nconst TIMEOUT = 30000;\nconst result = { check: 'security-headers', passed: false, details: {} };\ntry {\n  const resp = await $helpers.httpRequest({\n    method: 'GET',\n    url: PORTFOLIO_URL + '/',\n    headers: { 'User-Agent': UA, 'Accept': 'text/html' },\n    timeout: TIMEOUT,\n    returnFullResponse: true\n  });\n  const headers = resp.headers || {};\n  const csp = headers['content-security-policy'] || '';\n  if (csp) {\n    if (csp.includes('sha256')) {\n      result.details.csp = 'strict (sha256 hashes)';\n    } else if (csp.includes('unsafe-inline')) {\n      result.details.csp = 'present (unsafe-inline)';\n    } else {\n      result.details.csp = 'present';\n    }\n  } else {\n    result.details.csp = 'missing';\n  }\n  const hsts = headers['strict-transport-security'] || '';\n  if (hsts) {\n    result.details.hsts = hsts.includes('preload') ? 'present (with preload)' : 'present (without preload)';\n  } else {\n    result.details.hsts = 'missing';\n  }\n  const xcto = (headers['x-content-type-options'] || '').toLowerCase();\n  result.details.x_content_type_options = xcto.includes('nosniff') ? 'nosniff' : 'missing';\n  const xfo = headers['x-frame-options'] || '';\n  result.details.x_frame_options = xfo || 'missing';\n  const missing = [];\n  if (!csp) missing.push('CSP');\n  if (!hsts) missing.push('HSTS');\n  if (!xcto.includes('nosniff')) missing.push('X-Content-Type-Options');\n  if (!xfo) missing.push('X-Frame-Options');\n  result.passed = missing.length === 0;\n  if (missing.length > 0) result.details.missing_headers = missing;\n} catch (e) {\n  result.details.error = e.message;\n  result.passed = false;\n}\nreturn [{ json: result }];"
+      },
+      "id": "check-security-headers",
+      "name": "check-security-headers",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [550, 300],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $input.item.json.body || {};\nconst PORTFOLIO_URL = body.url || 'https://resume.jclee.me';\nconst UA = 'Mozilla/5.0 (n8n Verify; +https://n8n.jclee.me)';\nconst TIMEOUT = 30000;\nconst result = { check: 'content-integrity', passed: false, details: {} };\ntry {\n  const htmlResp = await $helpers.httpRequest({\n    method: 'GET',\n    url: PORTFOLIO_URL + '/',\n    headers: { 'Accept': 'text/html', 'User-Agent': UA },\n    timeout: TIMEOUT\n  });\n  const htmlStr = typeof htmlResp === 'string' ? htmlResp : JSON.stringify(htmlResp);\n  const titleMatch = htmlStr.match(/<title>([^<]+)<\\/title>/i);\n  const title = titleMatch ? titleMatch[1].trim() : '';\n  const titleOk = title.length > 10;\n  result.details.title = titleOk ? title.substring(0, 60) : ('too short or missing: \"' + title + '\"');\n  const ogTags = ['og:title', 'og:description', 'og:image', 'og:url'];\n  let ogCount = 0;\n  ogTags.forEach(function (tag) {\n    if (htmlStr.includes('property=\"' + tag + '\"')) ogCount++;\n  });\n  result.details.og_tags = ogCount + '/4';\n  let ogImageOk = false;\n  try {\n    const ogResp = await $helpers.httpRequest({\n      method: 'GET',\n      url: PORTFOLIO_URL + '/og-image.webp',\n      headers: { 'User-Agent': UA },\n      timeout: TIMEOUT,\n      returnFullResponse: true\n    });\n    ogImageOk = ogResp.statusCode === 200;\n    result.details.og_image = ogImageOk ? 'accessible' : ('not accessible (http ' + ogResp.statusCode + ')');\n  } catch (e) {\n    result.details.og_image = 'not accessible';\n    ogImageOk = false;\n  }\n  result.passed = titleOk && ogImageOk;\n} catch (e) {\n  result.details.error = e.message;\n  result.passed = false;\n}\nreturn [{ json: result }];"
+      },
+      "id": "check-content-integrity",
+      "name": "check-content-integrity",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [550, 500],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $input.item.json.body || {};\nconst PORTFOLIO_URL = body.url || 'https://resume.jclee.me';\nconst UA = 'Mozilla/5.0 (n8n Verify; +https://n8n.jclee.me)';\nconst TIMEOUT = 30000;\nconst result = { check: 'performance', passed: false, details: {} };\ntry {\n  const metricsRaw = await $helpers.httpRequest({\n    method: 'GET',\n    url: PORTFOLIO_URL + '/metrics',\n    headers: { 'User-Agent': UA, 'Accept': 'text/plain' },\n    timeout: TIMEOUT\n  });\n  const metricsStr = typeof metricsRaw === 'string' ? metricsRaw : '';\n  let metricCount = 0;\n  if (metricsStr.includes('http_requests_total')) metricCount++;\n  if (metricsStr.includes('http_response_time')) metricCount++;\n  if (metricsStr.includes('vitals_received')) metricCount++;\n  result.details.prometheus_metrics = metricCount + '/3 found';\n  if (metricCount < 1) {\n    result.details.error = 'metrics endpoint returned no known metrics';\n    return [{ json: result }];\n  }\n  const compResp = await $helpers.httpRequest({\n    method: 'GET',\n    url: PORTFOLIO_URL + '/',\n    headers: { 'Accept-Encoding': 'gzip, br', 'User-Agent': UA },\n    timeout: TIMEOUT,\n    returnFullResponse: true\n  });\n  const encoding = ((compResp.headers || {})['content-encoding'] || '').toLowerCase();\n  if (encoding.includes('br')) {\n    result.details.compression = 'brotli';\n  } else if (encoding.includes('gzip')) {\n    result.details.compression = 'gzip';\n  } else {\n    result.details.compression = 'none';\n  }\n  const cacheControl = (compResp.headers || {})['cache-control'] || '';\n  result.details.cache_control = cacheControl || 'not set';\n  result.details.cache_has_max_age = cacheControl.toLowerCase().includes('max-age');\n  result.passed = metricCount >= 2;\n} catch (e) {\n  result.details.error = e.message;\n  result.passed = false;\n}\nreturn [{ json: result }];"
+      },
+      "id": "check-performance",
+      "name": "check-performance",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [550, 700],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $input.item.json.body || {};\nconst PORTFOLIO_URL = body.url || 'https://resume.jclee.me';\nconst UA = 'Mozilla/5.0 (n8n Verify; +https://n8n.jclee.me)';\nconst TIMEOUT = 30000;\nconst result = { check: 'api-endpoints', passed: false, details: {} };\ntry {\n  const vitalsData = { lcp: 1250, fid: 50, cls: 0.05, url: '/', timestamp: Date.now() };\n  let vitalsOk = false;\n  try {\n    const vitalsResp = await $helpers.httpRequest({\n      method: 'POST',\n      url: PORTFOLIO_URL + '/api/vitals',\n      headers: { 'Content-Type': 'application/json', 'User-Agent': UA },\n      body: vitalsData,\n      timeout: TIMEOUT,\n      returnFullResponse: true\n    });\n    result.details.vitals_endpoint = 'http ' + vitalsResp.statusCode;\n    vitalsOk = vitalsResp.statusCode === 200;\n    if (!vitalsOk) result.details.vitals_note = 'unexpected status ' + vitalsResp.statusCode;\n  } catch (e) {\n    result.details.vitals_endpoint = 'unreachable';\n    result.details.vitals_error = e.message;\n    return [{ json: result }];\n  }\n  let robotsOk = false;\n  try {\n    const robotsRaw = await $helpers.httpRequest({\n      method: 'GET',\n      url: PORTFOLIO_URL + '/robots.txt',\n      headers: { 'User-Agent': UA },\n      timeout: TIMEOUT\n    });\n    const robotsStr = typeof robotsRaw === 'string' ? robotsRaw : '';\n    robotsOk = robotsStr.toLowerCase().includes('user-agent');\n    result.details.robots_txt = robotsOk ? 'valid' : 'invalid or missing';\n    if (!robotsOk) return [{ json: result }];\n  } catch (e) {\n    result.details.robots_txt = 'unreachable';\n    return [{ json: result }];\n  }\n  let sitemapOk = false;\n  try {\n    const sitemapRaw = await $helpers.httpRequest({\n      method: 'GET',\n      url: PORTFOLIO_URL + '/sitemap.xml',\n      headers: { 'User-Agent': UA },\n      timeout: TIMEOUT\n    });\n    const sitemapStr = typeof sitemapRaw === 'string' ? sitemapRaw : '';\n    sitemapOk = sitemapStr.toLowerCase().includes('<urlset');\n    if (sitemapOk) {\n      const urlCount = (sitemapStr.match(/<url>/g) || []).length;\n      result.details.sitemap_xml = 'valid (' + urlCount + ' urls)';\n    } else {\n      result.details.sitemap_xml = 'invalid or missing';\n    }\n  } catch (e) {\n    result.details.sitemap_xml = 'unreachable';\n    return [{ json: result }];\n  }\n  result.passed = vitalsOk && robotsOk && sitemapOk;\n} catch (e) {\n  result.details.error = e.message;\n  result.passed = false;\n}\nreturn [{ json: result }];"
+      },
+      "id": "check-api-endpoints",
+      "name": "check-api-endpoints",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [550, 900],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "id": "merge-results",
+      "name": "merge-results",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [900, 500]
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst results = items.map(function (item) { return item.json; });\nconst total = results.length;\nconst passed = results.filter(function (r) { return r.passed === true; }).length;\nconst failed = total - passed;\nconst overallStatus = failed === 0 ? 'passed' : 'failed';\nconst webhookBody = ($('webhook-trigger').first().json.body) || {};\nconst portfolioUrl = webhookBody.url || 'https://resume.jclee.me';\nconst icon = function (r) { return r.passed ? '\\u2705' : '\\u274c'; };\nconst checkDetails = results.map(function (r) {\n  return {\n    name: r.check,\n    passed: r.passed,\n    details: typeof r.details === 'object' ? JSON.stringify(r.details) : String(r.details || '')\n  };\n});\nconst statusIcon = failed === 0 ? '\\u2705' : '\\u274c';\nconst msg = '\\ud83d\\udd0d \\ubc30\\ud3ec \\uac80\\uc99d \\uc644\\ub8cc\\n' +\n  statusIcon + ' \\uc804\\uccb4 \\uc0c1\\ud0dc: ' + (failed === 0 ? '\\uc131\\uacf5' : '\\uc2e4\\ud328') + '\\n' +\n  '\\ud83d\\udcca \\uacb0\\uacfc: ' + passed + '/' + total + ' \\ud1b5\\uacfc\\n\\n' +\n  results.map(function (r) {\n    return icon(r) + ' ' + r.check + ': ' + (r.passed ? '\\ud1b5\\uacfc' : '\\uc2e4\\ud328');\n  }).join('\\n') + '\\n\\n' +\n  '\\ud83c\\udf10 URL: ' + portfolioUrl;\nconst notifyPayload = {\n  event: 'verify',\n  status: overallStatus,\n  checks: {\n    passed: passed,\n    total: total,\n    details: checkDetails\n  },\n  timestamp: new Date().toISOString(),\n  url: portfolioUrl,\n  message: msg\n};\nreturn [{ json: notifyPayload }];"
+      },
+      "id": "aggregate-results",
+      "name": "aggregate-results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 500]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "value": "PV5yLgHNzNSlCmRT",
+          "__rl": true,
+          "mode": "id"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "message": "={{ $json.message }}"
+          },
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "notify-telegram",
+      "name": "notify-telegram",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.1,
+      "position": [1300, 500],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ event: 'verify', status: $('aggregate-results').item.json.status, checks: $('aggregate-results').item.json.checks, timestamp: $('aggregate-results').item.json.timestamp, url: $('aggregate-results').item.json.url }) }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "respond-final",
+      "name": "respond-final",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1500, 500]
+    }
+  ],
+  "connections": {
+    "webhook-trigger": {
+      "main": [
+        [
+          { "node": "check-health", "type": "main", "index": 0 },
+          { "node": "check-security-headers", "type": "main", "index": 0 },
+          { "node": "check-content-integrity", "type": "main", "index": 0 },
+          { "node": "check-performance", "type": "main", "index": 0 },
+          { "node": "check-api-endpoints", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "check-health": {
+      "main": [[{ "node": "merge-results", "type": "main", "index": 0 }]]
+    },
+    "check-security-headers": {
+      "main": [[{ "node": "merge-results", "type": "main", "index": 1 }]]
+    },
+    "check-content-integrity": {
+      "main": [[{ "node": "merge-results", "type": "main", "index": 2 }]]
+    },
+    "check-performance": {
+      "main": [[{ "node": "merge-results", "type": "main", "index": 3 }]]
+    },
+    "check-api-endpoints": {
+      "main": [[{ "node": "merge-results", "type": "main", "index": 4 }]]
+    },
+    "merge-results": {
+      "main": [[{ "node": "aggregate-results", "type": "main", "index": 0 }]]
+    },
+    "aggregate-results": {
+      "main": [[{ "node": "notify-telegram", "type": "main", "index": 0 }]]
+    },
+    "notify-telegram": {
+      "main": [[{ "node": "respond-final", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Seoul",
+    "continueOnFail": true
+  },
+  "staticData": null,
+  "tags": [
+    { "id": "tag-ci-verify", "name": "ci-verify" },
+    { "id": "tag-verify", "name": "verify" }
+  ]
+}

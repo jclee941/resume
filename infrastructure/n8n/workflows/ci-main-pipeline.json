@@ -1,0 +1,334 @@
+{
+  "name": "CI Main Pipeline Orchestrator",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ci-main-pipeline",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "webhook-trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 300],
+      "webhookId": "ci-main-pipeline"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalize GitLab push/merge_request webhook payloads\nconst body = $input.first().json.body || $input.first().json;\nconst oa = body.object_attributes || {};\nconst ref = oa.ref || body.ref || '';\nconst branch = ref.split('/').slice(2).join('/') || ref;\nconst sha = oa.sha || body.checkout_sha || body.after || '';\nconst source = oa.source || body.object_kind || 'push';\nconst projectId = body.project_id ||\n  (body.project && body.project.id) ||\n  oa.project_id || 0;\nconst commitMsg = (body.commits && body.commits[0] && body.commits[0].message) ||\n  (body.commit && body.commit.title) ||\n  oa.title || '';\nconst author = (body.commits && body.commits[0] && body.commits[0].author && body.commits[0].author.name) ||\n  body.user_name || 'Unknown';\n\nreturn [{\n  json: {\n    branch,\n    ref,\n    sha: sha.substring(0, 8),\n    sha_full: sha,\n    source,\n    isMaster: branch === 'master' || branch === 'main',\n    projectId: String(projectId),\n    commitMsg: commitMsg.split('\\n')[0].substring(0, 100),\n    author,\n    triggeredAt: new Date().toISOString()\n  }\n}];"
+      },
+      "id": "extract-info",
+      "name": "extract-info",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "is-master-check",
+              "leftValue": "={{ $json.isMaster }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "is-master",
+      "name": "is-master",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [750, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ triggered: false, reason: 'not-master', branch: $('extract-info').first().json.branch }) }}",
+        "options": {}
+      },
+      "id": "respond-skipped",
+      "name": "respond-skipped",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1000, 550]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.GITLAB_URL }}/api/v4/projects/{{ $json.projectId }}/pipeline",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "PRIVATE-TOKEN",
+              "value": "={{ $env.GITLAB_TOKEN }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ ref: $json.ref, variables: [{ key: 'N8N_ORCHESTRATED', value: 'true' }, { key: 'N8N_EXECUTION_ID', value: $execution.id }, { key: 'TRIGGERED_BY', value: 'n8n' }] }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "create-pipeline",
+      "name": "create-pipeline",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1000, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "has-pipeline-id",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "isNotEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "check-created",
+      "name": "check-created",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1250, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Format pipeline creation error notification payload\nconst errorResp = $input.first().json;\nconst info = $('extract-info').first().json;\nconst gitlabUrl = $env.GITLAB_URL || 'https://gitlab.jclee.me';\nconst errorMsg = errorResp.message || errorResp.error || JSON.stringify(errorResp);\n\nreturn [{\n  json: {\n    event: 'ci-pipeline-create-error',\n    status: 'error',\n    conclusion: 'failure',\n    pipeline_id: null,\n    passed: 0,\n    failed: 0,\n    total: 0,\n    duration_seconds: 0,\n    commit: info.sha,\n    commit_message: info.commitMsg,\n    author: info.author,\n    ref: info.ref,\n    project_id: info.projectId,\n    url: `${gitlabUrl}/${info.projectId}/-/pipelines`,\n    timestamp: new Date().toISOString(),\n    message: `❌ CI 파이프라인 생성 실패\\n\\n브랜치: ${info.branch}\\nSHA: ${info.sha}\\n\\n오류: ${errorMsg}`\n  }\n}];"
+      },
+      "id": "create-error",
+      "name": "create-error",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1500, 550]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "PV5yLgHNzNSlCmRT",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "notify-create-error",
+      "name": "notify-create-error",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.1,
+      "position": [1750, 550],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ triggered: false, error: 'pipeline_create_failed', pipeline_id: null }) }}",
+        "options": {}
+      },
+      "id": "respond-create-error",
+      "name": "respond-create-error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [2000, 550]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Merge pipeline creation response with original webhook data into a single poll state object\nconst pipeline = $input.first().json;\nconst info = $('extract-info').first().json;\n\nreturn [{\n  json: {\n    project_id: info.projectId,\n    pipeline_id: pipeline.id,\n    pipeline_web_url: pipeline.web_url || '',\n    ref: info.ref,\n    branch: info.branch,\n    commit: info.sha,\n    commit_full: info.sha_full,\n    commit_message: info.commitMsg,\n    author: info.author,\n    source: info.source,\n    started_at: new Date().toISOString()\n  }\n}];"
+      },
+      "id": "init-poll",
+      "name": "init-poll",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1500, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Poll GitLab pipeline status until terminal state or timeout (60 polls x 30s = 30min max).\n// Uses fetch() available in n8n Code nodes on Node.js 18+.\nconst state = $input.first().json;\nconst { project_id, pipeline_id, ref, commit, started_at } = state;\n\nconst gitlabUrl = ($env.GITLAB_URL || 'https://gitlab.jclee.me').replace(/\\/+$/, '');\nconst gitlabToken = $env.GITLAB_TOKEN;\n\nif (!gitlabToken) {\n  throw new Error('GITLAB_TOKEN environment variable is not set');\n}\n\nconst headers = { 'PRIVATE-TOKEN': gitlabToken };\nconst terminalStatuses = ['success', 'failed', 'cancelled', 'canceled', 'skipped'];\nconst maxPolls = 60;\nconst pollIntervalMs = 30000; // 30초\n\nlet pipelineStatus = 'pending';\nlet pollCount = 0;\n\nconsole.log(`[CI 파이프라인 시작됨] pipeline_id=${pipeline_id} project_id=${project_id} ref=${ref}`);\n\nwhile (pollCount < maxPolls) {\n  const pollUrl = `${gitlabUrl}/api/v4/projects/${encodeURIComponent(String(project_id))}/pipelines/${pipeline_id}`;\n  let res;\n  try {\n    res = await fetch(pollUrl, { headers });\n  } catch (fetchErr) {\n    console.error(`Poll ${pollCount + 1}: fetch error — ${fetchErr.message}`);\n    pipelineStatus = 'poll_error';\n    break;\n  }\n\n  if (!res.ok) {\n    const errText = await res.text().catch(() => String(res.status));\n    console.error(`Poll ${pollCount + 1}: HTTP ${res.status} — ${errText}`);\n    pipelineStatus = 'poll_error';\n    break;\n  }\n\n  const pipeline = await res.json();\n  pipelineStatus = pipeline.status;\n  console.log(`Poll ${pollCount + 1}/${maxPolls}: status=${pipelineStatus}`);\n\n  if (terminalStatuses.includes(pipelineStatus)) {\n    break;\n  }\n\n  pollCount++;\n  if (pollCount < maxPolls) {\n    await new Promise(r => setTimeout(r, pollIntervalMs));\n  }\n}\n\nif (!terminalStatuses.includes(pipelineStatus)) {\n  pipelineStatus = 'timeout';\n}\n\nconst completedAt = new Date().toISOString();\nconst durationSeconds = Math.round((new Date(completedAt) - new Date(started_at)) / 1000);\n\nconsole.log(`[파이프라인 완료] status=${pipelineStatus} duration=${durationSeconds}s polls=${pollCount}`);\n\nreturn [{\n  json: {\n    ...state,\n    pipelineStatus,\n    pollCount,\n    completed_at: completedAt,\n    duration_seconds: durationSeconds\n  }\n}];"
+      },
+      "id": "poll-pipeline",
+      "name": "poll-pipeline",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1750, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.GITLAB_URL }}/api/v4/projects/{{ $json.project_id }}/pipelines/{{ $json.pipeline_id }}/jobs?per_page=100",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "PRIVATE-TOKEN",
+              "value": "={{ $env.GITLAB_TOKEN }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "get-jobs",
+      "name": "get-jobs",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2000, 300],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build Korean notification summary from poll state + job results\nconst pollState = $('poll-pipeline').first().json;\n\n// Handle both array-in-single-item and split-item responses from HTTP GET\nconst rawItems = $input.all();\nlet jobs = [];\nif (rawItems.length === 1 && Array.isArray(rawItems[0].json)) {\n  jobs = rawItems[0].json;\n} else {\n  jobs = rawItems.map(item => item.json).filter(j => j && j.id);\n}\n\nconst passed  = jobs.filter(j => j.status === 'success').length;\nconst failed  = jobs.filter(j => j.status === 'failed').length;\nconst skipped = jobs.filter(j => ['skipped', 'manual', 'canceled'].includes(j.status)).length;\nconst total   = jobs.length;\n\nconst {\n  pipelineStatus, pipeline_id, pipeline_web_url,\n  ref, commit, commit_message, author,\n  project_id, duration_seconds\n} = pollState;\n\nconst durationMinutes = Math.floor(duration_seconds / 60);\nconst durationSecs    = duration_seconds % 60;\nconst durationText    = durationMinutes > 0\n  ? `${durationMinutes}분 ${durationSecs}초`\n  : `${durationSecs}초`;\n\nlet statusEmoji, statusKr;\nswitch (pipelineStatus) {\n  case 'success':    statusEmoji = '✅'; statusKr = 'CI 파이프라인 완료';    break;\n  case 'failed':     statusEmoji = '❌'; statusKr = 'CI 파이프라인 실패';    break;\n  case 'cancelled':\n  case 'canceled':   statusEmoji = '⏹️'; statusKr = 'CI 파이프라인 취소됨'; break;\n  case 'timeout':    statusEmoji = '⏱️'; statusKr = 'CI 파이프라인 시간초과'; break;\n  case 'poll_error': statusEmoji = '⚠️'; statusKr = 'CI 파이프라인 폴링 오류'; break;\n  default:           statusEmoji = '❓'; statusKr = `CI 파이프라인: ${pipelineStatus}`;\n}\n\nconst gitlabUrl   = ($env.GITLAB_URL || 'https://gitlab.jclee.me').replace(/\\/+$/, '');\nconst pipelineUrl = pipeline_web_url || `${gitlabUrl}/${project_id}/-/pipelines/${pipeline_id}`;\nconst branchName  = (ref || '').replace('refs/heads/', '');\nconst failedNames = jobs.filter(j => j.status === 'failed').map(j => j.name).slice(0, 5);\n\nconst lines = [\n  `${statusEmoji} ${statusKr}`,\n  '',\n  `브랜치: ${branchName}`,\n  `SHA: ${commit}`,\n  `커밋: ${commit_message}`,\n  `작성자: ${author}`,\n  '',\n  `결과: ✅ ${passed} / ❌ ${failed} / 전체 ${total}`,\n  `소요시간: ${durationText}`,\n  failedNames.length ? `실패 잡: ${failedNames.join(', ')}` : null,\n  '',\n  `파이프라인: #${pipeline_id}`\n].filter(line => line !== null);\n\nconst conclusion = pipelineStatus === 'success' ? 'success' : 'failure';\n\nreturn [{\n  json: {\n    event: 'ci-pipeline-complete',\n    status: pipelineStatus,\n    conclusion,\n    pipeline_id: String(pipeline_id),\n    passed,\n    failed,\n    skipped,\n    total,\n    duration_seconds,\n    commit,\n    commit_message,\n    author,\n    ref,\n    project_id: String(project_id),\n    url: pipelineUrl,\n    timestamp: new Date().toISOString(),\n    message: lines.join('\\n')\n  }\n}];"
+      },
+      "id": "format-results",
+      "name": "format-results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2250, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5678/webhook/elk-ingest",
+        "authentication": "none",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ pipeline_id: $json.pipeline_id, sha: $json.commit, conclusion: $json.conclusion, ref: $json.ref, source: 'gitlab-ci', workflow: 'ci-main-pipeline', passed: $json.passed, failed: $json.failed, total: $json.total, duration_seconds: $json.duration_seconds }) }}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "elk-ingest",
+      "name": "elk-ingest",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [2500, 300],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "PV5yLgHNzNSlCmRT",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "notify-result",
+      "name": "notify-result",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.1,
+      "position": [2750, 300],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ triggered: true, pipeline_id: $('poll-pipeline').first().json.pipeline_id, status: $('poll-pipeline').first().json.pipelineStatus, conclusion: $json.conclusion || 'unknown' }) }}",
+        "options": {}
+      },
+      "id": "respond-final",
+      "name": "respond-final",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [3000, 300]
+    }
+  ],
+  "connections": {
+    "webhook-trigger": {
+      "main": [[{"node": "extract-info", "type": "main", "index": 0}]]
+    },
+    "extract-info": {
+      "main": [[{"node": "is-master", "type": "main", "index": 0}]]
+    },
+    "is-master": {
+      "main": [
+        [{"node": "create-pipeline", "type": "main", "index": 0}],
+        [{"node": "respond-skipped", "type": "main", "index": 0}]
+      ]
+    },
+    "create-pipeline": {
+      "main": [[{"node": "check-created", "type": "main", "index": 0}]]
+    },
+    "check-created": {
+      "main": [
+        [{"node": "init-poll", "type": "main", "index": 0}],
+        [{"node": "create-error", "type": "main", "index": 0}]
+      ]
+    },
+    "create-error": {
+      "main": [[{"node": "notify-create-error", "type": "main", "index": 0}]]
+    },
+    "notify-create-error": {
+      "main": [[{"node": "respond-create-error", "type": "main", "index": 0}]]
+    },
+    "init-poll": {
+      "main": [[{"node": "poll-pipeline", "type": "main", "index": 0}]]
+    },
+    "poll-pipeline": {
+      "main": [[{"node": "get-jobs", "type": "main", "index": 0}]]
+    },
+    "get-jobs": {
+      "main": [[{"node": "format-results", "type": "main", "index": 0}]]
+    },
+    "format-results": {
+      "main": [[{"node": "elk-ingest", "type": "main", "index": 0}]]
+    },
+    "elk-ingest": {
+      "main": [[{"node": "notify-result", "type": "main", "index": 0}]]
+    },
+    "notify-result": {
+      "main": [[{"node": "respond-final", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Seoul",
+    "saveManualExecutions": true
+  },
+  "staticData": null,
+  "tags": [
+    {"id": "tag-ci", "name": "ci"},
+    {"id": "tag-pipeline", "name": "pipeline"},
+    {"id": "tag-orchestrator", "name": "orchestrator"}
+  ]
+}
