@@ -56,23 +56,8 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
         jobsFailed: 0,
       },
       errors: [],
-    // Initialize workflow tracking
-    const workflow = {
-      id: event.instanceId,
-      triggerType,
-      status: 'running',
-      startedAt: new Date().toISOString(),
-      steps: [],
-      stats: {
-        jobsFound: 0,
-        jobsScored: 0,
-        jobsApproved: 0,
-        jobsRejected: 0,
-        jobsApplied: 0,
-        jobsFailed: 0,
-      },
-      errors: [],
     };
+
 
     // Initialize notification service
     const notificationService = new NotificationService(this.env);
@@ -168,14 +153,6 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
               `<b>Platforms</b>: ${platforms.join(', ')}\n` +
               `<b>Result</b>: No jobs found matching criteria`
           });
-          return { notified: true };
-        }
-            this.env,
-            '🔍 <b>Application Workflow Complete</b>\n\n' +
-              `<b>Trigger</b>: ${escapeHtml(triggerType)}\n` +
-              `<b>Platforms</b>: ${escapeHtml(platforms.join(', '))}\n` +
-              `<b>Result</b>: No jobs found matching criteria`
-          );
           return { notified: true };
         }
       );
@@ -409,28 +386,17 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
             `<b>Status</b>: ${status}\n` +
             `<b>Trigger</b>: ${triggerType}\n` +
             `<b>Mode</b>: ${dryRun ? 'Dry Run' : 'Live'}\n\n` +
-            `<b>Stats</b>:<\n` +
+            `<b>Stats</b>:\n` +
             `  Found: ${workflow.stats.jobsFound}\n` +
             `  Approved: ${workflow.stats.jobsApproved}\n` +
             `  Applied: ${workflow.stats.jobsApplied}\n` +
             `  Failed: ${workflow.stats.jobsFailed}\n\n` +
-            `<b>Top Jobs</b>:<\n${jobList}`
+            `<b>Top Jobs</b>:\n${jobList}`
         });
-          this.env,
-          `${icon} <b>Application Workflow Complete</b>\n\n` +
-            `<b>Status</b>: ${status}\n` +
-            `<b>Trigger</b>: ${escapeHtml(triggerType)}\n` +
-            `<b>Mode</b>: ${dryRun ? 'Dry Run' : 'Live'}\n\n` +
-            `<b>Stats</b>:<\n` +
-            `  Found: ${workflow.stats.jobsFound}\n` +
-            `  Approved: ${workflow.stats.jobsApproved}\n` +
-            `  Applied: ${workflow.stats.jobsApplied}\n` +
-            `  Failed: ${workflow.stats.jobsFailed}\n\n` +
-            `<b>Top Jobs</b>:<\n${jobList}`
-        );
-        return { notified: true };
-      }
+      },
     );
+
+
 
     workflow.steps.push({ step: 'notify', status: 'completed' });
 
@@ -646,7 +612,6 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
     const jobs = [];
     const pattern = /data-entity-urn="urn:li:jobPosting:(\d+)"[\s\S]*?base-search-card__title[^>]*>([^<]+)<\/[\s\S]*?base-search-card__subtitle[\s\S]*?<a[^>]*>([^<]+)</gi;
     
-    let match;
     let match = pattern.exec(html);
     while (match !== null) {
       jobs.push({
@@ -656,13 +621,6 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
         url: `https://www.linkedin.com/jobs/view/${match[1]}`,
       });
       match = pattern.exec(html);
-    }
-      jobs.push({
-        id: `linkedin-${match[1]}`,
-        position: match[2].trim(),
-        company: match[3].trim(),
-        url: `https://www.linkedin.com/jobs/view/${match[1]}`,
-      });
     }
     
     return jobs;
@@ -889,19 +847,5 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
   async sendNotification(message) {
     const notificationService = new NotificationService(this.env);
     await notificationService.sendTelegramNotification({ text: message });
-  }
-      this.env,
-      '⏳ <b>Approval Required</b>\n\n' +
-        `<b>Company</b>: ${escapeHtml(job.company)}\n` +
-        `<b>Position</b>: ${escapeHtml(job.position)}\n` +
-        `<b>Platform</b>: ${escapeHtml(job.source)}\n` +
-        `<b>Match Score</b>: ${job.matchScore}%\n` +
-        `<b>Workflow ID</b>: ${escapeHtml(workflowId)}\n` +
-        `<b>Request ID</b>: ${escapeHtml(requestId)}`
-    );
-  }
-
-  async sendNotification(message) {
-    await sendTelegramNotification(this.env, message);
   }
 }
