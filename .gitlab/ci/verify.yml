@@ -1,0 +1,15 @@
+# GitLab CI: Deployment Verification
+# Purpose: Post-deployment verification — health, security, content, performance, API checks
+# Triggers: Manual (web), push to master
+# Include in root .gitlab-ci.yml: - local: '.gitlab/ci/verify.yml'
+# Also add 'verify' to stages list in root .gitlab-ci.yml
+
+stages:
+  - verify
+
+include:
+  - local: '.gitlab/ci/jobs/verify/health.yml'
+  - local: '.gitlab/ci/jobs/verify/security-headers.yml'
+  - local: '.gitlab/ci/jobs/verify/content-integrity.yml'
+  - local: '.gitlab/ci/jobs/verify/performance.yml'
+  - local: '.gitlab/ci/jobs/verify/api-endpoints.yml'

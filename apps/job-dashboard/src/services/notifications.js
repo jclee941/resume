@@ -4,53 +4,21 @@
  * Features: Approval gates, action buttons, notification history, preferences
  */
 
+import { TokenBucketRateLimiter } from './rate-limiter/token-bucket.js';
+
 const TELEGRAM_MAX_LENGTH = 4096;
 const N8N_TIMEOUT_MS = 10000;
 const TELEGRAM_TIMEOUT_MS = 10000;
-
-// Rate limiting: 20 messages per minute per chat
-const RATE_LIMIT_MAX = 20;
-const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
-const messageTimestamps = new Map(); // chatId -> [timestamps]
 
 // Retry configuration
 const MAX_RETRIES = 3;
 const RETRY_DELAYS = [1000, 2000, 4000]; // Exponential backoff: 1s, 2s, 4s
 
 /**
- * Check rate limit for a chat
- */
-function checkRateLimit(chatId) {
-  const now = Date.now();
-  const timestamps = messageTimestamps.get(chatId) || [];
-  
-  // Remove timestamps outside the window
-  const validTimestamps = timestamps.filter(ts => now - ts < RATE_LIMIT_WINDOW_MS);
-  
-  if (validTimestamps.length >= RATE_LIMIT_MAX) {
-    const oldestTimestamp = validTimestamps[0];
-    const waitTime = RATE_LIMIT_WINDOW_MS - (now - oldestTimestamp);
-    return { allowed: false, waitTime };
-  }
-  
-  return { allowed: true, remaining: RATE_LIMIT_MAX - validTimestamps.length };
-}
-
-/**
- * Record message sent for rate limiting
- */
-function recordMessageSent(chatId) {
-  const now = Date.now();
-  const timestamps = messageTimestamps.get(chatId) || [];
-  timestamps.push(now);
-  messageTimestamps.set(chatId, timestamps);
-}
-
-/**
  * Sleep utility for delays
  */
 function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**
@@ -58,8 +26,12 @@ function sleep(ms) {
  */
 function isRetryableError(error, status) {
   // Network errors
-  if (error.name === 'TypeError' || error.code === 'ECONNRESET' || 
-      error.code === 'ETIMEDOUT' || error.code === 'ECONNREFUSED') {
+  if (
+    error.name === 'TypeError' ||
+    error.code === 'ECONNRESET' ||
+    error.code === 'ETIMEDOUT' ||
+    error.code === 'ECONNREFUSED'
+  ) {
     return true;
   }
   // HTTP status codes
@@ -149,6 +121,12 @@ export class NotificationService {
     this.telegramToken = env?.TELEGRAM_BOT_TOKEN;
     this.telegramChatId = env?.TELEGRAM_CHAT_ID;
     this.n8nWebhookUrl = env?.N8N_WEBHOOK_URL || env?.N8N_URL;
+    this.rateLimiter = new TokenBucketRateLimiter(env, {
+      capacity: 20,
+      refillRate: 20 / 60,
+      keyPrefix: 'rate_limit:telegram',
+      ttlSeconds: 60,
+    });
 
     // Notification preferences (default: both channels enabled)
     this.preferences = {
@@ -188,6 +166,19 @@ export class NotificationService {
       }
       return true;
     });
+  }
+
+  async checkRateLimit(chatId) {
+    const result = await this.rateLimiter.checkLimit(chatId);
+    return {
+      allowed: result.allowed,
+      remaining: result.remaining,
+      resetTime: result.resetTime,
+    };
+  }
+
+  async recordMessageSent(chatId) {
+    await this.rateLimiter.consume(chatId, 1);
   }
 
   /**
@@ -430,10 +421,11 @@ export class NotificationService {
     }
 
     // Check rate limit
-    const rateCheck = checkRateLimit(this.telegramChatId);
+    const rateCheck = await this.checkRateLimit(this.telegramChatId);
     if (!rateCheck.allowed) {
-      console.warn(`[NotificationService] Rate limit exceeded. Wait ${rateCheck.waitTime}ms`);
-      return { sent: false, reason: 'rate_limited', waitTime: rateCheck.waitTime };
+      const waitTime = Math.max(0, (rateCheck.resetTime || Date.now()) - Date.now());
+      console.warn(`[NotificationService] Rate limit exceeded. Wait ${waitTime}ms`);
+      return { sent: false, reason: 'rate_limited', waitTime, resetTime: rateCheck.resetTime };
     }
 
     const endpoint = `https://api.telegram.org/bot${this.telegramToken}/sendMessage`;
@@ -461,7 +453,7 @@ export class NotificationService {
     // Retry logic
     let lastError = null;
     let lastStatus = null;
-    
+
     for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), TELEGRAM_TIMEOUT_MS);
@@ -479,15 +471,17 @@ export class NotificationService {
         if (!response.ok) {
           const errorBody = await response.text();
           lastStatus = response.status;
-          
+
           // Check if we should retry
           if (attempt < MAX_RETRIES && (response.status === 429 || response.status >= 500)) {
-            console.warn(`[NotificationService] Telegram error ${response.status}, retrying (${attempt + 1}/${MAX_RETRIES})...`);
+            console.warn(
+              `[NotificationService] Telegram error ${response.status}, retrying (${attempt + 1}/${MAX_RETRIES})...`
+            );
             lastError = new Error(`HTTP ${response.status}: ${errorBody}`);
             await sleep(RETRY_DELAYS[attempt]);
             continue;
           }
-          
+
           console.error('[NotificationService] Telegram error:', response.status, errorBody);
           return {
             sent: false,
@@ -499,7 +493,7 @@ export class NotificationService {
         }
 
         const result = await response.json();
-        recordMessageSent(this.telegramChatId);
+        await this.recordMessageSent(this.telegramChatId);
         return {
           sent: true,
           messageId: result.result?.message_id,
@@ -508,14 +502,16 @@ export class NotificationService {
       } catch (error) {
         clearTimeout(timeoutId);
         lastError = error;
-        
+
         // Check if we should retry
         if (attempt < MAX_RETRIES && isRetryableError(error)) {
-          console.warn(`[NotificationService] Telegram network error, retrying (${attempt + 1}/${MAX_RETRIES})...`);
+          console.warn(
+            `[NotificationService] Telegram network error, retrying (${attempt + 1}/${MAX_RETRIES})...`
+          );
           await sleep(RETRY_DELAYS[attempt]);
           continue;
         }
-        
+
         console.error('[NotificationService] Telegram error:', error.message);
         return {
           sent: false,
@@ -525,7 +521,7 @@ export class NotificationService {
         };
       }
     }
-    
+
     // All retries exhausted
     return {
       sent: false,
@@ -533,76 +529,6 @@ export class NotificationService {
       error: lastError?.message || 'Unknown error',
       attempts: MAX_RETRIES + 1,
     };
-  }
-   /**
-   * Send Telegram notification with optional inline keyboard
-   */
-  async sendTelegramNotification(data, options = {}) {
-    if (!this.telegramToken || !this.telegramChatId) {
-      console.log('[NotificationService] Telegram not configured');
-      return { sent: false, reason: 'not_configured' };
-    }
-
-    const endpoint = `https://api.telegram.org/bot${this.telegramToken}/sendMessage`;
-
-    let body = {
-      chat_id: this.telegramChatId,
-      parse_mode: options.parse_mode || 'HTML',
-      disable_web_page_preview: true,
-    };
-
-    // Handle different message formats
-    if (options.text || typeof data === 'string') {
-      body.text = formatNotificationText(options.text || data);
-    } else if (data.text) {
-      body.text = formatNotificationText(data.text);
-    } else {
-      body.text = formatNotificationText(data);
-    }
-
-    // Add reply markup if provided
-    if (options.reply_markup || data.reply_markup) {
-      body.reply_markup = options.reply_markup || data.reply_markup;
-    }
-
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), TELEGRAM_TIMEOUT_MS);
-
-    try {
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        const errorBody = await response.text();
-        console.error('[NotificationService] Telegram error:', response.status, errorBody);
-        return {
-          sent: false,
-          reason: 'http_error',
-          status: response.status,
-          error: errorBody,
-        };
-      }
-
-      const result = await response.json();
-      return {
-        sent: true,
-        messageId: result.result?.message_id,
-      };
-    } catch (error) {
-      clearTimeout(timeoutId);
-      console.error('[NotificationService] Telegram error:', error.message);
-      return {
-        sent: false,
-        reason: error.name === 'AbortError' ? 'timeout' : 'fetch_error',
-        error: error.message,
-      };
-    }
   }
 
   /**
