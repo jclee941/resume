@@ -1,0 +1,30 @@
+# =============================================================================
+# STAGE: TEST - E2E Tests
+# =============================================================================
+test-e2e:
+  stage: test
+  needs: ["analyze"]
+  interruptible: true
+  before_script:
+    - source .gitlab/job_vars.env 2>/dev/null || true
+    - apk add --no-cache chromium
+  script: |
+    set -euo pipefail
+    echo "🔄 Syncing resume data..."
+    npm ci --cache .npm --prefer-offline 2>&1 | tail -3
+    npm run sync:data
+    echo "🏗️ Building portfolio worker..."
+    npm run build
+    echo "🎭 Running smoke E2E tests..."
+    npx playwright install chromium 2>&1 | tail -3 || true
+    CI=true npm run test:e2e:smoke
+    echo "✅ E2E tests complete"
+  artifacts:
+    when: always
+    paths:
+      - playwright-report/
+    expire_in: 7 days
+  rules:
+    - if: '$PORTFOLIO == "true"'
+      when: manual
+      allow_failure: false

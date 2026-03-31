@@ -1,0 +1,41 @@
+# =============================================================================
+# STAGE: VALIDATE - Linting
+# =============================================================================
+lint:
+  stage: validate
+  needs: ["analyze"]
+  interruptible: true
+  before_script:
+    - source .gitlab/job_vars.env 2>/dev/null || true
+  script: |
+    set -euo pipefail
+    echo "🔍 Running ESLint..."
+    npm ci --cache .npm --prefer-offline 2>&1 | tail -5
+    npm run lint 2>&1 | tee eslint-results.txt || true
+
+    ERRORS=$(grep -oP '\(\K[0-9]+(?= errors?[,)])' eslint-results.txt | tail -1 || echo "0")
+    WARNINGS=$(grep -oP '[0-9]+(?= warnings?\))' eslint-results.txt | tail -1 || echo "0")
+    echo "Lint: ${ERRORS:-0} errors, ${WARNINGS:-0} warnings"
+
+    # Zero-tolerance for errors
+    if [ "${ERRORS:-0}" -gt "0" ]; then
+      echo "❌ ESLint found errors - failing"
+      exit 1
+    fi
+
+    # Quality gate: Zero-tolerance ratchet
+    if [ -f .eslint-baseline ]; then
+      ESLINT_WARNING_BASELINE=$(cat .eslint-baseline 2>/dev/null || echo 0)
+      if [ "${WARNINGS:-0}" -gt "$ESLINT_WARNING_BASELINE" ]; then
+        echo "❌ ESLint warnings increased (${WARNINGS} > ${ESLINT_WARNING_BASELINE})"
+        exit 1
+      elif [ "${WARNINGS:-0}" -lt "$ESLINT_WARNING_BASELINE" ]; then
+        echo "🎉 Warnings decreased! Update baseline: echo ${WARNINGS} > .eslint-baseline"
+      fi
+    fi
+    echo "✅ Lint passed"
+  artifacts:
+    when: failure
+    paths:
+      - eslint-results.txt
+    expire_in: 7 days

@@ -1,0 +1,40 @@
+# =============================================================================
+# STAGE: VERIFY - Performance
+# =============================================================================
+verify-performance:
+  stage: verify
+  needs: ["deploy"]
+  interruptible: true
+  before_script:
+    - apk add --no-cache curl bash jq
+  script: |
+    set -euo pipefail
+    
+    PORTFOLIO_URL="${PORTFOLIO_URL:-https://resume.jclee.me}"
+    TIMEOUT="${VERIFY_TIMEOUT:-30}"
+    
+    echo "📊 Checking Performance Metrics..."
+    
+    # Metrics endpoint
+    METRICS=$(curl -sf --max-time "$TIMEOUT" "$PORTFOLIO_URL/metrics" 2>/dev/null) || true
+    if [ -n "$METRICS" ]; then
+      echo "✅ Metrics Endpoint: Accessible"
+    else
+      echo "⚠️  Metrics Endpoint: Not accessible (non-blocking)"
+    fi
+    
+    # Compression
+    ENCODING=$(curl -sI -H "Accept-Encoding: gzip, br" --max-time "$TIMEOUT" \
+      "$PORTFOLIO_URL/" 2>/dev/null | grep -i "content-encoding" | head -1 | tr -d '\r') || true
+    if echo "$ENCODING" | grep -qi "br"; then
+      echo "✅ Compression: Brotli"
+    elif echo "$ENCODING" | grep -qi "gzip"; then
+      echo "✅ Compression: Gzip"
+    else
+      echo "⚠️  Compression: None detected (non-blocking)"
+    fi
+    
+    echo "✅ Performance verification complete"
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "web" || $CI_COMMIT_BRANCH == "master"'
+      when: always

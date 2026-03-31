@@ -1,0 +1,40 @@
+# =============================================================================
+# STAGE: VERIFY - Content Integrity
+# =============================================================================
+verify-content-integrity:
+  stage: verify
+  needs: ["deploy"]
+  interruptible: true
+  before_script:
+    - apk add --no-cache curl bash jq
+  script: |
+    set -euo pipefail
+    
+    PORTFOLIO_URL="${PORTFOLIO_URL:-https://resume.jclee.me}"
+    TIMEOUT="${VERIFY_TIMEOUT:-30}"
+    UA='Mozilla/5.0 (GitLabCI VerifyDeployment; +https://gitlab.jclee.me)'
+    
+    echo "📄 Checking Content Integrity..."
+    HTML=$(curl -fsSL --http1.1 --connect-timeout 10 --retry 3 --retry-delay 2 \
+      -A "$UA" "$PORTFOLIO_URL/" 2>/dev/null) || true
+    
+    # Page Title
+    TITLE=$(echo "$HTML" | grep -oPi '<title>\K[^<]+' | head -1) || true
+    if [ -n "$TITLE" ] && [ ${#TITLE} -gt 10 ]; then
+      echo "✅ Page Title: ${TITLE:0:50}..."
+    else
+      echo "⚠️  Page Title: Too short or missing (non-blocking)"
+    fi
+    
+    # OG Image (blocking)
+    if curl -sfI --max-time "$TIMEOUT" "$PORTFOLIO_URL/og-image.webp" 2>/dev/null | grep -q "200"; then
+      echo "✅ OG Image: Accessible"
+    else
+      echo "❌ OG Image: Not accessible"
+      exit 1
+    fi
+    
+    echo "✅ Content integrity verification complete"
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "web" || $CI_COMMIT_BRANCH == "master"'
+      when: always

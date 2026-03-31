@@ -1,0 +1,28 @@
+# =============================================================================
+# STAGE: VALIDATE - Data Drift Check
+# =============================================================================
+data-drift:
+  stage: validate
+  needs: ["analyze"]
+  interruptible: true
+  before_script:
+    - source .gitlab/job_vars.env 2>/dev/null || true
+  script: |
+    set -euo pipefail
+    echo "🔄 Syncing resume data..."
+    npm ci --cache .npm --prefer-offline 2>&1 | tail -3
+    npm run sync:data
+    echo "🔍 Checking for data drift..."
+    if ! git diff --exit-code apps/portfolio/data.json apps/portfolio/data_en.json apps/portfolio/data_ja.json; then
+      echo "❌ Data drift detected: portfolio data files are out of sync with SSoT"
+      echo "Run 'npm run sync:data' locally and commit the changes"
+      exit 1
+    fi
+    echo "✅ No data drift detected"
+  rules:
+    - if: '$DATA == "true" || $PORTFOLIO == "true"'
+      when: manual
+      allow_failure: true
+    - if: '$CI_PIPELINE_SOURCE == "schedule" || $CI_PIPELINE_SOURCE == "web"'
+      when: manual
+      allow_failure: true

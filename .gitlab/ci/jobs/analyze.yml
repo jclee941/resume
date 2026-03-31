@@ -1,0 +1,95 @@
+# =============================================================================
+# STAGE: ANALYZE - Affected Target Analysis
+# =============================================================================
+analyze:
+  stage: analyze
+  interruptible: true
+  artifacts:
+    paths:
+      - .gitlab/affected_targets.json
+      - .gitlab/job_vars.env
+    expire_in: 1 hour
+    when: always
+  script: |
+    set -euo pipefail
+
+    # Determine base ref for change detection
+    if [ "$CI_PIPELINE_SOURCE" = "push" ] || [ "$CI_PIPELINE_SOURCE" = "merge_request_event" ]; then
+      if [ -n "$CI_MERGE_REQUEST_IID" ]; then
+        BASE_REF="origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
+      elif [ -n "$CI_COMMIT_BEFORE_SHA" ]; then
+        BASE_REF="${CI_COMMIT_BEFORE_SHA}"
+        if [ "$BASE_REF" = "0000000000000000000000000000000000000000" ]; then
+          BASE_REF="HEAD~1"
+        fi
+      else
+        BASE_REF="HEAD~1"
+      fi
+    else
+      BASE_REF="HEAD~1"
+    fi
+
+    echo "Using base ref: $BASE_REF"
+
+    mkdir -p .gitlab
+
+    # Run affected target detection (Go tool)
+    if go run ./tools/ci/affected.go "$BASE_REF" 2>/dev/null; then
+      : # Go tool produced .affected/affected_targets.json
+    fi
+
+    # Fallback: detect affected packages from git diff
+    if [ ! -f .affected/affected_targets.json ]; then
+      echo "Go tool did not produce output, using git-based detection"
+      CHANGED_FILES=$(git diff --name-only "$BASE_REF"...HEAD 2>/dev/null || git diff --name-only HEAD~1)
+      PORTFOLIO=$(echo "$CHANGED_FILES" | grep -qE "apps/portfolio|packages/data|packages/shared" && echo "true" || echo "false")
+      JOB_DASHBOARD=$(echo "$CHANGED_FILES" | grep -qE "apps/job-dashboard|packages/shared" && echo "true" || echo "false")
+      JOB_SERVER=$(echo "$CHANGED_FILES" | grep -qE "apps/job-server" && echo "true" || echo "false")
+      DATA=$(echo "$CHANGED_FILES" | grep -qE "packages/data" && echo "true" || echo "false")
+      INFRA=$(echo "$CHANGED_FILES" | grep -qE "infrastructure/" && echo "true" || echo "false")
+      SHARED=$(echo "$CHANGED_FILES" | grep -qE "packages/shared" && echo "true" || echo "false")
+
+      jq -n \
+        --arg p "$PORTFOLIO" \
+        --arg jd "$JOB_DASHBOARD" \
+        --arg js "$JOB_SERVER" \
+        --arg d "$DATA" \
+        --arg i "$INFRA" \
+        --arg s "$SHARED" \
+        '{portfolio: ($p=="true"), job_dashboard: ($jd=="true"), job_server: ($js=="true"), data: ($d=="true"), infra: ($i=="true"), shared: ($s=="true")}' > .gitlab/affected_targets.json
+    else
+      # Convert Go tool output to our format
+      PORTFOLIO=$(jq -r '.portfolio // false' .affected/affected_targets.json 2>/dev/null || echo "false")
+      JOB_DASHBOARD=$(jq -r '.job_dashboard // false' .affected/affected_targets.json 2>/dev/null || echo "false")
+      JOB_SERVER=$(jq -r '.job_server // false' .affected/affected_targets.json 2>/dev/null || echo "false")
+      DATA=$(jq -r '.data // false' .affected/affected_targets.json 2>/dev/null || echo "false")
+      INFRA=$(jq -r '.infra // false' .affected/affected_targets.json 2>/dev/null || echo "false")
+      SHARED=$(jq -r '.shared // false' .affected/affected_targets.json 2>/dev/null || echo "false")
+
+      jq -n \
+        --arg p "$PORTFOLIO" \
+        --arg jd "$JOB_DASHBOARD" \
+        --arg js "$JOB_SERVER" \
+        --arg d "$DATA" \
+        --arg i "$INFRA" \
+        --arg s "$SHARED" \
+        '{portfolio: ($p=="true"), job_dashboard: ($jd=="true"), job_server: ($js=="true"), data: ($d=="true"), infra: ($i=="true"), shared: ($s=="true")}' > .gitlab/affected_targets.json
+    fi
+
+    echo "📊 Affected targets:"
+    cat .gitlab/affected_targets.json
+
+    # Write job-level variables for subsequent jobs
+    PORTFOLIO=$(jq -r '.portfolio // false' .gitlab/affected_targets.json)
+    JOB_DASHBOARD=$(jq -r '.job_dashboard // false' .gitlab/affected_targets.json)
+    JOB_SERVER=$(jq -r '.job_server // false' .gitlab/affected_targets.json)
+    DATA=$(jq -r '.data // false' .gitlab/affected_targets.json)
+    INFRA=$(jq -r '.infra // false' .gitlab/affected_targets.json)
+    SHARED=$(jq -r '.shared // false' .gitlab/affected_targets.json)
+
+    echo "PORTFOLIO=$PORTFOLIO" > .gitlab/job_vars.env
+    echo "JOB_DASHBOARD=$JOB_DASHBOARD" >> .gitlab/job_vars.env
+    echo "JOB_SERVER=$JOB_SERVER" >> .gitlab/job_vars.env
+    echo "DATA=$DATA" >> .gitlab/job_vars.env
+    echo "INFRA=$INFRA" >> .gitlab/job_vars.env
+    echo "SHARED=$SHARED" >> .gitlab/job_vars.env

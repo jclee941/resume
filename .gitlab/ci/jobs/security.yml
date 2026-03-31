@@ -1,0 +1,25 @@
+# =============================================================================
+# STAGE: SECURITY - Secret Scanning
+# =============================================================================
+security-scan:
+  stage: security
+  needs: ["analyze"]
+  interruptible: true
+  script: |
+    set -euo pipefail
+    echo "🔒 Running security scan..."
+    apk add --no-cache curl jq
+
+    # gitleaks
+    GITLEAKS_VERSION="8.22.1"
+    curl -sSfL "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" | tar xz
+    mv gitleaks /usr/local/bin/
+    gitleaks detect --source . --config .gitleaks.toml --verbose --no-git || echo "⚠️ gitleaks detected issues"
+
+    # npm audit
+    npm ci --cache .npm --prefer-offline 2>&1 | tail -3
+    npm audit --audit-level=high || echo "::warning::npm audit found vulnerabilities"
+    echo "✅ Security scan complete"
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: on_success
