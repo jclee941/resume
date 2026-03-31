@@ -1,5 +1,5 @@
 import { APPLICATION_STATUS } from '../application-manager.js';
-import { n8n } from '../../shared/services/n8n/index.js';
+import { notifications } from '../../shared/services/notifications/index.js';
 
 export async function applyToJobKorea(job) {
   try {
@@ -100,9 +100,7 @@ export async function applyToJobKorea(job) {
 
     return { success: true, application };
   } catch (error) {
-    n8n
-      .notifyApplyFailed(job.company, job.title, job.sourceUrl, error.message, 'wanted')
-      .catch(() => {});
+    notifications.notifyApplyFailed(job.company, job.title, job.sourceUrl, error.message, 'jobkorea').catch(() => {});
     return { success: false, error: error.message };
   }
 }
