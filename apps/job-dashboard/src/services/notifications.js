@@ -68,8 +68,6 @@ function isRetryableError(error, status) {
   }
   return false;
 }
-const N8N_TIMEOUT_MS = 10000;
-const TELEGRAM_TIMEOUT_MS = 10000;
 
 /**
  * Notification event types
@@ -536,6 +534,7 @@ export class NotificationService {
       attempts: MAX_RETRIES + 1,
     };
   }
+   /**
    * Send Telegram notification with optional inline keyboard
    */
   async sendTelegramNotification(data, options = {}) {
