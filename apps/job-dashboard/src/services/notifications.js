@@ -182,6 +182,29 @@ export class NotificationService {
   }
 
   /**
+   * Enqueue notification for batch processing
+   * @param {Object} job - Notification job
+   * @param {Object} options - Queue options
+   */
+  async enqueueNotification(job, options = {}) {
+    const queueJob = {
+      id: job.id || crypto.randomUUID(),
+      type: job.type || 'telegram',
+      priority: job.priority || 'normal',
+      payload: job.payload,
+      createdAt: Date.now(),
+      attempts: 0,
+      maxAttempts: job.maxAttempts || 3
+    };
+
+    await this.env.NOTIFICATION_QUEUE.send(queueJob, {
+      delaySeconds: options.delaySeconds || 0
+    });
+
+    return { queued: true, jobId: queueJob.id };
+  }
+
+  /**
    * Send notification through specified channels
    */
   async notify(eventType, data, options = {}) {
