@@ -5,8 +5,6 @@ import { WantedClient } from '@resume/shared/wanted-client';
 import { LinkedInClient } from '../services/linkedin-client.js';
 import { RememberClient } from '../services/remember-client.js';
 
-import { DEFAULT_USER_AGENT } from '@resume/shared/ua';
-import { sendTelegramNotification, escapeHtml } from '../services/notification/telegram.js';
 
 /**
  * Application Workflow
@@ -56,7 +54,7 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
 
         // Check not already applied
         const existing = await this.env.DB.prepare(
-          'SELECT id FROM applications WHERE job_id = ? AND platform = ?'
+          'SELECT id FROM applications WHERE job_id = ? AND source = ?'
         )
           .bind(jobId, platform)
           .first();
@@ -221,7 +219,7 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
         await this.env.DB.prepare(
           `
           INSERT INTO applications (
-            id, job_id, platform, company, position, status, 
+            id, job_id, source, company, position, status, 
             resume_id, cover_letter, applied_at, created_at
           ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
         `
@@ -305,7 +303,7 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
             id: jobId,
             company: data.job?.company?.name || 'Unknown',
             position: data.job?.position || 'Unknown',
-            platform: 'wanted',
+            source: 'wanted',
           };
         }
         case 'linkedin':
