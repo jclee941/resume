@@ -1,6 +1,12 @@
 import { WorkflowEntrypoint } from 'cloudflare:workers';
 import { DEFAULT_USER_AGENT } from '@resume/shared/ua';
 import { sendTelegramNotification, escapeHtml } from '../services/notification/telegram.js';
+import { WantedClient } from '@resume/shared/wanted-client';
+import { LinkedInClient } from '../services/linkedin-client.js';
+import { RememberClient } from '../services/remember-client.js';
+
+import { DEFAULT_USER_AGENT } from '@resume/shared/ua';
+import { sendTelegramNotification, escapeHtml } from '../services/notification/telegram.js';
 
 /**
  * Application Workflow
@@ -277,9 +283,44 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
       return JSON.parse(cached.data);
     }
 
-    // Fetch from platform API
-    // Implementation varies by platform
-    return null;
+    // Fetch from platform API if not in cache
+    try {
+      switch (platform) {
+        case 'wanted': {
+          const session = await this.env.SESSIONS.get('auth:wanted');
+          if (!session) {
+            throw new Error('No Wanted session available');
+          }
+          const response = await fetch(`https://www.wanted.co.kr/api/v4/jobs/${jobId}`, {
+            headers: {
+              'Cookie': session,
+              'User-Agent': DEFAULT_USER_AGENT,
+            },
+          });
+          if (!response.ok) {
+            throw new Error(`Wanted API returned ${response.status}`);
+          }
+          const data = await response.json();
+          return {
+            id: jobId,
+            company: data.job?.company?.name || 'Unknown',
+            position: data.job?.position || 'Unknown',
+            platform: 'wanted',
+          };
+        }
+        case 'linkedin':
+        case 'remember': {
+          // These platforms require browser automation for job details
+          // Return null to indicate fetch not supported without cache
+          return null;
+        }
+        default:
+          return null;
+      }
+    } catch (error) {
+      console.error(`Failed to fetch job details from ${platform}:`, error.message);
+      return null;
+    }
   }
 
   async getResume(resumeId) {

@@ -360,6 +360,31 @@ curl https://resume.jclee.me/job/api/workflows/abc123/status \
 # Returns: { "id": "abc123", "status": "running", "progress": 60, ... }
 ```
 
+---
+
+## Platform Support & Limitations
+
+### Supported Platforms
+
+| Platform    | Search | Job Details | Auto-Apply | Notes |
+| ----------- | :----: | :---------: | :--------: | ----- |
+| **Wanted**    | ✅ | ✅ | ✅ | Full API support via Chaos API |
+| **LinkedIn**  | ✅ | ⚠️ | ❌ | Search works; Apply requires Puppeteer (see below) |
+| **Remember**  | ✅ | ⚠️ | ❌ | Search works; Apply requires Puppeteer (see below) |
+| **JobKorea**  | ❌ | ❌ | ❌ | Use job-server CLI instead |
+| **Saramin**   | ❌ | ❌ | ❌ | Use job-server CLI instead |
+
+### ⚠️ Important Limitations
+
+**LinkedIn and Remember Auto-Apply**: These platforms require browser automation (Puppeteer) for job applications, which is not available in Cloudflare Workers. The dashboard workflow will return an error with `requiresJobServer: true` if you attempt to apply to these platforms.
+
+**Workarounds**:
+1. Use job-server CLI: `npm run auto-apply -- --platforms=linkedin,remember --apply`
+2. Trigger via n8n webhook (integrates with job-server)
+
+**Job Details Cache**: The `ApplicationWorkflow` can fetch job details from Wanted API directly, but LinkedIn/Remember require cached data from previous crawls. Ensure jobs are crawled before applying.
+
+
 ### Webhooks (9 endpoints)
 
 ```bash
