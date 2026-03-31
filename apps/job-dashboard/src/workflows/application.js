@@ -412,22 +412,47 @@ Keep it professional, concise, and specific to this role.`;
 
     return { success: true, platformResponse: await response.json() };
   }
-
-  async submitToLinkedIn(_jobId, _resume, _coverLetter) {
-    // LinkedIn Easy Apply - requires browser automation
+  async submitToLinkedIn(jobId, resume, coverLetter) {
+    // LinkedIn Easy Apply requires browser automation via Puppeteer
+    // Cloudflare Workers cannot run Puppeteer, so we delegate to job-server
+    //
+    // TODO: Implement job-server API call for single-job submission
+    // Current workaround: Use job-server CLI or n8n webhook trigger
+    //
+    // Example n8n webhook trigger:
+    // await fetch('https://n8n.jclee.me/webhook/linkedin-apply', {
+    //   method: 'POST',
+    //   body: JSON.stringify({ jobId, resumeId: resume.id, coverLetter }),
+    // });
     return {
       success: false,
       error:
-        'LinkedIn Easy Apply requires browser automation — delegate to job-server for submission',
+        'LinkedIn Easy Apply requires browser automation (Puppeteer) which is not available in Cloudflare Workers. ' +
+        'Please use job-server CLI: npm run auto-apply -- --platforms=linkedin --apply',
+      platform: 'linkedin',
+      requiresJobServer: true,
     };
   }
 
-  async submitToRemember(_jobId, _resume, _coverLetter) {
-    // Remember.co.kr application
+  async submitToRemember(jobId, resume, coverLetter) {
+    // Remember.co.kr requires browser automation for form submission
+    // Cloudflare Workers cannot run Puppeteer, so we delegate to job-server
+    //
+    // TODO: Implement job-server API call for single-job submission
+    // Current workaround: Use job-server CLI or n8n webhook trigger
+    //
+    // Example n8n webhook trigger:
+    // await fetch('https://n8n.jclee.me/webhook/remember-apply', {
+    //   method: 'POST',
+    //   body: JSON.stringify({ jobId, resumeId: resume.id, coverLetter }),
+    // });
     return {
       success: false,
       error:
-        'Remember application submission requires browser automation — delegate to job-server for submission',
+        'Remember application requires browser automation (Puppeteer) which is not available in Cloudflare Workers. ' +
+        'Please use job-server CLI: npm run auto-apply -- --platforms=remember --apply',
+      platform: 'remember',
+      requiresJobServer: true,
     };
   }
 

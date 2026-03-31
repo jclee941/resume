@@ -7,13 +7,21 @@ import { WorkflowEntrypoint } from 'cloudflare:workers';
  * Supports dry-run mode to preview deletions without executing them.
  *
  * @param {Object} params
- * @param {number} params.sessionMaxAge - Days before sessions expire (default: 7)
- * @param {number} params.logMaxAge - Days before job results expire (default: 30)
+ * @param {number} params.sessionMaxAge - Days before sessions expire (default: 7, from env SESSION_MAX_AGE)
+ * @param {number} params.logMaxAge - Days before job results expire (default: 30, from env LOG_MAX_AGE)
  * @param {boolean} params.dryRun - Preview deletions without executing (default: false)
  */
 export class CleanupWorkflow extends WorkflowEntrypoint {
   async run(event, step) {
-    const { sessionMaxAge = 7, logMaxAge = 30, dryRun = false } = event.payload || {};
+    // Read retention config from env vars or use defaults
+    const DEFAULT_SESSION_MAX_AGE = parseInt(this.env.SESSION_MAX_AGE) || 7;
+    const DEFAULT_LOG_MAX_AGE = parseInt(this.env.LOG_MAX_AGE) || 30;
+
+    const {
+      sessionMaxAge = DEFAULT_SESSION_MAX_AGE,
+      logMaxAge = DEFAULT_LOG_MAX_AGE,
+      dryRun = false,
+    } = event.payload || {};
 
     const startedAt = new Date().toISOString();
     const deletedCounts = {
