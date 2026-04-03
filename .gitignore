@@ -1,151 +1,48 @@
-.gemini/
-gha-creds-*.json
-.env
-.dev.vars
-*.tfvars
-!*.tfvars.example
-.claude.json
-data/
-# Exception: allow i18n translations
-!typescript/portfolio-worker/src/scripts/data/
-# Exception: allow resume data (SSoT and applications)
-!typescript/data/
-!typescript/data/resumes/
-!typescript/data/resumes/master/
-!typescript/data/resumes/applications/
-!typescript/data/resumes/applications/**
-# But keep generated files ignored
-typescript/data/resumes/generated/
-# Exception: allow packages/data resume content (current structure)
-!packages/data/
-!packages/data/resumes/
-!packages/data/resumes/master/
-!packages/data/resumes/applications/
-!packages/data/resumes/applications/**
-!packages/data/resumes/wishket/
-!packages/data/resumes/wishket/**
-# Keep generated files ignored
-packages/data/resumes/generated/
-
-# Legacy/AI tool metadata
-.todos.md
-.user
+# -----------------------------------------------------------------------------
+# Resume Project - Git Ignore Patterns
+# -----------------------------------------------------------------------------
 
 # Dependencies
 node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
 
-# Test artifacts
-coverage/
-playwright-report/
-test-results/
-.serena/
-lighthouse-report.json
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
 
-# Generated databases
-in-memoria.db
-in-memoria-vectors.db/
+# Generated files
+worker.js
+*.generated.*
 
-# Generated outputs
-shinhan_filled.pptx
-ta/
+# Environment files
+.env
+.env.local
+.env.*.local
+!.env.example
 
-# resumes/generated/ churn files (keep stable exports like resume_*.pdf)
-resumes/generated/ta_filled*.pptx
-resumes/generated/ta_preview*.png
-resumes/generated/shinhan*.pptx
-resumes/generated/*.bak
-resumes/generated/*_backup_*
-
-# Temporary files
-*.tmp
-*.temp
-*~
+# IDE
+.vscode/
+.idea/
 *.swp
 *.swo
-*.bak
-*.backup
-*.backup-*
-*.old
-.env.backup*
+*~
 
-# Debug artifacts
-*.heapsnapshot
-Heap-*.heapsnapshot
-**/login_error.png
-**/test-og.png
-
-# Python cache
-__pycache__/
-*.pyc
-*.pyo
-.ruff_cache/
+# OS
+.DS_Store
+Thumbs.db
 
 # Logs
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# OS files
-.DS_Store
-Thumbs.db
-missfont.log
-cmd/resume-cli/resume-cli
-resume-cli
-
-# Shrimp task manager data
-infrastructure/todo/
-
-# OpenCode LSP
-.serena.json
-
-# Docker environment
-.docker.env
-
-# Infisical
-.infisical.json
-.env.infisical
-secrets.env
-.env.secrets
-
-# Session reports
-docs/sessions/*.md
-*.session-summary.md
-*.recovery-status.json
-
-# AI tool artifacts
-.opencode/
-.playwright-mcp/
-.sisyphus/
-.affected/
-
-# Go compiled binaries
-affected
-validate-cloudflare-native
-verify-agents-compliance
-_bmad/
-_bmad-output/
-docs/_vendor/
-todo/
-.opencode-scan-state
-.env.local
-
-# Root-level temp docs (session/task/deployment)
-SESSION_*.md
-TASK_*.md
-!typescript/job-automation/workers/DEPLOYMENT_GUIDE.md
-DEPLOYMENT_*.md
-PHASE_*.md
-ANALYSIS_*.md
-PORTFOLIO_*.md
-COPY_AUDIT_*.txt
-README_PHASE_*.md
-NEXT_*.md
-GET_TOKENS_GUIDE.md
-DOCUMENTATION_INDEX.md
-
-# Wrangler cache
-.wrangler/
-.google_oath2.json
-.venv/
-.tmp/
+# Testing
+coverage/
+.nyc_output/
 
 # Bazel output directories
 bazel-bin
@@ -153,11 +50,9 @@ bazel-out
 bazel-resume
 bazel-testlogs
 
+# -----------------------------------------------------------------------------
 # Local binaries
 bin/
-
-.gitlab-ci.yml
-.gitlab/
 
 # Legacy standalone configs
 lighthouserc.js

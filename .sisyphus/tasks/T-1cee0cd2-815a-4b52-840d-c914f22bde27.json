@@ -1,0 +1,15 @@
+{
+  "id": "T-1cee0cd2-815a-4b52-840d-c914f22bde27",
+  "subject": "Externalize hardcoded retention values in CleanupWorkflow",
+  "description": "Move hardcoded retention values (7 days, 30 days) in apps/job-dashboard/src/workflows/cleanup.js to configuration/environment variables.",
+  "status": "completed",
+  "activeForm": "Externalizing hardcoded retention values",
+  "blocks": [],
+  "blockedBy": [],
+  "metadata": {
+    "file": "apps/job-dashboard/src/workflows/cleanup.js",
+    "issue": "hardcoded values",
+    "priority": "medium"
+  },
+  "threadID": "ses_2bd9beba0ffe65tnBHQsrsmKO9"
+}

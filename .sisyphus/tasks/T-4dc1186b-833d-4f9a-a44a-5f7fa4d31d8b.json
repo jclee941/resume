@@ -1,0 +1,15 @@
+{
+  "id": "T-4dc1186b-833d-4f9a-a44a-5f7fa4d31d8b",
+  "subject": "Micro-modularize .gitlab-ci.yml (657 lines)",
+  "description": "Break down the 657-line .gitlab-ci.yml into smaller modules. Extract stage-specific job definitions into separate files under .gitlab/ci/jobs/ directory. Maintain existing functionality.",
+  "status": "completed",
+  "blocks": [],
+  "blockedBy": [],
+  "metadata": {
+    "priority": "high",
+    "file": "/home/jclee/dev/resume/.gitlab-ci.yml",
+    "lines": "657",
+    "target_loc": "<200 per file"
+  },
+  "threadID": "ses_2bd9beba0ffe65tnBHQsrsmKO9"
+}

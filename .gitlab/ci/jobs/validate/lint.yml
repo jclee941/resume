@@ -35,6 +35,7 @@ lint:
     fi
     echo "✅ Lint passed"
   artifacts:
+    when: on_failure
     when: failure
     paths:
       - eslint-results.txt
