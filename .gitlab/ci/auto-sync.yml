@@ -1,0 +1,119 @@
+# =============================================================================
+# AUTO-SYNC + AUTO-UPDATE (GitLab CI)
+# =============================================================================
+# Migrated from .github/workflows/auto-sync.yml and auto-update.yml
+#
+# auto-sync-data  : Syncs packages/data/ (SSoT) → apps/portfolio/ data files.
+# auto-update-deps: Weekly semver-safe npm dependency updates.
+#
+# Required CI/CD variable:
+#   GITLAB_TOKEN — Project Access Token with api + write_repository scopes
+#
+# Trigger via "Run pipeline" (web) or a scheduled pipeline.
+# The `automation` stage is appended after the root stage list via include merge.
+# =============================================================================
+
+stages:
+  - automation
+
+# ---------------------------------------------------------------------------
+# Base template shared by both automation jobs
+# ---------------------------------------------------------------------------
+.automation-base:
+  image: node:22
+  cache:
+    key:
+      files: [package-lock.json]
+    paths: [node_modules/]
+  stage: automation
+  before_script:
+    - npm ci --prefer-offline --no-audit
+    - git config user.email "gitlab-ci@noreply.gitlab.com"
+    - git config user.name "GitLab CI"
+
+# ---------------------------------------------------------------------------
+# auto-sync-data
+# Syncs packages/data/ (SSoT) → apps/portfolio/ snapshot files and opens MR.
+# ---------------------------------------------------------------------------
+auto-sync-data:
+  extends: .automation-base
+  resource_group: auto-sync
+  before_script:
+    # node:22 (Debian Bookworm) — install Go for validate-cloudflare-native.go
+    - apt-get update -qq && apt-get install -y -qq golang-go 2>/dev/null
+    - npm ci --prefer-offline --no-audit
+    - git config user.email "gitlab-ci@noreply.gitlab.com"
+    - git config user.name "GitLab CI"
+  script:
+    - npm run sync:data
+    - |
+      if git diff --quiet \
+          apps/portfolio/data.json \
+          apps/portfolio/data_en.json \
+          apps/portfolio/data_ja.json; then
+        echo "No data changes detected — skipping MR creation."
+        exit 0
+      fi
+    - npm run automate:ssot
+    - go run ./tools/ci/validate-cloudflare-native.go
+    - git restore apps/portfolio/worker.js
+    - BRANCH_NAME="chore/auto-sync-data-$(date +%Y%m%d-%H%M%S)"
+    - git checkout -b "$BRANCH_NAME"
+    - git add apps/portfolio/data*.json
+    - git commit -m "chore(data): sync resume data from SSoT"
+    - git push "https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" "$BRANCH_NAME"
+    - |
+      curl --fail --silent --show-error \
+        -X POST "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/merge_requests" \
+        -H "PRIVATE-TOKEN: ${GITLAB_TOKEN}" \
+        -H "Content-Type: application/json" \
+        -d "{
+          \"source_branch\": \"${BRANCH_NAME}\",
+          \"target_branch\": \"${CI_DEFAULT_BRANCH}\",
+          \"title\": \"chore(data): sync resume data from SSoT\",
+          \"description\": \"## Summary\nAutomated resume data sync from SSoT to portfolio snapshots.\n\n### Verification\n- [x] npm run automate:ssot\n- [x] go run ./tools/ci/validate-cloudflare-native.go\",
+          \"labels\": \"sync,automated\",
+          \"remove_source_branch\": true
+        }"
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "web"
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+
+# ---------------------------------------------------------------------------
+# auto-update-deps
+# Runs npm update --save, validates, and opens an MR.
+# Schedule: every Sunday 18:00 UTC (Monday 03:00 KST) on branch master
+# ---------------------------------------------------------------------------
+auto-update-deps:
+  extends: .automation-base
+  resource_group: auto-update
+  script:
+    - npm update --save
+    - |
+      if git diff --quiet package-lock.json; then
+        echo "No dependency updates available — skipping MR creation."
+        exit 0
+      fi
+    - npm run automate:full
+    - git restore apps/portfolio/worker.js apps/portfolio/data.json apps/portfolio/data_en.json apps/portfolio/data_ja.json
+    - BRANCH_NAME="chore/auto-update-deps-$(date +%Y%m%d)"
+    - git checkout -b "$BRANCH_NAME"
+    - git add package.json package-lock.json
+    - git commit -m "chore(deps): weekly dependency update"
+    - git push "https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" "$BRANCH_NAME"
+    - |
+      curl --fail --silent --show-error \
+        -X POST "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/merge_requests" \
+        -H "PRIVATE-TOKEN: ${GITLAB_TOKEN}" \
+        -H "Content-Type: application/json" \
+        -d "{
+          \"source_branch\": \"${BRANCH_NAME}\",
+          \"target_branch\": \"${CI_DEFAULT_BRANCH}\",
+          \"title\": \"chore(deps): weekly dependency update\",
+          \"description\": \"## Summary\nAutomated weekly dependency update.\n\n### Verification\n- [x] npm run automate:full\n\n---\n*This MR is auto-generated by the weekly update job.*\",
+          \"labels\": \"dependencies,auto-merge\",
+          \"remove_source_branch\": true
+        }"
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - if: $CI_PIPELINE_SOURCE == "web"

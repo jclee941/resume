@@ -156,7 +156,6 @@ bazel-testlogs
 # Local binaries
 bin/
 
-# GitLab CI (project uses GitHub Actions)
 .gitlab-ci.yml
 .gitlab/
 

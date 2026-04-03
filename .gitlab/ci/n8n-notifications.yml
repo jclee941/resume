@@ -1,0 +1,120 @@
+# =============================================================================
+# N8N Webhook Integration for GitLab CI/CD
+# =============================================================================
+# 모든 알림을 n8n으로 전송, n8n에서 텔레그램/슬랙 등 처리
+# 크리덴셜은 n8n 낶에서 관리 (GitLab env에 저장하지 않음)
+# =============================================================================
+
+.n8n-webhook:
+  image: alpine/curl:latest
+  variables:
+    # n8n 웹훅 URL - 기본값 설정
+    N8N_WEBHOOK_URL: "${N8N_WEBHOOK_URL:-https://n8n.jclee.me/webhook/gitlab-ci}"
+  script:
+    - |
+      # n8n 웹훅 페이로드 준비
+      cat > /tmp/n8n-payload.json <<EOF
+      {
+        "event": "${N8N_EVENT_TYPE:-pipeline_status}",
+        "pipeline": {
+          "id": "$CI_PIPELINE_ID",
+          "url": "$CI_PIPELINE_URL",
+          "status": "$CI_PIPELINE_STATUS",
+          "source": "$CI_PIPELINE_SOURCE"
+        },
+        "project": {
+          "path": "$CI_PROJECT_PATH",
+          "id": "$CI_PROJECT_ID",
+          "url": "$CI_PROJECT_URL"
+        },
+        "commit": {
+          "sha": "$CI_COMMIT_SHA",
+          "ref": "$CI_COMMIT_REF_NAME",
+          "message": "$(echo "$CI_COMMIT_MESSAGE" | head -1 | sed 's/"/\\"/g')",
+          "author": "$GITLAB_USER_NAME"
+        },
+        "job": {
+          "name": "$CI_JOB_NAME",
+          "stage": "$CI_JOB_STAGE",
+          "started_at": "$(date -Iseconds)"
+        },
+        "custom": ${N8N_CUSTOM_DATA:-null}
+      }
+      EOF
+    
+    - |
+      # n8n 웹훅 전송
+      if [ -n "$N8N_WEBHOOK_URL" ] && [ "$N8N_WEBHOOK_URL" != "null" ]; then
+        echo "📡 Sending to n8n: $N8N_WEBHOOK_URL"
+        
+        HTTP_CODE=$(curl -sfSL -X POST "$N8N_WEBHOOK_URL" \
+          -H "Content-Type: application/json" \
+          -H "X-GitLab-Event: Pipeline Hook" \
+          -H "X-N8N-Source: gitlab-ci" \
+          --data @/tmp/n8n-payload.json \
+          --write-out "%{http_code}" \
+          --output /dev/null 2>/dev/null || echo "000")
+        
+        if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "201" ]; then
+          echo "✅ n8n webhook delivered (HTTP $HTTP_CODE)"
+        else
+          echo "⚠️ n8n webhook failed (HTTP $HTTP_CODE) - non-blocking"
+        fi
+      else
+        echo "ℹ️ N8N_WEBHOOK_URL not set, skipping"
+      fi
+
+# =============================================================================
+# Pipeline 시작 알림
+# =============================================================================
+n8n-notify-start:
+  extends: .n8n-webhook
+  stage: .pre
+  variables:
+    N8N_EVENT_TYPE: "pipeline_started"
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - if: $CI_PIPELINE_SOURCE == "push"
+    - if: $CI_PIPELINE_SOURCE == "web"
+
+# =============================================================================
+# Pipeline 완료 알림 (성공/실패)
+# =============================================================================
+n8n-notify-complete:
+  extends: .n8n-webhook
+  stage: .post
+  variables:
+    N8N_EVENT_TYPE: "pipeline_completed"
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - if: $CI_PIPELINE_SOURCE == "push"
+    - if: $CI_PIPELINE_SOURCE == "web"
+  when: always
+
+# =============================================================================
+# 입사지원 특화 알림 (auto-apply 워크플로우에서 호출)
+# =============================================================================
+.n8n-notify-apply:
+  extends: .n8n-webhook
+  stage: report
+  variables:
+    N8N_EVENT_TYPE: "job_apply"
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: on_success
+    - if: $CI_PIPELINE_SOURCE == "web"
+      when: on_success
+
+# =============================================================================
+# 이력서 동기화 알림
+# =============================================================================
+n8n-notify-resume-sync:
+  extends: .n8n-webhook
+  stage: report
+  variables:
+    N8N_EVENT_TYPE: "resume_sync"
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: on_success
+    - if: $CI_PIPELINE_SOURCE == "web"
+      when: on_success
