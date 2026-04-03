@@ -1,0 +1,71 @@
+# =============================================================================
+# WANTED/JOBKOREA RESUME SYNC - GitLab CI
+# =============================================================================
+# Migrated from: .github/workflows/wanted-resume-sync.yml
+#
+# Purpose: Weekly automated sync of resume data to Wanted and JobKorea platforms
+# Trigger: Schedule (cron) or manual
+#
+# Required CI/CD Variables:
+#   WANTED_EMAIL              - Wanted platform login email
+#   WANTED_PASSWORD           - Wanted platform password (masked)
+#   JOBKOREA_ID               - JobKorea login ID
+#   JOBKOREA_PASSWORD         - JobKorea password (masked)
+#   OP_SERVICE_ACCOUNT_TOKEN  - 1Password service account (if using 1Password)
+# =============================================================================
+
+.scheduled:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - if: $CI_PIPELINE_SOURCE == "web"
+
+wanted-resume-sync:
+  stage: automation
+  extends: .scheduled
+  image: node:22-bookworm
+  resource_group: wanted-sync
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq chromium golang-go 2>/dev/null || true
+    - npm ci --prefer-offline --no-audit
+    - git config user.email "gitlab-ci@noreply.gitlab.com"
+    - git config user.name "GitLab CI"
+  script:
+    - |
+      set -euo pipefail
+      echo "🔄 Starting Wanted/JobKorea resume sync..."
+      
+      # Load secrets from 1Password if token is available
+      if [ -n "${OP_SERVICE_ACCOUNT_TOKEN:-}" ]; then
+        echo "🔐 Loading secrets from 1Password..."
+        export WANTED_EMAIL=$(op read "op://homelab/wanted-resume-sync/WANTED_EMAIL" 2>/dev/null || echo "")
+        export WANTED_PASSWORD=$(op read "op://homelab/wanted-resume-sync/WANTED_PASSWORD" 2>/dev/null || echo "")
+        export JOBKOREA_ID=$(op read "op://homelab/wanted-resume-sync/JOBKOREA_ID" 2>/dev/null || echo "")
+        export JOBKOREA_PASSWORD=$(op read "op://homelab/wanted-resume-sync/JOBKOREA_PASSWORD" 2>/dev/null || echo "")
+      fi
+      
+      # Validate credentials exist
+      if [ -z "${WANTED_EMAIL:-}" ] && [ -z "${JOBKOREA_ID:-}" ]; then
+        echo "⚠️ No credentials configured for Wanted or JobKorea. Skipping sync."
+        echo "Set WANTED_EMAIL/JOBKOREA_ID in CI/CD variables or 1Password."
+        exit 0
+      fi
+      
+      # Run sync script from job-server
+      cd apps/job-server
+      
+      if [ -n "${WANTED_EMAIL:-}" ]; then
+        echo "📄 Syncing to Wanted..."
+        node scripts/sync-wanted.js --dry-run=false || echo "⚠️ Wanted sync had issues"
+      fi
+      
+      if [ -n "${JOBKOREA_ID:-}" ]; then
+        echo "📄 Syncing to JobKorea..."
+        node scripts/sync-jobkorea.js --dry-run=false || echo "⚠️ JobKorea sync had issues"
+      fi
+      
+      echo "✅ Resume sync complete"
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - if: $CI_PIPELINE_SOURCE == "web"
+  allow_failure: true
+  timeout: 15 minutes

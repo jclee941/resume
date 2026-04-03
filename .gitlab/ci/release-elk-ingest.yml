@@ -1,0 +1,75 @@
+# =============================================================================
+# RELEASE ELK INGEST - Separate file to keep release.yml under 150 LOC
+# Migrated from .github/workflows/release.yml (lines 126-195)
+# =============================================================================
+
+release-elk-ingest:
+  stage: report
+  image: node:22-bookworm
+  needs:
+    - job: release
+      artifacts: true
+  when: always
+  before_script:
+    - apt-get update -qq
+    - apt-get install -y --no-install-recommends jq curl ca-certificates
+  script:
+    - |
+      set -euo pipefail
+
+      CONCLUSION="${RELEASE_CONCLUSION:-failure}"
+
+      # Guard: skip when credentials absent
+      if [ -z "${ELASTICSEARCH_URL:-}" ]; then
+        echo "ELASTICSEARCH_URL not set; skipping ELK ingest"
+        exit 0
+      fi
+      if [ -z "${ELASTICSEARCH_API_KEY:-}" ]; then
+        echo "ELASTICSEARCH_API_KEY not set; skipping ELK ingest"
+        exit 0
+      fi
+
+      # Build payload
+      PAYLOAD=$(jq -n \
+        --arg timestamp "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+        --arg project   "$CI_PROJECT_PATH" \
+        --arg workflow  "release" \
+        --arg pipeline  "$CI_PIPELINE_ID" \
+        --arg run_number "$CI_PIPELINE_IID" \
+        --arg conclusion "$CONCLUSION" \
+        --arg ref       "${RELEASE_TAG:-$CI_COMMIT_REF_NAME}" \
+        --arg sha       "$CI_COMMIT_SHA" \
+        --arg actor     "${GITLAB_USER_LOGIN:-ci}" \
+        --arg service   "resume" \
+        '{
+          "@timestamp":  $timestamp,
+          "repository":  $project,
+          "workflow":    $workflow,
+          "run_id":      ($pipeline    | tonumber),
+          "run_number":  ($run_number  | tonumber),
+          "conclusion":  $conclusion,
+          "branch":      $ref,
+          "commit_sha":  $sha,
+          "actor":       $actor,
+          "service":     $service
+        }')
+
+      RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
+        "${ELASTICSEARCH_URL%/}/gitlab-ci-logs/_doc" \
+        -H "Authorization: ApiKey ${ELASTICSEARCH_API_KEY}" \
+        -H "Content-Type: application/json" \
+        -d "$PAYLOAD")
+
+      HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+      echo "ELK ingest HTTP ${HTTP_CODE}"
+
+      if [ "$HTTP_CODE" -lt 200 ] || [ "$HTTP_CODE" -ge 300 ]; then
+        echo "ELK ingest failed (HTTP ${HTTP_CODE})"
+        exit 1
+      fi
+
+      echo "ELK ingest completed"
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
+    - if: '$CI_PIPELINE_SOURCE == "web"'
+    - when: never
