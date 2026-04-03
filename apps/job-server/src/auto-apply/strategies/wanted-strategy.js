@@ -2,19 +2,32 @@ import { APPLICATION_STATUS } from '../application-manager.js';
 import { notifications } from '../../shared/services/notifications/index.js';
 import {
   AuthError,
-  CaptchaError,
-  RateLimitError,
   ValidationError,
   classifyApplyError,
 } from '../../shared/errors/apply-errors.js';
-import { withRetry } from '../../shared/utils/retry.js';
+import SessionManager from '../../shared/services/session/session-manager.js';
+import { RetryService } from '../../shared/services/apply/retry-service.js';
 
-const RETRY_CONFIG = {
-  platform: 'wanted',
-  maxRetries: 3,
-  baseDelay: 1000,
-  maxDelay: 30000,
-};
+const WANTED_PLATFORM = 'wanted';
+const WANTED_APPLICATION_ENDPOINT = '/applications/v2';
+const RATE_LIMIT_PER_MINUTE = 60;
+const DEFAULT_DELAY_MS = 5000;
+
+const retryService = new RetryService({
+  retry: {
+    maxRetries: 3,
+    baseDelay: 1000,
+    maxDelay: 30000,
+    retryableErrors: [429, 500, 502, 503, 504],
+  },
+  circuit: {
+    failureThreshold: 5,
+    resetTimeout: 60000,
+    halfOpenMaxCalls: 3,
+  },
+});
+
+let lastSubmissionAt = 0;
 
 function createRetryReporter(ctx, job) {
   return (event, payload) => {
@@ -36,101 +49,366 @@ function createRetryReporter(ctx, job) {
 }
 
 function classifyWantedError(error) {
-  return classifyApplyError(error, { platform: 'wanted' });
+  return classifyApplyError(error, { platform: WANTED_PLATFORM });
 }
 
-async function executeWantedApply(job) {
-  await this.page.goto(job.sourceUrl, { waitUntil: 'domcontentloaded' });
-  await new Promise((r) => setTimeout(r, 2000));
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
-  const loginLink =
-    (await this.findByText('a', '로그인')) ||
-    (await this.findByText('a', 'Sign in')) ||
-    (await this.findByText('button', '로그인')) ||
-    (await this.findByText('button', 'Sign in'));
-  if (loginLink) {
-    throw new AuthError('Not logged in to Wanted', { platform: 'wanted' });
+function getErrorStatus(error) {
+  const candidates = [
+    error?.status,
+    error?.statusCode,
+    error?.response?.status,
+    error?.cause?.status,
+    error?.cause?.statusCode,
+  ];
+
+  for (const candidate of candidates) {
+    const value = Number(candidate);
+    if (Number.isFinite(value)) {
+      return value;
+    }
   }
 
-  const captchaChallenge =
-    (await this.findElementWithText('captcha')) ||
-    (await this.findElementWithText('로봇이 아닙니다')) ||
-    (await this.findElementWithText('자동입력방지'));
-  if (captchaChallenge) {
-    throw new CaptchaError('Wanted captcha challenge detected', { platform: 'wanted' });
+  return 0;
+}
+
+function isRetryableWantedError(error) {
+  const status = getErrorStatus(error);
+  return status === 429 || (status >= 500 && status <= 599);
+}
+
+function extractApplicationId(result) {
+  return (
+    result?.application_id ??
+    result?.applicationId ??
+    result?.id ??
+    result?.data?.application_id ??
+    result?.data?.applicationId ??
+    result?.data?.id ??
+    null
+  );
+}
+
+function resolveDelayMs(ctx, options = {}) {
+  const configured =
+    options.delayBetweenSubmissionsMs ??
+    options.delayBetweenSubmissions ??
+    options.delayBetweenApps ??
+    ctx?.config?.delayBetweenApps;
+
+  const parsed = Number(configured);
+  if (Number.isFinite(parsed) && parsed >= 0) {
+    return parsed;
   }
 
-  const rateLimited =
-    (await this.findElementWithText('잠시 후 다시 시도')) ||
-    (await this.findElementWithText('too many requests')) ||
-    (await this.findElementWithText('요청이 너무 많습니다'));
-  if (rateLimited) {
-    throw new RateLimitError('Wanted rate limit detected', {
-      platform: 'wanted',
-      retryAfterMs: 15000,
+  return DEFAULT_DELAY_MS;
+}
+
+async function enforceRateLimit(ctx, options = {}) {
+  const now = Date.now();
+  const minIntervalMs = Math.max(
+    resolveDelayMs(ctx, options),
+    Math.ceil(60000 / RATE_LIMIT_PER_MINUTE)
+  );
+  const elapsed = now - lastSubmissionAt;
+
+  if (elapsed < minIntervalMs) {
+    const waitMs = minIntervalMs - elapsed;
+    ctx?.logger?.debug?.(`[wanted] rate-limit delay ${waitMs}ms before next submission`);
+    await sleep(waitMs);
+  }
+
+  lastSubmissionAt = Date.now();
+}
+
+async function resolveResumeId(ctx, api, options = {}) {
+  const explicitResumeId =
+    options.resumeId ?? options.resume_id ?? ctx?.config?.resumeId ?? ctx?.config?.resume_id;
+
+  if (explicitResumeId) {
+    return explicitResumeId;
+  }
+
+  const resumes = await api.getResumes();
+  const resumeList =
+    resumes?.resumes ??
+    resumes?.results ??
+    resumes?.data ??
+    (Array.isArray(resumes) ? resumes : []);
+
+  if (!Array.isArray(resumeList) || resumeList.length === 0) {
+    throw new ValidationError('No available resume found for Wanted application', {
+      platform: WANTED_PLATFORM,
     });
   }
 
-  const applyButton =
-    (await this.findByText('button', '지원하기')) ||
-    (await this.findByText('a', '지원하기')) ||
-    (await this.findByText('button', 'Apply'));
-  if (!applyButton) {
-    try {
-      await this.page.screenshot({ path: `/tmp/wanted-debug-${Date.now()}.png` });
-    } catch (screenshotError) {
-      this.logger.error('[debug-screenshot] Wanted:', screenshotError.message);
+  const firstResume = resumeList[0];
+  const selectedResumeId =
+    firstResume?.id ?? firstResume?.resume_id ?? firstResume?.resumeId ?? firstResume?.uuid ?? null;
+
+  if (!selectedResumeId) {
+    throw new ValidationError('Unable to resolve resume_id from Wanted profile', {
+      platform: WANTED_PLATFORM,
+    });
+  }
+
+  return selectedResumeId;
+}
+
+function buildApplicationPayload(job, options, resumeId) {
+  const coverLetter = options.coverLetter ?? options.cover_letter ?? '';
+
+  return {
+    job_id: job.id,
+    resume_id: resumeId,
+    cover_letter: coverLetter || '',
+    ...(options.answers ? { answers: options.answers } : {}),
+    ...(options.extraPayload ? options.extraPayload : {}),
+  };
+}
+
+function normalizeApplicationEntries(response) {
+  const candidates = [
+    response?.applications,
+    response?.results,
+    response?.data?.applications,
+    response?.data?.results,
+    response?.data,
+  ];
+
+  for (const candidate of candidates) {
+    if (Array.isArray(candidate)) {
+      return candidate;
     }
-    throw new ValidationError('Apply button not found', { platform: 'wanted' });
   }
 
-  await applyButton.click();
-  await new Promise((r) => setTimeout(r, 1000));
+  return [];
+}
 
-  const resumeOption = await this.page.$('.resume-item');
-  if (resumeOption) {
-    await resumeOption.click();
+function isAppliedJob(entry, targetJobId) {
+  const postedJobId =
+    entry?.job_id ??
+    entry?.jobId ??
+    entry?.position_id ??
+    entry?.positionId ??
+    entry?.job?.id ??
+    null;
+
+  return String(postedJobId) === String(targetJobId);
+}
+
+export async function validateSession() {
+  const session = SessionManager.load(WANTED_PLATFORM);
+  if (!session) {
+    return {
+      valid: false,
+      error: 'Wanted session not found',
+      retryable: false,
+    };
   }
 
-  const submitButton = await this.findByText('button', '제출');
-  if (submitButton) {
-    await submitButton.click();
-    await new Promise((r) => setTimeout(r, 2000));
+  const api = await SessionManager.getAPI(WANTED_PLATFORM);
+  if (!api) {
+    return {
+      valid: false,
+      error: 'Wanted session cookies are missing or expired',
+      retryable: false,
+    };
   }
 
-  const successMessage = await this.findElementWithText('지원이 완료되었습니다');
+  try {
+    await api.getProfile();
+    return { valid: true, api };
+  } catch (error) {
+    const normalizedError = classifyWantedError(error);
+    return {
+      valid: false,
+      error: normalizedError.message,
+      retryable: Boolean(normalizedError.retryable),
+    };
+  }
+}
 
-  if (successMessage) {
-    const application = this.appManager.addApplication(job);
+export async function getApplicationStatus(jobId) {
+  const sessionValidation = await validateSession();
+  if (!sessionValidation.valid) {
+    return {
+      success: false,
+      applied: false,
+      error: sessionValidation.error,
+      retryable: sessionValidation.retryable,
+    };
+  }
+
+  try {
+    const response = await sessionValidation.api.getApplications({ limit: 100, page: 1 });
+    const applications = normalizeApplicationEntries(response);
+    const matched = applications.find((entry) => isAppliedJob(entry, jobId));
+
+    return {
+      success: true,
+      applied: Boolean(matched),
+      status: matched?.status ?? matched?.application_status ?? null,
+      applicationId: extractApplicationId(matched),
+      retryable: false,
+    };
+  } catch (error) {
+    const normalizedError = classifyWantedError(error);
+    return {
+      success: false,
+      applied: false,
+      error: normalizedError.message,
+      retryable: Boolean(normalizedError.retryable),
+    };
+  }
+}
+
+export async function applyToJob(job, options = {}) {
+  if (!job?.id) {
+    return {
+      success: false,
+      applicationId: null,
+      error: 'job.id is required for Wanted application',
+      retryable: false,
+    };
+  }
+
+  const sessionValidation = await validateSession();
+  if (!sessionValidation.valid) {
+    const authError = new AuthError(sessionValidation.error || 'Not logged in to Wanted', {
+      platform: WANTED_PLATFORM,
+    });
+    return {
+      success: false,
+      applicationId: null,
+      error: authError.message,
+      retryable: false,
+    };
+  }
+
+  const statusResult = await getApplicationStatus(job.id);
+  if (statusResult.success && statusResult.applied) {
+    return {
+      success: false,
+      applicationId: statusResult.applicationId,
+      error: 'Already applied to this Wanted job',
+      retryable: false,
+    };
+  }
+
+  let resumeId;
+  try {
+    resumeId = await resolveResumeId(this, sessionValidation.api, options);
+  } catch (error) {
+    const normalizedError = classifyWantedError(error);
+    return {
+      success: false,
+      applicationId: null,
+      error: normalizedError.message,
+      retryable: Boolean(normalizedError.retryable),
+    };
+  }
+
+  const payload = buildApplicationPayload(job, options, resumeId);
+  const retryReporter = createRetryReporter(this, job);
+
+  try {
+    await enforceRateLimit(this, options);
+
+    const response = await retryService.execute(
+      () =>
+        sessionValidation.api.chaosRequest(WANTED_APPLICATION_ENDPOINT, {
+          method: 'POST',
+          body: payload,
+        }),
+      {
+        serviceName: `${WANTED_PLATFORM}-applications-v2`,
+        retry: {
+          maxRetries: 3,
+          baseDelay: 1000,
+          maxDelay: 30000,
+          retryableErrors: [429, 500, 502, 503, 504],
+        },
+        circuit: {
+          failureThreshold: 5,
+          resetTimeout: 60000,
+          halfOpenMaxCalls: 3,
+        },
+      }
+    );
+
+    const applicationId = extractApplicationId(response);
+    const application = this.appManager.addApplication(job, {
+      resumeId,
+      coverLetter: payload.cover_letter,
+      notes: 'Auto-applied via Wanted API (chaos applications v2)',
+    });
     this.appManager.updateStatus(
       application.id,
       APPLICATION_STATUS.APPLIED,
-      'Auto-applied via bot'
+      'Auto-applied via Wanted API'
     );
 
+    retryReporter('execution_success', {
+      metrics: {
+        successRate:
+          retryService.getStats()?.services?.[`${WANTED_PLATFORM}-applications-v2`]?.successRate,
+      },
+    });
+
     notifications
-      .notifyApplySuccess(job.company, job.title, job.sourceUrl, 'wanted')
+      .notifyApplySuccess(job.company, job.title, job.sourceUrl, WANTED_PLATFORM)
       .catch(() => {});
 
-    return { success: true, application };
-  }
+    return {
+      success: true,
+      applicationId: applicationId ?? application.id,
+      application,
+      retryable: false,
+    };
+  } catch (error) {
+    const normalizedError = classifyWantedError(error);
+    const retryable = isRetryableWantedError(error) || Boolean(normalizedError.retryable);
 
-  throw new ValidationError('Application confirmation not found', { platform: 'wanted' });
+    retryReporter('execution_failed', {
+      metrics: {
+        successRate:
+          retryService.getStats()?.services?.[`${WANTED_PLATFORM}-applications-v2`]?.successRate,
+      },
+      error: normalizedError,
+    });
+
+    this.logger?.error?.('[wanted] API apply failed', {
+      jobId: job.id,
+      company: job.company,
+      title: job.title,
+      status: getErrorStatus(error),
+      retryable,
+      message: normalizedError.message,
+    });
+
+    notifications
+      .notifyApplyFailed(
+        job.company,
+        job.title,
+        job.sourceUrl,
+        normalizedError.message,
+        WANTED_PLATFORM
+      )
+      .catch(() => {});
+
+    return {
+      success: false,
+      applicationId: null,
+      error: normalizedError.message,
+      retryable,
+    };
+  }
 }
 
 export async function applyToWanted(job) {
-  try {
-    return await withRetry(() => executeWantedApply.call(this, job), {
-      ...RETRY_CONFIG,
-      logger: this.logger,
-      classifyError: classifyWantedError,
-      reporter: createRetryReporter(this, job),
-    });
-  } catch (error) {
-    const normalizedError = classifyWantedError(error);
-    notifications
-      .notifyApplyFailed(job.company, job.title, job.sourceUrl, normalizedError.message, 'wanted')
-      .catch(() => {});
-    return { success: false, error: normalizedError.message };
-  }
+  return applyToJob.call(this, job, {});
 }

@@ -1,131 +1,152 @@
-import { existsSync, readFileSync, writeFileSync } from 'fs';
-import { join } from 'path';
-import { fileURLToPath } from 'url';
-import { UnifiedApplySystem } from '../../shared/services/apply/index.js';
-import { UnifiedJobCrawler } from '../../crawlers/index.js';
 import { AutoApplier } from '../../auto-apply/auto-applier.js';
-import { ApplicationManager } from '../../auto-apply/application-manager.js';
+import { AutoApplyScheduler } from '../../auto-apply/scheduler.js';
 
-const __dirname = fileURLToPath(new URL('.', import.meta.url));
-const statusPath = join(__dirname, '..', '..', '..', 'auto-apply-status.json');
-
-let logger = console;
-
-const autoApplyState = {
-  status: 'idle',
-  lastRun: null,
-  lastResult: null,
-  nextScheduled: null,
-  currentJob: null,
-  progress: { current: 0, total: 0 },
-};
-
-function loadState() {
-  if (existsSync(statusPath)) {
-    try {
-      Object.assign(autoApplyState, JSON.parse(readFileSync(statusPath, 'utf-8')));
-    } catch (err) {
-      logger.error('Failed to load auto-apply state:', err.message);
-    }
-  }
-  return autoApplyState;
+function buildAutoApplierFactory(fastify) {
+  return (runOptions = {}) => {
+    const dryRun = runOptions.dryRun !== false;
+    return new AutoApplier({
+      secretsClient: fastify.secretsClient,
+      dryRun,
+      autoApply: !dryRun,
+      maxDailyApplications: runOptions.maxApplications ?? 10,
+      minMatchScore: runOptions.minMatchScore,
+      excludeCompanies: runOptions.excludeCompanies || [],
+      preferredCompanies: runOptions.preferredCompanies || [],
+      delayBetweenApps: runOptions.delayBetweenApps,
+    });
+  };
 }
 
-function saveState(updates) {
-  Object.assign(autoApplyState, updates, {
-    updatedAt: new Date().toISOString(),
-  });
-  try {
-    writeFileSync(statusPath, JSON.stringify(autoApplyState, null, 2));
-  } catch (err) {
-    logger.error('Failed to save auto-apply state:', err.message);
+function getScheduler(fastify) {
+  if (fastify.autoApplyScheduler) {
+    return fastify.autoApplyScheduler;
   }
+
+  const scheduler = new AutoApplyScheduler({
+    logger: fastify.log,
+    d1Client: fastify.d1Client,
+    autoApplierFactory: buildAutoApplierFactory(fastify),
+  });
+
+  scheduler.on('scheduled', (payload) => {
+    fastify.log.info({ payload }, 'Auto-apply schedule fired');
+  });
+  scheduler.on('started', (payload) => {
+    fastify.log.info({ payload }, 'Auto-apply run started');
+  });
+  scheduler.on('completed', (payload) => {
+    fastify.log.info({ payload }, 'Auto-apply run completed');
+  });
+  scheduler.on('failed', (payload) => {
+    fastify.log.error({ payload }, 'Auto-apply run failed');
+  });
+
+  scheduler.start();
+  fastify.decorate('autoApplyScheduler', scheduler);
+  return scheduler;
 }
 
 export default async function autoApplyRoutes(fastify) {
-  logger = fastify.log;
-  fastify.get('/status', async () => {
-    loadState();
+  const scheduler = getScheduler(fastify);
+
+  fastify.addHook('onClose', async () => {
+    scheduler.stop();
+  });
+
+  fastify.get('/schedule', async () => {
+    const status = scheduler.getStatus();
     return {
-      ...autoApplyState,
-      uptime: process.uptime(),
-      memoryUsage: process.memoryUsage().heapUsed / 1024 / 1024,
+      success: true,
+      schedule: status.schedule,
+      nextRun: status.nextRun,
+      started: status.started,
+      running: status.running,
     };
   });
 
-  fastify.post('/run', async (request, reply) => {
-    const options = request.body || {};
+  fastify.post('/schedule', async (request, reply) => {
+    try {
+      const updates = request.body || {};
+      const status = scheduler.updateConfig(updates);
 
-    saveState({
-      status: 'running',
-      lastRun: new Date().toISOString(),
-      currentJob: null,
-      progress: { current: 0, total: 0 },
+      if (status.schedule.enabled && !status.started) {
+        scheduler.start();
+      }
+
+      if (!status.schedule.enabled && status.started) {
+        scheduler.stop();
+      }
+
+      return {
+        success: true,
+        message: 'Scheduler updated',
+        schedule: status.schedule,
+        nextRun: status.nextRun,
+      };
+    } catch (error) {
+      return reply.status(400).send({
+        success: false,
+        error: error.message,
+      });
+    }
+  });
+
+  fastify.post('/trigger', async (request, reply) => {
+    if (scheduler.isRunning() && scheduler.config.preventOverlapping) {
+      return reply.status(409).send({
+        success: false,
+        status: 'running',
+        message: 'Auto-apply already running; overlapping run prevented',
+      });
+    }
+
+    scheduler.trigger({ source: 'api', options: request.body || {} }).catch((error) => {
+      fastify.log.error({ err: error }, 'Manual auto-apply trigger failed');
     });
 
-    (async () => {
-      try {
-        const dryRun = options.dryRun !== false;
-        const maxApps = options.maxApplications || 10;
-        const enabledPlatforms = options.platforms || ['wanted', 'jobkorea', 'saramin'];
-        const keywords = options.keywords || ['시니어 엔지니어', '클라우드 엔지니어', 'SRE'];
+    return reply.status(202).send({
+      success: true,
+      status: 'running',
+      message: 'Auto-apply manually triggered',
+    });
+  });
 
-        const crawler = new UnifiedJobCrawler({
-          sources: enabledPlatforms,
-        });
+  fastify.post('/run', async (request, reply) => {
+    if (scheduler.isRunning() && scheduler.config.preventOverlapping) {
+      return reply.status(409).send({
+        success: false,
+        status: 'running',
+        message: 'Auto-apply already running; overlapping run prevented',
+      });
+    }
 
-        const appManager = new ApplicationManager();
-
-        const system = new UnifiedApplySystem({
-          crawler,
-          applier: new AutoApplier({
-            dryRun,
-            maxDailyApplications: maxApps,
-            autoApply: !dryRun,
-          }),
-          appManager,
-          config: {
-            dryRun,
-            maxDailyApplications: maxApps,
-            reviewThreshold: 60,
-            autoApplyThreshold: 75,
-            enabledPlatforms,
-            keywords,
-          },
-        });
-
-        const result = await system.run({
-          keywords,
-          dryRun,
-          maxApplications: maxApps,
-        });
-
-        saveState({
-          status: result.success ? 'completed' : 'failed',
-          lastResult: result,
-          currentJob: null,
-          progress: {
-            current: result.phases?.apply?.succeeded || 0,
-            total: result.phases?.search?.found || 0,
-          },
-        });
-
-        fastify.triggerN8nWebhook?.('auto-apply-complete', result).catch((e) => {
-          fastify.log.error('Failed to trigger auto-apply-complete webhook:', e);
-        });
-      } catch (error) {
-        saveState({
-          status: 'failed',
-          lastResult: { success: false, error: error.message },
-          currentJob: null,
-        });
-      }
-    })();
+    scheduler.trigger({ source: 'api', options: request.body || {} }).catch((error) => {
+      fastify.log.error({ err: error }, 'Auto-apply /run trigger failed');
+    });
 
     return reply.status(202).send({
       success: true,
       message: 'Auto-apply started',
       status: 'running',
     });
+  });
+
+  fastify.get('/status', async () => {
+    const status = scheduler.getStatus();
+    return {
+      status: status.running ? 'running' : status.lastResult?.success === false ? 'failed' : 'idle',
+      started: status.started,
+      schedule: status.schedule,
+      running: status.running,
+      isRunning: scheduler.isRunning(),
+      nextRun: status.nextRun,
+      lastRun: status.lastRun,
+      lastResult: status.lastResult,
+      lastError: status.lastError,
+      stats: status.stats,
+      history: status.history,
+      uptime: process.uptime(),
+      memoryUsage: process.memoryUsage().heapUsed / 1024 / 1024,
+    };
   });
 }

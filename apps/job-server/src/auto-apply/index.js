@@ -4,9 +4,11 @@
 
 export { AutoApplier } from './auto-applier.js';
 export { ApplicationManager, APPLICATION_STATUS } from './application-manager.js';
+export { AutoApplyScheduler } from './scheduler.js';
 
 export default {
   AutoApplier: (await import('./auto-applier.js')).AutoApplier,
   ApplicationManager: (await import('./application-manager.js')).ApplicationManager,
-  APPLICATION_STATUS: (await import('./application-manager.js')).APPLICATION_STATUS
+  APPLICATION_STATUS: (await import('./application-manager.js')).APPLICATION_STATUS,
+  AutoApplyScheduler: (await import('./scheduler.js')).AutoApplyScheduler,
 };
