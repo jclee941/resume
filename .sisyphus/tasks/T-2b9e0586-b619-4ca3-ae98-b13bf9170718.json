@@ -1,0 +1,15 @@
+{
+  "id": "T-2b9e0586-b619-4ca3-ae98-b13bf9170718",
+  "subject": "Complete LinkedIn/Remember integration stubs",
+  "description": "Implement or integrate job-server browser automation for ApplicationWorkflow.submitToLinkedIn() and submitToRemember() stubs that currently return errors.",
+  "status": "completed",
+  "activeForm": "Completing platform integration stubs",
+  "blocks": [],
+  "blockedBy": [],
+  "metadata": {
+    "file": "apps/job-dashboard/src/workflows/application.js",
+    "issue": "unimplemented stubs",
+    "priority": "high"
+  },
+  "threadID": "ses_2bd9beba0ffe65tnBHQsrsmKO9"
+}

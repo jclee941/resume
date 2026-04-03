@@ -1,0 +1,15 @@
+{
+  "id": "T-170a1006-8849-448f-8008-8509c4614b34",
+  "subject": "Micro-modularize .gitlab/ci/verify.yml (429 lines)",
+  "description": "Break down the 429-line verify.yml into smaller modules. Each verification check (health, security-headers, content-integrity, performance, api-endpoints) should become a separate include file.",
+  "status": "completed",
+  "blocks": [],
+  "blockedBy": [],
+  "metadata": {
+    "priority": "high",
+    "file": "/home/jclee/dev/resume/.gitlab/ci/verify.yml",
+    "lines": "429",
+    "target_loc": "<200 per file"
+  },
+  "threadID": "ses_2bd9beba0ffe65tnBHQsrsmKO9"
+}

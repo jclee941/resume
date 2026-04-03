@@ -1,0 +1,19 @@
+{
+  "id": "T-7343324b-f748-41c0-9583-fef2cffc063d",
+  "subject": "Consolidate profile sync implementations",
+  "description": "Consolidate overlapping implementations: profile-sync.js (job-server), ProfileSyncHandler, and ResumeSyncWorkflow (job-dashboard) into a single canonical implementation.",
+  "status": "completed",
+  "activeForm": "Consolidating profile sync implementations",
+  "blocks": [],
+  "blockedBy": [],
+  "metadata": {
+    "files": [
+      "apps/job-server/scripts/profile-sync.js",
+      "apps/job-dashboard/src/handlers/profile-sync-handler.js",
+      "apps/job-dashboard/src/workflows/resume-sync.js"
+    ],
+    "issue": "code duplication",
+    "priority": "medium"
+  },
+  "threadID": "ses_2bd9beba0ffe65tnBHQsrsmKO9"
+}
