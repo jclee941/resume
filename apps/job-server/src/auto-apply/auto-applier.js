@@ -1,5 +1,19 @@
 import { ApplicationManager } from './application-manager.js';
 import { UnifiedJobCrawler } from '../crawlers/index.js';
+import { ApplicationRepository } from '../shared/repositories/application-repository.js';
+import { CoverLetterService } from '../shared/services/apply/cover-letter-service.js';
+import { ApprovalWorkflowManager } from '../shared/services/apply/approval-manager.js';
+import { RetryService } from '../shared/services/apply/retry-service.js';
+import { ApplicationTrackerService } from '../shared/services/apply/application-tracker.js';
+import { JobFilter } from '../shared/services/apply/job-filter.js';
+import { TelegramNotificationAdapter } from '../shared/services/notifications/telegram-adapter.js';
+import {
+  processJob,
+  shouldApply,
+  submitApplication,
+  handleApproval,
+  getExistingJobKeys,
+} from './auto-applier-pipeline.js';
 import {
   findByText,
   findElementWithText,
@@ -16,19 +30,69 @@ import {
 export class AutoApplier {
   constructor(options = {}) {
     this.logger = options.logger || console;
+
+    this.repository = options.repository || new ApplicationRepository();
+    this.coverLetterService =
+      options.coverLetterService ||
+      new CoverLetterService({
+        d1Client: this.repository.d1Client,
+        logger: this.logger,
+      });
+    this.notificationAdapter =
+      options.notificationAdapter ||
+      new TelegramNotificationAdapter({
+        logger: this.logger,
+        d1Client: this.repository.d1Client,
+      });
+    this.approvalManager =
+      options.approvalManager ||
+      new ApprovalWorkflowManager({
+        applicationRepository: this.repository,
+        notificationAdapter: this.notificationAdapter,
+        logger: this.logger,
+      });
+    this.retryService = options.retryService || new RetryService(options.retryConfig || {});
+    this.tracker =
+      options.tracker ||
+      new ApplicationTrackerService({
+        applicationRepository: this.repository,
+        coverLetterService: this.coverLetterService,
+        logger: this.logger,
+      });
+
     this.crawler = new UnifiedJobCrawler(options.crawler);
     this.appManager = new ApplicationManager({ logger: this.logger });
+
     this.config = {
       maxDailyApplications: options.maxDailyApplications || 10,
       reviewThreshold: options.reviewThreshold || 60,
       autoApplyThreshold: options.autoApplyThreshold || 75,
+      minMatchScore:
+        options.minMatchScore || options.reviewThreshold || options.autoApplyThreshold || 60,
       autoApply: options.autoApply !== undefined ? options.autoApply : false,
       dryRun: options.dryRun !== undefined ? options.dryRun : true,
       delayBetweenApps: options.delayBetweenApps || 5000,
       excludeCompanies: options.excludeCompanies || [],
+      excludeKeywords: options.excludeKeywords || [],
       preferredCompanies: options.preferredCompanies || [],
-      ...options,
+      keywords: options.keywords || [],
+      useAI: options.useAI || false,
+      resumePath: options.resumePath || null,
     };
+
+    this.jobFilter =
+      options.jobFilter ||
+      new JobFilter({
+        logger: this.logger,
+        reviewThreshold: this.config.reviewThreshold,
+        autoApplyThreshold: this.config.autoApplyThreshold,
+        minMatchScore: this.config.minMatchScore,
+        excludeKeywords: this.config.excludeKeywords,
+        excludeCompanies: this.config.excludeCompanies,
+        preferredCompanies: this.config.preferredCompanies,
+        keywords: this.config.keywords,
+      });
+
     this.browser = null;
     this.page = null;
   }
@@ -60,6 +124,8 @@ export class AutoApplier {
       experience = 8,
       location = 'seoul',
       maxApplications = this.config.maxDailyApplications,
+      useAI = this.config.useAI,
+      resumePath = this.config.resumePath,
     } = options;
 
     const results = {
@@ -69,67 +135,98 @@ export class AutoApplier {
       skipped: 0,
       failed: 0,
       applications: [],
+      stages: {
+        search: 0,
+        filterScore: 0,
+        generateCoverLetter: 0,
+        checkApproval: 0,
+        submit: 0,
+        track: 0,
+      },
+      filterStats: {},
     };
+
+    let browserInitialized = false;
 
     try {
       this.logger.info('🔍 Searching for jobs...');
-      const searchResult = await this.crawler.searchWithMatching({
-        keywords,
-        categories,
-        experience,
-        location,
-        minScore: this.config.minMatchScore,
-        maxResults: maxApplications * 2,
-        excludeCompanies: this.config.excludeCompanies,
-      });
+      const searchResult = await this.retryService.execute(
+        async () =>
+          await this.crawler.searchWithMatching({
+            keywords,
+            categories,
+            experience,
+            location,
+            minScore: this.config.minMatchScore,
+            maxResults: maxApplications * 3,
+            excludeCompanies: this.config.excludeCompanies,
+          }),
+        { serviceName: 'crawler-search' }
+      );
 
       if (!searchResult.success) {
         return { success: false, error: 'Search failed', results };
       }
 
       results.searched = searchResult.totalJobs;
+      results.stages.search = results.searched;
       this.logger.info(`📋 Found ${results.searched} matching jobs`);
 
-      const candidates = searchResult.jobs
-        .filter((job) => !this.appManager.isDuplicate(job.id))
-        .filter((job) => job.matchPercentage >= this.config.minMatchScore)
-        .slice(0, maxApplications);
+      await this.tracker.recordSearch(searchResult.jobs, {
+        sourceStats: searchResult.sourceStats,
+        keywords,
+      });
+
+      const existingKeys = await this.getExistingJobKeys();
+      const filterResult = await this.jobFilter.filter(searchResult.jobs, existingKeys, {
+        useAI,
+        resumePath,
+      });
+
+      results.filterStats = filterResult.stats;
+      results.stages.filterScore = filterResult.jobs.length;
+
+      const candidates = filterResult.jobs.slice(0, maxApplications);
 
       results.matched = candidates.length;
       this.logger.info(`✅ ${results.matched} jobs ready for application`);
 
-      if (this.config.autoApply && !this.config.dryRun) {
-        try {
-          await this.initBrowser();
-
-          for (const job of candidates) {
-            try {
-              const appResult = await this.applyToJob(job);
-
-              if (appResult.success) {
-                results.applied++;
-                results.applications.push(appResult.application);
-              } else {
-                results.failed++;
-              }
-
-              await this.sleep(this.config.delayBetweenApps);
-            } catch (error) {
-              this.logger.error(`❌ Failed to apply to ${job.company}: ${error.message}`);
-              results.failed++;
+      for (const job of candidates) {
+        const processResult = await this.processJob(job, {
+          ensureBrowser: async () => {
+            if (!browserInitialized && this.config.autoApply && !this.config.dryRun) {
+              await this.initBrowser();
+              browserInitialized = true;
             }
-          }
-        } finally {
-          await this.closeBrowser();
+          },
+        });
+
+        results.applications.push(processResult);
+
+        if (processResult.applied) {
+          results.applied += 1;
+        } else if (processResult.status === 'failed') {
+          results.failed += 1;
+        } else {
+          results.skipped += 1;
         }
-      } else {
-        for (const job of candidates) {
-          const application = this.appManager.addApplication(job, {
-            notes: this.config.dryRun ? 'Dry run - not actually applied' : '',
-          });
-          results.applications.push(application);
+
+        if (processResult.stages.generateCoverLetter) {
+          results.stages.generateCoverLetter += 1;
         }
-        results.skipped = candidates.length;
+        if (processResult.stages.checkApproval) {
+          results.stages.checkApproval += 1;
+        }
+        if (processResult.stages.submit) {
+          results.stages.submit += 1;
+        }
+        if (processResult.stages.track) {
+          results.stages.track += 1;
+        }
+
+        if (this.config.autoApply && !this.config.dryRun) {
+          await this.sleep(this.config.delayBetweenApps);
+        }
       }
 
       return {
@@ -143,7 +240,31 @@ export class AutoApplier {
         error: error.message,
         results,
       };
+    } finally {
+      if (browserInitialized) {
+        await this.closeBrowser();
+      }
     }
+  }
+
+  async processJob(job, context = {}) {
+    return processJob.call(this, job, context);
+  }
+
+  async shouldApply(job, trackedApplication = null) {
+    return shouldApply.call(this, job, trackedApplication);
+  }
+
+  async submitApplication(job) {
+    return submitApplication.call(this, job);
+  }
+
+  async handleApproval(job, trackedApplication = null) {
+    return handleApproval.call(this, job, trackedApplication);
+  }
+
+  async getExistingJobKeys() {
+    return getExistingJobKeys.call(this);
   }
 
   async applyToJob(job) {
