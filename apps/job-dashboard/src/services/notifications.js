@@ -268,6 +268,20 @@ export class NotificationService {
         `<b>Platform:</b> ${escapeHtml(job.platform || job.source)}\n` +
         `<b>Match Score:</b> ${matchScore}/100\n\n` +
         `<b>Actions:</b> Click buttons below to approve or reject`,
+        `<b>Position:</b> ${escapeHtml(job.position || job.title)}\n` +
+        `<b>Company:</b> ${escapeHtml(job.company)}\n` +
+        `<b>Platform:</b> ${escapeHtml(job.platform || job.source)}\n` +
+        `<b>Match Score:</b> ${matchScore}/100\n\n` +
+        `<b>Actions:</b> Click buttons below to approve or reject`,
+        `<b>Position:</b> ${escapeHtml(job.position || job.title)}\n` +
+        `<b>Company:</b> ${escapeHtml(job.company)}\n` +
+        `<b>Platform:</b> ${escapeHtml(job.platform || job.source)}\n` +
+        `<b>Match Score:</b> ${matchScore}/100\n\n` +
+        `<b>Actions:</b> Click buttons below to approve or reject`,
+        `<b>Company:</b> ${escapeHtml(job.company)}\n` +
+        `<b>Platform:</b> ${escapeHtml(job.platform || job.source)}\n` +
+        `<b>Match Score:</b> ${matchScore}/100\n\n` +
+        `<b>Actions:</b> Click buttons below to approve or reject`,
       parse_mode: 'HTML',
       reply_markup: {
         inline_keyboard: [
