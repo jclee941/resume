@@ -151,7 +151,7 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
             text: '🔍 <b>Application Workflow Complete</b>\n\n' +
               `<b>Trigger</b>: ${triggerType}\n` +
               `<b>Platforms</b>: ${platforms.join(', ')}\n` +
-              `<b>Result</b>: No jobs found matching criteria`
+              '<b>Result</b>: No jobs found matching criteria'
           });
           return { notified: true };
         }

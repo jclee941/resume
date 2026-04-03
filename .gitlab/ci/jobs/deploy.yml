@@ -19,14 +19,24 @@ deploy:
     set -euo pipefail
     echo "🚀 Deploying to Cloudflare Workers..."
     
-    if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
-      echo "❌ CLOUDFLARE_API_TOKEN is not set. Skipping deploy."
+    # Check for API Token (preferred) or API Key + Email (legacy)
+    if [ -n "$CLOUDFLARE_API_TOKEN" ]; then
+      echo "✓ Using CLOUDFLARE_API_TOKEN for authentication"
+    elif [ -n "$CLOUDFLARE_API_KEY" ] && [ -n "$CLOUDFLARE_EMAIL" ]; then
+      echo "✓ Using CLOUDFLARE_API_KEY + CLOUDFLARE_EMAIL for authentication"
+    else
+      echo "❌ Cloudflare credentials not set."
+      echo "   Set either:"
+      echo "   - CLOUDFLARE_API_TOKEN (preferred), or"
+      echo "   - CLOUDFLARE_API_KEY + CLOUDFLARE_EMAIL (legacy)"
       exit 1
     fi
+    
     if [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
       echo "❌ CLOUDFLARE_ACCOUNT_ID is not set. Skipping deploy."
       exit 1
     fi
+    
     echo "📦 Build artifact available: $(ls -lh apps/portfolio/worker.js 2>/dev/null || echo 'not found locally')"
     
     echo "🔐 Deploying via wrangler..."

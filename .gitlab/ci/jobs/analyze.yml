@@ -4,6 +4,8 @@
 analyze:
   stage: analyze
   interruptible: true
+  before_script:
+    - apk add --no-cache go jq
   artifacts:
     paths:
       - .gitlab/affected_targets.json
