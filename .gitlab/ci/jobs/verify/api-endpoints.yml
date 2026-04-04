@@ -3,7 +3,7 @@
 # =============================================================================
 verify-api-endpoints:
   stage: verify
-  needs: ["deploy"]
+  needs: [{"job": "deploy", "optional": true}]
   interruptible: true
   before_script:
     - apk add --no-cache curl bash jq
@@ -41,5 +41,9 @@ verify-api-endpoints:
     
     echo "✅ API endpoints verification complete"
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "web" || $CI_COMMIT_BRANCH == "master"'
-      when: always
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_JOB_STATUS_deploy == "success"'
+      when: on_success
+    - if: '$CI_PIPELINE_SOURCE == "web" && $CI_JOB_STATUS_deploy == "success"'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH == "master" || $CI_PIPELINE_SOURCE == "web"'
+      when: manual

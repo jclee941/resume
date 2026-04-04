@@ -1,0 +1,1290 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🤖 AI 자동화 채용 지원 시스템 대시보드</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script>
+      <!-- API_CONTRACTS_INJECTION -->
+    </script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #333;
+        min-height: 100vh;
+      }
+
+      .login-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.95);
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(10px);
+      }
+
+      .login-card {
+        background: white;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .header {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+
+      .header h1 {
+        font-size: 2.5em;
+        margin-bottom: 10px;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .status-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .status-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+      }
+
+      .status-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .status-card h3 {
+        font-size: 1.2em;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .status-indicator {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        display: inline-block;
+      }
+
+      .status-operational {
+        background: #10b981;
+      }
+      .status-degraded {
+        background: #f59e0b;
+      }
+      .status-error {
+        background: #ef4444;
+      }
+      .status-unknown {
+        background: #6b7280;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .stat-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      .stat-value {
+        font-size: 2.5em;
+        font-weight: bold;
+        color: #667eea;
+        margin-bottom: 5px;
+      }
+
+      .stat-label {
+        color: #666;
+        font-size: 0.9em;
+      }
+
+      .ai-section {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      }
+
+      .ai-section h2 {
+        margin-bottom: 20px;
+        color: #667eea;
+      }
+
+      .ai-test-form {
+        display: grid;
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      .form-group label {
+        font-weight: 500;
+        color: #555;
+      }
+
+      .form-group input,
+      .form-group textarea {
+        padding: 12px;
+        border: 2px solid #e1e5e9;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.3s ease;
+      }
+
+      .form-group input:focus,
+      .form-group textarea:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+
+      .form-group textarea {
+        resize: vertical;
+        min-height: 100px;
+      }
+
+      .btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .btn-primary {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+      }
+
+      .btn-secondary {
+        background: #f8f9fa;
+        color: #666;
+        border: 2px solid #e1e5e9;
+      }
+
+      .btn-secondary:hover {
+        background: #e9ecef;
+      }
+
+      .ai-result {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        margin-top: 20px;
+        display: none;
+      }
+
+      .ai-result.show {
+        display: block;
+      }
+
+      .match-score {
+        font-size: 2em;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+
+      .match-high {
+        color: #10b981;
+      }
+      .match-medium {
+        color: #f59e0b;
+      }
+      .match-low {
+        color: #ef4444;
+      }
+
+      .automation-section {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      }
+
+      .automation-section h2 {
+        margin-bottom: 20px;
+        color: #667eea;
+      }
+
+      .automation-controls {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .control-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .control-group label {
+        font-weight: 500;
+        color: #555;
+        font-size: 14px;
+      }
+
+      .control-group input,
+      .control-group select {
+        padding: 10px;
+        border: 2px solid #e1e5e9;
+        border-radius: 6px;
+        font-size: 14px;
+      }
+
+      .recent-applications {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      }
+
+      .recent-applications h2 {
+        margin-bottom: 20px;
+        color: #667eea;
+      }
+
+      .applications-list {
+        display: grid;
+        gap: 15px;
+      }
+
+      .application-item {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 15px;
+        border-left: 4px solid #667eea;
+        transition: all 0.3s ease;
+      }
+
+      .application-item:hover {
+        background: #e9ecef;
+        transform: translateX(5px);
+      }
+
+      .application-header {
+        display: flex;
+        justify-content: between;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      .application-title {
+        font-weight: 600;
+        color: #333;
+      }
+
+      .application-status {
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .status-applied {
+        background: #d1ecf1;
+        color: #0c5460;
+      }
+      .status-pending {
+        background: #fff3cd;
+        color: #856404;
+      }
+      .status-interview {
+        background: #d4edda;
+        color: #155724;
+      }
+      .status-rejected {
+        background: #f8d7da;
+        color: #721c24;
+      }
+
+      .application-meta {
+        font-size: 14px;
+        color: #666;
+      }
+
+      .loading {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #667eea;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .alert {
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        display: none;
+      }
+
+      .alert.show {
+        display: block;
+      }
+
+      .alert-success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+
+      .alert-error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+
+      .alert-info {
+        background: #d1ecf1;
+        color: #0c5460;
+        border: 1px solid #bee5eb;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 15px;
+        }
+
+        .header h1 {
+          font-size: 2em;
+        }
+
+        .status-grid,
+        .stats-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .automation-controls {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="login-overlay" class="login-overlay">
+      <div class="login-card">
+        <h1>🔐 접근 제한</h1>
+        <p style="margin-bottom: 20px; color: #666">인가된 사용자만 접근할 수 있습니다.</p>
+        <div
+          id="g_id_onload"
+          data-client_id="270835336667-1n57053075675546.apps.googleusercontent.com"
+          data-callback="handleCredentialResponse"
+          data-auto_select="true"
+        ></div>
+        <div
+          class="g_id_signin"
+          data-type="standard"
+          data-size="large"
+          data-theme="outline"
+          data-text="sign_in_with"
+          data-shape="rectangular"
+          data-logo_alignment="left"
+        ></div>
+      </div>
+    </div>
+
+    <div class="container" id="main-content" style="filter: blur(5px); pointer-events: none">
+      <div class="header">
+        <h1>🤖 AI 자동화 채용 지원 시스템</h1>
+        <p>실시간 모니터링 및 지능형 매칭 대시보드</p>
+        <div
+          id="system-status"
+          class="status-indicator status-unknown"
+          style="margin: 10px auto"
+        ></div>
+      </div>
+
+      <div id="alert-container"></div>
+
+      <div class="status-grid">
+        <div class="status-card" style="border-left: 4px solid #f59e0b">
+          <h3>
+            <span class="status-indicator status-operational" id="portfolio-status"></span>
+            포트폴리오 (Cloudflare)
+          </h3>
+          <div id="portfolio-stats-text">로딩 중...</div>
+          <div style="font-size: 0.8em; margin-top: 5px; color: #666" id="portfolio-details"></div>
+        </div>
+
+        <div class="status-card">
+          <h3>
+            <span class="status-indicator status-unknown" id="ai-status"></span>
+            AI 시스템
+          </h3>
+          <div id="ai-status-text">확인 중...</div>
+        </div>
+
+        <div class="status-card">
+          <h3>
+            <span class="status-indicator status-unknown" id="crawler-status"></span>
+            크롤러 시스템
+          </h3>
+          <div id="crawler-status-text">확인 중...</div>
+        </div>
+
+        <div class="status-card">
+          <h3>
+            <span class="status-indicator status-unknown" id="db-status"></span>
+            데이터베이스
+          </h3>
+          <div id="db-status-text">확인 중...</div>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value" id="total-apps">-</div>
+          <div class="stat-label">총 지원건수</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-value" id="success-rate">-</div>
+          <div class="stat-label">성공률 (%)</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-value" id="ai-matches">-</div>
+          <div class="stat-label">AI 매칭</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-value" id="pending-apps">-</div>
+          <div class="stat-label">대기중</div>
+        </div>
+      </div>
+
+      <div class="ai-section">
+        <h2>🧠 AI 매칭 테스트</h2>
+        <form class="ai-test-form" id="ai-test-form">
+          <div class="form-group">
+            <label for="job-title">채용 공고 제목</label>
+            <input
+              type="text"
+              id="job-title"
+              placeholder="예: Senior DevSecOps Engineer"
+              value="Senior DevSecOps Engineer"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="company">회사명</label>
+            <input type="text" id="company" placeholder="예: Tech Company" value="테크 회사" />
+          </div>
+
+          <div class="form-group">
+            <label for="job-description">채용 공고 내용</label>
+            <textarea id="job-description" placeholder="채용 공고의 주요 내용을 입력하세요...">
+DevSecOps 엔지니어 포지션입니다. 보안과 DevOps 경험을 보유한 분을 찾습니다. AWS, Kubernetes, CI/CD 파이프라인 구축 경험 필수입니다.</textarea
+            >
+          </div>
+
+          <button type="submit" class="btn btn-primary">
+            <span class="loading" id="ai-loading" style="display: none"></span>
+            🤖 AI 매칭 분석
+          </button>
+        </form>
+
+        <div class="ai-result" id="ai-result">
+          <h3>AI 분석 결과</h3>
+          <div class="match-score" id="match-score">-</div>
+          <div id="match-details"></div>
+        </div>
+      </div>
+
+      <div class="automation-section">
+        <h2>⚙️ 자동화 제어</h2>
+        <div class="automation-controls">
+          <div class="control-group">
+            <label for="auto-keywords">키워드</label>
+            <input
+              type="text"
+              id="auto-keywords"
+              value="DevSecOps,보안 엔지니어"
+              placeholder="쉼표로 구분"
+            />
+          </div>
+
+          <div class="control-group">
+            <label for="auto-max-apps">최대 지원 수</label>
+            <input type="number" id="auto-max-apps" value="3" min="1" max="10" />
+          </div>
+
+          <div class="control-group">
+            <label for="auto-platforms">대상 플랫폼</label>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; padding: 5px">
+              <label><input type="checkbox" name="platform" value="wanted" checked /> 원티드</label>
+              <label
+                ><input type="checkbox" name="platform" value="saramin" checked /> 사람인</label
+              >
+              <label
+                ><input type="checkbox" name="platform" value="jobkorea" checked /> 잡코리아</label
+              >
+              <label
+                ><input type="checkbox" name="platform" value="linkedin" checked /> 링크드인</label
+              >
+              <label
+                ><input type="checkbox" name="platform" value="remember" disabled /> 리멤버
+                (준비중)</label
+              >
+            </div>
+          </div>
+
+          <div class="control-group">
+            <label for="auto-mode">실행 모드</label>
+            <select id="auto-mode">
+              <option value="true">드라이런 (안전)</option>
+              <option value="false">실제 지원</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 10px; flex-wrap: wrap">
+          <button class="btn btn-primary" id="run-ai-system">🚀 AI 시스템 실행</button>
+
+          <button class="btn btn-secondary" id="run-basic-system">🔄 기본 시스템 실행</button>
+
+          <button class="btn btn-secondary" id="refresh-stats">📊 통계 새로고침</button>
+        </div>
+      </div>
+
+      <div class="automation-section">
+        <h2>🔐 플랫폼 인증 관리</h2>
+        <div
+          id="auth-platforms-grid"
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+          "
+        >
+          <!-- Auth cards will be rendered here -->
+        </div>
+
+        <div
+          id="auth-modal"
+          style="
+            display: none;
+            background: rgba(0, 0, 0, 0.5);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+          "
+        >
+          <div
+            style="
+              background: white;
+              padding: 30px;
+              border-radius: 15px;
+              width: 500px;
+              max-width: 90%;
+            "
+          >
+            <h3 id="auth-modal-title">플랫폼 인증 설정</h3>
+            <div class="form-group" style="margin: 15px 0">
+              <label for="auth-cookies">Cookie Header String</label>
+              <textarea
+                id="auth-cookies"
+                style="width: 100%; height: 150px; font-family: monospace; font-size: 12px"
+              ></textarea>
+              <p style="font-size: 11px; color: #666; margin-top: 5px">
+                브라우저 개발자 도구(F12) -> Network -> API 요청 클릭 -> Request Headers의 Cookie
+                값을 복사해 붙여넣으세요.
+              </p>
+            </div>
+            <div class="form-group" style="margin: 15px 0">
+              <label for="auth-email">계정 이메일 (선택)</label>
+              <input type="email" id="auth-email" placeholder="user@example.com" />
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end">
+              <button class="btn btn-secondary" id="close-auth-modal">취소</button>
+              <button class="btn btn-primary" id="save-auth">저장하기</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="automation-section">
+        <h2>👤 통합 프로필 (Sync Status)</h2>
+        <div
+          id="profile-sync-grid"
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+          "
+        >
+          <!-- Profile Sync Cards -->
+        </div>
+
+        <div style="background: #f8f9fa; border-radius: 8px; padding: 20px">
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 15px;
+            "
+          >
+            <h3 style="margin: 0; font-size: 1.1em">기본 정보 (Unified)</h3>
+            <span style="font-size: 0.8em; color: #666" id="profile-last-updated">업데이트: -</span>
+          </div>
+          <div
+            style="display: grid; grid-template-columns: 100px 1fr; gap: 15px; align-items: center"
+          >
+            <div style="text-align: center">
+              <div
+                id="profile-avatar"
+                style="
+                  width: 80px;
+                  height: 80px;
+                  border-radius: 50%;
+                  background: #e1e5e9;
+                  margin: 0 auto;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font-size: 30px;
+                "
+              >
+                👤
+              </div>
+            </div>
+            <div>
+              <div
+                id="profile-name"
+                style="font-weight: bold; font-size: 1.2em; margin-bottom: 5px"
+              >
+                -
+              </div>
+              <div id="profile-headline" style="color: #555; font-size: 0.9em; margin-bottom: 5px">
+                -
+              </div>
+              <div id="profile-email" style="color: #777; font-size: 0.9em">-</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="recent-applications">
+        <h2>📋 최근 지원 현황</h2>
+        <div class="applications-list" id="applications-list">
+          <div style="text-align: center; color: #666; padding: 40px">데이터를 불러오는 중...</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      /* API_CONTRACTS_INJECTION */
+
+      // 전역 상태
+      let systemStatus = {};
+      let stats = {};
+      let applications = [];
+      let cfStats = null;
+
+      // Google Auth Handler
+      async function handleCredentialResponse(response) {
+        try {
+          const res = await fetch(API_CONTRACTS.auth.google.path, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ credential: response.credential }),
+          });
+          const data = await res.json();
+          if (data.success) {
+            document.getElementById("login-overlay").style.display = "none";
+            document.getElementById("main-content").style.filter = "none";
+            document.getElementById("main-content").style.pointerEvents =
+              "auto";
+            init(); // Start loading data
+          } else {
+            alert("인증 실패: " + data.error);
+          }
+        } catch (e) {
+          console.error("Auth error:", e);
+          alert("인증 처리 중 오류가 발생했습니다.");
+        }
+      }
+
+      // DOM 요소들
+      const aiStatus = document.getElementById("ai-status");
+      const aiStatusText = document.getElementById("ai-status-text");
+      const crawlerStatus = document.getElementById("crawler-status");
+      const crawlerStatusText = document.getElementById("crawler-status-text");
+      const dbStatus = document.getElementById("db-status");
+      const dbStatusText = document.getElementById("db-status-text");
+      const automationStatus = document.getElementById("automation-status");
+      const automationStatusText = document.getElementById(
+        "automation-status-text",
+      );
+
+      // 유틸리티 함수들
+      function updateStatusIndicator(element, status) {
+        element.className = "status-indicator";
+        element.classList.add(`status-${status}`);
+      }
+
+      function showAlert(message, type = "info") {
+        const alertContainer = document.getElementById("alert-container");
+        const alert = document.createElement("div");
+        alert.className = `alert alert-${type} show`;
+        alert.textContent = message;
+
+        alertContainer.appendChild(alert);
+
+        setTimeout(() => {
+          alert.classList.remove("show");
+          setTimeout(() => alert.remove(), 300);
+        }, 5000);
+      }
+
+      function formatDate(dateString) {
+        return new Date(dateString).toLocaleDateString("ko-KR");
+      }
+
+      function getStatusClass(status) {
+        const classes = {
+          applied: "status-applied",
+          pending: "status-pending",
+          interview: "status-interview",
+          rejected: "status-rejected",
+        };
+        return classes[status] || "status-pending";
+      }
+
+      function escapeHtml(str) {
+        if (str == null) return "";
+        return String(str).replace(
+          /[&<>"']/g,
+          (c) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[c],
+        );
+      }
+
+      // API 호출 함수들
+      async function fetchCFStats() {
+        try {
+          const response = await fetch(API_CONTRACTS.cf.stats.path);
+          if (response.status === 401 || response.status === 403) return; // Auth handled by overlay
+          const data = await response.json();
+          if (data.stats && data.stats.length > 0) {
+            const today = data.stats[data.stats.length - 1].sum;
+            document.getElementById("portfolio-stats-text").innerHTML = `
+              <strong>${today.requests.toLocaleString()}</strong> 요청 /
+              <strong>${today.pageViews.toLocaleString()}</strong> 뷰
+            `;
+            document.getElementById("portfolio-details").textContent =
+              `최근 7일: ${data.stats.reduce((acc, cur) => acc + cur.sum.requests, 0).toLocaleString()} 요청`;
+          } else {
+            document.getElementById("portfolio-stats-text").textContent =
+              "데이터 없음";
+          }
+        } catch (error) {
+          console.error("CF Stats fetch failed:", error);
+          document.getElementById("portfolio-stats-text").textContent =
+            "연동 실패";
+        }
+      }
+
+      async function fetchStatus() {
+        try {
+          const response = await fetch(API_CONTRACTS.status.path);
+          const data = await response.json();
+          systemStatus = data;
+          updateStatusDisplay();
+        } catch (error) {
+          console.error("Status fetch failed:", error);
+        }
+      }
+
+      async function fetchStats() {
+        try {
+          const response = await fetch(API_CONTRACTS.stats.path);
+          const data = await response.json();
+          stats = data;
+
+          document.getElementById("total-apps").textContent =
+            data.totalApplications || 0;
+          document.getElementById("success-rate").textContent =
+            data.successRate || 0;
+          document.getElementById("ai-matches").textContent =
+            data.aiStats?.aiMatchCount || 0;
+          document.getElementById("pending-apps").textContent =
+            data.byStatus?.pending || 0;
+        } catch (error) {
+          console.error("Stats fetch failed:", error);
+        }
+      }
+
+      async function fetchApplications() {
+        try {
+          const response = await fetch(`${API_CONTRACTS.applications.list.path}?limit=10`);
+          const data = await response.json();
+          applications = data.applications || [];
+
+          renderApplications();
+        } catch (error) {
+          console.error("Applications fetch failed:", error);
+        }
+      }
+
+      async function fetchAuthStatus() {
+        try {
+          const response = await fetch(API_CONTRACTS.auth.status.path);
+          const data = await response.json();
+          if (data.success) {
+            renderAuthPlatforms(data.status);
+          }
+        } catch (error) {
+          console.error("Auth status fetch failed:", error);
+        }
+      }
+
+      function renderAuthPlatforms(authStatuses) {
+        const grid = document.getElementById("auth-platforms-grid");
+        grid.innerHTML = authStatuses
+          .map(
+            (status) => `
+                <div class="status-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h3 style="margin: 0;">
+                            <span class="status-indicator ${status.authenticated ? "status-operational" : "status-error"}"></span>
+                            ${escapeHtml(status.platform).toUpperCase()}
+                        </h3>
+                        <div style="font-size: 11px; color: #666;">
+                            ${status.lastUpdated ? "업데이트: " + new Date(status.lastUpdated).toLocaleDateString() : "인증 정보 없음"}
+                        </div>
+                    </div>
+                    <div style="margin: 15px 0; font-size: 14px;">
+                        ${status.authenticated ? `✅ 계정: ${escapeHtml(status.email) || "인증됨"}` : "❌ 로그인이 필요합니다"}
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn btn-secondary" style="padding: 8px 12px; font-size: 12px;" onclick="openAuthModal('${escapeHtml(status.platform)}')">
+                            ${status.authenticated ? "쿠키 갱신" : "인증 설정"}
+                        </button>
+                        ${
+                          status.authenticated
+                            ? `
+                            <button class="btn btn-secondary" style="padding: 8px 12px; font-size: 12px; color: #ef4444; border-color: #fecaca;" onclick="logout('${status.platform}')">
+                                로그아웃
+                            </button>
+                        `
+                            : ""
+                        }
+                    </div>
+                </div>
+            `,
+          )
+          .join("");
+      }
+
+      let currentPlatform = "";
+      function openAuthModal(platform) {
+        currentPlatform = platform;
+        document.getElementById("auth-modal-title").textContent =
+          `${platform.toUpperCase()} 인증 설정`;
+        document.getElementById("auth-cookies").value = "";
+        document.getElementById("auth-modal").style.display = "flex";
+      }
+
+      document.getElementById("close-auth-modal").onclick = () => {
+        document.getElementById("auth-modal").style.display = "none";
+      };
+
+      document.getElementById("save-auth").onclick = async () => {
+        const cookies = document.getElementById("auth-cookies").value;
+        const email = document.getElementById("auth-email").value;
+
+        if (!cookies) {
+          showAlert("쿠키 문자열을 입력해주세요.", "error");
+          return;
+        }
+
+        try {
+          const response = await fetch(API_CONTRACTS.auth.set.path, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ platform: currentPlatform, cookies, email }),
+          });
+
+          const data = await response.json();
+          if (data.success) {
+            showAlert(
+              `${currentPlatform} 인증 정보가 저장되었습니다.`,
+              "success",
+            );
+            document.getElementById("auth-modal").style.display = "none";
+            fetchAuthStatus();
+          } else {
+            showAlert(`저장 실패: ${data.error}`, "error");
+          }
+        } catch (error) {
+          showAlert("인증 저장 중 오류가 발생했습니다.", "error");
+        }
+      };
+
+      async function logout(platform) {
+        if (!confirm(`${platform}에서 로그아웃하시겠습니까?`)) return;
+
+        try {
+          // Use contract path pattern: /api/auth/:platform
+          const path = API_CONTRACTS.auth.logout.path.replace(":platform", platform);
+          const res = await fetch(path, {
+            method: "DELETE",
+          });
+          const data = await res.json();
+          if (data.success) {
+            showToast(`${platform} cookies cleared`);
+            checkAuth();
+          } else {
+            showToast("Failed to clear cookies", "error");
+          }
+        } catch (e) {
+          console.error("Cookie clear error:", e);
+          showToast("Error clearing cookies", "error");
+        }
+      };
+        return (
+          badges[source] ||
+          `<span style="background:#666; color:white; padding:2px 6px; border-radius:4px; font-size:11px;">${source}</span>`
+        );
+      }
+
+      function renderApplications() {
+        const listElement = document.getElementById("applications-list");
+
+        if (applications.length === 0) {
+          listElement.innerHTML =
+            '<div style="text-align: center; color: #666; padding: 40px;">지원 내역이 없습니다.</div>';
+          return;
+        }
+
+        listElement.innerHTML = applications
+          .map(
+            (app) => `
+                <div class="application-item">
+                    <div class="application-header">
+                        <div class="application-title">
+                            ${getPlatformBadge(app.source)}
+                            ${escapeHtml(app.position) || "포지션"} @ ${escapeHtml(app.company) || "회사"}
+                        </div>
+                        <div class="application-status ${getStatusClass(app.status)}">${escapeHtml(app.status) || "pending"}</div>
+                    </div>
+                    <div class="application-meta">
+                        ${formatDate(app.createdAt)} • 매칭: ${Number(app.matchScore) || 0}%
+                        ${app.notes ? `<br><span style="color:#888; font-size:12px;">Memo: ${escapeHtml(app.notes)}</span>` : ""}
+                    </div>
+                </div>
+            `,
+          )
+          .join("");
+      }
+
+      // AI 매칭 테스트
+      document
+        .getElementById("ai-test-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const loading = document.getElementById("ai-loading");
+          const result = document.getElementById("ai-result");
+          const matchScore = document.getElementById("match-score");
+          const matchDetails = document.getElementById("match-details");
+
+          loading.style.display = "inline-block";
+
+          try {
+            const response = await fetch(API_CONTRACTS.ai.match.path, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                jobTitle: document.getElementById("job-title").value,
+                company: document.getElementById("company").value,
+                jobDescription:
+                  document.getElementById("job-description").value,
+              }),
+            });
+
+            const data = await response.json();
+
+            if (data.success && data.match) {
+              const score = data.match.percentage;
+              matchScore.textContent = `${score}%`;
+              matchScore.className = "match-score";
+
+              if (score >= 80) matchScore.classList.add("match-high");
+              else if (score >= 60) matchScore.classList.add("match-medium");
+              else matchScore.classList.add("match-low");
+
+              matchDetails.innerHTML = `
+                        <p><strong>매칭 유형:</strong> ${data.match.type === "ai" ? "🤖 AI 매칭" : "🔍 기본 매칭"}</p>
+                        <p><strong>신뢰도:</strong> ${escapeHtml(data.match.confidence) || "N/A"}</p>
+                        <p><strong>합격 확률:</strong> ${data.match.successProbability ? escapeHtml(data.match.successProbability) + "%" : "N/A"}</p>
+                        ${data.match.reasoning ? `<p><strong>분석:</strong> ${escapeHtml(data.match.reasoning)}</p>` : ""}
+                        ${!data.aiEnabled ? '<p style="color: #f59e0b;">⚠️ AI가 비활성화되어 기본 매칭으로 분석되었습니다.</p>' : ""}
+                    `;
+
+              result.classList.add("show");
+              showAlert("AI 매칭 분석이 완료되었습니다!", "success");
+            } else {
+              showAlert("AI 매칭 분석에 실패했습니다.", "error");
+            }
+          } catch (error) {
+            console.error("AI test failed:", error);
+            showAlert("AI 매칭 테스트 중 오류가 발생했습니다.", "error");
+          } finally {
+            loading.style.display = "none";
+          }
+        });
+
+      // 자동화 실행
+      document
+        .getElementById("run-ai-system")
+        .addEventListener("click", async () => {
+          const keywords = document.getElementById("auto-keywords").value;
+          const maxApps = document.getElementById("auto-max-apps").value;
+          const dryRun = document.getElementById("auto-mode").value === "true";
+
+          // 선택된 플랫폼 수집
+          const platforms = Array.from(
+            document.querySelectorAll('input[name="platform"]:checked'),
+          ).map((cb) => cb.value);
+
+          try {
+            const response = await fetch(API_CONTRACTS.ai.runSystem.path, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                keywords: keywords.split(",").map((k) => k.trim()),
+                maxApplications: parseInt(maxApps),
+                dryRun,
+                platforms,
+              }),
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+              showAlert(
+                `${dryRun ? "드라이런" : "실제 지원"} AI 시스템이 시작되었습니다! (대상: ${platforms.join(", ")})`,
+                "success",
+              );
+              setTimeout(() => fetchStats(), 2000);
+            } else {
+              showAlert("시스템 실행에 실패했습니다.", "error");
+            }
+          } catch (error) {
+            console.error("System run failed:", error);
+            showAlert("시스템 실행 중 오류가 발생했습니다.", "error");
+          }
+        });
+
+      document
+        .getElementById("run-basic-system")
+        .addEventListener("click", () => {
+          showAlert("기본 시스템 실행은 CLI를 통해 이용해주세요.", "info");
+        });
+
+      document.getElementById("refresh-stats").addEventListener("click", () => {
+        fetchStats();
+        fetchApplications();
+        showAlert("통계가 새로고침되었습니다.", "info");
+      });
+
+      // 초기 데이터 로드
+      async function fetchUnifiedProfile() {
+        try {
+          const response = await fetch(API_CONTRACTS.profile.unified.path);
+          const data = await response.json();
+
+          if (data.success) {
+            renderProfile(data.profile);
+          }
+        } catch (error) {
+          console.error("Profile fetch failed:", error);
+        }
+      }
+
+      function renderProfile(profile) {
+        // Basic Info
+        document.getElementById("profile-name").textContent =
+          profile.basic.name || "-";
+        document.getElementById("profile-email").textContent =
+          profile.basic.email || "-";
+        document.getElementById("profile-headline").textContent =
+          profile.basic.headline || "-";
+        document.getElementById("profile-last-updated").textContent =
+          `업데이트: ${new Date(profile.meta.lastUpdated).toLocaleDateString()}`;
+
+        if (profile.basic.avatar) {
+          document.getElementById("profile-avatar").innerHTML =
+            `<img src="${profile.basic.avatar}" alt="Profile avatar" loading="lazy" decoding="async" width="80" height="80" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+        }
+
+        // Sync Status Grid
+        const grid = document.getElementById("profile-sync-grid");
+        grid.innerHTML = Object.entries(profile.meta.syncStatus)
+          .map(([platform, status]) => {
+            let statusColor = "#6b7280"; // unknown
+            let statusText = "Unknown";
+
+            if (status.status === "synced") {
+              statusColor = "#10b981";
+              statusText = "동기화 완료";
+            } else if (status.status === "auth_required") {
+              statusColor = "#ef4444";
+              statusText = "인증 필요";
+            } else if (status.status === "not_implemented") {
+              statusColor = "#f59e0b";
+              statusText = "지원 예정";
+            }
+
+            return `
+                    <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e5e7eb;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+                            <span style="font-weight:600; text-transform:uppercase;">${platform}</span>
+                            <span style="width:8px; height:8px; border-radius:50%; background:${statusColor};"></span>
+                        </div>
+                        <div style="font-size:12px; color:${statusColor};">${statusText}</div>
+                        <div style="font-size:11px; color:#888; margin-top:3px;">
+                            ${status.lastSync ? new Date(status.lastSync).toLocaleDateString() : "-"}
+                        </div>
+                    </div>
+                `;
+          })
+          .join("");
+      }
+
+      async function init() {
+        // 먼저 인증 상태 확인
+        try {
+          const authRes = await fetch(API_CONTRACTS.auth.status.path);
+          const authData = await authRes.json();
+          if (!authData.authenticated) {
+            // 인증 안됨 -> 로그인 오버레이 유지
+            return;
+          }
+
+          // 인증됨 -> 로그인 오버레이 제거
+          document.getElementById("login-overlay").style.display = "none";
+          document.getElementById("main-content").style.filter = "none";
+          document.getElementById("main-content").style.pointerEvents = "auto";
+
+          await Promise.all([
+            fetchStatus(),
+            fetchStats(),
+            fetchApplications(),
+            fetchAuthStatus(),
+            fetchUnifiedProfile(),
+            fetchCFStats(),
+          ]);
+        } catch (e) {
+          console.error("Init failed:", e);
+        }
+      }
+
+      setInterval(() => {
+        if (document.getElementById("login-overlay").style.display === "none") {
+          fetchStatus();
+          fetchStats();
+          fetchAuthStatus();
+          fetchUnifiedProfile();
+        }
+      }, 30000);
+
+      // 초기화
+      init();
+    </script>
+  </body>
+</html>

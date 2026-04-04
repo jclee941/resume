@@ -1,0 +1,1 @@
+This folder contains the built output assets for the worker "resume" generated at 2026-02-06T04:30:13.382Z.

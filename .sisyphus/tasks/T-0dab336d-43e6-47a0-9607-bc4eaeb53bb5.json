@@ -1,0 +1,18 @@
+{
+  "id": "T-0dab336d-43e6-47a0-9607-bc4eaeb53bb5",
+  "subject": "Unify crawling implementations",
+  "description": "Decide and implement unified approach: JobCrawlingWorkflow should use UnifiedJobCrawler from job-server instead of raw fetch/regex, or document why separate approaches exist.",
+  "status": "completed",
+  "activeForm": "Unifying crawling implementations",
+  "blocks": [],
+  "blockedBy": [],
+  "metadata": {
+    "files": [
+      "apps/job-dashboard/src/workflows/job-crawling.js",
+      "apps/job-server/src/crawlers/index.js"
+    ],
+    "issue": "implementation divergence",
+    "priority": "medium"
+  },
+  "threadID": "ses_2bd9beba0ffe65tnBHQsrsmKO9"
+}

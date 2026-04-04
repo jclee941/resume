@@ -7,7 +7,7 @@
 # =============================================================================
 deploy:
   stage: deploy
-  needs: ["build"]
+  needs: ['build']
   environment:
     name: production
     url: https://resume.jclee.me
@@ -18,11 +18,11 @@ deploy:
   script: |
     set -euo pipefail
     echo "🚀 Deploying to Cloudflare Workers..."
-    
+
     # Check for API Token (preferred) or API Key + Email (legacy)
-    if [ -n "$CLOUDFLARE_API_TOKEN" ]; then
+    if [ -n "${CLOUDFLARE_API_TOKEN:-}" ]; then
       echo "✓ Using CLOUDFLARE_API_TOKEN for authentication"
-    elif [ -n "$CLOUDFLARE_API_KEY" ] && [ -n "$CLOUDFLARE_EMAIL" ]; then
+    elif [ -n "${CLOUDFLARE_API_KEY:-}" ] && [ -n "${CLOUDFLARE_EMAIL:-}" ]; then
       echo "✓ Using CLOUDFLARE_API_KEY + CLOUDFLARE_EMAIL for authentication"
     else
       echo "❌ Cloudflare credentials not set."
@@ -31,25 +31,31 @@ deploy:
       echo "   - CLOUDFLARE_API_KEY + CLOUDFLARE_EMAIL (legacy)"
       exit 1
     fi
-    
-    if [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+
+    if [ -z "${CLOUDFLARE_ACCOUNT_ID:-}" ]; then
       echo "❌ CLOUDFLARE_ACCOUNT_ID is not set. Skipping deploy."
       exit 1
     fi
-    
+
     echo "📦 Build artifact available: $(ls -lh apps/portfolio/worker.js 2>/dev/null || echo 'not found locally')"
-    
+
     echo "🔐 Deploying via wrangler..."
     npx wrangler deploy \
       --config apps/portfolio/wrangler.toml \
       --env production \
-      2>&1 | tail -20 || true
-    
-    echo "✅ Deployment complete!"
+      2>&1 | tail -20
+
+    DEPLOY_STATUS=${PIPESTATUS[0]}
+    if [ $DEPLOY_STATUS -eq 0 ]; then
+      echo "✅ Deployment complete!"
+    else
+      echo "❌ Deployment failed with exit code $DEPLOY_STATUS"
+      exit $DEPLOY_STATUS
+    fi
     echo ""
   rules:
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
       when: manual
     - if: '$CI_PIPELINE_SOURCE == "web"'
       when: manual
-  allow_failure: true  # wrangler deploy is optional; CF Builds is primary path
+  allow_failure: true # wrangler deploy is optional; CF Builds is primary path

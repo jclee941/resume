@@ -1,0 +1,14 @@
+{
+  "id": "T-5e8cf3fa-349a-4bb9-bb8e-a467d8e420a6",
+  "subject": "Fix GitLab CI/CD duplicate include bug",
+  "description": "Fix the duplicate `include` blocks in .gitlab-ci.yml that are causing CI/CD parsing errors. Lines 23-31 and 33-40 have identical include directives.",
+  "status": "completed",
+  "blocks": [],
+  "blockedBy": [],
+  "metadata": {
+    "priority": "critical",
+    "file": "/home/jclee/dev/resume/.gitlab-ci.yml",
+    "lines": "23-40"
+  },
+  "threadID": "ses_2bd9beba0ffe65tnBHQsrsmKO9"
+}
