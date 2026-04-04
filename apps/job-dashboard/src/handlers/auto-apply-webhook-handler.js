@@ -1,6 +1,10 @@
 import { BaseHandler } from './base-handler.js';
 import { normalizeError } from '@resume/shared/errors';
-import { sendTelegramNotification, escapeHtml } from '../services/notification/telegram.js';
+import {
+  NotificationService,
+  sendTelegramNotification,
+  escapeHtml,
+} from '../notifications.js';
 
 /**
  * Handler for auto-apply operations.

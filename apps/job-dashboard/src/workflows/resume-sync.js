@@ -6,7 +6,11 @@ import {
   syncToPlatform,
   notifyPreview,
 } from './resume-sync-helpers.js';
-import { sendTelegramNotification, escapeHtml } from '../services/notification/telegram.js';
+import {
+  NotificationService,
+  sendTelegramNotification,
+  escapeHtml,
+} from '../notifications.js';
 
 /**
  * Resume Sync Workflow
