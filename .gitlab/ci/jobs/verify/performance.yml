@@ -36,9 +36,8 @@ verify-performance:
     
     echo "✅ Performance verification complete"
   rules:
-    - if: '$CI_COMMIT_BRANCH == "master" && $CI_JOB_STATUS_deploy == "success"'
+    - if: '$CI_COMMIT_BRANCH == "master"'
       when: on_success
-    - if: '$CI_PIPELINE_SOURCE == "web" && $CI_JOB_STATUS_deploy == "success"'
+    - if: '$CI_PIPELINE_SOURCE == "web"'
       when: on_success
-    - if: '$CI_COMMIT_BRANCH == "master" || $CI_PIPELINE_SOURCE == "web"'
-      when: manual
+    - when: never
