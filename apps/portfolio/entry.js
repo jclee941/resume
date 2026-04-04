@@ -124,4 +124,13 @@ export default {
     );
     return response;
   },
+
+  // Queue handler - acknowledges all messages (no-op for portfolio worker)
+  async queue(batch, env, ctx) {
+    console.log(`[queue] Received ${batch.messages.length} messages from queue: ${batch.queue}`);
+    // Acknowledge all messages - portfolio worker doesn't process queue messages
+    for (const message of batch.messages) {
+      message.ack();
+    }
+  },
 };
