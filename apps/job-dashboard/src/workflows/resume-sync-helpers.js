@@ -12,7 +12,11 @@
  */
 
 import { DEFAULT_USER_AGENT } from '@resume/shared/ua';
-import { sendTelegramNotification, escapeHtml } from '../services/notification/telegram.js';
+import {
+  NotificationService,
+  sendTelegramNotification,
+  escapeHtml,
+} from '../notifications.js';
 
 // ============================================================
 // DATA EXPORT
