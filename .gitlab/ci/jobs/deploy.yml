@@ -55,7 +55,7 @@ deploy:
     echo ""
   rules:
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
-      when: manual
+      when: on_success
     - if: '$CI_PIPELINE_SOURCE == "web"'
-      when: manual
+      when: on_success
   allow_failure: true # wrangler deploy is optional; CF Builds is primary path
