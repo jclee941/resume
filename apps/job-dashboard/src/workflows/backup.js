@@ -1,4 +1,8 @@
-import { sendTelegramNotification, escapeHtml } from '../services/notification/telegram.js';
+import {
+  NotificationService,
+  sendTelegramNotification,
+  escapeHtml,
+} from '../notifications.js';
 import { WorkflowEntrypoint } from 'cloudflare:workers';
 
 /**
