@@ -1,0 +1,15 @@
+{
+  "id": "T-62567972-3abb-4455-9045-6a2c83625f7a",
+  "subject": "Add integration tests for CI pipeline",
+  "description": "Add integration tests to verify ci-resume-sync.js works end-to-end with current Wanted API.",
+  "status": "completed",
+  "activeForm": "Adding integration tests",
+  "blocks": [],
+  "blockedBy": [],
+  "metadata": {
+    "file": "apps/job-server/scripts/ci-resume-sync.js",
+    "issue": "missing tests",
+    "priority": "low"
+  },
+  "threadID": "ses_2bd9beba0ffe65tnBHQsrsmKO9"
+}

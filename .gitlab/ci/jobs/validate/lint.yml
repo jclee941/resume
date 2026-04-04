@@ -11,7 +11,7 @@ lint:
     set -euo pipefail
     echo "🔍 Running ESLint..."
     npm ci --cache .npm --prefer-offline 2>&1 | tail -5
-    npm run lint 2>&1 | tee eslint-results.txt || true
+    npm run lint 2>&1 | tee eslint-results.txt
 
     ERRORS=$(grep -oP '\(\K[0-9]+(?= errors?[,)])' eslint-results.txt | tail -1 || echo "0")
     WARNINGS=$(grep -oP '[0-9]+(?= warnings?\))' eslint-results.txt | tail -1 || echo "0")
@@ -35,7 +35,7 @@ lint:
     fi
     echo "✅ Lint passed"
   artifacts:
-    when: failure
+    when: on_failure
     paths:
       - eslint-results.txt
     expire_in: 7 days

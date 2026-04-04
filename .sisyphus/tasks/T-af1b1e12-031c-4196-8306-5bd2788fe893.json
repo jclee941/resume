@@ -1,0 +1,15 @@
+{
+  "id": "T-af1b1e12-031c-4196-8306-5bd2788fe893",
+  "subject": "Micro-modularize deploy-gitlab-cicd.go (321 lines)",
+  "description": "Refactor the 321-line Go script into smaller modules. Extract concerns: prerequisites check, OAuth handling, runner setup, credentials management into separate packages or files.",
+  "status": "completed",
+  "blocks": [],
+  "blockedBy": [],
+  "metadata": {
+    "priority": "medium",
+    "file": "/home/jclee/dev/resume/tools/scripts/deployment/deploy-gitlab-cicd.go",
+    "lines": "321",
+    "target_loc": "<200 per file"
+  },
+  "threadID": "ses_2bd9beba0ffe65tnBHQsrsmKO9"
+}

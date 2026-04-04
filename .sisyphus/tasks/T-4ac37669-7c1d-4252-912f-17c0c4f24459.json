@@ -1,0 +1,15 @@
+{
+  "id": "T-4ac37669-7c1d-4252-912f-17c0c4f24459",
+  "subject": "Fix n8n undefined references in wanted-strategy.js",
+  "description": "Fix the undefined `n8n` references in apps/job-server/src/auto-apply/strategies/wanted-strategy.js (lines 60-68). Either remove dead code or add proper imports.",
+  "status": "completed",
+  "activeForm": "Fixing n8n undefined references",
+  "blocks": [],
+  "blockedBy": [],
+  "metadata": {
+    "file": "apps/job-server/src/auto-apply/strategies/wanted-strategy.js",
+    "issue": "undefined n8n",
+    "priority": "high"
+  },
+  "threadID": "ses_2bd9beba0ffe65tnBHQsrsmKO9"
+}

@@ -1,0 +1,15 @@
+{
+  "id": "T-09bb7363-1ab3-4e7b-8253-3ae75ccc06bd",
+  "subject": "Create GitLab CI/CD with comprehensive E2E and unit testing",
+  "description": "Create .gitlab-ci.yml that mirrors GitHub Actions pipeline with all stages: validate, lint, typecheck, test-unit, test-e2e, security-scan, build. Include npm caching, test artifacts, JUnit reports, coverage reports, and parallel job execution.",
+  "status": "completed",
+  "activeForm": "Creating GitLab CI/CD configuration",
+  "blocks": [],
+  "blockedBy": [],
+  "metadata": {
+    "project": "resume",
+    "priority": "high",
+    "category": "ci-cd"
+  },
+  "threadID": "ses_2c077ad22ffevVlwEDeT0kvLri"
+}
