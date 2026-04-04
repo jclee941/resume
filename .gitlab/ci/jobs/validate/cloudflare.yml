@@ -11,14 +11,14 @@ validate-cloudflare:
   script: |
     set -euo pipefail
     echo "🔧 Validating Cloudflare native structure..."
-    go run ./tools/ci/validate-cloudflare-native.go || true
+    go run ./tools/ci/validate-cloudflare-native.go
     
     echo "🔧 Validating wrangler types generation..."
-    npx wrangler types /tmp/portfolio-worker-types.d.ts --config apps/portfolio/wrangler.toml --env production 2>&1 | tail -5 || true
+    npx wrangler types /tmp/portfolio-worker-types.d.ts --config apps/portfolio/wrangler.toml --env production 2>&1 | tail -5
     
     if [ "${JOB_DASHBOARD:-false}" = "true" ]; then
       echo "🔧 Validating job-dashboard wrangler types generation..."
-      npx wrangler types /tmp/job-dashboard-worker-types.d.ts --config apps/job-dashboard/wrangler.jsonc 2>&1 | tail -5 || true
+      npx wrangler types /tmp/job-dashboard-worker-types.d.ts --config apps/job-dashboard/wrangler.jsonc 2>&1 | tail -5
     fi
     
     echo "✅ Cloudflare native validation complete"
