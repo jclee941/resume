@@ -33,7 +33,7 @@ build:
     expire_in: 7 days
     when: always
   rules:
-    - if: '$PORTFOLIO == "true" && $CI_PIPELINE_SOURCE != "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
       when: on_success
     - if: '$CI_PIPELINE_SOURCE == "web"'
       when: on_success
