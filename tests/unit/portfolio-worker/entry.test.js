@@ -17,9 +17,9 @@ describe('entry.js service binding contract', () => {
     expect(source).not.toMatch(/Workflow\s*,/);
   });
 
-  test('does not have a queue handler', () => {
-    expect(source).not.toMatch(/async\s+queue\s*\(/);
-    expect(source).not.toMatch(/queue\s*\(\s*batch/);
+  test('has a queue handler for Cloudflare Queue compatibility', () => {
+    expect(source).toMatch(/async\s+queue\s*\(/);
+    expect(source).toMatch(/queue\s*\(\s*batch/);
   });
 
   test('uses service binding for job requests', () => {
