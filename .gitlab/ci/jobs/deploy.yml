@@ -16,7 +16,7 @@ deploy:
     - apk add --no-cache go
     - npm ci --cache .npm --prefer-offline 2>&1 | tail -3
   script: |
-    set -eo pipefail
+    set -euo pipefail
     echo "🚀 Deploying to Cloudflare Workers..."
 
     # Check for API Token (preferred) or API Key + Email (legacy)
