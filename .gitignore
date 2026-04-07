@@ -59,3 +59,14 @@ lighthouserc.js
 
 # Logs directory
 logs/
+# Root directory cleanup - compiled binaries (build artifacts)
+/merge-ulw-to-master
+/setup-automation
+/verify-content-integrity
+/verify-health
+
+# Temporary session data (may contain credentials)
+sessions.json
+
+# Git artifacts
+/--head=HEAD
