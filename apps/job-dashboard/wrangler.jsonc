@@ -19,7 +19,6 @@
       "head_sampling_rate": 1,
     },
   },
-  // account_id sourced from CLOUDFLARE_ACCOUNT_ID env var or wrangler-action accountId
   "ai": {
     "binding": "AI",
   },
@@ -87,27 +86,27 @@
   ],
   "routes": [{ "pattern": "resume.jclee.me/job/*", "zone_name": "jclee.me" }],
   "queues": {
-    MM|    "producers": [
-ZQ|      { "queue": "crawl-tasks", "binding": "CRAWL_TASKS" },
-NN|      { "queue": "notifications", "binding": "NOTIFICATION_QUEUE" }
-MM|    ],
-MY|    "consumers": [
-SP|      {
-SX|        "queue": "crawl-tasks",
-SQ|        "max_batch_size": 10,
-NY|        "max_batch_timeout": 30,
-WP|        "max_retries": 5,
-TN|        "dead_letter_queue": "crawl-tasks-dlq",
-RJ|        "max_concurrency": 3,
-XQ|      },
-XT|      {
-SX|        "queue": "notifications",
-SQ|        "max_batch_size": 30,
-NY|        "max_batch_timeout": 10,
-WP|        "max_retries": 3,
-TN|        "dead_letter_queue": "notifications-dlq",
-RJ|        "max_concurrency": 3,
-XQ|      }
-XT|    ],
-XK|  },
+    "producers": [
+      { "queue": "crawl-tasks", "binding": "CRAWL_TASKS" },
+      { "queue": "notifications", "binding": "NOTIFICATION_QUEUE" },
+    ],
+    "consumers": [
+      {
+        "queue": "crawl-tasks",
+        "max_batch_size": 10,
+        "max_batch_timeout": 30,
+        "max_retries": 5,
+        "dead_letter_queue": "crawl-tasks-dlq",
+        "max_concurrency": 3,
+      },
+      {
+        "queue": "notifications",
+        "max_batch_size": 30,
+        "max_batch_timeout": 10,
+        "max_retries": 3,
+        "dead_letter_queue": "notifications-dlq",
+        "max_concurrency": 3,
+      },
+    ],
+  },
 }
