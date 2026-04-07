@@ -19,9 +19,16 @@ import {
 import { logResponse, logError } from '@resume/shared/es-client';
 
 async function fetchJobHandlerResponse(request, env, ctx, pathname) {
+  if (!env.JOB_SERVICE) {
+    return new Response(JSON.stringify({ error: 'Dashboard unavailable in local dev' }), {
+      status: 503,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
   const response = await env.JOB_SERVICE.fetch(request);
   return applyResponseHeaders(response, pathname);
 }
+
 
 export default {
   async fetch(request, env, ctx) {
