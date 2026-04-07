@@ -3,8 +3,7 @@
 import { readFileSync, existsSync } from 'fs';
 import { execSync } from 'child_process';
 import { join } from 'path';
-import { homedir } from 'os';
-import { getResumeMasterDataPath } from '../src/shared/utils/paths.js';
+import { getResumeBasePath, getResumeMasterDataPath } from '../src/shared/utils/paths.js';
 
 const PLATFORMS = ['wanted', 'jobkorea', 'remember'];
 
@@ -125,7 +124,7 @@ async function getPlatformStatus(platform) {
 
     case 'jobkorea':
     case 'remember': {
-      const sessionPath = join(homedir(), `.opencode/data/${platform}-session.json`);
+      const sessionPath = join(getResumeBasePath(), `${platform}-session.json`);
       const hasSession = existsSync(sessionPath);
       return {
         authenticated: hasSession,

@@ -44,7 +44,7 @@ Alternative - JWT Token:
 Alternative - Email/Password Login:
 1. Use: wanted_auth({ action: "login", email: "user@example.com", password: "password" })
 
-Session stored in: ~/.opencode/data/sessions.json (24hr expiry)`,
+Session stored in: <repo-root>/sessions.json (24hr expiry)`,
 
   inputSchema: {
     type: 'object',
@@ -94,19 +94,31 @@ Session stored in: ~/.opencode/data/sessions.json (24hr expiry)`,
         }
 
         // Test cookies by making API request
-        const cookieStr = typeof cookies === 'string' ? cookies : (Array.isArray(cookies) ? cookies.map((c) => `${c.name}=${c.value}`).join('; ') : String(cookies));
+        const cookieStr =
+          typeof cookies === 'string'
+            ? cookies
+            : Array.isArray(cookies)
+              ? cookies.map((c) => `${c.name}=${c.value}`).join('; ')
+              : String(cookies);
         const api = new WantedAPI(cookieStr);
         try {
           const profile = await api.getProfile();
 
           if (profile && (profile.id || profile.email || profile.name)) {
-            const cookieString = typeof cookies === 'string' ? cookies : (Array.isArray(cookies) ? cookies.map((c) => `${c.name}=${c.value}`).join('; ') : String(cookies));
+            const cookieString =
+              typeof cookies === 'string'
+                ? cookies
+                : Array.isArray(cookies)
+                  ? cookies.map((c) => `${c.name}=${c.value}`).join('; ')
+                  : String(cookies);
             SessionManager.save('wanted', {
               token: null,
               email: profile.email || 'unknown',
               cookies,
               cookieString,
-              cookieCount: Array.isArray(cookies) ? cookies.length : cookieString.split(';').filter(Boolean).length,
+              cookieCount: Array.isArray(cookies)
+                ? cookies.length
+                : cookieString.split(';').filter(Boolean).length,
               expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
             });
             return {

@@ -10,7 +10,7 @@ export const CONFIG = {
   GOOGLE_PASSWORD: process.env.GOOGLE_PASSWORD,
   JOB_WORKER_URL: process.env.JOB_WORKER_URL || 'https://resume.jclee.me/job',
   AUTH_SYNC_SECRET: process.env.AUTH_SYNC_SECRET,
-  SESSION_DIR: path.join(process.env.HOME || '/tmp', '.opencode/data'),
+  SESSION_DIR: path.resolve(__dirname, '../../../..'),
   SCREENSHOTS_DIR: path.join(__dirname, '../../.data/screenshots'),
 };
 

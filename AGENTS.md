@@ -1,6 +1,6 @@
 # PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-03-17
+**Generated:** 2026-04-05
 **Commit:** `882b837`
 **Branch:** `master`
 
@@ -32,20 +32,20 @@ Resume monorepo: Cloudflare Worker portfolio, job automation runtimes, dashboard
 
 ## WHERE TO LOOK
 
-| Task                          | Location              | Notes                                                           |
-| ----------------------------- | --------------------- | --------------------------------------------------------------- |
-| Portfolio build/runtime       | `apps/portfolio/`     | `worker.js` is generated; edit source/build pipeline instead    |
-| Wanted/job automation         | `apps/job-server/`    | API clients, crawlers, MCP tools, sync/auth scripts             |
-| Dashboard/API workflows       | `apps/job-dashboard/` | handlers, middleware, Cloudflare workflows                      |
-| Authoritative resume content  | `packages/data/`      | `packages/data/resumes/master/resume_data.json` is the SSoT     |
-| Workspace commands            | `package.json`        | `automate:ssot`, `automate:full`, `build`, `test`               |
+| Task                          | Location              | Notes                                                                      |
+| ----------------------------- | --------------------- | -------------------------------------------------------------------------- |
+| Portfolio build/runtime       | `apps/portfolio/`     | `worker.js` is generated; edit source/build pipeline instead               |
+| Wanted/job automation         | `apps/job-server/`    | API clients, crawlers, MCP tools, sync/auth scripts                        |
+| Dashboard/API workflows       | `apps/job-dashboard/` | handlers, middleware, Cloudflare workflows                                 |
+| Authoritative resume content  | `packages/data/`      | `packages/data/resumes/master/resume_data.json` is the SSoT                |
+| Workspace commands            | `package.json`        | `automate:ssot`, `automate:full`, `build`, `test`                          |
 | CI/release behavior           | `.gitlab/ci/`         | GitLab CI workflows: verify.yml, release.yml, notifications.yml, auto-sync |
-| Shared operational scripts    | `tools/scripts/`      | build, deployment, verification, sync utilities                 |
-| Tests by layer                | `tests/`              | `unit/`, `integration/`, `e2e/` with child guides               |
-| Monitoring and n8n automation | `infrastructure/`     | dashboards, alerting, webhook workflows                         |
-| Design/procedure docs         | `docs/`               | root docs guide plus ADR/architecture child guides              |
-| TA profile generation         | `ta/`                 | Python PPTX scripts, not a workspace package                    |
-| Shared utilities              | `packages/shared/`    | Shared code used across internal packages                       |
+| Shared operational scripts    | `tools/scripts/`      | build, deployment, verification, sync utilities                            |
+| Tests by layer                | `tests/`              | `unit/`, `integration/`, `e2e/` with child guides                          |
+| Monitoring and n8n automation | `infrastructure/`     | dashboards, alerting, webhook workflows                                    |
+| Design/procedure docs         | `docs/`               | root docs guide plus ADR/architecture child guides                         |
+| TA profile generation         | `ta/`                 | Python PPTX scripts, not a workspace package                               |
+| Shared utilities              | `packages/shared/`    | Shared code used across internal packages                                  |
 
 ## CONVENTIONS
 
@@ -66,6 +66,16 @@ Resume monorepo: Cloudflare Worker portfolio, job automation runtimes, dashboard
 - Never add new logic under deprecated wrapper modules; import from `apps/job-server/src/shared/` directly.
 - Never treat docs under `analysis/` or `reports/` as normative rules; canonical rules live in AGENTS or focused guide files.
 
+## Additional Anti-Patterns (from Tier 0 rules)
+
+- Never use `.sh` for operational scripts (use Go `.go` instead).
+- Never suppress type errors with `as any` or `@ts-ignore`.
+- Never batch MCP tool calls (`mcphub_*`); call each directly.
+- Never auto-init a git repo with `initializeIfNotPresent=true`.
+- Never place runtime artifacts in source domains (`logs/`, `data/`, `tmp/`).
+- Never use catch-all names like `utils.ts` or `helpers.js`; use specific names (`date-formatter.js`).
+- Never exceed 200 LOC per file without splitting (see `rules/00-code-modularization.md`).
+
 ## UNIQUE STYLES
 
 - Mixed runtime stack: Cloudflare Worker edge app, Node-based automation runtimes, and selective Python build tooling.
@@ -76,12 +86,34 @@ Resume monorepo: Cloudflare Worker portfolio, job automation runtimes, dashboard
 ## COMMANDS
 
 ```bash
-npm run automate:ssot
-npm run automate:full
-npm run build
-npm test
-npm run test:e2e
-node apps/job-server/scripts/ci-resume-sync.js
+# Full automation pipelines
+npm run automate:ssot     # SSOT sync + build + typecheck + test:node
+npm run automate:full     # Full CI pipeline (sync + lint + test + build + validate)
+
+# Build & development
+npm run build             # Generate worker.js from HTML templates
+npm run dev               # Local dev with Miniflare
+npm run dev:wrangler      # Wrangler dev mode
+
+# Testing
+npm test                  # All tests (Jest + Node)
+npm run test:jest         # Jest unit/integration tests
+npm run test:node         # Node native tests (job-server)
+npm run test:e2e          # Playwright E2E tests
+npm run test:e2e:smoke    # Smoke tests (worker-health + deploy-verification)
+npm run verify:production # Verify against live production site
+
+# Validation & quality
+npm run lint              # ESLint check
+npm run lint:fix          # ESLint auto-fix
+npm run typecheck         # TypeScript strict mode check
+npm run format            # Prettier format
+npm run format:check      # Prettier check only
+
+# Data sync
+npm run sync:data         # Sync resume data from SSoT
+npm run sync:pptx         # Generate PPTX profiles (Shinhan)
+npm run sync:all          # Both sync operations
 ```
 
 ## NOTES

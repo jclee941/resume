@@ -64,4 +64,43 @@ export default async function authRoutes(fastify) {
     reply.clearCookie('session_id', { path: '/' });
     return result;
   });
+  fastify.post('/logout', async (request, reply) => {
+    const sessionId = request.cookies?.session_id;
+    const result = authService.logout(sessionId);
+    reply.clearCookie('session_id', { path: '/' });
+    return result;
+  });
+
+  // Session renewal endpoint for n8n automation
+  fastify.post('/renew', {
+    config: { public: false },
+    handler: async (request, reply) => {
+      const { platform = 'wanted' } = request.body || {};
+      
+      try {
+        const result = await authService.renewSession(platform);
+        
+        if (!result.success) {
+          return reply.status(400).send({
+            success: false,
+            error: result.error,
+            message: 'Session renewal failed. Manual login required.'
+          });
+        }
+        
+        return {
+          success: true,
+          platform,
+          message: 'Session renewed successfully',
+          expiresAt: result.expiresAt
+        };
+      } catch (error) {
+        return reply.status(500).send({
+          success: false,
+          error: error.message,
+          message: 'Session renewal error'
+        });
+      }
+    }
+  });
 }

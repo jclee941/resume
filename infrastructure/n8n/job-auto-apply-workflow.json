@@ -20,9 +20,122 @@
       "position": [100, 300]
     },
     {
+      "id": "check-wanted-session-status",
+      "name": "Check Wanted Session Status",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [400, 300],
+      "continueOnFail": true,
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 10000,
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.JOB_SERVER_URL }}/api/session/wanted/status",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.JOB_SERVER_ADMIN_TOKEN }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 15000
+        }
+      }
+    },
+    {
+      "id": "evaluate-wanted-session",
+      "name": "Evaluate Wanted Session",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [700, 300],
+      "parameters": {
+        "jsCode": "const result = $input.first().json || {};\nconst requestedPlatforms = ['wanted', 'jobkorea', 'saramin'];\nconst thresholdMs = 2 * 60 * 60 * 1000;\nconst expiresAt = result.expiresAt || null;\nconst renewedAt = result.renewedAt || null;\nconst statusCode = result.statusCode || result.code || null;\nconst apiError = result.error || result.message || (statusCode && statusCode >= 400 ? `Session status request failed (${statusCode})` : null);\nconst valid = result.valid === true && !apiError;\nconst expiryTime = expiresAt ? new Date(expiresAt).getTime() : Number.NaN;\nconst nearExpiry = !apiError && Number.isFinite(expiryTime) ? expiryTime - Date.now() <= thresholdMs : false;\nconst needsRenewal = Boolean(apiError || !valid || nearExpiry);\n\nreturn {\n  requestedPlatforms,\n  attemptedPlatforms: [...requestedPlatforms],\n  platformsToRun: [...requestedPlatforms],\n  skippedPlatforms: [],\n  keywords: ['시니어 엔지니어', '클라우드 엔지니어', 'SRE', 'DevOps'],\n  maxApplications: 10,\n  dryRun: false,\n  preflight: {\n    wanted: {\n      checked: true,\n      valid,\n      nearExpiry,\n      needsRenewal,\n      renewed: false,\n      skipped: false,\n      reason: apiError ? 'status_error' : (!valid ? 'invalid_session' : (nearExpiry ? 'near_expiry' : 'valid')),\n      apiError,\n      renewalError: null,\n      expiresAt,\n      renewedAt\n    }\n  }\n};"
+      }
+    },
+    {
+      "id": "wanted-session-requires-renewal",
+      "name": "Wanted Session Requires Renewal",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1000, 300],
+      "parameters": {
+        "conditions": {
+          "conditions": [
+            {
+              "id": "cond-needs-renewal",
+              "leftValue": "={{ $json.preflight.wanted.needsRenewal }}",
+              "rightValue": "={{ true }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "options": {
+            "typeValidation": "strict",
+            "caseSensitive": true,
+            "leftValue": "",
+            "rightValue": ""
+          },
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "renew-wanted-session",
+      "name": "Renew Wanted Session",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1300, 200],
+      "continueOnFail": true,
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 30000,
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.JOB_SERVER_URL }}/api/session/wanted/renew",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.JOB_SERVER_ADMIN_TOKEN }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 120000
+        }
+      }
+    },
+    {
+      "id": "process-renewal-result",
+      "name": "Process Renewal Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1600, 200],
+      "parameters": {
+        "jsCode": "const context = JSON.parse(JSON.stringify($('Evaluate Wanted Session').first().json));\nconst result = $input.first().json || {};\nconst statusCode = result.statusCode || result.code || null;\nconst renewalError = result.error || result.message || (statusCode && statusCode >= 400 ? `Session renewal request failed (${statusCode})` : null);\nconst renewedSession = result.session || {};\nconst renewed = result.success === true && renewedSession.valid === true && !renewalError;\n\ncontext.preflight.wanted.renewed = renewed;\ncontext.preflight.wanted.valid = renewed ? true : context.preflight.wanted.valid;\ncontext.preflight.wanted.needsRenewal = false;\ncontext.preflight.wanted.expiresAt = renewedSession.expiresAt || context.preflight.wanted.expiresAt;\ncontext.preflight.wanted.renewedAt = renewedSession.renewedAt || context.preflight.wanted.renewedAt;\n\nif (renewed) {\n  context.preflight.wanted.reason = 'renewed';\n  context.preflight.wanted.apiError = null;\n  context.preflight.wanted.renewalError = null;\n} else {\n  const failureReason = renewalError || 'Wanted session renewal failed';\n  context.platformsToRun = context.platformsToRun.filter((platform) => platform !== 'wanted');\n  if (!context.skippedPlatforms.includes('wanted')) {\n    context.skippedPlatforms.push('wanted');\n  }\n  context.preflight.wanted.skipped = true;\n  context.preflight.wanted.valid = false;\n  context.preflight.wanted.reason = 'renewal_failed';\n  context.preflight.wanted.renewalError = failureReason;\n}\n\nreturn context;"
+      }
+    },
+    {
+      "id": "build-auto-apply-request",
+      "name": "Build Auto-Apply Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1300, 420],
+      "parameters": {
+        "jsCode": "const context = $input.first().json || {};\nconst requestBody = {\n  dryRun: context.dryRun === true ? true : false,\n  maxApplications: context.maxApplications || 10,\n  platforms: context.platformsToRun || ['jobkorea', 'saramin'],\n  keywords: context.keywords || []\n};\n\nreturn {\n  ...context,\n  requestBody\n};"
+      }
+    },
+    {
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1600, 420],
       "parameters": {
         "options": {
           "timeout": 30000
@@ -44,7 +157,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ dryRun: false, maxApplications: 10, platforms: ['wanted', 'jobkorea', 'saramin'], keywords: ['시니어 엔지니어', '클라우드 엔지니어', 'SRE', 'DevOps'] }) }}"
+        "jsonBody": "={{ JSON.stringify($json.requestBody) }}"
       },
       "id": "trigger-auto-apply",
       "name": "Trigger Auto-Apply"
@@ -58,14 +171,14 @@
       "name": "Wait 30s",
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
-      "position": [700, 300]
+      "position": [1900, 420]
     },
     {
       "id": "poll-status",
       "name": "Poll Status",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1000, 300],
+      "position": [2200, 420],
       "parameters": {
         "method": "GET",
         "url": "={{ $env.JOB_SERVER_URL }}/api/auto-apply/status",
@@ -87,7 +200,7 @@
       "name": "Check if Done",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [1300, 300],
+      "position": [2500, 420],
       "parameters": {
         "conditions": {
           "conditions": [
@@ -123,18 +236,18 @@
     },
     {
       "parameters": {
-        "jsCode": "// Format auto-apply result for telegram-notifier (Shape 4: pipeline status)\nconst status = $input.first().json;\nconst lastResult = status.lastResult || {};\nconst phases = lastResult.phases || {};\nconst searchCount = phases.search?.found || 0;\nconst filterMatched = phases.filter?.stats?.matched || 0;\nconst applied = phases.apply?.succeeded || 0;\nconst failed = phases.apply?.failed || 0;\nconst skipped = phases.apply?.skipped || 0;\n\nconst isSuccess = status.status === 'completed' && lastResult.success;\nconst duration = status.lastRun\n  ? Math.round((Date.now() - new Date(status.lastRun).getTime()) / 1000)\n  : 0;\n\nconst statsLine = `Found ${searchCount} jobs, ${filterMatched} matched, ${applied} applied, ${failed} failed, ${skipped} skipped`;\n\nreturn {\n  isSuccess,\n  status: status.status,\n  channel: 'auto-apply',\n  command: `auto-apply (${status.lastResult?.dryRun ? 'dry-run' : 'live'})`,\n  duration,\n  source: 'job-automation',\n  errorMessage: isSuccess ? null : (lastResult.error || statsLine),\n  outputUrl: null,\n  // Extra context appended as text fallback\n  pollCount: null\n};\n"
+        "jsCode": "const status = $input.first().json || {};\nconst lastResult = status.lastResult || {};\nconst phases = lastResult.phases || {};\nconst requestContext = $('Build Auto-Apply Request').first().json || {};\nconst attemptedPlatforms = requestContext.attemptedPlatforms || [];\nconst executedPlatforms = requestContext.platformsToRun || [];\nconst skippedPlatforms = requestContext.skippedPlatforms || [];\nconst preflight = requestContext.preflight || {};\nconst searchCount = phases.search?.found || 0;\nconst filterMatched = phases.filter?.stats?.matched || phases.filter?.matched || 0;\nconst applied = phases.apply?.succeeded || 0;\nconst failed = phases.apply?.failed || 0;\nconst skipped = phases.apply?.skipped || 0;\nconst isSuccess = status.status === 'completed' && lastResult.success !== false;\nconst duration = status.lastRun ? Math.round((Date.now() - new Date(status.lastRun).getTime()) / 1000) : 0;\nconst statsLine = `Found ${searchCount} jobs, ${filterMatched} matched, ${applied} applied, ${failed} failed, ${skipped} skipped`;\nconst platformStats = lastResult?.results?.phase1_search?.platformStats || phases.search?.platformStats || phases.search?.sourceStats || {};\nconst successes = new Set();\nconst failures = new Set(skippedPlatforms);\nconst platforms = {};\n\nfor (const platform of attemptedPlatforms) {\n  const skippedByPreflight = skippedPlatforms.includes(platform);\n  const stat = platformStats[platform] || {};\n  const ran = executedPlatforms.includes(platform) && !skippedByPreflight;\n  let valid = false;\n\n  if (skippedByPreflight) {\n    valid = false;\n  } else if (Object.keys(platformStats).length > 0) {\n    valid = Boolean(\n      stat.success === true ||\n      stat.succeeded > 0 ||\n      stat.applied > 0 ||\n      stat.found > 0 ||\n      stat.jobs > 0\n    );\n  } else {\n    valid = isSuccess && ran;\n  }\n\n  if (valid) {\n    successes.add(platform);\n  } else if (ran || skippedByPreflight || status.status === 'failed') {\n    failures.add(platform);\n  }\n\n  const reason = skippedByPreflight\n    ? preflight.wanted?.renewalError || preflight.wanted?.apiError || preflight.wanted?.reason || 'skipped'\n    : stat.error || (status.status === 'failed' && ran ? lastResult.error || status.lastError || 'platform_failed' : null);\n\n  platforms[platform] = {\n    attempted: attemptedPlatforms.includes(platform),\n    valid,\n    skipped: skippedByPreflight,\n    reason,\n    expiresAt: platform === 'wanted' ? preflight.wanted?.expiresAt || null : null,\n    renewedAt: platform === 'wanted' ? preflight.wanted?.renewedAt || null : null\n  };\n}\n\nconst successPlatforms = Array.from(successes);\nconst failurePlatforms = Array.from(failures);\nconst reportPayload = {\n  event: 'job-auto-apply-completed',\n  timestamp: new Date().toISOString(),\n  source: 'job-auto-apply',\n  actions: {\n    autoApply: true,\n    sessionPrecheck: true,\n    report: true\n  },\n  summary: {\n    attempted: attemptedPlatforms,\n    executed: executedPlatforms,\n    skipped: skippedPlatforms,\n    successes: successPlatforms,\n    failures: failurePlatforms\n  },\n  platforms,\n  result: {\n    status: status.status,\n    success: isSuccess,\n    dryRun: Boolean(lastResult.dryRun),\n    searchCount,\n    filterMatched,\n    applied,\n    failed,\n    skipped,\n    error: lastResult.error || status.lastError || null\n  }\n};\n\nreturn {\n  isSuccess,\n  status: status.status,\n  channel: 'auto-apply',\n  command: `auto-apply (${lastResult?.dryRun ? 'dry-run' : 'live'})`,\n  duration,\n  source: 'job-automation',\n  errorMessage: isSuccess ? null : (lastResult.error || statsLine),\n  outputUrl: null,\n  pollCount: null,\n  attemptedPlatforms,\n  successPlatforms,\n  failurePlatforms,\n  reportPayload\n};"
       },
       "id": "format-result",
       "name": "Format Result",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1600, 200]
+      "position": [2800, 300]
     },
     {
-      "position": [1600, 400],
+      "position": [2800, 540],
       "parameters": {
-        "jsCode": "// Track poll count to prevent infinite loops\nconst staticData = $getWorkflowStaticData('global');\nstaticData.pollCount = (staticData.pollCount || 0) + 1;\n\nconst MAX_POLLS = 40; // 40 polls * 30s = ~20 minutes max\n\nif (staticData.pollCount >= MAX_POLLS) {\n  // Timeout - reset and notify\n  const count = staticData.pollCount;\n  staticData.pollCount = 0;\n  return {\n    isSuccess: false,\n    status: 'timeout',\n    channel: 'auto-apply',\n    command: 'auto-apply',\n    duration: count * 30,\n    source: 'job-automation',\n    timedOut: true,\n    pollCount: count,\n    errorMessage: `Auto-apply timed out after ${count} polls (~${Math.round(count * 30 / 60)} minutes)`\n  };\n}\n\n// Pass through for another poll cycle\nreturn $input.first().json;\n"
+        "jsCode": "// Track poll count to prevent infinite loops\nconst staticData = $getWorkflowStaticData('global');\nstaticData.pollCount = (staticData.pollCount || 0) + 1;\n\nconst MAX_POLLS = 40; // 40 polls * 30s = ~20 minutes max\n\nif (staticData.pollCount >= MAX_POLLS) {\n  const count = staticData.pollCount;\n  staticData.pollCount = 0;\n  return {\n    isSuccess: false,\n    status: 'timeout',\n    channel: 'auto-apply',\n    command: 'auto-apply',\n    duration: count * 30,\n    source: 'job-automation',\n    timedOut: true,\n    pollCount: count,\n    errorMessage: `Auto-apply timed out after ${count} polls (~${Math.round(count * 30 / 60)} minutes)`\n  };\n}\n\nreturn $input.first().json;"
       },
       "id": "increment-poll",
       "name": "Increment Poll Count",
@@ -145,7 +258,7 @@
       "name": "Check Timeout",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [1900, 400],
+      "position": [3100, 540],
       "parameters": {
         "conditions": {
           "conditions": [
@@ -173,19 +286,65 @@
     {
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1900, 200],
+      "position": [3100, 300],
       "parameters": {
-        "jsCode": "// Reset poll counter on completion\nconst staticData = $getWorkflowStaticData('global');\nstaticData.pollCount = 0;\nreturn $input.first().json;\n"
+        "jsCode": "// Reset poll counter on completion\nconst staticData = $getWorkflowStaticData('global');\nstaticData.pollCount = 0;\nreturn $input.first().json;"
       },
       "id": "reset-poll-count",
       "name": "Reset Poll Count"
+    },
+    {
+      "id": "send-completion-report",
+      "name": "Send Completion Report",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [3400, 220],
+      "continueOnFail": true,
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.AUTOMATION_WEBHOOK_URL }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.reportPayload) }}",
+        "options": {
+          "timeout": 15000
+        }
+      }
+    },
+    {
+      "id": "build-timeout-report",
+      "name": "Build Timeout Report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [3400, 540],
+      "parameters": {
+        "jsCode": "const payload = $input.first().json || {};\nconst requestContext = $('Build Auto-Apply Request').first().json || {};\nconst attemptedPlatforms = requestContext.attemptedPlatforms || [];\nconst executedPlatforms = requestContext.platformsToRun || [];\nconst skippedPlatforms = requestContext.skippedPlatforms || [];\nconst preflight = requestContext.preflight || {};\nconst failures = Array.from(new Set([...executedPlatforms, ...skippedPlatforms]));\nconst platforms = {};\n\nfor (const platform of attemptedPlatforms) {\n  const skippedByPreflight = skippedPlatforms.includes(platform);\n  platforms[platform] = {\n    attempted: attemptedPlatforms.includes(platform),\n    valid: false,\n    skipped: skippedByPreflight,\n    reason: skippedByPreflight\n      ? preflight.wanted?.renewalError || preflight.wanted?.apiError || preflight.wanted?.reason || 'skipped'\n      : payload.errorMessage || 'timeout',\n    expiresAt: platform === 'wanted' ? preflight.wanted?.expiresAt || null : null,\n    renewedAt: platform === 'wanted' ? preflight.wanted?.renewedAt || null : null\n  };\n}\n\nreturn {\n  ...payload,\n  reportPayload: {\n    event: 'job-auto-apply-timeout',\n    timestamp: new Date().toISOString(),\n    source: 'job-auto-apply',\n    actions: {\n      autoApply: true,\n      sessionPrecheck: true,\n      report: true\n    },\n    summary: {\n      attempted: attemptedPlatforms,\n      executed: executedPlatforms,\n      skipped: skippedPlatforms,\n      successes: [],\n      failures\n    },\n    platforms,\n    result: {\n      status: 'timeout',\n      success: false,\n      error: payload.errorMessage || 'Auto-apply timed out'\n    }\n  }\n};"
+      }
+    },
+    {
+      "id": "send-timeout-report",
+      "name": "Send Timeout Report",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [3700, 480],
+      "continueOnFail": true,
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.AUTOMATION_WEBHOOK_URL }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.reportPayload) }}",
+        "options": {
+          "timeout": 15000
+        }
+      }
     },
     {
       "id": "notify-success",
       "name": "Notify Result",
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.1,
-      "position": [2200, 200],
+      "position": [3700, 300],
       "parameters": {
         "workflowId": "PV5yLgHNzNSlCmRT",
         "workflowInputs": {
@@ -195,7 +354,7 @@
     },
     {
       "typeVersion": 1.1,
-      "position": [2200, 400],
+      "position": [3700, 600],
       "parameters": {
         "workflowInputs": {
           "value": {}
@@ -208,20 +367,38 @@
     },
     {
       "parameters": {
-        "jsCode": "// Build error notification payload\nconst error = $input.first().json;\nreturn {\n  isSuccess: false,\n  status: 'error',\n  channel: 'auto-apply',\n  command: 'auto-apply',\n  duration: 0,\n  source: 'job-automation',\n  errorMessage: error.message || JSON.stringify(error).substring(0, 500)\n};\n"
+        "jsCode": "const error = $input.first().json || {};\nconst requestContext = $('Build Auto-Apply Request').first().json || {};\nconst attemptedPlatforms = requestContext.attemptedPlatforms || [];\nconst executedPlatforms = requestContext.platformsToRun || [];\nconst skippedPlatforms = requestContext.skippedPlatforms || [];\nconst preflight = requestContext.preflight || {};\nconst platforms = {};\n\nfor (const platform of attemptedPlatforms) {\n  const skippedByPreflight = skippedPlatforms.includes(platform);\n  platforms[platform] = {\n    attempted: attemptedPlatforms.includes(platform),\n    valid: false,\n    skipped: skippedByPreflight,\n    reason: skippedByPreflight\n      ? preflight.wanted?.renewalError || preflight.wanted?.apiError || preflight.wanted?.reason || 'skipped'\n      : error.message || JSON.stringify(error).substring(0, 200),\n    expiresAt: platform === 'wanted' ? preflight.wanted?.expiresAt || null : null,\n    renewedAt: platform === 'wanted' ? preflight.wanted?.renewedAt || null : null\n  };\n}\n\nreturn {\n  isSuccess: false,\n  status: 'error',\n  channel: 'auto-apply',\n  command: 'auto-apply',\n  duration: 0,\n  source: 'job-automation',\n  errorMessage: error.message || JSON.stringify(error).substring(0, 500),\n  reportPayload: {\n    event: 'job-auto-apply-error',\n    timestamp: new Date().toISOString(),\n    source: 'job-auto-apply',\n    actions: {\n      autoApply: true,\n      sessionPrecheck: true,\n      report: true\n    },\n    summary: {\n      attempted: attemptedPlatforms,\n      executed: executedPlatforms,\n      skipped: skippedPlatforms,\n      successes: [],\n      failures: Array.from(new Set([...executedPlatforms, ...skippedPlatforms]))\n    },\n    platforms,\n    result: {\n      status: 'error',\n      success: false,\n      error: error.message || JSON.stringify(error).substring(0, 500)\n    }\n  }\n};"
       },
       "id": "error-handler",
       "name": "Handle Error",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [400, 600]
+      "position": [400, 700]
+    },
+    {
+      "id": "send-error-report",
+      "name": "Send Error Report",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [700, 650],
+      "continueOnFail": true,
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.AUTOMATION_WEBHOOK_URL }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.reportPayload) }}",
+        "options": {
+          "timeout": 15000
+        }
+      }
     },
     {
       "id": "notify-error",
       "name": "Notify Error",
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.1,
-      "position": [700, 600],
+      "position": [1000, 760],
       "parameters": {
         "workflowInputs": {
           "value": {}
@@ -231,11 +408,84 @@
     }
   ],
   "connections": {
-    "Handle Error": {
+    "Daily Schedule": {
       "main": [
         [
           {
-            "node": "Notify Error",
+            "node": "Check Wanted Session Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Wanted Session Status": {
+      "main": [
+        [
+          {
+            "node": "Evaluate Wanted Session",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evaluate Wanted Session": {
+      "main": [
+        [
+          {
+            "node": "Wanted Session Requires Renewal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wanted Session Requires Renewal": {
+      "main": [
+        [
+          {
+            "node": "Renew Wanted Session",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Auto-Apply Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Renew Wanted Session": {
+      "main": [
+        [
+          {
+            "node": "Process Renewal Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Renewal Result": {
+      "main": [
+        [
+          {
+            "node": "Build Auto-Apply Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Auto-Apply Request": {
+      "main": [
+        [
+          {
+            "node": "Trigger Auto-Apply",
             "type": "main",
             "index": 0
           }
@@ -253,62 +503,11 @@
         ]
       ]
     },
-    "Increment Poll Count": {
-      "main": [
-        [
-          {
-            "node": "Check Timeout",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Daily Schedule": {
-      "main": [
-        [
-          {
-            "type": "main",
-            "index": 0,
-            "node": "Trigger Auto-Apply"
-          }
-        ]
-      ]
-    },
     "Wait 30s": {
       "main": [
         [
           {
-            "index": 0,
             "node": "Poll Status",
-            "type": "main"
-          }
-        ]
-      ]
-    },
-    "Check if Done": {
-      "main": [
-        [
-          {
-            "type": "main",
-            "index": 0,
-            "node": "Format Result"
-          }
-        ],
-        [
-          {
-            "index": 0,
-            "node": "Increment Poll Count",
-            "type": "main"
-          }
-        ]
-      ]
-    },
-    "Reset Poll Count": {
-      "main": [
-        [
-          {
-            "node": "Notify Result",
             "type": "main",
             "index": 0
           }
@@ -319,9 +518,27 @@
       "main": [
         [
           {
-            "index": 0,
             "node": "Check if Done",
-            "type": "main"
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if Done": {
+      "main": [
+        [
+          {
+            "node": "Format Result",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Increment Poll Count",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -337,20 +554,79 @@
         ]
       ]
     },
+    "Reset Poll Count": {
+      "main": [
+        [
+          {
+            "node": "Send Completion Report",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Notify Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Increment Poll Count": {
+      "main": [
+        [
+          {
+            "node": "Check Timeout",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
     "Check Timeout": {
       "main": [
         [
           {
-            "node": "Notify Timeout",
+            "node": "Build Timeout Report",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "index": 0,
             "node": "Wait 30s",
-            "type": "main"
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Timeout Report": {
+      "main": [
+        [
+          {
+            "node": "Send Timeout Report",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Notify Timeout",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Handle Error": {
+      "main": [
+        [
+          {
+            "node": "Send Error Report",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Notify Error",
+            "type": "main",
+            "index": 0
           }
         ]
       ]

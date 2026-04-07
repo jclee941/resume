@@ -11,6 +11,7 @@ const urlCjs = require('url');
 
 mock.method(osCjs, 'homedir', () => '/home/tester');
 syncBuiltinESMExports();
+process.env.RESUME_BASE_PATH = '/home/tester/dev/resume';
 const { SessionManager } = await import('../session-manager.js');
 
 function createFsState(initialFiles = {}) {
@@ -44,8 +45,8 @@ function setupFs(options = {}) {
   syncBuiltinESMExports();
   return {
     state,
-    sessionFile: '/home/tester/.opencode/data/sessions.json',
-    dataDir: join('/home/tester', '.opencode', 'data'),
+    sessionFile: '/home/tester/dev/resume/sessions.json',
+    dataDir: '/home/tester/dev/resume',
   };
 }
 
@@ -65,7 +66,7 @@ describe('SessionManager', () => {
     const now = Date.now();
     setupFs({
       files: {
-        '/home/tester/.opencode/data/sessions.json': JSON.stringify({
+        '/home/tester/dev/resume/sessions.json': JSON.stringify({
           wanted: { timestamp: now - 1000, email: 'w@example.com' },
           saramin: { timestamp: now - 8 * 24 * 60 * 60 * 1000, email: 's@example.com' },
         }),
@@ -80,7 +81,7 @@ describe('SessionManager', () => {
   it('returns fallback when session file is malformed', () => {
     setupFs({
       files: {
-        '/home/tester/.opencode/data/sessions.json': '{bad-json',
+        '/home/tester/dev/resume/sessions.json': '{bad-json',
       },
     });
     SessionManager.logger = { error: mock.fn() };
@@ -162,7 +163,7 @@ describe('SessionManager', () => {
     const now = Date.now();
     const { state, sessionFile } = setupFs({
       files: {
-        '/home/tester/.opencode/data/sessions.json': JSON.stringify({
+        '/home/tester/dev/resume/sessions.json': JSON.stringify({
           wanted: { timestamp: now },
           saramin: { timestamp: now },
         }),
@@ -259,7 +260,7 @@ describe('SessionManager', () => {
     const expired = SessionManager.checkHealth('expired');
     const soon = SessionManager.checkHealth('soon', 2 * 60 * 1000);
 
-    assert.deepEqual(missing, { valid: false, expiringSoon: false, expiresAt: null });
+    assert.deepEqual(missing, { valid: false, expiringSoon: false, expiresAt: null, reason: 'no_session' });
     assert.equal(valid.valid, true);
     assert.equal(valid.expiringSoon, false);
     assert.equal(expired.valid, false);

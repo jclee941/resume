@@ -11,6 +11,7 @@ import autoApplyRoutes from './auto-apply.js';
 import profileRoutes from './profile.js';
 import dashboardRoutes from './dashboard.js';
 import analyticsRoutes from './analytics.js';
+import sessionBrokerRoutes from '../../session-broker/server/session-broker-routes.js';
 
 export {
   authRoutes,
@@ -25,4 +26,5 @@ export {
   resumeSyncRoutes,
   dashboardRoutes,
   analyticsRoutes,
+  sessionBrokerRoutes,
 };

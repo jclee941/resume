@@ -23,6 +23,12 @@ let _startupPromise = null;
 const applications = [];
 let requestCount = 0;
 
+function resetMockState() {
+  applications.length = 0;
+  requestCount = 0;
+  cookieJar.clear();
+}
+
 // Realistic user agent pool for stealth verification
 const USER_AGENTS = [
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -494,6 +500,19 @@ function createMockServerInternal(port = 9393) {
         return;
       }
 
+      if (url.pathname === '/__admin/reset' && req.method === 'POST') {
+        resetMockState();
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, count: applications.length }));
+        return;
+      }
+
+      if (url.pathname === '/__admin/applications/count' && req.method === 'GET') {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ count: applications.length, requestCount }));
+        return;
+      }
+
       // Stealth verification endpoint
       if (url.pathname === '/stealth/check') {
         res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -532,7 +551,6 @@ function createMockServerInternal(port = 9393) {
         res.end(getApplicationFormHtml(jobId));
         return;
       }
-
 
       // Application form (GET)
       if (url.pathname === '/apply' || url.pathname === '/apply/') {
@@ -605,14 +623,14 @@ function createMockServerInternal(port = 9393) {
       if (url.pathname === '/health') {
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ status: 'ok', requestCount }));
-    }
+      }
 
-    // Favicon handler to prevent 404 errors during page load
-    if (url.pathname === '/favicon.ico' || url.pathname === '/favicon.png') {
-      res.writeHead(204);
-      res.end();
-      return;
-    }
+      // Favicon handler to prevent 404 errors during page load
+      if (url.pathname === '/favicon.ico' || url.pathname === '/favicon.png') {
+        res.writeHead(204);
+        res.end();
+        return;
+      }
 
       // 404 for unknown routes
       res.writeHead(404, { 'Content-Type': 'application/json' });
@@ -685,8 +703,21 @@ async function stopMockServer(server) {
 /**
  * Get application count
  */
-function getApplicationCount() {
-  return applications.length;
+async function getApplicationCount(port = 9393) {
+  const serverUrl = _serverUrl || `http://localhost:${port}`;
+
+  try {
+    const response = await fetch(`${serverUrl}/__admin/applications/count`);
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch application count: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.count;
+  } catch {
+    return applications.length;
+  }
 }
 
 /**
@@ -699,10 +730,41 @@ function getApplications() {
 /**
  * Reset applications (for test cleanup)
  */
-function resetApplications() {
-  applications.length = 0;
-  requestCount = 0;
-  cookieJar.clear();
+async function resetApplications(port = 9393) {
+  const serverUrl = _serverUrl || `http://localhost:${port}`;
+
+  try {
+    const response = await fetch(`${serverUrl}/__admin/reset`, {
+      method: 'POST',
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to reset mock server state: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.count;
+  } catch {
+    resetMockState();
+    return applications.length;
+  }
+}
+
+async function waitForApplicationCount(expectedCount, options = {}) {
+  const { timeout = 5000, interval = 50, port = 9393 } = options;
+  const startedAt = Date.now();
+
+  while (Date.now() - startedAt < timeout) {
+    const count = await getApplicationCount(port);
+
+    if (count === expectedCount) {
+      return count;
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, interval));
+  }
+
+  return getApplicationCount(port);
 }
 
 module.exports = {
@@ -712,6 +774,7 @@ module.exports = {
   getApplicationCount,
   getApplications,
   resetApplications,
+  waitForApplicationCount,
   getApplicationFormHtml,
   getMultiStepFormHtml,
   USER_AGENTS,

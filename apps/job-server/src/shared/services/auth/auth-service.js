@@ -172,7 +172,69 @@ export class AuthService {
     }
     return true;
   }
+  /**
+   * Renew platform session (attempt automated renewal)
+   * @param {string} platform
+   * @returns {{success: boolean, message?: string, error?: string, expiresAt?: string}}
+   */
+  async renewSession(platform) {
+    const currentSession = SessionManager.load(platform);
+    
+    if (!currentSession) {
+      return {
+        success: false,
+        error: `No existing session for ${platform}`,
+      };
+    }
 
+    // Check if session is still valid
+    const health = SessionManager.checkHealth(platform, 2 * 60 * 60 * 1000);
+    
+    if (health.valid && !health.expiringSoon) {
+      return {
+        success: true,
+        message: `Session for ${platform} is still valid`,
+        expiresAt: health.expiresAt,
+      };
+    }
+
+    // Attempt CDP-based renewal
+    try {
+      const { execSync } = await import('child_process');
+      const { fileURLToPath } = await import('url');
+      const { dirname: dn, join: jn } = await import('path');
+      const __dirname = dn(fileURLToPath(import.meta.url));
+      const cdpScript = jn(__dirname, '..', '..', '..', '..', 'scripts', 'extract-cookies-cdp.js');
+
+      execSync(`node ${cdpScript} ${platform}`, {
+        encoding: 'utf8',
+        stdio: 'pipe',
+        timeout: 30000,
+      });
+
+      // Verify renewal
+      const newSession = SessionManager.load(platform);
+      if (newSession && newSession.timestamp > Date.now() - 60000) {
+        return {
+          success: true,
+          message: `Session renewed for ${platform}`,
+          expiresAt: newSession.expiresAt,
+        };
+      }
+
+      return {
+        success: false,
+        error: 'CDP extraction completed but session not updated',
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: `Renewal failed: ${error.message}`,
+      };
+    }
+  }
+
+  /**
   /**
    * Get session TTL in seconds (for cookie Max-Age)
    * @returns {number}

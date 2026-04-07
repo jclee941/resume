@@ -1,14 +1,11 @@
 import { chromium } from 'playwright';
 import { readFileSync, existsSync } from 'fs';
-import { join } from 'path';
-import { homedir } from 'os';
+import { join, dirname } from 'path';
+import { getResumeBasePath } from '../../src/shared/utils/paths.js';
 
-const PROJECT_ROOT = join(homedir(), 'dev/resume');
-const RESUME_DATA_PATH = join(
-  PROJECT_ROOT,
-  'packages/data/resumes/master/resume_data.json',
-);
-const SESSION_PATH = join(homedir(), '.opencode/data/remember-session.json');
+const PROJECT_ROOT = getResumeBasePath();
+const RESUME_DATA_PATH = join(PROJECT_ROOT, 'packages/data/resumes/master/resume_data.json');
+const SESSION_PATH = join(PROJECT_ROOT, 'remember-session.json');
 
 const REMEMBER_URLS = {
   home: 'https://career.rememberapp.co.kr',
@@ -47,7 +44,15 @@ export class RememberProfileSync {
           .filter((p) => p && p.includes('='))
           .map((p) => {
             const [name, ...v] = p.split('=');
-            return { name: name.trim(), value: v.join('=').trim(), domain: '.rememberapp.co.kr', path: '/', httpOnly: false, secure: true, sameSite: 'Lax' };
+            return {
+              name: name.trim(),
+              value: v.join('=').trim(),
+              domain: '.rememberapp.co.kr',
+              path: '/',
+              httpOnly: false,
+              secure: true,
+              sameSite: 'Lax',
+            };
           });
         if (parsed.length > 0) await context.addCookies(parsed);
       }
@@ -72,7 +77,7 @@ export class RememberProfileSync {
 
     const cookies = await this.page.context().cookies();
     const fs = await import('fs/promises');
-    await fs.mkdir(join(homedir(), '.opencode/data'), { recursive: true });
+    await fs.mkdir(dirname(SESSION_PATH), { recursive: true });
     await fs.writeFile(SESSION_PATH, JSON.stringify({ cookies }, null, 2));
 
     console.log('Login successful, session saved.');
@@ -128,25 +133,19 @@ export class RememberProfileSync {
   }
 
   async updateHeadline(sourceData) {
-    const editBtn = await this.page.$(
-      'button:has-text("수정"), [class*="edit"]',
-    );
+    const editBtn = await this.page.$('button:has-text("수정"), [class*="edit"]');
     if (editBtn) {
       await editBtn.click();
       await this.page.waitForTimeout(500);
     }
 
     const headline = `${sourceData.current?.position || sourceData.careers?.[0]?.role || ''} | ${sourceData.summary.totalExperience}`;
-    const headlineInput = await this.page.$(
-      'input[name*="headline"], textarea[name*="intro"]',
-    );
+    const headlineInput = await this.page.$('input[name*="headline"], textarea[name*="intro"]');
     if (headlineInput) {
       await headlineInput.fill(headline);
     }
 
-    const saveBtn = await this.page.$(
-      'button:has-text("저장"), button[type="submit"]',
-    );
+    const saveBtn = await this.page.$('button:has-text("저장"), button[type="submit"]');
     if (saveBtn) {
       await saveBtn.click();
       await this.page.waitForTimeout(1000);
@@ -154,9 +153,7 @@ export class RememberProfileSync {
   }
 
   async updateCareers(careers) {
-    const careerSection = await this.page.$(
-      '[class*="career"], [data-section="career"]',
-    );
+    const careerSection = await this.page.$('[class*="career"], [data-section="career"]');
     if (!careerSection) return;
 
     for (const career of careers.slice(0, 5)) {
@@ -166,9 +163,7 @@ export class RememberProfileSync {
         await this.page.waitForTimeout(500);
       }
 
-      const companyInput = await this.page.$(
-        'input[name*="company"]:last-of-type',
-      );
+      const companyInput = await this.page.$('input[name*="company"]:last-of-type');
       if (companyInput) {
         await companyInput.fill(career.company);
       }
@@ -178,9 +173,7 @@ export class RememberProfileSync {
         await titleInput.fill(career.role);
       }
 
-      const periodInput = await this.page.$(
-        'input[name*="period"]:last-of-type',
-      );
+      const periodInput = await this.page.$('input[name*="period"]:last-of-type');
       if (periodInput) {
         await periodInput.fill(career.period);
       }
@@ -188,15 +181,11 @@ export class RememberProfileSync {
   }
 
   async updateSkills(skills) {
-    const skillSection = await this.page.$(
-      '[class*="skill"], [data-section="skill"]',
-    );
+    const skillSection = await this.page.$('[class*="skill"], [data-section="skill"]');
     if (!skillSection) return;
 
     for (const skill of skills) {
-      const skillInput = await this.page.$(
-        'input[name*="skill"], input[placeholder*="스킬"]',
-      );
+      const skillInput = await this.page.$('input[name*="skill"], input[placeholder*="스킬"]');
       if (skillInput) {
         await skillInput.fill(skill);
         await this.page.keyboard.press('Enter');
