@@ -54,11 +54,13 @@ The n8n instance at `n8n.jclee.me` is protected by Cloudflare Access. The deploy
 ### Method 1: Service Tokens (Recommended)
 
 **Get credentials from Cloudflare Dashboard:**
+
 1. Go to https://dash.cloudflare.com → Access → Service Auth → Service Tokens
 2. Create a new token for `n8n.jclee.me`
 3. Copy Client ID and Client Secret
 
 **Set environment variables:**
+
 ```bash
 export N8N_API_KEY="your-n8n-api-key"
 export CF_ACCESS_CLIENT_ID="your-client-id@your-account.cloudflareaccess.com"
@@ -68,6 +70,7 @@ export CF_ACCESS_CLIENT_SECRET="your-client-secret"
 ### Method 2: Browser Session Cookies
 
 **Use browser automation to get cookies:**
+
 ```bash
 # Install Playwright if not already installed
 npm install -g playwright
@@ -82,6 +85,7 @@ export CF_ACCESS_COOKIE="CF_Authorization=xxx; CF_Access=yyy"
 ### Method 3: SSH Tunnel (Bypass Cloudflare)
 
 **Connect directly to internal n8n:**
+
 ```bash
 # Create SSH tunnel
 ssh -f -N -L 15678:192.168.50.100:5678 root@192.168.50.100
@@ -328,8 +332,12 @@ See `resume-healthcheck-workflow.json` for full configuration.
 
 **Features**:
 
+- Pre-flight Wanted session check via Session Broker `GET /api/session/wanted/status`
+- Conditional Wanted renewal via `POST /api/session/wanted/renew` when invalid or near expiry
+- Graceful degradation: skip Wanted and continue other platforms when renewal fails
 - Triggers auto-apply run via job-server REST API
 - Polls for completion with 30-second intervals (max 40 polls = ~20 min timeout)
+- Sends completion/timeout/error reports to `automation-webhook-receiver`
 - Formats results and sends Telegram notification via `telegram-notifier`
 - Error handling branch for API failures
 - Timeout protection with automatic notification
@@ -337,17 +345,23 @@ See `resume-healthcheck-workflow.json` for full configuration.
 **Workflow Flow**:
 
 ```
-Daily 9am KST → POST /api/auto-apply/run → Wait 30s → Poll Status
-  → Done? → Format Result → Reset Poll Count → Telegram Notify
-  → Not Done? → Increment Poll → Timeout? → Notify Timeout
+Daily 9am KST → GET /api/session/wanted/status
+  → Valid → POST /api/auto-apply/run
+  → Invalid/Near expiry → POST /api/session/wanted/renew
+      → Renewal OK → POST /api/auto-apply/run
+      → Renewal failed → Skip Wanted → POST /api/auto-apply/run
+  → Wait 30s → Poll Status
+  → Done? → Format Result → Report to automation-webhook-receiver → Telegram Notify
+  → Not Done? → Increment Poll → Timeout? → Report Timeout → Telegram Notify
                                          → Not Timeout → Wait 30s (loop)
-  → Error? → Format Error → Telegram Notify
+  → Error? → Format Error → Report Error → Telegram Notify
 ```
 
 **Configuration**:
 
 - `JOB_SERVER_URL`: Base URL of the job automation server
 - `JOB_SERVER_ADMIN_TOKEN`: Bearer token for API authentication
+- `AUTOMATION_WEBHOOK_URL`: automation-webhook-receiver endpoint for completion reporting
 - Default platforms: Wanted, JobKorea, Saramin
 - Default keywords: 시니어 엔지니어, 클라우드 엔지니어, SRE, DevOps
 - Max applications per run: 10
@@ -452,6 +466,7 @@ CLOUDFLARE_ACCOUNT_ID=your-account-id
 # Job Auto-Apply
 JOB_SERVER_URL=https://your-job-server.example.com
 JOB_SERVER_ADMIN_TOKEN=your-admin-bearer-token
+AUTOMATION_WEBHOOK_URL=https://n8n.jclee.me/webhook/automation-run-report
 ```
 
 ## Deployment Readiness

@@ -24,7 +24,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const CONFIG = {
   USER_DATA_DIR: path.join(process.env.HOME || '/tmp', '.opencode/browser-data'),
-  SESSION_DIR: path.join(process.env.HOME || '/tmp', '.opencode/data'),
+  SESSION_DIR: path.resolve(__dirname, '../../..'),
   JOB_WORKER_URL: process.env.JOB_WORKER_URL || 'https://resume.jclee.me/job',
   AUTH_SYNC_SECRET: process.env.AUTH_SYNC_SECRET,
 };
@@ -47,12 +47,17 @@ const PLATFORMS = {
     cookieDomains: ['jobkorea.co.kr'],
     // JobKorea serves error pages on /User/ URLs without redirect — need content check
     verifyLogin: async (page) => {
-      return page.evaluate(() => {
-        const body = document.body?.innerText || '';
-        if (body.includes('찾을 수 없습니다') || body.includes('페이지의 주소가 변경')) return false;
-        return document.querySelector('.resumeList, .myPage, #container .user') !== null
-          || (body.includes('이력서') && !body.includes('로그인'));
-      }).catch(() => false);
+      return page
+        .evaluate(() => {
+          const body = document.body?.innerText || '';
+          if (body.includes('찾을 수 없습니다') || body.includes('페이지의 주소가 변경'))
+            return false;
+          return (
+            document.querySelector('.resumeList, .myPage, #container .user') !== null ||
+            (body.includes('이력서') && !body.includes('로그인'))
+          );
+        })
+        .catch(() => false);
     },
   },
   saramin: {
@@ -117,9 +122,7 @@ async function runPlatform(platformKey, reset = false) {
 
     const currentUrl = page.url();
     // Use platform-specific content verification when available (e.g. JobKorea error pages)
-    const hasUserContent = platform.verifyLogin
-      ? await platform.verifyLogin(page)
-      : true; // Platforms that redirect on auth failure need URL check only
+    const hasUserContent = platform.verifyLogin ? await platform.verifyLogin(page) : true; // Platforms that redirect on auth failure need URL check only
     const isLoggedIn = currentUrl.includes(platform.successIndicator) && hasUserContent;
 
     if (isLoggedIn) {
@@ -149,9 +152,7 @@ async function runPlatform(platformKey, reset = false) {
           });
           await sleep(2000);
 
-          const postLoginContent = platform.verifyLogin
-            ? await platform.verifyLogin(page)
-            : true;
+          const postLoginContent = platform.verifyLogin ? await platform.verifyLogin(page) : true;
           if (page.url().includes(platform.successIndicator) && postLoginContent) {
             log('Login successful! State saved for future runs.', 'success', platformKey);
             break;
@@ -219,7 +220,11 @@ async function syncToWorker(session) {
       },
       body: JSON.stringify({
         platform: session.platform,
-        cookies: session.cookieString || (Array.isArray(session.cookies) ? session.cookies.map((c) => `${c.name}=${c.value}`).join('; ') : session.cookies),
+        cookies:
+          session.cookieString ||
+          (Array.isArray(session.cookies)
+            ? session.cookies.map((c) => `${c.name}=${c.value}`).join('; ')
+            : session.cookies),
         expiresIn: 7 * 24 * 60 * 60 * 1000, // 7 days
       }),
     });

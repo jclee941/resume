@@ -1,10 +1,10 @@
 import { chromium } from 'playwright';
 import { readFileSync, existsSync } from 'fs';
-import { join } from 'path';
-import { homedir } from 'os';
-import { getResumeMasterDataPath } from '../../src/shared/utils/paths.js';
+import { join, dirname } from 'path';
+import { getResumeBasePath, getResumeMasterDataPath } from '../../src/shared/utils/paths.js';
 import { BaseCrawler } from '../../src/crawlers/base-crawler.js';
-const SESSION_PATH = join(homedir(), '.opencode/data/saramin-session.json');
+const PROJECT_ROOT = getResumeBasePath();
+const SESSION_PATH = join(PROJECT_ROOT, 'saramin-session.json');
 
 const SARAMIN_URLS = {
   login: 'https://www.saramin.co.kr/zf_user/login',
@@ -120,7 +120,7 @@ export class SaraminProfileSync {
 
     const cookies = await this.page.context().cookies();
     const fs = await import('fs/promises');
-    await fs.mkdir(join(homedir(), '.opencode/data'), { recursive: true });
+    await fs.mkdir(dirname(SESSION_PATH), { recursive: true });
     await fs.writeFile(SESSION_PATH, JSON.stringify({ cookies }, null, 2));
 
     console.log('Login successful, session saved.');

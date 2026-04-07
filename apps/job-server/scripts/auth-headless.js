@@ -18,7 +18,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const CONFIG = {
   USER_DATA_DIR: path.join(process.env.HOME || '/tmp', '.opencode/browser-data'),
-  SESSION_DIR: path.join(process.env.HOME || '/tmp', '.opencode/data'),
+  SESSION_DIR: path.resolve(__dirname, '../../..'),
 };
 
 const PLATFORMS = {

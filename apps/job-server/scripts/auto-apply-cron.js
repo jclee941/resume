@@ -71,7 +71,7 @@ async function checkSessionHealth() {
     const result = execSync(
       `node -e "
         import { SessionManager } from './src/shared/services/session/index.js';
-        const h = SessionManager.checkHealth('wanted');
+        const h = SessionManager.checkHealth('wanted', 2 * 60 * 60 * 1000, true);
         console.log(JSON.stringify(h));
       "`,
       { cwd: PROJECT_ROOT, encoding: 'utf8', stdio: 'pipe', timeout: 10000 }
@@ -147,7 +147,7 @@ async function attemptSessionRefresh() {
             cookies: '${cookieString}',
             cookieString: '${cookieString}',
           });
-          const h = SessionManager.checkHealth('wanted');
+          const h = SessionManager.checkHealth('wanted', 2 * 60 * 60 * 1000, true);
           console.log(JSON.stringify(h));
         "`,
         { cwd: PROJECT_ROOT, encoding: 'utf8', stdio: 'pipe', timeout: 10000 }

@@ -1,0 +1,64 @@
+services:
+  session-broker:
+    container_name: session-broker
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/session-broker.Dockerfile
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      DASHBOARD_PORT: 3456
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      CLOAK_BROWSER_HEADLESS: 'false'
+      STEALTH_BROWSER_ENDPOINT: http://stealth-browser:8080
+      WANTED_PROFILE_DIR: /app/profiles/wanted
+      TZ: Asia/Seoul
+      LANG: ko_KR.UTF-8
+      LANGUAGE: ko_KR:ko
+      LC_ALL: ko_KR.UTF-8
+    ports:
+      - '3456:3456'
+    volumes:
+      - session-broker-profiles:/app/profiles
+    depends_on:
+      stealth-browser:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD', 'curl', '-fsS', 'http://localhost:3456/api/session/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    command: ['npm', 'run', 'server', '--workspace', '@resume/job-automation']
+    networks:
+      - session-broker-network
+
+  stealth-browser:
+    image: psyb0t/stealthy-auto-browse:latest
+    container_name: session-broker-stealth-browser
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Seoul
+      LANG: ko_KR.UTF-8
+      LANGUAGE: ko_KR:ko
+      LC_ALL: ko_KR.UTF-8
+    expose:
+      - '8080'
+      - '5900'
+    volumes:
+      - session-broker-profiles:/app/profiles
+    healthcheck:
+      test: ['CMD', 'curl', '-fsS', 'http://localhost:8080/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - session-broker-network
+
+volumes:
+  session-broker-profiles:
+    driver: local
+
+networks:
+  session-broker-network:
+    driver: bridge

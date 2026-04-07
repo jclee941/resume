@@ -1,0 +1,202 @@
+{
+  "id": "session-renewal-wanted",
+  "name": "session-renewal-wanted",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtMinute": 0,
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Daily 8AM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [100, 300]
+    },
+    {
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [400, 300],
+      "continueOnFail": true,
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 30000,
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.JOB_SERVER_URL }}/api/session/wanted/renew",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.JOB_SERVER_ADMIN_TOKEN }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "renew-session",
+      "name": "Renew Wanted Session"
+    },
+    {
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [700, 300],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "combineOperation": "any"
+          },
+          "conditions": [
+            {
+              "id": "error",
+              "leftValue": "={{ $json.error }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            },
+            {
+              "id": "success",
+              "leftValue": "={{ $json.success }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ]
+        }
+      },
+      "id": "check-success",
+      "name": "Renewal Failed?"
+    },
+    {
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1000, 420],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.telegram.org/bot{{ $env.TELEGRAM_BOT_TOKEN }}/sendMessage",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ chat_id: $env.TELEGRAM_CHAT_ID, text: '✅ Wanted session renewed successfully' }) }}",
+        "options": {}
+      },
+      "id": "telegram-success",
+      "name": "Telegram Success"
+    },
+    {
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1000, 400],
+      "parameters": {
+        "jsCode": "const result = $input.first().json;\nconst error = result.error || result.message || result.statusMessage || 'Unknown error';\nreturn {\n  ...result,\n  error\n};"
+      },
+      "id": "format-failure",
+      "name": "Format Failure"
+    },
+    {
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1300, 340],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.telegram.org/bot{{ $env.TELEGRAM_BOT_TOKEN }}/sendMessage",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ chat_id: $env.TELEGRAM_CHAT_ID, text: `❌ Wanted session renewal failed: ${$json.error}` }) }}",
+        "options": {}
+      },
+      "id": "telegram-failure",
+      "name": "Telegram Failure"
+    },
+    {
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1600, 340],
+      "parameters": {
+        "jsCode": "const result = $input.first().json;\nconsole.error('[session-renewal-wanted] renewal failed', result.error || result);\nreturn result;"
+      },
+      "id": "log-failure",
+      "name": "Log Failure"
+    }
+  ],
+  "connections": {
+    "Daily 8AM": {
+      "main": [
+        [
+          {
+            "node": "Renew Wanted Session",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Renew Wanted Session": {
+      "main": [
+        [
+          {
+            "node": "Renewal Failed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Renewal Failed?": {
+      "main": [
+        [
+          {
+            "node": "Format Failure",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Failure": {
+      "main": [
+        [
+          {
+            "node": "Telegram Failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Failure": {
+      "main": [
+        [
+          {
+            "node": "Log Failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionTimeout": 300,
+    "timezone": "Asia/Seoul"
+  }
+}

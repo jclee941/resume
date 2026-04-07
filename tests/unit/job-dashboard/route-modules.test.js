@@ -5,7 +5,7 @@ const ROUTES_DIR = path.resolve(__dirname, '../../../apps/job-dashboard/src/rout
 
 /**
  * Structural tests for Phase 2 route module extraction.
- * Verifies that all 47 routes are properly distributed across 7 modules
+ * Verifies that all 48 routes are properly distributed across 7 modules
  * with correct register function exports and route patterns.
  */
 describe('job-dashboard route modules', () => {
@@ -51,8 +51,8 @@ describe('job-dashboard route modules', () => {
   describe('route distribution', () => {
     const expectedRoutes = {
       health: {
-        count: 3,
-        patterns: ['/health', '/api/health', '/api/status'],
+        count: 4,
+        patterns: ['/health', '/api/health', '/api/status', '/api/health/notifications'],
       },
       auth: {
         count: 7,
@@ -143,14 +143,14 @@ describe('job-dashboard route modules', () => {
   });
 
   describe('total route count across all modules', () => {
-    test('all modules together register exactly 47 routes', () => {
+    test('all modules together register exactly 48 routes', () => {
       let totalRoutes = 0;
       for (const mod of modules) {
         const src = fs.readFileSync(path.join(ROUTES_DIR, `${mod}.js`), 'utf8');
         const routeCalls = src.match(/router\.(get|post|put|delete)\(/g) || [];
         totalRoutes += routeCalls.length;
       }
-      expect(totalRoutes).toBe(47);
+      expect(totalRoutes).toBe(48);
     });
   });
 

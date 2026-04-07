@@ -1,0 +1,10 @@
+[Unit]
+Description=Run Resume Auto-Apply daily at 9:00 AM KST
+Requires=resume-auto-apply.service
+
+[Timer]
+OnCalendar=*-*-* 09:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

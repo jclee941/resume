@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://resume.jclee.me/schemas/sessions.schema.json",
   "title": "Multi-Platform Sessions",
-  "description": "Shared session format between Go CLI and Node.js MCP server. File path: ~/.opencode/data/sessions.json",
+  "description": "Shared session format between Go CLI and Node.js MCP server. File path: <repo-root>/sessions.json",
   "type": "object",
   "additionalProperties": {
     "$ref": "#/$defs/PlatformSession"

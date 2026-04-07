@@ -1,65 +1,28 @@
-<testsuites id="" name="" tests="28" failures="0" skipped="0" errors="0" time="24.217133">
-<testsuite name="job-application.spec.js" timestamp="2026-03-31T10:38:27.458Z" hostname="chromium" tests="28" failures="0" skipped="0" time="23.432" errors="0">
-<testcase name="Test A: Mock Job Site Application › should navigate to application form" classname="job-application.spec.js" time="0.273">
-<system-out>
-<![CDATA[[Mock Server] Server started on port 9393
-[Job Application E2E] Mock server ready at http://localhost:9393
-]]>
-</system-out>
+<testsuites id="" name="" tests="12" failures="0" skipped="0" errors="0" time="8.304334999999998">
+<testsuite name="visual.spec.js" timestamp="2026-04-04T16:26:36.954Z" hostname="chromium" tests="12" failures="0" skipped="0" time="7.653" errors="0">
+<testcase name="Visual Regression Tests › Desktop Screenshots › homepage full page screenshot" classname="visual.spec.js" time="0.966">
 </testcase>
-<testcase name="Test A: Mock Job Site Application › should auto-fill form fields using data-auto-fill attributes" classname="job-application.spec.js" time="0.205">
+<testcase name="Visual Regression Tests › Desktop Screenshots › hero section screenshot" classname="visual.spec.js" time="0.339">
 </testcase>
-<testcase name="Test A: Mock Job Site Application › should fill and submit application successfully" classname="job-application.spec.js" time="0.762">
+<testcase name="Visual Regression Tests › Desktop Screenshots › projects section screenshot" classname="visual.spec.js" time="0.45">
 </testcase>
-<testcase name="Test A: Mock Job Site Application › should validate required fields before submission" classname="job-application.spec.js" time="0.313">
+<testcase name="Visual Regression Tests › Desktop Screenshots › resume section screenshot" classname="visual.spec.js" time="0.483">
 </testcase>
-<testcase name="Test A: Mock Job Site Application › should handle job-specific application URL" classname="job-application.spec.js" time="0.554">
+<testcase name="Visual Regression Tests › Mobile Screenshots › mobile homepage screenshot" classname="visual.spec.js" time="2.001">
 </testcase>
-<testcase name="Test B: File Upload › should display file upload area" classname="job-application.spec.js" time="0.361">
+<testcase name="Visual Regression Tests › Mobile Screenshots › mobile hero section screenshot" classname="visual.spec.js" time="0.31">
 </testcase>
-<testcase name="Test B: File Upload › should select and upload resume file" classname="job-application.spec.js" time="0.296">
+<testcase name="Visual Regression Tests › Mobile Screenshots › mobile project card screenshot" classname="visual.spec.js" time="0.294">
 </testcase>
-<testcase name="Test B: File Upload › should upload file and submit application" classname="job-application.spec.js" time="0.629">
+<testcase name="Visual Regression Tests › Tablet Screenshots › tablet homepage screenshot" classname="visual.spec.js" time="0.765">
 </testcase>
-<testcase name="Test B: File Upload › should show file info after selection" classname="job-application.spec.js" time="0.198">
+<testcase name="Visual Regression Tests › Dark Mode Screenshots › dark mode preference screenshot" classname="visual.spec.js" time="0.973">
 </testcase>
-<testcase name="Test C: Multi-Step Form › should display step indicator with 4 steps" classname="job-application.spec.js" time="0.344">
+<testcase name="Visual Regression Tests › Component Screenshots › footer screenshot" classname="visual.spec.js" time="0.327">
 </testcase>
-<testcase name="Test C: Multi-Step Form › should complete step 1 (Personal Info)" classname="job-application.spec.js" time="0.357">
+<testcase name="Visual Regression Tests › Component Screenshots › hero download buttons screenshot" classname="visual.spec.js" time="0.383">
 </testcase>
-<testcase name="Test C: Multi-Step Form › should complete step 2 (Education)" classname="job-application.spec.js" time="0.453">
-</testcase>
-<testcase name="Test C: Multi-Step Form › should complete step 3 (Experience)" classname="job-application.spec.js" time="0.511">
-</testcase>
-<testcase name="Test C: Multi-Step Form › should navigate back from step 2 to step 1" classname="job-application.spec.js" time="0.438">
-</testcase>
-<testcase name="Test C: Multi-Step Form › should review and submit from step 4" classname="job-application.spec.js" time="1.376">
-</testcase>
-<testcase name="Test C: Multi-Step Form › should show submit button only on final step" classname="job-application.spec.js" time="0.311">
-</testcase>
-<testcase name="Test D: Error Handling › should handle 500 server error" classname="job-application.spec.js" time="0.496">
-</testcase>
-<testcase name="Test D: Error Handling › should retry on transient failure" classname="job-application.spec.js" time="1.005">
-</testcase>
-<testcase name="Test D: Error Handling › should capture screenshot on page error" classname="job-application.spec.js" time="0.27">
-</testcase>
-<testcase name="Test D: Error Handling › should handle network timeout gracefully" classname="job-application.spec.js" time="10.021">
-</testcase>
-<testcase name="Test D: Error Handling › should display error message to user" classname="job-application.spec.js" time="0.385">
-</testcase>
-<testcase name="Test E: Stealth Features Verification › should use realistic user agent" classname="job-application.spec.js" time="0.074">
-</testcase>
-<testcase name="Test E: Stealth Features Verification › should maintain cookie persistence across navigation" classname="job-application.spec.js" time="0.547">
-</testcase>
-<testcase name="Test E: Stealth Features Verification › should add human-like delays between actions" classname="job-application.spec.js" time="0.345">
-</testcase>
-<testcase name="Test E: Stealth Features Verification › should handle same-origin fetch requests" classname="job-application.spec.js" time="0.212">
-</testcase>
-<testcase name="Test F: Full Application Flow Integration › should complete full application flow with all features" classname="job-application.spec.js" time="0.864">
-</testcase>
-<testcase name="Test F: Full Application Flow Integration › should handle multiple rapid submissions correctly" classname="job-application.spec.js" time="1.438">
-</testcase>
-<testcase name="Test F: Full Application Flow Integration › should validate form state persistence across steps" classname="job-application.spec.js" time="0.394">
+<testcase name="Visual Regression Tests › Component Screenshots › single project card screenshot" classname="visual.spec.js" time="0.362">
 </testcase>
 </testsuite>
 </testsuites>
