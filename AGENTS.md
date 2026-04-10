@@ -39,7 +39,7 @@ Resume monorepo: Cloudflare Worker portfolio, job automation runtimes, dashboard
 | Dashboard/API workflows       | `apps/job-dashboard/` | handlers, middleware, Cloudflare workflows                                 |
 | Authoritative resume content  | `packages/data/`      | `packages/data/resumes/master/resume_data.json` is the SSoT                |
 | Workspace commands            | `package.json`        | `automate:ssot`, `automate:full`, `build`, `test`                          |
-| CI/release behavior           | `.gitlab/ci/`         | GitLab CI workflows: verify.yml, release.yml, notifications.yml, auto-sync |
+| CI/release behavior           | `.github/workflows/` + `.gitlab-legacy/` | GitHub Actions (ci.yml active); archived GitLab CI reference under `.gitlab-legacy/ci/`
 | Shared operational scripts    | `tools/scripts/`      | build, deployment, verification, sync utilities                            |
 | Tests by layer                | `tests/`              | `unit/`, `integration/`, `e2e/` with child guides                          |
 | Monitoring and n8n automation | `infrastructure/`     | dashboards, alerting, webhook workflows                                    |
