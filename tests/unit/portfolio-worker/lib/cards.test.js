@@ -737,10 +737,20 @@ describe('Cards Module', () => {
       expect(html).toContain('mailto:test@example.com');
       expect(html).toContain('https://example.com');
     });
+
+    test('should include velog placeholder link with terminal icon styling', () => {
+      const contactData = { github: 'https://github.com/test' };
+      const html = generateContactGrid(contactData);
+
+      expect(html).toContain('https://velog.io/@qws941');
+      expect(html).toContain('contact-item--velog');
+      expect(html).toContain('contact-icon--velog');
+      expect(html).toContain('Velog');
+    });
   });
 
-  describe('generateProjectCards - stars/forks/language branches', () => {
-    test('should render stars, forks, and language in meta line', () => {
+  describe('generateProjectCards - activity metadata branches', () => {
+    test('should render language, active, and live badges in meta line', () => {
       TEMPLATE_CACHE.dataHash = null;
       TEMPLATE_CACHE.projectCardsHtml = null;
       const projectData = [
@@ -755,13 +765,18 @@ describe('Cards Module', () => {
         },
       ];
       const html = generateProjectCards(projectData, 'stars-forks-lang-hash');
-      expect(html).toContain('42');
-      expect(html).toContain('7');
+      expect(html).toContain('project-meta-badge--language');
       expect(html).toContain('JavaScript');
+      expect(html).toContain('project-meta-badge--active');
+      expect(html).toContain('ACTIVE');
+      expect(html).toContain('project-meta-badge--live');
+      expect(html).toContain('LIVE');
       expect(html).toContain('project-meta');
+      expect(html).not.toContain('★');
+      expect(html).not.toContain('⑂');
     });
 
-    test('should render only stars when forks and language are absent', () => {
+    test('should ignore star counts and keep active badge when language is absent', () => {
       TEMPLATE_CACHE.dataHash = null;
       TEMPLATE_CACHE.projectCardsHtml = null;
       const projectData = [
@@ -773,11 +788,12 @@ describe('Cards Module', () => {
         },
       ];
       const html = generateProjectCards(projectData, 'stars-only-hash');
-      expect(html).toContain('100');
+      expect(html).toContain('ACTIVE');
       expect(html).toContain('project-meta');
+      expect(html).not.toContain('100');
     });
 
-    test('should not render meta line for NaN/Infinity stars and forks', () => {
+    test('should avoid rendering invalid star and fork numbers', () => {
       TEMPLATE_CACHE.dataHash = null;
       TEMPLATE_CACHE.projectCardsHtml = null;
       const projectData = [
@@ -790,10 +806,13 @@ describe('Cards Module', () => {
         },
       ];
       const html = generateProjectCards(projectData, 'nan-infinity-hash');
-      expect(html).not.toContain('project-meta');
+      expect(html).toContain('project-meta');
+      expect(html).toContain('ACTIVE');
+      expect(html).not.toContain('NaN');
+      expect(html).not.toContain('Infinity');
     });
 
-    test('should render only language when stars and forks are absent', () => {
+    test('should render language and active badges when language is present', () => {
       TEMPLATE_CACHE.dataHash = null;
       TEMPLATE_CACHE.projectCardsHtml = null;
       const projectData = [
@@ -806,10 +825,11 @@ describe('Cards Module', () => {
       ];
       const html = generateProjectCards(projectData, 'lang-only-hash');
       expect(html).toContain('Python');
+      expect(html).toContain('ACTIVE');
       expect(html).toContain('project-meta');
     });
 
-    test('should render githubUrl link without demoUrl', () => {
+    test('should render repo badge when only githubUrl exists', () => {
       TEMPLATE_CACHE.dataHash = null;
       TEMPLATE_CACHE.projectCardsHtml = null;
       const projectData = [
@@ -823,9 +843,11 @@ describe('Cards Module', () => {
       const html = generateProjectCards(projectData, 'github-only-hash');
       expect(html).toContain('href="https://github.com/test/repo"');
       expect(html).toContain('GitHub');
+      expect(html).toContain('project-meta-badge--repo');
+      expect(html).toContain('REPO');
     });
 
-    test('should render demoUrl link without githubUrl', () => {
+    test('should render live badge when only demoUrl exists', () => {
       TEMPLATE_CACHE.dataHash = null;
       TEMPLATE_CACHE.projectCardsHtml = null;
       const projectData = [
@@ -839,9 +861,11 @@ describe('Cards Module', () => {
       const html = generateProjectCards(projectData, 'demo-only-hash');
       expect(html).toContain('href="https://demo.example.com"');
       expect(html).toContain('Demo');
+      expect(html).toContain('project-meta-badge--live');
+      expect(html).toContain('LIVE');
     });
 
-    test('should render both githubUrl and demoUrl links', () => {
+    test('should prefer live badge when both githubUrl and demoUrl exist', () => {
       TEMPLATE_CACHE.dataHash = null;
       TEMPLATE_CACHE.projectCardsHtml = null;
       const projectData = [
@@ -856,6 +880,8 @@ describe('Cards Module', () => {
       const html = generateProjectCards(projectData, 'both-links-hash');
       expect(html).toContain('GitHub');
       expect(html).toContain('Demo');
+      expect(html).toContain('project-meta-badge--live');
+      expect(html).not.toContain('project-meta-badge--repo');
     });
   });
 

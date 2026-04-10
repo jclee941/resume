@@ -403,10 +403,15 @@
       .project-card,
       .cert-card,
       .infra-card {
-        transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        transition:
+          background-color 0.3s ease,
+          color 0.3s ease,
+          border-color 0.3s ease,
+          box-shadow 0.3s ease;
       }
 
-      a, .nav-link {
+      a,
+      .nav-link {
         transition: color 0.3s ease;
       }
 
@@ -453,7 +458,9 @@
       }
 
       .project-card {
-        transition: opacity 0.3s ease, transform 0.3s ease;
+        transition:
+          opacity 0.3s ease,
+          transform 0.3s ease;
       }
       /* CSS_PLACEHOLDER */
     </style>
@@ -516,6 +523,11 @@
                   <span class="typing-effect glow-cyan">이재철</span><span class="cursor"></span>
                 </h1>
                 <div class="cmd-output">보안 인프라 · Observability · 자동화</div>
+                <div class="status-seeking" role="status" aria-label="구직 중 · 즉시 투입 가능">
+                  <span class="status-seeking__label">구직 중</span>
+                  <span class="status-seeking__divider" aria-hidden="true">·</span>
+                  <span class="status-seeking__availability">즉시 투입 가능</span>
+                </div>
               </div>
             </section>
 
@@ -1629,27 +1641,27 @@
       document.head.appendChild(_gs);
     </script>
     <script>
-      (function() {
+      (function () {
         var container = document.querySelector('.tech-filter-container');
         if (!container) return;
         var cards = document.querySelectorAll('.project-card[data-tech]');
         var techSet = {};
 
-        cards.forEach(function(card) {
+        cards.forEach(function (card) {
           var techs = (card.getAttribute('data-tech') || '').split(',');
-          techs.forEach(function(t) {
+          techs.forEach(function (t) {
             t = t.trim().toLowerCase();
             if (t) techSet[t] = (techSet[t] || 0) + 1;
           });
         });
 
         // Sort by frequency, then alphabetically
-        var techList = Object.keys(techSet).sort(function(a, b) {
+        var techList = Object.keys(techSet).sort(function (a, b) {
           return techSet[b] - techSet[a] || a.localeCompare(b);
         });
 
         // Create filter buttons dynamically
-        techList.forEach(function(tech) {
+        techList.forEach(function (tech) {
           var btn = document.createElement('button');
           btn.className = 'tech-filter-btn';
           btn.setAttribute('data-filter', tech);
@@ -1658,22 +1670,22 @@
         });
 
         // Filter logic
-        container.addEventListener('click', function(e) {
+        container.addEventListener('click', function (e) {
           var btn = e.target.closest('.tech-filter-btn');
           if (!btn) return;
-          
+
           var filter = btn.getAttribute('data-filter');
-          
-          container.querySelectorAll('.tech-filter-btn').forEach(function(b) {
+
+          container.querySelectorAll('.tech-filter-btn').forEach(function (b) {
             b.classList.remove('active');
           });
           btn.classList.add('active');
 
-          cards.forEach(function(card) {
+          cards.forEach(function (card) {
             if (filter === 'all') {
               card.classList.remove('filtered-out');
             } else {
-              var techs = (card.getAttribute('data-tech') || '').toLowerCase();
+              const techs = (card.getAttribute('data-tech') || '').toLowerCase();
               if (techs.indexOf(filter) !== -1) {
                 card.classList.remove('filtered-out');
               } else {
