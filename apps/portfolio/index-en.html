@@ -269,10 +269,15 @@
       .project-card,
       .cert-card,
       .infra-card {
-        transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        transition:
+          background-color 0.3s ease,
+          color 0.3s ease,
+          border-color 0.3s ease,
+          box-shadow 0.3s ease;
       }
 
-      a, .nav-link {
+      a,
+      .nav-link {
         transition: color 0.3s ease;
       }
 
@@ -337,7 +342,7 @@
       }
 
       .modal-close:hover {
-        background: var(--hover-bg, rgba(0,0,0,0.1));
+        background: var(--hover-bg, rgba(0, 0, 0, 0.1));
       }
 
       .modal-title {
@@ -380,7 +385,9 @@
         border-radius: 6px;
         text-decoration: none;
         font-size: 0.9rem;
-        transition: background-color 0.2s ease, color 0.2s ease;
+        transition:
+          background-color 0.2s ease,
+          color 0.2s ease;
       }
       /* CSS_PLACEHOLDER */
     </style>
@@ -430,6 +437,15 @@
                   ><span class="cursor"></span>
                 </h1>
                 <div class="cmd-output">Security Infrastructure · Observability · Automation</div>
+                <div
+                  class="status-seeking"
+                  role="status"
+                  aria-label="Open to Work · Available Immediately"
+                >
+                  <span class="status-seeking__label">Open to Work</span>
+                  <span class="status-seeking__divider" aria-hidden="true">·</span>
+                  <span class="status-seeking__availability">Available Immediately</span>
+                </div>
               </div>
             </section>
 
@@ -966,7 +982,13 @@
       document.head.appendChild(_gs);
     </script>
     <!-- Project Detail Modal -->
-    <div class="modal-overlay" id="projectModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div
+      class="modal-overlay"
+      id="projectModal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modalTitle"
+    >
       <div class="modal-content">
         <button class="modal-close" aria-label="Close modal">&times;</button>
         <h3 class="modal-title" id="modalTitle"></h3>
@@ -976,7 +998,7 @@
       </div>
     </div>
     <script>
-      (function() {
+      (function () {
         var modal = document.getElementById('projectModal');
         if (!modal) return;
         var modalTitle = document.getElementById('modalTitle');
@@ -995,7 +1017,7 @@
           modalDesc.textContent = desc ? desc.textContent : '';
 
           modalTech.innerHTML = '';
-          techs.forEach(function(t) {
+          techs.forEach(function (t) {
             var tag = document.createElement('span');
             tag.className = 'modal-tech-tag';
             tag.textContent = t.textContent || t.getAttribute('data-tech') || '';
@@ -1004,7 +1026,7 @@
 
           modalLinks.innerHTML = '';
           if (link) {
-            var a = document.createElement('a');
+            const a = document.createElement('a');
             a.href = link.href;
             a.className = 'modal-link';
             a.target = '_blank';
@@ -1023,15 +1045,15 @@
           document.body.style.overflow = '';
         }
 
-        document.querySelectorAll('.project-card').forEach(function(card) {
+        document.querySelectorAll('.project-card').forEach(function (card) {
           card.style.cursor = 'pointer';
           card.setAttribute('role', 'button');
           card.setAttribute('tabindex', '0');
-          card.addEventListener('click', function(e) {
+          card.addEventListener('click', function (e) {
             if (e.target.tagName === 'A') return;
             openModal(card);
           });
-          card.addEventListener('keydown', function(e) {
+          card.addEventListener('keydown', function (e) {
             if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault();
               openModal(card);
@@ -1040,10 +1062,10 @@
         });
 
         closeBtn.addEventListener('click', closeModal);
-        modal.addEventListener('click', function(e) {
+        modal.addEventListener('click', function (e) {
           if (e.target === modal) closeModal();
         });
-        document.addEventListener('keydown', function(e) {
+        document.addEventListener('keydown', function (e) {
           if (e.key === 'Escape' && modal.classList.contains('active')) closeModal();
         });
       })();

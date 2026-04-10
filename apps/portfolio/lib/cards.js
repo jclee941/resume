@@ -80,14 +80,20 @@ function generateProjectCards(projectsData, dataHash) {
         ? `<a href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer" class="project-link-title" aria-label="View ${escapeHtml(project.title)} project (opens in new tab)">${titleContent}</a>`
         : `<div class="project-link-title">${titleContent}</div>`;
 
-      const stars = Number.isFinite(project.stars) ? project.stars : null;
-      const forks = Number.isFinite(project.forks) ? project.forks : null;
       const language = project.language ? escapeHtml(String(project.language)) : null;
-      const metaLineParts = [];
-      if (stars !== null) metaLineParts.push(`★ ${escapeHtml(String(stars))}`);
-      if (language) metaLineParts.push(language);
-      if (forks !== null) metaLineParts.push(`⑂ ${escapeHtml(String(forks))}`);
-      const metaLine = metaLineParts.join('  ');
+      const metaBadges = [];
+      if (language) {
+        metaBadges.push(
+          `<span class="project-meta-badge project-meta-badge--language">${language}</span>`
+        );
+      }
+      metaBadges.push('<span class="project-meta-badge project-meta-badge--active">ACTIVE</span>');
+      if (demoUrl) {
+        metaBadges.push('<span class="project-meta-badge project-meta-badge--live">LIVE</span>');
+      } else if (githubUrl) {
+        metaBadges.push('<span class="project-meta-badge project-meta-badge--repo">REPO</span>');
+      }
+      const metaLine = metaBadges.join('');
 
       const projectLinks =
         githubUrl || demoUrl
@@ -116,7 +122,7 @@ function generateProjectCards(projectsData, dataHash) {
               <div class="project-tech">
                   ${escapeHtml(project.tech)}
               </div>
-              ${metaLine ? `<div class="project-meta">${metaLine}</div>` : ''}
+              ${metaLine ? `<div class="project-meta" aria-label="Project activity metadata">${metaLine}</div>` : ''}
               ${projectLinks}
           </li>`;
     })
@@ -301,6 +307,7 @@ function generateContactGrid(contactData) {
   return `
         <a href="${escapeHtml(contactData.github)}" target="_blank" rel="noopener noreferrer" class="contact-item" aria-label="View GitHub profile (opens in new tab)">GitHub</a>
         <a href="${escapeHtml(contactData.linkedin)}" target="_blank" rel="noopener noreferrer" class="contact-item" aria-label="View LinkedIn profile (opens in new tab)">LinkedIn</a>
+        <a href="https://velog.io/@qws941" target="_blank" rel="noopener noreferrer" class="contact-item contact-item--velog" aria-label="Open Velog placeholder profile (opens in new tab)"><span class="contact-icon contact-icon--velog" aria-hidden="true">V.</span><span class="contact-label">Velog</span></a>
         <a href="mailto:${escapeHtml(contactData.email)}" class="contact-item" aria-label="Send email to ${escapeHtml(contactData.email)}">Email</a>
         <a href="${escapeHtml(contactData.website)}" target="_blank" rel="noopener noreferrer" class="contact-item" aria-label="Visit portfolio website (opens in new tab)">Website</a>
   `;
