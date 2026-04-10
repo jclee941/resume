@@ -49,6 +49,7 @@ export class LRUCache {
 
     if (options.autoCleanup !== false) {
       this.#cleanupInterval = setInterval(() => this.cleanup(), options.cleanupIntervalMs || 60000);
+      this.#cleanupInterval.unref?.();
     }
   }
 

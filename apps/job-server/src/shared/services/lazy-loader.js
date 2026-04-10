@@ -108,7 +108,7 @@ export class LazyCrawlerRegistry extends EventEmitter {
 
   constructor(_options = {}) {
     super();
-    this.#logger = options.logger || console;
+    this.#logger = _options.logger || console;
   }
 
   /**
