@@ -79,7 +79,7 @@ jobs:
     name: Unit Tests (Node)
     runs-on: ubuntu-latest
     timeout-minutes: 8
-    continue-on-error: true  # TODO: fix hanging tests in apps/job-server, re-enable as blocking
+    continue-on-error: true  # TODO: 7 pre-existing test failures (5 SessionBrokerService healthCheck + 2 Apply service integration). See docs/reports/NODE_TEST_PRE_EXISTING_FAILURES.md. Hang was fixed in fb4657c; these are real logic bugs hidden by the hang.
     steps:
       - name: Checkout
         uses: actions/checkout@v5
