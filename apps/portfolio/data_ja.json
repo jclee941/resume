@@ -182,7 +182,7 @@
       "stars": 0,
       "language": "Python",
       "forks": 0,
-      "githubUrl": "https://github.com/qws941/splunk",
+      "githubUrl": "https://github.com/jclee941/splunk",
       "demoUrl": null,
       "metrics": {
         "endpoints": "FortiManager, FortiAnalyzer REST API",
@@ -195,7 +195,7 @@
         "FortiManager",
         "FortiAnalyzer"
       ],
-      "repoUrl": "https://github.com/qws941/splunk"
+      "repoUrl": "https://github.com/jclee941/splunk"
     },
     {
       "icon": "🔔",
@@ -206,7 +206,7 @@
       "stars": 0,
       "language": "Python",
       "forks": 0,
-      "githubUrl": "https://github.com/qws941/splunk",
+      "githubUrl": "https://github.com/jclee941/splunk",
       "demoUrl": null,
       "metrics": {
         "detectionRules": "32件の検知ルール",
@@ -220,7 +220,7 @@
         "Python",
         "Slack"
       ],
-      "repoUrl": "https://github.com/qws941/splunk"
+      "repoUrl": "https://github.com/jclee941/splunk"
     },
     {
       "icon": "🚫",
@@ -231,7 +231,7 @@
       "stars": 0,
       "language": "Python",
       "forks": 0,
-      "githubUrl": "https://github.com/qws941/blacklist",
+      "githubUrl": "https://github.com/jclee941/blacklist",
       "demoUrl": null,
       "metrics": {
         "feeds": "3+ threat intelligence feeds",
@@ -243,7 +243,7 @@
         "Next.js",
         "PostgreSQL"
       ],
-      "repoUrl": "https://github.com/qws941/blacklist"
+      "repoUrl": "https://github.com/jclee941/blacklist"
     },
     {
       "icon": "🏎️",
@@ -254,7 +254,7 @@
       "stars": 0,
       "language": "Python",
       "forks": 0,
-      "githubUrl": "https://github.com/qws941/hycu_fsds",
+      "githubUrl": "https://github.com/jclee941/hycu_fsds",
       "demoUrl": null,
       "metrics": {
         "award": "優秀賞（Excellence Award）",
@@ -268,8 +268,8 @@
         "Docker",
         "AirSim"
       ],
-      "liveUrl": "https://github.com/qws941/hycu_fsds",
-      "repoUrl": "https://github.com/qws941/hycu_fsds"
+      "liveUrl": "https://github.com/jclee941/hycu_fsds",
+      "repoUrl": "https://github.com/jclee941/hycu_fsds"
     },
     {
       "icon": "⚡",
@@ -280,7 +280,7 @@
       "stars": 0,
       "language": "JavaScript",
       "forks": 0,
-      "githubUrl": "https://github.com/qws941/resume",
+      "githubUrl": "https://github.com/jclee941/resume",
       "demoUrl": "https://resume.jclee.me",
       "metrics": {
         "deployment": "resume.jclee.me（低遅延応答、グローバルCDN）",
@@ -294,7 +294,7 @@
         "Grafana Loki"
       ],
       "liveUrl": "https://resume.jclee.me",
-      "repoUrl": "https://github.com/qws941/resume"
+      "repoUrl": "https://github.com/jclee941/resume"
     }
   ],
   "projectsEn": [
@@ -357,7 +357,7 @@
       "stars": 0,
       "language": "Python",
       "forks": 0,
-      "githubUrl": "https://github.com/qws941/splunk",
+      "githubUrl": "https://github.com/jclee941/splunk",
       "demoUrl": null,
       "metrics": {
         "endpoints": "FortiManager, FortiAnalyzer REST API",
@@ -370,7 +370,7 @@
         "FortiManager",
         "FortiAnalyzer"
       ],
-      "repoUrl": "https://github.com/qws941/splunk"
+      "repoUrl": "https://github.com/jclee941/splunk"
     },
     {
       "icon": "🔔",
@@ -381,7 +381,7 @@
       "stars": 0,
       "language": "Python",
       "forks": 0,
-      "githubUrl": "https://github.com/qws941/splunk",
+      "githubUrl": "https://github.com/jclee941/splunk",
       "demoUrl": null,
       "metrics": {
         "detectionRules": "32 rules",
@@ -395,7 +395,7 @@
         "Python",
         "Slack"
       ],
-      "repoUrl": "https://github.com/qws941/splunk"
+      "repoUrl": "https://github.com/jclee941/splunk"
     },
     {
       "icon": "🚫",
@@ -406,7 +406,7 @@
       "stars": 0,
       "language": "Python",
       "forks": 0,
-      "githubUrl": "https://github.com/qws941/blacklist",
+      "githubUrl": "https://github.com/jclee941/blacklist",
       "demoUrl": null,
       "metrics": {
         "feeds": "3+ threat intelligence feeds",
@@ -418,7 +418,7 @@
         "Next.js",
         "PostgreSQL"
       ],
-      "repoUrl": "https://github.com/qws941/blacklist"
+      "repoUrl": "https://github.com/jclee941/blacklist"
     },
     {
       "icon": "🏎️",
@@ -429,7 +429,7 @@
       "stars": 0,
       "language": "Python",
       "forks": 0,
-      "githubUrl": "https://github.com/qws941/hycu_fsds",
+      "githubUrl": "https://github.com/jclee941/hycu_fsds",
       "demoUrl": null,
       "metrics": {
         "award": "優秀賞（Excellence Award）",
@@ -443,8 +443,8 @@
         "Docker",
         "AirSim"
       ],
-      "liveUrl": "https://github.com/qws941/hycu_fsds",
-      "repoUrl": "https://github.com/qws941/hycu_fsds"
+      "liveUrl": "https://github.com/jclee941/hycu_fsds",
+      "repoUrl": "https://github.com/jclee941/hycu_fsds"
     },
     {
       "icon": "⚡",
@@ -455,7 +455,7 @@
       "stars": 0,
       "language": "JavaScript",
       "forks": 0,
-      "githubUrl": "https://github.com/qws941/resume",
+      "githubUrl": "https://github.com/jclee941/resume",
       "demoUrl": "https://resume.jclee.me",
       "metrics": {
         "deployment": "resume.jclee.me（低遅延応答、グローバルCDN）",
@@ -469,7 +469,7 @@
         "Grafana Loki"
       ],
       "liveUrl": "https://resume.jclee.me",
-      "repoUrl": "https://github.com/qws941/resume"
+      "repoUrl": "https://github.com/jclee941/resume"
     }
   ],
   "certifications": [
@@ -856,7 +856,7 @@
   "contact": {
     "email": "qws941@kakao.com",
     "phone": "010-5757-9592",
-    "github": "https://github.com/qws941",
+    "github": "https://github.com/jclee941",
     "linkedin": "https://linkedin.com/in/jclee0109",
     "website": "https://resume.jclee.me",
     "monitoring": "https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b"

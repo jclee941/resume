@@ -107,5 +107,5 @@ X-Frame-Options: DENY
 ## Contact
 
 - **Email**: qws941@kakao.com
-- **GitHub**: https://github.com/qws941
-- **GitHub**: https://github.com/qws941/resume
+- **GitHub**: https://github.com/jclee941
+- **GitHub**: https://github.com/jclee941/resume

@@ -44,4 +44,4 @@ IP 블랙리스트 자동수집·관리 시스템.
 
 ## 링크
 
-- https://github.com/qws941/blacklist
+- https://github.com/jclee941/blacklist
