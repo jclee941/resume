@@ -8,7 +8,7 @@
 import { describe, it, before, after } from 'node:test';
 import assert from 'node:assert';
 import { BrowserPool, resetBrowserPool } from '../browser-pool.js';
-import { LRUCache, TypedCache, resetGlobalCache } from '../cache.js';
+import { LRUCache, TypedCache } from '../cache.js';
 import { PerformanceMetrics, resetMetrics } from '../performance-metrics.js';
 import { processInParallel, AsyncQueue, applyToJobsParallel } from '../parallel.js';
 import { LazyModule, LazyCrawlerRegistry } from '../lazy-loader.js';
@@ -183,10 +183,10 @@ describe('Performance Optimization', () => {
 
     it('should handle errors with stopOnError', async () => {
       const items = [1, 2, 3];
-      let callCount = 0;
+      let _callCount = 0;
 
       const processor = async (n) => {
-        callCount++;
+        _callCount++;
         if (n === 2) throw new Error('fail');
         return n;
       };

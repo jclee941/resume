@@ -16,27 +16,11 @@ export const SESSION_STATES = Object.freeze({
 
 export const SUPPORTED_SESSION_BROKER_PLATFORMS = Object.freeze(['wanted']);
 
-function readEnvNumber(name, fallback) {
-  const value = Number(process.env[name]);
-  return Number.isFinite(value) && value > 0 ? value : fallback;
-}
-
 function normalizePlatform(platform) {
   if (typeof platform !== 'string' || platform.trim().length === 0) {
     throw new TypeError('platform must be a non-empty string');
   }
   return platform.trim().toLowerCase();
-}
-
-function toIsoString(value) {
-  if (value instanceof Date) return value.toISOString();
-  if (typeof value === 'number') return new Date(value).toISOString();
-  if (typeof value === 'string') {
-    const d = new Date(value);
-    if (Number.isNaN(d.getTime())) return null;
-    return d.toISOString();
-  }
-  return null;
 }
 
 function sleep(ms) {

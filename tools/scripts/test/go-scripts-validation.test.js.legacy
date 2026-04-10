@@ -52,7 +52,7 @@ function checkGoScript(scriptPath) {
   try {
     execSync(`go build -o /dev/null ${fullPath}`, { stdio: 'pipe' });
     log('  Compiles successfully', 'success');
-  } catch (error) {
+  } catch (_error) {
     log('  Compilation failed', 'error');
     return false;
   }

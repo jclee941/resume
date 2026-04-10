@@ -40,13 +40,6 @@ function getSessionState() {
 }
 
 /**
- * Reset session state
- */
-function resetSessionState() {
-  sessionState = null;
-}
-
-/**
  * Validate search parameters
  * @param {Object} params - Search parameters
  * @returns {Object} Validated parameters with defaults

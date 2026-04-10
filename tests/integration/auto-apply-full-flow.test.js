@@ -8,7 +8,6 @@ const { describe, test, expect, beforeAll, afterEach } = require('@jest/globals'
 // Dynamic imports for ES modules
 let ApplyOrchestrator;
 let JobFilter;
-let ApplicationManager;
 
 const createMockCrawler = (jobs = []) => {
   const callLog = { search: 0, searchCalls: [] };

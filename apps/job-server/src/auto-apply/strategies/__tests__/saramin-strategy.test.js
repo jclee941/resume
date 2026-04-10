@@ -57,12 +57,12 @@ describe('applyToSaramin', () => {
       recordRetryMetric: mock.fn(() => {}),
     };
 
-    const findByText = async (tag, text, cssAlt) => {
+    const findByText = async (_tag, _text, _cssAlt) => {
       if (findByTextResults.length === 0) return null;
       return findByTextResults.shift();
     };
 
-    const findElementWithText = async (text) => {
+    const findElementWithText = async (_text) => {
       if (findElementResults.length === 0) return null;
       return findElementResults.shift();
     };

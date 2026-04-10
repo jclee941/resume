@@ -108,9 +108,6 @@ function getSampleResumePath() {
  * @returns {string} Path to sample PDF resume
  */
 function getSamplePdfResumePath() {
-  const fixturesDir = path.join(__dirname);
-  const pdfPath = path.join(fixturesDir, 'sample-resume.pdf');
-
   // For actual PDF upload testing, we'd need a real PDF
   // For now, return the text file path which can be used for upload testing
   return getSampleResumePath();

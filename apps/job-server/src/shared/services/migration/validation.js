@@ -6,7 +6,7 @@ import { readFile } from 'node:fs/promises';
 import { basename } from 'node:path';
 import { discoverMigrations, splitStatements } from './discovery.js';
 
-export async function validate(migrationsDir, logger = console.log) {
+export async function validate(migrationsDir, _logger = console.log) {
   const all = await discoverMigrations(migrationsDir);
   const errors = [];
   for (const m of all) {

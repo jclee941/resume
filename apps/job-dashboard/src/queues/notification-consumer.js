@@ -19,7 +19,7 @@ const PRIORITY_ORDER = {
  * @param {ExecutionContext} ctx
  */
 export default {
-  async queue(batch, env, ctx) {
+  async queue(batch, env, _ctx) {
     const notificationService = new NotificationService(env);
     const results = {
       processed: 0,
@@ -43,7 +43,7 @@ export default {
     }, {});
 
     // Process each type group
-    for (const [type, messages] of Object.entries(groupedByType)) {
+    for (const [, messages] of Object.entries(groupedByType)) {
       for (const message of messages) {
         try {
           await processNotification(message.body, notificationService);
