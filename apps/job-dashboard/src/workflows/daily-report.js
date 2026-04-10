@@ -1,6 +1,5 @@
 import { WorkflowEntrypoint } from 'cloudflare:workers';
 import {
-  NotificationService,
   sendTelegramNotification,
   escapeHtml,
 } from '../notifications.js';

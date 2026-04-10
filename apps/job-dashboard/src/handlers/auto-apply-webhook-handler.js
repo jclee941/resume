@@ -1,7 +1,6 @@
 import { BaseHandler } from './base-handler.js';
 import { normalizeError } from '@resume/shared/errors';
 import {
-  NotificationService,
   sendTelegramNotification,
   escapeHtml,
 } from '../notifications.js';
