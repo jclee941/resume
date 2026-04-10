@@ -145,7 +145,7 @@ FortiAnalyzer 쪽은 운영자가 원하는 요약 결과를 빠르게 가져오
 
 ## 링크
 
-- https://github.com/qws941/splunk
+- https://github.com/jclee941/splunk
 
 ## 비고
 

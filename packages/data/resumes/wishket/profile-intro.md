@@ -115,6 +115,6 @@
 ## 연락처
 
 - Email: qws941@kakao.com
-- GitHub: https://github.com/qws941
+- GitHub: https://github.com/jclee941
 - Portfolio: https://resume.jclee.me
 - Grafana Demo: https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b

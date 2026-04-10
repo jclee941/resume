@@ -151,7 +151,7 @@ Slack Block Kit를 사용한 이유도 여기에 있습니다. 제목, 이벤트
 
 ## 링크
 
-- https://github.com/qws941/splunk
+- https://github.com/jclee941/splunk
 
 ## 비고
 
