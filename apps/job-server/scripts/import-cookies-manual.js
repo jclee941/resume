@@ -44,8 +44,6 @@ function importCookies(platform, cookieString) {
 
   // Validate critical cookies
   const userCookie = cookies.find((c) => c.name === 'User');
-  const cUserCookie = cookies.find((c) => c.name === 'C_USER' || c.name === 'C%5FUSER');
-
   if (userCookie) {
     const uidMatch = userCookie.value.match(/UID=([^&]*)/);
     if (!uidMatch || !uidMatch[1]) {

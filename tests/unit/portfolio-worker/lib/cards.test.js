@@ -9,7 +9,6 @@
 const {
   generateResumeCards,
   generateProjectCards,
-  generateInfrastructureCards,
 } = require('../../../../apps/portfolio/lib/cards');
 const { TEMPLATE_CACHE } = require('../../../../apps/portfolio/lib/config');
 

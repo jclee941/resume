@@ -1,4 +1,3 @@
-import { randomUUID } from 'node:crypto';
 import { ApplicationRepository } from '../../repositories/application-repository.js';
 import { TelegramNotificationAdapter } from '../notifications/telegram-adapter.js';
 import { AppError, ErrorCodes, ValidationError } from '../../errors/index.js';

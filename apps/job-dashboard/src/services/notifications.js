@@ -194,11 +194,11 @@ export class NotificationService {
       payload: job.payload,
       createdAt: Date.now(),
       attempts: 0,
-      maxAttempts: job.maxAttempts || 3
+      maxAttempts: job.maxAttempts || 3,
     };
 
     await this.env.NOTIFICATION_QUEUE.send(queueJob, {
-      delaySeconds: options.delaySeconds || 0
+      delaySeconds: options.delaySeconds || 0,
     });
 
     return { queued: true, jobId: queueJob.id };
@@ -475,7 +475,6 @@ export class NotificationService {
 
     // Retry logic
     let lastError = null;
-    let lastStatus = null;
 
     for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
       const controller = new AbortController();
@@ -493,8 +492,6 @@ export class NotificationService {
 
         if (!response.ok) {
           const errorBody = await response.text();
-          lastStatus = response.status;
-
           // Check if we should retry
           if (attempt < MAX_RETRIES && (response.status === 429 || response.status >= 500)) {
             console.warn(
@@ -648,7 +645,7 @@ export class NotificationService {
    * Handle Telegram callback queries (inline button clicks)
    */
   async handleTelegramCallback(query) {
-    const { data, message } = query;
+    const { data } = query;
     const [action, applicationId] = data.split(':');
 
     if (!applicationId) {
@@ -679,7 +676,7 @@ export class NotificationService {
   /**
    * Handle /status command - Show today's applications
    */
-  async handleStatusCommand(chatId) {
+  async handleStatusCommand(_chatId) {
     try {
       const today = new Date().toISOString().split('T')[0];
 
@@ -746,7 +743,7 @@ export class NotificationService {
   /**
    * Handle /pause command - Pause auto-apply
    */
-  async handlePauseCommand(chatId) {
+  async handlePauseCommand(_chatId) {
     await this.env.SESSIONS.put('config:auto-apply:paused', 'true', { expirationTtl: 86400 });
     return this.sendTelegramNotification({
       text: '⏸️ Auto-apply paused. Use /resume to continue.',
@@ -756,7 +753,7 @@ export class NotificationService {
   /**
    * Handle /resume command - Resume auto-apply
    */
-  async handleResumeCommand(chatId) {
+  async handleResumeCommand(_chatId) {
     await this.env.SESSIONS.put('config:auto-apply:paused', 'false', { expirationTtl: 86400 });
     return this.sendTelegramNotification({
       text: '▶️ Auto-apply resumed.',
@@ -766,10 +763,10 @@ export class NotificationService {
   /**
    * Handle /help command
    */
-  async handleHelpCommand(chatId) {
+  async handleHelpCommand(_chatId) {
     const text =
       '🤖 <b>Job Automation Bot Commands</b>\n\n' +
-      '<b>/status</b> - Show today\'s applications\n' +
+      "<b>/status</b> - Show today's applications\n" +
       '<b>/approve &lt;id&gt;</b> - Approve pending application\n' +
       '<b>/reject &lt;id&gt;</b> - Reject pending application\n' +
       '<b>/pause</b> - Pause auto-apply\n' +

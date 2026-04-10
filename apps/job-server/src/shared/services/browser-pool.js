@@ -296,7 +296,7 @@ export class BrowserPool extends EventEmitter {
       // Test page responsiveness
       await entry.page.evaluate(() => true);
       return true;
-    } catch (e) {
+    } catch (_e) {
       return false;
     }
   }
@@ -309,7 +309,7 @@ export class BrowserPool extends EventEmitter {
 
     const available = this.#findAvailableBrowser();
     if (available) {
-      const { resolve, rotateUA } = this.#queue.shift();
+      const { resolve } = this.#queue.shift();
       available.inUse = true;
       available.useCount++;
       available.lastUsedAt = new Date();

@@ -106,7 +106,7 @@ export class LazyCrawlerRegistry extends EventEmitter {
   #factories = new Map();
   #logger;
 
-  constructor(options = {}) {
+  constructor(_options = {}) {
     super();
     this.#logger = options.logger || console;
   }
@@ -264,8 +264,7 @@ export class ServiceLocator {
   #services = new Map();
   #singletons = new Map();
 
-  constructor(options = {}) {
-  }
+  constructor(_options = {}) {}
 
   /**
    * Register a service factory
@@ -413,7 +412,7 @@ export class StreamProcessor {
    * @param {Object} options
    */
   async process(stream, processor, options = {}) {
-    const { chunkSize = 1024, onProgress } = options;
+    const { onProgress } = options;
     const reader = stream.getReader();
 
     let totalBytes = 0;
@@ -468,7 +467,7 @@ export class StreamProcessor {
           if (trimmed) {
             try {
               yield JSON.parse(trimmed);
-            } catch (e) {
+            } catch (_e) {
               this.#logger.debug('Failed to parse JSON line:', trimmed);
             }
           }
@@ -479,7 +478,7 @@ export class StreamProcessor {
       if (buffer.trim()) {
         try {
           yield JSON.parse(buffer);
-        } catch (e) {
+        } catch (_e) {
           this.#logger.debug('Failed to parse final JSON buffer');
         }
       }

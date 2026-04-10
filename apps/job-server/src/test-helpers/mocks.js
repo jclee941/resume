@@ -4,7 +4,7 @@
  */
 
 import { mock } from 'node:test';
-import { mockJobs, mockResumeData, mockTelegramResponse, mockWantedResponse } from './fixtures.js';
+import { mockResumeData, mockWantedResponse } from './fixtures.js';
 
 // ========================
 // Logger Mock
@@ -115,7 +115,9 @@ export function createMockFetch() {
 
   fetchMock._mockResponse = mockResponse;
   fetchMock._queue = responseQueue;
-  fetchMock.clear = () => (responseQueue.length = 0);
+  fetchMock.clear = () => {
+    responseQueue.length = 0;
+  };
 
   return fetchMock;
 }
@@ -344,7 +346,7 @@ export function createMockRepository() {
  * @param {Object} [config]
  * @returns {Object} Telegram mock
  */
-export function mockTelegramAPI(config = {}) {
+export function mockTelegramAPI(_config = {}) {
   const responses = [];
   let shouldFail = false;
   let failError = new Error('Telegram API error');
@@ -425,7 +427,7 @@ export function mockTelegramAPI(config = {}) {
  * @param {Object} [config]
  * @returns {Object} Claude mock
  */
-export function mockClaudeAPI(config = {}) {
+export function mockClaudeAPI(_config = {}) {
   const calls = [];
   let shouldFail = false;
   let failError = new Error('Claude API error');
@@ -517,7 +519,7 @@ export function mockClaudeAPI(config = {}) {
  * @param {Object} [config]
  * @returns {Object} Wanted API mock
  */
-export function mockWantedAPI(config = {}) {
+export function mockWantedAPI(_config = {}) {
   const calls = [];
   let isAuthenticated = true;
   let shouldFail = false;

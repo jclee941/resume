@@ -111,12 +111,10 @@ async function authenticate(platformKey, username, password) {
         '[placeholder*="password"]',
       ];
 
-      let filled = false;
       for (const sel of emailSelectors) {
         try {
           await page.waitForSelector(sel, { timeout: 2000 });
           await page.fill(sel, username);
-          filled = true;
           log(`Filled email using selector: ${sel}`);
           break;
         } catch {}
@@ -126,7 +124,6 @@ async function authenticate(platformKey, username, password) {
         try {
           await page.waitForSelector(sel, { timeout: 2000 });
           await page.fill(sel, password);
-          filled = true;
           log(`Filled password using selector: ${sel}`);
           break;
         } catch {}

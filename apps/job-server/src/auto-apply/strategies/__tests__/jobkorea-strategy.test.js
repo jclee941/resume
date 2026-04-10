@@ -11,19 +11,38 @@ import { describe, it, beforeEach, afterEach, mock } from 'node:test';
 import assert from 'node:assert/strict';
 
 // Import error classes to check against
-let ErrorClasses;
+let _ErrorClasses;
 try {
   const module = await import('../../shared/errors/apply-errors.js');
-  ErrorClasses = module;
+  _ErrorClasses = module;
 } catch {
-  ErrorClasses = {
-    AuthError: class extends Error { constructor(m) { super(m); this.name = 'AuthError'; } },
-    CaptchaError: class extends Error { constructor(m) { super(m); this.name = 'CaptchaError'; } },
-    RateLimitError: class extends Error { constructor(m) { super(m); this.name = 'RateLimitError'; } },
-    ValidationError: class extends Error { constructor(m) { super(m); this.name = 'ValidationError'; } }
+  _ErrorClasses = {
+    AuthError: class extends Error {
+      constructor(m) {
+        super(m);
+        this.name = 'AuthError';
+      }
+    },
+    CaptchaError: class extends Error {
+      constructor(m) {
+        super(m);
+        this.name = 'CaptchaError';
+      }
+    },
+    RateLimitError: class extends Error {
+      constructor(m) {
+        super(m);
+        this.name = 'RateLimitError';
+      }
+    },
+    ValidationError: class extends Error {
+      constructor(m) {
+        super(m);
+        this.name = 'ValidationError';
+      }
+    },
   };
 }
-const { AuthError, CaptchaError, RateLimitError, ValidationError } = ErrorClasses;
 // Mock the application manager
 const mockAppManager = {
   addApplication: mock.fn(() => ({
@@ -96,11 +115,21 @@ describe('JobKorea Strategy', () => {
     try {
       const { resetRetryState } = await import('../../../shared/utils/retry.js');
       resetRetryState('jobkorea');
-    } catch (e) { /* ignore if import fails */ }
+    } catch (_e) {
+      /* ignore if import fails */
+    }
 
     // Restore all mocks
-    try { mock.resetAll?.(); } catch (e) { /* ignore */ }
-    try { mock.restoreAll?.(); } catch (e) { /* ignore */ }
+    try {
+      mock.resetAll?.();
+    } catch (_e) {
+      /* ignore */
+    }
+    try {
+      mock.restoreAll?.();
+    } catch (_e) {
+      /* ignore */
+    }
 
     // Re-import the module to get fresh functions
     const strategyModule = await import('../jobkorea-strategy.js');
@@ -108,7 +137,11 @@ describe('JobKorea Strategy', () => {
   });
 
   afterEach(() => {
-    try { mock.restoreAll(); } catch (e) { /* ignore */ }
+    try {
+      mock.restoreAll();
+    } catch (_e) {
+      /* ignore */
+    }
   });
 
   describe('applyToJobKorea', () => {
@@ -119,20 +152,33 @@ describe('JobKorea Strategy', () => {
         const mockSubmitButton = { click: mock.fn(() => Promise.resolve()) };
 
         const context = createContext(mockPage, {
-          findByText: mock.fn((tag, text, cssAlt) => {
+          findByText: mock.fn((tag, text, _cssAlt) => {
             if (tag === 'a' && text === '로그인') return Promise.resolve(null); // Not logged in but no prompt needed
             if (tag === 'button' && text === '즉시 지원') return Promise.resolve(mockApplyButton);
-            if (tag === 'button' && text === '지원하기' && cssAlt === '#btnApplyDirect') return Promise.resolve(mockSubmitButton);
+            if (tag === 'button' && text === '지원하기' && cssAlt === '#btnApplyDirect')
+              return Promise.resolve(mockSubmitButton);
             if (tag === 'button' && text === '지원하기') return Promise.resolve(mockSubmitButton);
             return Promise.resolve(null);
           }),
           findElementWithText: mock.fn((text) => {
             // Return null for all checks except success
-            if (text === 'captcha' || text === '로봇이 아닙니다' || text === '자동입력방지') return Promise.resolve(null);
-            if (text === '잠시 후 다시 시도' || text === 'too many requests' || text === '요청이 너무 많습니다') return Promise.resolve(null);
+            if (text === 'captcha' || text === '로봇이 아닙니다' || text === '자동입력방지')
+              return Promise.resolve(null);
+            if (
+              text === '잠시 후 다시 시도' ||
+              text === 'too many requests' ||
+              text === '요청이 너무 많습니다'
+            )
+              return Promise.resolve(null);
             if (text === '이미 지원한') return Promise.resolve(null);
-            if (text === '오류' || text === '실패' || text === '지원할 수 없습니다') return Promise.resolve(null);
-            if (text.includes('지원이 완료') || text.includes('지원 완료') || text.includes('지원하였습니다')) return Promise.resolve({ textContent: '지원이 완료되었습니다' });
+            if (text === '오류' || text === '실패' || text === '지원할 수 없습니다')
+              return Promise.resolve(null);
+            if (
+              text.includes('지원이 완료') ||
+              text.includes('지원 완료') ||
+              text.includes('지원하였습니다')
+            )
+              return Promise.resolve({ textContent: '지원이 완료되었습니다' });
             return Promise.resolve(null);
           }),
         });
@@ -153,13 +199,14 @@ describe('JobKorea Strategy', () => {
         const mockFirstResume = { click: mock.fn(() => Promise.resolve()) };
 
         const context = createContext(mockPage, {
-          findByText: mock.fn((tag, text, cssAlt) => {
+          findByText: mock.fn((tag, text, _cssAlt) => {
             if (tag === 'button' && text === '즉시 지원') return Promise.resolve(mockApplyButton);
             if (tag === 'button' && text === '지원하기') return Promise.resolve(mockSubmitButton);
             return Promise.resolve(null);
           }),
           findElementWithText: mock.fn((text) => {
-            if (text === 'captcha' || text === '로봇이 아닙니다' || text === '자동입력방지') return Promise.resolve(null);
+            if (text === 'captcha' || text === '로봇이 아닙니다' || text === '자동입력방지')
+              return Promise.resolve(null);
             if (text === '잠시 후 다시 시도') return Promise.resolve(null);
             if (text === '이미 지원한') return Promise.resolve(null);
             if (text === '오류') return Promise.resolve(null);
@@ -194,7 +241,7 @@ describe('JobKorea Strategy', () => {
         const mockSubmitButton = { click: mock.fn(() => Promise.resolve()) };
 
         const context = createContext(mockPage, {
-          findByText: mock.fn((tag, text, cssAlt) => {
+          findByText: mock.fn((tag, text, _cssAlt) => {
             if (tag === 'button' && text === '즉시 지원') return Promise.resolve(mockApplyButton);
             if (tag === 'button' && text === '지원하기') return Promise.resolve(mockSubmitButton);
             return Promise.resolve(null);
@@ -216,7 +263,8 @@ describe('JobKorea Strategy', () => {
               $: () => Promise.resolve({ click: mock.fn(() => Promise.resolve()) }),
             });
           }
-          if (selector === '.resume_item:first-child') return Promise.resolve({ click: mock.fn(() => Promise.resolve()) });
+          if (selector === '.resume_item:first-child')
+            return Promise.resolve({ click: mock.fn(() => Promise.resolve()) });
           return Promise.resolve(null);
         });
 
@@ -233,7 +281,7 @@ describe('JobKorea Strategy', () => {
         const mockSubmitButton = { click: mock.fn(() => Promise.resolve()) };
 
         const context = createContext(mockPage, {
-          findByText: mock.fn((tag, text, cssAlt) => {
+          findByText: mock.fn((tag, text, _cssAlt) => {
             if (tag === 'button' && text === '즉시 지원') return Promise.resolve(mockApplyButton);
             if (tag === 'button' && text === '지원하기') return Promise.resolve(mockSubmitButton);
             return Promise.resolve(null);
@@ -263,7 +311,7 @@ describe('JobKorea Strategy', () => {
         const mockSubmitButton = { click: mock.fn(() => Promise.resolve()) };
 
         const context = createContext(mockPage, {
-          findByText: mock.fn((tag, text, cssAlt) => {
+          findByText: mock.fn((tag, text, _cssAlt) => {
             if (tag === 'button' && text === '즉시 지원') return Promise.resolve(mockApplyButton);
             if (tag === 'button' && text === '지원하기') return Promise.resolve(mockSubmitButton);
             return Promise.resolve(null);
@@ -317,12 +365,18 @@ describe('JobKorea Strategy', () => {
         const result = await applyToJobKorea.call(context, job);
 
         assert.strictEqual(result.success, false);
-        assert.ok(result.error.includes('Not logged in') || result.error.includes('session') || result.error.includes('expired'));
+        assert.ok(
+          result.error.includes('Not logged in') ||
+            result.error.includes('session') ||
+            result.error.includes('expired')
+        );
       });
 
       it('returns error when job not found (404)', async () => {
         const mockPage = createMockPage();
-        mockPage.goto.mock.mockImplementation(() => Promise.reject(new Error('Navigation failed: 404')));
+        mockPage.goto.mock.mockImplementation(() =>
+          Promise.reject(new Error('Navigation failed: 404'))
+        );
 
         const context = createContext(mockPage);
 
@@ -344,7 +398,8 @@ describe('JobKorea Strategy', () => {
           }),
           findElementWithText: mock.fn((text) => {
             if (text === 'captcha') return Promise.resolve(null);
-            if (text === '이미 지원한') return Promise.resolve({ textContent: '이미 지원한 공고입니다' });
+            if (text === '이미 지원한')
+              return Promise.resolve({ textContent: '이미 지원한 공고입니다' });
             return Promise.resolve(null);
           }),
         });
@@ -386,7 +441,7 @@ describe('JobKorea Strategy', () => {
         const mockSubmitButton = { click: mock.fn(() => Promise.resolve()) };
 
         const context = createContext(mockPage, {
-          findByText: mock.fn((tag, text, cssAlt) => {
+          findByText: mock.fn((tag, text, _cssAlt) => {
             if (tag === 'button' && text === '즉시 지원') return Promise.resolve(mockApplyButton);
             if (tag === 'button' && text === '지원하기') return Promise.resolve(mockSubmitButton);
             return Promise.resolve(null);
@@ -413,7 +468,9 @@ describe('JobKorea Strategy', () => {
 
       it('handles network timeout', async () => {
         const mockPage = createMockPage();
-        mockPage.goto.mock.mockImplementation(() => Promise.reject(new Error('Navigation timeout')));
+        mockPage.goto.mock.mockImplementation(() =>
+          Promise.reject(new Error('Navigation timeout'))
+        );
 
         const context = createContext(mockPage);
 
@@ -430,7 +487,7 @@ describe('JobKorea Strategy', () => {
         const mockSubmitButton = { click: mock.fn(() => Promise.resolve()) };
 
         const context = createContext(mockPage, {
-          findByText: mock.fn((tag, text, cssAlt) => {
+          findByText: mock.fn((tag, text, _cssAlt) => {
             if (tag === 'button' && text === '즉시 지원') return Promise.resolve(mockApplyButton);
             if (tag === 'button' && text === '지원하기') return Promise.resolve(mockSubmitButton);
             return Promise.resolve(null);
@@ -471,7 +528,9 @@ describe('JobKorea Strategy', () => {
 
         mockPage.title.mock.mockImplementation(() => Promise.resolve('Test Job'));
         mockPage.$.mock.mockImplementation(() => Promise.resolve(null));
-        mockPage.screenshot.mock.mockImplementation(() => Promise.reject(new Error('Screenshot failed')));
+        mockPage.screenshot.mock.mockImplementation(() =>
+          Promise.reject(new Error('Screenshot failed'))
+        );
 
         const job = createSampleJob();
         const result = await applyToJobKorea.call(context, job);
@@ -486,7 +545,7 @@ describe('JobKorea Strategy', () => {
         const mockSubmitButton = { click: mock.fn(() => Promise.resolve()) };
 
         const context = createContext(mockPage, {
-          findByText: mock.fn((tag, text, cssAlt) => {
+          findByText: mock.fn((tag, text, _cssAlt) => {
             if (tag === 'button' && text === '즉시 지원') return Promise.resolve(mockApplyButton);
             if (tag === 'button' && text === '지원하기') return Promise.resolve(mockSubmitButton);
             return Promise.resolve(null);
@@ -517,7 +576,11 @@ describe('JobKorea Strategy', () => {
           findByText: mock.fn(() => Promise.resolve(null)),
           findElementWithText: mock.fn((text) => {
             if (text === 'captcha') return Promise.resolve(null);
-            if (text === '잠시 후 다시 시도' || text === 'too many requests' || text === '요청이 너무 많습니다') {
+            if (
+              text === '잠시 후 다시 시도' ||
+              text === 'too many requests' ||
+              text === '요청이 너무 많습니다'
+            ) {
               return Promise.resolve({ textContent: '잠시 후 다시 시도' });
             }
             return Promise.resolve(null);
@@ -553,7 +616,7 @@ describe('JobKorea Strategy', () => {
         const mockSubmitButton = { click: mock.fn(() => Promise.resolve()) };
 
         const context = createContext(mockPage, {
-          findByText: mock.fn((tag, text, cssAlt) => {
+          findByText: mock.fn((tag, text, _cssAlt) => {
             if (tag === 'button' && text === '즉시 지원') return Promise.resolve(mockApplyButton);
             if (tag === 'button' && text === '지원하기') return Promise.resolve(mockSubmitButton);
             return Promise.resolve(null);
@@ -615,7 +678,7 @@ describe('JobKorea Strategy', () => {
           const mockSubmitButton = { click: mock.fn(() => Promise.resolve()) };
 
           const context = createContext(mockPage, {
-            findByText: mock.fn((t, txt, cssAlt) => {
+            findByText: mock.fn((t, txt, _cssAlt) => {
               if (t === tag && txt === text) return Promise.resolve(mockApplyButton);
               if (t === 'button' && txt === '지원하기') return Promise.resolve(mockSubmitButton);
               return Promise.resolve(null);
@@ -654,7 +717,7 @@ describe('JobKorea Strategy', () => {
           const mockSubmitButton = { click: mock.fn(() => Promise.resolve()) };
 
           const context = createContext(mockPage, {
-            findByText: mock.fn((tag, txt, cssAlt) => {
+            findByText: mock.fn((tag, txt, _cssAlt) => {
               if (tag === 'button' && txt === '즉시 지원') return Promise.resolve(mockApplyButton);
               if (tag === 'button' && txt === '지원하기') return Promise.resolve(mockSubmitButton);
               return Promise.resolve(null);
@@ -682,12 +745,9 @@ describe('JobKorea Strategy', () => {
     describe('Cookie Refresh Flow', () => {
       it('attempts cookie refresh when not logged in', async () => {
         const mockPage = createMockPage();
-        let loginChecks = 0;
-
         const context = createContext(mockPage, {
           findByText: mock.fn((tag, text) => {
             if (tag === 'a' && text === '로그인') {
-              loginChecks++;
               return Promise.resolve({ href: '/Login' });
             }
             return Promise.resolve(null);
@@ -696,7 +756,7 @@ describe('JobKorea Strategy', () => {
         });
 
         mockPage.title.mock.mockImplementation(() => Promise.resolve('JobKorea Main'));
-        mockPage.goto.mock.mockImplementation((url) => Promise.resolve());
+        mockPage.goto.mock.mockImplementation((_url) => Promise.resolve());
 
         const job = createSampleJob();
         const result = await applyToJobKorea.call(context, job);
@@ -736,7 +796,7 @@ describe('JobKorea Strategy', () => {
         });
 
         mockPage.title.mock.mockImplementation(() => Promise.resolve('Test Job'));
-        mockPage.goto.mock.mockImplementation((url) => Promise.resolve());
+        mockPage.goto.mock.mockImplementation((_url) => Promise.resolve());
         mockPage.$.mock.mockImplementation(() => Promise.resolve(null));
 
         const job = createSampleJob();
@@ -759,7 +819,9 @@ describe('JobKorea Strategy', () => {
         mockPage.title.mock.mockImplementation(() => Promise.resolve('Test Job'));
         mockPage.$.mock.mockImplementation(() => Promise.resolve(null));
         // Screenshot fails gracefully
-        mockPage.screenshot.mock.mockImplementation(() => Promise.reject(new Error('Screenshot failed')));
+        mockPage.screenshot.mock.mockImplementation(() =>
+          Promise.reject(new Error('Screenshot failed'))
+        );
 
         const job = createSampleJob();
         const result = await applyToJobKorea.call(context, job);

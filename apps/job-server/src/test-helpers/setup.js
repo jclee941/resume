@@ -3,7 +3,6 @@
  * @file apps/job-server/src/test-helpers/setup.js
  */
 
-import { mock } from 'node:test';
 import {
   createMockD1Client,
   createMockFetch,
@@ -14,7 +13,6 @@ import {
   mockClaudeAPI,
   mockWantedAPI,
 } from './mocks.js';
-import { mockJobs, mockResumeData, createMockApplication } from './fixtures.js';
 
 // ========================
 // Database Setup

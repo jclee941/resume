@@ -24,8 +24,6 @@ const {
   isRealisticUserAgent,
 } = require('./fixtures/mock-data');
 
-// Mock server singleton info
-let mockServerInfo = null;
 const MOCK_SERVER_BASE_PORT = 9393;
 let mockServerPort = MOCK_SERVER_BASE_PORT;
 let mockServerUrl = `http://localhost:${mockServerPort}`;
@@ -53,7 +51,7 @@ test.describe.serial('Job Application Browser Automation', () => {
   test.beforeAll(async ({ browser: _browser }, testInfo) => {
     mockServerPort = MOCK_SERVER_BASE_PORT + testInfo.workerIndex;
     mockServerUrl = `http://localhost:${mockServerPort}`;
-    mockServerInfo = await getServer(mockServerPort);
+    await getServer(mockServerPort);
     console.log(
       `[Job Application E2E] Mock server ready at ${mockServerUrl} (worker=${testInfo.workerIndex})`
     );
@@ -319,14 +317,6 @@ test.describe.serial('Job Application Browser Automation', () => {
   // ============================================================================
   test.describe('Test D: Error Handling', () => {
     test('should handle 500 server error', async ({ page }) => {
-      let retryCount = 0;
-
-      page.on('response', async (response) => {
-        if (response.url().includes('/error/500') && response.status() === 500) {
-          retryCount++;
-        }
-      });
-
       await page.goto(`${mockServerUrl}/error/500`, {
         waitUntil: 'domcontentloaded',
       });

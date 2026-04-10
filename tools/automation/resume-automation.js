@@ -25,8 +25,8 @@
  *   0 9 * * * cd /home/jclee/dev/resume && /usr/bin/node tools/automation/resume-automation.js >> /var/log/resume-automation.log 2>&1
  */
 
-import { execSync, spawn } from 'child_process';
-import { existsSync, mkdirSync, appendFileSync, readFileSync } from 'fs';
+import { spawn } from 'child_process';
+import { existsSync, mkdirSync, appendFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { homedir } from 'os';
@@ -36,8 +36,6 @@ const PROJECT_ROOT = dirname(dirname(__dirname));
 const JOB_SERVER_DIR = join(PROJECT_ROOT, 'apps/job-server');
 
 const LOG_DIR = join(homedir(), '.opencode', 'data', 'automation-logs');
-const ENV_FILE = join(PROJECT_ROOT, '.env.automation');
-
 const CONFIG = {
   jobkorea: {
     user: process.env.RESUME_JOBKOREA_USER,
@@ -188,7 +186,7 @@ async function autoApply() {
   args.push(`--max=${CONFIG.maxApply}`);
 
   try {
-    const { stdout } = await runCommand('node', args, { verbose: true, timeout: 600000 });
+    await runCommand('node', args, { verbose: true, timeout: 600000 });
     log('Auto-apply completed', 'success');
     return true;
   } catch (e) {
@@ -234,13 +232,13 @@ async function runPlatformAutomation(platform, credentials) {
 }
 
 async function main() {
-  log(`\n${  '='.repeat(60)}`);
+  log(`\n${'='.repeat(60)}`);
   log('RESUME AUTOMATION STARTED');
   log('='.repeat(60));
   log(`Mode: ${CONFIG.dryRun ? 'DRY-RUN' : 'LIVE'}`);
   log(`Max Apply: ${CONFIG.maxApply}`);
   log(`Log File: ${logFile}`);
-  log(`${'='.repeat(60)  }\n`);
+  log(`${'='.repeat(60)}\n`);
 
   const results = [];
 
@@ -262,7 +260,7 @@ async function main() {
   }
 
   // Summary
-  log(`\n${  '='.repeat(60)}`);
+  log(`\n${'='.repeat(60)}`);
   log('AUTOMATION SUMMARY');
   log('='.repeat(60));
 

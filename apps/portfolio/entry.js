@@ -29,7 +29,6 @@ async function fetchJobHandlerResponse(request, env, ctx, pathname) {
   return applyResponseHeaders(response, pathname);
 }
 
-
 export default {
   async fetch(request, env, ctx) {
     const startTime = Date.now();
@@ -133,7 +132,7 @@ export default {
   },
 
   // Queue handler - acknowledges all messages (no-op for portfolio worker)
-  async queue(batch, env, ctx) {
+  async queue(batch, _env, _ctx) {
     console.log(`[queue] Received ${batch.messages.length} messages from queue: ${batch.queue}`);
     // Acknowledge all messages - portfolio worker doesn't process queue messages
     for (const message of batch.messages) {

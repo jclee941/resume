@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { createRequire, syncBuiltinESMExports } from 'node:module';
-import { dirname, join } from 'node:path';
+import { dirname } from 'node:path';
 import { describe, it, beforeEach, mock } from 'node:test';
 
 const require = createRequire(import.meta.url);
@@ -260,7 +260,12 @@ describe('SessionManager', () => {
     const expired = SessionManager.checkHealth('expired');
     const soon = SessionManager.checkHealth('soon', 2 * 60 * 1000);
 
-    assert.deepEqual(missing, { valid: false, expiringSoon: false, expiresAt: null, reason: 'no_session' });
+    assert.deepEqual(missing, {
+      valid: false,
+      expiringSoon: false,
+      expiresAt: null,
+      reason: 'no_session',
+    });
     assert.equal(valid.valid, true);
     assert.equal(valid.expiringSoon, false);
     assert.equal(expired.valid, false);
