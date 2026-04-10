@@ -8,7 +8,7 @@
     {
       "icon": "🏦",
       "title": "ITCEN CTS Co., Ltd.",
-      "description": "Security operations managed service for Nextrade and support for the Information Security Team\n• Advanced Splunk-based security log analysis and real-time threat monitoring\n• Optimized FortiGate firewall policies and automated access-control operations\n• Strengthened infrastructure resilience through vulnerability checks and monthly security reporting\n• Technology: Splunk, FortiGate, Python, Linux",
+      "description": "[Problem] Security event response and firewall policy lookup were still manual in a 24/7 trading environment with 150 servers, 300 endpoints, 80 network devices, and 100K+ daily trades.\n[Action] I operated 32 Splunk ES detection rules, connected real-time Slack alerts through n8n workflows, and built a Python library for policy lookup using the FortiManager API.\n[Result] Alerts were delivered within 30 seconds, firewall policy lookup time was reduced by 80%, and unnecessary alerts were reduced by 70% through automation.\n[Stack] Splunk, Prometheus, Grafana, Loki, n8n, Python, Docker, Linux",
       "period": "2025.03 ~ 2026.02",
       "stats": [],
       "highlight": true,
@@ -17,7 +17,7 @@
     {
       "icon": "🏗️",
       "title": "Gaonnuri Information Systems Co., Ltd.",
-      "description": "Designed and implemented security infrastructure for the Nextrade trading execution platform\n• Supported technical responses for Financial Services Commission production authorization review and established the security architecture\n• Designed network segmentation and access-control policies to satisfy security compliance requirements\n• Built FortiGate HA architecture and formalized disaster recovery procedures\n• Technology: FortiGate, FortiManager, Linux, VMware",
+      "description": "[Problem] A new exchange had to standardize security infrastructure for 150 servers and 80 network devices on a tight timeline before FSC production approval.\n[Action] I designed the FGCP-based FortiGate Active-Passive HA architecture, established segmentation, L2/L3, VPN, and NAC access-control design, and standardized initial setup and policy rollout with Ansible roles and the FortiManager API.\n[Result] The environment passed FSC production approval, reached a 99.99% HA design target, and established an operational standard with less dependence on manual setup.\n[Stack] FortiGate, FortiManager, Ansible, Python, Linux, VMware",
       "period": "2024.03 ~ 2025.02",
       "stats": [],
       "highlight": false
@@ -25,7 +25,7 @@
     {
       "icon": "📈",
       "title": "Quant Investment Management Co., Ltd.",
-      "description": "Operated cloud infrastructure security for an AI asset management platform\n• Managed and enhanced AWS security controls including IAM, Security Groups, and WAF\n• Conducted regular vulnerability assessments and supported robo-advisor testbed security review readiness\n• Built and operated Prometheus/Grafana-based security metrics dashboards\n• Technology: AWS, Terraform, Prometheus, Grafana",
+      "description": "[Problem] AWS security operations for the AI asset-management platform were spread across the console, making audit evidence and security metrics difficult to organize.\n[Action] I codified VPCs, subnets, and security groups with Terraform, tightened IAM and WAF operating standards, integrated CloudTrail and GuardDuty logs into CloudWatch, and built Prometheus/Grafana dashboards.\n[Result] The platform gained an audit-ready operating baseline for robo-advisor testbed reviews and shifted to code-and-log-centric security operations.\n[Stack] AWS, Terraform, CloudTrail, GuardDuty, Prometheus, Grafana",
       "period": "2022.08 ~ 2024.02",
       "stats": [],
       "highlight": false
@@ -33,7 +33,7 @@
     {
       "icon": "☁️",
       "title": "FunNC Co., Ltd.",
-      "description": "Led cloud migration and security hardening for an e-commerce service\n• Designed migration from on-premises environments to AWS VPC-based cloud architecture\n• Established EKS cluster security configurations and container vulnerability review processes\n• Automated security review stages in GitLab CI/CD pipelines\n• Technology: AWS, Kubernetes, Docker, GitLab CI",
+      "description": "[Problem] The e-commerce platform had to move from on-premises to AWS without established container security standards or deployment verification gates.\n[Action] I designed the AWS VPC migration architecture, defined RBAC and Pod Security standards for EKS, and built Helm-based deployment automation plus GitLab CI/CD static-analysis and security-scan stages.\n[Result] Backup and recovery automation reduced MTTR by 50% (2 hours → 1 hour), while added security scans improved early vulnerability detection by 80% before the migration handoff.\n[Stack] AWS, Kubernetes, Docker, Helm, GitLab CI/CD",
       "period": "2022.05 ~ 2022.07",
       "stats": [],
       "highlight": false
@@ -41,7 +41,7 @@
     {
       "icon": "🎓",
       "title": "Jointree Co., Ltd.",
-      "description": "Advanced the security infrastructure for Kookmin University's next-generation information system\n• Strengthened internal network security with VMware NSX-T micro-segmentation architecture\n• Built integrated security controls and policies, including firewall, NAC, and DLP\n• Supported network security architecture for hybrid cloud transition\n• Technology: VMware NSX-T, Network Security, NAC",
+      "description": "[Problem] The university needed tighter east-west traffic control and unified security governance during its next-generation information-system transition.\n[Action] I designed VMware NSX-T DFW-based micro-segmentation, integrated NAC, DLP, and APT policy flows, and built security monitoring with Wazuh and Kibana.\n[Result] Monthly incidents fell by 25% (12 → 9), prevention effectiveness reached 80% with 200 blocked events per month, sensitive-data detection improved by 20%, and service availability held at 99.9%.\n[Stack] VMware NSX-T, Firewall, NAC, DLP, Wazuh, Kibana, Linux",
       "period": "2021.09 ~ 2022.04",
       "stats": [],
       "highlight": false
@@ -49,7 +49,7 @@
     {
       "icon": "📞",
       "title": "Metanet M Platform Co., Ltd.",
-      "description": "Operated and automated large-scale contact center IT infrastructure\n• Rapidly built and operated VPN infrastructure to support mass remote work during COVID-19\n• Improved operational efficiency by automating server provisioning and repetitive tasks with Ansible\n• Built real-time monitoring and incident response workflows using Zabbix and PRTG\n• Technology: Ansible, VPN, Zabbix, Python",
+      "description": "[Problem] A 1,000-user remote-work transition had to be launched urgently during COVID-19 while VPN/NAC exception handling and switch checks were still manual.\n[Action] I built the FortiGate SSL VPN and NAC integration model, automated NAC exception rollout with Ansible, and developed Python-based Cisco switch checks and VPN session monitoring dashboards.\n[Result] Switch inspection time dropped by 75% (8 hours → 2 hours), NAC exception processing dropped by 90% (30 minutes → 3 minutes), support tickets fell by 40% (20/week → 12/week), and three new sites were delivered.\n[Stack] Ansible, Python, VPN, NAC, Zabbix, PRTG, Linux",
       "period": "2019.12 ~ 2021.08",
       "stats": [],
       "highlight": false
@@ -57,7 +57,7 @@
     {
       "icon": "✈️",
       "title": "MT Data Co., Ltd.",
-      "description": "Provided on-site IT infrastructure operations support in a defense industry environment\n• Performed recurring inspections and maintenance for servers and client infrastructure in an isolated network\n• Managed infrastructure assets and applied security patches in line with internal security policies\n• Maintained stable business operations through technical support and incident response\n• Technology: Windows Server, Linux, Helpdesk",
+      "description": "[Problem] The manufacturing security environment had to operate 50+ Linux servers and firewall policies in a closed network with fragmented asset, patch, and vulnerability processes.\n[Action] I established log-based inspection routines, redesigned firewall policies, supported manufacturing/development network separation, and formalized monthly vulnerability checks and security patch procedures.\n[Result] Duplicate firewall rules were reduced by 30% (3,000 → 2,100), internal information leakage incidents stayed at zero during network separation, and critical vulnerabilities were remediated within two weeks at a 100% rate.\n[Stack] Linux, Windows Server, Shell Script, Firewall",
       "period": "2017.02 ~ 2018.10",
       "stats": [],
       "highlight": false
@@ -67,7 +67,7 @@
     {
       "icon": "🏦",
       "title": "ITCEN CTS Co., Ltd.",
-      "description": "Security operations managed service for Nextrade and support for the Information Security Team\n• Advanced Splunk-based security log analysis and real-time threat monitoring\n• Optimized FortiGate firewall policies and automated access-control operations\n• Strengthened infrastructure resilience through vulnerability checks and monthly security reporting\n• Technology: Splunk, FortiGate, Python, Linux",
+      "description": "[Problem] Security event response and firewall policy lookup were still manual in a 24/7 trading environment with 150 servers, 300 endpoints, 80 network devices, and 100K+ daily trades.\n[Action] I operated 32 Splunk ES detection rules, connected real-time Slack alerts through n8n workflows, and built a Python library for policy lookup using the FortiManager API.\n[Result] Alerts were delivered within 30 seconds, firewall policy lookup time was reduced by 80%, and unnecessary alerts were reduced by 70% through automation.\n[Stack] Splunk, Prometheus, Grafana, Loki, n8n, Python, Docker, Linux",
       "period": "2025.03 ~ 2026.02",
       "stats": [],
       "highlight": true,
@@ -76,7 +76,7 @@
     {
       "icon": "🏗️",
       "title": "Gaonnuri Information Systems Co., Ltd.",
-      "description": "Designed and implemented security infrastructure for the Nextrade trading execution platform\n• Supported technical responses for Financial Services Commission production authorization review and established the security architecture\n• Designed network segmentation and access-control policies to satisfy security compliance requirements\n• Built FortiGate HA architecture and formalized disaster recovery procedures\n• Technology: FortiGate, FortiManager, Linux, VMware",
+      "description": "[Problem] A new exchange had to standardize security infrastructure for 150 servers and 80 network devices on a tight timeline before FSC production approval.\n[Action] I designed the FGCP-based FortiGate Active-Passive HA architecture, established segmentation, L2/L3, VPN, and NAC access-control design, and standardized initial setup and policy rollout with Ansible roles and the FortiManager API.\n[Result] The environment passed FSC production approval, reached a 99.99% HA design target, and established an operational standard with less dependence on manual setup.\n[Stack] FortiGate, FortiManager, Ansible, Python, Linux, VMware",
       "period": "2024.03 ~ 2025.02",
       "stats": [],
       "highlight": false
@@ -84,7 +84,7 @@
     {
       "icon": "📈",
       "title": "Quant Investment Management Co., Ltd.",
-      "description": "Operated cloud infrastructure security for an AI asset management platform\n• Managed and enhanced AWS security controls including IAM, Security Groups, and WAF\n• Conducted regular vulnerability assessments and supported robo-advisor testbed security review readiness\n• Built and operated Prometheus/Grafana-based security metrics dashboards\n• Technology: AWS, Terraform, Prometheus, Grafana",
+      "description": "[Problem] AWS security operations for the AI asset-management platform were spread across the console, making audit evidence and security metrics difficult to organize.\n[Action] I codified VPCs, subnets, and security groups with Terraform, tightened IAM and WAF operating standards, integrated CloudTrail and GuardDuty logs into CloudWatch, and built Prometheus/Grafana dashboards.\n[Result] The platform gained an audit-ready operating baseline for robo-advisor testbed reviews and shifted to code-and-log-centric security operations.\n[Stack] AWS, Terraform, CloudTrail, GuardDuty, Prometheus, Grafana",
       "period": "2022.08 ~ 2024.02",
       "stats": [],
       "highlight": false
@@ -92,7 +92,7 @@
     {
       "icon": "☁️",
       "title": "FunNC Co., Ltd.",
-      "description": "Led cloud migration and security hardening for an e-commerce service\n• Designed migration from on-premises environments to AWS VPC-based cloud architecture\n• Established EKS cluster security configurations and container vulnerability review processes\n• Automated security review stages in GitLab CI/CD pipelines\n• Technology: AWS, Kubernetes, Docker, GitLab CI",
+      "description": "[Problem] The e-commerce platform had to move from on-premises to AWS without established container security standards or deployment verification gates.\n[Action] I designed the AWS VPC migration architecture, defined RBAC and Pod Security standards for EKS, and built Helm-based deployment automation plus GitLab CI/CD static-analysis and security-scan stages.\n[Result] Backup and recovery automation reduced MTTR by 50% (2 hours → 1 hour), while added security scans improved early vulnerability detection by 80% before the migration handoff.\n[Stack] AWS, Kubernetes, Docker, Helm, GitLab CI/CD",
       "period": "2022.05 ~ 2022.07",
       "stats": [],
       "highlight": false
@@ -100,7 +100,7 @@
     {
       "icon": "🎓",
       "title": "Jointree Co., Ltd.",
-      "description": "Advanced the security infrastructure for Kookmin University's next-generation information system\n• Strengthened internal network security with VMware NSX-T micro-segmentation architecture\n• Built integrated security controls and policies, including firewall, NAC, and DLP\n• Supported network security architecture for hybrid cloud transition\n• Technology: VMware NSX-T, Network Security, NAC",
+      "description": "[Problem] The university needed tighter east-west traffic control and unified security governance during its next-generation information-system transition.\n[Action] I designed VMware NSX-T DFW-based micro-segmentation, integrated NAC, DLP, and APT policy flows, and built security monitoring with Wazuh and Kibana.\n[Result] Monthly incidents fell by 25% (12 → 9), prevention effectiveness reached 80% with 200 blocked events per month, sensitive-data detection improved by 20%, and service availability held at 99.9%.\n[Stack] VMware NSX-T, Firewall, NAC, DLP, Wazuh, Kibana, Linux",
       "period": "2021.09 ~ 2022.04",
       "stats": [],
       "highlight": false
@@ -108,7 +108,7 @@
     {
       "icon": "📞",
       "title": "Metanet M Platform Co., Ltd.",
-      "description": "Operated and automated large-scale contact center IT infrastructure\n• Rapidly built and operated VPN infrastructure to support mass remote work during COVID-19\n• Improved operational efficiency by automating server provisioning and repetitive tasks with Ansible\n• Built real-time monitoring and incident response workflows using Zabbix and PRTG\n• Technology: Ansible, VPN, Zabbix, Python",
+      "description": "[Problem] A 1,000-user remote-work transition had to be launched urgently during COVID-19 while VPN/NAC exception handling and switch checks were still manual.\n[Action] I built the FortiGate SSL VPN and NAC integration model, automated NAC exception rollout with Ansible, and developed Python-based Cisco switch checks and VPN session monitoring dashboards.\n[Result] Switch inspection time dropped by 75% (8 hours → 2 hours), NAC exception processing dropped by 90% (30 minutes → 3 minutes), support tickets fell by 40% (20/week → 12/week), and three new sites were delivered.\n[Stack] Ansible, Python, VPN, NAC, Zabbix, PRTG, Linux",
       "period": "2019.12 ~ 2021.08",
       "stats": [],
       "highlight": false
@@ -116,7 +116,7 @@
     {
       "icon": "✈️",
       "title": "MT Data Co., Ltd.",
-      "description": "Provided on-site IT infrastructure operations support in a defense industry environment\n• Performed recurring inspections and maintenance for servers and client infrastructure in an isolated network\n• Managed infrastructure assets and applied security patches in line with internal security policies\n• Maintained stable business operations through technical support and incident response\n• Technology: Windows Server, Linux, Helpdesk",
+      "description": "[Problem] The manufacturing security environment had to operate 50+ Linux servers and firewall policies in a closed network with fragmented asset, patch, and vulnerability processes.\n[Action] I established log-based inspection routines, redesigned firewall policies, supported manufacturing/development network separation, and formalized monthly vulnerability checks and security patch procedures.\n[Result] Duplicate firewall rules were reduced by 30% (3,000 → 2,100), internal information leakage incidents stayed at zero during network separation, and critical vulnerabilities were remediated within two weeks at a 100% rate.\n[Stack] Linux, Windows Server, Shell Script, Firewall",
       "period": "2017.02 ~ 2018.10",
       "stats": [],
       "highlight": false
@@ -127,7 +127,7 @@
       "icon": "📊",
       "title": "Observability Platform",
       "tech": "Grafana, Prometheus, Loki, Blackbox Exporter, Docker",
-      "description": "Homelab infrastructure monitoring platform with Prometheus metrics collection, Loki log aggregation, and Grafana visualization.",
+      "description": "[Problem] Metrics and logs across the homelab were fragmented, which slowed down root-cause analysis.\n[Action] I collected 50+ metric endpoints with Prometheus and unified three data sources—Loki, Elasticsearch, and Prometheus—into 12+ Grafana dashboards.\n[Result] The platform maintained 99.5% infrastructure uptime while establishing a single-pane operating baseline for metrics and logs.",
       "tagline": "Monitoring Platform",
       "stars": 0,
       "language": "PromQL",
@@ -135,10 +135,11 @@
       "githubUrl": null,
       "demoUrl": "https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b",
       "metrics": {
-        "dashboards": "12+",
-        "datasources": "Prometheus, Loki, Elasticsearch",
+        "dashboards": "12+ Grafana dashboards",
+        "datasources": "3 unified data sources (Prometheus, Loki, Elasticsearch)",
         "uptime": "99.5%",
-        "targets": "50+ metrics endpoints"
+        "targets": "50+ metric endpoints",
+        "healthChecks": "Blackbox Exporter external endpoint monitoring"
       },
       "related_skills": [
         "Grafana",
@@ -153,7 +154,7 @@
       "icon": "🔄",
       "title": "n8n Automation",
       "tech": "n8n, PostgreSQL, Docker",
-      "description": "Automated workflows for alerting, deployment, and data collection.",
+      "description": "[Problem] Alerting, deployment, and data-collection tasks depended on scattered scripts and manual execution.\n[Action] I built 15+ workflows on n8n and connected Slack, GitHub, Cloudflare, and Grafana into one automation hub.\n[Result] The system now runs 200+ executions per day and processes 6K+ automation events per month as a stable operations orchestration layer.",
       "tagline": "Workflow Automation",
       "stars": 0,
       "language": "JavaScript",
@@ -161,9 +162,10 @@
       "githubUrl": null,
       "demoUrl": null,
       "metrics": {
-        "workflows": "15+",
+        "workflows": "15+ workflows",
         "executions": "200+ runs/day",
-        "integrations": "Slack, GitHub, Cloudflare, Grafana"
+        "monthlyExecutions": "6K+ automation events/month",
+        "integrations": "4 integrations (Slack, GitHub, Cloudflare, Grafana)"
       },
       "related_skills": [
         "n8n",
@@ -175,7 +177,7 @@
       "icon": "🛡️",
       "title": "Fortinet API Client",
       "tech": "Python, FortiManager, FortiAnalyzer",
-      "description": "Python library for querying FortiManager policies/routes and collecting FortiAnalyzer log statistics.",
+      "description": "[Problem] Firewall policy checks, route lookups, and log-statistics collection depended on manual CLI work and separate consoles.\n[Action] I built a Python library that wraps the FortiManager and FortiAnalyzer REST APIs and abstracts policy lookup, route management, and log statistics into reusable methods.\n[Result] The library reduced manual operating time by 80% and established a reusable API foundation for security automation.",
       "tagline": "Security Device API Automation",
       "stars": 0,
       "language": "Python",
@@ -184,8 +186,9 @@
       "demoUrl": null,
       "metrics": {
         "endpoints": "FortiManager, FortiAnalyzer REST API",
+        "systems": "2 device families wrapped by API",
         "features": "Policy lookup, route management, and log statistics",
-        "automation": "80% time reduction compared to manual operations"
+        "automation": "80% time reduction versus manual work"
       },
       "related_skills": [
         "Python",
@@ -198,7 +201,7 @@
       "icon": "🔔",
       "title": "Security Alert System",
       "tech": "Splunk, Python, Slack",
-      "description": "Detects FortiGate events in Splunk and sends alerts through Slack Block Kit. Operates 32 detection rules.",
+      "description": "[Problem] FortiGate security events were split across devices and log systems, which delayed real-time response.\n[Action] I operated 32 Splunk detection rules and built a Python + Slack Block Kit notification pipeline for immediate triage.\n[Result] Alerts are delivered within 30 seconds after an event and the automation baseline helps cut unnecessary alerts by 70%.",
       "tagline": "Security Alert Automation",
       "stars": 0,
       "language": "Python",
@@ -206,10 +209,11 @@
       "githubUrl": "https://github.com/qws941/splunk",
       "demoUrl": null,
       "metrics": {
-        "detectionRules": "32 rules",
+        "detectionRules": "32 detection rules",
         "alertChannels": "Slack Block Kit",
         "sources": "FortiGate syslog → Splunk",
-        "responseTime": "Alert within 30 seconds after event detection"
+        "responseTime": "Alert within 30 seconds after event detection",
+        "noiseReduction": "70% reduction in unnecessary alerts"
       },
       "related_skills": [
         "Splunk",
@@ -222,7 +226,7 @@
       "icon": "🚫",
       "title": "IP Blacklist Platform",
       "tech": "Flask, Next.js, PostgreSQL",
-      "description": "Collects and analyzes malicious IP intelligence, then provides dashboards. Built with Flask API and Next.js frontend.",
+      "description": "[Problem] Threat-intelligence feeds were scattered, making it hard to compare and analyze malicious IPs quickly.\n[Action] I combined a Flask REST API with a Next.js dashboard and applied GeoIP enrichment in PostgreSQL to consolidate 3+ threat-intelligence feeds into a single workflow.\n[Result] The platform created one place to collect, analyze, and inspect malicious IP intelligence, reducing lookup overhead for threat review.",
       "tagline": "Threat Intelligence",
       "stars": 0,
       "language": "Python",
@@ -245,7 +249,7 @@
       "icon": "🏎️",
       "title": "HYCU FSDS Autonomous Driving",
       "tech": "Python, ROS, Docker, AirSim",
-      "description": "Autonomous driving system based on Formula Student Driverless Simulator. Uses LiDAR cone detection (Grid BFS), Pure Pursuit path tracking, and three-tier safety state machine control. Received an Excellence Award at Hanyang Cyber University Formula Competition.",
+      "description": "[Problem] The Formula Student Driverless Simulator required stable perception and control for cone detection and path following.\n[Action] I integrated Python-based LiDAR cone detection (Grid BFS), Pure Pursuit path tracking, and a three-tier safety state machine in a ROS + Docker + AirSim environment.\n[Result] The project won the Excellence Award at the Hanyang Cyber University Formula competition and delivered a working simulator-based autonomous driving stack.",
       "tagline": "Autonomous Driving Simulation",
       "stars": 0,
       "language": "Python",
@@ -255,7 +259,8 @@
       "metrics": {
         "award": "Excellence Award",
         "platform": "Formula Student Driverless Simulator",
-        "stack": "ROS + Docker + AirSim"
+        "stack": "ROS + Docker + AirSim",
+        "control": "3-tier safety state machine control"
       },
       "related_skills": [
         "Python",
@@ -265,6 +270,31 @@
       ],
       "liveUrl": "https://github.com/qws941/hycu_fsds",
       "repoUrl": "https://github.com/qws941/hycu_fsds"
+    },
+    {
+      "icon": "⚡",
+      "title": "Resume Portfolio",
+      "tech": "Cloudflare Workers, HTML/CSS, JSON-LD SEO, Grafana Loki",
+      "description": "[Problem] Career history, projects, and operating signals were spread across separate documents, which made recruiter review slower.\n[Action] I built a Cloudflare Workers portfolio and combined JSON-LD SEO, Grafana Loki logging, and /health, /metrics, and Web Vitals tracking into one web asset.\n[Result] The result is a low-latency, globally distributed public portfolio at resume.jclee.me with verifiable deployment and health signals.",
+      "tagline": "Live Portfolio Platform",
+      "stars": 0,
+      "language": "JavaScript",
+      "forks": 0,
+      "githubUrl": "https://github.com/qws941/resume",
+      "demoUrl": "https://resume.jclee.me",
+      "metrics": {
+        "deployment": "resume.jclee.me (low-latency response, global CDN)",
+        "cicd": "GitLab CI/CD auto deployment + deployment timestamp injection",
+        "observability": "/health, /metrics, Web Vitals tracking"
+      },
+      "related_skills": [
+        "Cloudflare Workers",
+        "HTML/CSS",
+        "JSON-LD SEO",
+        "Grafana Loki"
+      ],
+      "liveUrl": "https://resume.jclee.me",
+      "repoUrl": "https://github.com/qws941/resume"
     }
   ],
   "projectsEn": [
@@ -280,10 +310,11 @@
       "githubUrl": null,
       "demoUrl": "https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b",
       "metrics": {
-        "dashboards": "12+",
-        "datasources": "Prometheus, Loki, Elasticsearch",
+        "dashboards": "12+ Grafana dashboards",
+        "datasources": "3 unified data sources (Prometheus, Loki, Elasticsearch)",
         "uptime": "99.5%",
-        "targets": "50+ metrics endpoints"
+        "targets": "50+ metric endpoints",
+        "healthChecks": "Blackbox Exporter external endpoint monitoring"
       },
       "related_skills": [
         "Grafana",
@@ -306,9 +337,10 @@
       "githubUrl": null,
       "demoUrl": null,
       "metrics": {
-        "workflows": "15+",
+        "workflows": "15+ workflows",
         "executions": "200+ runs/day",
-        "integrations": "Slack, GitHub, Cloudflare, Grafana"
+        "monthlyExecutions": "6K+ automation events/month",
+        "integrations": "4 integrations (Slack, GitHub, Cloudflare, Grafana)"
       },
       "related_skills": [
         "n8n",
@@ -320,7 +352,7 @@
       "icon": "🛡️",
       "title": "Fortinet API Client",
       "tech": "Python, FortiManager, FortiAnalyzer",
-      "description": "Python library for querying FortiManager policies/routes and collecting FortiAnalyzer log statistics.",
+      "description": "[Problem] Firewall policy checks, route lookups, and log-statistics collection depended on manual CLI work and separate consoles.\n[Action] I built a Python library that wraps the FortiManager and FortiAnalyzer REST APIs and abstracts policy lookup, route management, and log statistics into reusable methods.\n[Result] The library reduced manual operating time by 80% and established a reusable API foundation for security automation.",
       "tagline": "Security Device API Automation",
       "stars": 0,
       "language": "Python",
@@ -329,8 +361,9 @@
       "demoUrl": null,
       "metrics": {
         "endpoints": "FortiManager, FortiAnalyzer REST API",
+        "systems": "2 device families wrapped by API",
         "features": "Policy lookup, route management, and log statistics",
-        "automation": "80% time reduction compared to manual operations"
+        "automation": "80% time reduction versus manual work"
       },
       "related_skills": [
         "Python",
@@ -354,7 +387,8 @@
         "detectionRules": "32 rules",
         "alertChannels": "Slack Block Kit",
         "sources": "FortiGate syslog → Splunk",
-        "responseTime": "Alert delivered within 30 seconds of event detection"
+        "responseTime": "Alert delivered within 30 seconds of event detection",
+        "noiseReduction": "70% reduction in unnecessary alerts"
       },
       "related_skills": [
         "Splunk",
@@ -390,7 +424,7 @@
       "icon": "🏎️",
       "title": "HYCU FSDS Autonomous Driving",
       "tech": "Python, ROS, Docker, AirSim",
-      "description": "Autonomous driving system based on Formula Student Driverless Simulator. Uses LiDAR cone detection (Grid BFS), Pure Pursuit path tracking, and three-tier safety state machine control. Received an Excellence Award at Hanyang Cyber University Formula Competition.",
+      "description": "[Problem] The Formula Student Driverless Simulator required stable perception and control for cone detection and path following.\n[Action] I integrated Python-based LiDAR cone detection (Grid BFS), Pure Pursuit path tracking, and a three-tier safety state machine in a ROS + Docker + AirSim environment.\n[Result] The project won the Excellence Award at the Hanyang Cyber University Formula competition and delivered a working simulator-based autonomous driving stack.",
       "tagline": "Autonomous Driving Simulation",
       "stars": 0,
       "language": "Python",
@@ -400,7 +434,8 @@
       "metrics": {
         "award": "Excellence Award",
         "platform": "Formula Student Driverless Simulator",
-        "stack": "ROS + Docker + AirSim"
+        "stack": "ROS + Docker + AirSim",
+        "control": "3-tier safety state machine control"
       },
       "related_skills": [
         "Python",
@@ -410,13 +445,38 @@
       ],
       "liveUrl": "https://github.com/qws941/hycu_fsds",
       "repoUrl": "https://github.com/qws941/hycu_fsds"
+    },
+    {
+      "icon": "⚡",
+      "title": "Resume Portfolio",
+      "tech": "Cloudflare Workers, HTML/CSS, JSON-LD SEO, Grafana Loki",
+      "description": "[Problem] Career history, projects, and operating signals were spread across separate documents, which made recruiter review slower.\n[Action] I built a Cloudflare Workers portfolio and combined JSON-LD SEO, Grafana Loki logging, and /health, /metrics, and Web Vitals tracking into one web asset.\n[Result] The result is a low-latency, globally distributed public portfolio at resume.jclee.me with verifiable deployment and health signals.",
+      "tagline": "Live Portfolio Platform",
+      "stars": 0,
+      "language": "JavaScript",
+      "forks": 0,
+      "githubUrl": "https://github.com/qws941/resume",
+      "demoUrl": "https://resume.jclee.me",
+      "metrics": {
+        "deployment": "resume.jclee.me (low-latency response, global CDN)",
+        "cicd": "GitLab CI/CD auto deployment + deployment timestamp injection",
+        "observability": "/health, /metrics, Web Vitals tracking"
+      },
+      "related_skills": [
+        "Cloudflare Workers",
+        "HTML/CSS",
+        "JSON-LD SEO",
+        "Grafana Loki"
+      ],
+      "liveUrl": "https://resume.jclee.me",
+      "repoUrl": "https://github.com/qws941/resume"
     }
   ],
   "certifications": [
     {
       "name": "CCNP",
       "issuer": "Cisco Systems",
-      "date": "2020.08",
+      "date": "2020.08 (Expired 2023.08)",
       "expirationDate": "2023.08",
       "credentialId": null,
       "credentialUrl": null,
@@ -425,7 +485,7 @@
     {
       "name": "RHCSA",
       "issuer": "Red Hat",
-      "date": "2019.01",
+      "date": "2019.01 (Expired 2022.01)",
       "expirationDate": "2022.01",
       "credentialId": null,
       "credentialUrl": null,
@@ -474,7 +534,8 @@
       "expirationDate": null,
       "credentialId": null,
       "credentialUrl": null,
-      "status": "Preparing"
+      "status": "Preparing",
+      "targetDate": "2026 Q2"
     },
     {
       "name": "CISM",
@@ -483,7 +544,8 @@
       "expirationDate": null,
       "credentialId": null,
       "credentialUrl": null,
-      "status": "Preparing"
+      "status": "Preparing",
+      "targetDate": "2026 Q2"
     },
     {
       "name": "AWS Solutions Architect",
@@ -492,7 +554,8 @@
       "expirationDate": null,
       "credentialId": null,
       "credentialUrl": null,
-      "status": "Preparing"
+      "status": "Preparing",
+      "targetDate": "2026 Q2"
     }
   ],
   "skills": {
@@ -686,10 +749,10 @@
     }
   },
   "hero": {
-    "badge": "Infrastructure Engineer",
+    "badge": "Security Infrastructure Engineer · 9 Years",
     "title": "Jaecheol Lee",
     "titleEn": "Jaecheol Lee",
-    "subtitle": "Security Infrastructure Design · Observability · Automation"
+    "subtitle": "Finance/Public Security Infrastructure · Splunk ES 32 Rules · FortiGate HA 99.99% · n8n Automation 70%"
   },
   "sectionDescriptions": {
     "resume": "9 years of infrastructure experience",
@@ -700,16 +763,17 @@
     "contact": "Contact"
   },
   "achievements": [
-    "Designed Nextrade ATS security infrastructure (passed Financial Services Commission production authorization)",
-    "Built integrated Splunk-FortiNet monitoring system (central firewall management and automated policy rollout)",
-    "Improved operations by introducing security infrastructure automation (Nextrade)",
-    "Reduced false positives through WAF/IPS policy optimization (Nextrade)",
-    "Built and operated an Observability platform with Grafana, Prometheus, and Loki",
-    "Built n8n workflow automation platform for repetitive operational tasks",
-    "Introduced Claude AI-based security threat analysis automation",
-    "Supported security readiness for robo-advisor testbed evaluation (Quant)",
-    "Delivered cloud migration projects (Jointree)",
-    "Built VPN security infrastructure for large-scale remote work environments (Metanet)"
+    "Designed Nextrade ATS security infrastructure to a 99.99% HA target and passed FSC production approval.",
+    "Built an integrated Splunk-FortiNet security operations system with 32 detection rules and alerts delivered within 30 seconds.",
+    "Reduced unnecessary Nextrade alerts by 70% and cut firewall policy lookup time by 80% through operations automation.",
+    "Operated an observability platform with 12+ dashboards, 50+ metric endpoints, and 99.5% uptime across the homelab.",
+    "Built an n8n automation platform with 15+ workflows, 200+ daily executions, and 6K+ monthly automation events.",
+    "At Jointree, achieved 80% prevention effectiveness with 200 blocked incidents per month, 20% better sensitive-data detection, and 99.9% service availability.",
+    "At Metanet, reduced NAC exception processing by 90% (30 minutes → 3 minutes) and switch inspection time by 75% (8 hours → 2 hours).",
+    "At Metanet, resolved antivirus-VPN conflicts to reduce support tickets by 40% (20/week → 12/week) and delivered three new sites.",
+    "At KAI, removed 30% of duplicate firewall rules (3,000 → 2,100) and maintained zero internal data-leak incidents.",
+    "At FunNC, reduced MTTR by 50% (2 hours → 1 hour) through backup/recovery automation and improved early vulnerability detection by 80%.",
+    "At Quant, established Terraform-based AWS security codification and prepared the platform for robo-advisor testbed security review."
   ],
   "infrastructure": [
     {
