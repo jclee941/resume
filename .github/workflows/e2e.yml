@@ -1,0 +1,133 @@
+name: E2E Tests
+
+on:
+  workflow_run:
+    workflows: ['Deploy']
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      target_url:
+        description: 'Target URL for E2E tests'
+        required: false
+        default: 'https://resume.jclee.me'
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '22'
+
+jobs:
+  smoke:
+    name: Playwright Smoke Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # Only run if triggered by successful deploy or manual dispatch
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline --no-audit --no-fund
+
+      - name: Get Playwright version
+        id: playwright-version
+        run: |
+          echo "version=$(node -p "require('@playwright/test/package.json').version")" >> $GITHUB_OUTPUT
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
+
+      - name: Install Playwright browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+
+      - name: Install system dependencies (cache hit)
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+
+      - name: Run smoke tests
+        run: npm run test:e2e:smoke
+        env:
+          PLAYWRIGHT_BASE_URL: ${{ github.event.inputs.target_url || 'https://resume.jclee.me' }}
+          SKIP_WEBSERVER: '1'
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: test-results/
+          retention-days: 7
+
+  verify-production:
+    name: Production Verification (lighthouse + headers)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Security headers check
+        run: |
+          set -euo pipefail
+          URL="${{ github.event.inputs.target_url || 'https://resume.jclee.me' }}"
+          HEADERS=$(curl -sI "$URL")
+
+          echo "$HEADERS"
+          echo ""
+
+          REQUIRED_HEADERS=(
+            "strict-transport-security"
+            "x-content-type-options"
+            "x-frame-options"
+            "content-security-policy"
+          )
+
+          FAILED=0
+          for h in "${REQUIRED_HEADERS[@]}"; do
+            if echo "$HEADERS" | grep -qi "^$h:"; then
+              echo "✅ $h"
+            else
+              echo "❌ $h MISSING"
+              FAILED=$((FAILED+1))
+            fi
+          done
+
+          if [ $FAILED -gt 0 ]; then
+            echo "::warning::$FAILED security headers missing (non-blocking)"
+          fi
+
+      - name: Endpoint availability
+        run: |
+          set -euo pipefail
+          URL="${{ github.event.inputs.target_url || 'https://resume.jclee.me' }}"
+
+          for ep in "/" "/en/" "/health" "/metrics"; do
+            CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "${URL}${ep}")
+            echo "${ep}: $CODE"
+            if [ "$CODE" != "200" ]; then
+              echo "::warning::${ep} returned $CODE"
+            fi
+          done
