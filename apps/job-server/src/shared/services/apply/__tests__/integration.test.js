@@ -448,6 +448,13 @@ describe('Apply service integration', () => {
       appManager: {
         addApplication: mock.fn(() => ({ id: tracked.id })),
         updateStatus: mock.fn((applicationId, status, note) => {
+          // Mirror production ApplicationRepository.updateStatus:
+          // 1) update applications row
+          // 2) insert a row into application_timeline so the pipeline
+          //    integration test can assert the transition was recorded.
+          const prev = d1Client.db
+            .prepare('SELECT status FROM applications WHERE id = ?')
+            .get(applicationId);
           d1Client.db
             .prepare(
               `
@@ -457,6 +464,15 @@ describe('Apply service integration', () => {
               `
             )
             .run(status, note || null, applicationId);
+          d1Client.db
+            .prepare(
+              `
+                INSERT INTO application_timeline
+                  (application_id, status, previous_status, note, timestamp)
+                VALUES (?, ?, ?, ?, datetime('now'))
+              `
+            )
+            .run(applicationId, status, prev?.status ?? null, note || null);
         }),
         recordRetryMetric: mock.fn(),
       },

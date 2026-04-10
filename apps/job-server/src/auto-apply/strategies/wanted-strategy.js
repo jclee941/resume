@@ -76,6 +76,11 @@ function getErrorStatus(error) {
 }
 
 function isRetryableWantedError(error) {
+  // Circuit breaker 'open' errors are NOT retryable: the breaker is actively
+  // protecting the service and retrying would bypass the cooldown protection.
+  if (/circuit is open/i.test(error?.message ?? '')) {
+    return false;
+  }
   const status = getErrorStatus(error);
   return status === 429 || (status >= 500 && status <= 599);
 }
@@ -371,7 +376,10 @@ export async function applyToJob(job, options = {}) {
     };
   } catch (error) {
     const normalizedError = classifyWantedError(error);
-    const retryable = isRetryableWantedError(error) || Boolean(normalizedError.retryable);
+    const isCircuitOpen = /circuit is open/i.test(error?.message ?? '');
+    const retryable = isCircuitOpen
+      ? false
+      : isRetryableWantedError(error) || Boolean(normalizedError.retryable);
 
     retryReporter('execution_failed', {
       metrics: {
