@@ -16,7 +16,7 @@ const http = require('http');
 // ============================================================================
 let _serverInstance = null;
 let _serverUrl = null;
-let _serverStarting = false;
+const _serverStarting = false;
 let _startupPromise = null;
 
 // Track application state
@@ -462,7 +462,7 @@ function getMultiStepFormHtml() {
  * Parse multipart form data (simplified)
  */
 function parseFormData(body, boundary) {
-  const parts = body.split('--' + boundary);
+  const parts = body.split(`--${  boundary}`);
   const data = {};
 
   for (const part of parts) {
@@ -594,7 +594,7 @@ function createMockServerInternal(port = 9393) {
               return;
             }
 
-            const applicationId = 'MOCK-' + Date.now();
+            const applicationId = `MOCK-${  Date.now()}`;
             const application = {
               id: applicationId,
               ...applicationData,

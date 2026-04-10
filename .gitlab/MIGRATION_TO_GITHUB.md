@@ -4,39 +4,66 @@
 **Reason**: GitLab Runner at 192.168.50.215 was down (6+ days), blocking deployments.
 Repository migrated to https://github.com/jclee941/resume.
 
-## Mapping
+## Architecture Decision
 
-| GitLab CI Job | GitHub Actions Workflow | Location |
+Deployment is handled by **Cloudflare Workers Builds** (Git integration to GitHub).
+GitHub Actions only runs **validation CI** (lint, typecheck, tests, JSON validation).
+
+### Why no Deploy workflow in GitHub Actions
+CF Workers Builds auto-builds and deploys on every push to master. Running a parallel
+deploy from GitHub Actions would cause:
+- Double deploys (race condition)
+- Conflicting version IDs in Cloudflare
+- Wasted CI minutes
+
+### Deployment path after migration
+```
+git push origin master
+  ↓
+[GitHub Actions: CI validation]  ──(parallel)──  [CF Workers Builds: build + deploy]
+  ↓                                                   ↓
+lint, typecheck, test, JSON check                resume.jclee.me updated
+```
+
+## GitLab CI → GitHub Actions Mapping
+
+| GitLab CI Job | GitHub Actions | Notes |
 |---|---|---|
-| validate/lint.yml | ci.yml → lint job | .github/workflows/ci.yml |
-| validate/typecheck.yml | ci.yml → typecheck job | .github/workflows/ci.yml |
-| validate/data-drift.yml | ci.yml → validate-data job | .github/workflows/ci.yml |
-| test/unit.yml | ci.yml → test-unit job | .github/workflows/ci.yml |
-| build.yml | deploy.yml → build-and-deploy step | .github/workflows/deploy.yml |
-| deploy.yml | deploy.yml → build-and-deploy job | .github/workflows/deploy.yml |
-| verify/health.yml | deploy.yml → verify-health job | .github/workflows/deploy.yml |
-| test/e2e.yml | e2e.yml → smoke job | .github/workflows/e2e.yml |
-| verify/security-headers.yml | e2e.yml → verify-production job | .github/workflows/e2e.yml |
+| validate/lint.yml | ci.yml → lint | ESLint |
+| validate/typecheck.yml | ci.yml → typecheck | TypeScript |
+| validate/data-drift.yml | ci.yml → validate-data | JSON validation |
+| test/unit.yml | ci.yml → test-unit | Jest + Node tests |
+| build.yml | CF Workers Builds | Handled externally |
+| deploy.yml | CF Workers Builds | Handled externally |
+| verify/health.yml | Not yet ported | Manual: curl /health |
+| verify/security-headers.yml | Not yet ported | Manual: curl -I |
+| test/e2e.yml | Not yet ported | Manual: npm run test:e2e |
+| release.yml | Not yet ported | Low priority |
+| n8n-notifications.yml | Not yet ported | Optional |
+| auto-sync.yml (Wanted) | Not yet ported | Scheduled task |
 
-## Not Yet Ported (Lower Priority)
-- release.yml (semantic-release automation)
-- n8n-notifications.yml (n8n webhook notifications on CI events)
-- auto-issue-on-failure.yml (auto-create GitHub issues on CI failure)
-- auto-sync.yml (Wanted/JobKorea resume sync scheduled job)
-- onepassword.yml (1Password secret injection)
-- security.yml (SAST/DAST scanning)
-- analyze.yml (code analysis)
+## Preserved as Reference
+- `.gitlab/ci/**/*` — original job definitions
+- `.gitlab/verify-*.go` — Go verification scripts (can be reused from any CI)
 
-These remain available in `.gitlab/ci/jobs/` as reference for future porting.
+## Required GitHub Secrets (for CI only)
+CI workflow does not need Cloudflare secrets (no deploy step).
+Secrets set but currently unused by CI:
+- CLOUDFLARE_API_TOKEN
+- CLOUDFLARE_ACCOUNT_ID
+- CLOUDFLARE_API_KEY
+- CLOUDFLARE_EMAIL
 
-## Deprecated
-- `.gitlab-ci.yml` (root) — removed
-- `.gitlab/ci/*` — kept as reference, no longer executed
+These remain available for future workflow reactivation if needed.
 
-## Cloudflare Workers Builds
-CF Workers Builds was connected to GitLab for auto-deployment. After migration:
-- Option A: Reconnect CF Workers Builds to GitHub repo `jclee941/resume` via Cloudflare Dashboard
-- Option B: Use GitHub Actions `deploy.yml` (uses wrangler-action + CLOUDFLARE_API_TOKEN secret)
+## User Action: Connect CF Workers Builds to GitHub
+1. Cloudflare Dashboard → Workers & Pages → `resume`
+2. Settings → Git Integration → Connect → GitHub
+3. Authorize Cloudflare app → Select `jclee941/resume`
+4. Production branch: `master`
+5. Build command: `npm ci && npm run sync:data && npm run build`
+6. Deploy command: `npx wrangler deploy --config apps/portfolio/wrangler.toml --env production`
+7. Root directory: `/` (monorepo root)
+8. Disconnect old GitLab integration to avoid conflicts.
 
-This migration chose **Option B** — self-contained GitHub Actions deploy.
-CF Workers Builds git integration should be disconnected to avoid double-deploy.
+After connection, every `git push origin master` auto-triggers CF build + deploy.

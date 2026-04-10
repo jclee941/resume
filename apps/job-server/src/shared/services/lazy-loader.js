@@ -104,7 +104,6 @@ export class LazyModule {
 export class LazyCrawlerRegistry extends EventEmitter {
   #crawlers = new Map();
   #factories = new Map();
-  #preloadQueue = new Set();
   #logger;
 
   constructor(options = {}) {
@@ -264,10 +263,8 @@ export class LazyCrawlerRegistry extends EventEmitter {
 export class ServiceLocator {
   #services = new Map();
   #singletons = new Map();
-  #logger;
 
   constructor(options = {}) {
-    this.#logger = options.logger || console;
   }
 
   /**

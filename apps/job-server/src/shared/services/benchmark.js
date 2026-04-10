@@ -88,19 +88,19 @@ export async function compare(name, baseline, optimized, options = {}) {
   const speedup = baselineResult.avgTime / optimizedResult.avgTime;
   const improvement = ((speedup - 1) * 100).toFixed(1);
 
-  console.log(`\nBaseline:`);
+  console.log('\nBaseline:');
   console.log(`  Avg: ${baselineResult.avgTime.toFixed(3)}ms`);
   console.log(`  Min: ${baselineResult.minTime.toFixed(3)}ms`);
   console.log(`  Max: ${baselineResult.maxTime.toFixed(3)}ms`);
   console.log(`  Ops/s: ${baselineResult.opsPerSecond.toFixed(2)}`);
 
-  console.log(`\nOptimized:`);
+  console.log('\nOptimized:');
   console.log(`  Avg: ${optimizedResult.avgTime.toFixed(3)}ms`);
   console.log(`  Min: ${optimizedResult.minTime.toFixed(3)}ms`);
   console.log(`  Max: ${optimizedResult.maxTime.toFixed(3)}ms`);
   console.log(`  Ops/s: ${optimizedResult.opsPerSecond.toFixed(2)}`);
 
-  console.log(`\nImprovement:`);
+  console.log('\nImprovement:');
   console.log(`  Speedup: ${speedup.toFixed(2)}x`);
   console.log(`  Faster by: ${improvement}%`);
 
@@ -151,7 +151,7 @@ export async function memoryStressTest(fn, options = {}) {
     startMemory,
     endMemory,
     peakHeapUsed: peakHeap,
-    peakRss: peakRss,
+    peakRss,
     memoryGrowth: endMemory.heapUsed - startMemory.heapUsed,
     snapshots: memorySnapshots,
   };

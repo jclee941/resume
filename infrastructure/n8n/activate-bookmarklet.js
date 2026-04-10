@@ -1,4 +1,4 @@
-javascript: (function () {
+(function () {
   const workflow = {
     id: 'DRHg9pwanv4pHGxV',
     name: 'job-auto-apply',

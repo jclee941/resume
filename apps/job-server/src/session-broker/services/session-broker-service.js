@@ -250,7 +250,7 @@ export default class SessionBrokerService {
         message: 'Session valid',
       };
     } catch (error) {
-      this.logger.error(`[SessionBrokerService] Check session failed:`, error.message);
+      this.logger.error('[SessionBrokerService] Check session failed:', error.message);
       return {
         valid: false,
         state: SESSION_STATES.EXPIRED,

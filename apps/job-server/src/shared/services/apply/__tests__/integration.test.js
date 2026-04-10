@@ -337,7 +337,7 @@ describe('Apply service integration', () => {
     assert.equal(approvedApp.status, 'can_apply');
 
     const historyRows = await d1Client.query(
-      `SELECT event_type, status FROM notification_history ORDER BY timestamp ASC`
+      'SELECT event_type, status FROM notification_history ORDER BY timestamp ASC'
     );
 
     assert.ok(historyRows.some((row) => row.event_type === 'approval_required'));
