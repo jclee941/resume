@@ -6,7 +6,7 @@
 - 전화: 010-5757-9592
 - 이메일: qws941@kakao.com
 - 주소: 경기도 시흥시 장현천로61, 307동 1301호
-- GitHub: github.com/qws941
+- GitHub: github.com/jclee941
 
 ---
 
@@ -151,7 +151,7 @@
 ### 🔧 실전 보안 운영 자동화 플랫폼 (2024 ~ 현재)
 **개인 프로젝트 | Production-Ready Security Operations Platform**
 
-**GitHub**: [github.com/qws941](https://github.com/qws941)
+**GitHub**: [github.com/jclee941](https://github.com/jclee941)
 
 #### Splunk-FortiNet Integration
 - **목적**: 80대 방화벽 실시간 중앙관리 플랫폼 및 Splunk 중심 보안 통합
@@ -210,7 +210,7 @@
 ### AI 기반 인프라 자동화 플랫폼 (2024.09 ~ 현재)
 **개인 프로젝트 | AI-Powered Infrastructure Automation Platform**
 
-**GitHub**: [github.com/qws941](https://github.com/qws941)
+**GitHub**: [github.com/jclee941](https://github.com/jclee941)
 
 - **목적**: AI 기반의 지능형 인프라 운영 자동화 및 관측성(Observability) 플랫폼 구축
 - **기술스택**: OpenCode, MCP Protocol, Node.js, Python, Docker, Grafana Stack (Prometheus, Loki, Tempo), Traefik, Watchtower

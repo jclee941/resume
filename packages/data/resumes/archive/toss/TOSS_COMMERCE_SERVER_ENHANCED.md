@@ -2,7 +2,7 @@
 
 **Phone** 010-5757-9592
 **Email** qws941@kakao.com
-**GitHub** github.com/qws941
+**GitHub** github.com/jclee941
 **Portfolio** resume.jclee.me
 **Live Demos** blacklist.jclee.me | splunk.jclee.me | grafana.jclee.me
 
@@ -238,7 +238,7 @@
 
 ### REGTECH Blacklist Intelligence Platform
 **Production** | 2024 ~ 현재
-**URL** blacklist.jclee.me | **GitHub** github.com/qws941/blacklist
+**URL** blacklist.jclee.me | **GitHub** github.com/jclee941/blacklist
 
 **REGTECH 포털 자동 수집 및 위협 인텔리전스 플랫폼**
 
@@ -267,7 +267,7 @@ REGTECH 포털에서 수집한 위협 정보(월 10만 건+)를 수동으로 검
 
 ### Splunk-FortiNet Integration Platform
 **Production** | 2024 ~ 현재
-**URL** splunk.jclee.me | **GitHub** github.com/qws941/splunk-fortinet
+**URL** splunk.jclee.me | **GitHub** github.com/jclee941/splunk-fortinet
 
 **Splunk-FortiManager 통합 플랫폼**
 
@@ -295,7 +295,7 @@ REGTECH 포털에서 수집한 위협 정보(월 10만 건+)를 수동으로 검
 
 ### FortiGate Policy Orchestration Platform
 **Production** | 2024 ~ 현재
-**URL** fortinet.jclee.me | **GitHub** github.com/qws941/fortinet
+**URL** fortinet.jclee.me | **GitHub** github.com/jclee941/fortinet
 
 **FortiManager 정책 관리 자동화 플랫폼**
 
@@ -323,7 +323,7 @@ REGTECH 포털에서 수집한 위협 정보(월 10만 건+)를 수동으로 검
 
 ### Full-Stack Observability Platform
 **Production** | 2024 ~ 현재
-**URL** grafana.jclee.me | **GitHub** github.com/qws941/grafana
+**URL** grafana.jclee.me | **GitHub** github.com/jclee941/grafana
 
 **Prometheus + Grafana + Loki + Tempo 통합 모니터링 플랫폼**
 
@@ -351,7 +351,7 @@ REGTECH 포털에서 수집한 위협 정보(월 10만 건+)를 수동으로 검
 
 ### SafeWork Industrial Health Platform
 **Production** | 2024 ~ 현재
-**URL** safework.jclee.me | **GitHub** github.com/qws941/safework
+**URL** safework.jclee.me | **GitHub** github.com/jclee941/safework
 
 **산업보건 관리 시스템 (13개 관리 패널)**
 

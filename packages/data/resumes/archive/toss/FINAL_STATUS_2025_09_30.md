@@ -148,7 +148,7 @@
 
 ### 포트폴리오
 - **메인**: https://resume.jclee.me
-- **GitHub**: https://github.com/qws941
+- **GitHub**: https://github.com/jclee941
 - **Production 시스템**:
   - Grafana: https://grafana.jclee.me
   - Blacklist: https://blacklist.jclee.me

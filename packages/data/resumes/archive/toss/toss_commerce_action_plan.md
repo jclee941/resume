@@ -54,7 +54,7 @@ curl -I https://fortinet.jclee.me
 ```bash
 # 자동 확인 스크립트
 curl -I https://qws941.github.io/resume/
-curl -I https://github.com/qws941
+curl -I https://github.com/jclee941
 curl -I https://splunk.jclee.me
 curl -I https://safework.jclee.me
 curl -I https://grafana.jclee.me
@@ -98,7 +98,7 @@ Server Developer (Platform) - 토스 커머스
 이메일: qws941@kakao.com
 전화번호: 010-5757-9592
 포트폴리오: https://qws941.github.io/resume/
-GitHub: https://github.com/qws941
+GitHub: https://github.com/jclee941
 ```
 
 **3) 자기소개서 (500자)**

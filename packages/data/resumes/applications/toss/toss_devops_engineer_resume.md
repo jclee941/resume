@@ -8,7 +8,7 @@ DevOps Engineer
 
 - Email: qws941@kakao.com
 - Phone: 010-5757-9592
-- GitHub: github.com/qws941
+- GitHub: github.com/jclee941
 - Portfolio: resume.jclee.me
 - Monitoring: grafana.jclee.me
 

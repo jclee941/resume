@@ -48,7 +48,7 @@ header-includes:
 \vspace{-0.35em}
 
 \begin{center}
-{\scriptsize\color{muted} qws941@kakao.com\enspace\textbar\enspace 010-5757-9592\enspace\textbar\enspace \href{https://github.com/qws941}{github.com/qws941}\enspace\textbar\enspace \href{https://resume.jclee.me}{resume.jclee.me}\enspace\textbar\enspace \href{https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b}{grafana.jclee.me}}
+{\scriptsize\color{muted} qws941@kakao.com\enspace\textbar\enspace 010-5757-9592\enspace\textbar\enspace \href{https://github.com/jclee941}{github.com/jclee941}\enspace\textbar\enspace \href{https://resume.jclee.me}{resume.jclee.me}\enspace\textbar\enspace \href{https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b}{grafana.jclee.me}}
 \end{center}
 
 \vspace{0.1em}

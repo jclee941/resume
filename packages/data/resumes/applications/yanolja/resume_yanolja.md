@@ -21,7 +21,7 @@ fontsize: 11pt
 | 이메일    | qws941@kakao.com                       |
 | 연락처    | 010-5757-9592                          |
 | 주소      | 경기도 시흥시 장현천로61, 307동 1301호 |
-| GitHub    | github.com/qws941                      |
+| GitHub    | github.com/jclee941                      |
 | 경력 기간 | 7년 10개월 (2017.02 ~ 현재)            |
 
 ---
@@ -268,7 +268,7 @@ fontsize: 11pt
 
 ### GitHub
 
-- **URL**: github.com/qws941
+- **URL**: github.com/jclee941
 - **활동**: 개인 프로젝트, 인프라 자동화 스크립트, 학습 자료 공유
 
 ---

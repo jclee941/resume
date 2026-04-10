@@ -7,7 +7,7 @@
 ## 📱 연락처
 - Email: qws941@kakao.com
 - Phone: 010-5757-9592
-- GitHub: [github.com/qws941](https://github.com/qws941)
+- GitHub: [github.com/jclee941](https://github.com/jclee941)
 - Portfolio: [resume.jclee.me](https://resume.jclee.me)
 
 ---
@@ -187,7 +187,7 @@ HAProxy / Load Balancing              F5, HAProxy, Nginx 실무 경험
 - **API Gateway 패턴**: Cloudflare Workers Edge Computing
 - **실시간 Monitoring**: Splunk 기반 로그 분석 및 메트릭 수집
 
-**🔗 GitHub**: [github.com/qws941/splunk](https://github.com/qws941/splunk)
+**🔗 GitHub**: [github.com/jclee941/splunk](https://github.com/jclee941/splunk)
 **🔗 Live Demo**: [splunk.jclee.me](https://splunk.jclee.me)
 
 ---
@@ -214,7 +214,7 @@ HAProxy / Load Balancing              F5, HAProxy, Nginx 실무 경험
 - **장애 복구 자동화**: MTTR 70% 개선 경험
 - **Profiling & 성능 최적화**: Redis 캐싱, DB 쿼리 튜닝
 
-**🔗 GitHub**: [github.com/qws941/blacklist](https://github.com/qws941/blacklist)
+**🔗 GitHub**: [github.com/jclee941/blacklist](https://github.com/jclee941/blacklist)
 **🔗 Live Demo**: [blacklist.jclee.me](https://blacklist.jclee.me)
 
 ---
@@ -239,7 +239,7 @@ HAProxy / Load Balancing              F5, HAProxy, Nginx 실무 경험
 - FortiManager API 직접 연동 경험
 - 정책 변경 추적 시스템 구축
 
-**🔗 GitHub**: [github.com/qws941/fortinet](https://github.com/qws941/fortinet)
+**🔗 GitHub**: [github.com/jclee941/fortinet](https://github.com/jclee941/fortinet)
 **🔗 Live Demo**: [fortinet.jclee.me](https://fortinet.jclee.me)
 
 ---
@@ -291,7 +291,7 @@ HAProxy / Load Balancing              F5, HAProxy, Nginx 실무 경험
 - **대시보드 설계**: 11개 Production 대시보드 직접 설계 및 운영 (JSON 직접 작성)
 - **CI/CD 모니터링**: Guardian Protocol 5-phase 파이프라인 가시성 확보
 
-**🔗 GitHub**: [github.com/qws941/grafana](https://github.com/qws941/grafana)
+**🔗 GitHub**: [github.com/jclee941/grafana](https://github.com/jclee941/grafana)
 **🔗 Live Demo**: [grafana.jclee.me](https://grafana.jclee.me)
 
 ---
@@ -315,7 +315,7 @@ HAProxy / Load Balancing              F5, HAProxy, Nginx 실무 경험
 - Hybrid Architecture 경험 (폐쇄망 지원)
 - 실시간 데이터 처리 파이프라인
 
-**🔗 GitHub**: [github.com/qws941/safework](https://github.com/qws941/safework)
+**🔗 GitHub**: [github.com/jclee941/safework](https://github.com/jclee941/safework)
 **🔗 Live Demo**: [safework.jclee.me](https://safework.jclee.me)
 
 ---
@@ -476,4 +476,4 @@ Kotlin, Spring Boot, Istio 등 토스 핵심 기술은 현재 학습 중이며, 
 
 **제출일**: 2025년 9월 30일
 **포트폴리오**: https://resume.jclee.me
-**GitHub**: https://github.com/qws941
+**GitHub**: https://github.com/jclee941

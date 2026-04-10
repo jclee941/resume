@@ -8,7 +8,7 @@ Security Engineer (시스템 보안)
 
 - Email: qws941@kakao.com
 - Phone: 010-5757-9592
-- GitHub: github.com/qws941
+- GitHub: github.com/jclee941
 - Portfolio: resume.jclee.me
 
 ---
@@ -169,7 +169,7 @@ Security Engineer (시스템 보안)
 - 영어: 기술 문서 독해 가능
 
 ### GitHub
-- github.com/qws941
+- github.com/jclee941
 - 인프라 자동화 스크립트 및 보안 도구 공유
 
 ---
