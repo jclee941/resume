@@ -1,5 +1,4 @@
 import {
-  NotificationService,
   sendTelegramNotification,
   escapeHtml,
 } from '../notifications.js';

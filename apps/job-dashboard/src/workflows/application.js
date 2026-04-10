@@ -37,7 +37,7 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
       minMatchScore = 60,
       maxDailyApplications = 10,
       dryRun = false,
-      eventData = {}, // For event triggers (e.g., { type: 'resume_updated', resumeId: '...' })
+      _eventData = {}, // For event triggers (e.g., { type: 'resume_updated', resumeId: '...' })
     } = event.payload;
 
     // Initialize workflow tracking
@@ -718,7 +718,7 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
     return { success: true, platformResponse: await response.json() };
   }
 
-  async submitToLinkedIn(jobId, resume, coverLetter) {
+  async submitToLinkedIn(_jobId, _resume, _coverLetter) {
     return {
       success: false,
       error: 'LinkedIn Easy Apply requires browser automation (Puppeteer). Use job-server CLI.',
@@ -727,7 +727,7 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
     };
   }
 
-  async submitToRemember(jobId, resume, coverLetter) {
+  async submitToRemember(_jobId, _resume, _coverLetter) {
     return {
       success: false,
       error: 'Remember application requires browser automation (Puppeteer). Use job-server CLI.',
@@ -736,7 +736,7 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
     };
   }
 
-  async submitToJobKorea(jobId, resume, coverLetter) {
+  async submitToJobKorea(_jobId, _resume, _coverLetter) {
     return {
       success: false,
       error: 'JobKorea application requires browser automation (Puppeteer). Use job-server CLI.',
@@ -745,7 +745,7 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
     };
   }
 
-  async submitToSaramin(jobId, resume, coverLetter) {
+  async submitToSaramin(_jobId, _resume, _coverLetter) {
     return {
       success: false,
       error: 'Saramin application requires browser automation (Puppeteer). Use job-server CLI.',

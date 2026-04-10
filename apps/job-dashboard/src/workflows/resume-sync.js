@@ -7,7 +7,6 @@ import {
   notifyPreview,
 } from './resume-sync-helpers.js';
 import {
-  NotificationService,
   sendTelegramNotification,
   escapeHtml,
 } from '../notifications.js';

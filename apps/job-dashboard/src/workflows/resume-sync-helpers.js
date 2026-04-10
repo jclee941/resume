@@ -13,7 +13,6 @@
 
 import { DEFAULT_USER_AGENT } from '@resume/shared/ua';
 import {
-  NotificationService,
   sendTelegramNotification,
   escapeHtml,
 } from '../notifications.js';
