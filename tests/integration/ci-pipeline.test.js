@@ -1,6 +1,11 @@
 /**
  * CI/CD Pipeline Integration Tests
- * Tests the integration between GitLab CI and n8n workflows
+ * Tests the integration between archived GitLab CI configs (retained for reference)
+ * and n8n workflows (still active).
+ *
+ * Post-migration to GitHub Actions (2026-04-10), .gitlab/ was renamed to
+ * .gitlab-legacy/ but the YAML files are kept as historical reference.
+ * These tests ensure the archive stays parseable.
  */
 
 const fs = require('fs');
@@ -8,7 +13,7 @@ const path = require('path');
 const yaml = require('yaml');
 
 describe('CI/CD Pipeline Integration', () => {
-  const gitlabDir = path.join(process.cwd(), '.gitlab', 'ci');
+  const gitlabDir = path.join(process.cwd(), '.gitlab-legacy', 'ci');
   const n8nWorkflowsDir = path.join(process.cwd(), 'infrastructure', 'n8n', 'workflows');
 
   describe('GitLab CI Configuration', () => {
