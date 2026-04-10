@@ -229,7 +229,11 @@ function getCacheControlForPath(pathname) {
     return 'public, max-age=86400, must-revalidate';
   }
 
-  return 'public, max-age=0, must-revalidate';
+  // HTML pages: 1-hour browser cache + 24-hour CDN cache.
+  // CF Workers Builds auto-purges CDN cache on new deploys.
+  // stale-while-revalidate allows serving stale content for up to
+  // 10 minutes while CDN fetches a fresh copy in the background.
+  return 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=600';
 }
 
 function applyResponseHeaders(response, pathname, requestContext = {}) {
