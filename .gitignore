@@ -70,3 +70,6 @@ sessions.json
 
 # Git artifacts
 /--head=HEAD
+
+# Local OpenCode data (large vector DB files)
+.opencode/

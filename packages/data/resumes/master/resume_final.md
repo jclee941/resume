@@ -7,7 +7,7 @@
 - 전화: 010-5757-9592
 - 이메일: qws941@kakao.com
 - 주소: 경기도 시흥시 장현천로61, 307동 1301호
-- GitHub: github.com/qws941
+- GitHub: github.com/jclee941
 
 ---
 
@@ -221,7 +221,7 @@
 
 **개인 프로젝트**
 
-**GitHub**: [github.com/qws941](https://github.com/qws941)
+**GitHub**: [github.com/jclee941](https://github.com/jclee941)
 
 #### 보안 통합 관리 플랫폼
 
@@ -335,7 +335,7 @@
 
 **개인 프로젝트 | AI-Powered Infrastructure Automation & Observability Platform**
 
-**GitHub**: [github.com/qws941](https://github.com/qws941) | **Live**: https://resume.jclee.me
+**GitHub**: [github.com/jclee941](https://github.com/jclee941) | **Live**: https://resume.jclee.me
 
 **시스템 규모 & 아키텍처**:
 
@@ -362,7 +362,7 @@
 - **규모**: 145+ 스크립트 관리, Constitutional Framework v12.0
 - **성과**: AI 작업 효율 80% 향상, 자동 에이전트 라우팅으로 의사결정 시간 70% 단축
 - **Live**: http://127.0.0.1:5001
-- **GitHub**: [github.com/qws941/claude](https://github.com/qws941/claude)
+- **GitHub**: [github.com/jclee941/claude](https://github.com/jclee941/claude)
 
 **2. n8n Workflow Automation**
 
@@ -371,7 +371,7 @@
 - **규모**: 2709+ 템플릿, API 오케스트레이션
 - **성과**: 반복 작업 자동화로 월 100+ 시간 절감, 워크플로우 재사용성 95% 향상
 - **Live**: https://n8n.jclee.me
-- **GitHub**: [github.com/qws941/n8n](https://github.com/qws941/n8n)
+- **GitHub**: [github.com/jclee941/n8n](https://github.com/jclee941/n8n)
 
 **3. GitLab Enterprise Edition**
 
@@ -379,7 +379,7 @@
 - **기술스택**: GitLab EE 17.5.3, PostgreSQL 16.1, Redis 7.2, Traefik
 - **규모**: CI/CD pipelines, Container Registry, 7일 자동 백업
 - **성과**: Private 코드 호스팅, 자동화된 CI/CD, 컨테이너 이미지 관리
-- **GitHub**: [github.com/qws941/claude/tree/main/app/gitlab](https://github.com/qws941/claude/tree/main/app/gitlab)
+- **GitHub**: [github.com/jclee941/claude/tree/main/app/gitlab](https://github.com/jclee941/claude/tree/main/app/gitlab)
 
 **4. Nginx Airgap Configuration**
 
@@ -387,7 +387,7 @@
 - **기술스택**: Nginx 1.24+, Airgap Deployment, Security Hardening
 - **특징**: 패키지 사전 준비, 오프라인 설치 지원
 - **성과**: 폐쇄망 환경에서 100% 자급 배포 가능, 보안 설정 표준화
-- **GitHub**: [github.com/qws941/nginx](https://github.com/qws941/nginx)
+- **GitHub**: [github.com/jclee941/nginx](https://github.com/jclee941/nginx)
 
 **5. Python Automation Framework**
 
@@ -395,7 +395,7 @@
 - **기술스택**: Python, Ansible, Bash, Git Hooks, 145+ Scripts
 - **특징**: 파일 거버넌스, AI 보상 시스템, 세션 연속성
 - **성과**: 인프라 운영 시간 60% 단축, 스크립트 재사용성 90% 향상
-- **GitHub**: [github.com/qws941/claude](https://github.com/qws941/claude)
+- **GitHub**: [github.com/jclee941/claude](https://github.com/jclee941/claude)
 
 **6. Constitutional Governance System v12.0**
 
@@ -403,7 +403,7 @@
 - **기술스택**: Bash, Python, JSONL, Git Hooks
 - **규모**: 파일 생성 쿼터 (3 scripts, 2 docs), 70% 유사도 감지, 자동 로깅
 - **성과**: 파일 중복 90% 감소, 프로젝트 구조 일관성 100% 유지
-- **GitHub**: [github.com/qws941/claude/blob/main/scripts/master-prevention-system.sh](https://github.com/qws941/claude/blob/main/scripts/master-prevention-system.sh)
+- **GitHub**: [github.com/jclee941/claude/blob/main/scripts/master-prevention-system.sh](https://github.com/jclee941/claude/blob/main/scripts/master-prevention-system.sh)
 
 **7. AI Compensation Core**
 
@@ -411,7 +411,7 @@
 - **기술스택**: Python, Pattern Detection, Multi-Model Validation
 - **보상 영역**: Context window, Hallucination 감지, Real-time data, Domain routing
 - **성과**: AI 오답률 70% 감소, 작업 신뢰도 95% 향상
-- **GitHub**: [github.com/qws941/claude/blob/main/scripts/ai-compensation-core.py](https://github.com/qws941/claude/blob/main/scripts/ai-compensation-core.py)
+- **GitHub**: [github.com/jclee941/claude/blob/main/scripts/ai-compensation-core.py](https://github.com/jclee941/claude/blob/main/scripts/ai-compensation-core.py)
 
 **8. Ansible FortiManager Automation**
 
@@ -420,7 +420,7 @@
 - **규모**: 3개 플레이북 (584 lines), fortinet.fortimanager collection
 - **기능**: 정책 조회/생성/수정, 백업/복원, 오브젝트 관리, Docker 배포 자동화
 - **성과**: 정책 배포 시간 90% 단축 (10시간 → 1시간), 수동 오류 100% 제거
-- **GitHub**: [github.com/qws941/policy](https://github.com/qws941/policy)
+- **GitHub**: [github.com/jclee941/policy](https://github.com/jclee941/policy)
 
 **9. NAS Infrastructure Deployment**
 
@@ -429,7 +429,7 @@
 - **규모**: 9개 서비스 (Grafana, Prometheus, Loki, AlertManager, GitLab, Traefik, Splunk, Promtail, Node Exporter)
 - **기능**: 원격 Docker 관리, 자동 rsync 동기화, 멀티 서비스 오케스트레이션
 - **성과**: 배포 자동화로 수동 작업 100% 제거, 인프라 동기화 시간 95% 단축
-- **GitHub**: [github.com/qws941/claude/tree/main/infra](https://github.com/qws941/claude/tree/main/infra)
+- **GitHub**: [github.com/jclee941/claude/tree/main/infra](https://github.com/jclee941/claude/tree/main/infra)
 
 **핵심 아키텍처 설계**:
 
