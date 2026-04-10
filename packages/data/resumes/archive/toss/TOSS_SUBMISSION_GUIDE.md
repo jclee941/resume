@@ -131,7 +131,7 @@ Splunk-FortiManager 통합 플랫폼을 구축할 때, 80대의 방화벽에서 
 
 ### 포트폴리오
 
-- **GitHub**: https://github.com/qws941
+- **GitHub**: https://github.com/jclee941
 - **Portfolio Website**: https://resume.jclee.me
 - **Grafana Dashboard**: https://grafana.jclee.me/d/portfolio-2025/
 

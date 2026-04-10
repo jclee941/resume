@@ -109,7 +109,7 @@ cat toss_commerce_action_plan.md
 
 ### 포트폴리오 & 프로젝트
 - **포트폴리오**: https://resume.jclee.me (GitHub Pages)
-- **GitHub**: https://github.com/qws941
+- **GitHub**: https://github.com/jclee941
 - **Production 시스템**:
   - Grafana: https://grafana.jclee.me
   - Blacklist: https://blacklist.jclee.me
@@ -129,7 +129,7 @@ cat toss_commerce_action_plan.md
 - **Email**: qws941@kakao.com
 - **Phone**: 010-5757-9592
 - **Portfolio**: https://resume.jclee.me
-- **GitHub**: https://github.com/qws941
+- **GitHub**: https://github.com/jclee941
 
 ---
 

@@ -9,7 +9,7 @@
 
 ### 2. 포트폴리오 링크
 - **GitHub Pages**: https://qws941.github.io/resume/
-- **GitHub**: https://github.com/qws941
+- **GitHub**: https://github.com/jclee941
 - **Live Demo 프로젝트**:
   - Splunk Platform: https://splunk.jclee.me
   - Blacklist System: https://blacklist.jclee.me
@@ -146,7 +146,7 @@ REGTECH Blacklist Intelligence Platform
 [제출 서류]
 1. 이력서 (첨부)
 2. 포트폴리오: https://qws941.github.io/resume/
-3. GitHub: https://github.com/qws941
+3. GitHub: https://github.com/jclee941
 
 [프로덕션 시스템 (실운영 중)]
 • Splunk Platform: https://splunk.jclee.me (초당 10만 이벤트)
@@ -163,7 +163,7 @@ REGTECH Blacklist Intelligence Platform
 이재철
 📧 qws941@kakao.com
 📱 010-5757-9592
-🔗 https://github.com/qws941
+🔗 https://github.com/jclee941
 ```
 
 ---
@@ -190,7 +190,7 @@ REGTECH Blacklist Intelligence Platform
 - **이름**: 이재철
 - **Email**: qws941@kakao.com
 - **Phone**: 010-5757-9592
-- **GitHub**: https://github.com/qws941
+- **GitHub**: https://github.com/jclee941
 - **Portfolio**: https://qws941.github.io/resume/
 
 ---

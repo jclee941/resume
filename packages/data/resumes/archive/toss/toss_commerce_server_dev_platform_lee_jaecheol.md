@@ -7,7 +7,7 @@
 ## 📱 연락처
 - Email: qws941@kakao.com
 - Phone: 010-5757-9592
-- GitHub: [github.com/qws941](https://github.com/qws941)
+- GitHub: [github.com/jclee941](https://github.com/jclee941)
 - Portfolio: [resume.jclee.me](https://resume.jclee.me)
 
 ---
@@ -186,7 +186,7 @@ HAProxy / Load Balancing              F5, HAProxy, Nginx 실무 경험
 - 실시간 이벤트 처리 아키텍처 설계
 - API Gateway 패턴 적용 경험
 
-**🔗 GitHub**: [github.com/qws941/splunk](https://github.com/qws941/splunk)
+**🔗 GitHub**: [github.com/jclee941/splunk](https://github.com/jclee941/splunk)
 **🔗 Live Demo**: [splunk.jclee.me](https://splunk.jclee.me)
 
 ---
@@ -211,7 +211,7 @@ HAProxy / Load Balancing              F5, HAProxy, Nginx 실무 경험
 - 자동 롤백 시스템 설계 및 구현
 - 고가용성 아키텍처 검증
 
-**🔗 GitHub**: [github.com/qws941/blacklist](https://github.com/qws941/blacklist)
+**🔗 GitHub**: [github.com/jclee941/blacklist](https://github.com/jclee941/blacklist)
 **🔗 Live Demo**: [blacklist.jclee.me](https://blacklist.jclee.me)
 
 ---
@@ -236,7 +236,7 @@ HAProxy / Load Balancing              F5, HAProxy, Nginx 실무 경험
 - FortiManager API 직접 연동 경험
 - 정책 변경 추적 시스템 구축
 
-**🔗 GitHub**: [github.com/qws941/fortinet](https://github.com/qws941/fortinet)
+**🔗 GitHub**: [github.com/jclee941/fortinet](https://github.com/jclee941/fortinet)
 **🔗 Live Demo**: [fortinet.jclee.me](https://fortinet.jclee.me)
 
 ---
@@ -261,7 +261,7 @@ HAProxy / Load Balancing              F5, HAProxy, Nginx 실무 경험
 - 실시간 로그 스트리밍 파이프라인
 - 알림 시스템 통합 운영
 
-**🔗 GitHub**: [github.com/qws941/grafana](https://github.com/qws941/grafana)
+**🔗 GitHub**: [github.com/jclee941/grafana](https://github.com/jclee941/grafana)
 **🔗 Live Demo**: [grafana.jclee.me](https://grafana.jclee.me)
 
 ---
@@ -285,7 +285,7 @@ HAProxy / Load Balancing              F5, HAProxy, Nginx 실무 경험
 - Hybrid Architecture 경험 (폐쇄망 지원)
 - 실시간 데이터 처리 파이프라인
 
-**🔗 GitHub**: [github.com/qws941/safework](https://github.com/qws941/safework)
+**🔗 GitHub**: [github.com/jclee941/safework](https://github.com/jclee941/safework)
 **🔗 Live Demo**: [safework.jclee.me](https://safework.jclee.me)
 
 ---
@@ -420,4 +420,4 @@ HAProxy / Load Balancing              F5, HAProxy, Nginx 실무 경험
 
 **제출일**: 2025년 9월 30일
 **포트폴리오**: https://resume.jclee.me
-**GitHub**: https://github.com/qws941
+**GitHub**: https://github.com/jclee941

@@ -23,7 +23,7 @@
 - [x] 이름: 이재철
 - [x] 연락처: 010-5757-9592
 - [x] 이메일: qws941@kakao.com
-- [x] GitHub: github.com/qws941
+- [x] GitHub: github.com/jclee941
 - [x] Portfolio: resume.jclee.me
 - [x] Live Demos: blacklist.jclee.me | splunk.jclee.me | grafana.jclee.me
 

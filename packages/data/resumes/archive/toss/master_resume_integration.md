@@ -10,7 +10,7 @@
 | **전화번호** | 010-5757-9592 |
 | **이메일** | qws941@kakao.com |
 | **주소** | 경기도 남양주시 오남읍, 오남리 |
-| **GitHub** | https://github.com/qws941 |
+| **GitHub** | https://github.com/jclee941 |
 | **Portfolio** | https://qws941.github.io/resume/ |
 
 ---

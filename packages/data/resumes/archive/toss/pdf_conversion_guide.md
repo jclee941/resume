@@ -197,7 +197,7 @@ chmod +x pdf-convert.sh
 변환 중 문제 발생 시:
 
 - **이메일**: qws941@kakao.com
-- **GitHub**: https://github.com/qws941
+- **GitHub**: https://github.com/jclee941
 
 ---
 

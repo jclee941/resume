@@ -3,7 +3,7 @@
 ## 연락처
 - 전화: 010-5757-9592
 - 이메일: qws941@kakao.com
-- GitHub: github.com/qws941
+- GitHub: github.com/jclee941
 
 ---
 

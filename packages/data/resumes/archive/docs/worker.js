@@ -468,7 +468,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
         <div class="contact">
             <a href="mailto:qws941@kakao.com" class="contact-item">📧 qws941@kakao.com</a>
             <a href="tel:010-5757-9592" class="contact-item">📱 010-5757-9592</a>
-            <a href="https://github.com/qws941" target="_blank" class="contact-item">🔗 GitHub</a>
+            <a href="https://github.com/jclee941" target="_blank" class="contact-item">🔗 GitHub</a>
         </div>
     </div>
 </body>

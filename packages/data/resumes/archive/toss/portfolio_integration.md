@@ -17,7 +17,7 @@
 ## 📱 연락처
 - Email: qws941@kakao.com
 - Phone: 010-5757-9592
-- GitHub: [github.com/qws941](https://github.com/qws941)
+- GitHub: [github.com/jclee941](https://github.com/jclee941)
 - Portfolio: [qws941.github.io/resume](https://qws941.github.io/resume/)
 - **Live Dashboard**: [grafana.jclee.me](https://grafana.jclee.me) ⭐
 ```
@@ -28,7 +28,7 @@
 
 ### 1. Universal Observability System
 - **Live URL**: https://grafana.jclee.me
-- **GitHub**: https://github.com/qws941/grafana (예시)
+- **GitHub**: https://github.com/jclee941/grafana (예시)
 - **설명**: Production-grade 모니터링 시스템
 - **기술 스택**: Grafana 12.2.0, Loki 3.5.5, Promtail 2.9.3, Node.js v22.20.0
 - **성과**:
@@ -48,7 +48,7 @@
 
 ### 3. REGTECH Blacklist Platform
 - **Live URL**: https://blacklist.jclee.me (현재 점검 중)
-- **GitHub**: https://github.com/qws941/blacklist
+- **GitHub**: https://github.com/jclee941/blacklist
 - **성과**:
   - 수집 시간 95% 단축 (1시간 → 3분)
   - 99.9% 가용성 달성
@@ -56,14 +56,14 @@
 
 ### 4. Fortinet Policy Automation
 - **Live URL**: https://fortinet.jclee.me (현재 점검 중)
-- **GitHub**: https://github.com/qws941/fortinet
+- **GitHub**: https://github.com/jclee941/fortinet
 - **성과**:
   - 정책 검증 시간 80% 단축
   - 서비스 중단 0건 (3-Port HA)
 
 ### 5. SafeWork Platform
 - **Live URL**: https://safework.jclee.me
-- **GitHub**: https://github.com/qws941/safework
+- **GitHub**: https://github.com/jclee941/safework
 - **성과**:
   - 3,000개교 실시간 감시
   - Redis 캐싱으로 응답속도 40% 개선
@@ -131,7 +131,7 @@ GitOps            ✅ Push-to-deploy
 ### 1. Universal Observability System ⭐
 **기간**: 2024.01 ~ 현재
 **Live URL**: https://grafana.jclee.me
-**GitHub**: https://github.com/qws941/grafana
+**GitHub**: https://github.com/jclee941/grafana
 
 #### 프로젝트 개요
 - CNCF 표준 기반 Production-grade 모니터링 시스템
@@ -191,7 +191,7 @@ GitOps            ✅ Push-to-deploy
 
 ### 3. REGTECH Blacklist Automation Platform
 **Live URL**: https://blacklist.jclee.me
-**GitHub**: https://github.com/qws941/blacklist
+**GitHub**: https://github.com/jclee941/blacklist
 
 #### 성과
 - 수집 시간 95% 단축 (1시간 → 3분)
@@ -217,7 +217,7 @@ GitOps            ✅ Push-to-deploy
 
 ## 🔗 GitHub 프로필 업데이트 필요사항
 
-### README.md 추가 (github.com/qws941)
+### README.md 추가 (github.com/jclee941)
 ```markdown
 # 👋 Jaecheol Lee (이재철)
 

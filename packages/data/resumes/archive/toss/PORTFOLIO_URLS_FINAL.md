@@ -60,28 +60,28 @@
 
 ### 1. Blacklist Intelligence Platform
 **URL**: https://blacklist.jclee.me
-**GitHub**: https://github.com/qws941/blacklist
+**GitHub**: https://github.com/jclee941/blacklist
 **Tech Stack**: Python Flask, PostgreSQL 15, Redis 7, Docker, GitLab CI/CD
 **Status**: 🟢 Production
 **특징**: 자동 롤백 30초, AI 기반 장애 분석
 
 ### 2. Splunk-FortiNet Integration Platform
 **URL**: https://splunk.jclee.me
-**GitHub**: https://github.com/qws941/splunk-fortinet
+**GitHub**: https://github.com/jclee941/splunk-fortinet
 **Tech Stack**: Python Flask, Splunk API, FortiManager, Redis 7
 **Status**: 🟢 Production
 **특징**: 초당 10만 이벤트 처리 검증, 80대 방화벽 동시 관리
 
 ### 3. FortiGate Policy Orchestration Platform
 **URL**: https://fortinet.jclee.me
-**GitHub**: https://github.com/qws941/fortinet
+**GitHub**: https://github.com/jclee941/fortinet
 **Tech Stack**: Python Flask, FortiManager JSON-RPC, Docker
 **Status**: 🟢 Production
 **특징**: 정책 검증 80% 단축, 감사 대응 90% 절감
 
 ### 4. Full-Stack Observability Platform
 **URL**: https://grafana.jclee.me
-**GitHub**: https://github.com/qws941/grafana
+**GitHub**: https://github.com/jclee941/grafana
 **Tech Stack**: Prometheus, Grafana, Loki, Tempo, Docker Compose
 **Status**: 🟢 Production
 **특징**: 11개 대시보드, 121개 패널, 24/7 모니터링
@@ -100,7 +100,7 @@
 **이름**: 이재철 (Jaecheol Lee)
 **전화**: 010-5757-9592
 **이메일**: qws941@kakao.com
-**GitHub**: https://github.com/qws941
+**GitHub**: https://github.com/jclee941
 **포트폴리오**: https://resume.jclee.me
 
 ---

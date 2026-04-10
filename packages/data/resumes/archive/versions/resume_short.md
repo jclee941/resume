@@ -1,6 +1,6 @@
 # 이재철
 
-qws941@kakao.com | 010-5757-9592 | github.com/qws941
+qws941@kakao.com | 010-5757-9592 | github.com/jclee941
 
 ---
 

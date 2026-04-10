@@ -1790,7 +1790,7 @@ CONTACT INFORMATION:
 **Project Lead**: 이재철 (Jaecheol Lee)
 **Email**: qws941@kakao.com
 **LinkedIn**: [linkedin.com/in/jaecheol-lee](https://linkedin.com/in/jaecheol-lee)
-**GitHub**: [github.com/qws941](https://github.com/qws941)
+**GitHub**: [github.com/jclee941](https://github.com/jclee941)
 
 **References Available Upon Request**:
 - CTO, Nextrade Securities Exchange
