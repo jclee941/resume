@@ -12,9 +12,14 @@ import SessionManager from '../../session/session-manager.js';
 import { notifications } from '../../notifications/index.js';
 import { ApplicationRepository } from '../../../repositories/application-repository.js';
 
+// Track all DB instances created during tests so afterEach can close them
+// (prevents node --test hang waiting for SQLite handles to be released).
+const _openDbs = new Set();
+
 class InMemoryD1Client {
   constructor() {
     this.db = new Database(':memory:');
+    _openDbs.add(this.db);
     this.#createSchema();
   }
 
@@ -120,6 +125,15 @@ async function getTimeline(d1Client, applicationId) {
 
 afterEach(() => {
   mock.restoreAll();
+  // Close tracked SQLite databases to release handles (node --test hangs otherwise)
+  for (const db of _openDbs) {
+    try {
+      db.close();
+    } catch {
+      // Already closed
+    }
+  }
+  _openDbs.clear();
 });
 
 describe('Apply service integration', () => {

@@ -68,7 +68,11 @@ export class BrowserPool extends EventEmitter {
     this.#logger = options.logger || console;
 
     // Start cleanup interval
+    // Start cleanup interval. .unref() so Node can exit when nothing else
+    // keeps the event loop alive (e.g. when tests create pool instances but
+    // never call acquire() - would otherwise hang node --test for 60s+).
     this.#cleanupInterval = setInterval(() => this.#cleanupIdleBrowsers(), 60000);
+    this.#cleanupInterval.unref?.();
   }
 
   /**

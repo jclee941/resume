@@ -283,6 +283,7 @@ export class PerformanceMetrics extends EventEmitter {
 
       this.emit('sample', { type: 'memory', value: mem });
     }, intervalMs);
+    this.#samplingInterval.unref?.();
   }
 
   /**
