@@ -79,7 +79,7 @@ jobs:
     name: Unit Tests (Node)
     runs-on: ubuntu-latest
     timeout-minutes: 8
-    continue-on-error: true  # TODO: 7 pre-existing test failures (5 SessionBrokerService healthCheck + 2 Apply service integration). See docs/reports/NODE_TEST_PRE_EXISTING_FAILURES.md. Hang was fixed in fb4657c; these are real logic bugs hidden by the hang.
+    # Blocking: all 782 tests pass in ~8s after async leak fixes (fb4657c)
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -99,9 +99,8 @@ jobs:
           timeout --foreground --kill-after=10 300 npm test || {
             code=$?
             if [ $code -eq 124 ] || [ $code -eq 137 ]; then
-              echo '::warning::Node tests hit hard timeout (300s). Likely a hanging test with missing cleanup.'
-              echo '::warning::Investigate async leaks: node --test --test-reporter=spec --test-concurrency=1'
-              exit 0  # continue-on-error already set, but be explicit
+              echo '::error::Node tests hit hard timeout (300s). Investigate async leaks.'
+              echo '::error::Debug: node --test --test-reporter=spec --test-concurrency=1'
             fi
             exit $code
           }
@@ -139,11 +138,12 @@ jobs:
           echo "lint: ${{ needs.lint.result }}"
           echo "typecheck: ${{ needs.typecheck.result }}"
           echo "test-jest: ${{ needs.test-jest.result }}"
-          echo "test-node: ${{ needs.test-node.result }} (non-blocking)"
+          echo "test-node: ${{ needs.test-node.result }}"
           echo "validate-data: ${{ needs.validate-data.result }}"
           if [[ "${{ needs.lint.result }}" != "success" || \
                 "${{ needs.typecheck.result }}" != "success" || \
                 "${{ needs.test-jest.result }}" != "success" || \
+                "${{ needs.test-node.result }}" != "success" || \
                 "${{ needs.validate-data.result }}" != "success" ]]; then
             echo "❌ One or more CI jobs failed"
             exit 1
