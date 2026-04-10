@@ -1,0 +1,144 @@
+name: Release
+
+# Creates semver-bumped tag + GitHub Release after successful CI on master.
+# Ported from .gitlab-legacy/ci/release.yml. Conventional Commits based:
+#   feat!/BREAKING CHANGE → major bump
+#   feat(...)             → minor bump
+#   fix/chore/docs/...    → patch bump
+
+on:
+  workflow_run:
+    workflows: ['CI']
+    types: [completed]
+    branches: [master]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Preview the next tag without creating anything'
+        required: false
+        default: 'true'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
+concurrency:
+  group: release-production
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Tag and Release
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    # Only run on successful CI (workflow_run) or manual dispatch
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'master')
+
+    steps:
+      - name: Checkout with full history
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - name: Determine version bump
+        id: bump
+        env:
+          DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
+        run: |
+          set -euo pipefail
+
+          LAST_TAG=$(git describe --tags --abbrev=0 --match 'v[0-9]*' 2>/dev/null || echo 'v0.0.0')
+          echo "Last tag: ${LAST_TAG}"
+
+          VERSION="${LAST_TAG#v}"
+          MAJOR=$(echo "$VERSION" | cut -d. -f1)
+          MINOR=$(echo "$VERSION" | cut -d. -f2)
+          PATCH=$(echo "$VERSION" | cut -d. -f3)
+
+          COMMITS=$(git log "${LAST_TAG}..HEAD" --pretty=format:'%s%n%b' 2>/dev/null || \
+                    git log --pretty=format:'%s%n%b')
+
+          if [ -z "$(echo "$COMMITS" | tr -d '[:space:]')" ]; then
+            echo "No commits since ${LAST_TAG}; skipping release."
+            {
+              echo "should_release=false"
+              echo "new_tag=${LAST_TAG}"
+              echo "bump=skip"
+              echo "changelog="
+            } >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          BUMP=patch
+          if echo "$COMMITS" | grep -qiE '(BREAKING[[:space:]]CHANGE|^[a-z]+(\([^)]*\))?!:)'; then
+            BUMP=major
+          elif echo "$COMMITS" | grep -qE '^feat(\([^)]*\))?(!)?:'; then
+            BUMP=minor
+          fi
+          echo "Bump type: ${BUMP}"
+
+          case "$BUMP" in
+            major) MAJOR=$((MAJOR + 1)); MINOR=0; PATCH=0 ;;
+            minor) MINOR=$((MINOR + 1)); PATCH=0 ;;
+            patch) PATCH=$((PATCH + 1)) ;;
+          esac
+
+          NEW_TAG="v${MAJOR}.${MINOR}.${PATCH}"
+          echo "New tag: ${NEW_TAG}"
+
+          CHANGELOG=$(git log "${LAST_TAG}..HEAD" --pretty=format:'- %s (%h)' 2>/dev/null || \
+                      git log --pretty=format:'- %s (%h)')
+
+          {
+            echo "should_release=true"
+            echo "new_tag=${NEW_TAG}"
+            echo "bump=${BUMP}"
+            echo "last_tag=${LAST_TAG}"
+            echo "changelog<<EOF"
+            echo "$CHANGELOG"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+          if [ "$DRY_RUN" = "true" ]; then
+            echo "::notice::DRY RUN — would create tag ${NEW_TAG}"
+            echo ""
+            echo "=== Changelog preview ==="
+            echo "$CHANGELOG"
+          fi
+
+      - name: Create tag and GitHub Release
+        if: steps.bump.outputs.should_release == 'true' && github.event.inputs.dry_run != 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.bump.outputs.new_tag }}
+          name: Release ${{ steps.bump.outputs.new_tag }}
+          body: |
+            ## ${{ steps.bump.outputs.new_tag }}
+
+            Bump: ${{ steps.bump.outputs.bump }} (from ${{ steps.bump.outputs.last_tag }})
+
+            ### Changes
+            ${{ steps.bump.outputs.changelog }}
+          draft: false
+          prerelease: false
+          target_commitish: ${{ github.event.workflow_run.head_sha || github.sha }}
+          generate_release_notes: false
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "## Release Summary"
+            echo ""
+            echo "- **Should release**: ${{ steps.bump.outputs.should_release }}"
+            echo "- **Bump type**: ${{ steps.bump.outputs.bump }}"
+            echo "- **Last tag**: ${{ steps.bump.outputs.last_tag }}"
+            echo "- **New tag**: ${{ steps.bump.outputs.new_tag }}"
+            echo "- **Dry run**: ${{ github.event.inputs.dry_run || 'false' }}"
+            echo "- **Trigger**: ${{ github.event_name }}"
+          } >> "$GITHUB_STEP_SUMMARY"
