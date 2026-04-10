@@ -262,26 +262,12 @@ export class NotificationService {
   async sendApprovalRequest(job, matchScore, applicationId) {
     const message = {
       text:
-        `🔔 <b>Job Application Approval Request</b>\n\n` +
+        '🔔 <b>Job Application Approval Request</b>\n\n' +
         `<b>Position:</b> ${escapeHtml(job.position || job.title)}\n` +
         `<b>Company:</b> ${escapeHtml(job.company)}\n` +
         `<b>Platform:</b> ${escapeHtml(job.platform || job.source)}\n` +
         `<b>Match Score:</b> ${matchScore}/100\n\n` +
-        `<b>Actions:</b> Click buttons below to approve or reject`,
-        `<b>Position:</b> ${escapeHtml(job.position || job.title)}\n` +
-        `<b>Company:</b> ${escapeHtml(job.company)}\n` +
-        `<b>Platform:</b> ${escapeHtml(job.platform || job.source)}\n` +
-        `<b>Match Score:</b> ${matchScore}/100\n\n` +
-        `<b>Actions:</b> Click buttons below to approve or reject`,
-        `<b>Position:</b> ${escapeHtml(job.position || job.title)}\n` +
-        `<b>Company:</b> ${escapeHtml(job.company)}\n` +
-        `<b>Platform:</b> ${escapeHtml(job.platform || job.source)}\n` +
-        `<b>Match Score:</b> ${matchScore}/100\n\n` +
-        `<b>Actions:</b> Click buttons below to approve or reject`,
-        `<b>Company:</b> ${escapeHtml(job.company)}\n` +
-        `<b>Platform:</b> ${escapeHtml(job.platform || job.source)}\n` +
-        `<b>Match Score:</b> ${matchScore}/100\n\n` +
-        `<b>Actions:</b> Click buttons below to approve or reject`,
+        '<b>Actions:</b> Click buttons below to approve or reject',
       parse_mode: 'HTML',
       reply_markup: {
         inline_keyboard: [
@@ -321,7 +307,7 @@ export class NotificationService {
 
     const telegramMessage = {
       text:
-        `✅ <b>Application Submitted Successfully</b>\n\n` +
+        '✅ <b>Application Submitted Successfully</b>\n\n' +
         `<b>Company:</b> ${escapeHtml(job.company)}\n` +
         `<b>Position:</b> ${escapeHtml(job.position || job.title)}\n` +
         `<b>Platform:</b> ${escapeHtml(platform)}\n` +
@@ -348,7 +334,7 @@ export class NotificationService {
 
     const telegramMessage = {
       text:
-        `❌ <b>Application Failed</b>\n\n` +
+        '❌ <b>Application Failed</b>\n\n' +
         `<b>Company:</b> ${escapeHtml(job.company)}\n` +
         `<b>Position:</b> ${escapeHtml(job.position || job.title)}\n` +
         `<b>Platform:</b> ${escapeHtml(platform)}\n` +
@@ -373,7 +359,7 @@ export class NotificationService {
 
     const telegramMessage = {
       text:
-        `📊 <b>Daily Application Summary</b>\n\n` +
+        '📊 <b>Daily Application Summary</b>\n\n' +
         `<b>Date:</b> ${data.date}\n` +
         `<b>Total Applied:</b> ${stats.applied || 0}\n` +
         `<b>Pending Approval:</b> ${stats.pending || 0}\n` +
@@ -400,11 +386,11 @@ export class NotificationService {
 
     const telegramMessage = {
       text:
-        `🤖 <b>CAPTCHA Detected - Manual Intervention Required</b>\n\n` +
+        '🤖 <b>CAPTCHA Detected - Manual Intervention Required</b>\n\n' +
         `<b>Company:</b> ${escapeHtml(job.company)}\n` +
         `<b>Position:</b> ${escapeHtml(job.position || job.title)}\n` +
         `<b>Platform:</b> ${escapeHtml(platform)}\n\n` +
-        `Please check the platform manually to continue.`,
+        'Please check the platform manually to continue.',
       parse_mode: 'HTML',
     };
 
@@ -467,7 +453,7 @@ export class NotificationService {
 
     const endpoint = `https://api.telegram.org/bot${this.telegramToken}/sendMessage`;
 
-    let body = {
+    const body = {
       chat_id: this.telegramChatId,
       parse_mode: options.parse_mode || 'HTML',
       disable_web_page_preview: true,
@@ -782,13 +768,13 @@ export class NotificationService {
    */
   async handleHelpCommand(chatId) {
     const text =
-      `🤖 <b>Job Automation Bot Commands</b>\n\n` +
-      `<b>/status</b> - Show today's applications\n` +
-      `<b>/approve &lt;id&gt;</b> - Approve pending application\n` +
-      `<b>/reject &lt;id&gt;</b> - Reject pending application\n` +
-      `<b>/pause</b> - Pause auto-apply\n` +
-      `<b>/resume</b> - Resume auto-apply\n` +
-      `<b>/help</b> - Show this help message`;
+      '🤖 <b>Job Automation Bot Commands</b>\n\n' +
+      '<b>/status</b> - Show today\'s applications\n' +
+      '<b>/approve &lt;id&gt;</b> - Approve pending application\n' +
+      '<b>/reject &lt;id&gt;</b> - Reject pending application\n' +
+      '<b>/pause</b> - Pause auto-apply\n' +
+      '<b>/resume</b> - Resume auto-apply\n' +
+      '<b>/help</b> - Show this help message';
 
     return this.sendTelegramNotification({ text });
   }
@@ -883,7 +869,7 @@ export class NotificationService {
       }
 
       const text =
-        `📋 <b>Application Details</b>\n\n` +
+        '📋 <b>Application Details</b>\n\n' +
         `<b>ID:</b> <code>${application.id}</code>\n` +
         `<b>Company:</b> ${escapeHtml(application.company)}\n` +
         `<b>Position:</b> ${escapeHtml(application.position)}\n` +

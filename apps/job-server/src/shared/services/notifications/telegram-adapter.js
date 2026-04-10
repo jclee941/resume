@@ -110,13 +110,13 @@ export class TelegramNotificationAdapter {
 
     const message = {
       text:
-        `🔔 <b>Job Application Approval Request</b>\n\n` +
+        '🔔 <b>Job Application Approval Request</b>\n\n' +
         `<b>Position:</b> ${escapeHtml(resolveJobField(job, 'position', 'title'))}\n` +
         `<b>Company:</b> ${escapeHtml(resolveJobField(job, 'company', 'companyName'))}\n` +
         `<b>Platform:</b> ${escapeHtml(resolveJobField(job, 'platform', 'source'))}\n` +
         `<b>Match Score:</b> ${score}/100\n` +
         `<b>Application ID:</b> <code>${escapeHtml(applicationId)}</code>\n\n` +
-        `<b>Actions:</b> Approve or reject below`,
+        '<b>Actions:</b> Approve or reject below',
       parse_mode: 'HTML',
       reply_markup: {
         inline_keyboard: [
@@ -135,7 +135,7 @@ export class TelegramNotificationAdapter {
   async sendApplicationSuccess(job, applicationId, platform) {
     const message = {
       text:
-        `✅ <b>Application Submitted Successfully</b>\n\n` +
+        '✅ <b>Application Submitted Successfully</b>\n\n' +
         `<b>Company:</b> ${escapeHtml(resolveJobField(job, 'company', 'companyName'))}\n` +
         `<b>Position:</b> ${escapeHtml(resolveJobField(job, 'position', 'title'))}\n` +
         `<b>Platform:</b> ${escapeHtml(platform || resolveJobField(job, 'platform', 'source'))}\n` +
@@ -155,7 +155,7 @@ export class TelegramNotificationAdapter {
 
     const message = {
       text:
-        `❌ <b>Application Failed</b>\n\n` +
+        '❌ <b>Application Failed</b>\n\n' +
         `<b>Company:</b> ${escapeHtml(resolveJobField(job, 'company', 'companyName'))}\n` +
         `<b>Position:</b> ${escapeHtml(resolveJobField(job, 'position', 'title'))}\n` +
         `<b>Platform:</b> ${escapeHtml(platform || resolveJobField(job, 'platform', 'source'))}\n` +
@@ -187,7 +187,7 @@ export class TelegramNotificationAdapter {
 
     const message = {
       text:
-        `📊 <b>Daily Application Summary</b>\n\n` +
+        '📊 <b>Daily Application Summary</b>\n\n' +
         `<b>Date:</b> ${escapeHtml(date)}\n` +
         `<b>Total:</b> ${total}\n` +
         `<b>Applied:</b> ${applied}\n` +
@@ -207,11 +207,11 @@ export class TelegramNotificationAdapter {
   async sendCaptchaDetected(job, platform) {
     const message = {
       text:
-        `🤖 <b>CAPTCHA Detected - Manual Intervention Required</b>\n\n` +
+        '🤖 <b>CAPTCHA Detected - Manual Intervention Required</b>\n\n' +
         `<b>Company:</b> ${escapeHtml(resolveJobField(job, 'company', 'companyName'))}\n` +
         `<b>Position:</b> ${escapeHtml(resolveJobField(job, 'position', 'title'))}\n` +
         `<b>Platform:</b> ${escapeHtml(platform || resolveJobField(job, 'platform', 'source'))}\n\n` +
-        `Please resolve CAPTCHA manually and resume automation.`,
+        'Please resolve CAPTCHA manually and resume automation.',
       parse_mode: 'HTML',
     };
 

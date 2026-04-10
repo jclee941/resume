@@ -386,7 +386,7 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
             `<b>Status</b>: ${status}\n` +
             `<b>Trigger</b>: ${triggerType}\n` +
             `<b>Mode</b>: ${dryRun ? 'Dry Run' : 'Live'}\n\n` +
-            `<b>Stats</b>:\n` +
+            '<b>Stats</b>:\n' +
             `  Found: ${workflow.stats.jobsFound}\n` +
             `  Approved: ${workflow.stats.jobsApproved}\n` +
             `  Applied: ${workflow.stats.jobsApplied}\n` +

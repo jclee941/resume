@@ -234,13 +234,13 @@ async function runPlatformAutomation(platform, credentials) {
 }
 
 async function main() {
-  log('\n' + '='.repeat(60));
+  log(`\n${  '='.repeat(60)}`);
   log('RESUME AUTOMATION STARTED');
   log('='.repeat(60));
   log(`Mode: ${CONFIG.dryRun ? 'DRY-RUN' : 'LIVE'}`);
   log(`Max Apply: ${CONFIG.maxApply}`);
   log(`Log File: ${logFile}`);
-  log('='.repeat(60) + '\n');
+  log(`${'='.repeat(60)  }\n`);
 
   const results = [];
 
@@ -262,7 +262,7 @@ async function main() {
   }
 
   // Summary
-  log('\n' + '='.repeat(60));
+  log(`\n${  '='.repeat(60)}`);
   log('AUTOMATION SUMMARY');
   log('='.repeat(60));
 

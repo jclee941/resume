@@ -101,10 +101,6 @@ export class JobFilter {
     return this.#config.excludeCompanies.some((c) => company.includes(c.toLowerCase()));
   }
 
-  async #applyScoring(jobs, useAI = false, resumePath = null) {
-    return this.scoreBatch(jobs, { useAI, resumePath });
-  }
-
   async scoreBatch(jobs, options = {}) {
     const { useAI = false, resumePath = null } = options;
     const scored = [];
