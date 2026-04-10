@@ -33,12 +33,23 @@ Allow: /
 Allow: /en/
 Crawl-delay: 0
 
-# ChatGPT and AI bots
+# AI search bots - ALLOWED for visibility in AI-powered search results
+# (ChatGPT, Perplexity, Claude increasingly used by recruiters for candidate research)
 User-agent: ChatGPT-User
-Disallow: /
+Allow: /
+Allow: /en/
 
 User-agent: GPTBot
-Disallow: /
+Allow: /
+Allow: /en/
+
+User-agent: PerplexityBot
+Allow: /
+Allow: /en/
+
+User-agent: ClaudeBot
+Allow: /
+Allow: /en/
 
 User-agent: Applebot
 Allow: /
