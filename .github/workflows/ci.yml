@@ -1,0 +1,119 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '22'
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline --no-audit --no-fund
+
+      - name: Run ESLint
+        run: npm run lint
+
+  typecheck:
+    name: Typecheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline --no-audit --no-fund
+
+      - name: Run TypeScript check
+        run: npm run typecheck
+
+  test-unit:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline --no-audit --no-fund
+
+      - name: Run unit tests
+        run: npm test
+
+  validate-data:
+    name: SSoT Data Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate resume JSON files
+        run: |
+          set -euo pipefail
+          for f in packages/data/resumes/master/resume_data.json \
+                   packages/data/resumes/master/resume_data_en.json \
+                   packages/data/resumes/master/resume_data_ja.json \
+                   apps/portfolio/data.json \
+                   apps/portfolio/data_en.json \
+                   apps/portfolio/data_ja.json; do
+            if [ -f "$f" ]; then
+              python3 -m json.tool < "$f" > /dev/null && echo "✅ $f" || { echo "❌ $f"; exit 1; }
+            fi
+          done
+
+  summary:
+    name: CI Summary
+    runs-on: ubuntu-latest
+    needs: [lint, typecheck, test-unit, validate-data]
+    if: always()
+    steps:
+      - name: Check all jobs passed
+        run: |
+          echo "lint: ${{ needs.lint.result }}"
+          echo "typecheck: ${{ needs.typecheck.result }}"
+          echo "test-unit: ${{ needs.test-unit.result }}"
+          echo "validate-data: ${{ needs.validate-data.result }}"
+          if [[ "${{ needs.lint.result }}" != "success" || \
+                "${{ needs.typecheck.result }}" != "success" || \
+                "${{ needs.test-unit.result }}" != "success" || \
+                "${{ needs.validate-data.result }}" != "success" ]]; then
+            echo "❌ One or more CI jobs failed"
+            exit 1
+          fi
+          echo "✅ All CI jobs passed"
