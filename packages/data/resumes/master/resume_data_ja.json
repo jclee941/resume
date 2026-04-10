@@ -32,15 +32,24 @@
   "summary": {
     "totalExperience": "9年",
     "experienceStart": "2017.02",
-    "grade": null,
+    "grade": "シニア",
     "expertise": [
       "Observability",
       "セキュリティ基盤",
       "自動化"
     ],
-    "profileStatement": "金融・公共分野でセキュリティ基盤の設計と運用を担当してきた、9年目のインフラエンジニアです。Observability 体制の構築と運用自動化に取り組んでいます。"
+    "profileStatement": "金融・公共分野のセキュリティ基盤で、手作業運用と分散監視の課題を解消してきた9年目のエンジニアです。 ネクストレードでは、サーバー150台・端末300台・ネットワーク機器80台規模の環境で、Splunk ESの検知ルール32件とn8n自動化を組み合わせてセキュリティ対応フローを再設計しました。 その結果、30秒以内の通知体制を整え、ファイアウォールポリシー照会の手作業時間を80%削減しました。 現在は、設計・Observability・DevSecOps型自動化まで自ら担うシニアロールに注力しています。"
   },
-  "current": null,
+  "current": {
+    "status": "求職中",
+    "availability": "2026.03〜、即時参画可",
+    "desiredRoles": [
+      "セキュリティ基盤",
+      "DevSecOps",
+      "Observability",
+      "自動化"
+    ]
+  },
   "careers": [
     {
       "company": "ITCEN CTS",
@@ -49,16 +58,22 @@
       "project": "ネクストレード売買約定システム セキュリティ運用SM",
       "role": "セキュリティ運用担当",
       "client": "ネクストレード",
-      "description": "ネクストレード向けセキュリティ運用SMおよび情報セキュリティチーム支援\n• Splunk基盤のセキュリティログ分析とリアルタイム脅威監視体制を高度化\n• FortiGateファイアウォールポリシーを最適化し、アクセス制御運用を自動化\n• 脆弱性点検と月次定期レポートを通じてインフラ安定性を強化\n• 技術: Splunk, FortiGate, Python, Linux"
+      "teamSize": "情報セキュリティ運用セル（規模非公開）",
+      "myRole": "1人セキュリティ自動化担当",
+      "workType": "SM",
+      "description": "[課題] サーバー150台・端末300台・ネットワーク機器80台、日次10万件超の取引環境で、24/7のセキュリティ対応とファイアウォールポリシー照会が手作業中心でした。\n[対応] Splunk ESの検知ルール32件を運用し、n8nワークフローでSlackリアルタイム通知を連携し、FortiManager APIベースのポリシー照会用Pythonライブラリを開発しました。\n[成果] 通知を30秒以内に短縮し、ファイアウォールポリシー照会時間を80%削減、不要アラートを70%削減しました。\n[スタック] Splunk, Prometheus, Grafana, Loki, n8n, Python, Docker, Linux"
     },
     {
       "company": "ガオンヌリ情報システム",
       "period": "2024.03 ~ 2025.02",
       "duration": "1年",
       "project": "ネクストレード売買約定システム構築",
-      "role": "インフラエンジニア",
+      "role": "セキュリティ基盤エンジニア",
       "client": "ネクストレード",
-      "description": "ネクストレード売買約定システムのセキュリティ基盤を設計・構築\n• 金融委員会本認可審査に向けた技術対応とセキュリティアーキテクチャを策定\n• ネットワーク分離とアクセス制御ポリシーを設計し、セキュリティコンプライアンスに対応\n• FortiGate HA構成を実装し、障害復旧プロセスを整備\n• 技術: FortiGate, FortiManager, Linux, VMware"
+      "teamSize": "セキュリティ基盤構築チーム（規模非公開）",
+      "myRole": "セキュリティアーキテクチャ設計・FortiGate HA構築担当",
+      "workType": "SI",
+      "description": "[課題] 金融委員会の本認可前に、サーバー150台・ネットワーク機器80台規模の新規取引所セキュリティ基盤を短期間で標準化する必要がありました。\n[対応] FGCPベースのFortiGate Active-Passive HA構成を設計し、ネットワーク分離、L2/L3、VPN、NACアクセス制御を設計、Ansible RoleとFortiManager APIで初期設定とポリシー配布を標準化しました。\n[成果] 金融委員会の本認可を通過し、99.99% HA設計目標を達成し、手作業依存を下げた運用標準を整備しました。\n[スタック] FortiGate, FortiManager, Ansible, Python, Linux, VMware"
     },
     {
       "company": "クオンテック投資一任",
@@ -66,7 +81,11 @@
       "duration": "1年7か月",
       "project": "AI株式投資サービス セキュリティ運用",
       "role": "情報セキュリティチーム",
-      "description": "AI資産運用プラットフォームのクラウドセキュリティ運用\n• AWS基盤のセキュリティ（IAM、Security Group、WAF）を運用・高度化\n• 定期的な脆弱性点検とロボアドバイザーテストベッド審査対応を支援\n• Prometheus/Grafana基盤のセキュリティメトリクスダッシュボードを構築・運用\n• 技術: AWS, Terraform, Prometheus, Grafana"
+      "client": "クオンテック投資一任",
+      "teamSize": "インフラ・情報セキュリティチーム（規模非公開）",
+      "myRole": "AWSセキュリティ運用・可観測性構築担当",
+      "workType": "SM",
+      "description": "[課題] AI資産運用プラットフォームのAWSセキュリティ運用がコンソール中心で分散し、審査対応の証跡整理が非効率でした。\n[対応] TerraformでVPC・Subnet・Security Groupをコード化し、IAM・WAF運用基準を整備、CloudTrail・GuardDutyログをCloudWatchへ統合し、Prometheus/Grafanaダッシュボードを構築しました。\n[成果] ロボアドバイザーテストベッド審査に対応できる基盤を整え、コードとログ中心の運用体制へ移行しました。\n[スタック] AWS, Terraform, CloudTrail, GuardDuty, Prometheus, Grafana"
     },
     {
       "company": "ファンエンシー",
@@ -74,7 +93,11 @@
       "duration": "3か月",
       "project": "クラウドインフラ",
       "role": "インフラ担当",
-      "description": "ECサービス向けクラウド移行とセキュリティ強化を推進\n• オンプレミス環境からAWS VPCベース構成への移行設計\n• EKSクラスタのセキュリティ設定とコンテナ脆弱性点検プロセスを整備\n• GitLab CI/CDパイプラインへセキュリティレビュー工程を自動化\n• 技術: AWS, Kubernetes, Docker, GitLab CI"
+      "client": "ファンエンシー",
+      "teamSize": "DevOps移行タスクフォース（規模非公開）",
+      "myRole": "クラウド移行・CI/CDセキュリティ構築担当",
+      "workType": "SI",
+      "description": "[課題] ECサービスをオンプレミスからAWSへ移行する必要があり、コンテナセキュリティ基準と配備検証工程が未整備でした。\n[対応] AWS VPCベースの移行構成を設計し、EKSのRBAC・Pod Security基準を定義、Helm配備自動化とGitLab CI/CDによる静的解析・セキュリティスキャン工程を構築しました。\n[成果] バックアップ／復旧自動化でMTTRを50%短縮（2時間→1時間）し、セキュリティスキャン追加で脆弱性の早期発見率を80%向上させた状態で移行準備を完了しました。\n[スタック] AWS, Kubernetes, Docker, Helm, GitLab CI/CD"
     },
     {
       "company": "ジョイントリー",
@@ -82,7 +105,11 @@
       "duration": "8か月",
       "project": "国民大学 次世代情報システム",
       "role": "システムエンジニア",
-      "description": "国民大学の次世代情報システム向けセキュリティ基盤を高度化\n• VMware NSX-Tベースのマイクロセグメンテーション設計で内部ネットワーク防御を強化\n• ファイアウォール、NAC、DLPを含む統合セキュリティソリューションを構築\n• ハイブリッドクラウド移行に向けたネットワークセキュリティアーキテクチャを支援\n• 技術: VMware NSX-T, Network Security, NAC"
+      "client": "国民大学校",
+      "teamSize": "統合セキュリティ構築チーム（規模非公開）",
+      "myRole": "NSX-Tマイクロセグメンテーション・統合ポリシー設計担当",
+      "workType": "SI",
+      "description": "[課題] 次世代情報システム移行に伴い、内部ネットワークの東西トラフィック制御とセキュリティポリシー統合が必要でした。\n[対応] VMware NSX-T DFWベースのマイクロセグメンテーションを設計し、NAC・DLP・APT連携ポリシーとWazuh/Kibana監視基盤を構築しました。\n[成果] 月間障害件数を25%削減（12件→9件）し、侵害事故予防率80%（月200件遮断）、機密情報検知率20%向上、可用性99.9%を達成しました。\n[スタック] VMware NSX-T, Firewall, NAC, DLP, Wazuh, Kibana, Linux"
     },
     {
       "company": "メタネットMプラットフォーム",
@@ -90,7 +117,11 @@
       "duration": "1年9か月",
       "project": "コンタクトセンター インフラ",
       "role": "システムエンジニア",
-      "description": "大規模コンタクトセンターIT基盤の運用と自動化\n• COVID-19対応として大規模在宅勤務向けVPN基盤を緊急構築・運用\n• Ansibleでサーバープロビジョニングと反復作業を自動化し運用効率を改善\n• Zabbix/PRTG基盤のリアルタイム監視と障害対応体制を構築\n• 技術: Ansible, VPN, Zabbix, Python"
+      "client": "メタネットMプラットフォーム",
+      "teamSize": "インフラ運用チーム（規模非公開）",
+      "myRole": "VPN/NAC自動化・スイッチ点検自動化担当",
+      "workType": "SI+SM",
+      "description": "[課題] COVID-19下で1,000名規模の在宅勤務環境を短期間で立ち上げる必要があり、VPN/NAC例外処理とスイッチ点検は手作業でした。\n[対応] FortiGate SSL VPNとNAC連携を構築し、AnsibleでNAC例外ポリシー配布を自動化、PythonでCiscoスイッチ点検とVPNセッション監視ダッシュボードを実装しました。\n[成果] スイッチ点検時間を75%短縮（8時間→2時間）、NAC例外処理を90%短縮（30分→3分）、障害問い合わせを40%削減（週20件→12件）し、新規サイト3拠点を構築しました。\n[スタック] Ansible, Python, VPN, NAC, Zabbix, PRTG, Linux"
     },
     {
       "company": "MTデータ",
@@ -98,7 +129,11 @@
       "duration": "1年9か月",
       "project": "韓国航空宇宙産業（KAI）",
       "role": "IT支援 / OA運用",
-      "description": "防衛産業向け現場でITインフラ運用を支援\n• 閉域網環境でサーバーとクライアント基盤の定期点検・保守を実施\n• 社内セキュリティ規定に沿った資産管理とセキュリティパッチ適用を実施\n• 技術支援と障害対応を通じて安定した業務環境を維持\n• 技術: Windows Server, Linux, Helpdesk"
+      "client": "韓国航空宇宙産業（KAI）",
+      "teamSize": "現場IT運用チーム（規模非公開）",
+      "myRole": "閉域網サーバー運用・セキュリティパッチ担当",
+      "workType": "SM",
+      "description": "[課題] 閉域網の製造セキュリティ環境で50台超のLinuxサーバーとファイアウォールポリシーを運用しつつ、資産・パッチ・脆弱性管理を整備する必要がありました。\n[対応] ログ分析ベースの点検体制を運用し、ファイアウォールポリシーを再設計、製造網と開発網の分離運用、月次脆弱性点検とパッチ運用手順を確立しました。\n[成果] 重複ファイアウォールルールを30%削減（3,000→2,100）し、内部情報流出事故0件を維持、Critical脆弱性を2週間以内に100%是正する体制を整えました。\n[スタック] Linux, Windows Server, Shell Script, Firewall"
     }
   ],
   "projects": [
@@ -243,7 +278,7 @@
     {
       "name": "CCNP",
       "issuer": "Cisco Systems",
-      "date": "2020.08",
+      "date": "2020.08（2023.08 失効）",
       "expirationDate": "2023.08",
       "credentialId": null,
       "credentialUrl": null,
@@ -252,7 +287,7 @@
     {
       "name": "RHCSA",
       "issuer": "Red Hat",
-      "date": "2019.01",
+      "date": "2019.01（2022.01 失効）",
       "expirationDate": "2022.01",
       "credentialId": null,
       "credentialUrl": null,
@@ -301,7 +336,8 @@
       "expirationDate": null,
       "credentialId": null,
       "credentialUrl": null,
-      "status": "準備中"
+      "status": "準備中",
+      "targetDate": "2026 Q2"
     },
     {
       "name": "CISM",
@@ -310,7 +346,8 @@
       "expirationDate": null,
       "credentialId": null,
       "credentialUrl": null,
-      "status": "準備中"
+      "status": "準備中",
+      "targetDate": "2026 Q2"
     },
     {
       "name": "AWS Solutions Architect",
@@ -319,7 +356,8 @@
       "expirationDate": null,
       "credentialId": null,
       "credentialUrl": null,
-      "status": "準備中"
+      "status": "準備中",
+      "targetDate": "2026 Q2"
     }
   ],
   "skills": {
@@ -516,7 +554,7 @@
     {
       "name": "Observability Platform",
       "period": "2024.06 ~ 現在",
-      "description": "ホームラボ基盤モニタリング。Prometheusメトリクス収集、Lokiログ集約、Grafana可視化を実施。",
+      "description": "[課題] ホームラボ全体のメトリクスとログが分散し、障害原因の特定に時間がかかっていました。\n[対応] Prometheusで50+メトリクスエンドポイントを収集し、Loki・Elasticsearchを含む3つのデータソースをGrafana 12+ダッシュボードへ統合しました。\n[成果] 99.5%のインフラ可用性を維持しながら、メトリクスとログを一画面で追跡できる運用基準を確立しました。",
       "technologies": [
         "Grafana",
         "Prometheus",
@@ -527,21 +565,24 @@
       "icon": "📊",
       "tagline": "モニタリングプラットフォーム",
       "stars": 0,
+      "starsUiHint": "de-emphasize",
       "language": "PromQL",
       "forks": 0,
+      "forksUiHint": "de-emphasize",
       "githubUrl": null,
       "demoUrl": "https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b",
       "metrics": {
-        "dashboards": "12+",
-        "datasources": "Prometheus, Loki, Elasticsearch",
+        "dashboards": "12+ Grafanaダッシュボード",
+        "datasources": "3データソース統合（Prometheus, Loki, Elasticsearch）",
         "uptime": "99.5%",
-        "targets": "50+ metrics endpoints"
+        "targets": "50+ metric endpoints",
+        "healthChecks": "Blackbox Exporterによる外部エンドポイント監視"
       }
     },
     {
       "name": "n8n Automation",
       "period": "2024.01 ~ 現在",
-      "description": "通知・デプロイ・データ収集ワークフローを自動化。",
+      "description": "[課題] 通知・デプロイ・データ収集が個別スクリプトと手動実行に依存し、繰り返し運用の負荷が高い状態でした。\n[対応] n8nで15+ワークフローを構成し、Slack・GitHub・Cloudflare・Grafanaを1つの自動化ハブへ統合しました。\n[成果] 1日200回以上の実行体制を確立し、月6K+の自動化イベントを安定処理する運用基盤を整えました。",
       "technologies": [
         "n8n",
         "PostgreSQL",
@@ -550,20 +591,23 @@
       "icon": "🔄",
       "tagline": "ワークフロー自動化",
       "stars": 0,
+      "starsUiHint": "de-emphasize",
       "language": "JavaScript",
       "forks": 0,
+      "forksUiHint": "de-emphasize",
       "githubUrl": null,
       "demoUrl": null,
       "metrics": {
-        "workflows": "15+",
+        "workflows": "15+ワークフロー",
         "executions": "1日200回以上実行",
-        "integrations": "Slack, GitHub, Cloudflare, Grafana"
+        "monthlyExecutions": "月6K+自動化イベント",
+        "integrations": "4連携（Slack, GitHub, Cloudflare, Grafana）"
       }
     },
     {
       "name": "Fortinet API Client",
       "period": "2025.01 ~ 現在",
-      "description": "FortiManagerのポリシー/ルート照会と、FortiAnalyzerログ統計収集のためのPythonライブラリ。",
+      "description": "[課題] ファイアウォールポリシー確認、ルート照会、ログ統計収集を手動CLIと個別コンソールで処理していました。\n[対応] FortiManagerとFortiAnalyzerのREST APIをラップするPythonライブラリを開発し、ポリシー照会・ルート管理・ログ統計を共通メソッドとして抽象化しました。\n[成果] 運用作業時間を手動比80%削減し、セキュリティ自動化に再利用できるAPI基盤を整備しました。",
       "technologies": [
         "Python",
         "FortiManager",
@@ -572,20 +616,23 @@
       "icon": "🛡️",
       "tagline": "セキュリティ機器API自動化",
       "stars": 0,
+      "starsUiHint": "de-emphasize",
       "language": "Python",
       "forks": 0,
+      "forksUiHint": "de-emphasize",
       "githubUrl": "https://github.com/qws941/splunk",
       "demoUrl": null,
       "metrics": {
         "endpoints": "FortiManager, FortiAnalyzer REST API",
+        "systems": "2系統の機器APIをラップ",
         "features": "ポリシー照会・ルート管理・ログ統計",
-        "automation": "手動作業比で80%の時間削減"
+        "automation": "手動比80%時間短縮"
       }
     },
     {
       "name": "Security Alert System",
       "period": "2025.01 ~ 現在",
-      "description": "FortiGateイベントをSplunkで検知し、Slack Block Kitで通知。32件の検知ルールを運用。",
+      "description": "[課題] FortiGateのセキュリティイベントが機器とログ基盤に分散し、リアルタイム対応が遅れていました。\n[対応] Splunkで32件の検知ルールを運用し、PythonとSlack Block Kitで即時トリアージできる通知パイプラインを構築しました。\n[成果] イベント発生後30秒以内の通知体制を整え、不要アラートを70%削減する基盤を作りました。",
       "technologies": [
         "Splunk",
         "Python",
@@ -594,21 +641,24 @@
       "icon": "🔔",
       "tagline": "セキュリティ通知自動化",
       "stars": 0,
+      "starsUiHint": "de-emphasize",
       "language": "Python",
       "forks": 0,
+      "forksUiHint": "de-emphasize",
       "githubUrl": "https://github.com/qws941/splunk",
       "demoUrl": null,
       "metrics": {
-        "detectionRules": "32件",
+        "detectionRules": "32件の検知ルール",
         "alertChannels": "Slack Block Kit",
         "sources": "FortiGate syslog → Splunk",
-        "responseTime": "イベント発生後30秒以内に通知"
+        "responseTime": "イベント発生後30秒以内に通知",
+        "noiseReduction": "不要アラート70%削減"
       }
     },
     {
       "name": "IP Blacklist Platform",
       "period": "2024.12 ~ 現在",
-      "description": "悪性IPを収集・分析し、ダッシュボードを提供。Flask API + Next.jsフロントエンドで構築。",
+      "description": "[課題] 脅威インテリジェンスフィードが分散し、悪性IPを素早く比較・分析しにくい状態でした。\n[対応] Flask REST APIとNext.jsダッシュボードを組み合わせ、PostgreSQLのGeoIP enrichmentで3+ threat intelligence feedsを単一フローへ統合しました。\n[成果] 悪性IPの収集・分析・照会を1つのプラットフォームに整理し、脅威確認の手間を削減する基盤を作りました。",
       "technologies": [
         "Flask",
         "Next.js",
@@ -617,8 +667,10 @@
       "icon": "🚫",
       "tagline": "脅威インテリジェンス",
       "stars": 0,
+      "starsUiHint": "de-emphasize",
       "language": "Python",
       "forks": 0,
+      "forksUiHint": "de-emphasize",
       "githubUrl": "https://github.com/qws941/blacklist",
       "demoUrl": null,
       "metrics": {
@@ -630,7 +682,7 @@
     {
       "name": "HYCU FSDS 自動運転",
       "period": "2025.11 ~ 2026.02",
-      "description": "Formula Student Driverless Simulator基盤の自動運転システム。LiDARコーン検出（Grid BFS）とPure Pursuit経路追従、3層ステートマシン安全制御を実装。漢陽サイバー大学フォーミュラ大会で優秀賞を受賞。",
+      "description": "[課題] Formula Student Driverless Simulator環境で、コーン認識と経路追従を安定して同時実装する必要がありました。\n[対応] PythonベースのLiDARコーン検出（Grid BFS）、Pure Pursuit経路追従、3-tier安全ステートマシンをROS・Docker・AirSim環境へ統合しました。\n[成果] 漢陽サイバー大学フォーミュラ大会で優秀賞を受賞し、シミュレータベースの自動運転制御スタックを完成させました。",
       "technologies": [
         "Python",
         "ROS",
@@ -641,23 +693,51 @@
       "tagline": "自動運転シミュレーション",
       "url": "https://github.com/qws941/hycu_fsds",
       "stars": 0,
+      "starsUiHint": "de-emphasize",
       "language": "Python",
       "forks": 0,
+      "forksUiHint": "de-emphasize",
       "githubUrl": "https://github.com/qws941/hycu_fsds",
       "demoUrl": null,
       "metrics": {
         "award": "優秀賞（Excellence Award）",
         "platform": "Formula Student Driverless Simulator",
-        "stack": "ROS + Docker + AirSim"
+        "stack": "ROS + Docker + AirSim",
+        "control": "3-tier安全ステートマシン制御"
+      }
+    },
+    {
+      "name": "Resume Portfolio",
+      "period": "2024.01 ~ 現在",
+      "description": "[課題] 経歴・プロジェクト・運用指標が複数文書に分散し、採用担当者が強みを素早く把握しにくい状態でした。\n[対応] Cloudflare Workersベースのポートフォリオを構築し、JSON-LD SEO、Grafana Lokiログ、/health・/metrics・Web Vitals追跡を1つのWeb資産へ統合しました。\n[成果] resume.jclee.meで低遅延・グローバルCDN配信の公開ポートフォリオを運用し、デプロイ状態まで検証できる構造を整えました。",
+      "technologies": [
+        "Cloudflare Workers",
+        "HTML/CSS",
+        "JSON-LD SEO",
+        "Grafana Loki"
+      ],
+      "icon": "⚡",
+      "tagline": "ライブポートフォリオ基盤",
+      "stars": 0,
+      "starsUiHint": "de-emphasize",
+      "language": "JavaScript",
+      "forks": 0,
+      "forksUiHint": "de-emphasize",
+      "githubUrl": "https://github.com/qws941/resume",
+      "demoUrl": "https://resume.jclee.me",
+      "metrics": {
+        "deployment": "resume.jclee.me（低遅延応答、グローバルCDN）",
+        "cicd": "GitLab CI/CD自動デプロイ + デプロイタイムスタンプ注入",
+        "observability": "/health, /metrics, Web Vitals追跡"
       }
     }
   ],
   "ossContributions": [],
   "hero": {
-    "badge": "Infrastructure Engineer",
+    "badge": "セキュリティ基盤エンジニア · 9年",
     "title": "イ・ジェチョル",
     "titleEn": "Jaecheol Lee",
-    "subtitle": "セキュリティ基盤設計 · Observability · 自動化"
+    "subtitle": "金融・公共セキュリティ基盤 · Splunk ES 32ルール · FortiGate HA 99.99% · n8n自動化 70%"
   },
   "sectionDescriptions": {
     "resume": "インフラ経験9年",
@@ -668,16 +748,17 @@
     "contact": "連絡先"
   },
   "achievements": [
-    "ネクストレードATSセキュリティ基盤を設計（金融委員会本認可を通過）",
-    "Splunk-FortiNet統合監視体制を構築（ファイアウォール集中管理とポリシー配布自動化）",
-    "セキュリティ基盤自動化導入で運用効率を改善（ネクストレード）",
-    "WAF/IPSポリシー最適化により誤検知率を改善（ネクストレード）",
-    "Grafana/Prometheus/Loki基盤のObservabilityプラットフォームを構築・運用",
-    "n8nワークフロー自動化基盤を構築（反復運用業務を自動化）",
-    "Claude AIベースのセキュリティ脅威分析自動化を導入",
-    "ロボアドバイザーテストベッド審査に向けたセキュリティ支援（クオンテック）",
-    "クラウドマイグレーションプロジェクトを遂行（ジョイントリー）",
-    "大規模在宅勤務向けVPNセキュリティ基盤を構築（メタネット）"
+    "ネクストレードATSセキュリティ基盤を99.99% HA基準で設計し、金融委員会本認可を通過しました。",
+    "Splunk-FortiNet統合運用基盤を構築し、32件の検知ルールと30秒以内の通知パイプラインを運用しました。",
+    "ネクストレードの運用自動化により不要アラートを70%削減し、ファイアウォールポリシー照会時間を80%短縮しました。",
+    "Observabilityプラットフォームで12+ダッシュボード、50+メトリクスエンドポイント、99.5%可用性を維持しました。",
+    "n8n自動化基盤を構築し、15+ワークフロー、1日200回以上実行、月6K+自動化イベントを運用しました。",
+    "ジョイントリー案件で侵害事故予防率80%（月200件遮断）、機密情報検知率20%向上、可用性99.9%を達成しました。",
+    "メタネットでNAC例外処理を90%短縮（30分→3分）、スイッチ点検時間を75%短縮（8時間→2時間）しました。",
+    "メタネットでウイルス対策ソフトとVPNの競合を解消し、問い合わせを40%削減（週20件→12件）し、新規3拠点を構築しました。",
+    "KAI閉域網環境で重複ファイアウォールルールを30%削減（3,000→2,100）し、内部情報流出事故0件を維持しました。",
+    "ファンエンシー案件でバックアップ／復旧自動化によりMTTRを50%短縮（2時間→1時間）し、脆弱性の早期発見率を80%向上しました。",
+    "クオンテックでTerraformベースのAWSセキュリティコード化を定着させ、ロボアドバイザーテストベッド審査対応基盤を整えました。"
   ],
   "infrastructure": [
     {
@@ -764,5 +845,6 @@
     "linkedin": "https://linkedin.com/in/jclee0109",
     "website": "https://resume.jclee.me",
     "monitoring": "https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b"
-  }
+  },
+  "availability": "求職中 - 即時参画可"
 }
