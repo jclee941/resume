@@ -136,6 +136,7 @@ export async function syncActivities(api, resume_id, sourceData, remoteActivitie
       };
     });
 
+
   const matchedActivityIds = new Set();
   for (const activity of localActivities) {
     const matchedActivity = remoteActivities.find((ra) => ra.title === activity.title);
@@ -143,7 +144,10 @@ export async function syncActivities(api, resume_id, sourceData, remoteActivitie
       matchedActivityIds.add(matchedActivity.id);
       await api.resumeActivity.update(resume_id, matchedActivity.id, activity);
     } else {
-      await api.resumeActivity.add(resume_id, activity);
+      const anyMatch = remoteActivities.some((ra) => ra.title === activity.title);
+      if (!anyMatch) {
+        await api.resumeActivity.add(resume_id, activity);
+      }
     }
   }
 
