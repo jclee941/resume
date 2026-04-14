@@ -2,7 +2,7 @@
 
 **Date:** 2026-01-25
 **Updated:** 2026-03-28
-**Status:** 🟢 SECURE (OAuth-based GitLab integration)
+**Status:** 🟢 SECURE (GitHub Actions integration)
 
 ## 0. CI Secret Scanning (Active)
 
@@ -16,17 +16,17 @@
 
 The following secrets were exposed in project history/docs and MUST be rotated on each provider's dashboard.
 
-| Service        | Key Name                   | Action            | Status                        |
-| -------------- | -------------------------- | ----------------- | ----------------------------- |
-| **Grafana**    | `GRAFANA_API_KEY`         | Revoke & Re-issue | 🟡 Redacted, rotate key     |
-| **Slack**      | `SLACK_APP_TOKEN`         | Revoke & Re-issue | 🟡 Redacted, rotate key     |
-| **n8n**        | `N8N_API_KEY`             | Revoke & Re-issue | 🟡 Redacted, rotate key     |
-| **Telegram**   | `TELEGRAM_BOT_TOKEN`      | Revoke & Re-issue | 🟡 Redacted, rotate key     |
-| **Morph**       | `MORPH_API_KEY`           | Revoke & Re-issue | 🟡 Redacted, rotate key     |
-| **OpenRouter**  | `OPENROUTER_API_KEY`      | Revoke & Re-issue | 🟡 Redacted, rotate key     |
-| **Infisical**   | `INFISICAL_JWT...`        | Revoke & Re-issue | 🟡 Redacted, rotate key     |
-| **HYCU DB**     | `HYCU_DB_PASSWORD`        | Change Password   | 🟡 Redacted, rotate key     |
-| **GitLab**      | `GITLAB_OAUTH_CLIENT_SECRET` | Revoke & Re-issue | 🟢 OAuth (rotatable)        |
+| Service        | Key Name                     | Action            | Status                  |
+| -------------- | ---------------------------- | ----------------- | ----------------------- |
+| **Grafana**    | `GRAFANA_API_KEY`            | Revoke & Re-issue | 🟡 Redacted, rotate key |
+| **Slack**      | `SLACK_APP_TOKEN`            | Revoke & Re-issue | 🟡 Redacted, rotate key |
+| **n8n**        | `N8N_API_KEY`                | Revoke & Re-issue | 🟡 Redacted, rotate key |
+| **Telegram**   | `TELEGRAM_BOT_TOKEN`         | Revoke & Re-issue | 🟡 Redacted, rotate key |
+| **Morph**      | `MORPH_API_KEY`              | Revoke & Re-issue | 🟡 Redacted, rotate key |
+| **OpenRouter** | `OPENROUTER_API_KEY`         | Revoke & Re-issue | 🟡 Redacted, rotate key |
+| **Infisical**  | `INFISICAL_JWT...`           | Revoke & Re-issue | 🟡 Redacted, rotate key |
+| **HYCU DB**    | `HYCU_DB_PASSWORD`           | Change Password   | 🟡 Redacted, rotate key |
+| **GitLab**     | `GITLAB_OAUTH_CLIENT_SECRET` | Revoke & Re-issue | 🟢 OAuth (rotatable)    |
 
 ### Confirmed Exposure Inventory (Issue #22)
 
@@ -47,11 +47,12 @@ Exposed values found in historical report content. All literal values are now re
 ### GitLab OAuth Note
 
 GitLab now uses OAuth2 client credentials flow. To rotate:
+
 1. Go to GitLab UI: **Settings** → **Applications**
 2. Find the `resume-cicd` OAuth application
 3. Regenerate the client secret
-4. Update the secret in **1Password** (`homelab` vault → `GitLab OAuth`)
-5. Update GitLab CI/CD variables if using direct variables instead of 1Password
+4. Update the secret in **1Password** (`homelab` vault → `GitHub Actions`)
+5. Update GitHub Actions secrets if using direct secrets instead of 1Password
 
 ## 2. Hardcoded Passwords (Fixed)
 

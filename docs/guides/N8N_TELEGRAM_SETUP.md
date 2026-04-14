@@ -7,7 +7,7 @@
 **아키텍처:**
 
 ```
-GitLab CI / Auto-Apply ──webhook──> n8n ──Telegram Node──> Telegram
+GitHub Actions / Auto-Apply ──webhook──> n8n ──Telegram Node──> Telegram
                                     │
                                     └── Credentials (n8n에서 관리)
 ```
@@ -38,7 +38,7 @@ GitLab CI / Auto-Apply ──webhook──> n8n ──Telegram Node──> Teleg
 - **Path**: `job-automation` (또는 원하는 경로)
 - **Response Mode**: Response Node
 
-생성된 웹훅 URL을 복사하여 GitLab CI/CD 변수에 설정:
+생성된 웹훅 URL을 복사하여 GitHub Actions secrets에 설정:
 
 ```
 N8N_WEBHOOK_URL=https://n8n.jclee.me/webhook/job-automation
@@ -76,12 +76,12 @@ curl -X POST https://n8n.jclee.me/webhook/job-automation \
   }'
 ```
 
-### 2. GitLab CI 테스트
+### 2. GitHub Actions 테스트
 
 수동 파이프라인 실행:
 
 ```bash
-# GitLab UI에서 "Run pipeline" 클릭
+# GitHub Actions에서 워크플로우 실행
 # 또는
 # Auto-apply 실행
 node apps/job-server/scripts/auto-all.js --apply
@@ -97,7 +97,7 @@ node apps/job-server/scripts/auto-all.js --apply
 
 ### 웹훅이 도착하지 않음
 
-1. **GitLab CI 로그**: 파이프라인 로그에서 "n8n webhook sent" 확인
+1. **GitHub Actions 로그**: 워크플로우 로그에서 "n8n webhook sent" 확인
 2. **n8n 웹훅 URL**: 정확한지 확인 (trailing slash 주의)
 3. **방화벽**: n8n 서버가 외부에서 접근 가능한지 확인
 
@@ -105,12 +105,12 @@ node apps/job-server/scripts/auto-all.js --apply
 
 ```
 apps/job-server/src/shared/services/n8n/index.js  # n8n 서비스
-.gitlab/ci/n8n-notifications.yml                    # GitLab CI 템플릿
+.github/workflows/n8n-notifications.yml             # GitHub Actions 워크플로우
 infrastructure/n8n/workflows/job-automation-webhook.json  # n8n 워크플로우
 ```
 
 ## 참고
 
-- n8n 크리덴셜은 n8n 낶에서만 관리됨 (GitLab env에 저장하지 않음)
+- n8n 크리덴셜은 n8n 내에서만 관리됨 (GitHub Actions secrets에 저장하지 않음)
 - 모든 알림은 n8n을 통과함 (직접 Telegram API 호출 없음)
 - 웹훅 실패핫더라도 입사지원 프로세스는 계속 진행됨 (non-blocking)
