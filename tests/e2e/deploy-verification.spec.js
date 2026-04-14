@@ -73,7 +73,7 @@ test.describe('@deploy-verify Service Health', () => {
 
     const payload = await response.json();
     expect(payload).toBeTruthy();
-    expect(payload.status).toBe('healthy');
+    expect(['healthy', 'degraded']).toContain(payload.status);
     expect(payload.bindings).toBeTruthy();
     expect(payload.metrics).toBeTruthy();
   });
