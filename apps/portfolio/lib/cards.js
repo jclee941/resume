@@ -307,7 +307,7 @@ function generateContactGrid(contactData) {
   return `
         <a href="${escapeHtml(contactData.github)}" target="_blank" rel="noopener noreferrer" class="contact-item" aria-label="View GitHub profile (opens in new tab)">GitHub</a>
         <a href="${escapeHtml(contactData.linkedin)}" target="_blank" rel="noopener noreferrer" class="contact-item" aria-label="View LinkedIn profile (opens in new tab)">LinkedIn</a>
-        <a href="https://velog.io/@qws941" target="_blank" rel="noopener noreferrer" class="contact-item contact-item--velog" aria-label="Open Velog placeholder profile (opens in new tab)"><span class="contact-icon contact-icon--velog" aria-hidden="true">V.</span><span class="contact-label">Velog</span></a>
+        <a href="https://velog.io/@qws941" target="_blank" rel="noopener noreferrer" class="contact-item" aria-label="View Velog blog (opens in new tab)">Velog</a>
         <a href="mailto:${escapeHtml(contactData.email)}" class="contact-item" aria-label="Send email to ${escapeHtml(contactData.email)}">Email</a>
         <a href="${escapeHtml(contactData.website)}" target="_blank" rel="noopener noreferrer" class="contact-item" aria-label="Visit portfolio website (opens in new tab)">Website</a>
   `;

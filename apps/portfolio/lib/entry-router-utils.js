@@ -1,5 +1,5 @@
-const LAST_MODIFIED = 'Sun, 15 Feb 2026 00:00:00 GMT';
-const SITEMAP_ETAG = 'W/"resume-sitemap-2026-02-15"';
+const LAST_MODIFIED = new Date().toUTCString();
+const SITEMAP_ETAG = `W/"resume-sitemap-${Date.now()}"`;
 const DEFAULT_LANGUAGE = 'ko';
 const SUPPORTED_LANGUAGES = ['ko', 'en', 'ja'];
 const SINGLE_WORKER_PROFILE_SYNC_PATH = '/api/automation/resume-update';

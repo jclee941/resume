@@ -6,20 +6,14 @@
 const { minify } = require('html-minifier-terser');
 
 const EXTERNAL_SRI = {
-  GA_GTAG: 'sha384-D95pSxlR5vSF2Mt3lH3SvKEs9L5+WTLM53Lx1o515ZXOlyejGODwfb4YPse/qZk9',
   GOOGLE_GSI: 'sha384-Li3+JwrJUjnnr4ZvOP9SRczNCfPkOLWRVCzUTrD2TOhgQLBfRKs5Q5/lxh2tWguw',
 };
 
 function applyExternalSri(html) {
-  return html
-    .replace(
-      /<script\s+async\s+src="https:\/\/www\.googletagmanager\.com\/gtag\/js\?id=G-P9E8XY5K2L"><\/script>/g,
-      `<script async src="https://www.googletagmanager.com/gtag/js?id=G-P9E8XY5K2L" integrity="${EXTERNAL_SRI.GA_GTAG}" crossorigin="anonymous" referrerpolicy="no-referrer"></script>`
-    )
-    .replace(
-      /<script\s+src="https:\/\/accounts\.google\.com\/gsi\/client"\s+async\s+defer><\/script>/g,
-      `<script src="https://accounts.google.com/gsi/client" async defer integrity="${EXTERNAL_SRI.GOOGLE_GSI}" crossorigin="anonymous" referrerpolicy="no-referrer"></script>`
-    );
+  return html.replace(
+    /<script\s+src="https:\/\/accounts\.google\.com\/gsi\/client"\s+async\s+defer><\/script>/g,
+    `<script src="https://accounts.google.com/gsi/client" async defer integrity="${EXTERNAL_SRI.GOOGLE_GSI}" crossorigin="anonymous" referrerpolicy="no-referrer"></script>`
+  );
 }
 
 /**
