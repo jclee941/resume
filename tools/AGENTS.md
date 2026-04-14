@@ -1,7 +1,7 @@
 # TOOLS KNOWLEDGE BASE
 
-**Generated:** 2026-03-17
-**Commit:** `882b837`
+**Generated:** 2026-04-14
+**Commit:** `c2629c9`
 **Branch:** `master`
 
 ## OVERVIEW
@@ -27,23 +27,24 @@ tools/
 
 ## WHERE TO LOOK
 
-| Task             | Location                            | Notes                 |
+| Task | Location | Notes |
 | ---------------- | ----------------------------------- | --------------------- |
-| CI validation    | `ci/`                               | affected.go, validate |
-| Asset generation | `scripts/build/`                    | PDF, PPTX, icons      |
-| Deploy helpers   | `scripts/deployment/`               | quick-deploy, grafana |
-| Health checks    | `scripts/verification/`             | 7-point verify        |
-| Data sync        | `scripts/utils/sync-resume-data.js` | SSoT propagation      |
+| CI validation | `ci/` | affected.go, validate |
+| Asset generation | `scripts/build/` | PDF, PPTX, icons |
+| Deploy helpers | `scripts/deployment/` | quick-deploy, grafana |
+| Health checks | `scripts/verification/` | 7-point verify |
+| Data sync | `scripts/utils/sync-resume-data.js` | SSoT propagation |
 
 ## CONVENTIONS
 
 - Run all scripts from project root.
-- Shell scripts: `set -euo pipefail`.
+- Operational scripts are Go (.go); Node (.mjs) only for hooks/linters.
 - Scripts must be idempotent.
 - Bazel is a facade — use npm scripts day-to-day.
 
 ## ANTI-PATTERNS
 
+- Never use .sh for new operational scripts — use Go.
 - Never run scripts from subdirectories.
 - Never skip `affected.go` in CI.
 - Never deploy manually — CI/CD only.

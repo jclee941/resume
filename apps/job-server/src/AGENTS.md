@@ -1,7 +1,7 @@
 # JOB AUTOMATION SRC KNOWLEDGE BASE
 
-**Generated:** 2026-03-17
-**Commit:** `882b837`
+**Generated:** 2026-04-14
+**Commit:** `c2629c9`
 **Branch:** `master`
 
 ## OVERVIEW
@@ -15,24 +15,28 @@ src/
 ├── index.js              # MCP Fastify bootstrap
 ├── cli.js                # job CLI entry
 ├── server/routes/        # 13 Fastify route modules
+├── handlers/             # MCP handler registration + tool registry
 ├── shared/               # hexagonal core (services + clients)
 ├── tools/                # 9 MCP tool definitions
 ├── crawlers/             # stealth Playwright crawlers
+├── session-broker/       # Wanted session renewal service
 ├── auto-apply/           # form fill + rate limiting
+├── test-helpers/         # test mocks and fixtures
 └── lib/                  # utility wrappers (DEPRECATED)
 ```
 
 ## CODE MAP
 
-| Symbol               | Type     | Location                     | Role                       |
-| -------------------- | -------- | ---------------------------- | -------------------------- |
-| `main`               | function | `index.js`                   | Fastify + MCP registration |
-| `WantedAPI`          | class    | `shared/clients/wanted/`     | 40+ methods, 6 files       |
-| `BaseCrawler`        | class    | `crawlers/base-crawler.js`   | stealth, UA rotation       |
-| `JobMatcher`         | class    | `shared/services/matching/`  | scoring + auto-apply gates |
-| `SessionManager`     | class    | `shared/services/session/`   | 24h TTL cookies            |
-| `AIMatcher`          | class    | `shared/services/matching/`  | AI-assisted scoring        |
-| `UnifiedApplySystem` | class    | `auto-apply/auto-applier.js` | stealth form fill          |
+| Symbol                 | Type     | Location                     | Role                       |
+| ---------------------- | -------- | ---------------------------- | -------------------------- |
+| `main`                 | function | `index.js`                   | Fastify + MCP registration |
+| `WantedAPI`            | class    | `shared/clients/wanted/`     | 40+ methods, 6 files       |
+| `BaseCrawler`          | class    | `crawlers/base-crawler.js`   | stealth, UA rotation       |
+| `JobMatcher`           | class    | `shared/services/matching/`  | scoring + auto-apply gates |
+| `SessionManager`       | class    | `shared/services/session/`   | 24h TTL cookies            |
+| `SessionBrokerService` | class    | `session-broker/services/`   | Wanted session renewal     |
+| `AIMatcher`            | class    | `shared/services/matching/`  | AI-assisted scoring        |
+| `UnifiedApplySystem`   | class    | `auto-apply/auto-applier.js` | stealth form fill          |
 
 ## CONVENTIONS
 
