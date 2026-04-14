@@ -211,12 +211,9 @@ describe('mapMilitaryToFormFields', () => {
 });
 
 describe('mapAwardToFormFields', () => {
-  it('maps achievements[] as awards fallback when ssot.awards is absent (real SSOT shape)', () => {
+  it('returns [] when only achievements[] present (no fallback)', () => {
     const fields = mapAwardToFormFields({ achievements: ['A', 'B'] });
-    const byName = toMap(fields);
-    assert.strictEqual(byName.get('Award[c1].Award_Name'), 'A');
-    assert.strictEqual(byName.get('Award[c2].Award_Name'), 'B');
-    assert.strictEqual(byName.get('Award.index'), 'c1,c2');
+    assert.deepStrictEqual(fields, []);
   });
 
   it('returns [] for empty awards array', () => {
@@ -274,7 +271,7 @@ describe('buildJobKoreaFormData', () => {
     },
     certifications: [{ name: 'CCNP', issuer: 'Cisco Systems', date: '2020.08' }],
     military: { status: '사회복무요원', period: '2014.12 - 2016.12' },
-    achievements: ['no structured awards'],
+    awards: [{ name: '우수상', organization: '한양사이버대학교', year: '2026' }],
   };
 
   it('combines all mapped sections into one field array', () => {
@@ -300,7 +297,7 @@ describe('buildJobKoreaFormData', () => {
     assert.strictEqual(byName.get('Career[c77].Index_Name'), 'c77');
     assert.strictEqual(byName.get('UnivSchool[c88].Schl_Name'), '한양사이버대학교');
     assert.strictEqual(byName.get('License[c99].Index_Name'), 'c99');
-    // achievements[] maps to awards via fallback; indices=['c55'] limits to 1 entry = 5 fields
+    // structured awards[]; indices=['c55'] limits to 1 entry = 5 fields
     assert.strictEqual(countMatching(fields, /^Award\[/), 5);
   });
 
@@ -332,7 +329,7 @@ describe('dry-run smoke with real SSOT', () => {
 
     assert.strictEqual(countMatching(fields, /^Career\[c\d+\]\.C_Name$/), expectedCareerCount);
     assert.strictEqual(countMatching(fields, /^License\[c\d+\]\.Lc_Name$/), expectedLicenseCount);
-    const expectedAchievementCount = Array.isArray(ssot.achievements) ? ssot.achievements.length : 0;
-    assert.strictEqual(countMatching(fields, /^Award\[c\d+\]\./), expectedAchievementCount > 0 ? expectedAchievementCount * 5 : 0);
+    const expectedAwardCount = Array.isArray(ssot.awards) ? ssot.awards.length : 0;
+    assert.strictEqual(countMatching(fields, /^Award\[c\d+\]\./), expectedAwardCount > 0 ? expectedAwardCount * 5 : 0);
   });
 });
