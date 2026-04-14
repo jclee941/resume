@@ -12,8 +12,8 @@ export class ResumeEndpoint {
   }
 
   async getDetail(resumeId) {
-    // Chaos API requires /v1 version suffix
-    const response = await this.#client.chaosRequest(`/resumes/v1/${resumeId}`);
+    // Use v2 endpoint — v1 returns empty activities with OneID token auth
+    const response = await this.#client.chaosRequest(`/resumes/v2/${resumeId}`);
     return response.data || response;
   }
 

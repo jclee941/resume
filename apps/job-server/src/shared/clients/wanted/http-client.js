@@ -21,6 +21,7 @@ export class HttpClient {
     this.#defaultHeaders = {
       Accept: 'application/json',
       'Content-Type': 'application/json',
+      Referer: 'https://www.wanted.co.kr/',
       'User-Agent':
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
       Origin: 'https://www.wanted.co.kr',
