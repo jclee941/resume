@@ -263,22 +263,57 @@ Automated performance testing on every deployment:
 
 ## Job Automation
 
-The job automation runtime syncs resume data into external job platforms and keeps the portfolio content aligned with those sources.
+The job automation runtime syncs resume data into external job platforms and manages automated job applications.
 
-- **Wanted Korea**: headless OneID authentication, 7 of 8 sections synced, including careers, educations, skills, activities, language_certs, about, and contact
-- **JobKorea**: Playwright headless login, then form POST sync across 87 fields
-- **CI ready**: `node --import dotenv/config apps/job-server/scripts/ci-resume-sync.js`
-- **Automation**: weekly n8n workflow runs keep the syncs current
+### Resume Sync
+
+| Platform | Method | Sections | Status |
+| -------- | ------ | -------- | ------ |
+| **Wanted Korea** | OneID token + Chaos API v2 | careers, educations, skills, activities, language_certs, about, contact (8 sections) | Active |
+| **JobKorea** | Playwright headless + form POST | Career, License, Award, School, Intro (79 fields) | Active |
+
+```bash
+# Manual sync
+node apps/job-server/scripts/ci-resume-sync.js    # Wanted
+node apps/job-server/scripts/profile-sync.js --platform jobkorea --apply  # JobKorea
+```
+
+### Auto-Apply (Wanted)
+
+Reverse-engineered Wanted Chaos API for programmatic job applications:
+
+```
+POST /api/chaos/applications/v1
+{ email, username, mobile, job_id, resume_keys: ["<chaos-resume-uuid>"], status: "apply" }
+```
+
+Implementation: `apps/job-server/src/auto-apply/strategies/wanted-strategy.js`
+
+### n8n Automation
+
+| Workflow | ID | Schedule | What |
+| -------- | -- | -------- | ---- |
+| **Resume Sync** | `tG91fX0d6zZQzYay` | Sun 3am KST + webhook | Wanted + JobKorea parallel sync -> Telegram |
+
+```bash
+# Manual trigger
+curl -X POST https://n8n.jclee.me/webhook/resume-sync
+```
+
+- SSH nodes execute scripts on dev machine via `jclee-dev SSH` credential
+- `.env` sourced for Wanted OneID credentials (auto cookie minting)
+- Telegram notifications via `@qws941_bot` (resume-dedicated bot)
 
 ## Recent Changes
 
-- Portfolio redesign switched to a desaturated palette and removed CRT and matrix styling
-- IBM Plex Mono replaced the previous terminal font treatment in the portfolio UI
-- Wanted API sync now uses PATCH for v2 endpoints instead of PUT
-- Skill tag mapping now includes an AWS composite alias
-- E2E stability improved by skipping job health checks on 500 responses
-- Activities sync now includes all certificates with acquisition dates
-
+- Wanted application API reverse-engineered (`/api/chaos/applications/v1` with `status:apply`)
+- n8n Resume Sync workflow deployed (`tG91fX0d6zZQzYay`) with SSH + Telegram
+- Wanted `getDetail` endpoint migrated v1->v2 (fixes empty activities bug)
+- Activities sync now idempotent (update existing, delete orphans, prevent duplicates)
+- `Referer` header added to Wanted HTTP client
+- JobKorea awards section: removed `achievements[]` fallback, added structured `awards[]`
+- Career duration corrections: 5 entries fixed in `resume_data.json`
+- Telegram notifications via dedicated `@qws941_bot` (not YouTube bot)
 ## Documentation
 
 ### Key Guides
