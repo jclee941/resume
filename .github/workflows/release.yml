@@ -28,7 +28,7 @@ concurrency:
 
 jobs:
   release:
-    name: Tag and Release
+    name: Tag, Bump & Release
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -43,7 +43,7 @@ jobs:
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
-          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          ref: master
 
       - name: Determine version bump
         id: bump
@@ -111,6 +111,64 @@ jobs:
             echo "$CHANGELOG"
           fi
 
+      - name: Setup Node.js
+        if: steps.bump.outputs.should_release == 'true' && github.event.inputs.dry_run != 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Update package.json and CHANGELOG
+        if: steps.bump.outputs.should_release == 'true' && github.event.inputs.dry_run != 'true'
+        run: |
+          set -euo pipefail
+          NEW_TAG="${{ steps.bump.outputs.new_tag }}"
+          BUMP="${{ steps.bump.outputs.bump }}"
+          DATE=$(date '+%Y-%m-%d')
+
+          # 1. Bump package.json version (follows semver from tag)
+          NEW_VERSION="${NEW_TAG#v}"
+          node -e "
+            const fs = require('fs');
+            const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+            pkg.version = '${NEW_VERSION}';
+            fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
+            console.log('package.json updated to', pkg.version);
+          "
+
+          # 2. Prepend to CHANGELOG.md (create if missing)
+          CHANGELOG_ENTRY="## [${NEW_TAG}] - ${DATE}\n\n### Changes\n${{ steps.bump.outputs.changelog }}\n"
+          if [ -f CHANGELOG.md ]; then
+            # Insert after header line (line 6, after the 'adheres to' line)
+            HEADER=$(head -6 CHANGELOG.md)
+            BODY=$(tail -n +7 CHANGELOG.md)
+            {
+              echo "$HEADER"
+              echo ""
+              echo -e "$CHANGELOG_ENTRY"
+              echo "$BODY"
+            } > CHANGELOG.md.tmp
+            mv CHANGELOG.md.tmp CHANGELOG.md
+          else
+            cat > CHANGELOG.md << 'HEADER'
+          # Changelog
+
+          All notable changes documented automatically from conventional commits.
+          Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Versioning](https://semver.org/).
+
+          HEADER
+            echo -e "$CHANGELOG_ENTRY" >> CHANGELOG.md
+          fi
+          echo "CHANGELOG.md updated for ${NEW_TAG}"
+
+      - name: Commit version bump
+        if: steps.bump.outputs.should_release == 'true' && github.event.inputs.dry_run != 'true'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add package.json CHANGELOG.md
+          git commit -m "chore(release): ${{ steps.bump.outputs.new_tag }} [skip ci]" || echo 'No changes to commit'
+          git push origin master
+
       - name: Create tag and GitHub Release
         if: steps.bump.outputs.should_release == 'true' && github.event.inputs.dry_run != 'true'
         uses: softprops/action-gh-release@v2
@@ -126,7 +184,7 @@ jobs:
             ${{ steps.bump.outputs.changelog }}
           draft: false
           prerelease: false
-          target_commitish: ${{ github.event.workflow_run.head_sha || github.sha }}
+          target_commitish: master
           generate_release_notes: false
 
       - name: Summary
