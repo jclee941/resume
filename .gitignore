@@ -21,6 +21,7 @@ worker.js
 .env
 .env.local
 .env.*.local
+*-session.json
 !.env.example
 
 # IDE
