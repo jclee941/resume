@@ -1,6 +1,12 @@
 @import './variables.css';
 @import './base.css';
 @import './layout.css';
+@import './terminal.css';
+@import './hero.css';
+@import './cards.css';
+@import './skills.css';
+@import './status.css';
+@import './contact.css';
 @import './components.css';
 @import './animations.css';
 @import './utilities.css';

@@ -146,6 +146,16 @@
 }
 
 @media (max-width: 768px) {
+  .container-narrow {
+    width: 100%;
+    max-width: 100%;
+    padding: var(--space-5) var(--space-4);
+  }
+
+  .section-hero {
+    min-height: auto;
+  }
+
   .nav-container {
     padding: var(--space-3) var(--space-4);
   }
@@ -264,6 +274,10 @@
 }
 
 @media (max-width: 480px) {
+  .container-narrow {
+    padding: var(--space-4) var(--space-3);
+  }
+
   .nav-container {
     padding: var(--space-2) var(--space-3);
   }
@@ -309,7 +323,7 @@
   .infra-link,
   .back-to-top,
   .scroll-progress,
-  [aria-hidden="true"] {
+  [aria-hidden='true'] {
     display: none !important;
   }
 
@@ -395,16 +409,16 @@
     font-size: 1.5rem !important;
   }
 
-  a[href^="http"]::after,
-  a[href^="mailto"]::after {
-    content: " (" attr(href) ")";
+  a[href^='http']::after,
+  a[href^='mailto']::after {
+    content: ' (' attr(href) ')';
     font-size: 0.8em;
     color: #666666;
     word-break: break-all;
   }
 
-  a[href^="#"]::after,
-  a[href^="/"]::after {
+  a[href^='#']::after,
+  a[href^='/']::after {
     content: none;
   }
 
@@ -429,7 +443,6 @@
     color: #000000 !important;
   }
 
-  .contact-label,
   .contact-value,
   .contact-value a {
     color: #000000 !important;
