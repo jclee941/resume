@@ -57,13 +57,6 @@ export async function syncToWanted(data, params, sourceData = {}, injectedLogger
 
   const results = { updated: [], errors: [] };
 
-  await runStep(results, 'profile', async () => {
-    await api.updateProfile({
-      headline: data.profile.headline,
-      description: data.profile.description,
-    });
-  });
-
   let resumeDetail;
   try {
     resumeDetail = await api.getResumeDetail(params.resume_id);
@@ -71,6 +64,13 @@ export async function syncToWanted(data, params, sourceData = {}, injectedLogger
     results.errors.push({ section: 'resume_detail', error: e.message });
     return results;
   }
+
+  await runStep(results, 'profile', async () => {
+    await api.updateProfile({
+      headline: data.profile.headline,
+      description: data.profile.description,
+    });
+  });
 
   await runStep(results, 'careers', async () => {
     await syncCareers(

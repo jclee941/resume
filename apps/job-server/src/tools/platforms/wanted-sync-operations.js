@@ -10,10 +10,12 @@ export function mapToWantedFormat(source) {
   const totalExperience = source.summary?.totalExperience || '';
   const expertise = source.summary?.expertise || [];
 
+  const wantedVariant = source.platformVariants?.wanted || {};
+
   return {
     profile: {
-      headline: currentPosition ? `${currentPosition} | ${totalExperience}` : totalExperience,
-      description: expertise.join(', '),
+      headline: wantedVariant.headline || (currentPosition ? `${currentPosition} | ${totalExperience}` : totalExperience),
+      description: wantedVariant.about || expertise.join(', '),
     },
     careers: (source.careers || []).map((c) => {
       const [startStr, endStr] = (c.period || '').split(/~| - /).map((s) => s.trim());
@@ -123,13 +125,16 @@ export async function syncSkills(
 
 export async function syncActivities(api, resume_id, sourceData, remoteActivities) {
   const localActivities = (sourceData.certifications || [])
-    .filter((c) => c.date && c.status !== '준비중')
-    .map((cert) => ({
-      title: cert.name,
-      description: `${cert.issuer} | ${cert.date}`,
-      activity_type: 'CERTIFICATE',
-      start_time: parseDate(cert.date),
-    }));
+    .filter((c) => c.date)
+    .map((cert) => {
+      const acquiredDate = cert.date.split(/\s*\(/)[0];
+      return {
+        title: cert.name,
+        description: `${cert.issuer} | ${acquiredDate}`,
+        activity_type: 'CERTIFICATE',
+        start_time: parseDate(acquiredDate),
+      };
+    });
 
   const matchedActivityIds = new Set();
   for (const activity of localActivities) {
@@ -172,7 +177,8 @@ export async function syncLanguageCerts(api, resume_id, sourceData, remoteLangua
 }
 
 export async function syncAbout(api, resume_id, sourceData, currentAbout) {
-  const profileStatement = sourceData.summary?.profileStatement;
+  const platformAbout = sourceData.platformVariants?.wanted?.about;
+  const profileStatement = platformAbout || sourceData.summary?.profileStatement;
   if (typeof profileStatement === 'string' && profileStatement !== (currentAbout || '')) {
     await api.resume.save(resume_id, { about: profileStatement });
   }
