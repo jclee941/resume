@@ -1,7 +1,7 @@
 {
   "name": "resume",
   "version": "1.0.128",
-  "description": "Personal resume management system with multi-format output",
+  "description": "Resume portfolio monorepo: Cloudflare Worker edge site, job automation (Wanted/JobKorea), SSoT data, self-hosted observability",
   "main": "apps/portfolio/worker.js",
   "workspaces": [
     "apps/portfolio",

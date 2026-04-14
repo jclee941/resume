@@ -1,57 +1,89 @@
-# Documentation Directory
+# Documentation Index
 
-> Parent: [../AGENTS.md](../AGENTS.md)
+> Parent: [AGENTS.md](AGENTS.md)
 
-**Last Updated:** 2026-02
+This is the main entry point for the docs tree. Start with the maintained sections below, then use the archived sections for historical context only.
 
-## Overview
+## Active Documentation (maintained, accurate)
 
-Project documentation hub for the Resume Portfolio system. Contains deployment guides, architecture decisions, analysis reports, and workflow documentation.
+### Architecture Decision Records (`docs/adr/`)
 
-## Structure
+- [0001-monorepo-structure.md](adr/0001-monorepo-structure.md), monorepo layout and ownership boundaries.
+- [0002-zero-runtime-io.md](adr/0002-zero-runtime-io.md), runtime code should avoid unexpected I/O.
+- [0003-single-source-of-truth.md](adr/0003-single-source-of-truth.md), canonical resume data lives in one place.
+- [0004-stealth-crawling.md](adr/0004-stealth-crawling.md), crawler behavior and anti-detection constraints.
+- [0005-cloudflare-workers.md](adr/0005-cloudflare-workers.md), Cloudflare Workers as the primary runtime.
+- [0006-single-worker-architecture.md](adr/0006-single-worker-architecture.md), worker boundary and deployment shape.
+- [0007-msa-service-split.md](adr/0007-msa-service-split.md), service split guidance for the job automation stack.
 
-```
-docs/
-├── adr/                 # Numbered architecture decision records
-├── architecture/        # Current system shape and implementation docs
-├── guides/              # Step-by-step deployment & setup guides
-├── analysis/            # Code analysis, generated deep reviews
-├── reports/             # Historical reports and audits
-├── planning/            # Project planning and roadmaps
-├── api/                 # API-specific references
-└── thoughts/            # AI session ledgers and design notes
-```
+### Architecture (`docs/architecture/`)
 
-## Active Project Locations
+- [ARCHITECTURE.md](ARCHITECTURE.md), top-level architecture overview.
+- [system-overview.md](architecture/system-overview.md), current system map and major components.
+- [DEPLOYMENT_PIPELINE.md](architecture/DEPLOYMENT_PIPELINE.md), build and deployment flow.
+- [component-inventory.md](architecture/component-inventory.md), inventory of major runtime pieces.
+- [DESIGN_SYSTEM.md](architecture/DESIGN_SYSTEM.md), portfolio design and UI system notes.
+- [JOB_JCLEE_ME_IMPLEMENTATION.md](architecture/JOB_JCLEE_ME_IMPLEMENTATION.md), job platform sync implementation notes.
+- [project-context.md](architecture/project-context.md), repo and runtime context for the current system.
 
-| Component            | Location                        | Notes                      |
-| -------------------- | ------------------------------- | -------------------------- |
-| **Portfolio Worker** | `apps/portfolio/`               | Edge-deployed Cloudflare   |
-| **Job Automation**   | `apps/job-server/`              | MCP server + dashboard     |
-| **CLI Tool**         | `packages/cli/`                 | Deployment orchestration   |
-| **Resume Data**      | `packages/data/resumes/master/` | SSoT: resume_data.json     |
-| **Infrastructure**   | `infrastructure/`               | Grafana, Loki, n8n configs |
+### Guides (`docs/guides/`)
 
-## Key Documentation
+#### Getting Started
 
-| Guide                      | Location                              | Purpose                        |
-| -------------------------- | ------------------------------------- | ------------------------------ |
-| **Infrastructure**         | `guides/INFRASTRUCTURE.md`            | Complete system topology       |
-| **Monitoring Setup**       | `guides/MONITORING_SETUP.md`          | Prometheus, Grafana, Loki, n8n |
-| **Manual Deployment**      | `guides/MANUAL_DEPLOYMENT_GUIDE.md`   | Step-by-step deploy process    |
-| **PDF Generation**         | `guides/PDF_GENERATION.md`            | Resume PDF generation          |
-| **Deployment Pipeline**    | `architecture/DEPLOYMENT_PIPELINE.md` | CI/CD architecture             |
-| **Architecture Decisions** | `adr/0001-monorepo-structure.md`      | Durable design decisions       |
+- [QUICK_START.md](guides/QUICK_START.md)
+- [LOCAL_DEBUGGING.md](guides/LOCAL_DEBUGGING.md)
+- [PROJECT_STRUCTURE_MAP.md](guides/PROJECT_STRUCTURE_MAP.md)
 
-## Conventions
+#### Deployment
 
-- **Markdown Format**: All docs in `.md` with frontmatter when needed
-- **Naming**: `SCREAMING_SNAKE_CASE.md` for guides, `kebab-case.md` for notes
-- **Date Prefix**: Reports use `YYYY-MM-DD-` prefix for chronological ordering
-- **Relative Links**: Always use relative paths for cross-references
+- [MANUAL_DEPLOYMENT_GUIDE.md](guides/MANUAL_DEPLOYMENT_GUIDE.md)
+- [PRODUCTION_DEPLOYMENT_GUIDE.md](guides/PRODUCTION_DEPLOYMENT_GUIDE.md)
+- [CLOUDFLARE_GITHUB_AUTO_DEPLOY.md](guides/CLOUDFLARE_GITHUB_AUTO_DEPLOY.md)
+- [CI_CD_AUTOMATION.md](guides/CI_CD_AUTOMATION.md)
+- [FINAL_DEPLOYMENT_CHECKLIST.md](guides/FINAL_DEPLOYMENT_CHECKLIST.md)
 
-## Notes
+#### Monitoring
 
-- Historical docs may reference removed GitHub Actions configuration or outdated tree layouts
-- ADRs live in `adr/`, not `architecture/`
-- Notes in `thoughts/` are ephemeral and should not be treated as canonical rules
+- [MONITORING_SETUP.md](guides/MONITORING_SETUP.md)
+- [MONITORING_GUIDE.md](guides/MONITORING_GUIDE.md)
+- [DASHBOARD_ENDPOINTS.md](guides/DASHBOARD_ENDPOINTS.md)
+
+#### Platform-Specific
+
+- [INFRASTRUCTURE.md](guides/INFRASTRUCTURE.md)
+- [CF_API_TOKEN_SETUP.md](guides/CF_API_TOKEN_SETUP.md)
+- [CLOUDFLARE_AUTH_METHODS.md](guides/CLOUDFLARE_AUTH_METHODS.md)
+- [N8N_TELEGRAM_SETUP.md](guides/N8N_TELEGRAM_SETUP.md)
+- [SLACK_INTEGRATION.md](guides/SLACK_INTEGRATION.md)
+
+#### Troubleshooting
+
+- [TROUBLESHOOTING.md](guides/TROUBLESHOOTING.md)
+- [FETCH_ERROR_GUIDE.md](guides/FETCH_ERROR_GUIDE.md)
+- [GITLAB_DEPLOYMENT_TROUBLESHOOTING.md](guides/GITLAB_DEPLOYMENT_TROUBLESHOOTING.md)
+- [TS_SESSION_TROUBLESHOOTING.md](guides/TS_SESSION_TROUBLESHOOTING.md)
+
+### API (`docs/api/`)
+
+- [API README](api/README.md)
+
+## Historical Records (archived, not maintained)
+
+### Reports (`docs/reports/`)
+
+Historical session reports and status snapshots. Not actively maintained.
+
+### Analysis (`docs/analysis/`)
+
+Past codebase analyses. Historical reference only.
+
+### Planning (`docs/planning/`)
+
+Archived roadmaps and planning documents.
+
+## Document Standards
+
+- Use ADRs for durable decisions that need a stable record.
+- Use architecture docs for current system shape, guides for operator runbooks, and reports or analysis only for historical context.
+- Create a new doc only when an existing canonical doc cannot absorb the change cleanly.
+- Follow the `docs/AGENTS.md` hierarchy for docs-specific context, and check child `AGENTS.md` files in runtime areas when a doc points at a live subsystem.

@@ -1,11 +1,13 @@
 # Resume Management System
 
-Personal resume and portfolio management system built with modern web technologies and automated deployment pipeline.
+[![CI](https://github.com/jclee941/resume/actions/workflows/ci.yml/badge.svg)](https://github.com/jclee941/resume/actions/workflows/ci.yml)
+
+Personal resume and portfolio management system for 이재철 (Jaecheol Lee), built for Cloudflare Workers, job automation, and self-hosted observability.
 
 ## 🚀 Live Demo
 
 - **Portfolio**: https://resume.jclee.me
-- **Features**: Responsive design, dark mode, SEO optimized, accessibility compliant
+- **Features**: Responsive design, dark theme, SEO optimized, accessibility compliant
 
 ## Project Structure
 
@@ -36,10 +38,13 @@ resume/
 └── third_party/                   # policy/docs for third-party boundaries
 ```
 
+Additional runtime areas, `ta/` contains TA profile generation tooling, and `supabase/` contains Supabase edge functions.
+
 ## Tech Stack
 
 - **Frontend**: HTML5, CSS3, Vanilla JavaScript
-- **Deployment**: Cloudflare Workers (Edge-deployed)
+- **Typography**: IBM Plex Mono + Inter
+- **Deployment**: Cloudflare Workers, Cloudflare Workers Builds
 - **Build System**: npm workspaces + Bazel facade/query layer
 - **CI/CD**: GitHub Actions
 - **Testing**: Jest (unit), Playwright (E2E)
@@ -52,75 +57,65 @@ resume/
 
 - Node.js >= 22.0.0
 - npm
-- Wrangler CLI (for Cloudflare deployment)
+- Wrangler CLI for local Cloudflare work
 
 ### Local Development
 
 ```bash
-# Install dependencies
 npm install
-
-# End-to-end automation check (SSOT sync + lint + test + build + CF-native validation)
+npm run automate:ssot
 npm run automate:full
-
-# Serve portfolio locally
-cd apps/portfolio
 npm run dev
-
-# Run tests
+npm run dev:wrangler
 npm test
-
-# E2E tests
 npm run test:e2e
+npm run test:e2e:smoke
+npm run verify:production
+npm run lint
+npm run typecheck
+npm run format:check
 ```
 
 ### Worker Generation
 
-**CRITICAL**: After editing HTML files, regenerate `worker.js` (or run `npm run automate:ssot` from root):
+After editing the portfolio HTML templates, regenerate `worker.js`.
 
 ```bash
-# Generate worker.js from HTML (extracts CSP hashes from both KO + EN)
 cd apps/portfolio
 node generate-worker.js
 
-# Fast SSOT validation/build pipeline from project root
-cd ../..
+# From project root, run the full validation pipeline
 npm run automate:ssot
 ```
 
 ## Deployment
 
-### Automated Deployment
-
-Production deployment authority is Cloudflare Workers Builds (git push to protected branch). Local `wrangler deploy` is not the default production path.
+Production deployment runs through Cloudflare Workers Builds. The authoritative path is `git push` to the protected branch, which triggers the CI and deployment pipeline.
 
 ```bash
-# From project root: validate everything before pushing
 npm run automate:full
-
-# Then push branch/commit to trigger automated deployment pipeline
 git push
 ```
 
+`npm run deploy` is intentionally disabled in `package.json`. Use the build and push flow above instead.
+
 ### Resume Sync API
 
-The portfolio worker exposes direct (no `/job` prefix) aliases for JobKorea/Wanted profile sync automation, proxied to the job-dashboard worker via Service Binding:
+The portfolio worker exposes direct aliases for resume sync automation, proxied to the job-dashboard worker through Service Binding.
 
 ```bash
-# Trigger profile sync (defaults to platforms: wanted, jobkorea)
 curl -X POST https://resume.jclee.me/api/automation/resume-update \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer <admin-token>" \
   -d '{"ssotData": {"personal": {"name": "..."}}, "dryRun": true}'
 
-# Check sync status
 curl -H "Authorization: Bearer <admin-token>" \
   https://resume.jclee.me/api/automation/resume-update/<syncId>
 ```
 
 ### Environment Variables
 
-Required for deployment (in `~/.env`):
+Required for deployment in `~/.env`:
 
 ```bash
 CLOUDFLARE_API_KEY=your_global_api_key
@@ -143,7 +138,7 @@ CLOUDFLARE_ACCOUNT_ID=your_account_id
 index.html + index-en.html
   → generate-worker.js
     - Escape backticks and ${}
-    - Extract CSP hashes from both HTML files (union)
+    - Extract CSP hashes from both HTML files
     - Apply baseline CSP directives
   → worker.js (NEVER EDIT DIRECTLY)
   → wrangler deploy → Cloudflare Edge
@@ -169,9 +164,9 @@ Content-Security-Policy:
 
 > **📖 For complete infrastructure details**, see:
 >
-> - **[Infrastructure Architecture](docs/guides/INFRASTRUCTURE.md)** - Complete system topology, component details, security, performance metrics
-> - **[Monitoring Setup Guide](docs/guides/MONITORING_SETUP.md)** - Step-by-step configuration for Prometheus, Grafana, Elasticsearch, n8n
-> - **[Grafana Dashboard](monitoring/grafana-dashboard-resume-portfolio.json)** - Pre-configured dashboard with 7 visualization panels
+> - **[Infrastructure Architecture](docs/guides/INFRASTRUCTURE.md)** - system topology, component details, security, performance metrics
+> - **[Monitoring Setup Guide](docs/guides/MONITORING_SETUP.md)** - Prometheus, Grafana, Elasticsearch, n8n setup
+> - **[Grafana Dashboard](monitoring/grafana-dashboard-resume-portfolio.json)** - dashboard with 7 visualization panels
 
 ### Monitoring Endpoints
 
@@ -266,6 +261,24 @@ Automated performance testing on every deployment:
 - **Best Practices**: ≥95 score
 - **SEO**: ≥95 score
 
+## Job Automation
+
+The job automation runtime syncs resume data into external job platforms and keeps the portfolio content aligned with those sources.
+
+- **Wanted Korea**: headless OneID authentication, 7 of 8 sections synced, including careers, educations, skills, activities, language_certs, about, and contact
+- **JobKorea**: Playwright headless login, then form POST sync across 87 fields
+- **CI ready**: `node --import dotenv/config apps/job-server/scripts/ci-resume-sync.js`
+- **Automation**: weekly n8n workflow runs keep the syncs current
+
+## Recent Changes
+
+- Portfolio redesign switched to a desaturated palette and removed CRT and matrix styling
+- IBM Plex Mono replaced the previous terminal font treatment in the portfolio UI
+- Wanted API sync now uses PATCH for v2 endpoints instead of PUT
+- Skill tag mapping now includes an AWS composite alias
+- E2E stability improved by skipping job health checks on 500 responses
+- Activities sync now includes all certificates with acquisition dates
+
 ## Documentation
 
 ### Key Guides
@@ -289,14 +302,17 @@ Domain-specific context in subdirectory AGENTS.md files:
 
 ## Portfolio Features
 
-- **Responsive Design**: Mobile-first, 5 breakpoints
-- **Dark Mode**: Toggle with localStorage persistence
-- **SEO Optimized**: Meta tags, Open Graph, Twitter Card
+- **Terminal-themed dark aesthetic**: cyberpunk-inspired dark terminal layout, no dark mode toggle
+- **Typography**: IBM Plex Mono for UI, Inter for body text
+- **Color system**: intermediate-dim palette with desaturated neon accents
+- **Section layout**: hero, about, status, experience, projects, skills, infrastructure, contact
+- **Hover effects**: chromatic shift on hover only, no auto-playing glitch animation
+- **Skills display**: CSS gradient progress bars, not text-based bars
+- **Interactive CLI**: help, neofetch, snake, and `sudo hire-me` easter eggs
 - **Accessibility**: ARIA labels, semantic HTML, keyboard navigation
-- **Multi-language**: Korean (default) + English
 
 ## Links
 
 - **Live Site**: https://resume.jclee.me
 - **English**: https://resume.jclee.me/en
-- **GitHub**: https://github.com/qws941/resume
+- **GitHub**: https://github.com/jclee941/resume
