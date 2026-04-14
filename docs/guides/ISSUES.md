@@ -166,22 +166,14 @@ for (const deviceName of ['iPhone SE', 'iPhone 12 Pro', 'Pixel 5', 'iPad']) {
 
 **Issues**:
 
-- Theme toggle missing `aria-label`, `aria-pressed`
+- Static dark terminal theme, no toggle required
 - Interactive elements lack ARIA labels
 - No keyboard navigation tests
 - Color contrast not verified (WCAG AA)
 
 **Solution**:
 
-```html
-<!-- BEFORE -->
-<button id="theme-toggle">🌙</button>
-
-<!-- AFTER -->
-<button id="theme-toggle" aria-label="Toggle dark mode" aria-pressed="false" type="button">
-  🌙
-</button>
-```
+Static dark terminal theme, so no toggle button is needed.
 
 **Test**:
 
