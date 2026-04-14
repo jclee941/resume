@@ -14,8 +14,8 @@ export function mapToWantedFormat(source) {
 
   return {
     profile: {
-      headline: wantedVariant.headline || (currentPosition ? `${currentPosition} | ${totalExperience}` : totalExperience),
-      description: wantedVariant.about || expertise.join(', '),
+      headline: (wantedVariant.headline || (currentPosition ? `${currentPosition} | ${totalExperience}` : totalExperience)).slice(0, 50),
+      description: (wantedVariant.about || expertise.join(', ')).slice(0, 150),
     },
     careers: (source.careers || []).map((c) => {
       const [startStr, endStr] = (c.period || '').split(/~| - /).map((s) => s.trim());
