@@ -1,0 +1,122 @@
+/* ========================================
+   SKILLS - htop Style
+   ======================================== */
+.skill-list-minimal {
+  list-style: none;
+  margin: 0;
+  font-family: var(--font-mono);
+  background: rgba(0, 0, 0, 0.3);
+  padding: var(--space-4);
+  border-radius: 4px;
+  border: 1px solid var(--border-primary);
+}
+.skill-list-minimal::before {
+  content: 'skills --summary';
+  color: var(--text-muted);
+  display: block;
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--border-primary);
+  font-size: var(--text-xs);
+}
+.htop-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-1);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--border-primary);
+  font-size: var(--text-sm);
+  flex-wrap: wrap;
+}
+.htop-label {
+  width: 120px;
+  flex-shrink: 0;
+  color: var(--cyber-cyan);
+  font-weight: 500;
+}
+.htop-bar {
+  display: none;
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+}
+.htop-filled {
+  color: var(--cyber-green);
+}
+.htop-pct {
+  display: none;
+  width: 35px;
+  text-align: right;
+  color: var(--cyber-magenta);
+  font-weight: bold;
+  font-size: var(--text-xs);
+}
+.htop-items {
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  flex: 1;
+  min-width: 150px;
+}
+@media (max-width: 600px) {
+  .htop-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-1);
+    margin-bottom: var(--space-3);
+  }
+  .htop-label {
+    width: auto;
+  }
+  .htop-items {
+    min-width: auto;
+  }
+}
+/* ============================================================
+   SKILL BARS
+   ============================================================ */
+.skill-bar-container {
+  width: 100%;
+  margin-top: 0.25rem;
+}
+.skill-bar {
+  width: 100%;
+  height: 6px;
+  display: block;
+  appearance: none;
+  border: none;
+  border-radius: 4px;
+  overflow: hidden;
+  background: none;
+}
+.skill-bar::-webkit-progress-bar {
+  background: var(--bg-secondary);
+  border-radius: 4px;
+}
+.skill-bar::-webkit-progress-value {
+  background: linear-gradient(90deg, var(--cyber-cyan), var(--cyber-green));
+  border-radius: 4px;
+  box-shadow: 0 0 8px rgba(0, 212, 224, 0.2);
+}
+.skill-bar::-moz-progress-bar {
+  background: linear-gradient(90deg, var(--cyber-cyan), var(--cyber-green));
+  border-radius: 4px;
+  box-shadow: 0 0 8px rgba(0, 212, 224, 0.2);
+}
+/* ============================================================
+   SKILL TAG GLOW
+   ============================================================ */
+.skill-tag-glow {
+  border: 1px solid var(--cyber-cyan);
+  color: var(--cyber-cyan);
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  transition:
+    box-shadow 0.3s ease,
+    background 0.3s ease;
+}
+.skill-tag-glow:hover {
+  box-shadow: var(--glow-cyan);
+  background: rgba(0, 240, 255, 0.1);
+}

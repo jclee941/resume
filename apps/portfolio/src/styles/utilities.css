@@ -259,8 +259,6 @@ button:focus-visible {
   -webkit-backdrop-filter: blur(8px);
 }
 
-
-
 .noise-texture {
   position: relative;
 }
@@ -286,8 +284,6 @@ button:focus-visible {
     color: #000000 !important;
   }
 
-  #matrix-bg,
-  .crt-overlay,
   .cursor,
   .cmd-cursor,
   .cli-input-line,
@@ -337,10 +333,6 @@ button:focus-visible {
 }
 
 @media print {
-  body::before,
-  body::after,
-  #matrix-bg,
-  .crt-overlay,
   .cli-container {
     display: none !important;
   }
