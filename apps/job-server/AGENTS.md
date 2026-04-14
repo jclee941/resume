@@ -1,7 +1,7 @@
 # JOB AUTOMATION KNOWLEDGE BASE
 
-**Generated:** 2026-03-17
-**Commit:** `882b837`
+**Generated:** 2026-04-14
+**Commit:** `c2629c9`
 **Branch:** `master`
 
 ## OVERVIEW
@@ -17,6 +17,9 @@ job-server/
 │   ├── cli.js              # job CLI entry
 │   ├── server/routes/      # 13 Fastify route modules
 │   ├── shared/             # hexagonal core (services + clients)
+│   ├── handlers/           # MCP handler registration
+│   ├── session-broker/     # Wanted session renewal broker
+│   ├── test-helpers/       # test mock infrastructure
 │   ├── tools/              # 16 MCP tools
 │   ├── crawlers/           # stealth Playwright crawlers
 │   ├── auto-apply/         # form fill + rate limiting
@@ -33,7 +36,7 @@ job-server/
 | Task                 | Location               | Notes                              |
 | -------------------- | ---------------------- | ---------------------------------- |
 | MCP server bootstrap | `src/index.js`         | Fastify + MCP tool registration    |
-| MCP tool definitions | `src/tools/`           | 16 tools                           |
+| MCP tool definitions | `src/tools/`           | 16 MCP tools                       |
 | API routes           | `src/server/routes/`   | 13 class-based Fastify modules     |
 | Domain services      | `src/shared/services/` | 18 service directories             |
 | API clients          | `src/shared/clients/`  | wanted, d1, elasticsearch, secrets |
@@ -100,4 +103,5 @@ job-server/
 ## NOTES
 
 - See child AGENTS.md for domain-specific details (src/, scripts/, platforms/).
-- Large files: resume.js (869 lines), profile-sync.js (966), auth-sync.js (846).
+- session-broker provides Wanted session renewal via Docker (stealth browser + Node.js broker on port 3456).
+- Large files: notifications.js (1043L), application.js (851L), resume.js (869 lines), profile-sync.js (966), auth-sync.js (846).

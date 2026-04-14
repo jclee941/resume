@@ -1,7 +1,7 @@
 # PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-04-05
-**Commit:** `882b837`
+**Generated:** 2026-04-14
+**Commit:** `c2629c9`
 **Branch:** `master`
 
 ## OVERVIEW
@@ -18,13 +18,14 @@ Resume monorepo: Cloudflare Worker portfolio, job automation runtimes, dashboard
 │   └── job-dashboard/    # dashboard worker + workflows
 ├── packages/
 │   ├── cli/              # resume CLI
-│   └── data/             # SSoT resumes and schemas
+│   ├── data/             # SSoT resumes and schemas
 │   └── shared/           # cross-package shared utilities
 ├── tools/                # CI, build, deploy, verification scripts
 ├── tests/                # Jest, integration, Playwright E2E
 ├── infrastructure/       # Cloudflare, monitoring, n8n, DB config
 ├── docs/                 # guides, ADRs, architecture, reports
 ├── ta/                   # TA profile generation (Python/PPTX)
+├── supabase/             # Supabase edge functions
 ├── third_party/          # vendored external dependencies
 ├── .github/              # CI/release/maintenance control plane
 └── package.json          # workspace root + operator scripts
@@ -74,7 +75,7 @@ Resume monorepo: Cloudflare Worker portfolio, job automation runtimes, dashboard
 - Never auto-init a git repo with `initializeIfNotPresent=true`.
 - Never place runtime artifacts in source domains (`logs/`, `data/`, `tmp/`).
 - Never use catch-all names like `utils.ts` or `helpers.js`; use specific names (`date-formatter.js`).
-- Never exceed 200 LOC per file without splitting (see `rules/00-code-modularization.md`).
+- Never exceed 200 LOC per file without splitting (see `rules/00-code-modularization.md`). Large files exist in job-server (notifications.js 1043L, application.js 851L) — known tech debt.
 
 ## UNIQUE STYLES
 
@@ -118,6 +119,8 @@ npm run sync:all          # Both sync operations
 
 ## NOTES
 
-- Existing child AGENTS coverage is broad in `apps/`, `tests/`, `tools/`, and parts of `infrastructure/`; avoid duplicating their scope from the root.
-- `infrastructure/n8n/` and `infrastructure/monitoring/` are distinct enough to warrant child AGENTS files; `docs/` stays governed at the docs-root level in this pass.
-- `bazel-*` entries at repo root can confuse file-search tools; prefer project-root relative paths and ignore build outputs when documenting source layout.
+- 43 child AGENTS.md files exist across `apps/`, `tests/`, `tools/`, `infrastructure/`, and `packages/`; avoid duplicating their scope from the root.
+- `infrastructure/n8n/` and `infrastructure/monitoring/` are distinct enough to warrant child AGENTS files; `docs/` stays governed at the docs-root level.
+- `bazel-*` symlinks at repo root can confuse file-search tools; prefer project-root relative paths and ignore build outputs when documenting source layout.
+- `supabase/functions/` contains Supabase edge functions — distinct runtime, not part of npm workspaces.
+- Shell scripts persist in `infrastructure/n8n/` (9 files) — pending Go migration per monorepo standards.
