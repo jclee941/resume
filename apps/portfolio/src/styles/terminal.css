@@ -1,0 +1,157 @@
+/* ========================================
+   TERMINAL WINDOW FRAME
+   ======================================== */
+.terminal-window {
+  background: var(--glass-bg, var(--bg-primary));
+  border: 1px solid rgba(0, 212, 224, 0.15);
+  border-radius: 8px;
+  overflow: hidden;
+  contain: layout;
+  box-shadow:
+    0 0 30px rgba(0, 212, 224, 0.08),
+    0 20px 40px -10px rgba(0, 0, 0, 0.4);
+  backdrop-filter: var(--glass-blur, blur(12px));
+  -webkit-backdrop-filter: var(--glass-blur, blur(12px));
+  transition:
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
+}
+.terminal-window:hover {
+  border-color: rgba(0, 212, 224, 0.25);
+  box-shadow:
+    0 0 40px rgba(0, 212, 224, 0.12),
+    0 20px 40px -10px rgba(0, 0, 0, 0.45);
+}
+.terminal-titlebar {
+  background: var(--bg-secondary);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(0, 212, 224, 0.08);
+}
+.terminal-buttons {
+  display: flex;
+  gap: 8px;
+}
+.terminal-btn {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: none;
+  opacity: 0.75;
+}
+.terminal-btn--close {
+  background: #ff5f56;
+}
+.terminal-btn--minimize {
+  background: #ffbd2e;
+}
+.terminal-btn--maximize {
+  background: #27ca40;
+}
+.terminal-title {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  flex: 1;
+  text-align: center;
+}
+.terminal-body {
+  padding: var(--space-6);
+  min-height: 200px;
+  contain: layout;
+}
+/* ========================================
+   COMMAND LINE STYLING
+   ======================================== */
+.cmd-line {
+  font-family: var(--font-mono);
+  display: flex;
+  align-items: baseline;
+  gap: 0;
+  margin-bottom: var(--space-2);
+}
+.cmd-user {
+  color: var(--cyber-green);
+}
+.cmd-separator {
+  color: var(--text-muted);
+}
+.cmd-path {
+  color: var(--cyber-cyan);
+}
+.cmd-symbol {
+  color: var(--text-primary);
+  margin: 0 var(--space-2);
+}
+.cmd-input {
+  color: var(--text-primary);
+}
+.cmd-output {
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+  padding-left: var(--space-4);
+  margin-bottom: var(--space-4);
+  line-height: var(--leading-relaxed);
+}
+.cli-container {
+  max-height: 20vh;
+}
+/* Section Command Headers - Enhanced */
+.section-cmd {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  margin-bottom: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  background: rgba(0, 240, 255, 0.02);
+  border-left: 2px solid var(--cyber-green);
+  border-radius: 0 4px 4px 0;
+}
+.section-cmd::before {
+  content: 'jclee@resume:~$ ';
+  color: var(--cyber-green);
+}
+.section-cmd__command {
+  color: var(--cyber-cyan);
+}
+/* ========================================
+   TREE STRUCTURE (├── style)
+   ======================================== */
+.tree-item {
+  font-family: var(--font-mono);
+  padding-left: 1.5rem;
+  position: relative;
+}
+.tree-item::before {
+  content: '|- ';
+  position: absolute;
+  left: 0;
+  color: var(--text-muted);
+}
+.tree-item:last-child::before {
+  content: '\\- ';
+}
+.cli-input-line {
+  min-width: 0;
+}
+.cli-input {
+  min-width: 0;
+}
+.cli-prompt {
+  white-space: nowrap;
+}
+.cli-result {
+  animation: terminal-type-in 220ms ease-out;
+}
+@keyframes terminal-type-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

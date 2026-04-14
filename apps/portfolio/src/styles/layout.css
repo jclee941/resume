@@ -4,7 +4,7 @@
    ======================================== */
 
 .container-narrow {
-  max-width: 900px;
+  max-width: 1000px;
   margin: 0 auto;
   padding: var(--space-8) var(--space-6);
 }
@@ -75,13 +75,13 @@
 
 /* Sections */
 .section-hero {
-  min-height: 50vh;
+  min-height: 60vh;
   display: flex;
   contain: layout;
   align-items: center;
   justify-content: flex-start;
   position: relative;
-  padding: var(--space-8) 0;
+  padding: var(--space-16) 0;
 }
 
 .hero-content {
@@ -103,11 +103,16 @@
 .section-resume,
 .section-projects,
 .section-skills,
+.section-infrastructure,
+.section-status,
 .section-contact {
-  margin-bottom: var(--space-12);
+  margin-bottom: var(--space-16);
   padding-bottom: var(--space-8);
   border-bottom: 1px dashed var(--border-primary);
 }
+
+.section-infrastructure,
+.section-status {
 
 .section-contact {
   border-bottom: none;
@@ -132,7 +137,10 @@
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 60px;
+  width: 40px;
+  height: 3px;
+  background: var(--cyber-cyan);
+  opacity: 0.4;
   height: 3px;
   background: linear-gradient(90deg, var(--cyber-cyan), transparent);
   border-radius: var(--radius-full);
@@ -141,14 +149,14 @@
 .card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: var(--space-6);
+  gap: var(--space-8);
 }
 
 /* Footer */
 .site-footer {
-  padding: var(--space-6) 0;
+  padding: var(--space-8) 0;
   border-top: 1px dashed var(--border-primary);
-  margin-top: var(--space-8);
+  margin-top: var(--space-16);
   font-size: var(--text-sm);
   color: var(--text-muted);
   font-family: var(--font-mono);
