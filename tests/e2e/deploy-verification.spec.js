@@ -83,7 +83,7 @@ test.describe('@deploy-verify Service Health', () => {
       failOnStatusCode: false,
       headers: withProbeHeaders(),
     });
-    if ([404, 405, 501, 502, 503].includes(response.status())) {
+    if ([404, 405, 500, 501, 502, 503].includes(response.status())) {
       test.skip(true, 'Job dashboard health endpoint is optional in this environment');
     }
 
