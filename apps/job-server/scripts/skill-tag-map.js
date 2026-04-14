@@ -49,13 +49,28 @@ export const SKILL_ALIASES = {
   S3: 'AWS',
   EKS: 'AWS',
   EC2: 'AWS',
+  'AWS (EC2, VPC, EKS, S3)': 'AWS',
   'Cloudflare Workers': 'Cloudflare',
   'GitLab CI/CD': 'GitLab',
   'Container Registry': 'Docker',
   'Docker Compose': 'Docker',
   'API Integration': 'Python',
+  'FortiGate HA': 'FortiGate',
+  FortiAnalyzer: 'FortiManager',
+  'Splunk ES': 'Splunk',
+  'Splunk Enterprise Security': 'Splunk',
+  'Infrastructure as Code': 'IaC',
+  'Site Reliability Engineering': 'SRE',
+  'Cloud Security Posture Management': 'CSPM',
+  'Security Orchestration': 'SOAR',
+  'Extended Detection and Response': 'XDR',
+  제로트러스트: 'Zero Trust',
+  'VMware NSX-T': 'NSX-T',
+  vSphere: 'VMware',
+  ESXi: 'VMware',
+  'Blackbox Exporter': 'Prometheus',
+  PromQL: 'Prometheus',
 };
-
 export function getTagTypeId(skillName) {
   if (SKILL_TAG_MAP[skillName]) {
     return SKILL_TAG_MAP[skillName];
