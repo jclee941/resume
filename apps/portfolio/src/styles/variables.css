@@ -8,41 +8,41 @@
      NEON PALETTE
      ---------------------------------------- */
   --bg-primary: #0c0c12;
-  --bg-secondary: #1a1a2e;
-  --bg-card: #16161e;
-  --bg-tertiary: #1f1f2e;
+  --bg-secondary: #161625;
+  --bg-card: #181822;
+  --bg-tertiary: #1c1c2a;
   --bg-inverse: #e4e4e7;
 
-  --cyber-cyan: #00f0ff;
-  --cyber-magenta: #ff00ff;
-  --cyber-green: #00ff88;
+  --cyber-cyan: #00d4e0;
+  --cyber-magenta: #d946a8;
+  --cyber-green: #00d97a;
 
-  --text-primary: #e4e4e7;
+  --text-primary: #e2e0dc;
   --text-secondary: #a1a1aa;
   --text-muted: #71717a;
   --text-inverse: #0c0c12;
 
-  --glow-cyan: 0 0 20px rgba(0, 240, 255, 0.5);
-  --glow-magenta: 0 0 20px rgba(255, 0, 255, 0.5);
+  --glow-cyan: 0 0 20px rgba(0, 212, 224, 0.3);
+  --glow-magenta: 0 0 20px rgba(217, 70, 168, 0.3);
 
   /* ----------------------------------------
      SEMANTIC MAPPINGS
      ---------------------------------------- */
   /* Mapping legacy variables to new neon palette */
   --color-accent: var(--cyber-cyan);
-  --color-accent-light: #00ffff;
+  --color-accent-light: var(--cyber-cyan-bright);
   --color-accent-dark: #00b8cc;
-  --color-accent-subtle: rgba(0, 240, 255, 0.15);
+  --color-accent-subtle: rgba(0, 212, 224, 0.15);
 
   --color-accent-secondary: var(--cyber-magenta);
-  --color-accent-secondary-light: #ff55ff;
+  --color-accent-secondary-light: var(--cyber-magenta-bright);
   --color-accent-secondary-dark: #cc00cc;
-  --color-accent-secondary-subtle: rgba(255, 0, 255, 0.15);
+  --color-accent-secondary-subtle: rgba(217, 70, 168, 0.15);
 
   --color-accent-tertiary: var(--cyber-green);
-  --color-accent-tertiary-light: #00ffaa;
+  --color-accent-tertiary-light: var(--cyber-green-bright);
   --color-accent-tertiary-dark: #00cc66;
-  --color-accent-tertiary-subtle: rgba(0, 255, 136, 0.15);
+  --color-accent-tertiary-subtle: rgba(0, 217, 122, 0.15);
 
   --color-success: var(--cyber-green);
   --color-warning: #ffd700;
@@ -55,15 +55,15 @@
   /* ----------------------------------------
      ENHANCED NEON PALETTE
      ---------------------------------------- */
-  --cyber-cyan-bright: #00ffff;
-  --cyber-cyan-dim: #00a0aa;
-  --cyber-magenta-bright: #ff44ff;
-  --cyber-magenta-dim: #aa00aa;
-  --cyber-green-bright: #00ffaa;
-  --cyber-green-dim: #00aa66;
+  --cyber-cyan-bright: #00e8f0;
+  --cyber-cyan-dim: #008a96;
+  --cyber-magenta-bright: #e050b8;
+  --cyber-magenta-dim: #9a3080;
+  --cyber-green-bright: #00e890;
+  --cyber-green-dim: #009060;
   --cyber-yellow: #ffd700;
   --cyber-orange: #ff6600;
-  --cyber-red: #ff0044;
+  --cyber-red: #e0003c;
 
   /* ----------------------------------------
      EFFECTS
@@ -74,54 +74,40 @@
 
   --shadow-glow: var(--glow-cyan);
   --shadow-glow-secondary: var(--glow-magenta);
-  --shadow-glow-tertiary: 0 0 20px rgba(0, 255, 136, 0.5);
+  --shadow-glow-tertiary: 0 0 20px rgba(0, 217, 122, 0.3);
 
   /* Multi-layer glow effects */
-  --glow-cyan-subtle: 0 0 10px rgba(0, 240, 255, 0.3);
-  --glow-cyan-intense: 0 0 20px rgba(0, 240, 255, 0.6), 0 0 40px rgba(0, 240, 255, 0.3);
+  --glow-cyan-subtle: 0 0 10px rgba(0, 212, 224, 0.18);
+  --glow-cyan-intense: 0 0 20px rgba(0, 212, 224, 0.36), 0 0 40px rgba(0, 212, 224, 0.18);
   --glow-cyan-mega:
-    0 0 10px rgba(0, 240, 255, 0.8), 0 0 30px rgba(0, 240, 255, 0.5),
-    0 0 60px rgba(0, 240, 255, 0.3);
-  --glow-magenta-subtle: 0 0 10px rgba(255, 0, 255, 0.3);
-  --glow-magenta-intense: 0 0 20px rgba(255, 0, 255, 0.6), 0 0 40px rgba(255, 0, 255, 0.3);
-  --glow-green-intense: 0 0 20px rgba(0, 255, 136, 0.6), 0 0 40px rgba(0, 255, 136, 0.3);
+    0 0 10px rgba(0, 212, 224, 0.48), 0 0 30px rgba(0, 212, 224, 0.3),
+    0 0 60px rgba(0, 212, 224, 0.18);
+  --glow-magenta-subtle: 0 0 10px rgba(217, 70, 168, 0.18);
+  --glow-magenta-intense: 0 0 20px rgba(217, 70, 168, 0.36), 0 0 40px rgba(217, 70, 168, 0.18);
+  --glow-green-intense: 0 0 20px rgba(0, 217, 122, 0.36), 0 0 40px rgba(0, 217, 122, 0.18);
 
   /* Glassmorphism */
-  --glass-bg: rgba(22, 22, 30, 0.7);
+  --glass-bg: rgba(24, 24, 34, 0.75);
   --glass-bg-hover: rgba(22, 22, 30, 0.85);
-  --glass-border: rgba(0, 240, 255, 0.15);
-  --glass-border-hover: rgba(0, 240, 255, 0.4);
-  --glass-blur: blur(12px);
+  --glass-border: rgba(0, 212, 224, 0.1);
+  --glass-border-hover: rgba(0, 212, 224, 0.25);
+  --glass-blur: blur(8px);
 
-  --gradient-hero-light: linear-gradient(135deg, #0c0c12 0%, #1a1a2e 100%);
-  --gradient-hero-dark: linear-gradient(135deg, #0c0c12 0%, #1a1a2e 100%);
+  --gradient-hero-light: linear-gradient(135deg, #0c0c12 0%, #161625 100%);
+  --gradient-hero-dark: linear-gradient(135deg, #0c0c12 0%, #161625 100%);
   --gradient-accent: linear-gradient(135deg, var(--cyber-cyan) 0%, var(--cyber-magenta) 100%);
-  --gradient-glow: radial-gradient(ellipse at center, rgba(0, 240, 255, 0.15) 0%, transparent 70%);
+  --gradient-glow: radial-gradient(ellipse at center, rgba(0, 212, 224, 0.09) 0%, transparent 70%);
 
   /* Enhanced gradients */
   --gradient-cyber-1: linear-gradient(135deg, var(--cyber-cyan) 0%, var(--cyber-green) 100%);
   --gradient-cyber-2: linear-gradient(135deg, var(--cyber-magenta) 0%, var(--cyber-cyan) 100%);
-  --gradient-cyber-3: linear-gradient(180deg, rgba(0, 240, 255, 0.1) 0%, transparent 50%);
-  --gradient-vignette: radial-gradient(
-    ellipse at center,
-    transparent 0%,
-    transparent 50%,
-    rgba(0, 0, 0, 0.4) 100%
-  );
-  --gradient-scanline: repeating-linear-gradient(
-    0deg,
-    rgba(0, 0, 0, 0.15) 0px,
-    rgba(0, 0, 0, 0.15) 1px,
-    transparent 1px,
-    transparent 3px
-  );
-  --gradient-noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  --gradient-cyber-3: linear-gradient(180deg, rgba(0, 212, 224, 0.1) 0%, transparent 50%);
 
   /* ----------------------------------------
      TYPOGRAPHY (Preserved)
      ---------------------------------------- */
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', Consolas, 'Liberation Mono', monospace;
+  --font-mono: 'IBM Plex Mono', 'JetBrains Mono', 'SF Mono', 'Fira Code', Consolas, monospace;
 
   /* Fluid font sizes */
   --text-xs: clamp(0.7rem, 0.65rem + 0.25vw, 0.75rem);
@@ -174,7 +160,7 @@
   /* ----------------------------------------
      LAYOUT (Preserved)
      ---------------------------------------- */
-  --container-max: 1100px;
+  --container-max: 1000px;
   --container-narrow: 720px;
   --section-padding: var(--space-24);
 
