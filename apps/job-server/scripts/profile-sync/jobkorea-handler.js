@@ -240,11 +240,8 @@ export default class JobKoreaHandler {
     const validCerts = (Array.isArray(ssot?.certifications) ? ssot.certifications : []).filter(
       (c) => c?.date
     );
-    // Awards: fall back to achievements[] (string[]) if awards[] absent.
-    let awardItems = Array.isArray(ssot?.awards) ? ssot.awards : [];
-    if (awardItems.length === 0 && Array.isArray(ssot?.achievements)) {
-      awardItems = ssot.achievements;
-    }
+    // Use structured awards[] from SSoT. No fallback to achievements[].
+    const awardItems = Array.isArray(ssot?.awards) ? ssot.awards : [];
     // The server only accepts data keyed to indices IT generated.
     // Existing entries (from previous saves) cannot be updated — only fresh "추가" entries persist.
     const sections = [

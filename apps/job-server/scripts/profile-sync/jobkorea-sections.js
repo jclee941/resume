@@ -234,12 +234,8 @@ export function mapMilitaryToFormFields(ssot) {
  * `awards` entries, so real SSOT input returns an empty field set.
  */
 export function mapAwardToFormFields(ssot, indices) {
-  // SSoT stores achievements as string[], not structured awards objects.
-  // Fall back to achievements[] if awards[] is absent/empty.
-  let awards = Array.isArray(ssot?.awards) ? ssot.awards : [];
-  if (awards.length === 0 && Array.isArray(ssot?.achievements)) {
-    awards = ssot.achievements.map((name) => ({ name }));
-  }
+  // Use structured awards[] from SSoT. No fallback to achievements[].
+  const awards = Array.isArray(ssot?.awards) ? ssot.awards : [];
   if (awards.length === 0) return [];
 
   const fields = [];
