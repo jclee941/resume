@@ -6,6 +6,7 @@
    Matrix Rain Background
    -------------------------------------------------------------------------- */
 #matrix-bg {
+  display: none;
   position: fixed;
   top: 0;
   left: 0;
@@ -25,89 +26,36 @@ html {
    -------------------------------------------------------------------------- */
 .glitch {
   position: relative;
-  animation: glitch-skew 4s infinite linear alternate-reverse;
 }
 
 .glitch::before,
 .glitch::after {
-  content: attr(data-text);
+  content: attr(data-text) / '';
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   opacity: 0;
+  transition: opacity 0.15s ease;
+  pointer-events: none;
 }
 
 .glitch::before {
   color: var(--cyber-cyan, #00f0ff);
-  animation: glitch-anim-1 5s infinite linear alternate-reverse;
   clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
-  transform: translate(-2px, -2px);
+  transform: translate(-1px, -1px);
 }
 
 .glitch::after {
   color: var(--cyber-magenta, #ff00ff);
-  animation: glitch-anim-2 5s infinite linear alternate-reverse;
   clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
-  transform: translate(2px, 2px);
+  transform: translate(1px, 1px);
 }
 
-@keyframes glitch-anim-1 {
-  0%,
-  90%,
-  100% {
-    opacity: 0;
-    transform: translate(0);
-  }
-  91% {
-    opacity: 0.8;
-    transform: translate(-3px, -1px);
-  }
-  92% {
-    opacity: 0.8;
-    transform: translate(3px, 1px);
-  }
-  93% {
-    opacity: 0;
-  }
-}
-
-@keyframes glitch-anim-2 {
-  0%,
-  90%,
-  100% {
-    opacity: 0;
-    transform: translate(0);
-  }
-  91.5% {
-    opacity: 0.8;
-    transform: translate(3px, 2px);
-  }
-  92.5% {
-    opacity: 0.8;
-    transform: translate(-3px, -2px);
-  }
-  93.5% {
-    opacity: 0;
-  }
-}
-
-@keyframes glitch-skew {
-  0%,
-  95%,
-  100% {
-    transform: skew(0deg);
-  }
-  96% {
-    transform: skew(-1deg);
-  }
-  97% {
-    transform: skew(1deg);
-  }
-  98% {
-    transform: skew(0deg);
-  }
+.glitch:hover::before,
+.glitch:hover::after {
+  opacity: 0.4;
 }
 
 /* --------------------------------------------------------------------------
@@ -219,6 +167,7 @@ html {
    CRT Scanlines (subtle)
    -------------------------------------------------------------------------- */
 .crt-overlay {
+  display: none;
   position: fixed;
   top: 0;
   left: 0;
@@ -261,46 +210,11 @@ html {
 @keyframes pulse-glow {
   0%,
   100% {
-    filter: drop-shadow(0 0 5px var(--cyber-cyan, #00f0ff));
+    filter: drop-shadow(0 0 3px var(--cyber-cyan, #00f0ff));
   }
   50% {
-    filter: drop-shadow(0 0 15px var(--cyber-cyan, #00f0ff));
+    filter: drop-shadow(0 0 9px var(--cyber-cyan, #00f0ff));
   }
-}
-
-/* --------------------------------------------------------------------------
-   CRT Flicker Effect
-   -------------------------------------------------------------------------- */
-@keyframes crt-flicker {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  3% {
-    opacity: 0.97;
-  }
-  6% {
-    opacity: 1;
-  }
-  9% {
-    opacity: 0.98;
-  }
-  12% {
-    opacity: 1;
-  }
-  92% {
-    opacity: 1;
-  }
-  94% {
-    opacity: 0.96;
-  }
-  96% {
-    opacity: 1;
-  }
-}
-
-.crt-flicker {
-  animation: crt-flicker 8s infinite;
 }
 
 /* --------------------------------------------------------------------------
@@ -310,13 +224,13 @@ html {
   0%,
   100% {
     box-shadow:
-      0 0 5px rgba(0, 240, 255, 0.3),
-      0 0 10px rgba(0, 240, 255, 0.2);
+      0 0 3px rgba(0, 240, 255, 0.18),
+      0 0 6px rgba(0, 240, 255, 0.12);
   }
   50% {
     box-shadow:
-      0 0 15px rgba(0, 240, 255, 0.5),
-      0 0 30px rgba(0, 240, 255, 0.3);
+      0 0 9px rgba(0, 240, 255, 0.3),
+      0 0 18px rgba(0, 240, 255, 0.18);
   }
 }
 
@@ -430,26 +344,7 @@ button:hover,
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: text-shimmer 3s linear infinite;
-}
-
-/* --------------------------------------------------------------------------
-   Neon Border Glow
-   -------------------------------------------------------------------------- */
-@keyframes neon-border-pulse {
-  0%,
-  100% {
-    border-color: rgba(0, 240, 255, 0.3);
-    box-shadow: 0 0 5px rgba(0, 240, 255, 0.2);
-  }
-  50% {
-    border-color: rgba(0, 240, 255, 0.6);
-    box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
-  }
-}
-
-.neon-border-glow {
-  animation: neon-border-pulse 2s ease-in-out infinite;
+  animation: text-shimmer 6s linear infinite;
 }
 
 /* --------------------------------------------------------------------------
@@ -488,13 +383,13 @@ button:hover,
 
 .float-animation {
   animation: float 3s ease-in-out infinite;
+  will-change: transform;
 }
 
 /* --------------------------------------------------------------------------
    Reduced Motion
    -------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
-  .glitch,
   .glitch::before,
   .glitch::after,
   .typing-text,
@@ -503,10 +398,8 @@ button:hover,
   .reveal,
   .reveal-stagger > *,
   .pulse-glow,
-  .crt-flicker,
   .hover-glow:hover,
   .text-shimmer,
-  .neon-border-glow,
   .chromatic-text:hover,
   .float-animation,
   .terminal-loading::before {
