@@ -53,7 +53,7 @@ export class ResumeCareerEndpoint {
   async update(resumeId, careerId, careerData) {
     const response = await this.#client.chaosRequest(
       `/resumes/v2/${resumeId}/careers/${careerId}`,
-      { method: 'PUT', body: careerData },
+      { method: 'PATCH', body: careerData },
     );
     return response;
   }
@@ -101,7 +101,7 @@ export class ResumeEducationEndpoint {
   async update(resumeId, educationId, educationData) {
     const response = await this.#client.chaosRequest(
       `/resumes/v2/${resumeId}/educations/${educationId}`,
-      { method: 'PUT', body: educationData },
+      { method: 'PATCH', body: educationData },
     );
     return response;
   }
@@ -157,7 +157,7 @@ export class ResumeActivityEndpoint {
   async update(resumeId, activityId, activityData) {
     const response = await this.#client.chaosRequest(
       `/resumes/v2/${resumeId}/activities/${activityId}`,
-      { method: 'PUT', body: activityData },
+      { method: 'PATCH', body: activityData },
     );
     return response;
   }
@@ -189,7 +189,7 @@ export class ResumeLanguageCertEndpoint {
   async update(resumeId, certId, certData) {
     const response = await this.#client.chaosRequest(
       `/resumes/v2/${resumeId}/language_certs/${certId}`,
-      { method: 'PUT', body: certData },
+      { method: 'PATCH', body: certData },
     );
     return response;
   }
