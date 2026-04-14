@@ -22,7 +22,7 @@ This is the main entry point for the docs tree. Start with the maintained sectio
 - [system-overview.md](architecture/system-overview.md), current system map and major components.
 - [DEPLOYMENT_PIPELINE.md](architecture/DEPLOYMENT_PIPELINE.md), build and deployment flow.
 - [component-inventory.md](architecture/component-inventory.md), inventory of major runtime pieces.
-- [DESIGN_SYSTEM.md](architecture/DESIGN_SYSTEM.md), portfolio design and UI system notes.
+- [JOB_JCLEE_ME_IMPLEMENTATION.md](architecture/JOB_JCLEE_ME_IMPLEMENTATION.md), job platform sync implementation notes.
 - [JOB_JCLEE_ME_IMPLEMENTATION.md](architecture/JOB_JCLEE_ME_IMPLEMENTATION.md), job platform sync implementation notes.
 - [project-context.md](architecture/project-context.md), repo and runtime context for the current system.
 
@@ -60,26 +60,23 @@ This is the main entry point for the docs tree. Start with the maintained sectio
 
 - [TROUBLESHOOTING.md](guides/TROUBLESHOOTING.md)
 - [FETCH_ERROR_GUIDE.md](guides/FETCH_ERROR_GUIDE.md)
-- [GITLAB_DEPLOYMENT_TROUBLESHOOTING.md](guides/GITLAB_DEPLOYMENT_TROUBLESHOOTING.md)
+- [TS_SESSION_TROUBLESHOOTING.md](guides/TS_SESSION_TROUBLESHOOTING.md)
 - [TS_SESSION_TROUBLESHOOTING.md](guides/TS_SESSION_TROUBLESHOOTING.md)
 
 ### API (`docs/api/`)
 
 - [API README](api/README.md)
 
-## Historical Records (archived, not maintained)
+## Deleted Directories (removed 2026-04-14)
 
-### Reports (`docs/reports/`)
+The following directories were purged as historical-only content with no active references:
+- `docs/reports/` - 36 session reports
+- `docs/analysis/` - 8 codebase analyses
+- `docs/planning/` - 9 archived roadmaps
+- `docs/testing/` - 2 ULW test artifacts
+- `docs/thoughts/ledgers/` - 3 continuity ledgers
 
-Historical session reports and status snapshots. Not actively maintained.
-
-### Analysis (`docs/analysis/`)
-
-Past codebase analyses. Historical reference only.
-
-### Planning (`docs/planning/`)
-
-Archived roadmaps and planning documents.
+All content remains recoverable via `git log --diff-filter=D -- docs/reports/`.
 
 ## Document Standards
 
