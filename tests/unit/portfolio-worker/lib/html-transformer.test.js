@@ -189,9 +189,9 @@ describe('html-transformer', () => {
       expect(output).toContain('<section id="hero">hero</section>');
       expect(output).not.toContain('<!-- strip me -->');
 
-      expect(output).toMatch(
-        /<script async src="https:\/\/www\.googletagmanager\.com\/gtag\/js\?id=G-P9E8XY5K2L" integrity="sha384-[^"]+" crossorigin="anonymous" referrerpolicy="no-referrer"><\/script>/
-      );
+      // GA gtag script should NOT have SRI (Google updates content frequently, breaking fixed hashes)
+      expect(output).toContain('src="https://www.googletagmanager.com/gtag/js?id=G-P9E8XY5K2L"');
+      expect(output).not.toMatch(/googletagmanager\.com[^>]*integrity=/);
       expect(output).toMatch(
         /<script src="https:\/\/accounts\.google\.com\/gsi\/client" async defer(?:="defer")? integrity="sha384-[^"]+" crossorigin="anonymous" referrerpolicy="no-referrer"><\/script>/
       );
