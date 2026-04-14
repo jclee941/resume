@@ -1,0 +1,26 @@
+/* ========================================
+   CONTACT - Terminal Output Style
+   ======================================== */
+.contact-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  font-family: var(--font-mono);
+}
+.contact-item {
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) 0;
+}
+.contact-item::before {
+  content: '> ';
+  color: var(--cyber-green);
+}
+.contact-item:hover {
+  color: var(--cyber-cyan);
+}

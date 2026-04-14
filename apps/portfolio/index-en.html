@@ -133,6 +133,20 @@
     <!-- Preload Critical Font -->
     <link
       rel="preload"
+      href="/assets/fonts/ibm-plex-mono-v19-latin-regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/assets/fonts/ibm-plex-mono-v19-latin-700.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
       href="/assets/fonts/inter-v13-latin-regular.woff2"
       as="font"
       type="font/woff2"
@@ -146,6 +160,34 @@
       crossorigin
     />
     <style>
+      @font-face {
+        font-family: 'IBM Plex Mono';
+        font-style: normal;
+        font-weight: 300;
+        font-display: swap;
+        src: url('/assets/fonts/ibm-plex-mono-v19-latin-300.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'IBM Plex Mono';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url('/assets/fonts/ibm-plex-mono-v19-latin-regular.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'IBM Plex Mono';
+        font-style: normal;
+        font-weight: 500;
+        font-display: swap;
+        src: url('/assets/fonts/ibm-plex-mono-v19-latin-500.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'IBM Plex Mono';
+        font-style: normal;
+        font-weight: 700;
+        font-display: swap;
+        src: url('/assets/fonts/ibm-plex-mono-v19-latin-700.woff2') format('woff2');
+      }
       @font-face {
         font-family: 'Inter';
         font-style: normal;
@@ -217,7 +259,7 @@
         padding: 1rem;
         font-family: monospace;
         z-index: 1000;
-        max-height: 40vh;
+        max-height: 20vh;
         overflow-y: auto;
       }
       .cli-output {
@@ -393,8 +435,6 @@
     </style>
   </head>
   <body class="minimal-theme">
-    <canvas id="matrix-bg"></canvas>
-    <div class="crt-overlay"></div>
     <a href="#terminal-input" class="skip-link">Skip to terminal</a>
 
     <div class="container-narrow">
@@ -432,9 +472,11 @@
                   ><span class="cmd-path">resume</span><span class="cmd-symbol">$</span>
                   <span class="cmd-input">whoami</span>
                 </div>
-                <h1 class="hero-title glitch" data-text="Jaecheol Lee" aria-label="Jaecheol Lee">
-                  <span class="typing-effect glow-cyan">Jaecheol Lee</span
-                  ><span class="cursor"></span>
+                <h1 class="hero-title" role="heading" aria-level="1">
+                  <span aria-hidden="true"
+                    ><span class="typing-effect glow-cyan">Jaecheol Lee</span
+                    ><span class="cursor"></span></span
+                  ><span class="sr-only">Jaecheol Lee</span>
                 </h1>
                 <div class="cmd-output">Security Infrastructure · Observability · Automation</div>
                 <div
@@ -504,10 +546,10 @@
                   <span class="status-title">Service Status</span>
                 </div>
                 <ul class="status-list" id="status-list">
-                  <li class="status-item" data-url="">
+                  <li class="status-item online" data-url="">
                     <span class="status-dot"></span>
                     <span class="status-name">☁️ Cloudflare Workers</span>
-                    <span class="status-state">checking...</span>
+                    <span class="status-state">operational</span>
                   </li>
                   <li class="status-item online" data-static="true">
                     <span class="status-dot"></span>
@@ -527,36 +569,6 @@
                   <li class="status-item online" data-static="true">
                     <span class="status-dot"></span>
                     <span class="status-name">🔄 n8n Automation</span>
-                    <span class="status-state">running</span>
-                  </li>
-                  <li class="status-item online" data-static="true">
-                    <span class="status-dot"></span>
-                    <span class="status-name">🔀 Traefik Proxy</span>
-                    <span class="status-state">running</span>
-                  </li>
-                  <li class="status-item online" data-static="true">
-                    <span class="status-dot"></span>
-                    <span class="status-name">🗄️ Supabase</span>
-                    <span class="status-state">running</span>
-                  </li>
-                  <li class="status-item online" data-static="true">
-                    <span class="status-dot"></span>
-                    <span class="status-name">💾 MinIO Object Storage</span>
-                    <span class="status-state">running</span>
-                  </li>
-                  <li class="status-item online" data-static="true">
-                    <span class="status-dot"></span>
-                    <span class="status-name">🤖 MCP Server</span>
-                    <span class="status-state">running</span>
-                  </li>
-                  <li class="status-item online" data-static="true">
-                    <span class="status-dot"></span>
-                    <span class="status-name">🏗️ Terraform IaC</span>
-                    <span class="status-state">running</span>
-                  </li>
-                  <li class="status-item online" data-static="true">
-                    <span class="status-dot"></span>
-                    <span class="status-name">⚡ GitHub Actions</span>
                     <span class="status-state">running</span>
                   </li>
                 </ul>
@@ -683,55 +695,6 @@
       })();
     </script>
     <script>
-      (function () {
-        var c = document.getElementById('matrix-bg');
-        if (!c) return;
-        var ctx = c.getContext('2d');
-        var w,
-          h,
-          cols,
-          drops = [];
-        var chars =
-          'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEF';
-
-        function resize() {
-          w = c.width = window.innerWidth;
-          h = c.height = window.innerHeight;
-          cols = Math.floor(w / 20);
-          drops = [];
-          for (let i = 0; i < cols; i++) drops[i] = Math.random() * -100;
-        }
-
-        function draw() {
-          ctx.fillStyle = 'rgba(12, 12, 18, 0.05)';
-          ctx.fillRect(0, 0, w, h);
-          ctx.fillStyle = '#00ff88';
-          ctx.font = '15px monospace';
-          for (let i = 0; i < cols; i++) {
-            const char = chars[Math.floor(Math.random() * chars.length)];
-            ctx.fillText(char, i * 20, drops[i] * 20);
-            if (drops[i] * 20 > h && Math.random() > 0.975) drops[i] = 0;
-            drops[i]++;
-          }
-        }
-
-        resize();
-        window.addEventListener('resize', resize);
-        // Use requestAnimationFrame for better performance
-        var lastTime = 0;
-        var fps = 20;
-        var interval = 1000 / fps;
-        function animate(currentTime) {
-          requestAnimationFrame(animate);
-          var delta = currentTime - lastTime;
-          if (delta >= interval) {
-            lastTime = currentTime - (delta % interval);
-            draw();
-          }
-        }
-        requestAnimationFrame(animate);
-      })();
-
       (function () {
         var obs = new IntersectionObserver(
           function (entries) {
@@ -977,8 +940,6 @@
       var _gs = document.createElement('script');
       _gs.src = 'https://www.googletagmanager.com/gtag/js?id=G-P9E8XY5K2L';
       _gs.async = true;
-      _gs.integrity = 'sha384-ZXsMWzL9jNkfVeDNiKiKlvdyvBmUvt8YMS2PljnnNk8cVfKES+GLjaItoIy8iwNi';
-      _gs.crossOrigin = 'anonymous';
       document.head.appendChild(_gs);
     </script>
     <!-- Project Detail Modal -->
