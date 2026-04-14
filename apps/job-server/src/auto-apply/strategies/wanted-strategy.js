@@ -9,7 +9,7 @@ import SessionManager from '../../shared/services/session/session-manager.js';
 import { RetryService } from '../../shared/services/apply/retry-service.js';
 
 const WANTED_PLATFORM = 'wanted';
-const WANTED_APPLICATION_ENDPOINT = '/applications/v2';
+const WANTED_APPLICATION_ENDPOINT = '/applications/v1';
 const RATE_LIMIT_PER_MINUTE = 60;
 const DEFAULT_DELAY_MS = 5000;
 
@@ -129,20 +129,16 @@ async function enforceRateLimit(ctx, options = {}) {
   lastSubmissionAt = Date.now();
 }
 
-async function resolveResumeId(ctx, api, options = {}) {
-  const explicitResumeId =
-    options.resumeId ?? options.resume_id ?? ctx?.config?.resumeId ?? ctx?.config?.resume_id;
+async function resolveResumeKey(ctx, api, options = {}) {
+  const explicitKey =
+    options.resumeKey ?? options.resume_key ?? options.resumeId ?? options.resume_id ??
+    ctx?.config?.resumeKey ?? ctx?.config?.resumeId;
 
-  if (explicitResumeId) {
-    return explicitResumeId;
-  }
+  if (explicitKey) return explicitKey;
 
-  const resumes = await api.getResumes();
-  const resumeList =
-    resumes?.resumes ??
-    resumes?.results ??
-    resumes?.data ??
-    (Array.isArray(resumes) ? resumes : []);
+  // Fetch resume list from Chaos API v1 — returns data[].wanted_resume_id (numeric) and UUID keys
+  const resumes = await api.chaosRequest('/resumes/v1?offset=0&limit=10');
+  const resumeList = resumes?.data ?? (Array.isArray(resumes) ? resumes : []);
 
   if (!Array.isArray(resumeList) || resumeList.length === 0) {
     throw new ValidationError('No available resume found for Wanted application', {
@@ -150,27 +146,37 @@ async function resolveResumeId(ctx, api, options = {}) {
     });
   }
 
-  const firstResume = resumeList[0];
-  const selectedResumeId =
-    firstResume?.id ?? firstResume?.resume_id ?? firstResume?.resumeId ?? firstResume?.uuid ?? null;
+  // Use the default resume, or first available
+  const defaultResume = resumeList.find((r) => r.is_default) || resumeList[0];
+  // The resume_key for applications is NOT wanted_resume_id (numeric).
+  // It's the UUID-style key visible in the UI radio input id attribute.
+  // Chaos API returns it as 'id' or can be derived from the resume detail.
+  const resumeKey =
+    defaultResume?.id ?? defaultResume?.resume_id ?? defaultResume?.uuid ?? null;
 
-  if (!selectedResumeId) {
-    throw new ValidationError('Unable to resolve resume_id from Wanted profile', {
+  if (!resumeKey) {
+    throw new ValidationError('Unable to resolve resume_key from Wanted profile', {
       platform: WANTED_PLATFORM,
     });
   }
 
-  return selectedResumeId;
+  return resumeKey;
 }
 
-function buildApplicationPayload(job, options, resumeId) {
-  const coverLetter = options.coverLetter ?? options.cover_letter ?? '';
-
+function buildApplicationPayload(job, options, resumeKey) {
+  // Reverse-engineered from Wanted web client (2026-04-15)
+  // POST /api/chaos/applications/v1
+  // status: 'write' = draft, 'apply' = submitted
+  const session = SessionManager.load('wanted') || {};
   return {
+    email: session.email || options.email || '',
+    username: options.username || session.username || '',
+    mobile: options.mobile || session.mobile || '',
     job_id: job.id,
-    resume_id: resumeId,
-    cover_letter: coverLetter || '',
-    ...(options.answers ? { answers: options.answers } : {}),
+    resume_keys: resumeKey ? [resumeKey] : [],
+    nationality_code: options.nationality_code || 'KR',
+    visa: options.visa || null,
+    status: 'apply',
     ...(options.extraPayload ? options.extraPayload : {}),
   };
 }
@@ -304,9 +310,9 @@ export async function applyToJob(job, options = {}) {
     };
   }
 
-  let resumeId;
+  let resumeKey;
   try {
-    resumeId = await resolveResumeId(this, sessionValidation.api, options);
+    resumeKey = await resolveResumeKey(this, sessionValidation.api, options);
   } catch (error) {
     const normalizedError = classifyWantedError(error);
     return {
@@ -317,7 +323,7 @@ export async function applyToJob(job, options = {}) {
     };
   }
 
-  const payload = buildApplicationPayload(job, options, resumeId);
+  const payload = buildApplicationPayload(job, options, resumeKey);
   const retryReporter = createRetryReporter(this, job);
 
   try {
@@ -330,7 +336,7 @@ export async function applyToJob(job, options = {}) {
           body: payload,
         }),
       {
-        serviceName: `${WANTED_PLATFORM}-applications-v2`,
+        serviceName: `${WANTED_PLATFORM}-applications-v1`,
         retry: {
           maxRetries: 3,
           baseDelay: 1000,
@@ -347,9 +353,8 @@ export async function applyToJob(job, options = {}) {
 
     const applicationId = extractApplicationId(response);
     const application = this.appManager.addApplication(job, {
-      resumeId,
-      coverLetter: payload.cover_letter,
-      notes: 'Auto-applied via Wanted API (chaos applications v2)',
+      resumeKey,
+      notes: 'Auto-applied via Wanted Chaos API (applications v1, status=apply)',
     });
     this.appManager.updateStatus(
       application.id,
@@ -360,7 +365,7 @@ export async function applyToJob(job, options = {}) {
     retryReporter('execution_success', {
       metrics: {
         successRate:
-          retryService.getStats()?.services?.[`${WANTED_PLATFORM}-applications-v2`]?.successRate,
+          retryService.getStats()?.services?.[`${WANTED_PLATFORM}-applications-v1`]?.successRate,
       },
     });
 
