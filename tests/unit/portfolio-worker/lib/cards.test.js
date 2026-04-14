@@ -737,14 +737,15 @@ describe('Cards Module', () => {
       expect(html).toContain('https://example.com');
     });
 
-    test('should include velog placeholder link with terminal icon styling', () => {
+    test('should include velog link with consistent plain text styling', () => {
       const contactData = { github: 'https://github.com/test' };
       const html = generateContactGrid(contactData);
 
       expect(html).toContain('https://velog.io/@qws941');
-      expect(html).toContain('contact-item--velog');
-      expect(html).toContain('contact-icon--velog');
       expect(html).toContain('Velog');
+      // Velog now uses plain text like all other contact items (no special icon styling)
+      expect(html).not.toContain('contact-item--velog');
+      expect(html).not.toContain('contact-icon--velog');
     });
   });
 

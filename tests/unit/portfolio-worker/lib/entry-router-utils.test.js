@@ -174,8 +174,9 @@ describe('entry-router-utils', () => {
       expect(wrapped.headers.get('Vary')).toContain('Accept-Language');
       expect(wrapped.headers.get('X-Detected-Language')).toBe('en');
       expect(wrapped.headers.get('X-Language-Source')).toBe('path');
-      expect(wrapped.headers.get('Last-Modified')).toBe('Sun, 15 Feb 2026 00:00:00 GMT');
-      expect(wrapped.headers.get('ETag')).toMatch(/^W\/".*-2026-02-15"$/);
+      // Last-Modified is now dynamic (computed at module load time)
+      expect(wrapped.headers.get('Last-Modified')).toMatch(/^\w{3}, \d{2} \w{3} \d{4} \d{2}:\d{2}:\d{2} GMT$/);
+      expect(wrapped.headers.get('ETag')).toMatch(/^W\/".*"$/);
     });
 
     test('preserves existing Last-Modified and ETag headers', () => {
@@ -277,8 +278,12 @@ describe('entry-router-utils', () => {
     test('exposes expected constants used by router', () => {
       expect(utils.DEFAULT_LANGUAGE).toBe('ko');
       expect(utils.JOB_ROUTE_PREFIX).toBe('/job');
-      expect(utils.LAST_MODIFIED).toBe('Sun, 15 Feb 2026 00:00:00 GMT');
-      expect(utils.SITEMAP_ETAG).toBe('W/"resume-sitemap-2026-02-15"');
+      // LAST_MODIFIED is now dynamic (computed at module load time)
+      expect(typeof utils.LAST_MODIFIED).toBe('string');
+      expect(utils.LAST_MODIFIED).toMatch(/^\w{3}, \d{2} \w{3} \d{4} \d{2}:\d{2}:\d{2} GMT$/);
+      // SITEMAP_ETAG is now dynamic (unique per deployment)
+      expect(typeof utils.SITEMAP_ETAG).toBe('string');
+      expect(utils.SITEMAP_ETAG).toMatch(/^W\/"resume-sitemap-\d+"$/);
       expect(utils.LOCALE_ROUTES.has('/')).toBe(true);
       expect(utils.LOCALE_ROUTES.has('/en')).toBe(true);
       expect(utils.SITEMAP_XML).toContain('<urlset');
