@@ -5,6 +5,21 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.1.0] - 2026-04-15
+
+### Changes
+- chore(data): sync SSoT resume data and rebuild portfolio worker (a4fc63d)
+- fix(profile-sync): truncate Wanted fields to API limits and fix JobKorea selectors (1d5281b)
+- fix(jobkorea-sync): empty M_MainField/M_MainJob to prevent code display (58abefa)
+- fix(ci): align tests with v2 migration and remove duplicate Referer (08ceecd)
+- docs: update README with job automation and recent changes (a0d9b75)
+- feat(auto-apply): update wanted strategy to Chaos applications v1 (7f0ea74)
+- fix(wanted-sync): make activities sync idempotent (fd9dafa)
+- fix(wanted-sync): migrate getDetail to v2 and add Referer header (10437b6)
+- chore(data): fix career durations and add awards to resume SSoT (5a9d9ae)
+- fix(jobkorea-sync): remove achievements fallback, add structured awards (b8469fd)
+
+
 ## [v1.0.131] - 2026-04-14
 
 ### Changes
