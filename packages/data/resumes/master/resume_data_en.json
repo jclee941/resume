@@ -38,7 +38,7 @@
       "Security Infrastructure",
       "Automation"
     ],
-    "profileStatement": "I am a ninth-year engineer who has focused on solving manual operations and fragmented monitoring in finance and public-sector security infrastructure. At Nextrade, I redesigned the security response flow for an environment with 150 servers, 300 endpoints, and 80 network devices by combining 32 Splunk ES detection rules with n8n automation. That work established alerting within 30 seconds and reduced manual firewall policy lookup time by 80%. More recently, I have been focusing on senior-level ownership across design, observability, and DevSecOps-style automation."
+    "profileStatement": "Security infrastructure engineer with 9 years of experience spanning build and operations automation in finance and public sectors. Designed Splunk ES-based security monitoring, built FortiGate HA, network segmentation, and VPN/NAC architectures, and automated repetitive tasks with Ansible, Python, and n8n. Currently focused on combining Observability and DevSecOps to own the full lifecycle from design to operations."
   },
   "current": {
     "status": "Open to work",
@@ -52,28 +52,29 @@
   },
   "careers": [
     {
-      "company": "ITCEN CTS Co., Ltd.",
-      "period": "2025.03 ~ 2026.02",
-      "duration": "1 year",
+      "company": "Nextrade Co., Ltd.",
+      "period": "2024.03 ~ 2026.02",
+      "duration": "2 years",
       "project": "Nextrade Trading Execution System Security Operations SM",
-      "role": "Security Operations Engineer",
-      "client": "Nextrade",
+      "role": "Security Engineer (Build/Operations)",
+      "client": "Nextrade Co., Ltd.",
       "teamSize": "Information security operations cell (size undisclosed)",
       "myRole": "Sole security automation engineer",
       "workType": "SM",
-      "description": "[Problem] Security event response and firewall policy lookup were still manual in a 24/7 trading environment with 150 servers, 300 endpoints, 80 network devices, and 100K+ daily trades.\n[Action] I operated 32 Splunk ES detection rules, connected real-time Slack alerts through n8n workflows, and built a Python library for policy lookup using the FortiManager API.\n[Result] Alerts were delivered within 30 seconds, firewall policy lookup time was reduced by 80%, and unnecessary alerts were reduced by 70% through automation.\n[Stack] Splunk, Prometheus, Grafana, Loki, n8n, Python, Docker, Linux"
-    },
-    {
-      "company": "Gaonnuri Information Systems Co., Ltd.",
-      "period": "2024.03 ~ 2025.02",
-      "duration": "1 year",
-      "project": "Nextrade Trading Execution System Build",
-      "role": "Security Infrastructure Engineer",
-      "client": "Nextrade",
-      "teamSize": "Security infrastructure build team (size undisclosed)",
-      "myRole": "Security architecture design and FortiGate HA implementation owner",
-      "workType": "SI",
-      "description": "[Problem] A new exchange had to standardize security infrastructure for 150 servers and 80 network devices on a tight timeline before FSC production approval.\n[Action] I designed the FGCP-based FortiGate Active-Passive HA architecture, established segmentation, L2/L3, VPN, and NAC access-control design, and standardized initial setup and policy rollout with Ansible roles and the FortiManager API.\n[Result] The environment passed FSC production approval, reached a 99.99% HA design target, and established an operational standard with less dependence on manual setup.\n[Stack] FortiGate, FortiManager, Ansible, Python, Linux, VMware"
+      "description": "FortiGate HA design/deployment, network segmentation architecture, Ansible-based security device standardization, ISMS-P certification, Splunk ES security monitoring, n8n-based security automation, security incident response",
+      "note": "Dispatch: Gaonnuri → ITCEN CTS",
+      "projects": [
+        {
+          "name": "Nextrade Security Operations",
+          "description": "Automated security operations with Splunk ES and FortiGate APIs\n• Integrated n8n workflows to deliver real-time Slack alerts when security events are detected\n• Built an automated firewall policy lookup tool using FortiManager API",
+          "period": "2025.03 ~ 2026.02"
+        },
+        {
+          "name": "Nextrade Security Infrastructure Build",
+          "description": "Designed a high-availability security architecture for a securities trading platform\n• Implemented Active-Passive HA with FGCP (FortiGate Clustering Protocol)\n• Standardized initial device setup and policy deployment with reusable Ansible roles",
+          "period": "2024.03 ~ 2025.02"
+        }
+      ]
     },
     {
       "company": "Quant Investment Management Co., Ltd.",
@@ -85,22 +86,10 @@
       "teamSize": "Infrastructure and information security team (size undisclosed)",
       "myRole": "AWS security operations and observability engineer",
       "workType": "SM",
-      "description": "[Problem] AWS security operations for the AI asset-management platform were spread across the console, making audit evidence and security metrics difficult to organize.\n[Action] I codified VPCs, subnets, and security groups with Terraform, tightened IAM and WAF operating standards, integrated CloudTrail and GuardDuty logs into CloudWatch, and built Prometheus/Grafana dashboards.\n[Result] The platform gained an audit-ready operating baseline for robo-advisor testbed reviews and shifted to code-and-log-centric security operations.\n[Stack] AWS, Terraform, CloudTrail, GuardDuty, Prometheus, Grafana"
+      "description": ""
     },
     {
-      "company": "FunNC Co., Ltd.",
-      "period": "2022.05 ~ 2022.07",
-      "duration": "3 months",
-      "project": "Cloud Infrastructure",
-      "role": "Infrastructure Engineer",
-      "client": "FunNC",
-      "teamSize": "DevOps transition task force (size undisclosed)",
-      "myRole": "Cloud migration and CI/CD security build engineer",
-      "workType": "SI",
-      "description": "[Problem] The e-commerce platform had to move from on-premises to AWS without established container security standards or deployment verification gates.\n[Action] I designed the AWS VPC migration architecture, defined RBAC and Pod Security standards for EKS, and built Helm-based deployment automation plus GitLab CI/CD static-analysis and security-scan stages.\n[Result] Backup and recovery automation reduced MTTR by 50% (2 hours → 1 hour), while added security scans improved early vulnerability detection by 80% before the migration handoff.\n[Stack] AWS, Kubernetes, Docker, Helm, GitLab CI/CD"
-    },
-    {
-      "company": "Jointree Co., Ltd.",
+      "company": "Kookmin University",
       "period": "2021.09 ~ 2022.04",
       "duration": "8 months",
       "project": "Kookmin University Next-Generation Information System",
@@ -109,7 +98,8 @@
       "teamSize": "Integrated security implementation team (size undisclosed)",
       "myRole": "NSX-T micro-segmentation and integrated security policy designer",
       "workType": "SI",
-      "description": "[Problem] The university needed tighter east-west traffic control and unified security governance during its next-generation information-system transition.\n[Action] I designed VMware NSX-T DFW-based micro-segmentation, integrated NAC, DLP, and APT policy flows, and built security monitoring with Wazuh and Kibana.\n[Result] Monthly incidents fell by 25% (12 → 9), prevention effectiveness reached 80% with 200 blocked events per month, sensitive-data detection improved by 20%, and service availability held at 99.9%.\n[Stack] VMware NSX-T, Firewall, NAC, DLP, Wazuh, Kibana, Linux"
+      "description": "",
+      "note": "Dispatch: Jointree"
     },
     {
       "company": "Metanet M Platform Co., Ltd.",
@@ -121,10 +111,10 @@
       "teamSize": "Infrastructure operations team (size undisclosed)",
       "myRole": "VPN/NAC automation and switch inspection automation engineer",
       "workType": "SI+SM",
-      "description": "[Problem] A 1,000-user remote-work transition had to be launched urgently during COVID-19 while VPN/NAC exception handling and switch checks were still manual.\n[Action] I built the FortiGate SSL VPN and NAC integration model, automated NAC exception rollout with Ansible, and developed Python-based Cisco switch checks and VPN session monitoring dashboards.\n[Result] Switch inspection time dropped by 75% (8 hours → 2 hours), NAC exception processing dropped by 90% (30 minutes → 3 minutes), support tickets fell by 40% (20/week → 12/week), and three new sites were delivered.\n[Stack] Ansible, Python, VPN, NAC, Zabbix, PRTG, Linux"
+      "description": ""
     },
     {
-      "company": "MT Data Co., Ltd.",
+      "company": "Korea Aerospace Industries (KAI)",
       "period": "2017.02 ~ 2018.10",
       "duration": "1 year 9 months",
       "project": "Korea Aerospace Industries (KAI)",
@@ -133,7 +123,8 @@
       "teamSize": "On-site IT operations team (size undisclosed)",
       "myRole": "Closed-network server operations and security patching engineer",
       "workType": "SM",
-      "description": "[Problem] The manufacturing security environment had to operate 50+ Linux servers and firewall policies in a closed network with fragmented asset, patch, and vulnerability processes.\n[Action] I established log-based inspection routines, redesigned firewall policies, supported manufacturing/development network separation, and formalized monthly vulnerability checks and security patch procedures.\n[Result] Duplicate firewall rules were reduced by 30% (3,000 → 2,100), internal information leakage incidents stayed at zero during network separation, and critical vulnerabilities were remediated within two weeks at a 100% rate.\n[Stack] Linux, Windows Server, Shell Script, Firewall"
+      "description": "",
+      "note": "Dispatch: MT Data"
     }
   ],
   "projects": [
@@ -192,25 +183,6 @@
         "iac": "VPC/Subnet/SG managed as Terraform code",
         "monitoring": "Integrated analysis of CloudTrail and GuardDuty",
         "audit": "Supported robo-advisor testbed security review"
-      }
-    },
-    {
-      "period": "2022.05 ~ 2022.07",
-      "name": "Cloud Infrastructure Build",
-      "client": "FunNC",
-      "technologies": [
-        "AWS",
-        "Kubernetes",
-        "Docker",
-        "GitLab CI/CD"
-      ],
-      "os": "Linux, AWS",
-      "role": "Infrastructure Build",
-      "description": "Built EKS-based container orchestration and CI/CD\n• Automated application deployment and operations with Helm charts\n• Built container image build and static-analysis pipelines with GitLab Runner",
-      "metrics": {
-        "stack": "Automated deployment with EKS + Helm",
-        "cicd": "GitLab CI/CD static-analysis pipeline",
-        "migration": "On-premises to AWS cloud migration"
       }
     },
     {
@@ -328,36 +300,6 @@
       "credentialId": null,
       "credentialUrl": null,
       "status": "active"
-    },
-    {
-      "name": "CISSP",
-      "issuer": "ISC²",
-      "date": null,
-      "expirationDate": null,
-      "credentialId": null,
-      "credentialUrl": null,
-      "status": "Preparing",
-      "targetDate": "2026 Q2"
-    },
-    {
-      "name": "CISM",
-      "issuer": "ISACA",
-      "date": null,
-      "expirationDate": null,
-      "credentialId": null,
-      "credentialUrl": null,
-      "status": "Preparing",
-      "targetDate": "2026 Q2"
-    },
-    {
-      "name": "AWS Solutions Architect",
-      "issuer": "Amazon Web Services",
-      "date": null,
-      "expirationDate": null,
-      "credentialId": null,
-      "credentialUrl": null,
-      "status": "Preparing",
-      "targetDate": "2026 Q2"
     }
   ],
   "skills": {
@@ -846,5 +788,12 @@
     "website": "https://resume.jclee.me",
     "monitoring": "https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b"
   },
-  "availability": "Open to work - immediate start possible"
+  "availability": "Open to work - immediate start possible",
+  "awards": [
+    {
+      "name": "Autonomous Driving Competition Excellence Award",
+      "organization": "Hanyang Cyber University",
+      "year": "2026"
+    }
+  ]
 }

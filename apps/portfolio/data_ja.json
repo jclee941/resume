@@ -7,57 +7,41 @@
   "resume": [
     {
       "icon": "🏦",
-      "title": "ITCEN CTS",
-      "description": "[課題] サーバー150台・端末300台・ネットワーク機器80台、日次10万件超の取引環境で、24/7のセキュリティ対応とファイアウォールポリシー照会が手作業中心でした。\n[対応] Splunk ESの検知ルール32件を運用し、n8nワークフローでSlackリアルタイム通知を連携し、FortiManager APIベースのポリシー照会用Pythonライブラリを開発しました。\n[成果] 通知を30秒以内に短縮し、ファイアウォールポリシー照会時間を80%削減、不要アラートを70%削減しました。\n[スタック] Splunk, Prometheus, Grafana, Loki, n8n, Python, Docker, Linux",
-      "period": "2025.03 ~ 2026.02",
+      "title": "ネクストレード(株)",
+      "description": "FortiGate HA設計/構築、ネットワーク分離アーキテクチャ策定、Ansibleベースセキュリティ機器標準化、ISMS-P認証対応、Splunk ESセキュリティ監視、n8nベースセキュリティ自動化、セキュリティイベント対応",
+      "period": "2024.03 ~ 2026.02",
       "stats": [],
       "highlight": true,
       "completePdfUrl": "https://raw.githubusercontent.com/jclee-homelab/resume/master/packages/data/resumes/technical/nextrade/exports/Nextrade_Full_Documentation.pdf"
     },
     {
       "icon": "🏗️",
-      "title": "ガオンヌリ情報システム",
-      "description": "[課題] 金融委員会の本認可前に、サーバー150台・ネットワーク機器80台規模の新規取引所セキュリティ基盤を短期間で標準化する必要がありました。\n[対応] FGCPベースのFortiGate Active-Passive HA構成を設計し、ネットワーク分離、L2/L3、VPN、NACアクセス制御を設計、Ansible RoleとFortiManager APIで初期設定とポリシー配布を標準化しました。\n[成果] 金融委員会の本認可を通過し、99.99% HA設計目標を達成し、手作業依存を下げた運用標準を整備しました。\n[スタック] FortiGate, FortiManager, Ansible, Python, Linux, VMware",
-      "period": "2024.03 ~ 2025.02",
-      "stats": [],
-      "highlight": false
-    },
-    {
-      "icon": "📈",
       "title": "クオンテック投資一任",
-      "description": "[課題] AI資産運用プラットフォームのAWSセキュリティ運用がコンソール中心で分散し、審査対応の証跡整理が非効率でした。\n[対応] TerraformでVPC・Subnet・Security Groupをコード化し、IAM・WAF運用基準を整備、CloudTrail・GuardDutyログをCloudWatchへ統合し、Prometheus/Grafanaダッシュボードを構築しました。\n[成果] ロボアドバイザーテストベッド審査に対応できる基盤を整え、コードとログ中心の運用体制へ移行しました。\n[スタック] AWS, Terraform, CloudTrail, GuardDuty, Prometheus, Grafana",
+      "description": "",
       "period": "2022.08 ~ 2024.02",
       "stats": [],
       "highlight": false
     },
     {
-      "icon": "☁️",
-      "title": "ファンエンシー",
-      "description": "[課題] ECサービスをオンプレミスからAWSへ移行する必要があり、コンテナセキュリティ基準と配備検証工程が未整備でした。\n[対応] AWS VPCベースの移行構成を設計し、EKSのRBAC・Pod Security基準を定義、Helm配備自動化とGitLab CI/CDによる静的解析・セキュリティスキャン工程を構築しました。\n[成果] バックアップ／復旧自動化でMTTRを50%短縮（2時間→1時間）し、セキュリティスキャン追加で脆弱性の早期発見率を80%向上させた状態で移行準備を完了しました。\n[スタック] AWS, Kubernetes, Docker, Helm, GitLab CI/CD",
-      "period": "2022.05 ~ 2022.07",
-      "stats": [],
-      "highlight": false
-    },
-    {
-      "icon": "🎓",
-      "title": "ジョイントリー",
-      "description": "[課題] 次世代情報システム移行に伴い、内部ネットワークの東西トラフィック制御とセキュリティポリシー統合が必要でした。\n[対応] VMware NSX-T DFWベースのマイクロセグメンテーションを設計し、NAC・DLP・APT連携ポリシーとWazuh/Kibana監視基盤を構築しました。\n[成果] 月間障害件数を25%削減（12件→9件）し、侵害事故予防率80%（月200件遮断）、機密情報検知率20%向上、可用性99.9%を達成しました。\n[スタック] VMware NSX-T, Firewall, NAC, DLP, Wazuh, Kibana, Linux",
+      "icon": "📈",
+      "title": "国民大学校",
+      "description": "",
       "period": "2021.09 ~ 2022.04",
       "stats": [],
       "highlight": false
     },
     {
-      "icon": "📞",
+      "icon": "☁️",
       "title": "メタネットMプラットフォーム",
-      "description": "[課題] COVID-19下で1,000名規模の在宅勤務環境を短期間で立ち上げる必要があり、VPN/NAC例外処理とスイッチ点検は手作業でした。\n[対応] FortiGate SSL VPNとNAC連携を構築し、AnsibleでNAC例外ポリシー配布を自動化、PythonでCiscoスイッチ点検とVPNセッション監視ダッシュボードを実装しました。\n[成果] スイッチ点検時間を75%短縮（8時間→2時間）、NAC例外処理を90%短縮（30分→3分）、障害問い合わせを40%削減（週20件→12件）し、新規サイト3拠点を構築しました。\n[スタック] Ansible, Python, VPN, NAC, Zabbix, PRTG, Linux",
+      "description": "",
       "period": "2019.12 ~ 2021.08",
       "stats": [],
       "highlight": false
     },
     {
-      "icon": "✈️",
-      "title": "MTデータ",
-      "description": "[課題] 閉域網の製造セキュリティ環境で50台超のLinuxサーバーとファイアウォールポリシーを運用しつつ、資産・パッチ・脆弱性管理を整備する必要がありました。\n[対応] ログ分析ベースの点検体制を運用し、ファイアウォールポリシーを再設計、製造網と開発網の分離運用、月次脆弱性点検とパッチ運用手順を確立しました。\n[成果] 重複ファイアウォールルールを30%削減（3,000→2,100）し、内部情報流出事故0件を維持、Critical脆弱性を2週間以内に100%是正する体制を整えました。\n[スタック] Linux, Windows Server, Shell Script, Firewall",
+      "icon": "🎓",
+      "title": "韓国航空宇宙産業(KAI)",
+      "description": "",
       "period": "2017.02 ~ 2018.10",
       "stats": [],
       "highlight": false
@@ -66,57 +50,41 @@
   "resumeEn": [
     {
       "icon": "🏦",
-      "title": "ITCEN CTS",
-      "description": "[課題] サーバー150台・端末300台・ネットワーク機器80台、日次10万件超の取引環境で、24/7のセキュリティ対応とファイアウォールポリシー照会が手作業中心でした。\n[対応] Splunk ESの検知ルール32件を運用し、n8nワークフローでSlackリアルタイム通知を連携し、FortiManager APIベースのポリシー照会用Pythonライブラリを開発しました。\n[成果] 通知を30秒以内に短縮し、ファイアウォールポリシー照会時間を80%削減、不要アラートを70%削減しました。\n[スタック] Splunk, Prometheus, Grafana, Loki, n8n, Python, Docker, Linux",
-      "period": "2025.03 ~ 2026.02",
+      "title": "ネクストレード(株)",
+      "description": "FortiGate HA設計/構築、ネットワーク分離アーキテクチャ策定、Ansibleベースセキュリティ機器標準化、ISMS-P認証対応、Splunk ESセキュリティ監視、n8nベースセキュリティ自動化、セキュリティイベント対応",
+      "period": "2024.03 ~ 2026.02",
       "stats": [],
       "highlight": true,
       "completePdfUrl": "https://raw.githubusercontent.com/jclee-homelab/resume/master/packages/data/resumes/technical/nextrade/exports/Nextrade_Full_Documentation.pdf"
     },
     {
       "icon": "🏗️",
-      "title": "ガオンヌリ情報システム",
-      "description": "[課題] 金融委員会の本認可前に、サーバー150台・ネットワーク機器80台規模の新規取引所セキュリティ基盤を短期間で標準化する必要がありました。\n[対応] FGCPベースのFortiGate Active-Passive HA構成を設計し、ネットワーク分離、L2/L3、VPN、NACアクセス制御を設計、Ansible RoleとFortiManager APIで初期設定とポリシー配布を標準化しました。\n[成果] 金融委員会の本認可を通過し、99.99% HA設計目標を達成し、手作業依存を下げた運用標準を整備しました。\n[スタック] FortiGate, FortiManager, Ansible, Python, Linux, VMware",
-      "period": "2024.03 ~ 2025.02",
-      "stats": [],
-      "highlight": false
-    },
-    {
-      "icon": "📈",
       "title": "クオンテック投資一任",
-      "description": "[課題] AI資産運用プラットフォームのAWSセキュリティ運用がコンソール中心で分散し、審査対応の証跡整理が非効率でした。\n[対応] TerraformでVPC・Subnet・Security Groupをコード化し、IAM・WAF運用基準を整備、CloudTrail・GuardDutyログをCloudWatchへ統合し、Prometheus/Grafanaダッシュボードを構築しました。\n[成果] ロボアドバイザーテストベッド審査に対応できる基盤を整え、コードとログ中心の運用体制へ移行しました。\n[スタック] AWS, Terraform, CloudTrail, GuardDuty, Prometheus, Grafana",
+      "description": "",
       "period": "2022.08 ~ 2024.02",
       "stats": [],
       "highlight": false
     },
     {
-      "icon": "☁️",
-      "title": "ファンエンシー",
-      "description": "[課題] ECサービスをオンプレミスからAWSへ移行する必要があり、コンテナセキュリティ基準と配備検証工程が未整備でした。\n[対応] AWS VPCベースの移行構成を設計し、EKSのRBAC・Pod Security基準を定義、Helm配備自動化とGitLab CI/CDによる静的解析・セキュリティスキャン工程を構築しました。\n[成果] バックアップ／復旧自動化でMTTRを50%短縮（2時間→1時間）し、セキュリティスキャン追加で脆弱性の早期発見率を80%向上させた状態で移行準備を完了しました。\n[スタック] AWS, Kubernetes, Docker, Helm, GitLab CI/CD",
-      "period": "2022.05 ~ 2022.07",
-      "stats": [],
-      "highlight": false
-    },
-    {
-      "icon": "🎓",
-      "title": "ジョイントリー",
-      "description": "[課題] 次世代情報システム移行に伴い、内部ネットワークの東西トラフィック制御とセキュリティポリシー統合が必要でした。\n[対応] VMware NSX-T DFWベースのマイクロセグメンテーションを設計し、NAC・DLP・APT連携ポリシーとWazuh/Kibana監視基盤を構築しました。\n[成果] 月間障害件数を25%削減（12件→9件）し、侵害事故予防率80%（月200件遮断）、機密情報検知率20%向上、可用性99.9%を達成しました。\n[スタック] VMware NSX-T, Firewall, NAC, DLP, Wazuh, Kibana, Linux",
+      "icon": "📈",
+      "title": "国民大学校",
+      "description": "",
       "period": "2021.09 ~ 2022.04",
       "stats": [],
       "highlight": false
     },
     {
-      "icon": "📞",
+      "icon": "☁️",
       "title": "メタネットMプラットフォーム",
-      "description": "[課題] COVID-19下で1,000名規模の在宅勤務環境を短期間で立ち上げる必要があり、VPN/NAC例外処理とスイッチ点検は手作業でした。\n[対応] FortiGate SSL VPNとNAC連携を構築し、AnsibleでNAC例外ポリシー配布を自動化、PythonでCiscoスイッチ点検とVPNセッション監視ダッシュボードを実装しました。\n[成果] スイッチ点検時間を75%短縮（8時間→2時間）、NAC例外処理を90%短縮（30分→3分）、障害問い合わせを40%削減（週20件→12件）し、新規サイト3拠点を構築しました。\n[スタック] Ansible, Python, VPN, NAC, Zabbix, PRTG, Linux",
+      "description": "",
       "period": "2019.12 ~ 2021.08",
       "stats": [],
       "highlight": false
     },
     {
-      "icon": "✈️",
-      "title": "MTデータ",
-      "description": "[課題] 閉域網の製造セキュリティ環境で50台超のLinuxサーバーとファイアウォールポリシーを運用しつつ、資産・パッチ・脆弱性管理を整備する必要がありました。\n[対応] ログ分析ベースの点検体制を運用し、ファイアウォールポリシーを再設計、製造網と開発網の分離運用、月次脆弱性点検とパッチ運用手順を確立しました。\n[成果] 重複ファイアウォールルールを30%削減（3,000→2,100）し、内部情報流出事故0件を維持、Critical脆弱性を2週間以内に100%是正する体制を整えました。\n[スタック] Linux, Windows Server, Shell Script, Firewall",
+      "icon": "🎓",
+      "title": "韓国航空宇宙産業(KAI)",
+      "description": "",
       "period": "2017.02 ~ 2018.10",
       "stats": [],
       "highlight": false
@@ -526,36 +494,6 @@
       "credentialId": null,
       "credentialUrl": null,
       "status": "active"
-    },
-    {
-      "name": "CISSP",
-      "issuer": "ISC²",
-      "date": null,
-      "expirationDate": null,
-      "credentialId": null,
-      "credentialUrl": null,
-      "status": "準備中",
-      "targetDate": "2026 Q2"
-    },
-    {
-      "name": "CISM",
-      "issuer": "ISACA",
-      "date": null,
-      "expirationDate": null,
-      "credentialId": null,
-      "credentialUrl": null,
-      "status": "準備中",
-      "targetDate": "2026 Q2"
-    },
-    {
-      "name": "AWS Solutions Architect",
-      "issuer": "Amazon Web Services",
-      "date": null,
-      "expirationDate": null,
-      "credentialId": null,
-      "credentialUrl": null,
-      "status": "準備中",
-      "targetDate": "2026 Q2"
     }
   ],
   "skills": {
