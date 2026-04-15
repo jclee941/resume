@@ -248,7 +248,9 @@ export async function syncWantedActivities(client, ssot, profile, resumeId) {
 
 /** @param {Object} client @param {Object} ssot @param {Object} resumeDetail @param {string} resumeId @returns {Promise<Object>} */
 export async function syncWantedAbout(client, ssot, resumeDetail, resumeId) {
-  const ssotAbout = ssot.summary?.profileStatement || '';
+  const rawAbout = ssot.summary?.profileStatement || '';
+  // Wanted about field has a character limit — truncate to 150 chars
+  const ssotAbout = rawAbout.length > 150 ? rawAbout.slice(0, 147) + '...' : rawAbout;
   const wantedAbout = resumeDetail?.about || '';
 
   if (ssotAbout === wantedAbout) {

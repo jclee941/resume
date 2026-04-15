@@ -141,15 +141,31 @@ export class JobKoreaCrawler extends BaseCrawler {
     try {
       const job = await withStealthBrowser(async (page) => {
         const url = `${this.baseUrl}/Recruit/GI_Read/${jobId}`;
-        await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
+        await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
+        await new Promise((r) => setTimeout(r, 3000));
 
         return page.evaluate((jid) => {
-          const title = document.querySelector('[class*="title"], h1')?.textContent?.trim() || '';
-          const company = document.querySelector('[class*="company"]')?.textContent?.trim() || '';
-          const description =
-            document
-              .querySelector('[class*="description"], [class*="content"]')
-              ?.textContent?.trim() || '';
+          // Next.js SPA — client-rendered, use multiple fallbacks
+          let title = document.querySelector('h1')?.textContent?.trim() || '';
+          let company =
+            document.querySelector('a[href*="/company/"]')?.textContent?.trim() ||
+            document.querySelector('h2')?.textContent?.trim() ||
+            '';
+
+          // Fallback: parse from page title "회사명 채용 - 포지션 | 잡코리아"
+          if (!title || !company) {
+            const pageTitle = document.title || '';
+            const match = pageTitle.match(/^(.+?)\s*채용\s*-\s*(.+?)\s*\|/);
+            if (match) {
+              if (!company) company = match[1].trim();
+              if (!title) title = match[2].trim();
+            }
+          }
+
+          const descEl =
+            document.querySelector('[class*="content"]') ||
+            document.querySelector('[class*="description"]');
+          const description = descEl?.textContent?.trim() || '';
 
           return { id: jid, position: title, company, description };
         }, jobId);

@@ -32,11 +32,15 @@ export const PLATFORMS = {
       headline: 'textarea[name="introduction"]',
       skills: '[data-testid="skills-section"]',
     },
-    mapData: (ssot) => ({
-      name: ssot.personal.name,
-      introduction: ssot.summary.profileStatement,
-    }),
-  },
+    mapData: (ssot) => {
+      const intro = ssot.summary.profileStatement || '';
+      return {
+        name: ssot.personal.name,
+        // Wanted API limit: 150 chars
+        introduction: intro.length > 150 ? intro.slice(0, 147) + '...' : intro,
+      };
+    },  // end mapData
+  },  // end wanted
   jobkorea: {
     name: 'JobKorea',
     profileUrl: 'https://www.jobkorea.co.kr/User/Resume/View?rNo=30236578',
