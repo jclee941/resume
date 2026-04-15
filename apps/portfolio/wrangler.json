@@ -70,12 +70,6 @@
           "binding": "NONCE_KV",
           "id": "3e282b1b906c474aadcc947a06f0c1ad"
         }
-      ],
-      "services": [
-        {
-          "binding": "JOB_SERVICE",
-          "service": "job"
-        }
       ]
     }
   }
