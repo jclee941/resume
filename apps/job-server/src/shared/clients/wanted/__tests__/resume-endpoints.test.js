@@ -62,13 +62,13 @@ describe('ResumeEndpoint', async () => {
     assert.strictEqual(result, response);
   });
 
-  it('getDetail() calls /resumes/v1/:id with GET semantics and returns data', async () => {
+  it('getDetail() calls /resumes/v2/:id with GET semantics and returns data', async () => {
     const response = { data: { id: 1 } };
     mockClient.chaosRequest = mock.fn(async () => response);
 
     const result = await endpoint.getDetail(resumeId);
 
-    assertChaosCall(mockClient, `/resumes/v1/${resumeId}`);
+    assertChaosCall(mockClient, `/resumes/v2/${resumeId}`);
     assert.strictEqual(result, response.data);
   });
 
@@ -78,7 +78,7 @@ describe('ResumeEndpoint', async () => {
 
     const result = await endpoint.getDetail(resumeId);
 
-    assertChaosCall(mockClient, `/resumes/v1/${resumeId}`);
+    assertChaosCall(mockClient, `/resumes/v2/${resumeId}`);
     assert.strictEqual(result, response);
   });
 

@@ -403,11 +403,15 @@ describe('Apply service integration', () => {
     const api = {
       getProfile: async () => ({ ok: true }),
       getApplications: async () => ({ applications: [] }),
-      getResumes: async () => ({ resumes: [{ id: 'resume-1' }] }),
-      chaosRequest: async () => ({ application_id: 'wanted-application-99' }),
+      chaosRequest: async (path) => {
+        if (path && path.startsWith('/resumes/v1')) {
+          return { data: [{ id: 'resume-1', is_default: true }] };
+        }
+        return { application_id: 'wanted-application-99' };
+      },
     };
 
-    mock.method(SessionManager, 'load', () => ({ cookieString: 'sid=ok', timestamp: Date.now() }));
+    mock.method(SessionManager, 'load', () => ({ cookieString: 'sid=ok', timestamp: Date.now(), email: 'test@example.com', username: 'Pipeline Tester', mobile: '010-0000-0000' }));
     mock.method(SessionManager, 'getAPI', async () => api);
 
     const job = {
@@ -517,8 +521,12 @@ describe('Apply service integration', () => {
     const api = {
       getProfile: async () => ({ ok: true }),
       getApplications: async () => ({ applications: [] }),
-      getResumes: async () => ({ resumes: [{ id: 'resume-1' }] }),
-      chaosRequest: async () => {
+      chaosRequest: async (path) => {
+        // Resume list requests always succeed
+        if (path && path.startsWith('/resumes/v1')) {
+          return { data: [{ id: 'resume-1', is_default: true }] };
+        }
+        // Application requests follow retry/circuit logic
         chaosRequestCalls += 1;
 
         if (mode === 'retry-once') {
@@ -532,7 +540,7 @@ describe('Apply service integration', () => {
       },
     };
 
-    mock.method(SessionManager, 'load', () => ({ cookieString: 'sid=ok', timestamp: Date.now() }));
+    mock.method(SessionManager, 'load', () => ({ cookieString: 'sid=ok', timestamp: Date.now(), email: 'test@example.com', username: 'Test User', mobile: '010-0000-0000' }));
     mock.method(SessionManager, 'getAPI', async () => api);
     mock.method(notifications, 'notifyApplySuccess', async () => ({ sent: true }));
     mock.method(notifications, 'notifyApplyFailed', async () => ({ sent: true }));
