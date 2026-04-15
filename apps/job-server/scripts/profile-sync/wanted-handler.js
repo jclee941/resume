@@ -87,12 +87,21 @@ export default class WantedHandler {
         return { success: false, changes: [] };
       }
 
+      const currentIntro = profile.user?.description || '';
+      const targetIntro = rawTarget.introduction?.length > 150
+        ? rawTarget.introduction.slice(0, 147) + '...'
+        : rawTarget.introduction || '';
+      // Skip introduction diff if both are already truncated to ~150 chars (avoids false positive 406)
+      const introSynced = currentIntro.length >= 147 && targetIntro.length >= 147
+        && currentIntro.slice(0, 140) === targetIntro.slice(0, 140);
       const current = {
         name: profile.user?.name || '',
-        introduction: profile.user?.description || '',
+        ...(introSynced ? {} : { introduction: currentIntro }),
       };
-
-      const target = PLATFORMS.wanted.mapData(ssot);
+      const target = {
+        name: rawTarget.name,
+        ...(introSynced ? {} : { introduction: targetIntro }),
+      };
       const changes = computeDiff(current, target);
 
       if (changes.length > 0) {
@@ -106,7 +115,9 @@ export default class WantedHandler {
         const updateData = {};
         for (const change of changes) {
           if (change.field === 'introduction') {
-            updateData.description = change.to;
+            // Skip if already ~150 chars synced (avoids false positive 406)
+            if (change.from.length >= 147 && change.to.length > 150) continue;
+            updateData.description = change.to.length > 150 ? change.to.slice(0, 147) + '...' : change.to;
           } else if (change.field === 'name') {
             updateData.name = change.to;
           }
