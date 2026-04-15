@@ -7,57 +7,41 @@
   "resume": [
     {
       "icon": "🏦",
-      "title": "ITCEN CTS Co., Ltd.",
-      "description": "[Problem] Security event response and firewall policy lookup were still manual in a 24/7 trading environment with 150 servers, 300 endpoints, 80 network devices, and 100K+ daily trades.\n[Action] I operated 32 Splunk ES detection rules, connected real-time Slack alerts through n8n workflows, and built a Python library for policy lookup using the FortiManager API.\n[Result] Alerts were delivered within 30 seconds, firewall policy lookup time was reduced by 80%, and unnecessary alerts were reduced by 70% through automation.\n[Stack] Splunk, Prometheus, Grafana, Loki, n8n, Python, Docker, Linux",
-      "period": "2025.03 ~ 2026.02",
+      "title": "Nextrade Co., Ltd.",
+      "description": "FortiGate HA design/deployment, network segmentation architecture, Ansible-based security device standardization, ISMS-P certification, Splunk ES security monitoring, n8n-based security automation, security incident response",
+      "period": "2024.03 ~ 2026.02",
       "stats": [],
       "highlight": true,
       "completePdfUrl": "https://raw.githubusercontent.com/jclee-homelab/resume/master/packages/data/resumes/technical/nextrade/exports/Nextrade_Full_Documentation.pdf"
     },
     {
       "icon": "🏗️",
-      "title": "Gaonnuri Information Systems Co., Ltd.",
-      "description": "[Problem] A new exchange had to standardize security infrastructure for 150 servers and 80 network devices on a tight timeline before FSC production approval.\n[Action] I designed the FGCP-based FortiGate Active-Passive HA architecture, established segmentation, L2/L3, VPN, and NAC access-control design, and standardized initial setup and policy rollout with Ansible roles and the FortiManager API.\n[Result] The environment passed FSC production approval, reached a 99.99% HA design target, and established an operational standard with less dependence on manual setup.\n[Stack] FortiGate, FortiManager, Ansible, Python, Linux, VMware",
-      "period": "2024.03 ~ 2025.02",
-      "stats": [],
-      "highlight": false
-    },
-    {
-      "icon": "📈",
       "title": "Quant Investment Management Co., Ltd.",
-      "description": "[Problem] AWS security operations for the AI asset-management platform were spread across the console, making audit evidence and security metrics difficult to organize.\n[Action] I codified VPCs, subnets, and security groups with Terraform, tightened IAM and WAF operating standards, integrated CloudTrail and GuardDuty logs into CloudWatch, and built Prometheus/Grafana dashboards.\n[Result] The platform gained an audit-ready operating baseline for robo-advisor testbed reviews and shifted to code-and-log-centric security operations.\n[Stack] AWS, Terraform, CloudTrail, GuardDuty, Prometheus, Grafana",
+      "description": "",
       "period": "2022.08 ~ 2024.02",
       "stats": [],
       "highlight": false
     },
     {
-      "icon": "☁️",
-      "title": "FunNC Co., Ltd.",
-      "description": "[Problem] The e-commerce platform had to move from on-premises to AWS without established container security standards or deployment verification gates.\n[Action] I designed the AWS VPC migration architecture, defined RBAC and Pod Security standards for EKS, and built Helm-based deployment automation plus GitLab CI/CD static-analysis and security-scan stages.\n[Result] Backup and recovery automation reduced MTTR by 50% (2 hours → 1 hour), while added security scans improved early vulnerability detection by 80% before the migration handoff.\n[Stack] AWS, Kubernetes, Docker, Helm, GitLab CI/CD",
-      "period": "2022.05 ~ 2022.07",
-      "stats": [],
-      "highlight": false
-    },
-    {
-      "icon": "🎓",
-      "title": "Jointree Co., Ltd.",
-      "description": "[Problem] The university needed tighter east-west traffic control and unified security governance during its next-generation information-system transition.\n[Action] I designed VMware NSX-T DFW-based micro-segmentation, integrated NAC, DLP, and APT policy flows, and built security monitoring with Wazuh and Kibana.\n[Result] Monthly incidents fell by 25% (12 → 9), prevention effectiveness reached 80% with 200 blocked events per month, sensitive-data detection improved by 20%, and service availability held at 99.9%.\n[Stack] VMware NSX-T, Firewall, NAC, DLP, Wazuh, Kibana, Linux",
+      "icon": "📈",
+      "title": "Kookmin University",
+      "description": "",
       "period": "2021.09 ~ 2022.04",
       "stats": [],
       "highlight": false
     },
     {
-      "icon": "📞",
+      "icon": "☁️",
       "title": "Metanet M Platform Co., Ltd.",
-      "description": "[Problem] A 1,000-user remote-work transition had to be launched urgently during COVID-19 while VPN/NAC exception handling and switch checks were still manual.\n[Action] I built the FortiGate SSL VPN and NAC integration model, automated NAC exception rollout with Ansible, and developed Python-based Cisco switch checks and VPN session monitoring dashboards.\n[Result] Switch inspection time dropped by 75% (8 hours → 2 hours), NAC exception processing dropped by 90% (30 minutes → 3 minutes), support tickets fell by 40% (20/week → 12/week), and three new sites were delivered.\n[Stack] Ansible, Python, VPN, NAC, Zabbix, PRTG, Linux",
+      "description": "",
       "period": "2019.12 ~ 2021.08",
       "stats": [],
       "highlight": false
     },
     {
-      "icon": "✈️",
-      "title": "MT Data Co., Ltd.",
-      "description": "[Problem] The manufacturing security environment had to operate 50+ Linux servers and firewall policies in a closed network with fragmented asset, patch, and vulnerability processes.\n[Action] I established log-based inspection routines, redesigned firewall policies, supported manufacturing/development network separation, and formalized monthly vulnerability checks and security patch procedures.\n[Result] Duplicate firewall rules were reduced by 30% (3,000 → 2,100), internal information leakage incidents stayed at zero during network separation, and critical vulnerabilities were remediated within two weeks at a 100% rate.\n[Stack] Linux, Windows Server, Shell Script, Firewall",
+      "icon": "🎓",
+      "title": "Korea Aerospace Industries (KAI)",
+      "description": "",
       "period": "2017.02 ~ 2018.10",
       "stats": [],
       "highlight": false
@@ -66,57 +50,41 @@
   "resumeEn": [
     {
       "icon": "🏦",
-      "title": "ITCEN CTS Co., Ltd.",
-      "description": "[Problem] Security event response and firewall policy lookup were still manual in a 24/7 trading environment with 150 servers, 300 endpoints, 80 network devices, and 100K+ daily trades.\n[Action] I operated 32 Splunk ES detection rules, connected real-time Slack alerts through n8n workflows, and built a Python library for policy lookup using the FortiManager API.\n[Result] Alerts were delivered within 30 seconds, firewall policy lookup time was reduced by 80%, and unnecessary alerts were reduced by 70% through automation.\n[Stack] Splunk, Prometheus, Grafana, Loki, n8n, Python, Docker, Linux",
-      "period": "2025.03 ~ 2026.02",
+      "title": "Nextrade Co., Ltd.",
+      "description": "FortiGate HA design/deployment, network segmentation architecture, Ansible-based security device standardization, ISMS-P certification, Splunk ES security monitoring, n8n-based security automation, security incident response",
+      "period": "2024.03 ~ 2026.02",
       "stats": [],
       "highlight": true,
       "completePdfUrl": "https://raw.githubusercontent.com/jclee-homelab/resume/master/packages/data/resumes/technical/nextrade/exports/Nextrade_Full_Documentation.pdf"
     },
     {
       "icon": "🏗️",
-      "title": "Gaonnuri Information Systems Co., Ltd.",
-      "description": "[Problem] A new exchange had to standardize security infrastructure for 150 servers and 80 network devices on a tight timeline before FSC production approval.\n[Action] I designed the FGCP-based FortiGate Active-Passive HA architecture, established segmentation, L2/L3, VPN, and NAC access-control design, and standardized initial setup and policy rollout with Ansible roles and the FortiManager API.\n[Result] The environment passed FSC production approval, reached a 99.99% HA design target, and established an operational standard with less dependence on manual setup.\n[Stack] FortiGate, FortiManager, Ansible, Python, Linux, VMware",
-      "period": "2024.03 ~ 2025.02",
-      "stats": [],
-      "highlight": false
-    },
-    {
-      "icon": "📈",
       "title": "Quant Investment Management Co., Ltd.",
-      "description": "[Problem] AWS security operations for the AI asset-management platform were spread across the console, making audit evidence and security metrics difficult to organize.\n[Action] I codified VPCs, subnets, and security groups with Terraform, tightened IAM and WAF operating standards, integrated CloudTrail and GuardDuty logs into CloudWatch, and built Prometheus/Grafana dashboards.\n[Result] The platform gained an audit-ready operating baseline for robo-advisor testbed reviews and shifted to code-and-log-centric security operations.\n[Stack] AWS, Terraform, CloudTrail, GuardDuty, Prometheus, Grafana",
+      "description": "",
       "period": "2022.08 ~ 2024.02",
       "stats": [],
       "highlight": false
     },
     {
-      "icon": "☁️",
-      "title": "FunNC Co., Ltd.",
-      "description": "[Problem] The e-commerce platform had to move from on-premises to AWS without established container security standards or deployment verification gates.\n[Action] I designed the AWS VPC migration architecture, defined RBAC and Pod Security standards for EKS, and built Helm-based deployment automation plus GitLab CI/CD static-analysis and security-scan stages.\n[Result] Backup and recovery automation reduced MTTR by 50% (2 hours → 1 hour), while added security scans improved early vulnerability detection by 80% before the migration handoff.\n[Stack] AWS, Kubernetes, Docker, Helm, GitLab CI/CD",
-      "period": "2022.05 ~ 2022.07",
-      "stats": [],
-      "highlight": false
-    },
-    {
-      "icon": "🎓",
-      "title": "Jointree Co., Ltd.",
-      "description": "[Problem] The university needed tighter east-west traffic control and unified security governance during its next-generation information-system transition.\n[Action] I designed VMware NSX-T DFW-based micro-segmentation, integrated NAC, DLP, and APT policy flows, and built security monitoring with Wazuh and Kibana.\n[Result] Monthly incidents fell by 25% (12 → 9), prevention effectiveness reached 80% with 200 blocked events per month, sensitive-data detection improved by 20%, and service availability held at 99.9%.\n[Stack] VMware NSX-T, Firewall, NAC, DLP, Wazuh, Kibana, Linux",
+      "icon": "📈",
+      "title": "Kookmin University",
+      "description": "",
       "period": "2021.09 ~ 2022.04",
       "stats": [],
       "highlight": false
     },
     {
-      "icon": "📞",
+      "icon": "☁️",
       "title": "Metanet M Platform Co., Ltd.",
-      "description": "[Problem] A 1,000-user remote-work transition had to be launched urgently during COVID-19 while VPN/NAC exception handling and switch checks were still manual.\n[Action] I built the FortiGate SSL VPN and NAC integration model, automated NAC exception rollout with Ansible, and developed Python-based Cisco switch checks and VPN session monitoring dashboards.\n[Result] Switch inspection time dropped by 75% (8 hours → 2 hours), NAC exception processing dropped by 90% (30 minutes → 3 minutes), support tickets fell by 40% (20/week → 12/week), and three new sites were delivered.\n[Stack] Ansible, Python, VPN, NAC, Zabbix, PRTG, Linux",
+      "description": "",
       "period": "2019.12 ~ 2021.08",
       "stats": [],
       "highlight": false
     },
     {
-      "icon": "✈️",
-      "title": "MT Data Co., Ltd.",
-      "description": "[Problem] The manufacturing security environment had to operate 50+ Linux servers and firewall policies in a closed network with fragmented asset, patch, and vulnerability processes.\n[Action] I established log-based inspection routines, redesigned firewall policies, supported manufacturing/development network separation, and formalized monthly vulnerability checks and security patch procedures.\n[Result] Duplicate firewall rules were reduced by 30% (3,000 → 2,100), internal information leakage incidents stayed at zero during network separation, and critical vulnerabilities were remediated within two weeks at a 100% rate.\n[Stack] Linux, Windows Server, Shell Script, Firewall",
+      "icon": "🎓",
+      "title": "Korea Aerospace Industries (KAI)",
+      "description": "",
       "period": "2017.02 ~ 2018.10",
       "stats": [],
       "highlight": false
@@ -526,36 +494,6 @@
       "credentialId": null,
       "credentialUrl": null,
       "status": "active"
-    },
-    {
-      "name": "CISSP",
-      "issuer": "ISC²",
-      "date": null,
-      "expirationDate": null,
-      "credentialId": null,
-      "credentialUrl": null,
-      "status": "Preparing",
-      "targetDate": "2026 Q2"
-    },
-    {
-      "name": "CISM",
-      "issuer": "ISACA",
-      "date": null,
-      "expirationDate": null,
-      "credentialId": null,
-      "credentialUrl": null,
-      "status": "Preparing",
-      "targetDate": "2026 Q2"
-    },
-    {
-      "name": "AWS Solutions Architect",
-      "issuer": "Amazon Web Services",
-      "date": null,
-      "expirationDate": null,
-      "credentialId": null,
-      "credentialUrl": null,
-      "status": "Preparing",
-      "targetDate": "2026 Q2"
     }
   ],
   "skills": {

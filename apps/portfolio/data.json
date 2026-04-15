@@ -7,33 +7,17 @@
   "resume": [
     {
       "icon": "🏦",
-      "title": "(주)아이티센 CTS",
-      "description": "[문제] 서버 150대·단말 300대·네트워크 장비 80대, 일 10만+ 거래 환경에서 24/7 보안 이벤트 대응과 방화벽 정책 조회가 수동 중심으로 운영됐습니다.\n[해결] Splunk ES 32개 탐지 룰을 운영하고 n8n 워크플로우로 Slack 실시간 알림을 연동했으며, FortiManager API 기반 정책 조회 Python 라이브러리를 직접 개발했습니다.\n[결과] 보안 이벤트를 30초 내 알림 체계로 전환했고, 방화벽 정책 조회 시간을 수동 대비 80% 절감했으며, 자동화로 불필요한 알림을 70% 감소시켰습니다.\n[스택] Splunk, Prometheus, Grafana, Loki, n8n, Python, Docker, Linux",
-      "period": "2025.03 ~ 2026.02",
-      "stats": [
-        "보안관제",
-        "컴플라이언스",
-        "DR"
-      ],
+      "title": "넥스트레이드(주)",
+      "description": "FortiGate HA 설계/구축, 망분리 네트워크 아키텍처 수립, Ansible 기반 보안장비 설정 표준화, ISMS-P 인증 대응, Splunk ES 보안 모니터링 운영, n8n 기반 보안 자동화 구축, 보안 이벤트 대응",
+      "period": "2024.03 ~ 2026.02",
+      "stats": [],
       "highlight": true,
       "completePdfUrl": "https://raw.githubusercontent.com/jclee-homelab/resume/master/packages/data/resumes/technical/nextrade/exports/Nextrade_Full_Documentation.pdf"
     },
     {
       "icon": "🏗️",
-      "title": "(주)가온누리정보시스템",
-      "description": "[문제] 금융위 본인가를 앞둔 신규 거래소 환경에서 서버 150대·네트워크 장비 80대 규모 보안 인프라를 짧은 일정 안에 설계·표준화해야 했습니다.\n[해결] FGCP Active-Passive 기반 FortiGate HA 구조를 설계하고, 망분리·L2/L3 네트워크·VPN/NAC 접근통제 아키텍처를 수립했으며, Ansible Role과 FortiManager API로 초기 설정과 정책 배포를 표준화했습니다.\n[결과] 금융위 본인가 심사를 통과했고, 99.99% 가용성 목표의 HA 설계를 완료했으며, 수작업 설정 의존도를 낮춘 운영 표준을 마련했습니다.\n[스택] FortiGate, FortiManager, Ansible, Python, Linux, VMware",
-      "period": "2024.03 ~ 2025.02",
-      "stats": [
-        "아키텍처",
-        "망분리",
-        "인허가"
-      ],
-      "highlight": false
-    },
-    {
-      "icon": "📈",
       "title": "(주)콴텍투자일임",
-      "description": "[문제] AI 자산운용 플랫폼의 AWS 보안 운영이 콘솔 중심으로 분산되어 있었고, 심사 대응을 위한 변경 이력과 보안 메트릭 정리가 비효율적이었습니다.\n[해결] Terraform으로 VPC·Subnet·Security Group을 코드화하고 IAM·WAF 운영 기준을 정비했으며, CloudTrail·GuardDuty 로그를 CloudWatch로 통합하고 Prometheus/Grafana 대시보드를 구축했습니다.\n[결과] 로보어드바이저 테스트베드 심사 대응 기반을 마련했고, AWS 보안 변경 이력을 코드와 로그 중심으로 관리하는 운영 체계로 전환했습니다.\n[스택] AWS, Terraform, CloudTrail, GuardDuty, Prometheus, Grafana",
+      "description": "AWS 보안 운영 (IAM/VPC/WAF), Terraform IaC 관리, CloudTrail/GuardDuty 로그 통합, Prometheus/Grafana 모니터링",
       "period": "2022.08 ~ 2024.02",
       "stats": [
         "AWS",
@@ -43,33 +27,17 @@
       "highlight": false
     },
     {
-      "icon": "☁️",
-      "title": "(주)펀엔씨",
-      "description": "[문제] 이커머스 서비스를 온프레미스에서 AWS로 전환해야 했고, 컨테이너 보안 기준과 배포 검증 절차가 부재한 상태였습니다.\n[해결] AWS VPC 기반 마이그레이션 구조를 설계하고, EKS 클러스터의 RBAC·Pod Security 기준을 수립했으며, Helm Chart 배포 자동화와 GitLab CI/CD 기반 정적 분석·보안 스캔 파이프라인을 구축했습니다.\n[결과] 백업·복구 자동화로 MTTR을 50% 단축했고(평균 2시간→1시간), 보안 스캔 단계 추가로 취약점 조기 발견율을 80% 높인 상태에서 클라우드 전환 준비를 완료했습니다.\n[스택] AWS, Kubernetes, Docker, Helm, GitLab CI/CD",
-      "period": "2022.05 ~ 2022.07",
-      "stats": [
-        "AWS",
-        "K8s",
-        "DevOps"
-      ],
-      "highlight": false
-    },
-    {
-      "icon": "🎓",
-      "title": "(주)조인트리",
-      "description": "[문제] 대학 차세대 정보시스템 전환 과정에서 내부망 동서 트래픽 통제와 통합 보안 정책 일원화가 필요했습니다.\n[해결] VMware NSX-T DFW 기반 마이크로세그멘테이션을 설계하고, NAC·DLP·APT와 연계한 정책 체계 및 Wazuh/Kibana 기반 보안 모니터링을 구축했습니다.\n[결과] 월 장애 건수를 12건→9건으로 25% 줄였고, 침해사고 예방률 80%(월 200건 차단)와 민감정보 탐지율 20% 향상을 달성했으며, 서비스 가용률 99.9%를 유지했습니다.\n[스택] VMware NSX-T, Firewall, NAC, DLP, Wazuh, Kibana, Linux",
+      "icon": "📈",
+      "title": "국민대학교",
+      "description": "VMware NSX-T 마이크로세그멘테이션, 내부망 보안 정책 관리, 네트워크 장비 운영",
       "period": "2021.09 ~ 2022.04",
-      "stats": [
-        "NSX-T",
-        "보안통합",
-        "SI"
-      ],
+      "stats": [],
       "highlight": false
     },
     {
-      "icon": "📞",
+      "icon": "☁️",
       "title": "(주)메타넷엠플랫폼",
-      "description": "[문제] COVID-19로 1,000명 규모 재택근무 전환이 긴급 필요했고, VPN·NAC 예외 정책 처리와 스위치 점검이 수작업이어서 장애 문의가 누적됐습니다.\n[해결] FortiGate SSL VPN과 NAC 연동 구조를 구축하고, Ansible로 NAC 예외 정책 배포를 자동화했으며, Python으로 Cisco 스위치 자동 점검 시스템과 VPN 세션 모니터링 대시보드를 만들었습니다.\n[결과] 스위치 점검 시간을 75%(8시간→2시간), NAC 예외 정책 처리 시간을 90%(30분→3분) 단축했고, 백신-VPN 충돌 해결로 장애 문의를 40%(주 20건→12건) 줄였으며, 신규 사이트 3개소 구축을 완료했습니다.\n[스택] Ansible, Python, VPN, NAC, Zabbix, PRTG, Linux",
+      "description": "VPN/NAC 운영, 네트워크 스위치 관리, FortiGate 정책 운영, 재택근무 인프라 구축",
       "period": "2019.12 ~ 2021.08",
       "stats": [
         "VPN/NAC",
@@ -79,46 +47,26 @@
       "highlight": false
     },
     {
-      "icon": "✈️",
-      "title": "(주)엠티데이타",
-      "description": "[문제] 폐쇄망 제조 보안 환경에서 Linux 서버 50대 이상과 방화벽 정책을 운영해야 했고, 자산·패치·취약점 관리가 분리되어 있었습니다.\n[해결] 시스템 로그 분석 기반 점검 체계를 운영하고 방화벽 정책을 재설계했으며, 제조망-개발망 망분리 운영과 월간 취약점 점검·보안 패치 절차를 정착시켰습니다.\n[결과] 방화벽 중복 룰을 30%(3,000개→2,100개) 제거했고, 제조망-개발망 분리 운영 기간 동안 내부정보 유출사고 0건을 유지했으며, Critical 취약점은 2주 내 100% 조치 체계를 만들었습니다.\n[스택] Linux, Windows Server, Shell Script, Firewall",
+      "icon": "🎓",
+      "title": "한국항공우주산업(주)",
+      "description": "Linux 서버 운영, 방화벽 정책 관리, 자산/패치 관리, OA 시스템 운영",
       "period": "2017.02 ~ 2018.10",
-      "stats": [
-        "서버운영",
-        "방화벽",
-        "망분리"
-      ],
+      "stats": [],
       "highlight": false
     }
   ],
   "resumeEn": [
     {
       "icon": "🏦",
-      "title": "ITCEN CTS Co., Ltd.",
-      "description": "Nextrade security operations managed service and support for the Information Security Team\n• Enhanced Splunk-based security log analysis and real-time threat monitoring\n• Optimized FortiGate firewall policies and automated access-control operations\n• Strengthened infrastructure stability through vulnerability assessments and monthly security reporting\n• Tech: Splunk, FortiGate, Python, Linux",
-      "period": "2025.03 ~ 2026.02",
-      "stats": [
-        "Security Operations",
-        "Compliance",
-        "DR"
-      ],
+      "title": "넥스트레이드(주)",
+      "description": "FortiGate HA 설계/구축, 망분리 네트워크 아키텍처 수립, Ansible 기반 보안장비 설정 표준화, ISMS-P 인증 대응, Splunk ES 보안 모니터링 운영, n8n 기반 보안 자동화 구축, 보안 이벤트 대응",
+      "period": "2024.03 ~ 2026.02",
+      "stats": [],
       "highlight": true,
       "completePdfUrl": "https://raw.githubusercontent.com/jclee-homelab/resume/master/packages/data/resumes/technical/nextrade/exports/Nextrade_Full_Documentation.pdf"
     },
     {
       "icon": "🏗️",
-      "title": "Gaonnuri Information Systems Co., Ltd.",
-      "description": "Designed and built the security infrastructure for the Nextrade trading execution system\n• Provided technical support for Financial Services Commission authorization review and established the security architecture\n• Designed network segmentation and access-control policies to meet security compliance requirements\n• Implemented FortiGate HA high-availability architecture and disaster recovery processes\n• Tech: FortiGate, FortiManager, Linux, VMware",
-      "period": "2024.03 ~ 2025.02",
-      "stats": [
-        "Architecture",
-        "Network Segmentation",
-        "Regulatory Approval"
-      ],
-      "highlight": false
-    },
-    {
-      "icon": "📈",
       "title": "Quant Investment Management Co., Ltd.",
       "description": "Operated cloud infrastructure security for an AI asset management platform\n• Managed and improved AWS security controls including IAM, Security Groups, and WAF\n• Performed recurring vulnerability assessments and supported robo-advisor testbed security reviews\n• Built and operated Prometheus/Grafana security metrics dashboards\n• Tech: AWS, Terraform, Prometheus, Grafana",
       "period": "2022.08 ~ 2024.02",
@@ -130,31 +78,15 @@
       "highlight": false
     },
     {
-      "icon": "☁️",
-      "title": "FunNC Co., Ltd.",
-      "description": "Led cloud migration and security hardening for an e-commerce service\n• Designed migration from on-premises environments to AWS VPC-based cloud architecture\n• Established EKS cluster security settings and container vulnerability assessment processes\n• Automated security review steps in GitLab CI/CD pipelines\n• Tech: AWS, Kubernetes, Docker, GitLab CI",
-      "period": "2022.05 ~ 2022.07",
-      "stats": [
-        "AWS",
-        "K8s",
-        "DevOps"
-      ],
-      "highlight": false
-    },
-    {
-      "icon": "🎓",
-      "title": "Jointree Co., Ltd.",
-      "description": "Advanced security infrastructure for the next-generation information system at Kookmin University\n• Strengthened internal network security through VMware NSX-T-based micro-segmentation design\n• Built integrated security solutions and policies including firewall, NAC, and DLP\n• Supported network security architecture for hybrid cloud transition\n• Tech: VMware NSX-T, Network Security, NAC",
+      "icon": "📈",
+      "title": "국민대학교",
+      "description": "VMware NSX-T 마이크로세그멘테이션, 내부망 보안 정책 관리, 네트워크 장비 운영",
       "period": "2021.09 ~ 2022.04",
-      "stats": [
-        "NSX-T",
-        "Security Integration",
-        "Systems Integration"
-      ],
+      "stats": [],
       "highlight": false
     },
     {
-      "icon": "📞",
+      "icon": "☁️",
       "title": "Metanet M Platform Co., Ltd.",
       "description": "Operated and automated large-scale contact center IT infrastructure\n• Rapidly built and operated VPN infrastructure for large-scale remote work during COVID-19\n• Improved operational efficiency by automating server provisioning and repetitive tasks with Ansible\n• Built real-time monitoring and incident response using Zabbix and PRTG\n• Tech: Ansible, VPN, Zabbix, Python",
       "period": "2019.12 ~ 2021.08",
@@ -166,15 +98,11 @@
       "highlight": false
     },
     {
-      "icon": "✈️",
-      "title": "MT Data Co., Ltd.",
-      "description": "Provided on-site IT infrastructure operations support in the defense industry\n• Performed recurring maintenance and checks for server and client infrastructure in an isolated network\n• Managed infrastructure assets and applied security patches in compliance with internal security policies\n• Maintained stable working environments through technical support and incident response\n• Tech: Windows Server, Linux, Helpdesk",
+      "icon": "🎓",
+      "title": "한국항공우주산업(주)",
+      "description": "Linux 서버 운영, 방화벽 정책 관리, 자산/패치 관리, OA 시스템 운영",
       "period": "2017.02 ~ 2018.10",
-      "stats": [
-        "Server Operations",
-        "Firewall",
-        "Network Segmentation"
-      ],
+      "stats": [],
       "highlight": false
     }
   ],
@@ -582,36 +510,6 @@
       "credentialId": null,
       "credentialUrl": null,
       "status": "active"
-    },
-    {
-      "name": "CISSP",
-      "issuer": "ISC²",
-      "date": null,
-      "expirationDate": null,
-      "credentialId": null,
-      "credentialUrl": null,
-      "status": "준비중",
-      "targetDate": "2026 Q2"
-    },
-    {
-      "name": "CISM",
-      "issuer": "ISACA",
-      "date": null,
-      "expirationDate": null,
-      "credentialId": null,
-      "credentialUrl": null,
-      "status": "준비중",
-      "targetDate": "2026 Q2"
-    },
-    {
-      "name": "AWS Solutions Architect",
-      "issuer": "Amazon Web Services",
-      "date": null,
-      "expirationDate": null,
-      "credentialId": null,
-      "credentialUrl": null,
-      "status": "준비중",
-      "targetDate": "2026 Q2"
     }
   ],
   "skills": {
