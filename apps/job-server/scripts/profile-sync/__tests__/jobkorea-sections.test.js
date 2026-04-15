@@ -69,7 +69,7 @@ describe('mapCareersToFormFields', () => {
     assert.strictEqual(byName.get('Career[c1].C_Part'), '정보보안팀');
     assert.strictEqual(byName.get('Career[c1].CSYM'), '202503');
     assert.strictEqual(byName.get('Career[c1].CEYM'), '202602');
-    assert.strictEqual(byName.get('Career[c1].M_MainField'), '1000238');
+    assert.strictEqual(byName.get('Career[c1].M_MainField'), '');
     assert.strictEqual(byName.get('Career.index'), 'c1');
   });
 
@@ -107,8 +107,8 @@ describe('mapCareersToFormFields', () => {
     const fields = mapCareersToFormFields({ careers: [{ ...baseCareer, role: '알수없음직무' }] });
     const byName = toMap(fields);
 
-    assert.strictEqual(byName.get('Career[c1].M_MainField'), '1000233');
-    assert.strictEqual(byName.get('Career[c1].M_MainJob'), '1000233');
+    assert.strictEqual(byName.get('Career[c1].M_MainField'), '');
+    assert.strictEqual(byName.get('Career[c1].M_MainJob'), '');
   });
 });
 

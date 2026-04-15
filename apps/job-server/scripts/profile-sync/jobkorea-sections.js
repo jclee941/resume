@@ -113,9 +113,9 @@ export function mapCareersToFormFields(ssot, indices) {
     pushField(fields, `Career[${key}].RetireSt`, isCurrent ? 1 : 2);
     pushField(fields, `Career[${key}].M_MainJob_Jikwi`, career?.role || '');
     pushField(fields, `Career[${key}].Job_Type_Code`, '');
-    pushField(fields, `Career[${key}].M_MainField`, code);
-    pushField(fields, `Career[${key}].M_MainJob`, code);
-    pushField(fields, `Career[${key}].Job_Field_Direct`, '');
+    pushField(fields, `Career[${key}].M_MainField`, '');  // Empty: prevents code number display in resume
+    pushField(fields, `Career[${key}].M_MainJob`, '');     // Empty: same reason
+    pushField(fields, `Career[${key}].Job_Field_Direct`, '');  // Must be empty, not code
     pushField(fields, `Career[${key}].M_MainPay_User`, '');
     pushField(fields, `Career[${key}].Prfm_Prt`, String(career?.description || '').slice(0, 500));
     pushField(fields, `Career[${key}].CNameHold`, '0');
