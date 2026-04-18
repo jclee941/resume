@@ -150,9 +150,9 @@ async function resolveResumeKey(ctx, api, options = {}) {
   const defaultResume = resumeList.find((r) => r.is_default) || resumeList[0];
   // The resume_key for applications is NOT wanted_resume_id (numeric).
   // It's the UUID-style key visible in the UI radio input id attribute.
-  // Chaos API returns it as 'id' or can be derived from the resume detail.
+  // Chaos API v1 returns it in the 'key' field (e.g. "AwEACwcAAgJIAgcDCwUAB01F").
   const resumeKey =
-    defaultResume?.id ?? defaultResume?.resume_id ?? defaultResume?.uuid ?? null;
+    defaultResume?.key ?? defaultResume?.id ?? defaultResume?.resume_id ?? defaultResume?.uuid ?? null;
 
   if (!resumeKey) {
     throw new ValidationError('Unable to resolve resume_key from Wanted profile', {
@@ -163,16 +163,18 @@ async function resolveResumeKey(ctx, api, options = {}) {
   return resumeKey;
 }
 
-function buildApplicationPayload(job, options, resumeKey) {
+function buildApplicationPayload(job, options, resumeKey, profileData = {}) {
   // Reverse-engineered from Wanted web client (2026-04-15)
   // POST /api/chaos/applications/v1
   // status: 'write' = draft, 'apply' = submitted
   const session = SessionManager.load('wanted') || {};
+  // Strip platform prefix from job ID (e.g. 'wanted_301477' -> 301477)
+  const numericJobId = Number(String(job.id).replace(/^wanted_/, ''));
   return {
     email: session.email || options.email || '',
-    username: options.username || session.username || '',
-    mobile: options.mobile || session.mobile || '',
-    job_id: job.id,
+    username: profileData.name || options.username || session.username || '',
+    mobile: profileData.mobile || options.mobile || session.mobile || '',
+    job_id: numericJobId,
     resume_keys: resumeKey ? [resumeKey] : [],
     nationality_code: options.nationality_code || 'KR',
     visa: options.visa || null,
@@ -300,16 +302,6 @@ export async function applyToJob(job, options = {}) {
     };
   }
 
-  const statusResult = await getApplicationStatus(job.id);
-  if (statusResult.success && statusResult.applied) {
-    return {
-      success: false,
-      applicationId: statusResult.applicationId,
-      error: 'Already applied to this Wanted job',
-      retryable: false,
-    };
-  }
-
   let resumeKey;
   try {
     resumeKey = await resolveResumeKey(this, sessionValidation.api, options);
@@ -323,50 +315,68 @@ export async function applyToJob(job, options = {}) {
     };
   }
 
-  const payload = buildApplicationPayload(job, options, resumeKey);
+  // Fetch profile data for username/mobile fields
+  let profileData = {};
+  try {
+    profileData = await sessionValidation.api.getProfile();
+  } catch {
+    // Profile fetch is best-effort; proceed with session data
+  }
+
+  const payload = buildApplicationPayload(job, options, resumeKey, profileData);
   const retryReporter = createRetryReporter(this, job);
 
   try {
     await enforceRateLimit(this, options);
 
-    const response = await retryService.execute(
-      () =>
-        sessionValidation.api.chaosRequest(WANTED_APPLICATION_ENDPOINT, {
-          method: 'POST',
-          body: payload,
-        }),
-      {
-        serviceName: `${WANTED_PLATFORM}-applications-v1`,
-        retry: {
-          maxRetries: 3,
-          baseDelay: 1000,
-          maxDelay: 30000,
-          retryableErrors: [429, 500, 502, 503, 504],
-        },
-        circuit: {
-          failureThreshold: 5,
-          resetTimeout: 60000,
-          halfOpenMaxCalls: 3,
-        },
-      }
-    );
+    // Browser-based submission: the Chaos API requires HttpOnly cookies
+    // that can only be sent from a browser context (not via HttpClient headers).
+    // Use page.evaluate(fetch(...)) so the browser includes all cookies automatically.
+    if (!this.page) {
+      throw new AuthError('Browser not initialized for Wanted application', {
+        platform: WANTED_PLATFORM,
+      });
+    }
 
-    const applicationId = extractApplicationId(response);
+    const numericJobId = Number(String(job.id).replace(/^wanted_/, ''));
+    const jobUrl = job.sourceUrl || `https://www.wanted.co.kr/wd/${numericJobId}`;
+
+    // Navigate to job page to set proper Referer and origin context
+    await this.page.goto(jobUrl, { waitUntil: 'domcontentloaded', timeout: 15000 });
+    await sleep(1500);
+
+    const response = await this.page.evaluate(async (p) => {
+      const resp = await fetch('/api/chaos/applications/v1', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(p),
+      });
+      const body = await resp.json().catch(() => ({}));
+      return { status: resp.status, ok: resp.ok, body };
+    }, payload);
+
+    if (!response.ok) {
+      const errorMsg = response.body?.message || `API request failed: ${response.status}`;
+      throw new ValidationError(errorMsg, {
+        platform: WANTED_PLATFORM,
+        status: response.status,
+      });
+    }
+
+    const applicationId = extractApplicationId(response.body);
     const application = this.appManager.addApplication(job, {
       resumeKey,
-      notes: 'Auto-applied via Wanted Chaos API (applications v1, status=apply)',
+      notes: 'Auto-applied via Wanted browser submission (Chaos API v1)',
     });
     this.appManager.updateStatus(
       application.id,
       APPLICATION_STATUS.APPLIED,
-      'Auto-applied via Wanted API'
+      'Auto-applied via Wanted browser'
     );
 
     retryReporter('execution_success', {
-      metrics: {
-        successRate:
-          retryService.getStats()?.services?.[`${WANTED_PLATFORM}-applications-v1`]?.successRate,
-      },
+      metrics: { successRate: 1 },
     });
 
     notifications
@@ -381,20 +391,14 @@ export async function applyToJob(job, options = {}) {
     };
   } catch (error) {
     const normalizedError = classifyWantedError(error);
-    const isCircuitOpen = /circuit is open/i.test(error?.message ?? '');
-    const retryable = isCircuitOpen
-      ? false
-      : isRetryableWantedError(error) || Boolean(normalizedError.retryable);
+    const retryable = isRetryableWantedError(error) || Boolean(normalizedError.retryable);
 
     retryReporter('execution_failed', {
-      metrics: {
-        successRate:
-          retryService.getStats()?.services?.[`${WANTED_PLATFORM}-applications-v2`]?.successRate,
-      },
+      metrics: { successRate: 0 },
       error: normalizedError,
     });
 
-    this.logger?.error?.('[wanted] API apply failed', {
+    this.logger?.error?.('[wanted] browser apply failed', {
       jobId: job.id,
       company: job.company,
       title: job.title,

@@ -119,42 +119,114 @@ function buildTemplateFallback(resumeData, jobPosting, options = {}) {
   const position = jobPosting.position || jobPosting.title || 'this role';
   const company = jobPosting.company?.name || jobPosting.company || 'your company';
   const name = resumeData.personal?.name || 'Candidate';
+  const portfolio = resumeData.personal?.portfolio || '';
+  const role = detectRole(position);
+
+  // Collect quantified achievements from career projects
+  const achievements = [];
+  for (const career of resumeData.careers || []) {
+    for (const proj of career.projects || []) {
+      for (const ach of proj.achievements || []) {
+        achievements.push(ach);
+      }
+    }
+  }
+
+  // Pick top 3-5 achievements relevant to the job
+  const jobText = buildJobText(jobPosting);
+  const jobTokens = new Set(toTokens(jobText));
+  const scoredAch = achievements.map(a => ({
+    text: a,
+    score: toTokens(a).filter(t => jobTokens.has(t)).length,
+  })).sort((a, b) => b.score - a.score);
+  const topAchievements = scoredAch.slice(0, 4).map(a => a.text);
 
   if (language === 'ko') {
-    return [
-      '채용 담당자님께,',
-      '',
-      `${company}의 ${position} 포지션에 지원하고자 합니다.`,
-      `${years || 0}년의 ${domain} 경험을 바탕으로 ${
-        matchedSkills.length > 0 ? matchedSkills.slice(0, 3).join(', ') : '실무 중심 기술'
-      } 역량을 보유하고 있습니다.`,
-      '',
-      '주요 강점:',
-      `${matchedSkills.length > 0 ? matchedSkills.map((skill) => `- ${skill}`).join('\n') : '- 직무 연관 경험 다수 보유'}`,
-      '',
-      '귀사의 목표 달성에 기여할 수 있는 방법을 면접에서 자세히 말씀드리고 싶습니다.',
-      '',
-      `감사합니다.\n${name}`,
-    ].join('\n');
+    return buildKoreanCoverLetter(name, company, position, years, domain, role, matchedSkills, topAchievements, portfolio);
   }
+
+  return buildEnglishCoverLetter(name, company, position, years, domain, role, matchedSkills, topAchievements, portfolio);
+}
+
+function detectRole(position) {
+  const p = (position || '').toLowerCase();
+  if (p.includes('devsecops') || (p.includes('security') && p.includes('devops'))) return 'devsecops';
+  if (p.includes('sre') || p.includes('reliability')) return 'sre';
+  if (p.includes('cloud') && p.includes('security')) return 'cloud-security';
+  if (p.includes('security') || p.includes('보안')) return 'security';
+  if (p.includes('devops')) return 'devops';
+  if (p.includes('infra') || p.includes('인프라')) return 'infra';
+  return 'general';
+}
+
+function getRoleIntro(role) {
+  const intros = {
+    devsecops: '보안과 운영을 코드로 통합하는 DevSecOps 엔지니어로서',
+    sre: '서비스 안정성과 가용성을 최우선으로 설계하는 SRE 엔지니어로서',
+    'cloud-security': '클라우드 환경의 보안 아키텍처를 설계하고 자동화하는 엔지니어로서',
+    security: '보안 인프라의 설계부터 운영 자동화까지 담당하는 보안 엔지니어로서',
+    devops: '인프라 자동화와 CI/CD 파이프라인을 설계·운영하는 DevOps 엔지니어로서',
+    infra: '대규모 인프라 설계와 자동화를 전문으로 하는 인프라 엔지니어로서',
+    general: '보안 인프라 자동화 전문 엔지니어로서',
+  };
+  return intros[role] || intros.general;
+}
+
+function buildKoreanCoverLetter(name, company, position, years, domain, role, matchedSkills, achievements, portfolio) {
+  const roleIntro = getRoleIntro(role);
+  const skillsText = matchedSkills.length > 0
+    ? matchedSkills.slice(0, 5).join(', ')
+    : domain;
+  const achSection = achievements.length > 0
+    ? '\n[주요 성과]\n' + achievements.map(a => '• ' + a).join('\n')
+    : '';
+  const portfolioLine = portfolio ? '\n포트폴리오: ' + portfolio : '';
+
+  return [
+    '채용 담당자님께,',
+    '',
+    `${company}의 ${position} 포지션에 지원합니다.`,
+    '',
+    `${roleIntro}, ${years || 9}년간 금융·공공 환경에서 ${skillsText} 분야의 실무 경험을 쌓아왔습니다.`,
+    '',
+    `특히 증권 매매체결시스템의 보안 아키텍처를 설계하여 금융위원회 본인가 심사를 통과시킨 경험이 있으며, SIEM 기반 보안 관제 체계 구축과 대규모 서버 운영 자동화를 직접 수행했습니다.`,
+    achSection,
+    '',
+    `${company}의 ${position} 직무에서 그간의 경험과 기술력을 바탕으로 팀의 보안 역량 강화와 운영 효율화에 기여하고자 합니다.`,
+    '',
+    `면접 기회를 주시면 구체적인 기여 방안을 말씀드리겠습니다.`,
+    portfolioLine,
+    '',
+    `감사합니다.`,
+    name,
+  ].filter(Boolean).join('\n');
+}
+
+  function buildEnglishCoverLetter(name, company, position, years, domain, role, matchedSkills, achievements, portfolio) {
+  const skillsText = matchedSkills.length > 0
+    ? matchedSkills.slice(0, 5).join(', ')
+    : domain;
+  const achSection = achievements.length > 0
+    ? '\nKey Achievements:\n' + achievements.map(a => '• ' + a).join('\n')
+    : '';
+  const portfolioLine = portfolio ? '\nPortfolio: ' + portfolio : '';
 
   return [
     'Dear Hiring Manager,',
     '',
-    `I am writing to express my interest in the ${position} role at ${company}.`,
-    `With ${years || 0} years of experience in ${domain}, I bring expertise in ${
-      matchedSkills.length > 0
-        ? matchedSkills.slice(0, 3).join(', ')
-        : 'infrastructure and automation'
-    }.`,
+    `I am writing to apply for the ${position} position at ${company}.`,
     '',
-    'Key qualifications:',
-    `${matchedSkills.length > 0 ? matchedSkills.map((skill) => `- ${skill}`).join('\n') : '- Broad hands-on experience aligned with this role'}`,
+    `With ${years || 9} years of hands-on experience in ${skillsText}, I have designed and operated security infrastructure across financial and public-sector environments.`,
     '',
-    'I look forward to discussing how my background aligns with your needs.',
+    `I designed FortiGate HA architecture achieving 99.99% availability for a securities trading system, which passed the Financial Services Commission authorization review. I also built SIEM monitoring with 32 detection rules and automated 500+ server configurations using Ansible/Python.`,
+    achSection,
     '',
-    `Best regards,\n${name}`,
-  ].join('\n');
+    `I am confident that my experience in ${skillsText} would enable me to make meaningful contributions to your team.`,
+    portfolioLine,
+    '',
+    `Best regards,`,
+    name,
+  ].filter(Boolean).join('\n');
 }
 
 function buildAIPrompt(resumeData, jobPosting, options = {}) {
