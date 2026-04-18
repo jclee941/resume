@@ -5,7 +5,8 @@
     "email": "qws941@kakao.com",
     "phone": "010-5757-9592",
     "address": "Siheung-si, Gyeonggi-do, South Korea",
-    "github": "https://github.com/jclee941"
+    "github": "https://github.com/jclee941",
+    "portfolio": "https://resume.jclee.me"
   },
   "education": {
     "school": "Hanyang Cyber University",
@@ -34,11 +35,24 @@
     "experienceStart": "2017.02",
     "grade": "Senior",
     "expertise": [
-      "Observability",
+      "DevSecOps",
+      "SRE",
+      "SIEM/SOAR",
       "Security Infrastructure",
-      "Automation"
+      "IaC/Automation",
+      "Observability",
+      "Cloud Security",
+      "Compliance(ISMS-P)"
     ],
-    "profileStatement": "Security infrastructure engineer with 9 years of experience spanning build and operations automation in finance and public sectors. Designed Splunk ES-based security monitoring, built FortiGate HA, network segmentation, and VPN/NAC architectures, and automated repetitive tasks with Ansible, Python, and n8n. Currently focused on combining Observability and DevSecOps to own the full lifecycle from design to operations."
+    "profileStatement": "DevSecOps/SRE engineer with 9 years of experience designing and automating security infrastructure in financial and public-sector environments. Designed FortiGate HA 99.99% availability architecture for a securities trading system, passing the Financial Services Commission authorization review. Built 32 SIEM detection rules on Splunk ES with real-time 30-second alert pipeline. Automated 500+ server configurations with Ansible/Python and managed AWS infrastructure via Terraform IaC. Designed and operated Prometheus/Grafana observability platform and reduced security operations workload by 50% through n8n workflow automation.",
+    "coreCompetencies": [
+      "Financial Security Architecture (FortiGate HA, FSC Authorization)",
+      "SIEM/SOAR Operations (Splunk ES, 32 Detection Rules)",
+      "IaC Infrastructure Management (Terraform, Ansible)",
+      "Observability Platform (Prometheus, Grafana, ELK)",
+      "DevSecOps Pipeline (CI/CD Security Automation)",
+      "Security Operations Automation (Python, n8n, API Integration)"
+    ]
   },
   "current": {
     "status": "Open to work",
@@ -674,7 +688,21 @@
       }
     }
   ],
-  "ossContributions": [],
+  "ossContributions": [
+    {
+      "name": "resume-portfolio",
+      "url": "https://github.com/jclee941/resume",
+      "description": "Resume automation monorepo — Cloudflare Worker portfolio, auto-apply pipeline (Wanted/JobKorea), AI cover letter generation, n8n workflow automation",
+      "techStack": [
+        "TypeScript",
+        "Cloudflare Workers",
+        "Playwright",
+        "n8n",
+        "Elasticsearch"
+      ],
+      "role": "Solo developer"
+    }
+  ],
   "hero": {
     "badge": "Security Infrastructure Engineer · 9 Years",
     "title": "Jaecheol Lee",

@@ -91,6 +91,11 @@ export async function initBrowser() {
     }
   }
 
+  // Wanted: set OneID token via CDP as HttpOnly cookie.
+  // The Chaos API applications endpoint requires HttpOnly cookies that
+  // page.setCookie() cannot set. Use CDP Network.setCookie instead.
+  await mintAndSetWantedToken.call(this);
+
   return this;
 }
 
@@ -114,5 +119,76 @@ export async function closeBrowser() {
     await this.browser.close();
     this.browser = null;
     this.page = null;
+  }
+}
+
+/**
+ * Mint a fresh OneID token and inject it via CDP as an HttpOnly cookie.
+ * This is required because the Wanted Chaos API /applications/v1 endpoint
+ * rejects requests where WWW_ONEID_ACCESS_TOKEN is not set as HttpOnly.
+ */
+async function mintAndSetWantedToken() {
+  const email = process.env.WANTED_EMAIL;
+  const password = process.env.WANTED_PASSWORD;
+  const clientId = process.env.WANTED_ONEID_CLIENT_ID;
+
+  if (!email || !password || !clientId) {
+    this.logger.info('⚠️ wanted: OneID credentials not available for CDP token injection');
+    return;
+  }
+
+  try {
+    const response = await fetch('https://id-api.wanted.co.kr/v1/auth/token', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Origin: 'https://id.wanted.co.kr',
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+        'oneid-agent': 'web',
+      },
+      body: JSON.stringify({
+        grant_type: 'password',
+        email,
+        password,
+        client_id: clientId,
+        beforeUrl: 'https://www.wanted.co.kr/',
+        stay_signed_in: true,
+      }),
+    });
+
+    if (!response.ok) {
+      this.logger.info('⚠️ wanted: OneID token mint failed (' + response.status + ')');
+      return;
+    }
+
+    const payload = await response.json();
+    const token = payload?.token;
+    if (!token) {
+      this.logger.info('⚠️ wanted: OneID response missing token');
+      return;
+    }
+
+    const cdp = await this.page.createCDPSession();
+    await cdp.send('Network.setCookie', {
+      name: 'WWW_ONEID_ACCESS_TOKEN',
+      value: token,
+      domain: '.wanted.co.kr',
+      path: '/',
+      httpOnly: true,
+      secure: true,
+      sameSite: 'Lax',
+    });
+    await cdp.detach();
+
+    // Navigate to wanted.co.kr to activate the cookie and build full cookie jar
+    await this.page.goto('https://www.wanted.co.kr/', {
+      waitUntil: 'domcontentloaded',
+      timeout: 15000,
+    });
+
+    this.logger.info('✅ wanted: OneID token set via CDP (HttpOnly)');
+  } catch (e) {
+    this.logger.info('⚠️ wanted: CDP token injection failed - ' + e.message);
   }
 }
