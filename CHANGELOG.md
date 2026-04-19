@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.5.4] - 2026-04-19
+
+### Changes
+- refactor(pipeline): split job-search-apply-pipeline into N modules (cf46f45)
+
+
 ## [v1.5.3] - 2026-04-19
 
 ### Changes
