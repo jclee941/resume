@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.3.1] - 2026-04-19
+
+### Changes
+- chore(portfolio): sync enriched resume data to portfolio build (f96b26a)
+
+
 ## [v1.3.0] - 2026-04-19
 
 ### Changes
