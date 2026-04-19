@@ -37,7 +37,7 @@ export const PLATFORMS = {
       return {
         name: ssot.personal.name,
         // Wanted API limit: 150 chars
-        introduction: intro.length > 150 ? intro.slice(0, 147) + '...' : intro,
+        introduction: intro.length > 150 ? `${intro.slice(0, 147)  }...` : intro,
       };
     },  // end mapData
   },  // end wanted
