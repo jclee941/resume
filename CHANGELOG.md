@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.5.2] - 2026-04-19
+
+### Changes
+- test(profile-sync): add portfolio field mapping unit tests (133c230)
+
+
 ## [v1.5.1] - 2026-04-19
 
 ### Changes
