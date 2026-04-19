@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.3.0] - 2026-04-19
+
+### Changes
+- feat(auto-apply): add renew-wanted-session script + pipeline headless fix (d09343f)
+
+
 ## [v1.2.1] - 2026-04-19
 
 ### Changes
