@@ -12,7 +12,8 @@ export async function loadSession(service, normalized) {
   }
 
   try {
-    const { SessionManager } = await import('./index.js');
+    const { default: SessionManager } =
+      await import('../../shared/services/session/session-manager.js');
     return SessionManager.load(normalized) ?? null;
   } catch (error) {
     service.logger.error('[SessionBrokerService] SessionManager load failed:', error.message);
@@ -32,7 +33,8 @@ export async function saveSession(service, normalized, session) {
   }
 
   try {
-    const { SessionManager } = await import('./index.js');
+    const { default: SessionManager } =
+      await import('../../shared/services/session/session-manager.js');
     SessionManager.save(normalized, record);
   } catch (error) {
     service.logger.error('[SessionBrokerService] SessionManager save failed:', error.message);
