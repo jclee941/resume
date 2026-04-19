@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.5.13] - 2026-04-19
+
+### Changes
+- refactor(shared): split lazy-loader into N modules (36edaf3)
+
+
 ## [v1.5.12] - 2026-04-19
 
 ### Changes
