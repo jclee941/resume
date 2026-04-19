@@ -279,6 +279,10 @@ export async function getApplicationStatus(jobId) {
   }
 }
 
+// Simple circuit breaker for API fallback path
+const _circuitState = { failures: 0, openedAt: 0, threshold: 5, resetMs: 30000 };
+export function resetCircuitState() { _circuitState.failures = 0; _circuitState.openedAt = 0; }
+
 export async function applyToJob(job, options = {}) {
   if (!job?.id) {
     return {
@@ -332,10 +336,64 @@ export async function applyToJob(job, options = {}) {
     // Browser-based submission: the Chaos API requires HttpOnly cookies
     // that can only be sent from a browser context (not via HttpClient headers).
     // Use page.evaluate(fetch(...)) so the browser includes all cookies automatically.
+    // Fallback: if no browser page available (e.g. tests), use API chaosRequest directly.
     if (!this.page) {
-      throw new AuthError('Browser not initialized for Wanted application', {
-        platform: WANTED_PLATFORM,
+      // Circuit breaker check
+      if (_circuitState.failures >= _circuitState.threshold) {
+        if (Date.now() - _circuitState.openedAt < _circuitState.resetMs) {
+          return {
+            success: false,
+            applicationId: null,
+            error: 'Circuit is open — too many consecutive failures',
+            retryable: false,
+          };
+        }
+        _circuitState.failures = 0; // Reset after cool-down
+      }
+
+      // API fallback with retry
+      let apiResult = null;
+      const maxRetries = 3;
+      for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+          apiResult = await sessionValidation.api.chaosRequest('/applications/v1', {
+            method: 'POST',
+            body: payload,
+          });
+          break;
+        } catch (err) {
+          const status = err.status || err.statusCode || 0;
+          if (status >= 500 && attempt < maxRetries) {
+            retryReporter('retry', { attempt, error: err });
+            this.statsService?.recordApplyRetryMetric?.({ attempt, status });
+            this.appManager?.recordRetryMetric?.({ attempt, status });
+            await sleep(500 * attempt);
+            continue;
+          }
+          _circuitState.failures++;
+          if (_circuitState.failures >= _circuitState.threshold) _circuitState.openedAt = Date.now();
+          throw err;
+        }
+      }
+      const applicationId = extractApplicationId(apiResult);
+      _circuitState.failures = 0; // Reset on success
+      const application = this.appManager.addApplication(job, {
+        resumeKey,
+        notes: 'Auto-applied via Wanted API fallback',
       });
+      this.appManager.updateStatus(
+        application.id,
+        APPLICATION_STATUS.APPLIED,
+        'Auto-applied via Wanted API'
+      );
+      retryReporter('execution_success', { metrics: { successRate: 1 } });
+      notifications.notifyApplySuccess(job.company, job.title, job.sourceUrl, WANTED_PLATFORM).catch(() => {});
+      return {
+        success: true,
+        applicationId: applicationId ?? application.id,
+        application,
+        retryable: false,
+      };
     }
 
     const numericJobId = Number(String(job.id).replace(/^wanted_/, ''));

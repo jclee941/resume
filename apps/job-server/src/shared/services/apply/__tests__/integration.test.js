@@ -7,7 +7,7 @@ import { ApprovalWorkflowManager } from '../approval-manager.js';
 import { ApplicationTrackerService } from '../application-tracker.js';
 import { CoverLetterService } from '../cover-letter-service.js';
 import { TelegramNotificationAdapter } from '../../notifications/telegram-adapter.js';
-import { applyToJob } from '../../../../auto-apply/strategies/wanted-strategy.js';
+import { applyToJob, resetCircuitState } from '../../../../auto-apply/strategies/wanted-strategy.js';
 import SessionManager from '../../session/session-manager.js';
 import { notifications } from '../../notifications/index.js';
 import { ApplicationRepository } from '../../../repositories/application-repository.js';
@@ -146,6 +146,7 @@ describe('Apply service integration', () => {
     repository = new ApplicationRepository(d1Client);
     logger = createLogger();
   });
+    resetCircuitState();
 
   it('1) integrates JobFilter + ApprovalWorkflowManager for manual review flow', async () => {
     const notificationAdapter = {
@@ -405,7 +406,7 @@ describe('Apply service integration', () => {
       getApplications: async () => ({ applications: [] }),
       chaosRequest: async (path) => {
         if (path && path.startsWith('/resumes/v1')) {
-          return { data: [{ id: 'resume-1', is_default: true }] };
+          return { data: [{ key: 'resume-1', id: 'resume-1', is_default: true }] };
         }
         return { application_id: 'wanted-application-99' };
       },
@@ -524,7 +525,7 @@ describe('Apply service integration', () => {
       chaosRequest: async (path) => {
         // Resume list requests always succeed
         if (path && path.startsWith('/resumes/v1')) {
-          return { data: [{ id: 'resume-1', is_default: true }] };
+          return { data: [{ key: 'resume-1', id: 'resume-1', is_default: true }] };
         }
         // Application requests follow retry/circuit logic
         chaosRequestCalls += 1;
