@@ -333,6 +333,6 @@ export function buildJobKoreaFormData(ssot, sectionIndices = {}) {
     ...mapMilitaryToFormFields(ssot),
     ...mapAwardToFormFields(ssot, sectionIndices.award),
     ...mapHopeJobToFormFields(ssot),
-    ...mapPortfolioToFormFields(ssot, sectionIndices.portfolio),
+    ...mapPortfolioToFormFields(ssot, sectionIndices.portfolioFileIdx),
   ];
 }
