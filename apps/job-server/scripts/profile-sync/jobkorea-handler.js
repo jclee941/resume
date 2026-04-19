@@ -116,6 +116,7 @@ export default class JobKoreaHandler {
       /Award\[.*\]\.Award_Inst_Name$/,
       /Award\[.*\]\.Award_Year$/,
       /HopeJob\./,
+      /Portfolio\[.*\]\.Prtf_Url$/,
     ];
 
     const changes = [];
@@ -248,6 +249,7 @@ export default class JobKoreaHandler {
       { prefix: 'Career', needed: careers.length },
       { prefix: 'License', needed: validCerts.length },
       { prefix: 'Award', needed: awardItems.length },
+      { prefix: 'Portfolio', needed: ssot?.personal?.portfolio ? 1 : 0 },
     ];
 
     // Track existing indices per section BEFORE "추가" clicks.
@@ -286,7 +288,7 @@ export default class JobKoreaHandler {
         const prevTotal = (await this.readSectionIndices(page, prefix)).length;
 
         const clicked = await page.evaluate((pfx) => {
-          const sectionLabels = { Career: '경력', License: '자격증', Award: '수상' };
+          const sectionLabels = { Career: '경력', License: '자격증', Award: '수상', Portfolio: '포트폴리오' };
           const label = sectionLabels[pfx];
           if (!label) return false;
 
@@ -356,6 +358,7 @@ export default class JobKoreaHandler {
     const allLicenseIndices = await this.readSectionIndices(page, 'License');
     const allAwardIndices = await this.readSectionIndices(page, 'Award');
     const schoolIndices = await this.readSectionIndices(page, 'UnivSchool');
+    const allPortfolioIndices = await this.readSectionIndices(page, 'Portfolio');
 
     // Filter out existing entries — only "추가"-created entries persist.
     // Existing entries (from previous saves or templates) are silently dropped by the server.
@@ -369,6 +372,7 @@ export default class JobKoreaHandler {
       career: filterExisting(allCareerIndices, 'Career'),
       license: filterExisting(allLicenseIndices, 'License'),
       award: filterExisting(allAwardIndices, 'Award'),
+      portfolio: filterExisting(allPortfolioIndices, 'Portfolio'),
       school: schoolIndices[0] || 'c1',
     };
   }
@@ -419,6 +423,7 @@ export default class JobKoreaHandler {
           'InputStat_CareerInputStat',
           'InputStat_LicenseInputStat',
           'InputStat_AwardInputStat',
+          'InputStat_PortfolioInputStat',
         ];
         for (const syncId of requiredSections) {
           const btn = $(`button[data-sync_id="${syncId}"]`);
@@ -472,6 +477,7 @@ export default class JobKoreaHandler {
               { prefix: 'Career', keep: new Set(indices.career) },
               { prefix: 'License', keep: new Set(indices.license) },
               { prefix: 'Award', keep: new Set(indices.award) },
+              { prefix: 'Portfolio', keep: new Set(indices.portfolio) },
             ];
             for (const { prefix, keep } of sections) {
               document.querySelectorAll(`[name^="${prefix}["]`).forEach((el) => {
@@ -484,6 +490,7 @@ export default class JobKoreaHandler {
             career: sectionIndices.career,
             license: sectionIndices.license,
             award: sectionIndices.award,
+            portfolio: sectionIndices.portfolio,
           }
         );
 

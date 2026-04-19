@@ -257,6 +257,20 @@ export function mapAwardToFormFields(ssot, indices) {
   return fields;
 }
 
+export function mapPortfolioToFormFields(ssot, indices) {
+  const url = ssot?.personal?.portfolio || '';
+  if (!url) return [];
+
+  const key = indices?.[0] || 'c1';
+  const fields = [];
+  pushField(fields, `Portfolio[${key}].Index_Name`, key);
+  pushField(fields, `Portfolio[${key}].Prtf_Url`, url);
+  pushField(fields, `Portfolio[${key}].Prtf_Name`, '포트폴리오');
+  pushField(fields, 'Portfolio.index', key);
+  pushField(fields, 'InputStat.PortfolioInputStat', 'True');
+  return fields;
+}
+
 export function mapHopeJobToFormFields(ssot) {
   // Derive hope-job codes from SSoT career roles via JK_JOB_CODES lookup.
   // Falls back to hardcoded defaults if no matching roles found.
@@ -305,5 +319,6 @@ export function buildJobKoreaFormData(ssot, sectionIndices = {}) {
     ...mapMilitaryToFormFields(ssot),
     ...mapAwardToFormFields(ssot, sectionIndices.award),
     ...mapHopeJobToFormFields(ssot),
+    ...mapPortfolioToFormFields(ssot, sectionIndices.portfolio),
   ];
 }
