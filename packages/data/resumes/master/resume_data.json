@@ -60,7 +60,7 @@
       "about": "보안과 운영을 코드로 통합하는 DevSecOps/SRE 엔지니어입니다.\n\n금융·공공 환경에서 9년간 보안 인프라 설계부터 운영 자동화까지 담당했습니다. 증권 매매체결시스템의 보안 아키텍처를 설계하여 금융위원회 본인가 심사를 통과시켰고, SIEM 기반 보안 관제 체계와 대규모 서버 운영 자동화를 직접 구축·운영했습니다.\n\n[주요 성과]\n• 넥스트레이드 증권 매매체결시스템 FortiGate HA 보안 아키텍처 설계 → 금융위 본인가 심사 통과\n• Splunk ES 기반 SIEM 탐지 룰 설계·운영, 보안 이벤트 실시간 알림 체계 구축\n• Ansible/Python 대규모 서버 설정 자동화, 방화벽 정책 조회 자동화\n• Terraform IaC AWS VPC/Subnet/SG 코드 관리, CloudTrail+GuardDuty 통합 보안 모니터링\n• Prometheus/Grafana 관측성 플랫폼 설계·운영\n\n[기술 스택]\n• Security: FortiGate, FortiManager, Splunk ES, Wazuh, NAC, DLP, VPN\n• Cloud: AWS (IAM/VPC/WAF/CloudTrail/GuardDuty), Terraform\n• DevOps: Ansible, Docker, CI/CD, n8n, Python\n• Observability: Prometheus, Grafana, ELK Stack\n• Compliance: ISMS-P, ISO 27001, 금융위 본인가\n\n포트폴리오: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
     },
     "jobkorea": {
-      "headline": "금융·공공 보안 인프라 9년차 | FortiGate HA · Splunk ES · Ansible/Python 자동화 | DevSecOps/SRE | resume.jclee.me",
+      "headline": "DevSecOps/SRE - 금융 보안 인프라 자동화 9년",
       "about": "금융·공공 환경에서 보안 인프라 설계부터 운영 자동화까지 담당한 9년차 엔지니어입니다.\n\n[주요 경력]\n• 넥스트레이드(증권 거래소) — 보안운영/인프라 구축 (2024~현재)\n  - FortiGate HA 보안 아키텍처 설계, 금융위 본인가 심사 통과\n  - Splunk ES 탐지 룰 설계, 실시간 보안 이벤트 알림 체계\n  - n8n+FortiManager API 방화벽 정책 조회 자동화\n\n• 콴텍(AI 투자) — 보안운영 (2022~2024)\n  - Terraform IaC AWS 인프라 전환, CloudTrail+GuardDuty 통합 모니터링\n  - 로보어드바이저 테스트베드 심사 대응\n\n• 메타넷(SI) — 컨택센터 원격근무 인프라 (2019~2021)\n  - Ansible 서버 자동화, NAC 정책 자동화 시스템 개발\n\n[보유 기술]\nFortiGate/FortiManager, Splunk ES, Ansible, Python, Terraform, AWS, Docker, Prometheus/Grafana, ISMS-P\n\n포트폴리오: https://resume.jclee.me"
     }
   },
