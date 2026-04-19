@@ -20,7 +20,7 @@ const APPLY_DELAY_MS = 5000;
 const ELK_URL = 'http://192.168.50.105:9200';
 const ELK_INDEX = 'job-automation';
 const ELK_AUTH = process.env.ELK_USER && process.env.ELK_PASSWORD
-  ? 'Basic ' + Buffer.from(`${process.env.ELK_USER}:${process.env.ELK_PASSWORD}`).toString('base64')
+  ? `Basic ${  Buffer.from(`${process.env.ELK_USER}:${process.env.ELK_PASSWORD}`).toString('base64')}`
   : '';
 const DEDUP_CACHE_DIR = path.join(os.homedir(), '.opencode', 'data');
 
