@@ -45,6 +45,15 @@ jobs:
           fetch-depth: 0
           ref: master
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline --no-audit --no-fund
+
       - name: Determine version bump
         id: bump
         env:
@@ -110,13 +119,6 @@ jobs:
             echo "=== Changelog preview ==="
             echo "$CHANGELOG"
           fi
-
-      - name: Setup Node.js
-        if: steps.bump.outputs.should_release == 'true' && github.event.inputs.dry_run != 'true'
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-
       - name: Update package.json and CHANGELOG
         if: steps.bump.outputs.should_release == 'true' && github.event.inputs.dry_run != 'true'
         run: |
@@ -186,6 +188,19 @@ jobs:
           prerelease: false
           target_commitish: master
           generate_release_notes: false
+
+      - name: Build portfolio worker
+        if: steps.bump.outputs.should_release == 'true' && github.event.inputs.dry_run != 'true'
+        run: npm run build
+
+      - name: Deploy to Cloudflare Workers
+        if: steps.bump.outputs.should_release == 'true' && github.event.inputs.dry_run != 'true'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: apps/portfolio
+          command: deploy --env production
 
       - name: Summary
         if: always()
