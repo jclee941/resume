@@ -257,18 +257,32 @@ export function mapAwardToFormFields(ssot, indices) {
   return fields;
 }
 
-export function mapPortfolioToFormFields(ssot, indices) {
+export function mapPortfolioToFormFields(ssot, fileIdx) {
   const url = ssot?.personal?.portfolio || '';
-  if (!url) return [];
+  if (!url || !fileIdx) return [];
 
-  const key = indices?.[0] || 'c1';
-  const fields = [];
-  pushField(fields, `Portfolio[${key}].Index_Name`, key);
-  pushField(fields, `Portfolio[${key}].Prtf_Url`, url);
-  pushField(fields, `Portfolio[${key}].Prtf_Name`, '포트폴리오');
-  pushField(fields, 'Portfolio.index', key);
-  pushField(fields, 'InputStat.PortfolioInputStat', 'True');
-  return fields;
+  return [
+    { name: 'UserResume.Attach_File_Name', value: fileIdx + ',' },
+    { name: 'InputStat.PortfolioInputStat', value: 'True' },
+  ];
+}
+
+/**
+ * Register a portfolio URL via AddUserFileDB and return the server-generated IDX.
+ * @param {import('playwright').Page} page
+ * @param {string} url - Portfolio URL to register
+ * @returns {Promise<number|null>} File IDX or null on failure
+ */
+export async function registerPortfolioUrl(page, url) {
+  const result = await page.evaluate(async (u) => {
+    return new Promise(r => {
+      $.post('/User/Resume/AddUserFileDB', {
+        File_Name: u, Display_File_Name: u,
+        File_Type: 2, File_Up_Stat: 2, File_Size: 0
+      }, res => r(res)).fail(() => r(null));
+    });
+  }, url);
+  return result?.sc === 1 ? result.idx : null;
 }
 
 export function mapHopeJobToFormFields(ssot) {

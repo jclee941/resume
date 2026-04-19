@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { CONFIG, PLATFORMS } from './constants.js';
 import { log } from './utils.js';
-import { buildJobKoreaFormData } from './jobkorea-sections.js';
+import { buildJobKoreaFormData, registerPortfolioUrl, mapPortfolioToFormFields } from './jobkorea-sections.js';
 
 /**
  * Build Edit URL for the user's existing resume.
@@ -448,6 +448,18 @@ export default class JobKoreaHandler {
 
       // Step 3: Build form data using server-generated indices
       const targetFields = buildJobKoreaFormData(ssot, sectionIndices);
+
+      // Step 3b: Register portfolio URL via AddUserFileDB and inject into form fields
+      const portfolioUrl = ssot?.personal?.portfolio;
+      if (portfolioUrl) {
+        const fileIdx = await registerPortfolioUrl(page, portfolioUrl);
+        if (fileIdx) {
+          log(`Portfolio URL registered: IDX=${fileIdx}`, 'info', 'jobkorea');
+          targetFields.push(...mapPortfolioToFormFields(ssot, fileIdx));
+        } else {
+          log('Portfolio URL registration failed', 'warn', 'jobkorea');
+        }
+      }
 
       const currentFields = await page.evaluate(() => {
         return $('#frm1').serializeArray();
