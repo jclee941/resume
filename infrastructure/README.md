@@ -2,7 +2,7 @@
 
 **Last Updated**: 2025-11-26
 **Project**: Resume Portfolio (https://resume.jclee.me)
-**Repository**: https://github.com/qws941/resume
+**Repository**: https://github.com/jclee941/resume
 
 ---
 
@@ -59,7 +59,7 @@ infrastructure/
 | **Prometheus** | 192.168.50.100:9090              | 🔒 Internal | Metrics storage         |
 | **Loki**       | grafana.jclee.me/loki/...        | 🔒 Proxy    | Log aggregation         |
 | **n8n**        | 192.168.50.100:5678              | 🔒 Internal | Workflow automation     |
-| **GitHub**     | https://github.com/qws941/resume | ✅ Public   | Source repository       |
+| **GitHub**     | https://github.com/jclee941/resume | ✅ Public   | Source repository       |
 
 > ⚠️ **Internal Services**: Prometheus, Loki, n8n are internal-only (no public DNS).
 > Access via internal IP or Grafana proxy. See [Access Guide](#internal-service-access) below.
@@ -420,7 +420,7 @@ For issues or questions:
 
 3. **Contact**:
    - Email: qws941@kakao.com
-   - GitHub Issues: https://github.com/qws941/resume/issues
+   - GitHub Issues: https://github.com/jclee941/resume/issues
 
 ---
 

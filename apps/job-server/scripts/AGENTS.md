@@ -19,18 +19,16 @@
 | `ci-resume-sync.js`        | CI pipeline resume sync           |
 | `cookie-inject.js`         | inject cookies into browser       |
 | `extract-cookies-cdp.js`   | CDP cookie extraction             |
-| `get-cookies.js`           | retrieve cookies from data store  |
 | `import-cookies-manual.js` | manually import cookie strings    |
 | `metrics-exporter.js`      | Prometheus metrics export         |
 | `ops/`                     | operational helper scripts        |
 | `profile-sync.js`          | resume → API sync (966 lines)     |
 | `profile-sync/`            | profile sync helper modules       |
-| `quick-login.js`           | current auth method (recommended) |
 | `skill-tag-map.js`         | skill name → tag ID mapping       |
 
 ## AUTH EVOLUTION
 
-`direct-login v1-v5` → `quick-login.js` (current).
+`direct-login v1-v5` → `auth-persistent.js` (current).
 
 ## COOKIE EXTRACTION PRIORITY
 
@@ -39,7 +37,7 @@ CDP (recommended) > Playwright > SQLite > Profile.
 ## CONVENTIONS
 
 - All scripts run from project root.
-- Use `quick-login.js` for new auth flows.
+- Use `auth-persistent.js` for auth flows.
 - `profile-sync/` subdirectory has 8 helper modules.
 
 ## ANTI-PATTERNS

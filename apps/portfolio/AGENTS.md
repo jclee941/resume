@@ -17,7 +17,7 @@ portfolio/
 ├── generate-worker.js      # build compiler
 ├── worker.js               # GENERATED — never edit
 ├── entry.js                # edge router (proxies /job/* via Service Binding)
-├── data.json               # SSoT snapshot (KO)
+├── data.json               # Generated resume snapshot (KO), built from packages/data SSoT
 ├── data_en.json            # English resume data
 ├── data_ja.json            # Japanese resume data
 ├── dashboard.html          # admin dashboard (1290 lines)

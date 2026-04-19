@@ -2,352 +2,169 @@
 
 [![CI](https://github.com/jclee941/resume/actions/workflows/ci.yml/badge.svg)](https://github.com/jclee941/resume/actions/workflows/ci.yml)
 
-Personal resume and portfolio management system for 이재철 (Jaecheol Lee), built for Cloudflare Workers, job automation, and self-hosted observability.
+이재철 (Jaecheol Lee) — DevSecOps/SRE 이력서 자동화 monorepo. Cloudflare Workers 포트폴리오, 구직 자동화 파이프라인, 셀프호스팅 Observability.
 
-## 🚀 Live Demo
+## Live
 
 - **Portfolio**: https://resume.jclee.me
-- **Features**: Responsive design, dark theme, SEO optimized, accessibility compliant
+- **English**: https://resume.jclee.me/en
 
-## Project Structure
+## Structure
 
 ```
 resume/
-├── apps/                          # Deployable applications
-│   ├── portfolio/                 # Edge portfolio (resume.jclee.me)
-│   │   ├── lib/                   # Build utilities, security headers
-│   │   ├── assets/                # Fonts, images (inlined at build)
-│   │   ├── index.html             # KO portfolio template
-│   │   ├── index-en.html          # EN portfolio template
-│   │   └── generate-worker.js     # Build engine → worker.js
-│   ├── job-server/                # MCP Server + Automation runtime
-│   │   └── src/                   # Core: crawlers, services, tools
-│   └── job-dashboard/             # CF Worker: Job dashboard API (Service Binding)
-├── packages/                      # Shared packages
-│   ├── cli/                       # Deployment CLI (Commander.js)
-│   ├── data/                      # SSoT: Resume JSONs & schemas
-│   │   └── resumes/master/        # resume_data.json (canonical)
-│   └── shared/                    # @resume/shared: cross-worker utilities
-├── infrastructure/                # Grafana, Elasticsearch, Prometheus, n8n
-├── docs/                          # Documentation hub
-│   ├── adr/                       # Durable architecture decisions
-│   ├── guides/                    # Deployment & setup guides
-│   └── architecture/              # Current system design docs
-├── tools/                         # Build scripts, CI utilities
-├── tests/                         # Jest unit + Playwright E2E
-└── third_party/                   # policy/docs for third-party boundaries
+├── apps/
+│   ├── portfolio/          # Edge portfolio (Cloudflare Worker, ~572KB)
+│   ├── job-server/         # MCP Server + Job automation runtime
+│   └── job-dashboard/      # CF Worker: Dashboard API (Service Binding)
+├── packages/
+│   ├── cli/                # Deployment CLI
+│   ├── data/               # SSoT: resume_data.json (canonical)
+│   └── shared/             # Cross-worker utilities
+├── infrastructure/
+│   ├── monitoring/         # Grafana, Prometheus, Elasticsearch
+│   └── n8n/                # Workflow automation (10+ workflows)
+├── tools/                  # Build, CI, verification scripts
+├── tests/                  # Jest unit + Playwright E2E
+└── docs/                   # Guides, ADRs, architecture
 ```
-
-Additional runtime areas, `ta/` contains TA profile generation tooling, and `supabase/` contains Supabase edge functions.
 
 ## Tech Stack
 
-- **Frontend**: HTML5, CSS3, Vanilla JavaScript
-- **Typography**: IBM Plex Mono + Inter
-- **Deployment**: Cloudflare Workers, Cloudflare Workers Builds
-- **Build System**: npm workspaces + Bazel facade/query layer
-- **CI/CD**: GitHub Actions
-- **Testing**: Jest (unit), Playwright (E2E)
-- **Code Quality**: gitleaks (secret scanning)
-- **Observability**: Grafana, Elasticsearch, Prometheus (self-hosted)
+| Layer         | Stack                                           |
+| ------------- | ----------------------------------------------- |
+| Frontend      | HTML5, CSS3, Vanilla JS, IBM Plex Mono + Inter  |
+| Runtime       | Cloudflare Workers (portfolio + dashboard)      |
+| Automation    | Node.js MCP Server, Playwright, n8n             |
+| Build         | npm workspaces, Bazel (query layer)             |
+| CI/CD         | GitHub Actions → Cloudflare Workers Builds      |
+| Testing       | Jest (unit), Playwright (E2E), Node test runner |
+| Observability | Grafana, Prometheus, Elasticsearch, Loki        |
 
-## Development
-
-### Prerequisites
-
-- Node.js >= 22.0.0
-- npm
-- Wrangler CLI for local Cloudflare work
-
-### Local Development
+## Quick Start
 
 ```bash
 npm install
-npm run automate:ssot
-npm run automate:full
-npm run dev
-npm run dev:wrangler
-npm test
-npm run test:e2e
-npm run test:e2e:smoke
-npm run verify:production
-npm run lint
-npm run typecheck
-npm run format:check
-```
-
-### Worker Generation
-
-After editing the portfolio HTML templates, regenerate `worker.js`.
-
-```bash
-cd apps/portfolio
-node generate-worker.js
-
-# From project root, run the full validation pipeline
-npm run automate:ssot
-```
-
-## Deployment
-
-Production deployment runs through Cloudflare Workers Builds. The authoritative path is `git push` to the protected branch, which triggers the CI and deployment pipeline.
-
-```bash
-npm run automate:full
-git push
-```
-
-`npm run deploy` is intentionally disabled in `package.json`. Use the build and push flow above instead.
-
-### Resume Sync API
-
-The portfolio worker exposes direct aliases for resume sync automation, proxied to the job-dashboard worker through Service Binding.
-
-```bash
-curl -X POST https://resume.jclee.me/api/automation/resume-update \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <admin-token>" \
-  -d '{"ssotData": {"personal": {"name": "..."}}, "dryRun": true}'
-
-curl -H "Authorization: Bearer <admin-token>" \
-  https://resume.jclee.me/api/automation/resume-update/<syncId>
-```
-
-### Environment Variables
-
-Required for deployment in `~/.env`:
-
-```bash
-CLOUDFLARE_API_KEY=your_global_api_key
-CLOUDFLARE_EMAIL=your_email
-CLOUDFLARE_ACCOUNT_ID=your_account_id
+npm run automate:ssot     # sync + build + typecheck + test
+npm run dev               # local dev (Miniflare)
+npm test                  # all tests
+npm run lint && npm run typecheck
 ```
 
 ## Architecture
 
-### Cloudflare Worker Design
+### Portfolio Worker
 
-- **Static HTML serving**: HTML files embedded in `worker.js` as template literals
-- **Multi-language**: `/` → KO, `/en` → EN portfolio
-- **Security headers**: CSP with SHA-256 hashes, HSTS, X-Frame-Options
-- **Performance**: Global CDN, zero cold start
+HTML 템플릿 → `generate-worker.js` → `worker.js` (edge artifact). CSP SHA-256 해시, HSTS, multi-language (`/` KO, `/en` EN).
 
-### Worker Generation Pipeline
+### Job Automation Runtime
 
-```
-index.html + index-en.html
-  → generate-worker.js
-    - Escape backticks and ${}
-    - Extract CSP hashes from both HTML files
-    - Apply baseline CSP directives
-  → worker.js (NEVER EDIT DIRECTLY)
-  → wrangler deploy → Cloudflare Edge
-```
+MCP Server (Fastify) + 16 MCP tools. Hexagonal architecture: services (domain) ↔ clients (adapters).
 
-### Security Headers
-
-Content Security Policy with baseline directives and SHA-256 hashes:
-
-```
-Content-Security-Policy:
-  default-src 'none';
-  script-src 'self' 'sha256-...';
-  style-src 'self' 'sha256-...' https://fonts.googleapis.com;
-  font-src 'self' https://fonts.gstatic.com;
-  img-src 'self' data:;
-  connect-src 'self' https://grafana.jclee.me;
-  manifest-src 'self';
-  worker-src 'self';
-```
-
-## 📊 Observability
-
-> **📖 For complete infrastructure details**, see:
->
-> - **[Infrastructure Architecture](docs/guides/INFRASTRUCTURE.md)** - system topology, component details, security, performance metrics
-> - **[Monitoring Setup Guide](docs/guides/MONITORING_SETUP.md)** - Prometheus, Grafana, Elasticsearch, n8n setup
-> - **[Grafana Dashboard](monitoring/grafana-dashboard-resume-portfolio.json)** - dashboard with 7 visualization panels
-
-### Monitoring Endpoints
-
-**Health Check**:
-
-```bash
-curl https://resume.jclee.me/health
-```
-
-Returns JSON with service status, version, uptime, and request metrics:
-
-```json
-{
-  "status": "healthy",
-  "version": "1.0.0",
-  "deployed_at": "2025-10-17T09:45:00.000Z",
-  "uptime_seconds": 3600,
-  "metrics": {
-    "requests_total": 1234,
-    "requests_success": 1230,
-    "requests_error": 4,
-    "vitals_received": 56
-  }
-}
-```
-
-**Prometheus Metrics**:
-
-```bash
-curl https://resume.jclee.me/metrics
-```
-
-Prometheus exposition format for Grafana integration:
-
-```
-# HELP http_requests_total Total HTTP requests
-# TYPE http_requests_total counter
-http_requests_total{job="resume"} 1234
-
-# HELP http_requests_success Successful HTTP requests
-# TYPE http_requests_success counter
-http_requests_success{job="resume"} 1230
-
-# HELP http_requests_error Failed HTTP requests
-# TYPE http_requests_error counter
-http_requests_error{job="resume"} 4
-
-# HELP http_response_time_seconds Average response time
-# TYPE http_response_time_seconds gauge
-http_response_time_seconds{job="resume"} 0.05
-
-# HELP web_vitals_received Total Web Vitals data points received
-# TYPE web_vitals_received counter
-web_vitals_received{job="resume"} 56
-```
-
-**Web Vitals Endpoint**:
-
-```bash
-curl -X POST https://resume.jclee.me/api/vitals \
-  -H "Content-Type: application/json" \
-  -d '{"lcp": 1250, "fid": 50, "cls": 0.05}'
-```
-
-### Grafana Integration
-
-All metrics and logs are automatically sent to the centralized observability stack:
-
-- **Metrics**: Prometheus scrapes `/metrics` endpoint
-- **Logs**: All requests logged to Elasticsearch (ECS format, batched)
-- **Dashboard**: View real-time metrics at `https://grafana.jclee.me`
-
-**Log Format** (ECS):
-
-```json
-{
-  "job": "resume-worker",
-  "level": "INFO",
-  "path": "/",
-  "method": "GET",
-  "event": "request",
-  "response_time_ms": 45
-}
-```
-
-### Performance Budgets (Lighthouse CI)
-
-Automated performance testing on every deployment:
-
-- **Performance**: ≥90 score
-- **Accessibility**: ≥95 score
-- **Best Practices**: ≥95 score
-- **SEO**: ≥95 score
+| Component              | Role                                                        |
+| ---------------------- | ----------------------------------------------------------- |
+| `src/crawlers/`        | Stealth Playwright crawlers (Wanted, JobKorea, Saramin, +7) |
+| `src/auto-apply/`      | Browser-based form submission + rate limiting               |
+| `src/shared/services/` | 22 domain services (matching, apply, session, resume, etc.) |
+| `src/session-broker/`  | Wanted session renewal (Docker + stealth browser)           |
 
 ## Job Automation
 
-The job automation runtime syncs resume data into external job platforms and manages automated job applications.
-
 ### Resume Sync
 
-| Platform | Method | Sections | Status |
-| -------- | ------ | -------- | ------ |
-| **Wanted Korea** | OneID token + Chaos API v2 | careers, educations, skills, activities, language_certs, about, contact (8 sections) | Active |
-| **JobKorea** | Playwright headless + form POST | Career, License, Award, School, Intro (79 fields) | Active |
+| Platform     | Method                          | Status |
+| ------------ | ------------------------------- | ------ |
+| **Wanted**   | OneID token + Chaos API v1      | Active |
+| **JobKorea** | Playwright headless + form POST | Active |
+
+### Auto-Apply
+
+Wanted + JobKorea 자동지원. n8n 파이프라인으로 매일 9시/21시 실행.
+
+| Platform     | Method                                                        | How                                                           |
+| ------------ | ------------------------------------------------------------- | ------------------------------------------------------------- |
+| **Wanted**   | Browser-based (CDP cookie injection → `page.evaluate(fetch)`) | OneID 토큰 → CDP HttpOnly 쿠키 → Chaos API `/applications/v1` |
+| **JobKorea** | Playwright (click "즉시 지원" button flow)                    | `page.getByRole('button', { name: '즉시 지원' })`             |
 
 ```bash
-# Manual sync
-node apps/job-server/scripts/ci-resume-sync.js    # Wanted
-node apps/job-server/scripts/profile-sync.js --platform jobkorea --apply  # JobKorea
+# CLI
+node apps/job-server/src/auto-apply/cli/index.js apply --apply --max=10
+
+# n8n pipeline (SSH)
+node apps/job-server/scripts/job-search-apply-pipeline.js
 ```
 
-### Auto-Apply (Wanted)
+### Cover Letter Generator
 
-Reverse-engineered Wanted Chaos API for programmatic job applications:
+직무별 맞춤형 자소서 자동 생성 (500-600자). 6개 직무 템플릿 (DevSecOps, SRE, Security, Cloud Security, DevOps, Infra). Claude API 연동 시 AI 맞춤형 전환.
 
-```
-POST /api/chaos/applications/v1
-{ email, username, mobile, job_id, resume_keys: ["<chaos-resume-uuid>"], status: "apply" }
-```
+- **Fallback**: `cover-letter-generator.js` — `detectRole()` → `buildKoreanCoverLetter()`
+- **AI**: `ANTHROPIC_API_KEY` 설정 시 Claude Haiku 기반 직무 맞춤 생성
 
-Implementation: `apps/job-server/src/auto-apply/strategies/wanted-strategy.js`
+### Profile Auto-Sync
 
-### n8n Automation
+`resume_data.json` → Wanted CV + 소셜 프로필 자동 반영 (Playwright + CDP).
 
-| Workflow | ID | Schedule | What |
-| -------- | -- | -------- | ---- |
-| **Resume Sync** | `tG91fX0d6zZQzYay` | Sun 3am KST + webhook | Wanted + JobKorea parallel sync -> Telegram |
+## n8n Workflows
+
+| Workflow                    | Schedule    | Purpose                                                      |
+| --------------------------- | ----------- | ------------------------------------------------------------ |
+| **Job Search + Auto Apply** | 9am/9pm KST | 검색 → 스코어링 → 자소서 생성 → 자동지원 (Wanted + JobKorea) |
+| **Resume Sync**             | Sun 3am KST | Wanted + JobKorea 이력서 동기화                              |
+| **Shared: Telegram Notify** | On demand   | `@qws941_bot` 알림                                           |
 
 ```bash
 # Manual trigger
+curl -X POST https://n8n.jclee.me/webhook/job-search-apply
 curl -X POST https://n8n.jclee.me/webhook/resume-sync
 ```
 
-- SSH nodes execute scripts on dev machine via `jclee-dev SSH` credential
-- `.env` sourced for Wanted OneID credentials (auto cookie minting)
-- Telegram notifications via `@qws941_bot` (resume-dedicated bot)
+## Observability
 
-## Recent Changes
+Prometheus → Grafana 대시보드, Elasticsearch ECS 로그, Loki 인프라 로그.
 
-- Wanted application API reverse-engineered (`/api/chaos/applications/v1` with `status:apply`)
-- n8n Resume Sync workflow deployed (`tG91fX0d6zZQzYay`) with SSH + Telegram
-- Wanted `getDetail` endpoint migrated v1->v2 (fixes empty activities bug)
-- Activities sync now idempotent (update existing, delete orphans, prevent duplicates)
-- `Referer` header added to Wanted HTTP client
-- JobKorea awards section: removed `achievements[]` fallback, added structured `awards[]`
-- Career duration corrections: 5 entries fixed in `resume_data.json`
-- Telegram notifications via dedicated `@qws941_bot` (not YouTube bot)
+```bash
+curl https://resume.jclee.me/health    # JSON health check
+curl https://resume.jclee.me/metrics   # Prometheus exposition
+```
+
+> 상세: [Infrastructure Guide](docs/guides/INFRASTRUCTURE.md) · [Monitoring Setup](docs/guides/MONITORING_SETUP.md)
+
+## CI/CD
+
+| Workflow      | Trigger              | Jobs                                                             |
+| ------------- | -------------------- | ---------------------------------------------------------------- |
+| **CI**        | push/PR to master    | lint, typecheck, test-jest, test-node (782 tests), validate-data |
+| **Release**   | CI success on master | semver bump, changelog, GitHub Release, CF Workers deploy        |
+| **Auto-sync** | daily 00:00 UTC      | SSoT sync, drift detection, auto PR                              |
+
+## Deployment
+
+Production: Cloudflare Workers Builds (git push → CI → auto deploy).
+
+```bash
+npm run automate:full    # full CI pipeline locally
+git push                 # triggers CI + deploy
+```
+
+`npm run deploy` is intentionally disabled. Use the git push flow.
+
 ## Documentation
 
-### Key Guides
-
-- **Infrastructure Architecture**: `docs/guides/INFRASTRUCTURE.md`
-- **Monitoring Setup**: `docs/guides/MONITORING_SETUP.md`
-- **Manual Deployment**: `docs/guides/MANUAL_DEPLOYMENT_GUIDE.md`
-- **Git Auto-Deploy**: `docs/guides/CLOUDFLARE_GITHUB_AUTO_DEPLOY.md`
+| Guide                       | Path                                                 |
+| --------------------------- | ---------------------------------------------------- |
+| Infrastructure Architecture | `docs/guides/INFRASTRUCTURE.md`                      |
+| Monitoring Setup            | `docs/guides/MONITORING_SETUP.md`                    |
+| Auto-Apply Guide            | `docs/guides/auto-apply.md`                          |
+| Cover Letter Strategy       | `docs/guides/cover-letter-customization-strategy.md` |
+| Certification Roadmap       | `docs/guides/certification-roadmap.md`               |
+| PDF Generation              | `docs/guides/PDF_GENERATION.md`                      |
 
 ### AGENTS.md Hierarchy
 
-Domain-specific context in subdirectory AGENTS.md files:
-
-| Path                        | Focus                |
-| --------------------------- | -------------------- |
-| `apps/portfolio/AGENTS.md`  | Build pipeline, CSP  |
-| `apps/job-server/AGENTS.md` | MCP server, crawlers |
-| `packages/data/AGENTS.md`   | SSoT schema, sync    |
-| `packages/cli/AGENTS.md`    | CLI tool usage       |
-| `tests/AGENTS.md`           | Test patterns        |
-
-## Portfolio Features
-
-- **Terminal-themed dark aesthetic**: cyberpunk-inspired dark terminal layout, no dark mode toggle
-- **Typography**: IBM Plex Mono for UI, Inter for body text
-- **Color system**: intermediate-dim palette with desaturated neon accents
-- **Section layout**: hero, about, status, experience, projects, skills, infrastructure, contact
-- **Hover effects**: chromatic shift on hover only, no auto-playing glitch animation
-- **Skills display**: CSS gradient progress bars, not text-based bars
-- **Interactive CLI**: help, neofetch, snake, and `sudo hire-me` easter eggs
-- **Accessibility**: ARIA labels, semantic HTML, keyboard navigation
+43+ domain-specific AGENTS.md files across `apps/`, `packages/`, `tests/`, `tools/`, `infrastructure/`.
 
 ## Links
 
-- **Live Site**: https://resume.jclee.me
-- **English**: https://resume.jclee.me/en
+- **Portfolio**: https://resume.jclee.me
 - **GitHub**: https://github.com/jclee941/resume
