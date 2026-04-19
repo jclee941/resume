@@ -1,12 +1,12 @@
 # SCRIPTS KNOWLEDGE BASE
 
-**Generated:** 2026-03-17
-**Commit:** `882b837`
+**Generated:** 2026-04-19
+**Commit:** `133c230`
 **Branch:** `master`
 
 ## OVERVIEW
 
-17 utility scripts for authentication, data sync, and metrics. Run from project root.
+17 utility scripts for authentication, data sync, metrics, and profile automation. Run from project root.
 
 ## KEY SCRIPTS
 
@@ -24,6 +24,7 @@
 | `ops/`                     | operational helper scripts        |
 | `profile-sync.js`          | resume → API sync (966 lines)     |
 | `profile-sync/`            | profile sync helper modules       |
+| `job-search-apply-pipeline.js` | n8n pipeline: search + apply + profile sync |
 | `skill-tag-map.js`         | skill name → tag ID mapping       |
 
 ## AUTH EVOLUTION
@@ -38,10 +39,19 @@ CDP (recommended) > Playwright > SQLite > Profile.
 
 - All scripts run from project root.
 - Use `auth-persistent.js` for auth flows.
-- `profile-sync/` subdirectory has 8 helper modules.
+- `profile-sync/` subdirectory has 8 helper modules + 3 test files.
 
 ## ANTI-PATTERNS
 
 - Never commit cookies or session files.
 - Never use deprecated `direct-login` scripts.
 - Never hardcode paths — use config.
+
+## PROFILE-SYNC PORTFOLIO FLOW
+
+JobKorea portfolio URL registration uses `AddUserFileDB` API (not form POST):
+1. `registerPortfolioUrl(page, url)` → POST `/User/Resume/AddUserFileDB` → returns `{ sc: 1, idx: N }`
+2. `mapPortfolioToFormFields(ssot, fileIdx)` → sets `UserResume.Attach_File_Name = "N,"`
+3. Form save includes the server-generated IDX → portfolio persists
+
+Pipeline (`job-search-apply-pipeline.js`) runs this automatically at 9am/9pm KST via n8n.
