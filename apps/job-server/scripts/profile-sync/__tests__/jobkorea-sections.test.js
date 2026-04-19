@@ -7,6 +7,7 @@ import {
   mapHopeJobToFormFields,
   mapLicensesToFormFields,
   mapMilitaryToFormFields,
+  mapPortfolioToFormFields,
   mapSchoolToFormFields,
   parseRange,
   toYYYYMM,
@@ -233,6 +234,49 @@ describe('mapAwardToFormFields', () => {
     assert.strictEqual(byName.get('Award[c7].Award_Inst_Name'), '한양사이버대학교');
     assert.strictEqual(byName.get('Award[c7].Award_Year'), '2026');
     assert.strictEqual(byName.get('Award.index'), 'c7');
+  });
+});
+
+describe('mapPortfolioToFormFields', () => {
+  it('returns Attach_File_Name and InputStat with valid IDX', () => {
+    const fields = mapPortfolioToFormFields({ personal: { portfolio: 'https://resume.jclee.me' } }, 13479802);
+    const byName = toMap(fields);
+
+    assert.strictEqual(byName.get('UserResume.Attach_File_Name'), '13479802,');
+    assert.strictEqual(byName.get('InputStat.PortfolioInputStat'), 'True');
+  });
+
+  it('returns empty when no portfolio URL in SSoT', () => {
+    assert.deepStrictEqual(mapPortfolioToFormFields({ personal: {} }, 123), []);
+    assert.deepStrictEqual(mapPortfolioToFormFields({ personal: { portfolio: '' } }, 123), []);
+  });
+
+  it('returns empty when no fileIdx provided', () => {
+    assert.deepStrictEqual(mapPortfolioToFormFields({ personal: { portfolio: 'https://x.com' } }, null), []);
+    assert.deepStrictEqual(mapPortfolioToFormFields({ personal: { portfolio: 'https://x.com' } }, undefined), []);
+  });
+
+  it('includes portfolio fields in buildJobKoreaFormData when fileIdx present', () => {
+    const ssot = {
+      personal: { portfolio: 'https://resume.jclee.me' },
+      careers: [], education: null, certifications: [], military: null, awards: [],
+    };
+    const fields = buildJobKoreaFormData(ssot, { portfolioFileIdx: 99999 });
+    const byName = toMap(fields);
+
+    assert.strictEqual(byName.get('UserResume.Attach_File_Name'), '99999,');
+    assert.strictEqual(byName.get('InputStat.PortfolioInputStat'), 'True');
+  });
+
+  it('omits portfolio fields from buildJobKoreaFormData when no fileIdx', () => {
+    const ssot = {
+      personal: { portfolio: 'https://resume.jclee.me' },
+      careers: [], education: null, certifications: [], military: null, awards: [],
+    };
+    const fields = buildJobKoreaFormData(ssot, {});
+    const portFields = fields.filter(f => f.name === 'UserResume.Attach_File_Name');
+
+    assert.strictEqual(portFields.length, 0);
   });
 });
 
