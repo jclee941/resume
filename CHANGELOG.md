@@ -5,6 +5,15 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.4.0] - 2026-04-19
+
+### Changes
+- feat(portfolio): align site content with enriched SSoT — DevSecOps/SRE positioning (dad2f7d)
+- chore: clean up stale test artifacts and regenerate playwright report (92650ee)
+- refactor(profile-sync): modernize truncation to template literals (20b9e66)
+- feat(release): add portfolio build and Cloudflare Workers deploy to release pipeline (5a3bd90)
+
+
 ## [v1.3.1] - 2026-04-19
 
 ### Changes
