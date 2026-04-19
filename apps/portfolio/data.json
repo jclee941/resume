@@ -121,7 +121,7 @@
       "metrics": {
         "dashboards": "12+ Grafana 대시보드",
         "datasources": "3개 데이터소스 통합 (Prometheus, Loki, Elasticsearch)",
-        "uptime": "99.5%",
+        "uptime": "높은 가용성",
         "targets": "50+ metrics endpoints",
         "healthChecks": "Blackbox Exporter 기반 외부 엔드포인트 감시"
       },
@@ -172,7 +172,7 @@
         "endpoints": "FortiManager, FortiAnalyzer REST API",
         "systems": "2개 장비군 API 래핑",
         "features": "정책 조회, 라우트 관리, 로그 통계",
-        "automation": "수동 작업 대비 80% 시간 절감"
+        "automation": "수동 작업 대비 시간 절감"
       },
       "related_skills": [
         "Python",
@@ -196,8 +196,8 @@
         "detectionRules": "32개 탐지 룰",
         "alertChannels": "Slack Block Kit",
         "sources": "FortiGate syslog → Splunk",
-        "responseTime": "이벤트 발생 후 30초 이내 알림",
-        "noiseReduction": "불필요한 알림 70% 감소"
+        "responseTime": "이벤트 발생 후 실시간 알림",
+        "noiseReduction": "불필요한 알림 감소"
       },
       "related_skills": [
         "Splunk",
@@ -296,7 +296,7 @@
       "metrics": {
         "dashboards": "12+ Grafana 대시보드",
         "datasources": "3개 데이터소스 통합 (Prometheus, Loki, Elasticsearch)",
-        "uptime": "99.5%",
+        "uptime": "높은 가용성",
         "targets": "50+ metrics endpoints",
         "healthChecks": "Blackbox Exporter 기반 외부 엔드포인트 감시"
       },
@@ -372,7 +372,7 @@
         "alertChannels": "Slack Block Kit",
         "sources": "FortiGate syslog → Splunk",
         "responseTime": "Alert delivered within 30 seconds of event detection",
-        "noiseReduction": "불필요한 알림 70% 감소"
+        "noiseReduction": "불필요한 알림 감소"
       },
       "related_skills": [
         "Splunk",
@@ -706,7 +706,7 @@
     "badge": "Security Infrastructure Engineer · 9년차",
     "title": "이재철",
     "titleEn": "Jaecheol Lee",
-    "subtitle": "금융·공공 보안 인프라 · Splunk ES 32룰 · FortiGate HA 99.99% · n8n 자동화 70%"
+    "subtitle": "금융·공공 보안 인프라 · Splunk ES SIEM · FortiGate HA HA · n8n 자동화 효율화"
   },
   "sectionDescriptions": {
     "resume": "9년차 인프라 경력",
@@ -717,16 +717,16 @@
     "contact": "연락처"
   },
   "achievements": [
-    "넥스트레이드 ATS 보안 인프라를 99.99% HA 기준으로 설계하고 금융위 본인가 심사를 통과시켰습니다.",
-    "Splunk-FortiNet 통합 보안 운영 체계를 구축해 32개 탐지 룰과 30초 내 알림 파이프라인을 운영했습니다.",
-    "넥스트레이드 보안 운영 자동화로 불필요한 알림 70%를 줄이고 방화벽 정책 조회 시간을 80% 절감했습니다.",
-    "Grafana·Prometheus·Loki 기반 Observability 플랫폼을 운영하며 12+ 대시보드, 50+ 메트릭 엔드포인트, 99.5% 가용률을 유지했습니다.",
+    "넥스트레이드 ATS 보안 인프라를 고가용성(HA) 기준으로 설계하고 금융위 본인가 심사를 통과시켰습니다.",
+    "Splunk-FortiNet 통합 보안 운영 체계를 구축해 다수 탐지 룰과 실시간 알림 파이프라인을 운영했습니다.",
+    "넥스트레이드 보안 운영 자동화로 불필요한 알림 줄이고 방화벽 정책 조회 시간을 대폭 절감했습니다.",
+    "Grafana·Prometheus·Loki 기반 Observability 플랫폼을 운영하며 다수 대시보드, 메트릭 엔드포인트, 높은 가용성% 가용률을 유지했습니다.",
     "n8n 자동화 플랫폼을 구축해 15+ 워크플로우와 일 200+ 실행, 월 6K+ 자동화 이벤트를 운영했습니다.",
-    "조인트리 프로젝트에서 침해사고 예방률 80%(월 200건 차단), 민감정보 탐지율 20% 향상, 서비스 가용률 99.9%를 달성했습니다.",
-    "메타넷 재택근무 인프라에서 NAC 예외 정책 처리 시간을 90%(30분→3분) 단축하고 스위치 점검 시간을 75%(8시간→2시간) 줄였습니다.",
-    "메타넷 재택근무 환경에서 백신-VPN 충돌을 해결해 장애 문의를 40%(주 20건→12건) 줄이고 신규 사이트 3개소를 구축했습니다.",
-    "KAI 폐쇄망 환경에서 방화벽 중복 룰을 30%(3,000개→2,100개) 제거하고 내부정보 유출사고 0건을 유지했습니다.",
-    "펀엔씨 클라우드 전환 프로젝트에서 백업·복구 자동화로 MTTR을 50%(2시간→1시간) 단축하고 취약점 조기 발견율을 80% 높였습니다.",
+    "조인트리 프로젝트에서 침해사고 예방률 향상, 민감정보 탐지율 향상, 높은 서비스 가용률를 달성했습니다.",
+    "메타넷 재택근무 인프라에서 NAC 예외 정책 처리 시간을 대폭(30분→수 분) 단축하고 스위치 점검 시간을 대폭(8시간→2시간) 줄였습니다.",
+    "메타넷 재택근무 환경에서 백신-VPN 충돌을 해결해 장애 문의를 감소 줄이고 신규 사이트 3개소를 구축했습니다.",
+    "KAI 폐쇄망 환경에서 방화벽 중복 룰을 다수 제거하고 내부정보 유출사고 0건을 유지했습니다.",
+    "펀엔씨 클라우드 전환 프로젝트에서 백업·복구 자동화로 MTTR을 절반(2시간→1시간) 단축하고 취약점 조기 발견율을 높였습니다.",
     "콴텍에서 Terraform 기반 AWS 보안 코드화를 정착시키고 로보어드바이저 테스트베드 심사 대응 기반을 마련했습니다."
   ],
   "infrastructure": [
