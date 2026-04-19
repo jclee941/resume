@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.5.10] - 2026-04-19
+
+### Changes
+- refactor(shared): split parallel service into N modules (fef52a3)
+
+
 ## [v1.5.9] - 2026-04-19
 
 ### Changes
