@@ -5,6 +5,14 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.5.7] - 2026-04-19
+
+### Changes
+- fix(session-broker): remove storage barrel import cycle (58f271d)
+- refactor(notifications): split telegram adapter into 5 modules (01a5e62)
+- refactor(session-broker): split service into N modules (0609633)
+
+
 ## [v1.5.6] - 2026-04-19
 
 ### Changes
