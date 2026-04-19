@@ -96,7 +96,7 @@ export function mapCareersToFormFields(ssot, indices) {
     if (idx >= keys.length) return;
     const key = keys[idx];
     const { start, end, isCurrent } = parseRange(career?.period || '');
-    const code = JK_JOB_CODES[career?.role] || 1000233;
+    const _code = JK_JOB_CODES[career?.role] || 1000233;
 
     pushField(fields, `Career[${key}].Index_Name`, key);
     pushField(fields, `Career[${key}].C_Name`, career?.company || '');
@@ -262,7 +262,7 @@ export function mapPortfolioToFormFields(ssot, fileIdx) {
   if (!url || !fileIdx) return [];
 
   return [
-    { name: 'UserResume.Attach_File_Name', value: fileIdx + ',' },
+    { name: 'UserResume.Attach_File_Name', value: `${fileIdx  },` },
     { name: 'InputStat.PortfolioInputStat', value: 'True' },
   ];
 }

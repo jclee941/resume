@@ -9,11 +9,11 @@ import SessionManager from '../../shared/services/session/session-manager.js';
 import { RetryService } from '../../shared/services/apply/retry-service.js';
 
 const WANTED_PLATFORM = 'wanted';
-const WANTED_APPLICATION_ENDPOINT = '/applications/v1';
+const _WANTED_APPLICATION_ENDPOINT = '/applications/v1';
 const RATE_LIMIT_PER_MINUTE = 60;
 const DEFAULT_DELAY_MS = 5000;
 
-const retryService = new RetryService({
+const _retryService = new RetryService({
   retry: {
     maxRetries: 3,
     baseDelay: 1000,
