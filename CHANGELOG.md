@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.2.1] - 2026-04-19
+
+### Changes
+- docs: README redesign + legacy cleanup + stale doc fixes (f08b4a7)
+
+
 ## [v1.2.0] - 2026-04-19
 
 ### Changes
