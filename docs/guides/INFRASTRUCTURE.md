@@ -385,7 +385,7 @@ curl -X GET "https://n8n.jclee.me/api/v1/workflows" \
 
 **Resource Limits**:
 
-- Worker size: 1MB (current: 189KB)
+- Worker size: 1MB (current: ~572KB)
 - CPU time: 50ms (current: ~5ms)
 - Memory: 128MB (current: ~10MB)
 
@@ -522,4 +522,4 @@ go run ./deploy-workflow.go resume-healthcheck-oauth2.json
 - **Grafana**: https://grafana.jclee.me (✅ Public)
 - **Prometheus**: 192.168.50.100:9090 (🔒 Internal)
 - **n8n**: 192.168.50.100:5678 (🔒 Internal)
-- **GitHub**: https://github.com/qws941/resume
+- **GitHub**: https://github.com/jclee941/resume

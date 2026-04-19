@@ -164,7 +164,7 @@ Alert rules are defined in `../configs/grafana/alert-rules.yaml`.
 ### Alert Routing
 
 **Contact Point**: Resume Portfolio Alerts
-**Receiver Type**: Slack webhook
+**Receiver Type**: Telegram (@qws941_bot)
 **Repeat Interval**: 4 hours
 **Group By**: alertname, severity
 
@@ -282,4 +282,4 @@ For issues or questions:
 - Check logs: `curl https://resume.jclee.me/metrics`
 - Check health: `curl https://resume.jclee.me/health | jq`
 - Infrastructure status: `https://grafana.jclee.me`
-- Project repository: `https://github.com/qws941/resume/apps/resume`
+- Project repository: `https://github.com/jclee941/resume/apps/resume`
