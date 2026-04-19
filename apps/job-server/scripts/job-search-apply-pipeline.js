@@ -14,7 +14,6 @@ import {
 } from './pipeline/dedup-cache.js';
 import {
   createPipelineFailure,
-  extractJobArray,
   filterRelevantJobs,
 } from './pipeline/job-helpers.js';
 import { log, recordJobToElk, shipToElk, summarizeError } from './pipeline/logging.js';
