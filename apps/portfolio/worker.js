@@ -1,5 +1,5 @@
 // Cloudflare Worker - Auto-generated (IMPROVED VERSION)
-// Generated: 2026-04-19T02:57:18.352Z
+// Generated: 2026-04-19T08:01:12.827Z
 // Features: Template caching, JSDoc types, link helper, constants, rate limiting
 
 const INDEX_HTML = `<!doctype html><html lang="ko" data-theme="dark"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>이재철 - DevSecOps/SRE Engineer</title><meta name="description" content="이재철 - DevSecOps/SRE 엔지니어 | 금융·공공 보안 인프라 설계·운영, SIEM/SOAR, Observability, IaC 자동화 9년"><meta name="keywords" content="DevSecOps, SRE, SIEM, SOAR, Observability, Grafana, Prometheus, Splunk, FortiGate, Terraform, Ansible, AWS, 보안 인프라, IaC, 자동화, 이재철"><meta name="author" content="이재철 (Jaecheol Lee)"><meta name="robots" content="index, follow"><meta name="google-site-verification" content="2a5f8c3b7d4e9a1f6c2b5e8d1a4f7c0b9e3d6a9f2c5"><link rel="canonical" href="https://resume.jclee.me"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin><link rel="alternate" hreflang="ko-KR" href="https://resume.jclee.me"><link rel="alternate" hreflang="en-US" href="https://resume.jclee.me/en/"><link rel="alternate" hreflang="x-default" href="https://resume.jclee.me"><meta property="og:type" content="profile"><meta property="og:url" content="https://resume.jclee.me"><meta property="og:title" content="이재철 - DevSecOps/SRE Engineer"><meta property="og:description" content="DevSecOps/SRE 엔지니어 | 금융·공공 보안 인프라, SIEM/SOAR, Observability, IaC 자동화 9년"><meta property="og:image" content="https://resume.jclee.me/og-image.webp"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:type" content="image/webp"><meta property="og:image:alt" content="Jaecheol Lee - DevSecOps/SRE Engineer Portfolio"><meta property="og:site_name" content="Jaecheol Lee Resume"><meta property="og:locale" content="ko_KR"><meta property="og:locale:alternate" content="en_US"><meta property="profile:first_name" content="Jaecheol"><meta property="profile:last_name" content="Lee"><meta property="profile:username" content="jclee941"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:url" content="https://resume.jclee.me"><meta name="twitter:title" content="이재철 - DevSecOps/SRE Engineer"><meta name="twitter:description" content="DevSecOps/SRE 엔지니어 | 금융·공공 보안 인프라, SIEM/SOAR, Observability, IaC 자동화 9년"><meta name="twitter:image" content="https://resume.jclee.me/og-image.webp"><meta name="twitter:creator" content="@jclee941"><meta name="twitter:site" content="@jclee941"><script type="application/ld+json">{
@@ -435,9 +435,9 @@ const metrics = {
   "cache_misses": 0,
   "geo_countries": {},
   "geo_colos": {},
-  "worker_start_time": 1776567438352,
-  "version": "1.3.0",
-  "deployed_at": "2026-04-19T02:57:18.352Z"
+  "worker_start_time": 1776585672827,
+  "version": "1.5.13",
+  "deployed_at": "2026-04-19T08:01:12.827Z"
 };
 
 // Histogram bucket boundaries (Prometheus standard)
@@ -1645,8 +1645,8 @@ export default {
         const allHealthy = bindings.d1.healthy && bindings.kv.healthy;
         const health = {
           status: allHealthy ? 'healthy' : 'degraded',
-          version: '1.3.0',
-          deployed_at: '2026-04-19T02:57:18.352Z',
+          version: '1.5.13',
+          deployed_at: '2026-04-19T08:01:12.827Z',
           uptime_seconds: uptime,
           bindings,
           metrics: {
@@ -2179,7 +2179,7 @@ export default {
             clientIp,
             request.cf?.country || '',
             request.cf?.colo || '',
-            '1.3.0'
+            '1.5.13'
           ).run();
         } catch (dbErr) {
           console.error('[D1] Error log INSERT failed:', dbErr.message || dbErr);
