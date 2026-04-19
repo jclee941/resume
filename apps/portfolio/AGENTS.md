@@ -1,12 +1,12 @@
 # PORTFOLIO WORKER KNOWLEDGE BASE
 
-**Generated:** 2026-03-17
-**Commit:** `882b837`
+**Generated:** 2026-04-19
+**Commit:** `133c230`
 **Branch:** `master`
 
 ## OVERVIEW
 
-Cloudflare Worker serving a cyberpunk terminal-style portfolio. Zero runtime I/O — all assets inlined at build time.
+Cloudflare Worker serving a cyberpunk terminal-style portfolio (DevSecOps/SRE positioning). Zero runtime I/O — all assets inlined at build time.
 
 ## STRUCTURE
 
@@ -60,7 +60,7 @@ index.html → generate-worker.js → worker.js → wrangler deploy
 
 ## CLI COMMANDS
 
-`help`, `whoami`, `pwd`, `date`, `ls`, `cat`, `snake`, `clear`.
+`help`, `whoami`, `pwd`, `date`, `ls`, `cat`, `about`, `resume`, `projects`, `skills`, `contact`, `social`, `neofetch`, `snake`, `clear`.
 
 ## CONVENTIONS
 
@@ -77,3 +77,12 @@ index.html → generate-worker.js → worker.js → wrangler deploy
 - Never add runtime fetch for assets — inline at build.
 - Never hardcode colors — use CSS variables.
 - Never add light-mode without updating root docs.
+
+## CONTENT UPDATE PATTERN
+
+Hardcoded content in `index.html`/`index-en.html` must match SSoT (`resume_data.json`):
+- Title/meta/OG/Twitter tags: `DevSecOps/SRE Engineer`
+- JSON-LD Person schema: `knowsAbout` (12 domains), `jobTitle`, `description`
+- About section: career highlights (quantified achievements), current focus
+- Hero subtitle, neofetch command, terminal `whoami`/`cat about.txt` responses
+- After edits: `npm run sync:data && npm run build` to regenerate `worker.js`
