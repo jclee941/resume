@@ -5,6 +5,13 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.5.11] - 2026-04-19
+
+### Changes
+- refactor(apply): split retry-service into N modules (0c810f4)
+- refactor(profile-sync): split jobkorea handler into N modules (82806de)
+
+
 ## [v1.5.10] - 2026-04-19
 
 ### Changes
