@@ -158,7 +158,7 @@ async function mintAndSetWantedToken() {
     });
 
     if (!response.ok) {
-      this.logger.info('⚠️ wanted: OneID token mint failed (' + response.status + ')');
+      this.logger.info(`⚠️ wanted: OneID token mint failed (${  response.status  })`);
       return;
     }
 
@@ -189,6 +189,6 @@ async function mintAndSetWantedToken() {
 
     this.logger.info('✅ wanted: OneID token set via CDP (HttpOnly)');
   } catch (e) {
-    this.logger.info('⚠️ wanted: CDP token injection failed - ' + e.message);
+    this.logger.info(`⚠️ wanted: CDP token injection failed - ${  e.message}`);
   }
 }
