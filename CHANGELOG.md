@@ -5,6 +5,13 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.5.9] - 2026-04-19
+
+### Changes
+- refactor(crawlers): split base-crawler into N modules (7203e1f)
+- refactor(dashboard): split views scripts into N modules (5a5490f)
+
+
 ## [v1.5.8] - 2026-04-19
 
 ### Changes
