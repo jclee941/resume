@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.5.15] - 2026-04-19
+
+### Changes
+- fix(data): update availability to immediate, sync+rebuild portfolio (4f8fd1c)
+
+
 ## [v1.5.14] - 2026-04-19
 
 ### Changes
