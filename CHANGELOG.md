@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.5.16] - 2026-04-19
+
+### Changes
+- build(portfolio): rebuild worker with latest resume PDF (b04ad88)
+
+
 ## [v1.5.15] - 2026-04-19
 
 ### Changes
