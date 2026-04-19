@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.5.1] - 2026-04-19
+
+### Changes
+- fix(profile-sync): use AddUserFileDB for portfolio URL registration (010103c)
+
+
 ## [v1.5.0] - 2026-04-19
 
 ### Changes
