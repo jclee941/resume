@@ -89,7 +89,7 @@ export default class WantedHandler {
 
       const currentIntro = profile.user?.description || '';
       const targetIntro = rawTarget.introduction?.length > 150
-        ? rawTarget.introduction.slice(0, 147) + '...'
+        ? `${rawTarget.introduction.slice(0, 147)  }...`
         : rawTarget.introduction || '';
       // Skip introduction diff if both are already truncated to ~150 chars (avoids false positive 406)
       const introSynced = currentIntro.length >= 147 && targetIntro.length >= 147
@@ -117,7 +117,7 @@ export default class WantedHandler {
           if (change.field === 'introduction') {
             // Skip if already ~150 chars synced (avoids false positive 406)
             if (change.from.length >= 147 && change.to.length > 150) continue;
-            updateData.description = change.to.length > 150 ? change.to.slice(0, 147) + '...' : change.to;
+            updateData.description = change.to.length > 150 ? `${change.to.slice(0, 147)  }...` : change.to;
           } else if (change.field === 'name') {
             updateData.name = change.to;
           }
