@@ -5,6 +5,13 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.5.5] - 2026-04-19
+
+### Changes
+- refactor(dashboard): split notifications service into N modules (d338bb9)
+- refactor(dashboard): split application workflow into N modules (9a4bb1a)
+
+
 ## [v1.5.4] - 2026-04-19
 
 ### Changes
