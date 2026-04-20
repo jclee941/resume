@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.5.18] - 2026-04-20
+
+### Changes
+- chore: add natively as submodule under apps/natively (08e5ed3)
+
+
 ## [v1.5.17] - 2026-04-20
 
 ### Changes
