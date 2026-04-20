@@ -14,7 +14,9 @@
     "startDate": "2024.03",
     "status": "재학중",
     "highSchool": "용남고등학교",
-    "highSchoolGraduation": "2013"
+    "highSchoolGraduation": "2013",
+    "schoolType": "4년제",
+    "majorType": "전공"
   },
   "languages": [
     {
@@ -1006,5 +1008,16 @@
     "linkedin": "https://linkedin.com/in/jclee0109",
     "website": "https://resume.jclee.me",
     "monitoring": "https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b"
+  },
+  "hope": {
+    "locations": [
+      "서울"
+    ],
+    "roles": [
+      "보안 인프라",
+      "DevSecOps",
+      "Observability",
+      "자동화"
+    ]
   }
 }

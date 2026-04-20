@@ -14,7 +14,9 @@
     "startDate": "2024.03",
     "status": "Enrolled",
     "highSchool": "Yongnam High School",
-    "highSchoolGraduation": "2013"
+    "highSchoolGraduation": "2013",
+    "schoolType": "4-year",
+    "majorType": "Major"
   },
   "languages": [
     {
@@ -895,6 +897,17 @@
       "year": "2026"
     }
   ],
+  "hope": {
+    "locations": [
+      "Seoul"
+    ],
+    "roles": [
+      "Security Infrastructure",
+      "DevSecOps",
+      "Observability",
+      "Automation"
+    ]
+  },
   "platformVariants": {
     "wanted": {
       "headline": "DevSecOps / SRE | 9 years automating security infrastructure in finance | FortiGate HA · Splunk ES · Terraform · AWS | resume.jclee.me",
