@@ -81,4 +81,64 @@ describe('jobMatcherTool enhanced scoring', () => {
     assert.ok(Object.hasOwn(result.match, 'gaps'));
     assert.ok(Object.hasOwn(result.match, 'recommendations'));
   });
+
+  it('scores DevSecOps-aligned infrastructure and security matches above auto-apply threshold', async () => {
+    const result = await jobMatcherTool.execute({
+      title: 'Senior DevSecOps Engineer',
+      company: 'SecureOps',
+      requirements: [
+        'DevSecOps, SRE 경험',
+        'AWS, Terraform, Ansible 기반 IaC 운영',
+        'Prometheus/Grafana 모니터링',
+        'Python 자동화',
+      ],
+      description:
+        'Security와 DevOps를 함께 다루며 infrastructure as code, site reliability engineering 경험을 우대합니다.',
+      location: '서울특별시 강남구',
+      experience: '5년 이상',
+      __readFile: async () =>
+        JSON.stringify({
+          ...mockResumeData,
+          summary: { ...mockResumeData.summary, totalExperience: '9년' },
+          skills: {
+            core: {
+              items: [
+                { name: 'DevSecOps' },
+                { name: 'SRE' },
+                { name: 'AWS' },
+                { name: 'Terraform' },
+                { name: 'Ansible' },
+                { name: 'Prometheus' },
+                { name: 'Grafana' },
+                { name: 'Python' },
+              ],
+            },
+          },
+        }),
+    });
+
+    assert.strictEqual(result.success, true);
+    assert.ok(result.match.score >= 75);
+    assert.ok(result.match.detailedScore.technicalSkills >= 75);
+  });
+
+  it('understands SRE and IaC synonyms as exact-equivalent matches', async () => {
+    const result = await jobMatcherTool.execute({
+      title: 'Platform Reliability Engineer',
+      company: 'InfraCo',
+      requirements: 'Site Reliability Engineering, Infrastructure as Code, Kubernetes',
+      description: 'site reliability 기반 운영과 infrastructure as code 자동화 경험',
+      location: '서울특별시 강남구',
+      experience: '3년 이상',
+      __readFile: async () =>
+        JSON.stringify({
+          ...mockResumeData,
+          skills: { core: { items: [{ name: 'SRE' }, { name: 'IaC' }, { name: 'Kubernetes' }] } },
+        }),
+    });
+
+    assert.strictEqual(result.success, true);
+    assert.ok(result.match.detailedScore.technicalSkills >= 80);
+    assert.ok(result.match.matched_skills.includes('SRE'));
+  });
 });
