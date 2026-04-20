@@ -2,6 +2,8 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert';
 import {
   buildJobKoreaFormData,
+  JK_JOB_CODES,
+  JK_LOCATION_CODES,
   mapAwardToFormFields,
   mapCareersToFormFields,
   mapHopeJobToFormFields,
@@ -239,7 +241,10 @@ describe('mapAwardToFormFields', () => {
 
 describe('mapPortfolioToFormFields', () => {
   it('returns Attach_File_Name and InputStat with valid IDX', () => {
-    const fields = mapPortfolioToFormFields({ personal: { portfolio: 'https://resume.jclee.me' } }, 13479802);
+    const fields = mapPortfolioToFormFields(
+      { personal: { portfolio: 'https://resume.jclee.me' } },
+      13479802
+    );
     const byName = toMap(fields);
 
     assert.strictEqual(byName.get('UserResume.Attach_File_Name'), '13479802,');
@@ -252,14 +257,24 @@ describe('mapPortfolioToFormFields', () => {
   });
 
   it('returns empty when no fileIdx provided', () => {
-    assert.deepStrictEqual(mapPortfolioToFormFields({ personal: { portfolio: 'https://x.com' } }, null), []);
-    assert.deepStrictEqual(mapPortfolioToFormFields({ personal: { portfolio: 'https://x.com' } }, undefined), []);
+    assert.deepStrictEqual(
+      mapPortfolioToFormFields({ personal: { portfolio: 'https://x.com' } }, null),
+      []
+    );
+    assert.deepStrictEqual(
+      mapPortfolioToFormFields({ personal: { portfolio: 'https://x.com' } }, undefined),
+      []
+    );
   });
 
   it('includes portfolio fields in buildJobKoreaFormData when fileIdx present', () => {
     const ssot = {
       personal: { portfolio: 'https://resume.jclee.me' },
-      careers: [], education: null, certifications: [], military: null, awards: [],
+      careers: [],
+      education: null,
+      certifications: [],
+      military: null,
+      awards: [],
     };
     const fields = buildJobKoreaFormData(ssot, { portfolioFileIdx: 99999 });
     const byName = toMap(fields);
@@ -271,29 +286,76 @@ describe('mapPortfolioToFormFields', () => {
   it('omits portfolio fields from buildJobKoreaFormData when no fileIdx', () => {
     const ssot = {
       personal: { portfolio: 'https://resume.jclee.me' },
-      careers: [], education: null, certifications: [], military: null, awards: [],
+      careers: [],
+      education: null,
+      certifications: [],
+      military: null,
+      awards: [],
     };
     const fields = buildJobKoreaFormData(ssot, {});
-    const portFields = fields.filter(f => f.name === 'UserResume.Attach_File_Name');
+    const portFields = fields.filter((f) => f.name === 'UserResume.Attach_File_Name');
 
     assert.strictEqual(portFields.length, 0);
   });
 });
 
 describe('mapHopeJobToFormFields', () => {
-  it('returns static expected hope job values', () => {
-    const fields = mapHopeJobToFormFields();
+  it('exports lookup tables for role and location mapping', () => {
+    assert.strictEqual(JK_JOB_CODES['보안 엔지니어'], 1000238);
+    assert.strictEqual(JK_LOCATION_CODES.서울, 'I000');
+    assert.strictEqual(JK_LOCATION_CODES.경기, 'I100');
+  });
+
+  it('falls back once and logs a single warning for unmapped hope roles', () => {
+    const warnings = [];
+    const originalWarn = console.warn;
+    console.warn = (...args) => warnings.push(args.join(' '));
+
+    try {
+      const fields = mapHopeJobToFormFields({ hope: { roles: ['DevOps'] } });
+      const byName = toMap(fields);
+
+      assert.strictEqual(byName.get('HopeJob.HJ_Code'), '10031');
+      assert.strictEqual(byName.get('HopeJob.HJ_Name_Code'), '1000233,1000238');
+      assert.strictEqual(byName.get('HopeJob.HJ_Name'), '시스템엔지니어,보안엔지니어');
+      assert.strictEqual(warnings.length, 1);
+      assert.match(warnings[0], /Unmapped HopeJob roles skipped: DevOps/);
+    } finally {
+      console.warn = originalWarn;
+    }
+  });
+
+  it('maps hope roles with known system and security engineer labels', () => {
+    const fields = mapHopeJobToFormFields({
+      hope: { roles: ['시스템 엔지니어', '보안 엔지니어'] },
+    });
     const byName = toMap(fields);
 
     assert.strictEqual(byName.get('HopeJob.HJ_Code'), '10031');
     assert.strictEqual(byName.get('HopeJob.HJ_Name_Code'), '1000233,1000238');
-    assert.strictEqual(byName.get('HopeJob.HJ_Name'), '시스템엔지니어,보안엔지니어');
+    assert.strictEqual(byName.get('HopeJob.HJ_Name'), '시스템 엔지니어,보안 엔지니어');
     assert.strictEqual(byName.get('InputStat.HopeJobInputStat'), 'True');
   });
 
-  it('has no SSOT dependency', () => {
-    const fields = mapHopeJobToFormFields({ anything: 'ignored' });
-    assert.strictEqual(fields.length, 6);
+  it('maps hope locations through exported location codes', () => {
+    const fields = mapHopeJobToFormFields({
+      hope: { locations: ['서울', '경기'] },
+    });
+    const byName = toMap(fields);
+
+    assert.strictEqual(byName.get('HopeJob.HJ_Local_Code'), 'I000,I100');
+    assert.strictEqual(byName.get('HopeJob.HJ_Local_Name'), '서울,경기');
+  });
+
+  it('falls back to careers when no hope section exists', () => {
+    const fields = mapHopeJobToFormFields({
+      careers: [{ role: '시스템 엔지니어' }, { role: '보안 엔지니어' }],
+    });
+    const byName = toMap(fields);
+
+    assert.strictEqual(byName.get('HopeJob.HJ_Name_Code'), '1000233,1000238');
+    assert.strictEqual(byName.get('HopeJob.HJ_Name'), '시스템 엔지니어,보안 엔지니어');
+    assert.strictEqual(byName.get('InputStat.HopeJobInputStat'), 'True');
   });
 });
 
@@ -374,6 +436,9 @@ describe('dry-run smoke with real SSOT', () => {
     assert.strictEqual(countMatching(fields, /^Career\[c\d+\]\.C_Name$/), expectedCareerCount);
     assert.strictEqual(countMatching(fields, /^License\[c\d+\]\.Lc_Name$/), expectedLicenseCount);
     const expectedAwardCount = Array.isArray(ssot.awards) ? ssot.awards.length : 0;
-    assert.strictEqual(countMatching(fields, /^Award\[c\d+\]\./), expectedAwardCount > 0 ? expectedAwardCount * 5 : 0);
+    assert.strictEqual(
+      countMatching(fields, /^Award\[c\d+\]\./),
+      expectedAwardCount > 0 ? expectedAwardCount * 5 : 0
+    );
   });
 });

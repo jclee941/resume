@@ -1,16 +1,42 @@
 export const JK_JOB_CODES = {
   보안엔지니어: 1000238,
+  '보안 엔지니어': 1000238,
   '보안운영 담당': 1000238,
   '보안 구축 담당': 1000238,
+  보안담당자: 1000238,
+  '보안 담당자': 1000238,
+  '보안 담당': 1000238,
+  '보안 인프라': 1000238,
   정보보호팀: 1000238,
   보안구축담당: 1000238,
+  DevSecOps: 1000238,
+  데브섹옵스: 1000238,
   시스템엔지니어: 1000233,
   '시스템 엔지니어': 1000233,
   '인프라 담당': 1000233,
   'IT지원/OA운영': 1000233,
+  SRE: 1000233,
+  Observability: 1000233,
+  자동화: 1000233,
+  Automation: 1000233,
 };
 
 export const JK_JOB_CATEGORY = 10031;
+
+export const JK_LOCATION_CODES = {
+  서울: 'I000',
+  경기: 'I100',
+  부산: 'I200',
+  인천: 'I300',
+  원격: 'I900',
+};
+
+const JK_DEFAULT_HOPE_JOB = {
+  1000233: '시스템엔지니어',
+  1000238: '보안엔지니어',
+};
+
+const JK_DEFAULT_HOPE_LOCATION = ['서울'];
 
 export const GRAD_TYPE = {
   졸업: 10,
@@ -113,9 +139,9 @@ export function mapCareersToFormFields(ssot, indices) {
     pushField(fields, `Career[${key}].RetireSt`, isCurrent ? 1 : 2);
     pushField(fields, `Career[${key}].M_MainJob_Jikwi`, career?.role || '');
     pushField(fields, `Career[${key}].Job_Type_Code`, '');
-    pushField(fields, `Career[${key}].M_MainField`, '');  // Empty: prevents code number display in resume
-    pushField(fields, `Career[${key}].M_MainJob`, '');     // Empty: same reason
-    pushField(fields, `Career[${key}].Job_Field_Direct`, '');  // Must be empty, not code
+    pushField(fields, `Career[${key}].M_MainField`, ''); // Empty: prevents code number display in resume
+    pushField(fields, `Career[${key}].M_MainJob`, ''); // Empty: same reason
+    pushField(fields, `Career[${key}].Job_Field_Direct`, ''); // Must be empty, not code
     pushField(fields, `Career[${key}].M_MainPay_User`, '');
     pushField(fields, `Career[${key}].Prfm_Prt`, String(career?.description || '').slice(0, 500));
     pushField(fields, `Career[${key}].CNameHold`, '0');
@@ -262,7 +288,7 @@ export function mapPortfolioToFormFields(ssot, fileIdx) {
   if (!url || !fileIdx) return [];
 
   return [
-    { name: 'UserResume.Attach_File_Name', value: `${fileIdx  },` },
+    { name: 'UserResume.Attach_File_Name', value: `${fileIdx},` },
     { name: 'InputStat.PortfolioInputStat', value: 'True' },
   ];
 }
@@ -275,46 +301,99 @@ export function mapPortfolioToFormFields(ssot, fileIdx) {
  */
 export async function registerPortfolioUrl(page, url) {
   const result = await page.evaluate(async (u) => {
-    return new Promise(r => {
-      $.post('/User/Resume/AddUserFileDB', {
-        File_Name: u, Display_File_Name: u,
-        File_Type: 2, File_Up_Stat: 2, File_Size: 0
-      }, res => r(res)).fail(() => r(null));
+    return new Promise((r) => {
+      $.post(
+        '/User/Resume/AddUserFileDB',
+        {
+          File_Name: u,
+          Display_File_Name: u,
+          File_Type: 2,
+          File_Up_Stat: 2,
+          File_Size: 0,
+        },
+        (res) => r(res)
+      ).fail(() => r(null));
     });
   }, url);
   return result?.sc === 1 ? result.idx : null;
 }
 
-export function mapHopeJobToFormFields(ssot) {
-  // Derive hope-job codes from SSoT career roles via JK_JOB_CODES lookup.
-  // Falls back to hardcoded defaults if no matching roles found.
-  const codes = new Map(); // code -> name
+function getHopeRoles(ssot) {
+  const hopeRoles = Array.isArray(ssot?.hope?.roles)
+    ? ssot.hope.roles.map((role) => String(role || '').trim()).filter(Boolean)
+    : [];
+
+  if (hopeRoles.length > 0) return hopeRoles;
+
   const careers = Array.isArray(ssot?.careers) ? ssot.careers : [];
-  for (const career of careers) {
-    const role = (career?.role || career?.position || '').trim();
-    if (!role) continue;
+  return careers
+    .map((career) => String(career?.role || career?.position || '').trim())
+    .filter(Boolean);
+}
+
+function getHopeLocations(ssot) {
+  const hopeLocations = Array.isArray(ssot?.hope?.locations)
+    ? ssot.hope.locations.map((location) => String(location || '').trim()).filter(Boolean)
+    : [];
+
+  return hopeLocations.length > 0 ? hopeLocations : JK_DEFAULT_HOPE_LOCATION;
+}
+
+function collectHopeJobCodes(roles) {
+  const codes = new Map();
+  const unmatchedRoles = [];
+
+  for (const role of roles) {
+    let matched = false;
+
     for (const [label, code] of Object.entries(JK_JOB_CODES)) {
       if (role.includes(label) || label.includes(role)) {
         codes.set(String(code), label);
+        matched = true;
       }
+    }
+
+    if (!matched) unmatchedRoles.push(role);
+  }
+
+  return { codes, unmatchedRoles };
+}
+
+export function mapHopeJobToFormFields(ssot) {
+  const hopeRoles = getHopeRoles(ssot);
+  const { codes, unmatchedRoles } = collectHopeJobCodes(hopeRoles);
+
+  if (unmatchedRoles.length > 0) {
+    console.warn(
+      `[jobkorea-sections] Unmapped HopeJob roles skipped: ${unmatchedRoles.join(', ')}`
+    );
+  }
+
+  if (codes.size === 0) {
+    for (const [code, label] of Object.entries(JK_DEFAULT_HOPE_JOB)) {
+      codes.set(code, label);
     }
   }
 
-  // Fallback: use default codes if no matches from SSoT careers.
-  if (codes.size === 0) {
-    codes.set('1000233', '시스템엔지니어');
-    codes.set('1000238', '보안엔지니어');
-  }
+  const locationPairs = getHopeLocations(ssot)
+    .map((location) => [JK_LOCATION_CODES[location], location])
+    .filter(([code]) => Boolean(code));
+  const normalizedLocations =
+    locationPairs.length > 0
+      ? locationPairs
+      : JK_DEFAULT_HOPE_LOCATION.map((location) => [JK_LOCATION_CODES[location], location]);
 
   const codeValues = [...codes.keys()].join(',');
   const nameValues = [...codes.values()].join(',');
+  const locationCodes = normalizedLocations.map(([code]) => code).join(',');
+  const locationNames = normalizedLocations.map(([, location]) => location).join(',');
 
   return [
     { name: 'HopeJob.HJ_Code', value: String(JK_JOB_CATEGORY) },
     { name: 'HopeJob.HJ_Name_Code', value: codeValues },
     { name: 'HopeJob.HJ_Name', value: nameValues },
-    { name: 'HopeJob.HJ_Local_Code', value: 'I000' },
-    { name: 'HopeJob.HJ_Local_Name', value: '서울전체' },
+    { name: 'HopeJob.HJ_Local_Code', value: locationCodes },
+    { name: 'HopeJob.HJ_Local_Name', value: locationNames },
     { name: 'InputStat.HopeJobInputStat', value: 'True' },
   ];
 }
