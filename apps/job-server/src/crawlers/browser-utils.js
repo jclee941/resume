@@ -15,6 +15,18 @@ const LAUNCH_ARGS = [
   '--disable-gpu',
 ];
 
+function resolveHeadlessMode(headless) {
+  if (typeof headless !== 'undefined') {
+    return headless;
+  }
+
+  if (process.env.HEADLESS === 'false') {
+    return false;
+  }
+
+  return 'new';
+}
+
 /**
  * Execute an action inside a stealth-patched puppeteer browser session.
  *
@@ -22,13 +34,13 @@ const LAUNCH_ARGS = [
  * @returns {Promise<T>} Result of the action
  * @template T
  */
-export async function withStealthBrowser(action) {
+export async function withStealthBrowser(action, options = {}) {
   let browser = null;
   try {
     const puppeteer = await import('puppeteer').then((m) => m.default);
 
     browser = await puppeteer.launch({
-      headless: 'new',
+      headless: resolveHeadlessMode(options.headless),
       executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
       args: LAUNCH_ARGS,
     });
@@ -45,7 +57,7 @@ export async function withStealthBrowser(action) {
 export async function launchStealthBrowser() {
   const puppeteer = await import('puppeteer').then((m) => m.default);
   const browser = await puppeteer.launch({
-    headless: 'new',
+    headless: resolveHeadlessMode(),
     executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
     args: LAUNCH_ARGS,
   });
