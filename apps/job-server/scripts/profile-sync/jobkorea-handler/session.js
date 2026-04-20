@@ -3,6 +3,33 @@ import path from 'path';
 import { CONFIG } from '../constants.js';
 import { log } from '../utils.js';
 
+export const JOBKOREA_SESSION_RENEW_PATH =
+  'node apps/job-server/scripts/renew-jobkorea-session.js with HEADLESS=false';
+
+const JOBKOREA_VERIFICATION_TEXT_RE = /보안인증|reCAPTCHA|자동가입 방지|비정상적인 접근/i;
+const JOBKOREA_VERIFICATION_IFRAME_RE =
+  /<iframe\b[^>]*src=["'][^"']*(captcha|recaptcha)[^"']*["']/i;
+
+function createJobKoreaVerificationError() {
+  const error = new Error(
+    `JobKorea CAPTCHA/2FA required — regenerate session via: ${JOBKOREA_SESSION_RENEW_PATH}`
+  );
+  error.failLoud = true;
+  return error;
+}
+
+export async function assertJobKoreaResumeAccess(page) {
+  const currentUrl = typeof page?.url === 'function' ? page.url() : '';
+  if (/\/Login/i.test(currentUrl)) {
+    throw createJobKoreaVerificationError();
+  }
+
+  const html = await page.content();
+  if (JOBKOREA_VERIFICATION_TEXT_RE.test(html) || JOBKOREA_VERIFICATION_IFRAME_RE.test(html)) {
+    throw createJobKoreaVerificationError();
+  }
+}
+
 export function loadJobKoreaSession() {
   const sessionPath = path.join(CONFIG.SESSION_DIR, 'jobkorea-session.json');
   if (!fs.existsSync(sessionPath)) {
