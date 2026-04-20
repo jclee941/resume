@@ -5,6 +5,25 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.6.0] - 2026-04-20
+
+### Changes
+- fix(jobkorea): fail loud on portfolio URL and CAPTCHA errors (ed77d5c)
+- fix(jobkorea): fail loud on portfolio URL and CAPTCHA errors (355889e)
+- chore(jobkorea): migrate rNo to JOBKOREA_RNO env var (68bcd79)
+- fix(jobkorea): drive HopeJob roles and locations from SSoT hope section (ff44b60)
+- fix(jobkorea): expand change-detection patterns to 15+ additional form fields (87ccebe)
+- fix(jobkorea): wire MCP live mode through profile-sync CLI delegation (9dd6e38)
+- feat(wanted): sync career.projects[] sub-projects with techStack and achievements (3ed3586)
+- docs(schema): expand resume_schema.json to match SSoT (f710a71)
+- feat(auth): add JobKorea session renewal script (2e2e7a8)
+- fix(data): add education.schoolType/majorType and hope.* to all locales (8375953)
+- fix(data): restore JA personal portfolio and summary parity (8bfa0ce)
+- fix(data): restore platformVariants to EN and JA resume SSoT (487ba89)
+- fix(wanted): stop wiping manual projects and foreign activities (144b705)
+- fix(skills): route 7 unmapped skills via aliases to nearest tag (1c31815)
+
+
 ## [v1.5.20] - 2026-04-20
 
 ### Changes
