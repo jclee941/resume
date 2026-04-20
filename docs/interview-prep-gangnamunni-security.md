@@ -799,3 +799,274 @@ IMPORTANT:
 
 
 
+
+---
+
+# 부록: JD 기반 실전 예상질문 + 사례
+
+## A. 취약점 진단 시나리오
+
+### Q1. "우리 서비스에 SSRF 취약점이 발견됐습니다. 어떻게 대응하시겠습니까?"
+
+**답변 구조:**
+
+**1단계: 영향 범위 파악**
+- 해당 기능 사용처 식별 (webhook URL, 이미지 리사이징, PDF 생성 등)
+- 내부 네트워크 접근 가능 여부 확인 (metadata endpoint 169.254.169.254)
+
+**2단계: 즉각 대응**
+- Critical이면 Feature Flag로 기능 비활성화
+- AWS 환경: IAM role 권한 확인, metadata endpoint 차단 확인
+
+**3단계: 수정**
+- 허용 목록(whitelist) 기반 URL 검증
+- Protocol 제한: https만, 내부 IP 대역 차단
+- 요청 타임아웃 + 응답 크기 제한
+
+**4단계: 재발 방지**
+- CI/CD에 DAST/SAST 통합
+- 코드 리뷰 체크리스트 적용
+
+**강남언니 연결:** "미용 플랫폼에서 후기 이미지 URL을 외부에서 가져오는 기능이 있다면, AWS 환경에서 컨테이너의 IAM role 권한을 최소화하고 metadata endpoint 접근을 네트워크 레벨에서 차단하는 것이 중요합니다."
+
+### Q2. "API에서 IDOR가 발견됐을 때, 수정 방향과 재발 방지는?"
+
+**답변:**
+- 서비스 레이어에서 리소스 소유권 검증 중앙화
+- Spring Security @PreAuthorize로 메서드 레벨 접근 통제
+- Integration test로 IDOR 케이스 자동화
+- API Gateway 레벨 authorization policy enforcement
+
+**코드 예시 (Kotlin):**
+```kotlin
+@PreAuthorize("#userId == authentication.principal.id or hasRole('ADMIN')")
+@GetMapping("/users/{userId}")
+fun getUser(@PathVariable userId: Long): User
+```
+
+### Q3. "JWT 토큰이 탈취됐을 때 대응 절차는?"
+
+**답변:**
+1. 토큰 무효화: Redis에 탈취 토큰 jti 등록 → 만료 전까지 거부
+2. 해당 계정 세션 일괄 종료 + 강제 비밀번호 변경
+3. 토큰 사용 기간 API 로그 분석
+4. Refresh token rotation, 만료 시간 단축 (15분)
+
+## B. DevSecOps 파이프라인 설계 시나리오
+
+### Q4. "CI/CD에 보안 검사를 넣으라면 어떻게 설계?"
+
+**Multi-Stage Pipeline:**
+```
+[Commit] SAST + Secrets scanning + Dependency check
+[Build]  SCA (Snyk/Dependabot) + License compliance
+[Container] Image scanning (Trivy) + Base image verification
+[Pre-Deploy] DAST (ZAP) + IaC scanning (Checkov)
+[Deploy] Policy Gate (OPA/Gatekeeper) + Artifact signing
+[Post-Deploy] Runtime protection + CSPM
+```
+
+**핵심:** "Critical 발견 시 자동 차단, False Positive 튜닝은 개발팀과 협력, 빌드 시간은 병렬 실행으로 최적화"
+
+### Q5. "SAST 도구 False Positive가 너무 많으면?"
+
+**답변:**
+1. 정량 분석: 실제 취약점 비율 계산
+2. Rule별 제외 설정 (annotate-based)
+3. 커스텀 룰 작성으로 노이즈 제거
+4. 도구 비교 (SonarQube vs Semgrep vs CodeQL)
+5. "Kotlin/Spring Boot 환경이라면, Spring MVC security 룰과 Kotlin null-safety 관련 룰을 커스터마이징해서 노이즈를 줄일 수 있습니다."
+
+### Q6. "Kubernetes 환경에서 컨테이너 보안은?"
+
+**Defense-in-Depth:**
+- 클러스터: CIS Benchmark, RBAC 최소권한, etcd 암호화, Network Policy
+- 컨테이너: Pod Security Standards (runAsNonRoot, readOnlyRootFilesystem, drop ALL capabilities)
+- 이미지: distroless 베이스, Trivy 스캔, Cosign 서명
+- 런타임: Falco 이상행위 탐지
+
+## C. 실제 보안 사고 대응 시나리오
+
+### Q7. "Log4Shell(CVE-2021-44228) 발표 시 72시간 대응?"
+
+**답변:**
+- T+0~4: SCA로 취약 Log4j 식별, Public-facing → Internal → Legacy 우선순위화
+- T+4~24: 2.17.1 이상 업그레이드, 패치 불가 시 formatMsgNoLookups=true + WAF 시그니처 차단
+- T+24~72: DNS query 로그에서 JNDI 패턴 탐색, 외부 비정상 요청 확인, Lessons Learned 문서화
+
+### Q8. "개발자가 실수로 S3 버킷을 public으로 설정해 고객 데이터 유출?"
+
+**답변:**
+1. 즉시 Block All Public Access
+2. CloudTrail에서 외부 접근 IP 추출
+3. 유출 데이터 유형 분류 (PII, 민감의료정보)
+4. 개인정보보호위원회 72시간 내 신고
+5. 재발 방지: SCP로 계정 레벨 public access 차단, Config Rule 모니터링
+
+### Q9. "OAuth refresh token이 유출됐다면?"
+
+**답변:**
+1. 모든 활성 토큰 즉시 REVOKE
+2. 제3자 통합 자격증 변경
+3. 토큰 사용 기간 API 로그 분석
+4. Refresh token 수명 단축 (90일→24시간), Token rotation 적용
+
+## D. 강남언니 도메인 특화 시나리오
+
+### Q10. "미용의료 플랫폼에서 환자 민감정보 보호 아키텍처는?"
+
+**답변:**
+- 데이터 분류: Level 1 (일반 PII) → Level 2 (의료 관련) → Level 3 (시술 사진, 진단명)
+- Level 3: RBAC + MFA + Row-Level Security + 감사 로깅
+- 암호화: at-rest AES-256, in-transit TLS 1.3
+- 감사: 누가/언제/어떤 데이터 접근했는지 기록, 최소 3년 보관
+
+### Q11. "글로벌 서비스(한국/일본/태국)에서 데이터 레지던시 설계?"
+
+**답변:**
+- 국가별 데이터 저장 리전 분리 (AWS ap-northeast-1 JP, ap-southeast-1 TH)
+- API Gateway에서 jurisdiction 판정 → 데이터 로케이션 라우팅
+- GDPR/개인정보보호법 동시 만족: 동의 획득/철회 메커니즘, 삭제권 지원
+- Cross-border 전송 시 Standard Contractual Clauses 적용
+
+### Q12. "Spring Boot Actuator가 Kubernetes에서 외부 노출될 위험과 대응?"
+
+**답변:**
+- Network Policy로 actuator endpoints 내부 모니터링 네임스페이스에서만 접근 허용
+- management.endpoints.web.exposure.include: health,info만 노출
+- show-details: when_authorized로 인증된 요청만 상세 정보
+- 별도 관리 포트 분리 (management.server.port)
+
+## E. 보안 코드 리뷰 실전 예제
+
+### 예제 1: SQL Injection (Java/Kotlin)
+
+**취약 코드:**
+```java
+@Query("SELECT u FROM User u WHERE u.email = '" + email + "'")
+User findByEmail(String email);
+```
+
+**리뷰 코멘트:** "사용자 입력이 JPQL 쿼리에 직접 들어가서 SQL Injection 가능. @Param 파라미터 바인딩 사용 필요."
+
+**수정:**
+```java
+@Query("SELECT u FROM User u WHERE u.email = :email")
+User findByEmail(@Param("email") String email);
+```
+
+### 예제 2: SSRF (Spring Boot)
+
+**취약 코드:**
+```java
+@GetMapping("/view-image")
+public byte[] getImage(@RequestParam String url) {
+    return restTemplate.getForObject(url, byte[].class);
+}
+```
+
+**리뷰 코멘트:** "사용자 URL이 검증 없이 RestTemplate에 전달. 169.254.169.254로 AWS 크레덴셜 탈취 가능. HTTPS + 도메인 allowlist 적용 필요."
+
+### 예제 3: IDOR (Kotlin)
+
+**취약 코드:**
+```kotlin
+@GetMapping("/appointments/{id}")
+fun getAppointment(@PathVariable id: Long) = appointmentService.findById(id)
+```
+
+**리뷰 코멘트:** "인증된 사용자가 다른 환자의 예약 정보에 접근 가능. 소유권 검증 필요."
+
+**수정:**
+```kotlin
+@GetMapping("/appointments/{id}")
+fun getAppointment(@PathVariable id: Long, @AuthenticationPrincipal user: User): Appointment {
+    val appointment = appointmentService.findById(id)
+    require(appointment.patientId == user.id || user.hasRole("ADMIN"))
+    return appointment
+}
+```
+
+### 예제 4: Pickle Deserialization RCE (Python)
+
+**취약 코드:**
+```python
+obj = pickle.loads(request.data)  # RCE!
+```
+
+**리뷰 코멘트:** "pickle.loads()에 사용자 데이터 전달 시 임의 코드 실행 가능. JSON으로 교체."
+
+### 예제 5: CORS Origin Reflection
+
+**취약 코드:**
+```javascript
+res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
+res.setHeader('Access-Control-Allow-Credentials', 'true');
+```
+
+**리뷰 코멘트:** "임의 Origin 반영으로 공격자 사이트에서 인증된 API 응답 탈취 가능. 도메인 allowlist 적용."
+
+### 예제 6: Terraform S3 Public
+
+**취약 코드:**
+```hcl
+resource "aws_s3_bucket" "user_data" {
+  bucket = "my-app-user-data"
+  acl    = "public-read"
+}
+```
+
+**리뷰 코멘트:** "S3 버킷 public 노출. acl=private + aws_s3_bucket_public_access_block 4개 설정 모두 true로."
+
+### 예제 7: K8s RBAC 과잉 권한
+
+**취약 코드:**
+```yaml
+subjects:
+  - kind: ServiceAccount
+    name: default
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+```
+
+**리뷰 코멘트:** "default SA에 cluster-admin 부여. 팟 하나 탈취되면 클러스터 전체 장악. 네임스페이스 스코프 Role + 최소 권한."
+
+## F. 한국 테크기업 실제 면접 기출 (출처별)
+
+### 잡플래닛/블로터
+- TCP와 UDP 차이를 보안 관점에서 설명
+- IDS와 IPS 차이
+- CSRF와 XSS 차이, 각 종류
+- OWASP Top 10 상위 5개 설명
+- 블라인드 SQL 인젝션 설명
+- 서버 취약점 점검 시 가장 먼저 할 일
+- 개보법/신용법/망법 아는 바
+
+### 안랩
+- 방화벽 동작 원리 (관리자 측면)
+- TCP 3-Way Handshake 깊이 추궁
+- Suricata vs Snort 차이
+- 파일리스(Fileless) 공격 대응
+
+### 쿠팡
+- 시스템 설계 + 라이브코딩 + 도메인 + 컬쳐핏 (각 1시간, 총 4시간)
+- "보안 속도와 기능 개발 속도의 트레이드오프 관리?"
+- OAuth/OIDC/SAML/JWT 심층 지식
+
+### 공통 행동 질문
+- "가장 어려웠던 기술적 문제는?"
+- "보안 취약점 발견 시 개발팀이 무시하려 할 때?"
+- "보안팀이 병목이라는 불만 해결법?"
+- "보안 교육/Training 진행 경험?"
+
+## G. 참고 리소스
+
+| 자료 | URL |
+|------|-----|
+| 코드 리뷰 챌린지 (FAANG Prep) | https://github.com/dub-flow/secure-code-review-challenges |
+| 정보보안 면접 질문 50개 | https://lheunx.tistory.com/entry/정보보안면접질문-50개 |
+| IT 보안 면접 Top 10 | https://www.it-server-room.com/it-보안-면접-인터뷰-예상-질문/ |
+| Threat Modeling 55문제 | https://www.practical-devsecops.com/threat-modeling-interview-questions-and-answers/ |
+| AppSec 101문제 | https://www.adaface.com/blog/application-security-engineer-interview-questions/ |
+| Amazon Security Engineer Prep | https://amazon.jobs/content/en/how-we-hire/security-engineer-interview-prep |
