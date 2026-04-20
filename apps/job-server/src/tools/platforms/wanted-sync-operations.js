@@ -9,19 +9,68 @@ function isStrictSyncEnabled() {
   return process.env.SYNC_STRICT === 'true';
 }
 
+const WANTED_PROJECT_DESCRIPTION_LIMIT = 2000;
+
+function normalizeText(value) {
+  return typeof value === 'string' ? value.trim() : '';
+}
+
+function truncateWantedProjectDescription(description) {
+  return description.slice(0, WANTED_PROJECT_DESCRIPTION_LIMIT).trim();
+}
+
+function composeCareerProjectDescription(project = {}) {
+  const period = normalizeText(project.period);
+  const techStack = Array.isArray(project.techStack)
+    ? project.techStack
+        .map((item) => normalizeText(item))
+        .filter(Boolean)
+        .join(', ')
+    : '';
+  const achievements = Array.isArray(project.achievements)
+    ? project.achievements
+        .map((achievement) => normalizeText(achievement))
+        .filter(Boolean)
+        .map((achievement) => `- ${achievement}`)
+        .join('\n')
+    : '';
+  const description = `${period || ''}\n${techStack || ''}\n\n${achievements}`.trim();
+
+  if (description) {
+    return truncateWantedProjectDescription(description);
+  }
+
+  return truncateWantedProjectDescription(normalizeText(project.description));
+}
+
 function normalizeCareerProjects(ssotCareer = {}) {
   if (Array.isArray(ssotCareer.projects)) {
-    return ssotCareer.projects.filter(
-      (project) =>
-        project && typeof project.title === 'string' && typeof project.description === 'string'
-    );
+    return ssotCareer.projects
+      .map((project) => {
+        if (!project || typeof project !== 'object') {
+          return null;
+        }
+
+        const title =
+          normalizeText(project.name) ||
+          normalizeText(project.title) ||
+          normalizeText(ssotCareer.project);
+        const description = composeCareerProjectDescription(project);
+
+        if (!title || !description) {
+          return null;
+        }
+
+        return { title, description };
+      })
+      .filter(Boolean);
   }
 
   if (ssotCareer.project && ssotCareer.description) {
     return [
       {
-        title: ssotCareer.project,
-        description: ssotCareer.description,
+        title: normalizeText(ssotCareer.project),
+        description: truncateWantedProjectDescription(normalizeText(ssotCareer.description)),
       },
     ];
   }

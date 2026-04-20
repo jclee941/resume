@@ -186,4 +186,138 @@ describe('wanted sync operations', () => {
       ['resume-1', 'career-1', { title: 'Legacy Project', description: 'After sync' }],
     ]);
   });
+
+  it('syncCareers emits one project sync per SSoT sub-project', async () => {
+    const api = createApiMock();
+    const localCareers = [
+      {
+        company: { name: 'Wanted Lab' },
+        job_role: 'SRE',
+      },
+    ];
+    const remoteCareers = [
+      {
+        id: 'career-1',
+        company: { name: 'Wanted Lab' },
+        projects: [
+          { id: 'project-1', title: 'Core Platform', description: 'Old' },
+          { id: 'project-2', title: 'Observability', description: 'Old' },
+        ],
+      },
+    ];
+    const ssotCareers = [
+      {
+        project: 'Career Fallback',
+        projects: [
+          {
+            name: 'Core Platform',
+            period: '2022.01 ~ 2022.06',
+            achievements: ['Migrated workloads'],
+          },
+          {
+            name: 'Observability',
+            period: '2022.07 ~ 2022.12',
+            achievements: ['Built dashboards'],
+          },
+          {
+            name: 'Incident Automation',
+            period: '2023.01 ~ 2023.06',
+            achievements: ['Reduced MTTR'],
+          },
+        ],
+      },
+    ];
+
+    await syncCareers(api, 'resume-1', localCareers, remoteCareers, ssotCareers);
+
+    assert.deepStrictEqual(getMockArgs(api.resumeCareer.deleteProject), [
+      ['resume-1', 'career-1', 'project-1'],
+      ['resume-1', 'career-1', 'project-2'],
+    ]);
+    assert.strictEqual(api.resumeCareer.addProject.mock.calls.length, 3);
+    assert.deepStrictEqual(
+      getMockArgs(api.resumeCareer.addProject).map(([, , payload]) => payload.title),
+      ['Core Platform', 'Observability', 'Incident Automation']
+    );
+  });
+
+  it('syncCareers composes project descriptions from period, tech stack, and achievements', async () => {
+    const api = createApiMock();
+    const localCareers = [
+      {
+        company: { name: 'Wanted Lab' },
+        job_role: 'SRE',
+      },
+    ];
+    const remoteCareers = [
+      {
+        id: 'career-1',
+        company: { name: 'Wanted Lab' },
+        projects: [],
+      },
+    ];
+    const ssotCareers = [
+      {
+        projects: [
+          {
+            name: 'Platform Migration',
+            period: '2024.01 ~ 2024.06',
+            techStack: ['Node.js', 'Cloudflare Workers', 'PostgreSQL'],
+            achievements: ['Migrated 12 services', 'Reduced deploy time by 70%'],
+          },
+        ],
+      },
+    ];
+
+    await syncCareers(api, 'resume-1', localCareers, remoteCareers, ssotCareers);
+
+    assert.deepStrictEqual(getMockArgs(api.resumeCareer.addProject), [
+      [
+        'resume-1',
+        'career-1',
+        {
+          title: 'Platform Migration',
+          description:
+            '2024.01 ~ 2024.06\nNode.js, Cloudflare Workers, PostgreSQL\n\n- Migrated 12 services\n- Reduced deploy time by 70%',
+        },
+      ],
+    ]);
+  });
+
+  it('syncCareers caps composed project descriptions at 2000 characters', async () => {
+    const api = createApiMock();
+    const localCareers = [
+      {
+        company: { name: 'Wanted Lab' },
+        job_role: 'SRE',
+      },
+    ];
+    const remoteCareers = [
+      {
+        id: 'career-1',
+        company: { name: 'Wanted Lab' },
+        projects: [],
+      },
+    ];
+    const longAchievement = 'A'.repeat(2105);
+    const ssotCareers = [
+      {
+        projects: [
+          {
+            name: 'Long Project',
+            period: '2024',
+            techStack: ['Node.js'],
+            achievements: [longAchievement],
+          },
+        ],
+      },
+    ];
+
+    await syncCareers(api, 'resume-1', localCareers, remoteCareers, ssotCareers);
+
+    const [, , payload] = getMockArgs(api.resumeCareer.addProject)[0];
+    assert.strictEqual(payload.title, 'Long Project');
+    assert.strictEqual(payload.description.length, 2000);
+    assert.match(payload.description, /^2024\nNode\.js\n\n- A+/);
+  });
 });
