@@ -58,7 +58,7 @@ async function appendPortfolioFields(page, ssot, targetFields, options = {}) {
   const timestamp =
     typeof options.getTimestamp === 'function' ? options.getTimestamp() : new Date().toISOString();
   const fileIdx = await registerPortfolioUrl(page, portfolioUrl);
-  if (fileIdx !== null && fileIdx !== undefined && fileIdx !== '') {
+  if (fileIdx) {
     logger(`Portfolio URL registered: IDX=${fileIdx}`, 'info', 'jobkorea');
     targetFields.push(...mapPortfolioToFormFields(ssot, fileIdx));
     return;
