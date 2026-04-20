@@ -83,6 +83,14 @@
           "type": "string",
           "pattern": "^\\d{4}$",
           "description": "High school graduation year (YYYY format)"
+        },
+        "schoolType": {
+          "type": "string",
+          "description": "School type (e.g., 4년제, 2년제)"
+        },
+        "majorType": {
+          "type": "string",
+          "description": "Major type (e.g., 전공, 복수전공)"
         }
       },
       "additionalProperties": true
@@ -186,8 +194,51 @@
             "description": "Job role/position"
           },
           "client": {
+            "type": ["string", "null"],
+            "description": "Client name (null if direct employment)"
+          },
+          "teamSize": {
             "type": "string",
-            "description": "Client name"
+            "description": "Team size description"
+          },
+          "myRole": {
+            "type": "string",
+            "description": "Specific role within the team"
+          },
+          "workType": {
+            "type": "string",
+            "description": "Work type (e.g., 정규직, 파견, SI, SM)"
+          },
+          "wantedSummary": {
+            "type": "string",
+            "description": "One-liner summary for Wanted platform"
+          },
+          "note": {
+            "type": ["string", "null"],
+            "description": "Additional notes (null if none)"
+          },
+          "projects": {
+            "type": "array",
+            "description": "Sub-projects within this career entry",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string", "description": "Project name" },
+                "description": { "type": "string", "description": "Project description" },
+                "period": { "type": "string", "description": "Project period" },
+                "techStack": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Technologies used"
+                },
+                "achievements": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Key achievements"
+                }
+              },
+              "additionalProperties": true
+            }
           },
           "description": {
             "type": "string",
@@ -705,6 +756,105 @@
           "format": "uri",
           "description": "Monitoring dashboard URL"
         }
+      },
+      "additionalProperties": true
+    },
+    "platformVariants": {
+      "type": "object",
+      "description": "Platform-specific resume variants",
+      "properties": {
+        "wanted": {
+          "type": "object",
+          "description": "Wanted platform variant",
+          "properties": {
+            "headline": { "type": "string", "description": "Headline for Wanted" },
+            "about": { "type": "string", "description": "About section for Wanted" }
+          },
+          "additionalProperties": true
+        },
+        "jobkorea": {
+          "type": "object",
+          "description": "JobKorea platform variant",
+          "properties": {
+            "headline": { "type": "string", "description": "Headline for JobKorea" },
+            "about": { "type": "string", "description": "About section for JobKorea" }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "ossContributions": {
+      "type": "array",
+      "description": "Open source contributions",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "description": "Repository/project name" },
+          "url": { "type": "string", "description": "Repository URL" },
+          "description": { "type": "string", "description": "Contribution description" },
+          "techStack": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Technologies used"
+          },
+          "role": { "type": "string", "description": "Role in the project" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "awards": {
+      "type": "array",
+      "description": "Awards and recognitions",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "description": "Award name" },
+          "organization": { "type": "string", "description": "Awarding organization" },
+          "year": { "type": "string", "description": "Year awarded" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "hope": {
+      "type": "object",
+      "description": "Job preferences",
+      "properties": {
+        "locations": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Preferred work locations"
+        },
+        "roles": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Desired roles"
+        }
+      },
+      "additionalProperties": true
+    },
+    "availability": {
+      "type": "string",
+      "description": "Availability status string"
+    },
+    "languages": {
+      "type": "array",
+      "description": "Language proficiencies",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "description": "Language name" },
+          "level": { "type": "string", "description": "Proficiency level" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "military": {
+      "type": "object",
+      "description": "Military service information",
+      "properties": {
+        "status": { "type": "string", "description": "Military service status" },
+        "period": { "type": "string", "description": "Service period" }
       },
       "additionalProperties": true
     }
