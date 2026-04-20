@@ -2,9 +2,64 @@ import { describe, it, mock, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert';
 import fs from 'fs';
 import JobKoreaHandler from '../jobkorea-handler.js';
+import { syncJobKoreaProfile } from '../jobkorea-handler/sync.js';
+import {
+  assertJobKoreaResumeAccess,
+  JOBKOREA_SESSION_RENEW_PATH,
+} from '../jobkorea-handler/session.js';
 
 describe('JobKoreaHandler.computeChanges', () => {
   const handler = new JobKoreaHandler();
+  const existingKeyFields = [
+    'Career[c1].C_Name',
+    'Career[c1].C_Part',
+    'Career[c1].CSYM',
+    'Career[c1].CEYM',
+    'Career[c1].M_MainJob_Jikwi',
+    'Career[c1].RetireSt',
+    'Career[c1].M_MainField',
+    'Career[c1].Prfm_Prt',
+    'UnivSchool[c1].Schl_Name',
+    'UnivSchool[c1].Entc_YM',
+    'UnivSchool[c1].Grad_YM',
+    'UnivSchool[c1].Major_Name',
+    'License[c1].Lc_Name',
+    'License[c1].Lc_Pub',
+    'License[c1].Lc_YYMM',
+    'UserAddition.Military_Stat',
+    'UserAddition.Military_Kind',
+    'UserAddition.Military_SYM',
+    'UserAddition.Military_EYM',
+    'Award[c1].Award_Name',
+    'Award[c1].Award_Inst_Name',
+    'Award[c1].Award_Year',
+    'HopeJob.HJ_Name',
+    'HopeJob.HJ_Name_Code',
+    'HopeJob.HJ_Code',
+    'Portfolio[c1].Prtf_Url',
+  ];
+  const newlyCoveredFields = [
+    'Career[c1].Co_Code',
+    'Career[c1].CName_Code',
+    'Career[c1].Biz_No',
+    'Career[c1].Job_Type_Code',
+    'Career[c1].M_MainField',
+    'Career[c1].M_MainJob',
+    'Career[c1].Job_Field_Direct',
+    'Career[c1].M_MainPay_User',
+    'Career[c1].Retire_Rsn_Code',
+    'Career[c1].NHIS_LINKED_STAT',
+    'Career[c1].CNameHold',
+    'Career[c1].OpenStat',
+    'License[c1].Lc_Code',
+    'License[c1].Naver_Lcns_Linked_Stat',
+    'UnivSchool[c1].Schl_Type_Code',
+    'UnivSchool[c1].UnivMajor[0].Major_Type_Code',
+    'Award[c1].Award_Cntnt',
+    'UserAddition.Military_Stat',
+    'UserAddition.Military_Kind',
+    'PIOfferAgree.IpAgree',
+  ];
 
   it('detects changed key field values', () => {
     const before = [{ name: 'Career[c1].C_Name', value: 'Old Company' }];
@@ -36,11 +91,11 @@ describe('JobKoreaHandler.computeChanges', () => {
 
   it('ignores non-key fields and reports correct shape for key fields', () => {
     const before = [
-      { name: 'Career[c1].Co_Code', value: 'A' },
+      { name: 'Career[c1].Co_Code_Extra', value: 'A' },
       { name: 'HopeJob.HJ_Name', value: '시스템엔지니어' },
     ];
     const after = [
-      { name: 'Career[c1].Co_Code', value: 'B' },
+      { name: 'Career[c1].Co_Code_Extra', value: 'B' },
       { name: 'HopeJob.HJ_Name', value: '시스템엔지니어,보안엔지니어' },
     ];
 
@@ -51,6 +106,63 @@ describe('JobKoreaHandler.computeChanges', () => {
     assert.strictEqual(changes[0].field, 'Hope job names');
     assert.strictEqual(changes[0].from, '시스템엔지니어');
     assert.strictEqual(changes[0].to, '시스템엔지니어,보안엔지니어');
+  });
+
+  it('detects changes for each newly covered field', () => {
+    const before = newlyCoveredFields.map((name, index) => ({
+      name,
+      value: `before-${index}`,
+    }));
+    const after = newlyCoveredFields.map((name, index) => ({
+      name,
+      value: `after-${index}`,
+    }));
+
+    const changes = handler.computeChanges(before, after);
+
+    assert.strictEqual(changes.length, newlyCoveredFields.length);
+    assert.deepStrictEqual(
+      changes.map((change) => change.field),
+      newlyCoveredFields.map((name) => handler.describeField(name))
+    );
+  });
+
+  it('keeps all existing key-field regex patterns working', () => {
+    const before = existingKeyFields.map((name, index) => ({
+      name,
+      value: `old-${index}`,
+    }));
+    const after = existingKeyFields.map((name, index) => ({
+      name,
+      value: `new-${index}`,
+    }));
+
+    const changes = handler.computeChanges(before, after);
+
+    assert.strictEqual(changes.length, existingKeyFields.length);
+    assert.deepStrictEqual(
+      changes.map((change) => change.field),
+      existingKeyFields.map((name) => handler.describeField(name))
+    );
+  });
+
+  it('does not match near-miss field names for newly added patterns', () => {
+    const before = [
+      { name: 'Career[c1].OpenStatExtra', value: 'A' },
+      { name: 'License[c1].Lc_Code_Extra', value: 'B' },
+      { name: 'UnivSchool[c1].Schl_Type_Code_Extra', value: 'C' },
+      { name: 'UnivSchool[c1].UnivMajor[0].Major_Type_Code_Extra', value: 'D' },
+      { name: 'Award[c1].Award_Cntnt_Extra', value: 'E' },
+      { name: 'PIOfferAgree.IpAgreeExtra', value: 'F' },
+    ];
+    const after = before.map((field, index) => ({
+      name: field.name,
+      value: `changed-${index}`,
+    }));
+
+    const changes = handler.computeChanges(before, after);
+
+    assert.deepStrictEqual(changes, []);
   });
 });
 
@@ -70,6 +182,34 @@ describe('JobKoreaHandler.describeField', () => {
     );
   });
 
+  it('returns meaningful labels for newly covered field names', () => {
+    const fieldNames = [
+      'Career[c1].Co_Code',
+      'Career[c1].CName_Code',
+      'Career[c1].Biz_No',
+      'Career[c1].Job_Type_Code',
+      'Career[c1].M_MainJob',
+      'Career[c1].Job_Field_Direct',
+      'Career[c1].M_MainPay_User',
+      'Career[c1].Retire_Rsn_Code',
+      'Career[c1].NHIS_LINKED_STAT',
+      'Career[c1].CNameHold',
+      'Career[c1].OpenStat',
+      'License[c1].Lc_Code',
+      'License[c1].Naver_Lcns_Linked_Stat',
+      'UnivSchool[c1].Schl_Type_Code',
+      'UnivSchool[c1].UnivMajor[0].Major_Type_Code',
+      'Award[c1].Award_Cntnt',
+      'PIOfferAgree.IpAgree',
+    ];
+
+    for (const fieldName of fieldNames) {
+      const label = handler.describeField(fieldName);
+      assert.notStrictEqual(label, '');
+      assert.notStrictEqual(label, fieldName);
+    }
+  });
+
   it('maps License field names to readable labels', () => {
     assert.strictEqual(handler.describeField('License[c9].Lc_Name'), 'License c9 name');
     assert.strictEqual(handler.describeField('License[c9].Lc_YYMM'), 'License c9 date');
@@ -79,6 +219,22 @@ describe('JobKoreaHandler.describeField', () => {
     assert.strictEqual(handler.describeField('Award[c2].Award_Name'), 'Award c2 name');
     assert.strictEqual(handler.describeField('Award[c2].Award_Inst_Name'), 'Award c2 organization');
     assert.strictEqual(handler.describeField('Award[c2].Award_Year'), 'Award c2 year');
+  });
+
+  it('maps newly added field names to readable labels', () => {
+    assert.strictEqual(handler.describeField('Career[c2].Co_Code'), 'Career c2 회사 코드');
+    assert.strictEqual(handler.describeField('Career[c2].Biz_No'), 'Career c2 사업자번호');
+    assert.strictEqual(handler.describeField('License[c2].Lc_Code'), 'License c2 자격증 코드');
+    assert.strictEqual(
+      handler.describeField('UnivSchool[c2].Schl_Type_Code'),
+      'School c2 학교 유형 코드'
+    );
+    assert.strictEqual(
+      handler.describeField('UnivSchool[c2].UnivMajor[0].Major_Type_Code'),
+      'School c2 major 0 전공 유형 코드'
+    );
+    assert.strictEqual(handler.describeField('Award[c2].Award_Cntnt'), 'Award c2 수상 내용');
+    assert.strictEqual(handler.describeField('PIOfferAgree.IpAgree'), '개인정보 제공 동의');
   });
 
   it('maps military named fields', () => {
@@ -176,9 +332,7 @@ describe('JobKoreaHandler.saveSession', () => {
 
   it('normalizes legacy array session to object with metadata', () => {
     // loadSession() at line 22 supports legacy bare-array format
-    const legacyArray = [
-      { name: 'ACNT_COOKIE', value: 'legacy123', domain: '.jobkorea.co.kr' },
-    ];
+    const legacyArray = [{ name: 'ACNT_COOKIE', value: 'legacy123', domain: '.jobkorea.co.kr' }];
     mock.method(fs, 'readFileSync', () => JSON.stringify(legacyArray));
 
     const newCookies = [
@@ -228,5 +382,138 @@ describe('JobKoreaHandler.loadSession - auth-sync compatibility', () => {
     assert.strictEqual(result.length, 2);
     assert.strictEqual(result[0].name, 'ACNT_COOKIE');
     assert.strictEqual(result[1].domain, '.jobkorea.co.kr');
+  });
+});
+
+describe('JobKorea fail-loud guards', () => {
+  function createSyncHarness(overrides = {}) {
+    const logs = [];
+    const page = {
+      goto: async () => {},
+      url: () => overrides.url ?? 'https://www.jobkorea.co.kr/User/Resume/Edit?RNo=30236578',
+      content: async () => overrides.content ?? '<form id="frm1"></form>',
+      waitForFunction: async () => {},
+      waitForTimeout: async () => {},
+      evaluate: async () => {
+        if (typeof overrides.evaluate === 'function') {
+          return overrides.evaluate();
+        }
+        return [];
+      },
+    };
+    const context = {
+      addCookies: async () => {},
+      newPage: async () => page,
+      cookies: async () => [],
+    };
+    const browser = {
+      newContext: async () => context,
+      close: async () => {},
+    };
+    const handler = {
+      loadSession: () => [
+        { name: 'ACNT_COOKIE', value: 'abc', domain: '.jobkorea.co.kr', path: '/' },
+      ],
+      saveSession: () => {},
+      createEntrySlots: async () => ({ career: [], license: [], award: [], school: 'c1' }),
+      computeChanges: () => [],
+    };
+
+    return {
+      browser,
+      handler,
+      logger: (message, level, scope) => logs.push({ message, level, scope }),
+      logs,
+    };
+  }
+
+  it('throws when registerPortfolioUrl returns null by default', async () => {
+    const harness = createSyncHarness();
+    const ssot = { personal: { portfolio: 'https://portfolio.example.com' } };
+
+    await assert.rejects(
+      () =>
+        syncJobKoreaProfile(harness.handler, ssot, {
+          launchBrowser: async () => harness.browser,
+          registerPortfolioUrl: async () => null,
+          getTimestamp: () => '2026-04-21T10:00:00.000Z',
+          logger: harness.logger,
+        }),
+      (error) => {
+        assert.match(error.message, /JobKorea portfolio URL registration failed/);
+        assert.match(error.message, /https:\/\/portfolio\.example\.com/);
+        assert.match(error.message, /2026-04-21T10:00:00\.000Z/);
+        return true;
+      }
+    );
+  });
+
+  it('continues with warning when JOBKOREA_PORTFOLIO_OPTIONAL=true', async () => {
+    const harness = createSyncHarness();
+    const original = process.env.JOBKOREA_PORTFOLIO_OPTIONAL;
+    process.env.JOBKOREA_PORTFOLIO_OPTIONAL = 'true';
+
+    try {
+      const result = await syncJobKoreaProfile(
+        harness.handler,
+        { personal: { portfolio: 'https://portfolio.example.com' } },
+        {
+          launchBrowser: async () => harness.browser,
+          registerPortfolioUrl: async () => null,
+          getTimestamp: () => '2026-04-21T10:00:00.000Z',
+          logger: harness.logger,
+        }
+      );
+
+      assert.strictEqual(result.success, true);
+      assert.ok(
+        harness.logs.some(
+          (entry) =>
+            entry.level === 'warn' &&
+            entry.message.includes('JobKorea portfolio URL registration failed')
+        )
+      );
+    } finally {
+      if (original === undefined) {
+        delete process.env.JOBKOREA_PORTFOLIO_OPTIONAL;
+      } else {
+        process.env.JOBKOREA_PORTFOLIO_OPTIONAL = original;
+      }
+    }
+  });
+
+  it('throws when CAPTCHA text is present on the page', async () => {
+    const page = {
+      url: () => 'https://www.jobkorea.co.kr/User/Resume/Edit?RNo=30236578',
+      content: async () => '<html><body>보안인증이 필요합니다</body></html>',
+    };
+
+    await assert.rejects(
+      () => assertJobKoreaResumeAccess(page),
+      (error) => {
+        assert.match(error.message, /JobKorea CAPTCHA\/2FA required/);
+        assert.match(
+          error.message,
+          new RegExp(JOBKOREA_SESSION_RENEW_PATH.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+        );
+        return true;
+      }
+    );
+  });
+
+  it('throws when the page redirects to /Login', async () => {
+    const page = {
+      url: () => 'https://www.jobkorea.co.kr/Login',
+      content: async () => '<html><body>login</body></html>',
+    };
+
+    await assert.rejects(
+      () => assertJobKoreaResumeAccess(page),
+      (error) => {
+        assert.match(error.message, /JobKorea CAPTCHA\/2FA required/);
+        assert.match(error.message, /renew-jobkorea-session\.js/);
+        return true;
+      }
+    );
   });
 });

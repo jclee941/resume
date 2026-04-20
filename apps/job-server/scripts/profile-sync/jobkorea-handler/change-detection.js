@@ -8,21 +8,27 @@ const KEY_FIELD_PATTERNS = [
   /\.M_MainJob_Jikwi$/,
   /\.RetireSt$/,
   /\.M_MainField$/,
+  /^Career\[c\d+\]\.(Co_Code|CName_Code|Biz_No|Job_Type_Code|M_MainField|M_MainJob|Job_Field_Direct|M_MainPay_User|Retire_Rsn_Code|NHIS_LINKED_STAT|CNameHold|OpenStat)$/,
   /\.Prfm_Prt$/,
   /\.Schl_Name$/,
   /\.Entc_YM$/,
   /\.Grad_YM$/,
+  /^UnivSchool\[c\d+\]\.(Schl_Type_Code)$/,
   /\.Major_Name$/,
+  /^UnivSchool\[c\d+\]\.UnivMajor\[\d+\]\.Major_Type_Code$/,
   /\.Lc_Name$/,
   /\.Lc_Pub$/,
   /\.Lc_YYMM$/,
+  /^License\[c\d+\]\.(Lc_Code|Naver_Lcns_Linked_Stat)$/,
   /UserAddition\.Military_Stat$/,
   /UserAddition\.Military_Kind$/,
   /UserAddition\.Military_SYM$/,
   /UserAddition\.Military_EYM$/,
+  /^PIOfferAgree\.(IpAgree)$/,
   /Award\[.*\]\.Award_Name$/,
   /Award\[.*\]\.Award_Inst_Name$/,
   /Award\[.*\]\.Award_Year$/,
+  /^Award\[c\d+\]\.(Award_Cntnt)$/,
   /HopeJob\./,
   /Portfolio\[.*\]\.Prtf_Url$/,
 ];
@@ -69,7 +75,7 @@ export function computeChangesForJobKorea(currentFields, targetFields, describeF
 
 export function describeJobKoreaField(name) {
   let match = name.match(
-    /^Career\[([^\]]+)\]\.(C_Name|C_Part|CSYM|CEYM|M_MainJob_Jikwi|RetireSt|M_MainField|Prfm_Prt)$/
+    /^Career\[([^\]]+)\]\.(C_Name|C_Part|CSYM|CEYM|M_MainJob_Jikwi|RetireSt|M_MainField|Co_Code|CName_Code|Biz_No|Job_Type_Code|M_MainJob|Job_Field_Direct|M_MainPay_User|Retire_Rsn_Code|NHIS_LINKED_STAT|CNameHold|OpenStat|Prfm_Prt)$/
   );
   if (match) {
     const map = {
@@ -80,43 +86,65 @@ export function describeJobKoreaField(name) {
       M_MainJob_Jikwi: 'role',
       RetireSt: 'status',
       M_MainField: 'job code',
+      Co_Code: '회사 코드',
+      CName_Code: '회사명 코드',
+      Biz_No: '사업자번호',
+      Job_Type_Code: '직무 형태 코드',
+      M_MainJob: '주요 직무 코드',
+      Job_Field_Direct: '직무 분야 직접 입력',
+      M_MainPay_User: '주요 연봉',
+      Retire_Rsn_Code: '퇴사 사유 코드',
+      NHIS_LINKED_STAT: '건강보험 연동 상태',
+      CNameHold: '회사명 보존 여부',
+      OpenStat: '공개 상태',
       Prfm_Prt: 'description',
     };
     return `Career ${match[1]} ${map[match[2]] || match[2]}`;
   }
 
-  match = name.match(/^UnivSchool\[([^\]]+)\]\.(Schl_Name|Entc_YM|Grad_YM|Grad_Type_Code)$/);
+  match = name.match(
+    /^UnivSchool\[([^\]]+)\]\.(Schl_Name|Entc_YM|Grad_YM|Grad_Type_Code|Schl_Type_Code)$/
+  );
   if (match) {
     const map = {
       Schl_Name: 'school',
       Entc_YM: 'start',
       Grad_YM: 'end',
       Grad_Type_Code: 'status',
+      Schl_Type_Code: '학교 유형 코드',
     };
     return `School ${match[1]} ${map[match[2]] || match[2]}`;
   }
 
-  match = name.match(/^UnivSchool\[([^\]]+)\]\.UnivMajor\[0\]\.Major_Name$/);
+  match = name.match(/^UnivSchool\[([^\]]+)\]\.UnivMajor\[(\d+)\]\.(Major_Name|Major_Type_Code)$/);
   if (match) {
-    return `School ${match[1]} major`;
+    if (match[3] === 'Major_Name') {
+      return `School ${match[1]} major`;
+    }
+    return `School ${match[1]} major ${match[2]} 전공 유형 코드`;
   }
 
-  match = name.match(/^License\[([^\]]+)\]\.(Lc_Name|Lc_Pub|Lc_YYMM)$/);
+  match = name.match(
+    /^License\[([^\]]+)\]\.(Lc_Name|Lc_Pub|Lc_YYMM|Lc_Code|Naver_Lcns_Linked_Stat)$/
+  );
   if (match) {
     const map = {
       Lc_Name: 'name',
       Lc_Pub: 'issuer',
       Lc_YYMM: 'date',
+      Lc_Code: '자격증 코드',
+      Naver_Lcns_Linked_Stat: '네이버 자격증 연동 상태',
     };
     return `License ${match[1]} ${map[match[2]] || match[2]}`;
   }
 
-  match = name.match(/^Award\[([^\]]+)\]\.(Award_Name|Award_Inst_Name|Award_Year)$/);
+  match = name.match(/^Award\[([^\]]+)\]\.(Award_Name|Award_Inst_Name|Award_Year|Award_Cntnt)$/);
   if (match) {
     const map = {
       Award_Name: 'name',
       Award_Inst_Name: 'organization',
       Award_Year: 'year',
+      Award_Cntnt: '수상 내용',
     };
     return `Award ${match[1]} ${map[match[2]] || match[2]}`;
   }
@@ -125,6 +153,7 @@ export function describeJobKoreaField(name) {
   if (name === 'UserAddition.Military_Kind') return 'Military kind';
   if (name === 'UserAddition.Military_SYM') return 'Military start';
   if (name === 'UserAddition.Military_EYM') return 'Military end';
+  if (name === 'PIOfferAgree.IpAgree') return '개인정보 제공 동의';
   if (name === 'HopeJob.HJ_Name') return 'Hope job names';
   if (name === 'HopeJob.HJ_Name_Code') return 'Hope job codes';
   if (name === 'HopeJob.HJ_Code') return 'Hope job category';
