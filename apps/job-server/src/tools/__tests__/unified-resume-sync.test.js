@@ -88,6 +88,7 @@ describe('unifiedResumeSyncTool', () => {
   beforeEach(() => {
     mock.restoreAll();
     syncBuiltinESMExports();
+    delete process.env.SYNC_STRICT;
   });
 
   it('maps preview wanted format including parseDate-derived fields', async () => {
@@ -274,7 +275,11 @@ describe('unifiedResumeSyncTool', () => {
         update: resumeActivityUpdate,
         delete: resumeActivityDelete,
       },
-      resumeLanguageCert: { add: mock.fn(async () => undefined), update: mock.fn(async () => undefined), delete: mock.fn(async () => undefined) },
+      resumeLanguageCert: {
+        add: mock.fn(async () => undefined),
+        update: mock.fn(async () => undefined),
+        delete: mock.fn(async () => undefined),
+      },
       resume: { save: resumeSave },
     };
 
@@ -463,7 +468,11 @@ describe('unifiedResumeSyncTool', () => {
           update: mock.fn(async () => undefined),
           delete: mock.fn(async () => undefined),
         },
-        resumeLanguageCert: { add: mock.fn(async () => undefined), update: mock.fn(async () => undefined), delete: mock.fn(async () => undefined) },
+        resumeLanguageCert: {
+          add: mock.fn(async () => undefined),
+          update: mock.fn(async () => undefined),
+          delete: mock.fn(async () => undefined),
+        },
         resume: { save: mock.fn(async () => undefined) },
       };
 
@@ -534,7 +543,11 @@ describe('unifiedResumeSyncTool', () => {
         update: mock.fn(async () => undefined),
         delete: mock.fn(async () => undefined),
       },
-      resumeLanguageCert: { add: mock.fn(async () => undefined), update: mock.fn(async () => undefined), delete: mock.fn(async () => undefined) },
+      resumeLanguageCert: {
+        add: mock.fn(async () => undefined),
+        update: mock.fn(async () => undefined),
+        delete: mock.fn(async () => undefined),
+      },
       resume: { save: mock.fn(async () => undefined) },
     };
 
@@ -599,7 +612,11 @@ describe('unifiedResumeSyncTool', () => {
         update: mock.fn(async () => undefined),
         delete: mock.fn(async () => undefined),
       },
-      resumeLanguageCert: { add: mock.fn(async () => undefined), update: mock.fn(async () => undefined), delete: mock.fn(async () => undefined) },
+      resumeLanguageCert: {
+        add: mock.fn(async () => undefined),
+        update: mock.fn(async () => undefined),
+        delete: mock.fn(async () => undefined),
+      },
       resume: { save: mock.fn(async () => undefined) },
     };
 
@@ -619,7 +636,7 @@ describe('unifiedResumeSyncTool', () => {
     assert.strictEqual(resumeCareerDelete.mock.calls.length, 0);
   });
 
-  it('syncs career projects: deletes existing and adds SSoT project', async () => {
+  it('syncs career projects in safe mode without deleting unmatched remote projects', async () => {
     const data = clone(BASE_RESUME_DATA);
     data.careers = [
       {
@@ -674,7 +691,11 @@ describe('unifiedResumeSyncTool', () => {
         update: mock.fn(async () => undefined),
         delete: mock.fn(async () => undefined),
       },
-      resumeLanguageCert: { add: mock.fn(async () => undefined), update: mock.fn(async () => undefined), delete: mock.fn(async () => undefined) },
+      resumeLanguageCert: {
+        add: mock.fn(async () => undefined),
+        update: mock.fn(async () => undefined),
+        delete: mock.fn(async () => undefined),
+      },
       resume: { save: mock.fn(async () => undefined) },
     };
 
@@ -687,11 +708,90 @@ describe('unifiedResumeSyncTool', () => {
     });
 
     assert.strictEqual(result.success, true);
-    // Should delete both existing projects
+    assert.strictEqual(resumeCareerDeleteProject.mock.calls.length, 0);
+    assert.strictEqual(resumeCareerAddProject.mock.calls.length, 1);
+    assert.deepStrictEqual(resumeCareerAddProject.mock.calls[0].arguments[2], {
+      title: 'Platform Infrastructure',
+      description: 'Cloud infra management and CI/CD pipeline',
+    });
+  });
+
+  it('syncs career projects in strict mode by deleting unmatched remote projects', async () => {
+    process.env.SYNC_STRICT = 'true';
+
+    const data = clone(BASE_RESUME_DATA);
+    data.careers = [
+      {
+        company: 'TestCorp',
+        role: 'DevOps Engineer',
+        period: '2020.03 ~ 현재',
+        project: 'Platform Infrastructure',
+        description: 'Cloud infra management and CI/CD pipeline',
+      },
+    ];
+    mockResumeFile(data);
+
+    const resumeCareerAddProject = mock.fn(async () => undefined);
+    const resumeCareerDeleteProject = mock.fn(async () => undefined);
+
+    const mockApi = {
+      updateProfile: mock.fn(async () => undefined),
+      getResumeDetail: mock.fn(async () => ({
+        careers: [
+          {
+            id: 'career-1',
+            company: { name: 'TestCorp' },
+            projects: [
+              { id: 'proj-old-1', title: 'STAR Project', description: '【Situation】...' },
+              { id: 'proj-old-2', title: 'Another', description: 'AI-generated' },
+            ],
+          },
+        ],
+        educations: [],
+        skills: [],
+        activities: [],
+        language_certs: [],
+        about: '',
+        email: 'test@test.com',
+        mobile: '010-1234-5678',
+      })),
+      resumeCareer: {
+        update: mock.fn(async () => undefined),
+        add: mock.fn(async () => undefined),
+        delete: mock.fn(async () => undefined),
+        addProject: resumeCareerAddProject,
+        deleteProject: resumeCareerDeleteProject,
+      },
+      resumeEducation: {
+        update: mock.fn(async () => undefined),
+        add: mock.fn(async () => undefined),
+      },
+      resumeSkills: { add: mock.fn(async () => undefined) },
+      resumeActivity: {
+        add: mock.fn(async () => undefined),
+        update: mock.fn(async () => undefined),
+        delete: mock.fn(async () => undefined),
+      },
+      resumeLanguageCert: {
+        add: mock.fn(async () => undefined),
+        update: mock.fn(async () => undefined),
+        delete: mock.fn(async () => undefined),
+      },
+      resume: { save: mock.fn(async () => undefined) },
+    };
+
+    mock.method(SessionManager, 'getAPI', async () => mockApi);
+
+    const result = await unifiedResumeSyncTool.execute({
+      action: 'sync',
+      platforms: ['wanted'],
+      resume_id: 'resume-1',
+    });
+
+    assert.strictEqual(result.success, true);
     assert.strictEqual(resumeCareerDeleteProject.mock.calls.length, 2);
     assert.strictEqual(resumeCareerDeleteProject.mock.calls[0].arguments[2], 'proj-old-1');
     assert.strictEqual(resumeCareerDeleteProject.mock.calls[1].arguments[2], 'proj-old-2');
-    // Should add SSoT project
     assert.strictEqual(resumeCareerAddProject.mock.calls.length, 1);
     assert.deepStrictEqual(resumeCareerAddProject.mock.calls[0].arguments[2], {
       title: 'Platform Infrastructure',

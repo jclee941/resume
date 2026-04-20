@@ -5,6 +5,66 @@ import {
 } from '../../../scripts/profile-sync/constants.js';
 import { parseDate } from '../utils.js';
 
+function isStrictSyncEnabled() {
+  return process.env.SYNC_STRICT === 'true';
+}
+
+function normalizeCareerProjects(ssotCareer = {}) {
+  if (Array.isArray(ssotCareer.projects)) {
+    return ssotCareer.projects.filter(
+      (project) =>
+        project && typeof project.title === 'string' && typeof project.description === 'string'
+    );
+  }
+
+  if (ssotCareer.project && ssotCareer.description) {
+    return [
+      {
+        title: ssotCareer.project,
+        description: ssotCareer.description,
+      },
+    ];
+  }
+
+  return [];
+}
+
+async function syncCareerProjects(api, resume_id, careerId, ssotCareer = {}, remoteProjects = []) {
+  const strictSync = isStrictSyncEnabled();
+  const localProjects = normalizeCareerProjects(ssotCareer);
+  const matchedProjectIds = new Set();
+
+  for (const project of localProjects) {
+    const matchedProject = remoteProjects.find(
+      (remoteProject) => remoteProject.title === project.title
+    );
+
+    if (matchedProject) {
+      matchedProjectIds.add(matchedProject.id);
+
+      if (typeof api.resumeCareer.updateProject === 'function') {
+        await api.resumeCareer.updateProject(resume_id, careerId, matchedProject.id, project);
+      } else {
+        await api.resumeCareer.deleteProject(resume_id, careerId, matchedProject.id);
+        await api.resumeCareer.addProject(resume_id, careerId, project);
+      }
+    } else {
+      await api.resumeCareer.addProject(resume_id, careerId, project);
+    }
+  }
+
+  if (!strictSync) {
+    return;
+  }
+
+  const unknownProjects = remoteProjects.filter(
+    (remoteProject) => !matchedProjectIds.has(remoteProject.id)
+  );
+  for (const project of unknownProjects) {
+    await api.resumeCareer.deleteProject(resume_id, careerId, project.id);
+  }
+}
+
 export function mapToWantedFormat(source) {
   const currentPosition = source.current?.position || source.careers?.[0]?.role || '';
   const totalExperience = source.summary?.totalExperience || '';
@@ -14,7 +74,10 @@ export function mapToWantedFormat(source) {
 
   return {
     profile: {
-      headline: (wantedVariant.headline || (currentPosition ? `${currentPosition} | ${totalExperience}` : totalExperience)).slice(0, 50),
+      headline: (
+        wantedVariant.headline ||
+        (currentPosition ? `${currentPosition} | ${totalExperience}` : totalExperience)
+      ).slice(0, 50),
       description: (wantedVariant.about || expertise.join(', ')).slice(0, 150),
     },
     careers: (source.careers || []).map((c) => {
@@ -65,23 +128,18 @@ export async function syncCareers(api, resume_id, localCareers, remoteCareers, s
     if (matchedCareer) {
       matchedIds.add(matchedCareer.id);
       await api.resumeCareer.update(resume_id, matchedCareer.id, career);
-      for (const p of matchedCareer.projects || []) {
-        await api.resumeCareer.deleteProject(resume_id, matchedCareer.id, p.id);
-      }
-      if (ssotCareer.project && ssotCareer.description) {
-        await api.resumeCareer.addProject(resume_id, matchedCareer.id, {
-          title: ssotCareer.project,
-          description: ssotCareer.description,
-        });
-      }
+      await syncCareerProjects(
+        api,
+        resume_id,
+        matchedCareer.id,
+        ssotCareer,
+        matchedCareer.projects || []
+      );
     } else {
       const result = await api.resumeCareer.add(resume_id, career);
       const newId = result?.data?.id || result?.id;
-      if (newId && ssotCareer.project && ssotCareer.description) {
-        await api.resumeCareer.addProject(resume_id, newId, {
-          title: ssotCareer.project,
-          description: ssotCareer.description,
-        });
+      if (newId) {
+        await syncCareerProjects(api, resume_id, newId, ssotCareer, []);
       }
     }
   }
@@ -124,6 +182,7 @@ export async function syncSkills(
 }
 
 export async function syncActivities(api, resume_id, sourceData, remoteActivities) {
+  const strictSync = isStrictSyncEnabled();
   const localActivities = (sourceData.certifications || [])
     .filter((c) => c.date)
     .map((cert) => {
@@ -135,7 +194,6 @@ export async function syncActivities(api, resume_id, sourceData, remoteActivitie
         start_time: parseDate(acquiredDate),
       };
     });
-
 
   const matchedActivityIds = new Set();
   for (const activity of localActivities) {
@@ -151,7 +209,17 @@ export async function syncActivities(api, resume_id, sourceData, remoteActivitie
     }
   }
 
-  const toDeleteActivities = remoteActivities.filter((ra) => !matchedActivityIds.has(ra.id));
+  const toDeleteActivities = remoteActivities.filter((ra) => {
+    if (matchedActivityIds.has(ra.id)) {
+      return false;
+    }
+
+    if (strictSync) {
+      return true;
+    }
+
+    return ra.activity_type === 'CERTIFICATE';
+  });
   for (const activity of toDeleteActivities) {
     await api.resumeActivity.delete(resume_id, activity.id);
   }
