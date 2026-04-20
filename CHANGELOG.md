@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.5.19] - 2026-04-20
+
+### Changes
+- fix(resume): restore 7 careers profile sync + close unbalanced CSS braces (fa72646)
+
+
 ## [v1.5.18] - 2026-04-20
 
 ### Changes
