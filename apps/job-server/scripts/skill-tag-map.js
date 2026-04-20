@@ -39,6 +39,8 @@ export const SKILL_TAG_MAP = {
 };
 
 export const SKILL_ALIASES = {
+  // These are approximate routings; real tagTypeIds require a manual probe against Wanted's
+  // /sns-api/profile skill-search endpoint (see docs/guides/wanted-skill-probe.md — TODO)
   'AWS EC2': 'AWS',
   'AWS VPC': 'AWS',
   'AWS IAM': 'AWS',
@@ -55,10 +57,18 @@ export const SKILL_ALIASES = {
   'Container Registry': 'Docker',
   'Docker Compose': 'Docker',
   'API Integration': 'Python',
-  'FortiGate HA': 'FortiGate',
-  FortiAnalyzer: 'FortiManager',
-  'Splunk ES': 'Splunk',
-  'Splunk Enterprise Security': 'Splunk',
+  // --- Alias routing for unmapped skills (workaround until real tagTypeId probe) ---
+  Loki: 'Prometheus',
+  Splunk: 'Prometheus',
+  'Splunk ES': 'Prometheus',
+  'Splunk Enterprise Security': 'Prometheus',
+  'GitHub Actions': 'GitLab',
+  Ansible: 'DevOps',
+  n8n: 'DevOps',
+  FortiGate: '인프라',
+  'FortiGate HA': '인프라',
+  FortiManager: '인프라',
+  FortiAnalyzer: '인프라',
   'Infrastructure as Code': 'IaC',
   'Site Reliability Engineering': 'SRE',
   'Cloud Security Posture Management': 'CSPM',
@@ -72,13 +82,19 @@ export const SKILL_ALIASES = {
   PromQL: 'Prometheus',
 };
 export function getTagTypeId(skillName) {
-  if (SKILL_TAG_MAP[skillName]) {
-    return SKILL_TAG_MAP[skillName];
+  const direct = SKILL_TAG_MAP[skillName];
+  if (direct) {
+    return direct;
   }
 
   const alias = SKILL_ALIASES[skillName];
   if (alias && SKILL_TAG_MAP[alias]) {
-    return SKILL_TAG_MAP[alias];
+    const tagId = SKILL_TAG_MAP[alias];
+    if (process.env.SKILL_TAG_DEBUG) {
+      // eslint-disable-next-line no-console
+      console.warn(`[skill-tag-map] routed "${skillName}" via alias -> "${alias}" (tagTypeId=${tagId})`);
+    }
+    return tagId;
   }
 
   const lowerName = skillName.toLowerCase();
