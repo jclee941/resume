@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.5.17] - 2026-04-20
+
+### Changes
+- docs: add 강남언니 보안엔지니어 면접 준비 자료 (c22f5c8)
+
+
 ## [v1.5.16] - 2026-04-19
 
 ### Changes
