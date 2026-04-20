@@ -7,15 +7,23 @@
   "resume": [
     {
       "icon": "🏦",
-      "title": "Nextrade Co., Ltd.",
-      "description": "FortiGate HA design/deployment, network segmentation architecture, Ansible-based security device standardization, ISMS-P certification, Splunk ES security monitoring, n8n-based security automation, security incident response",
-      "period": "2024.03 ~ 2026.02",
+      "title": "ITCEN CTS Co., Ltd.",
+      "description": "Splunk ES SIEM detection rule design & operations, FortiGate policy optimization & access control automation, monthly security vulnerability assessment, real-time threat monitoring enhancement, n8n-based security event automation.",
+      "period": "2025.03 ~ 2026.02",
       "stats": [],
       "highlight": true,
       "completePdfUrl": "https://raw.githubusercontent.com/jclee-homelab/resume/master/packages/data/resumes/technical/nextrade/exports/Nextrade_Full_Documentation.pdf"
     },
     {
       "icon": "🏗️",
+      "title": "Gaonnuri Information System Co., Ltd.",
+      "description": "Financial Services Commission (FSC) license review technical response and security architecture design, network segmentation & access control policy design for security compliance, FortiGate HA configuration and disaster recovery process.",
+      "period": "2024.03 ~ 2025.02",
+      "stats": [],
+      "highlight": false
+    },
+    {
+      "icon": "📈",
       "title": "Quant Investment Management Co., Ltd.",
       "description": "",
       "period": "2022.08 ~ 2024.02",
@@ -23,15 +31,23 @@
       "highlight": false
     },
     {
-      "icon": "📈",
-      "title": "Kookmin University",
+      "icon": "☁️",
+      "title": "Fun&C Co., Ltd.",
+      "description": "On-premise to AWS VPC cloud migration design, EKS cluster security hardening and container vulnerability assessment, GitLab CI/CD pipeline security scan automation.",
+      "period": "2022.05 ~ 2022.07",
+      "stats": [],
+      "highlight": false
+    },
+    {
+      "icon": "🎓",
+      "title": "Jointree Co., Ltd.",
       "description": "",
       "period": "2021.09 ~ 2022.04",
       "stats": [],
       "highlight": false
     },
     {
-      "icon": "☁️",
+      "icon": "📞",
       "title": "Metanet M Platform Co., Ltd.",
       "description": "",
       "period": "2019.12 ~ 2021.08",
@@ -39,8 +55,8 @@
       "highlight": false
     },
     {
-      "icon": "🎓",
-      "title": "Korea Aerospace Industries (KAI)",
+      "icon": "✈️",
+      "title": "MTData Co., Ltd.",
       "description": "",
       "period": "2017.02 ~ 2018.10",
       "stats": [],
@@ -50,15 +66,23 @@
   "resumeEn": [
     {
       "icon": "🏦",
-      "title": "Nextrade Co., Ltd.",
-      "description": "FortiGate HA design/deployment, network segmentation architecture, Ansible-based security device standardization, ISMS-P certification, Splunk ES security monitoring, n8n-based security automation, security incident response",
-      "period": "2024.03 ~ 2026.02",
+      "title": "ITCEN CTS Co., Ltd.",
+      "description": "Splunk ES SIEM detection rule design & operations, FortiGate policy optimization & access control automation, monthly security vulnerability assessment, real-time threat monitoring enhancement, n8n-based security event automation.",
+      "period": "2025.03 ~ 2026.02",
       "stats": [],
       "highlight": true,
       "completePdfUrl": "https://raw.githubusercontent.com/jclee-homelab/resume/master/packages/data/resumes/technical/nextrade/exports/Nextrade_Full_Documentation.pdf"
     },
     {
       "icon": "🏗️",
+      "title": "Gaonnuri Information System Co., Ltd.",
+      "description": "Financial Services Commission (FSC) license review technical response and security architecture design, network segmentation & access control policy design for security compliance, FortiGate HA configuration and disaster recovery process.",
+      "period": "2024.03 ~ 2025.02",
+      "stats": [],
+      "highlight": false
+    },
+    {
+      "icon": "📈",
       "title": "Quant Investment Management Co., Ltd.",
       "description": "",
       "period": "2022.08 ~ 2024.02",
@@ -66,15 +90,23 @@
       "highlight": false
     },
     {
-      "icon": "📈",
-      "title": "Kookmin University",
+      "icon": "☁️",
+      "title": "Fun&C Co., Ltd.",
+      "description": "On-premise to AWS VPC cloud migration design, EKS cluster security hardening and container vulnerability assessment, GitLab CI/CD pipeline security scan automation.",
+      "period": "2022.05 ~ 2022.07",
+      "stats": [],
+      "highlight": false
+    },
+    {
+      "icon": "🎓",
+      "title": "Jointree Co., Ltd.",
       "description": "",
       "period": "2021.09 ~ 2022.04",
       "stats": [],
       "highlight": false
     },
     {
-      "icon": "☁️",
+      "icon": "📞",
       "title": "Metanet M Platform Co., Ltd.",
       "description": "",
       "period": "2019.12 ~ 2021.08",
@@ -82,8 +114,8 @@
       "highlight": false
     },
     {
-      "icon": "🎓",
-      "title": "Korea Aerospace Industries (KAI)",
+      "icon": "✈️",
+      "title": "MTData Co., Ltd.",
       "description": "",
       "period": "2017.02 ~ 2018.10",
       "stats": [],
