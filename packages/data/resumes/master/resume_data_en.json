@@ -887,12 +887,22 @@
     "website": "https://resume.jclee.me",
     "monitoring": "https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b"
   },
-  "availability": "Open to work - immediate start possible",
+  "availability": "Open to work - Available from 2026.03, immediate start possible",
   "awards": [
     {
       "name": "Autonomous Driving Competition Excellence Award",
       "organization": "Hanyang Cyber University",
       "year": "2026"
     }
-  ]
+  ],
+  "platformVariants": {
+    "wanted": {
+      "headline": "DevSecOps / SRE | 9 years automating security infrastructure in finance | FortiGate HA · Splunk ES · Terraform · AWS | resume.jclee.me",
+      "about": "I am a DevSecOps/SRE engineer who brings security and operations together through code.\n\nOver the past 9 years in financial and public-sector environments, I have handled everything from security infrastructure design to operations automation. I designed the security architecture for a securities trading and execution system, helped it pass the Financial Services Commission production authorization review, and built SIEM-based security monitoring and large-scale infrastructure automation in production.\n\n[Key achievements]\n• Designed the FortiGate HA security architecture for the Nextrade trading and execution system → passed the Financial Services Commission production authorization review\n• Designed and operated Splunk ES detection rules and built a real-time alerting pipeline for security events\n• Automated large-scale server configuration and firewall policy lookup with Ansible and Python\n• Managed AWS VPC/Subnet/Security Group resources as Terraform IaC and built integrated monitoring with CloudTrail and GuardDuty\n• Designed and operated a Prometheus/Grafana observability platform\n\n[Tech stack]\n• Security: FortiGate, FortiManager, Splunk ES, Wazuh, NAC, DLP, VPN\n• Cloud: AWS (IAM/VPC/WAF/CloudTrail/GuardDuty), Terraform\n• DevOps: Ansible, Docker, CI/CD, n8n, Python\n• Observability: Prometheus, Grafana, ELK Stack\n• Compliance: ISMS-P, ISO 27001, Financial Services Commission authorization\n\nPortfolio: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
+    },
+    "jobkorea": {
+      "headline": "DevSecOps/SRE - 9 years in financial security infrastructure automation",
+      "about": "Engineer with 9 years of experience spanning security infrastructure design through operations automation in financial and public-sector environments.\n\n[Career highlights]\n• Nextrade (securities exchange) — Security operations / infrastructure implementation (2024~present)\n  - Designed the FortiGate HA security architecture and passed the Financial Services Commission production authorization review\n  - Designed Splunk ES detection rules and built a real-time security event alerting pipeline\n  - Automated firewall policy lookup with n8n + FortiManager API\n\n• Quant (AI investment) — Security operations (2022~2024)\n  - Led the transition to Terraform-based AWS IaC and integrated monitoring with CloudTrail + GuardDuty\n  - Supported the robo-advisor testbed security review\n\n• Metanet (SI) — Contact center remote-work infrastructure (2019~2021)\n  - Automated server operations with Ansible and developed an NAC policy automation system\n\n[Skills]\nFortiGate/FortiManager, Splunk ES, Ansible, Python, Terraform, AWS, Docker, Prometheus/Grafana, ISMS-P\n\nPortfolio: https://resume.jclee.me"
+    }
+  }
 }
