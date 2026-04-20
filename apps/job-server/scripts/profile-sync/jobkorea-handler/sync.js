@@ -3,10 +3,11 @@ import { CONFIG } from '../constants.js';
 import { log } from '../utils.js';
 import {
   buildJobKoreaFormData,
-  registerPortfolioUrl,
+  registerPortfolioUrl as defaultRegisterPortfolioUrl,
   mapPortfolioToFormFields,
 } from '../jobkorea-sections.js';
 import { getEditUrl } from './change-detection.js';
+import { assertJobKoreaResumeAccess } from './session.js';
 
 const USER_AGENT_POOL = [
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
@@ -37,20 +38,39 @@ async function activateRequiredSections(page) {
   await page.waitForTimeout(1000);
 }
 
-async function appendPortfolioFields(page, ssot, targetFields) {
+function buildPortfolioRegistrationError(portfolioUrl, timestamp) {
+  const error = new Error(
+    'JobKorea portfolio URL registration failed — check browser session and verify ' +
+      `/User/Resume/AddUserFileDB endpoint is accessible (url=${portfolioUrl}, timestamp=${timestamp})`
+  );
+  error.failLoud = true;
+  return error;
+}
+
+async function appendPortfolioFields(page, ssot, targetFields, options = {}) {
   const portfolioUrl = ssot?.personal?.portfolio;
   if (!portfolioUrl) {
     return;
   }
 
+  const registerPortfolioUrl = options.registerPortfolioUrl ?? defaultRegisterPortfolioUrl;
+  const logger = options.logger ?? log;
+  const timestamp =
+    typeof options.getTimestamp === 'function' ? options.getTimestamp() : new Date().toISOString();
   const fileIdx = await registerPortfolioUrl(page, portfolioUrl);
-  if (fileIdx) {
-    log(`Portfolio URL registered: IDX=${fileIdx}`, 'info', 'jobkorea');
+  if (fileIdx !== null && fileIdx !== undefined && fileIdx !== '') {
+    logger(`Portfolio URL registered: IDX=${fileIdx}`, 'info', 'jobkorea');
     targetFields.push(...mapPortfolioToFormFields(ssot, fileIdx));
     return;
   }
 
-  log('Portfolio URL registration failed', 'warn', 'jobkorea');
+  const error = buildPortfolioRegistrationError(portfolioUrl, timestamp);
+  if (process.env.JOBKOREA_PORTFOLIO_OPTIONAL === 'true') {
+    logger(error.message, 'warn', 'jobkorea');
+    return;
+  }
+
+  throw error;
 }
 
 function logChangeSummary(changes) {
@@ -167,16 +187,20 @@ async function persistUpdatedCookies(handler, context) {
   }
 }
 
-export async function syncJobKoreaProfile(handler, ssot) {
-  log('Starting sync for JobKorea (via form POST)', 'info', 'jobkorea');
+export async function syncJobKoreaProfile(handler, ssot, options = {}) {
+  const logger = options.logger ?? log;
+  const launchBrowser = options.launchBrowser ?? chromium.launch.bind(chromium);
+  const ensureResumeAccess = options.assertJobKoreaResumeAccess ?? assertJobKoreaResumeAccess;
+
+  logger('Starting sync for JobKorea (via form POST)', 'info', 'jobkorea');
 
   const cookies = handler.loadSession();
   if (!cookies) {
-    log('No saved session - login to JobKorea first and save cookies', 'error', 'jobkorea');
+    logger('No saved session - login to JobKorea first and save cookies', 'error', 'jobkorea');
     return { success: false, changes: [] };
   }
 
-  const browser = await chromium.launch({ headless: CONFIG.HEADLESS });
+  const browser = await launchBrowser({ headless: CONFIG.HEADLESS });
   const context = await browser.newContext({
     userAgent: pickRandomUserAgent(),
     viewport: { width: 1280, height: 800 },
@@ -187,13 +211,9 @@ export async function syncJobKoreaProfile(handler, ssot) {
     const page = await context.newPage();
 
     const editUrl = getEditUrl();
-    log(`Navigating to ${editUrl}`, 'info', 'jobkorea');
+    logger(`Navigating to ${editUrl}`, 'info', 'jobkorea');
     await page.goto(editUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
-
-    if (page.url().includes('/Login')) {
-      log('Session expired - redirected to login page', 'error', 'jobkorea');
-      return { success: false, changes: [], error: 'Session expired' };
-    }
+    await ensureResumeAccess(page);
 
     await page.waitForFunction(() => typeof $ !== 'undefined' && $('#frm1').length > 0, {
       timeout: 15000,
@@ -202,7 +222,7 @@ export async function syncJobKoreaProfile(handler, ssot) {
     await activateRequiredSections(page);
 
     const sectionIndices = await handler.createEntrySlots(page, ssot);
-    log(
+    logger(
       `Entry slots — Career: ${sectionIndices.career.length} (${sectionIndices.career.join(',')}), ` +
         `License: ${sectionIndices.license.length} (${sectionIndices.license.join(',')}), ` +
         `Award: ${sectionIndices.award.length} (${sectionIndices.award.join(',')}), ` +
@@ -212,7 +232,11 @@ export async function syncJobKoreaProfile(handler, ssot) {
     );
 
     const targetFields = buildJobKoreaFormData(ssot, sectionIndices);
-    await appendPortfolioFields(page, ssot, targetFields);
+    await appendPortfolioFields(page, ssot, targetFields, {
+      registerPortfolioUrl: options.registerPortfolioUrl,
+      logger,
+      getTimestamp: options.getTimestamp,
+    });
 
     const currentFields = await page.evaluate(() => $('#frm1').serializeArray());
     const changes = handler.computeChanges(currentFields, targetFields);
@@ -224,21 +248,24 @@ export async function syncJobKoreaProfile(handler, ssot) {
       await markPartialSave(page);
 
       const saveResult = await saveForm(page);
-      log(`Save response: ${JSON.stringify(saveResult).slice(0, 500)}`, 'info', 'jobkorea');
+      logger(`Save response: ${JSON.stringify(saveResult).slice(0, 500)}`, 'info', 'jobkorea');
 
       if (saveResult?.IsSuccess === false) {
         const errorMessage = buildSaveError(saveResult);
-        log(`Save failed: ${errorMessage}`, 'error', 'jobkorea');
+        logger(`Save failed: ${errorMessage}`, 'error', 'jobkorea');
         return { success: false, changes, error: errorMessage };
       }
 
-      log('Resume form save completed', 'success', 'jobkorea');
+      logger('Resume form save completed', 'success', 'jobkorea');
     }
 
     const dryRun = !CONFIG.APPLY || CONFIG.DIFF_ONLY;
     return { success: true, changes, dryRun };
   } catch (error) {
-    log(`Sync failed: ${error.message}`, 'error', 'jobkorea');
+    logger(`Sync failed: ${error.message}`, 'error', 'jobkorea');
+    if (error?.failLoud) {
+      throw error;
+    }
     return { success: false, changes: [], error: error.message };
   } finally {
     await persistUpdatedCookies(handler, context);
