@@ -66,23 +66,40 @@
   },
   "careers": [
     {
-      "company": "Nextrade Co., Ltd.",
-      "period": "2024.03 ~ 2026.02",
-      "duration": "2 years",
-      "project": "Nextrade Trading Execution System Security Operations SM",
-      "role": "Security Engineer (Build/Operations)",
+      "company": "ITCEN CTS Co., Ltd.",
+      "period": "2025.03 ~ 2026.02",
+      "duration": "1 year",
+      "project": "Nextrade Trading System Security Operations SM",
+      "role": "Security Operations Lead",
       "client": "Nextrade Co., Ltd.",
-      "teamSize": "Information security operations cell (size undisclosed)",
-      "myRole": "Sole security automation engineer",
-      "workType": "SM",
-      "description": "FortiGate HA design/deployment, network segmentation architecture, Ansible-based security device standardization, ISMS-P certification, Splunk ES security monitoring, n8n-based security automation, security incident response",
-      "note": "Dispatch: Gaonnuri → ITCEN CTS",
+      "teamSize": "Information Security Operations Cell",
+      "myRole": "Security Automation Engineer",
+      "workType": "Full-time (Dispatched)",
+      "description": "Splunk ES SIEM detection rule design & operations, FortiGate policy optimization & access control automation, monthly security vulnerability assessment, real-time threat monitoring enhancement, n8n-based security event automation.",
+      "wantedSummary": "Nextrade Security Operations SM | Splunk ES · FortiManager API · n8n\n→ SIEM detection rule design and automated security event response",
+      "note": "ITCEN CTS employee, dispatched to Nextrade Trading System Security Operations SM",
       "projects": [
         {
           "name": "Nextrade Security Operations",
           "description": "Automated security operations with Splunk ES and FortiGate APIs\n• Integrated n8n workflows to deliver real-time Slack alerts when security events are detected\n• Built an automated firewall policy lookup tool using FortiManager API",
           "period": "2025.03 ~ 2026.02"
-        },
+        }
+      ]
+    },
+    {
+      "company": "Gaonnuri Information System Co., Ltd.",
+      "period": "2024.03 ~ 2025.02",
+      "duration": "1 year",
+      "project": "Nextrade Trading System Construction",
+      "role": "Security Build Engineer",
+      "client": "Nextrade Co., Ltd.",
+      "teamSize": "Security Build Cell",
+      "myRole": "Security Architect",
+      "workType": "Full-time (Dispatched)",
+      "description": "Financial Services Commission (FSC) license review technical response and security architecture design, network segmentation & access control policy design for security compliance, FortiGate HA configuration and disaster recovery process.",
+      "wantedSummary": "Nextrade Security Infra Build | FortiGate HA · FortiManager · Ansible\n→ Passed FSC license review, HA security architecture design",
+      "note": "Gaonnuri Information System employee, dispatched to Nextrade Trading System construction",
+      "projects": [
         {
           "name": "Nextrade Security Infrastructure Build",
           "description": "Designed a high-availability security architecture for a securities trading platform\n• Implemented Active-Passive HA with FGCP (FortiGate Clustering Protocol)\n• Standardized initial device setup and policy deployment with reusable Ansible roles",
@@ -103,7 +120,41 @@
       "description": ""
     },
     {
-      "company": "Kookmin University",
+      "company": "Fun&C Co., Ltd.",
+      "period": "2022.05 ~ 2022.07",
+      "duration": "3 months",
+      "project": "E-commerce Cloud Migration & Security Enhancement",
+      "role": "Infrastructure Engineer",
+      "client": null,
+      "teamSize": "Infrastructure Team",
+      "myRole": "Cloud Security & DevSecOps Engineer",
+      "workType": "Full-time",
+      "description": "On-premise to AWS VPC cloud migration design, EKS cluster security hardening and container vulnerability assessment, GitLab CI/CD pipeline security scan automation.",
+      "wantedSummary": "E-commerce Cloud Migration | AWS VPC · EKS · GitLab CI\n→ SAST/SCA-based DevSecOps pipeline implementation",
+      "note": null,
+      "projects": [
+        {
+          "name": "E-commerce Cloud Migration",
+          "description": "E-commerce service on-premise→AWS cloud migration and security hardening\n• AWS VPC-based network boundary design with security group/NACL policy\n• EKS cluster security baseline and container vulnerability scan process\n• GitLab CI/CD pipeline with SCA & container scan automation stages",
+          "period": "2022.05 ~ 2022.07",
+          "techStack": [
+            "AWS",
+            "AWS VPC",
+            "Kubernetes (EKS)",
+            "Docker",
+            "GitLab CI",
+            "Trivy"
+          ],
+          "achievements": [
+            "Completed on-premise→AWS migration design",
+            "Established EKS container security assessment process",
+            "Implemented CI/CD security scan automation"
+          ]
+        }
+      ]
+    },
+    {
+      "company": "Jointree Co., Ltd.",
       "period": "2021.09 ~ 2022.04",
       "duration": "8 months",
       "project": "Kookmin University Next-Generation Information System",
@@ -113,7 +164,7 @@
       "myRole": "NSX-T micro-segmentation and integrated security policy designer",
       "workType": "SI",
       "description": "",
-      "note": "Dispatch: Jointree"
+      "note": "Jointree employee, dispatched to Kookmin University Next-Gen Information System project"
     },
     {
       "company": "Metanet M Platform Co., Ltd.",
@@ -128,7 +179,7 @@
       "description": ""
     },
     {
-      "company": "Korea Aerospace Industries (KAI)",
+      "company": "MTData Co., Ltd.",
       "period": "2017.02 ~ 2018.10",
       "duration": "1 year 9 months",
       "project": "Korea Aerospace Industries (KAI)",
@@ -138,7 +189,7 @@
       "myRole": "Closed-network server operations and security patching engineer",
       "workType": "SM",
       "description": "",
-      "note": "Dispatch: MT Data"
+      "note": "MTData employee, dispatched to Korea Aerospace Industries (KAI) IT infrastructure field operations"
     }
   ],
   "projects": [
@@ -197,6 +248,26 @@
         "iac": "VPC/Subnet/SG managed as Terraform code",
         "monitoring": "Integrated analysis of CloudTrail and GuardDuty",
         "audit": "Supported robo-advisor testbed security review"
+      }
+    },
+    {
+      "period": "2022.05 ~ 2022.07",
+      "name": "E-commerce Cloud Migration",
+      "client": "Fun&C",
+      "technologies": [
+        "AWS",
+        "Kubernetes",
+        "Docker",
+        "GitLab CI",
+        "Trivy"
+      ],
+      "os": "Linux, Docker, EKS",
+      "role": "Infrastructure Engineer",
+      "description": "E-commerce service on-premise→AWS cloud migration and security hardening\n• AWS VPC network boundary design with security group policy\n• EKS cluster security baseline and container vulnerability scan process\n• GitLab CI/CD pipeline with SCA & container scan automation",
+      "metrics": {
+        "migration": "On-premise→AWS VPC migration design",
+        "containerSecurity": "EKS container vulnerability assessment process",
+        "devsecops": "CI/CD pipeline security scan automation"
       }
     },
     {

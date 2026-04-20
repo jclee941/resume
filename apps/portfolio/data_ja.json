@@ -7,15 +7,23 @@
   "resume": [
     {
       "icon": "🏦",
-      "title": "ネクストレード(株)",
-      "description": "FortiGate HA設計/構築、ネットワーク分離アーキテクチャ策定、Ansibleベースセキュリティ機器標準化、ISMS-P認証対応、Splunk ESセキュリティ監視、n8nベースセキュリティ自動化、セキュリティイベント対応",
-      "period": "2024.03 ~ 2026.02",
+      "title": "(株)アイティセンCTS",
+      "description": "Splunk ESベースのSIEM検知ルール設計・運用、FortiGateファイアウォールポリシー最適化とアクセス制御自動化、月次セキュリティ脆弱性点検、リアルタイム脅威監視体制高度化、n8nベースのセキュリティイベント自動対応。",
+      "period": "2025.03 ~ 2026.02",
       "stats": [],
       "highlight": true,
       "completePdfUrl": "https://raw.githubusercontent.com/jclee-homelab/resume/master/packages/data/resumes/technical/nextrade/exports/Nextrade_Full_Documentation.pdf"
     },
     {
       "icon": "🏗️",
+      "title": "(株)ガオンヌリ情報システム",
+      "description": "金融委員会本認可審査技術対応およびセキュリティアーキテクチャ策定、ネットワーク分離・アクセス制御ポリシー設計によるセキュリティコンプライアンス遵守、FortiGate HA高可用性構成と障害復旧プロセス策定。",
+      "period": "2024.03 ~ 2025.02",
+      "stats": [],
+      "highlight": false
+    },
+    {
+      "icon": "📈",
       "title": "クオンテック投資一任",
       "description": "",
       "period": "2022.08 ~ 2024.02",
@@ -23,15 +31,23 @@
       "highlight": false
     },
     {
-      "icon": "📈",
-      "title": "国民大学校",
+      "icon": "☁️",
+      "title": "(株)ファンエンシー",
+      "description": "オンプレミス環境のAWS VPCベースクラウド移行設計、EKSクラスタ セキュリティ設定と コンテナ脆弱性点検プロセス策定、GitLab CI/CDパイプラインのセキュリティ検査ステップ自動化。",
+      "period": "2022.05 ~ 2022.07",
+      "stats": [],
+      "highlight": false
+    },
+    {
+      "icon": "🎓",
+      "title": "(株)ジョイントリー",
       "description": "",
       "period": "2021.09 ~ 2022.04",
       "stats": [],
       "highlight": false
     },
     {
-      "icon": "☁️",
+      "icon": "📞",
       "title": "メタネットMプラットフォーム",
       "description": "",
       "period": "2019.12 ~ 2021.08",
@@ -39,8 +55,8 @@
       "highlight": false
     },
     {
-      "icon": "🎓",
-      "title": "韓国航空宇宙産業(KAI)",
+      "icon": "✈️",
+      "title": "(株)エムティデータ",
       "description": "",
       "period": "2017.02 ~ 2018.10",
       "stats": [],
@@ -50,15 +66,23 @@
   "resumeEn": [
     {
       "icon": "🏦",
-      "title": "ネクストレード(株)",
-      "description": "FortiGate HA設計/構築、ネットワーク分離アーキテクチャ策定、Ansibleベースセキュリティ機器標準化、ISMS-P認証対応、Splunk ESセキュリティ監視、n8nベースセキュリティ自動化、セキュリティイベント対応",
-      "period": "2024.03 ~ 2026.02",
+      "title": "(株)アイティセンCTS",
+      "description": "Splunk ESベースのSIEM検知ルール設計・運用、FortiGateファイアウォールポリシー最適化とアクセス制御自動化、月次セキュリティ脆弱性点検、リアルタイム脅威監視体制高度化、n8nベースのセキュリティイベント自動対応。",
+      "period": "2025.03 ~ 2026.02",
       "stats": [],
       "highlight": true,
       "completePdfUrl": "https://raw.githubusercontent.com/jclee-homelab/resume/master/packages/data/resumes/technical/nextrade/exports/Nextrade_Full_Documentation.pdf"
     },
     {
       "icon": "🏗️",
+      "title": "(株)ガオンヌリ情報システム",
+      "description": "金融委員会本認可審査技術対応およびセキュリティアーキテクチャ策定、ネットワーク分離・アクセス制御ポリシー設計によるセキュリティコンプライアンス遵守、FortiGate HA高可用性構成と障害復旧プロセス策定。",
+      "period": "2024.03 ~ 2025.02",
+      "stats": [],
+      "highlight": false
+    },
+    {
+      "icon": "📈",
       "title": "クオンテック投資一任",
       "description": "",
       "period": "2022.08 ~ 2024.02",
@@ -66,15 +90,23 @@
       "highlight": false
     },
     {
-      "icon": "📈",
-      "title": "国民大学校",
+      "icon": "☁️",
+      "title": "(株)ファンエンシー",
+      "description": "オンプレミス環境のAWS VPCベースクラウド移行設計、EKSクラスタ セキュリティ設定と コンテナ脆弱性点検プロセス策定、GitLab CI/CDパイプラインのセキュリティ検査ステップ自動化。",
+      "period": "2022.05 ~ 2022.07",
+      "stats": [],
+      "highlight": false
+    },
+    {
+      "icon": "🎓",
+      "title": "(株)ジョイントリー",
       "description": "",
       "period": "2021.09 ~ 2022.04",
       "stats": [],
       "highlight": false
     },
     {
-      "icon": "☁️",
+      "icon": "📞",
       "title": "メタネットMプラットフォーム",
       "description": "",
       "period": "2019.12 ~ 2021.08",
@@ -82,8 +114,8 @@
       "highlight": false
     },
     {
-      "icon": "🎓",
-      "title": "韓国航空宇宙産業(KAI)",
+      "icon": "✈️",
+      "title": "(株)エムティデータ",
       "description": "",
       "period": "2017.02 ~ 2018.10",
       "stats": [],
