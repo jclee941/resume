@@ -291,6 +291,33 @@ describe('JobKorea fail-loud guards', () => {
     );
   });
 
+  it('throws when registerPortfolioUrl returns false or zero by default', async () => {
+    const falsyResults = [false, 0];
+
+    for (const falsyResult of falsyResults) {
+      const harness = createSyncHarness();
+
+      await assert.rejects(
+        () =>
+          syncJobKoreaProfile(
+            harness.handler,
+            { personal: { portfolio: 'https://portfolio.example.com' } },
+            {
+              launchBrowser: async () => harness.browser,
+              registerPortfolioUrl: async () => falsyResult,
+              getTimestamp: () => '2026-04-21T10:00:00.000Z',
+              logger: harness.logger,
+            }
+          ),
+        (error) => {
+          assert.match(error.message, /JobKorea portfolio URL registration failed/);
+          assert.match(error.message, /https:\/\/portfolio\.example\.com/);
+          return true;
+        }
+      );
+    }
+  });
+
   it('continues with warning when JOBKOREA_PORTFOLIO_OPTIONAL=true', async () => {
     const harness = createSyncHarness();
     const original = process.env.JOBKOREA_PORTFOLIO_OPTIONAL;
