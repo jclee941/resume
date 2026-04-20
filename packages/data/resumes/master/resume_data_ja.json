@@ -5,7 +5,8 @@
     "email": "qws941@kakao.com",
     "phone": "010-5757-9592",
     "address": "京畿道 始興市（韓国）",
-    "github": "https://github.com/jclee941"
+    "github": "https://github.com/jclee941",
+    "portfolio": "https://resume.jclee.me"
   },
   "education": {
     "school": "漢陽サイバー大学",
@@ -13,7 +14,9 @@
     "startDate": "2024.03",
     "status": "在学中",
     "highSchool": "龍南高校",
-    "highSchoolGraduation": "2013"
+    "highSchoolGraduation": "2013",
+    "schoolType": "4年制",
+    "majorType": "専攻"
   },
   "languages": [
     {
@@ -34,11 +37,24 @@
     "experienceStart": "2017.02",
     "grade": "シニア",
     "expertise": [
-      "Observability",
+      "DevSecOps",
+      "SRE",
+      "SIEM/SOAR",
       "セキュリティ基盤",
-      "自動化"
+      "IaC/自動化",
+      "Observability",
+      "クラウドセキュリティ",
+      "コンプライアンス（ISMS-P）"
     ],
-    "profileStatement": "金融・公共環境でセキュリティインフラの構築から運用自動化まで担当してきた9年目のエンジニアです。Splunk ESベースのセキュリティ監視体系を設計し、FortiGate HA・ネットワーク分離・VPN/NACなどのセキュリティアーキテクチャを構築、Ansible・Python・n8nで繰り返し業務を自動化しました。最近はObservabilityとDevSecOpsを組み合わせ、設計から運用まで一貫して責任を持つ役割に注力しています。"
+    "profileStatement": "金融・公共環境でセキュリティインフラの構築から運用自動化まで担当してきた9年目のエンジニアです。Splunk ESベースのセキュリティ監視体系を設計し、FortiGate HA・ネットワーク分離・VPN/NACなどのセキュリティアーキテクチャを構築、Ansible・Python・n8nで繰り返し業務を自動化しました。最近はObservabilityとDevSecOpsを組み合わせ、設計から運用まで一貫して責任を持つ役割に注力しています。",
+    "coreCompetencies": [
+      "金融セキュリティアーキテクチャ設計（FortiGate HA、金融委員会本認可）",
+      "SIEM/SOAR の構築・運用（Splunk ES、検知ルール32件）",
+      "IaC ベースのインフラ運用（Terraform、Ansible）",
+      "Observability プラットフォーム（Prometheus、Grafana、ELK）",
+      "DevSecOps パイプライン（CI/CD セキュリティ自動化）",
+      "セキュリティ運用自動化（Python、n8n、API 連携）"
+    ]
   },
   "current": {
     "status": "求職中",
@@ -745,7 +761,21 @@
       }
     }
   ],
-  "ossContributions": [],
+  "ossContributions": [
+    {
+      "name": "resume-portfolio",
+      "url": "https://github.com/jclee941/resume",
+      "description": "履歴書自動化モノレポ — Cloudflare Worker ポートフォリオ、自動応募パイプライン（Wanted/JobKorea）、AI 自己紹介書生成、n8n 自動化ワークフロー",
+      "techStack": [
+        "TypeScript",
+        "Cloudflare Workers",
+        "Playwright",
+        "n8n",
+        "Elasticsearch"
+      ],
+      "role": "個人開発"
+    }
+  ],
   "hero": {
     "badge": "セキュリティ基盤エンジニア · 9年",
     "title": "イ・ジェチョル",
@@ -867,6 +897,17 @@
       "year": "2026"
     }
   ],
+  "hope": {
+    "locations": [
+      "ソウル"
+    ],
+    "roles": [
+      "セキュリティ基盤",
+      "DevSecOps",
+      "Observability",
+      "自動化"
+    ]
+  },
   "platformVariants": {
     "wanted": {
       "headline": "DevSecOps / SRE | 金融セキュリティ基盤の自動化 9年 | FortiGate HA · Splunk ES · Terraform · AWS | resume.jclee.me",
