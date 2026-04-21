@@ -1,7 +1,12 @@
 import { beforeEach, describe, it, mock } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { syncActivities, syncCareers } from '../wanted-sync-operations.js';
+import {
+  composeWantedAbout,
+  syncAbout,
+  syncActivities,
+  syncCareers,
+} from '../wanted-sync-operations.js';
 
 function createApiMock() {
   return {
@@ -17,11 +22,24 @@ function createApiMock() {
       delete: mock.fn(async () => undefined),
       add: mock.fn(async () => undefined),
     },
+    resume: {
+      save: mock.fn(async () => undefined),
+    },
   };
 }
 
 function getMockArgs(mockFn) {
   return mockFn.mock.calls.map((call) => call.arguments);
+}
+
+function createLongProject(index, extra = '') {
+  return {
+    name: `Project ${index}`,
+    tagline: `Tagline ${index}${extra}`,
+    description: `Description ${index}${extra}`,
+    technologies: ['Node.js', 'Cloudflare Workers', 'PostgreSQL', 'Terraform', 'Grafana'],
+    githubUrl: `https://github.com/example/project-${index}`,
+  };
 }
 
 describe('wanted sync operations', () => {
@@ -319,5 +337,232 @@ describe('wanted sync operations', () => {
     assert.strictEqual(payload.title, 'Long Project');
     assert.strictEqual(payload.description.length, 2000);
     assert.match(payload.description, /^2024\nNode\.js\n\n- A+/);
+  });
+
+  it('syncAbout keeps manual override even when personalProjects exist', async () => {
+    const api = {
+      resume: {
+        save: mock.fn(async () => undefined),
+      },
+    };
+    const sourceData = {
+      summary: { profileStatement: 'Base summary' },
+      platformVariants: { wanted: { about: 'manual' } },
+      personalProjects: [createLongProject(1), createLongProject(2), createLongProject(3)],
+    };
+
+    await syncAbout(api, 'resume-1', sourceData, 'old about');
+
+    assert.deepStrictEqual(getMockArgs(api.resume.save), [['resume-1', { about: 'manual' }]]);
+  });
+
+  it('composeWantedAbout includes the first three personal projects with their taglines', () => {
+    const sourceData = {
+      summary: { profileStatement: 'Infra automation engineer.' },
+      personalProjects: [createLongProject(1), createLongProject(2), createLongProject(3)],
+    };
+
+    const about = composeWantedAbout(sourceData);
+
+    assert.match(about, /^Infra automation engineer\.\n\n주요 개인 프로젝트:/);
+    assert.match(
+      about,
+      /Project 1 \(Node\.js, Cloudflare Workers, PostgreSQL, Terraform\): Tagline 1/
+    );
+    assert.match(
+      about,
+      /Project 2 \(Node\.js, Cloudflare Workers, PostgreSQL, Terraform\): Tagline 2/
+    );
+    assert.match(
+      about,
+      /Project 3 \(Node\.js, Cloudflare Workers, PostgreSQL, Terraform\): Tagline 3/
+    );
+  });
+
+  it('composeWantedAbout only exposes the first three personal projects', () => {
+    const sourceData = {
+      summary: { profileStatement: 'Infra automation engineer.' },
+      personalProjects: Array.from({ length: 10 }, (_, index) => createLongProject(index + 1)),
+    };
+
+    const about = composeWantedAbout(sourceData);
+
+    assert.match(about, /Project 1/);
+    assert.match(about, /Project 2/);
+    assert.match(about, /Project 3/);
+    assert.doesNotMatch(about, /Project 4/);
+    assert.doesNotMatch(about, /Project 10/);
+  });
+
+  it('composeWantedAbout respects the 3000 character limit', () => {
+    const longText = 'A'.repeat(2200);
+    const sourceData = {
+      summary: { profileStatement: `Summary ${longText}` },
+      personalProjects: [
+        createLongProject(1, longText),
+        createLongProject(2, longText),
+        createLongProject(3, longText),
+        createLongProject(4, longText),
+      ],
+    };
+
+    const about = composeWantedAbout(sourceData);
+
+    assert.strictEqual(about.length, 3000);
+    assert.match(about, /^Summary A+/);
+    assert.match(about, /주요 개인 프로젝트:/);
+    assert.match(about, /Project 1/);
+    assert.match(about, /\.\.\.$/);
+  });
+
+  it('composeWantedAbout falls back to profileStatement when personalProjects are missing', () => {
+    const about = composeWantedAbout({
+      summary: { profileStatement: 'Profile only summary' },
+    });
+
+    assert.strictEqual(about, 'Profile only summary');
+  });
+
+  it('composeWantedAbout includes awards and achievements sections', () => {
+    const about = composeWantedAbout({
+      summary: {
+        profileStatement: '보안과 운영을 코드로 통합하는 엔지니어입니다.',
+      },
+      personalProjects: [
+        {
+          name: 'Resume Automation',
+          technologies: ['Node.js', 'Cloudflare Workers'],
+          tagline: '이력서와 포트폴리오 동기화 자동화',
+        },
+      ],
+      awards: [
+        {
+          name: '자율주행 경진대회 우수상',
+          organization: '한양사이버대학교',
+          year: '2026',
+        },
+      ],
+      achievements: ['성과 1', '성과 2', '성과 3', '성과 4', '성과 5'],
+    });
+
+    assert.strictEqual(
+      about,
+      [
+        '보안과 운영을 코드로 통합하는 엔지니어입니다.',
+        '주요 개인 프로젝트:\n- Resume Automation (Node.js, Cloudflare Workers): 이력서와 포트폴리오 동기화 자동화',
+        '수상 경력:\n- 자율주행 경진대회 우수상 (한양사이버대학교, 2026)',
+        '주요 성과:\n- 성과 1\n- 성과 2\n- 성과 3\n- 성과 4\n- 성과 5',
+      ].join('\n\n')
+    );
+  });
+
+  it('composeWantedAbout omits awards and achievements sections when arrays are empty', () => {
+    const about = composeWantedAbout({
+      summary: {
+        profileStatement: '프로필 요약',
+      },
+      personalProjects: [
+        {
+          name: 'Job Dashboard',
+          technologies: ['Workers', 'D1'],
+          tagline: '대시보드 자동화',
+        },
+      ],
+      awards: [],
+      achievements: [],
+    });
+
+    assert.strictEqual(
+      about,
+      ['프로필 요약', '주요 개인 프로젝트:\n- Job Dashboard (Workers, D1): 대시보드 자동화'].join(
+        '\n\n'
+      )
+    );
+    assert.doesNotMatch(about, /수상 경력:/);
+    assert.doesNotMatch(about, /주요 성과:/);
+  });
+
+  it('composeWantedAbout caps achievements at five items', () => {
+    const about = composeWantedAbout({
+      summary: {
+        profileStatement: '프로필 요약',
+      },
+      achievements: Array.from({ length: 10 }, (_, index) => `성과 ${index + 1}`),
+    });
+
+    assert.match(about, /주요 성과:/);
+    assert.match(about, /- 성과 5/);
+    assert.doesNotMatch(about, /- 성과 6/);
+  });
+
+  it('composeWantedAbout renders award entries in Korean format', () => {
+    const about = composeWantedAbout({
+      summary: {
+        profileStatement: '프로필 요약',
+      },
+      awards: [
+        {
+          name: '자율주행 경진대회 우수상',
+          organization: '한양사이버대학교',
+          year: '2026',
+        },
+      ],
+    });
+
+    assert.match(about, /수상 경력:\n- 자율주행 경진대회 우수상 \(한양사이버대학교, 2026\)/);
+  });
+
+  it('composeWantedAbout truncates the last section gracefully at 3000 characters', () => {
+    const about = composeWantedAbout({
+      summary: {
+        profileStatement: '프로필 요약',
+      },
+      personalProjects: [
+        {
+          name: 'Job Platform Sync',
+          technologies: ['Node.js', 'Workers'],
+          tagline: '플랫폼 이력서 동기화',
+        },
+      ],
+      awards: [
+        {
+          name: '자율주행 경진대회 우수상',
+          organization: '한양사이버대학교',
+          year: '2026',
+        },
+      ],
+      achievements: Array.from(
+        { length: 5 },
+        (_, index) => `${index + 1}. ${'긴 성과 설명 '.repeat(90)}`
+      ),
+    });
+
+    assert.strictEqual(about.length, 3000);
+    assert.match(about, /주요 개인 프로젝트:/);
+    assert.match(about, /수상 경력:/);
+    assert.match(about, /주요 성과:/);
+  });
+
+  it('syncAbout saves the composed about when awards and achievements are present', async () => {
+    const api = createApiMock();
+    const sourceData = {
+      summary: {
+        profileStatement: '프로필 요약',
+      },
+      awards: [
+        {
+          name: '자율주행 경진대회 우수상',
+          organization: '한양사이버대학교',
+          year: '2026',
+        },
+      ],
+      achievements: ['성과 1'],
+    };
+
+    await syncAbout(api, 'resume-1', sourceData, '기존 about');
+
+    assert.deepStrictEqual(getMockArgs(api.resume.save), [
+      ['resume-1', { about: composeWantedAbout(sourceData) }],
+    ]);
   });
 });
