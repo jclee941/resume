@@ -423,146 +423,15 @@ describe('wanted sync operations', () => {
     assert.strictEqual(about, 'Profile only summary');
   });
 
-  it('composeWantedAbout includes awards and achievements sections', () => {
-    const about = composeWantedAbout({
-      summary: {
-        profileStatement: '보안과 운영을 코드로 통합하는 엔지니어입니다.',
+  it('syncAbout preserves existing remote about when source has no usable content', async () => {
+    const api = {
+      resume: {
+        save: mock.fn(async () => undefined),
       },
-      personalProjects: [
-        {
-          name: 'Resume Automation',
-          technologies: ['Node.js', 'Cloudflare Workers'],
-          tagline: '이력서와 포트폴리오 동기화 자동화',
-        },
-      ],
-      awards: [
-        {
-          name: '자율주행 경진대회 우수상',
-          organization: '한양사이버대학교',
-          year: '2026',
-        },
-      ],
-      achievements: ['성과 1', '성과 2', '성과 3', '성과 4', '성과 5'],
-    });
-
-    assert.strictEqual(
-      about,
-      [
-        '보안과 운영을 코드로 통합하는 엔지니어입니다.',
-        '주요 개인 프로젝트:\n- Resume Automation (Node.js, Cloudflare Workers): 이력서와 포트폴리오 동기화 자동화',
-        '수상 경력:\n- 자율주행 경진대회 우수상 (한양사이버대학교, 2026)',
-        '주요 성과:\n- 성과 1\n- 성과 2\n- 성과 3\n- 성과 4\n- 성과 5',
-      ].join('\n\n')
-    );
-  });
-
-  it('composeWantedAbout omits awards and achievements sections when arrays are empty', () => {
-    const about = composeWantedAbout({
-      summary: {
-        profileStatement: '프로필 요약',
-      },
-      personalProjects: [
-        {
-          name: 'Job Dashboard',
-          technologies: ['Workers', 'D1'],
-          tagline: '대시보드 자동화',
-        },
-      ],
-      awards: [],
-      achievements: [],
-    });
-
-    assert.strictEqual(
-      about,
-      ['프로필 요약', '주요 개인 프로젝트:\n- Job Dashboard (Workers, D1): 대시보드 자동화'].join(
-        '\n\n'
-      )
-    );
-    assert.doesNotMatch(about, /수상 경력:/);
-    assert.doesNotMatch(about, /주요 성과:/);
-  });
-
-  it('composeWantedAbout caps achievements at five items', () => {
-    const about = composeWantedAbout({
-      summary: {
-        profileStatement: '프로필 요약',
-      },
-      achievements: Array.from({ length: 10 }, (_, index) => `성과 ${index + 1}`),
-    });
-
-    assert.match(about, /주요 성과:/);
-    assert.match(about, /- 성과 5/);
-    assert.doesNotMatch(about, /- 성과 6/);
-  });
-
-  it('composeWantedAbout renders award entries in Korean format', () => {
-    const about = composeWantedAbout({
-      summary: {
-        profileStatement: '프로필 요약',
-      },
-      awards: [
-        {
-          name: '자율주행 경진대회 우수상',
-          organization: '한양사이버대학교',
-          year: '2026',
-        },
-      ],
-    });
-
-    assert.match(about, /수상 경력:\n- 자율주행 경진대회 우수상 \(한양사이버대학교, 2026\)/);
-  });
-
-  it('composeWantedAbout truncates the last section gracefully at 3000 characters', () => {
-    const about = composeWantedAbout({
-      summary: {
-        profileStatement: '프로필 요약',
-      },
-      personalProjects: [
-        {
-          name: 'Job Platform Sync',
-          technologies: ['Node.js', 'Workers'],
-          tagline: '플랫폼 이력서 동기화',
-        },
-      ],
-      awards: [
-        {
-          name: '자율주행 경진대회 우수상',
-          organization: '한양사이버대학교',
-          year: '2026',
-        },
-      ],
-      achievements: Array.from(
-        { length: 5 },
-        (_, index) => `${index + 1}. ${'긴 성과 설명 '.repeat(90)}`
-      ),
-    });
-
-    assert.strictEqual(about.length, 3000);
-    assert.match(about, /주요 개인 프로젝트:/);
-    assert.match(about, /수상 경력:/);
-    assert.match(about, /주요 성과:/);
-  });
-
-  it('syncAbout saves the composed about when awards and achievements are present', async () => {
-    const api = createApiMock();
-    const sourceData = {
-      summary: {
-        profileStatement: '프로필 요약',
-      },
-      awards: [
-        {
-          name: '자율주행 경진대회 우수상',
-          organization: '한양사이버대학교',
-          year: '2026',
-        },
-      ],
-      achievements: ['성과 1'],
     };
 
-    await syncAbout(api, 'resume-1', sourceData, '기존 about');
+    await syncAbout(api, 'resume-1', {}, 'existing remote about');
 
-    assert.deepStrictEqual(getMockArgs(api.resume.save), [
-      ['resume-1', { about: composeWantedAbout(sourceData) }],
-    ]);
+    assert.strictEqual(api.resume.save.mock.calls.length, 0);
   });
 });

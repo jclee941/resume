@@ -24,31 +24,6 @@ function truncateWantedAbout(description) {
   return description.slice(0, WANTED_ABOUT_LIMIT).trim();
 }
 
-function appendWantedAboutSection(currentAbout, nextSection) {
-  const section = normalizeText(nextSection);
-  if (!section) {
-    return currentAbout;
-  }
-
-  const separator = currentAbout ? '\n\n' : '';
-  const candidateAbout = `${currentAbout}${separator}${section}`;
-  if (candidateAbout.length <= WANTED_ABOUT_LIMIT) {
-    return candidateAbout;
-  }
-
-  const remaining = WANTED_ABOUT_LIMIT - currentAbout.length - separator.length;
-  if (remaining <= 0) {
-    return truncateWantedAbout(currentAbout);
-  }
-
-  const truncatedSection = truncateWantedAbout(section.slice(0, remaining));
-  if (!truncatedSection) {
-    return truncateWantedAbout(currentAbout);
-  }
-
-  return `${currentAbout}${separator}${truncatedSection}`;
-}
-
 function composePersonalProjectSummary(project = {}) {
   const technologies = Array.isArray(project.technologies)
     ? project.technologies
@@ -68,30 +43,6 @@ function composePersonalProjectSummary(project = {}) {
   return `- ${projectName} (${technologies}): ${summary}`;
 }
 
-function composeAwardSummary(award = {}) {
-  const name = normalizeText(award.name);
-  const organization = normalizeText(award.organization);
-  const year = normalizeText(award.year);
-
-  if (!name || !organization || !year) {
-    return '';
-  }
-
-  return `- ${name} (${organization}, ${year})`;
-}
-
-function composeWantedSection(title, lines = []) {
-  const sectionLines = Array.isArray(lines)
-    ? lines.map((line) => normalizeText(line)).filter(Boolean)
-    : [];
-
-  if (!title || sectionLines.length === 0) {
-    return '';
-  }
-
-  return `${title}\n${sectionLines.join('\n')}`;
-}
-
 export function composeWantedAbout(sourceData = {}) {
   const manualAbout = normalizeText(sourceData.platformVariants?.wanted?.about);
   if (manualAbout) {
@@ -105,36 +56,38 @@ export function composeWantedAbout(sourceData = {}) {
         .filter(Boolean)
         .slice(0, 3)
     : [];
-  const awards = Array.isArray(sourceData.awards)
-    ? sourceData.awards
-        .map((award) => composeAwardSummary(award))
-        .filter(Boolean)
-        .slice(0, 3)
-    : [];
-  const achievements = Array.isArray(sourceData.achievements)
-    ? sourceData.achievements
-        .map((achievement) => normalizeText(achievement))
-        .filter(Boolean)
-        .map((achievement) => `- ${achievement}`)
-        .slice(0, 5)
-    : [];
 
-  const sections = [
-    profileStatement,
-    composeWantedSection('주요 개인 프로젝트:', personalProjects),
-    composeWantedSection('수상 경력:', awards),
-    composeWantedSection('주요 성과:', achievements),
-  ].filter(Boolean);
-
-  let about = '';
-  for (const section of sections) {
-    about = appendWantedAboutSection(about, section);
-    if (about.length >= WANTED_ABOUT_LIMIT) {
-      return truncateWantedAbout(about);
-    }
+  if (personalProjects.length === 0) {
+    return profileStatement;
   }
 
-  return truncateWantedAbout(about);
+  const sections = [];
+  if (profileStatement) {
+    sections.push(profileStatement);
+  }
+  sections.push('주요 개인 프로젝트:');
+
+  let about = sections.join('\n\n');
+  for (const projectLine of personalProjects) {
+    const nextAbout = `${about}\n${projectLine}`;
+    if (nextAbout.length <= WANTED_ABOUT_LIMIT) {
+      about = nextAbout;
+      continue;
+    }
+
+    const remaining = WANTED_ABOUT_LIMIT - about.length - 1;
+    if (remaining <= 0) {
+      return truncateWantedAbout(about);
+    }
+
+    if (remaining <= 3) {
+      return `${about}${'.'.repeat(remaining)}`;
+    }
+
+    return `${about}\n${projectLine.slice(0, remaining - 3).trimEnd()}...`;
+  }
+
+  return about;
 }
 
 function composeCareerProjectDescription(project = {}) {
@@ -417,6 +370,9 @@ export async function syncLanguageCerts(api, resume_id, sourceData, remoteLangua
 
 export async function syncAbout(api, resume_id, sourceData, currentAbout) {
   const nextAbout = composeWantedAbout(sourceData);
+  if (!nextAbout) {
+    return;
+  }
   if (typeof nextAbout === 'string' && nextAbout !== (currentAbout || '')) {
     await api.resume.save(resume_id, { about: nextAbout });
   }
