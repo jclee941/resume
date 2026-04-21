@@ -412,7 +412,7 @@ describe('wanted sync operations', () => {
     assert.match(about, /^Summary A+/);
     assert.match(about, /주요 개인 프로젝트:/);
     assert.match(about, /Project 1/);
-    assert.match(about, /\.\.\.$/);
+    assert.doesNotMatch(about, /Project 2/);
   });
 
   it('composeWantedAbout falls back to profileStatement when personalProjects are missing', () => {
