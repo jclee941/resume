@@ -60,8 +60,8 @@ describe('AutoApplier strategy methods', () => {
       expect(linkedinFailedCalls).toBeNull();
       
       // Check wanted strategy (should use 'wanted')
-      const wantedContent = fs.readFileSync(path.join(strategiesDir, 'wanted-strategy.js'), 'utf8');
-      expect(wantedContent).toContain("'wanted'");
+      const wantedHelpersContent = fs.readFileSync(path.join(strategiesDir, 'wanted-helpers.js'), 'utf8');
+      expect(wantedHelpersContent).toContain("'wanted'");
     });
 
     test('jobkorea strategy uses correct n8n notification platform', () => {
