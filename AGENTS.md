@@ -75,7 +75,7 @@ Resume monorepo: Cloudflare Worker portfolio, job automation runtimes, dashboard
 - Never auto-init a git repo with `initializeIfNotPresent=true`.
 - Never place runtime artifacts in source domains (`logs/`, `data/`, `tmp/`).
 - Never use catch-all names like `utils.ts` or `helpers.js`; use specific names (`date-formatter.js`).
-- Never exceed 200 LOC per file without splitting (see `rules/00-code-modularization.md`). Large files exist in job-server (notifications.js 1043L, application.js 851L) — known tech debt.
+- Never exceed 200 LOC per file without splitting (see `rules/00-code-modularization.md`). Large files exist in job-server (job-matcher.js 554L, auto-apply-config.js 499L, application-repository.js 492L, wanted-strategy.js 489L, performance-metrics.js 479L, approval-manager.js 454L, application-tracker.js 452L, renew-jobkorea-session.js 464L) — known tech debt.
 
 ## UNIQUE STYLES
 

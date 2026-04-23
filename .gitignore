@@ -66,6 +66,14 @@ logs/
 /verify-content-integrity
 /verify-health
 
+# Go build artifacts (n8n scripts)
+/deploy-auto-apply
+/deploy-workflow
+/n8n-browser-auth
+/setup-api-key
+
+# Wrangler generated types
+/worker-configuration.d.ts
 # Temporary session data (may contain credentials)
 sessions.json
 
