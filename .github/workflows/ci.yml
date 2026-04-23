@@ -144,6 +144,16 @@ jobs:
         run: |
           set -euo pipefail
           for script in infrastructure/n8n/*.go; do
+            name=$(basename "$script" .go)
+            tmpdir=$(mktemp -d)
+            cp "$script" "$tmpdir/main.go"
+            (cd "$tmpdir" && go build -o /dev/null main.go)
+            rm -rf "$tmpdir"
+            echo "✅ Built $name"
+          done
+        run: |
+          set -euo pipefail
+          for script in infrastructure/n8n/*.go; do
             echo "Building $script"
             go build "$script"
           done
