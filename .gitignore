@@ -89,3 +89,5 @@ sessions.json
 test-results/
 *.backup-*
 downloaded_files/
+# Generated dashboards
+apps/job-server/scripts/dashboard.html
