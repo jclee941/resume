@@ -5,6 +5,13 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.7.0] - 2026-04-21
+
+### Changes
+- feat(wanted): append awards and achievements to composed about (a0f0d9a)
+- feat(wanted): compose personalProjects into about section (fc10647)
+
+
 ## [v1.6.0] - 2026-04-20
 
 ### Changes
