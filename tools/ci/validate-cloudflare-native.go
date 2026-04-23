@@ -19,8 +19,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	if !fileExists(filepath.Join(rootDir, "apps/portfolio/wrangler.toml")) {
-		fmt.Println("ERROR: missing portfolio wrangler.toml")
+	if !fileExists(filepath.Join(rootDir, "apps/portfolio/wrangler.jsonc")) {
+		fmt.Println("ERROR: missing portfolio wrangler.jsonc")
 		os.Exit(1)
 	}
 

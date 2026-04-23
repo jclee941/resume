@@ -27,7 +27,7 @@ wrangler r2 bucket create resume-assets
 wrangler r2 bucket lifecycle set resume-assets --file infrastructure/cloudflare/r2/lifecycle-rules.json
 ```
 
-3. Bind the bucket in worker config (`wrangler.toml`) with an `r2_buckets` binding.
+3. Bind the bucket in worker config (`wrangler.jsonc`) with an `r2_buckets` binding.
 
 ## Presigned URL Generation
 

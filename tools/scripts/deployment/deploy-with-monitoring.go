@@ -119,7 +119,7 @@ func step2Tests() bool {
 
 func step3Deploy(root string) bool {
 	fmt.Printf("%s[3/4] Deploying to Cloudflare Workers...%s\n", blue, nc)
-	sendKeys("cd " + root + " && npx wrangler deploy --config apps/portfolio/wrangler.toml --env production")
+	sendKeys("cd " + root + " && npx wrangler deploy --config apps/portfolio/wrangler.jsonc --env production")
 	time.Sleep(5 * time.Second)
 	output := capturePane(10)
 	if strings.Contains(output, "Published") || strings.Contains(output, "Deployed") || strings.Contains(output, "Success") {
