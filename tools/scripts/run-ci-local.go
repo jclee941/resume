@@ -115,7 +115,7 @@ func allStageDefinitions() map[string]stageDefinition {
 			ExpectedJobs: []string{"validate-cloudflare"},
 			Commands: [][]string{
 				{"go", "run", "./tools/ci/validate-cloudflare-native.go"},
-				{"npx", "wrangler", "types", "/tmp/portfolio-worker-types.d.ts", "--config", "apps/portfolio/wrangler.toml", "--env", "production"},
+				{"npx", "wrangler", "types", "/tmp/portfolio-worker-types.d.ts", "--config", "apps/portfolio/wrangler.jsonc", "--env", "production"},
 				{"npx", "wrangler", "types", "/tmp/job-dashboard-worker-types.d.ts", "--config", "apps/job-dashboard/wrangler.jsonc"},
 			},
 			Description: "Validate Cloudflare-native structure",

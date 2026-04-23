@@ -24,7 +24,7 @@ title = "Resume Monorepo Gitleaks Config"
     '''placeholder''',
   ]
 
-# Allowlist Cloudflare wrangler.toml account/zone IDs (not secrets)
+# Allowlist Cloudflare wrangler.jsonc account/zone IDs (not secrets)
 [[rules]]
   id = "cloudflare-account-id"
   description = "Cloudflare account/zone IDs are not secrets"

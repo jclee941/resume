@@ -4,11 +4,6 @@ import fs from 'fs';
 import path from 'path';
 
 function resolveWranglerConfigPath(baseDir) {
-  const tomlPath = path.join(baseDir, 'wrangler.toml');
-  if (fs.existsSync(tomlPath)) {
-    return tomlPath;
-  }
-
   const jsoncPath = path.join(baseDir, 'wrangler.jsonc');
   if (fs.existsSync(jsoncPath)) {
     return jsoncPath;
