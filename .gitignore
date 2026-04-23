@@ -74,3 +74,10 @@ sessions.json
 
 # Local OpenCode data (large vector DB files)
 .opencode/
+
+# Tooling artifacts
+.wrangler/
+.playwright-mcp/
+test-results/
+*.backup-*
+downloaded_files/
