@@ -151,12 +151,6 @@ jobs:
             rm -rf "$tmpdir"
             echo "✅ Built $name"
           done
-        run: |
-          set -euo pipefail
-          for script in infrastructure/n8n/*.go; do
-            echo "Building $script"
-            go build "$script"
-          done
 
   summary:
     name: CI Summary
