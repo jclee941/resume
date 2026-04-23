@@ -110,54 +110,12 @@ module.exports = [
       ],
     },
   },
-  {
-    files: ['apps/job-dashboard/**/*.js', 'apps/job-dashboard/**/*.mjs'],
-    rules: {
-      'no-restricted-imports': [
-        'error',
-        {
-          patterns: [
-            {
-              group: ['**/job-server/**', '**/portfolio/**'],
-              message: 'Cross-app import. Use @resume/shared/* instead.',
-            },
-          ],
-        },
-      ],
-    },
-  },
-  {
-    files: ['apps/job-server/**/*.js', 'apps/job-server/**/*.mjs'],
-    rules: {
-      'no-restricted-imports': [
-        'error',
-        {
-          patterns: [
-            {
-              group: ['**/job-dashboard/**', '**/portfolio/**'],
-              message: 'Cross-app import. Use @resume/shared/* instead.',
-            },
-          ],
-        },
-      ],
-    },
-  },
-  {
-    files: ['apps/portfolio/**/*.js', 'apps/portfolio/**/*.mjs'],
-    rules: {
-      'no-restricted-imports': [
-        'error',
-        {
-          patterns: [
-            {
-              group: ['**/job-server/**', '**/job-dashboard/**'],
-              message: 'Cross-app import. Use @resume/shared/* instead.',
-            },
-          ],
-        },
-      ],
-    },
-  },
+  ...require('./apps/job-dashboard/eslint.config.cjs'),
+  ...require('./apps/job-server/eslint.config.cjs'),
+  ...require('./apps/portfolio/eslint.config.cjs'),
+  ...require('./packages/cli/eslint.config.cjs'),
+  ...require('./packages/data/eslint.config.cjs'),
+  ...require('./packages/shared/eslint.config.cjs'),
   {
     files: ['tests/**/*.test.js', 'tests/**/*.spec.js', 'tests/**/*.test.ts', 'tests/**/*.spec.ts'],
     rules: {

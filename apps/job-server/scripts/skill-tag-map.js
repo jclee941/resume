@@ -91,7 +91,6 @@ export function getTagTypeId(skillName) {
   if (alias && SKILL_TAG_MAP[alias]) {
     const tagId = SKILL_TAG_MAP[alias];
     if (process.env.SKILL_TAG_DEBUG) {
-      // eslint-disable-next-line no-console
       console.warn(`[skill-tag-map] routed "${skillName}" via alias -> "${alias}" (tagTypeId=${tagId})`);
     }
     return tagId;
