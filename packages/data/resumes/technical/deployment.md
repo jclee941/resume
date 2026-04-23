@@ -153,7 +153,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy --config wrangler.toml --env production
+          command: deploy --config wrangler.jsonc --env production
           workingDirectory: apps/portfolio
 ```
 
@@ -162,7 +162,7 @@ jobs:
 ### Development
 
 ```bash
-# Edit wrangler.toml
+# Edit wrangler.jsonc
 [env.dev]
 name = "resume-dev"
 vars = { ENVIRONMENT = "development" }
@@ -250,7 +250,7 @@ html-minifier --collapse-whitespace \
 
 ### Issue: "Route not found"
 
-**Solution**: Check `wrangler.toml` routes
+**Solution**: Check `wrangler.jsonc` routes
 
 ```toml
 # Ensure no route conflicts
@@ -303,7 +303,7 @@ For larger assets:
 # Create KV namespace
 wrangler kv:namespace create "ASSETS"
 
-# Update wrangler.toml
+# Update wrangler.jsonc
 kv_namespaces = [
   { binding = "ASSETS", id = "xxx" }
 ]

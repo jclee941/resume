@@ -104,7 +104,7 @@ resume/
 │   ├── resume.html         # Resume page
 │   ├── generate-worker.js  # Build script
 │   ├── worker.js           # Cloudflare Worker
-│   └── wrangler.toml       # Deployment config
+│   └── wrangler.jsonc      # Deployment config
 ├── toss/                # Job application materials
 ├── docs/                # Alternative formats
 ├── data/                # Utilities

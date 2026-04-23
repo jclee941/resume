@@ -145,7 +145,7 @@ The monitoring script tracks these steps:
   └─ Checks for "Tests:.*passed"
 
 [3/4] Deploying to Cloudflare
-  ├─ npx wrangler deploy --config apps/portfolio/wrangler.toml --env production
+  ├─ npx wrangler deploy --config apps/portfolio/wrangler.jsonc --env production
   └─ Checks for "Published|Deployed|Success"
 
 [4/4] Verifying deployment

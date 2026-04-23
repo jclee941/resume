@@ -238,7 +238,7 @@ Error: Failed to publish
 **Solution**:
 
 1. Check Cloudflare Workers quota
-2. Verify wrangler.toml configuration
+2. Verify wrangler.jsonc configuration
 3. Check worker name conflicts
 
 #### Verification Failed
@@ -317,7 +317,7 @@ open https://codecov.io/gh/YOUR_USERNAME/resume
 
 ```bash
 # 1. Create staging worker in Cloudflare
-# 2. Update wrangler.toml with staging config
+# 2. Update wrangler.jsonc with staging config
 # 3. Use manual workflow dispatch for staging
 ```
 

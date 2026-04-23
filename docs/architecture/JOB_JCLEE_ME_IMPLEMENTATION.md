@@ -26,7 +26,7 @@ This document now tracks the finalized architecture after decommissioning the le
 ### Ownership Model
 
 - Worker code deployment is managed by CI (`.github/workflows/ci.yml`).
-- Worker/route configuration is managed in source (`wrangler.toml` / `wrangler.jsonc`) and infrastructure definitions.
+- Worker/route configuration is managed in source (`wrangler.jsonc`) and infrastructure definitions.
 - Verification runs against `/health` and `/job/health` targets as part of deploy validation.
 
 ---

@@ -70,7 +70,7 @@ export CLOUDFLARE_API_TOKEN=여기에_복사한_토큰_붙여넣기
 
 ### 5단계: Account ID 확인 (선택사항)
 
-**필요한 경우**: wrangler.toml에 account_id가 없으면
+**필요한 경우**: wrangler.jsonc에 account_id가 없으면
 
 1. Cloudflare Dashboard: https://dash.cloudflare.com/
 2. 왼쪽 메뉴에서 **"Workers & Pages"** 클릭
