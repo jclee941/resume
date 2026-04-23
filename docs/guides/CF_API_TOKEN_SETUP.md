@@ -76,7 +76,7 @@ npx wrangler whoami
 export CLOUDFLARE_API_KEY=$(grep CLOUDFLARE_API_KEY /home/jclee/infra/infisical/agent-output/infisical-secrets.env | cut -d= -f2)
 export CLOUDFLARE_EMAIL="your-email@example.com"
 
-# wrangler.toml에 추가
+# wrangler.jsonc에 추가
 # [env.production]
 # account_id = "a8d9c67f586acdd15eebcc65ca3aa5bb"
 ```

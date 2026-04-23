@@ -66,7 +66,7 @@ The deployment process follows a strict unidirectional data flow:
    - Computes SHA-256 hashes for all inline scripts to build a strict Content Security Policy (CSP).
    - Escapes backticks for injection into a template literal.
 4. **Artifact Creation**: `worker.js` is created as a single self-contained script.
-5. **Deployment**: `npx wrangler deploy --config apps/portfolio/wrangler.toml --env production` uploads the artifact to the Cloudflare network.
+5. **Deployment**: `npx wrangler deploy --config apps/portfolio/wrangler.jsonc --env production` uploads the artifact to the Cloudflare network.
 
 ### 2.4 Architecture Diagram
 
@@ -142,7 +142,7 @@ Your `.env` file contains 6 primary sections:
 
 The monorepo uses two active Wrangler configuration files:
 
-1. `apps/portfolio/wrangler.toml`: Uses TOML format for the main site.
+1. `apps/portfolio/wrangler.jsonc`: Uses JSONC format for the main site.
 2. `apps/job-dashboard/wrangler.jsonc`: Uses JSONC format for the dashboard worker.
 
 ### 3.4 Managing Production Secrets
@@ -338,7 +338,7 @@ The worker includes 5 scheduled workflow triggers for operational tasks:
   - _Fix_: Run `rm -rf ~/.wrangler` and re-authenticate with `npx wrangler login`.
 - **Missing entry-point to Worker script**:
   - _Symptom_: `npx wrangler deploy` fails from repo root with entry-point error.
-  - _Fix_: Use explicit config path: `npx wrangler deploy --config apps/portfolio/wrangler.toml --env production`.
+  - _Fix_: Use explicit config path: `npx wrangler deploy --config apps/portfolio/wrangler.jsonc --env production`.
 
 ---
 

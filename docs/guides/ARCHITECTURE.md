@@ -38,7 +38,7 @@ Source files (HTML/CSS/JSON) are transformed into a single deployable `worker.js
 
 1. **Edit Content**: Modify `apps/portfolio/data.json` (project data) OR `apps/portfolio/index.html` (structure) OR `apps/portfolio/styles.css` (styling)
 2. **Generate Worker**: Run `npm run build` (performs 6 transformations)
-3. **Deploy**: Push to `master` branch (GitHub Actions auto-deploys) OR run `npx wrangler deploy --config apps/portfolio/wrangler.toml --env production` manually
+3. **Deploy**: Push to `master` branch (GitHub Actions auto-deploys) OR run `npx wrangler deploy --config apps/portfolio/wrangler.jsonc --env production` manually
 
 ### 6 Critical Transformations
 
@@ -255,7 +255,7 @@ Content-Security-Policy:
 - `jest.config.cjs`: Jest 30 CommonJS configuration
 - `eslint.config.cjs`: ESLint 9 flat config (modern syntax)
 - `playwright.config.js`: Playwright E2E test configuration
-- `apps/portfolio/wrangler.toml`: Cloudflare Workers deployment config
+- `apps/portfolio/wrangler.jsonc`: Cloudflare Workers deployment config
 
 ## Git Repository
 

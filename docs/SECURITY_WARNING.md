@@ -68,9 +68,9 @@ GitLab now uses OAuth2 client credentials flow. To rotate:
 ## 4. D1 Database
 
 - **Portfolio**: Production D1 binding is marked TODO.
-- **Action**: If Portfolio needs persistence (e.g., A/B tests, Visitor counts), create a production D1 DB and update `wrangler.toml`.
+- **Action**: If Portfolio needs persistence (e.g., A/B tests, Visitor counts), create a production D1 DB and update `wrangler.jsonc`.
 - **Command**:
   ```bash
   npx wrangler d1 create resume-prod-db
-  # Update wrangler.toml with new ID
+# Update wrangler.jsonc with new ID
   ```

@@ -30,7 +30,7 @@ portfolio/
 ├── generate-project-schemas.js # Schema generator
 ├── sitemap.xml             # SEO sitemap
 ├── robots.txt              # SEO robots config
-├── wrangler.toml           # worker config (name: resume)
+├── wrangler.jsonc          # worker config (name: resume)
 └── validate-seo.go         # SEO validation script
 ```
 

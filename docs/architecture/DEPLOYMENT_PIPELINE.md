@@ -18,7 +18,7 @@ This repo now uses a split model:
 3. Ensure deploy command uses explicit config:
 
 ```bash
-npx wrangler deploy --config apps/portfolio/wrangler.toml --env production
+npx wrangler deploy --config apps/portfolio/wrangler.jsonc --env production
 ```
 
 4. Push to `master` to trigger build/deploy via Cloudflare.
@@ -47,7 +47,7 @@ Deploy/rollback/preview deploy jobs are disabled to avoid dual-deployer drift.
 To let Cloudflare Builds create versions without promoting active deployment, set deploy command to:
 
 ```bash
-npx wrangler versions upload --config apps/portfolio/wrangler.toml --env production
+npx wrangler versions upload --config apps/portfolio/wrangler.jsonc --env production
 ```
 
 ## Required Secrets

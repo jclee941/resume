@@ -115,7 +115,7 @@ If API token creation is not possible:
 
 ### Error: "Account ID mismatch"
 
-- Verify `wrangler.toml` has correct `account_id = "a8d9c67f586acdd15eebcc65ca3aa5bb"`
+- Verify `wrangler.jsonc` has correct `account_id = "a8d9c67f586acdd15eebcc65ca3aa5bb"`
 
 ---
 

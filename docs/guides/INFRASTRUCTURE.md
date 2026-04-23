@@ -109,7 +109,7 @@ GET  /og-image.png        Social media preview
 **Worker Configuration**:
 
 ```toml
-# apps/portfolio/wrangler.toml
+# apps/portfolio/wrangler.jsonc
 name = "resume"
 main = "worker.js"
 compatibility_date = "2024-01-01"
@@ -440,7 +440,7 @@ go run ./deploy-workflow.go resume-healthcheck-oauth2.json
 **Daily Backups**:
 
 - Worker.js source code (GitHub)
-- Configuration files (`.env`, `wrangler.toml`)
+- Configuration files (`.env`, `wrangler.jsonc`)
 - Monitoring dashboards (Grafana JSON exports)
 
 **Weekly Backups**:
