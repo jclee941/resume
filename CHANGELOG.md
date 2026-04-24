@@ -5,6 +5,39 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.8.0] - 2026-04-23
+
+### Changes
+- fix(test): update auto-applier strategy test for modularized wanted-helpers (f9cc595)
+- fix(ci): remove duplicate run key in validate-go job (bffece8)
+- chore: raise file size limit from 200 to 500 LOC (538c0b0)
+- chore(gitignore): ignore generated dashboard.html (45c6220)
+- docs: add wishket portfolio and n8n workflow export (4a0aba3)
+- fix(ci): use temporary directory for individual Go script builds (7e31712)
+- Merge branch 'master' of https://github.com/jclee941/resume (2986192)
+- refactor: split renew-jobkorea-session into modular session helpers (d90db10)
+- refactor: split application-tracker into lifecycle and analytics modules (160b2d3)
+- refactor: split approval-manager into workflow state modules (1c0237a)
+- refactor: split performance-metrics into core, reporter, and decorators (0df6865)
+- refactor: extract wanted-strategy helpers into focused modules (ed3c813)
+- refactor: split application-repository into reader and writer modules (8a51726)
+- refactor: split auto-apply-config into helpers and validation modules (1e2136c)
+- refactor: split job-matcher into domain-specific scoring modules (de47807)
+- feat: migrate n8n operational scripts from shell to Go (2103eb2)
+- chore: add per-package ESLint flat configs (f3cfdde)
+- ci: add Go build validation to GitHub Actions workflow (0419613)
+- chore: clean up binary artifacts and update AGENTS.md inventory (8d3b03e)
+- docs(cf): update wrangler config references (b9b3c2e)
+- chore(cf): migrate portfolio wrangler config to jsonc (0a9e7eb)
+- chore(git): remove unused natively submodule (d4900ba)
+- chore(ts): add local tsconfig extending root for job-dashboard (9d80da9)
+- fix(deps): use file protocol for internal shared dependency (a9ac4c0)
+- chore(git): remove generated PDF artifacts from tracking (0fff205)
+- fix(gitignore): add missing patterns for tooling artifacts (6166f39)
+- fix(lint): exclude natively submodule and ephemeral dirs from eslint (6e81550)
+- fix(wanted): preserve about when source content is empty (27c785e)
+
+
 ## [v1.7.0] - 2026-04-21
 
 ### Changes
