@@ -5,6 +5,14 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.8.1] - 2026-04-24
+
+### Changes
+- fix(ci): remove duplicate YAML entries causing workflow failure (d11984e)
+- Merge branch 'master' of https://github.com/jclee941/resume (f7efbcf)
+- ci: resolve deprecation and cache warnings (ab8af4c)
+
+
 ## [v1.8.0] - 2026-04-23
 
 ### Changes
