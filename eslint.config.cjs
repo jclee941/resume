@@ -36,14 +36,24 @@ const sharedRules = {
 
 const tsFiles = ['**/*.ts', '**/*.tsx', '**/*.mts', '**/*.cts'];
 
+const crossAppImportRule = (forbiddenApps) => ({
+  'no-restricted-imports': [
+    'error',
+    {
+      patterns: [
+        {
+          group: forbiddenApps.map((app) => `**/${app}/**`),
+          message: 'Cross-app import. Use @resume/shared/* instead.',
+        },
+      ],
+    },
+  ],
+});
+
 module.exports = [
   {
     ignores: [
       'node_modules/**',
-      'bazel-bin/**',
-      'bazel-out/**',
-      'bazel-resume/**',
-      'bazel-testlogs/**',
       'apps/portfolio/worker.js',
       'packages/data/resumes/archive/docs/worker.js',
       '*.min.js',
@@ -110,12 +120,18 @@ module.exports = [
       ],
     },
   },
-  ...require('./apps/job-dashboard/eslint.config.cjs'),
-  ...require('./apps/job-server/eslint.config.cjs'),
-  ...require('./apps/portfolio/eslint.config.cjs'),
-  ...require('./packages/cli/eslint.config.cjs'),
-  ...require('./packages/data/eslint.config.cjs'),
-  ...require('./packages/shared/eslint.config.cjs'),
+  {
+    files: ['apps/portfolio/**/*.{js,mjs}'],
+    rules: crossAppImportRule(['job-server', 'job-dashboard']),
+  },
+  {
+    files: ['apps/job-server/**/*.{js,mjs}'],
+    rules: crossAppImportRule(['job-dashboard', 'portfolio']),
+  },
+  {
+    files: ['apps/job-dashboard/**/*.{js,mjs}'],
+    rules: crossAppImportRule(['job-server', 'portfolio']),
+  },
   {
     files: ['tests/**/*.test.js', 'tests/**/*.spec.js', 'tests/**/*.test.ts', 'tests/**/*.spec.ts'],
     rules: {

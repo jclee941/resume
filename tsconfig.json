@@ -1,10 +1,6 @@
 {
-  "extends": "./jsconfig.json",
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "skipLibCheck": true,
-    "noEmit": true,
-    "allowJs": true,
-    "checkJs": false,
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
@@ -18,5 +14,34 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true
   },
-  "exclude": ["node_modules", "dist", "build", "coverage"]
+  "include": [
+    "apps/portfolio/lib/**/*.js",
+    "apps/portfolio/src/**/*.js",
+    "apps/job-server/src/**/*.js",
+    "apps/job-dashboard/src/**/*.js",
+    "packages/cli/**/*.js",
+    "packages/data/**/*.js",
+    "packages/shared/src/**/*.js",
+    "packages/types/src/**/*",
+    "packages/schemas/src/**/*",
+    "packages/contracts/src/**/*",
+    "tools/scripts/**/*.js"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    "coverage",
+    "playwright-report",
+    "test-results",
+    "apps/portfolio/worker.js",
+    "apps/portfolio/sw.js",
+    "apps/portfolio/.tmp",
+    "apps/portfolio/src/scripts/modules/**",
+    "apps/job-server/platforms/**",
+    "tests/**",
+    ".wrangler",
+    "**/*.test.js",
+    "**/*.spec.js"
+  ]
 }
