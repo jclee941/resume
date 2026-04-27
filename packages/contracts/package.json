@@ -1,0 +1,17 @@
+{
+  "name": "@resume/contracts",
+  "version": "1.0.0",
+  "description": "Cross-app API contracts: OpenAPI spec, Cloudflare Worker Env interfaces, RPC types",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./env": "./src/env.js",
+    "./openapi": "./openapi.yaml"
+  },
+  "files": [
+    "src/",
+    "openapi.yaml"
+  ]
+}

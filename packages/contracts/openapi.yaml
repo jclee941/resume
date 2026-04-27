@@ -1,0 +1,504 @@
+openapi: 3.0.3
+info:
+  title: Job Automation API
+  description: REST API for job search, application tracking, and auto-apply automation
+  version: 1.4.0
+  contact:
+    email: qws941@kakao.com
+
+servers:
+  - url: http://localhost:3000
+    description: Local development
+  - url: https://resume.jclee.me/job
+    description: Production (Cloudflare Worker)
+
+tags:
+  - name: Health
+    description: Service health endpoints
+  - name: Applications
+    description: Job application CRUD
+  - name: Search
+    description: Job search across platforms
+  - name: Stats
+    description: Statistics and reports
+  - name: AutoApply
+    description: Automated job application
+
+paths:
+  /health:
+    get:
+      tags: [Health]
+      summary: Health check
+      responses:
+        '200':
+          description: Service healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /api/health:
+    get:
+      tags: [Health]
+      summary: API health check
+      responses:
+        '200':
+          description: API healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /api/applications:
+    get:
+      tags: [Applications]
+      summary: List applications
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, applied, interviewing, rejected, offered, withdrawn]
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Application list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  applications:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Application'
+                  total:
+                    type: integer
+                  limit:
+                    type: integer
+                  offset:
+                    type: integer
+
+    post:
+      tags: [Applications]
+      summary: Create application
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                job:
+                  $ref: '#/components/schemas/Job'
+                options:
+                  type: object
+      responses:
+        '201':
+          description: Application created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+
+  /api/applications/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+
+    get:
+      tags: [Applications]
+      summary: Get application by ID
+      responses:
+        '200':
+          description: Application details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+        '404':
+          description: Not found
+
+    put:
+      tags: [Applications]
+      summary: Update application
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationUpdate'
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  application:
+                    $ref: '#/components/schemas/Application'
+
+    delete:
+      tags: [Applications]
+      summary: Delete application
+      responses:
+        '200':
+          description: Deleted
+
+  /api/applications/{id}/status:
+    put:
+      tags: [Applications]
+      summary: Update application status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [pending, applied, interviewing, rejected, offered, withdrawn]
+                note:
+                  type: string
+                notifyN8n:
+                  type: boolean
+                  default: true
+      responses:
+        '200':
+          description: Status updated
+
+  /api/search:
+    get:
+      tags: [Search]
+      summary: Search jobs
+      parameters:
+        - name: keyword
+          in: query
+          schema:
+            type: string
+            default: 보안 엔지니어
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: minScore
+          in: query
+          schema:
+            type: integer
+            default: 50
+        - name: platforms
+          in: query
+          description: Comma-separated platform list
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResult'
+
+  /api/search/batch:
+    post:
+      tags: [Search]
+      summary: Batch search with multiple keywords
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                keywords:
+                  type: array
+                  items:
+                    type: string
+                  default: [보안 엔지니어, DevOps, 인프라]
+                platforms:
+                  type: array
+                  items:
+                    type: string
+                limit:
+                  type: integer
+                  default: 10
+                minScore:
+                  type: integer
+                  default: 60
+      responses:
+        '200':
+          description: Batch search results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SearchResult'
+                  totalJobs:
+                    type: integer
+
+  /api/stats:
+    get:
+      tags: [Stats]
+      summary: Get application statistics
+      responses:
+        '200':
+          description: Statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stats'
+
+  /api/stats/weekly:
+    get:
+      tags: [Stats]
+      summary: Get weekly report
+      responses:
+        '200':
+          description: Weekly report
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WeeklyReport'
+
+  /api/report:
+    get:
+      tags: [Stats]
+      summary: Get daily report
+      parameters:
+        - name: date
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Daily report
+
+  /api/report/weekly:
+    get:
+      tags: [Stats]
+      summary: Get weekly report (alias)
+      responses:
+        '200':
+          description: Weekly report
+
+  /api/cleanup:
+    post:
+      tags: [Stats]
+      summary: Cleanup old applications
+      responses:
+        '200':
+          description: Cleanup result
+
+  /api/auto-apply/status:
+    get:
+      tags: [AutoApply]
+      summary: Get auto-apply status
+      responses:
+        '200':
+          description: Auto-apply status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AutoApplyStatus'
+
+  /api/auto-apply/run:
+    post:
+      tags: [AutoApply]
+      summary: Start auto-apply process
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                dryRun:
+                  type: boolean
+                  default: true
+                keywords:
+                  type: array
+                  items:
+                    type: string
+                minScore:
+                  type: integer
+                maxApplications:
+                  type: integer
+      responses:
+        '202':
+          description: Auto-apply started
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  status:
+                    type: string
+
+components:
+  schemas:
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: ok
+        timestamp:
+          type: string
+          format: date-time
+        version:
+          type: string
+          example: 1.4.0
+        uptime:
+          type: number
+
+    Job:
+      type: object
+      properties:
+        id:
+          type: integer
+        company:
+          type: string
+        position:
+          type: string
+        source:
+          type: string
+          enum: [wanted, saramin, jobkorea, linkedin]
+        matchScore:
+          type: integer
+        url:
+          type: string
+
+    Application:
+      type: object
+      properties:
+        id:
+          type: string
+        job:
+          $ref: '#/components/schemas/Job'
+        status:
+          type: string
+          enum: [pending, applied, interviewing, rejected, offered, withdrawn]
+        appliedAt:
+          type: string
+          format: date-time
+        notes:
+          type: array
+          items:
+            type: string
+        source:
+          type: string
+
+    ApplicationUpdate:
+      type: object
+      properties:
+        status:
+          type: string
+        notes:
+          type: array
+          items:
+            type: string
+
+    SearchResult:
+      type: object
+      properties:
+        jobs:
+          type: array
+          items:
+            $ref: '#/components/schemas/Job'
+        totalJobs:
+          type: integer
+        keyword:
+          type: string
+
+    Stats:
+      type: object
+      properties:
+        total:
+          type: integer
+        byStatus:
+          type: object
+          additionalProperties:
+            type: integer
+        bySource:
+          type: object
+          additionalProperties:
+            type: integer
+        thisWeek:
+          type: integer
+        today:
+          type: integer
+
+    WeeklyReport:
+      type: object
+      properties:
+        weekStart:
+          type: string
+          format: date
+        weekEnd:
+          type: string
+          format: date
+        applications:
+          type: integer
+        interviews:
+          type: integer
+        offers:
+          type: integer
+        rejections:
+          type: integer
+
+    AutoApplyStatus:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [idle, running, completed, failed]
+        lastRun:
+          type: string
+          format: date-time
+        lastResult:
+          type: object
+        nextScheduled:
+          type: string
+          format: date-time
+        progress:
+          type: object
+          properties:
+            current:
+              type: integer
+            total:
+              type: integer
+        uptime:
+          type: number
+        memoryUsage:
+          type: number

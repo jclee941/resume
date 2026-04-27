@@ -1,0 +1,19 @@
+{
+  "name": "@resume/types",
+  "version": "1.0.0",
+  "description": "Canonical TypeScript/JSDoc type definitions for the resume monorepo (zero runtime deps)",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./gitlab": "./src/gitlab.js",
+    "./wanted": "./src/wanted.js",
+    "./notification": "./src/notification.js",
+    "./job-categories": "./src/job-categories.js",
+    "./application": "./src/application.js",
+    "./resume": "./src/resume.js",
+    "./session": "./src/session.js",
+    "./env": "./src/env.js"
+  }
+}
