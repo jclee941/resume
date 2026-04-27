@@ -3,7 +3,56 @@
 **Generated:** 2026-04-27
 **Repo:** `/home/jclee/dev/resume`
 **Version:** package.json `1.8.0`
-**Status:** Documentation only — NO code changes have been performed. Each task below is intended to become a separate PR.
+**Original Status:** Documentation only — each task intended as a separate PR.
+
+## 2026-04-27 Execution Update
+
+The owner asked to execute the plan in one session. The following Epics
+were completed automatically; the remainder are explicitly out of scope
+for the current execution and remain task-tracked here.
+
+| Epic | Status | Commits | Notes |
+|------|--------|---------|-------|
+| **Epic 0** Security | ✅ Working tree complete | `e0ee539`, `c8b85d8` | History rewrite + force push are owner-driven (see `docs/security/SECRET_ROTATION_PLAYBOOK.md`). Backup tag `backup/pre-secret-rewrite-20260427-133607`. |
+| **Epic 1** Build/Config | ✅ Complete | `dfcf9ef` | Bazel dropped (D-1: Option A → ADR 0008). `jsconfig.json` → `tsconfig.base.json`. ESLint sub-configs inlined into root. `workspace:*` protocol. |
+| **Epic 2** Types/Schemas/Contracts | ✅ Foundation complete | `a14f7c5` | 3 new packages created: `@resume/types` (8 modules), `@resume/schemas` (5 Zod modules), `@resume/contracts` (env + openapi). Each with own AGENTS.md. **Migration of existing call-sites is per-domain follow-up PRs.** |
+| **Epic 3** Env/Secrets | ⚠️ Partial | (Epic 0) | CI gitleaks gate + pre-commit hook landed in Epic 0. Full secrets manager (Doppler/Keyflare) deferred. t3-env / `packages/env` not yet created. |
+| **Epic 4** Domain SSOT | ✅ Foundation complete | `bc2aff0` | New canonical modules in `@resume/shared`: `retry/` (http + circuit-breaker), `crypto/` (webcrypto + node), `rate-limit/` (token-bucket + sliding-window), `auth/` (cookie + hmac). Smoke test passes. **Migration of app-local consumers (errors, logger, retry, crypto, rate-limit, auth, validation, wanted-client) is per-PR follow-up.** |
+| **Epic 5** Documentation | ✅ Complete | `230823b`, `a1880c1` | `.gitlab-legacy/` deleted (10 YAMLs + 5 Go scripts + 3 docs). `rules/` → `docs/conventions/architecture-rules.md`. Root binaries (deploy-auto-apply, deploy-workflow, n8n-browser-auth, setup-api-key) deleted (~24MB; rebuild from `infrastructure/n8n/*.go`). Root AGENTS.md refreshed for current state. CI pipeline test updated. |
+| **Epic 6** File splits | ❌ Not executed | — | 9544L `applications.js` and 10963L `auto-apply.js` splits are each large enough to warrant a dedicated PR series with careful behavior-preservation testing. Out of scope for this execution. |
+
+### Verification (post-execution)
+
+```
+$ npm run lint        # exit 0
+$ npm run typecheck   # exit 0
+$ npm test:jest       # 60 suites, 1169 tests pass
+$ gitleaks detect --source . --no-git
+  16 findings — ALL in gitignored files (.env*, *-session.json) — no
+  tracked file leaks.
+```
+
+### Remaining work (task IDs reference original plan below)
+
+1. **Owner-driven (manual):** Epic 0 SECRET_ROTATION_PLAYBOOK.md steps 1–9
+   (credential rotation, 1Password upload, wrangler secret put,
+   `git filter-repo`, force push).
+2. **Follow-up PRs (per domain):** Epic 4 consumer migrations — for each of
+   errors / logger / retry / crypto / rate-limit / auth / validation /
+   wanted-client, audit existing call-sites, switch to `@resume/shared/*`,
+   delete the app-local duplicate.
+3. **Larger workstreams:** Epic 3 secrets-manager adoption (D-2 final
+   choice + `packages/env` with t3-env), Epic 6 file splits.
+
+### Backup tags created
+
+```
+backup/pre-secret-rewrite-20260427-133607   # before Epic 0 (working tree + bundle)
+backup/pre-epic-1-6-20260427-135829         # before Epics 1-6 batch
+```
+
+---
+
 
 ---
 
