@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.9.4] - 2026-04-27
+
+### Changes
+- fix(csp): allow data: in img-src, add Cloudflare challenge script hash (6f7fb6c)
+
+
 ## [v1.9.3] - 2026-04-27
 
 ### Changes
