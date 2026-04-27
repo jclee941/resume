@@ -10,7 +10,10 @@
     "apps/job-dashboard",
     "packages/cli",
     "packages/data",
-    "packages/shared"
+    "packages/shared",
+    "packages/types",
+    "packages/schemas",
+    "packages/contracts"
   ],
   "scripts": {
     "strip-exif": "exiftool -all= -overwrite_original apps/portfolio/src/images/*.png apps/portfolio/src/images/*.webp 2>/dev/null || echo 'exiftool not found - skipping'",
