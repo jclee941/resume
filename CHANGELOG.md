@@ -5,6 +5,19 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.9.0] - 2026-04-27
+
+### Changes
+- docs(plan): record 2026-04-27 execution status of Epics 0-5 (0a132ad)
+- test(epic-5): remove legacy GitLab YAML check after .gitlab-legacy/ deletion (94ba1fb)
+- docs(epic-5): cleanup legacy artifacts, relocate rules, refresh AGENTS.md (c494bff)
+- feat(epic-4): scaffold canonical SSoT modules in @resume/shared (9036c86)
+- feat(epic-2): create @resume/types, @resume/schemas, @resume/contracts (90dd908)
+- build(epic-1): drop Bazel facade, fix tsconfig, decouple ESLint, workspace:* (01ad9b4)
+- security(playbook): redact gitlab/grafana token examples to satisfy gitleaks (bd45820)
+- security(epic-0): purge committed secrets, harden gitignore, add CI gate (dcb2c1b)
+
+
 ## [v1.8.1] - 2026-04-24
 
 ### Changes
