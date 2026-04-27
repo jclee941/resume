@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.9.2] - 2026-04-27
+
+### Changes
+- docs(readme): redesign with minimal modern tone (Linear/Vercel style) (85bea3e)
+
+
 ## [v1.9.1] - 2026-04-27
 
 ### Changes
