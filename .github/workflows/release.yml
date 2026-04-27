@@ -189,18 +189,7 @@ jobs:
           target_commitish: master
           generate_release_notes: false
 
-      - name: Build portfolio worker
-        if: steps.bump.outputs.should_release == 'true' && github.event.inputs.dry_run != 'true'
-        run: npm run build
-
-      - name: Deploy to Cloudflare Workers
-        if: steps.bump.outputs.should_release == 'true' && github.event.inputs.dry_run != 'true'
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          workingDirectory: apps/portfolio
-          command: deploy --env production
+      # Deploy authority: Cloudflare Workers Builds (git push → auto). Do not re-add wrangler-action here.
 
       - name: Summary
         if: always()
