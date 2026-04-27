@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.9.3] - 2026-04-27
+
+### Changes
+- ci(release): remove duplicate wrangler deploy step (8754f4a)
+
+
 ## [v1.9.2] - 2026-04-27
 
 ### Changes
