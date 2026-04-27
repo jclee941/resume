@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.10.0] - 2026-04-27
+
+### Changes
+- feat(csp): switch to dynamic per-response nonce + strict-dynamic (76661ed)
+
+
 ## [v1.9.6] - 2026-04-27
 
 ### Changes
