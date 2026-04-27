@@ -56,7 +56,7 @@ These tasks block downstream Epic planning. Resolve first.
 
 1. **Code that looks like a duplicate may have intentional divergence.** e.g. `apps/job-server/src/shared/clients/wanted/WantedAPI` (40+ methods) vs `packages/shared/src/wanted-client.js` (191L) — one is build-up, the other might be a transitional layer. Each consolidation task below assumes "investigate divergence first" before the rewrite.
 2. **KV namespace silent coupling** between `apps/portfolio` and `apps/job-dashboard` (same IDs for `SESSIONS`, `RATE_LIMIT_KV`, `NONCE_KV`) means breaking changes in key-naming are a runtime hazard until SSOT-23 lands.
-3. **The 9544-line `applications.js` and 10963-line `auto-apply.js`** in `apps/job-dashboard/src/handlers/` are explicitly outside `rules/MANDATORY_ARCHITECTURE_AND_WORKFLOW_RULE.md` (200 LOC limit). Splitting them is Epic 6 but is prerequisite for trustworthy domain SSOT (Epic 4).
+3. **The 9544-line `applications.js` and 10963-line `auto-apply.js`** in `apps/job-dashboard/src/handlers/` are explicitly outside `docs/conventions/architecture-rules.md` (200 LOC limit). Splitting them is Epic 6 but is prerequisite for trustworthy domain SSOT (Epic 4).
 
 ---
 
@@ -493,7 +493,7 @@ These tasks block downstream Epic planning. Resolve first.
 
 - [ ] **SSOT-046 — Promote `rules/` to `docs/rules/` or merge into `docs/conventions/`**
   - **Severity:** P3 · **Effort:** S
-  - **Files:** `rules/MANDATORY_ARCHITECTURE_AND_WORKFLOW_RULE.md`
+  - **Files:** `docs/conventions/architecture-rules.md` (was `rules/MANDATORY_ARCHITECTURE_AND_WORKFLOW_RULE.md`, moved during Epic 5)
   - **Why:** Top-level `rules/` directory with one file is unusual structure. Rules are documentation.
   - **Acceptance:** File moved to `docs/conventions/architecture-rules.md`. References updated. `rules/` directory removed.
 
@@ -501,7 +501,7 @@ These tasks block downstream Epic planning. Resolve first.
 
 ## Epic 6 — File-Size / Architecture Hygiene (P2)
 
-> Per `rules/MANDATORY_ARCHITECTURE_AND_WORKFLOW_RULE.md`: 200 LOC limit, >500L = MUST split. Below files violate this.
+> Per `docs/conventions/architecture-rules.md`: 200 LOC limit, >500L = MUST split. Below files violate this.
 
 - [ ] **SSOT-047 — Split `apps/job-dashboard/src/handlers/auto-apply.js` (10963L)**
   - **Severity:** P2 · **Effort:** XL
@@ -688,7 +688,7 @@ Refresh AGENTS.md, link checks, GitLab legacy purge, root cleanup.
 
 ## Notes / Out of Scope
 
-- **`rules/MANDATORY_ARCHITECTURE_AND_WORKFLOW_RULE.md`** is the existing canonical rules file (200 LOC limit, no catch-all names, n8n SSoT for workflows). This plan respects it but does not modify it. SSOT-046 only relocates it.
+- **`docs/conventions/architecture-rules.md`** (formerly `rules/MANDATORY_ARCHITECTURE_AND_WORKFLOW_RULE.md`) is the canonical rules file (200 LOC limit, no catch-all names, n8n SSoT for workflows). Moved during Epic 5 execution.
 - **`packages/data/resumes/master/resume_data.json`** (the project's existing SSoT) is preserved unchanged. SSOT-023 generates JSON Schema from Zod alongside it; SSOT-026/SSOT-027 generate types from DB schemas.
 - **`infrastructure/`** is mostly well-organized (clear k8s/Cloudflare/n8n/monitoring split). Only minor doc/cleanup tasks touch it (SSOT-051 for root binaries that source from `infrastructure/n8n/`).
 - **`ta/`** (Python PPTX) is intentionally out of npm workspaces. No changes.
