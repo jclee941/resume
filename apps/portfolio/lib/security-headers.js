@@ -1,20 +1,10 @@
-const CLOUDFLARE_SCRIPT_HASHES = [
-  "'sha256-ejv3KuWsiHLmQk4H/gGfcyNdLfHz0/RVasWLywuSzIM='",
-  "'sha256-zs+4J8cC1q5fwDOyvn4APEMKVZsN1GmQ2jr0OQ2Z4Ng='",
-  "'sha256-aqgtbzDOW7zHIbhXqXNSxzAlXB8Psw8OG18Wht/X/n0='",
-  "'sha256-4cHQiB5K6cfR3bRbK3RY2HcoTewmvanuY0HCc0I26RU='",
-  "'sha256-Pac6/0adH6LNf9SEGMYOFH32qPa/c9uZRclm+jHGHko='",
-];
+// Per-response nonce placeholder. The runtime replaces it with a freshly generated
+// random nonce (16 bytes base64) on each HTML response. Cloudflare's auto-injected
+// JS Detections script also picks up this nonce, eliminating the need for static hash allowlists.
+const CSP_NONCE_PLACEHOLDER = '__CSP_NONCE__';
 
-// SRI status:
-// - The portfolio is mostly inline-script/style at build time, so SRI does not apply to those blocks.
-// - The portfolio is mostly inline-script/style at build time, so SRI does not apply to those blocks.
-// - Dynamic GA/Cloudflare beacon scripts are versionless third-party loaders and are constrained by CSP.
-
-// Cloudflare-injected inline style hashes (e.g., Web Analytics beacon)
 const CLOUDFLARE_STYLE_HASHES = ["'sha256-b/NzXPDoe2isM/MKIj3ExOIXdb0mbKWzX0VnJlT7jvY='"];
 
-// Cloudflare Web Analytics domains
 const CLOUDFLARE_ANALYTICS = {
   script: 'https://static.cloudflareinsights.com',
   connect: 'https://cloudflareinsights.com',
@@ -37,19 +27,32 @@ const CACHE_STRATEGIES = {
   SW: 'max-age=0, must-revalidate',
 };
 
+function buildScriptSrc(nonce) {
+  return [
+    "'self'",
+    `'nonce-${nonce}'`,
+    "'strict-dynamic'",
+    'https://www.googletagmanager.com',
+    CLOUDFLARE_ANALYTICS.script,
+    'https://accounts.google.com',
+  ].join(' ');
+}
+
 /**
- * Generate security headers with CSP
- * @param {string[]} scriptHashes - SHA-256 hashes for inline scripts
- * @param {string[]} styleHashes - SHA-256 hashes for inline styles
- * @returns {Object} Security headers object
+ * @param {string[]} styleHashes
+ * @param {{ nonce?: string }} [options]
  */
-function generateSecurityHeaders(scriptHashes, styleHashes) {
+function generateSecurityHeaders(styleHashes, options = {}) {
+  const nonce = options.nonce || CSP_NONCE_PLACEHOLDER;
+  const scriptSrc = buildScriptSrc(nonce);
+  const styleSrc = `'self' ${styleHashes.join(' ')} ${CLOUDFLARE_STYLE_HASHES.join(' ')}`;
+
   const cspDirectives = [
     "default-src 'none'",
-    `script-src 'self' ${scriptHashes.join(' ')} ${CLOUDFLARE_SCRIPT_HASHES.join(' ')} https://www.googletagmanager.com ${CLOUDFLARE_ANALYTICS.script} https://accounts.google.com`,
-    `script-src-elem 'self' ${scriptHashes.join(' ')} ${CLOUDFLARE_SCRIPT_HASHES.join(' ')} https://www.googletagmanager.com ${CLOUDFLARE_ANALYTICS.script} https://accounts.google.com`,
-    `style-src 'self' ${styleHashes.join(' ')} ${CLOUDFLARE_STYLE_HASHES.join(' ')}`,
-    `style-src-elem 'self' ${styleHashes.join(' ')} ${CLOUDFLARE_STYLE_HASHES.join(' ')}`,
+    `script-src ${scriptSrc}`,
+    `script-src-elem ${scriptSrc}`,
+    `style-src ${styleSrc}`,
+    `style-src-elem ${styleSrc}`,
     `connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://www.google.com https://oauth2.googleapis.com ${CLOUDFLARE_ANALYTICS.connect}`,
     "img-src 'self' https: data:",
     'report-uri /api/csp-violation',
@@ -71,7 +74,6 @@ function generateSecurityHeaders(scriptHashes, styleHashes) {
     'X-Content-Type-Options': 'nosniff',
     'X-Frame-Options': 'DENY',
     'X-XSS-Protection': '0',
-
     'Referrer-Policy': 'strict-origin-when-cross-origin',
     'Cross-Origin-Opener-Policy': 'same-origin',
     'Cross-Origin-Resource-Policy': 'same-origin',
@@ -92,4 +94,9 @@ function getCacheHeaders(resourceType) {
   return { 'Cache-Control': cacheControl };
 }
 
-module.exports = { generateSecurityHeaders, getCacheHeaders, CACHE_STRATEGIES };
+module.exports = {
+  generateSecurityHeaders,
+  getCacheHeaders,
+  CACHE_STRATEGIES,
+  CSP_NONCE_PLACEHOLDER,
+};

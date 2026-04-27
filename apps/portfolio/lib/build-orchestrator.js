@@ -4,8 +4,9 @@
  */
 
 const { ESCAPE_PATTERNS, TEMPLATE_CACHE } = require('./config');
-const { extractScriptHashes, extractStyleHashes, mergeHashes } = require('./csp-hash-generator');
+const { extractStyleHashes, mergeHashes } = require('./csp-hash-generator');
 const securityHeadersModule = require('./security-headers');
+const { injectScriptNoncePlaceholder } = require('./templates');
 const { readBuildInputs } = require('./file-reader');
 const { processProjectData, encodeBinaryAssets } = require('./data-processor');
 const { buildLocalizedHtml, escapeForTemplateLiteral } = require('./html-transformer');
@@ -85,20 +86,18 @@ async function runWorkerBuild({ baseDir, version, allowedEmails, logger }) {
   });
   logger.log('✓ English HTML processed\n');
 
-  const scriptHashes = mergeHashes(
-    extractScriptHashes(indexHtml),
-    extractScriptHashes(indexEnHtml)
-  );
   const styleHashes = mergeHashes(extractStyleHashes(indexHtml), extractStyleHashes(indexEnHtml));
-  logger.log(
-    `✓ CSP hashes extracted: ${scriptHashes.length} scripts, ${styleHashes.length} styles\n`
-  );
+  logger.log(`✓ CSP style hashes extracted: ${styleHashes.length} styles\n`);
+
+  indexHtml = injectScriptNoncePlaceholder(indexHtml);
+  indexEnHtml = injectScriptNoncePlaceholder(indexEnHtml);
+  logger.log('✓ CSP nonce placeholders injected into <script> tags\n');
 
   indexHtml = escapeForTemplateLiteral(indexHtml, ESCAPE_PATTERNS);
   indexEnHtml = escapeForTemplateLiteral(indexEnHtml, ESCAPE_PATTERNS);
   logger.log('✓ Template literals escaped\n');
 
-  const securityHeaders = securityHeadersModule.generateSecurityHeaders(scriptHashes, styleHashes);
+  const securityHeaders = securityHeadersModule.generateSecurityHeaders(styleHashes);
   const deployedAt = process.env.DEPLOYED_AT || new Date().toISOString();
   const metrics = {
     requests_total: 0,
@@ -150,8 +149,8 @@ async function runWorkerBuild({ baseDir, version, allowedEmails, logger }) {
   logger.log('\n📊 Build Statistics:');
   logger.log(`   - Build time: ${buildTime}s`);
   logger.log(`   - Worker size: ${workerSizeKB} KB`);
-  logger.log(`   - Script hashes: ${scriptHashes.length}`);
   logger.log(`   - Style hashes: ${styleHashes.length}`);
+  logger.log('   - CSP mode: dynamic per-response nonce + strict-dynamic');
   logger.log(`   - Resume cards: ${projectData.resume.length}`);
   logger.log(`   - Project cards: ${projectData.projects.length}`);
   logger.log(`   - Template cache: ${TEMPLATE_CACHE.dataHash ? 'Active' : 'Empty'}`);

@@ -5,11 +5,12 @@ const {
 
 describe('Security Headers', () => {
   test('should include CSP header with required directives', () => {
-    const headers = generateSecurityHeaders(["'sha256-test'"], ["'sha256-style'"]);
+    const headers = generateSecurityHeaders(["'sha256-style'"]);
     expect(headers['Content-Security-Policy']).toBeDefined();
     expect(headers['Content-Security-Policy']).toContain("default-src 'none'");
     expect(headers['Content-Security-Policy']).toContain('script-src');
-    expect(headers['Content-Security-Policy']).toContain("'sha256-test'");
+    expect(headers['Content-Security-Policy']).toContain("'strict-dynamic'");
+    expect(headers['Content-Security-Policy']).toContain("'sha256-style'");
   });
 
   test('should include HSTS header with secure configuration', () => {

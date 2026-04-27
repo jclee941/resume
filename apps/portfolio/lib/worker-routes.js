@@ -83,9 +83,10 @@ function generatePageRoutes() {
        // Routing
 
       if (url.pathname === '/') {
-        const response = new Response(INDEX_HTML, {
+        const nonce = generateCspNonce();
+        const response = new Response(applyNonceToHtml(INDEX_HTML, nonce), {
           headers: {
-            ...SECURITY_HEADERS,
+            ...applyNonceToHeaders(SECURITY_HEADERS, nonce),
             ...CACHE_POLICIES.html,
             ...rateLimitHeaders
           }
@@ -104,9 +105,10 @@ function generatePageRoutes() {
 
       // English version route
       if (url.pathname === '/en/' || url.pathname === '/en') {
-        const response = new Response(INDEX_EN_HTML, {
+        const nonce = generateCspNonce();
+        const response = new Response(applyNonceToHtml(INDEX_EN_HTML, nonce), {
           headers: {
-            ...SECURITY_HEADERS,
+            ...applyNonceToHeaders(SECURITY_HEADERS, nonce),
             ...CACHE_POLICIES.html,
             ...rateLimitHeaders
           }
