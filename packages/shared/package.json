@@ -1,6 +1,6 @@
 {
   "name": "@resume/shared",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
   "exports": {
     "./errors": "./src/errors/index.js",
@@ -15,6 +15,18 @@
     "./wanted-client": "./src/wanted-client.js",
     "./clients/gitlab": "./src/clients/gitlab/index.js",
     "./clients/gitlab/http-client": "./src/clients/gitlab/http-client.js",
-    "./clients/gitlab/gitlab-api": "./src/clients/gitlab/gitlab-api.js"
+    "./clients/gitlab/gitlab-api": "./src/clients/gitlab/gitlab-api.js",
+    "./retry": "./src/retry/index.js",
+    "./retry/http": "./src/retry/http-retry.js",
+    "./retry/circuit-breaker": "./src/retry/circuit-breaker.js",
+    "./crypto": "./src/crypto/index.js",
+    "./crypto/webcrypto": "./src/crypto/webcrypto.js",
+    "./crypto/node": "./src/crypto/node.js",
+    "./rate-limit": "./src/rate-limit/index.js",
+    "./rate-limit/token-bucket": "./src/rate-limit/token-bucket.js",
+    "./rate-limit/sliding-window": "./src/rate-limit/sliding-window.js",
+    "./auth": "./src/auth/index.js",
+    "./auth/cookie": "./src/auth/cookie.js",
+    "./auth/hmac": "./src/auth/hmac.js"
   }
 }
