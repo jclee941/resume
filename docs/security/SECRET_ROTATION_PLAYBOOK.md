@@ -64,8 +64,8 @@ These appeared in `docs/reports/ALL_SYSTEMS_REPORT.md` and elsewhere:
 |-------|---------|--------|
 | `morph_***[REDACTED-PURGED]***` | Morph (LLM) | Revoke at Morph dashboard |
 | `sk-or-v1-***[REDACTED-PURGED]***` | OpenRouter | Revoke at https://openrouter.ai/keys |
-| `glpat-***[REDACTED-PURGED]***` | GitLab Personal Access Token | Revoke at GitLab → User Settings → Access Tokens |
-| `glsa_***[REDACTED-PURGED]***` | Grafana service account | Revoke at Grafana → Service accounts |
+| `glpat-dYEw***[REDACTED]***` | GitLab Personal Access Token (full value in /tmp/git-filter-replacements.txt) | Revoke at GitLab → User Settings → Access Tokens |
+| `glsa_39K1QJ***[REDACTED]***` | Grafana service account (full value in /tmp/git-filter-replacements.txt) | Revoke at Grafana → Service accounts |
 | `xapp-1-A09TER0TF5Y-10022641763313-...` | Slack app token | Revoke at https://api.slack.com/apps → OAuth & Permissions |
 
 ### Step 4 — Upload the freshly rotated job-dashboard secrets to 1Password
