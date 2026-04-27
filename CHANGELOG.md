@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.9.5] - 2026-04-27
+
+### Changes
+- chore: trigger Cloudflare Workers Builds redeploy (3d61b59)
+
+
 ## [v1.9.4] - 2026-04-27
 
 ### Changes
