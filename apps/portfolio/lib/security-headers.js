@@ -2,6 +2,7 @@ const CLOUDFLARE_SCRIPT_HASHES = [
   "'sha256-ejv3KuWsiHLmQk4H/gGfcyNdLfHz0/RVasWLywuSzIM='",
   "'sha256-zs+4J8cC1q5fwDOyvn4APEMKVZsN1GmQ2jr0OQ2Z4Ng='",
   "'sha256-aqgtbzDOW7zHIbhXqXNSxzAlXB8Psw8OG18Wht/X/n0='",
+  "'sha256-4cHQiB5K6cfR3bRbK3RY2HcoTewmvanuY0HCc0I26RU='",
 ];
 
 // SRI status:
@@ -49,7 +50,7 @@ function generateSecurityHeaders(scriptHashes, styleHashes) {
     `style-src 'self' ${styleHashes.join(' ')} ${CLOUDFLARE_STYLE_HASHES.join(' ')}`,
     `style-src-elem 'self' ${styleHashes.join(' ')} ${CLOUDFLARE_STYLE_HASHES.join(' ')}`,
     `connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://oauth2.googleapis.com ${CLOUDFLARE_ANALYTICS.connect}`,
-    "img-src 'self' https:",
+    "img-src 'self' https: data:",
     'report-uri /api/csp-violation',
     "font-src 'self'",
     "manifest-src 'self'",
