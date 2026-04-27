@@ -46,7 +46,7 @@ CLOUDFLARE_API_TOKEN=<your_token_here>
 CLOUDFLARE_ACCOUNT_ID=a8d9c67f586acdd15eebcc65ca3aa5bb
 
 # Deprecated: Old Global API Key method (keep for backup)
-# CLOUDFLARE_API_KEY=00ceb252a1a463c9c69a9f5a9f97e5d112bb9
+# CLOUDFLARE_API_KEY=REVOKED_CF_API_KEY_REPLACE_ME
 # CLOUDFLARE_EMAIL=qws941@kakao.com
 ```
 

@@ -13,11 +13,11 @@
  *   2. Run: node tools/automation/resume-automation.js
  *   3. Or add to crontab for scheduled runs
  *
- * Environment Variables:
- *   RESUME_JOBKOREA_USER=qws941
- *   RESUME_JOBKOREA_PASS=bingogo1l7
- *   RESUME_WANTED_EMAIL=qws941@kakao.com
- *   RESUME_WANTED_PASS=bingogo1l7
+ * Environment Variables (load from 1Password / your shell, never commit):
+ *   RESUME_JOBKOREA_USER=<your-username>
+ *   RESUME_JOBKOREA_PASS=<your-password>
+ *   RESUME_WANTED_EMAIL=<your-email>
+ *   RESUME_WANTED_PASS=<your-password>
  *   RESUME_MAX_APPLY=5
  *   RESUME_DRY_RUN=true
  *

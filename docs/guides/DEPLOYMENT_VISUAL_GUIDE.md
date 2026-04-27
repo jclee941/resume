@@ -121,14 +121,14 @@
 │  └────────────────────────────────────────────────────────┘  │
 └────────────────────────────────────────────────────────────┬──┘
                                                              │
-                 Key: 00ceb252a1a463c9c69a9f5a9f97e5d112bb9 │
+                 Key: REVOKED_CF_API_KEY_REPLACE_ME │
                  (37 characters hex)                        │
                                                              │
                                                              ▼
 ┌──────────────────────────────────────────────────────────────┐
 │  ~/.env                                                       │
 │  ┌────────────────────────────────────────────────────────┐  │
-│  │  CLOUDFLARE_API_KEY=00ceb252a1a463c9c69a9f5a9f97...   │  │
+│  │  CLOUDFLARE_API_KEY=REVOKED_CF_API_KEY_REPLACE_ME...   │  │
 │  │  CLOUDFLARE_EMAIL=qws941@kakao.com                    │  │
 │  └────────────────────────────────────────────────────────┘  │
 └──────────────────────────────────────────────────────────────┘
@@ -363,7 +363,7 @@
 ┌──────────────────────────────────────────────────────────────┐
 │  ~/.env (현재 상태)                                           │
 │  ┌────────────────────────────────────────────────────────┐  │
-│  │  CLOUDFLARE_API_TOKEN=00ceb252a1a463c9c69a9f5a9f97... │  │
+│  │  CLOUDFLARE_API_TOKEN=REVOKED_CF_API_KEY_REPLACE_ME... │  │
 │  │                                                        │  │
 │  │  ❌ 문제점:                                            │  │
 │  │  • 길이: 37자 (API Token은 40자 이상)                 │  │
@@ -393,10 +393,10 @@
 │  │  $ vim ~/.env                                          │  │
 │  │                                                        │  │
 │  │  # 변경 전 (삭제):                                     │  │
-│  │  # CLOUDFLARE_API_TOKEN=00ceb252a1a463c9c69a9f5a...  │  │
+│  │  # CLOUDFLARE_API_TOKEN=REVOKED_CF_API_KEY_REPLACE_ME...  │  │
 │  │                                                        │  │
 │  │  # 변경 후 (추가 - 2개 변수 필요):                     │  │
-│  │  CLOUDFLARE_API_KEY=00ceb252a1a463c9c69a9f5a9f97...  │  │
+│  │  CLOUDFLARE_API_KEY=REVOKED_CF_API_KEY_REPLACE_ME...  │  │
 │  │  CLOUDFLARE_EMAIL=qws941@kakao.com                    │  │
 │  └────────────────────────────────────────────────────────┘  │
 └────────────────┬─────────────────────────────────────────────┘
@@ -523,7 +523,7 @@ LOCAL DEVELOPMENT                 PRODUCTION
 # 1️⃣ .env 파일 수정
 vim ~/.env
 # 다음 2줄 추가:
-# CLOUDFLARE_API_KEY=00ceb252a1a463c9c69a9f5a9f97e5d112bb9
+# CLOUDFLARE_API_KEY=REVOKED_CF_API_KEY_REPLACE_ME
 # CLOUDFLARE_EMAIL=qws941@kakao.com
 
 # 2️⃣ 환경 변수 로드
