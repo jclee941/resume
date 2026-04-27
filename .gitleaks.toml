@@ -1,52 +1,193 @@
 # Gitleaks configuration for resume monorepo
 # See: https://github.com/gitleaks/gitleaks#configuration
+# This file is the SINGLE SOURCE OF TRUTH for secret-scanning rules.
+# CI runs `gitleaks detect --source . --config .gitleaks.toml --redact -v`
+# Pre-commit runs `gitleaks protect --staged --config .gitleaks.toml -v`
 
 title = "Resume Monorepo Gitleaks Config"
 
+# Inherit gitleaks default ruleset (covers AWS, GCP, Stripe, Slack, GitHub PAT, etc.)
+[extend]
+useDefault = true
+
+# -----------------------------------------------------------------------------
+# Project-specific rules
+# -----------------------------------------------------------------------------
+
+[[rules]]
+id = "wanted-oneid-token"
+description = "Wanted OneID access token (browser cookie)"
+regex = '''WWW_ONEID_ACCESS_TOKEN["'\s:=]+[A-Za-z0-9._-]{20,}'''
+tags = ["session", "wanted", "credential"]
+
+[[rules]]
+id = "jobkorea-session-cookie"
+description = "JobKorea ASP.NET session cookie"
+regex = '''ASP\.NET_SessionId["'\s:=]+[a-z0-9]{20,}'''
+tags = ["session", "jobkorea", "credential"]
+
+[[rules]]
+id = "cloudflare-api-token"
+description = "Cloudflare API token"
+regex = '''(?i)(cloudflare_api_token|cf_api_token)["'\s:=]+[A-Za-z0-9_-]{30,}'''
+tags = ["cloudflare", "api"]
+[rules.allowlist]
+regexTarget = "match"
+regexes = [
+    '''cf_api_token_replace_me''',
+    '''cf_api_key_for_stats_replace_me''',
+    '''replace_me''',
+    '''aBcD1234efGh5678ijKl9012mnOp3456qrSt7890''',
+]
+
+[[rules]]
+id = "telegram-bot-token"
+description = "Telegram Bot API token"
+regex = '''[0-9]{8,12}:[A-Za-z0-9_-]{30,}'''
+tags = ["telegram"]
+
+[[rules]]
+id = "admin-token-hex"
+description = "Project ADMIN_TOKEN (hex 64 chars)"
+regex = '''ADMIN_TOKEN["'\s:=]+[a-f0-9]{64}'''
+tags = ["admin", "credential"]
+[rules.allowlist]
+regexes = [
+    '''replace_with_64char_hex_token''',
+    '''admin_token_replace_me''',
+]
+
+[[rules]]
+id = "webhook-secret-hex"
+description = "Project WEBHOOK_SECRET (hex 64 chars)"
+regex = '''WEBHOOK_SECRET["'\s:=]+[a-f0-9]{64}'''
+tags = ["webhook", "credential"]
+[rules.allowlist]
+regexes = [
+    '''replace_with_64char_hex_secret''',
+    '''webhook_secret_replace_me''',
+]
+
+[[rules]]
+id = "encryption-key-base64"
+description = "Project ENCRYPTION_KEY (base64 32-byte AES)"
+regex = '''ENCRYPTION_KEY["'\s:=]+[A-Za-z0-9+/]{43}=?'''
+tags = ["encryption", "credential"]
+[rules.allowlist]
+regexes = [
+    '''replace_with_base64_32byte_key''',
+    '''base64_32_byte_encryption_key_replace_me''',
+]
+
+[[rules]]
+id = "korean-credential-pattern"
+description = "Plaintext Wanted/JobKorea credential pattern (full chars including underscore)"
+regex = '''(?i)(WANTED_PASS|JOBKOREA_PASS|RESUME_WANTED_PASS|RESUME_JOBKOREA_PASS)["'\s=:]+[A-Za-z0-9!@#$%^&*_-]{4,}'''
+tags = ["korean-platform", "credential"]
+[rules.allowlist]
+regexTarget = "match"
+regexes = [
+    '''wanted_password_replace_me''',
+    '''replace_me''',
+    '''your_password''',
+    '''your_username''',
+    '''\$\{[A-Z_]+:-\}''',
+    '''<your-(password|username|email)>''',
+]
+
+# -----------------------------------------------------------------------------
+# Inherited / pre-existing rules — preserved
+# -----------------------------------------------------------------------------
+
+[[rules]]
+id = "cloudflare-account-id"
+description = "Cloudflare account/zone IDs are not secrets"
+regex = '''account_id\s*=\s*"[a-f0-9]{32}"'''
+[rules.allowlist]
+regexTarget = "match"
+regexes = ['''account_id''']
+
+[[rules]]
+id = "d1-database-id"
+description = "D1 database IDs are not secrets"
+regex = '''database_id\s*=\s*"[a-f0-9-]{36}"'''
+[rules.allowlist]
+regexTarget = "match"
+regexes = ['''database_id''']
+
+[[rules]]
+id = "google-site-verification"
+description = "Google site verification tokens are public meta tags"
+regex = '''google-site-verification'''
+[rules.allowlist]
+regexTarget = "match"
+regexes = ['''google-site-verification''']
+
+# -----------------------------------------------------------------------------
+# Allowlist — paths and global patterns
+# -----------------------------------------------------------------------------
 [allowlist]
-  description = "Global allowlist for known-safe patterns"
+description = "Global allowlist for known-safe paths and patterns"
 
-  # Documentation and reports (secrets already redacted with [REDACTED_ROTATE_REQUIRED])
-  paths = [
-    '''docs/.*''',
-    '''README\.md''',
+paths = [
+    '''node_modules/''',
+    '''dist/''',
+    '''build/''',
+    '''coverage/''',
+    '''\.wrangler/''',
+    '''\.tmp/''',
+    '''playwright-report/''',
+    '''test-results/''',
+    '''bazel-bin''',
+    '''bazel-out''',
+    '''bazel-resume''',
+    '''bazel-testlogs''',
+    '''package-lock\.json''',
+    '''docs/architecture/SSOT_IMPROVEMENT_PLAN\.md''',
+    '''docs/architecture/kv-ownership\.md''',
+    '''\.opencode/''',
+    '''downloaded_files/''',
+    # All *.example files
+    '''.*\.example$''',
     '''\.env\.example''',
-    '''infrastructure/.*\.example''',
     '''infrastructure/.*\.sample''',
-  ]
+    # Test fixtures (must use known-fake patterns like 0123456789abcdef)
+    '''apps/job-server/src/session-broker/__tests__/.*\.test\.js''',
+    # Backup files (excluded by .gitignore but be defensive)
+    '''.*\.backup-.*''',
+    '''.*\.backup$''',
+    # Existing safe paths
+    '''README\.md''',
+]
 
-  # Known-safe placeholder patterns
-  regexes = [
+regexes = [
+    # Existing legacy markers
     '''REDACTED_ROTATE_REQUIRED''',
+    '''REVOKED_CF_API_KEY_REPLACE_ME''',
     '''_replace_me''',
+    '''replace_me''',
+    '''replace_with_''',
     '''your[-_](api[-_])?key''',
+    '''your_.*_here''',
+    '''YOUR_(JWT_)?TOKEN''',
+    '''YOUR_API_KEY''',
     '''changeme''',
     '''placeholder''',
-  ]
-
-# Allowlist Cloudflare wrangler.jsonc account/zone IDs (not secrets)
-[[rules]]
-  id = "cloudflare-account-id"
-  description = "Cloudflare account/zone IDs are not secrets"
-  regex = '''account_id\s*=\s*"[a-f0-9]{32}"'''
-  [rules.allowlist]
-    regexTarget = "match"
-    regexes = ['''account_id''']
-
-# Allowlist D1 database IDs in wrangler configs
-[[rules]]
-  id = "d1-database-id"
-  description = "D1 database IDs are not secrets"
-  regex = '''database_id\s*=\s*"[a-f0-9-]{36}"'''
-  [rules.allowlist]
-    regexTarget = "match"
-    regexes = ['''database_id''']
-
-# Allowlist Google site verification tokens (public by design)
-[[rules]]
-  id = "google-site-verification"
-  description = "Google site verification tokens are public meta tags"
-  regex = '''google-site-verification'''
-  [rules.allowlist]
-    regexTarget = "match"
-    regexes = ['''google-site-verification''']
+    '''example\.com''',
+    # Common doc placeholder patterns (full-form match)
+    '''abc123def456''',
+    '''aBcD1234efGh5678ijKl9012mnOp3456qrSt7890''',
+    '''aBcD1234efGh''',
+    # Truncated CF placeholder pattern  (partial match)
+    '''aBcD[A-Za-z0-9]{2,}\.\.\.''',
+    # Truncated JWT in docs (ends in ...)
+    '''eyJ[A-Za-z0-9_-]+\.\.\.''',
+    # Stripe explicit fake (sk_live_1234567890 in docs)
+    '''sk_live_1234567890''',
+    # Test fixture pattern (repeated 0123456789abcdef)
+    '''0123456789abcdef0123456789abcdef''',
+    # OpenSSL command examples in docs
+    '''openssl rand''',
+    # Gitleaks rule patterns themselves (this file)
+    '''regex\s*=''',
+]

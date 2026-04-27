@@ -1,0 +1,36 @@
+# Pre-commit hooks for resume monorepo
+# Install: `pre-commit install` (requires `pip install pre-commit` or `brew install pre-commit`)
+# Run manually: `pre-commit run --all-files`
+# Skip (NOT RECOMMENDED): `SKIP=gitleaks git commit ...`
+
+repos:
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.1
+    hooks:
+      - id: gitleaks
+        name: Detect hardcoded secrets (gitleaks)
+        description: Scans staged files for secrets using .gitleaks.toml
+        args:
+          - protect
+          - --staged
+          - --config=.gitleaks.toml
+          - --redact
+          - --verbose
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-merge-conflict
+      - id: check-yaml
+        args: [--allow-multiple-documents]
+        exclude: ^(infrastructure/n8n|\.gitlab-legacy)/
+      - id: check-json
+        exclude: ^(.*\.jsonc|.*\.json5)$
+      - id: end-of-file-fixer
+        exclude: \.(min\.(js|css)|map|generated\..*)$
+      - id: trailing-whitespace
+        exclude: \.(md|markdown)$
+      - id: detect-private-key
+      - id: no-commit-to-branch
+        args: [--branch=master]
+        stages: [pre-commit]

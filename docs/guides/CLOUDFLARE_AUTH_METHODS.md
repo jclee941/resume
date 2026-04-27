@@ -56,7 +56,7 @@ CLOUDFLARE_API_KEY=your_global_api_key_here
 CLOUDFLARE_EMAIL=your_cloudflare_email@example.com
 ```
 
-**Format**: 37 character hex string (e.g., `00ceb252a1a463c9c69a9f5a9f97e5d112bb9`)
+**Format**: 37 character hex string (e.g., `REVOKED_CF_API_KEY_REPLACE_ME`)
 
 ---
 
@@ -131,7 +131,7 @@ npx wrangler whoami
 vim ~/.env
 
 # Add BOTH lines (replace with your actual values):
-CLOUDFLARE_API_KEY=00ceb252a1a463c9c69a9f5a9f97e5d112bb9
+CLOUDFLARE_API_KEY=REVOKED_CF_API_KEY_REPLACE_ME
 CLOUDFLARE_EMAIL=your_cloudflare_email@example.com
 
 # Save and load
@@ -226,7 +226,7 @@ go run ./tools/scripts/deployment/quick-deploy.go
 
 ```bash
 $ cat ~/.env
-CLOUDFLARE_API_TOKEN=00ceb252a1a463c9c69a9f5a9f97e5d112bb9
+CLOUDFLARE_API_TOKEN=REVOKED_CF_API_KEY_REPLACE_ME
 ```
 
 **Issues**:
@@ -267,10 +267,10 @@ npx wrangler whoami
 vim ~/.env
 
 # Change from:
-# CLOUDFLARE_API_TOKEN=00ceb252a1a463c9c69a9f5a9f97e5d112bb9
+# CLOUDFLARE_API_TOKEN=REVOKED_CF_API_KEY_REPLACE_ME
 
 # To:
-CLOUDFLARE_API_KEY=00ceb252a1a463c9c69a9f5a9f97e5d112bb9
+CLOUDFLARE_API_KEY=REVOKED_CF_API_KEY_REPLACE_ME
 CLOUDFLARE_EMAIL=your_cloudflare_email@example.com
 
 # 3. Test

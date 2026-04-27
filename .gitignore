@@ -17,12 +17,43 @@ build/
 worker.js
 *.generated.*
 
-# Environment files
+# -----------------------------------------------------------------------------
+# Environment files & secrets — NEVER COMMIT
+# -----------------------------------------------------------------------------
 .env
+.env.*
+!.env.example
+!.env.*.example
 .env.local
 .env.*.local
+.env.automation
+.env.secrets
+.env.production
+.env.staging
+.env.development
+.dev.vars
+.dev.vars.local
+.dev.vars.*
+!.dev.vars.example
+*.secrets
+*-secrets.*
 *-session.json
-!.env.example
+sessions.json
+jobkorea-session.json
+wanted-session.json
+**/cookies.json
+**/credentials.json
+secrets/
+.secrets/
+# Cloudflare wrangler local secrets
+.wrangler/
+**/.wrangler/
+
+# 1Password / secret manager local cache
+.op-session
+.doppler-cache
+.infisical-cache
+.keyflare-cache
 
 # IDE
 .vscode/
@@ -91,3 +122,12 @@ test-results/
 downloaded_files/
 # Generated dashboards
 apps/job-server/scripts/dashboard.html
+
+# Build/temp artifacts
+.tmp/
+**/.tmp/
+apps/portfolio/.tmp/
+
+# 1Password secret backups (rotated values awaiting upload)
+/tmp/resume-new-secrets.env
+/tmp/resume-rewrite-env.sh
