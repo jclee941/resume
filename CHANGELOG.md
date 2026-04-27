@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.9.1] - 2026-04-27
+
+### Changes
+- docs(readme): sync structure with current monorepo (types/schemas/contracts, ja locale, ADR-0008) (9dfeb3f)
+
+
 ## [v1.9.0] - 2026-04-27
 
 ### Changes
