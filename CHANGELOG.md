@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.10.2] - 2026-04-27
+
+### Changes
+- data(careers): correct Jointree and MTData workType to dispatched (f69ae81)
+
+
 ## [v1.10.1] - 2026-04-27
 
 ### Changes
