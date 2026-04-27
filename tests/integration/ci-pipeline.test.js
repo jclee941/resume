@@ -1,32 +1,21 @@
 /**
  * CI/CD Pipeline Integration Tests
- * Tests the integration between archived GitLab CI configs (retained for reference)
- * and n8n workflows (still active).
+ * Validates n8n workflow + secrets infrastructure integrations.
  *
- * Post-migration to GitHub Actions (2026-04-10), .gitlab/ was renamed to
- * .gitlab-legacy/ but the YAML files are kept as historical reference.
- * These tests ensure the archive stays parseable.
+ * Note: The legacy .gitlab-legacy/ archive was deleted during Epic 5 of the
+ * SSOT improvement plan (2026-04-27). The previous "GitLab CI Configuration"
+ * describe block has been removed accordingly. Migration history lives in
+ * git log; the canonical CI is now .github/workflows/ exclusively.
  */
 
 const fs = require('fs');
 const path = require('path');
-const yaml = require('yaml');
 
 describe('CI/CD Pipeline Integration', () => {
-  const gitlabDir = path.join(process.cwd(), '.gitlab-legacy', 'ci');
   const n8nWorkflowsDir = path.join(process.cwd(), 'infrastructure', 'n8n', 'workflows');
 
-  describe('GitLab CI Configuration', () => {
-    it('should have valid YAML syntax for all CI files', () => {
-      const ciFiles = fs.readdirSync(gitlabDir).filter((f) => f.endsWith('.yml'));
-
-      for (const file of ciFiles) {
-        const content = fs.readFileSync(path.join(gitlabDir, file), 'utf8');
-        expect(() => yaml.parse(content)).not.toThrow();
-      }
-    });
-
-    it('should reference existing n8n workflows', () => {
+  describe('n8n CI workflow inventory', () => {
+    it('should provide the expected ci-* n8n workflows', () => {
       const n8nFiles = fs
         .readdirSync(n8nWorkflowsDir)
         .filter((f) => f.endsWith('.json') && f.startsWith('ci-'));
