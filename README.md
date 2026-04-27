@@ -6,27 +6,32 @@
 
 ## Live
 
-- **Portfolio**: https://resume.jclee.me
+- **Portfolio (KO)**: https://resume.jclee.me
 - **English**: https://resume.jclee.me/en
+- **日本語**: https://resume.jclee.me/ja
+- **Health**: https://resume.jclee.me/health · **Metrics**: https://resume.jclee.me/metrics
 
 ## Structure
 
 ```
 resume/
 ├── apps/
-│   ├── portfolio/          # Edge portfolio (Cloudflare Worker, ~572KB)
+│   ├── portfolio/          # Edge portfolio (Cloudflare Worker, ~582KB)
 │   ├── job-server/         # MCP Server + Job automation runtime
 │   └── job-dashboard/      # CF Worker: Dashboard API (Service Binding)
 ├── packages/
 │   ├── cli/                # Deployment CLI
-│   ├── data/               # SSoT: resume_data.json (canonical)
-│   └── shared/             # Cross-worker utilities
+│   ├── data/               # SSoT: resume_data.json (canonical, ko/en/ja)
+│   ├── types/              # Canonical JSDoc/TS types (zero runtime deps)
+│   ├── schemas/            # Runtime Zod validation schemas
+│   ├── contracts/          # OpenAPI spec + Worker Env interface
+│   └── shared/             # Cross-worker utilities (errors, logger, retry, crypto, rate-limit, auth)
 ├── infrastructure/
-│   ├── monitoring/         # Grafana, Prometheus, Elasticsearch
+│   ├── monitoring/         # Grafana, Prometheus, Elasticsearch, Loki
 │   └── n8n/                # Workflow automation (10+ workflows)
-├── tools/                  # Build, CI, verification scripts
+├── tools/                  # Build, CI, verification scripts (Go + JS)
 ├── tests/                  # Jest unit + Playwright E2E
-└── docs/                   # Guides, ADRs, architecture
+└── docs/                   # ADRs, architecture, conventions, guides, security
 ```
 
 ## Tech Stack
@@ -36,7 +41,7 @@ resume/
 | Frontend      | HTML5, CSS3, Vanilla JS, IBM Plex Mono + Inter  |
 | Runtime       | Cloudflare Workers (portfolio + dashboard)      |
 | Automation    | Node.js MCP Server, Playwright, n8n             |
-| Build         | npm workspaces, Bazel (query layer)             |
+| Build         | npm workspaces (Bazel dropped — ADR-0008)       |
 | CI/CD         | GitHub Actions → Cloudflare Workers Builds      |
 | Testing       | Jest (unit), Playwright (E2E), Node test runner |
 | Observability | Grafana, Prometheus, Elasticsearch, Loki        |
@@ -55,7 +60,7 @@ npm run lint && npm run typecheck
 
 ### Portfolio Worker
 
-HTML 템플릿 → `generate-worker.js` → `worker.js` (edge artifact). CSP SHA-256 해시, HSTS, multi-language (`/` KO, `/en` EN).
+HTML 템플릿 → `generate-worker.js` → `worker.js` (edge artifact). CSP SHA-256 해시, HSTS, multi-language (`/` KO, `/en` EN, `/ja` JA).
 
 ### Job Automation Runtime
 
@@ -132,11 +137,11 @@ curl https://resume.jclee.me/metrics   # Prometheus exposition
 
 ## CI/CD
 
-| Workflow      | Trigger              | Jobs                                                             |
-| ------------- | -------------------- | ---------------------------------------------------------------- |
-| **CI**        | push/PR to master    | lint, typecheck, test-jest, test-node (782 tests), validate-data |
-| **Release**   | CI success on master | semver bump, changelog, GitHub Release, CF Workers deploy        |
-| **Auto-sync** | daily 00:00 UTC      | SSoT sync, drift detection, auto PR                              |
+| Workflow      | Trigger              | Jobs                                                                         |
+| ------------- | -------------------- | ---------------------------------------------------------------------------- |
+| **CI**        | push/PR to master    | secret-scan (gitleaks), lint, typecheck, test-jest, test-node, validate-data |
+| **Release**   | CI success on master | semver bump, changelog, GitHub Release, CF Workers deploy                    |
+| **Auto-sync** | daily 00:00 UTC      | SSoT sync, drift detection, auto PR                                          |
 
 ## Deployment
 
@@ -162,7 +167,13 @@ git push                 # triggers CI + deploy
 
 ### AGENTS.md Hierarchy
 
-43+ domain-specific AGENTS.md files across `apps/`, `packages/`, `tests/`, `tools/`, `infrastructure/`.
+43 domain-specific AGENTS.md files across `apps/`, `packages/`, `tests/`, `tools/`, `infrastructure/`. Root: [`AGENTS.md`](AGENTS.md).
+
+### Conventions & Security
+
+- [Architecture Rules](docs/conventions/architecture-rules.md) — 200/500 LOC limits, naming, n8n SSoT
+- [Secret Rotation Playbook](docs/security/SECRET_ROTATION_PLAYBOOK.md) — gitleaks gate + rotation
+- [SSOT Improvement Plan](docs/architecture/SSOT_IMPROVEMENT_PLAN.md) — Epic 0–6 roadmap
 
 ## Links
 
