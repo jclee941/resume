@@ -6,6 +6,7 @@ const {
   generateSecurityHeaders,
   getCacheHeaders,
   CACHE_STRATEGIES,
+  CSP_NONCE_PLACEHOLDER,
 } = require('../../../../apps/portfolio/lib/security-headers');
 
 describe('Security Headers Module', () => {
@@ -31,20 +32,36 @@ describe('Security Headers Module', () => {
     });
   });
 
-  describe('generateSecurityHeaders', () => {
-    test('should generate headers with script and style hashes', () => {
-      const scriptHashes = ["'sha256-abc123'"];
-      const styleHashes = ["'sha256-def456'"];
-      const headers = generateSecurityHeaders(scriptHashes, styleHashes);
+  describe('CSP_NONCE_PLACEHOLDER', () => {
+    test('should expose stable placeholder string', () => {
+      expect(CSP_NONCE_PLACEHOLDER).toBe('__CSP_NONCE__');
+    });
+  });
 
-      expect(headers['Content-Type']).toBe('text/html;charset=UTF-8');
-      expect(headers['Content-Security-Policy']).toContain("'sha256-abc123'");
+  describe('generateSecurityHeaders', () => {
+    test('uses CSP_NONCE_PLACEHOLDER by default', () => {
+      const headers = generateSecurityHeaders([]);
+      expect(headers['Content-Security-Policy']).toContain(`'nonce-${CSP_NONCE_PLACEHOLDER}'`);
+      expect(headers['Content-Security-Policy']).toContain("'strict-dynamic'");
+    });
+
+    test('substitutes provided nonce in script-src and script-src-elem', () => {
+      const headers = generateSecurityHeaders([], { nonce: 'abc123XYZ' });
+      const csp = headers['Content-Security-Policy'];
+      expect(csp).toContain("'nonce-abc123XYZ'");
+      expect(csp).not.toContain('__CSP_NONCE__');
+      expect(csp).toMatch(/script-src [^;]*'nonce-abc123XYZ'/);
+      expect(csp).toMatch(/script-src-elem [^;]*'nonce-abc123XYZ'/);
+    });
+
+    test('includes provided style hashes', () => {
+      const styleHashes = ["'sha256-def456'"];
+      const headers = generateSecurityHeaders(styleHashes);
       expect(headers['Content-Security-Policy']).toContain("'sha256-def456'");
     });
 
-    test('should include security headers', () => {
-      const headers = generateSecurityHeaders([], []);
-
+    test('includes baseline security headers', () => {
+      const headers = generateSecurityHeaders([]);
       expect(headers['Strict-Transport-Security']).toContain('max-age=63072000');
       expect(headers['X-Content-Type-Options']).toBe('nosniff');
       expect(headers['X-Frame-Options']).toBe('DENY');
@@ -52,34 +69,40 @@ describe('Security Headers Module', () => {
       expect(headers['Referrer-Policy']).toBe('strict-origin-when-cross-origin');
     });
 
-    test('should include Cloudflare script hashes', () => {
-      const headers = generateSecurityHeaders([], []);
-      expect(headers['Content-Security-Policy']).toContain('sha256-ejv3KuWsiHLmQk4H');
+    test('does not embed legacy Cloudflare script hash allowlist', () => {
+      const headers = generateSecurityHeaders([]);
+      expect(headers['Content-Security-Policy']).not.toContain('sha256-ejv3KuWsiHLmQk4H');
+      expect(headers['Content-Security-Policy']).not.toContain('sha256-4cHQiB5K6cfR3bRbK3RY');
     });
 
-    test('should use HTML cache strategy by default', () => {
-      const headers = generateSecurityHeaders([], []);
+    test('uses HTML cache strategy by default', () => {
+      const headers = generateSecurityHeaders([]);
       expect(headers['Cache-Control']).toBe(CACHE_STRATEGIES.HTML);
     });
 
-    test('should include Permissions-Policy', () => {
-      const headers = generateSecurityHeaders([], []);
+    test('includes Permissions-Policy', () => {
+      const headers = generateSecurityHeaders([]);
       expect(headers['Permissions-Policy']).toContain('camera=()');
       expect(headers['Permissions-Policy']).toContain('microphone=()');
       expect(headers['Permissions-Policy']).toContain('geolocation=()');
     });
 
-    test('should include modern cross-origin hardening headers', () => {
-      const headers = generateSecurityHeaders([], []);
+    test('includes modern cross-origin hardening headers', () => {
+      const headers = generateSecurityHeaders([]);
       expect(headers['Cross-Origin-Opener-Policy']).toBe('same-origin');
       expect(headers['Cross-Origin-Resource-Policy']).toBe('same-origin');
       expect(headers['Origin-Agent-Cluster']).toBe('?1');
     });
 
-    test('should restrict framing and script origins', () => {
-      const headers = generateSecurityHeaders([], []);
+    test('restricts framing and script origins', () => {
+      const headers = generateSecurityHeaders([]);
       expect(headers['Content-Security-Policy']).toContain("frame-src 'none'");
       expect(headers['Content-Security-Policy']).toContain('https://accounts.google.com');
+    });
+
+    test('allows data: URIs in img-src for inline noise SVG', () => {
+      const headers = generateSecurityHeaders([]);
+      expect(headers['Content-Security-Policy']).toContain("img-src 'self' https: data:");
     });
   });
 

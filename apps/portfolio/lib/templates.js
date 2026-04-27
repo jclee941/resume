@@ -4,6 +4,16 @@
  */
 
 const { generateHash } = require('./utils');
+const { CSP_NONCE_PLACEHOLDER } = require('./security-headers');
+
+function injectScriptNoncePlaceholder(html, placeholder = CSP_NONCE_PLACEHOLDER) {
+  return html.replace(/<script\b([^>]*)>/g, (match, attrs) => {
+    if (/\bnonce\s*=/.test(attrs)) {
+      return match;
+    }
+    return `<script${attrs} nonce="${placeholder}">`;
+  });
+}
 
 /**
  * Generate HTML link element
@@ -67,5 +77,6 @@ function extractInlineHashes(html) {
 
 module.exports = {
   generateLink,
-  extractInlineHashes
+  extractInlineHashes,
+  injectScriptNoncePlaceholder,
 };

@@ -16,12 +16,15 @@ jest.mock('../../../../apps/portfolio/lib/html-transformer', () => ({
   escapeForTemplateLiteral: jest.fn(),
 }));
 jest.mock('../../../../apps/portfolio/lib/csp-hash-generator', () => ({
-  extractScriptHashes: jest.fn(),
   extractStyleHashes: jest.fn(),
   mergeHashes: jest.fn(),
 }));
 jest.mock('../../../../apps/portfolio/lib/security-headers', () => ({
   generateSecurityHeaders: jest.fn(),
+  CSP_NONCE_PLACEHOLDER: '__CSP_NONCE__',
+}));
+jest.mock('../../../../apps/portfolio/lib/templates', () => ({
+  injectScriptNoncePlaceholder: jest.fn((html) => html),
 }));
 jest.mock('../../../../apps/portfolio/lib/worker-writer', () => ({
   buildAndWriteWorker: jest.fn(),
@@ -37,13 +40,15 @@ const {
   escapeForTemplateLiteral,
 } = require('../../../../apps/portfolio/lib/html-transformer');
 const {
-  extractScriptHashes,
   extractStyleHashes,
   mergeHashes,
 } = require('../../../../apps/portfolio/lib/csp-hash-generator');
 const {
   generateSecurityHeaders,
 } = require('../../../../apps/portfolio/lib/security-headers');
+const {
+  injectScriptNoncePlaceholder,
+} = require('../../../../apps/portfolio/lib/templates');
 const {
   buildAndWriteWorker,
 } = require('../../../../apps/portfolio/lib/worker-writer');
@@ -103,9 +108,9 @@ describe('build-orchestrator', () => {
     });
 
     buildLocalizedHtml.mockReturnValue('<html>built</html>');
-    extractScriptHashes.mockReturnValue(["'sha256-script'"]);
     extractStyleHashes.mockReturnValue(["'sha256-style'"]);
-    mergeHashes.mockReturnValue(["'sha256-script'", "'sha256-style'"]);
+    mergeHashes.mockReturnValue(["'sha256-style'"]);
+    injectScriptNoncePlaceholder.mockImplementation((html) => html);
     escapeForTemplateLiteral.mockReturnValue('<html>escaped</html>');
     generateSecurityHeaders.mockReturnValue('const SECURITY_HEADERS = {};');
     buildAndWriteWorker.mockReturnValue({ workerSizeKB: '100.00' });
@@ -134,9 +139,9 @@ describe('build-orchestrator', () => {
       expect(buildLocalizedHtml).toHaveBeenCalledTimes(2);
     });
 
-    it('calls extractScriptHashes for both locales', async () => {
+    it('calls injectScriptNoncePlaceholder for both locales', async () => {
       await runWorkerBuild(buildOpts);
-      expect(extractScriptHashes).toHaveBeenCalledTimes(2);
+      expect(injectScriptNoncePlaceholder).toHaveBeenCalledTimes(2);
     });
 
     it('calls extractStyleHashes for both locales', async () => {

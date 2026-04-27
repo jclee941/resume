@@ -47,8 +47,28 @@ const OG_IMAGE_BASE64 = '${opts.ogImageBase64}';
 const OG_IMAGE_EN_BASE64 = '${opts.ogImageEnBase64}';
 const RESUME_PDF_BASE64 = '${opts.resumePdfBase64}';
 
-// Security headers
+const CSP_NONCE_PLACEHOLDER = '__CSP_NONCE__';
+
 const SECURITY_HEADERS = ${opts.securityHeadersJson};
+
+function generateCspNonce() {
+  const bytes = crypto.getRandomValues(new Uint8Array(16));
+  let binary = '';
+  for (const byte of bytes) binary += String.fromCharCode(byte);
+  return btoa(binary);
+}
+
+function applyNonceToHeaders(baseHeaders, nonce) {
+  const headers = { ...baseHeaders };
+  if (typeof headers['Content-Security-Policy'] === 'string') {
+    headers['Content-Security-Policy'] = headers['Content-Security-Policy'].split(CSP_NONCE_PLACEHOLDER).join(nonce);
+  }
+  return headers;
+}
+
+function applyNonceToHtml(html, nonce) {
+  return html.split(CSP_NONCE_PLACEHOLDER).join(nonce);
+}
 
 const CACHE_POLICIES = {
   html: { 'Cache-Control': 'public, max-age=300, s-maxage=3600, stale-while-revalidate=86400' },
