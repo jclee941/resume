@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.12.5] - 2026-04-28
+
+### Changes
+- fix(content): conservative tone (담백) rewrite per Oracle + tone audit (0bc21ca)
+
+
 ## [v1.12.4] - 2026-04-28
 
 ### Changes
