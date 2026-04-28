@@ -1,6 +1,12 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { homedir } from 'os';
-import { dirname, join } from 'path';
+import { dirname, join, resolve } from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+// repoSessionFile is the location profile-sync/constants.js reads from (repo root).
+const repoSessionFile = resolve(__dirname, '../../../../jobkorea-session.json');
+
 
 const defaultSessionFile = join(homedir(), '.OpenCode', 'data', 'jobkorea-session.json');
 
@@ -43,6 +49,17 @@ export function ensureSessionDir(filePath) {
 export function savePlatformSession(data, filePath = defaultSessionFile) {
   ensureSessionDir(filePath);
   writeFileSync(filePath, JSON.stringify(data, null, 2));
+  // Also mirror to repo root so profile-sync (CONFIG.SESSION_DIR) sees the same data.
+  if (filePath !== repoSessionFile) {
+    try {
+      ensureSessionDir(repoSessionFile);
+      writeFileSync(repoSessionFile, JSON.stringify(data, null, 2));
+    } catch (error) {
+      // non-fatal: profile-sync will warn separately if missing
+      console.warn(`[jobkorea-session] mirror to repo failed: ${error.message}`);
+    }
+  }
 }
 
-export { defaultSessionFile };
+
+export { defaultSessionFile, repoSessionFile };

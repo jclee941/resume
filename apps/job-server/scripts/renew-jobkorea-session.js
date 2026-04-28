@@ -20,7 +20,7 @@ import {
   waitForLoginConfirmation,
 } from './jobkorea-session/index.js';
 
-const email = process.env.JOBKOREA_EMAIL;
+const email = process.env.JOBKOREA_EMAIL || process.env.JOBKOREA_USERNAME;
 const password = process.env.JOBKOREA_PASSWORD;
 const headless = process.env.HEADLESS !== 'false';
 const headlessEnv = process.env.HEADLESS;
@@ -60,7 +60,18 @@ async function main() {
       if (existing?.cookies && Array.isArray(existing.cookies)) {
         const valid = existing.cookies.filter((cookie) => cookie.name && cookie.value && cookie.domain);
         if (valid.length) {
-          await page.browser().defaultBrowserContext().addCookies(valid);
+          // Puppeteer v22+: use page.setCookie(...spread). Map to Puppeteer's CookieParam shape.
+          const puppeteerCookies = valid.map((c) => ({
+            name: c.name,
+            value: c.value,
+            domain: c.domain,
+            path: c.path || '/',
+            expires: typeof c.expires === 'number' ? c.expires : undefined,
+            httpOnly: !!c.httpOnly,
+            secure: !!c.secure,
+            sameSite: c.sameSite || undefined,
+          }));
+          await page.setCookie(...puppeteerCookies);
           log('Injected existing cookies:', valid.length);
         }
       }
@@ -84,7 +95,7 @@ async function main() {
         log('Login successful');
       }
 
-      const cookies = await page.browser().defaultBrowserContext().cookies();
+      const cookies = await page.cookies('https://www.jobkorea.co.kr', 'https://www.jobkorea.co.kr/');
       const cookieString = buildCookieString(cookies);
       const session = {
         platform: 'jobkorea',

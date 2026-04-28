@@ -1,4 +1,5 @@
 import { chromium } from 'playwright';
+import { applyPlaywrightStealth } from '../playwright-stealth.js';
 import { CONFIG } from '../constants.js';
 import { log } from '../utils.js';
 import {
@@ -204,7 +205,13 @@ export async function syncJobKoreaProfile(handler, ssot, options = {}) {
   const context = await browser.newContext({
     userAgent: pickRandomUserAgent(),
     viewport: { width: 1280, height: 800 },
+    locale: 'ko-KR',
+    timezoneId: 'Asia/Seoul',
+    extraHTTPHeaders: {
+      'Accept-Language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7',
+    },
   });
+  await applyPlaywrightStealth(context);
 
   try {
     await context.addCookies(cookies);
