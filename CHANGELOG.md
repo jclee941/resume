@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.13.1] - 2026-04-28
+
+### Changes
+- fix(content): Kibana demoUrl points to specific portfolio dashboard (245add1)
+
+
 ## [v1.13.0] - 2026-04-28
 
 ### Changes
