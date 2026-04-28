@@ -1,6 +1,9 @@
-const LAST_MODIFIED = new Date().toUTCString();
-const SITEMAP_LASTMOD = new Date().toISOString().slice(0, 10);
-const SITEMAP_ETAG = `W/"resume-sitemap-${Date.now()}"`;
+const BUILD_LASTMOD = '2026-04-28';
+const BUILD_LASTMOD_HTTP = 'Tue, 28 Apr 2026 00:00:00 GMT';
+const BUILD_ETAG_VERSION = '20260428';
+const LAST_MODIFIED = BUILD_LASTMOD_HTTP;
+const SITEMAP_LASTMOD = BUILD_LASTMOD;
+const SITEMAP_ETAG = `W/"resume-sitemap-${BUILD_ETAG_VERSION}"`;
 const DEFAULT_LANGUAGE = 'ko';
 const SUPPORTED_LANGUAGES = ['ko', 'en'];
 const SINGLE_WORKER_PROFILE_SYNC_PATH = '/api/automation/resume-update';
