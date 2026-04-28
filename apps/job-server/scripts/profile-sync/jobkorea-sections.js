@@ -113,6 +113,16 @@ function pushField(fields, name, value) {
   fields.push({ name, value: toFieldValue(value) });
 }
 
+/**
+ * Strips Korean corporation prefix "(주)" / "(주)/" from company names so JobKorea
+ * matches the same canonical form Wanted's career sync uses (parity with
+ * apps/job-server/src/tools/platforms/wanted-sync-operations.js).
+ */
+export function normalizeCompanyName(name) {
+  if (!name) return '';
+  return String(name).replace(/\(주\)/g, '').trim();
+}
+
 export function parseRange(period) {
   const raw = String(period || '');
   // Support both '~' and ' - ' separators
@@ -152,7 +162,7 @@ export function mapCareersToFormFields(ssot, indices) {
     const _code = JK_JOB_CODES[career?.role] || 1000233;
 
     pushField(fields, `Career[${key}].Index_Name`, key);
-    pushField(fields, `Career[${key}].C_Name`, career?.company || '');
+    pushField(fields, `Career[${key}].C_Name`, normalizeCompanyName(career?.company));
     pushField(fields, `Career[${key}].Co_Code`, '');
     pushField(fields, `Career[${key}].CName_Code`, '');
     pushField(fields, `Career[${key}].M_MainCate`, '');

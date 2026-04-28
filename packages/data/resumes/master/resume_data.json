@@ -540,11 +540,6 @@
           "proficiency": 80
         },
         {
-          "name": "Splunk",
-          "level": "expert",
-          "proficiency": 95
-        },
-        {
           "name": "OpenTelemetry",
           "level": "intermediate",
           "proficiency": 60

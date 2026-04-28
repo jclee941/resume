@@ -6,6 +6,7 @@ import {
   JK_LOCATION_CODES,
   mapAwardToFormFields,
   mapCareersToFormFields,
+  normalizeCompanyName,
   mapHopeJobToFormFields,
   mapLicensesToFormFields,
   mapMilitaryToFormFields,
@@ -68,7 +69,7 @@ describe('mapCareersToFormFields', () => {
     const fields = mapCareersToFormFields({ careers: [baseCareer] });
     const byName = toMap(fields);
 
-    assert.strictEqual(byName.get('Career[c1].C_Name'), '(주)아이티센 CTS');
+    assert.strictEqual(byName.get('Career[c1].C_Name'), '아이티센 CTS');
     assert.strictEqual(byName.get('Career[c1].C_Part'), '정보보안팀');
     assert.strictEqual(byName.get('Career[c1].CSYM'), '202503');
     assert.strictEqual(byName.get('Career[c1].CEYM'), '202602');
@@ -81,7 +82,7 @@ describe('mapCareersToFormFields', () => {
     const byName = toMap(fields);
 
     assert.strictEqual(byName.get('Career[c844].Index_Name'), 'c844');
-    assert.strictEqual(byName.get('Career[c844].C_Name'), '(주)아이티센 CTS');
+    assert.strictEqual(byName.get('Career[c844].C_Name'), '아이티센 CTS');
     assert.strictEqual(byName.get('Career.index'), 'c844');
   });
 
@@ -487,5 +488,23 @@ describe('dry-run smoke with real SSOT', () => {
       countMatching(fields, /^Award\[c\d+\]\./),
       expectedAwardCount > 0 ? expectedAwardCount * 5 : 0
     );
+  });
+});
+
+describe('normalizeCompanyName — Wanted/JobKorea parity (audit P2 fix)', () => {
+  it('strips "(주)" prefix to match Wanted career sync normalization', () => {
+    assert.strictEqual(normalizeCompanyName('(주)아이티센 CTS'), '아이티센 CTS');
+    assert.strictEqual(normalizeCompanyName('아이티센 CTS(주)'), '아이티센 CTS');
+  });
+
+  it('returns empty string for null/undefined', () => {
+    assert.strictEqual(normalizeCompanyName(null), '');
+    assert.strictEqual(normalizeCompanyName(undefined), '');
+    assert.strictEqual(normalizeCompanyName(''), '');
+  });
+
+  it('passes through company names without "(주)"', () => {
+    assert.strictEqual(normalizeCompanyName('Acme Corp'), 'Acme Corp');
+    assert.strictEqual(normalizeCompanyName('  spaced  '), 'spaced');
   });
 });

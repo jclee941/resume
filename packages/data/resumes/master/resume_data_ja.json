@@ -527,9 +527,9 @@
           "proficiency": 80
         },
         {
-          "name": "Splunk",
-          "level": "expert",
-          "proficiency": 95
+          "name": "OpenTelemetry",
+          "level": "intermediate",
+          "proficiency": 60
         }
       ]
     },
@@ -674,6 +674,11 @@
         },
         {
           "name": "TypeScript",
+          "level": "intermediate",
+          "proficiency": 60
+        },
+        {
+          "name": "Go",
           "level": "intermediate",
           "proficiency": 60
         }
