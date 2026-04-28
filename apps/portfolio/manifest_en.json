@@ -25,14 +25,6 @@
   "lang": "en-US",
   "dir": "ltr",
   "scope": "/en/",
-  "screenshots": [
-    {
-      "src": "/og-image-en.webp",
-      "sizes": "1200x630",
-      "type": "image/webp",
-      "label": "Portfolio Screenshot"
-    }
-  ],
   "shortcuts": [
     {
       "name": "Resume",
