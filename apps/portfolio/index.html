@@ -68,7 +68,7 @@
         "name": "이재철",
         "alternateName": "Jaecheol Lee",
         "jobTitle": "DevSecOps/SRE Engineer",
-        "description": "금융·공공 환경에서 보안 인프라 설계부터 운영 자동화까지 9년간 담당한 DevSecOps/SRE 엔지니어입니다. FortiGate HA 보안 아키텍처 설계, Splunk ES 기반 SIEM 운영, Terraform/Ansible IaC 자동화, Prometheus/Grafana 관측성 플랫폼을 구축·운영합니다.",
+        "description": "금융위원회 본인가 심사를 직접 통과시킨 securities trading platform 보안 아키텍쳐 설계자입니다. 9년차 DevSecOps/SRE로서 FortiGate HA · Splunk ES SIEM(32개 탐지 룰) · Terraform IaC · Ansible/Python 자동화 · Prometheus/Grafana 관측성 플랫폼을 직접 설계·운영해왔습니다.",
         "url": "https://resume.jclee.me",
         "email": "qws941@kakao.com",
         "telephone": "+82-10-5757-9592",
@@ -85,7 +85,8 @@
           "Kubernetes",
           "Splunk",
           "Prometheus",
-          "Grafana"
+          "Grafana",
+          "OpenTelemetry",
         ]
       }
     </script>
@@ -591,7 +592,7 @@
                   <ul class="cmd-output about-list">
                     <li>금융·공공 보안 인프라 9년 | DevSecOps/SRE</li>
                     <li>넥스트레이드 FortiGate HA 보안 아키텍처 → 금융위 본인가 통과</li>
-                    <li>Splunk ES SIEM 탐지 룰 설계 · 보안 이벤트 실시간 대응 체계</li>
+                    <li>Splunk ES SIEM 32개 탐지 룰 설계 · 보안 이벤트 실시간 대응 체계</li>
                     <li>Ansible/Terraform IaC 자동화 · Prometheus/Grafana 관측성</li>
                   </ul>
                 </div>
@@ -1318,7 +1319,7 @@
             'about.txt': 'DevSecOps / SRE / 보안 자동화\\n금융·공공 중심 9년차, 설계-운영-개선',
             'contact.txt': 'Email: qws941@kakao.com\\nGitHub: github.com/jclee941',
             'skills.json':
-              '{\\n  "observability": ["Grafana", "Prometheus", "Loki", "Splunk"],\\n  "devops": ["GitLab CI/CD", "Ansible", "Terraform"]\\n}',
+              '{\n  "observability": ["Grafana", "Prometheus", "Loki", "Splunk", "OpenTelemetry"],\n  "devops": ["GitLab CI/CD", "GitHub Actions", "Ansible", "Terraform"],\n  "programming": ["Python", "Bash", "Node.js", "TypeScript", "Go"]\n}',
           };
           if (!args) return 'cat: missing file operand';
           return files[args] || 'cat: ' + args + ': No such file or directory';

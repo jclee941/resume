@@ -281,7 +281,7 @@
           "period": "2017.02 ~ 2018.10",
           "techStack": [
             "Linux",
-            "Shell",
+            "Bash",
             "Firewall",
             "WSUS"
           ],
@@ -415,7 +415,7 @@
       "client": "韓国航空宇宙産業（KAI）",
       "technologies": [
         "Linux",
-        "Shell",
+        "Bash",
         "Firewall"
       ],
       "os": "Linux",
@@ -578,7 +578,7 @@
           "proficiency": 80
         },
         {
-          "name": "Shell",
+          "name": "Bash",
           "level": "expert",
           "proficiency": 95
         },
