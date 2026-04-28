@@ -1,12 +1,18 @@
 #!/bin/bash
 #
-# Session Renewal Automation for Wanted
+# Session Renewal Automation (Wanted + JobKorea)
 # Runs before auto-apply to ensure valid session
 #
 
 set -e
 
-LOG_FILE="/home/jclee/.claude/logs/session-renewal.log"
+PLATFORM="${1:-wanted}"
+if [[ "$PLATFORM" != "wanted" && "$PLATFORM" != "jobkorea" ]]; then
+  echo "Usage: $0 [wanted|jobkorea]" >&2
+  exit 2
+fi
+
+LOG_FILE="/home/jclee/.claude/logs/session-renewal-${PLATFORM}.log"
 RESUME_DIR="/home/jclee/dev/resume"
 
 # Create log directory
@@ -16,13 +22,13 @@ log() {
   echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "$LOG_FILE"
 }
 
-log "=== Session Renewal Started ==="
+log "=== Session Renewal Started: $PLATFORM ==="
 
 # Check current session
 cd "$RESUME_DIR/apps/job-server"
 node -e "
 const { SessionManager } = require('./src/shared/services/session');
-const status = SessionManager.checkHealth('wanted', 4 * 60 * 60 * 1000);
+const status = SessionManager.checkHealth('$PLATFORM', 4 * 60 * 60 * 1000);
 console.log(JSON.stringify(status, null, 2));
 process.exit(status.valid ? 0 : 1);
 " 2>&1 | tee -a "$LOG_FILE"
@@ -38,7 +44,7 @@ log "⚠️  Session expired or expiring soon, attempting CDP renewal..."
 if ! curl -s http://127.0.0.1:9222/json/version >/dev/null 2>&1; then
   log "❌ Chrome DevTools not available"
   log "   Please start Chrome with: google-chrome --remote-debugging-port=9222"
-  log "   Or login manually and run: node scripts/extract-cookies-cdp.js wanted"
+  log "   Or login manually and run: node scripts/extract-cookies-cdp.js $PLATFORM"
 
   # Send Telegram notification
   if [ -n "$N8N_WEBHOOK_URL" ]; then
@@ -46,10 +52,10 @@ if ! curl -s http://127.0.0.1:9222/json/version >/dev/null 2>&1; then
       -H "Content-Type: application/json" \
       -d '{
         "event": "session_renewal_failed",
-        "platform": "wanted",
+        "platform": "'$PLATFORM'",
         "reason": "chrome_devtools_not_available",
         "timestamp": "'$(date -Iseconds)'",
-        "message": "⚠️ Wanted session renewal failed. Please login manually."
+        "message": "⚠️ '$PLATFORM' session renewal failed. Please login manually."
       }' >/dev/null 2>&1 || true
   fi
 
@@ -58,12 +64,12 @@ fi
 
 # Extract cookies via CDP
 log "🔐 Extracting cookies via CDP..."
-node "$RESUME_DIR/apps/job-server/scripts/extract-cookies-cdp.js" wanted 2>&1 | tee -a "$LOG_FILE"
+node "$RESUME_DIR/apps/job-server/scripts/extract-cookies-cdp.js" "$PLATFORM" 2>&1 | tee -a "$LOG_FILE"
 
 # Verify new session
 node -e "
 const { SessionManager } = require('./src/shared/services/session');
-const status = SessionManager.checkHealth('wanted', 24 * 60 * 60 * 1000);
+const status = SessionManager.checkHealth('$PLATFORM', 24 * 60 * 60 * 1000);
 console.log(JSON.stringify(status, null, 2));
 process.exit(status.valid ? 0 : 1);
 " 2>&1 | tee -a "$LOG_FILE"
@@ -77,9 +83,9 @@ if [ $? -eq 0 ]; then
       -H "Content-Type: application/json" \
       -d '{
         "event": "session_renewal_success",
-        "platform": "wanted",
+        "platform": "'$PLATFORM'",
         "timestamp": "'$(date -Iseconds)'",
-        "message": "✅ Wanted session renewed successfully"
+        "message": "✅ '$PLATFORM' session renewed successfully"
       }' >/dev/null 2>&1 || true
   fi
 
