@@ -44,6 +44,7 @@ function buildWorkerCode(options) {
     indexHtml: options.indexHtml,
     indexEnHtml: options.indexEnHtml || options.indexHtml,
     manifestJson: options.manifestJson,
+    manifestEnJson: options.manifestEnJson || options.manifestJson,
     serviceWorker: options.serviceWorker,
     mainJs: options.mainJs,
     robotsTxt: options.robotsTxt,

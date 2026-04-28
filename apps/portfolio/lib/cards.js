@@ -222,7 +222,6 @@ function generateSkillsList(skillsData, dataHash) {
         <span class="htop-bar">[<span class="htop-filled">${bar}</span>]</span>
         <span class="htop-pct">${averageLevel}%</span>
         <span class="htop-items">${skills
-          .slice(0, 4)
           .map((s) => {
             if (typeof s === 'string') return escapeHtml(s);
             const name = escapeHtml(String(s && s.name ? s.name : 'Unknown'));

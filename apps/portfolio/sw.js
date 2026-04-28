@@ -7,7 +7,9 @@ const RUNTIME_CACHE = 'resume-runtime-v1';
 // Resources to cache on install
 const PRECACHE_URLS = [
   '/',
+  '/en/',
   '/manifest.json',
+  '/manifest_en.json',
   'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap',
 ];
 

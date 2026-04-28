@@ -547,7 +547,7 @@ describe('Cards Module', () => {
       expect(html1).toBe(html2);
     });
 
-    test('should slice items to max 4', () => {
+    test('should render all skill items without slicing', () => {
       const skillsData = {
         automation: ['A', 'B', 'C', 'D', 'E', 'F'],
       };
@@ -555,7 +555,8 @@ describe('Cards Module', () => {
 
       expect(html).toContain('A');
       expect(html).toContain('D');
-      expect(html).not.toContain('>E<');
+      expect(html).toContain('E');
+      expect(html).toContain('F');
     });
 
     test('should handle mixed string and object items', () => {

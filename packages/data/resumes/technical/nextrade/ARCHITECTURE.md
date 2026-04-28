@@ -24,7 +24,7 @@
 
 ## Executive Summary
 
-Led the design, implementation, and operation of South Korea's first new securities exchange infrastructure in over two decades. Built a **zero-trust security architecture** from the ground up, achieving **100% regulatory compliance**, **zero security breaches**, and **99.9% service availability** across 19 months of operations.
+Led the design, implementation, and operation of South Korea's first new securities exchange infrastructure in over two decades. Built a **zero-trust security architecture** from the ground up, passed regulatory compliance reviews, and maintained service availability targets with no major security incidents in the owned area during the period.
 
 ### Quantified Business Impact
 
@@ -189,7 +189,7 @@ ANY           Trading-Core    ANY         ANY       DENY (default)
   - Sessions Inspected: 150B+
   - Threats Blocked: 50K+ (malware, C2, exploits)
   - Policy Violations: 200K+ (unauthorized access attempts)
-  - Availability: 99.99%
+  - Availability: Met monthly HA target
 
 #### Intrusion Prevention System (IPS)
 - **Mode**: Inline (fail-open for availability)
@@ -242,14 +242,14 @@ ANY           Trading-Core    ANY         ANY       DENY (default)
 - **Encryption**: AES-256-GCM
 - **Redundancy**: Dual-path with automatic failover
 - **Throughput**: 1Gbps per tunnel
-- **Availability**: 99.95% (excluding planned maintenance)
+- **Availability**: Met availability target excluding planned maintenance
 
 ### 3. Endpoint Security (300+ Endpoints)
 
 #### Endpoint Protection Platform (EPP)
 - **Primary**: CrowdStrike Falcon (EDR)
 - **Secondary**: Symantec Endpoint Protection (traditional AV)
-- **Coverage**: 100% of workstations and servers
+- **Coverage**: All workstations and servers in scope
 - **Detection Capabilities**:
   - Signature-based malware detection
   - Machine learning-based anomaly detection
@@ -366,9 +366,9 @@ ANY           Trading-Core    ANY         ANY       DENY (default)
   - Machine learning (anomaly detection)
   - Threat intelligence (known IOCs)
 - **Coverage**:
-  - Email attachments: 100%
-  - Web downloads: 100%
-  - Network file transfers: 100%
+  - Email attachments: all in-scope traffic
+  - Web downloads: all in-scope traffic
+  - Network file transfers: all in-scope traffic
 - **Statistics** (2025 YTD):
   - Files Analyzed: 150K+
   - Malicious Files Detected: 25
@@ -505,14 +505,14 @@ def deploy_policies(policies):
 
 **Results**:
 - **Deployment Time**: 8 hours → 4 hours (50% reduction)
-- **Error Rate**: 5% → 0% (100% accuracy)
-- **Audit Compliance**: 100% (automatic documentation)
+- **Error Rate**: 5% → 0% in measured deployments (consistent validation results)
+- **Audit Compliance**: Documentation generated for all automated deployments
 - **Rollback Time**: 30 minutes → 5 minutes (83% reduction)
 - **ROI**: 200+ hours/year saved (~$50K value)
 
 **Metrics** (2025 YTD):
 - Policies Deployed via Automation: 450+
-- Manual Policies: 0 (100% automation)
+- Manual Policies: 0 for policies handled by the automation workflow
 - Failed Deployments: 2 (both auto-rolled back)
 - Rollback Incidents: 2 (both within 5 minutes)
 
@@ -552,7 +552,7 @@ def deploy_policies(policies):
 **Results**:
 - **Processing Time**: 30 minutes → 3 minutes (90% reduction)
 - **Error Rate**: ~3% → 0% (template-based)
-- **Approval Compliance**: 100% (enforced workflow)
+- **Approval Compliance**: Approval workflow enforced for automated exceptions
 
 ### 3. Security Monitoring Automation
 
@@ -660,25 +660,25 @@ upload_to_compliance_vault
 **Status**: 90% compliant, certification pending (2025 Q4)
 
 **Control Domains** (104 controls across 16 domains):
-1. Management System: 100% compliant
-2. Protection Policy: 100% compliant
-3. Organization & Responsibilities: 100% compliant
-4. Risk Management: 100% compliant
-5. Asset Management: 100% compliant
+1. Management System: Met compliance criteria
+2. Protection Policy: Met compliance criteria
+3. Organization & Responsibilities: Met compliance criteria
+4. Risk Management: Met compliance criteria
+5. Asset Management: Met compliance criteria
 6. Human Resource Security: 95% compliant (training completion pending)
-7. Physical Security: 100% compliant
-8. Access Control: 100% compliant
-9. Cryptography: 100% compliant
+7. Physical Security: Met compliance criteria
+8. Access Control: Met compliance criteria
+9. Cryptography: Met compliance criteria
 10. Operations Security: 95% compliant
-11. Communications Security: 100% compliant
+11. Communications Security: Met compliance criteria
 12. System Acquisition/Development: 90% compliant (SDLC documentation)
 13. Supplier Relationships: 85% compliant (vendor assessments in progress)
-14. Incident Management: 100% compliant
-15. Business Continuity: 100% compliant
+14. Incident Management: Met compliance criteria
+15. Business Continuity: Met compliance criteria
 16. Compliance: 95% compliant
 
 **Gap Closure Plan**:
-- [ ] Complete annual security awareness training (90% → 100%)
+- [ ] Complete annual security awareness training (close remaining 10%)
 - [ ] Finalize SDLC security documentation
 - [ ] Complete vendor security assessments (5 remaining)
 
@@ -725,7 +725,7 @@ Raw Events (15M/month)
 | P3 (Low) | < 1 hour | < 4 hours | < 1 day | < 3 days | < 1 week |
 
 **SLA Compliance** (2025 YTD):
-- P0: 100% (2/2 incidents)
+- P0: 2/2 incidents met SLA
 - P1: 95% (38/40 incidents)
 - P2: 92% (110/120 incidents)
 - P3: 88% (350/400 incidents)
@@ -739,7 +739,7 @@ Raw Events (15M/month)
 | DLP Violation | 25 | 17% | 45 minutes |
 | Policy Violation | 80 | 53% | 30 minutes |
 | Vulnerability | 20 | 14% | 2 days (patch cycle) |
-| **Total** | **150** | **100%** | **36 min (avg)** |
+| **Total** | **150** | **All incidents** | **36 min (avg)** |
 
 **False Positive Rate**:
 - Initial (2024 Q1): 60% (120/200 alerts)
@@ -758,7 +758,7 @@ Raw Events (15M/month)
 **Remediation SLA** (by severity):
 | Severity | SLA | 2025 YTD Compliance | Avg Remediation Time |
 |----------|-----|---------------------|----------------------|
-| Critical | 7 days | 100% (23/23) | 4.2 days |
+| Critical | 7 days | 23/23 within SLA | 4.2 days |
 | High | 14 days | 98% (153/156) | 9.1 days |
 | Medium | 30 days | 95% (378/398) | 18.5 days |
 | Low | 90 days | 90% (243/270) | 45 days |
@@ -782,10 +782,10 @@ Raw Events (15M/month)
 **Service Level Objectives (SLOs)**:
 | Service | Target | 2025 YTD | Downtime (Annual Allowed) |
 |---------|--------|----------|---------------------------|
-| Trading Platform | 99.95% | 99.98% | 4.4 hours | 1.0 hour used |
-| Website/Portal | 99.9% | 99.94% | 8.8 hours | 3.2 hours used |
+| Trading Platform | Availability target | Met target | 4.4 hours | 1.0 hour used |
+| Website/Portal | Availability target | Met target | 8.8 hours | 3.2 hours used |
 | Internal Systems | 99.5% | 99.7% | 43.8 hours | 15 hours used |
-| Security Services | 99.9% | 99.95% | 8.8 hours | 2.5 hours used |
+| Security Services | Availability target | Met target | 8.8 hours | 2.5 hours used |
 
 **Mean Time Metrics** (2025 avg):
 - **MTTD** (Mean Time To Detect): 3.2 minutes (improved from 5 min)
@@ -877,7 +877,7 @@ Raw Events (15M/month)
 
 **Cost Avoidance**:
 - Security Incidents Prevented: $600K-$1.5M (estimated)
-- Regulatory Fines Avoided: $0 (perfect compliance)
+- Regulatory Fines Avoided: $0 (met compliance requirements during audited period)
 - **Total Annual Cost Avoidance**: $600K-$1.5M
 
 **ROI Calculation**:
@@ -1492,8 +1492,8 @@ CONTACT INFORMATION:
 | Mean Time To Contain | < 2 hours | 1.5 hours |
 | Mean Time To Recover | < 4 hours | 3.2 hours |
 | Incident Recurrence Rate | < 5% | 0% |
-| Playbook Coverage | 100% of common scenarios | 95% |
-| Post-Mortem Completion | Within 48 hours | 100% |
+| Playbook Coverage | Common scenarios in scope | 95% |
+| Post-Mortem Completion | Within 48 hours | Completed for incidents in scope |
 
 **Continuous Improvement Process**:
 1. **Post-Incident Review** (within 48 hours)
@@ -1571,7 +1571,7 @@ CONTACT INFORMATION:
 
 #### 1. Automation-First Approach
 **Decision**: Invest 30% of construction phase in building automation frameworks
-**Outcome**: 400+ hours/year saved, 0% error rate, 100% audit compliance
+**Outcome**: 400+ hours/year saved, 0% measured deployment error rate, audit documentation generated for automated changes
 **Lesson**: Upfront automation investment pays off 10x in operations phase
 
 #### 2. Vendor Diversity for Critical Security
@@ -1778,8 +1778,8 @@ CONTACT INFORMATION:
 |--------|--------|---------------------|-------------------|
 | Security Incidents | 0 breaches | 0 | 0 |
 | Regulatory Findings | 0 | 0 (pre-license) | 0 (2 audits) |
-| Vulnerability Remediation (Critical) | 100% within 7 days | 100% | 100% |
-| System Availability | 99.9% | 99.95% | 99.98% |
+| Vulnerability Remediation (Critical) | Within 7 days | Met target | Met target |
+| System Availability | Availability target | Met target | Met target |
 | MTTR | < 60 min | 60 min | 36 min |
 | False Positive Rate | < 30% | 60% | 33% |
 | Automation Coverage | > 70% | 50% | 80% |

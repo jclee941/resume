@@ -75,6 +75,7 @@ describe('build-orchestrator', () => {
       mainJs: 'main()',
       cssContent: 'body{}',
       manifestJson: '{}',
+      manifestEnJson: '{}',
       serviceWorker: 'self.addEventListener("fetch",()=>{})',
       ogImageBuffer: Buffer.from('image'),
       ogImageEnBuffer: Buffer.from('image-en'),

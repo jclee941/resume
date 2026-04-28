@@ -132,9 +132,11 @@ function generatePageRoutes() {
  */
 function generateStaticRoutes() {
   return `
-      if (url.pathname === '/manifest.json') {
+      if (url.pathname === '/manifest.json' || url.pathname === '/manifest_en.json') {
+        const isEnglish = url.pathname === '/manifest_en.json';
+        const manifestContent = isEnglish ? MANIFEST_EN_JSON : MANIFEST_JSON;
         metrics.requests_success++;
-        return new Response(MANIFEST_JSON, {
+        return new Response(manifestContent, {
           headers: {
             ...SECURITY_HEADERS,
             ...CACHE_POLICIES.static,
