@@ -428,7 +428,7 @@
       "client": "한국항공우주산업",
       "technologies": [
         "Linux",
-        "Shell",
+        "Bash",
         "Firewall"
       ],
       "os": "Linux",
