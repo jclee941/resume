@@ -132,7 +132,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Validate resume JSON files
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Validate JSON syntax (all data files)
         run: |
           set -euo pipefail
           for f in packages/data/resumes/master/resume_data.json \
@@ -142,9 +148,30 @@ jobs:
                    apps/portfolio/data_en.json \
                    apps/portfolio/data_ja.json; do
             if [ -f "$f" ]; then
-              python3 -m json.tool < "$f" > /dev/null && echo "✅ $f" || { echo "❌ $f"; exit 1; }
+              python3 -m json.tool < "$f" > /dev/null && echo "✅ syntax: $f" || { echo "❌ syntax: $f"; exit 1; }
             fi
           done
+
+      - name: Validate SSoT against canonical JSON Schema
+        run: |
+          set -euo pipefail
+          # Canonical schema validator — enforces 22 SSoT keys + nested shape.
+          # See docs/architecture/RESUME_SYNC_AUDIT_2026-04-29.md (Issue B resolution).
+          for f in packages/data/resumes/master/resume_data.json \
+                   packages/data/resumes/master/resume_data_en.json \
+                   packages/data/resumes/master/resume_data_ja.json; do
+            node tools/scripts/utils/validate-resume-data.js "$f" \
+              packages/data/resumes/master/resume_schema.json
+          done
+
+      - name: Validate application variants (intentionally independent)
+        run: |
+          set -euo pipefail
+          if [ -f tools/scripts/utils/validate-application-variants.js ]; then
+            node tools/scripts/utils/validate-application-variants.js
+          else
+            echo "⚠️  validate-application-variants.js not present — skipping"
+          fi
 
   validate-go:
     name: Go Script Validation
