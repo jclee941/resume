@@ -11,6 +11,14 @@ function isStrictSyncEnabled() {
 
 const WANTED_PROJECT_DESCRIPTION_LIMIT = 2000;
 const WANTED_ABOUT_LIMIT = 3000;
+const WANTED_HEADLINE_LIMIT = 150;
+
+export {
+  WANTED_PROJECT_DESCRIPTION_LIMIT,
+  WANTED_ABOUT_LIMIT,
+  WANTED_HEADLINE_LIMIT,
+};
+
 
 function normalizeText(value) {
   return typeof value === 'string' ? value.trim() : '';
