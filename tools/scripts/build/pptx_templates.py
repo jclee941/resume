@@ -239,7 +239,7 @@ TEMPLATES = {
     ),
     "shinhan": TemplateSpec(
         name="신한형 이력서",
-        source_path=ROOT / "packages/data/resumes/master/shinhan_resume_data.json",
+        source_path=ROOT / "packages/data/resumes/applications/shinhan/shinhan_resume_data.json",
         template_path=ROOT / "packages/data/resumes/archive/기타/shinhan.pptx",
         output_path=ROOT / "packages/data/resumes/generated/shinhan_filled.pptx",
         table_handlers={
