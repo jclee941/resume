@@ -47,7 +47,7 @@ export default {
         return new Response(JSON.stringify({ error: 'Too Many Requests' }), {
           status: 429,
           headers: {
-            ...SECURITY_HEADERS,
+            ...applyNonceToHeaders(SECURITY_HEADERS, ""),
             ...rateLimitHeaders,
             ...corsHeaders,
             'Content-Type': 'application/json',
@@ -138,7 +138,7 @@ function generateStaticRoutes() {
         metrics.requests_success++;
         return new Response(manifestContent, {
           headers: {
-            ...SECURITY_HEADERS,
+            ...applyNonceToHeaders(SECURITY_HEADERS, ""),
             ...CACHE_POLICIES.static,
             ...rateLimitHeaders,
             'Content-Type': 'application/json'
@@ -146,11 +146,11 @@ function generateStaticRoutes() {
         });
       }
 
-      if (url.pathname === '/sw.js') {
+      if (url.pathname === '/sw.js' || url.pathname === '/en/sw.js') {
         metrics.requests_success++;
         return new Response(SERVICE_WORKER, {
           headers: {
-            ...SECURITY_HEADERS,
+            ...applyNonceToHeaders(SECURITY_HEADERS, ""),
             ...CACHE_POLICIES.static,
             ...rateLimitHeaders,
             'Content-Type': 'application/javascript',
@@ -163,7 +163,7 @@ function generateStaticRoutes() {
         metrics.requests_success++;
         return new Response(MAIN_JS, {
           headers: {
-            ...SECURITY_HEADERS,
+            ...applyNonceToHeaders(SECURITY_HEADERS, ""),
             ...CACHE_POLICIES.static,
             ...rateLimitHeaders,
             'Content-Type': 'application/javascript'
@@ -219,7 +219,7 @@ function generateHealthRoute(opts) {
         metrics.requests_success++;
         return new Response(JSON.stringify(health, null, 2), {
           headers: {
-            ...SECURITY_HEADERS,
+            ...applyNonceToHeaders(SECURITY_HEADERS, ""),
             ...rateLimitHeaders,
             'Content-Type': 'application/json',
             ...CACHE_POLICIES.api
@@ -238,7 +238,7 @@ function generateMetricsRoute() {
         metrics.requests_success++;
         return new Response(generateMetrics(metrics), {
           headers: {
-            ...SECURITY_HEADERS,
+            ...applyNonceToHeaders(SECURITY_HEADERS, ""),
             ...rateLimitHeaders,
             'Content-Type': 'text/plain; version=0.0.4; charset=utf-8',
             ...CACHE_POLICIES.api
@@ -257,7 +257,7 @@ function generateSeoRoutes() {
         metrics.requests_success++;
         return new Response(ROBOTS_TXT, {
           headers: {
-            ...SECURITY_HEADERS,
+            ...applyNonceToHeaders(SECURITY_HEADERS, ""),
             ...CACHE_POLICIES.static,
             ...rateLimitHeaders,
             'Content-Type': 'text/plain'
@@ -269,7 +269,7 @@ function generateSeoRoutes() {
         metrics.requests_success++;
         return new Response(SITEMAP_XML, {
           headers: {
-            ...SECURITY_HEADERS,
+            ...applyNonceToHeaders(SECURITY_HEADERS, ""),
             ...CACHE_POLICIES.static,
             ...rateLimitHeaders,
             'Content-Type': 'application/xml'
@@ -282,7 +282,7 @@ function generateSeoRoutes() {
         metrics.requests_success++;
         return new Response(imageBuffer, {
           headers: {
-            ...SECURITY_HEADERS,
+            ...applyNonceToHeaders(SECURITY_HEADERS, ""),
             ...CACHE_POLICIES.static,
             ...rateLimitHeaders,
             'Content-Type': 'image/webp',
@@ -295,7 +295,7 @@ function generateSeoRoutes() {
         metrics.requests_success++;
         return new Response(imageBuffer, {
           headers: {
-            ...SECURITY_HEADERS,
+            ...applyNonceToHeaders(SECURITY_HEADERS, ""),
             ...CACHE_POLICIES.static,
             ...rateLimitHeaders,
             'Content-Type': 'image/webp',
@@ -308,7 +308,7 @@ function generateSeoRoutes() {
         metrics.requests_success++;
         return new Response(pdfBuffer, {
           headers: {
-            ...SECURITY_HEADERS,
+            ...applyNonceToHeaders(SECURITY_HEADERS, ""),
             ...CACHE_POLICIES.static,
             ...rateLimitHeaders,
             'Content-Type': 'application/pdf',
@@ -329,7 +329,7 @@ function generate404() {
       return new Response('Not Found', {
         status: 404,
         headers: {
-          ...SECURITY_HEADERS,
+          ...applyNonceToHeaders(SECURITY_HEADERS, ""),
           ...rateLimitHeaders,
           'Content-Type': 'text/plain',
           ...CACHE_POLICIES.api
@@ -376,7 +376,7 @@ function generateErrorHandler(opts) {
       return new Response('Internal Server Error', {
         status: 500,
         headers: {
-          ...SECURITY_HEADERS,
+          ...applyNonceToHeaders(SECURITY_HEADERS, ""),
           ...rateLimitHeaders,
           'Content-Type': 'text/plain',
           ...CACHE_POLICIES.api

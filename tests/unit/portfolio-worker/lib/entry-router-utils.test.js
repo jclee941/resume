@@ -212,7 +212,7 @@ describe('entry-router-utils', () => {
       );
 
       const fallback = utils.applyResponseHeaders(base, '/projects');
-      expect(fallback.headers.get('Cache-Control')).toBe('public, max-age=3600, s-maxage=86400, stale-while-revalidate=600');
+      expect(fallback.headers.get('Cache-Control')).toBe('private, no-store, must-revalidate');
     });
   });
 

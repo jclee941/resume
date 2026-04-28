@@ -54,7 +54,24 @@
       "Observability プラットフォーム（Prometheus、Grafana、ELK）",
       "DevSecOps パイプライン（CI/CD セキュリティ自動化）",
       "セキュリティ運用自動化（Python、n8n、API 連携）"
-    ]
+    ],
+    "aboutSection": {
+      "careerHighlights": [
+        "金融・公共セキュリティインフラ 9年 | DevSecOps/SRE",
+        "ネクストレード FortiGate HA セキュリティインフラ構築（本認可審査対応）",
+        "Splunk ES SIEM 検知ルール 32 個運用 · セキュリティイベントリアルタイム通知体制",
+        "Ansible/Terraform IaC 自動化 · Prometheus/Grafana オブザーバビリティ"
+      ],
+      "techPhilosophy": [
+        "\"監視できなければ、運用できない\"",
+        "手作業の繰り返し → 自動化パイプラインへの転換",
+        "Infrastructure as Code、宣言的構成志向"
+      ],
+      "currentFocus": [
+        "クラウドネイティブ オブザーバビリティ · AWS セキュリティアーキテクチャ",
+        "AI/MCP ベースのセキュリティ自動化 · DevSecOps パイプライン"
+      ]
+    }
   },
   "current": {
     "status": "求職中",

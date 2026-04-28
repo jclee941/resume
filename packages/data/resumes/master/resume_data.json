@@ -54,7 +54,24 @@
       "Observability 플랫폼 (Prometheus, Grafana, ELK)",
       "DevSecOps 파이프라인 (CI/CD 보안 자동화)",
       "보안 운영 자동화 (Python, n8n, API 연동)"
-    ]
+    ],
+    "aboutSection": {
+      "careerHighlights": [
+        "금융·공공 보안 인프라 9년 | DevSecOps/SRE",
+        "넥스트레이드 FortiGate HA 보안 인프라 구축 (본인가 심사 대응 참여)",
+        "Splunk ES SIEM 탐지 룰 32개 운영 · 보안 이벤트 실시간 알림 체계",
+        "Ansible/Terraform IaC 자동화 · Prometheus/Grafana 관측성"
+      ],
+      "techPhilosophy": [
+        "\"관측 가능하지 않으면, 운영할 수 없다\"",
+        "수작업 반복 → 자동화 파이프라인 전환",
+        "Infrastructure as Code, 선언적 구성 지향"
+      ],
+      "currentFocus": [
+        "클라우드 네이티브 관측성 · AWS 보안 아키텍처",
+        "AI/MCP 기반 보안 자동화 · DevSecOps 파이프라인"
+      ]
+    }
   },
   "platformVariants": {
     "wanted": {

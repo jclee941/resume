@@ -831,5 +831,22 @@
     "linkedin": "https://linkedin.com/in/jclee0109",
     "website": "https://resume.jclee.me",
     "monitoring": "https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b"
+  },
+  "aboutSection": {
+    "careerHighlights": [
+      "9 years in finance & public-sector security infrastructure | DevSecOps/SRE",
+      "Nextrade FortiGate HA security infrastructure (FSC review participation)",
+      "Operated 32 Splunk ES SIEM detection rules · real-time alert pipeline",
+      "Ansible/Terraform IaC automation · Prometheus/Grafana observability"
+    ],
+    "techPhilosophy": [
+      "\"If it's not observable, it's not operable\"",
+      "Manual repetition → automated pipelines",
+      "Infrastructure as Code, declarative-first"
+    ],
+    "currentFocus": [
+      "Cloud-native observability · AWS security architecture",
+      "AI/MCP-driven security automation · DevSecOps pipelines"
+    ]
   }
 }

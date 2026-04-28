@@ -47,6 +47,7 @@ function injectPlaceholders(html, options) {
     .replace('<!-- CERTIFICATION_CARDS_PLACEHOLDER -->', options.certCardsHtml)
     .replace('<!-- SKILLS_LIST_PLACEHOLDER -->', options.skillsHtml)
     .replace('<!-- CONTACT_GRID_PLACEHOLDER -->', options.contactGridHtml)
+    .replace('<!-- ABOUT_CONTENT_PLACEHOLDER -->', options.aboutContentHtml || '')
     .replace('<!-- RESUME_PDF_URL -->', options.resumePdfUrl)
     .replace('<!-- RESUME_DOCX_URL -->', options.resumeDocxUrl)
     .replace('<!-- RESUME_MD_URL -->', options.resumeMdUrl)

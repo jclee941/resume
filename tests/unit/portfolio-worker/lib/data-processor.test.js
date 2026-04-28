@@ -17,6 +17,7 @@ jest.mock('../../../../apps/portfolio/lib/cards', () => ({
   generateResumeDescription: jest.fn(() => ''),
   generateInfrastructureCards: jest.fn(() => '<div class="infra">cards</div>'),
   generateContactGrid: jest.fn(() => '<div class="contact">grid</div>'),
+  generateAboutContent: jest.fn(() => '<div class="about">content</div>'),
 }));
 
 const { TEMPLATE_CACHE } = require('../../../../apps/portfolio/lib/config');
