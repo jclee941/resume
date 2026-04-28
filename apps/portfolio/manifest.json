@@ -25,14 +25,6 @@
   "lang": "ko-KR",
   "dir": "ltr",
   "scope": "/",
-  "screenshots": [
-    {
-      "src": "/og-image.webp",
-      "sizes": "1200x630",
-      "type": "image/webp",
-      "label": "Portfolio Screenshot"
-    }
-  ],
   "shortcuts": [
     {
       "name": "Resume",

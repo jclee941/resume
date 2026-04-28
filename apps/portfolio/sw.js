@@ -5,9 +5,9 @@ const CACHE_NAME = 'resume-pwa-v1';
 const RUNTIME_CACHE = 'resume-runtime-v1';
 
 // Resources to cache on install
-const PRECACHE_URLS = [
-  '/',
-  '/en/',
+// Resources to cache on install (no HTML — HTML carries per-response CSP nonce)
+  // Manifests are cached for offline PWA install support; HTML is fetched fresh.
+  const PRECACHE_URLS = [
   '/manifest.json',
   '/manifest_en.json',
   'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap',
@@ -50,31 +50,17 @@ self.addEventListener('fetch', (event) => {
   if (!request.url.startsWith('http')) return;
 
   // Network-first strategy for HTML
+  // Network-only for HTML — never cache HTML responses because they carry per-response
+  // CSP nonces. Caching would create stale nonce mismatches that block inline scripts.
   if (request.headers.get('accept').includes('text/html')) {
     event.respondWith(
-      fetch(request)
-        .then((response) => {
-          // Clone and cache successful responses
-          if (response.ok) {
-            const responseClone = response.clone();
-            caches.open(RUNTIME_CACHE).then((cache) => {
-              cache.put(request, responseClone);
-            });
-          }
-          return response;
+      fetch(request).catch(() =>
+        new Response('Offline - please check your connection', {
+          status: 503,
+          statusText: 'Service Unavailable',
+          headers: new Headers({ 'Content-Type': 'text/plain' }),
         })
-        .catch(() => {
-          // Fallback to cache if network fails
-          return caches.match(request).then((cached) => {
-            return cached || new Response('Offline - please check your connection', {
-              status: 503,
-              statusText: 'Service Unavailable',
-              headers: new Headers({
-                'Content-Type': 'text/plain',
-              }),
-            });
-          });
-        })
+      )
     );
     return;
   }
