@@ -9,7 +9,7 @@
       "icon": "🏦",
       "title": "(주)아이티센 CTS",
       "description": "Splunk ES 기반 SIEM 탐지 룰 설계·운영, FortiGate 방화벽 정책 최적화 및 접근 제어 자동화, 월간 보안 취약점 점검 및 실시간 위협 모니터링 체계 고도화, n8n 기반 보안 이벤트 자동 대응",
-      "period": "2025.03 ~ 2026.02",
+      "period": "2025.03 ~ 현재",
       "stats": [
         "보안관제",
         "컴플라이언스",
@@ -33,7 +33,7 @@
     {
       "icon": "📈",
       "title": "(주)콴텍투자일임",
-      "description": "AWS 보안 운영 (IAM/VPC/WAF), Terraform IaC 관리, CloudTrail/GuardDuty 로그 통합, Prometheus/Grafana 모니터링",
+      "description": "금융 클라우드 보안 운영 및 IaC 정착\n• AWS 보안 운영 (IAM 권한 분리, VPC/Subnet/SG 설계, WAF 정책)\n• Terraform IaC로 VPC/SG 코드 관리 정착, 변경 추적성 확보\n• CloudTrail + GuardDuty 통합 로그 분석 체계 수립\n• 로보어드바이저 테스트베드 심사 대응 및 보안 가이드라인 수립",
       "period": "2022.08 ~ 2024.02",
       "stats": [
         "AWS",
@@ -69,7 +69,7 @@
     {
       "icon": "📞",
       "title": "(주)메타넷엠플랫폼",
-      "description": "VPN/NAC 운영, 네트워크 스위치 관리, FortiGate 정책 운영, 재택근무 인프라 구축",
+      "description": "대규모 컨택센터 원격근무 인프라 운영\n• VPN/NAC 정책 운영 및 백신-VPN 프로파일 충돌 해결\n• Python + Ansible로 네트워크 스위치 점검 자동화 (8시간 → 2시간)\n• FortiGate 정책 운영 및 NAC 예외 정책 처리 시간 30분 → 수 분 단축\n• 재택근무 신규 사이트 3개소 네트워크 설계·구축",
       "period": "2019.12 ~ 2021.08",
       "stats": [
         "VPN/NAC",
@@ -81,7 +81,7 @@
     {
       "icon": "✈️",
       "title": "(주)엠티데이타",
-      "description": "Linux 서버 운영, 방화벽 정책 관리, 자산/패치 관리, OA 시스템 운영",
+      "description": "KAI 폐쇄망 보안 인프라 운영\n• Linux 서버 운영 및 보안 패치 관리\n• 방화벽 중복 룰 정리 및 정책 최적화\n• 자산 관리·취약점 점검 체계 운영\n• 21개월 연속 내부정보 유출사고 0건 유지",
       "period": "2017.02 ~ 2018.10",
       "stats": [
         "서버운영",
@@ -238,8 +238,8 @@
       "stars": 0,
       "language": "Python",
       "forks": 0,
-      "githubUrl": "https://github.com/jclee941/splunk",
-      "demoUrl": null,
+      "githubUrl": "https://github.com/qws941/splunk",
+      "demoUrl": "https://splunk.jclee.me",
       "metrics": {
         "endpoints": "FortiManager, FortiAnalyzer REST API",
         "systems": "2개 장비군 API 래핑",
@@ -251,7 +251,8 @@
         "FortiManager",
         "FortiAnalyzer"
       ],
-      "repoUrl": "https://github.com/jclee941/splunk"
+      "liveUrl": "https://splunk.jclee.me",
+      "repoUrl": "https://github.com/qws941/splunk"
     },
     {
       "icon": "🔔",
@@ -262,8 +263,8 @@
       "stars": 0,
       "language": "Python",
       "forks": 0,
-      "githubUrl": "https://github.com/jclee941/splunk",
-      "demoUrl": null,
+      "githubUrl": "https://github.com/qws941/splunk",
+      "demoUrl": "https://splunk.jclee.me",
       "metrics": {
         "detectionRules": "32개 탐지 룰",
         "alertChannels": "Slack Block Kit",
@@ -276,7 +277,8 @@
         "Python",
         "Slack"
       ],
-      "repoUrl": "https://github.com/jclee941/splunk"
+      "liveUrl": "https://splunk.jclee.me",
+      "repoUrl": "https://github.com/qws941/splunk"
     },
     {
       "icon": "🚫",
@@ -310,7 +312,7 @@
       "stars": 0,
       "language": "Python",
       "forks": 0,
-      "githubUrl": "https://github.com/jclee941/hycu_fsds",
+      "githubUrl": null,
       "demoUrl": null,
       "metrics": {
         "award": "우수상 (Excellence Award)",
@@ -324,8 +326,7 @@
         "Docker",
         "AirSim"
       ],
-      "liveUrl": "https://github.com/jclee941/hycu_fsds",
-      "repoUrl": "https://github.com/jclee941/hycu_fsds"
+      "liveUrl": "https://github.com/jclee941/hycu_fsds"
     },
     {
       "icon": "⚡",
@@ -413,8 +414,8 @@
       "stars": 0,
       "language": "Python",
       "forks": 0,
-      "githubUrl": "https://github.com/jclee941/splunk",
-      "demoUrl": null,
+      "githubUrl": "https://github.com/qws941/splunk",
+      "demoUrl": "https://splunk.jclee.me",
       "metrics": {
         "endpoints": "FortiManager, FortiAnalyzer REST API",
         "systems": "2개 장비군 API 래핑",
@@ -426,7 +427,8 @@
         "FortiManager",
         "FortiAnalyzer"
       ],
-      "repoUrl": "https://github.com/jclee941/splunk"
+      "liveUrl": "https://splunk.jclee.me",
+      "repoUrl": "https://github.com/qws941/splunk"
     },
     {
       "icon": "🔔",
@@ -437,8 +439,8 @@
       "stars": 0,
       "language": "Python",
       "forks": 0,
-      "githubUrl": "https://github.com/jclee941/splunk",
-      "demoUrl": null,
+      "githubUrl": "https://github.com/qws941/splunk",
+      "demoUrl": "https://splunk.jclee.me",
       "metrics": {
         "detectionRules": "32 rules",
         "alertChannels": "Slack Block Kit",
@@ -451,7 +453,8 @@
         "Python",
         "Slack"
       ],
-      "repoUrl": "https://github.com/jclee941/splunk"
+      "liveUrl": "https://splunk.jclee.me",
+      "repoUrl": "https://github.com/qws941/splunk"
     },
     {
       "icon": "🚫",
@@ -485,7 +488,7 @@
       "stars": 0,
       "language": "Python",
       "forks": 0,
-      "githubUrl": "https://github.com/jclee941/hycu_fsds",
+      "githubUrl": null,
       "demoUrl": null,
       "metrics": {
         "award": "우수상 (Excellence Award)",
@@ -499,8 +502,7 @@
         "Docker",
         "AirSim"
       ],
-      "liveUrl": "https://github.com/jclee941/hycu_fsds",
-      "repoUrl": "https://github.com/jclee941/hycu_fsds"
+      "liveUrl": "https://github.com/jclee941/hycu_fsds"
     },
     {
       "icon": "⚡",
@@ -778,7 +780,7 @@
     "badge": "Security Infrastructure Engineer · 9년차",
     "title": "이재철",
     "titleEn": "Jaecheol Lee",
-    "subtitle": "금융·공공 보안 인프라 · Splunk ES SIEM · FortiGate HA HA · n8n 자동화 효율화"
+    "subtitle": "금융·공공 보안 인프라 · Splunk ES SIEM · FortiGate HA · n8n 자동화 효율화"
   },
   "sectionDescriptions": {
     "resume": "9년차 인프라 경력",
@@ -790,16 +792,17 @@
   },
   "achievements": [
     "넥스트레이드 ATS 보안 인프라를 고가용성(HA) 기준으로 설계하고 금융위 본인가 심사를 통과시켰습니다.",
-    "Splunk-FortiNet 통합 보안 운영 체계를 구축해 다수 탐지 룰과 실시간 알림 파이프라인을 운영했습니다.",
-    "넥스트레이드 보안 운영 자동화로 불필요한 알림 줄이고 방화벽 정책 조회 시간을 대폭 절감했습니다.",
-    "Grafana·Prometheus·Loki 기반 Observability 플랫폼을 운영하며 다수 대시보드, 메트릭 엔드포인트, 높은 가용성% 가용률을 유지했습니다.",
+    "Splunk ES 32개 탐지 룰 + FortiNet API 연동으로 보안 이벤트 실시간 알림 파이프라인을 구축·운영했습니다.",
+    "보안 이벤트 자동 대응 체계를 구축해 알림 노이즈를 줄이고, FortiManager API 기반 방화벽 정책 조회를 수동(콘솔 접속)에서 자동(스크립트 단축)으로 전환했습니다.",
+    "Grafana 12개 대시보드, Prometheus 50+ 메트릭 엔드포인트 운영, 99.9% 이상 가용률 유지",
     "n8n 자동화 플랫폼을 구축해 15+ 워크플로우와 일 200+ 실행, 월 6K+ 자동화 이벤트를 운영했습니다.",
-    "조인트리 프로젝트에서 침해사고 예방률 향상, 민감정보 탐지율 향상, 높은 서비스 가용률를 달성했습니다.",
+    "조인트리 NSX-T 마이크로세그멘테이션 적용으로 동서(East-West) 트래픽 가시성을 확보하고, 분산 방화벽(DFW) 정책 중앙 관리 체계를 수립했습니다.",
     "메타넷 재택근무 인프라에서 NAC 예외 정책 처리 시간을 대폭(30분→수 분) 단축하고 스위치 점검 시간을 대폭(8시간→2시간) 줄였습니다.",
-    "메타넷 재택근무 환경에서 백신-VPN 충돌을 해결해 장애 문의를 감소 줄이고 신규 사이트 3개소를 구축했습니다.",
-    "KAI 폐쇄망 환경에서 방화벽 중복 룰을 다수 제거하고 내부정보 유출사고 0건을 유지했습니다.",
+    "메타넷 재택근무 환경에서 백신-VPN 프로파일 충돌을 분석·해결하고, 신규 사이트 3개소 네트워크를 설계·구축했습니다.",
+    "KAI 폐쇄망 환경에서 방화벽 중복 룰을 정리하고 21개월 연속 내부정보 유출사고 0건을 유지했습니다.",
     "펀엔씨 클라우드 전환 프로젝트에서 백업·복구 자동화로 MTTR을 절반(2시간→1시간) 단축하고 취약점 조기 발견율을 높였습니다.",
-    "콴텍에서 Terraform 기반 AWS 보안 코드화를 정착시키고 로보어드바이저 테스트베드 심사 대응 기반을 마련했습니다."
+    "콴텍에서 Terraform 기반 AWS 보안 코드화를 정착시키고 로보어드바이저 테스트베드 심사 대응 기반을 마련했습니다.",
+    "한양사이버대학교 포뮬러 자율주행 경진대회에서 우수상을 수상했습니다 (2026)."
   ],
   "infrastructure": [
     {

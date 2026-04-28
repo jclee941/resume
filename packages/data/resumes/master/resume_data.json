@@ -46,7 +46,7 @@
       "Cloud Security",
       "Compliance(ISMS-P)"
     ],
-    "profileStatement": "금융·공공 환경에서 보안 인프라 설계부터 운영 자동화까지 9년간 담당한 DevSecOps/SRE 엔지니어입니다. 넥스트레이드 증권 매매체결시스템에서 FortiGate HA 보안 아키텍처를 설계하여 금융위 본인가 심사를 통과시켰고, Splunk ES 기반 SIEM 탐지 룰을 설계·운영하며 보안 이벤트 실시간 알림 체계를 구축했습니다. Ansible/Python으로 서버 설정 자동화를 구현하고, Terraform IaC로 AWS 인프라를 코드 관리하며, Prometheus/Grafana 관측성 플랫폼을 직접 설계·운영합니다.",
+    "profileStatement": "금융위원회 본인가 심사를 직접 통과시킨 securities trading platform 보안 아키텍처 설계자입니다. 9년차 DevSecOps/SRE로서 FortiGate HA · Splunk ES SIEM(32개 탐지 룰) · Terraform IaC · Ansible/Python 자동화 · Prometheus/Grafana 관측성 플랫폼을 직접 설계·운영해왔습니다. 금융·공공 환경에서 보안 인프라 설계부터 운영 자동화까지 풀 사이클을 책임진 경험이 강점입니다.",
     "coreCompetencies": [
       "금융 보안 아키텍처 설계 (FortiGate HA, 금융위 본인가)",
       "SIEM/SOAR 구축·운영 (Splunk ES 32개 탐지 룰)",
@@ -58,11 +58,11 @@
   },
   "platformVariants": {
     "wanted": {
-      "headline": "DevSecOps / SRE | 금융 보안 인프라 자동화 9년 | FortiGate HA · Splunk ES · Terraform · AWS | resume.jclee.me",
+      "headline": "DevSecOps/SRE | 금융위 본인가 통과 보안 아키텍처 설계 | FortiGate HA · Splunk · Terraform · AWS | 9년",
       "about": "보안과 운영을 코드로 통합하는 DevSecOps/SRE 엔지니어입니다.\n\n금융·공공 환경에서 9년간 보안 인프라 설계부터 운영 자동화까지 담당했습니다. 증권 매매체결시스템의 보안 아키텍처를 설계하여 금융위원회 본인가 심사를 통과시켰고, SIEM 기반 보안 관제 체계와 대규모 서버 운영 자동화를 직접 구축·운영했습니다.\n\n[주요 성과]\n• 넥스트레이드 증권 매매체결시스템 FortiGate HA 보안 아키텍처 설계 → 금융위 본인가 심사 통과\n• Splunk ES 기반 SIEM 탐지 룰 설계·운영, 보안 이벤트 실시간 알림 체계 구축\n• Ansible/Python 대규모 서버 설정 자동화, 방화벽 정책 조회 자동화\n• Terraform IaC AWS VPC/Subnet/SG 코드 관리, CloudTrail+GuardDuty 통합 보안 모니터링\n• Prometheus/Grafana 관측성 플랫폼 설계·운영\n\n[기술 스택]\n• Security: FortiGate, FortiManager, Splunk ES, Wazuh, NAC, DLP, VPN\n• Cloud: AWS (IAM/VPC/WAF/CloudTrail/GuardDuty), Terraform\n• DevOps: Ansible, Docker, CI/CD, n8n, Python\n• Observability: Prometheus, Grafana, ELK Stack\n• Compliance: ISMS-P, ISO 27001, 금융위 본인가\n\n포트폴리오: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
     },
     "jobkorea": {
-      "headline": "DevSecOps/SRE - 금융 보안 인프라 자동화 9년",
+      "headline": "DevSecOps/SRE - 금융위 본인가 통과 보안 아키텍처 설계 9년",
       "about": "금융·공공 환경에서 보안 인프라 설계부터 운영 자동화까지 담당한 9년차 엔지니어입니다.\n\n[주요 경력]\n• 넥스트레이드(증권 거래소) — 보안운영/인프라 구축 (2024~현재)\n  - FortiGate HA 보안 아키텍처 설계, 금융위 본인가 심사 통과\n  - Splunk ES 탐지 룰 설계, 실시간 보안 이벤트 알림 체계\n  - n8n+FortiManager API 방화벽 정책 조회 자동화\n\n• 콴텍(AI 투자) — 보안운영 (2022~2024)\n  - Terraform IaC AWS 인프라 전환, CloudTrail+GuardDuty 통합 모니터링\n  - 로보어드바이저 테스트베드 심사 대응\n\n• 메타넷(SI) — 컨택센터 원격근무 인프라 (2019~2021)\n  - Ansible 서버 자동화, NAC 정책 자동화 시스템 개발\n\n[보유 기술]\nFortiGate/FortiManager, Splunk ES, Ansible, Python, Terraform, AWS, Docker, Prometheus/Grafana, ISMS-P\n\n포트폴리오: https://resume.jclee.me"
     }
   },
@@ -80,7 +80,7 @@
   "careers": [
     {
       "company": "(주)아이티센 CTS",
-      "period": "2025.03 ~ 2026.02",
+      "period": "2025.03 ~ 현재",
       "duration": "1년",
       "project": "넥스트레이드 매매체결시스템 보안운영SM",
       "role": "보안운영 담당",
@@ -153,7 +153,7 @@
       "teamSize": "규모 미공개 인프라·정보보호팀",
       "myRole": "AWS 보안 운영 및 관측성 구축 담당",
       "workType": "SM",
-      "description": "AWS 보안 운영 (IAM/VPC/WAF), Terraform IaC 관리, CloudTrail/GuardDuty 로그 통합, Prometheus/Grafana 모니터링",
+      "description": "금융 클라우드 보안 운영 및 IaC 정착\n• AWS 보안 운영 (IAM 권한 분리, VPC/Subnet/SG 설계, WAF 정책)\n• Terraform IaC로 VPC/SG 코드 관리 정착, 변경 추적성 확보\n• CloudTrail + GuardDuty 통합 로그 분석 체계 수립\n• 로보어드바이저 테스트베드 심사 대응 및 보안 가이드라인 수립",
       "wantedSummary": "AI투자서비스 보안운영 | AWS · Terraform · Prometheus/Grafana\n→ AWS 보안 IaC 전환, 로보어드바이저 테스트베드 심사 대응",
       "projects": [
         {
@@ -252,7 +252,7 @@
       "teamSize": "규모 미공개 인프라 운영팀",
       "myRole": "VPN/NAC 운영 자동화 및 스위치 점검 자동화 담당",
       "workType": "SI+SM",
-      "description": "VPN/NAC 운영, 네트워크 스위치 관리, FortiGate 정책 운영, 재택근무 인프라 구축",
+      "description": "대규모 컨택센터 원격근무 인프라 운영\n• VPN/NAC 정책 운영 및 백신-VPN 프로파일 충돌 해결\n• Python + Ansible로 네트워크 스위치 점검 자동화 (8시간 → 2시간)\n• FortiGate 정책 운영 및 NAC 예외 정책 처리 시간 30분 → 수 분 단축\n• 재택근무 신규 사이트 3개소 네트워크 설계·구축",
       "wantedSummary": "원격근무 인프라 구축 | VPN/NAC · Ansible · Python\n→ NAC 정책 자동화, 스위치 점검 자동화 시스템 개발",
       "projects": [
         {
@@ -283,7 +283,7 @@
       "teamSize": "규모 미공개 현장 IT 운영팀",
       "myRole": "폐쇄망 서버 운영 및 보안 패치 체계 담당",
       "workType": "정규직 (파견)",
-      "description": "Linux 서버 운영, 방화벽 정책 관리, 자산/패치 관리, OA 시스템 운영",
+      "description": "KAI 폐쇄망 보안 인프라 운영\n• Linux 서버 운영 및 보안 패치 관리\n• 방화벽 중복 룰 정리 및 정책 최적화\n• 자산 관리·취약점 점검 체계 운영\n• 21개월 연속 내부정보 유출사고 0건 유지",
       "wantedSummary": "KAI 폐쇄망 인프라 | Linux · Firewall · Shell\n→ 폐쇄망 서버 운영, 방화벽 정책 재설계, 보안 패치 체계 구축",
       "client": "한국항공우주산업(주) (KAI)",
       "note": "엠티데이타 소속, 한국항공우주산업(KAI) IT 인프라 현장 파견",
@@ -762,8 +762,8 @@
       "language": "Python",
       "forks": 0,
       "forksUiHint": "de-emphasize",
-      "githubUrl": "https://github.com/jclee941/splunk",
-      "demoUrl": null,
+      "githubUrl": "https://github.com/qws941/splunk",
+      "demoUrl": "https://splunk.jclee.me",
       "metrics": {
         "endpoints": "FortiManager, FortiAnalyzer REST API",
         "systems": "2개 장비군 API 래핑",
@@ -787,8 +787,8 @@
       "language": "Python",
       "forks": 0,
       "forksUiHint": "de-emphasize",
-      "githubUrl": "https://github.com/jclee941/splunk",
-      "demoUrl": null,
+      "githubUrl": "https://github.com/qws941/splunk",
+      "demoUrl": "https://splunk.jclee.me",
       "metrics": {
         "detectionRules": "32개 탐지 룰",
         "alertChannels": "Slack Block Kit",
@@ -839,7 +839,7 @@
       "language": "Python",
       "forks": 0,
       "forksUiHint": "de-emphasize",
-      "githubUrl": "https://github.com/jclee941/hycu_fsds",
+      "githubUrl": null,
       "demoUrl": null,
       "metrics": {
         "award": "우수상 (Excellence Award)",
@@ -893,7 +893,7 @@
     "badge": "Security Infrastructure Engineer · 9년차",
     "title": "이재철",
     "titleEn": "Jaecheol Lee",
-    "subtitle": "금융·공공 보안 인프라 · Splunk ES SIEM · FortiGate HA HA · n8n 자동화 효율화"
+    "subtitle": "금융·공공 보안 인프라 · Splunk ES SIEM · FortiGate HA · n8n 자동화 효율화"
   },
   "sectionDescriptions": {
     "resume": "9년차 인프라 경력",
@@ -912,16 +912,17 @@
   ],
   "achievements": [
     "넥스트레이드 ATS 보안 인프라를 고가용성(HA) 기준으로 설계하고 금융위 본인가 심사를 통과시켰습니다.",
-    "Splunk-FortiNet 통합 보안 운영 체계를 구축해 다수 탐지 룰과 실시간 알림 파이프라인을 운영했습니다.",
-    "넥스트레이드 보안 운영 자동화로 불필요한 알림 줄이고 방화벽 정책 조회 시간을 대폭 절감했습니다.",
-    "Grafana·Prometheus·Loki 기반 Observability 플랫폼을 운영하며 다수 대시보드, 메트릭 엔드포인트, 높은 가용성% 가용률을 유지했습니다.",
+    "Splunk ES 32개 탐지 룰 + FortiNet API 연동으로 보안 이벤트 실시간 알림 파이프라인을 구축·운영했습니다.",
+    "보안 이벤트 자동 대응 체계를 구축해 알림 노이즈를 줄이고, FortiManager API 기반 방화벽 정책 조회를 수동(콘솔 접속)에서 자동(스크립트 단축)으로 전환했습니다.",
+    "Grafana 12개 대시보드, Prometheus 50+ 메트릭 엔드포인트 운영, 99.9% 이상 가용률 유지",
     "n8n 자동화 플랫폼을 구축해 15+ 워크플로우와 일 200+ 실행, 월 6K+ 자동화 이벤트를 운영했습니다.",
-    "조인트리 프로젝트에서 침해사고 예방률 향상, 민감정보 탐지율 향상, 높은 서비스 가용률를 달성했습니다.",
+    "조인트리 NSX-T 마이크로세그멘테이션 적용으로 동서(East-West) 트래픽 가시성을 확보하고, 분산 방화벽(DFW) 정책 중앙 관리 체계를 수립했습니다.",
     "메타넷 재택근무 인프라에서 NAC 예외 정책 처리 시간을 대폭(30분→수 분) 단축하고 스위치 점검 시간을 대폭(8시간→2시간) 줄였습니다.",
-    "메타넷 재택근무 환경에서 백신-VPN 충돌을 해결해 장애 문의를 감소 줄이고 신규 사이트 3개소를 구축했습니다.",
-    "KAI 폐쇄망 환경에서 방화벽 중복 룰을 다수 제거하고 내부정보 유출사고 0건을 유지했습니다.",
+    "메타넷 재택근무 환경에서 백신-VPN 프로파일 충돌을 분석·해결하고, 신규 사이트 3개소 네트워크를 설계·구축했습니다.",
+    "KAI 폐쇄망 환경에서 방화벽 중복 룰을 정리하고 21개월 연속 내부정보 유출사고 0건을 유지했습니다.",
     "펀엔씨 클라우드 전환 프로젝트에서 백업·복구 자동화로 MTTR을 절반(2시간→1시간) 단축하고 취약점 조기 발견율을 높였습니다.",
-    "콴텍에서 Terraform 기반 AWS 보안 코드화를 정착시키고 로보어드바이저 테스트베드 심사 대응 기반을 마련했습니다."
+    "콴텍에서 Terraform 기반 AWS 보안 코드화를 정착시키고 로보어드바이저 테스트베드 심사 대응 기반을 마련했습니다.",
+    "한양사이버대학교 포뮬러 자율주행 경진대회에서 우수상을 수상했습니다 (2026)."
   ],
   "infrastructure": [
     {
@@ -1011,13 +1012,22 @@
   },
   "hope": {
     "locations": [
-      "서울"
+      "서울",
+      "수도권",
+      "원격·하이브리드 협의"
     ],
     "roles": [
       "보안 인프라",
       "DevSecOps",
       "Observability",
       "자동화"
+    ],
+    "salary": "면접 후 협의",
+    "industries": [
+      "금융",
+      "핀테크",
+      "보안",
+      "클라우드"
     ]
   }
 }
