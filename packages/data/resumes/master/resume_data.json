@@ -790,7 +790,7 @@
       "forks": 0,
       "forksUiHint": "de-emphasize",
       "githubUrl": "https://github.com/jclee941/splunk",
-      "demoUrl": "https://splunk.jclee.me",
+      "demoUrl": null,
       "metrics": {
         "endpoints": "FortiManager, FortiAnalyzer REST API",
         "systems": "2개 장비군 API 래핑",
@@ -815,7 +815,7 @@
       "forks": 0,
       "forksUiHint": "de-emphasize",
       "githubUrl": "https://github.com/jclee941/splunk",
-      "demoUrl": "https://splunk.jclee.me",
+      "demoUrl": null,
       "metrics": {
         "detectionRules": "32개 탐지 룰",
         "alertChannels": "Slack Block Kit",
