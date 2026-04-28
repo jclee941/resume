@@ -42,7 +42,7 @@ fontsize: 11pt
 
 ### Automation & Scripting
 
-- **언어**: Python, Shell 스크립트 개발 (1,000+ LOC 프로젝트 다수)
+- **언어**: Python, Shell 스크립트 개발 (1,000+ LOC 프로젝트 경험)
 - **자동화 도구**: Ansible, n8n, REST API 통합
 - **FortiManager API**: 방화벽 정책 자동화 (Python SDK)
 

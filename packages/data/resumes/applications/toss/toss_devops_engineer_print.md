@@ -55,7 +55,7 @@ header-includes:
 \accentrule
 \vspace{0.1em}
 
-9년간 금융·공공 분야에서 인프라 설계·운영을 담당하며, Observability 체계 수립과 운영 자동화를 수행해왔습니다. 넥스트레이드 대체거래소에서 고가용성 인프라를 설계하고 Splunk·Prometheus·Grafana 기반 모니터링 체계를 구축한 경험을 바탕으로, 토스증권 DevOps&SRE팀이 추구하는 **개발자 경험 혁신**과 **Cloud Native 기반 시스템 고도화**에 기여하고자 지원합니다.
+9년간 금융·공공 분야에서 인프라 설계·운영을 담당하며, Observability 운영과 운영 자동화를 수행해왔습니다. 넓스트레이드 대체거래소에서 고가용성 인프라를 구성하고 Splunk·Prometheus·Grafana 기반 모니터링을 구성한 경험을 바탕으로, 토스증권 DevOps&SRE팀이 추구하는 **개발자 경험 개선**과 **Cloud Native 기반 시스템 운영**에 기여하고자 지원합니다.
 
 # 핵심 역량
 
@@ -76,10 +76,10 @@ header-includes:
 
 넥스트레이드 대체거래소 운영SM
 
-- **보안 모니터링 체계 운영**: Splunk 기반 보안 로그 분석 고도화 및 실시간 위협 모니터링 운영
+- **보안 모니터링**: Splunk 기반 보안 로그 분석 개선 및 실시간 위협 모니터링 운영
 - **실시간 알림 자동화**: n8n + Splunk 연동 이벤트 탐지 시 Slack 알림 파이프라인 구축
 - **운영 자동화 툴 개발**: FortiManager API 기반 방화벽 정책 조회 Python 라이브러리 개발
-- **인프라 안정성**: HA 구성 기반 고가용성 유지 및 장애 대응 체계 운영
+- **인프라 안정성**: HA 구성 기반 고가용성 유지 및 장애 대응
 
 *기술: Splunk, FortiGate, n8n, Python, Docker, Linux*
 
