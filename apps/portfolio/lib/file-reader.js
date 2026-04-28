@@ -36,6 +36,11 @@ function getFilesToRead(baseDir) {
       name: 'manifestJson',
     },
     {
+      path: path.join(baseDir, 'manifest_en.json'),
+      encoding: 'utf-8',
+      name: 'manifestEnJson',
+    },
+    {
       path: path.join(baseDir, 'sw.js'),
       encoding: 'utf-8',
       name: 'serviceWorker',

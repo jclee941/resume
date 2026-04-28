@@ -24,6 +24,7 @@ async function runWorkerBuild({ baseDir, version, allowedEmails, logger }) {
     indexEnHtmlRaw,
     projectDataRaw,
     manifestJson,
+    manifestEnJson,
     serviceWorker,
     robotsTxt,
     sitemapXml,
@@ -49,6 +50,7 @@ async function runWorkerBuild({ baseDir, version, allowedEmails, logger }) {
     `data.json: ${projectData.resume.length} resume items, ${projectData.projects.length} projects`
   );
   logger.debug(`manifest.json size: ${manifestJson.length} bytes`);
+  logger.debug(`manifest_en.json size: ${manifestEnJson.length} bytes`);
   logger.debug(`sw.js size: ${serviceWorker.length} bytes`);
   logger.log('✓ Source files loaded\n');
 
@@ -123,6 +125,7 @@ async function runWorkerBuild({ baseDir, version, allowedEmails, logger }) {
     indexHtml,
     indexEnHtml,
     manifestJson,
+    manifestEnJson,
     serviceWorker,
     mainJs,
     robotsTxt,

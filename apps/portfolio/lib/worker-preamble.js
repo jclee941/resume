@@ -10,7 +10,8 @@
  * @param {string} opts.deployedAt - ISO timestamp of deployment
  * @param {string} opts.indexHtml - Escaped HTML content (Korean)
  * @param {string} opts.indexEnHtml - Escaped HTML content (English)
- * @param {string} opts.manifestJson - Escaped manifest.json content
+ * @param {string} opts.manifestJson - Escaped manifest.json content (Korean)
+ * @param {string} opts.manifestEnJson - Escaped manifest.json content (English)
  * @param {string} opts.serviceWorker - Escaped service worker JS
  * @param {string} opts.mainJs - Escaped main.js content
  * @param {string} opts.robotsTxt - Escaped robots.txt content
@@ -37,6 +38,7 @@ const INDEX_HTML = \`${opts.indexHtml}\`;
 const INDEX_EN_HTML = \`${opts.indexEnHtml}\`;
 
 const MANIFEST_JSON = \`${opts.manifestJson}\`;
+const MANIFEST_EN_JSON = \`${opts.manifestEnJson}\`;
 const SERVICE_WORKER = \`${opts.serviceWorker}\`;
 const MAIN_JS = \`${opts.mainJs}\`;
 
@@ -137,6 +139,7 @@ function getRateLimitPolicy(pathname) {
     pathname.startsWith('/assets/') ||
     pathname.startsWith('/fonts/') ||
     pathname === '/manifest.json' ||
+    pathname === '/manifest_en.json' ||
     pathname === '/sw.js' ||
     pathname === '/main.js' ||
     pathname === '/robots.txt' ||
