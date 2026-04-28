@@ -60,11 +60,12 @@ const {
 
 /**
  * Validate source data and build reusable HTML fragments.
- * @param {{projectDataRaw: string, logger: {log: Function}}} options - Data processing options.
+ * @param {{projectDataRaw: string, projectDataEnRaw?: string, logger: {log: Function}}} options - Data processing options.
  * @returns {{projectData: Object, dataHash: string, templates: Object}} Processed data payload.
  */
-function processProjectData({ projectDataRaw, logger }) {
+function processProjectData({ projectDataRaw, projectDataEnRaw, logger }) {
   const projectData = JSON.parse(projectDataRaw);
+  const projectDataEn = projectDataEnRaw ? JSON.parse(projectDataEnRaw) : null;
 
   logger.log('🔍 Validating data.json...');
   validateData(projectData);
@@ -96,6 +97,10 @@ function processProjectData({ projectDataRaw, logger }) {
     infrastructureCardsHtml: generateInfrastructureCards(projectData.infrastructure),
     contactGridHtml: generateContactGrid(projectData.contact),
     aboutContentHtml: generateAboutContent(projectData.aboutSection, dataHash),
+    aboutContentEnHtml: generateAboutContent(
+      (projectDataEn && projectDataEn.aboutSection) || projectData.aboutSection,
+      `${dataHash}:en-about`
+    ),
   };
 
   return {

@@ -143,6 +143,8 @@ function getRateLimitPolicy(pathname) {
     pathname === '/sw.js' ||
     pathname === '/main.js' ||
     pathname === '/robots.txt' ||
+    pathname === '/.well-known/security.txt' ||
+    pathname === '/security.txt' ||
     pathname === '/sitemap.xml' ||
     pathname === '/og-image.webp' ||
     pathname === '/og-image-en.webp' ||

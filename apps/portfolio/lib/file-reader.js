@@ -31,6 +31,11 @@ function getFilesToRead(baseDir) {
       name: 'projectDataRaw',
     },
     {
+      path: path.join(baseDir, 'data_en.json'),
+      encoding: 'utf-8',
+      name: 'projectDataEnRaw',
+    },
+    {
       path: path.join(baseDir, 'manifest.json'),
       encoding: 'utf-8',
       name: 'manifestJson',
