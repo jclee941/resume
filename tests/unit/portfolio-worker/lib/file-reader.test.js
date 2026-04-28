@@ -30,10 +30,10 @@ describe('file-reader', () => {
   });
 
   describe('getFilesToRead', () => {
-    it('returns an array of 11 file specs', () => {
+    it('returns an array of 12 file specs', () => {
       const files = getFilesToRead('/base');
       expect(Array.isArray(files)).toBe(true);
-      expect(files).toHaveLength(11);
+      expect(files).toHaveLength(12);
     });
 
     it('each file spec has path, encoding, and name', () => {
