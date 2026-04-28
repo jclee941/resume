@@ -1,16 +1,16 @@
 const LAST_MODIFIED = new Date().toUTCString();
 const SITEMAP_ETAG = `W/"resume-sitemap-${Date.now()}"`;
 const DEFAULT_LANGUAGE = 'ko';
-const SUPPORTED_LANGUAGES = ['ko', 'en', 'ja'];
+const SUPPORTED_LANGUAGES = ['ko', 'en'];
 const SINGLE_WORKER_PROFILE_SYNC_PATH = '/api/automation/resume-update';
 const SINGLE_WORKER_PROFILE_SYNC_STATUS_PATTERN = /^\/api\/automation\/resume-update\/([^/]+)$/;
 const JOB_ROUTE_PREFIX = '/job';
-const LOCALE_ROUTES = new Set(['/', '/ko', '/ko/', '/en', '/en/', '/ja', '/ja/']);
+const LOCALE_ROUTES = new Set(['/', '/ko', '/ko/', '/en', '/en/', '/ja', '/ja/']); // /ja kept for redirect
 
 const HREFLANG_LINKS = [
   '<link rel="alternate" hreflang="ko-KR" href="https://resume.jclee.me/" />',
   '<link rel="alternate" hreflang="en-US" href="https://resume.jclee.me/en/" />',
-  '<link rel="alternate" hreflang="ja-JP" href="https://resume.jclee.me/ja/" />',
+
   '<link rel="alternate" hreflang="x-default" href="https://resume.jclee.me/" />',
 ].join('\n    ');
 
@@ -28,12 +28,7 @@ const SITEMAP_XML = `<?xml version="1.0" encoding="UTF-8"?>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
-  <url>
-    <loc>https://resume.jclee.me/ja</loc>
-    <lastmod>2026-02-15</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
+
   <url>
     <loc>https://resume.jclee.me/job</loc>
     <lastmod>2026-02-15</lastmod>
@@ -142,7 +137,13 @@ function getPortfolioTargetPath(pathname, language) {
     return '/en/';
   }
 
-  if (pathname === '/ko' || pathname === '/ko/' || pathname === '/ja' || pathname === '/ja/') {
+  if (pathname === '/ko' || pathname === '/ko/') {
+    return '/';
+  }
+
+  // /ja was a partial-localization path that returned KO content (duplicate-content SEO risk).
+  // Treat it as KO for now; the entry router issues a 301 redirect to '/' instead of serving.
+  if (pathname === '/ja' || pathname === '/ja/') {
     return '/';
   }
 

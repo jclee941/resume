@@ -71,6 +71,10 @@ export default {
         response = await fetchJobHandlerResponse(statusRequest, env, ctx, url.pathname);
       } else if (url.pathname.startsWith(JOB_ROUTE_PREFIX)) {
         response = await fetchJobHandlerResponse(request, env, ctx, url.pathname);
+      } else if (url.pathname === '/ja' || url.pathname === '/ja/') {
+        // /ja was a partial-localization route that served KO content (duplicate-content SEO risk).
+        // Permanently redirect to KO root until full JA localization is implemented.
+        return Response.redirect(new URL('/', request.url).toString(), 301);
       } else if (LOCALE_ROUTES.has(url.pathname)) {
         const targetPath = getPortfolioTargetPath(url.pathname, languageContext.language);
         const targetUrl = new URL(request.url);
