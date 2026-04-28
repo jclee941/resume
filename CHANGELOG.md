@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.14.6] - 2026-04-28
+
+### Changes
+- fix(audit): resolve 4 follow-up issues — Zod alignment, JSON Schema CI, app-variant guard, JK stub (83a9b1c)
+
+
 ## [v1.14.5] - 2026-04-28
 
 ### Changes
