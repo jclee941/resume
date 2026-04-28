@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.12.9] - 2026-04-28
+
+### Changes
+- fix(portfolio): self-resolve P1/P2 issues — manifest locale, skill display, hype, canonical (a2257b4)
+
+
 ## [v1.12.8] - 2026-04-28
 
 ### Changes
