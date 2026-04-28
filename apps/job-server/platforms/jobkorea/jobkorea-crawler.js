@@ -186,18 +186,54 @@ export class JobKoreaCrawler extends BaseCrawler {
   }
 
   /**
-   * @stub Profile fetching not yet implemented for JobKorea.
-   * Returns an empty profile placeholder.
+   * Returns the current JobKorea resume snapshot for the authenticated user.
+   *
+   * NOT YET IMPLEMENTED.
+   *
+   * The current placeholder returned `{ success: true, profile: { name: null,
+   * careers: [], skills: [] } }` which is ambiguous — callers cannot distinguish
+   * "empty profile", "not logged in", and "feature not built".
+   *
+   * Implementing this requires:
+   *   1. an authenticated JobKorea session (renew via
+   *      `apps/job-server/scripts/renew-jobkorea-session.js`)
+   *   2. navigating to `/User/Resume/Edit?RNo=<rNo>` with `withStealthBrowser`
+   *   3. running `await page.evaluate(() => $('#frm1').serializeArray())` to
+   *      read the form state, then parsing the index-prefixed field names
+   *      (`Career[c1].C_Name`, `UnivSchool[c1].UnivMajor[0].Major_Name`, etc.)
+   *      documented in
+   *      apps/job-server/scripts/profile-sync/jobkorea-handler/change-detection.js
+   *   4. mapping into the unified `ProfileAggregator` shape:
+   *      `{ basic, careers, education, skills, meta }`
+   *
+   * Tracked in: docs/architecture/RESUME_SYNC_AUDIT_2026-04-29.md (Issue D).
+   *
+   * Returns a structured non-implemented response so consumers can detect
+   * the unsupported state instead of silently working with empty arrays.
    */
   async getProfile() {
     if (!this.cookies) {
-      return { success: false, error: 'Authentication required' };
+      return {
+        success: false,
+        source: 'jobkorea',
+        error: 'Authentication required',
+        status: 'AUTH_REQUIRED',
+      };
     }
 
-    console.warn('[jobkorea-crawler] getProfile() is a stub — returns empty profile');
     return {
-      success: true,
-      profile: { name: null, careers: [], skills: [] },
+      success: false,
+      source: 'jobkorea',
+      status: 'NOT_IMPLEMENTED',
+      profile: null,
+      reason:
+        'JobKorea profile read-back requires live authenticated DOM probing of /User/Resume/Edit. See docs/architecture/RESUME_SYNC_AUDIT_2026-04-29.md (Issue D).',
+      recommendedFlow: [
+        'Authenticate via apps/job-server/scripts/renew-jobkorea-session.js',
+        'Probe /User/Resume/Edit?RNo=<rNo> form via withStealthBrowser',
+        'Parse $(#frm1).serializeArray() against KEY_FIELD_PATTERNS in change-detection.js',
+        'Normalize into ProfileAggregator { basic, careers, education, skills, meta }',
+      ],
     };
   }
 

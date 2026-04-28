@@ -117,3 +117,59 @@ apps/job-server/scripts/profile-sync/__tests__/jobkorea-sections.test.js  (+18/-
 apps/job-server/README.md                           (+2/-2: skill counts)
 docs/architecture/RESUME_SYNC_AUDIT_2026-04-29.md   (+this file)
 ```
+
+---
+
+## 7. 후속 조치 완료 (2026-04-29 same-day follow-up)
+
+Oracle architectural review (cliproxyapi/gpt-5.5) 권고에 따라 아래 4개 이슈 해소.
+
+### Issue A (P1) — JobKorea skills mapping: **Documented & deferred**
+- `apps/job-server/scripts/profile-sync/jobkorea-sections.js` 상단에 27-line 도큐멘트 블록 추가.
+- 레포: codebase 전체에 `Skl_*`/`Skill[*]`/`UserSkill[*]` 레퍼런스 0건. live DOM probe 이전에는 mapping 추측이 아닌 이상적으로 구현 불가.
+- SSoT skills (29개)는 현재 `platformVariants.jobkorea.about` 프로즈에 임베딩. 이것은 **의도된 동작** 임을 명시.
+- Implementation 5-step recipe 도큐멘트에 포함.
+
+### Issue B (P1) — Zod schema 6/22: **Resolved via canonical-validator wiring**
+Oracle 권고: Zod 22개 키 확장은 duplicate validator 만드는 일. 대신 canonical = JSON Schema.
+- **CI wire-in**: `.github/workflows/ci.yml` 의 `validate-data` job에 `validate-resume-data.js` 호출 추가. JSON Schema 검증 실패 시 CI fail.
+- **Zod resume.js**: SSoT 필드명으로 **재정렬** (`profile`→`personal`, `educations`→`education`, `startDate/endDate`→`period`, `techStack`→`technologies`, `issueDate`→`date`). API boundary validation 용도로 용도 제한 명시.
+- **Backward-compat aliases**: `resumeProfileSchema = resumePersonalSchema`, `resumeSkillSchema = resumeSkillItemSchema`.
+- **신규 13 단위 테스트**: `packages/schemas/src/__tests__/resume.test.js`. SSoT 실제 데이터로 parse 검증.
+
+### Issue C (P1) — Shinhan parallel SSoT: **Declared intentionally independent + CI guard**
+Oracle 권고: overlay는 schema mismatch (9 vs 22 keys) 때문에 비현실적. minimal contract validator로 충분.
+- **`packages/data/resumes/applications/AGENTS.md`** 생성: "intentionally independent" 선언 + contract 명세 + anti-patterns.
+- **`tools/scripts/utils/validate-application-variants.js`** 생성: 6 top-level keys + personal.{name,email,phone} + careers[].{company,period} + non-empty skills object 검증.
+- **CI wire-in**: 같은 `validate-data` job에 추가. 3/3 shinhan variants pass.
+
+### Issue D (P2) — JobKorea profile read-back stub: **Structured NOT_IMPLEMENTED**
+- `apps/job-server/platforms/jobkorea/jobkorea-crawler.js` `getProfile()` 교체: empty placeholder → `{ success: false, status: 'AUTH_REQUIRED' | 'NOT_IMPLEMENTED', source: 'jobkorea', reason, recommendedFlow }`.
+- 4-step `recommendedFlow` 포함 (auth, navigate, parse serializeArray, normalize to ProfileAggregator shape).
+- 신규 3 단위 테스트: `apps/job-server/platforms/jobkorea/__tests__/jobkorea-crawler.test.js`.
+- `apps/job-server/package.json` `test` 스크립에 `platforms/**/__tests__/*.test.js` glob 추가 (npm test에 자동 포함).
+
+### Verification (post-followup)
+
+| Check | Result |
+|---|---|
+| `validate-resume-data.js` × ko/en/ja | ✅ 3/3 pass |
+| `validate-application-variants.js` | ✅ 3/3 shinhan pass |
+| `packages/schemas/src/__tests__/resume.test.js` | ✅ 13/13 pass |
+| `apps/job-server` `npm test` | ✅ 818/818 pass (이전 809 + 9 new) |
+| `.github/workflows/ci.yml` YAML lint | ✅ valid |
+
+### Files modified / added (2026-04-29 follow-up)
+
+```
+M  .github/workflows/ci.yml                                            (+24/-12: validate-data wires JSON Schema + variants)
+M  apps/job-server/platforms/jobkorea/jobkorea-crawler.js               (+27/-14: structured stub)
+A  apps/job-server/platforms/jobkorea/__tests__/jobkorea-crawler.test.js (+37: stub regression)
+M  apps/job-server/scripts/profile-sync/jobkorea-sections.js            (+27: skills DEFERRED docblock)
+M  apps/job-server/package.json                                         (+1: platforms/__tests__ glob)
+A  packages/data/resumes/applications/AGENTS.md                          (+65: intentionally independent doc)
+M  packages/schemas/src/resume.js                                        (rewritten: SSoT field-name parity)
+A  packages/schemas/src/__tests__/resume.test.js                         (+125: 13 new tests)
+A  tools/scripts/utils/validate-application-variants.js                  (+156: contract validator)
+M  docs/architecture/RESUME_SYNC_AUDIT_2026-04-29.md                     (+this section)
+```
