@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.12.2] - 2026-04-28
+
+### Changes
+- fix(portfolio): rebuild worker.js + sync index.html with current SSoT (adc7c61)
+
+
 ## [v1.12.1] - 2026-04-28
 
 ### Changes
