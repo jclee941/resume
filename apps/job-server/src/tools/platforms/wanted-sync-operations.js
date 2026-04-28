@@ -205,7 +205,7 @@ export function mapToWantedFormat(source) {
       headline: (
         wantedVariant.headline ||
         (currentPosition ? `${currentPosition} | ${totalExperience}` : totalExperience)
-      ).slice(0, 50),
+      ).slice(0, WANTED_HEADLINE_LIMIT),
       description: (wantedVariant.about || expertise.join(', ')).slice(0, 150),
     },
     careers: (source.careers || []).map((c) => {

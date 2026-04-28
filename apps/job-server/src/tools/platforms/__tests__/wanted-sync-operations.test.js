@@ -3,9 +3,11 @@ import assert from 'node:assert/strict';
 
 import {
   composeWantedAbout,
+  mapToWantedFormat,
   syncAbout,
   syncActivities,
   syncCareers,
+  WANTED_HEADLINE_LIMIT,
 } from '../wanted-sync-operations.js';
 
 function createApiMock() {
@@ -433,5 +435,31 @@ describe('wanted sync operations', () => {
     await syncAbout(api, 'resume-1', {}, 'existing remote about');
 
     assert.strictEqual(api.resume.save.mock.calls.length, 0);
+  });
+});
+
+describe('mapToWantedFormat — BUG-W2 headline truncation', () => {
+  it('uses WANTED_HEADLINE_LIMIT (150) instead of legacy 50-char truncation', () => {
+    const longHeadline =
+      'DevSecOps/SRE | 금융위 본인가 통과 보안 아키텍쳐 설계 | FortiGate HA · Splunk · Terraform · AWS | 9년';
+    assert.ok(longHeadline.length > 50, 'fixture must exceed 50');
+    assert.ok(longHeadline.length <= WANTED_HEADLINE_LIMIT, 'fixture must fit within 150');
+    const result = mapToWantedFormat({
+      platformVariants: { wanted: { headline: longHeadline } },
+      careers: [],
+      summary: {},
+    });
+    assert.strictEqual(result.profile.headline, longHeadline, 'full headline preserved when within 150');
+    assert.strictEqual(result.profile.headline.length, longHeadline.length);
+  });
+
+  it('truncates at 150 when input exceeds limit', () => {
+    const oversized = 'X'.repeat(WANTED_HEADLINE_LIMIT + 50);
+    const result = mapToWantedFormat({
+      platformVariants: { wanted: { headline: oversized } },
+      careers: [],
+      summary: {},
+    });
+    assert.strictEqual(result.profile.headline.length, WANTED_HEADLINE_LIMIT);
   });
 });
