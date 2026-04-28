@@ -80,6 +80,11 @@ export const SKILL_ALIASES = {
   ESXi: 'VMware',
   'Blackbox Exporter': 'Prometheus',
   PromQL: 'Prometheus',
+  // --- Security/compliance fallback to '인프라' (Infrastructure) until real probe ---
+  NAC: '인프라',
+  DLP: '인프라',
+  'ISMS-P': '인프라',
+  'ISO 27001': '인프라',
 };
 export function getTagTypeId(skillName) {
   const direct = SKILL_TAG_MAP[skillName];
