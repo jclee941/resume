@@ -15,6 +15,7 @@ const {
   generateResumeDescription,
   generateInfrastructureCards,
   generateContactGrid,
+  generateAboutContent,
 } = require('./cards');
 
 /**
@@ -94,6 +95,7 @@ function processProjectData({ projectDataRaw, logger }) {
     ),
     infrastructureCardsHtml: generateInfrastructureCards(projectData.infrastructure),
     contactGridHtml: generateContactGrid(projectData.contact),
+    aboutContentHtml: generateAboutContent(projectData.aboutSection, dataHash),
   };
 
   return {

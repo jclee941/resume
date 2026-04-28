@@ -215,11 +215,10 @@ function getCacheControlForPath(pathname) {
     return 'public, max-age=86400, must-revalidate';
   }
 
-  // HTML pages: 1-hour browser cache + 24-hour CDN cache.
-  // CF Workers Builds auto-purges CDN cache on new deploys.
-  // stale-while-revalidate allows serving stale content for up to
-  // 10 minutes while CDN fetches a fresh copy in the background.
-  return 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=600';
+  // HTML pages: nonce-bearing CSP requires per-response uniqueness.
+  // Caching HTML at CDN causes nonce mismatch (body cached, header regenerated).
+  // Per Oracle review: HTML responses with dynamic nonces MUST NOT be shared-cacheable.
+  return 'private, no-store, must-revalidate';
 }
 
 function applyResponseHeaders(response, pathname, requestContext = {}) {

@@ -51,6 +51,7 @@ const TEMPLATE_CACHE = {
   projectCardsHtml: null,
   certCardsHtml: null,
   skillsHtml: null,
+  aboutContentHtml: null,
 };
 
 module.exports = {

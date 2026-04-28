@@ -215,6 +215,7 @@ function generateWebData(source) {
     achievements: source.achievements,
     infrastructure: source.infrastructure,
     contact: source.contact,
+    aboutSection: source.summary && source.summary.aboutSection ? source.summary.aboutSection : null,
   };
 }
 
