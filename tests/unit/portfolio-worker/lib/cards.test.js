@@ -504,7 +504,7 @@ describe('Cards Module', () => {
       expect(html).toContain('Cloud Services');
       expect(html).toContain('AWS');
       expect(html).toContain('GCP');
-      expect(html).toContain('90');
+      expect(html).not.toContain('AWS[90]');
     });
 
     test('should skip categories not in categoryOrder', () => {
@@ -526,15 +526,17 @@ describe('Cards Module', () => {
       expect(html).toContain('Grafana');
     });
 
-    test('should calculate proficiency bar', () => {
+    test('should render skill items inline (no proficiency bar)', () => {
       const skillsData = {
         devops: {
-          items: [{ name: 'Docker', proficiency: 100 }],
+          items: [{ name: 'Docker', proficiency: 100 }, { name: 'Terraform', proficiency: 80 }],
         },
       };
       const html = generateSkillsList(skillsData, 'bar-hash');
 
-      expect(html).toContain('\u2588');
+      expect(html).toContain('Docker');
+      expect(html).toContain('Terraform');
+      expect(html).toContain('htop-row');
     });
 
     test('should use cache on repeated calls with same hash', () => {
@@ -929,12 +931,12 @@ describe('Cards Module', () => {
 
       const html = generateSkillsList(skillsData, 'non-finite-prof-hash');
 
-      expect(html).toContain('FiniteSkill[80]');
+      expect(html).toContain('FiniteSkill');
       expect(html).toContain('NaNSkill');
       expect(html).toContain('StringSkill');
+      expect(html).not.toContain('FiniteSkill[');
       expect(html).not.toContain('NaNSkill[');
       expect(html).not.toContain('StringSkill[');
-      expect(html).toContain('<span class="htop-pct">40%</span>');
     });
 
     test('should return empty string for empty items array in object format', () => {

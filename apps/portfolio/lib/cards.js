@@ -219,21 +219,12 @@ function generateSkillsList(skillsData, dataHash) {
 
       return `<li class="htop-row">
         <span class="htop-label">${label}</span>
-        <span class="htop-bar">[<span class="htop-filled">${bar}</span>]</span>
-        <span class="htop-pct">${averageLevel}%</span>
         <span class="htop-items">${skills
           .map((s) => {
             if (typeof s === 'string') return escapeHtml(s);
-            const name = escapeHtml(String(s && s.name ? s.name : 'Unknown'));
-            const proficiency = Number(s && s.proficiency);
-            return Number.isFinite(proficiency)
-              ? `${name}[${escapeHtml(String(proficiency))}]`
-              : name;
+            return escapeHtml(String(s && s.name ? s.name : 'Unknown'));
           })
           .join(', ')}</span>
-        <div class="skill-bar-container">
-          <progress class="skill-bar" max="100" value="${averageLevel}" aria-label="Average skill level ${averageLevel}%"></progress>
-        </div>
       </li>`;
     })
     .join('\n');
