@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.12.4] - 2026-04-28
+
+### Changes
+- fix(content): quantify remaining 대폭 mentions; restore demo URL infrastructure (6e87ea5)
+
+
 ## [v1.12.3] - 2026-04-28
 
 ### Changes
