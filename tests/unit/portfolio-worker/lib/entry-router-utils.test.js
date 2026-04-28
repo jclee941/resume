@@ -63,13 +63,14 @@ describe('entry-router-utils', () => {
       });
     });
 
-    test('uses Accept-Language ranking when path has no locale', () => {
+    test('uses Accept-Language ranking when path has no locale (ko wins, ja unsupported)', () => {
       const request = new Request('https://resume.jclee.me/', {
         headers: { 'Accept-Language': 'en-US;q=0.5,ja;q=1.0,ko;q=0.8' },
       });
 
+      // Note: 'ja' is unsupported (only ko/en); ko ranks above en-US so ko wins
       expect(utils.detectRequestLanguage(request, '/')).toEqual({
-        language: 'ja',
+        language: 'ko',
         source: 'accept-language',
       });
     });
@@ -126,18 +127,18 @@ describe('entry-router-utils', () => {
       expect(utils.isHtmlResponse(jsonResponse)).toBe(false);
     });
 
-    test('localizes html and injects hreflang links into head', async () => {
+    test('localizes html and injects hreflang links into head (ko/en/x-default)', async () => {
       const response = new Response('<html lang="ko"><head></head><body>Hello</body></html>', {
         headers: { 'Content-Type': 'text/html; charset=utf-8' },
       });
 
-      const localized = await utils.localizeHtmlResponse(response, 'ja');
+      const localized = await utils.localizeHtmlResponse(response, 'en');
       const text = await localized.text();
 
-      expect(text).toContain('<html lang="ja">');
+      expect(text).toContain('<html lang="en">');
       expect(text).toContain('hreflang="ko-KR"');
       expect(text).toContain('hreflang="en-US"');
-      expect(text).toContain('hreflang="ja-JP"');
+      expect(text).not.toContain('hreflang="ja-JP"');
       expect(text).toContain('hreflang="x-default"');
     });
 
