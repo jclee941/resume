@@ -246,6 +246,7 @@ describe('JobKorea fail-loud guards', () => {
     };
     const context = {
       addCookies: async () => {},
+      addInitScript: async () => {},
       newPage: async () => page,
       cookies: async () => [],
     };
