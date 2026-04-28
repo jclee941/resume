@@ -131,3 +131,14 @@ apps/portfolio/.tmp/
 # 1Password secret backups (rotated values awaiting upload)
 /tmp/resume-new-secrets.env
 /tmp/resume-rewrite-env.sh
+
+# Generated PDF artifacts (built via tools/scripts/build/pdf-generator.go)
+# See docs/guides/PDF_GENERATION.md
+# NOTE: packages/data/resumes/applications/**/*.pdf is intentionally tracked
+#       as a record of submitted application materials.
+apps/portfolio/downloads/*.pdf
+packages/data/resumes/generated/*.pdf
+packages/data/resumes/master/*.pdf
+packages/data/resumes/archive/**/*.pdf
+packages/data/resumes/technical/**/*.pdf
+!packages/data/resumes/applications/**/*.pdf
