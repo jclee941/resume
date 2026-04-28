@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.13.0] - 2026-04-28
+
+### Changes
+- feat(content): restore live demo URLs (n8n + Kibana public read-only) (de0c5bf)
+
+
 ## [v1.12.12] - 2026-04-28
 
 ### Changes
