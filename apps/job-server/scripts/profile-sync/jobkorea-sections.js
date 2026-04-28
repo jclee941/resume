@@ -66,10 +66,37 @@ export const MILITARY_KIND = {
   기타: 8,
 };
 
+// JobKorea school type codes. KO keys are canonical; EN/JA aliases below normalize
+// SSoT education.schoolType across locales (KO=4년제, EN=4-year, JA=4年制).
 export const SCHOOL_TYPE = {
   '4년제': 2,
   '2년제': 5,
   고등학교: 11,
+  대학원: 12,
+  // Locale aliases
+  '4-year': 2,
+  '2-year': 5,
+  'high school': 11,
+  graduate: 12,
+  '4年制': 2,
+  '2年制': 5,
+  高校: 11,
+  大学院: 12,
+};
+
+// JobKorea major type codes. KO keys are canonical; EN/JA aliases follow.
+// 1=전공(Major), 2=부전공(Minor), 3=복수전공(Double Major).
+export const MAJOR_TYPE = {
+  전공: 1,
+  부전공: 2,
+  복수전공: 3,
+  // Locale aliases
+  Major: 1,
+  Minor: 2,
+  'Double Major': 3,
+  専攻: 1,
+  副専攻: 2,
+  複数専攻: 3,
 };
 
 export function toYYYYMM(dateStr) {
@@ -181,10 +208,16 @@ export function mapSchoolToFormFields(ssot, schoolIndex) {
     gradYM = toYYYYMM(education.endDate || '');
   }
   const gradTypeCode = GRAD_TYPE[education.status] || GRAD_TYPE.재학중;
+  const schoolTypeCode =
+    SCHOOL_TYPE[education.schoolType] !== undefined
+      ? SCHOOL_TYPE[education.schoolType]
+      : SCHOOL_TYPE['4년제'];
+  const majorTypeCode =
+    MAJOR_TYPE[education.majorType] !== undefined ? MAJOR_TYPE[education.majorType] : 1;
 
   return [
     { name: `UnivSchool[${key}].Schl_Name`, value: toFieldValue(education.school || '') },
-    { name: `UnivSchool[${key}].Schl_Type_Code`, value: toFieldValue(SCHOOL_TYPE['4년제']) },
+    { name: `UnivSchool[${key}].Schl_Type_Code`, value: toFieldValue(schoolTypeCode) },
     {
       name: `UnivSchool[${key}].Entc_YM`,
       value: toFieldValue(toYYYYMM(education.startDate || '')),
@@ -195,7 +228,7 @@ export function mapSchoolToFormFields(ssot, schoolIndex) {
       name: `UnivSchool[${key}].UnivMajor[0].Major_Name`,
       value: toFieldValue(education.major || ''),
     },
-    { name: `UnivSchool[${key}].UnivMajor[0].Major_Type_Code`, value: '1' },
+    { name: `UnivSchool[${key}].UnivMajor[0].Major_Type_Code`, value: toFieldValue(majorTypeCode) },
     { name: 'UnivSchool.index', value: key },
     { name: 'InputStat.SchoolInputStat', value: 'True' },
   ];

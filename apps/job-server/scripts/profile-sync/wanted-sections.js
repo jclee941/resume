@@ -1,5 +1,7 @@
 import { CONFIG, JOB_CATEGORY_MAPPING, DEFAULT_JOB_CATEGORY } from './constants.js';
+import { WANTED_ABOUT_LIMIT } from '../../src/tools/platforms/wanted-sync-operations.js';
 import { log, parsePeriod, normalizePhone } from './utils.js';
+
 
 /** @param {Object} career @returns {Object} Wanted career format */
 export function mapCareerToWanted(career) {
@@ -249,8 +251,11 @@ export async function syncWantedActivities(client, ssot, profile, resumeId) {
 /** @param {Object} client @param {Object} ssot @param {Object} resumeDetail @param {string} resumeId @returns {Promise<Object>} */
 export async function syncWantedAbout(client, ssot, resumeDetail, resumeId) {
   const rawAbout = ssot.summary?.profileStatement || '';
-  // Wanted about field has a character limit — truncate to 150 chars
-  const ssotAbout = rawAbout.length > 150 ? `${rawAbout.slice(0, 147)  }...` : rawAbout;
+  // Wanted about field has a 3000-char limit (WANTED_ABOUT_LIMIT). Truncate with ellipsis.
+  const ssotAbout =
+    rawAbout.length > WANTED_ABOUT_LIMIT
+      ? `${rawAbout.slice(0, WANTED_ABOUT_LIMIT - 3)}...`
+      : rawAbout;
   const wantedAbout = resumeDetail?.about || '';
 
   if (ssotAbout === wantedAbout) {

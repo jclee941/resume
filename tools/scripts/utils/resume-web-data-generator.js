@@ -86,6 +86,13 @@ function generateWebData(source) {
     },
   };
 
+  // SSoT → portfolio data contract:
+  // - source.careers[] → resume[] (flat career cards: icon, title, description, period, stats, highlight)
+  // - source.personalProjects[] → projects[] (showcase cards)
+  // INTENTIONALLY EXCLUDED: source.careers[].projects[] (work sub-projects with techStack/achievements)
+  //   These are job-application detail consumed by Wanted/JobKorea sync, not portfolio content.
+  //   The terminal-themed portfolio shows summarized career cards only.
+  //   If sub-projects need to render here, extend the entry below AND update apps/portfolio/lib/cards.js.
   const resume = source.careers.map((career, idx) => {
     const icons = ['🏦', '🏗️', '📈', '☁️', '🎓', '📞', '✈️'];
     const statsMap = {

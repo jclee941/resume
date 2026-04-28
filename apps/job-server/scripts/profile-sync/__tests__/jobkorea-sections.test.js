@@ -158,6 +158,53 @@ describe('mapSchoolToFormFields', () => {
     assert.strictEqual(byName.get('UnivSchool[c1].Grad_YM'), '201802');
     assert.strictEqual(byName.get('UnivSchool[c1].Grad_Type_Code'), '10');
   });
+
+  it('BUG-J1: derives Schl_Type_Code from SSoT (KO 4년제 → 2)', () => {
+    const fields = mapSchoolToFormFields({
+      education: { school: '테스트대', major: '전산', startDate: '2020.03', status: '재학중', schoolType: '4년제', majorType: '전공' },
+    });
+    const byName = toMap(fields);
+    assert.strictEqual(byName.get('UnivSchool[c1].Schl_Type_Code'), '2');
+    assert.strictEqual(byName.get('UnivSchool[c1].UnivMajor[0].Major_Type_Code'), '1');
+  });
+
+  it('BUG-J1: maps EN locale aliases (4-year → 2, Major → 1)', () => {
+    const fields = mapSchoolToFormFields({
+      education: { school: 'Test U', major: 'CS', startDate: '2020.03', status: '재학중', schoolType: '4-year', majorType: 'Major' },
+    });
+    const byName = toMap(fields);
+    assert.strictEqual(byName.get('UnivSchool[c1].Schl_Type_Code'), '2');
+    assert.strictEqual(byName.get('UnivSchool[c1].UnivMajor[0].Major_Type_Code'), '1');
+  });
+
+  it('BUG-J1: maps JA locale aliases (4年制 → 2, 専攻 → 1)', () => {
+    const fields = mapSchoolToFormFields({
+      education: { school: 'テスト大', major: 'CS', startDate: '2020.03', status: '재학중', schoolType: '4年制', majorType: '専攻' },
+    });
+    const byName = toMap(fields);
+    assert.strictEqual(byName.get('UnivSchool[c1].Schl_Type_Code'), '2');
+    assert.strictEqual(byName.get('UnivSchool[c1].UnivMajor[0].Major_Type_Code'), '1');
+  });
+
+  it('BUG-J1: defaults to 4년제 (code 2) when schoolType is missing or unknown', () => {
+    const fields = mapSchoolToFormFields({
+      education: { school: '테스트대', major: '전산', startDate: '2020.03', status: '재학중' },
+    });
+    const byName = toMap(fields);
+    assert.strictEqual(byName.get('UnivSchool[c1].Schl_Type_Code'), '2');
+    assert.strictEqual(byName.get('UnivSchool[c1].UnivMajor[0].Major_Type_Code'), '1');
+  });
+
+  it('BUG-J1: maps 고등학교 (KO) → 11 and 대학원 (KO) → 12', () => {
+    const hs = mapSchoolToFormFields({
+      education: { school: '용남고', startDate: '2010.03', endDate: '2013.02', status: '졸업', schoolType: '고등학교' },
+    });
+    const grad = mapSchoolToFormFields({
+      education: { school: '대학원', startDate: '2018.03', endDate: '2020.02', status: '졸업', schoolType: '대학원' },
+    });
+    assert.strictEqual(toMap(hs).get('UnivSchool[c1].Schl_Type_Code'), '11');
+    assert.strictEqual(toMap(grad).get('UnivSchool[c1].Schl_Type_Code'), '12');
+  });
 });
 
 describe('mapLicensesToFormFields', () => {
