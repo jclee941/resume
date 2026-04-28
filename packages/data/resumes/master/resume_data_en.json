@@ -84,7 +84,19 @@
         {
           "name": "Nextrade Security Operations",
           "description": "Automated security operations with Splunk ES and FortiGate APIs\n• Integrated n8n workflows to deliver real-time Slack alerts when security events are detected\n• Built an automated firewall policy lookup tool using FortiManager API",
-          "period": "2025.03 ~ 2026.02"
+          "period": "2025.03 ~ 2026.02",
+          "techStack": [
+            "Splunk ES",
+            "FortiManager API",
+            "n8n",
+            "Python",
+            "Docker"
+          ],
+          "achievements": [
+            "Designed and operated 32 SIEM detection rules",
+            "Established real-time security event alerting pipeline",
+            "Improved operational efficiency through firewall policy lookup automation"
+          ]
         }
       ]
     },
@@ -105,7 +117,19 @@
         {
           "name": "Nextrade Security Infrastructure Build",
           "description": "Designed a high-availability security architecture for a securities trading platform\n• Implemented Active-Passive HA with FGCP (FortiGate Clustering Protocol)\n• Standardized initial device setup and policy deployment with reusable Ansible roles",
-          "period": "2024.03 ~ 2025.02"
+          "period": "2024.03 ~ 2025.02",
+          "techStack": [
+            "FortiGate",
+            "FortiManager",
+            "Ansible",
+            "Python",
+            "VMware"
+          ],
+          "achievements": [
+            "Designed high-availability (HA) security architecture",
+            "Passed FSC main authorization review (security architecture)",
+            "Standardized Ansible-based security appliance policy deployment"
+          ]
         }
       ]
     },
@@ -119,7 +143,27 @@
       "teamSize": "Infrastructure and information security team (size undisclosed)",
       "myRole": "AWS security operations and observability engineer",
       "workType": "SM",
-      "description": ""
+      "description": "",
+      "projects": [
+        {
+          "name": "AI Investment Service Security Operations",
+          "description": "IaC-based AWS security infrastructure management and observability.\n• Code-based management of VPCs, Subnets, and Security Groups via Terraform.\n• Integrated AWS CloudTrail and GuardDuty logs into CloudWatch for analysis.",
+          "period": "2022.08 ~ 2024.02",
+          "techStack": [
+            "AWS",
+            "Terraform",
+            "Prometheus",
+            "Grafana",
+            "CloudTrail",
+            "GuardDuty"
+          ],
+          "achievements": [
+            "Completed Terraform IaC migration of VPC/Subnet/SG",
+            "Built integrated security monitoring with CloudTrail + GuardDuty",
+            "Completed robo-advisor testbed security review response"
+          ]
+        }
+      ]
     },
     {
       "company": "Fun&C Co., Ltd.",
@@ -166,7 +210,26 @@
       "myRole": "NSX-T micro-segmentation and integrated security policy designer",
       "workType": "Full-time (Dispatched)",
       "description": "",
-      "note": "Jointree employee, dispatched to Kookmin University Next-Gen Information System project"
+      "note": "Jointree employee, dispatched to Kookmin University Next-Gen Information System project",
+      "projects": [
+        {
+          "name": "Kookmin University Next-Generation Information System",
+          "description": "SDN-based network virtualization and microsegmentation.\n• Server-to-server traffic control via VMware NSX-T Distributed Firewall (DFW).\n• Centralized network security policies at the virtual switch (VDS) layer.",
+          "period": "2021.09 ~ 2022.04",
+          "techStack": [
+            "VMware NSX-T",
+            "vSphere",
+            "NAC",
+            "DLP",
+            "Wazuh"
+          ],
+          "achievements": [
+            "Completed NSX-T microsegmentation rollout",
+            "Designed DFW-based traffic control policies",
+            "Established centralized VDS-layer security policy management"
+          ]
+        }
+      ]
     },
     {
       "company": "Metanet M Platform Co., Ltd.",
@@ -178,7 +241,26 @@
       "teamSize": "Infrastructure operations team (size undisclosed)",
       "myRole": "VPN/NAC automation and switch inspection automation engineer",
       "workType": "SI+SM",
-      "description": ""
+      "description": "",
+      "projects": [
+        {
+          "name": "Contact Center Remote-Work Infrastructure",
+          "description": "VPN infrastructure design and automation for large-scale remote access.\n• Synchronized large-scale server configurations via Python scripts and Ansible.\n• Built VPN session monitoring and abnormal access detection dashboards.",
+          "period": "2019.12 ~ 2021.08",
+          "techStack": [
+            "Ansible",
+            "Python",
+            "VPN",
+            "NAC",
+            "FortiGate"
+          ],
+          "achievements": [
+            "Automated large-scale server configuration via Ansible",
+            "Developed NAC policy automation system",
+            "Built VPN abnormal-access detection dashboard"
+          ]
+        }
+      ]
     },
     {
       "company": "MTData Co., Ltd.",
@@ -191,7 +273,25 @@
       "myRole": "Closed-network server operations and security patching engineer",
       "workType": "Full-time (Dispatched)",
       "description": "",
-      "note": "MTData employee, dispatched to Korea Aerospace Industries (KAI) IT infrastructure field operations"
+      "note": "MTData employee, dispatched to Korea Aerospace Industries (KAI) IT infrastructure field operations",
+      "projects": [
+        {
+          "name": "KAI Infrastructure Operations",
+          "description": "Reliable availability of closed-network security infrastructure.\n• Proactive hardware-failure detection via periodic system log analysis.\n• Compliance with internal security audit standards and configuration guidelines.",
+          "period": "2017.02 ~ 2018.10",
+          "techStack": [
+            "Linux",
+            "Shell",
+            "Firewall",
+            "WSUS"
+          ],
+          "achievements": [
+            "Proactive hardware-failure detection through log analysis",
+            "Compliance with internal security audit configuration standards",
+            "Stable operation of closed-network security infrastructure"
+          ]
+        }
+      ]
     }
   ],
   "projects": [

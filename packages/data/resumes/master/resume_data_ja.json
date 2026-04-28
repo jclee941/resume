@@ -84,7 +84,19 @@
         {
           "name": "ネクストレード セキュリティ運用",
           "description": "Splunk ESとFortiGate APIを活用したセキュリティ運用自動化\n• n8nワークフロー連携により、セキュリティイベント検知時にSlackへリアルタイム通知\n• FortiManager APIを利用したファイアウォールポリシー自動照会ツールを開発",
-          "period": "2025.03 ~ 2026.02"
+          "period": "2025.03 ~ 2026.02",
+          "techStack": [
+            "Splunk ES",
+            "FortiManager API",
+            "n8n",
+            "Python",
+            "Docker"
+          ],
+          "achievements": [
+            "SIEM検知ルール32件の設計・運用",
+            "セキュリティイベントのリアルタイムアラートパイプライン構築",
+            "ファイアウォールポリシー照会自動化による運用業務の効率化"
+          ]
         }
       ]
     },
@@ -105,7 +117,19 @@
         {
           "name": "ネクストレード セキュリティ基盤構築",
           "description": "高可用性を前提とした証券売買システムのセキュリティアーキテクチャを設計\n• FGCP（FortiGate Clustering Protocol）ベースのActive-Passive HAを構成\n• Ansible Roleを活用し、セキュリティ機器の初期設定とポリシー配布を標準化",
-          "period": "2024.03 ~ 2025.02"
+          "period": "2024.03 ~ 2025.02",
+          "techStack": [
+            "FortiGate",
+            "FortiManager",
+            "Ansible",
+            "Python",
+            "VMware"
+          ],
+          "achievements": [
+            "高可用性(HA)セキュリティアーキテクチャ設計",
+            "金融委本認可審査通過(セキュリティアーキテクチャ)",
+            "Ansibleベースのセキュリティ機器ポリシー配布標準化"
+          ]
         }
       ]
     },
@@ -119,7 +143,27 @@
       "teamSize": "インフラ・情報セキュリティチーム（規模非公開）",
       "myRole": "AWSセキュリティ運用・可観測性構築担当",
       "workType": "SM",
-      "description": ""
+      "description": "",
+      "projects": [
+        {
+          "name": "AI投資サービス セキュリティ運用",
+          "description": "IaCベースのAWSセキュリティインフラ管理および可観測性確保。\n• Terraformを使用したVPC、サブネット、セキュリティグループのコードベース管理。\n• AWS CloudTrailおよびGuardDutyログをCloudWatchに統合分析。",
+          "period": "2022.08 ~ 2024.02",
+          "techStack": [
+            "AWS",
+            "Terraform",
+            "Prometheus",
+            "Grafana",
+            "CloudTrail",
+            "GuardDuty"
+          ],
+          "achievements": [
+            "VPC/Subnet/SGのTerraform IaC化完了",
+            "CloudTrail + GuardDutyによる統合セキュリティ監視構築",
+            "ロボアドバイザー・テストベッド審査対応完了"
+          ]
+        }
+      ]
     },
     {
       "company": "(株)ファンエンシー",
@@ -166,7 +210,26 @@
       "myRole": "NSX-Tマイクロセグメンテーション・統合ポリシー設計担当",
       "workType": "正社員（派遣）",
       "description": "",
-      "note": "ジョイントリー所属、国民大学校次世代情報システム構築へ派遣"
+      "note": "ジョイントリー所属、国民大学校次世代情報システム構築へ派遣",
+      "projects": [
+        {
+          "name": "国民大学校 次世代情報システム",
+          "description": "SDNベースのネットワーク仮想化およびマイクロセグメンテーション実装。\n• VMware NSX-T分散ファイアウォール(DFW)を活用したサーバー間トラフィック制御。\n• 仮想スイッチ(VDS)レベルでのネットワークセキュリティポリシー集中管理。",
+          "period": "2021.09 ~ 2022.04",
+          "techStack": [
+            "VMware NSX-T",
+            "vSphere",
+            "NAC",
+            "DLP",
+            "Wazuh"
+          ],
+          "achievements": [
+            "NSX-Tマイクロセグメンテーション適用完了",
+            "DFWベースのトラフィック制御ポリシー設計",
+            "VDSレベルセキュリティポリシー集中管理体制の構築"
+          ]
+        }
+      ]
     },
     {
       "company": "メタネットMプラットフォーム",
@@ -178,7 +241,26 @@
       "teamSize": "インフラ運用チーム（規模非公開）",
       "myRole": "VPN/NAC自動化・スイッチ点検自動化担当",
       "workType": "SI+SM",
-      "description": ""
+      "description": "",
+      "projects": [
+        {
+          "name": "コンタクトセンター リモートワーク基盤",
+          "description": "大規模リモートアクセス向けVPNインフラ設計および自動化。\n• PythonスクリプトとAnsibleを連携した大規模サーバー設定の同期。\n• VPNセッション監視および異常アクセス検知ダッシュボードの構築。",
+          "period": "2019.12 ~ 2021.08",
+          "techStack": [
+            "Ansible",
+            "Python",
+            "VPN",
+            "NAC",
+            "FortiGate"
+          ],
+          "achievements": [
+            "大規模サーバー設定のAnsible自動化",
+            "NACポリシー自動化システムの開発",
+            "VPN異常アクセス検知ダッシュボードの構築"
+          ]
+        }
+      ]
     },
     {
       "company": "(株)エムティデータ",
@@ -191,7 +273,25 @@
       "myRole": "閉域網サーバー運用・セキュリティパッチ担当",
       "workType": "正社員（派遣）",
       "description": "",
-      "note": "エムティデータ所属、韓国航空宇宙産業(KAI) IT インフラ現場運用へ派遣"
+      "note": "エムティデータ所属、韓国航空宇宙産業(KAI) IT インフラ現場運用へ派遣",
+      "projects": [
+        {
+          "name": "KAI インフラ運用",
+          "description": "閉域網セキュリティインフラの安定的可用性確保。\n• サーバーシステムログの定期分析によるハードウェア障害兆候の事前把握。\n• 内部セキュリティ監査基準に基づくシステム設定セキュリティガイドラインの遵守。",
+          "period": "2017.02 ~ 2018.10",
+          "techStack": [
+            "Linux",
+            "Shell",
+            "Firewall",
+            "WSUS"
+          ],
+          "achievements": [
+            "ログ分析によるハードウェア障害の事前検知",
+            "内部セキュリティ監査基準に基づく設定遵守",
+            "閉域網セキュリティインフラの安定運用"
+          ]
+        }
+      ]
     }
   ],
   "projects": [
