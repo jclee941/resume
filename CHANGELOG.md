@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.12.12] - 2026-04-28
+
+### Changes
+- fix(content): null Splunk demoUrls per Oracle public-exposure review (1ce365c)
+
+
 ## [v1.12.11] - 2026-04-28
 
 ### Changes
