@@ -765,7 +765,7 @@
       "forks": 0,
       "forksUiHint": "de-emphasize",
       "githubUrl": null,
-      "demoUrl": null,
+      "demoUrl": "https://n8n.jclee.me/webhook/portfolio/demo",
       "metrics": {
         "workflows": "15+ 워크플로우",
         "executions": "일 200+ 실행",
@@ -815,7 +815,7 @@
       "forks": 0,
       "forksUiHint": "de-emphasize",
       "githubUrl": "https://github.com/jclee941/splunk",
-      "demoUrl": null,
+      "demoUrl": "https://kibana.jclee.me/s/portfolio-demo/app/dashboards?auth_provider_hint=portfolio_demo",
       "metrics": {
         "detectionRules": "32개 탐지 룰",
         "alertChannels": "Slack Block Kit",
