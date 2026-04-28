@@ -30,8 +30,8 @@ MCP server for job platform automation across Wanted, JobKorea, Saramin, LinkedI
 
 ## Skills mapping
 
-- `SKILL_TAG_MAP` maps 24 skills
-- 12 skills remain unmapped because the Wanted database does not expose them
+- `SKILL_TAG_MAP` maps 31 skills directly + 45 aliases (apps/job-server/scripts/skill-tag-map.js)
+- ~10 alias targets currently resolve to fallback routings (e.g. Loki→Prometheus, Ansible→DevOps) until real `tag_type_id` values are probed via /sns-api/profile (see docs/guides/wanted-skill-probe.md)
 
 ## API notes
 
