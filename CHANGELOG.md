@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.12.8] - 2026-04-28
+
+### Changes
+- fix(content): remove fabricated metrics, fix ITCEN period, clean residual hype (8eede04)
+
+
 ## [v1.12.7] - 2026-04-28
 
 ### Changes
