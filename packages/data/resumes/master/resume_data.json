@@ -815,7 +815,7 @@
       "forks": 0,
       "forksUiHint": "de-emphasize",
       "githubUrl": "https://github.com/jclee941/splunk",
-      "demoUrl": "https://kibana.jclee.me/s/portfolio-demo/app/dashboards?auth_provider_hint=portfolio_demo",
+      "demoUrl": "https://kibana.jclee.me/s/portfolio-demo/app/dashboards?auth_provider_hint=portfolio_demo#/view/portfolio-demo-dashboard",
       "metrics": {
         "detectionRules": "32개 탐지 룰",
         "alertChannels": "Slack Block Kit",
