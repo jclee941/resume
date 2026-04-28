@@ -1,4 +1,5 @@
 const LAST_MODIFIED = new Date().toUTCString();
+const SITEMAP_LASTMOD = new Date().toISOString().slice(0, 10);
 const SITEMAP_ETAG = `W/"resume-sitemap-${Date.now()}"`;
 const DEFAULT_LANGUAGE = 'ko';
 const SUPPORTED_LANGUAGES = ['ko', 'en'];
@@ -18,34 +19,15 @@ const SITEMAP_XML = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://resume.jclee.me/</loc>
-    <lastmod>2026-02-15</lastmod>
+    <lastmod>${SITEMAP_LASTMOD}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://resume.jclee.me/en</loc>
-    <lastmod>2026-02-15</lastmod>
+    <loc>https://resume.jclee.me/en/</loc>
+    <lastmod>${SITEMAP_LASTMOD}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://resume.jclee.me/job</loc>
-    <lastmod>2026-02-15</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://resume.jclee.me/job/dashboard</loc>
-    <lastmod>2026-02-15</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://resume.jclee.me/health</loc>
-    <lastmod>2026-02-15</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
   </url>
 </urlset>`;
 
