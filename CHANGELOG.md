@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.14.4] - 2026-04-28
+
+### Changes
+- chore(pdf): untrack generated PDF artifacts and add ignore patterns (56f9104)
+
+
 ## [v1.14.3] - 2026-04-28
 
 ### Changes
