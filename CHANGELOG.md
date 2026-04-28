@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.0.129] - 2026-04-14
 
+## [v1.14.5] - 2026-04-28
+
+### Changes
+- fix(sync): resume sync audit — Splunk dedup, locale parity, JK company normalize (5dc60f1)
+
+
 ## [v1.14.4] - 2026-04-28
 
 ### Changes
