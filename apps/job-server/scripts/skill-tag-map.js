@@ -85,6 +85,10 @@ export const SKILL_ALIASES = {
   DLP: '인프라',
   'ISMS-P': '인프라',
   'ISO 27001': '인프라',
+  // --- Modern observability/cloud-native (Oracle Wave 2: real and defensible) ---
+  OpenTelemetry: 'Prometheus',
+  OTel: 'Prometheus',
+  Otelp: 'Prometheus',
 };
 export function getTagTypeId(skillName) {
   const direct = SKILL_TAG_MAP[skillName];

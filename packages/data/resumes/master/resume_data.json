@@ -294,7 +294,7 @@
           "period": "2017.02 ~ 2018.10",
           "techStack": [
             "Linux",
-            "Shell",
+            "Bash",
             "Firewall",
             "WSUS"
           ],
@@ -526,6 +526,11 @@
           "name": "Splunk",
           "level": "expert",
           "proficiency": 95
+        },
+        {
+          "name": "OpenTelemetry",
+          "level": "intermediate",
+          "proficiency": 60
         }
       ]
     },
@@ -546,7 +551,7 @@
         {
           "name": "Kubernetes",
           "level": "intermediate",
-          "proficiency": 60
+          "proficiency": 70
         },
         {
           "name": "Linux",
@@ -591,7 +596,7 @@
           "proficiency": 80
         },
         {
-          "name": "Shell",
+          "name": "Bash",
           "level": "expert",
           "proficiency": 95
         },
@@ -670,6 +675,11 @@
         },
         {
           "name": "TypeScript",
+          "level": "intermediate",
+          "proficiency": 60
+        },
+        {
+          "name": "Go",
           "level": "intermediate",
           "proficiency": 60
         }
