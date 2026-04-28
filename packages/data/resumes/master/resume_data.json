@@ -772,7 +772,7 @@
       "language": "Python",
       "forks": 0,
       "forksUiHint": "de-emphasize",
-      "githubUrl": "https://github.com/qws941/splunk",
+      "githubUrl": "https://github.com/jclee941/splunk",
       "demoUrl": "https://splunk.jclee.me",
       "metrics": {
         "endpoints": "FortiManager, FortiAnalyzer REST API",
@@ -797,7 +797,7 @@
       "language": "Python",
       "forks": 0,
       "forksUiHint": "de-emphasize",
-      "githubUrl": "https://github.com/qws941/splunk",
+      "githubUrl": "https://github.com/jclee941/splunk",
       "demoUrl": "https://splunk.jclee.me",
       "metrics": {
         "detectionRules": "32개 탐지 룰",
@@ -849,7 +849,7 @@
       "language": "Python",
       "forks": 0,
       "forksUiHint": "de-emphasize",
-      "githubUrl": null,
+      "githubUrl": "https://github.com/jclee941/hycu_fsds",
       "demoUrl": null,
       "metrics": {
         "award": "우수상 (Excellence Award)",
