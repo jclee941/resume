@@ -127,7 +127,7 @@
       "icon": "📊",
       "title": "Observability Platform",
       "tech": "Grafana, Prometheus, Loki, Blackbox Exporter, Docker",
-      "description": "[Problem] Metrics and logs across the homelab were fragmented, which slowed down root-cause analysis.\n[Action] I collected 50+ metric endpoints with Prometheus and unified three data sources—Loki, Elasticsearch, and Prometheus—into 12+ Grafana dashboards.\n[Result] The platform maintained 99.5% infrastructure uptime while establishing a single-pane operating baseline for metrics and logs.",
+      "description": "[Problem] Metrics and logs across the homelab were fragmented, which slowed down root-cause analysis.\n[Action] I collected 50+ metric endpoints with Prometheus and unified three data sources—Loki, Elasticsearch, and Prometheus—into 12+ Grafana dashboards.\n[Result] The platform consolidated metrics and logs into a single operating baseline, supporting infrastructure visibility across services.",
       "tagline": "Monitoring Platform",
       "stars": 0,
       "language": "PromQL",
@@ -137,7 +137,7 @@
       "metrics": {
         "dashboards": "12+ Grafana dashboards",
         "datasources": "3 unified data sources (Prometheus, Loki, Elasticsearch)",
-        "uptime": "99.5%",
+        "uptime": "High availability",
         "targets": "50+ metric endpoints",
         "healthChecks": "Blackbox Exporter external endpoint monitoring"
       },
@@ -177,7 +177,7 @@
       "icon": "🛡️",
       "title": "Fortinet API Client",
       "tech": "Python, FortiManager, FortiAnalyzer",
-      "description": "[Problem] Firewall policy checks, route lookups, and log-statistics collection depended on manual CLI work and separate consoles.\n[Action] I built a Python library that wraps the FortiManager and FortiAnalyzer REST APIs and abstracts policy lookup, route management, and log statistics into reusable methods.\n[Result] The library reduced manual operating time by 80% and established a reusable API foundation for security automation.",
+      "description": "[Problem] Firewall policy checks, route lookups, and log-statistics collection depended on manual CLI work and separate consoles.\n[Action] I built a Python library that wraps the FortiManager and FortiAnalyzer REST APIs and abstracts policy lookup, route management, and log statistics into reusable methods.\n[Result] Firewall policy lookups and changes can now be handled with a single script command, and the library is reused for security operations automation.",
       "tagline": "Security Device API Automation",
       "stars": 0,
       "language": "Python",
@@ -201,7 +201,7 @@
       "icon": "🔔",
       "title": "Security Alert System",
       "tech": "Splunk, Python, Slack",
-      "description": "[Problem] FortiGate security events were split across devices and log systems, which delayed real-time response.\n[Action] I operated 32 Splunk detection rules and built a Python + Slack Block Kit notification pipeline for immediate triage.\n[Result] Alerts are delivered within 30 seconds after an event and the automation baseline helps cut unnecessary alerts by 70%.",
+      "description": "[Problem] FortiGate security events were split across devices and log systems, which delayed real-time response.\n[Action] I operated 32 Splunk detection rules and built a Python + Slack Block Kit notification pipeline for immediate triage.\n[Result] Alerts are delivered within 30 seconds after an event, and rule-based noise filtering reduced unnecessary alerts to support an alert-driven security operations flow.",
       "tagline": "Security Alert Automation",
       "stars": 0,
       "language": "Python",
@@ -213,7 +213,7 @@
         "alertChannels": "Slack Block Kit",
         "sources": "FortiGate syslog → Splunk",
         "responseTime": "Alert within 30 seconds after event detection",
-        "noiseReduction": "70% reduction in unnecessary alerts"
+        "noiseReduction": "Reduction of unnecessary alerts"
       },
       "related_skills": [
         "Splunk",
@@ -312,7 +312,7 @@
       "metrics": {
         "dashboards": "12+ Grafana dashboards",
         "datasources": "3 unified data sources (Prometheus, Loki, Elasticsearch)",
-        "uptime": "99.5%",
+        "uptime": "High availability",
         "targets": "50+ metric endpoints",
         "healthChecks": "Blackbox Exporter external endpoint monitoring"
       },
@@ -352,7 +352,7 @@
       "icon": "🛡️",
       "title": "Fortinet API Client",
       "tech": "Python, FortiManager, FortiAnalyzer",
-      "description": "[Problem] Firewall policy checks, route lookups, and log-statistics collection depended on manual CLI work and separate consoles.\n[Action] I built a Python library that wraps the FortiManager and FortiAnalyzer REST APIs and abstracts policy lookup, route management, and log statistics into reusable methods.\n[Result] The library reduced manual operating time by 80% and established a reusable API foundation for security automation.",
+      "description": "[Problem] Firewall policy checks, route lookups, and log-statistics collection depended on manual CLI work and separate consoles.\n[Action] I built a Python library that wraps the FortiManager and FortiAnalyzer REST APIs and abstracts policy lookup, route management, and log statistics into reusable methods.\n[Result] Firewall policy lookups and changes can now be handled with a single script command, and the library is reused for security operations automation.",
       "tagline": "Security Device API Automation",
       "stars": 0,
       "language": "Python",
@@ -388,7 +388,7 @@
         "alertChannels": "Slack Block Kit",
         "sources": "FortiGate syslog → Splunk",
         "responseTime": "Alert delivered within 30 seconds of event detection",
-        "noiseReduction": "70% reduction in unnecessary alerts"
+        "noiseReduction": "Reduction of unnecessary alerts"
       },
       "related_skills": [
         "Splunk",
@@ -722,7 +722,7 @@
     "badge": "Security Infrastructure Engineer · 9 Years",
     "title": "Jaecheol Lee",
     "titleEn": "Jaecheol Lee",
-    "subtitle": "Finance/Public Security Infrastructure · Splunk ES 32 Rules · FortiGate HA 99.99% · n8n Automation 70%"
+    "subtitle": "Finance/Public Security Infrastructure · Splunk ES SIEM · FortiGate HA · n8n Operations Automation"
   },
   "sectionDescriptions": {
     "resume": "9 years of infrastructure experience",
@@ -733,17 +733,18 @@
     "contact": "Contact"
   },
   "achievements": [
-    "Designed Nextrade ATS security infrastructure to a 99.99% HA target and passed FSC production approval.",
-    "Built an integrated Splunk-FortiNet security operations system with 32 detection rules and alerts delivered within 30 seconds.",
-    "Reduced unnecessary Nextrade alerts by 70% and cut firewall policy lookup time by 80% through operations automation.",
-    "Operated an observability platform with 12+ dashboards, 50+ metric endpoints, and 99.5% uptime across the homelab.",
+    "Operated Nextrade ATS HA-based security infrastructure and supported the Financial Services Commission production authorization review.",
+    "Operated 32 Splunk ES detection rules integrated with the FortiNet API for real-time security event alerts.",
+    "Reduced security event alert noise and replaced FortiManager API firewall policy lookups with scripted automation.",
+    "Operated 12 Grafana dashboards and 50+ Prometheus metric endpoints, consolidating infrastructure status into a single view.",
     "Built an n8n automation platform with 15+ workflows, 200+ daily executions, and 6K+ monthly automation events.",
-    "At Jointree, achieved 80% prevention effectiveness with 200 blocked incidents per month, 20% better sensitive-data detection, and 99.9% service availability.",
-    "At Metanet, reduced NAC exception processing by 90% (30 minutes → 3 minutes) and switch inspection time by 75% (8 hours → 2 hours).",
-    "At Metanet, resolved antivirus-VPN conflicts to reduce support tickets by 40% (20/week → 12/week) and delivered three new sites.",
-    "At KAI, removed 30% of duplicate firewall rules (3,000 → 2,100) and maintained zero internal data-leak incidents.",
-    "At FunNC, reduced MTTR by 50% (2 hours → 1 hour) through backup/recovery automation and improved early vulnerability detection by 80%.",
-    "At Quant, established Terraform-based AWS security codification and prepared the platform for robo-advisor testbed security review."
+    "At Jointree, applied NSX-T microsegmentation for East-West traffic analysis and centralized DFW policy management.",
+    "At Metanet, reduced NAC exception processing from 30 minutes to a few minutes and switch inspection time from 8 hours to 2 hours.",
+    "At Metanet, analyzed and resolved antivirus-VPN profile conflicts and built network infrastructure for 3 new sites.",
+    "At KAI's air-gapped environment, cleaned up duplicate firewall rules and maintained 21 consecutive months without internal data leak incidents.",
+    "At FunNC's cloud migration project, halved MTTR (2 hours → 1 hour) through backup/recovery automation and improved early vulnerability detection.",
+    "At Quant, applied Terraform-based AWS security codification and supported the robo-advisor testbed security review.",
+    "Received an Excellence Award at the Hanyang Cyber University Formula Autonomous Driving Competition (2026)."
   ],
   "infrastructure": [
     {
