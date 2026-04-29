@@ -1,0 +1,20 @@
+# PR Review caller — points to jclee941/.github reusable workflow
+# Source of truth: https://github.com/jclee941/.github/blob/main/.github/workflows/pr-review.yml
+name: PR Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  review:
+    uses: jclee941/.github/.github/workflows/pr-review.yml@main
+    secrets:
+      CLIPROXY_API_KEY: ${{ secrets.CLIPROXY_API_KEY }}
