@@ -5,6 +5,13 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.14.9] - 2026-04-29
+
+### Changes
+- fix(lint): remove duplicate import + unused eslint-disable directives (7afd8da)
+- fix(audit): close P0×4 + P1×7 from MONOREPO_REVIEW_2026-04-29 (964901a)
+
+
 ## [v1.14.8] - 2026-04-29
 
 ### Changes
