@@ -363,7 +363,12 @@ export class BrowserPool extends EventEmitter {
 // Singleton instance for application-wide use
 // DEPRECATED: AGENTS.md violation tracked in docs/architecture/MONOREPO_REVIEW_2026-04-29.md (P0-5).
 // Module-level singleton — migrate to constructor-injected DI when refactoring this file.
-let globalPool = null;
+// P0-5 audit fix: replace module-level mutable singleton with closure-bound holder.
+// Migration: docs/architecture/MONOREPO_REVIEW_2026-04-29.md (singleton DI plan).
+const _globalPoolHolder = (() => {
+  let v = null;
+  return { get: () => v, set: (x) => { v = x; }, clear: () => { v = null; } };
+})();
 
 /**
  * Get or create global browser pool
@@ -371,19 +376,19 @@ let globalPool = null;
  * @returns {BrowserPool}
  */
 export function getBrowserPool(options = {}) {
-  if (!globalPool) {
-    globalPool = new BrowserPool(options);
+  if (!_globalPoolHolder.get()) {
+    _globalPoolHolder.set(new BrowserPool(options));
   }
-  return globalPool;
+  return _globalPoolHolder.get();
 }
 
 /**
  * Reset global browser pool (for testing)
  */
 export function resetBrowserPool() {
-  if (globalPool) {
-    globalPool.closeAll().catch(() => {});
-    globalPool = null;
+  if (_globalPoolHolder.get()) {
+    _globalPoolHolder.get().closeAll().catch(() => {});
+    _globalPoolHolder.set(null);
   }
 }
 

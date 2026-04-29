@@ -142,14 +142,12 @@ function pushField(fields, name, value) {
 }
 
 /**
- * Strips Korean corporation prefix "(주)" / "(주)/" from company names so JobKorea
- * matches the same canonical form Wanted's career sync uses (parity with
- * apps/job-server/src/tools/platforms/wanted-sync-operations.js).
+ * Re-export normalizeCompanyName from @resume/shared/normalize so existing
+ * importers keep working. The canonical implementation lives in
+ * `packages/shared/src/normalize/index.js` (P2 audit fix).
  */
-export function normalizeCompanyName(name) {
-  if (!name) return '';
-  return String(name).replace(/\(주\)/g, '').trim();
-}
+import { normalizeCompanyName } from '@resume/shared/normalize';
+export { normalizeCompanyName };
 
 export function parseRange(period) {
   const raw = String(period || '');

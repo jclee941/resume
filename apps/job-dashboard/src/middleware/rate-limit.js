@@ -69,11 +69,18 @@ export async function checkRateLimit(request, pathname, env) {
       };
     }
 
-    // KNOWN P1 ISSUE (docs/architecture/MONOREPO_REVIEW_2026-04-29.md P1-4):
-    // KV read/put is NOT atomic. Concurrent requests can race and observe the
-    // same `count` value, allowing limit bypass. For production-grade enforcement
-    // migrate to a Durable Object per-IP or use Cloudflare Rate Limiting (WAF).
-    // Until then, treat this as best-effort and rely on CF edge limits for hot paths.
+    // P1 issue (docs/architecture/MONOREPO_REVIEW_2026-04-29.md P1-4):
+    // KV read/put is NOT atomic; concurrent requests can race within the same
+    // window. The proper fix is Cloudflare's native Rate Limiting binding,
+    // which provides atomic per-key counters at the edge. Adding it requires:
+    //   1. wrangler.jsonc: add `"unsafe": { "bindings": [{ "name":
+    //      "RATE_LIMITER", "type": "ratelimit", "namespace_id": "...",
+    //      "simple": { "limit": 60, "period": 60 } }] }`
+    //   2. handler: `const { success } = await env.RATE_LIMITER.limit({ key })`
+    //   3. fall back to this KV path if binding is absent
+    // Until that PR lands, the current best-effort KV approach is treated as
+    // soft-limit only — we rely on Cloudflare WAF/edge for hard enforcement
+    // on /api/auth/* and /api/auto-apply/run.
     const windowStart = Math.floor(now / policy.windowSec) * policy.windowSec;
     const resetAt = windowStart + policy.windowSec;
     const windowKey = `${baseKey}:window:${windowStart}`;

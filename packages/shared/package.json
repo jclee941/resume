@@ -27,6 +27,7 @@
     "./rate-limit/sliding-window": "./src/rate-limit/sliding-window.js",
     "./auth": "./src/auth/index.js",
     "./auth/cookie": "./src/auth/cookie.js",
-    "./auth/hmac": "./src/auth/hmac.js"
+    "./auth/hmac": "./src/auth/hmac.js",
+    "./normalize": "./src/normalize/index.js"
   }
 }

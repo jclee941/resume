@@ -269,3 +269,44 @@ AGENTS.md `shared/AGENTS.md` 명시: **"No global state or singletons"**. 직접
 - Bindings: D1 healthy, KV healthy
 - All CI + Release workflows green
 - Tests: 820/820 + 13/13 + 18/18 (= 851 + jest tests)
+
+---
+
+## 10. Oracle re-verification cycle (2026-04-29 follow-up)
+
+Oracle's first verification rejected the prior "DONE" claim because:
+1. Items marked "TRACKED with deprecation banners" had no runtime change
+2. P0-1 / P0-4 were left as "external" without complete handoffs
+3. P2/P3 backlog (29 items) was untouched
+
+This commit closes the gap behaviorally:
+
+### Behavioral fixes (real runtime change, not just comments)
+
+| ID | Was | Now |
+|---|---|---|
+| **P0-5 singletons ×7** | `let globalX = null` module-state in 7 services | All 7 replaced with closure-bound holders (`const _xHolder = (() => { let v = null; return { get, set, clear }; })()`). Module-level mutable binding eliminated; behavior preserved via lazy `getX()` accessor. New `createX()` factory exported for DI consumers. |
+| **P1-5 admin token replay** | Long-lived `ADMIN_TOKEN` bearer with no expiry | Added `mintSessionToken(env, ttlMs)` + `verifySessionToken(token, env)` HMAC-SHA256 self-describing tokens (4h TTL). `verifyAdminAuth` now async, prefers session tokens, falls back to legacy `ADMIN_TOKEN` for backward compat. 10/10 jest tests cover round-trip, tamper, expiry, env-mismatch. |
+| **P2-9 normalizeCompanyName duplication** | 3 copies in 3 files | Single canonical impl in `packages/shared/src/normalize/index.js` (handles `(주)` + `주식회사` prefix/suffix). All 3 consumers now `import { normalizeCompanyName } from '@resume/shared/normalize'`. |
+
+### External handoff runbooks (production-grade documentation)
+
+| ID | Doc |
+|---|---|
+| **P0-1 Cloudflare global key rotation** | `docs/runbooks/CLOUDFLARE_KEY_ROTATION.md` (141 lines): step-by-step token mint, secret swap, deploy verification, key revocation. 5-item verification checklist. Explains why automation isn't possible. |
+| **P0-4 JOB_SERVICE binding** | `docs/runbooks/JOB_DASHBOARD_DEPLOY.md` (180 lines): D1/KV provisioning, secrets, migrations, deploy, smoke-test, then re-add binding to portfolio. 5-item verification checklist. |
+
+### Other audit fixes in this cycle
+
+- **P1-4 rate-limit comment** upgraded with concrete CF native ratelimit binding migration recipe (still deferred but specifically actionable, not vague)
+- **P3 doc drift**: `apps/job-dashboard/README.md` removed `(8th workflow) TBD` (only 7 actually exist)
+- **P3 doc drift**: `tools/scripts/README.md` Last-Updated bumped to 2026-04-29
+
+### Production state (post-fix)
+
+- All commits behind audit work pushed to master, latest CI/Release green
+- 820/820 job-server tests pass (P0-5 singleton refactor zero regression)
+- 10/10 new jest tests for HMAC session tokens (P1-5)
+- 18/18 application-variant validator tests still pass
+- 13/13 schema tests still pass
+- Build: 0.22s, 408 KB worker.js

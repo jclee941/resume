@@ -1,6 +1,7 @@
 import { CONFIG, JOB_CATEGORY_MAPPING, DEFAULT_JOB_CATEGORY } from './constants.js';
 import { WANTED_ABOUT_LIMIT } from '../../src/tools/platforms/wanted-sync-operations.js';
 import { log, parsePeriod, normalizePhone } from './utils.js';
+import { normalizeCompanyName } from '@resume/shared/normalize';
 
 
 /** @param {Object} career @returns {Object} Wanted career format */
@@ -107,7 +108,7 @@ export async function syncWantedCareers(client, ssot, profile, resumeId) {
   const matched = new Set();
 
   for (const ssotCareer of ssotCareers) {
-    const ssotCompanyNormalized = ssotCareer.company.replace(/\(주\)/g, '').trim();
+    const ssotCompanyNormalized = normalizeCompanyName(ssotCareer.company);
     const wantedCareer = wantedCareers.find((w) => {
       return (w.company?.name || '').includes(ssotCompanyNormalized);
     });

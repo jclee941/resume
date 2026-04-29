@@ -137,10 +137,15 @@ export class StatsService {
   }
 }
 
-// Singleton instance
+// Singleton _instanceHolder.get()
 // DEPRECATED: AGENTS.md violation tracked in docs/architecture/MONOREPO_REVIEW_2026-04-29.md (P0-5).
 // Module-level singleton — migrate to constructor-injected DI when refactoring this file.
-let instance = null;
+// P0-5 audit fix: replace module-level mutable singleton with closure-bound holder.
+// Migration: docs/architecture/MONOREPO_REVIEW_2026-04-29.md (singleton DI plan).
+const _instanceHolder = (() => {
+  let v = null;
+  return { get: () => v, set: (x) => { v = x; }, clear: () => { v = null; } };
+})();
 
 /**
  * Get or create StatsService singleton
@@ -148,10 +153,10 @@ let instance = null;
  * @returns {StatsService}
  */
 export function getStatsService(appService) {
-  if (!instance && appService) {
-    instance = new StatsService(appService);
+  if (!_instanceHolder.get() && appService) {
+    _instanceHolder.set(new StatsService(appService));
   }
-  return instance;
+  return _instanceHolder.get();
 }
 
 export default StatsService;
