@@ -23,7 +23,6 @@ This is the main entry point for the docs tree. Start with the maintained sectio
 - [DEPLOYMENT_PIPELINE.md](architecture/DEPLOYMENT_PIPELINE.md), build and deployment flow.
 - [component-inventory.md](architecture/component-inventory.md), inventory of major runtime pieces.
 - [JOB_JCLEE_ME_IMPLEMENTATION.md](architecture/JOB_JCLEE_ME_IMPLEMENTATION.md), job platform sync implementation notes.
-- [JOB_JCLEE_ME_IMPLEMENTATION.md](architecture/JOB_JCLEE_ME_IMPLEMENTATION.md), job platform sync implementation notes.
 - [project-context.md](architecture/project-context.md), repo and runtime context for the current system.
 
 ### Guides (`docs/guides/`)

@@ -25,7 +25,7 @@ Cloudflare Workers 포트폴리오 · 구직 자동화 파이프라인 · 셀프
 
 ```
                     ┌─────────────────────────────────┐
-                    │  packages/data/resume_data.json │  ← Single Source of Truth
+                    │  packages/data/resumes/master/resume_data.json  │  ← Single Source of Truth
                     └────────────┬────────────────────┘
                                  │
             ┌────────────────────┼────────────────────┐
@@ -50,8 +50,8 @@ npm test                  # Jest + Node native
 ```
 resume/
 ├─ apps/
-│  ├─ portfolio/           Edge portfolio · Cloudflare Worker (~582 KB)
-│  ├─ job-server/          MCP Server + 16 tools, hexagonal job-automation runtime
+│  ├─ portfolio/           Edge portfolio · Cloudflare Worker (~409 KB)
+│  ├─ job-server/          MCP Server + 14 tools, hexagonal job-automation runtime
 │  └─ job-dashboard/       Dashboard API Worker (Service Binding)
 ├─ packages/
 │  ├─ data/                SSoT — resume_data.json (ko / en / ja)

@@ -129,7 +129,7 @@ Markdown Source Files
 
 ### Resume Variants
 
-Configured in `tools/tools/scripts/build/pdf-generator.go`:
+Configured in `tools/scripts/build/pdf-generator.go`:
 
 ```bash
 # Resume variants (line 28-32)
@@ -178,7 +178,7 @@ LINESTRETCH="1.3"                   # Line spacing
 
 ### Adding New Resume Variant
 
-**Edit `tools/tools/scripts/build/pdf-generator.go`** (line 28-32):
+**Edit `tools/scripts/build/pdf-generator.go`** (line 28-32):
 
 ```bash
 declare -A RESUME_VARIANTS=(
@@ -515,6 +515,6 @@ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook \
 ## 📞 Support
 
 - **Documentation**: This guide
-- **Script Issues**: Check `tools/tools/scripts/build/pdf-generator.go` comments
+- **Script Issues**: Check `tools/scripts/build/pdf-generator.go` comments
 - **Questions**: qws941@kakao.com
 - **Repository**: https://github.com/qws941/resume

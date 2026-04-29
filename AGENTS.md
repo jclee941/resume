@@ -1,7 +1,7 @@
 # PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-04-27
-**Commit:** `bc2aff0`
+**Generated:** 2026-04-29
+**Commit:** `e02e53d`
 **Branch:** `master`
 
 ## OVERVIEW
@@ -137,7 +137,7 @@ pre-commit install                                              # Install pre-co
 
 ## NOTES
 
-- 43+ child AGENTS.md files exist across `apps/`, `tests/`, `tools/`, `infrastructure/`, and `packages/`; avoid duplicating their scope from the root.
+- 47 child AGENTS.md files exist across `apps/`, `tests/`, `tools/`, `infrastructure/`, and `packages/`; avoid duplicating their scope from the root.
 - `infrastructure/n8n/` and `infrastructure/monitoring/` are distinct enough to warrant child AGENTS files; `docs/` stays governed at the docs-root level.
 - `supabase/functions/` contains Supabase edge functions — distinct runtime, not part of npm workspaces.
 - Shell scripts persist in `infrastructure/n8n/` (9 files) — pending Go migration per monorepo standards.
