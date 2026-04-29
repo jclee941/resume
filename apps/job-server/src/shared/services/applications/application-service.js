@@ -174,6 +174,8 @@ export class ApplicationService {
 }
 
 // Singleton instance
+// DEPRECATED: AGENTS.md violation tracked in docs/architecture/MONOREPO_REVIEW_2026-04-29.md (P0-5).
+// Module-level singleton — migrate to constructor-injected DI when refactoring this file.
 let instance = null;
 
 /**
