@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.14.15] - 2026-04-29
+
+### Changes
+- fix(audit): wire P1-5 — login mints HMAC token, not raw ADMIN_TOKEN (200446d)
+
+
 ## [v1.14.14] - 2026-04-29
 
 ### Changes
