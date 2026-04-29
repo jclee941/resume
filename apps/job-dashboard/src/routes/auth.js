@@ -1,5 +1,5 @@
 import { jsonResponse } from '../middleware/cors.js';
-import { verifySecret, createAuthCookie, clearAuthCookie } from '../services/auth.js';
+import { verifySecret, createAuthCookie, clearAuthCookie, mintSessionToken } from '../services/auth.js';
 
 export function registerAuthRoutes(router, ctx) {
   const { env, auth } = ctx;
@@ -17,8 +17,13 @@ export function registerAuthRoutes(router, ctx) {
       if (!verifySecret(token || null, env.ADMIN_TOKEN)) {
         return jsonResponse({ error: 'Invalid token' }, 401);
       }
+      // P1-5 fix: do NOT echo the long-lived ADMIN_TOKEN back into a cookie.
+      // Mint a short-lived (4h) HMAC-signed session token that is bound to
+      // its own expiry and cannot be replayed once it expires — even if
+      // ADMIN_TOKEN itself isn't rotated. Cookie max-age aligned to TTL.
+      const sessionToken = await mintSessionToken(env);
       const response = jsonResponse({ success: true });
-      response.headers.set('Set-Cookie', createAuthCookie(token));
+      response.headers.set('Set-Cookie', createAuthCookie(sessionToken, 4 * 60 * 60));
       return response;
     } catch {
       return jsonResponse({ error: 'Invalid request' }, 400);
