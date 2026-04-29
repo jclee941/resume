@@ -50,38 +50,28 @@ function generateWebData(source) {
   const projectEnMap = {
     'Observability Platform': {
       description:
-        'Homelab infrastructure monitoring with Prometheus metrics collection, Loki log aggregation, and Grafana visualization.',
+        'Built unified observability for homelab infrastructure to remove the need to switch between per-service consoles by integrating Prometheus, Loki, and Grafana into a single dashboard.',
       tagline: 'Monitoring Platform',
     },
     'n8n Automation': {
-      description: 'Automated workflows for alerts, deployments, and data collection.',
+      description:
+        'Centralized scattered automation tasks (alerts, deployments, data collection) into n8n so new integrations can be added without writing code.',
       tagline: 'Workflow Automation',
-      metrics: {
-        executions: '200+ runs/day',
-      },
     },
     'FortiNet API Client': {
       title: 'Fortinet API Client',
       description:
-        'Python library for querying FortiManager policies/routes and collecting FortiAnalyzer log statistics.',
+        'Python library wrapping FortiManager and FortiAnalyzer REST APIs to remove repetitive console operations from daily security ops.',
       tagline: 'Security Device API Automation',
-      metrics: {
-        features: 'Policy retrieval, route management, log statistics',
-        automation: '80% reduction in manual effort',
-      },
     },
     'Security Alert System': {
       description:
-        'Detects FortiGate events in Splunk and sends Slack Block Kit alerts with 32 active detection rules.',
+        'Connected Splunk Saved Search webhooks to Slack/Telegram so security event detection delivers immediate notifications instead of waiting on console review.',
       tagline: 'Security Alert Automation',
-      metrics: {
-        detectionRules: '32 rules',
-        responseTime: 'Alert delivered within 30 seconds of event detection',
-      },
     },
     'IP Blacklist Platform': {
       description:
-        'Collects malicious IP data, performs analysis, and provides dashboards via a Flask API and Next.js frontend.',
+        'Built a unified threat intel lookup over Flask and Next.js so analysts query a single interface instead of multiple external feeds.',
       tagline: 'Threat Intelligence',
     },
   };
