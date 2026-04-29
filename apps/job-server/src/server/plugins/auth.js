@@ -3,8 +3,19 @@ import { randomBytes } from 'crypto';
 import config from '../config/index.js';
 import { createAuthMiddleware } from '../../shared/contracts/auth.js';
 
-const sessions = new Map();
-const csrfTokens = new Map();
+// Issue #16: closure-bound holders eliminate top-level mutable Map bindings.
+// fastify.decorate exposes the holder.get() Map which retains live reference,
+// so existing route handlers continue to work unchanged.
+const _sessionsHolder = (() => {
+  let m = new Map();
+  return { get: () => m, clear: () => { m = new Map(); } };
+})();
+const _csrfTokensHolder = (() => {
+  let m = new Map();
+  return { get: () => m, clear: () => { m = new Map(); } };
+})();
+const sessions = _sessionsHolder.get();
+const csrfTokens = _csrfTokensHolder.get();
 
 const PUBLIC_PATHS = ['/api/health', '/api/status', '/api/auth/google'];
 const CSRF_EXEMPT_PATHS = ['/api/auth/google'];

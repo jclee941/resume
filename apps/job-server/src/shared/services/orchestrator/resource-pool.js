@@ -35,7 +35,11 @@ import { EventEmitter } from 'node:events';
  * @property {'idle'|'in_use'|'destroyed'} state - Current state
  */
 
-let poolIdCounter = 0;
+// Issue #16: closure-bound holder for monotonic counter; tests can reset.
+const _poolIdCounterHolder = (() => {
+  let n = 0;
+  return { next: () => ++n, reset: () => { n = 0; } };
+})();
 
 /**
  * @template T
@@ -306,7 +310,7 @@ export class ResourcePool extends EventEmitter {
    * @returns {Promise<T>}
    */
   async #createAndCheckout() {
-    const id = `pool-${++poolIdCounter}`;
+    const id = `pool-${_poolIdCounterHolder.next()}`;
     const resource = await this.#options.create();
     this.#totalCreated++;
 
