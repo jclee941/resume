@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.14.18] - 2026-04-29
+
+### Changes
+- fix(debt): tech-debt audit quick wins — module state, OpenAPI drift, coverage, dead code (f9f16cb)
+
+
 ## [v1.14.17] - 2026-04-29
 
 ### Changes
