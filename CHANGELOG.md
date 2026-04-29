@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.14.23] - 2026-04-29
+
+### Changes
+- refactor(#17): consolidate job-server validation to thin SSoT wrapper (6106a80)
+
+
 ## [v1.14.22] - 2026-04-29
 
 ### Changes
