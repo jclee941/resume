@@ -29,7 +29,11 @@ import { EventEmitter } from 'node:events';
  * @property {Record<string, unknown>} metadata - Arbitrary metadata
  */
 
-let taskIdCounter = 0;
+// Issue #16: closure-bound holder for monotonic counter; tests can reset.
+const _taskIdCounterHolder = (() => {
+  let n = 0;
+  return { next: () => ++n, reset: () => { n = 0; } };
+})();
 
 export class ProgressTracker extends EventEmitter {
   /** @type {Map<string, TaskState>} */
@@ -54,7 +58,7 @@ export class ProgressTracker extends EventEmitter {
    * @returns {string} Task ID
    */
   addTask(platform, type, options = {}) {
-    const id = `task-${++taskIdCounter}`;
+    const id = `task-${_taskIdCounterHolder.next()}`;
 
     /** @type {TaskState} */
     const task = {
@@ -277,7 +281,7 @@ export class ProgressTracker extends EventEmitter {
     this.#tasks.clear();
     this.#counters = { started: 0, completed: 0, failed: 0, cancelled: 0 };
     this.#startTime = Date.now();
-    taskIdCounter = 0;
+    _taskIdCounterHolder.reset();
   }
 
   /**
