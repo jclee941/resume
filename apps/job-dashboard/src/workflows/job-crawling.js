@@ -1,7 +1,6 @@
 import { WorkflowEntrypoint } from 'cloudflare:workers';
 import { DEFAULT_USER_AGENT } from '@resume/shared/ua';
 import { decrypt } from '../utils/crypto.js';
-import { DEFAULT_USER_AGENT } from '@resume/shared/ua';
 import {
   sendTelegramNotification,
   escapeHtml,
