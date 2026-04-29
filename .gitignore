@@ -142,3 +142,7 @@ packages/data/resumes/master/*.pdf
 packages/data/resumes/archive/**/*.pdf
 packages/data/resumes/technical/**/*.pdf
 !packages/data/resumes/applications/**/*.pdf
+
+# CI affected-detection cache (regenerated each run by tools/ci/affected.go)
+.affected/
+.affected-review/

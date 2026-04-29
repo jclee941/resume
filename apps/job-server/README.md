@@ -4,7 +4,7 @@ MCP server for job platform automation across Wanted, JobKorea, Saramin, LinkedI
 
 ## Overview
 
-- MCP server with 9 tools and 32 actions
+- MCP server with 14 tools registered via handlers/tools.js
 - Covers search, auth, resume sync, profile sync, and automation helpers
 - Uses the job automation runtime in `src/`
 

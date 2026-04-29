@@ -2,7 +2,7 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "job",
   "main": "src/index.js",
-  "compatibility_date": "2026-02-21",
+  "compatibility_date": "2026-04-29",
   "compatibility_flags": ["nodejs_compat"],
   "observability": {
     "enabled": true,
