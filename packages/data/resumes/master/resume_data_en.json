@@ -768,7 +768,6 @@
       "icon": "📊",
       "tagline": "모니터링 플랫폼",
       "language": "PromQL",
-      "forksUiHint": "de-emphasize",
       "githubUrl": null,
       "demoUrl": "https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b"
     },
@@ -784,7 +783,6 @@
       "icon": "🔄",
       "tagline": "워크플로우 자동화",
       "language": "JavaScript",
-      "forksUiHint": "de-emphasize",
       "githubUrl": null,
       "demoUrl": null
     },
@@ -800,7 +798,6 @@
       "icon": "🛡️",
       "tagline": "보안장비 API 자동화",
       "language": "Python",
-      "forksUiHint": "de-emphasize",
       "githubUrl": null,
       "demoUrl": null,
       "note": "비공개 — 현직 환경 코드 (포트폴리오는 https://resume.jclee.me 데모)"
@@ -808,7 +805,7 @@
     {
       "name": "Security Alert System",
       "period": "2025.01 ~ 현재",
-      "description": "[문제] FortiGate 보안 이벤트가 장비 syslog와 Splunk에 분산되어 이벤트 발생부터 담당자 인지까지 시간이 걸렸습니다.\n[해결] Splunk Saved Search와 Webhook을 연동해 보안 이벤트 발생 시 Slack/Telegram으로 즉시 알림을 보내는 체계를 구축했습니다.\n[결과] 보안 이벤트 인지 시간을 단축하고 담당자 응대 흐름을 표준화했습니다.",
+      "description": "[문제] FortiGate 보안 이벤트가 장비 syslog와 Splunk에 분산되어 이벤트 발생부터 담당자 인지까지 시간이 걸렸습니다. [해결] Splunk Saved Search와 Webhook을 연동해 보안 이벤트 발생 시 Slack/Telegram으로 즉시 알림을 보내는 체계를 구축했습니다. [결과] 보안 이벤트 인지 시간을 단축하고 담당자 응대 흐름을 표준화했습니다.",
       "technologies": [
         "Splunk",
         "Python",
@@ -817,7 +814,6 @@
       "icon": "🔔",
       "tagline": "보안 알림 자동화",
       "language": "Python",
-      "forksUiHint": "de-emphasize",
       "githubUrl": "https://github.com/jclee941/splunk",
       "demoUrl": "https://kibana.jclee.me/s/portfolio-demo/app/dashboards?auth_provider_hint=portfolio_demo#/view/portfolio-demo-dashboard"
     },
@@ -833,7 +829,6 @@
       "icon": "🚫",
       "tagline": "위협 인텔리전스",
       "language": "Python",
-      "forksUiHint": "de-emphasize",
       "githubUrl": "https://github.com/jclee941/blacklist",
       "demoUrl": null
     },
@@ -851,7 +846,6 @@
       "tagline": "자율주행 시뮬레이션",
       "url": "https://github.com/jclee941/hycu_fsds",
       "language": "Python",
-      "forksUiHint": "de-emphasize",
       "githubUrl": "https://github.com/jclee941/hycu_fsds",
       "demoUrl": null
     },
@@ -868,7 +862,6 @@
       "icon": "⚡",
       "tagline": "포트폴리오 플랫폼",
       "language": "JavaScript",
-      "forksUiHint": "de-emphasize",
       "githubUrl": "https://github.com/jclee941/resume",
       "demoUrl": "https://resume.jclee.me",
       "highlights": [
