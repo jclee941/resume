@@ -1,0 +1,14 @@
+# Source: jclee941/.github/.github/workflows/_issue-lifecycle.yml
+name: Issue Lifecycle
+on:
+  issues:
+    types: [opened, labeled, unlabeled, assigned, unassigned, closed, reopened]
+  issue_comment:
+    types: [created]
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+jobs:
+  lifecycle:
+    uses: jclee941/.github/.github/workflows/_issue-lifecycle.yml@master
