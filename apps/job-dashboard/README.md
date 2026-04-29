@@ -531,7 +531,6 @@ const image = await env.R2.get(`screenshots/2026-02-11/123.png`);
 | `HealthCheckWorkflow` | Event trigger | Health monitoring            |
 | `BackupWorkflow`      | Event trigger | D1→KV backup                 |
 | `CleanupWorkflow`     | Event trigger | Stale data cleanup           |
-| (8th workflow)        | TBD           | TBD                          |
 
 ### Example: Trigger Resume Sync
 

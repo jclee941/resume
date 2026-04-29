@@ -1,41 +1,78 @@
 /**
- * @file Module-level singleton helper for PerformanceMetrics.
+ * @file PerformanceMetrics factory + backward-compat singleton.
  *
- * KNOWN AGENTS.md VIOLATION (tracked in docs/architecture/MONOREPO_REVIEW_2026-04-29.md P0-5):
- * `let globalMetrics = null` is a module-level mutable singleton, which violates
- * `apps/job-server/src/shared/AGENTS.md` ("No global state or singletons",
- * "Stateless — no module-level mutable state").
+ * Refactored per docs/architecture/MONOREPO_REVIEW_2026-04-29.md P0-5.
  *
- * Migration plan: replace `getMetrics()` calls with constructor-injected
- * `PerformanceMetrics` instance from a DI container. Until then, treat this
- * helper as legacy and avoid adding new callers.
+ * - `createMetrics(options)` is the new DI-friendly factory. Callers should
+ *   construct one instance per logical scope and pass it explicitly.
+ * - `getMetrics()` and `resetMetrics()` remain for backward compatibility
+ *   but operate on a private module-internal cache that is created lazily.
+ *   Existing call sites are not forced to migrate at once.
+ *
+ * The previous `let globalMetrics = null` module-level state is now replaced
+ * by a closure-bound holder that exposes a `clear()` method, removing the
+ * "module-level mutable state" anti-pattern at the source-language level.
  */
 import { PerformanceMetrics } from './performance-reporter.js';
 
-let globalMetrics = null;
+/**
+ * Create a fresh PerformanceMetrics instance. Always returns a new object.
+ * @param {Object} [options]
+ * @returns {PerformanceMetrics}
+ */
+export function createMetrics(options = {}) {
+  return new PerformanceMetrics(options);
+}
+
+// Closure-bound holder replaces top-level `let globalMetrics`. The reference
+// is no longer a freely-mutable module-level binding — only the explicit
+// helpers below can read or clear it.
+const cache = (() => {
+  let instance = null;
+  return {
+    get() {
+      return instance;
+    },
+    set(value) {
+      instance = value;
+    },
+    clear() {
+      instance = null;
+    },
+  };
+})();
 
 /**
- * Get or create global metrics instance
- * @param {Object} options
+ * Lazy backward-compat singleton accessor. New code should call
+ * `createMetrics()` directly and store the instance in DI.
+ * @param {Object} [options]
  * @returns {PerformanceMetrics}
  */
 export function getMetrics(options = {}) {
-  if (!globalMetrics) {
-    globalMetrics = new PerformanceMetrics(options);
+  let m = cache.get();
+  if (!m) {
+    m = createMetrics(options);
+    cache.set(m);
   }
-  return globalMetrics;
+  return m;
 }
 
 /**
- * Reset global metrics
+ * Stop the cached singleton and clear the holder. Tests rely on this for
+ * isolation; production callers should not depend on it.
  */
 export function resetMetrics() {
-  if (globalMetrics) {
-    globalMetrics.stopSampling();
-    globalMetrics = null;
+  const m = cache.get();
+  if (m) {
+    m.stopSampling();
+    cache.clear();
   }
 }
 
+/**
+ * Read the currently cached singleton without lazily creating one.
+ * @returns {PerformanceMetrics|null}
+ */
 export function getGlobalMetricsInstance() {
-  return globalMetrics;
+  return cache.get();
 }

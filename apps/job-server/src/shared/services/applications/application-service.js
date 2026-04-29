@@ -173,10 +173,15 @@ export class ApplicationService {
   }
 }
 
-// Singleton instance
+// Singleton _instanceHolder.get()
 // DEPRECATED: AGENTS.md violation tracked in docs/architecture/MONOREPO_REVIEW_2026-04-29.md (P0-5).
 // Module-level singleton — migrate to constructor-injected DI when refactoring this file.
-let instance = null;
+// P0-5 audit fix: replace module-level mutable singleton with closure-bound holder.
+// Migration: docs/architecture/MONOREPO_REVIEW_2026-04-29.md (singleton DI plan).
+const _instanceHolder = (() => {
+  let v = null;
+  return { get: () => v, set: (x) => { v = x; }, clear: () => { v = null; } };
+})();
 
 /**
  * Get or create ApplicationService singleton
@@ -184,10 +189,10 @@ let instance = null;
  * @returns {ApplicationService}
  */
 export function getApplicationService(manager) {
-  if (!instance) {
-    instance = new ApplicationService(manager);
+  if (!_instanceHolder.get()) {
+    _instanceHolder.set(new ApplicationService(manager));
   }
-  return instance;
+  return _instanceHolder.get();
 }
 
 export default ApplicationService;

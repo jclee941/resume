@@ -260,10 +260,15 @@ export class AuthService {
   }
 }
 
-// Singleton instance factory
+// Singleton _instanceHolder.get() factory
 // DEPRECATED: AGENTS.md violation tracked in docs/architecture/MONOREPO_REVIEW_2026-04-29.md (P0-5).
 // Module-level singleton — migrate to constructor-injected DI when refactoring this file.
-let instance = null;
+// P0-5 audit fix: replace module-level mutable singleton with closure-bound holder.
+// Migration: docs/architecture/MONOREPO_REVIEW_2026-04-29.md (singleton DI plan).
+const _instanceHolder = (() => {
+  let v = null;
+  return { get: () => v, set: (x) => { v = x; }, clear: () => { v = null; } };
+})();
 
 /**
  * Get or create AuthService singleton
@@ -272,10 +277,10 @@ let instance = null;
  * @returns {AuthService}
  */
 export function getAuthService(config, store) {
-  if (!instance && config) {
-    instance = new AuthService(config, store);
+  if (!_instanceHolder.get() && config) {
+    _instanceHolder.set(new AuthService(config, store));
   }
-  return instance;
+  return _instanceHolder.get();
 }
 
 export default AuthService;

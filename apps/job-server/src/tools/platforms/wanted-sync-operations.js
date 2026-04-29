@@ -4,6 +4,7 @@ import {
   DEFAULT_JOB_CATEGORY,
 } from '../../../scripts/profile-sync/constants.js';
 import { parseDate } from '../utils.js';
+import { normalizeCompanyName } from '@resume/shared/normalize';
 
 function isStrictSyncEnabled() {
   return process.env.SYNC_STRICT === 'true';
@@ -248,7 +249,7 @@ export async function syncCareers(api, resume_id, localCareers, remoteCareers, s
     const career = localCareers[i];
     const ssotCareer = ssotCareers[i] || {};
     const companyName = career.company?.name || career.company || '';
-    const normalizedName = companyName.replace(/\(주\)/g, '').trim();
+    const normalizedName = normalizeCompanyName(companyName);
     const matchedCareer = remoteCareers.find((rc) =>
       (rc.company?.name || '').includes(normalizedName)
     );

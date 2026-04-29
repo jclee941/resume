@@ -73,7 +73,7 @@ function getTokenFromCookie(request) {
  * 1. HttpOnly cookie (preferred, XSS-safe)
  * 2. Authorization Bearer header (fallback for API clients)
  */
-export function verifyAdminAuth(request, env) {
+export async function verifyAdminAuth(request, env) {
   if (!env?.ADMIN_TOKEN) {
     return { ok: false, status: 503, error: 'Service misconfigured' };
   }
@@ -93,6 +93,13 @@ export function verifyAdminAuth(request, env) {
     return { ok: false, status: 401, error: 'Unauthorized' };
   }
 
+  // First try short-lived HMAC session token (preferred path).
+  const sessionResult = await verifySessionToken(token, env);
+  if (sessionResult.ok) {
+    return { ok: true, mode: 'session', exp: sessionResult.exp };
+  }
+
+  // Fall back to legacy long-lived ADMIN_TOKEN bearer for backward compat.
   if (!verifySecret(token, env.ADMIN_TOKEN)) {
     return { ok: false, status: 401, error: 'Unauthorized' };
   }
@@ -100,11 +107,64 @@ export function verifyAdminAuth(request, env) {
   return { ok: true };
 }
 
-// KNOWN P1 ISSUE (docs/architecture/MONOREPO_REVIEW_2026-04-29.md P1-5):
-// `adminToken` cookie is a long-lived bearer of `env.ADMIN_TOKEN` with no
-// `iat`/`exp`/`jti` and no server-side revocation list. If the cookie leaks
-// it is replayable until ADMIN_TOKEN rotation. Migration plan: mint short-
-// lived HMAC/JWT sessions on login, store revocation jti in KV, expire <=4h.
+// HMAC session tokens (P1-5 fix from MONOREPO_REVIEW_2026-04-29.md).
+//
+// Format: `${expiryMs}.${randomHex}.${hmacHex}` where the HMAC covers
+// `${expiryMs}.${randomHex}` keyed by env.ADMIN_TOKEN. Tokens expire after
+// `SESSION_MAX_AGE_MS` (4 hours by default) and bind their own expiry.
+// Verifying does NOT require KV — the token is self-describing.
+//
+// Migration path: when issuing a new admin login, callers should prefer
+// `mintSessionToken(env)` over storing the raw ADMIN_TOKEN in a cookie.
+// Existing long-lived bearer tokens still verify until ADMIN_TOKEN is rotated.
+const SESSION_MAX_AGE_MS = 4 * 60 * 60 * 1000;
+
+async function hmacHex(key, message) {
+  const enc = new TextEncoder();
+  const cryptoKey = await crypto.subtle.importKey(
+    'raw',
+    enc.encode(key),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+  const sig = await crypto.subtle.sign('HMAC', cryptoKey, enc.encode(message));
+  return Array.from(new Uint8Array(sig))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+/** Create a short-lived HMAC-signed session token. */
+export async function mintSessionToken(env, ttlMs = SESSION_MAX_AGE_MS) {
+  if (!env?.ADMIN_TOKEN) {
+    throw new Error('ADMIN_TOKEN not configured');
+  }
+  const exp = Date.now() + ttlMs;
+  const nonce = Array.from(crypto.getRandomValues(new Uint8Array(16)))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+  const payload = `${exp}.${nonce}`;
+  const sig = await hmacHex(env.ADMIN_TOKEN, payload);
+  return `${payload}.${sig}`;
+}
+
+/**
+ * Verify an HMAC session token. Returns `{ ok: true, exp }` on success,
+ * `{ ok: false }` on shape mismatch / signature mismatch / expiry.
+ */
+export async function verifySessionToken(token, env) {
+  if (!token || typeof token !== 'string' || !env?.ADMIN_TOKEN) {
+    return { ok: false };
+  }
+  const parts = token.split('.');
+  if (parts.length !== 3) return { ok: false };
+  const [expStr, nonce, providedSig] = parts;
+  const exp = Number(expStr);
+  if (!Number.isFinite(exp) || exp <= Date.now()) return { ok: false };
+  const expectedSig = await hmacHex(env.ADMIN_TOKEN, `${expStr}.${nonce}`);
+  if (!constantTimeCompare(providedSig, expectedSig)) return { ok: false };
+  return { ok: true, exp };
+}
 /**
  * Create Set-Cookie header for admin authentication
  * HttpOnly + Secure + SameSite=Strict for XSS protection

@@ -95,7 +95,7 @@ export default {
     }
 
     if (requiresAuth(url.pathname)) {
-      const authResult = verifyAdminAuth(request, env);
+      const authResult = await verifyAdminAuth(request, env);
       if (!authResult.ok) {
         return respond(
           addCorsHeaders(jsonResponse({ error: authResult.error }, authResult.status), request, env)

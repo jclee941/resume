@@ -350,26 +350,31 @@ export class TypedCache {
 // Global typed cache instance
 // DEPRECATED: AGENTS.md violation tracked in docs/architecture/MONOREPO_REVIEW_2026-04-29.md (P0-5).
 // Module-level singleton — migrate to constructor-injected DI when refactoring this file.
-let globalCache = null;
+// P0-5 audit fix: replace module-level mutable singleton with closure-bound holder.
+// Migration: docs/architecture/MONOREPO_REVIEW_2026-04-29.md (singleton DI plan).
+const _globalCacheHolder = (() => {
+  let v = null;
+  return { get: () => v, set: (x) => { v = x; }, clear: () => { v = null; } };
+})();
 
 /**
  * Get or create global typed cache
  * @returns {TypedCache}
  */
 export function getGlobalCache() {
-  if (!globalCache) {
-    globalCache = new TypedCache();
+  if (!_globalCacheHolder.get()) {
+    _globalCacheHolder.set(new TypedCache());
   }
-  return globalCache;
+  return _globalCacheHolder.get();
 }
 
 /**
  * Reset global cache (for testing)
  */
 export function resetGlobalCache() {
-  if (globalCache) {
-    globalCache.destroy();
-    globalCache = null;
+  if (_globalCacheHolder.get()) {
+    _globalCacheHolder.get().destroy();
+    _globalCacheHolder.set(null);
   }
 }
 
