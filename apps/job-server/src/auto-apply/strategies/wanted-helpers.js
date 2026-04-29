@@ -5,7 +5,13 @@ const WANTED_PLATFORM = 'wanted';
 const RATE_LIMIT_PER_MINUTE = 60;
 const DEFAULT_DELAY_MS = 5000;
 
-let lastSubmissionAt = 0;
+// P0-5 audit residual fix: replace module-level mutable singleton with
+// closure-bound holder. Same pattern applied to 7 other singletons in
+// commit cb37858 (docs/architecture/MONOREPO_REVIEW_2026-04-29.md P0-5).
+const _lastSubmissionAtHolder = (() => {
+  let v = 0;
+  return { get: () => v, set: (x) => { v = x; }, clear: () => { v = 0; } };
+})();
 
 export function classifyWantedError(error) {
   return classifyApplyError(error, { platform: WANTED_PLATFORM });
@@ -72,7 +78,7 @@ export async function enforceRateLimit(ctx, options = {}) {
     resolveDelayMs(ctx, options),
     Math.ceil(60000 / RATE_LIMIT_PER_MINUTE)
   );
-  const elapsed = now - lastSubmissionAt;
+  const elapsed = now - _lastSubmissionAtHolder.get();
 
   if (elapsed < minIntervalMs) {
     const waitMs = minIntervalMs - elapsed;
@@ -80,7 +86,7 @@ export async function enforceRateLimit(ctx, options = {}) {
     await sleep(waitMs);
   }
 
-  lastSubmissionAt = Date.now();
+  _lastSubmissionAtHolder.set(Date.now());
 }
 
 export function sleep(ms) {

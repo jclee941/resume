@@ -91,6 +91,12 @@ async function logToElasticsearch(env, message, level = 'INFO', labels = {}, opt
         headers: { ...buildEsHeaders(env), 'Content-Type': 'application/json' },
         body: JSON.stringify(doc),
       });
+      // Tech-debt audit: track total successful ES writes for success-rate visibility.
+      try {
+        globalThis.__esLogTotal = (globalThis.__esLogTotal || 0) + 1;
+      } catch {
+        // ignore
+      }
     } catch (err) {
       // P2-19: bump a global counter so /metrics exposes
       // `es_log_failures_total` for Grafana alerting on sustained logging-
