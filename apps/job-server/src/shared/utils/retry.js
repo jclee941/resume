@@ -5,12 +5,28 @@ import {
   isRetryableApplyError,
 } from '../errors/apply-errors.js';
 
-const CIRCUIT_STATE = new Map();
-const RETRY_METRICS = new Map();
+// Issue #16: Module state encapsulated in closure-bound holders to eliminate
+// top-level mutable bindings. Each holder still exists once per module instance,
+// but tests can call resetRetryState() to reset cleanly. See
+// docs/architecture/TECH_DEBT_AUDIT_2026-04-29.md § P0-5 for the pattern.
+const _circuitStateHolder = (() => {
+  let m = new Map();
+  return {
+    get: () => m,
+    clear: () => { m = new Map(); },
+  };
+})();
+const _retryMetricsHolder = (() => {
+  let m = new Map();
+  return {
+    get: () => m,
+    clear: () => { m = new Map(); },
+  };
+})();
 
 function getCircuitState(key) {
-  if (!CIRCUIT_STATE.has(key)) {
-    CIRCUIT_STATE.set(key, {
+  if (!_circuitStateHolder.get().has(key)) {
+    _circuitStateHolder.get().set(key, {
       state: 'closed',
       consecutiveFailures: 0,
       openedAt: null,
@@ -18,12 +34,12 @@ function getCircuitState(key) {
     });
   }
 
-  return CIRCUIT_STATE.get(key);
+  return _circuitStateHolder.get().get(key);
 }
 
 function getMetricState(key) {
-  if (!RETRY_METRICS.has(key)) {
-    RETRY_METRICS.set(key, {
+  if (!_retryMetricsHolder.get().has(key)) {
+    _retryMetricsHolder.get().set(key, {
       executions: 0,
       successes: 0,
       failures: 0,
@@ -33,7 +49,7 @@ function getMetricState(key) {
     });
   }
 
-  return RETRY_METRICS.get(key);
+  return _retryMetricsHolder.get().get(key);
 }
 
 function calculateDelay(retryAttempt, options) {
@@ -56,7 +72,7 @@ function emitReport(reporter, event, payload) {
 
 export function getRetryMetrics(platform = null) {
   if (platform) {
-    const metric = RETRY_METRICS.get(platform);
+    const metric = _retryMetricsHolder.get().get(platform);
     if (!metric) {
       return null;
     }
@@ -69,7 +85,7 @@ export function getRetryMetrics(platform = null) {
     };
   }
 
-  return [...RETRY_METRICS.entries()].reduce((acc, [key, value]) => {
+  return [..._retryMetricsHolder.get().entries()].reduce((acc, [key, value]) => {
     const successRate = value.executions > 0 ? value.successes / value.executions : 0;
     acc[key] = { ...value, successRate };
     return acc;
@@ -78,13 +94,13 @@ export function getRetryMetrics(platform = null) {
 
 export function resetRetryState(platform = null) {
   if (platform) {
-    CIRCUIT_STATE.delete(platform);
-    RETRY_METRICS.delete(platform);
+    _circuitStateHolder.get().delete(platform);
+    _retryMetricsHolder.get().delete(platform);
     return;
   }
 
-  CIRCUIT_STATE.clear();
-  RETRY_METRICS.clear();
+  _circuitStateHolder.clear();
+  _retryMetricsHolder.clear();
 }
 
 export async function withRetry(fn, options = {}) {

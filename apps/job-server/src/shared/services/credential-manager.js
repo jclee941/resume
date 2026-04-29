@@ -9,8 +9,15 @@ const ALGORITHM = 'aes-256-gcm';
 const IV_LENGTH = 16;
 const _AUTH_TAG_LENGTH = 16; // Used implicitly by AES-256-GCM
 
-/** @type {Map<string, {encrypted: Buffer, iv: Buffer, tag: Buffer}>} */
-const credentialStore = new Map();
+// Issue #16: closure-bound holder eliminates top-level mutable Map binding.
+/** @type {{ get: () => Map, clear: () => void }} */
+const _credentialStoreHolder = (() => {
+  let m = new Map();
+  return {
+    get: () => m,
+    clear: () => { m = new Map(); },
+  };
+})();
 
 /**
  * Derive encryption key from environment secret.
@@ -37,7 +44,7 @@ export function storeCredentials(platform, credentials, encryptionSecret) {
   const encrypted = Buffer.concat([cipher.update(plaintext, 'utf8'), cipher.final()]);
   const tag = cipher.getAuthTag();
 
-  credentialStore.set(platform, { encrypted, iv, tag });
+  _credentialStoreHolder.get().set(platform, { encrypted, iv, tag });
 }
 
 /**
@@ -47,7 +54,7 @@ export function storeCredentials(platform, credentials, encryptionSecret) {
  * @returns {Object|null} Decrypted credentials or null if not found
  */
 export function getCredentials(platform, encryptionSecret, { logger = console } = {}) {
-  const entry = credentialStore.get(platform);
+  const entry = _credentialStoreHolder.get().get(platform);
   if (!entry) return null;
 
   try {
@@ -69,7 +76,7 @@ export function getCredentials(platform, encryptionSecret, { logger = console } 
  * @returns {boolean}
  */
 export function hasCredentials(platform) {
-  return credentialStore.has(platform);
+  return _credentialStoreHolder.get().has(platform);
 }
 
 /**
@@ -78,7 +85,7 @@ export function hasCredentials(platform) {
  * @returns {boolean}
  */
 export function removeCredentials(platform) {
-  return credentialStore.delete(platform);
+  return _credentialStoreHolder.get().delete(platform);
 }
 
 /**
@@ -86,7 +93,7 @@ export function removeCredentials(platform) {
  * @returns {string[]}
  */
 export function listCredentialPlatforms() {
-  return [...credentialStore.keys()];
+  return [..._credentialStoreHolder.get().keys()];
 }
 
 /**

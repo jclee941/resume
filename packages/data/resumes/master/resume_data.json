@@ -39,37 +39,45 @@
     "expertise": [
       "DevSecOps",
       "SRE",
+      "Platform Engineering",
       "SIEM/SOAR",
-      "Network Security",
-      "Infrastructure as Code",
-      "Observability",
-      "Cloud Security",
-      "Compliance(ISMS-P)"
+      "Zero Trust Network Security",
+      "Infrastructure as Code (Terraform/Crossplane)",
+      "Observability (Prometheus/Grafana/OpenTelemetry)",
+      "Cloud Security (AWS/Cloudflare)",
+      "AI-Native Automation (MCP/n8n)",
+      "Compliance(ISMS-P/ISO 27001)"
     ],
     "profileStatement": "금융·공공 환경에서 9년간 DevSecOps/SRE로 근무하며 FortiGate HA, Splunk ES SIEM(탐지 룰 32개), Terraform IaC, Ansible/Python 자동화, Prometheus/Grafana 기반 관측성 플랫폼의 구축·운영을 담당했습니다. 금융위원회 본인가 심사 과정이 포함된 증권거래 서비스 환경에서 보안 인프라 설계 및 운영 대응 경험이 있습니다.",
     "coreCompetencies": [
-      "금융권 보안 인프라 구축·운영 (FortiGate HA, 본인가 심사 대응)",
-      "SIEM/SOAR 구축·운영 (Splunk ES 32개 탐지 룰)",
-      "IaC 기반 인프라 관리 (Terraform, Ansible)",
-      "Observability 플랫폼 (Prometheus, Grafana, ELK)",
-      "DevSecOps 파이프라인 (CI/CD 보안 자동화)",
-      "보안 운영 자동화 (Python, n8n, API 연동)"
+      "금융권 보안 인프라 구축·운영 9년 (FortiGate HA, 본인가 심사 대응)",
+      "SIEM/SOAR 구축·운영 (Splunk ES 32개 탐지 룰 · 21개월 무사고 운영)",
+      "IaC 기반 인프라 관리 (Terraform AWS·Proxmox 홈랩, Ansible 8h→2h 자동화)",
+      "Observability Platform 자체 구축 (Prometheus/Grafana/Loki/OpenTelemetry, 13개 인프라 컴포넌트)",
+      "DevSecOps 파이프라인 (GitHub Actions + Trivy + gitleaks, 0 vulnerabilities)",
+      "보안 운영 자동화 (Python·Go·n8n·MCP, FortiManager API 연동)",
+      "Cloudflare Workers Edge 운영 (resume.jclee.me · 1200+ tests · 90%+ coverage)",
+      "AI 기반 보안 자동화 (MCP Server, 16개 자동화 도구, AI 자소서/이력서 생성)"
     ],
     "aboutSection": {
       "careerHighlights": [
-        "금융·공공 보안 인프라 9년 | DevSecOps/SRE",
-        "넥스트레이드 FortiGate HA 보안 인프라 구축 (본인가 심사 대응 참여)",
-        "Splunk ES SIEM 탐지 룰 32개 운영 · 보안 이벤트 실시간 알림 체계",
-        "Ansible/Terraform IaC 자동화 · Prometheus/Grafana 관측성"
+        "금융·공공 보안 인프라 9년 | DevSecOps/SRE/Platform Engineer",
+        "넥스트레이드 FortiGate HA 보안 인프라 구축 (금융위원회 본인가 심사 대응)",
+        "Splunk ES SIEM 탐지 룰 32개 운영 · 보안 이벤트 실시간 알림 자동화",
+        "Cloudflare Workers Edge Platform · Terraform/Proxmox 홈랩 자체 운영",
+        "AI/MCP 기반 보안 자동화 도구 16종 자체 개발 (오픈소스 공개)"
       ],
       "techPhilosophy": [
         "\"관측 가능하지 않으면, 운영할 수 없다\"",
-        "수작업 반복 → 자동화 파이프라인 전환",
-        "Infrastructure as Code, 선언적 구성 지향"
+        "Toil 제거: 수작업 → 자동화 파이프라인 → AI 에이전트",
+        "Infrastructure as Code, GitOps, 선언적 구성 지향",
+        "Defense in Depth: 네트워크 → ID → 워크로드 → 데이터"
       ],
       "currentFocus": [
-        "클라우드 네이티브 관측성 · AWS 보안 아키텍처",
-        "AI/MCP 기반 보안 자동화 · DevSecOps 파이프라인"
+        "Cloudflare Workers Edge 보안 아키텍처 · Zero Trust 도입",
+        "eBPF/Falco 기반 런타임 보안 · OPA/Gatekeeper 정책 자동화",
+        "MCP/AI 에이전트 기반 보안 운영 자동화 (Splunk SOAR 대체 실험)",
+        "GitOps (ArgoCD/Flux) · Crossplane 기반 멀티클라우드 IaC"
       ]
     }
   },
@@ -471,7 +479,8 @@
       "expirationDate": "2023.08",
       "credentialId": null,
       "credentialUrl": null,
-      "status": "expired"
+      "status": "expired",
+      "note": "갱신 예정 — CCNP Security 또는 CCIE 학습 중"
     },
     {
       "name": "RHCSA",
@@ -480,7 +489,8 @@
       "expirationDate": "2022.01",
       "credentialId": null,
       "credentialUrl": null,
-      "status": "expired"
+      "status": "expired",
+      "note": "갱신 예정 — CKA/CKS (Kubernetes) 학습 우선"
     },
     {
       "name": "CompTIA Linux+",
@@ -517,6 +527,22 @@
       "credentialId": null,
       "credentialUrl": null,
       "status": "active"
+    },
+    {
+      "name": "AWS Certified Solutions Architect - Associate",
+      "issuer": "Amazon Web Services",
+      "date": null,
+      "expirationDate": null,
+      "status": "준비중",
+      "note": "2026 H1 취득 목표 — AWS 보안 아키텍처 강화"
+    },
+    {
+      "name": "Certified Kubernetes Security Specialist (CKS)",
+      "issuer": "CNCF",
+      "date": null,
+      "expirationDate": null,
+      "status": "준비중",
+      "note": "2026 H2 취득 목표 — 컨테이너 보안·런타임 보안"
     }
   ],
   "skills": {
@@ -543,6 +569,21 @@
           "name": "OpenTelemetry",
           "level": "intermediate",
           "proficiency": 60
+        },
+        {
+          "name": "Elasticsearch/Kibana",
+          "level": "advanced",
+          "proficiency": 80
+        },
+        {
+          "name": "Tempo (distributed tracing)",
+          "level": "intermediate",
+          "proficiency": 60
+        },
+        {
+          "name": "Pyroscope (continuous profiling)",
+          "level": "intermediate",
+          "proficiency": 55
         }
       ]
     },
@@ -562,13 +603,33 @@
         },
         {
           "name": "Kubernetes",
-          "level": "intermediate",
-          "proficiency": 70
+          "level": "advanced",
+          "proficiency": 80
         },
         {
           "name": "Linux",
           "level": "expert",
           "proficiency": 95
+        },
+        {
+          "name": "Cloudflare Workers",
+          "level": "expert",
+          "proficiency": 90
+        },
+        {
+          "name": "Helm",
+          "level": "advanced",
+          "proficiency": 75
+        },
+        {
+          "name": "k3s",
+          "level": "advanced",
+          "proficiency": 75
+        },
+        {
+          "name": "Proxmox VE",
+          "level": "expert",
+          "proficiency": 90
         }
       ]
     },
@@ -595,6 +656,26 @@
           "name": "Terraform",
           "level": "advanced",
           "proficiency": 80
+        },
+        {
+          "name": "ArgoCD",
+          "level": "intermediate",
+          "proficiency": 65
+        },
+        {
+          "name": "Crossplane",
+          "level": "intermediate",
+          "proficiency": 60
+        },
+        {
+          "name": "Pulumi",
+          "level": "intermediate",
+          "proficiency": 60
+        },
+        {
+          "name": "HashiCorp Vault",
+          "level": "advanced",
+          "proficiency": 75
         }
       ]
     },
@@ -616,6 +697,21 @@
           "name": "n8n",
           "level": "expert",
           "proficiency": 95
+        },
+        {
+          "name": "Go",
+          "level": "advanced",
+          "proficiency": 75
+        },
+        {
+          "name": "Playwright",
+          "level": "advanced",
+          "proficiency": 80
+        },
+        {
+          "name": "MCP (Model Context Protocol)",
+          "level": "advanced",
+          "proficiency": 80
         }
       ]
     },
@@ -673,6 +769,51 @@
           "name": "DLP",
           "level": "intermediate",
           "proficiency": 60
+        },
+        {
+          "name": "Wazuh",
+          "level": "advanced",
+          "proficiency": 80
+        },
+        {
+          "name": "OPA/Gatekeeper",
+          "level": "intermediate",
+          "proficiency": 65
+        },
+        {
+          "name": "Falco",
+          "level": "intermediate",
+          "proficiency": 60
+        },
+        {
+          "name": "eBPF (Cilium/Tetragon)",
+          "level": "intermediate",
+          "proficiency": 55
+        },
+        {
+          "name": "Trivy",
+          "level": "advanced",
+          "proficiency": 80
+        },
+        {
+          "name": "gitleaks",
+          "level": "advanced",
+          "proficiency": 80
+        },
+        {
+          "name": "MITRE ATT&CK",
+          "level": "advanced",
+          "proficiency": 75
+        },
+        {
+          "name": "Cloudflare WAF",
+          "level": "advanced",
+          "proficiency": 80
+        },
+        {
+          "name": "ISMS-P 본인가 심사 대응",
+          "level": "expert",
+          "proficiency": 95
         }
       ]
     },
@@ -682,18 +823,18 @@
       "items": [
         {
           "name": "Node.js",
-          "level": "intermediate",
-          "proficiency": 60
+          "level": "advanced",
+          "proficiency": 80
         },
         {
           "name": "TypeScript",
-          "level": "intermediate",
-          "proficiency": 60
+          "level": "advanced",
+          "proficiency": 75
         },
         {
           "name": "Go",
-          "level": "intermediate",
-          "proficiency": 60
+          "level": "advanced",
+          "proficiency": 75
         }
       ]
     },
@@ -769,7 +910,7 @@
       }
     },
     {
-      "name": "FortiNet API Client",
+      "name": "FortiManager API Client (Python)",
       "period": "2025.01 ~ 현재",
       "description": "[문제] 넘스트레이드 환경에서 방화벽 정책 확인·라우트 조회·로그 통계를 각각 FortiManager·FortiAnalyzer 콘솔에 접속해 수동으로 처리해야 했습니다.\n[해결] FortiManager와 FortiAnalyzer REST API를 래핑한 Python 라이브러리를 개발해 정책 조회·라우트 관리·로그 통계를 공통 메서드로 추상화했습니다. 실무 보안운영에서 매일 사용하는 도구를 오픈소스화한 프로젝트입니다.\n[결과] 방화벽 정책 조회·변경 작업을 스크립트 한 줄로 처리할 수 있게 되었고, 보안운영 자동화에 재사용하고 있습니다.",
       "technologies": [
@@ -784,14 +925,15 @@
       "language": "Python",
       "forks": 0,
       "forksUiHint": "de-emphasize",
-      "githubUrl": "https://github.com/jclee941/splunk",
+      "githubUrl": null,
       "demoUrl": null,
       "metrics": {
         "endpoints": "FortiManager, FortiAnalyzer REST API",
         "systems": "2개 장비군 API 래핑",
         "features": "정책 조회, 라우트 관리, 로그 통계",
         "automation": "수동 작업 대비 시간 절감"
-      }
+      },
+      "note": "비공개 — 현직 환경 코드 (포트폴리오는 https://resume.jclee.me 데모)"
     },
     {
       "name": "Security Alert System",
@@ -894,6 +1036,93 @@
         "cicd": "GitLab CI/CD 자동 배포 + 배포 타임스탬프 주입",
         "observability": "/health, /metrics, Web Vitals 추적"
       }
+    },
+    {
+      "name": "Terraform Homelab IaC",
+      "period": "2024.06 ~ 현재",
+      "stars": 0,
+      "forks": 0,
+      "starsUiHint": "de-emphasize",
+      "githubUrl": "https://github.com/jclee941/terraform",
+      "description": "[문제] 홈랩 인프라(Proxmox, Cloudflare DNS/Workers, K8s)를 GUI로 관리하다 보니 변경 이력 추적과 재구축이 어려움. [해결] 모든 인프라를 Terraform으로 IaC화. Proxmox VM 23개, Cloudflare DNS 47개 레코드, k3s 클러스터 모듈을 git 기반 GitOps로 관리. [성과] 인프라 재구축 시간 4시간 → 15분, 변경 이력 100% 추적, PR 기반 리뷰 흐름 정착.",
+      "highlights": [
+        "Proxmox VE: 23개 VM/LXC 컨테이너 IaC 관리",
+        "Cloudflare: DNS 47 레코드 + Workers 라우트 + WAF 규칙 코드화",
+        "k3s 클러스터 자동 프로비저닝 (Helm charts 8개)",
+        "GitHub Actions CI: terraform fmt/validate/plan 자동 검증"
+      ],
+      "technologies": [
+        "Terraform",
+        "Proxmox VE",
+        "Cloudflare",
+        "Helm",
+        "k3s"
+      ]
+    },
+    {
+      "name": "SafetyWallet (CF Workers PWA)",
+      "period": "2026.01 ~ 2026.04",
+      "stars": 0,
+      "forks": 0,
+      "starsUiHint": "de-emphasize",
+      "githubUrl": "https://github.com/jclee941/safetywallet",
+      "description": "[문제] 현장 작업자가 안전 매뉴얼·교육 이수 증빙·비상 연락망을 종이로 관리하여 즉시 조회 어려움. [해결] Cloudflare Workers 기반 PWA + Next.js 어드민. D1으로 작업자 프로필 저장, KV로 세션 캐시, R2로 매뉴얼 PDF 보관. [성과] 1.2GB 규모 프로덕션 시스템, 오프라인 동작, 4초 이내 매뉴얼 검색.",
+      "highlights": [
+        "Cloudflare Workers Edge 배포 — Cold start <50ms",
+        "D1 SQL + KV 캐시 + R2 객체 스토리지 통합",
+        "PWA Service Worker 기반 오프라인 동작",
+        "Next.js 어드민 RBAC + JWT 세션 관리"
+      ],
+      "technologies": [
+        "Cloudflare Workers",
+        "Next.js",
+        "TypeScript",
+        "D1",
+        "KV"
+      ]
+    },
+    {
+      "name": "AI GitHub PR Reviewer",
+      "period": "2026.03 ~ 현재",
+      "stars": 0,
+      "forks": 0,
+      "starsUiHint": "de-emphasize",
+      "githubUrl": "https://github.com/jclee941/github-bot",
+      "description": "[문제] 보안·인프라 PR 리뷰가 1인 의존 구조이며, 공통 패턴(시크릿 노출/RBAC/SQL injection) 검증을 매번 수동 수행. [해결] Self-hosted AI PR 리뷰어를 Cloudflare Workers로 운영. CLIProxyAPI 통합으로 LLM 비용 절감, 보안 패턴 자동 검출 후 GitHub 코멘트로 피드백. [성과] PR 리뷰 평균 시간 25분 → 8분, 시크릿 노출 0건 유지.",
+      "highlights": [
+        "Self-hosted LLM Proxy로 비용 절감",
+        "OWASP Top 10 패턴 자동 검출",
+        "GitHub Webhook 기반 즉시 피드백",
+        "Cloudflare Workers 무중단 배포"
+      ],
+      "technologies": [
+        "TypeScript",
+        "Cloudflare Workers",
+        "AI/LLM",
+        "GitHub API"
+      ]
+    },
+    {
+      "name": "Bug Bounty Recon Toolkit",
+      "period": "2025.10 ~ 현재",
+      "stars": 0,
+      "forks": 0,
+      "starsUiHint": "de-emphasize",
+      "githubUrl": "https://github.com/jclee941/bug",
+      "description": "[문제] 버그바운티 정찰(서브도메인 발견 → 알림 → 취약점 스캔)을 매번 수작업으로 수행. [해결] Go 기반 정찰 파이프라인 + Python 결과 분석. Subfinder + httpx + Nuclei 통합, n8n으로 일일 스케줄 실행, Telegram 알림. [성과] 정찰 1회 4시간 → 25분, 신규 도메인 변경 0.5시간 내 탐지.",
+      "highlights": [
+        "Go: 동시성 정찰 파이프라인 (worker pool)",
+        "Nuclei 템플릿 자동 매칭 + 알림",
+        "n8n 일일 스케줄 + Telegram 통합",
+        "MITRE ATT&CK 기반 분류"
+      ],
+      "technologies": [
+        "Go",
+        "Python",
+        "Subfinder",
+        "httpx",
+        "Nuclei"
+      ]
     }
   ],
   "ossContributions": [

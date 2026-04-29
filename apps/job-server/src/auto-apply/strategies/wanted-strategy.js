@@ -16,13 +16,19 @@ import {
 } from './wanted-helpers.js';
 import { getApplicationStatus, validateSession } from './wanted-session.js';
 
-const _circuitState = { failures: 0, openedAt: 0, threshold: 5, resetMs: 30000 };
+// Issue #16: closure-bound holder eliminates top-level mutable object binding.
+const _circuitStateHolder = (() => {
+  let s = { failures: 0, openedAt: 0, threshold: 5, resetMs: 30000 };
+  return {
+    get: () => s,
+    reset: () => { s = { failures: 0, openedAt: 0, threshold: 5, resetMs: 30000 }; },
+  };
+})();
 
 export { getApplicationStatus, validateSession };
 
 export function resetCircuitState() {
-  _circuitState.failures = 0;
-  _circuitState.openedAt = 0;
+  _circuitStateHolder.reset();
 }
 
 export async function applyToJob(job, options = {}) {
@@ -83,7 +89,7 @@ export async function applyToJob(job, options = {}) {
         payload,
         resumeKey,
         retryReporter,
-        circuitState: _circuitState,
+        circuitState: _circuitStateHolder.get(),
       });
     }
 

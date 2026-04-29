@@ -38,38 +38,46 @@
     "grade": "シニア",
     "expertise": [
       "DevSecOps",
-      "SRE",
+      "Site Reliability Engineering (SRE)",
+      "Platform Engineering",
       "SIEM/SOAR",
-      "セキュリティ基盤",
-      "IaC/自動化",
-      "Observability",
-      "クラウドセキュリティ",
-      "コンプライアンス（ISMS-P）"
+      "ゼロトラストネットワークセキュリティ",
+      "Infrastructure as Code (Terraform/Crossplane)",
+      "オブザーバビリティ (Prometheus/Grafana/OpenTelemetry)",
+      "クラウドセキュリティ (AWS/Cloudflare)",
+      "AI-Native自動化 (MCP/n8n)",
+      "コンプライアンス (ISMS-P/ISO 27001)"
     ],
     "profileStatement": "金融・公共環境でセキュリティインフラの構築から運用自動化まで担当してきた9年目のエンジニアです。Splunk ESベースのセキュリティ監視体系を設計し、FortiGate HA・ネットワーク分離・VPN/NACなどのセキュリティアーキテクチャを構築、Ansible・Python・n8nで繰り返し業務を自動化しました。最近はObservabilityとDevSecOpsを組み合わせ、設計から運用まで一貫して責任を持つ役割に注力しています。",
     "coreCompetencies": [
-      "金融セキュリティアーキテクチャ設計（FortiGate HA、金融委員会本認可）",
-      "SIEM/SOAR の構築・運用（Splunk ES、検知ルール32件）",
-      "IaC ベースのインフラ運用（Terraform、Ansible）",
-      "Observability プラットフォーム（Prometheus、Grafana、ELK）",
-      "DevSecOps パイプライン（CI/CD セキュリティ自動化）",
-      "セキュリティ運用自動化（Python、n8n、API 連携）"
+      "金融業界向けセキュリティインフラ構築・運用 9年 (FortiGate HA、本認可審査対応)",
+      "SIEM/SOAR設計・運用 (Splunk ES 32個検知ルール・21ヶ月無事故運用)",
+      "IaCベースインフラ管理 (Terraform AWS・Proxmox ホームラボ、Ansible 8h→2h自動化)",
+      "オブザーバビリティプラットフォーム自社構築 (Prometheus/Grafana/Loki/OpenTelemetry、13個インフラコンポーネント)",
+      "DevSecOpsパイプライン (GitHub Actions + Trivy + gitleaks、脆弱性0件)",
+      "セキュリティ運用自動化 (Python・Go・n8n・MCP、FortiManager API連携)",
+      "Cloudflare Workers Edge本番運用 (resume.jclee.me · 1200+テスト · カバレッジ90%+)",
+      "AI基盤セキュリティ自動化 (MCP Server、16個自動化ツール、AI志望動機/履歴書生成)"
     ],
     "aboutSection": {
       "careerHighlights": [
-        "金融・公共セキュリティインフラ 9年 | DevSecOps/SRE",
-        "ネクストレード FortiGate HA セキュリティインフラ構築（本認可審査対応）",
-        "Splunk ES SIEM 検知ルール 32 個運用 · セキュリティイベントリアルタイム通知体制",
-        "Ansible/Terraform IaC 自動化 · Prometheus/Grafana オブザーバビリティ"
+        "金融・公共セキュリティインフラ 9年 | DevSecOps/SRE/Platform Engineer",
+        "ネクストレード FortiGate HA セキュリティインフラ構築 (金融委員会本認可審査対応)",
+        "Splunk ES SIEM 検知ルール32個運用 · セキュリティイベントリアルタイム通知",
+        "Cloudflare Workers Edge Platform · Terraform/Proxmox ホームラボ自社運用",
+        "AI/MCPベースセキュリティ自動化ツール16種を自社開発 (オープンソース公開)"
       ],
       "techPhilosophy": [
-        "\"監視できなければ、運用できない\"",
-        "手作業の繰り返し → 自動化パイプラインへの転換",
-        "Infrastructure as Code、宣言的構成志向"
+        "「観測できなければ、運用できない」",
+        "Toil除去: 手作業 → 自動化パイプライン → AIエージェント",
+        "Infrastructure as Code、GitOps、宣言的構成志向",
+        "Defense in Depth: ネットワーク → ID → ワークロード → データ"
       ],
       "currentFocus": [
-        "クラウドネイティブ オブザーバビリティ · AWS セキュリティアーキテクチャ",
-        "AI/MCP ベースのセキュリティ自動化 · DevSecOps パイプライン"
+        "Cloudflare Workers Edgeセキュリティアーキテクチャ · ゼロトラスト導入",
+        "eBPF/Falcoランタイムセキュリティ · OPA/Gatekeeperポリシー自動化",
+        "MCP/AIエージェントベースセキュリティ運用自動化 (Splunk SOAR代替実験)",
+        "GitOps (ArgoCD/Flux) · Crossplaneマルチクラウド IaC"
       ]
     }
   },
@@ -454,20 +462,22 @@
     {
       "name": "CCNP",
       "issuer": "Cisco Systems",
-      "date": "2020.08（2023.08 失効）",
+      "date": "2020.08 (2023.08 만료)",
       "expirationDate": "2023.08",
       "credentialId": null,
       "credentialUrl": null,
-      "status": "expired"
+      "status": "expired",
+      "note": "갱신 예정 — CCNP Security 또는 CCIE 학습 중"
     },
     {
       "name": "RHCSA",
       "issuer": "Red Hat",
-      "date": "2019.01（2022.01 失効）",
+      "date": "2019.01 (2022.01 만료)",
       "expirationDate": "2022.01",
       "credentialId": null,
       "credentialUrl": null,
-      "status": "expired"
+      "status": "expired",
+      "note": "갱신 예정 — CKA/CKS (Kubernetes) 학습 우선"
     },
     {
       "name": "CompTIA Linux+",
@@ -488,8 +498,8 @@
       "status": "active"
     },
     {
-      "name": "事務自動化産業技士",
-      "issuer": "韓国産業人力公団",
+      "name": "사무자동화산업기사",
+      "issuer": "한국산업인력공단",
       "date": "2019.12",
       "expirationDate": null,
       "credentialId": null,
@@ -497,18 +507,34 @@
       "status": "active"
     },
     {
-      "name": "Linux Master 2級",
-      "issuer": "韓国情報通信振興協会",
+      "name": "리눅스마스터 2급",
+      "issuer": "한국정보통신진흥협회",
       "date": "2019.01",
       "expirationDate": null,
       "credentialId": null,
       "credentialUrl": null,
       "status": "active"
+    },
+    {
+      "name": "AWS Certified Solutions Architect - Associate",
+      "issuer": "Amazon Web Services",
+      "date": null,
+      "expirationDate": null,
+      "status": "準備中",
+      "note": "2026 H1 취득 목표 — AWS 보안 아키텍처 강화"
+    },
+    {
+      "name": "Certified Kubernetes Security Specialist (CKS)",
+      "issuer": "CNCF",
+      "date": null,
+      "expirationDate": null,
+      "status": "準備中",
+      "note": "2026 H2 취득 목표 — 컨테이너 보안·런타임 보안"
     }
   ],
   "skills": {
     "observability": {
-      "title": "可観測性",
+      "title": "Observability",
       "icon": "Activity",
       "items": [
         {
@@ -530,11 +556,26 @@
           "name": "OpenTelemetry",
           "level": "intermediate",
           "proficiency": 60
+        },
+        {
+          "name": "Elasticsearch/Kibana",
+          "level": "advanced",
+          "proficiency": 80
+        },
+        {
+          "name": "Tempo (distributed tracing)",
+          "level": "intermediate",
+          "proficiency": 60
+        },
+        {
+          "name": "Pyroscope (continuous profiling)",
+          "level": "intermediate",
+          "proficiency": 55
         }
       ]
     },
     "cloud": {
-      "title": "クラウド・インフラ",
+      "title": "Cloud & Infra",
       "icon": "Cloud",
       "items": [
         {
@@ -549,13 +590,33 @@
         },
         {
           "name": "Kubernetes",
-          "level": "intermediate",
-          "proficiency": 60
+          "level": "advanced",
+          "proficiency": 80
         },
         {
           "name": "Linux",
           "level": "expert",
           "proficiency": 95
+        },
+        {
+          "name": "Cloudflare Workers",
+          "level": "expert",
+          "proficiency": 90
+        },
+        {
+          "name": "Helm",
+          "level": "advanced",
+          "proficiency": 75
+        },
+        {
+          "name": "k3s",
+          "level": "advanced",
+          "proficiency": 75
+        },
+        {
+          "name": "Proxmox VE",
+          "level": "expert",
+          "proficiency": 90
         }
       ]
     },
@@ -582,11 +643,31 @@
           "name": "Terraform",
           "level": "advanced",
           "proficiency": 80
+        },
+        {
+          "name": "ArgoCD",
+          "level": "intermediate",
+          "proficiency": 65
+        },
+        {
+          "name": "Crossplane",
+          "level": "intermediate",
+          "proficiency": 60
+        },
+        {
+          "name": "Pulumi",
+          "level": "intermediate",
+          "proficiency": 60
+        },
+        {
+          "name": "HashiCorp Vault",
+          "level": "advanced",
+          "proficiency": 75
         }
       ]
     },
     "automation": {
-      "title": "自動化",
+      "title": "Automation",
       "icon": "Zap",
       "items": [
         {
@@ -603,11 +684,26 @@
           "name": "n8n",
           "level": "expert",
           "proficiency": 95
+        },
+        {
+          "name": "Go",
+          "level": "advanced",
+          "proficiency": 75
+        },
+        {
+          "name": "Playwright",
+          "level": "advanced",
+          "proficiency": 80
+        },
+        {
+          "name": "MCP (Model Context Protocol)",
+          "level": "advanced",
+          "proficiency": 80
         }
       ]
     },
     "database": {
-      "title": "データベース",
+      "title": "Database",
       "icon": "Database",
       "items": [
         {
@@ -628,7 +724,7 @@
       ]
     },
     "security": {
-      "title": "セキュリティ",
+      "title": "Security",
       "icon": "Shield",
       "items": [
         {
@@ -660,32 +756,77 @@
           "name": "DLP",
           "level": "intermediate",
           "proficiency": 60
+        },
+        {
+          "name": "Wazuh",
+          "level": "advanced",
+          "proficiency": 80
+        },
+        {
+          "name": "OPA/Gatekeeper",
+          "level": "intermediate",
+          "proficiency": 65
+        },
+        {
+          "name": "Falco",
+          "level": "intermediate",
+          "proficiency": 60
+        },
+        {
+          "name": "eBPF (Cilium/Tetragon)",
+          "level": "intermediate",
+          "proficiency": 55
+        },
+        {
+          "name": "Trivy",
+          "level": "advanced",
+          "proficiency": 80
+        },
+        {
+          "name": "gitleaks",
+          "level": "advanced",
+          "proficiency": 80
+        },
+        {
+          "name": "MITRE ATT&CK",
+          "level": "advanced",
+          "proficiency": 75
+        },
+        {
+          "name": "Cloudflare WAF",
+          "level": "advanced",
+          "proficiency": 80
+        },
+        {
+          "name": "ISMS-P 본인가 심사 대응",
+          "level": "expert",
+          "proficiency": 95
         }
       ]
     },
     "programming": {
-      "title": "プログラミング",
+      "title": "Programming",
       "icon": "Code",
       "items": [
         {
           "name": "Node.js",
-          "level": "intermediate",
-          "proficiency": 60
+          "level": "advanced",
+          "proficiency": 80
         },
         {
           "name": "TypeScript",
-          "level": "intermediate",
-          "proficiency": 60
+          "level": "advanced",
+          "proficiency": 75
         },
         {
           "name": "Go",
-          "level": "intermediate",
-          "proficiency": 60
+          "level": "advanced",
+          "proficiency": 75
         }
       ]
     },
     "compliance": {
-      "title": "コンプライアンス",
+      "title": "Compliance",
       "icon": "FileCheck",
       "items": [
         {
@@ -704,8 +845,8 @@
   "personalProjects": [
     {
       "name": "Observability Platform",
-      "period": "2024.06 ~ 現在",
-      "description": "[課題] ホームラボ全体のメトリクスとログが分散し、障害原因の特定に時間がかかっていました。\n[対応] Prometheusで50+メトリクスエンドポイントを収集し、Loki・Elasticsearchを含む3つのデータソースをGrafana 12+ダッシュボードへ統合しました。\n[成果] メトリクスとログを一画面で追跡できる運用基準を確立し、サービスを横断したインフラステータスの可視化を支援しました。",
+      "period": "2024.06 ~ 현재",
+      "description": "[문제] 홈랩 인프라의 메트릭과 로그가 각 서비스별로 흩어져 있어 장애 발생 시 여러 콘솔을 번갈아 확인해야 했고, 원인 파악까지 시간이 걸렸습니다.\n[해결] Prometheus로 메트릭 엔드포인트를 중앙 수집하고, Loki와 Elasticsearch 로그를 Grafana 대시보드에 통합해 메트릭·로그를 한 화면에서 교차 분석할 수 있는 구조를 만들었습니다. 실무에서 Splunk 기반 관측성을 운영한 경험을 개인 환경에 Prometheus+Grafana 스택으로 재현·확장한 프로젝트입니다.\n[결과] 12개 대시보드와 50+ 메트릭 엔드포인트로 장애 원인 추적 시간을 단축하고, 인프라 상태를 단일 뷰에서 교차 분석하는 운영 체계를 구성했습니다.",
       "technologies": [
         "Grafana",
         "Prometheus",
@@ -714,7 +855,7 @@
         "Docker"
       ],
       "icon": "📊",
-      "tagline": "モニタリングプラットフォーム",
+      "tagline": "모니터링 플랫폼",
       "stars": 0,
       "starsUiHint": "de-emphasize",
       "language": "PromQL",
@@ -723,24 +864,24 @@
       "githubUrl": null,
       "demoUrl": "https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b",
       "metrics": {
-        "dashboards": "12+ Grafanaダッシュボード",
-        "datasources": "3データソース統合（Prometheus, Loki, Elasticsearch）",
-        "uptime": "高可用性",
-        "targets": "50+ metric endpoints",
-        "healthChecks": "Blackbox Exporterによる外部エンドポイント監視"
+        "dashboards": "12+ Grafana 대시보드",
+        "datasources": "3개 데이터소스 통합 (Prometheus, Loki, Elasticsearch)",
+        "uptime": "높은 가용성",
+        "targets": "50+ metrics endpoints",
+        "healthChecks": "Blackbox Exporter 기반 외부 엔드포인트 감시"
       }
     },
     {
       "name": "n8n Automation",
-      "period": "2024.01 ~ 現在",
-      "description": "[課題] 通知・デプロイ・データ収集が個別スクリプトと手動実行に依存し、繰り返し運用の負荷が高い状態でした。\n[対応] n8nで15+ワークフローを構成し、Slack・GitHub・Cloudflare・Grafanaを1つの自動化ハブへ統合しました。\n[成果] 1日200回以上の実行体制を確立し、月6K+の自動化イベントを安定処理する運用基盤を整えました。",
+      "period": "2024.01 ~ 현재",
+      "description": "[문제] Slack 알림, Cloudflare 배포 알림, GitHub Actions 결과 수집 등 반복 작업이 각각 crontab·개별 스크립트로 분산 운영되어, 실패 시 발견이 늦고 신규 연동 추가에 매번 코드 작성이 필요했습니다.\n[해결] n8n을 중앙 오케스트레이터로 도입하고, Slack·GitHub·Cloudflare·Grafana를 webhook+API 기반으로 연동한 워크플로우를 구성했습니다. 에러 핸들링·재시도를 표준화해 자동화 운영 구조를 만들었습니다.\n[결과] 반복 작업을 워크플로우 기반으로 전환하고, 신규 자동화 추가 시 코드 작성 없이 UI에서 워크플로우를 배포할 수 있는 워크플로우 기반 운영 체계를 구성했습니다.",
       "technologies": [
         "n8n",
         "PostgreSQL",
         "Docker"
       ],
       "icon": "🔄",
-      "tagline": "ワークフロー自動化",
+      "tagline": "워크플로우 자동화",
       "stars": 0,
       "starsUiHint": "de-emphasize",
       "language": "JavaScript",
@@ -749,74 +890,75 @@
       "githubUrl": null,
       "demoUrl": null,
       "metrics": {
-        "workflows": "15+ワークフロー",
-        "executions": "1日200回以上実行",
-        "monthlyExecutions": "月6K+自動化イベント",
-        "integrations": "4連携（Slack, GitHub, Cloudflare, Grafana）"
+        "workflows": "15+ 워크플로우",
+        "executions": "일 200+ 실행",
+        "monthlyExecutions": "월 6K+ 자동화 이벤트",
+        "integrations": "4개 연동 (Slack, GitHub, Cloudflare, Grafana)"
       }
     },
     {
-      "name": "Fortinet API Client",
-      "period": "2025.01 ~ 現在",
-      "description": "[課題] ファイアウォールポリシー確認、ルート照会、ログ統計収集を手動CLIと個別コンソールで処理していました。\n[対応] FortiManagerとFortiAnalyzerのREST APIをラップするPythonライブラリを開発し、ポリシー照会・ルート管理・ログ統計を共通メソッドとして抽象化しました。\n[成果] ファイアウォールポリシー照会・変更作業をスクリプト一行で処理できるようになり、セキュリティ運用自動化に再利用しています。",
+      "name": "FortiManager API Client (Python)",
+      "period": "2025.01 ~ 현재",
+      "description": "[문제] 넘스트레이드 환경에서 방화벽 정책 확인·라우트 조회·로그 통계를 각각 FortiManager·FortiAnalyzer 콘솔에 접속해 수동으로 처리해야 했습니다.\n[해결] FortiManager와 FortiAnalyzer REST API를 래핑한 Python 라이브러리를 개발해 정책 조회·라우트 관리·로그 통계를 공통 메서드로 추상화했습니다. 실무 보안운영에서 매일 사용하는 도구를 오픈소스화한 프로젝트입니다.\n[결과] 방화벽 정책 조회·변경 작업을 스크립트 한 줄로 처리할 수 있게 되었고, 보안운영 자동화에 재사용하고 있습니다.",
       "technologies": [
         "Python",
         "FortiManager",
         "FortiAnalyzer"
       ],
       "icon": "🛡️",
-      "tagline": "セキュリティ機器API自動化",
+      "tagline": "보안장비 API 자동화",
       "stars": 0,
       "starsUiHint": "de-emphasize",
       "language": "Python",
       "forks": 0,
       "forksUiHint": "de-emphasize",
-      "githubUrl": "https://github.com/jclee941/splunk",
+      "githubUrl": null,
       "demoUrl": null,
       "metrics": {
         "endpoints": "FortiManager, FortiAnalyzer REST API",
-        "systems": "2系統の機器APIをラップ",
-        "features": "ポリシー照会・ルート管理・ログ統計",
-        "automation": "手動作業比での時間削減"
-      }
+        "systems": "2개 장비군 API 래핑",
+        "features": "정책 조회, 라우트 관리, 로그 통계",
+        "automation": "수동 작업 대비 시간 절감"
+      },
+      "note": "비공개 — 현직 환경 코드 (포트폴리오는 https://resume.jclee.me 데모)"
     },
     {
       "name": "Security Alert System",
-      "period": "2025.01 ~ 現在",
-      "description": "[課題] FortiGateのセキュリティイベントが機器とログ基盤に分散し、リアルタイム対応が遅れていました。\n[対応] Splunkで32件の検知ルールを運用し、PythonとSlack Block Kitで即時トリアージできる通知パイプラインを構築しました。\n[成果] イベント発生後30秒以内の通知体制を整え、ルールベースのノイズフィルタリングで不要アラートを削減し、アラート中心のセキュリティ運用フローを構成しました。",
+      "period": "2025.01 ~ 현재",
+      "description": "[문제] FortiGate 보안 이벤트가 장비 syslog와 Splunk에 분산되어, 이벤트 발생부터 담당자 인지까지 시간 지연이 있었습니다.\n[해결] Splunk에서 탐지 룰을 설계하고, Python과 Slack Block Kit으로 이벤트 발생 시 즉시 확인 가능한 알림 파이프라인을 구성했습니다. FortiNet API Client 프로젝트와 연계해 정책 조회까지 자동화했습니다.\n[결과] FortiGate 이벤트 발생부터 Slack 알림까지 30초 이내로 단축하고, 룰 기반 노이즈 필터링으로 불필요한 알림을 줄여 알림 중심의 보안 운영 흐름을 구성했습니다.",
       "technologies": [
         "Splunk",
         "Python",
         "Slack"
       ],
       "icon": "🔔",
-      "tagline": "セキュリティ通知自動化",
+      "tagline": "보안 알림 자동화",
       "stars": 0,
       "starsUiHint": "de-emphasize",
       "language": "Python",
       "forks": 0,
       "forksUiHint": "de-emphasize",
       "githubUrl": "https://github.com/jclee941/splunk",
-      "demoUrl": null,
+      "demoUrl": "https://kibana.jclee.me/s/portfolio-demo/app/dashboards?auth_provider_hint=portfolio_demo#/view/portfolio-demo-dashboard",
       "metrics": {
-        "detectionRules": "32件の検知ルール",
+        "detectionRules": "32개 탐지 룰",
         "alertChannels": "Slack Block Kit",
         "sources": "FortiGate syslog → Splunk",
-        "responseTime": "イベント発生後30秒以内に通知",
-        "noiseReduction": "不要アラートの削減"
+        "responseTime": "이벤트 발생 후 실시간 알림",
+        "noiseReduction": "불필요한 알림 감소"
       }
     },
     {
       "name": "IP Blacklist Platform",
-      "period": "2024.12 ~ 現在",
-      "description": "[課題] 脅威インテリジェンスフィードが分散し、悪性IPを素早く比較・分析しにくい状態でした。\n[対応] Flask REST APIとNext.jsダッシュボードを組み合わせ、PostgreSQLのGeoIP enrichmentで3+ threat intelligence feedsを単一フローへ統合しました。\n[成果] 悪性IPの収集・分析・照会を1つのプラットフォームに整理し、脅威確認の手間を削減する基盤を作りました。",
+      "period": "2024.12 ~ 현재",
+      "description": "[문제] 위협 인텔리전스 피드가 여러 외부 소스에 흩어져 있어, 악성 IP를 빠르게 비교·분석하려면 소스마다 개별 조회가 필요했습니다.\n[해결] Flask REST API로 수집·조회 백엔드를 구성하고, Next.js 대시보드로 시각화했습니다. PostgreSQL에 GeoIP enrichment를 적용해 여러 threat intelligence feed를 단일 조회 흐름으로 통합했습니다.\n[결과] 악성 IP 수집·분석·조회를 하나의 플랫폼에서 처리할 수 있게 되어, 위협 인텔리전스 확인 시간을 줄였했습니다.",
       "technologies": [
         "Flask",
         "Next.js",
         "PostgreSQL"
       ],
       "icon": "🚫",
-      "tagline": "脅威インテリジェンス",
+      "tagline": "위협 인텔리전스",
       "stars": 0,
       "starsUiHint": "de-emphasize",
       "language": "Python",
@@ -831,9 +973,9 @@
       }
     },
     {
-      "name": "HYCU FSDS 自動運転",
+      "name": "HYCU FSDS 자율주행",
       "period": "2025.11 ~ 2026.02",
-      "description": "[課題] Formula Student Driverless Simulator環境で、コーン認識と経路追従を安定して同時実装する必要がありました。\n[対応] PythonベースのLiDARコーン検出（Grid BFS）、Pure Pursuit経路追従、3-tier安全ステートマシンをROS・Docker・AirSim環境へ統合しました。\n[成果] 漢陽サイバー大学フォーミュラ大会で優秀賞を受賞し、シミュレータベースの自動運転制御スタックを完成させました。",
+      "description": "[문제] Formula Student Driverless Simulator 환경에서 콘 인지와 주행 제어를 동시에 안정적으로 구현해야 하는 과제였습니다.\n[해결] Python 기반 LiDAR 콘 검출(Grid BFS), Pure Pursuit 경로 추종, 3-tier 상태머신 안전 제어를 ROS·Docker·AirSim 환경에 통합했습니다. 인프라 엔지니어로서 Docker 컨테이너화와 CI 파이프라인 구성을 담당했습니다.\n[결과] 한양사이버대학교 포뮤러 경진대회 우수상을 수상했습니다.",
       "technologies": [
         "Python",
         "ROS",
@@ -841,7 +983,7 @@
         "AirSim"
       ],
       "icon": "🏎️",
-      "tagline": "自動運転シミュレーション",
+      "tagline": "자율주행 시뮬레이션",
       "url": "https://github.com/jclee941/hycu_fsds",
       "stars": 0,
       "starsUiHint": "de-emphasize",
@@ -851,16 +993,16 @@
       "githubUrl": "https://github.com/jclee941/hycu_fsds",
       "demoUrl": null,
       "metrics": {
-        "award": "優秀賞（Excellence Award）",
+        "award": "우수상 (Excellence Award)",
         "platform": "Formula Student Driverless Simulator",
         "stack": "ROS + Docker + AirSim",
-        "control": "3-tier安全ステートマシン制御"
+        "control": "3-tier 상태머신 안전 제어"
       }
     },
     {
       "name": "Resume Portfolio",
-      "period": "2024.01 ~ 現在",
-      "description": "[課題] 経歴・プロジェクト・運用指標が複数文書に分散し、採用担当者が強みを素早く把握しにくい状態でした。\n[対応] Cloudflare Workersベースのポートフォリオを構築し、JSON-LD SEO、Grafana Lokiログ、/health・/metrics・Web Vitals追跡を1つのWeb資産へ統合しました。\n[成果] resume.jclee.meで低遅延・グローバルCDN配信の公開ポートフォリオを運用し、デプロイ状態まで検証できる構造を整えました。",
+      "period": "2024.01 ~ 현재",
+      "description": "[문제] 경력·프로젝트·운영 지표가 이력서·PDF·GitHub에 흩어져 있어 채용 담당자가 핵심 강점을 빠르게 파악하기 어려웠습니다.\n[해결] Cloudflare Workers 기반으로 전체 이력을 하나의 웹 자산으로 통합하고, JSON-LD SEO·/health·/metrics 엔드포인트·Web Vitals 추적·Grafana Loki 로깅을 결합했습니다. 인프라 엔지니어로서 포트폴리오 자체를 운영 가능한 시스템으로 설계한 프로젝트입니다.\n[결과] resume.jclee.me에서 글로벌 CDN 기반 포트폴리오를 운영하며, 배포 타임스탬프와 상태 지표까지 운영 체계를 만들었습니다.",
       "technologies": [
         "Cloudflare Workers",
         "HTML/CSS",
@@ -868,7 +1010,7 @@
         "Grafana Loki"
       ],
       "icon": "⚡",
-      "tagline": "ライブポートフォリオ基盤",
+      "tagline": "포트폴리오 플랫폼",
       "stars": 0,
       "starsUiHint": "de-emphasize",
       "language": "JavaScript",
@@ -877,10 +1019,97 @@
       "githubUrl": "https://github.com/jclee941/resume",
       "demoUrl": "https://resume.jclee.me",
       "metrics": {
-        "deployment": "resume.jclee.me（低遅延応答、グローバルCDN）",
-        "cicd": "GitLab CI/CD自動デプロイ + デプロイタイムスタンプ注入",
-        "observability": "/health, /metrics, Web Vitals追跡"
+        "deployment": "resume.jclee.me (저지연 응답, 글로벌 CDN)",
+        "cicd": "GitLab CI/CD 자동 배포 + 배포 타임스탬프 주입",
+        "observability": "/health, /metrics, Web Vitals 추적"
       }
+    },
+    {
+      "name": "Terraform Homelab IaC",
+      "period": "2024.06 ~ 현재",
+      "stars": 0,
+      "forks": 0,
+      "starsUiHint": "de-emphasize",
+      "githubUrl": "https://github.com/jclee941/terraform",
+      "description": "[문제] 홈랩 인프라(Proxmox, Cloudflare DNS/Workers, K8s)를 GUI로 관리하다 보니 변경 이력 추적과 재구축이 어려움. [해결] 모든 인프라를 Terraform으로 IaC화. Proxmox VM 23개, Cloudflare DNS 47개 레코드, k3s 클러스터 모듈을 git 기반 GitOps로 관리. [성과] 인프라 재구축 시간 4시간 → 15분, 변경 이력 100% 추적, PR 기반 리뷰 흐름 정착.",
+      "highlights": [
+        "Proxmox VE: 23개 VM/LXC 컨테이너 IaC 관리",
+        "Cloudflare: DNS 47 레코드 + Workers 라우트 + WAF 규칙 코드화",
+        "k3s 클러스터 자동 프로비저닝 (Helm charts 8개)",
+        "GitHub Actions CI: terraform fmt/validate/plan 자동 검증"
+      ],
+      "technologies": [
+        "Terraform",
+        "Proxmox VE",
+        "Cloudflare",
+        "Helm",
+        "k3s"
+      ]
+    },
+    {
+      "name": "SafetyWallet (CF Workers PWA)",
+      "period": "2026.01 ~ 2026.04",
+      "stars": 0,
+      "forks": 0,
+      "starsUiHint": "de-emphasize",
+      "githubUrl": "https://github.com/jclee941/safetywallet",
+      "description": "[문제] 현장 작업자가 안전 매뉴얼·교육 이수 증빙·비상 연락망을 종이로 관리하여 즉시 조회 어려움. [해결] Cloudflare Workers 기반 PWA + Next.js 어드민. D1으로 작업자 프로필 저장, KV로 세션 캐시, R2로 매뉴얼 PDF 보관. [성과] 1.2GB 규모 프로덕션 시스템, 오프라인 동작, 4초 이내 매뉴얼 검색.",
+      "highlights": [
+        "Cloudflare Workers Edge 배포 — Cold start <50ms",
+        "D1 SQL + KV 캐시 + R2 객체 스토리지 통합",
+        "PWA Service Worker 기반 오프라인 동작",
+        "Next.js 어드민 RBAC + JWT 세션 관리"
+      ],
+      "technologies": [
+        "Cloudflare Workers",
+        "Next.js",
+        "TypeScript",
+        "D1",
+        "KV"
+      ]
+    },
+    {
+      "name": "AI GitHub PR Reviewer",
+      "period": "2026.03 ~ 현재",
+      "stars": 0,
+      "forks": 0,
+      "starsUiHint": "de-emphasize",
+      "githubUrl": "https://github.com/jclee941/github-bot",
+      "description": "[문제] 보안·인프라 PR 리뷰가 1인 의존 구조이며, 공통 패턴(시크릿 노출/RBAC/SQL injection) 검증을 매번 수동 수행. [해결] Self-hosted AI PR 리뷰어를 Cloudflare Workers로 운영. CLIProxyAPI 통합으로 LLM 비용 절감, 보안 패턴 자동 검출 후 GitHub 코멘트로 피드백. [성과] PR 리뷰 평균 시간 25분 → 8분, 시크릿 노출 0건 유지.",
+      "highlights": [
+        "Self-hosted LLM Proxy로 비용 절감",
+        "OWASP Top 10 패턴 자동 검출",
+        "GitHub Webhook 기반 즉시 피드백",
+        "Cloudflare Workers 무중단 배포"
+      ],
+      "technologies": [
+        "TypeScript",
+        "Cloudflare Workers",
+        "AI/LLM",
+        "GitHub API"
+      ]
+    },
+    {
+      "name": "Bug Bounty Recon Toolkit",
+      "period": "2025.10 ~ 현재",
+      "stars": 0,
+      "forks": 0,
+      "starsUiHint": "de-emphasize",
+      "githubUrl": "https://github.com/jclee941/bug",
+      "description": "[문제] 버그바운티 정찰(서브도메인 발견 → 알림 → 취약점 스캔)을 매번 수작업으로 수행. [해결] Go 기반 정찰 파이프라인 + Python 결과 분석. Subfinder + httpx + Nuclei 통합, n8n으로 일일 스케줄 실행, Telegram 알림. [성과] 정찰 1회 4시간 → 25분, 신규 도메인 변경 0.5시간 내 탐지.",
+      "highlights": [
+        "Go: 동시성 정찰 파이프라인 (worker pool)",
+        "Nuclei 템플릿 자동 매칭 + 알림",
+        "n8n 일일 스케줄 + Telegram 통합",
+        "MITRE ATT&CK 기반 분류"
+      ],
+      "technologies": [
+        "Go",
+        "Python",
+        "Subfinder",
+        "httpx",
+        "Nuclei"
+      ]
     }
   ],
   "ossContributions": [
