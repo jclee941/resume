@@ -1,0 +1,11 @@
+# Source: jclee941/.github/.github/workflows/_issue-label.yml
+name: Issue Label
+on:
+  issues:
+    types: [opened, edited, reopened]
+permissions:
+  contents: read
+  issues: write
+jobs:
+  label:
+    uses: jclee941/.github/.github/workflows/_issue-label.yml@master
