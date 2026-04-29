@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.14.17] - 2026-04-29
+
+### Changes
+- docs(audit): final-status doc per Oracle round-4 verify-with-caveats (b1996e8)
+
+
 ## [v1.14.16] - 2026-04-29
 
 ### Changes
