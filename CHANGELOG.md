@@ -5,6 +5,13 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.14.22] - 2026-04-29
+
+### Changes
+- chore(deps)(deps-dev): bump @typescript-eslint/eslint-plugin (#12) (2ae36e8)
+- chore(deps)(deps): bump nodemailer from 8.0.5 to 8.0.7 (#10) (1d20016)
+
+
 ## [v1.14.21] - 2026-04-29
 
 ### Changes
