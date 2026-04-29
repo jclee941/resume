@@ -92,6 +92,14 @@ async function logToElasticsearch(env, message, level = 'INFO', labels = {}, opt
         body: JSON.stringify(doc),
       });
     } catch (err) {
+      // P2-19: bump a global counter so /metrics exposes
+      // `es_log_failures_total` for Grafana alerting on sustained logging-
+      // pipeline outage. Best-effort — ignore failures (frozen global).
+      try {
+        globalThis.__esLogFailures = (globalThis.__esLogFailures || 0) + 1;
+      } catch {
+        // ignore
+      }
       console.error('[ES] Log failed:', err.message);
     } finally {
       clearTimeout(timeoutId);

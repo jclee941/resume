@@ -6,7 +6,7 @@
 
 ## Context
 
-ADR 0006 established a single-worker architecture where portfolio and job-dashboard shared one Cloudflare Worker entry point (`entry.js`). As the job-dashboard grew to 47 API endpoints, 14 handlers, 7 Cloudflare Workflows, a Durable Object, and a Queue consumer, this created a single failure domain, entangled deployment lifecycles, and made independent scaling impossible.
+ADR 0006 established a single-worker architecture where portfolio and job-dashboard shared one Cloudflare Worker entry point (`entry.js`). As the job-dashboard grew to 48 API endpoints, 14 handlers, 7 Cloudflare Workflows, a Durable Object, and a Queue consumer, this created a single failure domain, entangled deployment lifecycles, and made independent scaling impossible.
 
 The MSA refactoring (Phases 0–3) split the system into independently deployable Cloudflare Workers connected via Service Bindings.
 
@@ -19,7 +19,7 @@ The project adopts a microservice architecture with three independent services:
 | Service              | Worker Name   | Domain                  | Responsibility                                                   |
 | -------------------- | ------------- | ----------------------- | ---------------------------------------------------------------- |
 | Portfolio Worker     | `resume`      | `resume.jclee.me`       | Edge static rendering, HTML templates, i18n, SEO, health/metrics |
-| Job Dashboard Worker | `job`         | `resume.jclee.me/job/*` | 47 API endpoints, 7 CF Workflows, Queue consumer, Durable Object |
+| Job Dashboard Worker | `job`         | `resume.jclee.me/job/*` | 48 API endpoints, 7 CF Workflows, Queue consumer, Durable Object |
 | Job Server           | N/A (Node.js) | Docker container        | MCP server, 10 platform crawlers, Fastify runtime                |
 
 ### Communication

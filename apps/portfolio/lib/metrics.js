@@ -89,11 +89,14 @@ function generateMetrics(metrics, _requestInfo = {}) {
       ? ((metrics.requests_success / metrics.requests_total) * 100).toFixed(2)
       : 100;
 
-  // Extract Cloudflare metrics with defaults
+  // P2-18 fix: cf_metrics fields default to NaN (not arbitrary fake values)
+  // when not populated, so dashboards/Grafana correctly show 'no data' rather
+  // than a fabricated stable cache hit ratio. Prometheus exposition prints
+  // NaN as 'NaN' which scrapers treat as missing.
   const cfMetrics = metrics.cf_metrics || {};
-  const cacheHitRatio = cfMetrics.cache_hit_ratio ?? 0.85;
-  const cacheBypassRatio = cfMetrics.cache_bypass_ratio ?? 0.15;
-  const cpuTimeMs = cfMetrics.cpu_time_ms ?? 5;
+  const cacheHitRatio = cfMetrics.cache_hit_ratio ?? NaN;
+  const cacheBypassRatio = cfMetrics.cache_bypass_ratio ?? NaN;
+  const cpuTimeMs = cfMetrics.cpu_time_ms ?? NaN;
 
   // Extract Web Vitals with defaults (in ms)
   const webVitals = metrics.web_vitals || {};
@@ -207,6 +210,10 @@ http_success_rate_percent{job="resume"} ${successRate}
 # HELP worker_info Worker information with version and deployment metadata
 # TYPE worker_info gauge
 worker_info{job="resume",version="${metrics.version || 'unknown'}",deployed_at="${metrics.deployed_at || 'unknown'}"} 1
+
+# HELP es_log_failures_total Cumulative count of Elasticsearch log writes that failed (P2-19)
+# TYPE es_log_failures_total counter
+es_log_failures_total{job="resume"} ${typeof globalThis.__esLogFailures === 'number' ? globalThis.__esLogFailures : 0}
 
 # HELP http_requests_by_country HTTP requests by country
 # TYPE http_requests_by_country counter

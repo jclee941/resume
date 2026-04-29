@@ -164,6 +164,22 @@ jobs:
               packages/data/resumes/master/resume_schema.json
           done
 
+      - name: SSoT drift gate (sync:data must produce no diff)
+        run: |
+          set -euo pipefail
+          # P2-22: block PRs where master/resume_data.json was edited without
+          # propagating to apps/portfolio/data*.json. Run sync:data and assert
+          # no working-tree diff in the generated outputs.
+          npm install --prefer-offline --no-audit --no-fund --silent
+          npm run sync:data
+          if ! git diff --quiet -- 'apps/portfolio/data*.json' 2>/dev/null; then
+            echo "❌ SSoT drift detected: apps/portfolio/data*.json out of sync with master."
+            echo "   Run 'npm run sync:data' locally and commit the result."
+            git --no-pager diff --stat -- 'apps/portfolio/data*.json'
+            exit 1
+          fi
+          echo "✅ SSoT in sync"
+
       - name: Validate application variants (intentionally independent)
         run: |
           set -euo pipefail
@@ -171,6 +187,15 @@ jobs:
             node tools/scripts/utils/validate-application-variants.js
           else
             echo "⚠️  validate-application-variants.js not present — skipping"
+          fi
+
+      - name: Validate n8n workflow JSON structure
+        run: |
+          set -euo pipefail
+          if [ -f tools/scripts/utils/validate-n8n-workflows.js ]; then
+            node tools/scripts/utils/validate-n8n-workflows.js
+          else
+            echo "⚠️  validate-n8n-workflows.js not present — skipping"
           fi
 
   validate-go:

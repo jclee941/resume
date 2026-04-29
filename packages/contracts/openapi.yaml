@@ -49,6 +49,46 @@ paths:
               schema:
                 $ref: '#/components/schemas/HealthResponse'
 
+  /api/health/notifications:
+    get:
+      tags: [Health]
+      summary: Notification subsystem health (Telegram + n8n configuration)
+      responses:
+        '200':
+          description: Notification configuration status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  telegram:
+                    type: object
+                  n8n:
+                    type: object
+
+  /api/status:
+    get:
+      tags: [Health]
+      summary: Service status with deploy metadata + bindings overview
+      responses:
+        '200':
+          description: Service status payload
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  version:
+                    type: string
+                  deployed_at:
+                    type: string
+                  bindings:
+                    type: object
+
   /api/applications:
     get:
       tags: [Applications]
