@@ -81,9 +81,15 @@ function calculateDataHash(data) {
 
 /**
  * Read multiple files safely with parallel processing for better performance.
- * @param {Array<Object>} files - An array of file objects { path: string, encoding: string | null, name: string }.
+ * @param {Array<{path: string, encoding: string|null, name: string, optional?: boolean}>} files
+ *   File descriptors. If `optional: true` is set on a file and the read fails
+ *   because the path does not exist, the value resolves to `null` (binary) or
+ *   `''` (utf-8) instead of raising. This lets the build proceed when generated
+ *   artefacts (e.g. `resume_final.pdf` produced by tools/scripts/build/pdf-generator.go)
+ *   are not present in the working tree — the worker still serves an empty
+ *   buffer until the next CI build that produces them.
  * @returns {Object} An object with file contents, keyed by their `name`.
- * @throws {FileOperationError} If any file reading fails via `safeReadFile`.
+ * @throws {FileOperationError} If any required file fails to read.
  */
 function readAllFiles(files) {
   const contents = {};
@@ -93,6 +99,12 @@ function readAllFiles(files) {
     try {
       contents[file.name] = safeReadFile(file.path, file.encoding);
     } catch (err) {
+      const isMissing =
+        err && (err.message?.startsWith('File not found:') || err?.cause?.code === 'ENOENT');
+      if (file.optional && isMissing) {
+        contents[file.name] = file.encoding === null ? Buffer.alloc(0) : '';
+        continue;
+      }
       errors.push(err);
     }
   }
