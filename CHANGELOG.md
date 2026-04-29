@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.14.12] - 2026-04-29
+
+### Changes
+- chore(repo): repository hygiene cleanup — untrack 573 generated/cache files (9fc8e4f)
+
+
 ## [v1.14.11] - 2026-04-29
 
 ### Changes
