@@ -20,15 +20,13 @@ apps/portfolio/data_en.json
 apps/portfolio/data_ja.json
 apps/portfolio/dashboard.html
 apps/portfolio/dashboard.html.backup
-apps/portfolio/og-image*.png
-apps/portfolio/og-image*.webp
-apps/portfolio/sitemap.xml
-apps/portfolio/manifest.json
-apps/portfolio/manifest_en.json
 apps/portfolio/.wrangler/
 *.generated.*
 *.tsbuildinfo
-# legacy 'worker.js' bare match removed — explicit path above is safer
+# NOTE: manifest*.json, sitemap.xml, og-image*.png, og-image*.webp are
+# hand-maintained build inputs and SHOULD remain tracked in git — the build
+# pipeline (apps/portfolio/lib/file-reader.js) reads them as required inputs.
+# Earlier audit incorrectly classified them as generated; they are NOT.
 
 # -----------------------------------------------------------------------------
 # Environment files & secrets — NEVER COMMIT
