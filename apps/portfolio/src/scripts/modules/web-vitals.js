@@ -88,21 +88,26 @@ const sendVitals = () => {
     userAgent: navigator.userAgent.substring(0, 100), // Truncate for privacy
   };
 
-  // Beacon API (preferred, non-blocking)
+  // P3-6 fix: sendBeacon can silently drop on Safari/Firefox over quota.
+  // Try beacon first; if it returns false, fall back to fetch with keepalive.
+  const payload = JSON.stringify(vitalsData);
+  let beaconOk = false;
   if (navigator.sendBeacon && !isLocalTestHost) {
-    const blob = new Blob([JSON.stringify(vitalsData)], {
-      type: 'application/json',
-    });
-    navigator.sendBeacon('/api/vitals', blob);
-  } else {
-    // Fallback to fetch
+    const blob = new Blob([payload], { type: 'application/json' });
+    try {
+      beaconOk = navigator.sendBeacon('/api/vitals', blob);
+    } catch {
+      beaconOk = false;
+    }
+  }
+  if (!beaconOk) {
     fetch('/api/vitals', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(vitalsData),
+      body: payload,
       keepalive: true,
     }).catch(() => {
-      // Silently fail - don't block user experience
+      // Final fallback: silently drop. /api/vitals is fire-and-forget telemetry.
     });
   }
 };

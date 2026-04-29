@@ -6,7 +6,7 @@
 
 **Architecture**: Independent worker (`job`), proxied from portfolio worker (`resume`) via Service Binding. See [ADR 0007](../../docs/adr/0007-msa-service-split.md).
 
-**Status**: ✅ Production-ready | 7 workflows | 30+ API endpoints | D1 + KV + R2 bindings
+**Status**: ✅ Production-ready | 7 workflows | 48 API endpoints | D1 + KV + R2 bindings
 
 ---
 

@@ -1,6 +1,6 @@
 # ADR 0001: Google3-Style Monorepo Structure
 
-- Status: Accepted
+- Status: Accepted (Bazel facade portion superseded by ADR-0008)
 - Date: 2026-02-15
 
 ## Context
@@ -9,7 +9,7 @@ The project combines a portfolio worker, job automation worker, MCP server, data
 
 ## Decision
 
-Adopt a Google3-style monorepo structure with layer-based directories (`apps/`, `packages/`), repository governance (`OWNERS`, `CODEOWNERS`), and Bazel metadata (`BUILD.bazel`, `MODULE.bazel`) as the build orchestration facade.
+Adopt a Google3-style monorepo structure with layer-based directories (`apps/`, `packages/`) and repository governance (`OWNERS`, `CODEOWNERS`). Originally also included Bazel metadata (`BUILD.bazel`, `MODULE.bazel`) as a build orchestration facade; that part has since been **superseded by ADR-0008** — npm workspaces is the actual build orchestrator and BUILD.bazel files were removed in commit `b51c0f4`.
 
 ## Consequences
 
