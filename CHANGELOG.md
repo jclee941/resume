@@ -5,6 +5,20 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.16.8] - 2026-04-29
+
+### Changes
+- chore(ci): update welcome.yml caller (jclee941/.github) (38a553a)
+- chore(ci): update issue-lifecycle.yml caller (jclee941/.github) (ce4207a)
+- chore(ci): update issue-label.yml caller (jclee941/.github) (72d6361)
+- chore(ci): update stale.yml caller (jclee941/.github) (9013b13)
+- chore(ci): update auto-merge.yml caller (jclee941/.github) (4313490)
+- chore(ci): update labeler.yml caller (jclee941/.github) (48b123e)
+- chore(ci): update pr-size.yml caller (jclee941/.github) (71d2c5d)
+- chore(ci): update pr-normalize.yml caller (jclee941/.github) (95600f6)
+- chore(ci): bump pr-review-security.yml caller to @master (45820b5)
+- chore(ci): bump pr-review.yml caller to @master (f810c27)
+
 ## [v1.16.7] - 2026-04-29
 
 ### Changes
