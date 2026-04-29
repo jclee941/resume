@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.16.1] - 2026-04-29
+
+### Changes
+- refactor(resume): SSoT 전체를 담백한 how/why 중심으로 리팩토링 (fd4e10f)
+
+
 ## [v1.16.0] - 2026-04-29
 
 ### Changes
