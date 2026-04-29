@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.16.0] - 2026-04-29
+
+### Changes
+- feat(portfolio): sync index.html hardcoded content to modernized SSoT (bef340e)
+
+
 ## [v1.15.0] - 2026-04-29
 
 ### Changes
