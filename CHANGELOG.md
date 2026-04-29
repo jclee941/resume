@@ -5,6 +5,18 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.14.20] - 2026-04-29
+
+### Changes
+- chore(deps)(deps-dev): bump @typescript-eslint/parser (#9) (522d8e3)
+- chore(deps)(deps-dev): bump wrangler (#8) (f6b99c6)
+- chore(ci)(deps): bump actions/setup-node from 5 to 6 (#5) (89f45a0)
+- chore(ci)(deps): bump peter-evans/create-pull-request from 7 to 8 (#4) (eb7f37e)
+- chore(ci)(deps): bump softprops/action-gh-release from 2 to 3 (#3) (af2eb4d)
+- chore(ci)(deps): bump actions/checkout from 5 to 6 (#2) (b6787d9)
+- chore(ci)(deps): bump actions/setup-go from 5 to 6 (#1) (12ea77c)
+
+
 ## [v1.14.19] - 2026-04-29
 
 ### Changes
