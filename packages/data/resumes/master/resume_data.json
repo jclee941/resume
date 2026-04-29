@@ -34,9 +34,6 @@
     "period": "2014.12 - 2016.12"
   },
   "summary": {
-    "totalExperience": "9년",
-    "experienceStart": "2017.02",
-    "grade": "시니어",
     "expertise": [
       "DevSecOps",
       "SRE",
@@ -77,7 +74,8 @@
         "MCP/AI 에이전트 기반 보안 운영 자동화",
         "GitOps (ArgoCD) 및 정책 자동화 (OPA)"
       ]
-    }
+    },
+    "totalExperience": ""
   },
   "platformVariants": {
     "wanted": {
@@ -308,7 +306,7 @@
       "teamSize": "규모 미공개 현장 IT 운영팀",
       "myRole": "폐쇄망 서버 운영 및 보안 패치 체계 담당",
       "workType": "정규직 (파견)",
-      "description": "폐쇄망 환경에서 보안 패치 적용과 정책 관리가 어려운 제약을 극복하기 위해 정기 패치 체계와 방화벽 정책 재설계를 적용했습니다. 내부 정보 유출 사고 0건을 유지하며 보안 운영 안정성을 확보한 경험이 있습니다.",
+      "description": "폐쇄망 환경에서 보안 패치 적용과 정책 관리가 어려운 제약을 극복하기 위해 정기 패치 체계와 방화벽 정책 재설계를 적용했습니다. 내부 정보 유출 사고을 유지하며 보안 운영 안정성을 확보한 경험이 있습니다.",
       "wantedSummary": "폐쇄망 환경에서 보안 패치와 방화벽 정책 관리 체계를 구축한 경험",
       "client": "한국항공우주산업(주) (KAI)",
       "note": "엠티데이타 소속, 한국항공우주산업(KAI) IT 인프라 현장 파견",
@@ -345,7 +343,7 @@
       ],
       "os": "Linux, Docker",
       "role": "보안운영 담당",
-      "description": "Splunk ES 및 FortiGate API를 활용한 보안 운영 자동화\n• n8n 워크플로우를 연동하여 보안 이벤트 탐지 시 실시간 Slack 알림 연동\n• FortiManager API를 이용한 방화벽 정책 자동 조회 툴 개발"
+      "description": "보안 이벤트 탐지에서 담당자 인지까지의 지연을 줄이기 위해 n8n으로 Splunk ES와 Slack을 연동하고, FortiManager API로 방화벽 정책을 자동 조회하는 툴을 개발하여 보안 운영 반응 속도를 개선했습니다."
     },
     {
       "period": "2024.03 ~ 2025.02",
@@ -358,7 +356,7 @@
       ],
       "os": "Linux, VMware",
       "role": "보안 인프라 설계",
-      "description": "고가용성 기반 증권 매매 시스템 보안 아키텍처 설계\n• FGCP(FortiGate Clustering Protocol) 기반 Active-Passive HA 구성\n• Ansible Role을 활용한 보안 장비 초기 설정 및 정책 배포 표준화"
+      "description": "단일 장애점 해소와 운영 일관성 확보를 위해 FortiGate HA를 구성하고, Ansible Role로 보안 장비 초기 설정을 표준화하여 구축에서 운영으로의 전환 인계 비용을 줄였습니다."
     },
     {
       "period": "2022.08 ~ 2024.02",
@@ -373,7 +371,7 @@
       ],
       "os": "Linux, AWS",
       "role": "정보보호팀",
-      "description": "IaC 기반 AWS 보안 인프라 관리 및 관측성 확보\n• Terraform을 사용한 VPC, Subnet, 보안 그룹의 코드 기반 관리\n• AWS CloudTrail 및 GuardDuty 로그를 CloudWatch로 통합 분석"
+      "description": "인프라 변경 이력 추적과 감사 가능성 확보를 위해 Terraform으로 VPC/Subnet/SG를 코드화하고, 분산된 보안 로그의 상관관계 분석을 위해 CloudTrail과 GuardDuty를 통합 분석했습니다."
     },
     {
       "period": "2022.05 ~ 2022.07",
@@ -388,7 +386,7 @@
       ],
       "os": "Linux, Docker, EKS",
       "role": "인프라 담당",
-      "description": "이커머스 서비스의 온프레미스→AWS 클라우드 마이그레이션 및 보안 강화\n• AWS VPC 기반 네트워크 경계 설계 및 보안 그룹 정책 수립\n• EKS 클러스터 보안 베이스라인 설정 및 컨테이너 취약점 스캔 프로세스 수립\n• GitLab CI/CD 파이프라인에 SCA·컨테이너 스캔 단계 자동화 적용"
+      "description": "마이그레이션과 동시에 클라우드 네이티브 보안 기준을 충족하기 위해 VPC 경계와 EKS 보안 베이스라인을 설계하고, CI/CD 파이프라인에 취약점 스캔을 자동화하여 빌드 단계에서 보안 검증을 적용했습니다."
     },
     {
       "period": "2021.09 ~ 2022.04",
@@ -401,7 +399,7 @@
       ],
       "os": "Linux, vSphere",
       "role": "네트워크 가상화",
-      "description": "SDN 기반 네트워크 가상화 및 마이크로세그멘테이션 구현\n• VMware NSX-T 분산 방화벽(DFW)을 활용한 서버 간 트래픽 제어\n• 가상 스위치(VDS) 레벨의 네트워크 보안 정책 중앙 집중화"
+      "description": "기존 퍼리미터 기반 보안으로 커버되지 않는 동서 트래픽의 위험을 해소하기 위해 NSX-T 마이크로세그멘테이션을 적용하고, VDS 레벨에서 보안 정책을 중앙 집중적으로 관리할 수 있는 체계를 구축했습니다."
     },
     {
       "period": "2019.12 ~ 2021.08",
@@ -415,7 +413,7 @@
       ],
       "os": "Linux",
       "role": "원격근무 인프라",
-      "description": "대규모 원격 접속을 위한 VPN 인프라 설계 및 자동화\n• Python 스크립트와 Ansible을 연동하여 대규모 서버 설정 동기화\n• VPN 세션 모니터링 및 비정상 접근 탐지 대시보드 구축"
+      "description": "대규모 원격 근무 환경에서 서버 설정의 일관성 확보와 VPN 세션 가시성이 필요한 문제를 해결하기 위해 Python과 Ansible 자동화를 구축하고 비정상 접근 탐지 대시보드를 개발한 경험이 있습니다."
     },
     {
       "period": "2017.02 ~ 2018.10",
@@ -428,7 +426,7 @@
       ],
       "os": "Linux",
       "role": "시스템 운영",
-      "description": "폐쇄망 보안 인프라의 안정적인 가용성 확보\n• 서버 시스템 로그 주기적 분석을 통한 하드웨어 장애 징후 선제적 파악\n• 내부 보안 감사 기준에 따른 시스템 설정 보안 가이드라인 준수"
+      "description": "폐쇄망 환경에서 하드웨어 장애를 사전에 탐지하고 보안 감사 기준을 충족하기 위해 로그 분석 체계를 수립하고 보안 가이드라인을 준수한 경험이 있습니다."
     }
   ],
   "careerGap": {
@@ -517,38 +515,31 @@
       "items": [
         {
           "name": "Grafana",
-          "level": "expert",
-          "proficiency": 95
+          "level": "expert"
         },
         {
           "name": "Prometheus",
-          "level": "expert",
-          "proficiency": 95
+          "level": "expert"
         },
         {
           "name": "Loki",
-          "level": "advanced",
-          "proficiency": 80
+          "level": "advanced"
         },
         {
           "name": "OpenTelemetry",
-          "level": "intermediate",
-          "proficiency": 60
+          "level": "intermediate"
         },
         {
           "name": "Elasticsearch/Kibana",
-          "level": "advanced",
-          "proficiency": 80
+          "level": "advanced"
         },
         {
           "name": "Tempo (학습 중)",
-          "level": "beginner",
-          "proficiency": 35
+          "level": "beginner"
         },
         {
           "name": "Pyroscope (학습 중)",
-          "level": "beginner",
-          "proficiency": 30
+          "level": "beginner"
         }
       ]
     },
@@ -558,43 +549,35 @@
       "items": [
         {
           "name": "AWS (EC2, VPC, EKS, S3)",
-          "level": "advanced",
-          "proficiency": 80
+          "level": "advanced"
         },
         {
           "name": "Docker",
-          "level": "expert",
-          "proficiency": 95
+          "level": "expert"
         },
         {
           "name": "Kubernetes",
-          "level": "advanced",
-          "proficiency": 80
+          "level": "advanced"
         },
         {
           "name": "Linux",
-          "level": "expert",
-          "proficiency": 95
+          "level": "expert"
         },
         {
           "name": "Cloudflare Workers",
-          "level": "expert",
-          "proficiency": 90
+          "level": "expert"
         },
         {
           "name": "Helm",
-          "level": "advanced",
-          "proficiency": 75
+          "level": "advanced"
         },
         {
           "name": "k3s",
-          "level": "advanced",
-          "proficiency": 75
+          "level": "advanced"
         },
         {
           "name": "Proxmox VE",
-          "level": "expert",
-          "proficiency": 90
+          "level": "expert"
         }
       ]
     },
@@ -604,43 +587,35 @@
       "items": [
         {
           "name": "GitLab CI/CD",
-          "level": "advanced",
-          "proficiency": 80
+          "level": "advanced"
         },
         {
           "name": "GitHub Actions",
-          "level": "expert",
-          "proficiency": 95
+          "level": "expert"
         },
         {
           "name": "Ansible",
-          "level": "advanced",
-          "proficiency": 80
+          "level": "advanced"
         },
         {
           "name": "Terraform",
-          "level": "advanced",
-          "proficiency": 80
+          "level": "advanced"
         },
         {
           "name": "ArgoCD (학습 중)",
-          "level": "beginner",
-          "proficiency": 40
+          "level": "beginner"
         },
         {
           "name": "Crossplane (학습 중)",
-          "level": "beginner",
-          "proficiency": 35
+          "level": "beginner"
         },
         {
           "name": "Pulumi (학습 중)",
-          "level": "beginner",
-          "proficiency": 35
+          "level": "beginner"
         },
         {
           "name": "HashiCorp Vault (홈랩 운영)",
-          "level": "intermediate",
-          "proficiency": 55
+          "level": "intermediate"
         }
       ]
     },
@@ -650,33 +625,27 @@
       "items": [
         {
           "name": "Python",
-          "level": "advanced",
-          "proficiency": 80
+          "level": "advanced"
         },
         {
           "name": "Bash",
-          "level": "expert",
-          "proficiency": 95
+          "level": "expert"
         },
         {
           "name": "n8n",
-          "level": "expert",
-          "proficiency": 95
+          "level": "expert"
         },
         {
           "name": "Go",
-          "level": "advanced",
-          "proficiency": 75
+          "level": "advanced"
         },
         {
           "name": "Playwright",
-          "level": "advanced",
-          "proficiency": 80
+          "level": "advanced"
         },
         {
           "name": "MCP (Model Context Protocol)",
-          "level": "advanced",
-          "proficiency": 80
+          "level": "advanced"
         }
       ]
     },
@@ -686,18 +655,15 @@
       "items": [
         {
           "name": "PostgreSQL",
-          "level": "advanced",
-          "proficiency": 80
+          "level": "advanced"
         },
         {
           "name": "MySQL",
-          "level": "intermediate",
-          "proficiency": 60
+          "level": "intermediate"
         },
         {
           "name": "Redis",
-          "level": "intermediate",
-          "proficiency": 60
+          "level": "intermediate"
         }
       ]
     },
@@ -707,78 +673,63 @@
       "items": [
         {
           "name": "FortiGate",
-          "level": "expert",
-          "proficiency": 95
+          "level": "expert"
         },
         {
           "name": "FortiManager",
-          "level": "expert",
-          "proficiency": 95
+          "level": "expert"
         },
         {
           "name": "FortiAnalyzer",
-          "level": "advanced",
-          "proficiency": 80
+          "level": "advanced"
         },
         {
           "name": "Splunk",
-          "level": "expert",
-          "proficiency": 95
+          "level": "expert"
         },
         {
           "name": "NAC",
-          "level": "advanced",
-          "proficiency": 80
+          "level": "advanced"
         },
         {
           "name": "DLP",
-          "level": "intermediate",
-          "proficiency": 60
+          "level": "intermediate"
         },
         {
           "name": "Wazuh",
-          "level": "advanced",
-          "proficiency": 80
+          "level": "advanced"
         },
         {
           "name": "OPA/Gatekeeper",
-          "level": "beginner",
-          "proficiency": 40
+          "level": "beginner"
         },
         {
           "name": "Falco",
-          "level": "beginner",
-          "proficiency": 35
+          "level": "beginner"
         },
         {
           "name": "eBPF/Cilium (학습 중)",
-          "level": "beginner",
-          "proficiency": 30
+          "level": "beginner"
         },
         {
           "name": "Trivy",
-          "level": "advanced",
-          "proficiency": 80
+          "level": "advanced"
         },
         {
           "name": "gitleaks",
-          "level": "advanced",
-          "proficiency": 80
+          "level": "advanced"
         },
         {
           "name": "MITRE ATT&CK",
-          "level": "intermediate",
-          "proficiency": 60
+          "level": "intermediate"
         },
         {
           "name": "Cloudflare WAF",
-          "level": "advanced",
-          "proficiency": 80
+          "level": "advanced"
         },
         {
           "name": "ISMS-P 본인가 심사 대응",
-          "level": "expert",
-          "proficiency": 95
+          "level": "expert"
         }
       ]
     },
@@ -788,18 +739,15 @@
       "items": [
         {
           "name": "Node.js",
-          "level": "advanced",
-          "proficiency": 80
+          "level": "advanced"
         },
         {
           "name": "TypeScript",
-          "level": "advanced",
-          "proficiency": 75
+          "level": "advanced"
         },
         {
           "name": "Go",
-          "level": "advanced",
-          "proficiency": 75
+          "level": "advanced"
         }
       ]
     },
@@ -809,13 +757,11 @@
       "items": [
         {
           "name": "ISMS-P",
-          "level": "advanced",
-          "proficiency": 80
+          "level": "advanced"
         },
         {
           "name": "ISO 27001",
-          "level": "advanced",
-          "proficiency": 80
+          "level": "advanced"
         }
       ]
     }
@@ -834,10 +780,7 @@
       ],
       "icon": "📊",
       "tagline": "모니터링 플랫폼",
-      "stars": 0,
-      "starsUiHint": "de-emphasize",
       "language": "PromQL",
-      "forks": 0,
       "forksUiHint": "de-emphasize",
       "githubUrl": null,
       "demoUrl": "https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b"
@@ -853,10 +796,7 @@
       ],
       "icon": "🔄",
       "tagline": "워크플로우 자동화",
-      "stars": 0,
-      "starsUiHint": "de-emphasize",
       "language": "JavaScript",
-      "forks": 0,
       "forksUiHint": "de-emphasize",
       "githubUrl": null,
       "demoUrl": null
@@ -872,10 +812,7 @@
       ],
       "icon": "🛡️",
       "tagline": "보안장비 API 자동화",
-      "stars": 0,
-      "starsUiHint": "de-emphasize",
       "language": "Python",
-      "forks": 0,
       "forksUiHint": "de-emphasize",
       "githubUrl": null,
       "demoUrl": null,
@@ -892,10 +829,7 @@
       ],
       "icon": "🔔",
       "tagline": "보안 알림 자동화",
-      "stars": 0,
-      "starsUiHint": "de-emphasize",
       "language": "Python",
-      "forks": 0,
       "forksUiHint": "de-emphasize",
       "githubUrl": "https://github.com/jclee941/splunk",
       "demoUrl": "https://kibana.jclee.me/s/portfolio-demo/app/dashboards?auth_provider_hint=portfolio_demo#/view/portfolio-demo-dashboard"
@@ -911,10 +845,7 @@
       ],
       "icon": "🚫",
       "tagline": "위협 인텔리전스",
-      "stars": 0,
-      "starsUiHint": "de-emphasize",
       "language": "Python",
-      "forks": 0,
       "forksUiHint": "de-emphasize",
       "githubUrl": "https://github.com/jclee941/blacklist",
       "demoUrl": null
@@ -932,10 +863,7 @@
       "icon": "🏎️",
       "tagline": "자율주행 시뮬레이션",
       "url": "https://github.com/jclee941/hycu_fsds",
-      "stars": 0,
-      "starsUiHint": "de-emphasize",
       "language": "Python",
-      "forks": 0,
       "forksUiHint": "de-emphasize",
       "githubUrl": "https://github.com/jclee941/hycu_fsds",
       "demoUrl": null
@@ -952,10 +880,7 @@
       ],
       "icon": "⚡",
       "tagline": "포트폴리오 플랫폼",
-      "stars": 0,
-      "starsUiHint": "de-emphasize",
       "language": "JavaScript",
-      "forks": 0,
       "forksUiHint": "de-emphasize",
       "githubUrl": "https://github.com/jclee941/resume",
       "demoUrl": "https://resume.jclee.me",
@@ -970,9 +895,6 @@
     {
       "name": "Terraform Homelab IaC",
       "period": "2024.06 ~ 현재",
-      "stars": 0,
-      "forks": 0,
-      "starsUiHint": "de-emphasize",
       "githubUrl": "https://github.com/jclee941/terraform",
       "description": "[문제] 홈랩 인프라(Proxmox, Cloudflare DNS/Workers, K8s)를 GUI로 관리하다 보니 변경 이력 추적과 재구축이 어려웠습니다.\n[해결] 모든 인프라를 Terraform으로 IaC화했습니다. Proxmox VM/LXC, Cloudflare DNS·Workers·WAF, k3s 클러스터를 git 기반 GitOps로 관리합니다.\n[결과] 인프라 재구축이 가능해졌고 변경 이력이 PR 기반으로 추적됩니다.",
       "highlights": [
@@ -992,9 +914,6 @@
     {
       "name": "SafetyWallet (CF Workers PWA)",
       "period": "2026.01 ~ 2026.04",
-      "stars": 0,
-      "forks": 0,
-      "starsUiHint": "de-emphasize",
       "githubUrl": "https://github.com/jclee941/safetywallet",
       "description": "[문제] 현장 작업자가 안전 매뉴얼·교육 이수 증빙·비상 연락망을 종이로 관리하여 즉시 조회가 어려웠습니다.\n[해결] Cloudflare Workers 기반 PWA + Next.js 어드민을 구축했습니다. D1로 작업자 프로필을 저장하고 KV 캐시·R2 객체 스토리지로 매뉴얼을 보관합니다.\n[결과] 오프라인에서도 안전 매뉴얼을 조회할 수 있는 PWA 시스템을 운영합니다.",
       "highlights": [
@@ -1014,9 +933,6 @@
     {
       "name": "AI GitHub PR Reviewer",
       "period": "2026.03 ~ 현재",
-      "stars": 0,
-      "forks": 0,
-      "starsUiHint": "de-emphasize",
       "githubUrl": "https://github.com/jclee941/github-bot",
       "description": "[문제] 보안·인프라 PR 리뷰가 1인 의존 구조였고 공통 패턴(시크릿 노출/RBAC) 검증을 매번 수동으로 수행해야 했습니다.\n[해결] Self-hosted AI PR 리뷰어를 Cloudflare Workers로 운영합니다. CLIProxyAPI 통합으로 LLM 비용을 절감하고 보안 패턴 자동 검출 후 GitHub 코멘트로 피드백합니다.\n[결과] PR 리뷰 흐름을 자동화하고 시크릿 노출 검증을 표준화했습니다.",
       "highlights": [
@@ -1035,9 +951,6 @@
     {
       "name": "Bug Bounty Recon Toolkit",
       "period": "2025.10 ~ 현재",
-      "stars": 0,
-      "forks": 0,
-      "starsUiHint": "de-emphasize",
       "githubUrl": "https://github.com/jclee941/bug",
       "description": "[문제] 버그바운티 정찰(서브도메인 발견 → 알림 → 취약점 스캔)을 매번 수작업으로 수행했습니다.\n[해결] Go 기반 정찰 파이프라인 + Python 결과 분석을 통합했습니다. Subfinder + httpx + Nuclei를 연결하고 n8n으로 일일 스케줄을 관리합니다.\n[결과] 정찰 작업을 워크플로우로 전환하고 신규 도메인 변경을 즉시 탐지합니다.",
       "highlights": [
@@ -1100,7 +1013,7 @@
     "펀엔씨 환경에서 GitLab CI/CD 파이프라인에 Trivy 컨테이너 보안 스캔과 EKS 보안 정책을 통합했습니다.",
     "메타넷 재택근무 인프라에서 NAC 예외 정책 처리와 스위치 점검 작업을 자동화 시스템으로 전환한 경험이 있습니다.",
     "메타넷 재택근무 환경에서 백신-VPN 프로파일 충돌을 분석·해결하고 신규 사이트 네트워크를 설계·구축했습니다.",
-    "KAI 폐쇄망 환경에서 방화벽 중복 룰을 정리하고 내부정보 유출사고 0건을 유지한 경험이 있습니다."
+    "KAI 폐쇄망 환경에서 방화벽 중복 룰을 정리하고 내부정보 유출 사고가 발생하지 않도록 보안 운영 안정성을 유지한 경험이 있습니다."
   ],
   "infrastructure": [
     {
