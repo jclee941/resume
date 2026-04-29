@@ -131,7 +131,7 @@ export async function loginWithGoogle(browser, page, config, log) {
   }
 
   log('Waiting for Google OAuth popup', 'info', platformKey);
-  let googlePage = null;
+  let googlePage;
 
   const popupPromise = new Promise((resolve) => {
     browser.once('targetcreated', async (target) => {

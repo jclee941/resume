@@ -31,7 +31,7 @@ function executeD1(sql, options = {}) {
       stdio: ['pipe', 'pipe', 'pipe'],
     });
   } catch (err) {
-    throw new Error(`D1 execution failed: ${err.stderr || err.message}`);
+    throw new Error(`D1 execution failed: ${err.stderr || err.message}`, { cause: err });
   }
 }
 
@@ -60,7 +60,7 @@ function executeD1File(filePath, options = {}) {
       stdio: ['pipe', 'pipe', 'pipe'],
     });
   } catch (err) {
-    throw new Error(`D1 file execution failed: ${err.stderr || err.message}`);
+    throw new Error(`D1 file execution failed: ${err.stderr || err.message}`, { cause: err });
   }
 }
 

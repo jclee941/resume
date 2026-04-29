@@ -247,7 +247,7 @@ export async function triggerN8nWebhook(adapter, eventType, data, message) {
 export async function notify(adapter, eventType, data, telegramPayload) {
   const historyRecord = createNotificationHistoryRecord(eventType, data);
   let telegramResult = { sent: false, reason: 'not_attempted' };
-  let n8nResult = { sent: false, reason: 'not_attempted' };
+  let n8nResult;
 
   if (adapter.telegramToken && adapter.telegramChatId) {
     historyRecord.channels.push('telegram');
