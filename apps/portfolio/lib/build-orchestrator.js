@@ -36,6 +36,13 @@ async function runWorkerBuild({ baseDir, version, allowedEmails, logger }) {
     cssContent,
   } = await readBuildInputs({ baseDir, logger });
 
+  if (!resumePdfBuffer || resumePdfBuffer.length === 0) {
+    logger.warn(
+      '⚠️  resume_final.pdf is missing — the /resume.pdf route will return an empty body. ' +
+        'Run `go run ./tools/scripts/build/pdf-generator.go master` to generate it.'
+    );
+  }
+
   const { projectData, templates } = processProjectData({ projectDataRaw, projectDataEnRaw, logger });
   const resumeChatDataBase64Literal = `'${Buffer.from(JSON.stringify(projectData), 'utf-8').toString('base64')}'`;
   const workerAiModel = '@cf/meta/llama-2-7b-chat-int8';

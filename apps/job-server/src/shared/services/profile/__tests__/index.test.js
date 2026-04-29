@@ -104,6 +104,70 @@ describe('ProfileAggregator.fetchUnifiedProfile', () => {
   });
 });
 
+describe('ProfileAggregator + JK NOT_IMPLEMENTED stub (audit Issue D)', () => {
+  beforeEach(() => {
+    mock.restoreAll();
+    mock.method(SessionManager, 'load', () => ({ cookies: { token: 'session' } }));
+  });
+
+  it('handles new JK structured stub without crashing and surfaces reason', async () => {
+    const crawlers = {
+      wanted: {
+        getProfile: mock.fn(async () => ({
+          success: true,
+          profile: { name: 'Wanted', careers: [], skills: [] },
+        })),
+      },
+      jobkorea: {
+        // NEW shape from apps/job-server/platforms/jobkorea/jobkorea-crawler.js getProfile()
+        getProfile: mock.fn(async () => ({
+          success: false,
+          source: 'jobkorea',
+          status: 'NOT_IMPLEMENTED',
+          profile: null,
+          reason: 'JobKorea profile read-back requires live authenticated DOM probing.',
+          recommendedFlow: ['step1', 'step2', 'step3', 'step4'],
+        })),
+      },
+      saramin: { getProfile: mock.fn(async () => ({ success: true, profile: {} })) },
+      linkedin: { getProfile: mock.fn(async () => ({ success: true, profile: {} })) },
+    };
+
+    const aggregator = new ProfileAggregator(crawlers);
+    const unified = await aggregator.fetchUnifiedProfile();
+
+    assert.equal(unified.meta.syncStatus.jobkorea.status, 'not_implemented');
+    assert.equal(
+      unified.meta.syncStatus.jobkorea.error,
+      'JobKorea profile read-back requires live authenticated DOM probing.'
+    );
+    // Critical: did NOT throw on profile=null
+    assert.equal(unified.meta.sources.includes('jobkorea'), false);
+  });
+
+  it('handles AUTH_REQUIRED structured stub', async () => {
+    const crawlers = {
+      wanted: { getProfile: mock.fn(async () => ({ success: true, profile: {} })) },
+      jobkorea: {
+        getProfile: mock.fn(async () => ({
+          success: false,
+          source: 'jobkorea',
+          status: 'AUTH_REQUIRED',
+          error: 'Authentication required',
+        })),
+      },
+      saramin: { getProfile: mock.fn(async () => ({ success: true, profile: {} })) },
+      linkedin: { getProfile: mock.fn(async () => ({ success: true, profile: {} })) },
+    };
+
+    const aggregator = new ProfileAggregator(crawlers);
+    const unified = await aggregator.fetchUnifiedProfile();
+
+    assert.equal(unified.meta.syncStatus.jobkorea.status, 'error');
+    assert.equal(unified.meta.syncStatus.jobkorea.error, 'Authentication required');
+  });
+});
+
 describe('ProfileAggregator.mergeProfile', () => {
   beforeEach(() => {
     mock.restoreAll();

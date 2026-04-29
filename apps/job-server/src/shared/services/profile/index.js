@@ -63,8 +63,8 @@ export class ProfileAggregator {
                 unified.meta.sources.push(platform);
             } else {
               unified.meta.syncStatus[platform] = {
-                status: 'error',
-                error: profileData.error,
+                status: profileData.status === 'NOT_IMPLEMENTED' ? 'not_implemented' : 'error',
+                error: profileData.error ?? profileData.reason ?? null,
               };
             }
           } else {
