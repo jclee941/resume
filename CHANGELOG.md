@@ -5,6 +5,11 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.16.4] - 2026-04-29
+
+### Changes
+- fix(resume): Oracle round 2 blockers - 모든 잔여 수치 + 상위 projects 배열 how/why 전환 (2043e80)
+
 ## [v1.16.3] - 2026-04-29
 
 ### Changes
