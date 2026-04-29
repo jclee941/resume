@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.14.14] - 2026-04-29
+
+### Changes
+- fix(audit): close P0/P1 with real runtime changes per Oracle re-verification (2798e08)
+
+
 ## [v1.14.13] - 2026-04-29
 
 ### Changes
