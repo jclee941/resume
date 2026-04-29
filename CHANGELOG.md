@@ -5,6 +5,11 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.16.6] - 2026-04-29
+
+### Changes
+- fix(resume): final residual metric cleanup in en data + generator hardcoded text (08d10ec)
+
 ## [v1.16.5] - 2026-04-29
 
 ### Changes
