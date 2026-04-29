@@ -4,7 +4,7 @@
 
 # Dependencies
 node_modules/
-package-lock.json
+# package-lock.json IS tracked (npm workspaces deterministic install) — do NOT ignore
 yarn.lock
 pnpm-lock.yaml
 
@@ -13,9 +13,22 @@ dist/
 build/
 *.tsbuildinfo
 
-# Generated files
-worker.js
+# Generated files — portfolio worker bundle and propagated SSoT snapshots
+apps/portfolio/worker.js
+apps/portfolio/data.json
+apps/portfolio/data_en.json
+apps/portfolio/data_ja.json
+apps/portfolio/dashboard.html
+apps/portfolio/dashboard.html.backup
+apps/portfolio/og-image*.png
+apps/portfolio/og-image*.webp
+apps/portfolio/sitemap.xml
+apps/portfolio/manifest.json
+apps/portfolio/manifest_en.json
+apps/portfolio/.wrangler/
 *.generated.*
+*.tsbuildinfo
+# legacy 'worker.js' bare match removed — explicit path above is safer
 
 # -----------------------------------------------------------------------------
 # Environment files & secrets — NEVER COMMIT
@@ -149,3 +162,21 @@ packages/data/resumes/technical/**/*.pdf
 
 # Sisyphus loop ephemeral state
 .sisyphus/*.local.md
+
+# Test reports / Playwright outputs
+playwright-report/
+playwright-report-public/
+blob-report/
+
+# Python bytecode + local caches under ta/
+ta/__pycache__/
+ta/.opencode/
+ta/output/
+**/__pycache__/
+*.pyc
+
+# Compiled Go binaries pulled by setup scripts (act, etc.)
+tools/bin/
+
+# OpenCode local scan state (regenerated)
+.opencode-scan-state
