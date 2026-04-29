@@ -1,0 +1,19 @@
+# PR Security Review caller — triggers on 'security-review' label
+# Source of truth: https://github.com/jclee941/.github/blob/main/.github/workflows/pr-review-security.yml
+name: PR Security Review
+
+on:
+  pull_request_target:
+    types: [labeled]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  security:
+    if: github.event.label.name == 'security-review'
+    uses: jclee941/.github/.github/workflows/pr-review-security.yml@main
+    secrets:
+      CLIPROXY_API_KEY: ${{ secrets.CLIPROXY_API_KEY }}
