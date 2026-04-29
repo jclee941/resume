@@ -5,6 +5,15 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.16.3] - 2026-04-29
+
+### Changes
+- fix(release-yml): inject changelog via env var to fully isolate from shell (506266e)
+- fix(release-yml): commit message with quotes no longer breaks bash interpolation (f3d7b2d)
+- refactor(job-server): apply closure-bound holder pattern to remaining P1 module state (cd00379)
+- chore: trigger redeploy for portfolio-en JSON-LD update (dfd6d06)
+- fix(portfolio-en): JSON-LD description에서 잔여 "9-year/32 detection rules" 수치 제거 (b78f73f)
+
 ## [v1.16.2] - 2026-04-29
 
 ### Changes
