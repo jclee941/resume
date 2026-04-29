@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.14.10] - 2026-04-29
+
+### Changes
+- fix(deploy): revert P0-4 JOB_SERVICE binding — job-dashboard not yet deployed (a626e28)
+
+
 ## [v1.14.9] - 2026-04-29
 
 ### Changes
