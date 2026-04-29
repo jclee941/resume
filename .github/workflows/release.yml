@@ -195,6 +195,13 @@ jobs:
           target_commitish: master
           generate_release_notes: false
 
+      - name: Sync SSoT → portfolio data*.json (build inputs)
+        if: steps.bump.outputs.should_release == 'true' && github.event.inputs.dry_run != 'true'
+        # apps/portfolio/data*.json are generated from packages/data/resumes/master/
+        # by tools/scripts/utils/sync-resume-data.js. They were untracked in 9fc8e4f
+        # so CI must regenerate them before `npm run build`.
+        run: npm run sync:data
+
       - name: Build portfolio worker
         if: steps.bump.outputs.should_release == 'true' && github.event.inputs.dry_run != 'true'
         run: npm run build
