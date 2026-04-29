@@ -1,245 +1,143 @@
 /**
- * Resume Validation Adapter for ES6 Modules
- * Loads JSON schema and provides validation functions for resume-sync.js
- * 
- * Location: apps/job-server/src/shared/validation/index.js
- * Schema: packages/data/resumes/master/resume_schema.json (relative: ../../../../data/...)
+ * Resume Validation Adapter — thin wrapper over canonical SSoT.
+ *
+ * The CANONICAL resume schema is the JSON Schema at:
+ *   packages/data/resumes/master/resume_schema.json
+ *
+ * This file is a thin adapter that:
+ *   1. Loads the canonical JSON Schema (`masterSchema` re-export).
+ *   2. Validates resume payloads using a layered approach:
+ *      - Pre-checks for null/undefined/non-object root + type checks
+ *      - Delegates property-level validation to the SimpleValidator engine
+ *        in tools/scripts/utils/validate-resume-data.js, ensuring CI and
+ *        runtime checks produce identical errors for matching cases.
+ *   3. Reformats errors for MCP responses.
+ *
+ * Issue #17: Was 245 LOC of hand-rolled validation that drifted from
+ * validate-resume-data.js. Now ~115 LOC; the engine-level type checks live
+ * in the canonical CJS module to guarantee CI/runtime parity.
  */
 
 import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { createRequire } from 'module';
 
-// ES6 module: Calculate __dirname for path resolution
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+// ESM: __dirname equivalent for path resolution
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
-// Load master schema from relative path
-// From: apps/job-server/src/shared/validation/
-// To:   packages/data/resumes/master/resume_schema.json
-const schemaPath = join(__dirname, '../../../../../packages/data/resumes/master/resume_schema.json');
-export const masterSchema = JSON.parse(readFileSync(schemaPath, 'utf-8'));
+// CommonJS interop for the validate-resume-data.js engine (CJS module)
+const require = createRequire(import.meta.url);
+const validatorEngine = require('../../../../../tools/scripts/utils/validate-resume-data.js');
+
+// Canonical schema path (relative to this file):
+//   apps/job-server/src/shared/validation/index.js
+//   → packages/data/resumes/master/resume_schema.json
+const SCHEMA_PATH = join(
+  __dirname,
+  '../../../../../packages/data/resumes/master/resume_schema.json'
+);
+
+export const masterSchema = JSON.parse(readFileSync(SCHEMA_PATH, 'utf-8'));
 
 /**
- * Validate resume data against schema
- * Checks required top-level and nested fields
- * 
+ * Validate resume data against the canonical JSON Schema.
+ *
+ * Provides the MCP-facing validation contract. Pre-checks handle the cases
+ * the canonical engine cannot (null root, non-object root, type mismatches
+ * on top-level fields), then delegates property-required checks to the engine.
+ *
  * @param {Object} data - Resume data object to validate
- * @param {Object} schema - JSON Schema (draft-07) for validation
- * @returns {Object} Validation result: { valid: boolean, errors?: Array }
- *   - valid: true → Resume passes validation
- *   - valid: false → Check errors array for details
- *   - errors: Array of {path, message} for each validation failure
- * 
- * @example
- * const result = validateResumeData(resumeData, masterSchema);
- * if (!result.valid) {
- *   console.log("Validation errors:", result.errors);
- * }
+ * @param {Object} [schema=masterSchema] - JSON Schema (defaults to canonical)
+ * @returns {{ valid: boolean, errors?: Array<{path:string,message:string}> }}
  */
-export function validateResumeData(data, schema) {
+export function validateResumeData(data, schema = masterSchema) {
   const errors = [];
-  
-  // Type check: ensure data is an object
-  if (!data || typeof data !== 'object') {
+
+  // Pre-check 1: root must be an object
+  if (data === null || data === undefined || typeof data !== 'object') {
     errors.push({
       path: '(root)',
-      message: 'Resume data must be an object'
+      message: 'Resume data must be an object',
     });
     return { valid: false, errors };
   }
-  
-  // Validate required top-level fields
-  if (schema.required && Array.isArray(schema.required)) {
+
+  // Pre-check 2: top-level required fields
+  if (Array.isArray(schema.required)) {
     for (const field of schema.required) {
       if (!(field in data)) {
         errors.push({
           path: field,
-          message: `Required field missing: ${field}`
+          message: `Required field missing: ${field}`,
         });
       }
     }
   }
-  
-  // Validate nested required fields in "personal"
-  if (data.personal) {
-    if (typeof data.personal !== 'object') {
-      errors.push({
-        path: 'personal',
-        message: "Field 'personal' must be an object"
-      });
-    } else if (schema.properties?.personal?.required) {
-      for (const field of schema.properties.personal.required) {
-        if (!(field in data.personal)) {
-          errors.push({
-            path: `personal.${field}`,
-            message: `Required field missing: personal.${field}`
-          });
-        }
-      }
-    }
-  }
-  
-  // Validate nested required fields in "education"
-  if (data.education) {
-    if (typeof data.education !== 'object') {
-      errors.push({
-        path: 'education',
-        message: "Field 'education' must be an object"
-      });
-    } else if (schema.properties?.education?.required) {
-      for (const field of schema.properties.education.required) {
-        if (!(field in data.education)) {
-          errors.push({
-            path: `education.${field}`,
-            message: `Required field missing: education.${field}`
-          });
-        }
-      }
-    }
-  }
-  
-  // Validate careers is array if present
-  if (data.careers && !Array.isArray(data.careers)) {
-    errors.push({
-      path: 'careers',
-      message: "Field 'careers' must be an array"
-    });
-  }
-  
-  // Validate skills is object if present
-  if (data.skills && typeof data.skills !== 'object') {
-    errors.push({
-      path: 'skills',
-      message: "Field 'skills' must be an object"
-    });
-  }
 
-  // Validate summary fields
-  if (data.summary) {
-    if (typeof data.summary !== 'object') {
-      errors.push({
-        path: 'summary',
-        message: "Field 'summary' must be an object"
-      });
-    } else {
-      // Validate expertise is array if present
-      if (data.summary.expertise && !Array.isArray(data.summary.expertise)) {
+  // Pre-check 3: type checks for fields the canonical engine doesn't catch
+  // (engine's _validateProperty allows null and skips type checks for objects
+  //  with `additionalProperties: true`)
+  if ('personal' in data && (data.personal === null || typeof data.personal !== 'object')) {
+    errors.push({ path: 'personal', message: "Field 'personal' must be an object" });
+  } else if (data.personal && schema.properties?.personal?.required) {
+    for (const field of schema.properties.personal.required) {
+      if (!(field in data.personal)) {
         errors.push({
-          path: 'summary.expertise',
-          message: "Field 'summary.expertise' must be an array"
+          path: `personal.${field}`,
+          message: `Required field missing: personal.${field}`,
         });
       }
     }
   }
 
-  // Validate current is object or null
-  if (data.current !== undefined && data.current !== null) {
-    if (typeof data.current !== 'object') {
-      errors.push({
-        path: 'current',
-        message: "Field 'current' must be an object or null"
-      });
-    }
-  }
-
-  // Validate careers array items
-  if (data.careers && Array.isArray(data.careers)) {
-    for (let i = 0; i < data.careers.length; i++) {
-      const career = data.careers[i];
-      if (typeof career !== 'object' || career === null) {
+  if ('education' in data && (data.education === null || typeof data.education !== 'object')) {
+    errors.push({ path: 'education', message: "Field 'education' must be an object" });
+  } else if (data.education && schema.properties?.education?.required) {
+    for (const field of schema.properties.education.required) {
+      if (!(field in data.education)) {
         errors.push({
-          path: `careers[${i}]`,
-          message: `Career item at index ${i} must be an object`
-        });
-      } else {
-        if (!career.company) {
-          errors.push({
-            path: `careers[${i}].company`,
-            message: `Career item at index ${i} is missing required field: company`
-          });
-        }
-        if (!career.period) {
-          errors.push({
-            path: `careers[${i}].period`,
-            message: `Career item at index ${i} is missing required field: period`
-          });
-        }
-        if (!career.role) {
-          errors.push({
-            path: `careers[${i}].role`,
-            message: `Career item at index ${i} is missing required field: role`
-          });
-        }
-      }
-    }
-  }
-
-  // Validate personal.phone format (XXX-XXXX-XXXX)
-  if (data.personal && data.personal.phone) {
-    const phonePattern = /^\d{3}-\d{4}-\d{4}$/;
-    if (!phonePattern.test(data.personal.phone)) {
-      errors.push({
-        path: 'personal.phone',
-        message: "Field 'personal.phone' must match format XXX-XXXX-XXXX"
-      });
-    }
-  }
-
-  // Validate skills category structure
-  if (data.skills && typeof data.skills === 'object') {
-    for (const [category, value] of Object.entries(data.skills)) {
-      if (value && typeof value === 'object') {
-        // Check if it has the structured format with title/icon/items
-        if (value.items && !Array.isArray(value.items)) {
-          errors.push({
-            path: `skills.${category}.items`,
-            message: `Field 'skills.${category}.items' must be an array`
-          });
-        }
-      } else if (Array.isArray(value)) {
-        // Array format is also valid per schema
-        // No additional validation needed
-      } else if (value !== null && value !== undefined) {
-        errors.push({
-          path: `skills.${category}`,
-          message: `Field 'skills.${category}' must be an object or array`
+          path: `education.${field}`,
+          message: `Required field missing: education.${field}`,
         });
       }
     }
   }
-  
+
+  if ('careers' in data && !Array.isArray(data.careers)) {
+    errors.push({ path: 'careers', message: "Field 'careers' must be an array" });
+  }
+
+  if ('skills' in data && data.skills !== null && typeof data.skills !== 'object') {
+    errors.push({ path: 'skills', message: "Field 'skills' must be an object" });
+  }
+
+  // Delegate to canonical engine for happy-path full validation when no
+  // structural failures were found. Engine handles required-property,
+  // pattern, and enum checks identically to CI.
+  if (errors.length === 0) {
+    const engineResult = validatorEngine.validateResumeData(data, schema);
+    if (!engineResult.valid && engineResult.errors) {
+      errors.push(...engineResult.errors);
+    }
+  }
+
   return {
     valid: errors.length === 0,
-    errors: errors.length > 0 ? errors : undefined
+    errors: errors.length > 0 ? errors : undefined,
   };
 }
 
 /**
- * Format validation errors for MCP response
- * Converts internal validator error format to MCP-compliant format
- * 
+ * Format validation errors for MCP response shape.
+ *
  * @param {Array} errors - Array of validation errors from validateResumeData
- * @returns {Array} MCP-formatted errors: [{field, message}, ...]
- * 
- * @example
- * const validation = validateResumeData(data, schema);
- * if (!validation.valid) {
- *   const mcpErrors = formatErrorsForMCP(validation.errors);
- *   return {
- *     success: false,
- *     error: "Validation failed",
- *     errors: mcpErrors
- *   };
- * }
+ * @returns {Array<{field:string,message:string}>}
  */
 export function formatErrorsForMCP(errors) {
-  if (!errors || !Array.isArray(errors)) {
-    return [];
-  }
-  
-  return errors.map(err => ({
+  if (!errors || !Array.isArray(errors)) return [];
+  return errors.map((err) => ({
     field: err.path || err.field || '(root)',
-    message: err.message || 'Validation error'
+    message: err.message || 'Validation error',
   }));
 }
