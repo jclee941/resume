@@ -225,3 +225,47 @@ AGENTS.md `shared/AGENTS.md` 명시: **"No global state or singletons"**. 직접
 - 이전 audits: `RESUME_SYNC_AUDIT_2026-04-29.md`
 - ADRs: `docs/adr/0001..0008`
 - Production: https://resume.jclee.me v1.14.7 deployed 2026-04-29T01:05:46
+
+---
+
+## 9. Resolution log (2026-04-29 same-day)
+
+후속 commit `41242a1` + `a626e28` + 후속 release 자동 됑 — v1.14.10 production live.
+
+### ✅ Resolved (commit 964901a + 7afd8da + a626e28)
+
+| ID | Status | Commit | 단서 |
+|---|---|---|---|
+| P0-2 KV plaintext cookies | RESOLVED | 964901a | 모든 KV writes encrypt; validateSession은 decrypt 후 parse |
+| P0-3 Jest threshold 90% | RESOLVED | 964901a | 75% + browser-only excludes (auth/crypto/rate-limit/retry/browser/cli) |
+| P0-4 JOB_SERVICE binding | DEFERRED | 964901a → a626e28 | job-dashboard 미배포 상태 — 503 fallback이 이미 올바르게 처리. job-dashboard deploy 후 binding 추가 PR 필요. |
+| P0-5 7 singletons | TRACKED | 964901a | DEPRECATED 배너 + migration plan 코멘트 추가 (refactor는 per-service PR로) |
+| P1-1 Prod approval gate | RESOLVED | 964901a | `environment: production` 대항 설정 (GH UI에서 required reviewer 구성 가능) |
+| P1-2 /api/auth/sync fail-closed | RESOLVED | 964901a | `!env.AUTH_SYNC_SECRET → 503` |
+| P1-3 /api/auto-apply/run CSRF | RESOLVED | 964901a | skipCsrf 에서 `/api/auto-apply/` prefix 제거 |
+| P1-4 Rate limit non-atomic | TRACKED | 964901a | KV race 코멘트 설명 + Durable Object migration plan |
+| P1-5 Admin token replay | TRACKED | 964901a | bearer 재활용 위험 코멘트 + JWT migration plan |
+| P1-6 .affected/ untrack | RESOLVED | b51c0f4 | (prior commit) |
+| P1-7 JK retry 5→3 | RESOLVED | 964901a | AGENTS.md "3 max" 준수 |
+| P1-8 n8n public webhook | RESOLVED | 964901a | demoUrl → null + sync:data 재생성 |
+| P1-9 CHANGELOG semver | RESOLVED | b51c0f4 | (prior commit) |
+| P1-10 BUILD.bazel 삭제 | RESOLVED | b51c0f4 | (prior commit) |
+| P1-11 gitlab-legacy | RESOLVED | b51c0f4 | (prior commit) |
+| P1-12 variant validator tests | RESOLVED | 964901a | 18 tests 추가, npm test 에 wired |
+
+### 남은 있는 이슈 (external action 필요)
+
+| ID | 조치 필요 |
+|---|---|
+| P0-1 Cloudflare global API key | **외부 manual rotation** — Cloudflare dashboard에서 scoped Token 발급 + `CLOUDFLARE_API_TOKEN` GH secret 추가 + release.yml 교체 + 구 API key 폐기 |
+| P0-4 (deferred) | apps/job-dashboard worker 별도 따로 production deploy 후 portfolio 에 services binding 추가 PR |
+| P0-5 (TRACKED) | 7 singleton DI refactor — 1 service per PR |
+| P1-4 (TRACKED) | Rate limit Durable Object migration |
+| P1-5 (TRACKED) | Admin token JWT/short-lived migration |
+
+### Production state
+
+- Version: **v1.14.10** live (`deployed_at: 2026-04-29T01:47:31`)
+- Bindings: D1 healthy, KV healthy
+- All CI + Release workflows green
+- Tests: 820/820 + 13/13 + 18/18 (= 851 + jest tests)
