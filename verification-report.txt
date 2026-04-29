@@ -1,0 +1,10 @@
+Resume Portfolio Verification Report
+=====================================
+Time: 2026-04-29 14:59:29 KST
+Target: https://resume.jclee.me
+
+Results:
+  Passed:   14/16
+  Warnings: 2
+  Failed:   0/16
+  Score:    87%

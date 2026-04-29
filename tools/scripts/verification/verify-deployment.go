@@ -4,7 +4,7 @@
 // Categories:
 //   1. Service Health (3 checks)
 //   2. Security Headers (4 checks)
-//   3. Content Integrity (3 checks)
+//   3. Content Integrity (4 checks: title, OG, OG image, JSON-LD parse on /+/en)
 //   4. Performance Metrics (3 checks)
 //   5. API Endpoints (3 checks)
 //
@@ -352,6 +352,38 @@ func checkContentIntegrity() {
 			resp.Body.Close()
 		}
 		logResult("fail", "CONTENT", "OG Image", "Not accessible")
+	}
+
+	// 3.4 JSON-LD Structured Data — parse every block, fail on invalid JSON
+	// Both KO (/) and EN (/en) must have parseable application/ld+json blocks.
+	checkJSONLDForLocale(html, "/")
+	if resp2, err2 := http.Get(portfolioURL + "/en"); err2 == nil {
+		body2, _ := io.ReadAll(resp2.Body)
+		resp2.Body.Close()
+		checkJSONLDForLocale(string(body2), "/en")
+	}
+}
+
+// checkJSONLDForLocale parses every <script type="application/ld+json"> block
+// and reports invalid JSON as a verification failure.
+func checkJSONLDForLocale(html, locale string) {
+	ldRegex := regexp.MustCompile(`(?s)<script type="application/ld\+json"[^>]*>(.*?)</script>`)
+	matches := ldRegex.FindAllStringSubmatch(html, -1)
+	if len(matches) == 0 {
+		logResult("warn", "CONTENT", "JSON-LD "+locale, "No structured data blocks found")
+		return
+	}
+	invalid := []string{}
+	for i, m := range matches {
+		var parsed map[string]interface{}
+		if err := json.Unmarshal([]byte(strings.TrimSpace(m[1])), &parsed); err != nil {
+			invalid = append(invalid, fmt.Sprintf("block[%d]: %v", i, err))
+		}
+	}
+	if len(invalid) > 0 {
+		logResult("fail", "CONTENT", "JSON-LD "+locale, fmt.Sprintf("%d/%d blocks invalid: %s", len(invalid), len(matches), strings.Join(invalid, "; ")))
+	} else {
+		logResult("pass", "CONTENT", "JSON-LD "+locale, fmt.Sprintf("%d/%d blocks parse cleanly", len(matches), len(matches)))
 	}
 }
 
