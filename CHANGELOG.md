@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.14.13] - 2026-04-29
+
+### Changes
+- fix(deploy): restore manifest/sitemap/og-image as tracked + add sync:data CI step (18b8ba0)
+
+
 ## [v1.14.12] - 2026-04-29
 
 ### Changes
