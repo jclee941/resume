@@ -5,6 +5,11 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.16.10] - 2026-04-29
+
+### Changes
+- fix(portfolio-en): EN JSON-LD Person 블록의 trailing comma 수정 + verifier에 JSON-LD parse 검증 추가 (2354d97)
+
 ## [v1.16.9] - 2026-04-29
 
 ### Changes
