@@ -69,6 +69,11 @@ export async function checkRateLimit(request, pathname, env) {
       };
     }
 
+    // KNOWN P1 ISSUE (docs/architecture/MONOREPO_REVIEW_2026-04-29.md P1-4):
+    // KV read/put is NOT atomic. Concurrent requests can race and observe the
+    // same `count` value, allowing limit bypass. For production-grade enforcement
+    // migrate to a Durable Object per-IP or use Cloudflare Rate Limiting (WAF).
+    // Until then, treat this as best-effort and rely on CF edge limits for hot paths.
     const windowStart = Math.floor(now / policy.windowSec) * policy.windowSec;
     const resetAt = windowStart + policy.windowSec;
     const windowKey = `${baseKey}:window:${windowStart}`;

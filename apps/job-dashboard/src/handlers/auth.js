@@ -58,23 +58,26 @@ export class AuthHandler {
       .run();
 
     if (this.kv) {
+      // P0 fix: encrypt all KV cookie storage. Previously `auth:${platform}` and
+      // `wanted:session` were plaintext — KV compromise would expose live sessions.
+      // All KV reads MUST go through helper that decrypts before use.
       await this.kv.put(`session:${platform}`, encryptedCookies, {
         expirationTtl: 86400,
       });
-      await this.kv.put(`auth:${platform}`, cookies, {
+      await this.kv.put(`auth:${platform}`, encryptedCookies, {
         expirationTtl: 86400,
       });
       if (platform === 'wanted') {
-        await this.kv.put(
-          'wanted:session',
+        const wantedSessionEncrypted = await encrypt(
           JSON.stringify({
             cookies,
             email: email || null,
             expires_at: expiresAt,
             updated_at: now,
           }),
-          { expirationTtl: 86400 }
+          this.env
         );
+        await this.kv.put('wanted:session', wantedSessionEncrypted, { expirationTtl: 86400 });
       }
     }
 
@@ -195,11 +198,21 @@ export class AuthHandler {
    * Requires X-Auth-Sync-Secret header matching AUTH_SYNC_SECRET env var
    */
   async syncFromScript(request) {
-    // Verify secret
-    const secret = request.headers.get('X-Auth-Sync-Secret');
-    if (!verifySecret(secret, this.env.AUTH_SYNC_SECRET)) {
-      return this.jsonResponse({ error: 'Unauthorized' }, 401);
+    // Fail-closed: AUTH_SYNC_SECRET env var must be configured. Without it, this
+    // endpoint must NOT accept requests — it ingests platform cookies and writes
+    // them to D1/KV. Returning 503 instead of 401 distinguishes misconfiguration
+    // from a wrong secret in client logs.
+    if (!this.env.AUTH_SYNC_SECRET) {
+      return this.jsonResponse(
+        { error: 'AUTH_SYNC_SECRET not configured — endpoint disabled' },
+        503
+      );
     }
+// Verify secret
+const secret = request.headers.get('X-Auth-Sync-Secret');
+if (!verifySecret(secret, this.env.AUTH_SYNC_SECRET)) {
+return this.jsonResponse({ error: 'Unauthorized' }, 401);
+}
 
     const body = await request.json();
     const { platform, cookies, email, expiresIn } = body;
@@ -230,25 +243,27 @@ export class AuthHandler {
       .bind(platform, encryptedCookies, email || null, expiresAt, now, now)
       .run();
 
-    // Also store in KV for faster access
+    // P0 fix: KV stores encrypted blobs only — see saveAuth() comment.
     if (this.kv) {
       await this.kv.put(`session:${platform}`, encryptedCookies, {
         expirationTtl: Math.floor(ttl / 1000),
       });
-      await this.kv.put(`auth:${platform}`, cookies, {
+      await this.kv.put(`auth:${platform}`, encryptedCookies, {
         expirationTtl: Math.floor(ttl / 1000),
       });
       if (platform === 'wanted') {
-        await this.kv.put(
-          'wanted:session',
+        const wantedSessionEncrypted = await encrypt(
           JSON.stringify({
             cookies,
             email: email || null,
             expires_at: expiresAt,
             updated_at: now,
           }),
-          { expirationTtl: Math.floor(ttl / 1000) }
+          this.env
         );
+        await this.kv.put('wanted:session', wantedSessionEncrypted, {
+          expirationTtl: Math.floor(ttl / 1000),
+        });
       }
     }
 

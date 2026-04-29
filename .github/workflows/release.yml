@@ -31,6 +31,12 @@ jobs:
     name: Tag, Bump & Release
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    # Production environment can be configured in GitHub Settings → Environments →
+    # "production" with required reviewers + wait-timer if a manual gate is desired.
+    # Workflow_dispatch with dry_run=false also serves as an explicit human trigger.
+    environment:
+      name: production
+      url: https://resume.jclee.me
     permissions:
       contents: write
     # Only run on successful CI (workflow_run) or manual dispatch

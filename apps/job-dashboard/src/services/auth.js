@@ -100,6 +100,11 @@ export function verifyAdminAuth(request, env) {
   return { ok: true };
 }
 
+// KNOWN P1 ISSUE (docs/architecture/MONOREPO_REVIEW_2026-04-29.md P1-5):
+// `adminToken` cookie is a long-lived bearer of `env.ADMIN_TOKEN` with no
+// `iat`/`exp`/`jti` and no server-side revocation list. If the cookie leaks
+// it is replayable until ADMIN_TOKEN rotation. Migration plan: mint short-
+// lived HMAC/JWT sessions on login, store revocation jti in KV, expire <=4h.
 /**
  * Create Set-Cookie header for admin authentication
  * HttpOnly + Secure + SameSite=Strict for XSS protection

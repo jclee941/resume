@@ -760,7 +760,7 @@
       "forks": 0,
       "forksUiHint": "de-emphasize",
       "githubUrl": null,
-      "demoUrl": "https://n8n.jclee.me/webhook/portfolio/demo",
+      "demoUrl": null,
       "metrics": {
         "workflows": "15+ 워크플로우",
         "executions": "일 200+ 실행",

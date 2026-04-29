@@ -112,10 +112,11 @@ export default {
       }
     }
 
+    // CSRF gate. Webhooks use HMAC signature (validated above) and /api/auth/sync
+    // is gated by AUTH_SYNC_SECRET (handler-level fail-closed). All other state-
+    // changing endpoints — including /api/auto-apply/run — require X-CSRF-Token.
     const skipCsrf =
-      url.pathname.startsWith('/api/webhooks/') ||
-      url.pathname.startsWith('/api/auto-apply/') ||
-      url.pathname === '/api/auth/sync';
+      url.pathname.startsWith('/api/webhooks/') || url.pathname === '/api/auth/sync';
     if (!skipCsrf) {
       const csrfResult = validateCsrf(request);
       if (!csrfResult.ok) {

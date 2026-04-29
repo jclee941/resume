@@ -146,3 +146,6 @@ packages/data/resumes/technical/**/*.pdf
 # CI affected-detection cache (regenerated each run by tools/ci/affected.go)
 .affected/
 .affected-review/
+
+# Sisyphus loop ephemeral state
+.sisyphus/*.local.md

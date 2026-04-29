@@ -9,9 +9,11 @@ import {
 } from '../../shared/errors/apply-errors.js';
 import { withRetry } from '../../shared/utils/retry.js';
 
+// Per AGENTS.md auto-apply convention: "retry logic (3 max)".
+// AuthError + CaptchaError are non-retryable (handled by classifyApplyError).
 const RETRY_CONFIG = {
   platform: 'jobkorea',
-  maxRetries: 5,
+  maxRetries: 3,
   baseDelay: 1000,
   maxDelay: 30000,
 };

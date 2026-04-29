@@ -1,5 +1,7 @@
 import { WorkflowEntrypoint } from 'cloudflare:workers';
 import { DEFAULT_USER_AGENT } from '@resume/shared/ua';
+import { decrypt } from '../utils/crypto.js';
+import { DEFAULT_USER_AGENT } from '@resume/shared/ua';
 import {
   sendTelegramNotification,
   escapeHtml,
@@ -198,9 +200,11 @@ export class JobCrawlingWorkflow extends WorkflowEntrypoint {
   }
 
   async validateSession(platform, session) {
-    // Platform-specific session validation
+    // Platform-specific session validation. KV stores encrypted blobs since the
+    // P0 audit fix — decrypt before parsing.
     try {
-      const parsed = JSON.parse(session);
+      const decrypted = await decrypt(session, this.env);
+      const parsed = JSON.parse(decrypted);
       if (!parsed.expiresAt) return true;
       return new Date(parsed.expiresAt) > new Date();
     } catch {
