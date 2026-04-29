@@ -144,7 +144,14 @@ jobs:
           "
 
           # 2. Prepend to CHANGELOG.md (create if missing)
-          CHANGELOG_ENTRY="## [${NEW_TAG}] - ${DATE}\n\n### Changes\n${{ steps.bump.outputs.changelog }}\n"
+          # Use file to avoid shell-injection from commit messages with quotes/special chars
+          cat > /tmp/changelog_entry.txt <<CHANGELOG_END
+## [${NEW_TAG}] - ${DATE}
+
+### Changes
+${{ steps.bump.outputs.changelog }}
+
+CHANGELOG_END
           if [ -f CHANGELOG.md ]; then
             # Insert after header line (line 6, after the 'adheres to' line)
             HEADER=$(head -6 CHANGELOG.md)
@@ -152,7 +159,7 @@ jobs:
             {
               echo "$HEADER"
               echo ""
-              echo -e "$CHANGELOG_ENTRY"
+              cat /tmp/changelog_entry.txt
               echo "$BODY"
             } > CHANGELOG.md.tmp
             mv CHANGELOG.md.tmp CHANGELOG.md
@@ -164,7 +171,7 @@ jobs:
           Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Versioning](https://semver.org/).
 
           HEADER
-            echo -e "$CHANGELOG_ENTRY" >> CHANGELOG.md
+            cat /tmp/changelog_entry.txt >> CHANGELOG.md
           fi
           echo "CHANGELOG.md updated for ${NEW_TAG}"
 
