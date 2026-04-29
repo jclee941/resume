@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.14.21] - 2026-04-29
+
+### Changes
+- fix(lint): pre-emptive eslint 9.x rule fixes (preserve-caught-error, no-useless-assignment) (bf4c6aa)
+
+
 ## [v1.14.20] - 2026-04-29
 
 ### Changes
