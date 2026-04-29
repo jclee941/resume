@@ -5,6 +5,11 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.16.5] - 2026-04-29
+
+### Changes
+- fix(resume): Oracle round 3 final blockers (9efe632)
+
 ## [v1.16.4] - 2026-04-29
 
 ### Changes
