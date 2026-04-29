@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.14.11] - 2026-04-29
+
+### Changes
+- docs(audit): close P0/P1 backlog with resolution log — v1.14.10 live (4478f2a)
+
+
 ## [v1.14.10] - 2026-04-29
 
 ### Changes
