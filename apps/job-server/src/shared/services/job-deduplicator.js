@@ -5,8 +5,16 @@ import { createHash } from 'crypto';
  * Hash-based deduplication using job URL + title + company with configurable TTL.
  */
 
-/** @type {Map<string, {hash: string, firstSeen: number, source: string}>} */
-const seenJobs = new Map();
+// Issue #16: closure-bound holder eliminates top-level mutable Map binding.
+// Tests can call clearAll() to reset state.
+/** @type {{ get: () => Map, clear: () => void }} */
+const _seenJobsHolder = (() => {
+  let m = new Map();
+  return {
+    get: () => m,
+    clear: () => { m = new Map(); },
+  };
+})();
 
 /** Default TTL: 7 days in milliseconds */
 const DEFAULT_TTL_MS = 7 * 24 * 60 * 60 * 1000;
@@ -36,7 +44,7 @@ export function generateJobHash(job) {
  */
 export function isDuplicate(job) {
   const hash = generateJobHash(job);
-  return seenJobs.has(hash);
+  return _seenJobsHolder.get().has(hash);
 }
 
 /**
@@ -46,7 +54,7 @@ export function isDuplicate(job) {
  */
 export function markSeen(job) {
   const hash = generateJobHash(job);
-  seenJobs.set(hash, {
+  _seenJobsHolder.get().set(hash, {
     hash,
     firstSeen: Date.now(),
     source: job.source || 'unknown',
@@ -79,9 +87,9 @@ export function deduplicateJobs(jobs) {
 export function purgeExpired(ttlMs = DEFAULT_TTL_MS) {
   const cutoff = Date.now() - ttlMs;
   let purged = 0;
-  for (const [hash, entry] of seenJobs) {
+  for (const [hash, entry] of _seenJobsHolder.get()) {
     if (entry.firstSeen < cutoff) {
-      seenJobs.delete(hash);
+      _seenJobsHolder.get().delete(hash);
       purged++;
     }
   }
@@ -94,15 +102,15 @@ export function purgeExpired(ttlMs = DEFAULT_TTL_MS) {
  */
 export function getDeduplicationStats() {
   const bySource = {};
-  for (const entry of seenJobs.values()) {
+  for (const entry of _seenJobsHolder.get().values()) {
     bySource[entry.source] = (bySource[entry.source] || 0) + 1;
   }
-  return { totalTracked: seenJobs.size, bySource };
+  return { totalTracked: _seenJobsHolder.get().size, bySource };
 }
 
 /**
  * Clear all dedup state.
  */
 export function clearAll() {
-  seenJobs.clear();
+  _seenJobsHolder.clear();
 }
