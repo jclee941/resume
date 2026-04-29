@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.15.0] - 2026-04-29
+
+### Changes
+- feat(resume): modernize SSoT for Big-Tech ready content + tech debt cleanup (99bd30f)
+
+
 ## [v1.14.23] - 2026-04-29
 
 ### Changes
