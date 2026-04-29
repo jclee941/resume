@@ -127,6 +127,8 @@ jobs:
           fi
       - name: Update package.json and CHANGELOG
         if: steps.bump.outputs.should_release == 'true' && github.event.inputs.dry_run != 'true'
+        env:
+          CHANGELOG_TEXT: ${{ steps.bump.outputs.changelog }}
         run: |
           set -euo pipefail
           NEW_TAG="${{ steps.bump.outputs.new_tag }}"
@@ -144,14 +146,8 @@ jobs:
           "
 
           # 2. Prepend to CHANGELOG.md (create if missing)
-          # Use file to avoid shell-injection from commit messages with quotes/special chars
-          cat > /tmp/changelog_entry.txt <<CHANGELOG_END
-## [${NEW_TAG}] - ${DATE}
-
-### Changes
-${{ steps.bump.outputs.changelog }}
-
-CHANGELOG_END
+          # Write changelog text to file via printf to avoid shell injection from commit messages with quotes
+          printf '## [%s] - %s\n\n### Changes\n%s\n' "${NEW_TAG}" "${DATE}" "${CHANGELOG_TEXT}" > /tmp/changelog_entry.txt
           if [ -f CHANGELOG.md ]; then
             # Insert after header line (line 6, after the 'adheres to' line)
             HEADER=$(head -6 CHANGELOG.md)
