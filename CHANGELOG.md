@@ -5,6 +5,14 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.16.2] - 2026-04-29
+
+### Changes
+- refactor(portfolio): HTML hero/meta에서 모든 수치 제거 + how/why 컨텍스트로 교체 (815f5a5)
+- chore(ci): update pr-review-security.yml caller (jclee941/.github) (1934916)
+- chore(ci): update pr-review.yml caller (jclee941/.github) (3ac5dca)
+
+
 ## [v1.16.1] - 2026-04-29
 
 ### Changes
