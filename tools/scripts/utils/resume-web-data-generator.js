@@ -13,37 +13,37 @@ function generateWebData(source) {
       title: 'ITCEN CTS Co., Ltd.',
       period: '2025.03 ~ 2026.02',
       description:
-        'Nextrade security operations managed service and support for the Information Security Team\n• Enhanced Splunk-based security log analysis and real-time threat monitoring\n• Optimized FortiGate firewall policies and automated access-control operations\n• Strengthened infrastructure stability through vulnerability assessments and monthly security reporting\n• Tech: Splunk, FortiGate, Python, Linux',
+        'Built integrated security operations to reduce the delay between security event detection and responder notification by connecting Splunk ES with Slack via n8n and developing a FortiManager API-based firewall policy lookup tool.',
     },
     '(주)가온누리정보시스템': {
       title: 'Gaonnuri Information Systems Co., Ltd.',
       description:
-        'Designed and built the security infrastructure for the Nextrade trading execution system\n• Provided technical support for Financial Services Commission authorization review and established the security architecture\n• Designed network segmentation and access-control policies to meet security compliance requirements\n• Implemented FortiGate HA high-availability architecture and disaster recovery processes\n• Tech: FortiGate, FortiManager, Linux, VMware',
+        'Eliminated single points of failure for a financial trading system by configuring FortiGate HA and standardized security appliance setup with Ansible Role to reduce the handoff cost from build to operations phases.',
     },
     '(주)콴텍투자일임': {
-      title: 'Quant Investment Management Co., Ltd.',
+      title: 'Quantec Investment Management Co., Ltd.',
       description:
-        'Operated cloud infrastructure security for an AI asset management platform\n• Managed and improved AWS security controls including IAM, Security Groups, and WAF\n• Performed recurring vulnerability assessments and supported robo-advisor testbed security reviews\n• Built and operated Prometheus/Grafana security metrics dashboards\n• Tech: AWS, Terraform, Prometheus, Grafana',
+        'Established change traceability and auditability for cloud infrastructure by codifying VPC/Subnet/SG with Terraform, and resolved the difficulty of correlating distributed security logs through integrated CloudTrail and GuardDuty analysis.',
     },
     '(주)펀엔씨': {
       title: 'FunNC Co., Ltd.',
       description:
-        'Led cloud migration and security hardening for an e-commerce service\n• Designed migration from on-premises environments to AWS VPC-based cloud architecture\n• Established EKS cluster security settings and container vulnerability assessment processes\n• Automated security review steps in GitLab CI/CD pipelines\n• Tech: AWS, Kubernetes, Docker, GitLab CI',
+        'Met cloud-native security baselines while migrating by designing VPC perimeter and EKS security baselines, and automated vulnerability scanning in CI/CD to enforce security validation at build time.',
     },
     '(주)조인트리': {
       title: 'Jointree Co., Ltd.',
       description:
-        'Advanced security infrastructure for the next-generation information system at Kookmin University\n• Strengthened internal network security through VMware NSX-T-based micro-segmentation design\n• Built integrated security solutions and policies including firewall, NAC, and DLP\n• Supported network security architecture for hybrid cloud transition\n• Tech: VMware NSX-T, Network Security, NAC',
+        'Resolved east-west traffic blind spots from perimeter-based security by applying NSX-T micro-segmentation, and built centralized security policy management at the VDS level.',
     },
     '(주)메타넷엠플랫폼': {
       title: 'Metanet M Platform Co., Ltd.',
       description:
-        'Operated and automated large-scale contact center IT infrastructure\n• Rapidly built and operated VPN infrastructure for large-scale remote work during COVID-19\n• Improved operational efficiency by automating server provisioning and repetitive tasks with Ansible\n• Built real-time monitoring and incident response using Zabbix and PRTG\n• Tech: Ansible, VPN, Zabbix, Python',
+        'Solved server configuration consistency and remote-access visibility for a large-scale remote work environment by building Python and Ansible automation, and operated FortiGate VPN infrastructure for new contact-center sites.',
     },
     '(주)엠티데이타': {
       title: 'MT Data Co., Ltd.',
       description:
-        'Provided on-site IT infrastructure operations support in the defense industry\n• Performed recurring maintenance and checks for server and client infrastructure in an isolated network\n• Managed infrastructure assets and applied security patches in compliance with internal security policies\n• Maintained stable working environments through technical support and incident response\n• Tech: Windows Server, Linux, Helpdesk',
+        'Established a routine log analysis cadence and adhered to security audit guidelines to proactively detect hardware failure indicators in a closed network environment.',
     },
   };
 
@@ -148,12 +148,12 @@ function generateWebData(source) {
     tech: Array.isArray(proj.technologies) ? proj.technologies.join(', ') : proj.technologies,
     description: proj.description,
     tagline: proj.tagline || proj.description,
-    stars: proj.stars,
+
     language: proj.language,
-    forks: proj.forks,
+
     githubUrl: proj.githubUrl,
     demoUrl: proj.demoUrl,
-    metrics: proj.metrics || {},
+
     related_skills: proj.technologies || [],
     liveUrl: proj.demoUrl || proj.url,
     repoUrl: proj.githubUrl || proj.repoUrl,
@@ -162,10 +162,7 @@ function generateWebData(source) {
 
   const projectsEn = (source.personalProjects || []).map((proj) => {
     const translated = projectEnMap[proj.name] || {};
-    const translatedMetrics = {
-      ...(proj.metrics || {}),
-      ...(translated.metrics || {}),
-    };
+
 
     return {
       icon: proj.icon || '💻',
@@ -173,12 +170,12 @@ function generateWebData(source) {
       tech: Array.isArray(proj.technologies) ? proj.technologies.join(', ') : proj.technologies,
       description: translated.description || proj.description,
       tagline: translated.tagline || proj.tagline || proj.description,
-      stars: proj.stars,
+
       language: proj.language,
-      forks: proj.forks,
+
       githubUrl: proj.githubUrl,
       demoUrl: proj.demoUrl,
-      metrics: translatedMetrics,
+
       related_skills: proj.technologies || [],
       liveUrl: proj.demoUrl || proj.url,
       repoUrl: proj.githubUrl || proj.repoUrl,
