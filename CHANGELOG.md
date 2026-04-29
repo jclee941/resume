@@ -5,6 +5,11 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.16.9] - 2026-04-29
+
+### Changes
+- fix(resume-en/ja): apply how/why career descriptions directly to EN/JA SSoT (9bd62a6)
+
 ## [v1.16.8] - 2026-04-29
 
 ### Changes
