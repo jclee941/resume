@@ -105,7 +105,7 @@ test.describe('Security Headers & CSP', () => {
 
   test('should block external scripts not in CSP', async ({ page }) => {
     const cspErrors = [];
-    let scriptExecuted = false;
+
 
     page.on('console', (msg) => {
       if (msg.type() === 'error') {
@@ -134,7 +134,7 @@ test.describe('Security Headers & CSP', () => {
     await page.waitForLoadState('load');
 
     // Check that malicious script did NOT execute
-    scriptExecuted = await page.evaluate(
+    const scriptExecuted = await page.evaluate(
       () => document.documentElement.dataset.maliciousScriptExecuted === 'true'
     );
 

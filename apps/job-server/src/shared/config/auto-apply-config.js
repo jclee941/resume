@@ -100,7 +100,7 @@ export class AutoApplyConfig {
     } catch (error) {
       this.#config = currentSnapshot;
       this.#runtimeOverrides = overridesSnapshot;
-      throw new Error(`Failed to set config path "${path}": ${error.message}`);
+      throw new Error(`Failed to set config path "${path}": ${error.message}`, { cause: error });
     }
   }
 
@@ -123,7 +123,7 @@ export class AutoApplyConfig {
     } catch (error) {
       this.#config = currentSnapshot;
       this.#runtimeOverrides = overridesSnapshot;
-      throw new Error(`Failed to update config: ${error.message}`);
+      throw new Error(`Failed to update config: ${error.message}`, { cause: error });
     }
   }
 
