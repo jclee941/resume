@@ -5,6 +5,13 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.14.16] - 2026-04-29
+
+### Changes
+- fix(test): update metrics test for P2-18 NaN defaults (3ddcfb0)
+- fix(audit): clear remaining P2/P3 backlog per Oracle round-3 verdict (cb37858)
+
+
 ## [v1.14.15] - 2026-04-29
 
 ### Changes
