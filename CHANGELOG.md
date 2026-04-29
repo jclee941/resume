@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.14.8] - 2026-04-29
+
+### Changes
+- chore(review): ADR-0008 cleanup + doc drift fixes from full monorepo review (b51c0f4)
+
+
 ### Changes
 - fix(verify): unblock Release CI build + close 2 audit gaps found during verification (18db622)
 
