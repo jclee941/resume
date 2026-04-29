@@ -638,15 +638,17 @@ describe('metrics', () => {
       );
     });
 
-    test('applies default cf_metrics values when cf_metrics is empty object', () => {
+    test('emits NaN cf_metrics values when cf_metrics is empty object (P2-18 fix)', () => {
       const collector = metrics.createMetricsCollector();
       collector.cf_metrics = {};
 
       const output = metrics.generateMetrics(collector);
 
-      expect(output).toContain('cloudflare_cache_hit_ratio{job="resume"} 0.85');
-      expect(output).toContain('cloudflare_cache_bypass_ratio{job="resume"} 0.15');
-      expect(output).toContain('cloudflare_worker_cpu_time_ms{job="resume"} 5');
+      // Per P2-18, defaults removed: missing cf_metrics surface as NaN so
+      // dashboards correctly show 'no data' rather than fabricated values.
+      expect(output).toContain('cloudflare_cache_hit_ratio{job="resume"} NaN');
+      expect(output).toContain('cloudflare_cache_bypass_ratio{job="resume"} NaN');
+      expect(output).toContain('cloudflare_worker_cpu_time_ms{job="resume"} NaN');
     });
 
     test('applies default web_vitals values when web_vitals is empty object', () => {
@@ -669,9 +671,9 @@ describe('metrics', () => {
 
       const output = metrics.generateMetrics(collector);
 
-      expect(output).toContain('cloudflare_cache_hit_ratio{job="resume"} 0.85');
-      expect(output).toContain('cloudflare_cache_bypass_ratio{job="resume"} 0.15');
-      expect(output).toContain('cloudflare_worker_cpu_time_ms{job="resume"} 5');
+      expect(output).toContain('cloudflare_cache_hit_ratio{job="resume"} NaN');
+      expect(output).toContain('cloudflare_cache_bypass_ratio{job="resume"} NaN');
+      expect(output).toContain('cloudflare_worker_cpu_time_ms{job="resume"} NaN');
       expect(output).toContain('web_vitals_lcp_ms{job="resume"} 0');
       expect(output).toContain('web_vitals_inp_ms{job="resume"} 0');
       expect(output).toContain('web_vitals_cls{job="resume"} 0');
