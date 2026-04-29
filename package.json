@@ -1,6 +1,6 @@
 {
   "name": "resume",
-  "version": "1.16.2",
+  "version": "1.16.3",
   "description": "Resume portfolio monorepo: Cloudflare Worker edge site, job automation (Wanted/JobKorea), SSoT data, self-hosted observability",
   "main": "apps/portfolio/worker.js",
   "private": true,
