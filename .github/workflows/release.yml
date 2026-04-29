@@ -179,7 +179,7 @@ jobs:
 
       - name: Create tag and GitHub Release
         if: steps.bump.outputs.should_release == 'true' && github.event.inputs.dry_run != 'true'
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ steps.bump.outputs.new_tag }}
           name: Release ${{ steps.bump.outputs.new_tag }}
