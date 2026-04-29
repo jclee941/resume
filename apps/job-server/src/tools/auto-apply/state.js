@@ -1,4 +1,9 @@
-let sessionState = null;
+// P0-5 audit residual fix: replace module-level mutable singleton with closure-bound holder.
+// Pattern matches commit cb37858 (docs/architecture/MONOREPO_REVIEW_2026-04-29.md P0-5).
+const _sessionStateHolder = (() => {
+  let v = null;
+  return { get: () => v, set: (x) => { v = x; }, clear: () => { v = null; } };
+})();
 
 function createDefaultState() {
   return {
@@ -17,9 +22,9 @@ function createDefaultState() {
 }
 
 export function getSessionState() {
-  if (!sessionState) {
-    sessionState = createDefaultState();
+  if (!_sessionStateHolder.get()) {
+    _sessionStateHolder.set(createDefaultState());
   }
 
-  return sessionState;
+  return _sessionStateHolder.get();
 }

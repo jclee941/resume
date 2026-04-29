@@ -542,3 +542,229 @@ components:
           type: number
         memoryUsage:
           type: number
+
+  # ===== ADDED 2026-04-29 closing OpenAPI drift (audit P1) =====
+  # Auth routes (apps/job-dashboard/src/routes/auth.js)
+  /api/auth/status:
+    get:
+      tags: [Auth]
+      summary: Current admin session status
+      responses:
+        '200':
+          description: Session status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  authenticated:
+                    type: boolean
+                  expiresAt:
+                    type: string
+
+  /api/auth/login:
+    post:
+      tags: [Auth]
+      summary: Mint a 4h HMAC session token from a valid ADMIN_TOKEN
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token]
+              properties:
+                token:
+                  type: string
+      responses:
+        '200':
+          description: Sets adminToken cookie
+        '401':
+          description: Invalid token
+
+  /api/auth/logout:
+    post:
+      tags: [Auth]
+      summary: Clear admin session cookie
+      responses:
+        '200':
+          description: Session cleared
+
+  /api/auth/sync:
+    post:
+      tags: [Auth]
+      summary: Ingest platform cookies from external script (requires X-Auth-Sync-Secret)
+      parameters:
+        - in: header
+          name: X-Auth-Sync-Secret
+          schema:
+            type: string
+          required: true
+      responses:
+        '200': { description: Synced }
+        '401': { description: Invalid secret }
+        '503': { description: AUTH_SYNC_SECRET not configured }
+
+  /api/auth/set:
+    post:
+      tags: [Auth]
+      summary: Manually set platform auth (admin)
+
+  /api/auth/profile:
+    get:
+      tags: [Auth]
+      summary: Read Wanted profile via authenticated session
+
+  /api/auth/{platform}:
+    delete:
+      tags: [Auth]
+      summary: Clear platform-specific session
+      parameters:
+        - in: path
+          name: platform
+          schema: { type: string }
+          required: true
+
+  # Workflows (apps/job-dashboard/src/routes/workflows.js)
+  /api/workflows/job-crawling:
+    post:
+      tags: [Workflows]
+      summary: Trigger job-crawling Cloudflare Workflow
+
+  /api/workflows/application:
+    post:
+      tags: [Workflows]
+      summary: Trigger application Cloudflare Workflow
+
+  /api/workflows/resume-sync:
+    post:
+      tags: [Workflows]
+      summary: Trigger resume-sync Cloudflare Workflow
+
+  /api/workflows/daily-report:
+    post:
+      tags: [Workflows]
+      summary: Trigger daily-report Cloudflare Workflow
+
+  /api/workflows/{workflowType}/{instanceId}:
+    get:
+      tags: [Workflows]
+      summary: Read workflow instance status
+      parameters:
+        - in: path
+          name: workflowType
+          schema: { type: string }
+          required: true
+        - in: path
+          name: instanceId
+          schema: { type: string }
+          required: true
+
+  /api/workflows/application/{instanceId}/approve:
+    post:
+      tags: [Workflows]
+      summary: Approve a pending application workflow step
+      parameters:
+        - in: path
+          name: instanceId
+          schema: { type: string }
+          required: true
+
+  /api/workflows/application/{instanceId}/reject:
+    post:
+      tags: [Workflows]
+      summary: Reject a pending application workflow step
+      parameters:
+        - in: path
+          name: instanceId
+          schema: { type: string }
+          required: true
+
+  # Automation triggers (apps/job-dashboard/src/routes/automation.js)
+  /api/automation/search:
+    post:
+      tags: [Automation]
+      summary: Trigger job-search webhook
+
+  /api/automation/apply:
+    post:
+      tags: [Automation]
+      summary: Trigger auto-apply webhook
+
+  /api/automation/report:
+    post:
+      tags: [Automation]
+      summary: Trigger daily-report webhook
+
+  /api/automation/resume:
+    post:
+      tags: [Automation]
+      summary: Trigger resume-sync webhook
+
+  /api/automation/profile-sync:
+    post:
+      tags: [Automation]
+      summary: Trigger profile-sync webhook
+
+  /api/automation/profile-sync/history:
+    get:
+      tags: [Automation]
+      summary: Profile sync history
+
+  /api/automation/profile-sync/{syncId}:
+    get:
+      tags: [Automation]
+      summary: Profile sync status by ID
+      parameters:
+        - in: path
+          name: syncId
+          schema: { type: string }
+          required: true
+
+  /api/automation/profile-sync/callback:
+    post:
+      tags: [Automation]
+      summary: Profile-sync completion callback
+
+  /api/auto-apply/config:
+    get:
+      tags: [Automation]
+      summary: Auto-apply configuration
+
+  # Resume master (apps/job-dashboard/src/routes/automation.js)
+  /api/resume/master:
+    get:
+      tags: [Resume]
+      summary: Read master resume blob
+    put:
+      tags: [Resume]
+      summary: Upload master resume
+
+  /api/test/chaos-resumes:
+    get:
+      tags: [Test]
+      summary: Test endpoint for Wanted chaos-resume API
+
+  # Admin (apps/job-dashboard/src/routes/admin.js)
+  /api/diagnostics/bindings:
+    get:
+      tags: [Admin]
+      summary: Diagnose Cloudflare Worker bindings (D1, KV, AI, browser)
+
+  /api/config:
+    get:
+      tags: [Admin]
+      summary: Read worker config from D1
+    put:
+      tags: [Admin]
+      summary: Update worker config in D1
+
+  /api/queue/enqueue:
+    post:
+      tags: [Admin]
+      summary: Enqueue a job to the crawl-tasks queue
+
+  /api/queue/status:
+    get:
+      tags: [Admin]
+      summary: Queue status overview

@@ -215,6 +215,10 @@ worker_info{job="resume",version="${metrics.version || 'unknown'}",deployed_at="
 # TYPE es_log_failures_total counter
 es_log_failures_total{job="resume"} ${typeof globalThis.__esLogFailures === 'number' ? globalThis.__esLogFailures : 0}
 
+# HELP es_log_total Cumulative count of successful Elasticsearch log writes
+# TYPE es_log_total counter
+es_log_total{job="resume"} ${typeof globalThis.__esLogTotal === 'number' ? globalThis.__esLogTotal : 0}
+
 # HELP http_requests_by_country HTTP requests by country
 # TYPE http_requests_by_country counter
 ${geoMetricsLines || '# No geographic data collected yet\n'}`;
