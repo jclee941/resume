@@ -1,0 +1,17 @@
+# Source: jclee941/.github/.github/workflows/_auto-merge.yml
+name: Auto Merge
+on:
+  pull_request_target:
+    types: [opened, synchronize, ready_for_review, reopened, labeled]
+  pull_request_review:
+    types: [submitted]
+  check_suite:
+    types: [completed]
+permissions:
+  contents: write
+  pull-requests: write
+  checks: read
+jobs:
+  merge:
+    uses: jclee941/.github/.github/workflows/_auto-merge.yml@master
+    secrets: inherit
