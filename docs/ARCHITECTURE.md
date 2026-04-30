@@ -185,14 +185,14 @@ The CI pipeline runs eight validation jobs: analyze, validate-cf, lint, typechec
 | Job Dashboard    | `resume.jclee.me/job/*` | Cloudflare Workers | CF Workers Builds (git push) |
 | Job Server       | Local / Docker          | Node.js + Fastify  | Docker / manual              |
 
-**Deploy authority**: Cloudflare Workers Builds deploys each worker independently on push to `master`. GitHub Actions is CI only and never deploys. The portfolio worker proxies `/job/*` to the job-dashboard worker via Service Binding. See [ADR 0007](adr/0007-msa-service-split.md).
+**Deploy authority**: Cloudflare Workers Builds deploys the merged `resume` worker on push to `master`. GitHub Actions is CI only and never deploys. The portfolio worker imports the job-dashboard worker module in-process (no Service Binding) and routes `/job/*` requests via `jobWorker.fetch(request, env, ctx)`. See [ADR 0008](adr/0008-single-worker-consolidation.md) (supersedes ADR 0007).
 
 ## Storage Bindings
 
 | Binding         | Type  | Used By                    | Purpose                   |
 | --------------- | ----- | -------------------------- | ------------------------- |
-| `DB`            | D1    | Portfolio Worker           | Portfolio data            |
-| `DB`            | D1    | Job Dashboard Worker       | Applications, job data    |
+| `DB`            | D1    | Merged Worker (resume)     | Portfolio data (resume-prod-db)            |
+| `JOB_DB`        | D1    | Merged Worker (resume)     | Applications, job data (job-dashboard-db)  |
 | `SESSIONS`      | KV    | Both (shared, intentional) | Session storage           |
 | `RATE_LIMIT_KV` | KV    | Both (shared, intentional) | Domain-wide rate limiting |
 | `NONCE_KV`      | KV    | Both (shared, intentional) | CSRF nonce validation     |
@@ -223,9 +223,9 @@ The portfolio worker embeds all assets (HTML, CSS, data) at build-time rather th
 
 The job-server application follows hexagonal architecture principles. Business logic lives in `services/` (domain), while external integrations reside in `clients/` (adapters). Dependencies point inward: clients implement interfaces defined by services. This isolation enables testing without real API calls and simplifies swapping implementations.
 
-### Service Binding Architecture
+### Single-Worker Architecture (Post-Consolidation)
 
-The portfolio worker (`apps/portfolio/entry.js`) proxies `/job/*` requests to the independent job-dashboard worker via Cloudflare Service Binding (`env.JOB_SERVICE.fetch(request)`). Each worker deploys independently via Cloudflare Workers Builds. Shared concerns (Elasticsearch client, Logger, error types, user-agent parsing, phone formatting, job categories, browser automation, Wanted API client) live in `@resume/shared`. See [ADR 0007](adr/0007-msa-service-split.md) for the full architecture rationale.
+The portfolio worker (`apps/portfolio/entry.js`) imports the job-dashboard worker module in-process: `import jobWorker from '../job-dashboard/src/index.js'`. `/job/*` requests are routed via direct function call `jobWorker.fetch(request, env, ctx)` — no Service Binding round-trip. The merged `resume` worker registers all 7 Workflow classes and the `BrowserSessionDO` Durable Object directly. A single `wrangler deploy` per push to `master` updates the entire system. Shared concerns (Elasticsearch client, Logger, error types, user-agent parsing, phone formatting, job categories, browser automation, Wanted API client) live in `@resume/shared`. See [ADR 0008](adr/0008-single-worker-consolidation.md) for the full architecture rationale (supersedes ADR 0007).
 
 ### Stealth Crawling
 
