@@ -72,32 +72,33 @@ jobs:
       - name: Verify merged `resume` worker exists
         run: |
           set -euo pipefail
-          STATUS=$(curl -s -o /tmp/resume.json -w '%{http_code}' \
+          # NOTE: GET /workers/scripts/{name} returns the script binary, not JSON.
+          # We only check HTTP status here.
+          STATUS=$(curl -s -o /dev/null -w '%{http_code}' \
             -H "Authorization: Bearer $TOKEN" \
             "$CF_API/accounts/$ACCOUNT_ID/workers/scripts/resume")
-          cat /tmp/resume.json | python3 -m json.tool 2>&1 | head -20
           if [ "$STATUS" != "200" ]; then
-            echo "::error::Merged `resume` worker not found (HTTP $STATUS). Aborting to prevent /job/* outage."
+            echo "::error::Merged \`resume\` worker not found (HTTP $STATUS). Aborting to prevent /job/* outage."
             exit 1
           fi
-          echo "✓ Merged `resume` worker verified"
+          echo "✓ Merged \`resume\` worker verified (HTTP 200)"
 
       - name: Check `job` worker exists (idempotent — skip if already deleted)
         id: job_check
         run: |
           set -euo pipefail
-          STATUS=$(curl -s -o /tmp/job.json -w '%{http_code}' \
+          # NOTE: same as above — status-only check, ignore body.
+          STATUS=$(curl -s -o /dev/null -w '%{http_code}' \
             -H "Authorization: Bearer $TOKEN" \
             "$CF_API/accounts/$ACCOUNT_ID/workers/scripts/$SCRIPT_NAME")
           if [ "$STATUS" = "404" ]; then
-            echo "✓ `job` worker already deleted (HTTP 404). Workflow will exit early."
+            echo "✓ \`job\` worker already deleted (HTTP 404). Workflow will exit early."
             echo "already_deleted=true" >> "$GITHUB_OUTPUT"
           elif [ "$STATUS" = "200" ]; then
-            echo "✓ `job` worker exists. Proceeding with deletion."
+            echo "✓ \`job\` worker exists (HTTP 200). Proceeding with deletion."
             echo "already_deleted=false" >> "$GITHUB_OUTPUT"
           else
-            echo "::error::Unexpected HTTP $STATUS when checking `job` worker. Aborting."
-            cat /tmp/job.json | python3 -m json.tool 2>&1 | head -20 || cat /tmp/job.json
+            echo "::error::Unexpected HTTP $STATUS when checking \`job\` worker. Aborting."
             exit 1
           fi
 
@@ -236,14 +237,13 @@ jobs:
           set -euo pipefail
           # Wait for delete propagation
           sleep 10
-          STATUS=$(curl -s -o /tmp/verify_gone.json -w '%{http_code}' \
+          STATUS=$(curl -s -o /dev/null -w '%{http_code}' \
             -H "Authorization: Bearer $TOKEN" \
             "$CF_API/accounts/$ACCOUNT_ID/workers/scripts/$SCRIPT_NAME")
           if [ "$STATUS" = "404" ]; then
-            echo "✓ `job` worker confirmed deleted (HTTP 404)"
+            echo "✓ \`job\` worker confirmed deleted (HTTP 404)"
           else
-            echo "::error::`job` worker still exists (HTTP $STATUS). Deletion may not have propagated."
-            cat /tmp/verify_gone.json | python3 -m json.tool 2>&1 | head -20
+            echo "::error::\`job\` worker still exists (HTTP $STATUS). Deletion may not have propagated."
             exit 1
           fi
 
