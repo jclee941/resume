@@ -5,6 +5,11 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.21.0] - 2026-04-30
+
+### Changes
+- feat: add automated workflows (354a2b6)
+
 ## [v1.20.3] - 2026-04-30
 
 ### Changes
