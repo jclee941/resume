@@ -5,6 +5,11 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.19.0] - 2026-04-30
+
+### Changes
+- feat(ci): add delete-standalone-job-worker workflow (ADR 0008 #10) (79c932b)
+
 ## [v1.18.0] - 2026-04-30
 
 ### Changes
