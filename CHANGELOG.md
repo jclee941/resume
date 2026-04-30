@@ -5,6 +5,11 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.20.0] - 2026-04-30
+
+### Changes
+- feat(data): remove AWS experience from master SSOT (4f84345)
+
 ## [v1.19.2] - 2026-04-30
 
 ### Changes
