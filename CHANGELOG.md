@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.20.2] - 2026-04-30
+
+### Changes
+- chore: add PR review bot workflow (#51) (9df5ac8)
+- chore: sync pending docs, CI config, and app metadata (4e3357a)
+
 ## [v1.20.1] - 2026-04-30
 
 ### Changes
