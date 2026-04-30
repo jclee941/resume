@@ -5,6 +5,13 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.17.0] - 2026-04-30
+
+### Changes
+- chore(sync): remove stale 펀엔씨(FunNC) entries from web data generator (e1f207c)
+- feat(portfolio): consolidate job-dashboard into single resume worker (ADR 0008) (526c010)
+- fix(job-dashboard): notifications.js import paths + env.DB → env.JOB_DB rename (6fff448)
+
 ## [v1.16.11] - 2026-04-30
 
 ### Changes
