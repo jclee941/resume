@@ -238,7 +238,7 @@ AGENTS.md `shared/AGENTS.md` 명시: **"No global state or singletons"**. 직접
 |---|---|---|---|
 | P0-2 KV plaintext cookies | RESOLVED | 964901a | 모든 KV writes encrypt; validateSession은 decrypt 후 parse |
 | P0-3 Jest threshold 90% | RESOLVED | 964901a | 75% + browser-only excludes (auth/crypto/rate-limit/retry/browser/cli) |
-| P0-4 JOB_SERVICE binding | DEFERRED | 964901a → a626e28 | job-dashboard 미배포 상태 — 503 fallback이 이미 올바르게 처리. job-dashboard deploy 후 binding 추가 PR 필요. |
+| P0-4 JOB_SERVICE binding | **OBSOLETE** | 8a1724e0 (ADR 0008) | Service Binding 자체가 제거됨 — portfolio worker가 job-dashboard module을 in-process로 import (`jobWorker.fetch(...)`). 단일 worker로 통합되어 binding 자체가 불필요. |
 | P0-5 7 singletons | TRACKED | 964901a | DEPRECATED 배너 + migration plan 코멘트 추가 (refactor는 per-service PR로) |
 | P1-1 Prod approval gate | RESOLVED | 964901a | `environment: production` 대항 설정 (GH UI에서 required reviewer 구성 가능) |
 | P1-2 /api/auth/sync fail-closed | RESOLVED | 964901a | `!env.AUTH_SYNC_SECRET → 503` |
@@ -258,7 +258,7 @@ AGENTS.md `shared/AGENTS.md` 명시: **"No global state or singletons"**. 직접
 | ID | 조치 필요 |
 |---|---|
 | P0-1 Cloudflare global API key | **외부 manual rotation** — Cloudflare dashboard에서 scoped Token 발급 + `CLOUDFLARE_API_TOKEN` GH secret 추가 + release.yml 교체 + 구 API key 폐기 |
-| P0-4 (deferred) | apps/job-dashboard worker 별도 따로 production deploy 후 portfolio 에 services binding 추가 PR |
+| ~~P0-4 (deferred)~~ | **RESOLVED via ADR 0008** — 단일 worker 통합으로 Service Binding 자체가 불필요해짐. |
 | P0-5 (TRACKED) | 7 singleton DI refactor — 1 service per PR |
 | P1-4 (TRACKED) | Rate limit Durable Object migration |
 | P1-5 (TRACKED) | Admin token JWT/short-lived migration |
