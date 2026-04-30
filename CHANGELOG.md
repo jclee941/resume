@@ -5,6 +5,13 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.18.0] - 2026-04-30
+
+### Changes
+- feat(ci): add provision-queues workflow + clarify queue binding inactive state (6e3ad2f)
+- docs(architecture): reflect ADR 0008 single-worker consolidation (91c04b1)
+- chore(cleanup): delete obsolete standalone job worker config + runbook (ADR 0008) (20c3be4)
+
 ## [v1.17.1] - 2026-04-30
 
 ### Changes
