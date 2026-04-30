@@ -5,6 +5,11 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.19.2] - 2026-04-30
+
+### Changes
+- docs(adr-0008): mark Migration Plan #10 RESOLVED — job worker deleted (verified HTTP 404) (70ae04b)
+
 ## [v1.19.1] - 2026-04-30
 
 ### Changes
