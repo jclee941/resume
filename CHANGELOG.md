@@ -5,6 +5,11 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.19.1] - 2026-04-30
+
+### Changes
+- fix(ci): delete-job-worker — status-only check (workers/scripts returns binary) (8cfb694)
+
 ## [v1.19.0] - 2026-04-30
 
 ### Changes
