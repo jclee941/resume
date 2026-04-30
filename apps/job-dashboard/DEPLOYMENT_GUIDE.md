@@ -28,9 +28,10 @@ Production deploy path: independent worker (`job`) via Cloudflare Workers Builds
 Before starting deployment, ensure you have:
 
 ### Required Software
-- **Node.js** 18.0.0 or higher (LTS recommended)
+
+- **Node.js** 22.0.0 or higher
   ```bash
-  node --version  # v18.0.0 or higher
+  node --version  # v22.0.0 or higher
   ```
 - **npm** 8.0.0 or higher
   ```bash
@@ -43,6 +44,7 @@ Before starting deployment, ensure you have:
   ```
 
 ### Cloudflare Account Requirements
+
 - Active Cloudflare account with Workers plan (Paid recommended for production)
 - Domain `jclee.me` added to Cloudflare (with nameservers configured)
 - Cloudflare API token with appropriate permissions:
@@ -54,11 +56,13 @@ Before starting deployment, ensure you have:
   - Analytics (read)
 
 ### Account Information
+
 - **Account ID**: Available from Cloudflare dashboard → Account
 - **Zone ID**: Available from Cloudflare dashboard → Domain Overview
 - **API Token**: Create at https://dash.cloudflare.com/profile/api-tokens
 
 ### Project Files
+
 - Clean checkout of this repository
 - All dependencies installed (`npm install`)
 - `wrangler.jsonc` configured with valid account ID
@@ -77,6 +81,7 @@ wrangler whoami
 ```
 
 If not authenticated, login with:
+
 ```bash
 wrangler login
 ```
@@ -95,11 +100,13 @@ echo $CLOUDFLARE_ACCOUNT_ID
 ### Step 3: Domain Configuration
 
 Ensure domain `jclee.me` is:
+
 1. Added to Cloudflare dashboard
 2. Nameservers configured at domain registrar
 3. Status shows "Active" in Cloudflare
 
 Verify with:
+
 ```bash
 # DNS should resolve through Cloudflare
 dig jclee.me
@@ -636,11 +643,11 @@ npm run build
 # Binding: ...
 ```
 
-### Step 4: Deploy to Staging (Optional)
+### Step 4: Preview Staging (Optional)
 
 ```bash
-# Deploy to staging environment
-wrangler deploy --config apps/job-dashboard/wrangler.jsonc --env staging
+# Preview against the staging environment locally
+wrangler dev --config apps/job-dashboard/wrangler.jsonc --env staging
 
 # Output will show:
 # ✨ Uploaded job-dashboard-staging
@@ -662,12 +669,16 @@ curl https://staging.jclee.me/job/api/test/db-connection
 
 ### Step 6: Deploy to Production
 
+Production deployment is owned by Cloudflare Workers Builds. Do not run local
+`wrangler deploy` for production; commit the verified change and push through CI
+so the same gate protects every deployment.
+
 ```bash
-# Deploy to production
-wrangler deploy --config apps/job-dashboard/wrangler.jsonc --env production
+# Trigger Cloudflare Workers Builds after CI passes
+git push origin master
 
 # Output will show:
-# ✨ Uploaded job-dashboard
+# GitHub CI passes, then Cloudflare Workers Builds deploys job-dashboard
 # 🔗 https://resume.jclee.me/job/*
 ```
 
@@ -830,6 +841,7 @@ curl https://resume.jclee.me/job/api/metrics
 ### Set Up Grafana Dashboards
 
 Create dashboards in Grafana to visualize:
+
 - Request rate (requests/min)
 - Error rate (errors/min)
 - Response times (p50, p95, p99)
@@ -907,13 +919,16 @@ After rollback, investigate the issue:
 **Symptom**: `Error: Database job-dashboard-db not found`
 
 **Solutions**:
+
 1. Verify database ID in `wrangler.jsonc`:
+
    ```bash
    wrangler d1 list
    # Find correct ID and update wrangler.jsonc
    ```
 
 2. Ensure database is created:
+
    ```bash
    wrangler d1 create job-dashboard-db
    ```
@@ -929,6 +944,7 @@ After rollback, investigate the issue:
 **Symptom**: `Error: listen EADDRINUSE: address already in use :::8787`
 
 **Solutions**:
+
 ```bash
 # Find process using port 8787
 lsof -i :8787
@@ -945,7 +961,9 @@ wrangler dev --port 8788
 **Symptom**: `Error: Namespace SESSIONS not found`
 
 **Solutions**:
+
 1. Verify KV binding in `wrangler.jsonc`:
+
    ```toml
    [[kv_namespaces]]
    binding = "SESSIONS"
@@ -953,6 +971,7 @@ wrangler dev --port 8788
    ```
 
 2. Create missing namespace:
+
    ```bash
    wrangler kv:namespace create "SESSIONS"
    ```
@@ -967,13 +986,16 @@ wrangler dev --port 8788
 **Symptom**: `Error: Unauthorized - Authentication failed`
 
 **Solutions**:
+
 1. Verify JWT secret is set:
+
    ```bash
    wrangler secret list --env production
    # Should show JWT_SECRET
    ```
 
 2. Regenerate JWT token:
+
    ```bash
    # Use login endpoint to get new token
    curl -X POST https://resume.jclee.me/job/api/auth/login \
@@ -992,13 +1014,16 @@ wrangler dev --port 8788
 **Symptom**: `Error: CORS policy: response has invalid Access-Control-Allow-Origin`
 
 **Solutions**:
+
 1. Verify CORS configuration:
+
    ```javascript
    // In worker code
    const allowedOrigins = ['resume.jclee.me', '*.jclee.me'];
    ```
 
 2. Update CORS headers:
+
    ```javascript
    response.headers.set('Access-Control-Allow-Origin', '*');
    response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
@@ -1016,6 +1041,7 @@ wrangler dev --port 8788
 **Symptom**: Scheduled automation not executing
 
 **Solutions**:
+
 1. Verify workflow bindings in `wrangler.jsonc` and worker deployment state.
 
 2. Trigger workflow manually through API to validate end-to-end path.
@@ -1031,11 +1057,13 @@ wrangler dev --port 8788
 **Symptom**: `Error: 429 Too Many Requests - Rate limit exceeded`
 
 **Solutions**:
+
 1. Check rate limit configuration:
    - Default: 60 requests per minute per IP
    - Stored in RATE_LIMIT_KV with 60-second TTL
 
 2. Adjust rate limit (in code):
+
    ```javascript
    const RATE_LIMIT = 100; // Change to 100 req/min
    ```
@@ -1052,15 +1080,18 @@ wrangler dev --port 8788
 **Symptom**: `Error: Secrets not available in worker context`
 
 **Solutions**:
+
 1. Ensure secrets are set:
+
    ```bash
    wrangler secret list --env production
    ```
 
 2. Use correct secret name in code:
+
    ```javascript
-   const secret = env.JWT_SECRET;  // Correct
-   const secret = env.jwt_secret;  // Wrong - case sensitive
+   const secret = env.JWT_SECRET; // Correct
+   const secret = env.jwt_secret; // Wrong - case sensitive
    ```
 
 3. For local development, create `.dev.vars`:
@@ -1075,8 +1106,10 @@ wrangler dev --port 8788
 **Symptom**: `Error: Worker exceeded memory limit (128 MB)`
 
 **Solutions**:
+
 1. Reduce data processing in single request
 2. Use streaming for large files:
+
    ```javascript
    return new Response(stream, { headers: { 'Content-Length': size } });
    ```
@@ -1127,6 +1160,7 @@ Before deploying to production:
 ### Report Issues
 
 If you encounter issues:
+
 1. Check this troubleshooting section
 2. Review Cloudflare dashboard for service status
 3. Check worker logs for errors

@@ -37,12 +37,9 @@ npm run dev --workspace @resume/job-dashboard-worker
 
 ### Deploy to Cloudflare
 
-Production deployment is handled by Cloudflare Workers Builds (git push triggers automatic deploy).
+Production deployment is handled by Cloudflare Workers Builds (git push to `master` triggers automatic deploy). Local production deploys are intentionally disabled so the dashboard follows the same authoritative deployment path as the root worker.
 
 ```bash
-# Deploy to production environment
-npm run deploy --workspace @resume/job-dashboard-worker
-
 # View live logs
 npm run tail --workspace @resume/job-dashboard-worker
 
@@ -366,24 +363,24 @@ curl https://resume.jclee.me/job/api/workflows/abc123/status \
 
 ### Supported Platforms
 
-| Platform    | Search | Job Details | Auto-Apply | Notes |
-| ----------- | :----: | :---------: | :--------: | ----- |
-| **Wanted**    | ✅ | ✅ | ✅ | Full API support via Chaos API |
-| **LinkedIn**  | ✅ | ⚠️ | ❌ | Search works; Apply requires Puppeteer (see below) |
-| **Remember**  | ✅ | ⚠️ | ❌ | Search works; Apply requires Puppeteer (see below) |
-| **JobKorea**  | ❌ | ❌ | ❌ | Use job-server CLI instead |
-| **Saramin**   | ❌ | ❌ | ❌ | Use job-server CLI instead |
+| Platform     | Search | Job Details | Auto-Apply | Notes                                              |
+| ------------ | :----: | :---------: | :--------: | -------------------------------------------------- |
+| **Wanted**   |   ✅   |     ✅      |     ✅     | Full API support via Chaos API                     |
+| **LinkedIn** |   ✅   |     ⚠️      |     ❌     | Search works; Apply requires Puppeteer (see below) |
+| **Remember** |   ✅   |     ⚠️      |     ❌     | Search works; Apply requires Puppeteer (see below) |
+| **JobKorea** |   ❌   |     ❌      |     ❌     | Use job-server CLI instead                         |
+| **Saramin**  |   ❌   |     ❌      |     ❌     | Use job-server CLI instead                         |
 
 ### ⚠️ Important Limitations
 
 **LinkedIn and Remember Auto-Apply**: These platforms require browser automation (Puppeteer) for job applications, which is not available in Cloudflare Workers. The dashboard workflow will return an error with `requiresJobServer: true` if you attempt to apply to these platforms.
 
 **Workarounds**:
+
 1. Use job-server CLI: `npm run auto-apply -- --platforms=linkedin,remember --apply`
 2. Trigger via n8n webhook (integrates with job-server)
 
 **Job Details Cache**: The `ApplicationWorkflow` can fetch job details from Wanted API directly, but LinkedIn/Remember require cached data from previous crawls. Ensure jobs are crawled before applying.
-
 
 ### Webhooks (9 endpoints)
 
@@ -757,10 +754,10 @@ const RATE_LIMIT = {
 };
 ```
 
-Then redeploy:
+Then commit the change and let Cloudflare Workers Builds deploy it from `master`:
 
 ```bash
-npx wrangler deploy --config apps/job-dashboard/wrangler.jsonc --env production
+git push origin master
 ```
 
 ### CORS Issues

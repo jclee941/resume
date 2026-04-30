@@ -66,7 +66,7 @@
 
 ```bash
 # Required software
-- Node.js >= 20.0.0
+- Node.js >= 22.0.0
 - npm >= 9.0.0
 - Playwright browsers (npx playwright install)
 

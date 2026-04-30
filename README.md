@@ -9,7 +9,7 @@ Cloudflare Workers 포트폴리오 · 구직 자동화 파이프라인 · 셀프
 [![CI](https://github.com/jclee941/resume/actions/workflows/ci.yml/badge.svg)](https://github.com/jclee941/resume/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-MIT-000000.svg)](LICENSE)
 [![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-F38020?logo=cloudflare&logoColor=white)](https://workers.cloudflare.com)
-[![Node](https://img.shields.io/badge/node-≥20-43853D?logo=node.js&logoColor=white)](https://nodejs.org)
+[![Node](https://img.shields.io/badge/node-≥22-43853D?logo=node.js&logoColor=white)](https://nodejs.org)
 
 [Portfolio →](https://resume.jclee.me) · [English](https://resume.jclee.me/en) · [日本語](https://resume.jclee.me/ja) · [Health](https://resume.jclee.me/health) · [Metrics](https://resume.jclee.me/metrics)
 
@@ -72,7 +72,7 @@ resume/
 
 | Layer             | Technology                                      |
 | ----------------- | ----------------------------------------------- |
-| **Runtime**       | Cloudflare Workers · Node.js ≥20                |
+| **Runtime**       | Cloudflare Workers · Node.js ≥22                |
 | **Frontend**      | Vanilla JS · IBM Plex Mono · Inter              |
 | **Automation**    | MCP (Fastify) · Playwright stealth · n8n        |
 | **Build**         | npm workspaces (Bazel dropped — [ADR-0008][a8]) |
