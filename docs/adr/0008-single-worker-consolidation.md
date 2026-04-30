@@ -70,7 +70,7 @@ The `env.DB` → `env.JOB_DB` rename was applied across 55 references in `apps/j
 7. ✅ Delete obsolete `apps/job-dashboard/wrangler.jsonc` and `docs/runbooks/JOB_DASHBOARD_DEPLOY.md`.
 8. ✅ Update `docs/ARCHITECTURE.md` and `docs/architecture/MONOREPO_REVIEW_2026-04-29.md` (P0-4 marked OBSOLETE).
 9. ✅ Add `.github/workflows/provision-queues.yml` for opt-in queue provisioning + binding activation.
-10. **Pending operator action:** monitor production for 7 days, then delete the standalone `job` Cloudflare Worker via `wrangler delete --name job` (or Cloudflare dashboard).
+10. ✅ **Standalone `job` Cloudflare Worker deleted** (verified 2026-04-30: GET `/accounts/{id}/workers/scripts/job` → HTTP 404). `/job/*` traffic confirmed handled by merged `resume` worker via in-process `jobWorker.fetch()`. Deletion automation: `.github/workflows/delete-standalone-job-worker.yml` (workflow_dispatch, status-only existence check, route-first deletion with auto-rollback). The actual deletion was a no-op because the `job` worker had been deleted earlier; the workflow's idempotent skip path correctly detected this and exited successfully without further action.
 11. **Pending operator action (optional):** Trigger `provision-queues.yml` workflow when ready to activate `crawl-tasks` and `notifications` queues. Producer functions are defined but no current workflow handler invokes them; queue activation is OPT-IN until task enqueueing is implemented in workflow code.
 
 ### Reversibility
