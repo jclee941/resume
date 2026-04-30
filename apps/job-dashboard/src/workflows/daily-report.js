@@ -2,7 +2,7 @@ import { WorkflowEntrypoint } from 'cloudflare:workers';
 import {
   sendTelegramNotification,
   escapeHtml,
-} from '../notifications.js';
+} from '../services/notifications.js';
 
 /**
  * Daily Report Workflow
@@ -104,7 +104,7 @@ export class DailyReportWorkflow extends WorkflowEntrypoint {
         timeout: '30 seconds',
       },
       async () => {
-        await this.env.DB.prepare(
+        await this.env.JOB_DB.prepare(
           `
           INSERT INTO reports (id, type, date, data, created_at)
           VALUES (?, ?, ?, ?, datetime('now'))
@@ -142,7 +142,7 @@ export class DailyReportWorkflow extends WorkflowEntrypoint {
   async getApplicationStats(type, _date) {
     const dateFilter = type === 'weekly' ? "date('now', '-7 days')" : "date('now', '-1 day')";
 
-    const stats = await this.env.DB.prepare(
+    const stats = await this.env.JOB_DB.prepare(
       `
       SELECT 
         COUNT(*) as total,
@@ -169,7 +169,7 @@ export class DailyReportWorkflow extends WorkflowEntrypoint {
   async getPlatformStats(type, _date) {
     const dateFilter = type === 'weekly' ? "date('now', '-7 days')" : "date('now', '-1 day')";
 
-    const results = await this.env.DB.prepare(
+    const results = await this.env.JOB_DB.prepare(
       `
       SELECT 
         platform,
@@ -197,7 +197,7 @@ export class DailyReportWorkflow extends WorkflowEntrypoint {
   async getSearchStats(type, _date) {
     const dateFilter = type === 'weekly' ? "date('now', '-7 days')" : "date('now', '-1 day')";
 
-    const stats = await this.env.DB.prepare(
+    const stats = await this.env.JOB_DB.prepare(
       `
       SELECT 
         COUNT(*) as total_jobs,
@@ -222,7 +222,7 @@ export class DailyReportWorkflow extends WorkflowEntrypoint {
         ? "date('now', '-14 days') AND date('now', '-7 days')"
         : "date('now', '-2 days') AND date('now', '-1 day')";
 
-    const prevStats = await this.env.DB.prepare(
+    const prevStats = await this.env.JOB_DB.prepare(
       `
       SELECT COUNT(*) as total
       FROM applications

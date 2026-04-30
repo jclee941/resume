@@ -76,7 +76,7 @@ export class CleanupWorkflow extends WorkflowEntrypoint {
       },
       async () => {
         if (dryRun) {
-          const count = await this.env.DB.prepare(
+          const count = await this.env.JOB_DB.prepare(
             `
             SELECT COUNT(*) as count FROM job_search_results 
             WHERE created_at < datetime('now', '-${logMaxAge} days')
@@ -85,7 +85,7 @@ export class CleanupWorkflow extends WorkflowEntrypoint {
           return { found: count?.count || 0, deleted: 0 };
         }
 
-        const result = await this.env.DB.prepare(
+        const result = await this.env.JOB_DB.prepare(
           `
           DELETE FROM job_search_results 
           WHERE created_at < datetime('now', '-${logMaxAge} days')
@@ -106,7 +106,7 @@ export class CleanupWorkflow extends WorkflowEntrypoint {
       },
       async () => {
         if (dryRun) {
-          const count = await this.env.DB.prepare(
+          const count = await this.env.JOB_DB.prepare(
             `
             SELECT COUNT(*) as count FROM health_checks 
             WHERE checked_at < datetime('now', '-${sessionMaxAge} days')
@@ -115,7 +115,7 @@ export class CleanupWorkflow extends WorkflowEntrypoint {
           return { found: count?.count || 0, deleted: 0 };
         }
 
-        const result = await this.env.DB.prepare(
+        const result = await this.env.JOB_DB.prepare(
           `
           DELETE FROM health_checks 
           WHERE checked_at < datetime('now', '-${sessionMaxAge} days')
@@ -169,7 +169,7 @@ export class CleanupWorkflow extends WorkflowEntrypoint {
           return { logged: false, reason: 'Dry run mode' };
         }
 
-        await this.env.DB.prepare(
+        await this.env.JOB_DB.prepare(
           `
           INSERT INTO cleanup_logs (sessions_deleted, results_deleted, checks_deleted, rate_limits_deleted, ran_at)
           VALUES (?, ?, ?, ?, datetime('now'))

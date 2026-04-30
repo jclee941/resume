@@ -54,7 +54,7 @@ export function getTemplateCoverLetter(_ctx, job) {
 }
 
 export async function getResume(ctx, resumeId) {
-  const resume = await ctx.env.DB.prepare('SELECT * FROM resumes WHERE id = ?')
+  const resume = await ctx.env.JOB_DB.prepare('SELECT * FROM resumes WHERE id = ?')
     .bind(resumeId)
     .first();
   return resume;
@@ -70,7 +70,7 @@ export async function getStoredResume(ctx) {
 
 export async function getMatchingConfig(ctx) {
   try {
-    const config = await ctx.env.DB.prepare(
+    const config = await ctx.env.JOB_DB.prepare(
       "SELECT value FROM config WHERE key = 'auto_apply_config'"
     ).first();
     return config?.value ? JSON.parse(config.value) : { minMatchScore: 70 };

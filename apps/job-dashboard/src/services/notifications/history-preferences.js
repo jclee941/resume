@@ -1,8 +1,8 @@
 export async function saveNotificationHistory(service, record) {
-  if (!service.env.DB) return;
+  if (!service.env.JOB_DB) return;
 
   try {
-    await service.env.DB.prepare(
+    await service.env.JOB_DB.prepare(
       `
         INSERT INTO notification_history (
           id, event_type, data, channels, timestamp, status, results
@@ -49,7 +49,7 @@ export async function getNotificationHistory(service, options = {}) {
   sql += ' ORDER BY timestamp DESC LIMIT ?';
   params.push(limit);
 
-  const result = await service.env.DB.prepare(sql)
+  const result = await service.env.JOB_DB.prepare(sql)
     .bind(...params)
     .all();
   return result.results || [];

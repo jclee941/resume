@@ -3,7 +3,7 @@ import { normalizeError } from '@resume/shared/errors';
 import {
   sendTelegramNotification,
   escapeHtml,
-} from '../notifications.js';
+} from '../services/notifications.js';
 
 /**
  * Handler for auto-apply operations.

@@ -1,7 +1,7 @@
 import {
   sendTelegramNotification,
   escapeHtml,
-} from '../notifications.js';
+} from '../services/notifications.js';
 import { WorkflowEntrypoint } from 'cloudflare:workers';
 
 /**
@@ -79,7 +79,7 @@ export class HealthCheckWorkflow extends WorkflowEntrypoint {
 
         const d1Start = Date.now();
         try {
-          await this.env.DB.prepare('SELECT 1 AS ok').first();
+          await this.env.JOB_DB.prepare('SELECT 1 AS ok').first();
           checks.d1 = { healthy: true, latencyMs: Date.now() - d1Start };
         } catch (err) {
           checks.d1 = { healthy: false, latencyMs: Date.now() - d1Start, error: err.message };
@@ -195,12 +195,12 @@ export class HealthCheckWorkflow extends WorkflowEntrypoint {
         timeout: '2 minutes',
       },
       async () => {
-        const healthStmt = this.env.DB.prepare(`
+        const healthStmt = this.env.JOB_DB.prepare(`
           INSERT INTO health_checks (service_url, status, latency_ms, checked_at)
           VALUES (?, ?, ?, datetime('now'))
         `);
 
-        const detailStmt = this.env.DB.prepare(`
+        const detailStmt = this.env.JOB_DB.prepare(`
           INSERT INTO health_check_details (check_type, service_name, status, latency_ms, consecutive_failures, escalation_level)
           VALUES (?, ?, ?, ?, ?, ?)
         `);
@@ -243,7 +243,7 @@ export class HealthCheckWorkflow extends WorkflowEntrypoint {
           ),
         ];
 
-        await this.env.DB.batch(batch);
+        await this.env.JOB_DB.batch(batch);
         return { logged: batch.length, consecutiveFailures, escalationLevel };
       }
     );
@@ -259,7 +259,7 @@ export class HealthCheckWorkflow extends WorkflowEntrypoint {
 
   async getConsecutiveFailures() {
     try {
-      const row = await this.env.DB.prepare(
+      const row = await this.env.JOB_DB.prepare(
         `
         SELECT COUNT(*) as cnt FROM health_check_details
         WHERE check_type = 'http'

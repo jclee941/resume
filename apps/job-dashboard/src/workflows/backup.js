@@ -1,7 +1,7 @@
 import {
   sendTelegramNotification,
   escapeHtml,
-} from '../notifications.js';
+} from '../services/notifications.js';
 import { WorkflowEntrypoint } from 'cloudflare:workers';
 
 /**
@@ -35,7 +35,7 @@ export class BackupWorkflow extends WorkflowEntrypoint {
         timeout: '30 seconds',
       },
       async () => {
-        const existingTables = await this.env.DB.prepare(
+        const existingTables = await this.env.JOB_DB.prepare(
           `
           SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'
         `
@@ -63,7 +63,7 @@ export class BackupWorkflow extends WorkflowEntrypoint {
         },
         async () => {
           try {
-            const data = await this.env.DB.prepare(`SELECT * FROM ${table}`).all();
+            const data = await this.env.JOB_DB.prepare(`SELECT * FROM ${table}`).all();
             return {
               table,
               rows: data.results,

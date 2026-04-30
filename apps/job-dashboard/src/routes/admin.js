@@ -7,8 +7,8 @@ export function registerAdminRoutes(router, ctx) {
 
   router.get('/api/diagnostics/bindings', (req) => diagnostics.checkBindings(req));
 
-  router.get('/api/config', () => getConfig(env.DB));
-  router.put('/api/config', (req) => saveConfig(req, env.DB));
+  router.get('/api/config', () => getConfig(env.JOB_DB));
+  router.put('/api/config', (req) => saveConfig(req, env.JOB_DB));
 
   router.post('/api/queue/enqueue', async (req) => {
     try {

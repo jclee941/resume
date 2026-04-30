@@ -1,5 +1,5 @@
 import { normalizeError } from '@resume/shared/errors';
-import { sendTelegramNotification } from '../../notifications.js';
+import { sendTelegramNotification } from '../../services/notifications.js';
 
 export async function getProfileSyncStatusResponse(handler, request) {
   const syncId = request.params?.syncId;
