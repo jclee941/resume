@@ -983,7 +983,6 @@
     "Migrated AWS infrastructure to Terraform IaC and built integrated CloudTrail+GuardDuty monitoring at Quantec.",
     "Built unified Grafana dashboards with Prometheus metrics for single-view infrastructure analysis.",
     "Built n8n automation platform to convert repetitive operations into workflow-based execution.",
-    "Integrated Trivy container security scanning with EKS security policies into GitLab CI/CD pipelines at FunNC.",
     "Converted NAC exception policy handling and switch diagnostics to automated systems at Metanet remote-work infrastructure.",
     "Analyzed and resolved antivirus-VPN profile conflicts and designed/built new site networks at Metanet remote-work environment.",
     "Cleaned up duplicate firewall rules and maintained security operations stability at the KAI closed network."
