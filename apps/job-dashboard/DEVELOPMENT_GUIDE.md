@@ -29,7 +29,7 @@ Complete guide for local development, testing, debugging, and extending the job-
 
 ### System Requirements
 
-- **Node.js** 18.0.0 or higher (LTS)
+- **Node.js** 22.0.0 or higher
 
   ```bash
   node --version

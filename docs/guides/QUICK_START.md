@@ -4,7 +4,7 @@ Get up and running with the resume portfolio project in under 3 minutes.
 
 ## Prerequisites
 
-- Node.js >= 20.0.0
+- Node.js >= 22.0.0
 - npm or yarn
 - Git
 
