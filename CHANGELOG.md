@@ -5,6 +5,13 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.16.11] - 2026-04-30
+
+### Changes
+- fix(resume): EN/JA careers 배열에서 펀엔씨(Fun&C) 항목 제거 (29ae262)
+- Merge branch 'master' of https://github.com/jclee941/resume (04697f4)
+- fix(resume): SSOT에서 ㈜펀엔씨 경력 삭제 (4314b47)
+
 ## [v1.16.10] - 2026-04-29
 
 ### Changes
