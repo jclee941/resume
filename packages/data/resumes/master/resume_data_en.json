@@ -189,40 +189,6 @@
       ]
     },
     {
-      "company": "Fun&C Co., Ltd.",
-      "period": "2022.05 ~ 2022.07",
-      "duration": "3 months",
-      "project": "E-commerce Cloud Migration & Security Enhancement",
-      "role": "Infrastructure Engineer",
-      "client": null,
-      "teamSize": "Infrastructure Team",
-      "myRole": "Cloud Security & DevSecOps Engineer",
-      "workType": "Full-time",
-      "description": "Met cloud-native security baselines while migrating by designing VPC perimeter and EKS security baselines, and automated vulnerability scanning in CI/CD to enforce security validation at build time.",
-      "wantedSummary": "E-commerce Cloud Migration | AWS VPC · EKS · GitLab CI\n→ SAST/SCA-based DevSecOps pipeline implementation",
-      "note": null,
-      "projects": [
-        {
-          "name": "E-commerce Cloud Migration",
-          "description": "E-commerce service on-premise→AWS cloud migration and security hardening\n• AWS VPC-based network boundary design with security group/NACL policy\n• EKS cluster security baseline and container vulnerability scan process\n• GitLab CI/CD pipeline with SCA & container scan automation stages",
-          "period": "2022.05 ~ 2022.07",
-          "techStack": [
-            "AWS",
-            "AWS VPC",
-            "Kubernetes (EKS)",
-            "Docker",
-            "GitLab CI",
-            "Trivy"
-          ],
-          "achievements": [
-            "Completed on-premise→AWS migration design",
-            "Established EKS container security assessment process",
-            "Implemented CI/CD security scan automation"
-          ]
-        }
-      ]
-    },
-    {
       "company": "Jointree Co., Ltd.",
       "period": "2021.09 ~ 2022.04",
       "duration": "8 months",
