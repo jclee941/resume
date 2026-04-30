@@ -1,4 +1,5 @@
 {
+  "$schema": "node_modules/wrangler/config-schema.json",
   "name": "resume",
   "main": "entry.js",
   "compatibility_date": "2026-04-29",
@@ -22,6 +23,14 @@
     "directory": "./assets",
     "binding": "ASSETS"
   },
+  // Durable Object class migrations — required when DO classes are first introduced
+  // to a worker. See ADR 0008 (single-worker consolidation).
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_classes": ["BrowserSessionDO"]
+    }
+  ],
   "env": {
     "preview": {
       "name": "resume-preview",
@@ -50,11 +59,30 @@
         "directory": "./assets",
         "binding": "ASSETS"
       },
+      "ai": {
+        "binding": "AI"
+      },
+      "browser": {
+        "binding": "MYBROWSER"
+      },
+      "durable_objects": {
+        "bindings": [
+          {
+            "name": "BROWSER_SESSION",
+            "class_name": "BrowserSessionDO"
+          }
+        ]
+      },
       "d1_databases": [
         {
           "binding": "DB",
           "database_name": "resume-prod-db",
           "database_id": "6c723024-2527-490d-8ffd-38604b923166"
+        },
+        {
+          "binding": "JOB_DB",
+          "database_name": "job-dashboard-db",
+          "database_id": "c858dda6-b752-4e12-b60c-2886e9483cc7"
         }
       ],
       "kv_namespaces": [
@@ -70,11 +98,68 @@
           "binding": "NONCE_KV",
           "id": "3e282b1b906c474aadcc947a06f0c1ad"
         }
-      ]
-      // P0-4 follow-up: "services" binding for JOB_SERVICE → 'job' will be re-added
-      // once apps/job-dashboard is deployed to the same Cloudflare account.
-      // entry.js:22-28 already handles missing binding via 503 fallback.
-      // Tracked in docs/architecture/MONOREPO_REVIEW_2026-04-29.md (P0-4).
+      ],
+      "workflows": [
+        {
+          "name": "job-crawling-workflow",
+          "binding": "JOB_CRAWLING_WORKFLOW",
+          "class_name": "JobCrawlingWorkflow"
+        },
+        {
+          "name": "application-workflow",
+          "binding": "APPLICATION_WORKFLOW",
+          "class_name": "ApplicationWorkflow"
+        },
+        {
+          "name": "resume-sync-workflow",
+          "binding": "RESUME_SYNC_WORKFLOW",
+          "class_name": "ResumeSyncWorkflow"
+        },
+        {
+          "name": "daily-report-workflow",
+          "binding": "DAILY_REPORT_WORKFLOW",
+          "class_name": "DailyReportWorkflow"
+        },
+        {
+          "name": "health-check-workflow",
+          "binding": "HEALTH_CHECK_WORKFLOW",
+          "class_name": "HealthCheckWorkflow"
+        },
+        {
+          "name": "backup-workflow",
+          "binding": "BACKUP_WORKFLOW",
+          "class_name": "BackupWorkflow"
+        },
+        {
+          "name": "cleanup-workflow",
+          "binding": "CLEANUP_WORKFLOW",
+          "class_name": "CleanupWorkflow"
+        }
+      ],
+      "queues": {
+        "producers": [
+          { "queue": "crawl-tasks", "binding": "CRAWL_TASKS" },
+          { "queue": "notifications", "binding": "NOTIFICATION_QUEUE" }
+        ],
+        "consumers": [
+          {
+            "queue": "crawl-tasks",
+            "max_batch_size": 10,
+            "max_batch_timeout": 30,
+            "max_retries": 5,
+            "dead_letter_queue": "crawl-tasks-dlq",
+            "max_concurrency": 3
+          },
+          {
+            "queue": "notifications",
+            "max_batch_size": 30,
+            "max_batch_timeout": 10,
+            "max_retries": 3,
+            "dead_letter_queue": "notifications-dlq",
+            "max_concurrency": 3
+          }
+        ]
+      }
     }
   }
 }
