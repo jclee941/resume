@@ -5,6 +5,11 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.20.1] - 2026-04-30
+
+### Changes
+- fix(portfolio): remove remaining AWS hardcoded strings from HTML templates (4895ad9)
+
 ## [v1.20.0] - 2026-04-30
 
 ### Changes
