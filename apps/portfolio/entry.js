@@ -1,4 +1,17 @@
 import portfolioWorker from './worker.js';
+// Single-worker consolidation per ADR 0008: import the job-dashboard worker in-process
+// instead of via Service Binding. This is the one sanctioned cross-app import.
+// eslint-disable-next-line no-restricted-imports
+import jobWorker, {
+  JobCrawlingWorkflow,
+  ApplicationWorkflow,
+  ResumeSyncWorkflow,
+  DailyReportWorkflow,
+  HealthCheckWorkflow,
+  BackupWorkflow,
+  CleanupWorkflow,
+  BrowserSessionDO,
+} from '../job-dashboard/src/index.js';
 import {
   DEFAULT_LANGUAGE,
   JOB_ROUTE_PREFIX,
@@ -18,14 +31,22 @@ import {
 } from './lib/entry-router-utils.js';
 import { logResponse, logError } from '@resume/shared/es-client';
 
+// Re-export Workflow + Durable Object classes so wrangler can register them in the merged worker.
+export {
+  JobCrawlingWorkflow,
+  ApplicationWorkflow,
+  ResumeSyncWorkflow,
+  DailyReportWorkflow,
+  HealthCheckWorkflow,
+  BackupWorkflow,
+  CleanupWorkflow,
+  BrowserSessionDO,
+};
+
 async function fetchJobHandlerResponse(request, env, ctx, pathname) {
-  if (!env.JOB_SERVICE) {
-    return new Response(JSON.stringify({ error: 'Dashboard unavailable in local dev' }), {
-      status: 503,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
-  const response = await env.JOB_SERVICE.fetch(request);
+  // Job dashboard runs in-process (merged worker — no Service Binding needed).
+  // The job worker's internal router strips the /job prefix itself.
+  const response = await jobWorker.fetch(request, env, ctx);
   return applyResponseHeaders(response, pathname);
 }
 
@@ -136,11 +157,8 @@ export default {
   },
 
   // Queue handler - acknowledges all messages (no-op for portfolio worker)
-  async queue(batch, _env, _ctx) {
-    console.log(`[queue] Received ${batch.messages.length} messages from queue: ${batch.queue}`);
-    // Acknowledge all messages - portfolio worker doesn't process queue messages
-    for (const message of batch.messages) {
-      message.ack();
-    }
+  // Queue handler — delegate to job worker (it handles crawl-tasks + notifications queues).
+  async queue(batch, env, ctx) {
+    return jobWorker.queue(batch, env, ctx);
   },
 };
