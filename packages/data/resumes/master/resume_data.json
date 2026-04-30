@@ -26,7 +26,7 @@
     {
       "name": "English",
       "level": "Working proficiency (technical reading & writing)",
-      "note": "Daily technical documentation, vendor support correspondence, AWS/Cloudflare console operation"
+      "note": "Daily technical documentation, vendor support correspondence, Cloudflare console operation"
     }
   ],
   "military": {
@@ -84,7 +84,7 @@
     },
     "jobkorea": {
       "headline": "DevSecOps/SRE — 금융권 규제 환경 보안 인프라 설계·운영",
-      "about": "금융권 규제 환경에서 보안 인프라를 설계·운영하며 본인가 심사 대응을 수행한 DevSecOps/SRE 엔지니어입니다.\n\n[주요 경험]\n• 넥스트레이드 — 금융권 규제 환경에서 FortiGate HA 보안 인프라를 설계·구축하고 본인가 심사 보안 영역을 대응한 경험. SIEM 탐지 룰 운영과 n8n+FortiManager API 연동을 통해 보안 이벤트 자동 대응 체계를 구축한 경험\n• 콴텍 — Terraform IaC로 AWS 보안을 전환하고 로보어드바이저 테스트베드 심사 대응을 수행한 경험\n• 메타넷 — Ansible/Python으로 대규모 서버 설정과 NAC 정책 자동화를 구축한 경험\n\n[보유 기술]\nFortiGate/FortiManager, Splunk ES, Ansible, Python, Terraform, AWS, Docker, Prometheus/Grafana, ISMS-P\n\n포트폴리오: https://resume.jclee.me"
+      "about": "금융권 규제 환경에서 보안 인프라를 설계·운영하며 본인가 심사 대응을 수행한 DevSecOps/SRE 엔지니어입니다.\n\n[주요 경험]\n• 넥스트레이드 — 금융권 규제 환경에서 FortiGate HA 보안 인프라를 설계·구축하고 본인가 심사 보안 영역을 대응한 경험. SIEM 탐지 룰 운영과 n8n+FortiManager API 연동을 통해 보안 이벤트 자동 대응 체계를 구축한 경험\n• 메타넷 — Ansible/Python으로 대규모 서버 설정과 NAC 정책 자동화를 구축한 경험\n\n[보유 기술]\nFortiGate/FortiManager, Splunk ES, Ansible, Python, Terraform, Docker, Prometheus/Grafana, ISMS-P\n\n포트폴리오: https://resume.jclee.me"
     }
   },
   "current": {
@@ -166,38 +166,6 @@
         }
       ],
       "continuousEngagement": "넥스트레이드 매매체결시스템 (2024.03~2026.02 연속 참여, 구축→운영 단계)"
-    },
-    {
-      "company": "(주)콴텍투자일임",
-      "period": "2022.08 ~ 2024.02",
-      "duration": "1년 6개월",
-      "project": "AI 주식투자 서비스 보안운영",
-      "role": "정보보호팀",
-      "teamSize": "규모 미공개 인프라·정보보호팀",
-      "myRole": "AWS 보안 운영 및 관측성 구축 담당",
-      "workType": "SM",
-      "description": "클라우드 인프라의 추적성과 감사 가능성을 확보하기 위해 Terraform IaC로 전환하고, 분산된 보안 로그의 상관관계 분석이 어려운 문제를 해결하기 위해 CloudTrail과 GuardDuty를 통합 모니터링했습니다. 로보어드바이저 테스트베드 심사 대응을 통해 보안 영역 기준을 충족하고 ISMS-P 인증 갱신 과정에서도 인프라 보안을 지속 검증한 경험이 있습니다.",
-      "wantedSummary": "IaC 기반 클라우드 보안을 구축하고 외부 심사 기준을 충족시킨 경험",
-      "projects": [
-        {
-          "name": "AI투자서비스 보안운영",
-          "description": "인프라 변경 이력 추적과 감사 가능성 확보를 위해 Terraform으로 VPC/Subnet/SG를 코드화하고, 분산된 보안 로그의 상관관계 분석을 위해 CloudTrail과 GuardDuty를 통합 분석했습니다.",
-          "period": "2022.08 ~ 2024.02",
-          "techStack": [
-            "AWS",
-            "Terraform",
-            "Prometheus",
-            "Grafana",
-            "CloudTrail",
-            "GuardDuty"
-          ],
-          "achievements": [
-            "인프라 관리의 추적성 확보를 위해 IaC 전환을 완료한 경험",
-            "분산된 로그의 상관관계 분석이 어려운 문제를 해결하기 위해 통합 모니터링을 구축한 경험",
-            "외부 심사에서 요구하는 보안 기준을 충족하기 위해 대응 체계를 구축한 경험"
-          ]
-        }
-      ]
     },
     {
       "company": "(주)조인트리",
@@ -325,21 +293,6 @@
       "description": "단일 장애점 해소와 운영 일관성 확보를 위해 FortiGate HA를 구성하고, Ansible Role로 보안 장비 초기 설정을 표준화하여 구축에서 운영으로의 전환 인계 비용을 줄였습니다."
     },
     {
-      "period": "2022.08 ~ 2024.02",
-      "name": "AI투자서비스 보안운영",
-      "client": "콴텍투자일임",
-      "technologies": [
-        "AWS",
-        "IAM",
-        "Security Group",
-        "Prometheus",
-        "Grafana"
-      ],
-      "os": "Linux, AWS",
-      "role": "정보보호팀",
-      "description": "인프라 변경 이력 추적과 감사 가능성 확보를 위해 Terraform으로 VPC/Subnet/SG를 코드화하고, 분산된 보안 로그의 상관관계 분석을 위해 CloudTrail과 GuardDuty를 통합 분석했습니다."
-    },
-    {
       "period": "2021.09 ~ 2022.04",
       "name": "국민대 차세대 정보시스템",
       "client": "국민대학교",
@@ -443,14 +396,6 @@
       "status": "active"
     },
     {
-      "name": "AWS Certified Solutions Architect - Associate",
-      "issuer": "Amazon Web Services",
-      "date": null,
-      "expirationDate": null,
-      "status": "준비중",
-      "note": "2026 H1 취득 목표 — AWS 보안 아키텍처 강화"
-    },
-    {
       "name": "Certified Kubernetes Security Specialist (CKS)",
       "issuer": "CNCF",
       "date": null,
@@ -498,10 +443,6 @@
       "title": "Cloud & Infra",
       "icon": "Cloud",
       "items": [
-        {
-          "name": "AWS (EC2, VPC, EKS, S3)",
-          "level": "advanced"
-        },
         {
           "name": "Docker",
           "level": "expert"
@@ -951,7 +892,6 @@
   "achievements": [
     "넥스트레이드 매매체결시스템에서 FortiGate HA 보안 인프라를 설계·운영하며 금융위 본인가 심사를 통과한 경험이 있습니다.",
     "Splunk ES 탐지 룰과 FortiNet API 연동을 통해 보안 이벤트 실시간 알림 체계를 구축·운영했습니다.",
-    "콴텍 환경에서 Terraform IaC로 AWS 인프라를 코드화하고 CloudTrail+GuardDuty 통합 모니터링을 구축했습니다.",
     "Grafana 대시보드와 Prometheus 메트릭을 통합 운영하며 인프라 상태를 단일 뷰에서 분석할 수 있는 환경을 구성했습니다.",
     "n8n 자동화 플랫폼을 구축하여 반복 작업을 워크플로우 기반으로 전환했습니다.",
     "메타넷 재택근무 인프라에서 NAC 예외 정책 처리와 스위치 점검 작업을 자동화 시스템으로 전환한 경험이 있습니다.",

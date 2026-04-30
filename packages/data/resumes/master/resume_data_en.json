@@ -26,7 +26,7 @@
     {
       "name": "English",
       "level": "Working proficiency (technical reading & writing)",
-      "note": "Daily technical documentation, vendor support correspondence, AWS/Cloudflare console operation"
+      "note": "Daily technical documentation, vendor support correspondence, Cloudflare console operation"
     }
   ],
   "military": {
@@ -157,38 +157,6 @@
       "continuousEngagement": "NextTrade Trading System (2024.03~2026.02 continuous engagement, build → operate)"
     },
     {
-      "company": "Quant Investment Management Co., Ltd.",
-      "period": "2022.08 ~ 2024.02",
-      "duration": "1 year 7 months",
-      "project": "AI Equity Investment Service Security Operations",
-      "role": "Information Security Team",
-      "client": "Quant Investment Management",
-      "teamSize": "Infrastructure and information security team (size undisclosed)",
-      "myRole": "AWS security operations and observability engineer",
-      "workType": "SM",
-      "description": "Established change traceability and auditability for cloud infrastructure by codifying VPC/Subnet/SG with Terraform, and resolved the difficulty of correlating distributed security logs through integrated CloudTrail and GuardDuty analysis.",
-      "projects": [
-        {
-          "name": "AI Investment Service Security Operations",
-          "description": "IaC-based AWS security infrastructure management and observability.\n• Code-based management of VPCs, Subnets, and Security Groups via Terraform.\n• Integrated AWS CloudTrail and GuardDuty logs into CloudWatch for analysis.",
-          "period": "2022.08 ~ 2024.02",
-          "techStack": [
-            "AWS",
-            "Terraform",
-            "Prometheus",
-            "Grafana",
-            "CloudTrail",
-            "GuardDuty"
-          ],
-          "achievements": [
-            "Completed Terraform IaC migration of VPC/Subnet/SG",
-            "Built integrated security monitoring with CloudTrail + GuardDuty",
-            "Completed robo-advisor testbed security review response"
-          ]
-        }
-      ]
-    },
-    {
       "company": "Jointree Co., Ltd.",
       "period": "2021.09 ~ 2022.04",
       "duration": "8 months",
@@ -312,36 +280,6 @@
       "description": "Designed a high-availability security architecture for a securities trading platform\n• Implemented Active-Passive HA with FGCP (FortiGate Clustering Protocol)\n• Standardized initial device setup and policy deployment with reusable Ansible roles"
     },
     {
-      "period": "2022.08 ~ 2024.02",
-      "name": "AI Investment Service Security Operations",
-      "client": "Quant Investment Management",
-      "technologies": [
-        "AWS",
-        "IAM",
-        "Security Group",
-        "Prometheus",
-        "Grafana"
-      ],
-      "os": "Linux, AWS",
-      "role": "Information Security Team",
-      "description": "Managed AWS security infrastructure using IaC and improved observability\n• Managed VPC, subnet, and security group resources as code with Terraform\n• Consolidated AWS CloudTrail and GuardDuty logs in CloudWatch for unified analysis"
-    },
-    {
-      "period": "2022.05 ~ 2022.07",
-      "name": "E-commerce Cloud Migration",
-      "client": "Fun&C",
-      "technologies": [
-        "AWS",
-        "Kubernetes",
-        "Docker",
-        "GitLab CI",
-        "Trivy"
-      ],
-      "os": "Linux, Docker, EKS",
-      "role": "Infrastructure Engineer",
-      "description": "E-commerce service on-premise→AWS cloud migration and security hardening\n• AWS VPC network boundary design with security group policy\n• EKS cluster security baseline and container vulnerability scan process\n• GitLab CI/CD pipeline with SCA & container scan automation"
-    },
-    {
       "period": "2021.09 ~ 2022.04",
       "name": "Kookmin University Next-Generation Information System",
       "client": "Kookmin University",
@@ -445,14 +383,6 @@
       "status": "active"
     },
     {
-      "name": "AWS Certified Solutions Architect - Associate",
-      "issuer": "Amazon Web Services",
-      "date": null,
-      "expirationDate": null,
-      "status": "준비중",
-      "note": "2026 H1 취득 목표 — AWS 보안 아키텍처 강화"
-    },
-    {
       "name": "Certified Kubernetes Security Specialist (CKS)",
       "issuer": "CNCF",
       "date": null,
@@ -500,10 +430,6 @@
       "title": "Cloud & Infra",
       "icon": "Cloud",
       "items": [
-        {
-          "name": "AWS (EC2, VPC, EKS, S3)",
-          "level": "advanced"
-        },
         {
           "name": "Docker",
           "level": "expert"
@@ -946,7 +872,6 @@
   "achievements": [
     "Designed and operated FortiGate HA security infrastructure for the NextTrade trading system and passed the FSC licensing audit.",
     "Built real-time security event alerting via Splunk ES detection rules integrated with FortiNet API.",
-    "Migrated AWS infrastructure to Terraform IaC and built integrated CloudTrail+GuardDuty monitoring at Quantec.",
     "Built unified Grafana dashboards with Prometheus metrics for single-view infrastructure analysis.",
     "Built n8n automation platform to convert repetitive operations into workflow-based execution.",
     "Converted NAC exception policy handling and switch diagnostics to automated systems at Metanet remote-work infrastructure.",
@@ -1065,7 +990,7 @@
     },
     "jobkorea": {
       "headline": "DevSecOps/SRE — Financial-Sector Security Infrastructure",
-      "about": "DevSecOps/SRE engineer who designed and operated security infrastructure in financial regulated environments and performed regulatory licensing audit response.\n\n[Key Experience]\n• NextTrade — Designed and built FortiGate HA security infrastructure in financial regulated environment and responded to FSC licensing audit on the security domain. Built SIEM detection rule operations and automated response systems via n8n+FortiManager API integration\n• Quantec — Migrated AWS security to Terraform IaC and responded to robo-advisor testbed audit\n• Metanet — Built large-scale server configuration and NAC policy automation with Ansible/Python\n\n[Tech Stack]\nFortiGate/FortiManager, Splunk ES, Ansible, Python, Terraform, AWS, Docker, Prometheus/Grafana, ISMS-P\n\nPortfolio: https://resume.jclee.me"
+      "about": "DevSecOps/SRE engineer who designed and operated security infrastructure in financial regulated environments and performed regulatory licensing audit response.\n\n[Key Experience]\n• NextTrade — Designed and built FortiGate HA security infrastructure in financial regulated environment and responded to FSC licensing audit on the security domain. Built SIEM detection rule operations and automated response systems via n8n+FortiManager API integration\n• Metanet — Built large-scale server configuration and NAC policy automation with Ansible/Python\n\n[Tech Stack]\nFortiGate/FortiManager, Splunk ES, Ansible, Python, Terraform, Docker, Prometheus/Grafana, ISMS-P\n\nPortfolio: https://resume.jclee.me"
     }
   }
 }
