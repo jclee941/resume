@@ -5,6 +5,16 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.22.1] - 2026-04-30
+
+### Changes
+- chore: remove duplicate workflow (1971f45)
+- chore: remove duplicate workflow (7d45e2e)
+- chore: remove duplicate workflow (c25855c)
+- chore: remove duplicate workflow (ac38be4)
+- chore: remove duplicate workflow (a7460df)
+- chore: remove duplicate workflow (7570b5e)
+
 ## [v1.22.0] - 2026-04-30
 
 ### Changes
