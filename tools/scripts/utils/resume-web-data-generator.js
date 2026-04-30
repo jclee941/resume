@@ -25,11 +25,6 @@ function generateWebData(source) {
       description:
         'Established change traceability and auditability for cloud infrastructure by codifying VPC/Subnet/SG with Terraform, and resolved the difficulty of correlating distributed security logs through integrated CloudTrail and GuardDuty analysis.',
     },
-    '(주)펀엔씨': {
-      title: 'FunNC Co., Ltd.',
-      description:
-        'Met cloud-native security baselines while migrating by designing VPC perimeter and EKS security baselines, and automated vulnerability scanning in CI/CD to enforce security validation at build time.',
-    },
     '(주)조인트리': {
       title: 'Jointree Co., Ltd.',
       description:
@@ -89,7 +84,6 @@ function generateWebData(source) {
       '(주)아이티센 CTS': ['보안관제', '컴플라이언스', 'DR'],
       '(주)가온누리정보시스템': ['아키텍처', '망분리', '인허가'],
       '(주)콴텍투자일임': ['AWS', '정책설계', '안정운영'],
-      '(주)펀엔씨': ['AWS', 'K8s', 'DevOps'],
       '(주)조인트리': ['NSX-T', '보안통합', 'SI'],
       '(주)메타넷엠플랫폼': ['VPN/NAC', 'Ansible', 'Python'],
       '(주)엠티데이타': ['서버운영', '방화벽', '망분리'],
@@ -118,7 +112,6 @@ function generateWebData(source) {
       '(주)아이티센 CTS': ['Security Operations', 'Compliance', 'DR'],
       '(주)가온누리정보시스템': ['Architecture', 'Network Segmentation', 'Regulatory Approval'],
       '(주)콴텍투자일임': ['AWS', 'Policy Design', 'Stable Operations'],
-      '(주)펀엔씨': ['AWS', 'K8s', 'DevOps'],
       '(주)조인트리': ['NSX-T', 'Security Integration', 'Systems Integration'],
       '(주)메타넷엠플랫폼': ['VPN/NAC', 'Ansible', 'Python'],
       '(주)엠티데이타': ['Server Operations', 'Firewall', 'Network Segmentation'],
