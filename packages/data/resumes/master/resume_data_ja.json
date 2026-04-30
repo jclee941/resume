@@ -186,40 +186,6 @@
       ]
     },
     {
-      "company": "(株)ファンエンシー",
-      "period": "2022.05 ~ 2022.07",
-      "duration": "3ヶ月",
-      "project": "ECサービス クラウド移行・セキュリティ強化",
-      "role": "インフラ担当",
-      "client": null,
-      "teamSize": "インフラチーム",
-      "myRole": "クラウドセキュリティ・DevSecOps担当",
-      "workType": "正社員",
-      "description": "オンプレミス環境のAWS VPCベースクラウド移行設計、EKSクラスタ セキュリティ設定と コンテナ脆弱性点検プロセス策定、GitLab CI/CDパイプラインのセキュリティ検査ステップ自動化。",
-      "wantedSummary": "ECクラウド移行 | AWS VPC · EKS · GitLab CI\n→ SAST/SCAベースのDevSecOpsパイプライン構築",
-      "note": null,
-      "projects": [
-        {
-          "name": "ECクラウド移行",
-          "description": "ECサービスのオンプレ→AWSクラウド移行およびセキュリティ強化\n• AWS VPCベースのネットワーク境界設計とセキュリティグループ/NACLポリシー策定\n• EKSクラスタ セキュリティベースラインおよびコンテナ脆弱性スキャンプロセス策定\n• GitLab CI/CDパイプラインにSCA・コンテナスキャン段階の自動化適用",
-          "period": "2022.05 ~ 2022.07",
-          "techStack": [
-            "AWS",
-            "AWS VPC",
-            "Kubernetes (EKS)",
-            "Docker",
-            "GitLab CI",
-            "Trivy"
-          ],
-          "achievements": [
-            "オンプレ→AWS移行設計完了",
-            "EKSコンテナセキュリティ点検プロセス策定",
-            "CI/CDパイプラインのセキュリティ検査自動化適用"
-          ]
-        }
-      ]
-    },
-    {
       "company": "(株)ジョイントリー",
       "period": "2021.09 ~ 2022.04",
       "duration": "8か月",
