@@ -194,7 +194,7 @@ export async function runApplicationWorkflow(ctx, event, step) {
         timeout: '2 minutes',
       },
       async () => {
-        const existing = await ctx.env.DB.prepare(
+        const existing = await ctx.env.JOB_DB.prepare(
           'SELECT id FROM applications WHERE job_id = ? AND source = ?'
         )
           .bind(job.id, job.source)

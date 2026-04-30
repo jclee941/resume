@@ -1,5 +1,5 @@
 export async function saveWorkflowState(ctx, workflow) {
-  await ctx.env.DB.prepare(
+  await ctx.env.JOB_DB.prepare(
     `
       INSERT INTO application_workflows (
         id, status, trigger_type, jobs_found, jobs_approved, jobs_applied,
@@ -32,7 +32,7 @@ export async function saveWorkflowState(ctx, workflow) {
 }
 
 export async function logWorkflowStep(ctx, workflowId, stepName, status, details = {}) {
-  await ctx.env.DB.prepare(
+  await ctx.env.JOB_DB.prepare(
     `
       INSERT INTO workflow_logs (
         id, workflow_id, step_name, status, details, created_at
@@ -52,7 +52,7 @@ export async function logWorkflowStep(ctx, workflowId, stepName, status, details
 export async function createApprovalRequest(ctx, workflowId, job, status, matchScore) {
   const requestId = `approval-${workflowId}-${job.id}`;
 
-  await ctx.env.DB.prepare(
+  await ctx.env.JOB_DB.prepare(
     `
       INSERT INTO approval_requests (
         id, workflow_id, job_id, job_title, company, platform,
@@ -70,7 +70,7 @@ export async function createApprovalRequest(ctx, workflowId, job, status, matchS
 }
 
 export async function getApprovalStatus(ctx, requestId) {
-  const result = await ctx.env.DB.prepare('SELECT status FROM approval_requests WHERE id = ?')
+  const result = await ctx.env.JOB_DB.prepare('SELECT status FROM approval_requests WHERE id = ?')
     .bind(requestId)
     .first();
 
@@ -83,7 +83,7 @@ export async function recordApplication(
 ) {
   const applicationId = `${workflowId}-${jobId}`;
 
-  await ctx.env.DB.prepare(
+  await ctx.env.JOB_DB.prepare(
     `
       INSERT INTO applications (
         id, workflow_id, job_id, source, company, position,
@@ -107,7 +107,7 @@ export async function recordApplication(
 }
 
 export async function getDailyApplicationCount(ctx, date) {
-  const result = await ctx.env.DB.prepare(
+  const result = await ctx.env.JOB_DB.prepare(
     `
       SELECT COUNT(*) as count FROM applications
       WHERE date(applied_at) = ? AND status = 'applied'

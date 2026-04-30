@@ -287,9 +287,9 @@ export class QueueConsumer {
    */
   async _recordMetrics(queueName, duration) {
     try {
-      if (!this.env.DB) return;
+      if (!this.env.JOB_DB) return;
 
-      await this.env.DB.prepare(
+      await this.env.JOB_DB.prepare(
         `INSERT INTO sync_logs (id, sync_type, status, started_at, completed_at, details)
          VALUES (?, ?, ?, datetime('now', ?), datetime('now'), ?)`
       )

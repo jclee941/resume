@@ -60,7 +60,7 @@ export async function handleStatusCommand(service, _chatId) {
   try {
     const today = new Date().toISOString().split('T')[0];
 
-    const stats = await service.env.DB.prepare(
+    const stats = await service.env.JOB_DB.prepare(
       `
         SELECT
           COUNT(*) as total,

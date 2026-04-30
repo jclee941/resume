@@ -19,7 +19,7 @@ async function updateWorkflowApprovalState(service, applicationId, stateMutator)
 
 export async function approveApplication(service, applicationId) {
   try {
-    await service.env.DB.prepare(
+    await service.env.JOB_DB.prepare(
       `
         UPDATE applications
         SET status = 'approved', approved_at = datetime('now')
@@ -43,7 +43,7 @@ export async function approveApplication(service, applicationId) {
 
 export async function rejectApplication(service, applicationId) {
   try {
-    await service.env.DB.prepare(
+    await service.env.JOB_DB.prepare(
       `
         UPDATE applications
         SET status = 'rejected', rejected_at = datetime('now')
@@ -67,7 +67,7 @@ export async function rejectApplication(service, applicationId) {
 
 export async function viewApplicationDetails(service, applicationId) {
   try {
-    const application = await service.env.DB.prepare(
+    const application = await service.env.JOB_DB.prepare(
       `
         SELECT * FROM applications WHERE id = ?
       `

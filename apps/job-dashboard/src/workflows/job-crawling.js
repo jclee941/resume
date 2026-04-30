@@ -4,7 +4,7 @@ import { decrypt } from '../utils/crypto.js';
 import {
   sendTelegramNotification,
   escapeHtml,
-} from '../notifications.js';
+} from '../services/notifications.js';
 import { calculateMatchScore } from '../handlers/auto-apply/match-scoring.js';
 
 /**
@@ -133,7 +133,7 @@ export class JobCrawlingWorkflow extends WorkflowEntrypoint {
           timeout: '2 minutes',
         },
         async () => {
-          const stmt = this.env.DB.prepare(`
+          const stmt = this.env.JOB_DB.prepare(`
             INSERT INTO job_search_results (job_id, company, position, source, match_score, data, created_at)
             VALUES (?, ?, ?, ?, ?, ?, datetime('now'))
             ON CONFLICT (job_id) DO UPDATE SET match_score = excluded.match_score, updated_at = datetime('now')
@@ -152,7 +152,7 @@ export class JobCrawlingWorkflow extends WorkflowEntrypoint {
               )
             );
 
-          await this.env.DB.batch(batch);
+          await this.env.JOB_DB.batch(batch);
           return { saved: batch.length };
         }
       );
@@ -365,7 +365,7 @@ export class JobCrawlingWorkflow extends WorkflowEntrypoint {
 
   async getMatchingConfig() {
     try {
-      const config = await this.env.DB.prepare(
+      const config = await this.env.JOB_DB.prepare(
         "SELECT value FROM config WHERE key = 'auto_apply_config'"
       ).first();
       return config?.value ? JSON.parse(config.value) : { minMatchScore: 70 };

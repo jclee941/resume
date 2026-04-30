@@ -10,8 +10,8 @@ export function registerHealthRoutes(router, ctx) {
       version: '2.0.0',
     };
     try {
-      if (env.DB) {
-        await env.DB.prepare('SELECT 1').first();
+      if (env.JOB_DB) {
+        await env.JOB_DB.prepare('SELECT 1').first();
         health.database = 'connected';
       } else {
         health.database = 'not configured';
@@ -30,8 +30,8 @@ export function registerHealthRoutes(router, ctx) {
       version: '2.0.0',
     };
     try {
-      if (env.DB) {
-        await env.DB.prepare('SELECT 1').first();
+      if (env.JOB_DB) {
+        await env.JOB_DB.prepare('SELECT 1').first();
         health.database = 'connected';
       } else {
         health.database = 'not configured';
@@ -49,9 +49,9 @@ export function registerHealthRoutes(router, ctx) {
       timestamp: new Date().toISOString(),
       version: '2.0.0',
     };
-    if (env.DB) {
+    if (env.JOB_DB) {
       try {
-        const result = await env.DB.prepare('SELECT COUNT(*) as count FROM applications').first();
+        const result = await env.JOB_DB.prepare('SELECT COUNT(*) as count FROM applications').first();
         status.applications = result?.count ?? 0;
       } catch {
         status.applications = 'error';

@@ -16,7 +16,7 @@ const SUPPORTED_PLATFORMS = ['wanted', 'linkedin', 'remember', 'jobkorea', 'sara
 export class AutoApplyHandler {
   constructor(env) {
     this.env = env;
-    this.db = env.DB;
+    this.db = env.JOB_DB;
     this.sessions = env.SESSIONS;
     this.clients = {
       wanted: new WantedClient(),

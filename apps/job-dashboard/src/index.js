@@ -126,9 +126,9 @@ export default {
       }
     }
 
-    const apps = new ApplicationsHandler(env.DB);
-    const stats = new StatsHandler(env.DB);
-    const auth = new AuthHandler(env.DB, env.SESSIONS, env);
+    const apps = new ApplicationsHandler(env.JOB_DB);
+    const stats = new StatsHandler(env.JOB_DB);
+    const auth = new AuthHandler(env.JOB_DB, env.SESSIONS, env);
     const webhooks = new WebhookHandler(env, auth);
     const autoApply = new AutoApplyHandler(env);
     const diagnostics = new DiagnosticsHandler(env);

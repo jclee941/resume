@@ -9,7 +9,7 @@ import {
 import {
   sendTelegramNotification,
   escapeHtml,
-} from '../notifications.js';
+} from '../services/notifications.js';
 
 /**
  * Resume Sync Workflow
@@ -214,7 +214,7 @@ export class ResumeSyncWorkflow extends WorkflowEntrypoint {
         timeout: '30 seconds',
       },
       async () => {
-        await this.env.DB.prepare(
+        await this.env.JOB_DB.prepare(
           `
           INSERT INTO resume_sync_history (
             id, resume_id, platforms, changes, status, backup_id, created_at

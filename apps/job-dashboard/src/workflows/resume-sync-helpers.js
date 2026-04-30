@@ -15,7 +15,7 @@ import { DEFAULT_USER_AGENT } from '@resume/shared/ua';
 import {
   sendTelegramNotification,
   escapeHtml,
-} from '../notifications.js';
+} from '../services/notifications.js';
 
 // ============================================================
 // DATA EXPORT
@@ -24,7 +24,7 @@ import {
 export async function getMasterResumeData(env, resumeId) {
   // Get from SSoT (resume_data.json)
   // In production, this would read from D1 or KV
-  const data = await env.DB.prepare('SELECT data FROM resumes WHERE id = ?').bind(resumeId).first();
+  const data = await env.JOB_DB.prepare('SELECT data FROM resumes WHERE id = ?').bind(resumeId).first();
 
   return data?.data ? JSON.parse(data.data) : null;
 }

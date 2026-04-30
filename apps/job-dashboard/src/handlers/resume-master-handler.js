@@ -17,7 +17,7 @@ export class ResumeMasterHandler extends BaseHandler {
     const resumeId = url.searchParams.get('resumeId') || 'master';
 
     try {
-      const row = await this.env.DB.prepare(
+      const row = await this.env.JOB_DB.prepare(
         'SELECT id, target_resume_id, source, data, created_at, updated_at FROM resumes WHERE id = ?'
       )
         .bind(resumeId)
@@ -65,7 +65,7 @@ export class ResumeMasterHandler extends BaseHandler {
       }
 
       const now = new Date().toISOString();
-      await this.env.DB.prepare(
+      await this.env.JOB_DB.prepare(
         `INSERT INTO resumes (id, target_resume_id, source, data, created_at, updated_at)
          VALUES (?, ?, ?, ?, ?, ?)
          ON CONFLICT(id) DO UPDATE SET
@@ -102,7 +102,7 @@ export class ResumeMasterHandler extends BaseHandler {
     const limit = Math.min(parseInt(url.searchParams.get('limit') || '10', 10) || 10, 50);
 
     try {
-      const rows = await this.env.DB.prepare(
+      const rows = await this.env.JOB_DB.prepare(
         `SELECT id, platforms, status, dry_run, result, created_at, updated_at
          FROM profile_syncs
          ORDER BY created_at DESC
