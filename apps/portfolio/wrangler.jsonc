@@ -136,29 +136,12 @@
           "class_name": "CleanupWorkflow"
         }
       ],
+      // Queues temporarily disabled until Cloudflare account has 'crawl-tasks' and 'notifications' queues provisioned.
+      // Create with: wrangler queues create crawl-tasks && wrangler queues create notifications
+      // Then re-enable this block. See ADR 0008 § Migration Plan.
       "queues": {
-        "producers": [
-          { "queue": "crawl-tasks", "binding": "CRAWL_TASKS" },
-          { "queue": "notifications", "binding": "NOTIFICATION_QUEUE" }
-        ],
-        "consumers": [
-          {
-            "queue": "crawl-tasks",
-            "max_batch_size": 10,
-            "max_batch_timeout": 30,
-            "max_retries": 5,
-            "dead_letter_queue": "crawl-tasks-dlq",
-            "max_concurrency": 3
-          },
-          {
-            "queue": "notifications",
-            "max_batch_size": 30,
-            "max_batch_timeout": 10,
-            "max_retries": 3,
-            "dead_letter_queue": "notifications-dlq",
-            "max_concurrency": 3
-          }
-        ]
+        "producers": [],
+        "consumers": []
       }
     }
   }
