@@ -67,7 +67,11 @@ The `env.DB` → `env.JOB_DB` rename was applied across 55 references in `apps/j
 4. ✅ Modify `apps/portfolio/entry.js` to import jobWorker, re-export classes, delete `JOB_SERVICE` fallback.
 5. ✅ Remove `services: [{ binding: "JOB_SERVICE", service: "job" }]` from root `wrangler.jsonc`.
 6. ✅ Rewrite `tests/unit/portfolio-worker/entry.test.js` to assert merged-worker contract (no `JOB_SERVICE`).
-7. After deploy: monitor production for 7 days, then delete the standalone `job` Cloudflare Worker.
+7. ✅ Delete obsolete `apps/job-dashboard/wrangler.jsonc` and `docs/runbooks/JOB_DASHBOARD_DEPLOY.md`.
+8. ✅ Update `docs/ARCHITECTURE.md` and `docs/architecture/MONOREPO_REVIEW_2026-04-29.md` (P0-4 marked OBSOLETE).
+9. ✅ Add `.github/workflows/provision-queues.yml` for opt-in queue provisioning + binding activation.
+10. **Pending operator action:** monitor production for 7 days, then delete the standalone `job` Cloudflare Worker via `wrangler delete --name job` (or Cloudflare dashboard).
+11. **Pending operator action (optional):** Trigger `provision-queues.yml` workflow when ready to activate `crawl-tasks` and `notifications` queues. Producer functions are defined but no current workflow handler invokes them; queue activation is OPT-IN until task enqueueing is implemented in workflow code.
 
 ### Reversibility
 - This decision can be reversed by reverting the entry.js + wrangler.jsonc commits and re-deploying job-dashboard as a standalone Worker.
@@ -76,5 +80,5 @@ The `env.DB` → `env.JOB_DB` rename was applied across 55 references in `apps/j
 ## References
 - [ADR 0006 — Single-Worker Architecture](./0006-single-worker-architecture.md) (original, superseded by 0007)
 - [ADR 0007 — MSA Service Split](./0007-msa-service-split.md) (now superseded by this ADR)
-- `docs/runbooks/JOB_DASHBOARD_DEPLOY.md` (now obsolete — merged worker has no separate `job` deploy)
+- ~~`docs/runbooks/JOB_DASHBOARD_DEPLOY.md`~~ — deleted (merged worker has no separate `job` deploy)
 - Cloudflare Service Bindings documentation: https://developers.cloudflare.com/workers/runtime-apis/bindings/service-bindings/

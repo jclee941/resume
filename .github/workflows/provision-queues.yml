@@ -1,0 +1,88 @@
+name: Provision Cloudflare Queues
+
+# Manual workflow to create the crawl-tasks and notifications queues + their DLQs
+# in the Cloudflare account.
+#
+# Why manual: Cloudflare Queues are paid resources (Workers Paid plan). Creating them
+# automatically on every deploy is wasteful. Trigger this workflow once when ready
+# to activate queue-based async task processing (per ADR 0008 § Migration Plan).
+#
+# After provisioning succeeds, manually edit apps/portfolio/wrangler.jsonc to replace
+# the "Queue bindings INACTIVE" comment block with the active producer/consumer
+# configuration documented in ADR 0008.
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type "PROVISION" to confirm queue creation (paid resources)'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  provision:
+    if: ${{ inputs.confirm == 'PROVISION' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+
+      - name: List existing queues
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npx wrangler queues list
+
+      - name: Create queues (idempotent)
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          for q in crawl-tasks crawl-tasks-dlq notifications notifications-dlq; do
+            echo "::group::Create $q"
+            if npx wrangler queues create "$q" 2>&1 | tee /tmp/q.log; then
+              echo "Created $q"
+            elif grep -q "already exists" /tmp/q.log; then
+              echo "$q already exists (idempotent skip)"
+            else
+              echo "Failed to create $q"
+              exit 1
+            fi
+            echo "::endgroup::"
+          done
+
+      - name: Verify queues
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          npx wrangler queues list | tee /tmp/queues.txt
+          for q in crawl-tasks crawl-tasks-dlq notifications notifications-dlq; do
+            if ! grep -q "$q" /tmp/queues.txt; then
+              echo "Queue $q missing after provision"
+              exit 1
+            fi
+            echo "$q verified"
+          done
+
+      - name: Summary
+        run: |
+          {
+            echo "## Queue Provisioning Complete"
+            echo ""
+            echo "Provisioned queues:"
+            echo "- crawl-tasks + crawl-tasks-dlq"
+            echo "- notifications + notifications-dlq"
+            echo ""
+            echo "Next step: edit apps/portfolio/wrangler.jsonc to activate bindings."
+            echo "See ADR 0008 Migration Plan."
+          } >> "$GITHUB_STEP_SUMMARY"

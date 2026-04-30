@@ -136,9 +136,11 @@
           "class_name": "CleanupWorkflow"
         }
       ],
-      // Queues temporarily disabled until Cloudflare account has 'crawl-tasks' and 'notifications' queues provisioned.
-      // Create with: wrangler queues create crawl-tasks && wrangler queues create notifications
-      // Then re-enable this block. See ADR 0008 § Migration Plan.
+      // Queue bindings INACTIVE: producer functions (enqueueTask, enqueueBatch, enqueueNotification)
+      // are defined in apps/job-dashboard/src/{queue-consumer,services/notifications}.js but no current
+      // workflow handler invokes them — workflows trigger via direct Workflow.create() calls instead.
+      // To activate: (1) provision queues via .github/workflows/provision-queues.yml,
+      // (2) repopulate producers/consumers arrays below from infrastructure/cloudflare/queues.json.
       "queues": {
         "producers": [],
         "consumers": []
