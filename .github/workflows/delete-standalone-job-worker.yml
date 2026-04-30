@@ -1,0 +1,293 @@
+name: Delete Standalone Job Worker
+
+# Manual workflow to delete the obsolete standalone `job` Cloudflare Worker
+# (and its legacy route `resume.jclee.me/job/*`) per ADR 0008 § Migration Plan #10.
+#
+# SAFETY DESIGN (per planning agent recommendations):
+#   1. Pre-flight: verify token, account, merged `resume` worker, and the existence
+#      of the `job` worker + its route. Abort if anything is unexpected.
+#   2. Delete the legacy zone route `resume.jclee.me/job/* -> job` FIRST so traffic
+#      falls through to the merged worker (which already owns `resume.jclee.me`).
+#   3. Smoke-test `/job/*` via the merged worker.
+#      - If smoke fails, AUTO-RECREATE the legacy route (rollback) and abort.
+#   4. Only then DELETE /accounts/{id}/workers/scripts/job (no --force).
+#   5. Post-delete: verify GET /workers/scripts/job returns 404, smoke `/job/*` again.
+#
+# TRIGGER: workflow_dispatch with confirmation input.
+# Requires repo secrets: CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID. ZONE_ID is auto-discovered.
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type "DELETE-job" to confirm permanent deletion of the standalone job worker'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  delete:
+    if: ${{ inputs.confirm == 'DELETE-job' }}
+    runs-on: ubuntu-latest
+    env:
+      CF_API: https://api.cloudflare.com/client/v4
+      ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      ZONE_NAME: jclee.me
+      TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      SCRIPT_NAME: job
+      ROUTE_PATTERN: resume.jclee.me/job/*
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # ──────────────────────────────────────────────────────────────────
+      # STAGE 1 — Pre-flight verification
+      # ──────────────────────────────────────────────────────────────────
+      - name: Verify CF API token
+        run: |
+          set -euo pipefail
+          STATUS=$(curl -s -o /tmp/verify.json -w '%{http_code}' \
+            -H "Authorization: Bearer $TOKEN" \
+            "$CF_API/user/tokens/verify")
+          cat /tmp/verify.json | python3 -m json.tool
+          test "$STATUS" = "200"
+
+      - name: Discover zone ID for $ZONE_NAME
+        id: zone
+        run: |
+          set -euo pipefail
+          curl -s -H "Authorization: Bearer $TOKEN" \
+            "$CF_API/zones?name=$ZONE_NAME" > /tmp/zones.json
+          ZONE_ID=$(python3 -c "import json; d=json.load(open('/tmp/zones.json')); zones=d.get('result',[]); print(zones[0]['id'] if zones else '')")
+          if [ -z "$ZONE_ID" ]; then
+            echo "::error::Zone '$ZONE_NAME' not found in account"
+            cat /tmp/zones.json | python3 -m json.tool
+            exit 1
+          fi
+          echo "✓ Discovered zone ID: $ZONE_ID for $ZONE_NAME"
+          echo "zone_id=$ZONE_ID" >> "$GITHUB_OUTPUT"
+
+      - name: Verify merged `resume` worker exists
+        run: |
+          set -euo pipefail
+          STATUS=$(curl -s -o /tmp/resume.json -w '%{http_code}' \
+            -H "Authorization: Bearer $TOKEN" \
+            "$CF_API/accounts/$ACCOUNT_ID/workers/scripts/resume")
+          cat /tmp/resume.json | python3 -m json.tool 2>&1 | head -20
+          if [ "$STATUS" != "200" ]; then
+            echo "::error::Merged `resume` worker not found (HTTP $STATUS). Aborting to prevent /job/* outage."
+            exit 1
+          fi
+          echo "✓ Merged `resume` worker verified"
+
+      - name: Check `job` worker exists (idempotent — skip if already deleted)
+        id: job_check
+        run: |
+          set -euo pipefail
+          STATUS=$(curl -s -o /tmp/job.json -w '%{http_code}' \
+            -H "Authorization: Bearer $TOKEN" \
+            "$CF_API/accounts/$ACCOUNT_ID/workers/scripts/$SCRIPT_NAME")
+          if [ "$STATUS" = "404" ]; then
+            echo "✓ `job` worker already deleted (HTTP 404). Workflow will exit early."
+            echo "already_deleted=true" >> "$GITHUB_OUTPUT"
+          elif [ "$STATUS" = "200" ]; then
+            echo "✓ `job` worker exists. Proceeding with deletion."
+            echo "already_deleted=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "::error::Unexpected HTTP $STATUS when checking `job` worker. Aborting."
+            cat /tmp/job.json | python3 -m json.tool 2>&1 | head -20 || cat /tmp/job.json
+            exit 1
+          fi
+
+      - name: List zone routes for `resume.jclee.me/job/*`
+        if: steps.job_check.outputs.already_deleted == 'false'
+        id: routes
+        run: |
+          set -euo pipefail
+          curl -s -H "Authorization: Bearer $TOKEN" \
+            "$CF_API/zones/${{ steps.zone.outputs.zone_id }}/workers/routes" > /tmp/routes.json
+          cat /tmp/routes.json | python3 -m json.tool | head -80
+          ROUTE_ID=$(python3 -c "
+          import json
+          data = json.load(open('/tmp/routes.json'))
+          for r in data.get('result', []):
+              if r.get('pattern') == '$ROUTE_PATTERN' and r.get('script') == '$SCRIPT_NAME':
+                  print(r['id'])
+                  break
+          ")
+          if [ -z "$ROUTE_ID" ]; then
+            echo "ℹ️  No legacy route '$ROUTE_PATTERN -> $SCRIPT_NAME' found (likely already removed or merged worker takes precedence)."
+            echo "route_id=" >> "$GITHUB_OUTPUT"
+          else
+            echo "✓ Found legacy route: $ROUTE_ID ($ROUTE_PATTERN -> $SCRIPT_NAME)"
+            echo "route_id=$ROUTE_ID" >> "$GITHUB_OUTPUT"
+          fi
+
+      # ──────────────────────────────────────────────────────────────────
+      # STAGE 2 — Pre-deletion smoke test (baseline)
+      # ──────────────────────────────────────────────────────────────────
+      - name: Pre-deletion smoke test (baseline)
+        if: steps.job_check.outputs.already_deleted == 'false'
+        run: |
+          set -euo pipefail
+          echo "── Baseline /job/health ──"
+          curl -s -o /tmp/pre_health.json -w 'HTTP %{http_code}\n' "https://resume.jclee.me/job/health" | tee /tmp/pre_health_status.txt
+          cat /tmp/pre_health.json
+          if ! grep -q '"status":"ok"' /tmp/pre_health.json; then
+            echo "::error::Pre-deletion baseline /job/health is NOT ok. Aborting deletion."
+            exit 1
+          fi
+
+      # ──────────────────────────────────────────────────────────────────
+      # STAGE 3 — Delete the legacy route (if it exists)
+      # ──────────────────────────────────────────────────────────────────
+      - name: Delete legacy zone route (frees /job/* for merged worker)
+        if: steps.job_check.outputs.already_deleted == 'false' && steps.routes.outputs.route_id != ''
+        id: delete_route
+        run: |
+          set -euo pipefail
+          STATUS=$(curl -s -o /tmp/del_route.json -w '%{http_code}' \
+            -X DELETE \
+            -H "Authorization: Bearer $TOKEN" \
+            "$CF_API/zones/${{ steps.zone.outputs.zone_id }}/workers/routes/${{ steps.routes.outputs.route_id }}")
+          cat /tmp/del_route.json | python3 -m json.tool 2>&1 | head -20
+          if [ "$STATUS" = "200" ]; then
+            echo "✓ Legacy route deleted (HTTP 200)"
+          else
+            echo "::error::Failed to delete legacy route (HTTP $STATUS). Worker NOT deleted."
+            exit 1
+          fi
+          # Wait for route propagation
+          sleep 15
+
+      # ──────────────────────────────────────────────────────────────────
+      # STAGE 4 — Post-route-delete smoke test
+      #   If /job/* fails here, AUTO-ROLLBACK by recreating the route.
+      # ──────────────────────────────────────────────────────────────────
+      - name: Smoke test after route deletion
+        if: steps.job_check.outputs.already_deleted == 'false'
+        id: smoke
+        run: |
+          set -euo pipefail
+          echo "── Post-route-delete /job/health ──"
+          STATUS=$(curl -s -o /tmp/post_route.json -w '%{http_code}' "https://resume.jclee.me/job/health")
+          cat /tmp/post_route.json
+          echo ""
+          echo "HTTP $STATUS"
+          if ! grep -q '"status":"ok"' /tmp/post_route.json; then
+            echo "::error::/job/health failed after legacy route deletion. Triggering rollback."
+            echo "rollback=true" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+          echo "── /job/api/stats (expect 401) ──"
+          STATS=$(curl -s -o /tmp/stats.json -w '%{http_code}' "https://resume.jclee.me/job/api/stats")
+          echo "HTTP $STATS"
+          if [ "$STATS" != "401" ] && [ "$STATS" != "403" ]; then
+            echo "::warning::/job/api/stats returned $STATS (expected 401/403)"
+          fi
+          echo "rollback=false" >> "$GITHUB_OUTPUT"
+
+      - name: AUTO-ROLLBACK — recreate legacy route on smoke failure
+        if: failure() && steps.smoke.outcome == 'failure' && steps.routes.outputs.route_id != ''
+        run: |
+          set -euo pipefail
+          echo "::warning::ROLLBACK: recreating legacy route '$ROUTE_PATTERN -> $SCRIPT_NAME'"
+          STATUS=$(curl -s -o /tmp/rollback.json -w '%{http_code}' \
+            -X POST \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{\"pattern\":\"$ROUTE_PATTERN\",\"script\":\"$SCRIPT_NAME\"}" \
+            "$CF_API/zones/${{ steps.zone.outputs.zone_id }}/workers/routes")
+          cat /tmp/rollback.json | python3 -m json.tool 2>&1 | head -20
+          if [ "$STATUS" = "200" ]; then
+            echo "✓ Rollback succeeded — legacy route restored."
+          else
+            echo "::error::ROLLBACK FAILED (HTTP $STATUS). MANUAL INTERVENTION REQUIRED."
+            exit 1
+          fi
+
+      # ──────────────────────────────────────────────────────────────────
+      # STAGE 5 — Delete the standalone `job` worker script
+      # ──────────────────────────────────────────────────────────────────
+      - name: DELETE standalone `job` worker script
+        if: steps.job_check.outputs.already_deleted == 'false'
+        run: |
+          set -euo pipefail
+          STATUS=$(curl -s -o /tmp/del_script.json -w '%{http_code}' \
+            -X DELETE \
+            -H "Authorization: Bearer $TOKEN" \
+            "$CF_API/accounts/$ACCOUNT_ID/workers/scripts/$SCRIPT_NAME")
+          cat /tmp/del_script.json | python3 -m json.tool 2>&1 | head -20
+          if [ "$STATUS" = "200" ] || [ "$STATUS" = "204" ]; then
+            echo "✓ Standalone `job` worker script DELETED (HTTP $STATUS)"
+          else
+            echo "::error::Failed to delete `job` worker script (HTTP $STATUS)"
+            exit 1
+          fi
+
+      # ──────────────────────────────────────────────────────────────────
+      # STAGE 6 — Post-deletion verification
+      # ──────────────────────────────────────────────────────────────────
+      - name: Verify `job` worker is gone (expect HTTP 404)
+        if: steps.job_check.outputs.already_deleted == 'false'
+        run: |
+          set -euo pipefail
+          # Wait for delete propagation
+          sleep 10
+          STATUS=$(curl -s -o /tmp/verify_gone.json -w '%{http_code}' \
+            -H "Authorization: Bearer $TOKEN" \
+            "$CF_API/accounts/$ACCOUNT_ID/workers/scripts/$SCRIPT_NAME")
+          if [ "$STATUS" = "404" ]; then
+            echo "✓ `job` worker confirmed deleted (HTTP 404)"
+          else
+            echo "::error::`job` worker still exists (HTTP $STATUS). Deletion may not have propagated."
+            cat /tmp/verify_gone.json | python3 -m json.tool 2>&1 | head -20
+            exit 1
+          fi
+
+      - name: Final smoke test (production via merged worker)
+        if: steps.job_check.outputs.already_deleted == 'false'
+        run: |
+          set -euo pipefail
+          echo "── Final /health ──"
+          curl -s "https://resume.jclee.me/health" | python3 -m json.tool | head -10
+          echo ""
+          echo "── Final /job/health ──"
+          STATUS=$(curl -s -o /tmp/final_job.json -w '%{http_code}' "https://resume.jclee.me/job/health")
+          cat /tmp/final_job.json
+          echo ""
+          echo "HTTP $STATUS"
+          if [ "$STATUS" != "200" ]; then
+            echo "::error::FINAL /job/health failed (HTTP $STATUS). MERGED WORKER NOT HANDLING /job/*."
+            exit 1
+          fi
+          echo ""
+          echo "── Final /job/api/stats (expect 401/403) ──"
+          STATS=$(curl -s -o /tmp/final_stats.json -w '%{http_code}' "https://resume.jclee.me/job/api/stats")
+          cat /tmp/final_stats.json
+          echo ""
+          echo "HTTP $STATS"
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "## Standalone Job Worker Deletion"
+            echo ""
+            if [ "${{ steps.job_check.outputs.already_deleted }}" = "true" ]; then
+              echo "Status: NO-OP (worker was already deleted)"
+            else
+              echo "Status: ${{ job.status }}"
+              echo ""
+              echo "Operations:"
+              echo "- Pre-flight verification: token + resume + job script existence + zone routes"
+              echo "- Legacy route delete: ${{ steps.routes.outputs.route_id }} ($ROUTE_PATTERN -> $SCRIPT_NAME)"
+              echo "- Worker script delete: $SCRIPT_NAME"
+              echo "- Verification: GET /workers/scripts/$SCRIPT_NAME -> expect 404"
+              echo "- Production smoke: /, /job/health, /job/api/stats"
+            fi
+            echo ""
+            echo "ADR 0008 § Migration Plan #10 → COMPLETED"
+          } >> "$GITHUB_STEP_SUMMARY"
