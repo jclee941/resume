@@ -25,7 +25,7 @@
 ### 보유 기술
 
 - **보안**: FortiGate 방화벽, DDoS, IPS, WAF, NAC, DLP, EDR, APT, Splunk SIEM (15종 운영 경험)
-- **클라우드**: AWS (EC2, VPC, IAM, S3), Docker, Kubernetes, Cloudflare Workers (Edge Computing)
+- **클 라우드**: Docker, Kubernetes, Cloudflare Workers (Edge Computing)
 - **자동화**: Python, Shell, Ansible, Terraform, n8n (워크플로우 오케스트레이션)
 - **모니터링**: Grafana, Prometheus, Loki (통합 관제 플랫폼)
 - **DevOps**: GitLab EE, CI/CD, Container Registry, Docker Compose
@@ -36,7 +36,6 @@
 
 - **진행 중**: CISSP (Certified Information Systems Security Professional) 준비
 - **계획**: CISM (Certified Information Security Manager) 취득 예정 (2026년 상반기)
-- AWS Certified Solutions Architect 준비 중
 - 한양사이버대학교 컴퓨터공학과 재학 (2024.03 ~ )
 
 ### 금융 보안 전문성
@@ -120,21 +119,6 @@
 
 ---
 
-### ㈜콴텍투자일임 | 인프라·정보보호팀 인프라 엔지니어
-
-2022.08 ~ 2024.03 (1년 7개월) | AI 기반 주식투자 서비스
-
-주요 업무
-
-- 금융보안데이터센터(FSDC) 운영
-- 150대 이상 서버 및 스토리지 형상관리
-- 망분리 환경 내 DLP, DB 접근제어, VPN 정책 관리
-- AWS 클라우드 보안(VPC, IAM, CloudTrail, GuardDuty) 구성
-
-주요 성과
-
-- Python 자동화로 월간 시스템 장애 40% 감소 (10건 → 6건)
-- 19개월 연속 개인정보 유출사고 0건
 - DB 접근제어 쿼리 튜닝으로 CPU 30% 개선 (75% → 52%)
 - PB 플랫폼 POC 성능 검증
 
@@ -306,13 +290,6 @@
 기술: SSL VPN, NAC, Ansible, Python
 성과: COVID-19 대응 2주 내 구축, 운영 인력 3명 → 1명
 
-### 금융 클라우드 보안 아키텍처
-
-콴텍투자일임 | 2023
-
-역할: AWS 보안 설계
-기술: AWS (VPC, IAM, GuardDuty), Python, Terraform
-성과: 이상징후 탐지 시스템, 인프라 비용 20% 절감
 
 ### 🤖 AI 기반 인프라 자동화 플랫폼 (2024.09 ~ 현재)
 
@@ -515,7 +492,6 @@
 
 ### 클라우드 및 가상화
 
-- AWS: EC2, VPC, IAM, S3, CloudTrail, GuardDuty, Route53
 - 가상화: VMware vSphere, NSX-T, Hyper-V
 - 컨테이너: Docker, Kubernetes, Helm
 
