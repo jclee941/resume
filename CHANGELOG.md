@@ -5,6 +5,11 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.17.1] - 2026-04-30
+
+### Changes
+- fix(portfolio): disable queue bindings until queues are provisioned (395c26f)
+
 ## [v1.17.0] - 2026-04-30
 
 ### Changes
