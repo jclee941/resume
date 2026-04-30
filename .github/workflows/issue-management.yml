@@ -4,6 +4,13 @@ on:
   schedule:
     - cron: '0 0 * * *'  # Daily at 00:00 UTC
   issues:
+    types: [opened, edited, closed, reopened, labeled, unlabeled, assigned]
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'  # Daily at 00:00 UTC
+  issues:
     types: [opened, edited]
   workflow_dispatch:
 
@@ -84,6 +91,28 @@ jobs:
               });
               console.log(`Added labels: ${labels.join(', ')}`);
             }
+
+  stale-remove:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'issue_comment' || (github.event_name == 'issues' && contains(fromJson('["reopened", "edited"]'), github.event.action))
+    steps:
+      - name: Remove stale label on activity
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue || context.payload.comment?.issue;
+            if (!issue) return;
+            const labels = issue.labels.map(l => l.name);
+            if (labels.includes('stale')) {
+              await github.rest.issues.removeLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                name: 'stale'
+              });
+              console.log(`Removed stale label from #${issue.number}`);
+            }
+
 
   issue-stats:
     runs-on: ubuntu-latest
