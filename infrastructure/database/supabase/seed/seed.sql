@@ -394,33 +394,7 @@ ON CONFLICT (id) DO UPDATE SET
   display_order = EXCLUDED.display_order,
   updated_at = now();
 
-INSERT INTO resume_certifications (id, resume_id, name, issuer, date, expiration_date, credential_id, credential_url, status, display_order)
-VALUES ('b6ca25f1-de9d-4766-92a4-ec5bf7836ac9', '1e8b81c6-d88b-4035-8160-1897f0f3b7e5', 'CISSP', 'ISC²', NULL, NULL, NULL, NULL, 'preparing', 6)
-ON CONFLICT (id) DO UPDATE SET
-  resume_id = EXCLUDED.resume_id,
-  name = EXCLUDED.name,
-  issuer = EXCLUDED.issuer,
-  date = EXCLUDED.date,
-  expiration_date = EXCLUDED.expiration_date,
-  credential_id = EXCLUDED.credential_id,
-  credential_url = EXCLUDED.credential_url,
-  status = EXCLUDED.status,
-  display_order = EXCLUDED.display_order,
-  updated_at = now();
 
-INSERT INTO resume_certifications (id, resume_id, name, issuer, date, expiration_date, credential_id, credential_url, status, display_order)
-VALUES ('aae65074-ec92-435d-9097-84bc75a827d7', '1e8b81c6-d88b-4035-8160-1897f0f3b7e5', 'CISM', 'ISACA', NULL, NULL, NULL, NULL, 'preparing', 7)
-ON CONFLICT (id) DO UPDATE SET
-  resume_id = EXCLUDED.resume_id,
-  name = EXCLUDED.name,
-  issuer = EXCLUDED.issuer,
-  date = EXCLUDED.date,
-  expiration_date = EXCLUDED.expiration_date,
-  credential_id = EXCLUDED.credential_id,
-  credential_url = EXCLUDED.credential_url,
-  status = EXCLUDED.status,
-  display_order = EXCLUDED.display_order,
-  updated_at = now();
 
 INSERT INTO resume_certifications (id, resume_id, name, issuer, date, expiration_date, credential_id, credential_url, status, display_order)
 VALUES ('33cb1a45-9041-469d-80a1-00a4bd318051', '1e8b81c6-d88b-4035-8160-1897f0f3b7e5', 'AWS Solutions Architect', 'Amazon Web Services', NULL, NULL, NULL, NULL, 'preparing', 8)
@@ -782,7 +756,6 @@ ON CONFLICT (id) DO UPDATE SET
   display_order = EXCLUDED.display_order,
   updated_at = now();
 
-INSERT INTO resume_skills (id, category_id, name, level, proficiency, display_order)
 VALUES ('05ca80a6-1906-4f75-b252-b6025ff43497', 'bd95b7f6-c766-4660-b621-f80a546b7774', 'ISMS-P', 'advanced', 80, 0)
 ON CONFLICT (id) DO UPDATE SET
   category_id = EXCLUDED.category_id,
@@ -792,7 +765,6 @@ ON CONFLICT (id) DO UPDATE SET
   display_order = EXCLUDED.display_order,
   updated_at = now();
 
-INSERT INTO resume_skills (id, category_id, name, level, proficiency, display_order)
 VALUES ('acd6cb15-591a-4edc-b322-7528bfbf17d0', 'bd95b7f6-c766-4660-b621-f80a546b7774', 'ISO 27001', 'advanced', 80, 1)
 ON CONFLICT (id) DO UPDATE SET
   category_id = EXCLUDED.category_id,

@@ -191,7 +191,7 @@ PostgreSQL (Supabase), MySQL, Redis
 | LPIC Level 1 | Linux Professional Institute | 2019.02 |
 | 리눅스마스터 2급 | 한국정보통신진흥협회 | 2019.01 |
 
-준비 중: AWS Solutions Architect, CISSP
+준비 중: AWS Solutions Architect, Certified Kubernetes Security Specialist (CKS)
 
 ---
 

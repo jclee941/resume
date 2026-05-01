@@ -24,7 +24,6 @@
 3) AWS 클라우드 보안 — Terraform IaC, CloudTrail+GuardDuty
 4) DevSecOps 확장 기반 — IaC/자동화/관측성
 5) 보안 아키텍처 설계 — FortiGate HA → 금융위 본인가
-6) 컴플라이언스 — ISMS-P, 금융위 본인가
 
 ### 약점/갭 + 보완 전략:
 1) AppSec (Burp Suite/ZAP/모의해킹) 약함 → "확장 중인 영역"으로 포지셔닝

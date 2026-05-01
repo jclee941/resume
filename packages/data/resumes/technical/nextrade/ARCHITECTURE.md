@@ -51,8 +51,6 @@ Led the design, implementation, and operation of South Korea's first new securit
 **Compliance & Governance**
 - FSC Pre-License Audit: **Zero findings** (2024.12)
 - FSC Quarterly Audits: **Zero findings** (2025.05, 2025.09)
-- ISMS-P Preparation: **90% completion** (certification pending)
-- ISO 27001 Gap Analysis: **85% compliant** (certification 2026)
 
 ---
 
@@ -654,48 +652,6 @@ upload_to_compliance_vault
 - Automated access reviews (quarterly user recertification)
 - Configuration compliance scanning (CIS benchmarks)
 - Encryption validation (all data-at-rest + data-in-transit)
-
-### ISMS-P (Personal Information Management System)
-
-**Status**: 90% compliant, certification pending (2025 Q4)
-
-**Control Domains** (104 controls across 16 domains):
-1. Management System: Met compliance criteria
-2. Protection Policy: Met compliance criteria
-3. Organization & Responsibilities: Met compliance criteria
-4. Risk Management: Met compliance criteria
-5. Asset Management: Met compliance criteria
-6. Human Resource Security: 95% compliant (training completion pending)
-7. Physical Security: Met compliance criteria
-8. Access Control: Met compliance criteria
-9. Cryptography: Met compliance criteria
-10. Operations Security: 95% compliant
-11. Communications Security: Met compliance criteria
-12. System Acquisition/Development: 90% compliant (SDLC documentation)
-13. Supplier Relationships: 85% compliant (vendor assessments in progress)
-14. Incident Management: Met compliance criteria
-15. Business Continuity: Met compliance criteria
-16. Compliance: 95% compliant
-
-**Gap Closure Plan**:
-- [ ] Complete annual security awareness training (close remaining 10%)
-- [ ] Finalize SDLC security documentation
-- [ ] Complete vendor security assessments (5 remaining)
-
-### ISO 27001 Preparation
-
-**Gap Analysis Results**: 85% compliant (vs. ISO 27001:2022)
-
-**Major Gaps**:
-1. **Information Security Policies**: Need formal policy review process (annual)
-2. **Asset Inventory**: Need automated asset discovery (currently manual)
-3. **Business Impact Analysis**: Need quantified RTO/RPO for all critical systems
-4. **Third-Party Audits**: Need annual external penetration testing
-
-**Roadmap to Certification** (Target: 2026 Q2):
-- 2025 Q4: Close all gaps
-- 2026 Q1: Internal audit + management review
-- 2026 Q2: External certification audit
 
 ---
 
@@ -1466,8 +1422,6 @@ Report Date: [YYYY-MM-DD HH:MM KST]
 
 8. REGULATORY COMPLIANCE
    - PIPA Compliance: [Yes / No / N/A]
-   - ISMS-P Compliance: [Yes / No / N/A]
-   - Other Regulations: [ISO 27001 / etc.]
 
 9. SUPPORTING DOCUMENTATION
    - Attached: [Forensic report / Timeline / Evidence logs]
@@ -1675,11 +1629,6 @@ CONTACT INFORMATION:
 - **Solution**: Machine learning-based content classification
 - **Training Data**: 1 year of DLP incidents (3,200+ samples)
 
-#### ISMS-P Certification
-- **Target**: 2025 Q4
-- **Remaining Work**: Training completion, vendor assessments
-- **Expected Effort**: 200 hours (gap closure)
-
 ### Medium-term (2026)
 
 #### Zero Trust Architecture
@@ -1698,11 +1647,6 @@ CONTACT INFORMATION:
 - **Trigger**: Planned AWS migration (trading analytics)
 - **Solution**: Palo Alto Prisma Cloud or Wiz
 - **Coverage**: IaaS, PaaS, SaaS security
-
-#### ISO 27001 Certification
-- **Target**: 2026 Q2
-- **Remaining Work**: Close gaps, internal audit, external audit
-- **Expected Effort**: 500 hours
 
 #### SOC 2 Type II Compliance
 - **Trigger**: Required for US institutional clients

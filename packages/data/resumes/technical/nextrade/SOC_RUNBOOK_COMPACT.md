@@ -303,8 +303,6 @@ index=firewall action=allowed dst_ip=[SUSPICIOUS_IP]
 - SLA Compliance: P0/P1/P2/P3 percentages
 - MTTR Trend: Improving or degrading?
 - False Positive Rate: Current vs. target
-- Top Vulnerabilities: Critical/High counts
-- Compliance Status: ISMS-P/ISO checkpoints
 
 ---
 

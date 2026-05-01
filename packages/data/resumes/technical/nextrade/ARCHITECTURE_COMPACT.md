@@ -6,7 +6,7 @@ Led design, implementation, and operation of **South Korea's first new securitie
 
 - **Security**: 0 breaches (19 months), 0 FSC audit findings (3 consecutive)
 - **Availability**: 99.98% platform uptime (target 99.95%)
-- **Compliance**: ISMS-P 90%, ISO 27001 85%, FSC 100%
+- **Compliance**: FSC 100%
 - **Efficiency**: $188K annual savings, 461 hours/year automated
 
 **Duration**: 2024.03 ~ Present (19 months)
@@ -116,10 +116,6 @@ Internet → DDoS Scrubbing (20Gbps) → Edge Firewall (Fortigate 600F HA)
 - Incident response (NIST SP 800-61 framework)
 - Vulnerability management (Critical 7d, High 14d SLA)
 
-### ISMS-P & ISO 27001
-
-- **ISMS-P**: 90% compliant (104 controls, certification pending 2025 Q4)
-- **ISO 27001**: 85% compliant (gap analysis complete, certification target 2026 Q2)
 
 ### Automated Compliance
 - Daily evidence collection (firewall changes, PAM sessions, SIEM alerts, vuln scans)
@@ -320,12 +316,10 @@ Security Analyst (L1) → Security Lead (L2) → CISO (L3) → CTO → CEO (Crit
 - UEBA (User & Entity Behavior Analytics) → Detect insider threats
 - Automated threat hunting (SOAR playbooks)
 - AI-powered DLP (33% → 20% false positives)
-- ISMS-P certification
 
 ### 2026
 - Zero Trust Architecture (ZTNA replacement for VPN)
 - Cloud Security Posture Management (AWS migration)
-- ISO 27001 certification
 - SOC 2 Type II (for US clients)
 
 ### 2027+

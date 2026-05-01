@@ -143,7 +143,7 @@ pandoc SOC_RUNBOOK_COMPACT.md -o SOC_RUNBOOK_COMPACT.docx --toc --number-section
 
 - Extract quantified achievements from executive summaries
 - Use specific metrics (0 breaches, 99.98% uptime, $188K savings)
-- Reference compliance certifications (FSC, ISMS-P, ISO)
+- Reference compliance certifications (FSC)
 
 ## Project Context
 

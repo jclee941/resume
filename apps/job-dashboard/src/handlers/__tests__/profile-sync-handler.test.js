@@ -243,8 +243,8 @@ describe('ProfileSyncHandler — activity sync parity', () => {
   it('준비중 certifications are filtered out before mapping', () => {
     const certs = [
       { name: 'CPPG', issuer: 'KISA', date: '2024.11', status: 'active' },
-      { name: 'CISSP', issuer: 'ISC2', date: null, status: '준비중' },
-      { name: 'CISM', issuer: 'ISACA', date: null, status: '준비중' },
+      { name: 'CKS', issuer: 'CNCF', date: null, status: '준비중' },
+      { name: 'AWS Solutions Architect', issuer: 'AWS', date: null, status: '준비중' },
     ];
 
     const filtered = certs.filter((c) => c.date && c.status !== '준비중');

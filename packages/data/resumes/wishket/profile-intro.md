@@ -100,8 +100,8 @@
 - CCNP (2020.08, 2023.08 만료)
 - RHCSA (2019.01, 2022.01 만료)
   **학습 중 (2026 취득 목표)**:
-- CISSP
-- CISM
+- Certified Kubernetes Security Specialist (CKS)
+- AWS Solutions Architect
 - AWS Solutions Architect
 
 ## 선호 프로젝트

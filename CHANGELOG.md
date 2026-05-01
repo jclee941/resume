@@ -376,7 +376,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 - test(jobkorea): fix mock context to support addInitScript (204d458)
 - feat(wave2): Wanted headline 50→150ch + modern stack additions (bfe086b)
 - feat(ssot): elevate content per Oracle review + fix splunk repo URL (180e02e)
-- feat(skills): map remaining 4 unmapped SSoT skills (NAC, DLP, ISMS-P, ISO 27001) (7055cd0)
+- feat(skills): map remaining 2 unmapped SSoT skills (NAC, DLP) (7055cd0)
 - fix(sync): BUG-W1 (Wanted about) + BUG-J1 (JobKorea school code) (ae7dc16)
 - fix(data): EN/JA careers[].projects[] parity with KO (99c7dfc)
 - feat(jobkorea): stealth-bypass CAPTCHA for headless renewal+sync (c995792)
