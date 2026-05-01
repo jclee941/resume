@@ -5,6 +5,47 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.22.3] - 2026-05-01
+
+### Changes
+- chore: add standard automation workflows (#61) (af7a55b)
+
+## [v1.22.2] - 2026-05-01
+
+### Changes
+- chore: add standard automation workflows (#59) (f02b2a3)
+
+## [v1.22.1] - 2026-04-30
+
+### Changes
+- chore: remove duplicate workflow (1971f45)
+- chore: remove duplicate workflow (7d45e2e)
+- chore: remove duplicate workflow (c25855c)
+- chore: remove duplicate workflow (ac38be4)
+- chore: remove duplicate workflow (a7460df)
+- chore: remove duplicate workflow (7570b5e)
+
+## [v1.22.0] - 2026-04-30
+
+### Changes
+- feat: standardize PR checks (fec21eb)
+
+## [v1.21.0] - 2026-04-30
+
+### Changes
+- feat: add automated workflows (354a2b6)
+
+## [v1.20.3] - 2026-04-30
+
+### Changes
+- chore: add PR review bot workflow (#53) (3a3d153)
+
+## [v1.20.2] - 2026-04-30
+
+### Changes
+- chore: add PR review bot workflow (#51) (9df5ac8)
+- chore: sync pending docs, CI config, and app metadata (4e3357a)
+
 ## [v1.20.1] - 2026-04-30
 
 ### Changes
