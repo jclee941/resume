@@ -11,7 +11,7 @@
 | PDF 이력서              | ⚠️ 2025-03-02 생성, 구버전             | 재생성 필요      |
 | 영문 이력서             | ⚠️ resume_data_en.json 존재하나 구버전 | 업데이트 필요    |
 | 자소서 생성기           | ❌ fallback 템플릿 198자               | 대폭 개선 필요   |
-| 자격증                  | ❌ CKA/AWS/CISSP 없음, CCNP/RHCSA 만료 | 취득 전략 필요   |
+| 자격증                  | ❌ CKA/AWS 없음, CCNP/RHCSA 만료 | 취득 전략 필요   |
 | OSS 기여                | ❌ 0건                                 | 기록 필요        |
 | expertise 키워드        | ❌ 3개만                               | 확장 필요        |
 | profileStatement        | ❌ 229자, generic                      | 성과 중심 재작성 |
@@ -27,7 +27,7 @@
 - **소요**: 1-2h
 - **효과**: ★★★★★ (모든 하위 산출물에 전파)
 - **작업**:
-  - `expertise` 확장: `['Observability', '보안 인프라', '자동화']` → `['DevSecOps', 'SRE', 'SIEM/SOAR', 'Security Infrastructure', 'IaC/Automation', 'Observability', 'Cloud Security', 'Compliance(ISMS-P)']`
+  - `expertise` 확장: `['Observability', '보안 인프라', '자동화']` → `['DevSecOps', 'SRE', 'SIEM/SOAR', 'Security Infrastructure', 'IaC/Automation', 'Observability', 'Cloud Security']`
   - `profileStatement` 재작성 (500자+, 정량 성과 포함):
     - 금융위 본인가 심사 통과
     - FortiGate HA 99.99% 가용성
@@ -46,7 +46,7 @@
 - **작업**:
   - 현재: 198자 generic 템플릿 → 목표: 500-800자 직무 맞춤형
   - 직무별 템플릿 분기 (cover-letter-role-templates.js 신규):
-    - `DevSecOps` 템플릿: SIEM 탐지 룰, 보안 자동화, ISMS-P 강조
+    - `DevSecOps` 템플릿: SIEM 탐지 룰, 보안 자동화, 금융권 본인가 심사 대응 강조
     - `SRE` 템플릿: HA 설계, 모니터링, 장애 대응, 자동화 강조
     - `Cloud Security` 템플릿: AWS/Terraform, CloudTrail/GuardDuty, IaC 보안 강조
     - `보안 엔지니어` 템플릿: 방화벽 HA, 침해 대응, 보안 솔루션 운영 강조
@@ -62,7 +62,6 @@
   - **즉시 (1개월)**: AWS Solutions Architect Associate — 시장성 최고, 온라인 시험
   - **단기 (2-3개월)**: CKA (Certified Kubernetes Administrator) — DevOps/SRE 필수
   - **중기 (3-6개월)**: AWS Security Specialty — 클라우드 보안 차별화
-  - **선택**: CISSP (경력 5년+ 필요, 보안 관리직 타겟 시)
 
 ---
 
@@ -161,7 +160,7 @@
 - **효과**: ★★★
 - **의존**: T3
 - **작업**:
-  - 금융권 (토스/카카오뱅크/케이뱅크): 금융위 심사, ISMS-P, 컴플라이언스 강조
+  - 금융권 (토스/카카오뱅크/케이뱅크): 금융위 심사, 본인가 대응, 컴플라이언스 강조
   - 게임사 (크래프톤/넥슨): 클라우드 보안, DevSecOps, 대규모 인프라 강조
   - 커머스/플랫폼 (당근/배민/쿠팡): SRE, 가용성, 자동화, 모니터링 강조
   - 보안 전문 (안랩/로그프레소): SIEM/SOAR, 보안 관제, 탐지 룰 강조
