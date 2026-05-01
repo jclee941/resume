@@ -575,7 +575,7 @@ describe('Cards Module', () => {
 
     test('should use key as label when title not provided', () => {
       const skillsData = {
-        compliance: ['SOC2', 'ISO27001'],
+        compliance: ['SOC2'],
       };
       const html = generateSkillsList(skillsData, 'no-title-hash');
 

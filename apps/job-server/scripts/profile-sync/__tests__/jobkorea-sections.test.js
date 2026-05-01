@@ -211,7 +211,7 @@ describe('mapSchoolToFormFields', () => {
 describe('mapLicensesToFormFields', () => {
   const certs = [
     { name: 'CCNP', issuer: 'Cisco Systems', date: '2020.08', status: 'expired' },
-    { name: 'CISSP', issuer: 'ISC²', date: null, status: '준비중' },
+    { name: 'CKS', issuer: 'CNCF', date: null, status: '준비중' },
     { name: 'RHCSA', issuer: 'Red Hat', date: '2019.01', status: 'expired' },
   ];
 
@@ -233,7 +233,7 @@ describe('mapLicensesToFormFields', () => {
 
   it('returns empty when all certs lack date', () => {
     const fields = mapLicensesToFormFields({
-      certifications: [{ name: 'CISM', issuer: 'ISACA', date: null, status: '준비중' }],
+      certifications: [{ name: 'CKS', issuer: 'CNCF', date: null, status: '준비중' }],
     });
     assert.deepStrictEqual(fields, []);
   });

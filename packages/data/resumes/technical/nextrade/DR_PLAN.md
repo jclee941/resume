@@ -890,9 +890,6 @@ Chief Information Security Officer
 - **Personal Information Protection Act (PIPA)**
   - Article 29: Data Backup and Recovery
 
-- **ISMS-P (Personal Information Management System)**
-  - Control 15: Business Continuity Management (15.1.1 - 15.1.4)
-
 ---
 
 **Document Approval**:

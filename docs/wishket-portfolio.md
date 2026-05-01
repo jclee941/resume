@@ -6,7 +6,7 @@
 
 ## 보유 기술
 
-Splunk, FortiGate, FortiManager, FortiAnalyzer, Prometheus, Grafana, Loki, AWS, Terraform, Docker, Kubernetes, Linux, Ansible, Python, n8n, GitHub Actions, GitLab CI/CD, PostgreSQL, Elasticsearch, Kibana, VMware NSX-T, VPN, NAC, Shell Script, ISMS-P, ISO 27001
+Splunk, FortiGate, FortiManager, FortiAnalyzer, Prometheus, Grafana, Loki, AWS, Terraform, Docker, Kubernetes, Linux, Ansible, Python, n8n, GitHub Actions, GitLab CI/CD, PostgreSQL, Elasticsearch, Kibana, VMware NSX-T, VPN, NAC, Shell Script
 
 ---
 

@@ -137,5 +137,5 @@ R6 수정: 면책 표기 제거, SSoT 미등록 기술 행 전체 제거 (Redis,
 | CompTIA Linux+, LPIC-1, RHCSA 등 | `certifications[]` | 5개 자격증 배열 |
 | 선호 프로젝트 | 위시캣 프로필 UI 입력 | SSoT 비대상 (HTML 주석 표기) |
 
-R5 수정: `차세대 증권거래소` 제거, `ISMS-P` 제거, `리포트 자동화` → SSoT features 원문, `SOAR/AWS/IaC` 괄호 제거, 선호 프로젝트 SSoT 비대상 주석 추가
+R5 수정: `차세대 증권거래소` 제거, `리포트 자동화` → SSoT features 원문, `SOAR/AWS/IaC` 괄호 제거, 선호 프로젝트 SSoT 비대상 주석 추가
 R6 수정: `VPN 인프라 설계` 제거 → `망 분리 및 접근통제 정책 설계` (VPN은 메타넷 경력이며 해당 섹션 문맥과 불일치)

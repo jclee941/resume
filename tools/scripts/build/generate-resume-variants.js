@@ -24,9 +24,9 @@ const path = require('path');
 
 // Configuration
 const CONFIG = {
-  masterFile: path.join(__dirname, '../../resumes/master/resume_master.md'),
-  outputDir: path.join(__dirname, '../../resumes/generated'),
-  archiveDir: path.join(__dirname, '../../resumes/archive/pre-consolidation'),
+  masterFile: path.join(__dirname, '../../../packages/data/resumes/master/resume_master.md'),
+  outputDir: path.join(__dirname, '../../../packages/data/resumes/generated'),
+  archiveDir: path.join(__dirname, '../../../packages/data/resumes/archive/pre-consolidation'),
 
   variants: {
     general: {
@@ -68,6 +68,16 @@ const CONFIG = {
   },
 };
 
+const SECTION_NAME_MAP = {
+  '연락처': 'contact',
+  '학력': 'education',
+  '경력_요약': 'summary',
+  '경력사항': 'experience',
+  '주요_프로젝트': 'projects',
+  '기술_스택': 'skills',
+  '자격증': 'certifications',
+};
+
 /**
  * Parse master resume into structured sections
  */
@@ -90,12 +100,12 @@ async function parseMasterResume() {
         }
 
         // Start new section
-        currentSection = line
+        const rawName = line
           .substring(3)
           .trim()
           .toLowerCase()
-          .replace(/\s+/g, '_')
-          .replace(/[^\w_]/g, '');
+          .replace(/\s+/g, '_');
+        currentSection = SECTION_NAME_MAP[rawName] || rawName;
         currentContent = [line];
       } else {
         currentContent.push(line);
