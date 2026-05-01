@@ -484,15 +484,6 @@ ON CONFLICT (id) DO UPDATE SET
   display_order = EXCLUDED.display_order,
   updated_at = now();
 
-INSERT INTO resume_skill_categories (id, resume_id, key, title, icon, display_order)
-VALUES ('bd95b7f6-c766-4660-b621-f80a546b7774', '1e8b81c6-d88b-4035-8160-1897f0f3b7e5', 'compliance', 'Compliance', 'FileCheck', 7)
-ON CONFLICT (id) DO UPDATE SET
-  resume_id = EXCLUDED.resume_id,
-  key = EXCLUDED.key,
-  title = EXCLUDED.title,
-  icon = EXCLUDED.icon,
-  display_order = EXCLUDED.display_order,
-  updated_at = now();
 
 -- resume_skills
 
@@ -756,29 +747,13 @@ ON CONFLICT (id) DO UPDATE SET
   display_order = EXCLUDED.display_order,
   updated_at = now();
 
-VALUES ('05ca80a6-1906-4f75-b252-b6025ff43497', 'bd95b7f6-c766-4660-b621-f80a546b7774', 'ISMS-P', 'advanced', 80, 0)
-ON CONFLICT (id) DO UPDATE SET
-  category_id = EXCLUDED.category_id,
-  name = EXCLUDED.name,
-  level = EXCLUDED.level,
-  proficiency = EXCLUDED.proficiency,
-  display_order = EXCLUDED.display_order,
-  updated_at = now();
 
-VALUES ('acd6cb15-591a-4edc-b322-7528bfbf17d0', 'bd95b7f6-c766-4660-b621-f80a546b7774', 'ISO 27001', 'advanced', 80, 1)
-ON CONFLICT (id) DO UPDATE SET
-  category_id = EXCLUDED.category_id,
-  name = EXCLUDED.name,
-  level = EXCLUDED.level,
-  proficiency = EXCLUDED.proficiency,
-  display_order = EXCLUDED.display_order,
-  updated_at = now();
 
-DELETE FROM resume_skills WHERE category_id IN (SELECT id FROM resume_skill_categories WHERE resume_id = '1e8b81c6-d88b-4035-8160-1897f0f3b7e5') AND id NOT IN ('ccd97dc3-c9f9-4b4d-8948-f74c24668dbd', '270c8cfc-91be-4c7b-a34e-d471b5eef06f', '318f03ea-3868-4c4b-8df1-487d1db3c9ce', 'f2c046ff-bc2c-4091-945c-7dcb093ea093', 'd49501ec-5869-43eb-97f4-15a438a1dced', 'fa7bd503-8031-4e4b-8273-b0831140ac89', '11430515-63a6-40ea-82a6-8d33f022ce45', '8baa64b3-970d-4fb5-a0fa-79ee41546785', '886879c7-8fc2-4ea6-bf80-2a2c486891c6', 'cf0dd84f-3e96-4a35-b6fb-18f83d8058bc', '3ffdff06-42f9-4053-8b9f-991fec53ea76', '5850ba1d-1e8b-420a-867b-82b1eb14866e', 'ac080299-15ee-42e7-9770-3d9e1d3eb331', '3a1f9ccb-cf9e-4805-bef5-665dbefbdba0', 'cabe56be-e216-40c4-a149-054881c1a9c6', 'ef234229-b10f-43aa-b065-dbdd196fafc4', '1a27aead-82f6-460f-8086-18e14fedd55e', 'cbf303ac-6738-4ad6-be24-5503a50f1e24', '1f98ac7f-a70b-4a0a-a0f7-1682e684d0df', '06a07e87-3c4d-4cb6-a212-21c909f952cb', '2a389d4a-cc13-4bd2-96f1-537af8229a0a', '2a8d88f9-82cd-4b2b-8057-5ee6fe1ad1d3', '54f883bc-6919-480f-845e-cbcc5a37e229', '99fa5ed7-e843-4757-8ddb-046c7302fe15', 'ddb2e62a-159e-4303-a46a-b43a5b6fa0bf', '08c64c52-a7fa-4d83-a81a-cebee9935adc', '05ca80a6-1906-4f75-b252-b6025ff43497', 'acd6cb15-591a-4edc-b322-7528bfbf17d0');
+DELETE FROM resume_skills WHERE category_id IN (SELECT id FROM resume_skill_categories WHERE resume_id = '1e8b81c6-d88b-4035-8160-1897f0f3b7e5') AND id NOT IN ('ccd97dc3-c9f9-4b4d-8948-f74c24668dbd', '270c8cfc-91be-4c7b-a34e-d471b5eef06f', '318f03ea-3868-4c4b-8df1-487d1db3c9ce', 'f2c046ff-bc2c-4091-945c-7dcb093ea093', 'd49501ec-5869-43eb-97f4-15a438a1dced', 'fa7bd503-8031-4e4b-8273-b0831140ac89', '11430515-63a6-40ea-82a6-8d33f022ce45', '8baa64b3-970d-4fb5-a0fa-79ee41546785', '886879c7-8fc2-4ea6-bf80-2a2c486891c6', 'cf0dd84f-3e96-4a35-b6fb-18f83d8058bc', '3ffdff06-42f9-4053-8b9f-991fec53ea76', '5850ba1d-1e8b-420a-867b-82b1eb14866e', 'ac080299-15ee-42e7-9770-3d9e1d3eb331', '3a1f9ccb-cf9e-4805-bef5-665dbefbdba0', 'cabe56be-e216-40c4-a149-054881c1a9c6', 'ef234229-b10f-43aa-b065-dbdd196fafc4', '1a27aead-82f6-460f-8086-18e14fedd55e', 'cbf303ac-6738-4ad6-be24-5503a50f1e24', '1f98ac7f-a70b-4a0a-a0f7-1682e684d0df', '06a07e87-3c4d-4cb6-a212-21c909f952cb', '2a389d4a-cc13-4bd2-96f1-537af8229a0a', '2a8d88f9-82cd-4b2b-8057-5ee6fe1ad1d3', '54f883bc-6919-480f-845e-cbcc5a37e229', '99fa5ed7-e843-4757-8ddb-046c7302fe15', 'ddb2e62a-159e-4303-a46a-b43a5b6fa0bf', '08c64c52-a7fa-4d83-a81a-cebee9935adc');
 
 -- resume_skill_categories (orphan cleanup)
 
-DELETE FROM resume_skill_categories WHERE resume_id = '1e8b81c6-d88b-4035-8160-1897f0f3b7e5' AND id NOT IN ('47b8639c-724a-4634-9a2a-02ce59b00ae2', 'ecb39e4b-2fe3-43af-9b54-428790a22f51', '00479df8-f0b3-40ba-b915-08eec91a6cef', '0485a018-b3c3-4bd1-b156-165060a3af57', '37371320-0805-43c0-b5c8-249c1720a27f', '61ddcba5-47d3-43f3-89e2-ebe7785b7477', 'cef9a04d-3bd9-4114-bfe8-9d587ecd37f0', 'bd95b7f6-c766-4660-b621-f80a546b7774');
+DELETE FROM resume_skill_categories WHERE resume_id = '1e8b81c6-d88b-4035-8160-1897f0f3b7e5' AND id NOT IN ('47b8639c-724a-4634-9a2a-02ce59b00ae2', 'ecb39e4b-2fe3-43af-9b54-428790a22f51', '00479df8-f0b3-40ba-b915-08eec91a6cef', '0485a018-b3c3-4bd1-b156-165060a3af57', '37371320-0805-43c0-b5c8-249c1720a27f', '61ddcba5-47d3-43f3-89e2-ebe7785b7477', 'cef9a04d-3bd9-4114-bfe8-9d587ecd37f0');
 
 -- resume_personal_projects
 
