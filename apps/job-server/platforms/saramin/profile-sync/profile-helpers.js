@@ -59,7 +59,7 @@ export function parseProfileSections(snapshot) {
     }));
 
   const certSkills = lines.filter((line) =>
-    /(자격증|기사|기능사|CCNA|CCNP|RHCSA|LPIC|AWS|리눅스)/i.test(line)
+    /(자격증|기사|기능사|CCNA|CCNP|RHCSA|LPIC|AWS|리눅스|CKS|CNCF)/i.test(line)
   );
   const technicalSkills = lines.filter((line) =>
     /(Python|Java|Node|Linux|AWS|Kubernetes|Docker|Terraform|Splunk|Forti)/i.test(line)
