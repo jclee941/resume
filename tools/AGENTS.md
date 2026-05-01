@@ -6,7 +6,7 @@
 
 ## OVERVIEW
 
-Bazel facade layer + npm script automation. CI validation, build scripts, deployment helpers.
+npm script automation. CI validation, build scripts, deployment helpers.
 
 ## STRUCTURE
 
@@ -22,25 +22,23 @@ tools/
 │   ├── setup/            # environment setup
 │   ├── utils/            # shared utilities
 │   └── verification/     # post-deploy checks
-└── BUILD.bazel           # Bazel aliases
 ```
 
 ## WHERE TO LOOK
 
-| Task | Location | Notes |
+| Task             | Location                            | Notes                 |
 | ---------------- | ----------------------------------- | --------------------- |
-| CI validation | `ci/` | affected.go, validate |
-| Asset generation | `scripts/build/` | PDF, PPTX, icons |
-| Deploy helpers | `scripts/deployment/` | quick-deploy, grafana |
-| Health checks | `scripts/verification/` | 7-point verify |
-| Data sync | `scripts/utils/sync-resume-data.js` | SSoT propagation |
+| CI validation    | `ci/`                               | affected.go, validate |
+| Asset generation | `scripts/build/`                    | PDF, PPTX, icons      |
+| Deploy helpers   | `scripts/deployment/`               | quick-deploy, grafana |
+| Health checks    | `scripts/verification/`             | 7-point verify        |
+| Data sync        | `scripts/utils/sync-resume-data.js` | SSoT propagation      |
 
 ## CONVENTIONS
 
 - Run all scripts from project root.
 - Operational scripts are Go (.go); Node (.mjs) only for hooks/linters.
 - Scripts must be idempotent.
-- Bazel is a facade — use npm scripts day-to-day.
 
 ## ANTI-PATTERNS
 

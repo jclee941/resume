@@ -1,7 +1,7 @@
 import fp from 'fastify-plugin';
 import { ApplicationManager } from '../../auto-apply/application-manager.js';
 import { SecretsClient } from '../../shared/clients/secrets/index.js';
-import { UnifiedJobCrawler } from '../../crawlers/index.js';
+import { UnifiedJobCrawler } from '../../crawlers/unified/unified-job-crawler.js';
 import { AutoApplier } from '../../auto-apply/auto-applier.js';
 import { ProfileAggregator } from '../../shared/services/profile/index.js';
 import { D1Client } from '../../shared/clients/d1/index.js';
@@ -51,7 +51,7 @@ async function servicesPlugin(fastify) {
   fastify.addHook('onClose', () => clearInterval(cleanupTimer));
 
   fastify.log.info(
-    'Services plugin initialized (SecretsClient, ApplicationManager, UnifiedJobCrawler, AutoApplier, ProfileAggregator, D1Client, GoogleClient, CloudflareAnalytics)',
+    'Services plugin initialized (SecretsClient, ApplicationManager, UnifiedJobCrawler, AutoApplier, ProfileAggregator, D1Client, GoogleClient, CloudflareAnalytics)'
   );
 }
 

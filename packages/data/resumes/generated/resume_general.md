@@ -2,10 +2,10 @@
 <!-- Variant: general -->
 <!-- Generated: 2026-05-01T01:12:37.789Z -->
 <!-- Description: General purpose resume for all industries -->
+
 # 이재철
 
 DevSecOps / SRE 엔지니어
-
 
 ---
 
@@ -18,7 +18,6 @@ DevSecOps / SRE 엔지니어
 
 ---
 
-
 ---
 
 ## 학력
@@ -27,7 +26,6 @@ DevSecOps / SRE 엔지니어
 용남고등학교 졸업 (2013)
 
 ---
-
 
 ---
 
@@ -58,7 +56,6 @@ DevSecOps / SRE 엔지니어
 - **증권거래소 보안**: 일 10만+ 거래, 10TB+ 데이터 처리 환경 보안 운영
 
 ---
-
 
 ---
 
@@ -142,11 +139,10 @@ DevSecOps / SRE 엔지니어
 - PB 플랫폼 POC 검증 및 시스템 런칭 지원
 
 ---
----
-
 
 ---
 
+---
 
 ### ㈜조인트리 | 인프라·시스템 엔지니어
 
@@ -204,7 +200,6 @@ DevSecOps / SRE 엔지니어
 - 월간 취약점 점검 체계 구축 (Critical 취약점 2주 내 100% 처리)
 
 ---
-
 
 ---
 
@@ -313,7 +308,6 @@ DevSecOps / SRE 엔지니어
 규모: 1,000명 동시 접속
 기술: SSL VPN, NAC, Ansible, Python
 성과: COVID-19 대응 2주 내 구축, 운영 인력 3명 → 1명
-
 
 ### 🤖 AI 기반 인프라 자동화 플랫폼 (2024.09 ~ 현재)
 
@@ -431,7 +425,7 @@ DevSecOps / SRE 엔지니어
    - `.docker-context` 파일 기반 자동 라우팅 (투명한 컨텍스트 전환)
 
 3. **AI-Driven Automation Framework**
-   - 150+ SlashCommand 시스템 (/.claude/commands/)
+   - 150+ SlashCommand 시스템 (/.opencode/command/)
    - MCP 도구 생태계: filesystem, github, slack, tmux, n8n, sqlite, puppeteer
    - Constitutional AI 거버넌스 (CLAUDE.md: 자율 실행, 검증, 메타 학습)
    - 자동화 스크립트: 57개 Bash scripts (보안, 모니터링, 배포, 테스트)
@@ -505,7 +499,6 @@ DevSecOps / SRE 엔지니어
 
 ---
 
-
 ---
 
 ## 기술 스택
@@ -550,7 +543,6 @@ DevSecOps / SRE 엔지니어
 - SDN: VMware NSX-T, OpenFlow
 
 ---
-
 
 ---
 

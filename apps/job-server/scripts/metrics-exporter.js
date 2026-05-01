@@ -9,14 +9,8 @@ import fs from 'fs';
 import path from 'path';
 
 const PORT = process.env.METRICS_PORT || 9101;
-const METRICS_FILE = path.join(
-  process.env.HOME,
-  '.claude/data/wanted-login-metrics.json',
-);
-const SESSION_FILE = path.join(
-  process.env.HOME,
-  '.claude/data/wanted-session.json',
-);
+const METRICS_FILE = path.join(process.env.HOME, '.opencode/data/wanted-login-metrics.json');
+const SESSION_FILE = path.join(process.env.HOME, '.opencode/data/wanted-session.json');
 
 function loadMetrics() {
   try {
@@ -56,9 +50,7 @@ function generateMetrics() {
   const metrics = loadMetrics();
   const session = getSessionAge();
   const successRate =
-    metrics.attempts > 0
-      ? ((metrics.successes / metrics.attempts) * 100).toFixed(2)
-      : 0;
+    metrics.attempts > 0 ? ((metrics.successes / metrics.attempts) * 100).toFixed(2) : 0;
 
   return `# HELP wanted_login_attempts_total Total login attempts
 # TYPE wanted_login_attempts_total counter

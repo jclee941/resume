@@ -1,6 +1,6 @@
 import { describe, it, beforeEach, afterEach, mock } from 'node:test';
 import assert from 'node:assert/strict';
-import { ResourcePool } from '../resource-pool.js';
+import { ResourcePool } from '../resource-pool/resource-pool.js';
 
 describe('ResourcePool', { concurrency: 1 }, () => {
   const pools = [];

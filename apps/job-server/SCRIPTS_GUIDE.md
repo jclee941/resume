@@ -3,7 +3,7 @@
 This guide documents the operational scripts under `scripts/`, including JavaScript automation helpers and Go-based ops entrypoints. Scripts are organized by category with usage examples, security considerations, and recommended approaches.
 
 **Last Updated**: 2026-02-11  
-**Total Scripts**: 29 (25 .js + 1 legacy .sh + 3 .go ops entrypoints)
+**Total Scripts**: 30 (25 .js + 5 .go ops entrypoints)
 
 ---
 

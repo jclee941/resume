@@ -1,26 +1,35 @@
+// activate-auto-apply.go deploys and activates the job-auto-apply n8n workflow.
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"os/exec"
+	"regexp"
 	"strings"
 )
 
+const (
+	red    = "\033[0;31m"
+	green  = "\033[0;32m"
+	yellow = "\033[1;33m"
+	nc     = "\033[0m"
+)
+
 func main() {
-	// Colors
-	RED := "\033[0;31m"
-	GREEN := "\033[0;32m"
-	YELLOW := "\033[1;33m"
-	NC := "\033[0m"
+	// CLI flags
+	url := flag.String("url", "https://n8n.jclee.me", "n8n instance URL")
+	workflowFile := flag.String("file", "infrastructure/n8n/job-auto-apply-workflow.json", "workflow JSON file path")
+	flag.Parse()
 
 	fmt.Println("=== n8n Auto-Apply Workflow Activation ===")
 	fmt.Println()
 
-	// Check environment
+	// Check N8N_API_KEY
 	apiKey := os.Getenv("N8N_API_KEY")
 	if apiKey == "" {
-		fmt.Printf("%s[ERROR] N8N_API_KEY not set%s\n", RED, NC)
+		fmt.Printf("%s[ERROR] N8N_API_KEY not set%s\n", red, nc)
 		fmt.Println("Please set your n8n API key:")
 		fmt.Println("  export N8N_API_KEY=your-api-key")
 		fmt.Println()
@@ -28,67 +37,51 @@ func main() {
 		os.Exit(1)
 	}
 
-	n8nURL := os.Getenv("N8N_URL")
-	if n8nURL == "" {
-		n8nURL = "https://n8n.jclee.me"
+	n8nURL := *url
+	if envURL := os.Getenv("N8N_URL"); envURL != "" {
+		n8nURL = envURL
 	}
-	workflowFile := "infrastructure/n8n/job-auto-apply-workflow.json"
 
-	fmt.Println("[INFO] n8n URL:", n8nURL)
-	fmt.Println("[INFO] Workflow file:", workflowFile)
+	fmt.Printf("[INFO] n8n URL: %s\n", n8nURL)
+	fmt.Printf("[INFO] Workflow file: %s\n", *workflowFile)
 	fmt.Println()
 
 	// Check if workflow file exists
-	if _, err := os.Stat(workflowFile); os.IsNotExist(err) {
-		fmt.Printf("%s[ERROR] Workflow file not found: %s%s\n", RED, workflowFile, NC)
+	if _, err := os.Stat(*workflowFile); os.IsNotExist(err) {
+		fmt.Printf("%s[ERROR] Workflow file not found: %s%s\n", red, *workflowFile, nc)
 		os.Exit(1)
 	}
 
-	// Check workflow ID
-	workflowID := ""
-	grepCmd := exec.Command("grep", "-o", `"id": "[^"]*"`, workflowFile)
-	grepOut, err := grepCmd.CombinedOutput()
-	if err == nil && len(grepOut) > 0 {
-		line := string(grepOut)
-		parts := strings.Split(line, `"`)
-		if len(parts) >= 4 {
-			workflowID = parts[3]
-		}
+	// Check curl availability
+	curlPath, lookErr := exec.LookPath("curl")
+	if lookErr != nil {
+		fmt.Printf("%s[ERROR] curl is required but not installed%s\n", red, nc)
+		os.Exit(1)
 	}
-	fmt.Println("[INFO] Workflow ID from file:", workflowID)
+
+	// Extract workflow ID using grep
+	workflowID := extractWorkflowID(*workflowFile)
+	if workflowID == "" {
+		fmt.Printf("%s[ERROR] Could not extract workflow ID from workflow file%s\n", red, nc)
+		os.Exit(1)
+	}
+	fmt.Printf("[INFO] Workflow ID from file: %s\n", workflowID)
 
 	// Test n8n connection
 	fmt.Println()
 	fmt.Println("[INFO] Testing n8n connection...")
 
-	curlPath, lookErr := exec.LookPath("curl")
-	if lookErr != nil {
-		fmt.Printf("%s[ERROR] curl is required but not installed%s\n", RED, NC)
-		os.Exit(1)
-	}
-
 	authHeader := "X-N8N-API-KEY: " + apiKey
+	exists, httpStatus := checkWorkflowExists(curlPath, n8nURL, authHeader, workflowID)
 
-	// Check if workflow exists
-	checkCmd := exec.Command(curlPath, "-s", "-o", "/dev/null", "-w", "%{http_code}",
-		"-H", authHeader,
-		n8nURL+"/api/v1/workflows/"+workflowID)
-	checkOut, err := checkCmd.CombinedOutput()
-	httpStatus := string(checkOut)
-	if err != nil {
-		httpStatus = "000"
-	}
-	httpStatus = strings.TrimSpace(httpStatus)
-
-	exists := false
 	if httpStatus == "200" {
-		fmt.Printf("%s[OK] Workflow already exists in n8n%s\n", GREEN, NC)
+		fmt.Printf("%s[OK] Workflow already exists in n8n%s\n", green, nc)
 		exists = true
 	} else if httpStatus == "404" {
-		fmt.Printf("%s[INFO] Workflow not found, needs to be created%s\n", YELLOW, NC)
+		fmt.Printf("%s[INFO] Workflow not found, needs to be created%s\n", yellow, nc)
 		exists = false
 	} else {
-		fmt.Printf("%s[WARNING] Could not check workflow status (HTTP %s)%s\n", YELLOW, httpStatus, NC)
+		fmt.Printf("%s[WARNING] Could not check workflow status (HTTP %s)%s\n", yellow, httpStatus, nc)
 		fmt.Println("  This might be due to Cloudflare Access authentication.")
 		fmt.Println("  Make sure CF_ACCESS_CLIENT_ID and CF_ACCESS_CLIENT_SECRET are set.")
 		exists = false
@@ -96,51 +89,33 @@ func main() {
 
 	// Deploy workflow
 	fmt.Println()
-	var method, url string
+	method := "POST"
+	urlStr := n8nURL + "/api/v1/workflows"
 	if exists {
 		fmt.Println("[INFO] Updating existing workflow...")
 		method = "PUT"
-		url = n8nURL + "/api/v1/workflows/" + workflowID
+		urlStr = n8nURL + "/api/v1/workflows/" + workflowID
 	} else {
 		fmt.Println("[INFO] Creating new workflow...")
-		method = "POST"
-		url = n8nURL + "/api/v1/workflows"
 	}
 
-	curlOpts := []string{"-s", "-H", authHeader, "-H", "Content-Type: application/json"}
 	cfID := os.Getenv("CF_ACCESS_CLIENT_ID")
 	cfSecret := os.Getenv("CF_ACCESS_CLIENT_SECRET")
+
+	curlOpts := []string{"-s", "-H", authHeader, "-H", "Content-Type: application/json"}
 	if cfID != "" && cfSecret != "" {
 		curlOpts = append(curlOpts, "-H", "CF-Access-Client-Id: "+cfID)
 		curlOpts = append(curlOpts, "-H", "CF-Access-Client-Secret: "+cfSecret)
 	}
-	curlOpts = append(curlOpts, "-X", method, "-d", "@"+workflowFile, url)
+	curlOpts = append(curlOpts, "-X", method, "-d", "@"+*workflowFile, urlStr)
 
 	deployCmd := exec.Command(curlPath, curlOpts...)
 	deployOut, err := deployCmd.CombinedOutput()
 	response := string(deployOut)
 
 	if err == nil && strings.Contains(response, `"id"`) {
-		newID := ""
-		idx := strings.Index(response, `"id": "`)
-		if idx != -1 {
-			start := idx + len(`"id": "`)
-			end := strings.Index(response[start:], `"`)
-			if end != -1 {
-				newID = response[start : start+end]
-			}
-		}
-		if newID == "" {
-			idx = strings.Index(response, `"id":"`)
-			if idx != -1 {
-				start := idx + len(`"id":"`)
-				end := strings.Index(response[start:], `"`)
-				if end != -1 {
-					newID = response[start : start+end]
-				}
-			}
-		}
-		fmt.Printf("%s[SUCCESS] Workflow deployed with ID: %s%s\n", GREEN, newID, NC)
+		newID := extractID(response)
+		fmt.Printf("%s[SUCCESS] Workflow deployed with ID: %s%s\n", green, newID, nc)
 
 		// Activate workflow
 		fmt.Println()
@@ -153,14 +128,14 @@ func main() {
 		activateOpts = append(activateOpts, "-X", "PATCH", "-d", `{"active": true}`, n8nURL+"/api/v1/workflows/"+newID)
 
 		activateCmd := exec.Command(curlPath, activateOpts...)
-		_, err := activateCmd.CombinedOutput()
-		if err == nil {
-			fmt.Printf("%s[SUCCESS] Workflow activated!%s\n", GREEN, NC)
+		_, activateErr := activateCmd.CombinedOutput()
+		if activateErr == nil {
+			fmt.Printf("%s[SUCCESS] Workflow activated!%s\n", green, nc)
 			fmt.Println()
 			fmt.Println("=== Summary ===")
-			fmt.Println("Workflow ID:", newID)
+			fmt.Printf("Workflow ID: %s\n", newID)
 			fmt.Println("Schedule: Daily at 9:00 AM KST")
-			fmt.Println("URL:", n8nURL+"/workflow/"+newID)
+			fmt.Printf("URL: %s/workflow/%s\n", n8nURL, newID)
 			fmt.Println()
 			fmt.Println("The auto-apply system will now:")
 			fmt.Println("  1. Run daily at 9:00 AM KST")
@@ -168,22 +143,70 @@ func main() {
 			fmt.Println("  3. Apply to matching positions (match score ≥75%)")
 			fmt.Println("  4. Send Telegram notifications with results")
 		} else {
-			fmt.Printf("%s[WARNING] Could not activate automatically%s\n", YELLOW, NC)
-			fmt.Println("Please activate manually at:", n8nURL+"/workflow/"+newID)
+			fmt.Printf("%s[WARNING] Could not activate automatically%s\n", yellow, nc)
+			fmt.Printf("Please activate manually at: %s/workflow/%s\n", n8nURL, newID)
 		}
 	} else {
-		fmt.Printf("%s[ERROR] Failed to deploy workflow%s\n", RED, NC)
+		fmt.Printf("%s[ERROR] Failed to deploy workflow%s\n", red, nc)
 		fmt.Println("Response:", response)
 		os.Exit(1)
 	}
 
 	fmt.Println()
 	fmt.Println("=== Next Steps ===")
-	fmt.Println("1. Verify workflow is active:", n8nURL+"/workflow/"+workflowID)
+	fmt.Printf("1. Verify workflow is active: %s/workflow/%s\n", n8nURL, workflowID)
 	fmt.Println("2. Check Telegram bot is configured in n8n credentials")
 	fmt.Println("3. Set JOB_SERVER_URL and JOB_SERVER_ADMIN_TOKEN in n8n environment")
 	fmt.Println("4. Test with manual trigger or wait for next scheduled run (9:00 AM KST)")
 	fmt.Println()
 	fmt.Println("To check workflow status:")
 	fmt.Printf("  curl -H 'X-N8N-API-KEY: $N8N_API_KEY' %s/api/v1/workflows/%s | jq\n", n8nURL, workflowID)
+}
+
+func extractWorkflowID(file string) string {
+	grepCmd := exec.Command("grep", "-o", `"id": "[^"]*"`, file)
+	grepOut, err := grepCmd.CombinedOutput()
+	if err != nil {
+		return ""
+	}
+	line := string(grepOut)
+	parts := strings.Split(line, `"`)
+	if len(parts) >= 4 {
+		return parts[3]
+	}
+	return ""
+}
+
+func checkWorkflowExists(curlPath, n8nURL, authHeader, workflowID string) (bool, string) {
+	checkCmd := exec.Command(curlPath, "-s", "-o", "/dev/null", "-w", "%{http_code}",
+		"-H", authHeader, n8nURL+"/api/v1/workflows/"+workflowID)
+	checkOut, err := checkCmd.CombinedOutput()
+	httpStatus := string(checkOut)
+	if err != nil {
+		httpStatus = "000"
+	}
+	httpStatus = strings.TrimSpace(httpStatus)
+	return httpStatus == "200", httpStatus
+}
+
+func extractID(response string) string {
+	patterns := []string{`"id": "`, `"id":"`}
+	for _, pattern := range patterns {
+		idx := strings.Index(response, pattern)
+		if idx != -1 {
+			start := idx + len(pattern)
+			end := strings.Index(response[start:], `"`)
+			if end != -1 {
+				return response[start : start+end]
+			}
+		}
+	}
+
+	// Fallback: use regex
+	re := regexp.MustCompile(`"id":\s*"([^"]*)"`)
+	matches := re.FindStringSubmatch(response)
+	if len(matches) >= 2 {
+		return matches[1]
+	}
+	return ""
 }

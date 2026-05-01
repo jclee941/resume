@@ -39,7 +39,7 @@
             {
               "id": "session-path",
               "name": "sessionPath",
-              "value": "/home/jclee/.claude/data/wanted-session.json",
+              "value": "/home/jclee/.opencode/data/wanted-session.json",
               "type": "string"
             },
             {
@@ -253,7 +253,7 @@
     {
       "parameters": {
         "operation": "write",
-        "fileName": "/home/jclee/.claude/data/wanted-job-search-results.json",
+        "fileName": "/home/jclee/.opencode/data/wanted-job-search-results.json",
         "fileContent": "={{ JSON.stringify($json, null, 2) }}",
         "options": {}
       },

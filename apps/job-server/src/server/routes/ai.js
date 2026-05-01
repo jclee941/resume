@@ -1,7 +1,7 @@
 import config from '../config/index.js';
 import { matchJobsWithAI } from '../../shared/services/matching/index.js';
 import { UnifiedApplySystem } from '../../shared/services/apply/index.js';
-import { UnifiedJobCrawler } from '../../crawlers/index.js';
+import { UnifiedJobCrawler } from '../../crawlers/unified/unified-job-crawler.js';
 import { AutoApplier } from '../../auto-apply/auto-applier.js';
 import { ApplicationManager } from '../../auto-apply/application-manager.js';
 

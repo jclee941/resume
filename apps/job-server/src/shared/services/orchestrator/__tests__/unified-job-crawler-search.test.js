@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, it, mock } from 'node:test';
 import assert from 'node:assert/strict';
-import UnifiedJobCrawler from '../../../../crawlers/index.js';
+import UnifiedJobCrawler from '../../../../crawlers/unified/unified-job-crawler.js';
 
 function createNoopDeduplicator() {
   return {

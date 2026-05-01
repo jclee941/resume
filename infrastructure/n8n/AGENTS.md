@@ -15,7 +15,7 @@ infrastructure/n8n/
 ├── *.json                    # top-level workflow exports
 ├── workflows/                # additional workflow exports
 ├── README.md                 # operator guide + webhook/deploy flow
-├── SLACK_OAUTH2_SETUP.md     # Slack credential setup (deprecated)
+├── README.md                 # operator guide + webhook/deploy flow
 └── UPDATE_CREDENTIAL.md      # credential rotation notes
 ```
 
@@ -25,7 +25,7 @@ infrastructure/n8n/
 | ------------------------------ | ---------------------------------------------------------------------------- | -------------------------------------- |
 | End-to-end deploy webhook flow | `infrastructure/n8n/README.md`                                               | GitHub push → build/test/deploy/notify |
 | Telegram Bot API setup       | `infrastructure/n8n/README.md`                                               | Credentials in 1Password `homelab` vault |
-| Slack credential setup (deprecated) | `infrastructure/n8n/SLACK_OAUTH2_SETUP.md`                              | OAuth2 redirect/scopes (legacy)        |
+| Slack credential setup | `infrastructure/n8n/README.md` | Use Telegram Bot API instead |
 | Alert-to-issue bridges         | `grafana-github-issue-workflow.json` | webhook-driven issue creation          |
 | Wanted automation exports      | `wanted-*.json`                                                              | platform-specific workflow experiments |
 

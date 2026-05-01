@@ -44,7 +44,7 @@ CDP (recommended) > Playwright > SQLite > Profile.
 ## ANTI-PATTERNS
 
 - Never commit cookies or session files.
-- Never use deprecated `direct-login` scripts.
+- Never use deprecated `direct-login` scripts (already removed).
 - Never hardcode paths — use config.
 
 ## PROFILE-SYNC PORTFOLIO FLOW

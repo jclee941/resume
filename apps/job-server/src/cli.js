@@ -15,10 +15,7 @@
 import { SessionManager } from './tools/auth.js';
 import resumeSyncTool from './tools/resume-sync.js';
 import optimizeResumeTool from './tools/optimize-resume.js';
-import { join } from 'path';
-import { homedir } from 'os';
-
-const DATA_DIR = join(homedir(), '.claude', 'data', 'wanted-resume');
+import { DATA_DIR } from './tools/commands/base-command.js';
 
 // ANSI colors
 const colors = {
@@ -155,7 +152,7 @@ async function main() {
         });
         break;
 
-      case 'optimize':
+      case 'optimize': {
         const jobId = args[1];
         if (!jobId) {
           log('❌ job_id is required', 'red');
@@ -166,12 +163,13 @@ async function main() {
           job_id: parseInt(jobId, 10),
         });
         break;
+      }
 
       case 'sync:careers':
       case 'sync:educations':
       case 'sync:skills':
       case 'sync:activities':
-      case 'sync:language_certs':
+      case 'sync:language_certs': {
         if (!resumeId) {
           log('❌ resume_id is required', 'red');
           process.exit(1);
@@ -184,8 +182,9 @@ async function main() {
           dry_run: dryRun,
         });
         break;
+      }
 
-      case 'pipeline':
+      case 'pipeline': {
         const subCommand = args[1];
         const pipelineResumeId = args[2];
 
@@ -210,8 +209,9 @@ async function main() {
           process.exit(1);
         }
         break;
+      }
 
-      case 'list':
+      case 'list': {
         log('📁 Resume files:', 'blue');
         try {
           const { readdirSync } = await import('fs');
@@ -219,13 +219,17 @@ async function main() {
           if (files.length === 0) {
             log('   No resume files found. Run export first.', 'dim');
           } else {
-            files.forEach((f) => log(`   • ${f}`, 'green'));
+            files.forEach((f) => {
+              log(`   • ${f}`, 'green');
+            });
           }
         } catch (e) {
           console.error('Failed to read resume directory:', e);
           log('   Data directory not found. Run export first.', 'dim');
         }
         process.exit(0);
+        break;
+      }
 
       default:
         log(`❌ Unknown command: ${command}`, 'red');

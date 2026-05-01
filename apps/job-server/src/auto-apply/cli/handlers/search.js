@@ -1,4 +1,5 @@
-import { UnifiedJobCrawler, WANTED_CATEGORIES } from '../../../crawlers/index.js';
+import { WANTED_CATEGORIES } from '../../../crawlers/unified/platform-crawlers.js';
+import { UnifiedJobCrawler } from '../../../crawlers/unified/unified-job-crawler.js';
 import { matchJobsWithAI } from '../../../shared/services/matching/index.js';
 import { getResumeMasterMarkdownPath } from '../../../shared/utils/paths.js';
 

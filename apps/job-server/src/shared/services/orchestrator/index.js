@@ -8,10 +8,14 @@
  *  - {@link ResourcePool}       — Generic async resource pool
  */
 
-export { CrawlOrchestrator, SUPPORTED_PLATFORMS, DEFAULT_OPTIONS } from './crawl-orchestrator.js';
+export {
+  CrawlOrchestrator,
+  SUPPORTED_PLATFORMS,
+  DEFAULT_OPTIONS,
+} from './crawl-orchestrator/index.js';
 
 export { RateLimiter, DEFAULT_PLATFORM_LIMITS, FALLBACK_LIMIT } from './rate-limiter.js';
 
 export { ProgressTracker } from './progress-tracker.js';
 
-export { ResourcePool } from './resource-pool.js';
+export { ResourcePool } from './resource-pool/resource-pool.js';

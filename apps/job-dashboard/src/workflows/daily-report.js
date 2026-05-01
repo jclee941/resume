@@ -1,8 +1,12 @@
 import { WorkflowEntrypoint } from 'cloudflare:workers';
+import { sendTelegramNotification, escapeHtml } from '../services/notifications.js';
+import { generateReportContent } from './daily-report-content.js';
 import {
-  sendTelegramNotification,
-  escapeHtml,
-} from '../services/notifications.js';
+  calculateTrends,
+  getApplicationStats,
+  getPlatformStats,
+  getSearchStats,
+} from './daily-report-stats.js';
 
 /**
  * Daily Report Workflow
@@ -34,7 +38,7 @@ export class DailyReportWorkflow extends WorkflowEntrypoint {
         timeout: '1 minute',
       },
       async () => {
-        return await this.getApplicationStats(type, report.date);
+        return await getApplicationStats(this.env, type, report.date);
       }
     );
 
@@ -48,7 +52,7 @@ export class DailyReportWorkflow extends WorkflowEntrypoint {
         timeout: '1 minute',
       },
       async () => {
-        return await this.getPlatformStats(type, report.date);
+        return await getPlatformStats(this.env, type, report.date);
       }
     );
 
@@ -62,7 +66,7 @@ export class DailyReportWorkflow extends WorkflowEntrypoint {
         timeout: '1 minute',
       },
       async () => {
-        return await this.getSearchStats(type, report.date);
+        return await getSearchStats(this.env, type, report.date);
       }
     );
 
@@ -76,7 +80,7 @@ export class DailyReportWorkflow extends WorkflowEntrypoint {
         timeout: '1 minute',
       },
       async () => {
-        return await this.calculateTrends(appStats, type);
+        return await calculateTrends(this.env, appStats, type);
       }
     );
 
@@ -90,7 +94,7 @@ export class DailyReportWorkflow extends WorkflowEntrypoint {
         timeout: '1 minute',
       },
       async () => {
-        return this.generateReportContent(report);
+        return generateReportContent(report);
       }
     );
 
@@ -123,7 +127,8 @@ export class DailyReportWorkflow extends WorkflowEntrypoint {
         timeout: '30 seconds',
       },
       async () => {
-        await sendTelegramNotification(this.env,
+        await sendTelegramNotification(
+          this.env,
           `📊 <b>${escapeHtml(content.title)}</b>\n\nDate: ${escapeHtml(content.date)}\nType: ${escapeHtml(type)}`
         );
         return { notified: true };
@@ -136,168 +141,6 @@ export class DailyReportWorkflow extends WorkflowEntrypoint {
     return {
       success: true,
       report,
-    };
-  }
-
-  async getApplicationStats(type, _date) {
-    const dateFilter = type === 'weekly' ? "date('now', '-7 days')" : "date('now', '-1 day')";
-
-    const stats = await this.env.JOB_DB.prepare(
-      `
-      SELECT 
-        COUNT(*) as total,
-        SUM(CASE WHEN status = 'applied' THEN 1 ELSE 0 END) as applied,
-        SUM(CASE WHEN status = 'interviewing' THEN 1 ELSE 0 END) as interviewing,
-        SUM(CASE WHEN status = 'offered' THEN 1 ELSE 0 END) as offered,
-        SUM(CASE WHEN status = 'rejected' THEN 1 ELSE 0 END) as rejected,
-        SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending
-      FROM applications
-      WHERE date(created_at) >= ${dateFilter}
-    `
-    ).first();
-
-    return {
-      total: stats?.total || 0,
-      applied: stats?.applied || 0,
-      interviewing: stats?.interviewing || 0,
-      offered: stats?.offered || 0,
-      rejected: stats?.rejected || 0,
-      pending: stats?.pending || 0,
-    };
-  }
-
-  async getPlatformStats(type, _date) {
-    const dateFilter = type === 'weekly' ? "date('now', '-7 days')" : "date('now', '-1 day')";
-
-    const results = await this.env.JOB_DB.prepare(
-      `
-      SELECT 
-        platform,
-        COUNT(*) as count,
-        SUM(CASE WHEN status = 'interviewing' OR status = 'offered' THEN 1 ELSE 0 END) as success
-      FROM applications
-      WHERE date(created_at) >= ${dateFilter}
-      GROUP BY platform
-      ORDER BY count DESC
-    `
-    ).all();
-
-    const platforms = {};
-    for (const row of results.results || []) {
-      platforms[row.platform] = {
-        count: row.count,
-        success: row.success,
-        rate: row.count > 0 ? ((row.success / row.count) * 100).toFixed(1) : 0,
-      };
-    }
-
-    return platforms;
-  }
-
-  async getSearchStats(type, _date) {
-    const dateFilter = type === 'weekly' ? "date('now', '-7 days')" : "date('now', '-1 day')";
-
-    const stats = await this.env.JOB_DB.prepare(
-      `
-      SELECT 
-        COUNT(*) as total_jobs,
-        AVG(match_score) as avg_score,
-        MAX(match_score) as max_score
-      FROM job_search_results
-      WHERE date(created_at) >= ${dateFilter}
-    `
-    ).first();
-
-    return {
-      totalJobs: stats?.total_jobs || 0,
-      avgScore: Math.round(stats?.avg_score || 0),
-      maxScore: stats?.max_score || 0,
-    };
-  }
-
-  async calculateTrends(currentStats, type) {
-    // Compare with previous period
-    const prevFilter =
-      type === 'weekly'
-        ? "date('now', '-14 days') AND date('now', '-7 days')"
-        : "date('now', '-2 days') AND date('now', '-1 day')";
-
-    const prevStats = await this.env.JOB_DB.prepare(
-      `
-      SELECT COUNT(*) as total
-      FROM applications
-      WHERE date(created_at) BETWEEN ${prevFilter.split(' AND ')[0]} AND ${prevFilter.split(' AND ')[1]}
-    `
-    ).first();
-
-    const prev = prevStats?.total || 0;
-    const current = currentStats.total;
-
-    let trend = 'stable';
-    let change = 0;
-
-    if (prev > 0) {
-      change = ((current - prev) / prev) * 100;
-      if (change > 10) trend = 'up';
-      else if (change < -10) trend = 'down';
-    }
-
-    return {
-      trend,
-      change: Math.round(change),
-      previous: prev,
-      current,
-    };
-  }
-
-  generateReportContent(report) {
-    const { type, applications, platforms, searches, trends } = report;
-    const periodLabel = type === 'weekly' ? '주간' : '일간';
-
-    // Status emoji mapping
-    const statusEmoji = {
-      applied: '📝',
-      interviewing: '💼',
-      offered: '🎉',
-      rejected: '❌',
-      pending: '⏳',
-    };
-
-    // Trend emoji
-    const trendEmoji = trends.trend === 'up' ? '📈' : trends.trend === 'down' ? '📉' : '➡️';
-
-    // Platform breakdown
-    const platformBreakdown = Object.entries(platforms)
-      .map(([name, stats]) => `• ${name}: ${stats.count}건 (성공률 ${stats.rate}%)`)
-      .join('\n');
-
-    return {
-      title: `${periodLabel} 채용 리포트`,
-      date: report.date,
-      summary: {
-        total: applications.total,
-        trend: `${trendEmoji} ${trends.change > 0 ? '+' : ''}${trends.change}%`,
-      },
-      sections: [
-        {
-          title: '지원 현황',
-          content: `${statusEmoji.applied} 지원: ${applications.applied}건
-${statusEmoji.interviewing} 면접: ${applications.interviewing}건
-${statusEmoji.offered} 합격: ${applications.offered}건
-${statusEmoji.rejected} 불합격: ${applications.rejected}건
-${statusEmoji.pending} 대기: ${applications.pending}건`,
-        },
-        {
-          title: '플랫폼별 현황',
-          content: platformBreakdown || '데이터 없음',
-        },
-        {
-          title: '채용공고 검색',
-          content: `• 총 검색: ${searches.totalJobs}건
-• 평균 매칭: ${searches.avgScore}%
-• 최고 매칭: ${searches.maxScore}%`,
-        },
-      ],
     };
   }
 

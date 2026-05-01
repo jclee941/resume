@@ -126,11 +126,10 @@ DevSecOps / SRE 엔지니어
 - PB 플랫폼 POC 검증 및 시스템 런칭 지원
 
 ---
----
-
 
 ---
 
+---
 
 ### ㈜조인트리 | 인프라·시스템 엔지니어
 
@@ -295,7 +294,6 @@ DevSecOps / SRE 엔지니어
 기술: SSL VPN, NAC, Ansible, Python
 성과: COVID-19 대응 2주 내 구축, 운영 인력 3명 → 1명
 
-
 ### 🤖 AI 기반 인프라 자동화 플랫폼 (2024.09 ~ 현재)
 
 **개인 프로젝트 | AI-Powered Infrastructure Automation & Observability Platform**
@@ -412,7 +410,7 @@ DevSecOps / SRE 엔지니어
    - `.docker-context` 파일 기반 자동 라우팅 (투명한 컨텍스트 전환)
 
 3. **AI-Driven Automation Framework**
-   - 150+ SlashCommand 시스템 (/.claude/commands/)
+   - 150+ SlashCommand 시스템 (/.opencode/command/)
    - MCP 도구 생태계: filesystem, github, slack, tmux, n8n, sqlite, puppeteer
    - Constitutional AI 거버넌스 (CLAUDE.md: 자율 실행, 검증, 메타 학습)
    - 자동화 스크립트: 57개 Bash scripts (보안, 모니터링, 배포, 테스트)
