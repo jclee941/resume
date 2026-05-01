@@ -23,7 +23,7 @@ job-server/
 │   ├── tools/              # 16 MCP tools
 │   ├── crawlers/           # stealth Playwright crawlers
 │   ├── auto-apply/         # form fill + rate limiting
-│   └── lib/                # utility wrappers (deprecated)
+│   └── lib/                # utility wrappers (deprecated) → removed per TECH_DEBT_AUDIT_2026-04-29
 ├── scripts/                # auth/sync utilities (see scripts/AGENTS.md)
 ├── platforms/              # 10 platform-specific crawlers (see platforms/AGENTS.md)
 ├── config.json             # runtime config

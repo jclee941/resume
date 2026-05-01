@@ -18,6 +18,11 @@
  * @property {string} message
  */
 
+/**
+ * @typedef {Object} StatsServiceConfig
+ * @property {import('../applications/application-service.js').ApplicationService} appService
+ */
+
 export class StatsService {
   /** @type {import('../applications/application-service.js').ApplicationService} */
   #appService;
@@ -94,8 +99,7 @@ export class StatsService {
     if (allStats.responseRate < 30) {
       recommendations.push({
         type: 'info',
-        message:
-          '응답률이 낮습니다. 이력서를 개선하거나 매칭 점수가 높은 공고에 집중해보세요.',
+        message: '응답률이 낮습니다. 이력서를 개선하거나 매칭 점수가 높은 공고에 집중해보세요.',
       });
     }
 
@@ -137,24 +141,41 @@ export class StatsService {
   }
 }
 
-// Singleton _instanceHolder.get()
-// DEPRECATED: AGENTS.md violation tracked in docs/architecture/MONOREPO_REVIEW_2026-04-29.md (P0-5).
-// Module-level singleton — migrate to constructor-injected DI when refactoring this file.
-// P0-5 audit fix: replace module-level mutable singleton with closure-bound holder.
+/**
+ * Create an isolated StatsService instance for constructor-injected dependencies.
+ * @param {StatsServiceConfig} config
+ * @returns {StatsService}
+ */
+export function createStatsService(config) {
+  return new StatsService(config.appService);
+}
+
+// Deprecated singleton compatibility layer.
+// DEPRECATED: Prefer createStatsService() and pass the instance through constructors.
+// Singleton exports remain temporarily for existing imports and tests.
 // Migration: docs/architecture/MONOREPO_REVIEW_2026-04-29.md (singleton DI plan).
 const _instanceHolder = (() => {
   let v = null;
-  return { get: () => v, set: (x) => { v = x; }, clear: () => { v = null; } };
+  return {
+    get: () => v,
+    set: (x) => {
+      v = x;
+    },
+    clear: () => {
+      v = null;
+    },
+  };
 })();
 
 /**
  * Get or create StatsService singleton
+ * @deprecated Use createStatsService() and inject the returned instance through constructors.
  * @param {import('../applications/application-service.js').ApplicationService} appService
- * @returns {StatsService}
+ * @returns {StatsService|null}
  */
 export function getStatsService(appService) {
   if (!_instanceHolder.get() && appService) {
-    _instanceHolder.set(new StatsService(appService));
+    _instanceHolder.set(createStatsService({ appService }));
   }
   return _instanceHolder.get();
 }

@@ -1,10 +1,14 @@
 import { describe, it, beforeEach, afterEach, mock } from 'node:test';
 import assert from 'node:assert/strict';
 import * as barrel from '../index.js';
-import { CrawlOrchestrator, SUPPORTED_PLATFORMS, DEFAULT_OPTIONS } from '../crawl-orchestrator.js';
+import {
+  CrawlOrchestrator,
+  SUPPORTED_PLATFORMS,
+  DEFAULT_OPTIONS,
+} from '../crawl-orchestrator/index.js';
 import { RateLimiter, DEFAULT_PLATFORM_LIMITS, FALLBACK_LIMIT } from '../rate-limiter.js';
 import { ProgressTracker } from '../progress-tracker.js';
-import { ResourcePool } from '../resource-pool.js';
+import { ResourcePool } from '../resource-pool/resource-pool.js';
 
 describe('orchestrator index barrel', { concurrency: 1 }, () => {
   beforeEach(() => {

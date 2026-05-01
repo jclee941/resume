@@ -1,9 +1,9 @@
 import { Router } from './router.js';
-import { ApplicationsHandler } from './handlers/applications.js';
+import { ApplicationsHandler } from './handlers/applications/index.js';
 import { StatsHandler } from './handlers/stats.js';
 import { AuthHandler } from './handlers/auth.js';
 import { WebhookHandler } from './handlers/webhooks.js';
-import { AutoApplyHandler } from './handlers/auto-apply.js';
+import { AutoApplyHandler } from './handlers/auto-apply/handler.js';
 import { DiagnosticsHandler } from './handlers/diagnostics.js';
 import { ResumeMasterHandler } from './handlers/resume-master-handler.js';
 import { jsonResponse, addCorsHeaders } from './middleware/cors.js';
@@ -38,7 +38,7 @@ import {
   CleanupWorkflow,
 } from './workflows/index.js';
 import { BrowserSessionDO } from './durable-objects/browser-session-do.js';
-import { QueueConsumer } from './queue-consumer.js';
+import { QueueConsumer } from './queues/queue-consumer.js';
 
 export {
   JobCrawlingWorkflow,
@@ -115,8 +115,7 @@ export default {
     // CSRF gate. Webhooks use HMAC signature (validated above) and /api/auth/sync
     // is gated by AUTH_SYNC_SECRET (handler-level fail-closed). All other state-
     // changing endpoints — including /api/auto-apply/run — require X-CSRF-Token.
-    const skipCsrf =
-      url.pathname.startsWith('/api/webhooks/') || url.pathname === '/api/auth/sync';
+    const skipCsrf = url.pathname.startsWith('/api/webhooks/') || url.pathname === '/api/auth/sync';
     if (!skipCsrf) {
       const csrfResult = validateCsrf(request);
       if (!csrfResult.ok) {

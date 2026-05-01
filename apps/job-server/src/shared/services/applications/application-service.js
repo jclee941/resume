@@ -173,24 +173,44 @@ export class ApplicationService {
   }
 }
 
-// Singleton _instanceHolder.get()
-// DEPRECATED: AGENTS.md violation tracked in docs/architecture/MONOREPO_REVIEW_2026-04-29.md (P0-5).
-// Module-level singleton — migrate to constructor-injected DI when refactoring this file.
-// P0-5 audit fix: replace module-level mutable singleton with closure-bound holder.
+/**
+ * Create an isolated ApplicationService instance for constructor-injected dependencies.
+ * @param {Object} [config]
+ * @param {ApplicationManager} [config.manager]
+ * @param {Object} [config.managerOptions]
+ * @returns {ApplicationService}
+ */
+export function createApplicationService(config = {}) {
+  const { manager, managerOptions } = config;
+  return new ApplicationService(manager || new ApplicationManager(managerOptions));
+}
+
+// Deprecated singleton compatibility layer.
+// DEPRECATED: Prefer createApplicationService() and pass the instance through constructors.
+// Singleton exports remain temporarily for existing imports and tests.
 // Migration: docs/architecture/MONOREPO_REVIEW_2026-04-29.md (singleton DI plan).
 const _instanceHolder = (() => {
   let v = null;
-  return { get: () => v, set: (x) => { v = x; }, clear: () => { v = null; } };
+  return {
+    get: () => v,
+    set: (x) => {
+      v = x;
+    },
+    clear: () => {
+      v = null;
+    },
+  };
 })();
 
 /**
  * Get or create ApplicationService singleton
+ * @deprecated Use createApplicationService() and inject the returned instance through constructors.
  * @param {ApplicationManager} [manager]
  * @returns {ApplicationService}
  */
 export function getApplicationService(manager) {
   if (!_instanceHolder.get()) {
-    _instanceHolder.set(new ApplicationService(manager));
+    _instanceHolder.set(createApplicationService({ manager }));
   }
   return _instanceHolder.get();
 }

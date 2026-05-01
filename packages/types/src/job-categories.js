@@ -58,13 +58,3 @@ export const JOB_CATEGORY_BY_KEY = Object.freeze({
 
 /** @type {number} */
 export const DEFAULT_JOB_CATEGORY = 674;
-
-/**
- * @deprecated Use JOB_CATEGORY_BY_NAME instead. Kept for backward compatibility.
- */
-export const JOB_CATEGORY_MAPPING = JOB_CATEGORY_BY_NAME;
-
-/**
- * @deprecated Use JOB_CATEGORY_BY_KEY instead. Kept for backward compatibility.
- */
-export const JOB_CATEGORIES = JOB_CATEGORY_BY_KEY;

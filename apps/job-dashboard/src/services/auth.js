@@ -18,6 +18,8 @@ const NO_AUTH_ROUTES = [
 ];
 
 const WEBHOOK_ROUTES = [];
+const ADMIN_SESSION_COOKIE = 'adminToken';
+const BEARER_PREFIX = 'Bearer ';
 
 export function requiresAuth(pathname) {
   if (NO_AUTH_ROUTES.some((route) => pathname === route)) {
@@ -52,16 +54,16 @@ export function verifySecret(provided, expected) {
 }
 
 /**
- * Extract admin token from HttpOnly cookie
+ * Extract admin session token from HttpOnly cookie.
  */
-function getTokenFromCookie(request) {
+export function getSessionTokenFromCookie(request) {
   const cookieHeader = request.headers.get('Cookie');
   if (!cookieHeader) return null;
 
   const cookies = cookieHeader.split(';').map((c) => c.trim());
   for (const cookie of cookies) {
     const [name, ...valueParts] = cookie.split('=');
-    if (name === 'adminToken') {
+    if (name === ADMIN_SESSION_COOKIE) {
       return valueParts.join('='); // Handle tokens with '=' in them
     }
   }
@@ -69,24 +71,47 @@ function getTokenFromCookie(request) {
 }
 
 /**
- * Verify admin authentication via:
- * 1. HttpOnly cookie (preferred, XSS-safe)
- * 2. Authorization Bearer header (fallback for API clients)
+ * @deprecated Prefer `getSessionTokenFromCookie(request)`. This alias remains
+ * for older dashboard integrations while callers migrate to the explicit
+ * session-token naming.
+ */
+export const getTokenFromCookie = getSessionTokenFromCookie;
+
+/**
+ * @deprecated Legacy long-lived ADMIN_TOKEN bearer parsing is supported only
+ * for non-browser API clients during the session-token migration. Browser
+ * flows must use the HttpOnly `adminToken` cookie minted by `/api/auth/login`.
+ */
+export function getLegacyBearerToken(request) {
+  const authHeader = request.headers.get('Authorization');
+  if (!authHeader?.startsWith(BEARER_PREFIX)) {
+    return null;
+  }
+  return authHeader.slice(BEARER_PREFIX.length);
+}
+
+/**
+ * Verify admin authentication via the current session-token flow.
+ *
+ * Preferred path: `/api/auth/login` validates ADMIN_TOKEN once, mints a
+ * short-lived HMAC session token, and stores it in the HttpOnly admin cookie.
+ *
+ * @deprecated Raw `Authorization: Bearer ${ADMIN_TOKEN}` remains accepted only
+ * as a temporary compatibility path for scripts and API clients. New clients
+ * should authenticate through `/api/auth/login` and send the returned cookie, or
+ * send a minted session token as Bearer when cookies are unavailable.
  */
 export async function verifyAdminAuth(request, env) {
   if (!env?.ADMIN_TOKEN) {
     return { ok: false, status: 503, error: 'Service misconfigured' };
   }
 
-  // Try HttpOnly cookie first (browser requests)
-  let token = getTokenFromCookie(request);
+  // Current browser path: short-lived session token in an HttpOnly cookie.
+  let token = getSessionTokenFromCookie(request);
 
-  // Fall back to Authorization header (API clients, legacy)
+  // Deprecated compatibility path: API clients may still send Bearer tokens.
   if (!token) {
-    const authHeader = request.headers.get('Authorization');
-    if (authHeader?.startsWith('Bearer ')) {
-      token = authHeader.slice(7);
-    }
+    token = getLegacyBearerToken(request);
   }
 
   if (!token) {
@@ -99,12 +124,13 @@ export async function verifyAdminAuth(request, env) {
     return { ok: true, mode: 'session', exp: sessionResult.exp };
   }
 
-  // Fall back to legacy long-lived ADMIN_TOKEN bearer for backward compat.
+  // Deprecated: long-lived ADMIN_TOKEN bearer fallback exists only until all
+  // API clients migrate to minted session tokens or cookie-based auth.
   if (!verifySecret(token, env.ADMIN_TOKEN)) {
     return { ok: false, status: 401, error: 'Unauthorized' };
   }
 
-  return { ok: true };
+  return { ok: true, mode: 'legacy-admin-token', deprecated: true };
 }
 
 // HMAC session tokens (P1-5 fix from MONOREPO_REVIEW_2026-04-29.md).
@@ -114,9 +140,9 @@ export async function verifyAdminAuth(request, env) {
 // `SESSION_MAX_AGE_MS` (4 hours by default) and bind their own expiry.
 // Verifying does NOT require KV — the token is self-describing.
 //
-// Migration path: when issuing a new admin login, callers should prefer
-// `mintSessionToken(env)` over storing the raw ADMIN_TOKEN in a cookie.
-// Existing long-lived bearer tokens still verify until ADMIN_TOKEN is rotated.
+// Migration path: `/api/auth/login` mints session tokens. Existing long-lived
+// bearer tokens still verify until ADMIN_TOKEN is rotated, but new callers must
+// not persist or replay raw ADMIN_TOKEN values.
 const SESSION_MAX_AGE_MS = 4 * 60 * 60 * 1000;
 
 async function hmacHex(key, message) {
@@ -166,12 +192,12 @@ export async function verifySessionToken(token, env) {
   return { ok: true, exp };
 }
 /**
- * Create Set-Cookie header for admin authentication
+ * Create Set-Cookie header for admin session-token authentication.
  * HttpOnly + Secure + SameSite=Strict for XSS protection
  */
 export function createAuthCookie(token, maxAge = 86400) {
   const secure = 'Secure'; // Always use Secure for production
-  return `adminToken=${token}; HttpOnly; ${secure}; SameSite=Strict; Path=/; Max-Age=${maxAge}`;
+  return `${ADMIN_SESSION_COOKIE}=${token}; HttpOnly; ${secure}; SameSite=Strict; Path=/; Max-Age=${maxAge}`;
 }
 
 /**

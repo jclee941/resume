@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync } from 'fs';
+import { readFileSync, writeFileSync, mkdirSync, readdirSync } from 'fs';
 import { join, dirname } from 'path';
 import { homedir } from 'os';
 import {
@@ -7,11 +7,9 @@ import {
   formatErrorsForMCP,
 } from '../../shared/validation/index.js';
 
-const DEFAULT_OPENCODE_DATA_DIR = join(homedir(), '.OpenCode', 'data');
-const DEFAULT_CLAUDE_DATA_DIR = join(homedir(), '.claude', 'data');
+const DEFAULT_OPENCODE_DATA_DIR = join(homedir(), '.opencode', 'data');
 
 export const DATA_DIR = join(DEFAULT_OPENCODE_DATA_DIR, 'wanted-resume');
-export const LEGACY_DATA_DIR = join(DEFAULT_CLAUDE_DATA_DIR, 'wanted-resume');
 
 export class BaseCommand {
   constructor(api, { logger = console } = {}) {
@@ -22,13 +20,7 @@ export class BaseCommand {
   resolveResumeFilePathForRead(resumeId, filePathFromParams) {
     if (filePathFromParams) return filePathFromParams;
 
-    const preferred = join(DATA_DIR, `${resumeId}.json`);
-    if (existsSync(preferred) || !resumeId) return preferred;
-
-    const legacy = join(LEGACY_DATA_DIR, `${resumeId}.json`);
-    if (existsSync(legacy)) return legacy;
-
-    return preferred;
+    return join(DATA_DIR, `${resumeId}.json`);
   }
 
   resolveResumeFilePathForWrite(resumeId, filePathFromParams) {

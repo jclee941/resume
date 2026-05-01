@@ -1,6 +1,7 @@
 import { jsonResponse } from '../middleware/cors.js';
 import { getConfig, saveConfig } from '../services/config.js';
-import { enqueueTask, MESSAGE_TYPES, PRIORITY } from '../queue-consumer.js';
+import { enqueueTask } from '../queues/queue-enqueuer.js';
+import { MESSAGE_TYPES, PRIORITY } from '../queues/queue-message-constants.js';
 
 export function registerAdminRoutes(router, ctx) {
   const { env, diagnostics, log } = ctx;

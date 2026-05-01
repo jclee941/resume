@@ -1,5 +1,9 @@
 # Bazel Build System Guide
 
+**Status:** ARCHIVED — Bazel facade dropped per [ADR-0008](adr/0008-drop-bazel-facade.md). npm workspaces is the sole build orchestrator.
+
+This document is retained for historical context only.
+
 This project uses Bazel as a build coordination layer with npm as the underlying execution engine.
 
 ## Quick Start

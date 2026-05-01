@@ -1,15 +1,10 @@
-import { UnifiedJobCrawler } from '../../crawlers/index.js';
+import { UnifiedJobCrawler } from '../../crawlers/unified/unified-job-crawler.js';
 
 const crawler = new UnifiedJobCrawler();
 
 export default async function searchRoutes(fastify) {
   fastify.get('/', async (request) => {
-    const {
-      keyword = '시니어 엔지니어',
-      limit = 20,
-      minScore,
-      platforms,
-    } = request.query;
+    const { keyword = '시니어 엔지니어', limit = 20, minScore, platforms } = request.query;
 
     const result = await crawler.searchWithMatching({
       keyword,

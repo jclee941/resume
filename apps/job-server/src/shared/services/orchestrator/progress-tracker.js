@@ -8,6 +8,14 @@
  */
 
 import { EventEmitter } from 'node:events';
+import { buildOverallProgress } from './progress-tracker/progress-summary.js';
+import { resetTaskIdCounter } from './progress-tracker/task-id-counter.js';
+import {
+  areTasksComplete,
+  filterTasks,
+  summarizeTasksByPlatform,
+} from './progress-tracker/task-queries.js';
+import { applyTaskProgressUpdate, createTaskState } from './progress-tracker/task-state.js';
 
 /**
  * @typedef {'pending'|'running'|'completed'|'failed'|'cancelled'} TaskStatus
@@ -28,12 +36,6 @@ import { EventEmitter } from 'node:events';
  * @property {Error|null} error - Error if failed
  * @property {Record<string, unknown>} metadata - Arbitrary metadata
  */
-
-// Issue #16: closure-bound holder for monotonic counter; tests can reset.
-const _taskIdCounterHolder = (() => {
-  let n = 0;
-  return { next: () => ++n, reset: () => { n = 0; } };
-})();
 
 export class ProgressTracker extends EventEmitter {
   /** @type {Map<string, TaskState>} */
@@ -58,23 +60,8 @@ export class ProgressTracker extends EventEmitter {
    * @returns {string} Task ID
    */
   addTask(platform, type, options = {}) {
-    const id = `task-${_taskIdCounterHolder.next()}`;
-
-    /** @type {TaskState} */
-    const task = {
-      id,
-      platform,
-      type,
-      status: 'pending',
-      createdAt: Date.now(),
-      startedAt: null,
-      completedAt: null,
-      progress: 0,
-      itemsProcessed: 0,
-      itemsTotal: options.itemsTotal || 0,
-      error: null,
-      metadata: options.metadata || {},
-    };
+    const task = createTaskState(platform, type, options);
+    const { id } = task;
 
     this.#tasks.set(id, task);
     this.emit('task:added', { taskId: id, platform, type });
@@ -100,21 +87,7 @@ export class ProgressTracker extends EventEmitter {
    */
   updateProgress(taskId, update) {
     const task = this.#getTask(taskId);
-
-    if (update.itemsProcessed !== undefined) {
-      task.itemsProcessed = update.itemsProcessed;
-    }
-    if (update.itemsTotal !== undefined) {
-      task.itemsTotal = update.itemsTotal;
-    }
-    if (update.progress !== undefined) {
-      task.progress = Math.min(100, Math.max(0, update.progress));
-    } else if (task.itemsTotal > 0) {
-      task.progress = Math.round((task.itemsProcessed / task.itemsTotal) * 100);
-    }
-    if (update.metadata) {
-      task.metadata = { ...task.metadata, ...update.metadata };
-    }
+    applyTaskProgressUpdate(task, update);
 
     this.emit('task:progress', {
       taskId,
@@ -210,13 +183,7 @@ export class ProgressTracker extends EventEmitter {
    * @returns {TaskState[]}
    */
   getTasks(filter = {}) {
-    const tasks = [...this.#tasks.values()];
-    return tasks.filter((t) => {
-      if (filter.platform && t.platform !== filter.platform) return false;
-      if (filter.status && t.status !== filter.status) return false;
-      if (filter.type && t.type !== filter.type) return false;
-      return true;
-    });
+    return filterTasks(this.#tasks.values(), filter);
   }
 
   /**
@@ -224,25 +191,7 @@ export class ProgressTracker extends EventEmitter {
    * @returns {Record<string, { total: number, pending: number, running: number, completed: number, failed: number, cancelled: number }>}
    */
   getPlatformSummary() {
-    /** @type {Record<string, { total: number, pending: number, running: number, completed: number, failed: number, cancelled: number }>} */
-    const summary = {};
-
-    for (const task of this.#tasks.values()) {
-      if (!summary[task.platform]) {
-        summary[task.platform] = {
-          total: 0,
-          pending: 0,
-          running: 0,
-          completed: 0,
-          failed: 0,
-          cancelled: 0,
-        };
-      }
-      summary[task.platform].total++;
-      summary[task.platform][task.status]++;
-    }
-
-    return summary;
+    return summarizeTasksByPlatform(this.#tasks.values());
   }
 
   /**
@@ -250,17 +199,7 @@ export class ProgressTracker extends EventEmitter {
    * @returns {{ totalTasks: number, progress: number, counters: typeof ProgressTracker.prototype['#counters'] extends never ? never : { started: number, completed: number, failed: number, cancelled: number }, elapsedMs: number, tasksPerSecond: number }}
    */
   getOverallProgress() {
-    const total = this.#tasks.size;
-    const finished = this.#counters.completed + this.#counters.failed + this.#counters.cancelled;
-    const elapsed = Date.now() - this.#startTime;
-
-    return {
-      totalTasks: total,
-      progress: total > 0 ? Math.round((finished / total) * 100) : 0,
-      counters: { ...this.#counters },
-      elapsedMs: elapsed,
-      tasksPerSecond: elapsed > 0 ? this.#counters.completed / (elapsed / 1000) : 0,
-    };
+    return buildOverallProgress(this.#tasks.size, this.#counters, this.#startTime);
   }
 
   /**
@@ -268,10 +207,7 @@ export class ProgressTracker extends EventEmitter {
    * @returns {boolean}
    */
   isComplete() {
-    for (const task of this.#tasks.values()) {
-      if (task.status === 'pending' || task.status === 'running') return false;
-    }
-    return this.#tasks.size > 0;
+    return areTasksComplete(this.#tasks.values(), this.#tasks.size);
   }
 
   /**
@@ -281,7 +217,7 @@ export class ProgressTracker extends EventEmitter {
     this.#tasks.clear();
     this.#counters = { started: 0, completed: 0, failed: 0, cancelled: 0 };
     this.#startTime = Date.now();
-    _taskIdCounterHolder.reset();
+    resetTaskIdCounter();
   }
 
   /**

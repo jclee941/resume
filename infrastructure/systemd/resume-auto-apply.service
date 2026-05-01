@@ -6,7 +6,7 @@ After=network.target
 Type=oneshot
 User=jclee
 WorkingDirectory=/home/jclee/dev/resume/apps/job-server
-ExecStart=/home/jclee/dev/resume/apps/job-server/scripts/run-auto-apply.sh
+ExecStart=/usr/bin/go run /home/jclee/dev/resume/apps/job-server/scripts/run-auto-apply.go
 StandardOutput=journal
 StandardError=journal
 

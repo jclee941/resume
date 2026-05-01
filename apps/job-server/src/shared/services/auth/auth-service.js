@@ -179,7 +179,7 @@ export class AuthService {
    */
   async renewSession(platform) {
     const currentSession = SessionManager.load(platform);
-    
+
     if (!currentSession) {
       return {
         success: false,
@@ -189,7 +189,7 @@ export class AuthService {
 
     // Check if session is still valid
     const health = SessionManager.checkHealth(platform, 2 * 60 * 60 * 1000);
-    
+
     if (health.valid && !health.expiringSoon) {
       return {
         success: true,
@@ -260,25 +260,43 @@ export class AuthService {
   }
 }
 
-// Singleton _instanceHolder.get() factory
-// DEPRECATED: AGENTS.md violation tracked in docs/architecture/MONOREPO_REVIEW_2026-04-29.md (P0-5).
-// Module-level singleton — migrate to constructor-injected DI when refactoring this file.
-// P0-5 audit fix: replace module-level mutable singleton with closure-bound holder.
+/**
+ * Create an isolated AuthService instance for constructor-injected dependencies.
+ * @param {AuthConfig} config
+ * @param {SessionStore} [store]
+ * @returns {AuthService}
+ */
+export function createAuthService(config, store) {
+  return new AuthService(config, store);
+}
+
+// Deprecated singleton compatibility layer.
+// DEPRECATED: Prefer createAuthService() and pass the instance through constructors.
+// Singleton exports remain temporarily for existing imports and tests.
 // Migration: docs/architecture/MONOREPO_REVIEW_2026-04-29.md (singleton DI plan).
 const _instanceHolder = (() => {
   let v = null;
-  return { get: () => v, set: (x) => { v = x; }, clear: () => { v = null; } };
+  return {
+    get: () => v,
+    set: (x) => {
+      v = x;
+    },
+    clear: () => {
+      v = null;
+    },
+  };
 })();
 
 /**
  * Get or create AuthService singleton
+ * @deprecated Use createAuthService() and inject the returned instance through constructors.
  * @param {AuthConfig} [config]
  * @param {SessionStore} [store]
- * @returns {AuthService}
+ * @returns {AuthService|null}
  */
 export function getAuthService(config, store) {
   if (!_instanceHolder.get() && config) {
-    _instanceHolder.set(new AuthService(config, store));
+    _instanceHolder.set(createAuthService(config, store));
   }
   return _instanceHolder.get();
 }

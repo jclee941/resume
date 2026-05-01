@@ -3,7 +3,7 @@
  *
  * Refactored per docs/architecture/MONOREPO_REVIEW_2026-04-29.md P0-5.
  *
- * - `createMetrics(options)` is the new DI-friendly factory. Callers should
+ * - `createGlobalMetrics(config)` is the new DI-friendly factory. Callers should
  *   construct one instance per logical scope and pass it explicitly.
  * - `getMetrics()` and `resetMetrics()` remain for backward compatibility
  *   but operate on a private module-internal cache that is created lazily.
@@ -17,11 +17,21 @@ import { PerformanceMetrics } from './performance-reporter.js';
 
 /**
  * Create a fresh PerformanceMetrics instance. Always returns a new object.
+ * @param {Object} [config]
+ * @returns {PerformanceMetrics}
+ */
+export function createGlobalMetrics(config = {}) {
+  return new PerformanceMetrics(config);
+}
+
+/**
+ * Create a fresh PerformanceMetrics instance. Always returns a new object.
+ * @deprecated Use createGlobalMetrics(config) and inject the returned instance through constructors.
  * @param {Object} [options]
  * @returns {PerformanceMetrics}
  */
 export function createMetrics(options = {}) {
-  return new PerformanceMetrics(options);
+  return createGlobalMetrics(options);
 }
 
 // Closure-bound holder replaces top-level `let globalMetrics`. The reference
@@ -44,14 +54,15 @@ const cache = (() => {
 
 /**
  * Lazy backward-compat singleton accessor. New code should call
- * `createMetrics()` directly and store the instance in DI.
+ * `createGlobalMetrics()` directly and store the instance in DI.
+ * @deprecated Use createGlobalMetrics(config) and inject the returned instance through constructors.
  * @param {Object} [options]
  * @returns {PerformanceMetrics}
  */
 export function getMetrics(options = {}) {
   let m = cache.get();
   if (!m) {
-    m = createMetrics(options);
+    m = createGlobalMetrics(options);
     cache.set(m);
   }
   return m;
@@ -60,6 +71,7 @@ export function getMetrics(options = {}) {
 /**
  * Stop the cached singleton and clear the holder. Tests rely on this for
  * isolation; production callers should not depend on it.
+ * @deprecated Use createGlobalMetrics(config) and inject the returned instance through constructors.
  */
 export function resetMetrics() {
   const m = cache.get();
@@ -71,6 +83,7 @@ export function resetMetrics() {
 
 /**
  * Read the currently cached singleton without lazily creating one.
+ * @deprecated Use createGlobalMetrics(config) and inject the returned instance through constructors.
  * @returns {PerformanceMetrics|null}
  */
 export function getGlobalMetricsInstance() {

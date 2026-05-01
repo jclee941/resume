@@ -7,7 +7,7 @@ import {
   recordApplication,
   saveWorkflowState,
 } from './application/database.js';
-import { runApplicationWorkflow } from './application/orchestration.js';
+import { runApplicationWorkflow } from './application/workflow-runner.js';
 import {
   generateCoverLetter,
   buildCoverLetterPrompt,

@@ -361,6 +361,12 @@ cp packages/data/resumes/master/resume_data.json \
 
 ### 10. ALWAYS Use Bazel for Affected Target Analysis
 
+**Status**: ARCHIVED — Bazel facade dropped per ADR-0008. Use `go run ./tools/ci/affected.go origin/master` instead.
+
+**References**:
+
+- `tools/ci/affected.go`
+
 **Affected Files**:
 
 - `BUILD.bazel` (all packages)

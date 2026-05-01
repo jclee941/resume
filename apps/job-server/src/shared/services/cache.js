@@ -347,34 +347,66 @@ export class TypedCache {
   }
 }
 
-// Global typed cache instance
-// DEPRECATED: AGENTS.md violation tracked in docs/architecture/MONOREPO_REVIEW_2026-04-29.md (P0-5).
-// Module-level singleton — migrate to constructor-injected DI when refactoring this file.
-// P0-5 audit fix: replace module-level mutable singleton with closure-bound holder.
+/**
+ * Create an isolated typed cache instance for constructor-injected services.
+ * @param {Object} [defaultOptions] - Default options passed to each namespaced LRUCache.
+ * @returns {TypedCache}
+ */
+export function createCache(defaultOptions = {}) {
+  return new TypedCache(defaultOptions);
+}
+
+// Deprecated singleton compatibility layer.
+// DEPRECATED: Prefer createCache() and pass the instance through constructors.
+// Singleton exports remain temporarily for existing imports and tests.
 // Migration: docs/architecture/MONOREPO_REVIEW_2026-04-29.md (singleton DI plan).
 const _globalCacheHolder = (() => {
   let v = null;
-  return { get: () => v, set: (x) => { v = x; }, clear: () => { v = null; } };
+  return {
+    get: () => v,
+    set: (x) => {
+      v = x;
+    },
+    clear: () => {
+      v = null;
+    },
+  };
 })();
 
 /**
  * Get or create global typed cache
+ * @deprecated Use createCache() and inject the returned instance through constructors.
  * @returns {TypedCache}
  */
 export function getGlobalCache() {
   if (!_globalCacheHolder.get()) {
-    _globalCacheHolder.set(new TypedCache());
+    _globalCacheHolder.set(createCache());
   }
   return _globalCacheHolder.get();
 }
 
 /**
+ * Replace global typed cache (for legacy tests and compatibility wiring).
+ * @deprecated Use createCache() and inject the returned instance through constructors.
+ * @param {TypedCache|null} cache
+ * @returns {TypedCache|null}
+ */
+export function setGlobalCache(cache) {
+  if (_globalCacheHolder.get() && _globalCacheHolder.get() !== cache) {
+    _globalCacheHolder.get().destroy();
+  }
+  _globalCacheHolder.set(cache);
+  return cache;
+}
+
+/**
  * Reset global cache (for testing)
+ * @deprecated Use createCache() and inject the returned instance through constructors.
  */
 export function resetGlobalCache() {
   if (_globalCacheHolder.get()) {
     _globalCacheHolder.get().destroy();
-    _globalCacheHolder.set(null);
+    _globalCacheHolder.clear();
   }
 }
 

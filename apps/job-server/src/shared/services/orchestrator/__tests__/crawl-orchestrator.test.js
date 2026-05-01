@@ -1,7 +1,11 @@
 import { describe, it, beforeEach, afterEach, mock } from 'node:test';
 import assert from 'node:assert/strict';
-import { CrawlOrchestrator, SUPPORTED_PLATFORMS, DEFAULT_OPTIONS } from '../crawl-orchestrator.js';
-import UnifiedJobCrawler from '../../../../crawlers/index.js';
+import {
+  CrawlOrchestrator,
+  SUPPORTED_PLATFORMS,
+  DEFAULT_OPTIONS,
+} from '../crawl-orchestrator/index.js';
+import UnifiedJobCrawler from '../../../../crawlers/unified/unified-job-crawler.js';
 
 describe('CrawlOrchestrator', { concurrency: 1 }, () => {
   let orchestrator;

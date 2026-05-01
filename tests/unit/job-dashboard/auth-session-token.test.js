@@ -77,14 +77,28 @@ describe('auth-service mintSessionToken / verifySessionToken (P1-5)', () => {
     expect(typeof result.exp).toBe('number');
   });
 
-  test('verifyAdminAuth still accepts legacy raw ADMIN_TOKEN bearer', async () => {
+  test('verifyAdminAuth still accepts deprecated legacy raw ADMIN_TOKEN bearer', async () => {
     const request = new Request('https://example.com/api/applications', {
       headers: { Authorization: `Bearer ${ENV.ADMIN_TOKEN}` },
     });
     const result = await auth.verifyAdminAuth(request, ENV);
     expect(result.ok).toBe(true);
-    // legacy path returns ok without `mode: 'session'`
-    expect(result.mode).toBeUndefined();
+    expect(result.mode).toBe('legacy-admin-token');
+    expect(result.deprecated).toBe(true);
+  });
+
+  test('verifyAdminAuth accepts session token from HttpOnly cookie before bearer fallback', async () => {
+    const token = await auth.mintSessionToken(ENV);
+    const request = new Request('https://example.com/api/applications', {
+      headers: {
+        Cookie: `adminToken=${token}`,
+        Authorization: `Bearer ${ENV.ADMIN_TOKEN}`,
+      },
+    });
+    const result = await auth.verifyAdminAuth(request, ENV);
+    expect(result.ok).toBe(true);
+    expect(result.mode).toBe('session');
+    expect(result.deprecated).toBeUndefined();
   });
 
   test('verifyAdminAuth rejects when token absent', async () => {

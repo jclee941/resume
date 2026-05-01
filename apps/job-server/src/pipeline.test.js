@@ -2,10 +2,9 @@ import { SessionManager } from './tools/auth.js';
 import resumeSyncTool from './tools/resume-sync.js';
 import { existsSync, unlinkSync, mkdirSync } from 'fs';
 import { join } from 'path';
-import { homedir } from 'os';
+import { DATA_DIR } from './tools/commands/base-command.js';
 
 const RESUME_ID = 'AwcICwcLBAFIAgcDCwUAB01F';
-const DATA_DIR = join(homedir(), '.claude', 'data', 'wanted-resume');
 const TEST_FILE = join(DATA_DIR, `${RESUME_ID}.json`);
 
 async function runTests() {
@@ -45,9 +44,7 @@ async function runTests() {
 
   // Enable Mock Mode if session is missing/expired
   if (!validSession) {
-    console.log(
-      '\n⚠️  No valid session found. Switching to MOCK MODE for testing.',
-    );
+    console.log('\n⚠️  No valid session found. Switching to MOCK MODE for testing.');
     process.env.MOCK_WANTED_API = 'true';
   }
 
@@ -68,11 +65,8 @@ async function runTests() {
       resume_id: RESUME_ID,
     });
     if (!result.success) throw new Error(result.error);
-    if (!existsSync(result.file_path))
-      throw new Error('Export file not created');
-    console.log(
-      `(${result.summary.careers} careers, ${result.summary.skills} skills)`,
-    );
+    if (!existsSync(result.file_path)) throw new Error('Export file not created');
+    console.log(`(${result.summary.careers} careers, ${result.summary.skills} skills)`);
   });
 
   await test('diff action (no changes)', async () => {
@@ -139,8 +133,7 @@ async function runTests() {
       action: 'export',
     });
     if (result.success) throw new Error('Should have failed');
-    if (!result.error.includes('resume_id'))
-      throw new Error('Wrong error message');
+    if (!result.error.includes('resume_id')) throw new Error('Wrong error message');
   });
 
   await test('invalid action returns error', async () => {
@@ -148,8 +141,7 @@ async function runTests() {
       action: 'invalid_action',
     });
     if (result.success) throw new Error('Should have failed');
-    if (!result.available_actions)
-      throw new Error('No available_actions returned');
+    if (!result.available_actions) throw new Error('No available_actions returned');
   });
 
   await test('import with missing file fails', async () => {
@@ -159,8 +151,7 @@ async function runTests() {
       file_path: '/tmp/nonexistent.json',
     });
     if (result.success) throw new Error('Should have failed');
-    if (!result.error.includes('not found'))
-      throw new Error('Wrong error message');
+    if (!result.error.includes('not found')) throw new Error('Wrong error message');
   });
 
   await test('sync_educations action (dry run)', async () => {
@@ -173,7 +164,7 @@ async function runTests() {
     if (result.section !== 'educations') throw new Error('Wrong section');
   });
 
-  console.log(`\n${  '='.repeat(60)}`);
+  console.log(`\n${'='.repeat(60)}`);
   console.log(`Results: ${results.passed} passed, ${results.failed} failed`);
   console.log('='.repeat(60));
 

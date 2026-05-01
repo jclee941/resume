@@ -1,6 +1,6 @@
 import { UnifiedApplySystem } from '../../shared/services/apply/index.js';
 import { ApplicationManager } from '../application-manager.js';
-import { UnifiedJobCrawler } from '../../crawlers/index.js';
+import { UnifiedJobCrawler } from '../../crawlers/unified/unified-job-crawler.js';
 import { AutoApplier } from '../auto-applier.js';
 import { getResumeMasterMarkdownPath } from '../../shared/utils/paths.js';
 
