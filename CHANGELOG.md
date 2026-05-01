@@ -5,6 +5,11 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.22.3] - 2026-05-01
+
+### Changes
+- chore: add standard automation workflows (#61) (af7a55b)
+
 ## [v1.22.2] - 2026-05-01
 
 ### Changes
