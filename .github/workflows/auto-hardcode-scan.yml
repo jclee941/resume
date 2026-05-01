@@ -1,0 +1,81 @@
+name: Auto Hardcode Scan
+on:
+  schedule:
+    - cron: '0 0 * * 1'  # Every Monday at 00:00 UTC
+  workflow_dispatch:
+
+jobs:
+  scan:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Scan for hardcoded values
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 << 'PYEOF'
+          import os
+          import re
+          import subprocess
+          from pathlib import Path
+
+          # Regex patterns matching pr_hardcode_detector.py
+          HARDCODE_PATTERNS = {
+              "api_key": re.compile(r'(?i)(api[_-]?key|apikey)\s*[:=]\s*["\'][a-z0-9]{16,}["\']'),
+              "secret": re.compile(r'(?i)(secret|password|passwd|pwd|token)\s*[:=]\s*["\'][^"\']{4,}["\']'),
+              "ip_address": re.compile(r'\b(?:\d{1,3}\.){3}\d{1,3}(?::\d+)?\b'),
+              "url": re.compile(r'https?://[^\s"\']+(?<!\{)'),
+          }
+
+          IGNORE_DIRS = {".git", "node_modules", ".venv", "venv", "__pycache__", ".pytest_cache", ".mypy_cache"}
+
+          findings = []
+          for p in Path(".").rglob("*"):
+              if p.is_file():
+                  if any(part in IGNORE_DIRS for part in p.parts):
+                      continue
+                  try:
+                      content = p.read_text(encoding="utf-8", errors="ignore")
+                      for name, pattern in HARDCODE_PATTERNS.items():
+                          for m in pattern.finditer(content):
+                              line_num = content[: m.start()].count("\n") + 1
+                              findings.append(
+                                  {
+                                      "file": str(p),
+                                      "category": name,
+                                      "line": line_num,
+                                      "match": m.group(),
+                                  }
+                              )
+                  except Exception:
+                      pass
+
+          if findings:
+              body = "## 🔍 Hardcoded Values Detected (Scheduled Scan)\n\n"
+              body += "| Category | File | Line | Match |\n"
+              body += "|----------|------|------|-------|\n"
+              for f in findings[:50]:
+                  match_escaped = f['match'].replace("|", "\\|").replace("\n", " ")
+                  body += f"| {f['category']} | `{f['file']}` | {f['line']} | `{match_escaped}` |\n"
+              body += "\n**Recommendation:** Review these findings and consider extracting values into environment variables or configuration files."
+
+              subprocess.run(
+                  [
+                      "gh",
+                      "issue",
+                      "create",
+                      "--title",
+                      "[bot] Hardcoded values detected in scheduled scan",
+                      "--body",
+                      body,
+                      "--label",
+                      "hardcode,security,automated",
+                  ],
+                  check=True,
+              )
+              print(f"Created issue with {len(findings)} findings.")
+          else:
+              print("No hardcoded values detected.")
+          PYEOF
