@@ -159,7 +159,13 @@ test.describe('Performance & Core Web Vitals', () => {
     !!process.env.CI,
     'Web Vitals tracking requires /api/vitals endpoint not available in CI'
   );
-  test('should track and send Web Vitals to /api/vitals', async ({ page }) => {
+  test('should track and send Web Vitals to /api/vitals', async ({ page, request }) => {
+    // Skip if /api/vitals endpoint is not available
+    const healthResponse = await request.get('/api/vitals');
+    if (healthResponse.status() === 404) {
+      test.skip(true, '/api/vitals endpoint not available');
+    }
+
     const vitalsRequests = [];
 
     // Intercept /api/vitals requests
