@@ -52,7 +52,7 @@ self.addEventListener('fetch', (event) => {
   // Network-first strategy for HTML
   // Network-only for HTML — never cache HTML responses because they carry per-response
   // CSP nonces. Caching would create stale nonce mismatches that block inline scripts.
-  if (request.headers.get('accept').includes('text/html')) {
+  if ((request.headers.get('accept') || '').includes('text/html')) {
     event.respondWith(
       fetch(request).catch(() =>
         new Response('Offline - please check your connection', {
