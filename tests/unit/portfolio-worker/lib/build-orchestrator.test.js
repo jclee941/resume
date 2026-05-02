@@ -71,7 +71,9 @@ describe('build-orchestrator', () => {
     readBuildInputs.mockResolvedValue({
       indexHtmlRaw: '<html></html>',
       indexEnHtmlRaw: '<html lang="en"></html>',
+      indexJaHtmlRaw: '<html lang="ja"></html>',
       projectDataRaw: '{"resume":[],"projects":[]}',
+      projectDataJaRaw: '{"resume":[],"projects":[]}',
       mainJs: 'main()',
       cssContent: 'body{}',
       manifestJson: '{}',
@@ -93,8 +95,10 @@ describe('build-orchestrator', () => {
         resumeDescriptionHtml: '',
         resumeCardsHtml: '<div>cards</div>',
         resumeCardsEnHtml: '<div>cards-en</div>',
+        resumeCardsJaHtml: '<div>cards-ja</div>',
         projectCardsHtml: '<div>projects</div>',
         projectCardsEnHtml: '<div>projects-en</div>',
+        projectCardsJaHtml: '<div>projects-ja</div>',
         infrastructureCardsHtml: '<div>infra</div>',
         certCardsHtml: '<div>certs</div>',
         skillsHtml: '<div>skills</div>',
@@ -135,19 +139,19 @@ describe('build-orchestrator', () => {
       expect(encodeBinaryAssets).toHaveBeenCalled();
     });
 
-    it('calls buildLocalizedHtml twice (ko and en)', async () => {
+    it('calls buildLocalizedHtml for all locales (ko, en, ja)', async () => {
       await runWorkerBuild(buildOpts);
-      expect(buildLocalizedHtml).toHaveBeenCalledTimes(2);
+      expect(buildLocalizedHtml).toHaveBeenCalledTimes(3);
     });
 
-    it('calls injectScriptNoncePlaceholder for both locales', async () => {
+    it('calls injectScriptNoncePlaceholder for all locales', async () => {
       await runWorkerBuild(buildOpts);
-      expect(injectScriptNoncePlaceholder).toHaveBeenCalledTimes(2);
+      expect(injectScriptNoncePlaceholder).toHaveBeenCalledTimes(3);
     });
 
-    it('calls extractStyleHashes for both locales', async () => {
+    it('calls extractStyleHashes for all locales', async () => {
       await runWorkerBuild(buildOpts);
-      expect(extractStyleHashes).toHaveBeenCalledTimes(2);
+      expect(extractStyleHashes).toHaveBeenCalledTimes(3);
     });
 
     it('calls mergeHashes', async () => {
@@ -155,9 +159,9 @@ describe('build-orchestrator', () => {
       expect(mergeHashes).toHaveBeenCalled();
     });
 
-    it('calls escapeForTemplateLiteral for both locale HTML', async () => {
+    it('calls escapeForTemplateLiteral for all locale HTML', async () => {
       await runWorkerBuild(buildOpts);
-      expect(escapeForTemplateLiteral).toHaveBeenCalledTimes(2);
+      expect(escapeForTemplateLiteral).toHaveBeenCalledTimes(3);
     });
 
     it('calls generateSecurityHeaders', async () => {

@@ -43,6 +43,7 @@ function buildWorkerCode(options) {
     deployedAt: options.deployedAt,
     indexHtml: options.indexHtml,
     indexEnHtml: options.indexEnHtml || options.indexHtml,
+    indexJaHtml: options.indexJaHtml || options.indexHtml,
     manifestJson: options.manifestJson,
     manifestEnJson: options.manifestEnJson || options.manifestJson,
     serviceWorker: options.serviceWorker,
