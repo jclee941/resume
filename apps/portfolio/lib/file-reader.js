@@ -26,11 +26,6 @@ function getFilesToRead(baseDir) {
       name: 'indexEnHtmlRaw',
     },
     {
-      path: path.join(baseDir, 'index-ja.html'),
-      encoding: 'utf-8',
-      name: 'indexJaHtmlRaw',
-    },
-    {
       path: path.join(baseDir, 'data.json'),
       encoding: 'utf-8',
       name: 'projectDataRaw',

@@ -12,6 +12,7 @@ jest.mock('../../../../apps/portfolio/lib/data-processor', () => ({
   encodeBinaryAssets: jest.fn(),
 }));
 jest.mock('../../../../apps/portfolio/lib/html-transformer', () => ({
+  buildJapaneseTemplate: jest.fn((html) => html.replace('lang="ko"', 'lang="ja"')),
   buildLocalizedHtml: jest.fn(),
   escapeForTemplateLiteral: jest.fn(),
 }));
@@ -71,7 +72,6 @@ describe('build-orchestrator', () => {
     readBuildInputs.mockResolvedValue({
       indexHtmlRaw: '<html></html>',
       indexEnHtmlRaw: '<html lang="en"></html>',
-      indexJaHtmlRaw: '<html lang="ja"></html>',
       projectDataRaw: '{"resume":[],"projects":[]}',
       projectDataJaRaw: '{"resume":[],"projects":[]}',
       mainJs: 'main()',

@@ -9,7 +9,7 @@ const securityHeadersModule = require('./security-headers');
 const { injectScriptNoncePlaceholder } = require('./templates');
 const { readBuildInputs } = require('./file-reader');
 const { processProjectData, encodeBinaryAssets } = require('./data-processor');
-const { buildLocalizedHtml, escapeForTemplateLiteral } = require('./html-transformer');
+const { buildJapaneseTemplate, buildLocalizedHtml, escapeForTemplateLiteral } = require('./html-transformer');
 const { buildAndWriteWorker } = require('./worker-writer');
 
 /**
@@ -22,7 +22,6 @@ async function runWorkerBuild({ baseDir, version, allowedEmails, logger }) {
   const {
     indexHtmlRaw,
     indexEnHtmlRaw,
-    indexJaHtmlRaw,
     projectDataRaw,
     projectDataEnRaw,
     projectDataJaRaw,
@@ -100,27 +99,23 @@ async function runWorkerBuild({ baseDir, version, allowedEmails, logger }) {
   });
   logger.log('✓ English HTML processed\n');
 
-  let indexJaHtml = indexJaHtmlRaw
-    ? await buildLocalizedHtml(indexJaHtmlRaw, {
-        cssContent,
-        heroContentHtml: templates.heroContentHtml,
-        resumeDescriptionHtml: templates.resumeDescriptionHtml,
-        resumeCardsHtml: templates.resumeCardsJaHtml,
-        projectCardsHtml: templates.projectCardsJaHtml,
-        infrastructureCardsHtml: templates.infrastructureCardsHtml,
-        certCardsHtml: templates.certCardsHtml,
-        skillsHtml: templates.skillsHtml,
-        contactGridHtml: templates.contactGridHtml,
-        aboutContentHtml: templates.aboutContentJaHtml,
-        resumePdfUrl: projectData.resumeDownload.pdfUrl,
-        resumeDocxUrl: projectData.resumeDownload.docxUrl,
-        resumeMdUrl: projectData.resumeDownload.mdUrl,
-        resumeChatDataBase64: resumeChatDataBase64Literal,
-      })
-    : indexHtml;
-  if (indexJaHtmlRaw) {
-    logger.log('✓ Japanese HTML processed\n');
-  }
+  let indexJaHtml = await buildLocalizedHtml(buildJapaneseTemplate(indexHtmlRaw), {
+    cssContent,
+    heroContentHtml: templates.heroContentHtml,
+    resumeDescriptionHtml: templates.resumeDescriptionHtml,
+    resumeCardsHtml: templates.resumeCardsJaHtml,
+    projectCardsHtml: templates.projectCardsJaHtml,
+    infrastructureCardsHtml: templates.infrastructureCardsHtml,
+    certCardsHtml: templates.certCardsHtml,
+    skillsHtml: templates.skillsHtml,
+    contactGridHtml: templates.contactGridHtml,
+    aboutContentHtml: templates.aboutContentJaHtml,
+    resumePdfUrl: projectData.resumeDownload.pdfUrl,
+    resumeDocxUrl: projectData.resumeDownload.docxUrl,
+    resumeMdUrl: projectData.resumeDownload.mdUrl,
+    resumeChatDataBase64: resumeChatDataBase64Literal,
+  });
+  logger.log('✓ Japanese HTML processed\n');
 
   const styleHashes = mergeHashes(
     extractStyleHashes(indexHtml),
