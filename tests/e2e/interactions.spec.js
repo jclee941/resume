@@ -108,7 +108,7 @@ test.describe('Contact Links Interaction', () => {
   test('email link should have mailto protocol', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-    const emailLink = page.locator('a[href^="mailto:"]');
+    const emailLink = page.locator('a[href^="mailto:"]').first();
     await expect(emailLink).toHaveAttribute('href', 'mailto:qws941@kakao.com');
   });
 
