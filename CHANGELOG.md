@@ -5,6 +5,23 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.23.0] - 2026-05-02
+
+### Changes
+- fix(job-server): correct import path and fix resource pool health check test (549106d)
+- fix(e2e): make dashboard and interaction tests resilient (f63321e)
+- fix(e2e): correct accessibility and SEO test assertions (8a984c5)
+- fix(e2e): reduce parallel workers and add test tolerance (831129e)
+- fix(layout): improve responsive layout and mobile UX (a1999db)
+- fix(portfolio): sw null-safe header, deprecated meta tag, empty data-url (8965060)
+- Merge branch 'master' of https://github.com/jclee941/resume (0262095)
+- refactor: complete legacy cleanup across monorepo (16342d7)
+- fix(saramin): add CKS/CNCF to certSkills regex (b81a40e)
+- fix(review): resolve ISMS-P/CISSP residual references from review (b970e40)
+- docs(plan): remove ISMS-P/CISSP from profile enhancement master plan (ff68f1b)
+- docs(architecture): update nol-universe profile to remove CISSP/CISA plan (2275959)
+- feat(data): remove ISMS-P/ISO 27001 from SSOT and automation (f75a969)
+
 ## [v1.22.3] - 2026-05-01
 
 ### Changes
