@@ -181,6 +181,6 @@ test.describe('Terminal CLI - Accessibility', () => {
   test('should have skip link for accessibility', async ({ page }) => {
     const skipLink = page.locator('.skip-link');
     await expect(skipLink).toBeAttached();
-    await expect(skipLink).toHaveAttribute('href', '#terminal-input');
+    await expect(skipLink).toHaveAttribute('href', '#main-content');
   });
 });
