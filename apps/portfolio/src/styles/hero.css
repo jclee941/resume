@@ -199,3 +199,51 @@
     margin-left: 0;
   }
 }
+
+
+/* Hero Context Grid - Missing styles added */
+.hero-context-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin: var(--space-4) 0 var(--space-4) var(--space-4);
+  max-width: 720px;
+}
+
+.hero-context {
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  background:
+    linear-gradient(135deg, rgba(0, 240, 255, 0.06), rgba(255, 0, 255, 0.04)),
+    rgba(12, 12, 18, 0.88);
+  box-shadow: var(--glow-cyan-subtle);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hero-context:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--glow-cyan);
+}
+
+.hero-context__label {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  line-height: 1.4;
+}
+
+@media (max-width: 768px) {
+  .hero-context-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-context-grid {
+    grid-template-columns: 1fr;
+  }
+}

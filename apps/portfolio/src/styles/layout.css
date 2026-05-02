@@ -45,6 +45,12 @@
 .nav-links {
   display: flex;
   gap: var(--space-4);
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.nav-links::-webkit-scrollbar {
+  display: none;
 }
 
 .nav-links a {
