@@ -14,5 +14,6 @@ permissions:
 
 jobs:
   issue-management:
+    if: github.event_name != 'push'
     uses: jclee941/.github/.github/workflows/reusable-issue-management.yml@master
     secrets: inherit
