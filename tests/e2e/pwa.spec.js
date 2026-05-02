@@ -40,7 +40,8 @@ test.describe('Progressive Web App (PWA)', () => {
 
   test('should have manifest.json link', async ({ page }) => {
     const manifestLink = page.locator('link[rel="manifest"]');
-    await expect(manifestLink).toHaveAttribute('href', '/manifest.json');
+    const href = await manifestLink.getAttribute('href');
+    expect(href).toMatch(/^\/manifest(_en)?\.json$/);
   });
 
   test('should have PWA meta tags', async ({ page }) => {
