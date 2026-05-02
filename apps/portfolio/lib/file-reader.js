@@ -26,6 +26,11 @@ function getFilesToRead(baseDir) {
       name: 'indexEnHtmlRaw',
     },
     {
+      path: path.join(baseDir, 'index-ja.html'),
+      encoding: 'utf-8',
+      name: 'indexJaHtmlRaw',
+    },
+    {
       path: path.join(baseDir, 'data.json'),
       encoding: 'utf-8',
       name: 'projectDataRaw',
@@ -34,6 +39,11 @@ function getFilesToRead(baseDir) {
       path: path.join(baseDir, 'data_en.json'),
       encoding: 'utf-8',
       name: 'projectDataEnRaw',
+    },
+    {
+      path: path.join(baseDir, 'data_ja.json'),
+      encoding: 'utf-8',
+      name: 'projectDataJaRaw',
     },
     {
       path: path.join(baseDir, 'manifest.json'),
