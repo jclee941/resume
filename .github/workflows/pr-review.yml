@@ -12,7 +12,7 @@ permissions:
 jobs:
   pr_review:
     if: github.event.pull_request.user.login == 'jclee941'
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     name: PR review via CLIProxyAPI
     timeout-minutes: 15
 
@@ -21,12 +21,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 0
-
-      - name: Set up Python 3.12
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
+          fetch-depth: 1
 
       - name: Cache pip dependencies
         uses: actions/cache@v4
@@ -38,8 +33,9 @@ jobs:
 
       - name: Install pr-agent
         run: |
-          python -m pip install --upgrade pip
-          pip install -e .
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip
+          .venv/bin/python -m pip install -e .
 
       - name: Verify cli_proxy connectivity
         env:
@@ -83,4 +79,4 @@ jobs:
           PR_DESCRIPTION.EXTRA_INSTRUCTIONS: |
             PR 설명은 한국어로 작성하십시오.
         run: |
-          python -m pr_agent.servers.github_action_runner
+          .venv/bin/python -m pr_agent.servers.github_action_runner
