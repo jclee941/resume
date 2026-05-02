@@ -5,6 +5,11 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.23.1] - 2026-05-02
+
+### Changes
+- chore: deploy latest automation workflows (b9fdc61)
+
 ## [v1.23.0] - 2026-05-02
 
 ### Changes
