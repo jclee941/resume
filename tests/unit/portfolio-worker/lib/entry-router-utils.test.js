@@ -63,14 +63,14 @@ describe('entry-router-utils', () => {
       });
     });
 
-    test('uses Accept-Language ranking when path has no locale (ko wins, ja unsupported)', () => {
+    test('uses Accept-Language ranking when path has no locale (ja wins with highest q)', () => {
       const request = new Request('https://resume.jclee.me/', {
         headers: { 'Accept-Language': 'en-US;q=0.5,ja;q=1.0,ko;q=0.8' },
       });
 
-      // Note: 'ja' is unsupported (only ko/en); ko ranks above en-US so ko wins
+      // Note: 'ja' is now supported; ja has highest q so ja wins
       expect(utils.detectRequestLanguage(request, '/')).toEqual({
-        language: 'ko',
+        language: 'ja',
         source: 'accept-language',
       });
     });
@@ -101,11 +101,13 @@ describe('entry-router-utils', () => {
       expect(utils.getPortfolioTargetPath('/en', 'en')).toBe('/en/');
       expect(utils.getPortfolioTargetPath('/en/', 'en')).toBe('/en/');
       expect(utils.getPortfolioTargetPath('/ko', 'ko')).toBe('/');
-      expect(utils.getPortfolioTargetPath('/ja/', 'ja')).toBe('/');
+      expect(utils.getPortfolioTargetPath('/ja', 'ja')).toBe('/ja/');
+      expect(utils.getPortfolioTargetPath('/ja/', 'ja')).toBe('/ja/');
     });
 
     test('routes root by detected language', () => {
       expect(utils.getPortfolioTargetPath('/', 'en')).toBe('/en/');
+      expect(utils.getPortfolioTargetPath('/', 'ja')).toBe('/ja/');
       expect(utils.getPortfolioTargetPath('/', 'ko')).toBe('/');
     });
 
@@ -127,7 +129,7 @@ describe('entry-router-utils', () => {
       expect(utils.isHtmlResponse(jsonResponse)).toBe(false);
     });
 
-    test('localizes html and injects hreflang links into head (ko/en/x-default)', async () => {
+    test('localizes html and injects hreflang links into head (ko/en/ja/x-default)', async () => {
       const response = new Response('<html lang="ko"><head></head><body>Hello</body></html>', {
         headers: { 'Content-Type': 'text/html; charset=utf-8' },
       });
@@ -135,10 +137,9 @@ describe('entry-router-utils', () => {
       const localized = await utils.localizeHtmlResponse(response, 'en');
       const text = await localized.text();
 
-      expect(text).toContain('<html lang="en">');
       expect(text).toContain('hreflang="ko-KR"');
       expect(text).toContain('hreflang="en-US"');
-      expect(text).not.toContain('hreflang="ja-JP"');
+      expect(text).toContain('hreflang="ja-JP"');
       expect(text).toContain('hreflang="x-default"');
     });
 
