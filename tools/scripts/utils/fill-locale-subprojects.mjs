@@ -228,7 +228,7 @@ function syncLocale(locale, label) {
 syncLocale(en, 'en');
 syncLocale(ja, 'ja');
 
-writeFileSync(enPath, JSON.stringify(en, null, 2) + '\n');
-writeFileSync(jaPath, JSON.stringify(ja, null, 2) + '\n');
+writeFileSync(enPath, `${JSON.stringify(en, null, 2)}\n`);
+writeFileSync(jaPath, `${JSON.stringify(ja, null, 2)}\n`);
 
 console.log(`\n✅ Total changes: ${changes}`);
