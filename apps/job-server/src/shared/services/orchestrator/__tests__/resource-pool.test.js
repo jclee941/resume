@@ -267,7 +267,7 @@ describe('ResourcePool', { concurrency: 1 }, () => {
     const events = [];
     const pool = makePool({
       maxSize: 1,
-      idleTimeoutMs: 5,
+      idleTimeoutMs: 500,
       maxAge: 10_000,
       healthCheckIntervalMs: 1000,
       minSize: 0,
@@ -278,7 +278,8 @@ describe('ResourcePool', { concurrency: 1 }, () => {
     const resource = await pool.acquire();
     await pool.release(resource);
 
-    mock.timers.tick(1000);
+    mock.timers.tick(1500);
+    await Promise.resolve();
     await Promise.resolve();
     await Promise.resolve();
 

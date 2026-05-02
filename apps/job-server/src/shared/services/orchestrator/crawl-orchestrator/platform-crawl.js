@@ -88,7 +88,7 @@ export async function crawlPlatform(orchestrator, platform, searchParams, taskId
  * @returns {Promise<object[]>}
  */
 export async function executePlatformCrawl(platform, searchParams) {
-  const { default: UnifiedJobCrawler } = await import('../../../crawlers/index.js');
+  const { default: UnifiedJobCrawler } = await import('../../../../crawlers/index.js');
   const crawler = new UnifiedJobCrawler();
 
   const results = await crawler.search(platform, searchParams.keywords, {
