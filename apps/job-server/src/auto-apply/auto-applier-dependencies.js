@@ -5,7 +5,6 @@ import { CoverLetterService } from '../shared/services/apply/cover-letter-servic
 import { ApprovalWorkflowManager } from '../shared/services/apply/approval-manager.js';
 import { RetryService } from '../shared/services/apply/retry-service.js';
 import { ApplicationTrackerService } from '../shared/services/apply/application-tracker.js';
-import { JobFilter } from '../shared/services/apply/job-filter.js';
 import { TelegramNotificationAdapter } from '../shared/services/notifications/telegram-adapter.js';
 
 export function createAutoApplierDependencies(options = {}, logger = console) {

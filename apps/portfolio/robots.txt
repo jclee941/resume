@@ -1,10 +1,14 @@
 # robots.txt for resume.jclee.me
 # 이재철 - AIOps & Observability Engineer Portfolio
 # Generated: 2026-02-01
+# NOTE: Cloudflare Managed Content (기타 에이전트) is configured in the Cloudflare Dashboard
+# and appends its own AI-bot rules. This file contains only custom rules.
+# If you need to block specific AI bots, use Cloudflare Dashboard → Security → Bots.
 
 User-agent: *
 Allow: /
 Allow: /en/
+Allow: /ja/
 
 # Crawl-delay for all bots
 Crawl-delay: 0
@@ -16,43 +20,31 @@ Sitemap: https://resume.jclee.me/sitemap.xml
 User-agent: Googlebot
 Allow: /
 Allow: /en/
+Allow: /ja/
 Crawl-delay: 0
 
 User-agent: Bingbot
 Allow: /
 Allow: /en/
+Allow: /ja/
 Crawl-delay: 0
 
 User-agent: Yandex
 Allow: /
 Allow: /en/
+Allow: /ja/
 Crawl-delay: 0
 
 User-agent: Slurp
 Allow: /
 Allow: /en/
+Allow: /ja/
 Crawl-delay: 0
-
-# AI search bots - ALLOWED for visibility in AI-powered search results
-# (ChatGPT, Perplexity, Claude increasingly used by recruiters for candidate research)
-User-agent: ChatGPT-User
-Allow: /
-Allow: /en/
-
-User-agent: GPTBot
-Allow: /
-Allow: /en/
-
-User-agent: PerplexityBot
-Allow: /
-Allow: /en/
-
-User-agent: ClaudeBot
-Allow: /
-Allow: /en/
 
 User-agent: Applebot
 Allow: /
+Allow: /en/
+Allow: /ja/
 
 # Private areas (currently none)
 # Disallow: /private/
@@ -62,4 +54,3 @@ Allow: /
 User-agent: *
 Disallow: /api/
 Disallow: /dashboard
-

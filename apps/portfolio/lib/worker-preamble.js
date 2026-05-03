@@ -10,6 +10,7 @@
  * @param {string} opts.deployedAt - ISO timestamp of deployment
  * @param {string} opts.indexHtml - Escaped HTML content (Korean)
  * @param {string} opts.indexEnHtml - Escaped HTML content (English)
+ * @param {string} opts.indexJaHtml - Escaped HTML content (Japanese)
  * @param {string} opts.manifestJson - Escaped manifest.json content (Korean)
  * @param {string} opts.manifestEnJson - Escaped manifest.json content (English)
  * @param {string} opts.serviceWorker - Escaped service worker JS
@@ -36,6 +37,7 @@ function generateWorkerPreamble(opts) {
 
 const INDEX_HTML = \`${opts.indexHtml}\`;
 const INDEX_EN_HTML = \`${opts.indexEnHtml}\`;
+const INDEX_JA_HTML = \`${opts.indexJaHtml}\`;
 
 const MANIFEST_JSON = \`${opts.manifestJson}\`;
 const MANIFEST_EN_JSON = \`${opts.manifestEnJson}\`;

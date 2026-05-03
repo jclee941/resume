@@ -60,12 +60,13 @@ const {
 
 /**
  * Validate source data and build reusable HTML fragments.
- * @param {{projectDataRaw: string, projectDataEnRaw?: string, logger: {log: Function}}} options - Data processing options.
+ * @param {{projectDataRaw: string, projectDataEnRaw?: string, projectDataJaRaw?: string, logger: {log: Function}}} options - Data processing options.
  * @returns {{projectData: Object, dataHash: string, templates: Object}} Processed data payload.
  */
-function processProjectData({ projectDataRaw, projectDataEnRaw, logger }) {
+function processProjectData({ projectDataRaw, projectDataEnRaw, projectDataJaRaw, logger }) {
   const projectData = JSON.parse(projectDataRaw);
   const projectDataEn = projectDataEnRaw ? JSON.parse(projectDataEnRaw) : null;
+  const projectDataJa = projectDataJaRaw ? JSON.parse(projectDataJaRaw) : null;
 
   logger.log('🔍 Validating data.json...');
   validateData(projectData);
@@ -87,6 +88,14 @@ function processProjectData({ projectDataRaw, projectDataEnRaw, logger }) {
       projectData.projectsEn || projectData.projects,
       `${dataHash}:en-projects`
     ),
+    resumeCardsJaHtml: generateResumeCards(
+      (projectDataJa && projectDataJa.resume) || projectData.resume,
+      `${dataHash}:ja-resume`
+    ),
+    projectCardsJaHtml: generateProjectCards(
+      (projectDataJa && projectDataJa.projects) || projectData.projects,
+      `${dataHash}:ja-projects`
+    ),
     certCardsHtml: generateCertificationCards(projectData.certifications, dataHash),
     skillsHtml: generateSkillsList(projectData.skills, dataHash),
     heroContentHtml: generateHeroContent(projectData.hero),
@@ -100,6 +109,10 @@ function processProjectData({ projectDataRaw, projectDataEnRaw, logger }) {
     aboutContentEnHtml: generateAboutContent(
       (projectDataEn && projectDataEn.aboutSection) || projectData.aboutSection,
       `${dataHash}:en-about`
+    ),
+    aboutContentJaHtml: generateAboutContent(
+      (projectDataJa && projectDataJa.aboutSection) || projectData.aboutSection,
+      `${dataHash}:ja-about`
     ),
   };
 
