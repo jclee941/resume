@@ -19,7 +19,7 @@ Cloudflare Workers 포트폴리오 · 구직 자동화 파이프라인 · 셀프
 
 ## Overview
 
-이재철 (Jaecheol Lee) — DevSecOps/SRE 엔지니어. 9년차, 금융·공공 보안 인프라.
+이재철 (Jaecheol Lee) — DevSecOps/SRE 엔지니어. 8년차 (Linux 재무장 1년 포함), 금융·공공 보안 인프라.
 
 이 저장소는 단일 포트폴리오 사이트가 아닌 **단일 진실원(SSoT) 이력서 데이터에서 파생되는 다중 산출물**의 모노레포입니다.
 
