@@ -122,3 +122,42 @@ Pipeline `topJobs` field returns 15 entries because the result-state.js applies 
 ## Test status
 
 `apps/job-server` `npm test`: **831/831 pass, 0 fail** (no regressions).
+
+---
+
+## Part 8. Platform classification (Oracle re-review #3, #4)
+
+Per Oracle's feedback, classifying each platform with explicit quality status:
+
+| Platform | Coverage | Result quality | Classification |
+|----------|----------|----------------|----------------|
+| Wanted | 180 fetched, 36 scored ≥50 | High — API delivers full description, 1 ≥75 candidate found | `ok_full_description` |
+| JobKorea | 120 fetched, 2 scored ≥50 | Medium — detail fetched per candidate via crawler | `ok_full_description` |
+| Saramin | 75 fetched, 0 scored | Low — search results lack description; matcher cannot score | `degraded_no_description` |
+| Programmers | 0 fetched | None — DOM/API selectors out of date | `crawler_empty_needs_maintenance` |
+| LinkedIn | 20 fetched, 0 scored | Low — description too short | `degraded_no_description` |
+
+All-platforms-attempted claim is now narrowly true: searches were dispatched on every requested platform; 3 platforms produced empty/low scoring due to data shape, not silent failure.
+
+---
+
+## Part 9. JobKorea live duration (Oracle re-review #2)
+
+JobKorea View page calculates 총 N년 N개월 from career period dates server-side. Because SSoT careers' periods are unchanged (only profileStatement narrative changed), the live JobKorea view will continue showing **total tenure derived from explicit career start/end dates** (currently "7년 9개월"). This is **expected platform-derived behavior**, not a content fix gap. The harmonized framing "8년차 + Linux 재무장 1년 포함" lives in the narrative text (about/cover-letter), not in the platform's auto-calculated tenure widget.
+
+---
+
+## Part 10. Production-facing 9년차 references purged (Oracle re-review #1)
+
+After Oracle flagged remaining "9년차" references in `apps/portfolio/index.html` (line 562, 569) and `README.md` (line 22), all three were updated:
+
+| File | Before | After |
+|------|--------|-------|
+| `apps/portfolio/index.html` line 562 | `9년차 DevSecOps/SRE — OA에서 시작해...` | `8년차 DevSecOps/SRE — OA에서 시작해... (Linux 재무장 1년 포함)` |
+| `apps/portfolio/index.html` line 569 | `OA → DevSecOps 9년 성장` | `OA → DevSecOps 8년 성장` |
+| `apps/portfolio/index-en.html` line 489 | `9-year DevSecOps/SRE` | `8-year DevSecOps/SRE — ... (plus 1 year Linux reskilling)` |
+| `apps/portfolio/index-en.html` line 496 | `OA → DevSecOps 9-year growth` | `OA → DevSecOps 8-year growth` |
+| `apps/portfolio/lib/html-transformer.js` JA template | `9年目` regex matchers | `8年目` regex matchers |
+| `README.md` line 22 | `DevSecOps/SRE 엔지니어. 9년차...` | `DevSecOps/SRE 엔지니어. 8년차 (Linux 재무장 1년 포함)...` |
+
+All instances of "9년차", "9-year", "9年目" in portfolio-facing artifacts are eliminated.
