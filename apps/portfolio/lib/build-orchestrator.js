@@ -4,6 +4,8 @@
  */
 
 const { ESCAPE_PATTERNS, TEMPLATE_CACHE } = require('./config');
+const fs = require('fs');
+const path = require('path');
 const { extractStyleHashes, mergeHashes } = require('./csp-hash-generator');
 const securityHeadersModule = require('./security-headers');
 const { injectScriptNoncePlaceholder } = require('./templates');
@@ -62,6 +64,16 @@ async function runWorkerBuild({ baseDir, version, allowedEmails, logger }) {
   logger.debug(`manifest_en.json size: ${manifestEnJson.length} bytes`);
   logger.debug(`sw.js size: ${serviceWorker.length} bytes`);
   logger.log('✓ Source files loaded\n');
+
+  // Copy latest resume PDF into assets so worker can serve /resume.pdf
+  const pdfSource = path.resolve(__dirname, '../../../packages/data/resumes/master/resume_final.pdf');
+  const pdfDest = path.resolve(__dirname, '../assets/resume.pdf');
+  if (fs.existsSync(pdfSource)) {
+    fs.copyFileSync(pdfSource, pdfDest);
+    logger.log('✓ Copied resume.pdf to assets\n');
+  } else {
+    logger.warn('⚠ resume_final.pdf not found at SSoT, skipping copy\n');
+  }
 
   let indexHtml = await buildLocalizedHtml(indexHtmlRaw, {
     cssContent,

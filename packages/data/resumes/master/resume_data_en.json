@@ -44,7 +44,7 @@
       "Observability",
       "Cloud Security"
     ],
-    "profileStatement": "Designed and operated security infrastructure in financial regulated environments and passed regulatory licensing audits. Built integrated automation, real-time detection, and automated response systems to address the inefficiencies of fragmented security appliances and manual operations.",
+    "profileStatement": "DevSecOps/SRE engineer with 9-year career growth from OA operations into financial security automation. Started in 2017 at MT Data operating 50+ Linux servers with manual patches and firewall rules in KAI's closed network, then spent 11 months from 2018.11 reskilling on Linux fundamentals (RHCSA, CompTIA Linux+, LPIC-1, 리눅스마스터 2급). Grew through Metanet and Jointree adopting Ansible, Python, NSX-T, and Wazuh; deepened in financial infrastructure at Quantec Investment Management FSDC and Gaonnuri (FortiGate HA + FSC licensing); now operates Nextrade exchange security at ITCEN CTS using Splunk ES, n8n, FortiManager API, and Docker.",
     "coreCompetencies": [
       "Designed and operated high-availability security infrastructure in financial regulated environments and passed licensing audits",
       "Built SIEM detection rules and automated response systems to address delays in manual detection and response",
@@ -55,11 +55,11 @@
     ],
     "aboutSection": {
       "careerHighlights": [
-        "DevSecOps/SRE engineer responsible for security infrastructure in financial regulated environments",
-        "Designed and built high-availability security architecture that passed regulatory licensing audit",
-        "Built and operated real-time security event detection and automated response systems",
-        "Operated Edge runtimes and IaC-based homelab to continuously develop DevOps capabilities",
-        "Self-developed AI/MCP-based security operations automation tools"
+        "Started as OA engineer (2017 KAI closed network) — operated 50+ Linux servers, patches and firewall rules",
+        "Linux reskilling (2018.11~2019.11) — RHCSA, CompTIA Linux+, LPIC-1, Linux Master Level 2",
+        "Automation entry (2019~2022 Metanet · Jointree) — Ansible/Python for 1000-user contact center, NSX-T microsegmentation, Wazuh OSS monitoring",
+        "Financial infrastructure (2022~2024 Quantec Investment Management FSDC) — financial regulator audit response, DB tuning CPU 75%→52%",
+        "Financial security build/ops (2024~ Gaonnuri · ITCEN Nextrade) — FortiGate HA 5-tier segmentation, FSC licensing passed, Splunk ES + n8n + FortiManager API SOC 24/7"
       ],
       "techPhilosophy": [
         "\"If you can't observe it, you can't operate it\"",
@@ -68,10 +68,10 @@
         "Defense in Depth: Network → Identity → Workload → Data"
       ],
       "currentFocus": [
-        "Cloudflare Workers Edge security architecture",
-        "Zero Trust / Identity-aware Proxy design",
-        "MCP/AI-agent-based security operations automation",
-        "GitOps (ArgoCD) and policy automation (OPA)"
+        "SOC automated response with Splunk ES rules · n8n · FortiManager API",
+        "DevOps capability extension via Cloudflare Workers Edge and IaC homelab",
+        "Self-developed MCP/AI agent based security operations automation tools",
+        "Learning GitOps (ArgoCD) and policy automation (OPA)"
       ]
     },
     "totalExperience": ""
@@ -154,6 +154,39 @@
         }
       ],
       "continuousEngagement": "NextTrade Trading System (2024.03~2026.02 continuous engagement, build → operate)"
+    },
+    {
+      "company": "Quantec Investment Management",
+      "period": "2022.08 ~ 2024.03",
+      "duration": "1 year 7 months",
+      "project": "Quantec Investment Management AI Trading Platform / FSDC Operations",
+      "role": "Infrastructure Engineer",
+      "client": "Quantec Investment Management",
+      "teamSize": "Infrastructure operations team (size undisclosed)",
+      "myRole": "FSDC infrastructure operations and automation",
+      "workType": "Full-time",
+      "description": "Maintained infrastructure operations stability in the Financial Security Data Center (FSDC) environment and met Financial Supervisory Service periodic audit requirements. Standardized operations work with Python-based automation scripts, operated DLP policies, and tuned DB access-control queries to improve system performance.",
+      "wantedSummary": "Financial Security Data Center (FSDC) infrastructure operations automation and audit response experience",
+      "note": "Full-time at Quantec Investment Management, AI Trading Platform infrastructure operations",
+      "projects": [
+        {
+          "name": "Quantec Investment Management AI Trading Platform Infrastructure Operations",
+          "description": "Developed Python-based infrastructure automation scripts to reduce the inefficiency of manual operations and the repetitive work of audit response, and improved system load with DB access-control query tuning to support PB platform POC launch.",
+          "period": "2022.08 ~ 2024.03",
+          "techStack": [
+            "Python",
+            "Linux",
+            "DLP",
+            "PostgreSQL",
+            "FSDC"
+          ],
+          "achievements": [
+            "Standardized DLP policy operations to support Financial Supervisory Service periodic audits",
+            "Improved CPU utilization from 75% to 52% via DB access-control query tuning",
+            "Validated PB platform POC performance and supported system launch"
+          ]
+        }
+      ]
     },
     {
       "company": "Jointree Co., Ltd.",
@@ -630,7 +663,7 @@
     {
       "name": "Observability Platform",
       "period": "2024.06 ~ 현재",
-      "description": "[문제] 홈랩 인프라의 메트릭과 로그가 각 서비스별로 흩어져 있어 장애 발생 시 원인 파악에 시간이 걸렸습니다.\n[해결] Prometheus로 메트릭을 중앙 수집하고 Loki/Elasticsearch 로그를 Grafana 대시보드에 통합했습니다. Splunk 기반 관측성 운영 경험을 Prometheus+Grafana 스택으로 재현했습니다.\n[결과] 메트릭·로그를 한 화면에서 교차 분석하는 단일 관측성 운영 체계를 구성했습니다.",
+      "description": "[Problem] Metrics and logs from homelab infrastructure were scattered across per-service consoles, slowing root-cause analysis during incidents.\n[Solution] Centralized metrics with Prometheus and integrated Loki/Elasticsearch logs into Grafana dashboards. Reproduced the Splunk-based observability operations experience on a Prometheus+Grafana stack.\n[Result] Built a unified observability operations platform that cross-analyzes metrics and logs in a single view.",
       "technologies": [
         "Grafana",
         "Prometheus",
@@ -642,12 +675,13 @@
       "tagline": "모니터링 플랫폼",
       "language": "PromQL",
       "githubUrl": null,
-      "demoUrl": "https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b"
+      "demoUrl": "https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b",
+      "featured": true
     },
     {
       "name": "n8n Automation",
       "period": "2024.01 ~ 현재",
-      "description": "[문제] Slack 알림, Cloudflare 배포 알림, GitHub Actions 결과 수집 등 반복 작업이 crontab과 개별 스크립트로 분산 운영되어 신규 연동 추가에 매번 코드 작성이 필요했습니다.\n[해결] n8n을 중앙 오케스트레이터로 도입하고 Slack·GitHub·Cloudflare·Grafana를 webhook+API로 연동했습니다. 에러 핸들링·재시도를 표준화했습니다.\n[결과] 신규 자동화 추가 시 UI에서 워크플로우를 배포할 수 있는 워크플로우 기반 운영 체계를 구성했습니다.",
+      "description": "[Problem] Repetitive tasks (Slack alerts, Cloudflare deploy notifications, GitHub Actions result collection) were scattered across crontab and individual scripts, requiring custom code for every new integration.\n[Solution] Adopted n8n as a central orchestrator and integrated Slack, GitHub, Cloudflare, and Grafana via webhooks/APIs. Standardized error handling and retries.\n[Result] Built a workflow-based automation platform where new integrations can be deployed via UI.",
       "technologies": [
         "n8n",
         "PostgreSQL",
@@ -657,12 +691,13 @@
       "tagline": "워크플로우 자동화",
       "language": "JavaScript",
       "githubUrl": null,
-      "demoUrl": null
+      "demoUrl": null,
+      "featured": false
     },
     {
       "name": "FortiManager API Client (Python)",
       "period": "2025.01 ~ 현재",
-      "description": "[문제] 보안운영에서 방화벽 정책 확인·라우트 조회·로그 통계를 각각 FortiManager·FortiAnalyzer 콘솔에 접속해 수동으로 처리해야 했습니다.\n[해결] FortiManager와 FortiAnalyzer REST API를 래핑한 Python 라이브러리를 개발해 정책 조회·라우트 관리·로그 통계를 공통 메서드로 추상화했습니다.\n[결과] 방화벽 정책 조회·변경을 스크립트로 처리할 수 있게 되어 보안운영 자동화에 활용하고 있습니다.",
+      "description": "[Problem] Security operations required manually accessing FortiManager and FortiAnalyzer consoles for firewall policy lookups, route inspection, and log statistics.\n[Solution] Developed a Python library wrapping FortiManager and FortiAnalyzer REST APIs to abstract policy lookup, route management, and log statistics behind common methods.\n[Result] Firewall policy lookups and changes can now be handled via scripts and are used in security operations automation.",
       "technologies": [
         "Python",
         "FortiManager",
@@ -673,12 +708,13 @@
       "language": "Python",
       "githubUrl": null,
       "demoUrl": null,
-      "note": "비공개 — 현직 환경 코드 (포트폴리오는 https://resume.jclee.me 데모)"
+      "note": "비공개 — 현직 환경 코드 (포트폴리오는 https://resume.jclee.me 데모)",
+      "featured": true
     },
     {
       "name": "Security Alert System",
       "period": "2025.01 ~ 현재",
-      "description": "[문제] FortiGate 보안 이벤트가 장비 syslog와 Splunk에 분산되어 이벤트 발생부터 담당자 인지까지 시간이 걸렸습니다. [해결] Splunk Saved Search와 Webhook을 연동해 보안 이벤트 발생 시 Slack/Telegram으로 즉시 알림을 보내는 체계를 구축했습니다. [결과] 보안 이벤트 인지 시간을 단축하고 담당자 응대 흐름을 표준화했습니다.",
+      "description": "[Problem] FortiGate security events were scattered across device syslog and Splunk, delaying the time from event occurrence to operator awareness.\n[Solution] Connected Splunk Saved Search webhooks to Slack/Telegram so security events are immediately notified upon detection.\n[Result] Reduced security event awareness time and standardized operator response flow.",
       "technologies": [
         "Splunk",
         "Python",
@@ -688,12 +724,13 @@
       "tagline": "보안 알림 자동화",
       "language": "Python",
       "githubUrl": "https://github.com/jclee941/splunk",
-      "demoUrl": "https://kibana.jclee.me/s/portfolio-demo/app/dashboards?auth_provider_hint=portfolio_demo#/view/portfolio-demo-dashboard"
+      "demoUrl": "https://kibana.jclee.me/s/portfolio-demo/app/dashboards?auth_provider_hint=portfolio_demo#/view/portfolio-demo-dashboard",
+      "featured": true
     },
     {
       "name": "IP Blacklist Platform",
       "period": "2024.12 ~ 현재",
-      "description": "[문제] 위협 인텔리전스 피드가 여러 외부 소스에 흩어져 있어 악성 IP를 분석할 때 소스마다 별도 조회가 필요했습니다.\n[해결] Flask + PostgreSQL 백엔드와 Next.js 프론트엔드로 통합 조회 플랫폼을 구축했습니다. 다중 소스를 단일 인터페이스로 통합했습니다.\n[결과] 위협 IP 분석 흐름을 단일 화면으로 통합했습니다.",
+      "description": "[Problem] Threat intelligence feeds were scattered across multiple external sources, requiring separate lookups per source when analyzing malicious IPs.\n[Solution] Built a unified lookup platform with a Flask + PostgreSQL backend and Next.js frontend, consolidating multiple sources into a single interface.\n[Result] Unified the threat IP analysis workflow into a single screen.",
       "technologies": [
         "Flask",
         "Next.js",
@@ -703,12 +740,13 @@
       "tagline": "위협 인텔리전스",
       "language": "Python",
       "githubUrl": "https://github.com/jclee941/blacklist",
-      "demoUrl": null
+      "demoUrl": null,
+      "featured": true
     },
     {
       "name": "HYCU FSDS 자율주행",
       "period": "2025.11 ~ 2026.02",
-      "description": "[문제] Formula Student Driverless Simulator 환경에서 콘 인지와 주행 제어를 통합 운영할 필요가 있었습니다.\n[해결] ROS 기반 인지·제어 노드를 Docker 컨테이너로 통합하고 AirSim 시뮬레이션 환경에서 검증했습니다.\n[결과] 한양사이버대학교 자율주행 경진대회에 참가했습니다.",
+      "description": "[Problem] Needed integrated cone perception and driving control in the Formula Student Driverless Simulator environment.\n[Solution] Integrated ROS-based perception/control nodes into Docker containers and validated them in the AirSim simulation environment.\n[Result] Participated in the Hanyang Cyber University Autonomous Driving Competition.",
       "technologies": [
         "Python",
         "ROS",
@@ -720,12 +758,13 @@
       "url": "https://github.com/jclee941/hycu_fsds",
       "language": "Python",
       "githubUrl": "https://github.com/jclee941/hycu_fsds",
-      "demoUrl": null
+      "demoUrl": null,
+      "featured": false
     },
     {
       "name": "Resume Portfolio",
       "period": "2024.01 ~ 현재",
-      "description": "[문제] 경력·프로젝트·운영 지표가 이력서·PDF·GitHub에 흩어져 있어 채용 담당자가 강점을 빠르게 파악하기 어려웠습니다.\n[해결] Cloudflare Workers Edge에 단일 SSoT 기반 이력서 사이트를 구축하고 MCP 자동화 도구·자동 지원 파이프라인·n8n 워크플로우를 monorepo로 통합했습니다.\n[결과] 이력서·자소서 생성·자동 지원·관측성을 단일 monorepo에서 운영하고 있습니다.",
+      "description": "[Problem] Career, projects, and operational metrics were scattered across resumes, PDFs, and GitHub, making it hard for hiring teams to quickly grasp strengths.\n[Solution] Built a single-SSoT resume site on Cloudflare Workers Edge and integrated MCP automation tools, an auto-apply pipeline, and n8n workflows into a monorepo.\n[Result] Operates resume rendering, cover-letter generation, auto-apply, and observability from a single monorepo.",
       "technologies": [
         "Cloudflare Workers",
         "HTML/CSS",
@@ -743,13 +782,14 @@
         "반복 지원 작업을 자동화하기 위한 MCP 기반 도구 개발",
         "다중 패키지 일관된 버전 관리를 위한 monorepo 구조",
         "보안 장비 운영 효율화를 위한 n8n 워크플로우와 API 연동"
-      ]
+      ],
+      "featured": false
     },
     {
       "name": "Terraform Homelab IaC",
       "period": "2024.06 ~ 현재",
       "githubUrl": "https://github.com/jclee941/terraform",
-      "description": "[문제] 홈랩 인프라(Proxmox, Cloudflare DNS/Workers, K8s)를 GUI로 관리하다 보니 변경 이력 추적과 재구축이 어려웠습니다.\n[해결] 모든 인프라를 Terraform으로 IaC화했습니다. Proxmox VM/LXC, Cloudflare DNS·Workers·WAF, k3s 클러스터를 git 기반 GitOps로 관리합니다.\n[결과] 인프라 재구축이 가능해졌고 변경 이력이 PR 기반으로 추적됩니다.",
+      "description": "[Problem] Managing homelab infrastructure (Proxmox, Cloudflare DNS/Workers, K8s) via GUI made change history tracking and reconstruction difficult.\n[Solution] Codified all infrastructure with Terraform. Proxmox VM/LXC, Cloudflare DNS/Workers/WAF, and k3s clusters are managed via git-based GitOps.\n[Result] Infrastructure can now be rebuilt and changes are tracked via PRs.",
       "highlights": [
         "GUI 관리의 추적성 한계를 해결하기 위한 IaC 전환",
         "DNS·Edge 설정의 일관성 확보를 위한 코드화 관리",
@@ -762,13 +802,14 @@
         "Cloudflare",
         "Helm",
         "k3s"
-      ]
+      ],
+      "featured": true
     },
     {
       "name": "SafetyWallet (CF Workers PWA)",
       "period": "2026.01 ~ 2026.04",
       "githubUrl": "https://github.com/jclee941/safetywallet",
-      "description": "[문제] 현장 작업자가 안전 매뉴얼·교육 이수 증빙·비상 연락망을 종이로 관리하여 즉시 조회가 어려웠습니다.\n[해결] Cloudflare Workers 기반 PWA + Next.js 어드민을 구축했습니다. D1로 작업자 프로필을 저장하고 KV 캐시·R2 객체 스토리지로 매뉴얼을 보관합니다.\n[결과] 오프라인에서도 안전 매뉴얼을 조회할 수 있는 PWA 시스템을 운영합니다.",
+      "description": "[Problem] On-site workers managed safety manuals, training certificates, and emergency contacts on paper, making instant lookup difficult.\n[Solution] Built a Cloudflare Workers-based PWA with a Next.js admin. D1 stores worker profiles; KV cache and R2 object storage host the manuals.\n[Result] Operates a PWA system where safety manuals can be looked up offline.",
       "highlights": [
         "글로벌 저지연 서비스 제공을 위한 Edge 배포",
         "오프라인 동작을 위한 계층별 스토리지 통합 아키텍처",
@@ -781,13 +822,14 @@
         "TypeScript",
         "D1",
         "KV"
-      ]
+      ],
+      "featured": false
     },
     {
       "name": "AI GitHub PR Reviewer",
       "period": "2026.03 ~ 현재",
       "githubUrl": "https://github.com/jclee941/github-bot",
-      "description": "[문제] 보안·인프라 PR 리뷰가 1인 의존 구조였고 공통 패턴(시크릿 노출/RBAC) 검증을 매번 수동으로 수행해야 했습니다.\n[해결] Self-hosted AI PR 리뷰어를 Cloudflare Workers로 운영합니다. CLIProxyAPI 통합으로 LLM 비용을 절감하고 보안 패턴 자동 검출 후 GitHub 코멘트로 피드백합니다.\n[결과] PR 리뷰 흐름을 자동화하고 시크릿 노출 검증을 표준화했습니다.",
+      "description": "[Problem] Security/infrastructure PR reviews depended on a single person, and common-pattern checks (secret exposure, RBAC) had to be performed manually every time.\n[Solution] Operates a self-hosted AI PR reviewer on Cloudflare Workers. CLIProxyAPI integration reduces LLM cost; security patterns are auto-detected and reported as GitHub comments.\n[Result] Automated the PR review flow and standardized secret-exposure verification.",
       "highlights": [
         "LLM 호출 비용을 절감하기 위한 자체 프록시 운영",
         "보안 결함의 조기 탐지를 위한 자동 패턴 검출",
@@ -799,13 +841,14 @@
         "Cloudflare Workers",
         "AI/LLM",
         "GitHub API"
-      ]
+      ],
+      "featured": false
     },
     {
       "name": "Bug Bounty Recon Toolkit",
       "period": "2025.10 ~ 현재",
       "githubUrl": "https://github.com/jclee941/bug",
-      "description": "[문제] 버그바운티 정찰(서브도메인 발견 → 알림 → 취약점 스캔)을 매번 수작업으로 수행했습니다.\n[해결] Go 기반 정찰 파이프라인 + Python 결과 분석을 통합했습니다. Subfinder + httpx + Nuclei를 연결하고 n8n으로 일일 스케줄을 관리합니다.\n[결과] 정찰 작업을 워크플로우로 전환하고 신규 도메인 변경을 즉시 탐지합니다.",
+      "description": "[Problem] Bug-bounty reconnaissance (subdomain discovery → notification → vulnerability scan) was performed manually each time.\n[Solution] Integrated a Go-based recon pipeline with Python result analysis. Subfinder + httpx + Nuclei are chained, and n8n manages the daily schedule.\n[Result] Converted reconnaissance into a workflow and detects new domain changes immediately.",
       "highlights": [
         "대규모 대상 동시 스캔을 위한 동시성 설계",
         "취약점 발견 후 즉시 대응하기 위한 자동 매칭과 알림",
@@ -818,7 +861,8 @@
         "Subfinder",
         "httpx",
         "Nuclei"
-      ]
+      ],
+      "featured": false
     }
   ],
   "ossContributions": [
@@ -966,12 +1010,12 @@
   },
   "platformVariants": {
     "wanted": {
-      "headline": "DevSecOps/SRE | Financial-Sector Security Infrastructure | Regulatory licensing audit passed",
-      "about": "Designed and operated security infrastructure in financial regulated environments and passed regulatory licensing audits. Built SIEM, IaC, automation, and observability platforms to address the inefficiencies of fragmented security appliances and manual operations.\n\n[Background]\n• Designed and operated security infrastructure in financial regulated environments\n• Built SIEM-based security monitoring to address limitations of manual detection and response\n• Migrated server operations and infrastructure management to IaC for consistency and traceability\n• Built Prometheus/Grafana observability platform to reduce incident response time\n\n[Core Capabilities]\nSecurity appliance automation, SIEM detection rule design, IaC-based infrastructure management, security operations center, observability platform operations\n\nPortfolio: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
+      "headline": "OA → DevSecOps 9-year | Financial Security Infrastructure | FSC Licensing Passed | Splunk ES · n8n · FortiGate HA",
+      "about": "DevSecOps/SRE engineer with 9-year career growth from OA operations into financial security automation.\n\n[Growth Story]\n2017.02 — Started OA operations at MT Data on KAI (Korea Aerospace Industries) closed network. Manually managed patches, firewall/IDS policies, WSUS, and log analysis for 50+ Linux servers. Recognized the limits of manual operations.\n\n2018.11 — Spent 11 months reskilling on Linux fundamentals: RHCSA, CompTIA Linux+, LPIC-1, Linux Master Level 2.\n\n2019.12 — At Metanet M Platform, built a 1,000-user contact center remote-work environment using SSL VPN/NAC and automated new-terminal registration and switch inspection with Ansible/Python (NAC policy deployment 10h→1h, 90% reduction).\n\n2021.09 — At Jointree, applied NSX-T microsegmentation to Kookmin University's next-gen information system and built Wazuh-based OSS security monitoring.\n\n2022.08 — At Quantec Investment Management, operated FSDC (Financial Security Data Center) infrastructure: financial regulator audit response, DLP policy operations, DB access-control query tuning (CPU 75%→52%), PB platform POC validation.\n\n2024.03 — At Gaonnuri, built Nextrade exchange security infrastructure: FortiGate HA with 5-tier network segmentation, Ansible Role standardization (firewall policy 500 entries automated, 8h→1h). Passed FSC pre-licensing audit.\n\n2025.03 — At ITCEN CTS, operate Nextrade security: designed Splunk ES detection rules and built automated response with n8n + FortiManager API (150 servers, 300 terminals, 80 network devices, 100K+ orders/day, MTTR 30min→12min, 60% reduction).\n\n[Capabilities]\nSIEM rule design (Splunk ES), security ops automation (n8n, FortiManager API), HA security architecture (FortiGate HA, NSX-T), IaC infrastructure (Ansible Role, Terraform), observability platforms (Grafana/Prometheus/Loki), financial regulatory response (FSC licensing, FSS audits)\n\nPortfolio: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
     },
     "jobkorea": {
-      "headline": "DevSecOps/SRE — Financial-Sector Security Infrastructure",
-      "about": "DevSecOps/SRE engineer who designed and operated security infrastructure in financial regulated environments and performed regulatory licensing audit response.\n\n[Key Experience]\n• NextTrade — Designed and built FortiGate HA security infrastructure in financial regulated environment and responded to FSC licensing audit on the security domain. Built SIEM detection rule operations and automated response systems via n8n+FortiManager API integration\n• Metanet — Built large-scale server configuration and NAC policy automation with Ansible/Python\n\n[Tech Stack]\nFortiGate/FortiManager, Splunk ES, Ansible, Python, Terraform, Docker, Prometheus/Grafana\nPortfolio: https://resume.jclee.me"
+      "headline": "OA → DevSecOps 9-year — Financial Security Infrastructure (FSC Licensing, Splunk ES, FortiGate HA, n8n)",
+      "about": "DevSecOps/SRE engineer with 9-year career growth from OA operations into financial security automation.\n\n[Career Summary]\n• ITCEN CTS — 2025.03~2026.02 — Nextrade exchange security operations SM. Splunk ES + n8n + FortiManager API automated detection/response. SOC 24/7. MTTR reduced 60%.\n• Gaonnuri — 2024.03~2025.02 — Nextrade security infrastructure build. FortiGate HA + 5-tier segmentation + Ansible Role standardization. FSC pre-licensing audit passed.\n• Quantec Investment Management — 2022.08~2024.03 — Financial Security Data Center (FSDC) operations. Financial regulator audit response, DB tuning CPU 75%→52%.\n• Jointree — 2021.09~2022.04 — Kookmin University next-gen system. NSX-T microsegmentation + Wazuh.\n• Metanet — 2019.12~2021.08 — 1000-user contact center remote-work. Ansible/Python automation.\n• MT Data — 2017.02~2018.10 — KAI closed-network IT support / OA operations. 50+ Linux servers.\n\n[Growth Background]\nStarted as an OA engineer in 2017 and recognized the limits of manual operations on a closed network. From 2018.11 spent 11 months reskilling with RHCSA, LPIC-1, and Linux Master Level 2 to set the path toward automation and security. After contact-center, education, and financial infrastructure work, currently automating financial-exchange security operations.\n\n[Skills]\nSplunk ES, n8n, FortiGate/FortiManager, Ansible, Python, Terraform, Docker, NSX-T, Prometheus/Grafana/Loki, Cloudflare Workers, MCP/AI agents\n\nPortfolio: https://resume.jclee.me"
     }
   }
 }

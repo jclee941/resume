@@ -44,7 +44,7 @@
       "Observability",
       "Cloud Security"
     ],
-    "profileStatement": "금융권 규제 환경에서 고가용성 보안 인프라를 설계·운영하고 금융위 본인가 심사를 통과한 DevSecOps/SRE 엔지니어입니다. 분산된 보안 장비의 수동 운영 비효율을 자동화로 개선하고, SIEM 기반 실시간 탐지·자동 대응 체계를 구축한 경험이 있습니다.",
+    "profileStatement": "OA 엔지니어로 시작해 9년차 DevSecOps/SRE로 자동화·보안·관측 영역을 확장해 온 엔지니어입니다. 2017년 한국항공우주산업(KAI) 폐쇄망에서 Linux 서버 50대 이상의 패치·방화벽 룰을 수동 운영하며 반복 작업의 한계를 인식했고, 2018.11부터 11개월간 RHCSA·LPIC-1·리눅스마스터 2급 자격증으로 Linux 시스템을 재무장한 뒤 메타넷·조인트리에서 Ansible·Python·NSX-T·Wazuh로 자동화에 입문했습니다. 콴텍투자일임 FSDC 운영을 거쳐 가온누리·아이티센에서 넥스트레이드 매매체결시스템을 FortiGate HA·FSC 본인가·Splunk ES·n8n으로 구축·운영하고 있습니다.",
     "coreCompetencies": [
       "금융권 보안 규제 환경에서 고가용성 보안 인프라를 설계·운영하고 본인가 심사 대응을 통과한 경험",
       "수동 탐지·대응의 알림 지연을 해결하기 위해 SIEM 탐지 룰 설계와 자동 대응 체계를 구축한 경험",
@@ -55,11 +55,11 @@
     ],
     "aboutSection": {
       "careerHighlights": [
-        "금융권 규제 환경의 보안 인프라를 담당한 DevSecOps/SRE 엔지니어",
-        "금융위 본인가 심사를 통과한 고가용성 보안 아키텍처 설계·구축 경험",
-        "실시간 보안 이벤트 탐지와 자동 대응 체계 구축·운영 경험",
-        "Edge 런타임과 IaC 기반 홈랩을 운영하며 DevOps 역량을 지속 발전시킨 경험",
-        "AI/MCP를 활용한 보안 운영 자동화 도구 자체 개발 경험"
+        "OA 엔지니어 출발 (2017 KAI 폐쇄망) — Linux 50대+ 수동 운영, 패치·방화벽 룰 정비 경험",
+        "Linux 재무장 (2018.11~2019.11) — RHCSA, CompTIA Linux+, LPIC-1, 리눅스마스터 2급 취득",
+        "자동화 입문 (2019~2022 메타넷·조인트리) — Ansible/Python 1,000명 컨택센터, NSX-T 마이크로세그멘테이션, Wazuh OSS 모니터링",
+        "금융 인프라 (2022~2024 콴텍투자일임 FSDC) — 금융감독원 감사 대응, DB 튜닝 CPU 75%→52%",
+        "금융 보안 구축·운영 (2024~ 가온누리·아이티센 넥스트레이드) — FortiGate HA 5계층 망분리, FSC 본인가 통과, Splunk ES + n8n + FortiManager API SOC 24/7"
       ],
       "techPhilosophy": [
         "\"관측 가능하지 않으면, 운영할 수 없다\"",
@@ -68,22 +68,22 @@
         "Defense in Depth: 네트워크 → ID → 워크로드 → 데이터"
       ],
       "currentFocus": [
-        "Cloudflare Workers Edge 보안 아키텍처",
-        "Zero Trust / Identity-aware Proxy 설계",
-        "MCP/AI 에이전트 기반 보안 운영 자동화",
-        "GitOps (ArgoCD) 및 정책 자동화 (OPA)"
+        "Splunk ES 탐지 룰·n8n·FortiManager API 기반 SOC 자동 대응",
+        "Cloudflare Workers Edge·IaC 홈랩으로 DevOps 역량 확장",
+        "MCP/AI 에이전트 기반 보안 운영 자동화 도구 자체 개발",
+        "GitOps(ArgoCD)·정책 자동화(OPA) 학습 중"
       ]
     },
     "totalExperience": ""
   },
   "platformVariants": {
     "wanted": {
-      "headline": "DevSecOps/SRE | 금융권 규제 환경 보안 인프라 설계·운영 | 본인가 심사 대응 통과",
-      "about": "금융권 규제 환경에서 보안 인프라를 설계·운영하며, 본인가 심사 대응을 통과한 경험이 있습니다. 분산된 보안 장비와 수동 운영에서 발생하는 비효율을 해결하기 위해 SIEM, IaC, 자동화, 관측성 플랫폼을 구축·운영한 경험이 있습니다.\n\n[경력 배경]\n• 금융권 규제 환경의 보안 인프라를 설계·운영한 경험\n• 수동 탐지·대응의 한계를 개선하기 위한 SIEM 기반 보안 관제 체계 구축\n• 서버 운영과 인프라 관리를 IaC로 전환하여 일관성과 추적성 확보\n• Prometheus/Grafana 기반 관측성 플랫폼으로 장애 대응 시간 단축\n\n[보유 역량]\n보안 장비 운영 자동화, SIEM 탐지 룰 설계, IaC 기반 인프라 관리, 보안 관제 체계 구축, 관측성 플랫폼 운영\n\n포트폴리오: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
+      "headline": "OA→DevSecOps 9년차 | 금융 보안 인프라 설계·운영 | FSC 본인가 통과 | Splunk ES·n8n·FortiGate HA",
+      "about": "OA 엔지니어로 시작해 9년간 자동화·보안·관측 영역으로 확장한 DevSecOps/SRE 엔지니어입니다.\n\n[성장 스토리]\n2017.02 (주)엠티데이타에서 한국항공우주산업(KAI) 폐쇄망 OA 운영을 시작했습니다. Linux 서버 50대 이상의 패치, 방화벽·IDS 정책 관리, WSUS 운영, 로그 분석을 수동으로 수행하며 반복 작업의 한계를 인식했습니다. 2018.11부터 11개월간 Linux 시스템을 재무장해 RHCSA, CompTIA Linux+, LPIC-1, 리눅스마스터 2급 자격증을 취득했습니다.\n\n2019.12 (주)메타넷엠플랫폼에서 1,000명 규모 컨택센터 재택근무 환경을 SSL VPN·NAC로 구축하고 Ansible·Python으로 신규 단말 등록과 스위치 점검을 자동화했습니다(NAC 정책 배포 10시간→1시간, 90% 단축). 2021.09 (주)조인트리에서 국민대 차세대 정보시스템에 NSX-T 마이크로세그멘테이션을 적용하고 Wazuh 기반 OSS 보안 모니터링을 구축했습니다.\n\n2022.08 (주)콴텍투자일임에서 금융보안데이터센터(FSDC) 인프라를 운영하며 금융감독원 정기 감사 대응, DLP 정책 운영, DB 접근제어 쿼리 튜닝(CPU 75%→52%), PB 플랫폼 POC 검증을 수행했습니다.\n\n2024.03 (주)가온누리정보시스템에서 넥스트레이드 매매체결시스템 보안 인프라를 구축하며 FortiGate HA 5계층 망분리를 설계하고 Ansible Role로 보안 장비 초기 설정을 표준화했습니다(방화벽 정책 500건 자동화, 8시간→1시간). 금융위 본인가 사전 심사를 통과했습니다.\n\n2025.03 (주)아이티센 CTS에서 넥스트레이드 보안 운영을 담당하며 Splunk ES 탐지 룰을 설계하고 n8n + FortiManager API로 보안 이벤트 자동 대응 체계를 구축했습니다(서버 150대, 단말 300대, 네트워크 80대, 일 10만+ 주문 처리, MTTR 30분→12분, 60% 단축).\n\n[보유 역량]\nSIEM 탐지 룰 설계(Splunk ES), 보안 운영 자동화(n8n, FortiManager API), 고가용성 보안 아키텍처 설계(FortiGate HA, NSX-T), IaC 기반 인프라 관리(Ansible Role, Terraform), 관측성 플랫폼 운영(Grafana/Prometheus/Loki), 금융 규제 대응(FSC 본인가, 금융감독원 감사)\n\n포트폴리오: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
     },
     "jobkorea": {
-      "headline": "DevSecOps/SRE — 금융권 규제 환경 보안 인프라 설계·운영",
-      "about": "금융권 규제 환경에서 보안 인프라를 설계·운영하며 본인가 심사 대응을 수행한 DevSecOps/SRE 엔지니어입니다.\n\n[주요 경험]\n• 넥스트레이드 — 금융권 규제 환경에서 FortiGate HA 보안 인프라를 설계·구축하고 본인가 심사 보안 영역을 대응한 경험. SIEM 탐지 룰 운영과 n8n+FortiManager API 연동을 통해 보안 이벤트 자동 대응 체계를 구축한 경험\n• 메타넷 — Ansible/Python으로 대규모 서버 설정과 NAC 정책 자동화를 구축한 경험\n\n[보유 기술]\nFortiGate/FortiManager, Splunk ES, Ansible, Python, Terraform, Docker, Prometheus/Grafana\n포트폴리오: https://resume.jclee.me"
+      "headline": "OA→DevSecOps 9년차 — 금융 보안 인프라 설계·운영 (FSC 본인가, Splunk ES, FortiGate HA, n8n)",
+      "about": "OA 엔지니어로 시작해 9년간 자동화·보안·관측 영역으로 확장한 DevSecOps/SRE 엔지니어입니다.\n\n[주요 경력]\n• (주)아이티센 CTS — 2025.03~2026.02 — 넥스트레이드 매매체결시스템 보안 운영 SM. Splunk ES 탐지 룰 + n8n + FortiManager API로 자동 탐지·대응 체계 구축. SOC 24/7 운영, MTTR 60% 단축.\n• (주)가온누리정보시스템 — 2024.03~2025.02 — 넥스트레이드 보안 인프라 구축. FortiGate HA + 5계층 망분리 + Ansible Role 표준화. 금융위 본인가 사전 심사 통과.\n• (주)콴텍투자일임 — 2022.08~2024.03 — 금융보안데이터센터(FSDC) 인프라 운영. 금융감독원 감사 대응, DB 튜닝 CPU 75%→52%.\n• (주)조인트리 — 2021.09~2022.04 — 국민대 차세대 정보시스템. NSX-T 마이크로세그멘테이션 + Wazuh.\n• (주)메타넷엠플랫폼 — 2019.12~2021.08 — 1,000명 컨택센터 재택근무 환경. Ansible/Python 자동화.\n• (주)엠티데이타 — 2017.02~2018.10 — KAI 폐쇄망 IT지원/OA운영. Linux 50대+ 운영.\n\n[성장 배경]\n2017년 OA 엔지니어로 시작해 폐쇄망에서 수동 운영의 한계를 경험했습니다. 2018.11부터 11개월간 RHCSA·LPIC-1·리눅스마스터 2급으로 Linux를 재무장한 뒤 자동화·보안 영역으로 성장 경로를 잡았습니다. 컨택센터·교육·금융 인프라를 거쳐 현재는 금융 대체거래소 보안 운영을 자동화하고 있습니다.\n\n[보유 기술]\nSplunk ES, n8n, FortiGate/FortiManager, Ansible, Python, Terraform, Docker, NSX-T, Prometheus/Grafana/Loki, Cloudflare Workers, MCP/AI 에이전트\n\n포트폴리오: https://resume.jclee.me"
     }
   },
   "current": {
@@ -165,6 +165,39 @@
         }
       ],
       "continuousEngagement": "넥스트레이드 매매체결시스템 (2024.03~2026.02 연속 참여, 구축→운영 단계)"
+    },
+    {
+      "company": "(주)콴텍투자일임",
+      "period": "2022.08 ~ 2024.03",
+      "duration": "1년 7개월",
+      "project": "Quantec AI Trading Platform / FSDC 운영",
+      "role": "인프라 엔지니어",
+      "client": "콴텍투자일임(주)",
+      "teamSize": "규모 미공개 인프라 운영팀",
+      "myRole": "FSDC 인프라 운영 및 자동화 담당",
+      "workType": "정규직",
+      "description": "금융보안데이터센터(FSDC) 환경에서 인프라 운영 안정성을 유지하고 금융감독원 정기 감사 기준을 충족하기 위해 Python 기반 자동화 스크립트로 운영 작업을 표준화하고, DLP 정책 운영과 DB 접근제어 쿼리 튜닝으로 시스템 성능을 개선했습니다.",
+      "wantedSummary": "금융보안데이터센터(FSDC) 인프라 운영 자동화 및 감사 대응 경험",
+      "note": "콴텍투자일임 정규직, AI Trading Platform 인프라 운영",
+      "projects": [
+        {
+          "name": "Quantec AI Trading Platform 인프라 운영",
+          "description": "수동 운영의 비효율과 감사 대응의 반복 작업을 줄이기 위해 Python 기반 인프라 자동화 스크립트를 개발하고, DB 접근제어 쿼리 튜닝으로 시스템 부하를 개선하여 PB 플랫폼 POC 런칭을 지원한 경험이 있습니다.",
+          "period": "2022.08 ~ 2024.03",
+          "techStack": [
+            "Python",
+            "Linux",
+            "DLP",
+            "PostgreSQL",
+            "FSDC"
+          ],
+          "achievements": [
+            "금융감독원 정기 감사 대응을 위해 DLP 정책 운영 체계를 정비한 경험",
+            "DB 접근제어 쿼리 튜닝으로 CPU 사용률을 75%에서 52%로 개선한 경험",
+            "PB 플랫폼 POC 성능 검증 및 시스템 런칭을 지원한 경험"
+          ]
+        }
+      ]
     },
     {
       "company": "(주)조인트리",
@@ -655,7 +688,8 @@
       "tagline": "모니터링 플랫폼",
       "language": "PromQL",
       "githubUrl": null,
-      "demoUrl": "https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b"
+      "demoUrl": "https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b",
+      "featured": true
     },
     {
       "name": "n8n Automation",
@@ -670,7 +704,8 @@
       "tagline": "워크플로우 자동화",
       "language": "JavaScript",
       "githubUrl": null,
-      "demoUrl": null
+      "demoUrl": null,
+      "featured": false
     },
     {
       "name": "FortiManager API Client (Python)",
@@ -686,7 +721,8 @@
       "language": "Python",
       "githubUrl": null,
       "demoUrl": null,
-      "note": "비공개 — 현직 환경 코드 (포트폴리오는 https://resume.jclee.me 데모)"
+      "note": "비공개 — 현직 환경 코드 (포트폴리오는 https://resume.jclee.me 데모)",
+      "featured": true
     },
     {
       "name": "Security Alert System",
@@ -701,7 +737,8 @@
       "tagline": "보안 알림 자동화",
       "language": "Python",
       "githubUrl": "https://github.com/jclee941/splunk",
-      "demoUrl": "https://kibana.jclee.me/s/portfolio-demo/app/dashboards?auth_provider_hint=portfolio_demo#/view/portfolio-demo-dashboard"
+      "demoUrl": "https://kibana.jclee.me/s/portfolio-demo/app/dashboards?auth_provider_hint=portfolio_demo#/view/portfolio-demo-dashboard",
+      "featured": true
     },
     {
       "name": "IP Blacklist Platform",
@@ -716,7 +753,8 @@
       "tagline": "위협 인텔리전스",
       "language": "Python",
       "githubUrl": "https://github.com/jclee941/blacklist",
-      "demoUrl": null
+      "demoUrl": null,
+      "featured": true
     },
     {
       "name": "HYCU FSDS 자율주행",
@@ -733,7 +771,8 @@
       "url": "https://github.com/jclee941/hycu_fsds",
       "language": "Python",
       "githubUrl": "https://github.com/jclee941/hycu_fsds",
-      "demoUrl": null
+      "demoUrl": null,
+      "featured": false
     },
     {
       "name": "Resume Portfolio",
@@ -756,7 +795,8 @@
         "반복 지원 작업을 자동화하기 위한 MCP 기반 도구 개발",
         "다중 패키지 일관된 버전 관리를 위한 monorepo 구조",
         "보안 장비 운영 효율화를 위한 n8n 워크플로우와 API 연동"
-      ]
+      ],
+      "featured": false
     },
     {
       "name": "Terraform Homelab IaC",
@@ -775,7 +815,8 @@
         "Cloudflare",
         "Helm",
         "k3s"
-      ]
+      ],
+      "featured": true
     },
     {
       "name": "SafetyWallet (CF Workers PWA)",
@@ -794,7 +835,8 @@
         "TypeScript",
         "D1",
         "KV"
-      ]
+      ],
+      "featured": false
     },
     {
       "name": "AI GitHub PR Reviewer",
@@ -812,7 +854,8 @@
         "Cloudflare Workers",
         "AI/LLM",
         "GitHub API"
-      ]
+      ],
+      "featured": false
     },
     {
       "name": "Bug Bounty Recon Toolkit",
@@ -831,7 +874,8 @@
         "Subfinder",
         "httpx",
         "Nuclei"
-      ]
+      ],
+      "featured": false
     }
   ],
   "ossContributions": [
