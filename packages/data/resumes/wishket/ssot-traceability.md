@@ -125,7 +125,7 @@ R6 수정: 면책 표기 제거, SSoT 미등록 기술 행 전체 제거 (Redis,
 
 | 포트폴리오 주장 | SSoT 경로 | SSoT 값 |
 |----------------|-----------|---------|
-| 9년차 | `experiences[]` 총 기간 계산 | 2017 ~ 2026 = 9년 |
+| 8년차 + Linux 재무장 1년 | `experiences[]` 총 기간 계산 | 실 근무 합계 약 8년 + 2018.11~2019.11 reskilling |
 | 넥스트레이드 본인가 | `experiences[0].responsibilities` | `"금융위원회 본인가 심사 기술 대응"` |
 | FortiGate/FortiManager HA | `experiences[0].responsibilities` | `"FGCP Active-Passive HA"` |
 | 금융위원회 본인가 심사 기술 대응 | `experiences[0].responsibilities` | `"금융위원회 본인가 심사 기술 대응 및 보안 아키텍처 수립"` |
