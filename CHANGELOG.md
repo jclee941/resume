@@ -5,6 +5,11 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.14.7] - 2026-04-29
 
+## [v1.23.2] - 2026-05-03
+
+### Changes
+- chore: standardize automation workflows + dependabot config (#76) (5dba348)
+
 ## [v1.23.1] - 2026-05-02
 
 ### Changes
