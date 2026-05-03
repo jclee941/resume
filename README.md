@@ -209,3 +209,6 @@ git push                 # → CI → 자동 배포
 **[resume.jclee.me](https://resume.jclee.me)** · Built on Cloudflare's edge
 
 </div>
+
+
+<!-- llm review fix verification probe (auto-removed after merge or close) -->
