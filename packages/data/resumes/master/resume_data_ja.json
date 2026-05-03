@@ -195,7 +195,7 @@
       "teamSize": "統合セキュリティ構築チーム（規模非公開）",
       "myRole": "NSX-Tマイクロセグメンテーション・統合ポリシー設計担当",
       "workType": "正社員（派遣）",
-      "description": "",
+      "description": "国民大学校次世代情報システムにNSX-Tマイクロセグメンテーションを設計・適用し、NAC・DLP・APT統合監視とWazuh基盤のOSSセキュリティモニタリングを構築。月次障害25%削減・侵害試行月200件遮断。",
       "note": "ジョイントリー所属、国民大学校次世代情報システム構築へ派遣",
       "projects": [
         {
@@ -227,7 +227,7 @@
       "teamSize": "インフラ運用チーム（規模非公開）",
       "myRole": "VPN/NAC自動化・スイッチ点検自動化担当",
       "workType": "SI+SM",
-      "description": "",
+      "description": "コンタクトセンタの1000名規模の在宅勤務環境にSSL VPN/NACを構築し、Ansible・Pythonで新規端末登録・スイッチ点検を自動化(NAC政策展開10時間→1時間、90%短縮)。",
       "projects": [
         {
           "name": "コンタクトセンター リモートワーク基盤",
@@ -258,7 +258,7 @@
       "teamSize": "現場IT運用チーム（規模非公開）",
       "myRole": "閉域網サーバー運用・セキュリティパッチ担当",
       "workType": "正社員（派遣）",
-      "description": "",
+      "description": "韓国航空宇宙産業(KAI)閉鎖網のIT支援/OA運用としてLinuxサーバ50台以上のパッチ・ファイアウォール/IDS政策・WSUSを手動運用し、ログ分析体制を確立。21ヶ月連続セキュリティ事故0件。",
       "note": "エムティデータ所属、韓国航空宇宙産業(KAI) IT インフラ現場運用へ派遣",
       "projects": [
         {
@@ -358,22 +358,22 @@
     {
       "name": "CCNP",
       "issuer": "Cisco Systems",
-      "date": "2020.08 (2023.08 만료)",
+      "date": "2020.08 (2023.08 期限切れ)",
       "expirationDate": "2023.08",
       "credentialId": null,
       "credentialUrl": null,
       "status": "expired",
-      "note": "갱신 예정 — CCNP Security 또는 CCIE 학습 중"
+      "note": "更新予定 — CCNP SecurityまたはCCIE学習中"
     },
     {
       "name": "RHCSA",
       "issuer": "Red Hat",
-      "date": "2019.01 (2022.01 만료)",
+      "date": "2019.01 (2022.01 期限切れ)",
       "expirationDate": "2022.01",
       "credentialId": null,
       "credentialUrl": null,
       "status": "expired",
-      "note": "갱신 예정 — CKA/CKS (Kubernetes) 학습 우선"
+      "note": "更新予定 — CKA/CKS (Kubernetes) 学習優先"
     },
     {
       "name": "CompTIA Linux+",
@@ -416,8 +416,8 @@
       "issuer": "CNCF",
       "date": null,
       "expirationDate": null,
-      "status": "준비중",
-      "note": "2026 H2 취득 목표 — 컨테이너 보안·런타임 보안"
+      "status": "準備中",
+      "note": "2026 H2取得目標 — コンテナ・ランタイムセキュリティ"
     }
   ],
   "skills": {
@@ -446,11 +446,11 @@
           "level": "advanced"
         },
         {
-          "name": "Tempo (학습 중)",
+          "name": "Tempo (学習中)",
           "level": "beginner"
         },
         {
-          "name": "Pyroscope (학습 중)",
+          "name": "Pyroscope (学習中)",
           "level": "beginner"
         }
       ]
@@ -510,19 +510,19 @@
           "level": "advanced"
         },
         {
-          "name": "ArgoCD (학습 중)",
+          "name": "ArgoCD (学習中)",
           "level": "beginner"
         },
         {
-          "name": "Crossplane (학습 중)",
+          "name": "Crossplane (学習中)",
           "level": "beginner"
         },
         {
-          "name": "Pulumi (학습 중)",
+          "name": "Pulumi (学習中)",
           "level": "beginner"
         },
         {
-          "name": "HashiCorp Vault (홈랩 운영)",
+          "name": "HashiCorp Vault (ホームラボ運用)",
           "level": "intermediate"
         }
       ]
@@ -616,7 +616,7 @@
           "level": "beginner"
         },
         {
-          "name": "eBPF/Cilium (학습 중)",
+          "name": "eBPF/Cilium (学習中)",
           "level": "beginner"
         },
         {
@@ -659,7 +659,7 @@
   "personalProjects": [
     {
       "name": "Observability Platform",
-      "period": "2024.06 ~ 현재",
+      "period": "2024.06 ~ 現在",
       "description": "[課題] ホームラボインフラのメトリクスとログがサービスごとに分散し、障害発生時の原因把握に時間がかかっていました。\n[解決] Prometheusでメトリクスを中央収集し、Loki/Elasticsearchログを Grafanaダッシュボードに統合しました。Splunk基盤の可観測性運用経験をPrometheus+Grafanaスタックで再現しました。\n[結果] メトリクス・ログを単一画面で横断分析する統合可観測性運用基盤を構築しました。",
       "technologies": [
         "Grafana",
@@ -669,7 +669,7 @@
         "Docker"
       ],
       "icon": "📊",
-      "tagline": "모니터링 플랫폼",
+      "tagline": "監視プラットフォーム",
       "language": "PromQL",
       "githubUrl": null,
       "demoUrl": "https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b",
@@ -677,7 +677,7 @@
     },
     {
       "name": "n8n Automation",
-      "period": "2024.01 ~ 현재",
+      "period": "2024.01 ~ 現在",
       "description": "[課題] Slack通知、Cloudflareデプロイ通知、GitHub Actions結果収集などの繰り返し作業がcrontabと個別スクリプトに分散運用されており、新規連携追加時に毎回コード作成が必要でした。\n[解決] n8nを中央オーケストレーターとして導入し、Slack・GitHub・Cloudflare・Grafanaをwebhook+APIで連携しました。エラーハンドリング・リトライを標準化しました。\n[結果] 新規自動化追加時にUIでワークフローをデプロイできるワークフロー基盤を構築しました。",
       "technologies": [
         "n8n",
@@ -685,7 +685,7 @@
         "Docker"
       ],
       "icon": "🔄",
-      "tagline": "워크플로우 자동화",
+      "tagline": "ワークフロー自動化",
       "language": "JavaScript",
       "githubUrl": null,
       "demoUrl": null,
@@ -693,7 +693,7 @@
     },
     {
       "name": "FortiManager API Client (Python)",
-      "period": "2025.01 ~ 현재",
+      "period": "2025.01 ~ 現在",
       "description": "[課題] セキュリティ運用でファイアウォール政策確認・ルート照会・ログ統計をそれぞれFortiManager・FortiAnalyzerコンソールにアクセスして手動で処理する必要がありました。\n[解決] FortiManagerとFortiAnalyzer REST APIをラップしたPythonライブラリを開発し、政策照会・ルート管理・ログ統計を共通メソッドで抽象化しました。\n[結果] ファイアウォール政策照会・変更をスクリプトで処理可能になり、セキュリティ運用自動化に活用しています。",
       "technologies": [
         "Python",
@@ -701,16 +701,16 @@
         "FortiAnalyzer"
       ],
       "icon": "🛡️",
-      "tagline": "보안장비 API 자동화",
+      "tagline": "セキュリティ機器API自動化",
       "language": "Python",
       "githubUrl": null,
       "demoUrl": null,
-      "note": "비공개 — 현직 환경 코드 (포트폴리오는 https://resume.jclee.me 데모)",
+      "note": "非公開 — 現職環境のコード(ポートフォリオはhttps://resume.jclee.me のデモ)",
       "featured": true
     },
     {
       "name": "Security Alert System",
-      "period": "2025.01 ~ 현재",
+      "period": "2025.01 ~ 現在",
       "description": "[課題] FortiGateセキュリティイベントが装置syslogとSplunkに分散し、イベント発生から担当者認知までに時間がかかっていました。\n[解決] Splunk Saved SearchとWebhookを連携し、セキュリティイベント発生時にSlack/Telegramへ即時通知する体制を構築しました。\n[結果] セキュリティイベント認知時間を短縮し、担当者応答フローを標準化しました。",
       "technologies": [
         "Splunk",
@@ -718,7 +718,7 @@
         "Slack"
       ],
       "icon": "🔔",
-      "tagline": "보안 알림 자동화",
+      "tagline": "セキュリティアラート自動化",
       "language": "Python",
       "githubUrl": "https://github.com/jclee941/splunk",
       "demoUrl": "https://kibana.jclee.me/s/portfolio-demo/app/dashboards?auth_provider_hint=portfolio_demo#/view/portfolio-demo-dashboard",
@@ -726,7 +726,7 @@
     },
     {
       "name": "IP Blacklist Platform",
-      "period": "2024.12 ~ 현재",
+      "period": "2024.12 ~ 現在",
       "description": "[課題] 脅威インテリジェンスフィードが複数の外部ソースに分散し、悪性IPを分析する際にソースごとに別途照会が必要でした。\n[解決] Flask + PostgreSQLバックエンドとNext.jsフロントエンドで統合照会プラットフォームを構築しました。複数ソースを単一インターフェースに統合しました。\n[結果] 脅威IP分析フローを単一画面に統合しました。",
       "technologies": [
         "Flask",
@@ -734,14 +734,14 @@
         "PostgreSQL"
       ],
       "icon": "🚫",
-      "tagline": "위협 인텔리전스",
+      "tagline": "脅威インテリジェンス",
       "language": "Python",
       "githubUrl": "https://github.com/jclee941/blacklist",
       "demoUrl": null,
       "featured": true
     },
     {
-      "name": "HYCU FSDS 자율주행",
+      "name": "HYCU FSDS自律走行",
       "period": "2025.11 ~ 2026.02",
       "description": "[課題] Formula Student Driverless Simulator環境でコーン認識と走行制御を統合運用する必要がありました。\n[解決] ROSベースの認識・制御ノードをDockerコンテナに統合し、AirSimシミュレーション環境で検証しました。\n[結果] 漢陽サイバー大学校自律走行コンテストに参加しました。",
       "technologies": [
@@ -751,7 +751,7 @@
         "AirSim"
       ],
       "icon": "🏎️",
-      "tagline": "자율주행 시뮬레이션",
+      "tagline": "自律走行シミュレーション",
       "url": "https://github.com/jclee941/hycu_fsds",
       "language": "Python",
       "githubUrl": "https://github.com/jclee941/hycu_fsds",
@@ -760,7 +760,7 @@
     },
     {
       "name": "Resume Portfolio",
-      "period": "2024.01 ~ 현재",
+      "period": "2024.01 ~ 現在",
       "description": "[課題] 経歴・プロジェクト・運用指標が履歴書・PDF・GitHubに分散し、採用担当者が強みを素早く把握しにくい状態でした。\n[解決] Cloudflare Workers Edgeに単一SSoTベースの履歴書サイトを構築し、MCP自動化ツール・自動応募パイプライン・n8nワークフローをmonorepoに統合しました。\n[結果] 履歴書・志望動機生成・自動応募・可観測性を単一monorepoで運用しています。",
       "technologies": [
         "Cloudflare Workers",
@@ -769,29 +769,29 @@
         "Grafana Loki"
       ],
       "icon": "⚡",
-      "tagline": "포트폴리오 플랫폼",
+      "tagline": "ポートフォリオプラットフォーム",
       "language": "JavaScript",
       "githubUrl": "https://github.com/jclee941/resume",
       "demoUrl": "https://resume.jclee.me",
       "highlights": [
-        "저지연 글로벌 서비스 제공을 위한 Edge 런타임 운영",
-        "코드 품질 자동 검증을 위한 테스트 환경 자체 운영",
-        "반복 지원 작업을 자동화하기 위한 MCP 기반 도구 개발",
-        "다중 패키지 일관된 버전 관리를 위한 monorepo 구조",
-        "보안 장비 운영 효율화를 위한 n8n 워크플로우와 API 연동"
+        "低レイテンシのグローバルサービス提供のためのEdgeランタイム運用",
+        "コード品質の自動検証のためのテスト環境を自社運用",
+        "繰り返し応募作業を自動化するためのMCPベースのツール開発",
+        "複数パッケージの一貫したバージョン管理のためのmonorepo構造",
+        "セキュリティ機器運用の効率化のためのn8nワークフローとAPI連携"
       ],
       "featured": false
     },
     {
       "name": "Terraform Homelab IaC",
-      "period": "2024.06 ~ 현재",
+      "period": "2024.06 ~ 現在",
       "githubUrl": "https://github.com/jclee941/terraform",
       "description": "[課題] ホームラボインフラ(Proxmox、Cloudflare DNS/Workers、K8s)をGUIで管理しており、変更履歴追跡と再構築が困難でした。\n[解決] すべてのインフラをTerraformでIaC化しました。Proxmox VM/LXC、Cloudflare DNS・Workers・WAF、k3sクラスタをgitベースGitOpsで管理します。\n[結果] インフラ再構築が可能になり、変更履歴がPRベースで追跡されます。",
       "highlights": [
-        "GUI 관리의 추적성 한계를 해결하기 위한 IaC 전환",
-        "DNS·Edge 설정의 일관성 확보를 위한 코드화 관리",
-        "클러스터 재구축 시간 단축을 위한 자동 프로비저닝",
-        "IaC 품질 관리를 위한 CI 자동 검증 파이프라인"
+        "GUI管理のトレーサビリティ限界を解決するためのIaC移行",
+        "DNS・Edge設定の一貫性確保のためのコード化管理",
+        "クラスタ再構築時間の短縮のための自動プロビジョニング",
+        "IaC品質管理のためのCI自動検証パイプライン"
       ],
       "technologies": [
         "Terraform",
@@ -808,10 +808,10 @@
       "githubUrl": "https://github.com/jclee941/safetywallet",
       "description": "[課題] 現場作業者が安全マニュアル・教育修了証憑・緊急連絡網を紙で管理しており、即時参照が困難でした。\n[解決] Cloudflare Workers基盤のPWA + Next.js管理画面を構築しました。D1で作業者プロフィールを保存し、KVキャッシュ・R2オブジェクトストレージでマニュアルを保管します。\n[結果] オフラインでも安全マニュアルを参照できるPWAシステムを運用しています。",
       "highlights": [
-        "글로벌 저지연 서비스 제공을 위한 Edge 배포",
-        "오프라인 동작을 위한 계층별 스토리지 통합 아키텍처",
-        "네트워크 제약 환경에서도 매뉴얼 접근 가능하게 한 오프라인 지원",
-        "권한 분리와 세션 보안을 위한 RBAC + JWT 설계"
+        "グローバル低レイテンシサービス提供のためのEdgeデプロイ",
+        "オフライン動作のための階層別ストレージ統合アーキテクチャ",
+        "ネットワーク制約環境でもマニュアルアクセス可能にしたオフライン対応",
+        "権限分離とセッションセキュリティのためのRBAC + JWT設計"
       ],
       "technologies": [
         "Cloudflare Workers",
@@ -824,14 +824,14 @@
     },
     {
       "name": "AI GitHub PR Reviewer",
-      "period": "2026.03 ~ 현재",
+      "period": "2026.03 ~ 現在",
       "githubUrl": "https://github.com/jclee941/github-bot",
       "description": "[課題] セキュリティ・インフラのPRレビューが1人依存構造であり、共通パターン(シークレット露出/RBAC)検証を毎回手動で実施する必要がありました。\n[解決] Self-hosted AI PRレビューアをCloudflare Workersで運用しています。CLIProxyAPI統合でLLMコストを削減し、セキュリティパターンを自動検出してGitHubコメントでフィードバックします。\n[結果] PRレビューフローを自動化し、シークレット露出検証を標準化しました。",
       "highlights": [
-        "LLM 호출 비용을 절감하기 위한 자체 프록시 운영",
-        "보안 결함의 조기 탐지를 위한 자동 패턴 검출",
-        "PR 리뷰 지연을 줄이기 위한 Webhook 기반 즉시 알림",
-        "서비스 중단 없이 배포하기 위한 Edge 무중단 배포 설계"
+        "LLM呼び出しコスト削減のための自社プロキシ運用",
+        "セキュリティ欠陥の早期検出のための自動パターン検出",
+        "PRレビュー遅延削減のためのWebhookベースの即時通知",
+        "サービス中断のないデプロイのためのEdge無停止デプロイ設計"
       ],
       "technologies": [
         "TypeScript",
@@ -843,14 +843,14 @@
     },
     {
       "name": "Bug Bounty Recon Toolkit",
-      "period": "2025.10 ~ 현재",
+      "period": "2025.10 ~ 現在",
       "githubUrl": "https://github.com/jclee941/bug",
       "description": "[課題] バグバウンティ偵察(サブドメイン発見→通知→脆弱性スキャン)を毎回手作業で実施していました。\n[解決] Goベース偵察パイプライン+Python結果分析を統合しました。Subfinder + httpx + Nucleiを連結し、n8nで日次スケジュールを管理します。\n[結果] 偵察作業をワークフローに転換し、新規ドメイン変更を即時検出します。",
       "highlights": [
-        "대규모 대상 동시 스캔을 위한 동시성 설계",
-        "취약점 발견 후 즉시 대응하기 위한 자동 매칭과 알림",
-        "정기 정찰과 담당자 알림 연동을 위한 워크플로우",
-        "탐지 결과를 MITRE 프레임워크로 정렬하여 위험도 판단 지원"
+        "大規模対象の同時スキャンのための並行性設計",
+        "脆弱性発見後の即時対応のための自動マッチングと通知",
+        "定期偵察と担当者通知連携のためのワークフロー",
+        "検知結果をMITREフレームワークで整列し、リスク判断を支援"
       ],
       "technologies": [
         "Go",

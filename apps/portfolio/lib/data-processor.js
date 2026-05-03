@@ -81,11 +81,11 @@ function processProjectData({ projectDataRaw, projectDataEnRaw, projectDataJaRaw
     resumeCardsHtml: generateResumeCards(projectData.resume, dataHash),
     projectCardsHtml: generateProjectCards(projectData.projects, dataHash),
     resumeCardsEnHtml: generateResumeCards(
-      projectData.resumeEn || projectData.resume,
+      (projectDataEn && projectDataEn.resume) || projectData.resumeEn || projectData.resume,
       `${dataHash}:en-resume`
     ),
     projectCardsEnHtml: generateProjectCards(
-      projectData.projectsEn || projectData.projects,
+      (projectDataEn && projectDataEn.projects) || projectData.projectsEn || projectData.projects,
       `${dataHash}:en-projects`
     ),
     resumeCardsJaHtml: generateResumeCards(
@@ -98,12 +98,26 @@ function processProjectData({ projectDataRaw, projectDataEnRaw, projectDataJaRaw
     ),
     certCardsHtml: generateCertificationCards(projectData.certifications, dataHash),
     skillsHtml: generateSkillsList(projectData.skills, dataHash),
+    skillsEnHtml: generateSkillsList(
+      (projectDataEn && projectDataEn.skills) || projectData.skills,
+      `${dataHash}:en-skills`
+    ),
+    skillsJaHtml: generateSkillsList(
+      (projectDataJa && projectDataJa.skills) || projectData.skills,
+      `${dataHash}:ja-skills`
+    ),
     heroContentHtml: generateHeroContent(projectData.hero),
     resumeDescriptionHtml: generateResumeDescription(
       projectData.sectionDescriptions.resume,
       projectData.achievements
     ),
     infrastructureCardsHtml: generateInfrastructureCards(projectData.infrastructure),
+    infrastructureCardsEnHtml: generateInfrastructureCards(
+      (projectDataEn && projectDataEn.infrastructure) || projectData.infrastructure
+    ),
+    infrastructureCardsJaHtml: generateInfrastructureCards(
+      (projectDataJa && projectDataJa.infrastructure) || projectData.infrastructure
+    ),
     contactGridHtml: generateContactGrid(projectData.contact),
     aboutContentHtml: generateAboutContent(projectData.aboutSection, dataHash),
     aboutContentEnHtml: generateAboutContent(

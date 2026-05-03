@@ -77,6 +77,9 @@ function buildJapaneseTemplate(html) {
     .replace(/<meta\s+name="author"[\s\S]*?\/>/i, '<meta name="author" content="イ・ジェチョル (Lee Jaecheol)" />')
     .replace(/<meta\s+property="og:description"[\s\S]*?\/>/i, '<meta property="og:description" content="DevSecOps/SRE/Platform Engineer | セキュリティインフラ、SIEM/SOAR、Observability、IaC自動化" />')
     .replace(/<meta\s+name="twitter:description"[\s\S]*?\/>/i, '<meta name="twitter:description" content="DevSecOps/SRE/Platform Engineer | セキュリティインフラ、SIEM/SOAR、Observability、IaC自動化" />')
+    // === JA JSON-LD description ===
+    .replace(/"description": "금융권 보안 규제 환경에서 인프라 설계·운용을 담당하며[^"]*"/g, '"description": "金融規制環境でインフラ設計・運用を担当し、FSC本認可対応を通過したOAエンジニア出身9年目のDevSecOps/SREエンジニアです。分散したセキュリティ機器と手動運用の非効率を統合自動化で改善し、リアルタイム検知と自動対応体制を構築した経験があります。"')
+    .replace(/"description": "금융권 규제 환경에서 보안 인프라 설계·운영을 담당한[^"]*"/g, '"description": "金融規制環境でセキュリティインフラ設計·運用を担当したDevSecOps/SRE/Platform Engineerの個人ポートフォリオ。"')
     // === JA hero copy (replace KO hero text with Japanese) ===
     .replace(/<span class="typing-effect glow-cyan">이재철<\/span/g, '<span class="typing-effect glow-cyan">イ・ジェチョル</span')
     .replace(/<span class="sr-only">이재철<\/span>/g, '<span class="sr-only">イ・ジェチョル</span>')
@@ -111,7 +114,18 @@ function buildJapaneseTemplate(html) {
     .replace(/<h2 id="about-heading" class="sr-only">소개<\/h2>/g, '<h2 id="about-heading" class="sr-only">紹介</h2>')
     .replace(/<h2 id="skills-heading" class="sr-only">기술<\/h2>/g, '<h2 id="skills-heading" class="sr-only">スキル</h2>')
     .replace(/<h2 id="infrastructure-heading" class="sr-only">인프라<\/h2>/g, '<h2 id="infrastructure-heading" class="sr-only">インフラ</h2>')
-    .replace(/<h2 id="status-heading" class="sr-only">상태<\/h2>/g, '<h2 id="status-heading" class="sr-only">ステータス</h2>');
+    .replace(/<h2 id="status-heading" class="sr-only">상태<\/h2>/g, '<h2 id="status-heading" class="sr-only">ステータス</h2>')
+    // === Inline JS terminal commands KO -> JA ===
+    .replace(/'DevSecOps \/ SRE \/ Platform Engineering\\n금융권 본인가·보안 인프라 운영 자동화 · SIEM\/SOAR · IaC'/g, "'DevSecOps / SRE / Platform Engineering\\n金融FSC本認可・セキュリティインフラ運用自動化 · SIEM/SOAR · IaC'")
+    .replace(/> DevSecOps \/ SRE \/ Platform Engineering\\n> 금융권 규제 환경의 보안 인프라 자동화 엔지니어/g, '> DevSecOps / SRE / Platform Engineering\\n> 金融規制環境のセキュリティインフラ自動化エンジニア')
+    // === Inline JS terminal command keywords KO -> JA ===
+    .replace(/'연락', '이메일', '전화'/g, "'連絡', 'メール', '電話'")
+    .replace(/'기술', '스킬', '역량'/g, "'技術', 'スキル', 'スタック'")
+    .replace(/'사이드', '프로젝트'/g, "'サイド', 'プロジェクト'")
+    .replace(/'자격증', '인증'/g, "'資格', '認証'")
+    .replace(/'경력', '경험', '회사', '업무'/g, "'経歴', '経験', '会社', '業務'")
+    // === JSON-LD knowsAbout KO -> JA ===
+    .replace(/"금융권 본인가"/g, '"金融FSC本認可"')
 }
 
 /**
