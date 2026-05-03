@@ -83,7 +83,8 @@
     },
     "jobkorea": {
       "headline": "9년차 DevSecOps/SRE — OA→자동화→FSC 본인가→SOC 24/7 (Splunk ES, n8n, FortiGate HA)",
-      "about": "**\"반복 작업은 자동화 되어야 한다\"** — 한 가지 신념으로 운영의 도구를 9년간 진화시켜 왔습니다.\n\n[현장 → 자동화 → AI 에이전트 trajectory]\n• KAI 폐쇄망 (2017–2018): Linux 50대 수기 운영, 패치/방화벽/IDS 정책\n• Linux 재무장 (2018.11–2019.11): RHCSA·LPIC-1·리눅스마스터 2급 연속 취득\n• 자동화 입문 (2019–2022): 메타넷 컨택센터 1,000명 SSL VPN/NAC + Ansible/Python; 조인트리 NSX-T 마이크로세그멘테이션 + Wazuh\n• 금융 인프라 (2022–2024): 콴텍투자일임 FSDC, 금감원 감사 대응 + DB 튜닝(CPU 75%→52%)\n• 보안 구축 (2024–2025): 가온누리 넥스트레이드, FortiGate HA 5계층 망분리 + Ansible Role 표준화 + FSC 본인가 통과\n• 보안 운영 (2025–현재): 아이티센 CTS 넥스트레이드, Splunk ES + n8n + FortiManager API SOC 24/7 (서버 150대, MTTR 30→12분)\n\n[측정 가능한 임팩트]\nNAC 10h→1h · 방화벽 8h→1h · MTTR 30→12분 · 침해 시도 월 200건 차단 · DLP 오탐 80% ↓\n\n[보유 기술 스택]\nSplunk ES, n8n, FortiGate/FortiManager API, Ansible Role, Python, Terraform, Docker, NSX-T, Wazuh, Grafana/Prometheus/Loki, Cloudflare Workers, MCP/AI 에이전트\n\n포트폴리오: https://resume.jclee.me"
+      "about": "**\"반복 작업은 자동화 되어야 한다\"** — 한 가지 신념으로 운영의 도구를 9년간 진화시켜 왔습니다.\n\n[현장 → 자동화 → AI 에이전트 trajectory]\n• KAI 폐쇄망 (2017–2018): Linux 50대 수기 운영, 패치/방화벽/IDS 정책\n• Linux 재무장 (2018.11–2019.11): RHCSA·LPIC-1·리눅스마스터 2급 연속 취득\n• 자동화 입문 (2019–2022): 메타넷 컨택센터 1,000명 SSL VPN/NAC + Ansible/Python; 조인트리 NSX-T 마이크로세그멘테이션 + Wazuh\n• 금융 인프라 (2022–2024): 콴텍투자일임 FSDC, 금감원 감사 대응 + DB 튜닝(CPU 75%→52%)\n• 보안 구축 (2024–2025): 가온누리 넥스트레이드, FortiGate HA 5계층 망분리 + Ansible Role 표준화 + FSC 본인가 통과\n• 보안 운영 (2025–현재): 아이티센 CTS 넥스트레이드, Splunk ES + n8n + FortiManager API SOC 24/7 (서버 150대, MTTR 30→12분)\n\n[측정 가능한 임팩트]\nNAC 10h→1h · 방화벽 8h→1h · MTTR 30→12분 · 침해 시도 월 200건 차단 · DLP 오탐 80% ↓\n\n[보유 기술 스택]\nSplunk ES, n8n, FortiGate/FortiManager API, Ansible Role, Python, Terraform, Docker, NSX-T, Wazuh, Grafana/Prometheus/Loki, Cloudflare Workers, MCP/AI 에이전트\n\n포트폴리오: https://resume.jclee.me",
+      "defaultJobCode": "1000238"
     }
   },
   "current": {
@@ -130,7 +131,8 @@
           ]
         }
       ],
-      "continuousEngagement": "넥스트레이드 매매체결시스템 (2024.03~2026.02 연속 참여, 구축→운영 단계)"
+      "continuousEngagement": "넥스트레이드 매매체결시스템 (2024.03~2026.02 연속 참여, 구축→운영 단계)",
+      "jobkoreaJobCode": "1000238"
     },
     {
       "company": "(주)가온누리정보시스템",
@@ -164,7 +166,8 @@
           ]
         }
       ],
-      "continuousEngagement": "넥스트레이드 매매체결시스템 (2024.03~2026.02 연속 참여, 구축→운영 단계)"
+      "continuousEngagement": "넥스트레이드 매매체결시스템 (2024.03~2026.02 연속 참여, 구축→운영 단계)",
+      "jobkoreaJobCode": "1000238"
     },
     {
       "company": "(주)콴텍투자일임",
@@ -197,7 +200,8 @@
             "PB 플랫폼 POC 성능 검증 및 시스템 런칭을 지원한 경험"
           ]
         }
-      ]
+      ],
+      "jobkoreaJobCode": "1000238"
     },
     {
       "company": "(주)조인트리",
@@ -230,7 +234,8 @@
             "정책 불일치와 관리 비효율을 해결하기 위해 중앙 집중적 관리 체계를 구축한 경험"
           ]
         }
-      ]
+      ],
+      "jobkoreaJobCode": "1000238"
     },
     {
       "company": "(주)메타넷엠플랫폼",
@@ -261,7 +266,8 @@
             "VPN 세션 이상 징후를 가시화하기 위해 탐지 대시보드를 구축한 경험"
           ]
         }
-      ]
+      ],
+      "jobkoreaJobCode": "1000239"
     },
     {
       "company": "(주)엠티데이타",
@@ -293,7 +299,8 @@
             "패치 적용 지연으로 인한 취약성 노출을 방지하기 위해 정기 패치 체계를 구축한 경험"
           ]
         }
-      ]
+      ],
+      "jobkoreaJobCode": "1000239"
     }
   ],
   "projects": [

@@ -202,7 +202,13 @@ export function mapCareersToFormFields(ssot, indices) {
     pushField(fields, `Career[${key}].RetireSt`, isCurrent ? 1 : 2);
     pushField(fields, `Career[${key}].M_MainJob_Jikwi`, career?.role || '');
     pushField(fields, `Career[${key}].Job_Type_Code`, '');
-    pushField(fields, `Career[${key}].M_MainField`, ''); // Empty: prevents code number display in resume
+    // M_MainField is JobKorea's BizJobtype_Code (직무코드).
+    // SSoT may set careers[i].jobkoreaJobCode; otherwise fall back to ssot.platformVariants.jobkorea.defaultJobCode,
+    // and finally to '1000238' (보안엔지니어 / AI·개발·데이터 분류) matching the engineer's primary track.
+    const jkJobCode = career?.jobkoreaJobCode
+      || ssot?.platformVariants?.jobkorea?.defaultJobCode
+      || '1000238';
+    pushField(fields, `Career[${key}].M_MainField`, jkJobCode);
     pushField(fields, `Career[${key}].M_MainJob`, ''); // Empty: same reason
     pushField(fields, `Career[${key}].Job_Field_Direct`, ''); // Must be empty, not code
     pushField(fields, `Career[${key}].M_MainPay_User`, '');
