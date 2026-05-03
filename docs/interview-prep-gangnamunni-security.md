@@ -282,8 +282,7 @@ IMPORTANT:
 
 ### Q1. "우리 서비스에 SSRF 취약점이 발견됐습니다. 어떻게 대응하시겠습니까?"
 
-### 답변 구조
-
+**답변 구조:**
 **1단계: 영향 범위 파악**
 
 - 해당 기능 사용처 식별 (webhook URL, 이미지 리사이징, PDF 생성 등)
@@ -310,14 +309,14 @@ IMPORTANT:
 
 ### Q2. "API에서 IDOR가 발견됐을 때, 수정 방향과 재발 방지는?"
 
-### 답변
+**답변:**
 
 - 서비스 레이어에서 리소스 소유권 검증 중앙화
 - Spring Security @PreAuthorize로 메서드 레벨 접근 통제
 - Integration test로 IDOR 케이스 자동화
 - API Gateway 레벨 authorization policy enforcement
 
-### 코드 예시 (Kotlin)
+**코드 예시 (Kotlin):**
 
 ```kotlin
 @PreAuthorize("#userId == authentication.principal.id or hasRole('ADMIN')")
@@ -327,7 +326,7 @@ fun getUser(@PathVariable userId: Long): User
 
 ### Q3. "JWT 토큰이 탈취됐을 때 대응 절차는?"
 
-### 답변 (2)
+**답변:**
 
 1. 토큰 무효화: Redis에 탈취 토큰 jti 등록 → 만료 전까지 거부
 2. 해당 계정 세션 일괄 종료 + 강제 비밀번호 변경
@@ -338,7 +337,7 @@ fun getUser(@PathVariable userId: Long): User
 
 ### Q4. "CI/CD에 보안 검사를 넣으라면 어떻게 설계?"
 
-### Multi-Stage Pipeline
+**Multi-Stage Pipeline:**
 
 ```text
 [Commit] SAST + Secrets scanning + Dependency check
@@ -353,7 +352,7 @@ fun getUser(@PathVariable userId: Long): User
 
 ### Q5. "SAST 도구 False Positive가 너무 많으면?"
 
-### 답변 (3)
+**답변:**
 
 1. 정량 분석: 실제 취약점 비율 계산
 2. Rule별 제외 설정 (annotate-based)
@@ -364,7 +363,7 @@ fun getUser(@PathVariable userId: Long): User
 
 ### Q6. "Kubernetes 환경에서 컨테이너 보안은?"
 
-### Defense-in-Depth
+**Defense-in-Depth:**
 
 - 클러스터: CIS Benchmark, RBAC 최소권한, etcd 암호화, Network Policy
 - 컨테이너: Pod Security Standards (runAsNonRoot, readOnlyRootFilesystem, drop ALL
@@ -376,7 +375,7 @@ fun getUser(@PathVariable userId: Long): User
 
 ### Q7. "Log4Shell(CVE-2021-44228) 발표 시 72시간 대응?"
 
-### 답변 (4)
+**답변:**
 
 - T+0~4: SCA로 취약 Log4j 식별, Public-facing → Internal → Legacy 우선순위화
 - T+4~24: 2.17.1 이상 업그레이드, 패치 불가 시 formatMsgNoLookups=true + WAF 시그니처 차단
@@ -384,7 +383,7 @@ fun getUser(@PathVariable userId: Long): User
 
 ### Q8. "개발자가 실수로 S3 버킷을 public으로 설정해 고객 데이터 유출?"
 
-### 답변 (5)
+**답변:**
 
 1. 즉시 Block All Public Access
 2. CloudTrail에서 외부 접근 IP 추출
@@ -394,7 +393,7 @@ fun getUser(@PathVariable userId: Long): User
 
 ### Q9. "OAuth refresh token이 유출됐다면?"
 
-### 답변 (6)
+**답변:**
 
 1. 모든 활성 토큰 즉시 REVOKE
 2. 제3자 통합 자격증 변경
@@ -405,7 +404,7 @@ fun getUser(@PathVariable userId: Long): User
 
 ### Q10. "미용의료 플랫폼에서 환자 민감정보 보호 아키텍처는?"
 
-### 답변 (7)
+**답변:**
 
 - 데이터 분류: Level 1 (일반 PII) → Level 2 (의료 관련) → Level 3 (시술 사진, 진단명)
 - Level 3: RBAC + MFA + Row-Level Security + 감사 로깅
@@ -414,7 +413,7 @@ fun getUser(@PathVariable userId: Long): User
 
 ### Q11. "글로벌 서비스(한국/일본/태국)에서 데이터 레지던시 설계?"
 
-### 답변 (8)
+**답변:**
 
 - 국가별 데이터 저장 리전 분리 (AWS ap-northeast-1 JP, ap-southeast-1 TH)
 - API Gateway에서 jurisdiction 판정 → 데이터 로케이션 라우팅
@@ -423,7 +422,7 @@ fun getUser(@PathVariable userId: Long): User
 
 ### Q12. "Spring Boot Actuator가 Kubernetes에서 외부 노출될 위험과 대응?"
 
-### 답변 (9)
+**답변:**
 
 - Network Policy로 actuator endpoints 내부 모니터링 네임스페이스에서만 접근 허용
 - management.endpoints.web.exposure.include: health,info만 노출
@@ -434,7 +433,7 @@ fun getUser(@PathVariable userId: Long): User
 
 ### 예제 1: SQL Injection (Java/Kotlin)
 
-### 취약 코드
+**취약 코드:**
 
 ```java
 @Query("SELECT u FROM User u WHERE u.email = '" + email + "'")
@@ -443,7 +442,7 @@ User findByEmail(String email);
 
 **리뷰 코멘트:** "사용자 입력이 JPQL 쿼리에 직접 들어가서 SQL Injection 가능. @Param 파라미터 바인딩 사용 필요."
 
-### 수정
+**수정:**
 
 ```java
 @Query("SELECT u FROM User u WHERE u.email = :email")
@@ -452,7 +451,7 @@ User findByEmail(@Param("email") String email);
 
 ### 예제 2: SSRF (Spring Boot)
 
-### 취약 코드 (2)
+**취약 코드:**
 
 ```java
 @GetMapping("/view-image")
@@ -466,7 +465,7 @@ HTTPS + 도메인 allowlist 적용 필요."
 
 ### 예제 3: IDOR (Kotlin)
 
-### 취약 코드 (3)
+**취약 코드:**
 
 ```kotlin
 @GetMapping("/appointments/{id}")
@@ -475,7 +474,7 @@ fun getAppointment(@PathVariable id: Long) = appointmentService.findById(id)
 
 **리뷰 코멘트:** "인증된 사용자가 다른 환자의 예약 정보에 접근 가능. 소유권 검증 필요."
 
-### 수정 (2)
+**수정:**
 
 ```kotlin
 @GetMapping("/appointments/{id}")
@@ -488,7 +487,7 @@ fun getAppointment(@PathVariable id: Long, @AuthenticationPrincipal user: User):
 
 ### 예제 4: Pickle Deserialization RCE (Python)
 
-### 취약 코드 (4)
+**취약 코드:**
 
 ```python
 obj = pickle.loads(request.data)  # RCE!
@@ -498,7 +497,7 @@ obj = pickle.loads(request.data)  # RCE!
 
 ### 예제 5: CORS Origin Reflection
 
-### 취약 코드 (5)
+**취약 코드:**
 
 ```javascript
 res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
@@ -509,7 +508,7 @@ res.setHeader('Access-Control-Allow-Credentials', 'true');
 
 ### 예제 6: Terraform S3 Public
 
-### 취약 코드 (6)
+**취약 코드:**
 
 ```hcl
 resource "aws_s3_bucket" "user_data" {
@@ -523,7 +522,7 @@ resource "aws_s3_bucket" "user_data" {
 
 ### 예제 7: K8s RBAC 과잉 권한
 
-### 취약 코드 (7)
+**취약 코드:**
 
 ```yaml
 subjects:

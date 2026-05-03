@@ -53,7 +53,7 @@ if (!submitter) {
 return await submitter(); // ❌ Would also fail
 ```
 
-### Fix Applied
+**Fix Applied:**
 
 ```javascript
 // AFTER (Fixed)
@@ -85,14 +85,14 @@ return await submitter();
 | Cookies stored securely   | ⚠️ INFO | Stored in `~/.opencode/data/`, file permissions should be 600 |
 | Env vars used for secrets | ✅ PASS | `TELEGRAM_BOT_TOKEN`, `JWT_SECRET` use env                    |
 
-### Reviewed Files
+**Reviewed Files:**
 
 - `jobkorea-profile-sync.js`: Uses `SESSION_PATH` for cookie storage
 - `saramin-profile-sync.js`: Uses `SESSION_PATH` for cookie storage
 - `application.js`: Uses `env.TELEGRAM_BOT_TOKEN`, `env.SESSIONS`
 - `telegram.js`: Uses `env.TELEGRAM_BOT_TOKEN`, `env.TELEGRAM_CHAT_ID`
 
-### Recommendations
+**Recommendations:**
 
 1. Set file permissions to 600 on session files: `chmod 600
    ~/.opencode/data/*-session.json`
@@ -110,9 +110,8 @@ return await submitter();
 | Path traversal prevention | ✅ PASS | Path joins use `join()` with validation  |
 | Type checking enforced    | ✅ PASS | TypeScript strict mode enabled           |
 
-### Findings
-
-### ✅ Good Practices Found
+**Findings:**
+**✅ Good Practices Found:**
 
 - `application.js` uses `escapeHtml()` for Telegram notifications
 - All SQL queries use parameterized statements (`.bind()`)
@@ -148,7 +147,7 @@ may indicate pattern confusion.
 | Failures logged securely    | ✅ PASS | Logs use structured format         |
 | No information leakage      | ✅ PASS | No internal paths/details exposed  |
 
-### Reviewed Code
+**Reviewed Code:**
 
 - `retry.js`: Proper error classification with `classifyApplyError`
 - Circuit breaker prevents cascading failures
@@ -165,7 +164,7 @@ may indicate pattern confusion.
 | Circuit breaker implemented | ✅ PASS | Full implementation in `retry.js`    |
 | No brute force possible     | ✅ PASS | Exponential backoff, max retries = 3 |
 
-### Circuit Breaker Configuration
+**Circuit Breaker Configuration:**
 
 ```javascript
 // From retry.js
@@ -178,7 +177,7 @@ const DEFAULT_CONFIG = {
 };
 ```
 
-### Features
+**Features:**
 
 - ✅ Exponential backoff with jitter
 - ✅ Per-platform circuit breaker state
@@ -197,7 +196,7 @@ const DEFAULT_CONFIG = {
 | Proxy rotation working    | ✅ PASS | `ProxyRotator` class exists                         |
 | Cookie jar isolation      | ✅ PASS | Per-platform session files                          |
 
-### Reviewed Implementation
+**Reviewed Implementation:**
 
 - `saramin-profile-sync.js`: Has `humanDelay()`, `randomMouseMovement()`,
   `humanScroll()`
@@ -220,13 +219,13 @@ yet implemented), consider removing the export or creating a stub.
 | Session data isolated         | ✅ PASS | Per-platform session files        |
 | Audit logs created            | ✅ PASS | Application state saved to KV     |
 
-### Reviewed
+**Reviewed:**
 
 - Resume data stored in `packages/data/resumes/master/resume_data.json`
 - Sessions stored in `~/.opencode/data/{platform}-session.json`
 - Application workflow saves state to KV with 7-day TTL
 
-### Recommendations (2)
+**Recommendations:**
 
 1. Consider encrypting session files containing authentication cookies
 2. Add audit logging for all profile sync operations
@@ -236,7 +235,7 @@ yet implemented), consider removing the export or creating a stub.
 
 ### 7. Dependencies ✅
 
-### Tool Results
+**Tool Results:**
 
 ```bash
 $ npm audit --audit-level=moderate
@@ -256,7 +255,7 @@ $ npm run lint
 
 **gitleaks:** Not installed (optional tool)
 
-### Dependency Analysis
+**Dependency Analysis:**
 
 - No known vulnerable packages
 - Minimal attack surface in new code

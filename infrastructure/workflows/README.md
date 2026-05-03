@@ -34,14 +34,14 @@
 
 **Purpose**: Receive GitHub Actions deployment notifications
 
-### Features (2)
+**Features**
 
 - ✅ Webhook endpoint: `POST /webhook/resume-deploy`
 - ✅ Telegram deployment notifications via Telegram Bot API
 - ✅ Loki logging for centralized observability
 - ✅ Google Sheets deployment history
 
-### Nodes (2)
+**Nodes**
 
 1. Webhook Trigger → `/resume-deploy`
 2. Set → Extract deployment data
@@ -320,13 +320,13 @@ git push origin master
 
 ### Issue: Telegram notifications not sending
 
-### Check (2)
+**Check**
 
 1. Telegram Bot API credential is connected
 2. Telegram chat_id is correct
 3. Bot token is valid
 
-### Solution (2)
+**Solution**
 
 ```bash
 # Get channel ID
@@ -338,13 +338,13 @@ git push origin master
 
 ### Issue: Google Sheets not logging
 
-### Check (3)
+**Check**
 
 1. Google Sheets OAuth2 credential is connected
 2. Spreadsheet ID is correct
 3. Sheet names match exactly (case-sensitive)
 
-### Solution (3)
+**Solution**
 
 ```bash
 # Get spreadsheet ID from URL
@@ -357,13 +357,13 @@ git push origin master
 
 ### Issue: GitHub webhook not triggering
 
-### Check (4)
+**Check**
 
 1. `N8N_WEBHOOK_URL` secret is set in GitHub
 2. Webhook URL is accessible (public endpoint)
 3. GitHub Actions step runs successfully
 
-### Solution (4)
+**Solution**
 
 ```bash
 # Test webhook manually first

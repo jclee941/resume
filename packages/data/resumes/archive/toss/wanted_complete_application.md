@@ -109,7 +109,7 @@ Kotlin, Spring Boot, Istio는 현재 학습 중이며, 기존 Flask/Node.js 경�
 
 ### 2. ㈜가온누리정보시스템 (2024.03 ~ 2025.02)
 
-### 담당업무 (2)
+**담당업무**
 
 ```text
 넥스트레이드 ATS 보안인프라 구축 - 금융위 본인가 대응 보안체계 설계, 망분리 아키텍처(NAC/망연계/이중화), DDoS/IPS/WAF/VPN 신규 도입, 방화벽 정책 자동화(Python)로 등록시간 50% 단축, EPP/DLP/APT 엔드포인트 보안 구축
@@ -117,7 +117,7 @@ Kotlin, Spring Boot, Istio는 현재 학습 중이며, 기존 Flask/Node.js 경�
 
 ### 3. ㈜콴텍투자일임 (2022.08 ~ 2024.03)
 
-### 담당업무 (3)
+**담당업무**
 
 ```text
 금융인프라 운영 및 보안 규제 대응 - FSDC 내 서버/네트워크 150대 관리, AI 투자앱 안정화, 금감원 감사 대응(개인정보 접근로그/DLP/망분리), PB 플랫폼 인프라 설계(Kubernetes/API Gateway/WAF POC), DB 접근제어 성능 개선(CPU 30% 감소)
@@ -125,7 +125,7 @@ Kotlin, Spring Boot, Istio는 현재 학습 중이며, 기존 Flask/Node.js 경�
 
 ### 4. ㈜펀엔씨 (2022.05 ~ 2022.07)
 
-### 담당업무 (4)
+**담당업무**
 
 ```text
 AWS 클라우드 운영 - EC2/Auto Scaling/Route 53/S3 배포 자동화, Kubernetes 도입 준비(컨테이너 보안정책), Shell/Python 기반 백업/복구 자동화 및 Slack 알림 연동
@@ -133,7 +133,7 @@ AWS 클라우드 운영 - EC2/Auto Scaling/Route 53/S3 배포 자동화, Kuberne
 
 ### 5. ㈜조인트리 (2021.09 ~ 2022.04)
 
-### 담당업무 (5)
+**담당업무**
 
 ```text
 국민대교 차세대 정보시스템 구축 - Fortigate UTM/VMware NSX-T 보안 네트워크 구축, 물리서버/스토리지 100대 + VM 200대 통합관리, NSX-T 미세분할(Micro-segmentation) 정책 구현, UTM 로그분석 악성IP 차단
@@ -141,7 +141,7 @@ AWS 클라우드 운영 - EC2/Auto Scaling/Route 53/S3 배포 자동화, Kuberne
 
 ### 6. ㈜메타엠 (2019.12 ~ 2021.08)
 
-### 담당업무 (6)
+**담당업무**
 
 ```text
 대규모 재택근무 환경 구축(1,000명) - 코로나19 대응 콜센터 긴급 전환, Fortigate SSL VPN + Ansible VPN 에이전트 자동배포, NAC 실시간 모니터링 및 위험단말 격리, VPN-백신 충돌 해결(장애 문의 40% 감소), Python 네트워크 점검 자동화(점검시간 8시간→2시간)
@@ -149,7 +149,7 @@ AWS 클라우드 운영 - EC2/Auto Scaling/Route 53/S3 배포 자동화, Kuberne
 
 ### 7. ㈜엠티데이타 (2017.02 ~ 2018.10)
 
-### 담당업무 (7)
+**담당업무**
 
 ```text
 한국항공우주산업(KAI) 서버 운영 - Linux 서버 50대 운영관리(보안패치/계정관리/권한설정), 방화벽/IDS 로그분석 및 취약점 스캐닝, Shell 스크립트 기반 방화벽 정책 버전관리 구축, 중복정책 30% 제거로 트래픽 안정화

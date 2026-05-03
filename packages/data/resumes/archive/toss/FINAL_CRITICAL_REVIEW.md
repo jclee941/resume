@@ -52,7 +52,7 @@
 
 ### 토스 Commerce AI/자동화 Engineer 지원자 프로필 비교
 
-### 전형적 경쟁자 프로필
+**전형적 경쟁자 프로필:**
 
 - ML/MLOps 경험 2-3년
 - Kafka, Airflow, Spark 실무 경험
@@ -60,7 +60,7 @@
 - Python/Java/Kotlin 서버 개발
 - 추천 시스템, 이상 탐지 모델 개발 경험
 
-### 당신의 프로필
+**당신의 프로필:**
 
 - **강점:**
   - ✅ 운영 자동화 실무 7년 (대부분 지원자는 개발 중심)
@@ -168,8 +168,7 @@
 
 ### 1. GenAI 경험 연수 수정 (최우선)
 
-### Page 8 - Tech Stack 표 수정
-
+**Page 8 - Tech Stack 표 수정:**
 ❌ **수정 전:**
 
 ```text
@@ -184,8 +183,7 @@ GenAI | OpenCode, LLM 기반 자동화 시스템 | 1년 (실무 적용)
 
 ### 2. AI 성과 지표에 구체성 추가
 
-### Page 5 - REGTECH 프로젝트 주요 성과 수정
-
+**Page 5 - REGTECH 프로젝트 주요 성과 수정:**
 ❌ **수정 전:**
 
 ```text
@@ -200,8 +198,7 @@ GenAI | OpenCode, LLM 기반 자동화 시스템 | 1년 (실무 적용)
 
 ### 3. Tech Stack 과장 제거
 
-### Page 8 - Tech Stack 표 수정 (2)
-
+**Page 8 - Tech Stack 표 수정:**
 ❌ **수정 전:**
 
 ```text
@@ -218,8 +215,7 @@ ElasticSearch, Kafka, Hadoop | ElasticSearch (학습 중), Kafka (학습 중) | 
 
 ### 4. Summary 섹션 AI 멘션 보강 (선택)
 
-### Page 1 - Summary 수정
-
+**Page 1 - Summary 수정:**
 ❌ **수정 전:**
 
 ```text

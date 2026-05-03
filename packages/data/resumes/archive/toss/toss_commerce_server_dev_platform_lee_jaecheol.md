@@ -73,7 +73,7 @@ HAProxy / Load Balancing              F5, HAProxy, Nginx 실무 경험
 플랫폼 서비스 개발                      Flask, Node.js 기반 Production-Ready 시스템 5개 운영
 ```
 
-### 실적 기반 증명
+**실적 기반 증명:**
 
 - ✅ **안정성**: 99.9% 가용성 달성 (프로덕션 시스템)
 - ✅ **확장성**: 75,000% 확장 여유 검증 (엔터프라이즈급 아키텍처)

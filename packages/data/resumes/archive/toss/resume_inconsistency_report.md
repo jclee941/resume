@@ -58,7 +58,7 @@ documents in the `packages/data/resumes/archive/toss/` directory.
 
 **Recommended Fix**: Use **"1년 8개월"** (assuming full months)
 
-### Affected Files (2)
+**Affected Files**
 
 - master_resume_integration.md (Line ~150)
 
@@ -92,7 +92,7 @@ Actual Work: 8년 8개월 - 1년 1개월 = 7년 7개월 ✓
 - Fix self-introduction to consistently use "8년간"
 - Add footnote explaining gap period
 
-### Affected Files (3)
+**Affected Files**
 
 - wanted_complete_application.md (self-introduction section)
 
@@ -113,13 +113,13 @@ Actual Work: 8년 8개월 - 1년 1개월 = 7년 7개월 ✓
 1. **"6년강"** → should be **"8년간"** (incorrect duration + typo)
 2. Should reflect actual 8 years of experience
 
-### Recommended Fix (2)
+**Recommended Fix**
 
 ```text
 "8년간 금융·제조·교육 산업에서 보안 인프라를 구축하고 운영하면서..."
 ```
 
-### Affected Files (4)
+**Affected Files**
 
 - wanted_complete_application.md (Line ~49)
 
@@ -175,7 +175,7 @@ All company names are consistent:
 - ㈜메타넷엠플랫폼
 - ㈜엠티데이타
 
-### No Action Required (2)
+**No Action Required**
 
 ---
 

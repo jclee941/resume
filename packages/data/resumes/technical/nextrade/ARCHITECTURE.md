@@ -584,7 +584,7 @@ minutes per request (manual configuration)
 4. Ansible deploys policy to NAC
 5. Confirmation email sent to requester
 
-### Results (2)
+**Results**
 
 - **Processing Time**: 30 minutes → 3 minutes (90% reduction)
 - **Error Rate**: ~3% → 0% (template-based)
@@ -1136,15 +1136,14 @@ python3 firewall-unblock-host.py --ip 10.0.20.45
 
 #### Playbook 2: Data Breach / Unauthorized Access
 
-### Detection Triggers (2)
+**Detection Triggers**
 
 - DLP alert: Sensitive data exfiltration attempt
 - Unauthorized privileged access (after-hours, unusual location)
 - Database anomaly: Bulk data export
 - Firewall alert: Large outbound data transfer
 
-### Response Procedure (2)
-
+**Response Procedure**
 **Phase 1: Immediate Containment (< 10 minutes)**
 
 ```bash
@@ -1259,15 +1258,14 @@ python3 send-breach-notification.py \
 
 #### Playbook 3: DDoS Attack
 
-### Detection Triggers (3)
+**Detection Triggers**
 
 - Abnormal traffic volume (>2x baseline)
 - Service degradation/unavailability
 - Firewall session exhaustion
 - Network bandwidth saturation
 
-### Response Procedure (3)
-
+**Response Procedure**
 **Phase 1: Immediate Mitigation (< 5 minutes)**
 
 ```bash
@@ -1345,15 +1343,14 @@ python3 waf-block-uri.py --uri "/api/high-cost-endpoint" --rate-limit 10req/min
 
 #### Playbook 4: Insider Threat / Privilege Abuse
 
-### Detection Triggers (4)
+**Detection Triggers**
 
 - Unusual privileged access (after-hours, unusual location)
 - Bulk data download by employee
 - Access to unrelated systems (job role mismatch)
 - PAM alert: Dangerous command executed
 
-### Response Procedure (4)
-
+**Response Procedure**
 **Phase 1: Covert Monitoring (< 1 hour)**
 **IMPORTANT**: Do NOT alert the insider; gather evidence first
 

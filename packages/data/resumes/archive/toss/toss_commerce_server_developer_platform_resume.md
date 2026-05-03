@@ -74,7 +74,7 @@ HAProxy / Load Balancing              F5, HAProxy, Nginx 실무 경험
 플랫폼 서비스 개발                      Flask, Node.js 기반 Production-Ready 시스템 5개 운영
 ```
 
-### 실적 기반 증명
+**실적 기반 증명:**
 
 - ✅ **안정성**: 99.9% 가용성 달성 (프로덕션 시스템)
 - ✅ **확장성**: 75,000% 확장 여유 검증 (엔터프라이즈급 아키텍처)
@@ -525,7 +525,7 @@ HAProxy / Load Balancing              F5, HAProxy, Nginx 실무 경험
 토스의 **Server Developer (Platform)** 포지션은 제가 7년간 쌓아온 **Monitoring &
 Observability, Gateway 운영, 플랫폼 안정화** 전문성을 모두 발휘할 수 있는 최적의 자리라고 확신합니다.
 
-### 현재 강점
+**현재 강점:**
 
 - ✅ Prometheus, ELK Stack, Redis: 토스 요구사항 100% 충족
 - ✅ Docker, Kubernetes POC: Container Orchestration 경험

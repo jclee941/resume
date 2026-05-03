@@ -500,7 +500,7 @@ echo "C07ABC12345" | grep -E '^C[A-Z0-9]{10}$'
 
 **Error**: `Invalid Google Sheets spreadsheet_id`
 
-### Solution (2)
+**Solution**
 
 ```bash
 # Verify spreadsheet ID length
@@ -516,7 +516,7 @@ echo "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms" | wc -c
 
 **Error**: `Template not found: 01-site-health-monitor.json`
 
-### Solution (3)
+**Solution**
 
 ```bash
 # Verify you're in project root
@@ -532,7 +532,7 @@ ls -l n8n-workflows/*.json
 
 **Error**: `node: command not found`
 
-### Solution (4)
+**Solution**
 
 ```bash
 # Install Node.js (≥20.0.0)

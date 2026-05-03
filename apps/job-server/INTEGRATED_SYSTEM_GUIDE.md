@@ -111,7 +111,7 @@
 
 **Application tracking and management**
 
-### Features (2)
+**Features**
 
 - Track all applications across platforms
 - Status updates (applied/pending/interview/rejected)
@@ -145,7 +145,7 @@
 - Real-time statistics
 - RESTful API
 
-### Features (3)
+**Features**
 
 - Live system status monitoring
 - Application statistics
@@ -220,7 +220,7 @@ GET  /api/health  - Health check
 
 **Daily automated job search and application**
 
-### Features (4)
+**Features**
 
 - Automatic job search based on keywords
 - AI-powered matching
@@ -255,7 +255,7 @@ node src/cli.js pipeline run <resume_id>
 
 **System monitoring and health check**
 
-### Features (5)
+**Features**
 
 - System status check
 - Activity analysis
@@ -263,7 +263,7 @@ node src/cli.js pipeline run <resume_id>
 - Platform health check
 - Slack notifications
 
-### Usage (2)
+**Usage**
 
 ```bash
 npm run ops:monitor
@@ -279,7 +279,7 @@ curl -X POST https://resume.jclee.me/job/api/workflows/health-check/run
 
 **System maintenance and cleanup**
 
-### Features (6)
+**Features**
 
 - Log cleanup (7+ days old)
 - Cache cleanup
@@ -287,13 +287,13 @@ curl -X POST https://resume.jclee.me/job/api/workflows/health-check/run
 - Dependency check
 - Disk usage monitoring
 
-### Usage (3)
+**Usage**
 
 ```bash
 npm run ops:maintenance
 ```
 
-### Event Trigger Example (2)
+**Event Trigger Example**
 
 ```bash
 curl -X POST https://resume.jclee.me/job/api/workflows/cleanup/run
@@ -320,7 +320,7 @@ curl -X POST https://resume.jclee.me/job/api/workflows/cleanup/run
 
 **Daily application report generation and delivery**
 
-### Flow (2)
+**Flow**
 
 1. Scheduled trigger (daily 6 PM)
 2. Fetch statistics
@@ -331,7 +331,7 @@ curl -X POST https://resume.jclee.me/job/api/workflows/cleanup/run
 
 **Resume synchronization across platforms**
 
-### Flow (3)
+**Flow**
 
 1. Detect resume updates
 2. Format for each platform
