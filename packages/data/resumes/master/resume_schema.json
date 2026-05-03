@@ -3,12 +3,23 @@
   "title": "Resume Data Schema",
   "description": "JSON Schema for validating resume_data.json structure and content",
   "type": "object",
-  "required": ["personal", "education", "summary", "current", "careers", "skills"],
+  "required": [
+    "personal",
+    "education",
+    "summary",
+    "current",
+    "careers",
+    "skills"
+  ],
   "properties": {
     "personal": {
       "type": "object",
       "description": "Personal information",
-      "required": ["name", "email", "phone"],
+      "required": [
+        "name",
+        "email",
+        "phone"
+      ],
       "properties": {
         "name": {
           "type": "string",
@@ -46,7 +57,10 @@
     "education": {
       "type": "object",
       "description": "Education information",
-      "required": ["school", "major"],
+      "required": [
+        "school",
+        "major"
+      ],
       "properties": {
         "school": {
           "type": "string",
@@ -72,7 +86,20 @@
         },
         "status": {
           "type": "string",
-          "enum": ["재학중", "졸업", "수료", "중퇴", "Enrolled", "Graduated", "Completed", "Withdrawn", "在学中", "卒業", "修了", "中退"],
+          "enum": [
+            "재학중",
+            "졸업",
+            "수료",
+            "중퇴",
+            "Enrolled",
+            "Graduated",
+            "Completed",
+            "Withdrawn",
+            "在学中",
+            "卒業",
+            "修了",
+            "中退"
+          ],
           "description": "Education status (KO/EN/JA)"
         },
         "highSchool": {
@@ -98,7 +125,10 @@
     "summary": {
       "type": "object",
       "description": "Career summary",
-      "required": ["totalExperience", "expertise"],
+      "required": [
+        "totalExperience",
+        "expertise"
+      ],
       "properties": {
         "totalExperience": {
           "type": "string",
@@ -110,7 +140,10 @@
           "description": "Career start date in YYYY.MM format"
         },
         "grade": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Grade or level (optional)"
         },
         "expertise": {
@@ -156,7 +189,10 @@
           "description": "Months employed"
         },
         "participationRate": {
-          "type": ["number", "null"],
+          "type": [
+            "number",
+            "null"
+          ],
           "description": "Employment percentage (optional)"
         }
       },
@@ -168,7 +204,11 @@
       "description": "Career history",
       "items": {
         "type": "object",
-        "required": ["company", "period", "role"],
+        "required": [
+          "company",
+          "period",
+          "role"
+        ],
         "properties": {
           "company": {
             "type": "string",
@@ -194,7 +234,10 @@
             "description": "Job role/position"
           },
           "client": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "Client name (null if direct employment)"
           },
           "teamSize": {
@@ -214,7 +257,10 @@
             "description": "One-liner summary for Wanted platform"
           },
           "note": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "Additional notes (null if none)"
           },
           "projects": {
@@ -223,17 +269,30 @@
             "items": {
               "type": "object",
               "properties": {
-                "name": { "type": "string", "description": "Project name" },
-                "description": { "type": "string", "description": "Project description" },
-                "period": { "type": "string", "description": "Project period" },
+                "name": {
+                  "type": "string",
+                  "description": "Project name"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Project description"
+                },
+                "period": {
+                  "type": "string",
+                  "description": "Project period"
+                },
                 "techStack": {
                   "type": "array",
-                  "items": { "type": "string" },
+                  "items": {
+                    "type": "string"
+                  },
                   "description": "Technologies used"
                 },
                 "achievements": {
                   "type": "array",
-                  "items": { "type": "string" },
+                  "items": {
+                    "type": "string"
+                  },
                   "description": "Key achievements"
                 }
               },
@@ -253,7 +312,11 @@
       "description": "Project history",
       "items": {
         "type": "object",
-        "required": ["name", "role", "technologies"],
+        "required": [
+          "name",
+          "role",
+          "technologies"
+        ],
         "properties": {
           "period": {
             "type": "string",
@@ -320,7 +383,10 @@
       "description": "Professional certifications",
       "items": {
         "type": "object",
-        "required": ["name", "issuer"],
+        "required": [
+          "name",
+          "issuer"
+        ],
         "properties": {
           "name": {
             "type": "string",
@@ -333,23 +399,38 @@
             "description": "Issuing organization"
           },
           "date": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "pattern": "^\\d{4}\\.\\d{2}$",
             "description": "Issue date in YYYY.MM format (null if not yet obtained)"
           },
           "expirationDate": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "pattern": "^\\d{4}\\.\\d{2}$",
             "description": "Expiration date in YYYY.MM format (null if non-expiring or not yet obtained)"
           },
           "credentialUrl": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "format": "uri",
             "description": "URL to verify the credential (null if not available)"
           },
           "status": {
             "type": "string",
-            "enum": ["active", "expired", "준비중", "Preparing", "準備中"],
+            "enum": [
+              "active",
+              "expired",
+              "준비중",
+              "Preparing",
+              "準備中"
+            ],
             "description": "Certification status (KO/EN/JA)"
           }
         },
@@ -362,24 +443,41 @@
       "properties": {
         "observability": {
           "anyOf": [
-            { "type": "array", "items": { "type": "string" } },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
             {
               "type": "object",
               "properties": {
-                "title": { "type": "string" },
-                "icon": { "type": "string" },
+                "title": {
+                  "type": "string"
+                },
+                "icon": {
+                  "type": "string"
+                },
                 "items": {
                   "type": "array",
                   "items": {
                     "anyOf": [
-                      { "type": "string" },
+                      {
+                        "type": "string"
+                      },
                       {
                         "type": "object",
                         "properties": {
-                          "name": { "type": "string" },
-                          "level": { "type": "string" }
+                          "name": {
+                            "type": "string"
+                          },
+                          "level": {
+                            "type": "string"
+                          }
                         },
-                        "required": ["name"]
+                        "required": [
+                          "name"
+                        ]
                       }
                     ]
                   }
@@ -391,24 +489,41 @@
         },
         "cloud": {
           "anyOf": [
-            { "type": "array", "items": { "type": "string" } },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
             {
               "type": "object",
               "properties": {
-                "title": { "type": "string" },
-                "icon": { "type": "string" },
+                "title": {
+                  "type": "string"
+                },
+                "icon": {
+                  "type": "string"
+                },
                 "items": {
                   "type": "array",
                   "items": {
                     "anyOf": [
-                      { "type": "string" },
+                      {
+                        "type": "string"
+                      },
                       {
                         "type": "object",
                         "properties": {
-                          "name": { "type": "string" },
-                          "level": { "type": "string" }
+                          "name": {
+                            "type": "string"
+                          },
+                          "level": {
+                            "type": "string"
+                          }
                         },
-                        "required": ["name"]
+                        "required": [
+                          "name"
+                        ]
                       }
                     ]
                   }
@@ -420,24 +535,41 @@
         },
         "devops": {
           "anyOf": [
-            { "type": "array", "items": { "type": "string" } },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
             {
               "type": "object",
               "properties": {
-                "title": { "type": "string" },
-                "icon": { "type": "string" },
+                "title": {
+                  "type": "string"
+                },
+                "icon": {
+                  "type": "string"
+                },
                 "items": {
                   "type": "array",
                   "items": {
                     "anyOf": [
-                      { "type": "string" },
+                      {
+                        "type": "string"
+                      },
                       {
                         "type": "object",
                         "properties": {
-                          "name": { "type": "string" },
-                          "level": { "type": "string" }
+                          "name": {
+                            "type": "string"
+                          },
+                          "level": {
+                            "type": "string"
+                          }
                         },
-                        "required": ["name"]
+                        "required": [
+                          "name"
+                        ]
                       }
                     ]
                   }
@@ -449,24 +581,41 @@
         },
         "automation": {
           "anyOf": [
-            { "type": "array", "items": { "type": "string" } },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
             {
               "type": "object",
               "properties": {
-                "title": { "type": "string" },
-                "icon": { "type": "string" },
+                "title": {
+                  "type": "string"
+                },
+                "icon": {
+                  "type": "string"
+                },
                 "items": {
                   "type": "array",
                   "items": {
                     "anyOf": [
-                      { "type": "string" },
+                      {
+                        "type": "string"
+                      },
                       {
                         "type": "object",
                         "properties": {
-                          "name": { "type": "string" },
-                          "level": { "type": "string" }
+                          "name": {
+                            "type": "string"
+                          },
+                          "level": {
+                            "type": "string"
+                          }
                         },
-                        "required": ["name"]
+                        "required": [
+                          "name"
+                        ]
                       }
                     ]
                   }
@@ -478,24 +627,41 @@
         },
         "database": {
           "anyOf": [
-            { "type": "array", "items": { "type": "string" } },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
             {
               "type": "object",
               "properties": {
-                "title": { "type": "string" },
-                "icon": { "type": "string" },
+                "title": {
+                  "type": "string"
+                },
+                "icon": {
+                  "type": "string"
+                },
                 "items": {
                   "type": "array",
                   "items": {
                     "anyOf": [
-                      { "type": "string" },
+                      {
+                        "type": "string"
+                      },
                       {
                         "type": "object",
                         "properties": {
-                          "name": { "type": "string" },
-                          "level": { "type": "string" }
+                          "name": {
+                            "type": "string"
+                          },
+                          "level": {
+                            "type": "string"
+                          }
                         },
-                        "required": ["name"]
+                        "required": [
+                          "name"
+                        ]
                       }
                     ]
                   }
@@ -507,24 +673,41 @@
         },
         "programming": {
           "anyOf": [
-            { "type": "array", "items": { "type": "string" } },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
             {
               "type": "object",
               "properties": {
-                "title": { "type": "string" },
-                "icon": { "type": "string" },
+                "title": {
+                  "type": "string"
+                },
+                "icon": {
+                  "type": "string"
+                },
                 "items": {
                   "type": "array",
                   "items": {
                     "anyOf": [
-                      { "type": "string" },
+                      {
+                        "type": "string"
+                      },
                       {
                         "type": "object",
                         "properties": {
-                          "name": { "type": "string" },
-                          "level": { "type": "string" }
+                          "name": {
+                            "type": "string"
+                          },
+                          "level": {
+                            "type": "string"
+                          }
                         },
-                        "required": ["name"]
+                        "required": [
+                          "name"
+                        ]
                       }
                     ]
                   }
@@ -536,24 +719,41 @@
         },
         "monitoring": {
           "anyOf": [
-            { "type": "array", "items": { "type": "string" } },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
             {
               "type": "object",
               "properties": {
-                "title": { "type": "string" },
-                "icon": { "type": "string" },
+                "title": {
+                  "type": "string"
+                },
+                "icon": {
+                  "type": "string"
+                },
                 "items": {
                   "type": "array",
                   "items": {
                     "anyOf": [
-                      { "type": "string" },
+                      {
+                        "type": "string"
+                      },
                       {
                         "type": "object",
                         "properties": {
-                          "name": { "type": "string" },
-                          "level": { "type": "string" }
+                          "name": {
+                            "type": "string"
+                          },
+                          "level": {
+                            "type": "string"
+                          }
                         },
-                        "required": ["name"]
+                        "required": [
+                          "name"
+                        ]
                       }
                     ]
                   }
@@ -565,24 +765,41 @@
         },
         "security": {
           "anyOf": [
-            { "type": "array", "items": { "type": "string" } },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
             {
               "type": "object",
               "properties": {
-                "title": { "type": "string" },
-                "icon": { "type": "string" },
+                "title": {
+                  "type": "string"
+                },
+                "icon": {
+                  "type": "string"
+                },
                 "items": {
                   "type": "array",
                   "items": {
                     "anyOf": [
-                      { "type": "string" },
+                      {
+                        "type": "string"
+                      },
                       {
                         "type": "object",
                         "properties": {
-                          "name": { "type": "string" },
-                          "level": { "type": "string" }
+                          "name": {
+                            "type": "string"
+                          },
+                          "level": {
+                            "type": "string"
+                          }
                         },
-                        "required": ["name"]
+                        "required": [
+                          "name"
+                        ]
                       }
                     ]
                   }
@@ -594,24 +811,41 @@
         },
         "compliance": {
           "anyOf": [
-            { "type": "array", "items": { "type": "string" } },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
             {
               "type": "object",
               "properties": {
-                "title": { "type": "string" },
-                "icon": { "type": "string" },
+                "title": {
+                  "type": "string"
+                },
+                "icon": {
+                  "type": "string"
+                },
                 "items": {
                   "type": "array",
                   "items": {
                     "anyOf": [
-                      { "type": "string" },
+                      {
+                        "type": "string"
+                      },
                       {
                         "type": "object",
                         "properties": {
-                          "name": { "type": "string" },
-                          "level": { "type": "string" }
+                          "name": {
+                            "type": "string"
+                          },
+                          "level": {
+                            "type": "string"
+                          }
                         },
-                        "required": ["name"]
+                        "required": [
+                          "name"
+                        ]
                       }
                     ]
                   }
@@ -629,7 +863,11 @@
       "description": "Personal/side projects",
       "items": {
         "type": "object",
-        "required": ["name", "description", "technologies"],
+        "required": [
+          "name",
+          "description",
+          "technologies"
+        ],
         "properties": {
           "name": {
             "type": "string",
@@ -650,7 +888,9 @@
             "type": "array",
             "minItems": 1,
             "description": "Technologies used",
-            "items": { "type": "string" }
+            "items": {
+              "type": "string"
+            }
           },
           "icon": {
             "type": "string",
@@ -699,19 +939,33 @@
       "type": "object",
       "description": "Section descriptions for portfolio",
       "properties": {
-        "resume": { "type": "string" },
-        "projects": { "type": "string" },
-        "infrastructure": { "type": "string" },
-        "skills": { "type": "string" },
-        "certifications": { "type": "string" },
-        "contact": { "type": "string" }
+        "resume": {
+          "type": "string"
+        },
+        "projects": {
+          "type": "string"
+        },
+        "infrastructure": {
+          "type": "string"
+        },
+        "skills": {
+          "type": "string"
+        },
+        "certifications": {
+          "type": "string"
+        },
+        "contact": {
+          "type": "string"
+        }
       },
       "additionalProperties": true
     },
     "achievements": {
       "type": "array",
       "description": "Key achievements",
-      "items": { "type": "string" }
+      "items": {
+        "type": "string"
+      }
     },
     "infrastructure": {
       "type": "array",
@@ -719,11 +973,21 @@
       "items": {
         "type": "object",
         "properties": {
-          "icon": { "type": "string" },
-          "title": { "type": "string" },
-          "description": { "type": "string" },
-          "status": { "type": "string" },
-          "url": { "type": "string" }
+          "icon": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
         },
         "additionalProperties": true
       }
@@ -731,7 +995,9 @@
     "contact": {
       "type": "object",
       "description": "Contact information",
-      "required": ["email"],
+      "required": [
+        "email"
+      ],
       "properties": {
         "email": {
           "type": "string",
@@ -767,8 +1033,14 @@
           "type": "object",
           "description": "Wanted platform variant",
           "properties": {
-            "headline": { "type": "string", "description": "Headline for Wanted" },
-            "about": { "type": "string", "description": "About section for Wanted" }
+            "headline": {
+              "type": "string",
+              "description": "Headline for Wanted"
+            },
+            "about": {
+              "type": "string",
+              "description": "About section for Wanted"
+            }
           },
           "additionalProperties": true
         },
@@ -776,8 +1048,14 @@
           "type": "object",
           "description": "JobKorea platform variant",
           "properties": {
-            "headline": { "type": "string", "description": "Headline for JobKorea" },
-            "about": { "type": "string", "description": "About section for JobKorea" }
+            "headline": {
+              "type": "string",
+              "description": "Headline for JobKorea"
+            },
+            "about": {
+              "type": "string",
+              "description": "About section for JobKorea"
+            }
           },
           "additionalProperties": true
         }
@@ -790,15 +1068,29 @@
       "items": {
         "type": "object",
         "properties": {
-          "name": { "type": "string", "description": "Repository/project name" },
-          "url": { "type": "string", "description": "Repository URL" },
-          "description": { "type": "string", "description": "Contribution description" },
+          "name": {
+            "type": "string",
+            "description": "Repository/project name"
+          },
+          "url": {
+            "type": "string",
+            "description": "Repository URL"
+          },
+          "description": {
+            "type": "string",
+            "description": "Contribution description"
+          },
           "techStack": {
             "type": "array",
-            "items": { "type": "string" },
+            "items": {
+              "type": "string"
+            },
             "description": "Technologies used"
           },
-          "role": { "type": "string", "description": "Role in the project" }
+          "role": {
+            "type": "string",
+            "description": "Role in the project"
+          }
         },
         "additionalProperties": true
       }
@@ -809,9 +1101,18 @@
       "items": {
         "type": "object",
         "properties": {
-          "name": { "type": "string", "description": "Award name" },
-          "organization": { "type": "string", "description": "Awarding organization" },
-          "year": { "type": "string", "description": "Year awarded" }
+          "name": {
+            "type": "string",
+            "description": "Award name"
+          },
+          "organization": {
+            "type": "string",
+            "description": "Awarding organization"
+          },
+          "year": {
+            "type": "string",
+            "description": "Year awarded"
+          }
         },
         "additionalProperties": true
       }
@@ -822,12 +1123,16 @@
       "properties": {
         "locations": {
           "type": "array",
-          "items": { "type": "string" },
+          "items": {
+            "type": "string"
+          },
           "description": "Preferred work locations"
         },
         "roles": {
           "type": "array",
-          "items": { "type": "string" },
+          "items": {
+            "type": "string"
+          },
           "description": "Desired roles"
         }
       },
@@ -843,8 +1148,14 @@
       "items": {
         "type": "object",
         "properties": {
-          "name": { "type": "string", "description": "Language name" },
-          "level": { "type": "string", "description": "Proficiency level" }
+          "name": {
+            "type": "string",
+            "description": "Language name"
+          },
+          "level": {
+            "type": "string",
+            "description": "Proficiency level"
+          }
         },
         "additionalProperties": true
       }
@@ -853,10 +1164,98 @@
       "type": "object",
       "description": "Military service information",
       "properties": {
-        "status": { "type": "string", "description": "Military service status" },
-        "period": { "type": "string", "description": "Service period" }
+        "status": {
+          "type": "string",
+          "description": "Military service status"
+        },
+        "period": {
+          "type": "string",
+          "description": "Service period"
+        }
       },
       "additionalProperties": true
+    },
+    "coverLetter": {
+      "type": "object",
+      "description": "Cover letter (자기소개서) — distinct from summary.profileStatement (portfolio hero positioning). Used by Wanted/JobKorea profile-sync to populate cover-letter fields.",
+      "properties": {
+        "ko": {
+          "type": "object",
+          "description": "Locale-specific cover letter section",
+          "properties": {
+            "headline": {
+              "type": "string",
+              "description": "One-line cover letter heading"
+            },
+            "paragraphs": {
+              "type": "array",
+              "description": "5-paragraph progressive narrative",
+              "items": {
+                "type": "string"
+              }
+            },
+            "closing": {
+              "type": "string",
+              "description": "Closing line"
+            }
+          },
+          "required": [
+            "paragraphs"
+          ],
+          "additionalProperties": false
+        },
+        "en": {
+          "type": "object",
+          "description": "Locale-specific cover letter section",
+          "properties": {
+            "headline": {
+              "type": "string",
+              "description": "One-line cover letter heading"
+            },
+            "paragraphs": {
+              "type": "array",
+              "description": "5-paragraph progressive narrative",
+              "items": {
+                "type": "string"
+              }
+            },
+            "closing": {
+              "type": "string",
+              "description": "Closing line"
+            }
+          },
+          "required": [
+            "paragraphs"
+          ],
+          "additionalProperties": false
+        },
+        "ja": {
+          "type": "object",
+          "description": "Locale-specific cover letter section",
+          "properties": {
+            "headline": {
+              "type": "string",
+              "description": "One-line cover letter heading"
+            },
+            "paragraphs": {
+              "type": "array",
+              "description": "5-paragraph progressive narrative",
+              "items": {
+                "type": "string"
+              }
+            },
+            "closing": {
+              "type": "string",
+              "description": "Closing line"
+            }
+          },
+          "required": [
+            "paragraphs"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": true
