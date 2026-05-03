@@ -73,7 +73,8 @@ describe('mapCareersToFormFields', () => {
     assert.strictEqual(byName.get('Career[c1].C_Part'), '정보보안팀');
     assert.strictEqual(byName.get('Career[c1].CSYM'), '202503');
     assert.strictEqual(byName.get('Career[c1].CEYM'), '202602');
-    assert.strictEqual(byName.get('Career[c1].M_MainField'), '');
+    // M_MainField now defaults to JobKorea BizJobtype_Code 1000238 (보안엔지니어)
+    assert.strictEqual(byName.get('Career[c1].M_MainField'), '1000238');
     assert.strictEqual(byName.get('Career.index'), 'c1');
   });
 
@@ -107,12 +108,31 @@ describe('mapCareersToFormFields', () => {
     assert.strictEqual(byName.get('Career[c1].Prfm_Prt').length, 500);
   });
 
-  it('falls back to default job code for unknown role', () => {
+  it('falls back to default M_MainField BizJobtype_Code (1000238) for careers without explicit jobkoreaJobCode', () => {
     const fields = mapCareersToFormFields({ careers: [{ ...baseCareer, role: '알수없음직무' }] });
     const byName = toMap(fields);
 
-    assert.strictEqual(byName.get('Career[c1].M_MainField'), '');
+    assert.strictEqual(byName.get('Career[c1].M_MainField'), '1000238');
     assert.strictEqual(byName.get('Career[c1].M_MainJob'), '');
+  });
+
+  it('uses per-career jobkoreaJobCode override when provided', () => {
+    const fields = mapCareersToFormFields({
+      careers: [{ ...baseCareer, jobkoreaJobCode: '1000239' }],
+    });
+    const byName = toMap(fields);
+
+    assert.strictEqual(byName.get('Career[c1].M_MainField'), '1000239');
+  });
+
+  it('uses platformVariants.jobkorea.defaultJobCode when career has no override', () => {
+    const fields = mapCareersToFormFields({
+      careers: [{ ...baseCareer }],
+      platformVariants: { jobkorea: { defaultJobCode: '1000999' } },
+    });
+    const byName = toMap(fields);
+
+    assert.strictEqual(byName.get('Career[c1].M_MainField'), '1000999');
   });
 });
 
