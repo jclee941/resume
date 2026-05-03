@@ -126,6 +126,9 @@ function buildJapaneseTemplate(html) {
     .replace(/'경력', '경험', '회사', '업무'/g, "'経歴', '経験', '会社', '業務'")
     // === JSON-LD knowsAbout KO -> JA ===
     .replace(/"금융권 본인가"/g, '"金融FSC本認可"')
+    .replace(/"name": "홈"/g, '"name": "ホーム"')
+    // === Inline JS character class: extend Korean-only range to also cover Japanese ===
+    .replace(/\[\^a-z0-9가-힣\\s\]/g, '[^a-z0-9\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF\\s]');
 }
 
 /**
