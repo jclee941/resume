@@ -1,6 +1,6 @@
 import WantedAPI from '../../src/shared/clients/wanted/index.js';
 import WantedClient from '@resume/shared/wanted-client';
-import { CONFIG } from './constants.js';
+import { CONFIG, PLATFORMS } from './constants.js';
 import { log, computeDiff } from './utils.js';
 import {
   syncWantedSkills,
@@ -86,6 +86,8 @@ export default class WantedHandler {
         log('Failed to get profile - session may be expired', 'error', 'wanted');
         return { success: false, changes: [] };
       }
+
+      const rawTarget = PLATFORMS.wanted.mapData(ssot);
 
       const currentIntro = profile.user?.description || '';
       const targetIntro = rawTarget.introduction?.length > 150
