@@ -212,7 +212,15 @@ export function mapCareersToFormFields(ssot, indices) {
   });
 
   pushField(fields, 'Career.index', keys.slice(0, careers.length).join(','));
-  pushField(fields, 'UserResume.M_Career_Text', '');
+  // Pull cover letter (자기소개서) from SSoT and feed JobKorea "경력요약" field.
+  // Falls back to empty string when coverLetter is absent.
+  const coverParagraphs = ssot?.coverLetter?.ko?.paragraphs;
+  const coverHeadline = ssot?.coverLetter?.ko?.headline;
+  const coverClosing = ssot?.coverLetter?.ko?.closing;
+  const coverText = Array.isArray(coverParagraphs) && coverParagraphs.length
+    ? [coverHeadline, '', ...coverParagraphs, '', coverClosing].filter(Boolean).join('\n\n').slice(0, 2000)
+    : '';
+  pushField(fields, 'UserResume.M_Career_Text', coverText);
   pushField(fields, 'UserResume.M_Career_Text_Stat', '1');
   pushField(fields, 'InputStat.CareerInputStat', 'True');
   return fields;
