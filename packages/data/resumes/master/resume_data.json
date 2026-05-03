@@ -44,7 +44,7 @@
       "Observability",
       "Cloud Security"
     ],
-    "profileStatement": "폐쇄망 OA 운영실에서 출발해 금융 거래소 SOC 24/7로 도착한 9년차 DevSecOps/SRE 엔지니어입니다. \"반복 작업은 자동화 되어야 한다\"는 신념 하나로 50대 서버 수동 패치를 Ansible·Python·n8n 파이프라인으로 옮겨왔고, FSC 본인가를 통과한 FortiGate HA 망분리 위에서 Splunk ES + FortiManager API로 일 10만 건 주문의 보안 이벤트를 자동 탐지·대응합니다.",
+    "profileStatement": "폐쇄망 OA 운영실에서 출발해 금융 거래소 SOC 24/7로 도착한 8년차 DevSecOps/SRE (Linux 재무장 1년 포함) 엔지니어입니다. \"반복 작업은 자동화 되어야 한다\"는 신념 하나로 50대 서버 수동 패치를 Ansible·Python·n8n 파이프라인으로 옮겨왔고, FSC 본인가를 통과한 FortiGate HA 망분리 위에서 Splunk ES + FortiManager API로 일 10만 건 주문의 보안 이벤트를 자동 탐지·대응합니다.",
     "coreCompetencies": [
       "금융권 보안 규제 환경에서 고가용성 보안 인프라를 설계·운영하고 본인가 심사 대응을 통과한 경험",
       "수동 탐지·대응의 알림 지연을 해결하기 위해 SIEM 탐지 룰 설계와 자동 대응 체계를 구축한 경험",
@@ -58,7 +58,7 @@
         "**현장 → 자동화 → AI 에이전트** 권자: 9년 동안 한 번도 운영의 손을 놓지 않으면서 도구만 바꿔왔습니다.",
         "**금융 규제 환경 6년 트랙 레코드**: 금감원 감사·FSC 본인가·전자금융감독규정 대응을 무중단·무사고로 이행.",
         "**측정 가능한 임팩트**: NAC 정책 10h→1h, 방화벽 룰 8h→1h, MTTR 30분→12분 — 실측 기반 자동화.",
-        "**Polyglot 운영자**: Linux · Python · Ansible · Terraform · Splunk SPL · n8n · Cloudflare Workers — stack 아는 것보다 이식 광고 로 대축.",
+        "**Polyglot 운영자**: Linux · Python · Ansible · Terraform · Splunk SPL · n8n · Cloudflare Workers — 단일 stack 숙련보다 이종 환경에 빠르게 적응하는 능력을 우선시합니다.",
         "**홈랩 = 실험실**: Proxmox·Grafana·k3s·Vault·MCP를 IaC로 운영하며 사내 도구를 미리 검증한 뒤 도입."
       ],
       "techPhilosophy": [
@@ -74,7 +74,7 @@
         "GitOps(ArgoCD) + 정책 자동화(OPA) 도입 검토"
       ]
     },
-    "totalExperience": ""
+    "totalExperience": "8년 (재직 합계) + Linux 재무장 1년"
   },
   "platformVariants": {
     "wanted": {
@@ -131,7 +131,7 @@
           ]
         }
       ],
-      "continuousEngagement": "넥스트레이드 매매체결시스템 (2024.03~2026.02 연속 참여, 구축→운영 단계)",
+      "continuousEngagement": "넥스트레이드 매매체결시스템 트랙 (가온누리 구축 단계 2024.03~2025.02 → 아이티센 CTS 운영 단계 2025.03~2026.02, 동일 고객사 연속 참여)",
       "jobkoreaJobCode": "1000238"
     },
     {
@@ -166,7 +166,7 @@
           ]
         }
       ],
-      "continuousEngagement": "넥스트레이드 매매체결시스템 (2024.03~2026.02 연속 참여, 구축→운영 단계)",
+      "continuousEngagement": "넥스트레이드 매매체결시스템 트랙 (가온누리 구축 단계 2024.03~2025.02 → 아이티센 CTS 운영 단계 2025.03~2026.02, 동일 고객사 연속 참여)",
       "jobkoreaJobCode": "1000238"
     },
     {
@@ -246,7 +246,7 @@
       "teamSize": "규모 미공개 인프라 운영팀",
       "myRole": "VPN/NAC 운영 자동화 및 스위치 점검 자동화 담당",
       "workType": "SI+SM",
-      "description": "대규모 원격 근무 환경에서 신규 단말 등록과 스위치 점검의 반복 작업을 자동화하기 위해 Python과 Ansible 기반 시스템을 개발했습니다. FortiGate로 재택근무 사이트 보안을 설계하여 안전한 원격 접속 환경을 구축한 경험이 있습니다.",
+      "description": "1,000명 규모 컨택센터 원격 근무 환경에서 신규 단말 등록과 스위치 점검의 반복 작업을 자동화하기 위해 Python과 Ansible 기반 시스템을 개발했습니다. FortiGate로 재택근무 사이트 보안을 설계하여 안전한 원격 접속 환경을 구축한 경험이 있습니다.",
       "wantedSummary": "대규모 원격 근무 환경의 반복 작업을 자동화 시스템으로 전환한 경험",
       "projects": [
         {
