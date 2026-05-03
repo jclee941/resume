@@ -134,6 +134,52 @@ describe('mapCareersToFormFields', () => {
 
     assert.strictEqual(byName.get('Career[c1].M_MainField'), '1000999');
   });
+
+  it('maps SSoT coverLetter.ko to UserResume.M_Career_Text (headline + paragraphs + closing joined)', () => {
+    const fields = mapCareersToFormFields({
+      careers: [baseCareer],
+      coverLetter: {
+        ko: {
+          headline: 'OA에서 시작해 자동화로 도착한 9년차',
+          paragraphs: ['단락 1.', '단락 2.', '단락 3.'],
+          closing: '다음 함께하고 싶습니다.',
+        },
+      },
+    });
+    const byName = toMap(fields);
+    const careerText = byName.get('UserResume.M_Career_Text');
+
+    assert.ok(careerText.startsWith('OA에서 시작해 자동화로 도착한 9년차'), 'headline at start');
+    assert.ok(careerText.includes('단락 1.'), 'first paragraph included');
+    assert.ok(careerText.includes('단락 3.'), 'last paragraph included');
+    assert.ok(careerText.includes('다음 함께하고 싶습니다.'), 'closing included');
+    assert.strictEqual(byName.get('UserResume.M_Career_Text_Stat'), '1');
+  });
+
+  it('truncates UserResume.M_Career_Text to 2000 chars', () => {
+    const longParagraph = '·'.repeat(800);
+    const fields = mapCareersToFormFields({
+      careers: [baseCareer],
+      coverLetter: {
+        ko: {
+          headline: 'H',
+          paragraphs: [longParagraph, longParagraph, longParagraph, longParagraph],
+          closing: 'C',
+        },
+      },
+    });
+    const byName = toMap(fields);
+    const careerText = byName.get('UserResume.M_Career_Text');
+
+    assert.ok(careerText.length <= 2000, `expected <= 2000, got ${careerText.length}`);
+  });
+
+  it('emits empty UserResume.M_Career_Text when SSoT has no coverLetter', () => {
+    const fields = mapCareersToFormFields({ careers: [baseCareer] });
+    const byName = toMap(fields);
+
+    assert.strictEqual(byName.get('UserResume.M_Career_Text'), '');
+  });
 });
 
 describe('mapSchoolToFormFields', () => {
