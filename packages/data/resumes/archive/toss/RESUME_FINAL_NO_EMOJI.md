@@ -177,8 +177,7 @@
 
 ### 🔧 실전 보안 운영 자동화 플랫폼 (2024 ~ 현재)
 
-### 개인 프로젝트 | Production-Ready Security Operations Platform
-
+**개인 프로젝트 | Production-Ready Security Operations Platform**
 **GitHub**: [github.com/jclee941](https://github.com/jclee941)
 
 #### Splunk-FortiNet Integration
@@ -245,8 +244,7 @@
 
 ### AI 기반 인프라 자동화 플랫폼 (2024.09 ~ 현재)
 
-### 개인 프로젝트 | AI-Powered Infrastructure Automation Platform
-
+**개인 프로젝트 | AI-Powered Infrastructure Automation Platform**
 **GitHub**: [github.com/jclee941](https://github.com/jclee941)
 
 - **목적**: AI 기반의 지능형 인프라 운영 자동화 및 관측성(Observability) 플랫폼 구축

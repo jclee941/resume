@@ -88,21 +88,21 @@ export CF_ACCESS_CLIENT_SECRET="..."
 
 ### Step 2: Deploy Workflow
 
-### Option A: Using the activation script (Recommended)
+**Option A: Using the activation script (Recommended)**
 
 ```bash
 cd /home/jclee/dev/resume
 ./infrastructure/n8n/activate-auto-apply.sh
 ```
 
-### Option B: Using Go deployment tool
+**Option B: Using Go deployment tool**
 
 ```bash
 cd /home/jclee/dev/resume
 go run infrastructure/n8n/deploy-auto-apply.go
 ```
 
-### Option C: Using curl directly
+**Option C: Using curl directly**
 
 ```bash
 cd /home/jclee/dev/resume
@@ -235,14 +235,14 @@ curl -H "X-N8N-API-KEY: ${N8N_API_KEY}" \
 
 ### View Execution History
 
-### Via API
+**Via API**
 
 ```bash
 curl -H "X-N8N-API-KEY: ${N8N_API_KEY}" \
   "${N8N_URL}/api/v1/executions?workflowId=DRHg9pwanv4pHGxV&limit=10" | jq '.data[] | {id, status, startedAt}'
 ```
 
-### Via UI
+**Via UI**
 
 - Open: <https://n8n.jclee.me/executions>
 - Filter by workflow: "job-auto-apply"
@@ -275,7 +275,7 @@ Duration: 2m 30s
 
 ### Workflow Not Running
 
-### Check 1: Is workflow active?
+**Check 1: Is workflow active?**
 
 ```bash
 curl -H "X-N8N-API-KEY: ${N8N_API_KEY}" \
@@ -289,7 +289,7 @@ In n8n UI: Settings → Variables
 
 - Must have: `JOB_SERVER_URL`, `JOB_SERVER_ADMIN_TOKEN`
 
-### Check 3: Is job-server running?
+**Check 3: Is job-server running?**
 
 ```bash
 curl http://localhost:3456/health
@@ -297,14 +297,14 @@ curl http://localhost:3456/health
 
 ### Telegram Notifications Not Received
 
-### Check 1: Is telegram-notifier workflow active?
+**Check 1: Is telegram-notifier workflow active?**
 
 ```bash
 curl -H "X-N8N-API-KEY: ${N8N_API_KEY}" \
   "${N8N_URL}/api/v1/workflows/PV5yLgHNzNSlCmRT" | jq '.active'
 ```
 
-### Check 2: Test Telegram manually
+**Check 2: Test Telegram manually**
 
 ```bash
 export TELEGRAM_BOT_TOKEN="your-bot-token"

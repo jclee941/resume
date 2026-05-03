@@ -167,4 +167,4 @@ cat toss_commerce_action_plan.md
 
 ---
 
-### 행운을 빕니다! 🚀
+**행운을 빕니다! 🚀**

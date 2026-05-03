@@ -96,13 +96,13 @@ pandoc 토스커머스_Server_Developer_Platform_이재철.md -o 이재철_이�
 
 #### 작성 양식 (예상)
 
-### 1) 지원 포지션 선택
+**1) 지원 포지션 선택**
 
 ```text
 Server Developer (Platform) - 토스 커머스
 ```
 
-### 2) 기본 정보 입력
+**2) 기본 정보 입력**
 
 ```text
 이름: 이재철
@@ -112,7 +112,7 @@ Server Developer (Platform) - 토스 커머스
 GitHub: https://github.com/jclee941
 ```
 
-### 3) 자기소개서 (500자)
+**3) 자기소개서 (500자)**
 
 ```text
 [company-specific/토스커머스_제출용_이력서.pdf.md 파일의
@@ -136,14 +136,14 @@ GitHub: https://github.com/jclee941
 포트폴리오: https://qws941.github.io/resume/
 ```
 
-### 4) 지원 동기 (700자)
+**4) 지원 동기 (700자)**
 
 ```text
 [company-specific/토스커머스_제출용_이력서.pdf.md 파일의
 "지원 동기 (700자 기준)" 섹션 복사]
 ```
 
-### 5) 경력 사항
+**5) 경력 사항**
 
 ```text
 [company-specific/토스커머스_Server_Developer_Platform_이재철.md 파일의
@@ -156,7 +156,7 @@ GitHub: https://github.com/jclee941
 ...
 ```
 
-### 6) 기술 스택
+**6) 기술 스택**
 
 ```text
 우선순위 순서:
@@ -183,7 +183,7 @@ GitHub: https://github.com/jclee941
 
 #### 1. 면접 질문 답변 암기 (3회 반복)
 
-### 방법
+**방법**
 
 ```text
 1회차: 답변 전체 읽기 (company-specific/토스커머스_지원질문_답변.md)
@@ -212,7 +212,7 @@ GitHub: https://github.com/jclee941
 - **A (Action)**: 내가 취한 행동
 - **R (Result)**: 결과 및 성과
 
-### 연습 예시
+**연습 예시**
 
 ```text
 Q. 가장 자랑스러운 프로젝트는?
@@ -260,7 +260,7 @@ YouTube에서 "토스 개발자 인터뷰" 검색
 
 #### 2. 최신 토스 커머스 뉴스 확인
 
-### 검색 키워드
+**검색 키워드**
 
 ```text
 "토스 커머스" + "2025"
@@ -284,7 +284,7 @@ YouTube에서 "토스 개발자 인터뷰" 검색
 
 **목표**: 면접 시 "Istio 학습 중"이라고 자신 있게 말할 수 있는 수준
 
-### 학습 자료
+**학습 자료**
 
 ```text
 1. 공식 문서
@@ -297,7 +297,7 @@ YouTube에서 "토스 개발자 인터뷰" 검색
    https://www.katacoda.com/courses/istio
 ```
 
-### 학습 계획
+**학습 계획**
 
 ```text
 Day 5: Istio 개념 이해 (Service Mesh란?)
@@ -332,7 +332,7 @@ Day 7: 간단한 실습 (Local Minikube + Istio 설치)
 
 ### 2. 기술 질문 대비
 
-### 예상 기술 질문
+**예상 기술 질문**
 
 ```text
 Q1. Kubernetes와 Docker의 차이는?
@@ -352,7 +352,7 @@ Q5. 99.9% 가용성을 어떻게 달성했나?
 
 ### 3. 역질문 준비
 
-### 좋은 역질문 예시
+**좋은 역질문 예시**
 
 ```text
 1. "Platform 팀이 현재 가장 집중하고 있는 기술적 과제는 무엇인가요?"
@@ -423,7 +423,7 @@ Q5. 99.9% 가용성을 어떻게 달성했나?
 
 **토스 채용 페이지**: <https://toss.im/career/jobs>
 
-### 긴급 연락처
+**긴급 연락처**
 
 - 이메일: <qws941@kakao.com>
 - 전화: 010-5757-9592
@@ -433,4 +433,4 @@ Q5. 99.9% 가용성을 어떻게 달성했나?
 **작성일**: 2025년 9월 30일
 **최종 업데이트**: 2025년 9월 30일 18:00
 
-### 행운을 빕니다! 🍀
+**행운을 빕니다! 🍀**

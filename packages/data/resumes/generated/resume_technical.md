@@ -196,7 +196,7 @@
 
 ### 🤖 AI 기반 인프라 자동화 플랫폼 (2024.09 ~ 현재)
 
-### 개인 프로젝트 | AI-Powered Infrastructure Automation & Observability Platform
+**개인 프로젝트 | AI-Powered Infrastructure Automation & Observability Platform**
 
 - **인프라**: Rocky Linux 9.6, Hyper-V, 40GB RAM, 8 CPU cores
 - **프로젝트**: 12개 프로덕션 애플리케이션 (blacklist, mcp, resume, safework, grafana, n8n 등)

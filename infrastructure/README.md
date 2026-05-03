@@ -12,7 +12,7 @@ This directory contains all infrastructure configurations, monitoring
 dashboards, alert rules, and automation workflows for the Resume Portfolio
 application.
 
-### Infrastructure Stack
+**Infrastructure Stack**
 
 - **Application**: Cloudflare Workers (serverless, global CDN)
 - **Monitoring**: Grafana + Prometheus + Loki (hosted on Proxmox pve3
@@ -122,7 +122,7 @@ npm run deploy  # Cloudflare Workers via API
 - Response Time History (timeseries)
 - Resume Worker Logs (Loki integration)
 
-### Metrics Tracked
+**Metrics Tracked**
 
 - `up{job="resume"}` - Service health (1=UP, 0=DOWN)
 - `http_requests_total{job="resume"}` - Total requests
@@ -146,7 +146,7 @@ npm run deploy  # Cloudflare Workers via API
 | Service Down    | Health check fails   | Critical | 1 minute   |
 | No Traffic      | Zero requests        | Warning  | 15 minutes |
 
-### Alert Routing
+**Alert Routing**
 
 - **Receiver**: Telegram Bot API
 - **Group By**: alertname, severity
@@ -156,7 +156,7 @@ npm run deploy  # Cloudflare Workers via API
 
 **Directory**: `infrastructure/n8n/`
 
-### Available Workflows
+**Available Workflows**
 
 | Workflow                           | Purpose                     | Trigger          |
 | ---------------------------------- | --------------------------- | ---------------- |
@@ -165,7 +165,7 @@ npm run deploy  # Cloudflare Workers via API
 | `resume-auto-deploy.json`          | Automated deployment        | Webhook          |
 | `resume-deploy-optimized.json`     | Optimized deployment flow   | Webhook          |
 
-### Monitoring Workflow Features
+**Monitoring Workflow Features**
 
 - Health endpoint check every 5 minutes
 - Metrics validation (Prometheus format)
@@ -189,7 +189,7 @@ npm run deploy  # Cloudflare Workers via API
 
 **⚠️ CRITICAL**: Never use SSH to deploy to NAS. Use API or Grafana UI.
 
-### Method 1: Grafana API (Recommended)
+**Method 1: Grafana API (Recommended)**
 
 ```bash
 # Set API key
@@ -206,7 +206,7 @@ curl -H "Authorization: Bearer $GRAFANA_API_KEY" \
   https://grafana.jclee.me/api/dashboards/uid/resume-portfolio | jq '.meta.version'
 ```
 
-### Method 2: Grafana UI
+**Method 2: Grafana UI**
 
 1. Open <https://grafana.jclee.me>
 2. Go to **Dashboards** → **Import**
@@ -248,7 +248,7 @@ curl -H "Authorization: Bearer $GRAFANA_API_KEY" \
 | **Loki**       | 🔒 Grafana Proxy    | grafana.jclee.me/loki/... | Grafana proxy       |
 | **n8n**        | 🔒 Internal Only    | 192.168.50.100:5678       | Workflow editor     |
 
-### Access Methods
+**Access Methods**
 
 ```bash
 # Option 1: Internal Network (connect to 192.168.50.x subnet)
@@ -277,21 +277,21 @@ ssh -L 9090:192.168.50.100:9090 -L 5678:192.168.50.100:5678 user@gateway
 
 ### Dashboard Usage
 
-### Regular Monitoring
+**Regular Monitoring**
 
 - Dashboard auto-refreshes every 30 seconds
 - Monitor Health Check Status panel (top-left)
 - Check Error Count and Response Time
 - Review logs panel for anomalies
 
-### Incident Response
+**Incident Response**
 
 1. Check **Health Check Status** (RED = DOWN)
 2. Review **Error Count** and **Request Rate & Error Rate**
 3. Check **Resume Worker Logs** for error details
 4. Verify deployment annotations for recent changes
 
-### Post-Deployment
+**Post-Deployment**
 
 1. Watch for deployment annotation on graphs
 2. Monitor Response Time for spikes
@@ -304,7 +304,7 @@ ssh -L 9090:192.168.50.100:9090 -L 5678:192.168.50.100:5678 user@gateway
 
 ### Dashboard Issues
 
-### Dashboard not loading?
+**Dashboard not loading?**
 
 ```bash
 # Check Grafana service
@@ -315,7 +315,7 @@ curl -I https://grafana.jclee.me
 # Verify: Prometheus (prometheus), Loki (loki)
 ```
 
-### Metrics missing?
+**Metrics missing?**
 
 ```bash
 # Verify metrics endpoint
@@ -328,7 +328,7 @@ curl https://resume.jclee.me/metrics
 curl https://resume.jclee.me/health | jq
 ```
 
-### Logs not showing?
+**Logs not showing?**
 
 ```bash
 # Check Loki datasource
@@ -342,7 +342,7 @@ curl https://resume.jclee.me/health | jq
 
 ### Application Issues
 
-### Site down?
+**Site down?**
 
 ```bash
 # Check health
@@ -355,7 +355,7 @@ curl https://resume.jclee.me/health
 curl -I https://resume.jclee.me
 ```
 
-### High error rate?
+**High error rate?**
 
 ```bash
 # Check metrics
@@ -374,7 +374,7 @@ curl https://resume.jclee.me/metrics | grep error
 
 ### 2026-01-24 (Current)
 
-### Changes
+**Changes**
 
 - ✅ Unified dashboard files (monitoring/ is primary, configs/grafana/ is
   symlink)
@@ -386,7 +386,7 @@ curl https://resume.jclee.me/metrics | grep error
 - ✅ Updated infrastructure README (this file)
 - ✅ Clarified internal-only service access
 
-### File Structure
+**File Structure**
 
 - `monitoring/grafana-dashboard-resume-portfolio.json` - Primary source (v3)
 - `configs/grafana/resume-portfolio-dashboard.json` - Symlink to monitoring/

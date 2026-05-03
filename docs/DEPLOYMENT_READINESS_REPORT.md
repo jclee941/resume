@@ -34,7 +34,7 @@ All technical work for GitHub Actions CI/CD migration is **COMPLETE** and
 | `verify.yml`      | 636       | 3      | Deployment verification      | ✅ Committed |
 | **TOTAL**         | **1,825** | **23** | **All production workflows** | **✅ Ready** |
 
-### Validation Results
+**Validation Results**
 
 - ✅ All files have valid YAML structure
 - ✅ All files have required keys (name, on, jobs)
@@ -142,7 +142,7 @@ These **MUST** be configured in GitHub before deployment can proceed.
 | `ENCRYPTION_KEY`   | Session encryption       | deployment      | ⏸️ Optional |
 | `TF_STATE_URL`     | Terraform state backend  | terraform.yml   | ⏸️ Optional |
 
-### Auto-Provided by GitHub
+**Auto-Provided by GitHub**
 
 - `GITHUB_TOKEN` - Automatically available in all workflows
 
@@ -223,7 +223,7 @@ Secrets Configuration:
 2. Right sidebar: Shows "Account ID" at the top of a card
 3. Copy: Account ID (32-character alphanumeric string)
 
-### Values Needed
+**Values Needed**
 
 ```text
 CLOUDFLARE_API_TOKEN = "[Long token string starting with v1.0-]"
@@ -264,7 +264,7 @@ CLOUDFLARE_ACCOUNT_ID = "[32-character hex string]"
 5. Click: "Run workflow" button
 6. Wait: Workflow starts (page refreshes)
 
-### What to Expect
+**What to Expect**
 
 ```text
 Timeline:
@@ -291,7 +291,7 @@ Watch the workflow run:
    - analyze (1 min) → all validation jobs (parallel, 2 min) → builds (2 min) →
      deploys (3 min) → verify (2 min)
 
-### Logs to Monitor
+**Logs to Monitor**
 
 - `analyze`: Shows which targets affected
 - `lint` / `typecheck` / `test-*`: Should all pass (skip with `skip_tests` if

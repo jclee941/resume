@@ -218,8 +218,7 @@
 
 ### 🔧 실전 보안 운영 자동화 플랫폼 (2024 ~ 현재)
 
-### 개인 프로젝트 | Production-Ready Security Operations Platform
-
+**개인 프로젝트 | Production-Ready Security Operations Platform**
 **GitHub**: [github.com/jclee941](https://github.com/jclee941)
 
 #### 보안 통합 관리 플랫폼
@@ -331,12 +330,11 @@
 
 ### 🤖 AI 기반 인프라 자동화 플랫폼 (2024.09 ~ 현재)
 
-### 개인 프로젝트 | AI-Powered Infrastructure Automation & Observability Platform
-
+**개인 프로젝트 | AI-Powered Infrastructure Automation & Observability Platform**
 **GitHub**: [github.com/jclee941](https://github.com/jclee941) | **Live**:
 <https://resume.jclee.me>
 
-### 시스템 규모 & 아키텍처
+**시스템 규모 & 아키텍처**
 
 - **인프라**: Rocky Linux 9.6, Hyper-V
 - **프로젝트**: 프로덕션 애플리케이션 (blacklist, mcp, resume, safework, grafana, n8n 등)
@@ -356,7 +354,7 @@
 
 **세부 프로젝트 컴포넌트**
 
-### 1. ML Agent Selection System
+**1. ML Agent Selection System**
 
 - **목적**: ML 기반 자동 에이전트 라우팅 시스템
 - **기술스택**: Python, Flask, Scikit-learn, PostgreSQL, MCP Servers
@@ -366,7 +364,7 @@
 - **GitHub**:
   [github.com/jclee941/OpenCode](https://github.com/jclee941/OpenCode)
 
-### 2. n8n Workflow Automation
+**2. n8n Workflow Automation**
 
 - **목적**: Self-hosted 워크플로우 자동화 플랫폼
 - **기술스택**: n8n, PostgreSQL, Redis, Docker
@@ -401,7 +399,7 @@
 - **GitHub**:
   [github.com/jclee941/OpenCode](https://github.com/jclee941/OpenCode)
 
-### 6. Constitutional Governance System
+**6. Constitutional Governance System**
 
 - **목적**: 파일 생성 쿼터 관리 및 구조 거버넌스
 - **기술스택**: Bash, Python, JSONL, Git Hooks
@@ -465,7 +463,7 @@
 
 **프로젝트별 상세**
 
-### Resume Portfolio (Cloudflare Workers + Observability)
+**Resume Portfolio (Cloudflare Workers + Observability)**
 
 - **배포**: <https://resume.jclee.me> (저지연 응답, 글로벌 CDN)
 - **기술스택**: Cloudflare Workers, HTML/CSS, JSON-LD SEO, Grafana Loki 통합

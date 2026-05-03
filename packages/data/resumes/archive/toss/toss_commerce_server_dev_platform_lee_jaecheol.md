@@ -189,7 +189,7 @@ HAProxy / Load Balancing              F5, HAProxy, Nginx 실무 경험
 
 ### 1. Splunk-FortiNet Integration Platform (2024 ~ 현재)
 
-### Production-Ready | 엔터프라이즈급 중앙관리 플랫폼
+**Production-Ready | 엔터프라이즈급 중앙관리 플랫폼**
 
 #### 기술스택
 
@@ -218,7 +218,7 @@ HAProxy / Load Balancing              F5, HAProxy, Nginx 실무 경험
 
 ### 2. REGTECH Blacklist Intelligence Platform (2024 ~ 현재)
 
-### Production | AI 통합 CI/CD 자동화
+**Production | AI 통합 CI/CD 자동화**
 
 #### 기술스택
 
@@ -248,7 +248,7 @@ HAProxy / Load Balancing              F5, HAProxy, Nginx 실무 경험
 
 ### 3. FortiGate Policy Orchestration Platform (2024 ~ 현재)
 
-### Production | 3-Port 고가용성 배포
+**Production | 3-Port 고가용성 배포**
 
 #### 기술스택
 
@@ -278,7 +278,7 @@ HAProxy / Load Balancing              F5, HAProxy, Nginx 실무 경험
 
 ### 4. Full-Stack Observability Platform (2024 ~ 현재)
 
-### Production | Universal Observability 아키텍처
+**Production | Universal Observability 아키텍처**
 
 #### 기술스택
 
@@ -307,7 +307,7 @@ HAProxy / Load Balancing              F5, HAProxy, Nginx 실무 경험
 
 ### 5. SafeWork Industrial Health Platform (2024 ~ 현재)
 
-### Production | Edge Processing & Hybrid Architecture
+**Production | Edge Processing & Hybrid Architecture**
 
 #### 기술스택
 

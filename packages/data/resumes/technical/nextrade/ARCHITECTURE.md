@@ -137,7 +137,7 @@ incidents in the owned area during the period.
    - Session recording mandatory
    - Components: SIEM, backup, monitoring tools
 
-### Logical Segmentation (Micro-Segmentation)
+**Logical Segmentation (Micro-Segmentation)**
 
 ```text
 Zone          VLAN   Subnet              Purpose
@@ -634,7 +634,7 @@ Trigger: DLP violation (confidential data exfiltration attempt)
 
 #### Regulatory Requirements (Securities Exchange License)
 
-### Pre-License Audit (2024.12)
+**Pre-License Audit (2024.12)**
 
 - **Auditor**: FSC + Korea Financial Telecommunications & Clearings Institute
   (KFTC)
@@ -706,7 +706,7 @@ upload_to_compliance_vault
 
 **Coverage**: 24/7/365 monitoring (3 shifts, 2 analysts per shift)
 
-### Event Processing Pipeline
+**Event Processing Pipeline**
 
 ```text
 Raw Events (15M/month)
@@ -718,7 +718,7 @@ Raw Events (15M/month)
                       └─> Escalated to IR Team (2/month)
 ```
 
-### Response Time SLAs
+**Response Time SLAs**
 
 | Priority      | Detection | Triage    | Investigation | Containment | Resolution |
 | ------------- | --------- | --------- | ------------- | ----------- | ---------- |
@@ -746,7 +746,7 @@ Raw Events (15M/month)
 | Vulnerability       | 20      | 14%               | 2 days (patch cycle) |
 | **Total**           | **150** | **All incidents** | **36 min (avg)**     |
 
-### False Positive Rate
+**False Positive Rate**
 
 - Initial (2024 Q1): 60% (120/200 alerts)
 - Current (2025 Q4): 33% (100/300 alerts)
@@ -789,7 +789,7 @@ Raw Events (15M/month)
 
 ### System Availability & Reliability
 
-### Service Level Objectives (SLOs)
+**Service Level Objectives (SLOs)**
 
 | Service           | Target              | 2025 YTD   | Downtime (Annual Allowed) | Used           |
 | ----------------- | ------------------- | ---------- | ------------------------- | -------------- |
@@ -832,7 +832,7 @@ Raw Events (15M/month)
 
 ### Cost Avoidance Through Automation
 
-### Manual Labor Reduction
+**Manual Labor Reduction**
 
 | Task                            | Frequency | Manual Time | Automated Time | Annual Savings  |
 | ------------------------------- | --------- | ----------- | -------------- | --------------- |
@@ -842,7 +842,7 @@ Raw Events (15M/month)
 | Compliance evidence collection  | 12/year   | 8h          | 1h             | 84 hours        |
 | **Total**                       | -         | -           | -              | **461.5 hours** |
 
-### Value Calculation
+**Value Calculation**
 
 - Hours Saved: 461.5 hours/year
 - Average Hourly Rate: $100/hour (fully loaded)
@@ -976,7 +976,7 @@ Raw Events (15M/month)
 **Methodology**: NIST SP 800-61 Rev 2 (Computer Security Incident Handling
 Guide)
 
-### Phases
+**Phases**
 
 1. **Preparation**: Tools, training, communication plans
 2. **Detection & Analysis**: Identify and assess incidents
@@ -1008,7 +1008,7 @@ Guide)
 - External Forensics (for major incidents)
 - Vendor Support (CrowdStrike, Splunk, etc.)
 
-### Escalation Chain
+**Escalation Chain**
 
 ```text
 Security Analyst (L1)
@@ -1031,7 +1031,7 @@ Security Analyst (L1)
 
 **Response Procedure**
 
-### Phase 1: Immediate Containment (< 5 minutes)
+**Phase 1: Immediate Containment (< 5 minutes)**
 
 ```bash
 # Step 1: Isolate infected endpoint(s) via NAC
@@ -1145,7 +1145,7 @@ python3 firewall-unblock-host.py --ip 10.0.20.45
 
 ### Response Procedure (2)
 
-### Phase 1: Immediate Containment (< 10 minutes)
+**Phase 1: Immediate Containment (< 10 minutes)**
 
 ```bash
 # Step 1: Block exfiltration path
@@ -1268,7 +1268,7 @@ python3 send-breach-notification.py \
 
 ### Response Procedure (3)
 
-### Phase 1: Immediate Mitigation (< 5 minutes)
+**Phase 1: Immediate Mitigation (< 5 minutes)**
 
 ```bash
 # Step 1: Enable DDoS mitigation service
@@ -1555,7 +1555,7 @@ CONTACT INFORMATION:
 | Playbook Coverage           | Common scenarios in scope | 95%                              |
 | Post-Mortem Completion      | Within 48 hours           | Completed for incidents in scope |
 
-### Continuous Improvement Process
+**Continuous Improvement Process**
 
 1. **Post-Incident Review** (within 48 hours)
    - Root cause analysis (5 Whys)

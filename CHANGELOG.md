@@ -20,7 +20,7 @@ Versioning](https://semver.org/).
 
 ## [v1.23.0] - 2026-05-02
 
-### Changes (3)
+### Changes
 
 - fix(job-server): correct import path and fix resource pool health check test
   (549106d)
@@ -89,7 +89,7 @@ Versioning](https://semver.org/).
 
 ## [v1.20.1] - 2026-04-30
 
-### Changes (11)
+### Changes
 
 - fix(portfolio): remove remaining AWS hardcoded strings from HTML templates
   (4895ad9)
@@ -102,14 +102,14 @@ Versioning](https://semver.org/).
 
 ## [v1.19.2] - 2026-04-30
 
-### Changes (13)
+### Changes
 
 - docs(adr-0008): mark Migration Plan #10 RESOLVED — job worker deleted
   (verified HTTP 404) (70ae04b)
 
 ## [v1.19.1] - 2026-04-30
 
-### Changes (14)
+### Changes
 
 - fix(ci): delete-job-worker — status-only check (workers/scripts returns
   binary) (8cfb694)
@@ -122,7 +122,7 @@ Versioning](https://semver.org/).
 
 ## [v1.18.0] - 2026-04-30
 
-### Changes (16)
+### Changes
 
 - feat(ci): add provision-queues workflow + clarify queue binding inactive state
   (6e3ad2f)
@@ -156,14 +156,14 @@ Versioning](https://semver.org/).
 
 ## [v1.16.10] - 2026-04-29
 
-### Changes (20)
+### Changes
 
 - fix(portfolio-en): EN JSON-LD Person 블록의 trailing comma 수정 + verifier에 JSON-LD
   parse 검증 추가 (2354d97)
 
 ## [v1.16.9] - 2026-04-29
 
-### Changes (21)
+### Changes
 
 - fix(resume-en/ja): apply how/why career descriptions directly to EN/JA SSoT
   (9bd62a6)
@@ -185,14 +185,14 @@ Versioning](https://semver.org/).
 
 ## [v1.16.7] - 2026-04-29
 
-### Changes (23)
+### Changes
 
 - fix(resume): Oracle round 4 final blockers - 모든 잔여 metric/what-list 제거
   (1c921be)
 
 ## [v1.16.6] - 2026-04-29
 
-### Changes (24)
+### Changes
 
 - fix(resume): final residual metric cleanup in en data + generator hardcoded
   text (08d10ec)
@@ -205,14 +205,14 @@ Versioning](https://semver.org/).
 
 ## [v1.16.4] - 2026-04-29
 
-### Changes (26)
+### Changes
 
 - fix(resume): Oracle round 2 blockers - 모든 잔여 수치 + 상위 projects 배열 how/why 전환
   (2043e80)
 
 ## [v1.16.3] - 2026-04-29
 
-### Changes (27)
+### Changes
 
 - fix(release-yml): inject changelog via env var to fully isolate from shell
   (506266e)
@@ -234,27 +234,27 @@ Versioning](https://semver.org/).
 
 ## [v1.16.1] - 2026-04-29
 
-### Changes (29)
+### Changes
 
 - refactor(resume): SSoT 전체를 담백한 how/why 중심으로 리팩토링 (fd4e10f)
 
 ## [v1.16.0] - 2026-04-29
 
-### Changes (30)
+### Changes
 
 - feat(portfolio): sync index.html hardcoded content to modernized SSoT
   (bef340e)
 
 ## [v1.15.0] - 2026-04-29
 
-### Changes (31)
+### Changes
 
 - feat(resume): modernize SSoT for Big-Tech ready content + tech debt cleanup
   (99bd30f)
 
 ## [v1.14.23] - 2026-04-29
 
-### Changes (32)
+### Changes
 
 - refactor(#17): consolidate job-server validation to thin SSoT wrapper
   (6106a80)
@@ -268,7 +268,7 @@ Versioning](https://semver.org/).
 
 ## [v1.14.21] - 2026-04-29
 
-### Changes (34)
+### Changes
 
 - fix(lint): pre-emptive eslint 9.x rule fixes (preserve-caught-error,
   no-useless-assignment) (bf4c6aa)
@@ -288,21 +288,21 @@ Versioning](https://semver.org/).
 
 ## [v1.14.19] - 2026-04-29
 
-### Changes (36)
+### Changes
 
 - docs(review): session-end retrospective + Oracle holistic review (A−/B+)
   (2546d79)
 
 ## [v1.14.18] - 2026-04-29
 
-### Changes (37)
+### Changes
 
 - fix(debt): tech-debt audit quick wins — module state, OpenAPI drift, coverage,
   dead code (f9f16cb)
 
 ## [v1.14.17] - 2026-04-29
 
-### Changes (38)
+### Changes
 
 - docs(audit): final-status doc per Oracle round-4 verify-with-caveats (b1996e8)
 
@@ -315,47 +315,47 @@ Versioning](https://semver.org/).
 
 ## [v1.14.15] - 2026-04-29
 
-### Changes (40)
+### Changes
 
 - fix(audit): wire P1-5 — login mints HMAC token, not raw ADMIN_TOKEN (200446d)
 
 ## [v1.14.14] - 2026-04-29
 
-### Changes (41)
+### Changes
 
 - fix(audit): close P0/P1 with real runtime changes per Oracle re-verification
   (2798e08)
 
 ## [v1.14.13] - 2026-04-29
 
-### Changes (42)
+### Changes
 
 - fix(deploy): restore manifest/sitemap/og-image as tracked + add sync:data CI
   step (18b8ba0)
 
 ## [v1.14.12] - 2026-04-29
 
-### Changes (43)
+### Changes
 
 - chore(repo): repository hygiene cleanup — untrack 573 generated/cache files
   (9fc8e4f)
 
 ## [v1.14.11] - 2026-04-29
 
-### Changes (44)
+### Changes
 
 - docs(audit): close P0/P1 backlog with resolution log — v1.14.10 live (4478f2a)
 
 ## [v1.14.10] - 2026-04-29
 
-### Changes (45)
+### Changes
 
 - fix(deploy): revert P0-4 JOB_SERVICE binding — job-dashboard not yet deployed
   (a626e28)
 
 ## [v1.14.9] - 2026-04-29
 
-### Changes (46)
+### Changes
 
 - fix(lint): remove duplicate import + unused eslint-disable directives
   (7afd8da)
@@ -363,150 +363,147 @@ Versioning](https://semver.org/).
 
 ## [v1.14.8] - 2026-04-29
 
-### Changes (47)
+### Changes
 
 - chore(review): ADR-0008 cleanup + doc drift fixes from full monorepo review
   (b51c0f4)
-
-### Changes (48)
-
 - fix(verify): unblock Release CI build + close 2 audit gaps found during
   verification (18db622)
 
 ## [v1.14.6] - 2026-04-28
 
-### Changes (49)
+### Changes
 
 - fix(audit): resolve 4 follow-up issues — Zod alignment, JSON Schema CI,
   app-variant guard, JK stub (83a9b1c)
 
 ## [v1.14.5] - 2026-04-28
 
-### Changes (50)
+### Changes
 
 - fix(sync): resume sync audit — Splunk dedup, locale parity, JK company
   normalize (5dc60f1)
 
 ## [v1.14.4] - 2026-04-28
 
-### Changes (51)
+### Changes
 
 - chore(pdf): untrack generated PDF artifacts and add ignore patterns (56f9104)
 
 ## [v1.14.3] - 2026-04-28
 
-### Changes (52)
+### Changes
 
 - chore(saramin): remove .orig backup left over from refactor split (d8c1721)
 
 ## [v1.14.2] - 2026-04-28
 
-### Changes (53)
+### Changes
 
 - fix(skills): remove proficiency scores per Oracle senior-portfolio audit
   (b8ef750)
 
 ## [v1.14.1] - 2026-04-28
 
-### Changes (54)
+### Changes
 
 - fix(portfolio): EN about uses EN aboutSection + add /.well-known/security.txt
   (97410c8)
 
 ## [v1.14.0] - 2026-04-28
 
-### Changes (55)
+### Changes
 
 - feat(hero): add KPI cards + senior positioning per recruiter audit (4b17d81)
 
 ## [v1.13.1] - 2026-04-28
 
-### Changes (56)
+### Changes
 
 - fix(content): Kibana demoUrl points to specific portfolio dashboard (245add1)
 
 ## [v1.13.0] - 2026-04-28
 
-### Changes (57)
+### Changes
 
 - feat(content): restore live demo URLs (n8n + Kibana public read-only)
   (de0c5bf)
 
 ## [v1.12.12] - 2026-04-28
 
-### Changes (58)
+### Changes
 
 - fix(content): null Splunk demoUrls per Oracle public-exposure review (1ce365c)
 
 ## [v1.12.11] - 2026-04-28
 
-### Changes (59)
+### Changes
 
 - fix(portfolio): resolve P2 audit issues — sitemap hreflang, og:image:locale,
   manifest screenshots, sw cache (11dcd81)
 
 ## [v1.12.10] - 2026-04-28
 
-### Changes (60)
+### Changes
 
 - fix(portfolio): resolve P0 CSP nonce mismatch + P1 about SSoT integration
   (82513cb)
 
 ## [v1.12.9] - 2026-04-28
 
-### Changes (61)
+### Changes
 
 - fix(portfolio): self-resolve P1/P2 issues — manifest locale, skill display,
   hype, canonical (a2257b4)
 
 ## [v1.12.8] - 2026-04-28
 
-### Changes (62)
+### Changes
 
 - fix(content): remove fabricated metrics, fix ITCEN period, clean residual hype
   (8eede04)
 
 ## [v1.12.7] - 2026-04-28
 
-### Changes (63)
+### Changes
 
 - fix(portfolio): pin sitemap lastmod/etag to build-time constants (84d2068)
 
 ## [v1.12.6] - 2026-04-28
 
-### Changes (64)
+### Changes
 
 - fix(portfolio): cleanup post-audit findings (99eb95f)
 
 ## [v1.12.5] - 2026-04-28
 
-### Changes (65)
+### Changes
 
 - fix(content): conservative tone (담백) rewrite per Oracle + tone audit (0bc21ca)
 
 ## [v1.12.4] - 2026-04-28
 
-### Changes (66)
+### Changes
 
 - fix(content): quantify remaining 대폭 mentions; restore demo URL infrastructure
   (6e87ea5)
 
 ## [v1.12.3] - 2026-04-28
 
-### Changes (67)
+### Changes
 
 - fix(portfolio): remove /ja route to fix duplicate-content SEO (81d720f)
 
 ## [v1.12.2] - 2026-04-28
 
-### Changes (68)
+### Changes
 
 - fix(portfolio): rebuild worker.js + sync index.html with current SSoT
   (adc7c61)
 
 ## [v1.12.1] - 2026-04-28
 
-### Changes (69)
+### Changes
 
 - fix(ssot): restore splunk + hycu_fsds GitHub URLs after GitLab restore
   (b004108)
@@ -525,78 +522,78 @@ Versioning](https://semver.org/).
 
 ## [v1.11.0] - 2026-04-28
 
-### Changes (71)
+### Changes
 
 - feat(scripts): parameterize renew-session.sh for wanted+jobkorea (706507c)
 
 ## [v1.10.3] - 2026-04-28
 
-### Changes (72)
+### Changes
 
 - chore(data): consolidate SSoT — remove backups, relocate shinhan variants
   (7f03f11)
 
 ## [v1.10.2] - 2026-04-27
 
-### Changes (73)
+### Changes
 
 - data(careers): correct Jointree and MTData workType to dispatched (f69ae81)
 
 ## [v1.10.1] - 2026-04-27
 
-### Changes (74)
+### Changes
 
 - ci(release): restore production deploy via wrangler-action with global API key
   (0dc22b1)
 
 ## [v1.10.0] - 2026-04-27
 
-### Changes (75)
+### Changes
 
 - feat(csp): switch to dynamic per-response nonce + strict-dynamic (76661ed)
 
 ## [v1.9.6] - 2026-04-27
 
-### Changes (76)
+### Changes
 
 - fix(csp): expand allowed Cloudflare/GA hashes and connect-src (84a07a7)
 
 ## [v1.9.5] - 2026-04-27
 
-### Changes (77)
+### Changes
 
 - chore: trigger Cloudflare Workers Builds redeploy (3d61b59)
 
 ## [v1.9.4] - 2026-04-27
 
-### Changes (78)
+### Changes
 
 - fix(csp): allow data: in img-src, add Cloudflare challenge script hash
   (6f7fb6c)
 
 ## [v1.9.3] - 2026-04-27
 
-### Changes (79)
+### Changes
 
 - ci(release): remove duplicate wrangler deploy step (8754f4a)
 
 ## [v1.9.2] - 2026-04-27
 
-### Changes (80)
+### Changes
 
 - docs(readme): redesign with minimal modern tone (Linear/Vercel style)
   (85bea3e)
 
 ## [v1.9.1] - 2026-04-27
 
-### Changes (81)
+### Changes
 
 - docs(readme): sync structure with current monorepo (types/schemas/contracts,
   ja locale, ADR-0008) (9dfeb3f)
 
 ## [v1.9.0] - 2026-04-27
 
-### Changes (82)
+### Changes
 
 - docs(plan): record 2026-04-27 execution status of Epics 0-5 (0a132ad)
 - test(epic-5): remove legacy GitLab YAML check after .gitlab-legacy/ deletion
@@ -615,7 +612,7 @@ Versioning](https://semver.org/).
 
 ## [v1.8.1] - 2026-04-24
 
-### Changes (83)
+### Changes
 
 - fix(ci): remove duplicate YAML entries causing workflow failure (d11984e)
 - Merge branch 'master' of <https://github.com/jclee941/resume> (f7efbcf)
@@ -623,7 +620,7 @@ Versioning](https://semver.org/).
 
 ## [v1.8.0] - 2026-04-23
 
-### Changes (84)
+### Changes
 
 - fix(test): update auto-applier strategy test for modularized wanted-helpers
   (f9cc595)
@@ -692,57 +689,57 @@ Versioning](https://semver.org/).
 
 ## [v1.5.20] - 2026-04-20
 
-### Changes (87)
+### Changes
 
 - chore: flush uncommitted wip (job-matcher refactor + interview prep +
   submodule bump) (91001e8)
 
 ## [v1.5.19] - 2026-04-20
 
-### Changes (88)
+### Changes
 
 - fix(resume): restore 7 careers profile sync + close unbalanced CSS braces
   (fa72646)
 
 ## [v1.5.18] - 2026-04-20
 
-### Changes (89)
+### Changes
 
 - chore: add natively as submodule under apps/natively (08e5ed3)
 
 ## [v1.5.17] - 2026-04-20
 
-### Changes (90)
+### Changes
 
 - docs: add 강남언니 보안엔지니어 면접 준비 자료 (c22f5c8)
 
 ## [v1.5.16] - 2026-04-19
 
-### Changes (91)
+### Changes
 
 - build(portfolio): rebuild worker with latest resume PDF (b04ad88)
 
 ## [v1.5.15] - 2026-04-19
 
-### Changes (92)
+### Changes
 
 - fix(data): update availability to immediate, sync+rebuild portfolio (4f8fd1c)
 
 ## [v1.5.14] - 2026-04-19
 
-### Changes (93)
+### Changes
 
 - fix(lint): resolve all unused-vars warnings across 4 files (1903b5d)
 
 ## [v1.5.13] - 2026-04-19
 
-### Changes (94)
+### Changes
 
 - refactor(shared): split lazy-loader into N modules (36edaf3)
 
 ## [v1.5.12] - 2026-04-19
 
-### Changes (95)
+### Changes
 
 - refactor(profile-sync): split profile-sync entry into N modules (e9cc702)
 
@@ -755,7 +752,7 @@ Versioning](https://semver.org/).
 
 ## [v1.5.10] - 2026-04-19
 
-### Changes (97)
+### Changes
 
 - refactor(shared): split parallel service into N modules (fef52a3)
 
@@ -768,7 +765,7 @@ Versioning](https://semver.org/).
 
 ## [v1.5.8] - 2026-04-19
 
-### Changes (99)
+### Changes
 
 - refactor(tools): split auto-apply tool into N modules (e14b875)
 
@@ -782,7 +779,7 @@ Versioning](https://semver.org/).
 
 ## [v1.5.6] - 2026-04-19
 
-### Changes (101)
+### Changes
 
 - refactor(saramin): split profile-sync into N modules (e63f834)
 
@@ -795,39 +792,39 @@ Versioning](https://semver.org/).
 
 ## [v1.5.4] - 2026-04-19
 
-### Changes (103)
+### Changes
 
 - refactor(pipeline): split job-search-apply-pipeline into N modules (cf46f45)
 
 ## [v1.5.3] - 2026-04-19
 
-### Changes (104)
+### Changes
 
 - docs: update AGENTS.md hierarchy for portfolio + profile-sync changes
   (d3ddee7)
 
 ## [v1.5.2] - 2026-04-19
 
-### Changes (105)
+### Changes
 
 - test(profile-sync): add portfolio field mapping unit tests (133c230)
 
 ## [v1.5.1] - 2026-04-19
 
-### Changes (106)
+### Changes
 
 - fix(profile-sync): use AddUserFileDB for portfolio URL registration (010103c)
 
 ## [v1.5.0] - 2026-04-19
 
-### Changes (107)
+### Changes
 
 - feat(profile-sync): add portfolio field mapping and automate via pipeline
   (d5fe0ca)
 
 ## [v1.4.0] - 2026-04-19
 
-### Changes (108)
+### Changes
 
 - feat(portfolio): align site content with enriched SSoT — DevSecOps/SRE
   positioning (dad2f7d)
@@ -839,26 +836,26 @@ Versioning](https://semver.org/).
 
 ## [v1.3.1] - 2026-04-19
 
-### Changes (109)
+### Changes
 
 - chore(portfolio): sync enriched resume data to portfolio build (f96b26a)
 
 ## [v1.3.0] - 2026-04-19
 
-### Changes (110)
+### Changes
 
 - feat(auto-apply): add renew-wanted-session script + pipeline headless fix
   (d09343f)
 
 ## [v1.2.1] - 2026-04-19
 
-### Changes (111)
+### Changes
 
 - docs: README redesign + legacy cleanup + stale doc fixes (f08b4a7)
 
 ## [v1.2.0] - 2026-04-19
 
-### Changes (112)
+### Changes
 
 - fix(ci): resolve all test-node failures — API fallback with retry+circuit
   breaker, resume key mock fix (973933b)
@@ -873,7 +870,7 @@ Versioning](https://semver.org/).
 
 ## [v1.1.1] - 2026-04-15
 
-### Changes (113)
+### Changes
 
 - fix(deploy): remove stale JOB_SERVICE binding from wrangler.json (9c8acbe)
 
@@ -897,18 +894,15 @@ Versioning](https://semver.org/).
 
 ## [v1.0.131] - 2026-04-14
 
-### Changes (115)
+### Changes
 
 - fix(wanted-sync): truncate profile fields to Wanted API limits (headline 50,
   description 150) (79bfbc6)
 
 ## [v1.0.130] - 2026-04-14
 
-### Changes (116)
+### Changes
 
 - fix(e2e,wrangler): accept degraded health status, disable JOB_SERVICE binding
   (e4e89b7)
-
-### Changes (117)
-
 - fix(docs): remove stale GitLab CI and dark mode toggle references (973eb14)
