@@ -5,7 +5,8 @@
 
 ## OVERVIEW
 
-PostgreSQL database managed via Supabase. Schema changes tracked as numbered migrations with up/down scripts. Seed data for local development and testing.
+PostgreSQL database managed via Supabase. Schema changes tracked as numbered
+migrations with up/down scripts. Seed data for local development and testing.
 
 ## STRUCTURE
 

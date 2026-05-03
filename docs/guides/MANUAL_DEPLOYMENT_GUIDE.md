@@ -10,7 +10,8 @@
 
 ### ✅ Completed Work
 
-- **Code**: All features complete and tested (commits: 1159cc7, 7148d48, 3eda1d5)
+- **Code**: All features complete and tested (commits: 1159cc7, 7148d48,
+  3eda1d5)
 - **Tests**: 10/10 E2E tests passing
 - **Repository**: Committed to GitHub
 - **Build**: worker.js generated (150.06 KB)
@@ -19,7 +20,8 @@
 
 1. **GitHub SSH**: `Permission denied (publickey)` - SSH key invalid/expired
 2. **GitHub HTTPS**: `Invalid username or token` - Stored credentials expired
-3. **Wrangler Local**: `Unable to authenticate request [code: 10001]` - API token invalid/insufficient
+3. **Wrangler Local**: `Unable to authenticate request [code: 10001]` - API
+   token invalid/insufficient
 
 ### 📊 Impact
 
@@ -101,7 +103,7 @@ This enables automatic CI/CD deployment on every push to `master`.
 
 1. Go to GitHub Settings:
 
-   ```
+   ```text
    https://github.com/settings/tokens
    ```
 
@@ -175,13 +177,13 @@ Use this if you need immediate deployment without fixing GitHub auth.
 
 1. Log in to Cloudflare Dashboard:
 
-   ```
+   ```text
    https://dash.cloudflare.com/
    ```
 
 2. Navigate to:
 
-   ```
+   ```text
    My Profile (top right) → API Tokens
    ```
 
@@ -395,7 +397,7 @@ Test the Open Graph image on social media validators:
 
 **Twitter Card Validator**:
 
-```
+```text
 https://cards-dev.twitter.com/validator
 ```
 
@@ -404,7 +406,7 @@ https://cards-dev.twitter.com/validator
 
 **Facebook Sharing Debugger**:
 
-```
+```text
 https://developers.facebook.com/tools/debug/
 ```
 
@@ -414,7 +416,7 @@ https://developers.facebook.com/tools/debug/
 
 **LinkedIn Post Inspector**:
 
-```
+```text
 https://www.linkedin.com/post-inspector/
 ```
 
@@ -544,15 +546,18 @@ curl -X POST https://resume.jclee.me/api/vitals \
 **Worker Generation**:
 
 - Script: `apps/portfolio/generate-worker.js`
-- Input: `apps/portfolio/index.html`, `apps/portfolio/styles.css`, `apps/portfolio/data.json`, `apps/portfolio/og-image.png`
+- Input: `apps/portfolio/index.html`, `apps/portfolio/styles.css`,
+  `apps/portfolio/data.json`, `apps/portfolio/og-image.png`
 - Output: `apps/portfolio/worker.js` (150.06 KB)
-- Process: CSS injection, data injection, OG embedding, minification, CSP hashing
+- Process: CSS injection, data injection, OG embedding, minification, CSP
+  hashing
 
 **Commits**:
 
 - 1159cc7: "feat(seo): Add Open Graph image for social sharing"
 - 7148d48: "feat(analytics): Add Web Vitals tracking implementation"
-- 3eda1d5: "docs: Update deployment status - OG image & Web Vitals awaiting deployment"
+- 3eda1d5: "docs: Update deployment status - OG image & Web Vitals awaiting
+  deployment"
 
 ---
 
@@ -612,8 +617,8 @@ curl -X POST https://resume.jclee.me/api/vitals \
    ```
 
 4. **Contact**:
-   - Email: qws941@kakao.com
-   - GitHub Issues: https://github.com/qws941/resume/issues
+   - Email: <qws941@kakao.com>
+   - GitHub Issues: <https://github.com/qws941/resume/issues>
 
 ---
 

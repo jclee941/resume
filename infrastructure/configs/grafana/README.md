@@ -1,6 +1,7 @@
 # Grafana Configuration for Resume Portfolio
 
-This directory contains Grafana dashboard and alert configurations for monitoring the resume portfolio application deployed on Cloudflare Workers.
+This directory contains Grafana dashboard and alert configurations for
+monitoring the resume portfolio application deployed on Cloudflare Workers.
 
 ## Files
 
@@ -11,7 +12,8 @@ This directory contains Grafana dashboard and alert configurations for monitorin
 
 ## Dashboard Overview
 
-The **Resume Portfolio - Production Overview** dashboard provides comprehensive monitoring with:
+The **Resume Portfolio - Production Overview** dashboard provides comprehensive
+monitoring with:
 
 ### Key Metrics Panels
 
@@ -116,7 +118,7 @@ rate(http_requests_total{job="resume"}[5m]) == 0
 ## Prerequisites
 
 1. **Grafana Access**
-   - URL: https://grafana.jclee.me
+   - URL: <https://grafana.jclee.me>
    - Admin credentials required for importing dashboards and alert rules
 
 2. **Data Sources**
@@ -124,7 +126,7 @@ rate(http_requests_total{job="resume"}[5m]) == 0
    - **Loki**: Must be configured with job label `resume-worker`
 
 3. **Prometheus Metrics Endpoint**
-   - Endpoint: https://resume.jclee.me/metrics
+   - Endpoint: <https://resume.jclee.me/metrics>
    - Must be scraped by Prometheus
 
 4. **Telegram Bot Integration** (Optional for alerts)
@@ -138,7 +140,7 @@ rate(http_requests_total{job="resume"}[5m]) == 0
 
 #### Dashboard Import
 
-1. Open Grafana: https://grafana.jclee.me
+1. Open Grafana: <https://grafana.jclee.me>
 2. Navigate to **Dashboards** → **Import**
 3. Click **Upload JSON file**
 4. Select `resume-portfolio-dashboard.json`
@@ -203,6 +205,7 @@ curl -X POST "${GRAFANA_URL}/api/v1/provisioning/alert-rules" \
    ```
 
 3. Restart Grafana:
+
    ```bash
    ssh admin@192.168.50.100
    docker restart grafana
@@ -395,6 +398,7 @@ When updating the dashboard:
    - Dashboard Settings → JSON Model → Copy
 3. Save to `resume-portfolio-dashboard.json`
 4. Commit to git:
+
    ```bash
    git add configs/grafana/resume-portfolio-dashboard.json
    git commit -m "docs: Update Grafana dashboard configuration"
@@ -403,15 +407,18 @@ When updating the dashboard:
 
 ## References
 
-- [Grafana Dashboard Documentation](https://grafana.com/docs/grafana/latest/dashboards/)
-- [Prometheus Query Language (PromQL)](https://prometheus.io/docs/prometheus/latest/querying/basics/)
-- [Grafana Alerting Documentation](https://grafana.com/docs/grafana/latest/alerting/)
+- [Grafana Dashboard
+  Documentation](https://grafana.com/docs/grafana/latest/dashboards/)
+- [Prometheus Query Language
+  (PromQL)](https://prometheus.io/docs/prometheus/latest/querying/basics/)
+- [Grafana Alerting
+  Documentation](https://grafana.com/docs/grafana/latest/alerting/)
 - [POST_DEPLOYMENT_ANALYSIS.md](../../../docs/analysis/POST_DEPLOYMENT_ANALYSIS_2025_10_17.md)
 
 ## Support
 
 For issues or questions:
 
-- Email: qws941@kakao.com
-- GitHub Issues: https://github.com/qws941/resume/issues
-- Grafana Dashboard: https://grafana.jclee.me/d/resume-portfolio
+- Email: <qws941@kakao.com>
+- GitHub Issues: <https://github.com/qws941/resume/issues>
+- Grafana Dashboard: <https://grafana.jclee.me/d/resume-portfolio>

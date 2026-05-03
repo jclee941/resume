@@ -6,7 +6,8 @@
 
 ## OVERVIEW
 
-9 domain service directories. Stateless, DI-based, domain-focused. Matching has a dedicated child AGENTS for scoring/AI details.
+9 domain service directories. Stateless, DI-based, domain-focused. Matching has
+a dedicated child AGENTS for scoring/AI details.
 
 ## SERVICES
 
@@ -24,7 +25,8 @@
 
 ## CHILD GUIDES
 
-- `matching/AGENTS.md` owns threshold, weighting, and AI fallback rules for this domain.
+- `matching/AGENTS.md` owns threshold, weighting, and AI fallback rules for this
+  domain.
 
 ## CONVENTIONS
 

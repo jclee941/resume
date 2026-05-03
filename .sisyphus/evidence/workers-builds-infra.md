@@ -35,11 +35,11 @@ and are not accessible via the GitHub Checks API or `gh run` CLI.
 
 ## Reproduction
 
-| Branch                      | HEAD       | Workers Builds         |
-| --------------------------- | ---------- | ---------------------- |
-| `master` (post-merge #74)   | `80b97094` | failure (1s)           |
-| `master` (pre-merge #74)    | `d1e62878` | failure (1s)           |
-| `feat/japanese-portfolio-locale` | `e419e01c` | failure (1s)      |
+| Branch                           | HEAD       | Workers Builds |
+| -------------------------------- | ---------- | -------------- |
+| `master` (post-merge #74)        | `80b97094` | failure (1s)   |
+| `master` (pre-merge #74)         | `d1e62878` | failure (1s)   |
+| `feat/japanese-portfolio-locale` | `e419e01c` | failure (1s)   |
 
 The 1-second failure pattern indicates the build runner exits before
 executing any build command — typically a missing secret, an
@@ -68,8 +68,8 @@ Once resolved, the production smoke test should match the local
 Miniflare inspection recorded in
 `.sisyphus/evidence/portfolio-improvements-manual-qa.md`:
 
-| URL                                | Expected lang | Expected title fragment                        |
-| ---------------------------------- | ------------- | ---------------------------------------------- |
-| `https://resume.jclee.me/`         | `ko`          | `이재철 - DevSecOps/SRE/Platform Engineer`     |
-| `https://resume.jclee.me/en/`      | `en`          | `Jaecheol Lee - DevSecOps/SRE/Platform Engineer` |
-| `https://resume.jclee.me/ja/`      | `ja`          | `イ・ジェチョル - DevSecOps/SRE/Platform Engineer` |
+| URL                           | Expected lang | Expected title fragment                            |
+| ----------------------------- | ------------- | -------------------------------------------------- |
+| `https://resume.jclee.me/`    | `ko`          | `이재철 - DevSecOps/SRE/Platform Engineer`         |
+| `https://resume.jclee.me/en/` | `en`          | `Jaecheol Lee - DevSecOps/SRE/Platform Engineer`   |
+| `https://resume.jclee.me/ja/` | `ja`          | `イ・ジェチョル - DevSecOps/SRE/Platform Engineer` |

@@ -1,50 +1,60 @@
 # Changelog
 
 All notable changes documented automatically from conventional commits.
-Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Versioning](https://semver.org/).
+Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic
+Versioning](https://semver.org/).
 
 ## [v1.14.7] - 2026-04-29
 
 ## [v1.23.2] - 2026-05-03
 
 ### Changes
+
 - chore: standardize automation workflows + dependabot config (#76) (5dba348)
 
 ## [v1.23.1] - 2026-05-02
 
-### Changes
+### Changes (2)
+
 - chore: deploy latest automation workflows (b9fdc61)
 
 ## [v1.23.0] - 2026-05-02
 
-### Changes
-- fix(job-server): correct import path and fix resource pool health check test (549106d)
+### Changes (3)
+
+- fix(job-server): correct import path and fix resource pool health check test
+  (549106d)
 - fix(e2e): make dashboard and interaction tests resilient (f63321e)
 - fix(e2e): correct accessibility and SEO test assertions (8a984c5)
 - fix(e2e): reduce parallel workers and add test tolerance (831129e)
 - fix(layout): improve responsive layout and mobile UX (a1999db)
-- fix(portfolio): sw null-safe header, deprecated meta tag, empty data-url (8965060)
-- Merge branch 'master' of https://github.com/jclee941/resume (0262095)
+- fix(portfolio): sw null-safe header, deprecated meta tag, empty data-url
+  (8965060)
+- Merge branch 'master' of <https://github.com/jclee941/resume> (0262095)
 - refactor: complete legacy cleanup across monorepo (16342d7)
 - fix(saramin): add CKS/CNCF to certSkills regex (b81a40e)
 - fix(review): resolve ISMS-P/CISSP residual references from review (b970e40)
 - docs(plan): remove ISMS-P/CISSP from profile enhancement master plan (ff68f1b)
-- docs(architecture): update nol-universe profile to remove CISSP/CISA plan (2275959)
+- docs(architecture): update nol-universe profile to remove CISSP/CISA plan
+  (2275959)
 - feat(data): remove ISMS-P/ISO 27001 from SSOT and automation (f75a969)
 
 ## [v1.22.3] - 2026-05-01
 
-### Changes
+### Changes (4)
+
 - chore: add standard automation workflows (#61) (af7a55b)
 
 ## [v1.22.2] - 2026-05-01
 
-### Changes
+### Changes (5)
+
 - chore: add standard automation workflows (#59) (f02b2a3)
 
 ## [v1.22.1] - 2026-04-30
 
-### Changes
+### Changes (6)
+
 - chore: remove duplicate workflow (1971f45)
 - chore: remove duplicate workflow (7d45e2e)
 - chore: remove duplicate workflow (c25855c)
@@ -54,89 +64,114 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.22.0] - 2026-04-30
 
-### Changes
+### Changes (7)
+
 - feat: standardize PR checks (fec21eb)
 
 ## [v1.21.0] - 2026-04-30
 
-### Changes
+### Changes (8)
+
 - feat: add automated workflows (354a2b6)
 
 ## [v1.20.3] - 2026-04-30
 
-### Changes
+### Changes (9)
+
 - chore: add PR review bot workflow (#53) (3a3d153)
 
 ## [v1.20.2] - 2026-04-30
 
-### Changes
+### Changes (10)
+
 - chore: add PR review bot workflow (#51) (9df5ac8)
 - chore: sync pending docs, CI config, and app metadata (4e3357a)
 
 ## [v1.20.1] - 2026-04-30
 
-### Changes
-- fix(portfolio): remove remaining AWS hardcoded strings from HTML templates (4895ad9)
+### Changes (11)
+
+- fix(portfolio): remove remaining AWS hardcoded strings from HTML templates
+  (4895ad9)
 
 ## [v1.20.0] - 2026-04-30
 
-### Changes
+### Changes (12)
+
 - feat(data): remove AWS experience from master SSOT (4f84345)
 
 ## [v1.19.2] - 2026-04-30
 
-### Changes
-- docs(adr-0008): mark Migration Plan #10 RESOLVED — job worker deleted (verified HTTP 404) (70ae04b)
+### Changes (13)
+
+- docs(adr-0008): mark Migration Plan #10 RESOLVED — job worker deleted
+  (verified HTTP 404) (70ae04b)
 
 ## [v1.19.1] - 2026-04-30
 
-### Changes
-- fix(ci): delete-job-worker — status-only check (workers/scripts returns binary) (8cfb694)
+### Changes (14)
+
+- fix(ci): delete-job-worker — status-only check (workers/scripts returns
+  binary) (8cfb694)
 
 ## [v1.19.0] - 2026-04-30
 
-### Changes
+### Changes (15)
+
 - feat(ci): add delete-standalone-job-worker workflow (ADR 0008 #10) (79c932b)
 
 ## [v1.18.0] - 2026-04-30
 
-### Changes
-- feat(ci): add provision-queues workflow + clarify queue binding inactive state (6e3ad2f)
+### Changes (16)
+
+- feat(ci): add provision-queues workflow + clarify queue binding inactive state
+  (6e3ad2f)
 - docs(architecture): reflect ADR 0008 single-worker consolidation (91c04b1)
-- chore(cleanup): delete obsolete standalone job worker config + runbook (ADR 0008) (20c3be4)
+- chore(cleanup): delete obsolete standalone job worker config + runbook (ADR
+  0008) (20c3be4)
 
 ## [v1.17.1] - 2026-04-30
 
-### Changes
+### Changes (17)
+
 - fix(portfolio): disable queue bindings until queues are provisioned (395c26f)
 
 ## [v1.17.0] - 2026-04-30
 
-### Changes
+### Changes (18)
+
 - chore(sync): remove stale 펀엔씨(FunNC) entries from web data generator (e1f207c)
-- feat(portfolio): consolidate job-dashboard into single resume worker (ADR 0008) (526c010)
-- fix(job-dashboard): notifications.js import paths + env.DB → env.JOB_DB rename (6fff448)
+- feat(portfolio): consolidate job-dashboard into single resume worker (ADR
+  0008) (526c010)
+- fix(job-dashboard): notifications.js import paths + env.DB → env.JOB_DB rename
+  (6fff448)
 
 ## [v1.16.11] - 2026-04-30
 
-### Changes
+### Changes (19)
+
 - fix(resume): EN/JA careers 배열에서 펀엔씨(Fun&C) 항목 제거 (29ae262)
-- Merge branch 'master' of https://github.com/jclee941/resume (04697f4)
+- Merge branch 'master' of <https://github.com/jclee941/resume> (04697f4)
 - fix(resume): SSOT에서 ㈜펀엔씨 경력 삭제 (4314b47)
 
 ## [v1.16.10] - 2026-04-29
 
-### Changes
-- fix(portfolio-en): EN JSON-LD Person 블록의 trailing comma 수정 + verifier에 JSON-LD parse 검증 추가 (2354d97)
+### Changes (20)
+
+- fix(portfolio-en): EN JSON-LD Person 블록의 trailing comma 수정 + verifier에 JSON-LD
+  parse 검증 추가 (2354d97)
 
 ## [v1.16.9] - 2026-04-29
 
-### Changes
-- fix(resume-en/ja): apply how/why career descriptions directly to EN/JA SSoT (9bd62a6)
+### Changes (21)
+
+- fix(resume-en/ja): apply how/why career descriptions directly to EN/JA SSoT
+  (9bd62a6)
 
 ## [v1.16.8] - 2026-04-29
 
-### Changes
+### Changes (22)
+
 - chore(ci): update welcome.yml caller (jclee941/.github) (38a553a)
 - chore(ci): update issue-lifecycle.yml caller (jclee941/.github) (ce4207a)
 - chore(ci): update issue-label.yml caller (jclee941/.github) (72d6361)
@@ -150,297 +185,336 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 
 ## [v1.16.7] - 2026-04-29
 
-### Changes
-- fix(resume): Oracle round 4 final blockers - 모든 잔여 metric/what-list 제거 (1c921be)
+### Changes (23)
+
+- fix(resume): Oracle round 4 final blockers - 모든 잔여 metric/what-list 제거
+  (1c921be)
 
 ## [v1.16.6] - 2026-04-29
 
-### Changes
-- fix(resume): final residual metric cleanup in en data + generator hardcoded text (08d10ec)
+### Changes (24)
+
+- fix(resume): final residual metric cleanup in en data + generator hardcoded
+  text (08d10ec)
 
 ## [v1.16.5] - 2026-04-29
 
-### Changes
+### Changes (25)
+
 - fix(resume): Oracle round 3 final blockers (9efe632)
 
 ## [v1.16.4] - 2026-04-29
 
-### Changes
-- fix(resume): Oracle round 2 blockers - 모든 잔여 수치 + 상위 projects 배열 how/why 전환 (2043e80)
+### Changes (26)
+
+- fix(resume): Oracle round 2 blockers - 모든 잔여 수치 + 상위 projects 배열 how/why 전환
+  (2043e80)
 
 ## [v1.16.3] - 2026-04-29
 
-### Changes
-- fix(release-yml): inject changelog via env var to fully isolate from shell (506266e)
-- fix(release-yml): commit message with quotes no longer breaks bash interpolation (f3d7b2d)
-- refactor(job-server): apply closure-bound holder pattern to remaining P1 module state (cd00379)
+### Changes (27)
+
+- fix(release-yml): inject changelog via env var to fully isolate from shell
+  (506266e)
+- fix(release-yml): commit message with quotes no longer breaks bash
+  interpolation (f3d7b2d)
+- refactor(job-server): apply closure-bound holder pattern to remaining P1
+  module state (cd00379)
 - chore: trigger redeploy for portfolio-en JSON-LD update (dfd6d06)
-- fix(portfolio-en): JSON-LD description에서 잔여 "9-year/32 detection rules" 수치 제거 (b78f73f)
+- fix(portfolio-en): JSON-LD description에서 잔여 "9-year/32 detection rules" 수치 제거
+  (b78f73f)
 
 ## [v1.16.2] - 2026-04-29
 
-### Changes
+### Changes (28)
+
 - refactor(portfolio): HTML hero/meta에서 모든 수치 제거 + how/why 컨텍스트로 교체 (815f5a5)
 - chore(ci): update pr-review-security.yml caller (jclee941/.github) (1934916)
 - chore(ci): update pr-review.yml caller (jclee941/.github) (3ac5dca)
 
-
 ## [v1.16.1] - 2026-04-29
 
-### Changes
-- refactor(resume): SSoT 전체를 담백한 how/why 중심으로 리팩토링 (fd4e10f)
+### Changes (29)
 
+- refactor(resume): SSoT 전체를 담백한 how/why 중심으로 리팩토링 (fd4e10f)
 
 ## [v1.16.0] - 2026-04-29
 
-### Changes
-- feat(portfolio): sync index.html hardcoded content to modernized SSoT (bef340e)
+### Changes (30)
 
+- feat(portfolio): sync index.html hardcoded content to modernized SSoT
+  (bef340e)
 
 ## [v1.15.0] - 2026-04-29
 
-### Changes
-- feat(resume): modernize SSoT for Big-Tech ready content + tech debt cleanup (99bd30f)
+### Changes (31)
 
+- feat(resume): modernize SSoT for Big-Tech ready content + tech debt cleanup
+  (99bd30f)
 
 ## [v1.14.23] - 2026-04-29
 
-### Changes
-- refactor(#17): consolidate job-server validation to thin SSoT wrapper (6106a80)
+### Changes (32)
 
+- refactor(#17): consolidate job-server validation to thin SSoT wrapper
+  (6106a80)
 
 ## [v1.14.22] - 2026-04-29
 
-### Changes
+### Changes (33)
+
 - chore(deps)(deps-dev): bump @typescript-eslint/eslint-plugin (#12) (2ae36e8)
 - chore(deps)(deps): bump nodemailer from 8.0.5 to 8.0.7 (#10) (1d20016)
 
-
 ## [v1.14.21] - 2026-04-29
 
-### Changes
-- fix(lint): pre-emptive eslint 9.x rule fixes (preserve-caught-error, no-useless-assignment) (bf4c6aa)
+### Changes (34)
 
+- fix(lint): pre-emptive eslint 9.x rule fixes (preserve-caught-error,
+  no-useless-assignment) (bf4c6aa)
 
 ## [v1.14.20] - 2026-04-29
 
-### Changes
+### Changes (35)
+
 - chore(deps)(deps-dev): bump @typescript-eslint/parser (#9) (522d8e3)
 - chore(deps)(deps-dev): bump wrangler (#8) (f6b99c6)
 - chore(ci)(deps): bump actions/setup-node from 5 to 6 (#5) (89f45a0)
-- chore(ci)(deps): bump peter-evans/create-pull-request from 7 to 8 (#4) (eb7f37e)
+- chore(ci)(deps): bump peter-evans/create-pull-request from 7 to 8 (#4)
+  (eb7f37e)
 - chore(ci)(deps): bump softprops/action-gh-release from 2 to 3 (#3) (af2eb4d)
 - chore(ci)(deps): bump actions/checkout from 5 to 6 (#2) (b6787d9)
 - chore(ci)(deps): bump actions/setup-go from 5 to 6 (#1) (12ea77c)
 
-
 ## [v1.14.19] - 2026-04-29
 
-### Changes
-- docs(review): session-end retrospective + Oracle holistic review (A−/B+) (2546d79)
+### Changes (36)
 
+- docs(review): session-end retrospective + Oracle holistic review (A−/B+)
+  (2546d79)
 
 ## [v1.14.18] - 2026-04-29
 
-### Changes
-- fix(debt): tech-debt audit quick wins — module state, OpenAPI drift, coverage, dead code (f9f16cb)
+### Changes (37)
 
+- fix(debt): tech-debt audit quick wins — module state, OpenAPI drift, coverage,
+  dead code (f9f16cb)
 
 ## [v1.14.17] - 2026-04-29
 
-### Changes
-- docs(audit): final-status doc per Oracle round-4 verify-with-caveats (b1996e8)
+### Changes (38)
 
+- docs(audit): final-status doc per Oracle round-4 verify-with-caveats (b1996e8)
 
 ## [v1.14.16] - 2026-04-29
 
-### Changes
+### Changes (39)
+
 - fix(test): update metrics test for P2-18 NaN defaults (3ddcfb0)
 - fix(audit): clear remaining P2/P3 backlog per Oracle round-3 verdict (cb37858)
 
-
 ## [v1.14.15] - 2026-04-29
 
-### Changes
-- fix(audit): wire P1-5 — login mints HMAC token, not raw ADMIN_TOKEN (200446d)
+### Changes (40)
 
+- fix(audit): wire P1-5 — login mints HMAC token, not raw ADMIN_TOKEN (200446d)
 
 ## [v1.14.14] - 2026-04-29
 
-### Changes
-- fix(audit): close P0/P1 with real runtime changes per Oracle re-verification (2798e08)
+### Changes (41)
 
+- fix(audit): close P0/P1 with real runtime changes per Oracle re-verification
+  (2798e08)
 
 ## [v1.14.13] - 2026-04-29
 
-### Changes
-- fix(deploy): restore manifest/sitemap/og-image as tracked + add sync:data CI step (18b8ba0)
+### Changes (42)
 
+- fix(deploy): restore manifest/sitemap/og-image as tracked + add sync:data CI
+  step (18b8ba0)
 
 ## [v1.14.12] - 2026-04-29
 
-### Changes
-- chore(repo): repository hygiene cleanup — untrack 573 generated/cache files (9fc8e4f)
+### Changes (43)
 
+- chore(repo): repository hygiene cleanup — untrack 573 generated/cache files
+  (9fc8e4f)
 
 ## [v1.14.11] - 2026-04-29
 
-### Changes
-- docs(audit): close P0/P1 backlog with resolution log — v1.14.10 live (4478f2a)
+### Changes (44)
 
+- docs(audit): close P0/P1 backlog with resolution log — v1.14.10 live (4478f2a)
 
 ## [v1.14.10] - 2026-04-29
 
-### Changes
-- fix(deploy): revert P0-4 JOB_SERVICE binding — job-dashboard not yet deployed (a626e28)
+### Changes (45)
 
+- fix(deploy): revert P0-4 JOB_SERVICE binding — job-dashboard not yet deployed
+  (a626e28)
 
 ## [v1.14.9] - 2026-04-29
 
-### Changes
-- fix(lint): remove duplicate import + unused eslint-disable directives (7afd8da)
-- fix(audit): close P0×4 + P1×7 from MONOREPO_REVIEW_2026-04-29 (964901a)
+### Changes (46)
 
+- fix(lint): remove duplicate import + unused eslint-disable directives
+  (7afd8da)
+- fix(audit): close P0×4 + P1×7 from MONOREPO_REVIEW_2026-04-29 (964901a)
 
 ## [v1.14.8] - 2026-04-29
 
-### Changes
-- chore(review): ADR-0008 cleanup + doc drift fixes from full monorepo review (b51c0f4)
+### Changes (47)
 
+- chore(review): ADR-0008 cleanup + doc drift fixes from full monorepo review
+  (b51c0f4)
 
-### Changes
-- fix(verify): unblock Release CI build + close 2 audit gaps found during verification (18db622)
+### Changes (48)
 
+- fix(verify): unblock Release CI build + close 2 audit gaps found during
+  verification (18db622)
 
 ## [v1.14.6] - 2026-04-28
 
-### Changes
-- fix(audit): resolve 4 follow-up issues — Zod alignment, JSON Schema CI, app-variant guard, JK stub (83a9b1c)
+### Changes (49)
 
+- fix(audit): resolve 4 follow-up issues — Zod alignment, JSON Schema CI,
+  app-variant guard, JK stub (83a9b1c)
 
 ## [v1.14.5] - 2026-04-28
 
-### Changes
-- fix(sync): resume sync audit — Splunk dedup, locale parity, JK company normalize (5dc60f1)
+### Changes (50)
 
+- fix(sync): resume sync audit — Splunk dedup, locale parity, JK company
+  normalize (5dc60f1)
 
 ## [v1.14.4] - 2026-04-28
 
-### Changes
-- chore(pdf): untrack generated PDF artifacts and add ignore patterns (56f9104)
+### Changes (51)
 
+- chore(pdf): untrack generated PDF artifacts and add ignore patterns (56f9104)
 
 ## [v1.14.3] - 2026-04-28
 
-### Changes
-- chore(saramin): remove .orig backup left over from refactor split (d8c1721)
+### Changes (52)
 
+- chore(saramin): remove .orig backup left over from refactor split (d8c1721)
 
 ## [v1.14.2] - 2026-04-28
 
-### Changes
-- fix(skills): remove proficiency scores per Oracle senior-portfolio audit (b8ef750)
+### Changes (53)
 
+- fix(skills): remove proficiency scores per Oracle senior-portfolio audit
+  (b8ef750)
 
 ## [v1.14.1] - 2026-04-28
 
-### Changes
-- fix(portfolio): EN about uses EN aboutSection + add /.well-known/security.txt (97410c8)
+### Changes (54)
 
+- fix(portfolio): EN about uses EN aboutSection + add /.well-known/security.txt
+  (97410c8)
 
 ## [v1.14.0] - 2026-04-28
 
-### Changes
-- feat(hero): add KPI cards + senior positioning per recruiter audit (4b17d81)
+### Changes (55)
 
+- feat(hero): add KPI cards + senior positioning per recruiter audit (4b17d81)
 
 ## [v1.13.1] - 2026-04-28
 
-### Changes
-- fix(content): Kibana demoUrl points to specific portfolio dashboard (245add1)
+### Changes (56)
 
+- fix(content): Kibana demoUrl points to specific portfolio dashboard (245add1)
 
 ## [v1.13.0] - 2026-04-28
 
-### Changes
-- feat(content): restore live demo URLs (n8n + Kibana public read-only) (de0c5bf)
+### Changes (57)
 
+- feat(content): restore live demo URLs (n8n + Kibana public read-only)
+  (de0c5bf)
 
 ## [v1.12.12] - 2026-04-28
 
-### Changes
-- fix(content): null Splunk demoUrls per Oracle public-exposure review (1ce365c)
+### Changes (58)
 
+- fix(content): null Splunk demoUrls per Oracle public-exposure review (1ce365c)
 
 ## [v1.12.11] - 2026-04-28
 
-### Changes
-- fix(portfolio): resolve P2 audit issues — sitemap hreflang, og:image:locale, manifest screenshots, sw cache (11dcd81)
+### Changes (59)
 
+- fix(portfolio): resolve P2 audit issues — sitemap hreflang, og:image:locale,
+  manifest screenshots, sw cache (11dcd81)
 
 ## [v1.12.10] - 2026-04-28
 
-### Changes
-- fix(portfolio): resolve P0 CSP nonce mismatch + P1 about SSoT integration (82513cb)
+### Changes (60)
 
+- fix(portfolio): resolve P0 CSP nonce mismatch + P1 about SSoT integration
+  (82513cb)
 
 ## [v1.12.9] - 2026-04-28
 
-### Changes
-- fix(portfolio): self-resolve P1/P2 issues — manifest locale, skill display, hype, canonical (a2257b4)
+### Changes (61)
 
+- fix(portfolio): self-resolve P1/P2 issues — manifest locale, skill display,
+  hype, canonical (a2257b4)
 
 ## [v1.12.8] - 2026-04-28
 
-### Changes
-- fix(content): remove fabricated metrics, fix ITCEN period, clean residual hype (8eede04)
+### Changes (62)
 
+- fix(content): remove fabricated metrics, fix ITCEN period, clean residual hype
+  (8eede04)
 
 ## [v1.12.7] - 2026-04-28
 
-### Changes
-- fix(portfolio): pin sitemap lastmod/etag to build-time constants (84d2068)
+### Changes (63)
 
+- fix(portfolio): pin sitemap lastmod/etag to build-time constants (84d2068)
 
 ## [v1.12.6] - 2026-04-28
 
-### Changes
-- fix(portfolio): cleanup post-audit findings (99eb95f)
+### Changes (64)
 
+- fix(portfolio): cleanup post-audit findings (99eb95f)
 
 ## [v1.12.5] - 2026-04-28
 
-### Changes
-- fix(content): conservative tone (담백) rewrite per Oracle + tone audit (0bc21ca)
+### Changes (65)
 
+- fix(content): conservative tone (담백) rewrite per Oracle + tone audit (0bc21ca)
 
 ## [v1.12.4] - 2026-04-28
 
-### Changes
-- fix(content): quantify remaining 대폭 mentions; restore demo URL infrastructure (6e87ea5)
+### Changes (66)
 
+- fix(content): quantify remaining 대폭 mentions; restore demo URL infrastructure
+  (6e87ea5)
 
 ## [v1.12.3] - 2026-04-28
 
-### Changes
-- fix(portfolio): remove /ja route to fix duplicate-content SEO (81d720f)
+### Changes (67)
 
+- fix(portfolio): remove /ja route to fix duplicate-content SEO (81d720f)
 
 ## [v1.12.2] - 2026-04-28
 
-### Changes
-- fix(portfolio): rebuild worker.js + sync index.html with current SSoT (adc7c61)
+### Changes (68)
 
+- fix(portfolio): rebuild worker.js + sync index.html with current SSoT
+  (adc7c61)
 
 ## [v1.12.1] - 2026-04-28
 
-### Changes
-- fix(ssot): restore splunk + hycu_fsds GitHub URLs after GitLab restore (b004108)
+### Changes (69)
 
+- fix(ssot): restore splunk + hycu_fsds GitHub URLs after GitLab restore
+  (b004108)
 
 ## [v1.12.0] - 2026-04-28
 
-### Changes
+### Changes (70)
+
 - test(jobkorea): fix mock context to support addInitScript (204d458)
 - feat(wave2): Wanted headline 50→150ch + modern stack additions (bfe086b)
 - feat(ssot): elevate content per Oracle review + fix splunk repo URL (180e02e)
@@ -449,111 +523,127 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 - fix(data): EN/JA careers[].projects[] parity with KO (99c7dfc)
 - feat(jobkorea): stealth-bypass CAPTCHA for headless renewal+sync (c995792)
 
-
 ## [v1.11.0] - 2026-04-28
 
-### Changes
-- feat(scripts): parameterize renew-session.sh for wanted+jobkorea (706507c)
+### Changes (71)
 
+- feat(scripts): parameterize renew-session.sh for wanted+jobkorea (706507c)
 
 ## [v1.10.3] - 2026-04-28
 
-### Changes
-- chore(data): consolidate SSoT — remove backups, relocate shinhan variants (7f03f11)
+### Changes (72)
 
+- chore(data): consolidate SSoT — remove backups, relocate shinhan variants
+  (7f03f11)
 
 ## [v1.10.2] - 2026-04-27
 
-### Changes
-- data(careers): correct Jointree and MTData workType to dispatched (f69ae81)
+### Changes (73)
 
+- data(careers): correct Jointree and MTData workType to dispatched (f69ae81)
 
 ## [v1.10.1] - 2026-04-27
 
-### Changes
-- ci(release): restore production deploy via wrangler-action with global API key (0dc22b1)
+### Changes (74)
 
+- ci(release): restore production deploy via wrangler-action with global API key
+  (0dc22b1)
 
 ## [v1.10.0] - 2026-04-27
 
-### Changes
-- feat(csp): switch to dynamic per-response nonce + strict-dynamic (76661ed)
+### Changes (75)
 
+- feat(csp): switch to dynamic per-response nonce + strict-dynamic (76661ed)
 
 ## [v1.9.6] - 2026-04-27
 
-### Changes
-- fix(csp): expand allowed Cloudflare/GA hashes and connect-src (84a07a7)
+### Changes (76)
 
+- fix(csp): expand allowed Cloudflare/GA hashes and connect-src (84a07a7)
 
 ## [v1.9.5] - 2026-04-27
 
-### Changes
-- chore: trigger Cloudflare Workers Builds redeploy (3d61b59)
+### Changes (77)
 
+- chore: trigger Cloudflare Workers Builds redeploy (3d61b59)
 
 ## [v1.9.4] - 2026-04-27
 
-### Changes
-- fix(csp): allow data: in img-src, add Cloudflare challenge script hash (6f7fb6c)
+### Changes (78)
 
+- fix(csp): allow data: in img-src, add Cloudflare challenge script hash
+  (6f7fb6c)
 
 ## [v1.9.3] - 2026-04-27
 
-### Changes
-- ci(release): remove duplicate wrangler deploy step (8754f4a)
+### Changes (79)
 
+- ci(release): remove duplicate wrangler deploy step (8754f4a)
 
 ## [v1.9.2] - 2026-04-27
 
-### Changes
-- docs(readme): redesign with minimal modern tone (Linear/Vercel style) (85bea3e)
+### Changes (80)
 
+- docs(readme): redesign with minimal modern tone (Linear/Vercel style)
+  (85bea3e)
 
 ## [v1.9.1] - 2026-04-27
 
-### Changes
-- docs(readme): sync structure with current monorepo (types/schemas/contracts, ja locale, ADR-0008) (9dfeb3f)
+### Changes (81)
 
+- docs(readme): sync structure with current monorepo (types/schemas/contracts,
+  ja locale, ADR-0008) (9dfeb3f)
 
 ## [v1.9.0] - 2026-04-27
 
-### Changes
-- docs(plan): record 2026-04-27 execution status of Epics 0-5 (0a132ad)
-- test(epic-5): remove legacy GitLab YAML check after .gitlab-legacy/ deletion (94ba1fb)
-- docs(epic-5): cleanup legacy artifacts, relocate rules, refresh AGENTS.md (c494bff)
-- feat(epic-4): scaffold canonical SSoT modules in @resume/shared (9036c86)
-- feat(epic-2): create @resume/types, @resume/schemas, @resume/contracts (90dd908)
-- build(epic-1): drop Bazel facade, fix tsconfig, decouple ESLint, workspace:* (01ad9b4)
-- security(playbook): redact gitlab/grafana token examples to satisfy gitleaks (bd45820)
-- security(epic-0): purge committed secrets, harden gitignore, add CI gate (dcb2c1b)
+### Changes (82)
 
+- docs(plan): record 2026-04-27 execution status of Epics 0-5 (0a132ad)
+- test(epic-5): remove legacy GitLab YAML check after .gitlab-legacy/ deletion
+  (94ba1fb)
+- docs(epic-5): cleanup legacy artifacts, relocate rules, refresh AGENTS.md
+  (c494bff)
+- feat(epic-4): scaffold canonical SSoT modules in @resume/shared (9036c86)
+- feat(epic-2): create @resume/types, @resume/schemas, @resume/contracts
+  (90dd908)
+- build(epic-1): drop Bazel facade, fix tsconfig, decouple ESLint, workspace:\*
+  (01ad9b4)
+- security(playbook): redact gitlab/grafana token examples to satisfy gitleaks
+  (bd45820)
+- security(epic-0): purge committed secrets, harden gitignore, add CI gate
+  (dcb2c1b)
 
 ## [v1.8.1] - 2026-04-24
 
-### Changes
-- fix(ci): remove duplicate YAML entries causing workflow failure (d11984e)
-- Merge branch 'master' of https://github.com/jclee941/resume (f7efbcf)
-- ci: resolve deprecation and cache warnings (ab8af4c)
+### Changes (83)
 
+- fix(ci): remove duplicate YAML entries causing workflow failure (d11984e)
+- Merge branch 'master' of <https://github.com/jclee941/resume> (f7efbcf)
+- ci: resolve deprecation and cache warnings (ab8af4c)
 
 ## [v1.8.0] - 2026-04-23
 
-### Changes
-- fix(test): update auto-applier strategy test for modularized wanted-helpers (f9cc595)
+### Changes (84)
+
+- fix(test): update auto-applier strategy test for modularized wanted-helpers
+  (f9cc595)
 - fix(ci): remove duplicate run key in validate-go job (bffece8)
 - chore: raise file size limit from 200 to 500 LOC (538c0b0)
 - chore(gitignore): ignore generated dashboard.html (45c6220)
 - docs: add wishket portfolio and n8n workflow export (4a0aba3)
 - fix(ci): use temporary directory for individual Go script builds (7e31712)
-- Merge branch 'master' of https://github.com/jclee941/resume (2986192)
+- Merge branch 'master' of <https://github.com/jclee941/resume> (2986192)
 - refactor: split renew-jobkorea-session into modular session helpers (d90db10)
-- refactor: split application-tracker into lifecycle and analytics modules (160b2d3)
+- refactor: split application-tracker into lifecycle and analytics modules
+  (160b2d3)
 - refactor: split approval-manager into workflow state modules (1c0237a)
-- refactor: split performance-metrics into core, reporter, and decorators (0df6865)
+- refactor: split performance-metrics into core, reporter, and decorators
+  (0df6865)
 - refactor: extract wanted-strategy helpers into focused modules (ed3c813)
-- refactor: split application-repository into reader and writer modules (8a51726)
-- refactor: split auto-apply-config into helpers and validation modules (1e2136c)
+- refactor: split application-repository into reader and writer modules
+  (8a51726)
+- refactor: split auto-apply-config into helpers and validation modules
+  (1e2136c)
 - refactor: split job-matcher into domain-specific scoring modules (de47807)
 - feat: migrate n8n operational scripts from shell to Go (2103eb2)
 - chore: add per-package ESLint flat configs (f3cfdde)
@@ -569,233 +659,256 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic Vers
 - fix(lint): exclude natively submodule and ephemeral dirs from eslint (6e81550)
 - fix(wanted): preserve about when source content is empty (27c785e)
 
-
 ## [v1.7.0] - 2026-04-21
 
-### Changes
+### Changes (85)
+
 - feat(wanted): append awards and achievements to composed about (a0f0d9a)
 - feat(wanted): compose personalProjects into about section (fc10647)
 
-
 ## [v1.6.0] - 2026-04-20
 
-### Changes
+### Changes (86)
+
 - fix(jobkorea): fail loud on portfolio URL and CAPTCHA errors (ed77d5c)
 - fix(jobkorea): fail loud on portfolio URL and CAPTCHA errors (355889e)
 - chore(jobkorea): migrate rNo to JOBKOREA_RNO env var (68bcd79)
-- fix(jobkorea): drive HopeJob roles and locations from SSoT hope section (ff44b60)
-- fix(jobkorea): expand change-detection patterns to 15+ additional form fields (87ccebe)
-- fix(jobkorea): wire MCP live mode through profile-sync CLI delegation (9dd6e38)
-- feat(wanted): sync career.projects[] sub-projects with techStack and achievements (3ed3586)
+- fix(jobkorea): drive HopeJob roles and locations from SSoT hope section
+  (ff44b60)
+- fix(jobkorea): expand change-detection patterns to 15+ additional form fields
+  (87ccebe)
+- fix(jobkorea): wire MCP live mode through profile-sync CLI delegation
+  (9dd6e38)
+- feat(wanted): sync career.projects[] sub-projects with techStack and
+  achievements (3ed3586)
 - docs(schema): expand resume_schema.json to match SSoT (f710a71)
 - feat(auth): add JobKorea session renewal script (2e2e7a8)
-- fix(data): add education.schoolType/majorType and hope.* to all locales (8375953)
+- fix(data): add education.schoolType/majorType and hope.\* to all locales
+  (8375953)
 - fix(data): restore JA personal portfolio and summary parity (8bfa0ce)
 - fix(data): restore platformVariants to EN and JA resume SSoT (487ba89)
 - fix(wanted): stop wiping manual projects and foreign activities (144b705)
 - fix(skills): route 7 unmapped skills via aliases to nearest tag (1c31815)
 
-
 ## [v1.5.20] - 2026-04-20
 
-### Changes
-- chore: flush uncommitted wip (job-matcher refactor + interview prep + submodule bump) (91001e8)
+### Changes (87)
 
+- chore: flush uncommitted wip (job-matcher refactor + interview prep +
+  submodule bump) (91001e8)
 
 ## [v1.5.19] - 2026-04-20
 
-### Changes
-- fix(resume): restore 7 careers profile sync + close unbalanced CSS braces (fa72646)
+### Changes (88)
 
+- fix(resume): restore 7 careers profile sync + close unbalanced CSS braces
+  (fa72646)
 
 ## [v1.5.18] - 2026-04-20
 
-### Changes
-- chore: add natively as submodule under apps/natively (08e5ed3)
+### Changes (89)
 
+- chore: add natively as submodule under apps/natively (08e5ed3)
 
 ## [v1.5.17] - 2026-04-20
 
-### Changes
-- docs: add 강남언니 보안엔지니어 면접 준비 자료 (c22f5c8)
+### Changes (90)
 
+- docs: add 강남언니 보안엔지니어 면접 준비 자료 (c22f5c8)
 
 ## [v1.5.16] - 2026-04-19
 
-### Changes
-- build(portfolio): rebuild worker with latest resume PDF (b04ad88)
+### Changes (91)
 
+- build(portfolio): rebuild worker with latest resume PDF (b04ad88)
 
 ## [v1.5.15] - 2026-04-19
 
-### Changes
-- fix(data): update availability to immediate, sync+rebuild portfolio (4f8fd1c)
+### Changes (92)
 
+- fix(data): update availability to immediate, sync+rebuild portfolio (4f8fd1c)
 
 ## [v1.5.14] - 2026-04-19
 
-### Changes
-- fix(lint): resolve all unused-vars warnings across 4 files (1903b5d)
+### Changes (93)
 
+- fix(lint): resolve all unused-vars warnings across 4 files (1903b5d)
 
 ## [v1.5.13] - 2026-04-19
 
-### Changes
-- refactor(shared): split lazy-loader into N modules (36edaf3)
+### Changes (94)
 
+- refactor(shared): split lazy-loader into N modules (36edaf3)
 
 ## [v1.5.12] - 2026-04-19
 
-### Changes
-- refactor(profile-sync): split profile-sync entry into N modules (e9cc702)
+### Changes (95)
 
+- refactor(profile-sync): split profile-sync entry into N modules (e9cc702)
 
 ## [v1.5.11] - 2026-04-19
 
-### Changes
+### Changes (96)
+
 - refactor(apply): split retry-service into N modules (0c810f4)
 - refactor(profile-sync): split jobkorea handler into N modules (82806de)
 
-
 ## [v1.5.10] - 2026-04-19
 
-### Changes
-- refactor(shared): split parallel service into N modules (fef52a3)
+### Changes (97)
 
+- refactor(shared): split parallel service into N modules (fef52a3)
 
 ## [v1.5.9] - 2026-04-19
 
-### Changes
+### Changes (98)
+
 - refactor(crawlers): split base-crawler into N modules (7203e1f)
 - refactor(dashboard): split views scripts into N modules (5a5490f)
 
-
 ## [v1.5.8] - 2026-04-19
 
-### Changes
-- refactor(tools): split auto-apply tool into N modules (e14b875)
+### Changes (99)
 
+- refactor(tools): split auto-apply tool into N modules (e14b875)
 
 ## [v1.5.7] - 2026-04-19
 
-### Changes
+### Changes (100)
+
 - fix(session-broker): remove storage barrel import cycle (58f271d)
 - refactor(notifications): split telegram adapter into 5 modules (01a5e62)
 - refactor(session-broker): split service into N modules (0609633)
 
-
 ## [v1.5.6] - 2026-04-19
 
-### Changes
-- refactor(saramin): split profile-sync into N modules (e63f834)
+### Changes (101)
 
+- refactor(saramin): split profile-sync into N modules (e63f834)
 
 ## [v1.5.5] - 2026-04-19
 
-### Changes
+### Changes (102)
+
 - refactor(dashboard): split notifications service into N modules (d338bb9)
 - refactor(dashboard): split application workflow into N modules (9a4bb1a)
 
-
 ## [v1.5.4] - 2026-04-19
 
-### Changes
-- refactor(pipeline): split job-search-apply-pipeline into N modules (cf46f45)
+### Changes (103)
 
+- refactor(pipeline): split job-search-apply-pipeline into N modules (cf46f45)
 
 ## [v1.5.3] - 2026-04-19
 
-### Changes
-- docs: update AGENTS.md hierarchy for portfolio + profile-sync changes (d3ddee7)
+### Changes (104)
 
+- docs: update AGENTS.md hierarchy for portfolio + profile-sync changes
+  (d3ddee7)
 
 ## [v1.5.2] - 2026-04-19
 
-### Changes
-- test(profile-sync): add portfolio field mapping unit tests (133c230)
+### Changes (105)
 
+- test(profile-sync): add portfolio field mapping unit tests (133c230)
 
 ## [v1.5.1] - 2026-04-19
 
-### Changes
-- fix(profile-sync): use AddUserFileDB for portfolio URL registration (010103c)
+### Changes (106)
 
+- fix(profile-sync): use AddUserFileDB for portfolio URL registration (010103c)
 
 ## [v1.5.0] - 2026-04-19
 
-### Changes
-- feat(profile-sync): add portfolio field mapping and automate via pipeline (d5fe0ca)
+### Changes (107)
 
+- feat(profile-sync): add portfolio field mapping and automate via pipeline
+  (d5fe0ca)
 
 ## [v1.4.0] - 2026-04-19
 
-### Changes
-- feat(portfolio): align site content with enriched SSoT — DevSecOps/SRE positioning (dad2f7d)
-- chore: clean up stale test artifacts and regenerate playwright report (92650ee)
-- refactor(profile-sync): modernize truncation to template literals (20b9e66)
-- feat(release): add portfolio build and Cloudflare Workers deploy to release pipeline (5a3bd90)
+### Changes (108)
 
+- feat(portfolio): align site content with enriched SSoT — DevSecOps/SRE
+  positioning (dad2f7d)
+- chore: clean up stale test artifacts and regenerate playwright report
+  (92650ee)
+- refactor(profile-sync): modernize truncation to template literals (20b9e66)
+- feat(release): add portfolio build and Cloudflare Workers deploy to release
+  pipeline (5a3bd90)
 
 ## [v1.3.1] - 2026-04-19
 
-### Changes
-- chore(portfolio): sync enriched resume data to portfolio build (f96b26a)
+### Changes (109)
 
+- chore(portfolio): sync enriched resume data to portfolio build (f96b26a)
 
 ## [v1.3.0] - 2026-04-19
 
-### Changes
-- feat(auto-apply): add renew-wanted-session script + pipeline headless fix (d09343f)
+### Changes (110)
 
+- feat(auto-apply): add renew-wanted-session script + pipeline headless fix
+  (d09343f)
 
 ## [v1.2.1] - 2026-04-19
 
-### Changes
-- docs: README redesign + legacy cleanup + stale doc fixes (f08b4a7)
+### Changes (111)
 
+- docs: README redesign + legacy cleanup + stale doc fixes (f08b4a7)
 
 ## [v1.2.0] - 2026-04-19
 
-### Changes
-- fix(ci): resolve all test-node failures — API fallback with retry+circuit breaker, resume key mock fix (973933b)
-- fix(ci): fix lint errors (singlequote) and update cover letter tests for new template format (b0ce370)
-- fix(data): sync cover letter quality content to Wanted profile — remove job-specific phrasing, add structured achievements (94c0a9d)
-- fix(data): remove inflated metrics from resume — 95%, 99.99%, 50%, etc. (9f5a983)
-- feat: auto-apply browser-based submission + cover letter enhancement + profile enrichment (1b80736)
+### Changes (112)
 
+- fix(ci): resolve all test-node failures — API fallback with retry+circuit
+  breaker, resume key mock fix (973933b)
+- fix(ci): fix lint errors (singlequote) and update cover letter tests for new
+  template format (b0ce370)
+- fix(data): sync cover letter quality content to Wanted profile — remove
+  job-specific phrasing, add structured achievements (94c0a9d)
+- fix(data): remove inflated metrics from resume — 95%, 99.99%, 50%, etc.
+  (9f5a983)
+- feat: auto-apply browser-based submission + cover letter enhancement + profile
+  enrichment (1b80736)
 
 ## [v1.1.1] - 2026-04-15
 
-### Changes
-- fix(deploy): remove stale JOB_SERVICE binding from wrangler.json (9c8acbe)
+### Changes (113)
 
+- fix(deploy): remove stale JOB_SERVICE binding from wrangler.json (9c8acbe)
 
 ## [v1.1.0] - 2026-04-15
 
-### Changes
+### Changes (114)
+
 - chore(data): sync SSoT resume data and rebuild portfolio worker (a4fc63d)
-- fix(profile-sync): truncate Wanted fields to API limits and fix JobKorea selectors (1d5281b)
-- fix(jobkorea-sync): empty M_MainField/M_MainJob to prevent code display (58abefa)
+- fix(profile-sync): truncate Wanted fields to API limits and fix JobKorea
+  selectors (1d5281b)
+- fix(jobkorea-sync): empty M_MainField/M_MainJob to prevent code display
+  (58abefa)
 - fix(ci): align tests with v2 migration and remove duplicate Referer (08ceecd)
 - docs: update README with job automation and recent changes (a0d9b75)
 - feat(auto-apply): update wanted strategy to Chaos applications v1 (7f0ea74)
 - fix(wanted-sync): make activities sync idempotent (fd9dafa)
 - fix(wanted-sync): migrate getDetail to v2 and add Referer header (10437b6)
 - chore(data): fix career durations and add awards to resume SSoT (5a9d9ae)
-- fix(jobkorea-sync): remove achievements fallback, add structured awards (b8469fd)
-
+- fix(jobkorea-sync): remove achievements fallback, add structured awards
+  (b8469fd)
 
 ## [v1.0.131] - 2026-04-14
 
-### Changes
-- fix(wanted-sync): truncate profile fields to Wanted API limits (headline 50, description 150) (79bfbc6)
+### Changes (115)
 
+- fix(wanted-sync): truncate profile fields to Wanted API limits (headline 50,
+  description 150) (79bfbc6)
 
 ## [v1.0.130] - 2026-04-14
 
-### Changes
-- fix(e2e,wrangler): accept degraded health status, disable JOB_SERVICE binding (e4e89b7)
+### Changes (116)
 
+- fix(e2e,wrangler): accept degraded health status, disable JOB_SERVICE binding
+  (e4e89b7)
 
-### Changes
+### Changes (117)
+
 - fix(docs): remove stale GitLab CI and dark mode toggle references (973eb14)

@@ -18,7 +18,8 @@ export default async function nameRoutes(fastify) {
 
 ## MODULES (13)
 
-applications, auth, auto-apply, config, crawl, health, matching, profile, resume, search, stats, sync, webhooks.
+applications, auth, auto-apply, config, crawl, health, matching, profile,
+resume, search, stats, sync, webhooks.
 
 ## CONVENTIONS
 

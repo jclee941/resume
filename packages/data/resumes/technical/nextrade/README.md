@@ -2,7 +2,9 @@
 
 ## Overview
 
-This directory contains comprehensive technical documentation for the Nextrade securities exchange infrastructure project, covering 19 months of construction and operations phases.
+This directory contains comprehensive technical documentation for the Nextrade
+securities exchange infrastructure project, covering 19 months of construction
+and operations phases.
 
 ## Documents
 
@@ -167,7 +169,7 @@ pandoc SOC_RUNBOOK_COMPACT.md -o SOC_RUNBOOK_COMPACT.docx --toc --number-section
 ## Contact
 
 **Engineer**: 이재철 (Jaecheol Lee)
-**Email**: qws941@kakao.com
+**Email**: <qws941@kakao.com>
 **Phone**: 010-5757-9592
 **GitHub**: github.com/jclee941
 

@@ -1,17 +1,21 @@
 # Code Style and Conventions
 
-This document defines the canonical code style and conventions for the resume monorepo.
+This document defines the canonical code style and conventions for the resume
+monorepo.
 
 ## Overview
 
-JavaScript primary with TypeScript for type annotations only. ESM in all apps and packages, CJS for root config files. Node >= 22 required.
+JavaScript primary with TypeScript for type annotations only. ESM in all apps
+and packages, CJS for root config files. Node >= 22 required.
 
 ## Language and Runtime
 
-- JavaScript primary (.js files), TypeScript for type annotations only (.ts files)
+- JavaScript primary (.js files), TypeScript for type annotations only (.ts
+  files)
 - Node >= 22 required (enforced by `.nvmrc`)
 - ESM (`"type": "module"`) in all apps and packages
-- CJS only for root config files (eslint.config.cjs, jest.config.cjs, playwright.config.js)
+- CJS only for root config files (eslint.config.cjs, jest.config.cjs,
+  playwright.config.js)
 - Target: ES2022 (from jsconfig.json)
 
 ## File and Directory Naming
@@ -39,9 +43,11 @@ Key rules from eslint.config.cjs (ESLint 9 Flat Config):
 | no-new-func     | error (test files excepted)      |
 | no-unused-vars  | warn (argsIgnorePattern: `^_`)   |
 
-Test files (`tests/**/*.test.js`, `tests/**/*.spec.js`) have no-new-func disabled.
+Test files (`tests/**/*.test.js`, `tests/**/*.spec.js`) have no-new-func
+disabled.
 
-Ignored patterns: node_modules, build outputs (worker.js, dist), coverage, logs, .wrangler.
+Ignored patterns: node_modules, build outputs (worker.js, dist), coverage, logs,
+.wrangler.
 
 ## Module Patterns
 
@@ -58,13 +64,17 @@ Ignored patterns: node_modules, build outputs (worker.js, dist), coverage, logs,
 - Hexagonal architecture: services (domain logic) ↔ clients (external adapters)
 - DI via constructor injection, no global state
 - MCP tool export pattern:
+
   ```js
   export const {name}Tool = { ... }
   ```
+
 - Fastify route pattern:
+
   ```js
   export default async function nameRoutes(fastify) { ... }
   ```
+
 - Import from `src/shared/` directly — never import from `lib/` (deprecated)
 
 ### Job Dashboard (apps/job-dashboard/)
@@ -87,11 +97,14 @@ Critical: Never use `networkidle` in Playwright — use `domcontentloaded`.
 
 ## Commit and PR Standards
 
-- Conventional Commits: `type(scope): imperative summary` (<=72 chars, lowercase)
-- Types: `feat`, `fix`, `docs`, `refactor`, `test`, `ci`, `chore`, `perf`, `build`, `revert`
+- Conventional Commits: `type(scope): imperative summary` (<=72 chars,
+  lowercase)
+- Types: `feat`, `fix`, `docs`, `refactor`, `test`, `ci`, `chore`, `perf`,
+  `build`, `revert`
 - Squash merge only
 - ~200 LOC max per PR
-- SHA-pin all GitHub Actions with `# vN` version comment (e.g., `actions/checkout@v4 # v4.2.2`)
+- SHA-pin all GitHub Actions with `# vN` version comment (e.g.,
+  `actions/checkout@v4 # v4.2.2`)
 
 ## Anti-Patterns
 
@@ -139,4 +152,5 @@ Eight-job validation pipeline:
 7. security-scan — npm audit
 8. build → elk-ingest — worker.js build + ELK logging
 
-Deploy authority: Cloudflare Workers Builds (git push to master). GitHub Actions is CI only.
+Deploy authority: Cloudflare Workers Builds (git push to master). GitHub Actions
+is CI only.

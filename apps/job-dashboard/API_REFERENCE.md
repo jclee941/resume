@@ -18,11 +18,11 @@
    - [Statistics](#statistics)
    - [Authentication](#authentication-endpoints)
    - [Applications CRUD](#applications-crud)
-   - [Webhooks](#webhooks)
+   - Webhooks
    - [Workflows](#workflows)
-   - [Auto-Apply](#auto-apply)
-   - [Config](#config)
-   - [Testing & Cleanup](#testing--cleanup)
+   - Auto-Apply
+   - Config
+   - Testing & Cleanup
 7. [Response Format](#response-format)
 8. [Common Error Codes](#common-error-codes)
 
@@ -69,7 +69,7 @@ curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIs..." \
 
 If Bearer token is unavailable, the worker checks for session cookies:
 
-```
+```text
 Cookie: session=abc123; sessionId=def456; auth=ghi789
 ```
 
@@ -103,20 +103,20 @@ curl -X POST https://resume.jclee.me/job/api/auth/refresh \
 
 ### Base URL
 
-```
+```text
 https://resume.jclee.me/job
 ```
 
 ### Required Headers
 
-```
+```text
 Content-Type: application/json
 Authorization: Bearer <token>  # For protected endpoints
 ```
 
 ### Optional Headers
 
-```
+```text
 X-Request-ID: <uuid>          # For tracing (logged)
 X-Webhook-Signature: <hmac>   # For webhook verification
 ```
@@ -125,7 +125,7 @@ X-Webhook-Signature: <hmac>   # For webhook verification
 
 All responses include:
 
-```
+```text
 X-RateLimit-Limit: 60
 X-RateLimit-Remaining: 45
 X-RateLimit-Reset: 1739327125
@@ -188,7 +188,7 @@ HTTP/1.1 400 Bad Request
 
 Every response includes:
 
-```
+```text
 X-RateLimit-Limit: 60           # Max requests per minute
 X-RateLimit-Remaining: 45       # Tokens remaining
 X-RateLimit-Reset: 1739327125   # Unix timestamp when limit resets
@@ -356,11 +356,12 @@ curl https://resume.jclee.me/job/api/stats \
 ```
 
 **Query Parameters**:
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `platform` | string | No | Filter by platform (wanted, jobkorea, linkedin) |
-| `dateFrom` | ISO8601 | No | Filter from date (2026-02-01) |
-| `dateTo` | ISO8601 | No | Filter to date (2026-02-11) |
+
+| Parameter  | Type    | Required | Description                                     |
+| ---------- | ------- | -------- | ----------------------------------------------- |
+| `platform` | string  | No       | Filter by platform (wanted, jobkorea, linkedin) |
+| `dateFrom` | ISO8601 | No       | Filter from date (2026-02-01)                   |
+| `dateTo`   | ISO8601 | No       | Filter to date (2026-02-11)                     |
 
 **Response** (200 OK):
 
@@ -402,9 +403,10 @@ curl "https://resume.jclee.me/job/api/stats/weekly?weeks=4" \
 ```
 
 **Query Parameters**:
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `weeks` | integer | 4 | Number of weeks to include |
+
+| Parameter | Type    | Default | Description                |
+| --------- | ------- | ------- | -------------------------- |
+| `weeks`   | integer | 4       | Number of weeks to include |
 
 **Response** (200 OK):
 
@@ -445,9 +447,10 @@ curl "https://resume.jclee.me/job/api/stats/daily?days=7" \
 ```
 
 **Query Parameters**:
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `days` | integer | 7 | Number of days to include |
+
+| Parameter | Type    | Default | Description               |
+| --------- | ------- | ------- | ------------------------- |
+| `days`    | integer | 7       | Number of days to include |
 
 **Response** (200 OK):
 
@@ -549,12 +552,13 @@ curl "https://resume.jclee.me/job/api/applications?status=applied&limit=20" \
 ```
 
 **Query Parameters**:
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `status` | string | - | Filter: applied, reviewing, rejected, accepted |
-| `platform` | string | - | Filter: wanted, jobkorea, linkedin, saramin |
-| `limit` | integer | 20 | Max results per page |
-| `offset` | integer | 0 | Pagination offset |
+
+| Parameter  | Type    | Default | Description                                    |
+| ---------- | ------- | ------- | ---------------------------------------------- |
+| `status`   | string  | -       | Filter: applied, reviewing, rejected, accepted |
+| `platform` | string  | -       | Filter: wanted, jobkorea, linkedin, saramin    |
+| `limit`    | integer | 20      | Max results per page                           |
+| `offset`   | integer | 0       | Pagination offset                              |
 
 **Response** (200 OK):
 
@@ -668,7 +672,7 @@ curl -X DELETE https://resume.jclee.me/job/api/applications/app_123 \
 
 **Response** (204 No Content):
 
-```
+```text
 (empty response body)
 ```
 
@@ -688,9 +692,10 @@ curl -X POST https://resume.jclee.me/job/api/workflows/job-crawling/run \
 ```
 
 **URL Parameters**:
-| Parameter | Values |
-|-----------|--------|
-| `:name` | job-crawling, application, resume-sync, daily-report, health-check, backup, cleanup |
+
+| Parameter | Values                                                                              |
+| --------- | ----------------------------------------------------------------------------------- |
+| `:name`   | job-crawling, application, resume-sync, daily-report, health-check, backup, cleanup |
 
 **Response** (202 Accepted):
 
@@ -815,7 +820,7 @@ Endpoints returning lists support pagination:
 
 **Query Parameters**:
 
-```
+```text
 ?limit=20&offset=0
 ```
 

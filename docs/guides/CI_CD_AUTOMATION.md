@@ -20,7 +20,7 @@
 
 **작업 순서**:
 
-```
+```text
 lint → typecheck → test-unit → test-e2e → test-coverage → build → security-audit → summary
 ```
 
@@ -123,7 +123,7 @@ lint → typecheck → test-unit → test-e2e → test-coverage → build → se
 
 **작업 순서**:
 
-```
+```text
 validate → build → deploy → verify → lighthouse → notify
 ```
 
@@ -236,14 +236,14 @@ CODECOV_TOKEN            # Codecov 토큰
 
 ### 2. Secrets 설정 방법
 
-#### GitHub UI에서:
+#### GitHub UI에서
 
 1. Repository → Settings → Secrets and variables → Actions
 2. "New repository secret" 클릭
 3. Name과 Value 입력
 4. "Add secret" 클릭
 
-#### GitHub CLI로:
+#### GitHub CLI로
 
 ```bash
 # Cloudflare API Token
@@ -265,7 +265,7 @@ gh secret set SLACK_WEBHOOK_URL
 
 ### CI 워크플로우 실행
 
-#### Pull Request 생성 시 자동 실행:
+#### Pull Request 생성 시 자동 실행
 
 ```bash
 git checkout -b feature/new-feature
@@ -275,7 +275,7 @@ git push origin feature/new-feature
 # GitHub에서 PR 생성
 ```
 
-#### develop 브랜치 push 시 자동 실행:
+#### develop 브랜치 push 시 자동 실행
 
 ```bash
 git checkout develop
@@ -285,7 +285,7 @@ git push origin develop
 
 ### Deploy 워크플로우 실행
 
-#### master 브랜치 push 시 자동 실행:
+#### master 브랜치 push 시 자동 실행
 
 ```bash
 git checkout master
@@ -293,7 +293,7 @@ git merge develop
 git push origin master
 ```
 
-#### 수동 실행:
+#### 수동 실행
 
 1. GitHub → Actions → "Deploy - Enhanced with Verification"
 2. "Run workflow" 클릭
@@ -332,7 +332,7 @@ git push origin master
 
 ### CI 실패 시
 
-#### Lint 실패:
+#### Lint 실패
 
 ```bash
 # 로컬에서 확인
@@ -342,7 +342,7 @@ npm run lint
 npm run lint:fix
 ```
 
-#### Test 실패:
+#### Test 실패
 
 ```bash
 # 로컬에서 테스트
@@ -352,7 +352,7 @@ npm test
 npm test -- tests/unit/lib/utils.test.js
 ```
 
-#### Coverage 실패:
+#### Coverage 실패
 
 ```bash
 # 커버리지 확인
@@ -362,7 +362,7 @@ npm run test:coverage
 open coverage/lcov-report/index.html
 ```
 
-#### Build 실패:
+#### Build 실패
 
 ```bash
 # 로컬에서 빌드
@@ -374,7 +374,7 @@ npm run build:debug
 
 ### Deploy 실패 시
 
-#### Health Check 실패:
+#### Health Check 실패
 
 ```bash
 # 로컬에서 health check
@@ -384,7 +384,7 @@ curl https://resume.jclee.me/health
 wrangler tail
 ```
 
-#### Verification 실패:
+#### Verification 실패
 
 ```bash
 # 메인 페이지 확인
@@ -394,7 +394,7 @@ curl -I https://resume.jclee.me
 curl https://resume.jclee.me | grep "Infrastructure"
 ```
 
-#### Rollback:
+#### Rollback
 
 ```bash
 # Cloudflare 대시보드에서 이전 버전으로 롤백
@@ -408,27 +408,27 @@ wrangler rollback
 
 ### GitHub Actions
 
-#### 워크플로우 상태 확인:
+#### 워크플로우 상태 확인
 
-```
+```text
 Repository → Actions → 워크플로우 선택
 ```
 
-#### 실행 로그 확인:
+#### 실행 로그 확인
 
-```
+```text
 Actions → 워크플로우 실행 → Job 선택 → Step 로그 확인
 ```
 
 ### Cloudflare
 
-#### 배포 상태 확인:
+#### 배포 상태 확인
 
-```
+```text
 Cloudflare Dashboard → Workers → resume → Deployments
 ```
 
-#### 로그 확인:
+#### 로그 확인
 
 ```bash
 wrangler tail
@@ -436,9 +436,9 @@ wrangler tail
 
 ### n8n Webhook
 
-#### Webhook 로그 확인:
+#### Webhook 로그 확인
 
-```
+```text
 n8n → Workflows → Deployment Webhook → Executions
 ```
 

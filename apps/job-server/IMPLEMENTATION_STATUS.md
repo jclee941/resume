@@ -36,5 +36,6 @@
 
 ## ⚠️ Known Limitations
 
-- **Captcha**: Manual intervention required for Wanted/JobKorea login if Captcha appears.
+- **Captcha**: Manual intervention required for Wanted/JobKorea login if Captcha
+  appears.
 - **2FA**: OTP must be handled manually during `npm run login`.

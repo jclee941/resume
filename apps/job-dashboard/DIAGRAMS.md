@@ -1,6 +1,7 @@
 # Architecture Diagrams
 
-Visual representations of the job-automation workers system, request flows, and component interactions.
+Visual representations of the job-automation workers system, request flows, and
+component interactions.
 
 ## Table of Contents
 
@@ -91,9 +92,11 @@ graph TB
 **Cloudflare Worker**:
 
 - **Fetch Handler**: Entry point, strips `/job` prefix, dispatches to routing
-- **Middleware Stack**: 7 layers (logger, CORS, rate limit, CSRF, auth, handler, response)
+- **Middleware Stack**: 7 layers (logger, CORS, rate limit, CSRF, auth, handler,
+  response)
 - **Router**: Maps 30+ API endpoints to appropriate handlers
-- **Handler Classes**: 8 handler classes (Applications, Auth, Stats, Webhooks, etc.)
+- **Handler Classes**: 8 handler classes (Applications, Auth, Stats, Webhooks,
+  etc.)
 
 **Service Layer**:
 
@@ -105,7 +108,8 @@ graph TB
 **Storage**:
 
 - **D1 Database**: applications, job_cache, sync_logs tables
-- **KV Storage**: SESSIONS (24h TTL), RATE_LIMIT_KV (60s TTL), NONCE_KV (24h TTL)
+- **KV Storage**: SESSIONS (24h TTL), RATE_LIMIT_KV (60s TTL), NONCE_KV (24h
+  TTL)
 - **R2 Bucket**: Screenshot storage for job listings
 
 **External Services**:
@@ -185,7 +189,8 @@ sequenceDiagram
 
 1. **Request Transformation**: `/job/api/applications` → `/api/applications`
 2. **Middleware Chain**: Each layer can reject or modify the request
-3. **Token Bucket**: Rate limiting uses token-per-second refill (60 req/min = 1 token/sec)
+3. **Token Bucket**: Rate limiting uses token-per-second refill (60 req/min = 1
+   token/sec)
 4. **JWT Validation**: Tokens expire after 24 hours, require refresh
 5. **ECS Logging**: All logs include @timestamp, duration, status, response size
 6. **Database Query**: Average 4-5ms per query (simple SELECT)
@@ -432,7 +437,7 @@ graph TD
 
 **Response Headers**:
 
-```
+```text
 X-RateLimit-Limit: 60
 X-RateLimit-Remaining: 45
 X-RateLimit-Reset: 1708000060
@@ -440,7 +445,7 @@ X-RateLimit-Reset: 1708000060
 
 **When Limit Exceeded** (429 Too Many Requests):
 
-```
+```text
 HTTP/1.1 429 Too Many Requests
 Content-Type: application/json
 Retry-After: 60

@@ -15,9 +15,9 @@ This setup provides a local Cloudflare Worker runtime with D1, KV, and R2 simula
 cp .dev.vars.example .dev.vars
 ```
 
-2. Fill values in `.dev.vars` for local-only usage.
+1. Fill values in `.dev.vars` for local-only usage.
 
-3. Start local worker:
+2. Start local worker:
 
 ```bash
 npm run dev

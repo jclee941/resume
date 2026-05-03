@@ -5,7 +5,7 @@
 ## 연락처
 
 - 전화: 010-5757-9592
-- 이메일: qws941@kakao.com
+- 이메일: <qws941@kakao.com>
 - 주소: 경기도 시흥시 장현천로61, 307동 1301호
 - GitHub: github.com/qws941
 
@@ -24,8 +24,10 @@
 
 ### 핵심 역량 (Technical & Domain Expertise)
 
-- **보안 솔루션 통합 운영**: DDoS, IPS, WAF, NAC, DLP, EDR, APT 등 15종 이상 보안 솔루션 설계, 구축 및 통합 관제
-- **클라우드 & 컨테이너 인프라**: AWS 기반 클라우드 환경 설계 및 운영, Docker, Kubernetes, Portainer API를 활용한 컨테이너 오케스트레이션 및 Private Registry 관리
+- **보안 솔루션 통합 운영**: DDoS, IPS, WAF, NAC, DLP, EDR, APT 등 15종 이상 보안 솔루션 설계, 구축 및
+  통합 관제
+- **클라우드 & 컨테이너 인프라**: AWS 기반 클라우드 환경 설계 및 운영, Docker, Kubernetes, Portainer
+  API를 활용한 컨테이너 오케스트레이션 및 Private Registry 관리
 - **금융권 보안 규제 준수**: 금융감독원 감사 대응 및 규제 준수 체계 구축·운영
 - **대규모 시스템 운영**: 단말 1,000대 이상, 서버 150대 이상 규모의 대규모 인프라 운영 및 안정화 경험
 - **운영 자동화 및 효율화**: Python/Shell 스크립트 기반 업무 자동화 시스템 개발, 반복 업무 시간 50~95% 단축
@@ -172,15 +174,17 @@
 
 ### 🔧 실전 보안 운영 자동화 플랫폼 (2024 ~ 현재)
 
-**개인 프로젝트 | Production-Ready Security Operations Platform**
+### 개인 프로젝트 | Production-Ready Security Operations Platform
 
 **GitHub**: [github.com/qws941](https://github.com/qws941)
 
 #### Splunk-FortiNet Integration
 
-- **Live Demo**: [splunk.jclee.me](https://splunk.jclee.me) | **GitHub**: [github.com/qws941/splunk](https://github.com/qws941/splunk)
+- **Live Demo**: [splunk.jclee.me](https://splunk.jclee.me) | **GitHub**:
+  [github.com/qws941/splunk](https://github.com/qws941/splunk)
 - **목적**: 80대 방화벽 실시간 중앙관리 플랫폼 및 Splunk 중심 보안 통합
-- **기술스택**: Node.js, Cloudflare Workers, JavaScript, Splunk API, FortiManager/FortiOS API
+- **기술스택**: Node.js, Cloudflare Workers, JavaScript, Splunk API,
+  FortiManager/FortiOS API
 - **아키텍처**: DDD Level 3로 9개 도메인 분리 설계, FortiManager/FortiAnalyzer 직접 API 연동
 - **핵심기능**:
   - Splunk를 통한 중앙 집중식 로그 분석 및 정책 검증
@@ -193,7 +197,8 @@
 
 #### SafeWork Industrial Health Platform
 
-- **Live Demo**: [safework.jclee.me](https://safework.jclee.me) | **GitHub**: [github.com/qws941/safework](https://github.com/qws941/safework)
+- **Live Demo**: [safework.jclee.me](https://safework.jclee.me) | **GitHub**:
+  [github.com/qws941/safework](https://github.com/qws941/safework)
 - **목적**: 산업보건 설문조사 SaaS 플랫폼
 - **기술스택**: Flask 3.0, PostgreSQL 15, Redis 7, Cloudflare Workers
 - **아키텍처**: Cloudflare Workers Edge API 기반 전국 동시 접속 처리, Flask 3.0 하이브리드 아키텍처
@@ -210,13 +215,13 @@
 
 가온누리정보시스템 + 아이티센 CTS | 2024.03 ~ 현재
 
-**구축 단계 (2024.03 ~ 2025.02)**
+### 구축 단계 (2024.03 ~ 2025.02)
 
 - 역할: 보안 인프라 설계 및 구축 총괄
 - 기술: Python, Fortigate, NAC, DLP, APT, 망분리
 - 성과: 금융위원회 본인가 사전 준비 완료, 방화벽 자동화로 정책 반영 시간 50% 단축
 
-**운영 단계 (2025.03 ~ 현재)**
+### 운영 단계 (2025.03 ~ 현재)
 
 - 역할: 정보보안팀 운영 엔지니어
 - 업무: 15종 보안 솔루션 통합 운영, 24/7 모니터링, 금융감독 대응
@@ -241,12 +246,13 @@
 
 ### AI 기반 인프라 자동화 플랫폼 (2024.09 ~ 현재)
 
-**개인 프로젝트 | AI-Powered Infrastructure Automation Platform**
+### 개인 프로젝트 | AI-Powered Infrastructure Automation Platform
 
 **GitHub**: [github.com/qws941](https://github.com/qws941)
 
 - **목적**: AI 기반의 지능형 인프라 운영 자동화 및 관측성(Observability) 플랫폼 구축
-- **기술스택**: OpenCode, MCP Protocol, Node.js, Python, Docker, Grafana Stack (Prometheus, Loki, Tempo), Traefik, Watchtower
+- **기술스택**: OpenCode, MCP Protocol, Node.js, Python, Docker, Grafana Stack
+  (Prometheus, Loki, Tempo), Traefik, Watchtower
 - **아키텍처**: Docker Compose 기반 마이크로서비스 오케스트레이션, Git 기반 CI/CD 파이프라인
 - **핵심기능**:
   - 150개 이상의 자동화 명령어 체계(SlashCommand 시스템) 구축 및 통합

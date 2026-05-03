@@ -1,6 +1,7 @@
 # Supabase Resume Database
 
-PostgreSQL schema for the SSoT resume data, hosted on self-hosted Supabase at `supabase.jclee.me`.
+PostgreSQL schema for the SSoT resume data, hosted on self-hosted Supabase at
+`supabase.jclee.me`.
 
 ## Schema
 
@@ -50,7 +51,8 @@ psql "$DATABASE_URL" -f migrations/0001_create_resume_tables.down.sql
 
 ## Seed Data
 
-The seed script reads `packages/data/resumes/master/resume_data.json` (SSoT) and generates idempotent SQL.
+The seed script reads `packages/data/resumes/master/resume_data.json` (SSoT) and
+generates idempotent SQL.
 
 ```bash
 # Generate seed.sql from current resume data
@@ -64,7 +66,10 @@ node seed-resume-data.mjs --dry-run
 psql "$DATABASE_URL" -f seed/seed.sql
 ```
 
-The generated SQL uses `ON CONFLICT ... DO UPDATE` for safe re-runs, deterministic content-based UUIDs for stable row identities, and `DELETE ... WHERE id NOT IN (...)` for orphan row cleanup when items are removed from the JSON source.
+The generated SQL uses `ON CONFLICT ... DO UPDATE` for safe re-runs,
+deterministic content-based UUIDs for stable row identities, and `DELETE ...
+WHERE id NOT IN (...)` for orphan row cleanup when items are removed from the
+JSON source.
 
 ## Connection
 
@@ -83,17 +88,26 @@ export DATABASE_URL=$(op read "op://homelab/supabase/Connection/url")
 
 ## Design Decisions
 
-- **Singleton data as JSONB**: `personal`, `education`, `military`, `hero`, `contact`, `summary`, `section_descriptions`, `career_gap` stored as JSONB columns on `resume_profiles` to avoid over-normalization.
-- **Collection data normalized**: Careers, projects, skills, etc. are separate tables with FK to `resume_profiles` for query flexibility and ordering.
-- **CHECK constraints over enums**: `status` and `level` columns use `CHECK` constraints instead of `CREATE TYPE ... AS ENUM` for simpler migrations.
-- **GIN indexes on JSONB**: Enable efficient `@>`, `?`, and `?|` queries on JSONB columns.
-- **Deterministic UUIDs**: Seed script generates content-based UUIDs (e.g., `career-<company>`, `cert-<name>`) for idempotent re-seeding that survives array reordering.
-- **Orphan cleanup**: Seed script emits `DELETE ... NOT IN (...)` after each section to remove rows no longer present in the JSON source.
-- **SELECT-only grants**: `anon` and `authenticated` roles have SELECT-only access; `service_role` retains ALL for admin operations.
+- **Singleton data as JSONB**: `personal`, `education`, `military`, `hero`,
+  `contact`, `summary`, `section_descriptions`, `career_gap` stored as JSONB
+  columns on `resume_profiles` to avoid over-normalization.
+- **Collection data normalized**: Careers, projects, skills, etc. are separate
+  tables with FK to `resume_profiles` for query flexibility and ordering.
+- **CHECK constraints over enums**: `status` and `level` columns use `CHECK`
+  constraints instead of `CREATE TYPE ... AS ENUM` for simpler migrations.
+- **GIN indexes on JSONB**: Enable efficient `@>`, `?`, and `?|` queries on
+  JSONB columns.
+- **Deterministic UUIDs**: Seed script generates content-based UUIDs (e.g.,
+  `career-<company>`, `cert-<name>`) for idempotent re-seeding that survives
+  array reordering.
+- **Orphan cleanup**: Seed script emits `DELETE ... NOT IN (...)` after each
+  section to remove rows no longer present in the JSON source.
+- **SELECT-only grants**: `anon` and `authenticated` roles have SELECT-only
+  access; `service_role` retains ALL for admin operations.
 
 ## File Structure
 
-```
+```text
 supabase/
 ├── README.md                                    # This file
 ├── migrations/

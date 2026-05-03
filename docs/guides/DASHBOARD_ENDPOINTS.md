@@ -67,7 +67,8 @@
 ### 3. Blacklist Dashboard (이미지)
 
 - **PNG**: `apps/portfolio/src/assets/dashboards/blacklist-dashboard.png`
-- **WebP**: `apps/portfolio/src/assets/dashboards/blacklist-dashboard.webp` ✅ 최적화 완료
+- **WebP**: `apps/portfolio/src/assets/dashboards/blacklist-dashboard.webp` ✅
+  최적화 완료
 
 ---
 

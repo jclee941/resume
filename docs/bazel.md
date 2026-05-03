@@ -1,10 +1,13 @@
 # Bazel Build System Guide
 
-**Status:** ARCHIVED — Bazel facade dropped per [ADR-0008](adr/0008-drop-bazel-facade.md). npm workspaces is the sole build orchestrator.
+**Status:** ARCHIVED — Bazel facade dropped per
+[ADR-0008](adr/0008-drop-bazel-facade.md). npm workspaces is the sole build
+orchestrator.
 
 This document is retained for historical context only.
 
-This project uses Bazel as a build coordination layer with npm as the underlying execution engine.
+This project uses Bazel as a build coordination layer with npm as the underlying
+execution engine.
 
 ## Quick Start
 
@@ -26,7 +29,7 @@ bazel run //:deploy
 
 ### Build Strategy: Thin Wrapper
 
-```
+```text
 ┌─────────────────────────────────────────────────┐
 │                    Bazel                         │
 │  - Target queryability                          │
@@ -52,7 +55,7 @@ bazel run //:deploy
 
 ## Target Structure
 
-```
+```text
 //:build              → alias → //tools:build
 //:test               → alias → //tools:test
 //:deploy             → alias → //tools:deploy
@@ -185,7 +188,7 @@ go run ./tools/ci/affected.go origin/master
 
 ### 1. Create Directory Structure
 
-```
+```text
 apps/new-app/          # or packages/new-package/
 ├── BUILD.bazel
 ├── OWNERS
@@ -216,7 +219,7 @@ sh_binary(
 
 ### 3. OWNERS Template
 
-```
+```text
 # Package: new-package
 # Owner contact info
 
@@ -229,7 +232,8 @@ per-file BUILD.bazel = jclee@jclee.me
 
 ### "sh_binary not found"
 
-Ensure `load("@rules_shell//shell:sh_binary.bzl", "sh_binary")` is at the top of BUILD.bazel.
+Ensure `load("@rules_shell//shell:sh_binary.bzl", "sh_binary")` is at the top of
+BUILD.bazel.
 
 ### "glob matched no files"
 

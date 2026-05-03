@@ -1,13 +1,15 @@
 # Resume Inconsistency Report
 
 **Date**: 2025-09-30
-**Purpose**: Comprehensive analysis of inconsistencies across all resume documents
+**Purpose**: Comprehensive analysis of inconsistencies across all resume
+documents
 
 ---
 
 ## 📋 Executive Summary
 
-This report identifies all inconsistencies found across 13 resume-related documents in the `packages/data/resumes/archive/toss/` directory.
+This report identifies all inconsistencies found across 13 resume-related
+documents in the `packages/data/resumes/archive/toss/` directory.
 
 ### Critical Issues Found: 5
 
@@ -33,7 +35,7 @@ This report identifies all inconsistencies found across 13 resume-related docume
 
 **Recommended Fix**: Use **"1년"** consistently across all documents
 
-**Affected Files**:
+### Affected Files
 
 - master_resume_integration.md (Line ~50)
 - toss_commerce_server_developer_platform_resume.md (Line ~80)
@@ -49,14 +51,14 @@ This report identifies all inconsistencies found across 13 resume-related docume
 | `wanted_career_format_updated.md` | **1년 8개월**   | 2022.08 ~ 2024.03 |
 | `master_resume_integration.md`    | **1년 7개월**   | 2022.08 ~ 2024.03 |
 
-**Calculation**:
+### Calculation
 
 - 2022.08 ~ 2024.03 = **19개월 = 1년 7개월**
 - If counting 2022.08.01 ~ 2024.03.31: **20개월 = 1년 8개월**
 
 **Recommended Fix**: Use **"1년 8개월"** (assuming full months)
 
-**Affected Files**:
+### Affected Files (2)
 
 - master_resume_integration.md (Line ~150)
 
@@ -74,9 +76,9 @@ This report identifies all inconsistencies found across 13 resume-related docume
 | `wanted_career_format_updated.md` | "실무 경력 7년 7개월" | Excluding gap              |
 | Self-introduction text            | **"8년간"**           | General statement          |
 
-**Calculation Verification**:
+### Calculation Verification
 
-```
+```text
 Total Timeline: 2017.02 ~ 2025.09 = 8년 8개월 ✓
 Career Gap: 2018.11 ~ 2019.11 = 1년 1개월 ✓
 Actual Work: 8년 8개월 - 1년 1개월 = 7년 7개월 ✓
@@ -84,13 +86,13 @@ Actual Work: 8년 8개월 - 1년 1개월 = 7년 7개월 ✓
 
 **Issue**: Self-introduction should say "8년간" not "6년강"
 
-**Recommended Fix**:
+### Recommended Fix
 
 - Keep both statements but clarify context
 - Fix self-introduction to consistently use "8년간"
 - Add footnote explaining gap period
 
-**Affected Files**:
+### Affected Files (3)
 
 - wanted_complete_application.md (self-introduction section)
 
@@ -102,22 +104,22 @@ Actual Work: 8년 8개월 - 1년 1개월 = 7년 7개월 ✓
 
 **Current Text** (wanted_complete_application.md):
 
-```
+```text
 "지난 6년강 금융·제조·교육 산업에서..."
 ```
 
-**Problems**:
+### Problems
 
 1. **"6년강"** → should be **"8년간"** (incorrect duration + typo)
 2. Should reflect actual 8 years of experience
 
-**Recommended Fix**:
+### Recommended Fix (2)
 
-```
+```text
 "8년간 금융·제조·교육 산업에서 보안 인프라를 구축하고 운영하면서..."
 ```
 
-**Affected Files**:
+### Affected Files (4)
 
 - wanted_complete_application.md (Line ~49)
 
@@ -127,16 +129,16 @@ Actual Work: 8년 8개월 - 1년 1개월 = 7년 7개월 ✓
 
 **Issue**: Different date formats used across documents
 
-**Formats Found**:
+### Formats Found
 
 1. "2025.03 ~ 현재" (master_resume_integration.md)
 2. "2025.03 ~ 현재 (7개월)" (wanted_career_format_updated.md)
 3. "2024.03 ~ 2025.02 (11개월)" (some files)
 4. "2024.03 ~ 2025.02 (1년)" (other files)
 
-**Recommended Standard**:
+### Recommended Standard
 
-```
+```text
 YYYY.MM ~ YYYY.MM (X년 Y개월)
 ```
 
@@ -157,7 +159,7 @@ All quantitative achievements are consistent across documents:
 - ✅ 75% efficiency improvement (8hrs→2hrs)
 - ✅ 30% CPU reduction (DB access control)
 
-**No Action Required**
+### No Action Required
 
 ---
 
@@ -175,7 +177,7 @@ All company names are consistent:
 - ㈜메타넷엠플랫폼
 - ㈜엠티데이타
 
-**No Action Required**
+### No Action Required (2)
 
 ---
 
@@ -183,15 +185,15 @@ All company names are consistent:
 
 **Issue**: Some production links are broken or inaccessible
 
-| System              | URL                        | Status         | Evidence                              |
-| ------------------- | -------------------------- | -------------- | ------------------------------------- |
-| Grafana Dashboard   | https://grafana.jclee.me   | ✅ **Live**    | Confirmed in portfolio_integration.md |
-| Splunk Integration  | https://splunk.jclee.me    | ⚠️ **Unknown** | Not verified                          |
-| Blacklist Platform  | https://blacklist.jclee.me | ❌ **404**     | Mentioned as "점검 중"                |
-| Fortinet Automation | https://fortinet.jclee.me  | ❌ **Failed**  | Connection error                      |
-| SafeWork Platform   | https://safework.jclee.me  | ⚠️ **Unknown** | Not verified                          |
+| System              | URL                          | Status         | Evidence                              |
+| ------------------- | ---------------------------- | -------------- | ------------------------------------- |
+| Grafana Dashboard   | <https://grafana.jclee.me>   | ✅ **Live**    | Confirmed in portfolio_integration.md |
+| Splunk Integration  | <https://splunk.jclee.me>    | ⚠️ **Unknown** | Not verified                          |
+| Blacklist Platform  | <https://blacklist.jclee.me> | ❌ **404**     | Mentioned as "점검 중"                |
+| Fortinet Automation | <https://fortinet.jclee.me>  | ❌ **Failed**  | Connection error                      |
+| SafeWork Platform   | <https://safework.jclee.me>  | ⚠️ **Unknown** | Not verified                          |
 
-**Recommended Action**:
+### Recommended Action
 
 - Either fix broken services OR
 - Update portfolio_integration.md to mark as "Under Maintenance"
@@ -218,11 +220,11 @@ All company names are consistent:
 
 ### Priority 2: Verification Updates
 
-4. **wanted_career_format_updated.md**
+1. **wanted_career_format_updated.md**
    - ✅ Already correct (1년 for 가온누리)
    - ✅ Already correct (1년 8개월 for 콴텍)
 
-5. **portfolio_integration.md**
+2. **portfolio_integration.md**
    - Update broken link status for blacklist.jclee.me
    - Update broken link status for fortinet.jclee.me
    - OR remove references to unavailable services
@@ -301,12 +303,12 @@ After fixes are applied, verify:
 
 ### Medium Impact (Should Fix Before Submission)
 
-4. ⚠️ Date format standardization
-5. ⚠️ Portfolio link status
+1. ⚠️ Date format standardization
+2. ⚠️ Portfolio link status
 
 ### Low Impact (Optional)
 
-6. ℹ️ Additional formatting improvements
+1. ℹ️ Additional formatting improvements
 
 ---
 
@@ -320,4 +322,5 @@ After fixes are applied, verify:
 
 ---
 
-**Next Action**: Proceed with automated fixes using sed commands above, then regenerate PDF with corrections.
+**Next Action**: Proceed with automated fixes using sed commands above, then
+regenerate PDF with corrections.

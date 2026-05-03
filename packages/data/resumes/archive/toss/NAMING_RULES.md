@@ -27,13 +27,13 @@
 
 #### 패턴
 
-```
+```text
 {이름}_{회사명}_{포지션}_resume.{확장자}
 ```
 
 #### 예시
 
-```
+```text
 ✅ lee_jaecheol_toss_commerce_resume.pdf
 ✅ lee_jaecheol_toss_commerce_resume.md
 ✅ lee_jaecheol_general_resume.pdf
@@ -41,7 +41,7 @@
 
 #### 나쁜 예
 
-```
+```text
 ❌ 이재철_토스커머스_이력서.pdf (한글)
 ❌ LeeJaecheol_TossCommerce_Resume.pdf (카멜케이스)
 ❌ resume_toss_lee.pdf (순서 혼란)
@@ -53,13 +53,13 @@
 
 #### 패턴
 
-```
+```text
 {회사명}_{문서타입}.md
 ```
 
 #### 예시
 
-```
+```text
 ✅ toss_commerce_interview_qa.md
 ✅ toss_commerce_action_plan.md
 ✅ toss_commerce_submission_guide.md
@@ -72,13 +72,13 @@
 
 #### 패턴
 
-```
+```text
 wanted_{문서타입}_{버전}.md
 ```
 
 #### 예시
 
-```
+```text
 ✅ wanted_career_format.md
 ✅ wanted_career_format_updated.md
 ✅ wanted_complete_application.md
@@ -90,13 +90,13 @@ wanted_{문서타입}_{버전}.md
 
 #### 패턴
 
-```
+```text
 master_{문서타입}.md
 ```
 
 #### 예시
 
-```
+```text
 ✅ master_resume_integration.md
 ✅ master_career_history.md
 ✅ master_project_list.md
@@ -108,13 +108,13 @@ master_{문서타입}.md
 
 #### 패턴
 
-```
+```text
 {주제}_guide.md
 ```
 
 #### 예시
 
-```
+```text
 ✅ pdf_conversion_guide.md
 ✅ interview_preparation_guide.md
 ✅ github_pages_deployment_guide.md
@@ -126,7 +126,7 @@ master_{문서타입}.md
 
 #### 패턴
 
-```
+```text
 {원본파일명}_backup_{날짜}.{확장자}
 또는
 {원본파일명}.bak
@@ -134,7 +134,7 @@ master_{문서타입}.md
 
 #### 예시
 
-```
+```text
 ✅ resume_backup_20250930.md
 ✅ toss_commerce_resume.md.bak
 ✅ original_resume_20250930.doc.bak
@@ -144,7 +144,7 @@ master_{문서타입}.md
 
 ## 🗂️ 디렉토리 구조 예시
 
-```
+```text
 ./
 ├── README.md
 ├── master_resume_integration.md
@@ -200,13 +200,13 @@ master_{문서타입}.md
 
 ### 패턴
 
-```
+```text
 YYYYMMDD (ISO 8601 형식 숫자만)
 ```
 
 ### 예시
 
-```
+```text
 ✅ resume_backup_20250930.md
 ✅ interview_notes_20250930.md
 ✅ application_submitted_20250930.txt
@@ -214,7 +214,7 @@ YYYYMMDD (ISO 8601 형식 숫자만)
 
 ### 나쁜 예
 
-```
+```text
 ❌ resume_2025-09-30.md (하이픈 불필요)
 ❌ resume_09302025.md (미국식 날짜)
 ❌ resume_20250930_123045.md (시간까지 포함 - 과도함)
@@ -226,13 +226,13 @@ YYYYMMDD (ISO 8601 형식 숫자만)
 
 ### 패턴
 
-```
+```text
 {파일명}_v{버전}.{확장자}
 ```
 
 ### 예시
 
-```
+```text
 ✅ lee_jaecheol_resume_v1.pdf
 ✅ lee_jaecheol_resume_v2.pdf
 ✅ toss_interview_qa_v3.md
@@ -240,7 +240,7 @@ YYYYMMDD (ISO 8601 형식 숫자만)
 
 ### 나쁜 예
 
-```
+```text
 ❌ resume_version1.pdf (version 불필요)
 ❌ resume_v1.0.pdf (소수점 불필요)
 ❌ resume_final.pdf (의미 불명확)
@@ -253,14 +253,14 @@ YYYYMMDD (ISO 8601 형식 숫자만)
 
 ### 1. 공백(Space)
 
-```
+```text
 ❌ lee jaecheol resume.pdf
 ✅ lee_jaecheol_resume.pdf
 ```
 
 ### 2. 특수문자
 
-```
+```text
 ❌ lee@jaecheol#resume.pdf
 ❌ resume(toss).pdf
 ❌ resume[final].pdf
@@ -269,7 +269,7 @@ YYYYMMDD (ISO 8601 형식 숫자만)
 
 ### 3. 한글
 
-```
+```text
 ❌ 이재철_이력서.pdf
 ❌ toss_지원서.pdf
 ✅ lee_jaecheol_resume.pdf
@@ -277,14 +277,14 @@ YYYYMMDD (ISO 8601 형식 숫자만)
 
 ### 4. 대문자 (README 제외)
 
-```
+```text
 ❌ LeeJaecheol_Resume.PDF
 ✅ lee_jaecheol_resume.pdf
 ```
 
 ### 5. 모호한 단어
 
-```
+```text
 ❌ document.pdf
 ❌ file.md
 ❌ temp.txt
@@ -313,7 +313,7 @@ YYYYMMDD (ISO 8601 형식 숫자만)
 
 ### 토스 커머스 지원
 
-```
+```text
 프로젝트 폴더: packages/data/resumes/archive/toss/
 
 파일 구조:
@@ -328,7 +328,7 @@ YYYYMMDD (ISO 8601 형식 숫자만)
 
 ### 카카오 지원 (예시)
 
-```
+```text
 프로젝트 폴더: packages/data/resumes/archive/
 
 파일 구조:

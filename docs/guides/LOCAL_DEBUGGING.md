@@ -1,17 +1,21 @@
 # 🔧 Local CI/CD Debugging Guide
 
-> Comprehensive guide to the local debugging infrastructure for the resume monorepo.
+> Comprehensive guide to the local debugging infrastructure for the resume
+  monorepo.
 
 ## 📋 Overview
 
-This project includes a suite of local debugging tools that let you simulate the full CI pipeline, run development services, and mock external dependencies — all without pushing to GitHub or depending on remote infrastructure.
+This project includes a suite of local debugging tools that let you simulate the
+full CI pipeline, run development services, and mock external dependencies — all
+without pushing to GitHub or depending on remote infrastructure.
 
 **Why local debugging?**
 
 - **Faster feedback loops** — catch CI failures in seconds, not minutes
 - **Offline development** — no dependency on GitHub Actions, n8n, or Cloudflare
 - **Deterministic testing** — mock external services with predictable behavior
-- **Debugging isolation** — reproduce and fix issues without polluting CI history
+- **Debugging isolation** — reproduce and fix issues without polluting CI
+  history
 
 ### Tool inventory
 
@@ -43,7 +47,9 @@ go run infrastructure/mocks/n8n-mock-server.go
 
 ### `run-ci-local.go` — CI Pipeline Simulator
 
-Simulates the full GitHub Actions CI pipeline locally by parsing `.github/workflows/ci.yml`, mapping workflow jobs to local commands, and executing them in the correct stage order.
+Simulates the full GitHub Actions CI pipeline locally by parsing
+`.github/workflows/ci.yml`, mapping workflow jobs to local commands, and
+executing them in the correct stage order.
 
 #### Usage
 
@@ -77,7 +83,8 @@ go run tools/scripts/run-ci-local.go --stage test,build --mock --dry-run
 
 Stages execute in this fixed order (matching CI dependency graph):
 
-1. `analyze` → `validate` → `lint` → `typecheck` → `data-drift` → `test` → `security` → `build`
+1. `analyze` → `validate` → `lint` → `typecheck` → `data-drift` → `test` →
+   `security` → `build`
 
 #### Environment variables injected
 
@@ -101,7 +108,8 @@ With `--mock`:
 
 #### Report output
 
-Each run generates a timestamped report at `.ci-local/ci-report-YYYYMMDD-HHMMSS.txt` containing:
+Each run generates a timestamped report at
+`.ci-local/ci-report-YYYYMMDD-HHMMSS.txt` containing:
 
 - Timestamp, repository path, workflow file
 - Per-stage results with command-level pass/fail and durations
@@ -111,7 +119,8 @@ Each run generates a timestamped report at `.ci-local/ci-report-YYYYMMDD-HHMMSS.
 
 ### `local-dev-up.go` — Local Dev Environment Orchestrator
 
-Starts, health-checks, and manages multiple local development services with aggregated log output and graceful shutdown.
+Starts, health-checks, and manages multiple local development services with
+aggregated log output and graceful shutdown.
 
 #### Usage
 
@@ -134,19 +143,19 @@ go run tools/scripts/local-dev-up.go --portfolio --n8n=false
 
 #### Service flags
 
-| Flag           | Default | Description                                                     |
-| -------------- | ------- | --------------------------------------------------------------- |
+| Flag           | Default | Description                                                   |
+| -------------- | ------- | ------------------------------------------------------------- |
 | `--portfolio`  | `false` | Start portfolio dev server (`npm start` in `apps/portfolio/`) |
-| `--job-server` | `false` | Start job-server via docker-compose (`apps/job-server/`)        |
-| `--n8n`        | `true`  | Start n8n mock server                                           |
-| `--all`        | `false` | Enable all services                                             |
+| `--job-server` | `false` | Start job-server via docker-compose (`apps/job-server/`)      |
+| `--n8n`        | `true`  | Start n8n mock server                                         |
+| `--all`        | `false` | Enable all services                                           |
 
 #### Service details
 
 | Service    | URL                      | Health Endpoint | Health Timeout | Command                                                       |
 | ---------- | ------------------------ | --------------- | -------------- | ------------------------------------------------------------- |
 | n8n-mock   | `http://localhost:15678` | `/health`       | 25s            | `go run infrastructure/mocks/n8n-mock-server.go --port 15678` |
-| portfolio  | `http://localhost:8787`  | `/`             | 40s            | `npm start` (in `apps/portfolio/`)                          |
+| portfolio  | `http://localhost:8787`  | `/`             | 40s            | `npm start` (in `apps/portfolio/`)                            |
 | job-server | `http://localhost:3456`  | `/health`       | 90s            | `docker-compose up` (in `apps/job-server/`)                   |
 
 #### Features
@@ -154,7 +163,8 @@ go run tools/scripts/local-dev-up.go --portfolio --n8n=false
 - **Parallel startup** — all services start concurrently with spinner indicators
 - **Health check polling** — each service is polled until healthy or timeout
 - **Aggregated logs** — color-coded, prefixed log streams from all services
-- **Graceful shutdown** — `Ctrl+C` sends `SIGINT` to process groups, then `SIGKILL` after 10s timeout
+- **Graceful shutdown** — `Ctrl+C` sends `SIGINT` to process groups, then
+  `SIGKILL` after 10s timeout
 - **Unexpected exit handling** — detects early service exits and reports errors
 
 #### Prerequisites
@@ -167,7 +177,8 @@ go run tools/scripts/local-dev-up.go --portfolio --n8n=false
 
 ### `n8n-mock-server.go` — Mock n8n Webhook Server
 
-A lightweight HTTP server that mimics n8n webhook endpoints, logging all received payloads to JSON files for inspection.
+A lightweight HTTP server that mimics n8n webhook endpoints, logging all
+received payloads to JSON files for inspection.
 
 #### Usage
 
@@ -206,7 +217,7 @@ go run infrastructure/mocks/n8n-mock-server.go --verbose
 
 All `POST /webhook/*` payloads are persisted to daily JSON files:
 
-```
+```text
 infrastructure/mocks/logs/n8n-webhook-YYYY-MM-DD.json
 ```
 
@@ -249,7 +260,8 @@ cat infrastructure/mocks/logs/n8n-webhook-$(date +%Y-%m-%d).json | jq .
 
 ### `cf-bindings-mock.js` — Cloudflare Worker Binding Mocks
 
-Full-fidelity mock implementations of Cloudflare Worker bindings (D1, KV, R2, Queue) backed by local SQLite, JSON files, and filesystem storage.
+Full-fidelity mock implementations of Cloudflare Worker bindings (D1, KV, R2,
+Queue) backed by local SQLite, JSON files, and filesystem storage.
 
 #### Classes
 
@@ -331,7 +343,7 @@ createMockEnv({
 
 All mock data persists under `infrastructure/mocks/data/` by default:
 
-```
+```text
 infrastructure/mocks/data/
 ├── d1.sqlite              # D1 database (SQLite, WAL mode)
 ├── kv-sessions.json       # SESSIONS KV store
@@ -347,29 +359,29 @@ infrastructure/mocks/data/
 
 How local stages map to the real CI pipeline in `.github/workflows/ci.yml`:
 
-| Local Stage  | CI Job(s)                | Local Commands                                                                                               | CI Conditions                                      |
-| ------------ | ------------------------ | ------------------------------------------------------------------------------------------------------------ | -------------------------------------------------- |
-| `analyze`    | `analyze`                | `go run ./tools/ci/affected.go`                                                                              | Always runs                                        |
-| `validate`   | `validate-cloudflare`    | `go run ./tools/ci/validate-cloudflare-native.go`                                                            | portfolio or job-dashboard affected                |
+| Local Stage  | CI Job(s)                | Local Commands                                                                                                | CI Conditions                                      |
+| ------------ | ------------------------ | ------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| `analyze`    | `analyze`                | `go run ./tools/ci/affected.go`                                                                               | Always runs                                        |
+| `validate`   | `validate-cloudflare`    | `go run ./tools/ci/validate-cloudflare-native.go`                                                             | portfolio or job-dashboard affected                |
 |              |                          | `npx wrangler types /tmp/portfolio-worker-types.d.ts --config apps/portfolio/wrangler.jsonc --env production` |                                                    |
-|              |                          | `npx wrangler types /tmp/job-dashboard-worker-types.d.ts --config apps/job-dashboard/wrangler.jsonc`         |                                                    |
-| `lint`       | `lint`                   | `npm run lint`                                                                                               | Always runs                                        |
-| `typecheck`  | `typecheck`              | `npm run typecheck`                                                                                          | Always runs                                        |
-| `data-drift` | `data-drift`             | `npm run sync:data`                                                                                          | data or portfolio affected                         |
-|              |                          | `git diff --exit-code apps/portfolio/data.json apps/portfolio/data_en.json apps/portfolio/data_ja.json`      |                                                    |
-| `test`       | `test-unit` + `test-e2e` | `npm test`                                                                                                   | Always (unit); portfolio affected (e2e)            |
-|              |                          | `npm run test:coverage`                                                                                      |                                                    |
-|              |                          | `npm run sync:data`                                                                                          |                                                    |
-|              |                          | `npm --prefix apps/portfolio run build`                                                                      |                                                    |
-|              |                          | `npm run test:e2e:smoke`                                                                                     |                                                    |
-| `security`   | `security-scan`          | `gitleaks detect --source . --config .gitleaks.toml --verbose --no-git`                                      | Always runs                                        |
-|              |                          | `npm audit --audit-level=high`                                                                               |                                                    |
-| `build`      | `build`                  | `npm run sync:data`                                                                                          | portfolio affected; after lint+typecheck+test pass |
-|              |                          | `npm --prefix apps/portfolio run build`                                                                      |                                                    |
+|              |                          | `npx wrangler types /tmp/job-dashboard-worker-types.d.ts --config apps/job-dashboard/wrangler.jsonc`          |                                                    |
+| `lint`       | `lint`                   | `npm run lint`                                                                                                | Always runs                                        |
+| `typecheck`  | `typecheck`              | `npm run typecheck`                                                                                           | Always runs                                        |
+| `data-drift` | `data-drift`             | `npm run sync:data`                                                                                           | data or portfolio affected                         |
+|              |                          | `git diff --exit-code apps/portfolio/data.json apps/portfolio/data_en.json apps/portfolio/data_ja.json`       |                                                    |
+| `test`       | `test-unit` + `test-e2e` | `npm test`                                                                                                    | Always (unit); portfolio affected (e2e)            |
+|              |                          | `npm run test:coverage`                                                                                       |                                                    |
+|              |                          | `npm run sync:data`                                                                                           |                                                    |
+|              |                          | `npm --prefix apps/portfolio run build`                                                                       |                                                    |
+|              |                          | `npm run test:e2e:smoke`                                                                                      |                                                    |
+| `security`   | `security-scan`          | `gitleaks detect --source . --config .gitleaks.toml --verbose --no-git`                                       | Always runs                                        |
+|              |                          | `npm audit --audit-level=high`                                                                                |                                                    |
+| `build`      | `build`                  | `npm run sync:data`                                                                                           | portfolio affected; after lint+typecheck+test pass |
+|              |                          | `npm --prefix apps/portfolio run build`                                                                       |                                                    |
 
 ### CI dependency graph
 
-```
+```text
 analyze ──→ validate-cloudflare ──┐
        ──→ lint ──────────────────┤
        ──→ typecheck ─────────────┤──→ build ──→ elk-ingest
@@ -478,7 +490,9 @@ curl -X POST http://localhost:15678/webhook/resume-deploy \
 
 ## 🔄 Integration with `act`
 
-[`act`](https://github.com/nektos/act) runs GitHub Actions workflows locally using Docker. It complements `run-ci-local.go` for testing the actual workflow YAML.
+[`act`](https://github.com/nektos/act) runs GitHub Actions workflows locally
+using Docker. It complements `run-ci-local.go` for testing the actual workflow
+YAML.
 
 ### Installation
 
@@ -529,7 +543,9 @@ NODE_VERSION=22
 | Environment  | Approximates CI env     | Reproduces CI env            |
 | Use case     | Quick pre-push check    | Debug workflow YAML issues   |
 
-**Recommendation**: Use `run-ci-local.go` for fast pre-push validation. Use `act` when debugging workflow-level issues (job dependencies, conditional expressions, artifact passing).
+**Recommendation**: Use `run-ci-local.go` for fast pre-push validation. Use
+`act` when debugging workflow-level issues (job dependencies, conditional
+expressions, artifact passing).
 
 ---
 
@@ -537,9 +553,11 @@ NODE_VERSION=22
 
 ### `run-ci-local.go` fails to find repository root
 
-**Symptom**: `ERROR repository root not found (missing .github/workflows/ci.yml)`
+**Symptom**: `ERROR repository root not found (missing
+.github/workflows/ci.yml)`
 
-**Fix**: Run from within the repository, or ensure `.github/workflows/ci.yml` exists.
+**Fix**: Run from within the repository, or ensure `.github/workflows/ci.yml`
+exists.
 
 ```bash
 cd /path/to/resume

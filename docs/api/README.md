@@ -1,6 +1,7 @@
 # API Reference
 
-This document summarizes public and internal API surfaces for the portfolio worker, job dashboard worker, MCP server tools, and CLI commands.
+This document summarizes public and internal API surfaces for the portfolio
+worker, job dashboard worker, MCP server tools, and CLI commands.
 
 ## Portfolio Worker (Edge)
 

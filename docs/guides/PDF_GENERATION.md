@@ -1,13 +1,15 @@
 # PDF Generation Guide
 
-**Resume Portfolio System** - Automated PDF generation for resumes and technical documentation
+**Resume Portfolio System** - Automated PDF generation for resumes and technical
+documentation
 
 **Last Updated**: 2025-11-20
 **Version**: 1.0.3
 
 ## 🎯 Overview
 
-Automated PDF generation system supporting multiple resume variants and technical documentation with version control integration.
+Automated PDF generation system supporting multiple resume variants and
+technical documentation with version control integration.
 
 ### Key Features
 
@@ -28,7 +30,7 @@ go run ./tools/scripts/build/pdf-generator.go all
 
 **Output**:
 
-```
+```text
 === Resume PDF Generation ===
 Version: 1.0.3
 
@@ -102,7 +104,7 @@ newgrp docker
 
 ### PDF Generation Pipeline
 
-```
+```text
 Markdown Source Files
   ├── master/resume_master.md
   ├── toss/toss_commerce_...md
@@ -259,7 +261,7 @@ git lfs track
 
 **Expected output**:
 
-```
+```text
 Tracking "*.pdf"
 Tracking "*.png"
 Tracking "*.docx"
@@ -503,7 +505,7 @@ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook \
 - **Infrastructure**: `docs/guides/INFRASTRUCTURE.md`
 - **Monitoring**: `docs/guides/MONITORING_SETUP.md`
 - **Deployment**: `README.md` (Deployment section)
-- **Git LFS**: https://git-lfs.github.com/
+- **Git LFS**: <https://git-lfs.github.com/>
 
 ## 📚 References
 
@@ -516,5 +518,5 @@ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook \
 
 - **Documentation**: This guide
 - **Script Issues**: Check `tools/scripts/build/pdf-generator.go` comments
-- **Questions**: qws941@kakao.com
-- **Repository**: https://github.com/qws941/resume
+- **Questions**: <qws941@kakao.com>
+- **Repository**: <https://github.com/qws941/resume>

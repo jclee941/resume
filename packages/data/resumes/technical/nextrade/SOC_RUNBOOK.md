@@ -1,4 +1,5 @@
 # Security Operations Center (SOC) Runbook
+
 ## Nextrade Securities Exchange
 
 **Document Classification**: Internal Use
@@ -25,30 +26,34 @@
 
 ### Mission Statement
 
-"Monitor, detect, analyze, and respond to security threats 24/7 to protect Nextrade's trading platform, customer data, and infrastructure from cyber attacks while maintaining 99.95% availability."
+"Monitor, detect, analyze, and respond to security threats 24/7 to protect
+Nextrade's trading platform, customer data, and infrastructure from cyber
+attacks while maintaining 99.95% availability."
 
 ### Team Structure
 
 **Shift Schedule** (8-hour shifts):
+
 - **Day Shift**: 09:00-17:00 KST (2 analysts)
 - **Swing Shift**: 17:00-01:00 KST (2 analysts)
 - **Night Shift**: 01:00-09:00 KST (2 analysts)
 
 **Roles**:
+
 - **SOC Analyst L1**: Alert triage, initial investigation, escalation
 - **SOC Analyst L2**: Deep investigation, threat hunting, playbook execution
 - **Security Lead** (On-Call): Incident commander, executive escalation
 
 ### Key Performance Indicators (KPIs)
 
-| Metric | Target | Current (2025 Q3) |
-|--------|--------|-------------------|
-| Mean Time To Detect (MTTD) | < 5 minutes | 3.2 minutes ✅ |
-| Mean Time To Respond (MTTR) | < 30 minutes | 27 minutes ✅ |
-| Alert Triage Time (P1) | < 15 minutes | 12 minutes ✅ |
-| False Positive Rate | < 30% | 33% ⚠️ (improvement needed) |
-| SLA Compliance (P1) | > 95% | 95% ✅ |
-| Incident Escalation Accuracy | > 90% | 92% ✅ |
+| Metric                       | Target       | Current (2025 Q3)           |
+| ---------------------------- | ------------ | --------------------------- |
+| Mean Time To Detect (MTTD)   | < 5 minutes  | 3.2 minutes ✅              |
+| Mean Time To Respond (MTTR)  | < 30 minutes | 27 minutes ✅               |
+| Alert Triage Time (P1)       | < 15 minutes | 12 minutes ✅               |
+| False Positive Rate          | < 30%        | 33% ⚠️ (improvement needed) |
+| SLA Compliance (P1)          | > 95%        | 95% ✅                      |
+| Incident Escalation Accuracy | > 90%        | 92% ✅                      |
 
 ---
 
@@ -98,6 +103,7 @@ echo "Checklist Complete. Ready for shift."
 ```
 
 **Run daily**:
+
 ```bash
 /opt/soc/scripts/shift-start-checklist.sh day
 ```
@@ -109,13 +115,16 @@ echo "Checklist Complete. Ready for shift."
 **Every Hour on the Hour**:
 
 1. **Check Alert Queue** (5 minutes)
+
    ```bash
    splunk search 'index=alerts status=new | stats count by severity' -maxout 100
    ```
+
    - Expected: < 50 new alerts per hour
    - Action: Triage all new alerts within 1 hour
 
 2. **Verify Critical Services** (3 minutes)
+
    ```bash
    # Trading platform health
    curl -f http://trade-match-01:8080/health
@@ -126,9 +135,11 @@ echo "Checklist Complete. Ready for shift."
    ```
 
 3. **Review Firewall Blocks** (2 minutes)
+
    ```bash
    splunk search 'index=firewall action=denied earliest=-1h | stats count by src_ip | sort -count | head 20'
    ```
+
    - Expected: < 1000 blocks/hour
    - Action: Investigate if single IP > 100 blocks
 
@@ -139,9 +150,11 @@ echo "Checklist Complete. Ready for shift."
 **Morning (09:00-10:00)**:
 
 1. **Daily Security Metrics Report** (15 minutes)
+
    ```bash
    python3 /opt/soc/scripts/daily-metrics-report.py --date $(date +%Y-%m-%d)
    ```
+
    **Output**: `/var/log/soc/reports/daily-metrics-$(date +%Y%m%d).pdf`
 
    **Metrics Included**:
@@ -154,6 +167,7 @@ echo "Checklist Complete. Ready for shift."
    **Distribution**: Email to Security Lead + CISO
 
 2. **Vulnerability Scan Review** (30 minutes)
+
    ```bash
    # Check for new critical/high vulnerabilities
    nessus-cli report --severity critical,high --discovered-since "-24h"
@@ -165,6 +179,7 @@ echo "Checklist Complete. Ready for shift."
    - Notify system owners
 
 3. **Threat Intelligence Review** (15 minutes)
+
    ```bash
    # Check for new IOCs (Indicators of Compromise)
    curl -sf https://api.recordedfuture.com/v2/iocs?since=-24h | jq '.data[] | select(.risk_score > 80)'
@@ -175,7 +190,8 @@ echo "Checklist Complete. Ready for shift."
 
 **Afternoon (14:00-15:00)**:
 
-4. **Log Health Check** (20 minutes)
+1. **Log Health Check** (20 minutes)
+
    ```bash
    # Verify all log sources are sending data
    splunk search 'index=* earliest=-1h | stats count by host, sourcetype | where count < 100'
@@ -184,6 +200,7 @@ echo "Checklist Complete. Ready for shift."
    **Expected**: All critical systems logging (150+ hosts)
 
    **Action**: If host missing, investigate:
+
    ```bash
    # Check if host is online
    ping -c 5 $MISSING_HOST
@@ -195,7 +212,8 @@ echo "Checklist Complete. Ready for shift."
    ssh $MISSING_HOST "telnet siem.nextrade.local 9997"
    ```
 
-5. **User Activity Anomaly Review** (30 minutes)
+2. **User Activity Anomaly Review** (30 minutes)
+
    ```bash
    # Check for unusual user behavior
    splunk search 'index=* earliest=-24h | stats count by user, action | where count > 1000 | sort -count'
@@ -206,17 +224,20 @@ echo "Checklist Complete. Ready for shift."
 
 **Evening (17:00-18:00)**:
 
-6. **Prepare Handover Notes** (15 minutes)
+1. **Prepare Handover Notes** (15 minutes)
+
    ```markdown
    # SOC Shift Handover - $(date +%Y-%m-%d) Day Shift
 
    ## Summary
+
    - Total Alerts: [X]
    - True Positives: [X]
    - False Positives: [X]
    - Open Incidents: [X]
 
    ## Ongoing Investigations
+
    1. [INC-XXXX] Brute force attack from IP X.X.X.X (assigned to: Analyst Name)
       - Status: Containment complete, monitoring for 24h
       - Next Action: Close ticket if no recurrence by $(date -d '+1 day' +%Y-%m-%d)
@@ -226,10 +247,12 @@ echo "Checklist Complete. Ready for shift."
       - Next Action: Interview user tomorrow
 
    ## Issues/Concerns
+
    - SIEM ingestion delay (30 min) for firewall logs (opened ticket with vendor)
    - NAC quarantine VLAN full (95% capacity) - requested IP expansion
 
    ## Action Items for Next Shift
+
    - [ ] Follow up on [INC-XXXX] at 18:00
    - [ ] Review vulnerability scan results (scheduled at 19:00)
    ```
@@ -240,17 +263,17 @@ echo "Checklist Complete. Ready for shift."
 
 ### Alert Prioritization Matrix
 
-| Alert Source | Severity | Triage Time | Assignment |
-|--------------|----------|-------------|------------|
-| EDR (Malware Detected) | Critical | < 5 minutes | L2 (immediate) |
-| SIEM (Correlation Rule) | High | < 15 minutes | L1 → L2 if confirmed |
-| Firewall (IPS Block) | Medium | < 1 hour | L1 |
-| DLP (Policy Violation) | Medium | < 1 hour | L1 |
-| NAC (Non-Compliant Device) | Low | < 4 hours | L1 |
+| Alert Source               | Severity | Triage Time  | Assignment           |
+| -------------------------- | -------- | ------------ | -------------------- |
+| EDR (Malware Detected)     | Critical | < 5 minutes  | L2 (immediate)       |
+| SIEM (Correlation Rule)    | High     | < 15 minutes | L1 → L2 if confirmed |
+| Firewall (IPS Block)       | Medium   | < 1 hour     | L1                   |
+| DLP (Policy Violation)     | Medium   | < 1 hour     | L1                   |
+| NAC (Non-Compliant Device) | Low      | < 4 hours    | L1                   |
 
 ### Triage Workflow
 
-```
+```text
 New Alert
   ├─> [1] Acknowledge (update status to "In Progress")
   ├─> [2] Gather Context
@@ -596,6 +619,7 @@ index=dlp action=block earliest=-24h | stats sum(file_size) as total_mb by user 
 ```
 
 **Alert Management**:
+
 ```bash
 # List all active alerts
 splunk search 'index=alerts status=active | stats count by alert_name, severity'
@@ -685,6 +709,7 @@ ssh admin@fw-core-01 "execute log filter category ips; execute log display"
 ### When to Escalate
 
 **Immediate Escalation to Security Lead** (Phone call):
+
 - P0/P1 incidents (malware outbreak, data breach, system outage)
 - Regulatory reportable events (FSC notification required)
 - Executive account compromise
@@ -692,12 +717,15 @@ ssh admin@fw-core-01 "execute log filter category ips; execute log display"
 - Media/PR involving security
 
 **Escalation to Security Lead** (Email/Chat):
-- P2 incidents requiring decision (e.g., block entire country, take system offline)
+
+- P2 incidents requiring decision (e.g., block entire country, take system
+  offline)
 - Pattern of related incidents (potential campaign)
 - Unclear severity (need guidance)
 - Resource request (vendor support, budget approval)
 
 **Escalation to CISO** (via Security Lead):
+
 - Confirmed data breach (customer PII/financial data)
 - Ransomware encryption
 - Nation-state APT activity
@@ -709,7 +737,8 @@ ssh admin@fw-core-01 "execute log filter category ips; execute log display"
 **Subject**: [P0/P1/P2] [Brief Description] - Immediate Attention Required
 
 **Body**:
-```
+
+```text
 CLASSIFICATION: CONFIDENTIAL
 INCIDENT ID: INC-20251016-001
 SEVERITY: P1 (High)
@@ -755,6 +784,7 @@ WAR ROOM: [Teams link if active]
 # SOC Shift Handover - 2025-10-16 Swing Shift (17:00-01:00)
 
 ## Summary
+
 - **Total Alerts**: 150
 - **True Positives**: 5 (3.3%)
 - **False Positives**: 145 (96.7%)
@@ -764,6 +794,7 @@ WAR ROOM: [Teams link if active]
 ## Ongoing Incidents
 
 ### INC-20251016-001 (P1) - Brute Force Attack
+
 - **Status**: Contained
 - **Assigned To**: SOC L2 Analyst (Jane Doe)
 - **Description**: Brute force attack against admin@nextrade.com from 203.0.113.50 (Russia). 47 failed attempts, no successful login.
@@ -775,6 +806,7 @@ WAR ROOM: [Teams link if active]
 - **Next Action**: Close ticket if no further activity by 2025-10-17 17:00
 
 ### INC-20251016-002 (P2) - DLP Violation
+
 - **Status**: Investigation in Progress
 - **Assigned To**: SOC L1 Analyst (John Smith)
 - **Description**: Employee jsmith@nextrade.com attempted to email customer database export (5,000 records) to personal Gmail account. DLP blocked.
@@ -785,6 +817,7 @@ WAR ROOM: [Teams link if active]
 - **Next Action**: Conduct interview with HR present
 
 ### INC-20251016-003 (P3) - NAC Quarantine
+
 - **Status**: Remediation in Progress
 - **Assigned To**: SOC L1 Analyst (Mike Lee)
 - **Description**: 5 endpoints quarantined due to outdated Windows patches.
@@ -816,14 +849,14 @@ WAR ROOM: [Teams link if active]
 
 ## System Health
 
-| System | Status | Notes |
-|--------|--------|-------|
-| SIEM (Splunk) | ✅ OK | Indexing rate: 10GB/day |
-| EDR (CrowdStrike) | ✅ OK | 300/300 endpoints reporting |
-| Firewall (Fortigate) | ✅ OK | CPU: 45%, Memory: 62% |
-| NAC (Genian) | ⚠️ WARNING | Quarantine VLAN 95% full (IP expansion requested) |
-| DLP (Symantec) | ✅ OK | No issues |
-| Backup (Veeam) | ✅ OK | Last backup: 2025-10-16 02:00 (success) |
+| System               | Status     | Notes                                             |
+| -------------------- | ---------- | ------------------------------------------------- |
+| SIEM (Splunk)        | ✅ OK      | Indexing rate: 10GB/day                           |
+| EDR (CrowdStrike)    | ✅ OK      | 300/300 endpoints reporting                       |
+| Firewall (Fortigate) | ✅ OK      | CPU: 45%, Memory: 62%                             |
+| NAC (Genian)         | ⚠️ WARNING | Quarantine VLAN 95% full (IP expansion requested) |
+| DLP (Symantec)       | ✅ OK      | No issues                                         |
+| Backup (Veeam)       | ✅ OK      | Last backup: 2025-10-16 02:00 (success)           |
 
 ## Action Items for Night Shift
 
@@ -838,6 +871,7 @@ WAR ROOM: [Teams link if active]
 - Procurement team not responding to Nessus license renewal request (sent 2025-10-15). License expires 2025-11-16.
 
 ---
+
 **Prepared By**: Jane Doe (Swing Shift SOC Analyst)
 **Time**: 2025-10-16 00:45 KST
 **Next Shift**: Night Shift (Mike Lee, Sarah Kim)

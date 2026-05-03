@@ -3,13 +3,14 @@
 ## TL;DR
 
 > **Quick Summary**: Fix runtime JavaScript errors, remove quantified metrics from meta tags, and improve mobile touch target accessibility for resume.jclee.me
-> 
+>
 > **Deliverables**:
+>
 > - Error-free console (no TypeError from missing DOM elements)
 > - Meta descriptions without numbers ("8년", "15+")
 > - WCAG-compliant touch targets (44px minimum)
 > - Correct lang attributes on both Korean and English pages
-> 
+>
 > **Estimated Effort**: Short (2-3 hours)
 > **Parallel Execution**: YES - 2 waves
 > **Critical Path**: Task 1 → Task 5 (build) → Task 6 (verify)
@@ -19,7 +20,9 @@
 ## Context
 
 ### Original Request
+
 Fix critical issues identified by Oracle review of https://resume.jclee.me:
+
 1. main.js runtime errors from missing DOM elements
 2. lang attribute mismatch (Korean content with lang="en")
 3. Quantified metrics in meta/OG descriptions (user hates these)
@@ -28,20 +31,25 @@ Fix critical issues identified by Oracle review of https://resume.jclee.me:
 6. Skip link language inconsistency
 
 ### Interview Summary
+
 **Key Discussions**:
+
 - User explicitly hates quantified metrics ("8년", "15+", percentages)
 - Site was intentionally refactored to minimal Brittany Chiang/Lee Robinson style
 - Language/theme toggles were removed as part of minimization
 - /en/ route exists and serves English HTML
 
 **Research Findings**:
+
 - `i18n.js` lines 3-4: `querySelector('.language-toggle', '.lang-text')` → null
 - `theme.js` line 1: `querySelector('.theme-toggle')` → null
 - These modules call `.addEventListener()` on null → TypeError
 - `i18n.js` line 12 sets `lang` based on `navigator.language`, overriding Korean
 
 ### Metis Review
+
 **Identified Gaps** (addressed):
+
 - Skipped (tool unavailable) - proceeding with comprehensive analysis
 
 ---
@@ -49,9 +57,11 @@ Fix critical issues identified by Oracle review of https://resume.jclee.me:
 ## Work Objectives
 
 ### Core Objective
+
 Eliminate JavaScript errors, remove metrics from user-visible text, and ensure WCAG accessibility compliance.
 
 ### Concrete Deliverables
+
 - Modified `src/scripts/main.js` (remove unused module imports)
 - Modified `index.html` and `index-en.html` (meta tag updates)
 - Modified `manifest.json` (remove "8년")
@@ -59,17 +69,20 @@ Eliminate JavaScript errors, remove metrics from user-visible text, and ensure W
 - Rebuilt `worker.js`
 
 ### Definition of Done
+
 - [ ] `npm run build` succeeds without errors
 - [ ] Browser console shows no TypeError on page load
 - [ ] `curl -s https://resume.jclee.me | grep -o 'og:description.*'` contains no numbers
 - [ ] Touch targets measure ≥44px in browser DevTools
 
 ### Must Have
+
 - Zero JavaScript console errors
 - Zero quantified metrics in meta descriptions
 - Skip link matches page language
 
 ### Must NOT Have (Guardrails)
+
 - **NO** adding back language toggle
 - **NO** adding back theme toggle
 - **NO** changing the minimal design aesthetic
@@ -81,6 +94,7 @@ Eliminate JavaScript errors, remove metrics from user-visible text, and ensure W
 ## Verification Strategy (MANDATORY)
 
 ### Test Decision
+
 - **Infrastructure exists**: YES (Playwright installed per tests/e2e/)
 - **User wants tests**: Playwright browser automation
 - **Framework**: Playwright
@@ -90,6 +104,7 @@ Eliminate JavaScript errors, remove metrics from user-visible text, and ensure W
 Each critical fix will be verified by agent-executed browser automation:
 
 **Task 1-2 Verification (JS Errors Fixed)**:
+
 ```
 1. Navigate to: https://resume.jclee.me (after deploy)
 2. Open DevTools Console
@@ -99,6 +114,7 @@ Each critical fix will be verified by agent-executed browser automation:
 ```
 
 **Task 3 Verification (Metrics Removed)**:
+
 ```bash
 # Agent runs:
 curl -s https://resume.jclee.me | grep -oP 'content="[^"]*"' | head -10
@@ -106,6 +122,7 @@ curl -s https://resume.jclee.me | grep -oP 'content="[^"]*"' | head -10
 ```
 
 **Task 4 Verification (Touch Targets)**:
+
 ```
 1. Navigate to: https://resume.jclee.me
 2. Set viewport: mobile (375x667)
@@ -124,7 +141,7 @@ curl -s https://resume.jclee.me | grep -oP 'content="[^"]*"' | head -10
 Wave 1 (Start Immediately):
 ├── Task 1: Remove unused JS modules from main.js
 ├── Task 2: Fix Korean page meta descriptions
-├── Task 3: Fix English page meta descriptions  
+├── Task 3: Fix English page meta descriptions
 └── Task 4: Add touch target CSS
 
 Wave 2 (After Wave 1):
@@ -138,20 +155,20 @@ Parallel Speedup: ~40% faster than sequential
 ### Dependency Matrix
 
 | Task | Depends On | Blocks | Can Parallelize With |
-|------|------------|--------|---------------------|
-| 1 | None | 5 | 2, 3, 4 |
-| 2 | None | 5 | 1, 3, 4 |
-| 3 | None | 5 | 1, 2, 4 |
-| 4 | None | 5 | 1, 2, 3 |
-| 5 | 1, 2, 3, 4 | 6 | None |
-| 6 | 5 | None | None (final) |
+| ---- | ---------- | ------ | -------------------- |
+| 1    | None       | 5      | 2, 3, 4              |
+| 2    | None       | 5      | 1, 3, 4              |
+| 3    | None       | 5      | 1, 2, 4              |
+| 4    | None       | 5      | 1, 2, 3              |
+| 5    | 1, 2, 3, 4 | 6      | None                 |
+| 6    | 5          | None   | None (final)         |
 
 ### Agent Dispatch Summary
 
-| Wave | Tasks | Recommended Agents |
-|------|-------|-------------------|
-| 1 | 1, 2, 3, 4 | `delegate_task(category="quick", run_in_background=true)` × 4 |
-| 2 | 5, 6 | Sequential execution after Wave 1 |
+| Wave | Tasks      | Recommended Agents                                            |
+| ---- | ---------- | ------------------------------------------------------------- |
+| 1    | 1, 2, 3, 4 | `delegate_task(category="quick", run_in_background=true)` × 4 |
+| 2    | 5, 6       | Sequential execution after Wave 1                             |
 
 ---
 
@@ -189,13 +206,14 @@ Parallel Speedup: ~40% faster than sequential
   - `apps/portfolio/src/scripts/modules/theme.js:1,36` - querySelector calls causing errors
 
   **Acceptance Criteria**:
-  
+
   **Automated Verification (Bash)**:
+
   ```bash
   # After edit, verify imports removed:
   grep -c "initLanguage\|initTheme" apps/portfolio/src/scripts/main.js
   # Assert: Output is "0"
-  
+
   # Verify other imports still present:
   grep -c "initUI\|initWebVitals\|initializeABTesting" apps/portfolio/src/scripts/main.js
   # Assert: Output is "3"
@@ -215,7 +233,7 @@ Parallel Speedup: ~40% faster than sequential
     - Line 54 (og:description): Remove "15+" - replace with qualitative description
   - Edit `manifest.json`:
     - Line 4: Remove "8년 인프라 경험" - replace with generic description
-  
+
   **Replacement text (no numbers)**:
   - Meta description: `"이재철 - AIOps/ML Platform 엔지니어 | Observability 스택 설계, 자동화, 금융권 인프라"`
   - OG description: `"AIOps/ML Platform 엔지니어 | Observability 스택 설계, AI 에이전트 운영, 금융권 인프라 구축"`
@@ -243,13 +261,14 @@ Parallel Speedup: ~40% faster than sequential
   - `apps/portfolio/manifest.json:4` - description with "8년"
 
   **Acceptance Criteria**:
-  
+
   **Automated Verification (Bash)**:
+
   ```bash
   # Verify no metrics in Korean HTML:
   grep -E "8년|15\+|[0-9]+건|[0-9]+%" apps/portfolio/index.html | wc -l
   # Assert: Output is "0"
-  
+
   # Verify no metrics in manifest:
   grep -E "8년|[0-9]+년" apps/portfolio/manifest.json | wc -l
   # Assert: Output is "0"
@@ -269,7 +288,7 @@ Parallel Speedup: ~40% faster than sequential
     - Line 9 (meta description): Remove "8년", use English text
     - Line 54 (og:description): Remove "15+", use English text
   - Verify the page will serve with correct lang attribute
-  
+
   **Replacement text (English, no numbers)**:
   - Meta description: `"Jaecheol Lee - AIOps/ML Platform Engineer | Observability stack design, automation, financial infrastructure"`
   - OG description: `"AIOps/ML Platform Engineer | Observability stack design, AI agent operations, financial infrastructure"`
@@ -295,13 +314,14 @@ Parallel Speedup: ~40% faster than sequential
   - `apps/portfolio/index-en.html:54` - og:description
 
   **Acceptance Criteria**:
-  
+
   **Automated Verification (Bash)**:
+
   ```bash
   # Verify lang="en":
   grep -o 'lang="en"' apps/portfolio/index-en.html | head -1
   # Assert: Output is 'lang="en"'
-  
+
   # Verify no metrics:
   grep -E "8년|15\+|[0-9]+건|[0-9]+%" apps/portfolio/index-en.html | wc -l
   # Assert: Output is "0"
@@ -318,7 +338,7 @@ Parallel Speedup: ~40% faster than sequential
   **What to do**:
   - Find CSS file (likely `src/styles/main.css` or inline in index.html)
   - Add minimum touch target sizing for interactive elements:
-  
+
   ```css
   /* Touch target accessibility - WCAG 2.5.5 Level AAA */
   .nav-links a,
@@ -331,7 +351,7 @@ Parallel Speedup: ~40% faster than sequential
     align-items: center;
     justify-content: center;
   }
-  
+
   /* Ensure padding doesn't break layout */
   @media (max-width: 768px) {
     .nav-links a {
@@ -366,8 +386,9 @@ Parallel Speedup: ~40% faster than sequential
   - WCAG 2.5.5: https://www.w3.org/WAI/WCAG21/Understanding/target-size.html
 
   **Acceptance Criteria**:
-  
+
   **Automated Verification (Playwright)**:
+
   ```
   1. Navigate to: http://localhost:8787 (dev server)
   2. Set viewport: 375x667 (mobile)
@@ -388,9 +409,11 @@ Parallel Speedup: ~40% faster than sequential
 
   **What to do**:
   - Run build command from portfolio-worker directory:
+
   ```bash
   cd apps/portfolio && npm run build
   ```
+
   - Verify build succeeds
   - Verify worker.js is regenerated
 
@@ -414,13 +437,14 @@ Parallel Speedup: ~40% faster than sequential
   - `apps/portfolio/package.json` - npm scripts
 
   **Acceptance Criteria**:
-  
+
   **Automated Verification (Bash)**:
+
   ```bash
   cd apps/portfolio && npm run build 2>&1
   # Assert: Exit code 0
   # Assert: Output contains "worker.js generated successfully"
-  
+
   # Verify worker.js updated:
   stat -c %Y apps/portfolio/worker.js
   # Assert: Modification time is within last 60 seconds
@@ -437,12 +461,14 @@ Parallel Speedup: ~40% faster than sequential
 
   **What to do**:
   - Deploy to Cloudflare:
+
   ```bash
   source /home/jclee/.env && \
   cd apps/portfolio && \
   CLOUDFLARE_API_KEY="$CLOUDFLARE_API_KEY" CLOUDFLARE_EMAIL="$CLOUDFLARE_EMAIL" \
   npx wrangler deploy --env production
   ```
+
   - Wait for deployment to complete
   - Verify all fixes via browser automation
 
@@ -467,37 +493,41 @@ Parallel Speedup: ~40% faster than sequential
   - `apps/portfolio/wrangler.toml` - Deployment config
 
   **Acceptance Criteria**:
-  
+
   **Automated Verification (Playwright + Bash)**:
-  
+
   **1. Console Error Check:**
+
   ```
   1. Navigate to: https://resume.jclee.me
   2. Capture console messages
   3. Assert: No messages containing "TypeError", "Cannot read", or "null"
   4. Screenshot: .sisyphus/evidence/final-console-clean.png
   ```
-  
+
   **2. Meta Tag Verification:**
+
   ```bash
   curl -s https://resume.jclee.me | grep -oP 'og:description.*?content="[^"]*"'
   # Assert: No output contains digits followed by Korean characters (숫자+년/건/%)
-  
+
   curl -s https://resume.jclee.me/en/ | grep -oP '<html[^>]*lang="[^"]*"'
   # Assert: Output contains 'lang="en"'
   ```
-  
+
   **3. Touch Target Check (Mobile):**
+
   ```
   1. Navigate to: https://resume.jclee.me
   2. Set viewport: 375x667
   3. Measure: .nav-links a computed height/width
   4. Assert: Both >= 44px
   ```
-  
+
   **4. Skip Link Language:**
+
   ```
-  1. Navigate to: https://resume.jclee.me  
+  1. Navigate to: https://resume.jclee.me
   2. Query: document.querySelector('.skip-link').textContent
   3. Assert: Contains Korean text (not "Skip to main content")
   ```
@@ -508,9 +538,9 @@ Parallel Speedup: ~40% faster than sequential
 
 ## Commit Strategy
 
-| After Task | Message | Files | Verification |
-|------------|---------|-------|--------------|
-| 1+2+3+4+5 | `fix(portfolio): resolve Oracle review critical issues` | main.js, index.html, index-en.html, manifest.json, styles, worker.js | `npm run build` |
+| After Task | Message                                                 | Files                                                                | Verification    |
+| ---------- | ------------------------------------------------------- | -------------------------------------------------------------------- | --------------- |
+| 1+2+3+4+5  | `fix(portfolio): resolve Oracle review critical issues` | main.js, index.html, index-en.html, manifest.json, styles, worker.js | `npm run build` |
 
 **Note**: Single commit after all fixes + build to maintain atomic change.
 
@@ -519,6 +549,7 @@ Parallel Speedup: ~40% faster than sequential
 ## Success Criteria
 
 ### Verification Commands
+
 ```bash
 # 1. No console errors (requires browser):
 # Use Playwright to navigate and capture console
@@ -536,6 +567,7 @@ curl -s https://resume.jclee.me/en/ | grep -o 'lang="en"'
 ```
 
 ### Final Checklist
+
 - [ ] Zero TypeError in console
 - [ ] Zero quantified metrics in meta/OG descriptions
 - [ ] Korean page: `lang="ko"`, skip link "본문으로 건너뛰기"

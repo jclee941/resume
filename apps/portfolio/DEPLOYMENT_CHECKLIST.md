@@ -6,6 +6,7 @@
 ## Pre-Deployment Verification
 
 ### ✅ File Validation
+
 - [x] robots.txt exists (750 bytes)
 - [x] sitemap.xml exists (8.75 KB, 24 URLs)
 - [x] og-image.png (79 KB)
@@ -16,6 +17,7 @@
 - [x] index-en.html with meta tags & JSON-LD
 
 ### ✅ SEO Components
+
 - [x] robots.txt validation: PASSED
   - Sitemap reference: ✓
   - Googlebot user-agent: ✓
@@ -44,6 +46,7 @@
   - CreativeWork schemas (5): ✓
 
 ### ✅ Build Status
+
 - [x] Build successful: 501.21 KB worker.js
 - [x] CSP hashes generated: 10 scripts + 2 styles
 - [x] No build errors: ✓
@@ -52,18 +55,21 @@
 ## Deployment Steps
 
 ### Step 1: Verify Current State
+
 ```bash
 cd /home/jclee/dev/resume
 git status
 ```
 
 ### Step 2: Review Changes
+
 ```bash
 git diff apps/portfolio/sitemap.xml | head -100
 git diff apps/portfolio/robots.txt | head -50
 ```
 
 ### Step 3: Stage All SEO Files
+
 ```bash
 git add apps/portfolio/sitemap.xml
 git add apps/portfolio/robots.txt
@@ -74,6 +80,7 @@ git add apps/portfolio/worker.js
 ```
 
 ### Step 4: Create Commit
+
 ```bash
 git commit -m "chore(seo): enhance sitemap with hreflang & language variants
 
@@ -91,11 +98,13 @@ git commit -m "chore(seo): enhance sitemap with hreflang & language variants
 ```
 
 ### Step 5: Deploy to Cloudflare
+
 ```bash
 npm run deploy
 ```
 
 ### Step 6: Verify Deployment
+
 ```bash
 # Check robots.txt
 curl https://resume.jclee.me/robots.txt | head -20
@@ -114,6 +123,7 @@ curl https://resume.jclee.me/health
 ```
 
 ### Step 7: Verify in Search Console
+
 ```bash
 # Submit sitemap
 # https://search.google.com/search-console → Coverage → Sitemaps → NEW SITEMAP
@@ -129,6 +139,7 @@ curl https://resume.jclee.me/health
 ## Post-Deployment Monitoring
 
 ### Week 1 Checklist
+
 - [ ] Monitor crawl stats in GSC
 - [ ] Check for crawl errors (should be 0)
 - [ ] Verify sitemap URLs are being indexed
@@ -136,6 +147,7 @@ curl https://resume.jclee.me/health
 - [ ] Check mobile usability report
 
 ### Month 1 Checklist
+
 - [ ] Analyze search analytics
 - [ ] Monitor Core Web Vitals
 - [ ] Check indexing status by country (Korea & US)
@@ -143,6 +155,7 @@ curl https://resume.jclee.me/health
 - [ ] Monitor click-through rates
 
 ### Ongoing Monitoring
+
 - [ ] Weekly: GSC crawl errors
 - [ ] Weekly: Search impressions by language
 - [ ] Monthly: Sitemap coverage
@@ -152,18 +165,21 @@ curl https://resume.jclee.me/health
 ## Performance Expectations
 
 ### Immediate (1-7 days)
+
 - Sitemap discovery: 1-2 days
 - robots.txt update: 1-2 days
 - Image indexing: 2-3 days
 - Language variant detection: 3-5 days
 
 ### Short-term (1-4 weeks)
+
 - Initial indexing of new URLs: 2-3 weeks
 - hreflang processing: 2-4 weeks
 - Structured data rich snippets: 2-4 weeks
 - Search visibility increase: 3-4 weeks
 
 ### Medium-term (1-3 months)
+
 - Full index coverage: 4-8 weeks
 - Ranking improvements: 4-12 weeks
 - Traffic increase: 4-12 weeks
@@ -172,22 +188,26 @@ curl https://resume.jclee.me/health
 ## Troubleshooting
 
 ### If robots.txt returns 404
+
 1. Verify it's in: `apps/portfolio/robots.txt`
 2. Check `generate-worker.js` has robots.txt route handler
 3. Rebuild and redeploy: `npm run build && npm run deploy`
 
 ### If sitemap.xml returns 404
+
 1. Verify it's in: `apps/portfolio/sitemap.xml`
 2. Check `generate-worker.js` has sitemap.xml route handler
 3. Rebuild and redeploy: `npm run build && npm run deploy`
 
 ### If hreflang not detected in GSC
+
 1. Verify xhtml namespace in sitemap: `xmlns:xhtml="..."`
 2. Check lang attribute format (should be `ko-KR` not `ko`)
 3. Submit sitemap again in GSC
 4. Wait 1-2 weeks for reprocessing
 
 ### If OG images not showing on social media
+
 1. Verify cache headers are set (should be `public, max-age=31536000, immutable`)
 2. Clear social media cache (e.g., Facebook Cache Debugger)
 3. Test with Open Graph Preview tool
@@ -203,6 +223,7 @@ If issues are discovered post-deployment:
 4. **Verify**: `curl https://resume.jclee.me/` should work
 
 ### Critical rollback commands
+
 ```bash
 # Keep old version
 npm run deploy --wrangler
@@ -219,6 +240,7 @@ git revert HEAD --no-edit && npm run build && npm run deploy
 - **Ready for Deployment**: ✅ YES
 
 ### Summary of Changes
+
 - ✅ Enhanced robots.txt (7 validation checks)
 - ✅ Expanded sitemap.xml (4 → 24 URLs)
 - ✅ Added 40 hreflang links

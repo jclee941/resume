@@ -2,13 +2,16 @@
 
 ## Overview
 
-This document describes the Grok AI workflow integration for the resume portfolio project. Grok is used for deep reasoning, architectural decisions, and content analysis.
+This document describes the Grok AI workflow integration for the resume
+portfolio project. Grok is used for deep reasoning, architectural decisions, and
+content analysis.
 
 ## ⚡ Optimal Workflow Pattern (3-Stage Pipeline)
 
-**Token-efficient pipeline**: Minimize token usage while maximizing reasoning quality
+**Token-efficient pipeline**: Minimize token usage while maximizing reasoning
+quality
 
-```
+```text
 ┌─────────────┐      ┌────────────────────┐      ┌─────────────┐
 │  1. TASK    │ ───→ │  2. REASON         │ ───→ │  3. WRITE   │
 │  (OpenCode)   │      │  (Grok)            │      │  (OpenCode)   │
@@ -333,9 +336,11 @@ npx -y @modelcontextprotocol/server-grok
 
 **Documentation**:
 
-- xAI Grok API: https://docs.x.ai/api
-- MCP Grok Server: https://github.com/modelcontextprotocol/servers/tree/main/src/grok
-- Parent OpenCode.md: ~/.OpenCode/OpenCode.md (Section: "Optimal Workflow Pattern")
+- xAI Grok API: <https://docs.x.ai/api>
+- MCP Grok Server:
+  <https://github.com/modelcontextprotocol/servers/tree/main/src/grok>
+- Parent OpenCode.md: ~/.OpenCode/OpenCode.md (Section: "Optimal Workflow
+  Pattern")
 
 ## 🚀 Quick Start
 

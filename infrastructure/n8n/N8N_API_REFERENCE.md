@@ -2,7 +2,8 @@
 
 **Base URL**: `https://resume.jclee.me/job` (job-dashboard worker)
 
-**Authentication**: Bearer token required (`Authorization: Bearer <ADMIN_TOKEN>`)
+**Authentication**: Bearer token required (`Authorization: Bearer
+<ADMIN_TOKEN>`)
 
 ---
 
@@ -14,7 +15,7 @@ Trigger resume data sync from SSoT to Wanted platform.
 
 **Headers**:
 
-```
+```text
 Authorization: Bearer <admin-token>
 Content-Type: application/json
 ```
@@ -50,7 +51,7 @@ Trigger automatic job application for matching positions.
 
 **Headers**:
 
-```
+```text
 Authorization: Bearer <admin-token>
 Content-Type: application/json
 ```
@@ -86,7 +87,7 @@ Sync profile data across platforms.
 
 **Headers**:
 
-```
+```text
 Authorization: Bearer <admin-token>
 Content-Type: application/json
 ```
@@ -120,7 +121,7 @@ Get status of a sync/apply operation.
 
 **Headers**:
 
-```
+```text
 Authorization: Bearer <admin-token>
 ```
 
@@ -145,7 +146,8 @@ Authorization: Bearer <admin-token>
 
 ### Notification
 
-All operations should call telegram-notifier sub-workflow (`PV5yLgHNzNSlCmRT`) with results.
+All operations should call telegram-notifier sub-workflow (`PV5yLgHNzNSlCmRT`)
+with results.
 
 ---
 

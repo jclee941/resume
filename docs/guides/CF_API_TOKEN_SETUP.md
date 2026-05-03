@@ -31,23 +31,23 @@ npx wrangler login
 
 ### Option 2: API Token 생성 (권장)
 
-**1단계: Cloudflare Dashboard 접속**
+### 1단계: Cloudflare Dashboard 접속
 
-```
+```text
 https://dash.cloudflare.com/profile/api-tokens
 ```
 
-**2단계: Create Token**
+### 2단계: Create Token
 
 - Template: "Edit Cloudflare Workers" 선택
 - Permissions:
   - Account / Workers Scripts / Edit
   - Account / Workers KV Storage / Edit
   - Account / Account Settings / Read
-- Account Resources: Include / <your-account>
+- Account Resources: Include / `<your-account>`
 - Zone Resources: All zones
 
-**3단계: Copy Token**
+### 3단계: Copy Token
 
 ```bash
 # 생성된 토큰을 ~/.env에 추가
@@ -57,7 +57,7 @@ echo "CLOUDFLARE_API_TOKEN=<your-token>" >> ~/.env
 openctl infisical set CLOUDFLARE_API_TOKEN "<your-token>"
 ```
 
-**4단계: 테스트**
+### 4단계: 테스트
 
 ```bash
 cd ~/dev/resume
@@ -69,7 +69,7 @@ npx wrangler whoami
 
 ### Option 3: API Key 사용 (비권장)
 
-**현재 설정 활용**:
+### 현재 설정 활용
 
 ```bash
 # Infisical에 이미 있는 API Key 사용
@@ -95,9 +95,9 @@ export CLOUDFLARE_EMAIL="your-email@example.com"
 
 ## 📝 참고 링크
 
-- API Token 생성: https://developers.cloudflare.com/fundamentals/api/get-started/create-token/
-- Wrangler 인증: https://developers.cloudflare.com/workers/wrangler/commands/#login
-- Workers 배포: https://developers.cloudflare.com/workers/wrangler/commands/#deploy
+- API Token 생성: <https://developers.cloudflare.com/fundamentals/api/get-started/create-token/>
+- Wrangler 인증: <https://developers.cloudflare.com/workers/wrangler/commands/#login>
+- Workers 배포: <https://developers.cloudflare.com/workers/wrangler/commands/#deploy>
 
 ---
 

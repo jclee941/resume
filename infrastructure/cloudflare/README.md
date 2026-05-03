@@ -64,7 +64,7 @@ For team environments, consider Terraform Cloud or S3 backend.
 
 ## Workflow
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                        GitOps Flow                              │
 ├─────────────────────────────────────────────────────────────────┤

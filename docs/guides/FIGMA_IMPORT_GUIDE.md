@@ -133,7 +133,7 @@ Now create reusable components using the styles above.
 
 **Visual Reference**:
 
-```
+```text
 ┌─────────────────────────────────┐
 │                                 │
 │    CONTACT ME                   │
@@ -186,7 +186,7 @@ Same as Primary Button, but:
 
 **Visual Reference**:
 
-```
+```text
 ┌─────────────────────────────────────────────────┐
 │                                                 │
 │  PROJECT TITLE                                  │
@@ -227,7 +227,7 @@ Same as Primary Button, but:
 
 **Visual Reference**:
 
-```
+```text
 ┌──────────┐
 │  PYTHON  │
 └──────────┘
@@ -311,7 +311,7 @@ Create these pages in your Figma file:
 
 **Recommended component hierarchy**:
 
-```
+```text
 Components
 ├── Button
 │   ├── Primary
@@ -445,7 +445,7 @@ Learn these for faster work:
 
 ### Button Variations
 
-```
+```text
 PRIMARY (Default)          PRIMARY (Hover)
 ┌──────────────┐           ┌──────────────┐
 │ CONTACT ME   │           │ CONTACT ME   │  (no shadow)
@@ -462,7 +462,7 @@ SECONDARY (Default)        SECONDARY (Hover - Cyan)
 
 ### Card Variations
 
-```
+```text
 PROJECT CARD (Default)
 ┌─────────────────────────────────────────┐
 │                                         │
@@ -496,7 +496,7 @@ PROJECT CARD (Hover - moves up-left, shadow appears)
 
 ### Badge Variations
 
-```
+```text
 ┌──────────┐  ┌──────────┐  ┌────────────┐  ┌──────────┐
 │  PYTHON  │  │  DOCKER  │  │ KUBERNETES │  │   AWS    │
 └──────────┘  └──────────┘  └────────────┘  └──────────┘
@@ -504,7 +504,7 @@ PROJECT CARD (Hover - moves up-left, shadow appears)
 
 ### Navigation
 
-```
+```text
 ┌──────────────────────────────────────────────────────┐
 │                                                      │
 │  홈        프로젝트      경력        연락처          │

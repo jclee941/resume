@@ -40,7 +40,7 @@
 | 9        | **OpenCode Tasks**        | 7                      | Background 작업 모니터링                                           |
 | 10       | **Compliance**            | 4                      | Constitutional Compliance 요약                                     |
 | 11       | **Project Health**        | 10                     | 전체 프로젝트 건강 상태                                            |
-| **총합** | **121 패널**              | **종합 Observability** |
+| **총합** | **121 패널**              | **종합 Observability** | -                                                                  |
 
 ---
 
@@ -164,7 +164,7 @@ jq '.dashboard.panels // .panels // [] | length' [dashboard-file].json
 
 ### 대시보드 JSON 파일
 
-```
+```text
 /home/jclee/app/grafana/dashboards/
 ├── agent-activity-dashboard.json
 ├── cicd-pipeline-dashboard.json
@@ -181,7 +181,7 @@ jq '.dashboard.panels // .panels // [] | length' [dashboard-file].json
 
 ### 이력서 파일
 
-```
+```text
 packages/data/resumes/archive/toss/
 ├── toss_commerce_server_developer_platform_resume.md (최신)
 ├── lee_jaecheol_toss_platform_resume_final_v3.pdf (165KB) ⬆️ NEW
@@ -207,7 +207,7 @@ packages/data/resumes/archive/toss/
 ### 다음 단계
 
 - [ ] 최종 PDF 검토 (lee_jaecheol_toss_platform_resume_final_v3.pdf)
-- [ ] 토스 채용 페이지 지원 (https://toss.im/career/job-detail?job_id=4071145003)
+- [ ] 토스 채용 페이지 지원 (<https://toss.im/career/job-detail?job_id=4071145003>)
 - [ ] 면접 준비 시작 (toss_commerce_interview_qa.md)
 
 ---

@@ -6,7 +6,9 @@
 
 ## Purpose
 
-This document catalogs **forbidden patterns**, **deprecated practices**, and **common pitfalls** discovered in the resume project codebase. These rules prevent breaking changes and security issues.
+This document catalogs **forbidden patterns**, **deprecated practices**, and
+**common pitfalls** discovered in the resume project codebase. These rules
+prevent breaking changes and security issues.
 
 ---
 
@@ -18,7 +20,8 @@ This document catalogs **forbidden patterns**, **deprecated practices**, and **c
 
 - `apps/portfolio/worker.js` (deployable Cloudflare Worker)
 
-**Rule**: This file is **auto-generated** from `index.html` by `generate-worker.js`. Manual edits are **lost on next build**.
+**Rule**: This file is **auto-generated** from `index.html` by
+`generate-worker.js`. Manual edits are **lost on next build**.
 
 **Why It Breaks**:
 
@@ -53,11 +56,13 @@ npm run deploy                              # Deploy generated artifact
 - `apps/portfolio/lib/templates.js:41,54`
 - `apps/portfolio/generate-worker.js:109`
 
-**Rule**: Do NOT use `.trim()` on extracted inline scripts/styles before calculating SHA-256 hashes for Content Security Policy (CSP).
+**Rule**: Do NOT use `.trim()` on extracted inline scripts/styles before
+calculating SHA-256 hashes for Content Security Policy (CSP).
 
 **Why It Breaks**:
 
-Browsers calculate CSP hashes from the **exact** script/style content including all whitespace. Using `.trim()` before hashing causes CSP violations:
+Browsers calculate CSP hashes from the **exact** script/style content including
+all whitespace. Using `.trim()` before hashing causes CSP violations:
 
 ```javascript
 // ❌ WRONG - Causes CSP violation
@@ -71,7 +76,7 @@ const hash = generateHash(scriptContent);
 
 **Error You'll See**:
 
-```
+```text
 Refused to execute inline script because it violates the following
 Content Security Policy directive: "script-src 'sha256-abc123...'"
 ```
@@ -103,11 +108,13 @@ SHA256("console.log('hello');"); // Different hash!
 
 - `apps/job-server/src/crawlers/*`
 
-**Rule**: Always use `BaseCrawler` class instead of direct `chromium.launch()` or `puppeteer.launch()`.
+**Rule**: Always use `BaseCrawler` class instead of direct `chromium.launch()`
+or `puppeteer.launch()`.
 
 **Why It Breaks**:
 
-Job sites (Wanted, Saramin, JobKorea) have **bot detection**. Direct browser launch is immediately flagged:
+Job sites (Wanted, Saramin, JobKorea) have **bot detection**. Direct browser
+launch is immediately flagged:
 
 ```javascript
 // ❌ WRONG - Detected as bot
@@ -145,7 +152,8 @@ class WantedCrawler extends BaseCrawler {
 
 - `apps/job-server/src/shared/clients/*`
 
-**Rule**: Each client (`wanted/`, `saramin/`, `jobkorea/`) is **isolated**. Do NOT import across client directories.
+**Rule**: Each client (`wanted/`, `saramin/`, `jobkorea/`) is **isolated**. Do
+NOT import across client directories.
 
 **Why It Breaks**:
 
@@ -163,7 +171,7 @@ import { SessionManager } from '../../services/session/index.js';
 
 **Architecture**:
 
-```
+```text
 clients/
 ├── wanted/       # Isolated - only imports from shared/services/
 ├── saramin/      # Isolated - only imports from shared/services/
@@ -183,7 +191,8 @@ clients/
 
 - `apps/job-server/src/shared/clients/secrets/*`
 
-**Rule**: Credentials (cookies, tokens, API keys) MUST go in `secrets/` directory, never in client implementation files.
+**Rule**: Credentials (cookies, tokens, API keys) MUST go in `secrets/`
+directory, never in client implementation files.
 
 **Why It Breaks**:
 
@@ -218,7 +227,8 @@ const cookies = session.cookies;
 - `.env` (tracked in git)
 - `.env.local` (gitignored)
 
-**Rule**: Cloudflare API tokens and other secrets go in `.env.local`, NEVER in `.env`.
+**Rule**: Cloudflare API tokens and other secrets go in `.env.local`, NEVER in
+`.env`.
 
 **Why It Breaks**:
 
@@ -249,7 +259,8 @@ echo "CLOUDFLARE_API_TOKEN=abc123..." >> .env.local
 
 - `apps/job-server/src/server/routes/*`
 
-**Rule**: Use Fastify decorators for services, never `new Service()` in route handlers.
+**Rule**: Use Fastify decorators for services, never `new Service()` in route
+handlers.
 
 **Why It Breaks**:
 
@@ -321,11 +332,13 @@ npm run build
 
 - `packages/data/resumes/master/resume_data.json`
 
-**Rule**: After editing `resume_data.json`, always run `npm run sync:data` before building applications.
+**Rule**: After editing `resume_data.json`, always run `npm run sync:data`
+before building applications.
 
 **Why It Breaks**:
 
-Applications use **copied** resume data. Skipping sync means stale data in production:
+Applications use **copied** resume data. Skipping sync means stale data in
+production:
 
 ```bash
 # ❌ WRONG - Stale data deployed
@@ -361,7 +374,8 @@ cp packages/data/resumes/master/resume_data.json \
 
 ### 10. ALWAYS Use Bazel for Affected Target Analysis
 
-**Status**: ARCHIVED — Bazel facade dropped per ADR-0008. Use `go run ./tools/ci/affected.go origin/master` instead.
+**Status**: ARCHIVED — Bazel facade dropped per ADR-0008. Use `go run
+./tools/ci/affected.go origin/master` instead.
 
 **References**:
 
@@ -400,7 +414,8 @@ go run ./tools/ci/affected.go origin/master
 
 - `OWNERS` (all packages)
 
-**Rule**: Changes require approval from at least 1 OWNERS member of the affected directory.
+**Rule**: Changes require approval from at least 1 OWNERS member of the affected
+directory.
 
 **Why**:
 
@@ -462,7 +477,8 @@ Before deploying changes, verify:
 **Status**: Open  
 **Location**: `apps/portfolio/worker.js` (inferred from session notes)
 
-**Problem**: Admin tokens stored in sessionStorage are vulnerable to XSS attacks.
+**Problem**: Admin tokens stored in sessionStorage are vulnerable to XSS
+attacks.
 
 **Fix Required**: Migrate to HttpOnly cookies.
 

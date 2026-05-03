@@ -6,7 +6,8 @@
 
 ## OVERVIEW
 
-Unit tests validate module-level behavior with deterministic inputs/outputs for portfolio worker, job automation modules, CLI helpers, and data utilities.
+Unit tests validate module-level behavior with deterministic inputs/outputs for
+portfolio worker, job automation modules, CLI helpers, and data utilities.
 
 ## STRUCTURE
 

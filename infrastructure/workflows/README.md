@@ -6,14 +6,14 @@
 
 **Purpose**: Monitor resume.jclee.me every 5 minutes and alert on failures
 
-**Features**:
+### Features
 
 - ✅ Automated health checks via `/health` endpoint
 - ✅ Telegram alerts on downtime via Telegram Bot API
 - ✅ Google Sheets logging (separate sheets for downtime/healthy status)
 - ✅ Configurable retry logic (3 attempts, 10s timeout)
 
-**Nodes**:
+### Nodes
 
 1. Schedule Trigger (Every 5 minutes)
 2. HTTP Request → `GET https://resume.jclee.me/health`
@@ -34,14 +34,14 @@
 
 **Purpose**: Receive GitHub Actions deployment notifications
 
-**Features**:
+### Features (2)
 
 - ✅ Webhook endpoint: `POST /webhook/resume-deploy`
 - ✅ Telegram deployment notifications via Telegram Bot API
 - ✅ Loki logging for centralized observability
 - ✅ Google Sheets deployment history
 
-**Nodes**:
+### Nodes (2)
 
 1. Webhook Trigger → `/resume-deploy`
 2. Set → Extract deployment data
@@ -52,7 +52,7 @@
 **GitHub Actions Integration**:
 See `.github/workflows/release.yml` for CI/release integration
 
-**Webhook Payload**:
+### Webhook Payload
 
 ```json
 {
@@ -95,7 +95,7 @@ node scripts/setup/configure-n8n-workflows.js
 # 4. Configured workflows will be in: n8n-workflows/configured/
 ```
 
-**Option 2: Manual Configuration**
+### Option 2: Manual Configuration
 
 1. Copy `config.example.json` to `config.json`
 2. Manually edit workflow JSON files with your channel IDs and spreadsheet ID
@@ -105,24 +105,25 @@ node scripts/setup/configure-n8n-workflows.js
 
 ### Step 1: Import Workflows to n8n
 
-1. **Access n8n**: https://n8n.jclee.me
+1. **Access n8n**: <https://n8n.jclee.me>
 2. **Import configured workflows**:
    - Go to Workflows → Import from File
    - Upload `n8n-workflows/configured/01-site-health-monitor.json`
    - Upload `n8n-workflows/configured/02-github-deployment-webhook.json`
 
-**Note**: If using manual configuration, upload from `n8n-workflows/` instead of `configured/`
+**Note**: If using manual configuration, upload from `n8n-workflows/` instead of
+`configured/`
 
 ### Step 2: Configure Credentials
 
-**Required Credentials**:
+### Required Credentials
 
 | Service          | Credential Type | Usage                  |
 | ---------------- | --------------- | ---------------------- |
 | Telegram Bot API | Header API Key  | Alerts & notifications |
 | Google Sheets    | OAuth2          | Data logging           |
 
-**Setup Instructions**:
+### Setup Instructions
 
 1. **Telegram Bot API**:
    - Go to n8n → Credentials → New → Header Auth
@@ -137,7 +138,7 @@ node scripts/setup/configure-n8n-workflows.js
 
 ### Step 3: Update Workflow Parameters
 
-**01-site-health-monitor.json**:
+### 01-site-health-monitor.json
 
 ```javascript
 // Node: Send Telegram Alert (Telegram Bot API)
@@ -152,7 +153,7 @@ documentId: 'GOOGLE_SHEET_ID'; // Same spreadsheet
 sheetName: 'Health Log'; // Sheet gid=1
 ```
 
-**02-github-deployment-webhook.json**:
+### 02-github-deployment-webhook.json
 
 ```javascript
 // Node: Send Telegram Notification (Telegram Bot API)
@@ -179,6 +180,7 @@ sheetName: 'Deployment Log'; // Sheet gid=2
    ```
 
 3. **Verify integration**:
+
    ```bash
    # Test webhook manually
    curl -X POST https://n8n.jclee.me/webhook/resume-deploy \
@@ -303,13 +305,13 @@ git push origin master
 
 ### Issue: Workflow not executing
 
-**Check**:
+### Check
 
 1. Workflow is activated (toggle is ON)
 2. Schedule Trigger is configured correctly
 3. Check n8n executions log: Workflows → [Workflow Name] → Executions
 
-**Solution**:
+### Solution
 
 ```bash
 # Manually trigger workflow
@@ -318,13 +320,13 @@ git push origin master
 
 ### Issue: Telegram notifications not sending
 
-**Check**:
+### Check (2)
 
 1. Telegram Bot API credential is connected
 2. Telegram chat_id is correct
 3. Bot token is valid
 
-**Solution**:
+### Solution (2)
 
 ```bash
 # Get channel ID
@@ -336,13 +338,13 @@ git push origin master
 
 ### Issue: Google Sheets not logging
 
-**Check**:
+### Check (3)
 
 1. Google Sheets OAuth2 credential is connected
 2. Spreadsheet ID is correct
 3. Sheet names match exactly (case-sensitive)
 
-**Solution**:
+### Solution (3)
 
 ```bash
 # Get spreadsheet ID from URL
@@ -355,13 +357,13 @@ git push origin master
 
 ### Issue: GitHub webhook not triggering
 
-**Check**:
+### Check (4)
 
 1. `N8N_WEBHOOK_URL` secret is set in GitHub
 2. Webhook URL is accessible (public endpoint)
 3. GitHub Actions step runs successfully
 
-**Solution**:
+### Solution (4)
 
 ```bash
 # Test webhook manually first
@@ -380,9 +382,9 @@ curl -X POST https://n8n.jclee.me/webhook/resume-deploy \
 
 ## 📈 Monitoring Dashboard (Grafana)
 
-**Planned Dashboard**: https://grafana.jclee.me/d/resume
+**Planned Dashboard**: <https://grafana.jclee.me/d/resume>
 
-**Panels**:
+### Panels
 
 1. **Uptime %** (from Google Sheets Health Log)
 2. **Response Time Trend** (from /metrics endpoint)
@@ -390,7 +392,7 @@ curl -X POST https://n8n.jclee.me/webhook/resume-deploy \
 4. **Error Rate** (from requests_error metric)
 5. **Web Vitals** (LCP/FID/CLS - future workflow)
 
-**Data Sources**:
+### Data Sources
 
 - Google Sheets (via Grafana Google Sheets plugin)
 - Loki (deployment logs)
@@ -400,13 +402,13 @@ curl -X POST https://n8n.jclee.me/webhook/resume-deploy \
 
 ## 🔗 Resources
 
-- **n8n Documentation**: https://docs.n8n.io
-- **n8n Server**: https://n8n.jclee.me
-- **Grafana Dashboard**: https://grafana.jclee.me
-- **Loki Logs**: https://loki.jclee.me
-- **Resume Site**: https://resume.jclee.me
+- **n8n Documentation**: <https://docs.n8n.io>
+- **n8n Server**: <https://n8n.jclee.me>
+- **Grafana Dashboard**: <https://grafana.jclee.me>
+- **Loki Logs**: <https://loki.jclee.me>
+- **Resume Site**: <https://resume.jclee.me>
 
-**Related Documentation**:
+### Related Documentation
 
 - `docs/architecture/N8N-MONITORING-WORKFLOWS.md` - Detailed workflow guide
 - `.github/workflows/release.yml` - GitHub Actions CI/release integration

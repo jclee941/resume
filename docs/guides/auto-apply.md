@@ -23,7 +23,10 @@
 
 ### What is 입사지원자동화?
 
-입사지원자동화 (Auto-Apply) is a fully automated job application system for Korean and international job platforms. It uses AI-powered job matching, browser automation, and workflow orchestration to streamline the entire job application process.
+입사지원자동화 (Auto-Apply) is a fully automated job application system for Korean and
+international job platforms. It uses AI-powered job matching, browser
+automation, and workflow orchestration to streamline the entire job application
+process.
 
 ### Key Features
 
@@ -51,7 +54,7 @@
 
 ### Business Impact
 
-```
+```text
 📈 지원 효율      10x 향상     (수동 → 자동)
 ⏱️  지원 시간      90% 단축    (30분 → 3분)
 🎯 매칭 정확도    85%+        (AI 기반)
@@ -101,8 +104,8 @@ npm run dashboard:dev
 
 **Access Points**:
 
-- Dashboard UI: http://localhost:3456
-- API Base: http://localhost:3456/api/
+- Dashboard UI: <http://localhost:3456>
+- API Base: <http://localhost:3456/api/>
 
 **Verify**:
 
@@ -122,7 +125,7 @@ node src/auto-apply/cli/index.js apply --max=3
 
 **Expected Output**:
 
-```
+```text
 🔍 Searching for: DevOps 엔지니어
 📋 Found 15 matching jobs
 
@@ -164,14 +167,14 @@ curl -X POST http://localhost:3456/api/auto-apply/run \
 
 ### Environment Variables
 
-| Variable                 | Required | Description                               | Example                          |
-| ------------------------ | -------- | ----------------------------------------- | -------------------------------- |
-| `WANTED_EMAIL`           | ✅       | Wanted login email                        | user@example.com                 |
-| `WANTED_COOKIES`         | ⚠️       | Session cookies (alternative to password) | session=abc123...                |
-| `WANTED_ONEID_CLIENT_ID` | ⚠️       | OneID OAuth client ID                     | abc123...                        |
-| `SLACK_WEBHOOK_URL`      | ❌       | Slack notifications                       | https://hooks.slack.com/...      |
-| `N8N_WEBHOOK_URL`        | ❌       | n8n integration                           | https://n8n.jclee.me/webhook/... |
-| `JOB_SERVER_ADMIN_TOKEN` | ❌       | Admin API token                           | eyJhbGciOiJIUzI1NiIs...          |
+| Variable                 | Required | Description                               | Example                            |
+| ------------------------ | -------- | ----------------------------------------- | ---------------------------------- |
+| `WANTED_EMAIL`           | ✅       | Wanted login email                        | <user@example.com>                 |
+| `WANTED_COOKIES`         | ⚠️       | Session cookies (alternative to password) | session=abc123...                  |
+| `WANTED_ONEID_CLIENT_ID` | ⚠️       | OneID OAuth client ID                     | abc123...                          |
+| `SLACK_WEBHOOK_URL`      | ❌       | Slack notifications                       | <https://hooks.slack.com/>...      |
+| `N8N_WEBHOOK_URL`        | ❌       | n8n integration                           | <https://n8n.jclee.me/webhook/>... |
+| `JOB_SERVER_ADMIN_TOKEN` | ❌       | Admin API token                           | eyJhbGciOiJIUzI1NiIs...            |
 
 ### Config File (config.json)
 
@@ -229,7 +232,7 @@ curl -X POST http://localhost:3456/api/auto-apply/run \
 
 ### Matching Algorithm Weights
 
-```
+```text
 Total Score = (skills × 0.4) + (experience × 0.3) + (location × 0.15) + (salary × 0.15)
 
 Score Interpretation:
@@ -757,7 +760,7 @@ vim ~/.OpenCode/data/wanted-session.json
 
 ### Log Locations
 
-```
+```text
 ~/.OpenCode/data/
 ├── wanted-logs/
 │   ├── auto-apply-YYYY-MM-DD.log
@@ -865,6 +868,7 @@ curl http://localhost:3456/api/auth/status
    ```
 
 4. **Verify recovery**:
+
    ```bash
    curl -s http://localhost:3456/api/health | jq '.status'
    ```
@@ -885,6 +889,7 @@ curl http://localhost:3456/api/auth/status
    ```
 
 3. **Retry with backoff**:
+
    ```bash
    node src/auto-apply/cli/index.js apply --max=3
    ```
@@ -983,10 +988,14 @@ open https://grafana.jclee.me/d/resume-portfolio
 
 ### Related Documentation
 
-- [AUTO_APPLY_ACTIVATION_GUIDE.md](../guides/AUTO_APPLY_ACTIVATION_GUIDE.md) - Korean activation guide
-- [AUTO_APPLY_SYSTEM_STATUS.md](../reports/AUTO_APPLY_SYSTEM_STATUS.md) - Development status
-- [ARCHITECTURE.md](../../apps/job-server/ARCHITECTURE.md) - Internal architecture
-- [API_REFERENCE.md](../../apps/job-dashboard/API_REFERENCE.md) - Dashboard API reference
+- [AUTO_APPLY_ACTIVATION_GUIDE.md](../guides/AUTO_APPLY_ACTIVATION_GUIDE.md) -
+  Korean activation guide
+- [AUTO_APPLY_SYSTEM_STATUS.md](../reports/AUTO_APPLY_SYSTEM_STATUS.md) -
+  Development status
+- [ARCHITECTURE.md](../../apps/job-server/ARCHITECTURE.md) - Internal
+  architecture
+- [API_REFERENCE.md](../../apps/job-dashboard/API_REFERENCE.md) - Dashboard API
+  reference
 - [INFRASTRUCTURE.md](../guides/INFRASTRUCTURE.md) - Infrastructure overview
 
 ### Version History
@@ -1000,5 +1009,5 @@ open https://grafana.jclee.me/d/resume-portfolio
 ---
 
 **Maintained by**: Auto Agent  
-**Contact**: qws941@kakao.com  
-**Repository**: https://github.com/qws941/resume
+**Contact**: <qws941@kakao.com>  
+**Repository**: <https://github.com/qws941/resume>

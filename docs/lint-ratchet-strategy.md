@@ -2,8 +2,10 @@
 
 ## Concept
 
-A **lint ratchet** prevents warning count from increasing while allowing gradual reduction.
-New code must not introduce new warnings; existing warnings are fixed opportunistically.
+A **lint ratchet** prevents warning count from increasing while allowing gradual
+reduction.
+New code must not introduce new warnings; existing warnings are fixed
+opportunistically.
 
 ## Current State (2026-02)
 
@@ -65,7 +67,8 @@ Add a ratchet check step to the `lint` job in `ci.yml`:
 1. **New code**: Zero warnings required (enforced by ratchet)
 2. **Touched files**: Fix warnings in files you modify (boy scout rule)
 3. **Dedicated cleanup**: Monthly PR to reduce baseline by 10-20%
-4. **Baseline updates**: When warnings decrease, update `lint-baseline.json` in the same PR
+4. **Baseline updates**: When warnings decrease, update `lint-baseline.json` in
+   the same PR
 
 **Priority order for fixing existing warnings:**
 

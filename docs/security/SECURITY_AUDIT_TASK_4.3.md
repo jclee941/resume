@@ -10,7 +10,9 @@
 
 ## Executive Summary
 
-This security audit reviewed 7 target files across the job automation system. **One critical bug was identified and fixed**, with minor security improvements recommended. No high or critical vulnerabilities were found in dependencies.
+This security audit reviewed 7 target files across the job automation system.
+**One critical bug was identified and fixed**, with minor security improvements
+recommended. No high or critical vulnerabilities were found in dependencies.
 
 | Category              | Status   | Issues     | Fixed |
 | --------------------- | -------- | ---------- | ----- |
@@ -34,7 +36,8 @@ This security audit reviewed 7 target files across the job automation system. **
 **Severity:** CRITICAL (Runtime Error)
 
 **Issue:**
-The code referenced `submitter` variable which was never defined, causing a `ReferenceError` at runtime.
+The code referenced `submitter` variable which was never defined, causing a
+`ReferenceError` at runtime.
 
 ```javascript
 // BEFORE (Buggy)
@@ -50,7 +53,7 @@ if (!submitter) {
 return await submitter(); // ❌ Would also fail
 ```
 
-**Fix Applied:**
+### Fix Applied
 
 ```javascript
 // AFTER (Fixed)
@@ -82,16 +85,17 @@ return await submitter();
 | Cookies stored securely   | ⚠️ INFO | Stored in `~/.opencode/data/`, file permissions should be 600 |
 | Env vars used for secrets | ✅ PASS | `TELEGRAM_BOT_TOKEN`, `JWT_SECRET` use env                    |
 
-**Reviewed Files:**
+### Reviewed Files
 
 - `jobkorea-profile-sync.js`: Uses `SESSION_PATH` for cookie storage
 - `saramin-profile-sync.js`: Uses `SESSION_PATH` for cookie storage
 - `application.js`: Uses `env.TELEGRAM_BOT_TOKEN`, `env.SESSIONS`
 - `telegram.js`: Uses `env.TELEGRAM_BOT_TOKEN`, `env.TELEGRAM_CHAT_ID`
 
-**Recommendations:**
+### Recommendations
 
-1. Set file permissions to 600 on session files: `chmod 600 ~/.opencode/data/*-session.json`
+1. Set file permissions to 600 on session files: `chmod 600
+   ~/.opencode/data/*-session.json`
 2. Consider encrypting session files at rest
 
 ---
@@ -106,20 +110,23 @@ return await submitter();
 | Path traversal prevention | ✅ PASS | Path joins use `join()` with validation  |
 | Type checking enforced    | ✅ PASS | TypeScript strict mode enabled           |
 
-**Findings:**
+### Findings
 
-**✅ Good Practices Found:**
+### ✅ Good Practices Found
 
 - `application.js` uses `escapeHtml()` for Telegram notifications
 - All SQL queries use parameterized statements (`.bind()`)
 - `retry.js` validates error types with `classifyApplyError`
 - Platform names are whitelisted in `submitters` object
 
-**⚠️ LOW-001: Unnecessary Escape Characters**
+### ⚠️ LOW-001: Unnecessary Escape Characters
 
-**File:** `jobkorea-profile-sync.js` (lines 528, 537, 541, 545, 548, 556, 560, 564, 577, 581, 585, 673, 679, 691)
+**File:** `jobkorea-profile-sync.js` (lines 528, 537, 541, 545, 548, 556, 560,
+564, 577, 581, 585, 673, 679, 691)
 
-Regex patterns contain unnecessary escape characters (e.g., `\/`, `\-` inside character classes). While not a security issue, this causes ESLint errors and may indicate pattern confusion.
+Regex patterns contain unnecessary escape characters (e.g., `\/`, `\-` inside
+character classes). While not a security issue, this causes ESLint errors and
+may indicate pattern confusion.
 
 **Recommendation:** Clean up regex patterns:
 
@@ -142,7 +149,7 @@ Regex patterns contain unnecessary escape characters (e.g., `\/`, `\-` inside ch
 | Failures logged securely    | ✅ PASS | Logs use structured format         |
 | No information leakage      | ✅ PASS | No internal paths/details exposed  |
 
-**Reviewed Code:**
+### Reviewed Code
 
 - `retry.js`: Proper error classification with `classifyApplyError`
 - Circuit breaker prevents cascading failures
@@ -159,7 +166,7 @@ Regex patterns contain unnecessary escape characters (e.g., `\/`, `\-` inside ch
 | Circuit breaker implemented | ✅ PASS | Full implementation in `retry.js`    |
 | No brute force possible     | ✅ PASS | Exponential backoff, max retries = 3 |
 
-**Circuit Breaker Configuration:**
+### Circuit Breaker Configuration
 
 ```javascript
 // From retry.js
@@ -172,7 +179,7 @@ const DEFAULT_CONFIG = {
 };
 ```
 
-**Features:**
+### Features
 
 - ✅ Exponential backoff with jitter
 - ✅ Per-platform circuit breaker state
@@ -191,15 +198,18 @@ const DEFAULT_CONFIG = {
 | Proxy rotation working    | ✅ PASS | `ProxyRotator` class exists                         |
 | Cookie jar isolation      | ✅ PASS | Per-platform session files                          |
 
-**Reviewed Implementation:**
+### Reviewed Implementation
 
-- `saramin-profile-sync.js`: Has `humanDelay()`, `randomMouseMovement()`, `humanScroll()`
+- `saramin-profile-sync.js`: Has `humanDelay()`, `randomMouseMovement()`,
+  `humanScroll()`
 - `jobkorea-profile-sync.js`: Has `humanDelay()`, `randomViewportScroll()`
 - Session isolation: Each platform has separate session file
 
-**⚠️ INFO-001: Missing `tls-fingerprint.js` File**
+### ⚠️ INFO-001: Missing `tls-fingerprint.js` File
 
-The `stealth/index.js` exports `TLSFingerprintManager` from `tls-fingerprint.js`, but this file was not found. If this is intentional (not yet implemented), consider removing the export or creating a stub.
+The `stealth/index.js` exports `TLSFingerprintManager` from
+`tls-fingerprint.js`, but this file was not found. If this is intentional (not
+yet implemented), consider removing the export or creating a stub.
 
 ---
 
@@ -212,13 +222,13 @@ The `stealth/index.js` exports `TLSFingerprintManager` from `tls-fingerprint.js`
 | Session data isolated         | ✅ PASS | Per-platform session files        |
 | Audit logs created            | ✅ PASS | Application state saved to KV     |
 
-**Reviewed:**
+### Reviewed
 
 - Resume data stored in `packages/data/resumes/master/resume_data.json`
 - Sessions stored in `~/.opencode/data/{platform}-session.json`
 - Application workflow saves state to KV with 7-day TTL
 
-**Recommendations:**
+### Recommendations (2)
 
 1. Consider encrypting session files containing authentication cookies
 2. Add audit logging for all profile sync operations
@@ -228,7 +238,7 @@ The `stealth/index.js` exports `TLSFingerprintManager` from `tls-fingerprint.js`
 
 ### 7. Dependencies ✅
 
-**Tool Results:**
+### Tool Results
 
 ```bash
 $ npm audit --audit-level=moderate
@@ -248,7 +258,7 @@ $ npm run lint
 
 **gitleaks:** Not installed (optional tool)
 
-**Dependency Analysis:**
+### Dependency Analysis
 
 - No known vulnerable packages
 - Minimal attack surface in new code
@@ -359,7 +369,8 @@ function calculateDelay(retryAttempt, options) {
 
 ## Conclusion
 
-The security audit is **COMPLETE**. One critical runtime bug was identified and fixed. The codebase follows good security practices with:
+The security audit is **COMPLETE**. One critical runtime bug was identified and
+fixed. The codebase follows good security practices with:
 
 - ✅ Proper credential management (env vars)
 - ✅ Input validation and XSS prevention
@@ -368,7 +379,7 @@ The security audit is **COMPLETE**. One critical runtime bug was identified and 
 - ✅ Structured error handling
 - ✅ 0 dependency vulnerabilities
 
-**Overall Security Grade: A-**
+### Overall Security Grade: A-
 
 The system is secure for production use with the applied fix.
 

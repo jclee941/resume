@@ -17,7 +17,7 @@ This setup automates the resume job application process using:
 
 ### Architecture
 
-```
+```text
 ┌──────────────┐    ┌──────────────┐    ┌──────────────┐    ┌──────────────┐
 │   n8n        │───▶│  Job Server  │───▶│  Job Sites   │───▶│  Telegram    │
 │  Scheduler   │    │  Auto-Apply  │    │ (Wanted, etc)│    │  Notifications│
@@ -34,7 +34,7 @@ This setup automates the resume job application process using:
 
 Get your n8n API key:
 
-1. Open https://n8n.jclee.me
+1. Open <https://n8n.jclee.me>
 2. Go to **Settings** → **API**
 3. Create new API key
 4. Copy the key (shown only once)
@@ -88,21 +88,21 @@ export CF_ACCESS_CLIENT_SECRET="..."
 
 ### Step 2: Deploy Workflow
 
-**Option A: Using the activation script (Recommended)**
+### Option A: Using the activation script (Recommended)
 
 ```bash
 cd /home/jclee/dev/resume
 ./infrastructure/n8n/activate-auto-apply.sh
 ```
 
-**Option B: Using Go deployment tool**
+### Option B: Using Go deployment tool
 
 ```bash
 cd /home/jclee/dev/resume
 go run infrastructure/n8n/deploy-auto-apply.go
 ```
 
-**Option C: Using curl directly**
+### Option C: Using curl directly
 
 ```bash
 cd /home/jclee/dev/resume
@@ -162,7 +162,7 @@ In n8n web UI:
 
 ### Process Flow
 
-```
+```text
 1. Daily Schedule Trigger (9:00 AM KST)
          ↓
 2. POST /api/auto-apply/run
@@ -208,7 +208,7 @@ Modify the workflow temporarily for testing:
 
 Execute workflow manually in n8n:
 
-1. Open https://n8n.jclee.me/workflow/DRHg9pwanv4pHGxV
+1. Open <https://n8n.jclee.me/workflow/DRHg9pwanv4pHGxV>
 2. Click "Execute Workflow"
 3. Monitor execution in real-time
 4. Check Telegram notification
@@ -235,16 +235,16 @@ curl -H "X-N8N-API-KEY: ${N8N_API_KEY}" \
 
 ### View Execution History
 
-**Via API**:
+### Via API
 
 ```bash
 curl -H "X-N8N-API-KEY: ${N8N_API_KEY}" \
   "${N8N_URL}/api/v1/executions?workflowId=DRHg9pwanv4pHGxV&limit=10" | jq '.data[] | {id, status, startedAt}'
 ```
 
-**Via UI**:
+### Via UI
 
-- Open: https://n8n.jclee.me/executions
+- Open: <https://n8n.jclee.me/executions>
 - Filter by workflow: "job-auto-apply"
 
 ### Check Telegram Notifications
@@ -257,7 +257,7 @@ The bot sends notifications for:
 
 Notification format:
 
-```
+```text
 ✅ Auto-Apply Completed
 
 Found: 21 jobs
@@ -275,7 +275,7 @@ Duration: 2m 30s
 
 ### Workflow Not Running
 
-**Check 1: Is workflow active?**
+### Check 1: Is workflow active?
 
 ```bash
 curl -H "X-N8N-API-KEY: ${N8N_API_KEY}" \
@@ -289,7 +289,7 @@ In n8n UI: Settings → Variables
 
 - Must have: `JOB_SERVER_URL`, `JOB_SERVER_ADMIN_TOKEN`
 
-**Check 3: Is job-server running?**
+### Check 3: Is job-server running?
 
 ```bash
 curl http://localhost:3456/health
@@ -297,14 +297,14 @@ curl http://localhost:3456/health
 
 ### Telegram Notifications Not Received
 
-**Check 1: Is telegram-notifier workflow active?**
+### Check 1: Is telegram-notifier workflow active?
 
 ```bash
 curl -H "X-N8N-API-KEY: ${N8N_API_KEY}" \
   "${N8N_URL}/api/v1/workflows/PV5yLgHNzNSlCmRT" | jq '.active'
 ```
 
-**Check 2: Test Telegram manually**
+### Check 2: Test Telegram manually
 
 ```bash
 export TELEGRAM_BOT_TOKEN="your-bot-token"
@@ -378,10 +378,10 @@ export N8N_URL="http://localhost:15678"
 
 ## Support
 
-**n8n UI**: https://n8n.jclee.me/workflow/DRHg9pwanv4pHGxV  
+**n8n UI**: <https://n8n.jclee.me/workflow/DRHg9pwanv4pHGxV>  
 **Documentation**: `infrastructure/n8n/README.md`  
 **API Reference**: `infrastructure/n8n/N8N_API_REFERENCE.md`  
-**Issues**: https://github.com/qws941/resume/issues
+**Issues**: <https://github.com/qws941/resume/issues>
 
 ---
 
