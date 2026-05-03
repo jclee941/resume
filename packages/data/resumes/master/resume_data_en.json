@@ -44,7 +44,7 @@
       "Observability",
       "Cloud Security"
     ],
-    "profileStatement": "DevSecOps/SRE engineer with 9-year career growth from OA operations into financial security automation. Started in 2017 at MT Data operating 50+ Linux servers with manual patches and firewall rules in KAI's closed network, then spent 11 months from 2018.11 reskilling on Linux fundamentals (RHCSA, CompTIA Linux+, LPIC-1, 리눅스마스터 2급). Grew through Metanet and Jointree adopting Ansible, Python, NSX-T, and Wazuh; deepened in financial infrastructure at Quantec Investment Management FSDC and Gaonnuri (FortiGate HA + FSC licensing); now operates Nextrade exchange security at ITCEN CTS using Splunk ES, n8n, FortiManager API, and Docker.",
+    "profileStatement": "DevSecOps/SRE engineer with 8 years of working experience plus 1 year Linux reskilling from OA operations into financial security automation. Started in 2017 at MT Data operating 50+ Linux servers with manual patches and firewall rules in KAI's closed network, then spent 11 months from 2018.11 reskilling on Linux fundamentals (RHCSA, CompTIA Linux+, LPIC-1, Linux Master Level 2). Grew through Metanet and Jointree adopting Ansible, Python, NSX-T, and Wazuh; deepened in financial infrastructure at Quantec Investment Management FSDC and Gaonnuri (FortiGate HA + FSC licensing); now operates Nextrade exchange security at ITCEN CTS using Splunk ES, n8n, FortiManager API, and Docker.",
     "coreCompetencies": [
       "Designed and operated high-availability security infrastructure in financial regulated environments and passed licensing audits",
       "Built SIEM detection rules and automated response systems to address delays in manual detection and response",
@@ -230,7 +230,7 @@
       "teamSize": "Infrastructure operations team (size undisclosed)",
       "myRole": "VPN/NAC automation and switch inspection automation engineer",
       "workType": "SI+SM",
-      "description": "Solved server configuration consistency and remote-access visibility for a large-scale remote work environment by building Python and Ansible automation, and operated FortiGate VPN infrastructure for new contact-center sites.",
+      "description": "Solved server configuration consistency and remote-access visibility for a 1,000-user contact-center remote-work environment by building Python and Ansible automation, and operated FortiGate VPN infrastructure for new contact-center sites.",
       "projects": [
         {
           "name": "Contact Center Remote-Work Infrastructure",

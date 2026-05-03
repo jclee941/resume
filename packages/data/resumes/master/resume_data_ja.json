@@ -43,7 +43,7 @@
       "オブザーバビリティ",
       "クラウドセキュリティ"
     ],
-    "profileStatement": "OAエンジニアから始まり9年目のDevSecOps/SREエンジニアです。2017年MT DataにてKAI(韓国航空宇宙産業)閉鎖網で50台以上のLinuxサーバの手動パッチ・ファイアウォールルール運用を経験し、2018.11から11ヶ月間RHCSA・LPIC-1などの資格でLinuxを学び直しました。Metanet、JointreeにてAnsible・Python・NSX-T・Wazuhで自動化を本格化し、Quantec FSDCで金融監督対応、Gaonnuri/Nextradeの構築でFortiGate HA・FSC認可、ITCEN CTS/Nextrade運用でSplunk ES・n8n・FortiManager API・Dockerによる自動検知・対応体制を構築しています。",
+    "profileStatement": "OAエンジニアから始まり実務8年 + Linux再学習1年のDevSecOps/SREエンジニアです。2017年MT DataにてKAI(韓国航空宇宙産業)閉鎖網で50台以上のLinuxサーバの手動パッチ・ファイアウォールルール運用を経験し、2018.11から11ヶ月間RHCSA・LPIC-1などの資格でLinuxを学び直しました。Metanet、JointreeにてAnsible・Python・NSX-T・Wazuhで自動化を本格化し、Quantec FSDCで金融監督対応、Gaonnuri/Nextradeの構築でFortiGate HA・FSC認可、ITCEN CTS/Nextrade運用でSplunk ES・n8n・FortiManager API・Dockerによる自動検知・対応体制を構築しています。",
     "coreCompetencies": [
       "金融業界の規制環境で高可用性セキュリティインフラを設計・運用し、本認可審査対応を通過した経験",
       "手動検知・対応の遅延を解決するために、SIEM 検知ルール設計と自動対応体制を構築した経験",
@@ -394,8 +394,8 @@
       "status": "active"
     },
     {
-      "name": "사무자동화산업기사",
-      "issuer": "한국산업인력공단",
+      "name": "사무자동화산업기사 (Office Automation Industrial Engineer / 韓国産業人材公団認定)",
+      "issuer": "韓国産業人材公団 (Human Resources Development Service of Korea)",
       "date": "2019.12",
       "expirationDate": null,
       "credentialId": null,
@@ -403,8 +403,8 @@
       "status": "active"
     },
     {
-      "name": "리눅스마스터 2급",
-      "issuer": "한국정보통신진흥협회",
+      "name": "リナックスマスター2級 (Linux Master Level 2 / 韓国情報通信振興協会認定)",
+      "issuer": "韓国情報通信振興協会 (Korea Association for ICT Promotion)",
       "date": "2019.01",
       "expirationDate": null,
       "credentialId": null,

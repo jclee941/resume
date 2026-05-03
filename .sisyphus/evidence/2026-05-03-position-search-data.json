@@ -1,0 +1,596 @@
+{
+  "platforms": {
+    "wanted": {
+      "status": "ok",
+      "fetched": 180,
+      "scored": 36,
+      "elapsedMs": 45706
+    },
+    "jobkorea": {
+      "status": "ok",
+      "fetched": 120,
+      "scored": 2,
+      "elapsedMs": 18575
+    },
+    "saramin": {
+      "status": "ok",
+      "fetched": 75,
+      "scored": 0,
+      "elapsedMs": 17484
+    },
+    "programmers": {
+      "status": "ok",
+      "fetched": 0,
+      "scored": 0,
+      "elapsedMs": 24175
+    },
+    "linkedin": {
+      "status": "ok",
+      "fetched": 20,
+      "scored": 0,
+      "elapsedMs": 6056
+    }
+  },
+  "candidates": [
+    {
+      "id": 347834,
+      "source": "wanted",
+      "title": "Cloud Infra Engineer (Kubernetes / AWS)",
+      "company": "이우소프트",
+      "url": "https://www.wanted.co.kr/wd/347834",
+      "score": 76,
+      "matchedSkills": [
+        "Kubernetes",
+        "Prometheus",
+        "Grafana",
+        "Bash",
+        "Python"
+      ],
+      "titleMatched": true,
+      "platform": "wanted"
+    },
+    {
+      "id": "jobkorea_48943039",
+      "source": "jobkorea",
+      "title": "[ETU] Cloud Governance Architect",
+      "company": "메가존클라우드㈜",
+      "url": "https://www.jobkorea.co.kr/Recruit/GI_Read/48943039?Oem_Code=C1&logpath=1&stext=DevSecOps&listno=10&sc=630",
+      "score": 73,
+      "matchedSkills": [
+        "Go",
+        "Cloudflare Workers"
+      ],
+      "titleMatched": true,
+      "platform": "jobkorea"
+    },
+    {
+      "id": 199386,
+      "source": "wanted",
+      "title": "백엔드 개발자 (Node.js, 2년 이상)",
+      "company": "코딧(CODITCorp.)",
+      "url": "https://www.wanted.co.kr/wd/199386",
+      "score": 64,
+      "matchedSkills": [
+        "Node.js",
+        "MySQL",
+        "TypeScript",
+        "Python"
+      ],
+      "titleMatched": false,
+      "platform": "wanted"
+    },
+    {
+      "id": 208256,
+      "source": "wanted",
+      "title": "시니어 데브옵스 엔지니어",
+      "company": "알로카도스",
+      "url": "https://www.wanted.co.kr/wd/208256",
+      "score": 63,
+      "matchedSkills": [
+        "Kubernetes",
+        "Terraform",
+        "Ansible",
+        "Python"
+      ],
+      "titleMatched": false,
+      "platform": "wanted"
+    },
+    {
+      "id": 296646,
+      "source": "wanted",
+      "title": "기술지원팀 TA (Technical Architect)",
+      "company": "싸이버로지텍",
+      "url": "https://www.wanted.co.kr/wd/296646",
+      "score": 63,
+      "matchedSkills": [
+        "Python",
+        "Docker",
+        "Kubernetes",
+        "Terraform"
+      ],
+      "titleMatched": false,
+      "platform": "wanted"
+    },
+    {
+      "id": 354775,
+      "source": "wanted",
+      "title": "Cloud Infrastructure Engineer",
+      "company": "핵클(Hackle)",
+      "url": "https://www.wanted.co.kr/wd/354775",
+      "score": 61,
+      "matchedSkills": [
+        "Docker",
+        "Kubernetes",
+        "Prometheus",
+        "Grafana",
+        "Terraform"
+      ],
+      "titleMatched": true,
+      "platform": "wanted"
+    },
+    {
+      "id": 354775,
+      "source": "wanted",
+      "title": "Cloud Infrastructure Engineer",
+      "company": "핵클(Hackle)",
+      "url": "https://www.wanted.co.kr/wd/354775",
+      "score": 61,
+      "matchedSkills": [
+        "Docker",
+        "Kubernetes",
+        "Prometheus",
+        "Grafana",
+        "Terraform"
+      ],
+      "titleMatched": true,
+      "platform": "wanted"
+    },
+    {
+      "id": 46260,
+      "source": "wanted",
+      "title": "시니어 백엔드 개발자 (Node.js, 5년 이상)",
+      "company": "코딧(CODITCorp.)",
+      "url": "https://www.wanted.co.kr/wd/46260",
+      "score": 60,
+      "matchedSkills": [
+        "Node.js",
+        "TypeScript",
+        "Python"
+      ],
+      "titleMatched": false,
+      "platform": "wanted"
+    },
+    {
+      "id": 166683,
+      "source": "wanted",
+      "title": "AI Back-End / Bigdata 엔지니어",
+      "company": "제로원에이아이",
+      "url": "https://www.wanted.co.kr/wd/166683",
+      "score": 60,
+      "matchedSkills": [
+        "Go",
+        "Kubernetes"
+      ],
+      "titleMatched": false,
+      "platform": "wanted"
+    },
+    {
+      "id": 290047,
+      "source": "wanted",
+      "title": "Python Developer",
+      "company": "스피어코퍼레이션",
+      "url": "https://www.wanted.co.kr/wd/290047",
+      "score": 59,
+      "matchedSkills": [
+        "Python",
+        "Go",
+        "PostgreSQL",
+        "MySQL"
+      ],
+      "titleMatched": false,
+      "platform": "wanted"
+    },
+    {
+      "id": 337145,
+      "source": "wanted",
+      "title": "SRE/DevOps Engineer",
+      "company": "모레",
+      "url": "https://www.wanted.co.kr/wd/337145",
+      "score": 58,
+      "matchedSkills": [
+        "Linux"
+      ],
+      "titleMatched": true,
+      "platform": "wanted"
+    },
+    {
+      "id": 330270,
+      "source": "wanted",
+      "title": "클라우드 풀스택 엔지니어",
+      "company": "엘리스",
+      "url": "https://www.wanted.co.kr/wd/330270",
+      "score": 58,
+      "matchedSkills": [
+        "Python",
+        "TypeScript",
+        "Linux"
+      ],
+      "titleMatched": true,
+      "platform": "wanted"
+    },
+    {
+      "id": 358572,
+      "source": "wanted",
+      "title": "IVI OS Engineer (System Framework)",
+      "company": "포티투닷(42dot)",
+      "url": "https://www.wanted.co.kr/wd/358572",
+      "score": 57,
+      "matchedSkills": [
+        "Python",
+        "Linux",
+        "Docker"
+      ],
+      "titleMatched": false,
+      "platform": "wanted"
+    },
+    {
+      "id": 318370,
+      "source": "wanted",
+      "title": "[인턴] BE Engineer (전환형)",
+      "company": "틸다",
+      "url": "https://www.wanted.co.kr/wd/318370",
+      "score": 56,
+      "matchedSkills": [
+        "Python",
+        "Go",
+        "Docker",
+        "Kubernetes"
+      ],
+      "titleMatched": false,
+      "platform": "wanted"
+    },
+    {
+      "id": 347247,
+      "source": "wanted",
+      "title": "[인공지능솔루션] 인프라 엔지니어",
+      "company": "제논",
+      "url": "https://www.wanted.co.kr/wd/347247",
+      "score": 56,
+      "matchedSkills": [
+        "Linux",
+        "Docker",
+        "Kubernetes"
+      ],
+      "titleMatched": true,
+      "platform": "wanted"
+    },
+    {
+      "id": 347247,
+      "source": "wanted",
+      "title": "[인공지능솔루션] 인프라 엔지니어",
+      "company": "제논",
+      "url": "https://www.wanted.co.kr/wd/347247",
+      "score": 56,
+      "matchedSkills": [
+        "Linux",
+        "Docker",
+        "Kubernetes"
+      ],
+      "titleMatched": true,
+      "platform": "wanted"
+    },
+    {
+      "id": 356655,
+      "source": "wanted",
+      "title": "Infrastructure Engineer",
+      "company": "로아이",
+      "url": "https://www.wanted.co.kr/wd/356655",
+      "score": 56,
+      "matchedSkills": [
+        "Kubernetes",
+        "Terraform"
+      ],
+      "titleMatched": true,
+      "platform": "wanted"
+    },
+    {
+      "id": "jobkorea_48928470",
+      "source": "jobkorea",
+      "title": "네트워크 보안 엔지니어 채용(NAC,방화벽)",
+      "company": "다원티에스",
+      "url": "https://www.jobkorea.co.kr/Recruit/GI_Read/48928470?Oem_Code=C1&logpath=1&stext=%EB%B3%B4%EC%95%88+%EC%97%94%EC%A7%80%EB%8B%88%EC%96%B4&listno=6&sc=630",
+      "score": 56,
+      "matchedSkills": [
+        "NAC"
+      ],
+      "titleMatched": true,
+      "platform": "jobkorea"
+    },
+    {
+      "id": 351691,
+      "source": "wanted",
+      "title": "데브옵스 엔지니어(Infrastructure Part)",
+      "company": "큐픽스",
+      "url": "https://www.wanted.co.kr/wd/351691",
+      "score": 55,
+      "matchedSkills": [
+        "Docker",
+        "Kubernetes"
+      ],
+      "titleMatched": true,
+      "platform": "wanted"
+    },
+    {
+      "id": 284145,
+      "source": "wanted",
+      "title": "시스템 엔지니어 (3~8년차)",
+      "company": "싸이터",
+      "url": "https://www.wanted.co.kr/wd/284145",
+      "score": 54,
+      "matchedSkills": [
+        "Kubernetes"
+      ],
+      "titleMatched": true,
+      "platform": "wanted"
+    },
+    {
+      "id": 284145,
+      "source": "wanted",
+      "title": "시스템 엔지니어 (3~8년차)",
+      "company": "싸이터",
+      "url": "https://www.wanted.co.kr/wd/284145",
+      "score": 54,
+      "matchedSkills": [
+        "Kubernetes"
+      ],
+      "titleMatched": true,
+      "platform": "wanted"
+    },
+    {
+      "id": 338178,
+      "source": "wanted",
+      "title": "[NetsPresso] AI Compiler Engineer",
+      "company": "노타(Nota)",
+      "url": "https://www.wanted.co.kr/wd/338178",
+      "score": 54,
+      "matchedSkills": [
+        "Python",
+        "Linux",
+        "Docker"
+      ],
+      "titleMatched": false,
+      "platform": "wanted"
+    },
+    {
+      "id": 344560,
+      "source": "wanted",
+      "title": "자사 제품 현장 대응 & 플랫폼 개발 엔지니어",
+      "company": "쿼리시스템즈",
+      "url": "https://www.wanted.co.kr/wd/344560",
+      "score": 54,
+      "matchedSkills": [
+        "Linux",
+        "Python",
+        "Go",
+        "Bash",
+        "Docker",
+        "Kubernetes"
+      ],
+      "titleMatched": false,
+      "platform": "wanted"
+    },
+    {
+      "id": 339323,
+      "source": "wanted",
+      "title": "자사솔루션 구축 및 유지보수 엔지니어 0~8년",
+      "company": "쿼드마이너",
+      "url": "https://www.wanted.co.kr/wd/339323",
+      "score": 53,
+      "matchedSkills": [
+        "Linux"
+      ],
+      "titleMatched": false,
+      "platform": "wanted"
+    },
+    {
+      "id": 295915,
+      "source": "wanted",
+      "title": "[인턴] [SW] 백엔드 개발자",
+      "company": "코딧(CODITCorp.)",
+      "url": "https://www.wanted.co.kr/wd/295915",
+      "score": 52,
+      "matchedSkills": [
+        "Node.js"
+      ],
+      "titleMatched": false,
+      "platform": "wanted"
+    },
+    {
+      "id": 266750,
+      "source": "wanted",
+      "title": "DevSecOps Engineer",
+      "company": "어크로스비",
+      "url": "https://www.wanted.co.kr/wd/266750",
+      "score": 52,
+      "matchedSkills": [
+        "Terraform",
+        "Docker"
+      ],
+      "titleMatched": true,
+      "platform": "wanted"
+    },
+    {
+      "id": 354619,
+      "source": "wanted",
+      "title": "시스템 엔지니어(IoT 센서 & 농업 로봇)",
+      "company": "아이오크롭스",
+      "url": "https://www.wanted.co.kr/wd/354619",
+      "score": 52,
+      "matchedSkills": [
+        "Linux"
+      ],
+      "titleMatched": true,
+      "platform": "wanted"
+    },
+    {
+      "id": 266750,
+      "source": "wanted",
+      "title": "DevSecOps Engineer",
+      "company": "어크로스비",
+      "url": "https://www.wanted.co.kr/wd/266750",
+      "score": 52,
+      "matchedSkills": [
+        "Terraform",
+        "Docker"
+      ],
+      "titleMatched": true,
+      "platform": "wanted"
+    },
+    {
+      "id": 358879,
+      "source": "wanted",
+      "title": "System Engineer(Data Command)",
+      "company": "오케스트로",
+      "url": "https://www.wanted.co.kr/wd/358879",
+      "score": 52,
+      "matchedSkills": [
+        "Linux"
+      ],
+      "titleMatched": true,
+      "platform": "wanted"
+    },
+    {
+      "id": 354908,
+      "source": "wanted",
+      "title": "클라우드 서포트 엔지니어",
+      "company": "엘리스",
+      "url": "https://www.wanted.co.kr/wd/354908",
+      "score": 52,
+      "matchedSkills": [
+        "Linux",
+        "Python"
+      ],
+      "titleMatched": true,
+      "platform": "wanted"
+    },
+    {
+      "id": 246176,
+      "source": "wanted",
+      "title": "인프라 시스템 엔지니어",
+      "company": "엘리스",
+      "url": "https://www.wanted.co.kr/wd/246176",
+      "score": 52,
+      "matchedSkills": [
+        "Linux",
+        "Python"
+      ],
+      "titleMatched": true,
+      "platform": "wanted"
+    },
+    {
+      "id": 208423,
+      "source": "wanted",
+      "title": "클라우드 시스템 엔지니어",
+      "company": "엘리스",
+      "url": "https://www.wanted.co.kr/wd/208423",
+      "score": 52,
+      "matchedSkills": [
+        "Linux",
+        "Python",
+        "Go"
+      ],
+      "titleMatched": true,
+      "platform": "wanted"
+    },
+    {
+      "id": 358502,
+      "source": "wanted",
+      "title": "필드 엔지니어 FDPE (3~15년, k8s 필수) 계약직",
+      "company": "올거나이즈코리아(Allganize Korea)",
+      "url": "https://www.wanted.co.kr/wd/358502",
+      "score": 52,
+      "matchedSkills": [
+        "Kubernetes",
+        "Helm"
+      ],
+      "titleMatched": false,
+      "platform": "wanted"
+    },
+    {
+      "id": 355923,
+      "source": "wanted",
+      "title": "필드 엔지니어 FDPE (3~15년, k8s 필수)",
+      "company": "올거나이즈코리아(Allganize Korea)",
+      "url": "https://www.wanted.co.kr/wd/355923",
+      "score": 52,
+      "matchedSkills": [
+        "Kubernetes",
+        "Helm"
+      ],
+      "titleMatched": false,
+      "platform": "wanted"
+    },
+    {
+      "id": 358977,
+      "source": "wanted",
+      "title": "DevOps Engineer",
+      "company": "에스티씨랩(STCLab)",
+      "url": "https://www.wanted.co.kr/wd/358977",
+      "score": 51,
+      "matchedSkills": [
+        "Terraform",
+        "Kubernetes"
+      ],
+      "titleMatched": true,
+      "platform": "wanted"
+    },
+    {
+      "id": 344189,
+      "source": "wanted",
+      "title": "시니어 백엔드 개발자",
+      "company": "휴머닉스",
+      "url": "https://www.wanted.co.kr/wd/344189",
+      "score": 50,
+      "matchedSkills": [
+        "Node.js"
+      ],
+      "titleMatched": false,
+      "platform": "wanted"
+    },
+    {
+      "id": 352776,
+      "source": "wanted",
+      "title": "DevOps Engineer (~5년)",
+      "company": "파트리지시스템즈",
+      "url": "https://www.wanted.co.kr/wd/352776",
+      "score": 50,
+      "matchedSkills": [
+        "Kubernetes"
+      ],
+      "titleMatched": true,
+      "platform": "wanted"
+    },
+    {
+      "id": 279199,
+      "source": "wanted",
+      "title": "DevOps 엔지니어",
+      "company": "안랩블록체인컴퍼니",
+      "url": "https://www.wanted.co.kr/wd/279199",
+      "score": 50,
+      "matchedSkills": [
+        "Terraform",
+        "GitHub Actions"
+      ],
+      "titleMatched": true,
+      "platform": "wanted"
+    }
+  ],
+  "startedAt": "2026-05-03T12:30:17.312Z",
+  "summary": {
+    "totalFetched": 395,
+    "totalScored50plus": 38,
+    "autoApply75plus": 1,
+    "review6074": 8
+  },
+  "completedAt": "2026-05-03T12:32:09.308Z"
+}
