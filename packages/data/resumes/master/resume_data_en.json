@@ -361,22 +361,22 @@
     {
       "name": "CCNP",
       "issuer": "Cisco Systems",
-      "date": "2020.08 (2023.08 만료)",
+      "date": "2020.08 (2023.08 expired)",
       "expirationDate": "2023.08",
       "credentialId": null,
       "credentialUrl": null,
       "status": "expired",
-      "note": "갱신 예정 — CCNP Security 또는 CCIE 학습 중"
+      "note": "renewal planned — studying CCNP Security or CCIE"
     },
     {
       "name": "RHCSA",
       "issuer": "Red Hat",
-      "date": "2019.01 (2022.01 만료)",
+      "date": "2019.01 (2022.01 expired)",
       "expirationDate": "2022.01",
       "credentialId": null,
       "credentialUrl": null,
       "status": "expired",
-      "note": "갱신 예정 — CKA/CKS (Kubernetes) 학습 우선"
+      "note": "renewal planned — CKA/CKS (Kubernetes) prioritized"
     },
     {
       "name": "CompTIA Linux+",
@@ -419,8 +419,8 @@
       "issuer": "CNCF",
       "date": null,
       "expirationDate": null,
-      "status": "준비중",
-      "note": "2026 H2 취득 목표 — 컨테이너 보안·런타임 보안"
+      "status": "Preparing",
+      "note": "2026 H2 target — container & runtime security"
     }
   ],
   "skills": {
@@ -449,11 +449,11 @@
           "level": "advanced"
         },
         {
-          "name": "Tempo (학습 중)",
+          "name": "Tempo (learning)",
           "level": "beginner"
         },
         {
-          "name": "Pyroscope (학습 중)",
+          "name": "Pyroscope (learning)",
           "level": "beginner"
         }
       ]
@@ -513,19 +513,19 @@
           "level": "advanced"
         },
         {
-          "name": "ArgoCD (학습 중)",
+          "name": "ArgoCD (learning)",
           "level": "beginner"
         },
         {
-          "name": "Crossplane (학습 중)",
+          "name": "Crossplane (learning)",
           "level": "beginner"
         },
         {
-          "name": "Pulumi (학습 중)",
+          "name": "Pulumi (learning)",
           "level": "beginner"
         },
         {
-          "name": "HashiCorp Vault (홈랩 운영)",
+          "name": "HashiCorp Vault (homelab)",
           "level": "intermediate"
         }
       ]
@@ -619,7 +619,7 @@
           "level": "beginner"
         },
         {
-          "name": "eBPF/Cilium (학습 중)",
+          "name": "eBPF/Cilium (learning)",
           "level": "beginner"
         },
         {
@@ -662,7 +662,7 @@
   "personalProjects": [
     {
       "name": "Observability Platform",
-      "period": "2024.06 ~ 현재",
+      "period": "2024.06 ~ Present",
       "description": "[Problem] Metrics and logs from homelab infrastructure were scattered across per-service consoles, slowing root-cause analysis during incidents.\n[Solution] Centralized metrics with Prometheus and integrated Loki/Elasticsearch logs into Grafana dashboards. Reproduced the Splunk-based observability operations experience on a Prometheus+Grafana stack.\n[Result] Built a unified observability operations platform that cross-analyzes metrics and logs in a single view.",
       "technologies": [
         "Grafana",
@@ -672,7 +672,7 @@
         "Docker"
       ],
       "icon": "📊",
-      "tagline": "모니터링 플랫폼",
+      "tagline": "Monitoring Platform",
       "language": "PromQL",
       "githubUrl": null,
       "demoUrl": "https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b",
@@ -680,7 +680,7 @@
     },
     {
       "name": "n8n Automation",
-      "period": "2024.01 ~ 현재",
+      "period": "2024.01 ~ Present",
       "description": "[Problem] Repetitive tasks (Slack alerts, Cloudflare deploy notifications, GitHub Actions result collection) were scattered across crontab and individual scripts, requiring custom code for every new integration.\n[Solution] Adopted n8n as a central orchestrator and integrated Slack, GitHub, Cloudflare, and Grafana via webhooks/APIs. Standardized error handling and retries.\n[Result] Built a workflow-based automation platform where new integrations can be deployed via UI.",
       "technologies": [
         "n8n",
@@ -688,7 +688,7 @@
         "Docker"
       ],
       "icon": "🔄",
-      "tagline": "워크플로우 자동화",
+      "tagline": "Workflow Automation",
       "language": "JavaScript",
       "githubUrl": null,
       "demoUrl": null,
@@ -696,7 +696,7 @@
     },
     {
       "name": "FortiManager API Client (Python)",
-      "period": "2025.01 ~ 현재",
+      "period": "2025.01 ~ Present",
       "description": "[Problem] Security operations required manually accessing FortiManager and FortiAnalyzer consoles for firewall policy lookups, route inspection, and log statistics.\n[Solution] Developed a Python library wrapping FortiManager and FortiAnalyzer REST APIs to abstract policy lookup, route management, and log statistics behind common methods.\n[Result] Firewall policy lookups and changes can now be handled via scripts and are used in security operations automation.",
       "technologies": [
         "Python",
@@ -704,16 +704,16 @@
         "FortiAnalyzer"
       ],
       "icon": "🛡️",
-      "tagline": "보안장비 API 자동화",
+      "tagline": "Security Equipment API Automation",
       "language": "Python",
       "githubUrl": null,
       "demoUrl": null,
-      "note": "비공개 — 현직 환경 코드 (포트폴리오는 https://resume.jclee.me 데모)",
+      "note": "Private — production code (portfolio at https://resume.jclee.me as demo)",
       "featured": true
     },
     {
       "name": "Security Alert System",
-      "period": "2025.01 ~ 현재",
+      "period": "2025.01 ~ Present",
       "description": "[Problem] FortiGate security events were scattered across device syslog and Splunk, delaying the time from event occurrence to operator awareness.\n[Solution] Connected Splunk Saved Search webhooks to Slack/Telegram so security events are immediately notified upon detection.\n[Result] Reduced security event awareness time and standardized operator response flow.",
       "technologies": [
         "Splunk",
@@ -721,7 +721,7 @@
         "Slack"
       ],
       "icon": "🔔",
-      "tagline": "보안 알림 자동화",
+      "tagline": "Security Alert Automation",
       "language": "Python",
       "githubUrl": "https://github.com/jclee941/splunk",
       "demoUrl": "https://kibana.jclee.me/s/portfolio-demo/app/dashboards?auth_provider_hint=portfolio_demo#/view/portfolio-demo-dashboard",
@@ -729,7 +729,7 @@
     },
     {
       "name": "IP Blacklist Platform",
-      "period": "2024.12 ~ 현재",
+      "period": "2024.12 ~ Present",
       "description": "[Problem] Threat intelligence feeds were scattered across multiple external sources, requiring separate lookups per source when analyzing malicious IPs.\n[Solution] Built a unified lookup platform with a Flask + PostgreSQL backend and Next.js frontend, consolidating multiple sources into a single interface.\n[Result] Unified the threat IP analysis workflow into a single screen.",
       "technologies": [
         "Flask",
@@ -737,14 +737,14 @@
         "PostgreSQL"
       ],
       "icon": "🚫",
-      "tagline": "위협 인텔리전스",
+      "tagline": "Threat Intelligence",
       "language": "Python",
       "githubUrl": "https://github.com/jclee941/blacklist",
       "demoUrl": null,
       "featured": true
     },
     {
-      "name": "HYCU FSDS 자율주행",
+      "name": "HYCU FSDS Autonomous Driving",
       "period": "2025.11 ~ 2026.02",
       "description": "[Problem] Needed integrated cone perception and driving control in the Formula Student Driverless Simulator environment.\n[Solution] Integrated ROS-based perception/control nodes into Docker containers and validated them in the AirSim simulation environment.\n[Result] Participated in the Hanyang Cyber University Autonomous Driving Competition.",
       "technologies": [
@@ -754,7 +754,7 @@
         "AirSim"
       ],
       "icon": "🏎️",
-      "tagline": "자율주행 시뮬레이션",
+      "tagline": "Autonomous Driving Simulation",
       "url": "https://github.com/jclee941/hycu_fsds",
       "language": "Python",
       "githubUrl": "https://github.com/jclee941/hycu_fsds",
@@ -763,7 +763,7 @@
     },
     {
       "name": "Resume Portfolio",
-      "period": "2024.01 ~ 현재",
+      "period": "2024.01 ~ Present",
       "description": "[Problem] Career, projects, and operational metrics were scattered across resumes, PDFs, and GitHub, making it hard for hiring teams to quickly grasp strengths.\n[Solution] Built a single-SSoT resume site on Cloudflare Workers Edge and integrated MCP automation tools, an auto-apply pipeline, and n8n workflows into a monorepo.\n[Result] Operates resume rendering, cover-letter generation, auto-apply, and observability from a single monorepo.",
       "technologies": [
         "Cloudflare Workers",
@@ -772,29 +772,29 @@
         "Grafana Loki"
       ],
       "icon": "⚡",
-      "tagline": "포트폴리오 플랫폼",
+      "tagline": "Portfolio Platform",
       "language": "JavaScript",
       "githubUrl": "https://github.com/jclee941/resume",
       "demoUrl": "https://resume.jclee.me",
       "highlights": [
-        "저지연 글로벌 서비스 제공을 위한 Edge 런타임 운영",
-        "코드 품질 자동 검증을 위한 테스트 환경 자체 운영",
-        "반복 지원 작업을 자동화하기 위한 MCP 기반 도구 개발",
-        "다중 패키지 일관된 버전 관리를 위한 monorepo 구조",
-        "보안 장비 운영 효율화를 위한 n8n 워크플로우와 API 연동"
+        "Edge runtime operations for low-latency global service delivery",
+        "Self-operated test environment for automated code-quality verification",
+        "MCP-based tools to automate repetitive job-application work",
+        "Monorepo architecture for consistent multi-package versioning",
+        "n8n workflows + API integration for security ops efficiency"
       ],
       "featured": false
     },
     {
       "name": "Terraform Homelab IaC",
-      "period": "2024.06 ~ 현재",
+      "period": "2024.06 ~ Present",
       "githubUrl": "https://github.com/jclee941/terraform",
       "description": "[Problem] Managing homelab infrastructure (Proxmox, Cloudflare DNS/Workers, K8s) via GUI made change history tracking and reconstruction difficult.\n[Solution] Codified all infrastructure with Terraform. Proxmox VM/LXC, Cloudflare DNS/Workers/WAF, and k3s clusters are managed via git-based GitOps.\n[Result] Infrastructure can now be rebuilt and changes are tracked via PRs.",
       "highlights": [
-        "GUI 관리의 추적성 한계를 해결하기 위한 IaC 전환",
-        "DNS·Edge 설정의 일관성 확보를 위한 코드화 관리",
-        "클러스터 재구축 시간 단축을 위한 자동 프로비저닝",
-        "IaC 품질 관리를 위한 CI 자동 검증 파이프라인"
+        "Migrated to IaC to address GUI-management traceability limits",
+        "Code-driven management for DNS/Edge configuration consistency",
+        "Automated provisioning to reduce cluster-rebuild time",
+        "CI auto-validation pipeline for IaC quality management"
       ],
       "technologies": [
         "Terraform",
@@ -811,10 +811,10 @@
       "githubUrl": "https://github.com/jclee941/safetywallet",
       "description": "[Problem] On-site workers managed safety manuals, training certificates, and emergency contacts on paper, making instant lookup difficult.\n[Solution] Built a Cloudflare Workers-based PWA with a Next.js admin. D1 stores worker profiles; KV cache and R2 object storage host the manuals.\n[Result] Operates a PWA system where safety manuals can be looked up offline.",
       "highlights": [
-        "글로벌 저지연 서비스 제공을 위한 Edge 배포",
-        "오프라인 동작을 위한 계층별 스토리지 통합 아키텍처",
-        "네트워크 제약 환경에서도 매뉴얼 접근 가능하게 한 오프라인 지원",
-        "권한 분리와 세션 보안을 위한 RBAC + JWT 설계"
+        "Edge deployment for global low-latency service delivery",
+        "Layered storage architecture supporting offline operation",
+        "Offline support enabling manual access in constrained-network environments",
+        "RBAC + JWT design for permission separation and session security"
       ],
       "technologies": [
         "Cloudflare Workers",
@@ -827,14 +827,14 @@
     },
     {
       "name": "AI GitHub PR Reviewer",
-      "period": "2026.03 ~ 현재",
+      "period": "2026.03 ~ Present",
       "githubUrl": "https://github.com/jclee941/github-bot",
       "description": "[Problem] Security/infrastructure PR reviews depended on a single person, and common-pattern checks (secret exposure, RBAC) had to be performed manually every time.\n[Solution] Operates a self-hosted AI PR reviewer on Cloudflare Workers. CLIProxyAPI integration reduces LLM cost; security patterns are auto-detected and reported as GitHub comments.\n[Result] Automated the PR review flow and standardized secret-exposure verification.",
       "highlights": [
-        "LLM 호출 비용을 절감하기 위한 자체 프록시 운영",
-        "보안 결함의 조기 탐지를 위한 자동 패턴 검출",
-        "PR 리뷰 지연을 줄이기 위한 Webhook 기반 즉시 알림",
-        "서비스 중단 없이 배포하기 위한 Edge 무중단 배포 설계"
+        "Self-operated proxy to reduce LLM invocation cost",
+        "Auto pattern detection for early security-defect identification",
+        "Webhook-based immediate notifications to reduce PR-review delay",
+        "Zero-downtime Edge deployment design"
       ],
       "technologies": [
         "TypeScript",
@@ -846,14 +846,14 @@
     },
     {
       "name": "Bug Bounty Recon Toolkit",
-      "period": "2025.10 ~ 현재",
+      "period": "2025.10 ~ Present",
       "githubUrl": "https://github.com/jclee941/bug",
       "description": "[Problem] Bug-bounty reconnaissance (subdomain discovery → notification → vulnerability scan) was performed manually each time.\n[Solution] Integrated a Go-based recon pipeline with Python result analysis. Subfinder + httpx + Nuclei are chained, and n8n manages the daily schedule.\n[Result] Converted reconnaissance into a workflow and detects new domain changes immediately.",
       "highlights": [
-        "대규모 대상 동시 스캔을 위한 동시성 설계",
-        "취약점 발견 후 즉시 대응하기 위한 자동 매칭과 알림",
-        "정기 정찰과 담당자 알림 연동을 위한 워크플로우",
-        "탐지 결과를 MITRE 프레임워크로 정렬하여 위험도 판단 지원"
+        "Concurrency design for large-scale parallel scanning",
+        "Auto matching + notification for immediate response after vulnerability detection",
+        "Workflow integrating periodic recon with operator notifications",
+        "Aligns detection results to MITRE ATT&CK for risk assessment"
       ],
       "technologies": [
         "Go",
