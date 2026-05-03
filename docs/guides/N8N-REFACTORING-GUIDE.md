@@ -10,7 +10,7 @@
 
 ### Problem Statement (Before Refactoring)
 
-### Manual configuration process
+**Manual configuration process**
 
 1. User had to manually find and replace 10+ hardcoded values in JSON files
 2. Risk of typos and missed replacements
@@ -28,14 +28,14 @@
 
 ### Solution (After Refactoring)
 
-### Centralized configuration
+**Centralized configuration**
 
 1. Single `config.json` file with all customizable values
 2. Automated script applies configuration to workflow templates
 3. JSON schema validation ensures correct format
 4. Easy to maintain and version control
 
-### New workflow
+**New workflow**
 
 ```bash
 # 1. Copy example config
@@ -108,7 +108,7 @@ scripts/
 }
 ```
 
-### Validation rules
+**Validation rules**
 
 - ✅ Slack channel ID format: `C[A-Z0-9]{10}` (e.g., C07ABC12345)
 - ✅ Google Sheets ID: 44 characters (e.g., 1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms)
@@ -160,7 +160,7 @@ node scripts/setup/configure-n8n-workflows.js --help
 }
 ```
 
-### Config
+**Config**
 
 ```json
 {
@@ -208,7 +208,7 @@ vim n8n-workflows/config.json
 
 ### Step 2: Fill Required Values
 
-### Minimum required configuration
+**Minimum required configuration**
 
 ```json
 {
@@ -222,9 +222,8 @@ vim n8n-workflows/config.json
 }
 ```
 
-### How to get values
-
-### Slack Channel IDs
+**How to get values**
+**Slack Channel IDs**
 
 ```bash
 # In Slack:
@@ -233,7 +232,7 @@ vim n8n-workflows/config.json
 # Format: C07XXXXXXXX (11 characters, starts with C)
 ```
 
-### Google Sheets Spreadsheet ID
+**Google Sheets Spreadsheet ID**
 
 ```bash
 # From spreadsheet URL:
@@ -252,7 +251,7 @@ node scripts/setup/configure-n8n-workflows.js --validate-only
 node scripts/setup/configure-n8n-workflows.js
 ```
 
-### Expected output
+**Expected output**
 
 ```text
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -306,7 +305,7 @@ node scripts/setup/configure-n8n-workflows.js
 node scripts/setup/configure-n8n-workflows.js --validate-only
 ```
 
-### Validation checks
+**Validation checks**
 
 - ✅ Required keys present (`slack`, `google_sheets`, `monitoring`)
 - ✅ Slack channel IDs match pattern `C[A-Z0-9]{10}`
@@ -347,14 +346,14 @@ config.json
 configured/
 ```
 
-### Safe to commit
+**Safe to commit**
 
 - ✅ `config.template.json` (schema definition)
 - ✅ `config.example.json` (example with placeholders)
 - ✅ `01-site-health-monitor.json` (template with placeholders)
 - ✅ `02-github-deployment-webhook.json` (template with placeholders)
 
-### Never commit
+**Never commit**
 
 - ❌ `config.json` (contains actual channel IDs and spreadsheet ID)
 - ❌ `configured/*.json` (contains actual values)
@@ -379,7 +378,7 @@ configured/
 
 ### Multiple Environments
 
-### Development
+**Development**
 
 ```bash
 # Create dev config
@@ -390,7 +389,7 @@ vim config.dev.json  # Use dev Slack channels, dev spreadsheet
 node scripts/setup/configure-n8n-workflows.js --config config.dev.json
 ```
 
-### Production
+**Production**
 
 ```bash
 # Create prod config
@@ -486,7 +485,7 @@ node scripts/setup/configure-n8n-workflows.js --config config.prod.json
 
 **Error**: `Invalid Slack infra_alerts_channel_id`
 
-### Solution
+**Solution**
 
 ```bash
 # Verify channel ID format
@@ -559,7 +558,7 @@ nvm use 20
 
 If you already configured workflows manually:
 
-### Step 1: Extract current values
+**Step 1: Extract current values**
 
 ```bash
 # Get Slack channel ID
@@ -569,14 +568,14 @@ grep -o 'C07[A-Z0-9]\{10\}' n8n-workflows/01-site-health-monitor.json
 grep -o 'documentId.*value' n8n-workflows/01-site-health-monitor.json
 ```
 
-### Step 2: Create config.json with extracted values
+**Step 2: Create config.json with extracted values**
 
 ```bash
 cp config.example.json config.json
 # Edit config.json with extracted values
 ```
 
-### Step 3: Regenerate workflows
+**Step 3: Regenerate workflows**
 
 ```bash
 # Backup current workflows

@@ -10,12 +10,12 @@
 - Construction (2024.03-2025.02, 11 months)
 - Operations (2025.03-Present, 8 months)
 
-### Roles
+**Roles**
 
 - Construction: Security Infrastructure Lead & Automation Engineer
 - Operations: Information Security Operations Engineer
 
-### Scale
+**Scale**
 
 - Endpoints: 300+ workstations, 50+ mobile devices
 - Servers: 150+ (physical + virtual)
@@ -35,7 +35,7 @@ incidents in the owned area during the period.
 
 ### Quantified Business Impact
 
-### Security Posture
+**Security Posture**
 
 - Security Incidents: **0 breaches** (19 months continuous)
 - Regulatory Audits: **0 findings** (3 consecutive FSC audits)
@@ -43,7 +43,7 @@ incidents in the owned area during the period.
 - False Positive Reduction: **50%** (200/day → 100/day)
 - Incident Response Time: **40% faster** (45min → 27min average)
 
-### Operational Efficiency
+**Operational Efficiency**
 
 - Firewall Policy Deployment: **50% time reduction** (8h → 4h)
 - Endpoint Performance: **30% CPU improvement** (60% → 42%)
@@ -51,14 +51,14 @@ incidents in the owned area during the period.
 - MTTR (Mean Time To Repair): **40% reduction** (60min → 36min average)
 - Automation Coverage: **80% of repetitive tasks** eliminated
 
-### Cost Optimization
+**Cost Optimization**
 
 - Manual Labor Reduction: **400+ hours/year** saved through automation
 - Incident-Related Costs: **35% reduction** through proactive monitoring
 - Compliance Costs: **30% reduction** through automation and documentation
 - TCO (Total Cost of Ownership): **~20% below** industry benchmark
 
-### Compliance & Governance
+**Compliance & Governance**
 
 - FSC Pre-License Audit: **Zero findings** (2024.12)
 - FSC Quarterly Audits: **Zero findings** (2025.05, 2025.09)
@@ -116,7 +116,7 @@ incidents in the owned area during the period.
 
 ### Network Segmentation Strategy
 
-### Physical Separation (Air-Gap)
+**Physical Separation (Air-Gap)**
 
 1. **Trading Network** (Critical Infrastructure)
    - Completely isolated from internet
@@ -424,7 +424,7 @@ ANY           Trading-Core    ANY         ANY       DENY (default)
 
 ### 1. Firewall Policy Automation Framework
 
-### Business Problem
+**Business Problem**
 
 - Manual policy deployment: 8 hours for 100 policies
 - Human error rate: ~5% (typos, wrong IP, incorrect port)
@@ -433,7 +433,7 @@ ANY           Trading-Core    ANY         ANY       DENY (default)
 
 **Technical Solution**: Python-based automation framework
 
-### Architecture
+**Architecture**
 
 ```python
 ┌─────────────────┐
@@ -477,7 +477,7 @@ ANY           Trading-Core    ANY         ANY       DENY (default)
 └─────────────────────────────────┘
 ```
 
-### Key Features
+**Key Features**
 
 ```python
 # Example: Policy Validation
@@ -532,7 +532,7 @@ def deploy_policies(policies):
         raise
 ```
 
-### Results
+**Results**
 
 - **Deployment Time**: 8 hours → 4 hours (50% reduction)
 - **Error Rate**: 5% → 0% in measured deployments (consistent validation
@@ -576,7 +576,7 @@ minutes per request (manual configuration)
         notes: 'NAC exception deployed: {{ result.node_id }}'
 ```
 
-### Workflow
+**Workflow**
 
 1. User submits ServiceNow request
 2. Approval workflow (manager + security team)
@@ -619,7 +619,7 @@ Trigger: DLP violation (confidential data exfiltration attempt)
   └─> Add user to high-risk monitoring list
 ```
 
-### Automated Compliance Reporting
+**Automated Compliance Reporting**
 
 - Daily: Security event summary dashboard (for SOC team)
 - Weekly: Vulnerability scan results (for IT team)
@@ -666,7 +666,7 @@ Trigger: DLP violation (confidential data exfiltration attempt)
 
 #### Compliance Automation
 
-### Automated Evidence Collection
+**Automated Evidence Collection**
 
 ```bash
 # Daily compliance snapshot script
@@ -691,7 +691,7 @@ generate_compliance_report
 upload_to_compliance_vault
 ```
 
-### Continuous Compliance Monitoring
+**Continuous Compliance Monitoring**
 
 - Real-time policy drift detection (Terraform state comparison)
 - Automated access reviews (quarterly user recertification)
@@ -755,7 +755,7 @@ Raw Events (15M/month)
 
 ### Vulnerability Management
 
-### Scan Frequency
+**Scan Frequency**
 
 - Critical Systems (trading, database): Weekly
 - Production Servers: Bi-weekly
@@ -779,7 +779,7 @@ Raw Events (15M/month)
 - **Pending**: 38 (within SLA)
 - **Overdue**: 0
 
-### Top Vulnerability Categories
+**Top Vulnerability Categories**
 
 1. Outdated Software (35%): Windows updates, Java versions
 2. Misconfigurations (25%): Default passwords, open ports
@@ -805,7 +805,7 @@ Raw Events (15M/month)
 - **MTTR** (Mean Time To Repair): 36 minutes (improved from 60 min)
 - **MTBF** (Mean Time Between Failures): 720 hours (30 days)
 
-### Incident Post-Mortem Process
+**Incident Post-Mortem Process**
 
 1. Incident occurs → Immediate response
 2. Incident resolved → Root cause analysis (within 48 hours)
@@ -851,7 +851,7 @@ Raw Events (15M/month)
 
 ### Incident Cost Avoidance
 
-### Prevented Security Incidents
+**Prevented Security Incidents**
 
 - Data Breaches: 0 (industry avg: 1-2/year for similar orgs)
 - Ransomware: 0 (average cost: $500K per incident)
@@ -868,7 +868,7 @@ Raw Events (15M/month)
 
 ### Operational Efficiency Gains
 
-### Reduced MTTR Impact
+**Reduced MTTR Impact**
 
 - Previous MTTR: 60 minutes
 - Current MTTR: 36 minutes
@@ -876,7 +876,7 @@ Raw Events (15M/month)
 - Incidents/Year: 150
 - **Annual Savings**: 150 × (60-36)/60 × $10K = **$60K**
 
-### False Positive Reduction Impact
+**False Positive Reduction Impact**
 
 - Previous False Positive Rate: 60%
 - Current False Positive Rate: 33%
@@ -888,7 +888,7 @@ Raw Events (15M/month)
 
 ### Total Business Value (2025)
 
-### Cost Savings
+**Cost Savings**
 
 - Infrastructure TCO Savings: $450K (one-time)
 - Automation Savings: $46K (recurring)
@@ -897,14 +897,14 @@ Raw Events (15M/month)
 - False Positive Reduction: $32K (recurring)
 - **Total Annual Savings**: $188K (recurring)
 
-### Cost Avoidance
+**Cost Avoidance**
 
 - Security Incidents Prevented: $600K-$1.5M (estimated)
 - Regulatory Fines Avoided: $0 (met compliance requirements during audited
   period)
 - **Total Annual Cost Avoidance**: $600K-$1.5M
 
-### ROI Calculation
+**ROI Calculation**
 
 - Total Investment (Year 1): $1.85M
 - Total Annual Value: $788K-$1.688M (savings + avoidance)
@@ -939,7 +939,7 @@ Raw Events (15M/month)
 
 ### Infrastructure Components
 
-### Compute
+**Compute**
 
 - Hypervisor: VMware vSphere 7.0 (10 hosts, 500 VMs)
 - Containers: Docker Swarm (for internal tools)
@@ -947,20 +947,20 @@ Raw Events (15M/month)
   - Servers: Red Hat Enterprise Linux 8 (70%), Windows Server 2022 (30%)
   - Endpoints: Windows 11 Enterprise (90%), macOS (10%)
 
-### Storage
+**Storage**
 
 - Primary: Dell EMC Unity 600F (All-Flash, 100TB usable)
 - Backup: Dell EMC Data Domain (Deduplication, 500TB usable)
 - Archive: Tape Library (LTO-9, 2PB capacity)
 
-### Network
+**Network**
 
 - Core Switches: Cisco Catalyst 9500 (2x, StackWise Virtual)
 - Access Switches: Cisco Catalyst 9300 (10x)
 - Load Balancers: F5 BIG-IP (2x HA)
 - WAN: Dual ISP (1Gbps + 1Gbps, active-active)
 
-### Monitoring & Management
+**Monitoring & Management**
 
 - Infrastructure Monitoring: Zabbix 6.0
 - Log Management: Splunk + ELK Stack (for non-security logs)
@@ -1022,14 +1022,14 @@ Security Analyst (L1)
 
 #### Playbook 1: Malware/Ransomware Outbreak
 
-### Detection Triggers
+**Detection Triggers**
 
 - EDR alert: Malicious file execution
 - Multiple encryption events detected
 - Suspicious PowerShell/command-line activity
 - Lateral movement indicators
 
-### Response Procedure
+**Response Procedure**
 
 ### Phase 1: Immediate Containment (< 5 minutes)
 
@@ -1047,7 +1047,7 @@ Disable-ADAccount -Identity "compromised_user"
 curl -X POST https://api.crowdstrike.com/contain -d '{"device_id":"xyz","action":"contain"}'
 ```
 
-### Phase 2: Analysis (< 30 minutes)
+**Phase 2: Analysis (< 30 minutes)**
 
 ```bash
 # Step 1: Collect forensic evidence
@@ -1073,7 +1073,7 @@ curl https://api.recordedfuture.com/v2/search \
   -d '{"entity":"hash","value":"abc123..."}'
 ```
 
-### Phase 3: Eradication (< 2 hours)
+**Phase 3: Eradication (< 2 hours)**
 
 ```bash
 # Step 1: Remove malware from all endpoints
@@ -1097,7 +1097,7 @@ ansible-playbook update-dns-blocklist.yml -e "domains=malicious-domains.txt"
 crowdstrike-cli update-ioc-policy --hashes malicious-hashes.txt
 ```
 
-### Phase 4: Recovery (< 4 hours)
+**Phase 4: Recovery (< 4 hours)**
 
 ```bash
 # Step 1: Restore from backup (if encryption occurred)
@@ -1116,7 +1116,7 @@ ansible-playbook unquarantine-endpoint.yml -e "mac_address=XX:XX:XX:XX:XX:XX"
 python3 firewall-unblock-host.py --ip 10.0.20.45
 ```
 
-### Phase 5: Post-Incident (< 24 hours)
+**Phase 5: Post-Incident (< 24 hours)**
 
 - Root cause analysis (5 Whys)
 - Timeline documentation
@@ -1125,7 +1125,7 @@ python3 firewall-unblock-host.py --ip 10.0.20.45
 - Knowledge base update
 - FSC notification (if regulatory threshold met)
 
-### Success Criteria
+**Success Criteria**
 
 - Malware eradicated from all systems
 - No re-infection within 48 hours
@@ -1163,7 +1163,7 @@ cyberark-cli revoke-credentials --account "db_admin"
 ansible-playbook quarantine-endpoint.yml -e "hostname=fileserver-01"
 ```
 
-### Phase 2: Scope Assessment (< 30 minutes)
+**Phase 2: Scope Assessment (< 30 minutes)**
 
 ```bash
 # Step 1: Identify what data was accessed
@@ -1187,7 +1187,7 @@ splunk search 'index=proxy user=compromised_user url=*upload* OR url=*dropbox* O
 splunk search 'index=dlp_endpoint device_type=USB user=compromised_user'
 ```
 
-### Phase 3: Evidence Preservation (< 1 hour)
+**Phase 3: Evidence Preservation (< 1 hour)**
 
 ```bash
 # Step 1: Preserve logs (immutable copy)
@@ -1214,7 +1214,7 @@ Hash (SHA256): $(sha256sum /forensics/breach-logs.csv | awk '{print $1}')
 EOF
 ```
 
-### Phase 4: Notification & Reporting
+**Phase 4: Notification & Reporting**
 
 ```bash
 # Regulatory notification decision tree
@@ -1234,7 +1234,7 @@ python3 send-breach-notification.py \
   --summary "Unauthorized access to customer database detected"
 ```
 
-### Phase 5: Eradication & Recovery
+**Phase 5: Eradication & Recovery**
 
 - Revoke all credentials for compromised account
 - Force password reset for all potentially exposed accounts
@@ -1242,14 +1242,14 @@ python3 send-breach-notification.py \
 - Patch vulnerability exploited (if applicable)
 - Restore affected systems from clean backup
 
-### Phase 6: Post-Incident
+**Phase 6: Post-Incident**
 
 - Customer notification (if PII compromised, per PIPA law)
 - Credit monitoring offer (if financial data compromised)
 - Update incident response plan based on lessons learned
 - Security control enhancements (prevent similar incident)
 
-### FSC Reporting Timeline
+**FSC Reporting Timeline**
 
 - **Initial Report**: Within 72 hours of discovery
 - **Progress Update**: Every 7 days until resolution
@@ -1286,7 +1286,7 @@ fortigate-cli execute rate-limit --src-country CN,RU,KP --rate 100pps --duration
 python3 firewall-geoip-block.py --countries "CN,RU,KP,IR" --duration 24h
 ```
 
-### Phase 2: Attack Analysis (< 15 minutes)
+**Phase 2: Attack Analysis (< 15 minutes)**
 
 ```bash
 # Identify attack type
@@ -1303,7 +1303,7 @@ netstat -an | grep SYN_RECV | wc -l
 splunk search 'index=firewall action=denied | stats count by src_ip | sort -count | head 100'
 ```
 
-### Phase 3: Targeted Blocking (< 30 minutes)
+**Phase 3: Targeted Blocking (< 30 minutes)**
 
 ```bash
 # Block attack sources
@@ -1321,21 +1321,21 @@ python3 waf-block-user-agent.py --pattern "Mozilla/4.0 (compatible; MSIE 6.0; Wi
 python3 waf-block-uri.py --uri "/api/high-cost-endpoint" --rate-limit 10req/min
 ```
 
-### Phase 4: Service Recovery
+**Phase 4: Service Recovery**
 
 - Monitor traffic normalization
 - Gradual GeoIP unblocking (whitelisted countries first)
 - Disable scrubbing center when attack subsides
 - Performance verification (response time, error rate)
 
-### Phase 5: Post-Incident
+**Phase 5: Post-Incident**
 
 - Attack attribution (if possible)
 - Capacity planning (if attack exceeded capacity)
 - DDoS mitigation service contract review
 - Incident timeline documentation
 
-### Escalation Criteria
+**Escalation Criteria**
 
 - Attack exceeds scrubbing center capacity (>20Gbps)
 - Attack duration >4 hours
@@ -1379,7 +1379,7 @@ tail -f /var/log/file-access.log | grep suspicious_user
 tcpdump -i eth0 host suspicious_user_ip -w /forensics/insider-traffic.pcap &
 ```
 
-### Phase 2: Evidence Collection (< 4 hours)
+**Phase 2: Evidence Collection (< 4 hours)**
 
 ```bash
 # Historical activity analysis
@@ -1395,7 +1395,7 @@ cyberark-cli audit-report --user suspicious_user --days 30 -output /forensics/in
 proofpoint-cli search --sender suspicious_user@nextrade.com --days 30 --attachments-only
 ```
 
-### Phase 3: Coordinated Response (requires HR + Legal approval)
+**Phase 3: Coordinated Response (requires HR + Legal approval)**
 
 ```bash
 # Simultaneous actions (prevent evidence destruction)
@@ -1415,7 +1415,7 @@ mobileiron-cli wipe-device --user suspicious_user
 ## Confiscate laptop and phone (HR action)
 ```
 
-### Phase 4: Forensic Investigation
+**Phase 4: Forensic Investigation**
 
 - Timeline reconstruction (first suspicious activity → termination)
 - Data accessed inventory
@@ -1423,14 +1423,14 @@ mobileiron-cli wipe-device --user suspicious_user
 - Motive assessment (financial, revenge, competitor recruitment)
 - Legal consultation (criminal charges vs. civil action)
 
-### Phase 5: Remediation
+**Phase 5: Remediation**
 
 - Rotate all credentials accessed by insider
 - Review access for other employees in same department
 - Enhance monitoring for similar patterns
 - HR policy review (background checks, exit interviews)
 
-### Legal Considerations
+**Legal Considerations**
 
 - Preserve evidence chain of custody
 - Privacy laws compliance (employee monitoring notice)
@@ -1543,7 +1543,7 @@ CONTACT INFORMATION:
 
 ### Incident Response Metrics & Continuous Improvement
 
-### Key Performance Indicators (KPIs)
+**Key Performance Indicators (KPIs)**
 
 | Metric                      | Target                    | 2025 Actual                      |
 | --------------------------- | ------------------------- | -------------------------------- |
@@ -1578,7 +1578,7 @@ CONTACT INFORMATION:
    - Trend analysis
    - Strategic improvements (tools, processes, staffing)
 
-### Post-Incident Review Template
+**Post-Incident Review Template**
 
 ```markdown
 # Incident Post-Mortem: [Incident ID]
@@ -1885,7 +1885,7 @@ diversity
 [linkedin.com/in/jaecheol-lee](https://linkedin.com/in/jaecheol-lee)
 **GitHub**: [github.com/jclee941](https://github.com/jclee941)
 
-### References Available Upon Request
+**References Available Upon Request**
 
 - CTO, Nextrade Securities Exchange
 - Security Team Manager, Nextrade

@@ -71,9 +71,8 @@
 
 ### 1. UnifiedApplySystem (693 lines)
 
-### Multi-platform unified search and application system
-
-### Features
+**Multi-platform unified search and application system**
+**Features**
 
 - Unified job search across 4 platforms
 - Automated application submission
@@ -81,7 +80,7 @@
 - Cover letter generation
 - Application status tracking
 
-### Supported Platforms
+**Supported Platforms**
 
 - Wanted (원티드)
 - JobKorea (잡코리아)
@@ -90,9 +89,8 @@
 
 ### 2. AI Matcher (383 lines)
 
-### OpenCode 3.5 Sonnet-based semantic matching
-
-### Capabilities
+**OpenCode 3.5 Sonnet-based semantic matching**
+**Capabilities**
 
 - Semantic job matching (85-95% accuracy vs 60-70% basic)
 - Skill extraction and analysis
@@ -103,7 +101,7 @@
 - Batch processing
 - Fallback mode (works without API key)
 
-### Performance
+**Performance**
 
 - Match accuracy: 85-95%
 - Response time: <2s per analysis
@@ -111,7 +109,7 @@
 
 ### 3. ApplicationManager
 
-### Application tracking and management
+**Application tracking and management**
 
 ### Features (2)
 
@@ -121,7 +119,7 @@
 - Search and filtering
 - Export to CSV/JSON
 
-### Data Structure
+**Data Structure**
 
 ```javascript
 {
@@ -140,7 +138,7 @@
 
 **Real-time dashboard runtime owned by `apps/job-dashboard/` and served at `resume.jclee.me/job/*`**
 
-### Technical Stack
+**Technical Stack**
 
 - Cloudflare Worker runtime (`apps/job-dashboard/src/index.js`)
 - Chart.js for visualizations
@@ -155,7 +153,7 @@
 - Automation control panel
 - Recent applications view
 
-### Canonical Location
+**Canonical Location**
 
 ```text
 apps/job-dashboard/
@@ -220,7 +218,7 @@ GET  /api/health  - Health check
 
 ### 1. npm run ops:daily-run
 
-### Daily automated job search and application
+**Daily automated job search and application**
 
 ### Features (4)
 
@@ -230,7 +228,7 @@ GET  /api/health  - Health check
 - Slack notifications
 - Dry-run mode (default)
 
-### Usage
+**Usage**
 
 ```bash
 # Dry-run (test mode)
@@ -243,7 +241,7 @@ npm run ops:daily-run -- --apply --max=10
 npm run ops:daily-run -- --keywords="DevOps,Security" --max=5
 ```
 
-### Event Trigger Examples
+**Event Trigger Examples**
 
 ```bash
 # Dashboard/API trigger
@@ -255,7 +253,7 @@ node src/cli.js pipeline run <resume_id>
 
 ### 2. npm run ops:monitor
 
-### System monitoring and health check
+**System monitoring and health check**
 
 ### Features (5)
 
@@ -271,7 +269,7 @@ node src/cli.js pipeline run <resume_id>
 npm run ops:monitor
 ```
 
-### Event Trigger Example
+**Event Trigger Example**
 
 ```bash
 curl -X POST https://resume.jclee.me/job/api/workflows/health-check/run
@@ -279,7 +277,7 @@ curl -X POST https://resume.jclee.me/job/api/workflows/health-check/run
 
 ### 3. npm run ops:maintenance
 
-### System maintenance and cleanup
+**System maintenance and cleanup**
 
 ### Features (6)
 
@@ -309,9 +307,8 @@ curl -X POST https://resume.jclee.me/job/api/workflows/cleanup/run
 
 #### 1. job-application-automation.json
 
-### Automated job search → AI matching → Application → Notification
-
-### Flow
+**Automated job search → AI matching → Application → Notification**
+**Flow**
 
 1. Scheduled trigger (daily 9 AM)
 2. Search jobs via API
@@ -321,7 +318,7 @@ curl -X POST https://resume.jclee.me/job/api/workflows/cleanup/run
 
 #### 2. daily-job-report.json
 
-### Daily application report generation and delivery
+**Daily application report generation and delivery**
 
 ### Flow (2)
 
@@ -332,7 +329,7 @@ curl -X POST https://resume.jclee.me/job/api/workflows/cleanup/run
 
 #### 3. resume-sync-pipeline.json
 
-### Resume synchronization across platforms
+**Resume synchronization across platforms**
 
 ### Flow (3)
 

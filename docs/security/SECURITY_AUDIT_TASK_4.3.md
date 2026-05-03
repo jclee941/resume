@@ -119,8 +119,7 @@ return await submitter();
 - `retry.js` validates error types with `classifyApplyError`
 - Platform names are whitelisted in `submitters` object
 
-### ⚠️ LOW-001: Unnecessary Escape Characters
-
+**⚠️ LOW-001: Unnecessary Escape Characters**
 **File:** `jobkorea-profile-sync.js` (lines 528, 537, 541, 545, 548, 556, 560,
 564, 577, 581, 585, 673, 679, 691)
 
@@ -205,8 +204,7 @@ const DEFAULT_CONFIG = {
 - `jobkorea-profile-sync.js`: Has `humanDelay()`, `randomViewportScroll()`
 - Session isolation: Each platform has separate session file
 
-### ⚠️ INFO-001: Missing `tls-fingerprint.js` File
-
+**⚠️ INFO-001: Missing `tls-fingerprint.js` File**
 The `stealth/index.js` exports `TLSFingerprintManager` from
 `tls-fingerprint.js`, but this file was not found. If this is intentional (not
 yet implemented), consider removing the export or creating a stub.
@@ -379,8 +377,7 @@ fixed. The codebase follows good security practices with:
 - ✅ Structured error handling
 - ✅ 0 dependency vulnerabilities
 
-### Overall Security Grade: A-
-
+**Overall Security Grade: A-**
 The system is secure for production use with the applied fix.
 
 ---

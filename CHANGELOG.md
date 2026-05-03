@@ -14,7 +14,7 @@ Versioning](https://semver.org/).
 
 ## [v1.23.1] - 2026-05-02
 
-### Changes (2)
+### Changes
 
 - chore: deploy latest automation workflows (b9fdc61)
 
@@ -41,19 +41,19 @@ Versioning](https://semver.org/).
 
 ## [v1.22.3] - 2026-05-01
 
-### Changes (4)
+### Changes
 
 - chore: add standard automation workflows (#61) (af7a55b)
 
 ## [v1.22.2] - 2026-05-01
 
-### Changes (5)
+### Changes
 
 - chore: add standard automation workflows (#59) (f02b2a3)
 
 ## [v1.22.1] - 2026-04-30
 
-### Changes (6)
+### Changes
 
 - chore: remove duplicate workflow (1971f45)
 - chore: remove duplicate workflow (7d45e2e)
@@ -64,25 +64,25 @@ Versioning](https://semver.org/).
 
 ## [v1.22.0] - 2026-04-30
 
-### Changes (7)
+### Changes
 
 - feat: standardize PR checks (fec21eb)
 
 ## [v1.21.0] - 2026-04-30
 
-### Changes (8)
+### Changes
 
 - feat: add automated workflows (354a2b6)
 
 ## [v1.20.3] - 2026-04-30
 
-### Changes (9)
+### Changes
 
 - chore: add PR review bot workflow (#53) (3a3d153)
 
 ## [v1.20.2] - 2026-04-30
 
-### Changes (10)
+### Changes
 
 - chore: add PR review bot workflow (#51) (9df5ac8)
 - chore: sync pending docs, CI config, and app metadata (4e3357a)
@@ -96,7 +96,7 @@ Versioning](https://semver.org/).
 
 ## [v1.20.0] - 2026-04-30
 
-### Changes (12)
+### Changes
 
 - feat(data): remove AWS experience from master SSOT (4f84345)
 
@@ -116,7 +116,7 @@ Versioning](https://semver.org/).
 
 ## [v1.19.0] - 2026-04-30
 
-### Changes (15)
+### Changes
 
 - feat(ci): add delete-standalone-job-worker workflow (ADR 0008 #10) (79c932b)
 
@@ -132,13 +132,13 @@ Versioning](https://semver.org/).
 
 ## [v1.17.1] - 2026-04-30
 
-### Changes (17)
+### Changes
 
 - fix(portfolio): disable queue bindings until queues are provisioned (395c26f)
 
 ## [v1.17.0] - 2026-04-30
 
-### Changes (18)
+### Changes
 
 - chore(sync): remove stale 펀엔씨(FunNC) entries from web data generator (e1f207c)
 - feat(portfolio): consolidate job-dashboard into single resume worker (ADR
@@ -148,7 +148,7 @@ Versioning](https://semver.org/).
 
 ## [v1.16.11] - 2026-04-30
 
-### Changes (19)
+### Changes
 
 - fix(resume): EN/JA careers 배열에서 펀엔씨(Fun&C) 항목 제거 (29ae262)
 - Merge branch 'master' of <https://github.com/jclee941/resume> (04697f4)
@@ -170,7 +170,7 @@ Versioning](https://semver.org/).
 
 ## [v1.16.8] - 2026-04-29
 
-### Changes (22)
+### Changes
 
 - chore(ci): update welcome.yml caller (jclee941/.github) (38a553a)
 - chore(ci): update issue-lifecycle.yml caller (jclee941/.github) (ce4207a)
@@ -199,7 +199,7 @@ Versioning](https://semver.org/).
 
 ## [v1.16.5] - 2026-04-29
 
-### Changes (25)
+### Changes
 
 - fix(resume): Oracle round 3 final blockers (9efe632)
 
@@ -226,7 +226,7 @@ Versioning](https://semver.org/).
 
 ## [v1.16.2] - 2026-04-29
 
-### Changes (28)
+### Changes
 
 - refactor(portfolio): HTML hero/meta에서 모든 수치 제거 + how/why 컨텍스트로 교체 (815f5a5)
 - chore(ci): update pr-review-security.yml caller (jclee941/.github) (1934916)
@@ -261,7 +261,7 @@ Versioning](https://semver.org/).
 
 ## [v1.14.22] - 2026-04-29
 
-### Changes (33)
+### Changes
 
 - chore(deps)(deps-dev): bump @typescript-eslint/eslint-plugin (#12) (2ae36e8)
 - chore(deps)(deps): bump nodemailer from 8.0.5 to 8.0.7 (#10) (1d20016)
@@ -275,7 +275,7 @@ Versioning](https://semver.org/).
 
 ## [v1.14.20] - 2026-04-29
 
-### Changes (35)
+### Changes
 
 - chore(deps)(deps-dev): bump @typescript-eslint/parser (#9) (522d8e3)
 - chore(deps)(deps-dev): bump wrangler (#8) (f6b99c6)
@@ -308,7 +308,7 @@ Versioning](https://semver.org/).
 
 ## [v1.14.16] - 2026-04-29
 
-### Changes (39)
+### Changes
 
 - fix(test): update metrics test for P2-18 NaN defaults (3ddcfb0)
 - fix(audit): clear remaining P2/P3 backlog per Oracle round-3 verdict (cb37858)
@@ -513,7 +513,7 @@ Versioning](https://semver.org/).
 
 ## [v1.12.0] - 2026-04-28
 
-### Changes (70)
+### Changes
 
 - test(jobkorea): fix mock context to support addInitScript (204d458)
 - feat(wave2): Wanted headline 50→150ch + modern stack additions (bfe086b)
@@ -661,14 +661,14 @@ Versioning](https://semver.org/).
 
 ## [v1.7.0] - 2026-04-21
 
-### Changes (85)
+### Changes
 
 - feat(wanted): append awards and achievements to composed about (a0f0d9a)
 - feat(wanted): compose personalProjects into about section (fc10647)
 
 ## [v1.6.0] - 2026-04-20
 
-### Changes (86)
+### Changes
 
 - fix(jobkorea): fail loud on portfolio URL and CAPTCHA errors (ed77d5c)
 - fix(jobkorea): fail loud on portfolio URL and CAPTCHA errors (355889e)
@@ -748,7 +748,7 @@ Versioning](https://semver.org/).
 
 ## [v1.5.11] - 2026-04-19
 
-### Changes (96)
+### Changes
 
 - refactor(apply): split retry-service into N modules (0c810f4)
 - refactor(profile-sync): split jobkorea handler into N modules (82806de)
@@ -761,7 +761,7 @@ Versioning](https://semver.org/).
 
 ## [v1.5.9] - 2026-04-19
 
-### Changes (98)
+### Changes
 
 - refactor(crawlers): split base-crawler into N modules (7203e1f)
 - refactor(dashboard): split views scripts into N modules (5a5490f)
@@ -774,7 +774,7 @@ Versioning](https://semver.org/).
 
 ## [v1.5.7] - 2026-04-19
 
-### Changes (100)
+### Changes
 
 - fix(session-broker): remove storage barrel import cycle (58f271d)
 - refactor(notifications): split telegram adapter into 5 modules (01a5e62)
@@ -788,7 +788,7 @@ Versioning](https://semver.org/).
 
 ## [v1.5.5] - 2026-04-19
 
-### Changes (102)
+### Changes
 
 - refactor(dashboard): split notifications service into N modules (d338bb9)
 - refactor(dashboard): split application workflow into N modules (9a4bb1a)
@@ -879,7 +879,7 @@ Versioning](https://semver.org/).
 
 ## [v1.1.0] - 2026-04-15
 
-### Changes (114)
+### Changes
 
 - chore(data): sync SSoT resume data and rebuild portfolio worker (a4fc63d)
 - fix(profile-sync): truncate Wanted fields to API limits and fix JobKorea

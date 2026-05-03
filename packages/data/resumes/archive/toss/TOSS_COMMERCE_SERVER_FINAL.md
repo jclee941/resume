@@ -37,7 +37,7 @@
 
 **정보보안 운영 엔지니어** | 2025.03 ~ 현재 (7개월)
 
-### 넥스트레이드 운영SM (정보보안팀)
+**넥스트레이드 운영SM (정보보안팀)**
 
 #### 담당 업무
 
@@ -65,7 +65,7 @@
 
 **프리랜서 인프라 엔지니어** | 2024.03 ~ 2025.02 (11개월)
 
-### 넥스트레이드 구축 프로젝트
+**넥스트레이드 구축 프로젝트**
 
 #### 담당 업무
 
@@ -91,7 +91,7 @@
 
 **인프라·정보보호팀 인프라 엔지니어** | 2022.08 ~ 2024.03 (1년 7개월)
 
-### AI 기반 주식투자 서비스
+**AI 기반 주식투자 서비스**
 
 #### 담당 업무
 
@@ -118,7 +118,7 @@
 
 **인프라 엔지니어** | 2019.12 ~ 2021.08 (1년 8개월)
 
-### 대규모 재택근무 환경 구축
+**대규모 재택근무 환경 구축**
 
 #### 담당 업무
 
@@ -144,7 +144,7 @@
 
 **서버 엔지니어** | 2017.02 ~ 2018.10 (1년 8개월)
 
-### 한국항공우주산업(KAI) 서버 운영
+**한국항공우주산업(KAI) 서버 운영**
 
 #### 담당 업무
 
@@ -172,8 +172,7 @@
 **Production** | 2024 ~ 현재
 **URL** blacklist.jclee.me | **GitHub** github.com/jclee941/blacklist
 
-### REGTECH 포털 자동 수집 및 위협 인텔리전스 플랫폼
-
+**REGTECH 포털 자동 수집 및 위협 인텔리전스 플랫폼**
 **Tech Stack** Python Flask, PostgreSQL 15, Redis 7, Docker, GitLab CI/CD,
 Prometheus, Grafana
 
@@ -196,8 +195,7 @@ Prometheus, Grafana
 **Production** | 2024 ~ 현재
 **URL** splunk.jclee.me | **GitHub** github.com/jclee941/splunk-fortinet
 
-### 초당 10만 이벤트 처리 가능한 Splunk-FortiManager 통합 플랫폼
-
+**초당 10만 이벤트 처리 가능한 Splunk-FortiManager 통합 플랫폼**
 **Tech Stack** Python Flask, Splunk API, FortiManager JSON-RPC, Cloudflare
 Workers, Redis 7, Docker
 
@@ -219,8 +217,7 @@ Workers, Redis 7, Docker
 **Production** | 2024 ~ 현재
 **URL** fortinet.jclee.me | **GitHub** github.com/jclee941/fortinet
 
-### FortiManager 정책 관리 자동화 플랫폼
-
+**FortiManager 정책 관리 자동화 플랫폼**
 **Tech Stack** Python Flask, FortiManager JSON-RPC, Docker, GitLab CI/CD
 
 #### 주요 성과
@@ -241,8 +238,7 @@ Workers, Redis 7, Docker
 **Production** | 2024 ~ 현재
 **URL** grafana.jclee.me | **GitHub** github.com/jclee941/grafana
 
-### Prometheus + Grafana + Loki + Tempo 통합 모니터링 플랫폼
-
+**Prometheus + Grafana + Loki + Tempo 통합 모니터링 플랫폼**
 **Tech Stack** Prometheus, Grafana, Loki, Tempo, Promtail, Traefik, Docker
 Compose
 
@@ -264,8 +260,7 @@ Compose
 **Production** | 2024 ~ 현재
 **URL** safework.jclee.me | **GitHub** github.com/jclee941/safework
 
-### 산업보건 관리 시스템 (13개 관리 패널)
-
+**산업보건 관리 시스템 (13개 관리 패널)**
 **Tech Stack** Flask 3.0, PostgreSQL 15, Redis 7, Cloudflare Workers, Bootstrap
 
 #### 주요 성과

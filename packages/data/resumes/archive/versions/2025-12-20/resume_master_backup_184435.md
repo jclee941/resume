@@ -56,7 +56,7 @@
 
 2025.03 ~ 현재 (9개월) | Nextrade 대체거래소 운영SM (정보보안팀)
 
-### 프로젝트 규모
+**프로젝트 규모**
 
 - 운영 인프라: 대규모 서버·네트워크 장비
 - 일일 거래량: 대량 주문 및 데이터 처리
@@ -270,14 +270,14 @@
 
 가온누리정보시스템 + 아이티센 CTS | 2024.03 ~ 현재
 
-### 프로젝트 개요
+**프로젝트 개요**
 
 - **프로젝트 성격**: 대한민국 신규 대체거래소 구축
 - **인프라 규모**: 대규모 서버·단말·네트워크 장비, 대량 주문 처리
 - **사용자**: 전사 임직원
 - **핵심 시스템**: 거래 플랫폼, 백오피스
 
-### 구축 단계 (2024.03 ~ 2025.02)
+**구축 단계 (2024.03 ~ 2025.02)**
 
 - **역할**: 보안 인프라 설계 및 구축 총괄
 - **핵심 아키텍처**:
@@ -290,7 +290,7 @@
   - EPP/DLP 최적화로 단말 CPU 사용률 개선
   - 구축 기간 동안 보안 침해사고 0건
 
-### 운영 단계 (2025.03 ~ 현재)
+**운영 단계 (2025.03 ~ 현재)**
 
 - **역할**: 정보보안팀 운영 엔지니어
 - **핵심 업무**:
@@ -305,7 +305,7 @@
   - 보안 오탐 감소
   - DR 복구 시간 단축
 
-### 기술적 하이라이트
+**기술적 하이라이트**
 
 - **자동화**: Python 기반 프레임워크로 수작업 자동화
 - **컴플라이언스**: ISMS-P, ISO 27001, FSC 요구사항 준수
@@ -344,7 +344,7 @@
   Exporter)
 - **모니터링**: 중앙 집중식 Grafana Stack (Synology NAS), 고가용성
 
-### 기술스택 & 도구
+**기술스택 & 도구**
 
 - **AI/ML**: OpenCode (Sonnet 4.5), MCP Protocol, GitHub Copilot
 - **컨테이너**: Docker, Docker Compose, Watchtower (자동 업데이트), Portainer API
@@ -354,7 +354,7 @@
 - **네트워크**: Traefik (Reverse Proxy), NFS v3/v4 (Synology integration),
   Multi-host Docker
 
-### 세부 프로젝트 컴포넌트
+**세부 프로젝트 컴포넌트**
 
 ### 1. ML Agent Selection System
 
@@ -375,7 +375,7 @@
 - **Live**: <https://n8n.jclee.me>
 - **GitHub**: [github.com/jclee941/n8n](https://github.com/jclee941/n8n)
 
-### 3. GitLab Enterprise Edition
+**3. GitLab Enterprise Edition**
 
 - **목적**: Self-hosted DevOps 플랫폼 및 Container Registry
 - **기술스택**: GitLab EE, PostgreSQL, Redis, Traefik
@@ -384,7 +384,7 @@
 - **Live**: <https://gitlab.jclee.me>
 - **GitHub**: [github.com/jclee941/OpenCode/tree/main/app/gitlab](https://github.com/jclee941/OpenCode/tree/main/app/gitlab)
 
-### 4. Nginx Airgap Configuration
+**4. Nginx Airgap Configuration**
 
 - **목적**: 폐쇄망 환경용 Nginx 설정 및 보안 강화
 - **기술스택**: Nginx, Airgap Deployment, Security Hardening
@@ -392,7 +392,7 @@
 - **성과**: 폐쇄망 환경에서 자급 배포 가능, 보안 설정 표준화
 - **GitHub**: [github.com/jclee941/nginx](https://github.com/jclee941/nginx)
 
-### 5. Python Automation Framework
+**5. Python Automation Framework**
 
 - **목적**: 인프라 자동화 프레임워크
 - **기술스택**: Python, Ansible, Bash, Git Hooks
@@ -409,7 +409,7 @@
 - **성과**: 파일 중복 감소, 프로젝트 구조 일관성 유지
 - **GitHub**: [github.com/jclee941/OpenCode/blob/main/scripts/master-prevention-system.sh](https://github.com/jclee941/OpenCode/blob/main/scripts/master-prevention-system.sh)
 
-### 7. AI Compensation Core
+**7. AI Compensation Core**
 
 - **목적**: AI 한계 보상 시스템
 - **기술스택**: Python, Pattern Detection, Multi-Model Validation
@@ -417,7 +417,7 @@
 - **성과**: AI 오답률 감소, 작업 신뢰도 향상
 - **GitHub**: [github.com/jclee941/OpenCode/blob/main/scripts/ai-compensation-core.py](https://github.com/jclee941/OpenCode/blob/main/scripts/ai-compensation-core.py)
 
-### 8. Ansible FortiManager Automation
+**8. Ansible FortiManager Automation**
 
 - **목적**: FortiManager 방화벽 정책 자동화 (Infrastructure as Code)
 - **기술스택**: Ansible, FortiManager API, Ansible Vault, Docker
@@ -426,7 +426,7 @@
 - **성과**: 정책 배포 시간 단축, 수동 오류 제거
 - **GitHub**: [github.com/jclee941/policy](https://github.com/jclee941/policy)
 
-### 9. NAS Infrastructure Deployment
+**9. NAS Infrastructure Deployment**
 
 - **목적**: Synology NAS 인프라 자동 배포 시스템
 - **기술스택**: Bash, rsync, SSH, Docker Compose, Synology DSM
@@ -436,7 +436,7 @@
 - **성과**: 배포 자동화로 수동 작업 제거, 인프라 동기화 시간 단축
 - **GitHub**: [github.com/jclee941/OpenCode/tree/main/infra](https://github.com/jclee941/OpenCode/tree/main/infra)
 
-### 핵심 아키텍처 설계
+**핵심 아키텍처 설계**
 
 1. **Universal Observability Architecture**
    - 중앙 집중식 모니터링 (Synology NAS: grafana.jclee.me)
@@ -463,7 +463,7 @@
    - Git-based: 모든 변경사항 추적 가능, 자동 롤백 지원
    - 테스트 자동화: Jest (유닛), Playwright (E2E)
 
-### 프로젝트별 상세
+**프로젝트별 상세**
 
 ### Resume Portfolio (Cloudflare Workers + Observability)
 
@@ -481,33 +481,33 @@
 - **성과**: Lighthouse 고득점, 높은 접근성, Open Graph 소셜 미리보기
 - **최신 배포**: 2025-11-12T01:04:49Z
 
-### Blacklist (IP 블랙리스트 관리 시스템)
+**Blacklist (IP 블랙리스트 관리 시스템)**
 
 - 아키텍처: PostgreSQL, Redis, Flask, React (Frontend)
 - 스케일: 대규모 IP 주소 실시간 관리
 - 모니터링: Prometheus metrics (/metrics), Health check (/health)
 - 배포: Multi-port (2542), Docker Compose, Traefik integration
 
-### MCP Platform (AI 도구 통합)
+**MCP Platform (AI 도구 통합)**
 
 - 역할: Model Context Protocol 서버 통합 플랫폼
 - 규모: MCP 서버, 도구 (filesystem, github, slack, tmux, n8n)
 - WebUI: Node.js, Nginx reverse proxy
 - 성과: AI 작업 효율 향상, 도구 통합 복잡성 감소
 
-### Local Exporters (모니터링 스택)
+**Local Exporters (모니터링 스택)**
 
 - 구성: Prometheus, Node Exporter, cAdvisor, Promtail
 - 메트릭: 시스템 (CPU, RAM, Disk), 컨테이너 (Docker stats), 로그 (Loki)
 - 중앙 통합: Synology Grafana (192.168.50.215)
 
-### Splunk Demo (로그 분석)
+**Splunk Demo (로그 분석)**
 
 - 규모: 대규모 이벤트 처리 가능
 - 포트: WebUI, HEC, Forwarder
 - 용도: 보안 이벤트 중앙 집중 분석, FortiNet 통합
 
-### 운영 성과 (2024.09 ~ 현재)
+**운영 성과 (2024.09 ~ 현재)**
 
 - **자동화**: 반복 작업 시간 단축
 - **안정성**: MTTR 개선

@@ -289,18 +289,18 @@ IMPORTANT:
 - 해당 기능 사용처 식별 (webhook URL, 이미지 리사이징, PDF 생성 등)
 - 내부 네트워크 접근 가능 여부 확인 (metadata endpoint 169.254.169.254)
 
-### 2단계: 즉각 대응
+**2단계: 즉각 대응**
 
 - Critical이면 Feature Flag로 기능 비활성화
 - AWS 환경: IAM role 권한 확인, metadata endpoint 차단 확인
 
-### 3단계: 수정
+**3단계: 수정**
 
 - 허용 목록(whitelist) 기반 URL 검증
 - Protocol 제한: https만, 내부 IP 대역 차단
 - 요청 타임아웃 + 응답 크기 제한
 
-### 4단계: 재발 방지
+**4단계: 재발 방지**
 
 - CI/CD에 DAST/SAST 통합
 - 코드 리뷰 체크리스트 적용
@@ -534,9 +534,8 @@ roleRef:
   name: cluster-admin
 ```
 
-**리뷰 코멘트:** "default SA에 cluster-admin 부여. 팟 하나 탈취되면 클러스터 전체 장악. 네임스페이스 스코프 Role
-
-- 최소 권한."
+**리뷰 코멘트:** "default SA에 cluster-admin 부여. 팟 하나 탈취되면 클러스터
+전체 장악. 네임스페이스 스코프 Role + 최소 권한."
 
 ## F. 한국 테크기업 실제 면접 기출 (출처별)
 

@@ -194,7 +194,7 @@ Secrets Configuration:
 
 ### Step 1: Obtain Cloudflare Credentials (5 minutes)
 
-### Option A: Create New API Token (Recommended)
+**Option A: Create New API Token (Recommended)**
 
 1. Go to: <https://dash.cloudflare.com/profile/api-tokens>
 2. Click: "Create Token"
@@ -210,14 +210,14 @@ Secrets Configuration:
 6. Review and click: "Create Token"
 7. Copy: The full token (save temporarily)
 
-### Option B: Use Existing Global API Key
+**Option B: Use Existing Global API Key**
 
 1. Go to: <https://dash.cloudflare.com/profile/api-tokens>
 2. Look for: "Global API Key" section
 3. Click: "View" (you may need to verify your identity)
 4. Copy: The API key
 
-### Get Account ID
+**Get Account ID**
 
 1. Go to: <https://dash.cloudflare.com/>
 2. Right sidebar: Shows "Account ID" at the top of a card
@@ -245,7 +245,7 @@ CLOUDFLARE_ACCOUNT_ID = "[32-character hex string]"
    - Click: "Add secret"
 6. Verify: Both secrets appear in the list (values masked with asterisks)
 
-### Screenshot Checklist
+**Screenshot Checklist**
 
 - [ ] Secrets page loads without errors
 - [ ] Both secrets visible in list
@@ -324,7 +324,7 @@ open https://resume.jclee.me
 open https://resume.jclee.me/job
 ```
 
-### Visual Verification
+**Visual Verification**
 
 - [ ] Portfolio loads without errors
 - [ ] Portfolio pages render correctly

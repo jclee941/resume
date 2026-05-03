@@ -16,7 +16,7 @@
 
 #### 해결 방법
 
-### Option A: 서비스 재시작 (권장)
+**Option A: 서비스 재시작 (권장)**
 
 ```bash
 # 1. Docker 컨테이너 상태 확인
@@ -35,7 +35,7 @@ curl -I https://blacklist.jclee.me
 curl -I https://fortinet.jclee.me
 ```
 
-### Option B: 이력서에서 링크 제거 (빠른 해결)
+**Option B: 이력서에서 링크 제거 (빠른 해결)**
 
 ```markdown
 # 수정 전
@@ -55,7 +55,7 @@ curl -I https://fortinet.jclee.me
 
 #### 체크 항목
 
-### A. 링크 동작 확인
+**A. 링크 동작 확인**
 
 ```bash
 # 자동 확인 스크립트
@@ -66,14 +66,14 @@ curl -I https://safework.jclee.me
 curl -I https://grafana.jclee.me
 ```
 
-### B. 오타 및 맞춤법 검사
+**B. 오타 및 맞춤법 검사**
 
 - [ ] 연락처 정보 정확성 (이메일, 전화번호)
 - [ ] 회사명 정확한 표기 (㈜아이티센 CTS 등)
 - [ ] 숫자 표기 일관성 (99.9% vs 99.90%)
 - [ ] 기간 계산 정확성 (8년 7개월)
 
-### C. PDF 변환 (필요 시)
+**C. PDF 변환 (필요 시)**
 
 ```bash
 # Markdown → PDF 변환 도구 사용
@@ -169,7 +169,7 @@ GitHub: https://github.com/jclee941
 7. Node.js, Flask, JavaScript/TypeScript
 ```
 
-### 7) 첨부 파일
+**7) 첨부 파일**
 
 - [ ] 이력서 PDF 또는 Markdown 파일 첨부
 
@@ -191,7 +191,7 @@ GitHub: https://github.com/jclee941
 3회차: 거울 보고 실전처럼 연습
 ```
 
-### 핵심 5개 질문 우선 암기
+**핵심 5개 질문 우선 암기**
 
 1. 자기소개 (1분)
 2. 왜 토스 커머스에 지원하셨나요?
@@ -205,7 +205,7 @@ GitHub: https://github.com/jclee941
 
 #### 2. STAR 기법 연습
 
-### STAR 구조
+**STAR 구조**
 
 - **S (Situation)**: 상황 설명
 - **T (Task)**: 해결해야 할 과제
@@ -248,7 +248,7 @@ https://toss.tech/
 YouTube에서 "토스 개발자 인터뷰" 검색
 ```
 
-### 학습 목표
+**학습 목표**
 
 - [ ] 토스의 핵심 가치 3가지 이해
 - [ ] Platform 팀 업무 방식 파악
@@ -268,7 +268,7 @@ YouTube에서 "토스 개발자 인터뷰" 검색
 "토스 페이먼츠" + "뉴스"
 ```
 
-### 확인 사항
+**확인 사항**
 
 - [ ] 최근 서비스 런칭 소식
 - [ ] 기술 스택 변경 사항
@@ -319,7 +319,7 @@ Day 7: 간단한 실습 (Local Minikube + Istio 설치)
 2. 15개 질문 전체 답변
 3. 재생하며 개선점 파악
 
-### 체크 포인트
+**체크 포인트**
 
 - [ ] 눈 맞춤 (카메라 응시)
 - [ ] 말 속도 (너무 빠르지 않게)

@@ -174,8 +174,7 @@
 
 ### 🔧 실전 보안 운영 자동화 플랫폼 (2024 ~ 현재)
 
-### 개인 프로젝트 | Production-Ready Security Operations Platform
-
+**개인 프로젝트 | Production-Ready Security Operations Platform**
 **GitHub**: [github.com/qws941](https://github.com/qws941)
 
 #### Splunk-FortiNet Integration
@@ -215,13 +214,13 @@
 
 가온누리정보시스템 + 아이티센 CTS | 2024.03 ~ 현재
 
-### 구축 단계 (2024.03 ~ 2025.02)
+**구축 단계 (2024.03 ~ 2025.02)**
 
 - 역할: 보안 인프라 설계 및 구축 총괄
 - 기술: Python, Fortigate, NAC, DLP, APT, 망분리
 - 성과: 금융위원회 본인가 사전 준비 완료, 방화벽 자동화로 정책 반영 시간 50% 단축
 
-### 운영 단계 (2025.03 ~ 현재)
+**운영 단계 (2025.03 ~ 현재)**
 
 - 역할: 정보보안팀 운영 엔지니어
 - 업무: 15종 보안 솔루션 통합 운영, 24/7 모니터링, 금융감독 대응
@@ -246,8 +245,7 @@
 
 ### AI 기반 인프라 자동화 플랫폼 (2024.09 ~ 현재)
 
-### 개인 프로젝트 | AI-Powered Infrastructure Automation Platform
-
+**개인 프로젝트 | AI-Powered Infrastructure Automation Platform**
 **GitHub**: [github.com/qws941](https://github.com/qws941)
 
 - **목적**: AI 기반의 지능형 인프라 운영 자동화 및 관측성(Observability) 플랫폼 구축
