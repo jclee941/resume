@@ -1,70 +1,13 @@
-# Dependabot config — closes P2-17 from MONOREPO_REVIEW_2026-04-29.md.
-# Keeps npm + GitHub Actions dependencies up to date with weekly PRs.
-
 version: 2
 updates:
-  # Root + workspaces (npm)
-  - package-ecosystem: npm
-    directory: '/'
+  - package-ecosystem: "github-actions"
+    directory: "/"
     schedule:
-      interval: weekly
-      day: monday
-      time: '09:00'
-      timezone: Asia/Seoul
-    open-pull-requests-limit: 10
-    versioning-strategy: increase
-    commit-message:
-      prefix: 'chore(deps)'
-      include: scope
+      interval: "weekly"
+    open-pull-requests-limit: 5
     labels:
-      - dependencies
-      - npm
-    groups:
-      # Group dev tooling so we don't get N PRs per release of the same family
-      jest:
-        patterns:
-          - 'jest'
-          - '@types/jest'
-          - 'jest-*'
-          - '@jest/*'
-      eslint:
-        patterns:
-          - 'eslint'
-          - 'eslint-*'
-          - '@eslint/*'
-      typescript:
-        patterns:
-          - 'typescript'
-          - '@types/node'
-      cloudflare:
-        patterns:
-          - 'wrangler'
-          - '@cloudflare/*'
-          - 'miniflare'
-      fastify:
-        patterns:
-          - 'fastify'
-          - '@fastify/*'
-    ignore:
-      # rebrowser-puppeteer is intentionally aliased to puppeteer for stealth.
-      # Manual review required before bumping (P2-14).
-      - dependency-name: 'puppeteer'
-        update-types: [version-update:semver-major]
-      # Pin major versions of API contract clients
-      - dependency-name: 'zod'
-        update-types: [version-update:semver-major]
-
-  # GitHub Actions
-  - package-ecosystem: github-actions
-    directory: '/'
-    schedule:
-      interval: weekly
-      day: monday
-      time: '09:00'
-      timezone: Asia/Seoul
+      - "dependencies"
+      - "github-actions"
     commit-message:
-      prefix: 'chore(ci)'
-      include: scope
-    labels:
-      - dependencies
-      - github-actions
+      prefix: "chore"
+      include: "scope"
