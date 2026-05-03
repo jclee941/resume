@@ -47,13 +47,13 @@ type Variant struct {
 }
 
 var resumeVariants = map[string]Variant{
-	"master":    {"resumes/master/resume_master.md", "resumes/master/resume_master_v%s.pdf", fontNanum},
-	"final":     {"resumes/master/resume_final.md", "resumes/master/resume_final_v%s.pdf", fontNanum},
-	"toss":      {"resumes/companies/toss/toss_commerce_server_developer_platform_resume.md", "resumes/companies/toss/lee_jaecol_toss_v%s.pdf", fontNoto},
-	"general":   {"resumes/generated/resume_general.md", "resumes/generated/resume_general.pdf", fontNanum},
-	"technical": {"resumes/generated/resume_technical.md", "resumes/generated/resume_technical.pdf", fontNanum},
-	"security":  {"resumes/generated/resume_security.md", "resumes/generated/resume_security.pdf", fontNanum},
-	"short":     {"resumes/generated/resume_short.md", "resumes/generated/resume_short.pdf", fontNanum},
+	"master":    {"packages/data/resumes/master/resume_final.md", "packages/data/resumes/master/resume_final.pdf", fontNanum},
+	"final":     {"packages/data/resumes/master/resume_final.md", "packages/data/resumes/master/resume_final.pdf", fontNanum},
+	"toss":      {"packages/data/resumes/applications/toss/toss_devops_engineer_resume.md", "packages/data/resumes/applications/toss/toss_devops_engineer_resume.pdf", fontNoto},
+	"general":   {"packages/data/resumes/generated/resume_general.md", "packages/data/resumes/generated/resume_general.pdf", fontNanum},
+	"technical": {"packages/data/resumes/generated/resume_technical.md", "packages/data/resumes/generated/resume_technical.pdf", fontNanum},
+	"security":  {"packages/data/resumes/generated/resume_security.md", "packages/data/resumes/generated/resume_security.pdf", fontNanum},
+	"short":     {"packages/data/resumes/generated/resume_short.md", "packages/data/resumes/generated/resume_short.pdf", fontNanum},
 }
 
 // Doc variants: source|output
@@ -63,9 +63,9 @@ type DocVariant struct {
 }
 
 var docVariants = map[string]DocVariant{
-	"nextrade_arch": {"resumes/technical/nextrade/ARCHITECTURE_COMPACT.md", "resumes/technical/nextrade/exports/ARCHITECTURE_COMPACT.pdf"},
-	"nextrade_dr":   {"resumes/technical/nextrade/DR_PLAN_COMPACT.md", "resumes/technical/nextrade/exports/DR_PLAN_COMPACT.pdf"},
-	"nextrade_soc":  {"resumes/technical/nextrade/SOC_RUNBOOK_COMPACT.md", "resumes/technical/nextrade/exports/SOC_RUNBOOK_COMPACT.pdf"},
+	"nextrade_arch": {"packages/data/resumes/technical/nextrade/ARCHITECTURE_COMPACT.md", "packages/data/resumes/technical/nextrade/exports/ARCHITECTURE_COMPACT.pdf"},
+	"nextrade_dr":   {"packages/data/resumes/technical/nextrade/DR_PLAN_COMPACT.md", "packages/data/resumes/technical/nextrade/exports/DR_PLAN_COMPACT.pdf"},
+	"nextrade_soc":  {"packages/data/resumes/technical/nextrade/SOC_RUNBOOK_COMPACT.md", "packages/data/resumes/technical/nextrade/exports/SOC_RUNBOOK_COMPACT.pdf"},
 }
 
 func main() {
@@ -76,7 +76,11 @@ func main() {
 		fmt.Fprintf(os.Stderr, "%s✗ Failed to get working directory: %v%s\n", Red, err, NoColor)
 		os.Exit(1)
 	}
-	projectRoot = filepath.Dir(filepath.Dir(scriptDir))
+	projectRoot, err = findProjectRoot(scriptDir)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%s✗ Failed to find project root: %v%s\n", Red, err, NoColor)
+		os.Exit(1)
+	}
 
 	// Get version from package.json
 	version = getVersion()
@@ -107,6 +111,26 @@ func getVersion() string {
 		return "1.0.0"
 	}
 	return strings.TrimSpace(string(out))
+}
+
+func findProjectRoot(startDir string) (string, error) {
+	dir, err := filepath.Abs(startDir)
+	if err != nil {
+		return "", err
+	}
+
+	for {
+		packageJSON := filepath.Join(dir, "package.json")
+		if _, err := os.Stat(packageJSON); err == nil {
+			return dir, nil
+		}
+
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			return "", fmt.Errorf("package.json not found from %s", startDir)
+		}
+		dir = parent
+	}
 }
 
 func checkDependencies() bool {
@@ -189,6 +213,13 @@ func generatePDFDocker(source, output, font string) error {
 	return cmd.Run()
 }
 
+func formatOutputPath(output string) string {
+	if strings.Contains(output, "%") {
+		return fmt.Sprintf(output, version)
+	}
+	return output
+}
+
 func generateSinglePDF(source, output, font string) bool {
 	sourcePath := filepath.Join(projectRoot, source)
 	outputPath := filepath.Join(projectRoot, output)
@@ -252,7 +283,7 @@ func generateAllResumes() {
 	fmt.Println("Resume variants:")
 	for _, variant := range resumeVariants {
 		source := variant.Source
-		output := fmt.Sprintf(variant.Output, version)
+		output := formatOutputPath(variant.Output)
 		if generateSinglePDF(source, output, variant.Font) {
 			success++
 		} else {
@@ -285,7 +316,7 @@ func generateAllResumes() {
 		fmt.Println()
 		fmt.Println("Copying to apps/portfolio/downloads/...")
 		// Copy PDFs from nextrade/exports/
-		exportsDir := filepath.Join(projectRoot, "resumes", "technical", "nextrade", "exports")
+		exportsDir := filepath.Join(projectRoot, "packages", "data", "resumes", "technical", "nextrade", "exports")
 		if files, err := os.ReadDir(exportsDir); err == nil {
 			for _, file := range files {
 				if strings.HasSuffix(file.Name(), ".pdf") {
@@ -313,7 +344,7 @@ func generateVariant(variant string) {
 
 	// Check resume variants
 	if v, ok := resumeVariants[variant]; ok {
-		output := fmt.Sprintf(v.Output, version)
+		output := formatOutputPath(v.Output)
 		if generateSinglePDF(v.Source, output, v.Font) {
 			os.Exit(0)
 		}

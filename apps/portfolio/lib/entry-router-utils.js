@@ -5,16 +5,15 @@ const LAST_MODIFIED = BUILD_LASTMOD_HTTP;
 const SITEMAP_LASTMOD = BUILD_LASTMOD;
 const SITEMAP_ETAG = `W/"resume-sitemap-${BUILD_ETAG_VERSION}"`;
 const DEFAULT_LANGUAGE = 'ko';
-const SUPPORTED_LANGUAGES = ['ko', 'en'];
+const SUPPORTED_LANGUAGES = ['ko', 'en', 'ja'];
 const SINGLE_WORKER_PROFILE_SYNC_PATH = '/api/automation/resume-update';
 const SINGLE_WORKER_PROFILE_SYNC_STATUS_PATTERN = /^\/api\/automation\/resume-update\/([^/]+)$/;
 const JOB_ROUTE_PREFIX = '/job';
 const LOCALE_ROUTES = new Set(['/', '/ko', '/ko/', '/en', '/en/', '/ja', '/ja/']); // /ja kept for redirect
-
 const HREFLANG_LINKS = [
   '<link rel="alternate" hreflang="ko-KR" href="https://resume.jclee.me/" />',
   '<link rel="alternate" hreflang="en-US" href="https://resume.jclee.me/en/" />',
-
+  '<link rel="alternate" hreflang="ja-JP" href="https://resume.jclee.me/ja/" />',
   '<link rel="alternate" hreflang="x-default" href="https://resume.jclee.me/" />',
 ].join('\n    ');
 
@@ -28,6 +27,7 @@ const SITEMAP_XML = `<?xml version="1.0" encoding="UTF-8"?>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="ko-KR" href="https://resume.jclee.me/"/>
     <xhtml:link rel="alternate" hreflang="en-US" href="https://resume.jclee.me/en/"/>
+    <xhtml:link rel="alternate" hreflang="ja-JP" href="https://resume.jclee.me/ja/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://resume.jclee.me/"/>
   </url>
   <url>
@@ -37,6 +37,17 @@ const SITEMAP_XML = `<?xml version="1.0" encoding="UTF-8"?>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="ko-KR" href="https://resume.jclee.me/"/>
     <xhtml:link rel="alternate" hreflang="en-US" href="https://resume.jclee.me/en/"/>
+    <xhtml:link rel="alternate" hreflang="ja-JP" href="https://resume.jclee.me/ja/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://resume.jclee.me/"/>
+  </url>
+  <url>
+    <loc>https://resume.jclee.me/ja/</loc>
+    <lastmod>${SITEMAP_LASTMOD}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="ko-KR" href="https://resume.jclee.me/"/>
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://resume.jclee.me/en/"/>
+    <xhtml:link rel="alternate" hreflang="ja-JP" href="https://resume.jclee.me/ja/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://resume.jclee.me/"/>
   </url>
 </urlset>`;
@@ -133,15 +144,17 @@ function getPortfolioTargetPath(pathname, language) {
     return '/';
   }
 
-  // /ja was a partial-localization path that returned KO content (duplicate-content SEO risk).
-  // Treat it as KO for now; the entry router issues a 301 redirect to '/' instead of serving.
   if (pathname === '/ja' || pathname === '/ja/') {
-    return '/';
+    return '/ja/';
   }
 
   if (pathname === '/') {
     if (language === 'en') {
       return '/en/';
+    }
+
+    if (language === 'ja') {
+      return '/ja/';
     }
 
     return '/';

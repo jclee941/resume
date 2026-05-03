@@ -1,4 +1,4 @@
-import { describe, it, mock } from 'node:test';
+import { describe, it } from 'node:test';
 import assert from 'node:assert';
 import { syncWantedAbout } from '../wanted-sections.js';
 import { CONFIG } from '../constants.js';

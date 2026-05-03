@@ -179,5 +179,5 @@ data.personalProjects.forEach((p) => {
   }
 });
 
-writeFileSync(koPath, JSON.stringify(data, null, 2) + '\n');
+writeFileSync(koPath, `${JSON.stringify(data, null, 2)}\n`);
 console.log(`\n✅ Total changes: ${changes}`);

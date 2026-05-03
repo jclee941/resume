@@ -199,23 +199,7 @@ function generateSkillsList(skillsData, dataHash) {
 
       if (skills.length === 0) return '';
 
-      const proficiencyValues = skills
-        .map((s) => Number(s && s.proficiency))
-        .filter((value) => Number.isFinite(value));
-
-      const averageLevel =
-        proficiencyValues.length > 0
-          ? Math.round(
-              proficiencyValues.reduce((sum, value) => sum + value, 0) / proficiencyValues.length
-            )
-          : 0;
-
       const label = escapeHtml(String(skillData.title || key).replace(/\s*&\s*/g, ' & '));
-
-      const barWidth = 20;
-      const filled = Math.round((averageLevel / 100) * barWidth);
-      const empty = barWidth - filled;
-      const bar = '█'.repeat(filled) + '░'.repeat(empty);
 
       return `<li class="htop-row">
         <span class="htop-label">${label}</span>

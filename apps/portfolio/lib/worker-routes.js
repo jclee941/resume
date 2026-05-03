@@ -103,6 +103,28 @@ function generatePageRoutes() {
         return response;
       }
 
+      // Japanese version route
+      if (url.pathname === '/ja/' || url.pathname === '/ja') {
+        const nonce = generateCspNonce();
+        const response = new Response(applyNonceToHtml(INDEX_JA_HTML, nonce), {
+          headers: {
+            ...applyNonceToHeaders(SECURITY_HEADERS, nonce),
+            ...CACHE_POLICIES.html,
+            ...rateLimitHeaders
+          }
+        });
+        metrics.requests_success++;
+        metrics.response_time_sum += (Date.now() - startTime);
+
+        ctx.waitUntil(logToElasticsearch(env, \`Request: \${request.method} \${url.pathname}\`, 'INFO', {
+          route: url.pathname,
+          traceparent: request.headers.get('traceparent') || undefined,
+          tracestate: request.headers.get('tracestate') || undefined,
+        }, { immediate: true }));
+
+        return response;
+      }
+
       // English version route
       if (url.pathname === '/en/' || url.pathname === '/en') {
         const nonce = generateCspNonce();

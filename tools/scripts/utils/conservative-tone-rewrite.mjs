@@ -132,28 +132,28 @@ if (data.achievements[3]?.includes('99.9% 이상 가용률 유지')) {
 const ach10Idx = data.achievements.findIndex(a => a?.includes('Terraform 기반 AWS 보안 코드화를 정착'));
 if (ach10Idx >= 0) {
   data.achievements[ach10Idx] = '콴텍에서 Terraform 기반 AWS 보안 코드화를 적용하고 로보어드바이저 테스트베드 심사 대응 기반을 마련했습니다.';
-  log('achievements[' + ach10Idx + ']: "정착시키고" → "적용하고"');
+  log(`achievements[${ach10Idx}]: "정착시키고" → "적용하고"`);
 }
 
 // 15. achievements 'NSX-T 가시성 확보 체계 수립' → 객관
 const achNsxIdx = data.achievements.findIndex(a => a?.includes('가시성을 확보') && a?.includes('체계를 수립'));
 if (achNsxIdx >= 0) {
   data.achievements[achNsxIdx] = '조인트리 NSX-T 마이크로세그멘테이션을 적용해 동서(East-West) 트래픽 분석과 분산 방화벽(DFW) 정책 중앙 관리를 수행했습니다.';
-  log('achievements[' + achNsxIdx + ']: 가시성 확보/체계 수립 → 분석/중앙 관리');
+  log(`achievements[${achNsxIdx}]: 가시성 확보/체계 수립 → 분석/중앙 관리`);
 }
 
 // 16. achievements '자동 대응 체계 구축' fluff 정리
 const ach2Idx = data.achievements.findIndex(a => a?.includes('자동 대응 체계를 구축'));
 if (ach2Idx >= 0) {
   data.achievements[ach2Idx] = '보안 이벤트 알림 노이즈를 줄이고 FortiManager API 기반 방화벽 정책 조회를 스크립트로 전환했습니다.';
-  log('achievements[' + ach2Idx + ']: 자동 대응 체계 구축 → 객관적 기술');
+  log(`achievements[${ach2Idx}]: 자동 대응 체계 구축 → 객관적 기술`);
 }
 
 // 17. achievements 'Splunk ES 32개 탐지 룰 구축·운영' → 운영
 const ach1Idx = data.achievements.findIndex(a => a?.includes('Splunk ES 32개 탐지 룰') && a?.includes('구축·운영'));
 if (ach1Idx >= 0) {
   data.achievements[ach1Idx] = 'Splunk ES 탐지 룰 32개와 FortiNet API 연동 기반의 보안 이벤트 실시간 알림 체계를 운영했습니다.';
-  log('achievements[' + ach1Idx + ']: 구축·운영 → 운영');
+  log(`achievements[${ach1Idx}]: 구축·운영 → 운영`);
 }
 
 // 18. personalProjects fluff 정리
@@ -216,5 +216,5 @@ if (c2?.description?.includes('IaC 정착')) {
   log('careers[2] description: 정착/확보/체계 수립 → 적용/추적/구성/작성');
 }
 
-writeFileSync(koPath, JSON.stringify(data, null, 2) + '\n');
+writeFileSync(koPath, `${JSON.stringify(data, null, 2)}\n`);
 console.log(`\n✅ Total changes: ${changes}`);
