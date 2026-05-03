@@ -78,20 +78,20 @@ function buildJapaneseTemplate(html) {
     .replace(/<meta\s+property="og:description"[\s\S]*?\/>/i, '<meta property="og:description" content="DevSecOps/SRE/Platform Engineer | セキュリティインフラ、SIEM/SOAR、Observability、IaC自動化" />')
     .replace(/<meta\s+name="twitter:description"[\s\S]*?\/>/i, '<meta name="twitter:description" content="DevSecOps/SRE/Platform Engineer | セキュリティインフラ、SIEM/SOAR、Observability、IaC自動化" />')
     // === JA JSON-LD description ===
-    .replace(/"description": "금융권 보안 규제 환경에서 인프라 설계·운용을 담당하며[^"]*"/g, '"description": "金融規制環境でインフラ設計・運用を担当し、FSC本認可対応を通過したOAエンジニア出身9年目のDevSecOps/SREエンジニアです。分散したセキュリティ機器と手動運用の非効率を統合自動化で改善し、リアルタイム検知と自動対応体制を構築した経験があります。"')
+    .replace(/"description": "금융권 보안 규제 환경에서 인프라 설계·운용을 담당하며[^"]*"/g, '"description": "金融規制環境でインフラ設計・運用を担当し、FSC本認可対応を通過したOAエンジニア出身実務8年 + Linux再学習1年のDevSecOps/SREエンジニアです。分散したセキュリティ機器と手動運用の非効率を統合自動化で改善し、リアルタイム検知と自動対応体制を構築した経験があります。"')
     .replace(/"description": "금융권 규제 환경에서 보안 인프라 설계·운영을 담당한[^"]*"/g, '"description": "金融規制環境でセキュリティインフラ設計·運用を担当したDevSecOps/SRE/Platform Engineerの個人ポートフォリオ。"')
     // === JA hero copy (replace KO hero text with Japanese) ===
     .replace(/<span class="typing-effect glow-cyan">이재철<\/span/g, '<span class="typing-effect glow-cyan">イ・ジェチョル</span')
     .replace(/<span class="sr-only">이재철<\/span>/g, '<span class="sr-only">イ・ジェチョル</span>')
     .replace(
-      /9년차 DevSecOps\/SRE — OA에서 시작해 자동화·SIEM·금융 보안 인프라까지/g,
-      '9年目 DevSecOps/SRE — OAから始まり自動化・SIEM・金融セキュリティインフラへ'
+      /8년차 DevSecOps\/SRE — OA에서 시작해 자동화·SIEM·금융 보안 인프라까지[^<]*/g,
+      '8年目 DevSecOps/SRE — OAから始まり自動化・SIEM・金融セキュリティインフラへ（Linux再学習 1年を含む）'
     )
     .replace(
       /KAI 폐쇄망 OA 운영 → Linux 자격증 재무장 → Ansible·Python 자동화 → 넥스트레이드 FortiGate HA · Splunk ES · n8n SOC 24\/7/g,
       'KAI閉鎖網OA運用 → Linux資格再武装 → Ansible・Python自動化 → Nextrade FortiGate HA · Splunk ES · n8n SOC 24/7'
     )
-    .replace(/<div class="hero-context__label">OA → DevSecOps 9년 성장<\/div>/g, '<div class="hero-context__label">OA → DevSecOps 9年間の成長</div>')
+    .replace(/<div class="hero-context__label">OA → DevSecOps 8년 성장<\/div>/g, '<div class="hero-context__label">OA → DevSecOps 8年間の成長</div>')
     .replace(/<div class="hero-context__label">금융위 본인가 · 금융감독원 감사 대응<\/div>/g, '<div class="hero-context__label">FSC本認可 · 金融監督院監査対応</div>')
     .replace(/<div class="hero-context__label">Splunk ES · n8n 자동 탐지·대응<\/div>/g, '<div class="hero-context__label">Splunk ES · n8n 自動検知・対応</div>')
     .replace(/<div class="hero-context__label">FortiGate HA · IaC · Observability 표준화<\/div>/g, '<div class="hero-context__label">FortiGate HA · IaC · Observability 標準化</div>')
