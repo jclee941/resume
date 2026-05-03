@@ -61,7 +61,7 @@
 }
 .resume-description {
   font-size: var(--text-sm);
-  color: var(--text-secondary);
+  color: var(--text-primary);
   line-height: 1.6;
   margin-bottom: var(--space-2);
   font-family: var(--font-sans);
@@ -80,8 +80,8 @@
 }
 .tag {
   font-size: var(--text-xs);
-  color: var(--cyber-magenta);
-  background: rgba(217, 70, 168, 0.08);
+  color: var(--cyber-magenta-bright);
+  background: rgba(224, 80, 184, 0.18);
   border: 1px solid rgba(217, 70, 168, 0.15);
   padding: 2px 8px;
   border-radius: 2px;

@@ -69,7 +69,49 @@ function buildJapaneseTemplate(html) {
     .replace(/<meta name="twitter:url" content="https:\/\/resume\.jclee\.me" \/>/i, '<meta name="twitter:url" content="https://resume.jclee.me/ja/" />')
     .replace(/<meta name="twitter:title" content="[^"]*" \/>/i, '<meta name="twitter:title" content="イ・ジェチョル - DevSecOps/SRE/Platform Engineer" />')
     .replace(/"name": "이재철 - DevSecOps\/SRE\/Platform Engineer"/g, '"name": "イ・ジェチョル - DevSecOps/SRE/Platform Engineer"')
-    .replace(/"inLanguage": "ko-KR"/g, '"inLanguage": "ja-JP"');
+    .replace(/"name": "이재철"/g, '"name": "イ・ジェチョル"')
+    .replace(/"inLanguage": "ko-KR"/g, '"inLanguage": "ja-JP"')
+    // === JA meta tags (description, keywords, og:description, twitter:description) ===
+    .replace(/<meta\s+name="description"[\s\S]*?\/>/i, '<meta name="description" content="イ・ジェチョル - DevSecOps/SREエンジニア | 金融・公共セキュリティインフラ設計·運用、SIEM/SOAR、Observability、IaC自動化" />')
+    .replace(/<meta\s+name="keywords"[\s\S]*?\/>/i, '<meta name="keywords" content="DevSecOps, SRE, SIEM, SOAR, Observability, Grafana, Prometheus, Splunk, FortiGate, Terraform, Ansible, セキュリティインフラ, IaC, 自動化, イ・ジェチョル" />')
+    .replace(/<meta\s+name="author"[\s\S]*?\/>/i, '<meta name="author" content="イ・ジェチョル (Lee Jaecheol)" />')
+    .replace(/<meta\s+property="og:description"[\s\S]*?\/>/i, '<meta property="og:description" content="DevSecOps/SRE/Platform Engineer | セキュリティインフラ、SIEM/SOAR、Observability、IaC自動化" />')
+    .replace(/<meta\s+name="twitter:description"[\s\S]*?\/>/i, '<meta name="twitter:description" content="DevSecOps/SRE/Platform Engineer | セキュリティインフラ、SIEM/SOAR、Observability、IaC自動化" />')
+    // === JA hero copy (replace KO hero text with Japanese) ===
+    .replace(/<span class="typing-effect glow-cyan">이재철<\/span/g, '<span class="typing-effect glow-cyan">イ・ジェチョル</span')
+    .replace(/<span class="sr-only">이재철<\/span>/g, '<span class="sr-only">イ・ジェチョル</span>')
+    .replace(
+      /9년차 DevSecOps\/SRE — OA에서 시작해 자동화·SIEM·금융 보안 인프라까지/g,
+      '9年目 DevSecOps/SRE — OAから始まり自動化・SIEM・金融セキュリティインフラへ'
+    )
+    .replace(
+      /KAI 폐쇄망 OA 운영 → Linux 자격증 재무장 → Ansible·Python 자동화 → 넥스트레이드 FortiGate HA · Splunk ES · n8n SOC 24\/7/g,
+      'KAI閉鎖網OA運用 → Linux資格再武装 → Ansible・Python自動化 → Nextrade FortiGate HA · Splunk ES · n8n SOC 24/7'
+    )
+    .replace(/<div class="hero-context__label">OA → DevSecOps 9년 성장<\/div>/g, '<div class="hero-context__label">OA → DevSecOps 9年間の成長</div>')
+    .replace(/<div class="hero-context__label">금융위 본인가 · 금융감독원 감사 대응<\/div>/g, '<div class="hero-context__label">FSC本認可 · 金融監督院監査対応</div>')
+    .replace(/<div class="hero-context__label">Splunk ES · n8n 자동 탐지·대응<\/div>/g, '<div class="hero-context__label">Splunk ES · n8n 自動検知・対応</div>')
+    .replace(/<div class="hero-context__label">FortiGate HA · IaC · Observability 표준화<\/div>/g, '<div class="hero-context__label">FortiGate HA · IaC · Observability 標準化</div>')
+    .replace(/aria-label="주요 경험 영역"/g, 'aria-label="主要な経験領域"')
+    // === Status seeking strip ===
+    .replace(/aria-label="구직 중 · 즉시 투입 가능"/g, 'aria-label="求職中 · 即時入社可能"')
+    .replace(/<span class="status-seeking__label">구직 중<\/span>/g, '<span class="status-seeking__label">求職中</span>')
+    .replace(/<span class="status-seeking__availability">즉시 투입 가능<\/span>/g, '<span class="status-seeking__availability">即時入社可能</span>')
+    .replace(/<a href="#resume" class="status-seeking__cta">경력 근거 보기<\/a>/g, '<a href="#resume" class="status-seeking__cta">経歴を見る</a>')
+    // === PDF / Contact CTA ===
+    .replace(/aria-label="채용 문의 옵션"/g, 'aria-label="採用お問い合わせオプション"')
+    .replace(/download="이재철_이력서\.pdf"/g, 'download="Lee-Jaecheol-Resume-JA.pdf"')
+    .replace(/aria-label="이력서 PDF 다운로드"/g, 'aria-label="履歴書PDFダウンロード"')
+    .replace(/>📄 이력서 PDF 다운로드</g, '>📄 履歴書PDFダウンロード<')
+    .replace(/aria-label="채용 또는 면접 문의하기"/g, 'aria-label="採用・面接お問い合わせ"')
+    .replace(/>채용·면접 문의하기</g, '>採用・面接お問い合わせ<')
+    // === Skip link ===
+    .replace(/>바로 본문으로 이동</g, '>メインコンテンツへスキップ<')
+    // === sr-only section headings ===
+    .replace(/<h2 id="about-heading" class="sr-only">소개<\/h2>/g, '<h2 id="about-heading" class="sr-only">紹介</h2>')
+    .replace(/<h2 id="skills-heading" class="sr-only">기술<\/h2>/g, '<h2 id="skills-heading" class="sr-only">スキル</h2>')
+    .replace(/<h2 id="infrastructure-heading" class="sr-only">인프라<\/h2>/g, '<h2 id="infrastructure-heading" class="sr-only">インフラ</h2>')
+    .replace(/<h2 id="status-heading" class="sr-only">상태<\/h2>/g, '<h2 id="status-heading" class="sr-only">ステータス</h2>');
 }
 
 /**

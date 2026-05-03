@@ -52,7 +52,7 @@
   font-size: var(--text-xs);
 }
 .htop-items {
-  color: var(--text-muted);
+  color: var(--text-secondary);
   font-size: var(--text-xs);
   flex: 1;
   min-width: 150px;

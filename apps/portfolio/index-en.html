@@ -486,25 +486,23 @@
                   ><span class="sr-only">Jaecheol Lee</span>
                 </h1>
                 <div class="cmd-output hero-positioning">
-                  DevSecOps/SRE/Platform Engineer automating regulated security infrastructure
+                  9-year DevSecOps/SRE — from OA operations to automation, SIEM, and financial security infrastructure
                 </div>
                 <div class="cmd-output hero-tagline">
-                  FSC licensing audit · Splunk ES detection · FortiGate HA · Terraform IaC
+                  KAI closed-network OA → Linux certification reskilling → Ansible/Python automation → Nextrade FortiGate HA · Splunk ES · n8n SOC 24/7
                 </div>
                 <div class="hero-context-grid" role="list" aria-label="Key experience areas">
                   <div class="hero-context" role="listitem">
-                    <div class="hero-context__label">High-Availability Security Infrastructure</div>
+                    <div class="hero-context__label">OA → DevSecOps 9-year growth</div>
                   </div>
                   <div class="hero-context" role="listitem">
-                    <div class="hero-context__label">FSC Licensing</div>
+                    <div class="hero-context__label">FSC licensing · Financial regulator audit response</div>
                   </div>
                   <div class="hero-context" role="listitem">
-                    <div class="hero-context__label">SIEM Detection Rules · Automated Response</div>
+                    <div class="hero-context__label">Splunk ES · n8n automated detection & response</div>
                   </div>
                   <div class="hero-context" role="listitem">
-                    <div class="hero-context__label">
-                      IaC · Observability Operations Standardization
-                    </div>
+                    <div class="hero-context__label">FortiGate HA · IaC · Observability standardization</div>
                   </div>
                 </div>
                 <div
@@ -534,6 +532,59 @@
                 <span class="section-cmd__command">cat about.txt</span>
               </div>
               <!-- ABOUT_CONTENT_PLACEHOLDER -->
+            </section>
+
+            <section
+              id="resume"
+              class="section-resume reveal"
+              role="region"
+              aria-labelledby="resume-heading"
+            >
+              <div class="section-cmd">
+                <span class="section-cmd__command">cat experience.log</span>
+              </div>
+              <h2 id="resume-heading" class="sr-only">Work Experience</h2>
+              <ul class="resume-list">
+                <!-- RESUME_CARDS_PLACEHOLDER -->
+              </ul>
+              <div class="resume-download card">
+                <a href="/resume.pdf" download="Jaecheol-Lee-Resume.pdf" class="link-subtle" aria-label="Download resume PDF"
+                  >📄 Download Resume PDF</a
+                >
+                <a href="#contact" class="link-subtle" aria-label="Contact for interview or hiring"
+                  >Contact for Interview / Hiring</a
+                >
+              </div>
+            </section>
+
+            <section
+              id="projects"
+              class="section-projects reveal"
+              role="region"
+              aria-labelledby="projects-heading"
+            >
+              <div class="section-cmd">
+                <span class="section-cmd__command">ls -la ~/projects/</span>
+              </div>
+              <h2 id="projects-heading" class="sr-only">Projects</h2>
+              <ul class="project-list">
+                <!-- PROJECT_CARDS_PLACEHOLDER -->
+              </ul>
+            </section>
+
+            <section
+              id="skills"
+              class="section-skills reveal"
+              role="region"
+              aria-labelledby="skills-heading"
+            >
+              <h2 id="skills-heading" class="sr-only">Skills</h2>
+              <div class="section-cmd">
+                <span class="section-cmd__command">cat skills.json</span>
+              </div>
+              <ul class="skill-list-minimal">
+                <!-- SKILLS_LIST_PLACEHOLDER -->
+              </ul>
             </section>
 
             <section
@@ -579,56 +630,6 @@
                   </li>
                 </ul>
               </div>
-            </section>
-
-            <section
-              id="resume"
-              class="section-resume reveal"
-              role="region"
-              aria-labelledby="resume-heading"
-            >
-              <div class="section-cmd">
-                <span class="section-cmd__command">cat experience.log</span>
-              </div>
-              <h2 id="resume-heading" class="sr-only">Work Experience</h2>
-              <ul class="resume-list">
-                <!-- RESUME_CARDS_PLACEHOLDER -->
-              </ul>
-              <div class="resume-download card">
-                <a href="#contact" class="link-subtle" aria-label="Contact for interview or hiring"
-                  >Contact for Interview / Hiring</a
-                >
-              </div>
-            </section>
-
-            <section
-              id="projects"
-              class="section-projects reveal"
-              role="region"
-              aria-labelledby="projects-heading"
-            >
-              <div class="section-cmd">
-                <span class="section-cmd__command">ls -la ~/projects/</span>
-              </div>
-              <h2 id="projects-heading" class="sr-only">Projects</h2>
-              <ul class="project-list">
-                <!-- PROJECT_CARDS_PLACEHOLDER -->
-              </ul>
-            </section>
-
-            <section
-              id="skills"
-              class="section-skills reveal"
-              role="region"
-              aria-labelledby="skills-heading"
-            >
-              <h2 id="skills-heading" class="sr-only">Skills</h2>
-              <div class="section-cmd">
-                <span class="section-cmd__command">cat skills.json</span>
-              </div>
-              <ul class="skill-list-minimal">
-                <!-- SKILLS_LIST_PLACEHOLDER -->
-              </ul>
             </section>
 
             <section
@@ -913,7 +914,7 @@
           var url = item.getAttribute('data-url') || window.location.origin;
           var stateEl = item.querySelector('.status-state');
           var isSameOrigin = url.indexOf(window.location.origin) === 0;
-          fetch(url + '/health', { method: 'GET', mode: isSameOrigin ? 'same-origin' : 'no-cors' })
+          NZ|          fetch(url, { method: 'GET', mode: isSameOrigin ? 'same-origin' : 'no-cors' })
             .then(function (response) {
               if (response.type === 'opaque' || response.ok) {
                 item.classList.add('online');
