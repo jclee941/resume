@@ -14,6 +14,7 @@ jobs:
     if: |
       github.event_name == 'pull_request_target' &&
       github.event.label.name == 'security-review' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
       github.event.pull_request.user.login == 'jclee941'
 
     runs-on: ubuntu-latest
@@ -62,13 +63,14 @@ jobs:
 
       - name: Run deep security review
         env:
-          OPENAI_KEY: ${{ secrets.CLIPROXY_API_KEY }}
+          OPENAI.KEY: ${{ secrets.CLIPROXY_API_KEY }}
           OPENAI.API_BASE: https://cliproxy.jclee.me/v1
           CONFIG.MODEL: kimi-k2-thinking
           CONFIG.FALLBACK_MODELS: '["kimi-k2.6", "claude-opus-4-7"]'
           CONFIG.RESPONSE_LANGUAGE: ko
           CONFIG.AI_TIMEOUT: '300'
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CONFIG.CUSTOM_MODEL_MAX_TOKENS: "128000"
+          GITHUB__USER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_REVIEWER.REQUIRE_SECURITY_REVIEW: 'true'
           PR_REVIEWER.REQUIRE_TESTS_REVIEW: 'false'
           PR_REVIEWER.REQUIRE_ESTIMATE_EFFORT_TO_REVIEW: 'false'
