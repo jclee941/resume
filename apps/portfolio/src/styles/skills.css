@@ -84,21 +84,6 @@
   letter-spacing: 0;
   vertical-align: baseline;
 }
-.skill-item {
-  color: var(--text-secondary);
-  transition: color 0.15s ease;
-}
-.skill-item--expert {
-  color: var(--cyber-cyan-bright);
-  font-weight: var(--font-bold);
-  text-shadow: var(--glow-cyan-subtle);
-}
-.skill-item--expert::before {
-  content: "★ ";
-  color: var(--cyber-cyan);
-  font-size: 0.75em;
-  margin-right: 0.1em;
-}
 /* ============================================================
    SKILL BARS
    ============================================================ */
