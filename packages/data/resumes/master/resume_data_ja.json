@@ -57,8 +57,8 @@
       "careerHighlights": [
         "OAエンジニアスタート (2017 KAI閉鎖網) — Linuxサーバ50台以上の手動運用、パッチ・ファイアウォールルール経験",
         "Linux学び直し (2018.11~2019.11) — RHCSA、CompTIA Linux+、LPIC-1、Linuxマスター2級取得",
-        "自動化導入 (2019~2022 Metanet · Jointree) — Ansible/Python 1000名コンタクトセンタ、NSX-Tマイクロセグメンテーション、Wazuh OSS監視",
-        "金融インフラ (2022~2024 Quantec FSDC) — 金融監督院監査対応、DBチューニングCPU 75%→52%",
+        "自動化導入 (2019~2022 Metanet · Jointree) — Ansible/Python 大規模コンタクトセンタ、NSX-Tマイクロセグメンテーション、Wazuh OSS監視",
+        "金融インフラ (2022~2024 Quantec FSDC) — 金融監督院監査対応、DBクエリチューニング",
         "金融セキュリティ構築・運用 (2024~ Gaonnuri · ITCEN Nextrade) — FortiGate HA 5層分離、FSC認可通過、Splunk ES + n8n + FortiManager APIによる自動検知・対応"
       ],
       "techPhilosophy": [
@@ -196,7 +196,7 @@
       "teamSize": "統合セキュリティ構築チーム（規模非公開）",
       "myRole": "NSX-Tマイクロセグメンテーション・統合ポリシー設計担当",
       "workType": "正社員（派遣）",
-      "description": "国民大学校次世代情報システムにNSX-Tマイクロセグメンテーションを設計・適用し、NAC・DLP・APT統合監視とWazuh基盤のOSSセキュリティモニタリングを構築。月次障害25%削減・侵害試行月200件遮断。",
+      "description": "国民大学校次世代情報システムにNSX-Tマイクロセグメンテーションを設計・適用し、NAC・DLP・APT統合監視とWazuh基盤のOSSセキュリティモニタリングを構築。月次障害の継続的削減と侵害試行の遮断。",
       "note": "ジョイントリー所属、国民大学校次世代情報システム構築へ派遣",
       "projects": [
         {
@@ -228,7 +228,7 @@
       "teamSize": "インフラ運用チーム（規模非公開）",
       "myRole": "VPN/NAC自動化・スイッチ点検自動化担当",
       "workType": "SI+SM",
-      "description": "コンタクトセンタの1000名規模の在宅勤務環境にSSL VPN/NACを構築し、Ansible・Pythonで新規端末登録・スイッチ点検を自動化(NAC政策展開10時間→1時間、90%短縮)。",
+      "description": "コンタクトセンタの大規模在宅勤務環境にSSL VPN/NACを構築し、Ansible・Pythonで新規端末登録・スイッチ点検を自動化(NAC政策展開をAnsibleで自動化)。",
       "projects": [
         {
           "name": "コンタクトセンター リモートワーク基盤",
@@ -1009,11 +1009,11 @@
   "platformVariants": {
     "wanted": {
       "headline": "OA → DevSecOps 8年目 | 金融セキュリティ基盤 | FSC認可通過 | Splunk ES · n8n · FortiGate HA",
-      "about": "OAエンジニアから始まり8年目のDevSecOps/SREエンジニアです。\n\n[成長ストーリー]\n2017.02 — MT DataにてKAI(韓国航空宇宙産業)閉鎖網のOA運用を開始。Linuxサーバ50台以上のパッチ、ファイアウォール/IDS政策管理、WSUS運用、ログ分析を手動で実施し、繰り返し作業の限界を認識しました。\n\n2018.11 — 11ヶ月間Linuxシステムを学び直し、RHCSA、CompTIA Linux+、LPIC-1、Linuxマスター2級を取得しました。\n\n2019.12 — Metanet M Platformにて1000名規模のコンタクトセンタ在宅勤務環境をSSL VPN/NACで構築し、Ansible・Pythonで新規端末登録とスイッチ点検を自動化しました(NAC政策展開 10時間→1時間、90%短縮)。\n\n2021.09 — Jointreeにて国民大学校の次世代情報システムにNSX-Tマイクロセグメンテーションを適用し、Wazuh基盤のOSSセキュリティ監視を構築しました。\n\n2022.08 — Quantecにて金融セキュリティデータセンタ(FSDC)インフラを運用し、金融監督院定期監査対応、DLP政策運用、DBアクセス制御クエリチューニング(CPU 75%→52%)、PBプラットフォームPOC検証を実施しました。\n\n2024.03 — GaonnuriにてNextrade取引所のセキュリティインフラを構築。FortiGate HA 5層ネットワーク分離設計、Ansible Roleによる標準化(ファイアウォール政策500件自動化、8時間→1時間)。FSC事前認可審査を通過しました。\n\n2025.03 — ITCEN CTSにてNextradeセキュリティ運用を担当。Splunk ES検知ルール設計、n8n + FortiManager APIによる自動対応体制を構築(サーバ150台、端末300台、ネットワーク80台、日10万件以上の注文処理、MTTR 30分→12分、60%短縮)。\n\n[保有能力]\nSIEMルール設計(Splunk ES)、セキュリティ運用自動化(n8n、FortiManager API)、高可用性セキュリティアーキテクチャ(FortiGate HA、NSX-T)、IaCインフラ管理(Ansible Role、Terraform)、可観測性プラットフォーム運用(Grafana/Prometheus/Loki)、金融規制対応(FSC認可、金融監督院監査)\n\nポートフォリオ: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
+      "about": "OAエンジニアから始まり8年目のDevSecOps/SREエンジニアです。\n\n[成長ストーリー]\n2017.02 — MT DataにてKAI(韓国航空宇宙産業)閉鎖網のOA運用を開始。Linuxサーバ50台以上のパッチ、ファイアウォール/IDS政策管理、WSUS運用、ログ分析を手動で実施し、繰り返し作業の限界を認識しました。\n\n2018.11 — 11ヶ月間Linuxシステムを学び直し、RHCSA、CompTIA Linux+、LPIC-1、Linuxマスター2級を取得しました。\n\n2019.12 — Metanet M Platformにて大規模コンタクトセンタ在宅勤務環境をSSL VPN/NACで構築し、Ansible・Pythonで新規端末登録とスイッチ点検を自動化しました(NAC政策展開をAnsibleで自動化)。\n\n2021.09 — Jointreeにて国民大学校の次世代情報システムにNSX-Tマイクロセグメンテーションを適用し、Wazuh基盤のOSSセキュリティ監視を構築しました。\n\n2022.08 — Quantecにて金融セキュリティデータセンタ(FSDC)インフラを運用し、金融監督院定期監査対応、DLP政策運用、DBアクセス制御クエリチューニング、PBプラットフォームPOC検証を実施しました。\n\n2024.03 — GaonnuriにてNextrade取引所のセキュリティインフラを構築。FortiGate HA 5層ネットワーク分離設計、Ansible Roleによる標準化(ファイアウォール政策をAnsible Roleで標準化)。FSC事前認可審査を通過しました。\n\n2025.03 — ITCEN CTSにてNextradeセキュリティ運用を担当。Splunk ES検知ルール設計、n8n + FortiManager APIによる自動対応体制を構築（自動検知・対応によりMTTR短縮）。\n\n[保有能力]\nSIEMルール設計(Splunk ES)、セキュリティ運用自動化(n8n、FortiManager API)、高可用性セキュリティアーキテクチャ(FortiGate HA、NSX-T)、IaCインフラ管理(Ansible Role、Terraform)、可観測性プラットフォーム運用(Grafana/Prometheus/Loki)、金融規制対応(FSC認可、金融監督院監査)\n\nポートフォリオ: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
     },
     "jobkorea": {
       "headline": "OA → DevSecOps 8年目 — 金融セキュリティ基盤 (FSC認可、Splunk ES、FortiGate HA、n8n)",
-      "about": "OAエンジニアから始まり8年目のDevSecOps/SREエンジニアです。\n\n[主要経歴]\n• ITCEN CTS — 2025.03~2026.02 — Nextrade取引所セキュリティ運用SM。Splunk ES + n8n + FortiManager APIで自動検知・対応体制構築（MTTR 60%短縮）。\n• Gaonnuri — 2024.03~2025.02 — Nextradeセキュリティインフラ構築。FortiGate HA + 5層分離 + Ansible Role標準化。FSC事前認可審査通過。\n• Quantec — 2022.08~2024.03 — 金融セキュリティデータセンタ(FSDC)運用。金融監督院監査対応、DBチューニングCPU 75%→52%。\n• Jointree — 2021.09~2022.04 — 国民大学校次世代システム。NSX-Tマイクロセグメンテーション + Wazuh。\n• Metanet — 2019.12~2021.08 — 1000名コンタクトセンタ在宅勤務環境。Ansible/Python自動化。\n• MT Data — 2017.02~2018.10 — KAI閉鎖網IT支援/OA運用。Linuxサーバ50台以上。\n\n[成長背景]\n2017年OAエンジニアとして始まり、閉鎖網で手動運用の限界を経験しました。2018.11から11ヶ月間RHCSA・LPIC-1・Linuxマスター2級でLinuxを学び直し、自動化・セキュリティ領域への成長経路を設定しました。コンタクトセンタ・教育・金融インフラを経て、現在は金融取引所のセキュリティ運用を自動化しています。\n\n[保有技術]\nSplunk ES、n8n、FortiGate/FortiManager、Ansible、Python、Terraform、Docker、NSX-T、Prometheus/Grafana/Loki、Cloudflare Workers、MCP/AIエージェント\n\nポートフォリオ: https://resume.jclee.me"
+      "about": "OAエンジニアから始まり8年目のDevSecOps/SREエンジニアです。\n\n[主要経歴]\n• ITCEN CTS — 2025.03~2026.02 — Nextrade取引所セキュリティ運用SM。Splunk ES + n8n + FortiManager APIで自動検知・対応体制構築（MTTR 60%短縮）。\n• Gaonnuri — 2024.03~2025.02 — Nextradeセキュリティインフラ構築。FortiGate HA + 5層分離 + Ansible Role標準化。FSC事前認可審査通過。\n• Quantec — 2022.08~2024.03 — 金融セキュリティデータセンタ(FSDC)運用。金融監督院監査対応、DBクエリチューニング。\n• Jointree — 2021.09~2022.04 — 国民大学校次世代システム。NSX-Tマイクロセグメンテーション + Wazuh。\n• Metanet — 2019.12~2021.08 — 大規模コンタクトセンタ在宅勤務環境。Ansible/Python自動化。\n• MT Data — 2017.02~2018.10 — KAI閉鎖網IT支援/OA運用。Linuxサーバ50台以上。\n\n[成長背景]\n2017年OAエンジニアとして始まり、閉鎖網で手動運用の限界を経験しました。2018.11から11ヶ月間RHCSA・LPIC-1・Linuxマスター2級でLinuxを学び直し、自動化・セキュリティ領域への成長経路を設定しました。コンタクトセンタ・教育・金融インフラを経て、現在は金融取引所のセキュリティ運用を自動化しています。\n\n[保有技術]\nSplunk ES、n8n、FortiGate/FortiManager、Ansible、Python、Terraform、Docker、NSX-T、Prometheus/Grafana/Loki、Cloudflare Workers、MCP/AIエージェント\n\nポートフォリオ: https://resume.jclee.me"
     }
   },
   "coverLetter": {
@@ -1021,9 +1021,9 @@
       "headline": "OAから始まりセキュリティ運用自動化に到達した8年目 DevSecOps/SRE — 一つの信念が作った軌跡",
       "paragraphs": [
         "キャリアの出発点は、韓国航空宇宙産業(KAI)の閉鎖網IT運用室で、50台のLinuxサーバのパッチスケジュールをExcelに手書きしていた現場でした。毎週同じ作業を繰り返しながら、セキュリティ運用の価値は「無事故を維持すること」ではなく「無事故を自動で保証すること」だと確信しました。続く11ヶ月間、RHCSA・LPIC-1・Linuxマスター2級を連続取得してLinuxシステムの基礎を立て直し、その後現場で8年間の運用経験を積み上げてきました。",
-        "メタネットMプラットフォームで初めてAnsibleとPythonを手に取り、1,000名規模のコンタクトセンタのNAC政策展開を10時間から1時間に短縮しました。ジョイントリーでは国民大学校の次世代情報システムにNSX-Tマイクロセグメンテーションを適用し、東西トラフィックの盲点を解消(月200件の侵害試行遮断、DLP誤検知80%削減)。ツールは変わっても、「手作業はすべて自動化の対象である」という原則は変わりませんでした。",
-        "クォンテック投資一任の金融セキュリティデータセンタ(FSDC)で金融監督院の定期監査に対応する中で、セキュリティ運用の本質は「監査人にデータで証明できるか」だと学びました。DBアクセス制御クエリチューニング(CPU 75%→52%)もPBプラットフォームPOC検証も、結局は「根拠ある運用」という一つの目標でした。",
-        "現在はガオンヌリで構築段階を担当し、ITCEN CTSで運用段階へと連続参加しているNextrade取引所セキュリティトラックにいます。FortiGate HAで5層ネットワーク分離を設計、FSC本認可事前審査を通過、Ansible Roleでセキュリティ機器を標準化(ファイアウォール政策500件自動化、8時間→1時間)、Splunk ES検知ルール + n8n + FortiManager APIによる自動対応(MTTR 30分→12分、日10万件以上の注文処理)を運用しています。サーバ150台・端末300台・ネットワーク80台規模の環境で運用体制を安定化させました。",
+        "メタネットMプラットフォームで初めてAnsibleとPythonを手に取り、大規模コンタクトセンタのNAC政策展開をAnsibleで自動化しました。ジョイントリーでは国民大学校の次世代情報システムにNSX-Tマイクロセグメンテーションを適用し、東西トラフィックの盲点を解消（侵害試行の遮断とDLP誤検知の削減を達成）。ツールは変わっても、「手作業はすべて自動化の対象である」という原則は変わりませんでした。",
+        "クォンテック投資一任の金融セキュリティデータセンタ(FSDC)で金融監督院の定期監査に対応する中で、セキュリティ運用の本質は「監査人にデータで証明できるか」だと学びました。DBアクセス制御クエリチューニングもPBプラットフォームPOC検証も、結局は「根拠ある運用」という一つの目標でした。",
+        "現在はガオンヌリで構築段階を担当し、ITCEN CTSで運用段階へと連続参加しているNextrade取引所セキュリティトラックにいます。FortiGate HAで5層ネットワーク分離を設計、FSC本認可事前審査を通過、Ansible Roleでセキュリティ機器を標準化(ファイアウォール政策をAnsible Roleで標準化)、Splunk ES検知ルール + n8n + FortiManager APIによる自動対応（自動検知・対応によりMTTR短縮）を運用しています。取引所セキュリティ環境全体の運用体制を安定化させました。",
         "次のステップはAIエージェントとEdgeランタイムの統合です。個人のホームラボでCloudflare Workers、MCP、Grafana、1PasswordをTerraformでIaC化して運用し、「セキュリティ運用のtoilをAIが一次処理する」パターンを検証しています。既存ツールを運用するのではなく、運用の問題を新しいツールで答えるエンジニアとして次のキャリアを進めたいと考えています。"
       ],
       "closing": "「繰り返し作業の限界」という一つの問題意識が作った8年間の軌跡を持って、貴社のセキュリティインフラが次に解くべき問題に参加させてください。"
