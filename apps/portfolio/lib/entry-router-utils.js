@@ -1,6 +1,10 @@
 const BUILD_LASTMOD = '2026-05-04';
-const BUILD_LASTMOD_HTTP = 'Tue, 28 Apr 2026 00:00:00 GMT';
-const BUILD_ETAG_VERSION = '20260428';
+// Derive HTTP-format Last-Modified and ETag from BUILD_LASTMOD so they cannot drift.
+const BUILD_LASTMOD_HTTP = (() => {
+  const d = new Date(`${BUILD_LASTMOD}T00:00:00Z`);
+  return d.toUTCString();
+})();
+const BUILD_ETAG_VERSION = BUILD_LASTMOD.replace(/-/g, '');
 const LAST_MODIFIED = BUILD_LASTMOD_HTTP;
 const SITEMAP_LASTMOD = BUILD_LASTMOD;
 const SITEMAP_ETAG = `W/"resume-sitemap-${BUILD_ETAG_VERSION}"`;
