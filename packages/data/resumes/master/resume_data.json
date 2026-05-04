@@ -790,7 +790,7 @@
     {
       "name": "Resume Portfolio",
       "period": "2024.01 ~ 현재",
-      "description": "[문제] 경력·프로젝트·운영 지표가 이력서·PDF·GitHub에 흩어져 있어 채용 담당자가 강점을 빠르게 파악하기 어려웠습니다.\n[해결] Cloudflare Workers Edge에 단일 SSoT 기반 이력서 사이트를 구축하고 MCP 자동화 도구·자동 지원 파이프라인·n8n 워크플로우를 monorepo로 통합했습니다.\n[결과] 이력서·자소서 생성·자동 지원·관측성을 단일 monorepo에서 운영하고 있습니다.",
+      "description": "[문제] 경력·프로젝트·운영 지표가 이력서·PDF·GitHub에 흩어져 있어 채용 담당자가 강점을 빠르게 파악하기 어려웠습니다.\n[해결] Cloudflare Workers Edge에 단일 SSoT 기반 이력서 사이트를 구축하고 MCP 자동화 도구·자동 지원 파이프라인·n8n 워크플로우를 monorepo로 통합했습니다.\n[결과] 이력서·자소서 생성·자동 지원·관측성을 단일 monorepo에서 운영하고 있습니다.\n\n← 이 사이트가 Cloudflare Workers에서 동작합니다 (edge runtime, ~390KB 번들).",
       "technologies": [
         "Cloudflare Workers",
         "HTML/CSS",

@@ -768,7 +768,7 @@
     {
       "name": "Resume Portfolio",
       "period": "2024.01 ~ 現在",
-      "description": "[課題] 経歴・プロジェクト・運用指標が履歴書・PDF・GitHubに分散し、採用担当者が強みを素早く把握しにくい状態でした。\n[解決] Cloudflare Workers Edgeに単一SSoTベースの履歴書サイトを構築し、MCP自動化ツール・自動応募パイプライン・n8nワークフローをmonorepoに統合しました。\n[結果] 履歴書・志望動機生成・自動応募・可観測性を単一monorepoで運用しています。",
+      "description": "[課題] 経歴・プロジェクト・運用指標が履歴書・PDF・GitHubに分散し、採用担当者が強みを素早く把握しにくい状態でした。\n[解決] Cloudflare Workers Edgeに単一SSoTベースの履歴書サイトを構築し、MCP自動化ツール・自動応募パイプライン・n8nワークフローをmonorepoに統合しました。\n[結果] 履歴書・志望動機生成・自動応募・可観測性を単一monorepoで運用しています。\n\n← このサイトは Cloudflare Workers で稼働しています (edge runtime, ~390KB バンドル)。",
       "technologies": [
         "Cloudflare Workers",
         "HTML/CSS",
