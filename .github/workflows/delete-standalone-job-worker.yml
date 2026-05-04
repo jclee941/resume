@@ -40,7 +40,7 @@ jobs:
       ROUTE_PATTERN: resume.jclee.me/job/*
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       # ──────────────────────────────────────────────────────────────────
       # STAGE 1 — Pre-flight verification
