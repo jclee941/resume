@@ -273,16 +273,22 @@ test.describe('JSON-LD Structured Data', () => {
     expect(schemaCount).toBe(3);
   });
 
-  test('canonical URL matches route on each locale', async ({ page }) => {
+  test('canonical URL matches route on each locale', async ({ browser }) => {
     const cases = [
-      { path: '/', expected: 'https://resume.jclee.me/' },
-      { path: '/en/', expected: 'https://resume.jclee.me/en/' },
-      { path: '/ja/', expected: 'https://resume.jclee.me/ja/' },
+      { path: '/', locale: 'ko-KR', expected: 'https://resume.jclee.me/' },
+      { path: '/en/', locale: 'en-US', expected: 'https://resume.jclee.me/en/' },
+      { path: '/ja/', locale: 'ja-JP', expected: 'https://resume.jclee.me/ja/' },
     ];
-    for (const { path, expected } of cases) {
+    for (const { path, locale, expected } of cases) {
+      const ctx = await browser.newContext({
+        locale,
+        extraHTTPHeaders: { 'Accept-Language': `${locale},${locale.split('-')[0]};q=0.9` },
+      });
+      const page = await ctx.newPage();
       await page.goto(path, { waitUntil: 'domcontentloaded' });
       const canonical = await page.locator('link[rel="canonical"]').first().getAttribute('href');
       expect(canonical, `canonical for ${path}`).toBe(expected);
+      await ctx.close();
     }
   });
 
