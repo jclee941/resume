@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Jaecheol Lee — Cloudflare One Specialist Solutions Engineer</title>
+    <style>
+      @page {
+        size: A4;
+        margin: 9mm 11mm 9mm 11mm;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Inter', 'Helvetica Neue', 'Arial', 'Noto Sans KR', sans-serif;
+        color: #0b0b0b;
+        font-size: 8pt;
+        line-height: 1.28;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .page {
+        width: 100%;
+        max-width: 188mm;
+        margin: 0 auto;
+      }
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        border-bottom: 1.2pt solid #f38020;
+        padding-bottom: 3pt;
+        margin-bottom: 4pt;
+      }
+      .name-block h1 {
+        margin: 0 0 1pt 0;
+        font-size: 15pt;
+        font-weight: 700;
+        letter-spacing: -0.2pt;
+      }
+      .name-block .role {
+        font-size: 9pt;
+        color: #f38020;
+        font-weight: 600;
+        letter-spacing: 0.1pt;
+      }
+      .contact {
+        text-align: right;
+        font-size: 7.9pt;
+        line-height: 1.38;
+        color: #333;
+      }
+      .contact a {
+        color: #0b3d8a;
+        text-decoration: none;
+      }
+      .summary {
+        margin-bottom: 4pt;
+        padding: 3pt 6pt;
+        background: #fff7f0;
+        border-left: 1.6pt solid #f38020;
+        font-size: 8pt;
+        line-height: 1.3;
+      }
+      .summary em {
+        font-style: italic;
+        color: #555;
+      }
+      h2 {
+        font-size: 8pt;
+        text-transform: uppercase;
+        letter-spacing: 0.5pt;
+        color: #f38020;
+        border-bottom: 0.5pt solid #ddd;
+        padding-bottom: 1pt;
+        margin: 5pt 0 2.5pt 0;
+      }
+      h2:first-of-type {
+        margin-top: 4pt;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1pt 10pt;
+      }
+      .skill-row {
+        display: flex;
+        gap: 4pt;
+        line-height: 1.22;
+      }
+      .skill-row .label {
+        font-weight: 600;
+        min-width: 74pt;
+        color: #333;
+        font-size: 8pt;
+      }
+      .skill-row .value {
+        color: #0b0b0b;
+        font-size: 8pt;
+      }
+      .role-card {
+        margin-bottom: 3pt;
+      }
+      .role-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 0.5pt;
+      }
+      .role-title {
+        font-weight: 700;
+        font-size: 8pt;
+      }
+      .role-company {
+        color: #555;
+        font-weight: 500;
+        font-size: 8pt;
+      }
+      .role-period {
+        color: #777;
+        font-size: 8pt;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+      ul {
+        margin: 0.5pt 0 1pt 12pt;
+        padding: 0;
+      }
+      ul li {
+        margin-bottom: 0.4pt;
+        line-height: 1.26;
+      }
+      .why-list li {
+        margin-bottom: 0.8pt;
+      }
+      .tag {
+        display: inline-block;
+        padding: 0.4pt 3.5pt;
+        margin: 0 1.5pt 0.5pt 0;
+        background: #fff1e5;
+        color: #c65a00;
+        border-radius: 2pt;
+        font-size: 7.4pt;
+        font-weight: 500;
+      }
+      .two-col {
+        display: grid;
+        grid-template-columns: 1.55fr 1fr;
+        gap: 10pt;
+      }
+      .footer {
+        margin-top: 3pt;
+        padding-top: 2pt;
+        border-top: 0.4pt solid #eee;
+        font-size: 7.4pt;
+        color: #888;
+        text-align: center;
+        letter-spacing: 0.2pt;
+      }
+      .cf-highlight {
+        color: #f38020;
+        font-weight: 600;
+      }
+      strong {
+        font-weight: 700;
+      }
+      code {
+        font-family: 'SF Mono', Consolas, monospace;
+        font-size: 7.8pt;
+        background: #f5f5f5;
+        padding: 0.3pt 2pt;
+        border-radius: 1.5pt;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header>
+        <div class="name-block">
+          <h1>Jaecheol Lee · 이재철</h1>
+          <div class="role">
+            Sr. DevSecOps / SRE — 8 years · Korean Financial Security · Cloudflare Workers operator
+          </div>
+        </div>
+        <div class="contact">
+          <div>
+            <a href="https://resume.jclee.me/en/">resume.jclee.me</a> ·
+            <a href="https://github.com/jclee941">github.com/jclee941</a>
+          </div>
+          <div>qws941@kakao.com · Seoul, Korea</div>
+          <div>Open to work · Available immediately</div>
+        </div>
+      </header>
+
+      <div class="summary">
+        Eight-year DevSecOps/SRE engineer who started from closed-network OA operations and arrived
+        at financial-exchange security operations. Driven by the conviction that
+        <em>"repetitive work should be automated"</em>, I currently operate Splunk ES + n8n +
+        FortiManager API for automated security-event detection and response on FortiGate HA
+        five-tier segmentation at the Nextrade exchange (ITCEN CTS, 2025–2026).
+        <span class="cf-highlight"
+          >My personal portfolio resume.jclee.me runs on Cloudflare Workers in production</span
+        >
+        — D1, KV, build-time HTML injection, Accept-Language routing, CSP
+        <code>strict-dynamic</code>, validated 9 JSON-LD blocks across three locales.
+      </div>
+
+      <h2>Why Cloudflare One Specialist SE</h2>
+      <ul class="why-list">
+        <li>
+          <strong>Customer-side regulatory fluency</strong> — FSC pre-licensing audit passed
+          (Nextrade), FSS audits (Quantec FSDC), 전자금융감독규정 daily context. The translation
+          layer Korean financial enterprises need when evaluating SASE/Zero Trust.
+        </li>
+        <li>
+          <strong>Operator-grade familiarity with Cloudflare developer platform</strong> — Workers +
+          D1 + KV + Workflows in production for resume.jclee.me; deployed via GitHub Actions
+          <code>cloudflare/wrangler-action@v3</code>; ~390 KB compressed Worker.
+        </li>
+        <li>
+          <strong>Adjacent-stack literacy for Cloudflare One products</strong> — SIEM rule design
+          (Splunk ES correlation), VPN/remote access (FortiGate SSL-VPN), Zero Trust segmentation
+          (NSX-T DFW), DLP operations.
+        </li>
+        <li>
+          <strong>Bilingual</strong> — Korean (native) and English (working). Both KO/EN/JA versions
+          of resume.jclee.me are self-operated.
+        </li>
+      </ul>
+
+      <h2>Cloudflare One Capability Matrix</h2>
+      <div class="grid">
+        <div class="skill-row">
+          <span class="label">SIEM &amp; Logs</span
+          ><span class="value">Splunk ES correlation · ELK · Loki · Logpush → Splunk HEC plan</span>
+        </div>
+        <div class="skill-row">
+          <span class="label">Zero Trust &amp; SASE</span
+          ><span class="value">NSX-T DFW · FortiGate HA 5-tier · ZTNA design</span>
+        </div>
+        <div class="skill-row">
+          <span class="label">VPN / Remote Access</span
+          ><span class="value">FortiGate SSL-VPN · FortiClient profiles · tcpdump RCA</span>
+        </div>
+        <div class="skill-row">
+          <span class="label">IdP / SAML / OTP</span
+          ><span class="value">FortiGate SAML SSO · Cloudflare Access (learning)</span>
+        </div>
+        <div class="skill-row">
+          <span class="label">SWG · CASB · DLP</span
+          ><span class="value">DLP ops (FSDC) · CASB readiness · DNS over HTTPS</span>
+        </div>
+        <div class="skill-row">
+          <span class="label">Cloudflare Platform</span
+          ><span class="value"
+            >Workers · D1 · KV · Workflows · Wrangler · resume.jclee.me prod</span
+          >
+        </div>
+        <div class="skill-row">
+          <span class="label">Automation / IaC</span
+          ><span class="value">Ansible Role · Terraform · n8n · FortiManager JSON-RPC</span>
+        </div>
+        <div class="skill-row">
+          <span class="label">Observability</span
+          ><span class="value">Grafana-as-code · Prometheus · Loki · CloudWatch (learning)</span>
+        </div>
+        <div class="skill-row">
+          <span class="label">Compliance</span
+          ><span class="value"
+            >FSC pre-licensing · FSS audit · 전자금융감독규정 · ISMS-P aware</span
+          >
+        </div>
+        <div class="skill-row">
+          <span class="label">Hybrid Cloud</span
+          ><span class="value">Cloudflare Workers prod · NSX-T · AWS SAA-C03 in prep</span>
+        </div>
+      </div>
+
+      <h2>Experience</h2>
+
+      <div class="role-card">
+        <div class="role-head">
+          <div>
+            <span class="role-title">Security Operations Engineer · Nextrade exchange</span> ·
+            <span class="role-company">ITCEN CTS</span>
+          </div>
+          <div class="role-period">2025.03 – 2026.02</div>
+        </div>
+        <ul>
+          <li>
+            Designed Splunk ES detection rules; operate an n8n + FortiManager JSON-RPC API automated
+            detection / response pipeline.
+          </li>
+          <li>Streamlined alert path: Splunk Saved Search → n8n webhook → Slack/SMS routing.</li>
+          <li>
+            Automated firewall policy lookup via FortiManager JSON-RPC API, eliminating repetitive
+            console operations.
+          </li>
+        </ul>
+        <div>
+          <span class="tag">Splunk ES</span><span class="tag">n8n</span
+          ><span class="tag">FortiManager API</span><span class="tag">SOC ops</span>
+        </div>
+      </div>
+
+      <div class="role-card">
+        <div class="role-head">
+          <div>
+            <span class="role-title">Security Infrastructure Engineer · Nextrade build-out</span> ·
+            <span class="role-company">Gaonnuri</span>
+          </div>
+          <div class="role-period">2024.03 – 2025.02</div>
+        </div>
+        <ul>
+          <li>
+            Designed FortiGate FGCP active-passive HA + 5-tier network segmentation;
+            <strong>passed FSC pre-licensing review</strong>.
+          </li>
+          <li>Standardized policy distribution with Ansible Role to eliminate per-device drift.</li>
+        </ul>
+        <div>
+          <span class="tag">FortiGate HA</span><span class="tag">5-tier seg.</span
+          ><span class="tag">FSC licensing</span><span class="tag">Ansible Role</span>
+        </div>
+      </div>
+
+      <div class="role-card">
+        <div class="role-head">
+          <div>
+            <span class="role-title">FSDC Security Operations</span> ·
+            <span class="role-company">Quantec Investment Management</span>
+          </div>
+          <div class="role-period">2022.08 – 2024.03</div>
+        </div>
+        <ul>
+          <li>
+            Operated DLP policy framework and standardized audit deliverables for FSS regulatory
+            inspections.
+          </li>
+          <li>
+            Tuned DB access-control queries to materially lower CPU load; supported PB platform POC
+            launch.
+          </li>
+        </ul>
+        <div>
+          <span class="tag">DLP</span><span class="tag">FSS audit</span
+          ><span class="tag">DB access control</span>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div>
+          <div class="role-card">
+            <div class="role-head">
+              <div>
+                <span class="role-title">NSX-T microsegmentation</span> ·
+                <span class="role-company">Jointree (Kookmin Univ.)</span>
+              </div>
+              <div class="role-period">2021.09 – 2022.04</div>
+            </div>
+            <ul>
+              <li>
+                Designed NSX-T DFW distributed firewall to remove east-west blind spots; built Wazuh
+                OSS monitoring.
+              </li>
+            </ul>
+            <div><span class="tag">NSX-T DFW</span><span class="tag">Wazuh</span></div>
+          </div>
+          <div class="role-card">
+            <div class="role-head">
+              <div>
+                <span class="role-title">Contact-center Remote-Work Security</span> ·
+                <span class="role-company">Metanet</span>
+              </div>
+              <div class="role-period">2019.12 – 2021.08</div>
+            </div>
+            <ul>
+              <li>
+                Automated NAC exception handling, switch inspection, and new-terminal registration
+                with Ansible.
+              </li>
+            </ul>
+            <div>
+              <span class="tag">Ansible</span><span class="tag">NAC</span
+              ><span class="tag">SSL-VPN</span>
+            </div>
+          </div>
+          <div class="role-card">
+            <div class="role-head">
+              <div>
+                <span class="role-title">Closed-Network IT Operations · KAI</span> ·
+                <span class="role-company">MT Data</span>
+              </div>
+              <div class="role-period">2017.02 – 2018.10</div>
+            </div>
+            <ul>
+              <li>
+                Removed unused duplicate firewall rules across the closed-network Linux fleet via
+                firewall-cmd parsing; established WSUS regular patch cycle.
+              </li>
+            </ul>
+            <div>
+              <span class="tag">firewall-cmd</span><span class="tag">WSUS</span
+              ><span class="tag">log analysis</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h2 style="margin-top: 0">Selected Projects</h2>
+          <div class="role-card">
+            <div class="role-title">resume.jclee.me — Cloudflare Workers</div>
+            <ul>
+              <li>
+                Production Worker (~390 KB) with D1, KV, Workflows; Wrangler GitHub Actions CI/CD.
+              </li>
+              <li>
+                Build-time HTML injection of version &amp; deploy timestamp; Accept-Language
+                redirect (/ → /en|ja); CSP nonce + <code>strict-dynamic</code>.
+              </li>
+              <li>
+                9 JSON-LD blocks (KO/EN/JA) validated by Playwright E2E; canonical-per-locale guard.
+              </li>
+            </ul>
+          </div>
+          <div class="role-card">
+            <div class="role-title">FortiManager API Client (Python)</div>
+            <ul>
+              <li>
+                Wraps FortiManager &amp; FortiAnalyzer JSON-RPC; ADOM locking + retry/backoff +
+                idempotent calls; SOC adapter.
+              </li>
+            </ul>
+          </div>
+          <div class="role-card">
+            <div class="role-title">AI GitHub PR Reviewer</div>
+            <ul>
+              <li>
+                Self-hosted on Cloudflare Workers; gitleaks pattern + RBAC checks via GitHub Check
+                Run API; CLIProxyAPI cost control.
+              </li>
+            </ul>
+          </div>
+          <h2>Education &amp; Certifications</h2>
+          <ul>
+            <li>RHCSA · LPIC-1 · Linux Master Level 2 · CompTIA Linux+</li>
+            <li>AWS Solutions Architect Associate (in prep, target Q3 2026)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer">
+        Portfolio resume.jclee.me · KO/EN/JA on Cloudflare Workers · Updated 2026-05-04
+      </div>
+    </div>
+  </body>
+</html>

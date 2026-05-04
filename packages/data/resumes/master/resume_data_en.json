@@ -677,7 +677,7 @@
       "githubUrl": null,
       "demoUrl": null,
       "featured": true,
-      "displayOrder": 1
+      "displayOrder": 2
     },
     {
       "name": "n8n Automation",
@@ -729,7 +729,7 @@
       "githubUrl": "https://github.com/jclee941/splunk",
       "demoUrl": "https://kibana.jclee.me/s/portfolio-demo/app/dashboards?auth_provider_hint=portfolio_demo#/view/portfolio-demo-dashboard",
       "featured": true,
-      "displayOrder": 2
+      "displayOrder": 3
     },
     {
       "name": "IP Blacklist Platform",
@@ -783,14 +783,15 @@
       "githubUrl": "https://github.com/jclee941/resume",
       "demoUrl": "https://resume.jclee.me",
       "highlights": [
+        "← this site runs on Cloudflare Workers (edge runtime, ~390KB bundle, global CDN)",
         "Edge runtime operations for low-latency global service delivery",
         "Self-operated test environment for automated code-quality verification",
         "MCP-based tools to automate repetitive job-application work",
         "Monorepo architecture for consistent multi-package versioning",
         "n8n workflows + API integration for security ops efficiency"
       ],
-      "featured": false,
-      "displayOrder": 3
+      "featured": true,
+      "displayOrder": 1
     },
     {
       "name": "Terraform Homelab IaC",
@@ -895,7 +896,7 @@
     "badge": "Security Infrastructure Engineer",
     "title": "Jaecheol Lee",
     "titleEn": "Jaecheol Lee",
-    "subtitle": "Finance/Public Security Infrastructure · Splunk ES SIEM · FortiGate HA · n8n Operations Automation"
+    "subtitle": "Cloudflare Workers · Splunk ES SIEM · FortiGate HA · n8n automation"
   },
   "sectionDescriptions": {
     "resume": "infrastructure experience",
@@ -975,7 +976,7 @@
     {
       "icon": "⚡",
       "title": "Cloudflare Workers",
-      "description": "Edge deployment",
+      "description": "Edge runtime / ~390KB bundle / health-check verified",
       "status": "running",
       "url": "https://resume.jclee.me"
     },

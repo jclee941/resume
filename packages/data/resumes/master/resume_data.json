@@ -697,7 +697,7 @@
       "githubUrl": null,
       "demoUrl": "https://grafana.jclee.me",
       "featured": true,
-      "displayOrder": 1
+      "displayOrder": 2
     },
     {
       "name": "n8n Automation",
@@ -749,7 +749,7 @@
       "githubUrl": "https://github.com/jclee941/splunk",
       "demoUrl": "https://kibana.jclee.me/s/portfolio-demo/app/dashboards?auth_provider_hint=portfolio_demo#/view/portfolio-demo-dashboard",
       "featured": true,
-      "displayOrder": 2
+      "displayOrder": 3
     },
     {
       "name": "IP Blacklist Platform",
@@ -803,14 +803,15 @@
       "githubUrl": "https://github.com/jclee941/resume",
       "demoUrl": "https://resume.jclee.me",
       "highlights": [
+        "← 이 사이트가 Cloudflare Workers에서 동작합니다 (edge runtime, ~390KB 번들, 글로벌 CDN)",
         "저지연 글로벌 서비스 제공을 위한 Edge 런타임 운영",
         "코드 품질 자동 검증을 위한 테스트 환경 자체 운영",
         "반복 지원 작업을 자동화하기 위한 MCP 기반 도구 개발",
         "다중 패키지 일관된 버전 관리를 위한 monorepo 구조",
         "보안 장비 운영 효율화를 위한 n8n 워크플로우와 API 연동"
       ],
-      "featured": false,
-      "displayOrder": 3
+      "featured": true,
+      "displayOrder": 1
     },
     {
       "name": "Terraform Homelab IaC",
@@ -915,7 +916,7 @@
     "badge": "Security Infrastructure Engineer",
     "title": "이재철",
     "titleEn": "Jaecheol Lee",
-    "subtitle": "금융·공공 보안 인프라 · Splunk ES SIEM · FortiGate HA · n8n 운영 자동화"
+    "subtitle": "Cloudflare Workers · Splunk ES SIEM · FortiGate HA · n8n 자동화"
   },
   "sectionDescriptions": {
     "resume": "인프라 경력",
@@ -1002,7 +1003,7 @@
     {
       "icon": "⚡",
       "title": "Cloudflare Workers",
-      "description": "Edge 배포",
+      "description": "Edge 런타임 / ~390KB 번들 / health-check 검증",
       "status": "running",
       "url": "https://resume.jclee.me"
     },
