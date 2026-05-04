@@ -674,7 +674,8 @@
       "language": "PromQL",
       "githubUrl": null,
       "demoUrl": "https://grafana.jclee.me",
-      "featured": true
+      "featured": true,
+      "displayOrder": 4
     },
     {
       "name": "n8n Automation",
@@ -690,7 +691,8 @@
       "language": "JavaScript",
       "githubUrl": null,
       "demoUrl": null,
-      "featured": false
+      "featured": false,
+      "displayOrder": 7
     },
     {
       "name": "FortiManager API Client (Python)",
@@ -707,7 +709,8 @@
       "githubUrl": null,
       "demoUrl": null,
       "note": "非公開 — 現職環境のコード(ポートフォリオはhttps://resume.jclee.me のデモ)",
-      "featured": true
+      "featured": true,
+      "displayOrder": 1
     },
     {
       "name": "Security Alert System",
@@ -723,7 +726,8 @@
       "language": "Python",
       "githubUrl": "https://github.com/jclee941/splunk",
       "demoUrl": "https://kibana.jclee.me/s/portfolio-demo/app/dashboards?auth_provider_hint=portfolio_demo#/view/portfolio-demo-dashboard",
-      "featured": true
+      "featured": true,
+      "displayOrder": 5
     },
     {
       "name": "IP Blacklist Platform",
@@ -739,7 +743,8 @@
       "language": "Python",
       "githubUrl": "https://github.com/jclee941/blacklist",
       "demoUrl": null,
-      "featured": true
+      "featured": true,
+      "displayOrder": 6
     },
     {
       "name": "HYCU FSDS自律走行",
@@ -757,7 +762,8 @@
       "language": "Python",
       "githubUrl": "https://github.com/jclee941/hycu_fsds",
       "demoUrl": null,
-      "featured": false
+      "featured": false,
+      "displayOrder": 11
     },
     {
       "name": "Resume Portfolio",
@@ -781,7 +787,8 @@
         "複数パッケージの一貫したバージョン管理のためのmonorepo構造",
         "セキュリティ機器運用の効率化のためのn8nワークフローとAPI連携"
       ],
-      "featured": false
+      "featured": false,
+      "displayOrder": 9
     },
     {
       "name": "Terraform Homelab IaC",
@@ -801,7 +808,8 @@
         "Helm",
         "k3s"
       ],
-      "featured": true
+      "featured": true,
+      "displayOrder": 3
     },
     {
       "name": "SafetyWallet (CF Workers PWA)",
@@ -821,7 +829,8 @@
         "D1",
         "KV"
       ],
-      "featured": false
+      "featured": false,
+      "displayOrder": 8
     },
     {
       "name": "AI GitHub PR Reviewer",
@@ -840,7 +849,8 @@
         "AI/LLM",
         "GitHub API"
       ],
-      "featured": false
+      "featured": false,
+      "displayOrder": 2
     },
     {
       "name": "Bug Bounty Recon Toolkit",
@@ -860,7 +870,8 @@
         "httpx",
         "Nuclei"
       ],
-      "featured": false
+      "featured": false,
+      "displayOrder": 10
     }
   ],
   "ossContributions": [

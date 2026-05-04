@@ -151,6 +151,8 @@ function generateWebData(source) {
     liveUrl: proj.demoUrl || proj.url,
     repoUrl: proj.githubUrl || proj.repoUrl,
     businessImpact: proj.businessImpact,
+    displayOrder: typeof proj.displayOrder === 'number' ? proj.displayOrder : 999,
+    featured: proj.featured === true,
   }));
 
   const projectsEn = (source.personalProjects || []).map((proj) => {
@@ -173,6 +175,8 @@ function generateWebData(source) {
       liveUrl: proj.demoUrl || proj.url,
       repoUrl: proj.githubUrl || proj.repoUrl,
       businessImpact: proj.businessImpact,
+      displayOrder: typeof proj.displayOrder === 'number' ? proj.displayOrder : 999,
+      featured: proj.featured === true,
     };
   });
 

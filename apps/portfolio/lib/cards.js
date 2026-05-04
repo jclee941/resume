@@ -67,7 +67,8 @@ function generateProjectCards(projectsData, dataHash) {
     return TEMPLATE_CACHE.projectCardsHtml;
   }
 
-  const html = projectsData
+  const html = [...projectsData]
+    .sort((a, b) => (a.displayOrder ?? 999) - (b.displayOrder ?? 999))
     .map((project) => {
       const githubUrl = project.githubUrl || project.repoUrl;
       const demoUrl = project.demoUrl || project.liveUrl;
@@ -202,11 +203,15 @@ function generateSkillsList(skillsData, dataHash) {
       const label = escapeHtml(String(skillData.title || key).replace(/\s*&\s*/g, ' & '));
 
       return `<li class="htop-row">
-        <span class="htop-label">${label}</span>
+        <span class="htop-label">${label}<span class="htop-count" aria-label="${skills.length} items">${skills.length}</span></span>
         <span class="htop-items">${skills
           .map((s) => {
             if (typeof s === 'string') return escapeHtml(s);
-            return escapeHtml(String(s && s.name ? s.name : 'Unknown'));
+            const name = escapeHtml(String(s && s.name ? s.name : 'Unknown'));
+            const lvl = (s && s.level) ? String(s.level) : '';
+            const isExpert = lvl === 'expert';
+            const cls = isExpert ? 'skill-item skill-item--expert' : 'skill-item';
+            return `<span class="${cls}" data-level="${escapeHtml(lvl)}">${name}</span>`;
           })
           .join(', ')}</span>
       </li>`;
