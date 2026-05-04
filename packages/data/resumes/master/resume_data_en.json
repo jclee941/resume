@@ -113,9 +113,9 @@
             "Docker"
           ],
           "achievements": [
-            "Designed and operated 32 SIEM detection rules",
-            "Established real-time security event alerting pipeline",
-            "Improved operational efficiency through firewall policy lookup automation"
+            "Reduced manual rule-management overhead by designing and operating Splunk ES detection rules, expanding security event coverage",
+            "Reduced operator-awareness latency by building an n8n + Slack/SMS real-time alert pipeline",
+            "Automated firewall policy lookup via FortiManager JSON-RPC API, eliminating repetitive console actions"
           ]
         }
       ],
@@ -147,9 +147,9 @@
             "VMware"
           ],
           "achievements": [
-            "Designed high-availability (HA) security architecture",
-            "Passed FSC main authorization review (security architecture)",
-            "Standardized Ansible-based security appliance policy deployment"
+            "Designed FortiGate FGCP active-passive HA security architecture to ensure service continuity",
+            "Designed and documented 5-tier network segmentation to meet FSC pre-licensing review criteria",
+            "Standardized policy deployment with Ansible Role to eliminate per-device configuration drift"
           ]
         }
       ],
@@ -181,8 +181,8 @@
             "FSDC"
           ],
           "achievements": [
-            "Standardized DLP policy operations to support Financial Supervisory Service periodic audits",
-            "Materially improved CPU utilization via DB access-control query tuning",
+            "Refined DLP policy operations and standardized audit deliverables for FSS regular audits",
+            "Materially improved CPU load via DB access-control query tuning",
             "Validated PB platform POC performance and supported system launch"
           ]
         }
@@ -213,9 +213,9 @@
             "Wazuh"
           ],
           "achievements": [
-            "Completed NSX-T microsegmentation rollout",
-            "Designed DFW-based traffic control policies",
-            "Established centralized VDS-layer security policy management"
+            "Designed and applied NSX-T microsegmentation to eliminate east-west traffic blind spots",
+            "Designed NSX-T DFW distributed firewall policies for server-to-server visibility and control",
+            "Built NSX-T Manager centralized management to reduce policy drift and operational overhead"
           ]
         }
       ]
@@ -244,9 +244,9 @@
             "FortiGate"
           ],
           "achievements": [
-            "Automated large-scale server configuration via Ansible",
-            "Developed NAC policy automation system",
-            "Built VPN abnormal-access detection dashboard"
+            "Designed Ansible playbooks to reduce manual configuration drift and error",
+            "Developed NAC policy automation scripts to eliminate repetitive new-terminal registration",
+            "Built a FortiGate-log-based detection dashboard for VPN session anomaly visibility"
           ]
         }
       ]
@@ -275,9 +275,9 @@
             "WSUS"
           ],
           "achievements": [
-            "Proactive hardware-failure detection through log analysis",
-            "Compliance with internal security audit configuration standards",
-            "Stable operation of closed-network security infrastructure"
+            "Sustained 50 Linux server availability under closed-network constraints",
+            "Redesigned firewall policies to remove unused-rule security risk",
+            "Established WSUS-based regular patch cycle to prevent latency-driven vulnerability exposure"
           ]
         }
       ]
@@ -663,7 +663,7 @@
     {
       "name": "Observability Platform",
       "period": "2024.06 ~ Present",
-      "description": "[Problem] Metrics and logs from homelab infrastructure were scattered across per-service consoles, slowing root-cause analysis during incidents.\n[Solution] Centralized metrics with Prometheus and integrated Loki/Elasticsearch logs into Grafana dashboards. Reproduced the Splunk-based observability operations experience on a Prometheus+Grafana stack.\n[Result] Built a unified observability operations platform that cross-analyzes metrics and logs in a single view.",
+      "description": "[Problem] Homelab infrastructure metrics and logs were scattered per-service, slowing root-cause analysis during incidents.\n[Solution] Scraped Proxmox VM/CT metrics via Prometheus node_exporter, ingested logs via Loki Promtail, and managed Grafana dashboard definitions as code (Grafana-as-code) for IaC-reproducible deployment.\n[Result] PromQL + LogQL cross-queries in Grafana Explore unify metrics and logs in a single analysis surface.",
       "technologies": [
         "Grafana",
         "Prometheus",
@@ -681,7 +681,7 @@
     {
       "name": "n8n Automation",
       "period": "2024.01 ~ Present",
-      "description": "[Problem] Repetitive tasks (Slack alerts, Cloudflare deploy notifications, GitHub Actions result collection) were scattered across crontab and individual scripts, requiring custom code for every new integration.\n[Solution] Adopted n8n as a central orchestrator and integrated Slack, GitHub, Cloudflare, and Grafana via webhooks/APIs. Standardized error handling and retries.\n[Result] Built a workflow-based automation platform where new integrations can be deployed via UI.",
+      "description": "[Problem] Repetitive operations — Slack notifications, Cloudflare deploy alerts, GitHub Actions result collection — were scattered across crontab and ad-hoc scripts, requiring code changes for every new integration.\n[Solution] Onboarded n8n as central orchestrator wiring Slack, GitHub, Cloudflare, and Grafana via webhook+API, abstracting error handling and retry into shared workflow nodes.\n[Result] New automations deploy by adding nodes, not writing scripts; Slack alerts, GitHub Actions collection, and Cloudflare deploy hooks all run on the same workflow base.",
       "technologies": [
         "n8n",
         "PostgreSQL",
@@ -730,7 +730,7 @@
     {
       "name": "IP Blacklist Platform",
       "period": "2024.12 ~ Present",
-      "description": "[Problem] Threat intelligence feeds were scattered across multiple external sources, requiring separate lookups per source when analyzing malicious IPs.\n[Solution] Built a unified lookup platform with a Flask + PostgreSQL backend and Next.js frontend, consolidating multiple sources into a single interface.\n[Result] Unified the threat IP analysis workflow into a single screen.",
+      "description": "[Problem] Threat intelligence feeds were scattered across external sources (AbuseIPDB, Emerging Threats, AlienVault OTX, etc.), requiring separate lookups per source when analyzing malicious IPs.\n[Solution] Structured per-source adapters via Flask Blueprints, managed schema versions via SQLAlchemy + Alembic migrations, and built a Next.js frontend for cross-comparing IP reputation, frequency, and distribution.\n[Result] Multiple threat feeds queryable and cross-analyzable from a reproducible pipeline.",
       "technologies": [
         "Flask",
         "Next.js",
@@ -829,7 +829,7 @@
       "name": "AI GitHub PR Reviewer",
       "period": "2026.03 ~ Present",
       "githubUrl": "https://github.com/jclee941/pr-agent",
-      "description": "[Problem] Security/infrastructure PR reviews depended on a single person, and common-pattern checks (secret exposure, RBAC) had to be performed manually every time.\n[Solution] Operates a self-hosted AI PR reviewer on Cloudflare Workers. CLIProxyAPI integration reduces LLM cost; security patterns are auto-detected and reported as GitHub comments.\n[Result] Automated the PR review flow and standardized secret-exposure verification.",
+      "description": "[Problem] Security and infra PR reviews were single-person dependent, with shared patterns (secret leaks, RBAC paths) verified manually every time.\n[Solution] Run a self-hosted AI PR reviewer on Cloudflare Workers: gitleaks-pattern secret detection and RBAC path checks posted via GitHub Check Run API, with CLIProxyAPI proxy reducing LLM call cost.\n[Result] Every PR receives automated comments for secret-exposure and RBAC patterns, and LLM cost is controlled through the self-hosted proxy.",
       "highlights": [
         "Self-operated proxy to reduce LLM invocation cost",
         "Auto pattern detection for early security-defect identification",
@@ -895,13 +895,13 @@
     "contact": "Contact"
   },
   "achievements": [
-    "Designed and operated FortiGate HA security infrastructure for the NextTrade trading system and passed the FSC licensing audit.",
-    "Built real-time security event alerting via Splunk ES detection rules integrated with FortiNet API.",
-    "Built unified Grafana dashboards with Prometheus metrics for single-view infrastructure analysis.",
-    "Built n8n automation platform to convert repetitive operations into workflow-based execution.",
-    "Converted NAC exception policy handling and switch diagnostics to automated systems at Metanet remote-work infrastructure.",
-    "Analyzed and resolved antivirus-VPN profile conflicts and designed/built new site networks at Metanet remote-work environment.",
-    "Cleaned up duplicate firewall rules and maintained security operations stability at the KAI closed network."
+    "Designed and operated Nextrade exchange security infrastructure (FortiGate HA, 5-tier segmentation) and passed the FSC pre-licensing review.",
+    "Designed Splunk ES dest_port-based exfiltration rules and NSX-T DFW log correlation rules, and operate a security alert pipeline that calls FortiManager JSON-RPC API via n8n for automated policy lookup.",
+    "Scraped Proxmox VM/CT metrics with Prometheus node_exporter and managed Grafana dashboard JSON as code (Grafana-as-code), making single-pane observability reproducible via IaC.",
+    "Abstracted Slack, GitHub Actions, and Cloudflare hooks into shared n8n workflows with standardized error handling and retry, so new automations deploy by adding nodes rather than custom scripts.",
+    "Automated NAC exception handling and switch inspection at Metanet's contact-center remote-work environment via Ansible playbooks, including a new-terminal registration pipeline.",
+    "Root-caused a FortiGate SSL-VPN session collision between the endpoint-protection agent and the VPN client via tcpdump, resolved it with FortiClient profile separation, and designed VLAN subnetting for new sites.",
+    "Identified and removed unused duplicate firewall rules across 50 KAI closed-network Linux servers via firewall-cmd parsing, reducing operational overhead."
   ],
   "infrastructure": [
     {
