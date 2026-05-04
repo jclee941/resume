@@ -44,7 +44,7 @@
       "Observability",
       "Cloud Security"
     ],
-    "profileStatement": "DevSecOps/SRE engineer with 8 years of working experience plus 1 year Linux reskilling from OA operations into financial security automation. Started in 2017 at MT Data operating 50+ Linux servers with manual patches and firewall rules in KAI's closed network, then spent 11 months from 2018.11 reskilling on Linux fundamentals (RHCSA, CompTIA Linux+, LPIC-1, Linux Master Level 2). Grew through Metanet and Jointree adopting Ansible, Python, NSX-T, and Wazuh; deepened in financial infrastructure at Quantec Investment Management FSDC and Gaonnuri (FortiGate HA + FSC licensing); now operates Nextrade exchange security at ITCEN CTS using Splunk ES, n8n, FortiManager API, and Docker.",
+    "profileStatement": "DevSecOps/SRE engineer with 8 years of experience from OA operations into financial security automation. Started in 2017 at MT Data operating 50+ Linux servers with manual patches and firewall rules in KAI's closed network, then spent 11 months from 2018.11 rebuilding Linux fundamentals (RHCSA, CompTIA Linux+, LPIC-1, Linux Master Level 2). Grew through Metanet and Jointree adopting Ansible, Python, NSX-T, and Wazuh; deepened in financial infrastructure at Quantec Investment Management FSDC and Gaonnuri (FortiGate HA + FSC licensing); now operates Nextrade exchange security at ITCEN CTS using Splunk ES, n8n, FortiManager API, and Docker.",
     "coreCompetencies": [
       "Designed and operated high-availability security infrastructure in financial regulated environments and passed licensing audits",
       "Built SIEM detection rules and automated response systems to address delays in manual detection and response",
@@ -56,7 +56,7 @@
     "aboutSection": {
       "careerHighlights": [
         "Started as OA engineer (2017 KAI closed network) — operated 50+ Linux servers, patches and firewall rules",
-        "Linux reskilling (2018.11~2019.11) — RHCSA, CompTIA Linux+, LPIC-1, Linux Master Level 2",
+        "Linux foundations rebuilt (2018.11~2019.11) — RHCSA, CompTIA Linux+, LPIC-1, Linux Master Level 2",
         "Automation entry (2019~2022 Metanet · Jointree) — Ansible/Python for 1000-user contact center, NSX-T microsegmentation, Wazuh OSS monitoring",
         "Financial infrastructure (2022~2024 Quantec Investment Management FSDC) — financial regulator audit response, DB tuning CPU 75%→52%",
         "Financial security build/ops (2024~ Gaonnuri · ITCEN Nextrade) — FortiGate HA 5-tier segmentation, FSC licensing passed, Splunk ES + n8n + FortiManager API SOC 24/7"
@@ -74,7 +74,7 @@
         "Learning GitOps (ArgoCD) and policy automation (OPA)"
       ]
     },
-    "totalExperience": ""
+    "totalExperience": "8 years (working total)"
   },
   "current": {
     "status": "Open to work",
@@ -525,7 +525,7 @@
           "level": "beginner"
         },
         {
-          "name": "HashiCorp Vault (homelab)",
+          "name": "1Password (homelab)",
           "level": "intermediate"
         }
       ]
@@ -675,7 +675,7 @@
       "tagline": "Monitoring Platform",
       "language": "PromQL",
       "githubUrl": null,
-      "demoUrl": "https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b",
+      "demoUrl": null,
       "featured": true
     },
     {
@@ -697,7 +697,7 @@
     {
       "name": "FortiManager API Client (Python)",
       "period": "2025.01 ~ Present",
-      "description": "[Problem] Security operations required manually accessing FortiManager and FortiAnalyzer consoles for firewall policy lookups, route inspection, and log statistics.\n[Solution] Developed a Python library wrapping FortiManager and FortiAnalyzer REST APIs to abstract policy lookup, route management, and log statistics behind common methods.\n[Result] Firewall policy lookups and changes can now be handled via scripts and are used in security operations automation.",
+      "description": "[Problem] Security operations required manually accessing FortiManager and FortiAnalyzer consoles every time for firewall policy lookups, route inspection, and log statistics.\n[Solution] Designed a Python library wrapping FortiManager and FortiAnalyzer JSON-RPC APIs that abstracts policy lookup, route management, and log statistics behind common methods, with built-in ADOM locking, retry/backoff, and idempotent calls.\n[Result] Policies, routes, and logs can now be queried and modified via scripts without console access, and the library is used as the shared adapter across SOC automation scripts.",
       "technologies": [
         "Python",
         "FortiManager",
@@ -828,7 +828,7 @@
     {
       "name": "AI GitHub PR Reviewer",
       "period": "2026.03 ~ Present",
-      "githubUrl": "https://github.com/jclee941/github-bot",
+      "githubUrl": "https://github.com/jclee941/pr-agent",
       "description": "[Problem] Security/infrastructure PR reviews depended on a single person, and common-pattern checks (secret exposure, RBAC) had to be performed manually every time.\n[Solution] Operates a self-hosted AI PR reviewer on Cloudflare Workers. CLIProxyAPI integration reduces LLM cost; security patterns are auto-detected and reported as GitHub comments.\n[Result] Automated the PR review flow and standardized secret-exposure verification.",
       "highlights": [
         "Self-operated proxy to reduce LLM invocation cost",
@@ -915,7 +915,7 @@
       "title": "Grafana + Prometheus",
       "description": "Observability stack (metrics collection and visualization)",
       "status": "running",
-      "url": "https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b"
+      "url": "https://grafana.jclee.me"
     },
     {
       "icon": "🔍",
@@ -950,8 +950,8 @@
     },
     {
       "icon": "🔐",
-      "title": "HashiCorp Vault",
-      "description": "Secrets management / PKI",
+      "title": "1Password",
+      "description": "Secrets management / SSH & CLI integration",
       "status": "running"
     },
     {
@@ -987,7 +987,7 @@
     "github": "https://github.com/jclee941",
     "linkedin": "https://linkedin.com/in/jclee0109",
     "website": "https://resume.jclee.me",
-    "monitoring": "https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b"
+    "monitoring": "https://grafana.jclee.me"
   },
   "availability": "Open to work - Available from 2026.03, immediate start possible",
   "awards": [
@@ -1010,23 +1010,23 @@
   },
   "platformVariants": {
     "wanted": {
-      "headline": "OA → DevSecOps 8-year | Financial Security Infrastructure | FSC Licensing Passed | Splunk ES · n8n · FortiGate HA",
-      "about": "DevSecOps/SRE engineer with 8-year career growth (plus 1 year Linux reskilling) from OA operations into financial security automation.\n\n[Growth Story]\n2017.02 — Started OA operations at MT Data on KAI (Korea Aerospace Industries) closed network. Manually managed patches, firewall/IDS policies, WSUS, and log analysis for 50+ Linux servers. Recognized the limits of manual operations.\n\n2018.11 — Spent 11 months reskilling on Linux fundamentals: RHCSA, CompTIA Linux+, LPIC-1, Linux Master Level 2.\n\n2019.12 — At Metanet M Platform, built a 1,000-user contact center remote-work environment using SSL VPN/NAC and automated new-terminal registration and switch inspection with Ansible/Python (NAC policy deployment 10h→1h, 90% reduction).\n\n2021.09 — At Jointree, applied NSX-T microsegmentation to Kookmin University's next-gen information system and built Wazuh-based OSS security monitoring.\n\n2022.08 — At Quantec Investment Management, operated FSDC (Financial Security Data Center) infrastructure: financial regulator audit response, DLP policy operations, DB access-control query tuning (CPU 75%→52%), PB platform POC validation.\n\n2024.03 — At Gaonnuri, built Nextrade exchange security infrastructure: FortiGate HA with 5-tier network segmentation, Ansible Role standardization (firewall policy 500 entries automated, 8h→1h). Passed FSC pre-licensing audit.\n\n2025.03 — At ITCEN CTS, operate Nextrade security: designed Splunk ES detection rules and built automated response with n8n + FortiManager API (150 servers, 300 terminals, 80 network devices, 100K+ orders/day, MTTR 30min→12min, 60% reduction).\n\n[Capabilities]\nSIEM rule design (Splunk ES), security ops automation (n8n, FortiManager API), HA security architecture (FortiGate HA, NSX-T), IaC infrastructure (Ansible Role, Terraform), observability platforms (Grafana/Prometheus/Loki), financial regulatory response (FSC licensing, FSS audits)\n\nPortfolio: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
+      "headline": "OA → DevSecOps/SRE 8-year | Financial Security Infrastructure | FSC Licensing Passed | Splunk ES · n8n · FortiGate HA",
+      "about": "DevSecOps/SRE engineer with 8 years of experience from OA operations into financial security automation.\n\n[Growth Story]\n2017.02 — Started OA operations at MT Data on KAI (Korea Aerospace Industries) closed network. Manually managed patches, firewall/IDS policies, WSUS, and log analysis for 50+ Linux servers. Recognized the limits of manual operations.\n\n2018.11 — Spent 11 months rebuilding Linux fundamentals: RHCSA, CompTIA Linux+, LPIC-1, Linux Master Level 2.\n\n2019.12 — At Metanet M Platform, built a 1,000-user contact center remote-work environment using SSL VPN/NAC and automated new-terminal registration and switch inspection with Ansible/Python (NAC policy deployment 10h→1h, 90% reduction).\n\n2021.09 — At Jointree, applied NSX-T microsegmentation to Kookmin University's next-gen information system and built Wazuh-based OSS security monitoring.\n\n2022.08 — At Quantec Investment Management, operated FSDC (Financial Security Data Center) infrastructure: financial regulator audit response, DLP policy operations, DB access-control query tuning (CPU 75%→52%), PB platform POC validation.\n\n2024.03 — At Gaonnuri, built Nextrade exchange security infrastructure: FortiGate HA with 5-tier network segmentation, Ansible Role standardization (firewall policy 500 entries automated, 8h→1h). Passed FSC pre-licensing audit.\n\n2025.03 — At ITCEN CTS, operate Nextrade security: designed Splunk ES detection rules and built automated response with n8n + FortiManager API (150 servers, 300 terminals, 80 network devices, 100K+ orders/day, MTTR 30min→12min, 60% reduction).\n\n[Capabilities]\nSIEM rule design (Splunk ES), security ops automation (n8n, FortiManager API), HA security architecture (FortiGate HA, NSX-T), IaC infrastructure (Ansible Role, Terraform), observability platforms (Grafana/Prometheus/Loki), financial regulatory response (FSC licensing, FSS audits)\n\nPortfolio: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
     },
     "jobkorea": {
-      "headline": "OA → DevSecOps 8-year — Financial Security Infrastructure (FSC Licensing, Splunk ES, FortiGate HA, n8n)",
-      "about": "DevSecOps/SRE engineer with 8-year career growth (plus 1 year Linux reskilling) from OA operations into financial security automation.\n\n[Career Summary]\n• ITCEN CTS — 2025.03~2026.02 — Nextrade exchange security operations SM. Splunk ES + n8n + FortiManager API automated detection/response. SOC 24/7. MTTR reduced 60%.\n• Gaonnuri — 2024.03~2025.02 — Nextrade security infrastructure build. FortiGate HA + 5-tier segmentation + Ansible Role standardization. FSC pre-licensing audit passed.\n• Quantec Investment Management — 2022.08~2024.03 — Financial Security Data Center (FSDC) operations. Financial regulator audit response, DB tuning CPU 75%→52%.\n• Jointree — 2021.09~2022.04 — Kookmin University next-gen system. NSX-T microsegmentation + Wazuh.\n• Metanet — 2019.12~2021.08 — 1000-user contact center remote-work. Ansible/Python automation.\n• MT Data — 2017.02~2018.10 — KAI closed-network IT support / OA operations. 50+ Linux servers.\n\n[Growth Background]\nStarted as an OA engineer in 2017 and recognized the limits of manual operations on a closed network. From 2018.11 spent 11 months reskilling with RHCSA, LPIC-1, and Linux Master Level 2 to set the path toward automation and security. After contact-center, education, and financial infrastructure work, currently automating financial-exchange security operations.\n\n[Skills]\nSplunk ES, n8n, FortiGate/FortiManager, Ansible, Python, Terraform, Docker, NSX-T, Prometheus/Grafana/Loki, Cloudflare Workers, MCP/AI agents\n\nPortfolio: https://resume.jclee.me"
+      "headline": "OA → DevSecOps/SRE 8-year — Financial Security Infrastructure (FSC Licensing, Splunk ES, FortiGate HA, n8n)",
+      "about": "DevSecOps/SRE engineer with 8 years of experience from OA operations into financial security automation.\n\n[Career Summary]\n• ITCEN CTS — 2025.03~2026.02 — Nextrade exchange security operations SM. Splunk ES + n8n + FortiManager API automated detection/response. SOC 24/7. MTTR reduced 60%.\n• Gaonnuri — 2024.03~2025.02 — Nextrade security infrastructure build. FortiGate HA + 5-tier segmentation + Ansible Role standardization. FSC pre-licensing audit passed.\n• Quantec Investment Management — 2022.08~2024.03 — Financial Security Data Center (FSDC) operations. Financial regulator audit response, DB tuning CPU 75%→52%.\n• Jointree — 2021.09~2022.04 — Kookmin University next-gen system. NSX-T microsegmentation + Wazuh.\n• Metanet — 2019.12~2021.08 — 1000-user contact center remote-work. Ansible/Python automation.\n• MT Data — 2017.02~2018.10 — KAI closed-network IT support / OA operations. 50+ Linux servers.\n\n[Growth Background]\nStarted as an OA engineer in 2017 and recognized the limits of manual operations on a closed network. From 2018.11 spent 11 months rebuilding Linux fundamentals with RHCSA, LPIC-1, and Linux Master Level 2 to set the path toward automation and security. After contact-center, education, and financial infrastructure work, currently automating financial-exchange security operations.\n\n[Skills]\nSplunk ES, n8n, FortiGate/FortiManager, Ansible, Python, Terraform, Docker, NSX-T, Prometheus/Grafana/Loki, Cloudflare Workers, MCP/AI agents\n\nPortfolio: https://resume.jclee.me"
     }
   },
   "coverLetter": {
     "en": {
-      "headline": "From OA to DevSecOps — A 8-year Trajectory Built on One Conviction",
+      "headline": "From OA to DevSecOps — An 8-Year Trajectory Built on One Conviction",
       "paragraphs": [
-        "Nine years ago, I was the person tracking patch schedules for 50 Linux servers on an Excel sheet inside Korea Aerospace Industries' closed network. Repeating the same operations every week led to a single conviction: the value of security operations is not maintaining zero incidents, but automating the guarantee of zero incidents. I spent the next 11 months consecutively earning RHCSA, LPIC-1, and Linux Master Level 2 to rebuild my Linux foundation.",
+        "My career started inside Korea Aerospace Industries' closed network, tracking patch schedules for 50 Linux servers on an Excel sheet. Repeating the same operations every week led to a single conviction: the value of security operations is not maintaining zero incidents, but automating the guarantee of zero incidents. I spent the next 11 months consecutively earning RHCSA, LPIC-1, and Linux Master Level 2 to rebuild my Linux foundation, then carried that into eight years of operations.",
         "At Metanet M Platform I first picked up Ansible and Python, cutting NAC policy deployment from 10 hours to 1 hour for a 1,000-user contact center. At Jointree, I applied NSX-T microsegmentation to Kookmin University's next-generation information system, eliminating east-west traffic blind spots — blocking 200 monthly intrusion attempts and reducing DLP false positives by 80%. The tools changed, but the principle didn't: any task that requires hands is a candidate for automation.",
         "At Quantec Investment Management's Financial Security Data Center (FSDC), responding to Financial Supervisory Service audits taught me that security operations ultimately means \"can you prove it to an auditor with data?\" Tuning DB access-control queries from 75% to 52% CPU and validating a PB platform POC were both expressions of one goal: defensible operations.",
         "Today I am embedded in the Nextrade exchange security track, continuously engaged from build (Gaonnuri) into operations (ITCEN CTS). I designed FortiGate HA with 5-tier network segmentation, passed the FSC pre-licensing review, standardized security appliance configuration with Ansible Role (500 firewall policies automated, 8h→1h), and operate Splunk ES detection rules + n8n + FortiManager API automated response (MTTR 30min→12min, 100K+ orders/day). The 24/7 SOC oversees 150 servers, 300 terminals, and 80 network devices.",
-        "Next, I want to integrate AI agents with Edge runtimes. My homelab — Cloudflare Workers, MCP, Grafana, Vault — runs on Terraform-managed IaC where I validate \"AI handles the first pass of security operations toil\" patterns. I want to spend the next nine years not operating the tools that exist, but answering operational problems with new tools."
+        "Next, I want to integrate AI agents with Edge runtimes. My homelab — Cloudflare Workers, MCP, Grafana, 1Password — runs on Terraform-managed IaC where I validate \"AI handles the first pass of security operations toil\" patterns. I want to spend my next chapter not operating the tools that exist, but answering operational problems with new tools."
       ],
       "closing": "I'd like to bring this trajectory — built on a single question about the limits of repetitive work — to the next problem your security infrastructure needs to solve."
     }
