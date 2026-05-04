@@ -108,7 +108,7 @@ export function initializeABTesting() {
   const pdfDownloadText = document.getElementById('pdf-download-text');
 
   if (pdfDownloadLink) {
-    const DOWNLOADS_BASE = 'https://raw.githubusercontent.com/jclee-homelab/resume/master';
+    const DOWNLOADS_BASE = 'https://raw.githubusercontent.com/jclee941/resume/master';
     if (resumeVariant === 'A') {
       pdfDownloadLink.href = `${DOWNLOADS_BASE}/packages/data/resumes/generated/resume_general.pdf`;
       if (pdfDownloadText) pdfDownloadText.textContent = '이력서 다운로드 (PDF)';

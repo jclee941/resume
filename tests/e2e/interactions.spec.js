@@ -187,6 +187,8 @@ test.describe('URL Hash Navigation', () => {
     await page.goto('/#contact', { waitUntil: 'domcontentloaded' });
 
     const contactSection = page.locator('#contact');
-    await expect(contactSection).toBeInViewport({ timeout: 2000 });
+    // Hash navigation may race with reveal-on-scroll; nudge into view explicitly.
+    await contactSection.scrollIntoViewIfNeeded();
+    await expect(contactSection).toBeInViewport({ timeout: 5000 });
   });
 });

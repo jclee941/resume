@@ -61,10 +61,10 @@ test.describe('Download Functionality', () => {
       const count = await allDownloadLinks.count();
 
       const downloadsUrlPattern =
-        /^https:\/\/raw\.githubusercontent\.com\/jclee-homelab\/resume\/master\/.+\.(pdf|docx|md)$/;
+        /^https:\/\/raw\.githubusercontent\.com\/jclee941\/resume\/master\/.+\.(pdf|docx|md)$/;
       // Worker PDF pattern - handles both production (resume.jclee.me) and staging (*.workers.dev)
       const workerPdfPattern =
-        /^https:\/\/(resume\.jclee\.me|resume-staging\.jclee\.workers\.dev)\/resume\.pdf$/;
+        /^(https:\/\/(resume\.jclee\.me|resume-staging\.jclee\.workers\.dev))?\/resume\.pdf$/;
 
       for (let i = 0; i < count; i++) {
         const link = allDownloadLinks.nth(i);

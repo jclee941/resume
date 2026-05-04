@@ -5,7 +5,7 @@ import os from 'os';
 import path from 'path';
 
 // CI server URL - defaults to GitHub, falls back to GitLab for legacy CI
-const CI_SERVER_URL = process.env.CI_SERVER_URL || 'https://github.com/jclee-homelab/resume';
+const CI_SERVER_URL = process.env.CI_SERVER_URL || 'https://github.com/jclee941/resume';
 const PROJECT_ID = process.env.CI_PROJECT_ID;
 const MR_IID = process.env.CI_MERGE_REQUEST_IID;
 const CI_JOB_TOKEN = process.env.CI_JOB_TOKEN;
@@ -165,7 +165,7 @@ async function main() {
 ${review}
 
 ---
-*Automated review by [Oracle](https://github.com/jclee-homelab/resume/blob/master/tools/scripts/utils/oracle-review.js) | ${OPENCODE_MODEL}*`;
+*Automated review by [Oracle](https://github.com/jclee941/resume/blob/master/tools/scripts/utils/oracle-review.js) | ${OPENCODE_MODEL}*`;
 
     await postMRComment(comment);
     console.log('Review posted successfully.');
