@@ -71,6 +71,34 @@
     min-width: auto;
   }
 }
+.htop-count {
+  display: inline-block;
+  margin-left: var(--space-2);
+  padding: 0 var(--space-2);
+  font-size: 0.65rem;
+  color: var(--cyber-cyan);
+  background: rgba(0, 240, 255, 0.08);
+  border: 1px solid rgba(0, 240, 255, 0.18);
+  border-radius: var(--radius-full, 9999px);
+  font-weight: 500;
+  letter-spacing: 0;
+  vertical-align: baseline;
+}
+.skill-item {
+  color: var(--text-secondary);
+  transition: color 0.15s ease;
+}
+.skill-item--expert {
+  color: var(--cyber-cyan-bright);
+  font-weight: var(--font-bold);
+  text-shadow: var(--glow-cyan-subtle);
+}
+.skill-item--expert::before {
+  content: "★ ";
+  color: var(--cyber-cyan);
+  font-size: 0.75em;
+  margin-right: 0.1em;
+}
 /* ============================================================
    SKILL BARS
    ============================================================ */

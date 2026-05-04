@@ -141,6 +141,28 @@
   margin: 0 0 var(--space-4) var(--space-4);
   letter-spacing: var(--tracking-wide);
 }
+.hero-now {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  margin: 0 0 var(--space-4) var(--space-4);
+  letter-spacing: var(--tracking-wide);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: baseline;
+}
+.hero-now__label {
+  color: var(--cyber-cyan);
+  font-weight: var(--font-bold);
+}
+.hero-now__value {
+  color: var(--text-primary);
+}
+.hero-now__period {
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+}
 .hero-kpi-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));

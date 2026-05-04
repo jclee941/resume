@@ -564,6 +564,11 @@
                 <div class="cmd-output hero-tagline">
                   KAI 폐쇄망 OA 운영 → Linux 자격증 기초 재정비 → Ansible·Python 자동화 → 넷스트레이드 FortiGate HA · Splunk ES · n8n 자동 대응
                 </div>
+                <div class="cmd-output hero-now">
+                  <span class="hero-now__label">지금:</span>
+                  <span class="hero-now__value">아이티센 CTS @ 넷스트레이드 보안 운영</span>
+                  <span class="hero-now__period">2025.03 – 2026.02</span>
+                </div>
                 <div class="hero-context-grid" role="list" aria-label="주요 경험 영역">
                   <div class="hero-context" role="listitem">
                     <div class="hero-context__label">OA → DevSecOps 8년 성장</div>
@@ -742,6 +747,13 @@
             <div class="footer-content">
               <span class="terminal-prompt footer-prompt">logout</span>
               <span class="footer-status">Connection closed.</span>
+            </div>
+            <div class="footer-build" data-footer-build>
+              <span class="footer-build__source"><a href="https://github.com/jclee941/resume" target="_blank" rel="noopener">source</a></span>
+              <span class="footer-build__sep" aria-hidden="true">·</span>
+              <span class="footer-build__version">v<span data-footer-version>…</span></span>
+              <span class="footer-build__sep" aria-hidden="true">·</span>
+              <span class="footer-build__deployed">deployed <span data-footer-deployed>…</span></span>
             </div>
           </footer>
 
@@ -1568,6 +1580,28 @@
             })
             .finally(updateMainIndicator);
         });
+      })();
+
+      (function () {
+        var versionEl = document.querySelector('[data-footer-version]');
+        var deployedEl = document.querySelector('[data-footer-deployed]');
+        if (!versionEl && !deployedEl) return;
+        fetch('/health', { method: 'GET', mode: 'same-origin', headers: { Accept: 'application/json' } })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (data) {
+            if (!data) return;
+            if (versionEl && data.version) versionEl.textContent = data.version;
+            if (deployedEl && data.deployed_at) {
+              try {
+                var d = new Date(data.deployed_at);
+                if (!isNaN(d.getTime())) {
+                  deployedEl.textContent = d.toISOString().slice(0, 10) + ' ' + d.toISOString().slice(11, 16) + 'Z';
+                  deployedEl.setAttribute('title', data.deployed_at);
+                }
+              } catch (_) { /* keep ellipsis */ }
+            }
+          })
+          .catch(function () { /* keep ellipsis on failure */ });
       })();
     </script>
     <script>
