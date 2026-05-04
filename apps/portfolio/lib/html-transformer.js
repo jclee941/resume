@@ -83,7 +83,7 @@ function buildJapaneseTemplate(html) {
     // === JA JSON-LD description ===
     .replace(/"description": "금융권 보안 규제 환경에서 인프라 설계·운용을 담당하며[^"]*"/g, '"description": "金融規制環境でインフラ設計・運用を担当し、FSC本認可対応を通過したOAエンジニア出身、8年目のDevSecOps/SREエンジニアです。分散したセキュリティ機器と手動運用の非効率を統合自動化で改善し、リアルタイム検知と自動対応体制を構築した経験があります。"')
     .replace(/"description": "금융권 규제 환경에서 보안 인프라 설계·운영을 담당한[^"]*"/g, '"description": "金融規制環境でセキュリティインフラ設計·運用を担当したDevSecOps/SRE/Platform Engineerの個人ポートフォリオ。"')
-    .replace(/"description": "폐쇄망 OA 운영실에서 출발해[^"]*"/g, '"description": "閉鎖網OA運用室から出発し、金融取引所セキュリティ運用に到達した8年目のDevSecOps/SREエンジニア。「繰り返し作業は自動化されるべき」という信念でFortiGate HA·ネットワーク分離を上にSplunk ES + n8n + FortiManager APIでセキュリティイベントを自動検知・対応しています。"')
+    .replace(/"description": "폐쇄망 OA 운영실에서 출발해(?:\\.|[^"\\])*"/g, '"description": "閉鎖網OA運用室から出発し、金融取引所セキュリティ運用に到達した8年目のDevSecOps/SREエンジニア。「繰り返し作業は自動化されるべき」という信念でFortiGate HA·ネットワーク分離を上にSplunk ES + n8n + FortiManager APIでセキュリティイベントを自動検知・対応しています。"')
     // === JA hero copy (replace KO hero text with Japanese) ===
     .replace(/<span class="typing-effect glow-cyan">이재철<\/span/g, '<span class="typing-effect glow-cyan">イ・ジェチョル</span')
     .replace(/<span class="sr-only">이재철<\/span>/g, '<span class="sr-only">イ・ジェチョル</span>')

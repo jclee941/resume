@@ -19,15 +19,15 @@ async function generateOGImage(language = 'ko') {
   const content = {
     ko: {
       name: '이재철',
-      subtitle: 'AIOps & Infrastructure Engineer',
-      stats: '8.8+ 년 경력 | 15+ 보안 솔루션',
+      subtitle: 'DevSecOps / SRE / Platform Engineer',
+      stats: '8년차 | 금융 보안 인프라 · SIEM · IaC',
       url: 'resume.jclee.me',
       label: '한국어'
     },
     en: {
       name: 'Jaecheol Lee',
-      subtitle: 'AIOps & Infrastructure Engineer',
-      stats: '8.8+ Years Experience | 15+ Security Solutions',
+      subtitle: 'DevSecOps / SRE / Platform Engineer',
+      stats: '8 years | Financial Security Infrastructure · SIEM · IaC',
       url: 'resume.jclee.me',
       label: 'English'
     }
