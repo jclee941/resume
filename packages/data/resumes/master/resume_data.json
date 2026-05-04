@@ -44,7 +44,7 @@
       "Observability",
       "Cloud Security"
     ],
-    "profileStatement": "폐쇄망 OA 운영실에서 출발해 금융 거래소 SOC 24/7로 도착한 8년차 DevSecOps/SRE (Linux 재무장 1년 포함) 엔지니어입니다. \"반복 작업은 자동화 되어야 한다\"는 신념 하나로 50대 서버 수동 패치를 Ansible·Python·n8n 파이프라인으로 옮겨왔고, FSC 본인가를 통과한 FortiGate HA 망분리 위에서 Splunk ES + FortiManager API로 일 10만 건 주문의 보안 이벤트를 자동 탐지·대응합니다.",
+    "profileStatement": "폐쇄망 OA 운영실에서 출발해 금융 거래소 보안 운영으로 도착한 8년차 DevSecOps/SRE 엔지니어입니다. \"반복 작업은 자동화 되어야 한다\"는 신념 하나로 50대 서버 수동 패치를 Ansible·Python·n8n 파이프라인으로 옮겨왔고, FSC 본인가를 통과한 FortiGate HA 망분리 위에서 Splunk ES + FortiManager API로 거래소 매매체결시스템의 보안 이벤트를 자동 탐지·대응합니다.",
     "coreCompetencies": [
       "금융권 보안 규제 환경에서 고가용성 보안 인프라를 설계·운영하고 본인가 심사 대응을 통과한 경험",
       "수동 탐지·대응의 알림 지연을 해결하기 위해 SIEM 탐지 룰 설계와 자동 대응 체계를 구축한 경험",
@@ -55,11 +55,11 @@
     ],
     "aboutSection": {
       "careerHighlights": [
-        "**현장 → 자동화 → AI 에이전트** 권자: 9년 동안 한 번도 운영의 손을 놓지 않으면서 도구만 바꿔왔습니다.",
+        "**현장 → 자동화 → AI 에이전트** 권자: 8년 동안 한 번도 운영의 손을 놓지 않으면서 도구만 바꿔왔습니다.",
         "**금융 규제 환경 6년 트랙 레코드**: 금감원 감사·FSC 본인가·전자금융감독규정 대응을 무중단·무사고로 이행.",
-        "**측정 가능한 임팩트**: NAC 정책 10h→1h, 방화벽 룰 8h→1h, MTTR 30분→12분 — 실측 기반 자동화.",
+        "**핵심 활동**: NAC·방화벽 정책 자동화, 보안 이벤트 자동 탐지·대응 체계 운영.",
         "**Polyglot 운영자**: Linux · Python · Ansible · Terraform · Splunk SPL · n8n · Cloudflare Workers — 단일 stack 숙련보다 이종 환경에 빠르게 적응하는 능력을 우선시합니다.",
-        "**홈랩 = 실험실**: Proxmox·Grafana·k3s·Vault·MCP를 IaC로 운영하며 사내 도구를 미리 검증한 뒤 도입."
+        "**홈랩 = 실험실**: Proxmox·Grafana·k3s·1Password·MCP를 IaC로 운영하며 사내 도구를 미리 검증한 뒤 도입."
       ],
       "techPhilosophy": [
         "관측 가능하지 않은 것은 운영할 수 없다 (You can't operate what you can't observe).",
@@ -74,16 +74,16 @@
         "GitOps(ArgoCD) + 정책 자동화(OPA) 도입 검토"
       ]
     },
-    "totalExperience": "8년 (재직 합계) + Linux 재무장 1년"
+    "totalExperience": "8년 (재직 합계)"
   },
   "platformVariants": {
     "wanted": {
       "headline": "OA 엔지니어로 출발한 8년차 DevSecOps/SRE — 금융 거래소 SOC + FSC 본인가 + Splunk ES·n8n·FortiGate HA",
-      "about": "**\"반복 작업은 자동화 되어야 한다\"** — 이 한 가지 신념으로 9년을 운영해 온 DevSecOps/SRE 엔지니어입니다.\n\n**현장 → 자동화 → AI 에이전트**, 한 번도 운영의 손을 놓지 않으면서 도구만 바꿔왔습니다. KAI 폐쇄망에서 Linux 50대를 수기로 운영하던 시절, 메타넷·조인트리에서 Ansible·Python·NSX-T·Wazuh로 자동화에 입문하던 시기, 콴텍투자일임 FSDC에서 금융감독원 감사를 데이터로 대응하던 경험을 거쳐, 현재 가온누리·아이티센 트랙에서 넥스트레이드 매매체결시스템을 FortiGate HA(5계층 망분리)·FSC 본인가·Splunk ES + n8n + FortiManager API SOC 24/7로 운영합니다.\n\n**측정 가능한 임팩트**:\n• NAC 정책 배포: 10시간 → 1시간 (90% ↓)\n• 방화벽 정책 표준화: 8시간 → 1시간 (500건/Ansible Role)\n• 보안 이벤트 MTTR: 30분 → 12분 (60% ↓)\n• 환경 규모: 서버 150대 / 단말 300대 / 네트워크 80대 / 일 10만+ 주문\n\n**보유 역량**: SIEM 탐지 룰 설계(Splunk ES), 보안 운영 자동화(n8n, FortiManager API), HA 보안 아키텍처(FortiGate HA, NSX-T), IaC(Ansible Role, Terraform), 관측성(Grafana/Prometheus/Loki), 금융 규제(FSC 본인가, 금감원 감사)\n\n포트폴리오: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
+      "about": "**\"반복 작업은 자동화 되어야 한다\"** — 이 한 가지 신념으로 운영해 온 DevSecOps/SRE 엔지니어입니다.\n\n**현장 → 자동화 → AI 에이전트**, 한 번도 운영의 손을 놓지 않으면서 도구만 바꿔왔습니다. KAI 폐쇄망에서 Linux 50대를 수기로 운영하던 시절, 메타넷·조인트리에서 Ansible·Python·NSX-T·Wazuh로 자동화에 입문하던 시기, 콸텍투자일임 FSDC에서 금융감독원 감사를 데이터로 대응하던 경험을 거쳐, 현재 가온누리·아이티센 트랙에서 넷스트레이드 매매체결시스템을 FortiGate HA(5계층 망분리)·FSC 본인가·Splunk ES + n8n + FortiManager API 으로 운영합니다.\n\n**측정 가능한 임팩트**:\n• NAC 정책 배포 자동화로 수작업 시간 대폭 단축\n• 방화벽 정책을 Ansible Role로 표준화\n• 보안 이벤트 자동 탐지·대응으로 MTTR 단축\n• 환경 규모: 거래소 매매체결시스템 운영 규모\n\n**보유 역량**: SIEM 탐지 룰 설계(Splunk ES), 보안 운영 자동화(n8n, FortiManager API), HA 보안 아키텍처(FortiGate HA, NSX-T), IaC(Ansible Role, Terraform), 관측성(Grafana/Prometheus/Loki), 금융 규제(FSC 본인가, 금감원 감사)\n\n포트폴리오: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
     },
     "jobkorea": {
-      "headline": "8년차 DevSecOps/SRE — OA→자동화→FSC 본인가→SOC 24/7 (Splunk ES, n8n, FortiGate HA)",
-      "about": "**\"반복 작업은 자동화 되어야 한다\"** — 한 가지 신념으로 운영의 도구를 9년간 진화시켜 왔습니다.\n\n[현장 → 자동화 → AI 에이전트 trajectory]\n• KAI 폐쇄망 (2017–2018): Linux 50대 수기 운영, 패치/방화벽/IDS 정책\n• Linux 재무장 (2018.11–2019.11): RHCSA·LPIC-1·리눅스마스터 2급 연속 취득\n• 자동화 입문 (2019–2022): 메타넷 컨택센터 1,000명 SSL VPN/NAC + Ansible/Python; 조인트리 NSX-T 마이크로세그멘테이션 + Wazuh\n• 금융 인프라 (2022–2024): 콴텍투자일임 FSDC, 금감원 감사 대응 + DB 튜닝(CPU 75%→52%)\n• 보안 구축 (2024–2025): 가온누리 넥스트레이드, FortiGate HA 5계층 망분리 + Ansible Role 표준화 + FSC 본인가 통과\n• 보안 운영 (2025–현재): 아이티센 CTS 넥스트레이드, Splunk ES + n8n + FortiManager API SOC 24/7 (서버 150대, MTTR 30→12분)\n\n[측정 가능한 임팩트]\nNAC 10h→1h · 방화벽 8h→1h · MTTR 30→12분 · 침해 시도 월 200건 차단 · DLP 오탐 80% ↓\n\n[보유 기술 스택]\nSplunk ES, n8n, FortiGate/FortiManager API, Ansible Role, Python, Terraform, Docker, NSX-T, Wazuh, Grafana/Prometheus/Loki, Cloudflare Workers, MCP/AI 에이전트\n\n포트폴리오: https://resume.jclee.me",
+      "headline": "8년차 DevSecOps/SRE — OA→자동화→FSC 본인가→보안 운영 (Splunk ES, n8n, FortiGate HA)",
+      "about": "**\"반복 작업은 자동화 되어야 한다\"** — 한 가지 신념으로 운영의 도구를 진화시켜 왔습니다.\n\n[현장 → 자동화 → AI 에이전트 trajectory]\n• KAI 폐쇄망 (2017–2018): Linux 50대 수기 운영, 패치/방화벽/IDS 정책\n• Linux 기초 재정비 (2018.11–2019.11): RHCSA·LPIC-1·리눅스마스터 2급 연속 취득\n• 자동화 입문 (2019–2022): 메타넷 컴택센터 대규모 SSL VPN/NAC + Ansible/Python; 조인트리 NSX-T 마이크로세그멘테이션 + Wazuh\n• 금융 인프라 (2022–2024): 콸텍투자일임 FSDC, 금감원 감사 대응 + DB 튜닝\n• 보안 구축 (2024–2025): 가온누리 넷스트레이드, FortiGate HA 5계층 망분리 + Ansible Role 표준화 + FSC 본인가 통과\n• 보안 운영 (2025–현재): 아이티센 CTS 넷스트레이드, Splunk ES + n8n + FortiManager API 기반 자동 탐지·대응 (자동 탐지·대응 운영)\n\n[측정 가능한 임팩트]\nNAC·방화벽 정책 배포 자동화 · 보안 이벤트 자동 탐지·대응 · 침해 시도 차단 · DLP 오탐 감소\n\n[보유 기술 스택]\nSplunk ES, n8n, FortiGate/FortiManager API, Ansible Role, Python, Terraform, Docker, NSX-T, Wazuh, Grafana/Prometheus/Loki, Cloudflare Workers, MCP/AI 에이전트\n\n포트폴리오: https://resume.jclee.me",
       "defaultJobCode": "1000238"
     }
   },
@@ -196,7 +196,7 @@
           ],
           "achievements": [
             "금융감독원 정기 감사 대응을 위해 DLP 정책 운영 체계를 정비한 경험",
-            "DB 접근제어 쿼리 튜닝으로 CPU 사용률을 75%에서 52%로 개선한 경험",
+            "DB 접근제어 쿼리 튜닝으로 CPU 부하를 의미 있게 개선한 경험",
             "PB 플랫폼 POC 성능 검증 및 시스템 런칭을 지원한 경험"
           ]
         }
@@ -246,7 +246,7 @@
       "teamSize": "규모 미공개 인프라 운영팀",
       "myRole": "VPN/NAC 운영 자동화 및 스위치 점검 자동화 담당",
       "workType": "SI+SM",
-      "description": "1,000명 규모 컨택센터 원격 근무 환경에서 신규 단말 등록과 스위치 점검의 반복 작업을 자동화하기 위해 Python과 Ansible 기반 시스템을 개발했습니다. FortiGate로 재택근무 사이트 보안을 설계하여 안전한 원격 접속 환경을 구축한 경험이 있습니다.",
+      "description": "대규모 컨택센터 원격 근무 환경에서 신규 단말 등록과 스위치 점검의 반복 작업을 자동화하기 위해 Python과 Ansible 기반 시스템을 개발했습니다. FortiGate로 재택근무 사이트 보안을 설계하여 안전한 원격 접속 환경을 구축한 경험이 있습니다.",
       "wantedSummary": "대규모 원격 근무 환경의 반복 작업을 자동화 시스템으로 전환한 경험",
       "projects": [
         {
@@ -545,7 +545,7 @@
           "level": "beginner"
         },
         {
-          "name": "HashiCorp Vault (홈랩 운영)",
+          "name": "1Password (홈랩 운영)",
           "level": "intermediate"
         }
       ]
@@ -695,7 +695,7 @@
       "tagline": "모니터링 플랫폼",
       "language": "PromQL",
       "githubUrl": null,
-      "demoUrl": "https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b",
+      "demoUrl": "https://grafana.jclee.me",
       "featured": true
     },
     {
@@ -717,7 +717,7 @@
     {
       "name": "FortiManager API Client (Python)",
       "period": "2025.01 ~ 현재",
-      "description": "[문제] 보안운영에서 방화벽 정책 확인·라우트 조회·로그 통계를 각각 FortiManager·FortiAnalyzer 콘솔에 접속해 수동으로 처리해야 했습니다.\n[해결] FortiManager와 FortiAnalyzer REST API를 래핑한 Python 라이브러리를 개발해 정책 조회·라우트 관리·로그 통계를 공통 메서드로 추상화했습니다.\n[결과] 방화벽 정책 조회·변경을 스크립트로 처리할 수 있게 되어 보안운영 자동화에 활용하고 있습니다.",
+      "description": "[문제] 보안운영에서 방화벽 정책 확인·라우트 조회·로그 통계를 FortiManager·FortiAnalyzer 콘솔에 직접 접속해 매번 수동으로 처리해야 했습니다.\n[해결] FortiManager·FortiAnalyzer JSON-RPC API를 래핑한 Python 라이브러리를 설계해 정책 조회·라우트 관리·로그 통계를 공통 메서드로 추상화하고 ADOM 잠금·재시도/백오프·idempotent 호출을 내장했습니다.\n[결과] 콘솔 접속 없이 스크립트로 정책·라우트·로그를 조회·변경할 수 있게 되어 SOC 자동화 스크립트의 공용 어댑터로 사용하고 있습니다.",
       "technologies": [
         "Python",
         "FortiManager",
@@ -848,7 +848,7 @@
     {
       "name": "AI GitHub PR Reviewer",
       "period": "2026.03 ~ 현재",
-      "githubUrl": "https://github.com/jclee941/github-bot",
+      "githubUrl": "https://github.com/jclee941/pr-agent",
       "description": "[문제] 보안·인프라 PR 리뷰가 1인 의존 구조였고 공통 패턴(시크릿 노출/RBAC) 검증을 매번 수동으로 수행해야 했습니다.\n[해결] Self-hosted AI PR 리뷰어를 Cloudflare Workers로 운영합니다. CLIProxyAPI 통합으로 LLM 비용을 절감하고 보안 패턴 자동 검출 후 GitHub 코멘트로 피드백합니다.\n[결과] PR 리뷰 흐름을 자동화하고 시크릿 노출 검증을 표준화했습니다.",
       "highlights": [
         "LLM 호출 비용을 절감하기 위한 자체 프록시 운영",
@@ -942,7 +942,7 @@
       "title": "Grafana + Prometheus",
       "description": "Observability 스택 (메트릭 수집/시각화)",
       "status": "running",
-      "url": "https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b"
+      "url": "https://grafana.jclee.me"
     },
     {
       "icon": "🔍",
@@ -977,8 +977,8 @@
     },
     {
       "icon": "🔐",
-      "title": "HashiCorp Vault",
-      "description": "시크릿 관리 / PKI",
+      "title": "1Password",
+      "description": "시크릿 관리 / SSH·CLI 통합",
       "status": "running"
     },
     {
@@ -1014,7 +1014,7 @@
     "github": "https://github.com/jclee941",
     "linkedin": "https://linkedin.com/in/jclee0109",
     "website": "https://resume.jclee.me",
-    "monitoring": "https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b"
+    "monitoring": "https://grafana.jclee.me"
   },
   "hope": {
     "locations": [
@@ -1040,35 +1040,35 @@
     "ko": {
       "headline": "OA에서 시작해 자동화로 도착한 8년차 DevSecOps/SRE",
       "paragraphs": [
-        "9년 전 한국항공우주산업(KAI) 폐쇄망 IT 운영실에서 50대 서버의 패치 적용 일정을 손으로 엑셀에 적던 사람이었습니다. 매주 같은 작업을 반복하면서, 보안 운영의 가치는 \"무사고를 유지하는 것\"이 아니라 \"무사고를 자동으로 보장하는 것\"이라는 확신이 생겼습니다. 11개월간 휴식 없이 RHCSA·LPIC-1·리눅스마스터 2급을 연속 취득해 Linux 시스템을 다시 학습한 것이 그 출발점입니다.",
-        "메타넷엠플랫폼에서 처음 Ansible과 Python을 잡았을 때, 1,000명 규모 컨택센터의 NAC 정책 배포 시간을 10시간에서 1시간으로 줄이는 경험을 했습니다. 조인트리에서는 국민대 차세대 정보시스템에 NSX-T 마이크로세그멘테이션을 적용해 동서 트래픽 사각지대를 해소하고, 침해 시도 월 200건 차단·DLP 오탐 80% 감소를 달성했습니다. 도구가 바뀌어도 \"손이 가는 작업은 자동화 대상이다\"는 원칙은 변하지 않았습니다.",
-        "콴텍투자일임 금융보안데이터센터(FSDC)에서 금융감독원 정기 감사를 대응하며, 보안 운영의 진짜 의미는 \"감사관에게 데이터로 증명할 수 있느냐\"라는 것을 배웠습니다. DB 접근제어 쿼리 튜닝으로 CPU 부하를 75%에서 52%로 낮추는 일도, PB 플랫폼 POC 검증도, 결국은 \"근거 가능한 운영\"이라는 한 가지 목표였습니다.",
-        "지금은 가온누리에서 시작해 아이티센 CTS로 이어지는 넥스트레이드 매매체결시스템 보안 트랙에서, 구축 단계에서 운영 단계까지 연속 참여하고 있습니다. FortiGate HA로 5계층 망분리를 설계하고 FSC 본인가 사전 심사를 통과시켰으며, Ansible Role로 보안 장비 표준화(방화벽 정책 500건 자동화, 8시간→1시간)와 Splunk ES 탐지 룰 + n8n + FortiManager API 기반 자동 대응(MTTR 30분→12분, 일 10만+ 주문 처리)을 운영합니다. 서버 150대·단말 300대·네트워크 80대 환경에서 24/7 SOC 3교대 운영 체계를 안정화했습니다.",
-        "다음 단계는 AI 에이전트와 Edge 런타임의 통합입니다. 개인 홈랩에서 Cloudflare Workers, MCP, Grafana, Vault를 Terraform으로 코드화해 운영하며 \"보안 운영의 toil을 AI가 1차 처리하는\" 패턴을 검증하고 있습니다. 만들어진 도구를 운영하는 것이 아니라, 운영의 문제를 도구로 답하는 엔지니어로 다음 9년을 보내고 싶습니다."
+        "커리어 시작점은 한국항공우주산업(KAI) 폐쇄망 IT 운영실에서 50대 서버의 패치 적용 일정을 손으로 엑셀에 적던 자리였습니다. 매주 같은 작업을 반복하면서, 보안 운영의 가치는 \"무사고를 유지하는 것\"이 아니라 \"무사고를 자동으로 보장하는 것\"이라는 확신이 생겼습니다. 11개월간 휴식 없이 RHCSA·LPIC-1·리눅스마스터 2급을 연속 취득해 Linux 시스템 기초를 다지고, 그 다음해부터 현장으로 옮겨가 8년간 운영 경험을 쌓아왔습니다.",
+        "메타넷엠플랫폼에서 처음 Ansible과 Python을 잡았을 때, 대규모 컨택센터의 NAC 정책 배포를 Ansible로 자동화하는 경험을 했습니다. 조인트리에서는 국민대 차세대 정보시스템에 NSX-T 마이크로세그멘테이션을 적용해 동서 트래픽 사각지대를 해소하고, 침해 시도 차단과 DLP 오탐 감소를 달성했습니다. 도구가 바뀌어도 \"손이 가는 작업은 자동화 대상이다\"는 원칙은 변하지 않았습니다.",
+        "콴텍투자일임 금융보안데이터센터(FSDC)에서 금융감독원 정기 감사를 대응하며, 보안 운영의 진짜 의미는 \"감사관에게 데이터로 증명할 수 있느냐\"라는 것을 배웠습니다. DB 접근제어 쿼리 튜닝으로 CPU 부하를 의미 있게 낮추는 일도, PB 플랫폼 POC 검증도, 결국은 \"근거 가능한 운영\"이라는 한 가지 목표였습니다.",
+        "지금은 가온누리에서 시작해 아이티센 CTS로 이어지는 넥스트레이드 매매체결시스템 보안 트랙에서, 구축 단계에서 운영 단계까지 연속 참여하고 있습니다. FortiGate HA로 5계층 망분리를 설계하고 FSC 본인가 사전 심사를 통과시켰으며, Ansible Role로 보안 장비 표준화(방화벽 정책을 Ansible Role로 표준화)와 Splunk ES 탐지 룰 + n8n + FortiManager API 기반 자동 대응(자동 탐지·대응)을 운영합니다. 거래소 보안 운영 환경에서 운영 체계를 안정화했습니다.",
+        "다음 단계는 AI 에이전트와 Edge 런타임의 통합입니다. 개인 홈랩에서 Cloudflare Workers, MCP, Grafana, 1Password를 Terraform으로 코드화해 운영하며 \"보안 운영의 toil을 AI가 1차 처리하는\" 패턴을 검증하고 있습니다. 만들어진 도구를 운영하는 것이 아니라, 운영의 문제를 도구로 답하는 엔지니어로 다음 커리어를 보내고 싶습니다."
       ],
-      "closing": "9년간의 \"반복 작업의 한계\"라는 한 가지 문제 의식이 만든 trajectory를 가지고, 귀사의 보안 인프라가 풀어야 할 다음 문제에 합류하고 싶습니다."
+      "closing": "\"반복 작업의 한계\"라는 한 가지 문제 의식이 만든 8년간의 trajectory를 가지고, 귀사의 보안 인프라가 풀어야 할 다음 문제에 합류하고 싶습니다."
     },
     "en": {
-      "headline": "From OA to DevSecOps — A 8-year Trajectory Built on One Conviction",
+      "headline": "From OA to DevSecOps — An 8-year Trajectory Built on One Conviction",
       "paragraphs": [
-        "Nine years ago, I was the person tracking patch schedules for 50 Linux servers on an Excel sheet inside Korea Aerospace Industries' closed network. Repeating the same operations every week led to a single conviction: the value of security operations is not maintaining zero incidents, but automating the guarantee of zero incidents. I spent the next 11 months consecutively earning RHCSA, LPIC-1, and Linux Master Level 2 to rebuild my Linux foundation.",
-        "At Metanet M Platform I first picked up Ansible and Python, cutting NAC policy deployment from 10 hours to 1 hour for a 1,000-user contact center. At Jointree, I applied NSX-T microsegmentation to Kookmin University's next-generation information system, eliminating east-west traffic blind spots — blocking 200 monthly intrusion attempts and reducing DLP false positives by 80%. The tools changed, but the principle didn't: any task that requires hands is a candidate for automation.",
-        "At Quantec Investment Management's Financial Security Data Center (FSDC), responding to Financial Supervisory Service audits taught me that security operations ultimately means \"can you prove it to an auditor with data?\" Tuning DB access-control queries from 75% to 52% CPU and validating a PB platform POC were both expressions of one goal: defensible operations.",
-        "Today I am embedded in the Nextrade exchange security track, continuously engaged from build (Gaonnuri) into operations (ITCEN CTS). I designed FortiGate HA with 5-tier network segmentation, passed the FSC pre-licensing review, standardized security appliance configuration with Ansible Role (500 firewall policies automated, 8h→1h), and operate Splunk ES detection rules + n8n + FortiManager API automated response (MTTR 30min→12min, 100K+ orders/day). The 24/7 SOC oversees 150 servers, 300 terminals, and 80 network devices.",
-        "Next, I want to integrate AI agents with Edge runtimes. My homelab — Cloudflare Workers, MCP, Grafana, Vault — runs on Terraform-managed IaC where I validate \"AI handles the first pass of security operations toil\" patterns. I want to spend the next nine years not operating the tools that exist, but answering operational problems with new tools."
+        "My career started inside Korea Aerospace Industries' closed network, tracking patch schedules for 50 Linux servers on an Excel sheet. Repeating the same operations every week led to a single conviction: the value of security operations is not maintaining zero incidents, but automating the guarantee of zero incidents. I spent the next 11 months consecutively earning RHCSA, LPIC-1, and Linux Master Level 2 to rebuild my Linux foundation, then carried that into eight years of operations.",
+        "At Metanet M Platform I first picked up Ansible and Python, automating NAC policy deployment for a large-scale contact center via Ansible. At Jointree, I applied NSX-T microsegmentation to Kookmin University's next-generation information system, eliminating east-west traffic blind spots — continuously blocking intrusion attempts and reducing DLP false positives. The tools changed, but the principle didn't: any task that requires hands is a candidate for automation.",
+        "At Quantec Investment Management's Financial Security Data Center (FSDC), responding to Financial Supervisory Service audits taught me that security operations ultimately means \"can you prove it to an auditor with data?\" Tuning DB access-control queries to materially lower CPU load and validating a PB platform POC were both expressions of one goal: defensible operations.",
+        "Today I am embedded in the Nextrade exchange security track, continuously engaged from build (Gaonnuri) into operations (ITCEN CTS). I designed FortiGate HA with 5-tier network segmentation, passed the FSC pre-licensing review, standardized security appliance configuration with Ansible Role, and operate Splunk ES detection rules + n8n + FortiManager API for automated detection and response across the exchange security perimeter end-to-end.",
+        "Next, I want to integrate AI agents with Edge runtimes. My homelab — Cloudflare Workers, MCP, Grafana, 1Password — runs on Terraform-managed IaC where I validate \"AI handles the first pass of security operations toil\" patterns. I want to spend my next chapter not operating the tools that exist, but answering operational problems with new tools."
       ],
       "closing": "I'd like to bring this trajectory — built on a single question about the limits of repetitive work — to the next problem your security infrastructure needs to solve."
     },
     "ja": {
-      "headline": "OAから始まり9年で到達した DevSecOps/SRE — 一つの信念が作った軌跡",
+      "headline": "OAから始まりセキュリティ運用自動化に到達した8年目 DevSecOps/SRE — 一つの信念が作った軌跡",
       "paragraphs": [
-        "9年前、韓国航空宇宙産業(KAI)の閉鎖網IT運用室で、50台のLinuxサーバのパッチスケジュールをExcelに手書きしていた人間でした。毎週同じ作業を繰り返しながら、セキュリティ運用の価値は「無事故を維持すること」ではなく「無事故を自動で保証すること」だと確信しました。続く11ヶ月間、RHCSA・LPIC-1・Linuxマスター2級を連続取得してLinuxシステムを再学習したのが出発点です。",
-        "メタネットMプラットフォームで初めてAnsibleとPythonを手に取り、1,000名規模のコンタクトセンタのNAC政策展開を10時間から1時間に短縮しました。ジョイントリーでは国民大学校の次世代情報システムにNSX-Tマイクロセグメンテーションを適用し、東西トラフィックの盲点を解消(月200件の侵害試行遮断、DLP誤検知80%削減)。ツールは変わっても、「手作業はすべて自動化の対象である」という原則は変わりませんでした。",
-        "クォンテック投資一任の金融セキュリティデータセンタ(FSDC)で金融監督院の定期監査に対応する中で、セキュリティ運用の本質は「監査人にデータで証明できるか」だと学びました。DBアクセス制御クエリチューニング(CPU 75%→52%)もPBプラットフォームPOC検証も、結局は「根拠ある運用」という一つの目標でした。",
-        "現在はガオンヌリで構築段階を担当し、ITCEN CTSで運用段階へと連続参加しているNextrade取引所セキュリティトラックにいます。FortiGate HAで5層ネットワーク分離を設計、FSC本認可事前審査を通過、Ansible Roleでセキュリティ機器を標準化(ファイアウォール政策500件自動化、8時間→1時間)、Splunk ES検知ルール + n8n + FortiManager APIによる自動対応(MTTR 30分→12分、日10万件以上の注文処理)を運用しています。サーバ150台・端末300台・ネットワーク80台環境で24/7 SOC 3交代運用体制を安定化させました。",
-        "次のステップはAIエージェントとEdgeランタイムの統合です。個人のホームラボでCloudflare Workers、MCP、Grafana、VaultをTerraformでIaC化して運用し、「セキュリティ運用のtoilをAIが一次処理する」パターンを検証しています。既存ツールを運用するのではなく、運用の問題を新しいツールで答えるエンジニアとして次の9年を過ごしたいと考えています。"
+        "キャリアの出発点は、韓国航空宇宙産業(KAI)の閉鎖網IT運用室で、50台のLinuxサーバのパッチスケジュールをExcelに手書きしていた位置でした。毎週同じ作業を繰り返しながら、セキュリティ運用の価値は「無事故を維持すること」ではなく「無事故を自動で保証すること」だと確信しました。続く11ヶ月間、RHCSA・LPIC-1・Linuxマスター2級を連続取得してLinuxシステムの基礎を再構築し、そのあと現場での8年間の運用経験を積み上げてきました。",
+        "メタネットMプラットフォームで初めてAnsibleとPythonを手に取り、大規模コンタクトセンタのNAC政策展開をAnsibleで自動化しました。ジョイントリーでは国民大学校の次世代情報システムにNSX-Tマイクロセグメンテーションを適用し、東西トラフィックの盲点を解消（侵害試行の継続的遮断とDLP誤検知の削減を達成）。ツールは変わっても、「手作業はすべて自動化の対象である」という原則は変わりませんでした。",
+        "クォンテック投資一任の金融セキュリティデータセンタ(FSDC)で金融監督院の定期監査に対応する中で、セキュリティ運用の本質は「監査人にデータで証明できるか」だと学びました。DBアクセス制御クエリチューニングもPBプラットフォームPOC検証も、結局は「根拠ある運用」という一つの目標でした。",
+        "現在はガオンヌリで構築段階を担当し、ITCEN CTSで運用段階へと連続参加しているNextrade取引所セキュリティトラックにいます。FortiGate HAで5層ネットワーク分離を設計、FSC本認可事前審査を通過、Ansible Roleでセキュリティ機器を標準化、Splunk ES検知ルール + n8n + FortiManager APIによる自動対応を運用しています。取引所セキュリティ環境全体の運用体制を安定化させました。",
+        "次のステップはAIエージェントとEdgeランタイムの統合です。個人のホームラボでCloudflare Workers、MCP、Grafana、1PasswordをTerraformでIaC化して運用し、「セキュリティ運用のtoilをAIが一次処理する」パターンを検証しています。既存ツールを運用するのではなく、運用の問題を新しいツールで答えるエンジニアとして次のキャリアを進めたいと考えています。"
       ],
-      "closing": "「繰り返し作業の限界」という一つの問題意識が作った9年の軌跡を持って、貴社のセキュリティインフラが次に解くべき問題に参加させてください。"
+      "closing": "「繰り返し作業の限界」という一つの問題意識が作った8年間の軌跡を持って、貴社のセキュリティインフラが次に解くべき問題に参加させてください。"
     }
   }
 }
