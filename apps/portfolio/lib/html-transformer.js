@@ -89,8 +89,8 @@ function buildJapaneseTemplate(html) {
     .replace(/<span class="typing-effect glow-cyan">이재철<\/span/g, '<span class="typing-effect glow-cyan">イ・ジェチョル</span')
     .replace(/<span class="sr-only">이재철<\/span>/g, '<span class="sr-only">イ・ジェチョル</span>')
     .replace(
-      /8년차 DevSecOps\/SRE — OA에서 시작해 자동화·SIEM·금융 보안 인프라까지[^<]*/g,
-      '8年目 DevSecOps/SRE — OAから始まり自動化・SIEM・金融セキュリティインフラへ'
+      /Cloudflare Workers · Splunk ES SIEM · FortiGate HA · n8n — 8년차 DevSecOps\/SRE/g,
+      'Cloudflare Workers · Splunk ES SIEM · FortiGate HA · n8n — 8年目 DevSecOps/SRE'
     )
     .replace(
       /KAI 폐쇄망 OA 운영 → Linux 자격증 기초 재정비 → Ansible·Python 자동화 → 넥스트레이드 FortiGate HA · Splunk ES · n8n 자동 대응/g,
