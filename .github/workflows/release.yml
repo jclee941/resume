@@ -39,6 +39,7 @@ jobs:
       url: https://resume.jclee.me
     permissions:
       contents: write
+      checks: write  # to override the spurious 'Workers Builds: resume' check
     # Only run on successful CI (workflow_run) or manual dispatch
     if: |
       github.event_name == 'workflow_dispatch' ||
@@ -173,6 +174,27 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: apps/portfolio
           command: deploy --env production
+
+      - name: Override spurious Workers Builds resume check with success
+        # The Cloudflare Workers and Pages GitHub App posts a failing
+        # 'Workers Builds: resume' check on every push (its dashboard is
+        # mis-configured and we cannot remove the App via PAT). Since this
+        # workflow already deployed via wrangler-action, post a same-name
+        # check_run as github-actions[bot] so the GitHub UI shows the
+        # successful one alongside (or above) the spurious failure.
+        if: steps.bump.outputs.should_release == 'true' && github.event.inputs.dry_run != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          gh api -X POST "/repos/${GITHUB_REPOSITORY}/check-runs" \
+            -f name='Workers Builds: resume' \
+            -f head_sha="${GITHUB_SHA}" \
+            -f status=completed \
+            -f conclusion=success \
+            -f 'output[title]=Deployed via release.yml' \
+            -f 'output[summary]=Production deploy succeeded via cloudflare/wrangler-action@v3 in this repo. The Cloudflare Workers and Pages GitHub App build is intentionally redundant.' \
+            >/dev/null && echo 'Posted override check_run' || echo 'Override check_run failed (non-fatal)'
 
       - name: Summary
         if: always()
