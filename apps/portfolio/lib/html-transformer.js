@@ -94,8 +94,9 @@ function buildJapaneseTemplate(html) {
       /KAI 폐쇄망 OA 운영 → Linux 자격증 기초 재정비 → Ansible·Python 자동화 → 넥스트레이드 FortiGate HA · Splunk ES · n8n 자동 대응/g,
       'KAI閉鎖網OA運用 → Linux資格基礎を立て直し → Ansible・Python自動化 → Nextrade FortiGate HA · Splunk ES · n8n 自動対応'
     )
-    .replace(/<span class="hero-now__label">지금:<\/span>/g, '<span class="hero-now__label">現在:</span>')
-    .replace(/<span class="hero-now__value">아이티센 CTS @ 넥스트레이드 보안 운영<\/span>/g, '<span class="hero-now__value">ITCEN CTS @ Nextrade セキュリティ運用</span>')
+    .replace(/<span class="hero-now__label">최근:<\/span>/g, '<span class="hero-now__label">最終:</span>')
+    .replace(/<span class="hero-now__value">아이티센 CTS @ 넷스트레이드 보안 운영 \(2025\.03–2026\.02\)<\/span>/g, '<span class="hero-now__value">ITCEN CTS @ Nextrade セキュリティ運用 (2025.03–2026.02)</span>')
+    .replace(/<span class="hero-now__period">· 구직 중 · 즉시 투입 가능<\/span>/g, '<span class="hero-now__period">· 転職活動中 · 即時ジョイン可能</span>')
     .replace(/<div class="hero-context__label">OA → DevSecOps 8년 성장<\/div>/g, '<div class="hero-context__label">OA → DevSecOps 8年間の成長</div>')
     .replace(/<div class="hero-context__label">금융위 본인가 · 금융감독원 감사 대응<\/div>/g, '<div class="hero-context__label">FSC本認可 · 金融監督院監査対応</div>')
     .replace(/<div class="hero-context__label">Splunk ES · n8n 자동 탐지·대응<\/div>/g, '<div class="hero-context__label">Splunk ES · n8n 自動検知・対応</div>')
