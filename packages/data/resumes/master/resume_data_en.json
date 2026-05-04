@@ -770,7 +770,7 @@
     {
       "name": "Resume Portfolio",
       "period": "2024.01 ~ Present",
-      "description": "[Problem] Career, projects, and operational metrics were scattered across resumes, PDFs, and GitHub, making it hard for hiring teams to quickly grasp strengths.\n[Solution] Built a single-SSoT resume site on Cloudflare Workers Edge and integrated MCP automation tools, an auto-apply pipeline, and n8n workflows into a monorepo.\n[Result] Operates resume rendering, cover-letter generation, auto-apply, and observability from a single monorepo.",
+      "description": "[Problem] Career, projects, and operational metrics were scattered across resumes, PDFs, and GitHub, making it hard for hiring teams to quickly grasp strengths.\n[Solution] Built a single-SSoT resume site on Cloudflare Workers Edge and integrated MCP automation tools, an auto-apply pipeline, and n8n workflows into a monorepo.\n[Result] Operates resume rendering, cover-letter generation, auto-apply, and observability from a single monorepo.\n\n← this site runs on Cloudflare Workers (edge runtime, ~390KB bundle).",
       "technologies": [
         "Cloudflare Workers",
         "HTML/CSS",
