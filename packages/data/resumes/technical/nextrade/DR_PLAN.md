@@ -1,4 +1,5 @@
 # Disaster Recovery Plan (DR Plan)
+
 ## Nextrade Securities Exchange
 
 **Document Classification**: Confidential
@@ -13,7 +14,8 @@
 
 1. [Executive Summary](#executive-summary)
 2. [Scope & Objectives](#scope--objectives)
-3. [Recovery Time Objectives (RTO) & Recovery Point Objectives (RPO)](#recovery-time-objectives-rto--recovery-point-objectives-rpo)
+3. [Recovery Time Objectives (RTO) & Recovery Point Objectives
+   (RPO)](#recovery-time-objectives-rto--recovery-point-objectives-rpo)
 4. [Disaster Scenarios](#disaster-scenarios)
 5. [Critical Systems Inventory](#critical-systems-inventory)
 6. [Backup Strategy](#backup-strategy)
@@ -26,14 +28,22 @@
 
 ## Executive Summary
 
-This Disaster Recovery Plan outlines the procedures and processes to ensure business continuity for Nextrade Securities Exchange in the event of a disaster affecting IT infrastructure. The plan is designed to meet Financial Services Commission (FSC) requirements for securities exchanges and achieve the following objectives:
+This Disaster Recovery Plan outlines the procedures and processes to ensure
+business continuity for Nextrade Securities Exchange in the event of a disaster
+affecting IT infrastructure. The plan is designed to meet Financial Services
+Commission (FSC) requirements for securities exchanges and achieve the following
+objectives:
 
 **Primary Goals**:
-- **Trading Platform**: Resume operations within 4 hours (RTO: 4 hours, RPO: 15 minutes)
+
+- **Trading Platform**: Resume operations within 4 hours (RTO: 4 hours, RPO: 15
+  minutes)
 - **Customer Data**: Zero data loss for financial transactions (RPO: 0)
-- **Regulatory Compliance**: Meet FSC business continuity requirements (99.95% availability)
+- **Regulatory Compliance**: Meet FSC business continuity requirements (99.95%
+  availability)
 
 **Disaster Recovery Sites**:
+
 - **Primary Data Center**: Seoul, Korea (Main Operations)
 - **DR Data Center**: Busan, Korea (250km separation)
 - **Cloud DR**: AWS Seoul Region (Tertiary backup for critical databases)
@@ -73,12 +83,12 @@ This Disaster Recovery Plan outlines the procedures and processes to ensure busi
 
 ### Objectives
 
-| Objective | Target | Current Performance |
-|-----------|--------|---------------------|
-| **RTO (Trading Platform)** | 4 hours | 2.5 hours (last drill) |
-| **RPO (Trading Data)** | 15 minutes | 5 minutes (real-time replication) |
-| **RTO (Web Portal)** | 8 hours | 6 hours (last drill) |
-| **Annual Availability** | 99.95% | 99.98% (2025 YTD) |
+| Objective                  | Target     | Current Performance               |
+| -------------------------- | ---------- | --------------------------------- |
+| **RTO (Trading Platform)** | 4 hours    | 2.5 hours (last drill)            |
+| **RPO (Trading Data)**     | 15 minutes | 5 minutes (real-time replication) |
+| **RTO (Web Portal)**       | 8 hours    | 6 hours (last drill)              |
+| **Annual Availability**    | 99.95%     | 99.98% (2025 YTD)                 |
 
 ---
 
@@ -86,32 +96,32 @@ This Disaster Recovery Plan outlines the procedures and processes to ensure busi
 
 ### Critical Systems (Tier 1)
 
-| System | RTO | RPO | Backup Method | Recovery Method |
-|--------|-----|-----|---------------|-----------------|
-| Trading Matching Engine | 2 hours | 0 (real-time) | Active-active cluster | Automatic failover |
-| Order Routing System | 2 hours | 0 (real-time) | Synchronous replication | Automatic failover |
-| Market Data Feed | 1 hour | 0 (real-time) | Dual-feed from exchange | Switch to secondary feed |
-| Customer Database | 4 hours | 15 minutes | WAL streaming + snapshot | Restore from DR replica |
-| Core Firewalls | 1 hour | N/A | Config backup (hourly) | Deploy from backup config |
+| System                  | RTO     | RPO           | Backup Method            | Recovery Method           |
+| ----------------------- | ------- | ------------- | ------------------------ | ------------------------- |
+| Trading Matching Engine | 2 hours | 0 (real-time) | Active-active cluster    | Automatic failover        |
+| Order Routing System    | 2 hours | 0 (real-time) | Synchronous replication  | Automatic failover        |
+| Market Data Feed        | 1 hour  | 0 (real-time) | Dual-feed from exchange  | Switch to secondary feed  |
+| Customer Database       | 4 hours | 15 minutes    | WAL streaming + snapshot | Restore from DR replica   |
+| Core Firewalls          | 1 hour  | N/A           | Config backup (hourly)   | Deploy from backup config |
 
 ### Important Systems (Tier 2)
 
-| System | RTO | RPO | Backup Method | Recovery Method |
-|--------|-----|-----|---------------|-----------------|
-| Web Portal | 8 hours | 1 hour | VM snapshot (hourly) | Restore from snapshot |
-| API Gateway | 8 hours | 1 hour | VM snapshot (hourly) | Restore from snapshot |
-| Risk Management System | 8 hours | 1 hour | Database replication | Restore from DR database |
-| Settlement System | 12 hours | 4 hours | Daily backup | Restore from backup |
-| SIEM (Splunk) | 24 hours | 4 hours | Index replication | Restore from DR indexer |
+| System                 | RTO      | RPO     | Backup Method        | Recovery Method          |
+| ---------------------- | -------- | ------- | -------------------- | ------------------------ |
+| Web Portal             | 8 hours  | 1 hour  | VM snapshot (hourly) | Restore from snapshot    |
+| API Gateway            | 8 hours  | 1 hour  | VM snapshot (hourly) | Restore from snapshot    |
+| Risk Management System | 8 hours  | 1 hour  | Database replication | Restore from DR database |
+| Settlement System      | 12 hours | 4 hours | Daily backup         | Restore from backup      |
+| SIEM (Splunk)          | 24 hours | 4 hours | Index replication    | Restore from DR indexer  |
 
 ### General Systems (Tier 3)
 
-| System | RTO | RPO | Backup Method | Recovery Method |
-|--------|-----|-----|---------------|-----------------|
-| Email (Exchange) | 24 hours | 24 hours | Daily backup | Restore from tape/cloud |
-| File Servers | 24 hours | 24 hours | Daily backup | Restore from backup |
-| Collaboration Tools | 48 hours | 24 hours | Daily backup | Restore from backup |
-| Development Environments | 72 hours | 1 week | Weekly backup | Rebuild from template |
+| System                   | RTO      | RPO      | Backup Method | Recovery Method         |
+| ------------------------ | -------- | -------- | ------------- | ----------------------- |
+| Email (Exchange)         | 24 hours | 24 hours | Daily backup  | Restore from tape/cloud |
+| File Servers             | 24 hours | 24 hours | Daily backup  | Restore from backup     |
+| Collaboration Tools      | 48 hours | 24 hours | Daily backup  | Restore from backup     |
+| Development Environments | 72 hours | 1 week   | Weekly backup | Rebuild from template   |
 
 ---
 
@@ -120,6 +130,7 @@ This Disaster Recovery Plan outlines the procedures and processes to ensure busi
 ### Scenario 1: Data Center Outage (Complete Facility Loss)
 
 **Examples**:
+
 - Fire, flood, earthquake
 - Extended power outage (>12 hours)
 - HVAC failure causing overheating
@@ -128,6 +139,7 @@ This Disaster Recovery Plan outlines the procedures and processes to ensure busi
 **Impact**: Total loss of primary data center
 
 **Recovery Strategy**:
+
 1. Activate DR data center in Busan (automated failover for Tier 1 systems)
 2. DNS cutover to DR site (TTL: 60 seconds)
 3. Verify trading platform operational at DR site
@@ -141,6 +153,7 @@ This Disaster Recovery Plan outlines the procedures and processes to ensure busi
 ### Scenario 2: Ransomware / Cyber Attack
 
 **Examples**:
+
 - Ransomware encryption of file servers
 - Destructive malware (e.g., wiper attack)
 - Compromised backups requiring restore from older backup
@@ -148,6 +161,7 @@ This Disaster Recovery Plan outlines the procedures and processes to ensure busi
 **Impact**: Data encryption or destruction, potentially including backups
 
 **Recovery Strategy**:
+
 1. Isolate affected systems (network segmentation)
 2. Restore from immutable backups (air-gapped)
 3. Verify backup integrity before restore
@@ -155,6 +169,7 @@ This Disaster Recovery Plan outlines the procedures and processes to ensure busi
 5. Estimated Total Recovery Time: **8-12 hours**
 
 **Prevention**:
+
 - Immutable backups (WORM storage)
 - Air-gapped backup copy (offline tape)
 - 3-2-1 backup rule (3 copies, 2 media types, 1 offsite)
@@ -164,6 +179,7 @@ This Disaster Recovery Plan outlines the procedures and processes to ensure busi
 ### Scenario 3: Database Corruption
 
 **Examples**:
+
 - Software bug causing data corruption
 - Storage hardware failure
 - Human error (accidental deletion)
@@ -171,6 +187,7 @@ This Disaster Recovery Plan outlines the procedures and processes to ensure busi
 **Impact**: Data integrity compromise in production database
 
 **Recovery Strategy**:
+
 1. Identify corruption scope (affected tables/records)
 2. Point-in-time recovery (PITR) from WAL logs
 3. Validate data integrity after restore
@@ -178,6 +195,7 @@ This Disaster Recovery Plan outlines the procedures and processes to ensure busi
 5. Estimated Total Recovery Time: **2-6 hours**
 
 **Prevention**:
+
 - WAL archiving (continuous backup)
 - Transaction log retention (30 days)
 - Database checksum validation (daily)
@@ -187,6 +205,7 @@ This Disaster Recovery Plan outlines the procedures and processes to ensure busi
 ### Scenario 4: Network Infrastructure Failure
 
 **Examples**:
+
 - Core switch failure
 - Firewall cluster failure
 - ISP outage (dual-provider)
@@ -195,6 +214,7 @@ This Disaster Recovery Plan outlines the procedures and processes to ensure busi
 **Impact**: Network connectivity loss, service unavailability
 
 **Recovery Strategy**:
+
 1. Activate redundant network paths (automatic)
 2. Failover to secondary ISP (BGP reroute)
 3. Enable DDoS mitigation service (scrubbing center)
@@ -202,6 +222,7 @@ This Disaster Recovery Plan outlines the procedures and processes to ensure busi
 5. Estimated Total Recovery Time: **30 minutes - 2 hours**
 
 **Prevention**:
+
 - N+1 redundancy for all critical network components
 - Dual ISP with BGP load balancing
 - DDoS mitigation service on standby
@@ -211,6 +232,7 @@ This Disaster Recovery Plan outlines the procedures and processes to ensure busi
 ### Scenario 5: Cloud Service Outage (AWS)
 
 **Examples**:
+
 - AWS region outage (Seoul)
 - S3 service disruption
 - Database service (RDS) failure
@@ -218,12 +240,14 @@ This Disaster Recovery Plan outlines the procedures and processes to ensure busi
 **Impact**: Cloud-hosted services unavailable
 
 **Recovery Strategy**:
+
 1. Activate multi-region deployment (Tokyo region)
 2. Route traffic via Route 53 health checks
 3. Verify data consistency across regions
 4. Estimated Total Recovery Time: **2-4 hours**
 
 **Prevention**:
+
 - Multi-region deployment for critical services
 - Regular cross-region replication testing
 - Automated failover with Route 53
@@ -234,31 +258,31 @@ This Disaster Recovery Plan outlines the procedures and processes to ensure busi
 
 ### Trading Platform Components
 
-| Component | Hostname | IP Address | Location | Criticality | Dependencies |
-|-----------|----------|------------|----------|-------------|--------------|
-| Matching Engine (Primary) | trade-match-01 | 10.100.30.10 | Seoul DC | Tier 1 | Order Router, Market Data |
-| Matching Engine (DR) | trade-match-dr-01 | 10.200.30.10 | Busan DC | Tier 1 | Order Router, Market Data |
-| Order Router (Primary) | trade-router-01 | 10.100.30.20 | Seoul DC | Tier 1 | Database, Firewall |
-| Order Router (DR) | trade-router-dr-01 | 10.200.30.20 | Busan DC | Tier 1 | Database, Firewall |
-| Market Data Feed 1 | mktdata-feed-01 | 10.100.31.10 | Seoul DC | Tier 1 | Exchange Feed (KRX) |
-| Market Data Feed 2 | mktdata-feed-02 | 10.100.31.11 | Seoul DC | Tier 1 | Exchange Feed (Backup) |
+| Component                 | Hostname           | IP Address   | Location | Criticality | Dependencies              |
+| ------------------------- | ------------------ | ------------ | -------- | ----------- | ------------------------- |
+| Matching Engine (Primary) | trade-match-01     | 10.100.30.10 | Seoul DC | Tier 1      | Order Router, Market Data |
+| Matching Engine (DR)      | trade-match-dr-01  | 10.200.30.10 | Busan DC | Tier 1      | Order Router, Market Data |
+| Order Router (Primary)    | trade-router-01    | 10.100.30.20 | Seoul DC | Tier 1      | Database, Firewall        |
+| Order Router (DR)         | trade-router-dr-01 | 10.200.30.20 | Busan DC | Tier 1      | Database, Firewall        |
+| Market Data Feed 1        | mktdata-feed-01    | 10.100.31.10 | Seoul DC | Tier 1      | Exchange Feed (KRX)       |
+| Market Data Feed 2        | mktdata-feed-02    | 10.100.31.11 | Seoul DC | Tier 1      | Exchange Feed (Backup)    |
 
 ### Database Servers
 
-| Database | Type | Primary | DR Replica | Backup Frequency | Retention |
-|----------|------|---------|------------|------------------|-----------|
-| Customer DB | PostgreSQL 15 | db-customer-01 | db-customer-dr-01 | Continuous (WAL streaming) | 30 days |
-| Trading DB | PostgreSQL 15 | db-trading-01 | db-trading-dr-01 | Continuous (WAL streaming) | 90 days (regulatory) |
-| Risk DB | MySQL 8.0 | db-risk-01 | db-risk-dr-01 | Hourly snapshot | 30 days |
-| Analytics DB | PostgreSQL 15 | db-analytics-01 | N/A (not critical) | Daily | 7 days |
+| Database     | Type          | Primary         | DR Replica         | Backup Frequency           | Retention            |
+| ------------ | ------------- | --------------- | ------------------ | -------------------------- | -------------------- |
+| Customer DB  | PostgreSQL 15 | db-customer-01  | db-customer-dr-01  | Continuous (WAL streaming) | 30 days              |
+| Trading DB   | PostgreSQL 15 | db-trading-01   | db-trading-dr-01   | Continuous (WAL streaming) | 90 days (regulatory) |
+| Risk DB      | MySQL 8.0     | db-risk-01      | db-risk-dr-01      | Hourly snapshot            | 30 days              |
+| Analytics DB | PostgreSQL 15 | db-analytics-01 | N/A (not critical) | Daily                      | 7 days               |
 
 ### Network Infrastructure
 
-| Device | Model | Primary | DR | Config Backup | Replacement Time |
-|--------|-------|---------|-----|---------------|------------------|
-| Core Firewall | Fortigate 600F | fw-core-01 (HA1) | fw-core-dr-01 (HA1) | Hourly | 4 hours (vendor SLA) |
-| Core Switch | Cisco 9500 | sw-core-01 | sw-core-dr-01 | Daily | 24 hours (cold spare on-site) |
-| Load Balancer | F5 BIG-IP | lb-01 (HA) | lb-dr-01 (HA) | Hourly | 4 hours (vendor SLA) |
+| Device        | Model          | Primary          | DR                  | Config Backup | Replacement Time              |
+| ------------- | -------------- | ---------------- | ------------------- | ------------- | ----------------------------- |
+| Core Firewall | Fortigate 600F | fw-core-01 (HA1) | fw-core-dr-01 (HA1) | Hourly        | 4 hours (vendor SLA)          |
+| Core Switch   | Cisco 9500     | sw-core-01       | sw-core-dr-01       | Daily         | 24 hours (cold spare on-site) |
+| Load Balancer | F5 BIG-IP      | lb-01 (HA)       | lb-dr-01 (HA)       | Hourly        | 4 hours (vendor SLA)          |
 
 ---
 
@@ -266,7 +290,7 @@ This Disaster Recovery Plan outlines the procedures and processes to ensure busi
 
 ### Backup Architecture
 
-```
+```text
 Production Systems (Seoul DC)
     ├─> Local Backups (On-site, Dell EMC Data Domain, Deduplication)
     ├─> DR Backups (Off-site, Busan DC, Dell EMC Data Domain)
@@ -297,6 +321,7 @@ barman delete trading-db BEFORE 30d
 ```
 
 **Recovery**:
+
 ```bash
 # Point-in-time recovery (PITR)
 barman recover trading-db latest /var/lib/postgresql/15/main --target-time "2025-10-16 14:30:00"
@@ -308,11 +333,13 @@ barman recover trading-db latest /var/lib/postgresql/15/main
 #### 2. Virtual Machine Backups (Veeam)
 
 **Schedule**:
+
 - Tier 1 (Critical): Hourly snapshots, 24-hour retention
 - Tier 2 (Important): Daily backups, 30-day retention
 - Tier 3 (General): Weekly backups, 12-week retention
 
 **Backup Job Example**:
+
 ```powershell
 # Daily backup with application-aware processing
 Add-VBRViJob -Name "Trading-Platform-Backup" `
@@ -328,6 +355,7 @@ Add-VBRViJob -Name "Trading-Platform-Backup" `
 #### 3. Configuration Backups
 
 **Automated Config Backup Script** (runs hourly):
+
 ```bash
 #!/bin/bash
 # /opt/scripts/config-backup.sh
@@ -351,6 +379,7 @@ cd /backup/configs && git add . && git commit -m "Auto backup $DATE" && git push
 #### 4. Immutable Backups (Ransomware Protection)
 
 **Implementation**:
+
 - **WORM Storage**: Dell EMC Data Domain with retention lock (30 days)
 - **Air-Gapped Tape**: LTO-9 tapes stored offsite (90 days retention)
 - **Cloud Immutable**: AWS S3 Glacier with Object Lock (7 years for regulatory)
@@ -601,6 +630,7 @@ Invoke-WebRequest -Uri "http://trade-match-01:8080/health" -UseBasicParsing
 ### Internal Communication
 
 **Incident Response Team** (activated immediately):
+
 - Security Lead: Incident Commander
 - IT Manager: Technical Lead
 - Compliance Manager: Communication Lead
@@ -610,7 +640,8 @@ Invoke-WebRequest -Uri "http://trade-match-01:8080/health" -UseBasicParsing
 **Contact Method**: Microsoft Teams War Room + Conference Bridge
 
 **Communication Template**:
-```
+
+```text
 TO: Incident Response Team
 SUBJECT: [DR ACTIVATION] Primary DC Unavailable - DR Site Activation in Progress
 
@@ -643,10 +674,11 @@ WAR ROOM: [Teams link]
 
 #### To Customers
 
-**Channel**: Email + Status Page (https://status.nextrade.com)
+**Channel**: Email + Status Page (<https://status.nextrade.com>)
 
 **Template** (Incident Detection):
-```
+
+```text
 Subject: [IMPORTANT] Trading Platform Maintenance - Service Disruption
 
 Dear Valued Customer,
@@ -669,7 +701,8 @@ Customer Support Team
 ```
 
 **Template** (Service Restored):
-```
+
+```text
 Subject: [RESOLVED] Trading Platform Fully Restored
 
 Dear Valued Customer,
@@ -703,7 +736,8 @@ Customer Support Team
 **Notification Requirement**: Within 1 hour for critical system outages
 
 **Template**:
-```
+
+```text
 TO: Financial Services Commission (FSC)
       Electronic Financial Supervision Bureau
 FROM: Nextrade Securities Exchange
@@ -784,6 +818,7 @@ Chief Information Security Officer
 **Frequency**: Quarterly (FSC requirement)
 
 **Test Types**:
+
 1. **Tabletop Exercise** (Monthly)
    - Scenario walkthrough
    - Communication drill
@@ -807,27 +842,30 @@ Chief Information Security Officer
 **Test Type**: Full DR Drill
 **Scenario**: Primary data center fire
 **Objectives**:
+
 - Activate DR site within 4 hours
 - Zero data loss
 - Successful customer notification
 
 **Results**:
 
-| Metric | Target | Actual | Status |
-|--------|--------|--------|--------|
-| RTO (Trading Platform) | 4 hours | 2.5 hours | ✅ PASS |
-| RPO (Customer Data) | 15 minutes | 0 minutes (real-time replication) | ✅ PASS |
-| Database Promotion Time | 1.5 hours | 1.2 hours | ✅ PASS |
-| Network Cutover Time | 1 hour | 45 minutes | ✅ PASS |
-| Application Startup Time | 1 hour | 30 minutes | ✅ PASS |
-| End-to-End Trading Test | Success | Success | ✅ PASS |
+| Metric                   | Target     | Actual                            | Status  |
+| ------------------------ | ---------- | --------------------------------- | ------- |
+| RTO (Trading Platform)   | 4 hours    | 2.5 hours                         | ✅ PASS |
+| RPO (Customer Data)      | 15 minutes | 0 minutes (real-time replication) | ✅ PASS |
+| Database Promotion Time  | 1.5 hours  | 1.2 hours                         | ✅ PASS |
+| Network Cutover Time     | 1 hour     | 45 minutes                        | ✅ PASS |
+| Application Startup Time | 1 hour     | 30 minutes                        | ✅ PASS |
+| End-to-End Trading Test  | Success    | Success                           | ✅ PASS |
 
 **Issues Identified**:
+
 1. ⚠️ DNS TTL too long (300 seconds) → Reduced to 60 seconds
 2. ⚠️ Load balancer VIP manual activation → Automated with script
 3. ⚠️ Customer notification delay (15 minutes) → Pre-drafted templates
 
 **Action Items**:
+
 - [x] Update DNS TTL to 60 seconds (Completed: 2025-09-20)
 - [x] Automate load balancer VIP activation (Completed: 2025-09-25)
 - [x] Pre-draft customer notification templates (Completed: 2025-09-18)
@@ -839,13 +877,15 @@ Chief Information Security Officer
 ### A. Emergency Contacts
 
 **Internal**:
-- CISO: [Name], 010-XXXX-XXXX, ciso@nextrade.com
-- CTO: [Name], 010-XXXX-XXXX, cto@nextrade.com
-- Security Lead: Jaecheol Lee, 010-5757-9592, qws941@kakao.com
+
+- CISO: [Name], 010-XXXX-XXXX, <ciso@nextrade.com>
+- CTO: [Name], 010-XXXX-XXXX, <cto@nextrade.com>
+- Security Lead: Jaecheol Lee, 010-5757-9592, <qws941@kakao.com>
 - Database Admin: [Name], 010-XXXX-XXXX
 - Network Engineer: [Name], 010-XXXX-XXXX
 
 **External**:
+
 - FSC Hotline: 1332 (Financial Supervisory Service)
 - Data Center (Seoul): 02-XXXX-XXXX (24/7 NOC)
 - Data Center (Busan): 051-XXXX-XXXX (24/7 NOC)
@@ -854,17 +894,18 @@ Chief Information Security Officer
 
 ### B. Vendor SLAs
 
-| Vendor | Service | SLA | Contact |
-|--------|---------|-----|---------|
-| Dell EMC | Storage Hardware Replacement | 4 hours (on-site) | 1588-XXXX |
-| Cisco | Network Equipment Replacement | 4 hours (on-site) | 1588-XXXX |
-| Fortinet | Firewall Support | 1 hour (remote), 4 hours (on-site) | +82-2-XXXX-XXXX |
-| Veeam | Backup Software Support | 1 hour (P1), 4 hours (P2) | +82-2-XXXX-XXXX |
-| AWS | Cloud Infrastructure | 99.99% availability | aws.amazon.com/support |
+| Vendor   | Service                       | SLA                                | Contact                |
+| -------- | ----------------------------- | ---------------------------------- | ---------------------- |
+| Dell EMC | Storage Hardware Replacement  | 4 hours (on-site)                  | 1588-XXXX              |
+| Cisco    | Network Equipment Replacement | 4 hours (on-site)                  | 1588-XXXX              |
+| Fortinet | Firewall Support              | 1 hour (remote), 4 hours (on-site) | +82-2-XXXX-XXXX        |
+| Veeam    | Backup Software Support       | 1 hour (P1), 4 hours (P2)          | +82-2-XXXX-XXXX        |
+| AWS      | Cloud Infrastructure          | 99.99% availability                | aws.amazon.com/support |
 
 ### C. DR Site Inventory
 
 **Busan DR Data Center**:
+
 - Address: [Address]
 - Facility: Tier III (99.982% availability)
 - Power: 2N (dual-path), 500 kVA UPS, diesel generator
@@ -872,6 +913,7 @@ Chief Information Security Officer
 - Network: 10Gbps dual-carrier connectivity
 
 **Equipment** (Pre-positioned):
+
 - 10x Dell PowerEdge R750 (Application Servers)
 - 5x Dell PowerEdge R7525 (Database Servers)
 - 2x Fortigate 600F (Firewalls, HA pair)

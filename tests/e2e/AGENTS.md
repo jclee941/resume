@@ -6,7 +6,8 @@
 
 ## OVERVIEW
 
-Playwright end-to-end test suite for portfolio, dashboard, security, accessibility, and deployment verification paths.
+Playwright end-to-end test suite for portfolio, dashboard, security,
+accessibility, and deployment verification paths.
 
 ## WHERE TO LOOK
 
@@ -38,5 +39,6 @@ Playwright end-to-end test suite for portfolio, dashboard, security, accessibili
 
 ## NOTES
 
-- E2E runtime behavior is sensitive to animations and async widget loading; keep assertions phase-aware.
+- E2E runtime behavior is sensitive to animations and async widget loading; keep
+  assertions phase-aware.
 - Update snapshots intentionally with review when UI semantics change.

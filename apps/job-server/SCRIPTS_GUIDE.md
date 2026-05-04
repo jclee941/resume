@@ -1,6 +1,9 @@
 # Job Automation Scripts Guide
 
-This guide documents the operational scripts under `scripts/`, including JavaScript automation helpers and Go-based ops entrypoints. Scripts are organized by category with usage examples, security considerations, and recommended approaches.
+This guide documents the operational scripts under `scripts/`, including
+JavaScript automation helpers and Go-based ops entrypoints. Scripts are
+organized by category with usage examples, security considerations, and
+recommended approaches.
 
 **Last Updated**: 2026-02-11  
 **Total Scripts**: 30 (25 .js + 5 .go ops entrypoints)
@@ -33,7 +36,8 @@ This guide documents the operational scripts under `scripts/`, including JavaScr
 **Status**: Active | **Type**: Automated | **Recommended**: YES  
 **Requires**: Chrome running with `--remote-debugging-port=9222`
 
-Extracts cookies via Chrome DevTools Protocol (CDP) - the fastest and most reliable method. Avoids Puppeteer/Playwright overhead and WAF detection.
+Extracts cookies via Chrome DevTools Protocol (CDP) - the fastest and most
+reliable method. Avoids Puppeteer/Playwright overhead and WAF detection.
 
 **Usage**:
 
@@ -76,9 +80,11 @@ node scripts/extract-cookies-cdp.js --ws-url ws://localhost:9222/...
 
 ### 2. `auth-sync.js` ⭐ RECOMMENDED
 
-**Status**: Active | **Type**: Hybrid (automated + manual) | **Recommended**: YES
+**Status**: Active | **Type**: Hybrid (automated + manual) | **Recommended**:
+YES
 
-Multi-platform authentication sync. Handles both automated login (Wanted) and manual Google OAuth (JobKorea/Saramin).
+Multi-platform authentication sync. Handles both automated login (Wanted) and
+manual Google OAuth (JobKorea/Saramin).
 
 **Usage**:
 
@@ -106,7 +112,7 @@ node scripts/auth-sync.js --sync-worker
 - `WANTED_PASSWORD` - Wanted account password
 - `GOOGLE_EMAIL` - Google account email (for JobKorea/Saramin)
 - `GOOGLE_PASSWORD` - Google account password
-- `JOB_WORKER_URL` - Worker URL (default: https://resume.jclee.me/job)
+- `JOB_WORKER_URL` - Worker URL (default: <https://resume.jclee.me/job>)
 - `AUTH_SYNC_SECRET` - Secret for sync endpoint
 
 **Supported Platforms**: wanted (automated), jobkorea (manual), saramin (manual)
@@ -140,7 +146,8 @@ node scripts/auth-sync.js --sync-worker
 
 **Status**: Active | **Type**: Persistent UI | **Recommended**: YES
 
-Long-running authentication script with persistent browser UI. Best for keeping sessions fresh over extended periods.
+Long-running authentication script with persistent browser UI. Best for keeping
+sessions fresh over extended periods.
 
 **Usage**:
 
@@ -192,7 +199,8 @@ node scripts/auth-persistent.js --sync-worker
 
 **Status**: Legacy | **Type**: Puppeteer | **Recommended**: NO
 
-Older Puppeteer-based login. Slower and more bot-detection vulnerable than CDP approach. Keep for backwards compatibility.
+Older Puppeteer-based login. Slower and more bot-detection vulnerable than CDP
+approach. Keep for backwards compatibility.
 
 **Usage**:
 
@@ -332,7 +340,8 @@ node scripts/auto-all.js --all
 
 ## Legacy Scripts
 
-The following scripts are legacy attempts or experiments. **Do not use in production**.
+The following scripts are legacy attempts or experiments. **Do not use in
+production**.
 
 - `extract-cookies.js` - Puppeteer extraction (slow, use CDP)
 - `extract-cookies-from-profile.js` - Chrome profile extraction
@@ -355,7 +364,8 @@ The following scripts are legacy attempts or experiments. **Do not use in produc
 
 1. **Never hard-code credentials** - Always use environment variables
 2. **No credentials in logs** - Use ECS logging format (no plaintext passwords)
-3. **Session storage** - Cookies stored at `~/.opencode/data/sessions.json` (24h TTL)
+3. **Session storage** - Cookies stored at `~/.opencode/data/sessions.json` (24h
+   TTL)
 4. **Per-platform isolation** - Each platform has separate session store
 5. **No cross-script imports** - Each script is independent
 

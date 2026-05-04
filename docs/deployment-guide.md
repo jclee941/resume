@@ -1,30 +1,54 @@
 # Resume Monorepo Deployment Guide (v2.0)
 
-Welcome to the **Resume Monorepo** project. This guide provides comprehensive instructions for setting up your environment, understanding the architecture, and deploying the applications to production. It is designed for new developers joining the team to ensure a smooth onboarding and consistent deployment process.
+Welcome to the **Resume Monorepo** project. This guide provides comprehensive
+instructions for setting up your environment, understanding the architecture,
+and deploying the applications to production. It is designed for new developers
+joining the team to ensure a smooth onboarding and consistent deployment
+process.
 
 ---
 
 ## 1. Prerequisites
 
-Before starting, ensure your local development environment meets the following requirements. Following these strictly will prevent common build and runtime errors.
+Before starting, ensure your local development environment meets the following
+requirements. Following these strictly will prevent common build and runtime
+errors.
 
 ### 1.1 Node.js and Package Management
 
-- **Node.js**: >= 22.0.0. This project utilizes modern JavaScript features like ESM modules and Node-compatible APIs in Cloudflare Workers. It is recommended to use `nvm` (Node Version Manager) to switch between versions easily.
-- **npm**: Standard versions that come with Node.js 22. We use **npm workspaces** to manage multiple sub-projects within a single repository, allowing for shared `node_modules` and easy cross-project linking.
-- **Wrangler CLI**: Install it globally using `npm install -g wrangler` or use `npx wrangler`. This is the official tool for developing, testing, and deploying Cloudflare Workers. Make sure to authenticate using `npx wrangler login`.
+- **Node.js**: >= 22.0.0. This project utilizes modern JavaScript features like
+  ESM modules and Node-compatible APIs in Cloudflare Workers. It is recommended
+  to use `nvm` (Node Version Manager) to switch between versions easily.
+- **npm**: Standard versions that come with Node.js 22. We use **npm
+  workspaces** to manage multiple sub-projects within a single repository,
+  allowing for shared `node_modules` and easy cross-project linking.
+- **Wrangler CLI**: Install it globally using `npm install -g wrangler` or use
+  `npx wrangler`. This is the official tool for developing, testing, and
+  deploying Cloudflare Workers. Make sure to authenticate using `npx wrangler
+  login`.
 
 ### 1.2 Version Control and System Tools
 
-- **Git**: Required for repository management and CI/CD triggers. All commits must follow the conventional commits specification to ensure proper versioning.
-- **GitHub CLI (gh)**: Highly recommended for managing Pull Requests, viewing CI/CD logs from the terminal, and managing GitHub Secrets.
-- **Bazel (Optional)**: In this monorepo, Bazel serves as a high-level build coordinator. While you can run most tasks via `npm`, Bazel ensures hermetic builds and handles complex dependencies across workspaces. It is particularly useful for large-scale builds or when running tests in a distributed environment.
-- **OpenSSL**: Required for generating encryption keys for session management and creating self-signed certificates for local testing if needed.
-- **JQ**: A lightweight and flexible command-line JSON processor. It is used extensively in our shell scripts for parsing configuration files and API responses.
+- **Git**: Required for repository management and CI/CD triggers. All commits
+  must follow the conventional commits specification to ensure proper
+  versioning.
+- **GitHub CLI (gh)**: Highly recommended for managing Pull Requests, viewing
+  CI/CD logs from the terminal, and managing GitHub Secrets.
+- **Bazel (Optional)**: In this monorepo, Bazel serves as a high-level build
+  coordinator. While you can run most tasks via `npm`, Bazel ensures hermetic
+  builds and handles complex dependencies across workspaces. It is particularly
+  useful for large-scale builds or when running tests in a distributed
+  environment.
+- **OpenSSL**: Required for generating encryption keys for session management
+  and creating self-signed certificates for local testing if needed.
+- **JQ**: A lightweight and flexible command-line JSON processor. It is used
+  extensively in our shell scripts for parsing configuration files and API
+  responses.
 
 ### 1.3 Cloudflare Account
 
-- You must have a Cloudflare account with the **Workers Paid plan** ($5/mo). This is mandatory because the project uses:
+- You must have a Cloudflare account with the **Workers Paid plan** ($5/mo).
+  This is mandatory because the project uses:
   - **Cloudflare Workflows**: For scheduled background tasks.
   - **Durable Objects**: For stateful browser session management.
   - **D1 Databases**: For relational data storage.
@@ -33,40 +57,52 @@ Before starting, ensure your local development environment meets the following r
 
 ## 2. Architecture Overview
 
-The project is structured as a **Google3-style monorepo**, emphasizing a **Single Source of Truth (SSoT)** and modularity.
+The project is structured as a **Google3-style monorepo**, emphasizing a
+**Single Source of Truth (SSoT)** and modularity.
 
 ### 2.1 Core Components
 
 - **Portfolio Worker** (`apps/portfolio/`):
   - Domain: `resume.jclee.me`
-  - Function: Serves a high-performance, edge-deployed portfolio with a cyberpunk terminal UI. It inlines all assets (CSS, JS, JSON) at build time for zero-latency delivery.
+  - Function: Serves a high-performance, edge-deployed portfolio with a
+    cyberpunk terminal UI. It inlines all assets (CSS, JS, JSON) at build time
+    for zero-latency delivery.
 - **Job Dashboard Worker** (`apps/job-dashboard/`):
   - Domain: `resume.jclee.me/job/*`
-  - Function: A full-stack mini-app managing job applications, automation status, and analytics. It interfaces with D1, KV, and R2.
+  - Function: A full-stack mini-app managing job applications, automation
+    status, and analytics. It interfaces with D1, KV, and R2.
 - **Service Binding Routing**:
   - Implementation: `apps/portfolio/entry.js`
-  - Routing Logic: The portfolio worker proxies `/job/*` requests to the job-dashboard worker via Cloudflare Service Binding (`env.JOB_SERVICE.fetch()`). All other requests are handled directly by the portfolio worker. See [ADR 0007](adr/0007-msa-service-split.md).
+  - Routing Logic: The portfolio worker proxies `/job/*` requests to the
+    job-dashboard worker via Cloudflare Service Binding
+    (`env.JOB_SERVICE.fetch()`). All other requests are handled directly by the
+    portfolio worker. See [ADR 0007](adr/0007-msa-service-split.md).
 
 ### 2.2 SSoT: Single Source of Truth
 
 All resume data is managed in a single JSON file:
 `packages/data/resumes/master/resume_data.json`
 
-This file is synced to various platforms and inlined into the portfolio. **NEVER** edit the generated `data.json` or `worker.js` files directly.
+This file is synced to various platforms and inlined into the portfolio.
+**NEVER** edit the generated `data.json` or `worker.js` files directly.
 
 ### 2.3 Build Pipeline Flow
 
 The deployment process follows a strict unidirectional data flow:
 
 1. **Data Update**: Modify `resume_data.json`.
-2. **Sync**: Run `npm run sync:data`. This propagates the JSON to `apps/portfolio/data.json`.
+2. **Sync**: Run `npm run sync:data`. This propagates the JSON to
+   `apps/portfolio/data.json`.
 3. **Generation**: `node generate-worker.js` runs. It:
    - Reads `index.html`.
    - Inlines all modular CSS from `src/styles/`.
-   - Computes SHA-256 hashes for all inline scripts to build a strict Content Security Policy (CSP).
+   - Computes SHA-256 hashes for all inline scripts to build a strict Content
+     Security Policy (CSP).
    - Escapes backticks for injection into a template literal.
-4. **Artifact Creation**: `worker.js` is created as a single self-contained script.
-5. **Deployment**: `npx wrangler deploy --config apps/portfolio/wrangler.jsonc --env production` uploads the artifact to the Cloudflare network.
+4. **Artifact Creation**: `worker.js` is created as a single self-contained
+   script.
+5. **Deployment**: `npx wrangler deploy --config apps/portfolio/wrangler.jsonc
+   --env production` uploads the artifact to the Cloudflare network.
 
 ### 2.4 Architecture Diagram
 
@@ -105,7 +141,8 @@ The deployment process follows a strict unidirectional data flow:
 
 ### 2.5 Job Automation Crawlers
 
-The `job-automation` workspace includes specialized crawlers for various job platforms. Understanding these is key for debugging application issues:
+The `job-automation` workspace includes specialized crawlers for various job
+platforms. Understanding these is key for debugging application issues:
 
 - **Wanted**: API-based crawler (Direct JSON fetch). Most stable.
 - **JobKorea**: Puppeteer-based with stealth plugins.
@@ -113,7 +150,8 @@ The `job-automation` workspace includes specialized crawlers for various job pla
 - **LinkedIn**: Fetch-based with regex parsing for "Easy Apply".
 - **Remember**: Browser-based crawler for social recruiting.
 
-Each crawler implements the `BaseCrawler` class, which handles User-Agent rotation, request jitter, and automatic retries to avoid bot detection.
+Each crawler implements the `BaseCrawler` class, which handles User-Agent
+rotation, request jitter, and automatic retries to avoid bot detection.
 
 ---
 
@@ -133,7 +171,8 @@ Your `.env` file contains 6 primary sections:
 
 - **General**: Environment type (`NODE_ENV`) and logging verbosity.
 - **Cloudflare Credentials**: Used by the CLI and CI/CD to authenticate.
-- **Job Dashboard Secrets**: Critical for HMAC verification and session encryption.
+- **Job Dashboard Secrets**: Critical for HMAC verification and session
+  encryption.
 - **Portfolio Secrets**: Signing secrets for security headers and analytics.
 - **Observability**: Connection strings for Elasticsearch and Loki.
 - **Platform Secrets**: API keys for external integrations (Slack, n8n, etc.).
@@ -143,11 +182,13 @@ Your `.env` file contains 6 primary sections:
 The monorepo uses two active Wrangler configuration files:
 
 1. `apps/portfolio/wrangler.jsonc`: Uses JSONC format for the main site.
-2. `apps/job-dashboard/wrangler.jsonc`: Uses JSONC format for the dashboard worker.
+2. `apps/job-dashboard/wrangler.jsonc`: Uses JSONC format for the dashboard
+   worker.
 
 ### 3.4 Managing Production Secrets
 
-Secrets are **not** stored in git. You must push them to Cloudflare using the CLI:
+Secrets are **not** stored in git. You must push them to Cloudflare using the
+CLI:
 
 ```bash
 # Example: Setting the admin token for the dashboard
@@ -170,24 +211,31 @@ npx wrangler secret put ADMIN_TOKEN --config apps/job-dashboard/wrangler.jsonc
 
 ### 3.5 Cloudflare Bindings
 
-Ensure your Cloudflare account has the following resources created and bound to the worker environments. These IDs are referenced in the worker configuration files.
+Ensure your Cloudflare account has the following resources created and bound to
+the worker environments. These IDs are referenced in the worker configuration
+files.
 
 **D1 Relational Databases:**
 
-- **`DB`** (ID: `6c723024...`): Stores main portfolio data, visitor logs, applications, job cache, and sync logs.
+- **`DB`** (ID: `6c723024...`): Stores main portfolio data, visitor logs,
+  applications, job cache, and sync logs.
 
 **KV Distributed Storage:**
 
-- **`SESSIONS`**: Stores platform-specific session objects (e.g., `session:wanted`) with a 24h TTL.
-- **`RATE_LIMIT_KV`**: Used by the rate-limiting middleware to track request counts per IP.
+- **`SESSIONS`**: Stores platform-specific session objects (e.g.,
+  `session:wanted`) with a 24h TTL.
+- **`RATE_LIMIT_KV`**: Used by the rate-limiting middleware to track request
+  counts per IP.
 - **`NONCE_KV`**: Stores cryptographic nonces for CSRF protection.
 
 **Workflows Engine:**
-The dashboard worker exports several workflow classes that must be bound to their respective names in the Cloudflare dashboard:
+The dashboard worker exports several workflow classes that must be bound to
+their respective names in the Cloudflare dashboard:
 
 - `JobCrawlingWorkflow`: Orchestrates multi-platform job fetching.
 - `ApplicationWorkflow`: Handles the multi-step form submission process.
-- `ResumeSyncWorkflow`: Synchronizes the master resume data across various job boards.
+- `ResumeSyncWorkflow`: Synchronizes the master resume data across various job
+  boards.
 - `DailyReportWorkflow`: Generates the daily PDF/HTML activity summary.
 - `HealthCheckWorkflow`: Monitors database and API availability.
 - `BackupWorkflow`: Performs automated daily snapshots of D1 to KV.
@@ -221,13 +269,15 @@ Note: Local development uses a local SQLite version of D1 by default.
 
 ### 4.3 Data Synchronization (SSoT)
 
-If you change the content in `packages/data/resumes/master/resume_data.json`, you must run:
+If you change the content in `packages/data/resumes/master/resume_data.json`,
+you must run:
 
 ```bash
 npm run sync:data
 ```
 
-This script validates the JSON schema and updates the snapshots used by the workers.
+This script validates the JSON schema and updates the snapshots used by the
+workers.
 
 ### 4.4 Build and Verify
 
@@ -248,8 +298,10 @@ npm run test:unit   # Runs Jest tests
 When you open a Pull Request, GitHub Actions triggers a `deploy-preview` job.
 
 - **URL**: `https://resume-pr-{PR_NUMBER}.jclee.workers.dev`
-- **Behavior**: This is an ephemeral worker used for visual inspection and E2E testing.
-- **Cleanup**: The preview is automatically deleted when the PR is merged or closed.
+- **Behavior**: This is an ephemeral worker used for visual inspection and E2E
+  testing.
+- **Cleanup**: The preview is automatically deleted when the PR is merged or
+  closed.
 
 ---
 
@@ -257,7 +309,8 @@ When you open a Pull Request, GitHub Actions triggers a `deploy-preview` job.
 
 ### 6.1 Standard Deployment Process
 
-Production deployment is orchestrated by the `npm run deploy` command. This is a high-level script that performs a safe deployment:
+Production deployment is orchestrated by the `npm run deploy` command. This is a
+high-level script that performs a safe deployment:
 
 1. Increments the patch version (`1.0.x`).
 2. Builds all assets and generates the final `worker.js`.
@@ -265,11 +318,14 @@ Production deployment is orchestrated by the `npm run deploy` command. This is a
 
 ### 6.2 CI/CD Pipeline Breakdown
 
-Our GitHub Actions pipeline (`ci.yml`) is a 13-job dependency chain ensuring zero-downtime and high reliability. Every push to the `master` branch or Pull Request triggers this flow:
+Our GitHub Actions pipeline (`ci.yml`) is a 13-job dependency chain ensuring
+zero-downtime and high reliability. Every push to the `master` branch or Pull
+Request triggers this flow:
 
 1. **Analyze**:
    - Uses `tools/ci/affected.go` to compare the current branch against `master`.
-   - Determines which workspaces (Portfolio, Job Automation, Infra) need to be tested or built.
+   - Determines which workspaces (Portfolio, Job Automation, Infra) need to be
+     tested or built.
    - Saves time by skipping unaffected targets.
 2. **Lint**:
    - Runs `eslint .` using the project's flat configuration.
@@ -291,7 +347,8 @@ Our GitHub Actions pipeline (`ci.yml`) is a 13-job dependency chain ensuring zer
    - The primary artifact generation job. Runs `node generate-worker.js`.
    - Produces the production-ready `worker.js` (Artifact: `portfolio-worker`).
 8. **Deploy**:
-   - Uses `cloudflare/wrangler-action` to push the worker to the `production` environment.
+   - Uses `cloudflare/wrangler-action` to push the worker to the `production`
+     environment.
    - Creates a GitHub Deployment entry for tracking.
 9. **Verify**:
    - Primary: Checks the Cloudflare API for the deployment age.
@@ -325,20 +382,27 @@ The worker includes 5 scheduled workflow triggers for operational tasks:
 ### 7.1 Common Issues and Fixes
 
 - **CSP Hash Mismatch**:
-  - _Symptom_: Browser console shows "Refused to execute script because it violates CSP".
-  - _Fix_: You edited HTML or JS but didn't rebuild. Run `node generate-worker.js`.
+  - _Symptom_: Browser console shows "Refused to execute script because it
+    violates CSP".
+  - _Fix_: You edited HTML or JS but didn't rebuild. Run `node
+    generate-worker.js`.
 - **D1 Binding Error**:
   - _Symptom_: Worker returns 500 error with "DB not found".
-  - _Fix_: Check wrangler config database IDs. Ensure you are logged into Wrangler (`npx wrangler login`).
+  - _Fix_: Check wrangler config database IDs. Ensure you are logged into
+    Wrangler (`npx wrangler login`).
 - **Secret Not Set**:
   - _Symptom_: Dashboard login fails or redirects indefinitely.
-  - _Fix_: Ensure `SIGNING_SECRET` and `ENCRYPTION_KEY` are pushed to production.
+  - _Fix_: Ensure `SIGNING_SECRET` and `ENCRYPTION_KEY` are pushed to
+    production.
 - **Wrangler Login Issues**:
   - _Symptom_: Deploy fails with authentication error.
-  - _Fix_: Run `rm -rf ~/.wrangler` and re-authenticate with `npx wrangler login`.
+  - _Fix_: Run `rm -rf ~/.wrangler` and re-authenticate with `npx wrangler
+    login`.
 - **Missing entry-point to Worker script**:
-  - _Symptom_: `npx wrangler deploy` fails from repo root with entry-point error.
-  - _Fix_: Use explicit config path: `npx wrangler deploy --config apps/portfolio/wrangler.jsonc --env production`.
+  - _Symptom_: `npx wrangler deploy` fails from repo root with entry-point
+    error.
+  - _Fix_: Use explicit config path: `npx wrangler deploy --config
+    apps/portfolio/wrangler.jsonc --env production`.
 
 ---
 
@@ -368,19 +432,31 @@ The worker includes 5 scheduled workflow triggers for operational tasks:
 
 ## 9. Security Best Practices
 
-To maintain the integrity and security of the deployment pipeline, follow these guidelines:
+To maintain the integrity and security of the deployment pipeline, follow these
+guidelines:
 
-1. **Never commit `.env` files**: The `.gitignore` file should always include `.env`. Use `.env.example` as a template for other developers.
-2. **Rotate Secrets Regularly**: Use the `npx wrangler secret put` command to rotate sensitive keys like `ADMIN_TOKEN` and `ENCRYPTION_KEY` at least once every quarter.
-3. **Audit Dependencies**: Run `npm audit` frequently to check for vulnerabilities in the workspaces. The CI pipeline will automatically block deployments if high-severity vulnerabilities are found.
-4. **Strict CSP**: The `generate-worker.js` script automatically generates SHA-256 hashes for inline scripts. Avoid adding external script sources unless absolutely necessary, and always update the CSP policy in `security-headers.js`.
-5. **Least Privilege**: Ensure the Cloudflare API token used for deployment has the minimum required permissions (Workers, D1, KV, and Workflows access only).
+1. **Never commit `.env` files**: The `.gitignore` file should always include
+   `.env`. Use `.env.example` as a template for other developers.
+2. **Rotate Secrets Regularly**: Use the `npx wrangler secret put` command to
+   rotate sensitive keys like `ADMIN_TOKEN` and `ENCRYPTION_KEY` at least once
+   every quarter.
+3. **Audit Dependencies**: Run `npm audit` frequently to check for
+   vulnerabilities in the workspaces. The CI pipeline will automatically block
+   deployments if high-severity vulnerabilities are found.
+4. **Strict CSP**: The `generate-worker.js` script automatically generates
+   SHA-256 hashes for inline scripts. Avoid adding external script sources
+   unless absolutely necessary, and always update the CSP policy in
+   `security-headers.js`.
+5. **Least Privilege**: Ensure the Cloudflare API token used for deployment has
+   the minimum required permissions (Workers, D1, KV, and Workflows access
+   only).
 
 ## 10. Advanced Troubleshooting
 
 ### 10.1 Analyzing Worker Logs
 
-If you encounter a runtime error that isn't caught by the health check, use the tail command to stream live logs:
+If you encounter a runtime error that isn't caught by the health check, use the
+tail command to stream live logs:
 
 ```bash
 npx wrangler tail --env production
@@ -392,14 +468,17 @@ Look for `Uncaught Error` or `Worker exceeded resource limits`.
 
 If a D1 migration fails during deployment:
 
-1. Check the migration status: `npx wrangler d1 migrations list job-dashboard-db`
-2. Manually apply the missing migration: `npx wrangler d1 execute job-dashboard-db --file=migrations/XXXX.sql`
+1. Check the migration status: `npx wrangler d1 migrations list
+   job-dashboard-db`
+2. Manually apply the missing migration: `npx wrangler d1 execute
+   job-dashboard-db --file=migrations/XXXX.sql`
 
 ### 10.3 CI/CD Pipeline Stalls
 
 If the "Analyze" job in GitHub Actions takes too long or fails:
 
 - Run `go run ./tools/ci/affected.go` directly for affected-target analysis.
-- Check if the git history is shallow; the job needs a full checkout to compare against `master`.
+- Check if the git history is shallow; the job needs a full checkout to compare
+  against `master`.
 
 ---

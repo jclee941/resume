@@ -10,7 +10,9 @@
 
 ## Executive Summary
 
-This security audit reviewed 7 target files across the job automation system. **One critical bug was identified and fixed**, with minor security improvements recommended. No high or critical vulnerabilities were found in dependencies.
+This security audit reviewed 7 target files across the job automation system.
+**One critical bug was identified and fixed**, with minor security improvements
+recommended. No high or critical vulnerabilities were found in dependencies.
 
 | Category              | Status   | Issues     | Fixed |
 | --------------------- | -------- | ---------- | ----- |
@@ -34,7 +36,8 @@ This security audit reviewed 7 target files across the job automation system. **
 **Severity:** CRITICAL (Runtime Error)
 
 **Issue:**
-The code referenced `submitter` variable which was never defined, causing a `ReferenceError` at runtime.
+The code referenced `submitter` variable which was never defined, causing a
+`ReferenceError` at runtime.
 
 ```javascript
 // BEFORE (Buggy)
@@ -91,7 +94,8 @@ return await submitter();
 
 **Recommendations:**
 
-1. Set file permissions to 600 on session files: `chmod 600 ~/.opencode/data/*-session.json`
+1. Set file permissions to 600 on session files: `chmod 600
+   ~/.opencode/data/*-session.json`
 2. Consider encrypting session files at rest
 
 ---
@@ -107,7 +111,6 @@ return await submitter();
 | Type checking enforced    | ✅ PASS | TypeScript strict mode enabled           |
 
 **Findings:**
-
 **✅ Good Practices Found:**
 
 - `application.js` uses `escapeHtml()` for Telegram notifications
@@ -116,10 +119,12 @@ return await submitter();
 - Platform names are whitelisted in `submitters` object
 
 **⚠️ LOW-001: Unnecessary Escape Characters**
+**File:** `jobkorea-profile-sync.js` (lines 528, 537, 541, 545, 548, 556, 560,
+564, 577, 581, 585, 673, 679, 691)
 
-**File:** `jobkorea-profile-sync.js` (lines 528, 537, 541, 545, 548, 556, 560, 564, 577, 581, 585, 673, 679, 691)
-
-Regex patterns contain unnecessary escape characters (e.g., `\/`, `\-` inside character classes). While not a security issue, this causes ESLint errors and may indicate pattern confusion.
+Regex patterns contain unnecessary escape characters (e.g., `\/`, `\-` inside
+character classes). While not a security issue, this causes ESLint errors and
+may indicate pattern confusion.
 
 **Recommendation:** Clean up regex patterns:
 
@@ -193,13 +198,15 @@ const DEFAULT_CONFIG = {
 
 **Reviewed Implementation:**
 
-- `saramin-profile-sync.js`: Has `humanDelay()`, `randomMouseMovement()`, `humanScroll()`
+- `saramin-profile-sync.js`: Has `humanDelay()`, `randomMouseMovement()`,
+  `humanScroll()`
 - `jobkorea-profile-sync.js`: Has `humanDelay()`, `randomViewportScroll()`
 - Session isolation: Each platform has separate session file
 
 **⚠️ INFO-001: Missing `tls-fingerprint.js` File**
-
-The `stealth/index.js` exports `TLSFingerprintManager` from `tls-fingerprint.js`, but this file was not found. If this is intentional (not yet implemented), consider removing the export or creating a stub.
+The `stealth/index.js` exports `TLSFingerprintManager` from
+`tls-fingerprint.js`, but this file was not found. If this is intentional (not
+yet implemented), consider removing the export or creating a stub.
 
 ---
 
@@ -359,7 +366,8 @@ function calculateDelay(retryAttempt, options) {
 
 ## Conclusion
 
-The security audit is **COMPLETE**. One critical runtime bug was identified and fixed. The codebase follows good security practices with:
+The security audit is **COMPLETE**. One critical runtime bug was identified and
+fixed. The codebase follows good security practices with:
 
 - ✅ Proper credential management (env vars)
 - ✅ Input validation and XSS prevention
@@ -369,7 +377,6 @@ The security audit is **COMPLETE**. One critical runtime bug was identified and 
 - ✅ 0 dependency vulnerabilities
 
 **Overall Security Grade: A-**
-
 The system is secure for production use with the applied fix.
 
 ---

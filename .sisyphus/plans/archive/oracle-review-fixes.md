@@ -3,8 +3,9 @@
 ## TL;DR
 
 > **Quick Summary**: Fix 7 Oracle code review issues (4 critical, 3 warnings) in the portfolio worker including CSP hash mismatch, exposed job APIs, missing CSP directives, Content-Type bugs, and render-blocking resources.
-> 
+>
 > **Deliverables**:
+>
 > - Fixed CSP with union hashes from both HTML files
 > - Job API endpoints removed from portfolio worker
 > - Complete CSP with default-src baseline
@@ -12,7 +13,7 @@
 > - Non-blocking Sentry scripts
 > - Secure robots.txt
 > - Single SW registration point
-> 
+>
 > **Estimated Effort**: Medium (~3-4 hours)
 > **Parallel Execution**: YES - 3 waves
 > **Critical Path**: T1 (CSP hashes) → T3 (CSP baseline) → T8 (Build/Deploy)
@@ -22,16 +23,20 @@
 ## Context
 
 ### Original Request
+
 Fix all issues from Oracle code review of resume portfolio (resume.jclee.me). 7 issues identified: 4 Critical (P0), 3 Warning (P1).
 
 ### Interview Summary
+
 **Key Discussions**:
+
 - User confirmed: "Portfolio-only scope (job dashboard can be removed entirely)"
 - User confirmed: "Must maintain Sentry integration (self-hosted, intentional)"
 - User confirmed: "Must maintain Google Analytics"
 - Zero runtime I/O architecture constraint
 
 **Research Findings**:
+
 - CSP hashes extracted only from Korean HTML (line 305), not English
 - SECURITY_HEADERS has hardcoded Content-Type: text/html causing JSON override bug
 - Sentry scripts lack defer attribute at lines 23-27 in both HTMLs
@@ -43,9 +48,11 @@ Fix all issues from Oracle code review of resume portfolio (resume.jclee.me). 7 
 ## Work Objectives
 
 ### Core Objective
+
 Remediate all 7 Oracle code review findings to improve security posture, performance, and code quality of the portfolio worker.
 
 ### Concrete Deliverables
+
 - `apps/portfolio/generate-worker.js` - CSP hash union + job API removal + Content-Type fix
 - `apps/portfolio/lib/security-headers.js` - Complete CSP with baseline directives
 - `apps/portfolio/index.html` - Sentry defer + SW registration removal
@@ -53,6 +60,7 @@ Remediate all 7 Oracle code review findings to improve security posture, perform
 - `apps/portfolio/robots.txt` - Disallow /api/
 
 ### Definition of Done
+
 - [x] `curl -I https://resume.jclee.me | grep Content-Security-Policy` includes `default-src 'none'`
 - [x] `curl -I https://resume.jclee.me/en/ | grep Content-Security-Policy` includes all required hashes
 - [x] `curl https://resume.jclee.me/api/stats` returns 404 (endpoint removed)
@@ -61,12 +69,14 @@ Remediate all 7 Oracle code review findings to improve security posture, perform
 - [x] Lighthouse Performance score maintains ≥90
 
 ### Must Have
+
 - All 7 Oracle findings addressed
 - Sentry integration preserved
 - Google Analytics integration preserved
 - Zero breaking changes to portfolio functionality
 
 ### Must NOT Have (Guardrails)
+
 - DO NOT modify job-automation worker (separate codebase)
 - DO NOT add new features beyond fixes
 - DO NOT change visual appearance
@@ -78,6 +88,7 @@ Remediate all 7 Oracle code review findings to improve security posture, perform
 ## Verification Strategy (MANDATORY)
 
 ### Test Decision
+
 - **Infrastructure exists**: YES (Jest + Playwright)
 - **User wants tests**: Manual-only (config/header fixes don't need unit tests)
 - **Framework**: Manual verification via curl, browser DevTools, Lighthouse
@@ -111,15 +122,15 @@ Wave 3 (After Wave 2):
 ### Dependency Matrix
 
 | Task | Depends On | Blocks | Can Parallelize With |
-|------|------------|--------|---------------------|
-| T1 | None | T3, T8 | T2, T5, T6, T7 |
-| T2 | None | T4, T8 | T1, T5, T6, T7 |
-| T3 | T1 | T8 | T4 |
-| T4 | T2 | T8 | T3 |
-| T5 | None | T8 | T1, T2, T6, T7 |
-| T6 | None | T8 | T1, T2, T5, T7 |
-| T7 | None | T8 | T1, T2, T5, T6 |
-| T8 | T1-T7 | None | None (final) |
+| ---- | ---------- | ------ | -------------------- |
+| T1   | None       | T3, T8 | T2, T5, T6, T7       |
+| T2   | None       | T4, T8 | T1, T5, T6, T7       |
+| T3   | T1         | T8     | T4                   |
+| T4   | T2         | T8     | T3                   |
+| T5   | None       | T8     | T1, T2, T6, T7       |
+| T6   | None       | T8     | T1, T2, T5, T7       |
+| T7   | None       | T8     | T1, T2, T5, T6       |
+| T8   | T1-T7      | None   | None (final)         |
 
 ---
 
@@ -166,7 +177,7 @@ Wave 3 (After Wave 2):
   ```bash
   # Build the worker
   cd /home/jclee/dev/resume/apps/portfolio && node generate-worker.js
-  
+
   # Verify build output shows hashes from both HTMLs
   # Expected: Build log shows "CSP hashes extracted" with combined count
   ```
@@ -223,13 +234,13 @@ Wave 3 (After Wave 2):
   # After build and deploy:
   curl -s -o /dev/null -w "%{http_code}" https://resume.jclee.me/dashboard
   # Expected: 404
-  
+
   curl -s -o /dev/null -w "%{http_code}" https://resume.jclee.me/api/stats
   # Expected: 404
-  
+
   curl -s -o /dev/null -w "%{http_code}" https://resume.jclee.me/api/status
   # Expected: 404
-  
+
   curl -s -o /dev/null -w "%{http_code}" https://resume.jclee.me/api/applications
   # Expected: 404
   ```
@@ -277,7 +288,7 @@ Wave 3 (After Wave 2):
   # Verify defer added in source
   grep -n 'sentry-cdn.com.*defer' apps/portfolio/index.html
   # Expected: Line 23-26 with defer attribute
-  
+
   grep -n 'sentry-cdn.com.*defer' apps/portfolio/index-en.html
   # Expected: Line 23-26 with defer attribute
   ```
@@ -293,7 +304,7 @@ Wave 3 (After Wave 2):
 
   **What to do**:
   - Change line 52 from `Allow: /api/` to `Disallow: /api/`
-  - Keep the User-agent: * on line 51
+  - Keep the User-agent: \* on line 51
 
   **Must NOT do**:
   - Do NOT remove other Allow directives
@@ -321,7 +332,7 @@ Wave 3 (After Wave 2):
   ```bash
   grep "Disallow: /api/" apps/portfolio/robots.txt
   # Expected: Disallow: /api/ found
-  
+
   grep "Allow: /api/" apps/portfolio/robots.txt
   # Expected: No matches (removed)
   ```
@@ -370,10 +381,10 @@ Wave 3 (After Wave 2):
   # Verify inline SW removed from HTMLs
   grep -c "serviceWorker.register" apps/portfolio/index.html
   # Expected: 0 (removed)
-  
+
   grep -c "serviceWorker.register" apps/portfolio/index-en.html
   # Expected: 0 (removed)
-  
+
   # Verify main.js still has it
   grep -c "serviceWorker.register" apps/portfolio/src/scripts/main.js
   # Expected: 1 (kept)
@@ -428,16 +439,16 @@ Wave 3 (After Wave 2):
   # Verify new directives in source
   grep "default-src 'none'" apps/portfolio/lib/security-headers.js
   # Expected: Found
-  
+
   grep "img-src 'self' data:" apps/portfolio/lib/security-headers.js
   # Expected: Found
-  
+
   grep "font-src 'self'" apps/portfolio/lib/security-headers.js
   # Expected: Found
-  
+
   grep "manifest-src 'self'" apps/portfolio/lib/security-headers.js
   # Expected: Found
-  
+
   grep "worker-src 'self'" apps/portfolio/lib/security-headers.js
   # Expected: Found
   ```
@@ -452,11 +463,11 @@ Wave 3 (After Wave 2):
 - [x] 4. Fix Content-Type Header Spread Order
 
   **What to do**:
-  - Change pattern from `{ 'Content-Type': 'application/json', ...SECURITY_HEADERS }` 
+  - Change pattern from `{ 'Content-Type': 'application/json', ...SECURITY_HEADERS }`
   - To: `{ ...SECURITY_HEADERS, 'Content-Type': 'application/json' }`
   - Apply to all remaining JSON responses after T2 removes job endpoints
   - Affected: Rate limit 429 response (line 583-586)
-  
+
   Note: After T2 removes job endpoints, fewer locations need fixing.
 
   **Must NOT do**:
@@ -487,11 +498,11 @@ Wave 3 (After Wave 2):
   ```bash
   # After build and deploy, trigger rate limit and check Content-Type
   # (Manual test - requires hitting rate limit)
-  
+
   # Verify source pattern is fixed
   grep -n "SECURITY_HEADERS, 'Content-Type': 'application/json'" apps/portfolio/generate-worker.js
   # Expected: Found (new correct pattern)
-  
+
   grep -n "'Content-Type': 'application/json', ...SECURITY_HEADERS" apps/portfolio/generate-worker.js
   # Expected: Not found (old wrong pattern removed)
   ```
@@ -539,6 +550,7 @@ Wave 3 (After Wave 2):
   **Acceptance Criteria**:
 
   **Build Verification:**
+
   ```bash
   cd /home/jclee/dev/resume/apps/portfolio
   node generate-worker.js
@@ -547,6 +559,7 @@ Wave 3 (After Wave 2):
   ```
 
   **Deployment:**
+
   ```bash
   source /home/jclee/.env
   CLOUDFLARE_API_KEY="$CLOUDFLARE_API_KEY" CLOUDFLARE_EMAIL="$CLOUDFLARE_EMAIL" \
@@ -555,44 +568,49 @@ Wave 3 (After Wave 2):
   ```
 
   **CSP Verification:**
+
   ```bash
   curl -sI https://resume.jclee.me | grep -i content-security-policy
   # Expected: Contains default-src 'none', img-src, font-src, manifest-src, worker-src
-  
+
   curl -sI https://resume.jclee.me/en/ | grep -i content-security-policy
   # Expected: Same complete CSP, no missing hashes
   ```
 
   **Job API Removal Verification:**
+
   ```bash
   curl -s -o /dev/null -w "%{http_code}" https://resume.jclee.me/dashboard
   # Expected: 404
-  
+
   curl -s -o /dev/null -w "%{http_code}" https://resume.jclee.me/api/stats
   # Expected: 404
   ```
 
   **Robots.txt Verification:**
+
   ```bash
   curl -s https://resume.jclee.me/robots.txt | grep "api"
   # Expected: Disallow: /api/
   ```
 
   **Browser Console Verification (via Playwright):**
+
   ```
   # Agent navigates to https://resume.jclee.me
   # Check browser console for CSP violations
   # Expected: No CSP errors
-  
+
   # Agent navigates to https://resume.jclee.me/en/
   # Check browser console for CSP violations
   # Expected: No CSP errors
-  
+
   # Screenshot: .sisyphus/evidence/oracle-fixes-ko.png
   # Screenshot: .sisyphus/evidence/oracle-fixes-en.png
   ```
 
   **Lighthouse Quick Check:**
+
   ```bash
   # Run Lighthouse via CLI or browser
   # Performance score: ≥90
@@ -608,20 +626,21 @@ Wave 3 (After Wave 2):
 
 ## Commit Strategy
 
-| After Task | Message | Files | Verification |
-|------------|---------|-------|--------------|
-| T1 + T3 | `fix(portfolio): complete CSP with hash union and baseline directives` | generate-worker.js, security-headers.js | Build succeeds |
-| T2 | `fix(portfolio): remove job dashboard endpoints from resume.jclee.me` | generate-worker.js | Build succeeds |
-| T4 | `fix(portfolio): correct Content-Type header spread order` | generate-worker.js | Build succeeds |
-| T5 + T7 | `perf(portfolio): optimize Sentry loading and SW registration` | index.html, index-en.html | Files valid |
-| T6 | `fix(portfolio): disallow /api/ in robots.txt` | robots.txt | N/A |
-| T8 | (Deploy only, no commit) | N/A | All curl checks pass |
+| After Task | Message                                                                | Files                                   | Verification         |
+| ---------- | ---------------------------------------------------------------------- | --------------------------------------- | -------------------- |
+| T1 + T3    | `fix(portfolio): complete CSP with hash union and baseline directives` | generate-worker.js, security-headers.js | Build succeeds       |
+| T2         | `fix(portfolio): remove job dashboard endpoints from resume.jclee.me`  | generate-worker.js                      | Build succeeds       |
+| T4         | `fix(portfolio): correct Content-Type header spread order`             | generate-worker.js                      | Build succeeds       |
+| T5 + T7    | `perf(portfolio): optimize Sentry loading and SW registration`         | index.html, index-en.html               | Files valid          |
+| T6         | `fix(portfolio): disallow /api/ in robots.txt`                         | robots.txt                              | N/A                  |
+| T8         | (Deploy only, no commit)                                               | N/A                                     | All curl checks pass |
 
 ---
 
 ## Success Criteria
 
 ### Verification Commands
+
 ```bash
 # CSP Complete
 curl -sI https://resume.jclee.me | grep "default-src 'none'"
@@ -644,6 +663,7 @@ curl -s -o /dev/null -w "%{http_code}" https://resume.jclee.me/en/
 ```
 
 ### Final Checklist
+
 - [x] All 4 Critical (P0) issues resolved
 - [x] All 3 Warning (P1) issues resolved
 - [x] Sentry integration preserved

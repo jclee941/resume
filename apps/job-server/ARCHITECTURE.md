@@ -2,7 +2,8 @@
 
 **Last Updated**: 2026-02-11  
 **Status**: Comprehensive architecture mapping for developers  
-**Purpose**: Document internal patterns, anti-detection techniques, and service organization
+**Purpose**: Document internal patterns, anti-detection techniques, and service
+organization
 
 ## CRAWLERS ARCHITECTURE
 
@@ -35,13 +36,16 @@
 | LinkedIn | `linkedin-crawler.js` | Fetch + regex    | Fragile HTML scraping (subject to changes) |
 | Remember | `remember-crawler.js` | Puppeteer        | Uses puppeteer-extra + stealth plugins     |
 
-**Key Constraint**: NO Puppeteer/Playwright in `crawlers/` directory. Browser automation isolated in `src/auto-apply/` (only for form submission, not job search).
+**Key Constraint**: NO Puppeteer/Playwright in `crawlers/` directory. Browser
+automation isolated in `src/auto-apply/` (only for form submission, not job
+search).
 
 ## SHARED SERVICES ARCHITECTURE
 
 ### DI Pattern + Stateless Design
 
-All services use constructor-based dependency injection and store no instance state. SessionManager provides the only stateful component (cookie persistence).
+All services use constructor-based dependency injection and store no instance
+state. SessionManager provides the only stateful component (cookie persistence).
 
 | Service              | File                            | Lines | Pattern                           |
 | -------------------- | ------------------------------- | ----- | --------------------------------- |
@@ -78,7 +82,9 @@ All services use constructor-based dependency injection and store no instance st
 
 ### Isolation Principle
 
-Each client is self-contained in its own directory. **No cross-client imports**. This prevents circular dependencies and keeps business logic independent from specific platform implementations.
+Each client is self-contained in its own directory. **No cross-client imports**.
+This prevents circular dependencies and keeps business logic independent from
+specific platform implementations.
 
 | Client   | Location                       | Lines | Methods | API Version |
 | -------- | ------------------------------ | ----- | ------- | ----------- |
@@ -107,7 +113,8 @@ Each client is self-contained in its own directory. **No cross-client imports**.
 
 ### Standard MCP Format
 
-All tools follow the MCP tool contract with name, description, inputSchema, and async handle function.
+All tools follow the MCP tool contract with name, description, inputSchema, and
+async handle function.
 
 ### MCP Tools Catalog (11 Public + Auth-Required)
 
@@ -127,7 +134,7 @@ All tools follow the MCP tool contract with name, description, inputSchema, and 
 
 Resume sync tool uses explicit command pattern for sub-actions:
 
-```
+```text
 action: 'export'    → Export resume to JSON
 action: 'diff'      → Compare local vs remote
 action: 'sync'      → Apply local changes to remote
@@ -174,7 +181,7 @@ action: 'pipeline_schedule' → Schedule via n8n
 
 ### Request → Response Cycle
 
-```
+```text
 User (OpenCode) → MCP Tool Request
   ↓
 MCP Server (index.js) → Route matching
@@ -198,7 +205,8 @@ MCP Tool response → Claude context
 
 ### UA Rotation (12 Chrome Versions)
 
-Implements 12 randomized Chrome versions from v128-v131. Selected randomly per request to reduce fingerprinting.
+Implements 12 randomized Chrome versions from v128-v131. Selected randomly per
+request to reduce fingerprinting.
 
 ### Request Delay + Jitter
 
@@ -210,7 +218,8 @@ Retry delays: 2s, 4s, 8s (doubles each attempt) for rate limiting/timeouts.
 
 ### Cookie Persistence
 
-24-hour TTL with per-platform isolation. Manual extraction required for CloudFront WAF bypass.
+24-hour TTL with per-platform isolation. Manual extraction required for
+CloudFront WAF bypass.
 
 ## REFACTORING CANDIDATES
 

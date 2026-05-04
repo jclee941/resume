@@ -1,13 +1,18 @@
 # n8n Workflow Automation
 
-Automated resume deployment workflow using n8n (https://n8n.jclee.me).
+Automated resume deployment workflow using n8n (<https://n8n.jclee.me>).
 
-> **⚠️ Internal Service**: `n8n.jclee.me`, `loki.jclee.me`, and `prometheus.jclee.me` are internal-only domains. Ensure you are connected to the internal network or VPN.
-
-> **📖 See also**:
+> **⚠️ Internal Service**: `n8n.jclee.me`, `loki.jclee.me`, and
+  > `prometheus.jclee.me` are internal-only domains. Ensure you are connected to
+  > the internal network or VPN.
 >
-> - **[Infrastructure Architecture](../../docs/guides/INFRASTRUCTURE.md#5-n8n-workflow-automation)** - n8n service details, configuration, and deployment workflow
-> - **[Monitoring Setup Guide](../../docs/guides/MONITORING_SETUP.md)** - Integration with Prometheus, Grafana, and Loki
+> **📖 See also**: [Infrastructure Architecture](../../docs/guides/INFRASTRUCTURE.md#5-n8n-workflow-automation),
+> [Monitoring Setup Guide](../../docs/guides/MONITORING_SETUP.md)
+
+- n8n service details, configuration, and deployment workflow
+>
+> - **[Monitoring Setup Guide](../../docs/guides/MONITORING_SETUP.md)** -
+  Integration with Prometheus, Grafana, and Loki
 
 ## Overview
 
@@ -49,13 +54,14 @@ source ~/.env
 
 ## Cloudflare Access Authentication
 
-The n8n instance at `n8n.jclee.me` is protected by Cloudflare Access. The deployment script now supports three authentication methods:
+The n8n instance at `n8n.jclee.me` is protected by Cloudflare Access. The
+deployment script now supports three authentication methods:
 
 ### Method 1: Service Tokens (Recommended)
 
 **Get credentials from Cloudflare Dashboard:**
 
-1. Go to https://dash.cloudflare.com → Access → Service Auth → Service Tokens
+1. Go to <https://dash.cloudflare.com> → Access → Service Auth → Service Tokens
 2. Create a new token for `n8n.jclee.me`
 3. Copy Client ID and Client Secret
 
@@ -121,7 +127,7 @@ chmod +x infrastructure/n8n/deploy-workflow.go
 
 **Expected output:**
 
-```
+```text
 [INFO] === n8n Workflow Deployment ===
 [INFO] Target: https://n8n.jclee.me
 [INFO] Workflow: infrastructure/n8n/workflows/resume-auto-deploy.json
@@ -240,7 +246,8 @@ Creates GitHub issues from Grafana alert webhooks with label-based dedup.
 **Features**:
 
 - Webhook trigger for Grafana alert notifications
-- Label-based dedup: searches `grafana-alert,automated` open issues before creating
+- Label-based dedup: searches `grafana-alert,automated` open issues before
+  creating
 - Comments on existing issue if alert already tracked
 - Only fires on `alerting` state (ignores resolved)
 
@@ -272,7 +279,7 @@ Telegram Bot API-based health monitoring with secure credential management.
 
 **Workflow ID**: `PV5yLgHNzNSlCmRT`
 
-**URL**: https://n8n.jclee.me/workflow/PV5yLgHNzNSlCmRT
+**URL**: <https://n8n.jclee.me/workflow/PV5yLgHNzNSlCmRT>
 
 **Why Telegram Bot API?**
 
@@ -297,11 +304,12 @@ Telegram Bot API-based health monitoring with secure credential management.
 # 3. Activate workflow via n8n UI
 ```
 
-**Credential Setup**: Bot token stored in 1Password `homelab` vault as `telegram-bot-token`.
+**Credential Setup**: Bot token stored in 1Password `homelab` vault as
+`telegram-bot-token`.
 
 **Workflow Flow**:
 
-```
+```text
 Schedule Trigger (5 min)
   → HTTP Request (health check)
   → IF (is down?)
@@ -310,7 +318,7 @@ Schedule Trigger (5 min)
 
 **Monitoring Details**:
 
-- **Target**: https://resume.jclee.me/health
+- **Target**: <https://resume.jclee.me/health>
 - **Frequency**: Every 5 minutes
 - **Timeout**: 10 seconds
 - **Alert Conditions**: HTTP != 200 or timeout
@@ -318,7 +326,7 @@ Schedule Trigger (5 min)
 
 **Workflow Flow**:
 
-```
+```text
 Every 5 Minutes → Check Health → Is Down? → Telegram Bot API Notification
 ```
 
@@ -332,9 +340,12 @@ See `resume-healthcheck-workflow.json` for full configuration.
 
 **Features**:
 
-- Pre-flight Wanted session check via Session Broker `GET /api/session/wanted/status`
-- Conditional Wanted renewal via `POST /api/session/wanted/renew` when invalid or near expiry
-- Graceful degradation: skip Wanted and continue other platforms when renewal fails
+- Pre-flight Wanted session check via Session Broker `GET
+  /api/session/wanted/status`
+- Conditional Wanted renewal via `POST /api/session/wanted/renew` when invalid
+  or near expiry
+- Graceful degradation: skip Wanted and continue other platforms when renewal
+  fails
 - Triggers auto-apply run via job-server REST API
 - Polls for completion with 30-second intervals (max 40 polls = ~20 min timeout)
 - Sends completion/timeout/error reports to `automation-webhook-receiver`
@@ -344,7 +355,7 @@ See `resume-healthcheck-workflow.json` for full configuration.
 
 **Workflow Flow**:
 
-```
+```text
 Daily 9am KST → GET /api/session/wanted/status
   → Valid → POST /api/auto-apply/run
   → Invalid/Near expiry → POST /api/session/wanted/renew
@@ -361,7 +372,8 @@ Daily 9am KST → GET /api/session/wanted/status
 
 - `JOB_SERVER_URL`: Base URL of the job automation server
 - `JOB_SERVER_ADMIN_TOKEN`: Bearer token for API authentication
-- `AUTOMATION_WEBHOOK_URL`: automation-webhook-receiver endpoint for completion reporting
+- `AUTOMATION_WEBHOOK_URL`: automation-webhook-receiver endpoint for completion
+  reporting
 - Default platforms: Wanted, JobKorea, Saramin
 - Default keywords: 시니어 엔지니어, 클라우드 엔지니어, SRE, DevOps
 - Max applications per run: 10
@@ -372,13 +384,15 @@ See `job-auto-apply-workflow.json` for full configuration.
 
 **Workflow**: `automation-webhook-receiver` (ID: `p2QvwPEvVR1k7Upl`)
 **Schedule**: Webhook-triggered (no schedule)
-**Purpose**: Receives automation run reports from job-server and forwards notifications via Telegram
+**Purpose**: Receives automation run reports from job-server and forwards
+notifications via Telegram
 
 **Features**:
 
 - POST webhook at `/automation-run-report`
 - Parses platform results, actions, and error details from incoming payload
-- Builds structured notification shape (isSuccess, status, channel, command, duration, source)
+- Builds structured notification shape (isSuccess, status, channel, command,
+  duration, source)
 - Forwards notification via `telegram-notifier` sub-workflow
 - Returns immediate 200 OK response to caller
 
@@ -386,7 +400,7 @@ See `job-auto-apply-workflow.json` for full configuration.
 
 **Workflow Flow**:
 
-```
+```text
 POST /automation-run-report → Format Payload (parse platforms/actions/errors)
   → Notify via Telegram (telegram-notifier sub-workflow)
   → Respond 200 OK
@@ -396,12 +410,14 @@ POST /automation-run-report → Format Payload (parse platforms/actions/errors)
 
 - `event`: Event type string (e.g., `automation-run`)
 - `timestamp`: ISO 8601 timestamp
-- `platforms`: Object mapping platform names to `{ valid: boolean, cookies: number }`
+- `platforms`: Object mapping platform names to `{ valid: boolean, cookies:
+  number }`
 - `actions`: Object with boolean flags `{ extract, sync, verify }`
 
 **Derived Fields** (computed by Format Payload node):
 
-- `isSuccess`, `status`, `channel`, `command`, `duration`, `source`, `errorMessage`
+- `isSuccess`, `status`, `channel`, `command`, `duration`, `source`,
+  `errorMessage`
 - `validPlatforms`, `invalidPlatforms`, `totalCookies`
 
 See `automation-webhook-receiver-workflow.json` for full configuration.
@@ -484,10 +500,15 @@ AUTOMATION_WEBHOOK_URL=https://n8n.jclee.me/webhook/automation-run-report
 
 ### Testing Notes
 
-- **automation-webhook-receiver**: Safe to test anytime via POST to `/webhook/automation-run-report`
-- **job-auto-apply**: ⚠️ Manual trigger submits real job applications. Use `dryRun: true` in the Trigger Auto-Apply node body for safe testing
-- Poll timeout: 40 polls × 30s = ~20 minutes max wait before timeout notification
-- **Platform support**: The workflow sends `wanted`, `jobkorea`, `saramin` but the backend currently only supports `wanted`, `linkedin`, `remember`. Only `wanted` is honored by both sides today.
+- **automation-webhook-receiver**: Safe to test anytime via POST to
+  `/webhook/automation-run-report`
+- **job-auto-apply**: ⚠️ Manual trigger submits real job applications. Use
+  `dryRun: true` in the Trigger Auto-Apply node body for safe testing
+- Poll timeout: 40 polls × 30s = ~20 minutes max wait before timeout
+  notification
+- **Platform support**: The workflow sends `wanted`, `jobkorea`, `saramin` but
+  the backend currently only supports `wanted`, `linkedin`, `remember`. Only
+  `wanted` is honored by both sides today.
 
 ## Monitoring
 
@@ -643,7 +664,7 @@ Modify workflow to deploy to different environments based on branch:
 
 Add rollback node after deployment failure:
 
-```json
+````json
 {
   "parameters": {
     "command": "cd /home/jclee/dev/resume && git reset --hard HEAD~1 && npm run deploy"
@@ -651,7 +672,7 @@ Add rollback node after deployment failure:
   "name": "Rollback Deployment",
   "type": "n8n-nodes-base.executeCommand"
 }
-```
+```text
 
 ### Performance Metrics Collection
 
@@ -674,7 +695,7 @@ Add Prometheus metrics collection:
   "name": "Collect Metrics",
   "type": "n8n-nodes-base.httpRequest"
 }
-```
+```text
 
 ## API Reference
 
@@ -685,7 +706,7 @@ curl -X POST https://n8n.jclee.me/api/v1/workflows \
   -H "X-N8N-API-KEY: $N8N_API_KEY" \
   -H "Content-Type: application/json" \
   -d @n8n/workflows/resume-auto-deploy.json
-```
+```text
 
 ### Update Workflow
 
@@ -694,7 +715,7 @@ curl -X PATCH https://n8n.jclee.me/api/v1/workflows/{workflow-id} \
   -H "X-N8N-API-KEY: $N8N_API_KEY" \
   -H "Content-Type: application/json" \
   -d @n8n/workflows/resume-auto-deploy.json
-```
+```text
 
 ### Activate/Deactivate
 
@@ -710,14 +731,14 @@ curl -X PATCH https://n8n.jclee.me/api/v1/workflows/{workflow-id} \
   -H "X-N8N-API-KEY: $N8N_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"active": false}'
-```
+```text
 
 ### Delete Workflow
 
 ```bash
 curl -X DELETE https://n8n.jclee.me/api/v1/workflows/{workflow-id} \
   -H "X-N8N-API-KEY: $N8N_API_KEY"
-```
+```text
 
 ## Security Best Practices
 
@@ -752,7 +773,8 @@ curl -X DELETE https://n8n.jclee.me/api/v1/workflows/{workflow-id} \
 
 ## Support
 
-- **n8n Instance**: https://n8n.jclee.me
+- **n8n Instance**: <https://n8n.jclee.me>
 - **Documentation**: ~/dev/resume/docs/
-- **Issues**: https://github.com/qws941/resume/issues
-- **Contact**: qws941@kakao.com
+- **Issues**: <https://github.com/qws941/resume/issues>
+- **Contact**: <qws941@kakao.com>
+````

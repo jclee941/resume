@@ -5,7 +5,8 @@
 
 ## OVERVIEW
 
-Canonical SSoT for shared types across the monorepo. JSDoc `@typedef`-based so it works
+Canonical SSoT for shared types across the monorepo. JSDoc `@typedef`-based so
+it works
 identically in plain JS files (with TS Language Service) and in `.ts` files.
 
 Consumed by `apps/portfolio`, `apps/job-server`, `apps/job-dashboard`,
@@ -29,12 +30,15 @@ packages/types/
 
 ## CONVENTIONS
 
-- **Zero runtime dependencies.** Anything that needs `node:crypto` or `fetch` belongs
+- **Zero runtime dependencies.** Anything that needs `node:crypto` or `fetch`
+  belongs
   elsewhere (see `@resume/shared`).
 - **JSDoc `@typedef` only.** No actual `.d.ts` files; the entire surface is
   expressed as JSDoc so it tree-shakes to nothing in JS bundles.
-- **Constants are `Object.freeze`d.** Prevents accidental mutation across consumers.
-- **Backward-compat aliases marked `@deprecated`** with the canonical replacement
+- **Constants are `Object.freeze`d.** Prevents accidental mutation across
+  consumers.
+- **Backward-compat aliases marked `@deprecated`** with the canonical
+  replacement
   named in the message.
 
 ## ANTI-PATTERNS

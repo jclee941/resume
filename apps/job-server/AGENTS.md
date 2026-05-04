@@ -6,7 +6,8 @@
 
 ## OVERVIEW
 
-MCP Server + Cloudflare Worker for stealth job automation on Korean job platforms. Hexagonal architecture with shared services/clients core.
+MCP Server + Cloudflare Worker for stealth job automation on Korean job
+platforms. Hexagonal architecture with shared services/clients core.
 
 ## STRUCTURE
 
@@ -98,10 +99,13 @@ job-server/
 - D1: `job-dashboard-db` (applications, job_cache, sync_logs)
 - KV: `SESSIONS`, `RATE_LIMIT_KV`
 - Queue: `crawl-tasks`
-- 7 Workflows: job-crawling, application, resume-sync, daily-report, health-check, backup, cleanup
+- 7 Workflows: job-crawling, application, resume-sync, daily-report,
+  health-check, backup, cleanup
 
 ## NOTES
 
 - See child AGENTS.md for domain-specific details (src/, scripts/, platforms/).
-- session-broker provides Wanted session renewal via Docker (stealth browser + Node.js broker on port 3456).
-- Large files: notifications.js (1043L), application.js (851L), resume.js (869 lines), profile-sync.js (966), auth-sync.js (846).
+- session-broker provides Wanted session renewal via Docker (stealth browser +
+  Node.js broker on port 3456).
+- Large files: notifications.js (1043L), application.js (851L), resume.js (869
+  lines), profile-sync.js (966), auth-sync.js (846).

@@ -2,16 +2,16 @@
 
 ## 📋 Table of Contents
 
-1. [System Overview](#system-overview)
-2. [Core Components](#core-components)
-3. [API Endpoints](#api-endpoints)
-4. [Automation Scripts](#automation-scripts)
-5. [n8n Workflow Integration](#n8n-workflow-integration)
+1. System Overview
+2. Core Components
+3. API Endpoints
+4. Automation Scripts
+5. n8n Workflow Integration
 6. [Configuration](#configuration)
-7. [Performance Metrics](#performance-metrics)
-8. [Safety Features](#safety-features)
-9. [Quick Start Guide](#quick-start-guide)
-10. [CLI Commands](#cli-commands)
+7. Performance Metrics
+8. Safety Features
+9. Quick Start Guide
+10. CLI Commands
 
 ---
 
@@ -29,7 +29,7 @@
 
 ### Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────┐
 │         Wanted MCP Integrated System                │
 └─────────────────────────────────────────────────────┘
@@ -72,8 +72,7 @@
 ### 1. UnifiedApplySystem (693 lines)
 
 **Multi-platform unified search and application system**
-
-**Features**:
+**Features**
 
 - Unified job search across 4 platforms
 - Automated application submission
@@ -81,7 +80,7 @@
 - Cover letter generation
 - Application status tracking
 
-**Supported Platforms**:
+**Supported Platforms**
 
 - Wanted (원티드)
 - JobKorea (잡코리아)
@@ -91,8 +90,7 @@
 ### 2. AI Matcher (383 lines)
 
 **OpenCode 3.5 Sonnet-based semantic matching**
-
-**Capabilities**:
+**Capabilities**
 
 - Semantic job matching (85-95% accuracy vs 60-70% basic)
 - Skill extraction and analysis
@@ -103,7 +101,7 @@
 - Batch processing
 - Fallback mode (works without API key)
 
-**Performance**:
+**Performance**
 
 - Match accuracy: 85-95%
 - Response time: <2s per analysis
@@ -113,7 +111,7 @@
 
 **Application tracking and management**
 
-**Features**:
+**Features**
 
 - Track all applications across platforms
 - Status updates (applied/pending/interview/rejected)
@@ -121,7 +119,7 @@
 - Search and filtering
 - Export to CSV/JSON
 
-**Data Structure**:
+**Data Structure**
 
 ```javascript
 {
@@ -140,14 +138,14 @@
 
 **Real-time dashboard runtime owned by `apps/job-dashboard/` and served at `resume.jclee.me/job/*`**
 
-**Technical Stack**:
+**Technical Stack**
 
 - Cloudflare Worker runtime (`apps/job-dashboard/src/index.js`)
 - Chart.js for visualizations
 - Real-time statistics
 - RESTful API
 
-**Features**:
+**Features**
 
 - Live system status monitoring
 - Application statistics
@@ -155,7 +153,7 @@
 - Automation control panel
 - Recent applications view
 
-**Canonical Location**:
+**Canonical Location**
 
 ```text
 apps/job-dashboard/
@@ -171,7 +169,7 @@ apps/job-dashboard/
 
 ### Statistics & Reports
 
-```
+```text
 GET  /api/stats           - Overall statistics
 GET  /api/stats/weekly    - Weekly statistics
 GET  /api/report          - Detailed report
@@ -180,7 +178,7 @@ GET  /api/report/weekly   - Weekly report
 
 ### Application Management
 
-```
+```text
 GET    /api/applications           - List applications (limit: 100)
 POST   /api/applications           - Register new application
 GET    /api/applications/:id       - Get application details
@@ -191,7 +189,7 @@ PUT    /api/applications/:id/status - Update status
 
 ### Automation
 
-```
+```text
 GET  /api/search              - Search job postings
 POST /api/auto-apply/run      - Run auto-application
 POST /api/n8n/trigger         - Trigger n8n workflow
@@ -200,7 +198,7 @@ POST /api/n8n/webhook         - n8n webhook handler
 
 ### AI Features
 
-```
+```text
 POST /api/ai/match      - Test AI matching
 POST /api/ai/run-system - Run AI system
 GET  /api/ai/status     - Check AI status
@@ -208,7 +206,7 @@ GET  /api/ai/status     - Check AI status
 
 ### Configuration
 
-```
+```text
 GET  /api/config  - Get configuration
 PUT  /api/config  - Update configuration
 GET  /api/health  - Health check
@@ -222,7 +220,7 @@ GET  /api/health  - Health check
 
 **Daily automated job search and application**
 
-**Features**:
+**Features**
 
 - Automatic job search based on keywords
 - AI-powered matching
@@ -230,7 +228,7 @@ GET  /api/health  - Health check
 - Slack notifications
 - Dry-run mode (default)
 
-**Usage**:
+**Usage**
 
 ```bash
 # Dry-run (test mode)
@@ -243,7 +241,7 @@ npm run ops:daily-run -- --apply --max=10
 npm run ops:daily-run -- --keywords="DevOps,Security" --max=5
 ```
 
-**Event Trigger Examples**:
+**Event Trigger Examples**
 
 ```bash
 # Dashboard/API trigger
@@ -257,7 +255,7 @@ node src/cli.js pipeline run <resume_id>
 
 **System monitoring and health check**
 
-**Features**:
+**Features**
 
 - System status check
 - Activity analysis
@@ -265,13 +263,13 @@ node src/cli.js pipeline run <resume_id>
 - Platform health check
 - Slack notifications
 
-**Usage**:
+**Usage**
 
 ```bash
 npm run ops:monitor
 ```
 
-**Event Trigger Example**:
+**Event Trigger Example**
 
 ```bash
 curl -X POST https://resume.jclee.me/job/api/workflows/health-check/run
@@ -281,7 +279,7 @@ curl -X POST https://resume.jclee.me/job/api/workflows/health-check/run
 
 **System maintenance and cleanup**
 
-**Features**:
+**Features**
 
 - Log cleanup (7+ days old)
 - Cache cleanup
@@ -289,13 +287,13 @@ curl -X POST https://resume.jclee.me/job/api/workflows/health-check/run
 - Dependency check
 - Disk usage monitoring
 
-**Usage**:
+**Usage**
 
 ```bash
 npm run ops:maintenance
 ```
 
-**Event Trigger Example**:
+**Event Trigger Example**
 
 ```bash
 curl -X POST https://resume.jclee.me/job/api/workflows/cleanup/run
@@ -310,8 +308,7 @@ curl -X POST https://resume.jclee.me/job/api/workflows/cleanup/run
 #### 1. job-application-automation.json
 
 **Automated job search → AI matching → Application → Notification**
-
-**Flow**:
+**Flow**
 
 1. Scheduled trigger (daily 9 AM)
 2. Search jobs via API
@@ -323,7 +320,7 @@ curl -X POST https://resume.jclee.me/job/api/workflows/cleanup/run
 
 **Daily application report generation and delivery**
 
-**Flow**:
+**Flow**
 
 1. Scheduled trigger (daily 6 PM)
 2. Fetch statistics
@@ -334,7 +331,7 @@ curl -X POST https://resume.jclee.me/job/api/workflows/cleanup/run
 
 **Resume synchronization across platforms**
 
-**Flow**:
+**Flow**
 
 1. Detect resume updates
 2. Format for each platform
@@ -343,7 +340,7 @@ curl -X POST https://resume.jclee.me/job/api/workflows/cleanup/run
 
 ### Webhook URLs
 
-```
+```text
 Base URL: https://n8n.jclee.me/webhook
 
 Endpoints:

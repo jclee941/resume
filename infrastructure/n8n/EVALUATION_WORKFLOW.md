@@ -31,7 +31,7 @@
 
 #### 수동 실행
 
-1. n8n 대시보드 접속: https://n8n.jclee.me
+1. n8n 대시보드 접속: <https://n8n.jclee.me>
 2. "Resume Workflow Evaluation" 워크플로우 선택
 3. "Execute Workflow" 버튼 클릭
 
@@ -60,7 +60,7 @@ evaluate:
 
 ### 워크플로우 구조
 
-```
+```text
 [Manual Trigger]
     ↓
 [Health Check] ───────┐

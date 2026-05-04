@@ -7,10 +7,12 @@
 
 ## Overview
 
-This directory contains production monitoring configurations for the Resume Portfolio (https://resume.jclee.me).
+This directory contains production monitoring configurations for the Resume
+Portfolio (<https://resume.jclee.me>).
 
 **Monitoring Stack**:
-- **Grafana**: Dashboard visualization (https://grafana.jclee.me)
+
+- **Grafana**: Dashboard visualization (<https://grafana.jclee.me>)
 - **Prometheus**: Metrics collection and storage
 - **Loki**: Log aggregation from Cloudflare Workers
 - **n8n**: Automated health checks and alerting
@@ -19,7 +21,7 @@ This directory contains production monitoring configurations for the Resume Port
 
 ## Directory Structure
 
-```
+```text
 infrastructure/monitoring/
 ├── README.md                                    # This file
 ├── grafana-dashboard-resume-portfolio.json      # Main Grafana dashboard (8 panels)
@@ -41,6 +43,7 @@ infrastructure/monitoring/
 ### Panels (8 total)
 
 **Row 1 - Key Metrics** (4 stat panels):
+
 1. **Health Check Status** (id:1)
    - Query: `up{job="resume"}`
    - Visualization: Stat with background color (RED/GREEN)
@@ -62,40 +65,42 @@ infrastructure/monitoring/
    - Unit: seconds (3 decimals)
    - Thresholds: <0.1s (green), 0.1-0.5s (yellow), >0.5s (red)
 
-**Row 2 - Additional Metrics**:
-5. **Web Vitals Data Points** (id:5)
-   - Query: `web_vitals_received{job="resume"}`
-   - Visualization: Stat (count of Web Vitals reports)
-   - Location: Bottom left (small panel)
+**Row 2 - Additional Metrics**: 5. **Web Vitals Data Points** (id:5)
 
-**Row 3 - Time Series Graphs** (2 panels):
-6. **Request Rate & Error Rate (1m)** (id:6)
-   - Queries:
-     - Total Request Rate: `sum(rate(http_requests_total{job="resume"}[1m]))`
-     - Success Rate: `sum(rate(http_requests_success{job="resume"}[1m]))`
-     - Error Rate: `sum(rate(http_requests_error{job="resume"}[1m]))`
-   - Visualization: Timeseries with smooth interpolation
-   - Unit: reqps (requests per second)
-   - Legend: Table with mean, last, max
+- Query: `web_vitals_received{job="resume"}`
+- Visualization: Stat (count of Web Vitals reports)
+- Location: Bottom left (small panel)
 
-7. **Response Time History** (id:7)
+**Row 3 - Time Series Graphs** (2 panels): 6. **Request Rate & Error Rate (1m)**
+(id:6)
+
+- Queries:
+  - Total Request Rate: `sum(rate(http_requests_total{job="resume"}[1m]))`
+  - Success Rate: `sum(rate(http_requests_success{job="resume"}[1m]))`
+  - Error Rate: `sum(rate(http_requests_error{job="resume"}[1m]))`
+- Visualization: Timeseries with smooth interpolation
+- Unit: reqps (requests per second)
+- Legend: Table with mean, last, max
+
+1. **Response Time History** (id:7)
    - Query: `http_response_time_seconds{job="resume"}`
    - Visualization: Timeseries
    - Unit: seconds (3 decimals)
    - Legend: Table with mean, last, max, min
    - Thresholds: <0.1s (green), 0.1-0.5s (yellow), >0.5s (red)
 
-**Row 4 - Logs**:
-8. **Resume Worker Logs** (id:8)
-   - Datasource: Loki
-   - Query: `{job="resume-worker"}`
-   - Visualization: Logs panel (full width)
-   - Sort: Descending (newest first)
-   - Features: Log details, time display
+**Row 4 - Logs**: 8. **Resume Worker Logs** (id:8)
+
+- Datasource: Loki
+- Query: `{job="resume-worker"}`
+- Visualization: Logs panel (full width)
+- Sort: Descending (newest first)
+- Features: Log details, time display
 
 ### Annotations
 
 **Deployment Detection**: Automatically detects deployments via Prometheus query
+
 - Query: `changes(http_requests_total{job="resume"}[5m]) > 0`
 - Interval: 60s
 - Color: Cyan (#00D3FF)
@@ -104,18 +109,19 @@ infrastructure/monitoring/
 
 ## Metrics Reference
 
-All metrics are exposed at `https://resume.jclee.me/metrics` in Prometheus format.
+All metrics are exposed at `https://resume.jclee.me/metrics` in Prometheus
+format.
 
 ### Available Metrics
 
-| Metric Name | Type | Description | Labels |
-|-------------|------|-------------|--------|
-| `up` | Gauge | Service health status (1=UP, 0=DOWN) | job=resume |
-| `http_requests_total` | Counter | Total HTTP requests received | job=resume |
-| `http_requests_success` | Counter | Successful HTTP requests (2xx) | job=resume |
-| `http_requests_error` | Counter | Failed HTTP requests (4xx, 5xx) | job=resume |
-| `http_response_time_seconds` | Gauge | Average response time in seconds | job=resume |
-| `web_vitals_received` | Counter | Web Vitals data points received | job=resume |
+| Metric Name                  | Type    | Description                          | Labels     |
+| ---------------------------- | ------- | ------------------------------------ | ---------- |
+| `up`                         | Gauge   | Service health status (1=UP, 0=DOWN) | job=resume |
+| `http_requests_total`        | Counter | Total HTTP requests received         | job=resume |
+| `http_requests_success`      | Counter | Successful HTTP requests (2xx)       | job=resume |
+| `http_requests_error`        | Counter | Failed HTTP requests (4xx, 5xx)      | job=resume |
+| `http_response_time_seconds` | Gauge   | Average response time in seconds     | job=resume |
+| `web_vitals_received`        | Counter | Web Vitals data points received      | job=resume |
 
 ### Query Examples
 
@@ -222,26 +228,29 @@ curl -s https://resume.jclee.me/health | jq
 
 ### Performance Targets
 
-| Metric | Target | Warning | Critical |
-|--------|--------|---------|----------|
-| Uptime | 99.9% | <99.5% | <99% |
-| Response Time (Avg) | <100ms | >100ms | >500ms |
-| Error Rate | <0.1% | >1% | >5% |
-| Request Rate | Consistent | - | Zero for 15min |
+| Metric              | Target     | Warning | Critical       |
+| ------------------- | ---------- | ------- | -------------- |
+| Uptime              | 99.9%      | <99.5%  | <99%           |
+| Response Time (Avg) | <100ms     | >100ms  | >500ms         |
+| Error Rate          | <0.1%      | >1%     | >5%            |
+| Request Rate        | Consistent | -       | Zero for 15min |
 
 ### Troubleshooting
 
 **Dashboard not loading?**
+
 - Check Grafana service: `curl -I https://grafana.jclee.me`
 - Check Prometheus datasource: Grafana UI → Connections → Data sources
 - Check Loki datasource: Grafana UI → Connections → Data sources
 
 **Metrics missing?**
+
 - Verify endpoint: `curl https://resume.jclee.me/metrics`
 - Check Prometheus scrape config (on NAS)
 - Check worker deployment: `curl https://resume.jclee.me/health`
 
 **Logs not showing?**
+
 - Check Loki datasource connection
 - Verify log labels: `{job="resume-worker"}`
 - Check Cloudflare Workers log forwarding
@@ -260,6 +269,7 @@ curl -s https://resume.jclee.me/health | jq
 ## Changelog
 
 ### 2025-11-26
+
 - ✅ Unified dashboard from 2 duplicate files into single source
 - ✅ Added Health Check Status panel (id:1)
 - ✅ Added Deployment annotations
@@ -271,6 +281,7 @@ curl -s https://resume.jclee.me/health | jq
 - ✅ Added comprehensive README documentation
 
 ### Previous Versions
+
 - **v1**: Initial dashboard with 7 panels (2025-11-20)
 - **v0**: Legacy dashboard in configs/grafana/ (deprecated)
 
@@ -279,6 +290,7 @@ curl -s https://resume.jclee.me/health | jq
 ## Support
 
 For issues or questions:
+
 - Check logs: `curl https://resume.jclee.me/metrics`
 - Check health: `curl https://resume.jclee.me/health | jq`
 - Infrastructure status: `https://grafana.jclee.me`

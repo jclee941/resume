@@ -140,7 +140,7 @@ describe('mapCareersToFormFields', () => {
       careers: [baseCareer],
       coverLetter: {
         ko: {
-          headline: 'OA에서 시작해 자동화로 도착한 9년차',
+          headline: 'OA에서 시작해 자동화로 도착한 8년차',
           paragraphs: ['단락 1.', '단락 2.', '단락 3.'],
           closing: '다음 함께하고 싶습니다.',
         },
@@ -149,7 +149,7 @@ describe('mapCareersToFormFields', () => {
     const byName = toMap(fields);
     const careerText = byName.get('UserResume.M_Career_Text');
 
-    assert.ok(careerText.startsWith('OA에서 시작해 자동화로 도착한 9년차'), 'headline at start');
+    assert.ok(careerText.startsWith('OA에서 시작해 자동화로 도착한 8년차'), 'headline at start');
     assert.ok(careerText.includes('단락 1.'), 'first paragraph included');
     assert.ok(careerText.includes('단락 3.'), 'last paragraph included');
     assert.ok(careerText.includes('다음 함께하고 싶습니다.'), 'closing included');

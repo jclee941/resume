@@ -3,15 +3,16 @@
 ## TL;DR
 
 > **Quick Summary**: Refactor portfolio text content for consistency and professionalism across Korean, English, and CLI interfaces. Implement Oracle's 6 recommendations for "심플하지만 고급스럽게" aesthetic.
-> 
+>
 > **Deliverables**:
+>
 > - Unified positioning text across SSoT, HTML, and CLI
 > - Consistent "8년차" years display everywhere
 > - Professional CLI (no toy commands visible, no jokes)
 > - Professional neofetch (real info, no humor)
 > - Typography separation (sans for content, mono for chrome)
 > - Color restraint (cyan primary, green success-only)
-> 
+>
 > **Estimated Effort**: Medium (4-6 hours)
 > **Parallel Execution**: YES - 3 waves
 > **Critical Path**: Task 1 (SSoT) → Tasks 2,3 (HTML) → Task 4 (CSS) → Task 5 (Build/Deploy) → Task 6 (Verify)
@@ -21,14 +22,18 @@
 ## Context
 
 ### Original Request
+
 Improve text content consistency in portfolio (resume.jclee.me) with "심플하지만 고급스럽게" (simple but luxurious) feel.
 
 ### Interview Summary
+
 **Key Discussions**:
+
 - Years of experience: User confirmed "8년차" as canonical (not 7년11개월 or 10년)
 - Test strategy: Agent QA Only - Playwright browser verification, no unit tests needed
 
 **Research Findings**:
+
 - SSoT hero.subtitle (resume_data.json L246): "보안 인프라 설계 · Observability · 자동화"
 - index.html hero (L239) shows mismatched: "Infrastructure Engineer | Security | Observability | Automation"
 - neofetch contains jokes: "CPU: Problem Solving @ 100%", "Memory: 10y experience loaded"
@@ -36,7 +41,9 @@ Improve text content consistency in portfolio (resume.jclee.me) with "심플하�
 - Three neon colors defined (cyan, magenta, green) but Oracle recommends color restraint
 
 ### Self-Review Gap Analysis
+
 **Identified Gaps** (addressed):
+
 1. **CLI cat command output** - Also hardcodes "10년" at index.html L709, must update to match
 2. **English portfolio CLI** - index-en.html has no interactive CLI (simpler), but hero subtitle needs update
 3. **Konami code** - Keep functionality but remove hint from help output
@@ -47,9 +54,11 @@ Improve text content consistency in portfolio (resume.jclee.me) with "심플하�
 ## Work Objectives
 
 ### Core Objective
+
 Create consistent, professional text content across all portfolio surfaces with a "simple but luxurious" aesthetic that removes playful elements and establishes a unified brand voice.
 
 ### Concrete Deliverables
+
 - `packages/data/resumes/master/resume_data.json` - Updated SSoT
 - `apps/portfolio/index.html` - Updated Korean portfolio
 - `apps/portfolio/index-en.html` - Updated English portfolio
@@ -57,6 +66,7 @@ Create consistent, professional text content across all portfolio surfaces with 
 - Deployed worker at resume.jclee.me
 
 ### Definition of Done
+
 - [ ] `curl -s https://resume.jclee.me | grep "8년차"` returns match
 - [ ] `curl -s https://resume.jclee.me/en/ | grep "8 years"` returns match
 - [ ] No visible "10년" or "10 years" or "10+" in either portfolio
@@ -65,12 +75,14 @@ Create consistent, professional text content across all portfolio surfaces with 
 - [ ] About section renders in sans-serif font
 
 ### Must Have
+
 - All year references display "8년차" (KO) or "8 years" (EN)
 - Positioning sentence consistent: "보안 인프라 · Observability · 자동화"
 - neofetch shows: Role, Focus, Domain, Stack
 - help shows: neofetch, experience, projects, skills, contact, clear, help
 
 ### Must NOT Have (Guardrails)
+
 - **No toy command visibility**: sudo hire-me, rm -rf doubt must not appear in help
 - **No humor in neofetch**: No "CPU: Problem Solving @ 100%" style jokes
 - **No Konami code hints**: Easter egg can stay, but don't advertise it
@@ -89,6 +101,7 @@ Create consistent, professional text content across all portfolio surfaces with 
 > This is NOT conditional — it applies to EVERY task.
 
 ### Test Decision
+
 - **Infrastructure exists**: YES (Jest + Playwright)
 - **Automated tests**: NO (Agent QA only per user decision)
 - **Framework**: Playwright for browser verification
@@ -100,13 +113,13 @@ by running it — opening browsers, executing commands, sending API requests.
 
 **Verification Tool by Deliverable Type:**
 
-| Type | Tool | How Agent Verifies |
-|------|------|-------------------|
-| **Build** | Bash | Run generate-worker.js, check exit code |
-| **Deploy** | Bash | Run wrangler deploy, check exit code |
-| **Content** | Playwright | Navigate, assert text content |
-| **Typography** | Playwright | Assert computed font-family |
-| **CLI** | Playwright | Type commands, assert output |
+| Type           | Tool       | How Agent Verifies                      |
+| -------------- | ---------- | --------------------------------------- |
+| **Build**      | Bash       | Run generate-worker.js, check exit code |
+| **Deploy**     | Bash       | Run wrangler deploy, check exit code    |
+| **Content**    | Playwright | Navigate, assert text content           |
+| **Typography** | Playwright | Assert computed font-family             |
+| **CLI**        | Playwright | Type commands, assert output            |
 
 ---
 
@@ -138,23 +151,23 @@ Parallel Speedup: ~25% faster (Tasks 2 and 3 parallel)
 ### Dependency Matrix
 
 | Task | Depends On | Blocks | Can Parallelize With |
-|------|------------|--------|---------------------|
-| 1 | None | 2, 3 | None (foundational) |
-| 2 | 1 | 4, 5 | 3 |
-| 3 | 1 | 5 | 2 |
-| 4 | 2 | 5 | 3 |
-| 5 | 2, 3, 4 | 6 | None |
-| 6 | 5 | None | None (final) |
+| ---- | ---------- | ------ | -------------------- |
+| 1    | None       | 2, 3   | None (foundational)  |
+| 2    | 1          | 4, 5   | 3                    |
+| 3    | 1          | 5      | 2                    |
+| 4    | 2          | 5      | 3                    |
+| 5    | 2, 3, 4    | 6      | None                 |
+| 6    | 5          | None   | None (final)         |
 
 ### Agent Dispatch Summary
 
-| Wave | Tasks | Recommended Agents |
-|------|-------|-------------------|
-| 1 | 1 | quick: Simple JSON edits |
-| 2 | 2, 3 | quick: HTML text changes |
-| 3 | 4 | quick: CSS property change |
-| 4 | 5 | quick: Build commands |
-| 5 | 6 | playwright: Browser verification |
+| Wave | Tasks | Recommended Agents               |
+| ---- | ----- | -------------------------------- |
+| 1    | 1     | quick: Simple JSON edits         |
+| 2    | 2, 3  | quick: HTML text changes         |
+| 3    | 4     | quick: CSS property change       |
+| 4    | 5     | quick: Build commands            |
+| 5    | 6     | playwright: Browser verification |
 
 ---
 
@@ -214,7 +227,7 @@ Parallel Speedup: ~25% faster (Tasks 2 and 3 parallel)
 - [ ] 2. Update Korean Portfolio (index.html) - Text, CLI, neofetch
 
   **What to do**:
-  
+
   **A. Hero subtitle (L239)**:
   - Change: `Infrastructure Engineer | Security | Observability | Automation`
   - To: `보안 인프라 · Observability · 자동화`
@@ -325,7 +338,7 @@ Parallel Speedup: ~25% faster (Tasks 2 and 3 parallel)
 - [ ] 3. Update English Portfolio (index-en.html) - Hero and About
 
   **What to do**:
-  
+
   **A. Hero subtitle (L235)**:
   - Change: `Infrastructure Engineer | Security | Observability | Automation`
   - To: `Security Infrastructure · Observability · Automation`
@@ -642,19 +655,20 @@ Parallel Speedup: ~25% faster (Tasks 2 and 3 parallel)
 
 ## Commit Strategy
 
-| After Task | Message | Files | Verification |
-|------------|---------|-------|--------------|
-| 1 | `fix(data): unify experience years to 8년차` | resume_data.json | JSON parses |
-| 2+3 | `refactor(portfolio): unify text, professionalize CLI` | index.html, index-en.html | grep checks |
-| 4 | `style(portfolio): typography separation - sans for content` | components.css | grep check |
-| 5 | (no commit - deploy artifact) | - | wrangler success |
-| 6 | (no commit - verification) | - | Playwright passes |
+| After Task | Message                                                      | Files                     | Verification      |
+| ---------- | ------------------------------------------------------------ | ------------------------- | ----------------- |
+| 1          | `fix(data): unify experience years to 8년차`                 | resume_data.json          | JSON parses       |
+| 2+3        | `refactor(portfolio): unify text, professionalize CLI`       | index.html, index-en.html | grep checks       |
+| 4          | `style(portfolio): typography separation - sans for content` | components.css            | grep check        |
+| 5          | (no commit - deploy artifact)                                | -                         | wrangler success  |
+| 6          | (no commit - verification)                                   | -                         | Playwright passes |
 
 ---
 
 ## Success Criteria
 
 ### Verification Commands
+
 ```bash
 # After deploy, run these:
 curl -s https://resume.jclee.me | grep "보안 인프라"  # Expected: match
@@ -665,6 +679,7 @@ curl -s https://resume.jclee.me/health  # Expected: 200 OK
 ```
 
 ### Final Checklist
+
 - [ ] All "Must Have" present
 - [ ] All "Must NOT Have" absent
 - [ ] Browser verification passes (all 7 scenarios)

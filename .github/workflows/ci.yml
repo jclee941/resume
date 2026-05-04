@@ -168,7 +168,11 @@ jobs:
                    apps/portfolio/data_en.json \
                    apps/portfolio/data_ja.json; do
             if [ -f "$f" ]; then
-              python3 -m json.tool < "$f" > /dev/null && echo "✅ syntax: $f" || { echo "❌ syntax: $f"; exit 1; }
+              if python3 -m json.tool < "$f" > /dev/null; then
+                echo "✅ syntax: $f"
+              else
+                echo "❌ syntax: $f"; exit 1
+              fi
             fi
           done
 

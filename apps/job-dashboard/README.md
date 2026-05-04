@@ -2,11 +2,15 @@
 
 **Location**: `apps/job-dashboard/`
 
-**Description**: Independent Cloudflare Worker serving the job dashboard API at `resume.jclee.me/job/*`, connected to the portfolio worker via Service Binding.
+**Description**: Independent Cloudflare Worker serving the job dashboard API at
+`resume.jclee.me/job/*`, connected to the portfolio worker via Service Binding.
 
-**Architecture**: Independent worker (`job`), proxied from portfolio worker (`resume`) via Service Binding. See [ADR 0007](../../docs/adr/0007-msa-service-split.md).
+**Architecture**: Independent worker (`job`), proxied from portfolio worker
+(`resume`) via Service Binding. See [ADR
+0007](../../docs/adr/0007-msa-service-split.md).
 
-**Status**: ✅ Production-ready | 7 workflows | 48 API endpoints | D1 + KV + R2 bindings
+**Status**: ✅ Production-ready | 7 workflows | 48 API endpoints | D1 + KV + R2
+bindings
 
 ---
 
@@ -31,13 +35,16 @@ npm run dev --workspace @resume/job-dashboard-worker
 
 **Available Endpoints** (local):
 
-- Dashboard UI: http://localhost:8787/job/
-- API: http://localhost:8787/job/api/\*
-- Health check: http://localhost:8787/job/health
+- Dashboard UI: <http://localhost:8787/job/>
+- API: <http://localhost:8787/job/api/\>\*
+- Health check: <http://localhost:8787/job/health>
 
 ### Deploy to Cloudflare
 
-Production deployment is handled by Cloudflare Workers Builds (git push to `master` triggers automatic deploy). Local production deploys are intentionally disabled so the dashboard follows the same authoritative deployment path as the root worker.
+Production deployment is handled by Cloudflare Workers Builds (git push to
+`master` triggers automatic deploy). Local production deploys are intentionally
+disabled so the dashboard follows the same authoritative deployment path as the
+root worker.
 
 ```bash
 # View live logs
@@ -130,7 +137,7 @@ npx wrangler secret put JWT_SECRET
 
 ### Request Flow
 
-```
+```text
 Browser/API Client
     ↓
 resume.jclee.me/job/* (Cloudflare route)
@@ -175,7 +182,7 @@ Response (JSON):
 
 ### Directory Structure
 
-```
+```text
 job-dashboard/
 ├── src/
 │   ├── index.js                    # Entry point (fetch handler + exports)
@@ -373,14 +380,20 @@ curl https://resume.jclee.me/job/api/workflows/abc123/status \
 
 ### ⚠️ Important Limitations
 
-**LinkedIn and Remember Auto-Apply**: These platforms require browser automation (Puppeteer) for job applications, which is not available in Cloudflare Workers. The dashboard workflow will return an error with `requiresJobServer: true` if you attempt to apply to these platforms.
+**LinkedIn and Remember Auto-Apply**: These platforms require browser automation
+(Puppeteer) for job applications, which is not available in Cloudflare Workers.
+The dashboard workflow will return an error with `requiresJobServer: true` if
+you attempt to apply to these platforms.
 
 **Workarounds**:
 
-1. Use job-server CLI: `npm run auto-apply -- --platforms=linkedin,remember --apply`
+1. Use job-server CLI: `npm run auto-apply -- --platforms=linkedin,remember
+   --apply`
 2. Trigger via n8n webhook (integrates with job-server)
 
-**Job Details Cache**: The `ApplicationWorkflow` can fetch job details from Wanted API directly, but LinkedIn/Remember require cached data from previous crawls. Ensure jobs are crawled before applying.
+**Job Details Cache**: The `ApplicationWorkflow` can fetch job details from
+Wanted API directly, but LinkedIn/Remember require cached data from previous
+crawls. Ensure jobs are crawled before applying.
 
 ### Webhooks (9 endpoints)
 
@@ -570,7 +583,7 @@ curl https://resume.jclee.me/job/api/workflows/abc123def456/status \
 
 **Headers**:
 
-```
+```text
 X-RateLimit-Limit: 60
 X-RateLimit-Remaining: 45
 X-RateLimit-Reset: 1739327125
@@ -754,7 +767,8 @@ const RATE_LIMIT = {
 };
 ```
 
-Then commit the change and let Cloudflare Workers Builds deploy it from `master`:
+Then commit the change and let Cloudflare Workers Builds deploy it from
+`master`:
 
 ```bash
 git push origin master
@@ -776,10 +790,12 @@ const ALLOWED_ORIGINS = [
 
 ## Related Documentation
 
-- **[AGENTS.md](./AGENTS.md)** - Architecture details, handler classes, workflows, D1 schema, KV structure
+- **[AGENTS.md](./AGENTS.md)** - Architecture details, handler classes,
+  workflows, D1 schema, KV structure
 - **[SECRETS.md](./SECRETS.md)** - Secret management guide
 - **[../ARCHITECTURE.md](../ARCHITECTURE.md)** - Job automation system overview
-- **[../job-server/DATA_FLOW.md](../job-server/DATA_FLOW.md)** - End-to-end request flows
+- **[../job-server/DATA_FLOW.md](../job-server/DATA_FLOW.md)** - End-to-end
+  request flows
 - **[../SCRIPTS_GUIDE.md](../SCRIPTS_GUIDE.md)** - CLI scripts reference
 
 ---

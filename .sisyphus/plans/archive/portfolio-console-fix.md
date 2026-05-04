@@ -3,14 +3,15 @@
 ## TL;DR
 
 > **Quick Summary**: Fix all 6 console errors on resume.jclee.me while keeping GA, Sentry, and Cloudflare Insights analytics fully functional.
-> 
+>
 > **Deliverables**:
+>
 > - Zero console errors on production site
 > - All analytics tracking working (GA, Sentry, Cloudflare)
 > - Proper favicons rendering
 > - English page fully translated
 > - WCAG 2.5.5 compliant touch targets
-> 
+>
 > **Estimated Effort**: Medium (6 parallel edits + build + deploy)
 > **Parallel Execution**: YES - 3 waves
 > **Critical Path**: Wave 1 edits → Build → Deploy/Verify
@@ -20,23 +21,29 @@
 ## Context
 
 ### Original Request
+
 Fix ALL console errors on https://resume.jclee.me while keeping Google Analytics, Sentry, and Cloudflare Insights analytics active. User provided detailed findings from explore agents identifying 6 specific issues with file paths and line numbers.
 
 ### Interview Summary
+
 **Key Discussions**:
+
 - User wants to KEEP all analytics (GA, Sentry, Cloudflare Insights)
 - User confirmed favicon generation approach (copy svg, resize png)
 - User confirmed English name format: "Jaecheol Lee"
 - User wants Playwright browser automation for verification
 
 **Research Findings**:
+
 - Verified Sentry SRI hash via `curl | openssl dgst -sha384`: `r87PtLtqCNRN7WVYDoF6b24tH5mzHdp5/yxH2SOeuEBA43ZA0bIBOAhNjDaEveGK`
 - Existing icon files: `icon-192.svg`, `icon-192.png`, `icon-512.svg`, `icon-512.png`
 - CSP defined in `lib/security-headers.js` line 37
 - Touch target CSS partially exists - missing selectors identified
 
 ### Self-Review (Metis unavailable)
+
 **Identified Gaps** (addressed):
+
 - Need to verify index.html ALSO has same Sentry SRI hash issue → Confirmed both files have same lines
 - Need to ensure favicon generation doesn't break build → Using ImageMagick resize which is standard
 - CSP needs BOTH script-src AND connect-src for GA → Current structure handles this
@@ -47,9 +54,11 @@ Fix ALL console errors on https://resume.jclee.me while keeping Google Analytics
 ## Work Objectives
 
 ### Core Objective
+
 Achieve ZERO console errors on https://resume.jclee.me with all analytics (GA, Sentry, Cloudflare Insights) functioning correctly.
 
 ### Concrete Deliverables
+
 - `lib/security-headers.js` with GA domain in CSP
 - `index.html` and `index-en.html` with correct Sentry SRI hash
 - `sentry-config.js` with fixed regex syntax
@@ -60,6 +69,7 @@ Achieve ZERO console errors on https://resume.jclee.me with all analytics (GA, S
 - Production deployment verified via Playwright
 
 ### Definition of Done
+
 - [ ] `curl -s https://resume.jclee.me | grep -c "error"` returns 0 console errors
 - [ ] GA tracking visible in Network tab (requests to googletagmanager.com succeed)
 - [ ] Sentry initialized without integrity/syntax errors
@@ -67,6 +77,7 @@ Achieve ZERO console errors on https://resume.jclee.me with all analytics (GA, S
 - [ ] Touch targets measure ≥44px on mobile viewport
 
 ### Must Have
+
 - CSP allows googletagmanager.com
 - Correct Sentry SRI hash
 - Valid regex in sentry-config.js
@@ -75,6 +86,7 @@ Achieve ZERO console errors on https://resume.jclee.me with all analytics (GA, S
 - Touch targets meet WCAG 2.5.5
 
 ### Must NOT Have (Guardrails)
+
 - NO new analytics platforms added
 - NO design/layout changes beyond touch target sizing
 - NO content changes beyond SEO translations
@@ -86,6 +98,7 @@ Achieve ZERO console errors on https://resume.jclee.me with all analytics (GA, S
 ## Verification Strategy (MANDATORY)
 
 ### Test Decision
+
 - **Infrastructure exists**: NO (no formal test setup in portfolio-worker)
 - **User wants tests**: Manual verification via Playwright
 - **Framework**: Playwright MCP browser automation
@@ -96,6 +109,7 @@ Achieve ZERO console errors on https://resume.jclee.me with all analytics (GA, S
 Each task includes agent-executable verification. Final verification (Task 8) uses Playwright for comprehensive browser testing:
 
 **Browser Automation Checks:**
+
 1. Navigate to https://resume.jclee.me
 2. Open DevTools Console → Assert: 0 errors
 3. Check Network tab → Assert: GA requests succeed (200)
@@ -132,24 +146,24 @@ Parallel Speedup: ~50% faster than sequential
 
 ### Dependency Matrix
 
-| Task | Depends On | Blocks | Can Parallelize With |
-|------|------------|--------|---------------------|
-| 1 | None | 7 | 2, 3, 4, 5, 6 |
-| 2 | None | 7 | 1, 3, 4, 5, 6 |
-| 3 | None | 7 | 1, 2, 4, 5, 6 |
-| 4 | None | 7 | 1, 2, 3, 5, 6 |
-| 5 | None | 7 | 1, 2, 3, 4, 6 |
-| 6 | None | 7 | 1, 2, 3, 4, 5 |
-| 7 | 1, 2, 3, 4, 5, 6 | 8 | None |
-| 8 | 7 | None | None (final) |
+| Task | Depends On       | Blocks | Can Parallelize With |
+| ---- | ---------------- | ------ | -------------------- |
+| 1    | None             | 7      | 2, 3, 4, 5, 6        |
+| 2    | None             | 7      | 1, 3, 4, 5, 6        |
+| 3    | None             | 7      | 1, 2, 4, 5, 6        |
+| 4    | None             | 7      | 1, 2, 3, 5, 6        |
+| 5    | None             | 7      | 1, 2, 3, 4, 6        |
+| 6    | None             | 7      | 1, 2, 3, 4, 5        |
+| 7    | 1, 2, 3, 4, 5, 6 | 8      | None                 |
+| 8    | 7                | None   | None (final)         |
 
 ### Agent Dispatch Summary
 
-| Wave | Tasks | Recommended Dispatch |
-|------|-------|---------------------|
-| 1 | 1, 2, 3, 4, 5, 6 | 6x delegate_task(category="quick", run_in_background=true) |
-| 2 | 7 | Single delegate_task after Wave 1 completes |
-| 3 | 8 | delegate_task(load_skills=["playwright"]) |
+| Wave | Tasks            | Recommended Dispatch                                       |
+| ---- | ---------------- | ---------------------------------------------------------- |
+| 1    | 1, 2, 3, 4, 5, 6 | 6x delegate_task(category="quick", run_in_background=true) |
+| 2    | 7                | Single delegate_task after Wave 1 completes                |
+| 3    | 8                | delegate_task(load_skills=["playwright"])                  |
 
 ---
 
@@ -184,6 +198,7 @@ Parallel Speedup: ~50% faster than sequential
   - `apps/portfolio/lib/AGENTS.md` - CSP update guidance ("Add SHA hashes or external domains here")
 
   **Acceptance Criteria**:
+
   ```bash
   # Agent runs:
   grep -c "googletagmanager.com" apps/portfolio/lib/security-headers.js
@@ -225,11 +240,12 @@ Parallel Speedup: ~50% faster than sequential
   - Verified hash via: `curl -s https://browser.sentry-cdn.com/7.109.0/bundle.min.js | openssl dgst -sha384 -binary | openssl base64`
 
   **Acceptance Criteria**:
+
   ```bash
   # Agent runs:
   grep -c "r87PtLtqCNRN7WVYDoF6b24tH5mzHdp5" apps/portfolio/index.html
   # Assert: Returns 1
-  
+
   grep -c "r87PtLtqCNRN7WVYDoF6b24tH5mzHdp5" apps/portfolio/index-en.html
   # Assert: Returns 1
   ```
@@ -267,11 +283,12 @@ Parallel Speedup: ~50% faster than sequential
   - JavaScript regex escape rules: forward slash in regex literal requires backslash escape
 
   **Acceptance Criteria**:
+
   ```bash
   # Agent runs:
   grep -c "extensions\\\\/" apps/portfolio/sentry-config.js
   # Assert: Returns 1 (escaped slash present)
-  
+
   # Verify no double slash:
   grep -c "extensions//" apps/portfolio/sentry-config.js
   # Assert: Returns 0 (invalid pattern removed)
@@ -314,14 +331,15 @@ Parallel Speedup: ~50% faster than sequential
   - `apps/portfolio/index.html:136-138` - HTML references requiring these files
 
   **Acceptance Criteria**:
+
   ```bash
   # Agent runs:
   ls -la apps/portfolio/favicon.svg
   # Assert: File exists
-  
+
   file apps/portfolio/favicon-32x32.png | grep -c "32 x 32"
   # Assert: Returns 1 (correct dimensions)
-  
+
   file apps/portfolio/apple-touch-icon.png | grep -c "180 x 180"
   # Assert: Returns 1 (correct dimensions)
   ```
@@ -337,22 +355,22 @@ Parallel Speedup: ~50% faster than sequential
   **What to do**:
   Edit `index-en.html` to translate Korean → English:
 
-  | Line | Current (Korean) | Target (English) |
-  |------|------------------|------------------|
-  | 6 | `<title>이재철 - AIOps / ML Platform Engineer</title>` | `<title>Jaecheol Lee - AIOps / ML Platform Engineer</title>` |
-  | 13 | `자동화, 금융 인프라, 이재철, AIOps 엔지니어` | `automation, financial infrastructure, Jaecheol Lee, AIOps Engineer` |
-  | 15 | `이재철 (Jaecheol Lee)` | `Jaecheol Lee` |
-  | 35 | `language: "ko"` | `language: "en"` |
-  | 39 | `href="https://resume.jclee.me"` | `href="https://resume.jclee.me/en/"` |
-  | 50 | `og:url` → root | `og:url` → `/en/` |
-  | 51 | `og:title` Korean | `og:title` English |
-  | 76 | `twitter:title` Korean | `twitter:title` English |
-  | 78-80 | `twitter:description` Korean | Full English translation |
-  | 95 | `"name": "이재철"` | `"name": "Jaecheol Lee"` |
-  | 98 | `"description"` Korean | English description |
-  | 117 | `"name": "(주)아이티센 CTS"` | `"name": "ITCEN CTS Co., Ltd."` |
-  | 127 | `"name": "이재철 이력서"` | `"name": "Jaecheol Lee Resume"` |
-  | 129-130 | Korean description + `ko-KR` | English + `en-US` |
+  | Line    | Current (Korean)                                       | Target (English)                                                     |
+  | ------- | ------------------------------------------------------ | -------------------------------------------------------------------- |
+  | 6       | `<title>이재철 - AIOps / ML Platform Engineer</title>` | `<title>Jaecheol Lee - AIOps / ML Platform Engineer</title>`         |
+  | 13      | `자동화, 금융 인프라, 이재철, AIOps 엔지니어`          | `automation, financial infrastructure, Jaecheol Lee, AIOps Engineer` |
+  | 15      | `이재철 (Jaecheol Lee)`                                | `Jaecheol Lee`                                                       |
+  | 35      | `language: "ko"`                                       | `language: "en"`                                                     |
+  | 39      | `href="https://resume.jclee.me"`                       | `href="https://resume.jclee.me/en/"`                                 |
+  | 50      | `og:url` → root                                        | `og:url` → `/en/`                                                    |
+  | 51      | `og:title` Korean                                      | `og:title` English                                                   |
+  | 76      | `twitter:title` Korean                                 | `twitter:title` English                                              |
+  | 78-80   | `twitter:description` Korean                           | Full English translation                                             |
+  | 95      | `"name": "이재철"`                                     | `"name": "Jaecheol Lee"`                                             |
+  | 98      | `"description"` Korean                                 | English description                                                  |
+  | 117     | `"name": "(주)아이티센 CTS"`                           | `"name": "ITCEN CTS Co., Ltd."`                                      |
+  | 127     | `"name": "이재철 이력서"`                              | `"name": "Jaecheol Lee Resume"`                                      |
+  | 129-130 | Korean description + `ko-KR`                           | English + `en-US`                                                    |
 
   **Must NOT do**:
   - Do NOT change page structure or layout
@@ -376,14 +394,15 @@ Parallel Speedup: ~50% faster than sequential
   - `apps/portfolio/index.html` - Korean reference (keep consistent structure)
 
   **Acceptance Criteria**:
+
   ```bash
   # Agent runs:
   grep -c "이재철" apps/portfolio/index-en.html
   # Assert: Returns 0 (no Korean name in English page)
-  
+
   grep -c 'language: "en"' apps/portfolio/index-en.html
   # Assert: Returns 1 (GA language correct)
-  
+
   grep -c 'canonical.*\/en\/' apps/portfolio/index-en.html
   # Assert: Returns 1 (canonical points to /en/)
   ```
@@ -402,8 +421,9 @@ Parallel Speedup: ~50% faster than sequential
     - `.hero-link`
     - `.project-link-title`
     - `.back-to-top`
-  
+
   **CSS to add**:
+
   ```css
   /* In layout.css after .nav-logo definition (line ~24): */
   .nav-logo {
@@ -412,7 +432,7 @@ Parallel Speedup: ~50% faster than sequential
     display: inline-flex;
     align-items: center;
   }
-  
+
   /* In components.css, add to existing selectors or create new rule: */
   .hero-link,
   .project-link-title,
@@ -448,11 +468,12 @@ Parallel Speedup: ~50% faster than sequential
   - `apps/portfolio/src/styles/components.css:190-197` - Existing WCAG touch target rules to follow
 
   **Acceptance Criteria**:
+
   ```bash
   # Agent runs:
   grep -A5 ".nav-logo" apps/portfolio/src/styles/layout.css | grep -c "min-height: 44px"
   # Assert: Returns 1
-  
+
   grep -c "hero-link.*min-height" apps/portfolio/src/styles/components.css
   # Assert: Returns 1 (or grep the rule block)
   ```
@@ -491,14 +512,15 @@ Parallel Speedup: ~50% faster than sequential
   - `apps/portfolio/package.json` - npm scripts
 
   **Acceptance Criteria**:
+
   ```bash
   # Agent runs:
   cd apps/portfolio && npm run build
   # Assert: Exit code 0
-  
+
   ls -la apps/portfolio/worker.js
   # Assert: File exists and was recently modified
-  
+
   grep -c "googletagmanager" apps/portfolio/worker.js
   # Assert: Returns 1 (CSP change propagated to build)
   ```
@@ -518,7 +540,6 @@ Parallel Speedup: ~50% faster than sequential
      CLOUDFLARE_API_KEY="$CLOUDFLARE_API_KEY" CLOUDFLARE_EMAIL="$CLOUDFLARE_EMAIL" \
      npx wrangler deploy --env production
      ```
-  
   2. Verify with Playwright browser automation:
      - Navigate to https://resume.jclee.me
      - Check browser console for errors
@@ -550,6 +571,7 @@ Parallel Speedup: ~50% faster than sequential
   **Acceptance Criteria**:
 
   **Deployment Verification:**
+
   ```bash
   # Agent runs deployment:
   source /home/jclee/.env && cd apps/portfolio && \
@@ -559,23 +581,24 @@ Parallel Speedup: ~50% faster than sequential
   ```
 
   **Playwright Browser Verification:**
+
   ```
   # Agent executes via playwright browser automation:
   1. Navigate to: https://resume.jclee.me
   2. Wait for: page load complete
   3. Execute: browser_console_messages(level="error")
   4. Assert: 0 error messages returned
-  
+
   5. Execute: browser_network_requests(includeStatic=false)
   6. Assert: Request to googletagmanager.com shows status 200
   7. Assert: Request to browser.sentry-cdn.com shows status 200
-  
+
   8. Navigate to: https://resume.jclee.me/favicon.svg
   9. Assert: HTTP 200 response
-  
+
   10. Navigate to: https://resume.jclee.me/en/
   11. Assert: Page title contains "Jaecheol Lee"
-  
+
   12. Execute: browser_resize(width=375, height=667)  # Mobile viewport
   13. Take screenshot: .sisyphus/evidence/task-8-mobile-verification.png
   ```
@@ -592,11 +615,11 @@ Parallel Speedup: ~50% faster than sequential
 
 ## Commit Strategy
 
-| After Task | Message | Files | Verification |
-|------------|---------|-------|--------------|
-| 1-6 (batch) | `fix(portfolio): resolve all console errors` | All Wave 1 files | grep checks |
-| 7 | `build: regenerate worker.js` | worker.js | File exists |
-| 8 | N/A (deploy only) | N/A | Playwright |
+| After Task  | Message                                      | Files            | Verification |
+| ----------- | -------------------------------------------- | ---------------- | ------------ |
+| 1-6 (batch) | `fix(portfolio): resolve all console errors` | All Wave 1 files | grep checks  |
+| 7           | `build: regenerate worker.js`                | worker.js        | File exists  |
+| 8           | N/A (deploy only)                            | N/A              | Playwright   |
 
 **Alternative:** Single atomic commit after all source changes (Tasks 1-6), then build commit (Task 7).
 
@@ -605,6 +628,7 @@ Parallel Speedup: ~50% faster than sequential
 ## Success Criteria
 
 ### Verification Commands
+
 ```bash
 # After deployment, these should all pass:
 curl -s https://resume.jclee.me/favicon.svg -o /dev/null -w "%{http_code}"  # Expected: 200
@@ -616,6 +640,7 @@ curl -s https://resume.jclee.me/en/ | grep -c "Jaecheol Lee"  # Expected: ≥1
 ```
 
 ### Final Checklist
+
 - [ ] Zero console errors in browser DevTools
 - [ ] GA tracking calls visible in Network tab (200 status)
 - [ ] Sentry initialized (check console for "✅ Sentry initialized")

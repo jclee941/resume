@@ -6,26 +6,27 @@
 
 ## OVERVIEW
 
-17 utility scripts for authentication, data sync, metrics, and profile automation. Run from project root.
+17 utility scripts for authentication, data sync, metrics, and profile
+automation. Run from project root.
 
 ## KEY SCRIPTS
 
-| Script                     | Purpose                           |
-| -------------------------- | --------------------------------- |
-| `auth-persistent.js`       | persistent session management     |
-| `auth-sync.js`             | cookies → worker KV (846 lines)   |
-| `auth-sync/`               | auth sync helper modules          |
-| `auto-all.js`              | run all automation workflows      |
-| `ci-resume-sync.js`        | CI pipeline resume sync           |
-| `cookie-inject.js`         | inject cookies into browser       |
-| `extract-cookies-cdp.js`   | CDP cookie extraction             |
-| `import-cookies-manual.js` | manually import cookie strings    |
-| `metrics-exporter.js`      | Prometheus metrics export         |
-| `ops/`                     | operational helper scripts        |
-| `profile-sync.js`          | resume → API sync (966 lines)     |
-| `profile-sync/`            | profile sync helper modules       |
+| Script                         | Purpose                                     |
+| ------------------------------ | ------------------------------------------- |
+| `auth-persistent.js`           | persistent session management               |
+| `auth-sync.js`                 | cookies → worker KV (846 lines)             |
+| `auth-sync/`                   | auth sync helper modules                    |
+| `auto-all.js`                  | run all automation workflows                |
+| `ci-resume-sync.js`            | CI pipeline resume sync                     |
+| `cookie-inject.js`             | inject cookies into browser                 |
+| `extract-cookies-cdp.js`       | CDP cookie extraction                       |
+| `import-cookies-manual.js`     | manually import cookie strings              |
+| `metrics-exporter.js`          | Prometheus metrics export                   |
+| `ops/`                         | operational helper scripts                  |
+| `profile-sync.js`              | resume → API sync (966 lines)               |
+| `profile-sync/`                | profile sync helper modules                 |
 | `job-search-apply-pipeline.js` | n8n pipeline: search + apply + profile sync |
-| `skill-tag-map.js`         | skill name → tag ID mapping       |
+| `skill-tag-map.js`             | skill name → tag ID mapping                 |
 
 ## AUTH EVOLUTION
 
@@ -50,8 +51,12 @@ CDP (recommended) > Playwright > SQLite > Profile.
 ## PROFILE-SYNC PORTFOLIO FLOW
 
 JobKorea portfolio URL registration uses `AddUserFileDB` API (not form POST):
-1. `registerPortfolioUrl(page, url)` → POST `/User/Resume/AddUserFileDB` → returns `{ sc: 1, idx: N }`
-2. `mapPortfolioToFormFields(ssot, fileIdx)` → sets `UserResume.Attach_File_Name = "N,"`
+
+1. `registerPortfolioUrl(page, url)` → POST `/User/Resume/AddUserFileDB` →
+   returns `{ sc: 1, idx: N }`
+2. `mapPortfolioToFormFields(ssot, fileIdx)` → sets `UserResume.Attach_File_Name
+   = "N,"`
 3. Form save includes the server-generated IDX → portfolio persists
 
-Pipeline (`job-search-apply-pipeline.js`) runs this automatically at 9am/9pm KST via n8n.
+Pipeline (`job-search-apply-pipeline.js`) runs this automatically at 9am/9pm KST
+via n8n.

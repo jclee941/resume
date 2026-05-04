@@ -18,14 +18,14 @@ build time: 0.23s
 
 Subordinate runs (executed independently for record):
 
-| Stage                                       | Result            |
-| ------------------------------------------- | ----------------- |
-| `npm run lint` (eslint .)                   | clean             |
-| `npm run typecheck` (tsc --noEmit)          | clean             |
+| Stage                                              | Result                      |
+| -------------------------------------------------- | --------------------------- |
+| `npm run lint` (eslint .)                          | clean                       |
+| `npm run typecheck` (tsc --noEmit)                 | clean                       |
 | `npx jest tests/unit/portfolio-worker --runInBand` | 27 suites, 716 tests passed |
-| `npm run build:portfolio`                   | worker.js 790.05 KB |
-| `npx wrangler deploy --dry-run`             | success — bindings resolved |
-| `go run ./tools/ci/validate-cloudflare-native.go` | OK |
+| `npm run build:portfolio`                          | worker.js 790.05 KB         |
+| `npx wrangler deploy --dry-run`                    | success — bindings resolved |
+| `go run ./tools/ci/validate-cloudflare-native.go`  | OK                          |
 
 ## 2. Manual functional QA via Miniflare
 
@@ -33,11 +33,11 @@ Subordinate runs (executed independently for record):
 (compatibilityDate `2026-02-21`, `nodejs_compat`). Three locale routes were
 fetched and inspected:
 
-| URL                                | Status | Bytes  | `<html lang>` | `<title>`                                                |
-| ---------------------------------- | ------ | ------ | ------------- | -------------------------------------------------------- |
-| `https://resume.jclee.me/`         | 200    | 148984 | `ko`          | 이재철 - DevSecOps/SRE/Platform Engineer                 |
-| `https://resume.jclee.me/en/`      | 200    | 95390  | `en`          | Jaecheol Lee - DevSecOps/SRE/Platform Engineer           |
-| `https://resume.jclee.me/ja/`      | 200    | 148085 | `ja`          | イ・ジェチョル - DevSecOps/SRE/Platform Engineer         |
+| URL                           | Status | Bytes  | `<html lang>` | `<title>`                                        |
+| ----------------------------- | ------ | ------ | ------------- | ------------------------------------------------ |
+| `https://resume.jclee.me/`    | 200    | 148984 | `ko`          | 이재철 - DevSecOps/SRE/Platform Engineer         |
+| `https://resume.jclee.me/en/` | 200    | 95390  | `en`          | Jaecheol Lee - DevSecOps/SRE/Platform Engineer   |
+| `https://resume.jclee.me/ja/` | 200    | 148085 | `ja`          | イ・ジェチョル - DevSecOps/SRE/Platform Engineer |
 
 All three locales render the expected language, the Japanese page is a
 distinct artifact (≠ the Korean default), and no fetch returned 4xx/5xx.

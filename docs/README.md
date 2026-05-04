@@ -2,28 +2,41 @@
 
 > Parent: [AGENTS.md](AGENTS.md)
 
-This is the main entry point for the docs tree. Start with the maintained sections below, then use the archived sections for historical context only.
+This is the main entry point for the docs tree. Start with the maintained
+sections below, then use the archived sections for historical context only.
 
 ## Active Documentation (maintained, accurate)
 
 ### Architecture Decision Records (`docs/adr/`)
 
-- [0001-monorepo-structure.md](adr/0001-monorepo-structure.md), monorepo layout and ownership boundaries.
-- [0002-zero-runtime-io.md](adr/0002-zero-runtime-io.md), runtime code should avoid unexpected I/O.
-- [0003-single-source-of-truth.md](adr/0003-single-source-of-truth.md), canonical resume data lives in one place.
-- [0004-stealth-crawling.md](adr/0004-stealth-crawling.md), crawler behavior and anti-detection constraints.
-- [0005-cloudflare-workers.md](adr/0005-cloudflare-workers.md), Cloudflare Workers as the primary runtime.
-- [0006-single-worker-architecture.md](adr/0006-single-worker-architecture.md), worker boundary and deployment shape.
-- [0007-msa-service-split.md](adr/0007-msa-service-split.md), service split guidance for the job automation stack.
+- [0001-monorepo-structure.md](adr/0001-monorepo-structure.md), monorepo layout
+  and ownership boundaries.
+- [0002-zero-runtime-io.md](adr/0002-zero-runtime-io.md), runtime code should
+  avoid unexpected I/O.
+- [0003-single-source-of-truth.md](adr/0003-single-source-of-truth.md),
+  canonical resume data lives in one place.
+- [0004-stealth-crawling.md](adr/0004-stealth-crawling.md), crawler behavior and
+  anti-detection constraints.
+- [0005-cloudflare-workers.md](adr/0005-cloudflare-workers.md), Cloudflare
+  Workers as the primary runtime.
+- [0006-single-worker-architecture.md](adr/0006-single-worker-architecture.md),
+  worker boundary and deployment shape.
+- [0007-msa-service-split.md](adr/0007-msa-service-split.md), service split
+  guidance for the job automation stack.
 
 ### Architecture (`docs/architecture/`)
 
 - [ARCHITECTURE.md](ARCHITECTURE.md), top-level architecture overview.
-- [system-overview.md](architecture/system-overview.md), current system map and major components.
-- [DEPLOYMENT_PIPELINE.md](architecture/DEPLOYMENT_PIPELINE.md), build and deployment flow.
-- [component-inventory.md](architecture/component-inventory.md), inventory of major runtime pieces.
-- [JOB_JCLEE_ME_IMPLEMENTATION.md](architecture/JOB_JCLEE_ME_IMPLEMENTATION.md), job platform sync implementation notes.
-- [project-context.md](architecture/project-context.md), repo and runtime context for the current system.
+- [system-overview.md](architecture/system-overview.md), current system map and
+  major components.
+- [DEPLOYMENT_PIPELINE.md](architecture/DEPLOYMENT_PIPELINE.md), build and
+  deployment flow.
+- [component-inventory.md](architecture/component-inventory.md), inventory of
+  major runtime pieces.
+- [JOB_JCLEE_ME_IMPLEMENTATION.md](architecture/JOB_JCLEE_ME_IMPLEMENTATION.md),
+  job platform sync implementation notes.
+- [project-context.md](architecture/project-context.md), repo and runtime
+  context for the current system.
 
 ### Guides (`docs/guides/`)
 
@@ -68,7 +81,9 @@ This is the main entry point for the docs tree. Start with the maintained sectio
 
 ## Deleted Directories (removed 2026-04-14)
 
-The following directories were purged as historical-only content with no active references:
+The following directories were purged as historical-only content with no active
+references:
+
 - `docs/reports/` - 36 session reports
 - `docs/analysis/` - 8 codebase analyses
 - `docs/planning/` - 9 archived roadmaps
@@ -80,6 +95,10 @@ All content remains recoverable via `git log --diff-filter=D -- docs/reports/`.
 ## Document Standards
 
 - Use ADRs for durable decisions that need a stable record.
-- Use architecture docs for current system shape, guides for operator runbooks, and reports or analysis only for historical context.
-- Create a new doc only when an existing canonical doc cannot absorb the change cleanly.
-- Follow the `docs/AGENTS.md` hierarchy for docs-specific context, and check child `AGENTS.md` files in runtime areas when a doc points at a live subsystem.
+- Use architecture docs for current system shape, guides for operator runbooks,
+  and reports or analysis only for historical context.
+- Create a new doc only when an existing canonical doc cannot absorb the change
+  cleanly.
+- Follow the `docs/AGENTS.md` hierarchy for docs-specific context, and check
+  child `AGENTS.md` files in runtime areas when a doc points at a live
+  subsystem.

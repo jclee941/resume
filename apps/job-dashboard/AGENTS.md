@@ -6,7 +6,8 @@
 
 ## OVERVIEW
 
-Cloudflare Worker serving the job dashboard API at `resume.jclee.me/job/*`. Class-based handlers, 7 scheduled workflows, D1+KV storage.
+Cloudflare Worker serving the job dashboard API at `resume.jclee.me/job/*`.
+Class-based handlers, 7 scheduled workflows, D1+KV storage.
 
 ## STRUCTURE
 
@@ -35,7 +36,10 @@ job-dashboard/
 
 ## HANDLERS (14)
 
-ApplicationsHandler (7 methods), StatsHandler (4), AuthHandler (5), WebhookHandler (10+), AutoApplyHandler (3), AutoApplyWebhookHandler, DiagnosticsHandler, JobSearchHandler, ProfileSyncHandler, ReportHandler, ResumeMasterHandler, ResumeSyncHandler, TestHandler, BaseHandler.
+ApplicationsHandler (7 methods), StatsHandler (4), AuthHandler (5),
+WebhookHandler (10+), AutoApplyHandler (3), AutoApplyWebhookHandler,
+DiagnosticsHandler, JobSearchHandler, ProfileSyncHandler, ReportHandler,
+ResumeMasterHandler, ResumeSyncHandler, TestHandler, BaseHandler.
 
 ## WORKFLOWS (7)
 
@@ -51,26 +55,33 @@ ApplicationsHandler (7 methods), StatsHandler (4), AuthHandler (5), WebhookHandl
 
 ## MIDDLEWARE STACK
 
-`logger → CORS → rate-limit (60/min/IP) → CSRF → auth → handler → response-logger`
+`logger → CORS → rate-limit (60/min/IP) → CSRF → auth → handler →
+response-logger`
 
 ## STORAGE
 
 - **D1** (`job-dashboard-db`): applications, job_cache, sync_logs tables
 - **KV**: `SESSIONS`, `RATE_LIMIT_KV`, `NONCE_KV`
 - **AI**: Workers AI binding
-- **Browser**: `MYBROWSER` (Browser Rendering), `BROWSER_SESSION` (Durable Object: BrowserSessionDO)
+- **Browser**: `MYBROWSER` (Browser Rendering), `BROWSER_SESSION` (Durable
+  Object: BrowserSessionDO)
 - **Queue**: `crawl-tasks`
-- **Workflows**: 7 (job-crawling, application, resume-sync, daily-report, health-check, backup, cleanup)
+- **Workflows**: 7 (job-crawling, application, resume-sync, daily-report,
+  health-check, backup, cleanup)
 
 ## API SURFACE (47 endpoints)
 
-Health (3), Stats (4), Auth (7), Applications CRUD (6), Webhooks (9), Auto-apply (3), Workflows (7), Config (2), Testing (2), Diagnostics (2), Reports (2).
+Health (3), Stats (4), Auth (7), Applications CRUD (6), Webhooks (9), Auto-apply
+(3), Workflows (7), Config (2), Testing (2), Diagnostics (2), Reports (2).
 
 ## CHILD GUIDES
 
-- `src/handlers/AGENTS.md` owns handler-level contracts, route-to-handler responsibilities, and common handler anti-patterns.
-- `src/workflows/AGENTS.md` owns workflow trigger semantics, step boundaries, and idempotency constraints.
-- `src/middleware/AGENTS.md` owns middleware ordering, auth/rate-limit behavior, and response safety rules.
+- `src/handlers/AGENTS.md` owns handler-level contracts, route-to-handler
+  responsibilities, and common handler anti-patterns.
+- `src/workflows/AGENTS.md` owns workflow trigger semantics, step boundaries,
+  and idempotency constraints.
+- `src/middleware/AGENTS.md` owns middleware ordering, auth/rate-limit behavior,
+  and response safety rules.
 
 ## CONVENTIONS
 

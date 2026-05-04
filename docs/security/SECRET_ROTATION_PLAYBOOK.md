@@ -10,20 +10,29 @@
 
 Working-tree sanitization complete. The following changes are staged for commit:
 
-- `.env.automation` — replaced plaintext credentials with placeholder template (now gitignored).
+- `.env.automation` — replaced plaintext credentials with placeholder template
+  (now gitignored).
 - `.env.automation.example` — new template file to bootstrap from.
-- `apps/job-dashboard/.env.secrets` — replaced compromised values with **freshly rotated** ADMIN_TOKEN / WEBHOOK_SECRET / ENCRYPTION_KEY (now gitignored, mode 600).
+- `apps/job-dashboard/.env.secrets` — replaced compromised values with **freshly
+  rotated** ADMIN_TOKEN / WEBHOOK_SECRET / ENCRYPTION_KEY (now gitignored, mode
+  600).
 - `apps/job-dashboard/.env.secrets.example` — new template file.
-- `apps/portfolio/.tmp/` — entire directory untracked (build artifact, contained Cloudflare beacon token).
-- `tools/automation/resume-automation.js` — JSDoc comment with plaintext password redacted.
-- `docs/guides/CLOUDFLARE_AUTH_METHODS.md` — real CF API key replaced with `REVOKED_CF_API_KEY_REPLACE_ME`.
+- `apps/portfolio/.tmp/` — entire directory untracked (build artifact, contained
+  Cloudflare beacon token).
+- `tools/automation/resume-automation.js` — JSDoc comment with plaintext
+  password redacted.
+- `docs/guides/CLOUDFLARE_AUTH_METHODS.md` — real CF API key replaced with
+  `REVOKED_CF_API_KEY_REPLACE_ME`.
 - `docs/guides/CLOUDFLARE_TOKEN_SETUP.md` — same.
 - `docs/guides/DEPLOYMENT_VISUAL_GUIDE.md` — same (6 occurrences).
 - `.gitignore` — strengthened with comprehensive secret-file patterns.
-- `.gitleaks.toml` — extended with project-specific rules (Wanted OneID, JobKorea session, ADMIN_TOKEN/WEBHOOK_SECRET/ENCRYPTION_KEY patterns) and proper allowlists.
+- `.gitleaks.toml` — extended with project-specific rules (Wanted OneID,
+  JobKorea session, ADMIN_TOKEN/WEBHOOK_SECRET/ENCRYPTION_KEY patterns) and
+  proper allowlists.
 - `.pre-commit-config.yaml` — new file with gitleaks pre-commit hook.
 - `.github/workflows/ci.yml` — added `secret-scan` job using gitleaks-action.
-- `docs/architecture/kv-ownership.md` — new file documenting KV namespace ownership contract (SSOT-005).
+- `docs/architecture/kv-ownership.md` — new file documenting KV namespace
+  ownership contract (SSOT-005).
 
 ---
 
@@ -32,41 +41,46 @@ Working-tree sanitization complete. The following changes are staged for commit:
 ### Step 1 — Rotate JobKorea and Wanted credentials NOW
 
 The plaintext password `bingogo1l7` was committed to:
+
 - `.env.automation` (TRACKED, in commit `c40d7d1`)
 - `tools/automation/resume-automation.js` JSDoc (TRACKED)
 
-These are accessible via GitHub history at `https://github.com/jclee941/resume`. Anyone who cloned the repo before history rewrite has them.
+These are accessible via GitHub history at `https://github.com/jclee941/resume`.
+Anyone who cloned the repo before history rewrite has them.
 
 **Required actions:**
 
-1. Log in to JobKorea (`https://www.jobkorea.co.kr`) → change password → store new password in 1Password.
-2. Log in to Wanted (`https://wanted.co.kr`) → change password → store new password in 1Password.
+1. Log in to JobKorea (`https://www.jobkorea.co.kr`) → change password → store
+   new password in 1Password.
+2. Log in to Wanted (`https://wanted.co.kr`) → change password → store new
+   password in 1Password.
 3. Revoke any active OAuth tokens issued via the old passwords.
 
 ### Step 2 — Revoke / rotate the leaked Cloudflare API keys
 
-The following keys were committed and may be in github.com history (Initial commit `31fbb4c`):
+The following keys were committed and may be in github.com history (Initial
+commit `31fbb4c`):
 
-| Key prefix | Where it appeared | Action |
-|------------|-------------------|--------|
-| `00ceb252a1a463c9c69a9f5a9f97e5d112bb9` | `docs/guides/CLOUDFLARE_*.md` | Revoke at Cloudflare dashboard → My Profile → API Tokens |
-| `f79df8b585816744df8093b18b23f6a50b8cd` | `.env.local`, `DEPLOYMENT_*.md` | Revoke |
-| `CMTfxOdHacsbXsegngbbAV-jW5tPwsHA7HTtYswb` | `docs/reports/CICD_DEBUG*.md`, `DEPLOYMENT_STATUS.md` | Revoke |
-| `8c92c40a4f374cde9c3b7f8a1e9b5c2d` | `typescript/portfolio-worker/index*.html` (legacy) | Revoke |
+| Key prefix                                 | Where it appeared                                     | Action                                                   |
+| ------------------------------------------ | ----------------------------------------------------- | -------------------------------------------------------- |
+| `00ceb252a1a463c9c69a9f5a9f97e5d112bb9`    | `docs/guides/CLOUDFLARE_*.md`                         | Revoke at Cloudflare dashboard → My Profile → API Tokens |
+| `f79df8b585816744df8093b18b23f6a50b8cd`    | `.env.local`, `DEPLOYMENT_*.md`                       | Revoke                                                   |
+| `CMTfxOdHacsbXsegngbbAV-jW5tPwsHA7HTtYswb` | `docs/reports/CICD_DEBUG*.md`, `DEPLOYMENT_STATUS.md` | Revoke                                                   |
+| `8c92c40a4f374cde9c3b7f8a1e9b5c2d`         | `typescript/portfolio-worker/index*.html` (legacy)    | Revoke                                                   |
 
-Cloudflare console: https://dash.cloudflare.com/profile/api-tokens
+Cloudflare console: <https://dash.cloudflare.com/profile/api-tokens>
 
 ### Step 3 — Revoke / rotate the leaked third-party tokens
 
 These appeared in `docs/reports/ALL_SYSTEMS_REPORT.md` and elsewhere:
 
-| Token | Service | Action |
-|-------|---------|--------|
-| `morph_***[REDACTED-PURGED]***` | Morph (LLM) | Revoke at Morph dashboard |
-| `sk-or-v1-***[REDACTED-PURGED]***` | OpenRouter | Revoke at https://openrouter.ai/keys |
-| `glpat-dYEw***[REDACTED]***` | GitLab Personal Access Token (full value in /tmp/git-filter-replacements.txt) | Revoke at GitLab → User Settings → Access Tokens |
-| `glsa_39K1QJ***[REDACTED]***` | Grafana service account (full value in /tmp/git-filter-replacements.txt) | Revoke at Grafana → Service accounts |
-| `xapp-1-A09TER0TF5Y-10022641763313-...` | Slack app token | Revoke at https://api.slack.com/apps → OAuth & Permissions |
+| Token                                   | Service                                                                       | Action                                                       |
+| --------------------------------------- | ----------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| `morph_***[REDACTED-PURGED]***`         | Morph (LLM)                                                                   | Revoke at Morph dashboard                                    |
+| `sk-or-v1-***[REDACTED-PURGED]***`      | OpenRouter                                                                    | Revoke at <https://openrouter.ai/keys>                       |
+| `glpat-dYEw***[REDACTED]***`            | GitLab Personal Access Token (full value in /tmp/git-filter-replacements.txt) | Revoke at GitLab → User Settings → Access Tokens             |
+| `glsa_39K1QJ***[REDACTED]***`           | Grafana service account (full value in /tmp/git-filter-replacements.txt)      | Revoke at Grafana → Service accounts                         |
+| `xapp-1-A09TER0TF5Y-10022641763313-...` | Slack app token                                                               | Revoke at <https://api.slack.com/apps> → OAuth & Permissions |
 
 ### Step 4 — Upload the freshly rotated job-dashboard secrets to 1Password
 
@@ -123,7 +137,8 @@ For staging or other environments, repeat with `--env staging` etc.
 
 ### Step 6 — Rewrite git history to purge the leaked secrets
 
-**THIS IS DESTRUCTIVE. Coordinate with all collaborators first. After this, anyone with a local clone must reset.**
+**THIS IS DESTRUCTIVE. Coordinate with all collaborators first. After this,
+anyone with a local clone must reset.**
 
 ```bash
 # 1. Verify backups exist
@@ -239,7 +254,8 @@ cp /tmp/resume-backup-20260427-133607/job-dashboard-.env.secrets.backup apps/job
 
 ## Out-of-scope (future tasks per SSOT_IMPROVEMENT_PLAN.md)
 
-- **SSOT-028**: Adopt full secrets manager (Doppler / Keyflare / Infisical) instead of 1Password ad-hoc commands.
+- **SSOT-028**: Adopt full secrets manager (Doppler / Keyflare / Infisical)
+  instead of 1Password ad-hoc commands.
 - **SSOT-029**: t3-env for type-safe env access.
 - **SSOT-031**: CI gate that validates required env vars match secrets manager.
 

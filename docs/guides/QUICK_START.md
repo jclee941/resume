@@ -117,7 +117,7 @@ curl https://resume.jclee.me/health
 
 ## Critical Workflow (Memorize This!)
 
-```
+```text
 Edit sources → Build → Test → Deploy
      ↓           ↓       ↓       ↓
 data.json    npm run   npm    git push
@@ -146,7 +146,7 @@ index.html
 
 ## Project Structure (Key Directories)
 
-```
+```text
 resume/
 ├── apps/portfolio/
 │   ├── data.json          # ✏️ Edit: Project data
@@ -225,14 +225,14 @@ npm run deploy     # Deploy with new hashes
    - Add a new feature
 
 4. **Join monitoring**:
-   - Grafana: https://grafana.jclee.me
-   - Health check: https://resume.jclee.me/health
-   - Metrics: https://resume.jclee.me/metrics
+   - Grafana: <https://grafana.jclee.me>
+   - Health check: <https://resume.jclee.me/health>
+   - Metrics: <https://resume.jclee.me/metrics>
 
 ## Getting Help
 
 - **Questions**: Check `docs/` directory for guides
-- **Issues**: https://github.com/qws941/resume/issues
+- **Issues**: <https://github.com/qws941/resume/issues>
 - **Architecture**: `docs/guides/ARCHITECTURE.md`
 - **Testing**: `docs/guides/TESTING_GUIDE.md`
 - **Deployment**: `docs/guides/PRODUCTION_DEPLOYMENT_GUIDE.md`

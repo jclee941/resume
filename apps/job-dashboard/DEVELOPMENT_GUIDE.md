@@ -1,6 +1,7 @@
 # Development Guide
 
-Complete guide for local development, testing, debugging, and extending the job-automation dashboard worker.
+Complete guide for local development, testing, debugging, and extending the
+job-automation dashboard worker.
 
 ## Table of Contents
 
@@ -9,19 +10,19 @@ Complete guide for local development, testing, debugging, and extending the job-
 3. [Local Development](#local-development)
 4. [Testing](#testing)
 5. [Adding New Endpoints](#adding-new-endpoints)
-6. [Adding New Handlers](#adding-new-handlers)
-7. [Adding Middleware](#adding-middleware)
-8. [Database Changes](#database-changes)
-9. [KV Operations](#kv-operations)
-10. [Unit Testing](#unit-testing)
-11. [Integration Testing](#integration-testing)
-12. [Debugging](#debugging)
-13. [Performance Profiling](#performance-profiling)
-14. [Workflow Development](#workflow-development)
-15. [IDE Setup](#ide-setup)
-16. [Common Development Tasks](#common-development-tasks)
-17. [Troubleshooting](#troubleshooting)
-18. [Best Practices](#best-practices)
+6. Adding New Handlers
+7. Adding Middleware
+8. Database Changes
+9. KV Operations
+10. Unit Testing
+11. Integration Testing
+12. Debugging
+13. Performance Profiling
+14. Workflow Development
+15. IDE Setup
+16. Common Development Tasks
+17. Troubleshooting
+18. Best Practices
 
 ---
 
@@ -43,6 +44,7 @@ Complete guide for local development, testing, debugging, and extending the job-
   ```
 
 - **Wrangler CLI** 3.0.0 or higher
+
   ```bash
   npm install -g wrangler@latest
   wrangler --version
@@ -58,6 +60,7 @@ Complete guide for local development, testing, debugging, and extending the job-
 
 - **curl** or **Postman** for API testing
 - **SQLite CLI** for database inspection
+
   ```bash
   sqlite3 --version
   ```
@@ -373,8 +376,6 @@ Add to [API_REFERENCE.md](./API_REFERENCE.md):
 }
 ```
 
-````
-
 ---
 
 ## Adding New Handlers
@@ -422,7 +423,7 @@ export class MyHandler extends BaseHandler {
 
 ### Example: Full Handler
 
-```javascript
+````javascript
 import { BaseHandler } from './base-handler.js';
 
 export class JobsHandler extends BaseHandler {
@@ -461,7 +462,7 @@ export class JobsHandler extends BaseHandler {
     }
   }
 }
-```
+```text
 
 ---
 
@@ -488,7 +489,7 @@ export function customMiddleware(handler) {
     return response;
   };
 }
-```
+```text
 
 ### Adding to Middleware Stack
 
@@ -503,7 +504,7 @@ import { customMiddleware } from './custom-middleware.js';
 export function buildMiddlewareStack(handler) {
   return loggerMiddleware(corsMiddleware(rateLimitMiddleware(customMiddleware(handler))));
 }
-```
+```text
 
 ### Example: Custom Middleware
 
@@ -537,7 +538,7 @@ export function authMiddleware(handler) {
     return handler(request, env, context);
   };
 }
-```
+```text
 
 ---
 
@@ -555,9 +556,10 @@ cat > apps/job-dashboard/migrations/0002_add_column.sql << 'EOF'
 ALTER TABLE applications ADD COLUMN IF NOT EXISTS status_updated_at INTEGER;
 
 -- Create index for performance
-CREATE INDEX IF NOT EXISTS idx_status_updated ON applications(status_updated_at DESC);
+CREATE INDEX IF NOT EXISTS idx_status_updated ON applications(status_updated_at
+DESC);
 EOF
-```
+```text
 
 ### Running Migrations Locally
 
@@ -567,7 +569,7 @@ npx wrangler dev
 
 # Run migration once in the session
 wrangler d1 execute job-dashboard-db --file migrations/0002_add_column.sql
-```
+```text
 
 ### Running Migrations in Production
 
@@ -584,7 +586,7 @@ wrangler d1 execute job-dashboard-db \
 wrangler d1 execute job-dashboard-db \
   --command "PRAGMA table_info(applications);" \
   --env production
-```
+```text
 
 ### Querying Database in Code
 
@@ -620,7 +622,7 @@ const batch = env.DB.batch([
   env.DB.prepare('UPDATE applications ...').bind(...),
 ]);
 await batch;
-```
+```text
 
 ---
 
@@ -648,7 +650,7 @@ const exists = await env.SESSIONS.get('session:user-123');
 if (!exists) {
   // Key doesn't exist
 }
-```
+```text
 
 ### KV with Expiration (TTL)
 
@@ -681,7 +683,7 @@ if (!current) {
   // Rate limit exceeded
   return 429;
 }
-```
+```text
 
 ### KV Patterns
 
@@ -705,7 +707,7 @@ for (const key of listResult.keys) {
   const value = await env.SESSIONS.get(key.name, 'json');
   console.log(key.name, value);
 }
-```
+```text
 
 ---
 
@@ -723,7 +725,7 @@ global.TextDecoder = TextDecoder;
 // Mock Cloudflare environment
 global.Request = global.Request || class {};
 global.Response = global.Response || class {};
-```
+```text
 
 ### Testing Handlers
 
@@ -776,7 +778,7 @@ describe('CustomHandler', () => {
     expect(response.status).toBe(401);
   });
 });
-```
+```text
 
 ### Testing Middleware
 
@@ -804,7 +806,7 @@ describe('Rate Limit Middleware', () => {
     // Test rate limit exceeded scenario
   });
 });
-```
+```text
 
 ---
 
@@ -860,7 +862,7 @@ test.describe('Job Dashboard API', () => {
     expect(data).toHaveProperty('id');
   });
 });
-```
+```text
 
 ---
 
@@ -885,7 +887,7 @@ logECS('info', 'Application created', {
   'application.id': 'app-123',
   'user.id': 'user-456',
 });
-```
+```text
 
 ### Local Debugging with Wrangler
 
@@ -896,7 +898,7 @@ wrangler dev --inspect
 # Open Chrome DevTools
 # Navigate to: chrome://inspect
 # Click "Inspect" on the worker
-```
+```text
 
 ### VS Code Debugger
 
@@ -917,7 +919,7 @@ Create `.vscode/launch.json`:
     }
   ]
 }
-```
+```text
 
 ### Error Tracking
 
@@ -934,7 +936,7 @@ try {
   });
   throw error;
 }
-```
+```text
 
 ---
 
@@ -955,7 +957,7 @@ try {
     duration_ms: duration,
   });
 }
-```
+```text
 
 ### Database Query Performance
 
@@ -979,7 +981,7 @@ async function queryWithTiming(db, query, params, slowThreshold = 50) {
 
   return result;
 }
-```
+```text
 
 ### Memory Usage
 
@@ -999,7 +1001,7 @@ if (sizeMB > 10) {
     'memory.estimated_mb': sizeMB,
   });
 }
-```
+```text
 
 ---
 
@@ -1049,7 +1051,7 @@ export class MyWorkflow extends WorkflowEntrypoint {
     }
   }
 }
-```
+```text
 
 ### Triggering Workflows
 
@@ -1075,7 +1077,7 @@ async function handleWorkflowTrigger(request, env) {
   const result = await triggerWorkflow(env, workflow);
   return new Response(JSON.stringify(result), { status: 200 });
 }
-```
+```text
 
 ### Event Triggers
 
@@ -1086,7 +1088,7 @@ Configure workflows in `wrangler.jsonc` and trigger from API/CI:
 name = "daily-report-workflow"
 main = "src/workflows/daily-report.js"
 binding = "DAILY_REPORT"
-```
+```text
 
 ---
 
@@ -1106,7 +1108,7 @@ Recommended extensions for `.vscode/extensions.json`:
     "Cloudflare.wrangler"
   ]
 }
-```
+```text
 
 ### VS Code Settings
 
@@ -1138,7 +1140,7 @@ Create `.vscode/settings.json`:
     "editor.tabSize": 2
   }
 }
-```
+```text
 
 ### TypeScript Configuration
 
@@ -1162,7 +1164,7 @@ Create `tsconfig.json`:
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "tests"]
 }
-```
+```text
 
 ---
 
@@ -1216,7 +1218,7 @@ async function handleListApplications(request, env) {
     pagination: { page, limit, total: result.count },
   });
 }
-```
+```text
 
 ### Adjusting Rate Limit
 
@@ -1228,7 +1230,7 @@ const RATE_LIMIT_WINDOW = 60; // seconds
 // Or make it configurable
 const RATE_LIMIT = parseInt(env.RATE_LIMIT || '60');
 const RATE_LIMIT_WINDOW = parseInt(env.RATE_LIMIT_WINDOW || '60');
-```
+```text
 
 ### Adding CORS Support for New Domain
 
@@ -1250,7 +1252,7 @@ function getCORSHeaders(origin) {
   }
   return {};
 }
-```
+```text
 
 ### Creating a Webhook
 
@@ -1289,7 +1291,7 @@ async function sendWebhook(url, data, secret) {
 
   return response.status === 200;
 }
-```
+```text
 
 ---
 
@@ -1342,14 +1344,16 @@ async function sendWebhook(url, data, secret) {
 
 ### Code Organization
 
-```
+````
+
 src/
-├── handlers/          # Request handlers (one per domain)
-├── services/          # Business logic (stateless)
-├── middleware/        # Request/response pipeline
-├── utils/             # Utility functions
-└── index.js           # Entry point
-```
+├── handlers/ # Request handlers (one per domain)
+├── services/ # Business logic (stateless)
+├── middleware/ # Request/response pipeline
+├── utils/ # Utility functions
+└── index.js # Entry point
+
+````text
 
 ### Error Handling
 
@@ -1366,7 +1370,7 @@ try {
   // Return user-friendly error
   return errorResponse('Operation failed', 500);
 }
-```
+```text
 
 ### Validation
 
@@ -1390,7 +1394,7 @@ async function handleCreateApplication(request, env) {
     return errorResponse('Title too long', 400);
   }
 }
-```
+```text
 
 ### No Credentials in Logs
 
@@ -1406,7 +1410,7 @@ logECS('info', 'User login', {
   'user.id': userId,
   'user.ip': clientIP,
 });
-```
+```text
 
 ### Always Use TTL for KV
 
@@ -1418,7 +1422,7 @@ await env.KV.put(key, value);
 await env.KV.put(key, value, {
   expirationTtl: 86400, // 24 hours
 });
-```
+```text
 
 ### Async/Await Over Promises
 
@@ -1436,7 +1440,7 @@ function handler(request, env) {
     .then((data) => process(data))
     .then((result) => result);
 }
-```
+```text
 
 ### Environment Variables
 
@@ -1446,7 +1450,7 @@ const apiKey = env.API_KEY;
 
 // ❌ WRONG - Hardcoded secrets
 const apiKey = 'sk_live_1234567890';
-```
+```text
 
 ---
 
@@ -1457,7 +1461,7 @@ const apiKey = 'sk_live_1234567890';
    ```sql
    CREATE INDEX idx_status ON applications(status);
    CREATE INDEX idx_created ON applications(created_at DESC);
-   ```
+   ```text
 
 2. **Batch Database Operations**
 
@@ -1465,7 +1469,7 @@ const apiKey = 'sk_live_1234567890';
    // Better than individual queries
    const batch = env.DB.batch([query1, query2, query3]);
    await batch;
-   ```
+   ```text
 
 3. **Cache Static Data in KV**
 
@@ -1478,7 +1482,7 @@ const apiKey = 'sk_live_1234567890';
        expirationTtl: 3600,
      });
    }
-   ```
+   ```text
 
 4. **Minimize Response Size**
 
@@ -1486,15 +1490,16 @@ const apiKey = 'sk_live_1234567890';
    // Only return required fields
    SELECT id, title, company FROM applications  // Good
    SELECT * FROM applications  // Wasteful
-   ```
+   ```text
 
 5. **Stream Large Responses**
+
    ```javascript
    const stream = await generateLargeDataset();
    return new Response(stream, {
      headers: { 'Content-Type': 'application/json' },
    });
-   ```
+   ```text
 
 ---
 
@@ -1508,3 +1513,4 @@ const apiKey = 'sk_live_1234567890';
 - [Deployment Guide](./DEPLOYMENT_GUIDE.md)
 - [API Reference](./API_REFERENCE.md)
 - [Architecture Diagrams](./DIAGRAMS.md)
+````

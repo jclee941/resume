@@ -38,8 +38,8 @@ npm run dashboard
 
 **접속:**
 
-- 대시보드: http://localhost:3456
-- API: http://localhost:3456/api/
+- 대시보드: <http://localhost:3456>
+- API: <http://localhost:3456/api/>
 
 **확인:**
 
@@ -212,7 +212,7 @@ node src/auto-apply/cli/index.js search "인프라" 15
 
 **출력 예시:**
 
-```
+```text
 🔍 Searching for: DevOps 엔지니어
 
 📋 Found 15 matching jobs
@@ -368,7 +368,7 @@ node src/auto-apply/cli/index.js update app_123 accepted "최종 합격"
 
 **플로우:**
 
-```
+```text
 1. Schedule Trigger (09:00)
    ↓
 2. Wanted API (채용공고 검색)
@@ -406,7 +406,7 @@ curl -X POST https://n8n.jclee.me/webhook/job-search-trigger \
 
 **플로우:**
 
-```
+```text
 1. Schedule Trigger (18:00)
    ↓
 2. Dashboard API (통계 조회)
@@ -433,7 +433,7 @@ curl -X POST https://n8n.jclee.me/webhook/job-search-trigger \
 
 **플로우:**
 
-```
+```text
 1. Webhook Trigger
    ↓
 2. Export (현재 이력서)
@@ -488,7 +488,7 @@ export SLACK_WEBHOOK_URL="https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
 
 **지원 완료 알림:**
 
-```
+```text
 🎯 새로운 지원 완료!
 
 📋 포지션: DevOps 엔지니어
@@ -502,7 +502,7 @@ export SLACK_WEBHOOK_URL="https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
 
 **면접 예정 알림:**
 
-```
+```text
 📅 면접 일정 알림
 
 📋 포지션: DevOps 엔지니어
@@ -518,7 +518,7 @@ export SLACK_WEBHOOK_URL="https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
 
 **일일 리포트 알림:**
 
-```
+```text
 📊 오늘의 지원 현황 (2025-12-23)
 
 ✅ 지원 완료: 5건
@@ -539,7 +539,7 @@ export SLACK_WEBHOOK_URL="https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
 
 **세션 파일:**
 
-```
+```text
 ~/.OpenCode/data/wanted-session.json
 ```
 
@@ -607,7 +607,7 @@ tar -xzf wanted-backup-20251223.tar.gz -C ~/
 
 **위치:**
 
-```
+```text
 ~/.OpenCode/data/wanted-logs/
 ├── auto-apply-2025-12-23.log
 ├── dashboard-2025-12-23.log
@@ -823,7 +823,7 @@ npm run dashboard
 
 **지원 및 문의:**
 
-- 📧 Email: qws941@gmail.com
+- 📧 Email: <qws941@gmail.com>
 - 💬 Slack: #job-applications
 - 📚 문서: `docs/reports/AUTO_APPLY_SYSTEM_STATUS.md`
 

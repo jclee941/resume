@@ -33,7 +33,7 @@ npx wrangler login
 
 **1단계: Cloudflare Dashboard 접속**
 
-```
+```text
 https://dash.cloudflare.com/profile/api-tokens
 ```
 
@@ -44,7 +44,7 @@ https://dash.cloudflare.com/profile/api-tokens
   - Account / Workers Scripts / Edit
   - Account / Workers KV Storage / Edit
   - Account / Account Settings / Read
-- Account Resources: Include / <your-account>
+- Account Resources: Include / `<your-account>`
 - Zone Resources: All zones
 
 **3단계: Copy Token**
@@ -69,7 +69,7 @@ npx wrangler whoami
 
 ### Option 3: API Key 사용 (비권장)
 
-**현재 설정 활용**:
+**현재 설정 활용**
 
 ```bash
 # Infisical에 이미 있는 API Key 사용
@@ -95,9 +95,9 @@ export CLOUDFLARE_EMAIL="your-email@example.com"
 
 ## 📝 참고 링크
 
-- API Token 생성: https://developers.cloudflare.com/fundamentals/api/get-started/create-token/
-- Wrangler 인증: https://developers.cloudflare.com/workers/wrangler/commands/#login
-- Workers 배포: https://developers.cloudflare.com/workers/wrangler/commands/#deploy
+- API Token 생성: <https://developers.cloudflare.com/fundamentals/api/get-started/create-token/>
+- Wrangler 인증: <https://developers.cloudflare.com/workers/wrangler/commands/#login>
+- Workers 배포: <https://developers.cloudflare.com/workers/wrangler/commands/#deploy>
 
 ---
 

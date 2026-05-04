@@ -22,14 +22,18 @@ scripts/
 
 ## CHILD GUIDES
 
-- `build/AGENTS.md` owns generation pipeline guardrails for artifacts and snapshots.
-- `utils/AGENTS.md` owns shared utility conventions and SSoT-safe helper patterns.
-- `deployment/AGENTS.md` owns deploy helper safety constraints and preflight checks.
+- `build/AGENTS.md` owns generation pipeline guardrails for artifacts and
+  snapshots.
+- `utils/AGENTS.md` owns shared utility conventions and SSoT-safe helper
+  patterns.
+- `deployment/AGENTS.md` owns deploy helper safety constraints and preflight
+  checks.
 - `bazel/AGENTS.md` owns Bazel facade shell entrypoints and script boundaries.
 
 ## CONVENTIONS
 
-- Child scripts inherit root/`tools/` conventions (project root context, `set -euo pipefail`, idempotency).
+- Child scripts inherit root/`tools/` conventions (project root context, `set
+  -euo pipefail`, idempotency).
 
 ## ANTI-PATTERNS
 

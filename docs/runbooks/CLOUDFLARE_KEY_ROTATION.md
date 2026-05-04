@@ -9,16 +9,19 @@
 
 ## Why this is required
 
-Production deploys use the Cloudflare **Global API Key** (`CLOUDFLARE_API_KEY` GitHub
+Production deploys use the Cloudflare **Global API Key** (`CLOUDFLARE_API_KEY`
+GitHub
 secret + `CLOUDFLARE_EMAIL`). Per Oracle security review:
 
 > A leaked global API key is account-wide blast radius.
 
 The fix is to:
 
-1. Mint a **scoped API Token** with only `Workers Scripts:Edit` (and `Cache Purge` if used).
+1. Mint a **scoped API Token** with only `Workers Scripts:Edit` (and `Cache
+   Purge` if used).
 2. Add it as a new `CLOUDFLARE_API_TOKEN` GitHub secret.
-3. Update `.github/workflows/release.yml` to use the token instead of the global key.
+3. Update `.github/workflows/release.yml` to use the token instead of the global
+   key.
 4. Verify a deploy works.
 5. Revoke the old global API key.
 
@@ -31,7 +34,7 @@ and the GitHub repository — it cannot be automated from inside the repo.
 
 ### 1. Mint a scoped token in Cloudflare
 
-1. Open https://dash.cloudflare.com/profile/api-tokens
+1. Open <https://dash.cloudflare.com/profile/api-tokens>
 2. Click **Create Token**
 3. Use template **"Edit Cloudflare Workers"** (or **Custom token** with):
    - **Permissions**:
@@ -39,7 +42,8 @@ and the GitHub repository — it cannot be automated from inside the repo.
      - `Account → Workers Routes → Edit`
      - `Zone → Workers Routes → Edit` (resource: `jclee.me`)
      - `Zone → Cache Purge → Purge` (optional, only if release pipeline purges)
-   - **Account Resources**: include only the account that hosts `resume` and `job` workers
+   - **Account Resources**: include only the account that hosts `resume` and
+     `job` workers
    - **Zone Resources**: include only `jclee.me`
    - **TTL**: optional but recommended 1 year max
 4. Click **Continue to summary** → **Create Token**
@@ -81,7 +85,8 @@ The `wrangler-action` auto-detects `CLOUDFLARE_API_TOKEN` and prefers it
 over global key auth.
 
 Commit message:
-```
+
+```text
 chore(deploy): migrate Cloudflare auth from global API key to scoped token
 
 Closes P0-1 in docs/architecture/MONOREPO_REVIEW_2026-04-29.md.
@@ -105,12 +110,13 @@ curl -s https://resume.jclee.me/health | jq .
 
 ### 5. Revoke the old global API key
 
-1. Open https://dash.cloudflare.com/profile/api-tokens
+1. Open <https://dash.cloudflare.com/profile/api-tokens>
 2. Scroll to **Global API Key** section → click **View**
 3. Click **Roll** (this regenerates the key, invalidating the old one)
    OR
    If you also want to remove `CLOUDFLARE_EMAIL` + `CLOUDFLARE_API_KEY` GitHub
    secrets that are now unused:
+
    ```bash
    gh secret delete CLOUDFLARE_API_KEY --repo jclee941/resume
    gh secret delete CLOUDFLARE_EMAIL --repo jclee941/resume
@@ -121,10 +127,13 @@ curl -s https://resume.jclee.me/health | jq .
 ## Verification checklist
 
 - [ ] New `CLOUDFLARE_API_TOKEN` GitHub secret exists
-- [ ] `.github/workflows/release.yml` uses `CLOUDFLARE_API_TOKEN` env var only (no `CLOUDFLARE_API_KEY`/`CLOUDFLARE_EMAIL`)
+- [ ] `.github/workflows/release.yml` uses `CLOUDFLARE_API_TOKEN` env var only
+  (no `CLOUDFLARE_API_KEY`/`CLOUDFLARE_EMAIL`)
 - [ ] At least one production deploy via the new token completed successfully
-- [ ] `curl https://resume.jclee.me/health` returns `status: healthy` after deploy
-- [ ] Old global API key rolled OR `CLOUDFLARE_API_KEY` + `CLOUDFLARE_EMAIL` secrets deleted from GitHub
+- [ ] `curl https://resume.jclee.me/health` returns `status: healthy` after
+  deploy
+- [ ] Old global API key rolled OR `CLOUDFLARE_API_KEY` + `CLOUDFLARE_EMAIL`
+  secrets deleted from GitHub
 
 When all 5 checks pass, mark P0-1 RESOLVED in
 `docs/architecture/MONOREPO_REVIEW_2026-04-29.md` § 9.
@@ -133,8 +142,12 @@ When all 5 checks pass, mark P0-1 RESOLVED in
 
 ## Why this can't be automated from inside the repo
 
-- Cloudflare API tokens can only be created by a human signed into the Cloudflare dashboard.
-- GitHub repository secrets cannot be set by a workflow that doesn't already have admin access.
-- Even if both were possible programmatically, the credentials needed to bootstrap that automation would themselves be the same blast-radius global key we're trying to retire.
+- Cloudflare API tokens can only be created by a human signed into the
+  Cloudflare dashboard.
+- GitHub repository secrets cannot be set by a workflow that doesn't already
+  have admin access.
+- Even if both were possible programmatically, the credentials needed to
+  bootstrap that automation would themselves be the same blast-radius global key
+  we're trying to retire.
 
 This is a one-time human handoff, not a recurring chore.

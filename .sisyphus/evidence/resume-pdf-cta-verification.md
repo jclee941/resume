@@ -30,9 +30,7 @@ command at lines 1351–1361:
 
 ```js
 terminalCommands['download'] = function () {
-  var pdfLink = document.querySelector(
-    '.hero-download a[download], .resume-download a[download]'
-  );
+  var pdfLink = document.querySelector('.hero-download a[download], .resume-download a[download]');
   var url = pdfLink && pdfLink.getAttribute('href');
   if (!url || url.indexOf('<!--') !== -1) {
     return '> Resume PDF URL is not available yet.';
@@ -48,8 +46,7 @@ the `.hero-download` container only renders a `#contact` anchor:
 
 ```html
 <div class="hero-download" role="group" aria-label="채용 문의 옵션">
-  <a href="#contact" class="link-subtle" aria-label="채용 또는 면접 문의하기"
-    >채용·면접 문의하기</a>
+  <a href="#contact" class="link-subtle" aria-label="채용 또는 면접 문의하기">채용·면접 문의하기</a>
 </div>
 ```
 

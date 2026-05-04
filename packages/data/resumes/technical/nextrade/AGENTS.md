@@ -6,7 +6,8 @@
 
 ## OVERVIEW
 
-Nextrade exchange project documentation. Architecture, DR plan, SOC runbook in compact + full variants.
+Nextrade exchange project documentation. Architecture, DR plan, SOC runbook in
+compact + full variants.
 
 ## FILES
 

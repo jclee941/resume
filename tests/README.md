@@ -19,7 +19,8 @@ npm run test:e2e:smoke
 
 ## What changed recently
 
-- `deploy-verification` now skips job health checks when the job endpoint returns 500
+- `deploy-verification` now skips job health checks when the job endpoint
+  returns 500
 
 ## Test layout
 

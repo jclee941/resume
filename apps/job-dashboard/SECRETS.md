@@ -11,7 +11,7 @@ Set these in GitHub → Settings → Secrets and variables → Actions:
 
 ---
 
-# Worker Secrets Configuration for resume.jclee.me/job Worker
+## Worker Secrets Configuration for resume.jclee.me/job Worker
 
 ## Required Secrets
 

@@ -2,11 +2,16 @@
 
 ## 파트너 소개
 
-금융·공공 보안 인프라 엔지니어. 넥스트레이드에서 Splunk ES 탐지 체계와 FortiGate HA 아키텍처를 설계·운영했고, Grafana·Prometheus·Loki 기반 Observability 플랫폼을 직접 구축 중. 보안 설계부터 자동화·관측성까지 end-to-end로 책임지는 시니어 역할에 집중합니다.
+금융·공공 보안 인프라 엔지니어. 넥스트레이드에서 Splunk ES 탐지 체계와 FortiGate HA 아키텍처를 설계·운영했고,
+Grafana·Prometheus·Loki 기반 Observability 플랫폼을 직접 구축 중. 보안 설계부터 자동화·관측성까지
+end-to-end로 책임지는 시니어 역할에 집중합니다.
 
 ## 보유 기술
 
-Splunk, FortiGate, FortiManager, FortiAnalyzer, Prometheus, Grafana, Loki, AWS, Terraform, Docker, Kubernetes, Linux, Ansible, Python, n8n, GitHub Actions, GitLab CI/CD, PostgreSQL, Elasticsearch, Kibana, VMware NSX-T, VPN, NAC, Shell Script
+Splunk, FortiGate, FortiManager, FortiAnalyzer, Prometheus, Grafana, Loki, AWS,
+Terraform, Docker, Kubernetes, Linux, Ansible, Python, n8n, GitHub Actions,
+GitLab CI/CD, PostgreSQL, Elasticsearch, Kibana, VMware NSX-T, VPN, NAC, Shell
+Script
 
 ---
 

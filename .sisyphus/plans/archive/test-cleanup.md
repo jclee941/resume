@@ -3,14 +3,15 @@
 ## TL;DR
 
 > **Quick Summary**: Delete obsolete skipped tests (stats section removed in redesign) and fix @ts-ignore by using proper type assertion.
-> 
+>
 > **Deliverables**:
+>
 > - 2 skipped visual tests deleted from visual.spec.js
 > - @ts-ignore replaced with proper TypeScript-safe code
 > - Planning docs verified/deleted if exist
 > - All tests passing
 > - Committed and pushed
-> 
+>
 > **Estimated Effort**: Quick
 > **Parallel Execution**: YES - 2 waves
 > **Critical Path**: Task 1,2 (parallel) → Task 3 (verify) → Task 4 (commit)
@@ -20,18 +21,22 @@
 ## Context
 
 ### Original Request
+
 Cleanup actionable tasks from E2E test analysis:
+
 1. Delete skipped visual tests for removed stats section
 2. Fix @ts-ignore in ab-testing.test.js
 3. Delete completed .sisyphus planning docs (if exist)
 4. Commit and push
 
 ### What's NOT In Scope (Document Only)
+
 - Sentry configuration (7 tests) - infrastructure decision
 - Performance test investigation - needs deeper analysis
 - Archive file GitLab references - low priority historical
 
 ### Research Findings
+
 - **visual.spec.js lines 52-60**: Skipped test for `.stats-grid` - stats section removed in neon redesign
 - **visual.spec.js lines 167-175**: Skipped test for `.stat-card` - same reason
 - **ab-testing.test.js line 406-407**: Uses `delete global.localStorage` which TypeScript treats as readonly
@@ -42,25 +47,30 @@ Cleanup actionable tasks from E2E test analysis:
 ## Work Objectives
 
 ### Core Objective
+
 Remove dead test code and fix TypeScript warning for cleaner test suite.
 
 ### Concrete Deliverables
+
 - `tests/e2e/visual.spec.js` - 2 test blocks deleted
 - `tests/unit/lib/ab-testing.test.js` - @ts-ignore removed, proper type assertion added
 - `.sisyphus/plans/css-csp-gitlab-cleanup.md` - deleted (if exists)
 - `.sisyphus/drafts/css-csp-gitlab-cleanup.md` - deleted (if exists)
 
 ### Definition of Done
+
 - [ ] `npm test` passes with no failures
 - [ ] `npm run test:e2e` passes (or skips expected Sentry tests)
 - [ ] No @ts-ignore in ab-testing.test.js
 - [ ] Git working directory clean after commit
 
 ### Must Have
+
 - All tests pass after changes
 - Proper TypeScript handling for localStorage mock
 
 ### Must NOT Have (Guardrails)
+
 - Do NOT enable Sentry tests (infrastructure not configured)
 - Do NOT investigate performance test (out of scope)
 - Do NOT modify archive files (low priority)
@@ -74,6 +84,7 @@ Remove dead test code and fix TypeScript warning for cleaner test suite.
 > All verification via agent-executed commands.
 
 ### Test Decision
+
 - **Infrastructure exists**: YES (Jest + Playwright)
 - **Automated tests**: Tests-after (verify existing tests pass)
 - **Framework**: Jest (unit), Playwright (E2E)
@@ -136,11 +147,11 @@ Parallel Speedup: ~30% faster than sequential
 ### Dependency Matrix
 
 | Task | Depends On | Blocks | Can Parallelize With |
-|------|------------|--------|---------------------|
-| 1 | None | 3 | 2 |
-| 2 | None | 3 | 1 |
-| 3 | 1, 2 | 4 | None |
-| 4 | 3 | None | None (final) |
+| ---- | ---------- | ------ | -------------------- |
+| 1    | None       | 3      | 2                    |
+| 2    | None       | 3      | 1                    |
+| 3    | 1, 2       | 4      | None                 |
+| 4    | 3          | None   | None (final)         |
 
 ---
 
@@ -187,6 +198,7 @@ Parallel Speedup: ~30% faster than sequential
   - [ ] `grep -c "stats" tests/e2e/visual.spec.js` → 0 matches
 
   **QA Scenario**:
+
   ```
   Scenario: Visual tests file has no stats references
     Tool: Bash
@@ -246,6 +258,7 @@ Parallel Speedup: ~30% faster than sequential
   - [ ] localStorage is properly mocked/unmocked
 
   **QA Scenario**:
+
   ```
   Scenario: No @ts-ignore and test passes
     Tool: Bash
@@ -293,6 +306,7 @@ Parallel Speedup: ~30% faster than sequential
   - [ ] No css-csp-gitlab-cleanup.md files in .sisyphus/
 
   **QA Scenario**:
+
   ```
   Scenario: All tests pass
     Tool: Bash
@@ -343,6 +357,7 @@ Parallel Speedup: ~30% faster than sequential
   - [ ] `git push` succeeds
 
   **QA Scenario**:
+
   ```
   Scenario: Changes committed and pushed
     Tool: Bash
@@ -363,15 +378,16 @@ Parallel Speedup: ~30% faster than sequential
 
 ## Commit Strategy
 
-| After Task | Message | Files | Verification |
-|------------|---------|-------|--------------|
-| 4 | `test: cleanup obsolete skipped tests and fix ts-ignore` | visual.spec.js, ab-testing.test.js | npm test |
+| After Task | Message                                                  | Files                              | Verification |
+| ---------- | -------------------------------------------------------- | ---------------------------------- | ------------ |
+| 4          | `test: cleanup obsolete skipped tests and fix ts-ignore` | visual.spec.js, ab-testing.test.js | npm test     |
 
 ---
 
 ## Success Criteria
 
 ### Verification Commands
+
 ```bash
 # Verify no stats tests remain
 grep -c "stats" tests/e2e/visual.spec.js  # Expected: 0
@@ -390,6 +406,7 @@ git status  # Expected: clean working tree
 ```
 
 ### Final Checklist
+
 - [ ] 2 skipped visual tests deleted
 - [ ] @ts-ignore replaced with proper type handling
 - [ ] All unit tests pass
@@ -401,8 +418,8 @@ git status  # Expected: clean working tree
 
 ## Out of Scope (Documented for Future Reference)
 
-| Item | Reason | Future Action |
-|------|--------|---------------|
-| Sentry tests (7) | Needs DSN configuration | Configure Sentry in worker.js when ready |
-| Performance test | Flaky, needs investigation | Deep dive into JSON-LD script timing |
-| Archive GitLab refs | Historical files, low priority | Optional cleanup later |
+| Item                | Reason                         | Future Action                            |
+| ------------------- | ------------------------------ | ---------------------------------------- |
+| Sentry tests (7)    | Needs DSN configuration        | Configure Sentry in worker.js when ready |
+| Performance test    | Flaky, needs investigation     | Deep dive into JSON-LD script timing     |
+| Archive GitLab refs | Historical files, low priority | Optional cleanup later                   |

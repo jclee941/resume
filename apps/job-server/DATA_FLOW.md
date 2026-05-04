@@ -1,15 +1,18 @@
 # Job Automation Data Flow Architecture
 
-Complete documentation of all data flows in the job-automation system: MCP requests, service orchestration, browser automation, worker communication, and database synchronization.
+Complete documentation of all data flows in the job-automation system: MCP
+requests, service orchestration, browser automation, worker communication, and
+database synchronization.
 
 **Last Updated**: 2026-02-11  
-**Scope**: MCP Server, Cloudflare Worker, Database (D1), Cache (KV), Sessions, External APIs
+**Scope**: MCP Server, Cloudflare Worker, Database (D1), Cache (KV), Sessions,
+External APIs
 
 ---
 
 ## High-Level Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                     Job Automation System                        │
 ├─────────────────────────────────────────────────────────────────┤
@@ -51,7 +54,7 @@ Complete documentation of all data flows in the job-automation system: MCP reque
 
 ### Phase 1: User Request (Claude → MCP Server)
 
-```
+```text
 User (Claude): "Find iOS developer jobs"
                            │
                            ▼
@@ -74,7 +77,7 @@ User (Claude): "Find iOS developer jobs"
 
 ### Phase 2: Service Orchestration
 
-```
+```text
 MCP Handler (search-jobs tool)
                 │
                 ▼
@@ -107,7 +110,7 @@ MCP Handler (search-jobs tool)
 
 ### Phase 3: Crawler Execution
 
-```
+```text
 WantedClient.search("iOS")
                 │
                 ▼
@@ -137,7 +140,7 @@ WantedClient.search("iOS")
 
 ### Phase 4: Skill Matching
 
-```
+```text
 JobMatcher.scoreJobs(jobs)
                 │
                 ▼
@@ -168,7 +171,7 @@ JobMatcher.scoreJobs(jobs)
 
 ### Phase 5: Application Flow (if >= 75)
 
-```
+```text
 auto-apply tool triggered
          │
          ▼
@@ -207,7 +210,7 @@ auto-apply tool triggered
 
 ### Phase 6: Response (MCP → Claude)
 
-```
+```text
 ┌──────────────────────────────────────┐
 │ MCP Response JSON                    │
 │ {                                    │
@@ -244,7 +247,7 @@ auto-apply tool triggered
 
 ### UnifiedApplySystem Complete Cycle
 
-```
+```text
 User Initiates: "Apply to all 80+ jobs"
          │
          ▼
@@ -278,7 +281,7 @@ User Initiates: "Apply to all 80+ jobs"
 
 ### SessionManager Cookie Lifecycle
 
-```
+```text
 Session Creation (auth-sync.js)
          │
          ▼
@@ -342,7 +345,7 @@ Session Creation (auth-sync.js)
 
 ### Form Submission Sequence
 
-```
+```text
 Job Found (score >= 75)
          │
          ▼
@@ -425,7 +428,7 @@ Job Found (score >= 75)
 
 ### Cloudflare Worker Request Cycle
 
-```
+```text
 External Request
 GET /job/api/applications
          │
@@ -492,7 +495,7 @@ GET /job/api/applications
 
 ### D1 Database Schema
 
-```
+```text
 Database: job_dashboard (D1)
 
 ┌─────────────────────────────────────┐
@@ -537,7 +540,7 @@ Database: job_dashboard (D1)
 
 ### KV Cache Flow
 
-```
+```text
 Request to /api/jobs
          │
          ▼
@@ -576,7 +579,7 @@ Request to /api/jobs
 
 ### Cross-Platform Session Sync
 
-```
+```text
 Extract Cookies (all platforms)
          │
          ▼
@@ -636,7 +639,7 @@ Extract Cookies (all platforms)
 
 ### Application Result Notification
 
-```
+```text
 Application Submitted
          │
          ▼
@@ -686,7 +689,7 @@ Application Submitted
 
 ### Daily Report Workflow (Cloudflare)
 
-```
+```text
 Daily Report Trigger (event/API)
          │
          ▼
@@ -732,7 +735,7 @@ Daily Report Trigger (event/API)
 
 ### Error Recovery Flow
 
-```
+```text
 Error Occurs (any layer)
          │
          ▼

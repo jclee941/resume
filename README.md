@@ -1,8 +1,6 @@
-<div align="center">
-
 # resume.jclee.me
 
-**DevSecOps / SRE 이력서 자동화 모노레포**
+## DevSecOps / SRE 이력서 자동화 모노레포
 
 Cloudflare Workers 포트폴리오 · 구직 자동화 파이프라인 · 셀프호스팅 Observability
 
@@ -11,7 +9,9 @@ Cloudflare Workers 포트폴리오 · 구직 자동화 파이프라인 · 셀프
 [![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-F38020?logo=cloudflare&logoColor=white)](https://workers.cloudflare.com)
 [![Node](https://img.shields.io/badge/node-≥22-43853D?logo=node.js&logoColor=white)](https://nodejs.org)
 
-[Portfolio →](https://resume.jclee.me) · [English](https://resume.jclee.me/en) · [日本語](https://resume.jclee.me/ja) · [Health](https://resume.jclee.me/health) · [Metrics](https://resume.jclee.me/metrics)
+[Portfolio →](https://resume.jclee.me) · [English](https://resume.jclee.me/en) ·
+[日本語](https://resume.jclee.me/ja) · [Health](https://resume.jclee.me/health) ·
+[Metrics](https://resume.jclee.me/metrics)
 
 </div>
 
@@ -23,7 +23,7 @@ Cloudflare Workers 포트폴리오 · 구직 자동화 파이프라인 · 셀프
 
 이 저장소는 단일 포트폴리오 사이트가 아닌 **단일 진실원(SSoT) 이력서 데이터에서 파생되는 다중 산출물**의 모노레포입니다.
 
-```
+```text
                     ┌─────────────────────────────────┐
                     │  packages/data/resumes/master/resume_data.json  │  ← Single Source of Truth
                     └────────────┬────────────────────┘
@@ -47,7 +47,7 @@ npm test                  # Jest + Node native
 
 ## Structure
 
-```
+```text
 resume/
 ├─ apps/
 │  ├─ portfolio/           Edge portfolio · Cloudflare Worker (~409 KB)
@@ -87,7 +87,9 @@ resume/
 
 ### Portfolio Worker `apps/portfolio/`
 
-HTML 템플릿 → `generate-worker.js` → `worker.js` (edge artifact). CSP SHA-256 nonce, HSTS, multi-locale (`/` ko · `/en` en · `/ja` ja). 빌드된 `worker.js`는 아티팩트이므로 직접 편집하지 않습니다.
+HTML 템플릿 → `generate-worker.js` → `worker.js` (edge artifact). CSP SHA-256
+nonce, HSTS, multi-locale (`/` ko · `/en` en · `/ja` ja). 빌드된 `worker.js`는
+아티팩트이므로 직접 편집하지 않습니다.
 
 ### Job Automation Runtime `apps/job-server/`
 
@@ -102,7 +104,8 @@ MCP Server (Fastify) + 16 MCP tools. Hexagonal: services (도메인) ↔ clients
 
 ### Dashboard `apps/job-dashboard/`
 
-Cloudflare Worker. Service Binding으로 `job-server` 호출, applications/auto-apply 분석 화면.
+Cloudflare Worker. Service Binding으로 `job-server` 호출, applications/auto-apply 분석
+화면.
 
 ## Job Automation
 
@@ -132,9 +135,11 @@ curl -X POST https://n8n.jclee.me/webhook/job-search-apply
 
 ### Cover Letter Generator
 
-직무별 자소서 자동 생성 (500–600자). 6 templates (DevSecOps · SRE · Security · Cloud Security · DevOps · Infra).
+직무별 자소서 자동 생성 (500–600자). 6 templates (DevSecOps · SRE · Security · Cloud
+Security · DevOps · Infra).
 
-- **Fallback** — `cover-letter-generator.js` · `detectRole()` → `buildKoreanCoverLetter()`
+- **Fallback** — `cover-letter-generator.js` · `detectRole()` →
+  `buildKoreanCoverLetter()`
 - **AI** — `ANTHROPIC_API_KEY` 설정 시 Claude Haiku 기반 직무 맞춤 생성
 
 ### Profile Auto-Sync
@@ -160,7 +165,8 @@ curl https://resume.jclee.me/health     # JSON · D1·KV bindings · uptime
 curl https://resume.jclee.me/metrics    # Prometheus exposition
 ```
 
-> [Infrastructure Guide](docs/guides/INFRASTRUCTURE.md) · [Monitoring Setup](docs/guides/MONITORING_SETUP.md)
+> [Infrastructure Guide](docs/guides/INFRASTRUCTURE.md) · [Monitoring
+  Setup](docs/guides/MONITORING_SETUP.md)
 
 ## CI / CD
 
@@ -170,7 +176,8 @@ curl https://resume.jclee.me/metrics    # Prometheus exposition
 | **Release**   | CI ✓ on master     | semver bump · changelog · GitHub Release · CF Workers deploy                      |
 | **Auto-sync** | daily 00:00 UTC    | SSoT drift detection · auto PR                                                    |
 
-Production은 **Cloudflare Workers Builds**가 권위(authoritative). 로컬 `npm run deploy`는 의도적으로 비활성화.
+Production은 **Cloudflare Workers Builds**가 권위(authoritative). 로컬 `npm run
+deploy`는 의도적으로 비활성화.
 
 ```bash
 npm run automate:full    # 로컬 풀 파이프라인
@@ -197,15 +204,15 @@ git push                 # → CI → 자동 배포
 
 ### Conventions & Security
 
-- [Architecture Rules](docs/conventions/architecture-rules.md) — 200/500 LOC limits, naming, n8n SSoT
-- [Secret Rotation Playbook](docs/security/SECRET_ROTATION_PLAYBOOK.md) — gitleaks gate + rotation
-- [SSOT Improvement Plan](docs/architecture/SSOT_IMPROVEMENT_PLAN.md) — Epic 0 – 6 roadmap
-- Root [`AGENTS.md`](AGENTS.md) + 43 domain-specific child files across `apps/` · `packages/` · `tests/` · `tools/` · `infrastructure/`
+- [Architecture Rules](docs/conventions/architecture-rules.md) — 200/500 LOC
+  limits, naming, n8n SSoT
+- [Secret Rotation Playbook](docs/security/SECRET_ROTATION_PLAYBOOK.md) —
+  gitleaks gate + rotation
+- [SSOT Improvement Plan](docs/architecture/SSOT_IMPROVEMENT_PLAN.md) — Epic 0 –
+  6 roadmap
+- Root [`AGENTS.md`](AGENTS.md) + 43 domain-specific child files across `apps/`
+  · `packages/` · `tests/` · `tools/` · `infrastructure/`
 
 ---
 
-<div align="center">
-
 **[resume.jclee.me](https://resume.jclee.me)** · Built on Cloudflare's edge
-
-</div>

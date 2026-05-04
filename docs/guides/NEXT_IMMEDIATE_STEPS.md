@@ -10,7 +10,7 @@
 
 ## ✅ What Just Happened
 
-```
+```text
 ✅ Pushed 2 commits to GitHub (master branch)
 ✅ CI/CD workflows are now in repository
 ✅ 30 files changed, 7,246 lines added
@@ -40,6 +40,7 @@ Navigate to: `https://github.com/YOUR_USERNAME/resume/settings/secrets/actions`
    ```
 
 2. **`CLOUDFLARE_ACCOUNT_ID`**
+
    ```bash
    # Get from: https://dash.cloudflare.com
    # Click on Workers & Pages → Overview
@@ -48,7 +49,7 @@ Navigate to: `https://github.com/YOUR_USERNAME/resume/settings/secrets/actions`
 
 #### Optional Secrets (Recommended)
 
-3. **`CODECOV_TOKEN`** (for coverage tracking)
+1. **`CODECOV_TOKEN`** (for coverage tracking)
 
    ```bash
    # Get from: https://codecov.io
@@ -57,7 +58,7 @@ Navigate to: `https://github.com/YOUR_USERNAME/resume/settings/secrets/actions`
    # Copy token
    ```
 
-4. **`SLACK_WEBHOOK_URL`** (for team notifications)
+2. **`SLACK_WEBHOOK_URL`** (for team notifications)
 
    ```bash
    # Get from: https://api.slack.com/messaging/webhooks
@@ -65,7 +66,8 @@ Navigate to: `https://github.com/YOUR_USERNAME/resume/settings/secrets/actions`
    # Copy webhook URL
    ```
 
-5. **`N8N_WEBHOOK_URL`** (for workflow automation)
+3. **`N8N_WEBHOOK_URL`** (for workflow automation)
+
    ```bash
    # Get from your n8n instance
    # Create webhook workflow
@@ -159,7 +161,7 @@ curl https://YOUR_DOMAIN.workers.dev/
 
 ### CI Workflow Results
 
-```
+```text
 ✅ Lint: 0 errors, 38 warnings (non-critical)
 ✅ TypeCheck: Passed (with relaxed settings)
 ✅ Unit Tests: 274 passing
@@ -171,7 +173,7 @@ curl https://YOUR_DOMAIN.workers.dev/
 
 ### Deploy Workflow Results
 
-```
+```text
 ✅ Health Check: 200 OK
 ✅ Content Validation: Resume content present
 ✅ i18n: Multi-language support working
@@ -223,7 +225,7 @@ npm run build:debug
 
 #### Authentication Error
 
-```
+```text
 Error: Authentication failed
 ```
 
@@ -231,7 +233,7 @@ Error: Authentication failed
 
 #### Deployment Error
 
-```
+```text
 Error: Failed to publish
 ```
 
@@ -243,7 +245,7 @@ Error: Failed to publish
 
 #### Verification Failed
 
-```
+```text
 Error: Health check failed
 ```
 

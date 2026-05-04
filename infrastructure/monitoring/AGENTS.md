@@ -6,7 +6,8 @@
 
 ## OVERVIEW
 
-Monitoring assets for dashboards, logging strategy, SLOs, tracing, uptime checks, and Elasticsearch/Grafana integration.
+Monitoring assets for dashboards, logging strategy, SLOs, tracing, uptime
+checks, and Elasticsearch/Grafana integration.
 
 ## STRUCTURE
 
@@ -33,19 +34,27 @@ infrastructure/monitoring/
 
 ## CONVENTIONS
 
-- Dashboard JSON files are versioned artifacts; keep docs clear about which file is primary.
-- Elasticsearch is the app-log source of truth; Loki is infrastructure/ops-oriented unless explicitly stated otherwise.
+- Dashboard JSON files are versioned artifacts; keep docs clear about which file
+  is primary.
+- Elasticsearch is the app-log source of truth; Loki is
+  infrastructure/ops-oriented unless explicitly stated otherwise.
 - Prefer Grafana API or UI deployment flows; avoid undocumented NAS/SSH drift.
-- Monitoring docs should name the datasource, query family, and alert ownership explicitly.
+- Monitoring docs should name the datasource, query family, and alert ownership
+  explicitly.
 
 ## ANTI-PATTERNS
 
-- Never treat dashboards as self-updating truth; exported JSON and deployed UI can drift.
-- Never document dual-write logging as acceptable default when the strategy file says to converge roles.
+- Never treat dashboards as self-updating truth; exported JSON and deployed UI
+  can drift.
+- Never document dual-write logging as acceptable default when the strategy file
+  says to converge roles.
 - Never hardcode live secrets or bearer tokens in monitoring docs/examples.
-- Never collapse infrastructure logs and application logs into one vague bucket without naming the backend.
+- Never collapse infrastructure logs and application logs into one vague bucket
+  without naming the backend.
 
 ## NOTES
 
-- `README.md` is operator-heavy; `logging-strategy.md` is the better source for backend responsibility and migration intent.
-- This directory is a good child boundary because alerting, tracing, and logging semantics differ from general infrastructure guidance.
+- `README.md` is operator-heavy; `logging-strategy.md` is the better source for
+  backend responsibility and migration intent.
+- This directory is a good child boundary because alerting, tracing, and logging
+  semantics differ from general infrastructure guidance.

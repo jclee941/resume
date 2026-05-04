@@ -11,14 +11,15 @@ Two logging backends operate in parallel with overlapping responsibilities:
 
 ## Problem
 
-- **Dual writes** for the same event waste compute on the CF Worker (each log = outbound HTTP)
+- **Dual writes** for the same event waste compute on the CF Worker (each log =
+  outbound HTTP)
 - **No clear contract** for which backend receives what
 - **Query fragmentation** — operators must check both Kibana and Grafana Explore
 - **Correlation gap** — traceId propagates to ES but Loki may not receive it
 
 ## Recommended Architecture
 
-```
+```text
                     CF Worker
                        |
             ┌──────────┴──────────┐
@@ -42,12 +43,17 @@ Two logging backends operate in parallel with overlapping responsibilities:
 
 ### Migration Steps
 
-1. ~~**Audit all `logToLoki()` call sites**~~ ✅ Done (2026-02-16): `logToLoki()` was never called from any route. Dead code.
-2. ~~**Remove duplicate Loki writes**~~ ✅ Done (2026-02-16): Deleted `loki-logger.js` (dead code). ES is sole app log sink.
+1. ~~**Audit all `logToLoki()` call sites**~~ ✅ Done (2026-02-16): `logToLoki()`
+   was never called from any route. Dead code.
+2. ~~**Remove duplicate Loki writes**~~ ✅ Done (2026-02-16): Deleted
+   `loki-logger.js` (dead code). ES is sole app log sink.
 3. **Ensure traceId** is present in ALL ES log entries (enables Trace-to-Logs)
-4. **Configure Grafana Explore** to query both ES and Loki with traceId correlation
-5. **Update Grafana alert rules** that query Loki for app logs → point to ES instead
-   - Exception: `resume_error_log_spike` alert currently queries Loki — migrate to ES query
+4. **Configure Grafana Explore** to query both ES and Loki with traceId
+   correlation
+5. **Update Grafana alert rules** that query Loki for app logs → point to ES
+   instead
+   - Exception: `resume_error_log_spike` alert currently queries Loki — migrate
+     to ES query
 
 ### Success Criteria
 

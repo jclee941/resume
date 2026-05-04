@@ -6,7 +6,8 @@
 
 ## OVERVIEW
 
-Workflow modules orchestrate background execution for crawling, application, resume sync, reporting, health checks, backup, and cleanup.
+Workflow modules orchestrate background execution for crawling, application,
+resume sync, reporting, health checks, backup, and cleanup.
 
 ## STRUCTURE
 
@@ -27,7 +28,8 @@ workflows/
 
 - Keep steps idempotent so retries do not duplicate side effects.
 - Make input/output contracts explicit between workflow stages.
-- Keep helper logic in `resume-sync-helpers.js` style modules when reuse is real.
+- Keep helper logic in `resume-sync-helpers.js` style modules when reuse is
+  real.
 - Emit structured progress/status suitable for API status polling.
 
 ## ANTI-PATTERNS

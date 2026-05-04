@@ -8,6 +8,7 @@
 Stable surface contracts shared between workers + the job-server runtime.
 
 This package owns the single canonical version of:
+
 - `openapi.yaml` — the REST API spec (formerly at `apps/job-server/openapi.yaml`)
 - `Env` interface for Cloudflare Worker bindings (re-exports from `@resume/types/env`)
 

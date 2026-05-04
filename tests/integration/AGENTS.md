@@ -6,7 +6,9 @@
 
 ## OVERVIEW
 
-Integration tests validate cross-module contracts, failure scenarios, and HTML/runtime interaction boundaries that are broader than unit scope but lighter than full E2E.
+Integration tests validate cross-module contracts, failure scenarios, and
+HTML/runtime interaction boundaries that are broader than unit scope but lighter
+than full E2E.
 
 ## STRUCTURE
 

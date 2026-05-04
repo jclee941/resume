@@ -3,13 +3,14 @@
 ## TL;DR
 
 > **Quick Summary**: Refactor job-automation workers routing to router-first pattern, fixing security header gaps and restoring wrangler.toml compatibility with deploy.sh.
-> 
+>
 > **Deliverables**:
+>
 > - Router-first pattern in index.js (static as fallback)
 > - Security headers on OPTIONS preflight responses
 > - Restored wrangler.toml from backup
 > - CORS headers on static responses
-> 
+>
 > **Estimated Effort**: Quick
 > **Parallel Execution**: YES - 2 waves
 > **Critical Path**: Task 1 (wrangler.toml) → Task 4 (deploy verification)
@@ -19,7 +20,9 @@
 ## Context
 
 ### Original Request
+
 Implement Oracle's three recommendations for apps/job-dashboard/:
+
 1. Router-first pattern (remove path exceptions)
 2. Restore wrangler.toml
 3. Apply security headers to OPTIONS response
@@ -27,6 +30,7 @@ Implement Oracle's three recommendations for apps/job-dashboard/:
 ### Current State Analysis
 
 **Current Flow (Exception-Based - BROKEN):**
+
 ```
 REQUEST
   ↓
@@ -44,12 +48,14 @@ REQUEST
 ```
 
 **Issues Identified:**
+
 1. **Line 33-35**: OPTIONS uses `corsHeaders()` not `addCorsHeaders()` - missing security headers
 2. **Lines 206-209**: Static check BEFORE router - exception-based, fragile
 3. **Line 208**: Static response missing CORS via `addCorsHeaders()`
 4. **wrangler.toml missing**: Only jsonc exists, but deploy.sh uses sed on toml
 
 ### Key Files
+
 - `workers/src/index.js` - Main fetch handler (320 lines)
 - `workers/src/router.js` - Router class (44 lines, handle() returns null if no match)
 - `workers/src/middleware/cors.js` - corsHeaders() returns headers only, addCorsHeaders() adds security headers
@@ -62,15 +68,18 @@ REQUEST
 ## Work Objectives
 
 ### Core Objective
+
 Fix routing architecture and security header gaps in the dashboard worker.
 
 ### Concrete Deliverables
+
 - Modified `workers/src/index.js` with router-first pattern
 - Restored `workers/wrangler.toml` from backup
 - Deleted `workers/wrangler.jsonc` (superseded)
 - All responses (including OPTIONS and static) include security headers
 
 ### Definition of Done
+
 - [ ] `/health` endpoint accessible with CORS headers
 - [ ] Static files (/, /index.html) served with security headers
 - [ ] OPTIONS preflight returns security headers (HSTS, X-Content-Type-Options, etc.)
@@ -78,11 +87,13 @@ Fix routing architecture and security header gaps in the dashboard worker.
 - [ ] No regression on existing API routes
 
 ### Must Have
+
 - Router handles ALL requests first, static is fallback only
 - Security headers on every response (via addCorsHeaders)
 - wrangler.toml restored with correct worker name
 
 ### Must NOT Have (Guardrails)
+
 - DO NOT add new routes or change existing route behavior
 - DO NOT modify handler implementations (only routing flow)
 - DO NOT change CORS origin allowlist
@@ -94,6 +105,7 @@ Fix routing architecture and security header gaps in the dashboard worker.
 ## Verification Strategy
 
 ### Test Decision
+
 - **Infrastructure exists**: NO (no .test.js or .spec.js files in workers/)
 - **Automated tests**: None (no test framework configured)
 - **Agent-Executed QA**: ALWAYS (mandatory, primary verification method)
@@ -124,18 +136,18 @@ Parallel Speedup: ~50% faster than sequential
 ### Dependency Matrix
 
 | Task | Depends On | Blocks | Can Parallelize With |
-|------|------------|--------|---------------------|
-| 1 | None | 4 | 2, 3 |
-| 2 | None | 4 | 1, 3 |
-| 3 | None | 4 | 1, 2 |
-| 4 | 1, 2, 3 | None | None (final) |
+| ---- | ---------- | ------ | -------------------- |
+| 1    | None       | 4      | 2, 3                 |
+| 2    | None       | 4      | 1, 3                 |
+| 3    | None       | 4      | 1, 2                 |
+| 4    | 1, 2, 3    | None   | None (final)         |
 
 ### Agent Dispatch Summary
 
-| Wave | Tasks | Recommended Agents |
-|------|-------|-------------------|
-| 1 | 1, 2, 3 | dispatch parallel, category="quick" |
-| 2 | 4 | sequential after Wave 1, category="quick" |
+| Wave | Tasks   | Recommended Agents                        |
+| ---- | ------- | ----------------------------------------- |
+| 1    | 1, 2, 3 | dispatch parallel, category="quick"       |
+| 2    | 4       | sequential after Wave 1, category="quick" |
 
 ---
 
@@ -224,6 +236,7 @@ Parallel Speedup: ~50% faster than sequential
   - Keep status 204 (no content) for preflight
 
   **Current code (lines 33-35)**:
+
   ```javascript
   if (request.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: corsHeaders(origin) });
@@ -231,6 +244,7 @@ Parallel Speedup: ~50% faster than sequential
   ```
 
   **Target code**:
+
   ```javascript
   if (request.method === 'OPTIONS') {
     return addCorsHeaders(new Response(null, { status: 204 }), origin);
@@ -267,7 +281,7 @@ Parallel Speedup: ~50% faster than sequential
   - `workers/src/middleware/cors.js:20-41` - addCorsHeaders() adds CORS + security headers (HSTS, X-Content-Type-Options, etc.)
 
   **WHY Each Reference Matters**:
-  - corsHeaders() only returns CORS headers (Access-Control-*)
+  - corsHeaders() only returns CORS headers (Access-Control-\*)
   - addCorsHeaders() wraps response AND adds security headers (lines 26-39)
   - All other responses use addCorsHeaders(), OPTIONS should match
 
@@ -319,6 +333,7 @@ Parallel Speedup: ~50% faster than sequential
   - Apply addCorsHeaders() to static responses
 
   **Current code (lines 206-222)**:
+
   ```javascript
   // Serve static dashboard for non-API routes (except /health which needs CORS)
   if (!url.pathname.startsWith('/api/') && url.pathname !== '/health') {
@@ -339,6 +354,7 @@ Parallel Speedup: ~50% faster than sequential
   ```
 
   **Target code**:
+
   ```javascript
   try {
     // Router-first: try all registered routes
@@ -347,14 +363,14 @@ Parallel Speedup: ~50% faster than sequential
       const withCsrf = addCsrfCookie(response, request);
       return addRateLimitHeaders(addCorsHeaders(withCsrf, origin), rateResult.headers);
     }
-    
+
     // Static fallback: serve dashboard for non-API routes
     if (!url.pathname.startsWith('/api/')) {
       const staticResponse = serveStatic(url.pathname);
       const withCsrf = addCsrfCookie(staticResponse, request);
       return addCorsHeaders(withCsrf, origin);
     }
-    
+
     // API route not found
     return addCorsHeaders(jsonResponse({ error: 'Not found' }, 404), origin);
   } catch (error) {
@@ -558,17 +574,18 @@ Parallel Speedup: ~50% faster than sequential
 
 ## Commit Strategy
 
-| After Task | Message | Files | Verification |
-|------------|---------|-------|--------------|
-| 1 | `fix(workers): restore wrangler.toml from backup` | wrangler.toml, -wrangler.jsonc | File exists with correct name |
-| 2+3 | `fix(workers): add security headers to OPTIONS and static responses` | src/index.js | Deploy in Task 4 |
-| 4 | N/A (deploy only) | N/A | curl tests |
+| After Task | Message                                                              | Files                          | Verification                  |
+| ---------- | -------------------------------------------------------------------- | ------------------------------ | ----------------------------- |
+| 1          | `fix(workers): restore wrangler.toml from backup`                    | wrangler.toml, -wrangler.jsonc | File exists with correct name |
+| 2+3        | `fix(workers): add security headers to OPTIONS and static responses` | src/index.js                   | Deploy in Task 4              |
+| 4          | N/A (deploy only)                                                    | N/A                            | curl tests                    |
 
 ---
 
 ## Success Criteria
 
 ### Verification Commands
+
 ```bash
 # Health with CORS
 curl -s -i https://job.jclee.me/health -H "Origin: https://resume.jclee.me"
@@ -594,6 +611,7 @@ cd apps/job-dashboard && npx wrangler deploy --env production
 ```
 
 ### Final Checklist
+
 - [ ] All "Must Have" present:
   - [ ] Router-first pattern implemented
   - [ ] Security headers on OPTIONS

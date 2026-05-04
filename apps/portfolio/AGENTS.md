@@ -6,7 +6,8 @@
 
 ## OVERVIEW
 
-Cloudflare Worker serving a cyberpunk terminal-style portfolio (DevSecOps/SRE positioning). Zero runtime I/O — all assets inlined at build time.
+Cloudflare Worker serving a cyberpunk terminal-style portfolio (DevSecOps/SRE
+positioning). Zero runtime I/O — all assets inlined at build time.
 
 ## STRUCTURE
 
@@ -49,7 +50,7 @@ portfolio/
 
 ## BUILD PIPELINE
 
-```
+```text
 resume_data.json → sync → data.json
 index.html → generate-worker.js → worker.js → wrangler deploy
                  ↓
@@ -60,7 +61,8 @@ index.html → generate-worker.js → worker.js → wrangler deploy
 
 ## CLI COMMANDS
 
-`help`, `whoami`, `pwd`, `date`, `ls`, `cat`, `about`, `resume`, `projects`, `skills`, `contact`, `social`, `neofetch`, `snake`, `clear`.
+`help`, `whoami`, `pwd`, `date`, `ls`, `cat`, `about`, `resume`, `projects`,
+`skills`, `contact`, `social`, `neofetch`, `snake`, `clear`.
 
 ## CONVENTIONS
 
@@ -80,7 +82,9 @@ index.html → generate-worker.js → worker.js → wrangler deploy
 
 ## CONTENT UPDATE PATTERN
 
-Hardcoded content in `index.html`/`index-en.html` must match SSoT (`resume_data.json`):
+Hardcoded content in `index.html`/`index-en.html` must match SSoT
+(`resume_data.json`):
+
 - Title/meta/OG/Twitter tags: `DevSecOps/SRE Engineer`
 - JSON-LD Person schema: `knowsAbout` (12 domains), `jobTitle`, `description`
 - About section: career highlights (quantified achievements), current focus

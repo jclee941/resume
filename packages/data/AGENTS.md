@@ -23,7 +23,7 @@ data/
 
 ## DATA FLOW
 
-```
+```text
 resume_data.json → npm run sync:data → portfolio-worker/data.json
                                      → worker build pipeline
 ```
