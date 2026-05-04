@@ -273,6 +273,19 @@ test.describe('JSON-LD Structured Data', () => {
     expect(schemaCount).toBe(3);
   });
 
+  test('canonical URL matches route on each locale', async ({ page }) => {
+    const cases = [
+      { path: '/', expected: 'https://resume.jclee.me/' },
+      { path: '/en/', expected: 'https://resume.jclee.me/en/' },
+      { path: '/ja/', expected: 'https://resume.jclee.me/ja/' },
+    ];
+    for (const { path, expected } of cases) {
+      await page.goto(path, { waitUntil: 'domcontentloaded' });
+      const canonical = await page.locator('link[rel="canonical"]').first().getAttribute('href');
+      expect(canonical, `canonical for ${path}`).toBe(expected);
+    }
+  });
+
   test('should have valid JSON-LD on KO root', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     const result = await page.evaluate(() => {

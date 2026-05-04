@@ -61,7 +61,7 @@ function buildJapaneseTemplate(html) {
   return html
     .replace(/<html lang="ko"/i, '<html lang="ja"')
     .replace(/<title>[^<]*<\/title>/i, '<title>イ・ジェチョル - DevSecOps/SRE/Platform Engineer</title>')
-    .replace(/<link rel="canonical" href="https:\/\/resume\.jclee\.me" \/>/i, '<link rel="canonical" href="https://resume.jclee.me/ja/" />')
+    .replace(/<link rel="canonical" href="https:\/\/resume\.jclee\.me\/?" \/>/i, '<link rel="canonical" href="https://resume.jclee.me/ja/" />')
     .replace(
       /<link rel="alternate" hreflang="en-US" href="https:\/\/resume\.jclee\.me\/en\/" \/>/i,
       '<link rel="alternate" hreflang="en-US" href="https://resume.jclee.me/en/" />\n    <link rel="alternate" hreflang="ja-JP" href="https://resume.jclee.me/ja/" />'
