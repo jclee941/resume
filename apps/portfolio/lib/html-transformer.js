@@ -69,6 +69,7 @@ function buildJapaneseTemplate(html) {
     .replace(/<meta property="og:url" content="https:\/\/resume\.jclee\.me" \/>/i, '<meta property="og:url" content="https://resume.jclee.me/ja/" />')
     .replace(/<meta property="og:title" content="[^"]*" \/>/i, '<meta property="og:title" content="イ・ジェチョル - DevSecOps/SRE/Platform Engineer" />')
     .replace(/<meta property="og:locale" content="ko_KR" \/>/i, '<meta property="og:locale" content="ja_JP" />\n    <meta property="og:locale:alternate" content="ko_KR" />')
+    .replace(/\s*<meta property="og:locale:alternate" content="ja_JP" \/>/g, '')
     .replace(/<meta name="twitter:url" content="https:\/\/resume\.jclee\.me" \/>/i, '<meta name="twitter:url" content="https://resume.jclee.me/ja/" />')
     .replace(/<meta name="twitter:title" content="[^"]*" \/>/i, '<meta name="twitter:title" content="イ・ジェチョル - DevSecOps/SRE/Platform Engineer" />')
     .replace(/"name": "이재철 - DevSecOps\/SRE\/Platform Engineer"/g, '"name": "イ・ジェチョル - DevSecOps/SRE/Platform Engineer"')
