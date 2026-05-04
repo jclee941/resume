@@ -83,6 +83,7 @@ function buildJapaneseTemplate(html) {
     // === JA JSON-LD description ===
     .replace(/"description": "금융권 보안 규제 환경에서 인프라 설계·운용을 담당하며[^"]*"/g, '"description": "金融規制環境でインフラ設計・運用を担当し、FSC本認可対応を通過したOAエンジニア出身、8年目のDevSecOps/SREエンジニアです。分散したセキュリティ機器と手動運用の非効率を統合自動化で改善し、リアルタイム検知と自動対応体制を構築した経験があります。"')
     .replace(/"description": "금융권 규제 환경에서 보안 인프라 설계·운영을 담당한[^"]*"/g, '"description": "金融規制環境でセキュリティインフラ設計·運用を担当したDevSecOps/SRE/Platform Engineerの個人ポートフォリオ。"')
+    .replace(/"description": "폐쇄망 OA 운영실에서 출발해[^"]*"/g, '"description": "閉鎖網OA運用室から出発し、金融取引所セキュリティ運用に到達した8年目のDevSecOps/SREエンジニア。「繰り返し作業は自動化されるべき」という信念でFortiGate HA·ネットワーク分離を上にSplunk ES + n8n + FortiManager APIでセキュリティイベントを自動検知・対応しています。"')
     // === JA hero copy (replace KO hero text with Japanese) ===
     .replace(/<span class="typing-effect glow-cyan">이재철<\/span/g, '<span class="typing-effect glow-cyan">イ・ジェチョル</span')
     .replace(/<span class="sr-only">이재철<\/span>/g, '<span class="sr-only">イ・ジェチョル</span>')
@@ -95,7 +96,7 @@ function buildJapaneseTemplate(html) {
       'KAI閉鎖網OA運用 → Linux資格基礎を立て直し → Ansible・Python自動化 → Nextrade FortiGate HA · Splunk ES · n8n 自動対応'
     )
     .replace(/<span class="hero-now__label">최근:<\/span>/g, '<span class="hero-now__label">最終:</span>')
-    .replace(/<span class="hero-now__value">아이티센 CTS @ 넷스트레이드 보안 운영 \(2025\.03–2026\.02\)<\/span>/g, '<span class="hero-now__value">ITCEN CTS @ Nextrade セキュリティ運用 (2025.03–2026.02)</span>')
+    .replace(/<span class="hero-now__value">아이티센 CTS @ 넥스트레이드 보안 운영 \(2025\.03–2026\.02\)<\/span>/g, '<span class="hero-now__value">ITCEN CTS @ Nextrade セキュリティ運用 (2025.03–2026.02)</span>')
     .replace(/<span class="hero-now__period">· 구직 중 · 즉시 투입 가능<\/span>/g, '<span class="hero-now__period">· 転職活動中 · 即時ジョイン可能</span>')
     .replace(/<div class="hero-context__label">OA → DevSecOps 8년 성장<\/div>/g, '<div class="hero-context__label">OA → DevSecOps 8年間の成長</div>')
     .replace(/<div class="hero-context__label">금융위 본인가 · 금융감독원 감사 대응<\/div>/g, '<div class="hero-context__label">FSC本認可 · 金融監督院監査対応</div>')
