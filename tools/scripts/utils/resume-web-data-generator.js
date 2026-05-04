@@ -38,7 +38,7 @@ function generateWebData(source) {
     '(주)엠티데이타': {
       title: 'MT Data Co., Ltd.',
       description:
-        'Established a routine log analysis cadence and adhered to security audit guidelines to proactively detect hardware failure indicators in a closed network environment.',
+        'Established a routine log analysis cadence and adhered to security audit guidelines to identify hardware failure indicators early in a closed network environment.',
     },
   };
 
