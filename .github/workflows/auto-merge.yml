@@ -5,8 +5,10 @@ on:
     types: [opened, synchronize, ready_for_review, reopened, labeled]
   pull_request_review:
     types: [submitted]
-  check_suite:
-    types: [completed]
+  # Note: `check_suite` is intentionally NOT a trigger here. It fires on every
+  # check-suite completion (including those on master where no PR exists), and the
+  # downstream reusable workflow has nothing to merge in that case — producing
+  # spurious failure runs that pollute the Actions tab.
 permissions:
   contents: write
   pull-requests: write
