@@ -75,6 +75,10 @@ async function runWorkerBuild({ baseDir, version, allowedEmails, logger }) {
     logger.warn('⚠ resume_final.pdf not found at SSoT, skipping copy\n');
   }
 
+  // Build metadata (used to populate footer build line at static build time, not runtime)
+  const buildDeployedAt = process.env.DEPLOYED_AT || new Date().toISOString();
+  const buildDeployedDate = `${buildDeployedAt.slice(0, 10)} ${buildDeployedAt.slice(11, 16)}Z`;
+
   let indexHtml = await buildLocalizedHtml(indexHtmlRaw, {
     cssContent,
     heroContentHtml: templates.heroContentHtml,
@@ -90,6 +94,9 @@ async function runWorkerBuild({ baseDir, version, allowedEmails, logger }) {
     resumeDocxUrl: projectData.resumeDownload.docxUrl,
     resumeMdUrl: projectData.resumeDownload.mdUrl,
     resumeChatDataBase64: resumeChatDataBase64Literal,
+    buildVersion: version,
+    buildDeployedAt,
+    buildDeployedDate,
   });
   logger.log('✓ HTML minified\n');
 
@@ -108,6 +115,9 @@ async function runWorkerBuild({ baseDir, version, allowedEmails, logger }) {
     resumeDocxUrl: projectData.resumeDownload.docxUrl,
     resumeMdUrl: projectData.resumeDownload.mdUrl,
     resumeChatDataBase64: resumeChatDataBase64Literal,
+    buildVersion: version,
+    buildDeployedAt,
+    buildDeployedDate,
   });
   logger.log('✓ English HTML processed\n');
 
@@ -125,6 +135,9 @@ async function runWorkerBuild({ baseDir, version, allowedEmails, logger }) {
     resumePdfUrl: projectData.resumeDownload.pdfUrl,
     resumeDocxUrl: projectData.resumeDownload.docxUrl,
     resumeMdUrl: projectData.resumeDownload.mdUrl,
+    buildVersion: version,
+    buildDeployedAt,
+    buildDeployedDate,
     resumeChatDataBase64: resumeChatDataBase64Literal,
   });
   logger.log('✓ Japanese HTML processed\n');

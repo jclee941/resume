@@ -207,11 +207,7 @@ function generateSkillsList(skillsData, dataHash) {
         <span class="htop-items">${skills
           .map((s) => {
             if (typeof s === 'string') return escapeHtml(s);
-            const name = escapeHtml(String(s && s.name ? s.name : 'Unknown'));
-            const lvl = (s && s.level) ? String(s.level) : '';
-            const isExpert = lvl === 'expert';
-            const cls = isExpert ? 'skill-item skill-item--expert' : 'skill-item';
-            return `<span class="${cls}" data-level="${escapeHtml(lvl)}">${name}</span>`;
+            return escapeHtml(String(s && s.name ? s.name : 'Unknown'));
           })
           .join(', ')}</span>
       </li>`;
