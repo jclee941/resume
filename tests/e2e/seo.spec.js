@@ -272,6 +272,52 @@ test.describe('JSON-LD Structured Data', () => {
     });
     expect(schemaCount).toBe(3);
   });
+
+  test('should have valid JSON-LD on KO root', async ({ page }) => {
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const result = await page.evaluate(() => {
+      const scripts = document.querySelectorAll('script[type="application/ld+json"]');
+      const errors = [];
+      scripts.forEach((s, i) => {
+        try {
+          JSON.parse(s.textContent || '');
+        } catch (e) {
+          errors.push(`block ${i}: ${e.message}`);
+        }
+      });
+      return { count: scripts.length, errors };
+    });
+    expect(result.errors).toEqual([]);
+    expect(result.count).toBeGreaterThanOrEqual(1);
+  });
+
+  test('should have valid JSON-LD on EN page', async ({ page }) => {
+    await page.goto('/en/', { waitUntil: 'domcontentloaded' });
+    const result = await page.evaluate(() => {
+      const scripts = document.querySelectorAll('script[type="application/ld+json"]');
+      const errors = [];
+      scripts.forEach((s, i) => {
+        try { JSON.parse(s.textContent || ''); } catch (e) { errors.push(`block ${i}: ${e.message}`); }
+      });
+      return { count: scripts.length, errors };
+    });
+    expect(result.errors).toEqual([]);
+    expect(result.count).toBeGreaterThanOrEqual(1);
+  });
+
+  test('should have valid JSON-LD on JA page', async ({ page }) => {
+    await page.goto('/ja/', { waitUntil: 'domcontentloaded' });
+    const result = await page.evaluate(() => {
+      const scripts = document.querySelectorAll('script[type="application/ld+json"]');
+      const errors = [];
+      scripts.forEach((s, i) => {
+        try { JSON.parse(s.textContent || ''); } catch (e) { errors.push(`block ${i}: ${e.message}`); }
+      });
+      return { count: scripts.length, errors };
+    });
+    expect(result.errors).toEqual([]);
+    expect(result.count).toBeGreaterThanOrEqual(1);
+  });
 });
 
 test.describe('PWA Meta Tags', () => {
