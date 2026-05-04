@@ -173,10 +173,15 @@ jobs:
       - name: Commit version bump
         if: steps.bump.outputs.should_release == 'true' && github.event.inputs.dry_run != 'true'
         run: |
+          set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add package.json CHANGELOG.md
-          git commit -m "chore(release): ${{ steps.bump.outputs.new_tag }} [skip ci]" || echo 'No changes to commit'
+          if git diff --staged --quiet; then
+            echo 'Nothing to commit — package.json and CHANGELOG.md unchanged'
+            exit 0
+          fi
+          git commit -m "chore(release): ${{ steps.bump.outputs.new_tag }} [skip ci]"
           git push origin master
 
       - name: Create tag and GitHub Release
