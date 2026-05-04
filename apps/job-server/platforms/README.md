@@ -1,10 +1,11 @@
 # Job Automation Platforms
 
-This directory contains platform-specific integrations for the unified job automation system.
+This directory contains platform-specific integrations for the unified job
+automation system.
 
 ## Structure
 
-```
+```text
 platforms/
 ├── wanted/          - Wanted (원티드) - Korea IT/Startup
 ├── jobkorea/        - JobKorea (잡코리아) - Korea #1 Job Platform

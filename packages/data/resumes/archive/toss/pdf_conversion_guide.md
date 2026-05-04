@@ -12,13 +12,13 @@
 
 **추천 사이트**:
 
-1. **https://www.markdowntopdf.com/** ⭐ (가장 간단)
-2. **https://md2pdf.netlify.app/**
-3. **https://cloudconvert.com/md-to-pdf**
+1. **<https://www.markdowntopdf.com/>** ⭐ (가장 간단)
+2. **<https://md2pdf.netlify.app/>**
+3. **<https://cloudconvert.com/md-to-pdf>**
 
 **사용 방법**:
 
-```
+```text
 1. 위 사이트 중 하나 접속
 2. "토스커머스_Server_Developer_Platform_이재철.md" 파일 업로드
 3. "Convert to PDF" 클릭
@@ -33,11 +33,11 @@
 
 Markdown 에디터 중 가장 깔끔한 PDF 생성
 
-**다운로드**: https://typora.io/
+**다운로드**: <https://typora.io/>
 
 **사용 방법**:
 
-```
+```text
 1. Typora 설치
 2. "토스커머스_Server_Developer_Platform_이재철.md" 파일 열기
 3. File → Export → PDF
@@ -56,7 +56,7 @@ Markdown 에디터 중 가장 깔끔한 PDF 생성
 
 **설치 방법**:
 
-```
+```text
 1. VS Code 열기
 2. 확장(Extensions) 검색: "Markdown PDF"
 3. "yzane.markdown-pdf" 설치
@@ -94,7 +94,7 @@ pandoc 토스커머스_Server_Developer_Platform_이재철.md \
 
 ### 단계별 방법
 
-```
+```text
 1. Google Drive 접속
 2. "토스커머스_Server_Developer_Platform_이재철.md" 업로드
 3. 우클릭 → "연결 앱" → "Google Docs"로 열기
@@ -177,13 +177,13 @@ chmod +x pdf-convert.sh
 
 **온라인 이력서 작성 도구**:
 
-1. **Canva**: https://www.canva.com/ko_kr/templates/resume/
+1. **Canva**: <https://www.canva.com/ko_kr/templates/resume/>
 2. **Notion**: Notion 페이지 → PDF 내보내기
 3. **Google Docs**: 템플릿 활용
 
 **방법**:
 
-```
+```text
 1. 기존 Markdown 내용 복사
 2. 위 도구 중 하나에 붙여넣기
 3. 디자인 조정
@@ -196,8 +196,8 @@ chmod +x pdf-convert.sh
 
 변환 중 문제 발생 시:
 
-- **이메일**: qws941@kakao.com
-- **GitHub**: https://github.com/jclee941
+- **이메일**: <qws941@kakao.com>
+- **GitHub**: <https://github.com/jclee941>
 
 ---
 

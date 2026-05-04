@@ -6,7 +6,8 @@
 
 ## OVERVIEW
 
-Deployment helper scripts run preflight checks, deployment wrappers, and post-deploy verification support for Cloudflare-hosted services.
+Deployment helper scripts run preflight checks, deployment wrappers, and
+post-deploy verification support for Cloudflare-hosted services.
 
 ## STRUCTURE
 
@@ -21,7 +22,8 @@ deployment/
 ## CONVENTIONS
 
 - Treat these scripts as helpers around validated automation flows.
-- Run validation (`lint`, `typecheck`, `test`, `build`) before deployment actions.
+- Run validation (`lint`, `typecheck`, `test`, `build`) before deployment
+  actions.
 - Keep secrets in environment variables or managed secret stores.
 - Keep logging explicit so failures are diagnosable in CI/local dry runs.
 

@@ -4,31 +4,36 @@
       "status": "ok",
       "fetched": 180,
       "scored": 36,
-      "elapsedMs": 45706
+      "elapsedMs": 45706,
+      "classification": "ok_full_description"
     },
     "jobkorea": {
       "status": "ok",
       "fetched": 120,
       "scored": 2,
-      "elapsedMs": 18575
+      "elapsedMs": 18575,
+      "classification": "ok_full_description"
     },
     "saramin": {
       "status": "ok",
       "fetched": 75,
       "scored": 0,
-      "elapsedMs": 17484
+      "elapsedMs": 17484,
+      "classification": "degraded_no_description"
     },
     "programmers": {
       "status": "ok",
       "fetched": 0,
       "scored": 0,
-      "elapsedMs": 24175
+      "elapsedMs": 24175,
+      "classification": "crawler_empty_needs_maintenance"
     },
     "linkedin": {
       "status": "ok",
       "fetched": 20,
       "scored": 0,
-      "elapsedMs": 6056
+      "elapsedMs": 6056,
+      "classification": "degraded_no_description"
     }
   },
   "candidates": [

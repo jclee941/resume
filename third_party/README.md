@@ -4,7 +4,8 @@ Google3-style vendored dependencies directory.
 
 ## Current Strategy
 
-This project uses **npm** for dependency management with Bazel as a build coordination layer.
+This project uses **npm** for dependency management with Bazel as a build
+coordination layer.
 
 ### Why not full vendoring?
 
@@ -16,7 +17,7 @@ This project uses **npm** for dependency management with Bazel as a build coordi
 
 ## Structure
 
-```
+```text
 third_party/
 ├── README.md           # This file
 ├── OWNERS              # Dependency maintainers

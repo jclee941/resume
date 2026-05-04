@@ -6,7 +6,8 @@
 
 ## OVERVIEW
 
-Stealth Playwright crawling layer. BaseCrawler provides anti-detection; platform subclasses implement scraping logic.
+Stealth Playwright crawling layer. BaseCrawler provides anti-detection; platform
+subclasses implement scraping logic.
 
 ## STRUCTURE
 

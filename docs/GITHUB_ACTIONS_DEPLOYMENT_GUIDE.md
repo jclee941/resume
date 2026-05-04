@@ -33,7 +33,7 @@
 
 ## 🔧 Quick Setup Checklist
 
-- [ ] **Step 1**: Go to GitHub repository: https://github.com/qws941/resume
+- [ ] **Step 1**: Go to GitHub repository: <https://github.com/qws941/resume>
 - [ ] **Step 2**: Navigate to Settings → Secrets and variables → Actions
 - [ ] **Step 3**: Add CRITICAL secrets (see below)
 - [ ] **Step 4**: Trigger CI/CD workflow manually
@@ -51,7 +51,7 @@
 **Purpose**: Authentication for Cloudflare API operations
 **How to get**:
 
-1. Go to https://dash.cloudflare.com/profile/api-tokens
+1. Go to <https://dash.cloudflare.com/profile/api-tokens>
 2. Click "Create Token"
 3. Use template: "Edit Cloudflare Workers"
 4. Permissions needed:
@@ -74,7 +74,7 @@ curl -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
 **Purpose**: Identifies your Cloudflare account
 **How to get**:
 
-1. Go to https://dash.cloudflare.com/
+1. Go to <https://dash.cloudflare.com/>
 2. Click on any domain or account
 3. URL will show: `https://dash.cloudflare.com/[ACCOUNT_ID]/`
 4. Copy the ACCOUNT_ID value
@@ -163,7 +163,7 @@ All workflows are in: `.github/workflows/`
 
 1. **Go to your GitHub repository**:
 
-   ```
+   ```text
    https://github.com/qws941/resume
    ```
 
@@ -179,7 +179,7 @@ All workflows are in: `.github/workflows/`
 
 1. **Navigate to Secrets Settings**:
 
-   ```
+   ```text
    https://github.com/qws941/resume/settings/secrets/actions
    ```
 
@@ -202,7 +202,7 @@ All workflows are in: `.github/workflows/`
 
 1. **Go to Actions tab**:
 
-   ```
+   ```text
    https://github.com/qws941/resume/actions
    ```
 
@@ -252,7 +252,7 @@ curl https://resume.jclee.me/job/health
 
 1. **GitHub Actions Tab**:
 
-   ```
+   ```text
    https://github.com/qws941/resume/actions
    ```
 
@@ -315,9 +315,11 @@ curl https://resume.jclee.me
 1. Check GitHub Actions logs for actual error messages
 2. Verify Cloudflare account is active
 3. Check Cloudflare Workers are deployed:
-   ```
+
+   ```text
    https://dash.cloudflare.com/account/workers/overview
    ```
+
 4. Check KV namespace is accessible
 5. Verify DNS records point to Workers
 
@@ -327,7 +329,7 @@ curl https://resume.jclee.me
 
 **Solution**:
 
-1. Check GitHub status page: https://www.githubstatus.com/
+1. Check GitHub status page: <https://www.githubstatus.com/>
 2. Reduce test scope (skip e2e tests temporarily)
 3. Check for network connectivity issues
 4. Verify Docker image is properly cached
@@ -342,7 +344,7 @@ curl https://resume.jclee.me
    - Should include: Workers KV Edit, Workers Scripts Edit
 2. Verify Account ID matches the token's account
 3. Get new API token with proper permissions from:
-   https://dash.cloudflare.com/profile/api-tokens
+   <https://dash.cloudflare.com/profile/api-tokens>
 
 ---
 
@@ -381,17 +383,17 @@ Workflows use caching for:
 
 ## 🔗 Useful Links
 
-| Resource                         | URL                                                       |
-| -------------------------------- | --------------------------------------------------------- |
-| **GitHub Repository**            | https://github.com/qws941/resume                          |
-| **GitHub Actions Documentation** | https://docs.github.com/en/actions                        |
-| **GitHub Secrets Settings**      | https://github.com/qws941/resume/settings/secrets/actions |
-| **GitHub Actions Logs**          | https://github.com/qws941/resume/actions                  |
-| **Cloudflare API Tokens**        | https://dash.cloudflare.com/profile/api-tokens            |
-| **Cloudflare Dashboard**         | https://dash.cloudflare.com                               |
-| **Cloudflare Workers**           | https://dash.cloudflare.com/account/workers/overview      |
-| **Portfolio Service**            | https://resume.jclee.me                                   |
-| **Job Dashboard Service**        | https://resume.jclee.me/job                               |
+| Resource                         | URL                                                         |
+| -------------------------------- | ----------------------------------------------------------- |
+| **GitHub Repository**            | <https://github.com/qws941/resume>                          |
+| **GitHub Actions Documentation** | <https://docs.github.com/en/actions>                        |
+| **GitHub Secrets Settings**      | <https://github.com/qws941/resume/settings/secrets/actions> |
+| **GitHub Actions Logs**          | <https://github.com/qws941/resume/actions>                  |
+| **Cloudflare API Tokens**        | <https://dash.cloudflare.com/profile/api-tokens>            |
+| **Cloudflare Dashboard**         | <https://dash.cloudflare.com>                               |
+| **Cloudflare Workers**           | <https://dash.cloudflare.com/account/workers/overview>      |
+| **Portfolio Service**            | <https://resume.jclee.me>                                   |
+| **Job Dashboard Service**        | <https://resume.jclee.me/job>                               |
 
 ---
 
@@ -401,9 +403,9 @@ After triggering first deployment, verify:
 
 - [ ] All workflow jobs completed successfully (green checkmarks)
 - [ ] No job failures or errors in logs
-- [ ] Portfolio service responds at https://resume.jclee.me
+- [ ] Portfolio service responds at <https://resume.jclee.me>
 - [ ] Portfolio health endpoint returns 200: `curl https://resume.jclee.me/health`
-- [ ] Job Dashboard service responds at https://resume.jclee.me/job
+- [ ] Job Dashboard service responds at <https://resume.jclee.me/job>
 - [ ] Job Dashboard health endpoint returns 200: `curl https://resume.jclee.me/job/health`
 - [ ] Both services show correct version numbers
 - [ ] Recent git commits appear in GitHub

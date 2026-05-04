@@ -6,7 +6,8 @@
 
 ## OVERVIEW
 
-IaC for Cloudflare resources, monitoring (Grafana/Loki/Prometheus), n8n automation, and database migrations.
+IaC for Cloudflare resources, monitoring (Grafana/Loki/Prometheus), n8n
+automation, and database migrations.
 
 ## STRUCTURE
 

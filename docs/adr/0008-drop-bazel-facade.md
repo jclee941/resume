@@ -3,7 +3,8 @@
 **Status:** Accepted
 **Date:** 2026-04-27
 **Deciders:** Owner-driven (Epic 0–6 SSOT execution)
-**Supersedes:** Bazel files in repo root (BUILD.bazel, MODULE.bazel, WORKSPACE, .bazelrc, .bazelignore) and in `tools/`, `third_party/`
+**Supersedes:** Bazel files in repo root (BUILD.bazel, MODULE.bazel, WORKSPACE,
+.bazelrc, .bazelignore) and in `tools/`, `third_party/`
 
 ## Context
 
@@ -26,7 +27,7 @@ affected-target analysis layer", but in practice:
 
 - All builds went through `npm` scripts (no `bazel build` ever ran in CI).
 - `tools/ci/affected.go` used `git diff` and path globs, **not** `bazel
-  query`.
+query`.
 - `MODULE.bazel` had only one dependency (`rules_shell`) which was unused.
 - No `BUILD` files existed under `apps/`, `packages/`, or
   `infrastructure/` — only the four facade files at the top of the tree.
@@ -80,7 +81,7 @@ anyone runs `bazel` against the repo locally.
   discoverable.
 - The SSOT plan's optional `Turborepo` adoption (SSOT-019) is now
   available as a follow-up if caching becomes important. Until then, `npm
-  run` is sufficient.
+run` is sufficient.
 
 ### Neutral
 
@@ -113,5 +114,5 @@ npm run lint && npm run typecheck && npm test
 - `docs/architecture/SSOT_IMPROVEMENT_PLAN.md` — D-1, SSOT-018, SSOT-019
 - `tools/BUILD.bazel:17` (pre-removal) — "Bazel facade removed - use npm
   scripts directly"
-- Aspect Build's `rules_js` (https://github.com/aspect-build/rules_js) —
+- Aspect Build's `rules_js` (<https://github.com/aspect-build/rules_js>) —
   reference for any future re-adoption

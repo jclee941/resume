@@ -19,7 +19,7 @@ mount | grep nfs
 
 ## 백업 디렉토리 구조
 
-```
+```text
 /home/jclee/synology/resume/toss/
 ├── lee_jaecheol_toss_ai_automation_final.pdf (61KB) ⭐
 ├── lee_jaecheol_toss_ai_automation_with_emoji.pdf (108KB)

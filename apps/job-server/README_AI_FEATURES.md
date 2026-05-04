@@ -8,7 +8,8 @@
 
 ## 🎯 Overview
 
-The apps/job-server system has been upgraded with advanced AI capabilities, unified platform support, and comprehensive automation features.
+The apps/job-server system has been upgraded with advanced AI capabilities,
+unified platform support, and comprehensive automation features.
 
 ---
 
@@ -91,7 +92,9 @@ const advice = await getAICareerAdvice('path/to/resume.md', { focusArea: 'DevSec
 
 ### 3. Automation Scripts
 
-The browser-accessible auto-apply dashboard UI is owned by `apps/job-dashboard/` and exposed at `resume.jclee.me/job/*`. The scripts below are operator entrypoints for the automation runtime in `apps/job-server/`.
+The browser-accessible auto-apply dashboard UI is owned by `apps/job-dashboard/`
+and exposed at `resume.jclee.me/job/*`. The scripts below are operator
+entrypoints for the automation runtime in `apps/job-server/`.
 
 #### `npm run ops:daily-run` (Daily Automation)
 
@@ -355,7 +358,7 @@ node src/auto-apply/cli/index.js ai_unified --max=5
 
 ### Code Structure
 
-```
+```text
 apps/job-server/
 ├── src/
 │   ├── unified-apply-system.js    # Main unified system

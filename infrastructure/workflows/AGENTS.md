@@ -5,7 +5,9 @@
 
 ## OVERVIEW
 
-Cloudflare Workflows provide event-driven automation for the resume platform. These JSON workflow definitions are deployed via Wrangler and integrate with n8n for orchestration.
+Cloudflare Workflows provide event-driven automation for the resume platform.
+These JSON workflow definitions are deployed via Wrangler and integrate with n8n
+for orchestration.
 
 ## STRUCTURE
 
@@ -32,12 +34,14 @@ infrastructure/workflows/
 - **Numbered prefixes**: Workflows ordered by execution priority (01-, 02-, 03-)
 - **JSON format**: All workflows valid Cloudflare Workflow JSON
 - **Config injection**: Use `config.template.json` → populate → deploy
-- **n8n integration**: Workflows triggered via n8n webhooks for complex orchestration
+- **n8n integration**: Workflows triggered via n8n webhooks for complex
+  orchestration
 
 ## ANTI-PATTERNS
 
 - Never commit actual API keys or secrets in workflow JSON
-- Never edit deployed workflows directly in Cloudflare dashboard (use git + wrangler)
+- Never edit deployed workflows directly in Cloudflare dashboard (use git +
+  wrangler)
 - Never skip README update when adding new workflows
 
 ## NOTES

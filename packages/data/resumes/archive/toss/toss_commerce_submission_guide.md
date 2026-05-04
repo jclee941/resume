@@ -3,21 +3,24 @@
 ## 📄 제출 파일 목록
 
 ### 1. 메인 이력서
+
 - **파일명**: `이재철_Server_Developer_Platform.pdf`
 - **소스**: `토스커머스_Server_Developer_Platform_이재철.md`
 - **용도**: 온라인 지원서 첨부
 
 ### 2. 포트폴리오 링크
-- **GitHub Pages**: https://qws941.github.io/resume/
-- **GitHub**: https://github.com/jclee941
+
+- **GitHub Pages**: <https://qws941.github.io/resume/>
+- **GitHub**: <https://github.com/jclee941>
 - **Live Demo 프로젝트**:
-  - Splunk Platform: https://splunk.jclee.me
-  - Blacklist System: https://blacklist.jclee.me
-  - FortiGate Platform: https://fortinet.jclee.me
-  - Grafana Stack: https://grafana.jclee.me
-  - SafeWork Platform: https://safework.jclee.me
+  - Splunk Platform: <https://splunk.jclee.me>
+  - Blacklist System: <https://blacklist.jclee.me>
+  - FortiGate Platform: <https://fortinet.jclee.me>
+  - Grafana Stack: <https://grafana.jclee.me>
+  - SafeWork Platform: <https://safework.jclee.me>
 
 ### 3. 면접 준비 자료
+
 - **파일**: `토스커머스_지원질문_답변.md`
 - **내용**: 10가지 핵심 질문 + 모범 답변
 
@@ -27,7 +30,7 @@
 
 ### 자기소개서 (500자 기준)
 
-```
+```text
 안녕하세요, Server Developer (Platform) 포지션에 지원하는 이재철입니다.
 
 8년간 금융·제조·교육 산업에서 대규모 인프라 운영, 플랫폼 안정화, 자동화 시스템을 구축했습니다.
@@ -45,7 +48,7 @@
 
 ### 지원 동기 (700자 기준)
 
-```
+```text
 토스 커머스 Platform 팀이 추구하는 '예상치 못한 장애에도 빠른 복구', '개발자가 핵심 개발에 집중' 철학에 깊이 공감합니다.
 
 제가 8년간 추구해온 방향과 정확히 일치하기 때문입니다. MTTR 70% 개선, 자동 롤백 시스템 구현, 업무 시간 50~95% 단축 등 실제 성과로 이를 입증했습니다.
@@ -75,7 +78,8 @@
 ## 🎯 온라인 지원 양식 답변 예시
 
 ### Q1. 주요 경력을 간략히 소개해주세요
-```
+
+```text
 • 8년 인프라/보안 엔지니어 (금융·제조·교육)
 • 대규모 시스템: 서버 150대+, 단말 1,000대+ 운영
 • 보안 솔루션: 15종 이상 통합 운영 (Fortigate, Palo Alto, NAC, DLP 등)
@@ -84,7 +88,8 @@
 ```
 
 ### Q2. 가장 자랑스러운 프로젝트는?
-```
+
+```text
 REGTECH Blacklist Intelligence Platform
 
 • 목적: 금융보안원 IP 블랙리스트 자동 수집/관리
@@ -97,7 +102,8 @@ REGTECH Blacklist Intelligence Platform
 ```
 
 ### Q3. 왜 토스에 지원하셨나요?
-```
+
+```text
 토스 커머스 Platform 팀의 '빠른 복구', '개발자 생산성' 철학이 제가 추구하는 방향과 일치합니다.
 
 대용량 처리(초당 10만 이벤트), Monitoring(Grafana Stack), 고가용성(99.9%) 경험으로 즉시 기여 가능합니다.
@@ -106,7 +112,8 @@ REGTECH Blacklist Intelligence Platform
 ```
 
 ### Q4. 보유 기술 스택 (우선순위)
-```
+
+```text
 1. Container & Orchestration: Docker, Kubernetes, Portainer API
 2. Monitoring: Grafana, Prometheus, Loki, Tempo, ELK
 3. API Gateway: Cloudflare Workers, Traefik, HAProxy, Nginx
@@ -118,7 +125,8 @@ REGTECH Blacklist Intelligence Platform
 ```
 
 ### Q5. 희망 연봉 및 입사 가능일
-```
+
+```text
 • 희망 연봉: 토스 내부 기준 존중 (역량 고려한 합리적 제안 기대)
 • 입사 가능일: 2주 이내 조율 가능 (현 재직 중)
 ```
@@ -127,7 +135,7 @@ REGTECH Blacklist Intelligence Platform
 
 ## 📧 이메일 지원 템플릿 (필요 시)
 
-```
+```text
 제목: [토스 커머스] Server Developer (Platform) 지원 - 이재철
 
 안녕하세요,
@@ -171,6 +179,7 @@ REGTECH Blacklist Intelligence Platform
 ## ✅ 제출 전 최종 체크리스트
 
 ### 필수 항목
+
 - [ ] 이력서 PDF 변환 완료
 - [ ] 오타 및 맞춤법 검사
 - [ ] 포트폴리오 링크 동작 확인
@@ -178,6 +187,7 @@ REGTECH Blacklist Intelligence Platform
 - [ ] 프로덕션 시스템 정상 동작 확인
 
 ### 선택 항목
+
 - [ ] 자기소개서 글자 수 확인 (500자/700자)
 - [ ] 면접 질문 답변 숙지
 - [ ] 토스 문화/가치관 리서치
@@ -188,10 +198,10 @@ REGTECH Blacklist Intelligence Platform
 ## 📞 연락처
 
 - **이름**: 이재철
-- **Email**: qws941@kakao.com
+- **Email**: <qws941@kakao.com>
 - **Phone**: 010-5757-9592
-- **GitHub**: https://github.com/jclee941
-- **Portfolio**: https://qws941.github.io/resume/
+- **GitHub**: <https://github.com/jclee941>
+- **Portfolio**: <https://qws941.github.io/resume/>
 
 ---
 

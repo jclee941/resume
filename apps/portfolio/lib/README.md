@@ -4,7 +4,7 @@
 
 ## 📁 모듈 구조
 
-```
+```text
 apps/portfolio/lib/
 ├── cache-headers.js    # 캐시 헤더 설정
 ├── cards.js            # Resume/Project 카드 HTML 생성
@@ -30,6 +30,7 @@ const headers = getCacheHeaders('/og-image.webp');
 ```
 
 **캐시 전략**:
+
 - **Static** (이미지, 폰트): 1년 캐시, immutable
 - **HTML**: 1시간 캐시, must-revalidate
 - **API**: 캐시 없음
@@ -50,6 +51,7 @@ const projectHtml = generateProjectCards(data.projects, dataHash);
 ```
 
 **특징**:
+
 - 템플릿 캐싱으로 성능 최적화
 - 접근성 속성 자동 추가 (ARIA)
 - Highlighted 카드 지원
@@ -80,6 +82,7 @@ console.log(CONFIG.LINK_LABELS.COMPLETE_PDF); // "Complete PDF"
 ```
 
 **포함 내용**:
+
 - URL 프리픽스
 - 링크 타입/라벨
 - 카드 클래스명
@@ -113,7 +116,7 @@ const link = generateLink({
   text: 'Example',
   className: 'link-primary',
   ariaLabel: 'Open example',
-  isExternal: true
+  isExternal: true,
 });
 
 const { scriptHashes, styleHashes } = extractInlineHashes(html);
@@ -146,6 +149,7 @@ validateData(projectData); // Throws on validation error
 ```
 
 **검증 항목**:
+
 - resumeDownload 필수 필드
 - resume 배열 구조
 - projects 배열 구조
@@ -245,7 +249,7 @@ const projectHtml = generateProjectCards(projectData.projects, dataHash);
 // 4. 캐시 헤더 적용
 const headers = {
   ...SECURITY_HEADERS,
-  ...getCacheHeaders(url.pathname)
+  ...getCacheHeaders(url.pathname),
 };
 ```
 

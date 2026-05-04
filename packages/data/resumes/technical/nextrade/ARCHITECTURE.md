@@ -6,14 +6,17 @@
 **Type**: Multi-lateral Trading Facility (다자간매매체결회사)
 **Duration**: 2024.03 ~ Present (19 months)
 **Phases**:
+
 - Construction (2024.03-2025.02, 11 months)
 - Operations (2025.03-Present, 8 months)
 
-**Roles**:
+**Roles**
+
 - Construction: Security Infrastructure Lead & Automation Engineer
 - Operations: Information Security Operations Engineer
 
-**Scale**:
+**Scale**
+
 - Endpoints: 300+ workstations, 50+ mobile devices
 - Servers: 150+ (physical + virtual)
 - Network Devices: 80+ (switches, routers, firewalls, load balancers)
@@ -24,11 +27,16 @@
 
 ## Executive Summary
 
-Led the design, implementation, and operation of South Korea's first new securities exchange infrastructure in over two decades. Built a **zero-trust security architecture** from the ground up, passed regulatory compliance reviews, and maintained service availability targets with no major security incidents in the owned area during the period.
+Led the design, implementation, and operation of South Korea's first new
+securities exchange infrastructure in over two decades. Built a **zero-trust
+security architecture** from the ground up, passed regulatory compliance
+reviews, and maintained service availability targets with no major security
+incidents in the owned area during the period.
 
 ### Quantified Business Impact
 
 **Security Posture**
+
 - Security Incidents: **0 breaches** (19 months continuous)
 - Regulatory Audits: **0 findings** (3 consecutive FSC audits)
 - Vulnerability Remediation: **98% SLA compliance** (Critical/High priority)
@@ -36,6 +44,7 @@ Led the design, implementation, and operation of South Korea's first new securit
 - Incident Response Time: **40% faster** (45min → 27min average)
 
 **Operational Efficiency**
+
 - Firewall Policy Deployment: **50% time reduction** (8h → 4h)
 - Endpoint Performance: **30% CPU improvement** (60% → 42%)
 - Configuration Deployment: **90% time reduction** (30min → 3min per policy)
@@ -43,12 +52,14 @@ Led the design, implementation, and operation of South Korea's first new securit
 - Automation Coverage: **80% of repetitive tasks** eliminated
 
 **Cost Optimization**
+
 - Manual Labor Reduction: **400+ hours/year** saved through automation
 - Incident-Related Costs: **35% reduction** through proactive monitoring
 - Compliance Costs: **30% reduction** through automation and documentation
 - TCO (Total Cost of Ownership): **~20% below** industry benchmark
 
 **Compliance & Governance**
+
 - FSC Pre-License Audit: **Zero findings** (2024.12)
 - FSC Quarterly Audits: **Zero findings** (2025.05, 2025.09)
 
@@ -58,7 +69,7 @@ Led the design, implementation, and operation of South Korea's first new securit
 
 ### High-Level Infrastructure Topology
 
-```
+```text
                         ┌─────────────────────────────────┐
                         │    INTERNET (Public Network)    │
                         └────────────┬────────────────────┘
@@ -106,6 +117,7 @@ Led the design, implementation, and operation of South Korea's first new securit
 ### Network Segmentation Strategy
 
 **Physical Separation (Air-Gap)**
+
 1. **Trading Network** (Critical Infrastructure)
    - Completely isolated from internet
    - Dedicated physical switches
@@ -126,7 +138,8 @@ Led the design, implementation, and operation of South Korea's first new securit
    - Components: SIEM, backup, monitoring tools
 
 **Logical Segmentation (Micro-Segmentation)**
-```
+
+```text
 Zone          VLAN   Subnet              Purpose
 ─────────────────────────────────────────────────────────
 DMZ           10     172.16.10.0/24      External services
@@ -138,7 +151,8 @@ Trading-Data  31     10.100.31.0/24      Market data
 ```
 
 **Firewall Policy Matrix** (Simplified)
-```
+
+```text
 Source        Destination     Protocol    Port      Action
 ───────────────────────────────────────────────────────────
 Internet      DMZ             HTTPS       443       ALLOW
@@ -156,6 +170,7 @@ ANY           Trading-Core    ANY         ANY       DENY (default)
 ### 1. Perimeter Security (Layer 3-7)
 
 #### DDoS Protection
+
 - **Vendor**: Cloudflare / Local Scrubbing Center
 - **Capacity**: 20Gbps scrubbing, 100Gbps on-demand
 - **Detection**:
@@ -170,6 +185,7 @@ ANY           Trading-Core    ANY         ANY       DENY (default)
   - Downtime: 0 minutes
 
 #### Next-Generation Firewall (NGFW)
+
 - **Product**: Fortigate 600F (Dual, Active-Passive HA)
 - **Specifications**:
   - Firewall Throughput: 10Gbps
@@ -190,6 +206,7 @@ ANY           Trading-Core    ANY         ANY       DENY (default)
   - Availability: Met monthly HA target
 
 #### Intrusion Prevention System (IPS)
+
 - **Mode**: Inline (fail-open for availability)
 - **Signatures**: 10,000+ (auto-updated daily)
 - **Custom Rules**: 50+ (tailored to trading platform)
@@ -205,6 +222,7 @@ ANY           Trading-Core    ANY         ANY       DENY (default)
   - Zero-Day Exploits: 3 (heuristic detection)
 
 #### Web Application Firewall (WAF)
+
 - **Protection**: OWASP Top 10 vulnerabilities
 - **Features**:
   - Virtual patching for unpatched apps
@@ -219,6 +237,7 @@ ANY           Trading-Core    ANY         ANY       DENY (default)
 ### 2. VPN & Remote Access
 
 #### SSL VPN
+
 - **Product**: Fortigate SSL VPN
 - **Capacity**: 500 concurrent users
 - **Authentication**:
@@ -236,6 +255,7 @@ ANY           Trading-Core    ANY         ANY       DENY (default)
   - Data Transferred: 500GB/day
 
 #### IPsec Site-to-Site VPN
+
 - **Tunnels**: 5 active (partner exchanges, regulators, vendors)
 - **Encryption**: AES-256-GCM
 - **Redundancy**: Dual-path with automatic failover
@@ -245,6 +265,7 @@ ANY           Trading-Core    ANY         ANY       DENY (default)
 ### 3. Endpoint Security (300+ Endpoints)
 
 #### Endpoint Protection Platform (EPP)
+
 - **Primary**: CrowdStrike Falcon (EDR)
 - **Secondary**: Symantec Endpoint Protection (traditional AV)
 - **Coverage**: All workstations and servers in scope
@@ -261,6 +282,7 @@ ANY           Trading-Core    ANY         ANY       DENY (default)
   - False Positives: 2% (addressed through tuning)
 
 #### Network Access Control (NAC)
+
 - **Product**: Genian NAC
 - **Authentication**: 802.1X (EAP-TLS)
 - **Node Management**: 350+ devices (endpoints + IoT)
@@ -281,6 +303,7 @@ ANY           Trading-Core    ANY         ANY       DENY (default)
   - Average Remediation Time: 2 hours
 
 #### Data Loss Prevention (DLP)
+
 - **Product**: Symantec DLP
 - **Coverage**:
   - Network DLP: Email, apps/portfolio, file transfer
@@ -303,6 +326,7 @@ ANY           Trading-Core    ANY         ANY       DENY (default)
   - Average Incident Investigation Time: 15 minutes
 
 **EPP/DLP Optimization Project** (Major Achievement)
+
 - **Problem**: Concurrent scans caused CPU spikes (60-80%)
 - **Root Cause**:
   - EPP real-time scan + DLP content inspection = 2x I/O load
@@ -321,6 +345,7 @@ ANY           Trading-Core    ANY         ANY       DENY (default)
 ### 4. Access Control & Privileged Access Management
 
 #### Server Access Control
+
 - **Product**: CyberArk Privileged Access Security
 - **Scope**: 150+ servers (Linux + Windows)
 - **Capabilities**:
@@ -336,6 +361,7 @@ ANY           Trading-Core    ANY         ANY       DENY (default)
   - Audit Review Time: 2 hours/week
 
 #### Database Access Control
+
 - **Product**: Imperva SecureSphere
 - **Coverage**: 50+ databases (MySQL, PostgreSQL, Oracle, MSSQL)
 - **Monitoring**:
@@ -357,6 +383,7 @@ ANY           Trading-Core    ANY         ANY       DENY (default)
 ### 5. Advanced Threat Detection
 
 #### Advanced Persistent Threat (APT) Protection
+
 - **Products**: FireEye NX + Palo Alto WildFire
 - **Detection Methods**:
   - Sandbox analysis (suspicious files executed in isolated environment)
@@ -374,6 +401,7 @@ ANY           Trading-Core    ANY         ANY       DENY (default)
   - Zero-Day Exploits: 1 (blocked, reported to vendor)
 
 #### Security Information & Event Management (SIEM)
+
 - **Product**: Splunk Enterprise Security
 - **Log Sources**: 80+ (firewalls, servers, applications, endpoints)
 - **Daily Ingestion**: 10GB/day (50GB peak)
@@ -396,7 +424,8 @@ ANY           Trading-Core    ANY         ANY       DENY (default)
 
 ### 1. Firewall Policy Automation Framework
 
-**Business Problem**:
+**Business Problem**
+
 - Manual policy deployment: 8 hours for 100 policies
 - Human error rate: ~5% (typos, wrong IP, incorrect port)
 - Audit trail gaps: Inconsistent documentation
@@ -404,7 +433,8 @@ ANY           Trading-Core    ANY         ANY       DENY (default)
 
 **Technical Solution**: Python-based automation framework
 
-**Architecture**:
+**Architecture**
+
 ```python
 ┌─────────────────┐
 │  Excel/CSV      │  (Policy Request Template)
@@ -447,7 +477,8 @@ ANY           Trading-Core    ANY         ANY       DENY (default)
 └─────────────────────────────────┘
 ```
 
-**Key Features**:
+**Key Features**
+
 ```python
 # Example: Policy Validation
 def validate_policy(policy):
@@ -501,14 +532,17 @@ def deploy_policies(policies):
         raise
 ```
 
-**Results**:
+**Results**
+
 - **Deployment Time**: 8 hours → 4 hours (50% reduction)
-- **Error Rate**: 5% → 0% in measured deployments (consistent validation results)
+- **Error Rate**: 5% → 0% in measured deployments (consistent validation
+  results)
 - **Audit Compliance**: Documentation generated for all automated deployments
 - **Rollback Time**: 30 minutes → 5 minutes (83% reduction)
 - **ROI**: 200+ hours/year saved (~$50K value)
 
 **Metrics** (2025 YTD):
+
 - Policies Deployed via Automation: 450+
 - Manual Policies: 0 for policies handled by the automation workflow
 - Failed Deployments: 2 (both auto-rolled back)
@@ -516,9 +550,11 @@ def deploy_policies(policies):
 
 ### 2. NAC Exception Policy Automation
 
-**Challenge**: NAC exception requests (guest access, IoT devices) took 30 minutes per request (manual configuration)
+**Challenge**: NAC exception requests (guest access, IoT devices) took 30
+minutes per request (manual configuration)
 
 **Solution**: Ansible playbook + ServiceNow integration
+
 ```yaml
 # Ansible Playbook: nac_exception.yml
 - name: Deploy NAC Exception Policy
@@ -527,27 +563,29 @@ def deploy_policies(policies):
     - name: Create MAC address exception
       genian_nac:
         action: add_exception
-        mac_address: "{{ device_mac }}"
-        vlan: "{{ guest_vlan }}"
-        duration: "{{ access_duration }}"
-        approver: "{{ ticket_approver }}"
+        mac_address: '{{ device_mac }}'
+        vlan: '{{ guest_vlan }}'
+        duration: '{{ access_duration }}'
+        approver: '{{ ticket_approver }}'
       register: result
 
     - name: Update ServiceNow ticket
       servicenow:
-        ticket_number: "{{ ticket_number }}"
-        status: "Completed"
-        notes: "NAC exception deployed: {{ result.node_id }}"
+        ticket_number: '{{ ticket_number }}'
+        status: 'Completed'
+        notes: 'NAC exception deployed: {{ result.node_id }}'
 ```
 
-**Workflow**:
+**Workflow**
+
 1. User submits ServiceNow request
 2. Approval workflow (manager + security team)
 3. Approved ticket triggers Ansible via webhook
 4. Ansible deploys policy to NAC
 5. Confirmation email sent to requester
 
-**Results**:
+**Results**
+
 - **Processing Time**: 30 minutes → 3 minutes (90% reduction)
 - **Error Rate**: ~3% → 0% (template-based)
 - **Approval Compliance**: Approval workflow enforced for automated exceptions
@@ -555,7 +593,8 @@ def deploy_policies(policies):
 ### 3. Security Monitoring Automation
 
 **Automated Threat Response** (SOAR Playbooks):
-```
+
+```text
 Trigger: Malware detected on endpoint
   └─> Isolate endpoint from network (NAC quarantine)
   └─> Kill malicious process (EDR remote action)
@@ -580,7 +619,8 @@ Trigger: DLP violation (confidential data exfiltration attempt)
   └─> Add user to high-risk monitoring list
 ```
 
-**Automated Compliance Reporting**:
+**Automated Compliance Reporting**
+
 - Daily: Security event summary dashboard (for SOC team)
 - Weekly: Vulnerability scan results (for IT team)
 - Monthly: Compliance metrics (for management)
@@ -595,7 +635,9 @@ Trigger: DLP violation (confidential data exfiltration attempt)
 #### Regulatory Requirements (Securities Exchange License)
 
 **Pre-License Audit (2024.12)**
-- **Auditor**: FSC + Korea Financial Telecommunications & Clearings Institute (KFTC)
+
+- **Auditor**: FSC + Korea Financial Telecommunications & Clearings Institute
+  (KFTC)
 - **Duration**: 2 weeks on-site inspection
 - **Scope**: 200+ control items across 8 domains
 - **Result**: **Zero findings** → License approved
@@ -610,6 +652,7 @@ Trigger: DLP violation (confidential data exfiltration attempt)
   8. **Third-Party Risk**: Vendor security assessments
 
 **Post-License Quarterly Audits** (2025.05, 2025.09)
+
 - **Frequency**: Every 3 months
 - **Format**: Remote audit + on-site sampling
 - **Focus**: Operational compliance (policy adherence, incident handling)
@@ -623,7 +666,8 @@ Trigger: DLP violation (confidential data exfiltration attempt)
 
 #### Compliance Automation
 
-**Automated Evidence Collection**:
+**Automated Evidence Collection**
+
 ```bash
 # Daily compliance snapshot script
 #!/bin/bash
@@ -647,7 +691,8 @@ generate_compliance_report
 upload_to_compliance_vault
 ```
 
-**Continuous Compliance Monitoring**:
+**Continuous Compliance Monitoring**
+
 - Real-time policy drift detection (Terraform state comparison)
 - Automated access reviews (quarterly user recertification)
 - Configuration compliance scanning (CIS benchmarks)
@@ -661,8 +706,9 @@ upload_to_compliance_vault
 
 **Coverage**: 24/7/365 monitoring (3 shifts, 2 analysts per shift)
 
-**Event Processing Pipeline**:
-```
+**Event Processing Pipeline**
+
+```text
 Raw Events (15M/month)
   └─> Correlation Engine (SIEM)
       └─> Correlated Alerts (6K/month)
@@ -672,32 +718,36 @@ Raw Events (15M/month)
                       └─> Escalated to IR Team (2/month)
 ```
 
-**Response Time SLAs**:
-| Priority | Detection | Triage | Investigation | Containment | Resolution |
-|----------|-----------|--------|---------------|-------------|------------|
-| P0 (Critical) | < 1 min | < 5 min | < 15 min | < 30 min | < 4 hours |
-| P1 (High) | < 5 min | < 15 min | < 1 hour | < 2 hours | < 1 day |
-| P2 (Medium) | < 15 min | < 1 hour | < 4 hours | < 1 day | < 3 days |
-| P3 (Low) | < 1 hour | < 4 hours | < 1 day | < 3 days | < 1 week |
+**Response Time SLAs**
+
+| Priority      | Detection | Triage    | Investigation | Containment | Resolution |
+| ------------- | --------- | --------- | ------------- | ----------- | ---------- |
+| P0 (Critical) | < 1 min   | < 5 min   | < 15 min      | < 30 min    | < 4 hours  |
+| P1 (High)     | < 5 min   | < 15 min  | < 1 hour      | < 2 hours   | < 1 day    |
+| P2 (Medium)   | < 15 min  | < 1 hour  | < 4 hours     | < 1 day     | < 3 days   |
+| P3 (Low)      | < 1 hour  | < 4 hours | < 1 day       | < 3 days    | < 1 week   |
 
 **SLA Compliance** (2025 YTD):
+
 - P0: 2/2 incidents met SLA
 - P1: 95% (38/40 incidents)
 - P2: 92% (110/120 incidents)
 - P3: 88% (350/400 incidents)
 
 **Incident Breakdown by Type** (2025 YTD):
-| Category | Count | % | Avg Resolution Time |
-|----------|-------|---|---------------------|
-| Malware | 5 | 3% | 2.5 hours |
-| Phishing | 12 | 8% | 1.2 hours |
-| Unauthorized Access | 8 | 5% | 3.1 hours |
-| DLP Violation | 25 | 17% | 45 minutes |
-| Policy Violation | 80 | 53% | 30 minutes |
-| Vulnerability | 20 | 14% | 2 days (patch cycle) |
-| **Total** | **150** | **All incidents** | **36 min (avg)** |
 
-**False Positive Rate**:
+| Category            | Count   | %                 | Avg Resolution Time  |
+| ------------------- | ------- | ----------------- | -------------------- |
+| Malware             | 5       | 3%                | 2.5 hours            |
+| Phishing            | 12      | 8%                | 1.2 hours            |
+| Unauthorized Access | 8       | 5%                | 3.1 hours            |
+| DLP Violation       | 25      | 17%               | 45 minutes           |
+| Policy Violation    | 80      | 53%               | 30 minutes           |
+| Vulnerability       | 20      | 14%               | 2 days (patch cycle) |
+| **Total**           | **150** | **All incidents** | **36 min (avg)**     |
+
+**False Positive Rate**
+
 - Initial (2024 Q1): 60% (120/200 alerts)
 - Current (2025 Q4): 33% (100/300 alerts)
 - Target (2026): 20%
@@ -705,28 +755,32 @@ Raw Events (15M/month)
 
 ### Vulnerability Management
 
-**Scan Frequency**:
+**Scan Frequency**
+
 - Critical Systems (trading, database): Weekly
 - Production Servers: Bi-weekly
 - Development Systems: Monthly
 - Endpoints: Monthly
 
 **Remediation SLA** (by severity):
-| Severity | SLA | 2025 YTD Compliance | Avg Remediation Time |
-|----------|-----|---------------------|----------------------|
-| Critical | 7 days | 23/23 within SLA | 4.2 days |
-| High | 14 days | 98% (153/156) | 9.1 days |
-| Medium | 30 days | 95% (378/398) | 18.5 days |
-| Low | 90 days | 90% (243/270) | 45 days |
+
+| Severity | SLA     | 2025 YTD Compliance | Avg Remediation Time |
+| -------- | ------- | ------------------- | -------------------- |
+| Critical | 7 days  | 23/23 within SLA    | 4.2 days             |
+| High     | 14 days | 98% (153/156)       | 9.1 days             |
+| Medium   | 30 days | 95% (378/398)       | 18.5 days            |
+| Low      | 90 days | 90% (243/270)       | 45 days              |
 
 **Vulnerability Statistics** (2025 YTD):
+
 - **Total Discovered**: 847
 - **Total Remediated**: 797 (94%)
 - **Accepted Risks**: 12 (documented business justification)
 - **Pending**: 38 (within SLA)
 - **Overdue**: 0
 
-**Top Vulnerability Categories**:
+**Top Vulnerability Categories**
+
 1. Outdated Software (35%): Windows updates, Java versions
 2. Misconfigurations (25%): Default passwords, open ports
 3. Missing Patches (20%): OS kernel, application libraries
@@ -735,21 +789,24 @@ Raw Events (15M/month)
 
 ### System Availability & Reliability
 
-**Service Level Objectives (SLOs)**:
-| Service | Target | 2025 YTD | Downtime (Annual Allowed) |
-|---------|--------|----------|---------------------------|
-| Trading Platform | Availability target | Met target | 4.4 hours | 1.0 hour used |
-| Website/Portal | Availability target | Met target | 8.8 hours | 3.2 hours used |
-| Internal Systems | 99.5% | 99.7% | 43.8 hours | 15 hours used |
-| Security Services | Availability target | Met target | 8.8 hours | 2.5 hours used |
+**Service Level Objectives (SLOs)**
+
+| Service           | Target              | 2025 YTD   | Downtime (Annual Allowed) | Used           |
+| ----------------- | ------------------- | ---------- | ------------------------- | -------------- |
+| Trading Platform  | Availability target | Met target | 4.4 hours                 | 1.0 hour used  |
+| Website/Portal    | Availability target | Met target | 8.8 hours                 | 3.2 hours used |
+| Internal Systems  | 99.5%               | 99.7%      | 43.8 hours                | 15 hours used  |
+| Security Services | Availability target | Met target | 8.8 hours                 | 2.5 hours used |
 
 **Mean Time Metrics** (2025 avg):
+
 - **MTTD** (Mean Time To Detect): 3.2 minutes (improved from 5 min)
 - **MTTR** (Mean Time To Respond): 27 minutes (improved from 45 min)
 - **MTTR** (Mean Time To Repair): 36 minutes (improved from 60 min)
 - **MTBF** (Mean Time Between Failures): 720 hours (30 days)
 
-**Incident Post-Mortem Process**:
+**Incident Post-Mortem Process**
+
 1. Incident occurs → Immediate response
 2. Incident resolved → Root cause analysis (within 48 hours)
 3. Post-mortem document created (5 Whys, timeline, impact)
@@ -764,6 +821,7 @@ Raw Events (15M/month)
 ### Total Cost of Ownership (TCO)
 
 **Security Infrastructure Investment** (2024-2025):
+
 - Hardware: ~$800K (firewalls, servers, storage, network)
 - Software Licenses: ~$400K/year (15 security products)
 - Personnel: ~$600K/year (5 FTE security team)
@@ -774,16 +832,18 @@ Raw Events (15M/month)
 
 ### Cost Avoidance Through Automation
 
-**Manual Labor Reduction**:
-| Task | Frequency | Manual Time | Automated Time | Annual Savings |
-|------|-----------|-------------|----------------|----------------|
-| Firewall policy deployment | 50/year | 8h | 4h | 200 hours |
-| NAC exception processing | 200/year | 30min | 3min | 90 hours |
-| Vulnerability report generation | 50/year | 2h | 15min | 87.5 hours |
-| Compliance evidence collection | 12/year | 8h | 1h | 84 hours |
-| **Total** | - | - | - | **461.5 hours** |
+**Manual Labor Reduction**
 
-**Value Calculation**:
+| Task                            | Frequency | Manual Time | Automated Time | Annual Savings  |
+| ------------------------------- | --------- | ----------- | -------------- | --------------- |
+| Firewall policy deployment      | 50/year   | 8h          | 4h             | 200 hours       |
+| NAC exception processing        | 200/year  | 30min       | 3min           | 90 hours        |
+| Vulnerability report generation | 50/year   | 2h          | 15min          | 87.5 hours      |
+| Compliance evidence collection  | 12/year   | 8h          | 1h             | 84 hours        |
+| **Total**                       | -         | -           | -              | **461.5 hours** |
+
+**Value Calculation**
+
 - Hours Saved: 461.5 hours/year
 - Average Hourly Rate: $100/hour (fully loaded)
 - **Annual Value**: $46,150
@@ -791,13 +851,15 @@ Raw Events (15M/month)
 
 ### Incident Cost Avoidance
 
-**Prevented Security Incidents**:
+**Prevented Security Incidents**
+
 - Data Breaches: 0 (industry avg: 1-2/year for similar orgs)
 - Ransomware: 0 (average cost: $500K per incident)
 - Regulatory Fines: $0 (potential: $100K-$1M per violation)
 - **Estimated Cost Avoidance**: $600K-$1.5M per year
 
 **Actual Incident Costs** (2025 YTD):
+
 - Total Incidents: 150
 - Major Incidents (required >4 hours response): 5
 - **Total Cost**: ~$25K (personnel time + investigation)
@@ -806,24 +868,28 @@ Raw Events (15M/month)
 
 ### Operational Efficiency Gains
 
-**Reduced MTTR Impact**:
+**Reduced MTTR Impact**
+
 - Previous MTTR: 60 minutes
 - Current MTTR: 36 minutes
 - Average Downtime Cost: $10K/hour
 - Incidents/Year: 150
 - **Annual Savings**: 150 × (60-36)/60 × $10K = **$60K**
 
-**False Positive Reduction Impact**:
+**False Positive Reduction Impact**
+
 - Previous False Positive Rate: 60%
 - Current False Positive Rate: 33%
 - Time per False Positive Investigation: 20 minutes
 - Alerts/Month: 300
-- **Monthly Savings**: 300 × (60%-33%) × 20min = 1,620 minutes = **27 hours/month**
+- **Monthly Savings**: 300 × (60%-33%) × 20min = 1,620 minutes = **27
+  hours/month**
 - **Annual Savings**: 27h × 12 × $100/hour = **$32.4K**
 
 ### Total Business Value (2025)
 
-**Cost Savings**:
+**Cost Savings**
+
 - Infrastructure TCO Savings: $450K (one-time)
 - Automation Savings: $46K (recurring)
 - Incident Cost Savings: $50K (recurring)
@@ -831,12 +897,15 @@ Raw Events (15M/month)
 - False Positive Reduction: $32K (recurring)
 - **Total Annual Savings**: $188K (recurring)
 
-**Cost Avoidance**:
+**Cost Avoidance**
+
 - Security Incidents Prevented: $600K-$1.5M (estimated)
-- Regulatory Fines Avoided: $0 (met compliance requirements during audited period)
+- Regulatory Fines Avoided: $0 (met compliance requirements during audited
+  period)
 - **Total Annual Cost Avoidance**: $600K-$1.5M
 
-**ROI Calculation**:
+**ROI Calculation**
+
 - Total Investment (Year 1): $1.85M
 - Total Annual Value: $788K-$1.688M (savings + avoidance)
 - **ROI**: 43%-91% in Year 1
@@ -848,47 +917,51 @@ Raw Events (15M/month)
 
 ### Security Products (15 Vendors)
 
-| Category | Product | Version | License | Annual Cost |
-|----------|---------|---------|---------|-------------|
-| NGFW | Fortigate 600F | 7.4 | HA Pair | $120K |
-| SIEM | Splunk Enterprise Security | 9.1 | 10GB/day | $80K |
-| EPP/EDR | CrowdStrike Falcon | Latest | 300 endpoints | $60K |
-| NAC | Genian NAC | 6.0 | 350 nodes | $40K |
-| DLP | Symantec DLP | 16.0 | 300 agents | $50K |
-| PAM | CyberArk PAS | 13.2 | 150 accounts | $70K |
-| Database Security | Imperva SecureSphere | 15.0 | 50 databases | $45K |
-| APT | FireEye NX + Palo Alto WildFire | Latest | 2 appliances | $55K |
-| Backup | Veeam Backup & Replication | 12 | Unlimited | $30K |
-| Vulnerability Scanner | Tenable Nessus Pro | Latest | 500 assets | $20K |
-| Email Security | Proofpoint | Latest | 300 users | $25K |
-| Web Proxy | Zscaler | Latest | 300 users | $35K |
-| MDM | MobileIron | Latest | 50 devices | $15K |
-| SOAR | Palo Alto Cortex XSOAR | Latest | 5 analysts | $40K |
-| Threat Intelligence | Recorded Future | Latest | API access | $30K |
+| Category              | Product                         | Version | License       | Annual Cost |
+| --------------------- | ------------------------------- | ------- | ------------- | ----------- |
+| NGFW                  | Fortigate 600F                  | 7.4     | HA Pair       | $120K       |
+| SIEM                  | Splunk Enterprise Security      | 9.1     | 10GB/day      | $80K        |
+| EPP/EDR               | CrowdStrike Falcon              | Latest  | 300 endpoints | $60K        |
+| NAC                   | Genian NAC                      | 6.0     | 350 nodes     | $40K        |
+| DLP                   | Symantec DLP                    | 16.0    | 300 agents    | $50K        |
+| PAM                   | CyberArk PAS                    | 13.2    | 150 accounts  | $70K        |
+| Database Security     | Imperva SecureSphere            | 15.0    | 50 databases  | $45K        |
+| APT                   | FireEye NX + Palo Alto WildFire | Latest  | 2 appliances  | $55K        |
+| Backup                | Veeam Backup & Replication      | 12      | Unlimited     | $30K        |
+| Vulnerability Scanner | Tenable Nessus Pro              | Latest  | 500 assets    | $20K        |
+| Email Security        | Proofpoint                      | Latest  | 300 users     | $25K        |
+| Web Proxy             | Zscaler                         | Latest  | 300 users     | $35K        |
+| MDM                   | MobileIron                      | Latest  | 50 devices    | $15K        |
+| SOAR                  | Palo Alto Cortex XSOAR          | Latest  | 5 analysts    | $40K        |
+| Threat Intelligence   | Recorded Future                 | Latest  | API access    | $30K        |
 
 **Total Annual Licensing**: ~$715K (actual), ~$400K (after discounts)
 
 ### Infrastructure Components
 
-**Compute**:
+**Compute**
+
 - Hypervisor: VMware vSphere 7.0 (10 hosts, 500 VMs)
 - Containers: Docker Swarm (for internal tools)
 - Operating Systems:
   - Servers: Red Hat Enterprise Linux 8 (70%), Windows Server 2022 (30%)
   - Endpoints: Windows 11 Enterprise (90%), macOS (10%)
 
-**Storage**:
+**Storage**
+
 - Primary: Dell EMC Unity 600F (All-Flash, 100TB usable)
 - Backup: Dell EMC Data Domain (Deduplication, 500TB usable)
 - Archive: Tape Library (LTO-9, 2PB capacity)
 
-**Network**:
+**Network**
+
 - Core Switches: Cisco Catalyst 9500 (2x, StackWise Virtual)
 - Access Switches: Cisco Catalyst 9300 (10x)
 - Load Balancers: F5 BIG-IP (2x HA)
 - WAN: Dual ISP (1Gbps + 1Gbps, active-active)
 
-**Monitoring & Management**:
+**Monitoring & Management**
+
 - Infrastructure Monitoring: Zabbix 6.0
 - Log Management: Splunk + ELK Stack (for non-security logs)
 - ITSM: ServiceNow
@@ -900,9 +973,11 @@ Raw Events (15M/month)
 
 ### Incident Response Framework
 
-**Methodology**: NIST SP 800-61 Rev 2 (Computer Security Incident Handling Guide)
+**Methodology**: NIST SP 800-61 Rev 2 (Computer Security Incident Handling
+Guide)
 
-**Phases**:
+**Phases**
+
 1. **Preparation**: Tools, training, communication plans
 2. **Detection & Analysis**: Identify and assess incidents
 3. **Containment, Eradication & Recovery**: Stop and remediate threats
@@ -910,29 +985,32 @@ Raw Events (15M/month)
 
 ### Incident Classification Matrix
 
-| Severity | Criteria | Response Time | Escalation | Examples |
-|----------|----------|---------------|------------|----------|
-| **P0 - Critical** | Business-critical system compromised; active data breach; trading platform down; ransomware outbreak | < 15 minutes | CISO + CTO + CEO immediate notification | Core trading system breach, ransomware encryption, FSC reportable incident |
-| **P1 - High** | Non-critical system compromised; confirmed malware on multiple endpoints; DDoS attack affecting availability | < 30 minutes | Security Lead + IT Manager | APT detection, credential theft, sustained DDoS |
-| **P2 - Medium** | Single endpoint compromised; suspected unauthorized access; policy violations with business impact | < 2 hours | Security Team Lead | Single malware infection, phishing victim, privilege escalation attempt |
-| **P3 - Low** | Suspected security event; policy violation without business impact; false positive investigation | < 4 hours | Security Analyst | Suspicious log entries, minor policy violations, reconnaissance attempts |
+| Severity          | Criteria                                                                                                     | Response Time | Escalation                              | Examples                                                                   |
+| ----------------- | ------------------------------------------------------------------------------------------------------------ | ------------- | --------------------------------------- | -------------------------------------------------------------------------- |
+| **P0 - Critical** | Business-critical system compromised; active data breach; trading platform down; ransomware outbreak         | < 15 minutes  | CISO + CTO + CEO immediate notification | Core trading system breach, ransomware encryption, FSC reportable incident |
+| **P1 - High**     | Non-critical system compromised; confirmed malware on multiple endpoints; DDoS attack affecting availability | < 30 minutes  | Security Lead + IT Manager              | APT detection, credential theft, sustained DDoS                            |
+| **P2 - Medium**   | Single endpoint compromised; suspected unauthorized access; policy violations with business impact           | < 2 hours     | Security Team Lead                      | Single malware infection, phishing victim, privilege escalation attempt    |
+| **P3 - Low**      | Suspected security event; policy violation without business impact; false positive investigation             | < 4 hours     | Security Analyst                        | Suspicious log entries, minor policy violations, reconnaissance attempts   |
 
 ### Incident Response Team (IRT)
 
 **Core Team** (24/7 on-call rotation):
+
 - **Incident Commander**: Security Lead (me)
 - **Technical Lead**: Senior Security Engineer
 - **Communication Lead**: Compliance Manager
 - **Support**: IT Infrastructure Team
 
 **Extended Team** (on-demand):
+
 - Legal Counsel
 - HR Representative (for insider threats)
 - External Forensics (for major incidents)
 - Vendor Support (CrowdStrike, Splunk, etc.)
 
-**Escalation Chain**:
-```
+**Escalation Chain**
+
+```text
 Security Analyst (L1)
     → Security Lead (L2)
         → CISO (L3)
@@ -944,15 +1022,17 @@ Security Analyst (L1)
 
 #### Playbook 1: Malware/Ransomware Outbreak
 
-**Detection Triggers**:
+**Detection Triggers**
+
 - EDR alert: Malicious file execution
 - Multiple encryption events detected
 - Suspicious PowerShell/command-line activity
 - Lateral movement indicators
 
-**Response Procedure**:
+**Response Procedure**
 
 **Phase 1: Immediate Containment (< 5 minutes)**
+
 ```bash
 # Step 1: Isolate infected endpoint(s) via NAC
 ansible-playbook quarantine-endpoint.yml -e "mac_address=XX:XX:XX:XX:XX:XX"
@@ -968,6 +1048,7 @@ curl -X POST https://api.crowdstrike.com/contain -d '{"device_id":"xyz","action"
 ```
 
 **Phase 2: Analysis (< 30 minutes)**
+
 ```bash
 # Step 1: Collect forensic evidence
 ## Memory dump
@@ -993,6 +1074,7 @@ curl https://api.recordedfuture.com/v2/search \
 ```
 
 **Phase 3: Eradication (< 2 hours)**
+
 ```bash
 # Step 1: Remove malware from all endpoints
 ## Push EDR remediation
@@ -1016,6 +1098,7 @@ crowdstrike-cli update-ioc-policy --hashes malicious-hashes.txt
 ```
 
 **Phase 4: Recovery (< 4 hours)**
+
 ```bash
 # Step 1: Restore from backup (if encryption occurred)
 veeam-cli restore-vm --vm infected-01 --restore-point "2025-10-15 02:00"
@@ -1034,6 +1117,7 @@ python3 firewall-unblock-host.py --ip 10.0.20.45
 ```
 
 **Phase 5: Post-Incident (< 24 hours)**
+
 - Root cause analysis (5 Whys)
 - Timeline documentation
 - Impact assessment (systems affected, data accessed, business impact)
@@ -1041,7 +1125,8 @@ python3 firewall-unblock-host.py --ip 10.0.20.45
 - Knowledge base update
 - FSC notification (if regulatory threshold met)
 
-**Success Criteria**:
+**Success Criteria**
+
 - Malware eradicated from all systems
 - No re-infection within 48 hours
 - Affected systems restored to normal operation
@@ -1051,15 +1136,16 @@ python3 firewall-unblock-host.py --ip 10.0.20.45
 
 #### Playbook 2: Data Breach / Unauthorized Access
 
-**Detection Triggers**:
+**Detection Triggers**
+
 - DLP alert: Sensitive data exfiltration attempt
 - Unauthorized privileged access (after-hours, unusual location)
 - Database anomaly: Bulk data export
 - Firewall alert: Large outbound data transfer
 
-**Response Procedure**:
-
+**Response Procedure**
 **Phase 1: Immediate Containment (< 10 minutes)**
+
 ```bash
 # Step 1: Block exfiltration path
 ## Block IP/domain on firewall
@@ -1077,6 +1163,7 @@ ansible-playbook quarantine-endpoint.yml -e "hostname=fileserver-01"
 ```
 
 **Phase 2: Scope Assessment (< 30 minutes)**
+
 ```bash
 # Step 1: Identify what data was accessed
 ## Query database audit logs
@@ -1100,6 +1187,7 @@ splunk search 'index=dlp_endpoint device_type=USB user=compromised_user'
 ```
 
 **Phase 3: Evidence Preservation (< 1 hour)**
+
 ```bash
 # Step 1: Preserve logs (immutable copy)
 ## Export SIEM logs
@@ -1126,6 +1214,7 @@ EOF
 ```
 
 **Phase 4: Notification & Reporting**
+
 ```bash
 # Regulatory notification decision tree
 RECORDS_AFFECTED=$(splunk search 'index=database_audit user=compromised_user action=SELECT' | wc -l)
@@ -1145,6 +1234,7 @@ python3 send-breach-notification.py \
 ```
 
 **Phase 5: Eradication & Recovery**
+
 - Revoke all credentials for compromised account
 - Force password reset for all potentially exposed accounts
 - Review and remove backdoors (persistence mechanisms)
@@ -1152,12 +1242,14 @@ python3 send-breach-notification.py \
 - Restore affected systems from clean backup
 
 **Phase 6: Post-Incident**
+
 - Customer notification (if PII compromised, per PIPA law)
 - Credit monitoring offer (if financial data compromised)
 - Update incident response plan based on lessons learned
 - Security control enhancements (prevent similar incident)
 
-**FSC Reporting Timeline**:
+**FSC Reporting Timeline**
+
 - **Initial Report**: Within 72 hours of discovery
 - **Progress Update**: Every 7 days until resolution
 - **Final Report**: Within 30 days of resolution
@@ -1166,15 +1258,16 @@ python3 send-breach-notification.py \
 
 #### Playbook 3: DDoS Attack
 
-**Detection Triggers**:
+**Detection Triggers**
+
 - Abnormal traffic volume (>2x baseline)
 - Service degradation/unavailability
 - Firewall session exhaustion
 - Network bandwidth saturation
 
-**Response Procedure**:
-
+**Response Procedure**
 **Phase 1: Immediate Mitigation (< 5 minutes)**
+
 ```bash
 # Step 1: Enable DDoS mitigation service
 ## Activate scrubbing center
@@ -1192,6 +1285,7 @@ python3 firewall-geoip-block.py --countries "CN,RU,KP,IR" --duration 24h
 ```
 
 **Phase 2: Attack Analysis (< 15 minutes)**
+
 ```bash
 # Identify attack type
 ## Volumetric (UDP/ICMP flood)
@@ -1208,6 +1302,7 @@ splunk search 'index=firewall action=denied | stats count by src_ip | sort -coun
 ```
 
 **Phase 3: Targeted Blocking (< 30 minutes)**
+
 ```bash
 # Block attack sources
 ## Top 100 attacking IPs
@@ -1225,18 +1320,21 @@ python3 waf-block-uri.py --uri "/api/high-cost-endpoint" --rate-limit 10req/min
 ```
 
 **Phase 4: Service Recovery**
+
 - Monitor traffic normalization
 - Gradual GeoIP unblocking (whitelisted countries first)
 - Disable scrubbing center when attack subsides
 - Performance verification (response time, error rate)
 
 **Phase 5: Post-Incident**
+
 - Attack attribution (if possible)
 - Capacity planning (if attack exceeded capacity)
 - DDoS mitigation service contract review
 - Incident timeline documentation
 
-**Escalation Criteria**:
+**Escalation Criteria**
+
 - Attack exceeds scrubbing center capacity (>20Gbps)
 - Attack duration >4 hours
 - Revenue impact >$100K
@@ -1245,14 +1343,14 @@ python3 waf-block-uri.py --uri "/api/high-cost-endpoint" --rate-limit 10req/min
 
 #### Playbook 4: Insider Threat / Privilege Abuse
 
-**Detection Triggers**:
+**Detection Triggers**
+
 - Unusual privileged access (after-hours, unusual location)
 - Bulk data download by employee
 - Access to unrelated systems (job role mismatch)
 - PAM alert: Dangerous command executed
 
-**Response Procedure**:
-
+**Response Procedure**
 **Phase 1: Covert Monitoring (< 1 hour)**
 **IMPORTANT**: Do NOT alert the insider; gather evidence first
 
@@ -1279,6 +1377,7 @@ tcpdump -i eth0 host suspicious_user_ip -w /forensics/insider-traffic.pcap &
 ```
 
 **Phase 2: Evidence Collection (< 4 hours)**
+
 ```bash
 # Historical activity analysis
 splunk search 'index=* user=suspicious_user earliest=-30d | stats count by action, object | sort -count'
@@ -1294,6 +1393,7 @@ proofpoint-cli search --sender suspicious_user@nextrade.com --days 30 --attachme
 ```
 
 **Phase 3: Coordinated Response (requires HR + Legal approval)**
+
 ```bash
 # Simultaneous actions (prevent evidence destruction)
 ## Disable account
@@ -1313,6 +1413,7 @@ mobileiron-cli wipe-device --user suspicious_user
 ```
 
 **Phase 4: Forensic Investigation**
+
 - Timeline reconstruction (first suspicious activity → termination)
 - Data accessed inventory
 - Data exfiltration confirmation (email, USB, cloud upload)
@@ -1320,12 +1421,14 @@ mobileiron-cli wipe-device --user suspicious_user
 - Legal consultation (criminal charges vs. civil action)
 
 **Phase 5: Remediation**
+
 - Rotate all credentials accessed by insider
 - Review access for other employees in same department
 - Enhance monitoring for similar patterns
 - HR policy review (background checks, exit interviews)
 
-**Legal Considerations**:
+**Legal Considerations**
+
 - Preserve evidence chain of custody
 - Privacy laws compliance (employee monitoring notice)
 - Consult legal before accessing personal email/files
@@ -1337,7 +1440,7 @@ mobileiron-cli wipe-device --user suspicious_user
 
 #### Template 1: P0 Critical Incident Notification (Executives)
 
-```
+```text
 Subject: [P0 CRITICAL] Security Incident - [Brief Description]
 
 CLASSIFICATION: CONFIDENTIAL
@@ -1376,7 +1479,7 @@ WAR ROOM: [Zoom link / Physical location]
 
 #### Template 2: FSC Regulatory Incident Report
 
-```
+```text
 Financial Services Commission - Incident Report
 Reporting Entity: Nextrade Securities Exchange (넥스트레이드 증권거래소)
 Report Type: [Initial / Progress / Final]
@@ -1437,19 +1540,20 @@ CONTACT INFORMATION:
 
 ### Incident Response Metrics & Continuous Improvement
 
-**Key Performance Indicators (KPIs)**:
+**Key Performance Indicators (KPIs)**
 
-| Metric | Target | 2025 Actual |
-|--------|--------|-------------|
-| Mean Time To Detect (MTTD) | < 5 minutes | 3.2 minutes |
-| Mean Time To Respond (MTTR) | < 30 minutes | 27 minutes |
-| Mean Time To Contain | < 2 hours | 1.5 hours |
-| Mean Time To Recover | < 4 hours | 3.2 hours |
-| Incident Recurrence Rate | < 5% | 0% |
-| Playbook Coverage | Common scenarios in scope | 95% |
-| Post-Mortem Completion | Within 48 hours | Completed for incidents in scope |
+| Metric                      | Target                    | 2025 Actual                      |
+| --------------------------- | ------------------------- | -------------------------------- |
+| Mean Time To Detect (MTTD)  | < 5 minutes               | 3.2 minutes                      |
+| Mean Time To Respond (MTTR) | < 30 minutes              | 27 minutes                       |
+| Mean Time To Contain        | < 2 hours                 | 1.5 hours                        |
+| Mean Time To Recover        | < 4 hours                 | 3.2 hours                        |
+| Incident Recurrence Rate    | < 5%                      | 0%                               |
+| Playbook Coverage           | Common scenarios in scope | 95%                              |
+| Post-Mortem Completion      | Within 48 hours           | Completed for incidents in scope |
 
-**Continuous Improvement Process**:
+**Continuous Improvement Process**
+
 1. **Post-Incident Review** (within 48 hours)
    - Root cause analysis (5 Whys)
    - Timeline reconstruction
@@ -1471,37 +1575,44 @@ CONTACT INFORMATION:
    - Trend analysis
    - Strategic improvements (tools, processes, staffing)
 
-**Post-Incident Review Template**:
+**Post-Incident Review Template**
+
 ```markdown
 # Incident Post-Mortem: [Incident ID]
 
 ## Incident Summary
+
 - **Date**: [YYYY-MM-DD]
 - **Duration**: [X hours]
 - **Severity**: [P0/P1/P2/P3]
 - **Type**: [Malware / Breach / DDoS / Insider]
 
 ## Timeline
-| Time | Event | Action Taken | Outcome |
-|------|-------|--------------|---------|
-| 09:00 | Initial detection | Alert triggered | SOC analyst notified |
-| 09:05 | Triage | Investigation started | Confirmed true positive |
-| ... | ... | ... | ... |
+
+| Time  | Event             | Action Taken          | Outcome                 |
+| ----- | ----------------- | --------------------- | ----------------------- |
+| 09:00 | Initial detection | Alert triggered       | SOC analyst notified    |
+| 09:05 | Triage            | Investigation started | Confirmed true positive |
+| ...   | ...               | ...                   | ...                     |
 
 ## What Went Well
+
 1. [Positive aspect 1]
 2. [Positive aspect 2]
 
 ## What Went Wrong
+
 1. [Issue 1] → Root Cause: [Explanation]
 2. [Issue 2] → Root Cause: [Explanation]
 
 ## Action Items
-| Action | Owner | Due Date | Priority | Status |
-|--------|-------|----------|----------|--------|
-| [Action 1] | [Person] | [Date] | [High/Medium/Low] | [Open/In Progress/Done] |
+
+| Action     | Owner    | Due Date | Priority          | Status                  |
+| ---------- | -------- | -------- | ----------------- | ----------------------- |
+| [Action 1] | [Person] | [Date]   | [High/Medium/Low] | [Open/In Progress/Done] |
 
 ## Metrics
+
 - Detection Time: [X minutes]
 - Response Time: [X minutes]
 - Containment Time: [X hours]
@@ -1509,6 +1620,7 @@ CONTACT INFORMATION:
 - Financial Impact: [KRW]
 
 ## Lessons Learned
+
 1. [Lesson 1]
 2. [Lesson 2]
 
@@ -1524,21 +1636,29 @@ CONTACT INFORMATION:
 ### What Worked Exceptionally Well
 
 #### 1. Automation-First Approach
+
 **Decision**: Invest 30% of construction phase in building automation frameworks
-**Outcome**: 400+ hours/year saved, 0% measured deployment error rate, audit documentation generated for automated changes
+**Outcome**: 400+ hours/year saved, 0% measured deployment error rate, audit
+documentation generated for automated changes
 **Lesson**: Upfront automation investment pays off 10x in operations phase
 
 #### 2. Vendor Diversity for Critical Security
-**Decision**: Use multiple vendors for redundancy (e.g., CrowdStrike + Symantec for EPP)
-**Outcome**: When CrowdStrike outage occurred (global incident, July 2024), Symantec provided fallback
-**Lesson**: Defense-in-depth requires vendor diversity, not just technical diversity
+
+**Decision**: Use multiple vendors for redundancy (e.g., CrowdStrike + Symantec
+for EPP)
+**Outcome**: When CrowdStrike outage occurred (global incident, July 2024),
+Symantec provided fallback
+**Lesson**: Defense-in-depth requires vendor diversity, not just technical
+diversity
 
 #### 3. Aggressive False Positive Tuning
+
 **Decision**: Dedicated 2-month tuning period before go-live
 **Outcome**: 60% → 33% false positive rate, prevented alert fatigue
 **Lesson**: Alert quality > alert quantity; invest in tuning upfront
 
 #### 4. Comprehensive Documentation (Runbooks)
+
 **Decision**: Create step-by-step runbooks for all common scenarios
 **Outcome**: 40% MTTR reduction, seamless knowledge transfer
 **Lesson**: Good documentation is a force multiplier for small teams
@@ -1546,43 +1666,55 @@ CONTACT INFORMATION:
 ### Challenges Overcome
 
 #### 1. EPP/DLP Agent Conflict (CPU Performance)
+
 **Challenge**: Concurrent agent scans caused 60-80% CPU usage, user complaints
 **Initial Approaches Failed**:
+
 - ❌ Disabling DLP → Unacceptable security risk
 - ❌ Reducing scan frequency → Failed compliance requirements
-**Winning Solution**:
-- ✅ Multi-layered optimization (priority tuning, exclusions, scheduling, kernel driver update)
-**Outcome**: 30% CPU improvement without sacrificing security
-**Lesson**: Complex problems require systematic debugging, not quick fixes
+  **Winning Solution**:
+- ✅ Multi-layered optimization (priority tuning, exclusions, scheduling, kernel
+  driver update)
+  **Outcome**: 30% CPU improvement without sacrificing security
+  **Lesson**: Complex problems require systematic debugging, not quick fixes
 
 #### 2. False Positive Alert Fatigue
+
 **Challenge**: 200+ daily alerts, 60% false positives → analyst burnout
 **Initial Approaches Failed**:
+
 - ❌ Ignoring low-priority alerts → Missed 2 real incidents
 - ❌ Raising thresholds → Reduced detection capability
-**Winning Solution**:
-- ✅ Machine learning-based tuning + custom correlation rules + contextual enrichment
-**Outcome**: 50% false positive reduction while maintaining detection rate
-**Lesson**: Alert tuning is an ongoing process, not a one-time task
+  **Winning Solution**:
+- ✅ Machine learning-based tuning + custom correlation rules + contextual
+  enrichment
+  **Outcome**: 50% false positive reduction while maintaining detection rate
+  **Lesson**: Alert tuning is an ongoing process, not a one-time task
 
 #### 3. Firewall Policy Deployment Bottleneck
+
 **Challenge**: Manual deployment = 8 hours, high error rate, audit gaps
 **Initial Approaches Failed**:
+
 - ❌ Hiring more staff → High cost, didn't solve error rate
 - ❌ Manual checklists → Still slow, still error-prone
-**Winning Solution**:
+  **Winning Solution**:
 - ✅ Full automation with validation, dry-run, rollback
-**Outcome**: 50% time reduction, 0% error rate
-**Lesson**: Automate everything that can be automated; human error is inevitable at scale
+  **Outcome**: 50% time reduction, 0% error rate
+  **Lesson**: Automate everything that can be automated; human error is
+  inevitable at scale
 
 #### 4. Regulatory Audit Preparation
+
 **Challenge**: FSC audit required 200+ evidence artifacts, collected manually
 **Initial Approach Failed**:
+
 - ❌ Last-minute evidence gathering → 2 weeks of panic, incomplete artifacts
-**Winning Solution**:
-- ✅ Continuous compliance automation (daily evidence collection + immutable storage)
-**Outcome**: Zero findings, 95% less audit prep time
-**Lesson**: Compliance is a continuous process, not a point-in-time event
+  **Winning Solution**:
+- ✅ Continuous compliance automation (daily evidence collection + immutable
+  storage)
+  **Outcome**: Zero findings, 95% less audit prep time
+  **Lesson**: Compliance is a continuous process, not a point-in-time event
 
 ### Anti-Patterns to Avoid
 
@@ -1608,6 +1740,7 @@ CONTACT INFORMATION:
 ### Short-term (2025 Q4)
 
 #### UEBA (User & Entity Behavior Analytics)
+
 - **Goal**: Detect insider threats and account compromise
 - **Solution**: Splunk UBA or Microsoft Sentinel
 - **Expected Impact**:
@@ -1616,6 +1749,7 @@ CONTACT INFORMATION:
   - Reduce investigation time by 50%
 
 #### Automated Threat Hunting
+
 - **Goal**: Proactive threat detection (currently reactive)
 - **Approach**: SOAR playbooks for common attack patterns
 - **Hunts**:
@@ -1625,6 +1759,7 @@ CONTACT INFORMATION:
   - Monthly: Data exfiltration patterns
 
 #### AI-Powered DLP Classification
+
 - **Goal**: Reduce false positives from 33% to 20%
 - **Solution**: Machine learning-based content classification
 - **Training Data**: 1 year of DLP incidents (3,200+ samples)
@@ -1632,6 +1767,7 @@ CONTACT INFORMATION:
 ### Medium-term (2026)
 
 #### Zero Trust Architecture
+
 - **Scope**: Replace VPN with Zero Trust Network Access (ZTNA)
 - **Components**:
   - Identity-centric access (not network-centric)
@@ -1644,11 +1780,13 @@ CONTACT INFORMATION:
   - Improve user experience (seamless access)
 
 #### Cloud Security Posture Management (CSPM)
+
 - **Trigger**: Planned AWS migration (trading analytics)
 - **Solution**: Palo Alto Prisma Cloud or Wiz
 - **Coverage**: IaaS, PaaS, SaaS security
 
 #### SOC 2 Type II Compliance
+
 - **Trigger**: Required for US institutional clients
 - **Timeline**: 12-month audit period
 - **Start**: 2026 Q3
@@ -1656,6 +1794,7 @@ CONTACT INFORMATION:
 ### Long-term (2027+)
 
 #### AI-Driven Security Operations
+
 - **Vision**: Autonomous threat detection and response
 - **Technologies**:
   - LLMs for log analysis and alert triage
@@ -1663,16 +1802,20 @@ CONTACT INFORMATION:
   - Self-healing security infrastructure
 
 #### Quantum-Safe Cryptography
+
 - **Trigger**: NIST post-quantum standards (expected 2025-2026)
-- **Scope**: Migrate all encryption (TLS, VPN, database) to quantum-resistant algorithms
+- **Scope**: Migrate all encryption (TLS, VPN, database) to quantum-resistant
+  algorithms
 - **Timeline**: 2027-2028 (2-year migration)
 
 #### Automated Penetration Testing
+
 - **Goal**: Continuous security validation
 - **Approach**: Automated red team exercises (monthly)
 - **Tools**: AttackIQ, SafeBreach, or Cymulate
 
 #### Blockchain-Based Audit Trails
+
 - **Goal**: Immutable, tamper-proof audit logs
 - **Use Case**: Regulatory evidence (FSC, ISO)
 - **Technology**: Private blockchain or distributed ledger
@@ -1684,6 +1827,7 @@ CONTACT INFORMATION:
 ### Team Structure & Responsibilities
 
 #### Security Team (5 FTE)
+
 1. **Security Lead** (Me - Operations Phase)
    - Strategic planning, architecture design
    - Vendor management, budget planning
@@ -1711,6 +1855,7 @@ CONTACT INFORMATION:
    - Backup and disaster recovery
 
 #### Cross-Functional Collaboration
+
 - **Infrastructure Team**: Server, network, storage provisioning
 - **Development Team**: Application security, SDLC integration
 - **Compliance Team**: Audit preparation, policy documentation
@@ -1718,25 +1863,27 @@ CONTACT INFORMATION:
 
 ### Key Metrics Summary
 
-| Metric | Target | 2024 (Construction) | 2025 (Operations) |
-|--------|--------|---------------------|-------------------|
-| Security Incidents | 0 breaches | 0 | 0 |
-| Regulatory Findings | 0 | 0 (pre-license) | 0 (2 audits) |
-| Vulnerability Remediation (Critical) | Within 7 days | Met target | Met target |
-| System Availability | Availability target | Met target | Met target |
-| MTTR | < 60 min | 60 min | 36 min |
-| False Positive Rate | < 30% | 60% | 33% |
-| Automation Coverage | > 70% | 50% | 80% |
-| SOC Response Time (P1) | < 30 min | 45 min | 27 min |
+| Metric                               | Target              | 2024 (Construction) | 2025 (Operations) |
+| ------------------------------------ | ------------------- | ------------------- | ----------------- |
+| Security Incidents                   | 0 breaches          | 0                   | 0                 |
+| Regulatory Findings                  | 0                   | 0 (pre-license)     | 0 (2 audits)      |
+| Vulnerability Remediation (Critical) | Within 7 days       | Met target          | Met target        |
+| System Availability                  | Availability target | Met target          | Met target        |
+| MTTR                                 | < 60 min            | 60 min              | 36 min            |
+| False Positive Rate                  | < 30%               | 60%                 | 33%               |
+| Automation Coverage                  | > 70%               | 50%                 | 80%               |
+| SOC Response Time (P1)               | < 30 min            | 45 min              | 27 min            |
 
 ### Contact & References
 
 **Project Lead**: 이재철 (Jaecheol Lee)
-**Email**: qws941@kakao.com
-**LinkedIn**: [linkedin.com/in/jaecheol-lee](https://linkedin.com/in/jaecheol-lee)
+**Email**: <qws941@kakao.com>
+**LinkedIn**:
+[linkedin.com/in/jaecheol-lee](https://linkedin.com/in/jaecheol-lee)
 **GitHub**: [github.com/jclee941](https://github.com/jclee941)
 
-**References Available Upon Request**:
+**References Available Upon Request**
+
 - CTO, Nextrade Securities Exchange
 - Security Team Manager, Nextrade
 - Infrastructure Director, Nextrade
@@ -1747,4 +1894,5 @@ CONTACT INFORMATION:
 **Last Updated**: 2025-10-16
 **Version**: 1.2
 **Next Review**: 2026-01-16 (Quarterly)
-**Changelog**: v1.2 - Added comprehensive security incident response procedures (4 playbooks, communication templates, metrics)
+**Changelog**: v1.2 - Added comprehensive security incident response procedures
+(4 playbooks, communication templates, metrics)

@@ -478,10 +478,10 @@ describe('GitHub Stars Counter', () => {
 
 ## Resources
 
-- **Jest Documentation**: https://jestjs.io/docs/getting-started
-- **Playwright Documentation**: https://playwright.dev/
-- **Lighthouse CI**: https://github.com/GoogleChrome/lighthouse-ci
-- **Web Vitals**: https://apps/portfolio.dev/vitals/
+- **Jest Documentation**: <https://jestjs.io/docs/getting-started>
+- **Playwright Documentation**: <https://playwright.dev/>
+- **Lighthouse CI**: <https://github.com/GoogleChrome/lighthouse-ci>
+- **Web Vitals**: <https://apps/portfolio.dev/vitals/>
 
 ---
 

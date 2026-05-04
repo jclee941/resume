@@ -1,7 +1,9 @@
 # Anti-Detection & Security Guide
 
-**Purpose**: Document stealth techniques, WAF bypass strategies, and security considerations  
-**Audience**: Developers implementing crawlers, scripts, and automation workflows
+**Purpose**: Document stealth techniques, WAF bypass strategies, and security
+considerations
+**Audience**: Developers implementing crawlers, scripts, and automation
+workflows
 
 ## HTTP-Level Anti-Detection
 
@@ -33,7 +35,8 @@ static async fetch(url, options) {
 }
 ```
 
-**Coverage**: 12 Chrome versions (v120-v131) to avoid fingerprinting based on specific version
+**Coverage**: 12 Chrome versions (v120-v131) to avoid fingerprinting based on
+specific version
 
 ### 2. Request Delay + Jitter
 
@@ -47,7 +50,7 @@ static async fetch(url, options) {
   const baseDelay = 1000;
   const jitter = Math.random() * 500;
   await new Promise(r => setTimeout(r, baseDelay + jitter));
-  
+
   return fetch(url, options);
 }
 ```
@@ -70,7 +73,7 @@ for (let attempt = 0; attempt < 3; attempt++) {
     if (attempt < 2) {
       const waitTime = delays[attempt];
       this.#emit('retry', { attempt: attempt + 1, error: e.message });
-      await new Promise(r => setTimeout(r, waitTime));
+      await new Promise((r) => setTimeout(r, waitTime));
     } else {
       throw e;
     }
@@ -111,22 +114,22 @@ class SessionManager {
   static getCookies(platform) {
     const data = JSON.parse(fs.readFileSync('~/.opencode/data/sessions.json'));
     const session = data[platform];
-    
+
     // Check TTL (24 hours)
     if (Date.now() - session.timestamp > 86400000) {
       return null; // Session expired
     }
-    
+
     return session.cookies;
   }
-  
+
   static setCookies(platform, cookies) {
     // Isolate by platform to prevent cross-platform cookie leakage
     const data = JSON.parse(fs.readFileSync('~/.opencode/data/sessions.json'));
     data[platform] = {
       cookies,
       timestamp: Date.now(),
-      ttl: 86400000
+      ttl: 86400000,
     };
     fs.writeFileSync('~/.opencode/data/sessions.json', JSON.stringify(data, null, 2));
   }
@@ -158,8 +161,8 @@ const browser = await puppeteer.launch({
     '--disable-setuid-sandbox',
     '--disable-dev-shm-usage',
     '--disable-gpu',
-    '--window-size=1280,1024'
-  ]
+    '--window-size=1280,1024',
+  ],
 });
 
 // 1. Navigate to login page
@@ -172,6 +175,7 @@ const browser = await puppeteer.launch({
 **Location**: `scripts/extract-cookies-cdp.js` (NEW)
 
 **Advantages**:
+
 - Bypasses CloudFront WAF (connects directly to Chrome)
 - Faster (no browser rendering overhead)
 - More reliable (native Chrome protocol)
@@ -190,9 +194,7 @@ await client.Network.enable();
 
 // Set cookies from file
 const cookies = fs.readFileSync('~/.opencode/data/cookies.json');
-await Promise.all(
-  cookies.map(c => client.Network.setCookie(c))
-);
+await Promise.all(cookies.map((c) => client.Network.setCookie(c)));
 
 // Make requests
 const { responseHeaders, body } = await client.Network.getResponseBody(requestId);
@@ -200,14 +202,15 @@ const { responseHeaders, body } = await client.Network.getResponseBody(requestId
 
 ### Puppeteer vs Playwright vs CDP
 
-| Approach    | CloudFront WAF | Speed | Stealth | Resource Use |
-| ----------- | -------------- | ----- | ------- | ------------ |
-| Playwright  | ❌ Blocked     | Fast  | Medium  | Medium       |
-| Puppeteer   | ⚠️ Partial     | Fast  | Good    | Medium       |
-| CDP (Direct)| ✅ Passes      | Fast  | Excellent | Low        |
-| Cookie Only | ✅ Passes      | Fast  | Perfect | Very Low     |
+| Approach     | CloudFront WAF | Speed | Stealth   | Resource Use |
+| ------------ | -------------- | ----- | --------- | ------------ |
+| Playwright   | ❌ Blocked     | Fast  | Medium    | Medium       |
+| Puppeteer    | ⚠️ Partial     | Fast  | Good      | Medium       |
+| CDP (Direct) | ✅ Passes      | Fast  | Excellent | Low          |
+| Cookie Only  | ✅ Passes      | Fast  | Perfect   | Very Low     |
 
-**Recommendation**: Use CDP for login automation, manual extraction for production
+**Recommendation**: Use CDP for login automation, manual extraction for
+production
 
 ## Session Management Security
 
@@ -237,6 +240,7 @@ const { responseHeaders, body } = await client.Network.getResponseBody(requestId
 ### TTL Management
 
 **24-Hour Expiration**:
+
 - SessionManager validates TTL before use
 - Stale sessions trigger re-authentication flow
 - Prevents cookie rotation → bot detection
@@ -274,10 +278,7 @@ class RateLimiter {
   async acquire() {
     const now = Date.now();
     const timePassed = (now - this.lastRefill) / 1000;
-    this.tokens = Math.min(
-      this.maxTokens,
-      this.tokens + timePassed * this.tokensPerSecond
-    );
+    this.tokens = Math.min(this.maxTokens, this.tokens + timePassed * this.tokensPerSecond);
     this.lastRefill = now;
 
     if (this.tokens >= 1) {
@@ -286,8 +287,8 @@ class RateLimiter {
     }
 
     // Wait for next token
-    const waitTime = (1 - this.tokens) / this.tokensPerSecond * 1000;
-    await new Promise(r => setTimeout(r, waitTime));
+    const waitTime = ((1 - this.tokens) / this.tokensPerSecond) * 1000;
+    await new Promise((r) => setTimeout(r, waitTime));
     this.tokens = 0;
   }
 }
@@ -302,10 +303,10 @@ class RateLimiter {
 if (response.status === 429) {
   // Emit global rate-limit signal
   this.#emit('rateLimit', { retryAfter: response.headers['retry-after'] });
-  
+
   // Exponential backoff
   await delay(delays[attempt]);
-  
+
   // Retry
 }
 ```
@@ -328,11 +329,11 @@ class LogService {
       context: {
         platform: context.platform,
         endpoint: context.endpoint,
-        attempt: context.attempt
-      }
+        attempt: context.attempt,
+      },
       // ❌ Never include: credentials, cookies, API keys
     };
-    
+
     console.error(JSON.stringify(log));
   }
 }

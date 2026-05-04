@@ -105,7 +105,7 @@
 
 ### Before (기존)
 
-```
+```text
 수동 테스트 → 수동 빌드 → 수동 배포 → 수동 검증
 ```
 
@@ -115,7 +115,7 @@
 
 ### After (현재)
 
-```
+```text
 자동 검증 → 자동 빌드 → 자동 배포 → 자동 검증 → 자동 알림
 ```
 
@@ -243,19 +243,19 @@ git push origin master
 
 ### GitHub Actions
 
-```
+```text
 Repository → Actions → 워크플로우 선택
 ```
 
 ### Cloudflare
 
-```
+```text
 Dashboard → Workers → resume → Deployments
 ```
 
 ### n8n
 
-```
+```text
 Workflows → Deployment Webhook → Executions
 ```
 
@@ -265,7 +265,7 @@ Workflows → Deployment Webhook → Executions
 
 ### 자동 롤백
 
-```
+```text
 배포 검증 실패 시 자동으로 이전 버전 유지
 ```
 

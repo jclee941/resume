@@ -3,13 +3,14 @@
 ## TL;DR
 
 > **Quick Summary**: Resume portfolio 테마를 미니멀 화이트에서 다크 네온/터미널 스타일로 전환. CSS 컬러 팔레트 교체, 글로우 이펙트 추가, 히어로 타이핑 애니메이션, 하이브리드 스킬 UI 구현.
-> 
+>
 > **Deliverables**:
+>
 > - 7개 CSS 파일 네온 테마 오버홀
 > - 2개 HTML 파일 (KO/EN) 구조 업데이트
 > - theme.js 다크 온리 모드 전환
 > - worker.js 재생성 및 배포
-> 
+>
 > **Estimated Effort**: Medium (4-6시간)
 > **Parallel Execution**: YES - 3 waves
 > **Critical Path**: Task 0 → Task 1 → Task 2/3/4 (병렬) → Task 5 → Task 6 → Task 7
@@ -19,10 +20,13 @@
 ## Context
 
 ### Original Request
+
 Resume portfolio (resume.jclee.me)를 미니멀 화이트 테마에서 다크 모드 + 네온/터미널/사이버펑크 스타일로 리디자인.
 
 ### Interview Summary
+
 **Key Discussions**:
+
 - **Theme Toggle**: 다크 온리 - 라이트 모드 제거
 - **Animation Intensity**: Moderate - 타이핑 효과, 호버 글로우, 카드 fade-in. 스캔라인/글리치 없음
 - **Skills Layout**: 하이브리드 - Observability는 프로그레스 바, 나머지는 글로우 태그
@@ -30,6 +34,7 @@ Resume portfolio (resume.jclee.me)를 미니멀 화이트 테마에서 다크 �
 - **Rollback**: 작업 전 git tag 생성
 
 ### Technical Decisions
+
 - `[data-theme="dark"]` 조건부 스타일 제거 → `:root`에서 다크 기본값
 - OKLCH 유지하되 글로우 효과용 hex/rgba 추가
 - JetBrains Mono 터미널 느낌 강화, Inter 본문 유지
@@ -40,9 +45,11 @@ Resume portfolio (resume.jclee.me)를 미니멀 화이트 테마에서 다크 �
 ## Work Objectives
 
 ### Core Objective
+
 미니멀 화이트 테마를 다크 네온/터미널 스타일로 전환하여 시각적 임팩트와 개성 강화.
 
 ### Concrete Deliverables
+
 - `src/styles/variables.css` - 네온 컬러 팔레트
 - `src/styles/base.css` - 다크 배경 기본값
 - `src/styles/components.css` - 글로우 카드, 타이핑 효과, 스킬 바
@@ -53,6 +60,7 @@ Resume portfolio (resume.jclee.me)를 미니멀 화이트 테마에서 다크 �
 - `index.html` + `index-en.html` - 히어로 및 스킬 섹션 구조
 
 ### Definition of Done
+
 - [ ] resume.jclee.me 접속 시 다크 네온 테마 표시
 - [ ] 히어로 섹션에 타이핑 애니메이션 동작
 - [ ] 호버 시 카드/링크에 글로우 효과
@@ -61,6 +69,7 @@ Resume portfolio (resume.jclee.me)를 미니멀 화이트 테마에서 다크 �
 - [ ] KO/EN 양쪽 동일하게 동작
 
 ### Must Have
+
 - 다크 배경 (#0c0c12 또는 유사)
 - 사이안(#00f0ff) + 마젠타(#ff00ff) 네온 액센트
 - 호버 글로우 효과 (box-shadow)
@@ -68,6 +77,7 @@ Resume portfolio (resume.jclee.me)를 미니멀 화이트 테마에서 다크 �
 - Observability 스킬 프로그레스 바
 
 ### Must NOT Have (Guardrails)
+
 - 라이트 모드 지원 (제거)
 - 스캔라인/글리치/과도한 애니메이션
 - 외부 라이브러리 (바닐라 JS/CSS만)
@@ -79,6 +89,7 @@ Resume portfolio (resume.jclee.me)를 미니멀 화이트 테마에서 다크 �
 ## Verification Strategy (MANDATORY)
 
 ### Test Decision
+
 - **Infrastructure exists**: N/A (CSS/비주얼 작업)
 - **User wants tests**: Manual-only
 - **Framework**: N/A
@@ -88,6 +99,7 @@ Resume portfolio (resume.jclee.me)를 미니멀 화이트 테마에서 다크 �
 배포 후 다음 항목 수동 확인:
 
 **Korean (resume.jclee.me)**:
+
 - [ ] 페이지 배경이 다크 (#0c0c12 계열)
 - [ ] 히어로 이름에 타이핑 애니메이션
 - [ ] 카드 호버 시 사이안/마젠타 글로우
@@ -97,6 +109,7 @@ Resume portfolio (resume.jclee.me)를 미니멀 화이트 테마에서 다크 �
 - [ ] 모바일 뷰 (375px) 정상 표시
 
 **English (resume.jclee.me/en)**:
+
 - [ ] 동일한 스타일 적용
 - [ ] 영문 텍스트 레이아웃 정상
 
@@ -128,26 +141,26 @@ Wave 4 (Build & Deploy):
 
 ### Dependency Matrix
 
-| Task | Depends On | Blocks | Can Parallelize With |
-|------|------------|--------|---------------------|
-| 0 | None | 1 | None |
-| 1 | 0 | 2, 3, 4 | None |
-| 2 | 1 | 5 | 3, 4 |
-| 3 | 1 | 5 | 2, 4 |
-| 4 | 1 | 5 | 2, 3 |
-| 5 | 2, 3, 4 | 6 | None |
-| 6 | 5 | 7 | None |
-| 7 | 6 | None | None |
+| Task | Depends On | Blocks  | Can Parallelize With |
+| ---- | ---------- | ------- | -------------------- |
+| 0    | None       | 1       | None                 |
+| 1    | 0          | 2, 3, 4 | None                 |
+| 2    | 1          | 5       | 3, 4                 |
+| 3    | 1          | 5       | 2, 4                 |
+| 4    | 1          | 5       | 2, 3                 |
+| 5    | 2, 3, 4    | 6       | None                 |
+| 6    | 5          | 7       | None                 |
+| 7    | 6          | None    | None                 |
 
 ### Agent Dispatch Summary
 
-| Wave | Tasks | Recommended Approach |
-|------|-------|---------------------|
-| 0 | 0 | Sequential (git tag) |
-| 1 | 1 | Sequential (foundation) |
-| 2 | 2, 3, 4 | **Parallel** - 3 agents |
-| 3 | 5 | Sequential (HTML depends on CSS) |
-| 4 | 6, 7 | Sequential (build → deploy) |
+| Wave | Tasks   | Recommended Approach             |
+| ---- | ------- | -------------------------------- |
+| 0    | 0       | Sequential (git tag)             |
+| 1    | 1       | Sequential (foundation)          |
+| 2    | 2, 3, 4 | **Parallel** - 3 agents          |
+| 3    | 5       | Sequential (HTML depends on CSS) |
+| 4    | 6, 7    | Sequential (build → deploy)      |
 
 ---
 
@@ -178,6 +191,7 @@ Wave 4 (Build & Deploy):
   - 현재 커밋: 작업 디렉토리의 HEAD
 
   **Acceptance Criteria**:
+
   ```bash
   git tag pre-neon-redesign
   git tag -l "pre-neon*"
@@ -233,14 +247,15 @@ Wave 4 (Build & Deploy):
   - 글로우: `box-shadow 0 0 20px rgba(0,240,255,0.6)`, `text-shadow 0 0 10px`
 
   **Acceptance Criteria**:
+
   ```bash
   # Agent runs:
   grep -c "cyber-cyan" apps/portfolio/src/styles/variables.css
   # Assert: >= 1
-  
+
   grep -c "data-theme" apps/portfolio/src/styles/variables.css
   # Assert: 0 (다크 모드 조건부 제거됨)
-  
+
   grep "#0c0c12\|0c0c12" apps/portfolio/src/styles/variables.css
   # Assert: 다크 배경 정의됨
   ```
@@ -283,11 +298,12 @@ Wave 4 (Build & Deploy):
   - `src/scripts/modules/theme.js:1-69` - 현재 테마 토글 로직
 
   **Acceptance Criteria**:
+
   ```bash
   # theme.js가 간소화됨
   wc -l apps/portfolio/src/scripts/modules/theme.js
   # Assert: < 20 lines (기존 69줄에서 대폭 축소)
-  
+
   # localStorage 로직 제거됨
   grep -c "localStorage" apps/portfolio/src/scripts/modules/theme.js
   # Assert: 0
@@ -324,17 +340,26 @@ Wave 4 (Build & Deploy):
       overflow: hidden;
       border-right: 2px solid var(--cyber-cyan);
       white-space: nowrap;
-      animation: 
+      animation:
         typing 2s steps(20, end),
         blink-caret 0.75s step-end infinite;
     }
     @keyframes typing {
-      from { width: 0 }
-      to { width: 100% }
+      from {
+        width: 0;
+      }
+      to {
+        width: 100%;
+      }
     }
     @keyframes blink-caret {
-      from, to { border-color: transparent }
-      50% { border-color: var(--cyber-cyan) }
+      from,
+      to {
+        border-color: transparent;
+      }
+      50% {
+        border-color: var(--cyber-cyan);
+      }
     }
     ```
   - **스킬 프로그레스 바** (Observability 카테고리):
@@ -371,7 +396,9 @@ Wave 4 (Build & Deploy):
     .fade-in {
       opacity: 0;
       transform: translateY(20px);
-      transition: opacity 0.6s ease, transform 0.6s ease;
+      transition:
+        opacity 0.6s ease,
+        transform 0.6s ease;
     }
     .fade-in.visible {
       opacity: 1;
@@ -406,15 +433,16 @@ Wave 4 (Build & Deploy):
   - 그라디언트 바: `linear-gradient(90deg, cyan, magenta)`
 
   **Acceptance Criteria**:
+
   ```bash
   # 글로우 효과 정의됨
   grep -c "glow-cyan\|box-shadow.*0 0" apps/portfolio/src/styles/components.css
   # Assert: >= 3
-  
+
   # 타이핑 애니메이션 정의됨
   grep -c "@keyframes typing" apps/portfolio/src/styles/components.css
   # Assert: 1
-  
+
   # 스킬 바 정의됨
   grep -c "skill-bar" apps/portfolio/src/styles/components.css
   # Assert: >= 2
@@ -437,9 +465,15 @@ Wave 4 (Build & Deploy):
     - `.glass` 클래스들 다크 테마용 조정 (이미 `[data-theme="dark"]` 있음 → 기본값으로 통합)
     - 글로우 유틸리티 추가:
       ```css
-      .glow-cyan { box-shadow: var(--glow-cyan); }
-      .glow-magenta { box-shadow: var(--glow-magenta); }
-      .text-glow-cyan { text-shadow: var(--glow-text-cyan); }
+      .glow-cyan {
+        box-shadow: var(--glow-cyan);
+      }
+      .glow-magenta {
+        box-shadow: var(--glow-magenta);
+      }
+      .text-glow-cyan {
+        text-shadow: var(--glow-text-cyan);
+      }
       .gradient-text {
         background: linear-gradient(90deg, var(--cyber-cyan), var(--cyber-magenta));
         -webkit-background-clip: text;
@@ -448,7 +482,7 @@ Wave 4 (Build & Deploy):
       }
       ```
     - `[data-theme="dark"]` 조건부 스타일 제거 → 기본값으로 통합
-  - **media.css**: 
+  - **media.css**:
     - 현재 파일 확인 후 필요시 모바일에서 글로우 강도 조정 (성능)
 
   **Must NOT do**:
@@ -474,11 +508,12 @@ Wave 4 (Build & Deploy):
   - `src/styles/media.css` - 반응형 쿼리 (파일 확인 필요)
 
   **Acceptance Criteria**:
+
   ```bash
   # 글로우 유틸리티 추가됨
   grep -c "\.glow-cyan\|\.glow-magenta\|\.gradient-text" apps/portfolio/src/styles/utilities.css
   # Assert: >= 3
-  
+
   # [data-theme="dark"] 조건부 제거됨
   grep -c '\[data-theme="dark"\]' apps/portfolio/src/styles/utilities.css
   # Assert: 0
@@ -538,19 +573,20 @@ Wave 4 (Build & Deploy):
   - `data.json` skills 구조: observability, cloud, devops, automation, database, security 카테고리
 
   **Acceptance Criteria**:
+
   ```bash
   # 타이핑 효과 클래스 적용됨
   grep -c "typing-effect" apps/portfolio/index.html
   # Assert: >= 1
-  
+
   # 스킬 바 구조 추가됨
   grep -c "skill-bar" apps/portfolio/index.html
   # Assert: >= 1
-  
+
   # 테마 컬러 변경됨
   grep 'theme-color.*#0c0c12\|theme-color.*0c0c12' apps/portfolio/index.html
   # Assert: 출력됨
-  
+
   # 영문 버전도 동일 적용
   grep -c "typing-effect" apps/portfolio/index-en.html
   # Assert: >= 1
@@ -592,11 +628,12 @@ Wave 4 (Build & Deploy):
   - `AGENTS.md` 빌드 파이프라인 설명
 
   **Acceptance Criteria**:
+
   ```bash
   cd apps/portfolio && node generate-worker.js
   # Assert: Exit code 0
   # Assert: "worker.js" 파일 생성/갱신됨
-  
+
   ls -la apps/portfolio/worker.js
   # Assert: 최근 타임스탬프
   ```
@@ -642,10 +679,11 @@ Wave 4 (Build & Deploy):
   - `wrangler.toml` 환경 설정
 
   **Acceptance Criteria**:
+
   ```bash
   # 배포 성공
   # Assert: Wrangler 출력에 "Published" 또는 성공 메시지
-  
+
   # Health check
   curl -s https://resume.jclee.me/health | jq '.status'
   # Assert: "healthy"
@@ -664,18 +702,19 @@ Wave 4 (Build & Deploy):
 
 ## Commit Strategy
 
-| After Task | Message | Files | Verification |
-|------------|---------|-------|--------------|
-| 1 | `style(portfolio): replace color palette with neon/terminal theme` | variables.css | grep 검증 |
-| 2+3+4 (grouped) | `style(portfolio): implement neon effects and dark-only mode` | base.css, theme.js, components.css, layout.css, utilities.css, media.css | grep 검증 |
-| 5 | `feat(portfolio): update HTML structure for neon theme` | index.html, index-en.html | grep 검증 |
-| 6 | `build(portfolio): regenerate worker.js with neon theme` | worker.js | 빌드 성공 |
+| After Task      | Message                                                            | Files                                                                    | Verification |
+| --------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------ | ------------ |
+| 1               | `style(portfolio): replace color palette with neon/terminal theme` | variables.css                                                            | grep 검증    |
+| 2+3+4 (grouped) | `style(portfolio): implement neon effects and dark-only mode`      | base.css, theme.js, components.css, layout.css, utilities.css, media.css | grep 검증    |
+| 5               | `feat(portfolio): update HTML structure for neon theme`            | index.html, index-en.html                                                | grep 검증    |
+| 6               | `build(portfolio): regenerate worker.js with neon theme`           | worker.js                                                                | 빌드 성공    |
 
 ---
 
 ## Success Criteria
 
 ### Verification Commands
+
 ```bash
 # 빌드 성공
 cd apps/portfolio && node generate-worker.js && echo "BUILD OK"
@@ -688,6 +727,7 @@ curl -s https://resume.jclee.me/health | jq '.status'
 ```
 
 ### Final Checklist
+
 - [ ] 다크 배경 (#0c0c12 계열) 적용됨
 - [ ] 네온 글로우 효과 동작
 - [ ] 타이핑 애니메이션 동작
@@ -701,6 +741,7 @@ curl -s https://resume.jclee.me/health | jq '.status'
 ## Rollback Procedure
 
 문제 발생 시:
+
 ```bash
 # 1. 태그로 체크아웃
 git checkout pre-neon-redesign

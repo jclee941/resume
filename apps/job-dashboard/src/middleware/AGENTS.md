@@ -6,7 +6,8 @@
 
 ## OVERVIEW
 
-Middleware modules enforce cross-cutting request policy (CORS, CSRF, rate limiting) before handlers run.
+Middleware modules enforce cross-cutting request policy (CORS, CSRF, rate
+limiting) before handlers run.
 
 ## STRUCTURE
 

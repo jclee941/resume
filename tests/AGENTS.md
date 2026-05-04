@@ -32,13 +32,17 @@ tests/
 - Defaults to production URL.
 - 5 device projects: chromium + 4 mobile.
 - `maxDiffPixelRatio: 0.05` for visual snapshots.
-- Fixtures: `executeCliCommand`, `navigateToSection`, `validateLinks`, `waitForAnimation`.
+- Fixtures: `executeCliCommand`, `navigateToSection`, `validateLinks`,
+  `waitForAnimation`.
 
 ## CHILD GUIDES
 
-- `e2e/AGENTS.md` owns Playwright-specific runtime, fixture, and snapshot constraints.
-- `unit/AGENTS.md` owns deterministic module-test conventions and unit boundary rules.
-- `integration/AGENTS.md` owns cross-module contract and boundary-failure test rules.
+- `e2e/AGENTS.md` owns Playwright-specific runtime, fixture, and snapshot
+  constraints.
+- `unit/AGENTS.md` owns deterministic module-test conventions and unit boundary
+  rules.
+- `integration/AGENTS.md` owns cross-module contract and boundary-failure test
+  rules.
 
 ## NAMING CONVENTION
 
@@ -47,12 +51,14 @@ tests/
 
 ## CRITICAL: E2E GOTCHA
 
-**Use `domcontentloaded` for portfolio pages — `networkidle` timeouts due to terminal animations.**
+**Use `domcontentloaded` for portfolio pages — `networkidle` timeouts due to
+terminal animations.**
 
 ## CONVENTIONS
 
 - `node:test` at depth 5+ for isolated module tests.
-- Handle flaky tests via `retries` in `playwright.config.js` (2 in CI, 0 locally).
+- Handle flaky tests via `retries` in `playwright.config.js` (2 in CI, 0
+  locally).
 
 ## ANTI-PATTERNS
 

@@ -6,7 +6,8 @@
 
 ## OVERVIEW
 
-Scoring engine for job suitability. Combines deterministic skill/experience weighting with optional Claude-based analysis and explicit fallback semantics.
+Scoring engine for job suitability. Combines deterministic skill/experience
+weighting with optional Claude-based analysis and explicit fallback semantics.
 
 ## WHERE TO LOOK
 
@@ -30,22 +31,30 @@ Scoring engine for job suitability. Combines deterministic skill/experience weig
 
 ## CONVENTIONS
 
-- Threshold semantics: `<60` skip, `60-74` review queue, `>=75` auto-apply candidate.
-- Resume source defaults via `getResumeMasterMarkdownPath()`; missing file is a hard error.
-- Experience extraction supports Korean and English patterns; fallback default is 8 years.
-- AI path is additive: absent/failed API key or parse errors return fallback-safe structures.
-- JSON extraction pattern uses first object match (`/\{[\s\S]*\}/`) before parse.
+- Threshold semantics: `<60` skip, `60-74` review queue, `>=75` auto-apply
+  candidate.
+- Resume source defaults via `getResumeMasterMarkdownPath()`; missing file is a
+  hard error.
+- Experience extraction supports Korean and English patterns; fallback default
+  is 8 years.
+- AI path is additive: absent/failed API key or parse errors return
+  fallback-safe structures.
+- JSON extraction pattern uses first object match (`/\{[\s\S]*\}/`) before
+  parse.
 
 ## ANTI-PATTERNS
 
 - Do not bypass `loadResume()` with ad-hoc file path logic.
 - Do not change score thresholds without updating auto-apply policy docs/config.
 - Do not treat AI outputs as guaranteed JSON; keep parse/fallback guards.
-- Do not remove concurrency cap in `matchJobsWithAI` (batch size protects API and latency).
+- Do not remove concurrency cap in `matchJobsWithAI` (batch size protects API
+  and latency).
 - Do not couple matching logic to route handlers or platform clients.
 
 ## NOTES
 
 - Claude config reads `CLAUDE_API_KEY` first, then `ANTHROPIC_API_KEY`.
-- AI confidence is currently fixed as `medium`; downstream consumers should not assume calibration.
-- `matchPercentage` aliases `matchScore` in AI batch results for compatibility with rule-based flows.
+- AI confidence is currently fixed as `medium`; downstream consumers should not
+  assume calibration.
+- `matchPercentage` aliases `matchScore` in AI batch results for compatibility
+  with rule-based flows.

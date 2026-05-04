@@ -2,18 +2,20 @@
 
 ## 한 줄 소개
 
-9년차 보안 인프라 엔지니어, Splunk ES, FortiGate, n8n 자동화
+8년차 보안 인프라 엔지니어, Splunk ES, FortiGate, n8n 자동화
 
 ## 자기소개
 
-금융과 공공 도메인에서 보안 인프라 설계, 구축, 운영, 자동화를 꾸준히 맡아 온 9년차 엔지니어입니다.
-넥스트레이드에서는 보안 인프라 설계부터 금융위원회 본인가 심사 대응, 이후 보안운영 SM까지 이어서 담당하며 설계와 운영을 한 흐름으로 연결했습니다.
+금융과 공공 도메인에서 보안 인프라 설계, 구축, 운영, 자동화를 꾸준히 맡아 온 8년차 엔지니어입니다.
+넥스트레이드에서는 보안 인프라 설계부터 금융위원회 본인가 심사 대응, 이후 보안운영 SM까지 이어서 담당하며 설계와 운영을 한 흐름으로
+연결했습니다.
 콴텍투자일임, 국민대학교, 메타넷엠플랫폼 프로젝트에서는 보안 정책 수립, 관측성 체계 구축, 운영 자동화까지 실무 전 과정을 수행했습니다.
 저는 새로운 시스템을 빠르게 붙이는 사람보다, 장애와 운영 부담까지 고려해 오래 안정적으로 굴러가는 구조를 만드는 쪽에 강점이 있습니다.
 
 ## 전문 분야
 
-1. **보안 인프라 (9년)**: FortiGate/FortiManager 설계·운영, Splunk ES 탐지 룰 설계, 금융위원회 본인가 심사 대응
+1. **보안 인프라 (9년)**: FortiGate/FortiManager 설계·운영, Splunk ES 탐지 룰 설계, 금융위원회 본인가
+   심사 대응
 2. **관측성 구축 (6년)**: Grafana, Prometheus, Loki 스택, ELK 통합, 12+ 대시보드 운영
 3. **자동화 파이프라인 (5년)**: n8n 워크플로우, Ansible, Python, FortiNet API 연동
 
@@ -45,7 +47,8 @@
 - Grafana, Prometheus, Loki 기반 통합 모니터링 환경을 구축하고 운영했습니다.
 - Splunk 기반 보안 로그 분석과 실시간 위협 모니터링 체계를 운영했습니다.
 - 12+ 대시보드와 50+ 메트릭 엔드포인트를 운영하며 장애 징후와 보안 이벤트를 함께 추적했습니다.
-- AWS 환경에서는 Prometheus, Grafana 기반 보안 메트릭 대시보드를 구성해 운영 지표를 단일 화면에서 확인할 수 있도록 구성했습니다.
+- AWS 환경에서는 Prometheus, Grafana 기반 보안 메트릭 대시보드를 구성해 운영 지표를 단일 화면에서 확인할 수 있도록
+  구성했습니다.
 - 로그, 메트릭, 운영 리포트를 따로 관리하지 않고 하나의 운영 체계로 연결하는 데 익숙합니다.
 
 ### 운영 자동화
@@ -114,7 +117,8 @@
 
 ## 연락처
 
-- Email: qws941@kakao.com
-- GitHub: https://github.com/jclee941
-- Portfolio: https://resume.jclee.me
-- Grafana Demo: https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b
+- Email: <qws941@kakao.com>
+- GitHub: <https://github.com/jclee941>
+- Portfolio: <https://resume.jclee.me>
+- Grafana Demo:
+  <https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b>

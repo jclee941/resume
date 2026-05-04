@@ -6,7 +6,9 @@
 
 ## OVERVIEW
 
-Internal shared utilities package providing cross-cutting concerns: logging, error handling, API clients (GitLab, Wanted, Elasticsearch), browser automation, and data transformers. Consumed by `apps/job-server/` and other packages.
+Internal shared utilities package providing cross-cutting concerns: logging,
+error handling, API clients (GitLab, Wanted, Elasticsearch), browser automation,
+and data transformers. Consumed by `apps/job-server/` and other packages.
 
 ## STRUCTURE
 

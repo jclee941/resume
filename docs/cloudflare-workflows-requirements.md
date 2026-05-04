@@ -83,7 +83,7 @@
 | ----- | -------------------- | ----------------------------------- | ---------- |
 | NF1.1 | Cloudflare Workflows | 네이티브 Workflows 사용             | ✅         |
 | NF1.2 | Worker 이름 정규화   | production/staging 동일 이름        | ✅         |
-| NF1.3 | wrangler.jsonc 설정   | \[\[workflows\]\] 바인딩 구성       | ✅         |
+| NF1.3 | wrangler.jsonc 설정  | \[\[workflows\]\] 바인딩 구성       | ✅         |
 | NF1.4 | 클래스 Export        | index.js에서 Workflow 클래스 export | ✅         |
 | NF1.5 | 빌드 성공            | wrangler deploy --dry-run 통과      | ✅         |
 | NF1.6 | 번들 크기            | 500KB 미만                          | ✅ (204KB) |

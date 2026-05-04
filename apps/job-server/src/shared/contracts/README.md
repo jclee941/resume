@@ -10,10 +10,10 @@ Schema definitions and type contracts shared between Go and JavaScript stacks.
 
 ## Structure
 
-```
+```text
 contracts/
 ├── session.schema.json     # Session state format
-├── job.schema.json         # Job posting data structure  
+├── job.schema.json         # Job posting data structure
 ├── application.schema.json # Application tracking format
 ├── resume.schema.json      # Resume data contracts
 └── README.md
@@ -22,6 +22,7 @@ contracts/
 ## Usage
 
 ### JavaScript
+
 ```javascript
 import sessionSchema from '../contracts/session.schema.json';
 import { validate } from 'jsonschema';
@@ -30,6 +31,7 @@ const isValid = validate(sessionData, sessionSchema);
 ```
 
 ### Go
+
 ```go
 import (
     "encoding/json"

@@ -5,28 +5,28 @@
 
 ## 기본 정보
 
-| 항목 | 내용 |
-|------|------|
-| **포트폴리오명** | SafeWork 산업보건 관리 플랫폼 |
-| **업무 범위** | 개발 |
-| **카테고리** | 웹 |
-| **프로젝트 분야** | IT 서비스 구축 |
-| **참여 기간** | 2024 ~ 현재 |
-| **참여율** | 100% |
-| **역할** | Full-Stack Developer |
+| 항목              | 내용                          |
+| ----------------- | ----------------------------- |
+| **포트폴리오명**  | SafeWork 산업보건 관리 플랫폼 |
+| **업무 범위**     | 개발                          |
+| **카테고리**      | 웹                            |
+| **프로젝트 분야** | IT 서비스 구축                |
+| **참여 기간**     | 2024 ~ 현재                   |
+| **참여율**        | 100%                          |
+| **역할**          | Full-Stack Developer          |
 
 ---
 
 ## 기술스택
 
-| 레이어 | 기술 |
-|--------|------|
-| **Backend** | Flask 3.0 (Python) |
-| **Database** | PostgreSQL 15 |
-| **Cache** | Redis 7 |
-| **Edge API** | Cloudflare Workers |
-| **Frontend** | Bootstrap, Jinja2 |
-| **Infra** | Docker, Nginx, GitLab CI/CD |
+| 레이어       | 기술                        |
+| ------------ | --------------------------- |
+| **Backend**  | Flask 3.0 (Python)          |
+| **Database** | PostgreSQL 15               |
+| **Cache**    | Redis 7                     |
+| **Edge API** | Cloudflare Workers          |
+| **Frontend** | Bootstrap, Jinja2           |
+| **Infra**    | Docker, Nginx, GitLab CI/CD |
 
 ---
 
@@ -55,5 +55,5 @@
 
 ## 링크
 
-- https://safework.jclee.me
-- https://github.com/jclee941/safework
+- <https://safework.jclee.me>
+- <https://github.com/jclee941/safework>

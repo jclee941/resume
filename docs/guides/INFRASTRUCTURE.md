@@ -10,7 +10,7 @@
 
 ### Deployment Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                     Internet (Global CDN)                        │
 └───────────────────────────┬─────────────────────────────────────┘
@@ -96,7 +96,7 @@
 
 **Endpoints**:
 
-```
+```text
 GET  /                    Portfolio homepage
 GET  /health              Health check JSON
 GET  /metrics             Prometheus metrics
@@ -128,7 +128,7 @@ mode = "smart"
 
 ### 2. Grafana (Observability Dashboard)
 
-**URL**: https://grafana.jclee.me
+**URL**: <https://grafana.jclee.me>
 **Location**: Proxmox pve3 (192.168.50.100)
 **Purpose**: Centralized monitoring and visualization
 
@@ -200,7 +200,7 @@ web_vitals_received{job="resume"}
 ### 4. Loki (Log Aggregation)
 
 **Access**: 🔒 Via Grafana proxy (grafana.jclee.me/loki/...)
-**Push Endpoint**: https://grafana.jclee.me/api/datasources/proxy/uid/cfakfiakcs0zka/loki/api/v1/push
+**Push Endpoint**: <https://grafana.jclee.me/api/datasources/proxy/uid/cfakfiakcs0zka/loki/api/v1/push>
 **Location**: Proxmox pve3 (192.168.50.100)
 
 > ⚠️ No public DNS. Query logs via Grafana Explore panel.
@@ -250,11 +250,12 @@ web_vitals_received{job="resume"}
 
 ### 5. n8n (Workflow Automation)
 
-**URL**: https://n8n.jclee.me
+**URL**: <https://n8n.jclee.me>
 **Location**: Proxmox pve3 (192.168.50.100)
 **Purpose**: Health monitoring and alerting
 
-> **📖 For detailed workflow documentation**, see [infrastructure/n8n/README.md](../../infrastructure/n8n/README.md) for:
+> **📖 For detailed workflow documentation**, see
+  [infrastructure/n8n/README.md](../../infrastructure/n8n/README.md) for:
 >
 > - Complete workflow setup guides
 > - GitHub webhook integration
@@ -267,7 +268,7 @@ web_vitals_received{job="resume"}
 #### Health Check Monitor (OAuth2)
 
 - **Trigger**: Schedule (every 5 minutes)
-- **Check**: GET https://resume.jclee.me/health
+- **Check**: GET <https://resume.jclee.me/health>
 - **Condition**: HTTP status ≠ 200 OR timeout
 - **Action**: Send Slack alert to #general
 
@@ -501,25 +502,28 @@ go run ./deploy-workflow.go resume-healthcheck-oauth2.json
 
 ## 🔒 Internal Service Access
 
-> **Note**: Prometheus, Loki, n8n do not have public DNS. Access via internal network or Grafana proxy.
+> **Note**: Prometheus, Loki, n8n do not have public DNS. Access via internal
+  network or Grafana proxy.
 
-| Service        | Public URL                  | Internal Access           | Notes                               |
-| -------------- | --------------------------- | ------------------------- | ----------------------------------- |
-| **Grafana**    | ✅ https://grafana.jclee.me | 192.168.50.100:3000       | Primary dashboard                   |
-| **Prometheus** | 🔒 Internal Only            | 192.168.50.100:9090       | Metrics only via Grafana datasource |
-| **Loki**       | 🔒 Grafana Proxy            | grafana.jclee.me/loki/... | Log queries via Grafana proxy       |
-| **n8n**        | 🔒 Internal Only            | 192.168.50.100:5678       | Workflow automation (internal only) |
+| Service        | Public URL                    | Internal Access           | Notes                               |
+| -------------- | ----------------------------- | ------------------------- | ----------------------------------- |
+| **Grafana**    | ✅ <https://grafana.jclee.me> | 192.168.50.100:3000       | Primary dashboard                   |
+| **Prometheus** | 🔒 Internal Only              | 192.168.50.100:9090       | Metrics only via Grafana datasource |
+| **Loki**       | 🔒 Grafana Proxy              | grafana.jclee.me/loki/... | Log queries via Grafana proxy       |
+| **n8n**        | 🔒 Internal Only              | 192.168.50.100:5678       | Workflow automation (internal only) |
 
 **Access Methods**:
 
-1. **Internal Network**: Connect to home network (192.168.50.x) for direct access
+1. **Internal Network**: Connect to home network (192.168.50.x) for direct
+   access
 2. **Grafana Proxy**: Use Grafana Explore for Prometheus/Loki queries
-3. **SSH Tunnel**: `ssh -L 9090:192.168.50.100:9090 user@gateway` for remote access
+3. **SSH Tunnel**: `ssh -L 9090:192.168.50.100:9090 user@gateway` for remote
+   access
 
 ## 🔗 Quick Links
 
-- **Live Site**: https://resume.jclee.me
-- **Grafana**: https://grafana.jclee.me (✅ Public)
+- **Live Site**: <https://resume.jclee.me>
+- **Grafana**: <https://grafana.jclee.me> (✅ Public)
 - **Prometheus**: 192.168.50.100:9090 (🔒 Internal)
 - **n8n**: 192.168.50.100:5678 (🔒 Internal)
-- **GitHub**: https://github.com/jclee941/resume
+- **GitHub**: <https://github.com/jclee941/resume>

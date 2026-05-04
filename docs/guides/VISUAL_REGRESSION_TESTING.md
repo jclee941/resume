@@ -7,7 +7,8 @@
 
 ## Overview
 
-Visual regression testing ensures UI consistency across deployments by comparing screenshots of the application before and after changes.
+Visual regression testing ensures UI consistency across deployments by comparing
+screenshots of the application before and after changes.
 
 ## Implementation
 
@@ -23,7 +24,7 @@ Visual regression testing ensures UI consistency across deployments by comparing
 
 ### Snapshots Location
 
-```
+```text
 tests/e2e/visual.spec.js-snapshots/
 ├── dark-mode-homepage-chromium-linux.png (1.1 MB)
 ├── desktop-hero-chromium-linux.png (98 KB)
@@ -96,7 +97,8 @@ test:e2e:
 maxDiffPixelRatio: 0.05; // 5% pixel difference allowed
 ```
 
-This allows for minor rendering differences across environments while catching significant visual changes.
+This allows for minor rendering differences across environments while catching
+significant visual changes.
 
 ---
 
@@ -360,6 +362,7 @@ stages:
    ```
 
 4. **Cross-browser Testing** (Firefox, Safari)
+
    ```javascript
    projects: [{ name: 'chromium' }, { name: 'firefox' }, { name: 'webkit' }];
    ```
@@ -371,7 +374,8 @@ stages:
 - [Playwright Visual Comparisons](https://playwright.dev/docs/test-snapshots)
 - [Percy Documentation](https://docs.percy.io/)
 - [Chromatic Documentation](https://www.chromatic.com/docs/)
-- [Visual Regression Testing Best Practices](https://www.browserstack.com/guide/visual-regression-testing)
+- [Visual Regression Testing Best
+  Practices](https://www.browserstack.com/guide/visual-regression-testing)
 
 ---
 

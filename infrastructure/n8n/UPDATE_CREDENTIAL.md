@@ -4,7 +4,7 @@
 
 ## Step 1: n8n에서 Credential ID 확인
 
-1. **n8n UI 접속**: https://n8n.jclee.me
+1. **n8n UI 접속**: <https://n8n.jclee.me>
 2. **Settings (⚙️) → Credentials** 메뉴 클릭
 3. Slack 관련 credential 찾기:
    - `Slack OAuth2 API` 또는
@@ -12,14 +12,15 @@
    - 다른 Slack credential 이름
 4. Credential을 클릭하여 열기
 5. **브라우저 주소창에서 ID 확인**:
-   ```
+
+   ```text
    https://n8n.jclee.me/credentials/{CREDENTIAL_ID}
    예: https://n8n.jclee.me/credentials/3
    ```
 
 ## Step 2: 워크플로우 업데이트 (방법 A - UI에서 직접)
 
-1. **워크플로우 열기**: https://n8n.jclee.me/workflow/yCWYRtQsXNIsENi1
+1. **워크플로우 열기**: <https://n8n.jclee.me/workflow/yCWYRtQsXNIsENi1>
 2. **"Send Slack Alert (OAuth2)" 노드** 클릭
 3. **Credentials** 드롭다운에서 기존 credential 선택
 4. **Save** 클릭
@@ -59,7 +60,7 @@ curl -s -X PUT \
 
 API로는 활성화할 수 없으므로 UI에서:
 
-1. https://n8n.jclee.me/workflow/yCWYRtQsXNIsENi1
+1. <https://n8n.jclee.me/workflow/yCWYRtQsXNIsENi1>
 2. 우측 상단 **Active** 토글 ON
 
 ## Step 4: 테스트

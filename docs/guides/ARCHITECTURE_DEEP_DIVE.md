@@ -19,7 +19,7 @@ Complete technical architecture documentation for the Resume Portfolio System.
 
 ### High-Level Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                        User Request                              │
 └─────────────────────────────────────────────────────────────────┘
@@ -77,7 +77,7 @@ Complete technical architecture documentation for the Resume Portfolio System.
 
 ### Pipeline Overview
 
-```
+```text
 ┌──────────────────────────────────────────────────────────────────┐
 │                      Source Files                                 │
 │  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌────────────┐  │
@@ -130,7 +130,7 @@ Complete technical architecture documentation for the Resume Portfolio System.
 
 ### Module Structure
 
-```
+```text
 apps/portfolio/lib/
 ├── config.js          # Configuration constants, cache
 ├── cards.js           # Card generation (resume, project)
@@ -234,7 +234,7 @@ const securityHeaders = {
 
 ### Card Generation Flow
 
-```
+```text
 data.json
     │
     ▼
@@ -296,7 +296,7 @@ function getCacheHeaders(pathname) {
 
 ### Content Security Policy (CSP)
 
-```
+```text
 Content-Security-Policy:
   default-src 'self';
   script-src 'self'
@@ -412,7 +412,7 @@ resume_error_rate{job="resume"} 0.002
 
 ### Test Pyramid
 
-```
+```text
                     ┌─────────────┐
                     │    E2E      │  ← 34 tests (Playwright)
                     │   Tests     │    Visual, accessibility, mobile
@@ -461,7 +461,7 @@ resume_error_rate{job="resume"} 0.002
 
 ### CI/CD Pipeline
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                    GitHub Actions                                │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────────┐  │

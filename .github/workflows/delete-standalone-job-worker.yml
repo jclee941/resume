@@ -51,7 +51,7 @@ jobs:
           STATUS=$(curl -s -o /tmp/verify.json -w '%{http_code}' \
             -H "Authorization: Bearer $TOKEN" \
             "$CF_API/user/tokens/verify")
-          cat /tmp/verify.json | python3 -m json.tool
+          python3 -m json.tool < /tmp/verify.json
           test "$STATUS" = "200"
 
       - name: Discover zone ID for $ZONE_NAME
@@ -63,7 +63,7 @@ jobs:
           ZONE_ID=$(python3 -c "import json; d=json.load(open('/tmp/zones.json')); zones=d.get('result',[]); print(zones[0]['id'] if zones else '')")
           if [ -z "$ZONE_ID" ]; then
             echo "::error::Zone '$ZONE_NAME' not found in account"
-            cat /tmp/zones.json | python3 -m json.tool
+            python3 -m json.tool < /tmp/zones.json
             exit 1
           fi
           echo "✓ Discovered zone ID: $ZONE_ID for $ZONE_NAME"
@@ -109,7 +109,7 @@ jobs:
           set -euo pipefail
           curl -s -H "Authorization: Bearer $TOKEN" \
             "$CF_API/zones/${{ steps.zone.outputs.zone_id }}/workers/routes" > /tmp/routes.json
-          cat /tmp/routes.json | python3 -m json.tool | head -80
+          python3 -m json.tool < /tmp/routes.json | head -80
           ROUTE_ID=$(python3 -c "
           import json
           data = json.load(open('/tmp/routes.json'))
@@ -153,7 +153,7 @@ jobs:
             -X DELETE \
             -H "Authorization: Bearer $TOKEN" \
             "$CF_API/zones/${{ steps.zone.outputs.zone_id }}/workers/routes/${{ steps.routes.outputs.route_id }}")
-          cat /tmp/del_route.json | python3 -m json.tool 2>&1 | head -20
+          python3 -m json.tool < /tmp/del_route.json 2>&1 | head -20
           if [ "$STATUS" = "200" ]; then
             echo "✓ Legacy route deleted (HTTP 200)"
           else
@@ -201,7 +201,7 @@ jobs:
             -H "Content-Type: application/json" \
             -d "{\"pattern\":\"$ROUTE_PATTERN\",\"script\":\"$SCRIPT_NAME\"}" \
             "$CF_API/zones/${{ steps.zone.outputs.zone_id }}/workers/routes")
-          cat /tmp/rollback.json | python3 -m json.tool 2>&1 | head -20
+          python3 -m json.tool < /tmp/rollback.json 2>&1 | head -20
           if [ "$STATUS" = "200" ]; then
             echo "✓ Rollback succeeded — legacy route restored."
           else
@@ -220,11 +220,11 @@ jobs:
             -X DELETE \
             -H "Authorization: Bearer $TOKEN" \
             "$CF_API/accounts/$ACCOUNT_ID/workers/scripts/$SCRIPT_NAME")
-          cat /tmp/del_script.json | python3 -m json.tool 2>&1 | head -20
+          python3 -m json.tool < /tmp/del_script.json 2>&1 | head -20
           if [ "$STATUS" = "200" ] || [ "$STATUS" = "204" ]; then
-            echo "✓ Standalone `job` worker script DELETED (HTTP $STATUS)"
+            echo "✓ Standalone 'job' worker script DELETED (HTTP $STATUS)"
           else
-            echo "::error::Failed to delete `job` worker script (HTTP $STATUS)"
+            echo "::error::Failed to delete 'job' worker script (HTTP $STATUS)"
             exit 1
           fi
 

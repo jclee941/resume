@@ -3,13 +3,14 @@
 ## TL;DR
 
 > **Quick Summary**: Fix 24 E2E test failures across SEO (3), mobile touch (6), visual regression (12), and text size (3) categories to unblock CI/CD deployment for resume.jclee.me portfolio.
-> 
+>
 > **Deliverables**:
+>
 > - Updated `index.html` with correct og:image/twitter:image (.webp) and JSON-LD potentialAction
 > - Fixed `mobile.spec.js` with scrollIntoViewIfNeeded() and relaxed threshold
 > - Updated visual regression baselines
 > - Deployed and verified worker.js to production
-> 
+>
 > **Estimated Effort**: Medium (2-3 hours)
 > **Parallel Execution**: YES - 2 waves
 > **Critical Path**: Task 1 + 2 (parallel) → Task 3 → Task 4 → Task 5 → Task 6
@@ -19,7 +20,9 @@
 ## Context
 
 ### Original Request
+
 Fix 24 E2E test failures blocking CI/CD deployment. Failures span:
+
 - SEO meta tags: 3 failures (og:image, twitter:image expect .webp but get .png)
 - JSON-LD schema: 1 failure (WebSite missing potentialAction.SearchAction)
 - Mobile touch: 6 failures (click on element outside viewport)
@@ -27,13 +30,16 @@ Fix 24 E2E test failures blocking CI/CD deployment. Failures span:
 - Text size: 3 failures (font-size < 14px threshold exceeded)
 
 ### Interview Summary
+
 **Key Discussions**:
+
 - Text size fix: Relax threshold from 5 to 8 (user approved - don't block deploy for minor mobile font issues)
 - Visual snapshots: Bulk update with --update-snapshots (user approved - all changes intentional)
 - Deploy strategy: Full deploy cycle with verification against production
 - Test strategy: Run E2E against production after deploy
 
 **Research Findings**:
+
 - `index.html` line 27: `og:image` → `og-image.png` (needs change to `.webp`)
 - `index.html` line 46: `twitter:image` → `og-image.png` (needs change to `.webp`)
 - `index.html` lines 145-152: WebSite JSON-LD missing `potentialAction`
@@ -41,7 +47,9 @@ Fix 24 E2E test failures blocking CI/CD deployment. Failures span:
 - `mobile.spec.js` line 118: `expect(tooSmallCount).toBeLessThan(5)` → change to 8
 
 ### Metis Review
+
 **Identified Gaps** (addressed):
+
 - Cloudflare cache purge: Added explicit purge step in Task 4
 - Guardrails: Locked down scope to only specified changes
 - Edge case - scroll race: Added waitForLoadState before scroll
@@ -52,25 +60,30 @@ Fix 24 E2E test failures blocking CI/CD deployment. Failures span:
 ## Work Objectives
 
 ### Core Objective
+
 Restore CI/CD pipeline by fixing all 24 E2E test failures without introducing new issues.
 
 ### Concrete Deliverables
+
 - `apps/portfolio/index.html` - Updated SEO meta tags and JSON-LD
 - `tests/e2e/mobile.spec.js` - Fixed touch interaction and relaxed threshold
 - `tests/e2e/visual.spec.js-snapshots/` - Updated baselines
 - `apps/portfolio/worker.js` - Rebuilt from updated HTML
 
 ### Definition of Done
+
 - [ ] `npm run test:e2e` passes 100% (24 previously failing tests now pass)
 - [ ] `curl https://resume.jclee.me/health` returns 200 OK
 - [ ] `curl -s https://resume.jclee.me/ | grep -o 'og-image\.webp'` returns matches
 
 ### Must Have
+
 - All 24 test failures resolved
 - Production deployment verified
 - Visual snapshots committed to git
 
 ### Must NOT Have (Guardrails)
+
 - NO CSS styling changes (only test threshold adjustment)
 - NO new SEO schema additions (only add potentialAction to existing WebSite)
 - NO worker.js refactoring (only rebuild from HTML)
@@ -83,6 +96,7 @@ Restore CI/CD pipeline by fixing all 24 E2E test failures without introducing ne
 ## Verification Strategy (MANDATORY)
 
 ### Test Decision
+
 - **Infrastructure exists**: YES
 - **User wants tests**: YES (run E2E after deploy)
 - **Framework**: Playwright
@@ -121,23 +135,23 @@ Parallel Speedup: ~30% faster than sequential (Wave 1 parallelism)
 ### Dependency Matrix
 
 | Task | Depends On | Blocks | Can Parallelize With |
-|------|------------|--------|---------------------|
-| 1 | None | 3 | 2 |
-| 2 | None | 5, 6 | 1 |
-| 3 | 1 | 4 | None |
-| 4 | 3 | 5 | None |
-| 5 | 4 | 6 | None |
-| 6 | 2, 5 | None | None (final) |
+| ---- | ---------- | ------ | -------------------- |
+| 1    | None       | 3      | 2                    |
+| 2    | None       | 5, 6   | 1                    |
+| 3    | 1          | 4      | None                 |
+| 4    | 3          | 5      | None                 |
+| 5    | 4          | 6      | None                 |
+| 6    | 2, 5       | None   | None (final)         |
 
 ### Agent Dispatch Summary
 
-| Wave | Tasks | Recommended Agents |
-|------|-------|-------------------|
-| 1 | 1, 2 | quick category, parallel dispatch |
-| 2 | 3 | quick category |
-| 3 | 4 | quick category |
-| 4 | 5 | quick category with playwright skill |
-| 5 | 6 | quick category with playwright skill |
+| Wave | Tasks | Recommended Agents                   |
+| ---- | ----- | ------------------------------------ |
+| 1    | 1, 2  | quick category, parallel dispatch    |
+| 2    | 3     | quick category                       |
+| 3    | 4     | quick category                       |
+| 4    | 5     | quick category with playwright skill |
+| 5    | 6     | quick category with playwright skill |
 
 ---
 
@@ -198,6 +212,7 @@ Parallel Speedup: ~30% faster than sequential (Wave 1 parallelism)
   **Acceptance Criteria**:
 
   **Automated Verification** (using Bash grep):
+
   ```bash
   # Agent runs after edit:
   grep -n 'og:image.*content.*og-image\.webp' apps/portfolio/index.html
@@ -231,7 +246,7 @@ Parallel Speedup: ~30% faster than sequential (Wave 1 parallelism)
     ```
   - At line 118, change threshold from 5 to 8:
     ```javascript
-    expect(tooSmallCount).toBeLessThan(8);  // Was: toBeLessThan(5)
+    expect(tooSmallCount).toBeLessThan(8); // Was: toBeLessThan(5)
     ```
 
   **Must NOT do**:
@@ -272,6 +287,7 @@ Parallel Speedup: ~30% faster than sequential (Wave 1 parallelism)
   **Acceptance Criteria**:
 
   **Automated Verification** (using Bash grep):
+
   ```bash
   # Agent runs after edit:
   grep -n 'scrollIntoViewIfNeeded' tests/e2e/mobile.spec.js
@@ -333,6 +349,7 @@ Parallel Speedup: ~30% faster than sequential (Wave 1 parallelism)
   **Acceptance Criteria**:
 
   **Automated Verification** (using Bash):
+
   ```bash
   # Agent runs:
   cd /home/jclee/dev/resume && npm run build
@@ -398,6 +415,7 @@ Parallel Speedup: ~30% faster than sequential (Wave 1 parallelism)
   **Acceptance Criteria**:
 
   **Automated Verification** (using Bash curl):
+
   ```bash
   # Agent runs:
   cd /home/jclee/dev/resume && npm run deploy
@@ -469,6 +487,7 @@ Parallel Speedup: ~30% faster than sequential (Wave 1 parallelism)
   **Acceptance Criteria**:
 
   **Automated Verification** (using Bash):
+
   ```bash
   # Agent runs:
   cd /home/jclee/dev/resume
@@ -535,6 +554,7 @@ Parallel Speedup: ~30% faster than sequential (Wave 1 parallelism)
   **Acceptance Criteria**:
 
   **Automated Verification** (using Bash):
+
   ```bash
   # Agent runs:
   cd /home/jclee/dev/resume
@@ -556,16 +576,17 @@ Parallel Speedup: ~30% faster than sequential (Wave 1 parallelism)
 
 ## Commit Strategy
 
-| After Task | Message | Files | Verification |
-|------------|---------|-------|--------------|
-| 1 + 2 | `fix(e2e): resolve SEO meta tags, JSON-LD schema, and mobile test issues` | `apps/portfolio/index.html`, `tests/e2e/mobile.spec.js` | grep verification |
-| 5 | `test(visual): update regression baselines for portfolio content changes` | `tests/e2e/visual.spec.js-snapshots/*.png` | git status |
+| After Task | Message                                                                   | Files                                                   | Verification      |
+| ---------- | ------------------------------------------------------------------------- | ------------------------------------------------------- | ----------------- |
+| 1 + 2      | `fix(e2e): resolve SEO meta tags, JSON-LD schema, and mobile test issues` | `apps/portfolio/index.html`, `tests/e2e/mobile.spec.js` | grep verification |
+| 5          | `test(visual): update regression baselines for portfolio content changes` | `tests/e2e/visual.spec.js-snapshots/*.png`              | git status        |
 
 ---
 
 ## Success Criteria
 
 ### Verification Commands
+
 ```bash
 # Health check
 curl -s https://resume.jclee.me/health | jq .
@@ -581,6 +602,7 @@ npm run test:e2e
 ```
 
 ### Final Checklist
+
 - [ ] All 24 previously failing tests now pass
 - [ ] Production site serves og-image.webp in meta tags
 - [ ] WebSite JSON-LD includes potentialAction.SearchAction

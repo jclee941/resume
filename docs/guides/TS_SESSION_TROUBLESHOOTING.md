@@ -17,7 +17,8 @@ $ ts create system
 
 ### 원인
 
-`ts` 명령어가 세션 생성 후 자동으로 `attach_session()`을 호출하지만, 터미널 환경에 따라 attach가 실패하거나 즉시 detach될 수 있습니다.
+`ts` 명령어가 세션 생성 후 자동으로 `attach_session()`을 호출하지만, 터미널 환경에 따라 attach가 실패하거나 즉시
+detach될 수 있습니다.
 
 ## 해결 방법
 
@@ -68,6 +69,7 @@ error connecting to /home/jclee/.tmux/sockets/system (No such file or directory)
 **원인**: 세션이 생성되지 않았거나 이미 종료됨
 
 **해결**:
+
 ```bash
 # 세션 재생성
 ts create system
@@ -86,6 +88,7 @@ tmux -S /home/jclee/.tmux/sockets/system new-session -s system -c /home/jclee/ap
 **원인**: DB와 실제 tmux 세션이 불일치
 
 **해결**:
+
 ```bash
 # 동기화 명령 실행
 ts sync
@@ -105,6 +108,7 @@ rm /home/jclee/.tmux/sockets/old-session
 **원인**: `OpenCode` 명령어가 PATH에 없거나 실행 권한 문제
 
 **해결**:
+
 ```bash
 # 세션에 접속 후 수동 실행
 ts attach system

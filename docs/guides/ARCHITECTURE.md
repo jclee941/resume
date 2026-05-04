@@ -14,13 +14,15 @@
 - 📦 **Simplicity**: One `worker.js` file contains entire site
 - 💰 **Cost**: Free tier (100k requests/day)
 
-**Trade-off**: Cannot edit HTML directly in production - must rebuild and redeploy
+**Trade-off**: Cannot edit HTML directly in production - must rebuild and
+redeploy
 
 ## Build Pipeline Architecture
 
 ### Critical Worker Generation Workflow
 
-Source files (HTML/CSS/JSON) are transformed into a single deployable `worker.js`.
+Source files (HTML/CSS/JSON) are transformed into a single deployable
+`worker.js`.
 
 **Phase 1: CSS Separation** (Completed 2025-11-07)
 
@@ -30,26 +32,38 @@ Source files (HTML/CSS/JSON) are transformed into a single deployable `worker.js
 
 **Phase 2: Data-Driven Templates** (Completed 2025-11-07)
 
-- `apps/portfolio/data.json` contains all project data (resume cards + project cards)
-- `apps/portfolio/index.html` has placeholders: `<!-- RESUME_CARDS_PLACEHOLDER -->` and `<!-- PROJECT_CARDS_PLACEHOLDER -->`
+- `apps/portfolio/data.json` contains all project data (resume cards + project
+  cards)
+- `apps/portfolio/index.html` has placeholders: `<!-- RESUME_CARDS_PLACEHOLDER
+  -->` and `<!-- PROJECT_CARDS_PLACEHOLDER -->`
 - Build script generates HTML from JSON at build time
 
 ### Build Pipeline (3 phases)
 
-1. **Edit Content**: Modify `apps/portfolio/data.json` (project data) OR `apps/portfolio/index.html` (structure) OR `apps/portfolio/styles.css` (styling)
+1. **Edit Content**: Modify `apps/portfolio/data.json` (project data) OR
+   `apps/portfolio/index.html` (structure) OR `apps/portfolio/styles.css`
+   (styling)
 2. **Generate Worker**: Run `npm run build` (performs 6 transformations)
-3. **Deploy**: Push to `master` branch (GitHub Actions auto-deploys) OR run `npx wrangler deploy --config apps/portfolio/wrangler.jsonc --env production` manually
+3. **Deploy**: Push to `master` branch (GitHub Actions auto-deploys) OR run `npx
+   wrangler deploy --config apps/portfolio/wrangler.jsonc --env production`
+   manually
 
 ### 6 Critical Transformations
 
 `apps/portfolio/generate-worker.js` performs these operations:
 
-1. **CSS Injection**: Reads `styles.css`, replaces `<!-- CSS_PLACEHOLDER -->` (758 lines → inline CSS)
-2. **Data Injection**: Reads `data.json`, generates HTML cards from templates (resume + projects)
-3. **HTML Minification**: 15% size reduction using `html-minifier-terser` (whitespace removal, tag optimization)
-4. **CSP Hash Generation**: Extracts `<script>` and `<style>` tags, generates SHA-256 hashes (CRITICAL: no trim())
-5. **Template Literal Escaping**: Escapes backticks (`) and dollar signs ($) for safe JavaScript embedding
-6. **Deployment Timestamp**: Injects `DEPLOYED_AT` from environment variable (ISO 8601 UTC)
+1. **CSS Injection**: Reads `styles.css`, replaces `<!-- CSS_PLACEHOLDER -->`
+   (758 lines → inline CSS)
+2. **Data Injection**: Reads `data.json`, generates HTML cards from templates
+   (resume + projects)
+3. **HTML Minification**: 15% size reduction using `html-minifier-terser`
+   (whitespace removal, tag optimization)
+4. **CSP Hash Generation**: Extracts `<script>` and `<style>` tags, generates
+   SHA-256 hashes (CRITICAL: no trim())
+5. **Template Literal Escaping**: Escapes backticks (`) and dollar signs ($) for
+   safe JavaScript embedding
+6. **Deployment Timestamp**: Injects `DEPLOYED_AT` from environment variable
+   (ISO 8601 UTC)
 
 ### Worker Routing
 
@@ -62,8 +76,10 @@ Source files (HTML/CSS/JSON) are transformed into a single deployable `worker.js
 
 `apps/portfolio/generate-worker.js` contains:
 
-- `generateResumeCards(data)`: Creates resume project cards from `data.resume` array
-- `generateProjectCards(data)`: Creates portfolio project cards from `data.projects` array
+- `generateResumeCards(data)`: Creates resume project cards from `data.resume`
+  array
+- `generateProjectCards(data)`: Creates portfolio project cards from
+  `data.projects` array
 - Special handling:
   - Grafana project: Multiple dashboard links
   - Highlighted cards: Use `completePdfUrl` instead of `pdfUrl`/`docxUrl`
@@ -71,27 +87,33 @@ Source files (HTML/CSS/JSON) are transformed into a single deployable `worker.js
 
 ### CSP Hash Calculation
 
-**CRITICAL**: CSP hashes MUST be calculated from **original HTML before escaping**
+**CRITICAL**: CSP hashes MUST be calculated from **original HTML before
+escaping**
 
 - **DO NOT use `.trim()`** on extracted inline scripts/styles before hashing
 - Browsers calculate CSP hashes with **exact whitespace** as rendered in HTML
-- Commit f67b5eb fixed this: removed `trim()` from hash calculation to match browser behavior
+- Commit f67b5eb fixed this: removed `trim()` from hash calculation to match
+  browser behavior
 
 ## Content Hierarchy
 
 ### Source Files
 
 - **master/resume_master.md**: Single source of truth (complete career history)
-- **master/resume_final.md**: Compressed submission version (downloadable from portfolio)
+- **master/resume_final.md**: Compressed submission version (downloadable from
+  portfolio)
 - **company-specific/**: Tailored resumes derived from master
-- **apps/portfolio/data.json**: Portfolio project data (resume cards + project cards)
+- **apps/portfolio/data.json**: Portfolio project data (resume cards + project
+  cards)
 - **apps/portfolio/styles.css**: All CSS styles (758 lines)
 - **apps/portfolio/index.html**: HTML structure with placeholders (200 lines)
-- **resume/nextrade/**: Technical documentation (Architecture, DR, SOC) for download
+- **resume/nextrade/**: Technical documentation (Architecture, DR, SOC) for
+  download
 
 ### Generated Files (do not edit directly)
 
-- **apps/portfolio/worker.js**: Cloudflare Worker with embedded HTML (30.57 KB, auto-generated)
+- **apps/portfolio/worker.js**: Cloudflare Worker with embedded HTML (30.57 KB,
+  auto-generated)
 
 ### Data Structure
 
@@ -160,14 +182,17 @@ curl -X POST https://resume.jclee.me/api/vitals \
   -d '{"lcp": 1250, "fid": 50, "cls": 0.05}'
 ```
 
-Accepts POST requests with Web Vitals data (LCP, FID, CLS, FCP, TTFB), logs to Grafana Loki.
+Accepts POST requests with Web Vitals data (LCP, FID, CLS, FCP, TTFB), logs to
+Grafana Loki.
 
 ### Loki Integration
 
 - All requests logged to `https://grafana.jclee.me/loki/api/v1/push`
 - Fire-and-forget async logging (non-blocking, doesn't delay response)
-- Log labels: `job="resume-worker"`, `level="INFO|ERROR"`, `path="/..."`, `method="GET"`
-- Failed Loki writes are silently caught (logged to console but don't block request)
+- Log labels: `job="resume-worker"`, `level="INFO|ERROR"`, `path="/..."`,
+  `method="GET"`
+- Failed Loki writes are silently caught (logged to console but don't block
+  request)
 
 ## Web Portfolio Design
 
@@ -178,8 +203,10 @@ Accepts POST requests with Web Vitals data (LCP, FID, CLS, FCP, TTFB), logs to G
 - Responsive: 5 breakpoints (1200px/1024px/768px/640px/375px)
 - SEO: Meta tags, Open Graph, Twitter Card, canonical URL
 - Accessibility: ARIA labels, semantic HTML, 44px touch targets
-- Animations: Scroll fade-in, counter animations, hover effects with cubic-bezier easing
-- Nextrade technical documentation download section (4 docs with PDF/DOCX options)
+- Animations: Scroll fade-in, counter animations, hover effects with
+  cubic-bezier easing
+- Nextrade technical documentation download section (4 docs with PDF/DOCX
+  options)
 
 **Typography**:
 
@@ -189,7 +216,8 @@ Accepts POST requests with Web Vitals data (LCP, FID, CLS, FCP, TTFB), logs to G
 
 **Color System**:
 
-- Primary gradient: `#7c3aed → #5b21b6 → #2563eb` (darker purple/blue for better contrast)
+- Primary gradient: `#7c3aed → #5b21b6 → #2563eb` (darker purple/blue for better
+  contrast)
 - Gold gradient: `#f59e0b → #d97706`
 - Shadows: Enhanced opacity (0.35-0.5) for depth
 
@@ -223,7 +251,7 @@ Accepts POST requests with Web Vitals data (LCP, FID, CLS, FCP, TTFB), logs to G
 
 Enhanced Content Security Policy with SHA-256 hashes (no `unsafe-inline`):
 
-```
+```text
 Content-Security-Policy:
   default-src 'self';
   font-src 'self' https://fonts.gstatic.com;
@@ -259,7 +287,8 @@ Content-Security-Policy:
 
 ## Git Repository
 
-**Primary**: GitHub (https://github.com/qws941/resume.git) - **PRIVATE** as of 2025-11-18
+**Primary**: GitHub (<https://github.com/qws941/resume.git>) - **PRIVATE** as of
+2025-11-18
 
 **Remotes Configuration**:
 
@@ -276,8 +305,9 @@ git push origin master  # GitHub
 **IMPORTANT - GitHub Private Repository**:
 
 - GitHub repository is PRIVATE (since 2025-11-18)
-- Raw file URLs (in `apps/portfolio/data.json`) still work for authenticated users
-- Public resume site (https://resume.jclee.me) works via Cloudflare Workers
+- Raw file URLs (in `apps/portfolio/data.json`) still work for authenticated
+  users
+- Public resume site (<https://resume.jclee.me>) works via Cloudflare Workers
 - PDF/DOCX download links in portfolio require GitHub authentication
 - Alternative: Consider hosting resume files on Cloudflare R2 for public access
 

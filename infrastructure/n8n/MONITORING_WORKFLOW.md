@@ -4,7 +4,9 @@ n8n workflow for automated monitoring of resume portfolio infrastructure.
 
 ## Overview
 
-This workflow provides continuous monitoring of the resume portfolio infrastructure. It performs health checks, validates metrics endpoints, and verifies SSH connectivity on an hourly basis.
+This workflow provides continuous monitoring of the resume portfolio
+infrastructure. It performs health checks, validates metrics endpoints, and
+verifies SSH connectivity on an hourly basis.
 
 **File**: `resume-monitoring-workflow.json`
 
@@ -38,14 +40,16 @@ Following the infrastructure pattern documented in the main README:
 #### 1. Health Check via SSH
 
 - **Type**: SSH node → jclee@192.168.50.200
-- **Command**: `curl -s -w '\n%{http_code}' --max-time 10 https://resume.jclee.me/health`
+- **Command**: `curl -s -w '\n%{http_code}' --max-time 10
+  https://resume.jclee.me/health`
 - **Parse**: Extract HTTP status code and JSON body
 - **Pass Criteria**: Status 200 + body.status === 'healthy'
 
 #### 2. Metrics via SSH
 
 - **Type**: SSH node → jclee@192.168.50.200
-- **Command**: `curl -s -w '\n%{http_code}' --max-time 10 https://resume.jclee.me/metrics | head -20`
+- **Command**: `curl -s -w '\n%{http_code}' --max-time 10
+  https://resume.jclee.me/metrics | head -20`
 - **Parse**: Check for `http_requests_total` in output
 - **Pass Criteria**: Status 200 + contains metrics data
 
@@ -57,7 +61,7 @@ Following the infrastructure pattern documented in the main README:
 
 ### Flow
 
-```
+```text
 Trigger (Manual or Schedule)
     ├──→ [Test] Health Check via SSH ──→ [Parse] Health Result ──┐
     ├──→ [Test] Metrics via SSH ───────→ [Parse] Metrics Result ─┼→ [Monitor] Aggregate Results
@@ -111,7 +115,7 @@ curl -X POST https://n8n.jclee.me/api/v1/workflows \
 
 ### Success Message
 
-```
+```text
 ✅ Resume Monitoring Passed
 
 Score: 1.00 (3/3 tests)
@@ -122,7 +126,7 @@ All systems operational!
 
 ### Failure Message
 
-```
+```text
 ⚠️ Resume Monitoring Failed
 
 Score: 0.67 (2/3 tests)
@@ -145,13 +149,14 @@ This monitoring workflow complements the main `resume-unified-workflow.json`:
 
 ## Network Architecture
 
-```
+```text
 n8n Docker (192.168.50.110:5678)
     └── SSH ──→ jclee-dev (192.168.50.200)
                     └── curl ──→ https://resume.jclee.me
 ```
 
-**Note**: Direct HTTPS from n8n container is blocked. All checks route through jclee-dev via SSH.
+**Note**: Direct HTTPS from n8n container is blocked. All checks route through
+jclee-dev via SSH.
 
 ## Troubleshooting
 

@@ -6,7 +6,8 @@
 
 ## OVERVIEW
 
-Source files for portfolio markup, modular styles, and theme behavior. Edit here, not in generated `worker.js`.
+Source files for portfolio markup, modular styles, and theme behavior. Edit
+here, not in generated `worker.js`.
 
 ## STRUCTURE
 
@@ -26,7 +27,8 @@ src/
 
 ## KEY CSS SELECTORS
 
-`.terminal-window`, `.cli-container`, `#cli-input`, `.typing-effect`, `.glitch`, `.skill-bar`.
+`.terminal-window`, `.cli-container`, `#cli-input`, `.typing-effect`, `.glitch`,
+`.skill-bar`.
 
 ## CONVENTIONS
 

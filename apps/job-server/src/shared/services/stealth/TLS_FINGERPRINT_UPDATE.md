@@ -2,7 +2,8 @@
 
 ## Scope
 
-`TLSFingerprintManager` in `tls-fingerprint.js` maintains the JA3 + User-Agent pool used by crawlers.
+`TLSFingerprintManager` in `tls-fingerprint.js` maintains the JA3 + User-Agent
+pool used by crawlers.
 
 ## Monthly Update Steps
 

@@ -5,7 +5,7 @@ DevSecOps / SRE 엔지니어
 ## 연락처
 
 - 전화: 010-5757-9592
-- 이메일: qws941@kakao.com
+- 이메일: <qws941@kakao.com>
 - 주소: 경기도 시흥시 장현천로61, 307동 1301호
 - GitHub: github.com/jclee941
 
@@ -24,7 +24,8 @@ DevSecOps / SRE 엔지니어
 
 ### 보유 기술
 
-- **보안**: FortiGate 방화벽, DDoS, IPS, WAF, NAC, DLP, EDR, APT, Splunk SIEM (15종 운영 경험)
+- **보안**: FortiGate 방화벽, DDoS, IPS, WAF, NAC, DLP, EDR, APT, Splunk SIEM (15종 운영
+  경험)
 - **클 라우드**: Docker, Kubernetes, Cloudflare Workers (Edge Computing)
 - **자동화**: Python, Shell, Ansible, Terraform, n8n (워크플로우 오케스트레이션)
 - **모니터링**: Grafana, Prometheus, Loki (통합 관제 플랫폼)
@@ -73,10 +74,14 @@ DevSecOps / SRE 엔지니어
 - 20개월 연속 보안 침해사고 0건 (2023.11 ~ 2025.07)
 - 금융감독원 감사 4회 연속 지적사항 0건 (2024년 Q1/Q2/Q3/Q4)
 - 거래 플랫폼 가용성 99.98% 달성 (연간 다운타임 1.75시간 이내)
-- **Splunk-FortiNet 통합 시스템 구축**: 80개 방화벽 중앙 관리, 정책 배포 시간 90% 단축 (10시간 → 1시간), 일 100만+ 이벤트 실시간 처리 | **비용 절감**: 연간 인건비 약 5,000만원 절감 (정책 관리 자동화)
-- **Grafana 통합 모니터링 플랫폼 구축**: 5개 대시보드로 시스템/Docker/로그 실시간 가시성 확보, MTTR 60% 단축 (30분 → 12분) | **비용 절감**: 장애 손실 70% 감소, 연 약 3억원 상당 리스크 완화
-- **Claude AI 기반 위협 정보 자동화**: 금융 위협 정보 수집·분류 자동화, 수동 분석 시간 100% 제거 (주 8시간 → 0시간), 처리 속도 50% 향상 | **비용 절감**: 연간 보안 분석 인력 약 4,000만원 절감
-- **n8n 워크플로우 자동화 플랫폼 구축**: 541개 노드 활용, API 오케스트레이션 처리 속도 2배 향상 (250 RPS → 500 RPS), 반복 작업 80% 자동화 (주 40시간 → 8시간) | **비용 절감**: 운영 효율화로 연간 인건비 약 6,000만원 절감
+- **Splunk-FortiNet 통합 시스템 구축**: 80개 방화벽 중앙 관리, 정책 배포 시간 90% 단축 (10시간 → 1시간), 일
+  100만+ 이벤트 실시간 처리 | **비용 절감**: 연간 인건비 약 5,000만원 절감 (정책 관리 자동화)
+- **Grafana 통합 모니터링 플랫폼 구축**: 5개 대시보드로 시스템/Docker/로그 실시간 가시성 확보, MTTR 60% 단축
+  (30분 → 12분) | **비용 절감**: 장애 손실 70% 감소, 연 약 3억원 상당 리스크 완화
+- **Claude AI 기반 위협 정보 자동화**: 금융 위협 정보 수집·분류 자동화, 수동 분석 시간 100% 제거 (주 8시간 →
+  0시간), 처리 속도 50% 향상 | **비용 절감**: 연간 보안 분석 인력 약 4,000만원 절감
+- **n8n 워크플로우 자동화 플랫폼 구축**: 541개 노드 활용, API 오케스트레이션 처리 속도 2배 향상 (250 RPS → 500
+  RPS), 반복 작업 80% 자동화 (주 40시간 → 8시간) | **비용 절감**: 운영 효율화로 연간 인건비 약 6,000만원 절감
 - 보안 오탐 50% 감소 (SIEM 룰 최적화, 일 200건 → 100건)
 - 취약점 893건 처리 (SLA 준수율 98.5%)
 - DR 복구 시간 37% 단축 (4시간 → 2.5시간)
@@ -193,7 +198,6 @@ DevSecOps / SRE 엔지니어
 ### 🔧 보안 운영 자동화 플랫폼 (2024 ~ 현재)
 
 **개인 프로젝트**
-
 **GitHub**: [github.com/jclee941](https://github.com/jclee941)
 
 #### 보안 통합 관리 플랫폼
@@ -228,14 +232,14 @@ DevSecOps / SRE 엔지니어
 
 - **목적**: 실시간 인프라 모니터링 및 관찰성 플랫폼 공개
 - **기술스택**: Grafana, Prometheus, Loki, Tempo, Synology NAS
-- **접근**: https://grafana.jclee.me (퍼블릭 접근 가능)
+- **접근**: <https://grafana.jclee.me> (퍼블릭 접근 가능)
 - **핵심기능**:
   - 13개 프로덕션 서비스 실시간 모니터링
   - 메트릭, 로그, 트레이스 통합 대시보드
   - 99.9% 가용성 달성 및 실시간 알림 시스템
   - 30일 데이터 보관 및 히스토리 분석
 - **운영성과**:
-  - 퍼블릭 대시보드 운영 (https://grafana.jclee.me)
+  - 퍼블릭 대시보드 운영 (<https://grafana.jclee.me>)
   - 실시간 성능 지표 공개
   - 13개 서비스 라이브 메트릭
   - 99.9% 가용성
@@ -279,7 +283,7 @@ DevSecOps / SRE 엔지니어
   - 보안 오탐 45% 감소 (일 200건 → 110건)
   - DR 복구 시간 37% 단축 (4시간 → 2.5시간)
 
-**기술적 하이라이트**:
+**기술적 하이라이트**
 
 - **자동화**: Python 기반 프레임워크로 연간 461시간 수작업 자동화
 - **가용성**: 99.98% 거래 플랫폼 가용성, DR 복구 시간 37% 단축
@@ -297,34 +301,36 @@ DevSecOps / SRE 엔지니어
 ### 🤖 AI 기반 인프라 자동화 플랫폼 (2024.09 ~ 현재)
 
 **개인 프로젝트 | AI-Powered Infrastructure Automation & Observability Platform**
+**GitHub**: [github.com/jclee941](https://github.com/jclee941) | **Live**:
+<https://resume.jclee.me>
 
-**GitHub**: [github.com/jclee941](https://github.com/jclee941) | **Live**: https://resume.jclee.me
-
-**시스템 규모 & 아키텍처**:
+**시스템 규모 & 아키텍처**
 
 - **인프라**: Rocky Linux 9.6, Hyper-V, 40GB RAM, 8 CPU cores
 - **프로젝트**: 12개 프로덕션 애플리케이션 (blacklist, mcp, resume, safework, grafana, n8n 등)
-- **컨테이너**: Docker 28.5.1, 14개 운영 컨테이너 (Prometheus, Loki, Promtail, cAdvisor, Node Exporter)
+- **컨테이너**: Docker 28.5.1, 14개 운영 컨테이너 (Prometheus, Loki, Promtail, cAdvisor,
+  Node Exporter)
 - **모니터링**: 중앙 집중식 Grafana Stack (Synology NAS), 15개 리스닝 포트, 99.9% 가용성
 
-**기술스택 & 도구**:
+**기술스택 & 도구**
 
-- **AI/ML**: Claude Code (Sonnet 4.5), MCP Protocol (22 servers, 145+ tools), GitHub Copilot
+- **AI/ML**: Claude Code (Sonnet 4.5), MCP Protocol (22 servers, 145+ tools),
+  GitHub Copilot
 - **컨테이너**: Docker, Docker Compose, Watchtower (자동 업데이트), Portainer API
 - **모니터링**: Grafana, Prometheus, Loki, Tempo, Splunk, cAdvisor, Node Exporter
 - **언어**: Python 3.9, Node.js 22, JavaScript/TypeScript, Shell Script
 - **CI/CD**: GitLab CI/CD, Cloudflare Workers, Git-based automation
-- **네트워크**: Traefik (Reverse Proxy), NFS v3/v4 (Synology integration), Multi-host Docker
+- **네트워크**: Traefik (Reverse Proxy), NFS v3/v4 (Synology integration),
+  Multi-host Docker
 
-**세부 프로젝트 컴포넌트**:
-
+**세부 프로젝트 컴포넌트**
 **1. ML Agent Selection System**
 
 - **목적**: ML 기반 자동 에이전트 라우팅 시스템
 - **기술스택**: Python, Flask, Scikit-learn, PostgreSQL, 22 MCP Servers
 - **규모**: 145+ 스크립트 관리, Constitutional Framework v12.0
 - **성과**: AI 작업 효율 80% 향상, 자동 에이전트 라우팅으로 의사결정 시간 70% 단축
-- **Live**: http://127.0.0.1:5001
+- **Live**: <http://127.0.0.1:5001>
 - **GitHub**: [github.com/jclee941/claude](https://github.com/jclee941/claude)
 
 **2. n8n Workflow Automation**
@@ -333,7 +339,7 @@ DevSecOps / SRE 엔지니어
 - **기술스택**: n8n, PostgreSQL, Redis, Docker, 541 Nodes
 - **규모**: 2709+ 템플릿, API 오케스트레이션
 - **성과**: 반복 작업 자동화로 월 100+ 시간 절감, 워크플로우 재사용성 95% 향상
-- **Live**: https://n8n.jclee.me
+- **Live**: <https://n8n.jclee.me>
 - **GitHub**: [github.com/jclee941/n8n](https://github.com/jclee941/n8n)
 
 **3. GitLab Enterprise Edition**
@@ -389,12 +395,13 @@ DevSecOps / SRE 엔지니어
 
 - **목적**: Synology NAS 인프라 자동 배포 시스템
 - **기술스택**: Bash, rsync, SSH, Docker Compose, Synology DSM
-- **규모**: 9개 서비스 (Grafana, Prometheus, Loki, AlertManager, GitLab, Traefik, Splunk, Promtail, Node Exporter)
+- **규모**: 9개 서비스 (Grafana, Prometheus, Loki, AlertManager, GitLab, Traefik,
+  Splunk, Promtail, Node Exporter)
 - **기능**: 원격 Docker 관리, 자동 rsync 동기화, 멀티 서비스 오케스트레이션
 - **성과**: 배포 자동화로 수동 작업 100% 제거, 인프라 동기화 시간 95% 단축
 - **GitHub**: [github.com/jclee941/claude/tree/main/infra](https://github.com/jclee941/claude/tree/main/infra)
 
-**핵심 아키텍처 설계**:
+**핵심 아키텍처 설계**
 
 1. **Universal Observability Architecture**
    - 중앙 집중식 모니터링 (Synology NAS: grafana.jclee.me)
@@ -421,16 +428,15 @@ DevSecOps / SRE 엔지니어
    - Git-based: 모든 변경사항 추적 가능, 자동 롤백 지원
    - 테스트 자동화: Jest 30 (유닛), Playwright 1.56 (E2E)
 
-**프로젝트별 상세**:
-
+**프로젝트별 상세**
 **Resume Portfolio (Cloudflare Workers + Observability)**
 
-- **배포**: https://resume.jclee.me (< 50ms 응답, 글로벌 CDN)
+- **배포**: <https://resume.jclee.me> (< 50ms 응답, 글로벌 CDN)
 - **기술스택**: Cloudflare Workers (152 KB), HTML/CSS, JSON-LD SEO, Grafana Loki 통합
 - **인프라**: GitLab (Primary, 192.168.50.215:2222) + GitHub (Mirror, CI/CD)
 - **CI/CD**: GitLab CI/CD 자동 배포, 배포 타임스탬프 주입
 - **모니터링**:
-  - Grafana Loki 실시간 로깅 (https://grafana.jclee.me/loki)
+  - Grafana Loki 실시간 로깅 (<https://grafana.jclee.me/loki>)
   - Prometheus 메트릭 수집 (/metrics 엔드포인트)
   - Web Vitals 추적 (LCP, FID, CLS, FCP, TTFB)
   - Health Check (/health): 배포 시각, 가동 시간, 요청 통계
@@ -465,7 +471,7 @@ DevSecOps / SRE 엔지니어
 - 포트: 8000 (WebUI), 8088-9 (HEC), 9997 (Forwarder)
 - 용도: 보안 이벤트 중앙 집중 분석, FortiNet 통합
 
-**운영 성과 (2024.09 ~ 현재)**:
+**운영 성과 (2024.09 ~ 현재)**
 
 - **자동화**: 반복 작업 시간 80% 단축 (수동 배포 30분 → 자동 6분)
 - **안정성**: MTTR 70% 개선 (평균 복구 60분 → 18분)
@@ -474,7 +480,7 @@ DevSecOps / SRE 엔지니어
 - **보안**: SELinux + Firewall 구성 (현재 disabled, 활성화 준비 중)
 - **비용**: 로컬 + Synology 하이브리드로 클라우드 비용 제로
 
-**기술적 하이라이트**:
+**기술적 하이라이트**
 
 - Worker 생성 자동화 (HTML → Template Literal 변환, 보안 헤더 주입)
 - ROUTES 객체 패턴 (O(1) 라우팅, 5개 이상 확장 가능)

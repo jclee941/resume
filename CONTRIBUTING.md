@@ -1,6 +1,7 @@
 # Contributing to Resume Monorepo
 
-Thank you for your interest in contributing. This guide covers the conventions, processes, and standards for this project.
+Thank you for your interest in contributing. This guide covers the conventions,
+processes, and standards for this project.
 
 For a detailed architecture overview, see [AGENTS.md](./AGENTS.md).
 
@@ -22,7 +23,9 @@ For a detailed architecture overview, see [AGENTS.md](./AGENTS.md).
 
 ## Code of Conduct
 
-This project follows the [Contributor Covenant](https://www.contributor-covenant.org/) code of conduct. Be respectful, constructive, and inclusive in all interactions.
+This project follows the [Contributor
+Covenant](https://www.contributor-covenant.org/) code of conduct. Be respectful,
+constructive, and inclusive in all interactions.
 
 ## Prerequisites
 
@@ -48,7 +51,7 @@ npm run test:e2e     # Run E2E tests (requires Playwright browsers)
 
 ## Project Structure
 
-```
+```text
 resume/
 ├── apps/                       # Deployable applications
 │   ├── portfolio/              # Edge-deployed portfolio (resume.jclee.me)
@@ -65,7 +68,8 @@ resume/
 └── .github/                    # CI/CD workflows, CODEOWNERS
 ```
 
-Each subdirectory contains its own `AGENTS.md` with domain-specific context. See the root [AGENTS.md](./AGENTS.md) for the full hierarchy.
+Each subdirectory contains its own `AGENTS.md` with domain-specific context. See
+the root [AGENTS.md](./AGENTS.md) for the full hierarchy.
 
 ## Branch Naming
 
@@ -81,11 +85,13 @@ Format: `{type}/{short-description}`
 | `chore/`    | Maintenance tasks    |
 | `ci/`       | CI/CD changes        |
 
-Examples: `feat/parallel-crawling`, `fix/csp-hash-mismatch`, `docs/deployment-guide`
+Examples: `feat/parallel-crawling`, `fix/csp-hash-mismatch`,
+`docs/deployment-guide`
 
 ## Commit Messages
 
-This project uses [Conventional Commits](https://www.conventionalcommits.org/) enforced by commitlint.
+This project uses [Conventional Commits](https://www.conventionalcommits.org/)
+enforced by commitlint.
 
 Format: `type(scope): description`
 
@@ -95,7 +101,7 @@ Format: `type(scope): description`
 
 Examples from this repo:
 
-```
+```text
 feat(job-automation): add 4 Korean platform crawlers
 fix(ci): resolve 43 E2E failures from CI run
 docs: add comprehensive job-automation architecture guide
@@ -105,14 +111,17 @@ docs(workers): enhance AGENTS.md with handler classes and workflows
 
 ## Pull Request Process
 
-1. Create a feature branch from `master` using the [branch naming](#branch-naming) convention.
+1. Create a feature branch from `master` using the [branch
+   naming](#branch-naming) convention.
 2. Make changes with [conventional commits](#commit-messages).
 3. Ensure all checks pass:
+
    ```bash
    npm run lint          # ESLint
    npm run test          # Unit tests
    npm run test:e2e      # E2E tests
    ```
+
 4. Push your branch and open a Pull Request.
 5. PR requires CODEOWNERS review (`@qws941` for all files).
 6. All CI checks must pass before merge.
@@ -124,11 +133,13 @@ docs(workers): enhance AGENTS.md with handler classes and workflows
 
 - **ESM modules** — Use `import`/`export`, not `require`/`module.exports`.
 - **JSDoc** — Document all public APIs with JSDoc comments.
-- **Google3-style** — OWNERS files, BUILD.bazel, language-based directory structure.
+- **Google3-style** — OWNERS files, BUILD.bazel, language-based directory
+  structure.
 
 ### Linting
 
-- ESLint 9 flat config (`eslint.config.cjs`). Run `npm run lint` before committing.
+- ESLint 9 flat config (`eslint.config.cjs`). Run `npm run lint` before
+  committing.
 - Prettier is available (`npm run format`) but not strictly enforced.
 
 ### Strict Rules
@@ -162,17 +173,19 @@ docs(workers): enhance AGENTS.md with handler classes and workflows
 
 All resume data flows from a single canonical source:
 
-```
+```text
 packages/data/resumes/master/resume_data.json
 ```
 
 - **Never** edit resume data in multiple places.
-- After editing `resume_data.json`, run `npm run sync:data` to propagate changes.
-- The portfolio worker inlines all data at build time — there is no runtime data fetching.
+- After editing `resume_data.json`, run `npm run sync:data` to propagate
+  changes.
+- The portfolio worker inlines all data at build time — there is no runtime data
+  fetching.
 
 ## Build Pipeline
 
-```
+```text
 resume_data.json (SSoT)
     -> sync-resume-data.js
 index.html
@@ -205,6 +218,10 @@ npm run sync:data      # Propagate SSoT data
 
 ## Getting Help
 
-- **GitHub Issues**: [qws941/resume/issues](https://github.com/qws941/resume/issues) — Report bugs or request features.
-- **Architecture Context**: Each directory has an `AGENTS.md` with domain-specific documentation. Start with the root [AGENTS.md](./AGENTS.md).
-- **Build System**: See [tools/AGENTS.md](./tools/AGENTS.md) for build scripts and CI utilities.
+- **GitHub Issues**:
+  [qws941/resume/issues](https://github.com/qws941/resume/issues) — Report bugs
+  or request features.
+- **Architecture Context**: Each directory has an `AGENTS.md` with
+  domain-specific documentation. Start with the root [AGENTS.md](./AGENTS.md).
+- **Build System**: See [tools/AGENTS.md](./tools/AGENTS.md) for build scripts
+  and CI utilities.

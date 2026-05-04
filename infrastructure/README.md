@@ -1,19 +1,22 @@
 # Resume Portfolio - Infrastructure Configuration
 
 **Last Updated**: 2025-11-26
-**Project**: Resume Portfolio (https://resume.jclee.me)
-**Repository**: https://github.com/jclee941/resume
+**Project**: Resume Portfolio (<https://resume.jclee.me>)
+**Repository**: <https://github.com/jclee941/resume>
 
 ---
 
 ## Overview
 
-This directory contains all infrastructure configurations, monitoring dashboards, alert rules, and automation workflows for the Resume Portfolio application.
+This directory contains all infrastructure configurations, monitoring
+dashboards, alert rules, and automation workflows for the Resume Portfolio
+application.
 
-**Infrastructure Stack**:
+**Infrastructure Stack**
 
 - **Application**: Cloudflare Workers (serverless, global CDN)
-- **Monitoring**: Grafana + Prometheus + Loki (hosted on Proxmox pve3 (192.168.50.100))
+- **Monitoring**: Grafana + Prometheus + Loki (hosted on Proxmox pve3
+  (192.168.50.100))
 - **Automation**: n8n workflows (health checks, deployments)
 - **CI/CD**: GitHub Actions + GitHub Actions
 
@@ -21,7 +24,7 @@ This directory contains all infrastructure configurations, monitoring dashboards
 
 ## Directory Structure
 
-```
+```text
 infrastructure/
 ├── README.md                          # This file
 ├── configs/                           # Configuration files
@@ -53,25 +56,27 @@ infrastructure/
 
 ### Monitoring URLs
 
-| Service        | URL                              | Access      | Purpose                 |
-| -------------- | -------------------------------- | ----------- | ----------------------- |
-| **Grafana**    | https://grafana.jclee.me         | ✅ Public   | Dashboard visualization |
-| **Prometheus** | 192.168.50.100:9090              | 🔒 Internal | Metrics storage         |
-| **Loki**       | grafana.jclee.me/loki/...        | 🔒 Proxy    | Log aggregation         |
-| **n8n**        | 192.168.50.100:5678              | 🔒 Internal | Workflow automation     |
-| **GitHub**     | https://github.com/jclee941/resume | ✅ Public   | Source repository       |
+| Service        | URL                                  | Access      | Purpose                 |
+| -------------- | ------------------------------------ | ----------- | ----------------------- |
+| **Grafana**    | <https://grafana.jclee.me>           | ✅ Public   | Dashboard visualization |
+| **Prometheus** | 192.168.50.100:9090                  | 🔒 Internal | Metrics storage         |
+| **Loki**       | grafana.jclee.me/loki/...            | 🔒 Proxy    | Log aggregation         |
+| **n8n**        | 192.168.50.100:5678                  | 🔒 Internal | Workflow automation     |
+| **GitHub**     | <https://github.com/jclee941/resume> | ✅ Public   | Source repository       |
 
-> ⚠️ **Internal Services**: Prometheus, Loki, n8n are internal-only (no public DNS).
-> Access via internal IP or Grafana proxy. See [Access Guide](#internal-service-access) below.
+> ⚠️ **Internal Services**: Prometheus, Loki, n8n are internal-only (no public
+  DNS).
+> Access via internal IP or Grafana proxy. See [Access
+  Guide](#internal-service-access) below.
 
 ### Application Endpoints
 
-| Endpoint                           | Purpose            | Format |
-| ---------------------------------- | ------------------ | ------ |
-| https://resume.jclee.me            | Portfolio homepage | HTML   |
-| https://resume.jclee.me/health     | Health check       | JSON   |
-| https://resume.jclee.me/metrics    | Prometheus metrics | Text   |
-| https://resume.jclee.me/api/vitals | Web Vitals logging | JSON   |
+| Endpoint                             | Purpose            | Format |
+| ------------------------------------ | ------------------ | ------ |
+| <https://resume.jclee.me>            | Portfolio homepage | HTML   |
+| <https://resume.jclee.me/health>     | Health check       | JSON   |
+| <https://resume.jclee.me/metrics>    | Prometheus metrics | Text   |
+| <https://resume.jclee.me/api/vitals> | Web Vitals logging | JSON   |
 
 ### Key Commands
 
@@ -117,7 +122,7 @@ npm run deploy  # Cloudflare Workers via API
 - Response Time History (timeseries)
 - Resume Worker Logs (Loki integration)
 
-**Metrics Tracked**:
+**Metrics Tracked**
 
 - `up{job="resume"}` - Service health (1=UP, 0=DOWN)
 - `http_requests_total{job="resume"}` - Total requests
@@ -141,7 +146,7 @@ npm run deploy  # Cloudflare Workers via API
 | Service Down    | Health check fails   | Critical | 1 minute   |
 | No Traffic      | Zero requests        | Warning  | 15 minutes |
 
-**Alert Routing**:
+**Alert Routing**
 
 - **Receiver**: Telegram Bot API
 - **Group By**: alertname, severity
@@ -151,7 +156,7 @@ npm run deploy  # Cloudflare Workers via API
 
 **Directory**: `infrastructure/n8n/`
 
-**Available Workflows**:
+**Available Workflows**
 
 | Workflow                           | Purpose                     | Trigger          |
 | ---------------------------------- | --------------------------- | ---------------- |
@@ -160,7 +165,7 @@ npm run deploy  # Cloudflare Workers via API
 | `resume-auto-deploy.json`          | Automated deployment        | Webhook          |
 | `resume-deploy-optimized.json`     | Optimized deployment flow   | Webhook          |
 
-**Monitoring Workflow Features**:
+**Monitoring Workflow Features**
 
 - Health endpoint check every 5 minutes
 - Metrics validation (Prometheus format)
@@ -203,7 +208,7 @@ curl -H "Authorization: Bearer $GRAFANA_API_KEY" \
 
 **Method 2: Grafana UI**
 
-1. Open https://grafana.jclee.me
+1. Open <https://grafana.jclee.me>
 2. Go to **Dashboards** → **Import**
 3. Upload `monitoring/grafana-dashboard-resume-portfolio.json`
 4. Select datasources: Prometheus (`prometheus`), Loki (`loki`)
@@ -223,7 +228,7 @@ curl -H "Authorization: Bearer $GRAFANA_API_KEY" \
 
 ### Deploy n8n Workflows
 
-1. Open https://n8n.jclee.me
+1. Open <https://n8n.jclee.me>
 2. Go to **Workflows** → **Import from File**
 3. Select workflow JSON file
 4. Configure credentials (if required)
@@ -243,7 +248,7 @@ curl -H "Authorization: Bearer $GRAFANA_API_KEY" \
 | **Loki**       | 🔒 Grafana Proxy    | grafana.jclee.me/loki/... | Grafana proxy       |
 | **n8n**        | 🔒 Internal Only    | 192.168.50.100:5678       | Workflow editor     |
 
-**Access Methods**:
+**Access Methods**
 
 ```bash
 # Option 1: Internal Network (connect to 192.168.50.x subnet)
@@ -272,21 +277,21 @@ ssh -L 9090:192.168.50.100:9090 -L 5678:192.168.50.100:5678 user@gateway
 
 ### Dashboard Usage
 
-**Regular Monitoring**:
+**Regular Monitoring**
 
 - Dashboard auto-refreshes every 30 seconds
 - Monitor Health Check Status panel (top-left)
 - Check Error Count and Response Time
 - Review logs panel for anomalies
 
-**Incident Response**:
+**Incident Response**
 
 1. Check **Health Check Status** (RED = DOWN)
 2. Review **Error Count** and **Request Rate & Error Rate**
 3. Check **Resume Worker Logs** for error details
 4. Verify deployment annotations for recent changes
 
-**Post-Deployment**:
+**Post-Deployment**
 
 1. Watch for deployment annotation on graphs
 2. Monitor Response Time for spikes
@@ -369,9 +374,10 @@ curl https://resume.jclee.me/metrics | grep error
 
 ### 2026-01-24 (Current)
 
-**Changes**:
+**Changes**
 
-- ✅ Unified dashboard files (monitoring/ is primary, configs/grafana/ is symlink)
+- ✅ Unified dashboard files (monitoring/ is primary, configs/grafana/ is
+  symlink)
 - ✅ Added Health Check Status panel to dashboard
 - ✅ Enhanced dashboard with deployment annotations
 - ✅ Created comprehensive README for monitoring/
@@ -380,7 +386,7 @@ curl https://resume.jclee.me/metrics | grep error
 - ✅ Updated infrastructure README (this file)
 - ✅ Clarified internal-only service access
 
-**File Structure**:
+**File Structure**
 
 - `monitoring/grafana-dashboard-resume-portfolio.json` - Primary source (v3)
 - `configs/grafana/resume-portfolio-dashboard.json` - Symlink to monitoring/
@@ -396,9 +402,12 @@ curl https://resume.jclee.me/metrics | grep error
 
 ## Related Documentation
 
-- **Main Documentation**: `../OpenCode.md` (project overview, commands, architecture)
-- **Monitoring Guide**: `monitoring/README.md` (comprehensive monitoring documentation)
-- **Grafana Config**: `configs/grafana/README.md` (alert rules, dashboard deployment)
+- **Main Documentation**: `../OpenCode.md` (project overview, commands,
+  architecture)
+- **Monitoring Guide**: `monitoring/README.md` (comprehensive monitoring
+  documentation)
+- **Grafana Config**: `configs/grafana/README.md` (alert rules, dashboard
+  deployment)
 - **Testing Guide**: `../docs/guides/TESTING_GUIDE.md`
 - **Infrastructure Guide**: `../docs/guides/INFRASTRUCTURE.md`
 
@@ -411,7 +420,7 @@ For issues or questions:
 1. **Check Service Health**:
    - Health: `curl https://resume.jclee.me/health | jq`
    - Metrics: `curl https://resume.jclee.me/metrics`
-   - Dashboard: https://grafana.jclee.me
+   - Dashboard: <https://grafana.jclee.me>
 
 2. **Review Documentation**:
    - This file: `infrastructure/README.md`
@@ -419,8 +428,8 @@ For issues or questions:
    - Project: `OpenCode.md`
 
 3. **Contact**:
-   - Email: qws941@kakao.com
-   - GitHub Issues: https://github.com/jclee941/resume/issues
+   - Email: <qws941@kakao.com>
+   - GitHub Issues: <https://github.com/jclee941/resume/issues>
 
 ---
 

@@ -37,7 +37,7 @@ wrangler deploy
 
 **Symptoms**:
 
-```
+```text
 Error: Script startup exceeded CPU time limit.
 ```
 
@@ -96,7 +96,7 @@ wrangler --version
 
 **Symptoms**:
 
-```
+```text
 Error: Cannot find module 'fs'
 ```
 
@@ -117,11 +117,11 @@ node apps/portfolio/generate-worker.js
 
 **Symptoms**:
 
-```
+```text
 SyntaxError: Unexpected token
 ```
 
-**Cause**: Backticks (`) or `$` in HTML not properly escaped
+**Cause**: Backticks (`) or`$` in HTML not properly escaped
 
 **Solution**: Check `generate-worker.js` escaping logic:
 
@@ -226,6 +226,7 @@ curl -w "@curl-format.txt" -o /dev/null -s https://resume.jclee.me
    ```
 
 3. **Lazy-load fonts**:
+
    ```css
    @font-face {
      font-family: 'Playfair Display';
@@ -292,7 +293,7 @@ nodemon --watch apps/portfolio/index.html --watch apps/portfolio/resume.html \
 
 **Symptoms**:
 
-```
+```text
 Access to fetch at 'https://fonts.googleapis.com/...' blocked by CORS
 ```
 
@@ -369,7 +370,7 @@ pandoc input.md -o output.pdf \
 
 **Symptoms**:
 
-```
+```text
 Error: 10000: Authentication error
 ```
 
@@ -460,9 +461,9 @@ curl -H "Host: resume.jclee.me" https://[CLOUDFLARE_IP]/
 
 ### Resources
 
-- **Cloudflare Workers Docs**: https://developers.cloudflare.com/workers/
-- **Wrangler CLI Docs**: https://developers.cloudflare.com/workers/wrangler/
-- **Project Issues**: https://github.com/jclee-homelab/resume/issues
+- **Cloudflare Workers Docs**: <https://developers.cloudflare.com/workers/>
+- **Wrangler CLI Docs**: <https://developers.cloudflare.com/workers/wrangler/>
+- **Project Issues**: <https://github.com/jclee-homelab/resume/issues>
 
 ### Logs Location
 

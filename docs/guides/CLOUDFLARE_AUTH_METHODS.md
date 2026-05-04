@@ -20,7 +20,7 @@ Cloudflare supports **two different authentication methods** for Wrangler CLI:
 - ✅ **Granular**: Can limit to specific zones/accounts
 - ✅ **Revocable**: Easy to rotate without affecting other services
 
-**Where to find**: https://dash.cloudflare.com/profile/api-tokens
+**Where to find**: <https://dash.cloudflare.com/profile/api-tokens>
 
 **Required environment variable**:
 
@@ -28,7 +28,8 @@ Cloudflare supports **two different authentication methods** for Wrangler CLI:
 CLOUDFLARE_API_TOKEN=your_40_character_token_here
 ```
 
-**Format**: 40+ character string (e.g., `aBcD1234efGh5678ijKl9012mnOp3456qrSt7890`)
+**Format**: 40+ character string (e.g.,
+`aBcD1234efGh5678ijKl9012mnOp3456qrSt7890`)
 
 ---
 
@@ -47,7 +48,7 @@ CLOUDFLARE_API_TOKEN=your_40_character_token_here
 - ⚠️ **Legacy**: Cloudflare recommends using API Tokens instead
 - ⚠️ **No scoping**: Cannot limit permissions
 
-**Where to find**: https://dash.cloudflare.com/profile
+**Where to find**: <https://dash.cloudflare.com/profile>
 
 **Required environment variables** (need BOTH):
 
@@ -79,7 +80,7 @@ CLOUDFLARE_EMAIL=your_cloudflare_email@example.com
 
 #### Step 1: Generate Token
 
-1. Go to https://dash.cloudflare.com/profile/api-tokens
+1. Go to <https://dash.cloudflare.com/profile/api-tokens>
 2. Click **"Create Token"**
 3. Use template: **"Edit Cloudflare Workers"**
 4. Or create custom token with permissions:
@@ -118,7 +119,7 @@ npx wrangler whoami
 
 #### Step 1: Get Global API Key
 
-1. Go to https://dash.cloudflare.com/profile
+1. Go to <https://dash.cloudflare.com/profile>
 2. Scroll to **"API Keys"** section
 3. Find **"Global API Key"** → Click **"View"**
 4. Enter password to reveal key
@@ -232,10 +233,12 @@ CLOUDFLARE_API_TOKEN=REVOKED_CF_API_KEY_REPLACE_ME
 **Issues**:
 
 1. **Token length**: 37 characters (invalid - should be 40+)
-2. **Format looks like Global API Key** (37-char hex) but stored as `CLOUDFLARE_API_TOKEN`
+2. **Format looks like Global API Key** (37-char hex) but stored as
+   `CLOUDFLARE_API_TOKEN`
 3. **Error**: "Invalid format for Authorization header [code: 6111]"
 
-**Root cause**: This appears to be a **Global API Key stored with wrong variable name**
+**Root cause**: This appears to be a **Global API Key stored with wrong variable
+name**
 
 ---
 
@@ -309,7 +312,7 @@ npx wrangler whoami
 
 **Success output (API Token)**:
 
-```
+```text
 👋 You are logged in with an API Token, associated with the email 'your@email.com'!
 Account Name: Your Account Name
 Account ID: 1234567890abcdef1234567890abcdef
@@ -317,7 +320,7 @@ Account ID: 1234567890abcdef1234567890abcdef
 
 **Success output (Global API Key)**:
 
-```
+```text
 👋 You are logged in with an API Key, associated with the email 'your@email.com'!
 Account Name: Your Account Name
 Account ID: 1234567890abcdef1234567890abcdef
@@ -325,7 +328,7 @@ Account ID: 1234567890abcdef1234567890abcdef
 
 **Failure output**:
 
-```
+```text
 ✘ [ERROR] A request to the Cloudflare API (/user/tokens/verify) failed.
 Invalid format for Authorization header [code: 6111]
 ```
@@ -334,13 +337,13 @@ Invalid format for Authorization header [code: 6111]
 
 ## 📚 References
 
-| Resource                     | URL                                                             |
-| ---------------------------- | --------------------------------------------------------------- |
-| **API Token Creation**       | https://dash.cloudflare.com/profile/api-tokens                  |
-| **Global API Key**           | https://dash.cloudflare.com/profile (scroll to "API Keys")      |
-| **Wrangler Docs**            | https://developers.cloudflare.com/workers/wrangler/commands/    |
-| **Authentication Guide**     | https://developers.cloudflare.com/fundamentals/api/get-started/ |
-| **Project Deployment Guide** | docs/guides/MANUAL_DEPLOYMENT_GUIDE.md                          |
+| Resource                     | URL                                                               |
+| ---------------------------- | ----------------------------------------------------------------- |
+| **API Token Creation**       | <https://dash.cloudflare.com/profile/api-tokens>                  |
+| **Global API Key**           | <https://dash.cloudflare.com/profile> (scroll to "API Keys")      |
+| **Wrangler Docs**            | <https://developers.cloudflare.com/workers/wrangler/commands/>    |
+| **Authentication Guide**     | <https://developers.cloudflare.com/fundamentals/api/get-started/> |
+| **Project Deployment Guide** | docs/guides/MANUAL_DEPLOYMENT_GUIDE.md                            |
 
 ---
 
@@ -357,7 +360,7 @@ Invalid format for Authorization header [code: 6111]
 
 **Current action needed**:
 
-1. Generate new API Token at https://dash.cloudflare.com/profile/api-tokens
+1. Generate new API Token at <https://dash.cloudflare.com/profile/api-tokens>
 2. Use "Edit Cloudflare Workers" template
 3. Update `~/.env` with new token
 4. Run `go run ./tools/scripts/deployment/quick-deploy.go`

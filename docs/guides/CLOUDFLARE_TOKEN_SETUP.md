@@ -4,13 +4,14 @@
 
 Wrangler v4 deployment failing with authentication error (code: 10001, 6111)
 
-**Root Cause**: `.env` file uses deprecated Global API Key method. Wrangler v4 requires scoped API tokens.
+**Root Cause**: `.env` file uses deprecated Global API Key method. Wrangler v4
+requires scoped API tokens.
 
 ## Solution: Create Cloudflare API Token
 
 ### Step 1: Access Cloudflare Dashboard
 
-1. Visit: https://dash.cloudflare.com/profile/api-tokens
+1. Visit: <https://dash.cloudflare.com/profile/api-tokens>
 2. Click **"Create Token"**
 
 ### Step 2: Select Template
@@ -20,14 +21,16 @@ Choose **"Edit Cloudflare Workers"** template (recommended)
 OR create custom token with these permissions:
 
 - **Account** → **Cloudflare Workers Scripts** → **Edit**
-- **Account** → **Account Settings** → **Read** (optional, for `wrangler whoami`)
+- **Account** → **Account Settings** → **Read** (optional, for `wrangler
+  whoami`)
 - **Zone** → **Workers Routes** → **Edit** (if using custom domains)
 
 ### Step 3: Configure Token
 
 - **Account Resources**: Select your account (a8d9c67f586acdd15eebcc65ca3aa5bb)
 - **Zone Resources**: Include specific zone (jclee.me) or all zones
-- **Client IP Address Filtering**: Leave empty (optional: add 192.168.50.100 for security)
+- **Client IP Address Filtering**: Leave empty (optional: add 192.168.50.100 for
+  security)
 - **TTL**: Leave as default (no expiration) or set to 1 year
 
 ### Step 4: Copy Token
@@ -76,7 +79,7 @@ npm run deploy
 curl -s https://resume.jclee.me/health | jq -r '.deployed_at'
 ```
 
-2. Verify 14 projects visible:
+1. Verify 14 projects visible:
 
 ```bash
 curl -s https://resume.jclee.me | grep -o '"title":' | wc -l
@@ -87,11 +90,12 @@ curl -s https://resume.jclee.me | grep -o '"title":' | wc -l
 
 If API token creation is not possible:
 
-1. Log into https://dash.cloudflare.com/
+1. Log into <https://dash.cloudflare.com/>
 2. Navigate to **Workers & Pages**
 3. Select **"resume"** worker
 4. Click **"Quick Edit"** or **"Upload"**
-5. Replace content with `/home/jclee/dev/resume/apps/portfolio/worker.js` (155.96 KB)
+5. Replace content with `/home/jclee/dev/resume/apps/portfolio/worker.js`
+   (155.96 KB)
 6. Click **"Save and Deploy"**
 
 ## Security Notes
@@ -115,10 +119,12 @@ If API token creation is not possible:
 
 ### Error: "Account ID mismatch"
 
-- Verify `wrangler.jsonc` has correct `account_id = "a8d9c67f586acdd15eebcc65ca3aa5bb"`
+- Verify `wrangler.jsonc` has correct `account_id =
+  "a8d9c67f586acdd15eebcc65ca3aa5bb"`
 
 ---
 
 **Created**: 2025-11-12
 **Status**: Pending token creation
-**Next Step**: Create API token at https://dash.cloudflare.com/profile/api-tokens
+**Next Step**: Create API token at
+<https://dash.cloudflare.com/profile/api-tokens>

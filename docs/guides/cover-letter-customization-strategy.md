@@ -51,4 +51,5 @@
 
 ## 자동화 적용
 
-cover-letter-generator.js의 `detectRole()` 함수가 JD 포지션명에서 직무 자동 감지 → 해당 직무 템플릿 적용 → 매칭 성과 자동 삽입
+cover-letter-generator.js의 `detectRole()` 함수가 JD 포지션명에서 직무 자동 감지 → 해당 직무 템플릿 적용
+→ 매칭 성과 자동 삽입

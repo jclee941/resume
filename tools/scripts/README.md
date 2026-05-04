@@ -65,7 +65,8 @@ go run ./tools/scripts/verification/verify-deployment.go
 4. **Web Vitals tracking**: observeLCP, observeFID, observeCLS functions
 5. **Vitals endpoint**: POST /api/vitals responds with HTTP 200
 6. **Security headers**: CSP, HSTS, X-Content-Type-Options
-7. **Prometheus metrics**: http_requests_total, http_response_time_seconds, vitals_received_total
+7. **Prometheus metrics**: http_requests_total, http_response_time_seconds,
+   vitals_received_total
 
 **Output**:
 
@@ -83,8 +84,8 @@ go run ./tools/scripts/verification/verify-deployment.go
 
 ## Quick Reference
 
-| Task                   | Command                                             | Requires Credentials |
-| ---------------------- | --------------------------------------------------- | -------------------- |
+| Task                   | Command                                                    | Requires Credentials |
+| ---------------------- | ---------------------------------------------------------- | -------------------- |
 | Deploy with all checks | `go run ./tools/scripts/deployment/quick-deploy.go`        | ✅ Yes (API token)   |
 | Deploy step-by-step    | `go run ./tools/scripts/deployment/deploy-helper.go`       | ✅ Yes (API token)   |
 | Verify only            | `go run ./tools/scripts/verification/verify-deployment.go` | ❌ No (read-only)    |
@@ -170,7 +171,8 @@ npm run test:e2e  # Run E2E tests
 
 ## Full Deployment Guide
 
-For detailed instructions including GitHub authentication setup, SSH key configuration, and comprehensive troubleshooting, see:
+For detailed instructions including GitHub authentication setup, SSH key
+configuration, and comprehensive troubleshooting, see:
 
 📘 **[Manual Deployment Guide](../../docs/guides/MANUAL_DEPLOYMENT_GUIDE.md)**
 

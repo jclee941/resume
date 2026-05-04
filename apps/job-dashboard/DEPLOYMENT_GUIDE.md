@@ -2,7 +2,8 @@
 
 Complete step-by-step instructions for local/runtime module validation.
 
-Production deploy path: independent worker (`job`) via Cloudflare Workers Builds. See [ADR 0007](../../docs/adr/0007-msa-service-split.md).
+Production deploy path: independent worker (`job`) via Cloudflare Workers
+Builds. See [ADR 0007](../../docs/adr/0007-msa-service-split.md).
 
 ## Table of Contents
 
@@ -14,7 +15,8 @@ Production deploy path: independent worker (`job`) via Cloudflare Workers Builds
 6. [KV Namespace Creation](#kv-namespace-creation)
 7. [R2 Bucket Setup](#r2-bucket-setup)
 8. [Additional Bindings](#additional-bindings)
-9. [Workflows & Event Trigger Configuration](#workflows--event-trigger-configuration)
+9. [Workflows & Event Trigger
+   Configuration](#workflows--event-trigger-configuration)
 10. [Deployment Steps](#deployment-steps)
 11. [Post-Deployment Verification](#post-deployment-verification)
 12. [Monitoring & Logging](#monitoring--logging)
@@ -30,14 +32,19 @@ Before starting deployment, ensure you have:
 ### Required Software
 
 - **Node.js** 22.0.0 or higher
+
   ```bash
   node --version  # v22.0.0 or higher
   ```
+
 - **npm** 8.0.0 or higher
+
   ```bash
   npm --version   # 8.0.0 or higher
   ```
+
 - **Wrangler CLI** 3.0.0 or higher
+
   ```bash
   npm install -g wrangler
   wrangler --version
@@ -59,7 +66,7 @@ Before starting deployment, ensure you have:
 
 - **Account ID**: Available from Cloudflare dashboard → Account
 - **Zone ID**: Available from Cloudflare dashboard → Domain Overview
-- **API Token**: Create at https://dash.cloudflare.com/profile/api-tokens
+- **API Token**: Create at <https://dash.cloudflare.com/profile/api-tokens>
 
 ### Project Files
 
@@ -168,7 +175,8 @@ routes = [
 
 ## Secrets Management
 
-Cloudflare Workers secrets are stored securely and unavailable to attackers. Manage them via Wrangler CLI:
+Cloudflare Workers secrets are stored securely and unavailable to attackers.
+Manage them via Wrangler CLI:
 
 ### Required Secrets
 
@@ -252,7 +260,8 @@ wrangler secret list --env production
 
 ## D1 Database Setup
 
-D1 is Cloudflare's SQL database. The worker requires one D1 database for persistent storage.
+D1 is Cloudflare's SQL database. The worker requires one D1 database for
+persistent storage.
 
 ### Step 1: Create D1 Database
 
@@ -381,7 +390,8 @@ wrangler d1 execute job-dashboard-db \
 
 ## KV Namespace Creation
 
-Cloudflare KV provides fast, replicated storage for sessions, rate limits, and tokens. The worker requires 3 KV namespaces.
+Cloudflare KV provides fast, replicated storage for sessions, rate limits, and
+tokens. The worker requires 3 KV namespaces.
 
 ### Step 1: Create SESSIONS Namespace
 
@@ -457,7 +467,8 @@ curl http://localhost:8787/api/test/kv-get?key=test
 
 ## R2 Bucket Setup
 
-R2 is Cloudflare's object storage. The worker stores screenshots and archives here.
+R2 is Cloudflare's object storage. The worker stores screenshots and archives
+here.
 
 ### Step 1: Create R2 Bucket
 
@@ -534,7 +545,8 @@ environment = "production"
 
 ## Workflows & Event Trigger Configuration
 
-Cloudflare Workflows enable scheduled and event-driven jobs. Update `wrangler.jsonc` with workflow definitions:
+Cloudflare Workflows enable scheduled and event-driven jobs. Update
+`wrangler.jsonc` with workflow definitions:
 
 ### Workflow Definitions
 
@@ -934,6 +946,7 @@ After rollback, investigate the issue:
    ```
 
 3. Run schema initialization:
+
    ```bash
    wrangler d1 execute job-dashboard-db \
      --file migrations/0001_init.sql
@@ -977,6 +990,7 @@ wrangler dev --port 8788
    ```
 
 3. Verify namespace exists:
+
    ```bash
    wrangler kv:namespace list
    ```
@@ -1004,6 +1018,7 @@ wrangler dev --port 8788
    ```
 
 3. Check token expiration:
+
    ```bash
    # Tokens expire after 24 hours
    # Get new token or refresh existing one
@@ -1011,7 +1026,8 @@ wrangler dev --port 8788
 
 ### Issue: "CORS error: origin not allowed"
 
-**Symptom**: `Error: CORS policy: response has invalid Access-Control-Allow-Origin`
+**Symptom**: `Error: CORS policy: response has invalid
+Access-Control-Allow-Origin`
 
 **Solutions**:
 
@@ -1030,6 +1046,7 @@ wrangler dev --port 8788
    ```
 
 3. Test CORS:
+
    ```bash
    curl -H "Origin: https://resume.jclee.me" \
      https://resume.jclee.me/job/api/stats -v
@@ -1047,6 +1064,7 @@ wrangler dev --port 8788
 2. Trigger workflow manually through API to validate end-to-end path.
 
 3. View workflow execution logs:
+
    ```bash
    wrangler tail --env production
    # Filter for workflow execution logs
@@ -1071,6 +1089,7 @@ wrangler dev --port 8788
 3. Wait for rate limit reset:
    - Automatic reset after 60 seconds
    - Or clear manually:
+
    ```bash
    wrangler kv:key delete RATE_LIMIT_KV:ip-address
    ```
@@ -1095,6 +1114,7 @@ wrangler dev --port 8788
    ```
 
 3. For local development, create `.dev.vars`:
+
    ```bash
    cat > .dev.vars << 'EOF'
    JWT_SECRET=your-test-secret
@@ -1119,6 +1139,7 @@ wrangler dev --port 8788
    - Reduce payload size
 
 4. Profile memory usage:
+
    ```bash
    wrangler dev --inspect
    # Use Chrome DevTools to profile

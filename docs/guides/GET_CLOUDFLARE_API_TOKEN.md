@@ -8,7 +8,7 @@
 
 ### 1단계: Cloudflare Dashboard 접속
 
-**URL**: https://dash.cloudflare.com/profile/api-tokens
+**URL**: <https://dash.cloudflare.com/profile/api-tokens>
 
 브라우저에서 위 링크를 열고 Cloudflare 계정으로 로그인하세요.
 
@@ -37,7 +37,7 @@
 
 **⚠️ 중요**: 토큰은 **한 번만 표시**됩니다!
 
-```
+```text
 생성된 토큰 예시:
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
@@ -72,7 +72,7 @@ export CLOUDFLARE_API_TOKEN=여기에_복사한_토큰_붙여넣기
 
 **필요한 경우**: wrangler.jsonc에 account_id가 없으면
 
-1. Cloudflare Dashboard: https://dash.cloudflare.com/
+1. Cloudflare Dashboard: <https://dash.cloudflare.com/>
 2. 왼쪽 메뉴에서 **"Workers & Pages"** 클릭
 3. 오른쪽 사이드바에서 **"Account ID"** 확인
 4. 32자리 hex 문자열 복사
@@ -124,7 +124,7 @@ npx wrangler whoami
 
 **성공 시 출력**:
 
-```
+```text
 Getting User settings...
 👋 You are logged in with an API Token, associated with the email 'your@email.com'!
 ```
@@ -232,15 +232,15 @@ npx wrangler whoami
 
 ## 📚 추가 리소스
 
-| 리소스                        | 링크                                                                         |
-| ----------------------------- | ---------------------------------------------------------------------------- |
-| **시각적 배포 가이드** ⭐ NEW | docs/guides/DEPLOYMENT_VISUAL_GUIDE.md                                       |
-| **인증 방법 비교** ⭐ NEW     | docs/guides/CLOUDFLARE_AUTH_METHODS.md                                       |
-| Cloudflare API Tokens 문서    | https://developers.cloudflare.com/fundamentals/api/get-started/create-token/ |
-| Workers 배포 가이드           | https://developers.cloudflare.com/workers/get-started/guide/                 |
-| Wrangler 문서                 | https://developers.cloudflare.com/workers/wrangler/                          |
-| 프로젝트 배포 가이드          | docs/guides/MANUAL_DEPLOYMENT_GUIDE.md                                       |
-| 자동화 스크립트 가이드        | tools/scripts/README.md                                                      |
+| 리소스                        | 링크                                                                           |
+| ----------------------------- | ------------------------------------------------------------------------------ |
+| **시각적 배포 가이드** ⭐ NEW | docs/guides/DEPLOYMENT_VISUAL_GUIDE.md                                         |
+| **인증 방법 비교** ⭐ NEW     | docs/guides/CLOUDFLARE_AUTH_METHODS.md                                         |
+| Cloudflare API Tokens 문서    | <https://developers.cloudflare.com/fundamentals/api/get-started/create-token/> |
+| Workers 배포 가이드           | <https://developers.cloudflare.com/workers/get-started/guide/>                 |
+| Wrangler 문서                 | <https://developers.cloudflare.com/workers/wrangler/>                          |
+| 프로젝트 배포 가이드          | docs/guides/MANUAL_DEPLOYMENT_GUIDE.md                                         |
+| 자동화 스크립트 가이드        | tools/scripts/README.md                                                        |
 
 ---
 

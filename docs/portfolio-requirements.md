@@ -112,14 +112,14 @@
 > 감사 결과: `resume_data.json`과 Markdown 이력서 간 데이터 드리프트 발견.
 > 스키마 정의 대비 누락 필드 다수. 아래 항목은 데이터 계층 개선 사항.
 
-| ID   | 기능                  | 설명                                                                      | 구현 |
-| ---- | --------------------- | ------------------------------------------------------------------------- | ---- |
-| F7.1 | MD↔JSON 데이터 동기화 | Markdown에만 있는 데이터 JSON 반영 (AWS 자격증, AI/ML 스킬 등) | ✅   |
-| F7.2 | 스킬 숙련도 레벨      | 스키마 8카테고리 vs JSON 6카테고리 불일치 해소 + proficiency 필드 추가    | ✅   |
-| F7.3 | 프로젝트 메트릭 보강  | 빈 metrics 필드 채우기 (사용자 수, 성능 지표, 기술 스택)                  | ✅   |
-| F7.4 | 자격증 상세 정보      | 만료일(expiry), 자격번호(credential URL) 필드 추가                        | ✅   |
-| F7.5 | GitHub URL 정규화     | github.com URL에 https:// 프로토콜 누락 수정                              | ✅   |
-| F7.6 | 검증불가 수치 제거    | 비용 절감 추정치·검증불가 퍼센트 제거, 팩트 기반 성과로 교체 완료         | ✅   |
+| ID   | 기능                  | 설명                                                                   | 구현 |
+| ---- | --------------------- | ---------------------------------------------------------------------- | ---- |
+| F7.1 | MD↔JSON 데이터 동기화 | Markdown에만 있는 데이터 JSON 반영 (AWS 자격증, AI/ML 스킬 등)         | ✅   |
+| F7.2 | 스킬 숙련도 레벨      | 스키마 8카테고리 vs JSON 6카테고리 불일치 해소 + proficiency 필드 추가 | ✅   |
+| F7.3 | 프로젝트 메트릭 보강  | 빈 metrics 필드 채우기 (사용자 수, 성능 지표, 기술 스택)               | ✅   |
+| F7.4 | 자격증 상세 정보      | 만료일(expiry), 자격번호(credential URL) 필드 추가                     | ✅   |
+| F7.5 | GitHub URL 정규화     | github.com URL에 https:// 프로토콜 누락 수정                           | ✅   |
+| F7.6 | 검증불가 수치 제거    | 비용 절감 추정치·검증불가 퍼센트 제거, 팩트 기반 성과로 교체 완료      | ✅   |
 
 ### F8. 콘텐츠 확장
 
@@ -140,7 +140,8 @@
 ### F9. Job Dashboard 통합
 
 > 2026-02-11 추가. portfolio-worker와 job-automation 워커 간 통합 라우팅.
-> entry.js 디스패처가 /job/\* 경로를 Service Binding을 통해 job-dashboard 워커로 프록시 (ADR-0007).
+> entry.js 디스패처가 /job/\* 경로를 Service Binding을 통해 job-dashboard 워커로 프록시
+  (ADR-0007).
 
 | ID   | 기능                   | 설명                                                        | 구현 |
 | ---- | ---------------------- | ----------------------------------------------------------- | ---- |
@@ -330,5 +331,6 @@ curl -s https://resume.jclee.me/metrics
 
 - [AGENTS.md](../AGENTS.md) - 프로젝트 개요
 - [apps/portfolio/AGENTS.md](../apps/portfolio/AGENTS.md) - 빌드 파이프라인
-- [cloudflare-workflows-requirements.md](./cloudflare-workflows-requirements.md) - Job Automation 요구사항
+- [cloudflare-workflows-requirements.md](./cloudflare-workflows-requirements.md)
+  - Job Automation 요구사항
 - [planning/milestones.md](./planning/milestones.md) - 마일스톤 로드맵

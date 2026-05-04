@@ -6,7 +6,7 @@
 
 **아키텍처:**
 
-```
+```text
 GitHub Actions / Auto-Apply ──webhook──> n8n ──Telegram Node──> Telegram
                                     │
                                     └── Credentials (n8n에서 관리)
@@ -40,7 +40,7 @@ GitHub Actions / Auto-Apply ──webhook──> n8n ──Telegram Node──> 
 
 생성된 웹훅 URL을 복사하여 GitHub Actions secrets에 설정:
 
-```
+```text
 N8N_WEBHOOK_URL=https://n8n.jclee.me/webhook/job-automation
 ```
 
@@ -103,7 +103,7 @@ node apps/job-server/scripts/auto-all.js --apply
 
 ## 파일 구조
 
-```
+```text
 apps/job-server/src/shared/services/n8n/index.js  # n8n 서비스
 .github/workflows/n8n-notifications.yml             # GitHub Actions 워크플로우
 infrastructure/n8n/workflows/job-automation-webhook.json  # n8n 워크플로우

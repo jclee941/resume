@@ -6,7 +6,7 @@ Security Engineer (시스템 보안)
 
 ## 연락처
 
-- Email: qws941@kakao.com
+- Email: <qws941@kakao.com>
 - Phone: 010-5757-9592
 - GitHub: github.com/jclee941
 - Portfolio: resume.jclee.me
@@ -15,7 +15,8 @@ Security Engineer (시스템 보안)
 
 ## 지원 동기
 
-토스뱅크의 Security Engineer 포지션에 지원합니다. 9년간 금융, 공공, 제조 분야에서 보안 인프라 설계와 운영을 담당했습니다. 넥스트레이드 대체거래소 보안 인프라 구축 및 운영을 통해 금융권 보안 요구사항과 규제 대응 경험을 쌓았습니다.
+토스뱅크의 Security Engineer 포지션에 지원합니다. 9년간 금융, 공공, 제조 분야에서 보안 인프라 설계와 운영을 담당했습니다.
+넥스트레이드 대체거래소 보안 인프라 구축 및 운영을 통해 금융권 보안 요구사항과 규제 대응 경험을 쌓았습니다.
 
 토스뱅크의 고객 자산 보호와 제로 트러스트 보안 아키텍처 철학에 공감하여 지원하게 되었습니다.
 
@@ -34,6 +35,7 @@ Security Engineer (시스템 보안)
 ## 경력사항
 
 ### ㈜아이티센 CTS | 정볳안 운영 엔지니어
+
 2025.03 ~ 현재 (10개월) | 넥스트레이드 보안운영SM
 
 - 15종 보안 솔루션 통합 운영 (FortiGate, NAC, DLP, EDR, SIEM 등)
@@ -50,6 +52,7 @@ Security Engineer (시스템 보안)
 ---
 
 ### ㈜가온누리정보시스템 | 보안 인프라 엔지니어
+
 2024.03 ~ 2025.02 (1년) | 넥스트레이드 보안인프라 구축
 
 - 금융위원회 본인가 심사 대응 및 보안 아키텍처 기술 문서 작성
@@ -66,6 +69,7 @@ Security Engineer (시스템 보안)
 ---
 
 ### ㈜콴텍투자일임 | 인프라 보안 엔지니어
+
 2022.08 ~ 2024.02 (1년 7개월) | AI 기반 주식투자 서비스
 
 - AWS 환경 보안 인프라 운영 (VPC, IAM, Security Group, CloudTrail)
@@ -80,6 +84,7 @@ Security Engineer (시스템 보안)
 ---
 
 ### ㈜펀엔씨 | DevOps 엔지니어
+
 2022.05 ~ 2022.07 (3개월) | 클라우드 인프라 구축
 
 - AWS 인프라 보안 설계 (EC2, VPC 네트워크)
@@ -91,6 +96,7 @@ Security Engineer (시스템 보안)
 ---
 
 ### ㈜조인트리 | 시스템 보안 엔지니어
+
 2021.09 ~ 2022.04 (8개월) | 국민대학교 차세대 정보시스템
 
 - VMware NSX-T 분산 방화벽 기반 서버 간 트래픽 제어
@@ -102,6 +108,7 @@ Security Engineer (시스템 보안)
 ---
 
 ### ㈜메타넷엠플랫폼 | 시스템 보안 엔지니어
+
 2019.12 ~ 2021.08 (1년 9개월) | 대규모 콜센터 인프라
 
 - OpenVPN 기반 재택근무 VPN 인프라 구축
@@ -115,6 +122,7 @@ Security Engineer (시스템 보안)
 ---
 
 ### ㈜엠티데이타 | 서버 시스템 엔지니어
+
 2017.02 ~ 2018.10 (1년 9개월) | 한국항공우주산업
 
 - 폐쇄망 보안 인프라 운영
@@ -128,21 +136,25 @@ Security Engineer (시스템 보안)
 ## 기술 스택
 
 ### 보안 솔루션
+
 - 네트워크 보안: FortiGate, Palo Alto, IPS/IDS, WAF, DDoS
 - 엔드포인트 보안: NAC, DLP, EDR, APT
 - 접근제어: SSL VPN, IPSec, RADIUS, 2FA
 - 모니터링 및 분석: Splunk, SIEM
 
 ### 클라우드 보안
+
 - AWS: VPC, IAM, Security Group, CloudTrail, GuardDuty, WAF
 - 컨테이너 보안: Kubernetes RBAC, Pod Security
 
 ### 자동화 및 개발
+
 - 언어: Python, Shell Script
 - IaC: Ansible, Terraform
 - 자동화 도구: n8n, REST API
 
 ### 모니터링 및 관측성
+
 - 오픈소스: Prometheus, Grafana, ELK Stack
 - 상용: Splunk
 
@@ -151,9 +163,11 @@ Security Engineer (시스템 보안)
 ## 학력 및 자격증
 
 ### 학력
+
 - 한양사이버대학교 컴퓨터공학과 (재학중, 2024.03 ~ 현재)
 
 ### 자격증
+
 - CCNP (Cisco Systems, 2020.08)
 - RHCSA (Red Hat, 2019.01)
 - CompTIA Linux+ (CompTIA, 2019.02)
@@ -165,10 +179,12 @@ Security Engineer (시스템 보안)
 ## 기타
 
 ### 언어
+
 - 한국어: 원어민
 - 영어: 기술 문서 독해 가능
 
 ### GitHub
+
 - github.com/jclee941
 - 인프라 자동화 스크립트 및 보안 도구 공유
 

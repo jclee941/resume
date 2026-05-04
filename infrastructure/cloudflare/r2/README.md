@@ -1,6 +1,7 @@
 # Cloudflare R2 - resume-assets
 
-This directory defines baseline configuration for an R2 bucket named `resume-assets` used by the resume platform.
+This directory defines baseline configuration for an R2 bucket named
+`resume-assets` used by the resume platform.
 
 ## Purpose
 
@@ -21,13 +22,14 @@ This directory defines baseline configuration for an R2 bucket named `resume-ass
 wrangler r2 bucket create resume-assets
 ```
 
-2. Apply lifecycle policy (temp cleanup after 90 days):
+1. Apply lifecycle policy (temp cleanup after 90 days):
 
 ```bash
 wrangler r2 bucket lifecycle set resume-assets --file infrastructure/cloudflare/r2/lifecycle-rules.json
 ```
 
-3. Bind the bucket in worker config (`wrangler.jsonc`) with an `r2_buckets` binding.
+1. Bind the bucket in worker config (`wrangler.jsonc`) with an `r2_buckets`
+   binding.
 
 ## Presigned URL Generation
 

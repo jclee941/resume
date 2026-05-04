@@ -6,7 +6,8 @@
 
 ## OVERVIEW
 
-Platform-specific crawler implementations. Each platform has unique anti-detection requirements.
+Platform-specific crawler implementations. Each platform has unique
+anti-detection requirements.
 
 ## PLATFORMS
 

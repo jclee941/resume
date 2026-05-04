@@ -89,9 +89,11 @@ Push to `master` branch auto-deploys via `.github/workflows/ci.yml`
 
 1. **Checkout code**: `actions/checkout@v4`
 2. **Setup Node.js**: `actions/setup-node@v4` (v20)
-3. **Validate Cloudflare config**: native checks + `wrangler types` generation in CI
+3. **Validate Cloudflare config**: native checks + `wrangler types` generation
+   in CI
 4. **Deploy Worker**: `cloudflare/wrangler-action@v4`
-5. **Verify + rollback**: Cloudflare API verification and rollback job on failure
+5. **Verify + rollback**: Cloudflare API verification and rollback job on
+   failure
 
 ### Required GitHub Secrets
 
@@ -222,7 +224,7 @@ curl -w "@curl-format.txt" -o /dev/null -s https://resume.jclee.me
 
 Create `curl-format.txt`:
 
-```
+```text
 time_namelookup:  %{time_namelookup}\n
 time_connect:     %{time_connect}\n
 time_total:       %{time_total}\n

@@ -1,7 +1,8 @@
 # Resume System - All Issues & Tasks
 
 **Generated**: 2025-12-17  
-**Based on**: COMPREHENSIVE_IMPROVEMENT_ANALYSIS_2025_11_13.md, IMPROVEMENT_IMPLEMENTATION_CHECKLIST.md
+**Based on**: COMPREHENSIVE_IMPROVEMENT_ANALYSIS_2025_11_13.md,
+IMPROVEMENT_IMPLEMENTATION_CHECKLIST.md
 
 ---
 
@@ -20,7 +21,7 @@
 
 **Problem**:
 
-```
+```text
 ● Cannot log after tests are done. Did you forget to wait for something async in your test?
   Attempted to log "🔐 Generated CSP hashes from minified HTML:".
 ```
@@ -61,7 +62,9 @@ npm test  # Should show ZERO "Cannot log after tests" errors
 3. Archive old resumes to `resumes/archive/pre-consolidation/`
 4. Add Git tags for version control (e.g., `v1.0-nextrade`)
 
-> **Note**: Paths above are from the original proposal. Current SSoT location: `packages/data/resumes/master/resume_data.json`. Scripts moved to `tools/scripts/`.
+> **Note**: Paths above are from the original proposal. Current SSoT location:
+  `packages/data/resumes/master/resume_data.json`. Scripts moved to
+  `tools/scripts/`.
 
 **Verification**:
 
@@ -79,7 +82,8 @@ ls resumes/generated/  # nextrade.md, general.md, short.md
 **Priority**: P0  
 **Files**: `resumes/master/resume_master.md` (lines 68-186)
 
-> **Note**: Path above is from the original proposal. Current SSoT location: `packages/data/resumes/master/resume_data.json`.
+> **Note**: Path above is from the original proposal. Current SSoT location:
+  `packages/data/resumes/master/resume_data.json`.
 
 - "정책 배포 시간 단축" - No Before/After metrics
 - "평균 복구 시간 단축" - No baseline/timeframe
@@ -88,7 +92,8 @@ ls resumes/generated/  # nextrade.md, general.md, short.md
 
 **Action Taken**:
 
-- ✅ Created `docs/guides/METRICS_IMPROVEMENT_GUIDE.md` with templates and examples
+- ✅ Created `docs/guides/METRICS_IMPROVEMENT_GUIDE.md` with templates and
+  examples
 - ⏭️ **Next**: User must fill in actual metrics from Grafana/Splunk/JIRA
 
 **Solution**:
@@ -219,7 +224,7 @@ Add "tagline" + "metrics" fields:
 - `og:image:alt`
 - `lang="ko"` + `hreflang`
 
-**Validation**: https://validator.schema.org
+**Validation**: <https://validator.schema.org>
 
 ---
 
@@ -243,7 +248,8 @@ Link related skills in project cards:
 
 **Files**: `resumes/master/resume_master.md`
 
-> **Note**: Path above is from the original proposal. Current SSoT location: `packages/data/resumes/master/resume_data.json`.
+> **Note**: Path above is from the original proposal. Current SSoT location:
+  `packages/data/resumes/master/resume_data.json`.
 
 Add "경력 경로 분석" section documenting 3 career phases:
 
@@ -306,7 +312,8 @@ Add business impact to each technology
 
 ## ⚡ Quick Wins (Can Do Today - < 1 hour each)
 
-1. **C1: Remove console logging** (30m) → Use existing `apps/portfolio/logger.js`
+1. **C1: Remove console logging** (30m) → Use existing
+   `apps/portfolio/logger.js`
 2. **M5: Keyword optimization** (30m) → Update meta tags
 3. **M1: Design tokens doc** (1h) → Extract CSS variables
 
@@ -354,7 +361,8 @@ Day 3: L4 (1h)
 
 ### ⚠️ CRITICAL: Bash Tool is Broken
 
-**Error**: `TypeError: undefined is not an object (evaluating 'output.args.command')`
+**Error**: `TypeError: undefined is not an object (evaluating
+'output.args.command')`
 
 **Workarounds**:
 
@@ -463,7 +471,8 @@ npm run test:e2e:headed
 - ✅ L1: QUICK_START.md → docs/guides/QUICK_START.md (243 lines)
 - ✅ L2: ARCHITECTURE_DEEP_DIVE.md → docs/guides/ARCHITECTURE_DEEP_DIVE.md
 - ✅ L3: TROUBLESHOOTING.md → docs/guides/TROUBLESHOOTING.md
-- ✅ L4: Schema Markup → 4 JSON-LD schemas (Person, Breadcrumb, Collection, WebSite)
+- ✅ L4: Schema Markup → 4 JSON-LD schemas (Person, Breadcrumb, Collection,
+  WebSite)
 - ✅ L5: CSS Documentation → docs/architecture/DESIGN_SYSTEM.md (comprehensive)
 
 ### Improvements Summary (2025-12-22)

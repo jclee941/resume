@@ -21,11 +21,12 @@ This repo now uses a split model:
 npx wrangler deploy --config apps/portfolio/wrangler.jsonc --env production
 ```
 
-4. Push to `master` to trigger build/deploy via Cloudflare.
+1. Push to `master` to trigger build/deploy via Cloudflare.
 
 Important requirement:
 
-- Worker name in Cloudflare dashboard must match `name` in Wrangler config for the selected root.
+- Worker name in Cloudflare dashboard must match `name` in Wrangler config for
+  the selected root.
 
 ## CI Path (GitHub Actions)
 
@@ -44,7 +45,8 @@ Deploy/rollback/preview deploy jobs are disabled to avoid dual-deployer drift.
 
 ## Optional Build-Only Mode
 
-To let Cloudflare Builds create versions without promoting active deployment, set deploy command to:
+To let Cloudflare Builds create versions without promoting active deployment,
+set deploy command to:
 
 ```bash
 npx wrangler versions upload --config apps/portfolio/wrangler.jsonc --env production
@@ -67,6 +69,7 @@ curl -i https://resume.jclee.me/job/health
 
 ## Operational Notes
 
-- Keep only one active deploy authority (Cloudflare Builds) to prevent race conditions.
+- Keep only one active deploy authority (Cloudflare Builds) to prevent race
+  conditions.
 - Keep `--config` explicit in all build/deploy commands.
 - `apps/portfolio/worker.js` is generated; do not hand-edit.

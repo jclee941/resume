@@ -36,4 +36,3 @@
 - **비용**: $300 (시험비)
 - **준비**: AWS Security 실무 + 공식 교재
 - **효과**: Cloud Security Engineer 직무 핵심 자격
-

@@ -12,7 +12,8 @@ Complete guide for setting up monitoring infrastructure for Resume Portfolio
 - Docker and Docker Compose installed
 - Domain name configured (jclee.me)
 - SSL certificates (Let's Encrypt)
-- Network access to ports: 9090 (Prometheus), 3000 (Grafana), 3100 (Loki), 5678 (n8n)
+- Network access to ports: 9090 (Prometheus), 3000 (Grafana), 3100 (Loki), 5678
+  (n8n)
 
 ## 1. Prometheus Setup
 

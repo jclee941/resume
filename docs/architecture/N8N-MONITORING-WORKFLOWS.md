@@ -2,11 +2,11 @@
 
 ## 📊 Current Status (2025-11-18 23:25 KST)
 
-**Live Site**: https://resume.jclee.me
+**Live Site**: <https://resume.jclee.me>
 **Status**: ✅ Healthy (HTTP 200)
 **Deployment**: 2025-11-18 08:40:43 UTC
 **Uptime**: 14h 45m (53,071 seconds)
-**n8n Server**: https://n8n.jclee.me (✅ Healthy)
+**n8n Server**: <https://n8n.jclee.me> (✅ Healthy)
 
 **Current Metrics**:
 
@@ -16,7 +16,8 @@
 - Web Vitals Received: 0
 - Response Time: 0.00s
 
-**Gap Analysis**: Very low traffic metrics indicate monitoring automation opportunity.
+**Gap Analysis**: Very low traffic metrics indicate monitoring automation
+opportunity.
 
 ---
 
@@ -24,9 +25,11 @@
 
 ### Workflow 1: Site Health Monitor (Priority 1)
 
-**Purpose**: Monitor resume.jclee.me health endpoint every 5 minutes and alert on failures.
+**Purpose**: Monitor resume.jclee.me health endpoint every 5 minutes and alert
+on failures.
 
-**n8n Template Reference**: [Health Check Websites with Google Sheets & Telegram Alerts](https://n8n.io/workflows/3352) (ID: 3352)
+**n8n Template Reference**: [Health Check Websites with Google Sheets & Telegram
+Alerts](https://n8n.io/workflows/3352) (ID: 3352)
 
 **Nodes**:
 
@@ -68,18 +71,22 @@ Metrics:
 ```
 
 **Expected Output** (Google Sheets):
-| Timestamp | Status | Uptime (s) | Requests Total | Errors | Alert Sent |
-|-----------|--------|------------|----------------|--------|------------|
-| 2025-11-18 23:25 | healthy | 53071 | 1 | 0 | No |
-| 2025-11-18 23:30 | DOWN | 0 | 0 | 0 | Yes |
+
+| Timestamp        | Status  | Uptime (s) | Requests Total | Errors | Alert Sent |
+| ---------------- | ------- | ---------- | -------------- | ------ | ---------- |
+| 2025-11-18 23:25 | healthy | 53071      | 1              | 0      | No         |
+| 2025-11-18 23:30 | DOWN    | 0          | 0              | 0      | Yes        |
 
 ---
 
 ### Workflow 2: GitHub Deployment Webhook (Priority 2)
 
-**Purpose**: Receive GitHub Actions deployment notifications and broadcast to Telegram/Loki.
+**Purpose**: Receive GitHub Actions deployment notifications and broadcast to
+Telegram/Loki.
 
-**n8n Template Reference**: Custom webhook processing based on [Telegram Bot API](https://n8n.io/workflows/3352) pattern (external reference for webhook processing structure, using Telegram Bot API)
+**n8n Template Reference**: Custom webhook processing based on [Telegram Bot
+API](https://n8n.io/workflows/3352) pattern (external reference for webhook
+processing structure, using Telegram Bot API)
 
 **Nodes**:
 
@@ -141,7 +148,8 @@ Time: {{ $json.deployed_at }}
 
 **Purpose**: Collect `/api/vitals` POST data and analyze performance trends.
 
-**n8n Template Reference**: [Daily Personalized Air & Pollen Health Alerts](https://n8n.io/workflows/3699) pattern (data aggregation)
+**n8n Template Reference**: [Daily Personalized Air & Pollen Health
+Alerts](https://n8n.io/workflows/3699) pattern (data aggregation)
 
 **Nodes**:
 
@@ -209,7 +217,8 @@ fetch('https://n8n.jclee.me/webhook/vitals-proxy', {
 
 **Purpose**: Aggregate 24h metrics and send summary email.
 
-**n8n Template Reference**: [Monitor Server Uptime & Get Email Alerts](https://n8n.io/workflows/3880) pattern
+**n8n Template Reference**: [Monitor Server Uptime & Get Email
+Alerts](https://n8n.io/workflows/3880) pattern
 
 **Nodes**:
 
@@ -291,7 +300,8 @@ return [{json: {
 
 ### Core Nodes Used
 
-1. **HTTP Request** (`nodes-base.httpRequest`) - API calls to `/health`, `/metrics`, `/api/vitals`
+1. **HTTP Request** (`nodes-base.httpRequest`) - API calls to `/health`,
+   `/metrics`, `/api/vitals`
 2. **HTTP Request (Telegram Bot API)** - Alert notifications
 3. **Google Sheets** (`nodes-base.googleSheets`) - Data logging and aggregation
 4. **Schedule Trigger** (`nodes-base.scheduleTrigger`) - Time-based automation
@@ -302,7 +312,7 @@ return [{json: {
 
 ### Integration Pattern
 
-```
+```text
 External Event (GitHub/Browser)
   ↓
 Webhook (n8n)
@@ -394,9 +404,9 @@ Conditional Logic (IF Node)
 2. [Multiple Websites Monitoring](https://n8n.io/workflows/4833)
 3. [Server Uptime Monitoring](https://n8n.io/workflows/3880)
 
-**n8n Server**: https://n8n.jclee.me
+**n8n Server**: <https://n8n.jclee.me>
 **Documentation**: `~/dev/resume/docs/`
-**Grafana Dashboard**: https://grafana.jclee.me/d/resume (to be created)
+**Grafana Dashboard**: <https://grafana.jclee.me/d/resume> (to be created)
 
 **Node Documentation**:
 

@@ -78,11 +78,11 @@
   },
   "platformVariants": {
     "wanted": {
-      "headline": "OA 엔지니어로 출발한 9년차 DevSecOps/SRE — 금융 거래소 SOC + FSC 본인가 + Splunk ES·n8n·FortiGate HA",
+      "headline": "OA 엔지니어로 출발한 8년차 DevSecOps/SRE — 금융 거래소 SOC + FSC 본인가 + Splunk ES·n8n·FortiGate HA",
       "about": "**\"반복 작업은 자동화 되어야 한다\"** — 이 한 가지 신념으로 9년을 운영해 온 DevSecOps/SRE 엔지니어입니다.\n\n**현장 → 자동화 → AI 에이전트**, 한 번도 운영의 손을 놓지 않으면서 도구만 바꿔왔습니다. KAI 폐쇄망에서 Linux 50대를 수기로 운영하던 시절, 메타넷·조인트리에서 Ansible·Python·NSX-T·Wazuh로 자동화에 입문하던 시기, 콴텍투자일임 FSDC에서 금융감독원 감사를 데이터로 대응하던 경험을 거쳐, 현재 가온누리·아이티센 트랙에서 넥스트레이드 매매체결시스템을 FortiGate HA(5계층 망분리)·FSC 본인가·Splunk ES + n8n + FortiManager API SOC 24/7로 운영합니다.\n\n**측정 가능한 임팩트**:\n• NAC 정책 배포: 10시간 → 1시간 (90% ↓)\n• 방화벽 정책 표준화: 8시간 → 1시간 (500건/Ansible Role)\n• 보안 이벤트 MTTR: 30분 → 12분 (60% ↓)\n• 환경 규모: 서버 150대 / 단말 300대 / 네트워크 80대 / 일 10만+ 주문\n\n**보유 역량**: SIEM 탐지 룰 설계(Splunk ES), 보안 운영 자동화(n8n, FortiManager API), HA 보안 아키텍처(FortiGate HA, NSX-T), IaC(Ansible Role, Terraform), 관측성(Grafana/Prometheus/Loki), 금융 규제(FSC 본인가, 금감원 감사)\n\n포트폴리오: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
     },
     "jobkorea": {
-      "headline": "9년차 DevSecOps/SRE — OA→자동화→FSC 본인가→SOC 24/7 (Splunk ES, n8n, FortiGate HA)",
+      "headline": "8년차 DevSecOps/SRE — OA→자동화→FSC 본인가→SOC 24/7 (Splunk ES, n8n, FortiGate HA)",
       "about": "**\"반복 작업은 자동화 되어야 한다\"** — 한 가지 신념으로 운영의 도구를 9년간 진화시켜 왔습니다.\n\n[현장 → 자동화 → AI 에이전트 trajectory]\n• KAI 폐쇄망 (2017–2018): Linux 50대 수기 운영, 패치/방화벽/IDS 정책\n• Linux 재무장 (2018.11–2019.11): RHCSA·LPIC-1·리눅스마스터 2급 연속 취득\n• 자동화 입문 (2019–2022): 메타넷 컨택센터 1,000명 SSL VPN/NAC + Ansible/Python; 조인트리 NSX-T 마이크로세그멘테이션 + Wazuh\n• 금융 인프라 (2022–2024): 콴텍투자일임 FSDC, 금감원 감사 대응 + DB 튜닝(CPU 75%→52%)\n• 보안 구축 (2024–2025): 가온누리 넥스트레이드, FortiGate HA 5계층 망분리 + Ansible Role 표준화 + FSC 본인가 통과\n• 보안 운영 (2025–현재): 아이티센 CTS 넥스트레이드, Splunk ES + n8n + FortiManager API SOC 24/7 (서버 150대, MTTR 30→12분)\n\n[측정 가능한 임팩트]\nNAC 10h→1h · 방화벽 8h→1h · MTTR 30→12분 · 침해 시도 월 200건 차단 · DLP 오탐 80% ↓\n\n[보유 기술 스택]\nSplunk ES, n8n, FortiGate/FortiManager API, Ansible Role, Python, Terraform, Docker, NSX-T, Wazuh, Grafana/Prometheus/Loki, Cloudflare Workers, MCP/AI 에이전트\n\n포트폴리오: https://resume.jclee.me",
       "defaultJobCode": "1000238"
     }
@@ -1038,7 +1038,7 @@
   },
   "coverLetter": {
     "ko": {
-      "headline": "OA에서 시작해 자동화로 도착한 9년차 DevSecOps/SRE",
+      "headline": "OA에서 시작해 자동화로 도착한 8년차 DevSecOps/SRE",
       "paragraphs": [
         "9년 전 한국항공우주산업(KAI) 폐쇄망 IT 운영실에서 50대 서버의 패치 적용 일정을 손으로 엑셀에 적던 사람이었습니다. 매주 같은 작업을 반복하면서, 보안 운영의 가치는 \"무사고를 유지하는 것\"이 아니라 \"무사고를 자동으로 보장하는 것\"이라는 확신이 생겼습니다. 11개월간 휴식 없이 RHCSA·LPIC-1·리눅스마스터 2급을 연속 취득해 Linux 시스템을 다시 학습한 것이 그 출발점입니다.",
         "메타넷엠플랫폼에서 처음 Ansible과 Python을 잡았을 때, 1,000명 규모 컨택센터의 NAC 정책 배포 시간을 10시간에서 1시간으로 줄이는 경험을 했습니다. 조인트리에서는 국민대 차세대 정보시스템에 NSX-T 마이크로세그멘테이션을 적용해 동서 트래픽 사각지대를 해소하고, 침해 시도 월 200건 차단·DLP 오탐 80% 감소를 달성했습니다. 도구가 바뀌어도 \"손이 가는 작업은 자동화 대상이다\"는 원칙은 변하지 않았습니다.",
@@ -1049,7 +1049,7 @@
       "closing": "9년간의 \"반복 작업의 한계\"라는 한 가지 문제 의식이 만든 trajectory를 가지고, 귀사의 보안 인프라가 풀어야 할 다음 문제에 합류하고 싶습니다."
     },
     "en": {
-      "headline": "From OA to DevSecOps — A 9-year Trajectory Built on One Conviction",
+      "headline": "From OA to DevSecOps — A 8-year Trajectory Built on One Conviction",
       "paragraphs": [
         "Nine years ago, I was the person tracking patch schedules for 50 Linux servers on an Excel sheet inside Korea Aerospace Industries' closed network. Repeating the same operations every week led to a single conviction: the value of security operations is not maintaining zero incidents, but automating the guarantee of zero incidents. I spent the next 11 months consecutively earning RHCSA, LPIC-1, and Linux Master Level 2 to rebuild my Linux foundation.",
         "At Metanet M Platform I first picked up Ansible and Python, cutting NAC policy deployment from 10 hours to 1 hour for a 1,000-user contact center. At Jointree, I applied NSX-T microsegmentation to Kookmin University's next-generation information system, eliminating east-west traffic blind spots — blocking 200 monthly intrusion attempts and reducing DLP false positives by 80%. The tools changed, but the principle didn't: any task that requires hands is a candidate for automation.",

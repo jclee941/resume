@@ -6,7 +6,8 @@
 
 ## OVERVIEW
 
-Handler modules are request-facing adapters for `/job/*` API routes. Keep handlers thin and delegate business logic to services.
+Handler modules are request-facing adapters for `/job/*` API routes. Keep
+handlers thin and delegate business logic to services.
 
 ## STRUCTURE
 
@@ -29,8 +30,10 @@ handlers/
 ## CONVENTIONS
 
 - Extend `BaseHandler` for shared parsing/validation/error response patterns.
-- Keep request parsing and response shaping in handlers; move domain decisions to services.
-- Keep route-to-handler mapping explicit and stable to avoid hidden endpoint drift.
+- Keep request parsing and response shaping in handlers; move domain decisions
+  to services.
+- Keep route-to-handler mapping explicit and stable to avoid hidden endpoint
+  drift.
 - Treat webhook handlers as adapters; signature/auth checks stay mandatory.
 
 ## ANTI-PATTERNS

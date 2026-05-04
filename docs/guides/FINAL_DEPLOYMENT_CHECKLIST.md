@@ -210,9 +210,11 @@ npm run lighthouse -- https://resume.jclee.me
 #### Major Issues (Critical)
 
 1. **Immediate**: Rollback to previous version
+
    ```bash
    wrangler rollback
    ```
+
 2. **Investigate**: Check logs and error reports
 3. **Fix**: Create emergency fix
 4. **Test**: Comprehensive testing
@@ -294,7 +296,7 @@ wrangler rollback --version-id <VERSION_ID>
 
 ---
 
-## 🚀 Ready to Deploy!
+## 🚀 Ready to Deploy
 
 All systems are go. The project is ready for production deployment.
 
@@ -313,10 +315,10 @@ All systems are go. The project is ready for production deployment.
 
 **If deployment issues occur:**
 
-2. Review Cloudflare Workers logs
-3. Check GitHub Actions for CI/CD status
-4. Review deployment logs
-5. Execute rollback if necessary
+1. Review Cloudflare Workers logs
+2. Check GitHub Actions for CI/CD status
+3. Review deployment logs
+4. Execute rollback if necessary
 
 ---
 

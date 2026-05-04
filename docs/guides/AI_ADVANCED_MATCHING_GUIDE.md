@@ -7,12 +7,14 @@
 ## AI 기능 특징
 
 ### 🤖 OpenCode AI 기반 분석
+
 - **자연어 처리**: 한국어 텍스트의 맥락 이해 및 분석
 - **지능형 매칭**: 단순 키워드 매칭이 아닌 의미론적 매칭
 - **예측 분석**: 합격 확률 예측 및 성공 요인 분석
 - **개인화 조언**: 지원자 맞춤 커리어 조언 제공
 
 ### 🎯 고급 매칭 알고리즘
+
 - **이력서 심층 분석**: 경력, 기술, 성격 특성 추출
 - **채용 공고 이해**: 요구사항, 기업 문화, 근무 조건 분석
 - **종합 매칭 점수**: 기술(40%) + 경력(25%) + 프로젝트(20%) + 문화(10%) + 근무조건(5%)
@@ -23,6 +25,7 @@
 ### 1. OpenCode AI API 키 설정
 
 #### Anthropic 계정 생성 및 API 키 발급
+
 1. [Anthropic Console](https://console.anthropic.com/) 접속
 2. 계정 생성 및 로그인
 3. API Keys 메뉴에서 새 키 생성
@@ -30,6 +33,7 @@
 5. 생성된 API 키 복사
 
 #### 환경 변수 설정
+
 ```bash
 # ~/.bashrc 또는 ~/.zshrc에 추가
 export ANTHROPIC_API_KEY="your_claude_api_key_here"
@@ -41,6 +45,7 @@ CLAUDE_API_KEY=your_claude_api_key_here
 ```
 
 #### API 키 검증
+
 ```bash
 # API 키 유효성 확인
 curl -X POST https://api.anthropic.com/v1/messages \
@@ -57,17 +62,20 @@ curl -X POST https://api.anthropic.com/v1/messages \
 ### 2. 시스템 요구사항
 
 #### Node.js 버전
+
 ```bash
 node --version  # 20.0.0 이상 권장
 ```
 
 #### 의존성 설치
+
 ```bash
 cd apps/job-server
 npm install
 ```
 
 #### 메모리 설정 (고성능 AI 처리용)
+
 ```bash
 # package.json scripts에 추가
 "ai-search": "node --max-old-space-size=4096 src/auto-apply/cli/index.js ai_search",
@@ -79,6 +87,7 @@ npm install
 ### 1. AI 기반 채용공고 검색
 
 #### 기본 AI 검색
+
 ```bash
 # AI 기반 지능형 검색
 node src/auto-apply/cli/index.js ai_search "DevSecOps" 10
@@ -88,7 +97,8 @@ npm run ai-search "보안 엔지니어" 5
 ```
 
 #### AI 검색 결과 해석
-```
+
+```text
 🤖 AI 기반 검색: DevSecOps (최대 10개)
 
 📊 기본 검색 완료: 64개 공고 발견
@@ -107,6 +117,7 @@ npm run ai-search "보안 엔지니어" 5
 ### 2. AI 기반 통합 시스템
 
 #### AI 강화 자동 지원
+
 ```bash
 # AI 기반 통합 워크플로우
 node src/auto-apply/cli/index.js ai_unified --max=3
@@ -116,7 +127,8 @@ node src/auto-apply/cli/index.js ai_unified --apply --max=5
 ```
 
 #### AI 분석 결과
-```
+
+```text
 🚀 AI 기반 통합 시스템
 
 🔧 AI 기반 시스템 구성:
@@ -138,13 +150,15 @@ node src/auto-apply/cli/index.js ai_unified --apply --max=5
 ### 3. AI 기반 커리어 조언
 
 #### 개인화된 조언 받기
+
 ```bash
 # 특정 채용 공고에 대한 AI 조언
 node src/auto-apply/cli/index.js advice "https://www.wanted.co.kr/wd/12345"
 ```
 
 #### AI 조언 결과 예시
-```
+
+```text
 🤖 AI 기반 커리어 조언 생성 중...
 채용 공고: https://www.wanted.co.kr/wd/12345
 
@@ -175,6 +189,7 @@ node src/auto-apply/cli/index.js advice "https://www.wanted.co.kr/wd/12345"
 ## 고급 설정
 
 ### AI 모델 선택
+
 ```javascript
 // apps/job-server/config/ai-config.json
 {
@@ -196,6 +211,7 @@ node src/auto-apply/cli/index.js advice "https://www.wanted.co.kr/wd/12345"
 ```
 
 ### 캐싱 및 성능 최적화
+
 ```javascript
 // AI 분석 결과 캐싱
 const aiCache = new Map();
@@ -207,6 +223,7 @@ if (aiCache.has(jobPosting.url)) {
 ```
 
 ### 배치 처리
+
 ```bash
 # 여러 채용 공고 일괄 AI 분석
 node src/auto-apply/cli/index.js ai_search "DevSecOps" 50
@@ -220,6 +237,7 @@ htop  # 또는 top 명령어로 모니터링
 ### 일반적인 문제들
 
 #### Q: OpenCode API 키 오류
+
 ```bash
 # API 키 확인
 echo $ANTHROPIC_API_KEY
@@ -231,6 +249,7 @@ curl -H "x-api-key: $ANTHROPIC_API_KEY" \
 ```
 
 #### Q: AI 분석이 너무 느림
+
 ```bash
 # 메모리 증가
 node --max-old-space-size=8192 src/auto-apply/cli/index.js ai_search "keyword" 5
@@ -240,6 +259,7 @@ node src/auto-apply/cli/index.js ai_search "keyword" 3
 ```
 
 #### Q: AI 분석 결과가 부정확함
+
 ```bash
 # 기본 매칭으로 폴백
 node src/auto-apply/cli/index.js search "keyword" 10
@@ -249,6 +269,7 @@ DEBUG=ai* node src/auto-apply/cli/index.js ai_search "keyword" 5
 ```
 
 #### Q: API 사용량 초과
+
 ```bash
 # 사용량 확인
 curl -H "x-api-key: $ANTHROPIC_API_KEY" \
@@ -261,6 +282,7 @@ curl -H "x-api-key: $ANTHROPIC_API_KEY" \
 ### 성능 모니터링
 
 #### API 사용량 추적
+
 ```bash
 # 월별 사용량 스크립트
 cat > check-api-usage.sh << 'EOF'
@@ -284,11 +306,13 @@ chmod +x check-api-usage.sh
 ## 비용 및 사용량 관리
 
 ### OpenCode AI 비용 구조
+
 - **OpenCode 3 Haiku**: $0.25/1K tokens (가장 저렴)
 - **OpenCode 3 Sonnet**: $3.00/1K tokens (균형)
 - **OpenCode 3 Opus**: $15.00/1K tokens (가장 강력)
 
 ### 비용 절감 전략
+
 ```bash
 # 1. 모델 선택 최적화
 export CLAUDE_MODEL="OpenCode-3-haiku-20240307"  # 저비용 모델
@@ -304,7 +328,8 @@ export CLAUDE_MODEL="OpenCode-3-haiku-20240307"  # 저비용 모델
 ```
 
 ### 월별 비용 추정
-```
+
+```text
 일일 검색 20개 × AI 분석:
 - Haiku: 약 $0.5/일 = $15/월
 - Sonnet: 약 $6/일 = $180/월
@@ -314,19 +339,21 @@ export CLAUDE_MODEL="OpenCode-3-haiku-20240307"  # 저비용 모델
 ## 다음 단계
 
 ### 확장 가능성
+
 1. **다국어 지원**: 영어, 일본어 채용 공고 분석
 2. **산업별 특화**: 금융, 게임, 이커머스 등 분야별 모델
 3. **실시간 학습**: 사용자 피드백 기반 모델 개선
 4. **통합 API**: 외부 시스템과의 AI 매칭 API 제공
 
 ### 모니터링 및 개선
+
 1. **A/B 테스트**: AI vs 기본 매칭 정확도 비교
 2. **사용자 피드백**: AI 조언의 유용성 평가
 3. **성능 메트릭**: 응답 시간, 정확도, 사용자 만족도 측정
 
 ---
 
-## 🎉 AI 기반 고급 매칭 시스템 활성화 완료!
+## 🎉 AI 기반 고급 매칭 시스템 활성화 완료
 
 이제 시스템은 다음과 같은 AI 기능을 제공합니다:
 

@@ -2,18 +2,22 @@
 
 ## Overview
 
-This document describes the performance optimizations implemented for the auto-apply system in Wave 4 of 입사지원자동화.
+This document describes the performance optimizations implemented for the
+auto-apply system in Wave 4 of 입사지원자동화.
 
 ## Optimizations Implemented
 
 ### 1. Browser Pooling (`src/shared/services/browser-pool.js`)
 
-**Problem**: Creating a new browser instance for each job application is slow and memory-intensive.
+**Problem**: Creating a new browser instance for each job application is slow
+and memory-intensive.
 
 **Solution**: Implemented a reusable browser pool with the following features:
 
-- **Reusable Instances**: Browser instances are reused across multiple applications
-- **Concurrency Control**: Limits concurrent browsers to prevent memory exhaustion (default: 3)
+- **Reusable Instances**: Browser instances are reused across multiple
+  applications
+- **Concurrency Control**: Limits concurrent browsers to prevent memory
+  exhaustion (default: 3)
 - **Health Checks**: Automatically recycles unhealthy browser instances
 - **Idle Cleanup**: Closes idle browsers after 5 minutes
 - **Queue Management**: Queues requests when all browsers are in use
@@ -42,7 +46,8 @@ try {
 
 ### 2. LRU Cache (`src/shared/services/cache.js`)
 
-**Problem**: Repeated API calls for the same job/company data waste time and bandwidth.
+**Problem**: Repeated API calls for the same job/company data waste time and
+bandwidth.
 
 **Solution**: Implemented tiered caching with TTL support:
 
@@ -331,10 +336,13 @@ Set up alerts for:
 
 ## Best Practices
 
-1. **Always use the pool**: Never create browsers directly, always use `getBrowserPool()`
-2. **Enable caching**: Cache is disabled by default in tests, enable in production
+1. **Always use the pool**: Never create browsers directly, always use
+   `getBrowserPool()`
+2. **Enable caching**: Cache is disabled by default in tests, enable in
+   production
 3. **Monitor metrics**: Log performance reports periodically
-4. **Tune concurrency**: Start with 2 concurrent applies, increase based on system load
+4. **Tune concurrency**: Start with 2 concurrent applies, increase based on
+   system load
 5. **Set appropriate TTLs**: Match TTL to data freshness requirements
 6. **Handle cleanup**: Always call `pool.release()` and `orchestrator.destroy()`
 

@@ -10,7 +10,7 @@
 
 ### 문제
 
-```
+```text
 Error: CLOUDFLARE_API_KEY, CLOUDFLARE_EMAIL, and CLOUDFLARE_ACCOUNT_ID must be set in ~/.env
 ```
 
@@ -38,7 +38,7 @@ Error: CLOUDFLARE_API_KEY, CLOUDFLARE_EMAIL, and CLOUDFLARE_ACCOUNT_ID must be s
 
 #### 1. API 토큰 생성
 
-**접속**: https://dash.cloudflare.com/profile/api-tokens
+**접속**: <https://dash.cloudflare.com/profile/api-tokens>
 
 **순서**:
 
@@ -176,7 +176,7 @@ echo 'CLOUDFLARE_ACCOUNT_ID=a8d9c67f586acdd15eebcc65ca3aa5bb' >> ~/.env
 
 **해결**:
 
-1. https://dash.cloudflare.com/profile/api-tokens 접속
+1. <https://dash.cloudflare.com/profile/api-tokens> 접속
 2. 해당 토큰의 `Edit` 클릭
 3. Permissions 확인 및 수정:
    - Account > Workers Scripts > **Edit** ✅
@@ -299,9 +299,9 @@ resume-cli auto verify
 
 ### 공식 문서
 
-- **Cloudflare API Tokens**: https://developers.cloudflare.com/fundamentals/api/get-started/create-token/
-- **Wrangler CLI**: https://developers.cloudflare.com/workers/wrangler/
-- **Workers 배포**: https://developers.cloudflare.com/workers/get-started/guide/
+- **Cloudflare API Tokens**: <https://developers.cloudflare.com/fundamentals/api/get-started/create-token/>
+- **Wrangler CLI**: <https://developers.cloudflare.com/workers/wrangler/>
+- **Workers 배포**: <https://developers.cloudflare.com/workers/get-started/guide/>
 
 ### 프로젝트 문서
 

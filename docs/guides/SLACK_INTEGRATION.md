@@ -2,7 +2,8 @@
 
 ## Overview
 
-The resume portfolio now includes Slack notifications for deployment events via GitHub Actions.
+The resume portfolio now includes Slack notifications for deployment events via
+GitHub Actions.
 
 ## Features
 
@@ -21,11 +22,13 @@ The resume portfolio now includes Slack notifications for deployment events via 
 2. Navigate to **Apps** → **Incoming Webhooks**
 3. Click **Add to Slack**
 4. Choose a channel (e.g., `#deployments`)
-5. Copy the Webhook URL (looks like: `https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXX`)
+5. Copy the Webhook URL (looks like:
+   `https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXX`)
 
 ### 2. Add Secret to GitHub
 
-1. Go to GitHub repository → **Settings** → **Secrets and variables** → **Actions**
+1. Go to GitHub repository → **Settings** → **Secrets and variables** →
+   **Actions**
 2. Click **New repository secret**
 3. Name: `SLACK_WEBHOOK_URL`
 4. Value: Paste your webhook URL
@@ -46,7 +49,7 @@ Check your Slack channel for the deployment notification!
 
 The Slack message includes:
 
-```
+```text
 🚀 Resume Portfolio Deployment
 
 Status: ✅ Success
@@ -59,7 +62,7 @@ Commit Message:
 
 feat: Add Slack integration for deployments
 
-```
+```text
 
 [View Live Site] [View Workflow]
 ```
@@ -129,7 +132,8 @@ Only notify on failures:
 ### Invalid payload error
 
 - Verify JSON syntax in `slack_payload.json`
-- Test locally: `curl -X POST -H 'Content-type: application/json' --data @slack_payload.json YOUR_WEBHOOK_URL`
+- Test locally: `curl -X POST -H 'Content-type: application/json' --data
+  @slack_payload.json YOUR_WEBHOOK_URL`
 
 ## Security Notes
 
@@ -142,4 +146,5 @@ Only notify on failures:
 
 - [Slack Incoming Webhooks](https://api.slack.com/messaging/webhooks)
 - [Slack Block Kit Builder](https://app.slack.com/block-kit-builder)
-- [GitHub Actions Secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets)
+- [GitHub Actions
+  Secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets)

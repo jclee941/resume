@@ -19,7 +19,7 @@ Common issues and solutions for the Resume Portfolio System.
 
 **Error Message:**
 
-```
+```text
 Error: Parse Error: <0.1%</span>
 ```
 
@@ -36,7 +36,8 @@ grep -n '<' apps/portfolio/data.json | grep -v 'http'
 # After:  "error_rate": "0.1% 미만"
 ```
 
-**Prevention:** Always use text descriptions instead of `<` or `>` symbols in data.json.
+**Prevention:** Always use text descriptions instead of `<` or `>` symbols in
+data.json.
 
 ---
 
@@ -44,7 +45,7 @@ grep -n '<' apps/portfolio/data.json | grep -v 'http'
 
 **Error Message:**
 
-```
+```text
 Error: Worker size (1.2MB) exceeds Cloudflare limit (1MB)
 ```
 
@@ -77,7 +78,7 @@ console.log('Total:', (worker.length / 1024).toFixed(2), 'KB');
 
 **Error Message (Browser Console):**
 
-```
+```text
 Refused to execute inline script because it violates CSP
 ```
 
@@ -96,7 +97,8 @@ grep "sha256-" apps/portfolio/worker.js | head -5
 npm run deploy:wrangler:root
 ```
 
-**Root Cause:** The build script was using `.trim()` on script content before hashing, but browsers hash the exact content including whitespace.
+**Root Cause:** The build script was using `.trim()` on script content before
+hashing, but browsers hash the exact content including whitespace.
 
 **Fix Applied:** Removed `.trim()` from hash calculation (commit f67b5eb).
 
@@ -106,7 +108,7 @@ npm run deploy:wrangler:root
 
 **Error Message:**
 
-```
+```text
 SyntaxError: Unexpected token '`'
 ```
 
@@ -131,7 +133,7 @@ grep -n '\$' apps/portfolio/index.html
 
 **Error Message:**
 
-```
+```text
 Error: Authentication error (code: 10001)
 ```
 
@@ -178,7 +180,7 @@ npm run build && npm run deploy:wrangler:root
 
 **Error Message:**
 
-```
+```text
 Error: Resource not accessible by integration
 ```
 
@@ -200,7 +202,7 @@ Error: Resource not accessible by integration
 
 **Error Message:**
 
-```
+```text
 Expected 11 projects, found 12
 ```
 
@@ -224,11 +226,12 @@ npm run test:e2e
 
 **Error Message:**
 
-```
+```text
 Cannot log after tests are done. Did you forget to wait for something async?
 ```
 
-**Cause:** Console.log statements in production code running after test completion.
+**Cause:** Console.log statements in production code running after test
+completion.
 
 **Solution:**
 
@@ -247,7 +250,7 @@ Cannot log after tests are done. Did you forget to wait for something async?
 
 **Error Message:**
 
-```
+```text
 Timeout of 30000ms exceeded
 ```
 
@@ -273,7 +276,7 @@ npm run test:e2e
 
 **Error Message:**
 
-```
+```text
 Screenshot comparison failed: 5% difference
 ```
 
@@ -329,7 +332,7 @@ curl http://localhost:8787/health
 
 **Error Message:**
 
-```
+```text
 # No metrics returned
 ```
 
@@ -352,7 +355,7 @@ wrangler tail
 
 **Error Message:**
 
-```
+```text
 404 Not Found
 ```
 
@@ -437,7 +440,7 @@ img {
 
 **Error Message:**
 
-```
+```text
 Refused to load script from 'https://example.com'
 ```
 
@@ -461,7 +464,7 @@ npm run deploy:wrangler:root
 
 **Error Message:**
 
-```
+```text
 Mixed Content: The page was loaded over HTTPS, but requested an insecure resource
 ```
 
@@ -483,7 +486,7 @@ sed -i 's|http://|https://|g' apps/portfolio/data.json
 
 **Error Message:**
 
-```
+```text
 Access to fetch has been blocked by CORS policy
 ```
 

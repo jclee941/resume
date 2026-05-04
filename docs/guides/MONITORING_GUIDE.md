@@ -2,7 +2,8 @@
 
 ## Overview
 
-The resume portfolio includes tmux-based deployment monitoring for real-time visibility into the deployment process.
+The resume portfolio includes tmux-based deployment monitoring for real-time
+visibility into the deployment process.
 
 ## Quick Start
 
@@ -135,7 +136,7 @@ The deployment session uses:
 
 The monitoring script tracks these steps:
 
-```
+```text
 [1/4] Building worker.js
   ├─ npm run build
   └─ Checks for "generated successfully"
@@ -157,7 +158,7 @@ The monitoring script tracks these steps:
 
 ### Success
 
-```
+```text
 🚀 Starting Resume Portfolio Deployment
 📺 Creating tmux session: resume-deploy
 ✅ Tmux session created
@@ -179,7 +180,7 @@ The monitoring script tracks these steps:
 
 ### Failure
 
-```
+```text
 [3/4] Deploying to Cloudflare Workers...
 ❌ Deployment may have failed, check session
 

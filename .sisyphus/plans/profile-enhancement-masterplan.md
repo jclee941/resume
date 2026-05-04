@@ -11,7 +11,7 @@
 | PDF 이력서              | ⚠️ 2025-03-02 생성, 구버전             | 재생성 필요      |
 | 영문 이력서             | ⚠️ resume_data_en.json 존재하나 구버전 | 업데이트 필요    |
 | 자소서 생성기           | ❌ fallback 템플릿 198자               | 대폭 개선 필요   |
-| 자격증                  | ❌ CKA/AWS 없음, CCNP/RHCSA 만료 | 취득 전략 필요   |
+| 자격증                  | ❌ CKA/AWS 없음, CCNP/RHCSA 만료       | 취득 전략 필요   |
 | OSS 기여                | ❌ 0건                                 | 기록 필요        |
 | expertise 키워드        | ❌ 3개만                               | 확장 필요        |
 | profileStatement        | ❌ 229자, generic                      | 성과 중심 재작성 |
