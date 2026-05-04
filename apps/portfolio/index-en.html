@@ -492,9 +492,9 @@
                   KAI closed-network OA → Linux certifications rebuild → Ansible/Python automation → Nextrade FortiGate HA · Splunk ES · n8n automated response
                 </div>
                 <div class="cmd-output hero-now">
-                  <span class="hero-now__label">Currently:</span>
-                  <span class="hero-now__value">ITCEN CTS @ Nextrade security operations</span>
-                  <span class="hero-now__period">2025.03 – 2026.02</span>
+                  <span class="hero-now__label">Most recent:</span>
+                  <span class="hero-now__value">ITCEN CTS @ Nextrade security operations (2025.03–2026.02)</span>
+                  <span class="hero-now__period">· Open to work · Available immediately</span>
                 </div>
                 <div class="hero-context-grid" role="list" aria-label="Key experience areas">
                   <div class="hero-context" role="listitem">
@@ -679,9 +679,9 @@
             <div class="footer-build" data-footer-build>
               <span class="footer-build__source"><a href="https://github.com/jclee941/resume" target="_blank" rel="noopener">source</a></span>
               <span class="footer-build__sep" aria-hidden="true">·</span>
-              <span class="footer-build__version">v<span data-footer-version>…</span></span>
+              <span class="footer-build__version">v<!-- BUILD_VERSION_PLACEHOLDER --></span>
               <span class="footer-build__sep" aria-hidden="true">·</span>
-              <span class="footer-build__deployed">deployed <span data-footer-deployed>…</span></span>
+              <span class="footer-build__deployed">deployed <!-- BUILD_DEPLOYED_DATE_PLACEHOLDER --></span>
             </div>
           </footer>
 
@@ -926,7 +926,7 @@
           var url = item.getAttribute('data-url') || window.location.origin;
           var stateEl = item.querySelector('.status-state');
           var isSameOrigin = url.indexOf(window.location.origin) === 0;
-          NZ|          fetch(url, { method: 'GET', mode: isSameOrigin ? 'same-origin' : 'no-cors' })
+          fetch(url, { method: 'GET', mode: isSameOrigin ? 'same-origin' : 'no-cors' })
             .then(function (response) {
               if (response.type === 'opaque' || response.ok) {
                 item.classList.add('online');

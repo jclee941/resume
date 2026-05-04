@@ -230,7 +230,7 @@
       "teamSize": "Infrastructure operations team (size undisclosed)",
       "myRole": "VPN/NAC automation and switch inspection automation engineer",
       "workType": "SI+SM",
-      "description": "Solved server configuration consistency and remote-access visibility for a 1,000-user contact-center remote-work environment by building Python and Ansible automation, and operated FortiGate VPN infrastructure for new contact-center sites.",
+      "description": "Solved server configuration consistency and remote-access visibility for a large-scale contact-center remote-work environment by building Python and Ansible automation, and operated FortiGate VPN infrastructure for new contact-center sites.",
       "projects": [
         {
           "name": "Contact Center Remote-Work Infrastructure",
@@ -677,7 +677,7 @@
       "githubUrl": null,
       "demoUrl": null,
       "featured": true,
-      "displayOrder": 4
+      "displayOrder": 1
     },
     {
       "name": "n8n Automation",
@@ -694,7 +694,7 @@
       "githubUrl": null,
       "demoUrl": null,
       "featured": false,
-      "displayOrder": 7
+      "displayOrder": 9
     },
     {
       "name": "FortiManager API Client (Python)",
@@ -712,7 +712,7 @@
       "demoUrl": null,
       "note": "Private — production code (portfolio at https://resume.jclee.me as demo)",
       "featured": true,
-      "displayOrder": 1
+      "displayOrder": 10
     },
     {
       "name": "Security Alert System",
@@ -729,7 +729,7 @@
       "githubUrl": "https://github.com/jclee941/splunk",
       "demoUrl": "https://kibana.jclee.me/s/portfolio-demo/app/dashboards?auth_provider_hint=portfolio_demo#/view/portfolio-demo-dashboard",
       "featured": true,
-      "displayOrder": 5
+      "displayOrder": 2
     },
     {
       "name": "IP Blacklist Platform",
@@ -746,7 +746,7 @@
       "githubUrl": "https://github.com/jclee941/blacklist",
       "demoUrl": null,
       "featured": true,
-      "displayOrder": 6
+      "displayOrder": 5
     },
     {
       "name": "HYCU FSDS Autonomous Driving",
@@ -790,7 +790,7 @@
         "n8n workflows + API integration for security ops efficiency"
       ],
       "featured": false,
-      "displayOrder": 9
+      "displayOrder": 3
     },
     {
       "name": "Terraform Homelab IaC",
@@ -811,7 +811,7 @@
         "k3s"
       ],
       "featured": true,
-      "displayOrder": 3
+      "displayOrder": 4
     },
     {
       "name": "SafetyWallet (CF Workers PWA)",
@@ -832,7 +832,7 @@
         "KV"
       ],
       "featured": false,
-      "displayOrder": 8
+      "displayOrder": 7
     },
     {
       "name": "AI GitHub PR Reviewer",
@@ -852,7 +852,7 @@
         "GitHub API"
       ],
       "featured": false,
-      "displayOrder": 2
+      "displayOrder": 6
     },
     {
       "name": "Bug Bounty Recon Toolkit",
@@ -873,7 +873,7 @@
         "Nuclei"
       ],
       "featured": false,
-      "displayOrder": 10
+      "displayOrder": 8
     }
   ],
   "ossContributions": [

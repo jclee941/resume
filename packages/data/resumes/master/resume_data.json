@@ -79,11 +79,11 @@
   "platformVariants": {
     "wanted": {
       "headline": "OA 엔지니어로 출발한 8년차 DevSecOps/SRE — 금융 거래소 SOC + FSC 본인가 + Splunk ES·n8n·FortiGate HA",
-      "about": "**\"반복 작업은 자동화 되어야 한다\"** — 이 한 가지 신념으로 운영해 온 DevSecOps/SRE 엔지니어입니다.\n\n**현장 → 자동화 → AI 에이전트**, 한 번도 운영의 손을 놓지 않으면서 도구만 바꿔왔습니다. KAI 폐쇄망에서 Linux를 수기로 운영하던 시절, 메타넷·조인트리에서 Ansible·Python·NSX-T·Wazuh로 자동화에 입문하던 시기, 콸텍투자일임 FSDC에서 금융감독원 감사를 데이터로 대응하던 경험을 거쳐, 현재 가온누리·아이티센 트랙에서 넷스트레이드 매매체결시스템을 FortiGate HA(5계층 망분리)·FSC 본인가·Splunk ES + n8n + FortiManager API 으로 운영합니다.\n\n**측정 가능한 임팩트**:\n• NAC 정책 배포 자동화로 수작업 시간 대폭 단축\n• 방화벽 정책을 Ansible Role로 표준화\n• 보안 이벤트 자동 탐지·대응으로 MTTR 단축\n• 환경 규모: 거래소 매매체결시스템 운영 규모\n\n**보유 역량**: SIEM 탐지 룰 설계(Splunk ES), 보안 운영 자동화(n8n, FortiManager API), HA 보안 아키텍처(FortiGate HA, NSX-T), IaC(Ansible Role, Terraform), 관측성(Grafana/Prometheus/Loki), 금융 규제(FSC 본인가, 금감원 감사)\n\n포트폴리오: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
+      "about": "**\"반복 작업은 자동화 되어야 한다\"** — 이 한 가지 신념으로 운영해 온 DevSecOps/SRE 엔지니어입니다.\n\n**현장 → 자동화 → AI 에이전트**, 한 번도 운영의 손을 놓지 않으면서 도구만 바꿔왔습니다. KAI 폐쇄망에서 Linux를 수기로 운영하던 시절, 메타넷·조인트리에서 Ansible·Python·NSX-T·Wazuh로 자동화에 입문하던 시기, 콸텍투자일임 FSDC에서 금융감독원 감사를 데이터로 대응하던 경험을 거쳐, 현재 가온누리·아이티센 트랙에서 넥스트레이드 매매체결시스템을 FortiGate HA(5계층 망분리)·FSC 본인가·Splunk ES + n8n + FortiManager API 으로 운영합니다.\n\n**측정 가능한 임팩트**:\n• NAC 정책 배포 자동화로 수작업 시간 대폭 단축\n• 방화벽 정책을 Ansible Role로 표준화\n• 보안 이벤트 자동 탐지·대응으로 MTTR 단축\n• 환경 규모: 거래소 매매체결시스템 운영 규모\n\n**보유 역량**: SIEM 탐지 룰 설계(Splunk ES), 보안 운영 자동화(n8n, FortiManager API), HA 보안 아키텍처(FortiGate HA, NSX-T), IaC(Ansible Role, Terraform), 관측성(Grafana/Prometheus/Loki), 금융 규제(FSC 본인가, 금감원 감사)\n\n포트폴리오: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
     },
     "jobkorea": {
       "headline": "8년차 DevSecOps/SRE — OA→자동화→FSC 본인가→보안 운영 (Splunk ES, n8n, FortiGate HA)",
-      "about": "**\"반복 작업은 자동화 되어야 한다\"** — 한 가지 신념으로 운영의 도구를 진화시켜 왔습니다.\n\n[현장 → 자동화 → AI 에이전트 trajectory]\n• KAI 폐쇄망 (2017–2018): Linux 수기 운영, 패치/방화벽/IDS 정책\n• Linux 기초 재정비 (2018.11–2019.11): RHCSA·LPIC-1·리눅스마스터 2급 연속 취득\n• 자동화 입문 (2019–2022): 메타넷 컴택센터 대규모 SSL VPN/NAC + Ansible/Python; 조인트리 NSX-T 마이크로세그멘테이션 + Wazuh\n• 금융 인프라 (2022–2024): 콸텍투자일임 FSDC, 금감원 감사 대응 + DB 튜닝\n• 보안 구축 (2024–2025): 가온누리 넷스트레이드, FortiGate HA 5계층 망분리 + Ansible Role 표준화 + FSC 본인가 통과\n• 보안 운영 (2025–현재): 아이티센 CTS 넷스트레이드, Splunk ES + n8n + FortiManager API 기반 자동 탐지·대응 (자동 탐지·대응 운영)\n\n[측정 가능한 임팩트]\nNAC·방화벽 정책 배포 자동화 · 보안 이벤트 자동 탐지·대응 · 침해 시도 차단 · DLP 오탐 감소\n\n[보유 기술 스택]\nSplunk ES, n8n, FortiGate/FortiManager API, Ansible Role, Python, Terraform, Docker, NSX-T, Wazuh, Grafana/Prometheus/Loki, Cloudflare Workers, MCP/AI 에이전트\n\n포트폴리오: https://resume.jclee.me",
+      "about": "**\"반복 작업은 자동화 되어야 한다\"** — 한 가지 신념으로 운영의 도구를 진화시켜 왔습니다.\n\n[현장 → 자동화 → AI 에이전트 trajectory]\n• KAI 폐쇄망 (2017–2018): Linux 수기 운영, 패치/방화벽/IDS 정책\n• Linux 기초 재정비 (2018.11–2019.11): RHCSA·LPIC-1·리눅스마스터 2급 연속 취득\n• 자동화 입문 (2019–2022): 메타넷 컴택센터 대규모 SSL VPN/NAC + Ansible/Python; 조인트리 NSX-T 마이크로세그멘테이션 + Wazuh\n• 금융 인프라 (2022–2024): 콸텍투자일임 FSDC, 금감원 감사 대응 + DB 튜닝\n• 보안 구축 (2024–2025): 가온누리 넥스트레이드, FortiGate HA 5계층 망분리 + Ansible Role 표준화 + FSC 본인가 통과\n• 보안 운영 (2025–현재): 아이티센 CTS 넥스트레이드, Splunk ES + n8n + FortiManager API 기반 자동 탐지·대응 (자동 탐지·대응 운영)\n\n[측정 가능한 임팩트]\nNAC·방화벽 정책 배포 자동화 · 보안 이벤트 자동 탐지·대응 · 침해 시도 차단 · DLP 오탐 감소\n\n[보유 기술 스택]\nSplunk ES, n8n, FortiGate/FortiManager API, Ansible Role, Python, Terraform, Docker, NSX-T, Wazuh, Grafana/Prometheus/Loki, Cloudflare Workers, MCP/AI 에이전트\n\n포트폴리오: https://resume.jclee.me",
       "defaultJobCode": "1000238"
     }
   },
@@ -697,7 +697,7 @@
       "githubUrl": null,
       "demoUrl": "https://grafana.jclee.me",
       "featured": true,
-      "displayOrder": 4
+      "displayOrder": 1
     },
     {
       "name": "n8n Automation",
@@ -714,7 +714,7 @@
       "githubUrl": null,
       "demoUrl": null,
       "featured": false,
-      "displayOrder": 7
+      "displayOrder": 9
     },
     {
       "name": "FortiManager API Client (Python)",
@@ -732,7 +732,7 @@
       "demoUrl": null,
       "note": "비공개 — 현직 환경 코드 (포트폴리오는 https://resume.jclee.me 데모)",
       "featured": true,
-      "displayOrder": 1
+      "displayOrder": 10
     },
     {
       "name": "Security Alert System",
@@ -749,7 +749,7 @@
       "githubUrl": "https://github.com/jclee941/splunk",
       "demoUrl": "https://kibana.jclee.me/s/portfolio-demo/app/dashboards?auth_provider_hint=portfolio_demo#/view/portfolio-demo-dashboard",
       "featured": true,
-      "displayOrder": 5
+      "displayOrder": 2
     },
     {
       "name": "IP Blacklist Platform",
@@ -766,7 +766,7 @@
       "githubUrl": "https://github.com/jclee941/blacklist",
       "demoUrl": null,
       "featured": true,
-      "displayOrder": 6
+      "displayOrder": 5
     },
     {
       "name": "HYCU FSDS 자율주행",
@@ -810,7 +810,7 @@
         "보안 장비 운영 효율화를 위한 n8n 워크플로우와 API 연동"
       ],
       "featured": false,
-      "displayOrder": 9
+      "displayOrder": 3
     },
     {
       "name": "Terraform Homelab IaC",
@@ -831,7 +831,7 @@
         "k3s"
       ],
       "featured": true,
-      "displayOrder": 3
+      "displayOrder": 4
     },
     {
       "name": "SafetyWallet (CF Workers PWA)",
@@ -852,7 +852,7 @@
         "KV"
       ],
       "featured": false,
-      "displayOrder": 8
+      "displayOrder": 7
     },
     {
       "name": "AI GitHub PR Reviewer",
@@ -872,7 +872,7 @@
         "GitHub API"
       ],
       "featured": false,
-      "displayOrder": 2
+      "displayOrder": 6
     },
     {
       "name": "Bug Bounty Recon Toolkit",
@@ -893,7 +893,7 @@
         "Nuclei"
       ],
       "featured": false,
-      "displayOrder": 10
+      "displayOrder": 8
     }
   ],
   "ossContributions": [
