@@ -5,7 +5,10 @@
   "private": true,
   "exports": {
     ".": "./src/index.js",
-    "./parse": "./src/parse.js"
+    "./parse": "./src/parse.js",
+    "./schemas/portfolio": "./src/schemas/portfolio.js",
+    "./schemas/job-dashboard": "./src/schemas/job-dashboard.js",
+    "./schemas/job-server": "./src/schemas/job-server.js"
   },
   "files": [
     "src"
