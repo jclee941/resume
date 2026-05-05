@@ -55,11 +55,11 @@
     ],
     "aboutSection": {
       "careerHighlights": [
-        "**현장 → 자동화 → AI 에이전트**: 8년 동안 운영의 손을 놓지 않으면서 도구를 바꿔왔습니다.",
-        "**금융 규제 환경 운영 이력**: 금감원 감사·FSC 본인가·전자금융감독규정 대응 경험.",
-        "**핵심 활동**: NAC·방화벽 정책 자동화, 보안 이벤트 자동 탐지·대응 체계 운영.",
-        "**다양한 스택 운영**: Linux · Python · Ansible · Terraform · Splunk SPL · n8n · Cloudflare Workers — 단일 스택 숙련보다 이종 환경에 빠르게 적응하는 쪽을 우선시합니다.",
-        "**홈랩 = 실험실**: Proxmox·Grafana·k3s·1Password·MCP를 IaC로 운영하며 사내 도구를 미리 검증한 뒤 도입."
+        "현장 → 자동화 → AI 에이전트: 8년 동안 운영의 손을 놓지 않으면서 도구를 바꿔왔습니다.",
+        "금융 규제 환경 운영 이력: 금감원 감사·FSC 본인가·전자금융감독규정 대응 경험.",
+        "핵심 활동: NAC·방화벽 정책 자동화, 보안 이벤트 자동 탐지·대응 체계 운영.",
+        "다양한 스택 운영: Linux · Python · Ansible · Terraform · Splunk SPL · n8n · Cloudflare Workers — 단일 스택 숙련보다 이종 환경에 빠르게 적응하는 쪽을 우선시합니다.",
+        "홈랩 = 실험실: Proxmox·Grafana·k3s·1Password·MCP를 IaC로 운영하며 사내 도구를 미리 검증한 뒤 도입."
       ],
       "techPhilosophy": [
         "관측 가능하지 않은 것은 운영할 수 없다 (You can't operate what you can't observe).",
