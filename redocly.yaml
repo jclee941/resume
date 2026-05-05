@@ -1,0 +1,9 @@
+extends:
+  - recommended
+
+# 87 pre-existing spec problems are baselined in .redocly.lint-ignore.yaml.
+# Fixing them is tracked separately. New problems (not in the ignore file)
+# will fail CI via `npm run validate:openapi`.
+apis:
+  default:
+    root: packages/contracts/openapi.yaml

@@ -258,6 +258,29 @@ jobs:
             echo "✅ Built $name"
           done
 
+  validate-openapi:
+    name: OpenAPI Spec Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline --no-audit --no-fund
+
+      - name: Validate packages/contracts/openapi.yaml (#30 / SSOT-040)
+        # Uses redocly with the recommended ruleset; pre-existing 87 spec
+        # problems are baselined in .redocly.lint-ignore.yaml. New problems
+        # added to the spec will fail this job.
+        run: npm run validate:openapi
+
   summary:
     name: CI Summary
     runs-on: ubuntu-latest
@@ -271,6 +294,7 @@ jobs:
         test-workspace,
         validate-data,
         validate-go,
+        validate-openapi,
       ]
     if: always()
     permissions:
@@ -287,6 +311,7 @@ jobs:
           echo "test-workspace: ${{ needs.test-workspace.result }}"
           echo "validate-data: ${{ needs.validate-data.result }}"
           echo "validate-go: ${{ needs.validate-go.result }}"
+          echo "validate-openapi: ${{ needs.validate-openapi.result }}"
           if [[ "${{ needs.secret-scan.result }}" != "success" || \
                 "${{ needs.lint.result }}" != "success" || \
                 "${{ needs.typecheck.result }}" != "success" || \
@@ -294,7 +319,8 @@ jobs:
                 "${{ needs.test-node.result }}" != "success" || \
                 "${{ needs.test-workspace.result }}" != "success" || \
                 "${{ needs.validate-data.result }}" != "success" || \
-                "${{ needs.validate-go.result }}" != "success" ]]; then
+                "${{ needs.validate-go.result }}" != "success" || \
+                "${{ needs.validate-openapi.result }}" != "success" ]]; then
             echo "❌ One or more CI jobs failed"
             exit 1
           fi
@@ -310,7 +336,7 @@ jobs:
       # noise on commit lists and PR pages. Non-fatal on error.
       # Documented in .sisyphus/evidence/workers-builds-infra.md.
       - name: "Override spurious 'Workers Builds: resume' check with success"
-        if: needs.secret-scan.result == 'success' && needs.lint.result == 'success' && needs.typecheck.result == 'success' && needs.test-jest.result == 'success' && needs.test-node.result == 'success' && needs.test-workspace.result == 'success' && needs.validate-data.result == 'success' && needs.validate-go.result == 'success'
+        if: needs.secret-scan.result == 'success' && needs.lint.result == 'success' && needs.typecheck.result == 'success' && needs.test-jest.result == 'success' && needs.test-node.result == 'success' && needs.test-workspace.result == 'success' && needs.validate-data.result == 'success' && needs.validate-go.result == 'success' && needs.validate-openapi.result == 'success'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
