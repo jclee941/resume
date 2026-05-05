@@ -61,7 +61,7 @@
       name="twitter:description"
       content="DevSecOps/SRE/Platform Engineer | Security infrastructure, SIEM/SOAR, Observability, IaC automation"
     />
-    <meta name="twitter:image" content="https://resume.jclee.me/og-image.webp" />
+    <meta name="twitter:image" content="https://resume.jclee.me/og-image-en.webp" />
     <meta name="twitter:creator" content="@jclee941" />
     <meta name="twitter:site" content="@jclee941" />
 
@@ -460,15 +460,20 @@
           <header class="site-header">
             <nav class="minimal-nav">
               <a href="/" class="nav-logo">~/jclee</a>
-              <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+              <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">
                 <span class="hamburger"></span>
               </button>
-              <div class="nav-links">
+              <div id="nav-links" class="nav-links">
                 <a href="#about">about</a>
                 <a href="#resume">exp</a>
                 <a href="#projects">projects</a>
                 <a href="#contact">contact</a>
               </div>
+              <ul class="lang-switcher" aria-label="Language">
+                <li><a href="/" hreflang="ko" class="lang-link" lang="ko">KO</a></li>
+                <li><a href="/en/" hreflang="en" aria-current="true" class="lang-link lang-link--active" lang="en">EN</a></li>
+                <li><a href="/ja/" hreflang="ja" class="lang-link" lang="ja">JA</a></li>
+              </ul>
             </nav>
           </header>
 

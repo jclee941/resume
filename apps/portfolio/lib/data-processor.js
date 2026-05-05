@@ -139,13 +139,16 @@ function processProjectData({ projectDataRaw, projectDataEnRaw, projectDataJaRaw
 
 /**
  * Convert binary assets to base64 strings.
- * @param {{ogImageBuffer: Buffer, ogImageEnBuffer: Buffer, resumePdfBuffer: Buffer}} buffers - Binary assets.
- * @returns {{ogImageBase64: string, ogImageEnBase64: string, resumePdfBase64: string}} Base64 payload.
+ * @param {{ogImageBuffer: Buffer, ogImageEnBuffer: Buffer, ogImageJaBuffer?: Buffer, resumePdfBuffer: Buffer}} buffers - Binary assets.
+ * @returns {{ogImageBase64: string, ogImageEnBase64: string, ogImageJaBase64: string, resumePdfBase64: string}} Base64 payload.
  */
-function encodeBinaryAssets({ ogImageBuffer, ogImageEnBuffer, resumePdfBuffer }) {
+function encodeBinaryAssets({ ogImageBuffer, ogImageEnBuffer, ogImageJaBuffer, resumePdfBuffer }) {
   return {
     ogImageBase64: ogImageBuffer.toString('base64'),
     ogImageEnBase64: ogImageEnBuffer.toString('base64'),
+    ogImageJaBase64: (ogImageJaBuffer && ogImageJaBuffer.length > 0)
+      ? ogImageJaBuffer.toString('base64')
+      : '',
     resumePdfBase64: resumePdfBuffer.toString('base64'),
   };
 }
