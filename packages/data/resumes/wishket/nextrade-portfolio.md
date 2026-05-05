@@ -91,8 +91,26 @@ FortiManager API를 이용한 방화벽 정책 자동 조회 툴을 개발해 �
 
 이 프로젝트는 구축과 운영이 분리된 이력 나열이 아니라, 하나의 금융 보안 체계를 단계별로 고도화한 사례입니다.
 
-![아키텍처 다이어그램](TODO: 구축 단계 HA 구성과 운영 단계 Splunk, n8n, FortiManager API 흐름을 함께 보여주는
-다이어그램 첨부)
+```mermaid
+flowchart TB
+  subgraph Phase1[1단계 · 구축 · 2024.03-2025.02]
+    direction LR
+    HA1[FortiGate Active] -.->|HA sync| HA2[FortiGate Standby]
+    HA1 --> Tier1[외부 경계]
+    Tier1 --> Tier2[DMZ]
+    Tier2 --> Tier3[서비스]
+    Tier3 --> Tier4[운용]
+    Tier4 --> Tier5[데이터]
+  end
+  subgraph Phase2[2단계 · 운용 · 2025.03-]
+    direction LR
+    Devices[FortiGate / FortiAnalyzer<br/>syslog · API] --> Splunk[Splunk ES<br/>탐지 룰]
+    Splunk -->|webhook| N8N[n8n<br/>자동 대응]
+    N8N -->|JSON-RPC| FMG[FortiManager API<br/>정책 조정]
+    N8N --> Slack[Slack/Telegram<br/>알림]
+  end
+  Phase1 ==>|고도화| Phase2
+```
 
 ### 1단계. 보안 인프라 구축, 2024.03 ~ 2025.02
 

@@ -83,8 +83,32 @@ n8n을 선택한 이유는 복잡한 운영 절차를 시각적인 흐름으로 
 
 이 프로젝트의 구현 핵심은 개별 자동화 스크립트를 모아두는 것이 아니라, 운영 작업을 워크플로우 자산으로 전환하는 데 있었습니다.
 
-![아키텍처 다이어그램](TODO: n8n, PostgreSQL, Slack, GitHub, Cloudflare, Grafana 연동 흐름도
-첨부)
+```mermaid
+flowchart LR
+  subgraph Sources[Trigger 소스]
+    GH[GitHub Actions<br/>webhook]
+    CF[Cloudflare<br/>deploy hook]
+    GRA[Grafana<br/>alert]
+    Cron[Cron schedule]
+  end
+  subgraph N8N[n8n 오케스트레이터]
+    WF[Workflow nodes<br/>error handling · retry]
+    DB[(PostgreSQL<br/>실행 이력)]
+  end
+  subgraph Sinks[알림/액션]
+    Slack[Slack<br/>채널 알림]
+    Tel[Telegram]
+    API[구조화된 API 호출]
+  end
+  GH --> WF
+  CF --> WF
+  GRA --> WF
+  Cron --> WF
+  WF <--> DB
+  WF --> Slack
+  WF --> Tel
+  WF --> API
+```
 
 ### 아키텍처 개요
 

@@ -100,8 +100,33 @@ Prometheus는 수치 기반 상태 확인에 적합하고, Loki는 로그 흐름
 
 이 프로젝트의 구현 핵심은 도구를 많이 붙이는 것이 아니라, 서로 다른 관측 데이터를 같은 운영 흐름으로 연결하는 데 있었습니다.
 
-![아키텍처 다이어그램](TODO: Prometheus, Loki, Elasticsearch, Grafana, Blackbox Exporter
-흐름 다이어그램 첨부)
+```mermaid
+flowchart LR
+  subgraph Sources[수집 대상]
+    Hosts[Linux/Windows<br/>호스트]
+    Apps[애플리케이션<br/>50+ /metrics]
+    Endpoints[외부 엔드포인트]
+  end
+  subgraph Collect[수집 레이어]
+    Prom[Prometheus<br/>메트릭 scrape]
+    Loki[Loki<br/>로그 stream]
+    BB[Blackbox Exporter<br/>HTTP/TCP probe]
+    Beats[Beats/Logstash<br/>→ Elasticsearch]
+  end
+  Hosts --> Prom
+  Apps --> Prom
+  Apps --> Loki
+  Endpoints --> BB
+  Apps --> Beats
+  subgraph Visualize[분석/시각화]
+    Graf[Grafana<br/>PromQL · LogQL · Explore]
+    Kib[Elasticsearch + Kibana<br/>로그 차원 분석]
+  end
+  Prom --> Graf
+  Loki --> Graf
+  BB --> Graf
+  Beats --> Kib
+```
 
 ### 아키텍처 개요
 
