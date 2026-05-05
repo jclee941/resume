@@ -35,6 +35,8 @@ packages/shared/
 | -------------------------------- | ------------------------------------ | ---------------------- |
 | `@resume/shared/errors`          | `src/errors/index.js`                | Custom error classes   |
 | `@resume/shared/logger`          | `src/logger/index.js`                | Structured logging     |
+| `@resume/shared/logger/transports/elasticsearch` | `src/logger/transports/elasticsearch.js` | ES transport (default) |
+| `@resume/shared/logger/transports/loki` | `src/logger/transports/loki.js` | Loki transport         |
 | `@resume/shared/es-client`       | `src/clients/elasticsearch/index.js` | Elasticsearch client   |
 | `@resume/shared/browser`         | `src/browser/index.js`               | Browser automation     |
 | `@resume/shared/browser/stealth` | `src/browser/stealth-patches.js`     | Puppeteer stealth      |
@@ -46,7 +48,7 @@ packages/shared/
 - **Subpath exports** defined in `package.json` exports field
 - **Pure functions** preferred; minimal side effects
 - **Error handling** via custom error classes in `errors/`
-- **Logging** via pino with structured JSON output
+- **Logging** via the `Logger` class with pluggable transports (ES default, Loki optional)
 - **Browser automation** uses Playwright with stealth patches
 
 ## ANTI-PATTERNS
