@@ -1,3 +1,5 @@
+import { getCookie, serializeCookie, clearCookie } from '@resume/shared/cookies';
+
 const ADMIN_ROUTES = [
   '/api/applications',
   '/api/automation',
@@ -57,17 +59,7 @@ export function verifySecret(provided, expected) {
  * Extract admin session token from HttpOnly cookie.
  */
 export function getSessionTokenFromCookie(request) {
-  const cookieHeader = request.headers.get('Cookie');
-  if (!cookieHeader) return null;
-
-  const cookies = cookieHeader.split(';').map((c) => c.trim());
-  for (const cookie of cookies) {
-    const [name, ...valueParts] = cookie.split('=');
-    if (name === ADMIN_SESSION_COOKIE) {
-      return valueParts.join('='); // Handle tokens with '=' in them
-    }
-  }
-  return null;
+  return getCookie(request, ADMIN_SESSION_COOKIE);
 }
 
 /**
@@ -196,15 +188,25 @@ export async function verifySessionToken(token, env) {
  * HttpOnly + Secure + SameSite=Strict for XSS protection
  */
 export function createAuthCookie(token, maxAge = 86400) {
-  const secure = 'Secure'; // Always use Secure for production
-  return `${ADMIN_SESSION_COOKIE}=${token}; HttpOnly; ${secure}; SameSite=Strict; Path=/; Max-Age=${maxAge}`;
+  return serializeCookie(ADMIN_SESSION_COOKIE, token, {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'Strict',
+    path: '/',
+    maxAge,
+  });
 }
 
 /**
  * Create cookie to clear admin authentication
  */
 export function clearAuthCookie() {
-  return 'adminToken=; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=0';
+  return clearCookie(ADMIN_SESSION_COOKIE, {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'Strict',
+    path: '/',
+  });
 }
 
 export async function verifyWebhookSignature(request, env) {
