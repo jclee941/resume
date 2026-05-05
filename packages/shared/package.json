@@ -4,6 +4,7 @@
   "type": "module",
   "exports": {
     "./errors": "./src/errors/index.js",
+    "./cookies": "./src/cookies/index.js",
     "./logger": "./src/logger/index.js",
     "./logger/transports/elasticsearch": "./src/logger/transports/elasticsearch.js",
     "./logger/transports/loki": "./src/logger/transports/loki.js",
