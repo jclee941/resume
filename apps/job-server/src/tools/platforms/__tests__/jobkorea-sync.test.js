@@ -1,8 +1,17 @@
 import assert from 'node:assert/strict';
 import { createRequire, syncBuiltinESMExports } from 'node:module';
 import { EventEmitter } from 'node:events';
+import { fileURLToPath } from 'node:url';
+import { dirname, resolve } from 'node:path';
 import { PassThrough } from 'node:stream';
 import { beforeEach, describe, it, mock } from 'node:test';
+
+const TEST_DIR = dirname(fileURLToPath(import.meta.url));
+// Mirror the REPO_ROOT computation in ../jobkorea-sync.js so the test's
+// expected cwd matches the production code's spawn cwd regardless of where
+// the test runner is invoked from.
+const REPO_ROOT = resolve(TEST_DIR, '../../../../../..');
+
 
 const require = createRequire(import.meta.url);
 const childProcessCjs = require('child_process');
@@ -72,7 +81,7 @@ describe('jobkorea sync platform', () => {
       process.execPath,
       ['apps/job-server/scripts/profile-sync.js', 'jobkorea', '--apply'],
       {
-        cwd: '/home/jclee/dev/resume',
+        cwd: REPO_ROOT,
         stdio: ['ignore', 'pipe', 'pipe'],
       },
     ]);
