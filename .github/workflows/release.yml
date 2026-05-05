@@ -69,6 +69,13 @@ jobs:
           set -euo pipefail
 
           LAST_TAG=$(git describe --tags --abbrev=0 --match 'v[0-9]*' 2>/dev/null || echo 'v0.0.0')
+          # If LAST_TAG points to HEAD (release-publish.yml races us), step back to the prior tag
+          # so we still see the commits the user actually pushed.
+          if [ "$LAST_TAG" != 'v0.0.0' ] && [ "$(git rev-parse "${LAST_TAG}^{commit}")" = "$(git rev-parse HEAD)" ]; then
+            PRIOR_TAG=$(git describe --tags --abbrev=0 --match 'v[0-9]*' "${LAST_TAG}^" 2>/dev/null || echo 'v0.0.0')
+            echo "Last tag ${LAST_TAG} is at HEAD; using prior tag ${PRIOR_TAG} for changelog range."
+            LAST_TAG="$PRIOR_TAG"
+          fi
           echo "Last tag: ${LAST_TAG}"
 
           VERSION="${LAST_TAG#v}"
@@ -105,6 +112,11 @@ jobs:
           esac
 
           NEW_TAG="v${MAJOR}.${MINOR}.${PATCH}"
+          # If NEW_TAG already exists (race with release-publish.yml), bump again until free
+          while git rev-parse "$NEW_TAG" >/dev/null 2>&1; do
+            PATCH=$((PATCH + 1))
+            NEW_TAG="v${MAJOR}.${MINOR}.${PATCH}"
+          done
           echo "New tag: ${NEW_TAG}"
 
           CHANGELOG=$(git log "${LAST_TAG}..HEAD" --pretty=format:'- %s (%h)' 2>/dev/null || \
