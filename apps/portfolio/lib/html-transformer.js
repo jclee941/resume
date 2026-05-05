@@ -136,7 +136,17 @@ function buildJapaneseTemplate(html) {
     .replace(/"금융권 본인가"/g, '"金融FSC本認可"')
     .replace(/"name": "홈"/g, '"name": "ホーム"')
     // === Inline JS character class: extend Korean-only range to also cover Japanese ===
-    .replace(/\[\^a-z0-9가-힣\\s\]/g, '[^a-z0-9\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF\\s]');
+    .replace(/\[\^a-z0-9가-힣\\s\]/g, '[^a-z0-9\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF\\s]')
+    // === Language switcher: KO active -> JA active ===
+    .replace(
+      /<a href="\/" hreflang="ko" aria-current="true" class="lang-link lang-link--active" lang="ko">KO<\/a>/g,
+      '<a href="/" hreflang="ko" class="lang-link" lang="ko">KO</a>'
+    )
+    .replace(
+      /<a href="\/ja\/" hreflang="ja" class="lang-link" lang="ja">JA<\/a>/g,
+      '<a href="/ja/" hreflang="ja" aria-current="true" class="lang-link lang-link--active" lang="ja">JA</a>'
+    )
+    .replace(/aria-label="언어 선택 \/ Language"/g, 'aria-label="言語"');
 }
 
 /**
