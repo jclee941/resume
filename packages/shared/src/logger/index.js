@@ -12,12 +12,9 @@
  *   reqLogger.error('Handler failed', error, { handler: 'health' });
  */
 
-import {
-  logToElasticsearch,
-  flush as esFlush,
-  generateRequestId,
-} from '../clients/elasticsearch/index.js';
+import { generateRequestId } from '../clients/elasticsearch/index.js';
 import { HttpError, normalizeError } from '../errors/index.js';
+import { createElasticsearchTransport } from './transports/elasticsearch.js';
 
 /** @enum {string} */
 const LogLevel = {
@@ -150,21 +147,27 @@ export class RequestContext {
  * every log entry. Use child() to create scoped loggers with additional context.
  */
 export class Logger {
-  /**
-   * @param {Object} env - Cloudflare Worker env bindings
-   * @param {Object} [options]
-   * @param {string} [options.service] - Service name (e.g. 'job-worker')
-   * @param {string} [options.minLevel] - Minimum log level
-   * @param {RequestContext} [options.reqCtx] - Request context
+/**
+* @param {Object} env - Cloudflare Worker env bindings
+* @param {Object} [options]
+* @param {string} [options.service] - Service name (e.g. 'job-worker')
+* @param {string} [options.minLevel] - Minimum log level
+* @param {RequestContext} [options.reqCtx] - Request context
    * @param {Object} [options.context] - Additional labels merged into every log
-   */
-  constructor(env, options = {}) {
-    this.env = env;
-    this.service = options.service || 'default';
-    this.minLevel = options.minLevel || LogLevel.DEBUG;
-    this.reqCtx = options.reqCtx || null;
+   * @param {Array<{name: string, send: Function, flush?: Function}>} [options.transports]
+   *   Pluggable transports. When omitted, the canonical Elasticsearch
+   *   transport is used (back-compat with existing consumers).
+*/
+constructor(env, options = {}) {
+this.env = env;
+this.service = options.service || 'default';
+this.minLevel = options.minLevel || LogLevel.DEBUG;
+this.reqCtx = options.reqCtx || null;
     this.context = options.context || {};
-  }
+    this.transports = Array.isArray(options.transports) && options.transports.length > 0
+      ? options.transports
+      : [createElasticsearchTransport()];
+}
 
   /**
    * Create a Logger instance.
@@ -182,28 +185,30 @@ export class Logger {
    * @param {Object} extraContext - Additional labels to merge
    * @returns {Logger}
    */
-  child(extraContext = {}) {
-    return new Logger(this.env, {
-      service: this.service,
-      minLevel: this.minLevel,
-      reqCtx: this.reqCtx,
+child(extraContext = {}) {
+return new Logger(this.env, {
+service: this.service,
+minLevel: this.minLevel,
+reqCtx: this.reqCtx,
       context: { ...this.context, ...extraContext },
-    });
-  }
+      transports: this.transports,
+});
+}
 
   /**
    * Create a child logger bound to a RequestContext.
    * @param {RequestContext} reqCtx
    * @returns {Logger}
    */
-  withRequest(reqCtx) {
-    return new Logger(this.env, {
-      service: this.service,
-      minLevel: this.minLevel,
-      reqCtx,
+withRequest(reqCtx) {
+return new Logger(this.env, {
+service: this.service,
+minLevel: this.minLevel,
+reqCtx,
       context: this.context,
-    });
-  }
+      transports: this.transports,
+});
+}
 
   /**
    * Check if a log level should be emitted.
@@ -240,13 +245,48 @@ export class Logger {
     if (!this._shouldLog(level)) return;
 
     const labels = this._buildLabels(extra);
-    const opts = {
-      ...options,
-      job: this.service,
-      requestId: this.reqCtx?.requestId,
+    return this._dispatch({
+      level,
+      message,
+      labels,
+      immediate: options.immediate === true,
+      options,
+    });
+  }
+
+  /**
+   * Dispatch one log entry to every configured transport. Failures of one
+   * transport never break sibling transports or the caller.
+   * @param {Object} entry
+   * @returns {Promise<void>}
+   */
+  async _dispatch(entry) {
+    const payload = {
+      level: entry.level,
+      message: entry.message,
+      service: this.service,
+      labels: entry.labels,
+      env: this.env,
+      immediate: entry.immediate === true,
+      options: {
+        ...(entry.options || {}),
+        job: this.service,
+        requestId: this.reqCtx?.requestId,
+      },
     };
 
-    return logToElasticsearch(this.env, message, level, labels, opts);
+    const results = await Promise.allSettled(
+      this.transports.map((t) => Promise.resolve().then(() => t.send(payload)))
+    );
+    for (const r of results) {
+      if (r.status === 'rejected') {
+        try {
+          console.error(`[logger] transport failed: ${r.reason?.message || r.reason}`);
+        } catch {
+          // ignore — logging must never throw
+        }
+      }
+    }
   }
 
   /**
@@ -320,22 +360,15 @@ export class Logger {
       errorLabels.error.context = normalized.context;
     }
 
-    const opts = {
-      job: this.service,
-      requestId: this.reqCtx?.requestId,
-      immediate: true,
-    };
-
     // Also console.error for Worker tail logs / wrangler tail
     console.error(`[${this.service}] ${message}:`, normalized.message);
 
-    return logToElasticsearch(
-      this.env,
-      `${message}: ${normalized.message}`,
-      LogLevel.ERROR,
-      errorLabels,
-      opts
-    );
+    return this._dispatch({
+      level: LogLevel.ERROR,
+      message: `${message}: ${normalized.message}`,
+      labels: errorLabels,
+      immediate: true,
+    });
   }
 
   /**
@@ -367,17 +400,12 @@ export class Logger {
 
     console.error(`[FATAL][${this.service}] ${message}:`, normalized.message);
 
-    return logToElasticsearch(
-      this.env,
-      `[FATAL] ${message}: ${normalized.message}`,
-      LogLevel.FATAL,
+    return this._dispatch({
+      level: LogLevel.FATAL,
+      message: `[FATAL] ${message}: ${normalized.message}`,
       labels,
-      {
-        job: this.service,
-        requestId: this.reqCtx?.requestId,
-        immediate: true,
-      }
-    );
+      immediate: true,
+    });
   }
 
   /**
@@ -428,7 +456,22 @@ export class Logger {
    * @returns {Promise<void>}
    */
   async flush() {
-    return esFlush(this.env, { job: this.service });
+    const results = await Promise.allSettled(
+      this.transports.map((t) =>
+        Promise.resolve().then(() =>
+          typeof t.flush === 'function' ? t.flush(this.env, { job: this.service }) : undefined
+        )
+      )
+    );
+    for (const r of results) {
+      if (r.status === 'rejected') {
+        try {
+          console.error(`[logger] transport flush failed: ${r.reason?.message || r.reason}`);
+  } catch {
+          // ignore
+        }
+      }
+    }
   }
 }
 
