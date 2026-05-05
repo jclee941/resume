@@ -28,7 +28,7 @@ job-server/
 ├── scripts/                # auth/sync utilities (see scripts/AGENTS.md)
 ├── platforms/              # 10 platform-specific crawlers (see platforms/AGENTS.md)
 ├── config.json             # runtime config
-├── openapi.yaml            # API spec
+├── openapi.yaml            # symlink → packages/contracts/openapi.yaml (canonical, SSOT-040)
 └── docker-compose.yml      # local dev stack
 ```
 
