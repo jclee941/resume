@@ -5,7 +5,7 @@ import { Logger } from '@resume/shared/logger';
 
 const logger = Logger.create(process.env, {
   service: 'job-automation',
-  defaultLevel: 'INFO',
+  minLevel: 'INFO',
 });
 
 /**
