@@ -1,5 +1,23 @@
-// WantedClient — core class + job search/apply/profile.
-// Domain methods composed from wanted-resume-api, wanted-skill-api, wanted-profile-api.
+/**
+ * @deprecated Older 191-LOC Wanted client. See SSOT-037 / issue #46.
+ *
+ * **New code SHOULD prefer** the 40-method client at
+ * `apps/job-server/src/shared/clients/wanted/wanted-api.js` (or its future
+ * canonical home `@resume/clients-wanted` once Phase 2 of #46 ships).
+ *
+ * The newer client provides:
+ *   - 40+ methods organized by endpoint class (jobs, applications, profile,
+ *     resume) instead of a single class with mixed concerns.
+ *   - Automatic 401-retry + CSRF-token refresh (production-hardened).
+ *   - Dedicated test coverage at apps/job-server/src/shared/clients/wanted/__tests__/.
+ *
+ * This file is preserved for the existing consumers until they migrate
+ * per the plan in docs/architecture/wanted-client-triage.md.
+ *
+ * WantedClient — core class + job search/apply/profile.
+ * Domain methods composed from wanted-resume-api, wanted-skill-api,
+ * wanted-profile-api.
+ */
 import { DEFAULT_USER_AGENT } from './ua.js';
 import { resumeApiMethods } from './wanted-resume-api.js';
 import { skillApiMethods } from './wanted-skill-api.js';
