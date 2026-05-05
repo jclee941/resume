@@ -281,6 +281,25 @@ jobs:
         # added to the spec will fail this job.
         run: npm run validate:openapi
 
+  validate-env-drift:
+    name: Env Schema Drift
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: '1.22'
+
+      - name: Check env-schema drift vs .dev.vars.example (#35 / SSOT-031)
+        # Implements docs/architecture/env-validation-plan.md Phase 4.
+        # Fails when a required key declared in any packages/env/src/schemas/*.js
+        # is missing from .dev.vars.example.
+        run: go run ./tools/ci/check-env-schema-drift.go
+
   summary:
     name: CI Summary
     runs-on: ubuntu-latest
@@ -295,6 +314,7 @@ jobs:
         validate-data,
         validate-go,
         validate-openapi,
+        validate-env-drift,
       ]
     if: always()
     permissions:
@@ -312,6 +332,7 @@ jobs:
           echo "validate-data: ${{ needs.validate-data.result }}"
           echo "validate-go: ${{ needs.validate-go.result }}"
           echo "validate-openapi: ${{ needs.validate-openapi.result }}"
+          echo "validate-env-drift: ${{ needs.validate-env-drift.result }}"
           if [[ "${{ needs.secret-scan.result }}" != "success" || \
                 "${{ needs.lint.result }}" != "success" || \
                 "${{ needs.typecheck.result }}" != "success" || \
@@ -320,7 +341,8 @@ jobs:
                 "${{ needs.test-workspace.result }}" != "success" || \
                 "${{ needs.validate-data.result }}" != "success" || \
                 "${{ needs.validate-go.result }}" != "success" || \
-                "${{ needs.validate-openapi.result }}" != "success" ]]; then
+                "${{ needs.validate-openapi.result }}" != "success" || \
+                "${{ needs.validate-env-drift.result }}" != "success" ]]; then
             echo "❌ One or more CI jobs failed"
             exit 1
           fi
@@ -336,7 +358,7 @@ jobs:
       # noise on commit lists and PR pages. Non-fatal on error.
       # Documented in .sisyphus/evidence/workers-builds-infra.md.
       - name: "Override spurious 'Workers Builds: resume' check with success"
-        if: needs.secret-scan.result == 'success' && needs.lint.result == 'success' && needs.typecheck.result == 'success' && needs.test-jest.result == 'success' && needs.test-node.result == 'success' && needs.test-workspace.result == 'success' && needs.validate-data.result == 'success' && needs.validate-go.result == 'success' && needs.validate-openapi.result == 'success'
+        if: needs.secret-scan.result == 'success' && needs.lint.result == 'success' && needs.typecheck.result == 'success' && needs.test-jest.result == 'success' && needs.test-node.result == 'success' && needs.test-workspace.result == 'success' && needs.validate-data.result == 'success' && needs.validate-go.result == 'success' && needs.validate-openapi.result == 'success' && needs.validate-env-drift.result == 'success'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |

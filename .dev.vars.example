@@ -9,3 +9,8 @@ N8N_WEBHOOK_BASE=https://n8n.example.local/webhook
 ELASTICSEARCH_URL=https://elasticsearch.example.local
 ELASTICSEARCH_API_KEY=replace-with-es-api-key
 ELASTICSEARCH_INDEX=resume-logs-local
+
+# === @resume/env required keys (validated at boot via packages/env) ===
+# AES-GCM 256-bit symmetric key, base64-encoded (32 raw bytes).
+# Generate with: openssl rand -base64 32
+ENCRYPTION_KEY=replace-with-base64-32-bytes
