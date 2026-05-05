@@ -13,7 +13,8 @@
     "packages/shared",
     "packages/types",
     "packages/schemas",
-    "packages/contracts"
+    "packages/contracts",
+    "packages/env"
   ],
   "scripts": {
     "strip-exif": "exiftool -all= -overwrite_original apps/portfolio/src/images/*.png apps/portfolio/src/images/*.webp 2>/dev/null || echo 'exiftool not found - skipping'",
@@ -33,7 +34,7 @@
     "test": "npm run test:jest && npm run test:node && npm run test:schemas && npm run test:tools && npm run test:cli",
     "test:jest": "NODE_OPTIONS='--experimental-vm-modules' jest",
     "test:node": "cd apps/job-server && npm test",
-    "test:schemas": "node --test 'packages/schemas/src/__tests__/**/*.test.js'",
+    "test:schemas": "node --test 'packages/schemas/src/__tests__/**/*.test.js' 'packages/env/src/__tests__/**/*.test.js'",
     "test:tools": "node --test 'tools/scripts/utils/__tests__/**/*.test.js'",
     "test:cli": "node --test 'packages/cli/src/__tests__/**/*.test.js'",
     "test:coverage": "npm run test:coverage:jest && npm run test:coverage:node",
