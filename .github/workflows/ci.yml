@@ -34,6 +34,16 @@ jobs:
           GITLEAKS_ENABLE_UPLOAD_ARTIFACT: true
           GITLEAKS_ENABLE_SUMMARY: true
 
+      - name: Setup Go (for wrangler secret scan)
+        uses: actions/setup-go@v6
+        with:
+          go-version: '1.22'
+
+      - name: Wrangler config secret scan (SSOT-030)
+        # Implements docs/security/wrangler-vars-vs-secrets.md.
+        # Catches secret-shaped values committed to wrangler.{jsonc,toml}.
+        run: go run ./tools/scripts/security/check-wrangler-secrets.go
+
   lint:
     name: Lint
     runs-on: ubuntu-latest

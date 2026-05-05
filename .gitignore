@@ -48,6 +48,9 @@ apps/portfolio/.wrangler/
 !.dev.vars.example
 *.secrets
 *-secrets.*
+# Documentation and CI tooling about secret management are committed:
+!docs/**/*-secrets.*
+!tools/**/*-secrets.*
 *-session.json
 sessions.json
 jobkorea-session.json
