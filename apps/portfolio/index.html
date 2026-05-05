@@ -533,15 +533,20 @@
           <header class="site-header">
             <nav class="minimal-nav" role="navigation" aria-label="Main navigation">
               <a href="/" class="nav-logo" aria-label="Homepage">~/jclee</a>
-              <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+              <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">
                 <span class="hamburger"></span>
               </button>
-              <div class="nav-links">
+              <div id="nav-links" class="nav-links">
                 <a href="#about" class="nav-link" data-i18n-aria="nav.about">about</a>
                 <a href="#resume" class="nav-link" data-i18n-aria="nav.experience">exp</a>
                 <a href="#projects" class="nav-link" data-i18n-aria="nav.projects">projects</a>
                 <a href="#contact" class="nav-link" data-i18n-aria="nav.contact">contact</a>
               </div>
+              <ul class="lang-switcher" aria-label="언어 선택 / Language">
+                <li><a href="/" hreflang="ko" aria-current="true" class="lang-link lang-link--active" lang="ko">KO</a></li>
+                <li><a href="/en/" hreflang="en" class="lang-link" lang="en">EN</a></li>
+                <li><a href="/ja/" hreflang="ja" class="lang-link" lang="ja">JA</a></li>
+              </ul>
             </nav>
           </header>
 

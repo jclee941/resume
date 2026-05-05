@@ -34,6 +34,7 @@ async function runWorkerBuild({ baseDir, version, allowedEmails, logger }) {
     sitemapXml,
     ogImageBuffer,
     ogImageEnBuffer,
+    ogImageJaBuffer,
     resumePdfBuffer,
     mainJs,
     cssContent,
@@ -49,9 +50,10 @@ async function runWorkerBuild({ baseDir, version, allowedEmails, logger }) {
   const { projectData, templates } = processProjectData({ projectDataRaw, projectDataEnRaw, projectDataJaRaw, logger });
   const resumeChatDataBase64Literal = `'${Buffer.from(JSON.stringify(projectData), 'utf-8').toString('base64')}'`;
   const workerAiModel = '@cf/meta/llama-2-7b-chat-int8';
-  const { ogImageBase64, ogImageEnBase64, resumePdfBase64 } = encodeBinaryAssets({
+  const { ogImageBase64, ogImageEnBase64, ogImageJaBase64, resumePdfBase64 } = encodeBinaryAssets({
     ogImageBuffer,
     ogImageEnBuffer,
+    ogImageJaBuffer,
     resumePdfBuffer,
   });
 
@@ -193,6 +195,7 @@ async function runWorkerBuild({ baseDir, version, allowedEmails, logger }) {
     sitemapXml,
     ogImageBase64,
     ogImageEnBase64,
+    ogImageJaBase64,
     resumePdfBase64,
     securityHeaders,
     metrics,

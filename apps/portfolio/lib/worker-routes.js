@@ -346,6 +346,19 @@ function generateSeoRoutes() {
         });
       }
 
+      if (url.pathname === '/og-image-ja.webp' && OG_IMAGE_JA_BASE64) {
+        const imageBuffer = Uint8Array.from(atob(OG_IMAGE_JA_BASE64), c => c.charCodeAt(0));
+        metrics.requests_success++;
+        return new Response(imageBuffer, {
+          headers: {
+            ...applyNonceToHeaders(SECURITY_HEADERS, ""),
+            ...CACHE_POLICIES.static,
+            ...rateLimitHeaders,
+            'Content-Type': 'image/webp',
+          }
+        });
+      }
+
       if (url.pathname === '/resume.pdf') {
         const pdfBuffer = Uint8Array.from(atob(RESUME_PDF_BASE64), c => c.charCodeAt(0));
         metrics.requests_success++;

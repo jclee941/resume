@@ -30,6 +30,13 @@ async function generateOGImage(language = 'ko') {
       stats: '8 years | Financial Security Infrastructure · SIEM · IaC',
       url: 'resume.jclee.me',
       label: 'English'
+    },
+    ja: {
+      name: 'イ・ジェチョル',
+      subtitle: 'DevSecOps / SRE / Platform Engineer',
+      stats: '8年目 | 金融セキュリティインフラ · SIEM · IaC',
+      url: 'resume.jclee.me',
+      label: '日本語'
     }
   };
 
@@ -76,7 +83,12 @@ async function generateOGImage(language = 'ko') {
   const results = [];
 
   for (const fmt of formats) {
-    const fileName = language === 'ko' ? `og-image.${fmt.ext}` : `og-image-en.${fmt.ext}`;
+    const fileName =
+      language === 'ko'
+        ? `og-image.${fmt.ext}`
+        : language === 'ja'
+          ? `og-image-ja.${fmt.ext}`
+          : `og-image-en.${fmt.ext}`;
     const outputPath = path.join(__dirname, fileName);
 
     try {
@@ -124,6 +136,11 @@ if (require.main === module) {
       // Generate English version
       logger.log('🇺🇸 English version:');
       await generateOGImage('en');
+      logger.log('');
+
+      // Generate Japanese version
+      logger.log('🇯🇵 Japanese version:');
+      await generateOGImage('ja');
       logger.log('');
 
       logger.log('✅ All Open Graph images generated successfully!');

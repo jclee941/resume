@@ -49,6 +49,7 @@ const ROBOTS_TXT = \`${opts.robotsTxt}\`;
 const SITEMAP_XML = \`${opts.sitemapXml}\`;
 const OG_IMAGE_BASE64 = '${opts.ogImageBase64}';
 const OG_IMAGE_EN_BASE64 = '${opts.ogImageEnBase64}';
+const OG_IMAGE_JA_BASE64 = '${opts.ogImageJaBase64}';
 const RESUME_PDF_BASE64 = '${opts.resumePdfBase64}';
 
 const CSP_NONCE_PLACEHOLDER = '__CSP_NONCE__';
@@ -150,6 +151,7 @@ function getRateLimitPolicy(pathname) {
     pathname === '/sitemap.xml' ||
     pathname === '/og-image.webp' ||
     pathname === '/og-image-en.webp' ||
+    pathname === '/og-image-ja.webp' ||
     pathname === '/resume.pdf' ||
     pathname.endsWith('.css') ||
     pathname.endsWith('.js') ||
