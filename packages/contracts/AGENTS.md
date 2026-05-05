@@ -30,8 +30,8 @@ packages/contracts/
   presents the contract; the type definitions themselves are SSoT in
   `@resume/types`.
 - **Backward-compat for OpenAPI consumers.** The old path
-  `apps/job-server/openapi.yaml` is preserved as a copy until all consumers
-  are migrated; downstream PR will remove it.
+  `apps/job-server/openapi.yaml` is now a relative symlink to this canonical
+  file (closes SSOT-040 / #49).
 
 ## ANTI-PATTERNS
 
