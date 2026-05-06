@@ -1,3 +1,28 @@
+/**
+ * Retry Service with Circuit Breaker
+ *
+ * Implements circuit breaker pattern with exponential backoff and jitter.
+ *
+ * @module shared/services/apply/retry-service
+ *
+ * ```mermaid
+ * stateDiagram-v2
+ *     [*] --> CLOSED: Initialize
+ *     
+ *     CLOSED --> CLOSED: Success<br/>reset failures
+ *     CLOSED --> OPEN: Failures >= threshold
+ *     
+ *     OPEN --> HALF_OPEN: Timeout elapsed
+ *     OPEN --> OPEN: Request rejected<br/>fail fast
+ *     
+ *     HALF_OPEN --> CLOSED: Test success
+ *     HALF_OPEN --> OPEN: Test failed
+ *     
+ *     CLOSED --> [*]: Service shutdown
+ *     OPEN --> [*]: Service shutdown
+ * ```
+ */
+
 import { EventEmitter } from 'node:events';
 
 import { CircuitOpenError } from '../../errors/apply-errors.js';

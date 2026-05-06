@@ -1,3 +1,26 @@
+/**
+ * Session Broker Operations
+ *
+ * Manages session lifecycle for Wanted and JobKorea platforms.
+ *
+ * @module session-broker/services/session-broker-operations
+ *
+ * ```mermaid
+ * stateDiagram-v2
+ *     [*] --> VALID: Login
+ *     VALID --> RENEW_NEEDED: Expiry < 30min
+ *     RENEW_NEEDED --> RENEWING: renewSession()
+ *     RENEWING --> VALID: Success
+ *     RENEWING --> EXPIRED: Max retries
+ *     RENEWING --> FAILED: Auth error
+ *     EXPIRED --> RENEWING: Manual retry
+ *     VALID --> EXPIRED: Token expired
+ *     FAILED --> RENEW_NEEDED: Credentials updated
+ *     EXPIRED --> [*]: Abandoned
+ *     FAILED --> [*]: Abandoned
+ * ```
+ */
+
 import { normalizePlatform, SESSION_STATES } from './session-broker-constants.js';
 import { getState, setState } from './session-broker-state.js';
 import { loadSession, normalizeRenewalResult, saveSession } from './session-broker-storage.js';
