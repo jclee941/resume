@@ -1,6 +1,8 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert';
-import { parsePeriod, normalizePhone, computeDiff } from '../utils.js';
+import { parsePeriod } from '../period-parser.js';
+import { computeDiff } from '../diff-calculator.js';
+import { normalizePhone } from '@resume/shared/phone';
 
 describe('parsePeriod', () => {
   it('handles tilde separator (2024.03 ~ 2025.02)', () => {

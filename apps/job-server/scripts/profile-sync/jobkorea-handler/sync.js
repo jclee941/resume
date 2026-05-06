@@ -1,7 +1,7 @@
 import { chromium } from 'playwright';
 import { applyPlaywrightStealth } from '../playwright-stealth.js';
 import { CONFIG } from '../constants.js';
-import { log } from '../utils.js';
+import { log } from '../sync-logger.js';
 import {
   buildJobKoreaFormData,
   registerPortfolioUrl as defaultRegisterPortfolioUrl,

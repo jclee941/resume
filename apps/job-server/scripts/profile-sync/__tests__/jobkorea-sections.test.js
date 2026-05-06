@@ -15,7 +15,7 @@ import {
   parseRange,
   toYYYYMM,
 } from '../jobkorea-sections.js';
-import { loadSSOT } from '../utils.js';
+import { loadSSOT } from '../ssot-loader.js';
 
 function toMap(fields) {
   return new Map(fields.map((field) => [field.name, String(field.value ?? '')]));

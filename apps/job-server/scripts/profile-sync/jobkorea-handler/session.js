@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { CONFIG } from '../constants.js';
-import { log } from '../utils.js';
+import { log } from '../sync-logger.js';
 
 export const JOBKOREA_SESSION_RENEW_PATH =
   'node apps/job-server/scripts/renew-jobkorea-session.js with HEADLESS=false';

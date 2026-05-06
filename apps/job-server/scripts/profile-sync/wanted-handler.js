@@ -1,7 +1,8 @@
 import WantedAPI from '../../src/shared/clients/wanted/index.js';
 import WantedClient from '@resume/shared/wanted-client';
 import { CONFIG, PLATFORMS } from './constants.js';
-import { log, computeDiff } from './utils.js';
+import { log } from './sync-logger.js';
+import { computeDiff } from './diff-calculator.js';
 import {
   syncWantedSkills,
   syncWantedCareers,

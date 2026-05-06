@@ -1,4 +1,4 @@
-import { log } from '../utils.js';
+import { log } from '../sync-logger.js';
 
 export async function readJobKoreaSectionIndices(page, prefix) {
   return page.evaluate((pfx) => {
