@@ -360,7 +360,7 @@ These tasks block downstream Epic planning. Resolve first.
     `MODULE.bazel.lock` is 49KB of unused dependency state. Either commit fully
     or remove.
   - **Acceptance:** Per D-1 outcome. Document decision in new
-    `docs/adr/0008-bazel-decision.md`.
+    `docs/adr/0008-drop-bazel-facade.md`.
   - **Depends on:** D-1
 
 - [ ] **SSOT-019 — Add Turborepo OR document why not (if Bazel dropped)**

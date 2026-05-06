@@ -1,4 +1,4 @@
-# ADR 0008: Single-Worker Consolidation (resume + job-dashboard)
+# ADR 0009: Single-Worker Consolidation (resume + job-dashboard)
 
 **Status:** Accepted
 **Date:** 2026-04-30
