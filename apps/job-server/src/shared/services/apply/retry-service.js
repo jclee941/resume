@@ -6,7 +6,8 @@ import {
   DEFAULT_CIRCUIT_CONFIG,
   DEFAULT_RETRY_CONFIG,
 } from './retry-service/constants.js';
-import { calculateBackoffDelay, isRetryableError, nowMs, sleep } from './retry-service/helpers.js';
+import { nowMs, sleep } from './retry-service/time-helpers.js';
+import { calculateBackoffDelay, isRetryableError } from './retry-service/retry-logic.js';
 import { enterCircuit, recordFailure, recordSuccess } from './retry-service/operations.js';
 import {
   createStatsState,
