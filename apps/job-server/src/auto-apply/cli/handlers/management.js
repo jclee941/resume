@@ -1,5 +1,5 @@
 import { ApplicationManager, APPLICATION_STATUS } from '../../application-manager.js';
-import { getStatusEmoji } from '../utils.js';
+import { getStatusEmoji } from '../status-emoji.js';
 
 export async function listApplications(args) {
   const status = args.find((a) => a.startsWith('--status='))?.split('=')[1];
