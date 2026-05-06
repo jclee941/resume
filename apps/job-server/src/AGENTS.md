@@ -6,7 +6,7 @@
 
 ## OVERVIEW
 
-MCP server core with 9 tools (32 actions) for Wanted Korea job automation.
+MCP server core with 19 tools (32 actions) for Wanted Korea job automation.
 Hexagonal architecture.
 
 ## STRUCTURE
@@ -18,7 +18,7 @@ src/
 ├── server/routes/        # 13 Fastify route modules
 ├── handlers/             # MCP handler registration + tool registry
 ├── shared/               # hexagonal core (services + clients)
-├── tools/                # 9 MCP tool definitions
+├── tools/                # 19 MCP tool definitions
 ├── crawlers/             # stealth Playwright crawlers
 ├── session-broker/       # Wanted session renewal service
 ├── auto-apply/           # form fill + rate limiting

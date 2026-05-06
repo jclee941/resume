@@ -21,7 +21,7 @@ job-server/
 │   ├── handlers/           # MCP handler registration
 │   ├── session-broker/     # Wanted session renewal broker
 │   ├── test-helpers/       # test mock infrastructure
-│   ├── tools/              # 16 MCP tools
+│   ├── tools/              # 19 MCP tools
 │   ├── crawlers/           # stealth Playwright crawlers
 │   ├── auto-apply/         # form fill + rate limiting
 │   └── lib/                # utility wrappers (deprecated) → removed per TECH_DEBT_AUDIT_2026-04-29
@@ -37,7 +37,7 @@ job-server/
 | Task                 | Location               | Notes                              |
 | -------------------- | ---------------------- | ---------------------------------- |
 | MCP server bootstrap | `src/index.js`         | Fastify + MCP tool registration    |
-| MCP tool definitions | `src/tools/`           | 16 MCP tools                       |
+| MCP tool definitions | `src/tools/`           | 19 MCP tools                       |
 | API routes           | `src/server/routes/`   | 13 class-based Fastify modules     |
 | Domain services      | `src/shared/services/` | 18 service directories             |
 | API clients          | `src/shared/clients/`  | wanted, d1, elasticsearch, secrets |
