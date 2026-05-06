@@ -1,3 +1,34 @@
+/**
+ * Cover Letter Generator
+ *
+ * Generates Korean cover letters (500-600 chars) for job applications.
+ * Supports template fallback and AI-powered generation.
+ *
+ * @module shared/services/resume/cover-letter-generator
+ *
+ * ```mermaid
+ * flowchart TD
+ *     Start([Job Requirements]) --> Detect{detectRole}
+ *     Detect -->|DevSecOps| T1[Template: DevSecOps]
+ *     Detect -->|SRE| T2[Template: SRE]
+ *     Detect -->|Security| T3[Template: Security]
+ *     Detect -->|Cloud Sec| T4[Template: Cloud Security]
+ *     Detect -->|DevOps| T5[Template: DevOps]
+ *     Detect -->|Infra| T6[Template: Infra]
+ *     
+ *     T1 & T2 & T3 & T4 & T5 & T6 --> Match[getMatchedSkills]
+ *     Match --> Build[buildKoreanCoverLetter]
+ *     Build --> Output([Cover Letter])
+ *     
+ *     Detect -->|AI Mode| AI{ANTHROPIC_API_KEY?}
+ *     AI -->|Yes| Prompt[buildAIPrompt]
+ *     Prompt --> Claude[analyzeWithClaude]
+ *     Claude --> AIBuild[buildAICoverLetter]
+ *     AIBuild --> Output
+ *     AI -->|No| Build
+ * ```
+ */
+
 import { analyzeWithClaude } from '../matching/ai-matcher.js';
 
 const COVER_LETTER_STYLE_PROMPTS = {
