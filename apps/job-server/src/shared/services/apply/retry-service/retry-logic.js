@@ -1,11 +1,3 @@
-export function nowMs() {
-  return Date.now();
-}
-
-export function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 export function isRetryableError(error, retryConfig) {
   const retryableSet = new Set(retryConfig.retryableErrors);
   const code = error?.code ?? error?.cause?.code;
