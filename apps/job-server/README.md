@@ -3,9 +3,30 @@
 MCP server for job platform automation across Wanted, JobKorea, Saramin,
 LinkedIn, and related workflows.
 
-## Overview
+## Architecture
 
-- MCP server with 14 tools registered via handlers/tools.js
+```
+┌─────────────────────────────────────────┐
+│           MCP Tool Handlers             │
+│  (19 tools: search, apply, resume...)   │
+└─────────────────┬───────────────────────┘
+                     │ calls
+                     ▼
+┌─────────────────────────────────────────┐
+│         Domain Services (22)            │
+│  matching · apply · session · resume   │
+│  auth · analytics · notifications...    │
+└─────────────────┬───────────────────────┘
+                     │ uses
+                     ▼
+┌─────────────────────────────────────────┐
+│           Client Adapters               │
+│  Wanted API · JobKorea · Playwright    │
+│  Elasticsearch · Telegram · n8n         │
+└─────────────────────────────────────────┘
+```
+
+- MCP server with 19 tools registered via handlers/tools.js
 - Covers search, auth, resume sync, profile sync, and automation helpers
 - Uses the job automation runtime in `src/`
 
