@@ -173,16 +173,6 @@ sequenceDiagram
 
     Client->>Client: Parse JSON<br/>Render UI
 
-    style Client fill:#e1f5ff
-    style Fetch fill:#fff3e0
-    style Logger fill:#ffe0b2
-    style CORS fill:#ffe0b2
-    style RateLimit fill:#ffe0b2
-    style Auth fill:#ffe0b2
-    style Handler fill:#f3e5f5
-    style Service fill:#f3e5f5
-    style Database fill:#e8f5e9
-    style Response fill:#ffe0b2
 ```
 
 ### Key Points
