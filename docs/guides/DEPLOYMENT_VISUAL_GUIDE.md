@@ -292,6 +292,27 @@
 
 ---
 
+## 🔄 CI/CD 배포 파이프라인 (CI/CD Deployment Pipeline)
+
+```mermaid
+flowchart LR
+    Push["GitHub Push to master"] --> CI
+    subgraph CI ["CI Pipeline"]
+        direction LR
+        SS["🔒 secret-scan"] --> Lint
+        SS --> TC
+        SS --> TJ
+        SS --> TN
+        SS --> VD
+        Lint["⚡ lint"] && TC["📝 typecheck"] && TJ["🧪 test-jest"] && TN["🧪 test-node"] && VD["✅ validate-data"] --> Result{"Pass?"}
+    end
+    Result -->|Yes + master| CF["☁️ Cloudflare Workers Builds<br/>(authoritative)"]
+    Result -->|No| Fail["❌ CI Failed"]
+    CF --> Worker["📦 portfolio worker.js"]
+    CF --> Docker["🐳 job-server<br/>(Docker + MCP)"]
+    Worker --> Live["🌐 resume.jclee.me"]
+```
+
 ## 🔍 검증 체크리스트 (Verification Checklist)
 
 ### 7단계 자동 검증

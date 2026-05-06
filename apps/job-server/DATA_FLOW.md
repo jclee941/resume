@@ -10,6 +10,27 @@ External APIs
 
 ---
 
+**n8n Scheduler Integration**: The job automation pipeline is triggered bi-daily at 09:00 and 21:00 KST by n8n workflows. The n8n scheduler makes an HTTP POST request to the job-server webhook endpoint, initiating a cascade of operations: crawling job listings from multiple platforms, scoring and filtering candidates, generating personalized cover letters, and submitting applications. Results are persisted to D1 database and notifications dispatched via Telegram.
+
+```mermaid
+sequenceDiagram
+    participant n8n as n8n Scheduler
+    participant js as job-server (MCP)
+    participant wp as Wanted/JobKorea
+    participant d1 as D1 Database
+    participant tg as Telegram Bot
+    
+    n8n->>js: POST /webhook/job-search-apply
+    js->>wp: Crawl job listings (Playwright)
+    wp-->>js: Job data + requirements
+    js->>js: Score & filter jobs
+    js->>js: Generate cover letter
+    js->>wp: Submit application
+    wp-->>js: Application confirmation
+    js->>d1: Store application record
+    js->>tg: Send completion notification
+```
+
 ## High-Level Architecture
 
 ```text
