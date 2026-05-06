@@ -63,3 +63,7 @@ docs/
 - This file intentionally covers the docs tree at the domain level; avoid adding
   another child layer under `docs/guides/` unless guide-specific governance
   becomes materially distinct.
+
+---
+
+Parent: [../AGENTS.md](../AGENTS.md)

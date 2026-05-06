@@ -1,5 +1,9 @@
 # DATABASE INFRASTRUCTURE KNOWLEDGE BASE
 
+**Generated:** 2026-05-06
+**Commit:** `HEAD`
+**Branch:** `master`
+
 **Scope:** Supabase database migrations, seeds, and configuration  
 **Purpose:** Database schema versioning and seed data
 
@@ -54,3 +58,7 @@ infrastructure/database/
 - Supabase CLI manages migrations: `supabase db push`
 - Local development uses `supabase start`
 - Production migrations run via CI/CD pipeline
+
+---
+
+Parent: [../../AGENTS.md](../../AGENTS.md)

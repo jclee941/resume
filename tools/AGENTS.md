@@ -46,3 +46,7 @@ tools/
 - Never run scripts from subdirectories.
 - Never skip `affected.go` in CI.
 - Never deploy manually — CI/CD only.
+
+---
+
+Parent: [../AGENTS.md](../AGENTS.md)

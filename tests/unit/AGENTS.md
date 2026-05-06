@@ -36,3 +36,7 @@ unit/
 - Do not hit real third-party services in unit tests.
 - Do not couple tests to unstable generated output formatting.
 - Do not mute failures with broad skips; isolate and fix root causes.
+
+---
+
+Parent: [../../AGENTS.md](../../AGENTS.md)

@@ -66,3 +66,7 @@ terminal animations.**
 - Never use `describe.skip` — use runtime `test.skip`.
 - Never add arbitrary `sleep()` — use event-based waits.
 - Never use brittle CSS selectors — use semantic locators.
+
+---
+
+Parent: [../AGENTS.md](../AGENTS.md)

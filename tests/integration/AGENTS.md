@@ -32,3 +32,7 @@ integration/
 - Do not rely on non-deterministic remote state.
 - Do not hide flaky behavior with unconditional retries.
 - Do not weaken failure-path checks when adding happy-path coverage.
+
+---
+
+Parent: [../../AGENTS.md](../../AGENTS.md)

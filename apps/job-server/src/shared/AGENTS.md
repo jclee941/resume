@@ -40,3 +40,7 @@ shared/
 - No leaky abstractions, clients don't expose transport details.
 - No direct DB access from services, use client adapters.
 - No circular dependencies between services.
+
+---
+
+Parent: [../../../../AGENTS.md](../../../../AGENTS.md)

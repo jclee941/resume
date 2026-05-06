@@ -57,3 +57,7 @@ infrastructure/n8n/
   provider/UI labels where operators need click-by-click accuracy.
 - Some docs still describe older deploy patterns; verify ownership against
   current root docs and workflow files before expanding them.
+
+---
+
+Parent: [../../AGENTS.md](../../AGENTS.md)

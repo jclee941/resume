@@ -38,3 +38,7 @@ scripts/
 ## ANTI-PATTERNS
 
 - Never use absolute paths.
+
+---
+
+Parent: [../../AGENTS.md](../../AGENTS.md)

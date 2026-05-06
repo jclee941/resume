@@ -41,3 +41,7 @@ a dedicated child AGENTS for scoring/AI details.
 - Never use raw fetch/sqlite — go through clients.
 - Never create circular dependencies between services.
 - Tools are thin wrappers — logic lives here.
+
+---
+
+Parent: [../../../../../AGENTS.md](../../../../../AGENTS.md)

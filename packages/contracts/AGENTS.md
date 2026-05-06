@@ -1,5 +1,9 @@
 # CONTRACTS PACKAGE KNOWLEDGE BASE
 
+**Generated:** 2026-05-06
+**Commit:** `HEAD`
+**Branch:** `master`
+
 **Package:** `@resume/contracts`
 **Type:** Cross-app API + binding contracts
 
@@ -37,3 +41,7 @@ packages/contracts/
 
 - Never edit `openapi.yaml` in two places — this is the only writable copy.
 - Never define a binding type without also adding it to `@resume/types/env`.
+
+---
+
+Parent: [../../AGENTS.md](../../AGENTS.md)

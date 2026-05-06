@@ -42,3 +42,7 @@ handlers/
 - Do not bypass auth/rate-limit assumptions enforced by middleware.
 - Do not duplicate common response/error formatting across files.
 - Do not log tokens, cookies, or sensitive payload fields.
+
+---
+
+Parent: [../../../../AGENTS.md](../../../../AGENTS.md)

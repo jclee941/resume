@@ -37,3 +37,7 @@ client/
 - Never import one client from another.
 - Never expose transport details to services.
 - Never use singletons — use factory pattern.
+
+---
+
+Parent: [../../../../../AGENTS.md](../../../../../AGENTS.md)

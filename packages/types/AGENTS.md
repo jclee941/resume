@@ -1,5 +1,9 @@
 # TYPES PACKAGE KNOWLEDGE BASE
 
+**Generated:** 2026-05-06
+**Commit:** `HEAD`
+**Branch:** `master`
+
 **Package:** `@resume/types`
 **Type:** Pure TypeScript type definitions (zero runtime deps)
 
@@ -52,3 +56,7 @@ packages/types/
 
 - A future migration to true `.d.ts` files is straightforward — every typedef
   has a 1:1 `.d.ts` translation. Tracked in SSOT plan as part of D-4.
+
+---
+
+Parent: [../../AGENTS.md](../../AGENTS.md)

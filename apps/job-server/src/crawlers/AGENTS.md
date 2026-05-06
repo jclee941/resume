@@ -43,3 +43,7 @@ crawlers/
 - Never use fixed UA strings.
 - Never aggressive polling — always jitter.
 - Never hardcode selectors — use semantic locators.
+
+---
+
+Parent: [../../../../AGENTS.md](../../../../AGENTS.md)

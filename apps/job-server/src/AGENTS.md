@@ -52,3 +52,7 @@ src/
 - Never use naked Puppeteer — stealth plugins required.
 - Never commit cookies or session files.
 - Never import `lib/` wrappers — they are deleted/deprecated.
+
+---
+
+Parent: [../../../AGENTS.md](../../../AGENTS.md)

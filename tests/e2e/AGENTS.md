@@ -42,3 +42,7 @@ accessibility, and deployment verification paths.
 - E2E runtime behavior is sensitive to animations and async widget loading; keep
   assertions phase-aware.
 - Update snapshots intentionally with review when UI semantics change.
+
+---
+
+Parent: [../../AGENTS.md](../../AGENTS.md)

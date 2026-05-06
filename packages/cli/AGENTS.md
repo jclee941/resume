@@ -32,3 +32,7 @@ cli/
 - Never store secrets in CLI code.
 - Never bypass verification steps.
 - Never hardcode URLs — use env vars.
+
+---
+
+Parent: [../../AGENTS.md](../../AGENTS.md)

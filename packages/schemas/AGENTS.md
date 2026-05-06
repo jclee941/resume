@@ -1,5 +1,9 @@
 # SCHEMAS PACKAGE KNOWLEDGE BASE
 
+**Generated:** 2026-05-06
+**Commit:** `HEAD`
+**Branch:** `master`
+
 **Package:** `@resume/schemas`
 **Type:** Runtime validation (Zod)
 
@@ -41,3 +45,7 @@ packages/schemas/
   data through internal functions.
 - Never silently `.safeParse()` and ignore errors — log them or propagate.
 - Never re-define types in consumer code — import from here.
+
+---
+
+Parent: [../../AGENTS.md](../../AGENTS.md)

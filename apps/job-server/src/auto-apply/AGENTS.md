@@ -36,3 +36,7 @@ auto-apply/
 - Never skip rate limiting.
 - Never bypass matching score gates.
 - Never submit without valid session cookies.
+
+---
+
+Parent: [../../../../AGENTS.md](../../../../AGENTS.md)

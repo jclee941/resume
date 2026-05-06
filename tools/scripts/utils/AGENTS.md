@@ -32,3 +32,7 @@ resume data sync/validation, and supporting review/generation tasks.
 - Do not hardcode environment-specific absolute paths.
 - Do not hide partial failures behind success exit codes.
 - Do not couple unrelated utility concerns into a single script.
+
+---
+
+Parent: [../../../AGENTS.md](../../../AGENTS.md)

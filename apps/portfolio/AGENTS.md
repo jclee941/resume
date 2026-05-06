@@ -90,3 +90,7 @@ Hardcoded content in `index.html`/`index-en.html` must match SSoT
 - About section: career highlights (quantified achievements), current focus
 - Hero subtitle, neofetch command, terminal `whoami`/`cat about.txt` responses
 - After edits: `npm run sync:data && npm run build` to regenerate `worker.js`
+
+---
+
+Parent: [../../AGENTS.md](../../AGENTS.md)
