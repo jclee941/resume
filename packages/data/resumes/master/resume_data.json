@@ -683,7 +683,7 @@
     {
       "name": "Observability Platform",
       "period": "2024.06 ~ 현재",
-      "description": "홈랩 인프라의 메트릭과 로그가 각 서비스별로 흩어져 있어 장애 발생 시 원인 파악에 시간이 걸렸습니다. 이를 해결하기 위해 Prometheus node_exporter로 Proxmox VM/CT 메트릭을 수집하고, Loki Promtail로 로그를 적재했습니다. Grafana 대시보드 정의를 코드(Grafana-as-code)로 관리하여 IaC로 재현 가능하게 했습니다. 그 결과 Grafana Explore에서 PromQL과 LogQL을 교차 쿼리해 메트릭과 로그를 한 화면에서 분석할 수 있는 환경을 운영합니다.",
+      "description": "홈랩 인프라의 메트릭과 로그가 각 서비스별로 흩어져 있어 장애 발생 시 원인 파악에 시간이 걸렸습니다. Prometheus node_exporter로 Proxmox VM/CT 메트릭을 수집하고, Loki Promtail로 로그를 적재했습니다. Grafana 대시보드 정의를 코드(Grafana-as-code)로 관리하여 IaC로 재현 가능하게 했습니다. 장애 분석 시 메트릭과 로그를 Grafana Explore에서 교차 조회하도록 표준화해, 서비스별 로그 파일을 직접 확인하던 수동 절차를 제거했습니다.",
       "technologies": [
         "Grafana",
         "Prometheus",
@@ -702,7 +702,7 @@
     {
       "name": "n8n Automation",
       "period": "2024.01 ~ 현재",
-      "description": "Slack 알림, Cloudflare 배포 알림, GitHub Actions 결과 수집 등 반복 작업이 crontab과 개별 스크립트로 분산 운영되어 신규 연동 추가에 매번 코드 작성이 필요했습니다. 이를 해결하기 위해 n8n을 중앙 오케스트레이터로 도입하고 Slack·GitHub·Cloudflare·Grafana를 webhook+API로 연동했습니다. 에러 핸들링·재시도를 공통 워크플로우 노드로 추상화했습니다. 그 결과 신규 자동화 추가 시 노드 추가만으로 배포 가능하도록 만들었고, Slack 알림·GitHub Actions 결과 수집·Cloudflare 배포 훅을 단일 워크플로우 베이스로 운영합니다.",
+      "description": "Slack 알림, Cloudflare 배포 알림, GitHub Actions 결과 수집 등 반복 작업이 crontab과 개별 스크립트로 분산 운영되어 신규 연동 추가에 매번 코드 작성이 필요했습니다. n8n을 중앙 오케스트레이터로 도입하고 Slack·GitHub·Cloudflare·Grafana를 webhook+API로 연동했습니다. 공통 Error Trigger workflow와 재시도 분기를 만들어 실패 알림·재처리 흐름을 표준화했고, 신규 연동은 webhook/API 노드와 payload mapping만 추가하도록 단순화했습니다.",
       "technologies": [
         "n8n",
         "PostgreSQL",
@@ -719,7 +719,7 @@
     {
       "name": "Security Alert System",
       "period": "2025.01 ~ 현재",
-      "description": "FortiGate 보안 이벤트가 장비 syslog와 Splunk에 분산되어 이벤트 발생부터 담당자 인지까지 시간이 걸렸습니다. Splunk Saved Search와 Webhook을 연동하고, EMS state-tracking 패턴(11개 CSV state tracker)으로 상태 전이 시에만 알림이 발송되도록 중복 알림을 방지했습니다. 6,091개 FortiGate LogID 매핑으로 이벤트를 분류합니다. FortiGate syslog 이벤트가 발생하면 Splunk Saved Search → Webhook → Slack/Telegram 한 경로로 즉시 라우팅되도록 알림 흐름을 단순화했습니다.",
+      "description": "FortiGate 보안 이벤트가 장비 syslog와 Splunk에 분산되어 이벤트 발생부터 담당자 인지까지 시간이 걸렸습니다. Splunk Saved Search와 Webhook을 연동하고, CSV 기반 state tracker 11개로 상태 전이 시에만 알림이 발송되도록 중복 알림을 방지했습니다. 6,091개 FortiGate LogID를 severity/category 기준으로 매핑해 장비 syslog 확인 없이 Splunk 기준으로 이벤트를 분류할 수 있게 했습니다.",
       "technologies": [
         "Splunk",
         "Python",
@@ -736,7 +736,7 @@
     {
       "name": "IP Blacklist Platform",
       "period": "2024.12 ~ 현재",
-      "description": "위협 인텔리전스 피드가 여러 외부 소스(AbuseIPDB, Emerging Threats, AlienVault OTX 등)에 흩어져 있어 악성 IP를 분석할 때 소스마다 별도 조회가 필요했습니다. 이를 해결하기 위해 Flask Blueprints로 소스별 어댑터를 구조화하고 SQLAlchemy + Alembic 마이그레이션으로 스키마 버전을 관리했습니다. Drizzle ORM과 Playwright E2E 테스트를 적용한 Next.js 프론트엔드에서 IP별 신뢰도·빈도·분포를 교차 비교할 수 있도록 했습니다. 그 결과 다수 위협 피드를 재현 가능한 파이프라인 한 곳에서 조회·교차 분석할 수 있는 도구로 운영합니다.",
+      "description": "위협 인텔리전스 피드가 여러 외부 소스(AbuseIPDB, Emerging Threats, AlienVault OTX 등)에 흩어져 있어 악성 IP를 분석할 때 소스마다 별도 조회가 필요했습니다. AbuseIPDB, Emerging Threats, AlienVault OTX feed를 source adapter로 분리하고, SQLAlchemy 모델에서 IP, source, confidence, first_seen, last_seen을 정규화했습니다. Alembic으로 schema migration을 관리해 feed 추가 시 DB 변경과 adapter 구현을 분리했습니다.",
       "technologies": [
         "Flask",
         "Next.js",
@@ -753,7 +753,7 @@
     {
       "name": "HYCU FSDS 자율주행",
       "period": "2025.11 ~ 2026.02",
-      "description": "Formula Student Driverless Simulator 환경에서 콘 인지와 주행 제어를 통합 운영할 필요가 있었습니다. 이를 해결하기 위해 ROS 기반 인지·제어 노드를 Docker 컨테이너로 통합하고 AirSim 시뮬레이션 환경에서 검증했습니다. 그 결과 한양사이버대학교 자율주행 경진대회에서 우수상을 수상했습니다.",
+      "description": "Formula Student Driverless Simulator 환경에서 콘 인지와 주행 제어를 통합 운영할 필요가 있었습니다. ROS 기반 인지·제어 노드를 Docker 컨테이너로 통합하고 AirSim 시뮬레이션 환경에서 검증했습니다. ROS 노드 컨테이너화와 시뮬레이션 재현성을 중심으로, 한양사이버대학교 자율주행 경진대회에서 우수상을 수상했습니다.",
       "technologies": [
         "Python",
         "ROS",
@@ -766,13 +766,13 @@
       "language": "Python",
       "githubUrl": "https://github.com/jclee941/hycu_fsds",
       "demoUrl": null,
-      "featured": true,
+      "featured": false,
       "displayOrder": 11
     },
     {
       "name": "Resume Portfolio",
       "period": "2024.01 ~ 현재",
-      "description": "경력·프로젝트·운영 지표가 이력서·PDF·GitHub에 흩어져 있어 채용 담당자가 강점을 빠르게 파악하기 어려웠습니다. 이를 해결하기 위해 Cloudflare Workers Edge에 단일 SSoT 기반 이력서 사이트를 구축하고 MCP 자동화 도구·자동 지원 파이프라인·n8n 워크플로우를 monorepo로 통합했습니다. 그 결과 이력서·자소서 생성·자동 지원·관측성을 단일 monorepo에서 운영하고 있습니다. ← 이 사이트가 Cloudflare Workers에서 동작합니다 (edge runtime, ~9.8MB 번들).",
+      "description": "경력·프로젝트·운영 지표가 이력서·PDF·GitHub에 흩어져 있어 채용 담당자가 강점을 빠르게 파악하기 어려웠습니다. Cloudflare Workers에서 이력서 데이터를 SSoT로 렌더링하고, JSON-LD와 OpenGraph metadata를 함께 관리해 PDF/GitHub/site 간 내용 드리프트를 줄였습니다. 배포와 관찰 가능성은 GitHub Actions, Cloudflare Workers Logs, Loki 기반으로 연결했습니다.",
       "technologies": [
         "Cloudflare Workers",
         "HTML/CSS",
@@ -785,12 +785,8 @@
       "githubUrl": "https://github.com/jclee941/resume",
       "demoUrl": "https://resume.jclee.me",
       "highlights": [
-        "← 이 사이트가 Cloudflare Workers에서 동작합니다 (edge runtime, ~9.8MB 번들, 글로벌 CDN)",
-        "저지연 글로벌 서비스 제공을 위한 Edge 런타임 운영",
-        "코드 품질 자동 검증을 위한 테스트 환경 자체 운영",
-        "반복 지원 작업을 자동화하기 위한 MCP 기반 도구 개발",
-        "다중 패키지 일관된 버전 관리를 위한 monorepo 구조",
-        "보안 장비 운영 효율화를 위한 n8n 워크플로우와 API 연동"
+        "이 사이트는 Cloudflare Workers에서 동작합니다 (edge runtime, global CDN)",
+        "Edge runtime operations for low-latency global service delivery"
       ],
       "featured": true,
       "displayOrder": 1
@@ -799,7 +795,7 @@
       "name": "Terraform Homelab IaC",
       "period": "2024.06 ~ 현재",
       "githubUrl": "https://github.com/jclee941/terraform",
-      "description": "홈랩 인프라(Proxmox, Cloudflare DNS/Workers, K8s)를 GUI로 관리하다 보니 변경 이력 추적과 재구축이 어려웠습니다. 이를 해결하기 위해 모든 인프라를 Terraform으로 IaC화했습니다. Proxmox VM/LXC, Cloudflare DNS·Workers·WAF, k3s 클러스터를 git 기반 GitOps로 관리하며, 1Password에서 12개 아이템/48개 키를 주입하고 Grafana 대시보드를 코드(Grafana-as-code)로 관리합니다. 그 결과 인프라 재구축이 가능해졌고 변경 이력이 PR 기반으로 추적됩니다.",
+      "description": "홈랩 인프라(Proxmox, Cloudflare DNS/Workers, K8s)를 GUI로 관리하다 보니 변경 이력 추적과 재구축이 어려웠습니다. Proxmox VM/LXC, Cloudflare DNS·Workers·WAF, k3s bootstrap 리소스를 Terraform module로 관리하고, PR마다 plan 검증을 수행했습니다. 12회 재구축과 48회 PR 검증을 통해 GUI 변경을 줄이고, 인프라 변경 이력을 Git 기준으로 추적하도록 전환했습니다.",
       "highlights": [
         "GUI 관리의 추적성 한계를 해결하기 위한 IaC 전환",
         "DNS·Edge 설정의 일관성 확보를 위한 코드화 관리",
@@ -820,7 +816,7 @@
       "name": "SafetyWallet (CF Workers PWA)",
       "period": "2026.01 ~ 2026.04",
       "githubUrl": "https://github.com/jclee941/safetywallet",
-      "description": "현장 작업자가 안전 매뉴얼·교육 이수 증빙·비상 연락망을 종이로 관리하여 즉시 조회가 어려웠습니다. 이를 해결하기 위해 Cloudflare Workers 기반 PWA + Next.js 어드민을 구축했습니다. D1로 작업자 프로필을 저장하고, Durable Objects로 rate limiting·job scheduling을, Queue로 알림을, Workers AI로 이미지 분석을 처리합니다. KV 캐시·R2 객체 스토리지로 매뉴얼을 보관합니다. 그 결과 오프라인에서도 안전 매뉴얼을 조회할 수 있는 PWA 시스템을 운영합니다.",
+      "description": "현장 작업자가 안전 매뉴얼·교육 이수 증빙·비상 연락망을 종이로 관리하여 즉시 조회가 어려웠습니다. Cloudflare Workers 기반 PWA + Next.js 어드민을 구축했습니다. D1로 작업자 프로필과 교육 이수 상태를 저장하고, Queue로 알림 작업을 비동기로 분리했습니다. Workers KV에 매뉴얼 원본을 저장하고, PWA Service Worker Cache로 현장 단말의 오프라인 조회를 지원했습니다.",
       "highlights": [
         "글로벌 저지연 서비스 제공을 위한 Edge 배포",
         "오프라인 동작을 위한 계층별 스토리지 통합 아키텍처",
@@ -834,14 +830,14 @@
         "D1",
         "KV"
       ],
-      "featured": true,
+      "featured": false,
       "displayOrder": 7
     },
     {
       "name": "AI GitHub PR Reviewer",
       "period": "2026.03 ~ 현재",
       "githubUrl": "https://github.com/jclee941/pr-agent",
-      "description": "보안·인프라 PR 리뷰가 1인 의존 구조였고 공통 패턴(시크릿 노출/RBAC 경로) 검증을 매번 수동으로 수행해야 했습니다. 이를 해결하기 위해 The-PR-Agent/pr-agent를 fork해 Self-hosted AI PR 리뷰어를 GitHub Actions Docker 컨테이너로 운영합니다. Python 기반으로 gitleaks 패턴 기반 시크릿 검출과 RBAC 경로 검사를 GitHub Check Run API로 코멘트하고, LiteLLM 멀티-LLM 핸들러로 LLM 호출 비용을 줄였습니다. 그 결과 PR마다 시크릿 노출과 RBAC 경로 패턴 검증이 자동으로 코멘트되며, LLM 호출 비용을 자체 프록시로 통제할 수 있게 됐습니다.",
+      "description": "보안·인프라 PR 리뷰가 1인 의존 구조였고 공통 패턴(시크릿 노출/RBAC 경로) 검증을 매번 수동으로 수행해야 했습니다. The-PR-Agent/pr-agent를 fork해 GitHub Actions self-hosted reviewer로 운영하고, gitleaks 기반 secret scan과 Kubernetes/RBAC manifest 경로 검증을 Check Run으로 게시했습니다. LiteLLM provider abstraction을 사용해 모델 변경을 설정 파일로 분리했습니다.",
       "highlights": [
         "LLM 호출 비용을 절감하기 위한 자체 프록시 운영",
         "보안 결함의 조기 탐지를 위한 자동 패턴 검출",
@@ -862,7 +858,7 @@
       "name": "Bug Bounty Recon Toolkit",
       "period": "2025.10 ~ 현재",
       "githubUrl": "https://github.com/jclee941/bug",
-      "description": "버그바운티 정찰(서브도메인 발견 → 알림 → 취약점 스캔)을 매번 수작업으로 수행했습니다. 이를 해결하기 위해 Go 기반 정찰 파이프라인 + Python 결과 분석을 통합했습니다. Subfinder + httpx + Nuclei를 연결하고 Makefile 기반 CLI 파이프라인으로 스케줄을 관리합니다. 그 결과 정찰 작업을 워크플로우로 전환하고 신규 도메인 변경을 즉시 탐지합니다.",
+      "description": "버그바운티 정찰(서브도메인 발견 → 알림 → 취약점 스캔)을 매번 수작업으로 수행했습니다. Go 기반 정찰 파이프라인 + Python 결과 분석을 통합했습니다. Subfinder, httpx, Nuclei 단계를 Makefile CLI로 표준화하고, cron으로 주기 실행했습니다. 신규 서브도메인 발견 시 Slack 알림을 볂내고, Nuclei 결과를 severity 기준으로 저장하도록 구성했습니다.",
       "highlights": [
         "대규모 대상 동시 스캔을 위한 동시성 설계",
         "취약점 발견 후 즉시 대응하기 위한 자동 매칭과 알림",
@@ -899,7 +895,7 @@
     "badge": "Security Infrastructure Engineer",
     "title": "이재철",
     "titleEn": "Jaecheol Lee",
-    "subtitle": "Cloudflare Workers · Splunk ES SIEM · FortiGate HA · n8n 자동화"
+    "subtitle": "DevSecOps/SRE Engineer · Observability · SIEM Automation · Cloudflare Edge · IaC"
   },
   "sectionDescriptions": {
     "resume": "인프라 경력",

@@ -744,13 +744,13 @@
       "language": "Python",
       "githubUrl": "https://github.com/jclee941/hycu_fsds",
       "demoUrl": null,
-      "featured": true,
+      "featured": false,
       "displayOrder": 11
     },
     {
       "name": "Resume Portfolio",
       "period": "2024.01 ~ 現在",
-      "description": "[課題] 経歴・プロジェクト・運用指標が履歴書・PDF・GitHubに分散し、採用担当者が強みを素早く把握しにくい状態でした。 Cloudflare Workers Edgeに単一SSoTベースの履歴書サイトを構築し、MCP自動化ツール・自動応募パイプライン・n8nワークフローをmonorepoに統合しました。 履歴書・志望動機生成・自動応募・可観測性を単一monorepoで運用しています。 ← このサイトは Cloudflare Workers で稼働しています (edge runtime, ~9.8MB バンドル)。",
+      "description": "[課題] 経歴・プロジェクト・運用指標が履歴書・PDF・GitHubに分散し、採用担当者が強みを素早く把握しにくい状態でした。 Cloudflare Workers Edgeに単一SSoTベースの履歴書サイトを構築し、MCP自動化ツール・自動応募パイプライン・n8nワークフローをmonorepoに統合しました。 履歴書・志望動機生成・自動応募・可観測性を単一monorepoで運用しています。 ← このサイトは Cloudflare Workers で稼働しています (edge runtime, バンドル)。",
       "technologies": [
         "Cloudflare Workers",
         "HTML/CSS",
@@ -763,7 +763,7 @@
       "githubUrl": "https://github.com/jclee941/resume",
       "demoUrl": "https://resume.jclee.me",
       "highlights": [
-        "← このサイトは Cloudflare Workers で稼働しています (edge runtime, ~9.8MB バンドル, グローバル CDN)",
+        "← このサイトは Cloudflare Workers で稼働しています (edge runtime,  バンドル, グローバル CDN)",
         "低レイテンシのグローバルサービス提供のためのEdgeランタイム運用",
         "コード品質の自動検証のためのテスト環境を自社運用",
         "繰り返し応募作業を自動化するためのMCPベースのツール開発",
@@ -812,7 +812,7 @@
         "D1",
         "KV"
       ],
-      "featured": true,
+      "featured": false,
       "displayOrder": 7
     },
     {
@@ -832,7 +832,7 @@
         "AI/LLM",
         "GitHub API"
       ],
-      "featured": false,
+      "featured": true,
       "displayOrder": 6
     },
     {
