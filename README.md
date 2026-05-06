@@ -32,8 +32,9 @@ Cloudflare Workers 포트폴리오 · 구직 자동화 파이프라인 · 셀프
             ▼                    ▼                    ▼
    ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
    │  Edge Portfolio │  │ Job Automation  │  │ Profile Sync    │
-   │  (CF Workers)   │  │ (MCP + n8n)     │  │ (Wanted/JK CV)  │
-   └─────────────────┘  └─────────────────┘  └─────────────────┘
+   │  (CF Workers)   │  │  (n8n orches.) │  │ (Wanted CV +    │
+   └─────────────────┘  └─────────────────┘  │   Social)       │
+                                               └─────────────────┘
 ```
 
 ## Quick Start
@@ -43,7 +44,70 @@ npm install
 npm run automate:ssot     # sync + build + typecheck + test
 npm run dev               # Miniflare local dev
 npm test                  # Jest + Node native
-```
+
+## Scripts
+
+### Build & Development
+
+| Script | Description |
+| ------ | ----------- |
+| `npm run build` | Generate `worker.js` from HTML templates |
+| `npm run build:portfolio` | Build portfolio worker only |
+| `npm run build:full` | Full build: sync + compile + generate |
+| `npm run dev` | Miniflare local dev server |
+| `npm run dev:wrangler` | Wrangler dev mode |
+
+### Testing
+
+| Script | Description |
+| ------ | ----------- |
+| `npm test` | Jest + Node native tests |
+| `npm run test:jest` | Jest unit/integration tests |
+| `npm run test:node` | Node.js native tests |
+| `npm run test:schemas` | Zod schema validation |
+| `npm run test:e2e` | Playwright E2E tests |
+| `npm run test:e2e:smoke` | Smoke tests (worker-health + deploy) |
+| `npm run test:coverage` | Coverage report |
+
+### Data Sync
+
+| Script | Description |
+| ------ | ----------- |
+| `npm run sync:data` | Sync resume from SSoT |
+| `npm run sync:pptx` | Generate PPTX profiles (Shinhan) |
+| `npm run sync:all` | Both sync operations |
+
+### Validation & Quality
+
+| Script | Description |
+| ------ | ----------- |
+| `npm run lint` | ESLint check |
+| `npm run lint:fix` | ESLint auto-fix |
+| `npm run typecheck` | TypeScript strict mode |
+| `npm run format` | Prettier format |
+| `npm run validate:openapi` | OpenAPI spec validation |
+
+### Security
+
+| Script | Description |
+| ------ | ----------- |
+| `npm run security:audit` | npm audit security scan |
+
+### Docker
+
+| Script | Description |
+| ------ | ----------- |
+| `npm run docker:build:dev` | Build dev Docker image |
+| `npm run docker:run` | Run Docker container |
+| `npm run docker:compose` | Docker Compose up |
+
+### Automation Pipelines
+
+| Script | Description |
+| ------ | ----------- |
+| `npm run automate:ssot` | SSoT sync + build + typecheck + test |
+| `npm run automate:full` | Full CI pipeline (sync + lint + test + build) |
+
 
 ## Structure
 
@@ -51,7 +115,7 @@ npm test                  # Jest + Node native
 resume/
 ├─ apps/
 │  ├─ portfolio/           Edge portfolio · Cloudflare Worker (~409 KB)
-│  ├─ job-server/          MCP Server + 14 tools, hexagonal job-automation runtime
+│  ├─ job-server/          MCP Server + 19 tools, hexagonal job-automation runtime
 │  └─ job-dashboard/       Dashboard API Worker (Service Binding)
 ├─ packages/
 │  ├─ data/                SSoT — resume_data.json (ko / en / ja)
@@ -59,10 +123,11 @@ resume/
 │  ├─ schemas/             Runtime Zod validation
 │  ├─ contracts/           OpenAPI spec + Worker Env interface
 │  ├─ shared/              errors · logger · retry · crypto · rate-limit · auth
+│  ├─ env/                Environment validation + type-safe secrets
 │  └─ cli/                 Deployment CLI
 ├─ infrastructure/
 │  ├─ monitoring/          Grafana · Prometheus · Elasticsearch · Loki
-│  └─ n8n/                 10+ workflow automations
+#QW|│  └─ n8n/                 28 workflow exports (JSON)
 ├─ tools/                  Build · CI · verification (Go + JS)
 ├─ tests/                  Jest unit · integration · Playwright E2E
 └─ docs/                   ADRs · architecture · conventions · guides · security
@@ -93,7 +158,7 @@ nonce, HSTS, multi-locale (`/` ko · `/en` en · `/ja` ja). 빌드된 `worker.js
 
 ### Job Automation Runtime `apps/job-server/`
 
-MCP Server (Fastify) + 16 MCP tools. Hexagonal: services (도메인) ↔ clients (어댑터).
+MCP Server (Fastify) + 19 MCP tools. Hexagonal: services (도메인) ↔ clients (어댑터).
 
 | Module                 | Purpose                                                |
 | ---------------------- | ------------------------------------------------------ |
@@ -210,7 +275,7 @@ git push                 # → CI → 자동 배포
   gitleaks gate + rotation
 - [SSOT Improvement Plan](docs/architecture/SSOT_IMPROVEMENT_PLAN.md) — Epic 0 –
   6 roadmap
-- Root [`AGENTS.md`](AGENTS.md) + 43 domain-specific child files across `apps/`
+#RM|- Root [`AGENTS.md`](AGENTS.md) + 45 domain-specific child files across `apps/`
   · `packages/` · `tests/` · `tools/` · `infrastructure/`
 
 ---
