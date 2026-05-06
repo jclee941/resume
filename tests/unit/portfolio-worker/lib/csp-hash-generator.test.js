@@ -11,7 +11,7 @@ const {
   validateHashFormat,
 } = require('../../../../apps/portfolio/lib/csp-hash-generator');
 
-const { generateHash } = require('../../../../apps/portfolio/lib/utils');
+const { generateHash } = require('../../../../apps/portfolio/lib/content-hashing');
 
 describe('csp-hash-generator', () => {
   describe('extractScriptHashes', () => {

@@ -4,7 +4,7 @@
  * @module csp-hash-generator
  */
 
-const { generateHash } = require('./utils');
+const { generateHash } = require('./content-hashing');
 
 /**
  * Extract inline script tags from HTML and generate SHA-256 hashes

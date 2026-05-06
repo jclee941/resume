@@ -124,9 +124,9 @@ const { scriptHashes, styleHashes } = extractInlineHashes(html);
 
 ---
 
-### utils.js
+### file-operations.js, content-hashing.js, template-sanitizer.js
 
-파일 읽기, 해시 생성 등 범용 유틸리티
+파일 읽기, 해시 생성, 템플릿 검증 등 전문화된 유틸리티
 
 ```javascript
 const { safeReadFile, generateHash, calculateDataHash } = require('./lib/utils');

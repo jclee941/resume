@@ -1,17 +1,11 @@
 /**
- * Unit tests for apps/portfolio/lib/utils.js
+ * Unit tests for apps/portfolio/lib/file-operations, content-hashing, and template-sanitizer
  */
 
 const path = require('path');
-const {
-  safeReadFile,
-  generateHash,
-  calculateDataHash,
-  readAllFiles,
-  safeParseJSON,
-  sanitizeForTemplate,
-  FileOperationError,
-} = require('../../../../apps/portfolio/lib/utils');
+const { safeReadFile, readAllFiles, FileOperationError } = require('../../../../apps/portfolio/lib/file-operations');
+const { generateHash, calculateDataHash } = require('../../../../apps/portfolio/lib/content-hashing');
+const { safeParseJSON, sanitizeForTemplate } = require('../../../../apps/portfolio/lib/template-sanitizer');
 
 describe('Utils Module', () => {
   describe('safeReadFile', () => {
@@ -227,7 +221,7 @@ describe('Utils Module', () => {
   });
 
   describe('escapeHtml', () => {
-    const { escapeHtml } = require('../../../../apps/portfolio/lib/utils');
+    const { escapeHtml } = require('../../../../apps/portfolio/lib/template-sanitizer');
 
     test('should escape < and > characters', () => {
       const result = escapeHtml('<script>alert("xss")</script>');

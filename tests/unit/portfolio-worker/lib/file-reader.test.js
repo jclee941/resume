@@ -11,12 +11,12 @@ jest.mock('esbuild', () => ({
 }));
 
 // Mock utils (readAllFiles is from ./utils in the source)
-jest.mock('../../../../apps/portfolio/lib/utils', () => ({
+jest.mock('../../../../apps/portfolio/lib/file-operations', () => ({
   readAllFiles: jest.fn(),
 }));
 
 const esbuild = require('esbuild');
-const { readAllFiles } = require('../../../../apps/portfolio/lib/utils');
+const { readAllFiles } = require('../../../../apps/portfolio/lib/file-operations');
 const {
   getFilesToRead,
   bundleMainScript,

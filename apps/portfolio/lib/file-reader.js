@@ -6,7 +6,7 @@
 const path = require('path');
 const esbuild = require('esbuild');
 const { ESCAPE_PATTERNS } = require('./config');
-const { readAllFiles } = require('./utils');
+const { readAllFiles } = require('./file-operations');
 
 /**
  * Build configuration for source files loaded by the generator.

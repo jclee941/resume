@@ -3,7 +3,7 @@
  * @module templates
  */
 
-const { generateHash } = require('./utils');
+const { generateHash } = require('./content-hashing');
 const { CSP_NONCE_PLACEHOLDER } = require('./security-headers');
 
 function injectScriptNoncePlaceholder(html, placeholder = CSP_NONCE_PLACEHOLDER) {

@@ -4,7 +4,7 @@ jest.mock('../../../../apps/portfolio/lib/validators', () => ({
   validateData: jest.fn(),
 }));
 
-jest.mock('../../../../apps/portfolio/lib/utils', () => ({
+jest.mock('../../../../apps/portfolio/lib/content-hashing', () => ({
   calculateDataHash: jest.fn(() => 'mock-hash-abc123'),
 }));
 
@@ -22,7 +22,7 @@ jest.mock('../../../../apps/portfolio/lib/cards', () => ({
 
 const { TEMPLATE_CACHE } = require('../../../../apps/portfolio/lib/config');
 const { validateData } = require('../../../../apps/portfolio/lib/validators');
-const { calculateDataHash } = require('../../../../apps/portfolio/lib/utils');
+const { calculateDataHash } = require('../../../../apps/portfolio/lib/content-hashing');
 const cards = require('../../../../apps/portfolio/lib/cards');
 const {
   processProjectData,
