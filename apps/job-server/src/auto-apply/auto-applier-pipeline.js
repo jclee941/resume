@@ -1,3 +1,43 @@
+/**
+ * @fileOverview Auto-apply pipeline: TRACK → SCORE → COVER_LETTER → APPROVAL → SUBMIT.
+ *
+ * ```mermaid
+ * sequenceDiagram
+ *   participant T as n8n/CLI participant P as processJob() participant Tr as ApplicationTracker
+ *   participant CL as CoverLetterService participant A as ApprovalManager participant B as Playwright/CDP participant D as D1 participant N as Telegram
+ *   rect rgb(30,60,90)
+ *     Note over T,P: TRACK+SCORE
+ *     T->>P: processJob(job)
+ *     P->>Tr: startTracking()
+ *     Tr->>D: INSERT application
+ *   end
+ *   rect rgb(40,80,60)
+ *     Note over P,CL: COVER_LETTER (score≥reviewThreshold)
+ *     alt score≥reviewThreshold
+ *       P->>CL: generateForJob()
+ *       CL-->>P: coverLetter
+ *     end
+ *   end
+ *   rect rgb(90,50,40)
+ *     Note over P,A: APPROVAL
+ *     P->>A: shouldApply(job,app)
+ *     alt apply===false
+ *       A-->>P: skip/duplicate/rate-limit
+ *     end
+ *   end
+ *   rect rgb(60,40,80)
+ *     Note over P,N: SUBMIT
+ *     alt Wanted CDP
+ *       P->>B: page.evaluate(fetch→ChaosAPI)
+ *     else JobKorea
+ *       P->>B: click+fill(form)
+ *     end
+ *     B-->>P: submitted
+ *     P->>D: UPDATE status=submitted
+ *     P->>N: sendMessage()
+ *   end
+ * ```
+ */
 export async function processJob(job, context = {}) {
   const score = Number(job.matchScore ?? job.matchPercentage ?? 0);
   const jobId = String(job.id ?? job.job_id ?? `${job.source}:${job.company}:${job.position}`);
