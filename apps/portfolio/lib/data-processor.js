@@ -5,7 +5,7 @@
 
 const { TEMPLATE_CACHE } = require('./config');
 const { validateData } = require('./validators');
-const { calculateDataHash } = require('./utils');
+const { calculateDataHash } = require('./content-hashing');
 const {
   generateResumeCards,
   generateProjectCards,

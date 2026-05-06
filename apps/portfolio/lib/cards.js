@@ -4,7 +4,7 @@
  */
 
 const { TEMPLATE_CACHE } = require('./config');
-const { escapeHtml } = require('./utils');
+const { escapeHtml } = require('./template-sanitizer');
 const logger = require('../logger');
 
 /**
