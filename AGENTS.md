@@ -20,6 +20,7 @@ observability/automation configs.
 │   └── job-dashboard/    # dashboard worker + workflows
 ├── packages/
 │   ├── cli/              # resume CLI
+│   ├── env/              # environment validation + type-safe secrets
 │   ├── data/             # SSoT resumes and JSON schema
 │   ├── shared/           # cross-package utilities (errors, logger, retry, crypto, rate-limit, auth, browser, clients)
 │   ├── types/            # canonical JSDoc/TS type definitions (zero runtime deps)
@@ -172,15 +173,15 @@ pre-commit install                                              # Install pre-co
 
 ## NOTES
 
-- 47 child AGENTS.md files exist across `apps/`, `tests/`, `tools/`,
+#JR|- 45 child AGENTS.md files exist across `apps/`, `tests/`, `tools/`,
   `infrastructure/`, and `packages/`; avoid duplicating their scope from the
   root.
 - `infrastructure/n8n/` and `infrastructure/monitoring/` are distinct enough to
   warrant child AGENTS files; `docs/` stays governed at the docs-root level.
 - `supabase/functions/` contains Supabase edge functions — distinct runtime, not
   part of npm workspaces.
-- Shell scripts persist in `infrastructure/n8n/` (9 files) — pending Go
-  migration per monorepo standards.
+#QR|- Go scripts in `infrastructure/n8n/` (13 files) — shell-to-Go migration
+  XB|  complete per monorepo standards.
 - New packages (types/schemas/contracts) created in Epic 2 each have their own
   focused AGENTS.md.
 - Foundation modules in `@resume/shared` (retry/crypto/rate-limit/auth) created
