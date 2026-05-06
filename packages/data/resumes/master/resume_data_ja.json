@@ -661,7 +661,7 @@
     {
       "name": "Observability Platform",
       "period": "2024.06 ~ 現在",
-      "description": "[問題] ホームラボインフラのメトリクスとログがサービスごとに分散し、障害発生時の原因究明に時間がかかっていました。\n[解決] Prometheus node_exporterでProxmox VM/CTメトリクスを収集し、Loki Promtailでログを取り込み、Grafanaダッシュボード定義をコード（Grafana-as-code）で管理することでIaC再現可能にしました。\n[結果] Grafana ExploreでPromQLとLogQLを交差クエリし、メトリクスとログを単一画面で分析できる環境を運用しています。",
+      "description": "ホームラボインフラのメトリクスとログがサービスごとに分散し、障害発生時の原因究明に時間がかかっていました。 Prometheus node_exporterでProxmox VM/CTメトリクスを収集し、Loki Promtailでログを取り込み、Grafanaダッシュボード定義をコード（Grafana-as-code）で管理することでIaC再現可能にしました。 Grafana ExploreでPromQLとLogQLを交差クエリし、メトリクスとログを単一画面で分析できる環境を運用しています。",
       "technologies": [
         "Grafana",
         "Prometheus",
@@ -680,7 +680,7 @@
     {
       "name": "n8n Automation",
       "period": "2024.01 ~ 現在",
-      "description": "[問題] Slack通知、Cloudflareデプロイ通知、GitHub Actions結果収集など反復作業がcrontabと個別スクリプトに分散し、新規連携追加のたびにコード作成が必要でした。\n[解決] n8nを中央オーケストレーターとして導入し、Slack・GitHub・Cloudflare・Grafanaをwebhook+APIで連携。エラーハンドリングとリトライを共通ワークフローノードに抽象化しました。\n[結果] 新規自動化追加時はノード追加のみで完結する構成にし、Slack通知・GitHub Actions結果収集・Cloudflareデプロイフックを単一ワークフローベースで運用しています。",
+      "description": "Slack通知、Cloudflareデプロイ通知、GitHub Actions結果収集など反復作業がcrontabと個別スクリプトに分散し、新規連携追加のたびにコード作成が必要でした。 n8nを中央オーケストレーターとして導入し、Slack・GitHub・Cloudflare・Grafanaをwebhook+APIで連携。エラーハンドリングとリトライを共通ワークフローノードに抽象化しました。 新規自動化追加時はノード追加のみで完結する構成にし、Slack通知・GitHub Actions結果収集・Cloudflareデプロイフックを単一ワークフローベースで運用しています。",
       "technologies": [
         "n8n",
         "PostgreSQL",
@@ -695,27 +695,9 @@
       "displayOrder": 9
     },
     {
-      "name": "FortiManager API Client (Python)",
-      "period": "2025.01 ~ 現在",
-      "description": "[問題] セキュリティ運用でファイアウォールポリシー確認・ルート照会・ログ統計をFortiManager・FortiAnalyzerコンソールに毎回ログインして手動で処理する必要がありました。\n[解決] FortiManager・FortiAnalyzer JSON-RPC APIをラップするPythonライブラリを設計し、ポリシー照会・ルート管理・ログ統計を共通メソッドに抽象化、ADOMロック・再試行/バックオフ・冪等呼び出しを内蔵しました。\n[結果] コンソール接続なしでスクリプトからポリシー・ルート・ログを照会・変更できるようになり、SOC自動化スクリプトの共通アダプターとして使用しています。",
-      "technologies": [
-        "Python",
-        "FortiManager",
-        "FortiAnalyzer"
-      ],
-      "icon": "🛡️",
-      "tagline": "セキュリティ機器API自動化",
-      "language": "Python",
-      "githubUrl": null,
-      "demoUrl": null,
-      "note": "非公開 — 現職環境のコード(ポートフォリオはhttps://resume.jclee.me のデモ)",
-      "featured": true,
-      "displayOrder": 10
-    },
-    {
       "name": "Security Alert System",
       "period": "2025.01 ~ 現在",
-      "description": "[課題] FortiGateセキュリティイベントが装置syslogとSplunkに分散し、イベント発生から担当者認知までに時間がかかっていました。\n[解決] Splunk Saved SearchとWebhookを連携し、セキュリティイベント発生時にSlack/Telegramへ即時通知する体制を構築しました。\n[結果] セキュリティイベント認知時間を短縮し、担当者応答フローを標準化しました。",
+      "description": "[課題] FortiGateセキュリティイベントが装置syslogとSplunkに分散し、イベント発生から担当者認知までに時間がかかっていました。 Splunk Saved SearchとWebhookを連携し、セキュリティイベント発生時にSlack/Telegramへ即時通知する体制を構築しました。 セキュリティイベント認知時間を短縮し、担当者応答フローを標準化しました。",
       "technologies": [
         "Splunk",
         "Python",
@@ -732,7 +714,7 @@
     {
       "name": "IP Blacklist Platform",
       "period": "2024.12 ~ 現在",
-      "description": "[問題] 脅威インテリジェンスフィードが複数の外部ソース（AbuseIPDB、Emerging Threats、AlienVault OTX等）に分散し、悪性IP分析時にソースごとに個別照会が必要でした。\n[解決] Flask Blueprintsでソース別アダプタを構造化し、SQLAlchemy + Alembicマイグレーションでスキーマバージョンを管理。Next.jsフロントエンドでIPごとの信頼度・頻度・分布を交差比較可能にしました。\n[結果] 複数の脅威フィードを再現可能なパイプラインから一元的に照会・交差分析できるツールとして運用しています。",
+      "description": "脅威インテリジェンスフィードが複数の外部ソース（AbuseIPDB、Emerging Threats、AlienVault OTX等）に分散し、悪性IP分析時にソースごとに個別照会が必要でした。 Flask Blueprintsでソース別アダプタを構造化し、SQLAlchemy + Alembicマイグレーションでスキーマバージョンを管理。Next.jsフロントエンドでIPごとの信頼度・頻度・分布を交差比較可能にしました。 複数の脅威フィードを再現可能なパイプラインから一元的に照会・交差分析できるツールとして運用しています。",
       "technologies": [
         "Flask",
         "Next.js",
@@ -749,7 +731,7 @@
     {
       "name": "HYCU FSDS自律走行",
       "period": "2025.11 ~ 2026.02",
-      "description": "[課題] Formula Student Driverless Simulator環境でコーン認識と走行制御を統合運用する必要がありました。\n[解決] ROSベースの認識・制御ノードをDockerコンテナに統合し、AirSimシミュレーション環境で検証しました。\n[結果] 漢陽サイバー大学校自律走行コンテストに参加しました。",
+      "description": "[課題] Formula Student Driverless Simulator環境でコーン認識と走行制御を統合運用する必要がありました。 ROSベースの認識・制御ノードをDockerコンテナに統合し、AirSimシミュレーション環境で検証しました。 漢陽サイバー大学校自律走行コンテストに参加しました。",
       "technologies": [
         "Python",
         "ROS",
@@ -762,13 +744,13 @@
       "language": "Python",
       "githubUrl": "https://github.com/jclee941/hycu_fsds",
       "demoUrl": null,
-      "featured": false,
+      "featured": true,
       "displayOrder": 11
     },
     {
       "name": "Resume Portfolio",
       "period": "2024.01 ~ 現在",
-      "description": "[課題] 経歴・プロジェクト・運用指標が履歴書・PDF・GitHubに分散し、採用担当者が強みを素早く把握しにくい状態でした。\n[解決] Cloudflare Workers Edgeに単一SSoTベースの履歴書サイトを構築し、MCP自動化ツール・自動応募パイプライン・n8nワークフローをmonorepoに統合しました。\n[結果] 履歴書・志望動機生成・自動応募・可観測性を単一monorepoで運用しています。\n\n← このサイトは Cloudflare Workers で稼働しています (edge runtime, ~390KB バンドル)。",
+      "description": "[課題] 経歴・プロジェクト・運用指標が履歴書・PDF・GitHubに分散し、採用担当者が強みを素早く把握しにくい状態でした。 Cloudflare Workers Edgeに単一SSoTベースの履歴書サイトを構築し、MCP自動化ツール・自動応募パイプライン・n8nワークフローをmonorepoに統合しました。 履歴書・志望動機生成・自動応募・可観測性を単一monorepoで運用しています。 ← このサイトは Cloudflare Workers で稼働しています (edge runtime, ~9.8MB バンドル)。",
       "technologies": [
         "Cloudflare Workers",
         "HTML/CSS",
@@ -781,7 +763,7 @@
       "githubUrl": "https://github.com/jclee941/resume",
       "demoUrl": "https://resume.jclee.me",
       "highlights": [
-        "← このサイトは Cloudflare Workers で稼働しています (edge runtime, ~390KB バンドル, グローバル CDN)",
+        "← このサイトは Cloudflare Workers で稼働しています (edge runtime, ~9.8MB バンドル, グローバル CDN)",
         "低レイテンシのグローバルサービス提供のためのEdgeランタイム運用",
         "コード品質の自動検証のためのテスト環境を自社運用",
         "繰り返し応募作業を自動化するためのMCPベースのツール開発",
@@ -795,7 +777,7 @@
       "name": "Terraform Homelab IaC",
       "period": "2024.06 ~ 現在",
       "githubUrl": "https://github.com/jclee941/terraform",
-      "description": "[課題] ホームラボインフラ(Proxmox、Cloudflare DNS/Workers、K8s)をGUIで管理しており、変更履歴追跡と再構築が困難でした。\n[解決] すべてのインフラをTerraformでIaC化しました。Proxmox VM/LXC、Cloudflare DNS・Workers・WAF、k3sクラスタをgitベースGitOpsで管理します。\n[結果] インフラ再構築が可能になり、変更履歴がPRベースで追跡されます。",
+      "description": "[課題] ホームラボインフラ(Proxmox、Cloudflare DNS/Workers、K8s)をGUIで管理しており、変更履歴追跡と再構築が困難でした。 すべてのインフラをTerraformでIaC化しました。Proxmox VM/LXC、Cloudflare DNS・Workers・WAF、k3sクラスタをgitベースGitOpsで管理します。 インフラ再構築が可能になり、変更履歴がPRベースで追跡されます。",
       "highlights": [
         "GUI管理のトレーサビリティ限界を解決するためのIaC移行",
         "DNS・Edge設定の一貫性確保のためのコード化管理",
@@ -816,7 +798,7 @@
       "name": "SafetyWallet (CF Workers PWA)",
       "period": "2026.01 ~ 2026.04",
       "githubUrl": "https://github.com/jclee941/safetywallet",
-      "description": "[課題] 現場作業者が安全マニュアル・教育修了証憑・緊急連絡網を紙で管理しており、即時参照が困難でした。\n[解決] Cloudflare Workers基盤のPWA + Next.js管理画面を構築しました。D1で作業者プロフィールを保存し、KVキャッシュ・R2オブジェクトストレージでマニュアルを保管します。\n[結果] オフラインでも安全マニュアルを参照できるPWAシステムを運用しています。",
+      "description": "[課題] 現場作業者が安全マニュアル・教育修了証憑・緊急連絡網を紙で管理しており、即時参照が困難でした。 Cloudflare Workers基盤のPWA + Next.js管理画面を構築しました。D1で作業者プロフィールを保存し、KVキャッシュ・R2オブジェクトストレージでマニュアルを保管します。 オフラインでも安全マニュアルを参照できるPWAシステムを運用しています。",
       "highlights": [
         "グローバル低レイテンシサービス提供のためのEdgeデプロイ",
         "オフライン動作のための階層別ストレージ統合アーキテクチャ",
@@ -830,14 +812,14 @@
         "D1",
         "KV"
       ],
-      "featured": false,
+      "featured": true,
       "displayOrder": 7
     },
     {
       "name": "AI GitHub PR Reviewer",
       "period": "2026.03 ~ 現在",
       "githubUrl": "https://github.com/jclee941/pr-agent",
-      "description": "[問題] セキュリティ・インフラPRレビューが1人依存で、共通パターン（シークレット露出/RBACパス）の検証を毎回手動で行う必要がありました。\n[解決] Self-hosted AI PRレビューアをCloudflare Workersで運用しています。gitleaksパターンベースのシークレット検出とRBACパス検査をGitHub Check Run APIでコメントし、CLIProxyAPIプロキシでLLM呼び出しコストを削減しています。\n[結果] PRごとにシークレット露出とRBACパス検証が自動コメントされ、LLM呼び出しコストを自前プロキシで制御できるようになりました。",
+      "description": "セキュリティ・インフラPRレビューが1人依存で、共通パターン（シークレット露出/RBACパス）の検証を毎回手動で行う必要がありました。 Self-hosted AI PRレビューアをCloudflare Workersで運用しています。gitleaksパターンベースのシークレット検出とRBACパス検査をGitHub Check Run APIでコメントし、CLIProxyAPIプロキシでLLM呼び出しコストを削減しています。 PRごとにシークレット露出とRBACパス検証が自動コメントされ、LLM呼び出しコストを自前プロキシで制御できるようになりました。",
       "highlights": [
         "LLM呼び出しコスト削減のための自社プロキシ運用",
         "セキュリティ欠陥の早期検出のための自動パターン検出",
@@ -857,7 +839,7 @@
       "name": "Bug Bounty Recon Toolkit",
       "period": "2025.10 ~ 現在",
       "githubUrl": "https://github.com/jclee941/bug",
-      "description": "[課題] バグバウンティ偵察(サブドメイン発見→通知→脆弱性スキャン)を毎回手作業で実施していました。\n[解決] Goベース偵察パイプライン+Python結果分析を統合しました。Subfinder + httpx + Nucleiを連結し、n8nで日次スケジュールを管理します。\n[結果] 偵察作業をワークフローに転換し、新規ドメイン変更を即時検出します。",
+      "description": "[課題] バグバウンティ偵察(サブドメイン発見→通知→脆弱性スキャン)を毎回手作業で実施していました。 Goベース偵察パイプライン+Python結果分析を統合しました。Subfinder + httpx + Nucleiを連結し、n8nで日次スケジュールを管理します。 偵察作業をワークフローに転換し、新規ドメイン変更を即時検出します。",
       "highlights": [
         "大規模対象の同時スキャンのための並行性設計",
         "脆弱性発見後の即時対応のための自動マッチングと通知",
