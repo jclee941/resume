@@ -3,7 +3,7 @@ import {
   JOB_CATEGORY_MAPPING,
   DEFAULT_JOB_CATEGORY,
 } from '../../../../scripts/profile-sync/constants.js';
-import { parseDate } from '../../utils.js';
+import { parseDate } from '../../date-parser.js';
 
 import { WANTED_HEADLINE_LIMIT } from './constants.js';
 

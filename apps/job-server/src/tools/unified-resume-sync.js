@@ -11,7 +11,7 @@ import {
   syncToRemember,
   syncToWanted,
 } from './platforms/index.js';
-import { previewChanges } from './utils.js';
+import { previewChanges } from './change-preview.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = join(__dirname, '..', '..', '..', '..');

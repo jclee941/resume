@@ -1,5 +1,5 @@
 import { getTagTypeId } from '../../../../scripts/skill-tag-map.js';
-import { parseDate } from '../../utils.js';
+import { parseDate } from '../../date-parser.js';
 
 import { isStrictSyncEnabled } from './strict-sync.js';
 
