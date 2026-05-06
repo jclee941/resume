@@ -1,6 +1,6 @@
 # ADR 0007: MSA Service Split — Independent Workers for Portfolio and Job Dashboard
 
-- Status: **Superseded by [ADR 0008](0008-single-worker-consolidation.md)**
+- Status: **Superseded by [ADR 0009](0009-single-worker-consolidation.md)**
   (2026-04-30)
 - Date: 2026-03-22
 - Supersedes: [ADR 0006](0006-single-worker-architecture.md)

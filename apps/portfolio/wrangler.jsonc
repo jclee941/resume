@@ -24,7 +24,7 @@
     "binding": "ASSETS"
   },
   // Durable Object class migrations — required when DO classes are first introduced
-  // to a worker. See ADR 0008 (single-worker consolidation).
+  // to a worker. See ADR 0009 (single-worker consolidation).
   "migrations": [
     {
       "tag": "v1",

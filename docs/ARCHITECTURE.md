@@ -68,22 +68,24 @@ follows a layered architecture where `apps/` contains deployables and
                              │
          ┌───────────────────┼───────────────────┐
          │                   │                   │
-         ▼                   ▼                   ▼
-┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
-│   apps/portfolio│  │ apps/job-server │  │ apps/job-dash  │
-│   (CF Worker)   │  │  (Docker/MCP)   │  │  (CF Worker)   │
-│                 │  │                 │  │                 │
-│ resume.jclee.me │  │  Local/Docker   │  │  /job/* routes │
-│  proxies /job/* │  │  MCP+Fastify    │  │ (Svc Binding)  │
-└────────┬────────┘  └────────┬────────┘  └────────┬────────┘
-         │                   │                   │
-         ▼                   ▼                   ▼
-┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
-│   packages/data  │  │  External APIs  │  │    D1: DB       │
-│   (SSoT sync)    │  │  (Wanted,       │  │ (Applications,  │
-│                 │  │   JobKorea)     │  │  job data)      │
-└─────────────────┘  └─────────────────┘  └─────────────────┘
-```
+         JM|         │                   │                   │
+YH|         ▼                   ▼                   ▼
+HV|┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
+XW|│   apps/portfolio│  │ apps/job-server │  │ apps/job-dash   │
+ZQ|│   (CF Worker)   │  │  (Docker/MCP)   │  │  (module)       │
+QK|│                 │  │                 │  │                 │
+XY|│ resume.jclee.me │  │  Local/Docker   │  │  imported into   │
+TH|│  /job/* routes  │  │  MCP+Fastify    │  │  portfolio       │
+QM|│  (internal)     │  │                 │  │                 │
+XT|└────────┬────────┘  └────────┬────────┘  └─────────────────┘
+XQ|         │                   │
+XB|         ▼                   ▼
+KM|┌─────────────────┐  ┌─────────────────┐
+HV|│   packages/data  │  │  External APIs  │
+QS|│   (SSoT sync)    │  │  (Wanted,       │
+WY|│                 │  │   JobKorea)     │
+QB|└─────────────────┘  └─────────────────┘
+WB|```
 
 ## Directory Structure
 
@@ -92,34 +94,43 @@ follows a layered architecture where `apps/` contains deployables and
 ├── apps/
 │   ├── portfolio/              # CF Worker: cyberpunk terminal portfolio
 │   ├── job-server/             # MCP Server + Fastify for job platform automation
-│   └── job-dashboard/          # CF Worker: Job dashboard API (Service Binding)
+MS|│   └── job-dashboard/          # Dashboard API module (imported into portfolio worker)
 ├── packages/
 │   ├── cli/                    # Commander.js CLI for resume operations
+│   ├── env/                    # Environment validation + type-safe secrets
 │   ├── data/                   # SSoT for resume variants (master JSON)
-│   └── shared/                 # @resume/shared: cross-worker utilities (logger, errors, ES client, etc.)
+│   ├── shared/                 # @resume/shared: cross-worker utilities (logger, errors, ES client, etc.)
+│   ├── types/                  # Canonical JSDoc/TS type definitions (zero runtime deps)
+│   ├── schemas/                # Runtime Zod validation schemas
+│   └── contracts/              # OpenAPI spec + Worker Env interface
 ├── infrastructure/
+│   ├── automation/             # n8n workflow automation scripts
 │   ├── cloudflare/             # Terraform (Cloudflare resources)
-│   ├── monitoring/             # Grafana, Loki, Prometheus configs
+│   ├── configs/                # Shared configuration files
 │   ├── database/               # D1 migration scripts
-│   ├── nginx/                  # Reverse proxy configs
-│   └── n8n/                    # Workflow automation
+│   ├── docker/                 # Docker configuration and scripts
+│   ├── mocks/                  # Mock services and test utilities
+│   ├── monitoring/             # Grafana, Loki, Prometheus configs
+│   ├── n8n/                    # Workflow automation
+│   ├── systemd/                # Systemd service configs
+│   └── workflows/              # Workflow automation exports
 ├── tools/
 │   ├── scripts/                # Build, deploy, monitoring, setup, utils
-│   ├── ci/                     # CI helper scripts
-│   └── BUILD.bazel             # Bazel facade
+│   └── ci/                     # CI helper scripts
 ├── tests/
 │   ├── unit/                   # Jest test suites (33 suites, 712 tests)
 │   ├── e2e/                    # Playwright end-to-end tests (24 files)
 │   └── integration/            # Integration tests (3 files)
 ├── docs/                       # Architecture, guides, analysis, reports
-├── ta/                         # Python PPTX analysis scripts (orphaned)
-├── third_party/                # Bazel dependency coordination
+├── ta/                         # Python PPTX analysis scripts
+├── supabase/                   # Supabase edge functions
+├── third_party/                # Vendored external dependencies (npm-managed)
 ├── .github/
-│   ├── workflows/              # 19 CI/CD workflows
+│   ├── workflows/              # 29 CI/CD workflows
 │   └── actions/setup/          # Composite setup action
-├── package.json                # Root workspace config (v1.0.128)
-├── wrangler.jsonc              # Portfolio worker config (Service Binding to job-dashboard)
-├── jsconfig.json               # TypeScript checking config
+├── package.json                # Root workspace config
+├── wrangler.jsonc              # Portfolio worker config
+├── tsconfig.base.json          # TypeScript base checking config
 ├── eslint.config.cjs           # ESLint flat config
 ├── jest.config.cjs             # Jest test config
 ├── playwright.config.js        # Playwright E2E config
@@ -150,27 +161,28 @@ During build, `generate-worker.js` inlines the HTML, CSS, and data into
 
 ### 2. Job Automation Flow
 
-```text
-apps/job-server/ (crawlers, services)
-           │
-           ▼ API calls
-Korean job platforms (Wanted, JobKorea)
-           │
-           ▼ store results
-D1: DB (applications, job cache, sync logs)
-           │
-           ▼ API routes
-apps/job-dashboard/ (dashboard API)
-           │
-           ▼ routed via
-apps/portfolio/entry.js (/job/* routes)
-```
+KM|```text
+XN|apps/job-server/ (crawlers, services)
+           MN|           │
+           WM|           ▼ API calls
+SX|Korean job platforms (Wanted, JobKorea)
+           SM|           │
+           JQ|           ▼ store results
+KK|D1: DB (applications, job cache, sync logs)
+           NZ|           │
+           BM|           ▼
+WB|portfolio worker (imports job-dashboard)
+           HX|           │
+           PR|           ▼ handles internally
+XS|apps/portfolio/entry.js (/job/* routes)
+SQ|```
 
-Job automation runs in the job-server application, which crawls Korean job
-platforms using stealth techniques (UA rotation, jitter, rebrowser-puppeteer).
-Results are stored in the DB D1 database. The dashboard API is served by an
-independent Cloudflare Worker (`job`), proxied from the portfolio worker
-(`resume`) via Service Binding at `/job/*` routes.
+SP|Job automation runs in the job-server application, which crawls Korean job
+WS|platforms using stealth techniques (UA rotation, jitter, rebrowser-puppeteer).
+MN|Results are stored in the DB D1 database. The dashboard API is served by the
+HV|job-dashboard module imported directly into the portfolio worker — no Service
+MM|Binding, no separate deployment. `/job/*` requests route via internal function call.
+VB|
 
 ### 3. CI/CD Flow
 
@@ -206,7 +218,7 @@ health checks.
 worker on push to `master`. GitHub Actions is CI only and never deploys. The
 portfolio worker imports the job-dashboard worker module in-process (no Service
 Binding) and routes `/job/*` requests via `jobWorker.fetch(request, env, ctx)`.
-See [ADR 0008](adr/0008-single-worker-consolidation.md) (supersedes ADR 0007).
+See [ADR 0009](adr/0009-single-worker-consolidation.md) (supersedes ADR 0007).
 
 ## Storage Bindings
 
@@ -225,7 +237,7 @@ See [ADR 0008](adr/0008-single-worker-consolidation.md) (supersedes ADR 0007).
 | ------------------------------ | --------------------- | ------- | ------------------------------------ |
 | `@resume/portfolio-worker`     | `apps/portfolio/`     | App     | CF Worker: cyberpunk portfolio       |
 | `@resume/job-automation`       | `apps/job-server/`    | App     | MCP Server + Fastify (ESM)           |
-| `@resume/job-dashboard-worker` | `apps/job-dashboard/` | App     | Independent CF Worker: dashboard API |
+ST|| `@resume/job-dashboard-worker` | `apps/job-dashboard/` | Module   | Dashboard API module (imported into portfolio worker)
 | `@resume/shared`               | `packages/shared/`    | Package | Cross-worker shared kernel           |
 | `@resume/cli`                  | `packages/cli/`       | Package | Commander.js CLI (ESM)               |
 | `@resume/data`                 | `packages/data/`      | Package | Resume data SSoT                     |
@@ -266,7 +278,7 @@ round-trip. The merged `resume` worker registers all 7 Workflow classes and the
 to `master` updates the entire system. Shared concerns (Elasticsearch client,
 Logger, error types, user-agent parsing, phone formatting, job categories,
 browser automation, Wanted API client) live in `@resume/shared`. See [ADR
-0008](adr/0008-single-worker-consolidation.md) for the full architecture
+0009](adr/0009-single-worker-consolidation.md) for the full architecture
 rationale (supersedes ADR 0007).
 
 ### Stealth Crawling
