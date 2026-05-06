@@ -53,15 +53,9 @@ function generateWebData(source) {
         'Centralized scattered automation tasks (alerts, deployments, data collection) into n8n so new integrations can be added without writing code.',
       tagline: 'Workflow Automation',
     },
-    'FortiNet API Client': {
-      title: 'Fortinet API Client',
-      description:
-        'Python library wrapping FortiManager and FortiAnalyzer REST APIs to remove repetitive console operations from daily security ops.',
-      tagline: 'Security Device API Automation',
-    },
     'Security Alert System': {
       description:
-        'Connected Splunk Saved Search webhooks to Slack/Telegram so security event detection delivers immediate notifications instead of waiting on console review.',
+        'FortiGate security events were scattered across device syslog and Splunk, causing delays from event occurrence to responder awareness. Integrated Splunk Saved Search with Webhooks and implemented EMS state-tracking pattern (11 CSV state trackers) to prevent duplicate alerts by sending notifications only on state transitions. Classifies events with 6,091 FortiGate LogID mappings. When FortiGate syslog events occur, alerts are immediately routed through Splunk Saved Search → Webhook → Slack/Telegram in a single path.',
       tagline: 'Security Alert Automation',
     },
     'IP Blacklist Platform': {

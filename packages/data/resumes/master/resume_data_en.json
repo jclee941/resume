@@ -663,7 +663,7 @@
     {
       "name": "Observability Platform",
       "period": "2024.06 ~ Present",
-      "description": "[Problem] Homelab infrastructure metrics and logs were scattered per-service, slowing root-cause analysis during incidents.\n[Solution] Scraped Proxmox VM/CT metrics via Prometheus node_exporter, ingested logs via Loki Promtail, and managed Grafana dashboard definitions as code (Grafana-as-code) for IaC-reproducible deployment.\n[Result] PromQL + LogQL cross-queries in Grafana Explore unify metrics and logs in a single analysis surface.",
+      "description": "Homelab infrastructure metrics and logs were scattered per-service, slowing root-cause analysis during incidents. Scraped Proxmox VM/CT metrics via Prometheus node_exporter, ingested logs via Loki Promtail, and managed Grafana dashboard definitions as code (Grafana-as-code) for IaC-reproducible deployment. PromQL + LogQL cross-queries in Grafana Explore unify metrics and logs in a single analysis surface.",
       "technologies": [
         "Grafana",
         "Prometheus",
@@ -682,7 +682,7 @@
     {
       "name": "n8n Automation",
       "period": "2024.01 ~ Present",
-      "description": "[Problem] Repetitive operations — Slack notifications, Cloudflare deploy alerts, GitHub Actions result collection — were scattered across crontab and ad-hoc scripts, requiring code changes for every new integration.\n[Solution] Onboarded n8n as central orchestrator wiring Slack, GitHub, Cloudflare, and Grafana via webhook+API, abstracting error handling and retry into shared workflow nodes.\n[Result] New automations deploy by adding nodes, not writing scripts; Slack alerts, GitHub Actions collection, and Cloudflare deploy hooks all run on the same workflow base.",
+      "description": "Repetitive operations — Slack notifications, Cloudflare deploy alerts, GitHub Actions result collection — were scattered across crontab and ad-hoc scripts, requiring code changes for every new integration. Onboarded n8n as central orchestrator wiring Slack, GitHub, Cloudflare, and Grafana via webhook+API, abstracting error handling and retry into shared workflow nodes. New automations deploy by adding nodes, not writing scripts; Slack alerts, GitHub Actions collection, and Cloudflare deploy hooks all run on the same workflow base.",
       "technologies": [
         "n8n",
         "PostgreSQL",
@@ -697,27 +697,9 @@
       "displayOrder": 9
     },
     {
-      "name": "FortiManager API Client (Python)",
-      "period": "2025.01 ~ Present",
-      "description": "[Problem] Security operations required manually accessing FortiManager and FortiAnalyzer consoles every time for firewall policy lookups, route inspection, and log statistics.\n[Solution] Designed a Python library wrapping FortiManager and FortiAnalyzer JSON-RPC APIs that abstracts policy lookup, route management, and log statistics behind common methods, with built-in ADOM locking, retry/backoff, and idempotent calls.\n[Result] Policies, routes, and logs can now be queried and modified via scripts without console access, and the library is used as the shared adapter across SOC automation scripts.",
-      "technologies": [
-        "Python",
-        "FortiManager",
-        "FortiAnalyzer"
-      ],
-      "icon": "🛡️",
-      "tagline": "Security Equipment API Automation",
-      "language": "Python",
-      "githubUrl": null,
-      "demoUrl": null,
-      "note": "Private — production code (portfolio at https://resume.jclee.me as demo)",
-      "featured": true,
-      "displayOrder": 10
-    },
-    {
       "name": "Security Alert System",
       "period": "2025.01 ~ Present",
-      "description": "[Problem] FortiGate security events were scattered across device syslog and Splunk, delaying the time from event occurrence to operator awareness.\n[Solution] Connected Splunk Saved Search webhooks to Slack/Telegram so security events are immediately notified upon detection.\n[Result] Reduced security event awareness time and standardized operator response flow.",
+      "description": "FortiGate security events were scattered across device syslog and Splunk, delaying the time from event occurrence to operator awareness. Connected Splunk Saved Search webhooks to Slack/Telegram so security events are immediately notified upon detection. Reduced security event awareness time and standardized operator response flow.",
       "technologies": [
         "Splunk",
         "Python",
@@ -734,7 +716,7 @@
     {
       "name": "IP Blacklist Platform",
       "period": "2024.12 ~ Present",
-      "description": "[Problem] Threat intelligence feeds were scattered across external sources (AbuseIPDB, Emerging Threats, AlienVault OTX, etc.), requiring separate lookups per source when analyzing malicious IPs.\n[Solution] Structured per-source adapters via Flask Blueprints, managed schema versions via SQLAlchemy + Alembic migrations, and built a Next.js frontend for cross-comparing IP reputation, frequency, and distribution.\n[Result] Multiple threat feeds queryable and cross-analyzable from a reproducible pipeline.",
+      "description": "Threat intelligence feeds were scattered across external sources (AbuseIPDB, Emerging Threats, AlienVault OTX, etc.), requiring separate lookups per source when analyzing malicious IPs. Structured per-source adapters via Flask Blueprints, managed schema versions via SQLAlchemy + Alembic migrations, and built a Next.js frontend for cross-comparing IP reputation, frequency, and distribution. Multiple threat feeds queryable and cross-analyzable from a reproducible pipeline.",
       "technologies": [
         "Flask",
         "Next.js",
@@ -751,7 +733,7 @@
     {
       "name": "HYCU FSDS Autonomous Driving",
       "period": "2025.11 ~ 2026.02",
-      "description": "[Problem] Needed integrated cone perception and driving control in the Formula Student Driverless Simulator environment.\n[Solution] Integrated ROS-based perception/control nodes into Docker containers and validated them in the AirSim simulation environment.\n[Result] Participated in the Hanyang Cyber University Autonomous Driving Competition.",
+      "description": "Needed integrated cone perception and driving control in the Formula Student Driverless Simulator environment. Integrated ROS-based perception/control nodes into Docker containers and validated them in the AirSim simulation environment. Participated in the Hanyang Cyber University Autonomous Driving Competition.",
       "technologies": [
         "Python",
         "ROS",
@@ -764,13 +746,13 @@
       "language": "Python",
       "githubUrl": "https://github.com/jclee941/hycu_fsds",
       "demoUrl": null,
-      "featured": false,
+      "featured": true,
       "displayOrder": 11
     },
     {
       "name": "Resume Portfolio",
       "period": "2024.01 ~ Present",
-      "description": "[Problem] Career, projects, and operational metrics were scattered across resumes, PDFs, and GitHub, making it hard for hiring teams to quickly grasp strengths.\n[Solution] Built a single-SSoT resume site on Cloudflare Workers Edge and integrated MCP automation tools, an auto-apply pipeline, and n8n workflows into a monorepo.\n[Result] Operates resume rendering, cover-letter generation, auto-apply, and observability from a single monorepo.\n\n← this site runs on Cloudflare Workers (edge runtime, ~390KB bundle).",
+      "description": "Career, projects, and operational metrics were scattered across resumes, PDFs, and GitHub, making it hard for hiring teams to quickly grasp strengths. Built a single-SSoT resume site on Cloudflare Workers Edge and integrated MCP automation tools, an auto-apply pipeline, and n8n workflows into a monorepo. Operates resume rendering, cover-letter generation, auto-apply, and observability from a single monorepo. ← this site runs on Cloudflare Workers (edge runtime, ~9.8MB bundle).",
       "technologies": [
         "Cloudflare Workers",
         "HTML/CSS",
@@ -783,7 +765,7 @@
       "githubUrl": "https://github.com/jclee941/resume",
       "demoUrl": "https://resume.jclee.me",
       "highlights": [
-        "← this site runs on Cloudflare Workers (edge runtime, ~390KB bundle, global CDN)",
+        "← this site runs on Cloudflare Workers (edge runtime, ~9.8MB bundle, global CDN)",
         "Edge runtime operations for low-latency global service delivery",
         "Self-operated test environment for automated code-quality verification",
         "MCP-based tools to automate repetitive job-application work",
@@ -797,7 +779,7 @@
       "name": "Terraform Homelab IaC",
       "period": "2024.06 ~ Present",
       "githubUrl": "https://github.com/jclee941/terraform",
-      "description": "[Problem] Managing homelab infrastructure (Proxmox, Cloudflare DNS/Workers, K8s) via GUI made change history tracking and reconstruction difficult.\n[Solution] Codified all infrastructure with Terraform. Proxmox VM/LXC, Cloudflare DNS/Workers/WAF, and k3s clusters are managed via git-based GitOps.\n[Result] Infrastructure can now be rebuilt and changes are tracked via PRs.",
+      "description": "Managing homelab infrastructure (Proxmox, Cloudflare DNS/Workers, K8s) via GUI made change history tracking and reconstruction difficult. Codified all infrastructure with Terraform. Proxmox VM/LXC, Cloudflare DNS/Workers/WAF, and k3s clusters are managed via git-based GitOps. Infrastructure can now be rebuilt and changes are tracked via PRs.",
       "highlights": [
         "Migrated to IaC to address GUI-management traceability limits",
         "Code-driven management for DNS/Edge configuration consistency",
@@ -818,7 +800,7 @@
       "name": "SafetyWallet (CF Workers PWA)",
       "period": "2026.01 ~ 2026.04",
       "githubUrl": "https://github.com/jclee941/safetywallet",
-      "description": "[Problem] On-site workers managed safety manuals, training certificates, and emergency contacts on paper, making instant lookup difficult.\n[Solution] Built a Cloudflare Workers-based PWA with a Next.js admin. D1 stores worker profiles; KV cache and R2 object storage host the manuals.\n[Result] Operates a PWA system where safety manuals can be looked up offline.",
+      "description": "On-site workers managed safety manuals, training certificates, and emergency contacts on paper, making instant lookup difficult. Built a Cloudflare Workers-based PWA with a Next.js admin. D1 stores worker profiles; KV cache and R2 object storage host the manuals. Operates a PWA system where safety manuals can be looked up offline.",
       "highlights": [
         "Edge deployment for global low-latency service delivery",
         "Layered storage architecture supporting offline operation",
@@ -832,14 +814,14 @@
         "D1",
         "KV"
       ],
-      "featured": false,
+      "featured": true,
       "displayOrder": 7
     },
     {
       "name": "AI GitHub PR Reviewer",
       "period": "2026.03 ~ Present",
       "githubUrl": "https://github.com/jclee941/pr-agent",
-      "description": "[Problem] Security and infra PR reviews were single-person dependent, with shared patterns (secret leaks, RBAC paths) verified manually every time.\n[Solution] Run a self-hosted AI PR reviewer on Cloudflare Workers: gitleaks-pattern secret detection and RBAC path checks posted via GitHub Check Run API, with CLIProxyAPI proxy reducing LLM call cost.\n[Result] Every PR receives automated comments for secret-exposure and RBAC patterns, and LLM cost is controlled through the self-hosted proxy.",
+      "description": "Security and infra PR reviews were single-person dependent, with shared patterns (secret leaks, RBAC paths) verified manually every time. Run a self-hosted AI PR reviewer on Cloudflare Workers: gitleaks-pattern secret detection and RBAC path checks posted via GitHub Check Run API, with CLIProxyAPI proxy reducing LLM call cost. Every PR receives automated comments for secret-exposure and RBAC patterns, and LLM cost is controlled through the self-hosted proxy.",
       "highlights": [
         "Self-operated proxy to reduce LLM invocation cost",
         "Auto pattern detection for early security-defect identification",
@@ -859,7 +841,7 @@
       "name": "Bug Bounty Recon Toolkit",
       "period": "2025.10 ~ Present",
       "githubUrl": "https://github.com/jclee941/bug",
-      "description": "[Problem] Bug-bounty reconnaissance (subdomain discovery → notification → vulnerability scan) was performed manually each time.\n[Solution] Integrated a Go-based recon pipeline with Python result analysis. Subfinder + httpx + Nuclei are chained, and n8n manages the daily schedule.\n[Result] Converted reconnaissance into a workflow and detects new domain changes immediately.",
+      "description": "Bug-bounty reconnaissance (subdomain discovery → notification → vulnerability scan) was performed manually each time. Integrated a Go-based recon pipeline with Python result analysis. Subfinder + httpx + Nuclei are chained, and n8n manages the daily schedule. Converted reconnaissance into a workflow and detects new domain changes immediately.",
       "highlights": [
         "Concurrency design for large-scale parallel scanning",
         "Auto matching + notification for immediate response after vulnerability detection",
