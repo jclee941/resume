@@ -200,3 +200,8 @@ Active improvement plan: `docs/architecture/SSOT_IMPROVEMENT_PLAN.md`
 | Epic 4 | Domain SSOT consolidation                                                                     | Foundation modules created in @resume/shared. App-local migration is per-domain follow-up PRs.                        |
 | Epic 5 | Documentation SSOT                                                                            | Completed. .gitlab-legacy/ removed, rules/ moved to docs/conventions/, root binaries deleted.                         |
 | Epic 6 | File-size hygiene                                                                             | Pending. Splits of 9544L applications.js + 10963L auto-apply.js are large enough to warrant their own PR series.      |
+
+#AY|- Never include concrete performance metrics (percentages, ratios, or absolute numbers) in
+#QH|  portfolio/resume text. Describe outcomes factually without quantified claims (e.g., say
+#WR|  "automated manual workflows to reduce operational burden" instead of "80% reduction").
+#ER|  Be conservative—state only what is verifiable.
