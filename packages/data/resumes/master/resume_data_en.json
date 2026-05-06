@@ -746,13 +746,13 @@
       "language": "Python",
       "githubUrl": "https://github.com/jclee941/hycu_fsds",
       "demoUrl": null,
-      "featured": true,
+      "featured": false,
       "displayOrder": 11
     },
     {
       "name": "Resume Portfolio",
       "period": "2024.01 ~ Present",
-      "description": "Career, projects, and operational metrics were scattered across resumes, PDFs, and GitHub, making it hard for hiring teams to quickly grasp strengths. Built a single-SSoT resume site on Cloudflare Workers Edge and integrated MCP automation tools, an auto-apply pipeline, and n8n workflows into a monorepo. Operates resume rendering, cover-letter generation, auto-apply, and observability from a single monorepo. ← this site runs on Cloudflare Workers (edge runtime, ~9.8MB bundle).",
+      "description": "Career, projects, and operational metrics were scattered across resumes, PDFs, and GitHub, making it hard for hiring teams to quickly grasp strengths. Built a single-SSoT resume site on Cloudflare Workers Edge and integrated MCP automation tools, an auto-apply pipeline, and n8n workflows into a monorepo. Operates resume rendering, cover-letter generation, auto-apply, and observability from a single monorepo. ← this site runs on Cloudflare Workers (edge runtime, global CDN).",
       "technologies": [
         "Cloudflare Workers",
         "HTML/CSS",
@@ -765,7 +765,7 @@
       "githubUrl": "https://github.com/jclee941/resume",
       "demoUrl": "https://resume.jclee.me",
       "highlights": [
-        "← this site runs on Cloudflare Workers (edge runtime, ~9.8MB bundle, global CDN)",
+        "← this site runs on Cloudflare Workers (edge runtime, global CDN)",
         "Edge runtime operations for low-latency global service delivery",
         "Self-operated test environment for automated code-quality verification",
         "MCP-based tools to automate repetitive job-application work",
@@ -814,7 +814,7 @@
         "D1",
         "KV"
       ],
-      "featured": true,
+      "featured": false,
       "displayOrder": 7
     },
     {
@@ -834,7 +834,7 @@
         "AI/LLM",
         "GitHub API"
       ],
-      "featured": false,
+      "featured": true,
       "displayOrder": 6
     },
     {
