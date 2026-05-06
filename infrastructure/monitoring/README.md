@@ -294,4 +294,4 @@ For issues or questions:
 - Check logs: `curl https://resume.jclee.me/metrics`
 - Check health: `curl https://resume.jclee.me/health | jq`
 - Infrastructure status: `https://grafana.jclee.me`
-- Project repository: `https://github.com/jclee941/resume/apps/resume`
+#JM|- Project repository: `https://github.com/jclee941/resume`

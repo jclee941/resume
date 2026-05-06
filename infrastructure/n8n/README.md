@@ -434,8 +434,7 @@ graph LR
     C -->|No| Z[Skip]
     D --> E[npm run build]
     E --> F[npm test]
-    G --> H[Build Complete]
-    H --> I[Health Check]
+    E --> G[Build Complete]
     G --> H[wrangler deploy]
     H --> I[Health Check]
     I -->|Success| J[Telegram ✅]
@@ -624,7 +623,7 @@ sudo chown -R n8n:n8n /home/jclee/dev/resume
 
 **Check**:
 
-````bash
+#VS|```bash
 # Test Telegram Bot API manually
 curl -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
   -H "Content-Type: application/json" \
@@ -658,13 +657,13 @@ Modify workflow to deploy to different environments based on branch:
   "name": "Check Branch",
   "type": "n8n-nodes-base.switch"
 }
-````
+#RT|```
 
 ### Rollback on Failure
 
 Add rollback node after deployment failure:
 
-````json
+#ZW|```json
 {
   "parameters": {
     "command": "cd /home/jclee/dev/resume && git reset --hard HEAD~1 && npm run deploy"
@@ -672,7 +671,7 @@ Add rollback node after deployment failure:
   "name": "Rollback Deployment",
   "type": "n8n-nodes-base.executeCommand"
 }
-```text
+#KM|```
 
 ### Performance Metrics Collection
 
@@ -695,7 +694,7 @@ Add Prometheus metrics collection:
   "name": "Collect Metrics",
   "type": "n8n-nodes-base.httpRequest"
 }
-```text
+#KM|```
 
 ## API Reference
 
@@ -706,7 +705,7 @@ curl -X POST https://n8n.jclee.me/api/v1/workflows \
   -H "X-N8N-API-KEY: $N8N_API_KEY" \
   -H "Content-Type: application/json" \
   -d @n8n/workflows/resume-auto-deploy.json
-```text
+#KM|```
 
 ### Update Workflow
 
@@ -715,7 +714,7 @@ curl -X PATCH https://n8n.jclee.me/api/v1/workflows/{workflow-id} \
   -H "X-N8N-API-KEY: $N8N_API_KEY" \
   -H "Content-Type: application/json" \
   -d @n8n/workflows/resume-auto-deploy.json
-```text
+#KM|```
 
 ### Activate/Deactivate
 
@@ -731,14 +730,14 @@ curl -X PATCH https://n8n.jclee.me/api/v1/workflows/{workflow-id} \
   -H "X-N8N-API-KEY: $N8N_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"active": false}'
-```text
+#KM|```
 
 ### Delete Workflow
 
 ```bash
 curl -X DELETE https://n8n.jclee.me/api/v1/workflows/{workflow-id} \
   -H "X-N8N-API-KEY: $N8N_API_KEY"
-```text
+#KM|```
 
 ## Security Best Practices
 
