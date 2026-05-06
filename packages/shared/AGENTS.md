@@ -1,5 +1,9 @@
 # SHARED PACKAGE KNOWLEDGE BASE
 
+**Generated:** 2026-05-06
+**Commit:** `HEAD`
+**Branch:** `master`
+
 **Package:** `@resume/shared`  
 **Type:** Cross-package utilities  
 **Scope:** Shared clients, services, and utilities used across apps
@@ -63,3 +67,7 @@ packages/shared/
 - This package has no `AGENTS.md` child files; all guidance lives here
 - Changes require version bump and workspace reinstall
 - Test coverage enforced at 90% threshold
+
+---
+
+Parent: [../../AGENTS.md](../../AGENTS.md)

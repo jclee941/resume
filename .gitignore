@@ -11,6 +11,7 @@ pnpm-lock.yaml
 # Build outputs
 dist/
 build/
+!tools/scripts/build/AGENTS.md
 *.tsbuildinfo
 
 # Generated files — portfolio worker bundle and propagated SSoT snapshots

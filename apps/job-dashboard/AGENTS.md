@@ -96,3 +96,7 @@ Health (3), Stats (4), Auth (7), Applications CRUD (6), Webhooks (9), Auto-apply
 - Never log credentials or session tokens.
 - Never set KV without TTL.
 - Never bypass CSRF for state-changing operations.
+
+---
+
+Parent: [../../AGENTS.md](../../AGENTS.md)

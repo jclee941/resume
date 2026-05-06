@@ -24,3 +24,7 @@ compact + full variants.
 ## ANTI-PATTERNS
 
 - Never edit PDFs directly — edit markdown, regenerate.
+
+---
+
+Parent: [../../../../../AGENTS.md](../../../../../AGENTS.md)

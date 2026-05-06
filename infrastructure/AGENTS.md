@@ -42,3 +42,7 @@ infrastructure/
 - Never apply Terraform locally against production.
 - Never manage worker code via Terraform.
 - Never hardcode resource IDs — use variables.
+
+---
+
+Parent: [../AGENTS.md](../AGENTS.md)

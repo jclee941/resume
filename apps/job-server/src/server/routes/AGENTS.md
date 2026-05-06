@@ -33,3 +33,7 @@ resume, search, stats, sync, webhooks.
 - Never instantiate services in route handlers.
 - Never put business logic in routes — delegate to services.
 - Never bypass authentication without `config.public = true`.
+
+---
+
+Parent: [../../../../../AGENTS.md](../../../../../AGENTS.md)

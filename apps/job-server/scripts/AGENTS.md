@@ -60,3 +60,7 @@ JobKorea portfolio URL registration uses `AddUserFileDB` API (not form POST):
 
 Pipeline (`job-search-apply-pipeline.js`) runs this automatically at 9am/9pm KST
 via n8n.
+
+---
+
+Parent: [../../../AGENTS.md](../../../AGENTS.md)

@@ -58,3 +58,7 @@ weighting with optional Claude-based analysis and explicit fallback semantics.
   assume calibration.
 - `matchPercentage` aliases `matchScore` in AI batch results for compatibility
   with rule-based flows.
+
+---
+
+Parent: [../../../../../../AGENTS.md](../../../../../../AGENTS.md)

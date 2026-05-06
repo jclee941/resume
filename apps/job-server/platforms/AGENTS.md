@@ -30,3 +30,7 @@ anti-detection requirements.
 - Never use headless-only for Wanted/LinkedIn (detected).
 - Never aggressive scraping — triggers permanent bans.
 - Never share cookies across platforms.
+
+---
+
+Parent: [../../../AGENTS.md](../../../AGENTS.md)

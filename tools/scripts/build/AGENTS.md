@@ -28,3 +28,7 @@ Asset generation scripts for PDF, PPTX, icons, screenshots, and Docker images.
 
 - Never edit generated outputs directly.
 - Never commit generated artifacts to git (use `.gitignore`).
+
+---
+
+Parent: [../../../AGENTS.md](../../../AGENTS.md)

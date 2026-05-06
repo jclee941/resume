@@ -18,3 +18,7 @@ npm-managed dependency coordination.
 
 - Never introduce conflicting dependency versions.
 - Never use GPL-licensed packages in application code.
+
+---
+
+Parent: [../AGENTS.md](../AGENTS.md)

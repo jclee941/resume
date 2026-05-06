@@ -41,3 +41,7 @@ export const {name}Tool = {
 
 - Never put business logic in tool handlers — delegate to services.
 - Never call clients directly from tools — use services.
+
+---
+
+Parent: [../../../../AGENTS.md](../../../../AGENTS.md)

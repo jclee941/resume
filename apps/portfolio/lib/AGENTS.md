@@ -37,3 +37,7 @@
 - No external npm dependencies in lib modules.
 - No worker binding leaks across module boundaries.
 - No mutable module-level state.
+
+---
+
+Parent: [../../../AGENTS.md](../../../AGENTS.md)

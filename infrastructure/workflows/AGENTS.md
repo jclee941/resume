@@ -1,5 +1,9 @@
 # INFRASTRUCTURE WORKFLOWS KNOWLEDGE BASE
 
+**Generated:** 2026-05-06
+**Commit:** `HEAD`
+**Branch:** `master`
+
 **Scope:** Cloudflare Workflows configuration and deployment
 **Purpose:** Event-driven workflow definitions for the resume platform
 
@@ -50,3 +54,7 @@ infrastructure/workflows/
 - Config values injected via `config.json` (gitignored)
 - Workflows deployed via: `wrangler workflows deploy`
 - Integration with `infrastructure/n8n/` for webhook callbacks
+
+---
+
+Parent: [../../AGENTS.md](../../AGENTS.md)

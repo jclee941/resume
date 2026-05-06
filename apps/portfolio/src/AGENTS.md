@@ -43,3 +43,7 @@ src/
 - Never use localStorage theme toggling.
 - Never duplicate design tokens outside `variables.css`.
 - Never edit generated `worker.js` for style changes.
+
+---
+
+Parent: [../../../AGENTS.md](../../../AGENTS.md)

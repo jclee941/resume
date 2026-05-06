@@ -38,3 +38,7 @@ workflows/
 - Do not hide retries with unbounded loops; keep bounded retry semantics.
 - Do not couple workflow steps directly to route handlers.
 - Do not perform destructive operations without explicit guard conditions.
+
+---
+
+Parent: [../../../../AGENTS.md](../../../../AGENTS.md)

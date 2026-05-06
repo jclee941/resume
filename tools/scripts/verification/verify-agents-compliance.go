@@ -18,10 +18,7 @@ var requiredDirs = []string{
 	"apps/job-server/src",
 	"apps/job-server/platforms",
 	"packages/cli",
-	"packages/cli/internal",
 	"infrastructure",
-	"resumes",
-	"scripts",
 	"tests",
 	"docs",
 }

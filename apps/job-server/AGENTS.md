@@ -109,3 +109,7 @@ job-server/
   Node.js broker on port 3456).
 - Large files: notifications.js (1043L), application.js (851L), resume.js (869
   lines), profile-sync.js (966), auth-sync.js (846).
+
+---
+
+Parent: [../../AGENTS.md](../../AGENTS.md)

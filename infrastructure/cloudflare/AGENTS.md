@@ -63,3 +63,7 @@ infrastructure/cloudflare/
   `backend.tf` and the current file layout.
 - This subtree is distinct from general infrastructure because Terraform
   ownership boundaries matter here more than in `monitoring/` or `n8n/`.
+
+---
+
+Parent: [../../AGENTS.md](../../AGENTS.md)

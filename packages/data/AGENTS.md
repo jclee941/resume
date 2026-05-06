@@ -41,3 +41,7 @@ resume_data.json → npm run sync:data → portfolio-worker/data.json
 - Never put loose files outside the resumes/ hierarchy.
 - Never let derived artifacts drift from SSoT.
 - Never use absolute paths in data references.
+
+---
+
+Parent: [../../AGENTS.md](../../AGENTS.md)

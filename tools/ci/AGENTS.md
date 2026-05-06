@@ -25,3 +25,7 @@
 
 - Never skip `affected.go` — causes unnecessary CI work.
 - Never treat CI as deploy authority.
+
+---
+
+Parent: [../../AGENTS.md](../../AGENTS.md)

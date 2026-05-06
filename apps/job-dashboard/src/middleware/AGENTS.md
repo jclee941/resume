@@ -32,3 +32,7 @@ middleware/
 - Do not move domain/business decisions into middleware.
 - Do not introduce broad CORS wildcards without explicit requirement.
 - Do not remove tests when changing rate-limit or CSRF logic.
+
+---
+
+Parent: [../../../../AGENTS.md](../../../../AGENTS.md)

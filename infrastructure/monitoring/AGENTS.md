@@ -58,3 +58,7 @@ infrastructure/monitoring/
   backend responsibility and migration intent.
 - This directory is a good child boundary because alerting, tracing, and logging
   semantics differ from general infrastructure guidance.
+
+---
+
+Parent: [../../AGENTS.md](../../AGENTS.md)

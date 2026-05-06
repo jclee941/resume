@@ -33,3 +33,7 @@ deployment/
 - Do not run deployment steps while required checks are failing.
 - Do not print secrets/tokens in logs.
 - Do not bypass rollback/verification hooks when scripts provide them.
+
+---
+
+Parent: [../../../AGENTS.md](../../../AGENTS.md)

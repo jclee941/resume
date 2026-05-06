@@ -1,5 +1,9 @@
 # APPLICATIONS — INTENTIONALLY INDEPENDENT
 
+**Generated:** 2026-05-06
+**Commit:** `HEAD`
+**Branch:** `master`
+
 **Scope**: `packages/data/resumes/applications/`
 
 **Status**: hand-crafted, **not derived from master SSoT**
@@ -62,3 +66,7 @@ to diverge per role.
 - Audit: `docs/architecture/RESUME_SYNC_AUDIT_2026-04-29.md` Issue C
 - CI job: `.github/workflows/ci.yml` `validate-data`
 - Master SSoT: `packages/data/resumes/master/AGENTS.md` (or root data AGENTS.md)
+
+---
+
+Parent: [../../../../AGENTS.md](../../../../AGENTS.md)
