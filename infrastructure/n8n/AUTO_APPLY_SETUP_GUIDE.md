@@ -92,7 +92,7 @@ export CF_ACCESS_CLIENT_SECRET="..."
 
 ```bash
 cd /home/jclee/dev/resume
-./infrastructure/n8n/activate-auto-apply.sh
+go run infrastructure/n8n/activate-auto-apply.go
 ```
 
 **Option B: Using Go deployment tool**
@@ -369,7 +369,7 @@ export N8N_URL="http://localhost:15678"
 | File                                                 | Purpose                   |
 | ---------------------------------------------------- | ------------------------- |
 | `infrastructure/n8n/job-auto-apply-workflow.json`    | Main workflow definition  |
-| `infrastructure/n8n/activate-auto-apply.sh`          | Deployment script         |
+| `infrastructure/n8n/activate-auto-apply.go`          | Deployment script         |
 | `infrastructure/n8n/deploy-auto-apply.go`            | Go deployment tool        |
 | `apps/job-server/src/auto-apply/`                    | Auto-apply implementation |
 | `apps/job-server/src/shared/services/notifications/` | Telegram adapter          |

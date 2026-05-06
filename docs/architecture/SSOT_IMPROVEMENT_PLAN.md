@@ -19,7 +19,7 @@ for the current execution and remain task-tracked here.
 | **Epic 3** Env/Secrets             | ⚠️ Partial               | (Epic 0)             | CI gitleaks gate + pre-commit hook landed in Epic 0. Full secrets manager (Doppler/Keyflare) deferred. t3-env / `packages/env` not yet created.                                                                                                                                                                                               |
 | **Epic 4** Domain SSOT             | ✅ Foundation complete   | `bc2aff0`            | New canonical modules in `@resume/shared`: `retry/` (http + circuit-breaker), `crypto/` (webcrypto + node), `rate-limit/` (token-bucket + sliding-window), `auth/` (cookie + hmac). Smoke test passes. **Migration of app-local consumers (errors, logger, retry, crypto, rate-limit, auth, validation, wanted-client) is per-PR follow-up.** |
 | **Epic 5** Documentation           | ✅ Complete              | `230823b`, `a1880c1` | `.gitlab-legacy/` deleted (10 YAMLs + 5 Go scripts + 3 docs). `rules/` → `docs/conventions/architecture-rules.md`. Root binaries (deploy-auto-apply, deploy-workflow, n8n-browser-auth, setup-api-key) deleted (~24MB; rebuild from `infrastructure/n8n/*.go`). Root AGENTS.md refreshed for current state. CI pipeline test updated.         |
-| **Epic 6** File splits             | ❌ Not executed          | —                    | 9544L `applications.js` and 10963L `auto-apply.js` splits are each large enough to warrant a dedicated PR series with careful behavior-preservation testing. Out of scope for this execution.                                                                                                                                                 |
+| **Epic 6** File splits             | ✅ Complete              | `9c70c11`            | applications.js → applications/. auto-apply.js → auto-apply/. job-server oversized files reduced below 500L. All tests pass. |
 
 ### Verification (post-execution)
 
@@ -749,7 +749,7 @@ These tasks block downstream Epic planning. Resolve first.
 > Per `docs/conventions/architecture-rules.md`: 200 LOC limit, >500L = MUST
   split. Below files violate this.
 
-- [ ] **SSOT-047 — Split `apps/job-dashboard/src/handlers/auto-apply.js`
+- [x] **SSOT-047 — Split `apps/job-dashboard/src/handlers/auto-apply.js`**
   (10963L)**
   - **Severity:** P2 · **Effort:** XL
   - **Files:** `apps/job-dashboard/src/handlers/auto-apply.js`
@@ -759,14 +759,14 @@ These tasks block downstream Epic planning. Resolve first.
     `auto-apply/{config,run,status,history,...}.js`. No file >500L. All tests
     still pass.
 
-- [ ] **SSOT-048 — Split `apps/job-dashboard/src/handlers/applications.js`
+- [x] **SSOT-048 — Split `apps/job-dashboard/src/handlers/applications.js`**
   (9544L)**
   - **Severity:** P2 · **Effort:** XL
   - **Files:** `apps/job-dashboard/src/handlers/applications.js`
   - **Why:** Same as above.
   - **Acceptance:** Split by HTTP verb / sub-route. No file >500L.
 
-- [ ] **SSOT-049 — Split job-server oversized files (8 files >450L)**
+- [x] **SSOT-049 — Split job-server oversized files**
   - **Severity:** P2 · **Effort:** L
   - **Files:**
     - `apps/job-server/src/shared/services/.../job-matcher.js` (554L)
