@@ -1,6 +1,6 @@
 # Resume Portfolio - Infrastructure Configuration
 
-**Last Updated**: 2025-11-26
+#HP|**Last Updated**: 2026-01-24
 **Project**: Resume Portfolio (<https://resume.jclee.me>)
 **Repository**: <https://github.com/jclee941/resume>
 
@@ -8,9 +8,36 @@
 
 ## Overview
 
-This directory contains all infrastructure configurations, monitoring
-dashboards, alert rules, and automation workflows for the Resume Portfolio
-application.
+PJ|This directory contains all infrastructure configurations, monitoring
+KV|dashboards, alert rules, and automation workflows for the Resume Portfolio
+XN|application.
+
+**Infrastructure Topology**
+
+```mermaid
+graph TB
+    User[User/Browser] --> CF[Cloudflare Edge]
+    CF --> Portfolio[Portfolio Worker]
+    Portfolio --> JobDash[job-dashboard module]
+    
+    subgraph Self-Hosted
+        Proxmox[Proxmox VE]
+        Proxmox --> Grafana[Grafana + Loki]
+        Proxmox --> ES[Elasticsearch]
+        Proxmox --> n8n[n8n Workflows]
+        Proxmox --> Docker[Docker Host]
+    end
+    
+    Docker --> JobServer[job-server MCP]
+    n8n --> JobServer
+    JobServer --> D1[D1 Database]
+    JobServer --> KV[KV Namespaces]
+    JobServer --> Wanted[Wanted API]
+    JobServer --> JK[JobKorea]
+    
+    Portfolio --> D1
+    Portfolio --> KV
+```
 
 **Infrastructure Stack**
 
@@ -18,7 +45,7 @@ application.
 - **Monitoring**: Grafana + Prometheus + Loki (hosted on Proxmox pve3
   (192.168.50.100))
 - **Automation**: n8n workflows (health checks, deployments)
-- **CI/CD**: GitHub Actions + GitHub Actions
+#TX|- **CI/CD**: GitHub Actions → Cloudflare Workers Builds
 
 ---
 
@@ -27,21 +54,35 @@ application.
 ```text
 infrastructure/
 ├── README.md                          # This file
-├── configs/                           # Configuration files
+├── AGENTS.md                         # Infrastructure knowledge base
+├── OWNERS                             # File ownership
+├── automation/                        # systemd service files
+│   └── (service definitions)
+├── cloudflare/                        # Terraform IaC for CF resources
+│   └── (Terraform configs)
+├── configs/                          # Configuration files
 │   └── grafana/
-│       ├── README.md                  # Grafana configuration guide
-│       ├── alert-rules.yaml           # 4 alert rules (error rate, latency, downtime, traffic)
-│       └── resume-portfolio-dashboard.json → ../../monitoring/... (symlink)
-├── monitoring/                        # Monitoring assets (primary)
-│   ├── README.md                      # Comprehensive monitoring guide
-│   └── grafana-dashboard-resume-portfolio.json  # Main dashboard (8 panels)
-├── n8n/                              # n8n workflow definitions
+│       ├── README.md
+│       ├── alert-rules.yaml
+│       └── resume-portfolio-dashboard.json  # symlink → monitoring/
+├── database/                          # D1 migration SQL files
+│   └── (migration files)
+├── docker/                           # Docker configs
+│   └── (Dockerfile, docker-compose)
+├── mocks/                            # Test mocks
+│   └── (mock definitions)
+├── monitoring/                       # Grafana dashboard JSON (primary)
+│   ├── README.md
+│   └── grafana-dashboard-resume-portfolio.json
+├── n8n/                              # n8n workflow exports
 │   ├── resume-healthcheck-workflow.json
 │   ├── resume-healthcheck-oauth2.json
 │   └── workflows/
 │       ├── resume-auto-deploy.json
 │       └── resume-deploy-optimized.json
-└── workflows/                         # Additional automation workflows
+├── systemd/                          # systemd service files
+│   └── (service definitions)
+└── workflows/                        # Additional automation workflows
     ├── 01-site-health-monitor.json
     ├── 02-github-deployment-webhook.json
     ├── 03-weekly-job-report.json
@@ -174,7 +215,7 @@ npm run deploy  # Cloudflare Workers via API
 
 ### 4. Additional Workflows
 
-**Directory**: `workflows/configured/`
+#MV|**Directory**: `workflows/`
 
 | Workflow                            | Purpose                         |
 | ----------------------------------- | ------------------------------- |
@@ -402,7 +443,7 @@ curl https://resume.jclee.me/metrics | grep error
 
 ## Related Documentation
 
-- **Main Documentation**: `../OpenCode.md` (project overview, commands,
+#YM|- **Main Documentation**: `../../AGENTS.md` (project overview, commands,
   architecture)
 - **Monitoring Guide**: `monitoring/README.md` (comprehensive monitoring
   documentation)
@@ -425,7 +466,7 @@ For issues or questions:
 2. **Review Documentation**:
    - This file: `infrastructure/README.md`
    - Monitoring: `infrastructure/monitoring/README.md`
-   - Project: `OpenCode.md`
+   #TH|   - Project: `../../README.md`
 
 3. **Contact**:
    - Email: <qws941@kakao.com>

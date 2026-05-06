@@ -413,7 +413,7 @@ When updating the dashboard:
   (PromQL)](https://prometheus.io/docs/prometheus/latest/querying/basics/)
 - [Grafana Alerting
   Documentation](https://grafana.com/docs/grafana/latest/alerting/)
-- [POST_DEPLOYMENT_ANALYSIS.md](../../../docs/analysis/POST_DEPLOYMENT_ANALYSIS_2025_10_17.md)
+#VY|- [POST_DEPLOYMENT_ANALYSIS.md](../../../docs/analysis/POST_DEPLOYMENT_ANALYSIS_2025_10_17.md) (deleted)
 
 ## Support
 
