@@ -101,6 +101,7 @@
   "careers": [
     {
       "company": "(주)아이티센 CTS",
+      "companyUrl": "https://itcencts.com/",
       "period": "2025.03 ~ 2026.02",
       "duration": "1년",
       "project": "넥스트레이드 매매체결시스템 보안운영SM",
@@ -136,6 +137,7 @@
     },
     {
       "company": "(주)가온누리정보시스템",
+      "companyUrl": "http://www.gaonnuriis.com/",
       "period": "2024.03 ~ 2025.02",
       "duration": "1년",
       "project": "넥스트레이드 매매체결시스템 구축",
@@ -171,6 +173,7 @@
     },
     {
       "company": "(주)콴텍투자일임",
+      "companyUrl": "https://www.quantec.co.kr/",
       "period": "2022.08 ~ 2024.03",
       "duration": "1년 7개월",
       "project": "Quantec AI Trading Platform / FSDC 운영",
@@ -205,6 +208,7 @@
     },
     {
       "company": "(주)조인트리",
+      "companyUrl": "https://www.jointree.co.kr/",
       "period": "2021.09 ~ 2022.04",
       "duration": "8개월",
       "project": "국민대학교 차세대 정보시스템",
@@ -239,6 +243,7 @@
     },
     {
       "company": "(주)메타넷엠플랫폼",
+      "companyUrl": "https://www.meta-m.co.kr/",
       "period": "2019.12 ~ 2021.08",
       "duration": "1년 8개월",
       "project": "컨택센터 인프라",
@@ -271,6 +276,7 @@
     },
     {
       "company": "(주)엠티데이타",
+      "companyUrl": "https://www.mtdata.co.kr/",
       "period": "2017.02 ~ 2018.10",
       "duration": "1년 8개월",
       "project": "한국항공우주산업(KAI)",
@@ -753,7 +759,7 @@
     {
       "name": "HYCU FSDS 자율주행",
       "period": "2025.11 ~ 2026.02",
-      "description": "Formula Student Driverless Simulator 환경에서 콘 인지와 주행 제어를 통합 운영할 필요가 있었습니다. ROS 기반 인지·제어 노드를 Docker 컨테이너로 통합하고 AirSim 시뮬레이션 환경에서 검증했습니다. ROS 노드 컨테이너화와 시뮬레이션 재현성을 중심으로, 한양사이버대학교 자율주행 경진대회에서 우수상을 수상했습니다.",
+      "description": "Formula Student Driverless Simulator (FSDS) 환경에서 콘(Inflation-aware LiDAR Detection)·인지·주행 제어를 단일 런타임에서 통합 운영하는 과제가 있었습니다. ROS2 기반 인지·제어 노드를 Docker 컨테이너로 패키징하고, AirSim 시뮬레이션 환경에서 차량 동역학(vehicle dynamics)과 센서 모델을联合 검증하는 파이프라인을 구축했습니다. 시뮬레이션 재현성과 노드 컨테이너화를 핵심 과제로, Gazebo-ROS 브릿지를 통해 실제 센서 레이턴시(laser_scan → pointcloud 필터 체인)를 재현하고, rviz2 기반 센서 시각화 디버깅 체계를 도입했습니다. 한양사이버대학교 자율주행 경진대회에서 우수상을 수상했습니다.",
       "technologies": [
         "Python",
         "ROS",
@@ -816,7 +822,7 @@
       "name": "SafetyWallet (CF Workers PWA)",
       "period": "2026.01 ~ 2026.04",
       "githubUrl": "https://github.com/jclee941/safetywallet",
-      "description": "현장 작업자가 안전 매뉴얼·교육 이수 증빙·비상 연락망을 종이로 관리하여 즉시 조회가 어려웠습니다. Cloudflare Workers 기반 PWA + Next.js 어드민을 구축했습니다. D1로 작업자 프로필과 교육 이수 상태를 저장하고, Queue로 알림 작업을 비동기로 분리했습니다. Workers KV에 매뉴얼 원본을 저장하고, PWA Service Worker Cache로 현장 단말의 오프라인 조회를 지원했습니다.",
+      "description": "현장 작업자가 안전 매뉴얼·교육 이수 증빙·비상 연락망을 종이로 관리하여 현장에서 즉시 조회가 불가능했고, 관리자가 종이 서류로 증빙을 수기 확인해야 하는 비효율이 있었습니다. Cloudflare Workers 기반 PWA + Next.js 어드민을 구축하여 이 문제를 해결했습니다. D1(SQLite) 데이터베이스에 작업자 프로필·교육 이수 상태·비상 연락처를 저장하고, Workers Queue로 교육 만료 알림과 같은 비동기 작업을 분리하여 요청 지연 시간을 줄였습니다. Workers KV에 매뉴얼 PDF 원본을 저장(Edge 캐시 활용)하고, Service Worker Cache API로 현장 단말의 네트워크 제약 환경에서도 오프라인 조회를 지원했습니다. 어드민 화면은 Next.js + TypeScript로 구축하며, 세션 인증은 JWT(Short-lived access token + HttpOnly refresh token)를 사용하고, 역할 기반 접근 제어(RBAC)로 현장 작업자 vs 관리자 권한을 분리했습니다.",
       "highlights": [
         "글로벌 저지연 서비스 제공을 위한 Edge 배포",
         "오프라인 동작을 위한 계층별 스토리지 통합 아키텍처",
