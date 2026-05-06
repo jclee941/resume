@@ -9,7 +9,8 @@ import { chromium } from 'playwright';
 import fs from 'fs';
 import path from 'path';
 import { CONFIG, PLATFORMS } from './constants.js';
-import { log, computeDiff } from './utils.js';
+import { log } from './sync-logger.js';
+import { computeDiff } from './diff-calculator.js';
 
 /**
  * Base handler for browser-automated platform syncs

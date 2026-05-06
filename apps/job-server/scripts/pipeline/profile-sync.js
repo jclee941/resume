@@ -3,7 +3,7 @@ import { shipToElk } from './logging.js';
 export async function runProfileSync(result, log, summarizeError) {
   try {
     const { CONFIG: syncConfig } = await import('../profile-sync/constants.js');
-    const { loadSSOT: loadProfileSSOT } = await import('../profile-sync/utils.js');
+    const { loadSSOT: loadProfileSSOT } = await import('../profile-sync/ssot-loader.js');
     const { default: JKHandler } = await import('../profile-sync/jobkorea-handler.js');
     syncConfig.APPLY = true;
     syncConfig.DIFF_ONLY = false;

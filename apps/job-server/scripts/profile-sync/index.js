@@ -19,7 +19,8 @@
  */
 
 import { CONFIG } from './constants.js';
-import { log, loadSSOT } from './utils.js';
+import { log } from './sync-logger.js';
+import { loadSSOT } from './ssot-loader.js';
 import WantedHandler from './wanted-handler.js';
 import JobKoreaHandler from './jobkorea-handler.js';
 import SaraminHandler from './saramin-handler.js';

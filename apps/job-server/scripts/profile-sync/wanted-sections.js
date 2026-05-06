@@ -1,6 +1,8 @@
 import { CONFIG, JOB_CATEGORY_MAPPING, DEFAULT_JOB_CATEGORY } from './constants.js';
 import { WANTED_ABOUT_LIMIT } from '../../src/tools/platforms/wanted-sync-operations.js';
-import { log, parsePeriod, normalizePhone } from './utils.js';
+import { log } from './sync-logger.js';
+import { normalizePhone } from '@resume/shared/phone';
+import { parsePeriod } from './period-parser.js';
 import { normalizeCompanyName } from '@resume/shared/normalize';
 
 

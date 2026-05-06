@@ -6,7 +6,7 @@
  * data URL, and asks a vision LLM to read the alphanumeric characters.
  */
 
-import { log } from '../utils.js';
+import { log } from '../sync-logger.js';
 
 const CLIPROXY_BASE = process.env.CLIPROXY_BASE || 'https://cliproxy.jclee.me/v1';
 const CLIPROXY_KEY = process.env.CLIPROXY_API_KEY;
