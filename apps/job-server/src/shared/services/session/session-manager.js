@@ -1,19 +1,13 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
 import { dirname, join } from 'path';
 import { getResumeBasePath } from '../../utils/paths.js';
+import {
+  SUPPORTED_SESSION_PLATFORMS,
+  getSessionTtlMs,
+} from './session-constants.js';
 
 const SHARED_DATA_DIR = getResumeBasePath();
 const SESSION_FILE = join(SHARED_DATA_DIR, 'sessions.json');
-
-const DEFAULT_TTL_MS = 24 * 60 * 60 * 1000;
-const PLATFORM_TTL_MS = {
-  jobkorea: 30 * 24 * 60 * 60 * 1000,
-  wanted: 24 * 60 * 60 * 1000,
-  saramin: 7 * 24 * 60 * 60 * 1000,
-  linkedin: 7 * 24 * 60 * 60 * 1000,
-  remember: 30 * 24 * 60 * 60 * 1000,
-};
-const PLATFORMS = ['wanted', 'saramin', 'jobkorea', 'remember', 'linkedin'];
 
 const ensureDir = (filePath) => {
   const dir = dirname(filePath);
@@ -22,6 +16,17 @@ const ensureDir = (filePath) => {
   }
 };
 
+/**
+ * SessionManager — file-based session persistence.
+ *
+ * Implements the {@link SessionStore} port contract:
+ * - load(platform)  → object|null
+ * - save(platform, session) → boolean
+ * - clear(platform) → boolean
+ *
+ * Used directly by crawlers, auth tools, and the auto-apply system.
+ * The session broker accesses this via the SessionStore port for renewal.
+ */
 export class SessionManager {
   static logger = console;
 
@@ -31,7 +36,7 @@ export class SessionManager {
         const allSessions = JSON.parse(readFileSync(SESSION_FILE, 'utf-8'));
         if (platform) {
           const session = allSessions[platform];
-          const platformTtl = PLATFORM_TTL_MS[platform] || DEFAULT_TTL_MS;
+          const platformTtl = getSessionTtlMs(platform);
           if (session && session.timestamp && Date.now() - session.timestamp < platformTtl) {
             return session;
           }
@@ -82,7 +87,7 @@ export class SessionManager {
 
       // Set expiresAt if missing
       if (!normalized.expiresAt) {
-        const ttl = PLATFORM_TTL_MS[platform] || DEFAULT_TTL_MS;
+        const ttl = getSessionTtlMs(platform);
         normalized.expiresAt = new Date(Date.now() + ttl).toISOString();
       }
 
@@ -98,6 +103,7 @@ export class SessionManager {
       return false;
     }
   }
+
   static clear(platform = null) {
     try {
       if (!existsSync(SESSION_FILE)) return true;
@@ -141,9 +147,9 @@ export class SessionManager {
   static getStatus() {
     const sessions = this.load() || {};
 
-    return PLATFORMS.map((p) => {
+    return SUPPORTED_SESSION_PLATFORMS.map((p) => {
       const session = sessions[p];
-      const platformTtl = PLATFORM_TTL_MS[p] || DEFAULT_TTL_MS;
+      const platformTtl = getSessionTtlMs(p);
       const isValid = session && session.timestamp && Date.now() - session.timestamp < platformTtl;
 
       return {
@@ -169,13 +175,13 @@ export class SessionManager {
     if (!session || !session.timestamp) {
       return { valid: false, expiringSoon: false, expiresAt: null, reason: 'no_session' };
     }
-    
+
     // Check timestamp validity
-    const ttl = PLATFORM_TTL_MS[platform] || DEFAULT_TTL_MS;
+    const ttl = getSessionTtlMs(platform);
     const expiresAt = new Date(session.timestamp + ttl);
     const remaining = expiresAt.getTime() - Date.now();
     const timestampValid = remaining > 0;
-    
+
     // Optional: validate session content (cookies, tokens)
     if (validateContent && timestampValid) {
       const contentValidation = this.validateSessionContent(platform, session);
@@ -188,7 +194,7 @@ export class SessionManager {
         };
       }
     }
-    
+
     return {
       valid: timestampValid,
       expiringSoon: timestampValid && remaining < thresholdMs,
@@ -206,26 +212,33 @@ export class SessionManager {
     // Check for empty or invalid cookie values
     if (session.cookieString) {
       // Parse cookie string and check for empty critical values
-      const cookies = session.cookieString.split(';').map(c => c.trim());
-      
+      const cookies = session.cookieString.split(';').map((c) => c.trim());
+
       for (const cookie of cookies) {
         const [name, ...valueParts] = cookie.split('=');
         const value = valueParts.join('=').trim();
-        
+
         // Check for empty values in critical auth cookies
-        if (name && value === '' && ['UID', 'User', 'session', 'token'].some(critical => 
-          name.toLowerCase().includes(critical.toLowerCase()))) {
+        if (
+          name &&
+          value === '' &&
+          ['UID', 'User', 'session', 'token'].some((critical) =>
+            name.toLowerCase().includes(critical.toLowerCase())
+          )
+        ) {
           return { valid: false, reason: `empty_${name}` };
         }
       }
     }
-    
+
     // Platform-specific validations
     if (platform === 'jobkorea' && session.cookies) {
       // Check for JobKorea specific cookies
-      const userCookie = session.cookies.find(c => c.name === 'User');
-      const cUserCookie = session.cookies.find(c => c.name === 'C%5FUSER' || c.name === 'C_USER');
-      
+      const userCookie = session.cookies.find((c) => c.name === 'User');
+      const cUserCookie = session.cookies.find(
+        (c) => c.name === 'C%5FUSER' || c.name === 'C_USER'
+      );
+
       if (userCookie) {
         const decodedValue = decodeURIComponent(userCookie.value);
         if (decodedValue.includes('UID=&') || decodedValue.includes('UID=')) {
@@ -235,7 +248,7 @@ export class SessionManager {
           }
         }
       }
-      
+
       if (cUserCookie) {
         const decodedValue = decodeURIComponent(cUserCookie.value);
         if (decodedValue.includes('UID=&') || decodedValue === 'UID=') {
@@ -243,20 +256,20 @@ export class SessionManager {
         }
       }
     }
-    
+
     if (platform === 'wanted') {
       // Wanted should have cookieString or cookies
       if (!session.cookieString && !session.cookies) {
         return { valid: false, reason: 'no_wanted_cookies' };
       }
-      
+
       // Check for token in cookie string
       if (session.cookieString && !session.cookieString.includes('ONEID')) {
         // Not necessarily invalid, but might be using old auth method
         console.warn('[SessionManager] Wanted session missing ONEID token');
       }
     }
-    
+
     return { valid: true, reason: null };
   }
 
@@ -290,6 +303,7 @@ export class SessionManager {
       return false;
     }
   }
+
   /**
    * Check if session needs renewal (TTL threshold reached)
    * @param {string} platform - Platform name
@@ -301,12 +315,12 @@ export class SessionManager {
     if (!session || !session.timestamp || !session.expiresAt) {
       return true;
     }
-    
+
     const now = Date.now();
     const expiresAt = new Date(session.expiresAt).getTime();
     const totalLifetime = expiresAt - session.timestamp;
     const elapsed = now - session.timestamp;
-    
+
     return elapsed >= totalLifetime * threshold;
   }
 
@@ -317,16 +331,16 @@ export class SessionManager {
    */
   static getSessionStatus(platform) {
     const session = this.load(platform);
-    
+
     if (!session) {
       return { exists: false, valid: false, needsRenewal: true, session: null };
     }
-    
+
     const now = Date.now();
-    const platformTtl = PLATFORM_TTL_MS[platform] || DEFAULT_TTL_MS;
-    const isValid = session.timestamp && (now - session.timestamp < platformTtl);
+    const platformTtl = getSessionTtlMs(platform);
+    const isValid = session.timestamp && now - session.timestamp < platformTtl;
     const needsRenewal = this.isRenewalNeeded(platform);
-    
+
     return {
       exists: true,
       valid: isValid,
@@ -343,7 +357,7 @@ export class SessionManager {
   static getEncryptedSession(platform) {
     const session = this.load(platform);
     if (!session) return null;
-    
+
     try {
       const payload = JSON.stringify({
         platform,
@@ -366,20 +380,18 @@ export class SessionManager {
   static restoreEncryptedSession(platform, encryptedData) {
     try {
       const payload = JSON.parse(Buffer.from(encryptedData, 'base64').toString('utf8'));
-      
+
       if (payload.platform !== platform) {
         SessionManager.logger.error('[SessionManager.restoreEncryptedSession] Platform mismatch');
         return false;
       }
-      
+
       return this.save(platform, payload.session);
     } catch (e) {
       SessionManager.logger.error('[SessionManager.restoreEncryptedSession] Failed:', e.message);
       return false;
     }
   }
-
-
 }
 
 export default SessionManager;
