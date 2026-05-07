@@ -2,12 +2,13 @@
  * Cloudflare Analytics Service
  *
  * Fetches worker analytics from the Cloudflare GraphQL Analytics API.
- * Uses constructor injection for configuration (accountId, apiKey).
+ * Uses constructor injection for configuration (accountId, apiKey) and fetch.
  */
 export class CloudflareAnalyticsService {
-  constructor({ accountId, apiKey }) {
+  constructor({ accountId, apiKey, fetchFn = globalThis.fetch }) {
     this.accountId = accountId;
     this.apiKey = apiKey;
+    this.fetchFn = fetchFn;
     this.endpoint = 'https://api.cloudflare.com/client/v4/graphql';
   }
 
@@ -72,7 +73,7 @@ export class CloudflareAnalyticsService {
     `;
 
     try {
-      const response = await fetch(this.endpoint, {
+      const response = await this.fetchFn(this.endpoint, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${this.apiKey}`,

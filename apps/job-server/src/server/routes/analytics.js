@@ -1,7 +1,5 @@
-import { ApplicationAnalytics } from '../../shared/services/analytics/index.js';
-
 export default async function analyticsRoutes(fastify) {
-  const analytics = new ApplicationAnalytics(fastify.applicationService);
+  const analytics = fastify.applicationAnalytics;
 
   fastify.get('/api/analytics/report', async (_request, _reply) => {
     const report = await analytics.generateReport();
