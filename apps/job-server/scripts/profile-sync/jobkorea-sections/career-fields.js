@@ -49,6 +49,19 @@ export function mapCareersToFormFields(ssot, indices) {
     pushField(fields, `Career[${key}].Prfm_Prt`, String(career?.description || '').slice(0, 500));
     pushField(fields, `Career[${key}].CNameHold`, '0');
     pushField(fields, `Career[${key}].OpenStat`, '1');
+    pushField(fields, `Career[${key}].C_Client`, career?.client || '');
+    pushField(fields, `Career[${key}].C_TeamSize`, String(career?.teamSize || ''));
+    pushField(fields, `Career[${key}].C_MyRole`, career?.myRole || '');
+    pushField(fields, `Career[${key}].C_WorkType`, career?.workType || '');
+    if (Array.isArray(career?.projects)) {
+      career.projects.forEach((project, pIdx) => {
+        const pKey = `p${pIdx + 1}`;
+        pushField(fields, `Career[${key}].Project[${pKey}].P_Name`, project?.name || '');
+        pushField(fields, `Career[${key}].Project[${pKey}].P_Cntnt`, String(project?.description || '').slice(0, 500));
+      });
+    }
+    pushField(fields, `Career[${key}].CNameHold`, '0');
+    pushField(fields, `Career[${key}].OpenStat`, '1');
   });
 
   pushField(fields, 'Career.index', keys.slice(0, careers.length).join(','));

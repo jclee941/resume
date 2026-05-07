@@ -21,7 +21,10 @@ export async function syncSkills(
   remoteSkills,
   injectedLogger = console
 ) {
-  for (const skillName of localSkills) {
+  for (const skill of localSkills) {
+    const skillName = typeof skill === 'object' ? skill.name || '' : skill;
+    const skillLevel = typeof skill === 'object' ? skill.level || '' : '';
+    if (!skillName) continue;
     const skillExists = remoteSkills.some((rs) => rs.name === skillName || rs.text === skillName);
     if (!skillExists) {
       const tagTypeId = getTagTypeId(skillName);
@@ -29,14 +32,18 @@ export async function syncSkills(
         injectedLogger.warn(`[skills] Skipping "${skillName}" - no matching Wanted tag_type_id`);
         continue;
       }
-      await api.resumeSkills.add(resume_id, { tag_type_id: tagTypeId, text: skillName });
+      const payload = { tag_type_id: tagTypeId, text: skillName };
+      if (skillLevel) {
+        payload.level = skillLevel;
+      }
+      await api.resumeSkills.add(resume_id, payload);
     }
   }
 }
 
 export async function syncActivities(api, resume_id, sourceData, remoteActivities) {
   const strictSync = isStrictSyncEnabled();
-  const localActivities = (sourceData.certifications || [])
+  const certActivities = (sourceData.certifications || [])
     .filter((c) => c.date)
     .map((cert) => {
       const acquiredDate = cert.date.split(/\s*\(/)[0];
@@ -45,8 +52,22 @@ export async function syncActivities(api, resume_id, sourceData, remoteActivitie
         description: `${cert.issuer} | ${acquiredDate}`,
         activity_type: 'CERTIFICATE',
         start_time: parseDate(acquiredDate),
+        expirationDate: cert.expirationDate || '',
+        credentialId: cert.credentialId || '',
+        credentialUrl: cert.credentialUrl || '',
+        status: cert.status || '',
+        note: cert.note || '',
       };
     });
+
+  const awardActivities = (sourceData.awards || []).map((award) => ({
+    title: award.name || '',
+    description: `${award.organization || ''} | ${award.year || ''}`,
+    activity_type: 'AWARD',
+    start_time: award.year && /\./.test(award.year) ? parseDate(award.year) : null,
+  }));
+
+  const localActivities = [...certActivities, ...awardActivities];
 
   const matchedActivityIds = new Set();
   for (const activity of localActivities) {
@@ -82,6 +103,7 @@ export async function syncLanguageCerts(api, resume_id, sourceData, remoteLangua
   const localLanguages = (sourceData.languages || []).map((lang) => ({
     language_name: lang.name,
     level: lang.level === 'Native' ? 5 : lang.level === 'Professional working proficiency' ? 4 : 3,
+    note: lang.note || '',
   }));
 
   const matchedLangIds = new Set();

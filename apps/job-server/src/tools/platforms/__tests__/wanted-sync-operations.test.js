@@ -463,3 +463,175 @@ describe('mapToWantedFormat — BUG-W2 headline truncation', () => {
     assert.strictEqual(result.profile.headline.length, WANTED_HEADLINE_LIMIT);
   });
 });
+
+
+// Failing tests for identified Wanted gaps (Plan Agent: fill missing fields)
+describe('Wanted gap — skills level', () => {
+  it('mapToWantedFormat includes skill levels', () => {
+    const result = mapToWantedFormat({
+      skills: {
+        observability: { items: [{ name: 'Prometheus', level: 'Advanced' }] },
+      },
+      careers: [],
+      summary: {},
+    });
+    const skill = result.profile.skills?.find((s) => s.name === 'Prometheus');
+    assert.ok(skill, 'should include Prometheus skill');
+    assert.strictEqual(skill.level, 'Advanced', 'should preserve skill level');
+  });
+});
+
+describe('Wanted gap — certification extra fields', () => {
+  it('syncActivities syncs certification expirationDate, credentialId, credentialUrl, status, note', async () => {
+    const api = createApiMock();
+    const sourceData = {
+      certifications: [
+        {
+          name: 'AWS SAA',
+          issuer: 'AWS',
+          date: '2024.01',
+          expirationDate: '2027.01',
+          credentialId: 'ABC123',
+          credentialUrl: 'https://aws.amazon.com/cert',
+          status: 'active',
+          note: 'Note',
+        },
+      ],
+    };
+    const remoteActivities = [];
+    await syncActivities(api, 'resume-1', sourceData, remoteActivities);
+    const args = getMockArgs(api.resumeActivity.add);
+    assert.strictEqual(args.length, 1);
+    const payload = args[0][1];
+    assert.strictEqual(payload.expirationDate, '2027.01', 'should map expirationDate');
+    assert.strictEqual(payload.credentialId, 'ABC123', 'should map credentialId');
+    assert.strictEqual(payload.credentialUrl, 'https://aws.amazon.com/cert', 'should map credentialUrl');
+    assert.strictEqual(payload.status, 'active', 'should map status');
+    assert.strictEqual(payload.note, 'Note', 'should map note');
+  });
+});
+
+describe('Wanted gap — languages note', () => {
+  it('mapToWantedFormat includes languages with notes', () => {
+    const result = mapToWantedFormat({
+      languages: [{ name: 'English', level: '비즈니스 회화가능', note: 'TOEIC 900' }],
+      careers: [],
+      summary: {},
+    });
+    assert.ok(Array.isArray(result.profile.languages), 'should include languages array');
+    const lang = result.profile.languages.find((l) => l.name === 'English');
+    assert.ok(lang, 'should include English');
+    assert.strictEqual(lang.note, 'TOEIC 900', 'should preserve language note');
+  });
+});
+
+describe('Wanted gap — awards', () => {
+  it('syncActivities syncs awards from SSoT as AWARD activities', async () => {
+    const api = createApiMock();
+    const sourceData = {
+      certifications: [],
+      awards: [{ name: '우수상', organization: '한양사이버대학교', year: '2026' }],
+    };
+    const remoteActivities = [];
+    await syncActivities(api, 'resume-1', sourceData, remoteActivities);
+    const args = getMockArgs(api.resumeActivity.add);
+    assert.ok(args.length > 0, 'should add award activities');
+    const payload = args[0][1];
+    assert.strictEqual(payload.title, '우수상', 'should map award name');
+    assert.strictEqual(payload.activity_type, 'AWARD', 'should set activity type to AWARD');
+  });
+});
+
+describe('Wanted gap — career description fallback', () => {
+  it('syncCareers syncs career description even when no projects exist', async () => {
+    const api = createApiMock();
+    const localCareers = [{ company: { name: 'Wanted Lab' }, job_role: 'SRE' }];
+    const remoteCareers = [
+      { id: 'career-1', company: { name: 'Wanted Lab' }, projects: [] },
+    ];
+    const ssotCareers = [{ description: 'Security operations and automation' }];
+    await syncCareers(api, 'resume-1', localCareers, remoteCareers, ssotCareers);
+    const args = getMockArgs(api.resumeCareer.addProject);
+    assert.ok(args.length > 0, 'should add a fallback project from description');
+    const payload = args[0][2];
+    assert.ok(
+      payload.description.includes('Security operations and automation'),
+      'should include career description'
+    );
+  });
+});
+
+describe('Wanted gap — hope job', () => {
+  it('mapToWantedFormat includes hope locations, roles, salary, and industries', () => {
+    const result = mapToWantedFormat({
+      hope: {
+        locations: ['서울'],
+        roles: ['보안 엔지니어'],
+        salary: '5000만원 이상',
+        industries: ['금융'],
+      },
+      careers: [],
+      summary: {},
+    });
+    assert.ok(result.profile.hope, 'should include hope object');
+    assert.deepStrictEqual(result.profile.hope.locations, ['서울'], 'should map locations');
+    assert.deepStrictEqual(result.profile.hope.roles, ['보안 엔지니어'], 'should map roles');
+    assert.strictEqual(result.profile.hope.salary, '5000만원 이상', 'should map salary');
+    assert.deepStrictEqual(result.profile.hope.industries, ['금융'], 'should map industries');
+  });
+});
+
+describe('Wanted gap — cover letter', () => {
+  it('mapToWantedFormat includes cover letter', () => {
+    const result = mapToWantedFormat({
+      coverLetter: {
+        ko: { headline: 'Headline', paragraphs: ['P1', 'P2'], closing: 'Closing' },
+      },
+      careers: [],
+      summary: {},
+    });
+    assert.ok(result.profile.coverLetter, 'should include coverLetter');
+    assert.strictEqual(result.profile.coverLetter.headline, 'Headline', 'should map headline');
+  });
+});
+
+describe('Wanted gap — GitHub/LinkedIn/portfolio URLs', () => {
+  it('mapToWantedFormat includes GitHub, LinkedIn, and portfolio URLs', () => {
+    const result = mapToWantedFormat({
+      personal: {
+        github: 'https://github.com/jclee941',
+        linkedin: 'https://linkedin.com/in/jclee941',
+        portfolio: 'https://resume.jclee.me',
+      },
+      careers: [],
+      summary: {},
+    });
+    assert.strictEqual(
+      result.profile.githubUrl,
+      'https://github.com/jclee941',
+      'should map github'
+    );
+    assert.strictEqual(
+      result.profile.linkedinUrl,
+      'https://linkedin.com/in/jclee941',
+      'should map linkedin'
+    );
+    assert.strictEqual(
+      result.profile.portfolioUrl,
+      'https://resume.jclee.me',
+      'should map portfolio'
+    );
+  });
+});
+
+describe('Wanted gap — personal fields', () => {
+  it('mapToWantedFormat includes birthDate and address', () => {
+    const result = mapToWantedFormat({
+      personal: { birthDate: '1994-05-07', address: 'Seoul' },
+      careers: [],
+      summary: {},
+    });
+    assert.strictEqual(result.profile.birthDate, '1994-05-07', 'should map birthDate');
+    assert.strictEqual(result.profile.address, 'Seoul', 'should map address');
+  });
+});

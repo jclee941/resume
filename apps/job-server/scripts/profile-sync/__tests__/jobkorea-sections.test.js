@@ -328,10 +328,13 @@ describe('mapMilitaryToFormFields', () => {
 });
 
 describe('mapAwardToFormFields', () => {
-  it('returns [] when only achievements[] present (no fallback)', () => {
+  it('falls back achievements[] to UserResume.M_Career_Text when no awards[] present', () => {
     const fields = mapAwardToFormFields({ achievements: ['A', 'B'] });
-    assert.deepStrictEqual(fields, []);
+    const byName = toMap(fields);
+    assert.ok(byName.has('UserResume.M_Career_Text'), 'should emit fallback field');
+    assert.strictEqual(byName.get('UserResume.M_Career_Text_Stat'), '1');
   });
+
 
   it('returns [] for empty awards array', () => {
     assert.deepStrictEqual(mapAwardToFormFields({ awards: [] }), []);
@@ -572,5 +575,266 @@ describe('normalizeCompanyName — Wanted/JobKorea parity (audit P2 fix)', () =>
   it('passes through company names without "(주)"', () => {
     assert.strictEqual(normalizeCompanyName('Acme Corp'), 'Acme Corp');
     assert.strictEqual(normalizeCompanyName('  spaced  '), 'spaced');
+  });
+});
+
+
+// Failing tests for identified JobKorea gaps (Plan Agent: fill missing fields)
+describe('JobKorea gap — skills', () => {
+  it('buildJobKoreaFormData includes skill fields from SSoT', () => {
+    const ssot = {
+      skills: {
+        observability: { items: [{ name: 'Prometheus', level: 'Advanced' }] },
+      },
+      careers: [],
+      education: null,
+      certifications: [],
+      military: null,
+      awards: [],
+    };
+    const fields = buildJobKoreaFormData(ssot, {});
+    const names = fields.map((f) => f.name);
+    assert.ok(names.some((n) => n.includes('Skill')), 'should emit skill fields');
+  });
+});
+
+describe('JobKorea gap — languages', () => {
+  it('buildJobKoreaFormData includes language fields from SSoT', () => {
+    const ssot = {
+      languages: [{ name: 'English', level: '비즈니스 회화가능' }],
+      careers: [],
+      education: null,
+      certifications: [],
+      military: null,
+      awards: [],
+    };
+    const fields = buildJobKoreaFormData(ssot, {});
+    const names = fields.map((f) => f.name);
+    assert.ok(
+      names.some((n) => n.includes('Language') || n.includes('Foreign')),
+      'should emit language fields'
+    );
+  });
+});
+
+describe('JobKorea gap — personal fields', () => {
+  it('buildJobKoreaFormData includes birthDate, address, and github', () => {
+    const ssot = {
+      personal: {
+        birthDate: '1994-05-07',
+        address: 'Seoul',
+        github: 'https://github.com/jclee941',
+      },
+      careers: [],
+      education: null,
+      certifications: [],
+      military: null,
+      awards: [],
+    };
+    const fields = buildJobKoreaFormData(ssot, {});
+    const byName = toMap(fields);
+    assert.ok(
+      byName.has('UserResume.BirthDate') ||
+        byName.has('UserAddition.BirthDate') ||
+        byName.has('UserResume.Birth_YMD'),
+      'should map birthDate'
+    );
+    assert.ok(
+      byName.has('UserResume.Address') || byName.has('UserAddition.Address'),
+      'should map address'
+    );
+    assert.ok(
+      byName.has('UserResume.GitHub') || byName.has('UserAddition.GitHub'),
+      'should map github'
+    );
+  });
+});
+
+describe('JobKorea gap — hope salary and industries', () => {
+  it('mapHopeJobToFormFields maps hope salary', () => {
+    const fields = mapHopeJobToFormFields({
+      hope: { roles: ['보안 엔지니어'], salary: '5000만원 이상' },
+    });
+    const byName = toMap(fields);
+    assert.ok(
+      byName.has('HopeJob.HJ_Salary') || byName.has('HopeJob.Salary'),
+      'should map salary'
+    );
+  });
+
+  it('mapHopeJobToFormFields maps hope industries', () => {
+    const fields = mapHopeJobToFormFields({
+      hope: { roles: ['보안 엔지니어'], industries: ['금융', '보안'] },
+    });
+    const byName = toMap(fields);
+    assert.ok(
+      byName.has('HopeJob.HJ_Industry') || byName.has('HopeJob.Industry'),
+      'should map industries'
+    );
+  });
+});
+
+describe('JobKorea gap — career projects and metadata', () => {
+  it('mapCareersToFormFields maps sub-projects under careers', () => {
+    const fields = mapCareersToFormFields({
+      careers: [
+        {
+          company: 'Test',
+          period: '2024.01 ~ 2024.06',
+          role: 'DevOps',
+          projects: [
+            { name: 'Proj A', description: 'Desc A', achievements: ['A1'] },
+          ],
+        },
+      ],
+    });
+    const byName = toMap(fields);
+    assert.ok(
+      byName.has('Career[c1].Project[p1].P_Name') ||
+        byName.has('Career[c1].Project_P_Name'),
+      'should map project name'
+    );
+
+  });
+
+  it('mapCareersToFormFields maps career metadata fields', () => {
+    const fields = mapCareersToFormFields({
+      careers: [
+        {
+          company: 'Test',
+          period: '2024.01 ~ 2024.06',
+          role: 'DevOps',
+          client: 'ClientA',
+          teamSize: 5,
+          myRole: 'Lead',
+          workType: '정규직',
+        },
+      ],
+    });
+    const byName = toMap(fields);
+    assert.ok(
+      byName.has('Career[c1].Client') || byName.has('Career[c1].C_Client'),
+      'should map client'
+    );
+    assert.ok(
+      byName.has('Career[c1].TeamSize') || byName.has('Career[c1].C_TeamSize'),
+      'should map teamSize'
+    );
+    assert.ok(
+      byName.has('Career[c1].MyRole') || byName.has('Career[c1].C_MyRole'),
+      'should map myRole'
+    );
+    assert.ok(
+      byName.has('Career[c1].WorkType') || byName.has('Career[c1].C_WorkType'),
+      'should map workType'
+    );
+  });
+});
+
+describe('JobKorea gap — certification extra fields', () => {
+  it('mapLicensesToFormFields maps expirationDate, credentialId, credentialUrl, status, note', () => {
+    const fields = mapLicensesToFormFields({
+      certifications: [
+        {
+          name: 'AWS SAA',
+          issuer: 'AWS',
+          date: '2024.01',
+          expirationDate: '2027.01',
+          credentialId: 'ABC123',
+          credentialUrl: 'https://aws.amazon.com/cert',
+          status: 'active',
+          note: 'Note',
+        },
+      ],
+    });
+    const byName = toMap(fields);
+    assert.ok(
+      byName.has('License[c1].Lc_Exp') || byName.has('License[c1].Lc_Expire'),
+      'should map expirationDate'
+    );
+    assert.ok(
+      byName.has('License[c1].Lc_CredId') ||
+        byName.has('License[c1].Lc_Credential'),
+      'should map credentialId'
+    );
+    assert.ok(
+      byName.has('License[c1].Lc_CredUrl') ||
+        byName.has('License[c1].Lc_Url'),
+      'should map credentialUrl'
+    );
+    assert.ok(
+      byName.has('License[c1].Lc_Status') ||
+        byName.has('License[c1].Lc_Stat'),
+      'should map status'
+    );
+    assert.ok(
+      byName.has('License[c1].Lc_Note') || byName.has('License[c1].Lc_Memo'),
+      'should map note'
+    );
+  });
+});
+
+describe('JobKorea gap — high school', () => {
+  it('buildJobKoreaFormData includes high school when ssot.highSchool is present', () => {
+    const ssot = {
+      highSchool: {
+        school: '용남고',
+        startDate: '2010.03',
+        endDate: '2013.02',
+        status: '졸업',
+      },
+      careers: [],
+      education: null,
+      certifications: [],
+      military: null,
+      awards: [],
+    };
+    const fields = buildJobKoreaFormData(ssot, {});
+    const names = fields.map((f) => f.name);
+    assert.ok(
+      names.some((n) => n.includes('HighSchool') || n.includes('Schl_Name')),
+      'should emit high school fields'
+    );
+  });
+});
+
+describe('JobKorea gap — awards achievements fallback', () => {
+  it('mapAwardToFormFields falls back achievements to a bounded text field', () => {
+    const fields = mapAwardToFormFields({
+      achievements: ['Achievement A', 'Achievement B'],
+    });
+    const byName = toMap(fields);
+    assert.ok(fields.length > 0, 'should emit fallback fields for achievements');
+    assert.ok(
+      Array.from(byName.keys()).some(
+        (k) => k.includes('Award') || k.includes('Career_Text')
+      ),
+      'should map achievements somewhere'
+    );
+  });
+});
+
+describe('JobKorea gap — personal projects', () => {
+  it('buildJobKoreaFormData includes personal project fields', () => {
+    const ssot = {
+      personalProjects: [
+        {
+          name: 'Proj A',
+          description: 'Desc A',
+          url: 'https://example.com',
+        },
+      ],
+      careers: [],
+      education: null,
+      certifications: [],
+      military: null,
+      awards: [],
+    };
+    const fields = buildJobKoreaFormData(ssot, {});
+    const names = fields.map((f) => f.name);
+    assert.ok(
+      names.some((n) => n.includes('Project') || n.includes('Portfolio')),
+      'should emit personal project fields'
+    );
   });
 });

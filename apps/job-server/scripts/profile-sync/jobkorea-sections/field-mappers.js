@@ -16,4 +16,9 @@ export {
   mapMilitaryToFormFields,
   mapPortfolioToFormFields,
   mapSchoolToFormFields,
+  mapHighSchoolToFormFields,
+  mapLanguagesToFormFields,
+  mapPersonalFieldsToFormFields,
+  mapPersonalProjectsToFormFields,
+  mapSkillsToFormFields,
 } from './profile-fields.js';

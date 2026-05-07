@@ -1,6 +1,7 @@
 import { existsSync, readFileSync } from 'fs';
 import { getResumeMasterDataPath } from '../../src/shared/utils/paths.js';
 import { BaseCrawler } from '../../src/crawlers/base-crawler.js';
+import { BaseProfileSync, diffProfileSections } from '../base-profile-sync.js';
 import { SARAMIN_URLS } from './profile-sync/constants.js';
 import { initBrowser, checkLogin, waitForManualLogin } from './profile-sync/session.js';
 import {
@@ -26,13 +27,9 @@ import {
   getProfile,
 } from './profile-sync/navigation.js';
 
-export class SaraminProfileSync {
+export class SaraminProfileSync extends BaseProfileSync {
   constructor(options = {}) {
-    this.headless = options.headless ?? false;
-    this.browser = null;
-    this.page = null;
-    this.timeout = options.timeout || 30000;
-    this.debug = options.debug ?? false;
+    super(options);
     this.baseCrawler = new BaseCrawler('saramin-profile-sync', {
       baseUrl: 'https://www.saramin.co.kr',
       rateLimit: 1000,
@@ -44,12 +41,6 @@ export class SaraminProfileSync {
         maxDelay: 8000,
       },
     });
-  }
-
-  log(...args) {
-    if (this.debug) {
-      console.debug('[SaraminProfileSync]', ...args);
-    }
   }
 
   async init() {
@@ -88,43 +79,72 @@ export class SaraminProfileSync {
     }
 
     if (dry_run) {
+      const current = await this.getProfile().catch(() => ({ data: null }));
+      const changes = current.data ? diffProfileSections(sourceData, current.data) : [];
       return {
         dry_run: true,
         resume_url: SARAMIN_URLS.resumeEdit,
         would_update: {
           personal: sourceData.personal,
           careers: sourceData.careers.length,
+          education: sourceData.education,
           certifications: sourceData.certifications.length,
         },
+        changes,
       };
     }
 
-    try {
-      await this.fillPersonalInfo(sourceData.personal);
-      results.updated.push('personal');
-    } catch (e) {
-      results.errors.push({ section: 'personal', error: e.message });
+    const current = await this.getProfile().catch(() => ({ data: null }));
+    const changes = current.data ? diffProfileSections(sourceData, current.data) : null;
+    const changedSections = new Set(changes?.map((c) => c.section) ?? []);
+
+    if (changes && changes.length === 0) {
+      results.skipped.push('all');
+      return results;
     }
 
-    try {
-      await this.fillCareers(sourceData.careers);
-      results.updated.push('careers');
-    } catch (e) {
-      results.errors.push({ section: 'careers', error: e.message });
+    if (!changedSections.size || changedSections.has('personal')) {
+      try {
+        await this.fillPersonalInfo(sourceData.personal);
+        results.updated.push('personal');
+      } catch (e) {
+        results.errors.push({ section: 'personal', error: e.message });
+      }
+    } else {
+      results.skipped.push('personal');
     }
 
-    try {
-      await this.fillEducation(sourceData.education);
-      results.updated.push('education');
-    } catch (e) {
-      results.errors.push({ section: 'education', error: e.message });
+    if (!changedSections.size || changedSections.has('careers')) {
+      try {
+        await this.fillCareers(sourceData.careers);
+        results.updated.push('careers');
+      } catch (e) {
+        results.errors.push({ section: 'careers', error: e.message });
+      }
+    } else {
+      results.skipped.push('careers');
     }
 
-    try {
-      await this.fillCertifications(sourceData.certifications);
-      results.updated.push('certifications');
-    } catch (e) {
-      results.errors.push({ section: 'certifications', error: e.message });
+    if (!changedSections.size || changedSections.has('education')) {
+      try {
+        await this.fillEducation(sourceData.education);
+        results.updated.push('education');
+      } catch (e) {
+        results.errors.push({ section: 'education', error: e.message });
+      }
+    } else {
+      results.skipped.push('education');
+    }
+
+    if (!changedSections.size || changedSections.has('certifications')) {
+      try {
+        await this.fillCertifications(sourceData.certifications);
+        results.updated.push('certifications');
+      } catch (e) {
+        results.errors.push({ section: 'certifications', error: e.message });
+      }
+    } else {
+      results.skipped.push('certifications');
     }
 
     await this.saveResume();
@@ -198,9 +218,7 @@ export class SaraminProfileSync {
 
   async close() {
     this.baseCrawler?.destroy?.();
-    if (this.browser) {
-      await this.browser.close();
-    }
+    await super.close();
   }
 }
 

@@ -52,6 +52,11 @@ export function mapLicensesToFormFields(ssot, indices) {
     pushField(fields, `License[${key}].Lc_Code`, '');
     pushField(fields, `License[${key}].Lc_Pub`, cert?.issuer || '');
     pushField(fields, `License[${key}].Lc_YYMM`, toYYYYMM(cert?.date || ''));
+    pushField(fields, `License[${key}].Lc_Exp`, toYYYYMM(cert?.expirationDate || ''));
+    pushField(fields, `License[${key}].Lc_CredId`, cert?.credentialId || '');
+    pushField(fields, `License[${key}].Lc_CredUrl`, cert?.credentialUrl || '');
+    pushField(fields, `License[${key}].Lc_Status`, cert?.status || '');
+    pushField(fields, `License[${key}].Lc_Note`, cert?.note || '');
   });
   pushField(fields, 'License.index', keys.slice(0, validCerts.length).join(','));
   pushField(fields, 'InputStat.LicenseInputStat', 'True');
@@ -74,7 +79,8 @@ export function mapMilitaryToFormFields(ssot) {
 
 export function mapAwardToFormFields(ssot, indices) {
   const awards = Array.isArray(ssot?.awards) ? ssot.awards : [];
-  if (awards.length === 0) return [];
+  const achievements = Array.isArray(ssot?.achievements) ? ssot.achievements : [];
+  if (awards.length === 0 && achievements.length === 0) return [];
   const fields = [];
   const keys =
     indices && indices.length >= awards.length ? indices : awards.map((_, i) => `c${i + 1}`);
@@ -87,10 +93,19 @@ export function mapAwardToFormFields(ssot, indices) {
     pushField(fields, `Award[${key}].Award_Year`, award?.year || '');
     pushField(fields, `Award[${key}].Award_Cntnt`, '');
   });
-  pushField(fields, 'Award.index', keys.slice(0, awards.length).join(','));
-  pushField(fields, 'InputStat.AwardInputStat', 'True');
+  if (awards.length > 0) {
+    pushField(fields, 'Award.index', keys.slice(0, awards.length).join(','));
+    pushField(fields, 'InputStat.AwardInputStat', 'True');
+  }
+  if (achievements.length > 0) {
+    const summary = achievements.map((a) => `- ${a}`).join('\n').slice(0, 500);
+    pushField(fields, 'UserResume.M_Career_Text', summary);
+    pushField(fields, 'UserResume.M_Career_Text_Stat', '1');
+  }
   return fields;
 }
+
+
 
 export function mapPortfolioToFormFields(ssot, fileIdx) {
   const url = ssot?.personal?.portfolio || '';
@@ -99,4 +114,109 @@ export function mapPortfolioToFormFields(ssot, fileIdx) {
     { name: 'UserResume.Attach_File_Name', value: `${fileIdx},` },
     { name: 'InputStat.PortfolioInputStat', value: 'True' },
   ];
+}
+
+
+export function mapHighSchoolToFormFields(ssot, schoolIndex) {
+  const highSchool = ssot?.highSchool;
+  if (!highSchool) return [];
+  const key = schoolIndex || 'c1';
+  const startRaw = toYYYYMM(highSchool.startDate || '');
+  const gradYM = toYYYYMM(highSchool.endDate || '');
+  return [
+    [`HighSchool[${key}].Schl_Name`, highSchool.school || ''],
+    [`HighSchool[${key}].Entc_YM`, startRaw],
+    [`HighSchool[${key}].Grad_YM`, gradYM],
+    [`HighSchool[${key}].Grad_Type_Code`, GRAD_TYPE[highSchool.status] || GRAD_TYPE.졸업],
+    ['HighSchool.index', key],
+    ['InputStat.HighSchoolInputStat', 'True'],
+  ].map(([name, value]) => ({ name, value: toFieldValue(value) }));
+}
+
+export function mapLanguagesToFormFields(ssot, indices) {
+  const languages = Array.isArray(ssot?.languages) ? ssot.languages : [];
+  if (languages.length === 0) return [];
+  const fields = [];
+  const keys =
+    indices && indices.length >= languages.length
+      ? indices
+      : languages.map((_, i) => `c${i + 1}`);
+  languages.forEach((lang, idx) => {
+    if (idx >= keys.length) return;
+    const key = keys[idx];
+    pushField(fields, `Language[${key}].Index_Name`, key);
+    pushField(fields, `Language[${key}].Lang_Name`, lang?.name || '');
+    pushField(fields, `Language[${key}].Lang_Level`, lang?.level || '');
+  });
+  pushField(fields, 'Language.index', keys.slice(0, languages.length).join(','));
+  pushField(fields, 'InputStat.LanguageInputStat', 'True');
+  return fields;
+}
+
+export function mapPersonalFieldsToFormFields(ssot) {
+  const personal = ssot?.personal || {};
+  const fields = [];
+  if (personal.birthDate) {
+    pushField(fields, 'UserResume.Birth_YMD', personal.birthDate.replace(/-/g, ''));
+  }
+  if (personal.address) {
+    pushField(fields, 'UserResume.Address', personal.address);
+  }
+  if (personal.github) {
+    pushField(fields, 'UserResume.GitHub', personal.github);
+  }
+  return fields;
+}
+
+export function mapPersonalProjectsToFormFields(ssot, indices) {
+  const projects = Array.isArray(ssot?.personalProjects) ? ssot.personalProjects : [];
+  if (projects.length === 0) return [];
+  const fields = [];
+  const keys =
+    indices && indices.length >= projects.length
+      ? indices
+      : projects.map((_, i) => `c${i + 1}`);
+  projects.forEach((project, idx) => {
+    if (idx >= keys.length) return;
+    const key = keys[idx];
+    pushField(fields, `Project[${key}].Index_Name`, key);
+    pushField(fields, `Project[${key}].P_Name`, project?.name || '');
+    pushField(fields, `Project[${key}].P_Cntnt`, String(project?.description || '').slice(0, 500));
+    pushField(fields, `Project[${key}].P_Url`, project?.url || '');
+  });
+  pushField(fields, 'Project.index', keys.slice(0, projects.length).join(','));
+  pushField(fields, 'InputStat.ProjectInputStat', 'True');
+  return fields;
+}
+
+export function mapSkillsToFormFields(ssot, indices) {
+  const categories = ssot?.skills || {};
+  const skills = [];
+  for (const category of Object.values(categories)) {
+    if (category && Array.isArray(category.items)) {
+      for (const item of category.items) {
+        if (typeof item === 'object' && item?.name) {
+          skills.push(item);
+        } else if (typeof item === 'string') {
+          skills.push({ name: item });
+        }
+      }
+    }
+  }
+  if (skills.length === 0) return [];
+  const fields = [];
+  const keys =
+    indices && indices.length >= skills.length
+      ? indices
+      : skills.map((_, i) => `c${i + 1}`);
+  skills.forEach((skill, idx) => {
+    if (idx >= keys.length) return;
+    const key = keys[idx];
+    pushField(fields, `Skill[${key}].Index_Name`, key);
+    pushField(fields, `Skill[${key}].Skill_Name`, skill.name || '');
+    pushField(fields, `Skill[${key}].Skill_Level`, skill.level || '');
+  });
+  pushField(fields, 'Skill.index', keys.slice(0, skills.length).join(','));
+  pushField(fields, 'InputStat.SkillInputStat', 'True');
+  return fields;
 }
