@@ -27,7 +27,10 @@ describe('matching barrel', () => {
     assert.equal(typeof mod.prioritizeApplications, 'function');
   });
   it('exports JobMatcher', () => {
-    assert.equal(typeof mod.JobMatcher, 'object');
+    assert.equal(typeof mod.JobMatcher, 'function');
+  });
+  it('exports default matcher module', () => {
+    assert.equal(typeof mod.jobMatcher, 'object');
   });
   it('exports calculateAIMatch', () => {
     assert.equal(typeof mod.calculateAIMatch, 'function');
