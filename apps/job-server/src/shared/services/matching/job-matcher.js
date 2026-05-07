@@ -1,5 +1,10 @@
 export {
   SKILL_CATEGORIES,
+  DEFAULT_SCORING_CONFIG,
+  JobMatcher,
+  createFileResumeReader,
+  createScoringConfig,
+  defaultResumeReader,
   loadResume,
   extractSkills,
   extractExperience,
