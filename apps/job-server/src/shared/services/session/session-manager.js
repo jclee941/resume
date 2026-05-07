@@ -1,5 +1,6 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
-import { dirname, join } from 'path';
+import { join } from 'path';
+import { createFileSessionStore, cookieArrayToString } from '@resume/shared/session';
 import { getResumeBasePath } from '../../utils/paths.js';
 import {
   SUPPORTED_SESSION_PLATFORMS,
@@ -9,12 +10,17 @@ import {
 const SHARED_DATA_DIR = getResumeBasePath();
 const SESSION_FILE = join(SHARED_DATA_DIR, 'sessions.json');
 
-const ensureDir = (filePath) => {
-  const dir = dirname(filePath);
-  if (!existsSync(dir)) {
-    mkdirSync(dir, { recursive: true });
-  }
-};
+function createStore(logger) {
+  return createFileSessionStore({
+    existsSync,
+    readFileSync,
+    writeFileSync,
+    mkdirSync,
+    filePath: SESSION_FILE,
+    logger,
+    getTtlMs: getSessionTtlMs,
+  });
+}
 
 /**
  * SessionManager — file-based session persistence.
@@ -31,95 +37,15 @@ export class SessionManager {
   static logger = console;
 
   static load(platform = null) {
-    try {
-      if (existsSync(SESSION_FILE)) {
-        const allSessions = JSON.parse(readFileSync(SESSION_FILE, 'utf-8'));
-        if (platform) {
-          const session = allSessions[platform];
-          const platformTtl = getSessionTtlMs(platform);
-          if (session && session.timestamp && Date.now() - session.timestamp < platformTtl) {
-            return session;
-          }
-          return null;
-        }
-        return allSessions;
-      }
-    } catch (e) {
-      SessionManager.logger.error('Failed to load sessions:', e.message);
-    }
-    return platform ? null : {};
+    return createStore(SessionManager.logger).load(platform);
   }
 
   static save(platform, data) {
-    try {
-      ensureDir(SESSION_FILE);
-      const allSessions = this.load() || {};
-
-      // Normalize session contract at the boundary
-      const normalized = { ...data };
-
-      // Always set platform
-      normalized.platform = platform;
-
-      // Normalize cookies: string → cookieString, cookies: null
-      if (typeof normalized.cookies === 'string') {
-        if (!normalized.cookieString) {
-          normalized.cookieString = normalized.cookies;
-        }
-        normalized.cookies = null;
-      }
-
-      // If cookies is array, compute cookieString if missing
-      if (Array.isArray(normalized.cookies) && !normalized.cookieString) {
-        normalized.cookieString = normalized.cookies.map((c) => `${c.name}=${c.value}`).join('; ');
-      }
-
-      // Set cookieCount if missing
-      if (normalized.cookieCount == null) {
-        if (Array.isArray(normalized.cookies)) {
-          normalized.cookieCount = normalized.cookies.length;
-        } else if (normalized.cookieString) {
-          normalized.cookieCount = normalized.cookieString.split(';').filter(Boolean).length;
-        } else {
-          normalized.cookieCount = 0;
-        }
-      }
-
-      // Set expiresAt if missing
-      if (!normalized.expiresAt) {
-        const ttl = getSessionTtlMs(platform);
-        normalized.expiresAt = new Date(Date.now() + ttl).toISOString();
-      }
-
-      allSessions[platform] = {
-        ...normalized,
-        timestamp: Date.now(),
-      };
-
-      writeFileSync(SESSION_FILE, JSON.stringify(allSessions, null, 2));
-      return true;
-    } catch (e) {
-      SessionManager.logger.error(`Failed to save session for ${platform}:`, e.message);
-      return false;
-    }
+    return createStore(SessionManager.logger).save(platform, data);
   }
 
   static clear(platform = null) {
-    try {
-      if (!existsSync(SESSION_FILE)) return true;
-
-      if (platform) {
-        const allSessions = this.load() || {};
-        delete allSessions[platform];
-        writeFileSync(SESSION_FILE, JSON.stringify(allSessions, null, 2));
-      } else {
-        writeFileSync(SESSION_FILE, '{}');
-      }
-      return true;
-    } catch (error) {
-      SessionManager.logger.error('[SessionManager.clear] Failed to clear session:', error.message);
-      return false;
-    }
+    return createStore(SessionManager.logger).clear(platform);
   }
 
   static async getAPI(platform = 'wanted') {
@@ -134,9 +60,7 @@ export class SessionManager {
     const api = new WantedAPI();
     const cookieStr =
       session.cookieString ||
-      (Array.isArray(session.cookies)
-        ? session.cookies.map((c) => `${c.name}=${c.value}`).join('; ')
-        : session.cookies) ||
+      (Array.isArray(session.cookies) ? cookieArrayToString(session.cookies) : session.cookies) ||
       session.token;
     if (cookieStr) {
       api.setCookies(cookieStr);

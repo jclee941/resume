@@ -3,6 +3,7 @@
   "version": "1.1.0",
   "type": "module",
   "exports": {
+    "./validation": "./src/validation/index.js",
     "./errors": "./src/errors/index.js",
     "./cookies": "./src/cookies/index.js",
     "./logger": "./src/logger/index.js",
@@ -16,6 +17,13 @@
     "./browser/stealth": "./src/browser/stealth-patches.js",
     "./browser/service": "./src/browser/browser-service.js",
     "./wanted-client": "./src/wanted-client.js",
+    "./clients/wanted": "./src/clients/wanted/index.js",
+    "./clients/wanted/http-client": "./src/clients/wanted/http-client.js",
+    "./clients/wanted/wanted-api": "./src/clients/wanted/wanted-api.js",
+    "./clients/wanted/types": "./src/clients/wanted/types.js",
+    "./clients/wanted/endpoints/jobs": "./src/clients/wanted/endpoints/jobs.js",
+    "./clients/wanted/endpoints/profile": "./src/clients/wanted/endpoints/profile.js",
+    "./clients/wanted/endpoints/resume": "./src/clients/wanted/endpoints/resume.js",
     "./clients/gitlab": "./src/clients/gitlab/index.js",
     "./clients/gitlab/http-client": "./src/clients/gitlab/http-client.js",
     "./clients/gitlab/gitlab-api": "./src/clients/gitlab/gitlab-api.js",
@@ -31,9 +39,16 @@
     "./rate-limit/kv-token-bucket": "./src/rate-limit/kv-token-bucket.js",
     "./rate-limit/kv-sliding-window": "./src/rate-limit/kv-sliding-window.js",
     "./rate-limit/platform-rate-limiter": "./src/rate-limit/platform-rate-limiter.js",
+    "./session": "./src/session/index.js",
+    "./session/constants": "./src/session/constants.js",
+    "./session/cookies": "./src/session/cookies.js",
+    "./session/store": "./src/session/store.js",
     "./auth": "./src/auth/index.js",
     "./auth/cookie": "./src/auth/cookie.js",
     "./auth/hmac": "./src/auth/hmac.js",
     "./normalize": "./src/normalize/index.js"
+  },
+  "dependencies": {
+    "@resume/schemas": "*"
   }
 }
