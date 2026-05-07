@@ -124,5 +124,5 @@ try {
   await main();
 } catch (error) {
   console.error('[jobkorea-session] Renewal failed:', error.message);
-  process.exit(1);
+  process.exitCode = 1;
 }
