@@ -104,7 +104,7 @@
       "companyUrl": "https://itcencts.com/",
       "period": "2025.03 ~ 2026.02",
       "duration": "1년",
-      "project": "넥스트레이드 매매체결시스템 보안운영SM",
+      "project": "넥스트레이드 정보보안운영SM",
       "role": "보안운영 담당",
       "client": "넥스트레이드(주)",
       "teamSize": "정보보안팀 운영 셀",
@@ -1071,8 +1071,7 @@
       ],
       "closing": "「繰り返し作業の限界」という一つの問題意識が作った8年間の軌跡を持って、貴社のセキュリティインフラが次に解くべき問題に参加させてください。"
     }
-  }
-,
+  },
   "careerSummary": {
     "ko": {
       "headline": "8년차 DevSecOps/SRE 경력기술서",
