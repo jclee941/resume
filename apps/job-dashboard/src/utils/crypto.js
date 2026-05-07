@@ -1,6 +1,6 @@
 /**
  * Web Crypto AES-GCM helpers — thin re-export of canonical
- * `@resume/shared/crypto/webcrypto` (SSOT-033 / issue #42 Phase 2).
+ * `@resume/shared/crypto` (SSOT-033 / issue #42 Phase 2).
  *
  * The duplicate implementation that previously lived here has been
  * promoted to `packages/shared/src/crypto/webcrypto.js`. This file is
@@ -9,7 +9,7 @@
  *
  * New code should prefer:
  *
- *   import { encrypt, decrypt } from '@resume/shared/crypto/webcrypto';
+ *   import { encrypt, decrypt } from '@resume/shared/crypto';
  */
 
-export { encrypt, decrypt } from '@resume/shared/crypto/webcrypto';
+export { encrypt, decrypt } from '@resume/shared/crypto';

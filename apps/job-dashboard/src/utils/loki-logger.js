@@ -14,8 +14,7 @@
  *
  * For new code prefer the canonical API directly:
  *
- *   import { Logger } from '@resume/shared/logger';
- *   import { createLokiTransport } from '@resume/shared/logger/transports/loki';
+ *   import { Logger, createLokiTransport } from '@resume/shared/logger';
  *   const logger = new Logger(env, {
  *     service: 'job-worker',
  *     transports: [createLokiTransport()],
@@ -23,8 +22,7 @@
  *   await logger.info('Request', { path });
  */
 
-import { Logger } from '@resume/shared/logger';
-import { createLokiTransport } from '@resume/shared/logger/transports/loki';
+import { Logger, createLokiTransport } from '@resume/shared/logger';
 
 const JOB_NAME = 'job-worker';
 
