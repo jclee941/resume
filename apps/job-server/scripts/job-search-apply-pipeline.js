@@ -19,7 +19,7 @@ import {
 import { log, recordJobToElk, shipToElk, summarizeError } from './pipeline/logging.js';
 import { runProfileSync } from './pipeline/profile-sync.js';
 import { createResult, mapFailedJob, mapTopJob } from './pipeline/result-state.js';
-import { scoreJob, scoreJobKorea, searchJobKorea, searchJobs } from './pipeline/search.js';
+import { scorePipelineJob, searchJobKorea, searchJobs, searchSaramin } from './pipeline/search.js';
 import { checkSessionHealth } from './pipeline/session-health.js';
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -46,9 +46,11 @@ async function main() {
     dedupCache = await loadDedupCache();
     const wantedJobs = await searchJobs();
     const jobKoreaJobs = await searchJobKorea();
+    const saraminJobs = await searchSaramin();
     const searchedJobs = [
       ...wantedJobs.map((job) => ({ ...job, source: 'wanted' })),
       ...jobKoreaJobs,
+      ...saraminJobs,
     ];
     result.searched = searchedJobs.length;
 
@@ -77,8 +79,7 @@ async function main() {
       }
 
       try {
-        const scoredJob =
-          rawJob.source === 'jobkorea' ? await scoreJobKorea(rawJob) : await scoreJob(rawJob);
+        const scoredJob = await scorePipelineJob(rawJob);
         scoredJobs.push(scoredJob);
         updateDedupEntry(dedupCache, scoredJob, 'scored', scoredJob.score);
         result.scored += 1;
@@ -109,6 +110,20 @@ async function main() {
     const jobkoreaJobsToApply = relevantJobs.filter((job) => job.source === 'jobkorea');
     if (jobkoreaJobsToApply.length > 0) {
       await applyToJobKoreaJobs(result, jobkoreaJobsToApply, dedupCache, updateDedupEntry, sleep);
+    }
+
+    const saraminJobsToReview = relevantJobs.filter((job) => job.source === 'saramin');
+    for (const job of saraminJobsToReview) {
+      result.skippedJobs.push({
+        id: job.id,
+        title: job.title,
+        company: job.company,
+        source: job.source,
+        reason: 'saramin_apply_supported_not_live_verified',
+      });
+      result.skipped += 1;
+      updateDedupEntry(dedupCache, job, 'scored', job.score);
+      log('saramin apply skipped — supported but not live verified', { id: job.id, title: job.title });
     }
   } catch (error) {
     result.failedJobs.push(createPipelineFailure(error));
