@@ -2,9 +2,19 @@ import assert from 'node:assert/strict';
 import { describe, it, beforeEach, mock } from 'node:test';
 
 import { OAuth2Client } from 'google-auth-library';
-import { SessionManager } from '../../session/index.js';
 import { AuthService } from '../auth-service.js';
 import AuthServiceDefault from '../auth-service.js';
+
+function createPlatformSessionStore(overrides = {}) {
+  return {
+    load: mock.fn(() => null),
+    save: mock.fn(() => true),
+    clear: mock.fn(() => true),
+    getStatus: mock.fn(() => []),
+    checkHealth: mock.fn(() => ({ valid: false, expiringSoon: false, expiresAt: null })),
+    ...overrides,
+  };
+}
 
 describe('AuthService', () => {
   beforeEach(() => {
@@ -102,23 +112,31 @@ describe('AuthService', () => {
     assert.equal(service.getSessionTTLSeconds(), 2);
   });
 
-  it('returns auth status from SessionManager', () => {
-    const statusMock = mock.method(SessionManager, 'getStatus', () => [
-      { platform: 'wanted', authenticated: true },
-      { platform: 'saramin', authenticated: false },
-    ]);
-    const service = new AuthService({ googleClientId: 'gcid', adminEmail: 'admin@example.com' });
+  it('returns auth status from injected session store', () => {
+    const sessionStore = createPlatformSessionStore({
+      getStatus: mock.fn(() => [
+        { platform: 'wanted', authenticated: true },
+        { platform: 'saramin', authenticated: false },
+      ]),
+    });
+    const service = new AuthService(
+      { googleClientId: 'gcid', adminEmail: 'admin@example.com' },
+      { sessionStore }
+    );
 
     const result = service.getAuthStatus();
 
     assert.equal(result.success, true);
     assert.equal(result.status.length, 2);
-    assert.equal(statusMock.mock.callCount(), 1);
+    assert.equal(sessionStore.getStatus.mock.callCount(), 1);
   });
 
   it('validates savePlatformAuth params and normalizes cookie payload', () => {
-    const saveMock = mock.method(SessionManager, 'save', () => true);
-    const service = new AuthService({ googleClientId: 'gcid', adminEmail: 'admin@example.com' });
+    const sessionStore = createPlatformSessionStore();
+    const service = new AuthService(
+      { googleClientId: 'gcid', adminEmail: 'admin@example.com' },
+      { sessionStore }
+    );
 
     assert.deepEqual(service.savePlatformAuth('', 'a=1'), {
       success: false,
@@ -140,34 +158,34 @@ describe('AuthService', () => {
       'admin@example.com'
     );
     assert.equal(resultArray.success, true);
-    assert.equal(saveMock.mock.calls[0].arguments[0], 'wanted');
-    assert.equal(saveMock.mock.calls[0].arguments[1].cookieString, 'sid=abc; csrf=xyz');
-    assert.equal(saveMock.mock.calls[0].arguments[1].cookieCount, 2);
+    assert.equal(sessionStore.save.mock.calls[0].arguments[0], 'wanted');
+    assert.equal(sessionStore.save.mock.calls[0].arguments[1].cookieString, 'sid=abc; csrf=xyz');
+    assert.equal(sessionStore.save.mock.calls[0].arguments[1].cookieCount, 2);
 
     service.savePlatformAuth('saramin', 'a=1; b=2');
-    assert.equal(saveMock.mock.calls[1].arguments[1].cookieCount, 2);
+    assert.equal(sessionStore.save.mock.calls[1].arguments[1].cookieCount, 2);
 
     service.savePlatformAuth('jobkorea', { toString: () => 'k=v' });
-    assert.equal(saveMock.mock.calls[2].arguments[1].cookieString, 'k=v');
-    assert.equal(saveMock.mock.calls[2].arguments[1].cookieCount, 1);
+    assert.equal(sessionStore.save.mock.calls[2].arguments[1].cookieString, 'k=v');
+    assert.equal(sessionStore.save.mock.calls[2].arguments[1].cookieCount, 1);
   });
 
   it('clears platform auth and logs out admin session', () => {
-    const clearMock = mock.method(SessionManager, 'clear', () => true);
+    const sessionStore = createPlatformSessionStore();
     const store = {
       sessions: new Map([['s1', { email: 'admin@example.com', expiresAt: Date.now() + 1000 }]]),
       csrfTokens: new Map([['s1', 'csrf-token']]),
     };
     const service = new AuthService(
       { googleClientId: 'gcid', adminEmail: 'admin@example.com' },
-      store
+      { store, sessionStore }
     );
 
     assert.deepEqual(service.clearPlatformAuth('wanted'), {
       success: true,
       message: 'Logged out from wanted',
     });
-    assert.equal(clearMock.mock.callCount(), 1);
+    assert.equal(sessionStore.clear.mock.callCount(), 1);
 
     assert.deepEqual(service.logout('s1'), { success: true });
     assert.equal(store.sessions.has('s1'), false);

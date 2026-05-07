@@ -1,12 +1,11 @@
-import { SessionManager } from '../../session/index.js';
-
 /**
  * Renew platform session through the existing CDP extraction script.
+ * @param {import('./auth-typedefs.js').PlatformSessionStore} sessionStore
  * @param {string} platform
  * @returns {Promise<{success: boolean, message?: string, error?: string, expiresAt?: string}>}
  */
-export async function renewSession(platform) {
-  const currentSession = SessionManager.load(platform);
+export async function renewSession(sessionStore, platform) {
+  const currentSession = sessionStore.load(platform);
 
   if (!currentSession) {
     return {
@@ -15,7 +14,7 @@ export async function renewSession(platform) {
     };
   }
 
-  const health = SessionManager.checkHealth(platform, 2 * 60 * 60 * 1000);
+  const health = sessionStore.checkHealth(platform, 2 * 60 * 60 * 1000);
 
   if (health.valid && !health.expiringSoon) {
     return {
@@ -47,7 +46,7 @@ export async function renewSession(platform) {
       timeout: 30000,
     });
 
-    const newSession = SessionManager.load(platform);
+    const newSession = sessionStore.load(platform);
     if (newSession && newSession.timestamp > Date.now() - 60000) {
       return {
         success: true,
