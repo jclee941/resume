@@ -124,9 +124,13 @@ JSON 형식으로 응답:
   }
 }
 
-export async function calculateAIMatch(resumePath, jobPosting, { logger = console } = {}) {
+export async function calculateAIMatch(
+  resumePath,
+  jobPosting,
+  { logger = console, resumeReader = loadResume } = {}
+) {
   try {
-    const resume = loadResume(resumePath);
+    const resume = resumeReader(resumePath);
     const resumeAnalysis = await analyzeResume(resume, { logger });
     const jobAnalysis = await analyzeJobPosting(jobPosting, { logger });
 
@@ -181,10 +185,10 @@ JSON 형식: {"keywords": [], "tech_stack": [], "importance_scores": {}}`;
 }
 
 export async function matchJobsWithAI(resumePath, jobs, options = {}) {
-  const { minScore = 0, maxResults = 10, logger = console } = options;
+  const { minScore = 0, maxResults = 10, logger = console, resumeReader = loadResume } = options;
 
   try {
-    const resume = loadResume(resumePath);
+    const resume = resumeReader(resumePath);
     const resumeAnalysis = await analyzeResume(resume, { logger });
 
     if (!resumeAnalysis) {

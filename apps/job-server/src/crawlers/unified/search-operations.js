@@ -1,4 +1,4 @@
-import { filterAndRankJobs, prioritizeApplications } from '../../shared/services/matching/index.js';
+import { JobMatcher } from '../../shared/services/matching/index.js';
 import { WANTED_CATEGORIES } from './platform-crawlers.js';
 
 export async function searchAll(crawlerContext, params = {}) {
@@ -104,14 +104,16 @@ export async function searchWithMatching(crawlerContext, params = {}) {
     return searchResult;
   }
 
-  const matchedResult = filterAndRankJobs(searchResult.jobs, {
+  const matcher = getJobMatcher(crawlerContext);
+
+  const matchedResult = matcher.filterAndRankJobs(searchResult.jobs, {
     resumePath: crawlerContext.resumePath,
     minScore: params.minScore !== undefined ? params.minScore : 50,
     maxResults: params.maxResults || 50,
     excludeCompanies: params.excludeCompanies || [],
   });
 
-  const prioritizedJobs = prioritizeApplications(matchedResult.jobs);
+  const prioritizedJobs = matcher.prioritizeApplications(matchedResult.jobs);
 
   return {
     success: true,
@@ -160,7 +162,8 @@ export async function searchRecommended(crawlerContext, options = {}) {
     ...keywordResults.flatMap((result) => result.jobs || []),
   ];
   const uniqueJobs = crawlerContext.deduplicateJobs(allJobs);
-  const matchedResult = filterAndRankJobs(uniqueJobs, {
+  const matcher = getJobMatcher(crawlerContext);
+  const matchedResult = matcher.filterAndRankJobs(uniqueJobs, {
     resumePath: crawlerContext.resumePath,
     minScore: options.minScore || 60,
     maxResults: options.maxResults || 30,
@@ -170,8 +173,19 @@ export async function searchRecommended(crawlerContext, options = {}) {
     success: true,
     totalJobs: matchedResult.jobs.length,
     resumeAnalysis: matchedResult.resumeAnalysis,
-    jobs: prioritizeApplications(matchedResult.jobs),
+    jobs: matcher.prioritizeApplications(matchedResult.jobs),
   };
+}
+
+function getJobMatcher(crawlerContext) {
+  if (crawlerContext.jobMatcher) {
+    return crawlerContext.jobMatcher;
+  }
+
+  return new JobMatcher({
+    resumeReader: crawlerContext.resumeReader,
+    scoringConfig: crawlerContext.scoringConfig,
+  });
 }
 
 async function searchKeyword(
