@@ -220,10 +220,35 @@ export async function syncJobKoreaProfile(handler, ssot, options = {}) {
     const editUrl = getEditUrl();
     logger(`Navigating to ${editUrl}`, 'info', 'jobkorea');
     await page.goto(editUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
-    await ensureResumeAccess(page, {
-      headlessEnv: String(CONFIG.HEADLESS),
-      logger,
-    });
+
+    if (page.url().includes('/Login')) {
+      logger('Session expired on resume page, auto-renewing via Puppeteer...', 'warn', 'jobkorea');
+      const { execSync } = await import('child_process');
+      try {
+        execSync('node apps/job-server/scripts/renew-jobkorea-session.js', {
+          env: {
+            ...process.env,
+            HEADLESS: 'true',
+            JOBKOREA_EMAIL: process.env.JOBKOREA_EMAIL || '',
+            JOBKOREA_PASSWORD: process.env.JOBKOREA_PASSWORD || '',
+          },
+          stdio: 'inherit',
+          timeout: 300000,
+        });
+        const renewedCookies = handler.loadSession();
+        if (renewedCookies) {
+          await context.clearCookies();
+          await context.addCookies(renewedCookies);
+          await page.goto(editUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
+        }
+      } catch (renewError) {
+        throw new Error(`Session auto-renewal failed: ${renewError.message}`);
+      }
+    }
+await ensureResumeAccess(page, {
+headlessEnv: String(CONFIG.HEADLESS),
+logger,
+});
 
     await page.waitForFunction(() => typeof $ !== 'undefined' && $('#frm1').length > 0, {
       timeout: 15000,

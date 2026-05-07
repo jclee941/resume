@@ -96,7 +96,9 @@ export async function syncWantedViaAPI(ssot) {
       const updateData = {};
       for (const change of changes) {
         if (change.field === 'introduction') {
-          updateData.description = change.to;
+          // Wanted API rejects descriptions >150 chars with 406
+          const truncated = change.to.length > 150 ? `${change.to.slice(0, 147)}...` : change.to;
+          updateData.description = truncated;
         } else if (change.field === 'name') {
           updateData.name = change.to;
         }

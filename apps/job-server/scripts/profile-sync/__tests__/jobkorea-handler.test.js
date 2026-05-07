@@ -242,6 +242,7 @@ describe('JobKorea fail-loud guards', () => {
       addInitScript: async () => {},
       newPage: async () => page,
       cookies: async () => [],
+      ...overrides.context,
     };
     const browser = {
       newContext: async () => context,
@@ -254,6 +255,7 @@ describe('JobKorea fail-loud guards', () => {
       saveSession: () => {},
       createEntrySlots: async () => ({ career: [], license: [], award: [], school: 'c1' }),
       computeChanges: () => [],
+      ...overrides.handler,
     };
 
     return {
@@ -344,6 +346,69 @@ describe('JobKorea fail-loud guards', () => {
         process.env.JOBKOREA_PORTFOLIO_OPTIONAL = original;
       }
     }
+  });
+
+  it('persists refreshed JobKorea cookies from the Playwright context', async () => {
+    const refreshedCookies = [
+      { name: 'ACNT_COOKIE', value: 'fresh', domain: '.jobkorea.co.kr', path: '/' },
+      { name: 'OTHER', value: 'ignored', domain: '.example.com', path: '/' },
+    ];
+    let savedCookies = null;
+    const harness = createSyncHarness({
+      context: {
+        cookies: async () => refreshedCookies,
+      },
+      handler: {
+        saveSession: (cookies) => {
+          savedCookies = cookies;
+        },
+      },
+    });
+
+    const result = await syncJobKoreaProfile(
+      harness.handler,
+      { personal: { portfolio: 'https://portfolio.example.com' } },
+      {
+        launchBrowser: async () => harness.browser,
+        registerPortfolioUrl: async () => 123,
+        logger: harness.logger,
+      }
+    );
+
+    assert.strictEqual(result.success, true);
+    assert.deepStrictEqual(savedCookies, [refreshedCookies[0]]);
+  });
+
+  it('does not persist browser cookies when login verification fails', async () => {
+    let saved = false;
+    const harness = createSyncHarness({
+      context: {
+        cookies: async () => [
+          { name: 'ACNT_COOKIE', value: 'partial', domain: '.jobkorea.co.kr', path: '/' },
+        ],
+      },
+      handler: {
+        saveSession: () => {
+          saved = true;
+        },
+      },
+    });
+
+    const result = await syncJobKoreaProfile(
+      harness.handler,
+      { personal: { portfolio: 'https://portfolio.example.com' } },
+      {
+        launchBrowser: async () => harness.browser,
+        assertJobKoreaResumeAccess: async () => {
+          throw new Error('CAPTCHA required');
+        },
+        registerPortfolioUrl: async () => 123,
+        logger: harness.logger,
+      }
+    );
+
+    assert.strictEqual(result.success, false);
+    assert.strictEqual(saved, false);
   });
 
   it('throws when CAPTCHA text is present on the page', async () => {
