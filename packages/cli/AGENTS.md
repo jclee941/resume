@@ -1,7 +1,7 @@
 # CLI KNOWLEDGE BASE
 
-**Generated:** 2026-03-17
-**Commit:** `882b837`
+**Generated:** 2026-05-07
+**Commit:** `713f507e`
 **Branch:** `master`
 
 ## OVERVIEW
@@ -17,9 +17,18 @@ cli/
 ├── src/
 │   └── commands/
 │       ├── deploy.js   # deployment command
-│       └── verify.js   # verification command
+│       ├── verify.js   # verification command
+│       └── db.js       # D1 migration management
 └── package.json
 ```
+
+## COMMANDS
+
+| Command | Description | Subcommands |
+|---------|-------------|-------------|
+| `deploy` | Deploy services | `--worker-file`, `--dir`, `--env` |
+| `verify` | Verify service health | - |
+| `db` | D1 database migration management | `migrate`, `rollback`, `status`, `seed`, `create` |
 
 ## CONVENTIONS
 
