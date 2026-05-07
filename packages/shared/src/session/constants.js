@@ -4,7 +4,7 @@ export const DEFAULT_SESSION_TTL_MS = 24 * 60 * 60 * 1000;
 /** Platform-specific session TTLs in milliseconds. */
 export const SESSION_PLATFORM_TTL_MS = Object.freeze({
   wanted: 24 * 60 * 60 * 1000,
-  jobkorea: 30 * 24 * 60 * 60 * 1000,
+  jobkorea: 7 * 24 * 60 * 60 * 1000,
   saramin: 7 * 24 * 60 * 60 * 1000,
   linkedin: 7 * 24 * 60 * 60 * 1000,
   remember: 30 * 24 * 60 * 60 * 1000,
