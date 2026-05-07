@@ -2,10 +2,15 @@ export {
   loadResume,
   extractSkills,
   extractExperience,
+  DEFAULT_SCORING_CONFIG,
+  JobMatcher,
+  createFileResumeReader,
+  createScoringConfig,
+  defaultResumeReader,
   calculateMatchScore,
   filterAndRankJobs,
   prioritizeApplications,
-  default as JobMatcher,
+  default as jobMatcher,
 } from './job-matcher.js';
 
 export {
