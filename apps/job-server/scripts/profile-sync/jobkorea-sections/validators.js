@@ -1,6 +1,7 @@
+import { formatYYYYMM, parsePeriod } from '../../../src/shared/utils/date-formatters.js';
+
 export function toYYYYMM(dateStr) {
-  if (!dateStr) return '';
-  return String(dateStr).replace(/\./g, '').trim();
+  return formatYYYYMM(dateStr);
 }
 
 export function toFieldValue(value) {
@@ -13,13 +14,6 @@ export function pushField(fields, name, value) {
 }
 
 export function parseRange(period) {
-  const raw = String(period || '');
-  const parts = raw.includes('~')
-    ? raw.split('~').map((part) => part.trim())
-    : raw.split(' - ').map((part) => part.trim());
-  const start = toYYYYMM(parts[0] || '');
-  const rawEnd = parts[1] || '';
-  const isCurrent = rawEnd.includes('현재');
-  const end = isCurrent ? '' : toYYYYMM(rawEnd);
+  const { start, end, isCurrent } = parsePeriod(period);
   return { start, end, isCurrent };
 }
