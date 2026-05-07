@@ -13,6 +13,7 @@ export function createAutoApplierDependencies(options = {}, logger = console) {
     options.coverLetterService ||
     new CoverLetterService({
       d1Client: repository.d1Client,
+      dryRun: options.dryRun === true,
       logger,
     });
   const notificationAdapter =

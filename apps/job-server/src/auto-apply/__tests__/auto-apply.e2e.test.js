@@ -6,6 +6,7 @@ register(new URL('./auto-apply-test-loader.mjs', import.meta.url), import.meta.u
 
 const [
   { AutoApplier },
+  { createAutoApplierDependencies },
   { AutoApplyScheduler },
   { JobFilter },
   { CoverLetterService },
@@ -16,6 +17,7 @@ const [
   { TelegramNotificationAdapter },
 ] = await Promise.all([
   import('../auto-applier.js'),
+  import('../auto-applier-dependencies.js'),
   import('../scheduler.js'),
   import('../../shared/services/apply/job-filter.js'),
   import('../../shared/services/apply/cover-letter-service.js'),
@@ -577,6 +579,54 @@ describe('3) Cover Letter', () => {
 
     assert.equal(result.fallback, true);
     assert.match(result.coverLetter, /TEMPLATE/);
+  });
+
+  it('uses deterministic template fallback in dry-run without calling AI generator', async () => {
+    const generator = mock.fn(async () => {
+      throw new Error('AI generator should not run during dry-run');
+    });
+    const service = new CoverLetterService({
+      dryRun: true,
+      generator,
+      resumeData: {
+        personal: { name: 'Jaecheol Lee', portfolio: 'https://resume.jclee.me' },
+        summary: { totalExperience: '9 years', expertise: ['SRE', 'DevSecOps'] },
+        skills: { devops: { items: [{ name: 'Kubernetes' }, { name: 'Terraform' }] } },
+      },
+    });
+
+    const result = await service.generateForJob({
+      id: 'dry-run-cover-letter',
+      company: 'DryRun Co',
+      position: 'SRE Engineer',
+      description: 'Operate Kubernetes and Terraform platforms',
+      matchScore: 85,
+    });
+
+    assert.equal(result.fallback, true);
+    assert.equal(result.cached, false);
+    assert.equal(generator.mock.calls.length, 0);
+    assert.match(result.coverLetter, /DryRun Co/);
+    assert.match(result.coverLetter, /SRE Engineer/);
+  });
+
+  it('wires dry-run cover letter service through auto-applier dependencies', async () => {
+    const repository = createMockRepository();
+    const { coverLetterService } = createAutoApplierDependencies(
+      { repository, dryRun: true },
+      createLogger()
+    );
+
+    const result = await coverLetterService.generateForJob({
+      id: 'dependency-dry-run',
+      company: 'Dependency Co',
+      position: 'Cloud SRE',
+      description: 'Kubernetes reliability role',
+      matchScore: 90,
+    });
+
+    assert.equal(result.fallback, true);
+    assert.match(result.coverLetter, /Dependency Co/);
   });
 });
 

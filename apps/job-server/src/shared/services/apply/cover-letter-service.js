@@ -1,5 +1,5 @@
 import * as fsPromises from 'fs/promises';
-import { generateCoverLetter } from '../resume/cover-letter-generator.js';
+import { buildTemplateFallback, generateCoverLetter } from '../resume/cover-letter-generator.js';
 import { getResumeMasterDataPath } from '../../utils/paths.js';
 
 const KOREAN_CHAR_PATTERN = /[가-힣]/g;
@@ -59,6 +59,8 @@ export class CoverLetterService {
 
   #resumeData;
 
+  #dryRun;
+
   constructor(dependencies = {}) {
     this.#generator = dependencies.generator ?? generateCoverLetter;
     this.#readFile = dependencies.readFile ?? fsPromises.readFile;
@@ -68,6 +70,7 @@ export class CoverLetterService {
     this.#cacheStore = dependencies.cacheStore ?? new Map();
     this.#resumePath = dependencies.resumePath ?? getResumeMasterDataPath();
     this.#resumeData = dependencies.resumeData ?? null;
+    this.#dryRun = dependencies.dryRun === true;
   }
 
   async generateForJob(job, options = {}) {
@@ -106,6 +109,26 @@ export class CoverLetterService {
     }
 
     const resumeData = await this.#getResumeData();
+
+    if (this.#dryRun || finalOptions.dryRun) {
+      const coverLetter = buildTemplateFallback(resumeData, job, {
+        language: language === 'ko' ? 'ko' : 'en',
+        style: finalOptions.style,
+      });
+
+      if (finalOptions.cacheEnabled) {
+        await this.cache(jobId, coverLetter);
+      }
+
+      return {
+        coverLetter,
+        fallback: true,
+        language,
+        cached: false,
+        jobId,
+      };
+    }
+
     const generatorOptions = {
       language: language === 'ko' ? 'ko' : 'en',
       style: finalOptions.style,
