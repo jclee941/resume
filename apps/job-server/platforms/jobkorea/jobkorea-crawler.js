@@ -264,7 +264,6 @@ export class JobKoreaCrawler extends BaseCrawler {
 }
 
 export const JOBKOREA_CATEGORIES = {
-  IT_DEVELOPMENT: '1000238',
   SECURITY: '1000239',
   NETWORK: '1000240',
   DBA: '1000241',

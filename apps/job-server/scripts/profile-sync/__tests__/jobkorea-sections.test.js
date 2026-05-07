@@ -412,7 +412,7 @@ describe('mapPortfolioToFormFields', () => {
 
 describe('mapHopeJobToFormFields', () => {
   it('exports lookup tables for role and location mapping', () => {
-    assert.strictEqual(JK_JOB_CODES['보안 엔지니어'], 1000238);
+    assert.strictEqual(JK_JOB_CODES['시스템 엔지니어'], 1000233);
     assert.strictEqual(JK_LOCATION_CODES.서울, 'I000');
     assert.strictEqual(JK_LOCATION_CODES.경기, 'I100');
   });
@@ -427,8 +427,8 @@ describe('mapHopeJobToFormFields', () => {
       const byName = toMap(fields);
 
       assert.strictEqual(byName.get('HopeJob.HJ_Code'), '10031');
-      assert.strictEqual(byName.get('HopeJob.HJ_Name_Code'), '1000233,1000238');
-      assert.strictEqual(byName.get('HopeJob.HJ_Name'), '시스템엔지니어,보안엔지니어');
+      assert.strictEqual(byName.get('HopeJob.HJ_Name_Code'), '1000233');
+      assert.strictEqual(byName.get('HopeJob.HJ_Name'), '시스템엔지니어');
       assert.strictEqual(warnings.length, 1);
       assert.match(warnings[0], /Unmapped HopeJob roles skipped: DevOps/);
     } finally {
@@ -443,8 +443,8 @@ describe('mapHopeJobToFormFields', () => {
     const byName = toMap(fields);
 
     assert.strictEqual(byName.get('HopeJob.HJ_Code'), '10031');
-    assert.strictEqual(byName.get('HopeJob.HJ_Name_Code'), '1000233,1000238');
-    assert.strictEqual(byName.get('HopeJob.HJ_Name'), '시스템 엔지니어,보안 엔지니어');
+    assert.strictEqual(byName.get('HopeJob.HJ_Name_Code'), '1000233');
+    assert.strictEqual(byName.get('HopeJob.HJ_Name'), '시스템 엔지니어');
     assert.strictEqual(byName.get('InputStat.HopeJobInputStat'), 'True');
   });
 
@@ -464,8 +464,8 @@ describe('mapHopeJobToFormFields', () => {
     });
     const byName = toMap(fields);
 
-    assert.strictEqual(byName.get('HopeJob.HJ_Name_Code'), '1000233,1000238');
-    assert.strictEqual(byName.get('HopeJob.HJ_Name'), '시스템 엔지니어,보안 엔지니어');
+    assert.strictEqual(byName.get('HopeJob.HJ_Name_Code'), '1000233');
+    assert.strictEqual(byName.get('HopeJob.HJ_Name'), '시스템 엔지니어');
     assert.strictEqual(byName.get('InputStat.HopeJobInputStat'), 'True');
   });
 });
