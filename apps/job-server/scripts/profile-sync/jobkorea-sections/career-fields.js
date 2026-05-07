@@ -43,7 +43,7 @@ export function mapCareersToFormFields(ssot, indices) {
     pushField(
       fields,
       `Career[${key}].M_MainField`,
-      career?.jobkoreaJobCode || ssot?.platformVariants?.jobkorea?.defaultJobCode || '1000238'
+      career?.jobkoreaJobCode || ssot?.platformVariants?.jobkorea?.defaultJobCode || ''
     );
     EMPTY_CAREER_FIELDS.slice(7).forEach((name) => pushField(fields, `Career[${key}].${name}`, ''));
     pushField(fields, `Career[${key}].Prfm_Prt`, String(career?.description || '').slice(0, 500));

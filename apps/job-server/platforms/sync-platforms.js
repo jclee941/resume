@@ -115,7 +115,11 @@ async function getPlatformStatus(platform) {
   switch (platform) {
     case 'wanted': {
       const { SessionManager } = await import('../src/tools/auth.js');
-      const api = await SessionManager.getAPI();
+      let api = await SessionManager.getAPI();
+      if (!api) {
+        const renewed = await autoRenewWantedSession();
+        if (renewed) api = await SessionManager.getAPI();
+      }
       if (!api) return { authenticated: false, error: 'No session' };
 
       try {
@@ -150,6 +154,24 @@ async function getPlatformStatus(platform) {
 
     default:
       return { authenticated: false, error: 'Unknown platform' };
+  }
+}
+
+async function autoRenewWantedSession() {
+  const email = process.env.WANTED_EMAIL;
+  const password = process.env.WANTED_PASSWORD;
+  if (!email || !password) {
+    console.log('   WANTED_EMAIL/WANTED_PASSWORD not set, skipping auto-renew');
+    return false;
+  }
+  try {
+    console.log('   Auto-renewing Wanted session...');
+    const { renewWantedSession } = await import('../scripts/renew-wanted-session.js');
+    await renewWantedSession(email, password);
+    return true;
+  } catch (e) {
+    console.log('   Auto-renew failed:', e.message);
+    return false;
   }
 }
 
@@ -191,8 +213,12 @@ async function syncToPlatform(sourceData, platform, options) {
   switch (platform) {
     case 'wanted': {
       const { SessionManager } = await import('../src/tools/auth.js');
-      const api = await SessionManager.getAPI();
-      if (!api) return { error: 'Not authenticated. Run: wanted_auth first' };
+      let api = await SessionManager.getAPI();
+      if (!api) {
+        const renewed = await autoRenewWantedSession();
+        if (renewed) api = await SessionManager.getAPI();
+      }
+      if (!api) return { error: 'Not authenticated. Auto-renew failed or no credentials.' };
 
       if (options.dry_run) {
         return {
