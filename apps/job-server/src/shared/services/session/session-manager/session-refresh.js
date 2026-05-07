@@ -24,7 +24,7 @@ export async function runCdpSessionExtraction(platform) {
 export const sessionRefreshMethods = {
   async tryRefresh(platform) {
     try {
-      await runCdpSessionExtraction(platform);
+      await this.runSessionExtraction(platform);
       const session = this.load(platform);
       return !!(session && session.timestamp && Date.now() - session.timestamp < 60000);
     } catch (error) {
