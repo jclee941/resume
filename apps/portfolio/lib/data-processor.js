@@ -4,7 +4,7 @@
  */
 
 const { TEMPLATE_CACHE } = require('./config');
-const { validatePortfolioData } = require('@resume/shared/validation');
+const { validatePortfolioData } = require('./validators');
 const { calculateDataHash } = require('./content-hashing');
 const {
   generateResumeCards,
