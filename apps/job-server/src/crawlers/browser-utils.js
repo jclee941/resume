@@ -6,7 +6,7 @@
  * Imports stealth patches (pure JS) from the CF Workers browser service.
  */
 
-import { generateFingerprint, applyStealthPatches } from '@resume/shared/browser/stealth';
+import { generateFingerprint, applyStealthPatches } from '@resume/shared/browser';
 
 const LAUNCH_ARGS = [
   '--no-sandbox',

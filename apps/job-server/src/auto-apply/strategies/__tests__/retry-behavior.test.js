@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { applyToWanted } from '../wanted-strategy.js';
 import { applyToJobKorea } from '../jobkorea-strategy.js';
 import { applyToSaramin } from '../saramin-strategy.js';
-import { resetRetryState } from '../../../shared/utils/retry.js';
+import { resetRetryState } from '@resume/shared/retry';
 
 function createBaseContext({ platform, gotoFailures = 0, forceLogin = false }) {
   let gotoCalls = 0;
@@ -108,6 +108,7 @@ describe('auto-apply strategy retry behavior', () => {
     });
 
     const result = await applyToWanted.call(ctx, {
+      id: 'wanted_1',
       sourceUrl: 'https://wanted.example/job/1',
       company: 'Wanted Corp',
       title: 'Platform Engineer',
@@ -124,6 +125,7 @@ describe('auto-apply strategy retry behavior', () => {
     });
 
     const result = await applyToJobKorea.call(ctx, {
+      id: 'jobkorea_1',
       sourceUrl: 'https://jobkorea.example/job/1',
       company: 'JobKorea Corp',
       title: 'Platform Engineer',
@@ -140,6 +142,7 @@ describe('auto-apply strategy retry behavior', () => {
     });
 
     const result = await applyToSaramin.call(ctx, {
+      id: 'saramin_1',
       sourceUrl: 'https://saramin.example/job/1',
       company: 'Saramin Corp',
       title: 'Platform Engineer',
@@ -157,6 +160,7 @@ describe('auto-apply strategy retry behavior', () => {
     });
 
     const result = await applyToWanted.call(ctx, {
+      id: 'wanted_2',
       sourceUrl: 'https://wanted.example/job/2',
       company: 'Wanted Corp',
       title: 'Security Engineer',

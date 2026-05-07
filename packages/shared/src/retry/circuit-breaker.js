@@ -1,5 +1,4 @@
-const CIRCUIT_STATE = new Map();
-const RETRY_METRICS = new Map();
+const CIRCUIT_STATE = new Map(), RETRY_METRICS = new Map();
 
 function getCircuitState(key) {
   if (!CIRCUIT_STATE.has(key)) {
@@ -28,15 +27,24 @@ function getMetricState(key) {
 }
 
 function calculateDelay(retryAttempt, options) {
-  const { baseDelay, maxDelay, random, jitterMax } = options;
-  const exponential = baseDelay * 2 ** retryAttempt;
-  const jitter = Math.floor((random?.() ?? Math.random()) * jitterMax);
-  return Math.min(maxDelay, exponential + jitter);
+  const { baseDelay, maxDelay, random, jitterMax } = options, exponential = baseDelay * 2 ** retryAttempt;
+  return Math.min(maxDelay, exponential + Math.floor((random?.() ?? Math.random()) * jitterMax));
 }
 
 function defaultLog(logger, key, message, payload = {}) {
   const target = logger && typeof logger.info === 'function' ? logger : console;
   target.info(`[circuit:${key}] ${message}`, payload);
+}
+
+function errorPayload(error) { return typeof error?.toJSON === 'function' ? error.toJSON() : { name: error?.name, message: error?.message }; }
+
+function openCircuit(circuit, key, options) {
+  const { now, duration, logger, reporter, consecutiveFailures } = options;
+  circuit.state = 'open';
+  circuit.openedAt = now();
+  circuit.openUntil = now() + duration;
+  defaultLog(logger, key, 'Circuit opened', { openUntil: circuit.openUntil, consecutiveFailures });
+  emitReport(reporter, 'circuit_opened', { key, openUntil: circuit.openUntil, consecutiveFailures });
 }
 
 function emitReport(reporter, event, payload) {
@@ -72,6 +80,15 @@ export function resetRetryState(key = null) {
   RETRY_METRICS.clear();
 }
 
+function classifyApplyErrorFallback(error, key) {
+  if (error?.retryable !== undefined) return error;
+  const message = String(error?.message || error || 'Unknown apply error');
+  const status = Number(error?.statusCode || error?.status || error?.response?.status || 0);
+  const lowered = message.toLowerCase();
+  const retryable = status >= 500 || status === 429 || error?.name === 'AbortError' || /(timeout|timed\s+out|network|econnreset|econnrefused|etimedout|enotfound|failed\s+to\s+fetch|navigation\s+timeout)/i.test(lowered);
+  return Object.assign(error instanceof Error ? error : new Error(message), { name: retryable ? 'NetworkError' : 'ValidationError', platform: key, retryable, retryAfterMs: Number(error?.retryAfterMs || error?.retryAfter || 0) || null });
+}
+
 export async function withCircuitBreaker(fn, options = {}) {
   const {
     key = 'unknown',
@@ -81,8 +98,8 @@ export async function withCircuitBreaker(fn, options = {}) {
     jitterMax = 1000,
     circuitBreakerThreshold = 3,
     circuitBreakerDuration = 5 * 60 * 1000,
-    classifyError = (e) => e,
-    shouldRetry = () => true,
+    classifyError = (e) => classifyApplyErrorFallback(e, key),
+    shouldRetry = (error) => Boolean(error?.retryable),
     onCircuitOpen = null,
     logger = console,
     sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
@@ -93,18 +110,12 @@ export async function withCircuitBreaker(fn, options = {}) {
 
   const circuit = getCircuitState(key);
   const metrics = getMetricState(key);
-  const startTime = now();
-
   if (circuit.state === 'open') {
     if (circuit.openUntil && now() < circuit.openUntil) {
+      const context = { key, openUntil: circuit.openUntil, remainingMs: circuit.openUntil - now(), consecutiveFailures: circuit.consecutiveFailures };
       const error = onCircuitOpen
-        ? onCircuitOpen({
-            key,
-            openUntil: circuit.openUntil,
-            remainingMs: circuit.openUntil - now(),
-            consecutiveFailures: circuit.consecutiveFailures,
-          })
-        : Object.assign(new Error(`Circuit is open for ${key}`), { code: 'CIRCUIT_OPEN', key });
+        ? onCircuitOpen(context)
+        : Object.assign(new Error(`Circuit is open for ${key}`), { code: 'CIRCUIT_OPEN', key, metadata: context });
       emitReport(reporter, 'circuit_open_rejected', { key, error: error?.message });
       throw error;
     }
@@ -113,7 +124,7 @@ export async function withCircuitBreaker(fn, options = {}) {
     defaultLog(logger, key, 'Circuit closed after cooldown', {
       consecutiveFailures: circuit.consecutiveFailures,
     });
-    emitReport(reporter, 'circuit_closed', { key, at: now(), reason: 'cooldown_expired' });
+      emitReport(reporter, 'circuit_closed', { key, reason: 'cooldown_expired' });
   }
 
   let retriesUsed = 0;
@@ -129,16 +140,8 @@ export async function withCircuitBreaker(fn, options = {}) {
         metrics.successAfterRetry += 1;
       }
       circuit.consecutiveFailures = 0;
-      emitReport(reporter, 'execution_success', {
-        key,
-        retriesUsed,
-        durationMs: now() - startTime,
-        metrics: getRetryMetrics(key),
-      });
-      defaultLog(logger, key, 'Execution succeeded', {
-        retriesUsed,
-        successRate: getRetryMetrics(key)?.successRate,
-      });
+      emitReport(reporter, 'execution_success', { key, retriesUsed, metrics: getRetryMetrics(key) });
+      defaultLog(logger, key, 'Execution succeeded', { retriesUsed, successRate: getRetryMetrics(key)?.successRate });
       return result;
     } catch (error) {
       const normalizedError = classifyError(error, { key });
@@ -152,26 +155,13 @@ export async function withCircuitBreaker(fn, options = {}) {
         metrics.lastUpdatedAt = new Date(now()).toISOString();
         circuit.consecutiveFailures += 1;
         if (circuit.consecutiveFailures >= circuitBreakerThreshold) {
-          circuit.state = 'open';
-          circuit.openedAt = now();
-          circuit.openUntil = now() + circuitBreakerDuration;
-          defaultLog(logger, key, 'Circuit opened', {
-            openUntil: circuit.openUntil,
-            consecutiveFailures: circuit.consecutiveFailures,
-          });
-          emitReport(reporter, 'circuit_opened', {
-            key,
-            openUntil: circuit.openUntil,
-            consecutiveFailures: circuit.consecutiveFailures,
-          });
+          openCircuit(circuit, key, { now, duration: circuitBreakerDuration, logger, reporter, consecutiveFailures: circuit.consecutiveFailures });
         }
         emitReport(reporter, 'execution_failed', {
           key,
           retriesUsed,
           retryable,
-          durationMs: now() - startTime,
-          error: { name: normalizedError.name, message: normalizedError.message },
-          metrics: getRetryMetrics(key),
+          error: errorPayload(normalizedError),
         });
         throw normalizedError;
       }
@@ -188,7 +178,7 @@ export async function withCircuitBreaker(fn, options = {}) {
         retryAttempt: retriesUsed + 1,
         retriesRemaining,
         delayMs: appliedDelay,
-        error: { name: normalizedError.name, message: normalizedError.message },
+        error: errorPayload(normalizedError),
         metrics: getRetryMetrics(key),
       });
       defaultLog(logger, key, 'Retry scheduled', {

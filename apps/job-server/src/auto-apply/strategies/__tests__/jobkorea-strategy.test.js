@@ -113,7 +113,7 @@ describe('JobKorea Strategy', () => {
   beforeEach(async () => {
     // Reset retry state to avoid pollution between tests
     try {
-      const { resetRetryState } = await import('../../../shared/utils/retry.js');
+  const { resetRetryState } = await import('@resume/shared/retry');
       resetRetryState('jobkorea');
     } catch (_e) {
       /* ignore if import fails */

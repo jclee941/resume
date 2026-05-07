@@ -9,10 +9,10 @@
  *
  * New code should prefer:
  *
- *   import { EncryptionService } from '@resume/shared/crypto/node';
+ *   import { EncryptionService } from '@resume/shared/crypto';
  */
 
-import EncryptionServiceCanonical from '@resume/shared/crypto/node';
+import { EncryptionService as EncryptionServiceCanonical } from '@resume/shared/crypto';
 
 export { EncryptionServiceCanonical as EncryptionService };
 export default EncryptionServiceCanonical;

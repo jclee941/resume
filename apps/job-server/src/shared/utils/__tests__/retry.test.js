@@ -2,11 +2,10 @@ import { describe, it, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   AuthError,
-  CircuitOpenError,
   NetworkError,
   RateLimitError,
 } from '../../errors/apply-errors.js';
-import { getRetryMetrics, resetRetryState, withRetry } from '../retry.js';
+import { getRetryMetrics, resetRetryState, withRetry } from '@resume/shared/retry';
 
 describe('withRetry', () => {
   beforeEach(() => {
@@ -140,7 +139,7 @@ describe('withRetry', () => {
         sleep: async () => {},
       }),
       (error) => {
-        assert.ok(error instanceof CircuitOpenError);
+        assert.equal(error.code, 'CIRCUIT_OPEN');
         return true;
       }
     );

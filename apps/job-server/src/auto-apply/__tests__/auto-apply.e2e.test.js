@@ -20,7 +20,7 @@ const [
   import('../../shared/services/apply/job-filter.js'),
   import('../../shared/services/apply/cover-letter-service.js'),
   import('../../shared/services/apply/approval-manager.js'),
-  import('../../shared/services/apply/retry-service.js'),
+  import('@resume/shared/retry'),
   import('../../shared/services/apply/application-tracker.js'),
   import('../../shared/repositories/application-repository.js'),
   import('../../shared/services/notifications/telegram-adapter.js'),

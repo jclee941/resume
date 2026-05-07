@@ -7,7 +7,7 @@ import {
   ValidationError,
   classifyApplyError,
 } from '../../shared/errors/apply-errors.js';
-import { withRetry } from '../../shared/utils/retry.js';
+import { withRetry } from '@resume/shared/retry';
 
 // Per AGENTS.md auto-apply convention: "retry logic (3 max)".
 // AuthError + CaptchaError are non-retryable (handled by classifyApplyError).

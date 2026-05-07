@@ -3,7 +3,7 @@ import { UnifiedJobCrawler } from '../crawlers/unified/unified-job-crawler.js';
 import { ApplicationRepository } from '../shared/repositories/application-repository.js';
 import { CoverLetterService } from '../shared/services/apply/cover-letter-service.js';
 import { ApprovalWorkflowManager } from '../shared/services/apply/approval-manager.js';
-import { RetryService } from '../shared/services/apply/retry-service.js';
+import { RetryService } from '@resume/shared/retry';
 import { ApplicationTrackerService } from '../shared/services/apply/application-tracker.js';
 import { TelegramNotificationAdapter } from '../shared/services/notifications/telegram-adapter.js';
 

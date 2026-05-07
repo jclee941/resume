@@ -6,15 +6,17 @@
  * retryability via `isRetryableError()`.
  *
  * For HTTP-specific retry (axios/fetch error shapes) see `./http-retry.js`.
- * For circuit-breaker-aware retry (with metrics/state) see
- * `./circuit-breaker.js` and `apps/job-server/src/shared/utils/retry.js`
- * (domain-specific apply retry).
+ * For circuit-breaker-aware retry (with metrics/state), pass a `platform` or
+ * `key` option; this preserves the apply-retry contract that formerly lived in
+ * app-local modules.
  *
  * This module is the canonical home for the simple "retry with backoff" loop
  * that previously lived duplicated in:
  *   - apps/job-dashboard/src/utils/retry.js
- *   - apps/job-server/src/shared/utils/retry.js (sophisticated; not migrated)
+ *   - apps/job-server/src/shared/utils/retry.js
  */
+
+import { withCircuitBreaker } from './circuit-breaker.js';
 
 const DEFAULT_RETRYABLE_ERRORS = ['ETIMEDOUT', 'ETIMEOUT', 'ECONNRESET', 'ECONNREFUSED', 'EPIPE'];
 
@@ -102,6 +104,18 @@ export function isRetryableError(error, retryableErrors = DEFAULT_RETRYABLE_ERRO
   return false;
 }
 
+function shouldUseCircuitRetry(options) {
+  return Boolean(
+    options.platform ??
+      options.key ??
+      options.classifyError ??
+      options.reporter ??
+      options.logger ??
+      options.circuitBreakerThreshold ??
+      options.circuitBreakerDuration
+  );
+}
+
 /**
  * Retry an async operation with exponential backoff + jitter.
  *
@@ -116,12 +130,19 @@ export function isRetryableError(error, retryableErrors = DEFAULT_RETRYABLE_ERRO
  * @returns {Promise<T>}
  */
 export async function withRetry(fn, options = {}) {
+  if (shouldUseCircuitRetry(options)) {
+    const { platform, key = platform ?? 'unknown', ...rest } = options;
+    return withCircuitBreaker(fn, { key, ...rest });
+  }
+
   const {
     maxRetries = 4,
     baseDelay = 1000,
     maxDelay = 30000,
     retryableErrors = DEFAULT_RETRYABLE_ERRORS,
     shouldRetry = () => true,
+    sleep: wait = sleep,
+    random = Math.random,
   } = options;
 
   let attempt = 0;
@@ -140,7 +161,7 @@ export async function withRetry(fn, options = {}) {
         throw error;
       }
 
-      const jitter = Math.floor(Math.random() * 1001);
+      const jitter = Math.floor(random() * 1001);
       const exponential = baseDelay * 2 ** attempt;
       let delay = Math.min(maxDelay, exponential + jitter);
 
@@ -149,7 +170,7 @@ export async function withRetry(fn, options = {}) {
         delay = Math.min(maxDelay, Math.max(delay, retryAfterSeconds * 1000));
       }
 
-      await sleep(delay);
+      await wait(delay);
       attempt += 1;
     }
   }
