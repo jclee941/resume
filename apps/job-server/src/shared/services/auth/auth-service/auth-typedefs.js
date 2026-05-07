@@ -22,4 +22,19 @@
  * @property {Map<string, string>} csrfTokens
  */
 
+/**
+ * @typedef {Object} PlatformSessionStore
+ * @property {(platform?: string|null) => Object|null} load
+ * @property {(platform: string, session: Object) => boolean} save
+ * @property {(platform?: string|null) => boolean} clear
+ * @property {() => Array<Object>} [getStatus]
+ * @property {(platform: string, thresholdMs?: number, validateContent?: boolean) => Object} [checkHealth]
+ */
+
+/**
+ * @typedef {Object} AuthServiceDependencies
+ * @property {SessionStore} [store]
+ * @property {PlatformSessionStore} [sessionStore]
+ */
+
 export {};

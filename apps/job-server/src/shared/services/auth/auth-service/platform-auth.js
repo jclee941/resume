@@ -1,22 +1,22 @@
-import { SessionManager } from '../../session/index.js';
-
 /**
  * Get platform authentication status.
+ * @param {import('./auth-typedefs.js').PlatformSessionStore} sessionStore
  * @returns {{success: boolean, status: Object}}
  */
-export function getAuthStatus() {
-  const status = SessionManager.getStatus();
+export function getAuthStatus(sessionStore) {
+  const status = sessionStore.getStatus();
   return { success: true, status };
 }
 
 /**
  * Save platform authentication cookies.
+ * @param {import('./auth-typedefs.js').PlatformSessionStore} sessionStore
  * @param {string} platform
  * @param {string|Array<{name: string, value: string}>|unknown} cookies
  * @param {string} [email]
  * @returns {{success: boolean, message?: string, error?: string, statusCode?: number}}
  */
-export function savePlatformAuth(platform, cookies, email) {
+export function savePlatformAuth(sessionStore, platform, cookies, email) {
   if (!platform || !cookies) {
     return {
       success: false,
@@ -29,7 +29,7 @@ export function savePlatformAuth(platform, cookies, email) {
   const cookieCount = Array.isArray(cookies)
     ? cookies.length
     : cookieString.split(';').filter(Boolean).length;
-  SessionManager.save(platform, {
+  sessionStore.save(platform, {
     cookies,
     cookieString,
     cookieCount,
@@ -41,11 +41,12 @@ export function savePlatformAuth(platform, cookies, email) {
 
 /**
  * Clear platform authentication.
+ * @param {import('./auth-typedefs.js').PlatformSessionStore} sessionStore
  * @param {string} platform
  * @returns {{success: boolean, message: string}}
  */
-export function clearPlatformAuth(platform) {
-  SessionManager.clear(platform);
+export function clearPlatformAuth(sessionStore, platform) {
+  sessionStore.clear(platform);
   return { success: true, message: `Logged out from ${platform}` };
 }
 

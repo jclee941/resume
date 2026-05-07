@@ -1,4 +1,5 @@
 import { OAuth2Client } from 'google-auth-library';
+import { SessionManager } from '../../session/index.js';
 import { verifyGoogleCredentialWithSession } from './google-auth-flow.js';
 import { clearPlatformAuth, getAuthStatus, savePlatformAuth } from './platform-auth.js';
 import { renewSession } from './session-renewal.js';
@@ -11,22 +12,28 @@ export class AuthService {
   #config;
   /** @type {import('./auth-typedefs.js').SessionStore} */
   #store;
+  /** @type {import('./auth-typedefs.js').PlatformSessionStore} */
+  #sessionStore;
 
   /**
    * @param {import('./auth-typedefs.js').AuthConfig} config
-   * @param {import('./auth-typedefs.js').SessionStore} [store]
+   * @param {import('./auth-typedefs.js').SessionStore|import('./auth-typedefs.js').AuthServiceDependencies} [dependencies]
    */
-  constructor(config, store) {
+  constructor(config, dependencies = {}) {
     this.#config = {
       sessionTTL: 24 * 60 * 60 * 1000,
       ...config,
     };
     this.logger = config.logger ?? console;
     this.#googleClient = new OAuth2Client(config.googleClientId);
-    this.#store = store || {
+    const resolvedDependencies = isLegacySessionStore(dependencies)
+      ? { store: dependencies }
+      : dependencies;
+    this.#store = resolvedDependencies.store || {
       sessions: new Map(),
       csrfTokens: new Map(),
     };
+    this.#sessionStore = resolvedDependencies.sessionStore || SessionManager.getInstance();
   }
 
   /**
@@ -45,15 +52,15 @@ export class AuthService {
   }
 
   getAuthStatus() {
-    return getAuthStatus();
+    return getAuthStatus(this.#sessionStore);
   }
 
   savePlatformAuth(platform, cookies, email) {
-    return savePlatformAuth(platform, cookies, email);
+    return savePlatformAuth(this.#sessionStore, platform, cookies, email);
   }
 
   clearPlatformAuth(platform) {
-    return clearPlatformAuth(platform);
+    return clearPlatformAuth(this.#sessionStore, platform);
   }
 
   logout(sessionId) {
@@ -65,7 +72,7 @@ export class AuthService {
   }
 
   renewSession(platform) {
-    return renewSession(platform);
+    return renewSession(this.#sessionStore, platform);
   }
 
   /**
@@ -75,4 +82,12 @@ export class AuthService {
   getSessionTTLSeconds() {
     return Math.floor(this.#config.sessionTTL / 1000);
   }
+}
+
+/**
+ * @param {unknown} dependencies
+ * @returns {dependencies is import('./auth-typedefs.js').SessionStore}
+ */
+function isLegacySessionStore(dependencies) {
+  return Boolean(dependencies?.sessions && dependencies?.csrfTokens);
 }
