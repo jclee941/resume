@@ -1,4 +1,4 @@
-import { WantedClient } from '@resume/shared/wanted-client';
+import { WantedAPI } from '@resume/shared/clients/wanted';
 import { buildWantedChanges } from './wanted-profile-changes.js';
 import { applyWantedChanges } from './wanted-profile-apply.js';
 
@@ -13,7 +13,7 @@ export async function syncWantedProfile(context, ssotData, profileData, dryRun, 
     };
   }
 
-  const client = new WantedClient(cookies);
+  const client = new WantedAPI(cookies);
 
   try {
     const resumes = await client.getResumeList();
