@@ -2,13 +2,16 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { homedir } from 'os';
 import { dirname, join, resolve } from 'path';
 import { fileURLToPath } from 'url';
+import { getSessionTtlMs } from '../../src/shared/services/session/session-constants.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-// repoSessionFile is the location profile-sync/constants.js reads from (repo root).
+const JOBKOREA_PLATFORM = 'jobkorea';
+export const jobKoreaSessionTtlMs = getSessionTtlMs(JOBKOREA_PLATFORM);
+
+// repoSessionFile is a backward-compatible mirror at the project root.
 const repoSessionFile = resolve(__dirname, '../../../../jobkorea-session.json');
-
-
-const defaultSessionFile = join(homedir(), '.OpenCode', 'data', 'jobkorea-session.json');
+const legacyOpencodeSessionFile = join(homedir(), '.opencode', 'data', 'sessions', 'jobkorea.json');
+const defaultSessionFile = legacyOpencodeSessionFile;
 
 export function readJson(filePath) {
   if (!existsSync(filePath)) {
@@ -49,7 +52,7 @@ export function ensureSessionDir(filePath) {
 export function savePlatformSession(data, filePath = defaultSessionFile) {
   ensureSessionDir(filePath);
   writeFileSync(filePath, JSON.stringify(data, null, 2));
-  // Also mirror to repo root so profile-sync (CONFIG.SESSION_DIR) sees the same data.
+  // Mirror to repo root for backward compatibility with older profile-sync runs.
   if (filePath !== repoSessionFile) {
     try {
       ensureSessionDir(repoSessionFile);
@@ -61,5 +64,4 @@ export function savePlatformSession(data, filePath = defaultSessionFile) {
   }
 }
 
-
-export { defaultSessionFile, repoSessionFile };
+export { defaultSessionFile, legacyOpencodeSessionFile, repoSessionFile };

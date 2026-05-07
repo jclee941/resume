@@ -1,10 +1,10 @@
-import SessionManager from '../../src/shared/services/session/session-manager.js';
 import {
   buildCookieString,
   hasFreshSession,
   readJson,
   savePlatformSession,
 } from './cookie-utils.js';
+import { resolveJobKoreaSession } from './jobkorea-session-resolver.js';
 
 export async function maybeUseExistingSession({
   sessionFile,
@@ -27,11 +27,8 @@ export async function maybeUseExistingSession({
     return true;
   }
 
-  const unifiedSession = SessionManager.load('jobkorea');
-  if (
-    hasFreshSession(unifiedSession) &&
-    SessionManager.validateSessionContent('jobkorea', unifiedSession).valid
-  ) {
+  const unifiedSession = resolveJobKoreaSession({ saveResolvedFallback: false });
+  if (hasFreshSession(unifiedSession)) {
     const cookieString =
       unifiedSession.cookieString || buildCookieString(unifiedSession.cookies || []);
     await verifyAuthenticatedSession({ cookieString, resumeUrl, userAgent });
