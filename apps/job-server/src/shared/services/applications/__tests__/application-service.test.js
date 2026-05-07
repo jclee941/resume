@@ -1,32 +1,6 @@
-import { readFileSync } from 'node:fs';
 import { describe, it, beforeEach, mock } from 'node:test';
 import assert from 'node:assert/strict';
-
-class MockApplicationManager {
-  constructor() {
-    this.listApplications = mock.fn(() => []);
-    this.getApplication = mock.fn(() => null);
-    this.addApplication = mock.fn(() => ({}));
-    this.save = mock.fn(() => {});
-    this.updateStatus = mock.fn(() => ({ success: true }));
-    this.deleteApplication = mock.fn(() => ({ success: true }));
-    this.cleanupExpired = mock.fn(() => ({ cleaned: 0 }));
-  }
-}
-
-globalThis.__mockApplicationManager = MockApplicationManager;
-
-const applicationServiceSource = readFileSync(
-  new URL('../application-service.js', import.meta.url),
-  'utf8'
-).replace(
-  /import\s*\{\s*ApplicationManager\s*\}\s*from\s*['"]\.\.\/\.\.\/\.\.\/auto-apply\/application-manager\.js['"]\s*;?/,
-  'const { ApplicationManager } = { ApplicationManager: globalThis.__mockApplicationManager };'
-);
-const applicationServiceEncoded = Buffer.from(applicationServiceSource).toString('base64');
-const { ApplicationService } = await import(
-  `data:text/javascript;base64,${applicationServiceEncoded}`
-);
+import { ApplicationService } from '../application-service.js';
 
 function createManager() {
   return {
@@ -49,7 +23,7 @@ describe('ApplicationService', () => {
     const manager = createManager();
     manager.listApplications.mock.mockImplementation(() => [{ id: '1' }, { id: '2' }]);
 
-    const service = new ApplicationService(manager);
+    const service = new ApplicationService({ manager });
     const result = service.list({ status: 'pending', limit: '50', offset: '7' });
 
     assert.equal(manager.listApplications.mock.calls.length, 1);
@@ -73,7 +47,7 @@ describe('ApplicationService', () => {
     const manager = createManager();
     manager.getApplication.mock.mockImplementation((id) => (id === 'ok' ? { id } : null));
 
-    const service = new ApplicationService(manager);
+    const service = new ApplicationService({ manager });
 
     const found = service.get('ok');
     const missing = service.get('missing');
@@ -90,7 +64,7 @@ describe('ApplicationService', () => {
     const manager = createManager();
     manager.addApplication.mock.mockImplementation(() => ({ id: 'new-app' }));
 
-    const service = new ApplicationService(manager);
+    const service = new ApplicationService({ manager });
     const result = service.create({ id: 'job-1' }, { source: 'wanted' });
 
     assert.equal(manager.addApplication.mock.calls.length, 1);
@@ -110,7 +84,7 @@ describe('ApplicationService', () => {
     const app = { id: 'a1', notes: 'old', priority: 'low', resumeId: 'r1' };
     manager.getApplication.mock.mockImplementation(() => app);
 
-    const service = new ApplicationService(manager);
+    const service = new ApplicationService({ manager });
     const result = service.update('a1', { notes: 'new', priority: 'high', resumeId: 'r2' });
 
     assert.equal(result.success, true);
@@ -125,7 +99,7 @@ describe('ApplicationService', () => {
     const manager = createManager();
     manager.getApplication.mock.mockImplementation(() => null);
 
-    const service = new ApplicationService(manager);
+    const service = new ApplicationService({ manager });
     const result = service.update('missing', { notes: 'x' });
 
     assert.deepEqual(result, {
@@ -143,7 +117,7 @@ describe('ApplicationService', () => {
       return { success: false, error: 'bad status' };
     });
 
-    const service = new ApplicationService(manager);
+    const service = new ApplicationService({ manager });
     const ok = service.updateStatus('ok', 'interviewing', 'note');
     const bad = service.updateStatus('bad', 'invalid', 'note');
 
@@ -158,7 +132,7 @@ describe('ApplicationService', () => {
       id === 'ok' ? { success: true } : { success: false, error: 'not found' }
     );
 
-    const service = new ApplicationService(manager);
+    const service = new ApplicationService({ manager });
     const ok = service.delete('ok');
     const missing = service.delete('missing');
 
@@ -170,7 +144,7 @@ describe('ApplicationService', () => {
     const manager = createManager();
     manager.cleanupExpired.mock.mockImplementation(() => ({ cleaned: 3 }));
 
-    const service = new ApplicationService(manager);
+    const service = new ApplicationService({ manager });
 
     assert.deepEqual(service.cleanup(), { cleaned: 3 });
     assert.equal(service.getManager(), manager);

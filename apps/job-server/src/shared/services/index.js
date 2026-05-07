@@ -42,7 +42,6 @@ export { ApplyOrchestrator } from './apply/orchestrator.js';
 export {
   ApplicationService,
   createApplicationService,
-  getApplicationService,
 } from './applications/application-service.js';
 export { AuthService, createAuthService, getAuthService } from './auth/auth-service.js';
 export { JobFilter } from './apply/job-filter.js';

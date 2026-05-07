@@ -2,8 +2,6 @@
  * Framework-agnostic Application Service
  * Extracts business logic from server/routes/applications.js and dashboard/routes/applications.js
  */
-import { ApplicationManager } from '../../../auto-apply/application-manager.js';
-
 /**
  * @typedef {Object} ListOptions
  * @property {string} [status]
@@ -26,15 +24,34 @@ import { ApplicationManager } from '../../../auto-apply/application-manager.js';
  * @property {number} [statusCode]
  */
 
+/**
+ * @typedef {Object} ApplicationManagerPort
+ * @property {(options: Object) => Array} listApplications
+ * @property {(id: string) => Object|null} getApplication
+ * @property {(job: Object, options?: Object) => Object} addApplication
+ * @property {() => void} save
+ * @property {(id: string, status: string, note?: string) => Object} updateStatus
+ * @property {(id: string) => Object} deleteApplication
+ * @property {() => Object} cleanupExpired
+ */
+
+/**
+ * @typedef {Object} ApplicationServiceDependencies
+ * @property {ApplicationManagerPort} manager
+ */
+
 export class ApplicationService {
-  /** @type {ApplicationManager} */
+  /** @type {ApplicationManagerPort} */
   #manager;
 
   /**
-   * @param {ApplicationManager} [manager]
+   * @param {ApplicationServiceDependencies} dependencies
    */
-  constructor(manager) {
-    this.#manager = manager || new ApplicationManager();
+  constructor(dependencies) {
+    if (!dependencies?.manager) {
+      throw new TypeError('ApplicationService requires a manager dependency');
+    }
+    this.#manager = dependencies.manager;
   }
 
   /**
@@ -166,7 +183,7 @@ export class ApplicationService {
 
   /**
    * Get underlying manager (for stats/reports that need direct access)
-   * @returns {ApplicationManager}
+   * @returns {ApplicationManagerPort}
    */
   getManager() {
     return this.#manager;
@@ -175,44 +192,11 @@ export class ApplicationService {
 
 /**
  * Create an isolated ApplicationService instance for constructor-injected dependencies.
- * @param {Object} [config]
- * @param {ApplicationManager} [config.manager]
- * @param {Object} [config.managerOptions]
+ * @param {ApplicationServiceDependencies} dependencies
  * @returns {ApplicationService}
  */
-export function createApplicationService(config = {}) {
-  const { manager, managerOptions } = config;
-  return new ApplicationService(manager || new ApplicationManager(managerOptions));
-}
-
-// Deprecated singleton compatibility layer.
-// DEPRECATED: Prefer createApplicationService() and pass the instance through constructors.
-// Singleton exports remain temporarily for existing imports and tests.
-// Migration: docs/architecture/MONOREPO_REVIEW_2026-04-29.md (singleton DI plan).
-const _instanceHolder = (() => {
-  let v = null;
-  return {
-    get: () => v,
-    set: (x) => {
-      v = x;
-    },
-    clear: () => {
-      v = null;
-    },
-  };
-})();
-
-/**
- * Get or create ApplicationService singleton
- * @deprecated Use createApplicationService() and inject the returned instance through constructors.
- * @param {ApplicationManager} [manager]
- * @returns {ApplicationService}
- */
-export function getApplicationService(manager) {
-  if (!_instanceHolder.get()) {
-    _instanceHolder.set(createApplicationService({ manager }));
-  }
-  return _instanceHolder.get();
+export function createApplicationService(dependencies) {
+  return new ApplicationService(dependencies);
 }
 
 export default ApplicationService;
