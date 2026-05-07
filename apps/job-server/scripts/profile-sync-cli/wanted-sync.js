@@ -1,7 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import WantedAPI from '../../src/shared/clients/wanted/index.js';
-import WantedClient from '@resume/shared/wanted-client';
+import WantedAPI from '@resume/shared/clients/wanted';
 import {
   syncWantedSkills,
   syncWantedCareers,
@@ -113,7 +112,7 @@ export async function syncWantedViaAPI(ssot) {
     const resumeId = resumes?.[0]?.key;
 
     if (resumeId) {
-      const client = new WantedClient(cookieString);
+      const client = api;
 
       try {
         const skillsResult = await syncWantedSkills(api, ssot, profile);

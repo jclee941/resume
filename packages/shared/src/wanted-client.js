@@ -1,48 +1,24 @@
-/**
- * @deprecated Older 191-LOC Wanted client. See SSOT-037 / issue #46.
- *
- * **New code SHOULD prefer** the 40-method client at
- * `apps/job-server/src/shared/clients/wanted/wanted-api.js` (or its future
- * canonical home `@resume/clients-wanted` once Phase 2 of #46 ships).
- *
- * The newer client provides:
- *   - 40+ methods organized by endpoint class (jobs, applications, profile,
- *     resume) instead of a single class with mixed concerns.
- *   - Automatic 401-retry + CSRF-token refresh (production-hardened).
- *   - Dedicated test coverage at apps/job-server/src/shared/clients/wanted/__tests__/.
- *
- * This file is preserved for the existing consumers until they migrate
- * per the plan in docs/architecture/wanted-client-triage.md.
- *
- * WantedClient — core class + job search/apply/profile.
- * Domain methods composed from wanted-resume-api, wanted-skill-api,
- * wanted-profile-api.
- */
+/** Legacy-compatible facade for the canonical Wanted API client. */
 import { DEFAULT_USER_AGENT } from './ua.js';
-import { resumeApiMethods } from './wanted-resume-api.js';
-import { skillApiMethods } from './wanted-skill-api.js';
-import { profileApiMethods } from './wanted-profile-api.js';
+import { WantedAPI, WantedAPIError } from './clients/wanted/wanted-api.js';
 
 const BASE_URL = 'https://www.wanted.co.kr/api/v4';
 const CHAOS_BASE_URL = 'https://www.wanted.co.kr/api/chaos';
 const SNS_BASE_URL = 'https://www.wanted.co.kr/api/sns-api';
 
-export class WantedAPIError extends Error {
-  constructor(message, statusCode, response) {
-    super(message);
-    this.name = 'WantedAPIError';
-    this.statusCode = statusCode;
-    this.response = response;
-  }
-}
+export { WantedAPI, WantedAPIError };
 
-export class WantedClient {
+export class WantedClient extends WantedAPI {
   constructor(cookies = '') {
-    this.cookies = cookies;
+    super(cookies);
+  }
+
+  get cookies() {
+    return this.getCookies() || '';
   }
 
   setCookies(cookies) {
-    this.cookies = cookies;
+    super.setCookies(cookies || '');
   }
 
   async request(endpoint, options = {}) {
@@ -161,6 +137,161 @@ export class WantedClient {
     return response.json();
   }
 
+  async getResumeList() {
+    this._requireAuth();
+    const response = await this.chaosRequest('/resumes/v1');
+    return response.data || response;
+  }
+
+  async getResumeDetail(resumeId) {
+    this._requireAuth();
+    const response = await this.chaosRequest(`/resumes/v1/${resumeId}`);
+    return response.data || response;
+  }
+
+  async saveResume(resumeId) {
+    this._requireAuth();
+    return this.chaosRequest(`/resumes/${resumeId}/pdf`, { method: 'POST' });
+  }
+
+  async updateResumeFields(resumeId, fields) {
+    this._requireAuth();
+    return this.chaosRequest(`/resumes/v1/${resumeId}`, {
+      method: 'PUT',
+      body: fields,
+    });
+  }
+
+  async updateProfile(profileData) {
+    this._requireAuth();
+    return this.snsRequest('/profile', {
+      method: 'PATCH',
+      body: profileData,
+    });
+  }
+
+  async updateCareer(resumeId, careerId, careerData) {
+    this._requireAuth();
+    return this.chaosRequest(`/resumes/v2/${resumeId}/careers/${careerId}`, {
+      method: 'PATCH',
+      body: careerData,
+    });
+  }
+
+  async addCareer(resumeId, careerData) {
+    this._requireAuth();
+    return this.chaosRequest(`/resumes/v2/${resumeId}/careers`, {
+      method: 'POST',
+      body: careerData,
+    });
+  }
+
+  async deleteCareer(resumeId, careerId) {
+    this._requireAuth();
+    return this.chaosRequest(`/resumes/v2/${resumeId}/careers/${careerId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async addProject(resumeId, careerId, projectData) {
+    this._requireAuth();
+    return this.chaosRequest(`/resumes/v2/${resumeId}/careers/${careerId}/projects`, {
+      method: 'POST',
+      body: projectData,
+    });
+  }
+
+  async deleteProject(resumeId, careerId, projectId) {
+    this._requireAuth();
+    return this.chaosRequest(`/resumes/v2/${resumeId}/careers/${careerId}/projects/${projectId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async updateEducation(resumeId, educationId, educationData) {
+    this._requireAuth();
+    return this.chaosRequest(`/resumes/v2/${resumeId}/educations/${educationId}`, {
+      method: 'PATCH',
+      body: educationData,
+    });
+  }
+
+  async addEducation(resumeId, educationData) {
+    this._requireAuth();
+    return this.chaosRequest(`/resumes/v2/${resumeId}/educations`, {
+      method: 'POST',
+      body: educationData,
+    });
+  }
+
+  async deleteEducation(resumeId, educationId) {
+    this._requireAuth();
+    return this.chaosRequest(`/resumes/v2/${resumeId}/educations/${educationId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async addSkill(resumeId, tagTypeId) {
+    this._requireAuth();
+    return this.chaosRequest(`/resumes/v1/${resumeId}/skills`, {
+      method: 'POST',
+      body: { tag_type_id: tagTypeId },
+    });
+  }
+
+  async deleteSkill(resumeId, skillId) {
+    this._requireAuth();
+    return this.chaosRequest(`/resumes/v1/${resumeId}/skills/${skillId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async updateActivity(resumeId, activityId, activityData) {
+    this._requireAuth();
+    return this.chaosRequest(`/resumes/v2/${resumeId}/activities/${activityId}`, {
+      method: 'PATCH',
+      body: activityData,
+    });
+  }
+
+  async addActivity(resumeId, activityData) {
+    this._requireAuth();
+    return this.chaosRequest(`/resumes/v2/${resumeId}/activities`, {
+      method: 'POST',
+      body: activityData,
+    });
+  }
+
+  async deleteActivity(resumeId, activityId) {
+    this._requireAuth();
+    return this.chaosRequest(`/resumes/v2/${resumeId}/activities/${activityId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async updateLanguageCert(resumeId, certId, certData) {
+    this._requireAuth();
+    return this.chaosRequest(`/resumes/v2/${resumeId}/language_certs/${certId}`, {
+      method: 'PUT',
+      body: certData,
+    });
+  }
+
+  async addLanguageCert(resumeId, certData) {
+    this._requireAuth();
+    return this.chaosRequest(`/resumes/v2/${resumeId}/language_certs`, {
+      method: 'POST',
+      body: certData,
+    });
+  }
+
+  async deleteLanguageCert(resumeId, certId) {
+    this._requireAuth();
+    return this.chaosRequest(`/resumes/v2/${resumeId}/language_certs/${certId}`, {
+      method: 'DELETE',
+    });
+  }
+
   _requireAuth() {
     if (!this.cookies) {
       throw new WantedAPIError('Authentication required', 401, null);
@@ -201,9 +332,5 @@ export class WantedClient {
     };
   }
 }
-
-Object.assign(WantedClient.prototype, resumeApiMethods);
-Object.assign(WantedClient.prototype, skillApiMethods);
-Object.assign(WantedClient.prototype, profileApiMethods);
 
 export default WantedClient;

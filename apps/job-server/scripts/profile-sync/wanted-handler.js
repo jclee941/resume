@@ -1,5 +1,4 @@
-import WantedAPI from '../../src/shared/clients/wanted/index.js';
-import WantedClient from '@resume/shared/wanted-client';
+import WantedAPI from '@resume/shared/clients/wanted';
 import { CONFIG, PLATFORMS } from './constants.js';
 import { log } from './sync-logger.js';
 import { computeDiff } from './diff-calculator.js';
@@ -136,7 +135,7 @@ export default class WantedHandler {
       const resumeId = resumes?.[0]?.key;
 
       if (resumeId) {
-        const client = new WantedClient(cookieString);
+        const client = api;
 
         try {
           const skillsResult = await syncWantedSkills(api, ssot, profile);
