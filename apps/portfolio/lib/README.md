@@ -13,7 +13,7 @@ apps/portfolio/lib/
 ├── env.js              # 환경 변수 검증
 ├── templates.js        # HTML 템플릿 유틸리티
 ├── utils.js            # 파일 읽기, 해시 생성 등
-└── validators.js       # data.json 스키마 검증
+└── data-processor.js   # @resume/shared/validation 기반 data.json 검증 + 템플릿 생성
 ```
 
 ## 🔧 주요 모듈
@@ -138,14 +138,14 @@ const md5 = calculateDataHash(data);
 
 ---
 
-### validators.js
+### data validation
 
-data.json 스키마 검증
+data.json 구조 검증은 `@resume/shared/validation`의 `validatePortfolioData`를 사용합니다.
 
 ```javascript
-const { validateData } = require('./lib/validators');
+const { validatePortfolioData } = require('@resume/shared/validation');
 
-validateData(projectData); // Throws on validation error
+validatePortfolioData(projectData); // Throws on validation error
 ```
 
 **검증 항목**:
@@ -231,13 +231,13 @@ try {
 ### generate-worker.js에서의 사용
 
 ```javascript
-const { validateData } = require('./lib/validators');
+const { validatePortfolioData } = require('@resume/shared/validation');
 const { generateResumeCards, generateProjectCards } = require('./lib/cards');
 const { calculateDataHash } = require('./lib/utils');
 const { getCacheHeaders } = require('./lib/cache-headers');
 
 // 1. 데이터 검증
-validateData(projectData);
+validatePortfolioData(projectData);
 
 // 2. 해시 계산
 const dataHash = calculateDataHash(projectData);

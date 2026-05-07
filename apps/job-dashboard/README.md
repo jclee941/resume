@@ -212,7 +212,7 @@ job-dashboard/
 │   │   └── remember-client.js      # Remember API client
 │   ├── utils/                      # Utilities
 │   │   ├── crypto.js               # Encryption/decryption
-│   │   ├── validators.js           # Input validation schemas
+│   │   ├── errors.js               # Domain error classes
 │   │   ├── logger.js               # ECS logging helpers
 │   │   └── errors.js               # Domain error classes
 │   ├── views/                      # Static assets
