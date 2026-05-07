@@ -1,4 +1,4 @@
-import { decrypt } from '../../utils/crypto.js';
+import { decrypt } from '@resume/shared/crypto';
 
 /**
  * Validate an encrypted platform session from KV.

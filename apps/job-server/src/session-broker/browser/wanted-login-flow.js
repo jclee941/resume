@@ -1,5 +1,5 @@
 import { CloakBrowser } from './cloak-browser.js';
-import { EncryptionService } from '../services/encryption-service.js';
+import { EncryptionService } from '@resume/shared/crypto';
 import { SessionManager } from '../../shared/services/session/index.js';
 import {
   WANTED_HOME_URL,

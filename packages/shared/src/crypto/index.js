@@ -6,6 +6,9 @@ export {
 } from './webcrypto.js';
 
 export {
+  deriveAes256GcmKey,
+  encryptAes256Gcm,
+  decryptAes256Gcm,
   EncryptionService,
   EncryptionService as NodeEncryptionService,
 } from './node.js';

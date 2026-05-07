@@ -1,9 +1,30 @@
-import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto';
+import { createCipheriv, createDecipheriv, createHash, randomBytes } from 'node:crypto';
 
 const ALGORITHM = 'aes-256-gcm';
 const IV_LENGTH_BYTES = 16;
 const AUTH_TAG_LENGTH_BYTES = 16;
 const DEFAULT_TTL_MS = 24 * 60 * 60 * 1000;
+const DEFAULT_CREDENTIAL_SECRET = 'default-dev-key-change-in-production';
+
+export function deriveAes256GcmKey(secret, options = {}) {
+  const raw = secret || process.env.ENCRYPTION_KEY || options.defaultSecret || DEFAULT_CREDENTIAL_SECRET;
+  return createHash('sha256').update(raw).digest();
+}
+
+export function encryptAes256Gcm(plaintext, options = {}) {
+  const key = options.key ?? deriveAes256GcmKey(options.secret, options);
+  const iv = options.iv ?? randomBytes(options.ivLengthBytes ?? IV_LENGTH_BYTES);
+  const cipher = createCipheriv(ALGORITHM, key, iv);
+  const encrypted = Buffer.concat([cipher.update(plaintext, 'utf8'), cipher.final()]);
+  return { encrypted, iv, tag: cipher.getAuthTag() };
+}
+
+export function decryptAes256Gcm(entry, options = {}) {
+  const key = options.key ?? deriveAes256GcmKey(options.secret, options);
+  const decipher = createDecipheriv(ALGORITHM, key, entry.iv);
+  decipher.setAuthTag(entry.tag);
+  return Buffer.concat([decipher.update(entry.encrypted), decipher.final()]).toString('utf8');
+}
 
 export class EncryptionService {
   constructor(options = {}) {

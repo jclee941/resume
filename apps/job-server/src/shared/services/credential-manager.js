@@ -1,12 +1,14 @@
-import { createHash, createCipheriv, createDecipheriv, randomBytes } from 'crypto';
+import {
+  decryptAes256Gcm,
+  deriveAes256GcmKey,
+  encryptAes256Gcm,
+} from '@resume/shared/crypto';
 
 /**
  * Credential manager for platform-specific authentication.
  * Encrypts credentials at rest using AES-256-GCM.
  */
 
-const ALGORITHM = 'aes-256-gcm';
-const IV_LENGTH = 16;
 const _AUTH_TAG_LENGTH = 16; // Used implicitly by AES-256-GCM
 
 // Issue #16: closure-bound holder eliminates top-level mutable Map binding.
@@ -25,8 +27,7 @@ const _credentialStoreHolder = (() => {
  * @returns {Buffer} 32-byte key
  */
 function deriveKey(secret) {
-  const raw = secret || process.env.ENCRYPTION_KEY || 'default-dev-key-change-in-production';
-  return createHash('sha256').update(raw).digest();
+  return deriveAes256GcmKey(secret);
 }
 
 /**
@@ -37,12 +38,8 @@ function deriveKey(secret) {
  */
 export function storeCredentials(platform, credentials, encryptionSecret) {
   const key = deriveKey(encryptionSecret);
-  const iv = randomBytes(IV_LENGTH);
-  const cipher = createCipheriv(ALGORITHM, key, iv);
-
   const plaintext = JSON.stringify(credentials);
-  const encrypted = Buffer.concat([cipher.update(plaintext, 'utf8'), cipher.final()]);
-  const tag = cipher.getAuthTag();
+  const { encrypted, iv, tag } = encryptAes256Gcm(plaintext, { key });
 
   _credentialStoreHolder.get().set(platform, { encrypted, iv, tag });
 }
@@ -59,11 +56,7 @@ export function getCredentials(platform, encryptionSecret, { logger = console } 
 
   try {
     const key = deriveKey(encryptionSecret);
-    const decipher = createDecipheriv(ALGORITHM, key, entry.iv);
-    decipher.setAuthTag(entry.tag);
-
-    const decrypted = Buffer.concat([decipher.update(entry.encrypted), decipher.final()]);
-    return JSON.parse(decrypted.toString('utf8'));
+    return JSON.parse(decryptAes256Gcm(entry, { key }));
   } catch (e) {
     logger.error('Failed to decrypt credentials:', e);
     return null;
