@@ -220,7 +220,10 @@ export async function syncJobKoreaProfile(handler, ssot, options = {}) {
     const editUrl = getEditUrl();
     logger(`Navigating to ${editUrl}`, 'info', 'jobkorea');
     await page.goto(editUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
-    await ensureResumeAccess(page);
+    await ensureResumeAccess(page, {
+      headlessEnv: String(CONFIG.HEADLESS),
+      logger,
+    });
 
     await page.waitForFunction(() => typeof $ !== 'undefined' && $('#frm1').length > 0, {
       timeout: 15000,
