@@ -6,8 +6,6 @@ import { describe, it, beforeEach, mock } from 'node:test';
 const require = createRequire(import.meta.url);
 const fsCjs = require('fs');
 const osCjs = require('os');
-const childProcessCjs = require('child_process');
-const urlCjs = require('url');
 
 mock.method(osCjs, 'homedir', () => '/home/tester');
 syncBuiltinESMExports();
@@ -50,10 +48,67 @@ function setupFs(options = {}) {
   };
 }
 
+function createMemoryStore(initialSessions = {}) {
+  const sessions = structuredClone(initialSessions);
+  return {
+    load(platform = null) {
+      if (!platform) return sessions;
+      return sessions[platform] ?? null;
+    },
+    save(platform, session) {
+      sessions[platform] = session;
+      return true;
+    },
+    clear(platform = null) {
+      if (!platform) {
+        for (const key of Object.keys(sessions)) delete sessions[key];
+        return true;
+      }
+      delete sessions[platform];
+      return true;
+    },
+  };
+}
+
 describe('SessionManager', () => {
   beforeEach(() => {
     mock.restoreAll();
+    SessionManager.configure();
     syncBuiltinESMExports();
+  });
+
+  it('supports constructor-injected dependencies without static adapter state', async () => {
+    const store = createMemoryStore({ wanted: { cookieString: 'a=1', timestamp: Date.now() } });
+    const api = { setCookies: mock.fn() };
+    const manager = new SessionManager({
+      store,
+      apiFactory: (session) => {
+        api.setCookies(session.cookieString);
+        return api;
+      },
+      refreshRunner: (platform) => {
+        store.save(platform, { timestamp: Date.now() });
+      },
+    });
+
+    assert.equal(manager.load('wanted').cookieString, 'a=1');
+    assert.equal(await manager.getAPI('wanted'), api);
+    assert.equal(api.setCookies.mock.callCount(), 1);
+
+    assert.equal(manager.save('saramin', { token: 'x' }), true);
+    assert.equal(store.load('saramin').token, 'x');
+    assert.equal(await manager.tryRefresh('wanted'), true);
+    assert.equal(SessionManager.load('wanted'), null);
+  });
+
+  it('allows static compatibility adapter reconfiguration', () => {
+    const store = createMemoryStore({ wanted: { timestamp: Date.now(), email: 'di@example.com' } });
+    const manager = SessionManager.configure({ store });
+
+    assert.equal(manager, SessionManager.getInstance());
+    assert.equal(SessionManager.load('wanted').email, 'di@example.com');
+    assert.equal(SessionManager.save('jobkorea', { token: 'token-value' }), true);
+    assert.equal(store.load('jobkorea').token, 'token-value');
   });
 
   it('loads null or empty sessions when file is missing', () => {
@@ -196,13 +251,13 @@ describe('SessionManager', () => {
   it('returns api client for cookieString, array cookies, token, and null paths', async () => {
     const wantedModule = await import('../../../clients/wanted/index.js');
     const setCookiesMock = mock.method(wantedModule.default.prototype, 'setCookies', () => {});
-
-    mock.method(SessionManager, 'load', (platform) => {
-      if (platform === 'wanted') return { cookieString: 'a=1; b=2' };
-      if (platform === 'saramin') return { cookies: [{ name: 'sid', value: 'abc' }] };
-      if (platform === 'jobkorea') return { token: 'token-value' };
-      if (platform === 'linkedin') return { email: 'no-auth' };
-      return null;
+    SessionManager.configure({
+      store: createMemoryStore({
+        wanted: { cookieString: 'a=1; b=2' },
+        saramin: { cookies: [{ name: 'sid', value: 'abc' }] },
+        jobkorea: { token: 'token-value' },
+        linkedin: { email: 'no-auth' },
+      }),
     });
 
     assert.ok(await SessionManager.getAPI('wanted'));
@@ -218,11 +273,13 @@ describe('SessionManager', () => {
 
   it('returns platform auth status list', () => {
     const now = Date.now();
-    mock.method(SessionManager, 'load', () => ({
-      wanted: { timestamp: now - 1000, email: 'wanted@example.com' },
-      saramin: { timestamp: now - 20 * 24 * 60 * 60 * 1000, email: 'saramin@example.com' },
-      jobkorea: { timestamp: now - 1000 },
-    }));
+    SessionManager.configure({
+      store: createMemoryStore({
+        wanted: { timestamp: now - 1000, email: 'wanted@example.com' },
+        saramin: { timestamp: now - 20 * 24 * 60 * 60 * 1000, email: 'saramin@example.com' },
+        jobkorea: { timestamp: now - 1000 },
+      }),
+    });
 
     const status = SessionManager.getStatus();
     const wanted = status.find((s) => s.platform === 'wanted');
@@ -236,7 +293,7 @@ describe('SessionManager', () => {
   });
 
   it('returns status list when load() is falsy', () => {
-    mock.method(SessionManager, 'load', () => null);
+    SessionManager.configure({ store: { load: () => null } });
 
     const status = SessionManager.getStatus();
 
@@ -247,12 +304,12 @@ describe('SessionManager', () => {
 
   it('checks health for missing, valid, expired, and expiring sessions', () => {
     const now = Date.now();
-    mock.method(SessionManager, 'load', (platform) => {
-      if (platform === 'missing') return null;
-      if (platform === 'valid') return { timestamp: now - 60 * 1000 };
-      if (platform === 'expired') return { timestamp: now - 8 * 24 * 60 * 60 * 1000 };
-      if (platform === 'soon') return { timestamp: now - (24 * 60 * 60 * 1000 - 60 * 1000) };
-      return null;
+    SessionManager.configure({
+      store: createMemoryStore({
+        valid: { timestamp: now - 60 * 1000 },
+        expired: { timestamp: now - 8 * 24 * 60 * 60 * 1000 },
+        soon: { timestamp: now - (24 * 60 * 60 * 1000 - 60 * 1000) },
+      }),
     });
 
     const missing = SessionManager.checkHealth('missing');
@@ -274,23 +331,21 @@ describe('SessionManager', () => {
   });
 
   it('tries refresh success and failure', async () => {
-    mock.method(childProcessCjs, 'execSync', () => 'ok');
-    mock.method(urlCjs, 'fileURLToPath', () => '/tmp/session/session-manager.js');
-    syncBuiltinESMExports();
-    SessionManager.logger = { error: mock.fn() };
-    mock.method(SessionManager, 'load', () => ({ timestamp: Date.now() }));
+    const logger = { error: mock.fn() };
+    const store = createMemoryStore();
+    let refreshShouldFail = false;
+    SessionManager.configure({
+      logger,
+      store,
+      refreshRunner: (platform) => {
+        if (refreshShouldFail) throw new Error('cdp-failed');
+        store.save(platform, { timestamp: Date.now() });
+      },
+    });
 
     assert.equal(await SessionManager.tryRefresh('wanted'), true);
-    assert.equal(childProcessCjs.execSync.mock.callCount(), 1);
-    assert.match(
-      childProcessCjs.execSync.mock.calls[0].arguments[0],
-      /extract-cookies-cdp\.js wanted$/
-    );
-
-    childProcessCjs.execSync.mock.mockImplementation(() => {
-      throw new Error('cdp-failed');
-    });
+    refreshShouldFail = true;
     assert.equal(await SessionManager.tryRefresh('wanted'), false);
-    assert.equal(SessionManager.logger.error.mock.callCount(), 1);
+    assert.equal(logger.error.mock.callCount(), 1);
   });
 });

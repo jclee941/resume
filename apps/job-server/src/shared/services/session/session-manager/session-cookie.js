@@ -27,6 +27,6 @@ export const sessionCookieMethods = {
 
     if (!session.cookies && !session.cookieString && !session.token) return null;
 
-    return createAuthenticatedWantedApi(session);
+    return this.createAuthenticatedApi(session);
   },
 };
