@@ -351,7 +351,7 @@ jobs:
       # Override the spurious 'Workers Builds: resume' check posted by the
       # Cloudflare Workers and Pages GitHub App on every push. The App's
       # dashboard is mis-configured (production deploys are handled by
-      # release.yml via wrangler-action), and the App posts a 1-second
+      # Cloudflare Workers Builds), and the App posts a 1-second
       # 'failure' check_run that cannot be removed via API (requires UI).
       # Posting a same-name check_run as github-actions[bot] makes the GitHub
       # UI render the success alongside the spurious failure, reducing red-X
@@ -372,5 +372,5 @@ jobs:
             -f status='completed' \
             -f conclusion='success' \
             -f 'output[title]=CI passed (override)' \
-            -f 'output[summary]=Spurious Workers Builds check overridden by ci.yml after all required CI jobs succeeded. Production deploy is handled by release.yml. See .sisyphus/evidence/workers-builds-infra.md.' \
+            -f 'output[summary]=Spurious Workers Builds check overridden by ci.yml after all required CI jobs succeeded. Production deploy is handled by Cloudflare Workers Builds. See .sisyphus/evidence/workers-builds-infra.md.' \
             || echo 'Override step failed (non-fatal)'
