@@ -41,8 +41,11 @@ describe('CloudflareAnalyticsService', { concurrency: 1 }, () => {
   });
 
   it('getWorkerAnalytics handles non-ok responses', async () => {
-    const service = new CloudflareAnalyticsService({ accountId: 'acc', apiKey: 'key' });
-    mock.method(globalThis, 'fetch', async () => new Response('forbidden', { status: 403 }));
+    const service = new CloudflareAnalyticsService({
+      accountId: 'acc',
+      apiKey: 'key',
+      fetchFn: async () => new Response('forbidden', { status: 403 }),
+    });
 
     const result = await service.getWorkerAnalytics(1);
 
@@ -52,12 +55,14 @@ describe('CloudflareAnalyticsService', { concurrency: 1 }, () => {
   });
 
   it('getWorkerAnalytics handles GraphQL errors', async () => {
-    const service = new CloudflareAnalyticsService({ accountId: 'acc', apiKey: 'key' });
-    mock.method(globalThis, 'fetch', async () =>
-      jsonResponse({
-        errors: [{ message: 'bad query' }],
-      })
-    );
+    const service = new CloudflareAnalyticsService({
+      accountId: 'acc',
+      apiKey: 'key',
+      fetchFn: async () =>
+        jsonResponse({
+          errors: [{ message: 'bad query' }],
+        }),
+    });
 
     const result = await service.getWorkerAnalytics();
 
@@ -68,9 +73,12 @@ describe('CloudflareAnalyticsService', { concurrency: 1 }, () => {
   });
 
   it('getWorkerAnalytics handles fetch/network failures', async () => {
-    const service = new CloudflareAnalyticsService({ accountId: 'acc', apiKey: 'key' });
-    mock.method(globalThis, 'fetch', async () => {
-      throw new Error('network down');
+    const service = new CloudflareAnalyticsService({
+      accountId: 'acc',
+      apiKey: 'key',
+      fetchFn: async () => {
+        throw new Error('network down');
+      },
     });
 
     const result = await service.getWorkerAnalytics(2);
@@ -80,35 +88,37 @@ describe('CloudflareAnalyticsService', { concurrency: 1 }, () => {
   });
 
   it('getWorkerAnalytics returns formatted analytics on success', async () => {
-    const service = new CloudflareAnalyticsService({ accountId: 'acc', apiKey: 'key' });
-    mock.method(globalThis, 'fetch', async () =>
-      jsonResponse({
-        data: {
-          viewer: {
-            accounts: [
-              {
-                httpRequestsAdaptiveGroups: [
-                  {
-                    dimensions: { date: '2026-03-20' },
-                    sum: { requests: 100, bytes: 1000, cachedRequests: 20, cachedBytes: 200 },
-                  },
-                  {
-                    dimensions: { date: '2026-03-21' },
-                    sum: { requests: 50, bytes: 500, cachedRequests: 10, cachedBytes: 100 },
-                  },
-                ],
-                httpRequestsAdaptive: [
-                  { edgeResponseStatus: 200, clientRequestPath: '/a' },
-                  { edgeResponseStatus: 201, clientRequestPath: '/a' },
-                  { edgeResponseStatus: 404, clientRequestPath: '/b' },
-                  { edgeResponseStatus: 500, clientRequestPath: null },
-                ],
-              },
-            ],
+    const service = new CloudflareAnalyticsService({
+      accountId: 'acc',
+      apiKey: 'key',
+      fetchFn: async () =>
+        jsonResponse({
+          data: {
+            viewer: {
+              accounts: [
+                {
+                  httpRequestsAdaptiveGroups: [
+                    {
+                      dimensions: { date: '2026-03-20' },
+                      sum: { requests: 100, bytes: 1000, cachedRequests: 20, cachedBytes: 200 },
+                    },
+                    {
+                      dimensions: { date: '2026-03-21' },
+                      sum: { requests: 50, bytes: 500, cachedRequests: 10, cachedBytes: 100 },
+                    },
+                  ],
+                  httpRequestsAdaptive: [
+                    { edgeResponseStatus: 200, clientRequestPath: '/a' },
+                    { edgeResponseStatus: 201, clientRequestPath: '/a' },
+                    { edgeResponseStatus: 404, clientRequestPath: '/b' },
+                    { edgeResponseStatus: 500, clientRequestPath: null },
+                  ],
+                },
+              ],
+            },
           },
-        },
-      })
-    );
+        }),
+    });
 
     const result = await service.getWorkerAnalytics(7);
 

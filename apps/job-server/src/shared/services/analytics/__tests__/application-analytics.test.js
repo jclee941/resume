@@ -41,7 +41,7 @@ describe('ApplicationAnalytics', () => {
     mockAppService = {
       listApplications: mock.fn(() => createMockApplications()),
     };
-    analytics = new ApplicationAnalytics(mockAppService);
+    analytics = new ApplicationAnalytics({ applicationService: mockAppService });
   });
 
   describe('getSuccessRateBySource()', () => {
@@ -66,14 +66,16 @@ describe('ApplicationAnalytics', () => {
 
     it('uses manual source when source is missing', async () => {
       const manualAnalytics = new ApplicationAnalytics({
-        listApplications: mock.fn(() => [
-          {
-            id: 'manual-1',
-            job: { company: 'X', position: 'Backend', matchScore: 70 },
-            status: 'pending',
-            appliedAt: new Date().toISOString(),
-          },
-        ]),
+        applicationService: {
+          listApplications: mock.fn(() => [
+            {
+              id: 'manual-1',
+              job: { company: 'X', position: 'Backend', matchScore: 70 },
+              status: 'pending',
+              appliedAt: new Date().toISOString(),
+            },
+          ]),
+        },
       });
 
       const result = await manualAnalytics.getSuccessRateBySource();
@@ -92,7 +94,9 @@ describe('ApplicationAnalytics', () => {
       });
 
       const zeroBranchAnalytics = new ApplicationAnalytics({
-        listApplications: mock.fn(() => [{ source: 'syntheticZeroSource', status: 'pending' }]),
+        applicationService: {
+          listApplications: mock.fn(() => [{ source: 'syntheticZeroSource', status: 'pending' }]),
+        },
       });
 
       const result = await zeroBranchAnalytics.getSuccessRateBySource();
@@ -124,14 +128,16 @@ describe('ApplicationAnalytics', () => {
 
     it('places missing/low scores into <60 bucket', async () => {
       const lowScoreAnalytics = new ApplicationAnalytics({
-        listApplications: mock.fn(() => [
-          {
-            id: 'low-1',
-            job: { company: 'Unknown', position: 'Role' },
-            status: 'pending',
-            appliedAt: new Date().toISOString(),
-          },
-        ]),
+        applicationService: {
+          listApplications: mock.fn(() => [
+            {
+              id: 'low-1',
+              job: { company: 'Unknown', position: 'Role' },
+              status: 'pending',
+              appliedAt: new Date().toISOString(),
+            },
+          ]),
+        },
       });
 
       const result = await lowScoreAnalytics.getSuccessRateByMatchScore();
@@ -181,14 +187,16 @@ describe('ApplicationAnalytics', () => {
 
     it('uses Unknown company when company field is missing', async () => {
       const unknownAnalytics = new ApplicationAnalytics({
-        listApplications: mock.fn(() => [
-          {
-            id: 'u-1',
-            job: {},
-            status: 'pending',
-            appliedAt: new Date().toISOString(),
-          },
-        ]),
+        applicationService: {
+          listApplications: mock.fn(() => [
+            {
+              id: 'u-1',
+              job: {},
+              status: 'pending',
+              appliedAt: new Date().toISOString(),
+            },
+          ]),
+        },
       });
 
       const result = await unknownAnalytics.getTopPerformingCompanies();
@@ -205,9 +213,11 @@ describe('ApplicationAnalytics', () => {
       });
 
       const zeroBranchAnalytics = new ApplicationAnalytics({
-        listApplications: mock.fn(() => [
-          { job: { company: 'syntheticZeroCompany' }, status: 'pending' },
-        ]),
+        applicationService: {
+          listApplications: mock.fn(() => [
+            { job: { company: 'syntheticZeroCompany' }, status: 'pending' },
+          ]),
+        },
       });
 
       const result = await zeroBranchAnalytics.getTopPerformingCompanies();
@@ -234,14 +244,16 @@ describe('ApplicationAnalytics', () => {
 
     it('categorizes unknown positions as Other', async () => {
       const otherAnalytics = new ApplicationAnalytics({
-        listApplications: mock.fn(() => [
-          {
-            id: 'other-1',
-            job: { company: 'Etc Inc', position: 'Quality Assurance Specialist' },
-            status: 'pending',
-            appliedAt: new Date().toISOString(),
-          },
-        ]),
+        applicationService: {
+          listApplications: mock.fn(() => [
+            {
+              id: 'other-1',
+              job: { company: 'Etc Inc', position: 'Quality Assurance Specialist' },
+              status: 'pending',
+              appliedAt: new Date().toISOString(),
+            },
+          ]),
+        },
       });
 
       const result = await otherAnalytics.getPositionTypeAnalysis();
@@ -253,14 +265,16 @@ describe('ApplicationAnalytics', () => {
 
     it('handles missing position as Other', async () => {
       const missingPositionAnalytics = new ApplicationAnalytics({
-        listApplications: mock.fn(() => [
-          {
-            id: 'missing-pos',
-            job: {},
-            status: 'pending',
-            appliedAt: new Date().toISOString(),
-          },
-        ]),
+        applicationService: {
+          listApplications: mock.fn(() => [
+            {
+              id: 'missing-pos',
+              job: {},
+              status: 'pending',
+              appliedAt: new Date().toISOString(),
+            },
+          ]),
+        },
       });
 
       const result = await missingPositionAnalytics.getPositionTypeAnalysis();
@@ -269,20 +283,22 @@ describe('ApplicationAnalytics', () => {
 
     it('categorizes Frontend and Data/ML branches', async () => {
       const typedAnalytics = new ApplicationAnalytics({
-        listApplications: mock.fn(() => [
-          {
-            id: 'fe-1',
-            job: { company: 'UI Co', position: 'Frontend React Engineer' },
-            status: 'interviewing',
-            appliedAt: new Date().toISOString(),
-          },
-          {
-            id: 'ml-1',
-            job: { company: 'AI Co', position: 'Data ML Engineer' },
-            status: 'offered',
-            appliedAt: new Date().toISOString(),
-          },
-        ]),
+        applicationService: {
+          listApplications: mock.fn(() => [
+            {
+              id: 'fe-1',
+              job: { company: 'UI Co', position: 'Frontend React Engineer' },
+              status: 'interviewing',
+              appliedAt: new Date().toISOString(),
+            },
+            {
+              id: 'ml-1',
+              job: { company: 'AI Co', position: 'Data ML Engineer' },
+              status: 'offered',
+              appliedAt: new Date().toISOString(),
+            },
+          ]),
+        },
       });
 
       const result = await typedAnalytics.getPositionTypeAnalysis();
@@ -306,7 +322,9 @@ describe('ApplicationAnalytics', () => {
       });
 
       const zeroBranchAnalytics = new ApplicationAnalytics({
-        listApplications: mock.fn(() => [{ job: { position: 'generic role' }, status: 'pending' }]),
+        applicationService: {
+          listApplications: mock.fn(() => [{ job: { position: 'generic role' }, status: 'pending' }]),
+        },
       });
 
       const result = await zeroBranchAnalytics.getPositionTypeAnalysis();
@@ -347,7 +365,9 @@ describe('ApplicationAnalytics', () => {
 
     it('returns zero summary rates when there are no applications', async () => {
       const emptyAnalytics = new ApplicationAnalytics({
-        listApplications: mock.fn(() => []),
+        applicationService: {
+          listApplications: mock.fn(() => []),
+        },
       });
 
       const report = await emptyAnalytics.generateReport();
