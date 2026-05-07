@@ -1,4 +1,4 @@
-import { validateStatusUpdate } from '../../utils/validators.js';
+import { validateStatusUpdate } from '@resume/shared/validation';
 import { APPLICATION_STATUS } from './statuses.js';
 
 export async function updateApplicationStatus(handler, request) {

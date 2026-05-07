@@ -5,7 +5,7 @@ import {
   masterSchema,
   validateResumeData,
   formatErrorsForMCP,
-} from '../../shared/validation/index.js';
+} from '@resume/shared/validation';
 
 const DEFAULT_OPENCODE_DATA_DIR = join(homedir(), '.opencode', 'data');
 

@@ -1,4 +1,4 @@
-import { validateApplicationCreate } from '../../utils/validators.js';
+import { validateApplicationCreate } from '@resume/shared/validation';
 import { APPLICATION_STATUS, VALID_STATUSES } from './statuses.js';
 
 function normalizeNewApplication(body) {

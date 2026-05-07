@@ -77,9 +77,8 @@ export const VALID_APPLICATION_STATUSES_WIDE = applicationStatusWideSchema.optio
 //   - additional optional fields (location, notes, source, platform, sourceUrl,
 //     priority, matchScore)
 //
-// These schemas back the wrapper functions in
-// apps/job-dashboard/src/utils/validators.js so the runtime validation lives
-// in one place (this package) while the call-site shape stays unchanged.
+// These schemas back the wrapper functions in @resume/shared/validation so the
+// runtime validation lives in one place while the call-site shape stays unchanged.
 export const applicationPriorityWideSchema = z.enum(['low', 'medium', 'high']);
 
 const dashboardJobBaseSchema = z.object({

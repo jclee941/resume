@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "Edge-deployed portfolio (resume.jclee.me)",
   "private": true,
+  "dependencies": {
+    "@resume/shared": "*",
+    "@resume/schemas": "*"
+  },
   "scripts": {
     "build": "node generate-worker.js",
     "start": "wrangler dev"
