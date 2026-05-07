@@ -9,7 +9,7 @@
  */
 
 export class ApplicationAnalytics {
-  constructor(applicationService) {
+  constructor({ applicationService }) {
     this.appService = applicationService;
   }
 

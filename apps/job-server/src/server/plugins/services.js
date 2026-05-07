@@ -6,9 +6,13 @@ import { createStatsService } from '../../shared/services/stats/stats-service.js
 import { UnifiedJobCrawler } from '../../crawlers/unified/unified-job-crawler.js';
 import { AutoApplier } from '../../auto-apply/auto-applier.js';
 import { ProfileAggregator } from '../../shared/services/profile/index.js';
+import { SessionManager } from '../../shared/services/session/index.js';
+import { createAuthService } from '../../shared/services/auth/auth-service.js';
 import { D1Client } from '../../shared/clients/d1/index.js';
 import { CloudflareAnalyticsService } from '../../shared/services/analytics/cloudflare-analytics.js';
+import { ApplicationAnalytics } from '../../shared/services/analytics/application-analytics.js';
 import { OAuth2Client } from 'google-auth-library';
+import config from '../config/index.js';
 
 const SESSION_TTL = 24 * 60 * 60 * 1000;
 const CLEANUP_INTERVAL = 60 * 60 * 1000;
@@ -20,16 +24,30 @@ async function servicesPlugin(fastify) {
   const statsService = createStatsService({ appService: applicationService });
   const crawler = new UnifiedJobCrawler({ secretsClient });
   const autoApplier = new AutoApplier({ secretsClient, dryRun: true });
-  const profileAggregator = new ProfileAggregator(crawler.crawlers);
+  const sessionStore = SessionManager.getInstance();
+  const profileAggregator = new ProfileAggregator(crawler.crawlers, { sessionStore });
   const d1Client = new D1Client();
   const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
   const cloudflareAnalytics = new CloudflareAnalyticsService({
     accountId: process.env.CLOUDFLARE_ACCOUNT_ID,
     apiKey: process.env.CLOUDFLARE_API_KEY,
+    fetchFn: globalThis.fetch,
   });
+  const applicationAnalytics = new ApplicationAnalytics({ applicationService });
 
   const authSessions = new Map();
   const csrfTokens = new Map();
+  const authService = createAuthService({
+    googleClientId: config.googleClientId,
+    adminEmail: config.adminEmail,
+    sessionTTL: config.sessionTTL,
+    logger: fastify.log,
+    store: {
+      sessions: authSessions,
+      csrfTokens,
+    },
+    sessionStore,
+  });
 
   fastify.decorate('secretsClient', secretsClient);
   fastify.decorate('appManager', appManager);
@@ -37,12 +55,15 @@ async function servicesPlugin(fastify) {
   fastify.decorate('statsService', statsService);
   fastify.decorate('crawler', crawler);
   fastify.decorate('autoApplier', autoApplier);
+  fastify.decorate('sessionStore', sessionStore);
   fastify.decorate('profileAggregator', profileAggregator);
   fastify.decorate('d1Client', d1Client);
   fastify.decorate('googleClient', googleClient);
   fastify.decorate('authSessions', authSessions);
   fastify.decorate('csrfTokens', csrfTokens);
+  fastify.decorate('authService', authService);
   fastify.decorate('cloudflareAnalytics', cloudflareAnalytics);
+  fastify.decorate('applicationAnalytics', applicationAnalytics);
 
   const cleanupTimer = setInterval(() => {
     const now = Date.now();
@@ -57,7 +78,7 @@ async function servicesPlugin(fastify) {
   fastify.addHook('onClose', () => clearInterval(cleanupTimer));
 
   fastify.log.info(
-    'Services plugin initialized (SecretsClient, ApplicationManager, ApplicationService, StatsService, UnifiedJobCrawler, AutoApplier, ProfileAggregator, D1Client, GoogleClient, CloudflareAnalytics)'
+    'Services plugin initialized (SecretsClient, ApplicationManager, ApplicationService, StatsService, UnifiedJobCrawler, AutoApplier, SessionStore, ProfileAggregator, D1Client, GoogleClient, AuthService, CloudflareAnalytics, ApplicationAnalytics)'
   );
 }
 
