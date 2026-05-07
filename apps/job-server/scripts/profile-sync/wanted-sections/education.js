@@ -1,11 +1,12 @@
 import { CONFIG } from '../constants.js';
 import { log } from '../sync-logger.js';
+import { formatYYYY_MM_DD } from '../../../src/shared/utils/date-formatters.js';
 
 function mapEducationToWanted(ssotEducation) {
   return {
     school_name: ssotEducation.school,
     major: ssotEducation.major,
-    start_time: `${ssotEducation.startDate.replace('.', '-')}-01`,
+    start_time: formatYYYY_MM_DD(ssotEducation.startDate),
     end_time: null,
     degree: '학사',
   };

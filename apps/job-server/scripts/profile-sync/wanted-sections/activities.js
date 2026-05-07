@@ -1,11 +1,12 @@
 import { CONFIG } from '../constants.js';
 import { log } from '../sync-logger.js';
+import { formatYYYY_MM_DD } from '../../../src/shared/utils/date-formatters.js';
 
 function mapCertificationActivity(cert) {
   return {
     title: cert.name,
     description: `${cert.issuer} | ${cert.date}`,
-    start_time: `${cert.date.replace('.', '-')}-01`,
+    start_time: formatYYYY_MM_DD(cert.date),
     activity_type: 'CERTIFICATE',
   };
 }
