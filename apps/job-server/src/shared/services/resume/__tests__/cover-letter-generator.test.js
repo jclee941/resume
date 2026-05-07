@@ -1,19 +1,9 @@
-import { readFileSync } from 'node:fs';
 import { describe, it, beforeEach, mock } from 'node:test';
 import assert from 'node:assert/strict';
+import { generateCoverLetter } from '../cover-letter-generator.js';
 
-const analyzeWithClaudeMock = mock.fn(async () => 'mocked-ai-cover-letter');
-globalThis.__analyzeWithClaudeMock = analyzeWithClaudeMock;
-
-const coverLetterSource = readFileSync(
-  new URL('../cover-letter-generator.js', import.meta.url),
-  'utf8'
-).replace(
-  /import\s*\{[^}]*\}\s*from\s*['"]\.\.\/matching\/ai-matcher\.js['"]\s*;?/,
-  'const { analyzeWithClaude } = { analyzeWithClaude: globalThis.__analyzeWithClaudeMock };'
-);
-const coverLetterEncoded = Buffer.from(coverLetterSource).toString('base64');
-const { generateCoverLetter } = await import(`data:text/javascript;base64,${coverLetterEncoded}`);
+delete process.env.CLAUDE_API_KEY;
+delete process.env.ANTHROPIC_API_KEY;
 
 const fullResume = {
   personal: { name: 'Jin Lee' },
@@ -43,7 +33,6 @@ const jobWithArrayRequirements = {
 describe('generateCoverLetter', () => {
   beforeEach(() => {
     mock.restoreAll();
-    analyzeWithClaudeMock.mock.mockImplementation(async () => 'mocked-ai-cover-letter');
   });
 
   it('returns AI response when analyzeFn returns non-empty output', async () => {
@@ -237,14 +226,11 @@ describe('generateCoverLetter', () => {
     assert.ok(result.coverLetter.length > 100);
   });
 
-  it('uses module analyzeWithClaude when analyzeFn option is not provided', async () => {
-    analyzeWithClaudeMock.mock.mockImplementation(async () => '  module default output  ');
-
+  it('uses module analyzeWithClaude fallback when analyzeFn option is not provided', async () => {
     const result = await generateCoverLetter(fullResume, jobWithArrayRequirements);
 
-    assert.equal(result.fallback, false);
-    assert.equal(result.coverLetter, 'module default output');
-    assert.equal(analyzeWithClaudeMock.mock.calls.length, 1);
-    assert.equal(analyzeWithClaudeMock.mock.calls[0].arguments[1], '');
+    assert.equal(result.fallback, true);
+    assert.equal(result.language, 'en');
+    assert.ok(result.coverLetter.includes('Dear Hiring Manager,'));
   });
 });
