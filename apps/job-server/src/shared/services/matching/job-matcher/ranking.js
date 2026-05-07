@@ -1,11 +1,21 @@
 import { loadResume, extractSkills, extractExperience } from './resume-analysis.js';
-import { calculateMatchScore } from './scoring.js';
+import { calculateMatchScore, createScoringConfig } from './scoring.js';
 
 export function filterAndRankJobs(jobs, options = {}) {
-  const { resumePath, minScore = 50, maxResults = 20, excludeCompanies = [] } = options;
+  const {
+    resumePath,
+    minScore = 50,
+    maxResults = 20,
+    excludeCompanies = [],
+    resumeReader = loadResume,
+    scoringConfig: scoringOverrides = {},
+  } = options;
+  const scoringConfig = createScoringConfig(scoringOverrides);
 
-  const resumeText = loadResume(resumePath);
-  const resumeSkills = extractSkills(resumeText);
+  const resumeText = resumeReader(resumePath);
+  const resumeSkills = extractSkills(resumeText, {
+    skillCategories: scoringConfig.skillCategories,
+  });
   const resumeExperience = extractExperience(resumeText);
 
   const scoredJobs = jobs
@@ -16,7 +26,7 @@ export function filterAndRankJobs(jobs, options = {}) {
         )
     )
     .map((job) => {
-      const match = calculateMatchScore(job, resumeSkills, resumeExperience);
+      const match = calculateMatchScore(job, resumeSkills, resumeExperience, { scoringConfig });
       return {
         ...job,
         matchScore: match.score,
