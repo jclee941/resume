@@ -2,15 +2,23 @@ const path = require('path');
 const fs = require('fs');
 
 function loadEntryRouterUtils() {
-  const modulePath = path.resolve(
+  const moduleDir = path.resolve(
     __dirname,
-    '../../../../apps/portfolio/lib/entry-router-utils.js'
+    '../../../../apps/portfolio/lib/entry-router-utils'
   );
-  const source = fs.readFileSync(modulePath, 'utf8');
-
-  const transformedSource = source
-    .replace(/^export\s+const\s+/gm, 'const ')
-    .replace(/\nexport\s*\{[\s\S]*?\}\s*;?\s*$/m, '\n');
+  const moduleFiles = [
+    'constants.js',
+    'request-parsing.js',
+    'routing-helpers.js',
+    'html-localization.js',
+    'response-headers.js',
+    'profile-sync-proxy.js',
+  ];
+  const transformedSource = moduleFiles
+    .map((fileName) => fs.readFileSync(path.join(moduleDir, fileName), 'utf8'))
+    .join('\n')
+    .replace(/^import\s+[\s\S]*?from\s+['"].*?['"];\n?/gm, '')
+    .replace(/^export\s*\{[\s\S]*?\};\n?/gm, '');
 
   const module = { exports: {} };
   const factory = new Function(
