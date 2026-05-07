@@ -6,3 +6,4 @@ export {
   parseRetryAfter,
   RETRY_DEFAULT_RETRYABLE_ERRORS,
 } from './with-retry.js';
+export { RetryService, CircuitState } from './retry-service.js';

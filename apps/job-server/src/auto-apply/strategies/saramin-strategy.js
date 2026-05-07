@@ -7,7 +7,7 @@ import {
   ValidationError,
   classifyApplyError,
 } from '../../shared/errors/apply-errors.js';
-import { withRetry } from '../../shared/utils/retry.js';
+import { withRetry } from '@resume/shared/retry';
 
 const RETRY_CONFIG = {
   platform: 'saramin',

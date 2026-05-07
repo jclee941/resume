@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { isRetryableError, parseRetryAfter, withRetry } from '../retry.js';
+import { isRetryableError, parseRetryAfter, withRetry } from '@resume/shared/retry';
 
 function createSetTimeoutSpy() {
   const originalSetTimeout = globalThis.setTimeout;
