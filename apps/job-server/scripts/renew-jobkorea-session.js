@@ -5,7 +5,6 @@
  * Requires: JOBKOREA_EMAIL, JOBKOREA_PASSWORD, PUPPETEER_EXECUTABLE_PATH
  */
 import { withStealthBrowser } from '../src/crawlers/browser-utils.js';
-import SessionManager from '../src/shared/services/session/session-manager.js';
 import {
   buildCookieString,
   clickVisibleSubmit,
@@ -13,8 +12,10 @@ import {
   fillLoginForm,
   handleCaptchaIfNeeded,
   isLoggedIn,
+  jobKoreaSessionTtlMs,
   maybeUseExistingSession,
-  savePlatformSession,
+  resolveJobKoreaSession,
+  saveResolvedJobKoreaSession,
   sleep,
   verifyAuthenticatedSession,
   waitForLoginConfirmation,
@@ -56,7 +57,7 @@ async function main() {
 
   const newSession = await withStealthBrowser(
     async (page) => {
-      const existing = SessionManager.load('jobkorea');
+      const existing = resolveJobKoreaSession({ saveResolvedFallback: false });
       if (existing?.cookies && Array.isArray(existing.cookies)) {
         const valid = existing.cookies.filter((cookie) => cookie.name && cookie.value && cookie.domain);
         if (valid.length) {
@@ -104,7 +105,7 @@ async function main() {
         cookieString,
         cookieCount: cookies.length,
         extractedAt: new Date().toISOString(),
-        expiresAt: new Date(Date.now() + 6 * 24 * 60 * 60 * 1000).toISOString(),
+        expiresAt: new Date(Date.now() + jobKoreaSessionTtlMs).toISOString(),
         timestamp: Date.now(),
       };
 
@@ -114,8 +115,7 @@ async function main() {
     { headless: headless ? 'new' : false }
   );
 
-  SessionManager.save('jobkorea', newSession);
-  savePlatformSession(newSession, sessionFile);
+  saveResolvedJobKoreaSession(newSession, { filePath: sessionFile });
   log(`Session renewed: ${newSession.cookieCount} cookies`);
   log(`Expires: ${newSession.expiresAt}`);
 }
