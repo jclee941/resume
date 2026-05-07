@@ -1,18 +1,7 @@
-import { getAuthService } from '../../shared/services/auth/auth-service.js';
 import config from '../config/index.js';
 
 export default async function authRoutes(fastify) {
-  const authService = getAuthService(
-    {
-      googleClientId: config.googleClientId,
-      adminEmail: config.adminEmail,
-      sessionTTL: config.sessionTTL,
-    },
-    {
-      sessions: fastify.sessions,
-      csrfTokens: fastify.csrfTokens,
-    }
-  );
+  const authService = fastify.authService;
 
   fastify.post('/google', {
     config: { public: true },
@@ -76,31 +65,31 @@ export default async function authRoutes(fastify) {
     config: { public: false },
     handler: async (request, reply) => {
       const { platform = 'wanted' } = request.body || {};
-      
+
       try {
         const result = await authService.renewSession(platform);
-        
+
         if (!result.success) {
           return reply.status(400).send({
             success: false,
             error: result.error,
-            message: 'Session renewal failed. Manual login required.'
+            message: 'Session renewal failed. Manual login required.',
           });
         }
-        
+
         return {
           success: true,
           platform,
           message: 'Session renewed successfully',
-          expiresAt: result.expiresAt
+          expiresAt: result.expiresAt,
         };
       } catch (error) {
         return reply.status(500).send({
           success: false,
           error: error.message,
-          message: 'Session renewal error'
+          message: 'Session renewal error',
         });
       }
-    }
+    },
   });
 }
