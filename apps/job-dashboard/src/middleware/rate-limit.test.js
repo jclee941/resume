@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { checkRateLimit } from './rate-limit.js';
+import { checkKvSlidingWindowRateLimit as checkRateLimit } from '@resume/shared/rate-limit';
 
 class MemoryKv {
   constructor() {

@@ -18,9 +18,9 @@ describe('Network Failure Scenarios', () => {
   });
 
   test('KV unavailable should fail-open for rate limiting', () => {
-    const source = readWorkerFile('apps/job-dashboard/src/middleware/rate-limit.js');
+    const source = readWorkerFile('packages/shared/src/rate-limit/kv-sliding-window.js');
 
-    expect(source).toContain('if (!env?.RATE_LIMIT_KV)');
+    expect(source).toContain('if (!kv) return { ok: true };');
     expect(source).toContain('return { ok: true };');
     expect(source).toContain("console.error('Rate limit KV error:', error);");
   });

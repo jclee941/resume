@@ -1,6 +1,6 @@
 import { describe, it, beforeEach, afterEach, mock } from 'node:test';
 import assert from 'node:assert/strict';
-import { RateLimiter, DEFAULT_PLATFORM_LIMITS, FALLBACK_LIMIT } from '../rate-limiter.js';
+import { RateLimiter, DEFAULT_PLATFORM_LIMITS, FALLBACK_LIMIT } from '@resume/shared/rate-limit';
 
 describe('RateLimiter', { concurrency: 1 }, () => {
   let now;

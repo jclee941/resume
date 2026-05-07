@@ -10,12 +10,15 @@ import { jsonResponse, addCorsHeaders } from './middleware/cors.js';
 import Logger, { RequestContext } from '@resume/shared/logger';
 import { HttpError, normalizeError } from '@resume/shared/errors';
 import {
+  addRateLimitHeaders,
+  checkKvSlidingWindowRateLimit as checkRateLimit,
+} from '@resume/shared/rate-limit';
+import {
   requiresAuth,
   requiresWebhookSignature,
   verifyAdminAuth,
   verifyWebhookSignature,
 } from './services/auth.js';
-import { checkRateLimit, addRateLimitHeaders } from './middleware/rate-limit.js';
 import { validateCsrf, addCsrfCookie } from './middleware/csrf.js';
 import { serveStatic } from './views/dashboard.js';
 import {

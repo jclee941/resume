@@ -6,7 +6,7 @@ import {
   SUPPORTED_PLATFORMS,
   DEFAULT_OPTIONS,
 } from '../crawl-orchestrator/index.js';
-import { RateLimiter, DEFAULT_PLATFORM_LIMITS, FALLBACK_LIMIT } from '../rate-limiter.js';
+import { RateLimiter, DEFAULT_PLATFORM_LIMITS, FALLBACK_LIMIT } from '@resume/shared/rate-limit';
 import { ProgressTracker } from '../progress-tracker.js';
 import { ResourcePool } from '../resource-pool/resource-pool.js';
 
