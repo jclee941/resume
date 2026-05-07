@@ -1,6 +1,8 @@
 import fp from 'fastify-plugin';
 import { ApplicationManager } from '../../auto-apply/application-manager.js';
 import { SecretsClient } from '../../shared/clients/secrets/index.js';
+import { createApplicationService } from '../../shared/services/applications/application-service.js';
+import { createStatsService } from '../../shared/services/stats/stats-service.js';
 import { UnifiedJobCrawler } from '../../crawlers/unified/unified-job-crawler.js';
 import { AutoApplier } from '../../auto-apply/auto-applier.js';
 import { ProfileAggregator } from '../../shared/services/profile/index.js';
@@ -14,6 +16,8 @@ const CLEANUP_INTERVAL = 60 * 60 * 1000;
 async function servicesPlugin(fastify) {
   const secretsClient = SecretsClient.fromEnv();
   const appManager = new ApplicationManager();
+  const applicationService = createApplicationService({ manager: appManager });
+  const statsService = createStatsService({ appService: applicationService });
   const crawler = new UnifiedJobCrawler({ secretsClient });
   const autoApplier = new AutoApplier({ secretsClient, dryRun: true });
   const profileAggregator = new ProfileAggregator(crawler.crawlers);
@@ -29,6 +33,8 @@ async function servicesPlugin(fastify) {
 
   fastify.decorate('secretsClient', secretsClient);
   fastify.decorate('appManager', appManager);
+  fastify.decorate('applicationService', applicationService);
+  fastify.decorate('statsService', statsService);
   fastify.decorate('crawler', crawler);
   fastify.decorate('autoApplier', autoApplier);
   fastify.decorate('profileAggregator', profileAggregator);
@@ -51,7 +57,7 @@ async function servicesPlugin(fastify) {
   fastify.addHook('onClose', () => clearInterval(cleanupTimer));
 
   fastify.log.info(
-    'Services plugin initialized (SecretsClient, ApplicationManager, UnifiedJobCrawler, AutoApplier, ProfileAggregator, D1Client, GoogleClient, CloudflareAnalytics)'
+    'Services plugin initialized (SecretsClient, ApplicationManager, ApplicationService, StatsService, UnifiedJobCrawler, AutoApplier, ProfileAggregator, D1Client, GoogleClient, CloudflareAnalytics)'
   );
 }
 
