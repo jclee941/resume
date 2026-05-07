@@ -39,16 +39,23 @@ async function resolveCaptchaInput(page) {
 }
 
 async function fillCaptchaInput(page, text) {
-  const { input } = await resolveCaptchaInput(page);
-  if (!input) {
+  const { activePage } = await resolveCaptchaInput(page);
+  const hasInput = await activePage.evaluate(() => {
+    return !!document.querySelector('#gtxt, input[name="gtxt"], input[id*="captcha" i], input[name*="captcha" i]');
+  });
+  if (!hasInput) {
     throw new Error('CAPTCHA input not found');
   }
 
-  await input.click({ clickCount: 3 });
-  if (typeof input.press === 'function') {
-    await input.press('Backspace').catch(() => {});
-  }
-  await input.type(text, { delay: 50 });
+  await activePage.evaluate((value) => {
+    const el = document.querySelector('#gtxt, input[name="gtxt"], input[id*="captcha" i], input[name*="captcha" i]');
+    if (el) {
+      el.focus();
+      el.value = value;
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+      el.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+  }, text);
 }
 
 async function clickCaptchaSubmit(page, { log }) {
@@ -229,6 +236,15 @@ export async function waitForLoginConfirmation(page, { verifyAuthenticatedSessio
 }
 
 async function buildCookieHeaderFromContext(page) {
-  const cookies = await page.browser().defaultBrowserContext().cookies();
+  let cookies = [];
+  try {
+    if (page.browser && typeof page.browser === 'function' && page.browser().defaultBrowserContext) {
+      cookies = await page.browser().defaultBrowserContext().cookies();
+    } else if (page.context && typeof page.context === 'function') {
+      cookies = await page.context().cookies();
+    }
+  } catch (e) {
+    // ignore browser-context cookie extraction errors
+  }
   return cookies.map((cookie) => `${cookie.name}=${cookie.value}`).join('; ');
 }

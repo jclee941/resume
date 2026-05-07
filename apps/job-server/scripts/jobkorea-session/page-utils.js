@@ -1,8 +1,14 @@
 export async function getActivePage(page) {
-  const pages = await page.browser().pages();
-  const openPage = pages.reverse().find((candidate) => !candidate.isClosed());
-  if (openPage) {
-    return openPage;
+  try {
+    if (page.browser && typeof page.browser === 'function') {
+      const pages = await page.browser().pages();
+      const openPage = pages.reverse().find((candidate) => !candidate.isClosed());
+      if (openPage) {
+        return openPage;
+      }
+    }
+  } catch (e) {
+    // ignore browser-specific errors
   }
 
   if (!page.isClosed()) {

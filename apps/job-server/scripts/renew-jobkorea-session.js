@@ -13,7 +13,6 @@ import {
   handleCaptchaIfNeeded,
   isLoggedIn,
   jobKoreaSessionTtlMs,
-  maybeUseExistingSession,
   resolveJobKoreaSession,
   saveResolvedJobKoreaSession,
   sleep,
@@ -42,19 +41,8 @@ async function main() {
 
   log('Renewing JobKorea session for:', email);
 
-  if (
-    await maybeUseExistingSession({
-      sessionFile,
-      email,
-      verifyAuthenticatedSession,
-      resumeUrl,
-      userAgent,
-      log,
-    })
-  ) {
-    process.exit(0);
-  }
-
+  // Skip HTTP-only verification: it gives false positives (200 OK but actually
+  // triggers CAPTCHA in a real browser). Always verify with stealth browser.
   const newSession = await withStealthBrowser(
     async (page) => {
       const existing = resolveJobKoreaSession({ saveResolvedFallback: false });
@@ -81,8 +69,12 @@ async function main() {
       await sleep(3000);
 
       if (await isLoggedIn(page)) {
-        log('Already logged in via cookies');
+        log('Already logged in via cookies (browser verified)');
+        await page.goto(resumeUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
+        await sleep(3000);
       } else {
+        log('Session expired or CAPTCHA detected, performing fresh login...');
+
         await handleCaptchaIfNeeded(page, { log, headlessEnv });
         await fillLoginForm(page, { email, password, log });
         await clickVisibleSubmit(page, { log });
