@@ -45,42 +45,31 @@ export async function createApplication(handler, request) {
   const id = `app_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   const now = new Date().toISOString();
 
-  await handler.db
-    .prepare(
-      `
-      INSERT INTO applications (id, job_id, source, source_url, position, company, location, match_score, status, priority, resume_id, cover_letter, notes, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `
-    )
-    .bind(
-      id,
-      data.job.id || null,
-      data.source,
-      data.sourceUrl,
-      data.job.position || data.job.title || 'Unknown',
-      data.job.company || 'Unknown',
-      data.job.location || null,
-      data.matchScore,
-      data.status,
-      data.job.priority || data.options.priority || 'medium',
-      data.options.resumeId || null,
-      data.options.coverLetter || null,
-      data.notes,
-      now,
-      now
-    )
-    .run();
+  await handler.repository.insert({
+    id,
+    jobId: data.job.id || null,
+    source: data.source,
+    sourceUrl: data.sourceUrl,
+    position: data.job.position || data.job.title || 'Unknown',
+    company: data.job.company || 'Unknown',
+    location: data.job.location || null,
+    matchScore: data.matchScore,
+    status: data.status,
+    priority: data.job.priority || data.options.priority || 'medium',
+    resumeId: data.options.resumeId || null,
+    coverLetter: data.options.coverLetter || null,
+    notes: data.notes,
+    createdAt: now,
+    updatedAt: now,
+  });
 
-  await handler.db
-    .prepare(
-      `
-      INSERT INTO application_timeline (application_id, status, note, timestamp)
-      VALUES (?, ?, ?, ?)
-    `
-    )
-    .bind(id, data.status, 'Application created', now)
-    .run();
+  await handler.repository.insertTimeline({
+    applicationId: id,
+    status: data.status,
+    note: 'Application created',
+    timestamp: now,
+  });
 
-  const app = await handler.db.prepare('SELECT * FROM applications WHERE id = ?').bind(id).first();
+  const app = await handler.repository.findById(id);
   return handler.jsonResponse(app, 201);
 }

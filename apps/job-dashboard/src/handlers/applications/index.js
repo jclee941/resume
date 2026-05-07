@@ -1,3 +1,4 @@
+import { ApplicationRepository } from './application-repository.js';
 import { cleanupExpiredApplications } from './cleanup-operation.js';
 import { createApplication } from './create-operation.js';
 import { deleteApplication } from './delete-operation.js';
@@ -12,6 +13,7 @@ export { APPLICATION_STATUS, VALID_STATUSES } from './statuses.js';
 export class ApplicationsHandler {
   constructor(db) {
     this.db = db;
+    this.repository = new ApplicationRepository(db);
   }
 
   jsonResponse(data, status = 200) {
