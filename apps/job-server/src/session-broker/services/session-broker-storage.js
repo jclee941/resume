@@ -1,6 +1,6 @@
 export async function loadSession(service, normalized) {
-  if (service.sessionStore && typeof service.sessionStore.get === 'function') {
-    const raw = service.sessionStore.get(normalized);
+  if (service.sessionStore && typeof service.sessionStore.load === 'function') {
+    const raw = await service.sessionStore.load(normalized);
     if (raw == null) return null;
 
     try {
@@ -27,8 +27,8 @@ export async function saveSession(service, normalized, session) {
     ...session,
   };
 
-  if (service.sessionStore && typeof service.sessionStore.set === 'function') {
-    service.sessionStore.set(normalized, JSON.stringify(record));
+  if (service.sessionStore && typeof service.sessionStore.save === 'function') {
+    await service.sessionStore.save(normalized, record);
     return;
   }
 

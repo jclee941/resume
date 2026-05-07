@@ -1,4 +1,6 @@
-export const DEFAULT_SESSION_LIFETIME_MS = 24 * 60 * 60 * 1000;
+import { DEFAULT_SESSION_TTL_MS } from '../../shared/services/session/session-constants.js';
+
+export const DEFAULT_SESSION_LIFETIME_MS = DEFAULT_SESSION_TTL_MS;
 export const DEFAULT_TTL_THRESHOLD = 0.8;
 export const DEFAULT_RETRY_ATTEMPTS = 3;
 export const DEFAULT_RETRY_DELAY_MS = 30_000;
