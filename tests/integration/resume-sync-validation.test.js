@@ -110,12 +110,12 @@ const INVALID_RESUME_BAD_CAREER = {
 };
 
 describe('Resume Sync Validation', () => {
+  const importValidation = () => import('@resume/shared/validation');
+
   // Test: Validation Adapter Module
   test('Validation Adapter - should import validation adapter successfully', async () => {
     // Use dynamic import for ES modules
-    const validation = await import(
-      path.join(PROJECT_ROOT, 'apps/job-server/src/shared/validation/index.js')
-    );
+    const validation = await importValidation();
 
     expect(typeof validation.masterSchema).toBe('object');
     expect(typeof validation.validateResumeData).toBe('function');
@@ -123,9 +123,7 @@ describe('Resume Sync Validation', () => {
   });
 
   test('Validation Adapter - should have masterSchema with required properties', async () => {
-    const { masterSchema } = await import(
-      path.join(PROJECT_ROOT, 'apps/job-server/src/shared/validation/index.js')
-    );
+    const { masterSchema } = await importValidation();
 
     expect(masterSchema.type).toBe('object');
     expect(typeof masterSchema.properties).toBe('object');
@@ -134,9 +132,7 @@ describe('Resume Sync Validation', () => {
 
   // Test: Validation Logic
   test('Validation Logic - should validate correct resume data', async () => {
-    const { masterSchema, validateResumeData } = await import(
-      path.join(PROJECT_ROOT, 'apps/job-server/src/shared/validation/index.js')
-    );
+    const { masterSchema, validateResumeData } = await importValidation();
 
     const validation = validateResumeData(VALID_RESUME_DATA, masterSchema);
     expect(validation.valid).toBe(true);
@@ -144,9 +140,7 @@ describe('Resume Sync Validation', () => {
   });
 
   test('Validation Logic - should reject resume missing required fields', async () => {
-    const { masterSchema, validateResumeData } = await import(
-      path.join(PROJECT_ROOT, 'apps/job-server/src/shared/validation/index.js')
-    );
+    const { masterSchema, validateResumeData } = await importValidation();
 
     const validation = validateResumeData(INVALID_RESUME_MISSING_REQUIRED, masterSchema);
     expect(validation.valid).toBe(false);
@@ -154,9 +148,7 @@ describe('Resume Sync Validation', () => {
   });
 
   test('Validation Logic - should reject resume with wrong types', async () => {
-    const { masterSchema, validateResumeData } = await import(
-      path.join(PROJECT_ROOT, 'apps/job-server/src/shared/validation/index.js')
-    );
+    const { masterSchema, validateResumeData } = await importValidation();
 
     const validation = validateResumeData(INVALID_RESUME_WRONG_TYPES, masterSchema);
     expect(validation.valid).toBe(false);
@@ -164,9 +156,7 @@ describe('Resume Sync Validation', () => {
   });
 
   test('Validation Logic - should reject invalid phone format', async () => {
-    const { masterSchema, validateResumeData } = await import(
-      path.join(PROJECT_ROOT, 'apps/job-server/src/shared/validation/index.js')
-    );
+    const { masterSchema, validateResumeData } = await importValidation();
 
     const validation = validateResumeData(INVALID_RESUME_BAD_PHONE, masterSchema);
     expect(validation.valid).toBe(false);
@@ -174,9 +164,7 @@ describe('Resume Sync Validation', () => {
   });
 
   test('Validation Logic - should reject career items missing required fields', async () => {
-    const { masterSchema, validateResumeData } = await import(
-      path.join(PROJECT_ROOT, 'apps/job-server/src/shared/validation/index.js')
-    );
+    const { masterSchema, validateResumeData } = await importValidation();
 
     const validation = validateResumeData(INVALID_RESUME_BAD_CAREER, masterSchema);
     expect(validation.valid).toBe(false);
@@ -185,9 +173,7 @@ describe('Resume Sync Validation', () => {
 
   // Test: MCP Error Formatting
   test('MCP Error Formatting - should format validation errors for MCP response', async () => {
-    const { validateResumeData, formatErrorsForMCP, masterSchema } = await import(
-      path.join(PROJECT_ROOT, 'apps/job-server/src/shared/validation/index.js')
-    );
+    const { validateResumeData, formatErrorsForMCP, masterSchema } = await importValidation();
 
     const validation = validateResumeData(INVALID_RESUME_MISSING_REQUIRED, masterSchema);
     const formatted = formatErrorsForMCP(validation.errors);
@@ -202,9 +188,7 @@ describe('Resume Sync Validation', () => {
   });
 
   test('MCP Error Formatting - should return empty array for valid data', async () => {
-    const { validateResumeData, formatErrorsForMCP, masterSchema } = await import(
-      path.join(PROJECT_ROOT, 'apps/job-server/src/shared/validation/index.js')
-    );
+    const { validateResumeData, formatErrorsForMCP, masterSchema } = await importValidation();
 
     const validation = validateResumeData(VALID_RESUME_DATA, masterSchema);
     const formatted = formatErrorsForMCP(validation.errors);
@@ -236,7 +220,7 @@ describe('Resume Sync Validation', () => {
     const filePath = path.join(PROJECT_ROOT, 'apps/job-server/src/tools/commands/base-command.js');
     const content = fs.readFileSync(filePath, 'utf-8');
 
-    expect(content.includes("from '../../shared/validation/index.js'")).toBe(true);
+    expect(content.includes("from '@resume/shared/validation'")).toBe(true);
     expect(content.includes('validateResumeData')).toBe(true);
   });
 
@@ -287,9 +271,7 @@ describe('Resume Sync Validation', () => {
   });
 
   test('Error Format Compliance - should include validation errors in response', async () => {
-    const { validateResumeData, formatErrorsForMCP, masterSchema } = await import(
-      path.join(PROJECT_ROOT, 'apps/job-server/src/shared/validation/index.js')
-    );
+    const { validateResumeData, formatErrorsForMCP, masterSchema } = await importValidation();
 
     const validation = validateResumeData(INVALID_RESUME_MISSING_REQUIRED, masterSchema);
     const formattedErrors = formatErrorsForMCP(validation.errors);

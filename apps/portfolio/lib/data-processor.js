@@ -4,7 +4,7 @@
  */
 
 const { TEMPLATE_CACHE } = require('./config');
-const { validateData } = require('./validators');
+const { validatePortfolioData } = require('@resume/shared/validation');
 const { calculateDataHash } = require('./content-hashing');
 const {
   generateResumeCards,
@@ -69,7 +69,7 @@ function processProjectData({ projectDataRaw, projectDataEnRaw, projectDataJaRaw
   const projectDataJa = projectDataJaRaw ? JSON.parse(projectDataJaRaw) : null;
 
   logger.log('🔍 Validating data.json...');
-  validateData(projectData);
+  validatePortfolioData(projectData, { logger });
 
   const dataHash = calculateDataHash(projectData);
   if (TEMPLATE_CACHE.dataHash !== dataHash) {

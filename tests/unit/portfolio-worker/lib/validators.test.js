@@ -1,12 +1,13 @@
 /**
- * Unit tests for apps/portfolio/lib/validators.js
+ * Unit tests for shared portfolio validation
  */
 
-const { validateData } = require('../../../../apps/portfolio/lib/validators');
+let validatePortfolioData;
 
 describe('Validators Module', () => {
   // Suppress console.log during tests
-  beforeAll(() => {
+  beforeAll(async () => {
+    ({ validatePortfolioData } = await import('@resume/shared/validation'));
     jest.spyOn(console, 'log').mockImplementation(() => {});
   });
 
@@ -14,7 +15,7 @@ describe('Validators Module', () => {
     console.log.mockRestore();
   });
 
-  describe('validateData', () => {
+  describe('validatePortfolioData', () => {
     const validData = {
       resumeDownload: {
         pdfUrl: 'https://example.com/resume.pdf',
@@ -51,12 +52,12 @@ describe('Validators Module', () => {
     };
 
     test('should pass with valid data', () => {
-      expect(() => validateData(validData)).not.toThrow();
+      expect(() => validatePortfolioData(validData)).not.toThrow();
     });
 
     test('should throw if resumeDownload is missing', () => {
       const data = { ...validData, resumeDownload: undefined };
-      expect(() => validateData(data)).toThrow('Missing resumeDownload object');
+      expect(() => validatePortfolioData(data)).toThrow('Missing resumeDownload object');
     });
 
     test('should throw if resumeDownload.pdfUrl is missing', () => {
@@ -64,7 +65,7 @@ describe('Validators Module', () => {
         ...validData,
         resumeDownload: { docxUrl: 'test', mdUrl: 'test' },
       };
-      expect(() => validateData(data)).toThrow('Missing resumeDownload.pdfUrl');
+      expect(() => validatePortfolioData(data)).toThrow('Missing resumeDownload.pdfUrl');
     });
 
     test('should throw if resumeDownload.docxUrl is missing', () => {
@@ -72,7 +73,7 @@ describe('Validators Module', () => {
         ...validData,
         resumeDownload: { pdfUrl: 'test', mdUrl: 'test' },
       };
-      expect(() => validateData(data)).toThrow('Missing resumeDownload.docxUrl');
+      expect(() => validatePortfolioData(data)).toThrow('Missing resumeDownload.docxUrl');
     });
 
     test('should throw if resumeDownload.mdUrl is missing', () => {
@@ -80,12 +81,12 @@ describe('Validators Module', () => {
         ...validData,
         resumeDownload: { pdfUrl: 'test', docxUrl: 'test' },
       };
-      expect(() => validateData(data)).toThrow('Missing resumeDownload.mdUrl');
+      expect(() => validatePortfolioData(data)).toThrow('Missing resumeDownload.mdUrl');
     });
 
     test('should throw if resume is not an array', () => {
       const data = { ...validData, resume: 'not an array' };
-      expect(() => validateData(data)).toThrow('resume must be an array');
+      expect(() => validatePortfolioData(data)).toThrow('resume must be an array');
     });
 
     test('should throw if resume item missing title', () => {
@@ -101,7 +102,7 @@ describe('Validators Module', () => {
           },
         ],
       };
-      expect(() => validateData(data)).toThrow('resume[0]: missing title');
+      expect(() => validatePortfolioData(data)).toThrow('resume[0]: missing title');
     });
 
     test('should throw if resume item missing description', () => {
@@ -109,7 +110,7 @@ describe('Validators Module', () => {
         ...validData,
         resume: [{ icon: '📄', title: 'Test', stats: [], pdfUrl: 'x', docxUrl: 'x' }],
       };
-      expect(() => validateData(data)).toThrow('resume[0]: missing description');
+      expect(() => validatePortfolioData(data)).toThrow('resume[0]: missing description');
     });
 
     test('should throw if resume stats is not an array', () => {
@@ -126,7 +127,7 @@ describe('Validators Module', () => {
           },
         ],
       };
-      expect(() => validateData(data)).toThrow('resume[0]: stats must be an array');
+      expect(() => validatePortfolioData(data)).toThrow('resume[0]: stats must be an array');
     });
 
     test('should throw if highlighted card missing completePdfUrl', () => {
@@ -142,7 +143,7 @@ describe('Validators Module', () => {
           },
         ],
       };
-      expect(() => validateData(data)).toThrow(
+      expect(() => validatePortfolioData(data)).toThrow(
         'resume[0]: highlighted card missing completePdfUrl'
       );
     });
@@ -161,7 +162,7 @@ describe('Validators Module', () => {
           },
         ],
       };
-      expect(() => validateData(data)).not.toThrow();
+      expect(() => validatePortfolioData(data)).not.toThrow();
     });
 
     test('should pass if non-highlighted card has no document URLs (optional)', () => {
@@ -169,7 +170,7 @@ describe('Validators Module', () => {
         ...validData,
         resume: [{ icon: '📄', title: 'Test', description: 'Test', stats: [] }],
       };
-      expect(() => validateData(data)).not.toThrow();
+      expect(() => validatePortfolioData(data)).not.toThrow();
     });
 
     test('should pass if non-highlighted card has only pdfUrl', () => {
@@ -185,12 +186,12 @@ describe('Validators Module', () => {
           },
         ],
       };
-      expect(() => validateData(data)).not.toThrow();
+      expect(() => validatePortfolioData(data)).not.toThrow();
     });
 
     test('should throw if projects is not an array', () => {
       const data = { ...validData, projects: 'not an array' };
-      expect(() => validateData(data)).toThrow('projects must be an array');
+      expect(() => validatePortfolioData(data)).toThrow('projects must be an array');
     });
 
     test('should throw if project missing title', () => {
@@ -198,7 +199,7 @@ describe('Validators Module', () => {
         ...validData,
         projects: [{ icon: '🚀', tech: 'Node', description: 'Test', liveUrl: 'x' }],
       };
-      expect(() => validateData(data)).toThrow('projects[0]: missing title');
+      expect(() => validatePortfolioData(data)).toThrow('projects[0]: missing title');
     });
 
     test('should throw if project missing tech', () => {
@@ -206,7 +207,7 @@ describe('Validators Module', () => {
         ...validData,
         projects: [{ icon: '🚀', title: 'Test', description: 'Test', liveUrl: 'x' }],
       };
-      expect(() => validateData(data)).toThrow('projects[0]: missing tech');
+      expect(() => validatePortfolioData(data)).toThrow('projects[0]: missing tech');
     });
 
     test('should throw if project missing description', () => {
@@ -214,7 +215,7 @@ describe('Validators Module', () => {
         ...validData,
         projects: [{ icon: '🚀', title: 'Test', tech: 'Node', liveUrl: 'x' }],
       };
-      expect(() => validateData(data)).toThrow('projects[0]: missing description');
+      expect(() => validatePortfolioData(data)).toThrow('projects[0]: missing description');
     });
 
     test('should pass if project has liveUrl', () => {
@@ -230,7 +231,7 @@ describe('Validators Module', () => {
           },
         ],
       };
-      expect(() => validateData(data)).not.toThrow();
+      expect(() => validatePortfolioData(data)).not.toThrow();
     });
 
     test('should pass if project has repoUrl', () => {
@@ -246,7 +247,7 @@ describe('Validators Module', () => {
           },
         ],
       };
-      expect(() => validateData(data)).not.toThrow();
+      expect(() => validatePortfolioData(data)).not.toThrow();
     });
 
     test('should pass if project has documentationUrl', () => {
@@ -262,7 +263,7 @@ describe('Validators Module', () => {
           },
         ],
       };
-      expect(() => validateData(data)).not.toThrow();
+      expect(() => validatePortfolioData(data)).not.toThrow();
     });
 
     test('should pass if project has dashboards', () => {
@@ -278,7 +279,7 @@ describe('Validators Module', () => {
           },
         ],
       };
-      expect(() => validateData(data)).not.toThrow();
+      expect(() => validatePortfolioData(data)).not.toThrow();
     });
 
     test('should collect multiple errors', () => {
@@ -287,14 +288,14 @@ describe('Validators Module', () => {
         resume: 'invalid',
         projects: 'invalid',
       };
-      expect(() => validateData(data)).toThrow(/Missing resumeDownload\.pdfUrl/);
-      expect(() => validateData(data)).toThrow(/resume must be an array/);
+      expect(() => validatePortfolioData(data)).toThrow(/Missing resumeDownload\.pdfUrl/);
+      expect(() => validatePortfolioData(data)).toThrow(/resume must be an array/);
     });
 
     // --- Certification validation ---
     test('should throw if certifications is not an array', () => {
       const data = { ...validData, certifications: 'not array' };
-      expect(() => validateData(data)).toThrow('certifications must be an array');
+      expect(() => validatePortfolioData(data)).toThrow('certifications must be an array');
     });
 
     test('should throw if certification missing name', () => {
@@ -302,7 +303,7 @@ describe('Validators Module', () => {
         ...validData,
         certifications: [{ issuer: 'AWS', date: '2025-01' }],
       };
-      expect(() => validateData(data)).toThrow('certifications[0]: missing name');
+      expect(() => validatePortfolioData(data)).toThrow('certifications[0]: missing name');
     });
 
     test('should throw if certification missing issuer', () => {
@@ -310,7 +311,7 @@ describe('Validators Module', () => {
         ...validData,
         certifications: [{ name: 'CKA', date: '2025-01' }],
       };
-      expect(() => validateData(data)).toThrow('certifications[0]: missing issuer');
+      expect(() => validatePortfolioData(data)).toThrow('certifications[0]: missing issuer');
     });
 
     test('should throw if certification missing both date and status', () => {
@@ -318,7 +319,7 @@ describe('Validators Module', () => {
         ...validData,
         certifications: [{ name: 'CKA', issuer: 'CNCF' }],
       };
-      expect(() => validateData(data)).toThrow('certifications[0]: missing date');
+      expect(() => validatePortfolioData(data)).toThrow('certifications[0]: missing date');
     });
 
     test('should pass if certification has date but no status', () => {
@@ -326,7 +327,7 @@ describe('Validators Module', () => {
         ...validData,
         certifications: [{ name: 'CKA', issuer: 'CNCF', date: '2025-01' }],
       };
-      expect(() => validateData(data)).not.toThrow();
+      expect(() => validatePortfolioData(data)).not.toThrow();
     });
 
     test('should pass if certification has status but no date', () => {
@@ -334,18 +335,18 @@ describe('Validators Module', () => {
         ...validData,
         certifications: [{ name: 'CKA', issuer: 'CNCF', status: 'active' }],
       };
-      expect(() => validateData(data)).not.toThrow();
+      expect(() => validatePortfolioData(data)).not.toThrow();
     });
 
     // --- Skills validation ---
     test('should throw if skills is not an object', () => {
       const data = { ...validData, skills: 'not object' };
-      expect(() => validateData(data)).toThrow('skills must be an object');
+      expect(() => validatePortfolioData(data)).toThrow('skills must be an object');
     });
 
     test('should throw if skills is null', () => {
       const data = { ...validData, skills: null };
-      expect(() => validateData(data)).toThrow('skills must be an object');
+      expect(() => validatePortfolioData(data)).toThrow('skills must be an object');
     });
 
     test('should pass with simple array format skills (strings)', () => {
@@ -353,7 +354,7 @@ describe('Validators Module', () => {
         ...validData,
         skills: { security: ['IAM', 'OAuth'], cloud: ['AWS', 'GCP'] },
       };
-      expect(() => validateData(data)).not.toThrow();
+      expect(() => validatePortfolioData(data)).not.toThrow();
     });
 
     test('should pass with simple array format skills ({name, level} objects)', () => {
@@ -366,7 +367,7 @@ describe('Validators Module', () => {
           ],
         },
       };
-      expect(() => validateData(data)).not.toThrow();
+      expect(() => validatePortfolioData(data)).not.toThrow();
     });
 
     test('should throw if array format has invalid items', () => {
@@ -374,7 +375,7 @@ describe('Validators Module', () => {
         ...validData,
         skills: { security: [42, true] },
       };
-      expect(() => validateData(data)).toThrow(
+      expect(() => validatePortfolioData(data)).toThrow(
         'skills.security array items must be strings or {name, level} objects'
       );
     });
@@ -386,7 +387,7 @@ describe('Validators Module', () => {
           security: { title: 'Security', icon: 'lock', items: ['IAM', 'OAuth'] },
         },
       };
-      expect(() => validateData(data)).not.toThrow();
+      expect(() => validatePortfolioData(data)).not.toThrow();
     });
 
     test('should throw if object format missing items array', () => {
@@ -394,7 +395,7 @@ describe('Validators Module', () => {
         ...validData,
         skills: { security: { title: 'Security', icon: 'lock' } },
       };
-      expect(() => validateData(data)).toThrow('skills.security.items must be an array');
+      expect(() => validatePortfolioData(data)).toThrow('skills.security.items must be an array');
     });
 
     test('should throw if object format items has invalid entries', () => {
@@ -404,7 +405,7 @@ describe('Validators Module', () => {
           security: { title: 'Security', items: [42, false] },
         },
       };
-      expect(() => validateData(data)).toThrow(
+      expect(() => validatePortfolioData(data)).toThrow(
         'skills.security.items must contain strings or {name, level} objects'
       );
     });
@@ -414,7 +415,7 @@ describe('Validators Module', () => {
         ...validData,
         skills: { security: 'invalid' },
       };
-      expect(() => validateData(data)).toThrow(
+      expect(() => validatePortfolioData(data)).toThrow(
         'skills.security must be an array or object with items'
       );
     });
@@ -424,7 +425,7 @@ describe('Validators Module', () => {
         ...validData,
         skills: { security: 42 },
       };
-      expect(() => validateData(data)).toThrow(
+      expect(() => validatePortfolioData(data)).toThrow(
         'skills.security must be an array or object with items'
       );
     });
@@ -434,7 +435,7 @@ describe('Validators Module', () => {
         ...validData,
         skills: { security: [] },
       };
-      expect(() => validateData(data)).not.toThrow();
+      expect(() => validatePortfolioData(data)).not.toThrow();
     });
 
     test('should pass with object format having empty items array', () => {
@@ -442,7 +443,7 @@ describe('Validators Module', () => {
         ...validData,
         skills: { security: { title: 'Security', items: [] } },
       };
-      expect(() => validateData(data)).not.toThrow();
+      expect(() => validatePortfolioData(data)).not.toThrow();
     });
 
     test('should pass with mixed string and object items in array format', () => {
@@ -452,7 +453,7 @@ describe('Validators Module', () => {
           security: ['IAM', { name: 'OAuth', level: 80 }],
         },
       };
-      expect(() => validateData(data)).not.toThrow();
+      expect(() => validatePortfolioData(data)).not.toThrow();
     });
 
     test('should pass with object format items containing valid {name, level} objects', () => {
@@ -468,7 +469,7 @@ describe('Validators Module', () => {
           },
         },
       };
-      expect(() => validateData(data)).not.toThrow();
+      expect(() => validatePortfolioData(data)).not.toThrow();
     });
 
     test('should pass with mixed strings and objects in object format items', () => {
@@ -481,7 +482,7 @@ describe('Validators Module', () => {
           },
         },
       };
-      expect(() => validateData(data)).not.toThrow();
+      expect(() => validatePortfolioData(data)).not.toThrow();
     });
   });
 });

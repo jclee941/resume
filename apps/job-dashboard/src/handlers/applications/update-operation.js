@@ -1,4 +1,4 @@
-import { validateApplicationUpdate } from '../../utils/validators.js';
+import { validateApplicationUpdate } from '@resume/shared/validation';
 
 export async function updateApplication(handler, request) {
   const { id } = request.params;

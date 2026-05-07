@@ -1,7 +1,7 @@
 'use strict';
 
-jest.mock('../../../../apps/portfolio/lib/validators', () => ({
-  validateData: jest.fn(),
+jest.mock('@resume/shared/validation', () => ({
+  validatePortfolioData: jest.fn(),
 }));
 
 jest.mock('../../../../apps/portfolio/lib/content-hashing', () => ({
@@ -21,7 +21,7 @@ jest.mock('../../../../apps/portfolio/lib/cards', () => ({
 }));
 
 const { TEMPLATE_CACHE } = require('../../../../apps/portfolio/lib/config');
-const { validateData } = require('../../../../apps/portfolio/lib/validators');
+const { validatePortfolioData } = require('@resume/shared/validation');
 const { calculateDataHash } = require('../../../../apps/portfolio/lib/content-hashing');
 const cards = require('../../../../apps/portfolio/lib/cards');
 const {
@@ -73,18 +73,19 @@ describe('data-processor', () => {
       expect(result).toHaveProperty('templates');
     });
 
-    it('should call validateData with parsed data', () => {
+    it('should call validatePortfolioData with parsed data', () => {
       const data = createValidData();
       processProjectData({
         projectDataRaw: JSON.stringify(data),
         logger: mockLogger,
       });
 
-      expect(validateData).toHaveBeenCalledWith(
+      expect(validatePortfolioData).toHaveBeenCalledWith(
         expect.objectContaining({
           resume: data.resume,
           projects: data.projects,
-        })
+        }),
+        { logger: mockLogger }
       );
     });
 
