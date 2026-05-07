@@ -5,7 +5,7 @@
  * launch overhead and memory usage across multiple job applications.
  */
 
-import { generateFingerprint, applyStealthPatches } from '@resume/shared/browser/stealth';
+import { generateFingerprint, applyStealthPatches } from '@resume/shared/browser';
 import { EventEmitter } from 'events';
 
 const LAUNCH_ARGS = [
