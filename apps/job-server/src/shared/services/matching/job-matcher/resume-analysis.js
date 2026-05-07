@@ -2,22 +2,30 @@ import { readFileSync, existsSync } from 'fs';
 import { getResumeMasterMarkdownPath } from '../../../utils/paths.js';
 import { SKILL_CATEGORIES } from './skill-categories.js';
 
-export function loadResume(resumePath) {
-  const defaultPath = getResumeMasterMarkdownPath();
-  const path = resumePath || defaultPath;
+export function createFileResumeReader({ getDefaultPath = getResumeMasterMarkdownPath } = {}) {
+  return function readResume(resumePath) {
+    const defaultPath = getDefaultPath();
+    const path = resumePath || defaultPath;
 
-  if (!existsSync(path)) {
-    throw new Error(`Resume not found: ${path}`);
-  }
+    if (!existsSync(path)) {
+      throw new Error(`Resume not found: ${path}`);
+    }
 
-  return readFileSync(path, 'utf-8');
+    return readFileSync(path, 'utf-8');
+  };
 }
 
-export function extractSkills(resumeText) {
+export const defaultResumeReader = createFileResumeReader();
+
+export function loadResume(resumePath) {
+  return defaultResumeReader(resumePath);
+}
+
+export function extractSkills(resumeText, { skillCategories = SKILL_CATEGORIES } = {}) {
   const skills = new Map();
   const lowerText = resumeText.toLowerCase();
 
-  for (const [category, config] of Object.entries(SKILL_CATEGORIES)) {
+  for (const [category, config] of Object.entries(skillCategories)) {
     const found = [];
     for (const keyword of config.keywords) {
       if (lowerText.includes(keyword.toLowerCase())) {
