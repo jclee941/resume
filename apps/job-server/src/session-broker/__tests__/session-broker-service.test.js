@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import SessionBrokerService, { SESSION_STATES } from '../services/session-broker-service.js';
+import { createMemorySessionStore } from '../../shared/services/session/session-store.js';
 
 class FakeEncryptionService {
   encrypt(data) {
@@ -15,7 +16,7 @@ class FakeEncryptionService {
 
 function createService({
   now = 1_700_000_000_000,
-  sessionStore = new Map(),
+  sessionStore = createMemorySessionStore(),
   loginFlowFactories = {},
   browserFactory,
   platforms = ['wanted'],
@@ -60,7 +61,7 @@ function createService({
 }
 
 function storeSession(sessionStore, session) {
-  sessionStore.set(session.platform, JSON.stringify(session));
+  sessionStore.save(session.platform, session);
 }
 
 describe('SessionBrokerService', () => {
@@ -84,7 +85,7 @@ describe('SessionBrokerService', () => {
   });
 
   it('triggers renewal when the session is nearing expiry', async () => {
-    const sessionStore = new Map();
+    const sessionStore = createMemorySessionStore();
     const renewedSession = {
       cookies: [{ name: 'sid', value: 'renewed' }],
       renewedAt: '2024-01-01T21:00:00.000Z',
@@ -121,7 +122,7 @@ describe('SessionBrokerService', () => {
   });
 
   it('triggers renewal when the session is expired', async () => {
-    const sessionStore = new Map();
+    const sessionStore = createMemorySessionStore();
     let renewalCalls = 0;
 
     storeSession(sessionStore, {
@@ -156,7 +157,7 @@ describe('SessionBrokerService', () => {
   });
 
   it('returns an error when renewal fails after retries', async () => {
-    const sessionStore = new Map();
+    const sessionStore = createMemorySessionStore();
     let attempts = 0;
 
     storeSession(sessionStore, {
@@ -188,7 +189,7 @@ describe('SessionBrokerService', () => {
   });
 
   it('returns platform status in health checks', async () => {
-    const sessionStore = new Map();
+    const sessionStore = createMemorySessionStore();
 
     storeSession(sessionStore, {
       platform: 'wanted',
