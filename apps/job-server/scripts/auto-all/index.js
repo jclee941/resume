@@ -1,0 +1,10 @@
+export { checkChromeDevTools, extractCookiesViaCDP } from './cdp-cookies.js';
+export { parseAutomationArgs } from './cli-args.js';
+export { run } from './command-runner.js';
+export { CHROME_DEBUG_PORT, PLATFORM_DOMAINS, PLATFORMS } from './constants.js';
+export { c, header, log, printBanner } from './logging.js';
+export { main } from './orchestration.js';
+export { syncPlatform, syncPlatforms } from './platform-runners.js';
+export { buildSummaryData, sendWebhookNotification } from './reporting.js';
+export { checkSession, SessionManager } from './session-status.js';
+export { runVerification } from './verification.js';
