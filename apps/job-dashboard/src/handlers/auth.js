@@ -1,4 +1,4 @@
-import { encrypt, decrypt } from '../utils/crypto.js';
+import { encrypt, decrypt } from '@resume/shared/crypto';
 import { verifySecret } from '../services/auth.js';
 import { normalizeError } from '@resume/shared/errors';
 

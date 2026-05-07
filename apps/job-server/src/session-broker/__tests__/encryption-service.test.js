@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it, beforeEach } from 'node:test';
 
-import EncryptionService from '../services/encryption-service.js';
+import { EncryptionService } from '@resume/shared/crypto';
 
 const VALID_KEY = '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
 

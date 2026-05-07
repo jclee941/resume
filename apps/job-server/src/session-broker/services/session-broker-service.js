@@ -1,4 +1,4 @@
-import EncryptionService from './encryption-service.js';
+import { EncryptionService } from '@resume/shared/crypto';
 import {
   DEFAULT_RETRY_ATTEMPTS,
   DEFAULT_RETRY_DELAY_MS,
