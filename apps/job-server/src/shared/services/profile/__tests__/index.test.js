@@ -4,6 +4,10 @@ import { beforeEach, describe, it, mock } from 'node:test';
 import { SessionManager } from '../../session/index.js';
 import { ProfileAggregator, UNIFIED_PROFILE_SCHEMA } from '../index.js';
 
+function createSessionStore(load) {
+  return { load };
+}
+
 describe('UNIFIED_PROFILE_SCHEMA', () => {
   it('exports expected baseline structure', () => {
     assert.equal(UNIFIED_PROFILE_SCHEMA.basic.name, null);
@@ -19,7 +23,7 @@ describe('ProfileAggregator.fetchUnifiedProfile', () => {
   });
 
   it('handles synced, auth_required, not_implemented, and no-crawler paths', async () => {
-    mock.method(SessionManager, 'load', (platform) => {
+    const sessionStore = createSessionStore((platform) => {
       if (platform === 'wanted') return { token: 'ok' };
       if (platform === 'saramin') return null;
       if (platform === 'linkedin') return { token: 'ok' };
@@ -49,7 +53,7 @@ describe('ProfileAggregator.fetchUnifiedProfile', () => {
       linkedin: {},
     };
 
-    const aggregator = new ProfileAggregator(crawlers);
+    const aggregator = new ProfileAggregator(crawlers, { sessionStore });
     const unified = await aggregator.fetchUnifiedProfile();
 
     assert.equal(unified.basic.name, 'Kim');
@@ -65,7 +69,7 @@ describe('ProfileAggregator.fetchUnifiedProfile', () => {
   });
 
   it('handles profile error and thrown error and adds new source when needed', async () => {
-    mock.method(SessionManager, 'load', () => ({ token: 'ok' }));
+    const sessionStore = createSessionStore(() => ({ token: 'ok' }));
 
     const crawlers = {
       wanted: {
@@ -91,7 +95,7 @@ describe('ProfileAggregator.fetchUnifiedProfile', () => {
       },
     };
 
-    const aggregator = new ProfileAggregator(crawlers);
+    const aggregator = new ProfileAggregator(crawlers, { sessionStore });
     const unified = await aggregator.fetchUnifiedProfile();
 
     assert.equal(unified.meta.syncStatus.wanted.status, 'error');
@@ -133,7 +137,9 @@ describe('ProfileAggregator + JK NOT_IMPLEMENTED stub (audit Issue D)', () => {
       linkedin: { getProfile: mock.fn(async () => ({ success: true, profile: {} })) },
     };
 
-    const aggregator = new ProfileAggregator(crawlers);
+    const aggregator = new ProfileAggregator(crawlers, {
+      sessionStore: createSessionStore(() => ({ cookies: { token: 'session' } })),
+    });
     const unified = await aggregator.fetchUnifiedProfile();
 
     assert.equal(unified.meta.syncStatus.jobkorea.status, 'not_implemented');
@@ -160,7 +166,9 @@ describe('ProfileAggregator + JK NOT_IMPLEMENTED stub (audit Issue D)', () => {
       linkedin: { getProfile: mock.fn(async () => ({ success: true, profile: {} })) },
     };
 
-    const aggregator = new ProfileAggregator(crawlers);
+    const aggregator = new ProfileAggregator(crawlers, {
+      sessionStore: createSessionStore(() => ({ cookies: { token: 'session' } })),
+    });
     const unified = await aggregator.fetchUnifiedProfile();
 
     assert.equal(unified.meta.syncStatus.jobkorea.status, 'error');
