@@ -1,10 +1,6 @@
-import { getApplicationService } from '../../shared/services/applications/application-service.js';
-
-const appService = getApplicationService();
-
 export default async function applicationsRoutes(fastify) {
   fastify.get('/', async (request) => {
-    const result = appService.list(request.query);
+    const result = fastify.applicationService.list(request.query);
     return {
       applications: result.applications,
       total: result.total,
@@ -14,7 +10,7 @@ export default async function applicationsRoutes(fastify) {
   });
 
   fastify.get('/:id', async (request, reply) => {
-    const result = appService.get(request.params.id);
+    const result = fastify.applicationService.get(request.params.id);
     if (!result.success) {
       return reply.status(result.statusCode).send({ error: result.error });
     }
@@ -23,7 +19,7 @@ export default async function applicationsRoutes(fastify) {
 
   fastify.post('/', async (request, reply) => {
     const { job, options } = request.body || {};
-    const result = appService.create(job, options);
+    const result = fastify.applicationService.create(job, options);
     return reply.status(result.statusCode).send({
       success: result.success,
       id: result.application?.id,
@@ -32,7 +28,7 @@ export default async function applicationsRoutes(fastify) {
   });
 
   fastify.put('/:id', async (request, reply) => {
-    const result = appService.update(request.params.id, request.body || {});
+    const result = fastify.applicationService.update(request.params.id, request.body || {});
     if (!result.success) {
       return reply.status(result.statusCode).send({ error: result.error });
     }
@@ -41,7 +37,7 @@ export default async function applicationsRoutes(fastify) {
 
   fastify.put('/:id/status', async (request) => {
     const { status, note, notifyN8n } = request.body || {};
-    const result = appService.updateStatus(request.params.id, status, note);
+    const result = fastify.applicationService.updateStatus(request.params.id, status, note);
 
     if (result.success && notifyN8n !== false) {
       fastify
@@ -60,6 +56,6 @@ export default async function applicationsRoutes(fastify) {
   });
 
   fastify.delete('/:id', async (request) => {
-    return appService.delete(request.params.id);
+    return fastify.applicationService.delete(request.params.id);
   });
 }
