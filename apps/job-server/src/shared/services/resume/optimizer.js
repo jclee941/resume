@@ -7,7 +7,8 @@ import { analyzeWithClaude } from '../matching/ai-matcher.js';
 /**
  * JD 분석 결과를 바탕으로 이력서를 최적화합니다.
  */
-export async function optimizeResume(masterResume, jobAnalysis) {
+export async function optimizeResume(masterResume, jobAnalysis, options = {}) {
+  const analyzeFn = typeof options.analyzeFn === 'function' ? options.analyzeFn : analyzeWithClaude;
   const prompt = `
 당신은 전문 채용 컨설턴트입니다. 제공된 '마스터 이력서'를 '채용 공고 분석 결과'에 맞춰 최적화해주세요.
 
@@ -28,7 +29,7 @@ ${JSON.stringify(jobAnalysis, null, 2)}
 최적화된 Markdown 이력서만 출력하세요. 다른 설명은 필요 없습니다.
 `;
 
-  const optimized = await analyzeWithClaude(prompt, '');
+  const optimized = await analyzeFn(prompt, '');
 
   if (!optimized) {
     throw new Error('이력서 최적화 실패');

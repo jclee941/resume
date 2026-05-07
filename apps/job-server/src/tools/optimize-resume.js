@@ -5,7 +5,7 @@
 import { readFile, writeFile, mkdir } from 'fs/promises';
 import { join, dirname } from 'path';
 import getJobDetailTool from './get-job-detail.js';
-import { analyzeJobPosting } from '../shared/services/matching/ai-matcher.js';
+import { analyzeJobPosting, analyzeWithClaude } from '../shared/services/matching/ai-matcher.js';
 import { optimizeResume } from '../shared/services/resume/optimizer.js';
 import { getResumeMasterMarkdownPath, getOptimizedResumesDir } from '../shared/utils/paths.js';
 
@@ -59,7 +59,9 @@ export const optimizeResumeTool = {
       const masterResume = await readFile(MASTER_RESUME_PATH, 'utf-8');
 
       logger.info('✨ Optimizing resume for the job...');
-      const optimizedResume = await optimizeResume(masterResume, jobAnalysis);
+      const optimizedResume = await optimizeResume(masterResume, jobAnalysis, {
+        analyzeFn: analyzeWithClaude,
+      });
 
       // Save the optimized resume
       const companyName = job.company.name.replace(/[^\w가-힣]/g, '_');
