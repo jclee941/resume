@@ -212,6 +212,39 @@ describe('job-matcher', { concurrency: 1 }, () => {
     assert.ok(result.resumeAnalysis.totalSkills > 0);
   });
 
+  it('JobMatcher accepts injected resume reader and scoring config', async () => {
+    const jm = await importJobMatcherFresh();
+    const matcher = new jm.JobMatcher({
+      resumeReader: () => '총 경력: 2년 security terraform',
+      scoringConfig: {
+        preferredLocations: ['busan'],
+        topCompanies: ['local co'],
+        financeBonusScore: 0,
+        automationBonusScore: 0,
+        topCompanyBonusScore: 7,
+      },
+    });
+
+    const result = matcher.filterAndRankJobs(
+      [
+        {
+          company: 'Local Co',
+          position: 'Security Engineer',
+          description: 'security terraform',
+          experienceMin: 1,
+          experienceMax: 3,
+          location: 'Busan',
+        },
+      ],
+      { minScore: 0 }
+    );
+
+    assert.strictEqual(result.jobs.length, 1);
+    assert.strictEqual(result.jobs[0].matchDetails.locationMatch, true);
+    assert.ok(result.jobs[0].matchDetails.bonusPoints.includes('주요 기업'));
+    assert.deepEqual(result.resumeAnalysis.skillCategories, ['security', 'infrastructure']);
+  });
+
   it('prioritizeApplications applies high/medium/low and due-date logic', async () => {
     const jm = await importJobMatcherFresh();
     const soon = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString();
@@ -241,5 +274,6 @@ describe('job-matcher', { concurrency: 1 }, () => {
     assert.strictEqual(jm.default.calculateMatchScore, jm.calculateMatchScore);
     assert.strictEqual(jm.default.filterAndRankJobs, jm.filterAndRankJobs);
     assert.strictEqual(jm.default.prioritizeApplications, jm.prioritizeApplications);
+    assert.strictEqual(jm.default.JobMatcher, jm.JobMatcher);
   });
 });
