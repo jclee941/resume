@@ -6,10 +6,24 @@ import {
   diffPlatform as diffWantedPlatform,
   mapToJobKoreaFormat,
   mapToRememberFormat,
+  mapToSaraminFormat,
   mapToWantedFormat,
+  mapToJumpitFormat,
+  mapToProgrammersFormat,
+  mapToRallitFormat,
+  mapToRocketPunchFormat,
+  mapToIndeedFormat,
+  mapToLinkedInFormat,
   syncToJobKorea,
   syncToRemember,
+  syncToSaramin,
   syncToWanted,
+  syncToJumpit,
+  syncToProgrammers,
+  syncToRallit,
+  syncToRocketPunch,
+  syncToIndeed,
+  syncToLinkedIn,
 } from './platforms/index.js';
 import { previewChanges } from './change-preview.js';
 
@@ -19,18 +33,7 @@ const RESUME_DATA_PATH = join(PROJECT_ROOT, 'packages/data/resumes/master/resume
 
 export const unifiedResumeSyncTool = {
   name: 'unified_resume_sync',
-  description: `Sync resume_data.json to multiple job platforms.
-
-**Supported Platforms:**
-- wanted: API-based sync (full CRUD)
-- jobkorea: Browser automation (profile update)
-- remember: Browser automation (profile update)
-
-**Actions:**
-- status: Check sync status for all platforms
-- sync: Sync to specified platform(s)
-- diff: Compare local data with platform profile
-- preview: Preview changes without applying`,
+  description: `Sync resume_data.json to multiple job platforms.\n\n**Supported Platforms:**\n- wanted: API-based sync (full CRUD)\n- jobkorea: Browser automation (profile update)\n- saramin: Browser automation (profile update)\n- remember: Browser automation (profile update)\n- jumpit: Browser automation (profile update)\n- programmers: Browser automation (profile update)\n- rallit: Browser automation (profile update)\n- rocketpunch: Browser automation (profile update)\n- indeed: Browser automation (profile update)\n- linkedin: Browser automation (profile update)\n\n**Actions:**\n- status: Check sync status for all platforms\n- sync: Sync to specified platform(s)\n- diff: Compare local data with platform profile\n- preview: Preview changes without applying`,
 
   inputSchema: {
     type: 'object',
@@ -41,7 +44,7 @@ export const unifiedResumeSyncTool = {
       },
       platforms: {
         type: 'array',
-        items: { type: 'string', enum: ['wanted', 'jobkorea', 'remember'] },
+        items: { type: 'string', enum: ['wanted', 'jobkorea', 'saramin', 'remember', 'jumpit', 'programmers', 'rallit', 'rocketpunch', 'indeed', 'linkedin'] },
         description: 'Target platforms (default: all)',
       },
       dry_run: {
@@ -57,7 +60,7 @@ export const unifiedResumeSyncTool = {
   },
 
   async execute(params, { logger = console } = {}) {
-    const { action, platforms = ['wanted', 'jobkorea', 'remember'], dry_run = false } = params;
+    const { action, platforms = ['wanted', 'jobkorea', 'saramin', 'remember', 'jumpit', 'programmers', 'rallit', 'rocketpunch', 'indeed', 'linkedin'], dry_run = false } = params;
 
     if (!existsSync(RESUME_DATA_PATH)) {
       return { success: false, error: `Source not found: ${RESUME_DATA_PATH}` };
@@ -95,7 +98,14 @@ async function diffPlatform(sourceData, platform, params) {
     case 'wanted':
       return diffWantedPlatform(sourceData, params);
     case 'jobkorea':
+    case 'saramin':
     case 'remember':
+    case 'jumpit':
+    case 'programmers':
+    case 'rallit':
+    case 'rocketpunch':
+    case 'indeed':
+    case 'linkedin':
       return { note: 'Diff requires browser session - use preview instead' };
     default:
       return { error: `Unknown platform: ${platform}` };
@@ -117,8 +127,22 @@ async function syncPlatform(sourceData, platform, params) {
       return syncToWanted(mapped, params, sourceData, params.logger);
     case 'jobkorea':
       return syncToJobKorea(mapped, params);
+    case 'saramin':
+      return syncToSaramin(mapped, params);
     case 'remember':
       return syncToRemember(mapped, params);
+    case 'jumpit':
+      return syncToJumpit(mapped, params);
+    case 'programmers':
+      return syncToProgrammers(mapped, params);
+    case 'rallit':
+      return syncToRallit(mapped, params);
+    case 'rocketpunch':
+      return syncToRocketPunch(mapped, params);
+    case 'indeed':
+      return syncToIndeed(mapped, params);
+    case 'linkedin':
+      return syncToLinkedIn(mapped, params);
     default:
       return { error: `Unknown platform: ${platform}` };
   }
@@ -130,8 +154,22 @@ function mapToPlatformFormat(source, platform) {
       return mapToWantedFormat(source);
     case 'jobkorea':
       return mapToJobKoreaFormat(source);
+    case 'saramin':
+      return mapToSaraminFormat(source);
     case 'remember':
       return mapToRememberFormat(source);
+    case 'jumpit':
+      return mapToJumpitFormat(source);
+    case 'programmers':
+      return mapToProgrammersFormat(source);
+    case 'rallit':
+      return mapToRallitFormat(source);
+    case 'rocketpunch':
+      return mapToRocketPunchFormat(source);
+    case 'indeed':
+      return mapToIndeedFormat(source);
+    case 'linkedin':
+      return mapToLinkedInFormat(source);
     default:
       return { error: 'Unknown platform' };
   }

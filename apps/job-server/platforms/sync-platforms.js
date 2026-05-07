@@ -5,7 +5,7 @@ import { execSync } from 'child_process';
 import { join } from 'path';
 import { getResumeBasePath, getResumeMasterDataPath } from '../src/shared/utils/paths.js';
 
-const PLATFORMS = ['wanted', 'jobkorea', 'remember'];
+const PLATFORMS = ['wanted', 'jobkorea', 'saramin', 'remember', 'jumpit', 'programmers', 'rallit', 'rocketpunch', 'indeed', 'linkedin'];
 
 async function main() {
   const args = process.argv.slice(2);
@@ -66,9 +66,16 @@ COMMANDS:
   preview   Preview changes without applying
 
 PLATFORMS:
-  wanted    Wanted Korea (API-based)
-  jobkorea  JobKorea (browser automation)
-  remember  Remember (browser automation)
+  wanted      Wanted Korea (API-based)
+  jobkorea    JobKorea (browser automation)
+  saramin     Saramin (browser automation)
+  remember    Remember (browser automation)
+  jumpit      Jumpit (browser automation)
+  programmers Programmers (browser automation)
+  rallit      Rallit (browser automation)
+  rocketpunch RocketPunch (browser automation)
+  indeed      Indeed (browser automation)
+  linkedin    LinkedIn (browser automation)
 
 OPTIONS:
   --dry-run, -n   Preview changes without applying
@@ -123,7 +130,14 @@ async function getPlatformStatus(platform) {
     }
 
     case 'jobkorea':
-    case 'remember': {
+    case 'saramin':
+    case 'remember':
+    case 'jumpit':
+    case 'programmers':
+    case 'rallit':
+    case 'rocketpunch':
+    case 'indeed':
+    case 'linkedin': {
       const sessionPath = join(getResumeBasePath(), `${platform}-session.json`);
       const hasSession = existsSync(sessionPath);
       return {
@@ -207,8 +221,6 @@ async function syncToPlatform(sourceData, platform, options) {
     }
 
     case 'jobkorea': {
-      // Use maintained profile-sync handler (form serialization + $.post)
-      // Deprecated: ./jobkorea/jobkorea-profile-sync.js (CSS-selector based, broken)
       try {
         const flags = options.dry_run ? '' : '--apply';
         const output = execSync(`node scripts/profile-sync/index.js jobkorea ${flags}`, {
@@ -225,9 +237,44 @@ async function syncToPlatform(sourceData, platform, options) {
       }
     }
 
+    case 'saramin': {
+      const { syncToSaramin } = await import('../src/tools/platforms/saramin-sync.js');
+      return await syncToSaramin(sourceData, options);
+    }
+
     case 'remember': {
       const { syncToRemember } = await import('./remember/remember-profile-sync.js');
       return await syncToRemember({ ...options, headless: false });
+    }
+
+    case 'jumpit': {
+      const { syncToJumpit } = await import('../src/tools/platforms/jumpit-sync.js');
+      return await syncToJumpit(sourceData, options);
+    }
+
+    case 'programmers': {
+      const { syncToProgrammers } = await import('../src/tools/platforms/programmers-sync.js');
+      return await syncToProgrammers(sourceData, options);
+    }
+
+    case 'rallit': {
+      const { syncToRallit } = await import('../src/tools/platforms/rallit-sync.js');
+      return await syncToRallit(sourceData, options);
+    }
+
+    case 'rocketpunch': {
+      const { syncToRocketPunch } = await import('../src/tools/platforms/rocketpunch-sync.js');
+      return await syncToRocketPunch(sourceData, options);
+    }
+
+    case 'indeed': {
+      const { syncToIndeed } = await import('../src/tools/platforms/indeed-sync.js');
+      return await syncToIndeed(sourceData, options);
+    }
+
+    case 'linkedin': {
+      const { syncToLinkedIn } = await import('../src/tools/platforms/linkedin-sync.js');
+      return await syncToLinkedIn(sourceData, options);
     }
 
     default:
@@ -242,12 +289,12 @@ async function previewSync(sourceData, platforms) {
     console.log(`\n📋 ${platform.toUpperCase()}`);
     console.log('   ─────────────────');
 
-    const mapped = mapToPlatform(sourceData, platform);
+    const mapped = await mapToPlatform(sourceData, platform);
     console.log(`   ${JSON.stringify(mapped, null, 2).replace(/\n/g, '\n   ')}`);
   }
 }
 
-function mapToPlatform(source, platform) {
+async function mapToPlatform(source, platform) {
   switch (platform) {
     case 'wanted':
       return {
@@ -263,12 +310,47 @@ function mapToPlatform(source, platform) {
         certifications: source.certifications.map((c) => c.name),
       };
 
+    case 'saramin': {
+      const { mapToSaraminFormat } = await import('../src/tools/platforms/saramin-sync.js');
+      return mapToSaraminFormat(source);
+    }
+
     case 'remember':
       return {
         headline: `${source.current?.position || source.careers?.[0]?.role || ''} @ ${source.current?.company || source.careers?.[0]?.company || ''}`,
         experience: source.summary.totalExperience,
         skills: source.summary.expertise,
       };
+
+    case 'jumpit': {
+      const { mapToJumpitFormat } = await import('../src/tools/platforms/jumpit-sync.js');
+      return mapToJumpitFormat(source);
+    }
+
+    case 'programmers': {
+      const { mapToProgrammersFormat } = await import('../src/tools/platforms/programmers-sync.js');
+      return mapToProgrammersFormat(source);
+    }
+
+    case 'rallit': {
+      const { mapToRallitFormat } = await import('../src/tools/platforms/rallit-sync.js');
+      return mapToRallitFormat(source);
+    }
+
+    case 'rocketpunch': {
+      const { mapToRocketPunchFormat } = await import('../src/tools/platforms/rocketpunch-sync.js');
+      return mapToRocketPunchFormat(source);
+    }
+
+    case 'indeed': {
+      const { mapToIndeedFormat } = await import('../src/tools/platforms/indeed-sync.js');
+      return mapToIndeedFormat(source);
+    }
+
+    case 'linkedin': {
+      const { mapToLinkedInFormat } = await import('../src/tools/platforms/linkedin-sync.js');
+      return mapToLinkedInFormat(source);
+    }
 
     default:
       return {};

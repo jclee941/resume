@@ -213,6 +213,8 @@ export async function syncJobKoreaProfile(handler, ssot, options = {}) {
   });
   await applyPlaywrightStealth(context);
 
+  let shouldPersistCookies = false;
+
   try {
     await context.addCookies(cookies);
     const page = await context.newPage();
@@ -245,10 +247,13 @@ export async function syncJobKoreaProfile(handler, ssot, options = {}) {
         throw new Error(`Session auto-renewal failed: ${renewError.message}`);
       }
     }
-await ensureResumeAccess(page, {
-headlessEnv: String(CONFIG.HEADLESS),
-logger,
-});
+    await ensureResumeAccess(page, {
+      headlessEnv: String(CONFIG.HEADLESS),
+      logger,
+    });
+
+    // Only persist cookies after successful resume access verification
+    shouldPersistCookies = true;
 
     await page.waitForFunction(() => typeof $ !== 'undefined' && $('#frm1').length > 0, {
       timeout: 15000,
@@ -303,7 +308,9 @@ logger,
     }
     return { success: false, changes: [], error: error.message };
   } finally {
-    await persistUpdatedCookies(handler, context);
+    if (shouldPersistCookies) {
+      await persistUpdatedCookies(handler, context);
+    }
     await browser.close();
   }
 }

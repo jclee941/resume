@@ -183,3 +183,22 @@ export default {
   normalizeSkillName,
   diffSkills,
 };
+
+
+export function flattenSkillsWithLevels(skillsObj) {
+  if (!skillsObj) return [];
+
+  const skills = [];
+  for (const category of Object.values(skillsObj)) {
+    if (category && Array.isArray(category.items)) {
+      for (const item of category.items) {
+        if (typeof item === 'string') {
+          skills.push({ name: item, level: '' });
+        } else if (item && typeof item === 'object') {
+          skills.push({ name: item.name || '', level: item.level || '' });
+        }
+      }
+    }
+  }
+  return skills;
+}

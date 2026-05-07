@@ -49,7 +49,25 @@ function normalizeCareerProjects(ssotCareer = {}) {
       })
       .filter(Boolean);
   }
+  if (ssotCareer.project && ssotCareer.description) {
+    return [
+      {
+        title: normalizeText(ssotCareer.project),
+        description: truncateWantedProjectDescription(normalizeText(ssotCareer.description)),
+      },
+    ];
+  }
 
+  if (ssotCareer.description) {
+    return [
+      {
+        title: normalizeText(ssotCareer.project) || 'Career Description',
+        description: truncateWantedProjectDescription(normalizeText(ssotCareer.description)),
+      },
+    ];
+  }
+
+  return [];
   if (ssotCareer.project && ssotCareer.description) {
     return [
       {

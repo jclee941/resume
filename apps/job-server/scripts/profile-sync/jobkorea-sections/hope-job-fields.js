@@ -64,5 +64,7 @@ export function mapHopeJobToFormFields(ssot) {
       value: normalizedLocations.map(([, location]) => location).join(','),
     },
     { name: 'InputStat.HopeJobInputStat', value: 'True' },
+    ...(ssot?.hope?.salary ? [{ name: 'HopeJob.HJ_Salary', value: ssot.hope.salary }] : []),
+    ...(ssot?.hope?.industries?.length ? [{ name: 'HopeJob.HJ_Industry', value: ssot.hope.industries.join(',') }] : []),
   ];
 }

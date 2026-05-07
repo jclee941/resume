@@ -1,3 +1,5 @@
+import { syncToRemember as platformSyncToRemember } from '../../../platforms/remember/remember-profile-sync.js';
+
 export function mapToRememberFormat(source) {
   return {
     name: source.personal.name,
@@ -29,9 +31,5 @@ export async function syncToRemember(data, params) {
     };
   }
 
-  return {
-    error: 'Remember sync requires browser automation',
-    hint: 'Run with --browser flag or use dashboard UI',
-    data_prepared: data,
-  };
+  return platformSyncToRemember({ ...params, headless: false });
 }

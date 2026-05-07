@@ -1,4 +1,4 @@
-import { flattenSkills } from '../../../../scripts/skill-tag-map.js';
+import { flattenSkills, flattenSkillsWithLevels } from '../../../../scripts/skill-tag-map.js';
 import {
   JOB_CATEGORY_MAPPING,
   DEFAULT_JOB_CATEGORY,
@@ -21,6 +21,32 @@ export function mapToWantedFormat(source) {
         (currentPosition ? `${currentPosition} | ${totalExperience}` : totalExperience)
       ).slice(0, WANTED_HEADLINE_LIMIT),
       description: (wantedVariant.about || expertise.join(', ')).slice(0, 150),
+      skills: flattenSkillsWithLevels(source.skills).slice(0, 20),
+      languages: (source.languages || []).map((lang) => ({
+        name: lang.name || '',
+        level: lang.level || '',
+        note: lang.note || '',
+      })),
+      hope: source.hope
+        ? {
+            locations: source.hope.locations || [],
+            roles: source.hope.roles || [],
+            salary: source.hope.salary || '',
+            industries: source.hope.industries || [],
+          }
+        : null,
+      coverLetter: source.coverLetter?.ko
+        ? {
+            headline: source.coverLetter.ko.headline || '',
+            paragraphs: source.coverLetter.ko.paragraphs || [],
+            closing: source.coverLetter.ko.closing || '',
+          }
+        : null,
+      githubUrl: source.personal?.github || '',
+      linkedinUrl: source.personal?.linkedin || '',
+      portfolioUrl: source.personal?.portfolio || '',
+      birthDate: source.personal?.birthDate || '',
+      address: source.personal?.address || '',
     },
     careers: (source.careers || []).map((c) => {
       const [startStr, endStr] = (c.period || '').split(/~| - /).map((s) => s.trim());
