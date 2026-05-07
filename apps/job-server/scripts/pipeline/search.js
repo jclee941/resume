@@ -3,6 +3,7 @@ import { jobMatcherTool } from '../../src/tools/job-matcher.js';
 import {
   JOBKOREA_KEYWORDS,
   OFFSETS,
+  SARAMIN_KEYWORDS,
   SEARCH_LIMIT,
   TAG_TYPE_IDS,
   WANTED_HEADERS,
@@ -61,6 +62,49 @@ export async function searchJobKorea() {
   }
 
   return jobs;
+}
+
+export async function searchSaramin() {
+  const { SaraminCrawler } = await import('../../platforms/saramin/saramin-crawler.js');
+  const crawler = new SaraminCrawler();
+  const jobs = [];
+
+  for (const keyword of SARAMIN_KEYWORDS) {
+    try {
+      const result = await crawler.searchJobs({ keyword, limit: 20 });
+      if (result.success) {
+        jobs.push(...result.jobs);
+        log('saramin searched', { keyword, found: result.jobs.length });
+      } else {
+        log('saramin search failed', { keyword, error: result.error || 'unknown error' });
+      }
+    } catch (error) {
+      log('saramin search failed', { keyword, error: summarizeError(error) });
+    }
+  }
+
+  return jobs;
+}
+
+export function getPipelinePlatform(source) {
+  const platform = String(source || '').toLowerCase();
+  if (platform === 'wanted' || platform === 'jobkorea' || platform === 'saramin') {
+    return platform;
+  }
+
+  throw new Error(`Unsupported pipeline platform: ${source || 'unknown'}`);
+}
+
+export async function scorePipelineJob(rawJob, scorers = {}) {
+  const platform = getPipelinePlatform(rawJob?.source || 'wanted');
+  const scoreByPlatform = {
+    wanted: scoreJob,
+    jobkorea: scoreJobKorea,
+    saramin: scoreSaramin,
+    ...scorers,
+  };
+
+  return scoreByPlatform[platform](rawJob);
 }
 
 export async function scoreJob(rawJob) {
@@ -139,6 +183,37 @@ export async function scoreJobKorea(rawJob) {
     title,
     company,
     url: rawJob.sourceUrl,
+    score: matchResult.match.score || 0,
+    matchedSkills: Array.isArray(matchResult.match.matched_skills)
+      ? matchResult.match.matched_skills
+      : [],
+    titleMatched: titleMatchesRelevantKeywords(title),
+  };
+}
+
+export async function scoreSaramin(rawJob) {
+  const title = rawJob.position || rawJob.title || 'Untitled';
+  const company = rawJob.company || rawJob.company_name || 'Unknown Company';
+
+  const matchResult = await jobMatcherTool.execute({
+    title,
+    company,
+    requirements: rawJob.requirements || '',
+    description: rawJob.description || rawJob.benefits || '',
+    experience: [rawJob.experienceMin, rawJob.experienceMax].filter((value) => value != null).join('-'),
+    location: rawJob.location || '',
+  });
+
+  if (!matchResult?.success || !matchResult.match) {
+    throw new Error(matchResult?.error || 'Job matcher returned no match result');
+  }
+
+  return {
+    id: rawJob.id,
+    source: 'saramin',
+    title,
+    company,
+    url: rawJob.sourceUrl || rawJob.url,
     score: matchResult.match.score || 0,
     matchedSkills: Array.isArray(matchResult.match.matched_skills)
       ? matchResult.match.matched_skills
