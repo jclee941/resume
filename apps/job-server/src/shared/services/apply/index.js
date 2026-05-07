@@ -2,4 +2,4 @@ export { UnifiedApplySystem, JobFilter, ApplyOrchestrator } from './unified-appl
 export { ApprovalWorkflowManager } from './approval-manager.js';
 
 export { ApplicationTrackerService } from './application-tracker.js';
-export { RetryService, CircuitState } from './retry-service.js';
+export { RetryService, CircuitState } from '@resume/shared/retry';
