@@ -2,7 +2,6 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert';
 import {
   buildJobKoreaFormData,
-  JK_JOB_CODES,
   JK_LOCATION_CODES,
   mapAwardToFormFields,
   mapCareersToFormFields,
@@ -411,13 +410,12 @@ describe('mapPortfolioToFormFields', () => {
 });
 
 describe('mapHopeJobToFormFields', () => {
-  it('exports lookup tables for role and location mapping', () => {
-    assert.strictEqual(JK_JOB_CODES['시스템 엔지니어'], 1000233);
+  it('exports location codes', () => {
     assert.strictEqual(JK_LOCATION_CODES.서울, 'I000');
     assert.strictEqual(JK_LOCATION_CODES.경기, 'I100');
   });
 
-  it('falls back once and logs a single warning for unmapped hope roles', () => {
+  it('warns when no jobCodes provided', () => {
     const warnings = [];
     const originalWarn = console.warn;
     console.warn = (...args) => warnings.push(args.join(' '));
@@ -427,8 +425,8 @@ describe('mapHopeJobToFormFields', () => {
       const byName = toMap(fields);
 
       assert.strictEqual(byName.get('HopeJob.HJ_Code'), '10031');
-      assert.strictEqual(byName.get('HopeJob.HJ_Name_Code'), '1000233');
-      assert.strictEqual(byName.get('HopeJob.HJ_Name'), '시스템엔지니어');
+      assert.strictEqual(byName.get('HopeJob.HJ_Name_Code'), '');
+      assert.strictEqual(byName.get('HopeJob.HJ_Name'), '');
       assert.strictEqual(warnings.length, 1);
       assert.match(warnings[0], /Unmapped HopeJob roles skipped: DevOps/);
     } finally {
@@ -436,15 +434,15 @@ describe('mapHopeJobToFormFields', () => {
     }
   });
 
-  it('maps hope roles with known system and security engineer labels', () => {
+  it('maps hope roles with explicit jobCodes', () => {
     const fields = mapHopeJobToFormFields({
-      hope: { roles: ['시스템 엔지니어', '보안 엔지니어'] },
+      hope: { roles: ['시스템 엔지니어', '보안 엔지니어'], jobCodes: ['1000233', '1000238'] },
     });
     const byName = toMap(fields);
 
     assert.strictEqual(byName.get('HopeJob.HJ_Code'), '10031');
-    assert.strictEqual(byName.get('HopeJob.HJ_Name_Code'), '1000233');
-    assert.strictEqual(byName.get('HopeJob.HJ_Name'), '시스템 엔지니어');
+    assert.strictEqual(byName.get('HopeJob.HJ_Name_Code'), '1000233,1000238');
+    assert.strictEqual(byName.get('HopeJob.HJ_Name'), '시스템 엔지니어,보안 엔지니어');
     assert.strictEqual(byName.get('InputStat.HopeJobInputStat'), 'True');
   });
 
@@ -464,8 +462,8 @@ describe('mapHopeJobToFormFields', () => {
     });
     const byName = toMap(fields);
 
-    assert.strictEqual(byName.get('HopeJob.HJ_Name_Code'), '1000233');
-    assert.strictEqual(byName.get('HopeJob.HJ_Name'), '시스템 엔지니어');
+    assert.strictEqual(byName.get('HopeJob.HJ_Name_Code'), '');
+    assert.strictEqual(byName.get('HopeJob.HJ_Name'), '');
     assert.strictEqual(byName.get('InputStat.HopeJobInputStat'), 'True');
   });
 });

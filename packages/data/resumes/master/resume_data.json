@@ -133,7 +133,7 @@
         }
       ],
       "continuousEngagement": "넥스트레이드 매매체결시스템 트랙 (가온누리 구축 단계 2024.03~2025.02 → 아이티센 CTS 운영 단계 2025.03~2026.02, 동일 고객사 연속 참여)",
-      "jobkoreaJobCode": ""
+      "jobkoreaJobCode": "1000238"
     },
     {
       "company": "(주)가온누리정보시스템",
@@ -169,7 +169,7 @@
         }
       ],
       "continuousEngagement": "넥스트레이드 매매체결시스템 트랙 (가온누리 구축 단계 2024.03~2025.02 → 아이티센 CTS 운영 단계 2025.03~2026.02, 동일 고객사 연속 참여)",
-      "jobkoreaJobCode": ""
+      "jobkoreaJobCode": "1000238"
     },
     {
       "company": "(주)콴텍투자일임",
@@ -204,7 +204,7 @@
           ]
         }
       ],
-      "jobkoreaJobCode": ""
+      "jobkoreaJobCode": "1000233"
     },
     {
       "company": "(주)조인트리",
@@ -239,7 +239,7 @@
           ]
         }
       ],
-      "jobkoreaJobCode": ""
+      "jobkoreaJobCode": "1000233"
     },
     {
       "company": "(주)메타넷엠플랫폼",
@@ -272,7 +272,7 @@
           ]
         }
       ],
-      "jobkoreaJobCode": "1000239"
+      "jobkoreaJobCode": "1000233"
     },
     {
       "company": "(주)엠티데이타",
@@ -306,7 +306,7 @@
           ]
         }
       ],
-      "jobkoreaJobCode": "1000239"
+      "jobkoreaJobCode": "1000233"
     }
   ],
   "projects": [
@@ -1031,6 +1031,10 @@
       "핀테크",
       "보안",
       "클라우드"
+    ],
+    "jobCodes": [
+      "1000238",
+      "1000233"
     ]
   },
   "coverLetter": {

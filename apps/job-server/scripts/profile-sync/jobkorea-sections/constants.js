@@ -1,13 +1,4 @@
-export const JK_JOB_CODES = {
-  시스템엔지니어: 1000233,
-  '시스템 엔지니어': 1000233,
-  '인프라 담당': 1000233,
-  'IT지원/OA운영': 1000233,
-  SRE: 1000233,
-  Observability: 1000233,
-  자동화: 1000233,
-  Automation: 1000233,
-};
+export const JK_JOB_CODES = {};
 
 export const JK_JOB_CATEGORY = 10031;
 export const JK_LOCATION_CODES = {
@@ -17,7 +8,7 @@ export const JK_LOCATION_CODES = {
   인천: 'I300',
   원격: 'I900',
 };
-export const JK_DEFAULT_HOPE_JOB = { 1000233: '시스템엔지니어' };
+export const JK_DEFAULT_HOPE_JOB = {};
 export const JK_DEFAULT_HOPE_LOCATION = ['서울'];
 
 export const GRAD_TYPE = { 졸업: 10, 졸업예정: 5, 재학중: 4, 중퇴: 2, 수료: 9, 휴학: 3 };
@@ -26,7 +17,7 @@ export const MILITARY_KIND = {
   육군: 1,
   해군: 2,
   공군: 3,
-  해병: 4,
+  항병: 4,
   전경: 5,
   의경: 6,
   공익: 7,

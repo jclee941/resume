@@ -1,8 +1,6 @@
 import {
-  JK_DEFAULT_HOPE_JOB,
   JK_DEFAULT_HOPE_LOCATION,
   JK_JOB_CATEGORY,
-  JK_JOB_CODES,
   JK_LOCATION_CODES,
 } from './constants.js';
 
@@ -23,29 +21,20 @@ function getHopeLocations(ssot) {
   return hopeLocations.length > 0 ? hopeLocations : JK_DEFAULT_HOPE_LOCATION;
 }
 
-function collectHopeJobCodes(roles) {
-  const codes = new Map();
-  const unmatchedRoles = [];
-  for (const role of roles) {
-    const matches = Object.entries(JK_JOB_CODES).filter(
-      ([label]) => role.includes(label) || label.includes(role)
-    );
-    matches.forEach(([label, code]) => codes.set(String(code), label));
-    if (matches.length === 0) unmatchedRoles.push(role);
-  }
-  return { codes, unmatchedRoles };
-}
-
 export function mapHopeJobToFormFields(ssot) {
-  const { codes, unmatchedRoles } = collectHopeJobCodes(getHopeRoles(ssot));
-  if (unmatchedRoles.length > 0) {
-    console.warn(
-      `[jobkorea-sections] Unmapped HopeJob roles skipped: ${unmatchedRoles.join(', ')}`
-    );
+  const roles = getHopeRoles(ssot);
+  const jobCodes = Array.isArray(ssot?.hope?.jobCodes) ? ssot.hope.jobCodes : [];
+  const labels = Array.isArray(ssot?.hope?.roles) ? ssot.hope.roles : roles;
+
+  const codes = new Map();
+  jobCodes.forEach((code, idx) => {
+    codes.set(String(code), labels[idx] || '');
+  });
+
+  if (codes.size === 0 && roles.length > 0) {
+    console.warn(`[jobkorea-sections] Unmapped HopeJob roles skipped: ${roles.join(', ')}`);
   }
-  if (codes.size === 0) {
-    for (const [code, label] of Object.entries(JK_DEFAULT_HOPE_JOB)) codes.set(code, label);
-  }
+
   const locationPairs = getHopeLocations(ssot)
     .map((location) => [JK_LOCATION_CODES[location], location])
     .filter(([code]) => Boolean(code));
