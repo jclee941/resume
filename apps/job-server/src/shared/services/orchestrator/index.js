@@ -14,7 +14,7 @@ export {
   DEFAULT_OPTIONS,
 } from './crawl-orchestrator/index.js';
 
-export { RateLimiter, DEFAULT_PLATFORM_LIMITS, FALLBACK_LIMIT } from './rate-limiter.js';
+export { RateLimiter, DEFAULT_PLATFORM_LIMITS, FALLBACK_LIMIT } from '@resume/shared/rate-limit';
 
 export { ProgressTracker } from './progress-tracker.js';
 

@@ -3,8 +3,8 @@
  */
 
 import { EventEmitter } from 'events';
+import { RateLimiter } from '@resume/shared/rate-limit';
 import { ProgressTracker } from '../progress-tracker.js';
-import { RateLimiter } from '../rate-limiter.js';
 import { createBrowserContext, destroyBrowserContext, ensureBrowserPool } from './browser-pool.js';
 import { DEFAULT_OPTIONS } from './constants.js';
 import { crawlPlatform, executePlatformCrawl, executeWithConcurrency } from './platform-crawl.js';

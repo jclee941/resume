@@ -4,7 +4,7 @@
  * Features: Approval gates, action buttons, notification history, preferences
  */
 
-import { TokenBucketRateLimiter } from './rate-limiter/token-bucket.js';
+import { TokenBucketRateLimiter } from '@resume/shared/rate-limit';
 import {
   createDefaultNotificationPreferences,
   NotificationChannel,
