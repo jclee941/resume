@@ -55,6 +55,8 @@ export const JOBKOREA_KEYWORDS = [
   '클라우드 엔지니어',
 ];
 
+export const SARAMIN_KEYWORDS = [...JOBKOREA_KEYWORDS];
+
 export const MIN_EXPERIENCE_YEARS = 3;
 export const MAX_EXPERIENCE_YEARS = 15;
 export const EXCLUDED_LOCATIONS = ['제주', '부산', '대구', '광주', '대전', '울산', '강원'];
