@@ -1,6 +1,6 @@
 'use strict';
 
-jest.mock('@resume/shared/validation', () => ({
+jest.mock('../../../../apps/portfolio/lib/validators', () => ({
   validatePortfolioData: jest.fn(),
 }));
 
@@ -21,7 +21,7 @@ jest.mock('../../../../apps/portfolio/lib/cards', () => ({
 }));
 
 const { TEMPLATE_CACHE } = require('../../../../apps/portfolio/lib/config');
-const { validatePortfolioData } = require('@resume/shared/validation');
+const { validatePortfolioData } = require('../../../../apps/portfolio/lib/validators');
 const { calculateDataHash } = require('../../../../apps/portfolio/lib/content-hashing');
 const cards = require('../../../../apps/portfolio/lib/cards');
 const {
