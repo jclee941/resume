@@ -35,8 +35,8 @@ describe('jobkorea-sections helpers', () => {
     assert.strictEqual(toYYYYMM(undefined), '');
   });
 
-  it('toYYYYMM preserves full dotted date tokens', () => {
-    assert.strictEqual(toYYYYMM('2024.03.15'), '20240315');
+  it('toYYYYMM normalizes full dotted date tokens to year-month', () => {
+    assert.strictEqual(toYYYYMM('2024.03.15'), '202403');
   });
 
   it('parseRange handles current period', () => {
