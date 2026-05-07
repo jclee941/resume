@@ -4,8 +4,7 @@
   "description": "Edge-deployed portfolio (resume.jclee.me)",
   "private": true,
   "dependencies": {
-    "@resume/shared": "*",
-    "@resume/schemas": "*"
+    "@resume/shared": "*"
   },
   "scripts": {
     "build": "node generate-worker.js",
