@@ -1,8 +1,8 @@
 import { describe, it, mock, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert';
-import fs from 'fs';
 import JobKoreaHandler from '../jobkorea-handler.js';
 import { syncJobKoreaProfile } from '../jobkorea-handler/sync.js';
+import SessionManager from '../../../src/shared/services/session/session-manager.js';
 import {
   assertJobKoreaResumeAccess,
   JOBKOREA_SESSION_RENEW_PATH,
@@ -103,14 +103,15 @@ describe('JobKoreaHandler.describeField', () => {
 
 describe('JobKoreaHandler.saveSession', () => {
   let handler;
-  let writtenData;
+  let savedData;
 
   beforeEach(() => {
     handler = new JobKoreaHandler();
-    writtenData = null;
-    mock.method(fs, 'mkdirSync', () => {});
-    mock.method(fs, 'writeFileSync', (_filePath, data) => {
-      writtenData = JSON.parse(data);
+    savedData = null;
+    mock.method(SessionManager, 'load', () => null);
+    mock.method(SessionManager, 'save', (_platform, data) => {
+      savedData = data;
+      return true;
     });
   });
 
@@ -127,7 +128,7 @@ describe('JobKoreaHandler.saveSession', () => {
       cookies: [{ name: 'old', value: 'cookie' }],
       cookieString: 'old=cookie',
     };
-    mock.method(fs, 'readFileSync', () => JSON.stringify(existingSession));
+    SessionManager.load.mock.mockImplementation(() => existingSession);
 
     const newCookies = [
       { name: 'ACNT_COOKIE', value: 'abc123' },
@@ -135,36 +136,28 @@ describe('JobKoreaHandler.saveSession', () => {
     ];
     handler.saveSession(newCookies);
 
-    assert.strictEqual(writtenData.platform, 'jobkorea');
-    assert.strictEqual(writtenData.expiresAt, '2026-04-01T00:00:00.000Z');
-    assert.strictEqual(writtenData.cookies.length, 2);
-    assert.strictEqual(writtenData.cookies[0].name, 'ACNT_COOKIE');
-    assert.strictEqual(writtenData.cookieString, 'ACNT_COOKIE=abc123; SES_ID=xyz789');
-    assert.strictEqual(writtenData.cookieCount, 2);
-    assert.notStrictEqual(writtenData.extractedAt, '2026-03-15T00:00:00.000Z');
+    assert.strictEqual(savedData.platform, 'jobkorea');
+    assert.strictEqual(savedData.expiresAt, '2026-04-01T00:00:00.000Z');
+    assert.strictEqual(savedData.cookies.length, 2);
+    assert.strictEqual(savedData.cookies[0].name, 'ACNT_COOKIE');
+    assert.strictEqual(savedData.cookieString, 'ACNT_COOKIE=abc123; SES_ID=xyz789');
+    assert.strictEqual(savedData.cookieCount, 2);
+    assert.notStrictEqual(savedData.extractedAt, '2026-03-15T00:00:00.000Z');
   });
 
   it('populates defaults when no existing session file', () => {
-    mock.method(fs, 'readFileSync', () => {
-      throw new Error('ENOENT');
-    });
-
     const cookies = [{ name: 'test', value: 'val' }];
     handler.saveSession(cookies);
 
-    assert.strictEqual(writtenData.platform, 'jobkorea');
-    assert.ok(writtenData.expiresAt);
-    assert.strictEqual(writtenData.cookies.length, 1);
-    assert.strictEqual(writtenData.cookieString, 'test=val');
-    assert.strictEqual(writtenData.cookieCount, 1);
-    assert.ok(writtenData.extractedAt);
+    assert.strictEqual(savedData.platform, 'jobkorea');
+    assert.ok(savedData.expiresAt);
+    assert.strictEqual(savedData.cookies.length, 1);
+    assert.strictEqual(savedData.cookieString, 'test=val');
+    assert.strictEqual(savedData.cookieCount, 1);
+    assert.ok(savedData.extractedAt);
   });
 
   it('builds correct cookieString from cookie array', () => {
-    mock.method(fs, 'readFileSync', () => {
-      throw new Error('ENOENT');
-    });
-
     const cookies = [
       { name: 'A', value: '1' },
       { name: 'B', value: '2' },
@@ -172,13 +165,13 @@ describe('JobKoreaHandler.saveSession', () => {
     ];
     handler.saveSession(cookies);
 
-    assert.strictEqual(writtenData.cookieString, 'A=1; B=2; C=3');
-    assert.strictEqual(writtenData.cookieCount, 3);
+    assert.strictEqual(savedData.cookieString, 'A=1; B=2; C=3');
+    assert.strictEqual(savedData.cookieCount, 3);
   });
 
   it('normalizes legacy array session to object with metadata', () => {
     const legacyArray = [{ name: 'ACNT_COOKIE', value: 'legacy123', domain: '.jobkorea.co.kr' }];
-    mock.method(fs, 'readFileSync', () => JSON.stringify(legacyArray));
+    SessionManager.load.mock.mockImplementation(() => legacyArray);
 
     const newCookies = [
       { name: 'ACNT_COOKIE', value: 'updated456' },
@@ -186,13 +179,13 @@ describe('JobKoreaHandler.saveSession', () => {
     ];
     handler.saveSession(newCookies);
 
-    assert.ok(!Array.isArray(writtenData), 'saved session must be an object, not array');
-    assert.strictEqual(writtenData.platform, 'jobkorea');
-    assert.ok(writtenData.expiresAt, 'must have expiresAt default');
-    assert.strictEqual(writtenData.cookies.length, 2);
-    assert.strictEqual(writtenData.cookieString, 'ACNT_COOKIE=updated456; SES_ID=new789');
-    assert.strictEqual(writtenData.cookieCount, 2);
-    assert.ok(writtenData.extractedAt);
+    assert.ok(!Array.isArray(savedData), 'saved session must be an object, not array');
+    assert.strictEqual(savedData.platform, 'jobkorea');
+    assert.ok(savedData.expiresAt, 'must have expiresAt default');
+    assert.strictEqual(savedData.cookies.length, 2);
+    assert.strictEqual(savedData.cookieString, 'ACNT_COOKIE=updated456; SES_ID=new789');
+    assert.strictEqual(savedData.cookieCount, 2);
+    assert.ok(savedData.extractedAt);
   });
 });
 
@@ -202,6 +195,7 @@ describe('JobKoreaHandler.loadSession - auth-sync compatibility', () => {
   beforeEach(() => {
     handler = new JobKoreaHandler({}, {});
     mock.restoreAll();
+    mock.method(SessionManager, 'save', () => true);
   });
 
   it('loads cookie array from auth-sync-style session (cookies as objects)', () => {
@@ -214,11 +208,10 @@ describe('JobKoreaHandler.loadSession - auth-sync compatibility', () => {
       cookieString: 'ACNT_COOKIE=abc; SES_ID=xyz',
       cookieCount: 2,
       extractedAt: '2026-03-18T00:00:00.000Z',
-      expiresAt: '2026-03-19T00:00:00.000Z',
+      expiresAt: '2999-03-19T00:00:00.000Z',
     };
 
-    mock.method(fs, 'existsSync', () => true);
-    mock.method(fs, 'readFileSync', () => JSON.stringify(authSyncSession));
+    mock.method(SessionManager, 'load', () => authSyncSession);
 
     const result = handler.loadSession();
     assert.ok(Array.isArray(result), 'must return array');
