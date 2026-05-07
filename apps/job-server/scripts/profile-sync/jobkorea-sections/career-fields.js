@@ -2,7 +2,16 @@ import { normalizeCompanyName } from '@resume/shared/normalize';
 import { EMPTY_CAREER_FIELDS } from './constants.js';
 import { parseRange, pushField } from './validators.js';
 
-function buildCareerSummary(koreanCoverLetter) {
+function buildCareerSummary(ssot) {
+  const careerSummary = ssot?.careerSummary?.ko;
+  if (careerSummary?.paragraphs?.length > 0) {
+    return [careerSummary.headline, '', ...careerSummary.paragraphs, '', careerSummary.closing]
+      .filter(Boolean)
+      .join('\n\n')
+      .slice(0, 2000);
+  }
+
+  const koreanCoverLetter = ssot?.coverLetter?.ko;
   const coverParagraphs = koreanCoverLetter?.paragraphs;
   if (!Array.isArray(coverParagraphs) || coverParagraphs.length === 0) return '';
   return [koreanCoverLetter?.headline, '', ...coverParagraphs, '', koreanCoverLetter?.closing]
@@ -62,7 +71,7 @@ export function mapCareersToFormFields(ssot, indices) {
   });
 
   pushField(fields, 'Career.index', keys.slice(0, careers.length).join(','));
-  pushField(fields, 'UserResume.M_Career_Text', buildCareerSummary(ssot?.coverLetter?.ko));
+  pushField(fields, 'UserResume.M_Career_Text', buildCareerSummary(ssot));
   pushField(fields, 'UserResume.M_Career_Text_Stat', '1');
   pushField(fields, 'InputStat.CareerInputStat', 'True');
   return fields;
