@@ -24,9 +24,9 @@ describe('optimizeResume', () => {
 
   it('returns markdown section when AI response contains markdown heading', async () => {
     const analyzeWithClaude = mock.fn(async () => 'intro\n# Optimized Resume\n## Summary\nupdated');
-    const { optimizeResume } = await loadOptimizer(analyzeWithClaude);
+    const { optimizeResume } = await loadOptimizer(mock.fn(async () => ''));
 
-    const result = await optimizeResume('# Master Resume\nold', { score: 90, keywords: ['SRE'] });
+    const result = await optimizeResume('# Master Resume\nold', { score: 90, keywords: ['SRE'] }, { analyzeFn: analyzeWithClaude });
 
     assert.equal(result, '# Optimized Resume\n## Summary\nupdated');
     assert.equal(analyzeWithClaude.mock.calls.length, 1);
@@ -38,19 +38,29 @@ describe('optimizeResume', () => {
 
   it('returns raw response when markdown heading is not present', async () => {
     const analyzeWithClaude = mock.fn(async () => 'plain optimized text');
-    const { optimizeResume } = await loadOptimizer(analyzeWithClaude);
+    const { optimizeResume } = await loadOptimizer(mock.fn(async () => ''));
 
-    const result = await optimizeResume('master', { role: 'devops' });
+    const result = await optimizeResume('master', { role: 'devops' }, { analyzeFn: analyzeWithClaude });
 
     assert.equal(result, 'plain optimized text');
   });
 
   it('throws when AI optimization result is falsy', async () => {
     const analyzeWithClaude = mock.fn(async () => '');
-    const { optimizeResume } = await loadOptimizer(analyzeWithClaude);
+    const { optimizeResume } = await loadOptimizer(mock.fn(async () => 'fallback'));
 
-    await assert.rejects(() => optimizeResume('master', { role: 'devops' }), {
+    await assert.rejects(() => optimizeResume('master', { role: 'devops' }, { analyzeFn: analyzeWithClaude }), {
       message: '이력서 최적화 실패',
     });
+  });
+
+  it('uses module analyzeWithClaude fallback when analyzeFn option is not provided', async () => {
+    const analyzeWithClaude = mock.fn(async () => '# Default Analyzer Result');
+    const { optimizeResume } = await loadOptimizer(analyzeWithClaude);
+
+    const result = await optimizeResume('master', { role: 'devops' });
+
+    assert.equal(result, '# Default Analyzer Result');
+    assert.equal(analyzeWithClaude.mock.calls.length, 1);
   });
 });
