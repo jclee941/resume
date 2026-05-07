@@ -1,5 +1,3 @@
-import { SessionManager } from '../session/index.js';
-
 export const UNIFIED_PROFILE_SCHEMA = {
   basic: {
     name: null,
@@ -28,8 +26,17 @@ export const UNIFIED_PROFILE_SCHEMA = {
 };
 
 export class ProfileAggregator {
-  constructor(crawlers) {
+  constructor(crawlers, dependencies = {}) {
     this.crawlers = crawlers;
+    this.sessionStore = dependencies.sessionStore;
+  }
+
+  loadSession(platform) {
+    if (!this.sessionStore || typeof this.sessionStore.load !== 'function') {
+      throw new Error('ProfileAggregator requires a sessionStore with load(platform)');
+    }
+
+    return this.sessionStore.load(platform);
   }
 
   async fetchUnifiedProfile() {
@@ -42,7 +49,7 @@ export class ProfileAggregator {
           const crawler = this.crawlers[platform];
           if (!crawler) return;
 
-          const session = SessionManager.load(platform);
+          const session = this.loadSession(platform);
           if (!session) {
             unified.meta.syncStatus[platform] = {
               status: 'auth_required',

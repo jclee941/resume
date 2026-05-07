@@ -1,7 +1,5 @@
-import { SessionManager } from '../../shared/services/session/index.js';
-
 export default async function profileRoutes(fastify) {
-  const { profileAggregator } = fastify;
+  const { profileAggregator, sessionStore } = fastify;
 
   fastify.get('/profile/unified', async (_request, _reply) => {
     const profile = await profileAggregator.fetchUnifiedProfile();
@@ -9,7 +7,7 @@ export default async function profileRoutes(fastify) {
   });
 
   fastify.get('/auth/status', async (_request, _reply) => {
-    const status = SessionManager.getStatus();
+    const status = sessionStore.getStatus();
     return { success: true, status };
   });
 
@@ -20,15 +18,28 @@ export default async function profileRoutes(fastify) {
       return reply.code(400).send({ error: 'Platform and cookies required' });
     }
 
-    const cookieString = typeof cookies === 'string' ? cookies : (Array.isArray(cookies) ? cookies.map((c) => `${c.name}=${c.value}`).join('; ') : String(cookies));
-    const cookieCount = Array.isArray(cookies) ? cookies.length : cookieString.split(';').filter(Boolean).length;
-    SessionManager.save(platform, { cookies, cookieString, cookieCount, expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), email });
+    const cookieString = typeof cookies === 'string'
+      ? cookies
+      : (Array.isArray(cookies)
+          ? cookies.map((cookie) => `${cookie.name}=${cookie.value}`).join('; ')
+          : String(cookies));
+    const cookieCount = Array.isArray(cookies)
+      ? cookies.length
+      : cookieString.split(';').filter(Boolean).length;
+
+    sessionStore.save(platform, {
+      cookies,
+      cookieString,
+      cookieCount,
+      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+      email,
+    });
     return { success: true, message: `Auth saved for ${platform}` };
   });
 
   fastify.delete('/auth/:platform', async (request, _reply) => {
     const { platform } = request.params;
-    SessionManager.clear(platform);
+    sessionStore.clear(platform);
     return { success: true, message: `Logged out from ${platform}` };
   });
 }
