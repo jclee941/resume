@@ -12,10 +12,9 @@ const KEY_FIELD_PATTERNS = [
   /\.Prfm_Prt$/,
   /^Career\[c\d+\]\.(C_Client|C_TeamSize|C_MyRole|C_WorkType)$/,
   /^Career\[c\d+\]\.Project\[p\d+\]\.(P_Name|P_Cntnt)$/,
-  /\.Schl_Name$/,
-  /\.Entc_YM$/,
-  /\.Grad_YM$/,
-  /^HighSchool\[c\d+\]\.Grad_Type_Code$/,
+  /^UnivSchool\[[^\]]+\]\.Schl_Name$/,
+  /^UnivSchool\[[^\]]+\]\.Entc_YM$/,
+  /^UnivSchool\[[^\]]+\]\.Grad_YM$/,
   /^UnivSchool\[c\d+\]\.(Schl_Type_Code)$/,
   /\.Major_Name$/,
   /^UnivSchool\[c\d+\]\.UnivMajor\[\d+\]\.Major_Type_Code$/,
@@ -32,14 +31,10 @@ const KEY_FIELD_PATTERNS = [
   /Award\[.*\]\.Award_Inst_Name$/,
   /Award\[.*\]\.Award_Year$/,
   /^Award\[c\d+\]\.(Award_Cntnt)$/,
-  /HopeJob\./,
-  /^Skill\[c\d+\]\.(Skill_Name|Skill_Level)$/,
-  /^Language\[c\d+\]\.(Lang_Name|Lang_Level)$/,
-  /^Project\[c\d+\]\.(P_Name|P_Cntnt|P_Url)$/,
+  /^Language\[c\d+\]\.(Lang1_Name|Lang1_Stat)$/,
   /^UserResume\.(Birth_YMD|Address|GitHub)$/,
   /Portfolio\[.*\]\.Prtf_Url$/,
-  ];
-
+];
 export function getEditUrl() {
   const profileUrl = PLATFORMS.jobkorea?.profileUrl || '';
   const match = profileUrl.match(/[?&]rNo=(\d+)/i);
@@ -185,11 +180,11 @@ export function describeJobKoreaField(name) {
     return `Skill ${match[1]} ${map[match[2]] || match[2]}`;
   }
 
-  match = name.match(/^Language\[([^\]]+)\]\.(Lang_Name|Lang_Level)$/);
+  match = name.match(/^Language\[([^\]]+)\]\.(Lang1_Name|Lang1_Stat)$/);
   if (match) {
     const map = {
-      Lang_Name: 'name',
-      Lang_Level: 'level',
+      Lang1_Name: 'name',
+      Lang1_Stat: 'level',
     };
     return `Language ${match[1]} ${map[match[2]] || match[2]}`;
   }
