@@ -2,7 +2,13 @@ export async function getActivePage(page) {
   try {
     if (page.browser && typeof page.browser === 'function') {
       const pages = await page.browser().pages();
-      const openPage = pages.reverse().find((candidate) => !candidate.isClosed());
+      const openPage = pages.reverse().find((candidate) => {
+        try {
+          return !candidate.isClosed();
+        } catch {
+          return false;
+        }
+      });
       if (openPage) {
         return openPage;
       }
@@ -11,8 +17,12 @@ export async function getActivePage(page) {
     // ignore browser-specific errors
   }
 
-  if (!page.isClosed()) {
-    return page;
+  try {
+    if (!page.isClosed()) {
+      return page;
+    }
+  } catch {
+    // Page target may be destroyed; treat as closed.
   }
 
   throw new Error('Browser page closed before login could be confirmed');
@@ -33,7 +43,7 @@ export async function evaluateWithFallback(page, callback) {
 }
 
 export function isTransientPageError(error) {
-  return /Target closed|Execution context was destroyed|Cannot find context|detached Frame/i.test(
+  return /Target closed|Execution context was destroyed|Cannot find context|detached Frame|timed out|Browser page closed before login could be confirmed/i.test(
     error?.message || ''
   );
 }
