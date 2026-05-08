@@ -2,6 +2,7 @@ import { describe, it, mock, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert';
 import JobKoreaHandler from '../jobkorea-handler.js';
 import { syncJobKoreaProfile } from '../jobkorea-handler/sync.js';
+import { resolveCliproxyBase } from '../jobkorea-handler/captcha-solver.js';
 import SessionManager from '../../../src/shared/services/session/session-manager.js';
 import {
   assertJobKoreaResumeAccess,
@@ -67,6 +68,11 @@ describe('JobKoreaHandler.describeField', () => {
   it('maps Career field names to readable labels', () => {
     assert.strictEqual(handler.describeField('Career[c14].C_Name'), 'Career c14 company');
     assert.strictEqual(handler.describeField('Career[c14].M_MainField'), 'Career c14 job code');
+    assert.strictEqual(handler.describeField('Career[c14].C_Client'), 'Career c14 client');
+    assert.strictEqual(
+      handler.describeField('Career[c14].Project[p1].P_Name'),
+      'Career c14 project p1 name'
+    );
   });
 
   it('maps School field names to readable labels', () => {
@@ -80,6 +86,17 @@ describe('JobKoreaHandler.describeField', () => {
   it('maps License field names to readable labels', () => {
     assert.strictEqual(handler.describeField('License[c9].Lc_Name'), 'License c9 name');
     assert.strictEqual(handler.describeField('License[c9].Lc_YYMM'), 'License c9 date');
+    assert.strictEqual(handler.describeField('License[c9].Lc_CredUrl'), 'License c9 credential URL');
+  });
+
+  it('maps verified gap field names to readable labels', () => {
+    assert.strictEqual(handler.describeField('Skill[c1].Skill_Name'), 'Skill c1 name');
+    assert.strictEqual(handler.describeField('Language[c1].Lang_Level'), 'Language c1 level');
+    assert.strictEqual(handler.describeField('HighSchool[c1].Schl_Name'), 'High school c1 school');
+    assert.strictEqual(handler.describeField('Project[c1].P_Url'), 'Project c1 URL');
+    assert.strictEqual(handler.describeField('HopeJob.HJ_Salary'), 'Hope salary');
+    assert.strictEqual(handler.describeField('HopeJob.HJ_Industry'), 'Hope industry');
+    assert.strictEqual(handler.describeField('UserResume.Birth_YMD'), 'Personal birth date');
   });
 
   it('maps Award field names to readable labels', () => {
@@ -220,6 +237,43 @@ describe('JobKoreaHandler.loadSession - auth-sync compatibility', () => {
     assert.strictEqual(result.length, 2);
     assert.strictEqual(result[0].name, 'ACNT_COOKIE');
     assert.strictEqual(result[1].domain, '.jobkorea.co.kr');
+  });
+});
+
+describe('resolveCliproxyBase', () => {
+  it('throws when CLIPROXY_BASE is missing', () => {
+    assert.throws(
+      () => resolveCliproxyBase({}),
+      /CLIPROXY_BASE is required for JobKorea CAPTCHA solving/
+    );
+  });
+
+  it('throws when CLIPROXY_BASE is empty', () => {
+    assert.throws(
+      () => resolveCliproxyBase({ CLIPROXY_BASE: '   ' }),
+      /CLIPROXY_BASE is required for JobKorea CAPTCHA solving/
+    );
+  });
+
+  it('throws when CLIPROXY_BASE does not use HTTP or HTTPS', () => {
+    assert.throws(
+      () => resolveCliproxyBase({ CLIPROXY_BASE: 'ftp://vision.example.test/v1' }),
+      /CLIPROXY_BASE must start with http:\/\/ or https:\/\//
+    );
+  });
+
+  it('throws when CLIPROXY_BASE is not a valid URL', () => {
+    assert.throws(
+      () => resolveCliproxyBase({ CLIPROXY_BASE: 'https://exa mple.test/v1' }),
+      /CLIPROXY_BASE must be a valid URL/
+    );
+  });
+
+  it('returns a valid normalized CLIPROXY_BASE', () => {
+    assert.strictEqual(
+      resolveCliproxyBase({ CLIPROXY_BASE: ' https://vision.example.test/v1/// ' }),
+      'https://vision.example.test/v1'
+    );
   });
 });
 

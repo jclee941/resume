@@ -571,7 +571,7 @@ describe('normalizeCompanyName — Wanted/JobKorea parity (audit P2 fix)', () =>
 });
 
 
-// Failing tests for identified JobKorea gaps (Plan Agent: fill missing fields)
+// Verified JobKorea field mappings for previously broad gap categories.
 describe('JobKorea gap — skills', () => {
   it('buildJobKoreaFormData includes skill fields from SSoT', () => {
     const ssot = {
@@ -585,8 +585,13 @@ describe('JobKorea gap — skills', () => {
       awards: [],
     };
     const fields = buildJobKoreaFormData(ssot, {});
-    const names = fields.map((f) => f.name);
-    assert.ok(names.some((n) => n.includes('Skill')), 'should emit skill fields');
+    const byName = toMap(fields);
+
+    assert.strictEqual(byName.get('Skill[c1].Index_Name'), 'c1');
+    assert.strictEqual(byName.get('Skill[c1].Skill_Name'), 'Prometheus');
+    assert.strictEqual(byName.get('Skill[c1].Skill_Level'), 'Advanced');
+    assert.strictEqual(byName.get('Skill.index'), 'c1');
+    assert.strictEqual(byName.get('InputStat.SkillInputStat'), 'True');
   });
 });
 
@@ -601,11 +606,13 @@ describe('JobKorea gap — languages', () => {
       awards: [],
     };
     const fields = buildJobKoreaFormData(ssot, {});
-    const names = fields.map((f) => f.name);
-    assert.ok(
-      names.some((n) => n.includes('Language') || n.includes('Foreign')),
-      'should emit language fields'
-    );
+    const byName = toMap(fields);
+
+    assert.strictEqual(byName.get('Language[c1].Index_Name'), 'c1');
+    assert.strictEqual(byName.get('Language[c1].Lang_Name'), 'English');
+    assert.strictEqual(byName.get('Language[c1].Lang_Level'), '비즈니스 회화가능');
+    assert.strictEqual(byName.get('Language.index'), 'c1');
+    assert.strictEqual(byName.get('InputStat.LanguageInputStat'), 'True');
   });
 });
 
@@ -625,20 +632,10 @@ describe('JobKorea gap — personal fields', () => {
     };
     const fields = buildJobKoreaFormData(ssot, {});
     const byName = toMap(fields);
-    assert.ok(
-      byName.has('UserResume.BirthDate') ||
-        byName.has('UserAddition.BirthDate') ||
-        byName.has('UserResume.Birth_YMD'),
-      'should map birthDate'
-    );
-    assert.ok(
-      byName.has('UserResume.Address') || byName.has('UserAddition.Address'),
-      'should map address'
-    );
-    assert.ok(
-      byName.has('UserResume.GitHub') || byName.has('UserAddition.GitHub'),
-      'should map github'
-    );
+
+    assert.strictEqual(byName.get('UserResume.Birth_YMD'), '19940507');
+    assert.strictEqual(byName.get('UserResume.Address'), 'Seoul');
+    assert.strictEqual(byName.get('UserResume.GitHub'), 'https://github.com/jclee941');
   });
 });
 
@@ -648,10 +645,7 @@ describe('JobKorea gap — hope salary and industries', () => {
       hope: { roles: ['보안 엔지니어'], salary: '5000만원 이상' },
     });
     const byName = toMap(fields);
-    assert.ok(
-      byName.has('HopeJob.HJ_Salary') || byName.has('HopeJob.Salary'),
-      'should map salary'
-    );
+    assert.strictEqual(byName.get('HopeJob.HJ_Salary'), '5000만원 이상');
   });
 
   it('mapHopeJobToFormFields maps hope industries', () => {
@@ -659,10 +653,7 @@ describe('JobKorea gap — hope salary and industries', () => {
       hope: { roles: ['보안 엔지니어'], industries: ['금융', '보안'] },
     });
     const byName = toMap(fields);
-    assert.ok(
-      byName.has('HopeJob.HJ_Industry') || byName.has('HopeJob.Industry'),
-      'should map industries'
-    );
+    assert.strictEqual(byName.get('HopeJob.HJ_Industry'), '금융,보안');
   });
 });
 
@@ -681,12 +672,8 @@ describe('JobKorea gap — career projects and metadata', () => {
       ],
     });
     const byName = toMap(fields);
-    assert.ok(
-      byName.has('Career[c1].Project[p1].P_Name') ||
-        byName.has('Career[c1].Project_P_Name'),
-      'should map project name'
-    );
-
+    assert.strictEqual(byName.get('Career[c1].Project[p1].P_Name'), 'Proj A');
+    assert.strictEqual(byName.get('Career[c1].Project[p1].P_Cntnt'), 'Desc A');
   });
 
   it('mapCareersToFormFields maps career metadata fields', () => {
@@ -704,22 +691,10 @@ describe('JobKorea gap — career projects and metadata', () => {
       ],
     });
     const byName = toMap(fields);
-    assert.ok(
-      byName.has('Career[c1].Client') || byName.has('Career[c1].C_Client'),
-      'should map client'
-    );
-    assert.ok(
-      byName.has('Career[c1].TeamSize') || byName.has('Career[c1].C_TeamSize'),
-      'should map teamSize'
-    );
-    assert.ok(
-      byName.has('Career[c1].MyRole') || byName.has('Career[c1].C_MyRole'),
-      'should map myRole'
-    );
-    assert.ok(
-      byName.has('Career[c1].WorkType') || byName.has('Career[c1].C_WorkType'),
-      'should map workType'
-    );
+    assert.strictEqual(byName.get('Career[c1].C_Client'), 'ClientA');
+    assert.strictEqual(byName.get('Career[c1].C_TeamSize'), '5');
+    assert.strictEqual(byName.get('Career[c1].C_MyRole'), 'Lead');
+    assert.strictEqual(byName.get('Career[c1].C_WorkType'), '정규직');
   });
 });
 
@@ -740,29 +715,11 @@ describe('JobKorea gap — certification extra fields', () => {
       ],
     });
     const byName = toMap(fields);
-    assert.ok(
-      byName.has('License[c1].Lc_Exp') || byName.has('License[c1].Lc_Expire'),
-      'should map expirationDate'
-    );
-    assert.ok(
-      byName.has('License[c1].Lc_CredId') ||
-        byName.has('License[c1].Lc_Credential'),
-      'should map credentialId'
-    );
-    assert.ok(
-      byName.has('License[c1].Lc_CredUrl') ||
-        byName.has('License[c1].Lc_Url'),
-      'should map credentialUrl'
-    );
-    assert.ok(
-      byName.has('License[c1].Lc_Status') ||
-        byName.has('License[c1].Lc_Stat'),
-      'should map status'
-    );
-    assert.ok(
-      byName.has('License[c1].Lc_Note') || byName.has('License[c1].Lc_Memo'),
-      'should map note'
-    );
+    assert.strictEqual(byName.get('License[c1].Lc_Exp'), '202701');
+    assert.strictEqual(byName.get('License[c1].Lc_CredId'), 'ABC123');
+    assert.strictEqual(byName.get('License[c1].Lc_CredUrl'), 'https://aws.amazon.com/cert');
+    assert.strictEqual(byName.get('License[c1].Lc_Status'), 'active');
+    assert.strictEqual(byName.get('License[c1].Lc_Note'), 'Note');
   });
 });
 
@@ -782,11 +739,14 @@ describe('JobKorea gap — high school', () => {
       awards: [],
     };
     const fields = buildJobKoreaFormData(ssot, {});
-    const names = fields.map((f) => f.name);
-    assert.ok(
-      names.some((n) => n.includes('HighSchool') || n.includes('Schl_Name')),
-      'should emit high school fields'
-    );
+    const byName = toMap(fields);
+
+    assert.strictEqual(byName.get('HighSchool[c1].Schl_Name'), '용남고');
+    assert.strictEqual(byName.get('HighSchool[c1].Entc_YM'), '201003');
+    assert.strictEqual(byName.get('HighSchool[c1].Grad_YM'), '201302');
+    assert.strictEqual(byName.get('HighSchool[c1].Grad_Type_Code'), '10');
+    assert.strictEqual(byName.get('HighSchool.index'), 'c1');
+    assert.strictEqual(byName.get('InputStat.HighSchoolInputStat'), 'True');
   });
 });
 
@@ -797,12 +757,11 @@ describe('JobKorea gap — awards achievements fallback', () => {
     });
     const byName = toMap(fields);
     assert.ok(fields.length > 0, 'should emit fallback fields for achievements');
-    assert.ok(
-      Array.from(byName.keys()).some(
-        (k) => k.includes('Award') || k.includes('Career_Text')
-      ),
-      'should map achievements somewhere'
+    assert.strictEqual(
+      byName.get('UserResume.M_Career_Text'),
+      '- Achievement A\n- Achievement B'
     );
+    assert.strictEqual(byName.get('UserResume.M_Career_Text_Stat'), '1');
   });
 });
 
@@ -823,10 +782,13 @@ describe('JobKorea gap — personal projects', () => {
       awards: [],
     };
     const fields = buildJobKoreaFormData(ssot, {});
-    const names = fields.map((f) => f.name);
-    assert.ok(
-      names.some((n) => n.includes('Project') || n.includes('Portfolio')),
-      'should emit personal project fields'
-    );
+    const byName = toMap(fields);
+
+    assert.strictEqual(byName.get('Project[c1].Index_Name'), 'c1');
+    assert.strictEqual(byName.get('Project[c1].P_Name'), 'Proj A');
+    assert.strictEqual(byName.get('Project[c1].P_Cntnt'), 'Desc A');
+    assert.strictEqual(byName.get('Project[c1].P_Url'), 'https://example.com');
+    assert.strictEqual(byName.get('Project.index'), 'c1');
+    assert.strictEqual(byName.get('InputStat.ProjectInputStat'), 'True');
   });
 });
