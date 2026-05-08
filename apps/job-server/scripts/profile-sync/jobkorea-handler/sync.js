@@ -8,7 +8,15 @@ import {
   mapPortfolioToFormFields,
 } from '../jobkorea-sections.js';
 import { getEditUrl } from './change-detection.js';
-import { assertJobKoreaResumeAccess } from './session.js';
+import { assertJobKoreaResumeAccess, loadJobKoreaSession } from './session.js';
+import { JobKoreaAPIClient } from './api-client.js';
+import { buildCookieString } from '../../jobkorea-session/cookie-utils.js';
+import {
+  executeHybridPortfolio,
+  executeHybridSave,
+  shouldUseHybridMode,
+  getJobKoreaSyncMode,
+} from './sync-hybrid.js';
 import { pickJobKoreaBrowserProfile } from '../../jobkorea-session/user-agent-pool.js';
 import { fileURLToPath } from 'url';
 import path from 'path';
@@ -164,6 +172,24 @@ async function saveForm(page) {
   });
 }
 
+async function executePlaywrightSave(page, targetFields, sectionIndices, logger) {
+  await pruneOldSectionEntries(page, sectionIndices);
+  await fillTargetFields(page, targetFields);
+  await markPartialSave(page);
+
+  const saveResult = await saveForm(page);
+  logger(`Save response: ${JSON.stringify(saveResult).slice(0, 500)}`, 'info', 'jobkorea');
+
+  if (saveResult?.IsSuccess === false) {
+    const errorMessage = buildSaveError(saveResult);
+    logger(`Save failed: ${errorMessage}`, 'error', 'jobkorea');
+    return { success: false, error: errorMessage };
+  }
+
+  logger('Resume form save completed', 'success', 'jobkorea');
+  return { success: true };
+}
+
 function buildSaveError(saveResult) {
   return (
     saveResult?.ErrorMessage ||
@@ -189,10 +215,16 @@ export async function syncJobKoreaProfile(handler, ssot, options = {}) {
   const logger = options.logger ?? log;
   const launchBrowser = options.launchBrowser ?? chromium.launch.bind(chromium);
   const ensureResumeAccess = options.assertJobKoreaResumeAccess ?? assertJobKoreaResumeAccess;
+  const hybridMode = shouldUseHybridMode();
+  const syncMode = getJobKoreaSyncMode();
 
-  logger('Starting sync for JobKorea (via form POST)', 'info', 'jobkorea');
+  logger(
+    hybridMode ? `Starting sync for JobKorea (${syncMode})` : 'Starting sync for JobKorea (via form POST)',
+    'info',
+    'jobkorea'
+  );
 
-  const cookies = handler.loadSession();
+  const cookies = handler.loadSession?.() ?? loadJobKoreaSession();
   if (!cookies) {
     logger('No saved session - login to JobKorea first and save cookies', 'error', 'jobkorea');
     return { success: false, changes: [] };
@@ -270,34 +302,55 @@ export async function syncJobKoreaProfile(handler, ssot, options = {}) {
     );
 
     const targetFields = buildJobKoreaFormData(ssot, sectionIndices);
-    await appendPortfolioFields(page, ssot, targetFields, {
-      registerPortfolioUrl: options.registerPortfolioUrl,
-      logger,
-      getTimestamp: options.getTimestamp,
-    });
+    let apiClient = null;
+    if (hybridMode) {
+      apiClient =
+        options.apiClient ??
+        new JobKoreaAPIClient({
+          cookieString: handler.loadSessionCookieString?.() || buildCookieString(cookies),
+          logger,
+        });
+      await executeHybridPortfolio(apiClient, ssot?.personal?.portfolio, targetFields, page, ssot, {
+        logger,
+        fallbackPortfolio: (fallbackPage, fallbackSsot, fallbackFields) =>
+          appendPortfolioFields(fallbackPage, fallbackSsot, fallbackFields, {
+            registerPortfolioUrl: options.registerPortfolioUrl,
+            logger,
+            getTimestamp: options.getTimestamp,
+          }),
+      });
+    } else {
+      await appendPortfolioFields(page, ssot, targetFields, {
+        registerPortfolioUrl: options.registerPortfolioUrl,
+        logger,
+        getTimestamp: options.getTimestamp,
+      });
+    }
 
     const currentFields = await page.evaluate(() => $('#frm1').serializeArray());
     const changes = handler.computeChanges(currentFields, targetFields);
     logChangeSummary(changes);
 
-    if (CONFIG.APPLY && !CONFIG.DIFF_ONLY) {
-      await pruneOldSectionEntries(page, sectionIndices);
-      await fillTargetFields(page, targetFields);
-      await markPartialSave(page);
-
-      const saveResult = await saveForm(page);
-      logger(`Save response: ${JSON.stringify(saveResult).slice(0, 500)}`, 'info', 'jobkorea');
-
-      if (saveResult?.IsSuccess === false) {
-        const errorMessage = buildSaveError(saveResult);
-        logger(`Save failed: ${errorMessage}`, 'error', 'jobkorea');
-        return { success: false, changes, error: errorMessage };
+    if (hybridMode) {
+      const saveResult = await executeHybridSave(apiClient, targetFields, page, sectionIndices, {
+        logger,
+        apply: CONFIG.APPLY,
+        diffOnly: CONFIG.DIFF_ONLY,
+        dryRun: syncMode === 'api-dry-run',
+        fallbackSave: (fallbackPage, fallbackFields, fallbackSectionIndices) =>
+          executePlaywrightSave(fallbackPage, fallbackFields, fallbackSectionIndices, logger),
+      });
+      if (saveResult.success === false) {
+        return { success: false, changes, error: saveResult.error };
       }
-
-      logger('Resume form save completed', 'success', 'jobkorea');
+    } else if (CONFIG.APPLY && !CONFIG.DIFF_ONLY) {
+      const saveResult = await executePlaywrightSave(page, targetFields, sectionIndices, logger);
+      if (saveResult.success === false) {
+        return { success: false, changes, error: saveResult.error };
+      }
     }
 
-    const dryRun = !CONFIG.APPLY || CONFIG.DIFF_ONLY;
+    const dryRun = !CONFIG.APPLY || CONFIG.DIFF_ONLY || syncMode === 'api-dry-run';
     return { success: true, changes, dryRun };
   } catch (error) {
     logger(`Sync failed: ${error.message}`, 'error', 'jobkorea');
