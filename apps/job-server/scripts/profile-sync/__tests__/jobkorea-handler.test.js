@@ -7,6 +7,8 @@ import {
   assertJobKoreaResumeAccess,
   JOBKOREA_SESSION_RENEW_PATH,
 } from '../jobkorea-handler/session.js';
+// Ensure JOBKOREA_RNO is set for tests that validate profile URLs
+process.env.JOBKOREA_RNO = process.env.JOBKOREA_RNO || '30236578';
 
 describe('JobKoreaHandler.computeChanges', () => {
   const handler = new JobKoreaHandler();
