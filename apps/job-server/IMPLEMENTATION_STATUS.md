@@ -1,6 +1,6 @@
 # Auto-Apply System Implementation Status
 
-**Last Updated:** 2025-12-31
+**Last Updated:** 2026-05-08
 **System Status:** 🟢 Operational
 
 ## 🌐 Deployment
@@ -20,10 +20,22 @@
 | **Session Sync**  | ✅ Fixed         | Unified storage (`job-automation-sessions.json`) |
 | **Cookie Mgmt**   | ✅ Scripts Ready | `npm run login` / `npm run cookies`              |
 
+## 🔄 JobKorea Sync Status
+
+| Component                              | Status        | Notes                                           |
+| -------------------------------------- | ------------- | ----------------------------------------------- |
+| **Profile sync via Playwright form POST** | ✅ Implemented | `scripts/profile-sync/index.js`                |
+| **Session renewal with stealth browser** | ✅ Implemented | `scripts/renew-jobkorea-session.js`            |
+| **CAPTCHA auto-solve via vision API**  | ✅ Implemented | Vision API integration in session renewal        |
+| **Field mapping (87 fields)**          | ✅ Implemented | `scripts/profile-sync/index.js` SKILL_TAG_MAP   |
+| **getProfile() read-back**              | 🟡 In Progress| Being implemented in parallel task              |
+| **UA rotation**                         | 🟡 In Progress| Being implemented in parallel task               |
+
 ## 🛠️ Configuration
 
 - **Environment**: Loaded from `.env` (API Keys, Secrets)
 - **Settings**: `config.json` (Schedule, Keywords)
+- **Proxy**: `CLIPROXY_BASE`, `CLIPROXY_API_KEY` (optional, for CAPTCHA solving)
 
 ## 🚀 Usage
 
