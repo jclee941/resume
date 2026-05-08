@@ -53,6 +53,34 @@ export async function clickVisibleSubmit(page, { log }) {
     });
 
     if (visible) {
+      // Gracefully handle the page transition caused by the form POST.
+      await Promise.all([
+        page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 15000 }).catch(() => {}),
+        candidate.click(),
+      ]);
+      log('Submit clicked');
+      await sleep(3000);
+      return;
+    }
+  }
+
+  throw new Error('Visible submit button not found');
+}
+  const candidates = await page.$$('button[type="submit"], input[type="submit"]');
+  for (const candidate of candidates) {
+    const visible = await candidate.evaluate((element) => {
+      const style = window.getComputedStyle(element);
+      const rect = element.getBoundingClientRect();
+      return (
+        style.display !== 'none' &&
+        style.visibility !== 'hidden' &&
+        Number(style.opacity || '1') > 0 &&
+        rect.width > 0 &&
+        rect.height > 0
+      );
+    });
+
+    if (visible) {
       await candidate.click();
       log('Submit clicked');
       await sleep(5000);
