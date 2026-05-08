@@ -47,7 +47,8 @@ export function mapCareersToFormFields(ssot, indices) {
     pushField(fields, `Career[${key}].CSYM`, start);
     pushField(fields, `Career[${key}].CEYM`, end);
     pushField(fields, `Career[${key}].RetireSt`, isCurrent ? 1 : 2);
-    pushField(fields, `Career[${key}].M_MainJob_Jikwi`, career?.role || '');
+    const jikwiText = String(career?.role || '').replace(/ 담당$/, '');
+    pushField(fields, `Career[${key}].M_MainJob_Jikwi`, jikwiText);
     pushField(fields, `Career[${key}].Job_Type_Code`, '');
     const jobCode = career?.jobkoreaJobCode || ssot?.platformVariants?.jobkorea?.defaultJobCode || '';
     pushField(fields, `Career[${key}].M_MainField`, jobCode);
