@@ -5,8 +5,8 @@ function hasEmptyCriticalCookie(cookie) {
   return (
     name &&
     value === '' &&
-    ['UID', 'User', 'session', 'token'].some((critical) =>
-      name.toLowerCase().includes(critical.toLowerCase())
+    ['UID', 'User'].some((critical) =>
+      name.toLowerCase() === critical.toLowerCase()
     )
   );
 }
@@ -27,6 +27,19 @@ function validateCookieString(cookieString) {
 function validateJobKoreaCookies(cookies) {
   const userCookie = cookies.find((c) => c.name === 'User');
   const cUserCookie = cookies.find((c) => c.name === 'C%5FUSER' || c.name === 'C_USER');
+  const jkUserCookie = cookies.find((c) => c.name === 'JK%5FUser' || c.name === 'JK_User');
+
+  // Modern JobKorea sessions use JK_User instead of User. If JK_User has a
+  // valid member ID, the session is authenticated regardless of User cookie.
+  if (jkUserCookie) {
+    const decodedValue = decodeURIComponent(jkUserCookie.value);
+    if (decodedValue.includes('M%5FID=') || decodedValue.includes('M_ID=')) {
+      const midMatch = decodedValue.match(/M[_%5F]ID=([^&]+)/);
+      if (midMatch && midMatch[1]) {
+        return null;
+      }
+    }
+  }
 
   if (userCookie) {
     const decodedValue = decodeURIComponent(userCookie.value);
