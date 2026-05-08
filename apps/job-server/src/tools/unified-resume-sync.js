@@ -33,7 +33,7 @@ const RESUME_DATA_PATH = join(PROJECT_ROOT, 'packages/data/resumes/master/resume
 
 export const unifiedResumeSyncTool = {
   name: 'unified_resume_sync',
-  description: `Sync resume_data.json to multiple job platforms.\n\n**Supported Platforms:**\n- wanted: API-based sync (full CRUD)\n- jobkorea: Browser automation (profile update)\n- saramin: Browser automation (profile update)\n- remember: Browser automation (profile update)\n- jumpit: Browser automation (profile update)\n- programmers: Browser automation (profile update)\n- rallit: Browser automation (profile update)\n- rocketpunch: Browser automation (profile update)\n- indeed: Browser automation (profile update)\n- linkedin: Browser automation (profile update)\n\n**Actions:**\n- status: Check sync status for all platforms\n- sync: Sync to specified platform(s)\n- diff: Compare local data with platform profile\n- preview: Preview changes without applying`,
+  description: 'Sync resume_data.json to multiple job platforms.\n\n**Supported Platforms:**\n- wanted: API-based sync (full CRUD)\n- jobkorea: Browser automation (profile update)\n- saramin: Browser automation (profile update)\n- remember: Browser automation (profile update)\n- jumpit: Browser automation (profile update)\n- programmers: Browser automation (profile update)\n- rallit: Browser automation (profile update)\n- rocketpunch: Browser automation (profile update)\n- indeed: Browser automation (profile update)\n- linkedin: Browser automation (profile update)\n\n**Actions:**\n- status: Check sync status for all platforms\n- sync: Sync to specified platform(s)\n- diff: Compare local data with platform profile\n- preview: Preview changes without applying',
 
   inputSchema: {
     type: 'object',
