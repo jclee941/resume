@@ -1,28 +1,35 @@
-export async function getActivePage(page) {
-  try {
-    if (page.browser && typeof page.browser === 'function') {
-      const pages = await page.browser().pages();
-      const openPage = pages.reverse().find((candidate) => {
-        try {
-          return !candidate.isClosed();
-        } catch {
-          return false;
+export async function getActivePage(page, { retries = 3, delayMs = 1500 } = {}) {
+  let lastError;
+  for (let i = 0; i < retries; i++) {
+    try {
+      if (page.browser && typeof page.browser === 'function') {
+        const pages = await page.browser().pages();
+        const openPage = pages.reverse().find((candidate) => {
+          try {
+            return !candidate.isClosed();
+          } catch {
+            return false;
+          }
+        });
+        if (openPage) {
+          return openPage;
         }
-      });
-      if (openPage) {
-        return openPage;
       }
+    } catch (e) {
+      lastError = e;
     }
-  } catch (e) {
-    // ignore browser-specific errors
-  }
 
-  try {
-    if (!page.isClosed()) {
-      return page;
+    try {
+      if (!page.isClosed()) {
+        return page;
+      }
+    } catch {
+      // Page target may be destroyed; treat as closed.
     }
-  } catch {
-    // Page target may be destroyed; treat as closed.
+
+    if (i < retries - 1) {
+      await sleep(delayMs);
+    }
   }
 
   throw new Error('Browser page closed before login could be confirmed');
@@ -62,5 +69,8 @@ export async function withTimeout(promise, timeoutMs, fallbackValue) {
     return await Promise.race([promise, timeoutPromise]);
   } finally {
     clearTimeout(timeoutId);
+    // Swallow late rejections from the original promise so they don't become
+    // unhandled rejections after the race has already settled.
+    promise.catch(() => {});
   }
 }
