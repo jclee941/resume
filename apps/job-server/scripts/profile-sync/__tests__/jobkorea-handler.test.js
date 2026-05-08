@@ -2,6 +2,7 @@ import { describe, it, mock, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert';
 import JobKoreaHandler from '../jobkorea-handler.js';
 import { syncJobKoreaProfile } from '../jobkorea-handler/sync.js';
+import { createJobKoreaEntrySlots } from '../jobkorea-handler/section-slots.js';
 import { resolveCliproxyBase } from '../jobkorea-handler/captcha-solver.js';
 import SessionManager from '../../../src/shared/services/session/session-manager.js';
 import {
@@ -45,23 +46,54 @@ describe('JobKoreaHandler.computeChanges', () => {
   it('ignores non-key fields and reports correct shape for key fields', () => {
     const before = [
       { name: 'Career[c1].Co_Code_Extra', value: 'A' },
-      { name: 'HopeJob.HJ_Name', value: '시스템엔지니어' },
+      { name: 'Career[c1].C_Name', value: 'Old Company' },
     ];
     const after = [
       { name: 'Career[c1].Co_Code_Extra', value: 'B' },
-      { name: 'HopeJob.HJ_Name', value: '시스템엔지니어,보안엔지니어' },
+      { name: 'Career[c1].C_Name', value: 'New Company' },
     ];
 
     const changes = handler.computeChanges(before, after);
 
     assert.strictEqual(changes.length, 1);
     assert.deepStrictEqual(Object.keys(changes[0]).sort(), ['field', 'from', 'to']);
-    assert.strictEqual(changes[0].field, 'Hope job names');
-    assert.strictEqual(changes[0].from, '시스템엔지니어');
-    assert.strictEqual(changes[0].to, '시스템엔지니어,보안엔지니어');
+    assert.strictEqual(changes[0].field, 'Career c1 company');
+    assert.strictEqual(changes[0].from, 'Old Company');
+    assert.strictEqual(changes[0].to, 'New Company');
+  });
+  it('detects Language Lang1_Name changes from live JobKorea fields', () => {
+    const before = [{ name: 'Language[c532].Lang1_Name', value: '' }];
+    const after = [{ name: 'Language[c532].Lang1_Name', value: 'English' }];
+
+    const changes = handler.computeChanges(before, after);
+
+    assert.strictEqual(changes.length, 1);
+    assert.deepStrictEqual(changes[0], {
+      field: 'Language c532 name',
+      from: '(empty)',
+      to: 'English',
+    });
+  });
+
+  it('ignores removed section fields that are not emitted by live JobKorea sync', () => {
+    const before = [
+      { name: 'Skill[c1].Skill_Name', value: '' },
+      { name: 'Project[c1].P_Name', value: '' },
+      { name: 'HopeJob.HJ_Name', value: '' },
+      { name: 'HighSchool[c1].Schl_Name', value: '' },
+    ];
+    const after = [
+      { name: 'Skill[c1].Skill_Name', value: 'Prometheus' },
+      { name: 'Project[c1].P_Name', value: 'Proj A' },
+      { name: 'HopeJob.HJ_Name', value: '보안 엔지니어' },
+      { name: 'HighSchool[c1].Schl_Name', value: '용남고' },
+    ];
+
+    const changes = handler.computeChanges(before, after);
+
+    assert.deepStrictEqual(changes, []);
   });
 });
-
 describe('JobKoreaHandler.describeField', () => {
   const handler = new JobKoreaHandler();
 
@@ -89,20 +121,25 @@ describe('JobKoreaHandler.describeField', () => {
     assert.strictEqual(handler.describeField('License[c9].Lc_CredUrl'), 'License c9 credential URL');
   });
 
-  it('maps verified gap field names to readable labels', () => {
-    assert.strictEqual(handler.describeField('Skill[c1].Skill_Name'), 'Skill c1 name');
-    assert.strictEqual(handler.describeField('Language[c1].Lang_Level'), 'Language c1 level');
-    assert.strictEqual(handler.describeField('HighSchool[c1].Schl_Name'), 'High school c1 school');
-    assert.strictEqual(handler.describeField('Project[c1].P_Url'), 'Project c1 URL');
-    assert.strictEqual(handler.describeField('HopeJob.HJ_Salary'), 'Hope salary');
-    assert.strictEqual(handler.describeField('HopeJob.HJ_Industry'), 'Hope industry');
+  it('maps live JobKorea field names to readable labels', () => {
+    assert.strictEqual(handler.describeField('Language[c532].Lang1_Name'), 'Language c532 name');
     assert.strictEqual(handler.describeField('UserResume.Birth_YMD'), 'Personal birth date');
   });
 
-  it('maps Award field names to readable labels', () => {
+  it('maps Award field names to readable labels, including timestamp-based indices', () => {
     assert.strictEqual(handler.describeField('Award[c2].Award_Name'), 'Award c2 name');
-    assert.strictEqual(handler.describeField('Award[c2].Award_Inst_Name'), 'Award c2 organization');
-    assert.strictEqual(handler.describeField('Award[c2].Award_Year'), 'Award c2 year');
+    assert.strictEqual(
+      handler.describeField('Award[1_1778240625462].Award_Name'),
+      'Award 1_1778240625462 name'
+    );
+    assert.strictEqual(
+      handler.describeField('Award[1_1778240625462].Award_Inst_Name'),
+      'Award 1_1778240625462 organization'
+    );
+    assert.strictEqual(
+      handler.describeField('Award[1_1778240625462].Award_Year'),
+      'Award 1_1778240625462 year'
+    );
   });
 
   it('maps military named fields', () => {
@@ -117,6 +154,94 @@ describe('JobKoreaHandler.describeField', () => {
       handler.describeField('InputStat.CareerInputStat'),
       'InputStat.CareerInputStat'
     );
+  });
+});
+
+describe('createJobKoreaEntrySlots', () => {
+  it('reuses existing live DOM indices, including timestamp Award IDs', async () => {
+    const readCalls = [];
+    const handler = {
+      readSectionIndices: async (_page, prefix) => {
+        readCalls.push(prefix);
+        const indices = {
+          Career: ['c6'],
+          License: ['c18'],
+          Award: ['1_1778240625462', '2_1778240625463'],
+          UnivSchool: ['c2'],
+          Portfolio: [],
+          Language: ['c532'],
+        };
+        return indices[prefix] || [];
+      },
+    };
+    const page = {
+      waitForFunction: async () => {},
+      evaluate: async () => false,
+    };
+    const ssot = {
+      careers: [{ company: 'Company' }],
+      certifications: [{ name: 'Cert', date: '2020.08' }],
+      awards: [
+        { name: 'Award A', organization: 'Org A', year: '2026' },
+        { name: 'Award B', organization: 'Org B', year: '2025' },
+      ],
+      languages: [{ name: 'English' }],
+      personal: {},
+      skills: {
+        observability: { items: [{ name: 'Prometheus' }] },
+      },
+      personalProjects: [{ name: 'Project A' }],
+    };
+
+    const indices = await createJobKoreaEntrySlots(handler, page, ssot);
+
+    assert.deepStrictEqual(indices.career, ['c6']);
+    assert.deepStrictEqual(indices.license, ['c18']);
+    assert.deepStrictEqual(indices.award, ['1_1778240625462', '2_1778240625463']);
+    assert.strictEqual(indices.school, 'c2');
+    assert.deepStrictEqual(indices.language, ['c532']);
+    assert.ok(!Object.hasOwn(indices, 'skill'));
+    assert.ok(!Object.hasOwn(indices, 'personalProject'));
+    assert.ok(readCalls.includes('Award'));
+    assert.ok(readCalls.includes('Language'));
+    assert.ok(!readCalls.includes('Skill'));
+    assert.ok(!readCalls.includes('Project'));
+  });
+
+  it('uses post-addition DOM indices when more live slots are needed', async () => {
+    const callCounts = new Map();
+    const handler = {
+      readSectionIndices: async (_page, prefix) => {
+        const count = callCounts.get(prefix) || 0;
+        callCounts.set(prefix, count + 1);
+        if (prefix === 'Award' && count >= 1) {
+          return ['1_1778240625462', '2_1778240625463'];
+        }
+        if (prefix === 'Award') {
+          return ['1_1778240625462'];
+        }
+        if (prefix === 'UnivSchool') return ['c2'];
+        return [];
+      },
+    };
+    const page = {
+      waitForFunction: async () => {},
+      evaluate: async () => true,
+    };
+    const ssot = {
+      careers: [],
+      certifications: [],
+      awards: [
+        { name: 'Award A', organization: 'Org A', year: '2026' },
+        { name: 'Award B', organization: 'Org B', year: '2025' },
+      ],
+      languages: [],
+      personal: {},
+    };
+
+    const indices = await createJobKoreaEntrySlots(handler, page, ssot);
+
+    assert.deepStrictEqual(indices.award, ['1_1778240625462', '2_1778240625463']);
   });
 });
 

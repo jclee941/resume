@@ -20,15 +20,6 @@ export async function createJobKoreaEntrySlots(handler, page, ssot) {
     (c) => c?.date
   );
   const awardItems = Array.isArray(ssot?.awards) ? ssot.awards : [];
-  const skillItems = [];
-  for (const category of Object.values(ssot?.skills || {})) {
-    if (category && Array.isArray(category.items)) {
-      for (const item of category.items) {
-        if (typeof item === 'object' && item?.name) skillItems.push(item);
-        else if (typeof item === 'string') skillItems.push({ name: item });
-      }
-    }
-  }
   const languages = Array.isArray(ssot?.languages) ? ssot.languages : [];
   const personalProjects = Array.isArray(ssot?.personalProjects) ? ssot.personalProjects : [];
   const sections = [
@@ -36,9 +27,7 @@ export async function createJobKoreaEntrySlots(handler, page, ssot) {
     { prefix: 'License', needed: validCerts.length },
     { prefix: 'Award', needed: awardItems.length },
     { prefix: 'Portfolio', needed: ssot?.personal?.portfolio ? 1 : 0 },
-    { prefix: 'Skill', needed: skillItems.length },
     { prefix: 'Language', needed: languages.length },
-    { prefix: 'Project', needed: personalProjects.length },
   ];
 
   const existingIndices = {};
@@ -147,9 +136,7 @@ export async function createJobKoreaEntrySlots(handler, page, ssot) {
   const allAwardIndices = await handler.readSectionIndices(page, 'Award');
   const schoolIndices = await handler.readSectionIndices(page, 'UnivSchool');
   const allPortfolioIndices = await handler.readSectionIndices(page, 'Portfolio');
-  const allSkillIndices = await handler.readSectionIndices(page, 'Skill');
   const allLanguageIndices = await handler.readSectionIndices(page, 'Language');
-  const allProjectIndices = await handler.readSectionIndices(page, 'Project');
 
   const filterExisting = (all, prefix) => {
     const existing = existingIndices[prefix];
@@ -158,13 +145,11 @@ export async function createJobKoreaEntrySlots(handler, page, ssot) {
   };
 
   return {
-    career: filterExisting(allCareerIndices, 'Career'),
-    license: filterExisting(allLicenseIndices, 'License'),
-    award: filterExisting(allAwardIndices, 'Award'),
-    portfolio: filterExisting(allPortfolioIndices, 'Portfolio'),
+    career: allCareerIndices,
+    license: allLicenseIndices,
+    award: allAwardIndices,
+    portfolio: allPortfolioIndices,
     school: schoolIndices[0] || 'c1',
-    skill: filterExisting(allSkillIndices, 'Skill'),
-    language: filterExisting(allLanguageIndices, 'Language'),
-    personalProject: filterExisting(allProjectIndices, 'Project'),
+    language: allLanguageIndices,
   };
 }
