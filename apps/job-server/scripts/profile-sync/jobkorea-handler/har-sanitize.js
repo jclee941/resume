@@ -6,12 +6,12 @@ const TIMESTAMP_PARAM_NAMES = new Set(['_', 'timestamp', 'ts', 't']);
 const SENSITIVE_POST_FIELD_PATTERNS = [
   /^M_ID$/i,
   /^M_PWD$/i,
-  /(?:^|[._]])(?:pwd|password|passwd)(?:$|[._[])/i,
-  /(?:^|[._]])(?:email|mail)(?:$|[._[])/i,
-  /(?:^|[._]])(?:phone|mobile|tel|cell|cellphone)(?:$|[._[])/i,
-  /(?:^|[._]])(?:addr|address|zip|zipcode|post)(?:$|[._[])/i,
-  /(?:^|[._]])(?:birth|birthday|birthdate|jumin|resident)(?:$|[._[])/i,
-  /(?:^|[._]])(?:m_name|user_name|member_name|kor_name|eng_name)(?:$|[._[])/i,
+  /(?:^|[._\]])(?:pwd|password|passwd)(?:$|[._[])/i,
+  /(?:^|[._\]])(?:email|mail)(?:$|[._[])/i,
+  /(?:^|[._\]])(?:phone|mobile|tel|cell|cellphone)(?:$|[._[])/i,
+  /(?:^|[._\]])(?:addr|address|zip|zipcode|post)(?:$|[._[])/i,
+  /(?:^|[._\]])(?:birth|birthday|birthdate|jumin|resident)(?:$|[._[])/i,
+  /(?:^|[._\]])(?:m_name|user_name|member_name|kor_name|eng_name)(?:$|[._[])/i,
   /^(?:Name|UserName|M_Name)$/i,
   /(?:csrf|xsrf|token|session|auth|credential)/i,
 ];
