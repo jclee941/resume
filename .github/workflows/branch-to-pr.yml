@@ -58,7 +58,7 @@ jobs:
        github.event.pusher.name != 'github-actions[bot]')
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 

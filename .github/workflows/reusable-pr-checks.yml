@@ -54,7 +54,7 @@ jobs:
     name: Check PR Title
     steps:
       - name: Conventional Commits validation
-        uses: actions/github-script@v9
+        uses: actions/github-script@v7
         with:
           script: |
             const title = context.payload.pull_request.title;
@@ -80,7 +80,7 @@ jobs:
     name: Check Branch Name
     steps:
       - name: Branch naming validation
-        uses: actions/github-script@v9
+        uses: actions/github-script@v7
         with:
           script: |
             const branch = context.payload.pull_request.head.ref;
@@ -106,7 +106,7 @@ jobs:
     name: Check PR Description
     steps:
       - name: Description validation
-        uses: actions/github-script@v9
+        uses: actions/github-script@v7
         with:
           script: |
             const body = context.payload.pull_request.body || '';
@@ -149,12 +149,12 @@ jobs:
     name: Check Large Files
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Detect large file changes
-        uses: actions/github-script@v9
+        uses: actions/github-script@v7
         with:
           script: |
             const { data: files } = await github.rest.pulls.listFiles({
@@ -186,12 +186,12 @@ jobs:
     name: Check Sensitive Files
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Detect sensitive file changes
-        uses: actions/github-script@v9
+        uses: actions/github-script@v7
         with:
           script: |
             const { data: files } = await github.rest.pulls.listFiles({
