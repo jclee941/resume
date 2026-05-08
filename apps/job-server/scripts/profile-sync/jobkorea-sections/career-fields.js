@@ -53,7 +53,7 @@ export function mapCareersToFormFields(ssot, indices) {
     const jobCode = career?.jobkoreaJobCode || ssot?.platformVariants?.jobkorea?.defaultJobCode || '';
     pushField(fields, `Career[${key}].M_MainField`, jobCode);
     EMPTY_CAREER_FIELDS.slice(7).forEach((name) => pushField(fields, `Career[${key}].${name}`, ''));
-    pushField(fields, `Career[${key}].Prfm_Prt`, String(career?.project || career?.role || '').slice(0, 500));
+    pushField(fields, `Career[${key}].Prfm_Prt`, String(career?.myRole || career?.project || career?.role || '').slice(0, 500));
     pushField(fields, `Career[${key}].CNameHold`, '0');
     pushField(fields, `Career[${key}].OpenStat`, '1');
     pushField(fields, `Career[${key}].C_Client`, career?.client || '');
