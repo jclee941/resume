@@ -1,5 +1,5 @@
 /**
- * CAPTCHA solver via cliproxy.jclee.me vision models.
+ * CAPTCHA solver via configured cliproxy-compatible vision models.
  *
  * Downloads the JobKorea CAPTCHA image (BMP from /login/captcha.asp) within
  * the same Playwright context (preserves session cookies), encodes it as a
@@ -8,8 +8,6 @@
 
 import { log } from '../sync-logger.js';
 
-const CLIPROXY_BASE = process.env.CLIPROXY_BASE || 'https://cliproxy.jclee.me/v1';
-const CLIPROXY_KEY = process.env.CLIPROXY_API_KEY;
 // Vision-capable models in priority order. Pure-vision models (Gemini Flash,
 // Claude Sonnet) tend to handle BMP CAPTCHA better than reasoning models
 // (which leak chain-of-thought into the answer).
@@ -21,6 +19,42 @@ const VISION_MODELS = [
   'minimax-m2.5',
   'gpt-5.4-mini',
 ];
+
+/**
+ * Resolve and validate the cliproxy base URL from the provided environment.
+ *
+ * @param {NodeJS.ProcessEnv | Record<string, string | undefined>} env
+ * @returns {string}
+ */
+export function resolveCliproxyBase(env = process.env) {
+  const rawBase = env.CLIPROXY_BASE?.trim();
+  if (!rawBase) {
+    throw new Error('CLIPROXY_BASE is required for JobKorea CAPTCHA solving');
+  }
+  if (!/^https?:\/\//.test(rawBase)) {
+    throw new Error('CLIPROXY_BASE must start with http:// or https://');
+  }
+  try {
+    new URL(rawBase);
+  } catch {
+    throw new Error('CLIPROXY_BASE must be a valid URL');
+  }
+  return rawBase.replace(/\/+$/, '');
+}
+
+/**
+ * Resolve and validate the cliproxy API key from the provided environment.
+ *
+ * @param {NodeJS.ProcessEnv | Record<string, string | undefined>} env
+ * @returns {string}
+ */
+export function resolveCliproxyApiKey(env = process.env) {
+  const apiKey = env.CLIPROXY_API_KEY?.trim();
+  if (!apiKey) {
+    throw new Error('CLIPROXY_API_KEY is required for JobKorea CAPTCHA solving');
+  }
+  return apiKey;
+}
 
 /**
  * Read CAPTCHA image bytes through the page's fetch (so cookies attach),
@@ -101,7 +135,8 @@ export async function findCaptchaImageUrl(page) {
  * @returns {Promise<string>}
  */
 async function callVisionModel(image, model) {
-  if (!CLIPROXY_KEY) throw new Error('CLIPROXY_API_KEY is not set');
+  const cliproxyBase = resolveCliproxyBase();
+  const cliproxyKey = resolveCliproxyApiKey();
 
   const reqBody = {
     model,
@@ -128,10 +163,10 @@ async function callVisionModel(image, model) {
     temperature: 0,
   };
 
-  const res = await fetch(`${CLIPROXY_BASE}/chat/completions`, {
+  const res = await fetch(`${cliproxyBase}/chat/completions`, {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${CLIPROXY_KEY}`,
+      'Authorization': `Bearer ${cliproxyKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(reqBody),
