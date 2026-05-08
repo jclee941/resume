@@ -222,6 +222,11 @@ export async function captureJobKoreaProfileSyncHar(handler, ssot, options = {})
       error: error.message,
     };
   } finally {
+    try {
+      await context.close();
+    } catch {
+      // Context may already be closed.
+    }
     await browser.close();
   }
 }
