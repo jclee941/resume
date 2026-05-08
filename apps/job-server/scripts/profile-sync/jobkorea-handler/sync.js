@@ -22,10 +22,7 @@ async function activateRequiredSections(page) {
       'InputStat_AwardInputStat',
       'InputStat_PortfolioInputStat',
       'InputStat_SchoolInputStat',
-      'InputStat_HighSchoolInputStat',
-      'InputStat_SkillInputStat',
       'InputStat_LanguageInputStat',
-      'InputStat_ProjectInputStat',
     ];
     for (const syncId of requiredSections) {
       const btn = $(`button[data-sync_id="${syncId}"]`);
@@ -95,9 +92,7 @@ async function pruneOldSectionEntries(page, sectionIndices) {
         { prefix: 'License', keep: new Set(indices.license) },
         { prefix: 'Award', keep: new Set(indices.award) },
         { prefix: 'Portfolio', keep: new Set(indices.portfolio) },
-        { prefix: 'Skill', keep: new Set(indices.skill) },
         { prefix: 'Language', keep: new Set(indices.language) },
-        { prefix: 'Project', keep: new Set(indices.personalProject) },
       ];
       for (const { prefix, keep } of sections) {
         document.querySelectorAll(`[name^="${prefix}["]`).forEach((el) => {
@@ -111,9 +106,7 @@ async function pruneOldSectionEntries(page, sectionIndices) {
       license: sectionIndices.license,
       award: sectionIndices.award,
       portfolio: sectionIndices.portfolio,
-      skill: sectionIndices.skill,
       language: sectionIndices.language,
-      personalProject: sectionIndices.personalProject,
     }
   );
 }
@@ -271,9 +264,7 @@ export async function syncJobKoreaProfile(handler, ssot, options = {}) {
         `License: ${sectionIndices.license.length} (${sectionIndices.license.join(',')}), ` +
         `Award: ${sectionIndices.award.length} (${sectionIndices.award.join(',')}), ` +
         `School: ${sectionIndices.school}, ` +
-        `Skill: ${(sectionIndices.skill || []).length} (${(sectionIndices.skill || []).join(',')}), ` +
-        `Language: ${(sectionIndices.language || []).length} (${(sectionIndices.language || []).join(',')}), ` +
-        `Project: ${(sectionIndices.personalProject || []).length} (${(sectionIndices.personalProject || []).join(',')})`,
+        `Language: ${(sectionIndices.language || []).length} (${(sectionIndices.language || []).join(',')})`,
       'info',
       'jobkorea'
     );
