@@ -83,7 +83,7 @@ function hiddenFields(fields) {
   return fields.filter(
     (name) =>
       /^hdn/i.test(name) ||
-      /(?:^|[._\]])(?:idx|id|no|r_no|stat|inputstat|attach_file_name)(?:$|[._\[])/i.test(name)
+      /(?:^|[._]])(?:idx|id|no|r_no|stat|inputstat|attach_file_name)(?:$|[._[])/i.test(name)
   );
 }
 

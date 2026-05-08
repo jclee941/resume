@@ -67,7 +67,6 @@ function normalizeCareerProjects(ssotCareer = {}) {
     ];
   }
 
-  return [];
   if (ssotCareer.project && ssotCareer.description) {
     return [
       {
