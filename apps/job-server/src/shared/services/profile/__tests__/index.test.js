@@ -27,6 +27,7 @@ describe('ProfileAggregator.fetchUnifiedProfile', () => {
       if (platform === 'wanted') return { token: 'ok' };
       if (platform === 'saramin') return null;
       if (platform === 'linkedin') return { token: 'ok' };
+      if (platform === 'jobkorea') return { token: 'ok' };
       return null;
     });
 
@@ -51,6 +52,17 @@ describe('ProfileAggregator.fetchUnifiedProfile', () => {
         })),
       },
       linkedin: {},
+      jobkorea: {
+        getProfile: mock.fn(async () => ({
+          success: true,
+          profile: {
+            name: 'Park',
+            email: 'park@example.com',
+            careers: [{ company: 'C Corp', startDate: '2019-06-01' }],
+            skills: [{ name: 'Python' }],
+          },
+        })),
+      },
     };
 
     const aggregator = new ProfileAggregator(crawlers, { sessionStore });
@@ -61,10 +73,10 @@ describe('ProfileAggregator.fetchUnifiedProfile', () => {
     assert.equal(unified.meta.syncStatus.wanted.status, 'synced');
     assert.equal(unified.meta.syncStatus.saramin.status, 'auth_required');
     assert.equal(unified.meta.syncStatus.linkedin.status, 'not_implemented');
-    assert.equal(unified.meta.syncStatus.jobkorea, undefined);
+    assert.equal(unified.meta.syncStatus.jobkorea.status, 'synced');
     assert.ok(typeof unified.meta.lastUpdated === 'string');
     assert.ok(typeof unified.meta.syncStatus.wanted.lastSync === 'string');
-    assert.deepEqual(unified.meta.sources, ['wanted', 'linkedin']);
+    assert.deepEqual(unified.meta.sources, ['wanted', 'linkedin', 'jobkorea']);
     assert.equal(UNIFIED_PROFILE_SCHEMA.meta.lastUpdated, 'ISO_DATE');
   });
 
@@ -108,7 +120,7 @@ describe('ProfileAggregator.fetchUnifiedProfile', () => {
   });
 });
 
-describe('ProfileAggregator + JK NOT_IMPLEMENTED stub (audit Issue D)', () => {
+describe('ProfileAggregator + JK getProfile error handling', () => {
   beforeEach(() => {
     mock.restoreAll();
     mock.method(SessionManager, 'load', () => ({ cookies: { token: 'session' } }));
