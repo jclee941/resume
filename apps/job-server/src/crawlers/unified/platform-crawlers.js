@@ -1,7 +1,5 @@
-import {
-  JobKoreaCrawler,
-  JOBKOREA_CATEGORIES,
-} from '../../../platforms/jobkorea/jobkorea-crawler.js';
+import { JobKoreaCrawler } from '../../../platforms/jobkorea/jobkorea-crawler.js';
+import { JOBKOREA_CATEGORIES } from '@resume/data/platforms/jobkorea-categories.js';
 import { JumpitCrawler } from '../../../platforms/jumpit/jumpit-crawler.js';
 import { LinkedInCrawler, LINKEDIN_FILTERS } from '../../../platforms/linkedin/linkedin-crawler.js';
 import { ProgrammersCrawler } from '../../../platforms/programmers/programmers-crawler.js';

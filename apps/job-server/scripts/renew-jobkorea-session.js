@@ -25,7 +25,7 @@ const password = process.env.JOBKOREA_PASSWORD;
 const headless = process.env.HEADLESS !== 'false';
 const headlessEnv = process.env.HEADLESS;
 const loginUrl = 'https://www.jobkorea.co.kr/Login';
-const resumeUrl = `https://www.jobkorea.co.kr/User/Resume/View?rNo=${process.env.JOBKOREA_RNO || '30236578'}`;
+const resumeUrl = `https://www.jobkorea.co.kr/User/Resume/View?rNo=${process.env.JOBKOREA_RNO}`;
 const userAgent =
   'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36';
 

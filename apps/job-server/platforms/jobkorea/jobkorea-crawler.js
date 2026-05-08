@@ -263,12 +263,4 @@ export class JobKoreaCrawler extends BaseCrawler {
   }
 }
 
-export const JOBKOREA_CATEGORIES = {
-  SECURITY: '1000239',
-  NETWORK: '1000240',
-  DBA: '1000241',
-  SYSTEM: '1000242',
-  DEVOPS: '1000243',
-};
-
 export default JobKoreaCrawler;

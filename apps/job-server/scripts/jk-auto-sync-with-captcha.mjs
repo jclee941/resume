@@ -21,7 +21,7 @@ import { solveJobKoreaCaptcha } from './profile-sync/jobkorea-handler/captcha-so
 
 const EMAIL = process.env.JOBKOREA_EMAIL;
 const PASSWORD = process.env.JOBKOREA_PASSWORD;
-const RNO = process.env.JOBKOREA_RNO || '30236578';
+const RNO = process.env.JOBKOREA_RNO;
 const SESSION_PATHS = [
   path.join(os.homedir(), '.OpenCode/data/jobkorea-session.json'),
   path.resolve(process.cwd(), '../..', 'jobkorea-session.json'),
