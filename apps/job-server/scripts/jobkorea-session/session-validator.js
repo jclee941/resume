@@ -17,5 +17,19 @@ export async function verifyAuthenticatedSession({ cookieString, resumeUrl, user
     throw new Error(`Authenticated resume request failed with status ${response.status}`);
   }
 
-  return response.status;
+
+  const body = await response.text();
+  const expiredMarkers = [
+    '세션이 만료 되었습니다',
+    '로그인이 필요합니다',
+    '/Login/Login_ToT.asp',
+    '/Login/Login.asp',
+    "location.href='/Login",
+  ];
+  const foundMarker = expiredMarkers.find((marker) => body.includes(marker));
+  if (foundMarker) {
+    throw new Error(`Session expired detected by marker: ${foundMarker}`);
+  }
+
+  return true;
 }
