@@ -6,18 +6,19 @@
  */
 import { withStealthBrowser } from '../src/crawlers/browser-utils.js';
 import {
-  buildCookieString,
-  clickVisibleSubmit,
-  defaultSessionFile as sessionFile,
+buildCookieString,
+clickVisibleSubmit,
+defaultSessionFile as sessionFile,
   fillLoginForm,
-  handleCaptchaIfNeeded,
-  isLoggedIn,
-  jobKoreaSessionTtlMs,
-  resolveJobKoreaSession,
-  saveResolvedJobKoreaSession,
-  sleep,
-  verifyAuthenticatedSession,
-  waitForLoginConfirmation,
+  getActivePage,
+handleCaptchaIfNeeded,
+isLoggedIn,
+jobKoreaSessionTtlMs,
+resolveJobKoreaSession,
+saveResolvedJobKoreaSession,
+sleep,
+verifyAuthenticatedSession,
+waitForLoginConfirmation,
 } from './jobkorea-session/index.js';
 import { pickJobKoreaBrowserProfile } from './jobkorea-session/user-agent-pool.js';
 
@@ -89,7 +90,8 @@ async function main() {
         log('Login successful');
       }
 
-      const cookies = await page.cookies('https://www.jobkorea.co.kr', 'https://www.jobkorea.co.kr/');
+      const activePage = await getActivePage(page);
+      const cookies = await activePage.cookies('https://www.jobkorea.co.kr', 'https://www.jobkorea.co.kr/');
       const cookieString = buildCookieString(cookies);
       const session = {
         platform: 'jobkorea',

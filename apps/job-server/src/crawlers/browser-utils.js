@@ -9,11 +9,30 @@
 import { generateFingerprint, applyStealthPatches } from '@resume/shared/browser';
 
 const LAUNCH_ARGS = [
-  '--no-sandbox',
-  '--disable-setuid-sandbox',
-  '--disable-dev-shm-usage',
-  '--disable-gpu',
+'--no-sandbox',
+'--disable-setuid-sandbox',
+'--disable-dev-shm-usage',
+'--disable-gpu',
 ];
+
+async function safeBrowserClose(browser, timeoutMs = 10000) {
+  if (!browser) return;
+  try {
+    await Promise.race([
+      browser.close(),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('browser.close() timed out')), timeoutMs)
+      ),
+    ]);
+  } catch {
+    try {
+      const proc = browser.process();
+      if (proc) proc.kill('SIGKILL');
+    } catch {
+      // Best-effort cleanup.
+    }
+  }
+}
 
 function resolveHeadlessMode(headless) {
   if (typeof headless !== 'undefined') {
@@ -51,7 +70,7 @@ export async function withStealthBrowser(action, options = {}) {
 
     return await action(page);
   } finally {
-    if (browser) await browser.close();
+    await safeBrowserClose(browser);
   }
 }
 export async function launchStealthBrowser() {
