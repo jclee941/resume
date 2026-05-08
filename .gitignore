@@ -87,6 +87,11 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Raw browser captures may contain session cookies and form bodies
+*.har
+*.har.zip
+**/jobkorea-har/
+
 # Testing
 coverage/
 .nyc_output/
