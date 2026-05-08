@@ -347,6 +347,24 @@ describe('mapAwardToFormFields', () => {
     assert.strictEqual(byName.get('Award[c7].Award_Year'), '2026');
     assert.strictEqual(byName.get('Award.index'), 'c7');
   });
+  it('uses JobKorea timestamp-based Award indices from the live DOM', () => {
+    const fields = mapAwardToFormFields(
+      {
+        awards: [
+          { name: '우수상', organization: '한양사이버대학교', year: '2026' },
+          { name: '공로상', organization: '테스트기관', year: '2025' },
+        ],
+      },
+      ['1_1778240625462', '2_1778240625463']
+    );
+    const byName = toMap(fields);
+
+    assert.strictEqual(byName.get('Award[1_1778240625462].Award_Name'), '우수상');
+    assert.strictEqual(byName.get('Award[2_1778240625463].Award_Name'), '공로상');
+    assert.strictEqual(byName.get('Award.index'), '1_1778240625462,2_1778240625463');
+    assert.ok(!byName.has('Award[c1].Award_Name'));
+    assert.ok(!byName.has('Award[c2].Award_Name'));
+  });
 });
 
 describe('mapPortfolioToFormFields', () => {
@@ -489,7 +507,7 @@ describe('buildJobKoreaFormData', () => {
     awards: [{ name: '우수상', organization: '한양사이버대학교', year: '2026' }],
   };
 
-  it('combines all mapped sections into one field array', () => {
+  it('combines only live JobKorea form sections into one field array', () => {
     const fields = buildJobKoreaFormData(fullSSOT, {});
     const names = fields.map((field) => field.name);
 
@@ -497,7 +515,11 @@ describe('buildJobKoreaFormData', () => {
     assert.ok(names.some((name) => name.startsWith('UnivSchool[')));
     assert.ok(names.some((name) => name.startsWith('License[')));
     assert.ok(names.some((name) => name.startsWith('UserAddition.')));
-    assert.ok(names.some((name) => name.startsWith('HopeJob.')));
+    assert.ok(names.some((name) => name.startsWith('Award[')));
+    assert.ok(!names.some((name) => name.startsWith('HopeJob.')));
+    assert.ok(!names.some((name) => name.startsWith('Skill[')));
+    assert.ok(!names.some((name) => name.startsWith('Project[')));
+    assert.ok(!names.some((name) => name.startsWith('HighSchool[')));
   });
 
   it('respects provided sectionIndices', () => {
@@ -514,6 +536,55 @@ describe('buildJobKoreaFormData', () => {
     assert.strictEqual(byName.get('License[c99].Index_Name'), 'c99');
     // structured awards[]; indices=['c55'] limits to 1 entry = 5 fields
     assert.strictEqual(countMatching(fields, /^Award\[/), 5);
+  });
+
+  it('omits sections absent from the live JobKorea resume edit form', () => {
+    const ssot = {
+      ...fullSSOT,
+      highSchool: {
+        school: '용남고',
+        startDate: '2010.03',
+        endDate: '2013.02',
+        status: '졸업',
+      },
+      hope: {
+        roles: ['보안 엔지니어'],
+        jobCodes: ['1000238'],
+        salary: '5000만원 이상',
+        industries: ['금융', '보안'],
+      },
+      skills: {
+        observability: { items: [{ name: 'Prometheus', level: 'Advanced' }] },
+      },
+      personalProjects: [
+        {
+          name: 'Proj A',
+          description: 'Desc A',
+          url: 'https://example.com',
+        },
+      ],
+    };
+
+    const fields = buildJobKoreaFormData(ssot, {
+      career: ['c6'],
+      school: 'c2',
+      license: ['c18'],
+      award: ['1_1778240625462'],
+      language: ['c532'],
+    });
+    const names = fields.map((field) => field.name);
+
+    assert.ok(!names.some((name) => name.startsWith('HighSchool[')));
+    assert.ok(!names.some((name) => name === 'HighSchool.index'));
+    assert.ok(!names.some((name) => name === 'InputStat.HighSchoolInputStat'));
+    assert.ok(!names.some((name) => name.startsWith('HopeJob.')));
+    assert.ok(!names.some((name) => name === 'InputStat.HopeJobInputStat'));
+    assert.ok(!names.some((name) => name.startsWith('Skill[')));
+    assert.ok(!names.some((name) => name === 'Skill.index'));
+    assert.ok(!names.some((name) => name === 'InputStat.SkillInputStat'));
+    assert.ok(!names.some((name) => name.startsWith('Project[')));
+    assert.ok(!names.some((name) => name === 'Project.index'));
+    assert.ok(!names.some((name) => name === 'InputStat.ProjectInputStat'));
   });
 
   it('returns non-empty field list for valid SSOT', () => {
@@ -571,9 +642,8 @@ describe('normalizeCompanyName — Wanted/JobKorea parity (audit P2 fix)', () =>
 });
 
 
-// Verified JobKorea field mappings for previously broad gap categories.
-describe('JobKorea gap — skills', () => {
-  it('buildJobKoreaFormData includes skill fields from SSoT', () => {
+describe('JobKorea live form — skills', () => {
+  it('buildJobKoreaFormData omits skill fields because the live form has no Skill section', () => {
     const ssot = {
       skills: {
         observability: { items: [{ name: 'Prometheus', level: 'Advanced' }] },
@@ -585,18 +655,16 @@ describe('JobKorea gap — skills', () => {
       awards: [],
     };
     const fields = buildJobKoreaFormData(ssot, {});
-    const byName = toMap(fields);
+    const names = fields.map((field) => field.name);
 
-    assert.strictEqual(byName.get('Skill[c1].Index_Name'), 'c1');
-    assert.strictEqual(byName.get('Skill[c1].Skill_Name'), 'Prometheus');
-    assert.strictEqual(byName.get('Skill[c1].Skill_Level'), 'Advanced');
-    assert.strictEqual(byName.get('Skill.index'), 'c1');
-    assert.strictEqual(byName.get('InputStat.SkillInputStat'), 'True');
+    assert.ok(!names.some((name) => name.startsWith('Skill[')));
+    assert.ok(!names.includes('Skill.index'));
+    assert.ok(!names.includes('InputStat.SkillInputStat'));
   });
 });
 
-describe('JobKorea gap — languages', () => {
-  it('buildJobKoreaFormData includes language fields from SSoT', () => {
+describe('JobKorea live form — languages', () => {
+  it('buildJobKoreaFormData maps language names to Lang1_Name using live DOM indices', () => {
     const ssot = {
       languages: [{ name: 'English', level: '비즈니스 회화가능' }],
       careers: [],
@@ -605,14 +673,15 @@ describe('JobKorea gap — languages', () => {
       military: null,
       awards: [],
     };
-    const fields = buildJobKoreaFormData(ssot, {});
+    const fields = buildJobKoreaFormData(ssot, { language: ['c532'] });
     const byName = toMap(fields);
 
-    assert.strictEqual(byName.get('Language[c1].Index_Name'), 'c1');
-    assert.strictEqual(byName.get('Language[c1].Lang_Name'), 'English');
-    assert.strictEqual(byName.get('Language[c1].Lang_Level'), '비즈니스 회화가능');
-    assert.strictEqual(byName.get('Language.index'), 'c1');
+    assert.strictEqual(byName.get('Language[c532].Index_Name'), 'c532');
+    assert.strictEqual(byName.get('Language[c532].Lang1_Name'), 'English');
+    assert.strictEqual(byName.get('Language.index'), 'c532');
     assert.strictEqual(byName.get('InputStat.LanguageInputStat'), 'True');
+    assert.ok(!byName.has('Language[c532].Lang_Name'));
+    assert.ok(!byName.has('Language[c532].Lang_Level'));
   });
 });
 
@@ -723,8 +792,8 @@ describe('JobKorea gap — certification extra fields', () => {
   });
 });
 
-describe('JobKorea gap — high school', () => {
-  it('buildJobKoreaFormData includes high school when ssot.highSchool is present', () => {
+describe('JobKorea live form — high school', () => {
+  it('buildJobKoreaFormData omits high school because the live form has no HighSchool section', () => {
     const ssot = {
       highSchool: {
         school: '용남고',
@@ -739,14 +808,11 @@ describe('JobKorea gap — high school', () => {
       awards: [],
     };
     const fields = buildJobKoreaFormData(ssot, {});
-    const byName = toMap(fields);
+    const names = fields.map((field) => field.name);
 
-    assert.strictEqual(byName.get('HighSchool[c1].Schl_Name'), '용남고');
-    assert.strictEqual(byName.get('HighSchool[c1].Entc_YM'), '201003');
-    assert.strictEqual(byName.get('HighSchool[c1].Grad_YM'), '201302');
-    assert.strictEqual(byName.get('HighSchool[c1].Grad_Type_Code'), '10');
-    assert.strictEqual(byName.get('HighSchool.index'), 'c1');
-    assert.strictEqual(byName.get('InputStat.HighSchoolInputStat'), 'True');
+    assert.ok(!names.some((name) => name.startsWith('HighSchool[')));
+    assert.ok(!names.includes('HighSchool.index'));
+    assert.ok(!names.includes('InputStat.HighSchoolInputStat'));
   });
 });
 
@@ -765,8 +831,8 @@ describe('JobKorea gap — awards achievements fallback', () => {
   });
 });
 
-describe('JobKorea gap — personal projects', () => {
-  it('buildJobKoreaFormData includes personal project fields', () => {
+describe('JobKorea live form — personal projects', () => {
+  it('buildJobKoreaFormData omits personal project fields because the live form has no Project section', () => {
     const ssot = {
       personalProjects: [
         {
@@ -782,13 +848,10 @@ describe('JobKorea gap — personal projects', () => {
       awards: [],
     };
     const fields = buildJobKoreaFormData(ssot, {});
-    const byName = toMap(fields);
+    const names = fields.map((field) => field.name);
 
-    assert.strictEqual(byName.get('Project[c1].Index_Name'), 'c1');
-    assert.strictEqual(byName.get('Project[c1].P_Name'), 'Proj A');
-    assert.strictEqual(byName.get('Project[c1].P_Cntnt'), 'Desc A');
-    assert.strictEqual(byName.get('Project[c1].P_Url'), 'https://example.com');
-    assert.strictEqual(byName.get('Project.index'), 'c1');
-    assert.strictEqual(byName.get('InputStat.ProjectInputStat'), 'True');
+    assert.ok(!names.some((name) => name.startsWith('Project[')));
+    assert.ok(!names.includes('Project.index'));
+    assert.ok(!names.includes('InputStat.ProjectInputStat'));
   });
 });
