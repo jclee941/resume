@@ -18,6 +18,7 @@ import fs from 'fs';
 import path from 'path';
 import os from 'os';
 import { solveJobKoreaCaptcha } from './profile-sync/jobkorea-handler/captcha-solver.js';
+import { pickJobKoreaBrowserProfile } from './jobkorea-session/user-agent-pool.js';
 
 const EMAIL = process.env.JOBKOREA_EMAIL;
 const PASSWORD = process.env.JOBKOREA_PASSWORD;
@@ -70,6 +71,7 @@ function saveCookies(cookies) {
 }
 
 async function main() {
+  const browserProfile = pickJobKoreaBrowserProfile();
   const browser = await chromium.launch({
     headless: true,
     args: [
@@ -79,11 +81,10 @@ async function main() {
     ],
   });
   const context = await browser.newContext({
-    userAgent:
-      'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36',
-    viewport: { width: 1280, height: 800 },
-    locale: 'ko-KR',
-    timezoneId: 'Asia/Seoul',
+    userAgent: browserProfile.userAgent,
+    viewport: browserProfile.viewport,
+    locale: browserProfile.locale,
+    timezoneId: browserProfile.timezoneId,
   });
   await context.addInitScript(() => {
     Object.defineProperty(navigator, 'webdriver', { get: () => undefined });

@@ -9,17 +9,7 @@ import {
 } from '../jobkorea-sections.js';
 import { getEditUrl } from './change-detection.js';
 import { assertJobKoreaResumeAccess } from './session.js';
-
-const USER_AGENT_POOL = [
-  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
-  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
-  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36',
-  'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
-];
-
-function pickRandomUserAgent() {
-  return USER_AGENT_POOL[Math.floor(Math.random() * USER_AGENT_POOL.length)];
-}
+import { pickJobKoreaBrowserProfile } from '../../jobkorea-session/user-agent-pool.js';
 
 async function activateRequiredSections(page) {
   await page.evaluate(() => {
@@ -201,12 +191,13 @@ export async function syncJobKoreaProfile(handler, ssot, options = {}) {
     return { success: false, changes: [] };
   }
 
+  const browserProfile = pickJobKoreaBrowserProfile();
   const browser = await launchBrowser({ headless: CONFIG.HEADLESS });
   const context = await browser.newContext({
-    userAgent: pickRandomUserAgent(),
-    viewport: { width: 1280, height: 800 },
-    locale: 'ko-KR',
-    timezoneId: 'Asia/Seoul',
+    userAgent: browserProfile.userAgent,
+    viewport: browserProfile.viewport,
+    locale: browserProfile.locale,
+    timezoneId: browserProfile.timezoneId,
     extraHTTPHeaders: {
       'Accept-Language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7',
     },
