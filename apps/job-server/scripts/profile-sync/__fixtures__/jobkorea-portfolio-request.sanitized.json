@@ -1,0 +1,35 @@
+{
+  "log": {
+    "version": "1.2",
+    "creator": { "name": "jobkorea-har-tools", "version": "1.0.0" },
+    "entries": [
+      {
+        "request": {
+          "method": "POST",
+          "url": "https://www.jobkorea.co.kr/User/Resume/AddUserFileDB",
+          "headers": [
+            { "name": "Content-Type", "value": "application/x-www-form-urlencoded; charset=UTF-8" },
+            { "name": "X-Requested-With", "value": "XMLHttpRequest" },
+            { "name": "Cookie", "value": "[REDACTED]" }
+          ],
+          "queryString": [],
+          "postData": {
+            "mimeType": "application/x-www-form-urlencoded; charset=UTF-8",
+            "params": [
+              { "name": "File_Name", "value": "https://portfolio.example.test" },
+              { "name": "Display_File_Name", "value": "https://portfolio.example.test" },
+              { "name": "File_Type", "value": "2" },
+              { "name": "File_Up_Stat", "value": "2" },
+              { "name": "File_Size", "value": "0" }
+            ]
+          }
+        },
+        "response": {
+          "status": 200,
+          "headers": [{ "name": "Content-Type", "value": "application/json; charset=utf-8" }],
+          "content": { "mimeType": "application/json", "text": "{\"sc\":1,\"idx\":12345}" }
+        }
+      }
+    ]
+  }
+}
