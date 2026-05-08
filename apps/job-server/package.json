@@ -37,7 +37,9 @@
     "ops:monitor": "go run ./scripts/ops/auto-monitor/main.go",
     "ops:maintenance": "go run ./scripts/ops/auto-maintenance/main.go",
     "cookies:extract": "node scripts/extract-cookies-cdp.js",
-    "cookies:import": "node scripts/import-cookies-manual.js"
+    "cookies:import": "node scripts/import-cookies-manual.js",
+    "jobkorea:har:capture": "node scripts/profile-sync/jobkorea-handler/har-capture-cli.js --apply --include-save --include-portfolio",
+    "jobkorea:har:capture:dry": "node scripts/profile-sync/jobkorea-handler/har-capture-cli.js --dry-run"
   },
   "keywords": [
     "mcp",
