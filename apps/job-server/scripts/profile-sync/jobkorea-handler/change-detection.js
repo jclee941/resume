@@ -10,16 +10,19 @@ const KEY_FIELD_PATTERNS = [
   /\.M_MainField$/,
   /^Career\[c\d+\]\.(Co_Code|CName_Code|Biz_No|Job_Type_Code|M_MainField|M_MainJob|Job_Field_Direct|M_MainPay_User|Retire_Rsn_Code|NHIS_LINKED_STAT|CNameHold|OpenStat)$/,
   /\.Prfm_Prt$/,
+  /^Career\[c\d+\]\.(C_Client|C_TeamSize|C_MyRole|C_WorkType)$/,
+  /^Career\[c\d+\]\.Project\[p\d+\]\.(P_Name|P_Cntnt)$/,
   /\.Schl_Name$/,
   /\.Entc_YM$/,
   /\.Grad_YM$/,
+  /^HighSchool\[c\d+\]\.Grad_Type_Code$/,
   /^UnivSchool\[c\d+\]\.(Schl_Type_Code)$/,
   /\.Major_Name$/,
   /^UnivSchool\[c\d+\]\.UnivMajor\[\d+\]\.Major_Type_Code$/,
   /\.Lc_Name$/,
   /\.Lc_Pub$/,
   /\.Lc_YYMM$/,
-  /^License\[c\d+\]\.(Lc_Code|Naver_Lcns_Linked_Stat)$/,
+  /^License\[c\d+\]\.(Lc_Code|Naver_Lcns_Linked_Stat|Lc_Exp|Lc_CredId|Lc_CredUrl|Lc_Status|Lc_Note)$/,
   /UserAddition\.Military_Stat$/,
   /UserAddition\.Military_Kind$/,
   /UserAddition\.Military_SYM$/,
@@ -30,8 +33,12 @@ const KEY_FIELD_PATTERNS = [
   /Award\[.*\]\.Award_Year$/,
   /^Award\[c\d+\]\.(Award_Cntnt)$/,
   /HopeJob\./,
+  /^Skill\[c\d+\]\.(Skill_Name|Skill_Level)$/,
+  /^Language\[c\d+\]\.(Lang_Name|Lang_Level)$/,
+  /^Project\[c\d+\]\.(P_Name|P_Cntnt|P_Url)$/,
+  /^UserResume\.(Birth_YMD|Address|GitHub)$/,
   /Portfolio\[.*\]\.Prtf_Url$/,
-];
+  ];
 
 export function getEditUrl() {
   const profileUrl = PLATFORMS.jobkorea?.profileUrl || '';
@@ -77,7 +84,7 @@ export function computeChangesForJobKorea(currentFields, targetFields, describeF
 
 export function describeJobKoreaField(name) {
   let match = name.match(
-    /^Career\[([^\]]+)\]\.(C_Name|C_Part|CSYM|CEYM|M_MainJob_Jikwi|RetireSt|M_MainField|Co_Code|CName_Code|Biz_No|Job_Type_Code|M_MainJob|Job_Field_Direct|M_MainPay_User|Retire_Rsn_Code|NHIS_LINKED_STAT|CNameHold|OpenStat|Prfm_Prt)$/
+    /^Career\[([^\]]+)\]\.(C_Name|C_Part|CSYM|CEYM|M_MainJob_Jikwi|RetireSt|M_MainField|Co_Code|CName_Code|Biz_No|Job_Type_Code|M_MainJob|Job_Field_Direct|M_MainPay_User|Retire_Rsn_Code|NHIS_LINKED_STAT|CNameHold|OpenStat|Prfm_Prt|C_Client|C_TeamSize|C_MyRole|C_WorkType)$/
   );
   if (match) {
     const map = {
@@ -100,8 +107,21 @@ export function describeJobKoreaField(name) {
       CNameHold: '회사명 보존 여부',
       OpenStat: '공개 상태',
       Prfm_Prt: 'description',
+      C_Client: 'client',
+      C_TeamSize: 'team size',
+      C_MyRole: 'my role',
+      C_WorkType: 'work type',
     };
     return `Career ${match[1]} ${map[match[2]] || match[2]}`;
+  }
+
+  match = name.match(/^Career\[([^\]]+)\]\.Project\[([^\]]+)\]\.(P_Name|P_Cntnt)$/);
+  if (match) {
+    const map = {
+      P_Name: 'name',
+      P_Cntnt: 'description',
+    };
+    return `Career ${match[1]} project ${match[2]} ${map[match[3]] || match[3]}`;
   }
 
   match = name.match(
@@ -118,6 +138,17 @@ export function describeJobKoreaField(name) {
     return `School ${match[1]} ${map[match[2]] || match[2]}`;
   }
 
+  match = name.match(/^HighSchool\[([^\]]+)\]\.(Schl_Name|Entc_YM|Grad_YM|Grad_Type_Code)$/);
+  if (match) {
+    const map = {
+      Schl_Name: 'school',
+      Entc_YM: 'start',
+      Grad_YM: 'end',
+      Grad_Type_Code: 'status',
+    };
+    return `High school ${match[1]} ${map[match[2]] || match[2]}`;
+  }
+
   match = name.match(/^UnivSchool\[([^\]]+)\]\.UnivMajor\[(\d+)\]\.(Major_Name|Major_Type_Code)$/);
   if (match) {
     if (match[3] === 'Major_Name') {
@@ -127,7 +158,7 @@ export function describeJobKoreaField(name) {
   }
 
   match = name.match(
-    /^License\[([^\]]+)\]\.(Lc_Name|Lc_Pub|Lc_YYMM|Lc_Code|Naver_Lcns_Linked_Stat)$/
+    /^License\[([^\]]+)\]\.(Lc_Name|Lc_Pub|Lc_YYMM|Lc_Code|Naver_Lcns_Linked_Stat|Lc_Exp|Lc_CredId|Lc_CredUrl|Lc_Status|Lc_Note)$/
   );
   if (match) {
     const map = {
@@ -136,8 +167,41 @@ export function describeJobKoreaField(name) {
       Lc_YYMM: 'date',
       Lc_Code: '자격증 코드',
       Naver_Lcns_Linked_Stat: '네이버 자격증 연동 상태',
+      Lc_Exp: 'expiration date',
+      Lc_CredId: 'credential ID',
+      Lc_CredUrl: 'credential URL',
+      Lc_Status: 'status',
+      Lc_Note: 'note',
     };
     return `License ${match[1]} ${map[match[2]] || match[2]}`;
+  }
+
+  match = name.match(/^Skill\[([^\]]+)\]\.(Skill_Name|Skill_Level)$/);
+  if (match) {
+    const map = {
+      Skill_Name: 'name',
+      Skill_Level: 'level',
+    };
+    return `Skill ${match[1]} ${map[match[2]] || match[2]}`;
+  }
+
+  match = name.match(/^Language\[([^\]]+)\]\.(Lang_Name|Lang_Level)$/);
+  if (match) {
+    const map = {
+      Lang_Name: 'name',
+      Lang_Level: 'level',
+    };
+    return `Language ${match[1]} ${map[match[2]] || match[2]}`;
+  }
+
+  match = name.match(/^Project\[([^\]]+)\]\.(P_Name|P_Cntnt|P_Url)$/);
+  if (match) {
+    const map = {
+      P_Name: 'name',
+      P_Cntnt: 'description',
+      P_Url: 'URL',
+    };
+    return `Project ${match[1]} ${map[match[2]] || match[2]}`;
   }
 
   match = name.match(/^Award\[([^\]]+)\]\.(Award_Name|Award_Inst_Name|Award_Year|Award_Cntnt)$/);
@@ -161,6 +225,11 @@ export function describeJobKoreaField(name) {
   if (name === 'HopeJob.HJ_Code') return 'Hope job category';
   if (name === 'HopeJob.HJ_Local_Code') return 'Hope job location code';
   if (name === 'HopeJob.HJ_Local_Name') return 'Hope job location';
+  if (name === 'HopeJob.HJ_Salary') return 'Hope salary';
+  if (name === 'HopeJob.HJ_Industry') return 'Hope industry';
+  if (name === 'UserResume.Birth_YMD') return 'Personal birth date';
+  if (name === 'UserResume.Address') return 'Personal address';
+  if (name === 'UserResume.GitHub') return 'Personal GitHub';
 
   return name;
 }
