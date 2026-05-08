@@ -17,6 +17,8 @@ import {
  * Build complete JobKorea form data from SSOT.
  * @param {object} ssot - SSOT resume data
  * @param {object} [sectionIndices] - Server-generated indices per section:
+ *   { career: string[], license: string[], award: string[], school: string,
+ *     skill: string[], language: string[], personalProject: string[] }
  *   { career: string[], license: string[], award: string[], school: string }
  */
 export function buildJobKoreaFormData(ssot, sectionIndices = {}) {
