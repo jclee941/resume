@@ -5,6 +5,7 @@
 
 import { BaseCrawler } from '../../src/crawlers/base-crawler.js';
 import { withStealthBrowser } from '../../src/crawlers/browser-utils.js';
+import { parseJobKoreaProfile } from './jobkorea-profile-parser.js';
 
 export class JobKoreaCrawler extends BaseCrawler {
   constructor(options = {}) {
@@ -13,6 +14,8 @@ export class JobKoreaCrawler extends BaseCrawler {
       rateLimit: 2000,
       ...options,
     });
+    this.resumeNo = options.resumeNo || process.env.JOBKOREA_RNO || '';
+    this.browserRunner = options.browserRunner || withStealthBrowser;
   }
 
   buildSearchQuery(params) {
@@ -185,33 +188,7 @@ export class JobKoreaCrawler extends BaseCrawler {
     }
   }
 
-  /**
-   * Returns the current JobKorea resume snapshot for the authenticated user.
-   *
-   * NOT YET IMPLEMENTED.
-   *
-   * The current placeholder returned `{ success: true, profile: { name: null,
-   * careers: [], skills: [] } }` which is ambiguous — callers cannot distinguish
-   * "empty profile", "not logged in", and "feature not built".
-   *
-   * Implementing this requires:
-   *   1. an authenticated JobKorea session (renew via
-   *      `apps/job-server/scripts/renew-jobkorea-session.js`)
-   *   2. navigating to `/User/Resume/Edit?RNo=<rNo>` with `withStealthBrowser`
-   *   3. running `await page.evaluate(() => $('#frm1').serializeArray())` to
-   *      read the form state, then parsing the index-prefixed field names
-   *      (`Career[c1].C_Name`, `UnivSchool[c1].UnivMajor[0].Major_Name`, etc.)
-   *      documented in
-   *      apps/job-server/scripts/profile-sync/jobkorea-handler/change-detection.js
-   *   4. mapping into the unified `ProfileAggregator` shape:
-   *      `{ basic, careers, education, skills, meta }`
-   *
-   * Tracked in: docs/architecture/RESUME_SYNC_AUDIT_2026-04-29.md (Issue D).
-   *
-   * Returns a structured non-implemented response so consumers can detect
-   * the unsupported state instead of silently working with empty arrays.
-   */
-  async getProfile() {
+  async getProfile(resumeNo = this.resumeNo) {
     if (!this.cookies) {
       return {
         success: false,
@@ -221,20 +198,88 @@ export class JobKoreaCrawler extends BaseCrawler {
       };
     }
 
-    return {
-      success: false,
-      source: 'jobkorea',
-      status: 'NOT_IMPLEMENTED',
-      profile: null,
-      reason:
-        'JobKorea profile read-back requires live authenticated DOM probing of /User/Resume/Edit. See docs/architecture/RESUME_SYNC_AUDIT_2026-04-29.md (Issue D).',
-      recommendedFlow: [
-        'Authenticate via apps/job-server/scripts/renew-jobkorea-session.js',
-        'Probe /User/Resume/Edit?RNo=<rNo> form via withStealthBrowser',
-        'Parse $(#frm1).serializeArray() against KEY_FIELD_PATTERNS in change-detection.js',
-        'Normalize into ProfileAggregator { basic, careers, education, skills, meta }',
-      ],
-    };
+    if (!resumeNo) {
+      return {
+        success: false,
+        source: 'jobkorea',
+        status: 'RESUME_NO_REQUIRED',
+        error: 'JobKorea resume number is required',
+        profile: null,
+      };
+    }
+
+    const sourceUrl = `${this.baseUrl}/User/Resume/View?rNo=${encodeURIComponent(resumeNo)}`;
+
+    try {
+      const profile = await this.browserRunner(async (page) => {
+        await this.applyCookiesToPage(page);
+        await page.goto(sourceUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
+
+        const currentUrl = typeof page.url === 'function' ? page.url() : sourceUrl;
+        if (/\/Login(?:\/|\?|$)/i.test(currentUrl)) {
+          return null;
+        }
+
+        await page
+          .waitForSelector('body', {
+            timeout: 10000,
+          })
+          .catch(() => {});
+
+        const html =
+          typeof page.content === 'function'
+            ? await page.content()
+            : await page.evaluate(() => document.documentElement.outerHTML);
+
+        return parseJobKoreaProfile(html, { sourceUrl: currentUrl || sourceUrl, resumeNo });
+      });
+
+      if (!profile) {
+        return {
+          success: false,
+          source: 'jobkorea',
+          status: 'SESSION_EXPIRED',
+          error: 'JobKorea session expired or login redirect detected',
+          profile: null,
+        };
+      }
+
+      return {
+        success: true,
+        source: 'jobkorea',
+        profile,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        source: 'jobkorea',
+        status: 'SCRAPE_FAILED',
+        error: error.message,
+        profile: null,
+      };
+    }
+  }
+
+  async applyCookiesToPage(page) {
+    if (!this.cookies || typeof page.setCookie !== 'function') return;
+
+    const cookies = String(this.cookies)
+      .split(';')
+      .map((cookie) => {
+        const [name, ...valueParts] = cookie.trim().split('=');
+        if (!name || valueParts.length === 0) return null;
+        return {
+          name,
+          value: valueParts.join('='),
+          domain: '.jobkorea.co.kr',
+          path: '/',
+        };
+      })
+      .filter(Boolean);
+
+    if (cookies.length > 0) {
+      await page.setCookie(...cookies);
+    }
   }
 
   normalizeJob(rawJob) {
