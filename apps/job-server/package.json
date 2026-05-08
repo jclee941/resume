@@ -42,7 +42,8 @@
     "jobkorea:har:capture:dry": "node scripts/profile-sync/jobkorea-handler/har-capture-cli.js --dry-run",
     "jobkorea:har:sanitize": "node scripts/profile-sync/jobkorea-handler/har-tools-cli.js sanitize",
     "jobkorea:har:analyze": "node scripts/profile-sync/jobkorea-handler/har-tools-cli.js analyze",
-    "jobkorea:api:test": "node --test 'scripts/profile-sync/__tests__/jobkorea-api-client.test.js' 'scripts/profile-sync/__tests__/jobkorea-api-payload.test.js'"
+    "jobkorea:api:test": "node --test 'scripts/profile-sync/__tests__/jobkorea-api-client.test.js' 'scripts/profile-sync/__tests__/jobkorea-api-payload.test.js'",
+    "jobkorea:sync:hybrid:test": "node --test 'scripts/profile-sync/__tests__/jobkorea-sync-hybrid.test.js'"
   },
   "keywords": [
     "mcp",
