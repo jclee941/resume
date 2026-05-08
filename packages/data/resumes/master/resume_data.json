@@ -79,11 +79,11 @@
   "platformVariants": {
     "wanted": {
       "headline": "OA 엔지니어로 출발한 8년차 DevSecOps/SRE — 금융 거래소 SOC + FSC 본인가 + Splunk ES·n8n·FortiGate HA",
-      "about": "**\"반복 작업은 자동화 되어야 한다\"** — 이 한 가지 신념으로 운영해 온 DevSecOps/SRE 엔지니어입니다.\n\n**현장 → 자동화 → AI 에이전트**, 한 번도 운영의 손을 놓지 않으면서 도구만 바꿔왔습니다. KAI 폐쇄망에서 Linux를 수기로 운영하던 시절, 메타넷·조인트리에서 Ansible·Python·NSX-T·Wazuh로 자동화에 입문하던 시기, 콸텍투자일임 FSDC에서 금융감독원 감사를 데이터로 대응하던 경험을 거쳐, 현재 가온누리·아이티센 트랙에서 넥스트레이드 매매체결시스템을 FortiGate HA(5계층 망분리)·FSC 본인가·Splunk ES + n8n + FortiManager API 으로 운영합니다.\n\n**측정 가능한 임팩트**:\n• NAC 정책 배포 자동화로 수작업 시간 대폭 단축\n• 방화벽 정책을 Ansible Role로 표준화\n• 보안 이벤트 자동 탐지·대응으로 MTTR 단축\n• 환경 규모: 거래소 매매체결시스템 운영 규모\n\n**보유 역량**: SIEM 탐지 룰 설계(Splunk ES), 보안 운영 자동화(n8n, FortiManager API), HA 보안 아키텍처(FortiGate HA, NSX-T), IaC(Ansible Role, Terraform), 관측성(Grafana/Prometheus/Loki), 금융 규제(FSC 본인가, 금감원 감사)\n\n포트폴리오: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
+      "about": "**\"반복 작업은 자동화 되어야 한다\"** — 이 한 가지 신념으로 운영해 온 DevSecOps/SRE 엔지니어입니다.\n\n**현장 → 자동화 → AI 에이전트**, 한 번도 운영의 손을 놓지 않으면서 도구만 바꿔왔습니다. KAI 폐쇄망에서 Linux를 수기로 운영하던 시절, 메타넷·조인트리에서 Ansible·Python·NSX-T·Wazuh로 자동화에 입문하던 시기, 콸텍투자일임 FSDC에서 금융감독원 감사를 데이터로 대응하던 경험을 거치며, 현재 가온누리·아이티센 트랙에서 넥스트레이드 매매체결시스템을 FortiGate HA(5계층 망분리)·FSC 본인가·Splunk ES + n8n + FortiManager API 으로 운영합니다.\n\n**대표 임팩트**:\n• NAC 정책 배포 자동화로 수작업 시간 대폭 단축\n• 방화벽 정책을 Ansible Role로 표준화\n• 보안 이벤트 자동 탐지·대응으로 인지·분류·알림 흐름 표준화\n• 운영 환경: 금융 거래소 매매체결시스템의 보안 운영·규제 대응 환경\n\n**보유 역량**: SIEM 탐지 룰 설계(Splunk ES), 보안 운영 자동화(n8n, FortiManager API), HA 보안 아키텍처(FortiGate HA, NSX-T), IaC(Ansible Role, Terraform), 관측성(Grafana/Prometheus/Loki), 금융 규제(FSC 본인가, 금감원 감사)\n\n포트폴리오: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
     },
     "jobkorea": {
       "headline": "8년차 DevSecOps/SRE — OA→자동화→FSC 본인가→보안 운영 (Splunk ES, n8n, FortiGate HA)",
-      "about": "**\"반복 작업은 자동화 되어야 한다\"** — 한 가지 신념으로 운영의 도구를 진화시켜 왔습니다.\n\n[현장 → 자동화 → AI 에이전트 trajectory]\n• KAI 폐쇄망 (2017–2018): Linux 수기 운영, 패치/방화벽/IDS 정책\n• Linux 기초 재정비 (2018.11–2019.11): RHCSA·LPIC-1·리눅스마스터 2급 연속 취득\n• 자동화 입문 (2019–2022): 메타넷 컴택센터 대규모 SSL VPN/NAC + Ansible/Python; 조인트리 NSX-T 마이크로세그멘테이션 + Wazuh\n• 금융 인프라 (2022–2024): 콸텍투자일임 FSDC, 금감원 감사 대응 + DB 튜닝\n• 보안 구축 (2024–2025): 가온누리 넥스트레이드, FortiGate HA 5계층 망분리 + Ansible Role 표준화 + FSC 본인가 통과\n• 보안 운영 (2025–현재): 아이티센 CTS 넥스트레이드, Splunk ES + n8n + FortiManager API 기반 자동 탐지·대응 (자동 탐지·대응 운영)\n\n[측정 가능한 임팩트]\nNAC·방화벽 정책 배포 자동화 · 보안 이벤트 자동 탐지·대응 · 침해 시도 차단 · DLP 오탐 감소\n\n[보유 기술 스택]\nSplunk ES, n8n, FortiGate/FortiManager API, Ansible Role, Python, Terraform, Docker, NSX-T, Wazuh, Grafana/Prometheus/Loki, Cloudflare Workers, MCP/AI 에이전트\n\n포트폴리오: https://resume.jclee.me",
+      "about": "**\"반복 작업은 자동화 되어야 한다\"** — 한 가지 신념으로 운영의 도구를 진화시켜 왔습니다.\n\n[경력 흐름: 현장 운영 → 자동화 → AI 에이전트]\n• KAI 폐쇄망 (2017–2018): Linux 수기 운영, 패치/방화벽/IDS 정책\n• Linux 기초 재정비 (2018.11–2019.11): RHCSA·LPIC-1·리눅스마스터 2급 연속 취득\n• 자동화 입문 (2019–2022): 메타넷 컴택센터 대규모 SSL VPN/NAC + Ansible/Python; 조인트리 NSX-T 마이크로세그멘테이션 + Wazuh\n• 금융 인프라 (2022–2024): 콸텍투자일임 FSDC, 금감원 감사 대응 + DB 튜닝\n• 보안 구축 (2024–2025): 가온누리 넥스트레이드, FortiGate HA 5계층 망분리 + Ansible Role 표준화 + FSC 본인가 통과\n• 보안 운영 (2025–현재): 아이티센 CTS 넥스트레이드, Splunk ES + n8n + FortiManager API 기반 자동 탐지·대응 운영\n\n[측정 가능한 임팩트]\nNAC·방화벽 정책 배포 자동화 · 보안 이벤트 자동 탐지·대응 · 접근 제어 정책 정비 · DLP 정책 운영 표준화\n\n[보유 기술 스택]\nSplunk ES, n8n, FortiGate/FortiManager API, Ansible Role, Python, Terraform, Docker, NSX-T, Wazuh, Grafana/Prometheus/Loki, Cloudflare Workers, MCP/AI 에이전트\n\n포트폴리오: https://resume.jclee.me",
       "defaultJobCode": ""
     }
   },
@@ -110,7 +110,7 @@
       "teamSize": "정보보안팀 운영 셀",
       "myRole": "거래소 매매체결시스템 보안 운영 자동화 및 SIEM·SOAR 체계 구축 담당",
       "workType": "정규직 (파견)",
-      "description": "넥스트레이드 금융 거래소 매매체결시스템의 보안 운영 체계를 SIEM 기반 탐지·대응 파이프라인으로 전환했습니다. Splunk ES 탐지 룰을 직접 설계·운영하여 보안 이벤트 탐지 범위를 확장하고, Splunk Saved Search → n8n webhook → Slack/SMS 연동 실시간 알림 파이프라인을 구축하여 이벤트 발생부터 담당자 인지까지의 지연을 단축했습니다. FortiManager JSON-RPC API를 활용한 방화벽 정책 자동 조회 시스템을 개발하여 콘솔 수동 조작을 제거하고 접근 제어 일관성을 확보했습니다. Python과 Docker 기반 마이크로서비스로 탐지 룰의 버전 관리 및 배포 자동화를 구현하여 운영 효율을 향상시켰습니다.",
+      "description": "넥스트레이드 금융 거래소 매매체결시스템의 보안 운영 체계를 SIEM 기반 탐지·대응 파이프라인으로 전환했습니다. Splunk ES 탐지 룰을 직접 설계·운영하여 보안 이벤트 탐지 범위를 확장하고, Splunk Saved Search → n8n webhook → Slack/SMS 연동 실시간 알림 파이프라인을 구축하여 이벤트 발생부터 담당자 인지까지의 지연을 단축했습니다. FortiManager JSON-RPC API를 활용한 방화벽 정책 자동 조회 시스템을 개발하여 콘솔 수동 조작을 제거하고 접근 제어 일관성을 확보했습니다. Python과 Docker 기반 마이크로서비스로 탐지 룰의 버전 관리 및 배포 자동화를 구현하여 룰 변경 이력을 추적 가능한 운영 단위로 전환했습니다.",
       "wantedSummary": "SIEM 탐지·대응의 수동 반복을 자동화하여 보안 운영 효율화를 추진한 경험",
       "note": "아이티센 CTS 소속, 넥스트레이드 매매체결시스템 보안운영SM 파견",
       "projects": [
@@ -146,7 +146,7 @@
       "teamSize": "보안 구축 셀",
       "myRole": "금융 거래소 고가용성 보안 아키텍처 설계 및 FSC 본인가 대응 담당",
       "workType": "정규직 (파견)",
-      "description": "넥스트레이드 매매체결시스템의 금융위 본인가 심사 기준을 충족하는 고가용성 보안 인프라를 설계·구축했습니다. 서비스 연속성 확보를 위해 FortiGate FGCP 액티브-패시브 HA를 구성하고, 금융권 규제에 맞는 5계층 망분리 보안 아키텍처를 설계·문서화하여 FSC 본인가 사전 심사를 통과시켰습니다. 운영 인계 시 장비별 수동 설정의 불일치와 인계 비용을 줄이기 위해 Ansible Role로 방화벽 정책 및 보안 장비 초기 설정을 표준화하여 구축에서 운영으로의 전환을 원활하게 했습니다. VMware 환경에서 가상 방화벽의 성능 최적화 및 장애 대응 체계를 구축했습니다.",
+      "description": "넥스트레이드 매매체결시스템의 금융위 본인가 심사 기준을 충족하는 고가용성 보안 인프라를 설계·구축했습니다. 서비스 연속성 확보를 위해 FortiGate FGCP 액티브-패시브 HA를 구성하고, 금융권 규제에 맞는 5계층 망분리 보안 아키텍처를 설계·문서화하여 FSC 본인가 사전 심사를 통과시켰습니다. 운영 인계 시 장비별 수동 설정의 불일치와 인계 비용을 줄이기 위해 Ansible Role로 방화벽 정책 및 보안 장비 초기 설정을 표준화하여 구축 산출물이 운영 절차로 일관되게 인계되도록 했습니다. VMware 환경에서 가상 방화벽의 성능 최적화 및 장애 대응 체계를 구축했습니다.",
       "wantedSummary": "금융권 규제 심사 기준을 충족하는 고가용성 보안 아키텍처를 설계·구축한 경험",
       "note": "가온누리정보시스템 소속, 넥스트레이드 매매체결시스템 구축 파견",
       "projects": [
@@ -182,7 +182,7 @@
       "teamSize": "규모 미공개 인프라 운영팀",
       "myRole": "금융보안데이터센터 인프라 운영 자동화 및 규제 감사 대응 담당",
       "workType": "정규직",
-      "description": "금융보안데이터센터(FSDC)에서 AI 트레이딩 플랫폼 인프라의 안정적 운영과 규제 대응 체계를 구축했습니다. Python 기반 자동화 스크립트를 개발하여 반복적인 인프라 운영 작업을 표준화하고, 금융감독원 정기 감사에 필요한 DLP 정책 운영 체계와 감사 산출물 템플릿을 구축하여 규제 대응 역량을 강화했습니다. PostgreSQL DB 접근제어 쿼리 튜닝으로 시스템 부하를 개선하고, PB(프라이빗뱅킹) 플랫폼 POC의 성능 검증 및 안정적인 런칭을 지원했습니다. DB 백업 체계 구축과 데이터 보호 정책 수립을 통해 금융 데이터의 가용성과 무결성을 확보했습니다.",
+      "description": "금융보안데이터센터(FSDC)에서 AI 트레이딩 플랫폼 인프라의 안정적 운영과 규제 대응 체계를 구축했습니다. Python 기반 자동화 스크립트를 개발하여 반복적인 인프라 운영 작업을 표준화하고, 금융감독원 정기 감사에 필요한 DLP 정책 운영 체계와 감사 산출물 템플릿을 구축하여 반복되는 감사 대응을 재사용 가능한 프로세스로 전환했습니다. PostgreSQL DB 접근제어 쿼리 튜닝으로 시스템 부하를 개선하고, PB(프라이빗뱅킹) 플랫폼 POC의 성능 검증 및 안정적인 런칭을 지원했습니다. DB 백업 체계 구축과 데이터 보호 정책 수립을 통해 금융 데이터의 가용성과 무결성을 확보했습니다.",
       "wantedSummary": "금융보안데이터센터(FSDC) 인프라 운영 자동화 및 감사 대응 경험",
       "note": "콴텍투자일임 정규직, AI Trading Platform 인프라 운영",
       "projects": [
@@ -284,7 +284,7 @@
       "teamSize": "규모 미공개 현장 IT 운영팀",
       "myRole": "폐쇄망 Linux 서버 운영 및 보안 패치 체계 구축 담당",
       "workType": "정규직 (파견)",
-      "description": "한국항공우주산업(KAI) 폐쇄망 환경에서 IT 인프라 운영 기초를 다지고 보안 관리 체계를 구축했습니다. Linux 시스템 로그 분석 체계를 수립하여 하드웨어 장애를 사전 탐지하고, 방화벽 정책 변경 이력 추적 및 접근 로그 분석 체계를 구축하여 보안 감사 대응 역량을 확보했습니다. WSUS 기반 Windows 서버 패치 자동화와 Linux 보안 업데이트 체계를 구축하여 대규모 서버 패치 일정을 체계적으로 관리했고, 납품 정보 유출 방지를 위한 보안 가이드라인 점검 프로세스를 운영하여 시스템 취약점을 사전에 제거했습니다.",
+      "description": "한국항공우주산업(KAI) 폐쇄망 환경에서 Linux 서버, 방화벽 정책, 패치 운영을 관리하며 보안 관리 체계를 구축했습니다. Linux 시스템 로그 분석 체계를 수립하여 하드웨어 장애를 사전 탐지하고, 방화벽 정책 변경 이력 추적 및 접근 로그 분석 체계를 구축하여 보안 감사 대응 역량을 확보했습니다. WSUS 기반 Windows 서버 패치 자동화와 Linux 보안 업데이트 체계를 구축하여 대규모 서버 패치 일정을 체계적으로 관리했고, 납품 정보 유출 방지를 위한 보안 가이드라인 점검 프로세스를 운영하여 시스템 취약점을 사전에 제거했습니다.",
       "wantedSummary": "폐쇄망 환경에서 보안 패치와 방화벽 정책 관리 체계를 구축한 경험",
       "client": "한국항공우주산업(주) (KAI)",
       "note": "엠티데이타 소속, 한국항공우주산업(KAI) IT 인프라 현장 파견",
@@ -920,10 +920,10 @@
   ],
   "achievements": [
     "넥스트레이드 매매체결시스템 보안 인프라(FortiGate HA, 5계층 망분리)를 설계·운영하며 금융위 본인가 사전 심사를 통과했습니다.",
-    "Splunk ES에서 dest_port 기반 유출 탐지 룰과 NSX-T DFW 로그 correlation 룰을 설계하고, n8n으로 FortiManager JSON-RPC API를 호출해 정책 조회를 자동화한 보안 이벤트 알림 파이프라인을 운영합니다.",
+    "Splunk ES 탐지 룰, n8n 알림, FortiManager 정책 조회를 하나의 보안 이벤트 인지·분류·알림 흐름으로 연결해 운영합니다.",
     "Prometheus node_exporter로 Proxmox VM/CT 메트릭을 수집하고, Grafana Dashboard JSON을 코드(Grafana-as-code)로 관리해 단일 화면 가시화를 IaC로 재현 가능하게 했습니다.",
     "Slack·GitHub Actions·Cloudflare 훅을 n8n 공통 워크플로우로 추상화하고, 에러 핸들링·재시도를 표준화해 신규 자동화 추가 시 노드 추가만으로 배포 가능하도록 만들었습니다.",
-    "메타넷 컨택센터 재택근무 환경에서 NAC 예외 정책 처리와 스위치 점검을 Ansible 플레이북으로 자동화하고 신규 단말 등록 파이프라인을 구축했습니다.",
+    "컨택센터 원격 근무 전환 과정에서 NAC 예외 요청, 단말 등록, 현장 점검 절차를 재사용 가능한 운영 체크리스트로 정리했습니다.",
     "FortiGate SSL-VPN 환경에서 엔드포인트 보호 에이전트와 VPN 클라이언트 프로파일 충돌을 tcpdump로 root cause 분석해 FortiClient 프로파일 분리 정책으로 해결하고, 신규 사이트 VLAN 서브넷팅을 설계·적용했습니다.",
     "KAI 폐쇄망 Linux 서버 방화벽 정책에서 사용 빈도 0인 중복 규칙을 firewall-cmd 파싱으로 식별·정리해 운영 부담을 줄였습니다."
   ],
