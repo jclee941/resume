@@ -101,6 +101,17 @@ async function downloadCaptchaImage(page, captchaSrc) {
 }
 
 /**
+ * Check whether cliproxy is configured for automatic CAPTCHA solving.
+ *
+ * @param {NodeJS.ProcessEnv | Record<string, string | undefined>} env
+ * @returns {boolean}
+ */
+export function isCliproxyConfigured(env = process.env) {
+  return !!env.CLIPROXY_BASE?.trim() && !!env.CLIPROXY_API_KEY?.trim();
+}
+
+
+/**
  * Locate the JobKorea CAPTCHA image src on the current page.
  * Returns null if no CAPTCHA image is found.
  *
@@ -199,6 +210,11 @@ export async function solveJobKoreaCaptcha(page) {
     return null;
   }
   log(`CAPTCHA image: ${src}`, 'info', 'jobkorea');
+
+  if (!isCliproxyConfigured()) {
+    log('CLIPROXY_BASE not configured — skipping automatic CAPTCHA solve', 'warn', 'jobkorea');
+    return null;
+  }
 
   const image = await downloadCaptchaImage(page, src);
   log(`CAPTCHA image downloaded (${image.mime}, ${image.base64.length} chars b64)`, 'info', 'jobkorea');
