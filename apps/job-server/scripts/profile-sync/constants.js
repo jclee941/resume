@@ -44,10 +44,24 @@ export const PLATFORMS = {
   jobkorea: {
     name: 'JobKorea',
     get profileUrl() {
-      return `https://www.jobkorea.co.kr/User/Resume/View?rNo=${process.env.JOBKOREA_RNO}`;
+      const rNo = process.env.JOBKOREA_RNO?.trim();
+      if (!rNo) {
+        throw new Error(
+          'JOBKOREA_RNO environment variable is required for JobKorea sync. ' +
+          'Set it to your JobKorea resume number (e.g., export JOBKOREA_RNO=30236578)'
+        );
+      }
+      return `https://www.jobkorea.co.kr/User/Resume/View?rNo=${rNo}`;
     },
     get editUrl() {
-      return `https://www.jobkorea.co.kr/User/Resume/Edit?RNo=${process.env.JOBKOREA_RNO}`;
+      const rNo = process.env.JOBKOREA_RNO?.trim();
+      if (!rNo) {
+        throw new Error(
+          'JOBKOREA_RNO environment variable is required for JobKorea sync. ' +
+          'Set it to your JobKorea resume number (e.g., export JOBKOREA_RNO=30236578)'
+        );
+      }
+      return `https://www.jobkorea.co.kr/User/Resume/Edit?RNo=${rNo}`;
     },
   },
   saramin: {
