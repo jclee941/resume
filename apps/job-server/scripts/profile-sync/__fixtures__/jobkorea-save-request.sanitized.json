@@ -1,0 +1,57 @@
+{
+  "log": {
+    "version": "1.2",
+    "creator": { "name": "jobkorea-har-tools", "version": "1.0.0" },
+    "entries": [
+      {
+        "request": {
+          "method": "GET",
+          "url": "https://www.jobkorea.co.kr/User/Resume/Edit?rNo=<resume-id>",
+          "headers": [{ "name": "Accept", "value": "text/html" }],
+          "queryString": [{ "name": "rNo", "value": "<resume-id>" }]
+        },
+        "response": {
+          "status": 200,
+          "headers": [{ "name": "Content-Type", "value": "text/html; charset=utf-8" }],
+          "content": { "mimeType": "text/html", "text": "<form id=\"frm1\"></form>" }
+        }
+      },
+      {
+        "request": {
+          "method": "POST",
+          "url": "https://www.jobkorea.co.kr/User/Resume/Save?_=<timestamp>",
+          "headers": [
+            { "name": "Content-Type", "value": "application/x-www-form-urlencoded; charset=UTF-8" },
+            { "name": "X-Requested-With", "value": "XMLHttpRequest" },
+            { "name": "Cookie", "value": "[REDACTED]" }
+          ],
+          "queryString": [{ "name": "_", "value": "<timestamp>" }],
+          "postData": {
+            "mimeType": "application/x-www-form-urlencoded; charset=UTF-8",
+            "params": [
+              { "name": "M_ID", "value": "[REDACTED]" },
+              { "name": "M_PWD", "value": "[REDACTED]" },
+              { "name": "UserResume.Resume_Title", "value": "DevSecOps SRE Engineer" },
+              { "name": "UserResume.User_Name", "value": "[REDACTED]" },
+              { "name": "UserResume.Email", "value": "[REDACTED]" },
+              { "name": "UserResume.Cellphone", "value": "[REDACTED]" },
+              { "name": "UserResume.Address", "value": "[REDACTED]" },
+              { "name": "UserResume.Birth_Date", "value": "[REDACTED]" },
+              { "name": "Career[c1].C_Name", "value": "Example Cloud Operations" },
+              { "name": "Career[c1].Position", "value": "SRE" },
+              { "name": "Language[c1].Lang1_Name", "value": "English" },
+              { "name": "UserResume.Attach_File_Name", "value": "12345," },
+              { "name": "InputStat_PortfolioInputStat", "value": "1" },
+              { "name": "hdnIsCompleteSave", "value": "False" }
+            ]
+          }
+        },
+        "response": {
+          "status": 200,
+          "headers": [{ "name": "Content-Type", "value": "application/json; charset=utf-8" }],
+          "content": { "mimeType": "application/json", "text": "{\"saveResult\":{\"IsSuccess\":true}}" }
+        }
+      }
+    ]
+  }
+}

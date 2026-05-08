@@ -39,7 +39,9 @@
     "cookies:extract": "node scripts/extract-cookies-cdp.js",
     "cookies:import": "node scripts/import-cookies-manual.js",
     "jobkorea:har:capture": "node scripts/profile-sync/jobkorea-handler/har-capture-cli.js --apply --include-save --include-portfolio",
-    "jobkorea:har:capture:dry": "node scripts/profile-sync/jobkorea-handler/har-capture-cli.js --dry-run"
+    "jobkorea:har:capture:dry": "node scripts/profile-sync/jobkorea-handler/har-capture-cli.js --dry-run",
+    "jobkorea:har:sanitize": "node scripts/profile-sync/jobkorea-handler/har-tools-cli.js sanitize",
+    "jobkorea:har:analyze": "node scripts/profile-sync/jobkorea-handler/har-tools-cli.js analyze"
   },
   "keywords": [
     "mcp",
