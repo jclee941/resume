@@ -145,8 +145,8 @@ export function mapLanguagesToFormFields(ssot, indices) {
     if (idx >= keys.length) return;
     const key = keys[idx];
     pushField(fields, `Language[${key}].Index_Name`, key);
-    pushField(fields, `Language[${key}].Lang_Name`, lang?.name || '');
-    pushField(fields, `Language[${key}].Lang_Level`, lang?.level || '');
+    pushField(fields, `Language[${key}].Lang1_Name`, lang?.name || '');
+    pushField(fields, `Language[${key}].Lang1_Stat`, lang?.level || '');
   });
   pushField(fields, 'Language.index', keys.slice(0, languages.length).join(','));
   pushField(fields, 'InputStat.LanguageInputStat', 'True');
