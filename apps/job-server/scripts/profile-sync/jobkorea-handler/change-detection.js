@@ -37,10 +37,12 @@ export function getEditUrl() {
   const profileUrl = PLATFORMS.jobkorea?.profileUrl || '';
   const match = profileUrl.match(/[?&]rNo=(\d+)/i);
   if (!match) {
-    throw new Error(
+    const error = new Error(
       `Cannot extract rNo from PLATFORMS.jobkorea.profileUrl ("${profileUrl}"). ` +
         'Set profileUrl to https://www.jobkorea.co.kr/User/Resume/View?rNo=XXXXX'
     );
+    error.failLoud = true;
+    throw error;
   }
   return `https://www.jobkorea.co.kr/User/Resume/Edit?RNo=${match[1]}`;
 }

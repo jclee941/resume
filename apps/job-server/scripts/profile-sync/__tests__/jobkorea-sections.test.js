@@ -97,10 +97,10 @@ describe('mapCareersToFormFields', () => {
     assert.strictEqual(byName.get('Career[c1].RetireSt'), '1');
   });
 
-  it('truncates long description to 500 chars', () => {
-    const longDescription = 'a'.repeat(800);
+  it('truncates long myRole to 500 chars', () => {
+    const longMyRole = 'a'.repeat(800);
     const fields = mapCareersToFormFields({
-      careers: [{ ...baseCareer, description: longDescription }],
+      careers: [{ ...baseCareer, myRole: longMyRole }],
     });
     const byName = toMap(fields);
 
