@@ -66,27 +66,3 @@ export async function clickVisibleSubmit(page, { log }) {
 
   throw new Error('Visible submit button not found');
 }
-  const candidates = await page.$$('button[type="submit"], input[type="submit"]');
-  for (const candidate of candidates) {
-    const visible = await candidate.evaluate((element) => {
-      const style = window.getComputedStyle(element);
-      const rect = element.getBoundingClientRect();
-      return (
-        style.display !== 'none' &&
-        style.visibility !== 'hidden' &&
-        Number(style.opacity || '1') > 0 &&
-        rect.width > 0 &&
-        rect.height > 0
-      );
-    });
-
-    if (visible) {
-      await candidate.click();
-      log('Submit clicked');
-      await sleep(5000);
-      return;
-    }
-  }
-
-  throw new Error('Visible submit button not found');
-}
