@@ -43,8 +43,12 @@ export const PLATFORMS = {
   },  // end wanted
   jobkorea: {
     name: 'JobKorea',
-    profileUrl: `https://www.jobkorea.co.kr/User/Resume/View?rNo=${process.env.JOBKOREA_RNO || '30236578'}`,
-    editUrl: `https://www.jobkorea.co.kr/User/Resume/Edit?RNo=${process.env.JOBKOREA_RNO || '30236578'}`,
+    get profileUrl() {
+      return `https://www.jobkorea.co.kr/User/Resume/View?rNo=${process.env.JOBKOREA_RNO}`;
+    },
+    get editUrl() {
+      return `https://www.jobkorea.co.kr/User/Resume/Edit?RNo=${process.env.JOBKOREA_RNO}`;
+    },
   },
   saramin: {
     name: 'Saramin',
