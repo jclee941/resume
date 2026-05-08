@@ -21,6 +21,11 @@ async function activateRequiredSections(page) {
       'InputStat_LicenseInputStat',
       'InputStat_AwardInputStat',
       'InputStat_PortfolioInputStat',
+      'InputStat_SchoolInputStat',
+      'InputStat_HighSchoolInputStat',
+      'InputStat_SkillInputStat',
+      'InputStat_LanguageInputStat',
+      'InputStat_ProjectInputStat',
     ];
     for (const syncId of requiredSections) {
       const btn = $(`button[data-sync_id="${syncId}"]`);
@@ -70,11 +75,11 @@ async function appendPortfolioFields(page, ssot, targetFields, options = {}) {
 function logChangeSummary(changes) {
   if (changes.length > 0) {
     log(`Found ${changes.length} field change(s)`, 'diff', 'jobkorea');
-    for (const change of changes.slice(0, 20)) {
+    for (const change of changes.slice(0, 50)) {
       log(`${change.field}: "${change.from}" -> "${change.to}"`, 'diff', 'jobkorea');
     }
-    if (changes.length > 20) {
-      log(`... and ${changes.length - 20} more`, 'diff', 'jobkorea');
+    if (changes.length > 50) {
+      log(`... and ${changes.length - 50} more`, 'diff', 'jobkorea');
     }
     return;
   }
@@ -90,6 +95,9 @@ async function pruneOldSectionEntries(page, sectionIndices) {
         { prefix: 'License', keep: new Set(indices.license) },
         { prefix: 'Award', keep: new Set(indices.award) },
         { prefix: 'Portfolio', keep: new Set(indices.portfolio) },
+        { prefix: 'Skill', keep: new Set(indices.skill) },
+        { prefix: 'Language', keep: new Set(indices.language) },
+        { prefix: 'Project', keep: new Set(indices.personalProject) },
       ];
       for (const { prefix, keep } of sections) {
         document.querySelectorAll(`[name^="${prefix}["]`).forEach((el) => {
@@ -103,6 +111,9 @@ async function pruneOldSectionEntries(page, sectionIndices) {
       license: sectionIndices.license,
       award: sectionIndices.award,
       portfolio: sectionIndices.portfolio,
+      skill: sectionIndices.skill,
+      language: sectionIndices.language,
+      personalProject: sectionIndices.personalProject,
     }
   );
 }
@@ -259,7 +270,10 @@ export async function syncJobKoreaProfile(handler, ssot, options = {}) {
       `Entry slots — Career: ${sectionIndices.career.length} (${sectionIndices.career.join(',')}), ` +
         `License: ${sectionIndices.license.length} (${sectionIndices.license.join(',')}), ` +
         `Award: ${sectionIndices.award.length} (${sectionIndices.award.join(',')}), ` +
-        `School: ${sectionIndices.school}`,
+        `School: ${sectionIndices.school}, ` +
+        `Skill: ${(sectionIndices.skill || []).length} (${(sectionIndices.skill || []).join(',')}), ` +
+        `Language: ${(sectionIndices.language || []).length} (${(sectionIndices.language || []).join(',')}), ` +
+        `Project: ${(sectionIndices.personalProject || []).length} (${(sectionIndices.personalProject || []).join(',')})`,
       'info',
       'jobkorea'
     );

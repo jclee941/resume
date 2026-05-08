@@ -20,11 +20,25 @@ export async function createJobKoreaEntrySlots(handler, page, ssot) {
     (c) => c?.date
   );
   const awardItems = Array.isArray(ssot?.awards) ? ssot.awards : [];
+  const skillItems = [];
+  for (const category of Object.values(ssot?.skills || {})) {
+    if (category && Array.isArray(category.items)) {
+      for (const item of category.items) {
+        if (typeof item === 'object' && item?.name) skillItems.push(item);
+        else if (typeof item === 'string') skillItems.push({ name: item });
+      }
+    }
+  }
+  const languages = Array.isArray(ssot?.languages) ? ssot.languages : [];
+  const personalProjects = Array.isArray(ssot?.personalProjects) ? ssot.personalProjects : [];
   const sections = [
     { prefix: 'Career', needed: careers.length },
     { prefix: 'License', needed: validCerts.length },
     { prefix: 'Award', needed: awardItems.length },
     { prefix: 'Portfolio', needed: ssot?.personal?.portfolio ? 1 : 0 },
+    { prefix: 'Skill', needed: skillItems.length },
+    { prefix: 'Language', needed: languages.length },
+    { prefix: 'Project', needed: personalProjects.length },
   ];
 
   const existingIndices = {};
@@ -49,8 +63,10 @@ export async function createJobKoreaEntrySlots(handler, page, ssot) {
 
     existingIndices[prefix] = new Set(await handler.readSectionIndices(page, prefix));
 
+    const existingCount = existingIndices[prefix].size;
+    const slotsToAdd = Math.max(0, needed - existingCount);
     let addedCount = 0;
-    while (addedCount < needed) {
+    while (addedCount < slotsToAdd) {
       const prevTotal = (await handler.readSectionIndices(page, prefix)).length;
 
       const clicked = await page.evaluate((pfx) => {
@@ -59,6 +75,9 @@ export async function createJobKoreaEntrySlots(handler, page, ssot) {
           License: '자격증',
           Award: '수상',
           Portfolio: '포트폴리오',
+          Skill: '스킬',
+          Language: '외국어',
+          Project: '개인프로젝트',
         };
         const label = sectionLabels[pfx];
         if (!label) return false;
@@ -111,7 +130,7 @@ export async function createJobKoreaEntrySlots(handler, page, ssot) {
         const newTotal = (await handler.readSectionIndices(page, prefix)).length;
         if (newTotal <= prevTotal) {
           log(
-            `Timeout: ${prefix} stuck at ${addedCount}/${needed} added entries`,
+            `Timeout: ${prefix} stuck at ${addedCount}/${slotsToAdd} added entries`,
             'warn',
             'jobkorea'
           );
@@ -128,6 +147,9 @@ export async function createJobKoreaEntrySlots(handler, page, ssot) {
   const allAwardIndices = await handler.readSectionIndices(page, 'Award');
   const schoolIndices = await handler.readSectionIndices(page, 'UnivSchool');
   const allPortfolioIndices = await handler.readSectionIndices(page, 'Portfolio');
+  const allSkillIndices = await handler.readSectionIndices(page, 'Skill');
+  const allLanguageIndices = await handler.readSectionIndices(page, 'Language');
+  const allProjectIndices = await handler.readSectionIndices(page, 'Project');
 
   const filterExisting = (all, prefix) => {
     const existing = existingIndices[prefix];
@@ -141,5 +163,8 @@ export async function createJobKoreaEntrySlots(handler, page, ssot) {
     award: filterExisting(allAwardIndices, 'Award'),
     portfolio: filterExisting(allPortfolioIndices, 'Portfolio'),
     school: schoolIndices[0] || 'c1',
+    skill: filterExisting(allSkillIndices, 'Skill'),
+    language: filterExisting(allLanguageIndices, 'Language'),
+    personalProject: filterExisting(allProjectIndices, 'Project'),
   };
 }
