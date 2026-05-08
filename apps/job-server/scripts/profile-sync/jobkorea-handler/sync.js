@@ -10,7 +10,10 @@ import {
 import { getEditUrl } from './change-detection.js';
 import { assertJobKoreaResumeAccess } from './session.js';
 import { pickJobKoreaBrowserProfile } from '../../jobkorea-session/user-agent-pool.js';
+import { fileURLToPath } from 'url';
+import path from 'path';
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 async function activateRequiredSections(page) {
   await page.evaluate(() => {
     const requiredSections = [
@@ -218,12 +221,11 @@ export async function syncJobKoreaProfile(handler, ssot, options = {}) {
       logger('Session expired on resume page, auto-renewing via Puppeteer...', 'warn', 'jobkorea');
       const { execSync } = await import('child_process');
       try {
-        execSync('node apps/job-server/scripts/renew-jobkorea-session.js', {
+        const renewScript = path.resolve(__dirname, '../../renew-jobkorea-session.js');
+        execSync(`node "${renewScript}"`, {
           env: {
             ...process.env,
             HEADLESS: 'true',
-            JOBKOREA_EMAIL: process.env.JOBKOREA_EMAIL || '',
-            JOBKOREA_PASSWORD: process.env.JOBKOREA_PASSWORD || '',
           },
           stdio: 'inherit',
           timeout: 300000,
