@@ -1,4 +1,3 @@
-export * from './gitlab.js';
 export * from './wanted.js';
 export * from './notification.js';
 export * from './job-categories.js';
