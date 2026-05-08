@@ -70,7 +70,7 @@ WANTED_EMAIL=
 WANTED_PASSWORD=
 WANTED_ONEID_CLIENT_ID=
 WANTED_RESUME_ID=
-JOBKOREA_RNO=  # Resume ID for JobKorea (default: 30236578)
+JOBKOREA_RNO=  # Resume ID for JobKorea (required, no default)
 ```
 
 ## Usage

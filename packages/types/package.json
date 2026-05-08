@@ -7,7 +7,6 @@
   "main": "./src/index.js",
   "exports": {
     ".": "./src/index.js",
-    "./gitlab": "./src/gitlab.js",
     "./wanted": "./src/wanted.js",
     "./notification": "./src/notification.js",
     "./job-categories": "./src/job-categories.js",
