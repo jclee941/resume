@@ -22,7 +22,7 @@ jobs:
 
     steps:
       - name: Checkout repository inventory
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Check latest workflow runs across all repos
         id: health
