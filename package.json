@@ -92,7 +92,7 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^25.6.2",
     "c8": "^11.0.0",
-    "eslint": "^9.39.1",
+    "eslint": "^10.3.0",
     "globals": "^17.6.0",
     "html-minifier-terser": "^7.2.0",
     "jest": "^30.4.2",
