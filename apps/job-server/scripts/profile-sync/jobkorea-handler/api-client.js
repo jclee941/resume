@@ -1,19 +1,25 @@
-import { buildPortfolioPayload, buildSavePayload } from './api-payload.js';
+import { buildPortfolioPayload, buildSavePayload, smartMergeFields } from './api-payload.js';
 import { classifyError } from './api-errors.js';
 import { createAPISession } from './api-session.js';
+import { isJwtExpired } from './jwt-utils.js';
 
 const DEFAULT_BASE_URL = 'https://www.jobkorea.co.kr';
 const SAVE_ENDPOINT = '/User/Resume/Save';
 const PORTFOLIO_ENDPOINT = '/User/Resume/AddUserFileDB';
 const SESSION_CHECK_ENDPOINT = '/User/Resume/Edit';
 
-function requestHeaders(cookieString) {
+function requestHeaders(cookieString, options = {}) {
   const headers = {
     'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
     'X-Requested-With': 'XMLHttpRequest',
-    Referer: `${DEFAULT_BASE_URL}/User/Resume/Edit`,
+    Referer: `${DEFAULT_BASE_URL}/User/Resume/Edit${options.rNo ? `?RNo=${options.rNo}` : ''}`,
     Accept: 'application/json, text/javascript, */*',
+    Origin: DEFAULT_BASE_URL,
   };
+
+  if (options.userAgent) {
+    headers['User-Agent'] = options.userAgent;
+  }
 
   if (cookieString) {
     headers.Cookie = cookieString;
@@ -43,20 +49,50 @@ export class JobKoreaAPIClient {
     this.baseUrl = options.baseUrl || DEFAULT_BASE_URL;
     this.session = createAPISession(options.cookieString || '');
     this.logger = options.logger || console;
+    this.rNo = options.rNo || process.env.JOBKOREA_RNO || '';
+    this.userAgent = options.userAgent || '';
   }
 
   setCookies(cookieString) {
     this.session.cookieString = cookieString || '';
   }
 
-  async saveResume(formFields) {
+  async fetchEditPageTokens() {
+    const response = await fetch(`${this.baseUrl}${SESSION_CHECK_ENDPOINT}?RNo=${this.rNo}`, {
+      method: 'GET',
+      headers: requestHeaders(this.session.getCookieHeader(), {
+        rNo: this.rNo,
+        userAgent: this.userAgent,
+      }),
+    });
+    const html = await response.text();
+
+    const isEditPageMatch = html.match(/\bname=["']IsEditPage["'][^>]*\bvalue=["']([^"']*)["']/i);
+    const lastEditMatch = html.match(/\bname=["']LastEditDateTicks["'][^>]*\bvalue=["']([^"']*)["']/i);
+
+    return {
+      IsEditPage: isEditPageMatch ? isEditPageMatch[1] : 'True',
+      IsCompleteSave: 'False',
+      LastEditDateTicks: lastEditMatch ? lastEditMatch[1] : '',
+      hdnIsCompleteSave: 'False',
+    };
+  }
+
+  async saveResume(formFields, options = {}) {
     const url = endpointUrl(this.baseUrl, SAVE_ENDPOINT);
     url.searchParams.set('_', String(Date.now()));
 
+    const tokens = options.tokens || (await this.fetchEditPageTokens());
+    const baseFields = options.baseFields || [];
+    const mergedFields = smartMergeFields(baseFields, formFields, tokens);
+
     const response = await fetch(url, {
       method: 'POST',
-      headers: requestHeaders(this.session.getCookieHeader()),
-      body: buildSavePayload(formFields),
+      headers: requestHeaders(this.session.getCookieHeader(), {
+        rNo: this.rNo,
+        userAgent: this.userAgent,
+      }),
+      body: buildSavePayload(mergedFields),
     });
     const rawResponse = await response.text();
     const result = parseJson(rawResponse);
@@ -73,7 +109,10 @@ export class JobKoreaAPIClient {
   async registerPortfolio(url) {
     const response = await fetch(endpointUrl(this.baseUrl, PORTFOLIO_ENDPOINT), {
       method: 'POST',
-      headers: requestHeaders(this.session.getCookieHeader()),
+      headers: requestHeaders(this.session.getCookieHeader(), {
+        rNo: this.rNo,
+        userAgent: this.userAgent,
+      }),
       body: buildPortfolioPayload(url),
     });
     const rawResponse = await response.text();
@@ -89,9 +128,17 @@ export class JobKoreaAPIClient {
   }
 
   async checkSession() {
+    const cookieString = this.session.getCookieHeader();
+    if (isJwtExpired(cookieString)) {
+      return { valid: false, reason: 'jwt_expired' };
+    }
+
     const response = await fetch(endpointUrl(this.baseUrl, SESSION_CHECK_ENDPOINT), {
       method: 'GET',
-      headers: requestHeaders(this.session.getCookieHeader()),
+      headers: requestHeaders(cookieString, {
+        rNo: this.rNo,
+        userAgent: this.userAgent,
+      }),
     });
 
     return { valid: !/\/Login/i.test(response.url || '') };
