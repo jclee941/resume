@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
-import { buildPortfolioPayload, buildSavePayload, encodeFormFields } from '../jobkorea-handler/api-payload.js';
+import { buildPortfolioPayload, buildSavePayload, encodeFormFields, smartMergeFields } from '../jobkorea-handler/api-payload.js';
 
 describe('JobKorea API payload helpers', () => {
   it('encodes form fields as application/x-www-form-urlencoded', () => {
@@ -42,5 +42,54 @@ describe('JobKorea API payload helpers', () => {
     assert.strictEqual(params.get('File_Type'), '2');
     assert.strictEqual(params.get('File_Up_Stat'), '2');
     assert.strictEqual(params.get('File_Size'), '0');
+  });
+
+  it('smartMergeFields overlays target fields onto base, skipping incomplete sections', () => {
+    const base = [
+      { name: 'UserResume.R_No', value: '123' },
+      { name: 'Career[c1].C_Name', value: 'Old Corp' },
+      { name: 'Career[c1].C_Part', value: 'Engineering' },
+      { name: 'Language[c1].Lang1_Name', value: 'English' },
+      { name: 'Language[c1].Lang1_Stat', value: ' fluent' },
+      { name: 'Language[c1].Eval_Category', value: '2' },
+    ];
+    const target = [
+      { name: 'Career[c1].C_Name', value: 'New Corp' },
+      { name: 'Career[c1].C_Part', value: 'DevSecOps' },
+      { name: 'Language[c1].Lang1_Name', value: 'Japanese' },
+      { name: 'Language[c1].Lang1_Stat', value: 'business' },
+    ];
+
+    const merged = smartMergeFields(base, target, { IsEditPage: 'True' });
+    const map = new Map(merged.map((f) => [f.name, f.value]));
+
+    // Complete section overridden
+    assert.strictEqual(map.get('Career[c1].C_Name'), 'New Corp');
+    assert.strictEqual(map.get('Career[c1].C_Part'), 'DevSecOps');
+    // Incomplete section (Language) skipped — base fields preserved
+    assert.strictEqual(map.get('Language[c1].Lang1_Name'), 'English');
+    assert.strictEqual(map.get('Language[c1].Eval_Category'), '2');
+    // Tokens injected
+    assert.strictEqual(map.get('IsEditPage'), 'True');
+    assert.strictEqual(map.get('UserResume.R_No'), '123');
+  });
+
+  it('smartMergeFields applies complete section overrides', () => {
+    const base = [
+      { name: 'Career[c1].C_Name', value: 'Old' },
+      { name: 'Career[c1].C_Part', value: 'Dept' },
+    ];
+    const target = [
+      { name: 'Career[c1].C_Name', value: 'New' },
+      { name: 'Career[c1].C_Part', value: 'NewDept' },
+      { name: 'Career[c1].CSYM', value: '202301' },
+    ];
+
+    const merged = smartMergeFields(base, target);
+    const map = new Map(merged.map((f) => [f.name, f.value]));
+
+    assert.strictEqual(map.get('Career[c1].C_Name'), 'New');
+    assert.strictEqual(map.get('Career[c1].C_Part'), 'NewDept');
+    assert.strictEqual(map.get('Career[c1].CSYM'), '202301');
   });
 });

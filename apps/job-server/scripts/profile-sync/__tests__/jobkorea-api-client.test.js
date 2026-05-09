@@ -31,7 +31,10 @@ describe('JobKoreaAPIClient', () => {
 
     try {
       const client = new JobKoreaAPIClient({ cookieString: 'JKSESSION=abc' });
-      const result = await client.saveResume([{ name: 'UserResume.Resume_Title', value: 'Title' }]);
+      const result = await client.saveResume([{ name: 'UserResume.Resume_Title', value: 'Title' }], {
+        tokens: { IsEditPage: 'True', IsCompleteSave: 'False', LastEditDateTicks: '123', hdnIsCompleteSave: 'False' },
+      });
+      // fetchEditPageTokens is skipped when tokens are provided
       const { url, options } = requests[0];
 
       assert.strictEqual(result.success, true);
@@ -40,6 +43,7 @@ describe('JobKoreaAPIClient', () => {
       assert.strictEqual(options.method, 'POST');
       assert.match(options.headers['Content-Type'], /application\/x-www-form-urlencoded/);
       assert.strictEqual(options.headers['X-Requested-With'], 'XMLHttpRequest');
+      assert.strictEqual(options.headers.Origin, 'https://www.jobkorea.co.kr');
       assert.strictEqual(options.headers.Cookie, 'JKSESSION=abc');
       assert.match(options.body, /UserResume\.Resume_Title=Title/);
       assert.match(options.body, /hdnIsCompleteSave=False/);
@@ -89,7 +93,7 @@ describe('JobKoreaAPIClient', () => {
     await assert.rejects(() => client.saveResume([]), JobKoreaAuthError);
 
     const session = await client.checkSession();
-    assert.deepStrictEqual(session, { valid: false });
+    assert.deepStrictEqual(session, { valid: false, reason: 'jwt_expired' });
   });
 
   it('detects CAPTCHA challenge responses', async () => {
