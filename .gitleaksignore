@@ -74,3 +74,4 @@ deeac7ae82cf6aec2667dd233e685dd7c69336e3:.env.local:generic-api-key:7
 31fbb4c6d895ee2cc466ab85886cebf144ead7c0:typescript/job-automation/workers/.env.secrets:admin-token-hex:5
 31fbb4c6d895ee2cc466ab85886cebf144ead7c0:typescript/job-automation/workers/.env.secrets:generic-api-key:7
 31fbb4c6d895ee2cc466ab85886cebf144ead7c0:typescript/job-automation/workers/.env.secrets:webhook-secret-hex:6
+f15dd89dbb197fadb88336525b84de83824c3c16:typescript/portfolio-worker/index.html.task5-backup:generic-api-key:252
