@@ -30,7 +30,11 @@ export async function executeHybridSave(apiClient, targetFields, page, sectionIn
   }
 
   try {
-    const saveResult = await apiClient.saveResume(targetFields);
+    // Extract current form state from Playwright page to use as base for smart merge
+    const baseFields = typeof page?.evaluate === 'function'
+      ? await page.evaluate(() => $('#frm1').serializeArray())
+      : [];
+    const saveResult = await apiClient.saveResume(targetFields, { baseFields });
     logger(`API save response: ${JSON.stringify(saveResult.result ?? saveResult).slice(0, 500)}`, 'info', 'jobkorea');
 
     if (saveResult?.success === false) {
