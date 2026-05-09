@@ -18,7 +18,7 @@ const SENSITIVE_POST_FIELD_PATTERNS = [
 
 const SENSITIVE_TEXT_PATTERNS = [
   /"(?:cookie|set-cookie|authorization)"\s*:\s*"(?!\[REDACTED\])[^"\n]+"/i,
-  /(?:Cookie|Set-Cookie|Authorization):\s*(?!\[REDACTED\])[^\n]+/i,
+  /(?:^|\n)(?:Cookie|Set-Cookie|Authorization):\s*(?!\[REDACTED\])[^\n]+/i,
   /Bearer\s+[A-Za-z0-9._~+/=-]{12,}/i,
   /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i,
   /\b01[016789][-\s]?\d{3,4}[-\s]?\d{4}\b/,

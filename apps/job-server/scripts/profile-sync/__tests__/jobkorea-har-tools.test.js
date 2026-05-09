@@ -80,6 +80,27 @@ describe('JobKorea HAR sanitizer', () => {
     assert.throws(() => assertNoSensitiveHarContent('Cookie: JKSESSION=secret-session'), /Sensitive HAR content/);
     assert.doesNotThrow(() => assertNoSensitiveHarContent(JSON.stringify(sanitizeHar(rawHar()))));
   });
+
+  it('does not flag cookie object properties in JS response content', () => {
+    const harWithJsResponse = {
+      log: {
+        entries: [
+          {
+            request: { method: 'GET', url: 'https://example.com/api.js', headers: [] },
+            response: {
+              status: 200,
+              headers: [],
+              content: {
+                mimeType: 'application/javascript',
+                text: 'var o={cookie:""},Dp=function(a){return a&&Wf(5)?a:0};',
+              },
+            },
+          },
+        ],
+      },
+    };
+    assert.doesNotThrow(() => assertNoSensitiveHarContent(JSON.stringify(harWithJsResponse, null, 2)));
+  });
 });
 
 describe('JobKorea HAR analyzer', () => {
