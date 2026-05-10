@@ -1,0 +1,654 @@
+/* ============================================
+   PROJECT DEEP-DIVE CARDS
+   Dark Terminal Theme
+   Interactive project cards with technical evidence
+   ============================================ */
+
+/* ----------------------------------------
+   CSS Variables (local scope for module)
+   ---------------------------------------- */
+:root {
+  /* Project card specific */
+  --card-border: rgba(0, 212, 224, 0.15);
+  --card-border-hover: var(--cyber-cyan);
+  --card-glow: 0 0 20px rgba(0, 212, 224, 0.2);
+  --card-glow-hover: 0 0 30px rgba(0, 212, 224, 0.35);
+  --card-bg: var(--bg-card);
+  --card-bg-hover: var(--bg-tertiary);
+  
+  /* Deep dive overlay */
+  --overlay-bg: rgba(12, 12, 18, 0.95);
+  --deep-dive-bg: var(--bg-secondary);
+  --deep-dive-border: rgba(0, 212, 224, 0.2);
+  
+  /* Metrics */
+  --metric-color: var(--cyber-green);
+  --metric-bg: rgba(0, 217, 122, 0.1);
+  
+  /* Tech tag colors */
+  --tag-splunk: #ff6b35;
+  --tag-n8n: #ea4b71;
+  --tag-fortimanager: #00a8e0;
+  --tag-python: #3776ab;
+  --tag-docker: #2496ed;
+  --tag-fortigate: #00a8e0;
+  --tag-ansible: #ee0000;
+  --tag-vmware: #607078;
+  --tag-postgresql: #4169e1;
+  --tag-aws: #ff9900;
+  --tag-nsx: #77bc43;
+  --tag-wazuh: #339966;
+}
+
+/* ----------------------------------------
+   Card Grid Container
+   ---------------------------------------- */
+.project-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+  padding: var(--space-4) 0;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .project-cards-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+}
+
+/* ----------------------------------------
+   Base Card Styles
+   ---------------------------------------- */
+.project-card {
+  position: relative;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  padding: var(--space-4);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  font-family: var(--font-mono);
+}
+
+.project-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 212, 224, 0.03) 0%,
+    transparent 50%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.project-card:hover,
+.project-card:focus {
+  border-color: var(--card-border-hover);
+  box-shadow: var(--card-glow-hover);
+  transform: translateY(-4px);
+}
+
+.project-card:hover::before,
+.project-card:focus::before {
+  opacity: 1;
+}
+
+.project-card:focus {
+  outline: 2px solid var(--cyber-cyan);
+  outline-offset: 2px;
+}
+
+/* Card entrance animation */
+.project-card {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.project-card.animate-in {
+  animation: cardFadeIn 0.5s ease-out forwards;
+}
+
+@keyframes cardFadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Stagger delays for cards */
+.project-card:nth-child(1) { animation-delay: 0.1s; }
+.project-card:nth-child(2) { animation-delay: 0.2s; }
+.project-card:nth-child(3) { animation-delay: 0.3s; }
+.project-card:nth-child(4) { animation-delay: 0.4s; }
+
+/* ----------------------------------------
+   Card Header
+   ---------------------------------------- */
+.project-card__header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.project-card__icon {
+  font-size: var(--text-2xl);
+  line-height: 1;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 212, 224, 0.1);
+  border-radius: 4px;
+  border: 1px solid rgba(0, 212, 224, 0.2);
+}
+
+.project-card__title-group {
+  flex: 1;
+  min-width: 0;
+}
+
+.project-card__title {
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+  color: var(--text-primary);
+  margin: 0 0 4px 0;
+  line-height: 1.3;
+}
+
+.project-card__period {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+/* ----------------------------------------
+   Tech Stack Tags
+   ---------------------------------------- */
+.project-card__stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.tech-tag {
+  font-size: var(--text-xs);
+  padding: 2px 8px;
+  border-radius: 3px;
+  background: rgba(217, 70, 168, 0.15);
+  color: var(--cyber-magenta-bright);
+  border: 1px solid rgba(217, 70, 168, 0.2);
+  font-family: var(--font-mono);
+  transition: all 0.2s ease;
+}
+
+.tech-tag:hover {
+  background: rgba(217, 70, 168, 0.25);
+}
+
+/* Tech tag color variants */
+.tech-tag--splunk { background: rgba(255, 107, 53, 0.15); color: var(--tag-splunk); border-color: rgba(255, 107, 53, 0.3); }
+.tech-tag--n8n { background: rgba(234, 75, 113, 0.15); color: var(--tag-n8n); border-color: rgba(234, 75, 113, 0.3); }
+.tech-tag--fortimanager { background: rgba(0, 168, 224, 0.15); color: var(--tag-fortimanager); border-color: rgba(0, 168, 224, 0.3); }
+.tech-tag--python { background: rgba(55, 118, 171, 0.15); color: var(--tag-python); border-color: rgba(55, 118, 171, 0.3); }
+.tech-tag--docker { background: rgba(36, 150, 237, 0.15); color: var(--tag-docker); border-color: rgba(36, 150, 237, 0.3); }
+.tech-tag--fortigate { background: rgba(0, 168, 224, 0.15); color: var(--tag-fortigate); border-color: rgba(0, 168, 224, 0.3); }
+.tech-tag--ansible { background: rgba(238, 0, 0, 0.15); color: var(--tag-ansible); border-color: rgba(238, 0, 0, 0.3); }
+.tech-tag--vmware { background: rgba(96, 112, 120, 0.15); color: var(--tag-vmware); border-color: rgba(96, 112, 120, 0.3); }
+.tech-tag--postgresql { background: rgba(65, 105, 225, 0.15); color: var(--tag-postgresql); border-color: rgba(65, 105, 225, 0.3); }
+.tech-tag--aws { background: rgba(255, 153, 0, 0.15); color: var(--tag-aws); border-color: rgba(255, 153, 0, 0.3); }
+.tech-tag--nsx { background: rgba(119, 188, 67, 0.15); color: var(--tag-nsx); border-color: rgba(119, 188, 67, 0.3); }
+.tech-tag--wazuh { background: rgba(51, 153, 102, 0.15); color: var(--tag-wazuh); border-color: rgba(51, 153, 102, 0.3); }
+
+/* ----------------------------------------
+   Card Metrics Preview
+   ---------------------------------------- */
+.project-card__metrics {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.metric-preview {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-xs);
+  color: var(--metric-color);
+  opacity: 0.9;
+}
+
+.metric-preview__icon {
+  font-size: var(--text-sm);
+}
+
+.metric-preview__value {
+  font-weight: var(--font-medium);
+}
+
+/* ----------------------------------------
+   Card CTA (Call to Action)
+   ---------------------------------------- */
+.project-card__cta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-primary);
+  font-size: var(--text-xs);
+  color: var(--cyber-cyan);
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.project-card:hover .project-card__cta,
+.project-card:focus .project-card__cta {
+  opacity: 1;
+}
+
+.project-card__cta-icon {
+  transition: transform 0.2s ease;
+}
+
+.project-card:hover .project-card__cta-icon,
+.project-card:focus .project-card__cta-icon {
+  transform: translateX(4px);
+}
+
+/* ----------------------------------------
+   Deep Dive Overlay
+   ---------------------------------------- */
+.deep-dive-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay-bg);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: var(--space-4);
+  overflow-y: auto;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.deep-dive-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ----------------------------------------
+   Deep Dive Panel
+   ---------------------------------------- */
+.deep-dive-panel {
+  background: var(--deep-dive-bg);
+  border: 1px solid var(--deep-dive-border);
+  border-radius: 8px;
+  width: 100%;
+  max-width: 800px;
+  margin: var(--space-8) 0;
+  transform: translateY(-20px);
+  opacity: 0;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.deep-dive-overlay.active .deep-dive-panel {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* ----------------------------------------
+   Deep Dive Header
+   ---------------------------------------- */
+.deep-dive-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border-bottom: 1px solid var(--border-primary);
+  background: linear-gradient(
+    135deg,
+    rgba(0, 212, 224, 0.05) 0%,
+    transparent 50%
+  );
+}
+
+.deep-dive-header__icon {
+  font-size: var(--text-3xl);
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 212, 224, 0.1);
+  border-radius: 6px;
+  border: 1px solid rgba(0, 212, 224, 0.2);
+  flex-shrink: 0;
+}
+
+.deep-dive-header__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.deep-dive-header__title {
+  font-size: var(--text-xl);
+  font-weight: var(--font-semibold);
+  color: var(--text-primary);
+  margin: 0 0 var(--space-2) 0;
+  line-height: 1.3;
+}
+
+.deep-dive-header__period {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  margin-bottom: var(--space-3);
+}
+
+.deep-dive-header__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* ----------------------------------------
+   Close Button
+   ---------------------------------------- */
+.deep-dive-close {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--border-primary);
+  border-radius: 4px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: var(--text-xl);
+  transition: all 0.2s ease;
+}
+
+.deep-dive-close:hover,
+.deep-dive-close:focus {
+  border-color: var(--cyber-cyan);
+  color: var(--cyber-cyan);
+  box-shadow: var(--card-glow);
+}
+
+.deep-dive-close:focus {
+  outline: 2px solid var(--cyber-cyan);
+  outline-offset: 2px;
+}
+
+/* ----------------------------------------
+   Deep Dive Content
+   ---------------------------------------- */
+.deep-dive-content {
+  padding: var(--space-5);
+}
+
+/* Section titles */
+.deep-dive-section {
+  margin-bottom: var(--space-5);
+}
+
+.deep-dive-section:last-child {
+  margin-bottom: 0;
+}
+
+.deep-dive-section__title {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--cyber-cyan);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-3);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.deep-dive-section__title::before {
+  content: '>';
+  color: var(--cyber-cyan);
+}
+
+/* ----------------------------------------
+   Metrics Grid
+   ---------------------------------------- */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--space-3);
+}
+
+.metric-card {
+  background: var(--metric-bg);
+  border: 1px solid rgba(0, 217, 122, 0.2);
+  border-radius: 4px;
+  padding: var(--space-3);
+  text-align: center;
+}
+
+.metric-card__value {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  color: var(--metric-color);
+  line-height: 1;
+  margin-bottom: var(--space-1);
+}
+
+.metric-card__label {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+}
+
+/* Counter animation target */
+.metric-card__value.animate-counter {
+  animation: countPulse 0.5s ease-out;
+}
+
+@keyframes countPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+/* ----------------------------------------
+   Achievements List
+   ---------------------------------------- */
+.achievements-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.achievements-list__item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.achievements-list__item:last-child {
+  border-bottom: none;
+}
+
+.achievements-list__check {
+  color: var(--cyber-green);
+  font-size: var(--text-lg);
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.achievements-list__text {
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+/* ----------------------------------------
+   Architecture Overview
+   ---------------------------------------- */
+.architecture-diagram {
+  background: rgba(0, 212, 224, 0.03);
+  border: 1px solid var(--border-primary);
+  border-radius: 4px;
+  padding: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  overflow-x: auto;
+}
+
+.architecture-diagram__text {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  white-space: pre-wrap;
+  margin: 0;
+}
+
+.architecture-diagram__highlight {
+  color: var(--cyber-cyan);
+  font-weight: var(--font-medium);
+}
+
+/* ----------------------------------------
+   Tool Icons Grid
+   ---------------------------------------- */
+.tools-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.tool-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-primary);
+  border-radius: 4px;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.tool-item__icon {
+  font-size: var(--text-lg);
+}
+
+/* ----------------------------------------
+   Related Link
+   ---------------------------------------- */
+.related-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: transparent;
+  border: 1px solid var(--cyber-cyan);
+  border-radius: 4px;
+  color: var(--cyber-cyan);
+  font-size: var(--text-sm);
+  font-family: var(--font-mono);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.related-link:hover,
+.related-link:focus {
+  background: var(--cyber-cyan);
+  color: var(--bg-primary);
+  box-shadow: var(--card-glow);
+}
+
+.related-link:focus {
+  outline: 2px solid var(--cyber-cyan);
+  outline-offset: 2px;
+}
+
+/* ----------------------------------------
+   Keyboard hint
+   ---------------------------------------- */
+.keyboard-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  padding: var(--space-3);
+  background: var(--bg-tertiary);
+  border-top: 1px solid var(--border-primary);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.key-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.key-hint__key {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-secondary);
+  border-radius: 3px;
+  padding: 2px 6px;
+  font-size: var(--text-xs);
+}
+
+/* ----------------------------------------
+   Responsive Adjustments
+   ---------------------------------------- */
+@media (max-width: 768px) {
+  .deep-dive-header {
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  
+  .deep-dive-header__icon {
+    width: 48px;
+    height: 48px;
+    font-size: var(--text-xl);
+  }
+  
+  .deep-dive-header__title {
+    font-size: var(--text-lg);
+  }
+  
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .deep-dive-content {
+    padding: var(--space-4);
+  }
+  
+  .keyboard-hint {
+    flex-wrap: wrap;
+  }
+}

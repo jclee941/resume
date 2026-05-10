@@ -3,6 +3,8 @@ import { initializeABTesting } from './modules/ab-test.js';
 import { initUI } from './modules/ui.js';
 import { initMissionControl } from './modules/mission-control.js';
 import { initSkillRadar } from './modules/skill-radar.js';
+import { initCareerTimeline } from './modules/timeline.js';
+import { initProjectCards } from './modules/project-cards.js';
 
 // Initialize all modules
 document.addEventListener('DOMContentLoaded', () => {
@@ -11,6 +13,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initializeABTesting();
   initWebVitals();
   initSkillRadar();
+  initCareerTimeline();
+  initProjectCards();
 
   // Service Worker Registration
   if ('serviceWorker' in navigator) {
