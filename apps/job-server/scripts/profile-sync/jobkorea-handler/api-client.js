@@ -72,11 +72,12 @@ export class JobKoreaAPIClient {
 
     return {
       IsEditPage: isEditPageMatch ? isEditPageMatch[1] : 'True',
-      IsCompleteSave: 'False',
+      IsCompleteSave: 'True',
       LastEditDateTicks: lastEditMatch ? lastEditMatch[1] : '',
-      hdnIsCompleteSave: 'False',
     };
   }
+
+
 
   async saveResume(formFields, options = {}) {
     const url = endpointUrl(this.baseUrl, SAVE_ENDPOINT);
@@ -155,5 +156,42 @@ export class JobKoreaAPIClient {
     if (/\/Login/i.test(response.url || '') || !response.ok || /보안인증|reCAPTCHA|자동가입 방지|비정상적인 접근|captcha/i.test(rawResponse) || result?.saveResult?.IsSuccess === false) {
       throw classifyError(errorContext, endpoint);
     }
+  }
+
+  async fetchEditPageBaseFields() {
+    const response = await fetch(`${this.baseUrl}${SESSION_CHECK_ENDPOINT}?RNo=${this.rNo}`, {
+      method: 'GET',
+      headers: requestHeaders(this.session.getCookieHeader(), {
+        rNo: this.rNo,
+        userAgent: this.userAgent,
+      }),
+    });
+    const html = await response.text();
+
+    const baseFields = [];
+    const inputRegex = /<input[^>]*name=["']([^"']+)["'][^>]*>/gi;
+    let match;
+    while ((match = inputRegex.exec(html)) !== null) {
+      const tag = match[0];
+      const name = match[1];
+      const valueMatch = tag.match(/\bvalue=["']([^"]*)["']/i);
+      const value = valueMatch ? valueMatch[1] : '';
+      baseFields.push({ name, value });
+    }
+
+    const selectRegex = /<select[^>]*name=["']([^"']+)["'][^>]*>[\s\S]*?<\/select>/gi;
+    while ((match = selectRegex.exec(html)) !== null) {
+      const name = match[1];
+      const selectedMatch = match[0].match(/<option[^>]*\bselected\b[^>]*\bvalue=["']([^"]*)["']/i);
+      const value = selectedMatch ? selectedMatch[1] : '';
+      baseFields.push({ name, value });
+    }
+
+    const textareaRegex = /<textarea[^>]*name=["']([^"']+)["'][^>]*>([\s\S]*?)<\/textarea>/gi;
+    while ((match = textareaRegex.exec(html)) !== null) {
+      baseFields.push({ name: match[1], value: match[2] });
+    }
+
+    return baseFields;
   }
 }

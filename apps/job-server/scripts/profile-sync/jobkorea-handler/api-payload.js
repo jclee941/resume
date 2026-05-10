@@ -13,12 +13,6 @@ export function encodeFormFields(fields) {
 
 export function buildSavePayload(formFields) {
   const fields = Array.isArray(formFields) ? [...formFields] : [];
-  const hasCompleteSaveFlag = fields.some((field) => field?.name === 'hdnIsCompleteSave');
-
-  if (!hasCompleteSaveFlag) {
-    fields.push({ name: 'hdnIsCompleteSave', value: 'False' });
-  }
-
   return encodeFormFields(fields);
 }
 

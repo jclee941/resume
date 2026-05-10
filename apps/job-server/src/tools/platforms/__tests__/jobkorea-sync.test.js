@@ -1,30 +1,7 @@
 import assert from 'node:assert/strict';
-import { createRequire, syncBuiltinESMExports } from 'node:module';
-import { EventEmitter } from 'node:events';
-import { fileURLToPath } from 'node:url';
-import { dirname, resolve } from 'node:path';
-import { PassThrough } from 'node:stream';
 import { beforeEach, describe, it, mock } from 'node:test';
 
-const TEST_DIR = dirname(fileURLToPath(import.meta.url));
-// Mirror the REPO_ROOT computation in ../jobkorea-sync.js so the test's
-// expected cwd matches the production code's spawn cwd regardless of where
-// the test runner is invoked from.
-const REPO_ROOT = resolve(TEST_DIR, '../../../../../..');
-
-
-const require = createRequire(import.meta.url);
-const childProcessCjs = require('child_process');
-
 let importCounter = 0;
-
-function createFakeChild() {
-  const child = new EventEmitter();
-  child.stdout = new PassThrough();
-  child.stderr = new PassThrough();
-  child.kill = mock.fn(() => true);
-  return child;
-}
 
 async function loadModule() {
   importCounter += 1;
@@ -34,98 +11,53 @@ async function loadModule() {
 describe('jobkorea sync platform', () => {
   beforeEach(() => {
     mock.restoreAll();
-    syncBuiltinESMExports();
   });
 
-  it('keeps the existing dry-run response shape', async () => {
+  it('keeps the dry-run response shape in api-only mode', async () => {
     const { syncToJobKorea } = await loadModule();
-    const data = { name: 'Test User', careers: [] };
+    const data = { personal: { name: 'Test User', email: '', phone: '' }, careers: [], education: { school: '', major: '', status: '' }, certifications: [] };
 
     const result = await syncToJobKorea(data, { dry_run: true });
 
-    assert.deepStrictEqual(result, {
-      dry_run: true,
-      method: 'browser_automation',
-      would_sync: data,
-      steps: [
-        '1. Navigate to jobkorea.co.kr/User/Resume',
-        '2. Fill personal info form',
-        '3. Add/update career entries',
-        '4. Add certifications',
-        '5. Save resume',
-      ],
-    });
+    assert.equal(result.dry_run, true);
+    assert.equal(result.mode, 'api-only');
+    assert.ok(Array.isArray(result.steps));
+    assert.equal(result.steps.length, 5);
+    assert.ok(result.would_sync);
+    assert.equal(result.would_sync.name, 'Test User');
   });
 
-  it('returns success when the delegated CLI exits with code 0', async () => {
-    const child = createFakeChild();
-    const spawnMock = mock.method(childProcessCjs, 'spawn', () => {
-      queueMicrotask(() => {
-        child.stdout.write('sync ok\n');
-        child.stderr.write('warning\n');
-        child.emit('close', 0);
-      });
-      return child;
-    });
-    syncBuiltinESMExports();
+  it('returns error when cookieString is missing', async () => {
     const { syncToJobKorea } = await loadModule();
 
     const result = await syncToJobKorea({}, { dry_run: false });
 
-    assert.equal(result.success, true);
-    assert.equal(result.exit_code, 0);
-    assert.match(result.stdout_tail, /sync ok/);
-    assert.match(result.stderr_tail, /warning/);
-    assert.equal(typeof result.duration_ms, 'number');
-    assert.deepStrictEqual(spawnMock.mock.calls[0].arguments, [
-      process.execPath,
-      ['apps/job-server/scripts/profile-sync.js', 'jobkorea', '--apply'],
-      {
-        cwd: REPO_ROOT,
-        stdio: ['ignore', 'pipe', 'pipe'],
-      },
-    ]);
+    assert.equal(result.error, 'cookieString required for API-only sync. Authenticate via jobkorea_auth first.');
   });
 
-  it('returns failure when the delegated CLI exits with code 1', async () => {
-    const child = createFakeChild();
-    mock.method(childProcessCjs, 'spawn', () => {
-      queueMicrotask(() => {
-        child.stderr.write('sync failed\n');
-        child.emit('close', 1);
-      });
-      return child;
-    });
-    syncBuiltinESMExports();
+  it('delegates to syncToJobKoreaAPI when cookieString is provided', async () => {
     const { syncToJobKorea } = await loadModule();
 
-    const result = await syncToJobKorea({}, { dry_run: false });
+    // With a fake cookie, syncToJobKoreaAPI will throw (JWT expired or invalid)
+    // The wrapper should catch it and return an error object
+    const result = await syncToJobKorea(
+      { personal: { name: 'A', email: '', phone: '' }, careers: [], education: { school: '', major: '', status: '' }, certifications: [] },
+      { dry_run: false, cookieString: 'jkat=fake' }
+    );
 
-    assert.equal(result.success, false);
-    assert.equal(result.exit_code, 1);
-    assert.match(result.stderr_tail, /sync failed/);
+    // Should catch the error from syncToJobKoreaAPI
+    assert.ok(result.error);
+    assert.equal(result.mode, 'api-only');
   });
 
-  it('returns a timeout error when the delegated CLI does not exit in time', async () => {
-    const child = createFakeChild();
-    mock.method(childProcessCjs, 'spawn', () => {
-      child.kill.mock.mockImplementation((signal) => {
-        if (signal === 'SIGTERM') {
-          setTimeout(() => child.emit('close', null), 0);
-        }
-        return true;
-      });
-      return child;
-    });
-    syncBuiltinESMExports();
-    const { runJobKoreaProfileSync } = await loadModule();
+  it('diffPlatform returns local preview', async () => {
+    const { diffPlatform } = await loadModule();
+    const data = { personal: { name: 'Diff Test', email: '', phone: '' }, careers: [], education: { school: '', major: '', status: '' }, certifications: [] };
 
-    const result = await runJobKoreaProfileSync({ timeoutMs: 5 });
+    const result = await diffPlatform(data);
 
-    assert.equal(result.success, false);
-    assert.equal(result.error, 'timeout');
-    assert.equal(result.exit_code, null);
-    assert.equal(child.kill.mock.calls[0].arguments[0], 'SIGTERM');
-    assert.equal(typeof result.duration_ms, 'number');
+    assert.equal(result.mode, 'api-only');
+    assert.equal(result.local_preview.name, 'Diff Test');
+    assert.ok(result.note.includes('diff is not available'));
   });
 });

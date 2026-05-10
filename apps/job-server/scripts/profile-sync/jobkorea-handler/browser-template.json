@@ -1,0 +1,706 @@
+[
+  {
+    "name": "UserResume.R_No",
+    "value": "30236578"
+  },
+  {
+    "name": "UserResume.R_Default_Stat",
+    "value": "True"
+  },
+  {
+    "name": "UserResume.R_Input_Stat",
+    "value": "3"
+  },
+  {
+    "name": "UserInfo.M_Want_Job_Stat",
+    "value": "1"
+  },
+  {
+    "name": "UserResume.PFL_STAT",
+    "value": "0"
+  },
+  {
+    "name": "UserResume.PFL_CNDT_CODE",
+    "value": "0"
+  },
+  {
+    "name": "UserResume.M_Resume_Title",
+    "value": "함께+일하고+싶은+동료+이재철입니다."
+  },
+  {
+    "name": "UserInfo.M_Name",
+    "value": "이재철"
+  },
+  {
+    "name": "UserInfo.M_Born",
+    "value": "1994.10.17"
+  },
+  {
+    "name": "UserInfo.M_Gender",
+    "value": "False"
+  },
+  {
+    "name": "UserInfo.M_Email",
+    "value": "qws941@kakao.com"
+  },
+  {
+    "name": "UserInfo.M_Home_Phone",
+    "value": "010-5757-9592"
+  },
+  {
+    "name": "UserInfo.M_Hand_Phone",
+    "value": "010-5757-9592"
+  },
+  {
+    "name": "UserInfo.M_Zipcode",
+    "value": "15121"
+  },
+  {
+    "name": "UserInfo.M_AddAddr",
+    "value": "경기+시흥시+능곡동"
+  },
+  {
+    "name": "UserInfo.M_AddrType",
+    "value": "R"
+  },
+  {
+    "name": "UserInfo.M_Addr_Text",
+    "value": "경기+시흥시+장현천로+61+(능곡동,+시흥시청역트리플포레)"
+  },
+  {
+    "name": "UserInfo.M_Addr_Text1",
+    "value": "307동+1301호"
+  },
+  {
+    "name": "UserWishWork.Str_JobTypeCode",
+    "value": "1000238,1000239"
+  },
+  {
+    "name": "UserWishWork.JobKeywords.Index",
+    "value": "0"
+  },
+  {
+    "name": "UserWishWork.JobKeywords[0].BizJobtype_Code",
+    "value": "1000238"
+  },
+  {
+    "name": "UserWishWork.JobKeywords[0].Kwrd_Code",
+    "value": "2167"
+  },
+  {
+    "name": "UserWishWork.JobKeywords[0].Kwrd_Name",
+    "value": "정보보안"
+  },
+  {
+    "name": "UserWishWork.JobKeywords[0].BizJobtype_Type_Code",
+    "value": "2"
+  },
+  {
+    "name": "LowLastEduLevel",
+    "value": "false"
+  },
+  {
+    "name": "UnivSchool.index",
+    "value": "c2"
+  },
+  {
+    "name": "UnivSchool[c2].Index_Name",
+    "value": "c2"
+  },
+  {
+    "name": "UnivSchool[c2].Schl_Type_Code",
+    "value": "2"
+  },
+  {
+    "name": "UnivSchool[c2].Schl_Name",
+    "value": "한양사이버대학교"
+  },
+  {
+    "name": "UnivSchool[c2].School_Code",
+    "value": ""
+  },
+  {
+    "name": "UnivSchool[c2].Area_Code",
+    "value": ""
+  },
+  {
+    "name": "UnivSchool[c2].Schl_Type_Code",
+    "value": "2"
+  },
+  {
+    "name": "UnivSchool[c2].Entc_YM",
+    "value": "202403"
+  },
+  {
+    "name": "UnivSchool[c2].Grad_YM",
+    "value": "202802"
+  },
+  {
+    "name": "UnivSchool[c2].Mstr_Dctr_Type_Code",
+    "value": ""
+  },
+  {
+    "name": "UnivSchool[c2].Grad_Type_Code",
+    "value": "4"
+  },
+  {
+    "name": "UnivSchool[c2].Trnf_Stat",
+    "value": "0"
+  },
+  {
+    "name": "UnivSchool[c2].UnivMajor[0].Major_Name",
+    "value": "컴퓨터공학과"
+  },
+  {
+    "name": "UnivSchool[c2].UnivMajor[0].Major_Code",
+    "value": "203"
+  },
+  {
+    "name": "UnivSchool[c2].UnivMajor[0].Major_Aftn_Code",
+    "value": ""
+  },
+  {
+    "name": "UnivSchool[c2].UnivMajor[0].Major_Type_Code",
+    "value": "1"
+  },
+  {
+    "name": "UnivSchool[c2].UnivMajor[0].Index_Name",
+    "value": "0"
+  },
+  {
+    "name": "UnivSchool[c2].Grade",
+    "value": ""
+  },
+  {
+    "name": "UnivSchool[c2].Grade_Prft_Scr",
+    "value": ""
+  },
+  {
+    "name": "UnivSchool[c2].UnivMajor[1].Major_Type_Code",
+    "value": ""
+  },
+  {
+    "name": "UnivSchool[c2].UnivMajor[1].Major_Name",
+    "value": ""
+  },
+  {
+    "name": "UnivSchool[c2].UnivMajor[1].Major_Code",
+    "value": ""
+  },
+  {
+    "name": "UnivSchool[c2].UnivMajor[1].Major_Aftn_Code",
+    "value": ""
+  },
+  {
+    "name": "UnivSchool[c2].UnivMajor[1].Index_Name",
+    "value": "1"
+  },
+  {
+    "name": "UnivSchool[c2].Grad_Paper_Name",
+    "value": ""
+  },
+  {
+    "name": "Career.index",
+    "value": "c8"
+  },
+  {
+    "name": "Career[c8].Index_Name",
+    "value": "c8"
+  },
+  {
+    "name": "Career[c8].C_Name",
+    "value": ""
+  },
+  {
+    "name": "Career[c8].Co_Code",
+    "value": ""
+  },
+  {
+    "name": "Career[c8].CName_Code",
+    "value": ""
+  },
+  {
+    "name": "Career[c8].M_MainCate",
+    "value": ""
+  },
+  {
+    "name": "Career[c8].Retire_Rsn_Code",
+    "value": ""
+  },
+  {
+    "name": "Career[c8].Retire_Rsn",
+    "value": ""
+  },
+  {
+    "name": "Career[c8].Biz_No",
+    "value": ""
+  },
+  {
+    "name": "Career[c8].NHIS_LINKED_STAT",
+    "value": ""
+  },
+  {
+    "name": "Career[c8].C_Part",
+    "value": ""
+  },
+  {
+    "name": "Career[c8].CSYM",
+    "value": ""
+  },
+  {
+    "name": "Career[c8].CEYM",
+    "value": ""
+  },
+  {
+    "name": "Career[c8].RetireSt",
+    "value": "1"
+  },
+  {
+    "name": "Career[c8].M_MainJob_Jikwi",
+    "value": ""
+  },
+  {
+    "name": "Career[c8].Job_Type_Code",
+    "value": ""
+  },
+  {
+    "name": "Career[c8].M_MainField",
+    "value": ""
+  },
+  {
+    "name": "Career[c8].M_MainJob",
+    "value": ""
+  },
+  {
+    "name": "Career[c8].Job_Field_Direct",
+    "value": ""
+  },
+  {
+    "name": "Career[c8].M_MainPay_User",
+    "value": ""
+  },
+  {
+    "name": "Career[c8].Prfm_Prt",
+    "value": ""
+  },
+  {
+    "name": "Career[c8].CNameHold",
+    "value": "0"
+  },
+  {
+    "name": "Career[c8].OpenStat",
+    "value": "1"
+  },
+  {
+    "name": "UserResume.M_Career_Text",
+    "value": "- 넥스트레이드 매매체결시스템 보안 인프라(FortiGate HA, 5계층 망분리)를 설계·운영하며 금융위 본인가 사전 심사를 통과했습니다.\r\n- Splunk ES 탐지 룰, n8n 알림, FortiManager 정책 조회를 하나의 보안 이벤트 인지·분류·알림 흐름으로 연결해 운영합니다.\r\n- Prometheus node_exporter로 Proxmox VM/CT 메트릭을 수집하고, Grafana Dashboard JSON을 코드(Grafana-as-code)로 관리해 단일 화면 가시화를 IaC로 재현 가능하게 했습니다.\r\n- Slack·GitHub Actions·Cloudflare 훅을 n8n 공통 워크플로우로 추상화하고, 에러 핸들링·재시도를 표준화해 신규 자동화 추가 시 노드 추가만으로 배포 가능하도록 만들었습니다.\r\n- 컨택센터 원격 근무 전환 과정에서 NAC 예외 요청, 단말 등록, 현장 점검 절차를 재사용 가능한 운영 체크리스트로 정리했습니다.\r\n- FortiGate SSL-VPN"
+  },
+  {
+    "name": "UserResume.M_Career_Text_Stat",
+    "value": "1"
+  },
+  {
+    "name": "FrgnWork.index",
+    "value": "c5"
+  },
+  {
+    "name": "FrgnWork[c5].Local_Code",
+    "value": ""
+  },
+  {
+    "name": "FrgnWork[c5].Frgn_SYM",
+    "value": ""
+  },
+  {
+    "name": "FrgnWork[c5].Frgn_EYM",
+    "value": ""
+  },
+  {
+    "name": "Social.Index",
+    "value": "1_1778429992064"
+  },
+  {
+    "name": "Social[1_1778429992064].Index_Name",
+    "value": "1_1778429992064"
+  },
+  {
+    "name": "Social[1_1778429992064].Act_Type_Code",
+    "value": ""
+  },
+  {
+    "name": "Social[1_1778429992064].Inst_Name",
+    "value": ""
+  },
+  {
+    "name": "Social[1_1778429992064].Act_Start_YM",
+    "value": ""
+  },
+  {
+    "name": "Social[1_1778429992064].Act_End_YM",
+    "value": ""
+  },
+  {
+    "name": "Social[1_1778429992064].Act_Cntnt",
+    "value": ""
+  },
+  {
+    "name": "Edu.Index",
+    "value": "c12"
+  },
+  {
+    "name": "Edu[c12].Index_Name",
+    "value": "c12"
+  },
+  {
+    "name": "Edu[c12].Edu_Name",
+    "value": ""
+  },
+  {
+    "name": "Edu[c12].Edu_Inst_Name",
+    "value": ""
+  },
+  {
+    "name": "Edu[c12].Edu_Inst_Code",
+    "value": ""
+  },
+  {
+    "name": "Edu[c12].Edu_Start_YM",
+    "value": ""
+  },
+  {
+    "name": "Edu[c12].Edu_End_YM",
+    "value": ""
+  },
+  {
+    "name": "Edu[c12].Edu_Cntnt",
+    "value": ""
+  },
+  {
+    "name": "License.index",
+    "value": "c14"
+  },
+  {
+    "name": "License[c14].Index_Name",
+    "value": "c14"
+  },
+  {
+    "name": "License[c14].Naver_Lcns_Linked_Stat",
+    "value": ""
+  },
+  {
+    "name": "License[c14].Lc_Name",
+    "value": ""
+  },
+  {
+    "name": "License[c14].Lc_Code",
+    "value": ""
+  },
+  {
+    "name": "License[c14].Lc_Pub",
+    "value": ""
+  },
+  {
+    "name": "License[c14].Lc_YYMM",
+    "value": ""
+  },
+  {
+    "name": "Award.index",
+    "value": "1_1778429992067"
+  },
+  {
+    "name": "Award[1_1778429992067].Index_Name",
+    "value": "1_1778429992067"
+  },
+  {
+    "name": "Award[1_1778429992067].Award_Name",
+    "value": "자율주행 경진대회 우수상"
+  },
+  {
+    "name": "Award[1_1778429992067].Award_Inst_Name",
+    "value": "한양사이버대학교"
+  },
+  {
+    "name": "Award[1_1778429992067].Award_Year",
+    "value": "2026"
+  },
+  {
+    "name": "Award[1_1778429992067].Award_Cntnt",
+    "value": ""
+  },
+  {
+    "name": "Training.Index",
+    "value": "c18"
+  },
+  {
+    "name": "Training[c18].Index_Name",
+    "value": "c18"
+  },
+  {
+    "name": "Training[c18].NName",
+    "value": ""
+  },
+  {
+    "name": "Training[c18].NCode",
+    "value": ""
+  },
+  {
+    "name": "Training[c18].NETC",
+    "value": ""
+  },
+  {
+    "name": "Training[c18].T_S_YYMM",
+    "value": ""
+  },
+  {
+    "name": "Training[c18].T_E_YYMM",
+    "value": ""
+  },
+  {
+    "name": "Training[c18].Content",
+    "value": ""
+  },
+  {
+    "name": "Language.Index",
+    "value": "c521"
+  },
+  {
+    "name": "Language[c521].Index_Name",
+    "value": "c521"
+  },
+  {
+    "name": "Language[c521].Eval_Category",
+    "value": ""
+  },
+  {
+    "name": "Language[c521].Lang1_Name",
+    "value": ""
+  },
+  {
+    "name": "Language[c521].Lang_Etc",
+    "value": ""
+  },
+  {
+    "name": "Language[c521].Lang1_Name",
+    "value": ""
+  },
+  {
+    "name": "Language[c521].Test1_Name",
+    "value": ""
+  },
+  {
+    "name": "Language[c521].Test_Etc",
+    "value": ""
+  },
+  {
+    "name": "Language[c521].Test1_Point",
+    "value": ""
+  },
+  {
+    "name": "Language[c521].Test1_Point",
+    "value": ""
+  },
+  {
+    "name": "Language[c521].Point_Grade_Type_Code",
+    "value": ""
+  },
+  {
+    "name": "Language[c521].Test_YYMM",
+    "value": ""
+  },
+  {
+    "name": "Language[c521].Lang1_Stat",
+    "value": ""
+  },
+  {
+    "name": "UserResume.Attach_File_Name",
+    "value": "13691247,"
+  },
+  {
+    "name": "File_Type",
+    "value": "2"
+  },
+  {
+    "name": "UserInfo.Veteran_Stat",
+    "value": ""
+  },
+  {
+    "name": "UserInfo.Job_Protect_Stat",
+    "value": ""
+  },
+  {
+    "name": "UserInfo.Employ_Spprt_Trgt_Stat",
+    "value": ""
+  },
+  {
+    "name": "UserInfo.Handicap_Stat",
+    "value": ""
+  },
+  {
+    "name": "UserInfo.Handicap_Lev",
+    "value": ""
+  },
+  {
+    "name": "UserAddition.Military_Stat",
+    "value": "4"
+  },
+  {
+    "name": "UserInfo.Military_Stat",
+    "value": "4"
+  },
+  {
+    "name": "UserAddition.Military_SYM",
+    "value": "201412"
+  },
+  {
+    "name": "UserAddition.Military_EYM",
+    "value": "201612"
+  },
+  {
+    "name": "UserAddition.Military_Kind",
+    "value": "7"
+  },
+  {
+    "name": "PIOfferAgree.HandicapOfferAlreadyAgreeStat",
+    "value": "0"
+  },
+  {
+    "name": "PIOfferAgree.MilitaryOfferAlreadyAgreeStat",
+    "value": "1"
+  },
+  {
+    "name": "PIOfferAgree.VeteranOfferAlreadyAgreeStat",
+    "value": "0"
+  },
+  {
+    "name": "PIOfferAgree.JobProtectOfferAlreadyAgreeStat",
+    "value": "0"
+  },
+  {
+    "name": "PIOfferAgree.EmploySupportOfferAlreadyAgreeStat",
+    "value": "0"
+  },
+  {
+    "name": "PIOfferAgree.IpAgree",
+    "value": "1"
+  },
+  {
+    "name": "radio",
+    "value": "on"
+  },
+  {
+    "name": "UserWishWork.M_Job_Type",
+    "value": "1100000"
+  },
+  {
+    "name": "UserWishWork.AreaCode",
+    "value": "/I000/B000/K000/"
+  },
+  {
+    "name": "UserWishWork.Abn_BizJobtype_Code",
+    "value": ""
+  },
+  {
+    "name": "UserWishWork.M_Keyword",
+    "value": "정보보안"
+  },
+  {
+    "name": "UserWishWork.M_Job_Type_1",
+    "value": "1"
+  },
+  {
+    "name": "UserWishWork.M_Job_Type_2",
+    "value": "1"
+  },
+  {
+    "name": "M_Job_Type",
+    "value": "1100000"
+  },
+  {
+    "name": "UserWishWork.M_Want_Pay_Amt",
+    "value": ""
+  },
+  {
+    "name": "AreaCode",
+    "value": "/I000/B000/K000/"
+  },
+  {
+    "name": "InputStat.JobTypeInputStat",
+    "value": "True"
+  },
+  {
+    "name": "InputStat.SkillInputStat",
+    "value": "True"
+  },
+  {
+    "name": "InputStat.SchoolInputStat",
+    "value": "True"
+  },
+  {
+    "name": "InputStat.CareerInputStat",
+    "value": "False"
+  },
+  {
+    "name": "InputStat.SocialInputStat",
+    "value": "False"
+  },
+  {
+    "name": "InputStat.EduInputStat",
+    "value": "False"
+  },
+  {
+    "name": "InputStat.AwardInputStat",
+    "value": "True"
+  },
+  {
+    "name": "InputStat.LicenseInputStat",
+    "value": "False"
+  },
+  {
+    "name": "InputStat.TrainingInputStat",
+    "value": "False"
+  },
+  {
+    "name": "InputStat.LanguageInputStat",
+    "value": "False"
+  },
+  {
+    "name": "InputStat.PortfolioInputStat",
+    "value": "True"
+  },
+  {
+    "name": "InputStat.UserAdditionInputStat",
+    "value": "True"
+  },
+  {
+    "name": "InputStat.UserIntroduceInputStat",
+    "value": "False"
+  },
+  {
+    "name": "ResumePimAgree.PimAgreeEssentialStat",
+    "value": "1"
+  },
+  {
+    "name": "ResumePimAgree.PimAgreeEssential",
+    "value": "0"
+  },
+  {
+    "name": "ResumePimAgree.PimAgreeOptionalStat",
+    "value": "1"
+  },
+  {
+    "name": "ResumePimAgree.PimAgreeOptional",
+    "value": "1"
+  },
+  {
+    "name": "IsEditPage",
+    "value": "True"
+  },
+  {
+    "name": "IsCompleteSave",
+    "value": "True"
+  },
+  {
+    "name": "LastEditDateTicks",
+    "value": "639140580840070000"
+  }
+]
