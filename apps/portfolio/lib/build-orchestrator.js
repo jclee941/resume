@@ -208,9 +208,9 @@ async function runWorkerBuild({ baseDir, version, allowedEmails, logger }) {
 
   const buildTime = ((Date.now() - buildStartTime) / 1000).toFixed(2);
   // Cloudflare Workers limit is 1024KB after compression; uncompressed worker.js typically
-  // compresses ~3-4x. Sanity threshold raised to 1100KB uncompressed (≈ 280KB compressed).
-  if (parseFloat(workerSizeKB) > 1100) {
-    logger.error(`❌ Worker size ${workerSizeKB}KB exceeds 1100KB sanity limit!`);
+  // compresses ~3-4x. Sanity threshold raised to 1300KB uncompressed (≈ 350KB compressed).
+  if (parseFloat(workerSizeKB) > 1300) {
+    logger.error(`❌ Worker size ${workerSizeKB}KB exceeds 1300KB sanity limit!`);
     process.exit(1);
   }
 

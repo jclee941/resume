@@ -1,0 +1,537 @@
+/* ============================================
+   CAREER INCIDENT TIMELINE
+   Dark terminal theme - Incident Response visualization
+   ============================================ */
+
+/* ----------------------------------------
+   TIMELINE CONTAINER
+   ---------------------------------------- */
+.incident-timeline {
+  --timeline-offset: 120px;
+  position: relative;
+  padding: var(--space-6) 0;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Vertical connecting line */
+.timeline-line {
+  position: absolute;
+  left: 24px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(
+    to bottom,
+    var(--cyber-cyan-dim) 0%,
+    var(--cyber-cyan) 50%,
+    var(--cyber-green-dim) 100%
+  );
+  opacity: 0.4;
+}
+
+@media (min-width: 768px) {
+  .incident-timeline {
+    --timeline-offset: 180px;
+  }
+
+  .timeline-line {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+/* ----------------------------------------
+   TIMELINE NODE
+   ---------------------------------------- */
+.timeline-node {
+  position: relative;
+  display: flex;
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.timeline-node--animate {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.timeline-node:focus {
+  outline: none;
+}
+
+.timeline-node:focus-visible .timeline-card {
+  border-color: var(--cyber-cyan);
+  box-shadow: var(--shadow-glow);
+}
+
+/* ----------------------------------------
+   TIMELINE MARKER (dot on line)
+   ---------------------------------------- */
+.timeline-marker {
+  position: relative;
+  flex-shrink: 0;
+  width: 48px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: var(--space-2);
+}
+
+.timeline-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--bg-primary);
+  transition: all 0.3s ease;
+  z-index: 1;
+}
+
+/* Active status - blinking green */
+.timeline-dot.status--active {
+  background: var(--cyber-green);
+  box-shadow: 0 0 12px var(--cyber-green), 0 0 24px var(--cyber-green-dim);
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Completed status - solid cyan */
+.timeline-dot.status--completed {
+  background: var(--cyber-cyan);
+  box-shadow: 0 0 8px var(--cyber-cyan-dim);
+}
+
+/* ----------------------------------------
+   TIMELINE CONTENT
+   ---------------------------------------- */
+.timeline-content {
+  flex: 1;
+  min-width: 0;
+}
+
+@media (min-width: 768px) {
+  .timeline-node {
+    align-items: flex-start;
+  }
+
+  .timeline-node:nth-child(odd) .timeline-content {
+    text-align: right;
+    padding-right: calc(50% + var(--space-8));
+  }
+
+  .timeline-node:nth-child(even) .timeline-content {
+    text-align: left;
+    padding-left: calc(50% + var(--space-8));
+  }
+}
+
+/* ----------------------------------------
+   TIMELINE HEADER
+   ---------------------------------------- */
+.timeline-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+@media (min-width: 768px) {
+  .timeline-node:nth-child(odd) .timeline-header {
+    justify-content: flex-end;
+  }
+}
+
+.timeline-date {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+}
+
+.timeline-badges {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+/* ----------------------------------------
+   PHASE BADGES
+   ---------------------------------------- */
+.phase-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  padding: 3px 10px;
+  border-radius: 3px;
+  border: 1px solid;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.phase-badge--운영 {
+  background: rgba(0, 217, 122, 0.15);
+  border-color: var(--cyber-green);
+  color: var(--cyber-green);
+}
+
+.phase-badge--구축 {
+  background: rgba(0, 212, 224, 0.15);
+  border-color: var(--cyber-cyan);
+  color: var(--cyber-cyan);
+}
+
+.phase-badge--자동화 {
+  background: rgba(217, 70, 168, 0.15);
+  border-color: var(--cyber-magenta);
+  color: var(--cyber-magenta-bright);
+}
+
+.phase-badge--안정화 {
+  background: rgba(255, 215, 0, 0.15);
+  border-color: var(--cyber-yellow);
+  color: var(--cyber-yellow);
+}
+
+.phase-badge--기초 {
+  background: rgba(161, 161, 170, 0.15);
+  border-color: var(--text-secondary);
+  color: var(--text-secondary);
+}
+
+/* ----------------------------------------
+   STATUS BADGE
+   ---------------------------------------- */
+.status-badge--active {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  padding: 3px 8px;
+  border-radius: 3px;
+  background: var(--cyber-green);
+  color: var(--bg-primary);
+  animation: blink 1.5s ease-in-out infinite;
+}
+
+/* ----------------------------------------
+   TIMELINE CARD
+   ---------------------------------------- */
+.timeline-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+  padding: var(--space-4);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.timeline-card:hover {
+  border-color: var(--cyber-cyan-dim);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.timeline-company {
+  font-family: var(--font-mono);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-1) 0;
+}
+
+.company-link {
+  color: var(--cyber-cyan);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.company-link:hover {
+  color: var(--cyber-cyan-bright);
+  text-decoration: underline;
+}
+
+.timeline-role {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  margin: 0 0 var(--space-1) 0;
+}
+
+.timeline-myrole {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* ----------------------------------------
+   INCIDENT STAGES (Progress Icons)
+   ---------------------------------------- */
+.incident-stages {
+  display: flex;
+  gap: var(--space-3);
+  margin: var(--space-3) 0;
+  justify-content: flex-start;
+}
+
+.timeline-node:nth-child(odd) .incident-stages {
+  justify-content: flex-start;
+}
+
+@media (min-width: 768px) {
+  .timeline-node:nth-child(odd) .incident-stages {
+    justify-content: flex-end;
+  }
+}
+
+.incident-stage {
+  font-size: var(--text-lg);
+  opacity: 0.4;
+  transition: all 0.3s ease;
+  filter: grayscale(1);
+}
+
+.incident-stage--current,
+.timeline-node:hover .incident-stage {
+  opacity: 1;
+  filter: grayscale(0);
+  transform: scale(1.1);
+}
+
+/* ----------------------------------------
+   TIMELINE IMPACT
+   ---------------------------------------- */
+.timeline-impact {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-primary);
+}
+
+.impact-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+}
+
+.impact-label {
+  color: var(--cyber-green);
+  font-weight: 600;
+}
+
+.impact-text {
+  color: var(--text-secondary);
+}
+
+/* ----------------------------------------
+   EXPANDABLE DETAILS
+   ---------------------------------------- */
+.timeline-details {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.timeline-node.is-expanded .timeline-details {
+  max-height: 500px;
+  opacity: 1;
+  margin-top: var(--space-3);
+}
+
+.details-description {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0 0 var(--space-3) 0;
+}
+
+.details-achievements {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.details-achievements li {
+  position: relative;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--cyber-green);
+  padding-left: var(--space-4);
+  margin-bottom: var(--space-1);
+}
+
+.details-achievements li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--cyber-cyan);
+}
+
+/* ----------------------------------------
+   EXPAND BUTTON
+   ---------------------------------------- */
+.timeline-expand-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  background: transparent;
+  border: 1px solid var(--border-secondary);
+  border-radius: 4px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.timeline-expand-btn:hover {
+  border-color: var(--cyber-cyan);
+  color: var(--cyber-cyan);
+}
+
+.timeline-expand-btn:focus {
+  outline: none;
+}
+
+.timeline-expand-btn:focus-visible {
+  border-color: var(--cyber-cyan);
+  box-shadow: var(--shadow-glow);
+}
+
+.expand-icon {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.3s ease;
+}
+
+/* ----------------------------------------
+   ANIMATIONS
+   ---------------------------------------- */
+
+/* Active node pulse animation */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 12px var(--cyber-green), 0 0 24px var(--cyber-green-dim);
+  }
+  50% {
+    box-shadow: 0 0 20px var(--cyber-green), 0 0 40px var(--cyber-green-dim);
+  }
+}
+
+/* Status blink animation */
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Node entrance animation */
+@keyframes timeline-entrance {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.timeline-node--animate {
+  animation: timeline-entrance 0.4s ease forwards;
+}
+
+/* ----------------------------------------
+   RESPONSIVE ADJUSTMENTS
+   ---------------------------------------- */
+
+/* Mobile: full width cards */
+@media (max-width: 767px) {
+  .incident-timeline {
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+  }
+
+  .timeline-line {
+    left: 20px;
+  }
+
+  .timeline-marker {
+    width: 40px;
+  }
+
+  .timeline-dot {
+    width: 12px;
+    height: 12px;
+  }
+
+  .timeline-card {
+    padding: var(--space-3);
+  }
+
+  .phase-badge {
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+}
+
+/* Tablet adjustments */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .incident-timeline {
+    --timeline-offset: 140px;
+  }
+}
+
+/* ----------------------------------------
+   ACCESSIBILITY - REDUCED MOTION
+   ---------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .timeline-node,
+  .timeline-card,
+  .timeline-dot,
+  .status-badge--active,
+  .expand-icon,
+  .incident-stage {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .timeline-node--animate {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ----------------------------------------
+   PRINT STYLES
+   ---------------------------------------- */
+@media print {
+  .incident-timeline {
+    max-width: 100%;
+  }
+
+  .timeline-line,
+  .timeline-dot.status--active {
+    animation: none;
+  }
+
+  .timeline-expand-btn {
+    display: none;
+  }
+
+  .timeline-details {
+    max-height: none;
+    opacity: 1;
+  }
+}
