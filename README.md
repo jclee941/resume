@@ -1,283 +1,137 @@
+```markdown
 # resume.jclee.me
-
-## DevSecOps / SRE 이력서 자동화 모노레포
-
-Cloudflare Workers 포트폴리오 · 구직 자동화 파이프라인 · 셀프호스팅 Observability
 
 [![CI](https://github.com/jclee941/resume/actions/workflows/ci.yml/badge.svg)](https://github.com/jclee941/resume/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-MIT-000000.svg)](LICENSE)
 [![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-F38020?logo=cloudflare&logoColor=white)](https://workers.cloudflare.com)
 [![Node](https://img.shields.io/badge/node-≥22-43853D?logo=node.js&logoColor=white)](https://nodejs.org)
 
-[Portfolio →](https://resume.jclee.me) · [English](https://resume.jclee.me/en) ·
-[日本語](https://resume.jclee.me/ja) · [Health](https://resume.jclee.me/health) ·
-[Metrics](https://resume.jclee.me/metrics)
+> DevSecOps/SRE 엔지니어를 위한 **이력서 자동화 모노레포**입니다.  
+> 단일 진실원(SSoT) 데이터에서 파생되는 Cloudflare Workers 포트폴리오, 구직 자동화 파이프라인, 셀프호스팅 관측 도구를 포함합니다.
 
-</div>
+[포트폴리오 →](https://resume.jclee.me) · [English](https://resume.jclee.me/en) · [日本語](https://resume.jclee.me/ja) · [Health](https://resume.jclee.me/health) · [Metrics](https://resume.jclee.me/metrics)
 
 ---
 
-## Overview
+## 개요
 
-이재철 (Jaecheol Lee) — DevSecOps/SRE 엔지니어. 8년차, 금융·공공 보안 인프라.
+이 저장소는 단순한 정적 사이트가 아닌, **단일 진실원(SSoT)** 기반으로 운영되는 모노레포입니다.  
+`packages/data`의 중앙 집중식 이력서 데이터를 통해 포트폴리오 웹사이트, 구직 자동화 시스템, 대시보드를 동기화하고 일관성을 유지합니다.
 
-이 저장소는 단일 포트폴리오 사이트가 아닌 **단일 진실원(SSoT) 이력서 데이터에서 파생되는 다중 산출물**의 모노레포입니다.
-
-```text
-                    ┌─────────────────────────────────┐
-                    │  packages/data/resumes/master/resume_data.json  │  ← Single Source of Truth
-                    └────────────┬────────────────────┘
-                                 │
-            ┌────────────────────┼────────────────────┐
-            ▼                    ▼                    ▼
-   ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
-   │  Edge Portfolio │  │ Job Automation  │  │ Profile Sync    │
-   │  (CF Workers)   │  │  (n8n orches.) │  │ (Wanted CV +    │
-   └─────────────────┘  └─────────────────┘  │   Social)       │
-                                               └─────────────────┘
+```
+┌──────────────────────────────────────────────────────┐
+│  packages/data/resumes/master/resume_data.json       │
+│  (Single Source of Truth)                            │
+└──────────────┬───────────────────┬───────────────────┘
+               │                   │
+      ┌────────▼────────┐ ┌────────▼────────┐
+      │ Edge Portfolio  │ │ Job Automation  │
+      │ (CF Workers)    │ │ (Docker/n8n)    │
+      └─────────────────┘ └─────────────────┘
 ```
 
-## Quick Start
+## 주요 기능
 
-```bash
-npm install
-npm run automate:ssot     # sync + build + typecheck + test
-npm run dev               # Miniflare local dev
-npm test                  # Jest + Node native
+- **SSoT 이력서 관리**: 하나의 JSON 소스로부터 포트폴리오, 구직 프로필, 대시보드 데이터를 동기화
+- **에지 포트폴리오**: Cloudflare Workers 기반 SSR/i18n 사이트 (한국어, 영어, 일본어)
+- **구직 자동화**: Wanted/JobKorea 연동 및 자동 지원 파이프라인 (`apps/job-server`, `apps/job-dashboard`)
+- **셀프호스팅 관측**: `/health`, `/metrics` 엔드포인트 및 MCP 서버 제공
+- **엄격한 테스트**: Playwright E2E(접근성, 시각적 회귀, 모바일, SEO, 보안), 통합/단위 테스트
 
-## Scripts
+## 기술 스택
 
-### Build & Development
+- **런타임**: Node.js ≥22, Cloudflare Workers
+- **언어**: TypeScript, JavaScript, Go(CI 검증)
+- **테스트**: Jest, Playwright, Node.js Native Test Runner
+- **인프라**: Cloudflare Workers, Docker · Docker Compose
+- **품질**: ESLint, TypeScript 엄격 모드, 데이터 스키마 검증
 
-| Script | Description |
-| ------ | ----------- |
-| `npm run build` | Generate `worker.js` from HTML templates |
-| `npm run build:portfolio` | Build portfolio worker only |
-| `npm run build:full` | Full build: sync + compile + generate |
-| `npm run dev` | Miniflare local dev server |
-| `npm run dev:wrangler` | Wrangler dev mode |
-
-### Testing
-
-| Script | Description |
-| ------ | ----------- |
-| `npm test` | Jest + Node native tests |
-| `npm run test:jest` | Jest unit/integration tests |
-| `npm run test:node` | Node.js native tests |
-| `npm run test:schemas` | Zod schema validation |
-| `npm run test:e2e` | Playwright E2E tests |
-| `npm run test:e2e:smoke` | Smoke tests (worker-health + deploy) |
-| `npm run test:coverage` | Coverage report |
-
-### Data Sync
-
-| Script | Description |
-| ------ | ----------- |
-| `npm run sync:data` | Sync resume from SSoT |
-| `npm run sync:pptx` | Generate PPTX profiles (Shinhan) |
-| `npm run sync:all` | Both sync operations |
-
-### Validation & Quality
-
-| Script | Description |
-| ------ | ----------- |
-| `npm run lint` | ESLint check |
-| `npm run lint:fix` | ESLint auto-fix |
-| `npm run typecheck` | TypeScript strict mode |
-| `npm run format` | Prettier format |
-| `npm run validate:openapi` | OpenAPI spec validation |
-
-### Security
-
-| Script | Description |
-| ------ | ----------- |
-| `npm run security:audit` | npm audit security scan |
-
-### Docker
-
-| Script | Description |
-| ------ | ----------- |
-| `npm run docker:build:dev` | Build dev Docker image |
-| `npm run docker:run` | Run Docker container |
-| `npm run docker:compose` | Docker Compose up |
-
-### Automation Pipelines
-
-| Script | Description |
-| ------ | ----------- |
-| `npm run automate:ssot` | SSoT sync + build + typecheck + test |
-| `npm run automate:full` | Full CI pipeline (sync + lint + test + build) |
-
-
-## Structure
+## 프로젝트 구조
 
 ```text
 resume/
-├─ apps/
-│  ├─ portfolio/           Edge portfolio · Cloudflare Worker (~409 KB)
-│  ├─ job-server/          MCP Server + 19 tools, hexagonal job-automation runtime
-│  └─ job-dashboard/       Dashboard API Worker (Service Binding)
-├─ packages/
-│  ├─ data/                SSoT — resume_data.json (ko / en / ja)
-│  ├─ types/               Canonical JSDoc·TS types (zero runtime deps)
-│  ├─ schemas/             Runtime Zod validation
-│  ├─ contracts/           OpenAPI spec + Worker Env interface
-│  ├─ shared/              errors · logger · retry · crypto · rate-limit · auth
-│  ├─ env/                Environment validation + type-safe secrets
-│  └─ cli/                 Deployment CLI
-├─ infrastructure/
-│  ├─ monitoring/          Grafana · Prometheus · Elasticsearch · Loki
-#QW|│  └─ n8n/                 28 workflow exports (JSON)
-├─ tools/                  Build · CI · verification (Go + JS)
-├─ tests/                  Jest unit · integration · Playwright E2E
-└─ docs/                   ADRs · architecture · conventions · guides · security
+├── apps/
+│   ├── portfolio/              # Cloudflare Workers 에지 포트폴리오
+│   ├── job-server/             # 구직 자동화 MCP 서버 (Docker 지원)
+│   └── job-dashboard/          # 구직 현황 대시보드
+├── packages/
+│   ├── cli/                    # 이력서 검증 CLI
+│   ├── data/                   # SSoT 이력서 데이터
+│   ├── shared/                 # 공유 유틸리티
+│   ├── types/                  # TypeScript 타입
+│   ├── schemas/                # 데이터 스키마
+│   ├── contracts/              # API 계약
+│   └── env/                    # 환경 설정
+├── tests/
+│   ├── e2e/                    # Playwright E2E 테스트
+│   ├── integration/            # 통합 테스트
+│   └── unit/                   # 단위 테스트
+├── tools/                      # 빌드 및 CI 스크립트
+├── Dockerfile
+├── docker-compose.yml
+└── wrangler.jsonc
 ```
 
-## Stack
-
-| Layer             | Technology                                      |
-| ----------------- | ----------------------------------------------- |
-| **Runtime**       | Cloudflare Workers · Node.js ≥22                |
-| **Frontend**      | Vanilla JS · IBM Plex Mono · Inter              |
-| **Automation**    | MCP (Fastify) · Playwright stealth · n8n        |
-| **Build**         | npm workspaces (Bazel dropped — [ADR-0008][a8]) |
-| **CI/CD**         | GitHub Actions → Cloudflare Workers Builds      |
-| **Testing**       | Jest · Playwright · Node test runner            |
-| **Observability** | Prometheus · Grafana · Elasticsearch · Loki     |
-| **Security**      | gitleaks · CSP SHA-256 · HSTS · Workers Secrets |
-
-[a8]: docs/adr/0008-drop-bazel-facade.md
-
-## Apps
-
-### Portfolio Worker `apps/portfolio/`
-
-HTML 템플릿 → `generate-worker.js` → `worker.js` (edge artifact). CSP SHA-256
-nonce, HSTS, multi-locale (`/` ko · `/en` en · `/ja` ja). 빌드된 `worker.js`는
-아티팩트이므로 직접 편집하지 않습니다.
-
-### Job Automation Runtime `apps/job-server/`
-
-MCP Server (Fastify) + 19 MCP tools. Hexagonal: services (도메인) ↔ clients (어댑터).
-
-| Module                 | Purpose                                                |
-| ---------------------- | ------------------------------------------------------ |
-| `src/crawlers/`        | Stealth Playwright (Wanted, JobKorea, Saramin, +7)     |
-| `src/auto-apply/`      | Browser-based form submission · rate limiting          |
-| `src/shared/services/` | 22 domain services (matching, apply, session, resume…) |
-| `src/session-broker/`  | Wanted session renewal — Docker + stealth browser      |
-
-### Dashboard `apps/job-dashboard/`
-
-Cloudflare Worker. Service Binding으로 `job-server` 호출, applications/auto-apply 분석
-화면.
-
-## Job Automation
-
-### Resume Sync
-
-| Platform     | Method                          | Status   |
-| ------------ | ------------------------------- | -------- |
-| **Wanted**   | OneID token + Chaos API v1      | ● Active |
-| **JobKorea** | Playwright headless + form POST | ● Active |
-
-### Auto-Apply (Wanted + JobKorea)
-
-n8n 파이프라인으로 매일 9시·21시 KST 실행.
-
-| Platform     | Method                                                 | Path                                                 |
-| ------------ | ------------------------------------------------------ | ---------------------------------------------------- |
-| **Wanted**   | CDP cookie injection → `page.evaluate(fetch)`          | OneID → HttpOnly 쿠키 → Chaos API `/applications/v1` |
-| **JobKorea** | `page.getByRole('button', { name: '즉시 지원' })` 클릭 | Playwright 직접 폼 흐름                              |
+## 설치
 
 ```bash
-# CLI 단발
-node apps/job-server/src/auto-apply/cli/index.js apply --apply --max=10
-
-# n8n 파이프라인 수동 트리거
-curl -X POST https://n8n.jclee.me/webhook/job-search-apply
+git clone <repository-url>
+cd resume
+npm install
 ```
 
-### Cover Letter Generator
+## 사용법
 
-직무별 자소서 자동 생성 (500–600자). 6 templates (DevSecOps · SRE · Security · Cloud
-Security · DevOps · Infra).
-
-- **Fallback** — `cover-letter-generator.js` · `detectRole()` →
-  `buildKoreanCoverLetter()`
-- **AI** — `ANTHROPIC_API_KEY` 설정 시 Claude Haiku 기반 직무 맞춤 생성
-
-### Profile Auto-Sync
-
-`resume_data.json` → Wanted CV + 소셜 프로필 자동 반영 (Playwright + CDP).
-
-## n8n Workflows
-
-| Workflow                    | Schedule          | Purpose                                             |
-| --------------------------- | ----------------- | --------------------------------------------------- |
-| **Job Search + Auto Apply** | 09:00 / 21:00 KST | 검색 → 스코어링 → 자소서 → 지원 (Wanted + JobKorea) |
-| **Resume Sync**             | Sun 03:00 KST     | Wanted + JobKorea 이력서 동기화                     |
-| **Telegram Notify**         | On demand         | `@qws941_bot` 알림                                  |
+### 로컬 개발
 
 ```bash
-curl -X POST https://n8n.jclee.me/webhook/resume-sync
+# 데이터 동기화 → 빌드 → 타입체크 → 테스트
+npm run automate:ssot
+
+# 포트폴리오 로컬 개발 서버 실행
+npm run dev
 ```
 
-## Observability
+### 빌드 및 동기화
+
+| 스크립트 | 설명 |
+|---|---|
+| `npm run build` | `apps/portfolio` HTML 템플릿에서 `worker.js` 생성 |
+| `npm run build:full` | 포트폴리오 + CLI 전체 빌드 |
+| `npm run sync:data` | SSoT 데이터를 각 앱에 동기화 |
+| `npm run sync:pptx` | 신한은행 PPTX 형식 이력서 생성 |
+| `npm run automate:full` | 전체 동기화 → 린트 → 타입체크 → 테스트 → 빌드 → Go 검증 |
+
+### 테스트
 
 ```bash
-curl https://resume.jclee.me/health     # JSON · D1·KV bindings · uptime
-curl https://resume.jclee.me/metrics    # Prometheus exposition
+# 전체 테스트 실행
+npm test
+
+# 개별 스위트
+npm run test:jest       # Jest 단위 테스트
+npm run test:node       # job-server Node native 테스트
+npm run test:schemas    # 스키마 검증
 ```
 
-> [Infrastructure Guide](docs/guides/INFRASTRUCTURE.md) · [Monitoring
-  Setup](docs/guides/MONITORING_SETUP.md)
-
-## CI / CD
-
-| Workflow      | Trigger            | Jobs                                                                              |
-| ------------- | ------------------ | --------------------------------------------------------------------------------- |
-| **CI**        | push / PR → master | secret-scan (gitleaks) · lint · typecheck · test-jest · test-node · validate-data |
-| **Release**   | CI ✓ on master     | semver bump · changelog · GitHub Release · CF Workers deploy                      |
-| **Auto-sync** | daily 00:00 UTC    | SSoT drift detection · auto PR                                                    |
-
-Production은 **Cloudflare Workers Builds**가 권위(authoritative). 로컬 `npm run
-deploy`는 의도적으로 비활성화.
+E2E(접근성, UI 회귀, 보안 등)는 Playwright로 실행합니다:
 
 ```bash
-npm run automate:full    # 로컬 풀 파이프라인
-git push                 # → CI → 자동 배포
+npx playwright test
 ```
 
-## Documentation
+### Docker
 
-| Guide                       | Path                                                     |
-| --------------------------- | -------------------------------------------------------- |
-| Infrastructure Architecture | [docs/guides/INFRASTRUCTURE.md][g1]                      |
-| Monitoring Setup            | [docs/guides/MONITORING_SETUP.md][g2]                    |
-| Auto-Apply Guide            | [docs/guides/auto-apply.md][g3]                          |
-| Cover Letter Strategy       | [docs/guides/cover-letter-customization-strategy.md][g4] |
-| Certification Roadmap       | [docs/guides/certification-roadmap.md][g5]               |
-| PDF Generation              | [docs/guides/PDF_GENERATION.md][g6]                      |
+`apps/job-server`를 독립 컨테이너로 실행할 수 있습니다.
 
-[g1]: docs/guides/INFRASTRUCTURE.md
-[g2]: docs/guides/MONITORING_SETUP.md
-[g3]: docs/guides/auto-apply.md
-[g4]: docs/guides/cover-letter-customization-strategy.md
-[g5]: docs/guides/certification-roadmap.md
-[g6]: docs/guides/PDF_GENERATION.md
+```bash
+docker-compose up -d mcp-server
+```
 
-### Conventions & Security
+- **포트**: `3000`
+- **헬스체크**: `/health` 엔드포인트 기반 (`30s` 간격)
+- **볼륨**: `job_automation_data`로 데이터 영속화
 
-- [Architecture Rules](docs/conventions/architecture-rules.md) — 200/500 LOC
-  limits, naming, n8n SSoT
-- [Secret Rotation Playbook](docs/security/SECRET_ROTATION_PLAYBOOK.md) —
-  gitleaks gate + rotation
-- [SSOT Improvement Plan](docs/architecture/SSOT_IMPROVEMENT_PLAN.md) — Epic 0 –
-  6 roadmap
-#RM|- Root [`AGENTS.md`](AGENTS.md) + 45 domain-specific child files across `apps/`
-  · `packages/` · `tests/` · `tools/` · `infrastructure/`
+## 배포
 
----
-
-**[resume.jclee.me](https://resume.jclee.me)** · Built on Cloudflare's edge
+- **포트폴리오**: `master` 브랜치에 `git push` 시 Cloudflare Workers 자동 빌드가 트리거됩니다. 수동 배포는 비
