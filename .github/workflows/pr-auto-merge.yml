@@ -35,7 +35,7 @@ concurrency:
 
 jobs:
   enable-auto-merge:
-    runs-on: ${{ github.repository_visibility == 'private' && 'self-hosted' || 'ubuntu-latest' }}
+    runs-on: self-hosted
     timeout-minutes: 5
     # Trigger on either:
     #   1. an APPROVED review on a non-draft, non-bot PR
@@ -52,6 +52,10 @@ jobs:
        github.event.label.name == 'auto-merge' &&
        github.event.pull_request.draft == false)
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
       - name: Determine PR
         id: pr
         env:
@@ -117,3 +121,14 @@ jobs:
           # and the merge box is green. We just enable it; we never bypass.
           gh pr merge --auto --squash "$PR_URL" \
             || echo "::warning::auto-merge enable failed (allow_auto_merge disabled, branch protection mismatch, or PR already merged); not retrying"
+      - name: Notify on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🚨 ${{ github.workflow }} failed: ${context.runId}`,
+              body: `${{ github.workflow }} workflow failed. See [run logs](${context.payload.repository.html_url}/actions/runs/${context.runId}).`
+            });

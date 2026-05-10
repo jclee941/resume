@@ -18,29 +18,37 @@ permissions:
   issues: write
 
 concurrency:
-  group: pr-review-${{ github.event.pull_request.number }}
-  cancel-in-progress: true
+  group: pr-review-${{ github.event.pull_request.number }}-${{ matrix.model }}
+cancel-in-progress: true
 
 jobs:
   pr_review:
+    strategy:
+      matrix:
+        model: [minimax-m2.7, gpt-5.5]
+      fail-fast: false
     if: github.event.pull_request.draft == false && github.event.pull_request.user.login != 'dependabot[bot]'
     runs-on: ${{ github.repository_visibility == 'private' && 'self-hosted' || 'ubuntu-latest' }}
-    name: PR review via CLIProxyAPI
+    name: PR review via CLIProxyAPI (${{ matrix.model }})
     timeout-minutes: 30
 
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
       - name: Check out pr-agent source from jclee941/.github
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: jclee941/.github
           ref: master
           path: pr-agent-src
           fetch-depth: 1
 
-      - name: Set up Python 3.12
-        uses: actions/setup-python@v6
-        with:
-          python-version: "3.12"
+      - name: Set up Python
+        run: |
+          python3 --version
+          which python3
 
       - name: Cache pip dependencies
         uses: actions/cache@v5
@@ -79,6 +87,15 @@ jobs:
           MODEL_COUNT=$(python3 -c "import json; print(len(json.load(open('/tmp/cli_proxy_test.json'))['data']))")
           echo "cli_proxy OK - $MODEL_COUNT models available"
 
+      - name: Install GitHub CLI
+        run: |
+          if ! command -v gh &> /dev/null; then
+            curl -fsSL -o /tmp/gh.tar.gz https://github.com/cli/cli/releases/download/v2.49.2/gh_2.49.2_linux_amd64.tar.gz
+            tar -xzf /tmp/gh.tar.gz -C /tmp
+            mkdir -p "$HOME/.local/bin"
+            mv /tmp/gh_2.49.2_linux_amd64/bin/gh "$HOME/.local/bin/"
+            echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          fi
       - name: Run PR review
         working-directory: pr-agent-src
         env:
@@ -88,7 +105,7 @@ jobs:
           OPENAI_BASE_URL: https://cliproxy.jclee.me/v1
           LITELLM_LOG: 'DEBUG'
           LITELLM_LOCAL_MODEL_COST_MAP: "True"
-          CONFIG.MODEL: kimi-k2.6
+          CONFIG.MODEL: ${{ matrix.model }}
           CONFIG.FALLBACK_MODELS: '["minimax-m2.7"]'
           CONFIG.RESPONSE_LANGUAGE: ko
           CONFIG.AI_TIMEOUT: "180"
@@ -115,6 +132,7 @@ jobs:
           # the workflow portable to any runner.
           PR_URL: ${{ github.event.pull_request.html_url }}
           PR_REVIEWER.EXTRA_INSTRUCTIONS: |
+            [Model: ${{ matrix.model }}]
             이 리뷰는 표준 코드 리뷰 모드입니다.
             다음 관점에서 체계적으로 점검하십시오.
 
@@ -157,7 +175,7 @@ jobs:
           async def _test():
               try:
                   resp = await litellm.acompletion(
-                      model="openai/kimi-k2.6",
+                      model="${{ matrix.model }}",
                       messages=[{"role": "user", "content": "say pong"}],
                       api_key=api_key,
                       api_base=api_base,
@@ -193,10 +211,10 @@ jobs:
                   traceback.print_exc()
                   return
 
-              print('\n=== Debug: Handler chat_completion with kimi-k2.6 (streaming) ===')
+              print('\n=== Debug: Handler chat_completion with ${{ matrix.model }} (streaming) ===')
               try:
                   resp, finish_reason = await handler.chat_completion(
-                      model='kimi-k2.6',
+                      model='${{ matrix.model }}',
                       system='You are a helpful assistant.',
                       user='Say hello.',
                       temperature=0.2,
@@ -212,3 +230,14 @@ jobs:
           # Dynamic command selection, execution, and silent-failure detection
           # are handled by pr_review_runner.py (tested in scripts/pr_review_runner_test.py).
           .venv/bin/python scripts/pr_review_runner.py "$PR_URL"
+      - name: Notify on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🚨 PR Review failed for PR #${{ github.event.pull_request.number }}`
+              body: `PR Review workflow failed for PR #${{ github.event.pull_request.number }}. See [run logs](${context.payload.repository.html_url}/actions/runs/${context.runId}).`
+            });

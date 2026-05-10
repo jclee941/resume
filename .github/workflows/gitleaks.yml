@@ -14,7 +14,7 @@ name: Gitleaks
 #   - Push scans: scans the new tip's reachable history.
 #
 # fetch-depth: 0 is REQUIRED for both events. The action references PR
-# commits by explicit SHA (${baseRef}^..${headRef}), so shallow clones can
+# commits by explicit SHA (${baseRef}^..${headRef}`), so shallow clones can
 # break multi-commit PR scans. The upstream gitleaks-action README also
 # recommends fetch-depth: 0.
 #
@@ -42,23 +42,53 @@ concurrency:
 
 jobs:
   scan:
+    # Gitleaks does not need self-hosted resources; ubuntu-latest avoids
+    # gitleaks-action@v2 install failures on self-hosted runners.
     runs-on: ${{ github.repository_visibility == 'private' && 'self-hosted' || 'ubuntu-latest' }}
     timeout-minutes: 10
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
-      - name: Run gitleaks
-        uses: gitleaks/gitleaks-action@v2
+      - name: Clean stale gitleaks temp
+        run: |
+          rm -rf /tmp/gitleaks.tmp /tmp/gitleaks-8.24.3
+
+      - name: Install gitleaks
+        run: |
+          wget -qO /tmp/gitleaks.tar.gz "https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz"
+          mkdir -p "$HOME/.local/bin"
+          tar -xzf /tmp/gitleaks.tar.gz -C "$HOME/.local/bin" gitleaks
+          chmod +x "$HOME/.local/bin/gitleaks"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Run gitleaks detect
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            BASE_SHA="${{ github.event.pull_request.base.sha }}"
+            HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+            echo "Scanning PR commits: ${BASE_SHA}^..${HEAD_SHA}"
+            gitleaks detect --source . --log-opts "${BASE_SHA}^..${HEAD_SHA}" --redact --verbose --exit-code 1
+          else
+            echo "Scanning full repository"
+            gitleaks detect --source . --redact --verbose --exit-code 1
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # GITLEAKS_LICENSE only required for organization-scope scanning.
-          GITLEAKS_NOTIFY_USER_LIST: '@jclee941'
-          GITLEAKS_ENABLE_COMMENTS: 'true'
-          GITLEAKS_ENABLE_SUMMARY: 'true'
-          GITLEAKS_ENABLE_UPLOAD_ARTIFACT: 'false'
-          # GITLEAKS_CONFIG intentionally unset - gitleaks CLI auto-detects
-          # repo-local .gitleaks.toml. Setting it to a non-existent path
-          # would hard-fail the action across all downstream repos.
+      - name: Notify on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🚨 Gitleaks Scan Failed: ${context.runId}`,
+              body: `Secret scanning workflow failed. See [run logs](${context.payload.repository.html_url}/actions/runs/${context.runId}).`
+            });
