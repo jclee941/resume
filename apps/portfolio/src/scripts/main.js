@@ -1,12 +1,16 @@
 import { initWebVitals } from './modules/web-vitals.js';
 import { initializeABTesting } from './modules/ab-test.js';
 import { initUI } from './modules/ui.js';
+import { initMissionControl } from './modules/mission-control.js';
+import { initSkillRadar } from './modules/skill-radar.js';
 
 // Initialize all modules
 document.addEventListener('DOMContentLoaded', () => {
   initUI();
+  initMissionControl();
   initializeABTesting();
   initWebVitals();
+  initSkillRadar();
 
   // Service Worker Registration
   if ('serviceWorker' in navigator) {

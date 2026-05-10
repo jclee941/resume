@@ -1,0 +1,404 @@
+/* ========================================
+   SKILL RADAR - Interactive Capability Matrix
+   Dark terminal theme with cyber aesthetics
+   ======================================== */
+
+/* ----------------------------------------
+   SKILL RADAR CONTAINER
+   ---------------------------------------- */
+.skill-radar {
+  width: 100%;
+  margin-top: var(--space-6, 1.5rem);
+}
+
+.skill-radar__search {
+  margin-bottom: var(--space-6, 1.5rem);
+}
+
+.skill-radar__search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  max-width: 400px;
+}
+
+.skill-radar__search-icon {
+  position: absolute;
+  left: var(--space-4, 1rem);
+  color: var(--text-muted, #71717a);
+  pointer-events: none;
+  width: 18px;
+  height: 18px;
+}
+
+.skill-radar__search-input {
+  width: 100%;
+  padding: var(--space-3, 0.75rem) var(--space-4, 1rem) var(--space-3, 0.75rem) 2.75rem;
+  font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+  font-size: var(--text-sm, 0.875rem);
+  color: var(--text-primary, #e2e0dc);
+  background: var(--bg-secondary, #161625);
+  border: 1px solid var(--border-primary, #2a2a3e);
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.skill-radar__search-input::placeholder {
+  color: var(--text-muted, #71717a);
+}
+
+.skill-radar__search-input:focus {
+  border-color: var(--cyber-cyan, #00d4e0);
+  box-shadow: 0 0 0 3px rgba(0, 212, 224, 0.15);
+}
+
+.skill-radar__search-count {
+  display: none;
+  margin-top: var(--space-2, 0.5rem);
+  font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+  font-size: var(--text-xs, 0.75rem);
+  color: var(--cyber-cyan, #00d4e0);
+}
+
+/* ----------------------------------------
+   SKILL RADAR GRID
+   ---------------------------------------- */
+.skill-radar__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4, 1rem);
+}
+
+@media (max-width: 768px) {
+  .skill-radar__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ----------------------------------------
+   DOMAIN CARD
+   ---------------------------------------- */
+.skill-domain-card {
+  position: relative;
+  background: var(--bg-card, #181822);
+  border: 1px solid var(--border-primary, #2a2a3e);
+  border-radius: 8px;
+  padding: var(--space-4, 1rem);
+  cursor: pointer;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+  outline: none;
+}
+
+.skill-domain-card:hover,
+.skill-domain-card:focus-visible {
+  border-color: var(--cyber-cyan, #00d4e0);
+  box-shadow: 0 0 20px rgba(0, 212, 224, 0.2), 0 4px 12px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
+}
+
+.skill-domain-card:focus-visible {
+  outline: 2px solid var(--cyber-cyan, #00d4e0);
+  outline-offset: 2px;
+}
+
+.skill-domain-card[aria-expanded="true"] {
+  border-color: var(--cyber-cyan, #00d4e0);
+  box-shadow: 0 0 24px rgba(0, 212, 224, 0.25);
+}
+
+.skill-domain-card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3, 0.75rem);
+}
+
+.skill-domain-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  color: var(--cyber-cyan, #00d4e0);
+  background: rgba(0, 212, 224, 0.1);
+  border: 1px solid rgba(0, 212, 224, 0.2);
+  border-radius: 8px;
+}
+
+.skill-domain-card__icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.skill-domain-card__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.skill-domain-card__title {
+  font-family: var(--font-sans, 'Inter', sans-serif);
+  font-size: var(--text-base, 1rem);
+  font-weight: 600;
+  color: var(--text-primary, #e2e0dc);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.skill-domain-card__count {
+  font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+  font-size: var(--text-xs, 0.75rem);
+  color: var(--text-muted, #71717a);
+}
+
+.skill-domain-card__expand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  color: var(--text-muted, #71717a);
+  transition: transform 0.3s ease;
+}
+
+.skill-domain-card__expand svg {
+  width: 16px;
+  height: 16px;
+}
+
+.skill-domain-card__level-indicator {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+  margin-top: var(--space-3, 0.75rem);
+  padding-top: var(--space-3, 0.75rem);
+  border-top: 1px solid var(--border-primary, #2a2a3e);
+}
+
+.skill-domain-card__level-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--level-color, var(--cyber-green, #00d97a));
+  box-shadow: 0 0 8px var(--level-color, var(--cyber-green, #00d97a));
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.skill-domain-card__level-label {
+  font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+  font-size: var(--text-xs, 0.75rem);
+  color: var(--level-color, var(--cyber-green, #00d97a));
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ----------------------------------------
+   SKILL PANEL (Expandable)
+   ---------------------------------------- */
+.skill-panel {
+  margin-top: var(--space-4, 1rem);
+  padding-top: var(--space-4, 1rem);
+  border-top: 1px solid var(--border-primary, #2a2a3e);
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.skill-panel__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4, 1rem);
+}
+
+/* ----------------------------------------
+   SKILL LIST
+   ---------------------------------------- */
+.skill-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 0.75rem);
+}
+
+.skill-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 0.25rem);
+}
+
+.skill-item__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.skill-item__name {
+  font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+  font-size: var(--text-sm, 0.875rem);
+  color: var(--text-primary, #e2e0dc);
+  font-weight: 500;
+}
+
+.skill-item__level {
+  font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+  font-size: var(--text-xs, 0.75rem);
+  font-weight: 600;
+}
+
+.skill-item__bar-container {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.skill-item__bar {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, var(--bar-color, var(--cyber-cyan)) 0%, color-mix(in srgb, var(--bar-color, var(--cyber-cyan)) 80%, white 20%) 100%);
+  border-radius: 3px;
+  transition: width 0.8s ease-out;
+  box-shadow: 0 0 10px var(--bar-color, var(--cyber-cyan));
+}
+
+.skill-item__bar.animate {
+  width: var(--target-width, 0%);
+}
+
+/* ----------------------------------------
+   EVIDENCE DRAWER
+   ---------------------------------------- */
+.skill-evidence-drawer {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-primary, #2a2a3e);
+  border-radius: 6px;
+  padding: var(--space-3, 0.75rem);
+  margin-top: var(--space-2, 0.5rem);
+}
+
+.skill-evidence-drawer__title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+  font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+  font-size: var(--text-xs, 0.75rem);
+  font-weight: 600;
+  color: var(--text-secondary, #a1a1aa);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 var(--space-3, 0.75rem);
+  padding-bottom: var(--space-2, 0.5rem);
+  border-bottom: 1px solid var(--border-primary, #2a2a3e);
+}
+
+.skill-evidence-drawer__title svg {
+  width: 14px;
+  height: 14px;
+  color: var(--cyber-cyan, #00d4e0);
+}
+
+.skill-evidence-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 0.75rem);
+}
+
+.skill-evidence-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 0.25rem);
+}
+
+.skill-evidence-item__name {
+  font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+  font-size: var(--text-xs, 0.75rem);
+  color: var(--cyber-cyan, #00d4e0);
+  font-weight: 500;
+}
+
+.skill-evidence-item__text {
+  font-family: var(--font-sans, 'Inter', sans-serif);
+  font-size: var(--text-sm, 0.875rem);
+  color: var(--text-secondary, #a1a1aa);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ----------------------------------------
+   NO RESULTS STATE
+   ---------------------------------------- */
+.skill-radar__no-results {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: var(--space-8, 2rem);
+  color: var(--text-muted, #71717a);
+  font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+  font-size: var(--text-sm, 0.875rem);
+}
+
+.skill-radar__no-results svg {
+  width: 48px;
+  height: 48px;
+  margin-bottom: var(--space-4, 1rem);
+  opacity: 0.5;
+}
+
+/* ----------------------------------------
+   ACCESSIBILITY
+   ---------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .skill-domain-card,
+  .skill-panel,
+  .skill-item__bar {
+    animation: none;
+    transition: none;
+  }
+
+  .skill-item__bar {
+    width: var(--target-width, 0%);
+  }
+
+  .skill-domain-card__expand svg {
+    transition: none;
+  }
+}
+
+/* ----------------------------------------
+   PRINT STYLES
+   ---------------------------------------- */
+@media print {
+  .skill-radar__search,
+  .skill-domain-card__expand {
+    display: none;
+  }
+
+  .skill-domain-card {
+    break-inside: avoid;
+    border: 1px solid #333;
+  }
+
+  .skill-panel {
+    display: block !important;
+  }
+}

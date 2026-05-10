@@ -662,6 +662,97 @@
             </section>
 
             <section
+              id="observability"
+              class="section-observability reveal"
+              role="region"
+              aria-labelledby="observability-heading"
+            >
+              <h2 id="observability-heading" class="sr-only">Observability</h2>
+              <div class="section-cmd">
+                <span class="section-cmd__command">kubectl get pods -n monitoring</span>
+              </div>
+              <div class="observability-intro">
+                <p>Real-time infrastructure monitoring and log collection pipeline
+                  <a
+                    href="https://grafana.jclee.me/d/resume-portfolio"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn--neon observability-btn"
+                  >
+                    <span class="btn-icon">📊</span> View Live Dashboard
+                  </a>
+                </p>
+              </div>
+              <ul class="stats-grid observability-stats">
+                <li class="stat-card observability-stat">
+                  <span class="stat-icon">💚</span>
+                  <span class="stat-value">99.9%</span>
+                  <span class="stat-label">Uptime</span>
+                </li>
+                <li class="stat-card observability-stat">
+                  <span class="stat-icon">📈</span>
+                  <span class="stat-value">--</span>
+                  <span class="stat-label">Total Requests</span>
+                </li>
+                <li class="stat-card observability-stat">
+                  <span class="stat-icon">⚡</span>
+                  <span class="stat-value">--</span>
+                  <span class="stat-label">Avg Response Time</span>
+                </li>
+                <li class="stat-card observability-stat">
+                  <span class="stat-icon">🔴</span>
+                  <span class="stat-value">0</span>
+                  <span class="stat-label">Error Rate</span>
+                </li>
+              </ul>
+              <div class="observability-stack">
+                <div class="observability-stack__item">
+                  <span class="stack-icon">📊</span>
+                  <span class="stack-name">Grafana</span>
+                </div>
+                <div class="observability-stack__item">
+                  <span class="stack-icon">📈</span>
+                  <span class="stack-name">Prometheus</span>
+                </div>
+                <div class="observability-stack__item">
+                  <span class="stack-icon">📝</span>
+                  <span class="stack-name">Loki</span>
+                </div>
+                <div class="observability-stack__item">
+                  <span class="stack-icon">🔍</span>
+                  <span class="stack-name">ELK Stack</span>
+                </div>
+                <div class="observability-stack__item">
+                  <span class="stack-icon">🌐</span>
+                  <span class="stack-name">Cloudflare Workers</span>
+                </div>
+              </div>
+              <div class="observability-embed">
+                <div class="embed-header">
+                  <span class="embed-title">Live Dashboard Preview</span>
+                  <button
+                    class="btn--neon embed-toggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="grafana-embed"
+                  >
+                    Load Preview
+                  </button>
+                </div>
+                <div class="embed-container" id="grafana-embed" hidden>
+                  <iframe
+                    src="https://grafana.jclee.me/d/resume-portfolio?kiosk=tv&autofitpanels=true"
+                    title="Grafana Dashboard - Resume Portfolio"
+                    width="100%"
+                    height="400"
+                    loading="lazy"
+                    allowfullscreen></iframe>
+                </div>
+              </div>
+            </section>
+
+
+            <section
               id="contact"
               class="section-contact reveal"
               role="region"
@@ -1056,5 +1147,25 @@
         });
       })();
     </script>
-  </body>
+      <script>
+      // Embed toggle for Grafana dashboard preview
+      (function () {
+        var toggleBtn = document.querySelector('.embed-toggle');
+        var embedContainer = document.getElementById('grafana-embed');
+        if (!toggleBtn || !embedContainer) return;
+        toggleBtn.addEventListener('click', function () {
+          var isExpanded = toggleBtn.getAttribute('aria-expanded') === 'true';
+          if (isExpanded) {
+            embedContainer.hidden = true;
+            toggleBtn.textContent = 'Load Preview';
+            toggleBtn.setAttribute('aria-expanded', 'false');
+          } else {
+            embedContainer.hidden = false;
+            toggleBtn.textContent = 'Close Preview';
+            toggleBtn.setAttribute('aria-expanded', 'true');
+          }
+        });
+      })();
+    </script>
+</body>
 </html>
