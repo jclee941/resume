@@ -8,6 +8,10 @@ permissions:
   pull-requests: write
   issues: write
 
+concurrency:
+  group: reusable-pr-checks-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   check-size:
     if: github.event_name == 'pull_request'
@@ -15,6 +19,10 @@ jobs:
     timeout-minutes: 10
     name: Check PR Size
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
       - name: 500 LOC limit check
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -53,6 +61,10 @@ jobs:
     timeout-minutes: 10
     name: Check PR Title
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
       - name: Conventional Commits validation
         uses: actions/github-script@v7
         with:
@@ -79,6 +91,10 @@ jobs:
     timeout-minutes: 10
     name: Check Branch Name
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
       - name: Branch naming validation
         uses: actions/github-script@v7
         with:
@@ -105,6 +121,10 @@ jobs:
     timeout-minutes: 10
     name: Check PR Description
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
       - name: Description validation
         uses: actions/github-script@v7
         with:
@@ -148,8 +168,12 @@ jobs:
     timeout-minutes: 10
     name: Check Large Files
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -185,8 +209,12 @@ jobs:
     timeout-minutes: 10
     name: Check Sensitive Files
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -217,4 +245,15 @@ jobs:
                 issue_number: context.issue.number,
                 body: body
               });
+      - name: Notify on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🚨 ${{ github.workflow }} failed: ${context.runId}`,
+              body: `${{ github.workflow }} workflow failed. See [run logs](${context.payload.repository.html_url}/actions/runs/${context.runId}).`
+            });
             }

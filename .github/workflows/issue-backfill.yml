@@ -54,6 +54,10 @@ jobs:
     runs-on: ${{ github.repository_visibility == 'private' && 'self-hosted' || 'ubuntu-latest' }}
     timeout-minutes: 10
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
       - name: Pick and label candidates
         env:
           # Use a fine-grained PAT (secrets.GH_PAT) when available so the
@@ -144,3 +148,14 @@ jobs:
             echo "Picked: $PICKED (max $MAX_PICKS)"
           } >> "$GITHUB_STEP_SUMMARY"
           echo "Picked $PICKED candidates."
+      - name: Notify on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🚨 ${{ github.workflow }} failed: ${context.runId}`,
+              body: `${{ github.workflow }} workflow failed. See [run logs](${context.payload.repository.html_url}/actions/runs/${context.runId}).`
+            });
