@@ -1,142 +1,89 @@
-import { spawn } from 'node:child_process';
-import { dirname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { syncToJobKoreaAPI } from '../../../scripts/profile-sync/jobkorea-handler/sync-api-only.js';
 
-const MAX_OUTPUT_TAIL_BYTES = 100 * 1024;
-const DEFAULT_TIMEOUT_MS = 10 * 60 * 1000;
-const FORCE_KILL_GRACE_MS = 10 * 1000;
-const MODULE_DIR = dirname(fileURLToPath(import.meta.url));
-const REPO_ROOT = resolve(MODULE_DIR, '../../../../..');
-const PROFILE_SYNC_SCRIPT = 'apps/job-server/scripts/profile-sync.js';
-
-function appendTail(current, chunk, maxBytes = MAX_OUTPUT_TAIL_BYTES) {
-  const next = `${current}${chunk}`;
-  if (next.length <= maxBytes) {
-    return next;
-  }
-
-  return next.slice(-maxBytes);
-}
-
+/**
+ * Map resume SSoT data to JobKorea platform format.
+ *
+ * @param {object} source - Resume SSoT data
+ * @returns {object} JobKorea formatted resume
+ */
 export function mapToJobKoreaFormat(source) {
   return {
-    name: source.personal.name,
-    email: source.personal.email,
-    phone: source.personal.phone,
-    careers: source.careers.map((c) => ({
-      company: c.company,
-      position: c.role,
-      period: c.period,
-      description: c.description,
+    name: source?.personal?.name ?? '',
+    email: source?.personal?.email ?? '',
+    phone: source?.personal?.phone ?? '',
+    careers: (source?.careers ?? []).map((c) => ({
+      company: c.company ?? '',
+      position: c.role ?? '',
+      period: c.period ?? '',
+      description: c.description ?? '',
     })),
     education: {
-      school: source.education.school,
-      major: source.education.major,
-      status: source.education.status,
+      school: source?.education?.school ?? '',
+      major: source?.education?.major ?? '',
+      status: source?.education?.status ?? '',
     },
-    certifications: source.certifications.map((c) => ({
-      name: c.name,
-      issuer: c.issuer,
-      date: c.date,
+    certifications: (source?.certifications ?? []).map((c) => ({
+      name: c.name ?? '',
+      issuer: c.issuer ?? '',
+      date: c.date ?? '',
     })),
   };
 }
 
-export function runJobKoreaProfileSync(options = {}) {
-  const {
-    spawnImpl = spawn,
-    timeoutMs = DEFAULT_TIMEOUT_MS,
-    cwd = REPO_ROOT,
-    now = () => Date.now(),
-  } = options;
-
-  return new Promise((resolvePromise) => {
-    const startedAt = now();
-    let stdoutTail = '';
-    let stderrTail = '';
-    let settled = false;
-    let timedOut = false;
-    let forceKillTimer = null;
-
-    const finish = (result) => {
-      if (settled) {
-        return;
-      }
-      settled = true;
-      clearTimeout(timeoutTimer);
-      if (forceKillTimer) {
-        clearTimeout(forceKillTimer);
-      }
-      resolvePromise({
-        ...result,
-        duration_ms: now() - startedAt,
-        stdout_tail: stdoutTail,
-        stderr_tail: stderrTail,
-      });
-    };
-
-    const child = spawnImpl(process.execPath, [PROFILE_SYNC_SCRIPT, 'jobkorea', '--apply'], {
-      cwd,
-      stdio: ['ignore', 'pipe', 'pipe'],
-    });
-
-    child.stdout?.on('data', (chunk) => {
-      stdoutTail = appendTail(stdoutTail, String(chunk));
-    });
-
-    child.stderr?.on('data', (chunk) => {
-      stderrTail = appendTail(stderrTail, String(chunk));
-    });
-
-    child.on('error', (error) => {
-      finish({
-        success: false,
-        error: error.message,
-        exit_code: null,
-      });
-    });
-
-    child.on('close', (exitCode) => {
-      if (timedOut) {
-        finish({
-          success: false,
-          error: 'timeout',
-          exit_code: null,
-        });
-        return;
-      }
-
-      finish({
-        success: exitCode === 0,
-        exit_code: exitCode,
-      });
-    });
-
-    const timeoutTimer = setTimeout(() => {
-      timedOut = true;
-      child.kill('SIGTERM');
-      forceKillTimer = setTimeout(() => {
-        child.kill('SIGKILL');
-      }, FORCE_KILL_GRACE_MS);
-    }, timeoutMs);
-  });
-}
-
-export async function syncToJobKorea(data, params) {
+/**
+ * Sync resume data to JobKorea via API-only (no browser automation).
+ *
+ * @param {object} data - Resume SSoT data
+ * @param {object} params - Sync parameters
+ * @param {string} [params.cookieString] - JobKorea session cookies (required)
+ * @param {string} [params.rNo] - Resume number
+ * @param {boolean} [params.dry_run] - Preview without saving
+ * @returns {Promise<object>} Sync result
+ */
+export async function syncToJobKorea(data, params = {}) {
   if (params.dry_run) {
     return {
       dry_run: true,
-      method: 'browser_automation',
-      would_sync: data,
+      mode: 'api-only',
+      would_sync: mapToJobKoreaFormat(data),
       steps: [
-        '1. Navigate to jobkorea.co.kr/User/Resume',
-        '2. Fill personal info form',
-        '3. Add/update career entries',
-        '4. Add certifications',
-        '5. Save resume',
+        '1. Validate JWT session (jkat cookie)',
+        '2. Fetch edit page tokens',
+        '3. Build form data from SSoT',
+        '4. Register portfolio URL (if present)',
+        '5. Save resume via POST /User/Resume/Save',
       ],
     };
   }
 
-  return runJobKoreaProfileSync();
+  if (!params.cookieString) {
+    return { error: 'cookieString required for API-only sync. Authenticate via jobkorea_auth first.' };
+  }
+
+  try {
+    const result = await syncToJobKoreaAPI(data, {
+      cookieString: params.cookieString,
+      rNo: params.rNo || process.env.JOBKOREA_RNO,
+      dryRun: false,
+    });
+    return result;
+  } catch (e) {
+    return { error: e.message, mode: 'api-only' };
+  }
+}
+
+/**
+ * Diff local resume data with JobKorea remote data.
+ * API-only mode returns a preview of what would change.
+ *
+ * @param {object} sourceData - Local resume data
+ * @param {object} params - Parameters (unused in API-only, kept for compat)
+ */
+export async function diffPlatform(sourceData, params = {}) {
+  const local = mapToJobKoreaFormat(sourceData);
+  return {
+    mode: 'api-only',
+    local_preview: local,
+    note: 'API-only mode: diff is not available without remote fetch. Use syncToJobKorea with dry_run for preview.',
+  };
 }

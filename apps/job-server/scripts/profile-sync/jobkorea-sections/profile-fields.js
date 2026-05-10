@@ -97,11 +97,6 @@ export function mapAwardToFormFields(ssot, indices) {
     pushField(fields, 'Award.index', keys.slice(0, awards.length).join(','));
     pushField(fields, 'InputStat.AwardInputStat', 'True');
   }
-  if (achievements.length > 0) {
-    const summary = achievements.map((a) => `- ${a}`).join('\n').slice(0, 500);
-    pushField(fields, 'UserResume.M_Career_Text', summary);
-    pushField(fields, 'UserResume.M_Career_Text_Stat', '1');
-  }
   return fields;
 }
 
