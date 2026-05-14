@@ -47,8 +47,8 @@ type Variant struct {
 }
 
 var resumeVariants = map[string]Variant{
-	"master":    {"packages/data/resumes/master/resume_final.md", "packages/data/resumes/master/resume_final.pdf", fontNanum},
-	"final":     {"packages/data/resumes/master/resume_final.md", "packages/data/resumes/master/resume_final.pdf", fontNanum},
+	"master":    {"packages/data/resumes/master/resume_master.md", "packages/data/resumes/master/resume_final.pdf", fontNanum},
+	"final":     {"packages/data/resumes/master/resume_master.md", "packages/data/resumes/master/resume_final.pdf", fontNanum},
 	"toss":      {"packages/data/resumes/applications/toss/toss_devops_engineer_resume.md", "packages/data/resumes/applications/toss/toss_devops_engineer_resume.pdf", fontNoto},
 	"general":   {"packages/data/resumes/generated/resume_general.md", "packages/data/resumes/generated/resume_general.pdf", fontNanum},
 	"technical": {"packages/data/resumes/generated/resume_technical.md", "packages/data/resumes/generated/resume_technical.pdf", fontNanum},
@@ -170,6 +170,9 @@ func generatePDFNative(source, output, font string) error {
 		"-o", output,
 		"--pdf-engine=xelatex",
 		"-V", fmt.Sprintf("mainfont=%s", font),
+		"-V", fmt.Sprintf("CJKmainfont=%s", font),
+		"-V", fmt.Sprintf("sansfont=%s", font),
+		"-V", fmt.Sprintf("monofont=%s", font),
 		"-V", fmt.Sprintf("geometry:margin=%s", margin),
 		"-V", fmt.Sprintf("fontsize=%s", fontSize),
 		"-V", fmt.Sprintf("linestretch=%s", lineStretch),
@@ -181,6 +184,8 @@ func generatePDFNative(source, output, font string) error {
 		"--number-sections",
 		"--metadata", fmt.Sprintf("title=Resume - Jaecheol Lee"),
 		"--metadata", fmt.Sprintf("author=Jaecheol Lee"),
+		"--metadata", "lang=ko-KR",
+		"--lua-filter", "tools/scripts/build/strip-emoji.lua",
 	}
 
 	cmd := exec.Command("pandoc", args...)
@@ -201,12 +206,17 @@ func generatePDFDocker(source, output, font string) error {
 		"-o", relOutput,
 		"--pdf-engine=xelatex",
 		"-V", fmt.Sprintf("mainfont=%s", font),
+		"-V", fmt.Sprintf("CJKmainfont=%s", font),
+		"-V", fmt.Sprintf("sansfont=%s", font),
+		"-V", fmt.Sprintf("monofont=%s", font),
 		"-V", fmt.Sprintf("geometry:margin=%s", margin),
 		"-V", fmt.Sprintf("fontsize=%s", fontSize),
 		"-V", fmt.Sprintf("linestretch=%s", lineStretch),
 		"--toc",
 		"--metadata", fmt.Sprintf("title=Resume - Jaecheol Lee"),
 		"--metadata", fmt.Sprintf("author=Jaecheol Lee"),
+		"--metadata", "lang=ko-KR",
+		"--lua-filter", "tools/scripts/build/strip-emoji.lua",
 	}
 
 	cmd := exec.Command("docker", args...)
