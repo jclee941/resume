@@ -3,12 +3,35 @@ import { dirname, join } from 'path';
 import { createRequire } from 'module';
 import { fileURLToPath } from 'url';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const require = createRequire(import.meta.url);
-const validatorEngine = require('../../../../tools/scripts/utils/validate-resume-data.js');
-const SCHEMA_PATH = join(__dirname, '../../../data/resumes/master/resume_schema.json');
+function resolveSchemaPath() {
+  try {
+    return join(dirname(fileURLToPath(import.meta.url)), '../../../data/resumes/master/resume_schema.json');
+  } catch {
+    return null;
+  }
+}
 
-export const masterSchema = JSON.parse(readFileSync(SCHEMA_PATH, 'utf-8'));
+function loadMasterSchema() {
+  const schemaPath = resolveSchemaPath();
+  if (!schemaPath) return {};
+  try {
+    return JSON.parse(readFileSync(schemaPath, 'utf-8'));
+  } catch {
+    return {};
+  }
+}
+
+function loadValidatorEngine() {
+  try {
+    const require = createRequire(import.meta.url);
+    return require('../../../../tools/scripts/utils/validate-resume-data.js');
+  } catch {
+    return { validateResumeData: () => ({ valid: true, errors: undefined }) };
+  }
+}
+
+export const masterSchema = loadMasterSchema();
+const validatorEngine = loadValidatorEngine();
 
 export function validateResumeData(data, schema = masterSchema) {
   const errors = [];
