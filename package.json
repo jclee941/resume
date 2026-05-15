@@ -83,14 +83,14 @@
   "devDependencies": {
     "@eslint/js": "^9.39.1",
     "@axe-core/playwright": "^4.11.3",
-    "@typescript-eslint/eslint-plugin": "^8.59.2",
+    "@typescript-eslint/eslint-plugin": "^8.59.3",
     "@typescript-eslint/parser": "^8.59.1",
     "chrome-launcher": "^1.2.1",
     "lighthouse": "^13.3.0",
-    "@playwright/test": "^1.58.2",
-    "@redocly/cli": "^2.30.4",
+    "@playwright/test": "^1.60.0",
+    "@redocly/cli": "^2.30.6",
     "@types/jest": "^30.0.0",
-    "@types/node": "^25.6.2",
+    "@types/node": "^25.8.0",
     "c8": "^11.0.0",
     "eslint": "^10.3.0",
     "globals": "^17.6.0",
@@ -99,7 +99,7 @@
     "prettier": "^3.8.1",
     "sharp": "^0.34.5",
     "typescript": "^6.0.3",
-    "wrangler": "^4.90.0"
+    "wrangler": "^4.92.0"
   },
   "overrides": {
     "semver": "^7.6.3",
