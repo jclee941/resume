@@ -13,6 +13,7 @@ module.exports = {
     'tests/unit/portfolio-worker/generate-worker.test.js',
     'tests/unit/generate-worker.test.js',
     'tests/integration/worker-html.test.js',
+    'tests/unit/portfolio-worker/lib/file-reader.test.js',
   ],
   collectCoverageFrom: [
     'apps/portfolio/lib/**/*.js', // Core testable modules
