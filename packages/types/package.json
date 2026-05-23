@@ -13,6 +13,7 @@
     "./application": "./src/application.js",
     "./resume": "./src/resume.js",
     "./session": "./src/session.js",
-    "./env": "./src/env.js"
+    "./env": "./src/env.js",
+    "./queue": "./src/queue.js"
   }
 }

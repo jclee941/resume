@@ -5,6 +5,8 @@
 
 import { NotificationService } from '../services/notifications.js';
 
+/** @typedef {import('@resume/types').NotificationJob} NotificationJob */
+
 const MAX_CRITICAL_RETRIES = 5;
 const BACKOFF_BASE_SECONDS = 30;
 

@@ -11,7 +11,7 @@ function generateHeroContent(heroData) {
     <h1 class="hero-name">${escapeHtml(heroData.titleEn)}</h1>
     <h2 class="hero-subtitle">${escapeHtml(heroData.subtitle)}</h2>
     <div class="hero-contact">
-       <a href="mailto:qws941@kakao.com" class="hero-link" aria-label="Email Jaecheol Lee at qws941@kakao.com">qws941@kakao.com</a>
+       <a href="mailto:${escapeHtml(heroData.email || 'qws941@kakao.com')}" class="hero-link" aria-label="Email">${escapeHtml(heroData.email || 'qws941@kakao.com')}</a>
     </div>
   `;
 }
@@ -52,12 +52,13 @@ function generateInfrastructureCards(infraData) {
  * @returns {string} HTML string with accessible footer links
  */
 function generateContactGrid(contactData) {
+  const velog = contactData.velog || 'https://velog.io/@qws941';
   return `
-        <a href="${escapeHtml(contactData.github)}" target="_blank" rel="noopener noreferrer" class="contact-item" aria-label="View GitHub profile (opens in new tab)">GitHub</a>
-        <a href="${escapeHtml(contactData.linkedin)}" target="_blank" rel="noopener noreferrer" class="contact-item" aria-label="View LinkedIn profile (opens in new tab)">LinkedIn</a>
-        <a href="https://velog.io/@qws941" target="_blank" rel="noopener noreferrer" class="contact-item" aria-label="View Velog blog (opens in new tab)">Velog</a>
-        <a href="mailto:${escapeHtml(contactData.email)}" class="contact-item" aria-label="Send email to ${escapeHtml(contactData.email)}">Email</a>
-        <a href="${escapeHtml(contactData.website)}" target="_blank" rel="noopener noreferrer" class="contact-item" aria-label="Visit portfolio website (opens in new tab)">Website</a>
+        <a href="${escapeHtml(contactData.github)}" target="_blank" rel="noopener noreferrer" class="contact-item" aria-label="GitHub">GitHub</a>
+        <a href="${escapeHtml(contactData.linkedin)}" target="_blank" rel="noopener noreferrer" class="contact-item" aria-label="LinkedIn">LinkedIn</a>
+        <a href="${escapeHtml(velog)}" target="_blank" rel="noopener noreferrer" class="contact-item" aria-label="Velog">Velog</a>
+        <a href="mailto:${escapeHtml(contactData.email)}" class="contact-item" aria-label="Email">Email</a>
+        <a href="${escapeHtml(contactData.website)}" target="_blank" rel="noopener noreferrer" class="contact-item" aria-label="Website">Website</a>
   `;
 }
 

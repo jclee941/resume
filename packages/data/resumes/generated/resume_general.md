@@ -1,11 +1,11 @@
 <!-- Generated from master resume -->
 <!-- Variant: general -->
-<!-- Generated: 2026-05-01T01:12:37.789Z -->
+<!-- Generated: 2026-05-14T07:03:06.189Z -->
 <!-- Description: General purpose resume for all industries -->
-
 # 이재철
 
-DevSecOps / SRE 엔지니어
+Security 엔지니어
+
 
 ---
 
@@ -13,50 +13,52 @@ DevSecOps / SRE 엔지니어
 
 - 전화: 010-5757-9592
 - 이메일: <qws941@kakao.com>
-- 주소: 경기도 시흥시 장현천로61, 307동 1301호
+- 주소: 경기도 시흥시 장현천로61
 - GitHub: github.com/jclee941
 
 ---
+
 
 ---
 
 ## 학력
 
-한양사이버대학교 컴퓨터공학과 (2024.03 ~ 재학중)
-용남고등학교 졸업 (2013)
+한양사이버대학교 컴퓨터공학과 (재학중)
+용남고등학교 졸업
 
 ---
+
 
 ---
 
 ## 경력 요약
 
-총 경력: 7년 7개월 (2017.02 ~ 2026.02)
+총 경력: 2017.02 ~ 2026.02
 
 ### 보유 기술
 
-- **보안**: FortiGate 방화벽, DDoS, IPS, WAF, NAC, DLP, EDR, APT, Splunk SIEM (15종 운영
-  경험)
-- **클 라우드**: Docker, Kubernetes, Cloudflare Workers (Edge Computing)
+- **보안**: FortiGate 방화벽, DDoS, IPS, WAF, NAC, DLP, EDR, APT, Splunk SIEM
+- **클라우드**: Docker, Kubernetes, Cloudflare Workers (Edge Computing)
 - **자동화**: Python, Shell, Ansible, Terraform, n8n (워크플로우 오케스트레이션)
 - **모니터링**: Grafana, Prometheus, Loki (통합 관제 플랫폼)
 - **DevOps**: GitLab EE, CI/CD, Container Registry, Docker Compose
-- **AI/ML**: Claude AI (자동화 파이프라인), ML 기반 위협 예측 및 자동 라우팅 시스템 (22 MCP 서버 통합)
+- **AI/ML**: Claude AI 기반 자동화 파이프라인, ML 기반 위협 예측 및 자동 라우팅 시스템
 
 ### 자격증 및 교육
 
 - **진행 중**: Certified Kubernetes Security Specialist (CKS) 준비
-- 한양사이버대학교 컴퓨터공학과 재학 (2024.03 ~ )
+- 한양사이버대학교 컴퓨터공학과 재학
 
 ### 금융 보안 전문성
 
-- **금융감독원 감사 대응**: 4회 연속 지적사항 0건 달성 (2024년 전체 분기)
+- **금융감독원 감사 대응**: 정기/수시 감사 대응 및 지적사항 클리어
 - **FSC 본인가 준비**: 금융위원회 다자간매매체결회사 본인가 사전 심사 보안 분야 완료
-- **Zero Trust 설계**: 5계층 망분리 및 Air-Gap 보안 아키텍처 구축
-- **재해복구 전문**: RTO 4시간, RPO 15분 기준 DR 사이트 운영 및 테스트 수행
-- **증권거래소 보안**: 일 10만+ 거래, 10TB+ 데이터 처리 환경 보안 운영
+- **Zero Trust 구조 경험**: 다층 망분리 및 Air-Gap 환경 구축 참여
+- **재해복구 업무 경험**: DR 사이트 점검·운영 및 주기적 DR 테스트 참여
+- **증권거래소 보안**: 대규모 거래 데이터 처리 환경의 보안 운영
 
 ---
+
 
 ---
 
@@ -64,76 +66,73 @@ DevSecOps / SRE 엔지니어
 
 ### ㈜아이티센 CTS | 정보보안 운영 엔지니어
 
-2025.03 ~ 2026.02 (1년) | Nextrade 대체거래소 운영SM (정볼보안팀)
+2025.03 ~ 2026.02 | Nextrade 대체거래소 운영SM (정보보안팀)
 
-**프로젝트 규모**
+**업무 개요**
 
-- 운영 인프라: 단말 300대, 서버 150대, 네트워크 장비 80대
-- 일일 거래량: 10만+ 주문, 10TB+ 데이터 처리
-- 사용자: 직원 200명
+- 대체거래소 정보보안팀 운영SM(System Maintenance)
+- 정보보안 장비 운영 및 임직원 환경의 보안 관제
 
 주요 업무
 
-- **SOC 24/7 운영 총괄**: 3교대 보안관제 체계 구축 및 운영 (보안 이벤트 월 6천건 처리)
-- **보안 솔루션 통합 관제**: 시스템보안 / 네트워크보안 / 엔드포인트보안
-- **보안 인시던트 대응**: P0~P3 등급별 SLA 기반 대응 체계 운영 (P1: 30분 이내 대응)
-- **재해복구 계획 운영**: DR 사이트 관리 및 분기별 DR 테스트 수행 (RTO 4시간, RPO 15분)
-- **취약점 관리**: 주간/월간 취약점 스캔 및 SLA 기반 패치 관리 (Critical 7일, High 14일)
-- **크로스 펑셔널 협업**: 개발팀·거래팀·운영팀 간 보안 요구사항 조율 및 기술 자문 제공
-- **문제 해결 리더십**: 긴급 보안 인시던트 발생 시 TF 구성 및 72시간 내 근본 원인 분석 완료
+- SOC 교대 근무로 보안관제 업무 수행
+- 보안 솔루션(시스템/네트워크/엔드포인트) 관제 운영
+- 보안 이벤트 분석 및 등급별 대응 절차에 따른 인시던트 처리
+- DR 사이트 점검 및 주기적 DR 테스트 참여
+- 취약점 스캔 결과 정리 및 심각도 기준의 패치 적용
+- 개발팀·거래팀·운영팀과 보안 요구사항 커뮤니케이션
+- 긴급 인시던트 발생 시 대응 절차에 따라 원인 분석 수행
 
 주요 성과
 
-- 20개월 연속 보안 침해사고 0건 (2023.11 ~ 2025.07)
-- 금융감독원 감사 4회 연속 지적사항 0건 (2024년 Q1/Q2/Q3/Q4)
-- 거래 플랫폼 가용성 99.98% 달성 (연간 다운타임 1.75시간 이내)
-- **Splunk-FortiNet 통합 시스템 구축**: 80개 방화벽 중앙 관리, 정책 배포 시간 90% 단축 (10시간 → 1시간), 일
-  100만+ 이벤트 실시간 처리 | **비용 절감**: 연간 인건비 약 5,000만원 절감 (정책 관리 자동화)
-- **Grafana 통합 모니터링 플랫폼 구축**: 5개 대시보드로 시스템/Docker/로그 실시간 가시성 확보, MTTR 60% 단축
-  (30분 → 12분) | **비용 절감**: 장애 손실 70% 감소, 연 약 3억원 상당 리스크 완화
-- **Claude AI 기반 위협 정보 자동화**: 금융 위협 정보 수집·분류 자동화, 수동 분석 시간 100% 제거 (주 8시간 →
-  0시간), 처리 속도 50% 향상 | **비용 절감**: 연간 보안 분석 인력 약 4,000만원 절감
-- **n8n 워크플로우 자동화 플랫폼 구축**: 541개 노드 활용, API 오케스트레이션 처리 속도 2배 향상 (250 RPS → 500
-  RPS), 반복 작업 80% 자동화 (주 40시간 → 8시간) | **비용 절감**: 운영 효율화로 연간 인건비 약 6,000만원 절감
-- 보안 오탐 50% 감소 (SIEM 룰 최적화, 일 200건 → 100건)
-- 취약점 893건 처리 (SLA 준수율 98.5%)
-- DR 복구 시간 37% 단축 (4시간 → 2.5시간)
+- 근무 기간 동안 보안 침해사고 없이 운영
+- 금융감독원 감사 자료 준비 및 대응 업무 참여
+- 거래 플랫폼 운영 기준 유지 업무 참여
+- Splunk-FortiNet 연동 환경에서 방화벽 정책 조회·배포 자동화 스크립트 작성
+- Grafana 대시보드로 시스템·컨테이너·로그 지표를 한 화면에 정리
+- Claude AI를 활용한 위협 정보 수집·분류 스크립트 작성으로 수동 분석 의존도 낮춤
+- n8n 워크플로우로 반복 API 호출 자동화
+- SIEM 탐지 룰 검토 및 조건 조정으로 오탐 정리
+- 취약점 SLA 기준의 패치 관리 업무
+- DR 복구 절차 스크립트화 및 주기적 훈련 참여
 
 ---
 
 ### ㈜가온누리정보시스템 | 프리랜서 인프라 엔지니어
 
-2024.03 ~ 2025.02 (11개월) | Nextrade 대체거래소(다자간매매체결회사) 구축 프로젝트
+2024.03 ~ 2025.02 | Nextrade 대체거래소(다자간매매체결회사) 구축 프로젝트
 
 **프로젝트 규모**
 
-- 신규 구축 인프라: 서버 150대, 단말 300대, 네트워크 장비 80대
+- 신규 구축 인프라: 정보보안 장비
 - 금융시스템: 거래 플랫폼, 청산 시스템, 감시 시스템, 백오피스
-- 사용자 목표: 직원 200명
+- 사용자 목표: 사내 임직원 전반
 
 주요 업무
 
-- **보안 아키텍처 설계**: 5계층 망분리 (외부/거래/내부/개발/관리) 및 Air-Gap 구축
-- **보안 솔루션 구축**: 시스템보안, 네트워크보안, 엔드포인트보안
-- **자동화 개발**: Python 기반 방화벽/NAC/DLP 정책 자동화 시스템
-- **FSC 본인가**: 금융위원회 본인가 사전 심사 대응 및 보안 체크리스트 이행
-- **DR 인프라 구축**: DR 사이트 설계 및 구축 (RTO 4시간, RPO 15분)
+- 보안 아키텍처 구축 참여: 다층 망분리(외부/거래/내부/개발/관리) 및 Air-Gap 설정 작업
+- 보안 솔루션(시스템/네트워크/엔드포인트) 설치 및 연동 작업
+- Python 기반 방화벽/NAC/DLP 정책 자동화 스크립트 작성
+- FSC 본인가 사전 심사 대응 자료 준비 및 보안 체크리스트 이행
+- DR 사이트 구성 작업 참여
 
 주요 성과
 
-- 방화벽 정책 500건 자동화 (Python, 8시간 → 1시간, 오류율 0%)
-- EPP/DLP 최적화로 단말 CPU 30% 개선 (60% → 42%)
-- 11개월 보안 침해사고 0건
-- FSC 본인가 사전 심사 보안 분야 지적사항 0건
-- 5계층 망분리 (외부/거래/내부/개발/관리)
-- NAC 정책 배포 70% 단축
-- DR 복구 절차 자동화
-- DB 접근제어 쿼리 튜닝으로 CPU 30% 개선 (75% → 52%)
-- PB 플랫폼 POC 성능 검증
+- 방화벽 정책 자동화 스크립트 작성 (Python)
+- EPP/DLP 설정 조정으로 단말 자원 사용률 개선
+- 구축 기간 동안 보안 침해사고 없이 운영
+- FSC 본인가 사전 심사 보안 분야 대응 업무
+- 다층 망분리 구성 작업 참여
+- NAC 정책 배포 자동화 스크립트 작성
+- DR 복구 절차 스크립트화
+- DB 접근제어 쿼리 튜닝으로 성능 개선
+- PB 플랫폼 POC 검증 업무 참여
+
+---
 
 ### ㈜콴텍투자일임 | 인프라 엔지니어
 
-2022.08 ~ 2024.03 (1년 7개월) | Quantec AI Trading Platform / FSDC 운영
+2022.08 ~ 2024.03 | Quantec AI Trading Platform / FSDC 운영
 
 주요 업무
 
@@ -145,79 +144,76 @@ DevSecOps / SRE 엔지니어
 
 ---
 
----
-
----
-
 ### ㈜조인트리 | 인프라·시스템 엔지니어
 
-2021.09 ~ 2022.04 (8개월) | 국민대학교 차세대 정보시스템
+2021.09 ~ 2022.04 | 국민대학교 차세대 정보시스템
 
 주요 업무
 
 - UTM, VMware NSX-T 기반 네트워크 세분화
 - NAC, DLP, APT 등 보안 솔루션 통합 운영
-- OSS 기반 보안 모니터링 구축
+- OSS 기반 보안 모니터링 구성 작업 참여
 
 주요 성과
 
-- 네트워크 세분화로 월간 장애 25% 감소 (12건 → 9건)
-- APT·NAC·DLP 통합으로 침해 시도 월 200건 차단
-- DLP 룰 최적화로 오탐 80% 감소 (50건 → 10건/월)
-- 이중화 구성으로 서비스 가용률 99.9%
+- 네트워크 세분화로 월간 장애 발생 감소
+- APT·NAC·DLP 통합으로 침해 시도 차단 체계 강화
+- DLP 룰 최적화로 오탐 흐름 정비
+- 이중화 구성으로 서비스 가용성 강화
 
 ---
 
 ### ㈜메타넷엠플랫폼 | 인프라·시스템 엔지니어
 
-2019.12 ~ 2021.08 (1년 9개월) | 대규모 콜센터 인프라
+2019.12 ~ 2021.08 | 대규모 콜센터 인프라
 
 주요 업무
 
-- 1,000명 규모 재택근무 환경 구축
+- 대규모 재택근무 환경 구축 작업 참여
 - SSL VPN, NAC 솔루션 통합
 - Ansible 기반 정책 자동 배포
 - Python 기반 네트워크 스위치 자동 점검 시스템 개발
 
 주요 성과
 
-- Python으로 네트워크 점검 자동화 (주당 75% 시간 단축)
-- 백신-VPN 충돌 원인 분석 및 해결 (장애 문의 40% 감소)
-- Ansible로 NAC 정책 배포 자동화 (10시간 → 1시간, 90% 시간 단축)
-- 신규 사이트 3개소 네트워크 설계 및 구축 (동시 500명)
+- Python으로 네트워크 점검 자동화
+- 백신-VPN 충돌 원인 분석 및 해결로 장애 문의 감소
+- Ansible로 NAC 정책 배포 자동화
+- 신규 사이트 네트워크 구성 작업 참여
 
 ---
 
 ### ㈜엠티데이타 | 서버·시스템 엔지니어
 
-2017.02 ~ 2018.10 (1년 9개월) | 한국항공우주산업(KAI)
+2017.02 ~ 2018.10 | 한국항공우주산업(KAI)
 
 주요 업무
 
-- Linux 서버 50대 이상 운영 및 보안 패치
+- Linux 서버 운영 및 보안 패치
 - 방화벽, IDS 정책 관리 및 로그 분석
 - DB 접근제어 솔루션 초기 구성
 
 주요 성과
 
-- 방화벽 정책 분석 및 최적화 (중복 룰 30% 제거)
-- 제조망-개발망 물리적 분리로 21개월 연속 유출사고 0건
-- 월간 취약점 점검 체계 구축 (Critical 취약점 2주 내 100% 처리)
+- 방화벽 정책 분석 및 최적화 (중복 룰 정리)
+- 제조망-개발망 물리적 분리 운영
+- 정기 취약점 점검 절차 정리
 
 ---
+
 
 ---
 
 ## 주요 프로젝트
 
-### 🔧 보안 운영 자동화 플랫폼 (2024 ~ 현재)
+### 보안 운영 자동화 플랫폼 (2024 ~ 현재)
 
 **개인 프로젝트**
 **GitHub**: [github.com/jclee941](https://github.com/jclee941)
 
 #### 보안 통합 관리 플랫폼
 
-- **목적**: 80대 방화벽 실시간 중앙관리 플랫폼
+- **목적**: 방화벽 실시간 중앙관리 플랫폼
 - **기술스택**: Node.js, Cloudflare Workers, JavaScript, REST API, Webhook
 - **아키텍처**: 도메인 기반 아키텍처 설계, 방화벽 중앙관리 API 연동
 - **핵심기능**:
@@ -225,23 +221,23 @@ DevSecOps / SRE 엔지니어
   - 방화벽 실시간 데이터 수집 및 정책 위반 자동 탐지
   - 대용량 이벤트 처리 시스템
 - **운영성과**:
-  - 80대 방화벽 중앙 관리
+  - 방화벽 중앙 관리
   - 정책 검증 자동화
   - 위협 분석 및 알림 시스템
 
 #### SafeWork Industrial Health Platform
 
 - **목적**: 산업보건 설문조사 SaaS 플랫폼
-- **기술스택**: Flask 3.0, PostgreSQL 15, Redis 7, Cloudflare Workers
-- **아키텍처**: Cloudflare Workers Edge API 기반 전국 동시 접속 처리, Flask 3.0 하이브리드 아키텍처
+- **기술스택**: Flask, PostgreSQL, Redis, Cloudflare Workers
+- **아키텍처**: Cloudflare Workers Edge API 기반 전국 동시 접속 처리, Flask 하이브리드 아키텍처
 - **핵심기능**:
   - 종이 설문 디지털 전환 및 집계 자동화
   - 실시간 데이터 분석 및 리포팅
-  - Edge API를 통한 고성능 및 저지연 서비스 제공
+  - Edge API를 통한 안정적 저지연 서비스 제공
 - **운영성과**:
-  - 종이 설문 대비 집계 오류 100% 제거
+  - 종이 설문 대비 집계 오류 구조적 제거
   - 전국 동시 접속 처리 (Edge API)
-  - 중소기업 10곳 이상 운영
+  - 중소기업 대상 운영
 
 #### Public Grafana Dashboard (퍼블릭 대시보드)
 
@@ -249,15 +245,14 @@ DevSecOps / SRE 엔지니어
 - **기술스택**: Grafana, Prometheus, Loki, Tempo, Synology NAS
 - **접근**: <https://grafana.jclee.me> (퍼블릭 접근 가능)
 - **핵심기능**:
-  - 13개 프로덕션 서비스 실시간 모니터링
+  - 프로덕션 서비스 실시간 모니터링
   - 메트릭, 로그, 트레이스 통합 대시보드
-  - 99.9% 가용성 달성 및 실시간 알림 시스템
-  - 30일 데이터 보관 및 히스토리 분석
+  - 시스템 안정적 운영 및 실시간 알림 시스템
+  - 장기 데이터 보관 및 히스토리 분석
 - **운영성과**:
   - 퍼블릭 대시보드 운영 (<https://grafana.jclee.me>)
-  - 실시간 성능 지표 공개
-  - 13개 서비스 라이브 메트릭
-  - 99.9% 가용성
+  - 실시간 운영 가시성 공개
+  - 안정적 운영 유지
 
 ### Nextrade 대체거래소 인프라 구축 및 운영
 
@@ -266,154 +261,148 @@ DevSecOps / SRE 엔지니어
 **프로젝트 개요**
 
 - **프로젝트 성격**: 대한민국 대체거래소 (다자간매매체결회사)
-- **인프라 규모**: 서버 150대, 단말 300대, 네트워크 장비 80대, 일일 10만+ 주문 처리
-- **사용자**: 직원 200명
+- **인프라 규모**: 정보보안 장비 통합 운영, 대용량 일일 주문 처리
+- **사용자**: 사내 임직원 전반
 - **핵심 시스템**: 거래 플랫폼, 청산 시스템, 감시 시스템, 백오피스
 
-**구축 단계 (2024.03 ~ 2025.02, 11개월)**
+**구축 단계 (2024.03 ~ 2025.02)**
 
-- **역할**: 보안 인프라 설계 및 구축 (가온누리정보시스템)
-- **핵심 아키텍처**:
-  - 5계층 망분리 (외부망/거래망/내부망/개발망/관리망)
+- **역할**: 보안 인프라 구축 참여 (가온누리정보시스템)
+- **참여 분야**:
+  - 다층 망분리 (외부망/거래망/내부망/개발망/관리망)
   - 보안 솔루션 통합 (시스템보안 / 네트워크보안 / 엔드포인트보안)
   - Python 기반 보안 자동화 프레임워크 (방화벽, NAC, DLP 정책 자동화)
-- **주요 성과**:
-  - 금융위원회 본인가 사전 심사 보안 분야 지적사항 0건
-  - 방화벽 정책 자동화 (500+ 정책, 0% 오류율, 50% 시간 단축)
-  - EPP/DLP 최적화로 단말 CPU 사용률 30% 개선 (60% → 42%)
-  - 11개월 구축 기간 동안 보안 침해사고 0건
+- **주요 경험**:
+  - FSC 본인가 사전 심사 보안 분야 안정 통과
+  - 방화벽 정책 자동화로 수작업 부담 완화
+  - EPP/DLP 최적화로 단말 자원 사용률 개선
+  - 구축 기간 동안 보안 침해사고 없이 운영
 
-**운영 단계 (2025.03 ~ 현재, 8개월)**
+**운영 단계 (2025.03 ~ 현재)**
 
 - **역할**: 정보보안팀 운영 엔지니어 (아이티센 CTS)
-- **핵심 업무**:
-  - SOC 24/7 운영 (3교대 체계, 월 6천건 보안 이벤트 처리)
-  - 15종 보안 솔루션 통합 관제 및 인시던트 대응 (P0~P3 등급별 SLA)
-  - 재해복구 계획 운영 (RTO 4시간, RPO 15분, 분기별 DR 테스트)
+- **주요 업무**:
+  - SOC 교대 근무로 보안관제 업무 수행
+  - 보안 솔루션 관제 운영 및 등급별 대응 절차에 따른 인시던트 처리
+  - DR 사이트 점검 및 주기적 DR 테스트 참여
 - **주요 성과**:
-  - 19개월 연속 보안 침해사고 0건
-  - 금융감독원 감사 지적사항 0건 (3회 연속)
-  - 거래 플랫폼 가용성 99.98% (목표 99.95%)
-  - MTTD 3.2분, MTTR 27분
-  - 보안 오탐 45% 감소 (일 200건 → 110건)
-  - DR 복구 시간 37% 단축 (4시간 → 2.5시간)
+  - 보안 침해사고 없이 운영을 지속
+  - 금융감독원 감사에서 안정적인 대응 수행
+  - 거래 플랫폼 가용성을 운영 기준에 맞춰 유지
+  - SIEM 룰 최적화로 보안 오탐 흐름 정리
+  - DR 복구 절차 자동화 및 주기적 훈련
 
-**기술적 하이라이트**
+**경험 요약**
 
-- **자동화**: Python 기반 프레임워크로 연간 461시간 수작업 자동화
-- **가용성**: 99.98% 거래 플랫폼 가용성, DR 복구 시간 37% 단축
-- **보안 성과**: 19개월 무사고 운영, 취약점 SLA 준수율 98% (797/847건)
+- **자동화**: Python 기반 자동화 스크립트로 수작업 아이템 정리 업무
+- **안정성**: 거래 플랫폼 운영 기준 유지 및 DR 복구 절차 정리 업무
+- **보안 경험**: 근무 기간 동안 침해사고 없이 운영 및 취약점 SLA 준수 업무
 
 ### 대규모 콜센터 원격근무 전환
 
 메타넷엠플랫폼 | 2020
 
-역할: 보안 인프라 구축
-규모: 1,000명 동시 접속
+역할: 보안 인프라 구축 작업 참여
+규모: 대규모 동시 접속 환경
 기술: SSL VPN, NAC, Ansible, Python
-성과: COVID-19 대응 2주 내 구축, 운영 인력 3명 → 1명
+경험: COVID-19 대응 재택근무 인프라 구축 작업 참여, 운영 자동화 스크립트 작성
 
-### 🤖 AI 기반 인프라 자동화 플랫폼 (2024.09 ~ 현재)
+### AI 기반 인프라 자동화 플랫폼 (2024.09 ~ 현재)
 
 **개인 프로젝트 | AI-Powered Infrastructure Automation & Observability Platform**
-**GitHub**: [github.com/jclee941](https://github.com/jclee941) | **Live**:
-<https://resume.jclee.me>
+**GitHub**: [github.com/jclee941](https://github.com/jclee941) | **Live**: <https://resume.jclee.me>
 
 **시스템 규모 & 아키텍처**
 
-- **인프라**: Rocky Linux 9.6, Hyper-V, 40GB RAM, 8 CPU cores
-- **프로젝트**: 12개 프로덕션 애플리케이션 (blacklist, mcp, resume, safework, grafana, n8n 등)
-- **컨테이너**: Docker 28.5.1, 14개 운영 컨테이너 (Prometheus, Loki, Promtail, cAdvisor,
-  Node Exporter)
-- **모니터링**: 중앙 집중식 Grafana Stack (Synology NAS), 15개 리스닝 포트, 99.9% 가용성
+- **인프라**: Rocky Linux, Hyper-V 기반 홈랩 환경
+- **프로젝트**: 다양한 프로덕션 애플리케이션 (blacklist, mcp, resume, safework, grafana, n8n 등)
+- **컨테이너**: Docker 기반 운영 컨테이너 (Prometheus, Loki, Promtail, cAdvisor, Node Exporter)
+- **모니터링**: 중앙 집중식 Grafana Stack (Synology NAS), 안정적 운영 유지
 
 **기술스택 & 도구**
 
-- **AI/ML**: Claude Code (Sonnet 4.5), MCP Protocol (22 servers, 145+ tools),
-  GitHub Copilot
-- **컨테이너**: Docker, Docker Compose, Watchtower (자동 업데이트), Portainer API
+- **AI/ML**: Claude Code, MCP Protocol, GitHub Copilot
+- **컨테이너**: Docker, Docker Compose, Watchtower, Portainer API
 - **모니터링**: Grafana, Prometheus, Loki, Tempo, Splunk, cAdvisor, Node Exporter
-- **언어**: Python 3.9, Node.js 22, JavaScript/TypeScript, Shell Script
+- **언어**: Python, Node.js, JavaScript/TypeScript, Shell Script
 - **CI/CD**: GitLab CI/CD, Cloudflare Workers, Git-based automation
-- **네트워크**: Traefik (Reverse Proxy), NFS v3/v4 (Synology integration),
-  Multi-host Docker
+- **네트워크**: Traefik (Reverse Proxy), NFS (Synology integration), Multi-host Docker
 
 **세부 프로젝트 컴포넌트**
+
 **1. ML Agent Selection System**
 
 - **목적**: ML 기반 자동 에이전트 라우팅 시스템
-- **기술스택**: Python, Flask, Scikit-learn, PostgreSQL, 22 MCP Servers
-- **규모**: 145+ 스크립트 관리, Constitutional Framework v12.0
-- **성과**: AI 작업 효율 80% 향상, 자동 에이전트 라우팅으로 의사결정 시간 70% 단축
-- **Live**: <http://127.0.0.1:5001>
+- **기술스택**: Python, Flask, Scikit-learn, PostgreSQL, MCP Servers
+- **규모**: 스크립트 관리, Constitutional Framework
+- **성과**: AI 작업 흐름 개선, 자동 에이전트 라우팅으로 의사결정 재활용성 강화
 - **GitHub**: [github.com/jclee941/claude](https://github.com/jclee941/claude)
 
 **2. n8n Workflow Automation**
 
 - **목적**: Self-hosted 워크플로우 자동화 플랫폼
-- **기술스택**: n8n, PostgreSQL, Redis, Docker, 541 Nodes
-- **규모**: 2709+ 템플릿, API 오케스트레이션
-- **성과**: 반복 작업 자동화로 월 100+ 시간 절감, 워크플로우 재사용성 95% 향상
+- **기술스택**: n8n, PostgreSQL, Redis, Docker
+- **규모**: 템플릿 기반 API 오케스트레이션
+- **성과**: 반복 작업 자동화, 워크플로우 재사용성 강화
 - **Live**: <https://n8n.jclee.me>
 - **GitHub**: [github.com/jclee941/n8n](https://github.com/jclee941/n8n)
 
 **3. GitLab Enterprise Edition**
 
 - **목적**: Self-hosted DevOps 플랫폼 및 Container Registry
-- **기술스택**: GitLab EE 17.5.3, PostgreSQL 16.1, Redis 7.2, Traefik
-- **규모**: CI/CD pipelines, Container Registry, 7일 자동 백업
+- **기술스택**: GitLab EE, PostgreSQL, Redis, Traefik
+- **규모**: CI/CD pipelines, Container Registry, 주기적 자동 백업
 - **성과**: Private 코드 호스팅, 자동화된 CI/CD, 컨테이너 이미지 관리
 - **GitHub**: [github.com/jclee941/claude/tree/main/app/gitlab](https://github.com/jclee941/claude/tree/main/app/gitlab)
 
 **4. Nginx Airgap Configuration**
 
 - **목적**: 폐쇄망 환경용 Nginx 설정 및 보안 강화
-- **기술스택**: Nginx 1.24+, Airgap Deployment, Security Hardening
+- **기술스택**: Nginx, Airgap Deployment, Security Hardening
 - **특징**: 패키지 사전 준비, 오프라인 설치 지원
-- **성과**: 폐쇄망 환경에서 100% 자급 배포 가능, 보안 설정 표준화
+- **성과**: 폐쇄망 환경에서 자급 배포 구조 표준화
 - **GitHub**: [github.com/jclee941/nginx](https://github.com/jclee941/nginx)
 
 **5. Python Automation Framework**
 
 - **목적**: 인프라 자동화 프레임워크
-- **기술스택**: Python, Ansible, Bash, Git Hooks, 145+ Scripts
+- **기술스택**: Python, Ansible, Bash, Git Hooks
 - **특징**: 파일 거버넌스, AI 보상 시스템, 세션 연속성
-- **성과**: 인프라 운영 시간 60% 단축, 스크립트 재사용성 90% 향상
+- **성과**: 인프라 운영 수작업 자동화 및 스크립트 재사용성 강화
 - **GitHub**: [github.com/jclee941/claude](https://github.com/jclee941/claude)
 
-**6. Constitutional Governance System v12.0**
+**6. Constitutional Governance System**
 
 - **목적**: 파일 생성 쿼터 관리 및 구조 거버넌스
 - **기술스택**: Bash, Python, JSONL, Git Hooks
-- **규모**: 파일 생성 쿼터 (3 scripts, 2 docs), 70% 유사도 감지, 자동 로깅
-- **성과**: 파일 중복 90% 감소, 프로젝트 구조 일관성 100% 유지
+- **규모**: 파일 생성 쿼터 관리, 유사도 감지, 자동 로깅
+- **성과**: 파일 중복 억제 및 프로젝트 구조 일관성 유지
 - **GitHub**: [github.com/jclee941/claude/blob/main/scripts/master-prevention-system.sh](https://github.com/jclee941/claude/blob/main/scripts/master-prevention-system.sh)
 
 **7. AI Compensation Core**
 
-- **목적**: AI 한계 보상 시스템 (8가지 보상 메커니즘)
+- **목적**: AI 한계 보상 시스템
 - **기술스택**: Python, Pattern Detection, Multi-Model Validation
 - **보상 영역**: Context window, Hallucination 감지, Real-time data, Domain routing
-- **성과**: AI 오답률 70% 감소, 작업 신뢰도 95% 향상
+- **성과**: AI 응답 신뢰도 강화 및 환각 탐지 흐름 표준화
 - **GitHub**: [github.com/jclee941/claude/blob/main/scripts/ai-compensation-core.py](https://github.com/jclee941/claude/blob/main/scripts/ai-compensation-core.py)
 
 **8. Ansible FortiManager Automation**
 
 - **목적**: FortiManager 방화벽 정책 자동화 (Infrastructure as Code)
 - **기술스택**: Ansible, FortiManager API, Ansible Vault, Docker
-- **규모**: 3개 플레이북 (584 lines), fortinet.fortimanager collection
+- **규모**: 플레이북 기반 fortinet.fortimanager collection
 - **기능**: 정책 조회/생성/수정, 백업/복원, 오브젝트 관리, Docker 배포 자동화
-- **성과**: 정책 배포 시간 90% 단축 (10시간 → 1시간), 수동 오류 100% 제거
+- **성과**: 정책 배포 자동화 및 수작업 의존도 완화
 - **GitHub**: [github.com/jclee941/policy](https://github.com/jclee941/policy)
 
 **9. NAS Infrastructure Deployment**
 
 - **목적**: Synology NAS 인프라 자동 배포 시스템
 - **기술스택**: Bash, rsync, SSH, Docker Compose, Synology DSM
-- **규모**: 9개 서비스 (Grafana, Prometheus, Loki, AlertManager, GitLab, Traefik,
-  Splunk, Promtail, Node Exporter)
+- **규모**: 관찰성·CI/CD·프록시 서비스 묶음 (Grafana, Prometheus, Loki, AlertManager, GitLab, Traefik, Splunk, Promtail, Node Exporter)
 - **기능**: 원격 Docker 관리, 자동 rsync 동기화, 멀티 서비스 오케스트레이션
-- **성과**: 배포 자동화로 수동 작업 100% 제거, 인프라 동기화 시간 95% 단축
+- **성과**: 배포 자동화 및 인프라 동기화 흐름 표준화
 - **GitHub**: [github.com/jclee941/claude/tree/main/infra](https://github.com/jclee941/claude/tree/main/infra)
 
 **핵심 아키텍처 설계**
@@ -422,33 +411,33 @@ DevSecOps / SRE 엔지니어
    - 중앙 집중식 모니터링 (Synology NAS: grafana.jclee.me)
    - 메트릭 수집: Prometheus (로컬 scrape → Synology 통합)
    - 로그 수집: Promtail → Loki → Grafana (실시간 스트리밍)
-   - 컨테이너 메트릭: cAdvisor (8081) + Node Exporter (9101)
+   - 컨테이너 메트릭: cAdvisor + Node Exporter
    - 헬스체크: 모든 서비스 `/health` 엔드포인트 표준화
 
 2. **Multi-Host Docker Context System**
-   - 로컬 Docker (localhost): blacklist, mcp, local-exporters
-   - Synology Docker (192.168.50.215): grafana, n8n, xwiki, file
-   - NFS 마운트: /home/jclee/app/{grafana,n8n,xwiki} → Synology (realtime sync)
+   - 로컬 Docker: blacklist, mcp, local-exporters
+   - Synology Docker: grafana, n8n, xwiki, file
+   - NFS 마운트: 로컬 작업 디렉터리 → Synology (realtime sync)
    - `.docker-context` 파일 기반 자동 라우팅 (투명한 컨텍스트 전환)
 
 3. **AI-Driven Automation Framework**
-   - 150+ SlashCommand 시스템 (/.opencode/command/)
+   - SlashCommand 기반 자동화 시스템
    - MCP 도구 생태계: filesystem, github, slack, tmux, n8n, sqlite, puppeteer
-   - Constitutional AI 거버넌스 (CLAUDE.md: 자율 실행, 검증, 메타 학습)
-   - 자동화 스크립트: 57개 Bash scripts (보안, 모니터링, 배포, 테스트)
+   - Constitutional AI 거버넌스 (자율 실행, 검증, 메타 학습)
+   - 자동화 스크립트: 보안·모니터링·배포·테스트 영역의 Bash 스크립트 묶음
 
 4. **Production-Ready CI/CD Pipeline**
    - GitLab CI/CD: resume (Cloudflare Workers), blacklist (Docker)
    - Watchtower: 자동 이미지 업데이트 및 무중단 재배포
    - Git-based: 모든 변경사항 추적 가능, 자동 롤백 지원
-   - 테스트 자동화: Jest 30 (유닛), Playwright 1.56 (E2E)
+   - 테스트 자동화: Jest (유닛), Playwright (E2E)
 
 **프로젝트별 상세**
 **Resume Portfolio (Cloudflare Workers + Observability)**
 
-- **배포**: <https://resume.jclee.me> (< 50ms 응답, 글로벌 CDN)
-- **기술스택**: Cloudflare Workers (152 KB), HTML/CSS, JSON-LD SEO, Grafana Loki 통합
-- **인프라**: GitLab (Primary, 192.168.50.215:2222) + GitHub (Mirror, CI/CD)
+- **배포**: <https://resume.jclee.me> (글로벌 CDN 기반 엣지 응답)
+- **기술스택**: Cloudflare Workers, HTML/CSS, JSON-LD SEO, Grafana Loki 통합
+- **인프라**: GitLab (Primary) + GitHub (Mirror, CI/CD)
 - **CI/CD**: GitLab CI/CD 자동 배포, 배포 타임스탬프 주입
 - **모니터링**:
   - Grafana Loki 실시간 로깅 (<https://grafana.jclee.me/loki>)
@@ -456,54 +445,54 @@ DevSecOps / SRE 엔지니어
   - Web Vitals 추적 (LCP, FID, CLS, FCP, TTFB)
   - Health Check (/health): 배포 시각, 가동 시간, 요청 통계
 - **보안**: CSP SHA-256 해시 (unsafe-inline 제거), HSTS, X-Frame-Options
-- **테스트**: 23/23 유닛 테스트, 10/10 E2E 테스트 (Playwright)
-- **성과**: Lighthouse 100점, 접근성 95%+, Open Graph 소셜 미리보기
-- **최신 배포**: 2025-11-12T01:04:49Z (Account: a8d9c67f586acdd15eebcc65ca3aa5bb)
+- **테스트**: 유닛 및 E2E 테스트 통합 (Jest, Playwright)
+- **성과**: 웹 성능 지표 및 접근성 관리, Open Graph 소셜 미리보기 제공
 
 **Blacklist (IP 블랙리스트 관리 시스템)**
 
-- 아키텍처: PostgreSQL 15, Redis 7, Flask 3.0, React (Frontend)
-- 스케일: 10,000+ IP 주소 실시간 관리
+- 아키텍처: PostgreSQL, Redis, Flask, React (Frontend)
+- 스케일: 대규모 IP 주소 실시간 관리
 - 모니터링: Prometheus metrics (/metrics), Health check (/health)
-- 배포: Multi-port (2542), Docker Compose, Traefik integration
+- 배포: Docker Compose, Traefik integration
 
 **MCP Platform (AI 도구 통합)**
 
 - 역할: Model Context Protocol 서버 통합 플랫폼
-- 규모: 14개 MCP 서버, 70개 도구 (filesystem, github, slack, tmux, n8n)
-- WebUI: Node.js 22 (3001), Nginx reverse proxy (3002)
-- 성과: AI 작업 효율 80% 향상, 도구 통합 복잡성 감소
+- 규모: 다수 MCP 서버 및 도구 (filesystem, github, slack, tmux, n8n)
+- WebUI: Node.js 기반 백엔드 + Nginx reverse proxy
+- 성과: AI 작업 흐름 개선, 도구 통합 복잡성 감소
 
 **Local Exporters (모니터링 스택)**
 
 - 구성: Prometheus, Node Exporter, cAdvisor, Promtail
 - 메트릭: 시스템 (CPU, RAM, Disk), 컨테이너 (Docker stats), 로그 (Loki)
-- 중앙 통합: Synology Grafana (192.168.50.215)
+- 중앙 통합: Synology Grafana
 
 **Splunk Demo (로그 분석)**
 
-- 규모: 초당 10만 이벤트 처리 가능
-- 포트: 8000 (WebUI), 8088-9 (HEC), 9997 (Forwarder)
+- 규모: 대용량 이벤트 처리 가능
+- 구성: WebUI / HEC / Forwarder
 - 용도: 보안 이벤트 중앙 집중 분석, FortiNet 통합
 
 **운영 성과 (2024.09 ~ 현재)**
 
-- **자동화**: 반복 작업 시간 80% 단축 (수동 배포 30분 → 자동 6분)
-- **안정성**: MTTR 70% 개선 (평균 복구 60분 → 18분)
+- **자동화**: 반복 작업 자동화로 수작 배포 흐름 제거
+- **안정성**: 장애 인지·복구 흐름 정비
 - **가시성**: 통합 대시보드 구축, 모든 서비스 실시간 모니터링
-- **테스트**: Jest + Playwright 통합, 100% 커버리지 달성 (핵심 로직)
+- **테스트**: Jest + Playwright 통합, 핵심 로직 커버리지 확보
 - **보안**: SELinux + Firewall 구성 (현재 disabled, 활성화 준비 중)
-- **비용**: 로컬 + Synology 하이브리드로 클라우드 비용 제로
+- **비용**: 로컬 + Synology 하이브리드로 클라우드 비용 부담 완화
 
 **기술적 하이라이트**
 
 - Worker 생성 자동화 (HTML → Template Literal 변환, 보안 헤더 주입)
-- ROUTES 객체 패턴 (O(1) 라우팅, 5개 이상 확장 가능)
+- ROUTES 객체 패턴 기반 라우팅 확장성
 - Integration 테스트 (Worker ↔ HTML 통합 검증, 빌드 재현성)
 - Constitutional AI (자율 실행, 검증 필수, 메타 학습 의무화)
 - Docker Context Auto-routing (transparent context switching)
 
 ---
+
 
 ---
 
@@ -531,8 +520,8 @@ DevSecOps / SRE 엔지니어
 ### AI/ML 및 자동화
 
 - AI 도구: Claude Code, GitHub Copilot, ChatGPT API
-- MCP 프로토콜: 14개 서버 통합 (filesystem, github, brave-search, memory, tmux 등)
-- 자동화 프레임워크: Custom SlashCommand 시스템 (150+ 명령어)
+- MCP 프로토콜: 다수 서버 통합 (filesystem, github, brave-search, memory, tmux 등)
+- 자동화 프레임워크: Custom SlashCommand 시스템
 - 관찰성: Universal Observability 아키텍처 (Grafana 중심)
 
 ### 컨테이너 및 오케스트레이션
@@ -550,19 +539,16 @@ DevSecOps / SRE 엔지니어
 
 ---
 
+
 ---
 
 ## 자격증
 
-| 자격증명           | 발급기관                     | 취득일  |
-| ------------------ | ---------------------------- | ------- |
-| CCNP               | Cisco Systems                | 2020.08 |
-| RHCSA              | Red Hat                      | 2019.01 |
-| CompTIA Linux+     | CompTIA                      | 2019.02 |
-| LPIC Level 1       | Linux Professional Institute | 2019.02 |
-| 사무자동화산업기사 | 한국산업인력공단             | 2019.12 |
-| 리눅스마스터 2급   | 한국정보통신진흥협회         | 2019.01 |
-
----
-
-최종 업데이트: 2025년 11월 21일
+| 자격증명           | 발급기관                     |
+| ------------------ | ---------------------------- |
+| CCNP               | Cisco Systems                |
+| RHCSA              | Red Hat                      |
+| CompTIA Linux+     | CompTIA                      |
+| LPIC Level 1       | Linux Professional Institute |
+| 사무자동화산업기사 | 한국산업인력공단             |
+| 리눅스마스터 2급   | 한국정보통신진흥협회         |

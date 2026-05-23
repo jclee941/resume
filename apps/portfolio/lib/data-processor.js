@@ -12,7 +12,6 @@ const {
   generateCertificationCards,
   generateSkillsList,
   generateHeroContent,
-  generateResumeDescription,
   generateInfrastructureCards,
   generateContactGrid,
   generateAboutContent,
@@ -106,11 +105,7 @@ function processProjectData({ projectDataRaw, projectDataEnRaw, projectDataJaRaw
       (projectDataJa && projectDataJa.skills) || projectData.skills,
       `${dataHash}:ja-skills`
     ),
-    heroContentHtml: generateHeroContent(projectData.hero),
-    resumeDescriptionHtml: generateResumeDescription(
-      projectData.sectionDescriptions.resume,
-      projectData.achievements
-    ),
+    heroContentHtml: generateHeroContent({ ...projectData.hero, email: projectData.contact && projectData.contact.email }),
     infrastructureCardsHtml: generateInfrastructureCards(projectData.infrastructure),
     infrastructureCardsEnHtml: generateInfrastructureCards(
       (projectDataEn && projectDataEn.infrastructure) || projectData.infrastructure

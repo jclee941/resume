@@ -61,6 +61,82 @@ monitoring with:
   - Detected via metric changes
   - Blue markers on time series graphs
 
+## Public Dashboard Access
+
+The resume portfolio dashboard is available publicly without requiring a login. This makes it easy to share observability data with visitors while keeping administrative functions protected.
+
+### Public Dashboard URL
+
+**Direct link**: <https://grafana.jclee.me/d/resume-portfolio>
+
+Visitors land directly on the production overview dashboard. No account or password is required.
+
+### How Public Access is Configured
+
+Public dashboards are controlled by three settings in [`grafana.ini`](./grafana.ini):
+
+```ini
+[auth.anonymous]
+enabled = true
+org_role = Viewer
+
+[feature_toggles]
+publicDashboards = true
+
+[security]
+allow_embedding = true
+```
+
+- `[auth.anonymous] enabled = true` lets unauthenticated users open Grafana.
+- `org_role = Viewer` restricts anonymous users to read-only access.
+- `publicDashboards = true` enables the public-sharing feature introduced in Grafana 10+.
+- `allow_embedding = true` permits the dashboard to be displayed inside the portfolio site via iframe.
+
+### Security Model
+
+| Access type | Authentication | Role | Permissions |
+|-------------|----------------|------|-------------|
+| Public visitors | None | Viewer | View dashboards only |
+| Administrators | Basic auth | Admin | Full control |
+
+**Important security notes**:
+
+- Anonymous users cannot edit panels, create alerts, or access data-source settings.
+- Administrative tasks require basic-auth credentials.
+- The admin password is injected via the `GRAFANA_ADMIN_PASSWORD` environment variable; never commit it to version control.
+- Viewer access is scoped to the default organization only.
+
+### Enable or Disable Sharing for a Dashboard
+
+1. Open the dashboard in Grafana (admin access required).
+2. Click **Share** → **Public dashboard**.
+3. Toggle **Enabled** to turn public sharing on or off for that specific dashboard.
+4. Copy the public URL if you want to distribute it elsewhere.
+
+Only dashboards explicitly marked for public sharing are reachable without authentication.
+
+### Docker Compose Deployment
+
+The monitoring stack, including Grafana with public-dashboard support, is deployed through [`docker-compose.monitoring.yml`](../../docker/docker-compose.monitoring.yml).
+
+**Start the stack**:
+
+```bash
+cd infrastructure/docker
+docker compose -f docker-compose.monitoring.yml up -d
+```
+
+**Restart Grafana after changing `grafana.ini`**:
+
+```bash
+docker restart grafana
+```
+
+The compose file mounts `grafana.ini` as a read-only volume, so any edit to the local file requires a container restart to take effect.
+
+### Portfolio Integration
+
+The public dashboard is linked from the portfolio site. Visitors can click through from <https://resume.jclee.me> to the observability view at <https://grafana.jclee.me/d/resume-portfolio>. This provides transparency into uptime, request rates, and response latency without exposing sensitive operational data.
 ## Alert Rules
 
 ### 1. High Error Rate (CRITICAL)

@@ -9,18 +9,11 @@
 
 import puppeteer from '@cloudflare/puppeteer';
 
+/** @typedef {import('@resume/types').SessionState} SessionState */
+
 const MAX_CONCURRENT = 2;
 const IDLE_TIMEOUT_MS = 60_000;
 const KEEP_ALIVE_MS = 10_000;
-
-/**
- * @typedef {Object} SessionState
- * @property {string} id
- * @property {'idle'|'active'|'closing'} status
- * @property {number} createdAt
- * @property {number} lastUsedAt
- * @property {string|null} lockedBy
- */
 
 export class BrowserSessionDO {
   /** @type {DurableObjectState} */

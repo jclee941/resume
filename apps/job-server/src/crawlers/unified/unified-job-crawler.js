@@ -8,6 +8,10 @@ import {
   searchSource,
   searchWithMatching,
 } from './search-operations.js';
+import {
+  generateProposalsFromCrawlerResult,
+  writeProposalFiles,
+} from '../../sync/proposal-generator.js';
 
 export class UnifiedJobCrawler {
   constructor(options = {}) {
@@ -48,6 +52,28 @@ export class UnifiedJobCrawler {
 
   async searchWithMatching(params = {}) {
     return searchWithMatching(this, params);
+  }
+
+  async searchWithProposals(params = {}) {
+    const result = await this.searchWithMatching(params);
+    if (!result.success) {
+      return result;
+    }
+
+    const proposals = generateProposalsFromCrawlerResult(result, {
+      crawler: 'unified-job-crawler',
+      resumePath: this.resumePath,
+    });
+    const files = params.writeProposals === false ? [] : writeProposalFiles(proposals);
+
+    return {
+      ...result,
+      proposals: {
+        count: proposals.length,
+        files,
+        items: params.includeProposalItems ? proposals : undefined,
+      },
+    };
   }
 
   async searchRecommended(options = {}) {

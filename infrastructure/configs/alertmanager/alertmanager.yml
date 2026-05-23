@@ -1,0 +1,23 @@
+# Minimal Alertmanager configuration
+# Deployed to: Docker host (192.168.50.215) → /opt/monitoring/configs/alertmanager/alertmanager.yml
+# Legacy:      LXC 104 (192.168.50.100) — retained for reference only
+#
+# This is a placeholder with a null receiver. Update with real routing and
+# receivers (e.g., Slack, PagerDuty, email) before enabling in production.
+
+route:
+  group_by: ['alertname', 'severity']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 1h
+  receiver: 'null'
+
+receivers:
+  - name: 'null'
+
+inhibit_rules:
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['alertname', 'instance']

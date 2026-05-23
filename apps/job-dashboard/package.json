@@ -5,7 +5,9 @@
   "type": "module",
   "description": "Job automation dashboard Cloudflare Worker",
   "dependencies": {
-    "@resume/shared": "*"
+    "@resume/schemas": "*",
+    "@resume/shared": "*",
+    "@resume/types": "*"
   },
   "scripts": {
     "dev": "wrangler dev --config wrangler.jsonc",

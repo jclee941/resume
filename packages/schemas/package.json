@@ -14,7 +14,8 @@
     "./resume": "./src/resume.js",
     "./auth": "./src/auth.js",
     "./webhook": "./src/webhook.js",
-    "./common": "./src/common.js"
+    "./common": "./src/common.js",
+    "./portfolio": "./src/portfolio.js"
   },
   "dependencies": {
     "zod": "^4.4.3"

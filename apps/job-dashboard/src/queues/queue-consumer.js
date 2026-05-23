@@ -3,13 +3,7 @@ import { QueueMetricsRecorder } from './queue-metrics-recorder.js';
 import { sortMessagesByPriority } from './queue-message-sorter.js';
 import { QueueWorkflowDispatcher } from './queue-workflow-dispatcher.js';
 
-/**
- * @typedef {Object} QueueStats
- * @property {number} processed - Total messages processed
- * @property {number} succeeded - Successfully processed messages
- * @property {number} failed - Failed messages (retried or sent to DLQ)
- * @property {number} retried - Messages explicitly retried
- */
+/** @typedef {import('@resume/types').QueueStats} QueueStats */
 
 /**
  * Cloudflare Queue consumer for job automation tasks.

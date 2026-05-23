@@ -1,11 +1,13 @@
 # Grafana provisioned datasources
-# Deployed to: LXC 104 (192.168.50.100) → /opt/grafana/provisioning/datasources/datasources.yml
-# Docker Compose: /opt/grafana/docker-compose.yml (mounts ./provisioning:/etc/grafana/provisioning:ro)
+# Deployed to: Docker host (192.168.50.215) → /opt/monitoring/configs/grafana/provisioning/datasources/datasources.yml
+# Legacy:      LXC 104 (192.168.50.100) — retained for reference only
+# Docker Compose: /opt/monitoring/docker-compose.yml (mounts ./configs/grafana/provisioning:/etc/grafana/provisioning:ro)
 #
 # To apply changes:
 #   1. Edit this file
-#   2. SCP to LXC: ssh root@192.168.50.100 'pct exec 104 -- tee /opt/grafana/provisioning/datasources/datasources.yml' < this-file
-#   3. Restart: ssh root@192.168.50.100 'pct exec 104 -- bash -c "cd /opt/grafana && docker compose restart grafana"'
+#   2. SCP to host: scp -i ~/.ssh/id_rsa datasources.yml root@192.168.50.215:/opt/monitoring/configs/grafana/provisioning/datasources/
+#      (legacy LXC path: /opt/grafana/provisioning/datasources/datasources.yml on 192.168.50.100)
+#   3. Restart: ssh -i ~/.ssh/id_rsa root@192.168.50.215 'cd /opt/monitoring && docker compose restart grafana'
 apiVersion: 1
 
 datasources:

@@ -65,6 +65,7 @@
     "@modelcontextprotocol/sdk": "^1.27.1",
     "@resume/schemas": "*",
     "@resume/shared": "*",
+    "@resume/types": "*",
     "@resume/data": "*",
     "fastify": "^5.8.4",
     "google-auth-library": "^10.6.1",

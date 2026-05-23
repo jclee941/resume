@@ -84,7 +84,7 @@ describe('unified resume sync platform modules', () => {
   it('returns jobkorea dry-run plan in isolation', async () => {
     const result = await syncToJobKorea({ name: 'Test User', careers: [] }, { dry_run: true });
     assert.strictEqual(result.dry_run, true);
-    assert.strictEqual(result.method, 'browser_automation');
+    assert.strictEqual(result.mode, 'api-only');
     assert.ok(Array.isArray(result.steps));
   });
 

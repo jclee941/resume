@@ -5,6 +5,8 @@
 
 import { NotificationService } from '../services/notifications.js';
 
+/** @typedef {import('@resume/types').NotificationJob} NotificationJob */
+
 const PRIORITY_ORDER = {
   critical: 0,
   high: 1,
