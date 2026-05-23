@@ -51,6 +51,11 @@ function generateResumeCards(resumeData, dataHash) {
   return html;
 }
 
+function generateResumeDescription() {
+  return '';
+}
+
 module.exports = {
   generateResumeCards,
+  generateResumeDescription,
 };

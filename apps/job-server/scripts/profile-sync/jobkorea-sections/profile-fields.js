@@ -96,6 +96,9 @@ export function mapAwardToFormFields(ssot, indices) {
   if (awards.length > 0) {
     pushField(fields, 'Award.index', keys.slice(0, awards.length).join(','));
     pushField(fields, 'InputStat.AwardInputStat', 'True');
+  } else if (achievements.length > 0) {
+    pushField(fields, 'UserResume.M_Career_Text', achievements.filter(Boolean).map((a) => `- ${a}`).join('\n').slice(0, 2000));
+    pushField(fields, 'UserResume.M_Career_Text_Stat', '1');
   }
   return fields;
 }
