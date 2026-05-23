@@ -6,10 +6,15 @@
   "type": "module",
   "main": "./src/index.js",
   "scripts": {
+    "build:cjs": "esbuild src/index.js --bundle --platform=node --format=cjs --outfile=dist/index.cjs --external:zod",
+    "prepare": "npm run build:cjs",
     "test": "node --test 'src/__tests__/**/*.test.js'"
   },
   "exports": {
-    ".": "./src/index.js",
+    ".": {
+      "import": "./src/index.js",
+      "require": "./dist/index.cjs"
+    },
     "./application": "./src/application.js",
     "./resume": "./src/resume.js",
     "./auth": "./src/auth.js",
@@ -19,5 +24,9 @@
   },
   "dependencies": {
     "zod": "^4.4.3"
+}
+,
+  "devDependencies": {
+    "esbuild": "^0.28.0"
   }
 }

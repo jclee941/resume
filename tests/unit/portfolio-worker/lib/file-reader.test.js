@@ -5,17 +5,25 @@
 
 const _path = require('path');
 
-// Mock esbuild
-jest.mock('esbuild', () => ({
-  build: jest.fn(),
-}));
+// apps/portfolio has its own nested node_modules/esbuild (separate copy from root).
+// Both module IDs must resolve to the same mock so the test and the SUT share state.
+// jest.mock factory bodies cannot reference outer scope, so the mock object is held
+// on `globalThis` and recovered inside each factory.
+globalThis.__esbuildMock = { build: jest.fn() };
+jest.mock('esbuild', () => globalThis.__esbuildMock);
+jest.mock(
+  require.resolve('esbuild', {
+    paths: [require('path').resolve(__dirname, '../../../../apps/portfolio')],
+  }),
+  () => globalThis.__esbuildMock
+);
 
 // Mock utils (readAllFiles is from ./utils in the source)
 jest.mock('../../../../apps/portfolio/lib/file-operations', () => ({
   readAllFiles: jest.fn(),
 }));
 
-const esbuild = require('esbuild');
+const esbuild = globalThis.__esbuildMock;
 const { readAllFiles } = require('../../../../apps/portfolio/lib/file-operations');
 const {
   getFilesToRead,

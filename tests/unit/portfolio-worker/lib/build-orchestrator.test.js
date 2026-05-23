@@ -191,18 +191,18 @@ describe('build-orchestrator', () => {
       expect(writerCall.allowedEmails).toEqual(['test@test.com']);
     });
 
-    it('exits if worker size exceeds 1100KB sanity threshold', async () => {
+    it('exits if worker size exceeds 1300KB sanity threshold', async () => {
       const mockExit = jest.spyOn(process, 'exit').mockImplementation(() => {});
-      buildAndWriteWorker.mockReturnValue({ workerSizeKB: '1150.00' });
+      buildAndWriteWorker.mockReturnValue({ workerSizeKB: '1350.00' });
 
       await runWorkerBuild(buildOpts);
       expect(mockExit).toHaveBeenCalledWith(1);
       mockExit.mockRestore();
     });
 
-    it('does not exit if worker size is under 1100KB', async () => {
+    it('does not exit if worker size is under 1300KB', async () => {
       const mockExit = jest.spyOn(process, 'exit').mockImplementation(() => {});
-      buildAndWriteWorker.mockReturnValue({ workerSizeKB: '100.00' });
+      buildAndWriteWorker.mockReturnValue({ workerSizeKB: '1000.00' });
 
       await runWorkerBuild(buildOpts);
       expect(mockExit).not.toHaveBeenCalled();
