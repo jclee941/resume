@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "ignoreDeprecations": "5.0",
+    "ignoreDeprecations": "6.0",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "checkJs": false,
@@ -14,18 +14,17 @@
     "declaration": false,
     "declarationMap": false,
     "sourceMap": false,
-    "baseUrl": ".",
     "paths": {
-      "@lib/*": ["apps/portfolio/lib/*"],
-      "@tests/*": ["tests/*"],
-      "@resume/types": ["packages/types/src/index.js"],
-      "@resume/types/*": ["packages/types/src/*"],
-      "@resume/schemas": ["packages/schemas/src/index.js"],
-      "@resume/schemas/*": ["packages/schemas/src/*"],
-      "@resume/contracts": ["packages/contracts/src/index.js"],
-      "@resume/contracts/*": ["packages/contracts/src/*"],
-      "@resume/shared": ["packages/shared/src/index.js"],
-      "@resume/shared/*": ["packages/shared/src/*"]
+      "@lib/*": ["./apps/portfolio/lib/*"],
+      "@tests/*": ["./tests/*"],
+      "@resume/types": ["./packages/types/src/index.js"],
+      "@resume/types/*": ["./packages/types/src/*"],
+      "@resume/schemas": ["./packages/schemas/src/index.js"],
+      "@resume/schemas/*": ["./packages/schemas/src/*"],
+      "@resume/contracts": ["./packages/contracts/src/index.js"],
+      "@resume/contracts/*": ["./packages/contracts/src/*"],
+      "@resume/shared": ["./packages/shared/src/index.js"],
+      "@resume/shared/*": ["./packages/shared/src/*"]
     },
     "types": ["node", "jest", "@playwright/test"]
   }
