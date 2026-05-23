@@ -51,15 +51,6 @@ function generateResumeCards(resumeData, dataHash) {
   return html;
 }
 
-/**
- * Generate resume section description
- * @returns {string} Empty string for minimal design
- */
-function generateResumeDescription() {
-  return '';
-}
-
 module.exports = {
   generateResumeCards,
-  generateResumeDescription,
 };

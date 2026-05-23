@@ -11,20 +11,8 @@ const DEFAULT_RETRY = {
   jitter: true,
 };
 
-/**
- * @typedef {'urgent'|'normal'|'low'} JobPriority
- */
-
-/**
- * @typedef {Object} QueueJob
- * @property {string} id
- * @property {unknown} payload
- * @property {JobPriority} priority
- * @property {number} attempts
- * @property {number} createdAt
- * @property {number} availableAt
- * @property {string} [source]
- */
+/** @typedef {import('@resume/types').JobPriority} JobPriority */
+/** @typedef {import('@resume/types').QueueJob} QueueJob */
 
 /**
  * Job queue abstraction that works with Cloudflare Queues producers while

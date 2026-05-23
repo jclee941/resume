@@ -187,3 +187,4 @@ tools/bin/
 
 # OpenCode local scan state (regenerated)
 .opencode-scan-state
+/deploy-monitoring

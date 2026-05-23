@@ -22,3 +22,13 @@
  * @property {string} signature
  * @property {string} timestamp
  */
+
+
+/**
+ * @typedef {Object} SessionState
+ * @property {string} id
+ * @property {'idle'|'active'|'closing'} status
+ * @property {number} createdAt
+ * @property {number} lastUsedAt
+ * @property {string|null} lockedBy
+ */

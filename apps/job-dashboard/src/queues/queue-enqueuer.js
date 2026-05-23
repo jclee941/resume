@@ -1,13 +1,6 @@
 import { PRIORITY } from './queue-message-constants.js';
 
-/**
- * @typedef {Object} QueueMessage
- * @property {string} type - Message type: 'crawl' | 'apply' | 'sync' | 'report' | 'cleanup'
- * @property {string} [priority] - 'urgent' | 'background' (default: 'background')
- * @property {Object} payload - Type-specific payload data
- * @property {string} [correlationId] - Optional ID for tracking related messages
- * @property {number} [createdAt] - Unix timestamp of message creation
- */
+/** @typedef {import('@resume/types').QueueMessage} QueueMessage */
 
 /**
  * Enqueue a message to the crawl-tasks queue.
