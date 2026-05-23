@@ -10,6 +10,8 @@ pnpm-lock.yaml
 
 # Build outputs
 dist/
+!packages/schemas/dist/
+!packages/schemas/dist/**
 build/
 !tools/scripts/build/AGENTS.md
 *.tsbuildinfo
