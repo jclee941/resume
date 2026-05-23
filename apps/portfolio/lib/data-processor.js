@@ -8,6 +8,7 @@ const { validatePortfolioData } = require('./validators');
 const { calculateDataHash } = require('./content-hashing');
 const {
   generateResumeCards,
+  generateResumeDescription,
   generateProjectCards,
   generateCertificationCards,
   generateSkillsList,
@@ -106,6 +107,7 @@ function processProjectData({ projectDataRaw, projectDataEnRaw, projectDataJaRaw
       `${dataHash}:ja-skills`
     ),
     heroContentHtml: generateHeroContent({ ...projectData.hero, email: projectData.contact && projectData.contact.email }),
+    resumeDescriptionHtml: generateResumeDescription(projectData.resume),
     infrastructureCardsHtml: generateInfrastructureCards(projectData.infrastructure),
     infrastructureCardsEnHtml: generateInfrastructureCards(
       (projectDataEn && projectDataEn.infrastructure) || projectData.infrastructure

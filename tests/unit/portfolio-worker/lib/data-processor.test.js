@@ -132,7 +132,7 @@ describe('data-processor', () => {
         'mock-hash-abc123'
       );
       expect(cards.generateSkillsList).toHaveBeenCalledWith(data.skills, 'mock-hash-abc123');
-      expect(cards.generateHeroContent).toHaveBeenCalledWith(data.hero);
+      expect(cards.generateHeroContent).toHaveBeenCalledWith({ ...data.hero, email: data.contact && data.contact.email });
       expect(cards.generateInfrastructureCards).toHaveBeenCalledWith(data.infrastructure);
       expect(cards.generateContactGrid).toHaveBeenCalledWith(data.contact);
     });
