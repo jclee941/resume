@@ -77,8 +77,6 @@ jobs:
           BRANCH: ${{ github.event.pull_request.head.ref }}
           DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
         run: |
-          BRANCH="${BRANCH}"
-          DEFAULT_BRANCH="${DEFAULT_BRANCH}"
           if [ -z "$BRANCH" ] || [ "$BRANCH" = "$DEFAULT_BRANCH" ]; then
             echo "::error::Refusing to push to default branch"
             exit 1
