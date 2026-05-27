@@ -490,310 +490,306 @@
         display: none;
       }
 
-      MX|      .project-card {
-BV|        transition:
-HY|          opacity 0.3s ease,
-JQ|          transform 0.3s ease;
-HJ|      }
-SX|      /* CSS_PLACEHOLDER */
-VR|      /* skill-radar.css */
-MW|      .skill-radar {
-QT|        width: 100%;
-NQ|        margin-top: var(--space-6, 1.5rem);
-NM|      }
-RZ|      .skill-radar__search {
-TR|        margin-bottom: var(--space-6, 1.5rem);
-KP|      }
-NX|      .skill-radar__search-input-wrapper {
-WS|        position: relative;
-YX|        display: flex;
-ZM|        align-items: center;
-NN|        max-width: 400px;
-YV|      }
-HM|      .skill-radar__search-icon {
-BX|        position: absolute;
-YH|        left: var(--space-4, 1rem);
-WT|        color: var(--text-muted, #71717a);
-PQ|        pointer-events: none;
-HB|        width: 18px;
-KT|        height: 18px;
-YV|      }
-PP|      .skill-radar__search-input {
-WS|        width: 100%;
-YX|        padding: var(--space-3, 0.75rem) var(--space-4, 1rem) var(--space-3, 0.75rem) 2.75rem;
-ZM|        font-family: var(--font-mono, 'IBM Plex Mono', monospace);
-NN|        font-size: var(--text-sm, 0.875rem);
-YV|        color: var(--text-primary, #e2e0dc);
-HM|        background: var(--bg-secondary, #161625);
-BX|        border: 1px solid var(--border-primary, #2a2a3e);
-YH|        border-radius: 6px;
-WT|        outline: none;
-PQ|        transition: border-color 0.2s ease, box-shadow 0.2s ease;
-HB|      }
-KT|      .skill-radar__search-input::placeholder {
-YV|        color: var(--text-muted, #71717a);
-PP|      }
-WS|      .skill-radar__search-input:focus {
-YX|        border-color: var(--cyber-cyan, #00d4e0);
-ZM|        box-shadow: 0 0 0 3px rgba(0, 212, 224, 0.15);
-NN|      }
-YV|      .skill-radar__search-count {
-HM|        display: none;
-BX|        margin-top: var(--space-2, 0.5rem);
-YH|        font-family: var(--font-mono, 'IBM Plex Mono', monospace);
-WT|        font-size: var(--text-xs, 0.75rem);
-PQ|        color: var(--cyber-cyan, #00d4e0);
-HB|      }
-KT|      .skill-radar__grid {
-YV|        display: grid;
-PP|        grid-template-columns: repeat(2, 1fr);
-WS|        gap: var(--space-4, 1rem);
-YX|      }
-ZM|      @media (max-width: 768px) {
-NN|        .skill-radar__grid {
-YV|          grid-template-columns: 1fr;
-HM|        }
-BX|      }
-YH|      .skill-domain-card {
-WT|        position: relative;
-PQ|        background: var(--bg-card, #181822);
-HB|        border: 1px solid var(--border-primary, #2a2a3e);
-KT|        border-radius: 8px;
-YV|        padding: var(--space-4, 1rem);
-PP|        cursor: pointer;
-WS|        transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
-YX|        outline: none;
-ZM|      }
-NN|      .skill-domain-card:hover,
-YV|      .skill-domain-card:focus-visible {
-HM|        border-color: var(--cyber-cyan, #00d4e0);
-BX|        box-shadow: 0 0 20px rgba(0, 212, 224, 0.2), 0 4px 12px rgba(0, 0, 0, 0.3);
-YH|        transform: translateY(-2px);
-WT|      }
-PQ|      .skill-domain-card:focus-visible {
-HB|        outline: 2px solid var(--cyber-cyan, #00d4e0);
-KT|        outline-offset: 2px;
-YV|      }
-PP|      .skill-domain-card[aria-expanded="true"] {
-WS|        border-color: var(--cyber-cyan, #00d4e0);
-YX|        box-shadow: 0 0 24px rgba(0, 212, 224, 0.25);
-ZM|      }
-NN|      .skill-domain-card__header {
-YV|        display: flex;
-HM|        align-items: center;
-BX|        gap: var(--space-3, 0.75rem);
-YH|      }
-WT|      .skill-domain-card__icon {
-PQ|        display: flex;
-HB|        align-items: center;
-KT|        justify-content: center;
-YV|        width: 40px;
-PP|        height: 40px;
-WS|        flex-shrink: 0;
-YX|        color: var(--cyber-cyan, #00d4e0);
-ZM|        background: rgba(0, 212, 224, 0.1);
-NN|        border: 1px solid rgba(0, 212, 224, 0.2);
-YV|        border-radius: 8px;
-HM|      }
-BX|      .skill-domain-card__icon svg {
-YH|        width: 20px;
-WT|        height: 20px;
-PQ|      }
-HB|      .skill-domain-card__info {
-KT|        flex: 1;
-YV|        min-width: 0;
-PP|      }
-WS|      .skill-domain-card__title {
-YX|        font-family: var(--font-sans, 'Inter', sans-serif);
-ZM|        font-size: var(--text-base, 1rem);
-NN|        font-weight: 600;
-YV|        color: var(--text-primary, #e2e0dc);
-HM|        margin: 0;
-BX|        line-height: 1.3;
-YH|      }
-WT|      .skill-domain-card__count {
-PQ|        font-family: var(--font-mono, 'IBM Plex Mono', monospace);
-HB|        font-size: var(--text-xs, 0.75rem);
-KT|        color: var(--text-muted, #71717a);
-YV|      }
-PP|      .skill-domain-card__expand {
-WS|        display: flex;
-YX|        align-items: center;
-ZM|        justify-content: center;
-NN|        width: 24px;
-YV|        height: 24px;
-HM|        flex-shrink: 0;
-BX|        color: var(--text-muted, #71717a);
-YH|        transition: transform 0.3s ease;
-WT|      }
-PQ|      .skill-domain-card__expand svg {
-HB|        width: 16px;
-KT|        height: 16px;
-YV|      }
-PP|      .skill-domain-card__level-indicator {
-WS|        display: flex;
-YX|        align-items: center;
-ZM|        gap: var(--space-2, 0.5rem);
-NN|        margin-top: var(--space-3, 0.75rem);
-YV|        padding-top: var(--space-3, 0.75rem);
-HM|        border-top: 1px solid var(--border-primary, #2a2a3e);
-BX|      }
-YH|      .skill-domain-card__level-dot {
-WT|        width: 8px;
-PQ|        height: 8px;
-HB|        border-radius: 50%;
-KT|        background: var(--level-color, var(--cyber-green, #00d97a));
-YV|        box-shadow: 0 0 8px var(--level-color, var(--cyber-green, #00d97a));
-PP|        animation: pulse-dot 2s ease-in-out infinite;
-WS|      }
-YX|      @keyframes pulse-dot {
-ZM|        0%, 100% { opacity: 1; }
-NN|        50% { opacity: 0.5; }
-YV|      }
-HM|      .skill-domain-card__level-label {
-BX|        font-family: var(--font-mono, 'IBM Plex Mono', monospace);
-YH|        font-size: var(--text-xs, 0.75rem);
-WT|        color: var(--level-color, var(--cyber-green, #00d97a));
-PQ|        text-transform: uppercase;
-HB|        letter-spacing: 0.05em;
-KT|      }
-YV|      .skill-panel {
-PP|        margin-top: var(--space-4, 1rem);
-WS|        padding-top: var(--space-4, 1rem);
-YX|        border-top: 1px solid var(--border-primary, #2a2a3e);
-ZM|        animation: slideDown 0.3s ease-out;
-NN|      }
-YV|      @keyframes slideDown {
-HM|        from {
-BX|          opacity: 0;
-YH|          transform: translateY(-8px);
-WT|        }
-PQ|        to {
-HB|          opacity: 1;
-KT|          transform: translateY(0);
-YV|        }
-PP|      }
-WS|      .skill-panel__content {
-YX|        display: flex;
-ZM|        flex-direction: column;
-NN|        gap: var(--space-4, 1rem);
-YV|      }
-HM|      .skill-list {
-BX|        list-style: none;
-YH|        margin: 0;
-WT|        padding: 0;
-PQ|        display: flex;
-HB|        flex-direction: column;
-KT|        gap: var(--space-3, 0.75rem);
-YV|      }
-PP|      .skill-item {
-WS|        display: flex;
-YX|        flex-direction: column;
-ZM|        gap: var(--space-1, 0.25rem);
-NN|      }
-YV|      .skill-item__header {
-HM|        display: flex;
-BX|        justify-content: space-between;
-YH|        align-items: center;
-WT|      }
-PQ|      .skill-item__name {
-HB|        font-family: var(--font-mono, 'IBM Plex Mono', monospace);
-KT|        font-size: var(--text-sm, 0.875rem);
-YV|        color: var(--text-primary, #e2e0dc);
-PP|        font-weight: 500;
-WS|      }
-YX|      .skill-item__level {
-ZM|        font-family: var(--font-mono, 'IBM Plex Mono', monospace);
-NN|        font-size: var(--text-xs, 0.75rem);
-YV|        font-weight: 600;
-HM|      }
-BX|      .skill-item__bar-container {
-YH|        width: 100%;
-WT|        height: 6px;
-PQ|        background: rgba(255, 255, 255, 0.05);
-HB|        border-radius: 3px;
-KT|        overflow: hidden;
-YV|      }
-PP|      .skill-item__bar {
-WS|        height: 100%;
-YX|        width: 0;
-ZM|        background: linear-gradient(90deg, var(--bar-color, var(--cyber-cyan)) 0%, color-mix(in srgb, var(--bar-color, var(--cyber-cyan)) 80%, white 20%) 100%);
-NN|        border-radius: 3px;
-YV|        transition: width 0.8s ease-out;
-HM|        box-shadow: 0 0 10px var(--bar-color, var(--cyber-cyan));
-BX|      }
-YH|      .skill-item__bar.animate {
-WT|        width: var(--target-width, 0%);
-PQ|      }
-HB|      .skill-evidence-drawer {
-KT|        background: rgba(0, 0, 0, 0.2);
-YV|        border: 1px solid var(--border-primary, #2a2a3e);
-PP|        border-radius: 6px;
-WS|        padding: var(--space-3, 0.75rem);
-YX|        margin-top: var(--space-2, 0.5rem);
-ZM|      }
-NN|      .skill-evidence-drawer__title {
-YV|        display: flex;
-HM|        align-items: center;
-BX|        gap: var(--space-2, 0.5rem);
-YH|        font-family: var(--font-mono, 'IBM Plex Mono', monospace);
-WT|        font-size: var(--text-xs, 0.75rem);
-PQ|        font-weight: 600;
-HB|        color: var(--text-secondary, #a1a1aa);
-KT|        text-transform: uppercase;
-YV|        letter-spacing: 0.05em;
-PP|        margin: 0 0 var(--space-3, 0.75rem);
-WS|        padding-bottom: var(--space-2, 0.5rem);
-YX|        border-bottom: 1px solid var(--border-primary, #2a2a3e);
-ZM|      }
-NN|      .skill-evidence-drawer__title svg {
-YV|        width: 14px;
-HM|        height: 14px;
-BX|        color: var(--cyber-cyan, #00d4e0);
-YH|      }
-WT|      .skill-evidence-list {
-PQ|        list-style: none;
-HB|        margin: 0;
-KT|        padding: 0;
-YV|        display: flex;
-PP|        flex-direction: column;
-WS|        gap: var(--space-3, 0.75rem);
-YX|      }
-ZM|      .skill-evidence-item {
-NN|        display: flex;
-YV|        flex-direction: column;
-HM|        gap: var(--space-1, 0.25rem);
-BX|      }
-YH|      .skill-evidence-item__name {
-WT|        font-family: var(--font-mono, 'IBM Plex Mono', monospace);
-PQ|        font-size: var(--text-xs, 0.75rem);
-HB|        color: var(--cyber-cyan, #00d4e0);
-KT|        font-weight: 500;
-YV|      }
-PP|      .skill-evidence-item__text {
-WS|        font-family: var(--font-sans, 'Inter', sans-serif);
-YX|        font-size: var(--text-sm, 0.875rem);
-ZM|        color: var(--text-secondary, #a1a1aa);
-NN|        line-height: 1.5;
-YV|        margin: 0;
-HM|      }
-BX|      @media (prefers-reduced-motion: reduce) {
-YH|        .skill-domain-card,
-WT|        .skill-panel,
-PQ|        .skill-item__bar {
-HB|          animation: none;
-KT|          transition: none;
-YV|        }
-PP|        .skill-item__bar {
-WS|          width: var(--target-width, 0%);
-YX|        }
-ZM|        .skill-domain-card__expand svg {
-NN|          transition: none;
-YV|        }
-HM|      }
+      .project-card {
         transition:
           opacity 0.3s ease,
           transform 0.3s ease;
+      }
+      /* CSS_PLACEHOLDER */
+      /* skill-radar.css */
+      .skill-radar {
+        width: 100%;
+        margin-top: var(--space-6, 1.5rem);
+      }
+      .skill-radar__search {
+        margin-bottom: var(--space-6, 1.5rem);
+      }
+      .skill-radar__search-input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+        max-width: 400px;
+      }
+      .skill-radar__search-icon {
+        position: absolute;
+        left: var(--space-4, 1rem);
+        color: var(--text-muted, #71717a);
+        pointer-events: none;
+        width: 18px;
+        height: 18px;
+      }
+      .skill-radar__search-input {
+        width: 100%;
+        padding: var(--space-3, 0.75rem) var(--space-4, 1rem) var(--space-3, 0.75rem) 2.75rem;
+        font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+        font-size: var(--text-sm, 0.875rem);
+        color: var(--text-primary, #e2e0dc);
+        background: var(--bg-secondary, #161625);
+        border: 1px solid var(--border-primary, #2a2a3e);
+        border-radius: 6px;
+        outline: none;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+      .skill-radar__search-input::placeholder {
+        color: var(--text-muted, #71717a);
+      }
+      .skill-radar__search-input:focus {
+        border-color: var(--cyber-cyan, #00d4e0);
+        box-shadow: 0 0 0 3px rgba(0, 212, 224, 0.15);
+      }
+      .skill-radar__search-count {
+        display: none;
+        margin-top: var(--space-2, 0.5rem);
+        font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+        font-size: var(--text-xs, 0.75rem);
+        color: var(--cyber-cyan, #00d4e0);
+      }
+      .skill-radar__grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-4, 1rem);
+      }
+      @media (max-width: 768px) {
+        .skill-radar__grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .skill-domain-card {
+        position: relative;
+        background: var(--bg-card, #181822);
+        border: 1px solid var(--border-primary, #2a2a3e);
+        border-radius: 8px;
+        padding: var(--space-4, 1rem);
+        cursor: pointer;
+        transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+        outline: none;
+      }
+      .skill-domain-card:hover,
+      .skill-domain-card:focus-visible {
+        border-color: var(--cyber-cyan, #00d4e0);
+        box-shadow: 0 0 20px rgba(0, 212, 224, 0.2), 0 4px 12px rgba(0, 0, 0, 0.3);
+        transform: translateY(-2px);
+      }
+      .skill-domain-card:focus-visible {
+        outline: 2px solid var(--cyber-cyan, #00d4e0);
+        outline-offset: 2px;
+      }
+      .skill-domain-card[aria-expanded="true"] {
+        border-color: var(--cyber-cyan, #00d4e0);
+        box-shadow: 0 0 24px rgba(0, 212, 224, 0.25);
+      }
+      .skill-domain-card__header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3, 0.75rem);
+      }
+      .skill-domain-card__icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        flex-shrink: 0;
+        color: var(--cyber-cyan, #00d4e0);
+        background: rgba(0, 212, 224, 0.1);
+        border: 1px solid rgba(0, 212, 224, 0.2);
+        border-radius: 8px;
+      }
+      .skill-domain-card__icon svg {
+        width: 20px;
+        height: 20px;
+      }
+      .skill-domain-card__info {
+        flex: 1;
+        min-width: 0;
+      }
+      .skill-domain-card__title {
+        font-family: var(--font-sans, 'Inter', sans-serif);
+        font-size: var(--text-base, 1rem);
+        font-weight: 600;
+        color: var(--text-primary, #e2e0dc);
+        margin: 0;
+        line-height: 1.3;
+      }
+      .skill-domain-card__count {
+        font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+        font-size: var(--text-xs, 0.75rem);
+        color: var(--text-muted, #71717a);
+      }
+      .skill-domain-card__expand {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        flex-shrink: 0;
+        color: var(--text-muted, #71717a);
+        transition: transform 0.3s ease;
+      }
+      .skill-domain-card__expand svg {
+        width: 16px;
+        height: 16px;
+      }
+      .skill-domain-card__level-indicator {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2, 0.5rem);
+        margin-top: var(--space-3, 0.75rem);
+        padding-top: var(--space-3, 0.75rem);
+        border-top: 1px solid var(--border-primary, #2a2a3e);
+      }
+      .skill-domain-card__level-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--level-color, var(--cyber-green, #00d97a));
+        box-shadow: 0 0 8px var(--level-color, var(--cyber-green, #00d97a));
+        animation: pulse-dot 2s ease-in-out infinite;
+      }
+      @keyframes pulse-dot {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+      }
+      .skill-domain-card__level-label {
+        font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+        font-size: var(--text-xs, 0.75rem);
+        color: var(--level-color, var(--cyber-green, #00d97a));
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .skill-panel {
+        margin-top: var(--space-4, 1rem);
+        padding-top: var(--space-4, 1rem);
+        border-top: 1px solid var(--border-primary, #2a2a3e);
+        animation: slideDown 0.3s ease-out;
+      }
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .skill-panel__content {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-4, 1rem);
+      }
+      .skill-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3, 0.75rem);
+      }
+      .skill-item {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-1, 0.25rem);
+      }
+      .skill-item__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .skill-item__name {
+        font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+        font-size: var(--text-sm, 0.875rem);
+        color: var(--text-primary, #e2e0dc);
+        font-weight: 500;
+      }
+      .skill-item__level {
+        font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+        font-size: var(--text-xs, 0.75rem);
+        font-weight: 600;
+      }
+      .skill-item__bar-container {
+        width: 100%;
+        height: 6px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 3px;
+        overflow: hidden;
+      }
+      .skill-item__bar {
+        height: 100%;
+        width: 0;
+        background: linear-gradient(90deg, var(--bar-color, var(--cyber-cyan)) 0%, color-mix(in srgb, var(--bar-color, var(--cyber-cyan)) 80%, white 20%) 100%);
+        border-radius: 3px;
+        transition: width 0.8s ease-out;
+        box-shadow: 0 0 10px var(--bar-color, var(--cyber-cyan));
+      }
+      .skill-item__bar.animate {
+        width: var(--target-width, 0%);
+      }
+      .skill-evidence-drawer {
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--border-primary, #2a2a3e);
+        border-radius: 6px;
+        padding: var(--space-3, 0.75rem);
+        margin-top: var(--space-2, 0.5rem);
+      }
+      .skill-evidence-drawer__title {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2, 0.5rem);
+        font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+        font-size: var(--text-xs, 0.75rem);
+        font-weight: 600;
+        color: var(--text-secondary, #a1a1aa);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin: 0 0 var(--space-3, 0.75rem);
+        padding-bottom: var(--space-2, 0.5rem);
+        border-bottom: 1px solid var(--border-primary, #2a2a3e);
+      }
+      .skill-evidence-drawer__title svg {
+        width: 14px;
+        height: 14px;
+        color: var(--cyber-cyan, #00d4e0);
+      }
+      .skill-evidence-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3, 0.75rem);
+      }
+      .skill-evidence-item {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-1, 0.25rem);
+      }
+      .skill-evidence-item__name {
+        font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+        font-size: var(--text-xs, 0.75rem);
+        color: var(--cyber-cyan, #00d4e0);
+        font-weight: 500;
+      }
+      .skill-evidence-item__text {
+        font-family: var(--font-sans, 'Inter', sans-serif);
+        font-size: var(--text-sm, 0.875rem);
+        color: var(--text-secondary, #a1a1aa);
+        line-height: 1.5;
+        margin: 0;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .skill-domain-card,
+        .skill-panel,
+        .skill-item__bar {
+          animation: none;
+          transition: none;
+        }
+        .skill-item__bar {
+          width: var(--target-width, 0%);
+        }
+        .skill-domain-card__expand svg {
+          transition: none;
+        }
       }
       /* CSS_PLACEHOLDER */
     </style>
@@ -1005,112 +1001,112 @@ HM|      }
               <ul class="infra-grid">
                 <!-- INFRASTRUCTURE_CARDS_PLACEHOLDER -->
               </ul>
-            QY|            </section>
-VM|
-WS|            <section
-BW|              id="observability"
-PP|              class="section-observability reveal"
-NX|              role="region"
-YS|              aria-labelledby="observability-heading"
-MJ|            >
-XH|              <h2 id="observability-heading" class="sr-only">옵저버빌리티</h2>
-SS|              <div class="section-cmd">
-BW|                <span class="section-cmd__command">kubectl get pods -n monitoring</span>
-PM|              </div>
-BQ|              <div class="observability-intro">
-BB|                <p>실시간 인프라 모니터링 및 로그 수집 파이프라인
-WR|                  <a
-YH|                    href="https://grafana.jclee.me/d/resume-portfolio"
-RR|                    target="_blank"
-ZY|                    rel="noopener noreferrer"
-VS|                    class="btn--neon observability-btn"
-RS|                  >
-ZS|                    <span class="btn-icon">📊</span> View Live Dashboard
-YV|                  </a>
-QW|                </p>
-SZ|              </div>
-HM|              <ul class="stats-grid observability-stats">
-YH|                <li class="stat-card observability-stat">
-XW|                  <span class="stat-icon">💚</span>
+                        </section>
+
+            <section
+              id="observability"
+              class="section-observability reveal"
+              role="region"
+              aria-labelledby="observability-heading"
+            >
+              <h2 id="observability-heading" class="sr-only">옵저버빌리티</h2>
+              <div class="section-cmd">
+                <span class="section-cmd__command">kubectl get pods -n monitoring</span>
+              </div>
+              <div class="observability-intro">
+                <p>실시간 인프라 모니터링 및 로그 수집 파이프라인
+                  <a
+                    href="https://grafana.jclee.me/d/resume-portfolio"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn--neon observability-btn"
+                  >
+                    <span class="btn-icon">📊</span> View Live Dashboard
+                  </a>
+                </p>
+              </div>
+              <ul class="stats-grid observability-stats">
+                <li class="stat-card observability-stat">
+                  <span class="stat-icon">💚</span>
                   <span class="stat-value">--</span>
-WT|                  <span class="stat-label">Uptime</span>
-MJ|                </li>
-NW|                <li class="stat-card observability-stat">
-QZ|                  <span class="stat-icon">📈</span>
-YX|                  <span class="stat-value">--</span>
-TR|                  <span class="stat-label">Total Requests</span>
-ZK|                </li>
-YQ|                <li class="stat-card observability-stat">
-BZ|                  <span class="stat-icon">⚡</span>
-XH|                  <span class="stat-value">--</span>
-WQ|                  <span class="stat-label">Avg Response Time</span>
-MM|                </li>
-MQ|                <li class="stat-card observability-stat">
-RV|                  <span class="stat-icon">🔴</span>
+                  <span class="stat-label">Uptime</span>
+                </li>
+                <li class="stat-card observability-stat">
+                  <span class="stat-icon">📈</span>
                   <span class="stat-value">--</span>
-PY|                  <span class="stat-label">Error Rate</span>
-HW|                </li>
-QK|              </ul>
-YQ|              <div class="observability-stack">
-BK|                <div class="observability-stack__item">
-NN|                  <span class="stack-icon">📊</span>
-YH|                  <span class="stack-name">Grafana</span>
-HZ|                </div>
-YQ|                <div class="observability-stack__item">
-BK|                  <span class="stack-icon">📈</span>
-YH|                  <span class="stack-name">Prometheus</span>
-HZ|                </div>
-YQ|                <div class="observability-stack__item">
-BK|                  <span class="stack-icon">📝</span>
-YH|                  <span class="stack-name">Loki</span>
-HZ|                </div>
-YQ|                <div class="observability-stack__item">
-BK|                  <span class="stack-icon">🔍</span>
-YH|                  <span class="stack-name">ELK Stack</span>
-HZ|                </div>
-YQ|                <div class="observability-stack__item">
-BK|                  <span class="stack-icon">🌐</span>
-YH|                  <span class="stack-name">Cloudflare Workers</span>
-HZ|                </div>
-QK|              </div>
-YQ|              <div class="observability-embed">
-BK|                <div class="embed-header">
-NN|                  <span class="embed-title">Live Dashboard Preview</span>
-YH|                  <button
-HZ|                    class="btn--neon embed-toggle"
-YQ|                    type="button"
-BZ|                    aria-expanded="false"
-XH|                    aria-controls="grafana-embed"
-WQ|                  >
-MM|                    Load Preview
-HW|                  </button>
-QK|                </div>
-YQ|                <div class="embed-container" id="grafana-embed" hidden>
-BK|                  <iframe
-NN|                    src="https://grafana.jclee.me/d/resume-portfolio?kiosk=tv&autofitpanels=true"
-YH|                    title="Grafana Dashboard - Resume Portfolio"
-HZ|                    width="100%"
-YQ|                    height="400"
-BZ|                    loading="lazy"
-XH|                    allowfullscreen></iframe>
-MM|                </div>
-QK|              </div>
-YQ|            </section>
-VM|
-WS|            <section
-MW|              id="contact"
-KB|              class="section-contact reveal"
-NX|              role="region"
-VN|              aria-labelledby="contact-heading"
-RB|            >
+                  <span class="stat-label">Total Requests</span>
+                </li>
+                <li class="stat-card observability-stat">
+                  <span class="stat-icon">⚡</span>
+                  <span class="stat-value">--</span>
+                  <span class="stat-label">Avg Response Time</span>
+                </li>
+                <li class="stat-card observability-stat">
+                  <span class="stat-icon">🔴</span>
+                  <span class="stat-value">--</span>
+                  <span class="stat-label">Error Rate</span>
+                </li>
+              </ul>
+              <div class="observability-stack">
+                <div class="observability-stack__item">
+                  <span class="stack-icon">📊</span>
+                  <span class="stack-name">Grafana</span>
+                </div>
+                <div class="observability-stack__item">
+                  <span class="stack-icon">📈</span>
+                  <span class="stack-name">Prometheus</span>
+                </div>
+                <div class="observability-stack__item">
+                  <span class="stack-icon">📝</span>
+                  <span class="stack-name">Loki</span>
+                </div>
+                <div class="observability-stack__item">
+                  <span class="stack-icon">🔍</span>
+                  <span class="stack-name">ELK Stack</span>
+                </div>
+                <div class="observability-stack__item">
+                  <span class="stack-icon">🌐</span>
+                  <span class="stack-name">Cloudflare Workers</span>
+                </div>
+              </div>
+              <div class="observability-embed">
+                <div class="embed-header">
+                  <span class="embed-title">Live Dashboard Preview</span>
+                  <button
+                    class="btn--neon embed-toggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="grafana-embed"
+                  >
+                    Load Preview
+                  </button>
+                </div>
+                <div class="embed-container" id="grafana-embed" hidden>
+                  <iframe
+                    src="https://grafana.jclee.me/d/resume-portfolio?kiosk=tv&autofitpanels=true"
+                    title="Grafana Dashboard - Resume Portfolio"
+                    width="100%"
+                    height="400"
+                    loading="lazy"
+                    allowfullscreen></iframe>
+                </div>
+              </div>
+            </section>
+
+            <section
+              id="contact"
+              class="section-contact reveal"
+              role="region"
+              aria-labelledby="contact-heading"
+            >
               <h2 id="contact-heading" class="sr-only">연락처</h2>
-SS|              <div class="section-cmd">
-BN|                <span class="section-cmd__command">cat contact.txt</span>
-MQ|              </div>
-SP|              <div class="contact-grid">
-YH|                <!-- CONTACT_GRID_PLACEHOLDER -->
-MQ|              </div>
-QY|            </section>
+              <div class="section-cmd">
+                <span class="section-cmd__command">cat contact.txt</span>
+              </div>
+              <div class="contact-grid">
+                <!-- CONTACT_GRID_PLACEHOLDER -->
+              </div>
+            </section>
 
             <section
               id="contact"
@@ -2038,29 +2034,26 @@ QY|            </section>
           });
         });
       })();
-    QY|      })();
-WB|    </script>
-PR|    <script>
-HZ|      // Embed toggle for Grafana dashboard preview
-YQ|      (function () {
-BB|        var toggleBtn = document.querySelector('.embed-toggle');
-WR|        var embedContainer = document.getElementById('grafana-embed');
-YH|        if (!toggleBtn || !embedContainer) return;
-RR|        toggleBtn.addEventListener('click', function () {
-ZY|          var isExpanded = toggleBtn.getAttribute('aria-expanded') === 'true';
-VS|          if (isExpanded) {
-RS|            embedContainer.hidden = true;
-ZS|            toggleBtn.textContent = 'Load Preview';
-YV|            toggleBtn.setAttribute('aria-expanded', 'false');
-QW|          } else {
-SZ|            embedContainer.hidden = false;
-HM|            toggleBtn.textContent = 'Close Preview';
-YH|            toggleBtn.setAttribute('aria-expanded', 'true');
-XW|          }
-YQ|        });
-HM|      })();
-BK|    </script>
-QY|  </body>
-YH|</html>
+    </script>
+    <script>
+      // Embed toggle for Grafana dashboard preview
+      (function () {
+        var toggleBtn = document.querySelector('.embed-toggle');
+        var embedContainer = document.getElementById('grafana-embed');
+        if (!toggleBtn || !embedContainer) return;
+        toggleBtn.addEventListener('click', function () {
+          var isExpanded = toggleBtn.getAttribute('aria-expanded') === 'true';
+          if (isExpanded) {
+            embedContainer.hidden = true;
+            toggleBtn.textContent = 'Load Preview';
+            toggleBtn.setAttribute('aria-expanded', 'false');
+          } else {
+            embedContainer.hidden = false;
+            toggleBtn.textContent = 'Close Preview';
+            toggleBtn.setAttribute('aria-expanded', 'true');
+          }
+        });
+      })();
+    </script>
   </body>
 </html>
