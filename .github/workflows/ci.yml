@@ -101,6 +101,18 @@ jobs:
       - name: Install dependencies
         run: npm ci --prefer-offline --no-audit --no-fund
 
+      # apps/portfolio/worker.js is a build artifact (no longer tracked in
+      # git — see chore(monorepo) commit). Several jest suites in
+      # tests/integration/ and tests/unit/{,portfolio-worker/}generate-worker
+      # assert on the generated bundle, so we materialize it here. GIT_SHA
+      # is forwarded so the build embeds the right value for /health.
+      - name: Materialize worker bundle for integration tests
+        env:
+          GIT_SHA: ${{ github.sha }}
+        run: |
+          npm run sync:data
+          npm run build
+
       - name: Run Jest tests
         run: npm run test:jest -- --forceExit --maxWorkers=2
 

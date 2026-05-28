@@ -362,7 +362,7 @@ How local stages map to the real CI pipeline in `.github/workflows/ci.yml`:
 | Local Stage  | CI Job(s)                | Local Commands                                                                                                | CI Conditions                                      |
 | ------------ | ------------------------ | ------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
 | `analyze`    | `analyze`                | `go run ./tools/ci/affected.go`                                                                               | Always runs                                        |
-| `validate`   | `validate-cloudflare`    | `go run ./tools/ci/validate-cloudflare-native.go`                                                             | portfolio affected (dashboard is in-process per ADR 0009) |
+| `validate`   | `validate-cloudflare`    | `go run ./tools/ci/validate-cloudflare-native.go`                                                             | portfolio affected (ADR 0009)                      |
 |              |                          | `npx wrangler types /tmp/portfolio-worker-types.d.ts --config apps/portfolio/wrangler.jsonc --env production` |                                                    |
 | `lint`       | `lint`                   | `npm run lint`                                                                                                | Always runs                                        |
 | `typecheck`  | `typecheck`              | `npm run typecheck`                                                                                           | Always runs                                        |

@@ -412,15 +412,52 @@ components:
       properties:
         status:
           type: string
-          example: ok
-        timestamp:
-          type: string
-          format: date-time
+          enum: [healthy, degraded]
+          example: healthy
         version:
           type: string
-          example: 1.4.0
-        uptime:
+          example: 1.40.11
+        deployed_at:
+          type: string
+          format: date-time
+        git_sha:
+          type: string
+          description: >-
+            Build-time commit SHA injected by the portfolio worker build.
+            Used by post-deploy-verify.yml to confirm the deployed bundle
+            matches the pushed HEAD. Defaults to 'unknown' when the build
+            environment exports no SHA.
+          example: 049b4c5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c
+        uptime_seconds:
           type: number
+        bindings:
+          type: object
+          properties:
+            d1:
+              type: object
+              properties:
+                healthy:
+                  type: boolean
+                latency_ms:
+                  type: number
+            kv:
+              type: object
+              properties:
+                healthy:
+                  type: boolean
+                latency_ms:
+                  type: number
+        metrics:
+          type: object
+          properties:
+            requests_total:
+              type: number
+            requests_success:
+              type: number
+            requests_error:
+              type: number
+            vitals_received:
+              type: number
 
     Job:
       type: object
