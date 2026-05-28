@@ -1,0 +1,314 @@
+name: Post-Deploy Verification
+
+# After Cloudflare Workers Builds deploys a master commit, wait for
+# propagation and verify production against:
+#   1) Playwright deploy-verification suite (health, headers, content,
+#      perf, API surface)
+#   2) Code-reflection check — the /health endpoint exposes a build-time
+#      git_sha (and deployed_at). We assert the deployed SHA matches the
+#      pushed HEAD, or — if git_sha is 'unknown' (build env did not export
+#      one) — fall back to a freshness window on deployed_at.
+#
+# On failure: create or update a deduplicated GitHub issue
+# (label: deploy-verification, automated). The issue is auto-closed
+# on the next successful verification.
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'apps/portfolio/**'
+      - 'apps/job-dashboard/**'
+      - 'packages/**'
+      - 'wrangler.jsonc'
+  schedule:
+    # Drift detection — every 6 hours, even without a push
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: 'Base URL to verify'
+        required: false
+        default: 'https://resume.jclee.me'
+      wait_seconds:
+        description: 'Seconds to wait for Cloudflare Workers Builds propagation'
+        required: false
+        default: '180'
+      dry_run:
+        description: 'Skip GitHub issue ops'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: post-deploy-verify-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ${{ github.repository_visibility == 'private' && 'self-hosted' || 'ubuntu-latest' }}
+    timeout-minutes: 20
+    env:
+      BASE_URL: ${{ inputs.base_url || 'https://resume.jclee.me' }}
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Install Playwright (chromium only)
+        run: npx playwright install --with-deps chromium
+
+      - name: Wait for Cloudflare Workers Builds propagation
+        if: github.event_name == 'push'
+        env:
+          WAIT_SECONDS: ${{ inputs.wait_seconds || '180' }}
+        run: |
+          set -eu
+          echo "::notice::Waiting ${WAIT_SECONDS}s for Cloudflare Workers Builds deploy + edge propagation"
+          sleep "${WAIT_SECONDS}"
+
+      - name: Code-reflection check — /health git_sha
+        id: reflection
+        continue-on-error: true
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+          COMMIT_TS: ${{ github.event.head_commit.timestamp || '' }}
+        run: |
+          set -uo pipefail
+          HEALTH=$(curl -fsSL --max-time 30 "$BASE_URL/health" \
+            -H 'accept: application/json' \
+            -H 'user-agent: post-deploy-verify/1.0' 2>/dev/null || echo '{}')
+          DEPLOYED_SHA=$(echo "$HEALTH" | jq -r '.git_sha // "unknown"' 2>/dev/null || echo "unknown")
+          DEPLOYED_AT=$(echo "$HEALTH" | jq -r '.deployed_at // ""' 2>/dev/null || echo "")
+          DEPLOYED_VERSION=$(echo "$HEALTH" | jq -r '.version // "unknown"' 2>/dev/null || echo "unknown")
+
+          {
+            echo "deployed_sha=$DEPLOYED_SHA"
+            echo "deployed_at=$DEPLOYED_AT"
+            echo "deployed_version=$DEPLOYED_VERSION"
+            echo "expected_sha=$EXPECTED_SHA"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "::notice::Production /health → version=$DEPLOYED_VERSION sha=$DEPLOYED_SHA deployed_at=$DEPLOYED_AT"
+
+          # Path A — strict SHA match (preferred)
+          if [ "$DEPLOYED_SHA" != "unknown" ] && [ -n "$DEPLOYED_SHA" ]; then
+            if [ "$EXPECTED_SHA" = "$DEPLOYED_SHA" ]; then
+              echo "::notice::✅ Code reflection OK — deployed SHA matches HEAD"
+              echo "status=ok" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            # Tolerate short SHA prefix match
+            if [[ "$EXPECTED_SHA" == "$DEPLOYED_SHA"* ]] || [[ "$DEPLOYED_SHA" == "$EXPECTED_SHA"* ]]; then
+              echo "::notice::✅ Code reflection OK (prefix match) — deployed=$DEPLOYED_SHA head=$EXPECTED_SHA"
+              echo "status=ok" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            echo "::error::❌ Deployed SHA $DEPLOYED_SHA does not match HEAD $EXPECTED_SHA"
+            echo "status=sha_mismatch" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+
+          # Path B — fallback freshness check on deployed_at
+          if [ -n "$DEPLOYED_AT" ] && [ -n "$COMMIT_TS" ]; then
+            DEPLOYED_EPOCH=$(date -d "$DEPLOYED_AT" +%s 2>/dev/null || echo 0)
+            COMMIT_EPOCH=$(date -d "$COMMIT_TS" +%s 2>/dev/null || echo 0)
+            if [ "$DEPLOYED_EPOCH" -gt 0 ] && [ "$COMMIT_EPOCH" -gt 0 ]; then
+              if [ "$DEPLOYED_EPOCH" -ge "$COMMIT_EPOCH" ]; then
+                echo "::notice::✅ Freshness OK — deployed_at ($DEPLOYED_AT) ≥ commit_ts ($COMMIT_TS)"
+                echo "status=ok_freshness" >> "$GITHUB_OUTPUT"
+                exit 0
+              fi
+              echo "::error::❌ Stale deploy — deployed_at ($DEPLOYED_AT) < commit_ts ($COMMIT_TS)"
+              echo "status=stale" >> "$GITHUB_OUTPUT"
+              exit 1
+            fi
+          fi
+
+          echo "::warning::⚠️ Could not verify reflection — /health exposed neither a usable git_sha nor a comparable deployed_at"
+          echo "status=unknown" >> "$GITHUB_OUTPUT"
+          # unknown is not a hard failure — Playwright suite below still gates
+
+      - name: Run Playwright deploy-verification against production
+        id: playwright
+        continue-on-error: true
+        run: |
+          set -uo pipefail
+          mkdir -p /tmp/verify-logs
+          PLAYWRIGHT_BASE_URL="$BASE_URL" SKIP_WEBSERVER=1 \
+            npx playwright test deploy-verification --project=chromium \
+            2>&1 | tee /tmp/verify-logs/playwright.log
+          STATUS=${PIPESTATUS[0]}
+          echo "status=$STATUS" >> "$GITHUB_OUTPUT"
+          exit "$STATUS"
+
+      - name: Upload Playwright report on failure
+        if: steps.playwright.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ github.run_id }}
+          path: |
+            playwright-report/
+            /tmp/verify-logs/
+          retention-days: 14
+          if-no-files-found: ignore
+
+      - name: Aggregate outcome
+        id: outcome
+        run: |
+          set -eu
+          REFLECTION="${{ steps.reflection.outcome }}"
+          PLAYWRIGHT="${{ steps.playwright.outcome }}"
+          # outcome is "success" / "failure" / "cancelled" / "skipped"
+          if [ "$PLAYWRIGHT" = "failure" ] || [ "$REFLECTION" = "failure" ]; then
+            echo "failed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "failed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Ensure labels exist
+        if: steps.outcome.outputs.failed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh label create deploy-verification --color B60205 \
+            --description "Auto-managed by post-deploy-verify.yml" 2>/dev/null || true
+          gh label create automated --color BFD4F2 \
+            --description "Auto-managed by jclee-bot" 2>/dev/null || true
+
+      - name: Find or create deduplicated issue on failure
+        if: steps.outcome.outputs.failed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DRY_RUN: ${{ inputs.dry_run || 'false' }}
+          HEAD_SHA: ${{ github.sha }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          REFLECTION_OUTCOME: ${{ steps.reflection.outcome }}
+          REFLECTION_STATUS: ${{ steps.reflection.outputs.status }}
+          DEPLOYED_SHA: ${{ steps.reflection.outputs.deployed_sha }}
+          DEPLOYED_AT: ${{ steps.reflection.outputs.deployed_at }}
+          DEPLOYED_VERSION: ${{ steps.reflection.outputs.deployed_version }}
+          PLAYWRIGHT_OUTCOME: ${{ steps.playwright.outcome }}
+        run: |
+          set -eu
+          SHORT="${HEAD_SHA:0:8}"
+          TITLE="[deploy-verify] production check failed at $SHORT"
+
+          # Dedup search — open issue with this exact title
+          EXISTING=$(gh issue list --repo "$GITHUB_REPOSITORY" \
+            --state open --label deploy-verification \
+            --json number,title \
+            --jq ".[] | select(.title == \"$TITLE\") | .number" 2>/dev/null \
+            | head -1 || true)
+
+          # Last 80 lines of playwright output for context
+          TAIL=""
+          if [ -f /tmp/verify-logs/playwright.log ]; then
+            TAIL=$(tail -80 /tmp/verify-logs/playwright.log)
+          fi
+
+          BODY_FILE=$(mktemp)
+          {
+            echo "## Post-Deploy Verification Failure"
+            echo ""
+            echo "- **Production URL:** $BASE_URL"
+            echo "- **Commit:** \`$HEAD_SHA\`"
+            echo "- **Run:** $RUN_URL"
+            echo ""
+            echo "### Outcomes"
+            echo ""
+            echo "| Check | Outcome | Detail |"
+            echo "| --- | --- | --- |"
+            echo "| Code reflection (/health) | $REFLECTION_OUTCOME | status=$REFLECTION_STATUS · deployed_sha=\`$DEPLOYED_SHA\` · deployed_at=$DEPLOYED_AT · version=$DEPLOYED_VERSION |"
+            echo "| Playwright deploy-verification | $PLAYWRIGHT_OUTCOME | suite: \`tests/e2e/deploy-verification.spec.js\` |"
+            echo ""
+            echo "### Action Required"
+            echo ""
+            echo "1. Check Cloudflare Workers Builds dashboard for deploy status"
+            echo "2. Inspect the failed run logs and Playwright report artifact for the failing assertion"
+            echo "3. If transient (DNS/edge propagation): re-run the workflow. If real: push a fix and the issue auto-closes on the next green run."
+            if [ -n "$TAIL" ]; then
+              echo ""
+              echo "<details><summary>Playwright tail (last 80 lines)</summary>"
+              echo ""
+              echo '```'
+              echo "$TAIL"
+              echo '```'
+              echo ""
+              echo "</details>"
+            fi
+            echo ""
+            echo "> Auto-managed by jclee-bot (post-deploy-verify.yml)"
+          } > "$BODY_FILE"
+
+          if [ -n "$EXISTING" ]; then
+            if [ "$DRY_RUN" = "true" ]; then
+              echo "::notice::DRY-RUN: would comment on existing issue #$EXISTING"
+              rm -f "$BODY_FILE"
+              exit 0
+            fi
+            gh issue comment "$EXISTING" --repo "$GITHUB_REPOSITORY" \
+              --body "Another verification failure for $SHORT. Run: $RUN_URL" \
+              || echo "::warning::failed to add dedup comment; continuing"
+            echo "::notice::Recorded duplicate failure on existing issue #$EXISTING"
+          else
+            if [ "$DRY_RUN" = "true" ]; then
+              echo "::notice::DRY-RUN: would create new issue: $TITLE"
+              rm -f "$BODY_FILE"
+              exit 0
+            fi
+            gh issue create --repo "$GITHUB_REPOSITORY" \
+              --title "$TITLE" \
+              --body-file "$BODY_FILE" \
+              --label deploy-verification,automated \
+              || echo "::warning::failed to create issue; non-fatal"
+          fi
+          rm -f "$BODY_FILE"
+
+      - name: Close stale verification issues on success
+        if: steps.outcome.outputs.failed == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HEAD_SHA: ${{ github.sha }}
+          DRY_RUN: ${{ inputs.dry_run || 'false' }}
+        run: |
+          set -eu
+          OPEN=$(gh issue list --repo "$GITHUB_REPOSITORY" \
+            --state open --label deploy-verification \
+            --json number --jq '.[] | .number' 2>/dev/null || true)
+          if [ -z "$OPEN" ]; then
+            echo "::notice::No open deploy-verification issues to close"
+            exit 0
+          fi
+          for N in $OPEN; do
+            if [ "$DRY_RUN" = "true" ]; then
+              echo "::notice::DRY-RUN: would close issue #$N"
+              continue
+            fi
+            gh issue close "$N" --repo "$GITHUB_REPOSITORY" \
+              --comment "Resolved by successful post-deploy verification on $HEAD_SHA. Auto-closed by jclee-bot." \
+              --reason completed \
+              || echo "::warning::failed to close #$N; continuing"
+          done
+
+      - name: Fail the job if verification failed
+        if: steps.outcome.outputs.failed == 'true'
+        run: |
+          echo "::error::Post-deploy verification failed — see steps above and the GitHub issue created/updated by the previous step."
+          exit 1

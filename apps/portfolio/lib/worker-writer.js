@@ -76,7 +76,11 @@ function buildWorkerCode(options) {
     }) +
     generateCfStatsRoute() +
     generateStaticRoutes() +
-    generateHealthRoute({ version: options.version, deployedAt: options.deployedAt }) +
+    generateHealthRoute({
+      version: options.version,
+      deployedAt: options.deployedAt,
+      gitSha: options.gitSha || 'unknown',
+    }) +
     generateMetricsRoute() +
     generateVitalsRoute() +
     generateTrackRoute() +

@@ -1,9 +1,21 @@
 # Deployment Guide
 
+> ⚠️ **HISTORICAL — superseded by [ADR 0009 — Single-Worker Consolidation](../../docs/adr/0009-single-worker-consolidation.md).**
+> The standalone `job` Cloudflare Worker described below was deleted on
+> 2026-04-30. The dashboard module is now imported in-process by
+> `apps/portfolio/entry.js` and deploys with the merged `resume` worker.
+> For the current deployment path see
+> [`docs/deployment-guide.md`](../../docs/deployment-guide.md) and the
+> portfolio Wrangler config at `apps/portfolio/wrangler.jsonc`.
+>
+> This document is preserved as a reference for the binding shape, secrets,
+> and operational runbook that were inherited by the merged worker.
+
 Complete step-by-step instructions for local/runtime module validation.
 
-Production deploy path: independent worker (`job`) via Cloudflare Workers
-Builds. See [ADR 0007](../../docs/adr/0007-msa-service-split.md).
+Production deploy path (historical): independent worker (`job`) via Cloudflare
+Workers Builds. See [ADR 0007](../../docs/adr/0007-msa-service-split.md)
+(superseded by ADR 0009).
 
 ## Table of Contents
 

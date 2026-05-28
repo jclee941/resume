@@ -1,0 +1,29 @@
+# lychee ignore patterns — one regex per line.
+# Auto-loaded by lycheeverse/lychee-action@v2 if present at the repo root.
+# See https://lychee.cli.rs/usage/cli/
+
+# Self-hosted services (require VPN / k8s context; not stable from CI runners)
+^https?://([a-z0-9.-]+\.)?jclee\.me
+^https?://([a-z0-9.-]+\.)?jaecheol\.io
+
+# Local / RFC1918 / placeholders
+^https?://localhost
+^https?://127\.0\.0\.1
+^https?://192\.168\.
+^https?://10\.
+^https?://([a-z0-9.-]+\.)?example\.(com|org|net)
+
+# Old org path — repo renamed from qws941 → jclee941
+^https?://github\.com/qws941/
+
+# Auth-walled Cloudflare dashboards
+^https?://dash\.cloudflare\.com/
+
+# Korean blog with strict anti-bot (returns 403 to CI)
+^https?://lheunx\.tistory\.com
+
+# Template placeholders that aren't real URLs
+\[ACCOUNT_ID\]
+\$\{?[A-Z_]+\}?
+YOUR_ORG
+YOUR_REPO

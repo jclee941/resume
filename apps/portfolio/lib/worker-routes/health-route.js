@@ -6,8 +6,11 @@
  * @param {Object} opts
  * @param {string} opts.version - Build-time VERSION
  * @param {string} opts.deployedAt - Build-time deployedAt
+ * @param {string} [opts.gitSha] - Build-time git SHA for post-deploy
+ *   code-reflection verification. Defaults to 'unknown'.
  */
 function generateHealthRoute(opts) {
+  const gitSha = opts.gitSha || 'unknown';
   return `
       if (url.pathname === '/health') {
         const uptime = Math.floor((Date.now() - metrics.worker_start_time) / 1000);
@@ -34,6 +37,7 @@ function generateHealthRoute(opts) {
           status: allHealthy ? 'healthy' : 'degraded',
           version: '${opts.version}',
           deployed_at: '${opts.deployedAt}',
+          git_sha: '${gitSha}',
           uptime_seconds: uptime,
           bindings,
           metrics: {

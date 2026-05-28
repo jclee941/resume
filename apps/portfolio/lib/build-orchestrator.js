@@ -16,9 +16,9 @@ const { buildAndWriteWorker } = require('./worker-writer');
 
 /**
  * Execute full worker build process.
- * @param {{baseDir: string, version: string, allowedEmails: string[], logger: {log: Function, debug: Function, error: Function}}} options - Build options.
+ * @param {{baseDir: string, version: string, gitSha?: string, allowedEmails: string[], logger: {log: Function, debug: Function, error: Function}}} options - Build options.
  */
-async function runWorkerBuild({ baseDir, version, allowedEmails, logger }) {
+async function runWorkerBuild({ baseDir, version, gitSha = 'unknown', allowedEmails, logger }) {
   const buildStartTime = Date.now();
 
   const {
@@ -145,6 +145,7 @@ async function runWorkerBuild({ baseDir, version, allowedEmails, logger }) {
 
   const securityHeaders = securityHeadersModule.generateSecurityHeaders(styleHashes);
   const deployedAt = process.env.DEPLOYED_AT || new Date().toISOString();
+  const resolvedGitSha = gitSha || 'unknown';
   const metrics = {
     requests_total: 0,
     requests_success: 0,
@@ -166,6 +167,7 @@ async function runWorkerBuild({ baseDir, version, allowedEmails, logger }) {
   const { workerSizeKB } = buildAndWriteWorker({
     baseDir,
     deployedAt,
+    gitSha: resolvedGitSha,
     indexHtml,
     indexEnHtml,
     indexJaHtml,
@@ -206,6 +208,7 @@ async function runWorkerBuild({ baseDir, version, allowedEmails, logger }) {
   logger.log(`   - Project cards: ${projectData.projects.length}`);
   logger.log(`   - Template cache: ${TEMPLATE_CACHE.dataHash ? 'Active' : 'Empty'}`);
   logger.log(`   - Deployed at: ${deployedAt}`);
+  logger.log(`   - Git SHA: ${resolvedGitSha}`);
 }
 
 module.exports = {

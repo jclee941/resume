@@ -147,11 +147,23 @@ describe('worker-writer', () => {
       expect(preambleOpts.metricsJson).toBe(JSON.stringify({ requests_total: 0 }, null, 2));
     });
 
-    it('should call generateHealthRoute with version and deployedAt', () => {
+    it('should call generateHealthRoute with version, deployedAt, and gitSha', () => {
       buildWorkerCode(createMinimalOptions());
       expect(workerRoutes.generateHealthRoute).toHaveBeenCalledWith({
         version: '1.0.0',
         deployedAt: '2024-01-01T00:00:00Z',
+        gitSha: 'unknown',
+      });
+    });
+
+    it('should forward explicit gitSha to generateHealthRoute', () => {
+      const opts = createMinimalOptions();
+      opts.gitSha = 'abc1234567890def';
+      buildWorkerCode(opts);
+      expect(workerRoutes.generateHealthRoute).toHaveBeenCalledWith({
+        version: '1.0.0',
+        deployedAt: '2024-01-01T00:00:00Z',
+        gitSha: 'abc1234567890def',
       });
     });
 
