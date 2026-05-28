@@ -10,8 +10,6 @@
     "@resume/types": "*"
   },
   "scripts": {
-    "dev": "wrangler dev --config wrangler.jsonc",
-    "deploy": "node -e \"console.error('Manual deploy is disabled. Use git push to master for Cloudflare Workers Builds.'); process.exit(1)\"",
-    "tail": "wrangler tail --config wrangler.jsonc --env production"
+    "deploy": "node -e \"console.error('Standalone job-dashboard deploy disabled per ADR 0009 (merged into apps/portfolio). Use git push to master.'); process.exit(1)\""
   }
 }

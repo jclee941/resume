@@ -3,3 +3,5 @@ node_modules/
 .opencode/
 .sisyphus/
 applications/
+# Generated resume markdowns derived from packages/data/resumes/master/resume_data.json
+packages/data/resumes/generated/

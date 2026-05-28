@@ -46,7 +46,8 @@ The current KV-backed sliding-window has a non-atomic read-modify-write
 binding provides atomic semantics.
 
 - [ ] `RATE_LIMITER` binding created in the Cloudflare account dashboard
-- [ ] Binding wired into `apps/job-dashboard/wrangler.jsonc`
+- [ ] Binding wired into `apps/portfolio/wrangler.jsonc` (the merged worker
+      per ADR 0009 — `apps/job-dashboard/wrangler.jsonc` no longer exists)
 - [ ] Middleware migrated to consume the binding (recipe is in the file's
       header comment)
 - [ ] KV-based fallback removed once production traffic confirms parity

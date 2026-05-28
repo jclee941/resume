@@ -2,15 +2,18 @@
 
 **Location**: `apps/job-dashboard/`
 
-**Description**: Independent Cloudflare Worker serving the job dashboard API at
-`resume.jclee.me/job/*`, connected to the portfolio worker via Service Binding.
+**Description**: Job dashboard API served at `resume.jclee.me/job/*` — the
+handler module is merged in-process into the portfolio Cloudflare Worker
+(it is no longer a standalone Worker).
 
-**Architecture**: Independent worker (`job`), proxied from portfolio worker
-(`resume`) via Service Binding. See [ADR
-0007](../../docs/adr/0007-msa-service-split.md).
+**Architecture**: In-process consolidation with the portfolio Worker
+(`resume`). `apps/portfolio/entry.js` imports this module directly and
+dispatches `/job/*` requests via `jobWorker.fetch(request, env, ctx)`
+— no Service Binding round-trip. See
+[ADR 0009 — Single-Worker Consolidation](../../docs/adr/0009-single-worker-consolidation.md).
 
 **Status**: ✅ Production-ready | 7 workflows | 48 API endpoints | D1 + KV + R2
-bindings
+bindings (all registered on the merged `resume` worker)
 
 ---
 
@@ -19,7 +22,7 @@ bindings
 ### Prerequisites
 
 - Node.js >= 22
-- Wrangler CLI (`npm install -g wrangler`)
+- Wrangler CLI (installed as a workspace dev dependency)
 - Cloudflare account with Workers enabled
 - Valid `CLOUDFLARE_ACCOUNT_ID` environment variable
 
@@ -29,26 +32,27 @@ bindings
 # Install dependencies from repo root
 npm install
 
-# Start dev server (http://localhost:8787)
-npm run dev --workspace @resume/job-dashboard-worker
+# Start dev server for the merged worker (serves portfolio + /job/*)
+npm run dev          # Miniflare via tools/scripts/dev/miniflare.config.js
+# or
+npm run dev:wrangler # Wrangler-native dev mode
 ```
 
-**Available Endpoints** (local):
+**Available Endpoints** (local, via the merged portfolio worker):
 
-- Dashboard UI: <http://localhost:8787/job/>
-- API: <http://localhost:8787/job/api/\>\*
-- Health check: <http://localhost:8787/job/health>
+- Portfolio site: <http://localhost:8787/>
+- Dashboard API: <http://localhost:8787/job/api/...>
+- Dashboard health: <http://localhost:8787/job/health>
 
 ### Deploy to Cloudflare
 
 Production deployment is handled by Cloudflare Workers Builds (git push to
-`master` triggers automatic deploy). Local production deploys are intentionally
-disabled so the dashboard follows the same authoritative deployment path as the
-root worker.
+`master` triggers automatic deploy of the merged `resume` worker). Local
+production deploys are intentionally disabled.
 
 ```bash
-# View live logs
-npm run tail --workspace @resume/job-dashboard-worker
+# View live logs for the merged worker
+npx wrangler tail --config apps/portfolio/wrangler.jsonc --env production
 
 # View deployment history
 npx wrangler deployments list
@@ -69,11 +73,16 @@ npx wrangler secret put CLOUDFLARE_API_TOKEN
 npx wrangler secret put JWT_SECRET
 ```
 
-### wrangler.jsonc Structure
+### Binding Shape (informational)
+
+> ℹ️ `apps/job-dashboard/wrangler.jsonc` was removed per ADR 0009 — these
+> bindings are now declared in `apps/portfolio/wrangler.jsonc` on the merged
+> `resume` worker. The snippet below is kept for reference of what bindings
+> the dashboard module expects.
 
 ```jsonc
 {
-  "name": "job", // Worker name
+  "name": "resume", // merged worker name (was: "job")
   "main": "src/index.js", // Entry point
   "compatibility_date": "2026-02-21", // Compatibility version
 

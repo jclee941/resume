@@ -9,6 +9,28 @@ const packageJson = JSON.parse(
 );
 const VERSION = packageJson.version;
 
+// Build-time git SHA for post-deploy code-reflection verification.
+// Priority: explicit env (GIT_SHA, GITHUB_SHA, CF_PAGES_COMMIT_SHA,
+// WORKERS_CI_COMMIT_SHA), then `git rev-parse HEAD`, then 'unknown'.
+function resolveGitSha() {
+  const envSha =
+    process.env.GIT_SHA ||
+    process.env.GITHUB_SHA ||
+    process.env.CF_PAGES_COMMIT_SHA ||
+    process.env.WORKERS_CI_COMMIT_SHA;
+  if (envSha) return envSha.trim();
+  try {
+    return require('child_process').execSync('git rev-parse HEAD', {
+      cwd: path.join(__dirname, '..', '..'),
+      encoding: 'utf-8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim();
+  } catch {
+    return 'unknown';
+  }
+}
+const GIT_SHA = resolveGitSha();
+
 const ALLOWED_EMAILS = process.env.ALLOWED_EMAILS
   ? process.env.ALLOWED_EMAILS.split(',').map((email) => email.trim())
   : [];
@@ -26,11 +48,13 @@ const _N8N_WEBHOOK_BASE = process.env.N8N_WEBHOOK_BASE || 'https://n8n.jclee.me/
     DEBUG: process.env.DEBUG,
     VERBOSE: process.env.VERBOSE,
     VERSION,
+    GIT_SHA,
   });
 
   await runWorkerBuild({
     baseDir: __dirname,
     version: VERSION,
+    gitSha: GIT_SHA,
     allowedEmails: ALLOWED_EMAILS,
     logger,
   });

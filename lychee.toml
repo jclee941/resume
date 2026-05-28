@@ -1,0 +1,37 @@
+# lychee configuration for docs-sync/link-check
+# https://lychee.cli.rs/configuration/
+
+# Accept a wider set of status codes — many real sites return 403 to CI
+# runner IP ranges (anti-bot), 429 under rate limiting, 999 from LinkedIn.
+accept = [200, 203, 204, 301, 302, 307, 308, 401, 403, 405, 429, 500, 503, 999]
+
+# Treat redirects as success rather than chasing them.
+max_redirects = 5
+
+# Be patient — CI runners hit slow CDNs and many docs link to research sites.
+timeout = 30
+retry_wait_time = 2
+max_retries = 3
+
+# Exclude patterns that are not stable links to verify:
+# - Self-hosted private services (resolution depends on VPN / k8s context)
+# - Placeholders / examples (intentionally non-resolvable)
+# - The old qws941/* repo URL (renamed to jclee941/* — historical references
+#   live on for traceability, not for navigation)
+# - Cloudflare dashboards (auth-walled; only authenticated browsers see them)
+# - The Korean Tistory blog (anti-bot, returns 403 to CI)
+exclude = [
+  "^https?://([a-z0-9.-]+\\.)?(jclee\\.me|jaecheol\\.io)",
+  "^https?://([a-z0-9.-]+\\.)?example\\.(com|org|net)",
+  "^https?://localhost",
+  "^https?://127\\.0\\.0\\.1",
+  "^https?://192\\.168\\.",
+  "^https?://10\\.",
+  "^https?://github\\.com/qws941/",
+  "^https?://dash\\.cloudflare\\.com/",
+  "^https?://lheunx\\.tistory\\.com",
+  "\\[ACCOUNT_ID\\]",
+  "\\$\\{?[A-Z_]+\\}?",
+  "YOUR_ORG",
+  "YOUR_REPO",
+]

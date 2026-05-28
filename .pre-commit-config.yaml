@@ -42,3 +42,14 @@ repos:
         name: Lint Markdown files (markdownlint)
         args: [--fix]
         exclude: ^(node_modules|\.venv|.*pr-agent-upstream-README\.md)/
+
+  - repo: local
+    hooks:
+      - id: eslint
+        name: Lint JavaScript/TypeScript (eslint)
+        entry: npx --no-install eslint --cache
+        language: system
+        types_or: [javascript, jsx, ts, tsx]
+        require_serial: false
+        pass_filenames: true
+        exclude: ^(node_modules|dist|build|coverage|\.wrangler|playwright-report)/

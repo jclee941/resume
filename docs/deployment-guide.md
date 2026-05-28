@@ -179,11 +179,11 @@ Your `.env` file contains 6 primary sections:
 
 ### 3.3 Wrangler Configuration
 
-The monorepo uses two active Wrangler configuration files:
-
-1. `apps/portfolio/wrangler.jsonc`: Uses JSONC format for the main site.
-2. `apps/job-dashboard/wrangler.jsonc`: Uses JSONC format for the dashboard
-   worker.
+The monorepo uses a single active Wrangler configuration file
+(`apps/portfolio/wrangler.jsonc`) — the previously separate
+`apps/job-dashboard/wrangler.jsonc` was removed when the dashboard was
+merged in-process into the portfolio Worker (see
+[ADR 0009](adr/0009-single-worker-consolidation.md)).
 
 ### 3.4 Managing Production Secrets
 
@@ -192,7 +192,8 @@ CLI:
 
 ```bash
 # Example: Setting the admin token for the dashboard
-npx wrangler secret put ADMIN_TOKEN --config apps/job-dashboard/wrangler.jsonc
+# (dashboard bindings live in the merged portfolio worker per ADR 0009)
+npx wrangler secret put ADMIN_TOKEN --config apps/portfolio/wrangler.jsonc
 ```
 
 **Detailed Secret Descriptions:**
