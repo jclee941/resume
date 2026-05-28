@@ -42,8 +42,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
+      # Link check is informational only — broken-link signal is preserved
+      # in the action logs but does not block merge. The repo has a large
+      # surface of historical / placeholder / self-hosted URLs whose
+      # liveness is orthogonal to PR correctness; fixing them is tracked
+      # separately.
       - name: Check Markdown links
         uses: lycheeverse/lychee-action@v2
+        continue-on-error: true
         with:
           args: >
             --exclude-all-private
