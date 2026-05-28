@@ -106,12 +106,11 @@ jobs:
       # tests/integration/ and tests/unit/{,portfolio-worker/}generate-worker
       # assert on the generated bundle, so we materialize it here. GIT_SHA
       # is forwarded so the build embeds the right value for /health.
+      # 'npm run build' already chains sync:data → generate-worker.
       - name: Materialize worker bundle for integration tests
         env:
           GIT_SHA: ${{ github.sha }}
-        run: |
-          npm run sync:data
-          npm run build
+        run: npm run build
 
       - name: Run Jest tests
         run: npm run test:jest -- --forceExit --maxWorkers=2
