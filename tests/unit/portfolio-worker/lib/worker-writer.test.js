@@ -34,6 +34,7 @@ jest.mock('../../../../apps/portfolio/lib/worker-routes', () => ({
   generateMetricsRoute: jest.fn(() => '/* metrics-route */\n'),
   generateSeoRoutes: jest.fn(() => '/* seo-routes */\n'),
   generate404: jest.fn(() => '/* 404 */\n'),
+  generateFaviconRedirect: jest.fn(() => '/* favicon-redirect */\n'),
   generateErrorHandler: jest.fn(() => '/* error-handler */\n'),
 }));
 
@@ -214,6 +215,7 @@ describe('worker-writer', () => {
       expect(workerRoutes.generateMetricsRoute).toHaveBeenCalledTimes(1);
       expect(workerRoutes.generateSeoRoutes).toHaveBeenCalledTimes(1);
       expect(workerRoutes.generate404).toHaveBeenCalledTimes(1);
+      expect(workerRoutes.generateFaviconRedirect).toHaveBeenCalledTimes(1);
       expect(routes.generateControlRoutes).toHaveBeenCalledTimes(1);
       expect(routes.generateCfStatsRoute).toHaveBeenCalledTimes(1);
       expect(routes.generateVitalsRoute).toHaveBeenCalledTimes(1);

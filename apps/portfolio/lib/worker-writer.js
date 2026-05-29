@@ -17,6 +17,7 @@ const {
   generateMetricsRoute,
   generateSeoRoutes,
   generate404,
+  generateFaviconRedirect,
   generateErrorHandler,
 } = require('./worker-routes');
 const {
@@ -90,6 +91,7 @@ function buildWorkerCode(options) {
     generateMetricsGetRoute() +
     generateMetricsSnapshotRoute() +
     generateSeoRoutes() +
+    generateFaviconRedirect() +
     generate404() +
     generateErrorHandler({ version: options.version })
   );

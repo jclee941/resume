@@ -8,6 +8,7 @@ const {
   generateMetricsRoute,
   generateSeoRoutes,
   generate404,
+  generateFaviconRedirect,
   generateErrorHandler,
 } = require('../../apps/portfolio/lib/worker-routes');
 
@@ -226,6 +227,28 @@ describe('Worker Routes', () => {
 
     it('should contain Not Found message', () => {
       expect(code).toContain('Not Found');
+    });
+  });
+
+  describe('generateFaviconRedirect', () => {
+    let code;
+    beforeAll(() => {
+      code = generateFaviconRedirect();
+    });
+
+    it('should return a non-empty string', () => {
+      expect(typeof code).toBe('string');
+      expect(code.length).toBeGreaterThan(0);
+    });
+
+    it('should match /favicon.ico pathname', () => {
+      expect(code).toContain('/favicon.ico');
+    });
+
+    it('should redirect to /assets/favicon.svg with 308', () => {
+      expect(code).toContain('/assets/favicon.svg');
+      expect(code).toContain('308');
+      expect(code).toContain('Response.redirect');
     });
   });
 
