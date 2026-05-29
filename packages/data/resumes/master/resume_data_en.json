@@ -51,7 +51,7 @@
       "Migrated infrastructure to IaC for change traceability and consistency",
       "Built an observability platform to enable cross-analysis of metrics and logs scattered across services",
       "Integrated static analysis into CI pipelines to catch vulnerabilities and secret leaks at build time",
-      "Developed API-based automation scripts to reduce repetitive manual console operations on security appliances"
+      "Developed API-based automation scripts to replace repetitive manual console operations with API-based workflows on security appliances"
     ],
     "aboutSection": {
       "careerHighlights": [
@@ -97,7 +97,7 @@
       "teamSize": "Information Security Operations Cell",
       "myRole": "Security Automation Engineer",
       "workType": "Full-time (Dispatched)",
-      "description": "Worked on integrated security operations connecting Splunk ES with Slack via n8n and writing FortiManager API-based scripts for firewall policy lookups, contributing to shorter operator awareness paths.",
+      "description": "Worked on integrated security operations connecting Splunk ES with Slack via n8n and writing FortiManager API-based scripts for firewall policy lookups, standardizing operator notification and triage paths.",
       "wantedSummary": "Nextrade Security Operations SM | Splunk ES · FortiManager API · n8n\n→ SIEM detection rule design and automated security event response",
       "note": "ITCEN CTS employee, dispatched to Nextrade Trading System Security Operations SM",
       "projects": [
@@ -113,8 +113,8 @@
             "Docker"
           ],
           "achievements": [
-            "Reduced manual rule-management overhead by designing and operating Splunk ES detection rules, expanding security event coverage",
-            "Reduced operator-awareness latency by building an n8n + Slack/SMS real-time alert pipeline",
+            "Standardized manual rule-management workflows by designing and operating Splunk ES detection rules, expanding security event coverage",
+            "Standardized operator notification flow by building an n8n + Slack/SMS real-time alert pipeline",
             "Automated firewall policy lookup via FortiManager JSON-RPC API, eliminating repetitive console actions"
           ]
         }
@@ -215,7 +215,7 @@
           "achievements": [
             "Designed and applied NSX-T microsegmentation to eliminate east-west traffic blind spots",
             "Designed NSX-T DFW distributed firewall policies for server-to-server visibility and control",
-            "Built NSX-T Manager centralized management to reduce policy drift and operational overhead"
+            "Built NSX-T Manager centralized management to centralize policy management and rule governance"
           ]
         }
       ]
@@ -244,7 +244,7 @@
             "FortiGate"
           ],
           "achievements": [
-            "Designed Ansible playbooks to reduce manual configuration drift and error",
+            "Designed Ansible playbooks to standardize manual configuration workflows",
             "Developed NAC policy automation scripts to eliminate repetitive new-terminal registration",
             "Built a FortiGate-log-based detection dashboard for VPN session anomaly visibility"
           ]
@@ -699,7 +699,7 @@
     {
       "name": "Security Alert System",
       "period": "2025.01 ~ Present",
-      "description": "FortiGate security events were scattered across device syslog and Splunk, delaying the time from event occurrence to operator awareness. Connected Splunk Saved Search webhooks to Slack/Telegram so security events are immediately notified upon detection. Reduced security event awareness time and standardized operator response flow.",
+      "description": "FortiGate security events were scattered across device syslog and Splunk, delaying the time from event occurrence to operator awareness. Connected Splunk Saved Search webhooks to Slack/Telegram so security events are immediately notified upon detection. Standardized the security event notification and operator response flow and standardized operator response flow.",
       "technologies": [
         "Splunk",
         "Python",
@@ -783,7 +783,7 @@
       "highlights": [
         "Migrated to IaC to address GUI-management traceability limits",
         "Code-driven management for DNS/Edge configuration consistency",
-        "Automated provisioning to reduce cluster-rebuild time",
+        "Automated provisioning for cluster-rebuild",
         "CI auto-validation pipeline for IaC quality management"
       ],
       "technologies": [
@@ -825,7 +825,7 @@
       "highlights": [
         "Self-operated proxy to control LLM invocation routing",
         "Auto pattern detection for early security-defect identification",
-        "Webhook-based immediate notifications to reduce PR-review delay",
+        "Webhook-based immediate notifications for PR review",
         "Zero-downtime Edge deployment design"
       ],
       "technologies": [
@@ -1033,7 +1033,7 @@
         "(주)아이티센 CTS (2025.03 ~ 2026.02): 넥스트레이드 매매체결시스템 보안 운영에서 Splunk ES 탐지 룰 설계·운영, n8n + Slack/SMS 실시간 알림 파이프라인 구축, FortiManager API 기반 방화벽 정책 자동 조회 시스템 개발로 운영 자동화 및 인지·분류·알림 흐름 표준화.",
         "(주)가온누리정보시스템 (2024.03 ~ 2025.02): 넥스트레이드 보안 인프라 구축에서 FortiGate HA 5계층 망분리 설계, FSC 본인가 심사 통과, Ansible Role로 방화벽 정책 표준화.",
         "(주)콴텍투자일임 (2022.08 ~ 2024.03): 금융보안데이터센터(FSDC) 인프라 운영 자동화, 금융감독원 감사 대응, DB 접근제어 쿼리 튜닝, PB 플랫폼 POC 런칭 지원.",
-        "메타넷엠플랫폼 (2019.11 ~ 2022.07): 대규모 컨택센터 NAC 정책 배포 Ansible 자동화, NSX-T 마이크로세그멘테이션 적용, 침해 시도 차단 및 DLP 오탐 감소.",
+        "메타넷엠플랫폼 (2019.11 ~ 2022.07): 대규모 컨택센터 NAC 정책 배포 Ansible 자동화, NSX-T 마이크로세그멘테이션 적용, 침해 시도 차단 및 DLP 탐지 정책 재정비.",
         "한국항공우주산업(KAI) (2017.06 ~ 2018.10): 폐쇄망 Linux 서버 운영, 패치/방화벽/IDS 정책 수기 관리, RHCSA·LPIC-1·리눅스마스터 2급 취득."
       ],
       "closing": "OA에서 시작해 자동화로 도착한 보안 엔지니어 경력을 바탕으로, 보안 인프라의 자동화와 고가용성 설계에 기여하고자 합니다."
