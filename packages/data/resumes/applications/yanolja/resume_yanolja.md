@@ -22,7 +22,7 @@ fontsize: 11pt
 | 연락처    | 010-5757-9592                          |
 | 주소      | 경기도 시흥시 장현천로61, 307동 1301호 |
 | GitHub    | github.com/jclee941                    |
-| 경력 기간 | 7년 10개월 (2017.02 ~ 현재)            |
+| 경력 기간 | 2017.02 ~ 2026.02 (현재 구직 중)        |
 
 ---
 
@@ -42,7 +42,7 @@ fontsize: 11pt
 
 ### Automation & Scripting
 
-- **언어**: Python, Shell 스크립트 개발 (1,000+ LOC 프로젝트 경험)
+- **언어**: Python, Shell 스크립트 개발 (실무형 자동화 프로젝트 경험)
 - **자동화 도구**: Ansible, n8n, REST API 통합
 - **FortiManager API**: 방화벽 정책 자동화 (Python SDK)
 
@@ -62,7 +62,7 @@ fontsize: 11pt
 
 ## 경력사항
 
-### (주)아이티센 CTS | 인프라 운영 담당 (Infrastructure Operations Lead)
+### (주)아이티센 CTS | 인프라 운영 담당
 
 **2025.03 ~ 2026.02 (1년)**
 **넥스트레이드 대체거래소 매매체결시스템 운영**
@@ -76,7 +76,7 @@ fontsize: 11pt
 - **기술 스택**: Python, Splunk, n8n, Docker, Linux (CentOS 7/Rocky Linux 9)
 
 - **성과**:
-  - 운영 자동화로 반복 작업 시간 50% 단축
+  - 운영 자동화로 반복 작업 부담을 줄임
   - SIEM 기반 로그 분석으로 이상 징후 조기 탐지 체계 구축
 
 ---
@@ -87,7 +87,7 @@ fontsize: 11pt
 **넥스트레이드 대체거래소 매매체결시스템 구축**
 
 - **주요 업무**:
-  - 대체거래소 인프라 초기 구축 (100+ 서버 환경)
+  - 대체거래소 인프라 초기 구축 (대규모 서버 환경)
   - FortiManager API 기반 방화벽 정책 자동화 (Python SDK 활용)
   - Ansible 플레이북 개발로 서버 프로비저닝 자동화
   - 금융위원회 본인가 심사 기술 대응 (인프라 아키텍처 문서화)
@@ -95,8 +95,8 @@ fontsize: 11pt
 - **기술 스택**: Python, Ansible, FortiManager API, VMware, Linux
 
 - **성과**:
-  - FortiManager API 자동화로 방화벽 정책 배포 시간 70% 단축
-  - Ansible 플레이북으로 서버 설정 표준화 및 배포 시간 60% 단축
+  - FortiManager API 자동화로 방화벽 정책 배포 시간을 단축
+  - Ansible 플레이북으로 서버 설정을 표준화하고 배포를 자동화
   - 금융위 본인가 심사 통과 (기술 인프라 부분)
 
 ---
@@ -115,7 +115,7 @@ fontsize: 11pt
 - **기술 스택**: AWS, Python, Linux
 
 - **성과**:
-  - AWS 리소스 최적화로 월 인프라 비용 15% 절감
+  - AWS 리소스 최적화로 인프라 비용 부담을 줄임
   - Python 기반 백업 자동화로 수동 작업 제거
 
 ---
@@ -169,8 +169,8 @@ fontsize: 11pt
 - **기술 스택**: Ansible, Python, VPN (OpenVPN, Pritunl), Linux
 
 - **성과**:
-  - Ansible 플레이북으로 VPN 서버 배포 시간 80% 단축
-  - Python 자동화로 1,000+ 사용자 계정 관리 효율화
+  - Ansible 플레이북으로 VPN 서버 배포를 자동화
+  - Python 자동화로 대규모 사용자 계정 관리 효율화
 
 ---
 
@@ -188,7 +188,7 @@ fontsize: 11pt
 
 - **성과**:
   - Shell 스크립트 기반 로그 분석으로 장애 조기 발견
-  - 24/7 운영 환경에서 99.9% 가용성 유지
+  - 상시 운영 환경의 안정성 유지
 
 ---
 
