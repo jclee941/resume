@@ -932,13 +932,6 @@
       "status": "running"
     },
     {
-      "icon": "🔄",
-      "title": "n8n",
-      "description": "Workflow automation",
-      "status": "running",
-      "url": "https://n8n.jclee.me"
-    },
-    {
       "icon": "⚡",
       "title": "Cloudflare Workers",
       "description": "Edge runtime / ~390KB bundle / health-check verified",
