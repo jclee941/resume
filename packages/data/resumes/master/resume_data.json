@@ -962,13 +962,6 @@
       "status": "running"
     },
     {
-      "icon": "🔄",
-      "title": "n8n",
-      "description": "워크플로우 자동화",
-      "status": "running",
-      "url": "https://n8n.jclee.me"
-    },
-    {
       "icon": "⚡",
       "title": "Cloudflare Workers",
       "description": "Edge 런타임 / ~390KB 번들 / health-check 검증",
