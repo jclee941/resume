@@ -27,8 +27,8 @@
 | 경력 (experiences)          | ✅ 복수 이력 보유 | 2017~2026, 금융·공공 중심                                                                |
 | 프로젝트 (personalProjects) | ✅ 복수 프로젝트  | Observability, n8n, FortiNet API, Security Alert, Blacklist, HYCU FSDS, Resume Portfolio |
 | 기술 (skills)               | ✅ 여러 카테고리  | Security, Network, OS, Cloud, Monitoring, Automation, Frontend, DevOps, Database         |
-| 자격증 (certifications)     | ✅ 5개           | CompTIA Linux+, LPIC-1, RHCSA 등                                                         |
-| 학력 (education)            | ✅ 2개           | 한양사이버대 + 한국호텔관광전문학교                                                      |
+| 자격증 (certifications)     | ✅ 복수 항목     | CompTIA Linux+, LPIC-1, RHCSA 등                                                         |
+| 학력 (education)            | ✅ 복수 학력     | 한양사이버대 + 한국호텔관광전문학교                                                      |
 | current (현재 상태)         | `null`           | 넥스트레이드 계약 2026.02 종료                                                           |
 
 ---
