@@ -184,7 +184,7 @@
 - **목적**: 다수 방화벽 실시간 중앙관리 플랫폼 및 Splunk 중심 보안 통합
 - **기술스택**: Node.js, Cloudflare Workers, JavaScript, Splunk API,
  FortiManager/FortiOS API
-- **아키텍처**: DDD Level 3로 9개 도메인 분리 설계, FortiManager/FortiAnalyzer 직접 API 연동
+- **아키텍처**: DDD Level 3로 여러 도메인 분리 설계, FortiManager/FortiAnalyzer 직접 API 연동
 - **핵심기능**:
  - Splunk를 통한 중앙 집중식 로그 분석 및 정책 검증
  - FortiManager/FortiAnalyzer 실시간 데이터 수집 및 정책 위반 자동 탐지
