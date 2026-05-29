@@ -146,7 +146,7 @@ FortiAnalyzer 쪽은 운영자가 원하는 요약 결과를 빠르게 가져오
 
 ## 주요 성과
 
-- FortiManager + FortiAnalyzer 2개 제품 API 통합
+- FortiManager + FortiAnalyzer 제품 API 통합
 - 방화벽 정책 조회 자동화 (수동 확인 부담 완화)
 - 정책 조회, 라우트 관리, 로그 통계 기능을 재사용 가능한 Python 라이브러리로 정리
 - 보안 운영 자동화 파이프라인에 연결 가능한 공통 계층 확보

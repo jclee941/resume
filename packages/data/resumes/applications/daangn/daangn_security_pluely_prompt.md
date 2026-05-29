@@ -18,14 +18,14 @@
 - 콴텍투자일임 (2022.08~2024.03): AWS 금융 보안 (VPC/IAM/CloudTrail/GuardDuty)
 - 펀엔씨 (2022.05~07): DevOps, K8s 사전검토
 - 조인트리 (2021.09~2022.04): NSX-T, NAC/DLP/APT 통합 운영
-- 메타넷 (2019.12~2021.08): 1000명 재택근무 VPN, Ansible 자동화
+- 메타넷 (2019.12~2021.08): 대규모 재택근무 VPN, Ansible 자동화
 - 엠티데이타 (2017.02~2018.10): KAI 폐쇄망
 
 [현재 운영 중인 개인 인프라 — 면접 무기]
-- Proxmox 홈랩: 단일 노드(pve3, Ryzen 9800X3D, 60GB DDR5)에서 LXC 7개 + VM 3개 운영. Terraform IaC, 1Password Connect 시크릿 관리, Cloudflare Tunnel 외부 노출
+- Proxmox 홈랩: 단일 노드(pve3, Ryzen 9800X3D, 60GB DDR5)에서 복수 LXC와 VM 운영. Terraform IaC, 1Password Connect 시크릿 관리, Cloudflare Tunnel 외부 노출
 - 호스팅 서비스: Traefik(ingress), CoreDNS, ELK Stack, Grafana(grafana.jclee.me 퍼블릭), n8n(n8n.jclee.me), MCP Hub
-- 옵저버빌리티: Filebeat → Logstash → Elasticsearch → Kibana, Prometheus + Grafana 대시보드, 백업 vzdump+zstd 일 02:00 (RTO 15분/RPO 24h)
-- IP Blacklist 플랫폼 (github.com/qws941/blacklist): Flask + PostgreSQL 15 + Redis 7 + Next.js 15. REGTECH(한국금융보안원) 위협정보 자동수집, FortiGate Threat Feed API + Cloudflare WAF Lists API 양방향 연동, 10,000+ IP 관리, 2,201개 자동화 테스트
+- 옵저버빌리티: Filebeat → Logstash → Elasticsearch → Kibana, Prometheus + Grafana 대시보드, 백업 vzdump+zstd 일 02:00 (RTO/RPO 기준을 둔 백업 체계)
+- IP Blacklist 플랫폼 (github.com/qws941/blacklist): Flask + PostgreSQL 15 + Redis 7 + Next.js 15. REGTECH(한국금융보안원) 위협정보 자동수집, FortiGate Threat Feed API + Cloudflare WAF Lists API 양방향 연동, 대규모 IP 관리, 다수 자동화 테스트
 - Splunk SIEM (splunk.jclee.me, github.com/jclee941/splunk): FortiGate syslog 수집 → Splunk 탐지 → Python Block Kit 가공 → Slack 알림. 다수 탐지룰, 이벤트 발생 후 신속한 알림, 대용량 이벤트 처리 가능성 검증
 - FortiNet API 라이브러리: FortiManager + FortiAnalyzer REST API 통합 Python 라이브러리, 정책 조회/라우트 관리/로그 통계 자동화, 수동 정책 조회 부담을 줄임
 

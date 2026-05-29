@@ -167,7 +167,7 @@ flowchart LR
 ## 주요 성과
 
 - 15+ 워크플로우 운영 (일 200+ 자동 실행)
-- 4개 외부 서비스 통합 (Slack, GitHub, Cloudflare, Grafana)
+- 여러 외부 서비스 통합 (Slack, GitHub, Cloudflare, Grafana)
 - 반복 운영 업무를 워크플로우 자산으로 전환
 - 운영 절차의 누락 가능성과 전달 비용을 줄이는 자동화 기반 확보
 

@@ -25,9 +25,9 @@
 
 | 포트폴리오 주장                                      | SSoT 경로                                 | SSoT 값                                                        |
 | ---------------------------------------------------- | ----------------------------------------- | -------------------------------------------------------------- |
-| 50+ 메트릭 엔드포인트 수집                           | `personalProjects[0].metrics.targets`     | `"50+ metrics endpoints"`                                      |
-| 12+ Grafana 대시보드                                 | `personalProjects[0].metrics.dashboards`  | `"12+"`                                                        |
-| 3개 데이터소스 통합                                  | `personalProjects[0].metrics.datasources` | `"Prometheus, Loki, Elasticsearch"`                            |
+| 다수 메트릭 엔드포인트 수집                           | `personalProjects[0].metrics.targets`     | `"다수 metrics endpoints"`                                      |
+| 12+ Grafana 대시보드                                 | `personalProjects[0].metrics.dashboards`  | `"다수"`                                                        |
+| 여러 데이터소스 통합                                  | `personalProjects[0].metrics.datasources` | `"Prometheus, Loki, Elasticsearch"`                            |
 | 안정적인 인프라 가용성                                  | `personalProjects[0].metrics.uptime`      | `"안정적인 가용성"`                                                      |
 | Prometheus, Loki, Grafana, Blackbox Exporter, Docker | `personalProjects[0].technologies`        | `["Grafana","Prometheus","Loki","Blackbox Exporter","Docker"]` |
 | 홈랩 인프라 모니터링                                 | `personalProjects[0].description`         | `"홈랩 인프라 모니터링..."`                                    |
@@ -42,10 +42,10 @@ R5 수정: `(인프라 헬스, 서비스 상태)` 대시보드 설명 제거, `�
 
 | 포트폴리오 주장           | SSoT 경로                                    | SSoT 값                                |
 | ------------------------- | -------------------------------------------- | -------------------------------------- |
-| 다수 탐지 룰              | `personalProjects[3].metrics.detectionRules` | `"32개"`                               |
+| 다수 탐지 룰              | `personalProjects[3].metrics.detectionRules` | `"다수 탐지 룰"`                               |
 | Slack Block Kit 알림      | `personalProjects[3].metrics.alertChannels`  | `"Slack Block Kit"`                    |
 | FortiGate syslog → Splunk | `personalProjects[3].metrics.sources`        | `"FortiGate syslog → Splunk"`          |
-| 30초 이내 알림            | `personalProjects[3].metrics.responseTime`   | `"이벤트 발생 후 30초 이내 알림"`      |
+| 신속 알림            | `personalProjects[3].metrics.responseTime`   | `"이벤트 발생 후 신속 알림"`      |
 | Splunk, Python, Slack     | `personalProjects[3].technologies`           | `["Splunk","Python","Slack"]`          |
 | GitHub URL                | `personalProjects[3].githubUrl`              | `"https://github.com/jclee941/splunk"` |
 
@@ -92,8 +92,8 @@ R5 수정: `self-hosted` 제거, `Code nodes` 행 제거, 연동 상세 5줄→1
 | Ansible 정책 배포          | `experiences[0].responsibilities`             | `"Ansible Role 기반 방화벽 초기 설정 및 정책 배포 표준화"`  |
 | 금융위 본인가              | `experiences[0].responsibilities`             | `"금융위원회 본인가 심사 기술 대응 및 보안 아키텍처 수립"`  |
 | Splunk ES 보안 운영        | `experiences[0].responsibilities`             | `"Splunk ES 및 FortiGate API를 활용한 보안 운영 자동화"`    |
-| 다수 탐지 룰               | `personalProjects[3].metrics.detectionRules`  | `"32개"`                                                    |
-| 신속 알림               | `personalProjects[3].metrics.responseTime`    | `"이벤트 발생 후 30초 이내 알림"`                           |
+| 다수 탐지 룰               | `personalProjects[3].metrics.detectionRules`  | `"다수 탐지 룰"`                                                    |
+| 신속 알림               | `personalProjects[3].metrics.responseTime`    | `"이벤트 발생 후 신속 알림"`                           |
 | FortiManager API           | `experiences[0].responsibilities`             | `"FortiManager API를 이용한 방화벽 정책 자동 조회 툴 개발"` |
 
 R5 수정: `(JSON-RPC)` 제거
@@ -134,11 +134,11 @@ GitLab CI/CD, Nginx, Cloudflare), `(TypeScript)` 제거, `금융` 접두사 제�
 | FortiGate/FortiManager HA        | `experiences[0].responsibilities`      | `"FGCP Active-Passive HA"`                                 |
 | 금융위원회 본인가 심사 기술 대응 | `experiences[0].responsibilities`      | `"금융위원회 본인가 심사 기술 대응 및 보안 아키텍처 수립"` |
 | Grafana + Prometheus + Loki      | `personalProjects[0].technologies`     | `["Grafana","Prometheus","Loki"]`                          |
-| 12+ 대시보드, 50+ 메트릭         | `personalProjects[0].metrics`          | `dashboards: "12+"`, `targets: "50+ metrics endpoints"`    |
+| 다수 대시보드, 다수 메트릭         | `personalProjects[0].metrics`          | `dashboards: "다수"`, `targets: "다수 metrics endpoints"`    |
 | Splunk ES                        | `experiences[0].responsibilities`      | `"Splunk ES 및 FortiGate API를 활용"`                      |
 | 15+ 워크플로우, 일 200+ 실행     | `personalProjects[1].metrics`          | `workflows: "15+"`, `executions: "일 200+ 실행"`           |
 | FortiNet API 기능                | `personalProjects[2].metrics.features` | `"정책 조회, 라우트 관리, 로그 통계"`                      |
-| CompTIA Linux+, LPIC-1, RHCSA 등 | `certifications[]`                     | 5개 자격증 배열                                            |
+| CompTIA Linux+, LPIC-1, RHCSA 등 | `certifications[]`                     | 자격증 배열                                            |
 | 선호 프로젝트                    | 위시캣 프로필 UI 입력                  | SSoT 비대상 (HTML 주석 표기)                               |
 
 R5 수정: `차세대 증권거래소` 제거, `리포트 자동화` → SSoT features 원문, `SOAR/AWS/IaC` 괄호 제거, 선호

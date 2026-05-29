@@ -1,6 +1,6 @@
 <!-- Generated from master resume -->
 <!-- Variant: technical -->
-<!-- Generated: 2026-05-29T13:02:07.778Z -->
+<!-- Generated: 2026-05-29T13:24:19.850Z -->
 <!-- Description: Technical infrastructure focus -->
 ## 연락처
 - 전화: 010-5757-9592
