@@ -729,6 +729,35 @@
                 <!-- CONTACT_GRID_PLACEHOLDER -->
               </div>
             </section>
+
+            <section
+              id="guestbook"
+              class="section-guestbook reveal"
+              role="region"
+              aria-labelledby="guestbook-heading"
+            >
+              <h2 id="guestbook-heading" class="sr-only">Guestbook</h2>
+              <div class="section-cmd">
+                <span class="section-cmd__command">cat guestbook.log</span>
+              </div>
+              <form id="guestbook-form" class="guestbook-form" novalidate>
+                <div class="guestbook-field">
+                  <label for="guestbook-name">Name</label>
+                  <input type="text" id="guestbook-name" name="name" maxlength="40" required autocomplete="name" placeholder="Name" />
+                </div>
+                <div class="guestbook-field">
+                  <label for="guestbook-message">Message</label>
+                  <textarea id="guestbook-message" name="message" maxlength="500" rows="3" required placeholder="Leave a message"></textarea>
+                </div>
+                <div class="guestbook-hp" aria-hidden="true">
+                  <label for="guestbook-website">Website</label>
+                  <input type="text" id="guestbook-website" name="website" tabindex="-1" autocomplete="off" />
+                </div>
+                <button type="submit" class="guestbook-submit">Sign</button>
+                <p id="guestbook-status" class="guestbook-status" role="status" aria-live="polite"></p>
+              </form>
+              <ul id="guestbook-list" class="guestbook-list" aria-label="Guestbook entries"></ul>
+            </section>
           </main>
 
           <footer class="site-footer">

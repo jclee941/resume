@@ -50,6 +50,7 @@ jest.mock('../../../../apps/portfolio/lib/routes', () => ({
   generateMetricsPostRoute: jest.fn(() => '/* metrics-post-route */\n'),
   generateMetricsGetRoute: jest.fn(() => '/* metrics-get-route */\n'),
   generateMetricsSnapshotRoute: jest.fn(() => '/* metrics-snapshot-route */\n'),
+  generateGuestbookRoute: jest.fn(() => '/* guestbook-route */\n'),
 }));
 
 const fs = require('fs');
@@ -227,6 +228,7 @@ describe('worker-writer', () => {
       expect(routes.generateMetricsPostRoute).toHaveBeenCalledTimes(1);
       expect(routes.generateMetricsGetRoute).toHaveBeenCalledTimes(1);
       expect(routes.generateMetricsSnapshotRoute).toHaveBeenCalledTimes(1);
+      expect(routes.generateGuestbookRoute).toHaveBeenCalledTimes(1);
     });
   });
 
