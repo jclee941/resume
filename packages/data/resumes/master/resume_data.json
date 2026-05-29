@@ -68,7 +68,7 @@
         "코드만 PR을 받는다 — 정책도, 인프라도, 운영 절차도."
       ],
       "currentFocus": [
-        "Splunk ES + n8n + FortiManager API SOC 운영 업무 수행",
+        "Splunk ES + n8n + FortiManager API 기반 SOC 운영",
         "Cloudflare Workers Edge 기반 정책·관측·인증 통합 구조 학습",
         "MCP/AI 에이전트로 보안 운영 수작업 아이템 정리 시도",
         "GitOps(ArgoCD) + 정책 자동화(OPA) 학습"

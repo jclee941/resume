@@ -28,7 +28,7 @@
 | 50+ 메트릭 엔드포인트 수집                           | `personalProjects[0].metrics.targets`     | `"50+ metrics endpoints"`                                      |
 | 12+ Grafana 대시보드                                 | `personalProjects[0].metrics.dashboards`  | `"12+"`                                                        |
 | 3개 데이터소스 통합                                  | `personalProjects[0].metrics.datasources` | `"Prometheus, Loki, Elasticsearch"`                            |
-| 99.5% 인프라 가용률                                  | `personalProjects[0].metrics.uptime`      | `"99.5%"`                                                      |
+| 안정적인 인프라 가용성                                  | `personalProjects[0].metrics.uptime`      | `"안정적인 가용성"`                                                      |
 | Prometheus, Loki, Grafana, Blackbox Exporter, Docker | `personalProjects[0].technologies`        | `["Grafana","Prometheus","Loki","Blackbox Exporter","Docker"]` |
 | 홈랩 인프라 모니터링                                 | `personalProjects[0].description`         | `"홈랩 인프라 모니터링..."`                                    |
 | 데모 URL                                             | `personalProjects[0].demoUrl`             | `"https://grafana.jclee.me/..."`                               |
@@ -60,7 +60,7 @@ R5 수정: `Splunk Enterprise Security` → `Splunk`, SPL 행 제거, `Alert Act
 | ------------------------------------ | ---------------------------------------- | ------------------------------------------- |
 | FortiManager, FortiAnalyzer REST API | `personalProjects[2].metrics.endpoints`  | `"FortiManager, FortiAnalyzer REST API"`    |
 | 정책 조회, 라우트 관리, 로그 통계    | `personalProjects[2].metrics.features`   | `"정책 조회, 라우트 관리, 로그 통계"`       |
-| 수동 대비 80% 시간 절감              | `personalProjects[2].metrics.automation` | `"수동 작업 대비 80% 시간 절감"`            |
+| 수동 조회 부담 완화              | `personalProjects[2].metrics.automation` | `"수동 조회 부담 완화"`            |
 | Python, FortiManager, FortiAnalyzer  | `personalProjects[2].technologies`       | `["Python","FortiManager","FortiAnalyzer"]` |
 | GitHub URL                           | `personalProjects[2].githubUrl`          | `"https://github.com/jclee941/splunk"`      |
 
