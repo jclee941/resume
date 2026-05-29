@@ -4,7 +4,7 @@
 
 ---
 
-## 1. 아이티센CTS (2025.03~최근) — Nextrade SOC 24/7 + Splunk SIEM + Claude AI
+## 1. 아이티센CTS (2025.03~2026.02) — Nextrade SOC 24/7 + Splunk SIEM + Claude AI
 
 ### 핵심 검증 질문
 
