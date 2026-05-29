@@ -72,7 +72,7 @@ R5 수정: `JSON-RPC over HTTPS` 행 제거, features를 SSoT 원문으로 축�
 
 | 포트폴리오 주장                    | SSoT 경로                                  | SSoT 값                                        |
 | ---------------------------------- | ------------------------------------------ | ---------------------------------------------- |
-| 다수 워크플로우                     | `personalProjects[1].metrics.workflows`    | `"15+"`                                        |
+| 다수 워크플로우                     | `personalProjects[1].metrics.workflows`    | `"다수"`                                        |
 | 반복 실행                       | `personalProjects[1].metrics.executions`   | `"반복 실행"`                               |
 | Slack, GitHub, Cloudflare, Grafana | `personalProjects[1].metrics.integrations` | `"Slack, GitHub, Cloudflare, Grafana"`         |
 | n8n, PostgreSQL, Docker            | `personalProjects[1].technologies`         | `["n8n","PostgreSQL","Docker"]`                |
