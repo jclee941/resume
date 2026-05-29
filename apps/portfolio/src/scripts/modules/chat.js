@@ -24,15 +24,15 @@ class PortfolioChat {
       experience: {
         patterns: ['경력', 'experience', '몇 녬', 'years', 'career', 'work history', '언제부터'],
         responses: [
-          '8년차 DevSecOps/SRE 엔지니어입니다. 2017년 한국항공우주산업(KAI)에서 시작하여, 현재 넥스트레이드 매매체결시스템 보안 운영을 담당하고 있습니다.',
-          'I am an 8-year veteran DevSecOps/SRE engineer. Started at KAI in 2017, currently handling security operations for Nextrade trading system.'
+          '8년차 보안 엔지니어입니다. 2017년 한국항공우주산업(KAI)에서 시작해, 직전에는 넥스트레이드 매매체결시스템 보안 운영을 담당했으며 현재는 새로운 보안·인프라 역할을 찾는 구직 중입니다.',
+          'An 8-year security engineer. Started at KAI in 2017; most recently handled security operations for the Nextrade trading system, and am now seeking a new security/infrastructure role.'
         ]
       },
       current: {
         patterns: ['현재', 'now', '지금', 'current', 'doing', 'nextrade', '넥스트레이드'],
         responses: [
-          '현재 아이티센 CTS 소속으로 넥스트레이드(주) 금융 거래소 매매체결시스템의 보안 운영을 담당하고 있습니다. Splunk ES, n8n, FortiManager API 기반 자동 대응 체계를 운영 중입니다.',
-          'Currently at ITCEN CTS, handling security operations for Nextrade financial exchange trading system. Operating Splunk ES, n8n, and FortiManager API-based automated response.'
+          '직전 아이티센 CTS 소속으로 넥스트레이드(주) 금융 거래소 매매체결시스템의 보안 운영을 담당했습니다. Splunk ES, n8n, FortiManager API 기반 자동 대응 체계를 운영했으며, 현재는 다음 보안·인프라 역할을 찾는 구직 중입니다.',
+          'Most recently at ITCEN CTS, handled security operations for the Nextrade financial exchange trading system, operating Splunk ES, n8n, and FortiManager API-based automated response. Currently seeking my next security/infrastructure role.'
         ]
       },
       skills: {

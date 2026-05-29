@@ -1,7 +1,7 @@
 {
-  "name": "이재철 - DevSecOps/SRE Engineer",
+  "name": "이재철 - 보안 엔지니어",
   "short_name": "JC Lee Resume",
-  "description": "DevSecOps/SRE 포트폴리오 - 금융·공공 보안 인프라, SIEM, IaC, Observability 자동화",
+  "description": "보안 엔지니어 포트폴리오 - 금융·공공 보안 인프라, SIEM, IaC, Observability 자동화",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0f0f23",
