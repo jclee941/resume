@@ -27,7 +27,7 @@ const TRANSLATIONS = {
     // Hero section
     'hero.title': '이재철',
     'hero.subtitle': '보안 엔지니어',
-    'hero.description': '보안 자동화와 인프라 최적화를 통해 안전하고 효율적인 시스템을 구축합니다',
+    'hero.description': '보안 자동화와 인프라 정비를 통해 안전한 시스템을 구축합니다',
     'hero.download.complete': '완전한 이력서 다운로드',
     'hero.download.pdf': 'PDF',
     'hero.download.docx': 'DOCX',
@@ -70,7 +70,7 @@ const TRANSLATIONS = {
     'hero.title': 'Jaecheol Lee',
     'hero.subtitle': 'Security Engineer',
     'hero.description':
-      'Building secure and efficient systems through security automation and infrastructure optimization',
+      'Building secure systems through security automation and infrastructure governance',
     'hero.download.complete': 'Download Complete Resume',
     'hero.download.pdf': 'PDF',
     'hero.download.docx': 'DOCX',
@@ -113,7 +113,7 @@ const TRANSLATIONS = {
     'hero.title': 'イ・ジェチョル',
     'hero.subtitle': 'セキュリティエンジニア',
     'hero.description':
-      'セキュリティ自動化とインフラ最適化を通じて、安全で効率的なシステムを構築します',
+      'セキュリティ自動化とインフラ整備を通じて、安全なシステムを構築します',
     'hero.download.complete': '完全版履歴書をダウンロード',
     'hero.download.pdf': 'PDF',
     'hero.download.docx': 'DOCX',

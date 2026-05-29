@@ -224,7 +224,7 @@ fontsize: 11pt
 - **기술 스택**: Cloudflare Workers, GitLab CI/CD, JavaScript
 - **내용**:
   - CSP(Content Security Policy) SHA-256 해시 기반 보안 헤더 적용
-  - Security Headers 최적화 (HSTS, X-Frame-Options, X-XSS-Protection)
+  - Security Headers 정비 (HSTS, X-Frame-Options, X-XSS-Protection)
   - Cloudflare WAF 통합으로 엣지 레벨 보안
 
 ---
