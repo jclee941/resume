@@ -127,6 +127,8 @@ function processProjectData({ projectDataRaw, projectDataEnRaw, projectDataJaRaw
       `${dataHash}:ja-about`
     ),
     profileBentoHtml: generateProfileBento(projectData),
+    profileBentoEnHtml: generateProfileBento(projectDataEn || projectData),
+    profileBentoJaHtml: generateProfileBento(projectDataJa || projectData),
   };
 
   return {

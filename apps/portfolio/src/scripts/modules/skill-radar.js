@@ -3,6 +3,17 @@
  * Interactive capability matrix with domain cards, skill proficiency bars, and evidence drawer
  */
 
+// Escape HTML so build-time-injected SSoT skill data can never inject markup
+// when written via innerHTML. Mirrors lib/template-sanitizer escapeHtml.
+function escapeHtml(unsafe) {
+  return String(unsafe == null ? '' : unsafe)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 const SKILL_DATA_FALLBACK = {
   securityAutomation: {
     title: 'Security Automation',
@@ -142,7 +153,7 @@ function createDomainCard(domainKey, domain) {
     <div class="skill-domain-card__header">
       <div class="skill-domain-card__icon" aria-hidden="true">${domain.icon}</div>
       <div class="skill-domain-card__info">
-        <h3 class="skill-domain-card__title">${domain.title}</h3>
+        <h3 class="skill-domain-card__title">${escapeHtml(domain.title)}</h3>
         <span class="skill-domain-card__count">${domain.skills.length} skills</span>
       </div>
       <div class="skill-domain-card__expand" aria-hidden="true">
@@ -187,9 +198,9 @@ function createSkillPanel(domainKey, domain) {
         </h4>
         <ul class="skill-evidence-list" role="list">
           ${domain.skills.map(skill => `
-            <li class="skill-evidence-item" data-skill="${skill.name}">
-              <span class="skill-evidence-item__name">${skill.name}</span>
-              <p class="skill-evidence-item__text">${skill.evidence}</p>
+            <li class="skill-evidence-item" data-skill="${escapeHtml(skill.name)}">
+              <span class="skill-evidence-item__name">${escapeHtml(skill.name)}</span>
+              <p class="skill-evidence-item__text">${escapeHtml(skill.evidence)}</p>
             </li>
           `).join('')}
         </ul>
@@ -203,12 +214,12 @@ function createSkillPanel(domainKey, domain) {
 function createSkillItem(skill) {
   const levelInfo = getLevelInfo(skill.level);
   return `
-    <li class="skill-item" data-skill="${skill.name}" data-level="${skill.level}">
+    <li class="skill-item" data-skill="${escapeHtml(skill.name)}" data-level="${skill.level}">
       <div class="skill-item__header">
-        <span class="skill-item__name">${skill.name}</span>
+        <span class="skill-item__name">${escapeHtml(skill.name)}</span>
         <span class="skill-item__level" data-level-color="${levelInfo.color}">${skill.level}%</span>
       </div>
-      <div class="skill-item__bar-container" role="progressbar" aria-valuenow="${skill.level}" aria-valuemin="0" aria-valuemax="100" aria-label="${skill.name} proficiency">
+      <div class="skill-item__bar-container" role="progressbar" aria-valuenow="${skill.level}" aria-valuemin="0" aria-valuemax="100" aria-label="${escapeHtml(skill.name)} proficiency">
         <div class="skill-item__bar" data-target-width="${skill.level}" data-bar-color="${levelInfo.color}"></div>
       </div>
     </li>

@@ -570,11 +570,27 @@
             >
               <h2 id="skills-heading" class="sr-only">Skills</h2>
               <div class="section-cmd">
-                <span class="section-cmd__command">cat skills.json</span>
+                <span class="section-cmd__command">cat capability-matrix.json</span>
               </div>
-              <ul class="skill-list-minimal">
-                <!-- SKILLS_LIST_PLACEHOLDER -->
-              </ul>
+              <div class="skill-radar" role="region" aria-label="Skill Capability Matrix">
+                <div class="skill-radar__search">
+                  <label for="skill-search-input" class="sr-only">Filter skills</label>
+                  <div class="skill-radar__search-input-wrapper">
+                    <svg class="skill-radar__search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                    <input
+                      type="text"
+                      id="skill-search-input"
+                      class="skill-radar__search-input"
+                      placeholder="Filter skills..."
+                      aria-label="Filter skills by name"
+                    />
+                  </div>
+                  <div id="skill-search-count" class="skill-radar__search-count" aria-live="polite"></div>
+                </div>
+                <div id="skill-radar-grid" class="skill-radar__grid" role="list">
+                  <!-- Skill radar cards rendered by JS -->
+                </div>
+              </div>
             </section>
 
             <section
