@@ -463,7 +463,7 @@ Set-ADUser -Identity "USERNAME" -Description "Disabled by SOC: [INCIDENT_ID]"
 - MTTR: 27 minutes (target <30 min)
 - SLA Compliance: P0 100%, P1 95%, P2 92%
 - Incidents Prevented: 150+ confirmed threats neutralized
-- Zero Breaches: 19 months continuous
+- Zero Breaches: 24 months continuous
 
 ---
 

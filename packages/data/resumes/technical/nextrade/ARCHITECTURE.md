@@ -4,11 +4,11 @@
 
 **Project Name**: Nextrade Securities Exchange (넥스트레이드 증권거래소)
 **Type**: Multi-lateral Trading Facility (다자간매매체결회사)
-**Duration**: 2024.03 ~ Present (19 months)
+**Duration**: 2024.03 ~ 2026.02 (24 months)
 **Phases**:
 
 - Construction (2024.03-2025.02, 11 months)
-- Operations (2025.03-Present, 8 months)
+- Operations (2025.03-2026.02, 12 months)
 
 **Roles**
 
@@ -37,7 +37,7 @@ incidents in the owned area during the period.
 
 **Security Posture**
 
-- Security Incidents: **0 breaches** (19 months continuous)
+- Security Incidents: **0 breaches** (24 months continuous)
 - Regulatory Audits: **0 findings** (3 consecutive FSC audits)
 - Vulnerability Remediation: **98% SLA compliance** (Critical/High priority)
 - False Positive Reduction: **50%** (200/day → 100/day)

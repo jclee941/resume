@@ -6,13 +6,13 @@ Led design, implementation, and operation of **South Korea's first new
 securities exchange in 20+ years**. Built zero-trust security architecture
 achieving:
 
-- **Security**: 0 breaches (19 months), 0 FSC audit findings (3 consecutive)
+- **Security**: 0 breaches (24 months), 0 FSC audit findings (3 consecutive)
 - **Availability**: 99.98% platform uptime (target 99.95%)
 - **Compliance**: FSC 100%
 - **Efficiency**: $188K annual savings, 461 hours/year automated
 
-**Duration**: 2024.03 ~ Present (19 months)
-**Phases**: Construction (11 months) → Operations (8 months)
+**Duration**: 2024.03 ~ 2026.02 (24 months)
+**Phases**: Construction (11 months) → Operations (12 months)
 **Scale**: 300+ endpoints, 150+ servers, 80+ network devices, 10TB+/day
 
 ---
@@ -399,7 +399,7 @@ operations
 
 **Security Posture**:
 
-- 19 months zero breaches, zero data leaks
+- 24 months zero breaches, zero data leaks
 - 3 consecutive FSC audits with zero findings
 - 98% vulnerability SLA compliance
 - MTTD 3.2min, MTTR 27min (50% better than industry avg)
