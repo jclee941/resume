@@ -54,6 +54,7 @@ function injectPlaceholders(html, options) {
     .replace('<!-- PROFILE_BENTO_PLACEHOLDER -->', options.profileBentoHtml || '')
     .replace(/<!-- BUILD_VERSION_PLACEHOLDER -->/g, options.buildVersion || '')
     .replace(/<!-- BUILD_DEPLOYED_AT_PLACEHOLDER -->/g, options.buildDeployedAt || '')
+    .replace(/<!-- BUILD_CACHE_KEY_PLACEHOLDER -->/g, `${options.buildVersion || '0'}-${String(options.buildDeployedAt || '').replace(/[^0-9]/g, '').slice(0, 14)}`)
     .replace(/<!-- BUILD_DEPLOYED_DATE_PLACEHOLDER -->/g, options.buildDeployedDate || '')
     .replace("/* RESUME_CHAT_DATA_B64_PLACEHOLDER */ ''", options.resumeChatDataBase64 || "''");
 }
