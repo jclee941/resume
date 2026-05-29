@@ -16,6 +16,7 @@ const {
   generateInfrastructureCards,
   generateContactGrid,
   generateAboutContent,
+  generateProfileBento,
 } = require('./cards');
 
 /**
@@ -125,6 +126,7 @@ function processProjectData({ projectDataRaw, projectDataEnRaw, projectDataJaRaw
       (projectDataJa && projectDataJa.aboutSection) || projectData.aboutSection,
       `${dataHash}:ja-about`
     ),
+    profileBentoHtml: generateProfileBento(projectData),
   };
 
   return {

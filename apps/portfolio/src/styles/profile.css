@@ -1,0 +1,68 @@
+/* ========================================
+   PROFILE BENTO - education / languages / awards / OSS / military
+   ======================================== */
+.profile-bento {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-3);
+  margin-top: var(--space-5, 1.5rem);
+  font-family: var(--font-mono);
+}
+
+.profile-card {
+  border: 1px solid var(--color-border, rgba(0, 212, 224, 0.18));
+  border-radius: var(--radius-sm, 4px);
+  background: rgba(0, 0, 0, 0.25);
+  padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2, 0.5rem);
+}
+
+.profile-card__label {
+  color: var(--cyber-green);
+  font-size: var(--text-xs, 0.75rem);
+  letter-spacing: 0.04em;
+}
+
+.profile-card__value {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.profile-card__muted {
+  color: var(--text-secondary, #8899aa);
+  font-size: var(--text-xs, 0.75rem);
+}
+
+.profile-card__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.profile-card__list li {
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
+
+.profile-card__list li::before {
+  content: '> ';
+  color: var(--cyber-green);
+}
+
+.profile-card__list a {
+  color: var(--cyber-cyan);
+  text-decoration: none;
+}
+
+.profile-card__list a:hover {
+  text-decoration: underline;
+}
