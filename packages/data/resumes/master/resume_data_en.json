@@ -171,7 +171,7 @@
       "projects": [
         {
           "name": "Quantec Investment Management AI Trading Platform Infrastructure Operations",
-          "description": "Developed Python-based infrastructure automation scripts to reduce the inefficiency of manual operations and the repetitive work of audit response, and improved system load with DB access-control query tuning to support PB platform POC launch.",
+          "description": "Developed Python-based infrastructure automation scripts to standardize repeated operations of manual operations and the repetitive work of audit response, and reviewed DB access-control queries with DB access-control query tuning to support PB platform POC launch.",
           "period": "2022.08 ~ 2024.03",
           "techStack": [
             "Python",
@@ -182,7 +182,7 @@
           ],
           "achievements": [
             "Refined DLP policy operations and standardized audit deliverables for FSS regular audits",
-            "Materially improved CPU load via DB access-control query tuning",
+            "Tuned DB access-control queries via DB access-control query tuning",
             "Validated PB platform POC performance and supported system launch"
           ]
         }
@@ -336,7 +336,7 @@
       ],
       "os": "Linux",
       "role": "Remote Work Infrastructure",
-      "description": "Designed and automated VPN infrastructure for large-scale remote access\n• Synchronized configurations across 500+ servers with Python and Ansible\n• Built dashboards for VPN session monitoring and anomaly detection"
+      "description": "Designed and automated VPN infrastructure for large-scale remote access\n• Synchronized configurations across remote-access servers with Python and Ansible\n• Built dashboards for VPN session monitoring and anomaly detection"
     },
     {
       "period": "2017.02 ~ 2018.10",
@@ -823,7 +823,7 @@
       "githubUrl": "https://github.com/jclee941/pr-agent",
       "description": "Security and infra PR reviews were single-person dependent, with shared patterns (secret leaks, RBAC paths) verified manually every time. Run a self-hosted AI PR reviewer on Cloudflare Workers: gitleaks-pattern secret detection and RBAC path checks posted via GitHub Check Run API, with CLIProxyAPI proxy reducing LLM call cost. Every PR receives automated comments for secret-exposure and RBAC patterns, and LLM cost is controlled through the self-hosted proxy.",
       "highlights": [
-        "Self-operated proxy to reduce LLM invocation cost",
+        "Self-operated proxy to control LLM invocation routing",
         "Auto pattern detection for early security-defect identification",
         "Webhook-based immediate notifications to reduce PR-review delay",
         "Zero-downtime Edge deployment design"

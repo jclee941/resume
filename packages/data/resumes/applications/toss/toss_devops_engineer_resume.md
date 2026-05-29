@@ -52,10 +52,10 @@ DevOps Engineer
 **인프라 규모**: 대규모 서버·단말·네트워크 장비 환경 / 대량 거래 처리 환경
 
 - **Observability 플랫폼 구축**: Grafana + Prometheus + Loki 기반 시스템·컨테이너·로그 통합 모니터링
-  체계 구축, 장애 감지 시간 단축
+  체계 구축, 장애 감지 절차 자동화
 - **실시간 알림 자동화**: n8n 워크플로우와 Splunk를 연동하여 이벤트 탐지 시 신속한 Slack 알림 자동화 (다수 탐지 룰)
 - **운영 자동화 툴 개발**: FortiManager API 기반 방화벽 정책 자동 조회 Python 라이브러리 개발, 수동 작업 대비
-  수동 정책 조회 시간을 크게 단축
+  수동 정책 조회 절차를 자동화
 - **인프라 안정성**: HA 구성 기반 서비스 안정성 유지, 인시던트 대응 흐름 개선
 
 기술: Splunk, Prometheus, Grafana, Loki, n8n, Python, Docker, Linux

@@ -1,6 +1,6 @@
 <!-- Generated from master resume -->
 <!-- Variant: general -->
-<!-- Generated: 2026-05-29T13:24:19.846Z -->
+<!-- Generated: 2026-05-29T13:48:30.900Z -->
 <!-- Description: General purpose resume for all industries -->
 # 이재철
 
@@ -119,13 +119,13 @@
 주요 성과
 
 - 방화벽 정책 자동화 스크립트 작성 (Python)
-- EPP/DLP 설정 조정으로 단말 자원 사용률 개선
+- EPP/DLP 설정 조정으로 EPP/DLP 설정 조정으로 단말 보안 에이전트 정책 정비
 - 구축 기간 동안 보안 침해사고 없이 운영
 - FSC 본인가 심사 보안 분야 질의와 증빙 자료에 대응
 - 다층 망분리 구성 수행
 - NAC 정책 배포 자동화 스크립트 작성
 - DR 복구 절차 스크립트화
-- DB 접근제어 쿼리 튜닝으로 성능 개선
+- DB 접근제어 쿼리 튜닝으로 DB 접근제어 쿼리 튜닝 수행
 - PB 플랫폼 POC 검증 수행
 
 ---
@@ -139,7 +139,7 @@
 - 금융보안데이터센터(FSDC) 서버 인프라 운영
 - Python 기반 인프라 자동화 스크립트 개발
 - 금융감독원 정기 감사 대응 및 DLP 정책 운영
-- DB 접근제어 쿼리 튜닝 및 시스템 성능 개선
+- DB 접근제어 쿼리 튜닝 및 시스템 DB 접근제어 쿼리 튜닝 수행
 - PB 플랫폼 POC 검증 및 시스템 런칭 지원
 
 ---
@@ -156,7 +156,7 @@
 
 주요 성과
 
-- 네트워크 세분화로 월간 장애 발생 감소
+- 네트워크 세분화로 네트워크 세분화 및 장애 대응 기준 정비
 - APT·NAC·DLP 통합으로 침해 시도 차단 체계 강화
 - DLP 룰 최적화로 오탐 흐름 정비
 - 이중화 구성으로 서비스 가용성 강화
@@ -177,7 +177,7 @@
 주요 성과
 
 - Python으로 네트워크 점검 자동화
-- 백신-VPN 충돌 원인 분석 및 해결로 장애 문의 감소
+- 백신-VPN 충돌 원인 분석 및 해결로 백신-VPN 충돌 원인 분석 및 대응 절차 정리
 - Ansible로 NAC 정책 배포 자동화
 - 신규 사이트 네트워크 구성 수행
 
@@ -275,7 +275,7 @@
 - **주요 경험**:
   - FSC 본인가 심사 보안 분야 안정 통과
   - 방화벽 정책 자동화로 수작업 부담 완화
-  - EPP/DLP 최적화로 단말 자원 사용률 개선
+  - EPP/DLP 최적화로 EPP/DLP 설정 조정으로 단말 보안 에이전트 정책 정비
   - 구축 기간 동안 보안 침해사고 없이 운영
 
 **운영 단계 (2025.03 ~ 2026.02)**
@@ -335,7 +335,7 @@
 - **목적**: ML 기반 자동 에이전트 라우팅 시스템
 - **기술스택**: Python, Flask, Scikit-learn, PostgreSQL, MCP Servers
 - **규모**: 스크립트 관리, Constitutional Framework
-- **성과**: AI 작업 흐름 개선, 자동 에이전트 라우팅으로 의사결정 재활용성 강화
+- **성과**: AI 작업 흐름 자동화, 자동 에이전트 라우팅으로 의사결정 재활용성 강화
 - **GitHub**: [github.com/jclee941/claude](https://github.com/jclee941/claude)
 
 **2. n8n Workflow Automation**
@@ -460,7 +460,7 @@
 - 역할: Model Context Protocol 서버 통합 플랫폼
 - 규모: 다수 MCP 서버 및 도구 (filesystem, github, slack, tmux, n8n)
 - WebUI: Node.js 기반 백엔드 + Nginx reverse proxy
-- 성과: AI 작업 흐름 개선, 도구 통합 복잡성 감소
+- 성과: AI 작업 흐름 자동화, 도구 통합 구조 정리
 
 **Local Exporters (모니터링 스택)**
 
