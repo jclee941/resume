@@ -680,23 +680,6 @@
       "displayOrder": 2
     },
     {
-      "name": "n8n Automation",
-      "period": "2024.01 ~ Present",
-      "description": "Repetitive operations — Slack notifications, Cloudflare deploy alerts, GitHub Actions result collection — were scattered across crontab and ad-hoc scripts, requiring code changes for every new integration. Onboarded n8n as central orchestrator wiring Slack, GitHub, Cloudflare, and Grafana via webhook+API, abstracting error handling and retry into shared workflow nodes. New automations deploy by adding nodes, not writing scripts; Slack alerts, GitHub Actions collection, and Cloudflare deploy hooks all run on the same workflow base.",
-      "technologies": [
-        "n8n",
-        "PostgreSQL",
-        "Docker"
-      ],
-      "icon": "🔄",
-      "tagline": "Workflow Automation",
-      "language": "JavaScript",
-      "githubUrl": null,
-      "demoUrl": null,
-      "featured": false,
-      "displayOrder": 9
-    },
-    {
       "name": "Security Alert System",
       "period": "2025.01 ~ Present",
       "description": "FortiGate security events were scattered across device syslog and Splunk, delaying the time from event occurrence to operator awareness. Connected Splunk Saved Search webhooks to Slack/Telegram so security events are immediately notified upon detection. Standardized the security event notification and operator response flow and standardized operator response flow.",
@@ -770,7 +753,7 @@
         "Self-operated test environment for automated code-quality verification",
         "MCP-based tools to automate repetitive job-application work",
         "Monorepo architecture for consistent multi-package versioning",
-        "n8n workflows + API integration for security ops efficiency"
+        "n8n workflows + API integration for security ops automation"
       ],
       "featured": true,
       "displayOrder": 1

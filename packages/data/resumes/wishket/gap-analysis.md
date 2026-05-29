@@ -25,7 +25,7 @@
 | 항목                        | SSoT 상태        | 비고                                                                                     |
 | --------------------------- | ---------------- | ---------------------------------------------------------------------------------------- |
 | 경력 (experiences)          | ✅ 복수 이력 보유 | 2017~2026, 금융·공공 중심                                                                |
-| 프로젝트 (personalProjects) | ✅ 복수 프로젝트  | Observability, n8n, FortiNet API, Security Alert, Blacklist, HYCU FSDS, Resume Portfolio |
+| 프로젝트 (personalProjects) | ✅ 복수 프로젝트  | Observability, FortiNet API, Security Alert, Blacklist, HYCU FSDS, Resume Portfolio |
 | 기술 (skills)               | ✅ 여러 카테고리  | Security, Network, OS, Cloud, Monitoring, Automation, Frontend, DevOps, Database         |
 | 자격증 (certifications)     | ✅ 복수 항목     | CompTIA Linux+, LPIC-1, RHCSA 등                                                         |
 | 학력 (education)            | ✅ 복수 학력     | 한양사이버대 + 한국호텔관광전문학교                                                      |
@@ -60,7 +60,6 @@
 - [x] `observability-portfolio.md` — Observability 플랫폼 포트폴리오
 - [x] `security-alert-portfolio.md` — 보안 알림 시스템 포트폴리오
 - [x] `fortinet-api-portfolio.md` — FortiNet API 클라이언트 포트폴리오
-- [x] `n8n-portfolio.md` — n8n 자동화 포트폴리오
 - [x] `nextrade-portfolio.md` — 넥스트레이드 엔터프라이즈 케이스
 
 ### P1 — 사용자 입력 필요
@@ -107,7 +106,6 @@
 | `observability-portfolio.md`  | ✅ 완료      | ✅ 검증됨                       |
 | `security-alert-portfolio.md` | ✅ 완료      | ✅ 검증됨                       |
 | `fortinet-api-portfolio.md`   | ✅ 완료      | ✅ 검증됨                       |
-| `n8n-portfolio.md`            | ✅ 완료      | ✅ 검증됨                       |
 | `nextrade-portfolio.md`       | ✅ 완료      | ✅ 검증됨                       |
 | `blacklist-portfolio.md`      | ⚠️ 기존 파일 | ✅ 주요 성과 SSoT 정렬 완료     |
 | `safework-portfolio.md`       | ⚠️ 기존 파일 | ❌ SSoT 미등록 (면책 표시 추가) |

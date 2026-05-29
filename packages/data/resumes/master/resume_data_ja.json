@@ -678,23 +678,6 @@
       "displayOrder": 2
     },
     {
-      "name": "n8n Automation",
-      "period": "2024.01 ~ 現在",
-      "description": "Slack通知、Cloudflareデプロイ通知、GitHub Actions結果収集など反復作業がcrontabと個別スクリプトに分散し、新規連携追加のたびにコード作成が必要でした。 n8nを中央オーケストレーターとして導入し、Slack・GitHub・Cloudflare・Grafanaをwebhook+APIで連携。エラーハンドリングとリトライを共通ワークフローノードに抽象化しました。 新規自動化追加時はノード追加のみで完結する構成にし、Slack通知・GitHub Actions結果収集・Cloudflareデプロイフックを単一ワークフローベースで運用しています。",
-      "technologies": [
-        "n8n",
-        "PostgreSQL",
-        "Docker"
-      ],
-      "icon": "🔄",
-      "tagline": "ワークフロー自動化",
-      "language": "JavaScript",
-      "githubUrl": null,
-      "demoUrl": null,
-      "featured": false,
-      "displayOrder": 9
-    },
-    {
       "name": "Security Alert System",
       "period": "2025.01 ~ 現在",
       "description": "[課題] FortiGateセキュリティイベントが装置syslogとSplunkに分散し、イベント発生から担当者認知までに時間がかかっていました。 Splunk Saved SearchとWebhookを連携し、セキュリティイベント発生時にSlack/Telegramへ即時通知する体制を構築しました。 セキュリティイベント認知・分類・通知フローを標準化し、担当者応答フローを標準化しました。",

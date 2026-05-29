@@ -68,20 +68,6 @@ R5 수정: `JSON-RPC over HTTPS` 행 제거, features를 SSoT 원문으로 축�
 
 ---
 
-## n8n-portfolio.md ✅
-
-| 포트폴리오 주장                    | SSoT 경로                                  | SSoT 값                                        |
-| ---------------------------------- | ------------------------------------------ | ---------------------------------------------- |
-| 다수 워크플로우                     | `personalProjects[1].metrics.workflows`    | `"다수"`                                        |
-| 반복 실행                       | `personalProjects[1].metrics.executions`   | `"반복 실행"`                               |
-| Slack, GitHub, Cloudflare, Grafana | `personalProjects[1].metrics.integrations` | `"Slack, GitHub, Cloudflare, Grafana"`         |
-| n8n, PostgreSQL, Docker            | `personalProjects[1].technologies`         | `["n8n","PostgreSQL","Docker"]`                |
-| 알림, 배포, 데이터 수집 자동화     | `personalProjects[1].description`          | `"알림, 배포, 데이터 수집 워크플로우 자동화."` |
-
-R5 수정: `self-hosted` 제거, `Code nodes` 행 제거, 연동 상세 5줄→1줄 축소, `재시도 로직` 제거
-
----
-
 ## nextrade-portfolio.md ✅
 
 | 포트폴리오 주장            | SSoT 경로                                     | SSoT 값                                                     |
@@ -136,8 +122,7 @@ GitLab CI/CD, Nginx, Cloudflare), `(TypeScript)` 제거, `금융` 접두사 제�
 | Grafana + Prometheus + Loki      | `personalProjects[0].technologies`     | `["Grafana","Prometheus","Loki"]`                          |
 | 다수 대시보드, 다수 메트릭         | `personalProjects[0].metrics`          | `dashboards: "다수"`, `targets: "다수 metrics endpoints"`    |
 | Splunk ES                        | `experiences[0].responsibilities`      | `"Splunk ES 및 FortiGate API를 활용"`                      |
-| 다수 워크플로우, 반복 실행     | `personalProjects[1].metrics`          | `workflows: "다수"`, `executions: "반복 실행"`           |
-| FortiNet API 기능                | `personalProjects[2].metrics.features` | `"정책 조회, 라우트 관리, 로그 통계"`                      |
+| FortiNet API 기능                | `personalProjects[1].metrics.features` | `"정책 조회, 라우트 관리, 로그 통계"`                      |
 | CompTIA Linux+, LPIC-1, RHCSA 등 | `certifications[]`                     | 자격증 배열                                            |
 | 선호 프로젝트                    | 위시캣 프로필 UI 입력                  | SSoT 비대상 (HTML 주석 표기)                               |
 

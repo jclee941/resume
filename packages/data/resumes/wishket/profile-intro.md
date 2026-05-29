@@ -2,7 +2,7 @@
 
 ## 한 줄 소개
 
-8년차 보안 인프라 엔지니어, Splunk ES, FortiGate, n8n 자동화
+8년차 보안 인프라 엔지니어, Splunk ES, FortiGate, FortiManager API 연동
 
 ## 자기소개
 
@@ -54,7 +54,7 @@
 ### 운영 자동화
 
 - Python, Ansible 기반으로 반복 작업을 줄이는 자동화 도구와 프로비저닝 흐름을 만들어 왔습니다.
-- n8n 워크플로우 플랫폼을 활용해 여러 워크플로우와 반복 실행을 다루는 자동화 경험의 자동화 경험이 있습니다.
+- Ansible·Python·FortiNet API 연동으로 반복 운영 작업을 자동화한 경험이 있습니다.
 - FortiManager API를 활용한 방화벽 정책 자동 조회 툴을 개발해 운영 속도를 높였습니다.
 - 정책 조회, 라우트 관리, 로그 통계 등 FortiNet API 연동 자동화를 직접 구현한 경험이 있습니다.
 
