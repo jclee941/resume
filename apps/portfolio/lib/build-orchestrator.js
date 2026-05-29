@@ -41,10 +41,17 @@ async function runWorkerBuild({ baseDir, version, gitSha = 'unknown', allowedEma
   } = await readBuildInputs({ baseDir, logger });
 
   if (!resumePdfBuffer || resumePdfBuffer.length === 0) {
-    logger.warn(
-      '⚠️  resume_final.pdf is missing — the /resume.pdf route will return an empty body. ' +
-        'Run `go run ./tools/scripts/build/pdf-generator.go master` to generate it.'
-    );
+    // Fail-fast: missing PDF used to ship a 0-byte /resume.pdf response.
+    // The CI builder must abort so a stale or empty PDF never reaches production.
+    // Set RESUME_PDF_OPTIONAL=1 to downgrade to a warning for local experiments.
+    const message =
+      'resume_final.pdf is missing or empty \u2014 the /resume.pdf route would return a 0-byte body. ' +
+      'Run `go run ./tools/scripts/build/pdf-generator.go master` to regenerate it.';
+    if (process.env.RESUME_PDF_OPTIONAL === '1') {
+      logger.warn('\u26a0\ufe0f  ' + message + ' (RESUME_PDF_OPTIONAL=1 set, continuing)');
+    } else {
+      throw new Error(message);
+    }
   }
 
   const { projectData, templates } = processProjectData({ projectDataRaw, projectDataEnRaw, projectDataJaRaw, logger });
