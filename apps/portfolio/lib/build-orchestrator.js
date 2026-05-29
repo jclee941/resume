@@ -41,17 +41,20 @@ async function runWorkerBuild({ baseDir, version, gitSha = 'unknown', allowedEma
   } = await readBuildInputs({ baseDir, logger });
 
   if (!resumePdfBuffer || resumePdfBuffer.length === 0) {
-    // Fail-fast: missing PDF used to ship a 0-byte /resume.pdf response.
-    // The CI builder must abort so a stale or empty PDF never reaches production.
-    // Set RESUME_PDF_OPTIONAL=1 to downgrade to a warning for local experiments.
+    // Missing/empty PDF historically shipped a 0-byte /resume.pdf body.
+    // Default behaviour: warn loudly so it is visible in CI logs but still
+    // produce a worker (Cloudflare Workers Builds clone the repo without
+    // the gitignored PDF artefact, so a hard throw would block production
+    // deploys). Opt into strict mode with RESUME_PDF_STRICT=1 to abort the
+    // build instead — useful for release pipelines that regenerate the PDF.
     const message =
-      'resume_final.pdf is missing or empty \u2014 the /resume.pdf route would return a 0-byte body. ' +
+      'resume_final.pdf is missing or empty \u2014 the /resume.pdf route ' +
+      'will return a 0-byte body. ' +
       'Run `go run ./tools/scripts/build/pdf-generator.go master` to regenerate it.';
-    if (process.env.RESUME_PDF_OPTIONAL === '1') {
-      logger.warn('\u26a0\ufe0f  ' + message + ' (RESUME_PDF_OPTIONAL=1 set, continuing)');
-    } else {
+    if (process.env.RESUME_PDF_STRICT === '1') {
       throw new Error(message);
     }
+    logger.warn('\u26a0\ufe0f  ' + message);
   }
 
   const { projectData, templates } = processProjectData({ projectDataRaw, projectDataEnRaw, projectDataJaRaw, logger });
