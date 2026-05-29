@@ -100,3 +100,50 @@
   flex-shrink: 0;
   font-weight: 600;
 }
+
+/* ── Expertise tags + core competencies (surfaced SSoT summary.*) ── */
+.expertise-block {
+  margin-top: var(--space-3, 0.75rem);
+}
+
+.expertise-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2, 0.5rem);
+  margin: var(--space-2, 0.5rem) 0;
+}
+
+.expertise-tag {
+  display: inline-block;
+  padding: 2px var(--space-2, 0.5rem);
+  border: 1px solid var(--cyber-cyan, #00d4e0);
+  border-radius: var(--radius-sm, 4px);
+  color: var(--cyber-cyan, #00d4e0);
+  font-size: var(--text-xs, 0.75rem);
+  font-family: var(--font-mono, monospace);
+  background: rgba(0, 212, 224, 0.06);
+}
+
+.competency-list {
+  list-style: none;
+  margin: var(--space-2, 0.5rem) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 0.25rem);
+}
+
+.competency-item {
+  display: flex;
+  gap: var(--space-2, 0.5rem);
+  align-items: flex-start;
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.competency-item__marker {
+  color: var(--cyber-cyan, #00d4e0);
+  flex-shrink: 0;
+}

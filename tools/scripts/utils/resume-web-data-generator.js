@@ -194,6 +194,9 @@ function generateWebData(source) {
     infrastructure: source.infrastructure,
     contact: source.contact,
     aboutSection: source.summary && source.summary.aboutSection ? source.summary.aboutSection : null,
+    expertise: source.summary && source.summary.expertise ? source.summary.expertise : null,
+    coreCompetencies:
+      source.summary && source.summary.coreCompetencies ? source.summary.coreCompetencies : null,
     education: source.education || null,
     languages: source.languages || null,
     awards: source.awards || null,

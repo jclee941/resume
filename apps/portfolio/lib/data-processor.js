@@ -18,6 +18,7 @@ const {
   generateAboutContent,
   generateProfileBento,
   generateAchievementsSection,
+  generateExpertiseSection,
 } = require('./cards');
 
 /**
@@ -133,6 +134,9 @@ function processProjectData({ projectDataRaw, projectDataEnRaw, projectDataJaRaw
     achievementsHtml: generateAchievementsSection(projectData),
     achievementsEnHtml: generateAchievementsSection(projectDataEn || projectData),
     achievementsJaHtml: generateAchievementsSection(projectDataJa || projectData),
+    expertiseHtml: generateExpertiseSection(projectData),
+    expertiseEnHtml: generateExpertiseSection(projectDataEn || projectData),
+    expertiseJaHtml: generateExpertiseSection(projectDataJa || projectData),
   };
 
   return {

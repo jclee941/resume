@@ -26,4 +26,43 @@ function generateAchievementsSection(data) {
     </ul>`;
 }
 
-module.exports = { generateAchievementsSection };
+/**
+ * Generate an "expertise / core competencies" section surfacing the real
+ * SSoT `summary.expertise` (keyword tags) and `summary.coreCompetencies`
+ * (experience bullets) that were previously unsurfaced on the live portfolio.
+ *
+ * @param {Object} data - data.json (uses `expertise[]`, `coreCompetencies[]`).
+ * @returns {string} HTML, or '' if nothing to show.
+ */
+function generateExpertiseSection(data) {
+  if (!data) return '';
+  const expertise = Array.isArray(data.expertise)
+    ? data.expertise.filter((e) => typeof e === 'string' && e.trim().length > 0)
+    : [];
+  const competencies = Array.isArray(data.coreCompetencies)
+    ? data.coreCompetencies.filter((c) => typeof c === 'string' && c.trim().length > 0)
+    : [];
+  if (expertise.length === 0 && competencies.length === 0) return '';
+
+  let html = '';
+  if (expertise.length > 0) {
+    const tags = expertise
+      .map((e) => `<span class="expertise-tag">${escapeHtml(String(e))}</span>`)
+      .join('\n        ');
+    html += `<div class="expertise-tags">\n        ${tags}\n      </div>`;
+  }
+  if (competencies.length > 0) {
+    const items = competencies
+      .map(
+        (c) =>
+          `<li class="competency-item"><span class="competency-item__marker">&gt;</span> ${escapeHtml(
+            String(c)
+          )}</li>`
+      )
+      .join('\n        ');
+    html += `\n      <ul class="competency-list">\n        ${items}\n      </ul>`;
+  }
+  return html;
+}
+
+module.exports = { generateAchievementsSection, generateExpertiseSection };
