@@ -34,8 +34,7 @@ DevOps Engineer
   운영 (홈랩 8 VM/CT)
 - **네트워크 인프라 & 트러블슈팅**: L2~L7 네트워크 설계, 방화벽 HA 구성, VPN 대규모 인프라, NSX-T 마이크로세그멘테이션
   — CCNP 보유
-- **자동화 & 툴 개발**: Python/Ansible 기반 인프라 자동화, n8n 워크플로우 오케스트레이션 (15+ 워크플로우, 일
-  200+ 실행), FortiManager API 자동화 툴 개발
+- **자동화 & 툴 개발**: Python/Ansible 기반 인프라 자동화, n8n 워크플로우 오케스트레이션, FortiManager API 자동화 툴 개발
 - **CI/CD 파이프라인**: GitLab CI/CD 파이프라인 구축, GitHub Actions Self-hosted Runner 운영,
   컨테이너 이미지 빌드·배포 자동화
 - **IaC & 클라우드**: Terraform 기반 AWS 인프라 코드화 (VPC/Subnet/SG), Cloudflare Workers
@@ -162,7 +161,7 @@ Proxmox VE 기반 가상화 플랫폼에서 여러 서비스 운영
 - **시크릿 관리**: HashiCorp Vault 기반 PKI 및 시크릿 중앙 관리
 - **IaC**: Terraform으로 DNS/Workers/Proxmox 인프라 코드 관리
 - **CI/CD**: GitHub Actions Self-hosted Runner 운영, Cloudflare Workers Edge 배포
-- **자동화**: n8n 워크플로우 오케스트레이션 (15+ 워크플로우, 일 200+ 실행, Slack/GitHub/Grafana 연동)
+- **자동화**: n8n 워크플로우 오케스트레이션 (n8n 워크플로우 오케스트레이션 및 연동, Slack/GitHub/Grafana 연동)
 - **스토리지**: MinIO 오브젝트 스토리지, Supabase(PostgreSQL) BaaS
 
 ### 자율주행 시뮬레이션 (2025.11 ~ 2026.02)
