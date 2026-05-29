@@ -85,7 +85,7 @@ index.html → generate-worker.js → worker.js → wrangler deploy
 Hardcoded content in `index.html`/`index-en.html` must match SSoT
 (`resume_data.json`):
 
-- Title/meta/OG/Twitter tags: `DevSecOps/SRE Engineer`
+- Title/meta/OG/Twitter tags: `보안 엔지니어` (ko) / `Security Engineer` (en) / `セキュリティエンジニア` (ja)
 - JSON-LD Person schema: `knowsAbout` (12 domains), `jobTitle`, `description`
 - About section: career highlights (quantified achievements), current focus
 - Hero subtitle, neofetch command, terminal `whoami`/`cat about.txt` responses
