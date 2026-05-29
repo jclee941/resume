@@ -55,7 +55,7 @@ DevOps Engineer
   체계 구축, 장애 감지 시간 단축
 - **실시간 알림 자동화**: n8n 워크플로우와 Splunk를 연동하여 이벤트 탐지 시 30초 내 Slack 알림 자동화 (32개 탐지 룰)
 - **운영 자동화 툴 개발**: FortiManager API 기반 방화벽 정책 자동 조회 Python 라이브러리 개발, 수동 작업 대비
-  80% 시간 절감
+  수동 정책 조회 시간을 크게 단축
 - **인프라 안정성**: HA 구성 기반 99.99% 가용성 유지, 인시던트 평균 대응 시간 27분
 
 기술: Splunk, Prometheus, Grafana, Loki, n8n, Python, Docker, Linux
