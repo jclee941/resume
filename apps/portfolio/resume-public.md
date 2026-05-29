@@ -138,7 +138,7 @@
 
 주요 업무
 
-- 1,000명 규모 재택근무 환경 구축
+- 대규모 재택근무 환경 구축
 - Fortigate SSL VPN, NAC 솔루션 통합
 - Ansible 기반 정책 자동 배포
 - Python 기반 Cisco 스위치 자동 점검 시스템 개발
@@ -148,7 +148,7 @@
 - **자동화 구현**: Python으로 Cisco 스위치 점검 자동화, 주당 소요시간 단축
 - **안정성 개선**: 백신-VPN 충돌 근본 원인 분석 및 해결로 시스템 안정성 향상
 - **정책 자동화**: Ansible로 NAC 예외정책 자동 배포, 처리시간 단축
-- **아키텍처 설계**: 신규 사이트 3개소 네트워크 설계 및 구축 완료 (동시 500명 규모)
+- **아키텍처 설계**: 복수 신규 사이트 네트워크 설계 및 구축 완료 ()
 
 ---
 
@@ -181,7 +181,7 @@
 
 - **Live Demo**: [splunk.jclee.me](https://splunk.jclee.me) | **GitHub**:
  [github.com/qws941/splunk](https://github.com/qws941/splunk)
-- **목적**: 80대 방화벽 실시간 중앙관리 플랫폼 및 Splunk 중심 보안 통합
+- **목적**: 다수 방화벽 실시간 중앙관리 플랫폼 및 Splunk 중심 보안 통합
 - **기술스택**: Node.js, Cloudflare Workers, JavaScript, Splunk API,
  FortiManager/FortiOS API
 - **아키텍처**: DDD Level 3로 9개 도메인 분리 설계, FortiManager/FortiAnalyzer 직접 API 연동
@@ -190,7 +190,7 @@
  - FortiManager/FortiAnalyzer 실시간 데이터 수집 및 정책 위반 자동 탐지
  - 대규모 이벤트 처리 및 충분한 확장 여유로 엔터프라이즈 검증 완료
 - **운영성과**:
- - 80대 방화벽 정책 실시간 중앙 관리 및 모니터링
+ - 다수 방화벽 정책 실시간 중앙 관리 및 모니터링
  - 정책 검증 시간 단축 (수동 검토 불필요)
  - AI 기반 위협 분석 및 자동 알림 시스템 구축
 
@@ -231,7 +231,7 @@
 메타넷엠플랫폼 | 2020
 
 역할: 보안 인프라 구축 리드
-규모: 1,000명 동시 접속
+규모: 대규모 동시 접속
 기술: Fortigate SSL VPN, NAC, Ansible, Python
 성과: COVID-19 대응 재택근무 인프라를 신속히 구축하고 운영 부담을 줄임
 
@@ -253,7 +253,7 @@
  (Prometheus, Loki, Tempo), Traefik, Watchtower
 - **아키텍처**: Docker Compose 기반 마이크로서비스 오케스트레이션, Git 기반 CI/CD 파이프라인
 - **핵심기능**:
- - 150개 이상의 자동화 명령어 체계(SlashCommand 시스템) 구축 및 통합
+ - 다수 자동화 명령어 체계(SlashCommand 시스템) 구축 및 통합
  - Universal Observability 아키텍처 구현 (메트릭, 로그, 트레이스 통합 모니터링)
  - MCP(Model Context Protocol) 도구 생태계 구축
  - AI 어시스턴트(OpenCode, GitHub Copilot, ChatGPT API) 통합을 통한 운영 효율 극대화
@@ -263,7 +263,7 @@
  - AI 기반 자동화로 인프라 운영 효율 향상 및 수동 작업 시간 대폭 단축
  - 통합 관측성 확보로 장애 발생 시 평균 복구 시간(MTTR) 감소
  - Git 기반 완전 자동화 CI/CD 파이프라인 구축으로 배포 안정성 및 속도 향상
- - 14개 서버에 걸친 70개 이상의 도구를 통합 관리하여 복잡성 감소 및 가시성 증대
+ - 복수 서버에 걸친 다수 도구를 통합 관리하여 복잡성 감소 및 가시성 증대
 
 ---
 
@@ -292,7 +292,7 @@
 ### AI/ML 및 자동화
 
 - AI 도구: OpenCode, GitHub Copilot, ChatGPT API
-- MCP 프로토콜: 14개 서버 통합 (filesystem, github, brave-search, memory, tmux 등)
+- MCP 프로토콜: 복수 서버 통합 (filesystem, github, brave-search, memory, tmux 등)
 - 자동화 프레임워크: Custom SlashCommand 시스템 (다수 명령어)
 - 관찰성: Universal Observability 아키텍처 (Grafana 중심)
 

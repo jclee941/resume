@@ -24,9 +24,9 @@
 
 | 항목                        | SSoT 상태        | 비고                                                                                     |
 | --------------------------- | ---------------- | ---------------------------------------------------------------------------------------- |
-| 경력 (experiences)          | ✅ 5개 이력 보유 | 2017~2026, 금융·공공 중심                                                                |
-| 프로젝트 (personalProjects) | ✅ 7개 프로젝트  | Observability, n8n, FortiNet API, Security Alert, Blacklist, HYCU FSDS, Resume Portfolio |
-| 기술 (skills)               | ✅ 9개 카테고리  | Security, Network, OS, Cloud, Monitoring, Automation, Frontend, DevOps, Database         |
+| 경력 (experiences)          | ✅ 복수 이력 보유 | 2017~2026, 금융·공공 중심                                                                |
+| 프로젝트 (personalProjects) | ✅ 복수 프로젝트  | Observability, n8n, FortiNet API, Security Alert, Blacklist, HYCU FSDS, Resume Portfolio |
+| 기술 (skills)               | ✅ 여러 카테고리  | Security, Network, OS, Cloud, Monitoring, Automation, Frontend, DevOps, Database         |
 | 자격증 (certifications)     | ✅ 5개           | CompTIA Linux+, LPIC-1, RHCSA 등                                                         |
 | 학력 (education)            | ✅ 2개           | 한양사이버대 + 한국호텔관광전문학교                                                      |
 | current (현재 상태)         | `null`           | 넥스트레이드 계약 2026.02 종료                                                           |
@@ -38,7 +38,7 @@
 | #   | 위시캣 항목                  | SSoT 매핑                 | 갭 상태                 | 우선순위 |
 | --- | ---------------------------- | ------------------------- | ----------------------- | -------- |
 | 1   | 자기소개                     | 없음 (SSoT에 소개문 없음) | **신규 작성 필요**      | P0       |
-| 2   | 포트폴리오 (3개 이상 권장)   | personalProjects[0-4]     | **5건 작성 가능**       | P0       |
+| 2   | 포트폴리오 (복수 포트폴리오 권장)   | personalProjects[0-4]     | **여러 건 작성 가능**       | P0       |
 | 3   | 보유 기술 + 숙련도           | skills[]                  | ✅ 매핑 가능            | P1       |
 | 4   | 경력 사항                    | experiences[]             | ✅ 직접 입력            | P1       |
 | 5   | 학력                         | education[]               | ✅ 직접 입력            | P2       |
