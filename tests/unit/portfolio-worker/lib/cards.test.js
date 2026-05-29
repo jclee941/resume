@@ -386,7 +386,7 @@ describe('Cards Module', () => {
       expect(generateCertificationCards([], 'hash')).toBe('');
     });
 
-    test('should generate card with active status', () => {
+    test('should generate card as ACQUIRED (no expiry shown) for active cert', () => {
       const certData = [
         {
           name: 'AWS Solutions Architect',
@@ -399,45 +399,52 @@ describe('Cards Module', () => {
       const html = generateCertificationCards(certData, 'cert-hash');
 
       expect(html).toContain('cert-status--active');
-      expect(html).toContain('ACTIVE');
+      expect(html).toContain('ACQUIRED');
       expect(html).toContain('AWS Solutions Architect');
       expect(html).toContain('Amazon');
       expect(html).toContain('2024-01');
-      expect(html).toContain('2027-01');
+      // expiry must NOT be surfaced
+      expect(html).not.toContain('2027-01');
+      expect(html).not.toContain('exp ');
     });
 
-    test('should generate card with expired status', () => {
-      const certData = [{ name: 'Old Cert', issuer: 'Vendor', date: '2020-01', status: 'expired' }];
+    test('expired cert is still shown as ACQUIRED with no expiry note', () => {
+      const certData = [{ name: 'Old Cert', issuer: 'Vendor', date: '2020-01 (2023-01 만료)', status: 'expired' }];
       const html = generateCertificationCards(certData, 'expired-hash');
 
-      expect(html).toContain('cert-status--expired');
-      expect(html).toContain('EXPIRED');
+      expect(html).toContain('cert-status--active');
+      expect(html).toContain('ACQUIRED');
+      expect(html).not.toContain('EXPIRED');
+      expect(html).not.toContain('만료');
+      // parenthetical expiry note stripped, acquisition date kept
+      expect(html).toContain('2020-01');
     });
 
-    test('should generate card with pending/unknown status', () => {
+    test('pending cert shows IN PROGRESS', () => {
       const certData = [
-        { name: 'Pending Cert', issuer: 'Vendor', date: '2025-01', status: 'pending' },
+        { name: 'Pending Cert', issuer: 'Vendor', date: '2025-01', status: '준비중' },
       ];
       const html = generateCertificationCards(certData, 'pending-hash');
 
       expect(html).toContain('cert-status--pending');
-      expect(html).toContain('PENDING');
+      expect(html).toContain('IN PROGRESS');
     });
 
-    test('should handle missing status (defaults to UNKNOWN)', () => {
+    test('missing status defaults to ACQUIRED', () => {
       const certData = [{ name: 'No Status Cert', issuer: 'Vendor', date: '2025-01' }];
       const html = generateCertificationCards(certData, 'unknown-hash');
 
-      expect(html).toContain('cert-status--pending');
-      expect(html).toContain('UNKNOWN');
+      expect(html).toContain('cert-status--active');
+      expect(html).toContain('ACQUIRED');
     });
 
-    test('should use TBD for missing date and N/A for missing expirationDate', () => {
+    test('omits date span when date missing; never shows expiration', () => {
       const certData = [{ name: 'No Date Cert', issuer: 'Vendor', status: 'active' }];
       const html = generateCertificationCards(certData, 'no-date-hash');
 
-      expect(html).toContain('TBD');
-      expect(html).toContain('N/A');
+      expect(html).not.toContain('TBD');
+      expect(html).not.toContain('N/A');
+      expect(html).not.toContain('exp ');
     });
 
     test('should use Unknown Issuer for missing issuer', () => {

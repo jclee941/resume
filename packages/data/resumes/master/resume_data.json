@@ -44,7 +44,7 @@
       "관측성",
       "클라우드 보안"
     ],
-    "profileStatement": "폐쇄망 OA 운영으로 시작해 금융 거래소 보안 운영까지 경험해 온 Security 엔지니어입니다. 반복 작업을 자동화 스크립트로 옮기는 방향으로 운영 업무를 해왔고, 현재는 대체거래소 정보보안팀에서 FortiGate HA 망분리 환경의 Splunk ES·n8n·FortiManager API 연동 운영 업무에 참여하고 있습니다.",
+    "profileStatement": "폐쇄망 OA 운영으로 시작해 금융 거래소 보안 운영까지 경험해 온 Security 엔지니어입니다. 반복 작업을 자동화 스크립트로 옮기는 방향으로 운영 업무를 해왔고, 직전에는 대체거래소 정보보안팀에서 FortiGate HA 망분리 환경의 Splunk ES·n8n·FortiManager API 연동 운영 업무에 참여했습니다. 현재 새로운 보안·인프라 역할을 찾고 있는 구직 중입니다.",
     "coreCompetencies": [
       "금융권 규제 환경의 보안 인프라 구축·운영 프로젝트 참여 경험",
       "수동 탐지·대응 흐름을 정리하기 위해 SIEM 탐지 룰 검토와 자동화 스크립트를 작성한 경험",
@@ -79,11 +79,11 @@
   "platformVariants": {
     "wanted": {
       "headline": "OA 엔지니어로 출발한 Security — 금융 거래소 SOC + FSC 본인가 + Splunk ES·n8n·FortiGate HA",
-      "about": "**\"반복 작업은 자동화 되어야 한다\"** — 이 한 가지 신념으로 운영해 온 Security 엔지니어입니다.\n\n**현장 → 자동화 → AI 에이전트**, 한 번도 운영의 손을 놓지 않으면서 도구만 바꿔왔습니다. KAI 폐쇄망에서 Linux를 수기로 운영하던 시절, 메타넷·조인트리에서 Ansible·Python·NSX-T·Wazuh로 자동화에 입문하던 시기, 콸텍투자일임 FSDC에서 금융감독원 감사를 데이터로 대응하던 경험을 거치며, 현재 가온누리·아이티센 트랙에서 넥스트레이드 매매체결시스템을 FortiGate HA(5계층 망분리)·FSC 본인가·Splunk ES + n8n + FortiManager API 으로 운영합니다.\n\n**대표 임팩트**:\n• NAC 정책 배포 자동화로 수작업 시간 대폭 단축\n• 방화벽 정책을 Ansible Role로 표준화\n• 보안 이벤트 자동 탐지·대응으로 인지·분류·알림 흐름 표준화\n• 운영 환경: 금융 거래소 매매체결시스템의 보안 운영·규제 대응 환경\n\n**보유 역량**: SIEM 탐지 룰 설계(Splunk ES), 보안 운영 자동화(n8n, FortiManager API), HA 보안 아키텍처(FortiGate HA, NSX-T), IaC(Ansible Role, Terraform), 관측성(Grafana/Prometheus/Loki), 금융 규제(FSC 본인가, 금감원 감사)\n\n포트폴리오: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
+      "about": "**\"반복 작업은 자동화 되어야 한다\"** — 이 한 가지 신념으로 운영해 온 Security 엔지니어입니다.\n\n**현장 → 자동화 → AI 에이전트**, 한 번도 운영의 손을 놓지 않으면서 도구만 바꿔왔습니다. KAI 폐쇄망에서 Linux를 수기로 운영하던 시절, 메타넷·조인트리에서 Ansible·Python·NSX-T·Wazuh로 자동화에 입문하던 시기, 콸텍투자일임 FSDC에서 금융감독원 감사를 데이터로 대응하던 경험을 거치며, 가온누리·아이티센 트랙에서 넥스트레이드 매매체결시스템을 FortiGate HA(5계층 망분리)·FSC 본인가·Splunk ES + n8n + FortiManager API 으로 운영했습니다. 현재는 다음 보안·인프라 역할을 찾는 구직 중입니다.\n\n**대표 임팩트**:\n• NAC 정책 배포 자동화로 수작업 시간 대폭 단축\n• 방화벽 정책을 Ansible Role로 표준화\n• 보안 이벤트 자동 탐지·대응으로 인지·분류·알림 흐름 표준화\n• 운영 환경: 금융 거래소 매매체결시스템의 보안 운영·규제 대응 환경\n\n**보유 역량**: SIEM 탐지 룰 설계(Splunk ES), 보안 운영 자동화(n8n, FortiManager API), HA 보안 아키텍처(FortiGate HA, NSX-T), IaC(Ansible Role, Terraform), 관측성(Grafana/Prometheus/Loki), 금융 규제(FSC 본인가, 금감원 감사)\n\n포트폴리오: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
     },
     "jobkorea": {
       "headline": " Security — OA→자동화→FSC 본인가→보안 운영 (Splunk ES, n8n, FortiGate HA)",
-      "about": "**\"반복 작업은 자동화 되어야 한다\"** — 한 가지 신념으로 운영의 도구를 진화시켜 왔습니다.\n\n[경력 흐름: 현장 운영 → 자동화 → AI 에이전트]\n• KAI 폐쇄망 (2017–2018): Linux 수기 운영, 패치/방화벽/IDS 정책\n• Linux 기초 재정비 (2018.11–2019.11): RHCSA·LPIC-1·리눅스마스터 2급 연속 취득\n• 자동화 입문 (2019–2022): 메타넷 컴택센터 대규모 SSL VPN/NAC + Ansible/Python; 조인트리 NSX-T 마이크로세그멘테이션 + Wazuh\n• 금융 인프라 (2022–2024): 콸텍투자일임 FSDC, 금감원 감사 대응 + DB 튜닝\n• 보안 구축 (2024–2025): 가온누리 넥스트레이드, FortiGate HA 5계층 망분리 + Ansible Role 표준화 + FSC 본인가 통과\n• 보안 운영 (2025–현재): 아이티센 CTS 넥스트레이드, Splunk ES + n8n + FortiManager API 기반 자동 탐지·대응 운영\n\n[측정 가능한 임팩트]\nNAC·방화벽 정책 배포 자동화 · 보안 이벤트 자동 탐지·대응 · 접근 제어 정책 정비 · DLP 정책 운영 표준화\n\n[보유 기술 스택]\nSplunk ES, n8n, FortiGate/FortiManager API, Ansible Role, Python, Terraform, Docker, NSX-T, Wazuh, Grafana/Prometheus/Loki, Cloudflare Workers, MCP/AI 에이전트\n\n포트폴리오: https://resume.jclee.me",
+      "about": "**\"반복 작업은 자동화 되어야 한다\"** — 한 가지 신념으로 운영의 도구를 진화시켜 왔습니다.\n\n[경력 흐름: 현장 운영 → 자동화 → AI 에이전트]\n• KAI 폐쇄망 (2017–2018): Linux 수기 운영, 패치/방화벽/IDS 정책\n• Linux 기초 재정비 (2018.11–2019.11): RHCSA·LPIC-1·리눅스마스터 2급 연속 취득\n• 자동화 입문 (2019–2022): 메타넷 컴택센터 대규모 SSL VPN/NAC + Ansible/Python; 조인트리 NSX-T 마이크로세그멘테이션 + Wazuh\n• 금융 인프라 (2022–2024): 콸텍투자일임 FSDC, 금감원 감사 대응 + DB 튜닝\n• 보안 구축 (2024–2025): 가온누리 넥스트레이드, FortiGate HA 5계층 망분리 + Ansible Role 표준화 + FSC 본인가 통과\n• 보안 운영 (2025–2026): 아이티센 CTS 넥스트레이드, Splunk ES + n8n + FortiManager API 기반 자동 탐지·대응 운영\n• 현재: 구직 중 (보안·인프라 엔지니어)\n\n[측정 가능한 임팩트]\nNAC·방화벽 정책 배포 자동화 · 보안 이벤트 자동 탐지·대응 · 접근 제어 정책 정비 · DLP 정책 운영 표준화\n\n[보유 기술 스택]\nSplunk ES, n8n, FortiGate/FortiManager API, Ansible Role, Python, Terraform, Docker, NSX-T, Wazuh, Grafana/Prometheus/Loki, Cloudflare Workers, MCP/AI 에이전트\n\n포트폴리오: https://resume.jclee.me",
       "defaultJobCode": ""
     }
   },

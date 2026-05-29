@@ -110,6 +110,7 @@ async function bundleMainScript(baseDir, defines = {}) {
     format: 'iife',
     target: ['es2020'],
     absWorkingDir: baseDir,
+    charset: 'utf8',
     define: defines,
   });
 
