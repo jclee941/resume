@@ -11,4 +11,5 @@ module.exports = {
   ...require('./cards/layout'),
   ...require('./cards/about'),
   ...require('./cards/profile'),
+  ...require('./cards/evidence'),
 };

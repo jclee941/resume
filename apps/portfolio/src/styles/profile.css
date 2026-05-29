@@ -66,3 +66,37 @@
 .profile-card__list a:hover {
   text-decoration: underline;
 }
+
+/* ── Achievements evidence list (surfaced SSoT achievements[]) ── */
+.achievements-block {
+  margin-top: var(--space-4, 1rem);
+}
+
+.achievements-list {
+  list-style: none;
+  margin: var(--space-2, 0.5rem) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2, 0.5rem);
+}
+
+.achievement-card {
+  display: flex;
+  gap: var(--space-2, 0.5rem);
+  align-items: flex-start;
+  padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
+  border-left: 2px solid var(--cyber-green, #00d97a);
+  background: var(--surface-alt, rgba(255, 255, 255, 0.02));
+  border-radius: 0 var(--radius-sm, 4px) var(--radius-sm, 4px) 0;
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+  word-break: break-word;
+}
+
+.achievement-card__marker {
+  color: var(--cyber-green, #00d97a);
+  flex-shrink: 0;
+  font-weight: 600;
+}
