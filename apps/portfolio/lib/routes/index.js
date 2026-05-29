@@ -12,6 +12,7 @@ const {
   generateAnalyticsRoute,
   generateCspViolationRoute,
 } = require('./observability');
+const { generateGuestbookRoute } = require('./guestbook');
 
 module.exports = {
   generateAuthRoutes,
@@ -25,4 +26,5 @@ module.exports = {
   generateMetricsPostRoute,
   generateMetricsGetRoute,
   generateMetricsSnapshotRoute,
+  generateGuestbookRoute,
 };

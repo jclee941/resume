@@ -5,6 +5,7 @@ import { initMissionControl } from './modules/mission-control.js';
 import { initSkillRadar } from './modules/skill-radar.js';
 import { initCareerTimeline } from './modules/timeline.js';
 import { initProjectCards } from './modules/project-cards.js';
+import { initGuestbook } from './modules/guestbook.js';
 
 // Initialize all modules
 document.addEventListener('DOMContentLoaded', () => {
@@ -15,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initSkillRadar();
   initCareerTimeline();
   initProjectCards();
+  initGuestbook();
 
   // Service Worker Registration
   if ('serviceWorker' in navigator) {

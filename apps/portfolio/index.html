@@ -1111,6 +1111,36 @@
                 <!-- CONTACT_GRID_PLACEHOLDER -->
               </div>
             </section>
+
+            <section
+              id="guestbook"
+              class="section-guestbook reveal"
+              role="region"
+              aria-labelledby="guestbook-heading"
+            >
+              <h2 id="guestbook-heading" class="sr-only">방명록</h2>
+              <div class="section-cmd">
+                <span class="section-cmd__command">cat guestbook.log</span>
+              </div>
+              <form id="guestbook-form" class="guestbook-form" novalidate>
+                <div class="guestbook-field">
+                  <label for="guestbook-name" data-i18n="guestbook.nameLabel">이름</label>
+                  <input type="text" id="guestbook-name" name="name" maxlength="40" required autocomplete="name" data-i18n-placeholder="guestbook.namePlaceholder" placeholder="이름" />
+                </div>
+                <div class="guestbook-field">
+                  <label for="guestbook-message" data-i18n="guestbook.messageLabel">메시지</label>
+                  <textarea id="guestbook-message" name="message" maxlength="500" rows="3" required data-i18n-placeholder="guestbook.messagePlaceholder" placeholder="메시지를 남겨주세요"></textarea>
+                </div>
+                <!-- Honeypot: hidden from humans, bots fill it. aria-hidden + off-screen. -->
+                <div class="guestbook-hp" aria-hidden="true">
+                  <label for="guestbook-website">Website</label>
+                  <input type="text" id="guestbook-website" name="website" tabindex="-1" autocomplete="off" />
+                </div>
+                <button type="submit" class="guestbook-submit" data-i18n="guestbook.submit">남기기</button>
+                <p id="guestbook-status" class="guestbook-status" role="status" aria-live="polite"></p>
+              </form>
+              <ul id="guestbook-list" class="guestbook-list" aria-label="방명록 목록"></ul>
+            </section>
           </main>
 
           <footer class="site-footer" role="contentinfo">

@@ -1,0 +1,147 @@
+/* ========================================
+   GUESTBOOK (방명록) - Terminal Log Style
+   ======================================== */
+.section-guestbook {
+  margin-top: var(--space-8, 3rem);
+}
+
+.guestbook-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  font-family: var(--font-mono);
+  max-width: 640px;
+  margin-bottom: var(--space-6, 2rem);
+}
+
+.guestbook-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.guestbook-field label {
+  font-size: var(--text-sm);
+  color: var(--cyber-green);
+  font-family: var(--font-mono);
+}
+
+.guestbook-field input,
+.guestbook-field textarea {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--color-border, rgba(0, 212, 224, 0.25));
+  border-radius: var(--radius-sm, 4px);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.guestbook-field input:focus,
+.guestbook-field textarea:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px var(--color-accent-subtle);
+}
+
+.guestbook-field textarea {
+  resize: vertical;
+  min-height: 72px;
+}
+
+/* Honeypot: visually + semantically hidden, but present in the DOM for bots. */
+.guestbook-hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.guestbook-submit {
+  align-self: flex-start;
+  background: var(--color-accent-subtle);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-sm, 4px);
+  color: var(--color-accent);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  padding: var(--space-2, 0.5rem) var(--space-4, 1rem);
+  min-height: 44px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.guestbook-submit:hover:not(:disabled) {
+  background: var(--color-accent);
+  color: #001014;
+}
+
+.guestbook-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.guestbook-status {
+  font-size: var(--text-sm);
+  color: var(--cyber-green);
+  font-family: var(--font-mono);
+  min-height: 1.2em;
+  margin: 0;
+}
+
+.guestbook-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.guestbook-entry {
+  border-left: 2px solid var(--color-accent-subtle);
+  padding: var(--space-2, 0.5rem) 0 var(--space-2, 0.5rem) var(--space-3, 0.75rem);
+  font-family: var(--font-mono);
+}
+
+.guestbook-entry--empty {
+  color: var(--text-secondary, #8899aa);
+  border-left-color: transparent;
+}
+
+.guestbook-entry__header {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2, 0.5rem);
+  flex-wrap: wrap;
+}
+
+.guestbook-entry__name {
+  color: var(--cyber-cyan);
+  font-weight: var(--font-semibold);
+  font-size: var(--text-sm);
+  word-break: break-word;
+}
+
+.guestbook-entry__name::before {
+  content: '> ';
+  color: var(--cyber-green);
+}
+
+.guestbook-entry__time {
+  color: var(--text-secondary, #8899aa);
+  font-size: var(--text-xs, 0.75rem);
+}
+
+.guestbook-entry__message {
+  margin: var(--space-1) 0 0;
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+}

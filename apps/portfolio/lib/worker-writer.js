@@ -32,6 +32,7 @@ const {
   generateMetricsPostRoute,
   generateMetricsGetRoute,
   generateMetricsSnapshotRoute,
+  generateGuestbookRoute,
 } = require('./routes');
 
 /**
@@ -90,6 +91,7 @@ function buildWorkerCode(options) {
     generateMetricsPostRoute() +
     generateMetricsGetRoute() +
     generateMetricsSnapshotRoute() +
+    generateGuestbookRoute() +
     generateSeoRoutes() +
     generateFaviconRedirect() +
     generate404() +
