@@ -17,7 +17,7 @@ permissions:
 
 concurrency:
   group: release-notes-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   generate:
@@ -36,6 +36,7 @@ jobs:
       - name: Generate Release Notes
         id: notes
         run: |
+          set -eu
           TAG="${{ github.event.inputs.tag || github.ref_name }}"
           PREVIOUS_TAG=$(git tag --sort=-creatordate | grep -v "$TAG" | head -n 1)
           
@@ -113,6 +114,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          set -eu
           TAG="${{ github.event.inputs.tag || github.ref_name }}"
           BODY="${{ steps.notes.outputs.body }}"
           
@@ -128,16 +130,4 @@ jobs:
           fi
       - name: Notify on failure
         if: failure()
-        uses: actions/github-script@v9
-        with:
-          script: |
-            try {
-              await github.rest.issues.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              title: `🚨 ${{ github.workflow }} failed: ${context.runId}`,
-              body: `${{ github.workflow }} workflow failed. See [run logs](${context.payload.repository.html_url}/actions/runs/${context.runId}).`
-              });
-            } catch (e) {
-              core.warning(`Could not create issue: ${e.message}`);
-            }
+        uses: ./.github/actions/notify-on-failure
