@@ -10,4 +10,5 @@ module.exports = {
   ...require('./cards/skills'),
   ...require('./cards/layout'),
   ...require('./cards/about'),
+  ...require('./cards/profile'),
 };
