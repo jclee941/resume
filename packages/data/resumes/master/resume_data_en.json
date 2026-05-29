@@ -735,7 +735,7 @@
     {
       "name": "Resume Portfolio",
       "period": "2024.01 ~ Present",
-      "description": "Personal monorepo addressing the difficulty of presenting consolidated career evidence to recruiters. Hosts a single-SSoT resume site on Cloudflare Workers Edge alongside MCP tools, an auto-apply pipeline, and n8n workflows. Operates resume rendering, cover-letter generation, auto-apply, and observability from a single monorepo. ← this site runs on Cloudflare Workers (edge runtime, global CDN).",
+      "description": "Personal monorepo addressing the difficulty of presenting consolidated career evidence to recruiters. Hosts a single-SSoT resume site on Cloudflare Workers Edge alongside MCP tools and an auto-apply pipeline. Operates resume rendering, cover-letter generation, auto-apply, and observability from a single monorepo. ← this site runs on Cloudflare Workers (edge runtime, global CDN).",
       "technologies": [
         "Cloudflare Workers",
         "HTML/CSS",
@@ -753,7 +753,7 @@
         "Self-operated test environment for automated code-quality verification",
         "MCP-based tools to automate repetitive job-application work",
         "Monorepo architecture for consistent multi-package versioning",
-        "n8n workflows + API integration for security ops automation"
+        "Cloudflare Workers + API integration for security ops automation"
       ],
       "featured": true,
       "displayOrder": 1
@@ -824,7 +824,7 @@
       "name": "Bug Bounty Recon Toolkit",
       "period": "2025.10 ~ Present",
       "githubUrl": "https://github.com/jclee941/bug",
-      "description": "Bug-bounty reconnaissance (subdomain discovery → notification → vulnerability scan) was performed manually each time. Integrated a Go-based recon pipeline with Python result analysis. Subfinder + httpx + Nuclei are chained, and n8n manages the daily schedule. Converted reconnaissance into a workflow and detects new domain changes immediately.",
+      "description": "Bug-bounty reconnaissance (subdomain discovery → notification → vulnerability scan) was performed manually each time. Integrated a Go-based recon pipeline with Python result analysis. Subfinder + httpx + Nuclei are chained, and cron manages the daily schedule. Converted reconnaissance into a workflow and detects new domain changes immediately.",
       "highlights": [
         "Concurrency design for large-scale parallel scanning",
         "Auto matching + notification for immediate response after vulnerability detection",
@@ -875,7 +875,7 @@
     "Designed and operated Nextrade exchange security infrastructure (FortiGate HA, 5-tier segmentation) and passed the FSC main-license review.",
     "Designed Splunk ES dest_port-based exfiltration rules and NSX-T DFW log correlation rules, and operated a security alert pipeline that calls FortiManager JSON-RPC API via n8n for automated policy lookup.",
     "Scraped Proxmox VM/CT metrics with Prometheus node_exporter and managed Grafana dashboard JSON as code (Grafana-as-code), making single-pane observability reproducible via IaC.",
-    "Abstracted Slack, GitHub Actions, and Cloudflare hooks into shared n8n workflows with standardized error handling and retry, so new automations deploy by adding nodes rather than custom scripts.",
+    "Abstracted Slack, GitHub Actions, and Cloudflare hooks into shared automation workflows with standardized error handling and retry, so new automations deploy via configuration rather than custom scripts.",
     "Automated NAC exception handling and switch inspection at Metanet's contact-center remote-work environment via Ansible playbooks, including a new-terminal registration pipeline.",
     "Root-caused a FortiGate SSL-VPN session collision between the endpoint-protection agent and the VPN client via tcpdump, resolved it with FortiClient profile separation, and designed VLAN subnetting for new sites.",
     "Identified and removed unused duplicate firewall rules across KAI closed-network Linux servers via firewall-cmd parsing, cleaning up the firewall policy set."

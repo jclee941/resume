@@ -733,7 +733,7 @@
     {
       "name": "Resume Portfolio",
       "period": "2024.01 ~ 現在",
-      "description": "[課題] 経歴・プロジェクト・運用指標が履歴書・PDF・GitHubに分散し、採用担当者が強みを素早く把握しにくい状態でした。 Cloudflare Workers Edgeに単一SSoTベースの履歴書サイトを構築し、MCP自動化ツール・自動応募パイプライン・n8nワークフローをmonorepoに統合しました。 履歴書・志望動機生成・自動応募・可観測性を単一monorepoで運用しています。 ← このサイトは Cloudflare Workers で稼働しています (edge runtime, バンドル)。",
+      "description": "[課題] 経歴・プロジェクト・運用指標が履歴書・PDF・GitHubに分散し、採用担当者が強みを素早く把握しにくい状態でした。 Cloudflare Workers Edgeに単一SSoTベースの履歴書サイトを構築し、MCP自動化ツール・自動応募パイプラインをmonorepoに統合しました。 履歴書・志望動機生成・自動応募・可観測性を単一monorepoで運用しています。 ← このサイトは Cloudflare Workers で稼働しています (edge runtime, バンドル)。",
       "technologies": [
         "Cloudflare Workers",
         "HTML/CSS",
@@ -751,7 +751,7 @@
         "コード品質の自動検証のためのテスト環境を自社運用",
         "繰り返し応募作業を自動化するためのMCPベースのツール開発",
         "複数パッケージの一貫したバージョン管理のためのmonorepo構造",
-        "セキュリティ機器運用手順の自動化のためのn8nワークフローとAPI連携"
+        "セキュリティ機器運用手順の自動化のためのCloudflare WorkersとAPI連携"
       ],
       "featured": true,
       "displayOrder": 1
@@ -822,7 +822,7 @@
       "name": "Bug Bounty Recon Toolkit",
       "period": "2025.10 ~ 現在",
       "githubUrl": "https://github.com/jclee941/bug",
-      "description": "[課題] バグバウンティ偵察(サブドメイン発見→通知→脆弱性スキャン)を毎回手作業で実施していました。 Goベース偵察パイプライン+Python結果分析を統合しました。Subfinder + httpx + Nucleiを連結し、n8nで日次スケジュールを管理します。 偵察作業をワークフローに転換し、新規ドメイン変更を即時検出します。",
+      "description": "[課題] バグバウンティ偺察(サブドメイン発見→通知→脆弱性スキャン)を毎回手作業で実施していました。 Goベース偺察パイプライン+Python結果分析を統合しました。Subfinder + httpx + Nucleiを連結し、cronで日次スケジュールを管理します。 偺察作業をワークフローに転換し、新規ドメイン変更を即時検出します。",
       "highlights": [
         "大規模対象の同時スキャンのための並行性設計",
         "脆弱性発見後の即時対応のための自動マッチングと通知",
@@ -844,7 +844,7 @@
     {
       "name": "resume-portfolio",
       "url": "https://github.com/jclee941/resume",
-      "description": "履歴書自動化モノレポ — Cloudflare Worker ポートフォリオ、自動応募パイプライン（Wanted/JobKorea）、AI 自己紹介書生成、n8n 自動化ワークフロー",
+      "description": "履歴書自動化モノレポ — Cloudflare Worker ポートフォリオ、自動応募パイプライン（Wanted/JobKorea）、AI 自己紹介書生成、MCP自動化ツール",
       "techStack": [
         "TypeScript",
         "Cloudflare Workers",
@@ -873,7 +873,7 @@
     "Nextrade取引システムのセキュリティインフラ（FortiGate HA、5層分離）を設計・運用し、FSC本認可審査に対応しました。",
     "Splunk ESでdest_portベースの流出検知ルールとNSX-T DFWログcorrelationルールを設計し、n8nからFortiManager JSON-RPC APIを呼び出してポリシー照会を自動化したセキュリティアラートパイプラインを運用しました。",
     "Prometheus node_exporterでProxmox VM/CTメトリクスを収集し、Grafanaダッシュボード定義をコード（Grafana-as-code）で管理することで、単一画面の可観測性をIaCで再現可能にしました。",
-    "Slack・GitHub Actions・Cloudflareフックをn8n共通ワークフローに抽象化し、エラーハンドリングとリトライを標準化することで、新規自動化追加時はノード追加のみで完結する構成にしました。",
+    "Slack・GitHub Actions・Cloudflareフックを共通自動化ワークフローに抽象化し、エラーハンドリングとリトライを標準化することで、新規自動化追加時はノード追加のみで完結する構成にしました。",
     "Metanetコンタクトセンタ在宅環境で、NAC例外処理とスイッチ点検をAnsibleプレイブックで自動化し、新規端末登録パイプラインを構築しました。",
     "FortiGate SSL-VPN環境のエンドポイント保護エージェントとVPNクライアント間のプロファイル競合をtcpdumpでroot cause分析し、FortiClientプロファイル分離ポリシーで解決、新規サイトVLANサブネット設計を実施しました。",
     "KAI閉域網のLinuxサーバファイアウォールポリシーで、使用されていない重複ルールをfirewall-cmd解析で特定・整理し、ファイアウォールポリシーを整備しました。"
