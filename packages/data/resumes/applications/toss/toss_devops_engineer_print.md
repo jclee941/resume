@@ -65,7 +65,7 @@ header-includes:
 \accentrule
 \vspace{0.1em}
 
-9년간 금융·공공 분야에서 인프라 설계·운영을 담당하며, Observability 운영과 운영 자동화를 수행해왔습니다. 넓스트레이드
+9년간 금융·공공 분야에서 인프라 설계·운영을 담당하며, Observability 운영과 운영 자동화를 수행해왔습니다. 넥스트레이드
 대체거래소에서 고가용성 인프라를 구성하고 Splunk·Prometheus·Grafana 기반 모니터링을 구성한 경험을 바탕으로, 토스증권
 DevOps&SRE팀이 추구하는 **개발자 경험 개선**과 **Cloud Native 기반 시스템 운영**에 기여하고자 지원합니다.
 
