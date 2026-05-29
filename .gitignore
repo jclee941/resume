@@ -190,3 +190,7 @@ tools/bin/
 # OpenCode local scan state (regenerated)
 .opencode-scan-state
 /deploy-monitoring
+
+# Compiled Go helper (build artifact, not content)
+packages/data/resumes/technical/convert-all-projects
+packages/data/resumes/technical/**/convert-all-projects

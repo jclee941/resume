@@ -42,7 +42,7 @@ R5 수정: `(인프라 헬스, 서비스 상태)` 대시보드 설명 제거, `�
 
 | 포트폴리오 주장           | SSoT 경로                                    | SSoT 값                                |
 | ------------------------- | -------------------------------------------- | -------------------------------------- |
-| 32개 탐지 룰              | `personalProjects[3].metrics.detectionRules` | `"32개"`                               |
+| 다수 탐지 룰              | `personalProjects[3].metrics.detectionRules` | `"32개"`                               |
 | Slack Block Kit 알림      | `personalProjects[3].metrics.alertChannels`  | `"Slack Block Kit"`                    |
 | FortiGate syslog → Splunk | `personalProjects[3].metrics.sources`        | `"FortiGate syslog → Splunk"`          |
 | 30초 이내 알림            | `personalProjects[3].metrics.responseTime`   | `"이벤트 발생 후 30초 이내 알림"`      |
@@ -92,7 +92,7 @@ R5 수정: `self-hosted` 제거, `Code nodes` 행 제거, 연동 상세 5줄→1
 | Ansible 정책 배포          | `experiences[0].responsibilities`             | `"Ansible Role 기반 방화벽 초기 설정 및 정책 배포 표준화"`  |
 | 금융위 본인가              | `experiences[0].responsibilities`             | `"금융위원회 본인가 심사 기술 대응 및 보안 아키텍처 수립"`  |
 | Splunk ES 보안 운영        | `experiences[0].responsibilities`             | `"Splunk ES 및 FortiGate API를 활용한 보안 운영 자동화"`    |
-| 32개 탐지 룰               | `personalProjects[3].metrics.detectionRules`  | `"32개"`                                                    |
+| 다수 탐지 룰               | `personalProjects[3].metrics.detectionRules`  | `"32개"`                                                    |
 | 30초 내 알림               | `personalProjects[3].metrics.responseTime`    | `"이벤트 발생 후 30초 이내 알림"`                           |
 | FortiManager API           | `experiences[0].responsibilities`             | `"FortiManager API를 이용한 방화벽 정책 자동 조회 툴 개발"` |
 
