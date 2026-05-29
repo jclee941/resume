@@ -65,12 +65,12 @@ describe('i18n Module', () => {
   describe('t (translate)', () => {
     it('should translate Korean strings', () => {
       expect(t('hero.title', 'ko')).toBe('이재철');
-      expect(t('hero.subtitle', 'ko')).toBe('DevOps & Security Engineer');
+      expect(t('hero.subtitle', 'ko')).toBe('보안 엔지니어');
     });
 
     it('should translate English strings', () => {
       expect(t('hero.title', 'en')).toBe('Jaecheol Lee');
-      expect(t('hero.subtitle', 'en')).toBe('DevOps & Security Engineer');
+      expect(t('hero.subtitle', 'en')).toBe('Security Engineer');
     });
 
     it('should return key if translation not found', () => {
