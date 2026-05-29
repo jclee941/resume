@@ -1,6 +1,6 @@
 <!-- Generated from master resume -->
 <!-- Variant: general -->
-<!-- Generated: 2026-05-29T14:00:52.905Z -->
+<!-- Generated: 2026-05-29T14:10:24.838Z -->
 <!-- Description: General purpose resume for all industries -->
 # 이재철
 

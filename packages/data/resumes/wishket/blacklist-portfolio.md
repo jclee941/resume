@@ -28,7 +28,7 @@
 
 IP 블랙리스트 자동수집·관리 시스템.
 
-- 3+ threat intelligence feeds 자동 수집·파싱·정규화
+- 여러 threat intelligence feed 자동 수집·파싱·정규화
 - Flask REST API + Next.js 대시보드
 - PostgreSQL GeoIP enrichment
 
@@ -36,7 +36,7 @@ IP 블랙리스트 자동수집·관리 시스템.
 
 ## 주요 성과
 
-- 3+ threat intelligence feeds 자동 수집
+- 여러 threat intelligence feed 자동 수집
 - Flask REST API + Next.js Dashboard 구현
 - PostgreSQL GeoIP enrichment 기반 IP 분석 체계 구축
 

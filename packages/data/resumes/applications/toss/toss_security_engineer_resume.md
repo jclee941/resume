@@ -38,7 +38,7 @@ Security Engineer (시스템 보안)
 
 2025.03 ~ 2026.02 (1년) | 넥스트레이드 보안운영SM
 
-- 15종 보안 솔루션 통합 운영 (FortiGate, NAC, DLP, EDR, SIEM 등)
+- 보안 솔루션 통합 운영 (FortiGate, NAC, DLP, EDR, SIEM 등)
 - Splunk 기반 상시 보안 모니터링 체계 운영 및 인시던트 대응
 - 보안 장애 건수를 줄이고 반복 원인을 정리
 - 인시던트 평균 대응 절차를 자동화

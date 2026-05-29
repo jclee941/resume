@@ -104,7 +104,7 @@ Prometheus는 수치 기반 상태 확인에 적합하고, Loki는 로그 흐름
 flowchart LR
   subgraph Sources[수집 대상]
     Hosts[Linux/Windows<br/>호스트]
-    Apps[애플리케이션<br/>50+ /metrics]
+    Apps[애플리케이션<br/>다수 /metrics 엔드포인트]
     Endpoints[외부 엔드포인트]
   end
   subgraph Collect[수집 레이어]
@@ -171,7 +171,7 @@ flowchart LR
 ## 결과
 
 - 메트릭 수집 범위: 단일 관측 수준 → **다수 메트릭 엔드포인트 실시간 수집**
-- 시각화 범위: 단편적 확인 → **12+ Grafana 대시보드 운영**
+- 시각화 범위: 단편적 확인 → **여러 Grafana 대시보드 운영**
 - 데이터 연계: 개별 확인 → **Prometheus, Loki, Elasticsearch 데이터소스 통합**
 - 가용성 관리: 수동 추적 중심 → **안정적인 인프라 가용성 유지**
 
@@ -189,7 +189,7 @@ flowchart LR
 ## 주요 성과
 
 - 다수 메트릭 엔드포인트 실시간 수집
-- 12+ Grafana 대시보드 운영
+- 여러 Grafana 대시보드 운영
 - 여러 데이터소스 통합 (Prometheus, Loki, Elasticsearch)
 - 안정적인 인프라 가용성 확보
 - 운영자가 메트릭, 로그, 외부 상태를 분리해서 보지 않도록 관측 흐름 정리
