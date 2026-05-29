@@ -40,7 +40,7 @@
 - FortiManager와 FortiAnalyzer를 각각 확인해야 해서 운영 흐름이 끊기기 쉬웠습니다.
 - 자주 하는 조회 작업인데도 재사용 가능한 내부 도구가 부족했습니다.
 - 수동 조회는 시간이 오래 걸리고 반복성이 높아 운영 집중도를 떨어뜨렸습니다.
-- 결과적으로 FortiManager, FortiAnalyzer REST API를 하나의 자동화 관점으로 묶고, 수동 작업 대비 80% 시간
+- 결과적으로 FortiManager, FortiAnalyzer REST API를 하나의 자동화 관점으로 묶고, 수동 작업 부담
   절감을 만드는 도구가 필요했습니다.
 
 ## 해결 접근
