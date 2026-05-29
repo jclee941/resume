@@ -706,23 +706,6 @@
       "displayOrder": 2
     },
     {
-      "name": "n8n Automation",
-      "period": "2024.01 ~ 현재",
-      "description": "Slack 알림, Cloudflare 배포 알림, GitHub Actions 결과 수집 등 반복 작업이 crontab과 개별 스크립트로 분산 운영되어 신규 연동 추가에 매번 코드 작성이 필요했습니다. n8n을 중앙 오케스트레이터로 도입하고 Slack·GitHub·Cloudflare·Grafana를 webhook+API로 연동했습니다. 공통 Error Trigger workflow와 재시도 분기를 만들어 실패 알림·재처리 흐름을 표준화했고, 신규 연동은 webhook/API 노드와 payload mapping만 추가하도록 단순화했습니다.",
-      "technologies": [
-        "n8n",
-        "PostgreSQL",
-        "Docker"
-      ],
-      "icon": "🔄",
-      "tagline": "워크플로우 자동화",
-      "language": "JavaScript",
-      "githubUrl": null,
-      "demoUrl": null,
-      "featured": false,
-      "displayOrder": 9
-    },
-    {
       "name": "Security Alert System",
       "period": "2025.01 ~ 현재",
       "description": "FortiGate 보안 이벤트가 장비 syslog와 Splunk에 분산되어 발생부터 담당자 인지까지 지연이 발생하는 환경을 정리했습니다. Splunk Saved Search와 Webhook을 연동하고, CSV 기반 state tracker로 상태 전이 시에만 알림이 발송되도록 중복 알림을 억제했습니다. FortiGate LogID를 severity/category 기준으로 매핑해 장비 syslog 확인 없이 Splunk 기준으로 이벤트를 분류할 수 있게 했습니다.",

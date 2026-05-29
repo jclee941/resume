@@ -1,6 +1,6 @@
 <!-- Generated from master resume -->
 <!-- Variant: short -->
-<!-- Generated: 2026-05-29T14:17:18.955Z -->
+<!-- Generated: 2026-05-29T14:45:08.441Z -->
 <!-- Description: Short form resume (1-2 pages) -->
 ## 연락처
 

@@ -1,6 +1,6 @@
 <!-- Generated from master resume -->
 <!-- Variant: security -->
-<!-- Generated: 2026-05-29T14:17:18.963Z -->
+<!-- Generated: 2026-05-29T14:45:08.445Z -->
 <!-- Description: Security and compliance focus -->
 ## 연락처
 - 전화: 010-5757-9592
