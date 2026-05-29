@@ -164,7 +164,7 @@ context-aware policy, false positive tuning loop
 
 ---
 
-## 면접 직전 — 이 5개만 외우기
+## 면접 직전 — 핵심 항목만 외우기
 
 1. **짧은 자기소개** (이미 프롬프트에 고정됨)
 2. **PICERL 6단계** 침해사고 대응 순서
