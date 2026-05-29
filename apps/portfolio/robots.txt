@@ -9,6 +9,8 @@ User-agent: *
 Allow: /
 Allow: /en/
 Allow: /ja/
+Disallow: /api/
+Disallow: /dashboard
 
 # Crawl-delay for all bots
 Crawl-delay: 0
@@ -50,7 +52,3 @@ Allow: /ja/
 # Disallow: /private/
 # Disallow: /admin/
 
-# API endpoints - disallow indexing
-User-agent: *
-Disallow: /api/
-Disallow: /dashboard
