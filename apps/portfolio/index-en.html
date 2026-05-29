@@ -1169,25 +1169,5 @@
         });
       })();
     </script>
-      <script>
-      // Embed toggle for Grafana dashboard preview
-      (function () {
-        var toggleBtn = document.querySelector('.embed-toggle');
-        var embedContainer = document.getElementById('grafana-embed');
-        if (!toggleBtn || !embedContainer) return;
-        toggleBtn.addEventListener('click', function () {
-          var isExpanded = toggleBtn.getAttribute('aria-expanded') === 'true';
-          if (isExpanded) {
-            embedContainer.hidden = true;
-            toggleBtn.textContent = 'Load Preview';
-            toggleBtn.setAttribute('aria-expanded', 'false');
-          } else {
-            embedContainer.hidden = false;
-            toggleBtn.textContent = 'Close Preview';
-            toggleBtn.setAttribute('aria-expanded', 'true');
-          }
-        });
-      })();
-    </script>
 </body>
 </html>
