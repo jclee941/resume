@@ -106,8 +106,8 @@ function injectStatusWidgets() {
     </div>
     <div class="mc-status-widget mc-status-widget--uptime" data-widget="uptime">
       <span class="mc-status-widget__icon" aria-hidden="true">📊</span>
-      <span class="mc-status-widget__label">UPTIME:</span>
-      <span class="mc-status-widget__value">99.9%</span>
+      <span class="mc-status-widget__label">STATUS:</span>
+      <span class="mc-status-widget__value">OPERATIONAL</span>
     </div>
     <div class="mc-status-widget mc-status-widget--security" data-widget="security">
       <span class="mc-status-widget__icon" aria-hidden="true">🔒</span>
