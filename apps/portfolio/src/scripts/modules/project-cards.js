@@ -86,7 +86,7 @@ const PROJECTS = [
     description:
       'AI 기반 트레이딩 플랫폼의 데이터베이스 인프라를 운영하고 금융감독원 감사에 대응했습니다.',
     achievements: [
-      'PostgreSQL DB 튜닝으로 쿼리 성능 개선',
+      'PostgreSQL DB 접근제어 쿼리 튜닝 수행',
       '금융감독원 정기 감사 대응 체계 운영',
       '백업·복구 체계 구축',
       '인프라 모니터링 체계 운영',
