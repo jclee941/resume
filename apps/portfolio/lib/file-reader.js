@@ -7,6 +7,7 @@ const path = require('path');
 const esbuild = require('esbuild');
 const { ESCAPE_PATTERNS } = require('./config');
 const { readAllFiles } = require('./file-operations');
+const { buildSkillRadarData } = require('./skill-radar-data');
 
 /**
  * Build configuration for source files loaded by the generator.
@@ -100,7 +101,7 @@ function getFilesToRead(baseDir) {
  * @param {string} baseDir - Portfolio worker directory.
  * @returns {Promise<string>} Bundled and escaped JavaScript source.
  */
-async function bundleMainScript(baseDir) {
+async function bundleMainScript(baseDir, defines = {}) {
   const bundleResult = await esbuild.build({
     entryPoints: [path.join(baseDir, 'src', 'scripts', 'main.js')],
     bundle: true,
@@ -109,6 +110,7 @@ async function bundleMainScript(baseDir) {
     format: 'iife',
     target: ['es2020'],
     absWorkingDir: baseDir,
+    define: defines,
   });
 
   return bundleResult.outputFiles[0].text
@@ -144,7 +146,18 @@ async function readBuildInputs({ baseDir, logger }) {
   const fileContents = readAllFiles(filesToRead);
 
   logger.log('📦 Bundling main.js...');
-  const mainJs = await bundleMainScript(baseDir);
+  // Inject real skills from data.json into the client skill-radar widget via
+  // esbuild `define`, replacing the module's stale hardcoded fallback.
+  let skillRadarDefine = {};
+  try {
+    const projectData = JSON.parse(fileContents.projectDataRaw || '{}');
+    const radarData = buildSkillRadarData(projectData.skills);
+    skillRadarDefine = { __SKILL_DATA__: JSON.stringify(radarData) };
+    logger.log(`✓ Injected ${Object.keys(radarData).length} skill categories into radar`);
+  } catch (err) {
+    logger.warn(`⚠ Skill radar injection skipped: ${err.message}`);
+  }
+  const mainJs = await bundleMainScript(baseDir, skillRadarDefine);
 
   logger.log('📦 Bundling CSS...');
   const cssContent = await bundleCss(baseDir);
