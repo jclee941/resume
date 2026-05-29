@@ -60,7 +60,7 @@ class PortfolioChat {
         patterns: ['보안', 'security', '망분리', 'firewall', '방화벽', 'fsc', '인허가'],
         responses: [
           '금융권 규제에 맞는 5계층 망분리 보안 아키텍처를 설계하여 FSC 본인가 심사를 통과시켰습니다. VMware NSX-T 마이크로세그멘테이션으로 동서 트래픽 사각지대를 해소하고, NAC/DLP와 Wazuh를 통합 연동한 실시간 모니터링 체계를 구축했습니다.',
-          'Designed 5-tier network segmentation security architecture compliant with financial regulations, passed the FSC licensing review. Eliminated east-west traffic blind spots with VMware NSX-T microsegmentation, built real-time monitoring integrating NAC/DLP with Wazuh.'
+          'Designed 5-tier network segmentation security architecture compliant with financial regulations, passed the FSC main-license review. Eliminated east-west traffic blind spots with VMware NSX-T microsegmentation, built real-time monitoring integrating NAC/DLP with Wazuh.'
         ]
       },
       cloudflare: {
