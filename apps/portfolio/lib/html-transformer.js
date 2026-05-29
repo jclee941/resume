@@ -117,6 +117,16 @@ function buildJapaneseTemplate(html) {
     .replace(/<h2 id="projects-heading" class="sr-only">주요 프로젝트<\/h2>/g, '<h2 id="projects-heading" class="sr-only">主要プロジェクト</h2>')
     .replace(/<h2 id="contact-heading" class="sr-only">연락처<\/h2>/g, '<h2 id="contact-heading" class="sr-only">連絡先</h2>')
     .replace(/<h2 id="contact-section-heading" class="sr-only">연락처<\/h2>/g, '<h2 id="contact-section-heading" class="sr-only">連絡先</h2>')
+    // === Certifications + Guestbook + profile sr-only headings & labels ===
+    .replace(/<h2 id="certifications-heading" class="sr-only">자격증<\/h2>/g, '<h2 id="certifications-heading" class="sr-only">資格</h2>')
+    .replace(/<h2 id="guestbook-heading" class="sr-only">방명록<\/h2>/g, '<h2 id="guestbook-heading" class="sr-only">ゲストブック</h2>')
+    .replace(/<label for="guestbook-name"[^>]*>이름<\/label>/g, (mm) => mm.replace('이름', 'お名前'))
+    .replace(/<label for="guestbook-message"[^>]*>메시지<\/label>/g, (mm) => mm.replace('메시지', 'メッセージ'))
+    .replace(/<button type="submit" class="guestbook-submit"[^>]*>남기기<\/button>/g, (mm) => mm.replace('남기기', '投稿'))
+    .replace(/placeholder="이름"/g, 'placeholder="お名前"')
+    .replace(/placeholder="메시지를 남겨주세요"/g, 'placeholder="メッセージを残してください"')
+    .replace(/aria-label="방명록 목록"/g, 'aria-label="ゲストブック一覧"')
+    .replace(/"name": "Security\/Infrastructure Engineer — 구직 중"/g, '"name": "Security / Infrastructure Engineer — 求職中"')
     // === Inline JS terminal commands KO -> JA ===
     .replace(/'Security 엔지니어'/g, "'Security エンジニア'")
     .replace(/> Security 엔지니어\\n> Scrolling to #about\.\.\./g, '> Security エンジニア\\n> Scrolling to #about...')
