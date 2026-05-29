@@ -652,3 +652,8 @@
     flex-wrap: wrap;
   }
 }
+/* Project deep-dive description (moved off inline style for strict CSP). */
+.project-detail__description {
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
