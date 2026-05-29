@@ -8,8 +8,13 @@ import { initProjectCards } from './modules/project-cards.js';
 import { initGuestbook } from './modules/guestbook.js';
 import { initObservabilityStats } from './modules/observability.js';
 
-// Initialize all modules
-document.addEventListener('DOMContentLoaded', () => {
+// Initialize all modules. main.js is injected dynamically (a nonce'd loader
+// does document.body.appendChild(script src=/main.js, defer)). A dynamically
+// appended script can finish executing AFTER DOMContentLoaded has already
+// fired, in which case a fresh addEventListener('DOMContentLoaded') callback
+// would NEVER run. Guard on readyState: run immediately if the DOM is ready,
+// otherwise wait for the event.
+function bootstrapPortfolio() {
   initUI();
   initMissionControl();
   initializeABTesting();
@@ -47,4 +52,10 @@ document.addEventListener('DOMContentLoaded', () => {
       window.location.reload();
     });
   }
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', bootstrapPortfolio, { once: true });
+} else {
+  bootstrapPortfolio();
+}
