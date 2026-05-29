@@ -878,7 +878,7 @@
     "Abstracted Slack, GitHub Actions, and Cloudflare hooks into shared n8n workflows with standardized error handling and retry, so new automations deploy by adding nodes rather than custom scripts.",
     "Automated NAC exception handling and switch inspection at Metanet's contact-center remote-work environment via Ansible playbooks, including a new-terminal registration pipeline.",
     "Root-caused a FortiGate SSL-VPN session collision between the endpoint-protection agent and the VPN client via tcpdump, resolved it with FortiClient profile separation, and designed VLAN subnetting for new sites.",
-    "Identified and removed unused duplicate firewall rules across KAI closed-network Linux servers via firewall-cmd parsing, reducing operational overhead."
+    "Identified and removed unused duplicate firewall rules across KAI closed-network Linux servers via firewall-cmd parsing, cleaning up the firewall policy set."
   ],
   "infrastructure": [
     {
