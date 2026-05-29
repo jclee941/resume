@@ -93,7 +93,7 @@ R5 수정: `self-hosted` 제거, `Code nodes` 행 제거, 연동 상세 5줄→1
 | 금융위 본인가              | `experiences[0].responsibilities`             | `"금융위원회 본인가 심사 기술 대응 및 보안 아키텍처 수립"`  |
 | Splunk ES 보안 운영        | `experiences[0].responsibilities`             | `"Splunk ES 및 FortiGate API를 활용한 보안 운영 자동화"`    |
 | 다수 탐지 룰               | `personalProjects[3].metrics.detectionRules`  | `"32개"`                                                    |
-| 30초 내 알림               | `personalProjects[3].metrics.responseTime`    | `"이벤트 발생 후 30초 이내 알림"`                           |
+| 신속 알림               | `personalProjects[3].metrics.responseTime`    | `"이벤트 발생 후 30초 이내 알림"`                           |
 | FortiManager API           | `experiences[0].responsibilities`             | `"FortiManager API를 이용한 방화벽 정책 자동 조회 툴 개발"` |
 
 R5 수정: `(JSON-RPC)` 제거

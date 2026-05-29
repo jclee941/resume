@@ -166,7 +166,7 @@
 
 - **정책 최적화**: 방화벽 정책 분석 및 재설계, 중복 룰 제거
 - **망분리 구축**: 제조망-개발망 물리적 분리 완료, 내부정보 유출사고 없이 운영
-- **취약점 관리**: 월간 취약점 점검 체계 구축, 치명적(Critical) 취약점 2주 내 조치 완료
+- **취약점 관리**: 월간 취약점 점검 체계 구축, 치명적(Critical) 취약점 SLA 기준 조치 완료
 
 ---
 
@@ -233,7 +233,7 @@
 역할: 보안 인프라 구축 리드
 규모: 1,000명 동시 접속
 기술: Fortigate SSL VPN, NAC, Ansible, Python
-성과: COVID-19 대응 2주 내 구축 완료, 운영 인력 3명에서 1명으로 축소
+성과: COVID-19 대응 재택근무 인프라를 신속히 구축하고 운영 부담을 줄임
 
 ### 금융 클라우드 보안 아키텍처
 
@@ -293,7 +293,7 @@
 
 - AI 도구: OpenCode, GitHub Copilot, ChatGPT API
 - MCP 프로토콜: 14개 서버 통합 (filesystem, github, brave-search, memory, tmux 등)
-- 자동화 프레임워크: Custom SlashCommand 시스템 (150+ 명령어)
+- 자동화 프레임워크: Custom SlashCommand 시스템 (다수 명령어)
 - 관찰성: Universal Observability 아키텍처 (Grafana 중심)
 
 ### 컨테이너 및 오케스트레이션

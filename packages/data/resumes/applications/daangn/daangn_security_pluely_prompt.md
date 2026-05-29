@@ -26,7 +26,7 @@
 - 호스팅 서비스: Traefik(ingress), CoreDNS, ELK Stack, Grafana(grafana.jclee.me 퍼블릭), n8n(n8n.jclee.me), MCP Hub
 - 옵저버빌리티: Filebeat → Logstash → Elasticsearch → Kibana, Prometheus + Grafana 대시보드, 백업 vzdump+zstd 일 02:00 (RTO 15분/RPO 24h)
 - IP Blacklist 플랫폼 (github.com/qws941/blacklist): Flask + PostgreSQL 15 + Redis 7 + Next.js 15. REGTECH(한국금융보안원) 위협정보 자동수집, FortiGate Threat Feed API + Cloudflare WAF Lists API 양방향 연동, 10,000+ IP 관리, 2,201개 자동화 테스트
-- Splunk SIEM (splunk.jclee.me, github.com/jclee941/splunk): FortiGate syslog 수집 → Splunk 탐지 → Python Block Kit 가공 → Slack 알림. 32개 탐지룰, 이벤트 발생 30초 내 알림 도달, 초당 10만 이벤트 처리 가능 검증
+- Splunk SIEM (splunk.jclee.me, github.com/jclee941/splunk): FortiGate syslog 수집 → Splunk 탐지 → Python Block Kit 가공 → Slack 알림. 다수 탐지룰, 이벤트 발생 후 신속한 알림, 대용량 이벤트 처리 가능성 검증
 - FortiNet API 라이브러리: FortiManager + FortiAnalyzer REST API 통합 Python 라이브러리, 정책 조회/라우트 관리/로그 통계 자동화, 수동 정책 조회 부담을 줄임
 
 [지원 포지션]

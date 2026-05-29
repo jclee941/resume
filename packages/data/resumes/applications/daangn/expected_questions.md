@@ -200,14 +200,14 @@ context-aware policy, false positive tuning loop
 | B4  | "당근에 적용한다면 어뷰징 IP 차단에 쓸 수 있나요?"                                          | 그대로 적용 가능 + 신고 기반 피드백 루프 추가 + 당근 FDS 룰엔진과 통합 가능                     |
 | B5  | "Flask + PostgreSQL + Redis + Next.js 풀스택을 혼자 다 하셨다면, 가장 어려웠던 의사결정은?" | DI를 ServiceFactory로 직접 구현(프레임워크 의존 최소화) + Air-Gap 배포 가능성 우선 설계         |
 
-### C. Splunk SIEM (32개 탐지룰, 30초 내 알림)
+### C. Splunk SIEM (다수 탐지룰, 신속한 알림)
 
 | #   | 질문                                                                          | 답변 방향                                                                          |
 | --- | ----------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| S1  | "이벤트 발생 30초 내 알림이라고 하셨는데, 어떻게 측정하셨나요?"               | FortiGate syslog timestamp vs Slack message timestamp 차이 + 샘플링 모니터링       |
-| S2  | "초당 10만 이벤트 처리 검증은 어떻게 하셨나요?"                               | HEC 부하 테스트 (Splunk Enterprise validated) + 인덱서 자원 측정                   |
-| S3  | "32개 룰 중 가장 자랑스러운 룰 1개를 SPL로 써주세요."                         | 화이트보드에 직접 작성 가능 (예: brute force, lateral movement, data exfil 중 택1) |
-| S4  | "Slack Block Kit으로 알림을 구조화한 이유는? 단순 텍스트와 비교해서?"         | 운영자가 30초 내 판단 가능한 정보 우선순위 → 제목/맥락/확인포인트 분리             |
+| S1  | "이벤트 발생 후 신속한 알림이라고 하셨는데, 어떻게 측정하셨나요?"               | FortiGate syslog timestamp vs Slack message timestamp 차이 + 샘플링 모니터링       |
+| S2  | "대용량 이벤트 처리 검증은 어떻게 하셨나요?"                               | HEC 부하 테스트 (Splunk Enterprise validated) + 인덱서 자원 측정                   |
+| S3  | "운영한 탐지 룰 중 가장 자랑스러운 룰 하나를 SPL로 써주세요."                         | 화이트보드에 직접 작성 가능 (예: brute force, lateral movement, data exfil 중 택1) |
+| S4  | "Slack Block Kit으로 알림을 구조화한 이유는? 단순 텍스트와 비교해서?"         | 운영자가 신속히 판단 가능한 정보 우선순위 → 제목/맥락/확인포인트 분리             |
 | S5  | "당근이 Splunk를 쓰지 않을 수도 있는데, 다른 SIEM으로 어떻게 이식하시겠어요?" | Sigma 룰 표준화 + KQL/Elasticsearch DSL 변환 가능 + MITRE ATT&CK 매핑 유지         |
 
 ### D. FortiNet API 라이브러리
