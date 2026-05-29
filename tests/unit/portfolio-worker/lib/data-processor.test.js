@@ -20,6 +20,7 @@ jest.mock('../../../../apps/portfolio/lib/cards', () => ({
   generateAboutContent: jest.fn(() => '<div class="about">content</div>'),
   generateProfileBento: jest.fn(() => '<div class="profile-bento">profile</div>'),
   generateAchievementsSection: jest.fn(() => '<ul class="achievements-list"></ul>'),
+  generateExpertiseSection: jest.fn(() => '<div class="expertise-tags"></div>'),
 }));
 
 const { TEMPLATE_CACHE } = require('../../../../apps/portfolio/lib/config');
