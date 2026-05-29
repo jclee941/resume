@@ -17,6 +17,7 @@ const {
   generateContactGrid,
   generateAboutContent,
   generateProfileBento,
+  generateAchievementsSection,
 } = require('./cards');
 
 /**
@@ -129,6 +130,9 @@ function processProjectData({ projectDataRaw, projectDataEnRaw, projectDataJaRaw
     profileBentoHtml: generateProfileBento(projectData),
     profileBentoEnHtml: generateProfileBento(projectDataEn || projectData),
     profileBentoJaHtml: generateProfileBento(projectDataJa || projectData),
+    achievementsHtml: generateAchievementsSection(projectData),
+    achievementsEnHtml: generateAchievementsSection(projectDataEn || projectData),
+    achievementsJaHtml: generateAchievementsSection(projectDataJa || projectData),
   };
 
   return {

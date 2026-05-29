@@ -19,6 +19,7 @@ jest.mock('../../../../apps/portfolio/lib/cards', () => ({
   generateContactGrid: jest.fn(() => '<div class="contact">grid</div>'),
   generateAboutContent: jest.fn(() => '<div class="about">content</div>'),
   generateProfileBento: jest.fn(() => '<div class="profile-bento">profile</div>'),
+  generateAchievementsSection: jest.fn(() => '<ul class="achievements-list"></ul>'),
 }));
 
 const { TEMPLATE_CACHE } = require('../../../../apps/portfolio/lib/config');

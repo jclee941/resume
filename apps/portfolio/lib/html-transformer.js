@@ -52,6 +52,7 @@ function injectPlaceholders(html, options) {
     .replace('<!-- RESUME_MD_URL -->', options.resumeMdUrl || '')
     .replace('<!-- ABOUT_CONTENT_PLACEHOLDER -->', options.aboutContentHtml || '')
     .replace('<!-- PROFILE_BENTO_PLACEHOLDER -->', options.profileBentoHtml || '')
+    .replace('<!-- ACHIEVEMENTS_PLACEHOLDER -->', options.achievementsHtml || '')
     .replace(/<!-- BUILD_VERSION_PLACEHOLDER -->/g, options.buildVersion || '')
     .replace(/<!-- BUILD_DEPLOYED_AT_PLACEHOLDER -->/g, options.buildDeployedAt || '')
     .replace(/<!-- BUILD_CACHE_KEY_PLACEHOLDER -->/g, `${options.buildVersion || '0'}-${String(options.buildDeployedAt || '').replace(/[^0-9]/g, '').slice(0, 14)}`)
