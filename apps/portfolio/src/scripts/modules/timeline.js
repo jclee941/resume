@@ -19,6 +19,25 @@ const TIMELINE_CONFIG = {
   activeClass: 'is-active',
 };
 
+// UI label i18n. Career DATA (role/description) stays Korean as the SSoT
+// canonical text; only the structural UI labels are localized by page lang.
+function timelineLang() {
+  const l = (document.documentElement.lang || 'ko').toLowerCase();
+  if (l.startsWith('en')) return 'en';
+  if (l.startsWith('ja')) return 'ja';
+  return 'ko';
+}
+
+const TIMELINE_LABELS = {
+  ko: { period: '근무 기간', phase: '단계', incident: '인시던트 대응 단계', impact: '성과', detail: '상세 내용', expand: '상세 보기', collapse: '접기', stageDetected: '탐지', stageInvestigated: '분석', stageMitigated: '대응', stageImproved: '개선' },
+  en: { period: 'Tenure', phase: 'Phase', incident: 'Incident response stages', impact: 'Impact', detail: 'Details', expand: 'View details', collapse: 'Collapse', stageDetected: 'Detect', stageInvestigated: 'Analyze', stageMitigated: 'Respond', stageImproved: 'Improve' },
+  ja: { period: '在籍期間', phase: 'フェーズ', incident: 'インシデント対応ステージ', impact: '成果', detail: '詳細', expand: '詳細を見る', collapse: '閉じる', stageDetected: '検知', stageInvestigated: '分析', stageMitigated: '対応', stageImproved: '改善' },
+};
+
+function tl() {
+  return TIMELINE_LABELS[timelineLang()] || TIMELINE_LABELS.ko;
+}
+
 // Phase to incident response stage mapping
 const PHASE_STAGES = {
   '운영': { icon: '🔍', label: '탐지', key: 'detected' },
@@ -81,7 +100,7 @@ function getCareerData() {
         '자동화 실시간 알림 체계 운영',
       ],
       phase: '운영',
-      status: 'active',
+      status: 'completed',
     },
     {
       company: '(주)가온누리정보시스템',
@@ -201,6 +220,7 @@ function injectTimeline() {
  */
 function createTimelineNode(career, index) {
   const phaseInfo = PHASE_STAGES[career.phase] || PHASE_STAGES['기초'];
+  const L = tl();
   const isActive = career.status === 'active';
   const statusClass = isActive ? 'status--active' : 'status--completed';
   const nodeClass = isActive ? 'timeline-node--active' : '';
@@ -221,11 +241,11 @@ function createTimelineNode(career, index) {
 
       <div class="timeline-content">
         <header class="timeline-header">
-          <div class="timeline-date" aria-label="근무 기간">
+          <div class="timeline-date" aria-label="${L.period}">
             <time>${career.period}</time>
           </div>
           <div class="timeline-badges">
-            <span class="phase-badge phase-badge--${career.phase}" aria-label="단계: ${career.phase}">
+            <span class="phase-badge phase-badge--${career.phase}" aria-label="${L.phase}: ${career.phase}">
               ${phaseInfo.icon} ${career.phase}
             </span>
             ${isActive ? '<span class="status-badge status-badge--active" aria-label="현재 진행 중">진행 중</span>' : ''}
@@ -240,14 +260,14 @@ function createTimelineNode(career, index) {
           <p class="timeline-role">${career.role}</p>
           <p class="timeline-myrole">${career.myRole}</p>
 
-          <div class="incident-stages" aria-label="인시던트 대응 단계">
-            <span class="incident-stage" data-stage="detected" title="탐지">🔍</span>
-            <span class="incident-stage" data-stage="investigated" title="분석">🔬</span>
-            <span class="incident-stage" data-stage="mitigated" title="대응">🛡️</span>
-            <span class="incident-stage ${isActive ? 'incident-stage--current' : ''}" data-stage="improved" title="개선">✨</span>
+          <div class="incident-stages" aria-label="${L.incident}">
+            <span class="incident-stage" data-stage="detected" title="${L.stageDetected}">🔍</span>
+            <span class="incident-stage" data-stage="investigated" title="${L.stageInvestigated}">🔬</span>
+            <span class="incident-stage" data-stage="mitigated" title="${L.stageMitigated}">🛡️</span>
+            <span class="incident-stage ${isActive ? 'incident-stage--current' : ''}" data-stage="improved" title="${L.stageImproved}">✨</span>
           </div>
 
-          <div class="timeline-impact" aria-label="성과">
+          <div class="timeline-impact" aria-label="${L.impact}">
             <div class="impact-summary">
               <span class="impact-label">Impact:</span>
               <span class="impact-text">${impactText.split('\n')[0]}</span>
@@ -264,8 +284,8 @@ function createTimelineNode(career, index) {
           </div>
 
           <button class="timeline-expand-btn" aria-expanded="false" aria-controls="details-${index}"
-                  aria-label="상세 내용 ${career.company}">
-            <span class="expand-text">상세 보기</span>
+                  aria-label="${L.detail} ${career.company}">
+            <span class="expand-text">${L.expand}</span>
             <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M6 9l6 6 6-6"/>
             </svg>
@@ -319,7 +339,8 @@ function handleTimelineClick(event) {
 
   // Update button text
   const expandText = expandBtn.querySelector('.expand-text');
-  expandText.textContent = isExpanded ? '상세 보기' : '접기';
+  const L = tl();
+  expandText.textContent = isExpanded ? L.expand : L.collapse;
 
   // Rotate icon
   const icon = expandBtn.querySelector('.expand-icon');

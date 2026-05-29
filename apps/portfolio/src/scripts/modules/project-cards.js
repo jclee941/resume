@@ -159,7 +159,8 @@ export function initProjectCards() {
   const grid = document.createElement('div');
   grid.className = 'project-cards-grid';
   grid.setAttribute('role', 'list');
-  grid.setAttribute('aria-label', '프로젝트 목록');
+  const _pl = (document.documentElement.lang || 'ko').toLowerCase();
+  grid.setAttribute('aria-label', _pl.startsWith('en') ? 'Project list' : _pl.startsWith('ja') ? 'プロジェクト一覧' : '프로젝트 목록');
 
   PROJECTS.forEach((project, index) => {
     const card = createProjectCard(project, index);
@@ -276,7 +277,7 @@ function openDeepDive(project) {
     <div class="deep-dive-content">
       <div class="deep-dive-section">
         <h3 class="deep-dive-section__title">개요</h3>
-        <p style="color: var(--text-secondary); line-height: 1.6;">${escapeHtml(project.description)}</p>
+        <p class="project-detail__description">${escapeHtml(project.description)}</p>
       </div>
       <div class="deep-dive-section">
         <h3 class="deep-dive-section__title">주요 성과</h3>
