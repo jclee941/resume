@@ -19,7 +19,7 @@ const SKILL_DATA_FALLBACK = {
     title: 'Security Automation',
     icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>',
     skills: [
-      { name: 'Splunk ES (SIEM/SOAR)', level: 95, evidence: 'Designed 50+ detection rules, automated response pipeline' },
+      { name: 'Splunk ES (SIEM/SOAR)', level: 95, evidence: 'Designed custom detection rules, automated response pipeline' },
       { name: 'FortiGate/FortiManager', level: 90, evidence: 'Designed and operated firewall policies for financial enterprise' },
       { name: 'NSX-T Microsegmentation', level: 75, evidence: 'Implemented zero-trust microsegmentation in vSphere environment' },
       { name: 'Wazuh (EDR)', level: 80, evidence: 'Deployed EDR solution with custom detection rules' },
@@ -49,7 +49,7 @@ const SKILL_DATA_FALLBACK = {
     icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18 22 12 16 6"/><path d="M8 6 2 12 8 18"/></svg>',
     skills: [
       { name: 'Terraform', level: 85, evidence: 'Standardized firewall configs with Ansible Role' },
-      { name: 'Ansible', level: 82, evidence: 'Automated configuration management across 100+ nodes' },
+      { name: 'Ansible', level: 82, evidence: 'Automated configuration management across the node fleet' },
       { name: 'Docker', level: 78, evidence: 'Containerized applications for local development and CI/CD' }
     ]
   },
