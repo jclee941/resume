@@ -24,7 +24,19 @@ function generateAuthRoutes(opts) {
           }
 
           const body = await request.json();
-          const payload = await verifyGoogleToken(body.credential);
+          const expectedClientId = (typeof env !== 'undefined' && env.GOOGLE_CLIENT_ID) || '';
+          if (!expectedClientId) {
+            return new Response(JSON.stringify({ error: 'Server misconfigured: GOOGLE_CLIENT_ID missing' }), {
+              status: 503,
+              headers: {
+                ...SECURITY_HEADERS,
+                ...rateLimitHeaders,
+                ...corsHeaders,
+                'Content-Type': 'application/json'
+              }
+            });
+          }
+          const payload = await verifyGoogleToken(body.credential, expectedClientId);
           const email = payload.email;
           const allowedEmails = ${opts.allowedEmailsJson};
 
