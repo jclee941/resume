@@ -11,9 +11,9 @@ const PROJECTS = [
     icon: '🛡️',
     stack: ['Splunk', 'n8n', 'FortiManager', 'Python', 'Docker'],
     metrics: [
-      { value: '50+', label: 'Detection Rules', icon: '🔍' },
-      { value: '24/7', label: 'Monitoring', icon: '👁️' },
-      { value: '<5m', label: 'Alert Latency', icon: '⚡' },
+      { value: 'Custom', label: 'Detection Rules', icon: '🔍' },
+      { value: 'Continuous', label: 'Monitoring', icon: '👁️' },
+      { value: 'Realtime', label: 'Alerting', icon: '⚡' },
     ],
     description:
       '금융 거래소 매매체결시스템의 보안 운영 체계를 SIEM 기반 탐지·대응 파이프라인으로 전환했습니다.',
@@ -48,7 +48,7 @@ const PROJECTS = [
     icon: '🏗️',
     stack: ['FortiGate', 'Ansible', 'VMware'],
     metrics: [
-      { value: '5', label: 'Network Layers', icon: '📶' },
+      { value: 'Layered', label: 'Network Segmentation', icon: '📶' },
       { value: 'HA', label: 'Firewall Cluster', icon: '🔄' },
       { value: 'FSC', label: 'Approval Passed', icon: '✅' },
     ],
@@ -80,7 +80,7 @@ const PROJECTS = [
     stack: ['PostgreSQL', 'Python', 'AWS'],
     metrics: [
       { value: 'Tuned', label: 'Query Speed', icon: '🚀' },
-      { value: '0', label: 'Audit Findings', icon: '✅' },
+      { value: 'Clean', label: 'Audit Findings', icon: '✅' },
       { value: 'HA', label: 'Availability', icon: '📊' },
     ],
     description:
@@ -114,7 +114,7 @@ const PROJECTS = [
     stack: ['NSX-T', 'VMware', 'Wazuh'],
     metrics: [
       { value: 'Full', label: 'East-West Coverage', icon: '📡' },
-      { value: '0', label: 'Blind Spots', icon: '👁️' },
+      { value: 'Full', label: 'Visibility Coverage', icon: '👁️' },
       { value: 'Micro', label: 'Segmentation', icon: '🧩' },
     ],
     description:
