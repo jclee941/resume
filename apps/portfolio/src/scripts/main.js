@@ -6,6 +6,7 @@ import { initSkillRadar } from './modules/skill-radar.js';
 import { initCareerTimeline } from './modules/timeline.js';
 import { initProjectCards } from './modules/project-cards.js';
 import { initGuestbook } from './modules/guestbook.js';
+import { initObservabilityStats } from './modules/observability.js';
 
 // Initialize all modules
 document.addEventListener('DOMContentLoaded', () => {
@@ -17,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initCareerTimeline();
   initProjectCards();
   initGuestbook();
+  initObservabilityStats();
 
   // Service Worker Registration
   if ('serviceWorker' in navigator) {
