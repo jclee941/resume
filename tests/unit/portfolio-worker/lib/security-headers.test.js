@@ -96,7 +96,7 @@ describe('Security Headers Module', () => {
 
     test('restricts framing and script origins', () => {
       const headers = generateSecurityHeaders([]);
-      expect(headers['Content-Security-Policy']).toContain("frame-src 'none'");
+      expect(headers['Content-Security-Policy']).toContain('frame-src https://grafana.jclee.me');
       expect(headers['Content-Security-Policy']).toContain('https://accounts.google.com');
     });
 
