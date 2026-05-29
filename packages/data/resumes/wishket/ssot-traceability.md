@@ -25,10 +25,10 @@
 
 | 포트폴리오 주장                                      | SSoT 경로                                 | SSoT 값                                                        |
 | ---------------------------------------------------- | ----------------------------------------- | -------------------------------------------------------------- |
-| 다수 메트릭 엔드포인트 수집                           | `personalProjects[name="Observability Platform"].metrics.targets`     | `"다수 metrics endpoints"`                                      |
-| 다수 Grafana 대시보드                                 | `personalProjects[name="Observability Platform"].metrics.dashboards`  | `"다수"`                                                        |
-| 여러 데이터소스 통합                                  | `personalProjects[name="Observability Platform"].metrics.datasources` | `"Prometheus, Loki, Elasticsearch"`                            |
-| 안정적인 인프라 가용성                                  | `personalProjects[name="Observability Platform"].metrics.uptime`      | `"안정적인 가용성"`                                                      |
+| 다수 메트릭 엔드포인트 수집                           | `personalProjects[name="Observability Platform"].description`     | `"Prometheus node_exporter로 Proxmox VM/CT 메트릭을 수집"`      |
+| Grafana-as-code 대시보드                              | `personalProjects[name="Observability Platform"].description`  | `"Grafana 대시보드 정의를 코드로 관리"`                          |
+| 여러 데이터소스 통합                                  | `personalProjects[name="Observability Platform"].technologies` | `["Grafana","Prometheus","Loki","Blackbox Exporter","Docker"]` |
+| Blackbox Exporter 기반 모니터링                        | `personalProjects[name="Observability Platform"].technologies`      | `["...","Blackbox Exporter","..."]`                            |
 | Prometheus, Loki, Grafana, Blackbox Exporter, Docker | `personalProjects[name="Observability Platform"].technologies`        | `["Grafana","Prometheus","Loki","Blackbox Exporter","Docker"]` |
 | 홈랩 인프라 모니터링                                 | `personalProjects[name="Observability Platform"].description`         | `"홈랩 인프라 모니터링..."`                                    |
 | 데모 URL                                             | `personalProjects[name="Observability Platform"].demoUrl`             | `"https://grafana.jclee.me/..."`                               |
@@ -42,10 +42,10 @@ R5 수정: `(인프라 헬스, 서비스 상태)` 대시보드 설명 제거, `�
 
 | 포트폴리오 주장           | SSoT 경로                                    | SSoT 값                                |
 | ------------------------- | -------------------------------------------- | -------------------------------------- |
-| 다수 탐지 룰              | `personalProjects[name="Security Alert System"].metrics.detectionRules` | `"다수 탐지 룰"`                               |
-| Slack Block Kit 알림      | `personalProjects[name="Security Alert System"].metrics.alertChannels`  | `"Slack Block Kit"`                    |
-| FortiGate syslog → Splunk | `personalProjects[name="Security Alert System"].metrics.sources`        | `"FortiGate syslog → Splunk"`          |
-| 신속 알림            | `personalProjects[name="Security Alert System"].metrics.responseTime`   | `"이벤트 발생 후 신속 알림"`      |
+| Splunk Saved Search 연동  | `personalProjects[name="Security Alert System"].description` | `"Splunk Saved Search와 Webhook을 연동"`      |
+| Slack 알림 연동           | `personalProjects[name="Security Alert System"].technologies`  | `["Splunk","Python","Slack"]`         |
+| FortiGate syslog → Splunk | `personalProjects[name="Security Alert System"].description`            | `"FortiGate 보안 이벤트가 장비 syslog와 Splunk에 분산"` |
+| 중복 알림 억제       | `personalProjects[name="Security Alert System"].description`   | `"상태 전이 시에만 알림이 발송되도록 중복 알림을 억제"` |
 | Splunk, Python, Slack     | `personalProjects[name="Security Alert System"].technologies`           | `["Splunk","Python","Slack"]`          |
 | GitHub URL                | `personalProjects[name="Security Alert System"].githubUrl`              | `"https://github.com/jclee941/splunk"` |
 
@@ -58,13 +58,13 @@ R5 수정: `Splunk Enterprise Security` → `Splunk`, SPL 행 제거, `Alert Act
 
 | 포트폴리오 주장                      | SSoT 경로                                | SSoT 값                                     |
 | ------------------------------------ | ---------------------------------------- | ------------------------------------------- |
-| FortiManager, FortiAnalyzer REST API | `personalProjects[name="Security Alert System"].metrics.endpoints`  | `"FortiManager, FortiAnalyzer REST API"`    |
-| 정책 조회, 라우트 관리, 로그 통계    | `personalProjects[name="Security Alert System"].metrics.features`   | `"정책 조회, 라우트 관리, 로그 통계"`       |
-| 수동 조회 부담 완화              | `personalProjects[name="Security Alert System"].metrics.automation` | `"수동 조회 부담 완화"`            |
-| Python, FortiManager, FortiAnalyzer  | `personalProjects[name="Security Alert System"].technologies`       | `["Python","FortiManager","FortiAnalyzer"]` |
+| FortiManager API 활용                | `careers[0].description`  | `"FortiManager JSON-RPC API를 활용한 방화벽 정책 자동 조회"`    |
+| 방화벽 정책 자동 조회                | `careers[0].description`   | `"콘솔 수동 조작을 제거하고 접근 제어 일관성을 확보"`       |
+| 콘솔 수동 조작 제거              | `careers[0].description` | `"콘솔 수동 조작을 제거"`            |
+| Python, Splunk, Slack                | `personalProjects[name="Security Alert System"].technologies`       | `["Splunk","Python","Slack"]` |
 | GitHub URL                           | `personalProjects[name="Security Alert System"].githubUrl`          | `"https://github.com/jclee941/splunk"`      |
 
-R5 수정: `JSON-RPC over HTTPS` 행 제거, features를 SSoT 원문으로 축소
+R7 수정: FortiNet API 주장을 실제 SSoT 필드(careers[0].description, Security Alert technologies)로 재매핑
 
 ---
 
@@ -78,8 +78,8 @@ R5 수정: `JSON-RPC over HTTPS` 행 제거, features를 SSoT 원문으로 축�
 | Ansible 정책 배포          | `experiences[0].responsibilities`             | `"Ansible Role 기반 방화벽 초기 설정 및 정책 배포 표준화"`  |
 | 금융위 본인가              | `experiences[0].responsibilities`             | `"금융위원회 본인가 심사 기술 대응 및 보안 아키텍처 수립"`  |
 | Splunk ES 보안 운영        | `experiences[0].responsibilities`             | `"Splunk ES 및 FortiGate API를 활용한 보안 운영 자동화"`    |
-| 다수 탐지 룰               | `personalProjects[name="Security Alert System"].metrics.detectionRules`  | `"다수 탐지 룰"`                                                    |
-| 신속 알림               | `personalProjects[name="Security Alert System"].metrics.responseTime`    | `"이벤트 발생 후 신속 알림"`                           |
+| Splunk Saved Search 알림   | `personalProjects[name="Security Alert System"].description`  | `"Splunk Saved Search와 Webhook을 연동"`                            |
+| 중복 알림 억제          | `personalProjects[name="Security Alert System"].description`    | `"중복 알림을 억제"`                           |
 | FortiManager API           | `experiences[0].responsibilities`             | `"FortiManager API를 이용한 방화벽 정책 자동 조회 툴 개발"` |
 
 R5 수정: `(JSON-RPC)` 제거
@@ -90,9 +90,9 @@ R5 수정: `(JSON-RPC)` 제거
 
 | 포트폴리오 주장                    | SSoT 경로                             | SSoT 값                                   |
 | ---------------------------------- | ------------------------------------- | ----------------------------------------- |
-| multiple threat intelligence feeds       | `personalProjects[name="IP Blacklist Platform"].metrics.feeds`   | `"multiple threat intelligence feeds"`          |
-| Flask REST API + Next.js Dashboard | `personalProjects[name="IP Blacklist Platform"].metrics.stack`   | `"Flask REST API + Next.js Dashboard"`    |
-| PostgreSQL GeoIP enrichment        | `personalProjects[name="IP Blacklist Platform"].metrics.storage` | `"PostgreSQL with GeoIP enrichment"`      |
+| multiple threat intelligence feeds       | `personalProjects[name="IP Blacklist Platform"].description`   | `"AbuseIPDB, Emerging Threats, AlienVault OTX feed"`          |
+| Flask REST API + Next.js Dashboard | `personalProjects[name="IP Blacklist Platform"].technologies`   | `["Flask","Next.js","PostgreSQL"]`    |
+| PostgreSQL 저장                    | `personalProjects[name="IP Blacklist Platform"].technologies` | `["Flask","Next.js","PostgreSQL"]`      |
 | Flask, Next.js, PostgreSQL         | `personalProjects[name="IP Blacklist Platform"].technologies`    | `["Flask","Next.js","PostgreSQL"]`        |
 | GitHub URL                         | `personalProjects[name="IP Blacklist Platform"].githubUrl`       | `"https://github.com/jclee941/blacklist"` |
 
@@ -120,9 +120,9 @@ GitLab CI/CD, Nginx, Cloudflare), `(TypeScript)` 제거, `금융` 접두사 제�
 | FortiGate/FortiManager HA        | `experiences[0].responsibilities`      | `"FGCP Active-Passive HA"`                                 |
 | 금융위원회 본인가 심사 기술 대응 | `experiences[0].responsibilities`      | `"금융위원회 본인가 심사 기술 대응 및 보안 아키텍처 수립"` |
 | Grafana + Prometheus + Loki      | `personalProjects[name="Observability Platform"].technologies`     | `["Grafana","Prometheus","Loki"]`                          |
-| 다수 대시보드, 다수 메트릭         | `personalProjects[name="Observability Platform"].metrics`          | `dashboards: "다수"`, `targets: "다수 metrics endpoints"`    |
+| Grafana-as-code 대시보드         | `personalProjects[name="Observability Platform"].description`          | `"Grafana 대시보드 정의를 코드로 관리"`    |
 | Splunk ES                        | `experiences[0].responsibilities`      | `"Splunk ES 및 FortiGate API를 활용"`                      |
-| FortiNet API 기능                | `personalProjects[name="Security Alert System"].metrics.features` | `"정책 조회, 라우트 관리, 로그 통계"`                      |
+| FortiManager API 활용             | `careers[0].description`                | `"FortiManager JSON-RPC API를 활용한 방화벽 정책 자동 조회"`                      |
 | CompTIA Linux+, LPIC-1, RHCSA 등 | `certifications[]`                     | 자격증 배열                                            |
 | 선호 프로젝트                    | 위시캣 프로필 UI 입력                  | SSoT 비대상 (HTML 주석 표기)                               |
 
