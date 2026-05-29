@@ -3,7 +3,7 @@
 ## Overview
 
 This directory contains comprehensive technical documentation for the Nextrade
-securities exchange infrastructure project, covering 19 months of construction
+securities exchange infrastructure project, covering 24 months of construction
 and operations phases.
 
 ## Documents
@@ -46,7 +46,7 @@ Complete technical details with code examples (~60 pages each):
 
 **Security**:
 
-- 19 months zero breaches, zero data leaks
+- 24 months zero breaches, zero data leaks
 - 3 consecutive FSC audits with zero findings
 - 98% vulnerability SLA compliance
 - MTTD 3.2min, MTTR 27min (50% better than industry avg)
@@ -149,11 +149,11 @@ pandoc SOC_RUNBOOK_COMPACT.md -o SOC_RUNBOOK_COMPACT.docx --toc --number-section
 
 ## Project Context
 
-**Duration**: March 2024 ~ Present (19 months)
+**Duration**: March 2024 ~ February 2026 (24 months)
 **Phases**:
 
 - Construction (2024.03-2025.02, 11 months) - 가온누리정보시스템
-- Operations (2025.03-Present, 8 months) - 아이티센 CTS
+- Operations (2025.03-2026.02, 12 months) - 아이티센 CTS
 
 **Scale**:
 
