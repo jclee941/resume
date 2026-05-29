@@ -59,7 +59,7 @@ function generateSecurityHeaders(styleHashes, options = {}) {
     "font-src 'self'",
     "manifest-src 'self'",
     "worker-src 'self'",
-    "frame-src 'none'",
+    'frame-src https://grafana.jclee.me',
     "frame-ancestors 'none'",
     "base-uri 'self'",
     "form-action 'self'",
