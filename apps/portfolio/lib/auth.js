@@ -61,7 +61,7 @@ function verifySession() {
     '  const cookieHeader = request.headers.get("Cookie");',
     '  if (!cookieHeader) return null;',
     '  ',
-    "  const cookies = Object.fromEntries(cookieHeader.split(';').map(c => c.trim().split('=')));",
+  "  const cookies = Object.fromEntries(cookieHeader.split(';').map(c => { const t = c.trim(); const i = t.indexOf('='); return i === -1 ? [t, ''] : [t.slice(0, i), t.slice(i + 1)]; }));",
     "  const sessionData = cookies['dashboard_session'];",
     '  ',
     '  if (!sessionData) return null;',

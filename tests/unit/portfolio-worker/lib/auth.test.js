@@ -109,6 +109,24 @@ describe('auth', () => {
     it('should be valid JavaScript syntax', () => {
       expect(() => new Function(code)).not.toThrow();
     });
+
+    it('should not use unsafe split("=") cookie parsing', () => {
+      // Regression: split('=') breaks when cookie values contain '=' (e.g. base64 padding).
+      // The generated source must NOT call .split('=') on individual cookie pairs.
+      expect(code).not.toMatch(/\.split\('='\)/);
+      expect(code).not.toMatch(/\.split\("="\)/);
+    });
+
+    it('should preserve base64 padding and dotted payload in cookie values', () => {
+      // Build a runtime cookie parser identical to the one embedded in worker.js,
+      // and feed it a realistic dashboard_session value with '=' padding on both halves.
+      const parserSrc = code.match(/Object\.fromEntries\(cookieHeader\.split\(';'\)\.map\([\s\S]*?\)\);/);
+      expect(parserSrc).not.toBeNull();
+      const fn = new Function('cookieHeader', `return ${parserSrc[0].replace(/;\s*$/, '')}`);
+      const cookies = fn('dashboard_session=eyJ1Ijoi=.abc=; theme=dark');
+      expect(cookies.dashboard_session).toBe('eyJ1Ijoi=.abc=');
+      expect(cookies.theme).toBe('dark');
+    });
   });
 
   describe('getCFZoneId', () => {

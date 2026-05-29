@@ -21,6 +21,18 @@ function generateCfStatsRoute() {
         const cfApiKey = (typeof env !== 'undefined' && env.CF_API_KEY) || "";
         const cfEmail = (typeof env !== 'undefined' && env.CF_EMAIL) || "";
 
+        if (!cfApiKey || !cfEmail) {
+          return new Response(JSON.stringify({ error: "Cloudflare API credentials not configured" }), {
+            status: 503,
+            headers: {
+              ...SECURITY_HEADERS,
+              ...rateLimitHeaders,
+              ...corsHeaders,
+              'Content-Type': 'application/json'
+            }
+          });
+        }
+
         const zoneId = await getCFZoneId(cfApiKey, cfEmail);
         if (!zoneId) {
           return new Response(JSON.stringify({ error: "Zone not found" }), {
