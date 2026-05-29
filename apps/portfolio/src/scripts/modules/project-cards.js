@@ -79,14 +79,14 @@ const PROJECTS = [
     icon: '📈',
     stack: ['PostgreSQL', 'Python', 'AWS'],
     metrics: [
-      { value: '3x', label: 'Query Speed', icon: '🚀' },
+      { value: 'Tuned', label: 'Query Speed', icon: '🚀' },
       { value: '0', label: 'Audit Findings', icon: '✅' },
-      { value: '99.9%', label: 'Uptime', icon: '📊' },
+      { value: 'HA', label: 'Availability', icon: '📊' },
     ],
     description:
       'AI 기반 트레이딩 플랫폼의 데이터베이스 인프라를 운영하고 금융감독원 감사에 대응했습니다.',
     achievements: [
-      'PostgreSQL DB 튜닝으로 쿼리 성능 3배 개선',
+      'PostgreSQL DB 튜닝으로 쿼리 성능 개선',
       '금융감독원 정기 감사 대응 (0건 지적)',
       '백업·복구 체계 구축',
       '인프라 모니터링 체계 운영',
@@ -113,7 +113,7 @@ const PROJECTS = [
     icon: '🎓',
     stack: ['NSX-T', 'VMware', 'Wazuh'],
     metrics: [
-      { value: '100%', label: 'East-West Traffic', icon: '📡' },
+      { value: 'Full', label: 'East-West Coverage', icon: '📡' },
       { value: '0', label: 'Blind Spots', icon: '👁️' },
       { value: 'Micro', label: 'Segmentation', icon: '🧩' },
     ],
