@@ -41,7 +41,7 @@ Security Engineer (시스템 보안)
 - 15종 보안 솔루션 통합 운영 (FortiGate, NAC, DLP, EDR, SIEM 등)
 - Splunk 기반 상시 보안 모니터링 체계 운영 및 인시던트 대응
 - 보안 장애 건수를 줄이고 반복 원인을 정리
-- 인시던트 평균 대응 시간을 단축
+- 인시던트 평균 대응 절차를 자동화
 - 금융감독원 정기 감사 지적사항 없이 통과 (2회 연속)
 - 정기 보안 취약점 점검 및 월간 리포트 작성
 - n8n 워크플로우를 활용한 보안 알림 자동화
@@ -62,7 +62,7 @@ Security Engineer (시스템 보안)
 - EPP, DLP, APT 등 엔드포인트 보안 솔루션 구축
 - RADIUS와 2FA 통합을 통한 접근제어 체계 구축
 - Ansible 플레이북 개발로 보안 장비 설정 표준화
-- FortiManager API 연동 방화벽 정책 자동화로 배포 시간 단축
+- FortiManager API 연동 방화벽 정책 자동화로 배포 절차 자동화
 
 기술 스택: FortiGate, FortiManager, Ansible, Python, VMware
 

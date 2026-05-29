@@ -95,7 +95,7 @@ fontsize: 11pt
 - **기술 스택**: Python, Ansible, FortiManager API, VMware, Linux
 
 - **성과**:
-  - FortiManager API 자동화로 방화벽 정책 배포 시간을 단축
+  - FortiManager API 자동화로 방화벽 정책 배포 절차를 자동화
   - Ansible 기반 CCE 점검 자동화로 수동 점검 부담을 줄임
   - 금융위 본인가 심사 통과 (보안 아키텍처 부분)
 
