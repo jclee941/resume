@@ -3,7 +3,7 @@
  * Interactive capability matrix with domain cards, skill proficiency bars, and evidence drawer
  */
 
-const SKILL_DATA = {
+const SKILL_DATA_FALLBACK = {
   securityAutomation: {
     title: 'Security Automation',
     icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>',
@@ -62,6 +62,13 @@ const SKILL_DATA = {
   }
 };
 
+// Build-time injected real skills from data.json (esbuild `define` replaces the
+// __SKILL_DATA__ token). Falls back to the static copy above if not provided.
+const SKILL_DATA =
+  typeof __SKILL_DATA__ !== 'undefined' && __SKILL_DATA__ && Object.keys(__SKILL_DATA__).length > 0
+    ? __SKILL_DATA__
+    : SKILL_DATA_FALLBACK;
+
 const LEVELS = {
   expert: { min: 90, label: 'Expert', color: 'var(--cyber-green)' },
   advanced: { min: 70, label: 'Advanced', color: 'var(--cyber-cyan)' },
@@ -88,6 +95,36 @@ function createSkillRadar() {
     const card = createDomainCard(domainKey, domain);
     container.appendChild(card);
   });
+
+  // CSP-safe styling: the templates emit inert data-* attributes (no inline
+  // style="" which the strict style-src would block). Translate them into
+  // CSSOM custom properties here — CSSOM writes are NOT subject to style-src.
+  applyRadarStyles(container);
+}
+
+/**
+ * Apply dynamic colors / bar widths via the CSSOM (allowed under strict CSP),
+ * reading the inert data-* attributes set by the HTML templates.
+ * @param {ParentNode} root
+ */
+function applyRadarStyles(root) {
+  root.querySelectorAll('[data-level-color]').forEach((el) => {
+    const color = el.getAttribute('data-level-color');
+    if (!color) return;
+    // Domain level indicator uses a custom prop; the per-skill level label
+    // colors its own text. Set both safely; unused one is harmless.
+    el.style.setProperty('--level-color', color);
+    if (el.classList.contains('skill-item__level')) {
+      el.style.color = color;
+    }
+  });
+  root.querySelectorAll('.skill-item__bar[data-target-width]').forEach((bar) => {
+    const w = parseInt(bar.getAttribute('data-target-width'), 10);
+    const safeW = Number.isFinite(w) ? Math.min(Math.max(w, 0), 100) : 0;
+    bar.style.setProperty('--target-width', `${safeW}%`);
+    const barColor = bar.getAttribute('data-bar-color');
+    if (barColor) bar.style.setProperty('--bar-color', barColor);
+  });
 }
 
 function createDomainCard(domainKey, domain) {
@@ -112,7 +149,7 @@ function createDomainCard(domainKey, domain) {
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
       </div>
     </div>
-    <div class="skill-domain-card__level-indicator" style="--level-color: ${levelInfo.color}" aria-label="${getProficiencyLabel(domain.skills[0].level)}">
+    <div class="skill-domain-card__level-indicator" data-level-color="${levelInfo.color}" aria-label="${getProficiencyLabel(domain.skills[0].level)}">
       <span class="skill-domain-card__level-dot"></span>
       <span class="skill-domain-card__level-label">${getProficiencyLabel(domain.skills[0].level)}</span>
     </div>
@@ -169,10 +206,10 @@ function createSkillItem(skill) {
     <li class="skill-item" data-skill="${skill.name}" data-level="${skill.level}">
       <div class="skill-item__header">
         <span class="skill-item__name">${skill.name}</span>
-        <span class="skill-item__level" style="color: ${levelInfo.color}">${skill.level}%</span>
+        <span class="skill-item__level" data-level-color="${levelInfo.color}">${skill.level}%</span>
       </div>
       <div class="skill-item__bar-container" role="progressbar" aria-valuenow="${skill.level}" aria-valuemin="0" aria-valuemax="100" aria-label="${skill.name} proficiency">
-        <div class="skill-item__bar" style="--target-width: ${skill.level}%; --bar-color: ${levelInfo.color}"></div>
+        <div class="skill-item__bar" data-target-width="${skill.level}" data-bar-color="${levelInfo.color}"></div>
       </div>
     </li>
   `;
