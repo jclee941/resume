@@ -4,10 +4,9 @@
 const CACHE_NAME = 'resume-pwa-v1';
 const RUNTIME_CACHE = 'resume-runtime-v1';
 
-// Resources to cache on install
-// Resources to cache on install (no HTML — HTML carries per-response CSP nonce)
-  // Manifests are cached for offline PWA install support; HTML is fetched fresh.
-  const PRECACHE_URLS = [
+// Resources to cache on install (no HTML — HTML carries per-response CSP nonce).
+// Manifests are cached for offline PWA install support; HTML is fetched fresh.
+const PRECACHE_URLS = [
   '/manifest.json',
   '/manifest_en.json',
   'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap',
