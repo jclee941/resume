@@ -62,7 +62,7 @@ function injectPlaceholders(html, options) {
 function buildJapaneseTemplate(html) {
   return html
     .replace(/<html lang="ko"/i, '<html lang="ja"')
-    .replace(/<title>[^<]*<\/title>/i, '<title>イ・ジェチョル - Security エンジニア</title>')
+    .replace(/<title>[^<]*<\/title>/i, '<title>イ・ジェチョル - セキュリティエンジニア</title>')
     .replace(/<link rel="canonical" href="https:\/\/resume\.jclee\.me\/?" \/>/i, '<link rel="canonical" href="https://resume.jclee.me/ja/" />')
     .replace(
       /<link rel="alternate" hreflang="en-US" href="https:\/\/resume\.jclee\.me\/en\/" \/>/i,
@@ -70,27 +70,27 @@ function buildJapaneseTemplate(html) {
     )
     .replace(/<meta property="og:url" content="https:\/\/resume\.jclee\.me\/?" \/>/i, '<meta property="og:url" content="https://resume.jclee.me/ja/" />')
     .replace(/<meta property="og:image" content="https:\/\/resume\.jclee\.me\/og-image\.webp" \/>/i, '<meta property="og:image" content="https://resume.jclee.me/og-image-ja.webp" />')
-    .replace(/<meta property="og:title" content="[^"]*" \/>/i, '<meta property="og:title" content="イ・ジェチョル - Security エンジニア" />')
+    .replace(/<meta property="og:title" content="[^"]*" \/>/i, '<meta property="og:title" content="イ・ジェチョル - セキュリティエンジニア" />')
     .replace(/<meta property="og:locale" content="ko_KR" \/>/i, '<meta property="og:locale" content="ja_JP" />\n    <meta property="og:locale:alternate" content="ko_KR" />')
     .replace(/\s*<meta property="og:locale:alternate" content="ja_JP" \/>/g, '')
     .replace(/<meta name="twitter:url" content="https:\/\/resume\.jclee\.me\/?" \/>/i, '<meta name="twitter:url" content="https://resume.jclee.me/ja/" />')
     .replace(/<meta name="twitter:image" content="https:\/\/resume\.jclee\.me\/og-image\.webp" \/>/i, '<meta name="twitter:image" content="https://resume.jclee.me/og-image-ja.webp" />')
-    .replace(/<meta name="twitter:title" content="[^"]*" \/>/i, '<meta name="twitter:title" content="イ・ジェチョル - Security エンジニア" />')
-    .replace(/"name": "이재철 - Security 엔지니어"/g, '"name": "イ・ジェチョル - Security エンジニア"')
+    .replace(/<meta name="twitter:title" content="[^"]*" \/>/i, '<meta name="twitter:title" content="イ・ジェチョル - セキュリティエンジニア" />')
+    .replace(/"name": "이재철 - 보안 엔지니어"/g, '"name": "イ・ジェチョル - セキュリティエンジニア"')
     .replace(/"name": "이재철"/g, '"name": "イ・ジェチョル"')
     .replace(/"inLanguage": "ko-KR"/g, '"inLanguage": "ja-JP"')
     .replace(/"url": "https:\/\/resume\.jclee\.me\/"/g, '"url": "https://resume.jclee.me/ja/"')
     .replace(/"item": "https:\/\/resume\.jclee\.me\/"/g, '"item": "https://resume.jclee.me/ja/"')
     .replace(/"image": "https:\/\/resume\.jclee\.me\/og-image\.webp"/g, '"image": "https://resume.jclee.me/og-image-ja.webp"')
-    .replace(/"jobTitle": "Security 엔지니어"/g, '"jobTitle": "Security エンジニア"')
+    .replace(/"jobTitle": "보안 엔지니어"/g, '"jobTitle": "セキュリティエンジニア"')
     // === JA meta tags (description, keywords, og:description, twitter:description) ===
-    .replace(/<meta\s+name="description"[\s\S]*?\/>/i, '<meta name="description" content="イ・ジェチョル - Security エンジニア ポートフォリオ" />')
+    .replace(/<meta\s+name="description"[\s\S]*?\/>/i, '<meta name="description" content="イ・ジェチョル - セキュリティエンジニア ポートフォリオ" />')
     .replace(/<meta\s+name="keywords"[\s\S]*?\/>/i, '<meta name="keywords" content="イ・ジェチョル, Lee Jaecheol, Security Engineer" />')
     .replace(/<meta\s+name="author"[\s\S]*?\/>/i, '<meta name="author" content="イ・ジェチョル (Lee Jaecheol)" />')
-    .replace(/<meta\s+property="og:description"[\s\S]*?\/>/i, '<meta property="og:description" content="イ・ジェチョル - Security エンジニア ポートフォリオ" />')
-    .replace(/<meta\s+name="twitter:description"[\s\S]*?\/>/i, '<meta name="twitter:description" content="イ・ジェチョル - Security エンジニア ポートフォリオ" />')
+    .replace(/<meta\s+property="og:description"[\s\S]*?\/>/i, '<meta property="og:description" content="イ・ジェチョル - セキュリティエンジニア ポートフォリオ" />')
+    .replace(/<meta\s+name="twitter:description"[\s\S]*?\/>/i, '<meta name="twitter:description" content="イ・ジェチョル - セキュリティエンジニア ポートフォリオ" />')
     // === JA JSON-LD description ===
-    .replace(/"description": "[^"]*"/g, '"description": "イ・ジェチョル - Security エンジニア ポートフォリオ"')
+    .replace(/"description": "[^"]*"/g, '"description": "イ・ジェチョル - セキュリティエンジニア ポートフォリオ"')
     // === JA hero copy (replace KO hero text with Japanese) ===
     .replace(/<span class="typing-effect glow-cyan">이재철<\/span/g, '<span class="typing-effect glow-cyan">イ・ジェチョル</span')
     .replace(/<span class="sr-only">이재철<\/span>/g, '<span class="sr-only">イ・ジェチョル</span>')
@@ -129,8 +129,8 @@ function buildJapaneseTemplate(html) {
     .replace(/aria-label="방명록 목록"/g, 'aria-label="ゲストブック一覧"')
     .replace(/"name": "Security\/Infrastructure Engineer — 구직 중"/g, '"name": "Security / Infrastructure Engineer — 求職中"')
     // === Inline JS terminal commands KO -> JA ===
-    .replace(/'Security 엔지니어'/g, "'Security エンジニア'")
-    .replace(/> Security 엔지니어\\n> Scrolling to #about\.\.\./g, '> Security エンジニア\\n> Scrolling to #about...')
+    .replace(/'보안 엔지니어'/g, "'セキュリティエンジニア'")
+    .replace(/> 보안 엔지니어\\n> Scrolling to #about\.\.\./g, '> セキュリティエンジニア\\n> Scrolling to #about...')
     // === Inline JS terminal command keywords KO -> JA ===
     .replace(/'연락', '이메일', '전화'/g, "'連絡', 'メール', '電話'")
     .replace(/'기술', '스킬', '역량'/g, "'技術', 'スキル', 'スタック'")
