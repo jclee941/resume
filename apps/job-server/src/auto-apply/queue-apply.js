@@ -2,7 +2,10 @@ import { readFileSync } from 'fs';
 
 import { SessionManager } from '../shared/services/session/index.js';
 
-const SUPPORTED_PLATFORMS = new Set(['jobkorea', 'wanted']);
+// Platforms with a working browser-based apply strategy (applyTo<Platform>) and
+// per-platform cookie/session loading. saramin + jobkorea are the user's
+// requested platforms; wanted is also supported via its strategy.
+const SUPPORTED_PLATFORMS = new Set(['jobkorea', 'saramin', 'wanted']);
 
 /**
  * Normalize a curated submit-queue entry into the shape the apply strategies expect.

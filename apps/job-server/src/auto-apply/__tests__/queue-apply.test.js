@@ -16,6 +16,7 @@ const queue = [
   { company: 'B', position: '보안', source: 'saramin', url: 'https://www.saramin.co.kr/2' },
   { company: 'C', position: 'DevOps', source: 'wanted', url: 'https://www.wanted.co.kr/wd/3' },
   { company: 'D', position: 'nourl', source: 'jobkorea', url: '' },
+  { company: 'E', position: 'eng', source: 'linkedin', url: 'https://www.linkedin.com/jobs/5' },
 ];
 
 function fakeRead() {
@@ -33,11 +34,17 @@ describe('normalizeQueueEntry', () => {
 });
 
 describe('assessQueueEntry', () => {
-  it('blocks unsupported platforms (saramin has no submit path here)', () => {
-    const job = normalizeQueueEntry(queue[1]);
+  it('blocks unsupported platforms (linkedin has no curated submit path here)', () => {
+    const job = normalizeQueueEntry(queue[4]);
     const v = assessQueueEntry(job, { checkHealth: () => validHealth });
     assert.equal(v.ok, false);
-    assert.match(v.reason, /unsupported_platform:saramin/);
+    assert.match(v.reason, /unsupported_platform:linkedin/);
+  });
+
+  it('supports saramin (approved scope, has applyToSaramin strategy)', () => {
+    const job = normalizeQueueEntry(queue[1]);
+    const v = assessQueueEntry(job, { checkHealth: () => validHealth });
+    assert.equal(v.ok, true);
   });
 
   it('blocks supported platform with no valid session', () => {
@@ -67,14 +74,16 @@ describe('planQueueApply', () => {
       readFile: fakeRead,
       checkHealth: (p) => (p === 'jobkorea' ? validHealth : invalidHealth),
     });
-    // jobkorea#1 valid+url => submittable; saramin unsupported; wanted no session; jobkorea#4 no url
+    // jobkorea#1 valid+url => submittable; saramin no-session; wanted no-session;
+    // jobkorea#4 no url; linkedin unsupported
     assert.equal(plan.submittable.length, 1);
     assert.equal(plan.submittable[0].source, 'jobkorea');
-    assert.equal(plan.blocked.length, 3);
+    assert.equal(plan.blocked.length, 4);
     const reasons = plan.blocked.map((b) => b.reason).join(',');
-    assert.match(reasons, /unsupported_platform:saramin/);
+    assert.match(reasons, /no_valid_session:saramin/);
     assert.match(reasons, /no_valid_session:wanted/);
     assert.match(reasons, /missing_url/);
+    assert.match(reasons, /unsupported_platform:linkedin/);
   });
 });
 
@@ -114,7 +123,7 @@ describe('runQueueApply', () => {
     assert.deepEqual(calledWith, ['jobkorea']);
     assert.equal(res.applied.length, 1);
     assert.equal(res.applied[0].success, true);
-    assert.equal(res.blocked.length, 3);
+    assert.equal(res.blocked.length, 4);
   });
 
   it('respects max limit', async () => {
