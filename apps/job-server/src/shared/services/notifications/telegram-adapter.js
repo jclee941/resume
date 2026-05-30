@@ -4,11 +4,12 @@ import {
   createApprovalRequestMessage,
   createCaptchaDetectedMessage,
   createDailySummaryMessage,
+  createJobPostingsMessage,
 } from './telegram-adapter/formatters.js';
 import { answerCallbackQuery, notify } from './telegram-adapter/delivery.js';
 import { handleCallbackQuery } from './telegram-adapter/callbacks.js';
 
-export { escapeHtml } from './telegram-adapter/formatters.js';
+export { escapeHtml, createJobPostingsMessage } from './telegram-adapter/formatters.js';
 
 export class TelegramNotificationAdapter {
   constructor(options = {}) {
@@ -21,6 +22,7 @@ export class TelegramNotificationAdapter {
     this.telegramToken = options.telegramToken || env.TELEGRAM_BOT_TOKEN;
     this.telegramChatId = options.telegramChatId || env.TELEGRAM_CHAT_ID;
     this.n8nWebhookUrl = options.n8nWebhookUrl || env.N8N_WEBHOOK_URL || env.N8N_URL;
+    this.fetchImpl = options.fetchImpl || null;
 
     this.db = options.db || env.DB || null;
     this.d1Client = options.d1Client || null;
@@ -35,6 +37,22 @@ export class TelegramNotificationAdapter {
       windowStartedAt: 0,
       count: 0,
     };
+  }
+
+  /**
+   * Send a list of job postings (with clickable URLs) to Telegram.
+   *
+   * @param {Array<object>} jobs
+   * @param {{limit?:number, header?:string}} [options]
+   */
+  async sendJobPostings(jobs = [], options = {}) {
+    const message = createJobPostingsMessage(jobs, options);
+    return notify(
+      this,
+      'job_postings',
+      { count: Array.isArray(jobs) ? jobs.length : 0, timestamp: new Date().toISOString() },
+      message
+    );
   }
 
   async sendApprovalRequest(job, matchScore, applicationId) {
