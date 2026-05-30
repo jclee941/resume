@@ -19,7 +19,6 @@
  * @param {string} opts.sitemapXml - Escaped sitemap.xml content
  * @param {string} opts.ogImageBase64 - Base64 OG image (Korean)
  * @param {string} opts.ogImageEnBase64 - Base64 OG image (English)
- * @param {string} opts.resumePdfBase64 - Base64 resume PDF
  * @param {string} opts.securityHeadersJson - JSON.stringify'd security headers (pretty)
  * @param {string} opts.metricsJson - JSON.stringify'd initial metrics (pretty)
  * @param {string} opts.initHistogramBucketsStr - initHistogramBuckets function source
@@ -50,7 +49,6 @@ const SITEMAP_XML = \`${opts.sitemapXml}\`;
 const OG_IMAGE_BASE64 = '${opts.ogImageBase64}';
 const OG_IMAGE_EN_BASE64 = '${opts.ogImageEnBase64}';
 const OG_IMAGE_JA_BASE64 = '${opts.ogImageJaBase64}';
-const RESUME_PDF_BASE64 = '${opts.resumePdfBase64}';
 
 const CSP_NONCE_PLACEHOLDER = '__CSP_NONCE__';
 

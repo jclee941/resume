@@ -64,11 +64,15 @@ describe('Worker Preamble', () => {
       expect(code).toContain('SITEMAP_XML');
     });
 
-    it('should contain binary asset base64 constants', () => {
+    it('should contain OG image base64 constants', () => {
       expect(code).toContain('OG_IMAGE_BASE64');
       expect(code).toContain('OG_IMAGE_EN_BASE64');
-      expect(code).toContain('RESUME_PDF_BASE64');
-    });
+      });
+      it('should NOT inline the resume PDF (served from assets binding)', () => {
+      // resume.pdf is shipped as a static asset, so the ~210KB base64 blob must
+      // not be embedded in the generated worker source.
+      expect(code).not.toContain('RESUME_PDF_BASE64');
+});
   });
 
   describe('Security Headers', () => {

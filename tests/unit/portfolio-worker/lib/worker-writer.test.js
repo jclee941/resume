@@ -132,7 +132,9 @@ describe('worker-writer', () => {
       expect(preambleOpts.indexHtml).toBe('<html>ko</html>');
       expect(preambleOpts.indexEnHtml).toBe('<html>en</html>');
       expect(preambleOpts.ogImageBase64).toBe('og==');
-      expect(preambleOpts.resumePdfBase64).toBe('pdf==');
+      // resume.pdf is served from the static assets binding, not inlined; the
+      // preamble must NOT receive a resumePdfBase64 option.
+      expect(preambleOpts.resumePdfBase64).toBeUndefined();
     });
 
     it('should pass securityHeaders as JSON string', () => {

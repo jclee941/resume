@@ -215,36 +215,32 @@ describe('data-processor', () => {
       const result = encodeBinaryAssets({
         ogImageBuffer: Buffer.from('og-image-data'),
         ogImageEnBuffer: Buffer.from('og-image-en-data'),
-        resumePdfBuffer: Buffer.from('pdf-data'),
       });
 
       expect(result).toHaveProperty('ogImageBase64');
       expect(result).toHaveProperty('ogImageEnBase64');
-      expect(result).toHaveProperty('resumePdfBase64');
+      // resume.pdf is served from assets, not encoded into the bundle.
+      expect(result).not.toHaveProperty('resumePdfBase64');
     });
 
     it('should produce valid base64 output', () => {
       const result = encodeBinaryAssets({
         ogImageBuffer: Buffer.from('test'),
         ogImageEnBuffer: Buffer.from('test-en'),
-        resumePdfBuffer: Buffer.from('pdf'),
       });
 
       expect(result.ogImageBase64).toBe(Buffer.from('test').toString('base64'));
       expect(result.ogImageEnBase64).toBe(Buffer.from('test-en').toString('base64'));
-      expect(result.resumePdfBase64).toBe(Buffer.from('pdf').toString('base64'));
     });
 
     it('should handle empty buffers', () => {
       const result = encodeBinaryAssets({
         ogImageBuffer: Buffer.alloc(0),
         ogImageEnBuffer: Buffer.alloc(0),
-        resumePdfBuffer: Buffer.alloc(0),
       });
 
       expect(result.ogImageBase64).toBe('');
       expect(result.ogImageEnBase64).toBe('');
-      expect(result.resumePdfBase64).toBe('');
     });
 
     it('should handle binary content correctly', () => {
@@ -252,7 +248,6 @@ describe('data-processor', () => {
       const result = encodeBinaryAssets({
         ogImageBuffer: binaryData,
         ogImageEnBuffer: binaryData,
-        resumePdfBuffer: binaryData,
       });
 
       expect(Buffer.from(result.ogImageBase64, 'base64')).toEqual(binaryData);
