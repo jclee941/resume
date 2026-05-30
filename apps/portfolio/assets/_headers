@@ -1,0 +1,7 @@
+# Cloudflare static-assets headers.
+# The resume PDF is served directly by the assets binding (not the worker), so
+# its download-friendly headers are declared here instead of in the worker route.
+/resume.pdf
+  Content-Type: application/pdf
+  Content-Disposition: inline; filename="resume_jclee.pdf"
+  Cache-Control: public, max-age=3600
