@@ -194,3 +194,6 @@ tools/bin/
 # Compiled Go helper (build artifact, not content)
 packages/data/resumes/technical/convert-all-projects
 packages/data/resumes/technical/**/convert-all-projects
+
+# Personal job-search run outputs (candidate lists, cover-letter drafts) — local only
+applications/_auto-apply-runs/
