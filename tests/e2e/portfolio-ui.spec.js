@@ -26,7 +26,7 @@ test.describe('Portfolio UI', () => {
   });
 
   test('observability widget shows live stats and a status line', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded'
+await page.goto('/', { waitUntil: 'domcontentloaded'
 });
     // Bring the section into view so its IntersectionObserver-driven polling starts.
     await page.locator('#observability').scrollIntoViewIfNeeded();
@@ -41,5 +41,25 @@ test.describe('Portfolio UI', () => {
     const statusText = page.locator('[data-observability-status-text]');
     await expect(statusText).toHaveAttribute('aria-live', 'polite');
     await expect(statusText).not.toHaveText('');
+  });
+
+  test('observability widget does not poll until the section is in view', async ({ page }) => {
+    const metricsRequests = [];
+    page.on('request', (req) => {
+      const u = req.url();
+      if (u.includes('/api/metrics') || u.endsWith('/health')) metricsRequests.push(u);
+});
+
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    // Give any (incorrect) eager polling a chance to fire while above the fold.
+    await page.waitForTimeout(1500);
+    const beforeScroll = metricsRequests.length;
+    expect(beforeScroll, `eager off-screen requests: ${metricsRequests.join(', ')}`).toBe(0);
+
+    // Scrolling the section into view should start polling.
+    await page.locator('#observability').scrollIntoViewIfNeeded();
+    await expect
+      .poll(() => metricsRequests.length, { timeout: 15000 })
+      .toBeGreaterThan(0);
   });
 });

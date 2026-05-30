@@ -158,12 +158,15 @@ export async function initObservabilityStats() {
     }
   };
 
-  // Only poll while the observability section is actually on screen.
+  // Only poll while the observability section is on screen AND the tab is
+  // visible. The first fetch happens when the section first enters view (via
+  // start()) — we deliberately do NOT fetch on init, to avoid off-screen
+  // network requests for a below-the-fold widget.
   if ('IntersectionObserver' in window) {
     const io = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-inView = entry.isIntersecting;
+          inView = entry.isIntersecting;
           if (inView) start();
           else stop();
         }
@@ -172,14 +175,13 @@ inView = entry.isIntersecting;
     );
     io.observe(section);
   } else {
+    // No IntersectionObserver: treat as in view and start once.
     inView = true;
     start();
   }
 
   document.addEventListener('visibilitychange', () => {
+    // Refresh on tab re-focus only if the section is currently in view.
     if (document.visibilityState === 'visible' && inView) tick();
   });
-
-  // Initial fetch immediately so the section is never stuck on '--'.
-  await tick();
 }
