@@ -371,9 +371,10 @@ test.describe('Semantic HTML', () => {
     const count = await sections.count();
     expect(count).toBeGreaterThanOrEqual(4); // hero, resume, projects, contact
 
-    // Should have nav element
+    // Should have at least one nav element (primary nav + contact nav).
     const nav = page.locator('nav');
-    await expect(nav).toBeVisible();
+    expect(await nav.count()).toBeGreaterThan(0);
+    await expect(nav.first()).toBeVisible();
 
     // Should have footer element
     const footer = page.locator('footer');

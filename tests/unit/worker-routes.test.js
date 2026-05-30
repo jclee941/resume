@@ -200,14 +200,20 @@ describe('Worker Routes', () => {
       expect(code).toContain('image/webp');
     });
 
-    it('should contain /resume.pdf route with binary handling', () => {
+    it('should serve /resume.pdf from the assets binding (no inline base64)', () => {
       expect(code).toContain('/resume.pdf');
       expect(code).toContain('application/pdf');
       expect(code).toContain('Content-Disposition');
+      // PDF is no longer inlined: route must read from env.ASSETS, not atob a const.
+      expect(code).toContain('env.ASSETS');
+      expect(code).not.toContain('RESUME_PDF_BASE64');
+      // Must have a 404 fallback when the asset is unavailable.
+      expect(code).toContain('Resume PDF not found');
     });
 
-    it('should decode base64 for binary assets', () => {
+    it('should still base64-decode the OG image binary routes', () => {
       expect(code).toContain('atob');
+      expect(code).toContain('OG_IMAGE_BASE64');
     });
   });
 
