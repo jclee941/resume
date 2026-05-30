@@ -211,6 +211,87 @@ describe('Worker Routes', () => {
       expect(code).toContain('Resume PDF not found');
     });
 
+    describe('/resume.pdf route execution (mocked env.ASSETS)', () => {
+      // Wrap the generated route fragment in an executable handler so we test
+      // real runtime behaviour, not just the generated source string.
+      function buildHandler() {
+        const body = `
+          return (async () => {
+            ${generateSeoRoutes()}
+            return new Response('no-match', { status: 418 });
+          })();`;
+        return new Function(
+          'url', 'request', 'env', 'metrics', 'rateLimitHeaders',
+          'SECURITY_HEADERS', 'CACHE_POLICIES', 'applyNonceToHeaders',
+          'Response', 'Request', 'URL', 'Headers',
+          body
+        );
+      }
+
+      const baseDeps = () => ({
+        metrics: { requests_success: 0, requests_error: 0 },
+        rateLimitHeaders: {},
+        SECURITY_HEADERS: {},
+        CACHE_POLICIES: { static: {} },
+        applyNonceToHeaders: (h) => h,
+      });
+
+      it('serves the asset as application/pdf with Content-Disposition on success', async () => {
+        const handler = buildHandler();
+        const deps = baseDeps();
+        const pdfBytes = new Uint8Array([0x25, 0x50, 0x44, 0x46]); // %PDF
+        const env = {
+          ASSETS: {
+            fetch: async () =>
+              new Response(pdfBytes, { status: 200, headers: { 'Content-Type': 'application/octet-stream' } }),
+          },
+        };
+        const res = await handler(
+          new URL('https://resume.jclee.me/resume.pdf'),
+          new Request('https://resume.jclee.me/resume.pdf'),
+          env, deps.metrics, deps.rateLimitHeaders,
+          deps.SECURITY_HEADERS, deps.CACHE_POLICIES, deps.applyNonceToHeaders,
+          Response, Request, URL, Headers
+        );
+        expect(res.status).toBe(200);
+        expect(res.headers.get('Content-Type')).toBe('application/pdf');
+        expect(res.headers.get('Content-Disposition')).toContain('filename="resume_jclee.pdf"');
+        expect(deps.metrics.requests_success).toBe(1);
+        const buf = new Uint8Array(await res.arrayBuffer());
+        expect(Array.from(buf.slice(0, 4))).toEqual([0x25, 0x50, 0x44, 0x46]);
+      });
+
+      it('returns 404 when the asset is missing', async () => {
+        const handler = buildHandler();
+        const deps = baseDeps();
+        const env = {
+          ASSETS: { fetch: async () => new Response('not found', { status: 404 }) },
+        };
+        const res = await handler(
+          new URL('https://resume.jclee.me/resume.pdf'),
+          new Request('https://resume.jclee.me/resume.pdf'),
+          env, deps.metrics, deps.rateLimitHeaders,
+          deps.SECURITY_HEADERS, deps.CACHE_POLICIES, deps.applyNonceToHeaders,
+          Response, Request, URL, Headers
+        );
+        expect(res.status).toBe(404);
+        expect(deps.metrics.requests_error).toBe(1);
+      });
+
+      it('returns 404 when env.ASSETS binding is absent', async () => {
+        const handler = buildHandler();
+        const deps = baseDeps();
+        const res = await handler(
+          new URL('https://resume.jclee.me/resume.pdf'),
+          new Request('https://resume.jclee.me/resume.pdf'),
+          {}, deps.metrics, deps.rateLimitHeaders,
+          deps.SECURITY_HEADERS, deps.CACHE_POLICIES, deps.applyNonceToHeaders,
+          Response, Request, URL, Headers
+        );
+        expect(res.status).toBe(404);
+      });
+    });
+
     it('should still base64-decode the OG image binary routes', () => {
       expect(code).toContain('atob');
       expect(code).toContain('OG_IMAGE_BASE64');
