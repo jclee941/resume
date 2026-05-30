@@ -19,7 +19,7 @@
 
   --text-primary: #e2e0dc;
   --text-secondary: #a1a1aa;
-  --text-muted: #71717a;
+  --text-muted: #8b8b96; /* WCAG AA: 5.3:1 on --bg-secondary, 5.8:1 on --bg-primary */
   --text-inverse: #0c0c12;
 
   --glow-cyan: 0 0 20px rgba(0, 212, 224, 0.3);
@@ -32,6 +32,7 @@
   --color-accent: var(--cyber-cyan);
   --color-accent-light: var(--cyber-cyan-bright);
   --color-accent-dark: #00b8cc;
+  --color-accent-deep: #007a8a; /* WCAG AA: 5.06:1 with #fff text (skip-link, badges) */
   --color-accent-subtle: rgba(0, 212, 224, 0.15);
 
   --color-accent-secondary: var(--cyber-magenta);
