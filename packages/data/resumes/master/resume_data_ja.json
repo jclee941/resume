@@ -870,7 +870,7 @@
     "contact": "連絡先"
   },
   "achievements": [
-    "Nextrade取引システムのセキュリティインフラ（FortiGate HA、5層分離）を設計・運用し、FSC本認可審査に対応しました。",
+    "Nextrade取引システムのセキュリティインフラ（FortiGate FGCP active-passive HA 2ノード、5層分離）を設計・運用し、FSC本認可審査に対応しました。",
     "Splunk ESでdest_portベースの流出検知ルールとNSX-T DFWログcorrelationルールを設計し、n8nからFortiManager JSON-RPC APIを呼び出してポリシー照会を自動化したセキュリティアラートパイプラインを運用しました。",
     "Prometheus node_exporterでProxmox VM/CTメトリクスを収集し、Grafanaダッシュボード定義をコード（Grafana-as-code）で管理することで、単一画面の可観測性をIaCで再現可能にしました。",
     "Slack・GitHub Actions・Cloudflareフックを共通自動化ワークフローに抽象化し、エラーハンドリングとリトライを標準化することで、新規自動化追加時はノード追加のみで完結する構成にしました。",

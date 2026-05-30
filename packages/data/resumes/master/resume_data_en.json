@@ -872,7 +872,7 @@
     "contact": "Contact"
   },
   "achievements": [
-    "Designed and operated Nextrade exchange security infrastructure (FortiGate HA, 5-tier segmentation) and passed the FSC main-license review.",
+    "Designed and operated Nextrade exchange security infrastructure (FortiGate FGCP active-passive HA, 2 nodes, 5-tier segmentation) and passed the FSC main-license review.",
     "Designed Splunk ES dest_port-based exfiltration rules and NSX-T DFW log correlation rules, and operated a security alert pipeline that calls FortiManager JSON-RPC API via n8n for automated policy lookup.",
     "Scraped Proxmox VM/CT metrics with Prometheus node_exporter and managed Grafana dashboard JSON as code (Grafana-as-code), making single-pane observability reproducible via IaC.",
     "Abstracted Slack, GitHub Actions, and Cloudflare hooks into shared automation workflows with standardized error handling and retry, so new automations deploy via configuration rather than custom scripts.",
