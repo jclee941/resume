@@ -2,19 +2,11 @@
    CONTACT - Terminal Output Style
    ======================================== */
 .contact-grid {
-  /* Use block layout (not flex) so screen readers keep the <ul> list role;
-     flex/grid on a list container strips list semantics in some AT/axe. */
+  /* <nav> container (no list semantics) so flex layout is safe for AT/axe. */
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
   font-family: var(--font-mono);
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.contact-item-wrap {
-  list-style: none;
-  display: block;
-}
-.contact-item-wrap + .contact-item-wrap {
-  margin-top: var(--space-3);
 }
 .contact-item {
   font-size: var(--text-sm);
