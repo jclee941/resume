@@ -7,7 +7,9 @@
 ## OVERVIEW
 
 Cloudflare Worker serving a cyberpunk terminal-style portfolio (DevSecOps/SRE
-positioning). Zero runtime I/O — all assets inlined at build time.
+positioning). Almost all assets are inlined at build time; the exception is the
+resume PDF, which is served from the static `assets` binding via `env.ASSETS`
+(see EXCEPTIONS) to keep it out of the worker bundle.
 
 ## STRUCTURE
 
@@ -66,7 +68,7 @@ index.html → generate-worker.js → worker.js → wrangler deploy
 
 ## CONVENTIONS
 
-- All assets inlined at build — no runtime fetch.
+- Inline assets at build time; the sole exception is `resume.pdf` (served via `env.ASSETS`).
 - CSS vars for theming (see `src/styles/variables.css`).
 - Pure functions in `lib/` — receive env, no side effects.
 - Fire-and-forget telemetry (ES logger, metrics).
@@ -76,7 +78,7 @@ index.html → generate-worker.js → worker.js → wrangler deploy
 
 - Never edit `worker.js` directly — it is generated.
 - Never `trim()` inline scripts before CSP hash generation.
-- Never add runtime fetch for assets — inline at build.
+- Never add runtime fetch for assets — inline at build (EXCEPTION: `/resume.pdf` reads `env.ASSETS`).
 - Never hardcode colors — use CSS variables.
 - Never add light-mode without updating root docs.
 
@@ -90,6 +92,14 @@ Hardcoded content in `index.html`/`index-en.html` must match SSoT
 - About section: career highlights (quantified achievements), current focus
 - Hero subtitle, neofetch command, terminal `whoami`/`cat about.txt` responses
 - After edits: `npm run sync:data && npm run build` to regenerate `worker.js`
+
+## EXCEPTIONS
+
+- `/resume.pdf` is served from the static `assets` binding (`assets/resume.pdf`).
+  The build copies the SSoT PDF into `assets/` and the worker route in
+  `lib/worker-routes/seo-routes.js` reads it via `env.ASSETS.fetch()` (with a
+  404 fallback) instead of inlining ~210KB of base64. This is the ONLY runtime
+  asset fetch; everything else stays inlined at build.
 
 ---
 
