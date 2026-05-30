@@ -22,7 +22,14 @@ import { getResumeBasePath } from '../src/shared/utils/paths.js';
 // canonical sessions.json (not hardcoded to the script's repo location).
 const SESSION_DIR = getResumeBasePath();
 
-function parseCookieString(cookieString) {
+const PLATFORM_DOMAINS = {
+  jobkorea: '.jobkorea.co.kr',
+  saramin: '.saramin.co.kr',
+};
+
+const SUPPORTED = new Set(Object.keys(PLATFORM_DOMAINS));
+
+function parseCookieString(cookieString, domain) {
   const cookies = [];
   const parts = cookieString.split(';');
 
@@ -32,7 +39,7 @@ function parseCookieString(cookieString) {
       cookies.push({
         name: name.trim(),
         value: valueParts.join('=').trim(),
-        domain: '.jobkorea.co.kr',
+        domain,
         path: '/',
       });
     }
@@ -42,19 +49,20 @@ function parseCookieString(cookieString) {
 }
 
 function importCookies(platform, cookieString) {
-  const cookies = parseCookieString(cookieString);
+  const cookies = parseCookieString(cookieString, PLATFORM_DOMAINS[platform]);
 
-  // Validate critical cookies
+  // Validate critical cookies (jobkorea uses a `User` cookie carrying UID).
   const userCookie = cookies.find((c) => c.name === 'User');
-  if (userCookie) {
+  if (platform === 'jobkorea' && userCookie) {
     const uidMatch = userCookie.value.match(/UID=([^&]*)/);
     if (!uidMatch || !uidMatch[1]) {
       console.error('❌ Invalid User cookie - UID is empty. Please login again in browser.');
       process.exit(1);
     }
     console.log('✅ User cookie valid, UID:', uidMatch[1]);
-  } else {
-    console.warn('⚠️  User cookie not found');
+  } else if (cookies.length === 0) {
+    console.error('❌ No cookies parsed from the provided string.');
+    process.exit(1);
   }
 
   const session = {
@@ -76,8 +84,10 @@ function importCookies(platform, cookieString) {
 
   console.log(`✅ Saved ${cookies.length} cookies via SessionManager (sessions.json) + ${legacyFile}`);
   console.log('\n📝 Next steps:');
-  console.log('   1. Verify: node scripts/import-cookies-manual.js jobkorea --check');
-  console.log('   2. Apply : node src/auto-apply/cli/index.js apply --apply --max=5');
+  console.log(`   1. Verify: node scripts/import-cookies-manual.js ${platform} --check`);
+  console.log(
+    `   2. Apply : node src/auto-apply/cli/index.js apply_queue --queue=<${platform}-queue.json> --apply --max=5`
+  );
 }
 
 // CLI
@@ -85,29 +95,31 @@ const args = process.argv.slice(2);
 
 if (args.length < 2) {
   console.log(`
-Manual Cookie Import for JobKorea
+Manual Cookie Import (jobkorea | saramin)
 
 Usage:
-  node import-cookies-manual.js jobkorea "your_cookie_string_here"
+  node import-cookies-manual.js <jobkorea|saramin> "your_cookie_string_here"
+  node import-cookies-manual.js <jobkorea|saramin> --check
 
 Steps:
-  1. Login to https://www.jobkorea.co.kr in your browser
+  1. Login to https://www.jobkorea.co.kr or https://www.saramin.co.kr in your browser
   2. Open DevTools (F12) → Network tab
   3. Refresh the page (F5)
-  4. Click any request to www.jobkorea.co.kr
-  5. Copy Cookie header value
+  4. Click any request to the site
+  5. Copy the Cookie header value
   6. Run this script with the cookie string
 
 Example:
   node import-cookies-manual.js jobkorea "User=UID=12345&Type=M; C_USER=UID=12345&DB_NAME=GG; ..."
+  node import-cookies-manual.js saramin "_saramin_session=...; ..."
 `);
   process.exit(0);
 }
 
 const [platform, cookieStringOrFlag] = args;
 
-if (platform !== 'jobkorea') {
-  console.error('❌ Only jobkorea platform is supported by this script');
+if (!SUPPORTED.has(platform)) {
+  console.error(`❌ Unsupported platform '${platform}'. Supported: ${[...SUPPORTED].join(', ')}`);
   process.exit(1);
 }
 
