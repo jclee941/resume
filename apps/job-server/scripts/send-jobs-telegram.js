@@ -108,8 +108,9 @@ async function main() {
 
   const result = await adapter.sendJobPostings(jobs, { limit: args.limit });
   if (result.sent) {
-    console.log(`✅ Sent ${Math.min(jobs.length, args.limit)} postings to Telegram (@qws941_bot).`);
-    console.log(`   status=${result.status} historyId=${result.historyId}`);
+    const messageId = result.results?.telegram?.messageId;
+    console.log(`✅ Sent ${Math.min(jobs.length, args.limit)} postings to Telegram.`);
+    console.log(`   status=${result.status} historyId=${result.historyId} messageId=${messageId ?? 'n/a'}`);
   } else {
     console.error('❌ Telegram send failed:', JSON.stringify(result.results || result, null, 2));
     process.exit(1);

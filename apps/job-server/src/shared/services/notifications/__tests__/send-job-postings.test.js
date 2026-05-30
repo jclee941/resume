@@ -43,5 +43,7 @@ describe('TelegramNotificationAdapter.sendJobPostings', () => {
     // both job URLs present as anchors in the sent text
     assert.match(send.body.text, /<a href="https:\/\/x\.test\/1">/);
     assert.match(send.body.text, /<a href="https:\/\/x\.test\/2">/);
+    // surfaces the Telegram message_id so callers can prove delivery
+    assert.equal(res.results.telegram.messageId, 42);
   });
 });
