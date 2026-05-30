@@ -54,11 +54,11 @@ function generateInfrastructureCards(infraData) {
 function generateContactGrid(contactData) {
   const velog = contactData.velog || 'https://velog.io/@qws941';
   return `
-        <a href="${escapeHtml(contactData.github)}" target="_blank" rel="noopener noreferrer" class="contact-item" role="listitem" aria-label="GitHub (opens in new tab)">GitHub</a>
-        <a href="${escapeHtml(contactData.linkedin)}" target="_blank" rel="noopener noreferrer" class="contact-item" role="listitem" aria-label="LinkedIn (opens in new tab)">LinkedIn</a>
-        <a href="${escapeHtml(velog)}" target="_blank" rel="noopener noreferrer" class="contact-item" role="listitem" aria-label="Velog (opens in new tab)">Velog</a>
-        <a href="mailto:${escapeHtml(contactData.email)}" class="contact-item" role="listitem" aria-label="Email">Email</a>
-        <a href="${escapeHtml(contactData.website)}" target="_blank" rel="noopener noreferrer" class="contact-item" role="listitem" aria-label="Website (opens in new tab)">Website</a>
+        <li class="contact-item-wrap"><a href="${escapeHtml(contactData.github)}" target="_blank" rel="noopener noreferrer" class="contact-item" aria-label="GitHub (opens in new tab)">GitHub</a></li>
+        <li class="contact-item-wrap"><a href="${escapeHtml(contactData.linkedin)}" target="_blank" rel="noopener noreferrer" class="contact-item" aria-label="LinkedIn (opens in new tab)">LinkedIn</a></li>
+        <li class="contact-item-wrap"><a href="${escapeHtml(velog)}" target="_blank" rel="noopener noreferrer" class="contact-item" aria-label="Velog (opens in new tab)">Velog</a></li>
+        <li class="contact-item-wrap"><a href="mailto:${escapeHtml(contactData.email)}" class="contact-item" aria-label="Email">Email</a></li>
+        <li class="contact-item-wrap"><a href="${escapeHtml(contactData.website)}" target="_blank" rel="noopener noreferrer" class="contact-item" aria-label="Website (opens in new tab)">Website</a></li>
   `;
 }
 
