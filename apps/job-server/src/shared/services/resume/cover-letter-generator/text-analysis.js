@@ -70,13 +70,33 @@ export function buildJobText(jobPosting) {
   ].join(' ');
 }
 
+// Generic operational tokens that are too weak to indicate a real skill match
+// on their own (e.g. "1Password (홈랩 운영)" must not match a job that merely
+// says "클라우드 운영").
+const WEAK_MATCH_TOKENS = new Set([
+  '운영',
+  '관리',
+  '구축',
+  '설계',
+  '지원',
+  'ops',
+  'admin',
+]);
+
+function coreSkillTokens(skill) {
+  // Drop parenthetical annotations like "(홈랩 운영)" before tokenizing so the
+  // skill matches on its identifying name, not its descriptive note.
+  const core = String(skill || '').replace(/\([^)]*\)/g, ' ');
+  return toTokens(core).filter((token) => !WEAK_MATCH_TOKENS.has(token));
+}
+
 export function getMatchedSkills(resumeData, jobPosting) {
   const resumeSkills = collectResumeSkills(resumeData);
   const jobTokenSet = new Set(toTokens(buildJobText(jobPosting)));
 
   const scored = resumeSkills
     .map((skill) => {
-      const skillTokens = toTokens(skill);
+      const skillTokens = coreSkillTokens(skill);
       const overlapCount = skillTokens.filter((token) => jobTokenSet.has(token)).length;
       return { skill, overlapCount };
     })
