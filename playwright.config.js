@@ -80,10 +80,16 @@ module.exports = defineConfig({
     ? {}
     : {
         webServer: {
-          command: 'npm run start --workspace=apps/portfolio -- --port 8787',
+          // Run from the repo root so `npm run build` (which needs the
+          // root-only `sync:data` script) resolves, then serve the generated
+          // worker directly. Avoids the workspace cwd issue where wrangler.jsonc's
+          // build command (`npm run sync:data && npm run build`) cannot find
+          // `sync:data` when invoked from apps/portfolio.
+          command:
+            'npm run build && npx wrangler dev apps/portfolio/worker.js --port 8787 --local',
           port: 8787,
           reuseExistingServer: !process.env.CI,
-          timeout: 120 * 1000,
+          timeout: 180 * 1000,
         },
       }),
 });
