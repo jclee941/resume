@@ -121,12 +121,13 @@ export async function sendTelegramNotification(adapter, message = {}) {
   let lastError = null;
   let lastStatus = null;
 
+  const doFetch = adapter.fetchImpl || fetch;
   for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt += 1) {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), TELEGRAM_TIMEOUT_MS);
 
     try {
-      const response = await fetch(endpoint, {
+      const response = await doFetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),

@@ -128,3 +128,48 @@ export function createCaptchaDetectedMessage(job, platform) {
     parse_mode: 'HTML',
   };
 }
+
+/**
+ * Build a Telegram HTML message listing job postings, each as a clickable link.
+ *
+ * @param {Array<{company?:string,companyName?:string,position?:string,title?:string,url?:string,sourceUrl?:string,source?:string,platform?:string,matchScore?:number,score?:number}>} jobs
+ * @param {{limit?:number, header?:string}} [options]
+ * @returns {{text:string, parse_mode:'HTML', disable_web_page_preview:boolean}}
+ */
+export function createJobPostingsMessage(jobs = [], options = {}) {
+  const limit = Number.isInteger(options.limit) && options.limit > 0 ? options.limit : 10;
+  const list = Array.isArray(jobs) ? jobs : [];
+  const total = list.length;
+
+  if (total === 0) {
+    return {
+      text: '🔍 <b>지원할만한 공고</b>\n\n조건에 맞는 공고가 없습니다. (0건)',
+      parse_mode: 'HTML',
+      disable_web_page_preview: true,
+    };
+  }
+
+  const shown = list.slice(0, limit);
+  const lines = shown.map((job, i) => {
+    const company = escapeHtml(resolveJobField(job, 'company', 'companyName'));
+    const position = escapeHtml(resolveJobField(job, 'position', 'title'));
+    const url = resolveJobField(job, 'url', 'sourceUrl');
+    const platform = escapeHtml(resolveJobField(job, 'source', 'platform'));
+    const score = job.matchScore ?? job.score;
+    const scoreText = score == null ? '' : ` · ${escapeHtml(String(score))}%`;
+    const label = `${position} — ${company}`;
+    const linked = url ? `<a href="${escapeHtml(url)}">${label}</a>` : label;
+    const tag = platform ? ` [${platform}]` : '';
+    return `${i + 1}. ${linked}${tag}${scoreText}`;
+  });
+
+  const header = options.header || '🔍 <b>지원할만한 공고</b>';
+  let text = `${header} (${total}건)\n\n${lines.join('\n')}`;
+
+  const remainder = total - shown.length;
+  if (remainder > 0) {
+    text += `\n\n… 외 ${remainder}건 더 있음`;
+  }
+
+  return { text, parse_mode: 'HTML', disable_web_page_preview: true };
+}
