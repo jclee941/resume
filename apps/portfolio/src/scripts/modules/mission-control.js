@@ -157,17 +157,18 @@ function injectCommandPalette() {
   paletteContainer.innerHTML = `
     <div class="mc-command-palette__input-wrapper">
       <span class="mc-command-palette__prompt" aria-hidden="true">resume$</span>
-      <input
-        type="text"
-        class="mc-command-palette__input"
-        placeholder="Type a command or press / to search..."
-        aria-label="Command input"
-        aria-autocomplete="list"
-        aria-controls="${suggestionsId}"
-        aria-expanded="false"
-        spellcheck="false"
-        autocomplete="off"
-      />
+<input
+type="text"
+class="mc-command-palette__input"
+placeholder="Type a command or press / to search..."
+aria-label="Command input"
+role="combobox"
+aria-autocomplete="list"
+aria-controls="${suggestionsId}"
+aria-expanded="false"
+spellcheck="false"
+autocomplete="off"
+/>
       <span class="mc-command-palette__cursor" aria-hidden="true"></span>
     </div>
     <ul

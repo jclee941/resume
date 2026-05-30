@@ -49,4 +49,39 @@ test.describe('Accessibility - axe-core WCAG 2.1 AA', () => {
     );
     expect(criticalViolations).toHaveLength(0);
   });
+
+  test('homepage should have zero serious or critical WCAG violations', async ({ page }) => {
+    await page.goto('/', { waitUntil: 'domcontentloaded'
+});
+    // Wait for JS-rendered widgets (skill radar cards, command palette) to mount.
+    await page.waitForSelector('#skill-radar-grid .skill-domain-card', { timeout: 15000 });
+
+    const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze();
+
+    const blocking = results.violations.filter(
+      (v) => v.impact === 'critical' || v.impact === 'serious'
+    );
+    const summary = blocking.map((v) => `${v.id} (${v.impact}) x${v.nodes.length}`);
+    expect(summary, `serious/critical violations: ${JSON.stringify(summary, null, 2)}`).toEqual([]);
+  });
+
+  test('homepage should not have aria/list/contrast rule violations', async ({ page }) => {
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('#skill-radar-grid .skill-domain-card', { timeout: 15000 });
+
+    const results = await new AxeBuilder({ page })
+      .withTags(['wcag2a', 'wcag2aa'])
+      .withRules([
+        'aria-allowed-attr',
+        'aria-required-children',
+        'aria-required-parent',
+        'list',
+        'listitem',
+        'color-contrast',
+      ])
+      .analyze();
+
+    const ids = results.violations.map((v) => `${v.id} x${v.nodes.length}`);
+    expect(ids, `violations: ${JSON.stringify(ids, null, 2)}`).toEqual([]);
+  });
 });

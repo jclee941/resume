@@ -726,10 +726,24 @@ describe('Cards Module', () => {
       expect(html).toContain('target="_blank"');
     });
 
-    test('should not include role listitem (a elements use implicit link role)', () => {
+    test('should mark contact items with role=listitem for list semantics', () => {
       const contactData = { github: 'https://github.com/test' };
       const html = generateContactGrid(contactData);
-      expect(html).not.toContain('role="listitem"');
+      // contact-grid is role="list" so its anchor children must be role="listitem"
+      // to satisfy WCAG aria-required-children (axe/Lighthouse a11y).
+      expect(html).toContain('role="listitem"');
+    });
+
+    test('external contact links should announce they open in a new tab', () => {
+      const contactData = {
+        github: 'https://github.com/test',
+        email: 'test@example.com',
+      };
+      const html = generateContactGrid(contactData);
+      // target="_blank" links need an aria-label indicating a new tab opens.
+      expect(html).toContain('GitHub (opens in new tab)');
+      // mailto link does NOT open a new tab, so it keeps a plain label.
+      expect(html).toContain('aria-label="Email"');
     });
 
     test('should generate all contact links when all provided', () => {
