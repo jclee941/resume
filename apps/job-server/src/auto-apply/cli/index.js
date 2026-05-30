@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { searchJobs, aiSearchJobs } from './handlers/search.js';
-import { runAutoApply, runUnifiedSystem } from './handlers/apply.js';
+import { runAutoApply, runUnifiedSystem, runQueueAutoApply } from './handlers/apply.js';
 import { runAIUnifiedSystem, showAICareerAdvice } from './handlers/ai-apply.js';
 import { listApplications, showStats, showReport, updateStatus } from './handlers/management.js';
 
@@ -9,6 +9,7 @@ const COMMANDS = {
   ai_search: { handler: aiSearchJobs, desc: 'AI 기반 지능형 채용공고 검색' },
   apply: { handler: runAutoApply, desc: '자동 지원 실행 (통합 시스템)' },
   unified: { handler: runUnifiedSystem, desc: '통합 시스템 실행 (검색 + 지원)' },
+  apply_queue: { handler: runQueueAutoApply, desc: '정제된 큐(submit-queue.json) 기반 지원' },
   ai_unified: { handler: runAIUnifiedSystem, desc: 'AI 기반 통합 시스템 실행' },
   advice: { handler: showAICareerAdvice, desc: 'AI 기반 커리어 조언' },
   list: { handler: listApplications, desc: '지원 현황 조회' },
