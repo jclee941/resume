@@ -91,17 +91,28 @@ function generateSeoRoutes() {
       }
 
       if (url.pathname === '/resume.pdf') {
-        const pdfBuffer = Uint8Array.from(atob(RESUME_PDF_BASE64), c => c.charCodeAt(0));
-        metrics.requests_success++;
-        return new Response(pdfBuffer, {
-          headers: {
-            ...applyNonceToHeaders(SECURITY_HEADERS, ""),
+        // resume.pdf is shipped as a static asset (assets/resume.pdf) and is
+        // normally served by the assets binding before this worker route runs.
+        // This handler is a fallback that reads the same asset via env.ASSETS so
+        // the PDF is never inlined as base64 in the worker bundle. We re-assert
+        // the Content-Type and a download-friendly Content-Disposition here.
+        const assetResponse = env.ASSETS
+          ? await env.ASSETS.fetch(new Request(new URL('/resume.pdf', request.url), request))
+          : null;
+        if (assetResponse && assetResponse.ok) {
+          metrics.requests_success++;
+          const headers = new Headers(assetResponse.headers);
+          Object.entries({
+            ...applyNonceToHeaders(SECURITY_HEADERS, ''),
             ...CACHE_POLICIES.static,
             ...rateLimitHeaders,
-            'Content-Type': 'application/pdf',
-            'Content-Disposition': 'inline; filename="resume_jclee.pdf"'
-          }
-        });
+          }).forEach(([k, v]) => headers.set(k, v));
+          headers.set('Content-Type', 'application/pdf');
+          headers.set('Content-Disposition', 'inline; filename="resume_jclee.pdf"');
+          return new Response(assetResponse.body, { status: 200, headers });
+        }
+        metrics.requests_error++;
+        return new Response('Resume PDF not found', { status: 404 });
       }`;
 }
 

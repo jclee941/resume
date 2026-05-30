@@ -48,9 +48,9 @@ async function runWorkerBuild({ baseDir, version, gitSha = 'unknown', allowedEma
     // deploys). Opt into strict mode with RESUME_PDF_STRICT=1 to abort the
     // build instead — useful for release pipelines that regenerate the PDF.
     const message =
-      'resume_final.pdf is missing or empty \u2014 the /resume.pdf route ' +
-      'will return a 0-byte body. ' +
-      'Run `go run ./tools/scripts/build/pdf-generator.go master` to regenerate it.';
+'resume_final.pdf is missing or empty \u2014 /resume.pdf (served from the ' +
+      'static assets binding) will be unavailable. ' +
+'Run `go run ./tools/scripts/build/pdf-generator.go master` to regenerate it.';
     if (process.env.RESUME_PDF_STRICT === '1') {
       throw new Error(message);
     }
@@ -60,11 +60,12 @@ async function runWorkerBuild({ baseDir, version, gitSha = 'unknown', allowedEma
   const { projectData, templates } = processProjectData({ projectDataRaw, projectDataEnRaw, projectDataJaRaw, logger });
   const resumeChatDataBase64Literal = `'${Buffer.from(JSON.stringify(projectData), 'utf-8').toString('base64')}'`;
   const workerAiModel = '@cf/meta/llama-2-7b-chat-int8';
-  const { ogImageBase64, ogImageEnBase64, ogImageJaBase64, resumePdfBase64 } = encodeBinaryAssets({
+  // resume.pdf is served directly from the static assets binding (assets/resume.pdf),
+  // so it is NOT inlined into worker.js (saves ~210KB of base64 in the bundle).
+  const { ogImageBase64, ogImageEnBase64, ogImageJaBase64 } = encodeBinaryAssets({
     ogImageBuffer,
     ogImageEnBuffer,
     ogImageJaBuffer,
-    resumePdfBuffer,
   });
 
   logger.debug(`index.html size: ${indexHtmlRaw.length} bytes`);
@@ -202,7 +203,6 @@ async function runWorkerBuild({ baseDir, version, gitSha = 'unknown', allowedEma
     ogImageBase64,
     ogImageEnBase64,
     ogImageJaBase64,
-    resumePdfBase64,
     securityHeaders,
     metrics,
     rateLimitConfig,

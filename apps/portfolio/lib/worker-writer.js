@@ -55,7 +55,6 @@ function buildWorkerCode(options) {
     ogImageBase64: options.ogImageBase64,
     ogImageEnBase64: options.ogImageEnBase64 || options.ogImageBase64,
     ogImageJaBase64: options.ogImageJaBase64 || options.ogImageBase64,
-    resumePdfBase64: options.resumePdfBase64,
     securityHeadersJson: JSON.stringify(options.securityHeaders, null, 2),
     metricsJson: JSON.stringify(options.metrics, null, 2),
     initHistogramBucketsStr: metricsModule.initHistogramBuckets.toString(),
