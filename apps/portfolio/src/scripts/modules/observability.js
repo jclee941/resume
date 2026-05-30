@@ -7,8 +7,9 @@
  *   GET /api/metrics  → http.requests_total, http.error_rate, http.response_time_ms
  *
  * Behaviour:
- *   - Polls on load, then auto-refreshes while the section is in view and the
- *     tab is visible (pauses when hidden/off-screen to avoid needless requests).
+ *   - Fetches the FIRST time the section scrolls into view, then auto-refreshes
+ *     while it stays in view and the tab is visible (pauses when hidden or
+ *     off-screen to avoid needless requests). No fetch happens on initial load.
  *   - Announces refresh state via an aria-live status line for screen readers.
  *   - Values are written with textContent (XSS-safe). Failures leave the last
  *     known value (or the '--' placeholder) in place — degrades gracefully.
@@ -134,16 +135,14 @@ export async function initObservabilityStats() {
 
   let timer = null;
   let inView = false;
-  const destroyed = false;
 
   const tick = async () => {
-    if (destroyed) return;
     const ok = await refreshStats();
     setStatus(ok ? 'updated' : 'offline', ok);
   };
 
   const start = () => {
-    if (timer || destroyed) return;
+    if (timer) return;
     tick();
     timer = window.setInterval(() => {
       // Skip polling when the tab is hidden to save requests/battery.
