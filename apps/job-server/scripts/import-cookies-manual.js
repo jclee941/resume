@@ -15,10 +15,12 @@
 
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
+import { SessionManager } from '../src/shared/services/session/session-manager/index.js';
+import { getResumeBasePath } from '../src/shared/utils/paths.js';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const SESSION_DIR = path.resolve(__dirname, '../../..');
+// Honor RESUME_BASE_PATH so the legacy per-platform file lands beside the
+// canonical sessions.json (not hardcoded to the script's repo location).
+const SESSION_DIR = getResumeBasePath();
 
 function parseCookieString(cookieString) {
   const cookies = [];
@@ -64,13 +66,18 @@ function importCookies(platform, cookieString) {
     expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
   };
 
-  const sessionFile = path.join(SESSION_DIR, `${platform}-session.json`);
-  fs.writeFileSync(sessionFile, JSON.stringify(session, null, 2));
+  // Canonical store: SessionManager reads the unified sessions.json. Write there
+  // so the apply/profile-sync flow actually finds the freshly imported cookies.
+  SessionManager.save(platform, session);
 
-  console.log(`✅ Saved ${cookies.length} cookies to ${sessionFile}`);
+  // Backward-compatible per-platform file (legacy tooling still reads this).
+  const legacyFile = path.join(SESSION_DIR, `${platform}-session.json`);
+  fs.writeFileSync(legacyFile, JSON.stringify(session, null, 2));
+
+  console.log(`✅ Saved ${cookies.length} cookies via SessionManager (sessions.json) + ${legacyFile}`);
   console.log('\n📝 Next steps:');
-  console.log('   1. Test with: node scripts/profile-sync.js jobkorea --diff');
-  console.log('   2. Apply with: node scripts/profile-sync.js jobkorea --apply');
+  console.log('   1. Verify: node scripts/import-cookies-manual.js jobkorea --check');
+  console.log('   2. Apply : node src/auto-apply/cli/index.js apply --apply --max=5');
 }
 
 // CLI
@@ -97,15 +104,24 @@ Example:
   process.exit(0);
 }
 
-const [platform, cookieString] = args;
+const [platform, cookieStringOrFlag] = args;
 
 if (platform !== 'jobkorea') {
   console.error('❌ Only jobkorea platform is supported by this script');
   process.exit(1);
 }
 
+// --check verifies the canonical session is present and unexpired via SessionManager.
+if (cookieStringOrFlag === '--check') {
+  const health = SessionManager.checkHealth(platform);
+  const session = SessionManager.load(platform);
+  const cookieCount = session?.cookieCount ?? session?.cookies?.length ?? 0;
+  console.log(`🔍 ${platform} session:`, JSON.stringify({ ...health, cookieCount }, null, 2));
+  process.exit(health.valid ? 0 : 1);
+}
+
 try {
-  importCookies(platform, cookieString);
+  importCookies(platform, cookieStringOrFlag);
 } catch (e) {
   console.error('❌ Error:', e.message);
   process.exit(1);
