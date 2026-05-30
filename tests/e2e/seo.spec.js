@@ -114,7 +114,8 @@ test.describe('Open Graph Tags', () => {
   test('should have og:image with dimensions', async ({ page }) => {
     const ogImage = await page.getAttribute('meta[property="og:image"]', 'content');
     expect(ogImage).toBeTruthy();
-    expect(ogImage).toMatch(/og-image\.(webp|png)$/);
+    // Accept locale variants (og-image.webp, og-image-en.webp, og-image-ja.webp).
+    expect(ogImage).toMatch(/og-image(-[a-z]{2})?\.(webp|png)$/);
 
     const ogImageWidth = await page.getAttribute('meta[property="og:image:width"]', 'content');
     expect(ogImageWidth).toBe('1200');
@@ -189,7 +190,7 @@ test.describe('Twitter Card Tags', () => {
 
   test('should have twitter:image with alt', async ({ page }) => {
     const twitterImageMeta = page.locator('meta[name="twitter:image"]');
-    await expect(twitterImageMeta).toHaveAttribute('content', /og-image\.(webp|png)$/);
+    await expect(twitterImageMeta).toHaveAttribute('content', /og-image(-[a-z]{2})?\.(webp|png)$/);
 
     const twitterImage = await twitterImageMeta.getAttribute('content');
     expect(twitterImage).toBeTruthy();
