@@ -44,17 +44,19 @@ await page.goto('/', { waitUntil: 'domcontentloaded'
   });
 
   test('observability widget does not poll until the section is in view', async ({ page }) => {
+    // Track ONLY /api/metrics — the observability widget's unique endpoint.
+    // (/health is also fetched on load by the separate status-list badge widget,
+    // so it is not a reliable signal for observability polling.)
     const metricsRequests = [];
     page.on('request', (req) => {
-      const u = req.url();
-      if (u.includes('/api/metrics') || u.endsWith('/health')) metricsRequests.push(u);
-});
+      if (req.url().includes('/api/metrics')) metricsRequests.push(req.url());
+    });
 
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     // Give any (incorrect) eager polling a chance to fire while above the fold.
     await page.waitForTimeout(1500);
     const beforeScroll = metricsRequests.length;
-    expect(beforeScroll, `eager off-screen requests: ${metricsRequests.join(', ')}`).toBe(0);
+    expect(beforeScroll, `eager off-screen /api/metrics: ${metricsRequests.join(', ')}`).toBe(0);
 
     // Scrolling the section into view should start polling.
     await page.locator('#observability').scrollIntoViewIfNeeded();
