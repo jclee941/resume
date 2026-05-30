@@ -726,13 +726,14 @@ describe('Cards Module', () => {
       expect(html).toContain('target="_blank"');
     });
 
-    test('should wrap contact items in <li role=listitem> for list semantics', () => {
+    test('should render contact items as plain anchors (no list roles)', () => {
       const contactData = { github: 'https://github.com/test' };
       const html = generateContactGrid(contactData);
-      // contact-grid is a <ul role=list>; each anchor is wrapped in an
-      // <li role=listitem>. The explicit roles re-assert list semantics that
-      // display:flex strips in some screen readers (axe listitem rule).
-      expect(html).toContain('<li class="contact-item-wrap" role="listitem">');
+      // contact-grid is a <nav> of anchors, not a list, so anchors must NOT
+      // carry list/listitem roles or <li> wrappers (avoids axe aria-required-parent).
+      expect(html).toContain('class="contact-item"');
+      expect(html).not.toContain('role="listitem"');
+      expect(html).not.toContain('<li');
     });
 
     test('external contact links should announce they open in a new tab', () => {

@@ -133,7 +133,7 @@ const logoLabel = await logo.getAttribute('aria-label');
     test.skip(true, 'No download section found on page');
   });
 
-  test('contact grid should have list semantics', async ({ page }) => {
+  test('contact grid should be a labeled nav of links', async ({ page }) => {
     const contactGrid = page.locator('.contact-grid');
     if ((await contactGrid.count()) === 0) {
       const contactLinks = page.locator('#contact a');
@@ -141,17 +141,14 @@ const logoLabel = await logo.getAttribute('aria-label');
       return;
     }
 
-    // contact-grid is a native <ul> (implicit role=list) whose direct children
-    // are <li> wrappers (implicit role=listitem) — native semantics satisfy axe
-    // aria-required-parent without explicit ARIA roles on anchors.
-    expect(await contactGrid.evaluate((el) => el.tagName)).toBe('UL');
+    // contact-grid is a labeled <nav> of plain anchors (not a list). This avoids
+    // axe aria-required-parent/listitem issues that flex list containers trigger,
+    // while still exposing an accessible landmark name.
+    expect(await contactGrid.evaluate((el) => el.tagName)).toBe('NAV');
+    expect(await contactGrid.getAttribute('aria-label')).toBeTruthy();
 
-    const wraps = page.locator('.contact-grid > .contact-item-wrap');
-    const count = await wraps.count();
-    expect(count).toBeGreaterThan(0);
-    for (let i = 0; i < count; i++) {
-      expect(await wraps.nth(i).evaluate((el) => el.tagName)).toBe('LI');
-    }
+    const links = page.locator('.contact-grid > a.contact-item');
+    expect(await links.count()).toBeGreaterThan(0);
   });
 
   test('icons should be hidden from screen readers', async ({ page }) => {
