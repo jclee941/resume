@@ -67,12 +67,15 @@ test.describe('Accessibility (a11y)', () => {
       expect(navLabel).toBe('Main navigation');
     }
 
-    const logo = page.locator('.nav-logo');
-    await expect(logo).toBeVisible();
-    const logoLabel = await logo.getAttribute('aria-label');
+const logo = page.locator('.nav-logo');
+await expect(logo).toBeVisible();
+const logoLabel = await logo.getAttribute('aria-label');
     if (logoLabel !== null) {
-      expect(logoLabel).toBe('Homepage');
-    }
+      // aria-label must contain the visible text (~/jclee) to satisfy
+      // label-content-name-mismatch (axe/Lighthouse).
+      const logoText = (await logo.innerText()).trim();
+      expect(logoLabel).toContain(logoText);
+}
 
     const navLinks = page.locator('.nav-link, .nav-links a');
     const count = await navLinks.count();
@@ -138,13 +141,16 @@ test.describe('Accessibility (a11y)', () => {
       return;
     }
 
-    await expect(contactGrid).toHaveAttribute('role', 'list');
+    // contact-grid is a native <ul> (implicit role=list) whose direct children
+    // are <li> wrappers (implicit role=listitem) — native semantics satisfy axe
+    // aria-required-parent without explicit ARIA roles on anchors.
+    expect(await contactGrid.evaluate((el) => el.tagName)).toBe('UL');
 
-    const contactItems = page.locator('.contact-item');
-    const count = await contactItems.count();
-
+    const wraps = page.locator('.contact-grid > .contact-item-wrap');
+    const count = await wraps.count();
+    expect(count).toBeGreaterThan(0);
     for (let i = 0; i < count; i++) {
-      await expect(contactItems.nth(i)).toHaveAttribute('role', 'listitem');
+      expect(await wraps.nth(i).evaluate((el) => el.tagName)).toBe('LI');
     }
   });
 
