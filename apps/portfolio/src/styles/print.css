@@ -51,6 +51,12 @@
     display: none !important;
   }
 
+  /* Neutralize the hero atmospheric gradient layer for clean print. */
+  .section-hero::before {
+    display: none !important;
+    background: none !important;
+  }
+
   /* Keep resume-relevant sections visible and unconstrained. */
   #hero,
   #about,
