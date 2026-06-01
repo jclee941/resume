@@ -98,8 +98,8 @@ function buildJapaneseTemplate(html) {
     .replace(/<span class="sr-only">이재철<\/span>/g, '<span class="sr-only">イ・ジェチョル</span>')
     // === JA hero positioning / tagline / KPI grid ===
     .replace(
-      /<p class="hero-positioning">8년차 보안·SRE 엔지니어 — 증권거래소 보안 인프라 설계·운영<\/p>/g,
-      '<p class="hero-positioning">8年目のセキュリティ・SREエンジニア — 証券取引所セキュリティインフラの設計・運用</p>'
+      /<p class="hero-positioning">8년차 보안·SRE 엔지니어 — 금융권 보안 인프라 설계·운영<\/p>/g,
+      '<p class="hero-positioning">8年目のセキュリティ・SREエンジニア — 金融業界セキュリティインフラの設計・運用</p>'
     )
     .replace(
       /<p class="hero-tagline">FSC 본인가 통과 · SIEM 탐지·대응 자동화 · IaC 기반 관측성 · 이 사이트도 직접 빌드·배포<\/p>/g,
@@ -109,7 +109,7 @@ function buildJapaneseTemplate(html) {
     .replace(/<dd class="hero-kpi__value">8년\+<\/dd>/g, '<dd class="hero-kpi__value">8年+</dd>')
     .replace(/<dt class="hero-kpi__label">보안·인프라 경력<\/dt>/g, '<dt class="hero-kpi__label">セキュリティ・インフラ経験</dt>')
     .replace(/<dd class="hero-kpi__value">FSC 통과<\/dd>/g, '<dd class="hero-kpi__value">FSC通過</dd>')
-    .replace(/<dt class="hero-kpi__label">증권거래소 본인가<\/dt>/g, '<dt class="hero-kpi__label">証券取引所 本認可</dt>')
+    .replace(/<dt class="hero-kpi__label">금융권 본인가<\/dt>/g, '<dt class="hero-kpi__label">金融業界 本認可</dt>')
     .replace(/<dd class="hero-kpi__value">5계층 HA<\/dd>/g, '<dd class="hero-kpi__value">5層 HA</dd>')
     .replace(/<dt class="hero-kpi__label">FortiGate 망분리 설계<\/dt>/g, '<dt class="hero-kpi__label">FortiGate 網分離設計</dt>')
     .replace(/<dd class="hero-kpi__value">6 \+ CKS<\/dd>/g, '<dd class="hero-kpi__value">6 + CKS</dd>')
