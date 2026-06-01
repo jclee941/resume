@@ -9,7 +9,7 @@ name: CI Failure Issues
 
 on:
   workflow_run:
-    workflows: ["Sanity", "Auto Deploy Workflows", "PR Checks"]
+    workflows: ['Sanity', 'Auto Deploy Workflows', 'PR Checks']
     types: [completed]
   workflow_dispatch:
     inputs:
