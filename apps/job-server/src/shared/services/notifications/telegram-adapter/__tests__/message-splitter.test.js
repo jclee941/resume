@@ -56,4 +56,17 @@ describe('splitForTelegram', () => {
     assert.deepEqual(splitForTelegram(''), []);
     assert.deepEqual(splitForTelegram(null), []);
   });
+
+  it('S1d: oversized escaped anchor degrades to plain text without leaking a broken entity tag', () => {
+    // A single anchor whose escaped label alone exceeds the limit. After
+    // strip-to-plain + hard-split, no chunk may end inside an HTML tag.
+    const label = `${'R&amp;D '.repeat(900)}&lt;Ops&gt;`; // > 4096 escaped chars
+    const huge = `<a href="https://x.test/huge?a=1&amp;b=2">${label}</a>`;
+    const chunks = splitForTelegram(huge);
+    assert.ok(chunks.length > 1, 'oversized anchor must be split');
+    for (const chunk of chunks) {
+      assert.ok(chunk.length <= TELEGRAM_MAX_LENGTH, `chunk too long: ${chunk.length}`);
+      assert.ok(!hasDanglingTag(chunk), 'chunk must not end inside an HTML tag');
+    }
+  });
 });

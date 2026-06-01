@@ -166,4 +166,26 @@ describe('createSingleJobMessage', () => {
     assert.match(msg.text, /Engineer/);
     assert.match(msg.text, /NoUrl/);
   });
+
+  it('S11: escapes HTML special chars in anchor label and no-URL fallback (Telegram-safe)', () => {
+    const withUrl = createSingleJobMessage({
+      company: 'R&D <Ops>',
+      position: 'SRE & Platform <Senior>',
+      url: 'https://x.test/1?a=1&b=2',
+      source: 'wanted',
+      matchPercentage: 80,
+    });
+    // anchor text must be escaped, no raw & < > leaking outside tags
+    assert.match(withUrl.text, /SRE &amp; Platform &lt;Senior&gt; — R&amp;D &lt;Ops&gt;/);
+    assert.match(withUrl.text, /href="https:\/\/x\.test\/1\?a=1&amp;b=2"/);
+    // no unescaped raw special chars in the label region
+    assert.ok(!/R&D/.test(withUrl.text), 'raw R&D must not appear');
+    assert.ok(!/<Senior>/.test(withUrl.text), 'raw <Senior> must not appear');
+
+    // no-URL fallback must also escape the plain label
+    const noUrl = createSingleJobMessage({ company: 'A&B', position: 'C<D>' });
+    assert.ok(!/href=/.test(noUrl.text));
+    assert.match(noUrl.text, /C&lt;D&gt; — A&amp;B/);
+    assert.ok(!/C<D>/.test(noUrl.text), 'raw C<D> must not appear');
+  });
 });
