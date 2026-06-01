@@ -16,14 +16,20 @@ const observeLCP = () => {
 };
 
 // Interaction to Next Paint (INP) — replaces the deprecated FID Core Web Vital.
-// Tracks the longest interaction latency seen on the page (event-timing).
+// Groups event-timing entries by interactionId (ignoring non-interaction events)
+// and tracks the worst interaction latency. Lightweight approximation of INP.
 const observeINP = () => {
   try {
+    const interactions = new Map();
     let worstInp = 0;
     const po = new PerformanceObserver((entryList) => {
       for (const entry of entryList.getEntries()) {
-        if (entry.duration > worstInp) {
-          worstInp = entry.duration;
+        if (!entry.interactionId) continue;
+        const previous = interactions.get(entry.interactionId) || 0;
+        const duration = Math.max(previous, entry.duration);
+        interactions.set(entry.interactionId, duration);
+        if (duration > worstInp) {
+          worstInp = duration;
           webVitals.inp = Math.round(worstInp);
         }
       }
