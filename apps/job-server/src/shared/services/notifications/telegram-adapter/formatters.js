@@ -134,7 +134,7 @@ export function createCaptchaDetectedMessage(job, platform) {
  *
  * @param {Array<{company?:string,companyName?:string,position?:string,title?:string,url?:string,sourceUrl?:string,source?:string,platform?:string,matchScore?:number,score?:number}>} jobs
  * @param {{limit?:number, header?:string}} [options]
- * @returns {{text:string, parse_mode:'HTML', disable_web_page_preview:boolean}}
+ * @returns {{text:string, parse_mode:'HTML', disable_web_page_preview:boolean, renderedCount:number}}
  */
 export function createJobPostingsMessage(jobs = [], options = {}) {
   const limit = Number.isInteger(options.limit) && options.limit > 0 ? options.limit : 10;
