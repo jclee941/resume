@@ -1,0 +1,5 @@
+[
+  { "company": "WorthyCo", "position": "Senior SRE", "url": "https://x.test/worthy", "source": "wanted", "matchPercentage": 85 },
+  { "company": "LowCo", "position": "Unrelated Sales Role", "url": "https://x.test/low", "source": "saramin", "matchPercentage": 35 },
+  { "company": "MidCo", "position": "Cloud Engineer", "url": "https://x.test/mid", "source": "jobkorea", "matchPercentage": 64 }
+]

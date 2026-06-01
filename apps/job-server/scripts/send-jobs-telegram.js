@@ -23,6 +23,7 @@
 import { readFileSync } from 'fs';
 
 import { TelegramNotificationAdapter } from '../src/shared/services/notifications/telegram-adapter.js';
+import { filterWorthy, WORTHY_MIN_SCORE } from './worthiness.js';
 
 const DEFAULT_KEYWORDS = [
   '보안 엔지니어',
@@ -40,6 +41,7 @@ function parseArgs(argv) {
     keywords: get('keywords') ? get('keywords').split(',').map((s) => s.trim()) : DEFAULT_KEYWORDS,
     dryRun: argv.includes('--dry-run'),
     separate: argv.includes('--separate'),
+    minScore: Number.parseInt(get('min-score') ?? String(WORTHY_MIN_SCORE), 10) || WORTHY_MIN_SCORE,
   };
 }
 
@@ -62,19 +64,21 @@ async function loadFromQueue(queuePath) {
   return entries.map(normalizeJob).filter((j) => j.url);
 }
 
-async function crawlJobs(keywords) {
+async function crawlJobs(keywords, minScore) {
   const { UnifiedJobCrawler } = await import('../src/crawlers/unified/unified-job-crawler.js');
   const crawler = new UnifiedJobCrawler({ sources: ['saramin', 'jobkorea'] });
   const all = [];
   for (const kw of keywords) {
-    const r = await crawler.searchAll({ keyword: kw, limit: 10 });
-    if (r.success) all.push(...r.jobs);
+    // searchWithMatching scores each job against the resume (지원할만함 = score>=minScore)
+    const r = await crawler.searchWithMatching({ keyword: kw, limit: 10, minScore });
+    if (r.success && Array.isArray(r.jobs)) all.push(...r.jobs);
   }
   const seen = new Set();
   const uniq = [];
   for (const j of all) {
-    if (!seen.has(j.id)) {
-      seen.add(j.id);
+    const key = j.id ?? `${j.company}_${j.position}`;
+    if (!seen.has(key)) {
+      seen.add(key);
       uniq.push(normalizeJob(j));
     }
   }
@@ -84,11 +88,17 @@ async function crawlJobs(keywords) {
 async function main() {
   const args = parseArgs(process.argv.slice(2));
 
-  const jobs = args.queuePath
+  const collected = args.queuePath
     ? await loadFromQueue(args.queuePath)
-    : await crawlJobs(args.keywords);
+    : await crawlJobs(args.keywords, args.minScore);
 
-  console.log(`📋 Collected ${jobs.length} postings with URLs (${args.queuePath ? 'queue' : 'crawl'})`);
+  // Keep only 지원할만한 (worthy) postings, best-first. Queue files may be
+  // pre-curated but can also carry scores, so the same gate applies uniformly.
+  const jobs = filterWorthy(collected, args.minScore);
+
+  console.log(
+    `📋 ${jobs.length} worthy posting(s) (score>=${args.minScore}) of ${collected.length} collected (${args.queuePath ? 'queue' : 'crawl'})`
+  );
 
   const adapter = new TelegramNotificationAdapter();
 

@@ -49,4 +49,35 @@ describe('send-jobs-telegram.js --separate --dry-run', () => {
     const markers = stdout.match(/would send/gi) || [];
     assert.notEqual(markers.length, 3);
   });
+
+  it('S9: drops postings below the worthiness threshold (지원할만한 only)', async () => {
+    const mixed = resolve(__dirname, '../__fixtures__/telegram-queue-mixed.json');
+    const { error, stdout } = await runScript([
+      '--separate',
+      '--dry-run',
+      `--queue=${mixed}`,
+    ]);
+    assert.equal(error, null, `script should exit 0, stderr: ${error?.message}`);
+    // 2 of 3 jobs are worthy (85, 64); the 35-score job is excluded.
+    const markers = stdout.match(/would send/gi) || [];
+    assert.equal(markers.length, 2, `expected 2 worthy would-send markers, got ${markers.length}\n${stdout}`);
+    assert.match(stdout, /Senior SRE/);
+    assert.match(stdout, /Cloud Engineer/);
+    assert.ok(!/Unrelated Sales Role/.test(stdout), 'sub-threshold job must NOT be sent');
+  });
+
+  it('S9b: --min-score override tightens the worthiness gate', async () => {
+    const mixed = resolve(__dirname, '../__fixtures__/telegram-queue-mixed.json');
+    const { error, stdout } = await runScript([
+      '--separate',
+      '--dry-run',
+      '--min-score=80',
+      `--queue=${mixed}`,
+    ]);
+    assert.equal(error, null);
+    const markers = stdout.match(/would send/gi) || [];
+    assert.equal(markers.length, 1, `only the 85-score job qualifies at min-score=80, got ${markers.length}`);
+    assert.match(stdout, /Senior SRE/);
+    assert.ok(!/Cloud Engineer/.test(stdout), '64 < 80 excluded');
+  });
 });
