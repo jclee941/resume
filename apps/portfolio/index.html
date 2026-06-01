@@ -1146,6 +1146,75 @@
             </section>
 
             <section
+              id="site-security"
+              class="section-site-security reveal"
+              role="region"
+              aria-labelledby="site-security-heading"
+            >
+              <h2 id="site-security-heading" class="sr-only">이 사이트의 보안 설계</h2>
+              <div class="section-cmd">
+                <span class="section-cmd__command"
+                  >curl -sI https://resume.jclee.me | grep -i security</span
+                >
+              </div>
+              <p class="site-security__intro">
+                이 포트폴리오는 설명하는 보안 원칙을 사이트 자체에 적용했습니다. 아래 항목은 배포된
+                응답 헤더·워커 코드·CI 설정에서 실제로 동작하는 통제입니다.
+              </p>
+              <ul class="security-grid">
+                <li class="security-card">
+                  <span class="security-card__icon" aria-hidden="true">🔒</span>
+                  <h3 class="security-card__title">Strict CSP (nonce + strict-dynamic)</h3>
+                  <p class="security-card__desc">
+                    응답마다 nonce를 발급하고 strict-dynamic를 사용해 unsafe-inline·unsafe-eval 없이
+                    인라인 스크립트를 허용합니다.
+                  </p>
+                </li>
+                <li class="security-card">
+                  <span class="security-card__icon" aria-hidden="true">🛡️</span>
+                  <h3 class="security-card__title">HSTS preload-ready · 전송 강제</h3>
+                  <p class="security-card__desc">
+                    Strict-Transport-Security와 upgrade-insecure-requests로 HTTPS를 강제하고,
+                    X-Content-Type-Options·X-Frame-Options DENY·frame-ancestors none을 적용합니다.
+                  </p>
+                </li>
+                <li class="security-card">
+                  <span class="security-card__icon" aria-hidden="true">🧭</span>
+                  <h3 class="security-card__title">Cross-origin 격리 · 모니터링</h3>
+                  <p class="security-card__desc">
+                    COOP·CORP를 강제하고, COEP·Trusted Types는 report-only로 운영합니다. 3rd-party
+                    분석·Grafana 임베드가 있고 cross-origin-isolated API가 필요 없어 강제는
+                    보류했습니다.
+                  </p>
+                </li>
+                <li class="security-card">
+                  <span class="security-card__icon" aria-hidden="true">📝</span>
+                  <h3 class="security-card__title">Reporting · security.txt</h3>
+                  <p class="security-card__desc">
+                    Reporting-Endpoints와 CSP report-to로 위반을 수집하고, RFC 9116
+                    /.well-known/security.txt로 취약점 제보 창구를 공개합니다.
+                  </p>
+                </li>
+                <li class="security-card">
+                  <span class="security-card__icon" aria-hidden="true">🚦</span>
+                  <h3 class="security-card__title">서명 세션 · 입력 방어</h3>
+                  <p class="security-card__desc">
+                    관리자 세션은 HMAC 서명 + HttpOnly·SameSite=Strict·Secure 쿠키를 쓰고,
+                    게스트북·챗 API는 레이트 제한·입력 정규화·하니팟으로 보호합니다.
+                  </p>
+                </li>
+                <li class="security-card">
+                  <span class="security-card__icon" aria-hidden="true">🔍</span>
+                  <h3 class="security-card__title">CI 보안 스캔</h3>
+                  <p class="security-card__desc">
+                    CodeQL·gitleaks·OpenSSF Scorecard·Dependabot으로 코드·시크릿·의존성 위험을
+                    지속스캔하고, harden-runner로 CI 런너의 egress를 제한·감시합니다.
+                  </p>
+                </li>
+              </ul>
+            </section>
+
+            <section
               id="observability"
               class="section-observability reveal"
               role="region"

@@ -123,3 +123,31 @@ describe('고도화: PDF source polish', () => {
     expect(gen).toMatch(/linkcolor:(?:cyan|\[HTML\]\{[0-9A-Fa-f]{6}\}|[0-9A-Fa-f]{6})/);
   });
 });
+
+describe('보안 best practice: visible "How this site is secured" section', () => {
+  test('KO and EN expose a factual #site-security section', () => {
+    for (const f of ['index.html', 'index-en.html']) {
+      const html = read(path.join(PORTFOLIO, f));
+      expect(html).toMatch(/id="site-security"/);
+      // Must reference real, implemented controls (truthful — it is a live demo).
+      expect(html).toMatch(/CSP|Content-Security-Policy/);
+      expect(html).toMatch(/HSTS|Strict-Transport-Security/);
+      expect(html).toMatch(/strict-dynamic|nonce/);
+    }
+  });
+});
+
+describe('FAANG framing: case-study senior narrative', () => {
+  const src = read(path.join(PORTFOLIO, 'src', 'scripts', 'modules', 'project-cards.js'));
+
+  test('Nextrade case studies frame a design decision / trade-off', () => {
+    // The two Nextrade cards should read like senior engineering: an explicit
+    // constraint or trade-off, not just a task list.
+    expect(src).toMatch(/제약|트레이드오프|설계 결정|trade-off|constraint/);
+  });
+
+  test('does not introduce fabricated percentage/ratio metrics', () => {
+    // Guard the no-metrics rule on the case-study source.
+    expect(src).not.toMatch(/\b\d{1,3}\s?%/);
+  });
+});

@@ -751,6 +751,77 @@
             </section>
 
             <section
+              id="site-security"
+              class="section-site-security reveal"
+              role="region"
+              aria-labelledby="site-security-heading"
+            >
+              <h2 id="site-security-heading" class="sr-only">How this site is secured</h2>
+              <div class="section-cmd">
+                <span class="section-cmd__command"
+                  >curl -sI https://resume.jclee.me | grep -i security</span
+                >
+              </div>
+              <p class="site-security__intro">
+                This portfolio applies the security practices it describes to itself. Every item
+                below is implemented in deployed headers, Worker code, or CI configuration.
+              </p>
+              <ul class="security-grid">
+                <li class="security-card">
+                  <span class="security-card__icon" aria-hidden="true">🔒</span>
+                  <h3 class="security-card__title">Strict CSP (nonce + strict-dynamic)</h3>
+                  <p class="security-card__desc">
+                    A fresh nonce per response plus strict-dynamic allows inline scripts with no
+                    unsafe-inline or unsafe-eval.
+                  </p>
+                </li>
+                <li class="security-card">
+                  <span class="security-card__icon" aria-hidden="true">🛡️</span>
+                  <h3 class="security-card__title">HSTS preload-ready &amp; transport hardening</h3>
+                  <p class="security-card__desc">
+                    Strict-Transport-Security with preload, upgrade-insecure-requests,
+                    X-Content-Type-Options, X-Frame-Options DENY and frame-ancestors none.
+                  </p>
+                </li>
+                <li class="security-card">
+                  <span class="security-card__icon" aria-hidden="true">🧭</span>
+                  <h3 class="security-card__title">Cross-origin isolation, monitored</h3>
+                  <p class="security-card__desc">
+                    COOP and CORP are enforced; COEP and Trusted Types run report-only. The site
+                    embeds third-party analytics and an owned Grafana dashboard and needs no
+                    cross-origin-isolated APIs, so enforcing COEP would only break embeds.
+                  </p>
+                </li>
+                <li class="security-card">
+                  <span class="security-card__icon" aria-hidden="true">📝</span>
+                  <h3 class="security-card__title">Reporting &amp; security.txt</h3>
+                  <p class="security-card__desc">
+                    Violations are collected via Reporting-Endpoints and CSP report-to, and a RFC
+                    9116 /.well-known/security.txt publishes a disclosure contact.
+                  </p>
+                </li>
+                <li class="security-card">
+                  <span class="security-card__icon" aria-hidden="true">🚦</span>
+                  <h3 class="security-card__title">Signed sessions &amp; input defense</h3>
+                  <p class="security-card__desc">
+                    Admin sessions use HMAC-signed HttpOnly, SameSite=Strict, Secure cookies;
+                    guestbook and chat endpoints add rate limiting, input normalization and a
+                    honeypot.
+                  </p>
+                </li>
+                <li class="security-card">
+                  <span class="security-card__icon" aria-hidden="true">🔍</span>
+                  <h3 class="security-card__title">CI security scanning</h3>
+                  <p class="security-card__desc">
+                    CodeQL, gitleaks, OpenSSF Scorecard and Dependabot continuously review code,
+                    secrets and dependency risk; harden-runner constrains and monitors CI runner
+                    egress.
+                  </p>
+                </li>
+              </ul>
+            </section>
+
+            <section
               id="observability"
               class="section-observability reveal"
               role="region"
