@@ -13,7 +13,7 @@
 
 ## 학력
 
-한양사이버대학교 컴퓨터공학과 (재학중)
+한양사이버대학교 컴퓨터공학과 (2024.03 ~ 재학중)
 용남고등학교 졸업
 
 ---
@@ -89,7 +89,7 @@
 **프로젝트 규모**
 
 - 신규 구축 인프라: 정보보안 장비
-- 금융시스템: 거래 플랫폼, 청산 시스템, 감시 시스템, 백오피스
+- 금융시스템: 매매체결시스템
 - 사용자 목표: 사내 임직원 전반
 
 주요 업무
@@ -103,13 +103,13 @@
 주요 성과
 
 - 방화벽 정책 자동화 스크립트 작성 (Python)
-- EPP/DLP 설정 조정으로 EPP/DLP 설정 조정으로 단말 보안 에이전트 정책 정비
+- EPP/DLP 설정 조정으로 단말 보안 에이전트 정책 정비
 - 구축 기간 동안 보안 침해사고 없이 운영
 - FSC 본인가 심사 보안 분야 질의와 증빙 자료에 대응
 - 다층 망분리 구성 수행
 - NAC 정책 배포 자동화 스크립트 작성
 - DR 복구 절차 스크립트화
-- DB 접근제어 쿼리 튜닝으로 DB 접근제어 쿼리 튜닝 수행
+- DB 접근제어 쿼리 튜닝 수행
 - PB 플랫폼 POC 검증 수행
 
 ---
@@ -123,7 +123,7 @@
 - 금융보안데이터센터(FSDC) 서버 인프라 운영
 - Python 기반 인프라 자동화 스크립트 개발
 - 금융감독원 정기 감사 대응 및 DLP 정책 운영
-- DB 접근제어 쿼리 튜닝 및 시스템 DB 접근제어 쿼리 튜닝 수행
+- DB 접근제어 쿼리 튜닝 및 시스템 성능 최적화 수행
 - PB 플랫폼 POC 검증 및 시스템 런칭 지원
 
 ---
@@ -140,7 +140,7 @@
 
 주요 성과
 
-- 네트워크 세분화로 네트워크 세분화 및 장애 대응 기준 정비
+- 네트워크 세분화 및 장애 대응 기준 정비
 - APT·NAC·DLP 통합으로 침해 시도 차단 체계 강화
 - DLP 룰 재설계로 오탐 흐름 정비
 - 이중화 구성으로 서비스 가용성 강화
@@ -161,7 +161,7 @@
 주요 성과
 
 - Python으로 네트워크 점검 자동화
-- 백신-VPN 충돌 원인 분석 및 해결로 백신-VPN 충돌 원인 분석 및 대응 절차 정리
+- 백신-VPN 충돌 원인 분석 및 해결, 대응 절차 정리
 - Ansible로 NAC 정책 배포 자동화
 - 신규 사이트 네트워크 구성 수행
 
@@ -244,7 +244,7 @@
 - **프로젝트 성격**: 대한민국 대체거래소 (다자간매매체결회사)
 - **인프라 규모**: 정보보안 장비 통합 운영, 대용량 일일 주문 처리
 - **사용자**: 사내 임직원 전반
-- **핵심 시스템**: 거래 플랫폼, 청산 시스템, 감시 시스템, 백오피스
+- **핵심 시스템**: 매매체결시스템
 
 **구축 단계 (2024.03 ~ 2025.02)**
 
@@ -317,7 +317,6 @@
 - **기술스택**: Python, Flask, Scikit-learn, PostgreSQL, MCP Servers
 - **규모**: 스크립트 관리, Constitutional Framework
 - **성과**: AI 작업 흐름 자동화, 자동 에이전트 라우팅으로 의사결정 재활용성 강화
-- **GitHub**: [github.com/jclee941/claude](https://github.com/jclee941/claude)
 
 **2. n8n Workflow Automation**
 
@@ -326,7 +325,6 @@
 - **규모**: 템플릿 기반 API 오케스트레이션
 - **성과**: 반복 작업 자동화, 워크플로우 재사용성 강화
 - **Live**: <https://n8n.jclee.me>
-- **GitHub**: [github.com/jclee941/n8n](https://github.com/jclee941/n8n)
 
 **3. GitLab Enterprise Edition**
 
@@ -334,7 +332,6 @@
 - **기술스택**: GitLab EE, PostgreSQL, Redis, Traefik
 - **규모**: CI/CD pipelines, Container Registry, 주기적 자동 백업
 - **성과**: Private 코드 호스팅, 자동화된 CI/CD, 컨테이너 이미지 관리
-- **GitHub**: [github.com/jclee941/claude/tree/main/app/gitlab](https://github.com/jclee941/claude/tree/main/app/gitlab)
 
 **4. Nginx Airgap Configuration**
 
@@ -342,7 +339,6 @@
 - **기술스택**: Nginx, Airgap Deployment, Security Hardening
 - **특징**: 패키지 사전 준비, 오프라인 설치 지원
 - **성과**: 폐쇄망 환경에서 자급 배포 구조 표준화
-- **GitHub**: [github.com/jclee941/nginx](https://github.com/jclee941/nginx)
 
 **5. Python Automation Framework**
 
@@ -350,7 +346,6 @@
 - **기술스택**: Python, Ansible, Bash, Git Hooks
 - **특징**: 파일 거버넌스, AI 보상 시스템, 세션 연속성
 - **성과**: 인프라 운영 수작업 자동화 및 스크립트 재사용성 강화
-- **GitHub**: [github.com/jclee941/claude](https://github.com/jclee941/claude)
 
 **6. Constitutional Governance System**
 
@@ -358,7 +353,6 @@
 - **기술스택**: Bash, Python, JSONL, Git Hooks
 - **규모**: 파일 생성 쿼터 관리, 유사도 감지, 자동 로깅
 - **성과**: 파일 중복 억제 및 프로젝트 구조 일관성 유지
-- **GitHub**: [github.com/jclee941/claude/blob/main/scripts/master-prevention-system.sh](https://github.com/jclee941/claude/blob/main/scripts/master-prevention-system.sh)
 
 **7. AI Compensation Core**
 
@@ -366,7 +360,6 @@
 - **기술스택**: Python, Pattern Detection, Multi-Model Validation
 - **보상 영역**: Context window, Hallucination 감지, Real-time data, Domain routing
 - **성과**: AI 응답 신뢰도 강화 및 환각 탐지 흐름 표준화
-- **GitHub**: [github.com/jclee941/claude/blob/main/scripts/ai-compensation-core.py](https://github.com/jclee941/claude/blob/main/scripts/ai-compensation-core.py)
 
 **8. Ansible FortiManager Automation**
 
@@ -375,7 +368,6 @@
 - **규모**: 플레이북 기반 fortinet.fortimanager collection
 - **기능**: 정책 조회/생성/수정, 백업/복원, 오브젝트 관리, Docker 배포 자동화
 - **성과**: 정책 배포 자동화 및 수작업 의존도 완화
-- **GitHub**: [github.com/jclee941/policy](https://github.com/jclee941/policy)
 
 **9. NAS Infrastructure Deployment**
 
@@ -384,7 +376,6 @@
 - **규모**: 관찰성·CI/CD·프록시 서비스 묶음 (Grafana, Prometheus, Loki, AlertManager, GitLab, Traefik, Splunk, Promtail, Node Exporter)
 - **기능**: 원격 Docker 관리, 자동 rsync 동기화, 멀티 서비스 오케스트레이션
 - **성과**: 배포 자동화 및 인프라 동기화 흐름 표준화
-- **GitHub**: [github.com/jclee941/claude/tree/main/infra](https://github.com/jclee941/claude/tree/main/infra)
 
 **핵심 아키텍처 설계**
 
@@ -519,11 +510,12 @@
 
 ## 자격증
 
-| 자격증명           | 발급기관                     |
-| ------------------ | ---------------------------- |
-| CCNP               | Cisco Systems                |
-| RHCSA              | Red Hat                      |
-| CompTIA Linux+     | CompTIA                      |
-| LPIC Level 1       | Linux Professional Institute |
-| 사무자동화산업기사 | 한국산업인력공단             |
-| 리눅스마스터 2급   | 한국정보통신진흥협회         |
+| 자격증명                                        | 발급기관                     | 취득       | 상태               |
+| ----------------------------------------------- | ---------------------------- | ---------- | ------------------ |
+| CCNP                                            | Cisco Systems                | 2020.08    | 만료 (갱신 예정)   |
+| RHCSA                                           | Red Hat                      | 2019.01    | 만료 (갱신 예정)   |
+| CompTIA Linux+                                  | CompTIA                      | 2019.02    | 유효               |
+| LPIC Level 1                                    | Linux Professional Institute | 2019.02    | 유효               |
+| 리눅스마스터 2급                                | 한국정보통신진흥협회         | 2019.01    | 유효               |
+| 사무자동화산업기사                              | 한국산업인력공단             | 2019.12    | 유효               |
+| Certified Kubernetes Security Specialist (CKS)  | CNCF                         | 2026 예정  | 진행 중            |

@@ -96,6 +96,24 @@ function buildJapaneseTemplate(html) {
     // === JA hero copy (replace KO hero text with Japanese) ===
     .replace(/<span class="typing-effect glow-cyan">이재철<\/span/g, '<span class="typing-effect glow-cyan">イ・ジェチョル</span')
     .replace(/<span class="sr-only">이재철<\/span>/g, '<span class="sr-only">イ・ジェチョル</span>')
+    // === JA hero positioning / tagline / KPI grid ===
+    .replace(
+      /<p class="hero-positioning">8년차 보안·SRE 엔지니어 — 증권거래소 보안 인프라 설계·운영<\/p>/g,
+      '<p class="hero-positioning">8年目のセキュリティ・SREエンジニア — 証券取引所セキュリティインフラの設計・運用</p>'
+    )
+    .replace(
+      /<p class="hero-tagline">FSC 본인가 통과 · SIEM 탐지·대응 자동화 · IaC 기반 관측성 · 이 사이트도 직접 빌드·배포<\/p>/g,
+      '<p class="hero-tagline">FSC本認可審査対応 · SIEM検知・対応の自動化 · IaCベースの可観測性 · このサイトも自作・自前デプロイ</p>'
+    )
+    .replace(/aria-label="핵심 성과 지표"/g, 'aria-label="主要な実績指標"')
+    .replace(/<dd class="hero-kpi__value">8년\+<\/dd>/g, '<dd class="hero-kpi__value">8年+</dd>')
+    .replace(/<dt class="hero-kpi__label">보안·인프라 경력<\/dt>/g, '<dt class="hero-kpi__label">セキュリティ・インフラ経験</dt>')
+    .replace(/<dd class="hero-kpi__value">FSC 통과<\/dd>/g, '<dd class="hero-kpi__value">FSC通過</dd>')
+    .replace(/<dt class="hero-kpi__label">증권거래소 본인가<\/dt>/g, '<dt class="hero-kpi__label">証券取引所 本認可</dt>')
+    .replace(/<dd class="hero-kpi__value">5계층 HA<\/dd>/g, '<dd class="hero-kpi__value">5層 HA</dd>')
+    .replace(/<dt class="hero-kpi__label">FortiGate 망분리 설계<\/dt>/g, '<dt class="hero-kpi__label">FortiGate 網分離設計</dt>')
+    .replace(/<dd class="hero-kpi__value">6 \+ CKS<\/dd>/g, '<dd class="hero-kpi__value">6 + CKS</dd>')
+    .replace(/<dt class="hero-kpi__label">보유·취득예정 자격증<\/dt>/g, '<dt class="hero-kpi__label">保有・取得予定の資格</dt>')
     // === Status seeking strip ===
     .replace(/aria-label="구직 중 · 즉시 투입 가능"/g, 'aria-label="求職中 · 即時入社可能"')
     .replace(/<span class="status-seeking__label">구직 중<\/span>/g, '<span class="status-seeking__label">求職中</span>')

@@ -86,6 +86,7 @@ function generateWebData(source) {
     const entry = {
       icon: icons[idx] || '💼',
       title: career.company,
+      role: career.myRole || career.role || '',
       description: career.description,
       period: career.period,
       stats: statsMap[career.company] || [],
@@ -115,6 +116,7 @@ function generateWebData(source) {
     const entry = {
       icon: icons[idx] || '💼',
       title: translated.title || career.company,
+      role: translated.role || career.myRole || career.role || '',
       description: translated.description || career.description,
       period: translated.period || career.period.replace('현재', 'Present'),
       stats: statsMapEn[career.company] || [],
@@ -152,7 +154,6 @@ function generateWebData(source) {
   const projectsEn = (source.personalProjects || []).map((proj) => {
     const translated = projectEnMap[proj.name] || {};
 
-
     return {
       icon: proj.icon || '💻',
       title: translated.title || proj.name,
@@ -174,6 +175,25 @@ function generateWebData(source) {
     };
   });
 
+  // SSoT careers[] → top-level careers[] for the client timeline module.
+  // Preserves the data fields apps/portfolio/src/scripts/modules/timeline.js renders
+  // (company, companyUrl, period, role, myRole, description) so the timeline reads from
+  // build-injected window.__RESUME_CHAT_DATA__.careers instead of a hardcoded fallback.
+  // `achievements` is flattened from the SSoT work sub-projects (career.projects[].achievements)
+  // so the timeline "Impact" text + expanded list stay sourced from the SSoT (no drift).
+  // UI-only metadata (phase/status) is NOT part of the SSoT and is attached in timeline.js.
+  const careers = source.careers.map((career) => ({
+    company: career.company,
+    companyUrl: career.companyUrl || null,
+    period: career.period,
+    role: career.role,
+    myRole: career.myRole,
+    description: career.description,
+    achievements: (career.projects || [])
+      .flatMap((project) => project.achievements || [])
+      .filter((achievement) => typeof achievement === 'string' && achievement.length > 0),
+  }));
+
   return {
     resumeDownload: {
       pdfUrl: 'https://resume.jclee.me/resume.pdf',
@@ -183,6 +203,7 @@ function generateWebData(source) {
         'https://raw.githubusercontent.com/jclee941/resume/master/packages/data/resumes/master/resume_final.md',
     },
     resume,
+    careers,
     resumeEn,
     projects,
     projectsEn,
@@ -193,7 +214,8 @@ function generateWebData(source) {
     achievements: source.achievements,
     infrastructure: source.infrastructure,
     contact: source.contact,
-    aboutSection: source.summary && source.summary.aboutSection ? source.summary.aboutSection : null,
+    aboutSection:
+      source.summary && source.summary.aboutSection ? source.summary.aboutSection : null,
     expertise: source.summary && source.summary.expertise ? source.summary.expertise : null,
     coreCompetencies:
       source.summary && source.summary.coreCompetencies ? source.summary.coreCompetencies : null,
