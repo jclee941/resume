@@ -83,26 +83,28 @@ function enhanceCard(card, index, L) {
   panel.id = panelId;
   panel.setAttribute('aria-hidden', 'true');
   panel.innerHTML = `
-    ${
-      features.length > 0
-        ? `<div class="project-details__block">
-            <span class="project-details__label">${L.features}</span>
-            <ul class="project-details__features">
-              ${features.map((f) => `<li>${escapeHtml(f)}</li>`).join('')}
-            </ul>
-          </div>`
-        : ''
-    }
-    ${
-      techs.length > 0
-        ? `<div class="project-details__block">
-            <span class="project-details__label">${L.stack}</span>
-            <div class="project-details__stack">
-              ${techs.map((t) => `<span class="project-chip">${escapeHtml(t)}</span>`).join('')}
-            </div>
-          </div>`
-        : ''
-    }
+    <div class="project-details__inner">
+      ${
+        features.length > 0
+          ? `<div class="project-details__block">
+              <span class="project-details__label">${L.features}</span>
+              <ul class="project-details__features">
+                ${features.map((f) => `<li>${escapeHtml(f)}</li>`).join('')}
+              </ul>
+            </div>`
+          : ''
+      }
+      ${
+        techs.length > 0
+          ? `<div class="project-details__block">
+              <span class="project-details__label">${L.stack}</span>
+              <div class="project-details__stack">
+                ${techs.map((t) => `<span class="project-chip">${escapeHtml(t)}</span>`).join('')}
+              </div>
+            </div>`
+          : ''
+      }
+    </div>
   `;
 
   // The collapsed view shows a one-line preview; the full narrative moves into
