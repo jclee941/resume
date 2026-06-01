@@ -25,7 +25,9 @@ function generateAboutContent(aboutData, dataHash) {
   const blocksHtml = blocks
     .filter((block) => Array.isArray(block.items) && block.items.length > 0)
     .map((block) => {
-      const items = block.items.map((item) => `<li>${escapeHtml(String(item))}</li>`).join('\n          ');
+      const items = block.items
+        .map((item) => `<li>${escapeHtml(String(item))}</li>`)
+        .join('\n          ');
       return `<div class="about-block">
         <span class="about-label">&gt; ${block.label}</span>
         <ul class="cmd-output about-list">

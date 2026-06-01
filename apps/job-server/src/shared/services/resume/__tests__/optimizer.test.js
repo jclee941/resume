@@ -26,7 +26,11 @@ describe('optimizeResume', () => {
     const analyzeWithClaude = mock.fn(async () => 'intro\n# Optimized Resume\n## Summary\nupdated');
     const { optimizeResume } = await loadOptimizer(mock.fn(async () => ''));
 
-    const result = await optimizeResume('# Master Resume\nold', { score: 90, keywords: ['SRE'] }, { analyzeFn: analyzeWithClaude });
+    const result = await optimizeResume(
+      '# Master Resume\nold',
+      { score: 90, keywords: ['SRE'] },
+      { analyzeFn: analyzeWithClaude }
+    );
 
     assert.equal(result, '# Optimized Resume\n## Summary\nupdated');
     assert.equal(analyzeWithClaude.mock.calls.length, 1);
@@ -40,7 +44,11 @@ describe('optimizeResume', () => {
     const analyzeWithClaude = mock.fn(async () => 'plain optimized text');
     const { optimizeResume } = await loadOptimizer(mock.fn(async () => ''));
 
-    const result = await optimizeResume('master', { role: 'devops' }, { analyzeFn: analyzeWithClaude });
+    const result = await optimizeResume(
+      'master',
+      { role: 'devops' },
+      { analyzeFn: analyzeWithClaude }
+    );
 
     assert.equal(result, 'plain optimized text');
   });
@@ -49,9 +57,12 @@ describe('optimizeResume', () => {
     const analyzeWithClaude = mock.fn(async () => '');
     const { optimizeResume } = await loadOptimizer(mock.fn(async () => 'fallback'));
 
-    await assert.rejects(() => optimizeResume('master', { role: 'devops' }, { analyzeFn: analyzeWithClaude }), {
-      message: '이력서 최적화 실패',
-    });
+    await assert.rejects(
+      () => optimizeResume('master', { role: 'devops' }, { analyzeFn: analyzeWithClaude }),
+      {
+        message: '이력서 최적화 실패',
+      }
+    );
   });
 
   it('uses module analyzeWithClaude fallback when analyzeFn option is not provided', async () => {

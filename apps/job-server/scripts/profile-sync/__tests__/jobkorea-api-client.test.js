@@ -1,7 +1,11 @@
 import assert from 'node:assert';
 import { afterEach, describe, it } from 'node:test';
 import { JobKoreaAPIClient } from '../jobkorea-handler/api-client.js';
-import { JobKoreaAuthError, JobKoreaCaptchaError, JobKoreaSaveError } from '../jobkorea-handler/api-errors.js';
+import {
+  JobKoreaAuthError,
+  JobKoreaCaptchaError,
+  JobKoreaSaveError,
+} from '../jobkorea-handler/api-errors.js';
 
 function jsonResponse(body, options = {}) {
   return {
@@ -31,15 +35,26 @@ describe('JobKoreaAPIClient', () => {
 
     try {
       const client = new JobKoreaAPIClient({ cookieString: 'JKSESSION=abc' });
-      const result = await client.saveResume([{ name: 'UserResume.Resume_Title', value: 'Title' }], {
-        tokens: { IsEditPage: 'True', IsCompleteSave: 'False', LastEditDateTicks: '123', hdnIsCompleteSave: 'False' },
-      });
+      const result = await client.saveResume(
+        [{ name: 'UserResume.Resume_Title', value: 'Title' }],
+        {
+          tokens: {
+            IsEditPage: 'True',
+            IsCompleteSave: 'False',
+            LastEditDateTicks: '123',
+            hdnIsCompleteSave: 'False',
+          },
+        }
+      );
       // fetchEditPageTokens is skipped when tokens are provided
       const { url, options } = requests[0];
 
       assert.strictEqual(result.success, true);
       assert.deepStrictEqual(result.result, { saveResult: { IsSuccess: true } });
-      assert.strictEqual(url.toString(), `https://www.jobkorea.co.kr/User/Resume/Save?_=${fixedNow}`);
+      assert.strictEqual(
+        url.toString(),
+        `https://www.jobkorea.co.kr/User/Resume/Save?_=${fixedNow}`
+      );
       assert.strictEqual(options.method, 'POST');
       assert.match(options.headers['Content-Type'], /application\/x-www-form-urlencoded/);
       assert.strictEqual(options.headers['X-Requested-With'], 'XMLHttpRequest');
@@ -53,23 +68,30 @@ describe('JobKoreaAPIClient', () => {
   });
 
   it('throws JobKoreaSaveError when saveResult.IsSuccess is false', async () => {
-    global.fetch = async () => jsonResponse({ saveResult: { IsSuccess: false, ErrorMessage: 'invalid resume' } });
+    global.fetch = async () =>
+      jsonResponse({ saveResult: { IsSuccess: false, ErrorMessage: 'invalid resume' } });
 
     const client = new JobKoreaAPIClient({ cookieString: 'JKSESSION=abc' });
 
-    await assert.rejects(() => client.saveResume([]), (error) => {
-      assert.ok(error instanceof JobKoreaSaveError);
-      assert.strictEqual(error.message, 'invalid resume');
-      assert.strictEqual(error.endpoint, '/User/Resume/Save');
-      return true;
-    });
+    await assert.rejects(
+      () => client.saveResume([]),
+      (error) => {
+        assert.ok(error instanceof JobKoreaSaveError);
+        assert.strictEqual(error.message, 'invalid resume');
+        assert.strictEqual(error.endpoint, '/User/Resume/Save');
+        return true;
+      }
+    );
   });
 
   it('registers a portfolio URL and extracts file idx', async () => {
     const requests = [];
     global.fetch = async (url, options) => {
       requests.push({ url, options });
-      return jsonResponse({ sc: 1, idx: 12345 }, { url: 'https://www.jobkorea.co.kr/User/Resume/AddUserFileDB' });
+      return jsonResponse(
+        { sc: 1, idx: 12345 },
+        { url: 'https://www.jobkorea.co.kr/User/Resume/AddUserFileDB' }
+      );
     };
 
     const client = new JobKoreaAPIClient({ cookieString: 'JKSESSION=abc' });
@@ -86,7 +108,8 @@ describe('JobKoreaAPIClient', () => {
   });
 
   it('detects auth redirects in API responses and session checks', async () => {
-    global.fetch = async () => jsonResponse('<html>login</html>', { url: 'https://www.jobkorea.co.kr/Login/Login_Tot.asp' });
+    global.fetch = async () =>
+      jsonResponse('<html>login</html>', { url: 'https://www.jobkorea.co.kr/Login/Login_Tot.asp' });
 
     const client = new JobKoreaAPIClient({ cookieString: 'JKSESSION=abc' });
 

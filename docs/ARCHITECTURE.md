@@ -41,7 +41,7 @@ follows a layered architecture where `apps/` contains deployables and
 
 ## System Architecture
 
-```text
+````text
                         ┌─────────────────────────────────────────┐
                         │           GitHub Repository            │
                         │         (push to master)               │
@@ -135,7 +135,7 @@ MS|│   └── job-dashboard/          # Dashboard API module (imported into
 ├── jest.config.cjs             # Jest test config
 ├── playwright.config.js        # Playwright E2E config
 └── Dockerfile                  # Job server container
-```
+````
 
 ## Data Flow
 
@@ -161,7 +161,7 @@ During build, `generate-worker.js` inlines the HTML, CSS, and data into
 
 ### 2. Job Automation Flow
 
-KM|```text
+KM|`text
 XN|apps/job-server/ (crawlers, services)
            MN|           │
            WM|           ▼ API calls
@@ -175,7 +175,7 @@ WB|portfolio worker (imports job-dashboard)
            HX|           │
            PR|           ▼ handles internally
 XS|apps/portfolio/entry.js (/job/* routes)
-SQ|```
+SQ|`
 
 SP|Job automation runs in the job-server application, which crawls Korean job
 WS|platforms using stealth techniques (UA rotation, jitter, rebrowser-puppeteer).
@@ -233,14 +233,14 @@ See [ADR 0009](adr/0009-single-worker-consolidation.md) (supersedes ADR 0007).
 
 ## Workspaces
 
-| Package                        | Path                  | Type    | Description                          |
-| ------------------------------ | --------------------- | ------- | ------------------------------------ |
-| `@resume/portfolio-worker`     | `apps/portfolio/`     | App     | CF Worker: cyberpunk portfolio       |
-| `@resume/job-automation`       | `apps/job-server/`    | App     | MCP Server + Fastify (ESM)           |
-ST|| `@resume/job-dashboard-worker` | `apps/job-dashboard/` | Module   | Dashboard API module (imported into portfolio worker)
-| `@resume/shared`               | `packages/shared/`    | Package | Cross-worker shared kernel           |
-| `@resume/cli`                  | `packages/cli/`       | Package | Commander.js CLI (ESM)               |
-| `@resume/data`                 | `packages/data/`      | Package | Resume data SSoT                     |
+| Package                    | Path               | Type                           | Description                    |
+| -------------------------- | ------------------ | ------------------------------ | ------------------------------ | ------ | ----------------------------------------------------- |
+| `@resume/portfolio-worker` | `apps/portfolio/`  | App                            | CF Worker: cyberpunk portfolio |
+| `@resume/job-automation`   | `apps/job-server/` | App                            | MCP Server + Fastify (ESM)     |
+| ST                         |                    | `@resume/job-dashboard-worker` | `apps/job-dashboard/`          | Module | Dashboard API module (imported into portfolio worker) |
+| `@resume/shared`           | `packages/shared/` | Package                        | Cross-worker shared kernel     |
+| `@resume/cli`              | `packages/cli/`    | Package                        | Commander.js CLI (ESM)         |
+| `@resume/data`             | `packages/data/`   | Package                        | Resume data SSoT               |
 
 ## Key Design Decisions
 

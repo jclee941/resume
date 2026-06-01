@@ -7,7 +7,11 @@ export function mapCareerToWanted(career) {
   const { startsAt, endsAt } = parsePeriod(career.period);
   const jobCategoryId = JOB_CATEGORY_MAPPING[career.role] || DEFAULT_JOB_CATEGORY;
   if (!JOB_CATEGORY_MAPPING[career.role]) {
-    log(`Unknown role "${career.role}" - using default category ${DEFAULT_JOB_CATEGORY}`, 'warn', 'wanted');
+    log(
+      `Unknown role "${career.role}" - using default category ${DEFAULT_JOB_CATEGORY}`,
+      'warn',
+      'wanted'
+    );
   }
   return {
     company: { name: career.company, type: 'CUSTOM' },

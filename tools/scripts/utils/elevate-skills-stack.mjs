@@ -19,7 +19,10 @@ const koPath = resolve(root, 'packages/data/resumes/master/resume_data.json');
 const data = JSON.parse(readFileSync(koPath, 'utf-8'));
 
 let changes = 0;
-const log = (msg) => { console.log('  •', msg); changes++; };
+const log = (msg) => {
+  console.log('  •', msg);
+  changes++;
+};
 
 // Helper: add item if not present (by name match)
 function ensureItem(category, item) {
@@ -40,7 +43,9 @@ if (shellItem) {
 }
 
 // 2. Add OpenTelemetry to observability (extends Prometheus/Grafana)
-if (ensureItem('observability', { name: 'OpenTelemetry', level: 'intermediate', proficiency: 60 })) {
+if (
+  ensureItem('observability', { name: 'OpenTelemetry', level: 'intermediate', proficiency: 60 })
+) {
   log('observability: added OpenTelemetry (intermediate)');
 }
 

@@ -22,7 +22,10 @@ const sampleJobs = [
     matchScore: 80,
     matchPercentage: 82,
     applicationPriority: 'high',
-    matchDetails: { skillMatches: [{ category: 'security', keyword: 'devsecops' }], bonusPoints: [] },
+    matchDetails: {
+      skillMatches: [{ category: 'security', keyword: 'devsecops' }],
+      bonusPoints: [],
+    },
   },
   {
     id: 'jobkorea_2',
@@ -83,7 +86,10 @@ describe('buildRankedReport', () => {
     const report = buildRankedReport(sampleJobs, { minScore: 60, keywords: ['DevSecOps', 'SRE'] });
     assert.equal(report.totalScored, 3);
     assert.equal(report.worthApplying.length, 2, 'only >=60 are worth applying');
-    assert.deepEqual(report.worthApplying.map((j) => j.id), ['wanted_1', 'jobkorea_2']);
+    assert.deepEqual(
+      report.worthApplying.map((j) => j.id),
+      ['wanted_1', 'jobkorea_2']
+    );
     // tier classification per <60 skip / 60-74 review / >=75 auto
     assert.equal(report.worthApplying[0].tier, 'auto');
     assert.equal(report.worthApplying[1].tier, 'review');
@@ -104,7 +110,14 @@ describe('buildRankedReport', () => {
   });
 
   it('tags 50-59 as borderline tier', () => {
-    const job = { id: 'b1', position: 'p', company: 'c', matchPercentage: 55, matchScore: 0, matchDetails: {} };
+    const job = {
+      id: 'b1',
+      position: 'p',
+      company: 'c',
+      matchPercentage: 55,
+      matchScore: 0,
+      matchDetails: {},
+    };
     const report = buildRankedReport([job], { minScore: 50, keywords: [] });
     assert.equal(report.worthApplying.length, 1);
     assert.equal(report.worthApplying[0].tier, 'borderline');
@@ -113,7 +126,13 @@ describe('buildRankedReport', () => {
 
 describe('mergeDetailIntoJob', () => {
   it('fills empty description/requirements/techStack from detail payload', () => {
-    const job = { id: 'wanted_9', position: 'SRE', description: '', requirements: '', techStack: [] };
+    const job = {
+      id: 'wanted_9',
+      position: 'SRE',
+      description: '',
+      requirements: '',
+      techStack: [],
+    };
     const detail = {
       success: true,
       job: {
@@ -129,14 +148,22 @@ describe('mergeDetailIntoJob', () => {
   });
 
   it('keeps original job unchanged when detail failed', () => {
-    const job = { id: 'wanted_9', position: 'SRE', description: 'orig', requirements: '', techStack: [] };
+    const job = {
+      id: 'wanted_9',
+      position: 'SRE',
+      description: 'orig',
+      requirements: '',
+      techStack: [],
+    };
     const merged = mergeDetailIntoJob(job, { success: false, error: 'x' });
     assert.equal(merged.description, 'orig');
   });
 
   it('does not overwrite already-populated fields', () => {
     const job = { id: 'j', description: 'keep', requirements: 'keepreq', techStack: ['X'] };
-    const merged = mergeDetailIntoJob(job, { job: { description: 'new', requirements: 'newreq', techStack: ['Y'] } });
+    const merged = mergeDetailIntoJob(job, {
+      job: { description: 'new', requirements: 'newreq', techStack: ['Y'] },
+    });
     assert.equal(merged.description, 'keep');
     assert.equal(merged.requirements, 'keepreq');
     assert.deepEqual(merged.techStack, ['X']);
@@ -152,7 +179,12 @@ describe('rescoreJobs', () => {
     const fakeMatcher = {
       filterAndRankJobs(input) {
         return {
-          jobs: input.map((j) => ({ ...j, matchPercentage: j.id === 'a' ? 88 : 40, matchScore: 0, matchDetails: {} })),
+          jobs: input.map((j) => ({
+            ...j,
+            matchPercentage: j.id === 'a' ? 88 : 40,
+            matchScore: 0,
+            matchDetails: {},
+          })),
           resumeAnalysis: {},
         };
       },
@@ -229,8 +261,25 @@ describe('buildRankedReport enrichmentStats', () => {
 describe('buildRankedReport per-job enrichmentStatus', () => {
   it('carries enrichmentStatus and enrichmentError into worthApplying items', () => {
     const jobs = [
-      { id: 'a', position: 'p', company: 'c', matchPercentage: 80, matchScore: 0, matchDetails: {}, enrichmentStatus: 'success' },
-      { id: 'b', position: 'q', company: 'd', matchPercentage: 64, matchScore: 0, matchDetails: {}, enrichmentStatus: 'failed', enrichmentError: 'boom' },
+      {
+        id: 'a',
+        position: 'p',
+        company: 'c',
+        matchPercentage: 80,
+        matchScore: 0,
+        matchDetails: {},
+        enrichmentStatus: 'success',
+      },
+      {
+        id: 'b',
+        position: 'q',
+        company: 'd',
+        matchPercentage: 64,
+        matchScore: 0,
+        matchDetails: {},
+        enrichmentStatus: 'failed',
+        enrichmentError: 'boom',
+      },
     ];
     const report = buildRankedReport(jobs, { minScore: 60, keywords: [] });
     assert.equal(report.worthApplying[0].enrichmentStatus, 'success');
@@ -239,7 +288,14 @@ describe('buildRankedReport per-job enrichmentStatus', () => {
   });
 
   it('defaults jobs with no enrichmentStatus to not_attempted (outside enrich slice)', () => {
-    const job = { id: 'c', position: 'p', company: 'c', matchPercentage: 70, matchScore: 0, matchDetails: {} };
+    const job = {
+      id: 'c',
+      position: 'p',
+      company: 'c',
+      matchPercentage: 70,
+      matchScore: 0,
+      matchDetails: {},
+    };
     const report = buildRankedReport([job], { minScore: 60, keywords: [] });
     assert.equal(report.worthApplying[0].enrichmentStatus, 'not_attempted');
   });
@@ -247,15 +303,45 @@ describe('buildRankedReport per-job enrichmentStatus', () => {
 
 describe('buildSubmitQueue', () => {
   const candidates = [
-    { id: 'w1', source: 'wanted', position: 'Sec Eng', company: 'A', location: '서울', sourceUrl: 'https://w/1', matchPercentage: 80, tier: 'auto' },
-    { id: 'j2', source: 'jobkorea', position: 'SRE', company: 'B', location: '서울', sourceUrl: 'https://j/2', matchPercentage: 64, tier: 'review' },
-    { id: 'w3', source: 'wanted', position: 'Cloud', company: 'C', location: '서울', sourceUrl: 'https://w/3', matchPercentage: 78, tier: 'auto' },
+    {
+      id: 'w1',
+      source: 'wanted',
+      position: 'Sec Eng',
+      company: 'A',
+      location: '서울',
+      sourceUrl: 'https://w/1',
+      matchPercentage: 80,
+      tier: 'auto',
+    },
+    {
+      id: 'j2',
+      source: 'jobkorea',
+      position: 'SRE',
+      company: 'B',
+      location: '서울',
+      sourceUrl: 'https://j/2',
+      matchPercentage: 64,
+      tier: 'review',
+    },
+    {
+      id: 'w3',
+      source: 'wanted',
+      position: 'Cloud',
+      company: 'C',
+      location: '서울',
+      sourceUrl: 'https://w/3',
+      matchPercentage: 78,
+      tier: 'auto',
+    },
   ];
 
   it('includes only auto-tier candidates by default, in queue shape', () => {
     const queue = buildSubmitQueue(candidates);
     assert.equal(queue.length, 2);
-    assert.deepEqual(queue.map((q) => q.url), ['https://w/1', 'https://w/3']);
+    assert.deepEqual(
+      queue.map((q) => q.url),
+      ['https://w/1', 'https://w/3']
+    );
     const e = queue[0];
     assert.equal(e.company, 'A');
     assert.equal(e.position, 'Sec Eng');

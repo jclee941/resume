@@ -55,7 +55,7 @@ JobKorea portfolio URL registration uses `AddUserFileDB` API (not form POST):
 1. `registerPortfolioUrl(page, url)` → POST `/User/Resume/AddUserFileDB` →
    returns `{ sc: 1, idx: N }`
 2. `mapPortfolioToFormFields(ssot, fileIdx)` → sets `UserResume.Attach_File_Name
-   = "N,"`
+= "N,"`
 3. Form save includes the server-generated IDX → portfolio persists
 
 Pipeline (`job-search-apply-pipeline.js`) runs this automatically at 9am/9pm KST

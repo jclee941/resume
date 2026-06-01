@@ -12,11 +12,7 @@ export async function add_project(api, params) {
     };
   }
 
-  const result = await api.addCareerProject(
-    params.resume_id,
-    params.career_id,
-    params.project,
-  );
+  const result = await api.addCareerProject(params.resume_id, params.career_id, params.project);
   return { success: true, message: 'Project added successfully', project: result };
 }
 
@@ -31,11 +27,7 @@ export async function delete_project(api, params) {
     return { success: false, error: 'project_id is required for delete_project' };
   }
 
-  await api.deleteCareerProject(
-    params.resume_id,
-    params.career_id,
-    params.project_id,
-  );
+  await api.deleteCareerProject(params.resume_id, params.career_id, params.project_id);
   return {
     success: true,
     message: `Project ${params.project_id} deleted successfully`,

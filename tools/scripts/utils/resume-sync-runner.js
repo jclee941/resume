@@ -56,7 +56,11 @@ function autoCalculateExperience(sourceData, language) {
     en: { regex: /\d+ years/g, replacement: `${years} years` },
     ja: { regex: /\d+年/g, replacement: `${years}年` },
   };
-  if (sourceData.sectionDescriptions && sourceData.sectionDescriptions.resume && sectionPatterns[language]) {
+  if (
+    sourceData.sectionDescriptions &&
+    sourceData.sectionDescriptions.resume &&
+    sectionPatterns[language]
+  ) {
     const { regex, replacement } = sectionPatterns[language];
     const updated = sourceData.sectionDescriptions.resume.replace(regex, replacement);
     if (updated !== sourceData.sectionDescriptions.resume) {
@@ -142,7 +146,7 @@ function runSync() {
 
     console.log(`🔄 Generating ${source.webDataPath}...`);
     const webData = generateWebData(sourceData);
-    fs.writeFileSync(source.webDataPath, `${JSON.stringify(webData, null, 2)  }\n`);
+    fs.writeFileSync(source.webDataPath, `${JSON.stringify(webData, null, 2)}\n`);
     console.log(`✅ ${source.webDataPath} updated`);
 
     summary.push({ language: source.language, sourceData, webData });

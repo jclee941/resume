@@ -10,18 +10,73 @@ export const PROPOSALS_DIR = join(PROJECT_ROOT, 'packages/data/proposals');
 
 const PROPOSAL_VERSION = 1;
 const SKILL_CATEGORY_KEYWORDS = [
-  ['observability', ['grafana', 'prometheus', 'loki', 'opentelemetry', 'elastic', 'kibana', 'splunk', 'tempo']],
-  ['cloud', ['aws', 'gcp', 'azure', 'cloudflare', 'docker', 'kubernetes', 'k8s', 'helm', 'linux', 'terraform', 'proxmox']],
-  ['devops', ['github actions', 'gitlab ci', 'jenkins', 'ansible', 'argocd', 'ci/cd', 'gitops', 'packer']],
-  ['security', ['siem', 'soar', 'fortigate', 'waf', 'iam', 'zero trust', 'nac', 'ids', 'ips', 'vulnerability']],
-  ['backend', ['node.js', 'nodejs', 'python', 'go', 'postgresql', 'redis', 'api', 'worker', 'typescript']],
+  [
+    'observability',
+    ['grafana', 'prometheus', 'loki', 'opentelemetry', 'elastic', 'kibana', 'splunk', 'tempo'],
+  ],
+  [
+    'cloud',
+    [
+      'aws',
+      'gcp',
+      'azure',
+      'cloudflare',
+      'docker',
+      'kubernetes',
+      'k8s',
+      'helm',
+      'linux',
+      'terraform',
+      'proxmox',
+    ],
+  ],
+  [
+    'devops',
+    ['github actions', 'gitlab ci', 'jenkins', 'ansible', 'argocd', 'ci/cd', 'gitops', 'packer'],
+  ],
+  [
+    'security',
+    ['siem', 'soar', 'fortigate', 'waf', 'iam', 'zero trust', 'nac', 'ids', 'ips', 'vulnerability'],
+  ],
+  [
+    'backend',
+    ['node.js', 'nodejs', 'python', 'go', 'postgresql', 'redis', 'api', 'worker', 'typescript'],
+  ],
 ];
 
 const KNOWN_SKILLS = [
-  'Ansible', 'Argo CD', 'AWS', 'Azure', 'Cloudflare Workers', 'Docker', 'Elasticsearch/Kibana',
-  'FortiGate', 'GitHub Actions', 'GitLab CI/CD', 'Go', 'Grafana', 'Helm', 'IAM', 'Jenkins',
-  'Kubernetes', 'Linux', 'Loki', 'n8n', 'Node.js', 'OpenTelemetry', 'PostgreSQL', 'Prometheus',
-  'Python', 'Redis', 'SIEM', 'SOAR', 'Splunk', 'Terraform', 'TypeScript', 'WAF', 'Zero Trust',
+  'Ansible',
+  'Argo CD',
+  'AWS',
+  'Azure',
+  'Cloudflare Workers',
+  'Docker',
+  'Elasticsearch/Kibana',
+  'FortiGate',
+  'GitHub Actions',
+  'GitLab CI/CD',
+  'Go',
+  'Grafana',
+  'Helm',
+  'IAM',
+  'Jenkins',
+  'Kubernetes',
+  'Linux',
+  'Loki',
+  'n8n',
+  'Node.js',
+  'OpenTelemetry',
+  'PostgreSQL',
+  'Prometheus',
+  'Python',
+  'Redis',
+  'SIEM',
+  'SOAR',
+  'Splunk',
+  'Terraform',
+  'TypeScript',
+  'WAF',
+  'Zero Trust',
 ];
 
 export function loadResumeData(path = RESUME_DATA_PATH) {
@@ -49,7 +104,12 @@ export function writeProposalFiles(proposals, options = {}) {
 }
 
 export function ensureProposalDirectories(baseDir = PROPOSALS_DIR) {
-  for (const dir of [baseDir, join(baseDir, 'approved'), join(baseDir, 'rejected'), join(baseDir, 'applied')]) {
+  for (const dir of [
+    baseDir,
+    join(baseDir, 'approved'),
+    join(baseDir, 'rejected'),
+    join(baseDir, 'applied'),
+  ]) {
     if (!existsSync(dir)) {
       mkdirSync(dir, { recursive: true });
     }
@@ -65,7 +125,9 @@ function normalizeJobs(input) {
 
 function buildSkillProposals(job, existingSkills, timestamp, options) {
   const source = normalizeSource(job, options);
-  const terms = extractSkillTerms(job).filter((term) => !existingSkills.has(normalizeSkillName(term)));
+  const terms = extractSkillTerms(job).filter(
+    (term) => !existingSkills.has(normalizeSkillName(term))
+  );
   const uniqueTerms = [...new Map(terms.map((term) => [normalizeSkillName(term), term])).values()];
 
   return uniqueTerms.map((term) => {
@@ -124,10 +186,19 @@ function extractSkillTerms(job) {
     .map((value) => (typeof value === 'string' ? value : value?.name || value?.title))
     .filter(Boolean);
 
-  const haystack = [job.position, job.title, job.description, job.requirements, job.preferred, job.main_tasks]
+  const haystack = [
+    job.position,
+    job.title,
+    job.description,
+    job.requirements,
+    job.preferred,
+    job.main_tasks,
+  ]
     .filter(Boolean)
     .join('\n');
-  const detected = KNOWN_SKILLS.filter((skill) => haystack.toLowerCase().includes(skill.toLowerCase()));
+  const detected = KNOWN_SKILLS.filter((skill) =>
+    haystack.toLowerCase().includes(skill.toLowerCase())
+  );
 
   return [...explicit, ...detected]
     .map((term) => String(term).trim())
@@ -135,7 +206,8 @@ function extractSkillTerms(job) {
 }
 
 function inferSkillCategory(term, job) {
-  const text = `${term} ${job.position || ''} ${job.title || ''} ${job.description || ''}`.toLowerCase();
+  const text =
+    `${term} ${job.position || ''} ${job.title || ''} ${job.description || ''}`.toLowerCase();
   for (const [category, keywords] of SKILL_CATEGORY_KEYWORDS) {
     if (keywords.some((keyword) => text.includes(keyword))) {
       return category;
@@ -146,8 +218,13 @@ function inferSkillCategory(term, job) {
 
 function scoreSkillConfidence(term, job) {
   let score = 0.55;
-  const explicit = [job.skills, job.skillTags, job.techStack, job.technologies, job.stacks]
-    .some((value) => Array.isArray(value) && value.some((item) => normalizeSkillName(item?.name || item?.title || item) === normalizeSkillName(term)));
+  const explicit = [job.skills, job.skillTags, job.techStack, job.technologies, job.stacks].some(
+    (value) =>
+      Array.isArray(value) &&
+      value.some(
+        (item) => normalizeSkillName(item?.name || item?.title || item) === normalizeSkillName(term)
+      )
+  );
   if (explicit) score += 0.25;
   if (job.url || job.link) score += 0.1;
   if (job.description || job.requirements || job.preferred) score += 0.1;
@@ -160,7 +237,8 @@ function buildEvidence(term, job) {
     .join('\n');
   return {
     type: 'crawler-output',
-    text: snippetForTerm(snippetSource, term) || `Crawler output included ${canonicalSkillName(term)}.`,
+    text:
+      snippetForTerm(snippetSource, term) || `Crawler output included ${canonicalSkillName(term)}.`,
     url: job.url || job.link || null,
     capturedAt: new Date().toISOString(),
   };
@@ -170,22 +248,31 @@ function snippetForTerm(text, term) {
   if (!text) return null;
   const index = text.toLowerCase().indexOf(String(term).toLowerCase());
   if (index < 0) return text.slice(0, 220);
-  return text.slice(Math.max(0, index - 90), Math.min(text.length, index + term.length + 130)).trim();
+  return text
+    .slice(Math.max(0, index - 90), Math.min(text.length, index + term.length + 130))
+    .trim();
 }
 
 function createProposalId(source, targetPath, value) {
-  const stable = [source.platform, source.jobId, targetPath, normalizeSkillName(value)].filter(Boolean).join(':');
+  const stable = [source.platform, source.jobId, targetPath, normalizeSkillName(value)]
+    .filter(Boolean)
+    .join(':');
   const hash = Buffer.from(stable).toString('base64url').slice(0, 18);
   return `proposal-${hash || randomUUID()}`;
 }
 
 function canonicalSkillName(term) {
   const normalized = normalizeSkillName(term);
-  return KNOWN_SKILLS.find((skill) => normalizeSkillName(skill) === normalized) || String(term).trim();
+  return (
+    KNOWN_SKILLS.find((skill) => normalizeSkillName(skill) === normalized) || String(term).trim()
+  );
 }
 
 function normalizeSkillName(term) {
-  return String(term || '').toLowerCase().replace(/[.\s_-]+/g, '').trim();
+  return String(term || '')
+    .toLowerCase()
+    .replace(/[.\s_-]+/g, '')
+    .trim();
 }
 
 export default {

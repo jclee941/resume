@@ -19,7 +19,7 @@ for the current execution and remain task-tracked here.
 | **Epic 3** Env/Secrets             | ⚠️ Partial               | (Epic 0)             | CI gitleaks gate + pre-commit hook landed in Epic 0. Full secrets manager (Doppler/Keyflare) deferred. t3-env / `packages/env` not yet created.                                                                                                                                                                                               |
 | **Epic 4** Domain SSOT             | ✅ Foundation complete   | `bc2aff0`            | New canonical modules in `@resume/shared`: `retry/` (http + circuit-breaker), `crypto/` (webcrypto + node), `rate-limit/` (token-bucket + sliding-window), `auth/` (cookie + hmac). Smoke test passes. **Migration of app-local consumers (errors, logger, retry, crypto, rate-limit, auth, validation, wanted-client) is per-PR follow-up.** |
 | **Epic 5** Documentation           | ✅ Complete              | `230823b`, `a1880c1` | `.gitlab-legacy/` deleted (10 YAMLs + 5 Go scripts + 3 docs). `rules/` → `docs/conventions/architecture-rules.md`. Root binaries (deploy-auto-apply, deploy-workflow, n8n-browser-auth, setup-api-key) deleted (~24MB; rebuild from `infrastructure/n8n/*.go`). Root AGENTS.md refreshed for current state. CI pipeline test updated.         |
-| **Epic 6** File splits             | ✅ Complete              | `9c70c11`            | applications.js → applications/. auto-apply.js → auto-apply/. job-server oversized files reduced below 500L. All tests pass. |
+| **Epic 6** File splits             | ✅ Complete              | `9c70c11`            | applications.js → applications/. auto-apply.js → auto-apply/. job-server oversized files reduced below 500L. All tests pass.                                                                                                                                                                                                                  |
 
 ### Verification (post-execution)
 
@@ -88,7 +88,7 @@ Total: **52 atomic tasks** organized into **7 epics**.
 These tasks block downstream Epic planning. Resolve first.
 
 - [ ] **D-1 — Bazel: keep, drop, or commit?** Bazel is currently facade-only
-  (`tools/BUILD.bazel:17` says "Bazel facade removed"). Three options:
+      (`tools/BUILD.bazel:17` says "Bazel facade removed"). Three options:
   - **(A) Drop Bazel entirely** — remove `BUILD.bazel`, `MODULE.bazel`,
     `WORKSPACE`, `.bazelrc`, all `bazel-*` symlinks. Adopt `Turborepo` if
     caching is desired. (Recommended given current state.)
@@ -98,29 +98,29 @@ These tasks block downstream Epic planning. Resolve first.
     files per package. (High effort, requires Bazel champion.)
 - [ ] **D-2 — Secrets manager choice?** Pick one:
   - **(A) Cloudflare Workers Secrets only** (zero new tooling, set via `wrangler
-    secret put`). Suitable since most prod secrets land in Workers.
+secret put`). Suitable since most prod secrets land in Workers.
   - **(B) Doppler** — mature, paid, hierarchical envs.
   - **(C) Keyflare** — open-source, Cloudflare-native, free. (Recommended for
     stack alignment.)
   - **(D) Infisical** — open-source self-hostable.
 - [ ] **D-3 — `packages/shared` scope?** Today it holds 12+ unrelated concerns
-  (errors, logger, ES client, browser, wanted-client, ua, phone, job-categories,
-  gitlab). Choose:
+      (errors, logger, ES client, browser, wanted-client, ua, phone, job-categories,
+      gitlab). Choose:
   - **(A) Keep monolithic** with subpath exports (current).
   - **(B) Split into `@resume/errors`, `@resume/logger`,
     `@resume/clients-wanted`, `@resume/browser`, `@resume/types`, etc.**
     (Recommended — improves tree-shaking + clarity.)
 - [ ] **D-4 — TypeScript adoption strategy?** Currently `strict: true` but
-  `checkJs: false` — strict mode enforces nothing. Choose:
+      `checkJs: false` — strict mode enforces nothing. Choose:
   - **(A) Stay JS + JSDoc, enable `checkJs: true`** for incremental type
     discipline without `.ts` migration.
   - **(B) Migrate `packages/*` to `.ts`** first (smaller surface), then
     `apps/*`.
   - **(C) Status quo** — accept that TS configuration is decorative.
 - [ ] **D-5 — Allow code refactor PRs in this plan?** This document only
-  specifies tasks; mark whether the owner wants each Epic to be executed by an
-  agent (default: tasks are owner-driven, agent assists only when explicitly
-  invoked).
+      specifies tasks; mark whether the owner wants each Epic to be executed by an
+      agent (default: tasks are owner-driven, agent assists only when explicitly
+      invoked).
 
 ---
 
@@ -165,7 +165,7 @@ These tasks block downstream Epic planning. Resolve first.
   - **Depends on:** D-2
 
 - [ ] **SSOT-002 — Move `.env.automation` plaintext passwords to secrets
-  manager**
+      manager**
   - **Severity:** P0 · **Effort:** S
   - **Files:** `/home/jclee/dev/resume/.env.automation`
   - **Why:** Contains plaintext credentials.
@@ -174,7 +174,7 @@ These tasks block downstream Epic planning. Resolve first.
   - **Depends on:** D-2
 
 - [ ] **SSOT-003 — Sanitize `apps/job-server/.env` and
-  `apps/job-dashboard/.env.secrets`**
+      `apps/job-dashboard/.env.secrets`**
   - **Severity:** P0 · **Effort:** S
   - **Files:** `apps/job-server/.env`, `apps/job-server/.env.example`,
     `apps/job-dashboard/.env.secrets`
@@ -255,11 +255,11 @@ These tasks block downstream Epic planning. Resolve first.
   - **Depends on:** SSOT-006
 
 - [ ] **SSOT-009 — Drop hardcoded workspace paths from `jsconfig.json`
-  includes**
+      includes**
   - **Severity:** P2 · **Effort:** S
   - **Files:** `jsconfig.json:31-38`
   - **Why:** `include: ["packages/cli/**/*.js", "apps/portfolio/lib/**/*.js",
-    ...]` duplicates `package.json` workspaces. Adding a workspace requires
+...]` duplicates `package.json` workspaces. Adding a workspace requires
     updating two files.
   - **Acceptance:** `include` uses workspace globs (`packages/*/src/**`,
     `apps/*/src/**`) or relies entirely on per-package tsconfig (after
@@ -311,7 +311,7 @@ These tasks block downstream Epic planning. Resolve first.
   - **Severity:** P3 · **Effort:** M
   - **Files:** root `package.json`, `apps/job-server/package.json`
   - **Why:** Root mixes `jest` (apps/portfolio + packages/shared) with `node
-    --test` (job-server). Confusing for new contributors.
+--test` (job-server). Confusing for new contributors.
   - **Acceptance:** Document the split clearly in `CONTRIBUTING.md` OR migrate
     one to the other. Add `npm run test:all` that runs both with consistent
     reporting.
@@ -323,7 +323,7 @@ These tasks block downstream Epic planning. Resolve first.
   - **Files:** `apps/portfolio/wrangler.jsonc`,
     `apps/job-dashboard/wrangler.jsonc`, root `wrangler.jsonc`
   - **Why:** `compatibility_date: "2026-02-21"` and `compatibility_flags:
-    ["nodejs_compat"]` are duplicated. Cloudflare's `--config` chain or a shared
+["nodejs_compat"]` are duplicated. Cloudflare's `--config` chain or a shared
     JSONC fragment can deduplicate.
   - **Acceptance:**
     - Single source of truth for `compatibility_date` and shared flags.
@@ -356,7 +356,7 @@ These tasks block downstream Epic planning. Resolve first.
     `WORKSPACE`, `.bazelrc`, `.bazelignore`, `tools/BUILD.bazel`,
     `third_party/BUILD.bazel`, all `bazel-*` symlinks
   - **Why:** `tools/BUILD.bazel:17` literally says `# Bazel facade removed - use
-    npm scripts directly`. Bazel symlinks at root confuse tooling.
+npm scripts directly`. Bazel symlinks at root confuse tooling.
     `MODULE.bazel.lock` is 49KB of unused dependency state. Either commit fully
     or remove.
   - **Acceptance:** Per D-1 outcome. Document decision in new
@@ -534,8 +534,8 @@ These tasks block downstream Epic planning. Resolve first.
 ## Epic 4 — Domain Model / Cross-Cutting Code SSOT (P1)
 
 > **Investigate divergence first** — these duplications may have intentional
-  differences. Each task includes a "diff/triage" sub-step before code
-  consolidation.
+> differences. Each task includes a "diff/triage" sub-step before code
+> consolidation.
 
 - [ ] **SSOT-032 — Consolidate Error class hierarchy**
   - **Severity:** P1 · **Effort:** L
@@ -733,7 +733,7 @@ These tasks block downstream Epic planning. Resolve first.
   - **Acceptance:** Doc explains each, when committed vs gitignored, ownership.
 
 - [ ] **SSOT-046 — Promote `rules/` to `docs/rules/` or merge into
-  `docs/conventions/`**
+      `docs/conventions/`**
   - **Severity:** P3 · **Effort:** S
   - **Files:** `docs/conventions/architecture-rules.md` (was
     `rules/MANDATORY_ARCHITECTURE_AND_WORKFLOW_RULE.md`, moved during Epic 5)
@@ -747,10 +747,10 @@ These tasks block downstream Epic planning. Resolve first.
 ## Epic 6 — File-Size / Architecture Hygiene (P2)
 
 > Per `docs/conventions/architecture-rules.md`: 200 LOC limit, >500L = MUST
-  split. Below files violate this.
+> split. Below files violate this.
 
 - [x] **SSOT-047 — Split `apps/job-dashboard/src/handlers/auto-apply.js`**
-  (10963L)**
+      (10963L)\*\*
   - **Severity:** P2 · **Effort:** XL
   - **Files:** `apps/job-dashboard/src/handlers/auto-apply.js`
   - **Why:** Largest file in repo. 50× the 200L target. Untrustable,
@@ -760,7 +760,7 @@ These tasks block downstream Epic planning. Resolve first.
     still pass.
 
 - [x] **SSOT-048 — Split `apps/job-dashboard/src/handlers/applications.js`**
-  (9544L)**
+      (9544L)\*\*
   - **Severity:** P2 · **Effort:** XL
   - **Files:** `apps/job-dashboard/src/handlers/applications.js`
   - **Why:** Same as above.

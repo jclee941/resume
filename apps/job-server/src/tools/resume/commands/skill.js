@@ -9,10 +9,7 @@ export async function add_skill(api, params) {
     };
   }
 
-  const result = await api.addResumeSkill(
-    params.resume_id,
-    params.tag_type_id,
-  );
+  const result = await api.addResumeSkill(params.resume_id, params.tag_type_id);
   return { success: true, message: 'Skill added successfully', skill: result };
 }
 

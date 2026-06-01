@@ -20,9 +20,7 @@ export async function saveConfig(request, db) {
   for (const [key, value] of Object.entries(body)) {
     const valueStr = typeof value === 'string' ? value : JSON.stringify(value);
     await db
-      .prepare(
-        'INSERT OR REPLACE INTO config (key, value, updated_at) VALUES (?, ?, ?)',
-      )
+      .prepare('INSERT OR REPLACE INTO config (key, value, updated_at) VALUES (?, ?, ?)')
       .bind(key, valueStr, now)
       .run();
   }

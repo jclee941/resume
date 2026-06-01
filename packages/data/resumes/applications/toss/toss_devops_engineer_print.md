@@ -57,7 +57,7 @@ header-includes:
 \enspace\textbar\enspace>
 \href{<https://resume.jclee.me>}{resume.jclee.me}\enspace\textbar\enspace>
 \href{
-  <https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b>
+<https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b>
 }{grafana.jclee.me}}>
 \end{center}
 

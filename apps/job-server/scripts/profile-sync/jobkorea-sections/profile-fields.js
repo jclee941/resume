@@ -97,13 +97,19 @@ export function mapAwardToFormFields(ssot, indices) {
     pushField(fields, 'Award.index', keys.slice(0, awards.length).join(','));
     pushField(fields, 'InputStat.AwardInputStat', 'True');
   } else if (achievements.length > 0) {
-    pushField(fields, 'UserResume.M_Career_Text', achievements.filter(Boolean).map((a) => `- ${a}`).join('\n').slice(0, 2000));
+    pushField(
+      fields,
+      'UserResume.M_Career_Text',
+      achievements
+        .filter(Boolean)
+        .map((a) => `- ${a}`)
+        .join('\n')
+        .slice(0, 2000)
+    );
     pushField(fields, 'UserResume.M_Career_Text_Stat', '1');
   }
   return fields;
 }
-
-
 
 export function mapPortfolioToFormFields(ssot, fileIdx) {
   const url = ssot?.personal?.portfolio || '';
@@ -113,7 +119,6 @@ export function mapPortfolioToFormFields(ssot, fileIdx) {
     { name: 'InputStat.PortfolioInputStat', value: 'True' },
   ];
 }
-
 
 export function mapHighSchoolToFormFields(ssot, schoolIndex) {
   const highSchool = ssot?.highSchool;
@@ -136,9 +141,7 @@ export function mapLanguagesToFormFields(ssot, indices) {
   if (languages.length === 0) return [];
   const fields = [];
   const keys =
-    indices && indices.length >= languages.length
-      ? indices
-      : languages.map((_, i) => `c${i + 1}`);
+    indices && indices.length >= languages.length ? indices : languages.map((_, i) => `c${i + 1}`);
   languages.forEach((lang, idx) => {
     if (idx >= keys.length) return;
     const key = keys[idx];
@@ -171,9 +174,7 @@ export function mapPersonalProjectsToFormFields(ssot, indices) {
   if (projects.length === 0) return [];
   const fields = [];
   const keys =
-    indices && indices.length >= projects.length
-      ? indices
-      : projects.map((_, i) => `c${i + 1}`);
+    indices && indices.length >= projects.length ? indices : projects.map((_, i) => `c${i + 1}`);
   projects.forEach((project, idx) => {
     if (idx >= keys.length) return;
     const key = keys[idx];
@@ -204,9 +205,7 @@ export function mapSkillsToFormFields(ssot, indices) {
   if (skills.length === 0) return [];
   const fields = [];
   const keys =
-    indices && indices.length >= skills.length
-      ? indices
-      : skills.map((_, i) => `c${i + 1}`);
+    indices && indices.length >= skills.length ? indices : skills.map((_, i) => `c${i + 1}`);
   skills.forEach((skill, idx) => {
     if (idx >= keys.length) return;
     const key = keys[idx];

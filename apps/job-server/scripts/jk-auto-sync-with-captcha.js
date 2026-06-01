@@ -103,9 +103,10 @@ async function main() {
       path: c.path || '/',
       httpOnly: !!c.httpOnly,
       secure: !!c.secure,
-      sameSite: c.sameSite === 'Lax' || c.sameSite === 'Strict' || c.sameSite === 'None'
-        ? c.sameSite
-        : 'Lax',
+      sameSite:
+        c.sameSite === 'Lax' || c.sameSite === 'Strict' || c.sameSite === 'None'
+          ? c.sameSite
+          : 'Lax',
       expires: typeof c.expires === 'number' ? c.expires : -1,
     }));
     await context.addCookies(normalized);
@@ -180,7 +181,8 @@ async function main() {
   // Inspect post-login content for error messages (CAPTCHA mismatch)
   const postLoginCheck = await page.evaluate(() => {
     const body = document.body?.innerText || '';
-    const wrongPattern = /\uadf8\ub9bc\ubb38\uc790|\ubcf4\uc548\uc778\uc99d|\uc790\ub3d9\uac00\uc785|incorrect|invalid/i;
+    const wrongPattern =
+      /\uadf8\ub9bc\ubb38\uc790|\ubcf4\uc548\uc778\uc99d|\uc790\ub3d9\uac00\uc785|incorrect|invalid/i;
     return {
       hasError: wrongPattern.test(body),
       sample: body.slice(0, 300),

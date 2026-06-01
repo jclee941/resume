@@ -117,7 +117,9 @@ describe('executeHybridSave', () => {
     assert.strictEqual(result.success, true);
     assert.strictEqual(result.usedApi, false);
     assert.deepStrictEqual(fallbackArgs, [page, targetFields, sectionIndices]);
-    assert.ok(logs.some((entry) => entry.level === 'warn' && entry.message.includes('falling back')));
+    assert.ok(
+      logs.some((entry) => entry.level === 'warn' && entry.message.includes('falling back'))
+    );
   });
 
   it('skips API and Playwright save in dry-run mode', async () => {
@@ -170,7 +172,9 @@ describe('executeHybridPortfolio', () => {
 
     assert.deepStrictEqual(result, { success: true, usedApi: true, fileIdx: 9876 });
     assert.ok(
-      targetFields.some((field) => field.name === 'UserResume.Attach_File_Name' && field.value === '9876,')
+      targetFields.some(
+        (field) => field.name === 'UserResume.Attach_File_Name' && field.value === '9876,'
+      )
     );
   });
 });

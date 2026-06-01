@@ -9,10 +9,10 @@
 import { generateFingerprint, applyStealthPatches } from '@resume/shared/browser';
 
 const LAUNCH_ARGS = [
-'--no-sandbox',
-'--disable-setuid-sandbox',
-'--disable-dev-shm-usage',
-'--disable-gpu',
+  '--no-sandbox',
+  '--disable-setuid-sandbox',
+  '--disable-dev-shm-usage',
+  '--disable-gpu',
 ];
 
 async function safeBrowserClose(browser, timeoutMs = 10000) {

@@ -12,11 +12,7 @@ export async function update_career(api, params) {
     };
   }
 
-  const result = await api.updateResumeCareer(
-    params.resume_id,
-    params.career_id,
-    params.career,
-  );
+  const result = await api.updateResumeCareer(params.resume_id, params.career_id, params.career);
   return { success: true, message: 'Career updated successfully', career: result };
 }
 

@@ -22,22 +22,22 @@ async function generateOGImage(language = 'ko') {
       subtitle: '보안 엔지니어 · Security Engineer',
       stats: '8년차 | 금융 보안 인프라 · SIEM · IaC',
       url: 'resume.jclee.me',
-      label: '한국어'
+      label: '한국어',
     },
     en: {
       name: 'Jaecheol Lee',
       subtitle: 'Security Engineer',
       stats: '8 years | Financial Security Infrastructure · SIEM · IaC',
       url: 'resume.jclee.me',
-      label: 'English'
+      label: 'English',
     },
     ja: {
       name: 'イ・ジェチョル',
       subtitle: 'セキュリティエンジニア',
       stats: '8年目 | 金融セキュリティインフラ · SIEM · IaC',
       url: 'resume.jclee.me',
-      label: '日本語'
-    }
+      label: '日本語',
+    },
   };
 
   const data = content[language] || content.ko;
@@ -77,7 +77,7 @@ async function generateOGImage(language = 'ko') {
   // Generate both PNG and WebP for each language
   const formats = [
     { ext: 'png', format: 'png' },
-    { ext: 'webp', format: 'webp' }
+    { ext: 'webp', format: 'webp' },
   ];
 
   const results = [];
@@ -98,7 +98,7 @@ async function generateOGImage(language = 'ko') {
       results.push({
         file: fileName,
         size: stats.size,
-        language
+        language,
       });
 
       logger.log(`✅ Generated: ${fileName} (${(stats.size / 1024).toFixed(2)} KB)`);

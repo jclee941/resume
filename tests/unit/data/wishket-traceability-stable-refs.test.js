@@ -13,19 +13,14 @@ const path = require('path');
  *    (Catches stale `.metrics.*` paths after the field was never present.)
  */
 const wishketDir = path.join(__dirname, '../../../packages/data/resumes/wishket');
-const ssotPath = path.join(
-  __dirname,
-  '../../../packages/data/resumes/master/resume_data.json'
-);
+const ssotPath = path.join(__dirname, '../../../packages/data/resumes/master/resume_data.json');
 
 const mdFiles = fs.existsSync(wishketDir)
   ? fs.readdirSync(wishketDir).filter((f) => f.endsWith('.md'))
   : [];
 
 const ssot = JSON.parse(fs.readFileSync(ssotPath, 'utf-8'));
-const projectsByName = new Map(
-  (ssot.personalProjects || []).map((p) => [p.name, p])
-);
+const projectsByName = new Map((ssot.personalProjects || []).map((p) => [p.name, p]));
 
 describe('wishket docs use reorder-stable personalProjects references', () => {
   it('finds wishket markdown files to check', () => {

@@ -58,9 +58,16 @@ describe('syncWantedAbout — BUG-W1 regression', () => {
 
       assert.strictEqual(client.calls.length, 1);
       const sent = client.calls[0].fields.about;
-      assert.strictEqual(sent.length, WANTED_ABOUT_LIMIT, `expected exact ${WANTED_ABOUT_LIMIT} chars`);
+      assert.strictEqual(
+        sent.length,
+        WANTED_ABOUT_LIMIT,
+        `expected exact ${WANTED_ABOUT_LIMIT} chars`
+      );
       assert.ok(sent.endsWith('...'), 'truncated text should end with ellipsis');
-      assert.ok(sent.startsWith('B'.repeat(WANTED_ABOUT_LIMIT - 3)), 'prefix should be original content');
+      assert.ok(
+        sent.startsWith('B'.repeat(WANTED_ABOUT_LIMIT - 3)),
+        'prefix should be original content'
+      );
     } finally {
       CONFIG.APPLY = original.APPLY;
       CONFIG.DIFF_ONLY = original.DIFF_ONLY;

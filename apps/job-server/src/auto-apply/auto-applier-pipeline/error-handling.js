@@ -43,7 +43,9 @@ export async function handleProcessJobError(
     await notifyApplicationFailure(autoApplier, job, applicationId, error);
   }
 
-  autoApplier.logger.error(`❌ Failed to process job ${job.company}/${job.position}: ${error.message}`);
+  autoApplier.logger.error(
+    `❌ Failed to process job ${job.company}/${job.position}: ${error.message}`
+  );
   return {
     success: false,
     applied: false,

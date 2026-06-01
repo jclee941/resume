@@ -64,16 +64,13 @@ async function testProjectAPI() {
       }
 
       const result = await api.chaosRequest(ep.path, options);
-      console.log(
-        '  ✅ Success:',
-        JSON.stringify(result, null, 2).substring(0, 200),
-      );
+      console.log('  ✅ Success:', JSON.stringify(result, null, 2).substring(0, 200));
     } catch (err) {
       console.log('  ❌ Error:', err.message.substring(0, 100));
     }
   }
 
-  console.log(`\n${  '='.repeat(60)}`);
+  console.log(`\n${'='.repeat(60)}`);
 }
 
 testProjectAPI().catch((err) => {

@@ -37,7 +37,11 @@ const PROFILE_HTML = `
   </section>
 </main>`;
 
-function createBrowserRunner({ url = 'https://www.jobkorea.co.kr/User/Resume/View?rNo=123', html, error } = {}) {
+function createBrowserRunner({
+  url = 'https://www.jobkorea.co.kr/User/Resume/View?rNo=123',
+  html,
+  error,
+} = {}) {
   return async (action) => {
     if (error) throw error;
     const page = {

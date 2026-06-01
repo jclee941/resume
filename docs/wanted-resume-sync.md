@@ -33,7 +33,7 @@ resume_data.json (SSoT) → mapToWantedFormat() → Wanted API (Chaos)
 3. Optional override: add GitHub Secret `WANTED_COOKIES` only if you want to
    bypass password-based cookie minting.
 4. For local verification, either set a cookie session with `wanted_auth({
-   action: 'set_cookies', cookies: '...' })` or use the same email/password
+action: 'set_cookies', cookies: '...' })` or use the same email/password
    against Wanted OneID before running sync.
 5. Run `unified_resume_sync({ action: 'status', platforms: ['wanted'] })` to
    list resume IDs if you need to discover the target resume.

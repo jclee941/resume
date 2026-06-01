@@ -109,9 +109,14 @@ async function downloadCaptchaImage(page, captchaSrc) {
       const tmpBmp = `/tmp/jk-captcha-${Date.now()}.bmp`;
       const tmpPng = tmpBmp.replace(/\.bmp$/, '.png');
       fs.writeFileSync(tmpBmp, Buffer.from(raw.base64, 'base64'));
-      execSync(`python3 -c "from PIL import Image; Image.open('${tmpBmp}').save('${tmpPng}')"`, { stdio: 'ignore' });
+      execSync(`python3 -c "from PIL import Image; Image.open('${tmpBmp}').save('${tmpPng}')"`, {
+        stdio: 'ignore',
+      });
       const pngBuf = fs.readFileSync(tmpPng);
-      try { fs.unlinkSync(tmpBmp); fs.unlinkSync(tmpPng); } catch {}
+      try {
+        fs.unlinkSync(tmpBmp);
+        fs.unlinkSync(tmpPng);
+      } catch {}
       return { base64: pngBuf.toString('base64'), mime: 'image/png' };
     } catch {
       // PIL not installed or conversion failed — fall back to original BMP
@@ -129,7 +134,6 @@ async function downloadCaptchaImage(page, captchaSrc) {
 export function isCliproxyConfigured(env = process.env) {
   return !!env.CLIPROXY_BASE?.trim() && !!env.CLIPROXY_API_KEY?.trim();
 }
-
 
 /**
  * Locate the JobKorea CAPTCHA image src on the current page.
@@ -199,7 +203,7 @@ async function callVisionModel(image, model) {
   const res = await fetch(`${cliproxyBase}/chat/completions`, {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${cliproxyKey}`,
+      Authorization: `Bearer ${cliproxyKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(reqBody),
@@ -239,7 +243,11 @@ export async function solveJobKoreaCaptcha(page) {
   }
 
   const image = await downloadCaptchaImage(page, src);
-  log(`CAPTCHA image downloaded (${image.mime}, ${image.base64.length} chars b64)`, 'info', 'jobkorea');
+  log(
+    `CAPTCHA image downloaded (${image.mime}, ${image.base64.length} chars b64)`,
+    'info',
+    'jobkorea'
+  );
 
   const errors = [];
   for (const model of resolveVisionModels()) {

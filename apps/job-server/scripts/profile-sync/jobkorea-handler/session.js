@@ -28,8 +28,8 @@ function createJobKoreaEditableResumeError(rNo, reason) {
   const reasonText = reason ? ` (${reason})` : '';
   const error = new Error(
     `No editable form resume found for ${rNoText}${reasonText}. ` +
-      `This JobKorea account may only have a file-upload resume. ` +
-      `Create a form resume on JobKorea or set the correct JOBKOREA_RNO.`
+      'This JobKorea account may only have a file-upload resume. ' +
+      'Create a form resume on JobKorea or set the correct JOBKOREA_RNO.'
   );
   error.failLoud = true;
   return error;
@@ -46,10 +46,7 @@ export async function assertEditableResume(page, options = {}) {
 const EDITABLE_FORM_WAIT_MS = 15000;
 
 function isTimeoutError(error) {
-  return (
-    error?.name === 'TimeoutError' ||
-    /Timeout\s+\d+ms exceeded/i.test(error?.message ?? '')
-  );
+  return error?.name === 'TimeoutError' || /Timeout\s+\d+ms exceeded/i.test(error?.message ?? '');
 }
 
 // Waits for the JobKorea edit form (#frm1) to attach, preserving the original

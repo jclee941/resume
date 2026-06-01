@@ -157,18 +157,18 @@ Latest CI/Release:
 Use this verbatim when reporting to user:
 
 > **Verified**: all currently agent-actionable repository remediation is
-  complete and released in v1.14.16. CI/release passed, production `/health` is
-  healthy, and the remaining items are explicitly classified as operator-owned,
-  external-access blocked, intentional exceptions, or large follow-up refactors.
+> complete and released in v1.14.16. CI/release passed, production `/health` is
+> healthy, and the remaining items are explicitly classified as operator-owned,
+> external-access blocked, intentional exceptions, or large follow-up refactors.
 >
 > **Caveats** (not globally zero-work):
 >
 > 1. Cloudflare API key rotation, job-dashboard deployment, atomic rate-limit
-  binding, and authenticated JK/Wanted live probes still require operator action
-  — runbooks ready in `docs/runbooks/`.
+>    binding, and authenticated JK/Wanted live probes still require operator action
+>    — runbooks ready in `docs/runbooks/`.
 > 2. Full per-service DI for 7 P0-5 services is a multi-PR refactor; current
-  state is honest containment, not elimination.
+>    state is honest containment, not elimination.
 > 3. P2-8 validator consolidation is deferred as a large architectural cleanup
-  (separate PR).
+>    (separate PR).
 > 4. Intentional exceptions remain intentional (stealth browser, terminal Easter
-  egg, generated worker.js, infrastructure/n8n/ location).
+>    egg, generated worker.js, infrastructure/n8n/ location).

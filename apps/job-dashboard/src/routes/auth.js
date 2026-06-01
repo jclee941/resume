@@ -1,5 +1,10 @@
 import { jsonResponse } from '../middleware/cors.js';
-import { verifySecret, createAuthCookie, clearAuthCookie, mintSessionToken } from '../services/auth.js';
+import {
+  verifySecret,
+  createAuthCookie,
+  clearAuthCookie,
+  mintSessionToken,
+} from '../services/auth.js';
 
 export function registerAuthRoutes(router, ctx) {
   const { env, auth } = ctx;

@@ -2,17 +2,10 @@ function toIso(value = Date.now()) {
   return new Date(value).toISOString();
 }
 
-export async function upsertApprovalRequest(applicationRepository, {
-  id,
-  workflowId,
-  jobId,
-  jobTitle,
-  company,
-  platform,
-  matchScore,
-  notes,
-  now,
-}) {
+export async function upsertApprovalRequest(
+  applicationRepository,
+  { id, workflowId, jobId, jobTitle, company, platform, matchScore, notes, now }
+) {
   await applicationRepository.d1Client.query(
     `
       INSERT INTO approval_requests (
@@ -63,10 +56,20 @@ export async function updateApprovalRequest(applicationRepository, applicationId
   const values = entries.map(([, value]) => value);
   values.push(applicationId);
 
-  await applicationRepository.d1Client.query(`UPDATE approval_requests SET ${setClause} WHERE id = ?`, values);
+  await applicationRepository.d1Client.query(
+    `UPDATE approval_requests SET ${setClause} WHERE id = ?`,
+    values
+  );
 }
 
-export async function markTimedOut(applicationRepository, request, now, timeoutHours, parseNotes, stringifyNotes) {
+export async function markTimedOut(
+  applicationRepository,
+  request,
+  now,
+  timeoutHours,
+  parseNotes,
+  stringifyNotes
+) {
   const notesState = parseNotes(request.notes);
   notesState.reason = 'Timed out after approval window elapsed';
   notesState.events.push({ type: 'timeout', at: now });

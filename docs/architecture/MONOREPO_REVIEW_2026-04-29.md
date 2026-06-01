@@ -2,12 +2,12 @@
 
 **Scope**: resume.jclee.me (portfolio + job-server + job-dashboard + 6 packages
 
-+ 60 Go scripts + 28 n8n workflows)
-**Method**: 5 parallel explorer agents (code quality, architecture, CI/security,
-docs drift, test+observability) + Oracle senior security review + 직접 sanity
-verification
-**Repository state**: master @ `e02e53d` v1.14.7 production, 2,022 tracked
-files, 1,054 JS/TS, 162 tests, 47 AGENTS.md
+- 60 Go scripts + 28 n8n workflows)
+  **Method**: 5 parallel explorer agents (code quality, architecture, CI/security,
+  docs drift, test+observability) + Oracle senior security review + 직접 sanity
+  verification
+  **Repository state**: master @ `e02e53d` v1.14.7 production, 2,022 tracked
+  files, 1,054 JS/TS, 162 tests, 47 AGENTS.md
 
 ---
 
@@ -34,29 +34,29 @@ threshold 정상화**".
 
 **Source**: Oracle (verified: `release.yml:201`)
 
-+ `CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_API_KEY }}` 변수명이 *Token*이 아닌 *Key*
+- `CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_API_KEY }}` 변수명이 *Token*이 아닌 _Key_
   — Cloudflare global key 의심
-+ 글로벌 키는 계정 전체 권한 (blast radius)
-+ **조치**: Cloudflare API Token으로 교체 (`Workers Scripts:Edit` 스코프),
+- 글로벌 키는 계정 전체 권한 (blast radius)
+- **조치**: Cloudflare API Token으로 교체 (`Workers Scripts:Edit` 스코프),
   `CLOUDFLARE_API_TOKEN` secret 추가, 글로벌 키 폐기
 
 ### P0-2 — Platform cookies plaintext in KV
 
 **Source**: Oracle
 
-+ `apps/job-dashboard/src/handlers/auth.js:60-77` Wanted/JobKorea/Saramin 세션 쿠키를
+- `apps/job-dashboard/src/handlers/auth.js:60-77` Wanted/JobKorea/Saramin 세션 쿠키를
   KV에 평문 저장
-+ D1에는 암호화 저장하면서 KV는 평문 — KV 노출 시 active session 탈취 가능
-+ **조치**: 단일 helper에서 암호화/복호화 + KV에도 암호화 blob만 저장 + 기존 KV entry 마이그레이션
+- D1에는 암호화 저장하면서 KV는 평문 — KV 노출 시 active session 탈취 가능
+- **조치**: 단일 helper에서 암호화/복호화 + KV에도 암호화 blob만 저장 + 기존 KV entry 마이그레이션
 
 ### P0-3 — Jest coverage threshold IMPOSSIBLE
 
 **Source**: Test infra explorer
 
-+ `jest.config.cjs` 90% threshold, 실제 statements 76.61%, branches 75.53%
-+ packages/shared/src/{auth,crypto,rate-limit,retry}/\* 모두 0% coverage
-+ CI는 `test:jest` 실행 안 하기 때문에 이 mismatch가 silent failure
-+ **조치**: (a) threshold를 75% 등 현실적 수치로 낮추거나 (b) browser-only 모듈을
+- `jest.config.cjs` 90% threshold, 실제 statements 76.61%, branches 75.53%
+- packages/shared/src/{auth,crypto,rate-limit,retry}/\* 모두 0% coverage
+- CI는 `test:jest` 실행 안 하기 때문에 이 mismatch가 silent failure
+- **조치**: (a) threshold를 75% 등 현실적 수치로 낮추거나 (b) browser-only 모듈을
   coverageIgnorePatterns에 추가 + 누락 테스트 작성
 
 ### P0-4 — JOB_SERVICE Service Binding 누락
@@ -64,11 +64,11 @@ threshold 정상화**".
 **Source**: Architecture explorer (verified: `apps/portfolio/wrangler.jsonc` no
 `services` key)
 
-+ `apps/portfolio/entry.js:22-28` 에서 `env.JOB_SERVICE.fetch()` 호출
-+ `apps/portfolio/wrangler.jsonc` 에 `services: [{binding: "JOB_SERVICE",
-  service: "job"}]` 없음
-+ production에서는 503 fallback이 항상 발동되어 `/job/*` 라우트 미작동
-+ **조치**: wrangler.jsonc production env에 service binding 추가
+- `apps/portfolio/entry.js:22-28` 에서 `env.JOB_SERVICE.fetch()` 호출
+- `apps/portfolio/wrangler.jsonc` 에 `services: [{binding: "JOB_SERVICE",
+service: "job"}]` 없음
+- production에서는 503 fallback이 항상 발동되어 `/job/*` 라우트 미작동
+- **조치**: wrangler.jsonc production env에 service binding 추가
 
 ### P0-5 — 7 Module-level singletons (anti-pattern)
 
@@ -86,7 +86,7 @@ threshold 정상화**".
 
 AGENTS.md `shared/AGENTS.md` 명시: **"No global state or singletons"**. 직접 위반.
 
-+ **조치**: factory 패턴 또는 DI container로 교체. 점진적 (1 service per PR).
+- **조치**: factory 패턴 또는 DI container로 교체. 점진적 (1 service per PR).
 
 ---
 
@@ -96,88 +96,88 @@ AGENTS.md `shared/AGENTS.md` 명시: **"No global state or singletons"**. 직접
 
 **Source**: Oracle
 
-+ `release.yml` `workflow_run` trigger → CI success 시 자동 production deploy
-+ **조치**: GitHub Environment "production" 만들고 required reviewer 1명 설정
+- `release.yml` `workflow_run` trigger → CI success 시 자동 production deploy
+- **조치**: GitHub Environment "production" 만들고 required reviewer 1명 설정
 
 ### P1-2 — `/api/auth/sync` admin auth + CSRF 우회
 
 **Source**: Oracle (verified: `auth.js:13-18`, `index.js:115-119`)
 
-+ platform cookie 수신 endpoint이 admin 인증 우회 + CSRF 우회
-+ `AUTH_SYNC_SECRET` 미설정 시 fail-open 위험
-+ **조치**: route entry에서 `!env.AUTH_SYNC_SECRET → 503` fail-closed + 회귀 테스트
+- platform cookie 수신 endpoint이 admin 인증 우회 + CSRF 우회
+- `AUTH_SYNC_SECRET` 미설정 시 fail-open 위험
+- **조치**: route entry에서 `!env.AUTH_SYNC_SECRET → 503` fail-closed + 회귀 테스트
 
 ### P1-3 — `/api/auto-apply/run` CSRF 우회 (state-changing)
 
 **Source**: Oracle (`index.js:115-118`)
 
-+ 명시적으로 `skipCsrf` 처리됨에도 state-changing endpoint
-+ **조치**: skipCsrf 목록에서 제거 + `X-CSRF-Token` 강제
+- 명시적으로 `skipCsrf` 처리됨에도 state-changing endpoint
+- **조치**: skipCsrf 목록에서 제거 + `X-CSRF-Token` 강제
 
 ### P1-4 — Rate limiting non-atomic (KV race)
 
 **Source**: Oracle (`middleware/rate-limit.js:72-81`)
 
-+ KV read/put non-atomic — concurrent requests bypass possible
-+ **조치**: Durable Object per IP 또는 CF Rate Limiting WAF로 이전
+- KV read/put non-atomic — concurrent requests bypass possible
+- **조치**: Durable Object per IP 또는 CF Rate Limiting WAF로 이전
 
 ### P1-5 — Dashboard admin token replay risk
 
 **Source**: Oracle (`services/auth.js:76-100`)
 
-+ Long-lived bearer token + 24h cookie, no `iat`/`exp`/`jti`/revocation
-+ **조치**: 짧은 lifetime의 HMAC/JWT + KV revocation list
+- Long-lived bearer token + 24h cookie, no `iat`/`exp`/`jti`/revocation
+- **조치**: 짧은 lifetime의 HMAC/JWT + KV revocation list
 
 ### P1-6 — `.affected/`, `.affected-review/` build cache tracked in git
 
 **Source**: 직접 verification
 
-+ CI cache 파일 5개가 `git ls-files`에 보임
-+ **조치**: `.gitignore`에 `.affected/`, `.affected-review/` 추가 + `git rm --cached`
+- CI cache 파일 5개가 `git ls-files`에 보임
+- **조치**: `.gitignore`에 `.affected/`, `.affected-review/` 추가 + `git rm --cached`
 
 ### P1-7 — JK retry 5회 = 계정 ban risk
 
 **Source**: Oracle (`jobkorea-strategy.js:12-17`)
 
-+ `maxRetries: 5` (default 3) — captcha/rate-limit 후에도 재시도
-+ **조치**: 3회로 축소, captcha/auth 에러는 non-retryable 마킹
+- `maxRetries: 5` (default 3) — captcha/rate-limit 후에도 재시도
+- **조치**: 3회로 축소, captcha/auth 에러는 non-retryable 마킹
 
 ### P1-8 — public n8n webhook URL exposed in portfolio data
 
 **Source**: Oracle (`apps/portfolio/data.json:219, 231`)
 
-+ `https://n8n.jclee.me/webhook/portfolio/demo` 가 portfolio site에 공개
-+ **조치**: signed token 또는 captcha 보호, 또는 read-only landing으로 교체
+- `https://n8n.jclee.me/webhook/portfolio/demo` 가 portfolio site에 공개
+- **조치**: signed token 또는 captcha 보호, 또는 read-only landing으로 교체
 
 ### P1-9 — CHANGELOG.md semver order broken
 
 **Source**: 직접 verification
 
-+ v1.0.129 (line 6)가 v1.14.7 (line 8) 위에 배치 — release script bug
-+ **조치**: release.yml에서 generate-changelog 스크립트 수정 또는 manual reorder
+- v1.0.129 (line 6)가 v1.14.7 (line 8) 위에 배치 — release script bug
+- **조치**: release.yml에서 generate-changelog 스크립트 수정 또는 manual reorder
 
 ### P1-10 — 13 BUILD.bazel 파일 미삭제 (ADR-0008 미이행)
 
 **Source**: 직접 verification
 
-+ ADR-0008 (2026-04-27 accepted) "Drop Bazel facade"
-+ 13 BUILD.bazel 파일 + `tools/scripts/bazel/` 디렉터리 잔존
-+ **조치**: ADR-0008 cleanup PR — 모든 BUILD.bazel 삭제 + ADR-0001 update
+- ADR-0008 (2026-04-27 accepted) "Drop Bazel facade"
+- 13 BUILD.bazel 파일 + `tools/scripts/bazel/` 디렉터리 잔존
+- **조치**: ADR-0008 cleanup PR — 모든 BUILD.bazel 삭제 + ADR-0001 update
 
 ### P1-11 — gitlab-legacy 5 Go files orphan
 
 **Source**: Code quality explorer (verified:
 `tools/scripts/deployment/gitlab-legacy/{main,oauth,prereqs,runner,utils}.go`)
 
-+ Epic 5 cleanup 미완료 — 어디에서도 참조 안 됨
-+ **조치**: `git rm -rf tools/scripts/deployment/gitlab-legacy/`
+- Epic 5 cleanup 미완료 — 어디에서도 참조 안 됨
+- **조치**: `git rm -rf tools/scripts/deployment/gitlab-legacy/`
 
 ### P1-12 — `validate-application-variants.js` zero test coverage
 
 **Source**: Test infra explorer
 
-+ 156 LOC contract validator (방금 추가) — 0 tests
-+ **조치**: 6 test cases (각 contract 위반 시나리오 + happy path)
+- 156 LOC contract validator (방금 추가) — 0 tests
+- **조치**: 6 test cases (각 contract 위반 시나리오 + happy path)
 
 ---
 
@@ -226,21 +226,21 @@ AGENTS.md `shared/AGENTS.md` 명시: **"No global state or singletons"**. 직접
 
 ## 5. ✅ Compliance Highlights (positive findings)
 
-+ **Hexagonal architecture**: services/ → clients/ direct imports = **0 found**
+- **Hexagonal architecture**: services/ → clients/ direct imports = **0 found**
   ✓
-+ **Deprecated `lib/`**: `apps/job-server/src/lib/` does NOT exist ✓
-+ **packages/types**: zero runtime deps ✓
-+ **No circular package deps**: `grep "from '@resume/" packages/` = 0 matches ✓
-+ **CSP/HSTS/X-Frame**: `security-headers.js` OWASP-compliant, per-response
+- **Deprecated `lib/`**: `apps/job-server/src/lib/` does NOT exist ✓
+- **packages/types**: zero runtime deps ✓
+- **No circular package deps**: `grep "from '@resume/" packages/` = 0 matches ✓
+- **CSP/HSTS/X-Frame**: `security-headers.js` OWASP-compliant, per-response
   nonce + strict-dynamic ✓
-+ **Pull request secret exposure**: workflows use `pull_request` not
+- **Pull request secret exposure**: workflows use `pull_request` not
   `pull_request_target` ✓
-+ **gitleaks --redact**: enabled in CI ✓
-+ **Production health**: v1.14.7 deployed, `/health` 200, `/metrics` 200, D1+KV
+- **gitleaks --redact**: enabled in CI ✓
+- **Production health**: v1.14.7 deployed, `/health` 200, `/metrics` 200, D1+KV
   healthy ✓
-+ **Test suite**: 818/818 job-server pass, 13/13 schemas pass, 7/7
+- **Test suite**: 818/818 job-server pass, 13/13 schemas pass, 7/7
   ProfileAggregator pass ✓
-+ **Recent commits**: 모든 신규 코드 (normalizeCompanyName,
+- **Recent commits**: 모든 신규 코드 (normalizeCompanyName,
   validate-application-variants는 P1) 테스트 커버됨 ✓
 
 ---
@@ -270,10 +270,10 @@ AGENTS.md `shared/AGENTS.md` 명시: **"No global state or singletons"**. 직접
 
 본 리뷰에 사용된 에이전트:
 
-+ explore × 5 (code quality, architecture, CI/security, docs drift,
+- explore × 5 (code quality, architecture, CI/security, docs drift,
   test+observability) — 병렬 background
-+ oracle × 1 (senior security + production risk review)
-+ 직접 sanity verification (.env tracking 정정, BUILD.bazel/AGENTS.md count 확인 등)
+- oracle × 1 (senior security + production risk review)
+- 직접 sanity verification (.env tracking 정정, BUILD.bazel/AGENTS.md count 확인 등)
 
 **Notable correction during verification**: Oracle/CI explorer가 `.env` files를
 "committed real credentials"로 분류했으나, 실제 `git ls-files` 결과 **gitignored** +
@@ -283,9 +283,9 @@ tracked 안 됨. 디스크에는 평문이지만 git history에는 없음. P0 �
 
 ## 8. References
 
-+ 이전 audits: `RESUME_SYNC_AUDIT_2026-04-29.md`
-+ ADRs: `docs/adr/0001..0008`
-+ Production: <https://resume.jclee.me> v1.14.7 deployed 2026-04-29T01:05:46
+- 이전 audits: `RESUME_SYNC_AUDIT_2026-04-29.md`
+- ADRs: `docs/adr/0001..0008`
+- Production: <https://resume.jclee.me> v1.14.7 deployed 2026-04-29T01:05:46
 
 ---
 
@@ -326,10 +326,10 @@ tracked 안 됨. 디스크에는 평문이지만 git history에는 없음. P0 �
 
 ### Production state
 
-+ Version: **v1.14.10** live (`deployed_at: 2026-04-29T01:47:31`)
-+ Bindings: D1 healthy, KV healthy
-+ All CI + Release workflows green
-+ Tests: 820/820 + 13/13 + 18/18 (= 851 + jest tests)
+- Version: **v1.14.10** live (`deployed_at: 2026-04-29T01:47:31`)
+- Bindings: D1 healthy, KV healthy
+- All CI + Release workflows green
+- Tests: 820/820 + 13/13 + 18/18 (= 851 + jest tests)
 
 ---
 
@@ -347,7 +347,7 @@ This commit closes the gap behaviorally:
 
 | ID                                        | Was                                                          | Now                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | ----------------------------------------- | ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **P0-5 singletons ×7** (PARTIAL)          | `let globalX = null` top-level mutable binding in 7 services | All 7 replaced with closure-bound holders (`const _xHolder = (() => { let v = null; return { get, set, clear }; })()`). HONEST CAVEAT per Oracle re-review: this is a **containment** pattern, NOT full DI. Module-level mutable *binding* (the `let`) is gone, but the singleton *behavior* via `getX()` remains. Acceptable as an interim refactor; full constructor-injected DI per `shared/AGENTS.md` is a follow-up PR per service. New `createX()` factory exported for explicit DI consumers who don't want the cached singleton.                             |
+| **P0-5 singletons ×7** (PARTIAL)          | `let globalX = null` top-level mutable binding in 7 services | All 7 replaced with closure-bound holders (`const _xHolder = (() => { let v = null; return { get, set, clear }; })()`). HONEST CAVEAT per Oracle re-review: this is a **containment** pattern, NOT full DI. Module-level mutable _binding_ (the `let`) is gone, but the singleton _behavior_ via `getX()` remains. Acceptable as an interim refactor; full constructor-injected DI per `shared/AGENTS.md` is a follow-up PR per service. New `createX()` factory exported for explicit DI consumers who don't want the cached singleton.                             |
 | **P1-5 admin token replay**               | Long-lived `ADMIN_TOKEN` bearer in cookie                    | Added `mintSessionToken(env, ttlMs)` + `verifySessionToken(token, env)` HMAC-SHA256 self-describing tokens (4h TTL). `verifyAdminAuth` now async, prefers session tokens, falls back to legacy `ADMIN_TOKEN` for backward compat. **`/api/auth/login` route now mints a session token instead of echoing `ADMIN_TOKEN` into the cookie** (Oracle round-2 fix). 13/13 jest tests cover round-trip, tamper, expiry, env-mismatch, legacy bearer compat, login cookie content (`adminToken !== ADMIN_TOKEN`), HttpOnly+Secure+SameSite=Strict+Max-Age=14400 attributes. |
 | **P2-9 normalizeCompanyName duplication** | 3 copies in 3 files                                          | Single canonical impl in `packages/shared/src/normalize/index.js` (handles `(주)` + `주식회사` prefix/suffix). All 3 consumers now `import { normalizeCompanyName } from '@resume/shared/normalize'`.                                                                                                                                                                                                                                                                                                                                                                |
 
@@ -360,17 +360,17 @@ This commit closes the gap behaviorally:
 
 ### Other audit fixes in this cycle
 
-+ **P1-4 rate-limit comment** upgraded with concrete CF native ratelimit binding
+- **P1-4 rate-limit comment** upgraded with concrete CF native ratelimit binding
   migration recipe (still deferred but specifically actionable, not vague)
-+ **P3 doc drift**: `apps/job-dashboard/README.md` removed `(8th workflow) TBD`
+- **P3 doc drift**: `apps/job-dashboard/README.md` removed `(8th workflow) TBD`
   (only 7 actually exist)
-+ **P3 doc drift**: `tools/scripts/README.md` Last-Updated bumped to 2026-04-29
+- **P3 doc drift**: `tools/scripts/README.md` Last-Updated bumped to 2026-04-29
 
 ### Production state (post-fix)
 
-+ All commits behind audit work pushed to master, latest CI/Release green
-+ 820/820 job-server tests pass (P0-5 singleton refactor zero regression)
-+ 10/10 new jest tests for HMAC session tokens (P1-5)
-+ 18/18 application-variant validator tests still pass
-+ 13/13 schema tests still pass
-+ Build: 0.22s, 408 KB worker.js
+- All commits behind audit work pushed to master, latest CI/Release green
+- 820/820 job-server tests pass (P0-5 singleton refactor zero regression)
+- 10/10 new jest tests for HMAC session tokens (P1-5)
+- 18/18 application-variant validator tests still pass
+- 13/13 schema tests still pass
+- Build: 0.22s, 408 KB worker.js

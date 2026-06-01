@@ -19,7 +19,12 @@ function expandLang() {
 
 const EXPAND_LABELS = {
   ko: { features: '주요 기능', stack: '기술 스택', expand: '기능 보기', collapse: '접기' },
-  en: { features: 'Key Features', stack: 'Tech Stack', expand: 'View Features', collapse: 'Collapse' },
+  en: {
+    features: 'Key Features',
+    stack: 'Tech Stack',
+    expand: 'View Features',
+    collapse: 'Collapse',
+  },
   ja: { features: '主な機能', stack: '技術スタック', expand: '機能を見る', collapse: '閉じる' },
 };
 

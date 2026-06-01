@@ -5,10 +5,7 @@ const { describe, test, expect, beforeEach } = require('@jest/globals');
 const TELEGRAM_MAX_LENGTH = 4096;
 
 function escapeHtml(text) {
-  return text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
+  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 function formatNotificationText(message) {
@@ -28,13 +25,13 @@ function formatNotificationText(message) {
   } else {
     text = String(message ?? '');
   }
-  if (!
-    /<\/?(b|strong|i|em|u|ins|s|strike|del|code|pre|a|tg-spoiler|blockquote)[\s>/]/i.test(text)
+  if (
+    !/<\/?(b|strong|i|em|u|ins|s|strike|del|code|pre|a|tg-spoiler|blockquote)[\s>/]/i.test(text)
   ) {
     text = escapeHtml(text);
   }
   if (text.length > TELEGRAM_MAX_LENGTH) {
-    text = `${text.slice(0, TELEGRAM_MAX_LENGTH - 20)  }\n\n[...truncated]`;
+    text = `${text.slice(0, TELEGRAM_MAX_LENGTH - 20)}\n\n[...truncated]`;
   }
   return text;
 }
@@ -98,9 +95,7 @@ describe('Telegram Notification Service', () => {
     });
 
     test('escapes angle brackets', () => {
-      expect(escapeHtml('<script>alert(1)</script>')).toBe(
-        '&lt;script&gt;alert(1)&lt;/script&gt;'
-      );
+      expect(escapeHtml('<script>alert(1)</script>')).toBe('&lt;script&gt;alert(1)&lt;/script&gt;');
     });
 
     test('handles text with no special characters', () => {

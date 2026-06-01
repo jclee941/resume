@@ -438,7 +438,9 @@ describe('Cards Module', () => {
     });
 
     test('expired cert is still shown as ACQUIRED with no expiry note', () => {
-      const certData = [{ name: 'Old Cert', issuer: 'Vendor', date: '2020-01 (2023-01 만료)', status: 'expired' }];
+      const certData = [
+        { name: 'Old Cert', issuer: 'Vendor', date: '2020-01 (2023-01 만료)', status: 'expired' },
+      ];
       const html = generateCertificationCards(certData, 'expired-hash');
 
       expect(html).toContain('cert-status--active');
@@ -565,7 +567,10 @@ describe('Cards Module', () => {
     test('should render skill items inline (no proficiency bar)', () => {
       const skillsData = {
         devops: {
-          items: [{ name: 'Docker', proficiency: 100 }, { name: 'Terraform', proficiency: 80 }],
+          items: [
+            { name: 'Docker', proficiency: 100 },
+            { name: 'Terraform', proficiency: 80 },
+          ],
         },
       };
       const html = generateSkillsList(skillsData, 'bar-hash');

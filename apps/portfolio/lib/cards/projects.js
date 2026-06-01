@@ -14,7 +14,9 @@ function buildProjectMeta(project, githubUrl, demoUrl) {
   const metaBadges = [];
 
   if (language) {
-    metaBadges.push(`<span class="project-meta-badge project-meta-badge--language">${language}</span>`);
+    metaBadges.push(
+      `<span class="project-meta-badge project-meta-badge--language">${language}</span>`
+    );
   }
 
   metaBadges.push('<span class="project-meta-badge project-meta-badge--active">ACTIVE</span>');

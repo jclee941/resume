@@ -2,10 +2,7 @@
  * Unit tests for apps/portfolio/lib/env.js
  */
 
-const {
-  validateEnv,
-  getEnv,
-} = require('../../../../apps/portfolio/lib/env');
+const { validateEnv, getEnv } = require('../../../../apps/portfolio/lib/env');
 
 describe('Environment Module', () => {
   const originalEnv = process.env;
@@ -32,9 +29,7 @@ describe('Environment Module', () => {
 
     test('should throw if NODE_ENV is missing', () => {
       delete process.env.NODE_ENV;
-      expect(() => validateEnv()).toThrow(
-        'Missing required environment variables: NODE_ENV',
-      );
+      expect(() => validateEnv()).toThrow('Missing required environment variables: NODE_ENV');
     });
   });
 

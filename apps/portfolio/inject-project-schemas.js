@@ -14,13 +14,13 @@ async function injectSchemas(htmlFile) {
 
     // Find the insertion point (after WebSite schema)
     const insertionPoint = '    </script>\n\n    <!-- PWA Manifest -->';
-    
+
     // Build the schemas HTML
     let schemasHtml = '\n    <!-- JSON-LD Structured Data: Per-Project CreativeWork Schemas -->\n';
     schemas.forEach((schema, idx) => {
       schemasHtml += `    <!-- Project ${idx + 1}: ${schema.name} -->\n`;
       schemasHtml += '    <script type="application/ld+json">\n';
-      schemasHtml += `    ${  JSON.stringify(schema)  }\n`;
+      schemasHtml += `    ${JSON.stringify(schema)}\n`;
       schemasHtml += '    </script>\n\n';
     });
 
@@ -32,10 +32,7 @@ async function injectSchemas(htmlFile) {
 
     // Inject schemas
     if (htmlContent.includes(insertionPoint)) {
-      htmlContent = htmlContent.replace(
-        insertionPoint,
-        schemasHtml + insertionPoint
-      );
+      htmlContent = htmlContent.replace(insertionPoint, schemasHtml + insertionPoint);
       fs.writeFileSync(htmlPath, htmlContent, 'utf-8');
       console.log(`✅ Injected ${schemas.length} project schemas into ${htmlFile}`);
     } else {

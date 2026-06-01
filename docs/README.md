@@ -72,7 +72,7 @@ sections below, then use the archived sections for historical context only.
 
 - [TROUBLESHOOTING.md](guides/TROUBLESHOOTING.md)
 - [FETCH_ERROR_GUIDE.md](guides/FETCH_ERROR_GUIDE.md)
-PQ|- [TS_SESSION_TROUBLESHOOTING.md](guides/TS_SESSION_TROUBLESHOOTING.md)
+  PQ|- [TS_SESSION_TROUBLESHOOTING.md](guides/TS_SESSION_TROUBLESHOOTING.md)
 
 ### API (`docs/api/`)
 

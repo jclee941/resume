@@ -26,6 +26,9 @@ describe('shared validation', () => {
       skills: { languages: [{ name: 'JavaScript', level: 'expert' }] },
     };
 
-    assert.deepStrictEqual(validateResumeData(validData, masterSchema), { valid: true, errors: undefined });
+    assert.deepStrictEqual(validateResumeData(validData, masterSchema), {
+      valid: true,
+      errors: undefined,
+    });
   });
 });

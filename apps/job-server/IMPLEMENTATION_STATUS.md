@@ -22,14 +22,14 @@
 
 ## 🔄 JobKorea Sync Status
 
-| Component                              | Status        | Notes                                           |
-| -------------------------------------- | ------------- | ----------------------------------------------- |
-| **Profile sync via Playwright form POST** | ✅ Implemented | `scripts/profile-sync/index.js`                |
-| **Session renewal with stealth browser** | ✅ Implemented | `scripts/renew-jobkorea-session.js`            |
-| **CAPTCHA auto-solve via vision API**  | ✅ Implemented | Vision API integration in session renewal        |
-| **Field mapping (87 fields)**          | ✅ Implemented | `scripts/profile-sync/index.js` SKILL_TAG_MAP   |
-| **getProfile() read-back**              | 🟡 In Progress| Being implemented in parallel task              |
-| **UA rotation**                         | 🟡 In Progress| Being implemented in parallel task               |
+| Component                                 | Status         | Notes                                         |
+| ----------------------------------------- | -------------- | --------------------------------------------- |
+| **Profile sync via Playwright form POST** | ✅ Implemented | `scripts/profile-sync/index.js`               |
+| **Session renewal with stealth browser**  | ✅ Implemented | `scripts/renew-jobkorea-session.js`           |
+| **CAPTCHA auto-solve via vision API**     | ✅ Implemented | Vision API integration in session renewal     |
+| **Field mapping (87 fields)**             | ✅ Implemented | `scripts/profile-sync/index.js` SKILL_TAG_MAP |
+| **getProfile() read-back**                | 🟡 In Progress | Being implemented in parallel task            |
+| **UA rotation**                           | 🟡 In Progress | Being implemented in parallel task            |
 
 ## 🛠️ Configuration
 

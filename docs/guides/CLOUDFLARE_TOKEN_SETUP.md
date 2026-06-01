@@ -22,7 +22,7 @@ OR create custom token with these permissions:
 
 - **Account** → **Cloudflare Workers Scripts** → **Edit**
 - **Account** → **Account Settings** → **Read** (optional, for `wrangler
-  whoami`)
+whoami`)
 - **Zone** → **Workers Routes** → **Edit** (if using custom domains)
 
 ### Step 3: Configure Token
@@ -120,7 +120,7 @@ If API token creation is not possible:
 ### Error: "Account ID mismatch"
 
 - Verify `wrangler.jsonc` has correct `account_id =
-  "a8d9c67f586acdd15eebcc65ca3aa5bb"`
+"a8d9c67f586acdd15eebcc65ca3aa5bb"`
 
 ---
 

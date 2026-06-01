@@ -189,7 +189,9 @@
     linear-gradient(135deg, rgba(0, 240, 255, 0.06), rgba(255, 0, 255, 0.04)),
     rgba(12, 12, 18, 0.88);
   box-shadow: var(--glow-cyan-subtle);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 .hero-kpi:hover {
   transform: translateY(-2px);
@@ -233,7 +235,6 @@
   }
 }
 
-
 /* Hero Context Grid - Missing styles added */
 .hero-context-grid {
   display: grid;
@@ -251,7 +252,9 @@
     linear-gradient(135deg, rgba(0, 240, 255, 0.06), rgba(255, 0, 255, 0.04)),
     rgba(12, 12, 18, 0.88);
   box-shadow: var(--glow-cyan-subtle);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .hero-context:hover {

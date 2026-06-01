@@ -85,7 +85,7 @@ Thresholds Reference:
 - > 500 LOC: Must split before merging new functionality (HARD)
 - > 300 LOC: Must split if adding new logic (HARD)
 - > 200 LOC: Assess if natural split points exist (SOFT - this project uses as
-  HARD)
+  > HARD)
 
 Rule 5: ALL Automation Workflows MUST be Handled by n8n
 Do NOT write custom code, standalone scripts, or cron jobs for automation,

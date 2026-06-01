@@ -24,8 +24,7 @@
   },
   "dependencies": {
     "zod": "^4.4.3"
-}
-,
+  },
   "devDependencies": {
     "esbuild": "^0.28.0"
   }

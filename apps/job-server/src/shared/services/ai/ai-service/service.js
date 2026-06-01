@@ -1,6 +1,11 @@
 import { buildCompletionMessages } from './message-builder.js';
 import { autoRoute, resolveEmbeddingProvider, resolveModel } from './model-selection.js';
-import { callProvider, completeWithFallback, getFallbackModel, getFallbackProvider } from './provider-fallback.js';
+import {
+  callProvider,
+  completeWithFallback,
+  getFallbackModel,
+  getFallbackProvider,
+} from './provider-fallback.js';
 import { formatChatResult, normalizeUsage, trackCost } from './response-finalizer.js';
 
 export class AIService {

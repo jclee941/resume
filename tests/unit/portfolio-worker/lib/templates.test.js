@@ -2,10 +2,7 @@
  * Unit tests for apps/portfolio/lib/templates.js
  */
 
-const {
-  generateLink,
-  extractInlineHashes,
-} = require('../../../../apps/portfolio/lib/templates');
+const { generateLink, extractInlineHashes } = require('../../../../apps/portfolio/lib/templates');
 
 describe('Templates Module', () => {
   describe('generateLink', () => {
@@ -117,8 +114,7 @@ describe('Templates Module', () => {
     });
 
     test('should extract multiple script hashes', () => {
-      const html =
-        '<html><script>console.log(1);</script><script>console.log(2);</script></html>';
+      const html = '<html><script>console.log(1);</script><script>console.log(2);</script></html>';
       const { scriptHashes } = extractInlineHashes(html);
 
       expect(scriptHashes).toHaveLength(2);
@@ -132,16 +128,14 @@ describe('Templates Module', () => {
     });
 
     test('should not extract external scripts (with src)', () => {
-      const html =
-        '<html><script src="external.js"></script><script>inline();</script></html>';
+      const html = '<html><script src="external.js"></script><script>inline();</script></html>';
       const { scriptHashes } = extractInlineHashes(html);
 
       expect(scriptHashes).toHaveLength(1);
     });
 
     test('should handle JSON-LD scripts', () => {
-      const html =
-        '<html><script type="application/ld+json">{"@type":"Person"}</script></html>';
+      const html = '<html><script type="application/ld+json">{"@type":"Person"}</script></html>';
       const { scriptHashes } = extractInlineHashes(html);
 
       expect(scriptHashes).toHaveLength(1);

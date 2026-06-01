@@ -1,7 +1,4 @@
-import {
-  sendTelegramNotification,
-  escapeHtml,
-} from '../services/notifications.js';
+import { sendTelegramNotification, escapeHtml } from '../services/notifications.js';
 import { WorkflowEntrypoint } from 'cloudflare:workers';
 
 /**
@@ -156,15 +153,16 @@ export class BackupWorkflow extends WorkflowEntrypoint {
       },
       async () => {
         const emoji = results.errors.length === 0 ? '✅' : '⚠️';
-        const tablesSummary = results.tables
-          .map(t => `  • ${escapeHtml(t.name)}: ${t.count} rows`)
-          .join('\n') || 'None';
-        await sendTelegramNotification(this.env,
+        const tablesSummary =
+          results.tables.map((t) => `  • ${escapeHtml(t.name)}: ${t.count} rows`).join('\n') ||
+          'None';
+        await sendTelegramNotification(
+          this.env,
           `${emoji} <b>Database Backup Complete</b>\n\n` +
-          `<b>Date</b>: ${escapeHtml(dateKey)}\n` +
-          `<b>Tables Backed Up</b>:\n${tablesSummary}\n` +
-          `<b>Total Rows</b>: ${results.totalRows}\n` +
-          `<b>Old Backups Cleaned</b>: ${cleanupResult.deleted}`
+            `<b>Date</b>: ${escapeHtml(dateKey)}\n` +
+            `<b>Tables Backed Up</b>:\n${tablesSummary}\n` +
+            `<b>Total Rows</b>: ${results.totalRows}\n` +
+            `<b>Old Backups Cleaned</b>: ${cleanupResult.deleted}`
         );
         return { notified: true };
       }

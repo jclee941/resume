@@ -21,11 +21,15 @@ export async function updateApplication(handler, request) {
     return handler.jsonResponse({ error: 'Application not found' }, 404);
   }
 
-  const updated = await handler.repository.update(id, {
-    notes: body.notes,
-    priority: body.priority,
-    resumeId: body.resumeId,
-  }, now);
+  const updated = await handler.repository.update(
+    id,
+    {
+      notes: body.notes,
+      priority: body.priority,
+      resumeId: body.resumeId,
+    },
+    now
+  );
 
   return handler.jsonResponse({ success: true, application: updated });
 }

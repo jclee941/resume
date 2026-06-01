@@ -1,5 +1,11 @@
 import WantedAPI from '../../shared/clients/wanted/index.js';
-import { buildUser, countCookies, hasProfileIdentity, sessionExpiry, toCookieString } from './cookie-utils.js';
+import {
+  buildUser,
+  countCookies,
+  hasProfileIdentity,
+  sessionExpiry,
+  toCookieString,
+} from './cookie-utils.js';
 import { SessionManager } from './session-manager.js';
 
 const ACCOUNT_HINT = 'Use wanted_profile or wanted_resume to manage your account';

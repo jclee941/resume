@@ -44,8 +44,8 @@ for (const [name, file] of [
   let html = extractConst(name);
   // Replace CSP nonce placeholder so inline scripts/styles run under file://.
   html = html.replace(/__CSP_NONCE__/g, 'devnonce');
-fs.writeFileSync(path.join(outDir, file), html, 'utf-8');
-console.log(`wrote ${path.join(outDir, file)} (${html.length} bytes)`);
+  fs.writeFileSync(path.join(outDir, file), html, 'utf-8');
+  console.log(`wrote ${path.join(outDir, file)} (${html.length} bytes)`);
 }
 
 // Extract the bundled main.js so the static preview can run client JS.

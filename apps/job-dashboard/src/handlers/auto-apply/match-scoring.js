@@ -28,8 +28,8 @@ export function normalizeSkillName(skill) {
     reactjs: 'react',
     vuejs: 'vue',
     nextjs: 'nextjs',
-    'nodejs': 'nodejs',
-    'expressjs': 'express',
+    nodejs: 'nodejs',
+    expressjs: 'express',
     ts: 'typescript',
     js: 'javascript',
   };

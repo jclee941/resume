@@ -18,7 +18,7 @@
 | ----------------- | ------------------------------- |
 | **Metrics**       | Prometheus, Blackbox Exporter   |
 | **Logs**          | Loki                            |
-| **Visualization** | Grafana (다수 대시보드)          |
+| **Visualization** | Grafana (다수 대시보드)         |
 | **Data Sources**  | Prometheus, Loki, Elasticsearch |
 | **Container**     | Docker                          |
 

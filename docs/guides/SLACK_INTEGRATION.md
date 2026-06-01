@@ -133,7 +133,7 @@ Only notify on failures:
 
 - Verify JSON syntax in `slack_payload.json`
 - Test locally: `curl -X POST -H 'Content-type: application/json' --data
-  @slack_payload.json YOUR_WEBHOOK_URL`
+@slack_payload.json YOUR_WEBHOOK_URL`
 
 ## Security Notes
 

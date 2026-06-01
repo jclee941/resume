@@ -1,6 +1,6 @@
 /**
  * Resume Data Validator
- * 
+ *
  * Validates resume_data.json against the JSON schema.
  * Provides detailed error messages for debugging.
  */
@@ -166,8 +166,7 @@ class SimpleValidator {
 
       // Format validation
       if (schema.format === 'email') {
-        const emailRegex =
-          /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(data)) {
           this.errors.push({
             path,
@@ -328,7 +327,9 @@ if (require.main === module) {
 
   if (args.length === 0) {
     console.error('Usage: node validate-resume-data.js <data-file> [schema-file]');
-    console.error('Example: node validate-resume-data.js packages/data/resumes/master/resume_data.json');
+    console.error(
+      'Example: node validate-resume-data.js packages/data/resumes/master/resume_data.json'
+    );
     process.exit(1);
   }
 

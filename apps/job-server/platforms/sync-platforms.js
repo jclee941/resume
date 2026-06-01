@@ -5,7 +5,18 @@ import { execSync } from 'child_process';
 import { join } from 'path';
 import { getResumeBasePath, getResumeMasterDataPath } from '../src/shared/utils/paths.js';
 
-const PLATFORMS = ['wanted', 'jobkorea', 'saramin', 'remember', 'jumpit', 'programmers', 'rallit', 'rocketpunch', 'indeed', 'linkedin'];
+const PLATFORMS = [
+  'wanted',
+  'jobkorea',
+  'saramin',
+  'remember',
+  'jumpit',
+  'programmers',
+  'rallit',
+  'rocketpunch',
+  'indeed',
+  'linkedin',
+];
 
 async function main() {
   const args = process.argv.slice(2);

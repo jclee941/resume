@@ -23,8 +23,7 @@ export class HttpClient {
       Accept: 'application/json',
       'Content-Type': 'application/json',
       Referer: 'https://www.wanted.co.kr/',
-      'User-Agent':
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
       Origin: 'https://www.wanted.co.kr',
     };
   }
@@ -77,11 +76,7 @@ export class HttpClient {
 
     if (!response.ok) {
       const text = await response.text().catch(() => '');
-      throw new WantedAPIError(
-        `API request failed: ${response.status}`,
-        response.status,
-        text,
-      );
+      throw new WantedAPIError(`API request failed: ${response.status}`, response.status, text);
     }
 
     const contentType = response.headers.get('content-type');

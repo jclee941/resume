@@ -28,12 +28,7 @@ const periodStringSchema = z
     'must be "YYYY.MM ~ YYYY.MM" or "YYYY.MM ~ 현재/Present/現在"'
   );
 
-const skillLevelSchema = z.enum([
-  'beginner',
-  'intermediate',
-  'advanced',
-  'expert',
-]);
+const skillLevelSchema = z.enum(['beginner', 'intermediate', 'advanced', 'expert']);
 
 export const resumeSkillItemSchema = z.object({
   name: z.string().min(1),

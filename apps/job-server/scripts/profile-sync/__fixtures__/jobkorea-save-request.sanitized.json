@@ -49,7 +49,10 @@
         "response": {
           "status": 200,
           "headers": [{ "name": "Content-Type", "value": "application/json; charset=utf-8" }],
-          "content": { "mimeType": "application/json", "text": "{\"saveResult\":{\"IsSuccess\":true}}" }
+          "content": {
+            "mimeType": "application/json",
+            "text": "{\"saveResult\":{\"IsSuccess\":true}}"
+          }
         }
       }
     ]

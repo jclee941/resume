@@ -81,7 +81,11 @@ export async function checkKvSlidingWindowRateLimit(request, pathname, env, opti
     if (strikes === 1) {
       return {
         ok: true,
-        headers: { ...getHeaderSet(policy, 0, resetAt), 'X-RateLimit-Warn': 'true', 'X-RateLimit-Violation': '1' },
+        headers: {
+          ...getHeaderSet(policy, 0, resetAt),
+          'X-RateLimit-Warn': 'true',
+          'X-RateLimit-Violation': '1',
+        },
       };
     }
     if (strikes === 2) {
@@ -102,7 +106,11 @@ function tooMany(policy, resetAt, retryAfter) {
     ok: false,
     status: 429,
     error: 'Too many requests',
-    headers: { 'Retry-After': String(retryAfter), ...getHeaderSet(policy, 0, resetAt), 'X-RateLimit-Violation': '2' },
+    headers: {
+      'Retry-After': String(retryAfter),
+      ...getHeaderSet(policy, 0, resetAt),
+      'X-RateLimit-Violation': '2',
+    },
   };
 }
 

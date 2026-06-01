@@ -26,14 +26,16 @@ const projectItemSchema = z.object({
   description: z.string().min(1),
 });
 
-const certificationItemSchema = z.object({
-  name: z.string().min(1),
-  issuer: z.string().min(1),
-  date: z.string().nullable().optional(),
-  status: z.string().nullable().optional(),
-}).refine((item) => item.date || item.status, {
-  message: 'certification must have at least a date or a status',
-});
+const certificationItemSchema = z
+  .object({
+    name: z.string().min(1),
+    issuer: z.string().min(1),
+    date: z.string().nullable().optional(),
+    status: z.string().nullable().optional(),
+  })
+  .refine((item) => item.date || item.status, {
+    message: 'certification must have at least a date or a status',
+  });
 
 const resumeDownloadSchema = z.object({
   pdfUrl: z.string().min(1),

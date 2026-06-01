@@ -204,16 +204,22 @@ export class BrowserProfileSync extends BaseProfileSync {
   async fillCareers(careers) {
     if (!Array.isArray(careers)) return;
     for (const career of careers.slice(0, 5)) {
-      const addBtn = await this.page.$('button:has-text("추가"), a:has-text("경력 추가"), button[class*="add"]');
+      const addBtn = await this.page.$(
+        'button:has-text("추가"), a:has-text("경력 추가"), button[class*="add"]'
+      );
       if (addBtn) {
         await addBtn.click();
         await this.page.waitForTimeout(500);
       }
-      const companyInputs = await this.page.$$(this.selectors.companyInput || 'input[name*="company"], input[placeholder*="회사"]');
+      const companyInputs = await this.page.$$(
+        this.selectors.companyInput || 'input[name*="company"], input[placeholder*="회사"]'
+      );
       const lastCompany = companyInputs[companyInputs.length - 1];
       if (lastCompany) await lastCompany.fill(career.company);
 
-      const titleInputs = await this.page.$$(this.selectors.titleInput || 'input[name*="title"], input[placeholder*="직책"]');
+      const titleInputs = await this.page.$$(
+        this.selectors.titleInput || 'input[name*="title"], input[placeholder*="직책"]'
+      );
       const lastTitle = titleInputs[titleInputs.length - 1];
       if (lastTitle) await lastTitle.fill(career.role);
     }
@@ -221,10 +227,14 @@ export class BrowserProfileSync extends BaseProfileSync {
 
   async fillEducation(education) {
     if (!education) return;
-    const schoolInput = await this.page.$(this.selectors.schoolInput || 'input[name*="school"], input[placeholder*="학교"]');
+    const schoolInput = await this.page.$(
+      this.selectors.schoolInput || 'input[name*="school"], input[placeholder*="학교"]'
+    );
     if (schoolInput) await schoolInput.fill(education.school);
 
-    const majorInput = await this.page.$(this.selectors.majorInput || 'input[name*="major"], input[placeholder*="전공"]');
+    const majorInput = await this.page.$(
+      this.selectors.majorInput || 'input[name*="major"], input[placeholder*="전공"]'
+    );
     if (majorInput) await majorInput.fill(education.major);
 
     if (education.status) {
@@ -238,22 +248,30 @@ export class BrowserProfileSync extends BaseProfileSync {
   async fillCertifications(certifications) {
     if (!Array.isArray(certifications)) return;
     for (const cert of certifications.slice(0, 6)) {
-      const addBtn = await this.page.$('button:has-text("추가"), a:has-text("자격증"), button[class*="add"]');
+      const addBtn = await this.page.$(
+        'button:has-text("추가"), a:has-text("자격증"), button[class*="add"]'
+      );
       if (addBtn) {
         await addBtn.click();
         await this.page.waitForTimeout(300);
       }
-      const certInputs = await this.page.$$(this.selectors.certInput || 'input[name*="cert"], input[placeholder*="자격증"]');
+      const certInputs = await this.page.$$(
+        this.selectors.certInput || 'input[name*="cert"], input[placeholder*="자격증"]'
+      );
       const lastCert = certInputs[certInputs.length - 1];
       if (lastCert) await lastCert.fill(cert.name);
 
       if (cert.issuer) {
-        const issuerInputs = await this.page.$$('input[name*="issuer"], input[placeholder*="발급기관"]');
+        const issuerInputs = await this.page.$$(
+          'input[name*="issuer"], input[placeholder*="발급기관"]'
+        );
         const lastIssuer = issuerInputs[issuerInputs.length - 1];
         if (lastIssuer) await lastIssuer.fill(cert.issuer);
       }
       if (cert.date) {
-        const dateInputs = await this.page.$$('input[name*="date"], input[placeholder*="취득일"], input[type="date"]');
+        const dateInputs = await this.page.$$(
+          'input[name*="date"], input[placeholder*="취득일"], input[type="date"]'
+        );
         const lastDate = dateInputs[dateInputs.length - 1];
         if (lastDate) await lastDate.fill(cert.date);
       }
@@ -261,7 +279,9 @@ export class BrowserProfileSync extends BaseProfileSync {
   }
 
   async saveProfile() {
-    const saveBtn = await this.page.$('button:has-text("저장"), button[type="submit"], button[class*="save"]');
+    const saveBtn = await this.page.$(
+      'button:has-text("저장"), button[type="submit"], button[class*="save"]'
+    );
     if (saveBtn) {
       await saveBtn.click();
       await this.page.waitForTimeout(2000);

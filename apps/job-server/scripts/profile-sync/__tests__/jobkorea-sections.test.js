@@ -107,8 +107,6 @@ describe('mapCareersToFormFields', () => {
     assert.strictEqual(byName.get('Career[c1].Prfm_Prt').length, 500);
   });
 
-
-
   it('uses per-career jobkoreaJobCode override when provided', () => {
     const fields = mapCareersToFormFields({
       careers: [{ ...baseCareer, jobkoreaJobCode: '1000239' }],
@@ -221,7 +219,14 @@ describe('mapSchoolToFormFields', () => {
 
   it('BUG-J1: derives Schl_Type_Code from SSoT (KO 4년제 → 2)', () => {
     const fields = mapSchoolToFormFields({
-      education: { school: '테스트대', major: '전산', startDate: '2020.03', status: '재학중', schoolType: '4년제', majorType: '전공' },
+      education: {
+        school: '테스트대',
+        major: '전산',
+        startDate: '2020.03',
+        status: '재학중',
+        schoolType: '4년제',
+        majorType: '전공',
+      },
     });
     const byName = toMap(fields);
     assert.strictEqual(byName.get('UnivSchool[c1].Schl_Type_Code'), '2');
@@ -230,7 +235,14 @@ describe('mapSchoolToFormFields', () => {
 
   it('BUG-J1: maps EN locale aliases (4-year → 2, Major → 1)', () => {
     const fields = mapSchoolToFormFields({
-      education: { school: 'Test U', major: 'CS', startDate: '2020.03', status: '재학중', schoolType: '4-year', majorType: 'Major' },
+      education: {
+        school: 'Test U',
+        major: 'CS',
+        startDate: '2020.03',
+        status: '재학중',
+        schoolType: '4-year',
+        majorType: 'Major',
+      },
     });
     const byName = toMap(fields);
     assert.strictEqual(byName.get('UnivSchool[c1].Schl_Type_Code'), '2');
@@ -239,7 +251,14 @@ describe('mapSchoolToFormFields', () => {
 
   it('BUG-J1: maps JA locale aliases (4年制 → 2, 専攻 → 1)', () => {
     const fields = mapSchoolToFormFields({
-      education: { school: 'テスト大', major: 'CS', startDate: '2020.03', status: '재학중', schoolType: '4年制', majorType: '専攻' },
+      education: {
+        school: 'テスト大',
+        major: 'CS',
+        startDate: '2020.03',
+        status: '재학중',
+        schoolType: '4年制',
+        majorType: '専攻',
+      },
     });
     const byName = toMap(fields);
     assert.strictEqual(byName.get('UnivSchool[c1].Schl_Type_Code'), '2');
@@ -257,10 +276,22 @@ describe('mapSchoolToFormFields', () => {
 
   it('BUG-J1: maps 고등학교 (KO) → 11 and 대학원 (KO) → 12', () => {
     const hs = mapSchoolToFormFields({
-      education: { school: '용남고', startDate: '2010.03', endDate: '2013.02', status: '졸업', schoolType: '고등학교' },
+      education: {
+        school: '용남고',
+        startDate: '2010.03',
+        endDate: '2013.02',
+        status: '졸업',
+        schoolType: '고등학교',
+      },
     });
     const grad = mapSchoolToFormFields({
-      education: { school: '대학원', startDate: '2018.03', endDate: '2020.02', status: '졸업', schoolType: '대학원' },
+      education: {
+        school: '대학원',
+        startDate: '2018.03',
+        endDate: '2020.02',
+        status: '졸업',
+        schoolType: '대학원',
+      },
     });
     assert.strictEqual(toMap(hs).get('UnivSchool[c1].Schl_Type_Code'), '11');
     assert.strictEqual(toMap(grad).get('UnivSchool[c1].Schl_Type_Code'), '12');
@@ -327,7 +358,6 @@ describe('mapAwardToFormFields', () => {
     assert.ok(byName.has('UserResume.M_Career_Text'), 'should emit fallback field');
     assert.strictEqual(byName.get('UserResume.M_Career_Text_Stat'), '1');
   });
-
 
   it('returns [] for empty awards array', () => {
     assert.deepStrictEqual(mapAwardToFormFields({ awards: [] }), []);
@@ -641,7 +671,6 @@ describe('normalizeCompanyName — Wanted/JobKorea parity (audit P2 fix)', () =>
   });
 });
 
-
 describe('JobKorea live form — skills', () => {
   it('buildJobKoreaFormData omits skill fields because the live form has no Skill section', () => {
     const ssot = {
@@ -734,9 +763,7 @@ describe('JobKorea gap — career projects and metadata', () => {
           company: 'Test',
           period: '2024.01 ~ 2024.06',
           role: 'DevOps',
-          projects: [
-            { name: 'Proj A', description: 'Desc A', achievements: ['A1'] },
-          ],
+          projects: [{ name: 'Proj A', description: 'Desc A', achievements: ['A1'] }],
         },
       ],
     });
@@ -823,10 +850,7 @@ describe('JobKorea gap — awards achievements fallback', () => {
     });
     const byName = toMap(fields);
     assert.ok(fields.length > 0, 'should emit fallback fields for achievements');
-    assert.strictEqual(
-      byName.get('UserResume.M_Career_Text'),
-      '- Achievement A\n- Achievement B'
-    );
+    assert.strictEqual(byName.get('UserResume.M_Career_Text'), '- Achievement A\n- Achievement B');
     assert.strictEqual(byName.get('UserResume.M_Career_Text_Stat'), '1');
   });
 });

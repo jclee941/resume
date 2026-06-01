@@ -15,26 +15,32 @@ const PRECACHE_URLS = [
 // Install event - cache core resources
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      console.log('[SW] Precaching core resources');
-      return cache.addAll(PRECACHE_URLS);
-    }).then(() => self.skipWaiting())
+    caches
+      .open(CACHE_NAME)
+      .then((cache) => {
+        console.log('[SW] Precaching core resources');
+        return cache.addAll(PRECACHE_URLS);
+      })
+      .then(() => self.skipWaiting())
   );
 });
 
 // Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames
-          .filter((name) => name !== CACHE_NAME && name !== RUNTIME_CACHE)
-          .map((name) => {
-            console.log('[SW] Deleting old cache:', name);
-            return caches.delete(name);
-          })
-      );
-    }).then(() => self.clients.claim())
+    caches
+      .keys()
+      .then((cacheNames) => {
+        return Promise.all(
+          cacheNames
+            .filter((name) => name !== CACHE_NAME && name !== RUNTIME_CACHE)
+            .map((name) => {
+              console.log('[SW] Deleting old cache:', name);
+              return caches.delete(name);
+            })
+        );
+      })
+      .then(() => self.clients.claim())
   );
 });
 
@@ -53,12 +59,13 @@ self.addEventListener('fetch', (event) => {
   // CSP nonces. Caching would create stale nonce mismatches that block inline scripts.
   if ((request.headers.get('accept') || '').includes('text/html')) {
     event.respondWith(
-      fetch(request).catch(() =>
-        new Response('Offline - please check your connection', {
-          status: 503,
-          statusText: 'Service Unavailable',
-          headers: new Headers({ 'Content-Type': 'text/plain' }),
-        })
+      fetch(request).catch(
+        () =>
+          new Response('Offline - please check your connection', {
+            status: 503,
+            statusText: 'Service Unavailable',
+            headers: new Headers({ 'Content-Type': 'text/plain' }),
+          })
       )
     );
     return;
@@ -72,15 +79,18 @@ self.addEventListener('fetch', (event) => {
   ) {
     event.respondWith(
       caches.match(request).then((cached) => {
-        return cached || fetch(request).then((response) => {
-          if (response.ok) {
-            const responseClone = response.clone();
-            caches.open(RUNTIME_CACHE).then((cache) => {
-              cache.put(request, responseClone);
-            });
-          }
-          return response;
-        });
+        return (
+          cached ||
+          fetch(request).then((response) => {
+            if (response.ok) {
+              const responseClone = response.clone();
+              caches.open(RUNTIME_CACHE).then((cache) => {
+                cache.put(request, responseClone);
+              });
+            }
+            return response;
+          })
+        );
       })
     );
     return;
@@ -107,7 +117,5 @@ self.addEventListener('push', (event) => {
     vibrate: [200, 100, 200],
   };
 
-  event.waitUntil(
-    self.registration.showNotification('Resume Portfolio', options)
-  );
+  event.waitUntil(self.registration.showNotification('Resume Portfolio', options));
 });

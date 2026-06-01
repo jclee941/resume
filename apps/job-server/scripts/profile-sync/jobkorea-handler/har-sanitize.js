@@ -46,7 +46,10 @@ function normalizeUrl(rawUrl) {
     }
     let normalized = url.toString();
     for (const [name, value] of replacements) {
-      normalized = normalized.replace(`${name}=${encodeURIComponent(value)}`, `${name}=<timestamp>`);
+      normalized = normalized.replace(
+        `${name}=${encodeURIComponent(value)}`,
+        `${name}=<timestamp>`
+      );
     }
     return normalized;
   } catch {
@@ -101,7 +104,10 @@ function parseJsonPostText(text) {
     }
     if (parsed && typeof parsed === 'object') {
       return Object.fromEntries(
-        Object.entries(parsed).map(([name, value]) => [name, isSensitivePostField(name) ? REDACTED : value])
+        Object.entries(parsed).map(([name, value]) => [
+          name,
+          isSensitivePostField(name) ? REDACTED : value,
+        ])
       );
     }
   } catch {
@@ -118,7 +124,9 @@ function serializeTextLikeOriginal(originalText, sanitizedValue) {
       return JSON.stringify(sanitizedValue);
     }
     if (Array.isArray(sanitizedValue)) {
-      return new URLSearchParams(sanitizedValue.map(({ name, value }) => [name, value ?? ''])).toString();
+      return new URLSearchParams(
+        sanitizedValue.map(({ name, value }) => [name, value ?? ''])
+      ).toString();
     }
   }
   return originalText;

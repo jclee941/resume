@@ -137,12 +137,21 @@ async function saveForm(page) {
 
 export async function captureJobKoreaProfileSyncHar(handler, ssot, options = {}) {
   const capturedAt = new Date().toISOString();
-  const harPath = assertSafeHarOutputPath(options.output ?? getDefaultHarOutputPath(new Date(capturedAt)));
+  const harPath = assertSafeHarOutputPath(
+    options.output ?? getDefaultHarOutputPath(new Date(capturedAt))
+  );
   fs.mkdirSync(path.dirname(harPath), { recursive: true, mode: 0o700 });
 
   const cookies = handler.loadSession();
   if (!cookies) {
-    return { success: false, harPath, editUrl: null, capturedAt, requestSummary: [], error: 'No session' };
+    return {
+      success: false,
+      harPath,
+      editUrl: null,
+      capturedAt,
+      requestSummary: [],
+      error: 'No session',
+    };
   }
 
   const requestSummary = [];

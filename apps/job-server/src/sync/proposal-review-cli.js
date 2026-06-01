@@ -3,7 +3,12 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, renameSync, writeFile
 import { basename, join } from 'path';
 import { createInterface } from 'readline/promises';
 import { stdin as input, stdout as output } from 'process';
-import { PROPOSALS_DIR, RESUME_DATA_PATH, ensureProposalDirectories, loadResumeData } from './proposal-generator.js';
+import {
+  PROPOSALS_DIR,
+  RESUME_DATA_PATH,
+  ensureProposalDirectories,
+  loadResumeData,
+} from './proposal-generator.js';
 
 const APPROVED_DIR = join(PROPOSALS_DIR, 'approved');
 const REJECTED_DIR = join(PROPOSALS_DIR, 'rejected');
@@ -29,7 +34,11 @@ async function main() {
   try {
     for (const proposal of proposals) {
       showProposal(proposal, resume);
-      const answer = (await rl.question('[a]pprove, [r]eject, [e]dit proposed value, [s]kip, [q]uit: ')).trim().toLowerCase();
+      const answer = (
+        await rl.question('[a]pprove, [r]eject, [e]dit proposed value, [s]kip, [q]uit: ')
+      )
+        .trim()
+        .toLowerCase();
 
       if (answer === 'q') break;
       if (answer === 'a') moveProposal(proposal, APPROVED_DIR, 'approved');
@@ -62,7 +71,9 @@ function showProposal(proposal, resume) {
   const currentValue = getJsonPointer(resume, proposal.target.path);
   console.log('\n────────────────────────────────────────');
   console.log(`${proposal.id} (${proposal.confidence})`);
-  console.log(`${proposal.source.platform} · ${proposal.source.company || 'unknown company'} · ${proposal.source.jobTitle || 'unknown role'}`);
+  console.log(
+    `${proposal.source.platform} · ${proposal.source.company || 'unknown company'} · ${proposal.source.jobTitle || 'unknown role'}`
+  );
   console.log(`Target: ${proposal.target.operation} ${proposal.target.path}`);
   console.log('Current:');
   console.log(formatValue(currentValue ?? proposal.currentValue));
@@ -76,9 +87,13 @@ function showProposal(proposal, resume) {
 
 async function editProposal(rl, proposal) {
   console.log('Enter JSON for proposedValue. Leave blank to keep unchanged.');
-  const value = await rl.question(formatValue(proposal.proposedValue) + '\n> ');
+  const value = await rl.question(`${formatValue(proposal.proposedValue)}\n> `);
   if (!value.trim()) return;
-  const edited = { ...proposal, proposedValue: JSON.parse(value), editedAt: new Date().toISOString() };
+  const edited = {
+    ...proposal,
+    proposedValue: JSON.parse(value),
+    editedAt: new Date().toISOString(),
+  };
   delete edited.filePath;
   writeFileSync(proposal.filePath, `${JSON.stringify(edited, null, 2)}\n`);
   console.log('Updated proposal. Review it again before approval.');
@@ -106,10 +121,13 @@ function moveProposal(proposal, targetDir, status) {
 
 function getJsonPointer(data, pointer) {
   if (pointer === '') return data;
-  return pointer.split('/').slice(1).reduce((value, part) => {
-    if (value === undefined || value === null || part === '-') return value;
-    return value[part.replace(/~1/g, '/').replace(/~0/g, '~')];
-  }, data);
+  return pointer
+    .split('/')
+    .slice(1)
+    .reduce((value, part) => {
+      if (value === undefined || value === null || part === '-') return value;
+      return value[part.replace(/~1/g, '/').replace(/~0/g, '~')];
+    }, data);
 }
 
 function formatValue(value) {

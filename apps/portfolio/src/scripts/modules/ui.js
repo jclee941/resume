@@ -108,7 +108,6 @@ function initBackToTop() {
   toggleVisibility();
 }
 
-
 function initMobileNav() {
   const toggle = document.querySelector('.nav-toggle');
   if (!toggle) return;
@@ -122,7 +121,7 @@ function initMobileNav() {
   });
 
   // Close menu when a nav link is clicked
-  navLinks.querySelectorAll('a').forEach(link => {
+  navLinks.querySelectorAll('a').forEach((link) => {
     link.addEventListener('click', () => {
       toggle.setAttribute('aria-expanded', 'false');
       navLinks.classList.remove('open');

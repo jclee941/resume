@@ -51,12 +51,19 @@ describe('JobKorea API contract fixtures', () => {
       'File_Up_Stat',
       'File_Size',
     ]);
-    assert.deepStrictEqual(analysis.endpoints.portfolio.responseShape, { sc: 'number', idx: 'number' });
+    assert.deepStrictEqual(analysis.endpoints.portfolio.responseShape, {
+      sc: 'number',
+      idx: 'number',
+    });
   });
 
   it('classifies login redirects', () => {
     assert.strictEqual(
-      classifyJobKoreaResponse({ url: 'https://www.jobkorea.co.kr/Login', status: 200, body: '<html>login</html>' }),
+      classifyJobKoreaResponse({
+        url: 'https://www.jobkorea.co.kr/Login',
+        status: 200,
+        body: '<html>login</html>',
+      }),
       'login_redirect'
     );
   });

@@ -8,11 +8,21 @@ import { createAuthMiddleware } from '../../shared/contracts/auth.js';
 // so existing route handlers continue to work unchanged.
 const _sessionsHolder = (() => {
   let m = new Map();
-  return { get: () => m, clear: () => { m = new Map(); } };
+  return {
+    get: () => m,
+    clear: () => {
+      m = new Map();
+    },
+  };
 })();
 const _csrfTokensHolder = (() => {
   let m = new Map();
-  return { get: () => m, clear: () => { m = new Map(); } };
+  return {
+    get: () => m,
+    clear: () => {
+      m = new Map();
+    },
+  };
 })();
 const sessions = _sessionsHolder.get();
 const csrfTokens = _csrfTokensHolder.get();

@@ -1,8 +1,4 @@
-export {
-  AutoApplyConfig,
-  autoApplyConfig,
-  createAutoApplyConfig,
-} from './auto-apply-config.js';
+export { AutoApplyConfig, autoApplyConfig, createAutoApplyConfig } from './auto-apply-config.js';
 
 export {
   isPlainObject,

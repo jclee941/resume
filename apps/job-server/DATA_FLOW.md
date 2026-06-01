@@ -19,7 +19,7 @@ sequenceDiagram
     participant wp as Wanted/JobKorea
     participant d1 as D1 Database
     participant tg as Telegram Bot
-    
+
     n8n->>js: POST /webhook/job-search-apply
     js->>wp: Crawl job listings (Playwright)
     wp-->>js: Job data + requirements

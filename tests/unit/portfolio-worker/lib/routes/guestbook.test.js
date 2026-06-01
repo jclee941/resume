@@ -27,7 +27,9 @@ describe('routes/guestbook', () => {
   });
 
   it('handles DELETE /api/guestbook/:id', () => {
-    expect(code).toContain("url.pathname.startsWith('/api/guestbook/') && request.method === 'DELETE'");
+    expect(code).toContain(
+      "url.pathname.startsWith('/api/guestbook/') && request.method === 'DELETE'"
+    );
   });
 
   it('creates the table lazily with CREATE TABLE IF NOT EXISTS', () => {

@@ -58,7 +58,10 @@ export class TokenBucketRateLimiter {
             resetTime: computeResetTime(now, refilled.tokens, requested, this.refillRate),
           };
         }
-        const next = { tokens: clampTokens(refilled.tokens - requested, this.capacity), lastRefill: now };
+        const next = {
+          tokens: clampTokens(refilled.tokens - requested, this.capacity),
+          lastRefill: now,
+        };
         if (await this._writeState(key, next, version)) {
           return { allowed: true, remaining: Math.floor(next.tokens), resetTime: now };
         }
@@ -91,15 +94,22 @@ export class TokenBucketRateLimiter {
 
   _refill(state, now) {
     const lastRefill = Math.min(Number(state.lastRefill) || now, now);
-    const tokens = clampTokens((Number(state.tokens) || 0) + ((now - lastRefill) / 1000) * this.refillRate, this.capacity);
+    const tokens = clampTokens(
+      (Number(state.tokens) || 0) + ((now - lastRefill) / 1000) * this.refillRate,
+      this.capacity
+    );
     return { tokens, lastRefill: now };
   }
 
   async _readState(key, now) {
     if (typeof this.kv?.getWithMetadata === 'function') {
       const result = await this.kv.getWithMetadata(key, { type: 'json' });
-      if (!result?.value) return { state: { tokens: this.capacity, lastRefill: now }, version: null };
-      return { state: this._normalizeState(result.value, now), version: result.metadata?.version ?? null };
+      if (!result?.value)
+        return { state: { tokens: this.capacity, lastRefill: now }, version: null };
+      return {
+        state: this._normalizeState(result.value, now),
+        version: result.metadata?.version ?? null,
+      };
     }
     const value = await this.kv.get(key, { type: 'json' });
     return value
@@ -117,7 +127,10 @@ export class TokenBucketRateLimiter {
   async _writeState(key, state, version) {
     const payload = JSON.stringify({ tokens: state.tokens, lastRefill: state.lastRefill });
     if (typeof this.kv?.cas === 'function') {
-      return this.kv.cas(key, payload, { expirationTtl: this.ttlSeconds, expectedVersion: version });
+      return this.kv.cas(key, payload, {
+        expirationTtl: this.ttlSeconds,
+        expectedVersion: version,
+      });
     }
     await this.kv.put(key, payload, { expirationTtl: this.ttlSeconds });
     return true;

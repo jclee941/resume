@@ -74,7 +74,8 @@ export class TelegramNotificationAdapter {
    */
   async sendJobPostingsSeparately(jobs = [], options = {}) {
     const list = Array.isArray(jobs) ? jobs : [];
-    const limit = Number.isInteger(options.limit) && options.limit > 0 ? options.limit : list.length;
+    const limit =
+      Number.isInteger(options.limit) && options.limit > 0 ? options.limit : list.length;
     const selected = list.slice(0, limit);
 
     let sent = 0;

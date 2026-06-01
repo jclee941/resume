@@ -19,7 +19,8 @@ function anchorBalanced(chunk) {
 
 describe('splitForTelegram', () => {
   it('S2: returns a single unchanged chunk when text is within the limit', () => {
-    const text = '🔍 <b>지원할만한 공고</b>\n\n1. <a href="https://x.com/1">A — B</a> [wanted] · 80%';
+    const text =
+      '🔍 <b>지원할만한 공고</b>\n\n1. <a href="https://x.com/1">A — B</a> [wanted] · 80%';
     const chunks = splitForTelegram(text);
     assert.equal(chunks.length, 1);
     assert.equal(chunks[0], text);
@@ -29,7 +30,9 @@ describe('splitForTelegram', () => {
     // Build a long HTML message of many anchored lines, well over 4096 chars.
     const lines = [];
     for (let i = 0; i < 400; i += 1) {
-      lines.push(`${i + 1}. <a href="https://www.example.com/job/${i}">Position ${i} — Company ${i}</a> [wanted] · 7${i % 10}%`);
+      lines.push(
+        `${i + 1}. <a href="https://www.example.com/job/${i}">Position ${i} — Company ${i}</a> [wanted] · 7${i % 10}%`
+      );
     }
     const text = `🔍 <b>지원할만한 공고</b>\n\n${lines.join('\n')}`;
     assert.ok(text.length > TELEGRAM_MAX_LENGTH, 'fixture must exceed the limit');

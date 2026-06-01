@@ -90,7 +90,10 @@ function validate(file) {
       }
     });
   }
-  if (data.connections !== undefined && (typeof data.connections !== 'object' || Array.isArray(data.connections))) {
+  if (
+    data.connections !== undefined &&
+    (typeof data.connections !== 'object' || Array.isArray(data.connections))
+  ) {
     errors.push("'connections' must be an object when present");
   }
 

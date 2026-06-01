@@ -114,10 +114,7 @@ export async function recordSubmission(
   return transitionStatus(application.id, 'submitted', note);
 }
 
-export async function recordApprovalRequest(
-  { findByApplicationOrJobId, transitionStatus },
-  jobId
-) {
+export async function recordApprovalRequest({ findByApplicationOrJobId, transitionStatus }, jobId) {
   const application = await findByApplicationOrJobId(jobId);
   return transitionStatus(application.id, 'approval_requested', 'Approval requested');
 }

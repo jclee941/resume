@@ -82,7 +82,9 @@ function importCookies(platform, cookieString) {
   const legacyFile = path.join(SESSION_DIR, `${platform}-session.json`);
   fs.writeFileSync(legacyFile, JSON.stringify(session, null, 2));
 
-  console.log(`✅ Saved ${cookies.length} cookies via SessionManager (sessions.json) + ${legacyFile}`);
+  console.log(
+    `✅ Saved ${cookies.length} cookies via SessionManager (sessions.json) + ${legacyFile}`
+  );
   console.log('\n📝 Next steps:');
   console.log(`   1. Verify: node scripts/import-cookies-manual.js ${platform} --check`);
   console.log(

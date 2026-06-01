@@ -5,7 +5,10 @@ import { fileURLToPath } from 'url';
 
 function resolveSchemaPath() {
   try {
-    return join(dirname(fileURLToPath(import.meta.url)), '../../../data/resumes/master/resume_schema.json');
+    return join(
+      dirname(fileURLToPath(import.meta.url)),
+      '../../../data/resumes/master/resume_schema.json'
+    );
   } catch {
     return null;
   }
@@ -42,7 +45,8 @@ export function validateResumeData(data, schema = masterSchema) {
 
   if (Array.isArray(schema.required)) {
     for (const field of schema.required) {
-      if (!(field in data)) errors.push({ path: field, message: `Required field missing: ${field}` });
+      if (!(field in data))
+        errors.push({ path: field, message: `Required field missing: ${field}` });
     }
   }
 
@@ -72,12 +76,18 @@ function collectNestedObjectErrors(errors, data, schema, fieldName) {
   }
   for (const field of schema.properties?.[fieldName]?.required ?? []) {
     if (!(field in data[fieldName])) {
-      errors.push({ path: `${fieldName}.${field}`, message: `Required field missing: ${fieldName}.${field}` });
+      errors.push({
+        path: `${fieldName}.${field}`,
+        message: `Required field missing: ${fieldName}.${field}`,
+      });
     }
   }
 }
 
 export function formatErrorsForMCP(errors) {
   if (!errors || !Array.isArray(errors)) return [];
-  return errors.map((err) => ({ field: err.path || err.field || '(root)', message: err.message || 'Validation error' }));
+  return errors.map((err) => ({
+    field: err.path || err.field || '(root)',
+    message: err.message || 'Validation error',
+  }));
 }

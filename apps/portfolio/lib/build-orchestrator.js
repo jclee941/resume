@@ -11,7 +11,11 @@ const securityHeadersModule = require('./security-headers');
 const { injectScriptNoncePlaceholder } = require('./templates');
 const { readBuildInputs } = require('./file-reader');
 const { processProjectData, encodeBinaryAssets } = require('./data-processor');
-const { buildJapaneseTemplate, buildLocalizedHtml, escapeForTemplateLiteral } = require('./html-transformer');
+const {
+  buildJapaneseTemplate,
+  buildLocalizedHtml,
+  escapeForTemplateLiteral,
+} = require('./html-transformer');
 const { buildAndWriteWorker } = require('./worker-writer');
 
 /**
@@ -48,16 +52,21 @@ async function runWorkerBuild({ baseDir, version, gitSha = 'unknown', allowedEma
     // deploys). Opt into strict mode with RESUME_PDF_STRICT=1 to abort the
     // build instead — useful for release pipelines that regenerate the PDF.
     const message =
-'resume_final.pdf is missing or empty \u2014 /resume.pdf (served from the ' +
+      'resume_final.pdf is missing or empty \u2014 /resume.pdf (served from the ' +
       'static assets binding) will be unavailable. ' +
-'Run `go run ./tools/scripts/build/pdf-generator.go master` to regenerate it.';
+      'Run `go run ./tools/scripts/build/pdf-generator.go master` to regenerate it.';
     if (process.env.RESUME_PDF_STRICT === '1') {
       throw new Error(message);
     }
-    logger.warn('\u26a0\ufe0f  ' + message);
+    logger.warn(`\u26a0\ufe0f  ${message}`);
   }
 
-  const { projectData, templates } = processProjectData({ projectDataRaw, projectDataEnRaw, projectDataJaRaw, logger });
+  const { projectData, templates } = processProjectData({
+    projectDataRaw,
+    projectDataEnRaw,
+    projectDataJaRaw,
+    logger,
+  });
   const resumeChatDataBase64Literal = `'${Buffer.from(JSON.stringify(projectData), 'utf-8').toString('base64')}'`;
   const workerAiModel = '@cf/meta/llama-2-7b-chat-int8';
   // resume.pdf is served directly from the static assets binding (assets/resume.pdf),
@@ -79,7 +88,10 @@ async function runWorkerBuild({ baseDir, version, gitSha = 'unknown', allowedEma
   logger.log('✓ Source files loaded\n');
 
   // Copy latest resume PDF into assets so worker can serve /resume.pdf
-  const pdfSource = path.resolve(__dirname, '../../../packages/data/resumes/master/resume_final.pdf');
+  const pdfSource = path.resolve(
+    __dirname,
+    '../../../packages/data/resumes/master/resume_final.pdf'
+  );
   const pdfDest = path.resolve(__dirname, '../assets/resume.pdf');
   if (fs.existsSync(pdfSource)) {
     fs.copyFileSync(pdfSource, pdfDest);

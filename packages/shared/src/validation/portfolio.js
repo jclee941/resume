@@ -1,4 +1,1 @@
-export {
-  portfolioDataSchema,
-  validatePortfolioData,
-} from '@resume/schemas';
+export { portfolioDataSchema, validatePortfolioData } from '@resume/schemas';

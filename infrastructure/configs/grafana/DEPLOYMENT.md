@@ -141,12 +141,12 @@ ssh -i ~/.ssh/id_rsa root@192.168.50.215 \
 
 Health check endpoints:
 
-| Service       | URL                                |
-| ------------- | ---------------------------------- |
-| Grafana       | https://grafana.jclee.me           |
-| Prometheus    | http://192.168.50.215:9090         |
-| Alertmanager  | http://192.168.50.215:9093         |
-| Jaeger        | http://192.168.50.215:16686        |
+| Service      | URL                         |
+| ------------ | --------------------------- |
+| Grafana      | https://grafana.jclee.me    |
+| Prometheus   | http://192.168.50.215:9090  |
+| Alertmanager | http://192.168.50.215:9093  |
+| Jaeger       | http://192.168.50.215:16686 |
 
 ---
 

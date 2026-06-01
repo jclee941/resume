@@ -67,15 +67,15 @@ test.describe('Accessibility (a11y)', () => {
       expect(navLabel).toBe('Main navigation');
     }
 
-const logo = page.locator('.nav-logo');
-await expect(logo).toBeVisible();
-const logoLabel = await logo.getAttribute('aria-label');
+    const logo = page.locator('.nav-logo');
+    await expect(logo).toBeVisible();
+    const logoLabel = await logo.getAttribute('aria-label');
     if (logoLabel !== null) {
       // aria-label must contain the visible text (~/jclee) to satisfy
       // label-content-name-mismatch (axe/Lighthouse).
       const logoText = (await logo.innerText()).trim();
       expect(logoLabel).toContain(logoText);
-}
+    }
 
     const navLinks = page.locator('.nav-link, .nav-links a');
     const count = await navLinks.count();

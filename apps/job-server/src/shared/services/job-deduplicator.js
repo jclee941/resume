@@ -12,7 +12,9 @@ const _seenJobsHolder = (() => {
   let m = new Map();
   return {
     get: () => m,
-    clear: () => { m = new Map(); },
+    clear: () => {
+      m = new Map();
+    },
   };
 })();
 

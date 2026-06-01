@@ -1,4 +1,3 @@
-
 export async function listApplications(handler, request) {
   const url = new URL(request.url);
   const status = url.searchParams.get('status');
@@ -9,7 +8,15 @@ export async function listApplications(handler, request) {
   const limit = parseInt(url.searchParams.get('limit') || '100', 10);
   const offset = parseInt(url.searchParams.get('offset') || '0', 10);
 
-  const applications = await handler.repository.findAll({ status, source, company, sortBy, sortOrder, limit, offset });
+  const applications = await handler.repository.findAll({
+    status,
+    source,
+    company,
+    sortBy,
+    sortOrder,
+    limit,
+    offset,
+  });
   const total = await handler.repository.countAll();
 
   return handler.jsonResponse({

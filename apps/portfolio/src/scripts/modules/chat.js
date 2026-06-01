@@ -18,86 +18,97 @@ class PortfolioChat {
         patterns: ['안녕', 'hello', 'hi', 'hey', '반가', '처음'],
         responses: [
           '안녕하세요! 이재철의 포트폴리오에 오신 것을 환영합니다. 경력, 기술 스택, 프로젝트 등에 대해 질문해 주세요.',
-          'Hello! Welcome to Jaecheol Lee\'s portfolio. Feel free to ask about experience, skills, or projects.'
-        ]
+          "Hello! Welcome to Jaecheol Lee's portfolio. Feel free to ask about experience, skills, or projects.",
+        ],
       },
       experience: {
         patterns: ['경력', 'experience', '몇 녬', 'years', 'career', 'work history', '언제부터'],
         responses: [
           '8년차 보안 엔지니어입니다. 2017년 한국항공우주산업(KAI)에서 시작해, 직전에는 넥스트레이드 매매체결시스템 보안 운영을 담당했으며 현재는 새로운 보안·인프라 역할을 찾는 구직 중입니다.',
-          'An 8-year security engineer. Started at KAI in 2017; most recently handled security operations for the Nextrade trading system, and am now seeking a new security/infrastructure role.'
-        ]
+          'An 8-year security engineer. Started at KAI in 2017; most recently handled security operations for the Nextrade trading system, and am now seeking a new security/infrastructure role.',
+        ],
       },
       current: {
         patterns: ['현재', 'now', '지금', 'current', 'doing', 'nextrade', '넥스트레이드'],
         responses: [
           '직전 아이티센 CTS 소속으로 넥스트레이드(주) 매매체결시스템의 보안 운영을 담당했습니다. Splunk ES, n8n, FortiManager API 기반 자동 대응 체계를 운영했으며, 현재는 다음 보안·인프라 역할을 찾는 구직 중입니다.',
-          'Most recently at ITCEN CTS, handled security operations for the Nextrade financial exchange trading system, operating Splunk ES, n8n, and FortiManager API-based automated response. Currently seeking my next security/infrastructure role.'
-        ]
+          'Most recently at ITCEN CTS, handled security operations for the Nextrade financial exchange trading system, operating Splunk ES, n8n, and FortiManager API-based automated response. Currently seeking my next security/infrastructure role.',
+        ],
       },
       skills: {
-        patterns: ['기술', 'skill', 'stack', '도구', 'tool', '사용', 'what do you use', 'splunk', 'ansible', 'terraform'],
+        patterns: [
+          '기술',
+          'skill',
+          'stack',
+          '도구',
+          'tool',
+          '사용',
+          'what do you use',
+          'splunk',
+          'ansible',
+          'terraform',
+        ],
         responses: [
           '주요 기술 스택: Splunk ES/Phantom(SOAR), FortiGate/FortiManager, Ansible, Terraform, Python, Docker, Cloudflare Workers, Grafana/Prometheus, NSX-T, VMware vSphere, PostgreSQL, n8n, GitHub Actions',
-          'Key skills: Splunk ES/Phantom(SOAR), FortiGate/FortiManager, Ansible, Terraform, Python, Docker, Cloudflare Workers, Grafana/Prometheus, NSX-T, VMware vSphere, PostgreSQL, n8n, GitHub Actions'
-        ]
+          'Key skills: Splunk ES/Phantom(SOAR), FortiGate/FortiManager, Ansible, Terraform, Python, Docker, Cloudflare Workers, Grafana/Prometheus, NSX-T, VMware vSphere, PostgreSQL, n8n, GitHub Actions',
+        ],
       },
       siem: {
         patterns: ['siem', 'soar', 'splunk', '탐지', 'detection', '보안관제', 'soc'],
         responses: [
           'Splunk ES 탐지 룰을 직접 설계·운영하고, Splunk Saved Search → n8n webhook → Slack/SMS 연동 실시간 알림 파이프라인을 구축했습니다. Python과 Docker 기반 마이크로서비스로 탐지 룰 버전 관리 및 배포 자동화를 구현했습니다.',
-          'Designed and operated Splunk ES detection rules, built Splunk Saved Search → n8n webhook → Slack/SMS real-time alert pipeline. Implemented Python/Docker microservices for detection rule version management and deployment automation.'
-        ]
+          'Designed and operated Splunk ES detection rules, built Splunk Saved Search → n8n webhook → Slack/SMS real-time alert pipeline. Implemented Python/Docker microservices for detection rule version management and deployment automation.',
+        ],
       },
       automation: {
         patterns: ['자동화', 'automation', 'ansible', 'terraform', 'iac', '코드화', 'python'],
         responses: [
           'Ansible Role로 방화벽 정책 및 보안 장비 초기 설정을 표준화했고, FortiManager JSON-RPC API를 활용한 방화벽 정책 자동 조회 시스템을 개발했습니다. 개인 홈랩에서는 Terraform으로 Cloudflare Workers, MCP, Grafana, 1Password를 코드화해 운영 중입니다.',
-          'Standardized firewall policies and security device initial configs with Ansible Role, developed FortiManager JSON-RPC API-based automatic firewall policy lookup. Personal homelab uses Terraform to manage Cloudflare Workers, MCP, Grafana, and 1Password as code.'
-        ]
+          'Standardized firewall policies and security device initial configs with Ansible Role, developed FortiManager JSON-RPC API-based automatic firewall policy lookup. Personal homelab uses Terraform to manage Cloudflare Workers, MCP, Grafana, and 1Password as code.',
+        ],
       },
       security: {
         patterns: ['보안', 'security', '망분리', 'firewall', '방화벽', 'fsc', '인허가'],
         responses: [
           '금융권 규제에 맞는 5계층 망분리 보안 아키텍처를 설계하여 FSC 본인가 심사를 통과시켰습니다. VMware NSX-T 마이크로세그멘테이션으로 동서 트래픽 사각지대를 해소하고, NAC/DLP와 Wazuh를 통합 연동한 실시간 모니터링 체계를 구축했습니다.',
-          'Designed 5-tier network segmentation security architecture compliant with financial regulations, passed the FSC main-license review. Eliminated east-west traffic blind spots with VMware NSX-T microsegmentation, built real-time monitoring integrating NAC/DLP with Wazuh.'
-        ]
+          'Designed 5-tier network segmentation security architecture compliant with financial regulations, passed the FSC main-license review. Eliminated east-west traffic blind spots with VMware NSX-T microsegmentation, built real-time monitoring integrating NAC/DLP with Wazuh.',
+        ],
       },
       cloudflare: {
         patterns: ['cloudflare', 'worker', 'edge', 'mcp', 'grafana', '홈랩'],
         responses: [
           '개인 홈랩에서 Cloudflare Workers, MCP(Model Context Protocol), Grafana, 1Password를 Terraform으로 코드화해 운영합니다. resume.jclee.me 포트폴리오 사이트도 Cloudflare Workers로 배포되어 있으며, 이력서 동기화 자동화 파이프라인도 Workers 기반으로 구현했습니다.',
-          'Personal homelab manages Cloudflare Workers, MCP(Model Context Protocol), Grafana, and 1Password as code via Terraform. Portfolio site resume.jclee.me is deployed on Cloudflare Workers, with resume sync automation pipeline also Worker-based.'
-        ]
+          'Personal homelab manages Cloudflare Workers, MCP(Model Context Protocol), Grafana, and 1Password as code via Terraform. Portfolio site resume.jclee.me is deployed on Cloudflare Workers, with resume sync automation pipeline also Worker-based.',
+        ],
       },
       education: {
         patterns: ['학력', 'education', 'degree', 'university', '대학', '학교'],
         responses: [
           '국민대학교 소프트웨어학과 학사 졸업 (2012-2018). 11개월간 RHCSA·LPIC-1·리눅스마스터 2급을 연속 취득했습니다.',
-          'Bachelor of Software Engineering from Kookmin University (2012-2018). Earned RHCSA, LPIC-1, and Linux Master Level 2 certifications within 11 months.'
-        ]
+          'Bachelor of Software Engineering from Kookmin University (2012-2018). Earned RHCSA, LPIC-1, and Linux Master Level 2 certifications within 11 months.',
+        ],
       },
       contact: {
         patterns: ['연락', 'contact', 'email', 'mail', 'phone', '전화', '메일', 'hire', '채용'],
         responses: [
           '연락처: resume.jclee.me/contact 또는 GitHub @jclee941로 연락 주세요. 채용 제안은 언제나 환영합니다!',
-          'Contact: resume.jclee.me/contact or GitHub @jclee941. Open to opportunities!'
-        ]
+          'Contact: resume.jclee.me/contact or GitHub @jclee941. Open to opportunities!',
+        ],
       },
       projects: {
         patterns: ['프로젝트', 'project', 'portfolio', '포트폴리오', 'what did you build', '구축'],
         responses: [
           '주요 프로젝트: 넥스트레이드 매매체결시스템 보안 운영(SIEM/SOAR), KAI 폐쇄망 WSUS 패치 자동화, 대규모 컨택센터 NAC 정책 자동화, 국민대 차세대 정보시스템 NSX-T 보안 구축, 금융보안데이터센터 AI 트레이딩 플랫폼 인프라 운영',
-          'Key projects: Nextrade trading system security ops (SIEM/SOAR), KAI closed-network WSUS patch automation, large-scale contact center NAC policy automation, Kookmin University next-gen system NSX-T security, FSDC AI trading platform infra ops'
-        ]
+          'Key projects: Nextrade trading system security ops (SIEM/SOAR), KAI closed-network WSUS patch automation, large-scale contact center NAC policy automation, Kookmin University next-gen system NSX-T security, FSDC AI trading platform infra ops',
+        ],
       },
       help: {
         patterns: ['help', '도움', '뭐', 'what', '질문', 'question', 'ask'],
         responses: [
           '다음 주제에 대해 질문해 주세요: 경력, 현재 근무, 기술 스택, SIEM/SOAR, 자동화, 보안, Cloudflare, 학력, 프로젝트, 연락처',
-          'Ask me about: experience, current role, tech stack, SIEM/SOAR, automation, security, Cloudflare, education, projects, contact'
-        ]
-      }
+          'Ask me about: experience, current role, tech stack, SIEM/SOAR, automation, security, Cloudflare, education, projects, contact',
+        ],
+      },
     };
   }
 
@@ -193,11 +204,14 @@ class PortfolioChat {
 
     // Simulate typing delay
     this.showTyping();
-    setTimeout(() => {
-      this.hideTyping();
-      const response = this.findResponse(text);
-      this.addMessage('bot', response);
-    }, 600 + Math.random() * 400);
+    setTimeout(
+      () => {
+        this.hideTyping();
+        const response = this.findResponse(text);
+        this.addMessage('bot', response);
+      },
+      600 + Math.random() * 400
+    );
   }
 
   findResponse(text) {

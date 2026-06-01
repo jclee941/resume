@@ -1,11 +1,6 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert';
-import {
-  formatYYYY_MM,
-  formatYYYY_MM_DD,
-  formatYYYYMM,
-  parsePeriod,
-} from '../date-formatters.js';
+import { formatYYYY_MM, formatYYYY_MM_DD, formatYYYYMM, parsePeriod } from '../date-formatters.js';
 
 describe('date formatters', () => {
   it('formats dotted year-month as YYYYMM', () => {

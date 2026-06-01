@@ -211,7 +211,12 @@ describe('ResumeEducationEndpoint', async () => {
 
     const result = await endpoint.update(resumeId, educationId, payload);
 
-    assertChaosCall(mockClient, `/resumes/v2/${resumeId}/educations/${educationId}`, 'PATCH', payload);
+    assertChaosCall(
+      mockClient,
+      `/resumes/v2/${resumeId}/educations/${educationId}`,
+      'PATCH',
+      payload
+    );
     assert.strictEqual(result, response);
   });
 
@@ -292,7 +297,12 @@ describe('ResumeActivityEndpoint', async () => {
 
     const result = await endpoint.update(resumeId, activityId, payload);
 
-    assertChaosCall(mockClient, `/resumes/v2/${resumeId}/activities/${activityId}`, 'PATCH', payload);
+    assertChaosCall(
+      mockClient,
+      `/resumes/v2/${resumeId}/activities/${activityId}`,
+      'PATCH',
+      payload
+    );
     assert.strictEqual(result, response);
   });
 
@@ -338,7 +348,12 @@ describe('ResumeLanguageCertEndpoint', async () => {
 
     const result = await endpoint.update(resumeId, certId, payload);
 
-    assertChaosCall(mockClient, `/resumes/v2/${resumeId}/language_certs/${certId}`, 'PATCH', payload);
+    assertChaosCall(
+      mockClient,
+      `/resumes/v2/${resumeId}/language_certs/${certId}`,
+      'PATCH',
+      payload
+    );
     assert.strictEqual(result, response);
   });
 

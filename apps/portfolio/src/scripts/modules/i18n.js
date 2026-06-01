@@ -7,8 +7,7 @@ const html = document.documentElement;
 export function initLanguage() {
   // Load saved language or detect from browser
   const savedLang =
-    localStorage.getItem('language') ||
-    (navigator.language.startsWith('ko') ? 'ko' : 'en');
+    localStorage.getItem('language') || (navigator.language.startsWith('ko') ? 'ko' : 'en');
   html.setAttribute('lang', savedLang === 'ko' ? 'ko' : 'en');
   updateLanguage(savedLang);
 
@@ -30,10 +29,7 @@ function toggleLanguage() {
 
   html.setAttribute('lang', newLang);
   localStorage.setItem('language', newLang);
-  languageToggle.setAttribute(
-    'aria-pressed',
-    newLang === 'en' ? 'true' : 'false',
-  );
+  languageToggle.setAttribute('aria-pressed', newLang === 'en' ? 'true' : 'false');
   updateLanguage(newLang);
 }
 

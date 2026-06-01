@@ -49,8 +49,7 @@ Use wanted_auth with action="set_cookies" (recommended) or action="set_token" fi
       },
       query: {
         type: 'string',
-        description:
-          'Filter results by company or position substring (optional)',
+        description: 'Filter results by company or position substring (optional)',
       },
       include_raw: {
         type: 'boolean',
@@ -73,12 +72,8 @@ Use wanted_auth with action="set_cookies" (recommended) or action="set_token" fi
     }
 
     const view = params.view || 'overview';
-    const limit = Number.isFinite(params.limit)
-      ? Math.max(1, params.limit)
-      : 20;
-    const offset = Number.isFinite(params.offset)
-      ? Math.max(0, params.offset)
-      : 0;
+    const limit = Number.isFinite(params.limit) ? Math.max(1, params.limit) : 20;
+    const offset = Number.isFinite(params.offset) ? Math.max(0, params.offset) : 0;
     const query = params.query || null;
     const includeRaw = Boolean(params.include_raw);
 
@@ -127,9 +122,7 @@ Use wanted_auth with action="set_cookies" (recommended) or action="set_token" fi
             company: app?.job?.company?.name ?? null,
             status: app?.status ?? null,
             applied_at: app?.created_at ?? null,
-            url: app?.job?.id
-              ? `https://www.wanted.co.kr/wd/${app.job.id}`
-              : null,
+            url: app?.job?.id ? `https://www.wanted.co.kr/wd/${app.job.id}` : null,
           }));
 
           const filtered = filterByQuery(mapped, query);
@@ -153,9 +146,7 @@ Use wanted_auth with action="set_cookies" (recommended) or action="set_token" fi
             position: bm?.job?.position ?? null,
             company: bm?.job?.company?.name ?? null,
             bookmarked_at: bm?.created_at ?? null,
-            url: bm?.job?.id
-              ? `https://www.wanted.co.kr/wd/${bm.job.id}`
-              : null,
+            url: bm?.job?.id ? `https://www.wanted.co.kr/wd/${bm.job.id}` : null,
           }));
 
           const filtered = filterByQuery(mapped, query);
@@ -178,11 +169,7 @@ Use wanted_auth with action="set_cookies" (recommended) or action="set_token" fi
     } catch (error) {
       const message = error?.message ? String(error.message) : 'Unknown error';
 
-      if (
-        message.includes('401') ||
-        message.includes('403') ||
-        message.includes('Unauthorized')
-      ) {
+      if (message.includes('401') || message.includes('403') || message.includes('Unauthorized')) {
         return {
           success: false,
           error: 'Session expired. Please authenticate again.',

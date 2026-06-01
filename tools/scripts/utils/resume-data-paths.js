@@ -1,9 +1,6 @@
 const path = require('path');
 
-const SOURCE_PATH = path.join(
-  __dirname,
-  '../../../packages/data/resumes/master/resume_data.json'
-);
+const SOURCE_PATH = path.join(__dirname, '../../../packages/data/resumes/master/resume_data.json');
 const SOURCE_EN_PATH = path.join(
   __dirname,
   '../../../packages/data/resumes/master/resume_data_en.json'

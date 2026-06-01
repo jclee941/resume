@@ -5,7 +5,8 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
 const { MigrationRunner } = await import('../migration-runner.js');
-const { computeChecksum, parseMigrationFilename, splitStatements } = await import('../discovery.js');
+const { computeChecksum, parseMigrationFilename, splitStatements } =
+  await import('../discovery.js');
 const { validate } = await import('../validation.js');
 const { applyMigration, rollbackMigration, MIGRATIONS_TABLE } = await import('../execution.js');
 

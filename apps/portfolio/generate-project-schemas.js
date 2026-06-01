@@ -18,21 +18,21 @@ async function generateProjectSchemas() {
       '@context': 'https://schema.org',
       '@type': 'CreativeWork',
       '@id': `https://resume.jclee.me/#project-${index + 1}`,
-      'name': project.title,
-      'description': project.description,
-      'keywords': (project.related_skills || []).join(', '),
-      'creator': {
+      name: project.title,
+      description: project.description,
+      keywords: (project.related_skills || []).join(', '),
+      creator: {
         '@type': 'Person',
-        'name': '이재철',
-        'alternateName': 'Jaecheol Lee'
+        name: '이재철',
+        alternateName: 'Jaecheol Lee',
       },
-      'dateCreated': new Date().toISOString().split('T')[0],
-      'inLanguage': ['ko', 'en'],
-      'isPartOf': {
+      dateCreated: new Date().toISOString().split('T')[0],
+      inLanguage: ['ko', 'en'],
+      isPartOf: {
         '@type': 'WebSite',
-        'name': '이재철 포트폴리오',
-        'url': 'https://resume.jclee.me'
-      }
+        name: '이재철 포트폴리오',
+        url: 'https://resume.jclee.me',
+      },
     };
 
     // Add business impact if available
@@ -70,7 +70,7 @@ if (require.main === module) {
     try {
       const schemas = await generateProjectSchemas();
       console.log(`📋 Generated ${schemas.length} CreativeWork schemas\n`);
-      
+
       schemas.forEach((schema, idx) => {
         console.log(`Project ${idx + 1}: ${schema.name}`);
         console.log(`  ID: ${schema['@id']}`);

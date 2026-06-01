@@ -52,7 +52,8 @@ export class LinkedInProfileSync extends BrowserProfileSync {
       return {
         dry_run: true,
         method: 'manual_required',
-        message: 'LinkedIn does not support automated profile writes due to strict bot detection. Use the preview below to update manually.',
+        message:
+          'LinkedIn does not support automated profile writes due to strict bot detection. Use the preview below to update manually.',
         would_update: {
           personal: sourceData.personal,
           careers: sourceData.careers?.length ?? 0,
@@ -62,7 +63,8 @@ export class LinkedInProfileSync extends BrowserProfileSync {
         current_profile: current.data,
         manual_steps: [
           '1. Go to https://www.linkedin.com/in/me/edit/contact-info/',
-          '2. Update Headline with: ' + `${sourceData.current?.position || sourceData.careers?.[0]?.role || ''} | ${sourceData.summary?.totalExperience || ''}`,
+          '2. Update Headline with: ' +
+            `${sourceData.current?.position || sourceData.careers?.[0]?.role || ''} | ${sourceData.summary?.totalExperience || ''}`,
           '3. Update Experience section with career entries',
           '4. Update Education section',
           '5. Add Licenses & Certifications',

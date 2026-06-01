@@ -16,7 +16,7 @@ services:
     container_name: grafana
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       # Admin password — override via .env or shell export; never commit real values
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-changeme}
@@ -39,7 +39,7 @@ services:
     container_name: prometheus
     restart: unless-stopped
     ports:
-      - "9090:9090"
+      - '9090:9090'
     volumes:
       - prometheus-data:/prometheus
       - ../configs/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
@@ -57,7 +57,7 @@ services:
     container_name: loki
     restart: unless-stopped
     ports:
-      - "3100:3100"
+      - '3100:3100'
     volumes:
       - loki-data:/loki
     # The image ships with a default local-config.yaml; override with:
@@ -70,7 +70,7 @@ services:
     container_name: alertmanager
     restart: unless-stopped
     ports:
-      - "9093:9093"
+      - '9093:9093'
     volumes:
       - alertmanager-data:/alertmanager
       - ../configs/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
@@ -85,8 +85,8 @@ services:
     container_name: jaeger
     restart: unless-stopped
     ports:
-      - "16686:16686"
-      - "14268:14268"
+      - '16686:16686'
+      - '14268:14268'
     environment:
       - COLLECTOR_OTLP_ENABLED=true
     volumes:

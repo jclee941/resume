@@ -1,4 +1,13 @@
-export async function searchJobsWithStrategy({ cache, config, crawler, keywords, logger, metrics, options, stats }) {
+export async function searchJobsWithStrategy({
+  cache,
+  config,
+  crawler,
+  keywords,
+  logger,
+  metrics,
+  options,
+  stats,
+}) {
   metrics.mark('search:start');
   stats.startTime = Date.now();
 
@@ -19,9 +28,25 @@ export async function searchJobsWithStrategy({ cache, config, crawler, keywords,
   const platforms = options.platforms || config.enabledPlatforms;
 
   if (config.parallelSearch) {
-    await searchPlatformsInParallel({ crawler, jobs, keywords, logger, metrics, options, platforms });
+    await searchPlatformsInParallel({
+      crawler,
+      jobs,
+      keywords,
+      logger,
+      metrics,
+      options,
+      platforms,
+    });
   } else {
-    await searchPlatformsSequentially({ crawler, jobs, keywords, logger, metrics, options, platforms });
+    await searchPlatformsSequentially({
+      crawler,
+      jobs,
+      keywords,
+      logger,
+      metrics,
+      options,
+      platforms,
+    });
   }
 
   stats.searched = jobs.length;
@@ -34,7 +59,15 @@ export async function searchJobsWithStrategy({ cache, config, crawler, keywords,
   return jobs;
 }
 
-async function searchPlatformsInParallel({ crawler, jobs, keywords, logger, metrics, options, platforms }) {
+async function searchPlatformsInParallel({
+  crawler,
+  jobs,
+  keywords,
+  logger,
+  metrics,
+  options,
+  platforms,
+}) {
   const results = await Promise.allSettled(
     platforms.map(async (platform) => {
       metrics.mark(`search:${platform}`);
@@ -64,7 +97,15 @@ async function searchPlatformsInParallel({ crawler, jobs, keywords, logger, metr
   }
 }
 
-async function searchPlatformsSequentially({ crawler, jobs, keywords, logger, metrics, options, platforms }) {
+async function searchPlatformsSequentially({
+  crawler,
+  jobs,
+  keywords,
+  logger,
+  metrics,
+  options,
+  platforms,
+}) {
   for (const platform of platforms) {
     metrics.mark(`search:${platform}`);
     try {

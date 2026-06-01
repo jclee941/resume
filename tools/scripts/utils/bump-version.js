@@ -21,7 +21,7 @@ const PACKAGE_JSON_PATH = path.join(__dirname, '../../package.json');
  */
 function parseVersion(version) {
   const [major, minor, patch] = version.split('.').map(Number);
-  return {major, minor, patch};
+  return { major, minor, patch };
 }
 
 /**
@@ -31,7 +31,7 @@ function parseVersion(version) {
  * @returns {string} New semantic version
  */
 function incrementVersion(currentVersion, type = 'patch') {
-  const {major, minor, patch} = parseVersion(currentVersion);
+  const { major, minor, patch } = parseVersion(currentVersion);
 
   switch (type) {
     case 'major':
@@ -65,14 +65,9 @@ function main() {
 
   // Update package.json
   packageJson.version = newVersion;
-  fs.writeFileSync(
-    PACKAGE_JSON_PATH,
-    `${JSON.stringify(packageJson, null, 2)  }\n`
-  );
+  fs.writeFileSync(PACKAGE_JSON_PATH, `${JSON.stringify(packageJson, null, 2)}\n`);
 
-  console.log(
-    `✓ Version bumped: ${currentVersion} → ${newVersion} (${incrementType})`
-  );
+  console.log(`✓ Version bumped: ${currentVersion} → ${newVersion} (${incrementType})`);
   console.log('✓ Updated: package.json');
 }
 
@@ -81,4 +76,4 @@ if (require.main === module) {
   main();
 }
 
-module.exports = {incrementVersion, parseVersion};
+module.exports = { incrementVersion, parseVersion };

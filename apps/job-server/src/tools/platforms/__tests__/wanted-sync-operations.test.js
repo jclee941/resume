@@ -449,7 +449,11 @@ describe('mapToWantedFormat — BUG-W2 headline truncation', () => {
       careers: [],
       summary: {},
     });
-    assert.strictEqual(result.profile.headline, longHeadline, 'full headline preserved when within 150');
+    assert.strictEqual(
+      result.profile.headline,
+      longHeadline,
+      'full headline preserved when within 150'
+    );
     assert.strictEqual(result.profile.headline.length, longHeadline.length);
   });
 
@@ -463,7 +467,6 @@ describe('mapToWantedFormat — BUG-W2 headline truncation', () => {
     assert.strictEqual(result.profile.headline.length, WANTED_HEADLINE_LIMIT);
   });
 });
-
 
 // Failing tests for identified Wanted gaps (Plan Agent: fill missing fields)
 describe('Wanted gap — skills level', () => {
@@ -505,7 +508,11 @@ describe('Wanted gap — certification extra fields', () => {
     const payload = args[0][1];
     assert.strictEqual(payload.expirationDate, '2027.01', 'should map expirationDate');
     assert.strictEqual(payload.credentialId, 'ABC123', 'should map credentialId');
-    assert.strictEqual(payload.credentialUrl, 'https://aws.amazon.com/cert', 'should map credentialUrl');
+    assert.strictEqual(
+      payload.credentialUrl,
+      'https://aws.amazon.com/cert',
+      'should map credentialUrl'
+    );
     assert.strictEqual(payload.status, 'active', 'should map status');
     assert.strictEqual(payload.note, 'Note', 'should map note');
   });
@@ -546,9 +553,7 @@ describe('Wanted gap — career description fallback', () => {
   it('syncCareers syncs career description even when no projects exist', async () => {
     const api = createApiMock();
     const localCareers = [{ company: { name: 'Wanted Lab' }, job_role: 'SRE' }];
-    const remoteCareers = [
-      { id: 'career-1', company: { name: 'Wanted Lab' }, projects: [] },
-    ];
+    const remoteCareers = [{ id: 'career-1', company: { name: 'Wanted Lab' }, projects: [] }];
     const ssotCareers = [{ description: 'Security operations and automation' }];
     await syncCareers(api, 'resume-1', localCareers, remoteCareers, ssotCareers);
     const args = getMockArgs(api.resumeCareer.addProject);

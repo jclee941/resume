@@ -106,7 +106,6 @@ test.describe('Security Headers & CSP', () => {
   test('should block external scripts not in CSP', async ({ page }) => {
     const cspErrors = [];
 
-
     page.on('console', (msg) => {
       if (msg.type() === 'error') {
         const text = msg.text();

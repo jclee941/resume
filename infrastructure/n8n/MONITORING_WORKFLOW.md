@@ -41,7 +41,7 @@ Following the infrastructure pattern documented in the main README:
 
 - **Type**: SSH node → jclee@192.168.50.200
 - **Command**: `curl -s -w '\n%{http_code}' --max-time 10
-  https://resume.jclee.me/health`
+https://resume.jclee.me/health`
 - **Parse**: Extract HTTP status code and JSON body
 - **Pass Criteria**: Status 200 + body.status === 'healthy'
 
@@ -49,7 +49,7 @@ Following the infrastructure pattern documented in the main README:
 
 - **Type**: SSH node → jclee@192.168.50.200
 - **Command**: `curl -s -w '\n%{http_code}' --max-time 10
-  https://resume.jclee.me/metrics | head -20`
+https://resume.jclee.me/metrics | head -20`
 - **Parse**: Check for `http_requests_total` in output
 - **Pass Criteria**: Status 200 + contains metrics data
 

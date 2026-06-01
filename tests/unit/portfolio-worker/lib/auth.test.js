@@ -120,7 +120,9 @@ describe('auth', () => {
     it('should preserve base64 padding and dotted payload in cookie values', () => {
       // Build a runtime cookie parser identical to the one embedded in worker.js,
       // and feed it a realistic dashboard_session value with '=' padding on both halves.
-      const parserSrc = code.match(/Object\.fromEntries\(cookieHeader\.split\(';'\)\.map\([\s\S]*?\)\);/);
+      const parserSrc = code.match(
+        /Object\.fromEntries\(cookieHeader\.split\(';'\)\.map\([\s\S]*?\)\);/
+      );
       expect(parserSrc).not.toBeNull();
       const fn = new Function('cookieHeader', `return ${parserSrc[0].replace(/;\s*$/, '')}`);
       const cookies = fn('dashboard_session=eyJ1Ijoi=.abc=; theme=dark');

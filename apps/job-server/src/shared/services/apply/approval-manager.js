@@ -1,11 +1,7 @@
 import { ApplicationRepository } from '../../repositories/application-repository.js';
 import { TelegramNotificationAdapter } from '../notifications/telegram-adapter.js';
 
-import {
-  getApprovalRequestById,
-  markTimedOut,
-  updateApprovalRequest,
-} from './approval-store.js';
+import { getApprovalRequestById, markTimedOut, updateApprovalRequest } from './approval-store.js';
 import {
   parseApprovalNotes,
   shouldSendReminder,
@@ -14,11 +10,7 @@ import {
 import { assertPendingRequest } from './approval-validation.js';
 import { requestApproval } from './approval-requester.js';
 import { approveRequest, cancelApproval, rejectRequest } from './approval-reviewer.js';
-import {
-  checkApprovalStatus,
-  getPendingApprovals,
-  processTimeouts,
-} from './approval-processor.js';
+import { checkApprovalStatus, getPendingApprovals, processTimeouts } from './approval-processor.js';
 
 function asNumber(value, fallback = 0) {
   return Number.isFinite(Number(value)) ? Number(value) : fallback;

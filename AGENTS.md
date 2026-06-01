@@ -174,14 +174,15 @@ pre-commit install                                              # Install pre-co
 ## NOTES
 
 #JR|- 45 child AGENTS.md files exist across `apps/`, `tests/`, `tools/`,
-  `infrastructure/`, and `packages/`; avoid duplicating their scope from the
-  root.
+`infrastructure/`, and `packages/`; avoid duplicating their scope from the
+root.
+
 - `infrastructure/n8n/` and `infrastructure/monitoring/` are distinct enough to
   warrant child AGENTS files; `docs/` stays governed at the docs-root level.
 - `supabase/functions/` contains Supabase edge functions — distinct runtime, not
   part of npm workspaces.
-#QR|- Go scripts in `infrastructure/n8n/` (13 files) — shell-to-Go migration
-  XB|  complete per monorepo standards.
+  #QR|- Go scripts in `infrastructure/n8n/` (13 files) — shell-to-Go migration
+  XB| complete per monorepo standards.
 - New packages (types/schemas/contracts) created in Epic 2 each have their own
   focused AGENTS.md.
 - Foundation modules in `@resume/shared` (retry/crypto/rate-limit/auth) created
@@ -202,6 +203,6 @@ Active improvement plan: `docs/architecture/SSOT_IMPROVEMENT_PLAN.md`
 | Epic 6 | File-size hygiene                                                                             | Pending. Splits of 9544L applications.js + 10963L auto-apply.js are large enough to warrant their own PR series.      |
 
 #AY|- Never include concrete performance metrics (percentages, ratios, or absolute numbers) in
-#QH|  portfolio/resume text. Describe outcomes factually without quantified claims (e.g., say
-#WR|  "automated manual workflows to reduce operational burden" instead of "80% reduction").
-#ER|  Be conservative—state only what is verifiable.
+#QH| portfolio/resume text. Describe outcomes factually without quantified claims (e.g., say
+#WR| "automated manual workflows to reduce operational burden" instead of "80% reduction").
+#ER| Be conservative—state only what is verifiable.

@@ -21,7 +21,9 @@ const _circuitStateHolder = (() => {
   let s = { failures: 0, openedAt: 0, threshold: 5, resetMs: 30000 };
   return {
     get: () => s,
-    reset: () => { s = { failures: 0, openedAt: 0, threshold: 5, resetMs: 30000 }; },
+    reset: () => {
+      s = { failures: 0, openedAt: 0, threshold: 5, resetMs: 30000 };
+    },
   };
 })();
 
@@ -131,7 +133,9 @@ export async function applyToJob(job, options = {}) {
     );
 
     retryReporter('execution_success', { metrics: { successRate: 1 } });
-    notifications.notifyApplySuccess(job.company, job.title, job.sourceUrl, WANTED_PLATFORM).catch(() => {});
+    notifications
+      .notifyApplySuccess(job.company, job.title, job.sourceUrl, WANTED_PLATFORM)
+      .catch(() => {});
 
     return {
       success: true,

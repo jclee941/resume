@@ -28,7 +28,9 @@ const path = require('path');
 
 const DEFAULT_CONFIG_PATH = path.join(
   __dirname,
-  '..', '..', '..',
+  '..',
+  '..',
+  '..',
   'infrastructure',
   'workflows',
   'config.json'
@@ -38,16 +40,15 @@ const DEFAULT_CONFIG_PATH = path.join(
 const WORKFLOWS_DIR = path.join(__dirname, '..', '..', '..', 'infrastructure', 'workflows');
 const OUTPUT_DIR = path.join(
   __dirname,
-  '..', '..', '..',
+  '..',
+  '..',
+  '..',
   'infrastructure',
   'workflows',
   'configured'
 );
 
-const WORKFLOW_TEMPLATES = [
-  '01-site-health-monitor.json',
-  '02-github-deployment-webhook.json',
-];
+const WORKFLOW_TEMPLATES = ['01-site-health-monitor.json', '02-github-deployment-webhook.json'];
 
 // ============================================================================
 // CLI Argument Parsing
@@ -151,20 +152,11 @@ function validateConfig(config) {
 
   // Validate Google Sheets configuration
   if (config.google_sheets) {
-    if (
-      !config.google_sheets.spreadsheet_id ||
-      config.google_sheets.spreadsheet_id.length !== 44
-    ) {
-      errors.push(
-        'Invalid Google Sheets spreadsheet_id (expected 44 characters)'
-      );
+    if (!config.google_sheets.spreadsheet_id || config.google_sheets.spreadsheet_id.length !== 44) {
+      errors.push('Invalid Google Sheets spreadsheet_id (expected 44 characters)');
     }
-    if (
-      config.google_sheets.spreadsheet_id === 'GOOGLE_SHEET_ID_HERE_44_CHARS'
-    ) {
-      errors.push(
-        'Google Sheets spreadsheet_id not configured (still using placeholder)'
-      );
+    if (config.google_sheets.spreadsheet_id === 'GOOGLE_SHEET_ID_HERE_44_CHARS') {
+      errors.push('Google Sheets spreadsheet_id not configured (still using placeholder)');
     }
   }
 
@@ -188,24 +180,15 @@ function applyConfiguration(workflowContent, config) {
   // (TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID) — no template placeholders needed
 
   // Replace Google Sheets IDs
-  content = content.replace(
-    /GOOGLE_SHEET_ID/g,
-    config.google_sheets.spreadsheet_id
-  );
-  content = content.replace(
-    /"Resume Monitoring"/g,
-    `"${config.google_sheets.spreadsheet_name}"`
-  );
+  content = content.replace(/GOOGLE_SHEET_ID/g, config.google_sheets.spreadsheet_id);
+  content = content.replace(/"Resume Monitoring"/g, `"${config.google_sheets.spreadsheet_name}"`);
 
   // Replace monitoring URLs
   content = content.replace(
     /https:\/\/resume\.jclee\.me\/health/g,
     config.monitoring.health_endpoint
   );
-  content = content.replace(
-    /https:\/\/resume\.jclee\.me/g,
-    config.monitoring.site_url
-  );
+  content = content.replace(/https:\/\/resume\.jclee\.me/g, config.monitoring.site_url);
   content = content.replace(
     /https:\/\/grafana\.jclee\.me\/d\/resume/g,
     config.monitoring.grafana_dashboard_url
@@ -220,10 +203,7 @@ function applyConfiguration(workflowContent, config) {
     /"expression": "\*\/5 \* \* \* \*"/g,
     `"expression": "${config.monitoring.health_check_interval}"`
   );
-  content = content.replace(
-    /"timeout": 10000/g,
-    `"timeout": ${config.monitoring.http_timeout}`
-  );
+  content = content.replace(/"timeout": 10000/g, `"timeout": ${config.monitoring.http_timeout}`);
   content = content.replace(
     /"maxTries": 3/g,
     `"maxTries": ${config.monitoring.http_retry_max_tries}`
@@ -242,7 +222,7 @@ function applyConfiguration(workflowContent, config) {
 
 function ensureOutputDirectory() {
   if (!fs.existsSync(OUTPUT_DIR)) {
-    fs.mkdirSync(OUTPUT_DIR, {recursive: true});
+    fs.mkdirSync(OUTPUT_DIR, { recursive: true });
     log(`Created output directory: ${OUTPUT_DIR}`, 'verbose');
   }
 }
@@ -262,10 +242,7 @@ async function main() {
   if (!fs.existsSync(options.configPath)) {
     log(`Configuration file not found: ${options.configPath}`, 'error');
     log('\nCreate config.json by copying config.example.json:', 'info');
-    log(
-      `  cp infrastructure/workflows/config.example.json ${options.configPath}`,
-      'verbose'
-    );
+    log(`  cp infrastructure/workflows/config.example.json ${options.configPath}`, 'verbose');
     log('  Then edit config.json with your values', 'verbose');
     process.exit(1);
   }
@@ -286,7 +263,7 @@ async function main() {
 
   if (validationErrors.length > 0) {
     log('Configuration validation failed:', 'error');
-    validationErrors.forEach(error => log(`  • ${error}`, 'error'));
+    validationErrors.forEach((error) => log(`  • ${error}`, 'error'));
     process.exit(1);
   }
 
@@ -320,18 +297,11 @@ async function main() {
       const template = JSON.parse(templateContent);
 
       // Apply configuration
-      const configured = applyConfiguration(
-        JSON.stringify(template, null, 2),
-        config
-      );
+      const configured = applyConfiguration(JSON.stringify(template, null, 2), config);
       const configuredWorkflow = JSON.parse(configured);
 
       // Write configured workflow
-      fs.writeFileSync(
-        outputPath,
-        JSON.stringify(configuredWorkflow, null, 2),
-        'utf8'
-      );
+      fs.writeFileSync(outputPath, JSON.stringify(configuredWorkflow, null, 2), 'utf8');
       log(`✓ ${templateFile} → configured/${templateFile}`);
       processedCount++;
     } catch (error) {
@@ -348,9 +318,7 @@ async function main() {
   log(`Output directory: ${OUTPUT_DIR}`);
 
   console.log('\n📋 Next Steps:\n');
-  console.log(
-    '  1. Review configured workflows in infrastructure/workflows/configured/'
-  );
+  console.log('  1. Review configured workflows in infrastructure/workflows/configured/');
   console.log('  2. Import to n8n: https://n8n.jclee.me');
   console.log('     • Workflows → Import from File');
   console.log('     • Upload each .json file from configured/');
@@ -359,7 +327,7 @@ async function main() {
 }
 
 // Run main function
-main().catch(error => {
+main().catch((error) => {
   console.error('Fatal error:', error);
   process.exit(1);
 });

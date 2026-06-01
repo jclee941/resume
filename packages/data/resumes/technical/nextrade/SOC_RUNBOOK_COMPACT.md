@@ -138,7 +138,7 @@ index=windows_events EventCode=4625 user=[USERNAME] earliest=-24h
 
 - If internal user: Contact user, force password reset
 - If external attacker: Block source IP (30-min temp block), notify CISO if
-  >1000 attempts
+  > 1000 attempts
 
 ---
 

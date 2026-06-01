@@ -21,7 +21,7 @@ export async function update_language_cert(api, params) {
   const result = await api.updateResumeLanguageCert(
     params.resume_id,
     params.cert_id,
-    params.language_cert,
+    params.language_cert
   );
   return {
     success: true,
@@ -44,10 +44,7 @@ export async function add_language_cert(api, params) {
     };
   }
 
-  const result = await api.addResumeLanguageCert(
-    params.resume_id,
-    params.language_cert,
-  );
+  const result = await api.addResumeLanguageCert(params.resume_id, params.language_cert);
   return {
     success: true,
     message: 'Language certificate added successfully',

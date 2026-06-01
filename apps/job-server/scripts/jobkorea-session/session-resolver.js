@@ -18,7 +18,9 @@ export async function maybeUseExistingSession({
   if (hasFreshSession(existingFileSession)) {
     const cookieString =
       existingFileSession.cookieString ||
-      buildCookieString(Array.isArray(existingFileSession.cookies) ? existingFileSession.cookies : []);
+      buildCookieString(
+        Array.isArray(existingFileSession.cookies) ? existingFileSession.cookies : []
+      );
 
     await verifyAuthenticatedSession({ cookieString, resumeUrl, userAgent });
     log(

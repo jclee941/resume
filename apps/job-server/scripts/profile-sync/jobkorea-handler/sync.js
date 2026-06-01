@@ -224,7 +224,9 @@ export async function syncJobKoreaProfile(handler, ssot, options = {}) {
   const syncMode = getJobKoreaSyncMode();
 
   logger(
-    hybridMode ? `Starting sync for JobKorea (${syncMode})` : 'Starting sync for JobKorea (via form POST)',
+    hybridMode
+      ? `Starting sync for JobKorea (${syncMode})`
+      : 'Starting sync for JobKorea (via form POST)',
     'info',
     'jobkorea'
   );

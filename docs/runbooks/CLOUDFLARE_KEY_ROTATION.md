@@ -18,7 +18,7 @@ secret + `CLOUDFLARE_EMAIL`). Per Oracle security review:
 The fix is to:
 
 1. Mint a **scoped API Token** with only `Workers Scripts:Edit` (and `Cache
-   Purge` if used).
+Purge` if used).
 2. Add it as a new `CLOUDFLARE_API_TOKEN` GitHub secret.
 3. Update `.github/workflows/release.yml` to use the token instead of the global
    key.
@@ -128,12 +128,12 @@ curl -s https://resume.jclee.me/health | jq .
 
 - [ ] New `CLOUDFLARE_API_TOKEN` GitHub secret exists
 - [ ] `.github/workflows/release.yml` uses `CLOUDFLARE_API_TOKEN` env var only
-  (no `CLOUDFLARE_API_KEY`/`CLOUDFLARE_EMAIL`)
+      (no `CLOUDFLARE_API_KEY`/`CLOUDFLARE_EMAIL`)
 - [ ] At least one production deploy via the new token completed successfully
 - [ ] `curl https://resume.jclee.me/health` returns `status: healthy` after
-  deploy
+      deploy
 - [ ] Old global API key rolled OR `CLOUDFLARE_API_KEY` + `CLOUDFLARE_EMAIL`
-  secrets deleted from GitHub
+      secrets deleted from GitHub
 
 When all 5 checks pass, mark P0-1 RESOLVED in
 `docs/architecture/MONOREPO_REVIEW_2026-04-29.md` § 9.

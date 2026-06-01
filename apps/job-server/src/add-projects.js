@@ -25,8 +25,7 @@ const PROJECTS = {
   },
   6100648: {
     // 콴텍투자일임
-    title:
-      '금융보안데이터센터(FSDC) 내 서버 150대 운영 및 AWS 클라우드 보안 아키텍처 설계',
+    title: '금융보안데이터센터(FSDC) 내 서버 150대 운영 및 AWS 클라우드 보안 아키텍처 설계',
     description: `- DB 접근제어 정책 재설계를 통한 개발 환경 성능 최적화 및 개발팀 생산성 향상
 - Python 기반 시스템 모니터링 자동화로 장애 예방 체계 구축 및 운영 효율성 개선
 - 관련기술: AWS, Python`,
@@ -57,10 +56,7 @@ async function addProjects() {
     await api.deleteCareerProject(RESUME_ID, 6100646, 6478193);
     console.log('  ✅ Test project deleted');
   } catch (err) {
-    console.log(
-      '  ⚠️ Could not delete test project:',
-      err.message.substring(0, 50),
-    );
+    console.log('  ⚠️ Could not delete test project:', err.message.substring(0, 50));
   }
 
   // Add projects to each career
@@ -85,7 +81,7 @@ async function addProjects() {
     console.log(`  ❌ Error: ${err.message}`);
   }
 
-  console.log(`\n${  '='.repeat(60)}`);
+  console.log(`\n${'='.repeat(60)}`);
   console.log('DONE');
 }
 

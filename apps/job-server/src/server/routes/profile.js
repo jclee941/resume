@@ -18,11 +18,12 @@ export default async function profileRoutes(fastify) {
       return reply.code(400).send({ error: 'Platform and cookies required' });
     }
 
-    const cookieString = typeof cookies === 'string'
-      ? cookies
-      : (Array.isArray(cookies)
+    const cookieString =
+      typeof cookies === 'string'
+        ? cookies
+        : Array.isArray(cookies)
           ? cookies.map((cookie) => `${cookie.name}=${cookie.value}`).join('; ')
-          : String(cookies));
+          : String(cookies);
     const cookieCount = Array.isArray(cookies)
       ? cookies.length
       : cookieString.split(';').filter(Boolean).length;

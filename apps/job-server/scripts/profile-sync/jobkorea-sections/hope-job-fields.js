@@ -1,8 +1,4 @@
-import {
-  JK_DEFAULT_HOPE_LOCATION,
-  JK_JOB_CATEGORY,
-  JK_LOCATION_CODES,
-} from './constants.js';
+import { JK_DEFAULT_HOPE_LOCATION, JK_JOB_CATEGORY, JK_LOCATION_CODES } from './constants.js';
 
 const compactStrings = (values) =>
   values.map((value) => String(value || '').trim()).filter(Boolean);
@@ -54,6 +50,8 @@ export function mapHopeJobToFormFields(ssot) {
     },
     { name: 'InputStat.HopeJobInputStat', value: 'True' },
     ...(ssot?.hope?.salary ? [{ name: 'HopeJob.HJ_Salary', value: ssot.hope.salary }] : []),
-    ...(ssot?.hope?.industries?.length ? [{ name: 'HopeJob.HJ_Industry', value: ssot.hope.industries.join(',') }] : []),
+    ...(ssot?.hope?.industries?.length
+      ? [{ name: 'HopeJob.HJ_Industry', value: ssot.hope.industries.join(',') }]
+      : []),
   ];
 }

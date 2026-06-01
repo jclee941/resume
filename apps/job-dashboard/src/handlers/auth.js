@@ -208,11 +208,11 @@ export class AuthHandler {
         503
       );
     }
-// Verify secret
-const secret = request.headers.get('X-Auth-Sync-Secret');
-if (!verifySecret(secret, this.env.AUTH_SYNC_SECRET)) {
-return this.jsonResponse({ error: 'Unauthorized' }, 401);
-}
+    // Verify secret
+    const secret = request.headers.get('X-Auth-Sync-Secret');
+    if (!verifySecret(secret, this.env.AUTH_SYNC_SECRET)) {
+      return this.jsonResponse({ error: 'Unauthorized' }, 401);
+    }
 
     const body = await request.json();
     const { platform, cookies, email, expiresIn } = body;

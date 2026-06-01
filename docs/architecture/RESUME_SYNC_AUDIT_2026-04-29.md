@@ -75,8 +75,8 @@ integrity, skills/projects dedup) + 직접 검증.
 - **현상**: `packages/schemas/src/resume.js` 는
   `profile/careers/projects/skills/certifications/educations`만 검증. 실제 SSoT 키 22개
   중 `personalProjects, hero, platformVariants, availability, careerGap,
-  ossContributions, awards, achievements, infrastructure, contact, hope,
-  military, languages, summary, current, sectionDescriptions` 등 16개는 미검증.
+ossContributions, awards, achievements, infrastructure, contact, hope,
+military, languages, summary, current, sectionDescriptions` 등 16개는 미검증.
 - **권고**: 필드 추가 검증 — 또는 의도적 미검증 필드를 명시적으로 문서화.
 
 ### Issue C — P1: Shinhan / Application 변형이 parallel SSoT
@@ -199,7 +199,7 @@ validator로 충분.
 
 - `apps/job-server/platforms/jobkorea/jobkorea-crawler.js` `getProfile()` 교체:
   empty placeholder → `{ success: false, status: 'AUTH_REQUIRED' |
-  'NOT_IMPLEMENTED', source: 'jobkorea', reason, recommendedFlow }`.
+'NOT_IMPLEMENTED', source: 'jobkorea', reason, recommendedFlow }`.
 - 4-step `recommendedFlow` 포함 (auth, navigate, parse serializeArray, normalize
   to ProfileAggregator shape).
 - 신규 3 단위 테스트:

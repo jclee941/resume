@@ -3,9 +3,19 @@
  */
 
 const path = require('path');
-const { safeReadFile, readAllFiles, FileOperationError } = require('../../../../apps/portfolio/lib/file-operations');
-const { generateHash, calculateDataHash } = require('../../../../apps/portfolio/lib/content-hashing');
-const { safeParseJSON, sanitizeForTemplate } = require('../../../../apps/portfolio/lib/template-sanitizer');
+const {
+  safeReadFile,
+  readAllFiles,
+  FileOperationError,
+} = require('../../../../apps/portfolio/lib/file-operations');
+const {
+  generateHash,
+  calculateDataHash,
+} = require('../../../../apps/portfolio/lib/content-hashing');
+const {
+  safeParseJSON,
+  sanitizeForTemplate,
+} = require('../../../../apps/portfolio/lib/template-sanitizer');
 
 describe('Utils Module', () => {
   describe('safeReadFile', () => {

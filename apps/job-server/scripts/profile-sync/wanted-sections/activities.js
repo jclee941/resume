@@ -16,7 +16,11 @@ export async function syncWantedActivities(client, ssot, profile, resumeId) {
   const ssotCerts = (ssot.certifications || []).filter((c) => c.date && c.status !== '준비중');
   const wantedActivities = profile.activities || [];
 
-  log(`Activities: SSOT has ${ssotCerts.length} certs, Wanted has ${wantedActivities.length}`, 'info', 'wanted');
+  log(
+    `Activities: SSOT has ${ssotCerts.length} certs, Wanted has ${wantedActivities.length}`,
+    'info',
+    'wanted'
+  );
 
   const toAdd = [];
   const matched = new Set();

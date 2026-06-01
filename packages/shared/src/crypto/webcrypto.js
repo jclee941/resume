@@ -15,7 +15,7 @@ async function getKey(env) {
 
   if (keyBytes.length !== 32) {
     throw new Error(
-      `ENCRYPTION_KEY must be exactly 32 bytes (got ${keyBytes.length}). Generate with: openssl rand -base64 32`,
+      `ENCRYPTION_KEY must be exactly 32 bytes (got ${keyBytes.length}). Generate with: openssl rand -base64 32`
     );
   }
 

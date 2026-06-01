@@ -5,8 +5,7 @@
 
 const IS_TEST = process.env.NODE_ENV === 'test';
 const IS_DEBUG = process.env.DEBUG === '1' || process.env.DEBUG === 'true';
-const IS_VERBOSE =
-  process.env.VERBOSE === '1' || process.env.VERBOSE === 'true';
+const IS_VERBOSE = process.env.VERBOSE === '1' || process.env.VERBOSE === 'true';
 
 /**
  * Get formatted timestamp

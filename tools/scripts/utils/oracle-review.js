@@ -65,7 +65,7 @@ async function postMRComment(body) {
 
 function formatDiffForReview(diffText) {
   if (diffText.length > CONFIG.maxDiffSize) {
-    return `${diffText.slice(0, CONFIG.maxDiffSize)  }\n\n*[Diff truncated due to size]*\n`;
+    return `${diffText.slice(0, CONFIG.maxDiffSize)}\n\n*[Diff truncated due to size]*\n`;
   }
   return diffText;
 }
@@ -91,7 +91,9 @@ function callOpenCode(prompt) {
   } finally {
     try {
       fs.unlinkSync(tmpFile);
-    } catch (e) { console.error('[oracle-review] Failed to clean temp file:', e.message); }
+    } catch (e) {
+      console.error('[oracle-review] Failed to clean temp file:', e.message);
+    }
   }
 }
 
@@ -182,7 +184,9 @@ ${error.message}
 \`\`\`
 
 Please review manually or re-run the pipeline.`);
-    } catch (e) { console.error('[oracle-review] Failed to post review comment:', e.message); }
+    } catch (e) {
+      console.error('[oracle-review] Failed to post review comment:', e.message);
+    }
 
     process.exit(1);
   }

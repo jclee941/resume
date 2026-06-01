@@ -9,12 +9,18 @@ const { generateHistogramLines, initHistogramBuckets } = require('./histogram');
  */
 function generateMetrics(metrics, _requestInfo = {}) {
   const avgResponseTime =
-    metrics.requests_total > 0 ? (metrics.response_time_sum / metrics.requests_total).toFixed(2) : 0;
+    metrics.requests_total > 0
+      ? (metrics.response_time_sum / metrics.requests_total).toFixed(2)
+      : 0;
   const uptimeSeconds = Math.floor((Date.now() - metrics.worker_start_time) / 1000);
   const errorRate =
-    metrics.requests_total > 0 ? ((metrics.requests_error / metrics.requests_total) * 100).toFixed(2) : 0;
+    metrics.requests_total > 0
+      ? ((metrics.requests_error / metrics.requests_total) * 100).toFixed(2)
+      : 0;
   const successRate =
-    metrics.requests_total > 0 ? ((metrics.requests_success / metrics.requests_total) * 100).toFixed(2) : 100;
+    metrics.requests_total > 0
+      ? ((metrics.requests_success / metrics.requests_total) * 100).toFixed(2)
+      : 100;
 
   // P2-18 fix: cf_metrics fields default to NaN (not arbitrary fake values)
   // when not populated, so dashboards/Grafana correctly show 'no data' rather

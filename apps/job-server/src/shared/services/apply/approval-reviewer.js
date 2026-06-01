@@ -18,8 +18,15 @@ export async function approveRequest(context, applicationId, reviewer = 'unknown
     updated_at: now,
   });
 
-  await context.applicationRepository.updateStatus(applicationId, 'can_apply', `Approved by ${reviewer}`);
-  await context.applicationRepository.update(applicationId, { approved_at: now, rejected_at: null });
+  await context.applicationRepository.updateStatus(
+    applicationId,
+    'can_apply',
+    `Approved by ${reviewer}`
+  );
+  await context.applicationRepository.update(applicationId, {
+    approved_at: now,
+    rejected_at: null,
+  });
 
   return {
     applicationId,
@@ -52,7 +59,11 @@ export async function rejectRequest(
     updated_at: now,
   });
 
-  await context.applicationRepository.updateStatus(applicationId, 'skip', `Rejected by ${reviewer}: ${reason}`);
+  await context.applicationRepository.updateStatus(
+    applicationId,
+    'skip',
+    `Rejected by ${reviewer}: ${reason}`
+  );
   await context.applicationRepository.update(applicationId, { rejected_at: now });
 
   return {

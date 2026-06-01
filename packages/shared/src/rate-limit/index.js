@@ -7,7 +7,4 @@ export {
   RATE_LIMIT_POLICIES,
 } from './kv-sliding-window.js';
 export { RateLimiter, DEFAULT_PLATFORM_LIMITS, FALLBACK_LIMIT } from './platform-rate-limiter.js';
-export {
-  createMemoryTokenBuckets,
-  createMemorySlidingWindows,
-} from './adapters/memory.js';
+export { createMemoryTokenBuckets, createMemorySlidingWindows } from './adapters/memory.js';

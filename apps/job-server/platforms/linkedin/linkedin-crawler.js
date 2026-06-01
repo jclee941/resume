@@ -94,7 +94,7 @@ export class LinkedInCrawler extends BaseCrawler {
           id: match[1],
           position: match[2].trim(),
           company: match[3].trim(),
-        }),
+        })
       );
     }
 
@@ -110,7 +110,7 @@ export class LinkedInCrawler extends BaseCrawler {
             id: match[1],
             position: match[2].trim(),
             company: match[3].trim(),
-          }),
+          })
         );
       }
     }
@@ -147,16 +147,16 @@ export class LinkedInCrawler extends BaseCrawler {
    */
   parseJobDetail(html, jobId) {
     const titleMatch = html.match(
-      /<h1[^>]*class="[^"]*top-card-layout__title[^"]*"[^>]*>([^<]+)<\/h1>/i,
+      /<h1[^>]*class="[^"]*top-card-layout__title[^"]*"[^>]*>([^<]+)<\/h1>/i
     );
     const companyMatch = html.match(
-      /<a[^>]*class="[^"]*topcard__org-name-link[^"]*"[^>]*>([^<]+)<\/a>/i,
+      /<a[^>]*class="[^"]*topcard__org-name-link[^"]*"[^>]*>([^<]+)<\/a>/i
     );
     const locationMatch = html.match(
-      /<span[^>]*class="[^"]*topcard__flavor--bullet[^"]*"[^>]*>([^<]+)<\/span>/i,
+      /<span[^>]*class="[^"]*topcard__flavor--bullet[^"]*"[^>]*>([^<]+)<\/span>/i
     );
     const descMatch = html.match(
-      /<div[^>]*class="[^"]*description__text[^"]*"[^>]*>([\s\S]*?)<\/div>/i,
+      /<div[^>]*class="[^"]*description__text[^"]*"[^>]*>([\s\S]*?)<\/div>/i
     );
 
     return {
@@ -175,8 +175,7 @@ export class LinkedInCrawler extends BaseCrawler {
   async getProfile() {
     return {
       success: false,
-      error:
-        'LinkedIn profile fetching is not supported due to strict API limits.',
+      error: 'LinkedIn profile fetching is not supported due to strict API limits.',
     };
   }
 

@@ -8,13 +8,13 @@
 
 ## Baseline Results
 
-| Claim | Status | Detail |
-|---|---|---|
-| Epic 6 file-size hygiene | **STALE** | `applications.js` = 1 LOC, `auto-apply.js` = 5 LOC. Already split. No file in split dirs exceeds 500 LOC. |
+| Claim                     | Status      | Detail                                                                                                                 |
+| ------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Epic 6 file-size hygiene  | **STALE**   | `applications.js` = 1 LOC, `auto-apply.js` = 5 LOC. Already split. No file in split dirs exceeds 500 LOC.              |
 | Shared packages dead code | **PARTIAL** | `@resume/shared` = 117 non-test imports. `@resume/types`, `@resume/schemas`, `@resume/contracts` = 0 non-test imports. |
-| Profile sync one-way | **FAIL** | SSoT → platforms exists. Crawlers → SSoT missing. Git history shows only human commits. |
-| No external enrichment | **PARTIAL** | GitHub API: false. LinkedIn/AI exist for job apps, not portfolio/resume enrichment. |
-| Build pipeline stale | **STALE** | `worker.js` is newer than `resume_data.json` by ~46.8 hours. Fresh. |
+| Profile sync one-way      | **FAIL**    | SSoT → platforms exists. Crawlers → SSoT missing. Git history shows only human commits.                                |
+| No external enrichment    | **PARTIAL** | GitHub API: false. LinkedIn/AI exist for job apps, not portfolio/resume enrichment.                                    |
+| Build pipeline stale      | **STALE**   | `worker.js` is newer than `resume_data.json` by ~46.8 hours. Fresh.                                                    |
 
 ---
 
@@ -29,6 +29,7 @@
 **Action:** Migrate app-local JSDoc/TS type definitions to `@resume/types`. Replace hand-rolled validators with `@resume/schemas`.
 
 **Files to audit:**
+
 - `apps/portfolio/lib/validators.js` — hand-rolled validation, does NOT use `@resume/schemas`
 - `apps/job-server/src/` (search for `typedef`, `@typedef`, `interface`)
 - `apps/job-dashboard/src/` (search for local type definitions)
@@ -40,6 +41,7 @@
 **Finding:** `unified-resume-sync.js` pushes SSoT data TO job platforms (wanted, jobkorea, linkedin, etc.), but crawlers do NOT write enriched profile data back to `packages/data/resumes/master/resume_data.json`.
 
 **Evidence:**
+
 - `apps/job-server/src/crawlers/` — no write references to `packages/data/` or `resume_data.json`
 - Git history on `resume_data.json` (last 5 commits):
   - `ad7d21f0 data(resume): apply Oracle-reviewed wording fixes`
@@ -47,7 +49,7 @@
   - `970168dc data(resume): enhance career roles and descriptions`
   - `8ad65cda fix(resume): correct project field for ITCEN CTS`
   - `31456d09 fix(jobkorea): use careerSummary.ko for M_Career_Text instead of coverLetter.ko`
-  
+
   None are from crawlers or automation.
 
 **Impact:** Job application history, skill evolution, and platform-specific insights are lost to the SSoT.
@@ -55,6 +57,7 @@
 **Action:** Design a reverse sync pipeline where crawlers/extractors write enriched data back to SSoT as **proposals** (human-reviewed before merge).
 
 **Approach:** Proposal-first architecture
+
 1. Crawler extracts new data (e.g., skills from job history)
 2. Generates a `.proposal.json` patch
 3. CLI tool or n8n workflow presents proposal for review
@@ -62,6 +65,7 @@
 5. Auto-rebuild portfolio
 
 **Files involved:**
+
 - `apps/job-server/src/crawlers/`
 - `apps/job-server/src/tools/unified-resume-sync.js`
 - `packages/data/resumes/master/resume_data.json`
@@ -73,6 +77,7 @@
 **Finding:** GitHub, LinkedIn, and AI integrations exist, but they are job-application-focused, not portfolio/resume-enrichment-focused.
 
 **Evidence:**
+
 - **GitHub API:** `false` — no `api.github.com`, `github.com/api`, or `octokit` usage in app source (excluding node_modules and `.wrangler/`).
 - **LinkedIn:** Exists for job application sync (`linkedin-strategy.js`, `platform-crawlers.js`), but no profile enrichment that writes back to `resume_data.json`.
 - **AI:** OpenAI/Anthropic providers exist (`apps/job-server/src/shared/services/ai/`) for job matching and cover letters, but NOT for parsing or enriching `resume_data.json`.
@@ -80,11 +85,13 @@
 **Impact:** Resume SSoT does not benefit from external data (GitHub repos, LinkedIn endorsements, AI-extracted skills).
 
 **Action:** Add portfolio-focused enrichment pipeline:
+
 - GitHub API → project list + contribution stats
 - LinkedIn API → endorsements + job history
 - AI parser → skill extraction from job descriptions
 
 **Files involved:**
+
 - `apps/job-server/src/shared/services/ai/`
 - `apps/job-server/src/auto-apply/strategies/linkedin-strategy.js`
 - `apps/job-server/src/crawlers/unified/platform-crawlers.js`
@@ -143,28 +150,33 @@ The script exits with code `1` when confirmed gaps or partial truths exist, and 
 ## Appendix: Verification Script Claims
 
 **Claim A: Epic 6 file-size hygiene is pending**
+
 - Check actual line counts of `applications.js` and `auto-apply.js`
 - FAIL if either > 500 LOC (per architecture rules)
 - Also check if these are thin re-exports (< 50 LOC importing from other files)
 
 **Claim B: Shared packages are dead code**
+
 - Search for imports of `@resume/types`, `@resume/schemas`, `@resume/shared`, `@resume/contracts` across apps
 - Check `apps/portfolio/lib/validators.js` — does it use `@resume/schemas` or hand-roll?
 - FAIL if zero imports found across all apps
 
 **Claim C: Profile sync is one-way**
+
 - Check `apps/job-server/src/crawlers/` for any code that writes to `packages/data/`
 - Check if crawlers output to SSoT resume_data.json or separate config files
 - Check `packages/data/resumes/master/resume_data.json` modification history (git log)
 - FAIL if no evidence of crawlers writing back to SSoT
 
 **Claim D: No external profile enrichment**
+
 - Search for GitHub API integration in the codebase
 - Search for LinkedIn sync
 - Search for any AI/parser integration for resume updates
 - FAIL if none found
 
 **Claim E: Build pipeline gaps**
+
 - Check if `npm run sync:data` triggers a portfolio rebuild
 - Check if `apps/portfolio/worker.js` timestamp is newer than `packages/data/resumes/master/resume_data.json`
 - FAIL if resume data is newer than worker.js (indicates stale build)

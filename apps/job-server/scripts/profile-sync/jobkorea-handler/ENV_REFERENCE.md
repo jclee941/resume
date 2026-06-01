@@ -2,13 +2,13 @@
 
 ## Quick Reference
 
-| Variable | Default | Values | Description |
-|----------|---------|--------|-------------|
-| `JOBKOREA_SYNC_MODE` | `playwright` | `playwright`, `hybrid-api`, `api-dry-run` | Sync execution mode |
-| `JOBKOREA_API_FALLBACK` | `true` | `true`, `false` | Fall back to Playwright on API auth or CAPTCHA errors |
-| `JOBKOREA_PORTFOLIO_OPTIONAL` | `false` | `true`, `false` | Continue sync if portfolio registration fails |
-| `HEADLESS` | `true` | `true`, `false` | Playwright headless mode |
-| `JOBKOREA_RNO` | — | resume ID | JobKorea resume number (required) |
+| Variable                      | Default      | Values                                    | Description                                           |
+| ----------------------------- | ------------ | ----------------------------------------- | ----------------------------------------------------- |
+| `JOBKOREA_SYNC_MODE`          | `playwright` | `playwright`, `hybrid-api`, `api-dry-run` | Sync execution mode                                   |
+| `JOBKOREA_API_FALLBACK`       | `true`       | `true`, `false`                           | Fall back to Playwright on API auth or CAPTCHA errors |
+| `JOBKOREA_PORTFOLIO_OPTIONAL` | `false`      | `true`, `false`                           | Continue sync if portfolio registration fails         |
+| `HEADLESS`                    | `true`       | `true`, `false`                           | Playwright headless mode                              |
+| `JOBKOREA_RNO`                | —            | resume ID                                 | JobKorea resume number (required)                     |
 
 ## Required Variables
 

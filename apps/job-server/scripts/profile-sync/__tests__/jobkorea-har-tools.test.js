@@ -1,7 +1,17 @@
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
-import { analyzeJobKoreaHar, findJobKoreaPortfolioRequests, findJobKoreaSaveRequests, summarizeHarRequest } from '../jobkorea-handler/har-analyze.js';
-import { assertNoSensitiveHarContent, sanitizeHar, sanitizeHeaders, sanitizePostData } from '../jobkorea-handler/har-sanitize.js';
+import {
+  analyzeJobKoreaHar,
+  findJobKoreaPortfolioRequests,
+  findJobKoreaSaveRequests,
+  summarizeHarRequest,
+} from '../jobkorea-handler/har-analyze.js';
+import {
+  assertNoSensitiveHarContent,
+  sanitizeHar,
+  sanitizeHeaders,
+  sanitizePostData,
+} from '../jobkorea-handler/har-sanitize.js';
 import saveHar from '../__fixtures__/jobkorea-save-request.sanitized.json' with { type: 'json' };
 import portfolioHar from '../__fixtures__/jobkorea-portfolio-request.sanitized.json' with { type: 'json' };
 
@@ -72,12 +82,18 @@ describe('JobKorea HAR sanitizer', () => {
     const sanitized = sanitizeHar(rawHar());
     const entry = sanitized.log.entries[0];
 
-    assert.strictEqual(entry.request.url, 'https://www.jobkorea.co.kr/User/Resume/Save?_=<timestamp>');
+    assert.strictEqual(
+      entry.request.url,
+      'https://www.jobkorea.co.kr/User/Resume/Save?_=<timestamp>'
+    );
     assert.deepStrictEqual(entry.request.queryString, [{ name: '_', value: '<timestamp>' }]);
   });
 
   it('fails when sensitive content remains', () => {
-    assert.throws(() => assertNoSensitiveHarContent('Cookie: JKSESSION=secret-session'), /Sensitive HAR content/);
+    assert.throws(
+      () => assertNoSensitiveHarContent('Cookie: JKSESSION=secret-session'),
+      /Sensitive HAR content/
+    );
     assert.doesNotThrow(() => assertNoSensitiveHarContent(JSON.stringify(sanitizeHar(rawHar()))));
   });
 
@@ -99,7 +115,9 @@ describe('JobKorea HAR sanitizer', () => {
         ],
       },
     };
-    assert.doesNotThrow(() => assertNoSensitiveHarContent(JSON.stringify(harWithJsResponse, null, 2)));
+    assert.doesNotThrow(() =>
+      assertNoSensitiveHarContent(JSON.stringify(harWithJsResponse, null, 2))
+    );
   });
 });
 
@@ -108,14 +126,20 @@ describe('JobKorea HAR analyzer', () => {
     const requests = findJobKoreaSaveRequests(saveHar);
 
     assert.strictEqual(requests.length, 1);
-    assert.strictEqual(requests[0].request.url, 'https://www.jobkorea.co.kr/User/Resume/Save?_=<timestamp>');
+    assert.strictEqual(
+      requests[0].request.url,
+      'https://www.jobkorea.co.kr/User/Resume/Save?_=<timestamp>'
+    );
   });
 
   it('finds portfolio POST requests', () => {
     const requests = findJobKoreaPortfolioRequests(portfolioHar);
 
     assert.strictEqual(requests.length, 1);
-    assert.strictEqual(requests[0].request.url, 'https://www.jobkorea.co.kr/User/Resume/AddUserFileDB');
+    assert.strictEqual(
+      requests[0].request.url,
+      'https://www.jobkorea.co.kr/User/Resume/AddUserFileDB'
+    );
   });
 
   it('summarizes headers and request field counts', () => {
@@ -135,6 +159,9 @@ describe('JobKorea HAR analyzer', () => {
     assert.deepStrictEqual(analysis.endpoints.save.responseShape, {
       saveResult: { IsSuccess: 'boolean' },
     });
-    assert.deepStrictEqual(analysis.endpoints.portfolio.responseShape, { sc: 'number', idx: 'number' });
+    assert.deepStrictEqual(analysis.endpoints.portfolio.responseShape, {
+      sc: 'number',
+      idx: 'number',
+    });
   });
 });

@@ -14,8 +14,7 @@ export const translations = {
     // Hero section
     'hero.title': '이재철',
     'hero.subtitle': '보안 엔지니어',
-    'hero.description':
-      '보안 자동화와 인프라 정비를 통해 안전한 시스템을 구축합니다',
+    'hero.description': '보안 자동화와 인프라 정비를 통해 안전한 시스템을 구축합니다',
     'hero.download.complete': '완전한 이력서 다운로드',
     'hero.download.pdf': 'PDF',
     'hero.download.docx': 'DOCX',

@@ -15,7 +15,12 @@ describe('jobkorea sync platform', () => {
 
   it('keeps the dry-run response shape in api-only mode', async () => {
     const { syncToJobKorea } = await loadModule();
-    const data = { personal: { name: 'Test User', email: '', phone: '' }, careers: [], education: { school: '', major: '', status: '' }, certifications: [] };
+    const data = {
+      personal: { name: 'Test User', email: '', phone: '' },
+      careers: [],
+      education: { school: '', major: '', status: '' },
+      certifications: [],
+    };
 
     const result = await syncToJobKorea(data, { dry_run: true });
 
@@ -32,7 +37,10 @@ describe('jobkorea sync platform', () => {
 
     const result = await syncToJobKorea({}, { dry_run: false });
 
-    assert.equal(result.error, 'cookieString required for API-only sync. Authenticate via jobkorea_auth first.');
+    assert.equal(
+      result.error,
+      'cookieString required for API-only sync. Authenticate via jobkorea_auth first.'
+    );
   });
 
   it('delegates to syncToJobKoreaAPI when cookieString is provided', async () => {
@@ -41,7 +49,12 @@ describe('jobkorea sync platform', () => {
     // With a fake cookie, syncToJobKoreaAPI will throw (JWT expired or invalid)
     // The wrapper should catch it and return an error object
     const result = await syncToJobKorea(
-      { personal: { name: 'A', email: '', phone: '' }, careers: [], education: { school: '', major: '', status: '' }, certifications: [] },
+      {
+        personal: { name: 'A', email: '', phone: '' },
+        careers: [],
+        education: { school: '', major: '', status: '' },
+        certifications: [],
+      },
       { dry_run: false, cookieString: 'jkat=fake' }
     );
 
@@ -52,7 +65,12 @@ describe('jobkorea sync platform', () => {
 
   it('diffPlatform returns local preview', async () => {
     const { diffPlatform } = await loadModule();
-    const data = { personal: { name: 'Diff Test', email: '', phone: '' }, careers: [], education: { school: '', major: '', status: '' }, certifications: [] };
+    const data = {
+      personal: { name: 'Diff Test', email: '', phone: '' },
+      careers: [],
+      education: { school: '', major: '', status: '' },
+      certifications: [],
+    };
 
     const result = await diffPlatform(data);
 

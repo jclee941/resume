@@ -88,7 +88,16 @@ function getFilesToRead(baseDir) {
       // The build proceeds with an empty buffer; the next CI run that produces
       // the PDF (or a local `go run ./tools/scripts/build/pdf-generator.go master`)
       // will populate it.
-      path: path.join(baseDir, '..', '..', 'packages', 'data', 'resumes', 'master', 'resume_final.pdf'),
+      path: path.join(
+        baseDir,
+        '..',
+        '..',
+        'packages',
+        'data',
+        'resumes',
+        'master',
+        'resume_final.pdf'
+      ),
       encoding: null,
       name: 'resumePdfBuffer',
       optional: true,

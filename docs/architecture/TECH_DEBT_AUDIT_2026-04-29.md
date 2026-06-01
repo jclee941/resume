@@ -30,7 +30,7 @@ test/CI, architecture+performance) + Oracle holistic review.
 이전 round-3에서 7 services를 closure-bound holder로 전환했으나 추가 4건 발견:
 
 - `apps/job-server/src/auto-apply/strategies/wanted-helpers.js:8` — `let
-  lastSubmissionAt` (production rate-limit state) → closure-bound holder
+lastSubmissionAt` (production rate-limit state) → closure-bound holder
 - `apps/job-server/src/tools/auto-apply/state.js:1` — `let sessionState` →
   closure-bound holder
 - `apps/job-server/src/shared/services/orchestrator/`
@@ -80,7 +80,7 @@ Added 30+ missing endpoints to `packages/contracts/openapi.yaml`:
 - `/metrics` exposes `es_log_total{job="resume"}` alongside existing
   `es_log_failures_total`
 - Grafana can now compute success-rate as `1 - es_log_failures_total /
-  es_log_total`
+es_log_total`
 
 ---
 

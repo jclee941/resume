@@ -101,7 +101,13 @@ function createFakeD1(initialApps = [], initialTimeline = []) {
           if (sql.includes('INSERT INTO application_timeline')) {
             const [appId, status, previousStatus, note, timestamp] = this._params;
             if (!timeline.has(appId)) timeline.set(appId, []);
-            timeline.get(appId).push({ application_id: appId, status, previous_status: previousStatus, note, timestamp });
+            timeline.get(appId).push({
+              application_id: appId,
+              status,
+              previous_status: previousStatus,
+              note,
+              timestamp,
+            });
             return { success: true };
           }
           if (sql.includes('UPDATE applications')) {

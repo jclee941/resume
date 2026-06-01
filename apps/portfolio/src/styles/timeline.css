@@ -51,7 +51,9 @@
   margin-bottom: var(--space-8);
   opacity: 0;
   transform: translateY(20px);
-  transition: opacity 0.4s ease, transform 0.4s ease;
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease;
 }
 
 .timeline-node--animate {
@@ -93,7 +95,9 @@
 /* Active status - blinking green */
 .timeline-dot.status--active {
   background: var(--cyber-green);
-  box-shadow: 0 0 12px var(--cyber-green), 0 0 24px var(--cyber-green-dim);
+  box-shadow:
+    0 0 12px var(--cyber-green),
+    0 0 24px var(--cyber-green-dim);
   animation: pulse-glow 2s ease-in-out infinite;
 }
 
@@ -418,17 +422,23 @@
 
 /* Active node pulse animation */
 @keyframes pulse-glow {
-  0%, 100% {
-    box-shadow: 0 0 12px var(--cyber-green), 0 0 24px var(--cyber-green-dim);
+  0%,
+  100% {
+    box-shadow:
+      0 0 12px var(--cyber-green),
+      0 0 24px var(--cyber-green-dim);
   }
   50% {
-    box-shadow: 0 0 20px var(--cyber-green), 0 0 40px var(--cyber-green-dim);
+    box-shadow:
+      0 0 20px var(--cyber-green),
+      0 0 40px var(--cyber-green-dim);
   }
 }
 
 /* Status blink animation */
 @keyframes blink {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {

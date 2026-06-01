@@ -1,10 +1,6 @@
 import { describe, it, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
-import {
-  AuthError,
-  NetworkError,
-  RateLimitError,
-} from '../../errors/apply-errors.js';
+import { AuthError, NetworkError, RateLimitError } from '../../errors/apply-errors.js';
 import { getRetryMetrics, resetRetryState, withRetry } from '@resume/shared/retry';
 
 describe('withRetry', () => {

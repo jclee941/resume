@@ -38,7 +38,7 @@ The merged worker:
 
 - Continues to deploy as `resume` (the existing production worker name)
 - Imports the job-dashboard worker module **in-process**: `import jobWorker from
-  '../job-dashboard/src/index.js'` in `apps/portfolio/entry.js`
+'../job-dashboard/src/index.js'` in `apps/portfolio/entry.js`
 - Calls `jobWorker.fetch(request, env, ctx)` directly when
   `url.pathname.startsWith('/job')` (no Service Binding round-trip)
 - Re-exports all 7 Workflow classes (`JobCrawlingWorkflow`,

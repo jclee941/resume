@@ -38,11 +38,11 @@ session-broker/
 
 ## KEY CLASSES
 
-| Symbol                | Location                         | Role                                  |
-| --------------------- | -------------------------------- | ------------------------------------- |
-| `SessionBrokerService`| `services/session-broker-service.js` | Orchestrator: checks TTL, triggers renewal |
-| `EncryptionService`   | `services/encryption-service.js`     | AES-256-GCM cookie encryption         |
-| `WantedLoginFlow`     | `services/wanted-login-flow.js`      | OneID password flow via stealth browser |
+| Symbol                 | Location                             | Role                                       |
+| ---------------------- | ------------------------------------ | ------------------------------------------ |
+| `SessionBrokerService` | `services/session-broker-service.js` | Orchestrator: checks TTL, triggers renewal |
+| `EncryptionService`    | `services/encryption-service.js`     | AES-256-GCM cookie encryption              |
+| `WantedLoginFlow`      | `services/wanted-login-flow.js`      | OneID password flow via stealth browser    |
 
 ## CONVENTIONS
 
@@ -64,12 +64,12 @@ session-broker/
 
 ## OPERATIONS
 
-| Operation        | Entry Point                         | Description                     |
-| ---------------- | ----------------------------------- | ------------------------------- |
-| Check session    | `checkSession(platform)`            | Validate TTL and freshness      |
-| Renew session    | `renewSession(platform)`            | Trigger browser login flow      |
-| Get valid session| `getValidSession(platform)`         | Return valid cookies or renew   |
-| Health check     | `getHealth()`                       | Broker + browser health status  |
+| Operation         | Entry Point                 | Description                    |
+| ----------------- | --------------------------- | ------------------------------ |
+| Check session     | `checkSession(platform)`    | Validate TTL and freshness     |
+| Renew session     | `renewSession(platform)`    | Trigger browser login flow     |
+| Get valid session | `getValidSession(platform)` | Return valid cookies or renew  |
+| Health check      | `getHealth()`               | Broker + browser health status |
 
 ---
 

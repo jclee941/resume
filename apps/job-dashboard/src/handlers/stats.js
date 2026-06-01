@@ -11,20 +11,14 @@ export class StatsHandler {
   }
 
   async getStats(_request) {
-    const total = await this.db
-      .prepare('SELECT COUNT(*) as count FROM applications')
-      .first();
+    const total = await this.db.prepare('SELECT COUNT(*) as count FROM applications').first();
 
     const byStatus = await this.db
-      .prepare(
-        'SELECT status, COUNT(*) as count FROM applications GROUP BY status',
-      )
+      .prepare('SELECT status, COUNT(*) as count FROM applications GROUP BY status')
       .all();
 
     const bySource = await this.db
-      .prepare(
-        'SELECT source, COUNT(*) as count FROM applications GROUP BY source',
-      )
+      .prepare('SELECT source, COUNT(*) as count FROM applications GROUP BY source')
       .all();
 
     const statusMap = {};
@@ -40,25 +34,20 @@ export class StatsHandler {
     const offers = statusMap.offer || 0;
     const rejected = statusMap.rejected || 0;
     const completed = offers + rejected;
-    const successRate =
-      completed > 0 ? Math.round((offers / completed) * 100) : 0;
+    const successRate = completed > 0 ? Math.round((offers / completed) * 100) : 0;
 
     const applied = await this.db
-      .prepare(
-        'SELECT COUNT(*) as count FROM applications WHERE applied_at IS NOT NULL',
-      )
+      .prepare('SELECT COUNT(*) as count FROM applications WHERE applied_at IS NOT NULL')
       .first();
 
     const responded = await this.db
       .prepare(
-        "SELECT COUNT(*) as count FROM applications WHERE applied_at IS NOT NULL AND status NOT IN ('applied', 'pending')",
+        "SELECT COUNT(*) as count FROM applications WHERE applied_at IS NOT NULL AND status NOT IN ('applied', 'pending')"
       )
       .first();
 
     const responseRate =
-      applied?.count > 0
-        ? Math.round((responded?.count / applied.count) * 100)
-        : 0;
+      applied?.count > 0 ? Math.round((responded?.count / applied.count) * 100) : 0;
 
     return this.jsonResponse({
       totalApplications: total?.count || 0,
@@ -108,34 +97,26 @@ export class StatsHandler {
     const date = request.query.date || new Date().toISOString().split('T')[0];
 
     const newApps = await this.db
-      .prepare(
-        'SELECT COUNT(*) as count FROM applications WHERE created_at LIKE ?',
-      )
+      .prepare('SELECT COUNT(*) as count FROM applications WHERE created_at LIKE ?')
       .bind(`${date}%`)
       .first();
 
     const applied = await this.db
-      .prepare(
-        'SELECT COUNT(*) as count FROM applications WHERE applied_at LIKE ?',
-      )
+      .prepare('SELECT COUNT(*) as count FROM applications WHERE applied_at LIKE ?')
       .bind(`${date}%`)
       .first();
 
     const pending = await this.db
-      .prepare(
-        "SELECT COUNT(*) as count FROM applications WHERE status = 'pending'",
-      )
+      .prepare("SELECT COUNT(*) as count FROM applications WHERE status = 'pending'")
       .first();
 
     const active = await this.db
       .prepare(
-        "SELECT COUNT(*) as count FROM applications WHERE status IN ('applied', 'viewed', 'in_progress', 'interview')",
+        "SELECT COUNT(*) as count FROM applications WHERE status IN ('applied', 'viewed', 'in_progress', 'interview')"
       )
       .first();
 
-    const total = await this.db
-      .prepare('SELECT COUNT(*) as count FROM applications')
-      .first();
+    const total = await this.db.prepare('SELECT COUNT(*) as count FROM applications').first();
 
     return this.jsonResponse({
       date,

@@ -1,13 +1,18 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert';
 import path from 'node:path';
-import { assertSafeHarOutputPath, getDefaultHarOutputPath } from '../jobkorea-handler/har-capture.js';
+import {
+  assertSafeHarOutputPath,
+  getDefaultHarOutputPath,
+} from '../jobkorea-handler/har-capture.js';
 import { parseHarCaptureCliArgs } from '../jobkorea-handler/har-capture-cli.js';
 import { redactSensitiveValue } from '../jobkorea-handler/har-redaction-patterns.js';
 
 describe('JobKorea HAR output path safety', () => {
   it('allows the default /tmp/opencode output path', () => {
-    const safePath = assertSafeHarOutputPath(getDefaultHarOutputPath(new Date('2026-05-08T00:00:00Z')));
+    const safePath = assertSafeHarOutputPath(
+      getDefaultHarOutputPath(new Date('2026-05-08T00:00:00Z'))
+    );
 
     assert.ok(safePath.startsWith('/tmp/opencode/jobkorea-har/'));
     assert.ok(safePath.endsWith('.har'));
@@ -39,13 +44,16 @@ describe('JobKorea HAR CLI argument parsing', () => {
   });
 
   it('parses apply capture with save and portfolio endpoints', () => {
-    assert.deepStrictEqual(parseHarCaptureCliArgs(['--apply', '--include-save', '--include-portfolio']), {
-      output: undefined,
-      apply: true,
-      dryRun: false,
-      includeSave: true,
-      includePortfolio: true,
-    });
+    assert.deepStrictEqual(
+      parseHarCaptureCliArgs(['--apply', '--include-save', '--include-portfolio']),
+      {
+        output: undefined,
+        apply: true,
+        dryRun: false,
+        includeSave: true,
+        includePortfolio: true,
+      }
+    );
   });
 
   it('rejects unsafe or ambiguous flag combinations', () => {

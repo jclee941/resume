@@ -35,7 +35,7 @@ Source files (HTML/CSS/JSON) are transformed into a single deployable
 - `apps/portfolio/data.json` contains all project data (resume cards + project
   cards)
 - `apps/portfolio/index.html` has placeholders: `<!-- RESUME_CARDS_PLACEHOLDER
-  -->` and `<!-- PROJECT_CARDS_PLACEHOLDER -->`
+-->` and `<!-- PROJECT_CARDS_PLACEHOLDER -->`
 - Build script generates HTML from JSON at build time
 
 ### Build Pipeline (3 phases)
@@ -45,7 +45,7 @@ Source files (HTML/CSS/JSON) are transformed into a single deployable
    (styling)
 2. **Generate Worker**: Run `npm run build` (performs 6 transformations)
 3. **Deploy**: Push to `master` branch (GitHub Actions auto-deploys) OR run `npx
-   wrangler deploy --config apps/portfolio/wrangler.jsonc --env production`
+wrangler deploy --config apps/portfolio/wrangler.jsonc --env production`
    manually
 
 ### 6 Critical Transformations

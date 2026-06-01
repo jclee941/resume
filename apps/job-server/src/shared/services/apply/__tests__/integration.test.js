@@ -7,7 +7,10 @@ import { ApprovalWorkflowManager } from '../approval-manager.js';
 import { ApplicationTrackerService } from '../application-tracker.js';
 import { CoverLetterService } from '../cover-letter-service.js';
 import { TelegramNotificationAdapter } from '../../notifications/telegram-adapter.js';
-import { applyToJob, resetCircuitState } from '../../../../auto-apply/strategies/wanted-strategy.js';
+import {
+  applyToJob,
+  resetCircuitState,
+} from '../../../../auto-apply/strategies/wanted-strategy.js';
 import SessionManager from '../../session/session-manager.js';
 import { notifications } from '../../notifications/index.js';
 import { ApplicationRepository } from '../../../repositories/application-repository.js';
@@ -146,7 +149,7 @@ describe('Apply service integration', () => {
     repository = new ApplicationRepository(d1Client);
     logger = createLogger();
   });
-    resetCircuitState();
+  resetCircuitState();
 
   it('1) integrates JobFilter + ApprovalWorkflowManager for manual review flow', async () => {
     const notificationAdapter = {
@@ -412,7 +415,13 @@ describe('Apply service integration', () => {
       },
     };
 
-    mock.method(SessionManager, 'load', () => ({ cookieString: 'sid=ok', timestamp: Date.now(), email: 'test@example.com', username: 'Pipeline Tester', mobile: '010-0000-0000' }));
+    mock.method(SessionManager, 'load', () => ({
+      cookieString: 'sid=ok',
+      timestamp: Date.now(),
+      email: 'test@example.com',
+      username: 'Pipeline Tester',
+      mobile: '010-0000-0000',
+    }));
     mock.method(SessionManager, 'getAPI', async () => api);
 
     const job = {
@@ -541,7 +550,13 @@ describe('Apply service integration', () => {
       },
     };
 
-    mock.method(SessionManager, 'load', () => ({ cookieString: 'sid=ok', timestamp: Date.now(), email: 'test@example.com', username: 'Test User', mobile: '010-0000-0000' }));
+    mock.method(SessionManager, 'load', () => ({
+      cookieString: 'sid=ok',
+      timestamp: Date.now(),
+      email: 'test@example.com',
+      username: 'Test User',
+      mobile: '010-0000-0000',
+    }));
     mock.method(SessionManager, 'getAPI', async () => api);
     mock.method(notifications, 'notifyApplySuccess', async () => ({ sent: true }));
     mock.method(notifications, 'notifyApplyFailed', async () => ({ sent: true }));

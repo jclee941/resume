@@ -76,8 +76,12 @@ console.log('SVG length:', svg.length);
 console.log('SVG preview:', svg.substring(0, 200));
 
 const sharp = require('sharp');
-sharp(Buffer.from(svg)).png().toFile('./test-og.png').then(() => {
-  console.log('Generated successfully');
-}).catch(err => {
-  console.error('Error:', err.message);
-});
+sharp(Buffer.from(svg))
+  .png()
+  .toFile('./test-og.png')
+  .then(() => {
+    console.log('Generated successfully');
+  })
+  .catch((err) => {
+    console.error('Error:', err.message);
+  });

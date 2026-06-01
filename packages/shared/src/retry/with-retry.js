@@ -107,12 +107,12 @@ export function isRetryableError(error, retryableErrors = DEFAULT_RETRYABLE_ERRO
 function shouldUseCircuitRetry(options) {
   return Boolean(
     options.platform ??
-      options.key ??
-      options.classifyError ??
-      options.reporter ??
-      options.logger ??
-      options.circuitBreakerThreshold ??
-      options.circuitBreakerDuration
+    options.key ??
+    options.classifyError ??
+    options.reporter ??
+    options.logger ??
+    options.circuitBreakerThreshold ??
+    options.circuitBreakerDuration
   );
 }
 
