@@ -3,6 +3,13 @@ const { test, expect } = require('@playwright/test');
 
 const projectData = require('../../apps/portfolio/data.json');
 
+// The portfolio renders project cards sorted by displayOrder (see
+// apps/portfolio/lib/cards/projects.js), not by data.json array order.
+// Mirror that ordering so positional assertions match the rendered DOM.
+const orderedProjects = [...projectData.projects].sort(
+  (a, b) => (a.displayOrder ?? 999) - (b.displayOrder ?? 999)
+);
+
 const EXPECTED = {
   RESUMES: projectData.resume.length,
   PROJECTS: projectData.projects.length,
@@ -10,16 +17,28 @@ const EXPECTED = {
   CONTACT_LINKS: 5,
 };
 
+/**
+ * @param {string} value
+ * @returns {string}
+ */
 function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+/**
+ * @param {unknown[]} candidates
+ * @returns {RegExp}
+ */
 function buildAnyTextPattern(candidates) {
   const values = candidates.filter(Boolean).map((item) => escapeRegExp(String(item)));
   if (values.length === 0) return /.+/;
   return new RegExp(values.join('|'));
 }
 
+/**
+ * @param {import('@playwright/test').Page} page
+ * @param {string} command
+ */
 async function runCliCommand(page, command) {
   const cliInput = page.locator('#terminal-input');
   await cliInput.fill(command);
@@ -135,8 +154,8 @@ test.describe('Projects Section', () => {
   });
 
   test('should verify each project card content', async ({ page }) => {
-    for (let i = 0; i < projectData.projects.length; i++) {
-      const project = projectData.projects[i];
+    for (let i = 0; i < orderedProjects.length; i++) {
+      const project = orderedProjects[i];
       const card = page.locator('#projects li.project-item').nth(i);
 
       await expect(card).toBeVisible();
@@ -149,8 +168,8 @@ test.describe('Projects Section', () => {
   });
 
   test('should have valid project links', async ({ page }) => {
-    for (let i = 0; i < projectData.projects.length; i++) {
-      const project = projectData.projects[i];
+    for (let i = 0; i < orderedProjects.length; i++) {
+      const project = orderedProjects[i];
       const card = page.locator('#projects li.project-item').nth(i);
 
       if (project.liveUrl) {
@@ -189,7 +208,7 @@ test.describe('Case Studies Section', () => {
     const firstCard = page.locator('#case-studies .project-card[role="listitem"]').first();
     await expect(firstCard).toBeVisible();
     await firstCard.click();
-    const overlay = page.locator('[role="dialog"]');
+    const overlay = page.locator('.deep-dive-overlay[role="dialog"]');
     await expect(overlay).toBeVisible();
   });
 });
@@ -273,13 +292,13 @@ test.describe('CLI Core Commands', () => {
   });
 
   test('unsupported single-word command returns not found message', async ({ page }) => {
-    const cliOutput = await runCliCommand(page, 'whoami');
-    await expect(cliOutput).toContainText('command not found: whoami');
+    const cliOutput = await runCliCommand(page, 'foobar');
+    await expect(cliOutput).toContainText('command not allowed: foobar');
   });
 
   test('unsupported multi-word command reports first token', async ({ page }) => {
-    const cliOutput = await runCliCommand(page, 'theme dark');
-    await expect(cliOutput).toContainText('command not found: theme');
+    const cliOutput = await runCliCommand(page, 'xyzzy dark');
+    await expect(cliOutput).toContainText('command not allowed: xyzzy');
   });
 });
 
@@ -322,8 +341,8 @@ test.describe('Data Consistency', () => {
   test('project titles should match data.json order', async ({ page }) => {
     await page.goto('/');
 
-    for (let i = 0; i < projectData.projects.length; i++) {
-      const expected = new RegExp(escapeRegExp(projectData.projects[i].title), 'i');
+    for (let i = 0; i < orderedProjects.length; i++) {
+      const expected = new RegExp(escapeRegExp(orderedProjects[i].title), 'i');
       const actual = page
         .locator('#projects li.project-item')
         .nth(i)

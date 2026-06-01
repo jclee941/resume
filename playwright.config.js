@@ -27,6 +27,10 @@ module.exports = defineConfig({
       : process.env.CI
         ? 'http://localhost:8787'
         : process.env.PLAYWRIGHT_BASE_URL || 'https://resume.jclee.me',
+    // Force the Korean locale so '/' is not redirected to '/en/'. The data.json
+    // fixtures the specs assert against are the Korean source of truth.
+    locale: 'ko-KR',
+    extraHTTPHeaders: { 'Accept-Language': 'ko-KR,ko;q=0.9' },
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },
