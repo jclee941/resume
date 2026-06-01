@@ -69,16 +69,6 @@ jobs:
           npm install -g markdownlint-cli@0.43.0
           markdownlint --fix --config .markdownlint.json README.md || true
 
-      - name: Format generated README (prettier)
-        # The repo-wide format:check gate runs prettier on README.md. markdownlint
-        # --fix above does NOT produce prettier-clean output, so without this step
-        # every auto-generated README breaks format:check on master. Run the same
-        # prettier the repo uses (via npx, honoring .prettierrc) so the committed
-        # README passes the format gate.
-        run: |
-          set -eu
-          npx --yes prettier@3 --write README.md
-
       - name: Check for changes
         id: diff
         run: |
