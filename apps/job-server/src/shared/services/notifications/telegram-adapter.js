@@ -13,6 +13,10 @@ import { handleCallbackQuery } from './telegram-adapter/callbacks.js';
 
 export { escapeHtml, createJobPostingsMessage } from './telegram-adapter/formatters.js';
 
+// Max times sendJobPostingsSeparately will wait out a full rate-limit window
+// and retry a single chunk before counting it as failed.
+const MAX_RATE_LIMIT_WAITS = 3;
+
 export class TelegramNotificationAdapter {
   constructor(options = {}) {
     const env = options.env || process.env;
@@ -25,6 +29,7 @@ export class TelegramNotificationAdapter {
     this.telegramChatId = options.telegramChatId || env.TELEGRAM_CHAT_ID;
     this.n8nWebhookUrl = options.n8nWebhookUrl || env.N8N_WEBHOOK_URL || env.N8N_URL;
     this.fetchImpl = options.fetchImpl || null;
+    this.sleepImpl = options.sleepImpl || ((ms) => new Promise((r) => setTimeout(r, ms)));
 
     this.db = options.db || env.DB || null;
     this.d1Client = options.d1Client || null;
@@ -86,14 +91,38 @@ export class TelegramNotificationAdapter {
           parse_mode: message.parse_mode,
           disable_web_page_preview: message.disable_web_page_preview,
         };
-        const result = await notify(
-          this,
-          'job_posting',
-          { timestamp: new Date().toISOString() },
-          payload
-        );
+
+        // Send this chunk, waiting out the local rate-limit window if needed.
+        // The adapter enforces 20 sends/min; for bulk separate sends we pace
+        // rather than silently dropping rate-limited chunks.
+        let result;
+        let telegramSent = false;
+        for (let attempt = 0; attempt <= MAX_RATE_LIMIT_WAITS; attempt += 1) {
+          result = await notify(
+            this,
+            'job_posting',
+            { timestamp: new Date().toISOString() },
+            payload
+          );
+          const tg = result?.results?.telegram;
+          telegramSent = tg?.sent === true;
+          if (telegramSent) break;
+          if (tg?.reason === 'rate_limited' && attempt < MAX_RATE_LIMIT_WAITS) {
+            const waitMs = Math.max(0, (tg.resetTime ?? Date.now()) - Date.now()) + 50;
+            await this.sleepImpl(waitMs);
+            continue;
+          }
+          break; // non-rate-limit failure, or out of retries
+        }
         results.push(result);
-        if (!result.sent) jobOk = false;
+        // Judge success by ACTUAL Telegram delivery, not the aggregate status
+        // (notify() reports success when only the n8n fallback delivered).
+        if (!telegramSent) {
+          jobOk = false;
+          // Stop sending the remaining chunks of this job — a partially-sent
+          // job would arrive as truncated/incomplete content in Telegram.
+          break;
+        }
       }
       if (jobOk) sent += 1;
       else failed += 1;

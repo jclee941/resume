@@ -80,4 +80,19 @@ describe('send-jobs-telegram.js --separate --dry-run', () => {
     assert.match(stdout, /Senior SRE/);
     assert.ok(!/Cloud Engineer/.test(stdout), '64 < 80 excluded');
   });
+
+  it('S10: queue-source jobs WITHOUT scores are treated as curated-worthy (not dropped)', async () => {
+    const unscored = resolve(__dirname, '../__fixtures__/telegram-queue-unscored.json');
+    const { error, stdout } = await runScript([
+      '--separate',
+      '--dry-run',
+      `--queue=${unscored}`,
+    ]);
+    assert.equal(error, null, `script should exit 0, stderr: ${error?.message}`);
+    // both hand-curated jobs (no scores) must still be sent
+    const markers = stdout.match(/would send/gi) || [];
+    assert.equal(markers.length, 2, `curated unscored queue must send all, got ${markers.length}\n${stdout}`);
+    assert.match(stdout, /Staff SRE/);
+    assert.match(stdout, /Security Engineer/);
+  });
 });
