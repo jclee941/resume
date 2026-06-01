@@ -1328,7 +1328,11 @@
       // Interactive Terminal Commands (preparation for Phase 2)
       window.__RESUME_CHAT_DATA__ = (function () {
         try {
-          return JSON.parse(atob(/* RESUME_CHAT_DATA_B64_PLACEHOLDER */ ''));
+          var resumeDataB64 = /* RESUME_CHAT_DATA_B64_PLACEHOLDER */ '';
+          if (!resumeDataB64) return {};
+          var resumeDataBinary = atob(resumeDataB64);
+          var resumeDataBytes = Uint8Array.from(resumeDataBinary, function (c) { return c.charCodeAt(0); });
+          return JSON.parse(new TextDecoder('utf-8').decode(resumeDataBytes));
         } catch (resumeDataError) {
           if (typeof console !== 'undefined' && console.warn) {
             console.warn('Failed to parse embedded resume chat data', resumeDataError);
