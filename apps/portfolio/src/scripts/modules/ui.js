@@ -11,11 +11,14 @@ export function initUI() {
 /**
  * Fire a one-time `section_view` analytics event per section as it enters view.
  * Reveal of .reveal elements is handled separately by initScrollReveal(); this
- * is the analytics concern that used to live inline in index.html. Gated on
- * gtag so it no-ops when analytics is absent (and stays locale-agnostic).
+ * is the analytics concern that used to live inline in index.html.
+ *
+ * gtag is defined by a LATER inline script, and this module loads via a deferred
+ * dynamic loader — so gtag may not exist yet at init time. We therefore install
+ * the observer unconditionally and check window.gtag INSIDE the callback, only
+ * marking a section tracked once the event actually fires (no permanent no-op).
  */
 function initSectionAnalytics() {
-  if (typeof window.gtag !== 'function') return;
   const sections = document.querySelectorAll('.reveal');
   if (sections.length === 0) return;
   const tracked = Object.create(null);
@@ -23,6 +26,7 @@ function initSectionAnalytics() {
     (entries) => {
       entries.forEach((e) => {
         if (!e.isIntersecting) return;
+        if (typeof window.gtag !== 'function') return;
         const id = e.target.id || e.target.getAttribute('data-section');
         if (id && !tracked[id]) {
           tracked[id] = true;

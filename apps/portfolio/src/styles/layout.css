@@ -125,8 +125,11 @@
 .section-about,
 .section-resume,
 .section-projects,
+.section-case-studies,
 .section-skills,
 .section-infrastructure,
+.section-site-security,
+.section-observability,
 .section-status,
 .section-contact {
   margin-bottom: var(--space-16);
@@ -198,12 +201,8 @@
   left: 0;
   width: 40px;
   height: 3px;
-  background: var(--cyber-cyan);
   opacity: 0.7;
-  height: 3px;
   background: linear-gradient(90deg, var(--section-accent, var(--cyber-cyan)), transparent);
-  height: 3px;
-  background: linear-gradient(90deg, var(--cyber-cyan), transparent);
   border-radius: var(--radius-full);
 }
 
