@@ -118,6 +118,67 @@ test.describe('Terminal CLI - Extended Commands', () => {
   });
 });
 
+test.describe('Terminal CLI - Cover Letter', () => {
+  // Real SSoT cover-letter content (zero fabricated fixtures).
+  const coverLetter = require('../../packages/data/resumes/master/resume_data.json').coverLetter;
+  const koHeadline = coverLetter.ko.headline;
+  const koFragment = koHeadline.slice(0, 12);
+
+  test.beforeEach(async ({ page }) => {
+    await safeGoto(page, '/');
+  });
+
+  test('coverletter command prints the real KO headline', async ({ page }) => {
+    await executeCliCommand(page, 'coverletter');
+    const cliOutput = page.locator('#cli-output');
+    await expect(cliOutput).toContainText(koFragment);
+  });
+
+  test('cl alias prints the same cover letter', async ({ page }) => {
+    await executeCliCommand(page, 'cl');
+    const cliOutput = page.locator('#cli-output');
+    await expect(cliOutput).toContainText(koFragment);
+  });
+
+  test('help lists the coverletter command', async ({ page }) => {
+    await executeCliCommand(page, 'help', { expectedOutput: /coverletter/i });
+    await expect(page.locator('#cli-output')).toContainText(/coverletter/i);
+  });
+
+  test('ls lists coverletter.txt', async ({ page }) => {
+    await executeCliCommand(page, 'ls', { expectedOutput: /coverletter\.txt/i });
+    await expect(page.locator('#cli-output')).toContainText(/coverletter\.txt/i);
+  });
+
+  test('tab-completion expands cov -> coverletter', async ({ page }) => {
+    const cliInput = page.locator('#terminal-input');
+    await cliInput.focus();
+    await cliInput.fill('cov');
+    await cliInput.press('Tab');
+    await expect(cliInput).toHaveValue('coverletter');
+  });
+});
+
+test.describe('Terminal CLI - Output is rendered as text, not HTML (XSS guard)', () => {
+  // The EN template historically built cli output via innerHTML; command/data
+  // output (e.g. coverletter) must never be interpreted as markup.
+  for (const route of ['/', '/en/']) {
+    test(`command output on ${route} does not inject markup elements`, async ({ page }) => {
+      await safeGoto(page, route);
+      const cliInput = page.locator('#terminal-input');
+      await cliInput.fill('help');
+      await cliInput.press('Enter');
+      await page.waitForTimeout(400);
+      // `help` returns a string containing a <div class="help-output">. If output
+      // is rendered as text (safe), that element must NOT exist in the DOM.
+      const injected = await page.locator('#cli-output .help-output').count();
+      expect(injected).toBe(0);
+      // And the literal markup text should be visible instead.
+      await expect(page.locator('#cli-output')).toContainText('help-output');
+    });
+  }
+});
+
 test.describe('Terminal CLI - Keyboard Shortcuts', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });

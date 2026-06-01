@@ -224,6 +224,7 @@ function generateWebData(source) {
     awards: source.awards || null,
     ossContributions: source.ossContributions || null,
     military: source.military || null,
+    coverLetter: source.coverLetter || null,
   };
 }
 
