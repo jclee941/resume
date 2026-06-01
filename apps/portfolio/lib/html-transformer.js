@@ -136,6 +136,7 @@ function buildJapaneseTemplate(html) {
     .replace(/<h2 id="observability-heading" class="sr-only">옵저버빌리티<\/h2>/g, '<h2 id="observability-heading" class="sr-only">オブザーバビリティ</h2>')
     .replace(/<h2 id="resume-heading" class="sr-only">경력사항<\/h2>/g, '<h2 id="resume-heading" class="sr-only">職歴</h2>')
     .replace(/<h2 id="projects-heading" class="sr-only">주요 프로젝트<\/h2>/g, '<h2 id="projects-heading" class="sr-only">主要プロジェクト</h2>')
+    .replace(/<h2 id="case-studies-heading" class="sr-only">주요 아키텍처 케이스 스터디<\/h2>/g, '<h2 id="case-studies-heading" class="sr-only">アーキテクチャケーススタディ</h2>')
     .replace(/<h2 id="contact-heading" class="sr-only">연락처<\/h2>/g, '<h2 id="contact-heading" class="sr-only">連絡先</h2>')
     .replace(/<h2 id="contact-section-heading" class="sr-only">연락처<\/h2>/g, '<h2 id="contact-section-heading" class="sr-only">連絡先</h2>')
     // === Certifications + Guestbook + profile sr-only headings & labels ===
