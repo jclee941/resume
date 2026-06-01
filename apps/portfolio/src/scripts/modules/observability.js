@@ -39,11 +39,11 @@ function t(key) {
 }
 
 /**
- * Map a /health response to a SANITIZED, recruiter-facing display set.
+ * Map an /api/status response to a SANITIZED, recruiter-facing display set.
  * Pure (no DOM, no network). Deliberately omits raw uptime/latency/request
  * counts: those are noisy, leak operational patterns, and backfire if a number
  * looks bad. We surface coarse status + build metadata instead.
- * @param {object|null} health - parsed /health JSON, or null on fetch failure.
+ * @param {object|null} health - parsed /api/status JSON, or null on fetch failure.
  * @param {Date} [now] - clock for the 'last checked' stamp (injectable for tests).
  * @returns {{edgeStatus:string,d1:string,kv:string,build:string,lastChecked:string}}
  */
