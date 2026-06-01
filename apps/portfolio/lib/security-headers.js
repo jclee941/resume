@@ -55,6 +55,7 @@ function generateSecurityHeaders(styleHashes, options = {}) {
     `style-src-elem ${styleSrc}`,
     `connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://www.google.com https://oauth2.googleapis.com ${CLOUDFLARE_ANALYTICS.connect}`,
     "img-src 'self' https: data:",
+    'report-to csp',
     'report-uri /api/csp-violation',
     "font-src 'self'",
     "manifest-src 'self'",
@@ -67,9 +68,27 @@ function generateSecurityHeaders(styleHashes, options = {}) {
     'upgrade-insecure-requests',
   ];
 
+  // Trusted Types in REPORT-ONLY: demonstrates DOM-XSS hardening intent without
+  // breaking the terminal CLI's innerHTML-based rendering. Enforce only after the
+  // runtime is migrated to Trusted Types-safe sinks.
+  const cspReportOnly = [
+    "require-trusted-types-for 'script'",
+    'trusted-types default',
+    'report-to csp',
+  ].join('; ');
+
   return {
     'Content-Type': 'text/html;charset=UTF-8',
     'Content-Security-Policy': cspDirectives.join('; '),
+    'Content-Security-Policy-Report-Only': cspReportOnly,
+    // Modern reporting collector (replaces the deprecated Report-To header).
+    'Reporting-Endpoints': 'csp="/api/csp-violation"',
+    // Cross-origin isolation is MONITORED, not enforced: the page embeds GTM,
+    // Cloudflare Insights and an owned Grafana iframe and needs no
+    // cross-origin-isolated APIs (SharedArrayBuffer/threaded WASM). Enforcing
+    // COEP would break those embeds for zero functional gain.
+    'Cross-Origin-Embedder-Policy-Report-Only': 'require-corp; report-to="csp"',
+    'Cross-Origin-Opener-Policy-Report-Only': 'same-origin; report-to="csp"',
     'Strict-Transport-Security': 'max-age=63072000; includeSubDomains; preload',
     'X-Content-Type-Options': 'nosniff',
     'X-Frame-Options': 'DENY',

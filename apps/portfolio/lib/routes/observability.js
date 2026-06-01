@@ -251,8 +251,15 @@ function generateCspViolationRoute() {
       // ============================================================
       if (url.pathname === '/api/csp-violation' && request.method === 'POST') {
         try {
-          if (!hasJsonContentType(request)) {
-            return new Response('', {
+          // Accept legacy report-uri (application/csp-report, sometimes application/json)
+          // AND the modern Reporting API (application/reports+json).
+          const cspContentType = (request.headers.get('Content-Type') || '').toLowerCase();
+          const isReportContentType =
+            hasJsonContentType(request) ||
+            cspContentType.includes('application/csp-report') ||
+            cspContentType.includes('application/reports+json');
+          if (!isReportContentType) {
+            return new Response(null, {
               status: 204,
               headers: {
                 ...SECURITY_HEADERS,
@@ -262,18 +269,47 @@ function generateCspViolationRoute() {
             });
           }
 
-          const report = await request.json();
-
-          ctx.waitUntil(logToElasticsearch(env, \`CSP Violation: \${report['csp-report']?.['violated-directive'] || report?.violatedDirective || 'unknown'}\`, 'WARN', {
-            path: '/api/csp-violation',
-            blockedUri: report['csp-report']?.['blocked-uri'] || report?.blockedURL || '',
-            violatedDirective: report['csp-report']?.['violated-directive'] || report?.violatedDirective || '',
-            documentUri: report['csp-report']?.['document-uri'] || report?.documentURL || '',
-            sourceFile: report['csp-report']?.['source-file'] || report?.sourceFile || '',
-          }));
+          const payload = await request.json();
+          // Normalize the three shapes into a flat {blockedUri, violatedDirective, documentUri, sourceFile, type}.
+          const normalizeOne = (entry) => {
+            if (!entry || typeof entry !== 'object') return null;
+            // Reporting API: { type, url, body: { blockedURL, effectiveDirective, documentURL, sourceFile, disposition } }
+            if (entry.body && typeof entry.body === 'object') {
+              const b = entry.body;
+              return {
+                type: entry.type || 'csp-violation',
+                blockedUri: b.blockedURL || b['blocked-uri'] || '',
+                violatedDirective: b.effectiveDirective || b.violatedDirective || b['violated-directive'] || '',
+                documentUri: b.documentURL || entry.url || b['document-uri'] || '',
+                sourceFile: b.sourceFile || b['source-file'] || '',
+              };
+            }
+            // Legacy report-uri: { 'csp-report': { 'blocked-uri', 'violated-directive', ... } }
+            const r = entry['csp-report'] || entry;
+            return {
+              type: 'csp-violation',
+              blockedUri: r['blocked-uri'] || r.blockedURL || '',
+              violatedDirective: r['violated-directive'] || r.violatedDirective || '',
+              documentUri: r['document-uri'] || r.documentURL || '',
+              sourceFile: r['source-file'] || r.sourceFile || '',
+            };
+          };
+          const entries = Array.isArray(payload) ? payload : [payload];
+          for (const entry of entries) {
+            const n = normalizeOne(entry);
+            if (!n) continue;
+            ctx.waitUntil(logToElasticsearch(env, \`CSP Violation: \${n.violatedDirective || n.type || 'unknown'}\`, 'WARN', {
+              path: '/api/csp-violation',
+              reportType: n.type,
+              blockedUri: n.blockedUri,
+              violatedDirective: n.violatedDirective,
+              documentUri: n.documentUri,
+              sourceFile: n.sourceFile,
+            }));
+          }
 
           metrics.requests_success++;
-          return new Response('', {
+          return new Response(null, {
             status: 204,
             headers: {
               ...SECURITY_HEADERS,
@@ -283,7 +319,7 @@ function generateCspViolationRoute() {
           });
         } catch (err) {
           ctx.waitUntil(logToElasticsearch(env, \`CSP report error: \${err.message}\`, 'ERROR'));
-          return new Response('', {
+          return new Response(null, {
             status: 204,
             headers: {
               ...SECURITY_HEADERS,

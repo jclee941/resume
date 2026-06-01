@@ -199,5 +199,85 @@ describe('routes/observability', () => {
       expect(result).toContain('violated-directive');
       expect(result).toContain('blocked-uri');
     });
+
+    it('accepts the modern Reporting API content type', () => {
+      const result = generateCspViolationRoute();
+      expect(result).toContain('application/reports+json');
+      expect(result).toContain('application/csp-report');
+    });
+
+    it('normalizes the Reporting API array body (report[].body.blockedURL)', () => {
+      const result = generateCspViolationRoute();
+      expect(result).toContain('Array.isArray');
+      expect(result).toContain('blockedURL');
+      expect(result).toContain('effectiveDirective');
+    });
+  });
+
+  describe('generateCspViolationRoute execution (Reporting API payload)', () => {
+    async function runReport(contentType, body) {
+      const logged = [];
+      const fn = new Function(
+        'request',
+        'url',
+        'env',
+        'ctx',
+        'metrics',
+        'SECURITY_HEADERS',
+        'rateLimitHeaders',
+        'corsHeaders',
+        'logToElasticsearch',
+        'hasJsonContentType',
+        `return (async () => {${generateCspViolationRoute()}\n return null;})();`
+      );
+      const request = {
+        method: 'POST',
+        headers: { get: (h) => (h === 'Content-Type' ? contentType : '') },
+        json: async () => body,
+      };
+      const logToElasticsearch = (_e, msg, _lvl, fields) => {
+        logged.push({ msg, fields });
+      };
+      // The route returns 204 with a null body, which native Response accepts.
+      const res = await fn(
+        request,
+        { pathname: '/api/csp-violation' },
+        {},
+        { waitUntil: (p) => p },
+        { requests_success: 0 },
+        {},
+        {},
+        {},
+        logToElasticsearch,
+        (req) => (req.headers.get('Content-Type') || '').includes('application/json'),
+        globalThis.Response
+      );
+      return { res, logged };
+    }
+
+    it('logs a normalized blockedURL from a Reporting API array', async () => {
+      const { res, logged } = await runReport('application/reports+json', [
+        {
+          type: 'csp-violation',
+          url: 'https://resume.jclee.me/',
+          body: { blockedURL: 'https://evil.example/x.js', effectiveDirective: 'script-src' },
+        },
+      ]);
+      expect(res.status).toBe(204);
+      expect(logged.length).toBe(1);
+      expect(logged[0].fields.blockedUri).toBe('https://evil.example/x.js');
+      expect(logged[0].fields.violatedDirective).toBe('script-src');
+    });
+
+    it('still logs a legacy report-uri csp-report body', async () => {
+      const { logged } = await runReport('application/csp-report', {
+        'csp-report': {
+          'blocked-uri': 'https://legacy.example/y.js',
+          'violated-directive': 'style-src',
+        },
+      });
+      expect(logged.length).toBe(1);
+      expect(logged[0].fields.blockedUri).toBe('https://legacy.example/y.js');
+    });
   });
 });

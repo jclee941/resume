@@ -104,6 +104,33 @@ describe('Security Headers Module', () => {
       const headers = generateSecurityHeaders([]);
       expect(headers['Content-Security-Policy']).toContain("img-src 'self' https: data:");
     });
+
+    test('declares a modern Reporting-Endpoints collector', () => {
+      const headers = generateSecurityHeaders([]);
+      expect(headers['Reporting-Endpoints']).toMatch(/csp="[^"]*\/api\/csp-violation"/);
+    });
+
+    test('CSP uses modern report-to while keeping report-uri fallback', () => {
+      const csp = generateSecurityHeaders([])['Content-Security-Policy'];
+      expect(csp).toContain('report-to csp');
+      expect(csp).toContain('report-uri /api/csp-violation');
+    });
+
+    test('ships Trusted Types in report-only (not enforced)', () => {
+      const headers = generateSecurityHeaders([]);
+      const ro = headers['Content-Security-Policy-Report-Only'];
+      expect(ro).toContain("require-trusted-types-for 'script'");
+      expect(ro).toContain('trusted-types');
+      // Must NOT be enforced in the main CSP (would break the terminal DOM).
+      expect(headers['Content-Security-Policy']).not.toContain('require-trusted-types-for');
+    });
+
+    test('monitors cross-origin isolation via report-only COEP/COOP, never enforced', () => {
+      const headers = generateSecurityHeaders([]);
+      expect(headers['Cross-Origin-Embedder-Policy-Report-Only']).toContain('require-corp');
+      // Enforced COEP would break GTM / Cloudflare Insights / Grafana iframe.
+      expect(headers['Cross-Origin-Embedder-Policy']).toBeUndefined();
+    });
   });
 
   describe('getCacheHeaders', () => {
