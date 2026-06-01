@@ -377,6 +377,8 @@ button:hover,
 @media (prefers-reduced-motion: reduce) {
   .glitch::before,
   .glitch::after,
+  .glitch:hover::before,
+  .glitch:hover::after,
   .typing-text,
   .cursor,
   .cmd-cursor,

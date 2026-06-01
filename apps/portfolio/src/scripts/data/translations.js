@@ -96,4 +96,50 @@ export const translations = {
     'common.error': 'An error occurred',
     'common.retry': 'Retry',
   },
+
+  ja: {
+    // Navigation
+    'nav.home': 'ホーム',
+    'nav.projects': 'プロジェクト',
+    'nav.resume': '履歴書',
+    'nav.contact': '連絡先',
+
+    // Hero section
+    'hero.title': 'イ・ジェチョル',
+    'hero.subtitle': 'セキュリティエンジニア',
+    'hero.description': 'セキュリティ自動化とインフラ整備を通じて安全なシステムを構築します',
+    'hero.download.complete': '完全な履歴書をダウンロード',
+    'hero.download.pdf': 'PDF',
+    'hero.download.docx': 'DOCX',
+
+    // Projects section
+    'projects.title': '主なプロジェクト',
+    'projects.subtitle': '実際のプロダクション環境で運用中のプロジェクト',
+    'projects.viewMore': 'もっと見る',
+
+    // Resume section
+    'resume.title': '履歴書',
+    'resume.subtitle': '複数の形式で提供される履歴書',
+    'resume.download': 'ダウンロード',
+
+    // Footer
+    'footer.copyright': '© 2025 Jaecheol Lee. All rights reserved.',
+    'footer.builtWith': '使用技術',
+
+    // Accessibility
+    'aria.toggleTheme': 'ダークモード切り替え',
+    'aria.toggleLanguage': '言語切り替え',
+    'aria.downloadResume': '履歴書をダウンロード',
+    'aria.viewProject': 'プロジェクトを見る',
+    'aria.viewResume': '履歴書セクションへ移動',
+    'aria.viewProjects': 'プロジェクトセクションへ移動',
+    'aria.viewSkills': 'スキルセクションへ移動',
+    'aria.viewCertifications': '資格セクションへ移動',
+    'aria.viewContact': '連絡先セクションへ移動',
+
+    // Common
+    'common.loading': '読み込み中...',
+    'common.error': 'エラーが発生しました',
+    'common.retry': '再試行',
+  },
 };

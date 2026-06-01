@@ -147,6 +147,19 @@ const PROJECTS = [
 
 let overlay = null;
 let isOpen = false;
+let previousFocus = null;
+
+// Locale-aware labels for the deep-dive dialog (KO default, EN, JA).
+function dialogLabels() {
+  const lang = (document.documentElement.lang || 'ko').toLowerCase();
+  if (lang.startsWith('en')) {
+    return { dialog: 'Project details', close: 'Close', esc: 'Close', tab: 'Navigate' };
+  }
+  if (lang.startsWith('ja')) {
+    return { dialog: 'プロジェクト詳細', close: '閉じる', esc: '閉じる', tab: 'ナビゲーション' };
+  }
+  return { dialog: '프로젝트 상세 정보', close: '닫기', esc: '닫기', tab: '탐색' };
+}
 
 export function initProjectCards() {
   // Render the work-derived deep-dive case studies into their own container.
@@ -247,14 +260,15 @@ function createOverlay() {
   overlay.className = 'deep-dive-overlay';
   overlay.setAttribute('role', 'dialog');
   overlay.setAttribute('aria-modal', 'true');
-  overlay.setAttribute('aria-label', '프로젝트 상세 정보');
+  const labels = dialogLabels();
+  overlay.setAttribute('aria-label', labels.dialog);
   overlay.innerHTML = `
     <div class="deep-dive-panel">
-      <button class="deep-dive-close" aria-label="닫기">×</button>
+      <button class="deep-dive-close" aria-label="${labels.close}">×</button>
       <div class="deep-dive-content" id="deep-dive-content"></div>
       <div class="keyboard-hint">
-        <span class="key-hint"><span class="key-hint__key">ESC</span> 닫기</span>
-        <span class="key-hint"><span class="key-hint__key">Tab</span> 탐색</span>
+        <span class="key-hint"><span class="key-hint__key">ESC</span> ${labels.esc}</span>
+        <span class="key-hint"><span class="key-hint__key">Tab</span> ${labels.tab}</span>
       </div>
     </div>
   `;
@@ -332,11 +346,14 @@ function openDeepDive(project) {
     </div>
   `;
 
+  // Remember what had focus so we can restore it on close.
+  previousFocus = document.activeElement;
+
   overlay.classList.add('active');
   isOpen = true;
   document.body.style.overflow = 'hidden';
 
-  // Focus trap
+  // Move focus into the dialog.
   const closeBtn = overlay.querySelector('.deep-dive-close');
   if (closeBtn) closeBtn.focus();
 
@@ -354,12 +371,44 @@ function closeDeepDive() {
   overlay.classList.remove('active');
   isOpen = false;
   document.body.style.overflow = '';
+  // Restore focus to the element that opened the dialog.
+  if (previousFocus && typeof previousFocus.focus === 'function' && previousFocus.isConnected) {
+    previousFocus.focus();
+  }
+  previousFocus = null;
+}
+
+function focusableInOverlay() {
+  if (!overlay) return [];
+  return Array.from(
+    overlay.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])')
+  ).filter((el) => el.offsetParent !== null || el === document.activeElement);
 }
 
 function handleKeydown(e) {
-  if (e.key === 'Escape' && isOpen) {
+  if (!isOpen) return;
+  if (e.key === 'Escape') {
     e.preventDefault();
     closeDeepDive();
+    return;
+  }
+  if (e.key === 'Tab') {
+    // Trap focus within the dialog.
+    const focusable = focusableInOverlay();
+    if (focusable.length === 0) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    const active = document.activeElement;
+    if (e.shiftKey && active === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && active === last) {
+      e.preventDefault();
+      first.focus();
+    } else if (!overlay.contains(active)) {
+      e.preventDefault();
+      first.focus();
+    }
   }
 }
 
