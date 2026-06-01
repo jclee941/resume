@@ -19,7 +19,7 @@ name: Issue Backfill
 on:
   schedule:
     # Daily 09:00 UTC (18:00 KST). Manual dispatch is the primary path.
-    - cron: '0 9 * * *'
+    - cron: "0 9 * * *"
   workflow_dispatch:
     inputs:
       dry_run:
@@ -30,11 +30,11 @@ on:
       min_age_days:
         description: Pick only issues last updated this many days ago
         required: false
-        default: '5'
+        default: "5"
       max_picks:
         description: Cap on how many issues to label per run (per repo)
         required: false
-        default: '3'
+        default: "3"
       label:
         description: Label to add (default in-progress = triggers issue-to-branch.yml)
         required: false
