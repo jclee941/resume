@@ -16,7 +16,7 @@ const PROJECTS = [
       { value: 'Realtime', label: 'Alerting', icon: '⚡' },
     ],
     description:
-      '증권거래소 매매체결시스템의 보안 운영 체계를 SIEM 기반 탐지·대응 파이프라인으로 전환했습니다.',
+      '금융권 매매체결시스템의 보안 운영 체계를 SIEM 기반 탐지·대응 파이프라인으로 전환했습니다.',
     achievements: [
       'Splunk ES 탐지 룰 직접 설계·운영',
       'Saved Search → n8n webhook → Slack/SMS 실시간 알림 파이프라인 구축',
@@ -53,7 +53,7 @@ const PROJECTS = [
       { value: 'FSC', label: 'Approval Passed', icon: '✅' },
     ],
     description:
-      '증권거래소 보안 인프라를 5계층 망분리 구조로 설계·구축하여 FSC 본인가를 통과했습니다.',
+      '금융권 보안 인프라를 5계층 망분리 구조로 설계·구축하여 FSC 본인가를 통과했습니다.',
     achievements: [
       '5계층 망분리 아키텍처 설계·구축',
       'FortiGate HA 클러스터 구성',
