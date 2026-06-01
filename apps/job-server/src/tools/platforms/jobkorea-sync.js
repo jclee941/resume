@@ -57,7 +57,9 @@ export async function syncToJobKorea(data, params = {}) {
   }
 
   if (!params.cookieString) {
-    return { error: 'cookieString required for API-only sync. Authenticate via jobkorea_auth first.' };
+    return {
+      error: 'cookieString required for API-only sync. Authenticate via jobkorea_auth first.',
+    };
   }
 
   try {
@@ -79,7 +81,7 @@ export async function syncToJobKorea(data, params = {}) {
  * @param {object} sourceData - Local resume data
  * @param {object} params - Parameters (unused in API-only, kept for compat)
  */
-export async function diffPlatform(sourceData, params = {}) {
+export async function diffPlatform(sourceData, _params = {}) {
   const local = mapToJobKoreaFormat(sourceData);
   return {
     mode: 'api-only',

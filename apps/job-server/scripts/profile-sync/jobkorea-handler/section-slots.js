@@ -21,7 +21,6 @@ export async function createJobKoreaEntrySlots(handler, page, ssot) {
   );
   const awardItems = Array.isArray(ssot?.awards) ? ssot.awards : [];
   const languages = Array.isArray(ssot?.languages) ? ssot.languages : [];
-  const personalProjects = Array.isArray(ssot?.personalProjects) ? ssot.personalProjects : [];
   const sections = [
     { prefix: 'Career', needed: careers.length },
     { prefix: 'License', needed: validCerts.length },
@@ -137,12 +136,6 @@ export async function createJobKoreaEntrySlots(handler, page, ssot) {
   const schoolIndices = await handler.readSectionIndices(page, 'UnivSchool');
   const allPortfolioIndices = await handler.readSectionIndices(page, 'Portfolio');
   const allLanguageIndices = await handler.readSectionIndices(page, 'Language');
-
-  const filterExisting = (all, prefix) => {
-    const existing = existingIndices[prefix];
-    if (!existing || existing.size === 0) return all;
-    return all.filter((idx) => !existing.has(idx));
-  };
 
   return {
     career: allCareerIndices,

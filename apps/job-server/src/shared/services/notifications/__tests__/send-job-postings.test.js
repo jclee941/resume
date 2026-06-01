@@ -147,7 +147,12 @@ describe('TelegramNotificationAdapter.sendJobPostingsSeparately', () => {
         if (sendCount === 1) {
           return { ok: false, status: 400, json: async () => ({}), text: async () => 'bad' };
         }
-        return { ok: true, status: 200, json: async () => ({ ok: true, result: { message_id: sendCount } }), text: async () => '' };
+        return {
+          ok: true,
+          status: 200,
+          json: async () => ({ ok: true, result: { message_id: sendCount } }),
+          text: async () => '',
+        };
       }
       return { ok: true, status: 200, json: async () => ({ ok: true }), text: async () => '' };
     };
@@ -157,7 +162,12 @@ describe('TelegramNotificationAdapter.sendJobPostingsSeparately', () => {
       fetchImpl: fakeFetch,
     });
     // one oversized job that would split into multiple chunks
-    const bigJob = { company: 'BigCo', position: `E ${'X'.repeat(9000)}`, url: 'https://x.test/big', source: 'wanted' };
+    const bigJob = {
+      company: 'BigCo',
+      position: `E ${'X'.repeat(9000)}`,
+      url: 'https://x.test/big',
+      source: 'wanted',
+    };
     const res = await adapter.sendJobPostingsSeparately([bigJob]);
     assert.equal(res.failed, 1);
     // must NOT attempt the remaining chunks after the first failure
@@ -172,27 +182,33 @@ describe('TelegramNotificationAdapter.sendJobPostingsSeparately', () => {
         attempts += 1;
         // First attempt: simulate the local rate-limit window being full by
         // pre-filling rateState before the call (see adapter wiring below).
-        return { ok: true, status: 200, json: async () => ({ ok: true, result: { message_id: attempts } }), text: async () => '' };
+        return {
+          ok: true,
+          status: 200,
+          json: async () => ({ ok: true, result: { message_id: attempts } }),
+          text: async () => '',
+        };
       }
       return { ok: true, status: 200, json: async () => ({ ok: true }), text: async () => '' };
     };
     let slept = 0;
-    let adapter;
-    // Simulate the passage of time: a real wait carries us into the next
-    // rate-limit window, so model that by clearing the saturated window.
+    // Shared rate-state object: the adapter reads/writes it, and the simulated
+    // sleep "advances time" by clearing the saturated window on the same object.
+    const rateState = { windowStartedAt: Date.now(), count: 20 };
     const sleepImpl = async () => {
       slept += 1;
-      adapter.rateState = { windowStartedAt: 0, count: 0 };
+      rateState.windowStartedAt = 0;
+      rateState.count = 0;
     };
-    adapter = new TelegramNotificationAdapter({
+    const adapter = new TelegramNotificationAdapter({
       telegramToken: 'T',
       telegramChatId: 'C',
       fetchImpl: fakeFetch,
       sleepImpl,
     });
     // Force the rate limiter to report 'allowed: false' on the FIRST chunk by
-    // saturating the in-memory window, then it resets on the next window.
-    adapter.rateState = { windowStartedAt: Date.now(), count: 20 };
+    // saturating the in-memory window (resets on the simulated next window).
+    adapter.rateState = rateState;
     firstRateLimited = true;
 
     const res = await adapter.sendJobPostingsSeparately([jobs[0]]);

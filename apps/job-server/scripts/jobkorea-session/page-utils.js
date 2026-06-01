@@ -1,5 +1,5 @@
 export async function getActivePage(page, { retries = 3, delayMs = 1500 } = {}) {
-  let lastError;
+  // (previous getActivePage attempts swallow errors and fall through to retry)
   for (let i = 0; i < retries; i++) {
     try {
       if (page.browser && typeof page.browser === 'function') {
@@ -15,8 +15,8 @@ export async function getActivePage(page, { retries = 3, delayMs = 1500 } = {}) 
           return openPage;
         }
       }
-    } catch (e) {
-      lastError = e;
+    } catch {
+      // ignore and retry on the next loop iteration
     }
 
     try {
