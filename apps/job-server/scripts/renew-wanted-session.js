@@ -4,7 +4,6 @@
  * Uses page.type() for React controlled inputs.
  * Requires: WANTED_EMAIL, WANTED_PASSWORD, PUPPETEER_EXECUTABLE_PATH
  */
-import fs from 'fs';
 import { withStealthBrowser } from '../src/crawlers/browser-utils.js';
 import SessionManager from '../src/shared/services/session/session-manager.js';
 
@@ -34,13 +33,18 @@ export async function renewWantedSession(email, password) {
       console.log('  Already logged in via cookies');
     } else {
       console.log('  Not logged in, navigating to login page...');
-      await page.goto('https://id.wanted.jobs/login', { waitUntil: 'domcontentloaded', timeout: 30000 });
+      await page.goto('https://id.wanted.jobs/login', {
+        waitUntil: 'domcontentloaded',
+        timeout: 30000,
+      });
       await new Promise((r) => setTimeout(r, 3000));
 
       // Look for "Continue with email" button
       const emailBtn = await page.evaluateHandle(() => {
-        const buttons = Array.from(document.querySelectorAll('button, a[role="button"], [role="button"]'));
-        return buttons.find(b => b.textContent && b.textContent.includes('이메일로 계속하기'));
+        const buttons = Array.from(
+          document.querySelectorAll('button, a[role="button"], [role="button"]')
+        );
+        return buttons.find((b) => b.textContent && b.textContent.includes('이메일로 계속하기'));
       });
       if (emailBtn) {
         const btn = await emailBtn.asElement();
@@ -59,7 +63,7 @@ export async function renewWantedSession(email, password) {
         'input[placeholder*="이메일"]',
         'input[placeholder*="email"]',
         'input[type="text"]',
-        'input:not([type])'
+        'input:not([type])',
       ];
       let emailInput = null;
       for (const sel of emailSelectors) {

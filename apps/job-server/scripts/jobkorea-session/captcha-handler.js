@@ -1,5 +1,8 @@
 import { isLoggedIn, getDiagnostics } from './auth-checker.js';
-import { solveJobKoreaCaptcha, isCliproxyConfigured } from '../profile-sync/jobkorea-handler/captcha-solver.js';
+import {
+  solveJobKoreaCaptcha,
+  isCliproxyConfigured,
+} from '../profile-sync/jobkorea-handler/captcha-solver.js';
 
 import {
   evaluateWithFallback,
@@ -9,7 +12,8 @@ import {
   withTimeout,
 } from './page-utils.js';
 
-const MANUAL_RENEW_COMMAND = 'HEADLESS=false node apps/job-server/scripts/renew-jobkorea-session.js';
+const MANUAL_RENEW_COMMAND =
+  'HEADLESS=false node apps/job-server/scripts/renew-jobkorea-session.js';
 const MANUAL_TIMEOUT_MS = 120000;
 const MANUAL_PROGRESS_INTERVAL_MS = 10000;
 
@@ -42,14 +46,18 @@ async function resolveCaptchaInput(page) {
 async function fillCaptchaInput(page, text) {
   const { activePage } = await resolveCaptchaInput(page);
   const hasInput = await activePage.evaluate(() => {
-    return !!document.querySelector('#gtxt, input[name="gtxt"], input[id*="captcha" i], input[name*="captcha" i]');
+    return !!document.querySelector(
+      '#gtxt, input[name="gtxt"], input[id*="captcha" i], input[name*="captcha" i]'
+    );
   });
   if (!hasInput) {
     throw new Error('CAPTCHA input not found');
   }
 
   await activePage.evaluate((value) => {
-    const el = document.querySelector('#gtxt, input[name="gtxt"], input[id*="captcha" i], input[name*="captcha" i]');
+    const el = document.querySelector(
+      '#gtxt, input[name="gtxt"], input[id*="captcha" i], input[name*="captcha" i]'
+    );
     if (el) {
       el.focus();
       el.value = value;
@@ -152,7 +160,6 @@ export async function detectCaptcha(page) {
   });
 }
 
-
 export async function handleCaptchaIfNeeded(page, { log, headlessEnv }) {
   const captchaDetected = await detectCaptcha(page);
   if (!captchaDetected) {
@@ -168,8 +175,8 @@ export async function handleCaptchaIfNeeded(page, { log, headlessEnv }) {
     if (!isCliproxyConfigured()) {
       throw new Error(
         'CAPTCHA/2FA detected but CLIPROXY_BASE is not configured. ' +
-        'Set CLIPROXY_BASE and CLIPROXY_API_KEY environment variables to enable automatic CAPTCHA solving, ' +
-        'or run with HEADLESS=false to solve manually in a browser window.'
+          'Set CLIPROXY_BASE and CLIPROXY_API_KEY environment variables to enable automatic CAPTCHA solving, ' +
+          'or run with HEADLESS=false to solve manually in a browser window.'
       );
     }
     throw new Error(buildCaptchaInstructions(solveResult.reason));
@@ -180,8 +187,10 @@ export async function handleCaptchaIfNeeded(page, { log, headlessEnv }) {
   return true;
 }
 
-
-export async function waitForLoginConfirmation(page, { verifyAuthenticatedSession, resumeUrl, userAgent, headlessEnv, log }) {
+export async function waitForLoginConfirmation(
+  page,
+  { verifyAuthenticatedSession, resumeUrl, userAgent, headlessEnv, log }
+) {
   const startedAt = Date.now();
   while (Date.now() - startedAt < 30000) {
     const loggedIn = await withTimeout(
@@ -221,8 +230,8 @@ export async function waitForLoginConfirmation(page, { verifyAuthenticatedSessio
         if (!isCliproxyConfigured()) {
           throw new Error(
             'CAPTCHA/2FA detected but CLIPROXY_BASE is not configured. ' +
-            'Set CLIPROXY_BASE and CLIPROXY_API_KEY environment variables to enable automatic CAPTCHA solving, ' +
-            'or run with HEADLESS=false to solve manually in a browser window.'
+              'Set CLIPROXY_BASE and CLIPROXY_API_KEY environment variables to enable automatic CAPTCHA solving, ' +
+              'or run with HEADLESS=false to solve manually in a browser window.'
           );
         }
         throw new Error(buildCaptchaInstructions(solveResult.reason));
@@ -233,7 +242,11 @@ export async function waitForLoginConfirmation(page, { verifyAuthenticatedSessio
       return true;
     }
 
-    const cookieString = await withTimeout(buildCookieHeaderFromContext(page).catch(() => ''), 5000, '');
+    const cookieString = await withTimeout(
+      buildCookieHeaderFromContext(page).catch(() => ''),
+      5000,
+      ''
+    );
     if (cookieString) {
       try {
         await verifyAuthenticatedSession({ cookieString, resumeUrl, userAgent });
@@ -255,12 +268,16 @@ export async function waitForLoginConfirmation(page, { verifyAuthenticatedSessio
 async function buildCookieHeaderFromContext(page) {
   let cookies = [];
   try {
-    if (page.browser && typeof page.browser === 'function' && page.browser().defaultBrowserContext) {
+    if (
+      page.browser &&
+      typeof page.browser === 'function' &&
+      page.browser().defaultBrowserContext
+    ) {
       cookies = await page.browser().defaultBrowserContext().cookies();
     } else if (page.context && typeof page.context === 'function') {
       cookies = await page.context().cookies();
     }
-  } catch (e) {
+  } catch (_e) {
     // ignore browser-context cookie extraction errors
   }
   return cookies.map((cookie) => `${cookie.name}=${cookie.value}`).join('; ');

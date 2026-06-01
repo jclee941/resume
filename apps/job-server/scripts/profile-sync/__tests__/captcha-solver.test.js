@@ -1,4 +1,4 @@
-import { describe, it, mock, beforeEach, afterEach } from 'node:test';
+import { describe, it, mock, afterEach } from 'node:test';
 import assert from 'node:assert';
 import {
   resolveCliproxyBase,
@@ -15,10 +15,7 @@ describe('captcha-solver.resolveCliproxyBase', () => {
   });
 
   it('throws when CLIPROXY_BASE is missing', () => {
-    assert.throws(
-      () => resolveCliproxyBase({}),
-      /CLIPROXY_BASE is required/
-    );
+    assert.throws(() => resolveCliproxyBase({}), /CLIPROXY_BASE is required/);
   });
 
   it('throws when CLIPROXY_BASE is not a valid URL scheme', () => {
@@ -43,10 +40,7 @@ describe('captcha-solver.resolveCliproxyApiKey', () => {
   });
 
   it('throws when CLIPROXY_API_KEY is missing', () => {
-    assert.throws(
-      () => resolveCliproxyApiKey({}),
-      /CLIPROXY_API_KEY is required/
-    );
+    assert.throws(() => resolveCliproxyApiKey({}), /CLIPROXY_API_KEY is required/);
   });
 });
 
@@ -59,17 +53,11 @@ describe('captcha-solver.isCliproxyConfigured', () => {
   });
 
   it('returns false when base is missing', () => {
-    assert.strictEqual(
-      isCliproxyConfigured({ CLIPROXY_API_KEY: 'k' }),
-      false
-    );
+    assert.strictEqual(isCliproxyConfigured({ CLIPROXY_API_KEY: 'k' }), false);
   });
 
   it('returns false when key is missing', () => {
-    assert.strictEqual(
-      isCliproxyConfigured({ CLIPROXY_BASE: 'https://x.com' }),
-      false
-    );
+    assert.strictEqual(isCliproxyConfigured({ CLIPROXY_BASE: 'https://x.com' }), false);
   });
 
   it('returns false when both are missing', () => {

@@ -210,7 +210,8 @@ function buildSuggestionsList() {
   if (!suggestionsList) return;
 
   suggestionsList.innerHTML = MISSION_CONTROL_CONFIG.commands
-    .map((cmd, index) => `
+    .map(
+      (cmd, index) => `
       <li
         id="mc-cmd-suggestion-${index}"
         class="mc-command-palette__suggestion"
@@ -220,7 +221,8 @@ function buildSuggestionsList() {
         <span class="mc-command-palette__suggestion-icon" aria-hidden="true">›</span>
         <span class="mc-command-palette__suggestion-label">${cmd.label}</span>
       </li>
-    `)
+    `
+    )
     .join('');
 
   // Attach click listeners using delegation
@@ -242,9 +244,6 @@ function handleCommandInput(value) {
 
   // Filter commands by input
   const normalizedInput = value.toLowerCase().trim();
-  const matches = MISSION_CONTROL_CONFIG.commands.filter((cmd) =>
-    cmd.label.toLowerCase().includes(normalizedInput)
-  );
 
   // Also include partial matches on the command ID
   MISSION_CONTROL_CONFIG.commands.forEach((cmd, index) => {
@@ -405,8 +404,7 @@ function selectActiveSuggestion() {
     if (inputValue) {
       const match = MISSION_CONTROL_CONFIG.commands.find(
         (cmd) =>
-          cmd.label.toLowerCase().includes(inputValue) ||
-          cmd.id.toLowerCase().includes(inputValue)
+          cmd.label.toLowerCase().includes(inputValue) || cmd.id.toLowerCase().includes(inputValue)
       );
       if (match) {
         executeCommand(match.id);

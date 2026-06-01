@@ -41,7 +41,7 @@ export class BaseProfileSync {
     throw new Error('getProfile() must be implemented by subclass');
   }
 
-  async syncProfile(sourceData, options = {}) {
+  async syncProfile(sourceData, _options = {}) {
     throw new Error('syncProfile() must be implemented by subclass');
   }
 
