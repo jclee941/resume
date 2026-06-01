@@ -1,56 +1,57 @@
 version: 2
 updates:
-  - package-ecosystem: 'github-actions'
-    directory: '/'
+  - package-ecosystem: "github-actions"
+    directory: "/"
     schedule:
-      interval: 'weekly'
+      interval: "weekly"
     open-pull-requests-limit: 5
     labels:
-      - 'dependencies'
-      - 'github-actions'
+      - "dependencies"
+      - "github-actions"
     commit-message:
-      prefix: 'chore'
-      include: 'scope'
+      prefix: "chore"
+      include: "scope"
 
   # Python dependencies (pyproject.toml + requirements*.txt)
   # Auto-merge policy in dependabot-auto-merge.yml: patch + minor → squash;
   # major → manual review.
-  - package-ecosystem: 'pip'
-    directory: '/'
+  - package-ecosystem: "pip"
+    directory: "/"
     schedule:
-      interval: 'weekly'
+      interval: "weekly"
     open-pull-requests-limit: 5
     labels:
-      - 'dependencies'
-      - 'python'
+      - "dependencies"
+      - "python"
     commit-message:
-      prefix: 'chore'
-      include: 'scope'
+      prefix: "chore"
+      include: "scope"
     groups:
       python-minor-patch:
         update-types:
-          - 'minor'
-          - 'patch'
+          - "minor"
+          - "patch"
 
   # JavaScript/TypeScript dependencies (package.json + package-lock.json)
   # Dependabot skips repos without these manifest files, so this is safe
   # for all downstream repos.
-  - package-ecosystem: 'npm'
-    directory: '/'
+  - package-ecosystem: "npm"
+    directory: "/"
     schedule:
-      interval: 'weekly'
+      interval: "weekly"
     open-pull-requests-limit: 5
     labels:
-      - 'dependencies'
-      - 'javascript'
+      - "dependencies"
+      - "javascript"
     commit-message:
-      prefix: 'chore'
-      include: 'scope'
+      prefix: "chore"
+      include: "scope"
     groups:
       npm-minor-patch:
         update-types:
-          - 'minor'
-          - 'patch'
+          - "minor"
+          - "patch"
+
 
   # Go scripts (go.mod) - none yet, but ready when scripts/ gets a go.mod
   # - package-ecosystem: "gomod"
