@@ -26,6 +26,7 @@ function generateSeoRoutes() {
           'Preferred-Languages: ko, en',
           'Canonical: https://resume.jclee.me/.well-known/security.txt',
           'Policy: https://resume.jclee.me/#contact',
+          'Hiring: https://resume.jclee.me/#contact',
           \`Expires: \${expires}\`,
           ''
         ].join('\\n');

@@ -211,6 +211,14 @@ describe('Worker Routes', () => {
       expect(code).toContain('Resume PDF not found');
     });
 
+    it('should serve a richer RFC 9116 security.txt (Contact + Hiring + dynamic Expires)', () => {
+      expect(code).toContain('/.well-known/security.txt');
+      expect(code).toContain('Contact: mailto:qws941@kakao.com');
+      expect(code).toContain('Hiring:');
+      expect(code).toContain('Expires:');
+      expect(code).toContain('Preferred-Languages: ko, en');
+    });
+
     describe('/resume.pdf route execution (mocked env.ASSETS)', () => {
       // Wrap the generated route fragment in an executable handler so we test
       // real runtime behaviour, not just the generated source string.
