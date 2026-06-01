@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { searchJobs, aiSearchJobs } from './handlers/search.js';
+import { rankJobs } from './handlers/rank.js';
 import { runAutoApply, runUnifiedSystem, runQueueAutoApply } from './handlers/apply.js';
 import { runAIUnifiedSystem, showAICareerAdvice } from './handlers/ai-apply.js';
 import { listApplications, showStats, showReport, updateStatus } from './handlers/management.js';
@@ -7,6 +8,7 @@ import { listApplications, showStats, showReport, updateStatus } from './handler
 const COMMANDS = {
   search: { handler: searchJobs, desc: '채용공고 검색 (통합 시스템)' },
   ai_search: { handler: aiSearchJobs, desc: 'AI 기반 지능형 채용공고 검색' },
+  rank: { handler: rankJobs, desc: '지원 할만한 공고 랭킹 (검색+스코어링, AI 불필요)' },
   apply: { handler: runAutoApply, desc: '자동 지원 실행 (통합 시스템)' },
   unified: { handler: runUnifiedSystem, desc: '통합 시스템 실행 (검색 + 지원)' },
   apply_queue: { handler: runQueueAutoApply, desc: '정제된 큐(submit-queue.json) 기반 지원' },
@@ -39,6 +41,7 @@ function showHelp() {
 명령어:
   search [keyword] [limit]           채용공고 검색 (통합 시스템, 기본: 시니어 엔지니어, 20개)
   ai_search [keyword] [limit]        🤖 AI 기반 지능형 채용공고 검색 (Claude AI 활용)
+  rank [keyword|all] [minScore]      🎯 지원 할만한 공고 랭킹 (DevSecOps/SRE 키워드, 로컬 스코어링, 기본 60%+)
   apply [--apply] [--max=N]          자동 지원 실행 (통합 시스템, 기본: dry-run, 최대 5개)
   unified [--apply] [--max=N]        통합 시스템 실행 (검색 + 지원, 기본: dry-run, 최대 3개)
   ai_unified [--apply] [--max=N]     🚀 AI 기반 통합 시스템 실행 (고급 매칭 + 예측)
