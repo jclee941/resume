@@ -57,6 +57,43 @@ function generateHealthRoute(opts) {
             ...CACHE_POLICIES.api
           }
         });
+      }
+
+      // Sanitized PUBLIC status for the on-page observability widget. Unlike
+      // /health (used by monitoring), this deliberately omits raw uptime,
+      // binding latency, error messages, and request counters so no operational
+      // telemetry leaks to anonymous visitors.
+      if (url.pathname === '/api/status') {
+        const bindings = { d1: { healthy: false }, kv: { healthy: false } };
+        try {
+          await env.DB.prepare('SELECT 1 AS ok').first();
+          bindings.d1 = { healthy: true };
+        } catch (e) {
+          bindings.d1 = { healthy: false };
+        }
+        try {
+          await env.SESSIONS.put('_health_check', Date.now().toString());
+          await env.SESSIONS.get('_health_check');
+          bindings.kv = { healthy: true };
+        } catch (e) {
+          bindings.kv = { healthy: false };
+        }
+        const allHealthy = bindings.d1.healthy && bindings.kv.healthy;
+        const status = {
+          status: allHealthy ? 'healthy' : 'degraded',
+          version: '${opts.version}',
+          git_sha: '${gitSha}',
+          bindings
+        };
+        metrics.requests_success++;
+        return new Response(JSON.stringify(status), {
+          headers: {
+            ...applyNonceToHeaders(SECURITY_HEADERS, ""),
+            ...rateLimitHeaders,
+            'Content-Type': 'application/json',
+            ...CACHE_POLICIES.api
+          }
+        });
       }`;
 }
 

@@ -2,17 +2,19 @@
  * Observability stat cards — fill the #observability section's stat cards with
  * LIVE data instead of the static '--' placeholders, and keep them fresh.
  *
- * Sources:
- *   GET /health       → uptime_seconds
- *   GET /api/metrics  → http.requests_total, http.error_rate, http.response_time_ms
+ * Source:
+ *   GET /api/status → sanitized status (Operational/Degraded), D1/KV binding
+ *   health booleans, build version + short git sha. The raw /health endpoint
+ *   (uptime, latency, request counters) is deliberately NOT consumed here so no
+ *   operational telemetry leaks to anonymous visitors.
  *
  * Behaviour:
  *   - Fetches the FIRST time the section scrolls into view, then auto-refreshes
  *     while it stays in view and the tab is visible (pauses when hidden or
  *     off-screen to avoid needless requests). No fetch happens on initial load.
  *   - Announces refresh state via an aria-live status line for screen readers.
- *   - Values are written with textContent (XSS-safe). Failures leave the last
- *     known value (or the '--' placeholder) in place — degrades gracefully.
+ *   - Values are written with textContent (XSS-safe). On fetch failure the cards
+ *     are set to 'Unavailable' via mapHealthToDisplay(null) — degrades gracefully.
  */
 
 const REFRESH_MS = 30_000;
@@ -106,13 +108,13 @@ async function fetchJson(url) {
 }
 
 /**
- * Fetch /health and update the cards with the sanitized display set.
+ * Fetch the sanitized public /api/status and update the cards. On failure the
+ * cards are set to 'Unavailable' (no stale values left behind).
  * Returns true on a successful update.
  */
 async function refreshStats() {
-  const health = await fetchJson('/health');
-  if (!health) return false;
-  const view = mapHealthToDisplay(health);
+  const status = await fetchJson('/api/status');
+  const view = mapHealthToDisplay(status);
   setStat('Edge Status', view.edgeStatus);
   setStat('D1', view.d1);
   setStat('KV', view.kv);

@@ -197,6 +197,9 @@ describe('A: observability widget shows sanitized status (no raw telemetry label
     expect(src).not.toMatch(/setStat\('KV Latency'/);
     expect(src).not.toMatch(/setStat\('Edge Uptime'/);
     expect(src).toContain('mapHealthToDisplay');
+    // The widget must consume the SANITIZED public endpoint, not raw /health.
+    expect(src).toContain("fetchJson('/api/status')");
+    expect(src).not.toContain("fetchJson('/health')");
   });
 });
 

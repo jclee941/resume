@@ -149,6 +149,78 @@ describe('Worker Routes', () => {
       expect(code).toContain('healthy');
       expect(code).toContain('degraded');
     });
+
+    it('exposes a sanitized public /api/status route', () => {
+      expect(code).toContain('/api/status');
+    });
+
+    describe('/api/status execution (sanitized public payload)', () => {
+      async function runStatus(dbThrows, kvThrows) {
+        const fn = new Function(
+          'url',
+          'env',
+          'metrics',
+          'applyNonceToHeaders',
+          'SECURITY_HEADERS',
+          'rateLimitHeaders',
+          'CACHE_POLICIES',
+          'Response',
+          `return (async () => {${code}\n return null;})();`
+        );
+        const env = {
+          DB: {
+            prepare: () => ({
+              first: async () => {
+                if (dbThrows) throw new Error('db boom');
+                return { ok: 1 };
+              },
+            }),
+          },
+          SESSIONS: {
+            put: async () => {
+              if (kvThrows) throw new Error('kv boom');
+            },
+            get: async () => '1',
+          },
+        };
+        let captured = null;
+        const ResponseShim = function (body) {
+          captured = body;
+        };
+        await fn(
+          { pathname: '/api/status' },
+          env,
+          { worker_start_time: Date.now(), requests_success: 0 },
+          (h) => h,
+          {},
+          {},
+          { api: {} },
+          ResponseShim
+        );
+        return captured ? JSON.parse(captured) : null;
+      }
+
+      it('returns only sanitized fields, never raw telemetry', async () => {
+        const body = await runStatus(false, false);
+        expect(body).not.toBeNull();
+        expect(body.status).toBe('healthy');
+        expect(body.bindings.d1.healthy).toBe(true);
+        expect(body.bindings.kv.healthy).toBe(true);
+        expect(typeof body.version).toBe('string');
+        // Raw telemetry must NOT be in the public payload.
+        expect(body).not.toHaveProperty('uptime_seconds');
+        expect(body).not.toHaveProperty('metrics');
+        expect(body.bindings.d1).not.toHaveProperty('latency_ms');
+        expect(body.bindings.d1).not.toHaveProperty('error');
+      });
+
+      it('reports degraded without leaking error messages on binding failure', async () => {
+        const body = await runStatus(true, false);
+        expect(body.status).toBe('degraded');
+        expect(body.bindings.d1.healthy).toBe(false);
+        expect(JSON.stringify(body)).not.toContain('boom');
+      });
+    });
   });
 
   describe('generateMetricsRoute', () => {
