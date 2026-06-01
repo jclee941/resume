@@ -16,7 +16,7 @@ const PROJECTS = [
       { value: 'Realtime', label: 'Alerting', icon: '⚡' },
     ],
     description:
-      '금융권 매매체결시스템의 보안 운영 체계를 SIEM 기반 탐지·대응 파이프라인으로 전환했습니다.',
+      '금융권 매매체결시스템은 콘솔 수동 조작 의존도가 높아 대응 속도와 감사 추적성이 과제였습니다. 규제상 클라우드 SaaS SIEM을 쓸 수 없는 제약 속에서, 상용 SOAR 도입 대신 Splunk ES 탐지 → n8n webhook → Slack/SMS 로 이어지는 경량 파이프라인을 직접 설계했습니다 — 운영 투명성과 통제권을 얻는 대신 직접 유지보수 책임을 감수한 트레이드오프입니다.',
     achievements: [
       'Splunk ES 탐지 룰 직접 설계·운영',
       'Saved Search → n8n webhook → Slack/SMS 실시간 알림 파이프라인 구축',
@@ -53,7 +53,7 @@ const PROJECTS = [
       { value: 'FSC', label: 'Approval Passed', icon: '✅' },
     ],
     description:
-      '금융권 보안 인프라를 5계층 망분리 구조로 설계·구축하여 FSC 본인가를 통과했습니다.',
+      '금융위 본인가 심사는 망분리 수준과 가용성을 동시에 요구했습니다. 단일 방화벽의 장애가 전체 거래 중단으로 이어지는 위험을 피하기 위해 5계층 망분리와 FortiGate FGCP active-passive HA를 선택했고, 수작업 방화벽 설정의 휴먼 에러를 줄이기 위해 Ansible Role로 정책을 표준화했습니다 — 초기 구축 복잡도를 감수하고 재현성과 감사 대응력을 우선한 결정입니다.',
     achievements: [
       '5계층 망분리 아키텍처 설계·구축',
       'FortiGate HA 클러스터 구성',
