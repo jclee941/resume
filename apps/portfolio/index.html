@@ -1467,78 +1467,13 @@
         });
       })();
 
-      (function () {
-        var tracked = {};
-        var obs = new IntersectionObserver(
-          function (entries) {
-            entries.forEach(function (e) {
-              if (e.isIntersecting) {
-                e.target.classList.add('revealed');
-                const id = e.target.id || e.target.getAttribute('data-section');
-                if (id && !tracked[id]) {
-                  tracked[id] = true;
-                  if (typeof gtag === 'function') {
-                    gtag('event', 'section_view', {
-                      section: id,
-                      event_category: 'engagement',
-                    });
-                  }
-                }
-              }
-            });
-          },
-          { threshold: 0.1 }
-        );
-        document.querySelectorAll('.reveal').forEach(function (el) {
-          obs.observe(el);
-        });
-      })();
+      // Scroll reveal + section_view analytics are owned by src/scripts/modules/ui.js
 
       // ========================================
       // PHASE 1: Easter Eggs & Interactive Features
       // ========================================
 
-      // Konami Code Easter Egg
-      (function () {
-        var konamiCode = [
-          'ArrowUp',
-          'ArrowUp',
-          'ArrowDown',
-          'ArrowDown',
-          'ArrowLeft',
-          'ArrowRight',
-          'ArrowLeft',
-          'ArrowRight',
-          'KeyB',
-          'KeyA',
-        ];
-        var konamiIndex = 0;
-
-        document.addEventListener('keydown', function (e) {
-          if (e.code === konamiCode[konamiIndex]) {
-            konamiIndex++;
-            if (konamiIndex === konamiCode.length) {
-              activateHackMode();
-              konamiIndex = 0;
-            }
-          } else {
-            konamiIndex = 0;
-          }
-        });
-
-        function activateHackMode() {
-          var overlay = document.createElement('div');
-          overlay.id = 'hack-mode-overlay';
-          overlay.className = 'hack-mode-overlay';
-          overlay.innerHTML =
-            '<div class="hack-text">HACK MODE ACTIVATED</div><div class="hack-sub">// root access granted</div>';
-          document.body.appendChild(overlay);
-
-          setTimeout(function () {
-            overlay.remove();
-          }, 3000);
-        }
-      })();
+      // Konami easter egg is owned by src/scripts/modules/konami.js (initKonami)
 
       // Interactive Terminal Commands (preparation for Phase 2)
       window.__RESUME_CHAT_DATA__ = (function () {
