@@ -360,6 +360,47 @@ function buildJapaneseTemplate(html) {
         /CodeQL·gitleaks·OpenSSF Scorecard·Dependabot으로 코드·시크릿·의존성 위험을\s+지속스캔하고, harden-runner로 CI 런너의 egress를 제한·감시합니다\./g,
         'CodeQL・gitleaks・OpenSSF Scorecard・Dependabotでコード・シークレット・依存リスクを継続スキャンし、harden-runnerでCIランナーのegressを制限・監視します。'
       )
+      // === About principles / current focus (#about-principles) KO -> JA ===
+      .replace(
+        /<h3 class="about-principles__title">엔지니어링 원칙<\/h3>/g,
+        '<h3 class="about-principles__title">エンジニアリング原則</h3>'
+      )
+      .replace(
+        /관측 가능하지 않은 것은 운영할 수 없다 \(You can't operate what you can't\s+observe\)\./g,
+        '「観測できなければ、運用できない」'
+      )
+      .replace(
+        /수작업 → 자동화 파이프라인 → AI 에이전트 — 한 단계씩 점진적으로\./g,
+        '手作業 → 自動化パイプライン → AI エージェント'
+      )
+      .replace(
+        /Defense in Depth: 네트워크 → ID → 워크로드 → 데이터\./g,
+        'Infrastructure as Code、GitOps、宣言的構成'
+      )
+      .replace(
+        /코드만 PR을 받는다 — 정책도, 인프라도, 운영 절차도\./g,
+        'Defense in Depth: ネットワーク → ID → ワークロード → データ'
+      )
+      .replace(
+        /<h3 class="about-principles__title">현재 집중 영역<\/h3>/g,
+        '<h3 class="about-principles__title">現在の注力領域</h3>'
+      )
+      .replace(
+        /Splunk ES \+ n8n \+ FortiManager API 기반 SOC 운영/g,
+        'Splunk ES検知ルール・n8n・FortiManager APIによるSOC自動対応'
+      )
+      .replace(
+        /Cloudflare Workers Edge 기반 정책·관측·인증 통합 구조 학습/g,
+        'Cloudflare Workers Edge・IaCホームラボでDevOps能力拡張'
+      )
+      .replace(
+        /MCP\/AI 에이전트로 보안 운영 수작업 아이템 정리 시도/g,
+        'MCP/AIエージェント基盤のセキュリティ運用自動化ツール自社開発'
+      )
+      .replace(
+        /GitOps\(ArgoCD\) \+ 정책 자동화\(OPA\) 학습/g,
+        'GitOps(ArgoCD)・ポリシー自動化(OPA)学習中'
+      )
   );
 }
 
