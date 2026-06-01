@@ -2,7 +2,7 @@
  * Unit tests for the observability display mapping (idea A — sanitized status).
  *
  * The #observability widget must show a SAFE, recruiter-facing status set derived
- * from GET /health — NOT raw operational telemetry. Per security review:
+ * from the sanitized GET /api/status — NOT raw operational telemetry. Per review:
  *   - Edge Status: Operational / Degraded / Unavailable
  *   - D1 / KV: Healthy / Degraded (booleans, NOT latency_ms)
  *   - Build: version + short git sha (7)
