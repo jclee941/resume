@@ -40,7 +40,7 @@ function generateChatRoute(opts) {
             });
           }
 
-          const resumeData = JSON.parse(atob('${opts.resumeChatDataBase64}'));
+          const resumeData = JSON.parse(new TextDecoder('utf-8').decode(Uint8Array.from(atob('${opts.resumeChatDataBase64}'), function (c) { return c.charCodeAt(0); })));
 
           const normalize = (value) =>
             String(value || '')
