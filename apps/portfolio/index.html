@@ -1973,6 +1973,12 @@
               '{\n  "observability": ["Grafana", "Prometheus", "Loki", "Splunk", "OpenTelemetry"],\n  "devops": ["GitLab CI/CD", "GitHub Actions", "Ansible", "Terraform"],\n  "programming": ["Python", "Bash", "Node.js", "TypeScript", "Go"]\n}',
           };
           if (!args) return 'cat: missing file operand';
+          if (args === 'coverletter.txt') {
+            return formatCoverLetter(
+              (window.__RESUME_CHAT_DATA__ || {}).coverLetter,
+              document.documentElement.getAttribute('lang') || 'ko'
+            );
+          }
           return files[args] || 'cat: ' + args + ': No such file or directory';
         };
 

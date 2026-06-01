@@ -157,6 +157,33 @@ test.describe('Terminal CLI - Cover Letter', () => {
     await cliInput.press('Tab');
     await expect(cliInput).toHaveValue('coverletter');
   });
+  test('cat coverletter.txt prints the cover letter', async ({ page }) => {
+    await executeCliCommand(page, 'cat coverletter.txt');
+    const cliOutput = page.locator('#cli-output');
+    await expect(cliOutput).toContainText(koFragment);
+    await expect(cliOutput).not.toContainText(/No such file or directory/i);
+  });
+
+});
+
+test.describe('Terminal CLI - Cover Letter locale parity', () => {
+  const coverLetter = require('../../packages/data/resumes/master/resume_data.json').coverLetter;
+
+  test('EN route prints the English cover letter, not Korean', async ({ page }) => {
+    await safeGoto(page, '/en/');
+    await executeCliCommand(page, 'coverletter');
+    const cliOutput = page.locator('#cli-output');
+    await expect(cliOutput).toContainText(coverLetter.en.headline.slice(0, 16));
+    await expect(cliOutput).not.toContainText(coverLetter.ko.headline.slice(0, 12));
+  });
+
+  test('JA route prints the Japanese cover letter, not Korean', async ({ page }) => {
+    await safeGoto(page, '/ja/');
+    await executeCliCommand(page, 'coverletter');
+    const cliOutput = page.locator('#cli-output');
+    await expect(cliOutput).toContainText(coverLetter.ja.headline.slice(0, 12));
+    await expect(cliOutput).not.toContainText(coverLetter.ko.headline.slice(0, 12));
+  });
 });
 
 test.describe('Terminal CLI - Output is rendered as text, not HTML (XSS guard)', () => {
