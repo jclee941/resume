@@ -39,6 +39,7 @@ function parseArgs(argv) {
     limit: Number.parseInt(get('limit') ?? '10', 10) || 10,
     keywords: get('keywords') ? get('keywords').split(',').map((s) => s.trim()) : DEFAULT_KEYWORDS,
     dryRun: argv.includes('--dry-run'),
+    separate: argv.includes('--separate'),
   };
 }
 
@@ -49,6 +50,9 @@ function normalizeJob(entry) {
     url: entry.url || entry.sourceUrl || '',
     source: entry.source || entry.src || entry.platform || '',
     matchScore: entry.matchScore ?? entry.score ?? entry.relevantKeywordHits,
+    matchPercentage: entry.matchPercentage,
+    applicationPriority: entry.applicationPriority,
+    matchDetails: entry.matchDetails,
   };
 }
 
@@ -89,6 +93,27 @@ async function main() {
   const adapter = new TelegramNotificationAdapter();
 
   if (args.dryRun) {
+    if (args.separate) {
+      const { createSingleJobMessage } = await import(
+        '../src/shared/services/notifications/telegram-adapter/formatters.js'
+      );
+      const { splitForTelegram } = await import(
+        '../src/shared/services/notifications/telegram-adapter/message-splitter.js'
+      );
+      const selected = jobs.slice(0, args.limit);
+      console.log(`\n--- DRY RUN (separate: ${selected.length} job message(s)) ---\n`);
+      selected.forEach((job, i) => {
+        const msg = createSingleJobMessage(job);
+        const chunks = splitForTelegram(msg.text);
+        chunks.forEach((chunk, c) => {
+          console.log(`--- would send ${i + 1}/${selected.length} (chunk ${c + 1}/${chunks.length}) ---`);
+          console.log(chunk);
+          console.log('');
+        });
+      });
+      console.log('--- end preview (not sent) ---');
+      return;
+    }
     const { createJobPostingsMessage } = await import(
       '../src/shared/services/notifications/telegram-adapter/formatters.js'
     );
@@ -104,6 +129,20 @@ async function main() {
       '❌ Telegram not configured. Set TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID, then re-run.'
     );
     process.exit(1);
+  }
+
+  if (args.separate) {
+    const result = await adapter.sendJobPostingsSeparately(jobs, { limit: args.limit });
+    if (result.failed === 0 && result.sent > 0) {
+      console.log(`✅ Sent ${result.sent} job message(s) separately to Telegram (${result.messages} job(s)).`);
+    } else {
+      console.error(
+        `❌ Separate send: sent=${result.sent} failed=${result.failed} of ${result.messages} job(s).`,
+        JSON.stringify(result.results?.slice(0, 3) ?? result, null, 2)
+      );
+      process.exit(1);
+    }
+    return;
   }
 
   const { createJobPostingsMessage } = await import(

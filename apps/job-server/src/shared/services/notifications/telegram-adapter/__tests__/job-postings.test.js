@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { createJobPostingsMessage } from '../formatters.js';
+import { createJobPostingsMessage, createSingleJobMessage } from '../formatters.js';
 import { TELEGRAM_MAX_LENGTH } from '../constants.js';
 
 const jobs = [
@@ -129,5 +129,41 @@ describe('createJobPostingsMessage', () => {
     assert.equal(msg.renderedCount, 10);
     const anchorCount = (msg.text.match(/<a href=/g) || []).length;
     assert.equal(msg.renderedCount, anchorCount);
+  });
+});
+
+describe('createSingleJobMessage', () => {
+  const job = {
+    company: '<주>유니포인트 & Co',
+    position: '네트워크보안 엔지니어 <Senior>',
+    sourceUrl: 'https://www.jobkorea.co.kr/Recruit/GI_Read/1?x=1&y=2',
+    source: 'jobkorea',
+    matchPercentage: 82,
+    matchDetails: { skillMatches: [{ keyword: 'devsecops' }, { keyword: 'aws' }, { keyword: 'terraform' }] },
+  };
+
+  it('S3: returns an HTML payload <=4096 with escaped fields, anchor URL, and score', () => {
+    const msg = createSingleJobMessage(job);
+    assert.equal(msg.parse_mode, 'HTML');
+    assert.equal(msg.disable_web_page_preview, true);
+    assert.ok(msg.text.length <= TELEGRAM_MAX_LENGTH);
+    // clickable anchor to the source URL (escaped & in href)
+    assert.match(msg.text, /<a href="https:\/\/www\.jobkorea\.co\.kr\/Recruit\/GI_Read\/1\?x=1&amp;y=2">/);
+    // special chars escaped, not raw
+    assert.match(msg.text, /&lt;Senior&gt;/);
+    assert.match(msg.text, /&amp; Co/);
+    assert.ok(!/<주>/.test(msg.text) || /&lt;주&gt;/.test(msg.text));
+    // score percentage present
+    assert.match(msg.text, /82%/);
+    // at least one top skill rendered
+    assert.match(msg.text, /devsecops/);
+  });
+
+  it('S3b: handles a job with no URL (plain label, no anchor) without throwing', () => {
+    const msg = createSingleJobMessage({ company: 'NoUrl', position: 'Engineer' });
+    assert.equal(msg.parse_mode, 'HTML');
+    assert.ok(!/href=/.test(msg.text));
+    assert.match(msg.text, /Engineer/);
+    assert.match(msg.text, /NoUrl/);
   });
 });

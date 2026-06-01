@@ -5,8 +5,10 @@ import {
   createCaptchaDetectedMessage,
   createDailySummaryMessage,
   createJobPostingsMessage,
+  createSingleJobMessage,
 } from './telegram-adapter/formatters.js';
 import { answerCallbackQuery, notify } from './telegram-adapter/delivery.js';
+import { splitForTelegram } from './telegram-adapter/message-splitter.js';
 import { handleCallbackQuery } from './telegram-adapter/callbacks.js';
 
 export { escapeHtml, createJobPostingsMessage } from './telegram-adapter/formatters.js';
@@ -53,6 +55,51 @@ export class TelegramNotificationAdapter {
       { count: Array.isArray(jobs) ? jobs.length : 0, timestamp: new Date().toISOString() },
       message
     );
+  }
+
+  /**
+   * Send recommended job postings as SEPARATE Telegram messages — one message
+   * per job, and each job's message further length-split into <=4096-char
+   * chunks (Telegram-safe, never breaking an HTML tag). Reuses the existing
+   * notify()/raw-sender path so rate limiting and retries still apply.
+   *
+   * @param {Array<object>} jobs
+   * @param {{limit?:number, header?:string}} [options]
+   * @returns {Promise<{sent:number, failed:number, messages:number, results:Array}>}
+   */
+  async sendJobPostingsSeparately(jobs = [], options = {}) {
+    const list = Array.isArray(jobs) ? jobs : [];
+    const limit = Number.isInteger(options.limit) && options.limit > 0 ? options.limit : list.length;
+    const selected = list.slice(0, limit);
+
+    let sent = 0;
+    let failed = 0;
+    const results = [];
+
+    for (const job of selected) {
+      const message = createSingleJobMessage(job, options);
+      const chunks = splitForTelegram(message.text);
+      let jobOk = true;
+      for (const chunk of chunks) {
+        const payload = {
+          text: chunk,
+          parse_mode: message.parse_mode,
+          disable_web_page_preview: message.disable_web_page_preview,
+        };
+        const result = await notify(
+          this,
+          'job_posting',
+          { timestamp: new Date().toISOString() },
+          payload
+        );
+        results.push(result);
+        if (!result.sent) jobOk = false;
+      }
+      if (jobOk) sent += 1;
+      else failed += 1;
+    }
+
+    return { sent, failed, messages: selected.length, results };
   }
 
   async sendApprovalRequest(job, matchScore, applicationId) {
