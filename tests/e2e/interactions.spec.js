@@ -142,7 +142,7 @@ test.describe('Card Interactions', () => {
   test('project cards should be hoverable', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-    const card = page.locator('#projects .project-card[role="listitem"]').first();
+    const card = page.locator('#projects li.project-item').first();
     await card.hover();
 
     const cursor = await card.evaluate((el) => window.getComputedStyle(el).cursor);

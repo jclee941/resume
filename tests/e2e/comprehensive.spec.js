@@ -130,14 +130,14 @@ test.describe('Projects Section', () => {
   });
 
   test('should display all project cards', async ({ page }) => {
-    const projectCards = page.locator('#projects .project-card[role="listitem"]');
+    const projectCards = page.locator('#projects li.project-item');
     await expect(projectCards).toHaveCount(EXPECTED.PROJECTS);
   });
 
   test('should verify each project card content', async ({ page }) => {
     for (let i = 0; i < projectData.projects.length; i++) {
       const project = projectData.projects[i];
-      const card = page.locator('#projects .project-card[role="listitem"]').nth(i);
+      const card = page.locator('#projects li.project-item').nth(i);
 
       await expect(card).toBeVisible();
 
@@ -151,7 +151,7 @@ test.describe('Projects Section', () => {
   test('should have valid project links', async ({ page }) => {
     for (let i = 0; i < projectData.projects.length; i++) {
       const project = projectData.projects[i];
-      const card = page.locator('#projects .project-card[role="listitem"]').nth(i);
+      const card = page.locator('#projects li.project-item').nth(i);
 
       if (project.liveUrl) {
         const liveLink = card.locator('.project-link-title[href]');
@@ -171,6 +171,26 @@ test.describe('Projects Section', () => {
         }
       }
     }
+  });
+});
+
+test.describe('Case Studies Section', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/');
+    await page.waitForLoadState('domcontentloaded');
+  });
+
+  test('should render exactly four architecture case-study cards', async ({ page }) => {
+    const cards = page.locator('#case-studies .project-card[role="listitem"]');
+    await expect(cards).toHaveCount(4);
+  });
+
+  test('case-study card opens an architecture deep-dive overlay', async ({ page }) => {
+    const firstCard = page.locator('#case-studies .project-card[role="listitem"]').first();
+    await expect(firstCard).toBeVisible();
+    await firstCard.click();
+    const overlay = page.locator('[role="dialog"]');
+    await expect(overlay).toBeVisible();
   });
 });
 
@@ -295,7 +315,7 @@ test.describe('Data Consistency', () => {
 
   test('project count should match data.json', async ({ page }) => {
     await page.goto('/');
-    const projectCards = page.locator('#projects .project-card[role="listitem"]');
+    const projectCards = page.locator('#projects li.project-item');
     await expect(projectCards).toHaveCount(projectData.projects.length);
   });
 
@@ -305,7 +325,7 @@ test.describe('Data Consistency', () => {
     for (let i = 0; i < projectData.projects.length; i++) {
       const expected = new RegExp(escapeRegExp(projectData.projects[i].title), 'i');
       const actual = page
-        .locator('#projects .project-card[role="listitem"]')
+        .locator('#projects li.project-item')
         .nth(i)
         .locator('.project-link-title');
       await expect(actual).toContainText(expected);
