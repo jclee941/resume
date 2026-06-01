@@ -175,3 +175,84 @@ describe('i18n JA: security section is localized in the generated JA page', () =
     expect(ja).not.toContain('隣離');
   });
 });
+
+describe('A: observability widget shows sanitized status (no raw telemetry labels)', () => {
+  for (const f of ['index.html', 'index-en.html']) {
+    test(`${f} uses safe stat labels, not raw latency/uptime`, () => {
+      const html = read(path.join(PORTFOLIO, f));
+      // New safe labels present.
+      expect(html).toContain('>Edge Status<');
+      expect(html).toContain('>Build<');
+      // Old raw-telemetry labels gone.
+      expect(html).not.toContain('Edge Uptime');
+      expect(html).not.toContain('D1 Latency');
+      expect(html).not.toContain('KV Latency');
+      expect(html).not.toContain('Bindings Health');
+    });
+  }
+
+  test('observability.js no longer formats raw latency/uptime into the display', () => {
+    const src = read(path.join(PORTFOLIO, 'src', 'scripts', 'modules', 'observability.js'));
+    expect(src).not.toMatch(/setStat\('D1 Latency'/);
+    expect(src).not.toMatch(/setStat\('KV Latency'/);
+    expect(src).not.toMatch(/setStat\('Edge Uptime'/);
+    expect(src).toContain('mapHealthToDisplay');
+  });
+});
+
+describe('B: engineering principles + current focus surfaced from SSoT', () => {
+  const ja = (() => {
+    const { buildJapaneseTemplate } = require(path.join(PORTFOLIO, 'lib', 'html-transformer.js'));
+    return buildJapaneseTemplate(read(path.join(PORTFOLIO, 'index.html')));
+  })();
+  const ko = read(path.join(PORTFOLIO, 'index.html'));
+  const en = read(path.join(PORTFOLIO, 'index-en.html'));
+
+  test('KO renders a principles/focus block with exact SSoT text', () => {
+    expect(ko).toMatch(/id="about-principles"|class="about-principles"/);
+    expect(ko).toContain('관측 가능하지 않은 것은 운영할 수 없다');
+    expect(ko).toContain('Splunk ES + n8n + FortiManager API 기반 SOC 운영');
+  });
+
+  test('EN renders the block with exact EN SSoT text', () => {
+    expect(en).toMatch(/id="about-principles"|class="about-principles"/);
+    expect(en).toContain("If you can't observe it, you can't operate it");
+    expect(en).toContain('SOC automated response with Splunk ES rules');
+  });
+
+  test('JA page renders the block with exact JA SSoT text', () => {
+    expect(ja).toContain('観測できなければ、運用できない');
+    expect(ja).toContain('Splunk ES検知ルール・n8n・FortiManager APIによるSOC自動対応');
+    // No Korean leftover from the principles block in the JA page.
+    const jb = ja.slice(ja.indexOf('about-principles'), ja.indexOf('about-principles') + 1500);
+    expect(jb).not.toContain('관측 가능하지 않은');
+    expect(jb).not.toContain('수작업 → 자동화');
+  });
+
+  test('does not add resume-inflation sections (careerGap/awards/military)', () => {
+    const block = ko.slice(ko.indexOf('about-principles'), ko.indexOf('about-principles') + 2000);
+    expect(block).not.toMatch(/careerGap|공백기|수상|병역/);
+  });
+});
+
+describe('C: print stylesheet exists and hides interactive chrome', () => {
+  const printCss = (() => {
+    const p = path.join(PORTFOLIO, 'src', 'styles', 'print.css');
+    return require('fs').existsSync(p) ? read(p) : '';
+  })();
+  const mainCss = read(path.join(PORTFOLIO, 'src', 'styles', 'main.css'));
+
+  test('print.css exists and is imported by main.css', () => {
+    expect(printCss.length).toBeGreaterThan(0);
+    expect(mainCss).toContain("@import './print.css'");
+  });
+
+  test('print stylesheet wraps rules in @media print and hides interactive UI', () => {
+    expect(printCss).toContain('@media print');
+    expect(printCss).toMatch(
+      /\.cli-container[^}]*display:\s*none|\.cli-container[\s\S]*?display:\s*none/
+    );
+    expect(printCss).toContain('#guestbook');
+    expect(printCss).toMatch(/a\[href/);
+  });
+});

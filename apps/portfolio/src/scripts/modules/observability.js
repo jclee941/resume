@@ -36,14 +36,46 @@ function t(key) {
   return dict[key] || '';
 }
 
-function formatUptime(seconds) {
-  if (!Number.isFinite(seconds) || seconds < 0) return '--';
-  const d = Math.floor(seconds / 86400);
-  const h = Math.floor((seconds % 86400) / 3600);
-  const m = Math.floor((seconds % 3600) / 60);
-  if (d > 0) return `${d}d ${h}h`;
-  if (h > 0) return `${h}h ${m}m`;
-  return `${m}m`;
+/**
+ * Map a /health response to a SANITIZED, recruiter-facing display set.
+ * Pure (no DOM, no network). Deliberately omits raw uptime/latency/request
+ * counts: those are noisy, leak operational patterns, and backfire if a number
+ * looks bad. We surface coarse status + build metadata instead.
+ * @param {object|null} health - parsed /health JSON, or null on fetch failure.
+ * @param {Date} [now] - clock for the 'last checked' stamp (injectable for tests).
+ * @returns {{edgeStatus:string,d1:string,kv:string,build:string,lastChecked:string}}
+ */
+export function mapHealthToDisplay(health, now = new Date()) {
+  if (!health || typeof health !== 'object') {
+    return {
+      edgeStatus: 'Unavailable',
+      d1: 'Unavailable',
+      kv: 'Unavailable',
+      build: 'Unavailable',
+      lastChecked: '',
+    };
+  }
+  const bindingState = (b) => {
+    if (!b || typeof b !== 'object' || typeof b.healthy !== 'boolean') return 'Unavailable';
+    return b.healthy ? 'Healthy' : 'Degraded';
+  };
+  const bindings = health.bindings || {};
+  const edgeStatus =
+    health.status === 'healthy'
+      ? 'Operational'
+      : health.status === 'degraded'
+        ? 'Degraded'
+        : 'Unavailable';
+  const sha = typeof health.git_sha === 'string' ? health.git_sha.slice(0, 7) : '';
+  const version = typeof health.version === 'string' ? health.version : '';
+  const build = version ? (sha ? `${version} · ${sha}` : version) : sha || 'Unavailable';
+  return {
+    edgeStatus,
+    d1: bindingState(bindings.d1),
+    kv: bindingState(bindings.kv),
+    build,
+    lastChecked: now.toLocaleTimeString(),
+  };
 }
 
 /**
@@ -74,37 +106,18 @@ async function fetchJson(url) {
 }
 
 /**
- * Fetch both endpoints and update the cards. Returns true on a successful update.
+ * Fetch /health and update the cards with the sanitized display set.
+ * Returns true on a successful update.
  */
 async function refreshStats() {
   const health = await fetchJson('/health');
   if (!health) return false;
-
-  let ok = false;
-
-  if (Number.isFinite(health.uptime_seconds)) {
-    setStat('Edge Uptime', formatUptime(health.uptime_seconds));
-    ok = true;
-  }
-
-  const bindings = health.bindings || {};
-  if (bindings.d1 && Number.isFinite(bindings.d1.latency_ms)) {
-    setStat('D1 Latency', `${Math.round(bindings.d1.latency_ms)}ms`);
-    ok = true;
-  }
-  if (bindings.kv && Number.isFinite(bindings.kv.latency_ms)) {
-    setStat('KV Latency', `${Math.round(bindings.kv.latency_ms)}ms`);
-    ok = true;
-  }
-
-  const bindingValues = Object.values(bindings);
-  if (bindingValues.length > 0) {
-    const healthyCount = bindingValues.filter((b) => b && b.healthy).length;
-    setStat('Bindings Health', `${healthyCount}/${bindingValues.length}`);
-    ok = true;
-  }
-
-  return ok;
+  const view = mapHealthToDisplay(health);
+  setStat('Edge Status', view.edgeStatus);
+  setStat('D1', view.d1);
+  setStat('KV', view.kv);
+  setStat('Build', view.build);
+  return view.edgeStatus !== 'Unavailable';
 }
 
 export async function initObservabilityStats() {

@@ -942,6 +942,29 @@
               </div>
               <!-- ABOUT_CONTENT_PLACEHOLDER -->
               <div class="expertise-block"><!-- EXPERTISE_PLACEHOLDER --></div>
+              <div id="about-principles" class="about-principles">
+                <div class="about-principles__col">
+                  <h3 class="about-principles__title">엔지니어링 원칙</h3>
+                  <ul class="about-principles__list">
+                    <li>
+                      관측 가능하지 않은 것은 운영할 수 없다 (You can't operate what you can't
+                      observe).
+                    </li>
+                    <li>수작업 → 자동화 파이프라인 → AI 에이전트 — 한 단계씩 점진적으로.</li>
+                    <li>Defense in Depth: 네트워크 → ID → 워크로드 → 데이터.</li>
+                    <li>코드만 PR을 받는다 — 정책도, 인프라도, 운영 절차도.</li>
+                  </ul>
+                </div>
+                <div class="about-principles__col">
+                  <h3 class="about-principles__title">현재 집중 영역</h3>
+                  <ul class="about-principles__list">
+                    <li>Splunk ES + n8n + FortiManager API 기반 SOC 운영</li>
+                    <li>Cloudflare Workers Edge 기반 정책·관측·인증 통합 구조 학습</li>
+                    <li>MCP/AI 에이전트로 보안 운영 수작업 아이템 정리 시도</li>
+                    <li>GitOps(ArgoCD) + 정책 자동화(OPA) 학습</li>
+                  </ul>
+                </div>
+              </div>
               <!-- PROFILE_BENTO_PLACEHOLDER -->
               <div class="achievements-block">
                 <div class="section-cmd">
@@ -1241,22 +1264,22 @@
                 <li class="stat-card observability-stat">
                   <span class="stat-icon">💚</span>
                   <span class="stat-value">--</span>
-                  <span class="stat-label">Edge Uptime</span>
+                  <span class="stat-label">Edge Status</span>
                 </li>
                 <li class="stat-card observability-stat">
                   <span class="stat-icon">🗄️</span>
                   <span class="stat-value">--</span>
-                  <span class="stat-label">D1 Latency</span>
+                  <span class="stat-label">D1</span>
                 </li>
                 <li class="stat-card observability-stat">
                   <span class="stat-icon">⚡</span>
                   <span class="stat-value">--</span>
-                  <span class="stat-label">KV Latency</span>
+                  <span class="stat-label">KV</span>
                 </li>
                 <li class="stat-card observability-stat">
                   <span class="stat-icon">🟢</span>
                   <span class="stat-value">--</span>
-                  <span class="stat-label">Bindings Health</span>
+                  <span class="stat-label">Build</span>
                 </li>
               </ul>
               <p class="observability-status" data-observability-status hidden>
