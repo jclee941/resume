@@ -26,6 +26,7 @@
     <link rel="alternate" hreflang="ko-KR" href="https://resume.jclee.me" />
     <link rel="alternate" hreflang="en-US" href="https://resume.jclee.me/en/" />
     <link rel="alternate" hreflang="x-default" href="https://resume.jclee.me" />
+    <link rel="alternate" hreflang="ja-JP" href="https://resume.jclee.me/ja/" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="profile" />
@@ -833,7 +834,7 @@
     <a href="#main-content" class="skip-link">바로 본문으로 이동</a>
 
     <div class="container-narrow">
-      <div class="terminal-window" role="application" aria-label="Cyberpunk terminal portfolio">
+      <div class="terminal-window" role="region" aria-label="Cyberpunk terminal portfolio">
         <div class="terminal-titlebar">
           <div class="terminal-buttons">
             <span class="terminal-btn terminal-btn--close"></span>
@@ -1002,10 +1003,15 @@
               <div class="section-cmd">
                 <span class="section-cmd__command">ls -la ~/projects/</span>
               </div>
-              <div class="tech-filter-container" role="toolbar" aria-label="Filter by technology">
+              <div
+                class="tech-filter-container"
+                role="toolbar"
+                aria-label="Filter by technology"
+                aria-controls="project-list"
+              >
                 <button class="tech-filter-btn active" data-filter="all">All</button>
               </div>
-              <ul class="project-list">
+              <ul class="project-list" id="project-list">
                 <!-- PROJECT_CARDS_PLACEHOLDER -->
               </ul>
             </section>

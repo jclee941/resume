@@ -26,8 +26,7 @@ async function generateProjectSchemas() {
         name: '이재철',
         alternateName: 'Jaecheol Lee',
       },
-      dateCreated: new Date().toISOString().split('T')[0],
-      inLanguage: ['ko', 'en'],
+      inLanguage: ['ko', 'en', 'ja'],
       isPartOf: {
         '@type': 'WebSite',
         name: '이재철 포트폴리오',
