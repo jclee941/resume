@@ -98,14 +98,17 @@ test.describe('Resume Section', () => {
   });
 
   test('should display all resume items', async ({ page }) => {
-    const resumeItems = page.locator('#resume .resume-list li');
+    // Timeline JS replaces the server-rendered <ul.resume-list><li> with a
+    // <div.incident-timeline.resume-list> of <article role="listitem"> nodes.
+    // Use the semantic listitem role so the assertion survives that transform.
+    const resumeItems = page.locator('#resume .resume-list [role="listitem"]');
     await expect(resumeItems).toHaveCount(EXPECTED.RESUMES);
   });
 
   test('should verify resume item content', async ({ page }) => {
     for (let i = 0; i < Math.min(3, projectData.resume.length); i++) {
       const resume = projectData.resume[i];
-      const item = page.locator('#resume .resume-list li').nth(i);
+      const item = page.locator('#resume .resume-list [role="listitem"]').nth(i);
       await expect(item).toBeVisible();
       const text = await item.textContent();
       expect(text || '').toContain(resume.period);
@@ -127,14 +130,14 @@ test.describe('Projects Section', () => {
   });
 
   test('should display all project cards', async ({ page }) => {
-    const projectCards = page.locator('#projects .project-list li.project-item');
+    const projectCards = page.locator('#projects .project-card[role="listitem"]');
     await expect(projectCards).toHaveCount(EXPECTED.PROJECTS);
   });
 
   test('should verify each project card content', async ({ page }) => {
     for (let i = 0; i < projectData.projects.length; i++) {
       const project = projectData.projects[i];
-      const card = page.locator('#projects .project-list li.project-item').nth(i);
+      const card = page.locator('#projects .project-card[role="listitem"]').nth(i);
 
       await expect(card).toBeVisible();
 
@@ -148,7 +151,7 @@ test.describe('Projects Section', () => {
   test('should have valid project links', async ({ page }) => {
     for (let i = 0; i < projectData.projects.length; i++) {
       const project = projectData.projects[i];
-      const card = page.locator('#projects .project-list li.project-item').nth(i);
+      const card = page.locator('#projects .project-card[role="listitem"]').nth(i);
 
       if (project.liveUrl) {
         const liveLink = card.locator('.project-link-title[href]');
@@ -285,13 +288,14 @@ test.describe('External Links Validation', () => {
 test.describe('Data Consistency', () => {
   test('resume count should match data.json', async ({ page }) => {
     await page.goto('/');
-    const resumeItems = page.locator('#resume .resume-list li');
+    // Timeline JS renders 6 career <article role="listitem"> nodes (not <li>).
+    const resumeItems = page.locator('#resume .resume-list [role="listitem"]');
     await expect(resumeItems).toHaveCount(projectData.resume.length);
   });
 
   test('project count should match data.json', async ({ page }) => {
     await page.goto('/');
-    const projectCards = page.locator('#projects .project-list li.project-item');
+    const projectCards = page.locator('#projects .project-card[role="listitem"]');
     await expect(projectCards).toHaveCount(projectData.projects.length);
   });
 
@@ -301,7 +305,7 @@ test.describe('Data Consistency', () => {
     for (let i = 0; i < projectData.projects.length; i++) {
       const expected = new RegExp(escapeRegExp(projectData.projects[i].title), 'i');
       const actual = page
-        .locator('#projects .project-list li.project-item')
+        .locator('#projects .project-card[role="listitem"]')
         .nth(i)
         .locator('.project-link-title');
       await expect(actual).toContainText(expected);

@@ -127,7 +127,10 @@ test.describe('Card Interactions', () => {
   test('resume cards should be hoverable', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-    const card = page.locator('#resume .resume-list li').first();
+    // Timeline JS swaps the server <ul><li> for <article role="listitem"> nodes;
+    // wait for and target the semantic listitem so this survives the transform.
+    const card = page.locator('#resume .resume-list [role="listitem"]').first();
+    await card.waitFor({ state: 'visible' });
     await card.hover();
 
     // Check for hover state (transform or shadow change)
@@ -139,7 +142,7 @@ test.describe('Card Interactions', () => {
   test('project cards should be hoverable', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-    const card = page.locator('#projects .project-list li.project-item').first();
+    const card = page.locator('#projects .project-card[role="listitem"]').first();
     await card.hover();
 
     const cursor = await card.evaluate((el) => window.getComputedStyle(el).cursor);
