@@ -44,7 +44,7 @@
       "관측성",
       "클라우드 보안"
     ],
-    "profileStatement": "폐쇄망 OA 운영에서 출발해 금융 거래소 보안 인프라까지 운영해 온 보안 엔지니어입니다. 반복 운영 업무를 자동화 스크립트로 전환하며 운영 부담을 줄여 왔고, 직전 넥스트레이드 정보보안팀에서는 FortiGate HA 망분리 환경의 Splunk ES·n8n·FortiManager API 연동을 구축·운영했습니다. 현재 새로운 보안·인프라 역할을 찾는 구직 중입니다.",
+    "profileStatement": "폐쇄망 OA 운영에서 출발해 증권거래소 보안 인프라까지 운영해 온 보안 엔지니어입니다. 반복 운영 업무를 자동화 스크립트로 전환하며 운영 부담을 줄여 왔고, 직전 넥스트레이드 정보보안팀에서는 FortiGate HA 망분리 환경의 Splunk ES·n8n·FortiManager API 연동을 구축·운영했습니다. 현재 새로운 보안·인프라 역할을 찾는 구직 중입니다.",
     "coreCompetencies": [
       "금융권 규제 환경의 보안 인프라 구축·운영 프로젝트 수행 경험",
       "수동 탐지·대응 흐름을 정리하기 위해 SIEM 탐지 룰 검토와 자동화 스크립트를 작성한 경험",
@@ -78,8 +78,8 @@
   },
   "platformVariants": {
     "wanted": {
-      "headline": "OA 엔지니어로 출발한 보안 엔지니어 — 금융 거래소 SOC + FSC 본인가 + Splunk ES·n8n·FortiGate HA",
-      "about": "**\"반복 작업은 자동화 되어야 한다\"** — 이 한 가지 신념으로 운영해 온 보안 엔지니어입니다.\n\n**현장 → 자동화 → AI 에이전트**, 한 번도 운영의 손을 놓지 않으면서 도구만 바꿔왔습니다. KAI 폐쇄망에서 Linux를 수기로 운영하던 시절, 메타넷·조인트리에서 Ansible·Python·NSX-T·Wazuh로 자동화에 입문하던 시기, 콸텍투자일임 FSDC에서 금융감독원 감사를 데이터로 대응하던 경험을 거치며, 가온누리·아이티센 트랙에서 넥스트레이드 매매체결시스템을 FortiGate HA(5계층 망분리)·FSC 본인가·Splunk ES + n8n + FortiManager API 으로 운영했습니다. 현재는 다음 보안·인프라 역할을 찾는 구직 중입니다.\n\n**대표 임팩트**:\n• NAC 정책 배포를 자동화해 반복 수작업을 표준화\n• 방화벽 정책을 Ansible Role로 표준화\n• 보안 이벤트 자동 탐지·대응으로 인지·분류·알림 흐름 표준화\n• 운영 환경: 금융 거래소 매매체결시스템의 보안 운영·규제 대응 환경\n\n**보유 역량**: SIEM 탐지 룰 설계(Splunk ES), 보안 운영 자동화(n8n, FortiManager API), HA 보안 아키텍처(FortiGate HA, NSX-T), IaC(Ansible Role, Terraform), 관측성(Grafana/Prometheus/Loki), 금융 규제(FSC 본인가, 금감원 감사)\n\n포트폴리오: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
+      "headline": "OA 엔지니어로 출발한 보안 엔지니어 — 증권거래소 SOC + FSC 본인가 + Splunk ES·n8n·FortiGate HA",
+      "about": "**\"반복 작업은 자동화 되어야 한다\"** — 이 한 가지 신념으로 운영해 온 보안 엔지니어입니다.\n\n**현장 → 자동화 → AI 에이전트**, 한 번도 운영의 손을 놓지 않으면서 도구만 바꿔왔습니다. KAI 폐쇄망에서 Linux를 수기로 운영하던 시절, 메타넷·조인트리에서 Ansible·Python·NSX-T·Wazuh로 자동화에 입문하던 시기, 콸텍투자일임 FSDC에서 금융감독원 감사를 데이터로 대응하던 경험을 거치며, 가온누리·아이티센 트랙에서 넥스트레이드 매매체결시스템을 FortiGate HA(5계층 망분리)·FSC 본인가·Splunk ES + n8n + FortiManager API 으로 운영했습니다. 현재는 다음 보안·인프라 역할을 찾는 구직 중입니다.\n\n**대표 임팩트**:\n• NAC 정책 배포를 자동화해 반복 수작업을 표준화\n• 방화벽 정책을 Ansible Role로 표준화\n• 보안 이벤트 자동 탐지·대응으로 인지·분류·알림 흐름 표준화\n• 운영 환경: 증권거래소 매매체결시스템의 보안 운영·규제 대응 환경\n\n**보유 역량**: SIEM 탐지 룰 설계(Splunk ES), 보안 운영 자동화(n8n, FortiManager API), HA 보안 아키텍처(FortiGate HA, NSX-T), IaC(Ansible Role, Terraform), 관측성(Grafana/Prometheus/Loki), 금융 규제(FSC 본인가, 금감원 감사)\n\n포트폴리오: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
     },
     "jobkorea": {
       "headline": "보안 엔지니어 — OA→자동화→FSC 본인가→보안 운영 (Splunk ES, n8n, FortiGate HA)",
@@ -108,9 +108,9 @@
       "role": "보안운영 엔지니어 (SOC/Security)",
       "client": "넥스트레이드(주)",
       "teamSize": "정보보안팀 운영 셀",
-      "myRole": "넥스트레이드 매매체결시스템 보안운영SM",
+      "myRole": "보안 운영 담당",
       "workType": "정규직 (파견)",
-      "description": "넥스트레이드 금융 거래소 매매체결시스템의 보안 운영 체계를 SIEM 기반 탐지·대응 파이프라인으로 전환했습니다. Splunk ES 탐지 룰을 직접 설계·운영하여 보안 이벤트 탐지 범위를 확장하고, Splunk Saved Search → n8n webhook → Slack/SMS 연동 실시간 알림 파이프라인을 구축하여 이벤트 인지·분류·알림 흐름을 표준화했습니다. FortiManager JSON-RPC API를 활용한 방화벽 정책 자동 조회 시스템을 개발하여 콘솔 수동 조작을 제거하고 접근 제어 일관성을 확보했습니다. Python과 Docker 기반 마이크로서비스로 탐지 룰의 버전 관리 및 배포 자동화를 구현하여 룰 변경 이력을 추적 가능한 운영 단위로 전환했습니다.",
+      "description": "넥스트레이드 증권거래소 매매체결시스템의 보안 운영 체계를 SIEM 기반 탐지·대응 파이프라인으로 전환했습니다. Splunk ES 탐지 룰을 직접 설계·운영하여 보안 이벤트 탐지 범위를 확장하고, Splunk Saved Search → n8n webhook → Slack/SMS 연동 실시간 알림 파이프라인을 구축하여 이벤트 인지·분류·알림 흐름을 표준화했습니다. FortiManager JSON-RPC API를 활용한 방화벽 정책 자동 조회 시스템을 개발하여 콘솔 수동 조작을 제거하고 접근 제어 일관성을 확보했습니다. Python과 Docker 기반 마이크로서비스로 탐지 룰의 버전 관리 및 배포 자동화를 구현하여 룰 변경 이력을 추적 가능한 운영 단위로 전환했습니다.",
       "wantedSummary": "SIEM 탐지·대응의 수동 반복을 자동화하여 보안 운영 절차를 표준화한 경험",
       "note": "아이티센 CTS 소속, 넥스트레이드 매매체결시스템 보안운영SM 파견",
       "projects": [
@@ -144,7 +144,7 @@
       "role": "보안 인프라 엔지니어 (구축)",
       "client": "넥스트레이드(주)",
       "teamSize": "보안 구축 셀",
-      "myRole": "금융 거래소 고가용성 보안 아키텍처 설계 및 FSC 본인가 대응 담당",
+      "myRole": "보안 인프라 구축 담당",
       "workType": "정규직 (파견)",
       "description": "넥스트레이드 매매체결시스템의 금융위 본인가 심사 기준을 충족하는 고가용성 보안 인프라를 구축했습니다. 서비스 연속성 확보를 위해 FortiGate FGCP 액티브-패시브 HA를 구성하고, 금융권 규제에 맞는 5계층 망분리 보안 아키텍처를 설계·문서화하여 FSC 본인가 심사를 통과시켰습니다. 운영 인계 시 장비별 설정 기준을 맞추기 위해 Ansible Role로 방화벽 정책 및 보안 장비 초기 설정을 표준화하여, 구축 산출물이 운영 절차로 일관되게 인계되도록 했습니다. VMware 환경에서 가상 방화벽 구성과 장애 대응 절차를 담당했습니다.",
       "wantedSummary": "금융권 규제 심사 기준을 충족하는 고가용성 보안 아키텍처를 설계·구축한 경험",
@@ -152,7 +152,7 @@
       "projects": [
         {
           "name": "넥스트레이드 보안인프라 구축",
-          "description": "금융 거래소 매매체결시스템의 고가용성 보안 인프라를 구축했습니다. FortiGate FGCP 액티브-패시브 HA로 이중화를 구성하고, 금융위 본인가 기준에 맞춘 5계층 망분리 보안 아키텍처를 설계·문서화해 FSC 본인가 심사 대응을 완료했습니다. Ansible Role로 방화벽 정책 및 보안 장비 초기 설정을 표준화하여 구축 산출물이 운영 절차로 이어지도록 표준화했습니다.",
+          "description": "증권거래소 매매체결시스템의 고가용성 보안 인프라를 구축했습니다. FortiGate FGCP 액티브-패시브 HA로 이중화를 구성하고, 금융위 본인가 기준에 맞춘 5계층 망분리 보안 아키텍처를 설계·문서화해 FSC 본인가 심사 대응을 완료했습니다. Ansible Role로 방화벽 정책 및 보안 장비 초기 설정을 표준화하여 구축 산출물이 운영 절차로 이어지도록 표준화했습니다.",
           "period": "2024.03 ~ 2025.02",
           "techStack": [
             "FortiGate",
@@ -180,7 +180,7 @@
       "role": "인프라 엔지니어 (FSDC/금융DC)",
       "client": "콴텍투자일임(주)",
       "teamSize": "규모 미공개 인프라 운영팀",
-      "myRole": "금융보안데이터센터 인프라 운영 자동화 및 규제 감사 대응 담당",
+      "myRole": "인프라 운영 담당",
       "workType": "정규직",
       "description": "금융보안데이터센터(FSDC)에서 AI 트레이딩 플랫폼 인프라를 운영하며 규제 대응 체계를 구성했습니다. Python 기반 자동화 스크립트를 개발하여 반복적인 인프라 운영 작업을 표준화하고, 금융감독원 정기 감사에 필요한 DLP 정책 운영 체계와 감사 산출물 템플릿을 구축하여 반복되는 감사 대응을 재사용 가능한 프로세스로 전환했습니다. PostgreSQL DB 접근제어 쿼리를 튜닝하고, PB(프라이빗뱅킹) 플랫폼 POC의 성능 검증 및 안정적인 런칭을 지원했습니다. DB 백업 체계 구축과 데이터 보호 정책 수립을 통해 금융 데이터의 가용성과 무결성을 확보했습니다.",
       "wantedSummary": "금융보안데이터센터(FSDC) 인프라 운영 자동화 및 감사 대응 경험",
@@ -214,7 +214,7 @@
       "project": "국민대학교 차세대 정보시스템",
       "role": "네트워크 보안 엔지니어 (NSX-T/가상화)",
       "teamSize": "규모 미공개 보안 통합 구축팀",
-      "myRole": "캠퍼스 네트워크 동서 트래픽 보안 설계 및 NSX-T 마이크로세그멘테이션 도입 담당",
+      "myRole": "네트워크 보안 구축 담당",
       "workType": "정규직 (파견)",
       "description": "국민대학교 차세대 정보시스템 구축에서 캠퍼스 네트워크 동서 트래픽의 보안 사각지대를 해소했습니다. VMware NSX-T 마이크로세그멘테이션을 설계·도입하여 서버 간 통신의 가시성과 세분화된 접근 제어를 확보하고, NSX-T DFW(분산 방화벽) 정책과 NSX-T Manager 중앙 집중 관리 체계를 구축하여 정책 일관성과 정책 관리 흐름을 중앙화했습니다. NAC/DLP와 Wazuh를 통합 연동하여 호스트 수준의 실시간 보안 모니터링 및 침입 탐지 체계를 구축했으며, vSphere 연동을 통한 가상 네트워크 보안 정책 자동화를 구현했습니다.",
       "wantedSummary": "마이크로세그멘테이션으로 동서 트래픽 보안 정책을 세분화하고 통합 모니터링을 구축한 경험",
@@ -249,7 +249,7 @@
       "project": "컨택센터 인프라",
       "role": "인프라 운영 엔지니어 (VPN/NAC/자동화)",
       "teamSize": "규모 미공개 인프라 운영팀",
-      "myRole": "대규모 재택근무 인프라 운영 자동화 및 VPN/NAC 보안 체계 구축 담당",
+      "myRole": "인프라 운영 담당",
       "workType": "SI+SM",
       "description": "코로나19 대응 재택근무 환경에서 대규모 컨택센터 인프라 운영 자동화를 주도했습니다. Python과 Ansible 기반 자동화 시스템을 구축하여 신규 단말 등록, 스위치 점검, 서버 설정 등 반복 작업의 표준화와 일관성을 확보했고, NAC 정책 자동화 스크립트를 개발하여 단말 등록 절차를 자동화했습니다. FortiGate 로그 기반 VPN 세션 모니터링 대시보드를 구성하여 비정상 접근 패턴을 실시간으로 탐지하고, 재택근무 사이트별 보안 아키텍처를 설계하여 안전한 원격 접속 환경과 업무 연속성을 확보했습니다.",
       "wantedSummary": "대규모 원격 근무 환경의 반복 작업을 자동화 시스템으로 전환한 경험",
@@ -282,7 +282,7 @@
       "project": "한국항공우주산업(KAI)",
       "role": "IT지원·OA운영 (폐쇄망/Linux)",
       "teamSize": "규모 미공개 현장 IT 운영팀",
-      "myRole": "폐쇄망 Linux 서버 운영 및 보안 패치 체계 구축 담당",
+      "myRole": "서버 운영 담당",
       "workType": "정규직 (파견)",
       "description": "한국항공우주산업(KAI) 폐쇄망 환경에서 Linux 서버, 방화벽 정책, 패치 운영을 관리하며 보안 관리 체계를 구성했습니다. Linux 시스템 로그 분석 체계를 구성하여 하드웨어 장애를 사전 탐지하고, 방화벽 정책 변경 이력 추적 및 접근 로그 분석 체계를 구축하여 보안 감사 대응 역량을 확보했습니다. WSUS 기반 Windows 서버 패치 자동화와 Linux 보안 업데이트 체계를 구축하여 대규모 서버 패치 일정을 체계적으로 관리했고, 납품 정보 유출 방지를 위한 보안 가이드라인 점검 프로세스를 운영하여 시스템 취약점을 사전에 제거했습니다.",
       "wantedSummary": "폐쇄망 환경에서 보안 패치와 방화벽 정책 관리 체계를 구축한 경험",
@@ -727,13 +727,14 @@
       "period": "2024.12 ~ 현재",
       "description": "위협 인텔리전스 피드가 여러 외부 소스(AbuseIPDB, Emerging Threats, AlienVault OTX 등)에 흩어져 있어 악성 IP를 분석할 때 소스마다 별도 조회가 필요했습니다. AbuseIPDB, Emerging Threats, AlienVault OTX feed를 source adapter로 분리하고, SQLAlchemy 모델에서 IP, source, confidence, first_seen, last_seen을 정규화했습니다. Alembic으로 schema migration을 관리해 feed 추가 시 DB 변경과 adapter 구현을 분리했습니다.",
       "technologies": [
+        "JavaScript",
         "Flask",
-        "Next.js",
-        "PostgreSQL"
+        "PostgreSQL",
+        "Python"
       ],
       "icon": "🚫",
       "tagline": "위협 인텔리전스",
-      "language": "Python",
+      "language": "JavaScript",
       "githubUrl": "https://github.com/jclee941/blacklist",
       "demoUrl": null,
       "featured": true,
@@ -814,13 +815,14 @@
       ],
       "technologies": [
         "Cloudflare Workers",
-        "Next.js",
         "TypeScript",
-        "D1",
-        "KV"
+        "Hono",
+        "Drizzle ORM",
+        "D1"
       ],
       "featured": false,
-      "displayOrder": 7
+      "displayOrder": 7,
+      "language": "TypeScript"
     },
     {
       "name": "AI GitHub PR Reviewer",
@@ -855,14 +857,15 @@
         "탐지 결과를 MITRE 프레임워크로 정렬하여 위험도 판단 지원"
       ],
       "technologies": [
-        "Go",
-        "Python",
+        "JavaScript",
         "Subfinder",
         "httpx",
-        "Nuclei"
+        "Nuclei",
+        "Go"
       ],
       "featured": false,
-      "displayOrder": 8
+      "displayOrder": 8,
+      "language": "JavaScript"
     }
   ],
   "ossContributions": [

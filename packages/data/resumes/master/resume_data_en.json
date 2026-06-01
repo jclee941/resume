@@ -44,7 +44,7 @@
       "Observability",
       "Cloud Security"
     ],
-    "profileStatement": "Security engineer with experience spanning OA operations to financial exchange security. Started in 2017 at MT Data operating Linux servers with manual patches and firewall rules in KAI's closed network, then spent 11 months from 2018.11 rebuilding Linux fundamentals (RHCSA, CompTIA Linux+, LPIC-1, Linux Master Level 2). Grew through Metanet and Jointree adopting Ansible, Python, NSX-T, and Wazuh; deepened in financial infrastructure at Quantec Investment Management FSDC and Gaonnuri, owning FortiGate HA segmentation and FSC main-license review; most recently built and operated Nextrade exchange security at ITCEN CTS using Splunk ES, n8n, FortiManager API, and Docker. Currently seeking a new security/infrastructure role.",
+    "profileStatement": "Security engineer with experience spanning OA operations to stock exchange security. Started in 2017 at MT Data operating Linux servers with manual patches and firewall rules in KAI's closed network, then spent 11 months from 2018.11 rebuilding Linux fundamentals (RHCSA, CompTIA Linux+, LPIC-1, Linux Master Level 2). Grew through Metanet and Jointree adopting Ansible, Python, NSX-T, and Wazuh; deepened in financial infrastructure at Quantec Investment Management FSDC and Gaonnuri, owning FortiGate HA segmentation and FSC main-license review; most recently built and operated Nextrade exchange security at ITCEN CTS using Splunk ES, n8n, FortiManager API, and Docker. Currently seeking a new security/infrastructure role.",
     "coreCompetencies": [
       "Designed and operated high-availability security infrastructure in financial regulated environments and passed licensing audits",
       "Built SIEM detection rules and automated response systems to address delays in manual detection and response",
@@ -95,7 +95,7 @@
       "role": "Security Operations Lead",
       "client": "Nextrade Co., Ltd.",
       "teamSize": "Information Security Operations Cell",
-      "myRole": "Security Automation Engineer",
+      "myRole": "Security Operations",
       "workType": "Full-time (Dispatched)",
       "description": "Worked on integrated security operations connecting Splunk ES with Slack via n8n and writing FortiManager API-based scripts for firewall policy lookups, standardizing operator notification and triage paths.",
       "wantedSummary": "Nextrade Security Operations SM | Splunk ES · FortiManager API · n8n\n→ SIEM detection rule design and automated security event response",
@@ -129,7 +129,7 @@
       "role": "Security Build Engineer",
       "client": "Nextrade Co., Ltd.",
       "teamSize": "Security Build Cell",
-      "myRole": "Security Architect",
+      "myRole": "Security Infrastructure Build",
       "workType": "Full-time (Dispatched)",
       "description": "Owned FortiGate HA configuration and Ansible Role standardization for a financial trading system, easing the handoff between build and operations phases.",
       "wantedSummary": "Nextrade Security Infra Build | FortiGate HA · FortiManager · Ansible\n→ Passed FSC license review, HA security architecture design",
@@ -163,7 +163,7 @@
       "role": "Infrastructure Engineer",
       "client": "Quantec Investment Management",
       "teamSize": "Infrastructure operations team (size undisclosed)",
-      "myRole": "FSDC infrastructure operations and automation",
+      "myRole": "Infrastructure Operations",
       "workType": "Full-time",
       "description": "Operated the Financial Security Data Center (FSDC) environment including Financial Supervisory Service periodic audit response. Wrote Python-based automation scripts, operated DLP policies, and tuned DB access-control queries.",
       "wantedSummary": "Financial Security Data Center (FSDC) infrastructure operations automation and audit response experience",
@@ -196,7 +196,7 @@
       "role": "Systems Engineer",
       "client": "Kookmin University",
       "teamSize": "Integrated security implementation team (size undisclosed)",
-      "myRole": "NSX-T micro-segmentation and integrated security policy designer",
+      "myRole": "Network Security Build",
       "workType": "Full-time (Dispatched)",
       "description": "Resolved east-west traffic blind spots from perimeter-based security by applying NSX-T micro-segmentation, and built centralized security policy management at the VDS level.",
       "note": "Jointree employee, dispatched to Kookmin University Next-Gen Information System project",
@@ -228,7 +228,7 @@
       "role": "Systems Engineer",
       "client": "Metanet M Platform",
       "teamSize": "Infrastructure operations team (size undisclosed)",
-      "myRole": "VPN/NAC automation and switch inspection automation engineer",
+      "myRole": "Infrastructure Operations",
       "workType": "SI+SM",
       "description": "Solved server configuration consistency and remote-access visibility for a large-scale contact-center remote-work environment by building Python and Ansible automation, and operated FortiGate VPN infrastructure for new contact-center sites.",
       "projects": [
@@ -259,7 +259,7 @@
       "role": "IT Support / OA Operations",
       "client": "Korea Aerospace Industries (KAI)",
       "teamSize": "On-site IT operations team (size undisclosed)",
-      "myRole": "Closed-network server operations and security patching engineer",
+      "myRole": "Server Operations",
       "workType": "Full-time (Dispatched)",
       "description": "Established a routine log analysis cadence and adhered to security audit guidelines to identify hardware failure indicators early in a closed network environment.",
       "note": "MTData employee, dispatched to Korea Aerospace Industries (KAI) IT infrastructure field operations",
@@ -701,13 +701,14 @@
       "period": "2024.12 ~ Present",
       "description": "Threat intelligence feeds were scattered across external sources (AbuseIPDB, Emerging Threats, AlienVault OTX, etc.), requiring separate lookups per source when analyzing malicious IPs. Structured per-source adapters via Flask Blueprints, managed schema versions via SQLAlchemy + Alembic migrations, and built a Next.js frontend for cross-comparing IP reputation, frequency, and distribution. Multiple threat feeds queryable and cross-analyzable from a reproducible pipeline.",
       "technologies": [
+        "JavaScript",
         "Flask",
-        "Next.js",
-        "PostgreSQL"
+        "PostgreSQL",
+        "Python"
       ],
       "icon": "🚫",
       "tagline": "Threat Intelligence",
-      "language": "Python",
+      "language": "JavaScript",
       "githubUrl": "https://github.com/jclee941/blacklist",
       "demoUrl": null,
       "featured": true,
@@ -792,13 +793,14 @@
       ],
       "technologies": [
         "Cloudflare Workers",
-        "Next.js",
         "TypeScript",
-        "D1",
-        "KV"
+        "Hono",
+        "Drizzle ORM",
+        "D1"
       ],
       "featured": false,
-      "displayOrder": 7
+      "displayOrder": 7,
+      "language": "TypeScript"
     },
     {
       "name": "AI GitHub PR Reviewer",
@@ -832,14 +834,15 @@
         "Aligns detection results to MITRE ATT&CK for risk assessment"
       ],
       "technologies": [
-        "Go",
-        "Python",
+        "JavaScript",
         "Subfinder",
         "httpx",
-        "Nuclei"
+        "Nuclei",
+        "Go"
       ],
       "featured": false,
-      "displayOrder": 8
+      "displayOrder": 8,
+      "language": "JavaScript"
     }
   ],
   "ossContributions": [

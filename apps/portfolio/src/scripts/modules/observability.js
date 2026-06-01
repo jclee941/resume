@@ -46,12 +46,7 @@ function formatUptime(seconds) {
   return `${m}m`;
 }
 
-function formatNumber(n) {
-  if (!Number.isFinite(n)) return '--';
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}k`;
-  return String(n);
-}
+
 
 /**
  * Set a stat card value by its label, using textContent.
@@ -84,35 +79,31 @@ async function fetchJson(url) {
  * Fetch both endpoints and update the cards. Returns true on a successful update.
  */
 async function refreshStats() {
-  const [health, metrics] = await Promise.all([
-    fetchJson('/health'),
-    fetchJson('/api/metrics'),
-  ]);
+  const health = await fetchJson('/health');
+  if (!health) return false;
 
   let ok = false;
 
-  if (health && Number.isFinite(health.uptime_seconds)) {
-    setStat('Uptime', formatUptime(health.uptime_seconds));
+  if (Number.isFinite(health.uptime_seconds)) {
+    setStat('Edge Uptime', formatUptime(health.uptime_seconds));
     ok = true;
   }
 
-  const http = metrics && metrics.http;
-  if (http) {
-    if (Number.isFinite(http.requests_total)) {
-      setStat('Total Requests', formatNumber(http.requests_total));
-      ok = true;
-    }
-    if (Number.isFinite(http.response_time_ms)) {
-      setStat('Avg Response Time', `${Math.round(http.response_time_ms)}ms`);
-      ok = true;
-    }
-    if (typeof http.error_rate === 'string') {
-      setStat('Error Rate', http.error_rate);
-      ok = true;
-    } else if (Number.isFinite(http.error_rate)) {
-      setStat('Error Rate', `${http.error_rate.toFixed(2)}%`);
-      ok = true;
-    }
+  const bindings = health.bindings || {};
+  if (bindings.d1 && Number.isFinite(bindings.d1.latency_ms)) {
+    setStat('D1 Latency', `${Math.round(bindings.d1.latency_ms)}ms`);
+    ok = true;
+  }
+  if (bindings.kv && Number.isFinite(bindings.kv.latency_ms)) {
+    setStat('KV Latency', `${Math.round(bindings.kv.latency_ms)}ms`);
+    ok = true;
+  }
+
+  const bindingValues = Object.values(bindings);
+  if (bindingValues.length > 0) {
+    const healthyCount = bindingValues.filter((b) => b && b.healthy).length;
+    setStat('Bindings Health', `${healthyCount}/${bindingValues.length}`);
+    ok = true;
   }
 
   return ok;

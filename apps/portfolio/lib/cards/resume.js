@@ -34,6 +34,7 @@ function generateResumeCards(resumeData, dataHash) {
             <h3 class="resume-title">${escapeHtml(item.title)}</h3>
             <span class="resume-period">${escapeHtml(item.period)}</span>
           </div>
+          ${item.role ? `<p class="resume-role">${escapeHtml(item.role)}</p>` : ''}
           <p class="resume-description">${escapeHtml(item.description).replace(/\n/g, '<br>')}</p>
           ${
             item.stats && item.stats.length > 0

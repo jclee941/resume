@@ -15,7 +15,7 @@
 
 .site-header {
   padding: var(--space-4) 0;
-  margin-bottom: var(--space-8);
+  margin-bottom: var(--space-4);
   border-bottom: 1px solid var(--border-primary);
 }
 
@@ -81,13 +81,13 @@
 
 /* Sections */
 .section-hero {
-  min-height: 60vh;
+  min-height: auto;
   display: flex;
   contain: layout;
-  align-items: center;
+  align-items: flex-start;
   justify-content: flex-start;
   position: relative;
-  padding: var(--space-16) 0;
+  padding: var(--space-2) 0 var(--space-10);
 }
 
 .hero-content {

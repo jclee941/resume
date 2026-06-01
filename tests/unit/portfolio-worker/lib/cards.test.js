@@ -61,6 +61,35 @@ describe('Cards Module', () => {
       expect(html).toContain('class="tag"');
     });
 
+    test('should render role as an impact line when present', () => {
+      const roleData = [
+        {
+          title: 'Gaonnuri',
+          role: '증권거래소 고가용성 보안 아키텍처 설계 및 FSC 본인가 대응 담당',
+          period: '2024-03 ~ 2025-02',
+          description: 'desc',
+          stats: ['아키텍처'],
+        },
+      ];
+      const html = generateResumeCards(roleData, 'role-hash');
+      expect(html).toContain('resume-role');
+      expect(html).toContain('증권거래소 고가용성 보안 아키텍처 설계 및 FSC 본인가 대응 담당');
+    });
+
+    test('should not render role line when role is empty', () => {
+      const noRoleData = [
+        {
+          title: 'NoRole',
+          role: '',
+          period: '2024',
+          description: 'desc',
+          stats: [],
+        },
+      ];
+      const html = generateResumeCards(noRoleData, 'no-role-hash');
+      expect(html).not.toContain('resume-role');
+    });
+
     test('should not render tags section when stats are empty', () => {
       const noStatsData = [
         {
