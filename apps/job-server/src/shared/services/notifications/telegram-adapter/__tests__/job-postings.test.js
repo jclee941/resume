@@ -100,4 +100,34 @@ describe('createJobPostingsMessage', () => {
     // Still communicates that more postings exist beyond what was rendered.
     assert.match(msg.text, /외|more|더/);
   });
+
+  it('never ends mid-tag even when a single posting exceeds the length budget', () => {
+    // One posting whose URL alone is far larger than TELEGRAM_MAX_LENGTH.
+    const huge = 'https://x.test/' + 'a'.repeat(TELEGRAM_MAX_LENGTH + 500);
+    const msg = createJobPostingsMessage(
+      [{ company: 'C', position: 'P', url: huge, source: 'jobkorea' }],
+      { limit: 5 }
+    );
+    assert.ok(
+      msg.text.length <= TELEGRAM_MAX_LENGTH,
+      `message length ${msg.text.length} exceeds ${TELEGRAM_MAX_LENGTH}`
+    );
+    const open = (msg.text.match(/<a\s/g) || []).length;
+    const close = (msg.text.match(/<\/a>/g) || []).length;
+    assert.equal(open, close, 'overlong single line must not leave a dangling <a> tag');
+    assert.doesNotMatch(msg.text, /<a[^>]*$/, 'message must not end inside an <a> tag');
+  });
+
+  it('exposes the actual rendered count', () => {
+    const many = Array.from({ length: 25 }, (_, i) => ({
+      company: `C${i}`,
+      position: `P${i}`,
+      url: `https://x.test/${i}`,
+      source: 'jobkorea',
+    }));
+    const msg = createJobPostingsMessage(many, { limit: 10 });
+    assert.equal(msg.renderedCount, 10);
+    const anchorCount = (msg.text.match(/<a href=/g) || []).length;
+    assert.equal(msg.renderedCount, anchorCount);
+  });
 });

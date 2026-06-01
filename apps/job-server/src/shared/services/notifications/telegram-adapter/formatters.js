@@ -183,8 +183,18 @@ export function createJobPostingsMessage(jobs = [], options = {}) {
     chosen.push(allLines[i]);
   }
 
-  const remainder = total - chosen.length;
+  // Edge case: a single posting line alone exceeds the budget. Including it raw
+  // could let formatNotificationText() slice it mid-<a> tag. Replace that one
+  // line with a tag-free, hard-truncated plain-text fallback so the message can
+  // never end inside an HTML tag.
+  if (chosen.length === 1 && chosen[0].length > maxBody) {
+    const plain = chosen[0].replace(/<[^>]*>/g, '');
+    chosen[0] = `${plain.slice(0, Math.max(0, maxBody - 80))}…`;
+  }
+
+  const renderedCount = chosen.length;
+  const remainder = total - renderedCount;
   const text = `${header} (${total}건)\n\n${chosen.join('\n')}${footerFor(remainder)}`;
 
-  return { text, parse_mode: 'HTML', disable_web_page_preview: true };
+  return { text, parse_mode: 'HTML', disable_web_page_preview: true, renderedCount };
 }

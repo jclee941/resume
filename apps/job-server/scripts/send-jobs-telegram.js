@@ -106,10 +106,15 @@ async function main() {
     process.exit(1);
   }
 
+  const { createJobPostingsMessage } = await import(
+    '../src/shared/services/notifications/telegram-adapter/formatters.js'
+  );
+  const rendered = createJobPostingsMessage(jobs, { limit: args.limit }).renderedCount ?? Math.min(jobs.length, args.limit);
+
   const result = await adapter.sendJobPostings(jobs, { limit: args.limit });
   if (result.sent) {
     const messageId = result.results?.telegram?.messageId;
-    console.log(`✅ Sent ${Math.min(jobs.length, args.limit)} postings to Telegram.`);
+    console.log(`✅ Sent ${rendered} of ${jobs.length} postings to Telegram.`);
     console.log(`   status=${result.status} historyId=${result.historyId} messageId=${messageId ?? 'n/a'}`);
   } else {
     console.error('❌ Telegram send failed:', JSON.stringify(result.results || result, null, 2));
