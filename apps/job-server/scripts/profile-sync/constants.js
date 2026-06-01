@@ -44,11 +44,11 @@ export const PLATFORMS = {
   jobkorea: {
     name: 'JobKorea',
     get profileUrl() {
-      const rNo = process.env.JOBKOREA_RNO?.trim() || '30236578';
+      const rNo = process.env.JOBKOREA_RNO?.trim() || '';
       return `https://www.jobkorea.co.kr/User/Resume/View?rNo=${rNo}`;
     },
     get editUrl() {
-      const rNo = process.env.JOBKOREA_RNO?.trim() || '30236578';
+      const rNo = process.env.JOBKOREA_RNO?.trim() || '';
       return `https://www.jobkorea.co.kr/User/Resume/Edit?RNo=${rNo}`;
     },
   },

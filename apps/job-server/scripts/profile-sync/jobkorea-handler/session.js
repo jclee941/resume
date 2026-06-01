@@ -23,6 +23,55 @@ function createJobKoreaVerificationError(reason) {
   return error;
 }
 
+function createJobKoreaEditableResumeError(rNo, reason) {
+  const rNoText = rNo ? `rNo=${rNo}` : 'the configured rNo';
+  const reasonText = reason ? ` (${reason})` : '';
+  const error = new Error(
+    `No editable form resume found for ${rNoText}${reasonText}. ` +
+      `This JobKorea account may only have a file-upload resume. ` +
+      `Create a form resume on JobKorea or set the correct JOBKOREA_RNO.`
+  );
+  error.failLoud = true;
+  return error;
+}
+
+export async function assertEditableResume(page, options = {}) {
+  const rNo = options.rNo ?? process.env.JOBKOREA_RNO?.trim() ?? '';
+  const currentUrl = typeof page?.url === 'function' ? page.url() : '';
+  if (/\/User\/ResumeMng/i.test(currentUrl)) {
+    throw createJobKoreaEditableResumeError(rNo, 'redirected to ResumeMng');
+  }
+}
+
+const EDITABLE_FORM_WAIT_MS = 15000;
+
+function isTimeoutError(error) {
+  return (
+    error?.name === 'TimeoutError' ||
+    /Timeout\s+\d+ms exceeded/i.test(error?.message ?? '')
+  );
+}
+
+// Waits for the JobKorea edit form (#frm1) to attach, preserving the original
+// wait semantics for asynchronously-rendered forms. Only a wait TIMEOUT is
+// converted into a clear fail-loud editable-resume error; all other errors
+// propagate unchanged so we never mask navigation/login/CAPTCHA failures.
+export async function waitForEditableForm(page, options = {}) {
+  const rNo = options.rNo ?? process.env.JOBKOREA_RNO?.trim() ?? '';
+  const timeout = options.timeout ?? EDITABLE_FORM_WAIT_MS;
+  try {
+    await page.waitForFunction(
+      () => typeof globalThis.$ !== 'undefined' && globalThis.$('#frm1').length > 0,
+      { timeout }
+    );
+  } catch (error) {
+    if (isTimeoutError(error)) {
+      throw createJobKoreaEditableResumeError(rNo, 'editable form (#frm1) never appeared');
+    }
+    throw error;
+  }
+}
+
 export async function assertJobKoreaResumeAccess(page, options = {}) {
   const logger = options.logger ?? log;
   const headlessEnv = options.headlessEnv ?? String(process.env.HEADLESS !== 'false');
