@@ -71,7 +71,7 @@ jobs:
           script: |
             const title = context.payload.pull_request.title;
             const allowed = /^(feat|fix|hotfix|docs|refactor|test|chore|ci|perf|security|style|build|revert)(\(.+\))?!?: .+/;
-
+            
             if (!allowed.test(title)) {
               const body = `## PR 제목 규칙 위반\n\n현재 제목: \`${title}\`\n\n**Conventional Commits** 형식을 따라주세요:\n\n` +
                 `\`\`\`\nfeat: add new feature\nfix: resolve bug\ndocs: update README\nrefactor: improve structure\ntest: add tests\nchore: update config\nci: fix workflow\nperf: optimize speed\nsecurity: patch vulnerability\n\`\`\`\n\n> Automated by jclee-bot`;
@@ -101,7 +101,7 @@ jobs:
           script: |
             const branch = context.payload.pull_request.head.ref;
             const allowed = /^(feat|fix|hotfix|test|docs|refactor|chore|ci|perf|security|style|build|revert|dependabot|bot|fork|release|claude)\/.+/;
-
+            
             if (!allowed.test(branch)) {
               const body = `## 브랜치 이름 규칙 위반\n\n현재 브랜치: \`${branch}\`\n\n표준 prefix를 사용하세요:\n\n` +
                 `- \`feat/\` - 새 기능\n- \`fix/\` - 버그 수정\n- \`hotfix/\` - 긴급 수정\n- \`test/\` - 테스트\n- \`docs/\` - 문서\n- \`refactor/\` - 리팩토링\n- \`chore/\` - 잡무\n- \`ci/\` - CI/CD\n- \`perf/\` - 성능\n- \`security/\` - 보안\n- \`style/\` - 스타일\n- \`build/\` - 빌드\n- \`revert/\` - 롤백\n\n> Automated by jclee-bot`
@@ -186,9 +186,9 @@ jobs:
               repo: context.repo.repo,
               pull_number: context.issue.number
             });
-
+            
             const largeFiles = files.filter(f => f.changes > 1000);
-
+            
             if (largeFiles.length > 0) {
               const body = `## 대용량 파일 변경 경고\n\n` +
                 `다음 파일이 1000줄 이상 변경되었습니다. 리뷰가 어려울 수 있습니다:\n\n` +
@@ -231,12 +231,12 @@ jobs:
               repo: context.repo.repo,
               pull_number: context.issue.number
             });
-
+            
             const sensitivePatterns = ['.env', '.key', '.pem', '.p12', '.pfx', 'secrets', 'credentials', 'password'];
             const sensitiveFiles = files.filter(f => 
               sensitivePatterns.some(p => f.filename.toLowerCase().includes(p))
             );
-
+            
             if (sensitiveFiles.length > 0) {
               const body = `## 민감 파일 변경 감지\n\n` +
                 `⚠️ **보안 주의**: 다음 민감 파일이 변경되었습니다:\n\n` +
