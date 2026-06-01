@@ -30,7 +30,7 @@ function missionControlSource() {
   const subdir = path.join(MODULES, 'mission-control');
   if (fs.existsSync(subdir)) {
     for (const f of fs.readdirSync(subdir)) {
-      if (f.endsWith('.js')) src += '\n' + fs.readFileSync(path.join(subdir, f), 'utf-8');
+      if (f.endsWith('.js')) src += `\n${fs.readFileSync(path.join(subdir, f), 'utf-8')}`;
     }
   }
   return src;
