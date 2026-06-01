@@ -201,6 +201,16 @@ describe('A: observability widget shows sanitized status (no raw telemetry label
     expect(src).toContain("fetchJson('/api/status')");
     expect(src).not.toContain("fetchJson('/health')");
   });
+
+  test('no public page auto-fetches raw /health (status widget uses /api/status)', () => {
+    for (const f of ['index.html', 'index-en.html']) {
+      const html = read(path.join(PORTFOLIO, f));
+      // The status widget auto-fetches every .status-item[data-url]; none may
+      // point at raw /health (which leaks uptime/latency/errors/counters).
+      expect(html).not.toMatch(/data-url="https:\/\/resume\.jclee\.me\/health"/);
+      expect(html).toMatch(/data-url="https:\/\/resume\.jclee\.me\/api\/status"/);
+    }
+  });
 });
 
 describe('B: engineering principles + current focus surfaced from SSoT', () => {
