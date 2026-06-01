@@ -5,6 +5,7 @@ import { initMissionControl } from './modules/mission-control.js';
 import { initSkillRadar } from './modules/skill-radar.js';
 import { initCareerTimeline } from './modules/timeline.js';
 import { initProjectCards } from './modules/project-cards.js';
+import { initProjectExpand } from './modules/project-expand.js';
 import { initGuestbook } from './modules/guestbook.js';
 import { initObservabilityStats } from './modules/observability.js';
 
@@ -22,6 +23,7 @@ function bootstrapPortfolio() {
   initSkillRadar();
   initCareerTimeline();
   initProjectCards();
+  initProjectExpand();
   initGuestbook();
   initObservabilityStats();
 
