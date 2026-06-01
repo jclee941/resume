@@ -48,78 +48,166 @@
 
 | 앱 | 설명 |
 |----|------|
-| `portfolio/` | Cloudflare Workers 기반 공개 포트폴리오 엣지 사이트 |
-| `job-server/` | MCP 기반 채용 자동화 런타임 (Wanted/JobKorea) |
+| `portfolio/` | Cloudflare Workers 기반 공개 엣지 포트폴리오 |
+| `job-server/` | Wanted/JobKorea 채용 자동화 MCP 런타임 |
 | `job-dashboard/` | 대시보드 API 및 워크플로우 핸들러 |
 
 ## 패키지 (`packages/`)
 
 | 패키지 | 설명 |
 |--------|------|
-| `cli/` | CLI 배포/검증 도구 |
-| `env/` | 환경 검증 + 타입 세이프 시크릿 파싱 |
-| `data/` | SSoT 이력서 데이터 (master `resume_data.json`) |
-| `shared/` | 에러, 로거, 재시도, 서킷 브레이커, 암호화 유틸리티 |
-| `types/` | JSDoc/TS 정규 타입 정의 (런타임 의존성 없음) |
-| `schemas/` | Zod 런타임 검증 스키마 |
+| `cli/` | resume CLI 도구 |
+| `env/` | 환경 검증 및 타입 세이프 시크릿 |
+| `data/` | SSoT 이력서 및 JSON 스키마 |
+| `shared/` | 에러, 로거, 리트라이, 암호화, 레이트 리밋, 인증, 브라우저, 클라이언트 유틸리티 |
+| `types/` | 표준 JSDoc/TS 타입 정의 (런타임 의존성 없음) |
+| `schemas/` | 런타임 Zod 검증 스키마 |
 | `contracts/` | OpenAPI 스펙 + Cloudflare Worker Env 인터페이스 |
 
-## 도구 및 스크립트 (`tools/`)
+---
 
-- **Go:** `tools/scripts/` — 빌드, 배포, 검증, 동기화 유틸리티
-- **JavaScript:** CI/CD 스크립트 및 자동화 도구
+# Features
+
+## 주요 기능
+
+### Edge Portfolio Worker
+- Cloudflare Workers에 배포된 서버리스 포트폴리오
+- 서브 밀리초 응답 지연
+- 자동 생성된 엣지 번들
+
+### Job Automation (MCP)
+- Wanted 및 JobKorea 플랫폼용 MCP 서버
+- 자동화된 잡 스크래핑 및 지원
+- 제안서 검토 및 동기화 CLI
+
+### SSoT Data Management
+- 중앙 집중식 이력서 데이터 저장소
+- Zod 스키마 기반 런타임 검증
+- JSON 스키마 정의
+
+### Observability
+- 자체 호스팅 모니터링 대시보드
+- Cloudflare 대시보드 연동
+- n8n 기반 워크플로우 자동화
 
 ---
 
 # Architecture
 
-## System Overview
-
 ```mermaid
 flowchart TB
-    subgraph GitHub["GitHub Control Plane"]
-        WF[".github/workflows/"]
-        WF --> |37 Workflows| CI[CI Pipeline]
-        WF --> |Release| REL[Release Pipeline]
+    subgraph "Edge Layer"
+        PF[Portfolio Worker<br/>apps/portfolio]
+        JD[Job Dashboard Worker<br/>apps/job-dashboard]
     end
 
-    subgraph Apps["Application Layer"]
-        PFT[portfolio/] --> |Edge Deploy| CF[Cloudflare Workers]
-        JS[job-server/] --> |MCP Runtime| WANT[Wanted API]
-        JS --> |MCP Runtime| JK[JobKorea API]
-        JD[job-dashboard/] --> |API| USR[User Dashboard]
+    subgraph "Runtime Layer"
+        JS[Job Server MCP<br/>apps/job-server]
+        CLI[CLI Tool<br/>packages/cli]
     end
 
-    subgraph Packages["Shared Packages"]
-        TYPES[types/] --> |Canonical Types| APPS[All Apps]
-        SCHEMAS[schemas/] --> |Zod Validation| APPS
-        SHARED[shared/] --> |Utilities| APPS
-        CONTRACTS[contracts/] --> |OpenAPI + Env| APPS
+    subgraph "Data Layer"
+        DATA[Data Package<br/>packages/data]
+        TYPES[Types Package<br/>packages/types]
+        SCHEMAS[Schemas Package<br/>packages/schemas]
     end
 
-    subgraph Data["Data Layer"]
-        DATA[data/] --> |SSoT Resume| SHARED
-        DATA --> |SSoT Resume| TYPES
-        ENV[env/] --> |Validated Secrets| JS
+    subgraph "Shared Layer"
+        SHARED[Shared Utilities<br/>packages/shared]
+        CONTRACTS[Contracts<br/>packages/contracts]
+        ENV[Environment<br/>packages/env]
     end
 
-    CI --> |Lint/Test/Build| APPS
-    REL --> |Deploy| CF
-    REL --> |Health Check| JS
+    subgraph "Infrastructure"
+        CF[Cloudflare Workers/Pages]
+        OBS[self-hosted Observability]
+        N8N[n8n Workflow Automation]
+    end
+
+    subgraph "CI/CD"
+        GH[GitHub Actions<br/>37 Workflows]
+        WR[Workflow Runners]
+    end
+
+    PF --> CF
+    JD --> CF
+    JS --> WR
+    CLI --> WR
+    JS --> DATA
+    JS --> SCHEMAS
+    JS --> SHARED
+    DATA --> TYPES
+    SCHEMAS --> TYPES
+    SHARED --> ENV
+    WR --> GH
+    JS --> OBS
+    JS --> N8N
 ```
 
-## Development Flow
+## Repository Structure
 
-```mermaid
-flowchart LR
-    DEV[Developer] --> |Code Push| GH[GitHub]
-    GH --> |PR Created| PRC[PR Checks<br/>03_pr-checks.yml]
-    PRC --> |Review Request| PRR[PR Review<br/>10_pr-review.yml]
-    PRR --> |Approved| MERGE[Merge to Master]
-    MERGE --> |Trigger| SYNC[Data Sync<br/>auto-sync-data.yml]
-    SYNC --> |Build| BLD[Build Pipeline]
-    BLD --> |Deploy| CF[Cloudflare Workers]
-    CF --> |Health| HCHK[Health Check<br/>post-deploy-verify.yml]
+```
+/
+├── AGENTS.md
+├── CHANGELOG.md
+├── CONTRIBUTING.md
+├── Dockerfile
+├── LICENSE
+├── OWNERS
+├── README.md
+├── docker-compose.yml
+├── eslint.config.cjs
+├── jest.config.cjs
+├── lychee.toml
+├── package-lock.json
+├── package.json
+├── playwright.config.js
+├── redocly.yaml
+├── tsconfig.base.json
+├── tsconfig.json
+├── wrangler.jsonc
+├── apps/
+│   ├── portfolio/
+│   │   └── package.json
+│   ├── job-server/
+│   │   └── package.json
+│   └── job-dashboard/
+│       └── package.json
+├── packages/
+│   ├── cli/
+│   │   ├── package.json
+│   │   └── src/
+│   ├── env/
+│   │   ├── package.json
+│   │   └── src/
+│   ├── data/
+│   │   └── package.json
+│   ├── shared/
+│   │   ├── package.json
+│   │   └── src/
+│   ├── types/
+│   │   ├── package.json
+│   │   └── src/
+│   ├── schemas/
+│   │   ├── package.json
+│   │   └── src/
+│   └── contracts/
+│       ├── package.json
+│       ├── openapi.yaml
+│       └── src/
+├── tools/
+│   └── scripts/
+│       ├── build/
+│       ├── enrichment/
+│       ├── sync/
+│       └── utils/
+├── tests/
+├── infrastructure/
+├── docs/
+├── supabase/
+└── .github/
+    ├── workflows/
+    └── security/
 ```
 
 ---
@@ -128,92 +216,77 @@ flowchart LR
 
 ## GitHub Actions Workflows
 
-Total: **37 workflow files** across `.github/workflows/` and `security/`.
+This project uses **37 GitHub Actions workflows** for CI/CD, automation, and maintenance:
 
-### CI & Validation ( workflows)
+### Core CI Workflows
 
 | Workflow File | Purpose |
 |---------------|---------|
-| `01_branch-to-pr.yml` | Branch-to-PR conversion automation |
-| `02_issue-to-branch.yml` | Issue-to-branch creation |
-| `03_pr-checks.yml` | PR validation (lint, test, build) |
+| `01_branch-to-pr.yml` | Branch to PR creation automation |
+| `02_issue-to-branch.yml` | Issue to branch automation |
+| `03_pr-checks.yml` | PR validation and checks |
 | `04_actionlint.yml` | GitHub Actions YAML linting |
-| `05_gitleaks.yml` | Secret scanning |
+| `05_gitleaks.yml` | Secrets scanning |
 | `06_codeql.yml` | Code quality analysis |
-| `07_dependency-review.yml` | Dependency vulnerability review |
-| `08_scorecard.yml` | OpenSSF security scorecard |
-| `44_reusable-pr-checks.yml` | Reusable PR validation |
-| `45_reusable-gitleaks.yml` | Reusable secret scanning |
-| `ci.yml` | Core CI pipeline |
+| `07_dependency-review.yml` | Dependency security review |
+| `08_scorecard.yml` | OpenSSF scorecard |
+| `09_semantic-pr.yml` | Semantic PR enforcement |
+| `10_pr-review.yml` | Automated PR review (security/) |
+| `11_pr-review.yml` | PR review automation (security/) |
 
-### Code Review & Merge
-
-| Workflow File | Purpose |
-|---------------|---------|
-| `10_pr-review.yml` | AI-powered PR review (qodo-ai/pr-agent) |
-| `11_pr-review.yml` | Security-focused PR review |
-| `01_branch-to-pr.yml` | Branch-to-PR conversion |
-| `09_semantic-pr.yml` | Semantic PR validation |
-| `13_pr-auto-merge.yml` | Automatic PR merging |
-| `14_bot-auto-fix.yml` | Bot-triggered auto-fixes |
-| `15_merged-pr-cleanup.yml` | Post-merge cleanup |
-
-### Dependency Management
+### Automation Workflows
 
 | Workflow File | Purpose |
 |---------------|---------|
 | `12_dependabot-auto-merge.yml` | Dependabot PR auto-merge |
-| `42_reusable-docs-sync.yml` | Documentation sync |
-
-### Release & Deployment
-
-| Workflow File | Purpose |
-|---------------|---------|
-| `24_release-notes.yml` | Automated release notes generation |
-| `25_release-publish.yml` | Release publication |
-| `release.yml` | Release pipeline trigger |
-| `post-deploy-verify.yml` | Post-deployment health verification |
-| `provision-queues.yml` | Queue provisioning |
-
-### Issue & Project Management
-
-| Workflow File | Purpose |
-|---------------|---------|
-| `18_issue-management.yml` | Issue lifecycle automation |
+| `13_pr-auto-merge.yml` | General PR auto-merge |
+| `14_bot-auto-fix.yml` | Bot-powered auto-fixes |
+| `15_merged-pr-cleanup.yml` | Post-merge cleanup |
+| `18_issue-management.yml` | Issue state management |
 | `19_issue-backfill.yml` | Issue data backfill |
-| `29_downstream-health-check.yml` | Downstream service health check |
-| `37_ci-failure-issues.yml` | CI failure issue creation |
-| `43_reusable-issue-management.yml` | Reusable issue automation |
-| `welcome.yml` | New contributor welcome message |
-
-### Documentation
-
-| Workflow File | Purpose |
-|---------------|---------|
 | `20_readme-gen.yml` | README generation |
-| `21_docs-sync.yml` | Documentation synchronization |
+| `21_docs-sync.yml` | Documentation sync |
+| `42_reusable-docs-sync.yml` | Reusable docs sync |
 
-### Operational Automation
+### Release Workflows
 
 | Workflow File | Purpose |
 |---------------|---------|
+| `24_release-notes.yml` | Release notes generation |
+| `25_release-publish.yml` | Release publication |
+| `release.yml` | Main release workflow |
+| `auto-merge.yml` | Auto-merge trigger |
+
+### Health & Monitoring Workflows
+
+| Workflow File | Purpose |
+|---------------|---------|
+| `29_downstream-health-check.yml` | Downstream service health |
+| `37_ci-failure-issues.yml` | CI failure issue creation |
 | `60_ci-auto-heal.yml` | CI self-healing automation |
-| `auto-merge.yml` | Generic auto-merge handler |
-| `auto-sync-data.yml` | Data synchronization pipeline |
+
+### Utility Workflows
+
+| Workflow File | Purpose |
+|---------------|---------|
+| `auto-sync-data.yml` | Data synchronization |
+| `ci.yml` | Main CI workflow |
 | `delete-standalone-job-worker.yml` | Worker cleanup |
-| `labeler.yml` | PR/issue labeling |
-| `security/11_pr-review.yml` | Security PR review |
+| `labeler.yml` | PR label management |
+| `post-deploy-verify.yml` | Post-deployment verification |
+| `provision-queues.yml` | Queue provisioning |
+| `welcome.yml` | New contributor welcome |
+| `43_reusable-issue-management.yml` | Reusable issue management |
+| `44_reusable-pr-checks.yml` | Reusable PR checks |
+| `45_reusable-gitleaks.yml` | Reusable secrets scanning |
 
-## AI-Powered Review Tools
+## External Integrations
 
-| Tool | Purpose | Endpoint |
-|------|---------|----------|
-| **qodo-ai/pr-agent** | AI PR review and automation | Used in `10_pr-review.yml` |
-| **CLIProxyAPI** | LLM gateway for PR agent | `https://cliproxy.jclee.me/v1` |
-
-## Go Automation Tools
-
-**None.** This repository does not contain Go-based automation tools.
+| Service | Purpose |
+|---------|---------|
+| **qodo-ai/pr-agent** | PR review automation via `10_pr-review.yml` |
+| **cliproxy.jclee.me** | CLI Proxy API endpoint for AI operations |
+| **bot.jclee.me** | Bot automation endpoint |
 
 ---
 
@@ -223,90 +296,92 @@ Total: **37 workflow files** across `.github/workflows/` and `security/`.
 
 - Node.js ≥22
 - npm ≥10
-- Docker (for containerized job-server)
+- Docker (for containerized development)
 - Git
 
-## Clone & Install
+## Installation
 
 ```bash
+# Clone the repository
 git clone https://github.com/qodo-ai/pr-agent.git
-cd pr-agent
+cd resume
+
+# Install all workspace dependencies
 npm install
+
+# Verify installation
+npm run typecheck
 ```
 
-## Build All Applications
+## Development Setup
+
+### Local Portfolio Development
 
 ```bash
-npm run build:all
+# Sync SSoT data before building
+npm run sync:data
+
+# Build portfolio worker
+npm run build:portfolio
+
+# Run type checking
+npm run typecheck
+
+# Run tests
+npm run test
 ```
 
-## Run Portfolio Worker Locally
+### Job Server Development
 
 ```bash
-cd apps/portfolio
-npm run dev
+# Start job server with Docker
+docker-compose up -d
+
+# Check health
+curl http://localhost:3000/health
 ```
 
-## Run Job Server (Containerized)
+### Running CLI Commands
 
 ```bash
-docker compose up -d
-# Health check available at http://localhost:3000/health
+# Deploy operations
+npm run deploy --workspace=@resume/cli
+
+# Database operations
+npm run db --workspace=@resume/cli
+
+# Verification
+npm run verify --workspace=@resume/cli
 ```
 
 ---
 
 # Local Development
 
-## Repository Structure
+## Environment Variables
 
-```
-.
-├── apps/
-│   ├── portfolio/          # Cloudflare Worker portfolio
-│   ├── job-server/         # MCP job automation runtime
-│   └── job-dashboard/      # Dashboard API & workflows
-├── packages/
-│   ├── cli/                # CLI deployment/verification tools
-│   ├── env/                # Environment validation
-│   ├── data/               # SSoT resume data
-│   ├── shared/             # Cross-package utilities
-│   ├── types/              # Canonical type definitions
-│   ├── schemas/            # Zod validation schemas
-│   └── contracts/          # OpenAPI + Env interfaces
-├── tools/                  # CI, build, deploy scripts (Go + JS)
-├── tests/                  # Jest, Playwright E2E
-├── infrastructure/         # Monitoring, n8n, DB configs
-├── docs/                   # ADRs, guides, architecture
-└── .github/workflows/      # 37 GitHub Actions workflows
+Create a `.env` file with required environment variables:
+
+```env
+NODE_ENV=development
+PORT=3000
+# Add required secrets for job automation
 ```
 
-## Workspace Scripts
+## Docker Development
 
 ```bash
-# Data synchronization
-npm run sync:data           # Sync SSoT resume data
-npm run sync:pdf            # Generate PDF resume
-npm run sync:pptx           # Generate PPTX presentation
-npm run sync:all            # Sync all (data + PDF + PPTX)
+# Build the MCP server container
+docker-compose build
 
-# AI enrichment
-npm run enrich:github       # GitHub contribution enrichment
-npm run enrich:skills       # Skills data enrichment
-npm run enrich:ai           # AI-powered enrichment
-npm run enrich:all          # All enrichment tasks
+# Start all services
+docker-compose up
 
-# Build & deployment
-npm run build               # Build portfolio worker
-npm run build:full          # Build portfolio + CLI
-npm run build:all           # Full build pipeline
+# View logs
+docker-compose logs -f
 
-# Automation
-npm run automate:ssot       # Sync → Build → Typecheck → Test
-npm run automate:full       # Full pipeline (sync + lint + typecheck + test + build)
-
-# Version management
-npm run version:bump        # Version bump (interactive)
+# Stop services
+docker-compose down
 ```
 
 ## Testing
@@ -315,185 +390,133 @@ npm run version:bump        # Version bump (interactive)
 # Run all tests
 npm run test
 
-# Node-specific tests
+# Run unit tests
 npm run test:node
 
-# E2E tests with Playwright
+# Run E2E tests
 npm run test:e2e
 
-# Lint verification
-npm run lint
+# Run with coverage
+npm run test -- --coverage
 ```
 
-## Development Workflow
+## Linting
 
-1. **Create a branch** from `master`:
+```bash
+# Run ESLint
+npm run lint
 
-   ```bash
-   git checkout -b feature/my-feature
-   ```
-
-2. **Make changes** and commit with semantic messages:
-
-   ```bash
-   git commit -m "feat: add new job automation capability"
-   ```
-
-3. **Push and create PR** — workflows trigger automatically:
-   - `03_pr-checks.yml` runs CI checks
-   - `10_pr-review.yml` requests AI review
-   - `09_semantic-pr.yml` validates commit format
-
-4. **After approval**, merge via `13_pr-auto-merge.yml` or manually
+# Fix auto-fixable issues
+npm run lint -- --fix
+```
 
 ---
 
 # Commands Reference
 
-## npm Workspace Commands
+## Build Commands
 
-| Command | Workspace | Description |
-|---------|-----------|-------------|
-| `npm run build --workspace=@resume/portfolio-worker` | apps/portfolio | Build Cloudflare Worker |
-| `npm run deploy --workspace=@resume/cli` | packages/cli | Deploy via CLI |
-| `npm run verify --workspace=@resume/cli` | packages/cli | Verify deployment |
+| Command | Description |
+|---------|-------------|
+| `npm run build` | Sync SSoT data and build portfolio worker |
+| `npm run build:portfolio` | Build portfolio worker with data sync |
+| `npm run build:full` | Full build including CLI |
+| `npm run build:all` | Build all workspaces |
 
-## Package.json Root Scripts
+## Sync Commands
 
-| Script | Description |
-|--------|-------------|
-| `sync:data` | Sync SSoT resume data from source |
-| `sync:pdf` | Generate PDF via Go tool |
-| `sync:pptx` | Generate PPTX via Python |
-| `enrich:github` | Enrich resume with GitHub contributions |
-| `enrich:skills` | Enrich with skills data |
-| `enrich:ai` | AI-powered data enrichment |
-| `build` | Build portfolio worker |
-| `lint` | Run ESLint |
-| `typecheck` | Run TypeScript type checking |
-| `test` | Run all tests |
-| `test:node` | Run Node.js tests |
-| `test:e2e` | Run Playwright E2E tests |
-| `automate:ssot` | Full SSoT automation pipeline |
-| `automate:full` | Complete build/test/deploy pipeline |
+| Command | Description |
+|---------|-------------|
+| `npm run sync:data` | Sync resume data from SSoT |
+| `npm run sync:pdf` | Generate PDF (Go) |
+| `npm run sync:pptx` | Generate PPTX (Python) |
+| `npm run sync:all` | Sync all formats (data, PDF, PPTX) |
+| `npm run sync:proposals` | Sync job proposals |
 
-## Docker Commands
+## Enrichment Commands
+
+| Command | Description |
+|---------|-------------|
+| `npm run enrich:github` | Enrich with GitHub data (Go) |
+| `npm run enrich:skills` | Enrich with skills data (Go) |
+| `npm run enrich:ai` | AI-based enrichment (Go) |
+| `npm run enrich:all` | Run all enrichment scripts |
+
+## Automation Commands
+
+| Command | Description |
+|---------|-------------|
+| `npm run automate:ssot` | Sync data, build, typecheck, test |
+| `npm run automate:full` | Full automation pipeline |
+
+## CI/CD Commands
 
 ```bash
-# Start job-server
-docker compose up -d
+# Validate Cloudflare native build
+go run ./tools/ci/validate-cloudflare-native.go
 
-# View logs
-docker compose logs -f
+# Run health check
+npm run health-check
 
-# Stop services
-docker compose down
-
-# Rebuild image
-docker compose build --no-cache
+# Deploy with verification
+npm run deploy --workspace=@resume/cli
 ```
 
 ---
 
 # Contribution Guide
 
-## Getting Started
+## Contributing
 
-1. Fork the repository
-2. Clone your fork:
+Contributions are welcome! Please read our [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
-   ```bash
-   git clone https://github.com/<your-username>/pr-agent.git
-   ```
+## Development Workflow
 
-3. Add upstream remote:
-
-   ```bash
-   git remote add upstream https://github.com/qodo-ai/pr-agent.git
-   ```
-
-## Workflow
-
-### Feature Development
-
-```bash
-# Create feature branch
-git checkout -b feature/your-feature-name
-
-# Install dependencies
-npm install
-
-# Make changes, add tests
-git add .
-git commit -m "feat: describe your change"
-
-# Push to your fork
-git push origin feature/your-feature-name
-
-# Create PR via GitHub UI
-```
-
-### Commit Message Convention
-
-This project uses **Semantic PR** (`09_semantic-pr.yml`). Commits must follow:
-
-- `feat: new feature`
-- `fix: bug fix`
-- `docs: documentation changes`
-- `style: formatting, no code change`
-- `refactor: code refactoring`
-- `test: adding tests`
-- `chore: maintenance tasks`
-
-### PR Review Process
-
-1. **Automated checks** (`03_pr-checks.yml`):
-   - ESLint
-   - TypeScript type check
-   - Unit tests
-   - Build verification
-
-2. **AI Review** (`10_pr-review.yml`):
-   - Code quality analysis via qodo-ai/pr-agent
-   - Security consideration review
-
-3. **Manual review** by maintainers
-
-4. **Auto-merge** (`13_pr-auto-merge.yml`) upon approval
+1. **Fork** the repository
+2. **Create** a feature branch from `master`
+3. **Make** your changes with tests
+4. **Run** `npm run automate:ssot` to validate
+5. **Submit** a Pull Request
 
 ## Code Standards
 
-| Check | Tool | Config |
-|-------|------|--------|
-| Linting | ESLint | `eslint.config.cjs` |
-| Type checking | TypeScript | `tsconfig.json` |
-| Unit tests | Jest | `jest.config.cjs` |
-| E2E tests | Playwright | `playwright.config.js` |
-| API lint | lx | `lychee.toml` |
+- Run `npm run lint` before committing
+- Ensure `npm run typecheck` passes
+- All new features require tests
+- Follow the monorepo workspace structure
 
-## Reporting Issues
+## Commit Convention
 
-- Use issue templates via `18_issue-management.yml`
-- Check existing issues before creating new ones
-- Include reproduction steps and expected behavior
+This project uses semantic PR titles enforced by `09_semantic-pr.yml`.
+
+Format: `<type>(<scope>): <description>`
+
+Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
+
+## Release Process
+
+Releases follow a biweekly schedule managed by `24_release-notes.yml` and `25_release-publish.yml`:
+
+1. Features merged to `master`
+2. `20_readme-gen.yml` regenerates documentation
+3. `24_release-notes.yml` generates changelog
+4. `25_release-publish.yml` publishes release
 
 ---
 
 # License
 
-MIT License — see [LICENSE](LICENSE) for details.
+MIT License - see [LICENSE](LICENSE) file for details.
 
 ---
 
-# Links
+# Support
 
-- [CHANGELOG](CHANGELOG.md)
-- [CONTRIBUTING](CONTRIBUTING.md)
-- [AGENTS.md](AGENTS.md) — Project knowledge base
-- [OpenAPI Specification](packages/contracts/openapi.yaml)
+- **Documentation:** [docs/](docs/)
+- **Changelog:** [CHANGELOG.md](CHANGELOG.md)
+- **Agents.md:** [AGENTS.md](AGENTS.md) for project knowledge base
+- **Workflow Issues:** GitHub Actions workflows located in [.github/workflows/](.github/workflows/)
 
 ---
 
-**Maintained by:** qodo-ai/pr-agent  
-**Documentation generated by:** README workflow (`20_readme-gen.yml`)  
-**AI Review powered by:** [qodo-ai/pr-agent](https://github.com/qodo-ai/pr-agent)
+*Generated by README-gen (minimax-m2.7 with gpt-5.5 fallback via CLIProxyAPI)*
