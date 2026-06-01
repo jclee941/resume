@@ -10,10 +10,14 @@
 package main
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -190,6 +194,7 @@ func generatePDFNative(source, output, font string) error {
 
 	cmd := exec.Command("pandoc", args...)
 	cmd.Dir = projectRoot
+	cmd.Env = deterministicEnv(source)
 	return cmd.Run()
 }
 
@@ -220,6 +225,7 @@ func generatePDFDocker(source, output, font string) error {
 	}
 
 	cmd := exec.Command("docker", args...)
+	cmd.Env = deterministicEnv(source)
 	return cmd.Run()
 }
 
@@ -228,6 +234,76 @@ func formatOutputPath(output string) string {
 		return fmt.Sprintf(output, version)
 	}
 	return output
+}
+
+// deterministicEnv returns the process environment augmented with
+// FORCE_SOURCE_DATE=1 and a stable SOURCE_DATE_EPOCH so pandoc/xelatex emit
+// fixed CreationDate/ModDate. The epoch is the source file's last git commit
+// time (stable across machines); it falls back to the file mtime, then to a
+// fixed constant, so the build never depends on wall-clock time.
+func deterministicEnv(source string) []string {
+	epoch := sourceDateEpoch(source)
+	env := os.Environ()
+	env = append(env, "FORCE_SOURCE_DATE=1")
+	env = append(env, "SOURCE_DATE_EPOCH="+strconv.FormatInt(epoch, 10))
+	return env
+}
+
+// sourceDateEpoch resolves a stable Unix timestamp for the source file:
+// git commit time first, then file mtime, then a fixed fallback constant.
+func sourceDateEpoch(source string) int64 {
+	abs := source
+	if !filepath.IsAbs(abs) {
+		abs = filepath.Join(projectRoot, source)
+	}
+	cmd := exec.Command("git", "log", "-1", "--format=%ct", "--", abs)
+	cmd.Dir = projectRoot
+	if out, err := cmd.Output(); err == nil {
+		if ts, perr := strconv.ParseInt(strings.TrimSpace(string(out)), 10, 64); perr == nil && ts > 0 {
+			return ts
+		}
+	}
+	if info, err := os.Stat(abs); err == nil {
+		return info.ModTime().Unix()
+	}
+	return 1704067200 // 2024-01-01T00:00:00Z fixed fallback
+}
+
+// pdfIDPattern matches the PDF trailer /ID array: /ID[<hex><hex>].
+// xelatex emits a random pair on every run, which is the sole remaining source
+// of non-determinism once FORCE_SOURCE_DATE fixes the timestamps.
+var pdfIDPattern = regexp.MustCompile(`/ID\s*\[\s*<[0-9A-Fa-f]+>\s*<[0-9A-Fa-f]+>\s*\]`)
+
+// normalizePdfID rewrites the trailer /ID to a content-derived deterministic
+// value so two builds of identical content produce identical bytes. The ID is
+// the MD5 of the PDF with its /ID array stripped, so different content still
+// yields a different ID (no constant-collision that would mask real changes).
+// Returns the input unchanged when no /ID array is present.
+func normalizePdfID(pdf []byte) []byte {
+	loc := pdfIDPattern.FindIndex(pdf)
+	if loc == nil {
+		return pdf
+	}
+	withoutID := make([]byte, 0, len(pdf))
+	withoutID = append(withoutID, pdf[:loc[0]]...)
+	withoutID = append(withoutID, pdf[loc[1]:]...)
+	sum := md5.Sum(withoutID)
+	id := strings.ToUpper(hex.EncodeToString(sum[:]))
+	replacement := fmt.Sprintf("/ID [<%s><%s>]", id, id)
+	out := make([]byte, 0, loc[0]+len(replacement)+(len(pdf)-loc[1]))
+	out = append(out, pdf[:loc[0]]...)
+	out = append(out, []byte(replacement)...)
+	out = append(out, pdf[loc[1]:]...)
+	return out
+}
+
+// normalizePdfFile reads, normalizes the /ID of, and rewrites a PDF in place.
+func normalizePdfFile(path string) error {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(path, normalizePdfID(data), 0644)
 }
 
 func generateSinglePDF(source, output, font string) bool {
@@ -247,8 +323,11 @@ func generateSinglePDF(source, output, font string) bool {
 	// Try native Pandoc first
 	if _, err := exec.LookPath("pandoc"); err == nil {
 		if err := generatePDFNative(sourcePath, outputPath, font); err == nil {
+			if normErr := normalizePdfFile(outputPath); normErr != nil {
+				fmt.Printf("%s\u26a0 generated but /ID normalize failed: %s%s\n", Yellow, normErr, NoColor)
+			}
 			size := getFileSize(outputPath)
-			fmt.Printf("%s✓ (%s)%s\n", Green, size, NoColor)
+			fmt.Printf("%s\u2713 (%s)%s\n", Green, size, NoColor)
 			return true
 		}
 	}
@@ -256,8 +335,11 @@ func generateSinglePDF(source, output, font string) bool {
 	// Fallback to Docker
 	if _, err := exec.LookPath("docker"); err == nil {
 		if err := generatePDFDocker(sourcePath, outputPath, font); err == nil {
+			if normErr := normalizePdfFile(outputPath); normErr != nil {
+				fmt.Printf("%s\u26a0 generated but /ID normalize failed: %s%s\n", Yellow, normErr, NoColor)
+			}
 			size := getFileSize(outputPath)
-			fmt.Printf("%s✓ Docker (%s)%s\n", Green, size, NoColor)
+			fmt.Printf("%s\u2713 Docker (%s)%s\n", Green, size, NoColor)
 			return true
 		}
 	}
