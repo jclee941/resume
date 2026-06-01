@@ -10,7 +10,7 @@ import {
 import { getEditUrl } from './change-detection.js';
 import { assertJobKoreaResumeAccess, loadJobKoreaSession } from './session.js';
 import { JobKoreaAPIClient } from './api-client.js';
-import { buildCookieString } from '../../jobkorea-session/cookie-utils.js';
+import { buildCookieString, toPlaywrightCookies } from '../../jobkorea-session/cookie-utils.js';
 import {
   executeHybridPortfolio,
   executeHybridSave,
@@ -246,7 +246,7 @@ export async function syncJobKoreaProfile(handler, ssot, options = {}) {
   let shouldPersistCookies = false;
 
   try {
-    await context.addCookies(cookies);
+    await context.addCookies(toPlaywrightCookies(cookies));
     const page = await context.newPage();
 
     const editUrl = getEditUrl();
@@ -269,7 +269,7 @@ export async function syncJobKoreaProfile(handler, ssot, options = {}) {
         const renewedCookies = handler.loadSession();
         if (renewedCookies) {
           await context.clearCookies();
-          await context.addCookies(renewedCookies);
+          await context.addCookies(toPlaywrightCookies(renewedCookies));
           await page.goto(editUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
         }
       } catch (renewError) {

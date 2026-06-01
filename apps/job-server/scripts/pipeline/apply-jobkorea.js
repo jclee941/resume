@@ -1,4 +1,5 @@
 import SessionManager from '../../src/shared/services/session/session-manager.js';
+import { toPlaywrightCookies } from '../jobkorea-session/cookie-utils.js';
 
 import { generateCoverLetterForJob } from './cover-letter.js';
 import { APPLY_DELAY_MS, config } from './constants.js';
@@ -35,7 +36,7 @@ export async function applyToJobKoreaJobs(result, jobs, dedupCache, updateDedupE
       Object.defineProperty(navigator, 'webdriver', { get: () => false });
     });
 
-    const cookies = Array.isArray(session.cookies) ? session.cookies : [];
+    const cookies = toPlaywrightCookies(Array.isArray(session.cookies) ? session.cookies : []);
     if (cookies.length > 0) {
       await ctx.addCookies(cookies);
       log('jobkorea cookies loaded:', cookies.length);

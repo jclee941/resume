@@ -29,6 +29,26 @@ export function buildCookieString(cookies = []) {
   return cookies.map((cookie) => `${cookie.name}=${cookie.value}`).join('; ');
 }
 
+const PLAYWRIGHT_SAME_SITE = new Set(['Lax', 'Strict', 'None']);
+
+export function toPlaywrightCookies(cookies) {
+  if (!Array.isArray(cookies)) {
+    return [];
+  }
+  return cookies
+    .filter((cookie) => cookie && cookie.name && cookie.value !== undefined && cookie.value !== null)
+    .map((cookie) => ({
+      name: cookie.name,
+      value: String(cookie.value),
+      domain: cookie.domain || '.jobkorea.co.kr',
+      path: cookie.path || '/',
+      httpOnly: !!cookie.httpOnly,
+      secure: !!cookie.secure,
+      sameSite: PLAYWRIGHT_SAME_SITE.has(cookie.sameSite) ? cookie.sameSite : 'Lax',
+      expires: typeof cookie.expires === 'number' ? cookie.expires : -1,
+    }));
+}
+
 export function hasFreshSession(session) {
   if (!session || !session.expiresAt) {
     return false;
