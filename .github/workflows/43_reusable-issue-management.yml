@@ -56,9 +56,9 @@ jobs:
             const title = issue.title.toLowerCase();
             const body = (issue.body || '').toLowerCase();
             const combined = title + ' ' + body;
-
+            
             const labels = [];
-
+            
             // Keyword-based labeling
             if (combined.includes('bug') || combined.includes('fix') || combined.includes('error') || combined.includes('crash')) {
               labels.push('bug');
@@ -84,7 +84,7 @@ jobs:
             if (combined.includes('deps') || combined.includes('dependency') || combined.includes('upgrade') || combined.includes('bump')) {
               labels.push('dependencies');
             }
-
+            
             if (labels.length > 0) {
               await github.rest.issues.addLabels({
                 owner: context.repo.owner,
@@ -121,6 +121,7 @@ jobs:
               console.log(`Removed stale label from #${issue.number}`);
             }
 
+
   issue-stats:
     runs-on: ${{ github.repository_visibility == 'private' && 'self-hosted' || 'ubuntu-latest' }}
     timeout-minutes: 10
@@ -146,7 +147,7 @@ jobs:
               state: 'open',
               per_page: 100
             });
-
+            
             const stats = {
               total: issues.length,
               bug: issues.filter(i => i.labels.some(l => l.name === 'bug')).length,
@@ -160,7 +161,7 @@ jobs:
                 return days > 30;
               }).length
             };
-
+            
             console.log('📊 Issue Statistics');
             console.log('====================');
             console.log(`Total open: ${stats.total}`);
@@ -171,7 +172,7 @@ jobs:
             console.log(`Stale: ${stats.stale}`);
             console.log(`No labels: ${stats.no_labels}`);
             console.log(`Over 30 days: ${stats.old}`);
-
+            
             // Create summary comment if old issues exist
             if (stats.old > 0) {
               const body = `## 📋 이슈 현황 요약\n\n` +
