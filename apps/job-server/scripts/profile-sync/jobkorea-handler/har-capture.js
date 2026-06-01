@@ -8,6 +8,7 @@ import { CONFIG } from '../constants.js';
 import { buildJobKoreaFormData } from '../jobkorea-sections.js';
 import { getEditUrl } from './change-detection.js';
 import { assertJobKoreaResumeAccess } from './session.js';
+import { toPlaywrightCookies } from '../../jobkorea-session/cookie-utils.js';
 import { pickJobKoreaBrowserProfile } from '../../jobkorea-session/user-agent-pool.js';
 import { redactSensitiveValue } from './har-redaction-patterns.js';
 
@@ -166,7 +167,7 @@ export async function captureJobKoreaProfileSyncHar(handler, ssot, options = {})
   await applyPlaywrightStealth(context);
 
   try {
-    await context.addCookies(cookies);
+    await context.addCookies(toPlaywrightCookies(cookies));
     const page = await context.newPage();
     page.on('request', (request) => {
       try {

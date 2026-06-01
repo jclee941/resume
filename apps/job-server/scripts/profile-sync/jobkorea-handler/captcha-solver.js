@@ -8,17 +8,37 @@
 
 import { log } from '../sync-logger.js';
 
-// Vision-capable models in priority order. Pure-vision models (Gemini Flash,
-// Claude Sonnet) tend to handle BMP CAPTCHA better than reasoning models
-// (which leak chain-of-thought into the answer).
+// Vision-capable models in priority order. GPT first per operator preference;
+// Claude vision models follow as fallback. Must match model ids actually served
+// by the cliproxy backend (https://cliproxy.jclee.me/v1/models).
 const VISION_MODELS = [
-  'gemini-2.5-flash-lite',
-  'gemini-3.1-pro-preview',
-  'claude-sonnet-4-20250514',
-  'claude-opus-4-6',
-  'minimax-m2.5',
+  'gpt-5.5',
+  'gpt-5.4',
   'gpt-5.4-mini',
+  'claude-sonnet-4-5-20250929',
+  'claude-opus-4-8',
 ];
+
+/**
+ * Resolve the ordered list of vision model ids to try, allowing a
+ * comma-separated JOBKOREA_CAPTCHA_MODELS env override.
+ *
+ * @param {NodeJS.ProcessEnv | Record<string, string | undefined>} env
+ * @returns {string[]}
+ */
+export function resolveVisionModels(env = process.env) {
+  const override = env.JOBKOREA_CAPTCHA_MODELS?.trim();
+  if (override) {
+    const parsed = override
+      .split(',')
+      .map((model) => model.trim())
+      .filter(Boolean);
+    if (parsed.length > 0) {
+      return parsed;
+    }
+  }
+  return [...VISION_MODELS];
+}
 
 /**
  * Resolve and validate the cliproxy base URL from the provided environment.
@@ -158,10 +178,12 @@ async function callVisionModel(image, model) {
           {
             type: 'text',
             text:
-              'This is a CAPTCHA image from a Korean website (JobKorea). ' +
-              'Read the visible alphanumeric characters (no other content). ' +
-              'Reply with ONLY the characters, exact case, no punctuation, no spaces, no explanation. ' +
-              'If you cannot read the characters, reply with the single word: UNREADABLE.',
+              'The image contains a short distorted string of letters and digits. ' +
+              'Transcribe exactly the characters you see in the image, preserving upper/lower case. ' +
+              'It is usually 5 to 8 characters long and contains no real words. ' +
+              'Do NOT guess, do NOT output any word that is not literally drawn in the image. ' +
+              'Reply with ONLY those characters — no spaces, no punctuation, no explanation. ' +
+              'If the characters are illegible, reply with exactly: ZZZZZZ.',
           },
           {
             type: 'image_url',
@@ -191,7 +213,7 @@ async function callVisionModel(image, model) {
   // Reasoning models may prepend thoughts. Extract the last alphanumeric token of length 3-12.
   const tokens = String(raw)
     .split(/[^A-Za-z0-9]+/)
-    .filter((t) => t.length >= 3 && t.length <= 12 && t !== 'UNREADABLE');
+    .filter((t) => t.length >= 3 && t.length <= 12 && t !== 'ZZZZZZ');
   const cleaned = tokens.length ? tokens[tokens.length - 1] : '';
   return cleaned;
 }
@@ -220,10 +242,10 @@ export async function solveJobKoreaCaptcha(page) {
   log(`CAPTCHA image downloaded (${image.mime}, ${image.base64.length} chars b64)`, 'info', 'jobkorea');
 
   const errors = [];
-  for (const model of VISION_MODELS) {
+  for (const model of resolveVisionModels()) {
     try {
       const text = await callVisionModel(image, model);
-      if (text && text !== 'UNREADABLE' && text.length >= 3 && text.length <= 12) {
+      if (text && text !== 'ZZZZZZ' && text.length >= 3 && text.length <= 12) {
         log(`CAPTCHA solved via ${model}: "${text}"`, 'ok', 'jobkorea');
         return { text, model };
       }
