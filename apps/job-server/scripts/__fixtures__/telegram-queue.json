@@ -1,0 +1,24 @@
+[
+  {
+    "company": "AlphaSec",
+    "position": "DevSecOps Engineer",
+    "url": "https://www.wanted.co.kr/wd/1",
+    "source": "wanted",
+    "matchPercentage": 82,
+    "matchDetails": { "skillMatches": [{ "keyword": "devsecops" }, { "keyword": "aws" }] }
+  },
+  {
+    "company": "BetaCloud <Lab>",
+    "position": "Site Reliability Engineer & SRE",
+    "url": "https://www.jobkorea.co.kr/Recruit/GI_Read/2?x=1&y=2",
+    "source": "jobkorea",
+    "matchPercentage": 77
+  },
+  {
+    "company": "GammaPay",
+    "position": "보안 인프라 엔지니어",
+    "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=3",
+    "source": "saramin",
+    "matchPercentage": 71
+  }
+]

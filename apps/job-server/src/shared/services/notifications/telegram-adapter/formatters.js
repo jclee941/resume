@@ -198,3 +198,46 @@ export function createJobPostingsMessage(jobs = [], options = {}) {
 
   return { text, parse_mode: 'HTML', disable_web_page_preview: true, renderedCount };
 }
+
+/**
+ * Format a SINGLE job posting as its own Telegram HTML message. Used when
+ * sending one message per job (see TelegramNotificationAdapter.sendJobPostingsSeparately).
+ * Length-splitting of an oversized result is the caller's responsibility
+ * (splitForTelegram); this function does not truncate.
+ *
+ * @param {object} job
+ * @param {{header?:string}} [options]
+ * @returns {{text:string, parse_mode:'HTML', disable_web_page_preview:true}}
+ */
+export function createSingleJobMessage(job = {}, options = {}) {
+  const company = escapeHtml(resolveJobField(job, 'company', 'companyName'));
+  const position = escapeHtml(resolveJobField(job, 'position', 'title'));
+  const url = resolveJobField(job, 'url', 'sourceUrl');
+  const platform = escapeHtml(resolveJobField(job, 'source', 'platform'));
+  const score = job.matchPercentage ?? job.matchScore ?? job.score;
+
+  const label = company ? `${position} — ${company}` : position || company || '(제목 없음)';
+  const titleLine = url ? `<a href="${escapeHtml(url)}">${label}</a>` : label;
+
+  const meta = [];
+  if (platform) meta.push(`[${platform}]`);
+  if (score != null) meta.push(`${escapeHtml(String(score))}%`);
+  const priority = resolveJobField(job, 'applicationPriority');
+  if (priority) meta.push(escapeHtml(String(priority)));
+
+  const skillMatches = job?.matchDetails?.skillMatches;
+  let skillsLine = '';
+  if (Array.isArray(skillMatches) && skillMatches.length > 0) {
+    const names = skillMatches
+      .slice(0, 5)
+      .map((s) => escapeHtml(String(s?.keyword ?? s?.name ?? s)))
+      .filter(Boolean);
+    if (names.length > 0) skillsLine = `\n🧩 ${names.join(', ')}`;
+  }
+
+  const header = options.header || '🔍 <b>지원 추천 공고</b>';
+  const metaLine = meta.length > 0 ? `\n${meta.join(' · ')}` : '';
+  const text = `${header}\n\n${titleLine}${metaLine}${skillsLine}`;
+
+  return { text, parse_mode: 'HTML', disable_web_page_preview: true };
+}
