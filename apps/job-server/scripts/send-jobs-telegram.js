@@ -92,12 +92,14 @@ async function main() {
     ? await loadFromQueue(args.queuePath)
     : await crawlJobs(args.keywords, args.minScore);
 
-  // Keep only 지원할만한 (worthy) postings, best-first. Queue files may be
-  // pre-curated but can also carry scores, so the same gate applies uniformly.
-  const jobs = filterWorthy(collected, args.minScore);
+  // Keep only 지원할만한 (worthy) postings, best-first. Crawl results are gated by
+  // score (>=minScore). A queue file is hand-curated, so unscored queue entries
+  // are treated as already-vetted (kept); scored queue entries still obey the gate.
+  const jobs = filterWorthy(collected, args.minScore, { keepUnscored: Boolean(args.queuePath) });
 
   console.log(
-    `📋 ${jobs.length} worthy posting(s) (score>=${args.minScore}) of ${collected.length} collected (${args.queuePath ? 'queue' : 'crawl'})`
+    `📋 ${jobs.length} worthy posting(s) of ${collected.length} collected ` +
+      `(${args.queuePath ? 'queue' : `crawl, score>=${args.minScore}`})`
   );
 
   const adapter = new TelegramNotificationAdapter();
