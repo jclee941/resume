@@ -169,7 +169,7 @@ func checkDependencies() bool {
 	return false
 }
 
-func generatePDFNative(source, output, font string) error {
+func generatePDFNative(source, output, font string, toc bool) error {
 	args := []string{
 		source,
 		"-o", output,
@@ -184,13 +184,13 @@ func generatePDFNative(source, output, font string) error {
 		"-V", "colorlinks:true",
 		"-V", "linkcolor:blue",
 		"-V", "urlcolor:blue",
-		"--toc",
-		"--toc-depth=3",
-		"--number-sections",
 		"--metadata", fmt.Sprintf("title=Resume - Jaecheol Lee"),
 		"--metadata", fmt.Sprintf("author=Jaecheol Lee"),
 		"--metadata", "lang=ko-KR",
 		"--lua-filter", "tools/scripts/build/strip-emoji.lua",
+	}
+	if toc {
+		args = append(args, "--toc", "--toc-depth=3", "--number-sections")
 	}
 
 	cmd := exec.Command("pandoc", args...)
@@ -199,7 +199,7 @@ func generatePDFNative(source, output, font string) error {
 	return cmd.Run()
 }
 
-func generatePDFDocker(source, output, font string) error {
+func generatePDFDocker(source, output, font string, toc bool) error {
 	relSource, _ := filepath.Rel(projectRoot, source)
 	relOutput, _ := filepath.Rel(projectRoot, output)
 
@@ -221,11 +221,13 @@ func generatePDFDocker(source, output, font string) error {
 		"-V", fmt.Sprintf("geometry:margin=%s", margin),
 		"-V", fmt.Sprintf("fontsize=%s", fontSize),
 		"-V", fmt.Sprintf("linestretch=%s", lineStretch),
-		"--toc",
 		"--metadata", fmt.Sprintf("title=Resume - Jaecheol Lee"),
 		"--metadata", fmt.Sprintf("author=Jaecheol Lee"),
 		"--metadata", "lang=ko-KR",
 		"--lua-filter", "tools/scripts/build/strip-emoji.lua",
+	}
+	if toc {
+		args = append(args, "--toc", "--toc-depth=3", "--number-sections")
 	}
 
 	cmd := exec.Command("docker", args...)
@@ -327,7 +329,7 @@ func normalizePdfFile(path string) error {
 	return os.WriteFile(path, normalizePdfID(data), 0644)
 }
 
-func generateSinglePDF(source, output, font string) bool {
+func generateSinglePDF(source, output, font string, toc bool) bool {
 	sourcePath := filepath.Join(projectRoot, source)
 	outputPath := filepath.Join(projectRoot, output)
 
@@ -343,7 +345,7 @@ func generateSinglePDF(source, output, font string) bool {
 
 	// Try native Pandoc first
 	if _, err := exec.LookPath("pandoc"); err == nil {
-		if err := generatePDFNative(sourcePath, outputPath, font); err == nil {
+		if err := generatePDFNative(sourcePath, outputPath, font, toc); err == nil {
 			if normErr := normalizePdfFile(outputPath); normErr != nil {
 				fmt.Printf("%s\u26a0 generated but /ID normalize failed: %s%s\n", Yellow, normErr, NoColor)
 			}
@@ -355,7 +357,7 @@ func generateSinglePDF(source, output, font string) bool {
 
 	// Fallback to Docker
 	if _, err := exec.LookPath("docker"); err == nil {
-		if err := generatePDFDocker(sourcePath, outputPath, font); err == nil {
+		if err := generatePDFDocker(sourcePath, outputPath, font, toc); err == nil {
 			if normErr := normalizePdfFile(outputPath); normErr != nil {
 				fmt.Printf("%s\u26a0 generated but /ID normalize failed: %s%s\n", Yellow, normErr, NoColor)
 			}
@@ -397,7 +399,7 @@ func generateAllResumes() {
 	for _, variant := range resumeVariants {
 		source := variant.Source
 		output := formatOutputPath(variant.Output)
-		if generateSinglePDF(source, output, variant.Font) {
+		if generateSinglePDF(source, output, variant.Font, false) {
 			success++
 		} else {
 			failed++
@@ -410,7 +412,7 @@ func generateAllResumes() {
 	fmt.Println("Technical documentation:")
 	for name, variant := range docVariants {
 		_ = name
-		if generateSinglePDF(variant.Source, variant.Output, fontNanum) {
+		if generateSinglePDF(variant.Source, variant.Output, fontNanum, true) {
 			success++
 		} else {
 			failed++
@@ -458,7 +460,7 @@ func generateVariant(variant string) {
 	// Check resume variants
 	if v, ok := resumeVariants[variant]; ok {
 		output := formatOutputPath(v.Output)
-		if generateSinglePDF(v.Source, output, v.Font) {
+		if generateSinglePDF(v.Source, output, v.Font, false) {
 			os.Exit(0)
 		}
 		os.Exit(1)
@@ -466,7 +468,7 @@ func generateVariant(variant string) {
 
 	// Check doc variants
 	if v, ok := docVariants[variant]; ok {
-		if generateSinglePDF(v.Source, v.Output, fontNanum) {
+		if generateSinglePDF(v.Source, v.Output, fontNanum, true) {
 			os.Exit(0)
 		}
 		os.Exit(1)
