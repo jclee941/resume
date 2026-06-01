@@ -73,8 +73,12 @@ function sanitizeHref(url) {
   // Block control characters (null-byte injection, tab/newline smuggling)
   // eslint-disable-next-line no-control-regex
   if (/[\u0000-\u001F\u007F]/.test(trimmed)) return '';
-  // Block protocol-relative URLs (//evil.com)
-  if (trimmed.startsWith('//')) return '';
+  // Block protocol-relative URLs (//evil.com). Browsers normalize backslashes to
+  // forward slashes in URL context, so a leading backslash is the same threat
+  // (\\evil.com -> //evil.com); block any leading / or \ run that isn't a single
+  // absolute path slash.
+  if (trimmed.startsWith('//') || trimmed.startsWith('\\')) return '';
+  if (/^[/\\]{2,}/.test(trimmed) || /^\\/.test(trimmed)) return '';
   // Relative paths are safe — but reject protocol-relative URLs (//evil.com)
   if (
     (trimmed.startsWith('/') && !trimmed.startsWith('//')) ||

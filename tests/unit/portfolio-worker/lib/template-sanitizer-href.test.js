@@ -22,6 +22,8 @@ describe('sanitizeHref()', () => {
       ['non-string (null)', null],
       ['empty string', ''],
       ['whitespace only', '   '],
+      ['backslash protocol-relative (browsers normalize \\ to /)', '\\\\evil.com'],
+      ['single leading backslash', '\\evil.com'],
     ];
     test.each(blocked)('%s -> ""', (_label, input) => {
       expect(sanitizeHref(input)).toBe('');
