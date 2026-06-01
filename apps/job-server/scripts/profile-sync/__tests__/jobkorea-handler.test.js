@@ -7,10 +7,11 @@ import { resolveCliproxyBase } from '../jobkorea-handler/captcha-solver.js';
 import SessionManager from '../../../src/shared/services/session/session-manager.js';
 import {
   assertJobKoreaResumeAccess,
+  assertEditableResume,
+  waitForEditableForm,
   JOBKOREA_SESSION_RENEW_PATH,
 } from '../jobkorea-handler/session.js';
-// Ensure JOBKOREA_RNO is set for tests that validate profile URLs
-process.env.JOBKOREA_RNO = process.env.JOBKOREA_RNO || '30236578';
+import { PLATFORMS } from '../constants.js';
 
 describe('JobKoreaHandler.computeChanges', () => {
   const handler = new JobKoreaHandler();
@@ -403,6 +404,15 @@ describe('resolveCliproxyBase', () => {
 });
 
 describe('JobKorea fail-loud guards', () => {
+  let savedRno;
+  beforeEach(() => {
+    savedRno = process.env.JOBKOREA_RNO;
+    process.env.JOBKOREA_RNO = '30236578';
+  });
+  afterEach(() => {
+    if (savedRno === undefined) delete process.env.JOBKOREA_RNO;
+    else process.env.JOBKOREA_RNO = savedRno;
+  });
   function createSyncHarness(overrides = {}) {
     const logs = [];
     const page = {
@@ -417,6 +427,7 @@ describe('JobKorea fail-loud guards', () => {
         }
         return [];
       },
+      locator: () => ({ count: async () => 1 }),
     };
     const context = {
       addCookies: async () => {},
@@ -622,6 +633,138 @@ describe('JobKorea fail-loud guards', () => {
       (error) => {
         assert.match(error.message, /JobKorea CAPTCHA\/2FA required/);
         assert.match(error.message, /renew-jobkorea-session\.js/);
+        return true;
+      }
+    );
+  });
+});
+
+describe('PLATFORMS.jobkorea URL getters (rNo handling)', () => {
+  let savedRno;
+  beforeEach(() => {
+    savedRno = process.env.JOBKOREA_RNO;
+  });
+  afterEach(() => {
+    if (savedRno === undefined) delete process.env.JOBKOREA_RNO;
+    else process.env.JOBKOREA_RNO = savedRno;
+  });
+
+  it('S1: does NOT fabricate 30236578 when JOBKOREA_RNO is unset', () => {
+    delete process.env.JOBKOREA_RNO;
+    const { profileUrl, editUrl } = PLATFORMS.jobkorea;
+    assert.ok(!profileUrl.includes('30236578'), `profileUrl must not contain 30236578: ${profileUrl}`);
+    assert.ok(!editUrl.includes('30236578'), `editUrl must not contain 30236578: ${editUrl}`);
+  });
+
+  it('S2: uses provided JOBKOREA_RNO in both URLs', () => {
+    process.env.JOBKOREA_RNO = '9028903';
+    const { profileUrl, editUrl } = PLATFORMS.jobkorea;
+    assert.match(profileUrl, /rNo=9028903/);
+    assert.match(editUrl, /RNo=9028903/);
+  });
+});
+
+describe('assertEditableResume (ResumeMng / file-upload guard)', () => {
+  it('S3: throws fail-loud error when redirected to /User/ResumeMng', async () => {
+    const page = {
+      url: () => 'https://www.jobkorea.co.kr/User/ResumeMng',
+    };
+
+    await assert.rejects(
+      () => assertEditableResume(page, { rNo: '9028903' }),
+      (error) => {
+        assert.strictEqual(error.failLoud, true, 'error.failLoud must be true');
+        assert.match(error.message, /ResumeMng/);
+        assert.match(error.message, /file[- ]upload/i);
+        assert.match(error.message, /9028903/);
+        return true;
+      }
+    );
+  });
+
+  it('S3b: passes (URL-only guard) when on an editable Resume/Edit URL', async () => {
+    const page = {
+      url: () => 'https://www.jobkorea.co.kr/User/Resume/Edit?RNo=9028903',
+    };
+    await assert.doesNotReject(() => assertEditableResume(page, { rNo: '9028903' }));
+  });
+});
+
+describe('waitForEditableForm (#frm1 wait with fail-loud on timeout)', () => {
+  it('S6: resolves when #frm1 appears (sync waitForFunction)', async () => {
+    let calls = 0;
+    const page = {
+      url: () => 'https://www.jobkorea.co.kr/User/Resume/Edit?RNo=9028903',
+      waitForFunction: async () => {
+        calls += 1;
+        return true; // form attached within wait window
+      },
+    };
+    await assert.doesNotReject(() => waitForEditableForm(page, { rNo: '9028903' }));
+    assert.strictEqual(calls, 1, 'waitForFunction must be invoked once');
+  });
+
+  it('S6b: async-attached form (waitForFunction resolves after delay) still passes', async () => {
+    const page = {
+      url: () => 'https://www.jobkorea.co.kr/User/Resume/Edit?RNo=9028903',
+      waitForFunction: async () => {
+        await new Promise((r) => setTimeout(r, 20)); // form attaches late
+        return true;
+      },
+    };
+    await assert.doesNotReject(() => waitForEditableForm(page, { rNo: '9028903' }));
+  });
+
+  it('S6c: converts waitForFunction timeout into fail-loud editable-resume error', async () => {
+    const page = {
+      url: () => 'https://www.jobkorea.co.kr/User/Resume/Edit?RNo=9028903',
+      waitForFunction: async () => {
+        const err = new Error('Timeout 15000ms exceeded waiting for function');
+        err.name = 'TimeoutError';
+        throw err;
+      },
+    };
+    await assert.rejects(
+      () => waitForEditableForm(page, { rNo: '9028903' }),
+      (error) => {
+        assert.strictEqual(error.failLoud, true, 'timeout must become failLoud');
+        assert.match(error.message, /file[- ]upload/i);
+        assert.match(error.message, /9028903/);
+        return true;
+      }
+    );
+  });
+
+  it('S6d: re-throws non-timeout errors unchanged (no masking)', async () => {
+    const page = {
+      url: () => 'https://www.jobkorea.co.kr/User/Resume/Edit?RNo=9028903',
+      waitForFunction: async () => {
+        throw new Error('boom unrelated navigation error');
+      },
+    };
+    await assert.rejects(
+      () => waitForEditableForm(page, { rNo: '9028903' }),
+      (error) => {
+        assert.match(error.message, /boom unrelated/);
+        assert.notStrictEqual(error.failLoud, true);
+        return true;
+      }
+    );
+  });
+
+  it('S6e: re-throws non-timeout waitForFunction errors unchanged (no masking via API-name match)', async () => {
+    const page = {
+      url: () => 'https://www.jobkorea.co.kr/User/Resume/Edit?RNo=9028903',
+      waitForFunction: async () => {
+        // Playwright non-timeout error that mentions the API name in its message.
+        throw new Error('page.waitForFunction: Execution context was destroyed');
+      },
+    };
+    await assert.rejects(
+      () => waitForEditableForm(page, { rNo: '9028903' }),
+      (error) => {
+        assert.match(error.message, /Execution context was destroyed/);
+        assert.notStrictEqual(error.failLoud, true, 'non-timeout error must NOT be masked as failLoud');
         return true;
       }
     );

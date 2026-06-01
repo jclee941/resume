@@ -7,7 +7,7 @@ import { applyPlaywrightStealth } from '../playwright-stealth.js';
 import { CONFIG } from '../constants.js';
 import { buildJobKoreaFormData } from '../jobkorea-sections.js';
 import { getEditUrl } from './change-detection.js';
-import { assertJobKoreaResumeAccess } from './session.js';
+import { assertJobKoreaResumeAccess, waitForEditableForm } from './session.js';
 import { toPlaywrightCookies } from '../../jobkorea-session/cookie-utils.js';
 import { pickJobKoreaBrowserProfile } from '../../jobkorea-session/user-agent-pool.js';
 import { redactSensitiveValue } from './har-redaction-patterns.js';
@@ -187,9 +187,7 @@ export async function captureJobKoreaProfileSyncHar(handler, ssot, options = {})
       logger: options.logger,
     });
 
-    await page.waitForFunction(() => typeof globalThis.$ !== 'undefined' && globalThis.$('#frm1').length > 0, {
-      timeout: 15000,
-    });
+    await waitForEditableForm(page, { rNo: process.env.JOBKOREA_RNO?.trim() || '' });
     await activateRequiredSections(page);
 
     const sectionIndices = await handler.createEntrySlots(page, ssot);

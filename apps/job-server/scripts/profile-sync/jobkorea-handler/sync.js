@@ -8,7 +8,12 @@ import {
   mapPortfolioToFormFields,
 } from '../jobkorea-sections.js';
 import { getEditUrl } from './change-detection.js';
-import { assertJobKoreaResumeAccess, loadJobKoreaSession } from './session.js';
+import {
+  assertJobKoreaResumeAccess,
+  assertEditableResume,
+  waitForEditableForm,
+  loadJobKoreaSession,
+} from './session.js';
 import { JobKoreaAPIClient } from './api-client.js';
 import { buildCookieString, toPlaywrightCookies } from '../../jobkorea-session/cookie-utils.js';
 import {
@@ -281,12 +286,12 @@ export async function syncJobKoreaProfile(handler, ssot, options = {}) {
       logger,
     });
 
+    await assertEditableResume(page, { rNo: process.env.JOBKOREA_RNO?.trim() || '' });
+
     // Only persist cookies after successful resume access verification
     shouldPersistCookies = true;
 
-    await page.waitForFunction(() => typeof $ !== 'undefined' && $('#frm1').length > 0, {
-      timeout: 15000,
-    });
+    await waitForEditableForm(page, { rNo: process.env.JOBKOREA_RNO?.trim() || '' });
 
     await activateRequiredSections(page);
 
