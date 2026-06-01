@@ -169,8 +169,11 @@ packages/data/resumes/technical/**/*.pdf
 .affected/
 .affected-review/
 
-# Sisyphus loop ephemeral state
+# Agent tooling ephemeral state (OpenCode / Sisyphus runtime — local only, not content)
 .sisyphus/*.local.md
+.sisyphus/run-continuation/
+.sisyphus/ulw-*.md
+.omo/
 
 # Test reports / Playwright outputs
 playwright-report/
