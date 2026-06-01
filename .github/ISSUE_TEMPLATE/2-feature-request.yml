@@ -1,7 +1,7 @@
 name: ✨ Feature request
 description: Propose a new capability or workflow enhancement
-title: "feat: <short summary>"
-labels: ["enhancement"]
+title: 'feat: <short summary>'
+labels: ['enhancement']
 body:
   - type: textarea
     id: problem
