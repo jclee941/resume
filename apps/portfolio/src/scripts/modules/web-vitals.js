@@ -15,16 +15,22 @@ const observeLCP = () => {
   }
 };
 
-// First Input Delay (FID)
-const observeFID = () => {
+// Interaction to Next Paint (INP) — replaces the deprecated FID Core Web Vital.
+// Tracks the longest interaction latency seen on the page (event-timing).
+const observeINP = () => {
   try {
+    let worstInp = 0;
     const po = new PerformanceObserver((entryList) => {
-      const firstInput = entryList.getEntries()[0];
-      webVitals.fid = Math.round(firstInput.processingStart - firstInput.startTime);
+      for (const entry of entryList.getEntries()) {
+        if (entry.duration > worstInp) {
+          worstInp = entry.duration;
+          webVitals.inp = Math.round(worstInp);
+        }
+      }
     });
-    po.observe({ type: 'first-input', buffered: true });
+    po.observe({ type: 'event', durationThreshold: 40, buffered: true });
   } catch {
-    // FID not supported
+    // INP / event-timing not supported
   }
 };
 
@@ -114,7 +120,7 @@ const sendVitals = () => {
 
 export function initWebVitals() {
   observeLCP();
-  observeFID();
+  observeINP();
   observeCLS();
   observeFCP();
   observeTTFB();
@@ -125,8 +131,6 @@ export function initWebVitals() {
       sendVitals();
     }
   });
-
-  window.addEventListener('visibilitychange', sendVitals, { once: true });
 
   // Send vitals on page unload (fallback)
   window.addEventListener('pagehide', sendVitals);
