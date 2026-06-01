@@ -1,0 +1,91 @@
+/*
+ * Print stylesheet — produce a clean, recruiter-readable resume when the page is
+ * printed (the terminal `print` command calls window.print()). Kept intentionally
+ * minimal: it overrides the cyberpunk dark theme to black-on-white, hides all
+ * interactive / live-only chrome, and keeps the resume-relevant sections.
+ *
+ * Imported LAST from main.css so it wins the cascade for @media print.
+ */
+
+@media print {
+  /* Force a clean, legible black-on-white document. */
+  html,
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  * {
+    background: transparent !important;
+    color: #000 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+
+  /* Hide interactive / live-only / decorative chrome. */
+  .cli-container,
+  .terminal-input-line,
+  #terminal-input,
+  .minimal-nav,
+  .lang-switcher,
+  .back-to-top,
+  .scroll-progress,
+  .hack-mode-overlay,
+  .deep-dive-overlay,
+  .chat-widget,
+  #guestbook,
+  .section-guestbook,
+  #site-security,
+  #status,
+  .section-status,
+  #observability,
+  .section-observability,
+  .tech-filter-container,
+  .hero-download,
+  .status-seeking,
+  .cursor,
+  .cmd-cursor,
+  .typing-effect .cursor {
+    display: none !important;
+  }
+
+  /* Keep resume-relevant sections visible and unconstrained. */
+  #hero,
+  #about,
+  #resume,
+  #certifications,
+  #skills,
+  #projects,
+  #contact {
+    display: block !important;
+    page-break-inside: auto;
+  }
+
+  /* Avoid awkward breaks inside cards / list items. */
+  .resume-card,
+  .cert-card,
+  .project-card,
+  .about-principles__col,
+  li {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Reveal link targets so a printed page keeps its references. */
+  a[href^='http']::after {
+    content: ' (' attr(href) ')';
+    font-size: 0.85em;
+    word-break: break-all;
+  }
+  a[href^='mailto']::after {
+    content: ' (' attr(href) ')';
+    font-size: 0.85em;
+  }
+
+  /* Comfortable page margins. */
+  @page {
+    margin: 1.5cm;
+  }
+}
