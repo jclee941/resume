@@ -1,4 +1,5 @@
 # Resume Portfolio Monorepo
+
 # 이력서 포트폴리오 모노레포
 
 ---
@@ -39,7 +40,7 @@
 | **언어**        | JavaScript/TypeScript, Go, Python             |
 | **패키지 관리** | npm workspaces (monorepo)                     |
 | **검증**        | Zod (스키마), Jest (테스트), Playwright (E2E) |
-| **API**         | OpenAPI 3.0, Cloudflare Worker Env             |
+| **API**         | OpenAPI 3.0, Cloudflare Worker Env            |
 | **자동화**      | GitHub Actions, n8n workflows                 |
 | **인프라**      | Cloudflare, self-hosted monitoring            |
 
@@ -49,22 +50,22 @@
 
 ### Core Applications / 핵심 애플리케이션
 
-| 애플리케이션        | 설명                                                            |
-| ------------------ | --------------------------------------------------------------- |
-| `apps/portfolio`   | Cloudflare Workers 기반 공개 포트폴리오 사이트 (엣지-deployed) |
-| `apps/job-server`  | Wanted/JobKorea 플랫폼용 MCP 작업 자동화 런타임                |
-| `apps/job-dashboard` | 대시보드 Worker + Cloudflare workflows + API 핸들러           |
+| 애플리케이션         | 설명                                                           |
+| -------------------- | -------------------------------------------------------------- |
+| `apps/portfolio`     | Cloudflare Workers 기반 공개 포트폴리오 사이트 (엣지-deployed) |
+| `apps/job-server`    | Wanted/JobKorea 플랫폼용 MCP 작업 자동화 런타임                |
+| `apps/job-dashboard` | 대시보드 Worker + Cloudflare workflows + API 핸들러            |
 
 ### Packages / 패키지
 
-| 패키지              | 목적                                                    |
-| ------------------ | ------------------------------------------------------- |
-| `packages/cli`     | resume CLI 도구 ( deploy, db, verify 커맨드)            |
-| `packages/env`     | 환경 변수 검증 + 타입 안전 시크릿 관리                  |
-| `packages/data`    | SSoT 이력서 데이터 + JSON 스키마                         |
-| `packages/shared`  | 교차 패키지 유틸리티 (errors, retry, crypto, clients)   |
-| `packages/types`   | 정적 JSDoc/TS 타입 정의 (런타임 의존성 없음)             |
-| `packages/schemas` | Zod 런타임 유효성 검사 스키마                             |
+| 패키지               | 목적                                                  |
+| -------------------- | ----------------------------------------------------- |
+| `packages/cli`       | resume CLI 도구 ( deploy, db, verify 커맨드)          |
+| `packages/env`       | 환경 변수 검증 + 타입 안전 시크릿 관리                |
+| `packages/data`      | SSoT 이력서 데이터 + JSON 스키마                      |
+| `packages/shared`    | 교차 패키지 유틸리티 (errors, retry, crypto, clients) |
+| `packages/types`     | 정적 JSDoc/TS 타입 정의 (런타임 의존성 없음)          |
+| `packages/schemas`   | Zod 런타임 유효성 검사 스키마                         |
 | `packages/contracts` | OpenAPI 스펙 + Cloudflare Worker Env 인터페이스       |
 
 ---
@@ -139,76 +140,76 @@ flowchart TB
 
 #### Pull Request & Code Quality / 풀 리퀘스트 및 코드 품질
 
-| 워크플로우 파일                        | 목적                                           |
-| ------------------------------------- | ---------------------------------------------- |
-| `01_branch-to-pr.yml`                | 브랜치 → PR 자동 생성                           |
-| `03_pr-checks.yml`                   | PR 검사 (lint, typecheck, test)                |
-| `04_actionlint.yml`                  | GitHub Actions YAML 문법 검사                   |
-| `05_gitleaks.yml`                    |Secrets 스캔 (gitleaks)                        |
-| `06_codeql.yml`                      | CodeQL 정적 분석                                |
-| `07_dependency-review.yml`           | 의존성 보안 리뷰                                 |
-| `08_scorecard.yml`                   | OpenSSF Scorecard 평가                         |
-| `09_semantic-pr.yml`                 | Conventional Commits 검증                      |
-| `10_pr-review.yml`                   | AI 기반 PR 리뷰 (PR-Agent)                     |
-| `13_pr-auto-merge.yml`               | 자동 병합 (조건 충족 시)                        |
-| `14_bot-auto-fix.yml`                | 봇 자동 수정 실행                               |
+| 워크플로우 파일            | 목적                            |
+| -------------------------- | ------------------------------- |
+| `01_branch-to-pr.yml`      | 브랜치 → PR 자동 생성           |
+| `03_pr-checks.yml`         | PR 검사 (lint, typecheck, test) |
+| `04_actionlint.yml`        | GitHub Actions YAML 문법 검사   |
+| `05_gitleaks.yml`          | Secrets 스캔 (gitleaks)         |
+| `06_codeql.yml`            | CodeQL 정적 분석                |
+| `07_dependency-review.yml` | 의존성 보안 리뷰                |
+| `08_scorecard.yml`         | OpenSSF Scorecard 평가          |
+| `09_semantic-pr.yml`       | Conventional Commits 검증       |
+| `10_pr-review.yml`         | AI 기반 PR 리뷰 (PR-Agent)      |
+| `13_pr-auto-merge.yml`     | 자동 병합 (조건 충족 시)        |
+| `14_bot-auto-fix.yml`      | 봇 자동 수정 실행               |
 
 **Security Subdirectory:** `.github/workflows/security/11_pr-review.yml`
 
 #### Release & Version Management / Releases 및 버전 관리
 
-| 워크플로우 파일                        | 목적                                           |
-| ------------------------------------- | ---------------------------------------------- |
-| `24_release-notes.yml`               | 자동 릴리스 노트 생성                           |
-| `25_release-publish.yml`             | 릴리스 게시 및 배포                             |
-| `release.yml`                        | 메인 릴리스 워크플로우                           |
-| `auto-merge.yml`                     | 자동 병합 핸들러                                |
+| 워크플로우 파일          | 목적                   |
+| ------------------------ | ---------------------- |
+| `24_release-notes.yml`   | 자동 릴리스 노트 생성  |
+| `25_release-publish.yml` | 릴리스 게시 및 배포    |
+| `release.yml`            | 메인 릴리스 워크플로우 |
+| `auto-merge.yml`         | 자동 병합 핸들러       |
 
 #### Issue & Project Management / 이슈 및 프로젝트 관리
 
-| 워크플로우 파일                        | 목적                                           |
-| ------------------------------------- | ---------------------------------------------- |
-| `02_issue-to-branch.yml`             | 이슈 → 브랜치 자동 생성                         |
-| `12_dependabot-auto-merge.yml`       | Dependabot PR 자동 병합                         |
-| `15_merged-pr-cleanup.yml`           | 병합 후 브랜치 정리                              |
-| `18_issue-management.yml`             | 이슈 관리 및 라벨링                             |
-| `19_issue-backfill.yml`              | 이슈 백필 작업을 위한 워크플로우                 |
+| 워크플로우 파일                | 목적                             |
+| ------------------------------ | -------------------------------- |
+| `02_issue-to-branch.yml`       | 이슈 → 브랜치 자동 생성          |
+| `12_dependabot-auto-merge.yml` | Dependabot PR 자동 병합          |
+| `15_merged-pr-cleanup.yml`     | 병합 후 브랜치 정리              |
+| `18_issue-management.yml`      | 이슈 관리 및 라벨링              |
+| `19_issue-backfill.yml`        | 이슈 백필 작업을 위한 워크플로우 |
 
 #### Documentation & Sync / 문서 및 동기화
 
-| 워크플로우 파일                        | 목적                                           |
-| ------------------------------------- | ---------------------------------------------- |
-| `20_readme-gen.yml`                  | README 자동 생성                                |
-| `21_docs-sync.yml`                    | 문서 동기화                                      |
-| `42_reusable-docs-sync.yml`          | 재사용 가능한 문서 동기화                        |
+| 워크플로우 파일             | 목적                      |
+| --------------------------- | ------------------------- |
+| `20_readme-gen.yml`         | README 자동 생성          |
+| `21_docs-sync.yml`          | 문서 동기화               |
+| `42_reusable-docs-sync.yml` | 재사용 가능한 문서 동기화 |
 
 #### Health, Monitoring & Healing / 헬스, 모니터링 및 복구
 
-| 워크플로우 파일                        | 목적                                           |
-| ------------------------------------- | ---------------------------------------------- |
-| `29_downstream-health-check.yml`      | 하위 서비스 상태 확인                           |
-| `37_ci-failure-issues.yml`            | CI 실패 시 이슈 자동 생성                       |
-| `60_ci-auto-heal.yml`                 | CI 자동 복구                                     |
+| 워크플로우 파일                  | 목적                      |
+| -------------------------------- | ------------------------- |
+| `29_downstream-health-check.yml` | 하위 서비스 상태 확인     |
+| `37_ci-failure-issues.yml`       | CI 실패 시 이슈 자동 생성 |
+| `60_ci-auto-heal.yml`            | CI 자동 복구              |
 
 #### Utility & Support / 유틸리티 및 지원
 
-| 워크플로우 파일                        | 목적                                           |
-| ------------------------------------- | ---------------------------------------------- |
-| `auto-sync-data.yml`                  | 데이터 자동 동기화                              |
-| `ci.yml`                              | 기본 CI 워크플로우                              |
-| `delete-standalone-job-worker.yml`    | 독립형 Worker 삭제                              |
-| `labeler.yml`                         | PR/이슈 자동 라벨링                              |
-| `post-deploy-verify.yml`              | 배포 후 검증                                     |
-| `provision-queues.yml`                | 큐 프로비저닝                                    |
-| `welcome.yml`                         | 새로 온 기여자 환영                               |
+| 워크플로우 파일                    | 목적                |
+| ---------------------------------- | ------------------- |
+| `auto-sync-data.yml`               | 데이터 자동 동기화  |
+| `ci.yml`                           | 기본 CI 워크플로우  |
+| `delete-standalone-job-worker.yml` | 독립형 Worker 삭제  |
+| `labeler.yml`                      | PR/이슈 자동 라벨링 |
+| `post-deploy-verify.yml`           | 배포 후 검증        |
+| `provision-queues.yml`             | 큐 프로비저닝       |
+| `welcome.yml`                      | 새로 온 기여자 환영 |
 
 #### Reusable Workflows / 재사용 가능한 워크플로우
 
-| 워크플로우 파일                        | 목적                                           |
-| ------------------------------------- | ---------------------------------------------- |
-| `43_reusable-issue-management.yml`    | 이슈 관리 재사용ワークフロー                   |
-| `44_reusable-pr-checks.yml`           | PR 검사 재사용ワークフロー                     |
-| `45_reusable-gitleaks.yml`            | Gitleaks 재사용 워크플로우                     |
+| 워크플로우 파일                    | 목적                         |
+| ---------------------------------- | ---------------------------- |
+| `43_reusable-issue-management.yml` | 이슈 관리 재사용ワークフロー |
+| `44_reusable-pr-checks.yml`        | PR 검사 재사용ワークフロー   |
+| `45_reusable-gitleaks.yml`         | Gitleaks 재사용 워크플로우   |
 
 ---
 
@@ -315,31 +316,31 @@ npm run automate:full      # Full pipeline with lint and Cloudflare validation
 
 ### Workspace Root Scripts / 워크스페이스 루트 스크립트
 
-| 명령어                    | 설명                                              |
+| 명령어 | 설명 |
 | \------------------------ | ------------------------------------------------- |
-| `npm run build`          | SSoT 데이터 동기화 후 portfolio 빌드              |
-| `npm run build:full`     | full build (portfolio + CLI)                      |
-| `npm run sync:data`      | 이력서 SSoT 데이터 동기화                          |
-| `npm run sync:pdf`       | Go 기반 PDF 생성                                   |
-| `npm run sync:pptx`      | Python 기반 PPTX 생성                             |
-| `npm run sync:all`       | 모든 동기화 스크립트 실행                          |
-| `npm run enrich:github`  | GitHub 데이터 Enrichment                           |
-| `npm run enrich:skills`  | 스킬 데이터 Enrichment                             |
-| `npm run enrich:ai`      | AI 기반 Enrichment                                |
-| `npm run enrich:all`     | 모든 Enrichment 실행                               |
-| `npm run lint`           | ESLint 실행                                       |
-| `npm run typecheck`      | TypeScript 타입 검사                              |
-| `npm run test`           | 전체 테스트 실행 (Jest + Playwright)              |
-| `npm run test:node`      | Node.js 환경 테스트                               |
-| `npm run automate:ssot`  | SSoT 자동화 파이프라인                            |
-| `npm run automate:full`  | 전체 자동화 파이프라인                             |
-| `npm run strip-exif`     | 이미지 EXIF 데이터 제거 (exiftool)                |
+| `npm run build` | SSoT 데이터 동기화 후 portfolio 빌드 |
+| `npm run build:full` | full build (portfolio + CLI) |
+| `npm run sync:data` | 이력서 SSoT 데이터 동기화 |
+| `npm run sync:pdf` | Go 기반 PDF 생성 |
+| `npm run sync:pptx` | Python 기반 PPTX 생성 |
+| `npm run sync:all` | 모든 동기화 스크립트 실행 |
+| `npm run enrich:github` | GitHub 데이터 Enrichment |
+| `npm run enrich:skills` | 스킬 데이터 Enrichment |
+| `npm run enrich:ai` | AI 기반 Enrichment |
+| `npm run enrich:all` | 모든 Enrichment 실행 |
+| `npm run lint` | ESLint 실행 |
+| `npm run typecheck` | TypeScript 타입 검사 |
+| `npm run test` | 전체 테스트 실행 (Jest + Playwright) |
+| `npm run test:node` | Node.js 환경 테스트 |
+| `npm run automate:ssot` | SSoT 자동화 파이프라인 |
+| `npm run automate:full` | 전체 자동화 파이프라인 |
+| `npm run strip-exif` | 이미지 EXIF 데이터 제거 (exiftool) |
 
 ### CLI Commands (packages/cli) / CLI 명령어
 
-| 명령어                    | 설명                                              |
+| 명령어 | 설명 |
 | \------------------------ | ------------------------------------------------- |
-| `npm run cli:build`       | CLI 빌드 (oclif 기반)                             |
+| `npm run cli:build` | CLI 빌드 (oclif 기반) |
 
 ### Docker Commands / Docker 명령어
 
@@ -419,16 +420,16 @@ Your PR will automatically be checked by:
 
 ### Package Dependencies / 패키지 의존성
 
-| 패키지            | 의존하는 패키지                                  |
-| ---------------- | ------------------------------------------------ |
-| `packages/env`   | `@resume/types`                                  |
-| `packages/data`  | `@resume/schemas`, `@resume/types`               |
-| `packages/shared`| `@resume/types`, `@resume/schemas`                |
-| `packages/schemas` | `@resume/types`                                 |
-| `packages/cli`   | `@resume/shared`, `@resume/schemas`, `@resume/env` |
-| `apps/job-server`| `@resume/{shared,schemas,types,data,env}`        |
-| `apps/job-dashboard` | `@resume/{shared,schemas,types}`              |
-| `apps/portfolio` | `@resume/{shared,types,env}`                    |
+| 패키지               | 의존하는 패키지                                    |
+| -------------------- | -------------------------------------------------- |
+| `packages/env`       | `@resume/types`                                    |
+| `packages/data`      | `@resume/schemas`, `@resume/types`                 |
+| `packages/shared`    | `@resume/types`, `@resume/schemas`                 |
+| `packages/schemas`   | `@resume/types`                                    |
+| `packages/cli`       | `@resume/shared`, `@resume/schemas`, `@resume/env` |
+| `apps/job-server`    | `@resume/{shared,schemas,types,data,env}`          |
+| `apps/job-dashboard` | `@resume/{shared,schemas,types}`                   |
+| `apps/portfolio`     | `@resume/{shared,types,env}`                       |
 
 ---
 
@@ -476,13 +477,13 @@ pr-agent/
 
 ## External Integrations / 외부 통합
 
-| 서비스/도구              | 용도                                             | 엔드포인트                               |
-| ---------------------- | ------------------------------------------------ | ---------------------------------------- |
-| **CLIProxy API**        | CLI 프록시 및 AI 기반 작업                      | `https://cliproxy.jclee.me/v1`           |
-| **Bot API**             | Bot 자동화 및 알림                               | `bot.jclee.me`                           |
-| **Wanted API**          | Wanted 채용 정보 Automated                      | Platform MCP tools                       |
-| **JobKorea API**        | 잡코리아 채용 정보 Automated                    | Platform MCP tools                       |
-| **Cloudflare Workers**  | 엣지 배포 및 서버리스 런타임                     | `*.workers.dev`                          |
+| 서비스/도구            | 용도                         | 엔드포인트                     |
+| ---------------------- | ---------------------------- | ------------------------------ |
+| **CLIProxy API**       | CLI 프록시 및 AI 기반 작업   | `https://cliproxy.jclee.me/v1` |
+| **Bot API**            | Bot 자동화 및 알림           | `bot.jclee.me`                 |
+| **Wanted API**         | Wanted 채용 정보 Automated   | Platform MCP tools             |
+| **JobKorea API**       | 잡코리아 채용 정보 Automated | Platform MCP tools             |
+| **Cloudflare Workers** | 엣지 배포 및 서버리스 런타임 | `*.workers.dev`                |
 
 ---
 
@@ -494,15 +495,15 @@ MIT License — see [LICENSE](LICENSE) file for details.
 
 ## Badges / 배지
 
-| 배지                                      | 설명                     |
-| ---------------------------------------- | ------------------------ |
-| ![CI](https://github.com/qodo-ai/pr-agent/actions/workflows/ci.yml/badge.svg) | CI Pipeline Status |
-| ![Release](https://github.com/qodo-ai/pr-agent/actions/workflows/release.yml/badge.svg) | Release Status |
-| ![License](https://img.shields.io/badge/License-MIT-yellow.svg) | MIT License |
-| ![Node.js](https://img.shields.io/badge/Node.js-%3E%3D22-green.svg) | Node.js ≥22 Required |
-| ![Cloudflare](https://img.shields.io/badge/Cloudflare-Workers-orange.svg) | Cloudflare Workers |
-| ![Release Schedule](https://img.shields.io/badge/Release-Biweekly-blue.svg) | Biweekly Release Train |
+| 배지                                                                                    | 설명                   |
+| --------------------------------------------------------------------------------------- | ---------------------- |
+| ![CI](https://github.com/qodo-ai/pr-agent/actions/workflows/ci.yml/badge.svg)           | CI Pipeline Status     |
+| ![Release](https://github.com/qodo-ai/pr-agent/actions/workflows/release.yml/badge.svg) | Release Status         |
+| ![License](https://img.shields.io/badge/License-MIT-yellow.svg)                         | MIT License            |
+| ![Node.js](https://img.shields.io/badge/Node.js-%3E%3D22-green.svg)                     | Node.js ≥22 Required   |
+| ![Cloudflare](https://img.shields.io/badge/Cloudflare-Workers-orange.svg)               | Cloudflare Workers     |
+| ![Release Schedule](https://img.shields.io/badge/Release-Biweekly-blue.svg)             | Biweekly Release Train |
 
 ---
 
-*Generated automatically from repository metadata. Last updated: see `AGENTS.md`.*
+_Generated automatically from repository metadata. Last updated: see `AGENTS.md`._
