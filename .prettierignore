@@ -42,3 +42,19 @@ npm-debug.log*
 # External tools
 .serena/
 **/pyright/
+
+# Generated artifacts (do not hand-format; build regenerates)
+apps/portfolio/worker.js
+packages/data/resumes/archive/docs/worker.js
+
+# Internal task metadata (not product source)
+.sisyphus/
+
+# Legacy n8n workflow exports (CI-allow-listed in validate-n8n-workflows.js; unparseable by prettier)
+infrastructure/n8n/wanted-auto-login-workflow.json
+infrastructure/n8n/workflows/resume-auto-deploy.json
+infrastructure/n8n/workflows/archive/resume-auto-deploy.json
+
+# Archived HTML resume snapshots (historical, malformed for prettier)
+packages/data/resumes/archive/docs/index.html
+packages/data/resumes/archive/docs/platform-engineer.html
