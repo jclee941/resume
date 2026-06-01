@@ -1528,6 +1528,47 @@
         return Array.isArray(value) ? value : [];
       }
 
+      function formatCoverLetter(coverLetter, lang) {
+        var UNAVAILABLE = '> cover letter unavailable';
+        if (!coverLetter || typeof coverLetter !== 'object') return UNAVAILABLE;
+        var key = String(lang || 'ko')
+          .toLowerCase()
+          .split('-')[0];
+        function valid(entry) {
+          return (
+            !!entry &&
+            typeof entry === 'object' &&
+            typeof entry.headline === 'string' &&
+            entry.headline.length > 0 &&
+            Array.isArray(entry.paragraphs) &&
+            entry.paragraphs.length > 0 &&
+            typeof entry.closing === 'string'
+          );
+        }
+        var entry = null;
+        var candidates = [coverLetter[key], coverLetter.ko];
+        for (var i = 0; i < candidates.length && !entry; i++) {
+          if (valid(candidates[i])) entry = candidates[i];
+        }
+        if (!entry) {
+          var values = Object.keys(coverLetter).map(function (k) {
+            return coverLetter[k];
+          });
+          for (var j = 0; j < values.length && !entry; j++) {
+            if (valid(values[j])) entry = values[j];
+          }
+        }
+        if (!entry) return UNAVAILABLE;
+        var blocks = ['> ' + entry.headline];
+        entry.paragraphs.forEach(function (paragraph) {
+          if (typeof paragraph === 'string' && paragraph.length > 0) {
+            blocks.push(paragraph);
+          }
+        });
+        if (entry.closing.length > 0) blocks.push(entry.closing);
+        return blocks.join('\n\n');
+      }
+
       function getSkillItems(skills) {
         if (!skills || typeof skills !== 'object') return [];
         return Object.values(skills).flatMap(function (category) {
@@ -1765,6 +1806,7 @@
             '  <span class="cmd-name">chat</span>       - Enter interactive resume chat mode\\n' +
             '  <span class="cmd-name">ai</span>         - Alias for chat command\\n' +
             '  <span class="cmd-name">contact</span>    - Contact information\\n' +
+            '  <span class="cmd-name">coverletter</span> - Read the cover letter (alias: cl)\\n' +
             '  <span class="cmd-name">theme</span>      - Switch terminal theme\\n' +
             '  <span class="cmd-name">clear</span>      - Clear terminal' +
             '</div>'
@@ -1920,7 +1962,7 @@
         };
 
         window.terminalCommands.ls = function () {
-          return 'about.txt  experience.log  projects/  skills.json  contact.txt';
+          return 'about.txt  coverletter.txt  experience.log  projects/  skills.json  contact.txt';
         };
 
         window.terminalCommands.cat = function (args) {
@@ -1970,6 +2012,14 @@
           }
           return '> Social links:\\n' + links.join('\\n');
         };
+
+        terminalCommands['coverletter'] = function () {
+          var coverLetter = (window.__RESUME_CHAT_DATA__ || {}).coverLetter;
+          var lang = document.documentElement.getAttribute('lang') || 'ko';
+          return formatCoverLetter(coverLetter, lang);
+        };
+
+        terminalCommands['cl'] = terminalCommands['coverletter'];
 
         terminalCommands['download'] = function () {
           var pdfLink = document.querySelector(

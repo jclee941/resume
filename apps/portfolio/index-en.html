@@ -1072,6 +1072,47 @@
         }
       })();
 
+      function formatCoverLetter(coverLetter, lang) {
+        var UNAVAILABLE = '> cover letter unavailable';
+        if (!coverLetter || typeof coverLetter !== 'object') return UNAVAILABLE;
+        var key = String(lang || 'ko')
+          .toLowerCase()
+          .split('-')[0];
+        function valid(entry) {
+          return (
+            !!entry &&
+            typeof entry === 'object' &&
+            typeof entry.headline === 'string' &&
+            entry.headline.length > 0 &&
+            Array.isArray(entry.paragraphs) &&
+            entry.paragraphs.length > 0 &&
+            typeof entry.closing === 'string'
+          );
+        }
+        var entry = null;
+        var candidates = [coverLetter[key], coverLetter.ko];
+        for (var i = 0; i < candidates.length && !entry; i++) {
+          if (valid(candidates[i])) entry = candidates[i];
+        }
+        if (!entry) {
+          var values = Object.keys(coverLetter).map(function (k) {
+            return coverLetter[k];
+          });
+          for (var j = 0; j < values.length && !entry; j++) {
+            if (valid(values[j])) entry = values[j];
+          }
+        }
+        if (!entry) return UNAVAILABLE;
+        var blocks = ['> ' + entry.headline];
+        entry.paragraphs.forEach(function (paragraph) {
+          if (typeof paragraph === 'string' && paragraph.length > 0) {
+            blocks.push(paragraph);
+          }
+        });
+        if (entry.closing.length > 0) blocks.push(entry.closing);
+        return blocks.join('\n\n');
+      }
+
       window.terminalCommands = {
         help: function () {
           return (
@@ -1086,6 +1127,7 @@
             '  <span class="cmd-name">print</span>      - Open print dialog\\n' +
             '  <span class="cmd-name">skills</span>     - Scroll to skills\\n' +
             '  <span class="cmd-name">contact</span>    - Scroll to contact\\n' +
+            '  <span class="cmd-name">coverletter</span> - Read the cover letter (alias: cl)\\n' +
             '  <span class="cmd-name">clear</span>      - Clear terminal' +
             '</div>'
           );
@@ -1153,6 +1195,14 @@
           );
         };
 
+        window.terminalCommands.coverletter = function () {
+          var coverLetter = (window.__RESUME_CHAT_DATA__ || {}).coverLetter;
+          var lang = document.documentElement.getAttribute('lang') || 'en';
+          return formatCoverLetter(coverLetter, lang);
+        };
+
+        window.terminalCommands.cl = window.terminalCommands.coverletter;
+
         window.terminalCommands.download = function () {
           var pdfLink = document.querySelector(
             '.hero-download a[download], .resume-download a[download]'
@@ -1196,11 +1246,19 @@
         function addOutput(cmd, result) {
           var entry = document.createElement('div');
           entry.className = 'cli-entry';
-          entry.innerHTML =
-            '<div class="cli-cmd">jclee@resume:~$ ' +
-            cmd +
-            '</div>' +
-            (result ? '<div class="cli-result">' + result + '</div>' : '');
+
+          var cmdNode = document.createElement('div');
+          cmdNode.className = 'cli-cmd';
+          cmdNode.textContent = 'jclee@resume:~$ ' + cmd;
+          entry.appendChild(cmdNode);
+
+          if (result) {
+            var resultNode = document.createElement('div');
+            resultNode.className = 'cli-result';
+            resultNode.textContent = result;
+            entry.appendChild(resultNode);
+          }
+
           cliOutput.appendChild(entry);
           cliOutput.scrollTop = cliOutput.scrollHeight;
         }

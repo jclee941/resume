@@ -87,3 +87,36 @@ describe('generateWebData → careers[] (SSoT timeline data)', () => {
     assert.equal(out.resume[0].title, ssot.careers[0].company);
   });
 });
+
+describe('generateWebData → coverLetter (unsurfaced SSoT asset)', () => {
+  it('S1: propagates SSoT coverLetter verbatim (ko/en/ja parity, no drift)', () => {
+    const out = generateWebData(ssot);
+    assert.ok(ssot.coverLetter, 'SSoT must define coverLetter (test precondition)');
+    assert.deepEqual(
+      out.coverLetter,
+      ssot.coverLetter,
+      'out.coverLetter must equal SSoT coverLetter verbatim'
+    );
+  });
+
+  it('S1: coverLetter carries all three locales each with headline/paragraphs/closing', () => {
+    const out = generateWebData(ssot);
+    ['ko', 'en', 'ja'].forEach((lang) => {
+      const cl = out.coverLetter && out.coverLetter[lang];
+      assert.ok(cl, `coverLetter.${lang} must be present`);
+      assert.equal(typeof cl.headline, 'string', `coverLetter.${lang}.headline is string`);
+      assert.ok(cl.headline.length > 0, `coverLetter.${lang}.headline non-empty`);
+      assert.ok(
+        Array.isArray(cl.paragraphs) && cl.paragraphs.length > 0,
+        `coverLetter.${lang}.paragraphs non-empty array`
+      );
+      assert.equal(typeof cl.closing, 'string', `coverLetter.${lang}.closing is string`);
+    });
+  });
+
+  it('S5: edge — source without coverLetter yields coverLetter:null (no throw)', () => {
+    const { coverLetter: _omit, ...noCl } = ssot;
+    const out = generateWebData(noCl);
+    assert.equal(out.coverLetter, null);
+  });
+});
