@@ -8,7 +8,6 @@
  */
 const fs = require('fs');
 const path = require('path');
-const vm = require('vm');
 
 const workerPath = path.join(__dirname, 'worker.js');
 const src = fs.readFileSync(workerPath, 'utf-8');
@@ -45,6 +44,15 @@ for (const [name, file] of [
   let html = extractConst(name);
   // Replace CSP nonce placeholder so inline scripts/styles run under file://.
   html = html.replace(/__CSP_NONCE__/g, 'devnonce');
-  fs.writeFileSync(path.join(outDir, file), html, 'utf-8');
-  console.log(`wrote ${path.join(outDir, file)} (${html.length} bytes)`);
+fs.writeFileSync(path.join(outDir, file), html, 'utf-8');
+console.log(`wrote ${path.join(outDir, file)} (${html.length} bytes)`);
+}
+
+// Extract the bundled main.js so the static preview can run client JS.
+try {
+  const mainJs = extractConst('MAIN_JS').replace(/__CSP_NONCE__/g, 'devnonce');
+  fs.writeFileSync(path.join(outDir, 'main.js'), mainJs, 'utf-8');
+  console.log(`wrote ${path.join(outDir, 'main.js')} (${mainJs.length} bytes)`);
+} catch (err) {
+  console.warn('main.js not extracted:', err.message);
 }
