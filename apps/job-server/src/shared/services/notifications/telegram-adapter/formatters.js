@@ -149,8 +149,7 @@ export function createJobPostingsMessage(jobs = [], options = {}) {
     };
   }
 
-  const shown = list.slice(0, limit);
-  const lines = shown.map((job, i) => {
+  const allLines = list.map((job, i) => {
     const company = escapeHtml(resolveJobField(job, 'company', 'companyName'));
     const position = escapeHtml(resolveJobField(job, 'position', 'title'));
     const url = resolveJobField(job, 'url', 'sourceUrl');
@@ -164,12 +163,28 @@ export function createJobPostingsMessage(jobs = [], options = {}) {
   });
 
   const header = options.header || '🔍 <b>지원할만한 공고</b>';
-  let text = `${header} (${total}건)\n\n${lines.join('\n')}`;
 
-  const remainder = total - shown.length;
-  if (remainder > 0) {
-    text += `\n\n… 외 ${remainder}건 더 있음`;
+  // Build the message by ADDING whole postings until we approach the Telegram
+  // length cap, then stop. Truncating mid-line would split an <a>/<b> tag and
+  // trigger Telegram's "can't parse entities" 400, so we only ever drop whole
+  // (tag-balanced) lines. `limit` is the caller's preferred max count; the
+  // length budget is the hard constraint that wins when lines are long.
+  const footerFor = (remainder) => (remainder > 0 ? `\n\n… 외 ${remainder}건 더 있음` : '');
+  const maxBody = TELEGRAM_MAX_LENGTH - 64; // headroom for header + footer + emoji
+
+  const chosen = [];
+  for (let i = 0; i < allLines.length && chosen.length < limit; i += 1) {
+    const candidate = [...chosen, allLines[i]];
+    const remainder = total - candidate.length;
+    const draft = `${header} (${total}건)\n\n${candidate.join('\n')}${footerFor(remainder)}`;
+    if (draft.length > maxBody && chosen.length > 0) {
+      break;
+    }
+    chosen.push(allLines[i]);
   }
+
+  const remainder = total - chosen.length;
+  const text = `${header} (${total}건)\n\n${chosen.join('\n')}${footerFor(remainder)}`;
 
   return { text, parse_mode: 'HTML', disable_web_page_preview: true };
 }

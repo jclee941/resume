@@ -2,6 +2,7 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
 import { createJobPostingsMessage } from '../formatters.js';
+import { TELEGRAM_MAX_LENGTH } from '../constants.js';
 
 const jobs = [
   {
@@ -64,5 +65,39 @@ describe('createJobPostingsMessage', () => {
     const anchorCount = (msg.text.match(/<a href=/g) || []).length;
     assert.equal(anchorCount, 10);
     assert.match(msg.text, /15|\uc678|more|\ub354/);
+  });
+
+  it('keeps long messages Telegram-safe and never splits an HTML tag', () => {
+    // Reproduces the limit>=15 failure: many postings with long real-world
+    // saramin URLs previously overflowed TELEGRAM_MAX_LENGTH and got sliced
+    // mid-<a> tag, triggering Telegram 400 'can't parse entities'.
+    const longUrl = (i) =>
+      `https://www.saramin.co.kr/zf_user/jobs/relay/view?view_type=search&rec_idx=5390${i}878&location=ts&searchword=%EB%B3%B4%EC%95%88+%EC%97%94%EC%A7%80%EB%8B%88%EC%96%B4&searchType=search&paid_fl=n&search_uuid=153c1b3d-2ec2-4ceb-80fc-385ab4c9373e`;
+    const many = Array.from({ length: 50 }, (_, i) => ({
+      company: `주식회사 테스트기업${i} (보안·인프라)`,
+      position: `[2026 하반기] IT 보안 엔지니어 모집 (신입/경력) #${i}`,
+      url: longUrl(i),
+      source: 'saramin',
+      matchScore: 70 + (i % 20),
+    }));
+
+    const msg = createJobPostingsMessage(many, { limit: 15 });
+
+    // Hard length cap respected (no oversized body sent to Telegram).
+    assert.ok(
+      msg.text.length <= TELEGRAM_MAX_LENGTH,
+      `message length ${msg.text.length} exceeds ${TELEGRAM_MAX_LENGTH}`
+    );
+
+    // Tags stay balanced: every <a ...> has a closing </a>, no dangling tag.
+    const open = (msg.text.match(/<a\s/g) || []).length;
+    const close = (msg.text.match(/<\/a>/g) || []).length;
+    assert.equal(open, close, 'unbalanced <a> tags would break Telegram HTML parse');
+
+    // No truncation marker splitting a tag, and message does not end mid-tag.
+    assert.doesNotMatch(msg.text, /<a[^>]*$/, 'message must not end inside an <a> tag');
+
+    // Still communicates that more postings exist beyond what was rendered.
+    assert.match(msg.text, /외|more|더/);
   });
 });

@@ -31,7 +31,7 @@ class PortfolioChat {
       current: {
         patterns: ['현재', 'now', '지금', 'current', 'doing', 'nextrade', '넥스트레이드'],
         responses: [
-          '직전 아이티센 CTS 소속으로 넥스트레이드(주) 증권거래소 매매체결시스템의 보안 운영을 담당했습니다. Splunk ES, n8n, FortiManager API 기반 자동 대응 체계를 운영했으며, 현재는 다음 보안·인프라 역할을 찾는 구직 중입니다.',
+          '직전 아이티센 CTS 소속으로 넥스트레이드(주) 매매체결시스템의 보안 운영을 담당했습니다. Splunk ES, n8n, FortiManager API 기반 자동 대응 체계를 운영했으며, 현재는 다음 보안·인프라 역할을 찾는 구직 중입니다.',
           'Most recently at ITCEN CTS, handled security operations for the Nextrade financial exchange trading system, operating Splunk ES, n8n, and FortiManager API-based automated response. Currently seeking my next security/infrastructure role.'
         ]
       },
