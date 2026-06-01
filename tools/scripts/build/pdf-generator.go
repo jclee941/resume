@@ -10,6 +10,7 @@
 package main
 
 import (
+	"bytes"
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
@@ -202,8 +203,11 @@ func generatePDFDocker(source, output, font string) error {
 	relSource, _ := filepath.Rel(projectRoot, source)
 	relOutput, _ := filepath.Rel(projectRoot, output)
 
+	epoch := sourceDateEpoch(source)
 	args := []string{
 		"run", "--rm",
+		"-e", "FORCE_SOURCE_DATE=1",
+		"-e", fmt.Sprintf("SOURCE_DATE_EPOCH=%d", epoch),
 		"-v", fmt.Sprintf("%s:/data", projectRoot),
 		"-w", "/data",
 		"pandoc/latex:latest",
@@ -274,15 +278,32 @@ func sourceDateEpoch(source string) int64 {
 // of non-determinism once FORCE_SOURCE_DATE fixes the timestamps.
 var pdfIDPattern = regexp.MustCompile(`/ID\s*\[\s*<[0-9A-Fa-f]+>\s*<[0-9A-Fa-f]+>\s*\]`)
 
-// normalizePdfID rewrites the trailer /ID to a content-derived deterministic
+// normalizePdfID rewrites the PDF trailer /ID to a content-derived deterministic
 // value so two builds of identical content produce identical bytes. The ID is
-// the MD5 of the PDF with its /ID array stripped, so different content still
+// the MD5 of the PDF with that /ID array stripped, so different content still
 // yields a different ID (no constant-collision that would mask real changes).
-// Returns the input unchanged when no /ID array is present.
+//
+// Only the TRAILER /ID is touched: the last /ID match that occurs at or after
+// the last `trailer` keyword (or, for cross-reference streams, the last match
+// in the file). This avoids corrupting any /ID-looking bytes inside content or
+// object streams. Returns the input unchanged when no trailer /ID is present.
 func normalizePdfID(pdf []byte) []byte {
-	loc := pdfIDPattern.FindIndex(pdf)
-	if loc == nil {
+	matches := pdfIDPattern.FindAllIndex(pdf, -1)
+	if len(matches) == 0 {
 		return pdf
+	}
+	// Prefer a match after the last `trailer` keyword; otherwise (xref-stream
+	// PDFs have no `trailer` keyword) fall back to the last match in the file,
+	// which is the cross-reference stream's /ID.
+	trailerIdx := bytes.LastIndex(pdf, []byte("trailer"))
+	loc := matches[len(matches)-1]
+	if trailerIdx >= 0 {
+		for _, m := range matches {
+			if m[0] >= trailerIdx {
+				loc = m
+				break
+			}
+		}
 	}
 	withoutID := make([]byte, 0, len(pdf))
 	withoutID = append(withoutID, pdf[:loc[0]]...)
