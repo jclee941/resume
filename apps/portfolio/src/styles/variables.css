@@ -190,4 +190,11 @@
   --z-sticky: 200;
   --z-nav: 1000;
   --z-modal: 2000;
+
+  /* ----------------------------------------
+     TERMINAL WINDOW CONTROLS (macOS traffic-light buttons)
+     ---------------------------------------- */
+  --terminal-btn-close: #ff5f56;
+  --terminal-btn-minimize: #ffbd2e;
+  --terminal-btn-maximize: #27ca40;
 }

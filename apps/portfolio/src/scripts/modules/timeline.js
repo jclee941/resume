@@ -29,9 +29,45 @@ function timelineLang() {
 }
 
 const TIMELINE_LABELS = {
-  ko: { period: '근무 기간', phase: '단계', incident: '인시던트 대응 단계', impact: '성과', detail: '상세 내용', expand: '상세 보기', collapse: '접기', stageDetected: '탐지', stageInvestigated: '분석', stageMitigated: '대응', stageImproved: '개선' },
-  en: { period: 'Tenure', phase: 'Phase', incident: 'Incident response stages', impact: 'Impact', detail: 'Details', expand: 'View details', collapse: 'Collapse', stageDetected: 'Detect', stageInvestigated: 'Analyze', stageMitigated: 'Respond', stageImproved: 'Improve' },
-  ja: { period: '在籍期間', phase: 'フェーズ', incident: 'インシデント対応ステージ', impact: '成果', detail: '詳細', expand: '詳細を見る', collapse: '閉じる', stageDetected: '検知', stageInvestigated: '分析', stageMitigated: '対応', stageImproved: '改善' },
+  ko: {
+    period: '근무 기간',
+    phase: '단계',
+    incident: '인시던트 대응 단계',
+    impact: '성과',
+    detail: '상세 내용',
+    expand: '상세 보기',
+    collapse: '접기',
+    stageDetected: '탐지',
+    stageInvestigated: '분석',
+    stageMitigated: '대응',
+    stageImproved: '개선',
+  },
+  en: {
+    period: 'Tenure',
+    phase: 'Phase',
+    incident: 'Incident response stages',
+    impact: 'Impact',
+    detail: 'Details',
+    expand: 'View details',
+    collapse: 'Collapse',
+    stageDetected: 'Detect',
+    stageInvestigated: 'Analyze',
+    stageMitigated: 'Respond',
+    stageImproved: 'Improve',
+  },
+  ja: {
+    period: '在籍期間',
+    phase: 'フェーズ',
+    incident: 'インシデント対応ステージ',
+    impact: '成果',
+    detail: '詳細',
+    expand: '詳細を見る',
+    collapse: '閉じる',
+    stageDetected: '検知',
+    stageInvestigated: '分析',
+    stageMitigated: '対応',
+    stageImproved: '改善',
+  },
 };
 
 function tl() {
@@ -40,12 +76,26 @@ function tl() {
 
 // Phase to incident response stage mapping
 const PHASE_STAGES = {
-  '운영': { icon: '🔍', label: '탐지', key: 'detected' },
-  '구축': { icon: '🔬', label: '분석', key: 'investigated' },
-  '자동화': { icon: '🛡️', label: '대응', key: 'mitigated' },
-  '안정화': { icon: '✨', label: '개선', key: 'improved' },
-  '기초': { icon: '⚙️', label: '기반', key: 'foundation' },
+  운영: { icon: '🔍', label: '탐지', key: 'detected' },
+  구축: { icon: '🔬', label: '분석', key: 'investigated' },
+  자동화: { icon: '🛡️', label: '대응', key: 'mitigated' },
+  안정화: { icon: '✨', label: '개선', key: 'improved' },
+  기초: { icon: '⚙️', label: '기반', key: 'foundation' },
 };
+
+// UI-only metadata keyed by company. The SSoT (resume_data.json careers[]) carries
+// the DATA fields (company/companyUrl/period/role/myRole/description); phase and status
+// are presentation concerns that do not belong in the SSoT, so they live here and are
+// merged onto the build-injected career data at render time.
+const CAREER_UI_META = {
+  '(주)아이티센 CTS': { phase: '운영', status: 'completed' },
+  '(주)가온누리정보시스템': { phase: '구축', status: 'completed' },
+  '(주)콴텍투자일임': { phase: '안정화', status: 'completed' },
+  '(주)조인트리': { phase: '구축', status: 'completed' },
+  '(주)메타넷엠플랫폼': { phase: '자동화', status: 'completed' },
+  '(주)엠티데이타': { phase: '기초', status: 'completed' },
+};
+const DEFAULT_CAREER_UI_META = { phase: '기초', status: 'completed' };
 
 // Module state
 let timelineContainer = null;
@@ -75,105 +125,42 @@ function isTimelineSectionPresent() {
 }
 
 /**
- * Get career data from the page data attribute or use static fallback
+ * Merge build-injected SSoT career DATA with UI-only presentation metadata.
+ * Pure function (no globals) so it can be unit-tested in isolation.
+ * @param {Array<Object>} careers - SSoT career entries from generated portfolio data.
+ * @returns {Array<Object>} Render-ready career nodes with phase/status attached.
+ */
+export function mergeCareerUiMeta(careers) {
+  if (!Array.isArray(careers)) return [];
+  return careers.map((career) => {
+    const meta = CAREER_UI_META[career.company] || DEFAULT_CAREER_UI_META;
+    return { ...career, phase: career.phase || meta.phase, status: career.status || meta.status };
+  });
+}
+
+/**
+ * Get career data from the build-injected SSoT snapshot.
+ *
+ * The build pipeline base64-injects the full generated portfolio data into
+ * window.__RESUME_CHAT_DATA__ (see apps/portfolio/lib/build-orchestrator.js +
+ * html-transformer.js). Its `careers[]` is derived from the SSoT
+ * (packages/data/resumes/master/resume_data.json) by
+ * tools/scripts/utils/resume-web-data-generator.js, so there is no hardcoded
+ * career content here to drift out of sync. UI-only phase/status are merged on.
  * @returns {Array<Object>}
  */
 function getCareerData() {
-  // Try to get from window.RESUME_DATA first (set by the page)
-  const resumeData = window.RESUME_DATA?.resume || {};
+  const injected = (typeof window !== 'undefined' && window.__RESUME_CHAT_DATA__) || {};
+  const careers = Array.isArray(injected.careers) ? injected.careers : [];
 
-  if (resumeData.careers && Array.isArray(resumeData.careers)) {
-    return resumeData.careers;
+  if (careers.length === 0) {
+    console.warn(
+      '[CareerTimeline] No careers found in __RESUME_CHAT_DATA__; rendering empty timeline.'
+    );
+    return [];
   }
 
-  // Fallback static data matching resume_data.json
-  return [
-    {
-      company: '(주)아이티센 CTS',
-      companyUrl: 'https://itcencts.com/',
-      period: '2025.03 ~ 2026.02',
-      role: '보안운영 엔지니어 (SOC/DevSecOps)',
-      myRole: '넥스트레이드 매매체결시스템 보안운영SM',
-      description: '넥스트레이드 금융 거래소 매매체결시스템의 보안 운영 체계를 SIEM 기반 탐지·대응 파이프라인으로 전환했습니다. Splunk ES 탐지 룰을 직접 설계·운영하여 보안 이벤트 탐지 범위를 확장하고, Splunk Saved Search → n8n webhook → Slack/SMS 연동 실시간 알림 파이프라인을 구축하여 이벤트 인지·분류·알림 흐름을 표준화했습니다.',
-      achievements: [
-        'SIEM 탐지·대응 파이프라인 구축',
-        '자동화 실시간 알림 체계 운영',
-      ],
-      phase: '운영',
-      status: 'completed',
-    },
-    {
-      company: '(주)가온누리정보시스템',
-      companyUrl: 'http://www.gaonnuriis.com/',
-      period: '2024.03 ~ 2025.02',
-      role: '보안 인프라 엔지니어 (구축)',
-      myRole: '금융 거래소 고가용성 보안 아키텍처 설계 및 FSC 본인가 대응',
-      description: '넥스트레이드 매매체결시스템의 금융위 본인가 심사 기준을 충족하는 고가용성 보안 인프라를 설계·구축했습니다. FortiGate FGCP 액티브-패시브 HA를 구성하고, 금융권 규제에 맞는 5계층 망분리 보안 아키텍처를 설계·문서화하여 FSC 본인가 심사를 통과시켰습니다.',
-      achievements: [
-        '5계층 망분리 보안 아키텍처 설계',
-        'FSC 본인가 심사 통과',
-      ],
-      phase: '구축',
-      status: 'completed',
-    },
-    {
-      company: '(주)콴텍투자일임',
-      companyUrl: 'https://www.quantec.co.kr/',
-      period: '2022.08 ~ 2024.03',
-      role: '인프라 엔지니어 (FSDC/금융DC)',
-      myRole: '금융보안데이터센터 인프라 운영 자동화 및 규제 감사 대응',
-      description: '금융보안데이터센터(FSDC)에서 AI 트레이딩 플랫폼 인프라의 안정적 운영과 규제 대응 체계를 구축했습니다. 금융감독원 정기 감사에 필요한 DLP 정책 운영 체계와 감사 산출물 템플릿을 구축하여 반복되는 감사 대응을 재사용 가능한 프로세스로 전환했습니다.',
-      achievements: [
-        '금융감독원 감사 대응 체계 구축',
-        'DB 접근제어 쿼리 튜닝 수행',
-      ],
-      phase: '안정화',
-      status: 'completed',
-    },
-    {
-      company: '(주)조인트리',
-      companyUrl: null,
-      period: '2021.09 ~ 2022.04',
-      role: '보안 엔지니어',
-      myRole: '국민대 차세대 정보시스템 보안 구축',
-      description: '국민대학교 차세대 정보시스템 보안 구축에서 네트워크 세분화와 보안 아키텍처 설계를 담당했습니다.',
-      achievements: [
-        'NSX-T 마이크로세그멘테이션 구현',
-        '제로 트러스트 보안 아키텍처 설계',
-      ],
-      phase: '구축',
-      status: 'completed',
-    },
-    {
-      company: '(주)메타넷엠플랫폼',
-      companyUrl: null,
-      period: '2019.12 ~ 2021.08',
-      role: '인프라 엔지니어',
-      myRole: '대규모 컨택센터 인프라 운영',
-      description: '대규모 컨택센터 인프라를 운영하며 반복적인 네트워크 장비 관리 작업을 자동화했습니다.',
-      achievements: [
-        'Ansible NAC 자동화 구축',
-        '인프라 표준화 수행',
-      ],
-      phase: '자동화',
-      status: 'completed',
-    },
-    {
-      company: '(주)엠티데이타',
-      companyUrl: null,
-      period: '2017.02 ~ 2018.10',
-      role: 'IT 엔지니어',
-      myRole: 'KAI 폐쇄망 IT 운영',
-      description: 'KAI 폐쇄망 환경에서 IT 인프라 운영을 담당하며 Linux 시스템 관리와 네트워크 운영의 기반을 다졌습니다.',
-      achievements: [
-        'RHCSA 자격증 취득',
-        'LPIC-1 자격증 취득',
-        '리눅스마스터 2급 취득',
-      ],
-      phase: '기초',
-      status: 'completed',
-    },
-  ];
+  return mergeCareerUiMeta(careers);
 }
 
 /**
@@ -231,9 +218,15 @@ function createTimelineNode(career, index) {
   const nodeClass = isActive ? 'timeline-node--active' : '';
 
   const achievements = career.achievements || [];
-  const impactText = achievements.length > 0
-    ? achievements.map(a => `• ${a}`).join('\n')
-    : career.description.substring(0, 80) + '...';
+  const description = career.description || '';
+  let impactText;
+  if (achievements.length > 0) {
+    impactText = achievements.map((a) => `• ${a}`).join('\n');
+  } else if (description) {
+    impactText = `${description.substring(0, 80)}...`;
+  } else {
+    impactText = '';
+  }
 
   return `
     <article class="timeline-node ${nodeClass}" role="listitem" tabindex="0"
@@ -280,12 +273,16 @@ function createTimelineNode(career, index) {
           </div>
 
           <div class="timeline-details" aria-hidden="true">
-            <p class="details-description">${career.description}</p>
-            ${achievements.length > 0 ? `
+            <p class="details-description">${description}</p>
+            ${
+              achievements.length > 0
+                ? `
               <ul class="details-achievements">
-                ${achievements.map(a => `<li>${a}</li>`).join('')}
+                ${achievements.map((a) => `<li>${a}</li>`).join('')}
               </ul>
-            ` : ''}
+            `
+                : ''
+            }
           </div>
 
           <button class="timeline-expand-btn" aria-expanded="false" aria-controls="details-${index}"
@@ -316,7 +313,7 @@ function attachEventListeners() {
 
   // Hover effects for quick stats (optional enhancement)
   const nodes = timelineContainer.querySelectorAll('.timeline-node');
-  nodes.forEach(node => {
+  nodes.forEach((node) => {
     node.addEventListener('mouseenter', handleNodeHover);
     node.addEventListener('mouseleave', handleNodeLeave);
   });
