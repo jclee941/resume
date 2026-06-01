@@ -8,6 +8,7 @@ import { initProjectCards } from './modules/project-cards.js';
 import { initProjectExpand } from './modules/project-expand.js';
 import { initGuestbook } from './modules/guestbook.js';
 import { initObservabilityStats } from './modules/observability.js';
+import { initKonami } from './modules/konami.js';
 
 // Initialize all modules. main.js is injected dynamically (a nonce'd loader
 // does document.body.appendChild(script src=/main.js, defer)). A dynamically
@@ -17,6 +18,7 @@ import { initObservabilityStats } from './modules/observability.js';
 // otherwise wait for the event.
 function bootstrapPortfolio() {
   initUI();
+  initKonami();
   initMissionControl();
   initializeABTesting();
   initWebVitals();

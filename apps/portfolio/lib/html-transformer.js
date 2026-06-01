@@ -66,6 +66,16 @@ function injectPlaceholders(html, options) {
     .replace("/* RESUME_CHAT_DATA_B64_PLACEHOLDER */ ''", options.resumeChatDataBase64 || "''");
 }
 
+// ARCHITECTURE TODO (future refactor — intentionally NOT done in this pass):
+// The site renders 3 locales from a tri-source model that must be kept in sync:
+//   KO  -> index.html (hand-authored)
+//   EN  -> index-en.html (hand-authored, parallel copy)
+//   JA  -> buildJapaneseTemplate() below, by string .replace() over the KO source
+// This is the real architectural smell: every content change touches 2 templates
+// plus a brittle replace-list here, and drift between locales is easy. The future
+// target is a single locale-aware template + data/strings registry that renders
+// KO/EN/JA from shared components. Scoped as a separate refactor; do not expand it
+// inline with unrelated changes.
 function buildJapaneseTemplate(html) {
   return (
     html

@@ -2,9 +2,37 @@ export function initUI() {
   initSmoothScroll();
   initNavScrollEffect();
   initScrollReveal();
+  initSectionAnalytics();
   initScrollProgress();
   initBackToTop();
   initMobileNav();
+}
+
+/**
+ * Fire a one-time `section_view` analytics event per section as it enters view.
+ * Reveal of .reveal elements is handled separately by initScrollReveal(); this
+ * is the analytics concern that used to live inline in index.html. Gated on
+ * gtag so it no-ops when analytics is absent (and stays locale-agnostic).
+ */
+function initSectionAnalytics() {
+  if (typeof window.gtag !== 'function') return;
+  const sections = document.querySelectorAll('.reveal');
+  if (sections.length === 0) return;
+  const tracked = Object.create(null);
+  const obs = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        const id = e.target.id || e.target.getAttribute('data-section');
+        if (id && !tracked[id]) {
+          tracked[id] = true;
+          window.gtag('event', 'section_view', { section: id, event_category: 'engagement' });
+        }
+      });
+    },
+    { threshold: 0.1 }
+  );
+  sections.forEach((el) => obs.observe(el));
 }
 
 function initSmoothScroll() {
