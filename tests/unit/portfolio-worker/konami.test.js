@@ -1,6 +1,9 @@
 /**
  * Behavior tests for the extracted Konami easter egg module (jsdom-free).
  * A minimal fake document + injected timer exercise the real logic.
+ * INTENTIONAL parity change: konami was previously KO-only inline; extracting it
+ * to a shared module imported by main.js unifies it across KO/EN/JA (the
+ * .hack-mode-overlay CSS already shipped to all locales).
  */
 
 const path = require('path');

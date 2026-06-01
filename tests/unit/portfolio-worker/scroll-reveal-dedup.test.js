@@ -5,7 +5,9 @@
  * reveal behavior already owned by src/scripts/modules/ui.js. After the cleanup:
  *   - No inline reveal observer remains in either HTML source.
  *   - ui.js stays the single reveal owner and also fires section_view analytics
- *     (gated on gtag), so KO/EN analytics behavior is preserved.
+ *     (gated on gtag, checked inside the observer callback to avoid a load-order
+ *     race). INTENTIONAL parity change: section_view was previously KO-only inline;
+ *     it is now unified across KO/EN/JA via the shared bundle (both ship gtag).
  */
 
 const fs = require('fs');

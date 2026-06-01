@@ -28,6 +28,18 @@ describe('visual revamp: per-section accent rhythm', () => {
     expect(layout).toMatch(/var\(--cyber-magenta\)/);
     expect(layout).toMatch(/var\(--cyber-green\)/);
   });
+
+  test('section-title underline uses the accent and is not overwritten by a cyan-only background', () => {
+    const after = layout.slice(
+      layout.indexOf('.section-title::after'),
+      layout.indexOf('.section-title::after') + 400
+    );
+    expect(after).toMatch(/background:\s*linear-gradient\([^)]*--section-accent/);
+    // No later flat cyan-only override inside the same rule.
+    expect(after).not.toMatch(
+      /background:\s*linear-gradient\(90deg,\s*var\(--cyber-cyan\),\s*transparent\)/
+    );
+  });
 });
 
 describe('visual revamp: gradient section dividers', () => {
