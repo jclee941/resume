@@ -169,4 +169,9 @@ describe('i18n JA: security section is localized in the generated JA page', () =
     expect(ja).toMatch(/このサイトのセキュリティ|セキュリティ設計/);
     expect(ja).toContain('Strict CSP');
   });
+
+  test('JA cross-origin card uses the correct kanji (隔離, not 隣離)', () => {
+    expect(ja).toContain('Cross-origin 隔離');
+    expect(ja).not.toContain('隣離');
+  });
 });

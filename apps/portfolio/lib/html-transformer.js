@@ -334,7 +334,7 @@ function buildJapaneseTemplate(html) {
       )
       .replace(
         /<h3 class="security-card__title">Cross-origin 격리 · 모니터링<\/h3>/g,
-        '<h3 class="security-card__title">Cross-origin 隣離 · モニタリング</h3>'
+        '<h3 class="security-card__title">Cross-origin 隔離 · モニタリング</h3>'
       )
       .replace(
         /COOP·CORP를 강제하고, COEP·Trusted Types는 report-only로 운영합니다\. 3rd-party\s+분석·Grafana 임베드가 있고 cross-origin-isolated API가 필요 없어 강제는\s+보류했습니다\./g,
