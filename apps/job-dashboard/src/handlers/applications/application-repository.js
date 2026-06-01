@@ -57,7 +57,13 @@ export class ApplicationRepository {
         VALUES (?, ?, ?, ?, ?)
       `
       )
-      .bind(event.applicationId, event.status, event.previousStatus || null, event.note, event.timestamp)
+      .bind(
+        event.applicationId,
+        event.status,
+        event.previousStatus || null,
+        event.note,
+        event.timestamp
+      )
       .run();
   }
 
@@ -77,7 +83,9 @@ export class ApplicationRepository {
    */
   async findTimelineByAppId(applicationId) {
     const result = await this.db
-      .prepare('SELECT * FROM application_timeline WHERE application_id = ? ORDER BY timestamp DESC')
+      .prepare(
+        'SELECT * FROM application_timeline WHERE application_id = ? ORDER BY timestamp DESC'
+      )
       .bind(applicationId)
       .all();
     return result.results || [];
@@ -95,7 +103,15 @@ export class ApplicationRepository {
    * @param {number} [filters.offset=0]
    * @returns {Promise<Array<Object>>}
    */
-  async findAll({ status, source, company, sortBy = 'created_at', sortOrder = 'desc', limit = 100, offset = 0 }) {
+  async findAll({
+    status,
+    source,
+    company,
+    sortBy = 'created_at',
+    sortOrder = 'desc',
+    limit = 100,
+    offset = 0,
+  }) {
     const VALID_SORT_COLUMNS = ['created_at', 'updated_at', 'company', 'status', 'match_score'];
     let sql = 'SELECT * FROM applications WHERE 1=1';
     const params = [];
@@ -118,7 +134,10 @@ export class ApplicationRepository {
     sql += ` ORDER BY ${sortCol} ${order} LIMIT ? OFFSET ?`;
     params.push(parseInt(limit, 10), parseInt(offset, 10));
 
-    const result = await this.db.prepare(sql).bind(...params).all();
+    const result = await this.db
+      .prepare(sql)
+      .bind(...params)
+      .all();
     return result.results || [];
   }
 
@@ -151,7 +170,10 @@ export class ApplicationRepository {
     sql += ' WHERE id = ?';
     params.push(id);
 
-    await this.db.prepare(sql).bind(...params).run();
+    await this.db
+      .prepare(sql)
+      .bind(...params)
+      .run();
     return this.findById(id);
   }
 
@@ -185,7 +207,10 @@ export class ApplicationRepository {
     updates.push('updated_at = ?');
     params.push(updatedAt, id);
 
-    await this.db.prepare(`UPDATE applications SET ${updates.join(', ')} WHERE id = ?`).bind(...params).run();
+    await this.db
+      .prepare(`UPDATE applications SET ${updates.join(', ')} WHERE id = ?`)
+      .bind(...params)
+      .run();
     return this.findById(id);
   }
 
@@ -194,7 +219,10 @@ export class ApplicationRepository {
    * @param {string} id
    */
   async delete(id) {
-    await this.db.prepare('DELETE FROM application_timeline WHERE application_id = ?').bind(id).run();
+    await this.db
+      .prepare('DELETE FROM application_timeline WHERE application_id = ?')
+      .bind(id)
+      .run();
     await this.db.prepare('DELETE FROM applications WHERE id = ?').bind(id).run();
   }
 

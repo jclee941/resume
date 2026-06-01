@@ -13,14 +13,7 @@
     },
     "resumeAnalysis": {
       "experience": 8.666666666666666,
-      "skillCategories": [
-        "security",
-        "infrastructure",
-        "devops",
-        "automation",
-        "ai_ml",
-        "finance"
-      ],
+      "skillCategories": ["security", "infrastructure", "devops", "automation", "ai_ml", "finance"],
       "totalSkills": 56
     }
   },

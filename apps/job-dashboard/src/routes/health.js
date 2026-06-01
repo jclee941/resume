@@ -51,7 +51,9 @@ export function registerHealthRoutes(router, ctx) {
     };
     if (env.JOB_DB) {
       try {
-        const result = await env.JOB_DB.prepare('SELECT COUNT(*) as count FROM applications').first();
+        const result = await env.JOB_DB.prepare(
+          'SELECT COUNT(*) as count FROM applications'
+        ).first();
         status.applications = result?.count ?? 0;
       } catch {
         status.applications = 'error';

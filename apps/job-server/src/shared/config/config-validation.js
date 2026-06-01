@@ -159,9 +159,4 @@ function validateAutoApplyConfig(candidateConfig) {
   };
 }
 
-export {
-  isPositiveInteger,
-  isNonNegativeInteger,
-  isValidBoolean,
-  validateAutoApplyConfig,
-};
+export { isPositiveInteger, isNonNegativeInteger, isValidBoolean, validateAutoApplyConfig };

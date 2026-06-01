@@ -7,7 +7,8 @@ const DEFAULT_TTL_MS = 24 * 60 * 60 * 1000;
 const DEFAULT_CREDENTIAL_SECRET = 'default-dev-key-change-in-production';
 
 export function deriveAes256GcmKey(secret, options = {}) {
-  const raw = secret || process.env.ENCRYPTION_KEY || options.defaultSecret || DEFAULT_CREDENTIAL_SECRET;
+  const raw =
+    secret || process.env.ENCRYPTION_KEY || options.defaultSecret || DEFAULT_CREDENTIAL_SECRET;
   return createHash('sha256').update(raw).digest();
 }
 
@@ -83,7 +84,9 @@ export class EncryptionService {
     const decipher = createDecipheriv(ALGORITHM, this.key, iv);
     decipher.setAuthTag(authTag);
 
-    const decrypted = Buffer.concat([decipher.update(ciphertext), decipher.final()]).toString('utf8');
+    const decrypted = Buffer.concat([decipher.update(ciphertext), decipher.final()]).toString(
+      'utf8'
+    );
     const payload = JSON.parse(decrypted);
 
     if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {

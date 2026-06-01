@@ -12,7 +12,9 @@ export function autoRoute(messages) {
 /** Determine model routing based on tier and message complexity. */
 export function resolveModel({ tier, messages, modelOverride, workersAI, openAI }) {
   if (modelOverride) {
-    const catalogEntry = Object.values(MODEL_CATALOG).find((entry) => entry.model === modelOverride);
+    const catalogEntry = Object.values(MODEL_CATALOG).find(
+      (entry) => entry.model === modelOverride
+    );
     const providerName = catalogEntry?.provider ?? 'openai';
     const provider = providerName === 'workers-ai' ? workersAI : openAI;
     return { provider, providerName, model: modelOverride, catalogEntry };

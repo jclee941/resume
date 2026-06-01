@@ -23,11 +23,19 @@ function headerNames(headers = []) {
 }
 
 function requestContentType(entry) {
-  return getHeaderValue(entry.request?.headers ?? [], 'content-type') ?? entry.request?.postData?.mimeType ?? null;
+  return (
+    getHeaderValue(entry.request?.headers ?? [], 'content-type') ??
+    entry.request?.postData?.mimeType ??
+    null
+  );
 }
 
 function responseContentType(entry) {
-  return entry.response?.content?.mimeType ?? getHeaderValue(entry.response?.headers ?? [], 'content-type') ?? null;
+  return (
+    entry.response?.content?.mimeType ??
+    getHeaderValue(entry.response?.headers ?? [], 'content-type') ??
+    null
+  );
 }
 
 function pathWithNormalizedQuery(url) {
@@ -122,7 +130,10 @@ export function findJobKoreaPortfolioRequests(har) {
 function findEditEntry(har) {
   return getEntries(har).find((entry) => {
     const url = getUrl(entry);
-    return entry.request?.method === 'GET' && /\/User\/Resume\/(?:Edit|Modify)/i.test(url?.pathname ?? '');
+    return (
+      entry.request?.method === 'GET' &&
+      /\/User\/Resume\/(?:Edit|Modify)/i.test(url?.pathname ?? '')
+    );
   });
 }
 

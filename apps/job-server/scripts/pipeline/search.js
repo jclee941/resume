@@ -200,7 +200,9 @@ export async function scoreSaramin(rawJob) {
     company,
     requirements: rawJob.requirements || '',
     description: rawJob.description || rawJob.benefits || '',
-    experience: [rawJob.experienceMin, rawJob.experienceMax].filter((value) => value != null).join('-'),
+    experience: [rawJob.experienceMin, rawJob.experienceMax]
+      .filter((value) => value != null)
+      .join('-'),
     location: rawJob.location || '',
   });
 

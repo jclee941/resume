@@ -20,14 +20,24 @@ export class AppError extends Error {
    * @param {object} [metadata={}]
    * @param {Error|null} [cause=null]
    */
-  constructor(message, codeOrOptions = ErrorCodes.UNKNOWN, statusCode = 500, metadata = {}, cause = null) {
+  constructor(
+    message,
+    codeOrOptions = ErrorCodes.UNKNOWN,
+    statusCode = 500,
+    metadata = {},
+    cause = null
+  ) {
     let code;
     let resolvedStatusCode = statusCode;
     let resolvedMetadata = metadata;
     let resolvedCause = cause;
     let isOperational = true;
 
-    if (codeOrOptions !== null && typeof codeOrOptions === 'object' && !Array.isArray(codeOrOptions)) {
+    if (
+      codeOrOptions !== null &&
+      typeof codeOrOptions === 'object' &&
+      !Array.isArray(codeOrOptions)
+    ) {
       // Canonical options-object form.
       const opts = codeOrOptions;
       code = opts.errorCode ?? opts.code ?? ErrorCodes.UNKNOWN;
@@ -46,7 +56,8 @@ export class AppError extends Error {
     // Mirror as canonical "errorCode" alias.
     this.errorCode = code;
     this.statusCode = resolvedStatusCode;
-    this.metadata = resolvedMetadata && typeof resolvedMetadata === 'object' ? resolvedMetadata : {};
+    this.metadata =
+      resolvedMetadata && typeof resolvedMetadata === 'object' ? resolvedMetadata : {};
     // Mirror as canonical "context" alias.
     this.context = this.metadata;
     this.cause = resolvedCause;

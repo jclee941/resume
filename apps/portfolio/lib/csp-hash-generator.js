@@ -19,7 +19,7 @@ function extractScriptHashes(html) {
   }
 
   const scriptHashes = [];
-  
+
   // Match all <script> tags without src attribute (inline scripts)
   // Includes scripts with any attributes like type="application/ld+json"
   // Regex breakdown:
@@ -29,11 +29,11 @@ function extractScriptHashes(html) {
   //   ([\s\S]*?)       - capture inline script content (including whitespace)
   //   <\/script>       - closing tag
   const scriptRegex = /<script(?![^>]*src=)[^>]*>([\s\S]*?)<\/script>/g;
-  
+
   let scriptMatch;
   while ((scriptMatch = scriptRegex.exec(html)) !== null) {
     const scriptContent = scriptMatch[1]; // Captured content (NO TRIM)
-    
+
     // Only hash non-empty scripts
     if (scriptContent.trim()) {
       const hash = generateHash(scriptContent);
@@ -57,18 +57,18 @@ function extractStyleHashes(html) {
   }
 
   const styleHashes = [];
-  
+
   // Match all <style> tags with inline CSS
   // Regex breakdown:
   //   <style           - opening tag (no attributes used typically)
   //   ([\s\S]*?)       - capture inline style content (including whitespace)
   //   <\/style>        - closing tag
   const styleRegex = /<style[^>]*>([\s\S]*?)<\/style>/g;
-  
+
   let styleMatch;
   while ((styleMatch = styleRegex.exec(html)) !== null) {
     const styleContent = styleMatch[1]; // Captured content (NO TRIM)
-    
+
     // Only hash non-empty styles
     if (styleContent.trim()) {
       const hash = generateHash(styleContent);
@@ -137,8 +137,8 @@ function validateHashFormat(hashes) {
 
   // CSP hash format: 'sha256-<base64>'
   const hashPattern = /^'sha256-[A-Za-z0-9+/=]+='?$/;
-  
-  return hashes.every(hash => {
+
+  return hashes.every((hash) => {
     if (typeof hash !== 'string') {
       return false;
     }

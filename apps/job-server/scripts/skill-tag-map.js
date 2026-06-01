@@ -98,7 +98,9 @@ export function getTagTypeId(skillName) {
   if (alias && SKILL_TAG_MAP[alias]) {
     const tagId = SKILL_TAG_MAP[alias];
     if (process.env.SKILL_TAG_DEBUG) {
-      console.warn(`[skill-tag-map] routed "${skillName}" via alias -> "${alias}" (tagTypeId=${tagId})`);
+      console.warn(
+        `[skill-tag-map] routed "${skillName}" via alias -> "${alias}" (tagTypeId=${tagId})`
+      );
     }
     return tagId;
   }
@@ -121,7 +123,11 @@ export function flattenSkills(skillsObj) {
     if (Array.isArray(category)) {
       skills.push(...category);
     } else if (category && Array.isArray(category.items)) {
-      skills.push(...category.items.map((item) => (typeof item === 'string' ? item : item.name)).filter(Boolean));
+      skills.push(
+        ...category.items
+          .map((item) => (typeof item === 'string' ? item : item.name))
+          .filter(Boolean)
+      );
     }
   }
   return [...new Set(skills)];
@@ -183,7 +189,6 @@ export default {
   normalizeSkillName,
   diffSkills,
 };
-
 
 export function flattenSkillsWithLevels(skillsObj) {
   if (!skillsObj) return [];

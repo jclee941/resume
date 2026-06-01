@@ -33,13 +33,13 @@ packages/env/
 
 ## EXPORTS
 
-| Import Path                   | Source                        | Purpose                           |
-| ----------------------------- | ----------------------------- | --------------------------------- |
-| `@resume/env`                 | `src/index.js`                | `validateEnv()`, `EnvValidationError` |
-| `@resume/env/parse`           | `src/parse.js`                | Direct parser access              |
-| `@resume/env/schemas/portfolio`      | `src/schemas/portfolio.js`    | `portfolioEnvSchema`              |
-| `@resume/env/schemas/job-dashboard`  | `src/schemas/job-dashboard.js`| `jobDashboardEnvSchema`           |
-| `@resume/env/schemas/job-server`     | `src/schemas/job-server.js`   | `jobServerEnvSchema`              |
+| Import Path                         | Source                         | Purpose                               |
+| ----------------------------------- | ------------------------------ | ------------------------------------- |
+| `@resume/env`                       | `src/index.js`                 | `validateEnv()`, `EnvValidationError` |
+| `@resume/env/parse`                 | `src/parse.js`                 | Direct parser access                  |
+| `@resume/env/schemas/portfolio`     | `src/schemas/portfolio.js`     | `portfolioEnvSchema`                  |
+| `@resume/env/schemas/job-dashboard` | `src/schemas/job-dashboard.js` | `jobDashboardEnvSchema`               |
+| `@resume/env/schemas/job-server`    | `src/schemas/job-server.js`    | `jobServerEnvSchema`                  |
 
 ## CONVENTIONS
 

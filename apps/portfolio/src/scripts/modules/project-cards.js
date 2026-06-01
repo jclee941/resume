@@ -163,7 +163,11 @@ export function initProjectCards() {
   const _pl = (document.documentElement.lang || 'ko').toLowerCase();
   grid.setAttribute(
     'aria-label',
-    _pl.startsWith('en') ? 'Case studies' : _pl.startsWith('ja') ? 'ケーススタディ' : '케이스 스터디'
+    _pl.startsWith('en')
+      ? 'Case studies'
+      : _pl.startsWith('ja')
+        ? 'ケーススタディ'
+        : '케이스 스터디'
   );
 
   PROJECTS.forEach((project, index) => {

@@ -13,19 +13,9 @@ export {
   default as jobMatcher,
 } from './job-matcher.js';
 
-export {
-  normalize,
-  toTokens,
-  unique,
-  jaccardSimilarity,
-  parseRequirements,
-} from './text-utils.js';
+export { normalize, toTokens, unique, jaccardSimilarity, parseRequirements } from './text-utils.js';
 
-export {
-  parseExperienceYears,
-  getResumeYears,
-  scoreExperienceLevel,
-} from './experience-scorer.js';
+export { parseExperienceYears, getResumeYears, scoreExperienceLevel } from './experience-scorer.js';
 
 export { getCity, scoreLocation } from './location-scorer.js';
 

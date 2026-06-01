@@ -36,12 +36,8 @@ export class ApplicationAnalytics {
     return Object.entries(bySource).map(([source, stats]) => ({
       source,
       ...stats,
-      interviewRate: stats.total
-        ? ((stats.interviews / stats.total) * 100).toFixed(1)
-        : 0,
-      offerRate: stats.total
-        ? ((stats.offers / stats.total) * 100).toFixed(1)
-        : 0,
+      interviewRate: stats.total ? ((stats.interviews / stats.total) * 100).toFixed(1) : 0,
+      offerRate: stats.total ? ((stats.offers / stats.total) * 100).toFixed(1) : 0,
     }));
   }
 
@@ -76,9 +72,7 @@ export class ApplicationAnalytics {
     return Object.entries(buckets).map(([range, stats]) => ({
       scoreRange: range,
       ...stats,
-      successRate: stats.total
-        ? ((stats.interviews / stats.total) * 100).toFixed(1)
-        : 0,
+      successRate: stats.total ? ((stats.interviews / stats.total) * 100).toFixed(1) : 0,
     }));
   }
 
@@ -143,8 +137,7 @@ export class ApplicationAnalytics {
 
     const categorize = (position) => {
       const p = (position || '').toLowerCase();
-      if (p.includes('devops') || p.includes('sre') || p.includes('platform'))
-        return 'DevOps/SRE';
+      if (p.includes('devops') || p.includes('sre') || p.includes('platform')) return 'DevOps/SRE';
       if (p.includes('security') || p.includes('보안')) return 'Security';
       if (p.includes('backend') || p.includes('server')) return 'Backend';
       if (p.includes('frontend') || p.includes('react')) return 'Frontend';
@@ -165,21 +158,18 @@ export class ApplicationAnalytics {
     return Object.entries(byType).map(([type, stats]) => ({
       positionType: type,
       ...stats,
-      interviewRate: stats.total
-        ? ((stats.interviews / stats.total) * 100).toFixed(1)
-        : 0,
+      interviewRate: stats.total ? ((stats.interviews / stats.total) * 100).toFixed(1) : 0,
     }));
   }
 
   async generateReport() {
-    const [bySource, byScore, trend, topCompanies, byPosition] =
-      await Promise.all([
-        this.getSuccessRateBySource(),
-        this.getSuccessRateByMatchScore(),
-        this.getWeeklyTrend(),
-        this.getTopPerformingCompanies(),
-        this.getPositionTypeAnalysis(),
-      ]);
+    const [bySource, byScore, trend, topCompanies, byPosition] = await Promise.all([
+      this.getSuccessRateBySource(),
+      this.getSuccessRateByMatchScore(),
+      this.getWeeklyTrend(),
+      this.getTopPerformingCompanies(),
+      this.getPositionTypeAnalysis(),
+    ]);
 
     const apps = this.appService.listApplications();
     const total = apps.length;
@@ -190,21 +180,15 @@ export class ApplicationAnalytics {
       generatedAt: new Date().toISOString(),
       summary: {
         totalApplications: total,
-        interviewRate: total
-          ? `${((interviews / total) * 100).toFixed(1)  }%`
-          : '0%',
-        offerRate: total ? `${((offers / total) * 100).toFixed(1)  }%` : '0%',
+        interviewRate: total ? `${((interviews / total) * 100).toFixed(1)}%` : '0%',
+        offerRate: total ? `${((offers / total) * 100).toFixed(1)}%` : '0%',
       },
       bySource,
       byMatchScore: byScore,
       weeklyTrend: trend,
       topCompanies,
       byPositionType: byPosition,
-      recommendations: this.generateRecommendations(
-        bySource,
-        byScore,
-        byPosition,
-      ),
+      recommendations: this.generateRecommendations(bySource, byScore, byPosition),
     };
   }
 
@@ -212,36 +196,34 @@ export class ApplicationAnalytics {
     const recommendations = [];
 
     const bestSource = bySource.sort(
-      (a, b) => parseFloat(b.interviewRate) - parseFloat(a.interviewRate),
+      (a, b) => parseFloat(b.interviewRate) - parseFloat(a.interviewRate)
     )[0];
     if (bestSource && parseFloat(bestSource.interviewRate) > 0) {
       recommendations.push(
-        `Focus on ${bestSource.source}: ${bestSource.interviewRate}% interview rate`,
+        `Focus on ${bestSource.source}: ${bestSource.interviewRate}% interview rate`
       );
     }
 
     const scoreEffective = byScore.find(
-      (s) => s.scoreRange === '80-89' || s.scoreRange === '90-100',
+      (s) => s.scoreRange === '80-89' || s.scoreRange === '90-100'
     );
     if (scoreEffective && parseFloat(scoreEffective.successRate) > 20) {
       recommendations.push(
-        `Match scores ${scoreEffective.scoreRange} have ${scoreEffective.successRate}% success - prioritize high-match jobs`,
+        `Match scores ${scoreEffective.scoreRange} have ${scoreEffective.successRate}% success - prioritize high-match jobs`
       );
     }
 
     const bestPosition = byPosition.sort(
-      (a, b) => parseFloat(b.interviewRate) - parseFloat(a.interviewRate),
+      (a, b) => parseFloat(b.interviewRate) - parseFloat(a.interviewRate)
     )[0];
     if (bestPosition && parseFloat(bestPosition.interviewRate) > 10) {
       recommendations.push(
-        `${bestPosition.positionType} roles show ${bestPosition.interviewRate}% interview rate`,
+        `${bestPosition.positionType} roles show ${bestPosition.interviewRate}% interview rate`
       );
     }
 
     if (recommendations.length === 0) {
-      recommendations.push(
-        'Collect more application data for meaningful insights',
-      );
+      recommendations.push('Collect more application data for meaningful insights');
     }
 
     return recommendations;

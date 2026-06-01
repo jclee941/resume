@@ -1,10 +1,6 @@
 {
   "$metadata": {
-    "tokenSetOrder": [
-      "global",
-      "semantic",
-      "component"
-    ]
+    "tokenSetOrder": ["global", "semantic", "component"]
   },
   "global": {
     "color": {

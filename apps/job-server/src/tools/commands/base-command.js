@@ -1,11 +1,7 @@
 import { readFileSync, writeFileSync, mkdirSync, readdirSync } from 'fs';
 import { join, dirname } from 'path';
 import { homedir } from 'os';
-import {
-  masterSchema,
-  validateResumeData,
-  formatErrorsForMCP,
-} from '@resume/shared/validation';
+import { masterSchema, validateResumeData, formatErrorsForMCP } from '@resume/shared/validation';
 
 const DEFAULT_OPENCODE_DATA_DIR = join(homedir(), '.opencode', 'data');
 

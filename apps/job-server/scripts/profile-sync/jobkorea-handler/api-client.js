@@ -68,7 +68,9 @@ export class JobKoreaAPIClient {
     const html = await response.text();
 
     const isEditPageMatch = html.match(/\bname=["']IsEditPage["'][^>]*\bvalue=["']([^"']*)["']/i);
-    const lastEditMatch = html.match(/\bname=["']LastEditDateTicks["'][^>]*\bvalue=["']([^"']*)["']/i);
+    const lastEditMatch = html.match(
+      /\bname=["']LastEditDateTicks["'][^>]*\bvalue=["']([^"']*)["']/i
+    );
 
     return {
       IsEditPage: isEditPageMatch ? isEditPageMatch[1] : 'True',
@@ -76,8 +78,6 @@ export class JobKoreaAPIClient {
       LastEditDateTicks: lastEditMatch ? lastEditMatch[1] : '',
     };
   }
-
-
 
   async saveResume(formFields, options = {}) {
     const url = endpointUrl(this.baseUrl, SAVE_ENDPOINT);
@@ -153,7 +153,12 @@ export class JobKoreaAPIClient {
       result,
     };
 
-    if (/\/Login/i.test(response.url || '') || !response.ok || /보안인증|reCAPTCHA|자동가입 방지|비정상적인 접근|captcha/i.test(rawResponse) || result?.saveResult?.IsSuccess === false) {
+    if (
+      /\/Login/i.test(response.url || '') ||
+      !response.ok ||
+      /보안인증|reCAPTCHA|자동가입 방지|비정상적인 접근|captcha/i.test(rawResponse) ||
+      result?.saveResult?.IsSuccess === false
+    ) {
       throw classifyError(errorContext, endpoint);
     }
   }

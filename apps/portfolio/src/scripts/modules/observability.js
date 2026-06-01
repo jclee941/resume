@@ -46,8 +46,6 @@ function formatUptime(seconds) {
   return `${m}m`;
 }
 
-
-
 /**
  * Set a stat card value by its label, using textContent.
  * @param {string} label - The stat-label text to match.

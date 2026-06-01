@@ -1,12 +1,12 @@
 import SessionManager from '../../src/shared/services/session/session-manager.js';
 import { sessionContentValidationMethods } from '../../src/shared/services/session/session-manager/session-content-validation.js';
 import {
-buildCookieString,
-hasFreshSession,
-legacyOpencodeSessionFile,
-readJson,
-repoSessionFile,
-savePlatformSession,
+  buildCookieString,
+  hasFreshSession,
+  legacyOpencodeSessionFile,
+  readJson,
+  repoSessionFile,
+  savePlatformSession,
 } from './cookie-utils.js';
 
 export const JOBKOREA_SESSION_PLATFORM = 'jobkorea';
@@ -84,15 +84,15 @@ export function resolveJobKoreaSession(options = {}) {
       JOBKOREA_SESSION_PLATFORM,
       managedSession
     );
-if (validation.valid) {
-return managedSession;
-}
+    if (validation.valid) {
+      return managedSession;
+    }
   }
 
   for (const filePath of options.fallbackFiles || fallbackSessionFiles) {
     const fileSession = normalizeJobKoreaSession(readJson(filePath), filePath);
-if (!fileSession || (requireFresh && !hasFreshSession(fileSession))) {
-continue;
+    if (!fileSession || (requireFresh && !hasFreshSession(fileSession))) {
+      continue;
     }
 
     const fileValidation = sessionContentValidationMethods.validateSessionContent(

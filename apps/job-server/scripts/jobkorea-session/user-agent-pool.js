@@ -50,10 +50,7 @@ export function pickJobKoreaBrowserProfile(options = {}) {
     throw new Error('JobKorea browser profile pool is empty');
   }
 
-  const selectedIndex = Math.min(
-    Math.floor(randomFn() * profiles.length),
-    profiles.length - 1
-  );
+  const selectedIndex = Math.min(Math.floor(randomFn() * profiles.length), profiles.length - 1);
 
   return profiles[selectedIndex];
 }

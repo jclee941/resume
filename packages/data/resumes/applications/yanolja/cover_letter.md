@@ -1,5 +1,5 @@
 ---
-title: "자기소개서 - 야놀자 (Security Operations)"
+title: '자기소개서 - 야놀자 (Security Operations)'
 author: '이재철'
 date: '2026-01'
 ---

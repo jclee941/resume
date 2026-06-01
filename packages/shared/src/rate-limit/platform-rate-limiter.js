@@ -40,7 +40,10 @@ export class RateLimiter {
 
   #refillTokens(bucket) {
     const now = Date.now();
-    bucket.tokens = Math.min(bucket.maxTokens, bucket.tokens + (now - bucket.lastRefill) * bucket.refillRate);
+    bucket.tokens = Math.min(
+      bucket.maxTokens,
+      bucket.tokens + (now - bucket.lastRefill) * bucket.refillRate
+    );
     bucket.lastRefill = now;
   }
 
@@ -79,7 +82,8 @@ export class RateLimiter {
     try {
       await acquirePromise;
     } finally {
-      if (this.#pendingAcquires.get(platform) === acquirePromise) this.#pendingAcquires.delete(platform);
+      if (this.#pendingAcquires.get(platform) === acquirePromise)
+        this.#pendingAcquires.delete(platform);
     }
   }
 

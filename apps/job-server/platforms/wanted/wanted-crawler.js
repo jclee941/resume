@@ -178,9 +178,7 @@ export class WantedCrawler extends BaseCrawler {
       position: rawJob.position || '',
       company: rawJob.company?.name || '',
       companyId: rawJob.company?.id || '',
-      location: [rawJob.address?.location, rawJob.address?.district]
-        .filter(Boolean)
-        .join(' '),
+      location: [rawJob.address?.location, rawJob.address?.district].filter(Boolean).join(' '),
       experienceMin: rawJob.annual_from || 0,
       experienceMax: rawJob.annual_to || 99,
       salary: rawJob.reward?.formatted_total || '',

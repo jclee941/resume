@@ -2,10 +2,7 @@ const path = require('path');
 const fs = require('fs');
 
 function loadEntryRouterUtils() {
-  const moduleDir = path.resolve(
-    __dirname,
-    '../../../../apps/portfolio/lib/entry-router-utils'
-  );
+  const moduleDir = path.resolve(__dirname, '../../../../apps/portfolio/lib/entry-router-utils');
   const moduleFiles = [
     'constants.js',
     'request-parsing.js',
@@ -185,7 +182,9 @@ describe('entry-router-utils', () => {
       expect(wrapped.headers.get('X-Detected-Language')).toBe('en');
       expect(wrapped.headers.get('X-Language-Source')).toBe('path');
       // Last-Modified is now dynamic (computed at module load time)
-      expect(wrapped.headers.get('Last-Modified')).toMatch(/^\w{3}, \d{2} \w{3} \d{4} \d{2}:\d{2}:\d{2} GMT$/);
+      expect(wrapped.headers.get('Last-Modified')).toMatch(
+        /^\w{3}, \d{2} \w{3} \d{4} \d{2}:\d{2}:\d{2} GMT$/
+      );
       expect(wrapped.headers.get('ETag')).toMatch(/^W\/".*"$/);
     });
 

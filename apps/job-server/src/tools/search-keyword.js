@@ -33,8 +33,7 @@ Returns job listings with: id, position, company, location, highlight snippets.`
       },
       years: {
         type: 'number',
-        description:
-          'Experience years filter (-1=all, 0=entry, 1-10=specific years)',
+        description: 'Experience years filter (-1=all, 0=entry, 1-10=specific years)',
         default: -1,
       },
     },

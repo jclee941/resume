@@ -1,5 +1,5 @@
 ---
-title: "자기소개서 - 놀유니버스 (Security Operations)"
+title: '자기소개서 - 놀유니버스 (Security Operations)'
 author: '이재철'
 date: '2026-01'
 ---

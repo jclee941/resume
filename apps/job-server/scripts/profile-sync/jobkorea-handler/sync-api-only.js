@@ -66,7 +66,12 @@ function overlayTemplate(templateFields, targetFields) {
   for (const [pattern, targetList] of targetByPattern) {
     // Skip index fields to avoid mismatched indices
     // Skip Language fields entirely: template requires Eval_Category which our SSoT doesn't provide
-    if (pattern.endsWith('.index') || pattern.endsWith('.Index_Name') || pattern.startsWith('Language[')) continue;
+    if (
+      pattern.endsWith('.index') ||
+      pattern.endsWith('.Index_Name') ||
+      pattern.startsWith('Language[')
+    )
+      continue;
     const templateEntries = patternMap.get(pattern) || [];
     for (let i = 0; i < Math.min(targetList.length, templateEntries.length); i++) {
       templateEntries[i].value = targetList[i].value;

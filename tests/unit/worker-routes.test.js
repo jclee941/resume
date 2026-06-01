@@ -221,9 +221,18 @@ describe('Worker Routes', () => {
             return new Response('no-match', { status: 418 });
           })();`;
         return new Function(
-          'url', 'request', 'env', 'metrics', 'rateLimitHeaders',
-          'SECURITY_HEADERS', 'CACHE_POLICIES', 'applyNonceToHeaders',
-          'Response', 'Request', 'URL', 'Headers',
+          'url',
+          'request',
+          'env',
+          'metrics',
+          'rateLimitHeaders',
+          'SECURITY_HEADERS',
+          'CACHE_POLICIES',
+          'applyNonceToHeaders',
+          'Response',
+          'Request',
+          'URL',
+          'Headers',
           body
         );
       }
@@ -243,15 +252,25 @@ describe('Worker Routes', () => {
         const env = {
           ASSETS: {
             fetch: async () =>
-              new Response(pdfBytes, { status: 200, headers: { 'Content-Type': 'application/octet-stream' } }),
+              new Response(pdfBytes, {
+                status: 200,
+                headers: { 'Content-Type': 'application/octet-stream' },
+              }),
           },
         };
         const res = await handler(
           new URL('https://resume.jclee.me/resume.pdf'),
           new Request('https://resume.jclee.me/resume.pdf'),
-          env, deps.metrics, deps.rateLimitHeaders,
-          deps.SECURITY_HEADERS, deps.CACHE_POLICIES, deps.applyNonceToHeaders,
-          Response, Request, URL, Headers
+          env,
+          deps.metrics,
+          deps.rateLimitHeaders,
+          deps.SECURITY_HEADERS,
+          deps.CACHE_POLICIES,
+          deps.applyNonceToHeaders,
+          Response,
+          Request,
+          URL,
+          Headers
         );
         expect(res.status).toBe(200);
         expect(res.headers.get('Content-Type')).toBe('application/pdf');
@@ -270,9 +289,16 @@ describe('Worker Routes', () => {
         const res = await handler(
           new URL('https://resume.jclee.me/resume.pdf'),
           new Request('https://resume.jclee.me/resume.pdf'),
-          env, deps.metrics, deps.rateLimitHeaders,
-          deps.SECURITY_HEADERS, deps.CACHE_POLICIES, deps.applyNonceToHeaders,
-          Response, Request, URL, Headers
+          env,
+          deps.metrics,
+          deps.rateLimitHeaders,
+          deps.SECURITY_HEADERS,
+          deps.CACHE_POLICIES,
+          deps.applyNonceToHeaders,
+          Response,
+          Request,
+          URL,
+          Headers
         );
         expect(res.status).toBe(404);
         expect(deps.metrics.requests_error).toBe(1);
@@ -284,9 +310,16 @@ describe('Worker Routes', () => {
         const res = await handler(
           new URL('https://resume.jclee.me/resume.pdf'),
           new Request('https://resume.jclee.me/resume.pdf'),
-          {}, deps.metrics, deps.rateLimitHeaders,
-          deps.SECURITY_HEADERS, deps.CACHE_POLICIES, deps.applyNonceToHeaders,
-          Response, Request, URL, Headers
+          {},
+          deps.metrics,
+          deps.rateLimitHeaders,
+          deps.SECURITY_HEADERS,
+          deps.CACHE_POLICIES,
+          deps.applyNonceToHeaders,
+          Response,
+          Request,
+          URL,
+          Headers
         );
         expect(res.status).toBe(404);
       });

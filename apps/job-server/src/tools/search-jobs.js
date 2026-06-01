@@ -28,8 +28,7 @@ Returns job listings with: id, position, company, location, experience range, re
       tag_type_ids: {
         type: 'array',
         items: { type: 'number' },
-        description:
-          'Job category IDs to filter (e.g., [674] for DevOps, [672] for Security)',
+        description: 'Job category IDs to filter (e.g., [674] for DevOps, [672] for Security)',
       },
       locations: {
         type: 'string',
@@ -38,8 +37,7 @@ Returns job listings with: id, position, company, location, experience range, re
       },
       years: {
         type: 'number',
-        description:
-          'Experience years filter (-1 for all, 0 for entry, 1-10 for specific years)',
+        description: 'Experience years filter (-1 for all, 0 for entry, 1-10 for specific years)',
         default: -1,
       },
       limit: {

@@ -94,10 +94,7 @@ describe('Logger Module', () => {
 
     test('warn should handle multiple arguments', () => {
       logger.warn('warning', 'additional info');
-      expect(consoleSpy.warn).toHaveBeenCalledWith(
-        'warning',
-        'additional info',
-      );
+      expect(consoleSpy.warn).toHaveBeenCalledWith('warning', 'additional info');
     });
 
     test('debug should be suppressed without DEBUG env', () => {

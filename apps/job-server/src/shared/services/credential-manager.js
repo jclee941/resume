@@ -1,8 +1,4 @@
-import {
-  decryptAes256Gcm,
-  deriveAes256GcmKey,
-  encryptAes256Gcm,
-} from '@resume/shared/crypto';
+import { decryptAes256Gcm, deriveAes256GcmKey, encryptAes256Gcm } from '@resume/shared/crypto';
 
 /**
  * Credential manager for platform-specific authentication.
@@ -17,7 +13,9 @@ const _credentialStoreHolder = (() => {
   let m = new Map();
   return {
     get: () => m,
-    clear: () => { m = new Map(); },
+    clear: () => {
+      m = new Map();
+    },
   };
 })();
 

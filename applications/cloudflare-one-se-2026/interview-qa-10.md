@@ -51,7 +51,7 @@
 >
 > 룰 구조:
 >
-> - **Stream 1**: FortiGate session 로그에서 dest_port가 _정상 화이트리스트_ 외인 outbound traffic 추출
+> - **Stream 1**: FortiGate session 로그에서 dest*port가 *정상 화이트리스트\_ 외인 outbound traffic 추출
 > - **Stream 2**: 동일 src_ip가 짧은 시간(예: 5분) 안에 N개 이상 unique dest_port로 접속 (port scan 패턴)
 > - **Sequential Scenario**: Stream 1 이벤트가 발생한 src_ip가 Stream 2 패턴도 만족하면 high-priority alert
 >

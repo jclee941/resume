@@ -25,7 +25,11 @@ function parseJsonBody(body) {
 }
 
 function saveResultFrom(response) {
-  return response?.result?.saveResult ?? response?.json?.saveResult ?? parseJsonBody(responseBody(response))?.saveResult;
+  return (
+    response?.result?.saveResult ??
+    response?.json?.saveResult ??
+    parseJsonBody(responseBody(response))?.saveResult
+  );
 }
 
 export class JobKoreaAPIError extends Error {
@@ -71,13 +75,22 @@ export function classifyError(response, endpoint = '') {
   }
 
   if (CAPTCHA_RE.test(body)) {
-    return new JobKoreaCaptchaError('JobKorea CAPTCHA or verification challenge detected', baseOptions);
+    return new JobKoreaCaptchaError(
+      'JobKorea CAPTCHA or verification challenge detected',
+      baseOptions
+    );
   }
 
   const saveResult = saveResultFrom(response);
   if (saveResult?.IsSuccess === false) {
-    return new JobKoreaSaveError(saveResult.ErrorMessage || 'JobKorea resume save failed', baseOptions);
+    return new JobKoreaSaveError(
+      saveResult.ErrorMessage || 'JobKorea resume save failed',
+      baseOptions
+    );
   }
 
-  return new JobKoreaAPIError(`JobKorea API request failed${statusCode ? ` (${statusCode})` : ''}`, baseOptions);
+  return new JobKoreaAPIError(
+    `JobKorea API request failed${statusCode ? ` (${statusCode})` : ''}`,
+    baseOptions
+  );
 }

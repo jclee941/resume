@@ -104,8 +104,8 @@ export function initGuestbook() {
     const websiteInput = document.getElementById('guestbook-website');
     const submitBtn = form.querySelector('.guestbook-submit');
 
-    const name = (nameInput && nameInput.value || '').trim();
-    const message = (messageInput && messageInput.value || '').trim();
+    const name = ((nameInput && nameInput.value) || '').trim();
+    const message = ((messageInput && messageInput.value) || '').trim();
     if (!name || !message) {
       if (statusEl) statusEl.textContent = '이름과 메시지를 모두 입력해주세요.';
       return;

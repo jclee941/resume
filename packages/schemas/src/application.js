@@ -147,13 +147,17 @@ export const dashboardApplicationCreateSchema = z
     }
   });
 
-export const dashboardApplicationUpdateSchema = z.object({
-  notes: z.string().max(5000).optional(),
-  priority: applicationPriorityWideSchema.optional(),
-  resumeId: z.string().max(100).optional(),
-}).passthrough();
+export const dashboardApplicationUpdateSchema = z
+  .object({
+    notes: z.string().max(5000).optional(),
+    priority: applicationPriorityWideSchema.optional(),
+    resumeId: z.string().max(100).optional(),
+  })
+  .passthrough();
 
-export const dashboardStatusUpdateSchema = z.object({
-  status: applicationStatusWideSchema,
-  note: z.string().max(1000).optional(),
-}).passthrough();
+export const dashboardStatusUpdateSchema = z
+  .object({
+    status: applicationStatusWideSchema,
+    note: z.string().max(1000).optional(),
+  })
+  .passthrough();

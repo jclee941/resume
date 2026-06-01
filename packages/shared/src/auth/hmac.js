@@ -5,7 +5,7 @@ async function importKey(secret, runtime) {
       new TextEncoder().encode(secret),
       { name: 'HMAC', hash: 'SHA-256' },
       false,
-      ['sign', 'verify'],
+      ['sign', 'verify']
     );
   }
   return null;

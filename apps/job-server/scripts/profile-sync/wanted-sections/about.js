@@ -17,7 +17,11 @@ export async function syncWantedAbout(client, ssot, resumeDetail, resumeId) {
     return { changes: 0 };
   }
 
-  log(`About: "${wantedAbout.slice(0, 30)}..." -> "${ssotAbout.slice(0, 30)}..."`, 'diff', 'wanted');
+  log(
+    `About: "${wantedAbout.slice(0, 30)}..." -> "${ssotAbout.slice(0, 30)}..."`,
+    'diff',
+    'wanted'
+  );
   if (!CONFIG.APPLY || CONFIG.DIFF_ONLY) return { changes: 1, dryRun: true };
 
   try {

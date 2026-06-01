@@ -275,9 +275,20 @@ test.describe('JSON-LD Structured Data', () => {
   });
 
   test('rejected buzzwords/metrics absent on all locales', async ({ page }) => {
-    const REJECTED = ['proactively', 'proactive', 'SOC 24/7', '150대', '1,000명',
-      '1,000-user', 'MTTR 30→12', '5분→30초', 'Polyglot', 'AIOps',
-      '활용하고 있습니다', '경험이 있습니다'];
+    const REJECTED = [
+      'proactively',
+      'proactive',
+      'SOC 24/7',
+      '150대',
+      '1,000명',
+      '1,000-user',
+      'MTTR 30→12',
+      '5분→30초',
+      'Polyglot',
+      'AIOps',
+      '활용하고 있습니다',
+      '경험이 있습니다',
+    ];
     const routes = ['/', '/en/', '/ja/'];
     for (const r of routes) {
       await page.goto(r, { waitUntil: 'domcontentloaded' });
@@ -330,7 +341,11 @@ test.describe('JSON-LD Structured Data', () => {
       const scripts = document.querySelectorAll('script[type="application/ld+json"]');
       const errors = [];
       scripts.forEach((s, i) => {
-        try { JSON.parse(s.textContent || ''); } catch (e) { errors.push(`block ${i}: ${e.message}`); }
+        try {
+          JSON.parse(s.textContent || '');
+        } catch (e) {
+          errors.push(`block ${i}: ${e.message}`);
+        }
       });
       return { count: scripts.length, errors };
     });
@@ -344,7 +359,11 @@ test.describe('JSON-LD Structured Data', () => {
       const scripts = document.querySelectorAll('script[type="application/ld+json"]');
       const errors = [];
       scripts.forEach((s, i) => {
-        try { JSON.parse(s.textContent || ''); } catch (e) { errors.push(`block ${i}: ${e.message}`); }
+        try {
+          JSON.parse(s.textContent || '');
+        } catch (e) {
+          errors.push(`block ${i}: ${e.message}`);
+        }
       });
       return { count: scripts.length, errors };
     });

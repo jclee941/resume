@@ -1,9 +1,4 @@
-import {
-  normalizeJob,
-  normalizeJobDetail,
-  normalizeCompany,
-  JOB_CATEGORIES,
-} from '../types.js';
+import { normalizeJob, normalizeJobDetail, normalizeCompany, JOB_CATEGORIES } from '../types.js';
 
 export class JobsEndpoint {
   #client;
@@ -92,9 +87,7 @@ export class CompaniesEndpoint {
     params.append('limit', options.limit || 20);
     params.append('offset', options.offset || 0);
 
-    const response = await this.#client.request(
-      `/companies/${companyId}/jobs?${params}`,
-    );
+    const response = await this.#client.request(`/companies/${companyId}/jobs?${params}`);
     return {
       jobs: (response.data || []).map(normalizeJob),
       total: response.total_count || response.data?.length || 0,

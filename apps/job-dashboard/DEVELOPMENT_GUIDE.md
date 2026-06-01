@@ -411,7 +411,7 @@ export class MyHandler extends BaseHandler {
     return this.errorResponse(error.message, 500);
   }
 }
-````
+```
 
 ### Best Practices
 

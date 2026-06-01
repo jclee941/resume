@@ -12,10 +12,7 @@ import {
   saveDedupCache,
   updateDedupEntry,
 } from './pipeline/dedup-cache.js';
-import {
-  createPipelineFailure,
-  filterRelevantJobs,
-} from './pipeline/job-helpers.js';
+import { createPipelineFailure, filterRelevantJobs } from './pipeline/job-helpers.js';
 import { log, recordJobToElk, shipToElk, summarizeError } from './pipeline/logging.js';
 import { runProfileSync } from './pipeline/profile-sync.js';
 import { createResult, mapFailedJob, mapTopJob } from './pipeline/result-state.js';
@@ -123,7 +120,10 @@ async function main() {
       });
       result.skipped += 1;
       updateDedupEntry(dedupCache, job, 'scored', job.score);
-      log('saramin apply skipped — supported but not live verified', { id: job.id, title: job.title });
+      log('saramin apply skipped — supported but not live verified', {
+        id: job.id,
+        title: job.title,
+      });
     }
   } catch (error) {
     result.failedJobs.push(createPipelineFailure(error));

@@ -14,7 +14,12 @@ function parsePeriod(period = '') {
 
 function mapEducationToWanted(education) {
   const startTime = education.startDate ? `${education.startDate.replace('.', '-')}-01` : null;
-  const endTime = education.status === '재학중' ? null : (education.endDate ? `${education.endDate.replace('.', '-')}-01` : null);
+  const endTime =
+    education.status === '재학중'
+      ? null
+      : education.endDate
+        ? `${education.endDate.replace('.', '-')}-01`
+        : null;
   return {
     school_name: education.school,
     major: education.major,
@@ -176,7 +181,12 @@ describe('ProfileSyncHandler — career project sync', () => {
 
 describe('ProfileSyncHandler — education sync parity', () => {
   it('mapEducationToWanted produces status-aware end_time for 재학중', () => {
-    const edu = { school: '한양사이버대학교', major: '컴퓨터공학과', startDate: '2024.03', status: '재학중' };
+    const edu = {
+      school: '한양사이버대학교',
+      major: '컴퓨터공학과',
+      startDate: '2024.03',
+      status: '재학중',
+    };
     const mapped = mapEducationToWanted(edu);
     assert.strictEqual(mapped.end_time, null);
     assert.strictEqual(mapped.description, '재학중 (2024.03 ~ )');
@@ -185,7 +195,13 @@ describe('ProfileSyncHandler — education sync parity', () => {
   });
 
   it('mapEducationToWanted produces non-null end_time for graduated', () => {
-    const edu = { school: '서울대학교', major: 'CS', startDate: '2014.03', endDate: '2018.02', status: '졸업' };
+    const edu = {
+      school: '서울대학교',
+      major: 'CS',
+      startDate: '2014.03',
+      endDate: '2018.02',
+      status: '졸업',
+    };
     const mapped = mapEducationToWanted(edu);
     assert.strictEqual(mapped.end_time, '2018-02-01');
     assert.strictEqual(mapped.description, null);
@@ -198,7 +214,9 @@ describe('ProfileSyncHandler — education sync parity', () => {
     const resumeId = 'resume-abc';
 
     const changes = {
-      toUpdate: [{ id: 'edu-1', school: '한양사이버대학교', data: { school_name: '한양사이버대학교' } }],
+      toUpdate: [
+        { id: 'edu-1', school: '한양사이버대학교', data: { school_name: '한양사이버대학교' } },
+      ],
       toAdd: [],
     };
 
@@ -224,8 +242,19 @@ describe('ProfileSyncHandler — activity sync parity', () => {
     const resumeId = 'resume-abc';
 
     const changes = {
-      toUpdate: [{ id: 'act-1', title: 'CPPG', data: mapCertificationToWanted({ name: 'CPPG', issuer: 'KISA', date: '2024.11' }) }],
-      toAdd: [{ title: 'New Cert', data: mapCertificationToWanted({ name: 'New Cert', issuer: 'Test', date: '2025.01' }) }],
+      toUpdate: [
+        {
+          id: 'act-1',
+          title: 'CPPG',
+          data: mapCertificationToWanted({ name: 'CPPG', issuer: 'KISA', date: '2024.11' }),
+        },
+      ],
+      toAdd: [
+        {
+          title: 'New Cert',
+          data: mapCertificationToWanted({ name: 'New Cert', issuer: 'Test', date: '2025.01' }),
+        },
+      ],
       toDelete: [{ id: 'act-stale', title: 'Old Cert' }],
     };
 
@@ -273,9 +302,15 @@ describe('ProfileSyncHandler — language cert sync parity', () => {
 
     assert.strictEqual(updateLanguageCert.mock.calls.length, 1);
     assert.strictEqual(updateLanguageCert.mock.calls[0].arguments[1], 'lang-1');
-    assert.deepStrictEqual(updateLanguageCert.mock.calls[0].arguments[2], { language_name: 'Korean', level: 5 });
+    assert.deepStrictEqual(updateLanguageCert.mock.calls[0].arguments[2], {
+      language_name: 'Korean',
+      level: 5,
+    });
     assert.strictEqual(addLanguageCert.mock.calls.length, 1);
-    assert.deepStrictEqual(addLanguageCert.mock.calls[0].arguments[1], { language_name: 'English', level: 4 });
+    assert.deepStrictEqual(addLanguageCert.mock.calls[0].arguments[1], {
+      language_name: 'English',
+      level: 4,
+    });
     assert.strictEqual(deleteLanguageCert.mock.calls.length, 1);
     assert.strictEqual(deleteLanguageCert.mock.calls[0].arguments[1], 'lang-stale');
   });
@@ -288,7 +323,8 @@ describe('ProfileSyncHandler — language cert sync parity', () => {
     ];
     const mapped = languages.map((lang) => ({
       language_name: lang.name,
-      level: lang.level === 'Native' ? 5 : lang.level === 'Professional working proficiency' ? 4 : 3,
+      level:
+        lang.level === 'Native' ? 5 : lang.level === 'Professional working proficiency' ? 4 : 3,
     }));
     assert.strictEqual(mapped[0].level, 5);
     assert.strictEqual(mapped[1].level, 4);

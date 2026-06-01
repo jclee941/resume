@@ -6,7 +6,8 @@ import {
   validateStatusUpdate,
 } from '../index.js';
 
-const statuses = 'pending, saved, applied, viewed, in_progress, interview, offer, rejected, withdrawn, expired';
+const statuses =
+  'pending, saved, applied, viewed, in_progress, interview, offer, rejected, withdrawn, expired';
 
 describe('dashboard validation compatibility', () => {
   it('preserves create validation messages', () => {

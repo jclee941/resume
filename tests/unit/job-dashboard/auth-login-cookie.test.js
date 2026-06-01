@@ -9,18 +9,24 @@ describe('/api/auth/login cookie content (P1-5 wiring)', () => {
 
   beforeAll(async () => {
     auth = await import('../../../apps/job-dashboard/src/services/auth.js');
-    ({ registerAuthRoutes } = await import(
-      '../../../apps/job-dashboard/src/routes/auth.js'
-    ));
+    ({ registerAuthRoutes } = await import('../../../apps/job-dashboard/src/routes/auth.js'));
   });
 
   function makeRouter() {
     const handlers = new Map();
     return {
-      get(path, fn) { handlers.set(`GET ${path}`, fn); },
-      post(path, fn) { handlers.set(`POST ${path}`, fn); },
-      delete(path, fn) { handlers.set(`DELETE ${path}`, fn); },
-      _resolve(method, path) { return handlers.get(`${method} ${path}`); },
+      get(path, fn) {
+        handlers.set(`GET ${path}`, fn);
+      },
+      post(path, fn) {
+        handlers.set(`POST ${path}`, fn);
+      },
+      delete(path, fn) {
+        handlers.set(`DELETE ${path}`, fn);
+      },
+      _resolve(method, path) {
+        return handlers.get(`${method} ${path}`);
+      },
     };
   }
 

@@ -25,7 +25,11 @@ export function normalizeJob(rawJob) {
   };
 }
 
-export function parseSearchResults(html, normalize = normalizeJob, normalizeJson = normalizeJsonLd) {
+export function parseSearchResults(
+  html,
+  normalize = normalizeJob,
+  normalizeJson = normalizeJsonLd
+) {
   const jobs = parseJsonLdJobs(html, normalizeJson);
 
   if (jobs.length === 0) {
@@ -39,7 +43,12 @@ export function parseSearchResults(html, normalize = normalizeJob, normalizeJson
   return jobs.map((job) => normalize(job));
 }
 
-export function parseJobDetail(html, jobKey, normalize = normalizeJob, normalizeJson = normalizeJsonLd) {
+export function parseJobDetail(
+  html,
+  jobKey,
+  normalize = normalizeJob,
+  normalizeJson = normalizeJsonLd
+) {
   const jsonLdMatch = html.match(
     /<script[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/i
   );
@@ -83,9 +92,12 @@ export function normalizeJsonLd(jsonLd) {
     salary: formattedSalary,
     description: jsonLd.description || '',
     datePosted: jsonLd.datePosted || '',
-    isRemote: jsonLd.jobLocationType === 'TELECOMMUTE' || jsonLd.applicantLocationRequirements != null,
+    isRemote:
+      jsonLd.jobLocationType === 'TELECOMMUTE' || jsonLd.applicantLocationRequirements != null,
     jobType: jsonLd.employmentType || '',
-    benefits: Array.isArray(jsonLd.jobBenefits) ? jsonLd.jobBenefits.join(', ') : jsonLd.jobBenefits || '',
+    benefits: Array.isArray(jsonLd.jobBenefits)
+      ? jsonLd.jobBenefits.join(', ')
+      : jsonLd.jobBenefits || '',
     requirements: jsonLd.qualifications || jsonLd.experienceRequirements?.monthsOfExperience || '',
   };
 }
@@ -154,7 +166,11 @@ function parseRegexJobCards(html) {
   const cardPattern =
     /data-jk="([^"]+)"[\s\S]*?<h2[^>]*class="[^"]*jobTitle[^"]*"[^>]*>[\s\S]*?<(?:span|a)[^>]*>([^<]+)<\/(?:span|a)>[\s\S]*?data-testid="company-name"[^>]*>([^<]+)<[\s\S]*?data-testid="text-location"[^>]*>([^<]+)</gi;
 
-  for (let cardMatch = cardPattern.exec(html); cardMatch !== null; cardMatch = cardPattern.exec(html)) {
+  for (
+    let cardMatch = cardPattern.exec(html);
+    cardMatch !== null;
+    cardMatch = cardPattern.exec(html)
+  ) {
     jobs.push({
       jobKey: cardMatch[1],
       title: cardMatch[2].trim(),
@@ -186,5 +202,8 @@ function parseDetailFields(html, jobKey) {
 }
 
 function stripHtml(html) {
-  return html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  return html
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 }

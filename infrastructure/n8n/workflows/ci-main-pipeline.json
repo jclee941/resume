@@ -275,49 +275,49 @@
   ],
   "connections": {
     "webhook-trigger": {
-      "main": [[{"node": "extract-info", "type": "main", "index": 0}]]
+      "main": [[{ "node": "extract-info", "type": "main", "index": 0 }]]
     },
     "extract-info": {
-      "main": [[{"node": "is-master", "type": "main", "index": 0}]]
+      "main": [[{ "node": "is-master", "type": "main", "index": 0 }]]
     },
     "is-master": {
       "main": [
-        [{"node": "create-pipeline", "type": "main", "index": 0}],
-        [{"node": "respond-skipped", "type": "main", "index": 0}]
+        [{ "node": "create-pipeline", "type": "main", "index": 0 }],
+        [{ "node": "respond-skipped", "type": "main", "index": 0 }]
       ]
     },
     "create-pipeline": {
-      "main": [[{"node": "check-created", "type": "main", "index": 0}]]
+      "main": [[{ "node": "check-created", "type": "main", "index": 0 }]]
     },
     "check-created": {
       "main": [
-        [{"node": "init-poll", "type": "main", "index": 0}],
-        [{"node": "create-error", "type": "main", "index": 0}]
+        [{ "node": "init-poll", "type": "main", "index": 0 }],
+        [{ "node": "create-error", "type": "main", "index": 0 }]
       ]
     },
     "create-error": {
-      "main": [[{"node": "notify-create-error", "type": "main", "index": 0}]]
+      "main": [[{ "node": "notify-create-error", "type": "main", "index": 0 }]]
     },
     "notify-create-error": {
-      "main": [[{"node": "respond-create-error", "type": "main", "index": 0}]]
+      "main": [[{ "node": "respond-create-error", "type": "main", "index": 0 }]]
     },
     "init-poll": {
-      "main": [[{"node": "poll-pipeline", "type": "main", "index": 0}]]
+      "main": [[{ "node": "poll-pipeline", "type": "main", "index": 0 }]]
     },
     "poll-pipeline": {
-      "main": [[{"node": "get-jobs", "type": "main", "index": 0}]]
+      "main": [[{ "node": "get-jobs", "type": "main", "index": 0 }]]
     },
     "get-jobs": {
-      "main": [[{"node": "format-results", "type": "main", "index": 0}]]
+      "main": [[{ "node": "format-results", "type": "main", "index": 0 }]]
     },
     "format-results": {
-      "main": [[{"node": "elk-ingest", "type": "main", "index": 0}]]
+      "main": [[{ "node": "elk-ingest", "type": "main", "index": 0 }]]
     },
     "elk-ingest": {
-      "main": [[{"node": "notify-result", "type": "main", "index": 0}]]
+      "main": [[{ "node": "notify-result", "type": "main", "index": 0 }]]
     },
     "notify-result": {
-      "main": [[{"node": "respond-final", "type": "main", "index": 0}]]
+      "main": [[{ "node": "respond-final", "type": "main", "index": 0 }]]
     }
   },
   "settings": {
@@ -327,8 +327,8 @@
   },
   "staticData": null,
   "tags": [
-    {"id": "tag-ci", "name": "ci"},
-    {"id": "tag-pipeline", "name": "pipeline"},
-    {"id": "tag-orchestrator", "name": "orchestrator"}
+    { "id": "tag-ci", "name": "ci" },
+    { "id": "tag-pipeline", "name": "pipeline" },
+    { "id": "tag-orchestrator", "name": "orchestrator" }
   ]
 }

@@ -109,7 +109,10 @@ function processProjectData({ projectDataRaw, projectDataEnRaw, projectDataJaRaw
       (projectDataJa && projectDataJa.skills) || projectData.skills,
       `${dataHash}:ja-skills`
     ),
-    heroContentHtml: generateHeroContent({ ...projectData.hero, email: projectData.contact && projectData.contact.email }),
+    heroContentHtml: generateHeroContent({
+      ...projectData.hero,
+      email: projectData.contact && projectData.contact.email,
+    }),
     resumeDescriptionHtml: generateResumeDescription(projectData.resume),
     infrastructureCardsHtml: generateInfrastructureCards(projectData.infrastructure),
     infrastructureCardsEnHtml: generateInfrastructureCards(
@@ -155,9 +158,8 @@ function encodeBinaryAssets({ ogImageBuffer, ogImageEnBuffer, ogImageJaBuffer })
   return {
     ogImageBase64: ogImageBuffer.toString('base64'),
     ogImageEnBase64: ogImageEnBuffer.toString('base64'),
-    ogImageJaBase64: (ogImageJaBuffer && ogImageJaBuffer.length > 0)
-      ? ogImageJaBuffer.toString('base64')
-      : '',
+    ogImageJaBase64:
+      ogImageJaBuffer && ogImageJaBuffer.length > 0 ? ogImageJaBuffer.toString('base64') : '',
   };
 }
 

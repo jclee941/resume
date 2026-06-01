@@ -11,11 +11,18 @@ function planCareerSync(ssotCareers, wantedCareers) {
 
   for (const ssotCareer of ssotCareers) {
     const ssotCompanyNormalized = normalizeCompanyName(ssotCareer.company);
-    const wantedCareer = wantedCareers.find((w) => (w.company?.name || '').includes(ssotCompanyNormalized));
+    const wantedCareer = wantedCareers.find((w) =>
+      (w.company?.name || '').includes(ssotCompanyNormalized)
+    );
     const mapped = mapCareerToWanted(ssotCareer);
     if (wantedCareer) {
       matched.add(wantedCareer.id);
-      toUpdate.push({ id: wantedCareer.id, data: mapped, ssot: ssotCareer, existingProjects: wantedCareer.projects || [] });
+      toUpdate.push({
+        id: wantedCareer.id,
+        data: mapped,
+        ssot: ssotCareer,
+        existingProjects: wantedCareer.projects || [],
+      });
     } else {
       toAdd.push({ data: mapped, ssot: ssotCareer });
     }
@@ -27,7 +34,10 @@ function planCareerSync(ssotCareers, wantedCareers) {
 function reportCareerDiff(toUpdate, toAdd, toDelete) {
   for (const item of toUpdate) console.log(`  ~ ${item.ssot.company}: ${item.ssot.role}`);
   for (const item of toAdd) console.log(`  + ${item.ssot.company}: ${item.ssot.role}`);
-  for (const career of toDelete) console.log(`  - ${career.company?.name || 'Unknown'}: ${career.job_role || 'Unknown'} (id: ${career.id})`);
+  for (const career of toDelete)
+    console.log(
+      `  - ${career.company?.name || 'Unknown'}: ${career.job_role || 'Unknown'} (id: ${career.id})`
+    );
 }
 
 /** @param {Object} client @param {Object} ssot @param {Object} profile @param {string} resumeId @returns {Promise<Object>} */
@@ -36,14 +46,28 @@ export async function syncWantedCareers(client, ssot, profile, resumeId) {
   const resumeDetail = await client.getResumeDetail(resumeId);
   const wantedCareers = resumeDetail?.careers || [];
 
-  log(`Careers: SSOT has ${ssotCareers.length}, Wanted has ${wantedCareers.length}`, 'info', 'wanted');
+  log(
+    `Careers: SSOT has ${ssotCareers.length}, Wanted has ${wantedCareers.length}`,
+    'info',
+    'wanted'
+  );
 
   const { toUpdate, toAdd, toDelete } = planCareerSync(ssotCareers, wantedCareers);
-  log(`Careers: ${toUpdate.length} to override, ${toAdd.length} to add, ${toDelete.length} to delete`, 'info', 'wanted');
+  log(
+    `Careers: ${toUpdate.length} to override, ${toAdd.length} to add, ${toDelete.length} to delete`,
+    'info',
+    'wanted'
+  );
 
   if (!CONFIG.APPLY || CONFIG.DIFF_ONLY) {
     reportCareerDiff(toUpdate, toAdd, toDelete);
-    return { changes: toUpdate.length + toAdd.length + toDelete.length, updated: 0, added: 0, deleted: 0, dryRun: true };
+    return {
+      changes: toUpdate.length + toAdd.length + toDelete.length,
+      updated: 0,
+      added: 0,
+      deleted: 0,
+      dryRun: true,
+    };
   }
 
   const updated = await updateCareers(client, resumeId, toUpdate);
@@ -91,7 +115,11 @@ async function deleteCareers(client, resumeId, toDelete) {
       log(`Deleted career: ${career.company?.name || 'Unknown'}`, 'success', 'wanted');
       deleted++;
     } catch (e) {
-      log(`Failed to delete career ${career.company?.name || 'Unknown'}: ${e.message}`, 'error', 'wanted');
+      log(
+        `Failed to delete career ${career.company?.name || 'Unknown'}: ${e.message}`,
+        'error',
+        'wanted'
+      );
     }
   }
   return deleted;

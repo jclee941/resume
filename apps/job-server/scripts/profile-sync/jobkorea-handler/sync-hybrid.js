@@ -19,7 +19,13 @@ function resolveLogger(options) {
   return options.logger ?? (() => {});
 }
 
-export async function executeHybridSave(apiClient, targetFields, page, sectionIndices, options = {}) {
+export async function executeHybridSave(
+  apiClient,
+  targetFields,
+  page,
+  sectionIndices,
+  options = {}
+) {
   const logger = resolveLogger(options);
   const dryRun = options.dryRun || getJobKoreaSyncMode() === 'api-dry-run';
   const shouldSave = options.apply !== false && !options.diffOnly && !dryRun;
@@ -31,14 +37,20 @@ export async function executeHybridSave(apiClient, targetFields, page, sectionIn
 
   try {
     // Extract current form state from Playwright page to use as base for smart merge
-    const baseFields = typeof page?.evaluate === 'function'
-      ? await page.evaluate(() => $('#frm1').serializeArray())
-      : [];
+    const baseFields =
+      typeof page?.evaluate === 'function'
+        ? await page.evaluate(() => $('#frm1').serializeArray())
+        : [];
     const saveResult = await apiClient.saveResume(targetFields, { baseFields });
-    logger(`API save response: ${JSON.stringify(saveResult.result ?? saveResult).slice(0, 500)}`, 'info', 'jobkorea');
+    logger(
+      `API save response: ${JSON.stringify(saveResult.result ?? saveResult).slice(0, 500)}`,
+      'info',
+      'jobkorea'
+    );
 
     if (saveResult?.success === false) {
-      const errorMessage = saveResult?.result?.saveResult?.ErrorMessage || 'JobKorea resume save failed';
+      const errorMessage =
+        saveResult?.result?.saveResult?.ErrorMessage || 'JobKorea resume save failed';
       logger(`API save failed: ${errorMessage}`, 'error', 'jobkorea');
       return { success: false, error: errorMessage, usedApi: true };
     }
@@ -47,7 +59,11 @@ export async function executeHybridSave(apiClient, targetFields, page, sectionIn
     return { success: true, usedApi: true };
   } catch (error) {
     if (isFallbackEligible(error)) {
-      logger(`API save blocked (${error.name}); falling back to Playwright save`, 'warn', 'jobkorea');
+      logger(
+        `API save blocked (${error.name}); falling back to Playwright save`,
+        'warn',
+        'jobkorea'
+      );
       if (typeof options.fallbackSave !== 'function') {
         throw error;
       }
@@ -64,7 +80,14 @@ export async function executeHybridSave(apiClient, targetFields, page, sectionIn
   }
 }
 
-export async function executeHybridPortfolio(apiClient, portfolioUrl, targetFields, page, ssot, options = {}) {
+export async function executeHybridPortfolio(
+  apiClient,
+  portfolioUrl,
+  targetFields,
+  page,
+  ssot,
+  options = {}
+) {
   if (!portfolioUrl) {
     return { success: true, skipped: true, usedApi: false };
   }
@@ -87,7 +110,11 @@ export async function executeHybridPortfolio(apiClient, portfolioUrl, targetFiel
     throw error;
   } catch (error) {
     if (isFallbackEligible(error)) {
-      logger(`API portfolio blocked (${error.name}); falling back to Playwright portfolio registration`, 'warn', 'jobkorea');
+      logger(
+        `API portfolio blocked (${error.name}); falling back to Playwright portfolio registration`,
+        'warn',
+        'jobkorea'
+      );
       if (typeof options.fallbackPortfolio !== 'function') {
         throw error;
       }

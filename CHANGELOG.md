@@ -127,8 +127,7 @@ Versioning](https://semver.org/).
 - feat(ci): add provision-queues workflow + clarify queue binding inactive state
   (6e3ad2f)
 - docs(architecture): reflect ADR 0008 single-worker consolidation (91c04b1)
-- chore(cleanup): delete obsolete standalone job worker config + runbook (ADR
-  0008) (20c3be4)
+- chore(cleanup): delete obsolete standalone job worker config + runbook (ADR 0008) (20c3be4)
 
 ## [v1.17.1] - 2026-04-30
 
@@ -141,8 +140,7 @@ Versioning](https://semver.org/).
 ### Changes
 
 - chore(sync): remove stale 펀엔씨(FunNC) entries from web data generator (e1f207c)
-- feat(portfolio): consolidate job-dashboard into single resume worker (ADR
-  0008) (526c010)
+- feat(portfolio): consolidate job-dashboard into single resume worker (ADR 0008) (526c010)
 - fix(job-dashboard): notifications.js import paths + env.DB → env.JOB_DB rename
   (6fff448)
 

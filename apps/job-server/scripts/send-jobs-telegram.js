@@ -25,20 +25,23 @@ import { readFileSync } from 'fs';
 import { TelegramNotificationAdapter } from '../src/shared/services/notifications/telegram-adapter.js';
 import { filterWorthy, WORTHY_MIN_SCORE } from './worthiness.js';
 
-const DEFAULT_KEYWORDS = [
-  '보안 엔지니어',
-  'DevOps',
-  'SRE',
-  '클라우드 엔지니어',
-  '인프라 엔지니어',
-];
+const DEFAULT_KEYWORDS = ['보안 엔지니어', 'DevOps', 'SRE', '클라우드 엔지니어', '인프라 엔지니어'];
 
 function parseArgs(argv) {
-  const get = (name) => argv.find((a) => a.startsWith(`--${name}=`))?.split('=').slice(1).join('=');
+  const get = (name) =>
+    argv
+      .find((a) => a.startsWith(`--${name}=`))
+      ?.split('=')
+      .slice(1)
+      .join('=');
   return {
     queuePath: get('queue'),
     limit: Number.parseInt(get('limit') ?? '10', 10) || 10,
-    keywords: get('keywords') ? get('keywords').split(',').map((s) => s.trim()) : DEFAULT_KEYWORDS,
+    keywords: get('keywords')
+      ? get('keywords')
+          .split(',')
+          .map((s) => s.trim())
+      : DEFAULT_KEYWORDS,
     dryRun: argv.includes('--dry-run'),
     separate: argv.includes('--separate'),
     minScore: Number.parseInt(get('min-score') ?? String(WORTHY_MIN_SCORE), 10) || WORTHY_MIN_SCORE,
@@ -106,19 +109,19 @@ async function main() {
 
   if (args.dryRun) {
     if (args.separate) {
-      const { createSingleJobMessage } = await import(
-        '../src/shared/services/notifications/telegram-adapter/formatters.js'
-      );
-      const { splitForTelegram } = await import(
-        '../src/shared/services/notifications/telegram-adapter/message-splitter.js'
-      );
+      const { createSingleJobMessage } =
+        await import('../src/shared/services/notifications/telegram-adapter/formatters.js');
+      const { splitForTelegram } =
+        await import('../src/shared/services/notifications/telegram-adapter/message-splitter.js');
       const selected = jobs.slice(0, args.limit);
       console.log(`\n--- DRY RUN (separate: ${selected.length} job message(s)) ---\n`);
       selected.forEach((job, i) => {
         const msg = createSingleJobMessage(job);
         const chunks = splitForTelegram(msg.text);
         chunks.forEach((chunk, c) => {
-          console.log(`--- would send ${i + 1}/${selected.length} (chunk ${c + 1}/${chunks.length}) ---`);
+          console.log(
+            `--- would send ${i + 1}/${selected.length} (chunk ${c + 1}/${chunks.length}) ---`
+          );
           console.log(chunk);
           console.log('');
         });
@@ -126,9 +129,8 @@ async function main() {
       console.log('--- end preview (not sent) ---');
       return;
     }
-    const { createJobPostingsMessage } = await import(
-      '../src/shared/services/notifications/telegram-adapter/formatters.js'
-    );
+    const { createJobPostingsMessage } =
+      await import('../src/shared/services/notifications/telegram-adapter/formatters.js');
     const msg = createJobPostingsMessage(jobs, { limit: args.limit });
     console.log('\n--- DRY RUN (message preview) ---\n');
     console.log(msg.text);
@@ -146,7 +148,9 @@ async function main() {
   if (args.separate) {
     const result = await adapter.sendJobPostingsSeparately(jobs, { limit: args.limit });
     if (result.failed === 0 && result.sent > 0) {
-      console.log(`✅ Sent ${result.sent} job message(s) separately to Telegram (${result.messages} job(s)).`);
+      console.log(
+        `✅ Sent ${result.sent} job message(s) separately to Telegram (${result.messages} job(s)).`
+      );
     } else {
       console.error(
         `❌ Separate send: sent=${result.sent} failed=${result.failed} of ${result.messages} job(s).`,
@@ -157,16 +161,19 @@ async function main() {
     return;
   }
 
-  const { createJobPostingsMessage } = await import(
-    '../src/shared/services/notifications/telegram-adapter/formatters.js'
-  );
-  const rendered = createJobPostingsMessage(jobs, { limit: args.limit }).renderedCount ?? Math.min(jobs.length, args.limit);
+  const { createJobPostingsMessage } =
+    await import('../src/shared/services/notifications/telegram-adapter/formatters.js');
+  const rendered =
+    createJobPostingsMessage(jobs, { limit: args.limit }).renderedCount ??
+    Math.min(jobs.length, args.limit);
 
   const result = await adapter.sendJobPostings(jobs, { limit: args.limit });
   if (result.sent) {
     const messageId = result.results?.telegram?.messageId;
     console.log(`✅ Sent ${rendered} of ${jobs.length} postings to Telegram.`);
-    console.log(`   status=${result.status} historyId=${result.historyId} messageId=${messageId ?? 'n/a'}`);
+    console.log(
+      `   status=${result.status} historyId=${result.historyId} messageId=${messageId ?? 'n/a'}`
+    );
   } else {
     console.error('❌ Telegram send failed:', JSON.stringify(result.results || result, null, 2));
     process.exit(1);

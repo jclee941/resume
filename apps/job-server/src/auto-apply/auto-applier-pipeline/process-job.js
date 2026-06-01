@@ -35,7 +35,13 @@ export async function processJob(job, context = {}) {
     );
 
     if (!applyDecision.apply) {
-      return await handleSkippedDecision(this, applyDecision, trackedApplication, jobId, stageState);
+      return await handleSkippedDecision(
+        this,
+        applyDecision,
+        trackedApplication,
+        jobId,
+        stageState
+      );
     }
 
     if (this.config.dryRun || !this.config.autoApply) {

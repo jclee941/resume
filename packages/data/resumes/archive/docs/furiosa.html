@@ -1,651 +1,669 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>이재철 - Security Engineer | 퓨리오사AI</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Pretendard', 'Inter', sans-serif;
+        line-height: 1.6;
+        color: #1f2937;
+        background: #ffffff;
+        min-height: 100vh;
+      }
+
+      .resume-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        min-height: 100vh;
+      }
+
+      /* Sidebar */
+      .sidebar {
+        background: #111827;
+        color: #e5e7eb;
+        padding: 48px 32px;
+      }
+
+      .profile-section {
+        text-align: center;
+        margin-bottom: 40px;
+        padding-bottom: 32px;
+        border-bottom: 1px solid #374151;
+      }
+
+      .profile-img {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: #374151;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        color: white;
+        font-weight: 700;
+        margin: 0 auto 20px;
+      }
+
+      .profile-name {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #ffffff;
+        margin-bottom: 8px;
+      }
+
+      .profile-title {
+        font-size: 0.9rem;
+        color: #9ca3af;
+      }
+
+      .sidebar-section {
+        margin-bottom: 32px;
+      }
+
+      .sidebar-title {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #ffffff;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 16px;
+      }
+
+      .contact-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 12px;
+        font-size: 0.85rem;
+        color: #d1d5db;
+      }
+
+      .contact-item a {
+        color: #d1d5db;
+        text-decoration: none;
+      }
+
+      .contact-item a:hover {
+        color: #ffffff;
+      }
+
+      .skill-tag {
+        display: inline-block;
+        background: #1f2937;
+        color: #d1d5db;
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        margin: 4px 4px 4px 0;
+        border: 1px solid #374151;
+      }
+
+      .cert-item {
+        margin-bottom: 12px;
+      }
+
+      .cert-name {
+        font-size: 0.85rem;
+        color: #e5e7eb;
+        font-weight: 500;
+      }
+
+      .cert-date {
+        .pdf-button {
+          width: 100%;
+          padding: 12px 20px;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: #ffffff;
+          border: none;
+          border-radius: 8px;
+          font-size: 0.875rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Pretendard', 'Inter', sans-serif;
-            line-height: 1.6;
-            color: #1f2937;
-            background: #ffffff;
-            min-height: 100vh;
+        .pdf-button:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
         }
 
+        .pdf-button:active {
+          transform: translateY(0);
+        }
+        font-size: 0.75rem;
+
+        .pdf-button {
+          width: 100%;
+          padding: 12px 20px;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: #ffffff;
+          border: none;
+          border-radius: 8px;
+          font-size: 0.875rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .pdf-button:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+        }
+
+        .pdf-button:active {
+          transform: translateY(0);
+        }
+        color: #9ca3af;
+
+        .pdf-button {
+          width: 100%;
+          padding: 12px 20px;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: #ffffff;
+          border: none;
+          border-radius: 8px;
+          font-size: 0.875rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .pdf-button:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+        }
+
+        .pdf-button:active {
+          transform: translateY(0);
+        }
+      }
+
+      .pdf-button {
+        width: 100%;
+        padding: 12px 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #ffffff;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+      }
+
+      .pdf-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+      }
+
+      .pdf-button:active {
+        transform: translateY(0);
+      }
+
+      /* Main Content */
+      .main-content {
+        padding: 48px 56px;
+        background: #fafafa;
+      }
+
+      .section {
+        margin-bottom: 48px;
+      }
+
+      .section-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 8px;
+        letter-spacing: -0.025em;
+      }
+
+      .section-subtitle {
+        font-size: 0.95rem;
+        color: #6b7280;
+        margin-bottom: 32px;
+        line-height: 1.6;
+      }
+
+      .experience-item {
+        margin-bottom: 40px;
+        padding-bottom: 32px;
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      .experience-item:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+      }
+
+      .company {
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: #111827;
+        margin-bottom: 4px;
+      }
+
+      .period {
+        font-size: 0.85rem;
+        color: #6b7280;
+        margin-bottom: 12px;
+      }
+
+      .experience-item > p {
+        font-size: 0.95rem;
+        color: #4b5563;
+        margin-bottom: 16px;
+        line-height: 1.7;
+      }
+
+      .achievement {
+        background: #ffffff;
+        padding: 16px 20px;
+        border-radius: 6px;
+        margin: 12px 0;
+        border-left: 3px solid #111827;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        color: #374151;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      }
+
+      .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+      }
+
+      .project-card {
+        background: #ffffff;
+        border-radius: 6px;
+        padding: 24px;
+        border: 1px solid #e5e7eb;
+        transition: all 0.2s ease;
+      }
+
+      .project-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        transform: translateY(-2px);
+      }
+
+      .project-title {
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: #111827;
+        margin-bottom: 8px;
+      }
+
+      .project-card > p {
+        font-size: 0.85rem;
+        color: #6b7280;
+        line-height: 1.6;
+        margin-bottom: 12px;
+      }
+
+      .project-link {
+        display: inline-block;
+        font-size: 0.8rem;
+        color: #111827;
+        text-decoration: none;
+        font-weight: 500;
+        margin-top: 8px;
+      }
+
+      .project-link:hover {
+        text-decoration: underline;
+      }
+
+      .approach-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+      }
+
+      .approach-item {
+        background: #ffffff;
+        padding: 24px;
+        border-radius: 6px;
+        border: 1px solid #e5e7eb;
+      }
+
+      .approach-item h3 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #111827;
+        margin-bottom: 12px;
+      }
+
+      .approach-item p {
+        font-size: 0.875rem;
+        color: #6b7280;
+        line-height: 1.6;
+      }
+
+      /* Responsive */
+      @media (max-width: 1024px) {
         .resume-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 300px 1fr;
-            min-height: 100vh;
+          grid-template-columns: 1fr;
         }
 
-        /* Sidebar */
         .sidebar {
-            background: #111827;
-            color: #e5e7eb;
-            padding: 48px 32px;
+          padding: 32px 24px;
         }
 
-        .profile-section {
-            text-align: center;
-            margin-bottom: 40px;
-            padding-bottom: 32px;
-            border-bottom: 1px solid #374151;
-        }
-
-        .profile-img {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: #374151;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            color: white;
-            font-weight: 700;
-            margin: 0 auto 20px;
-        }
-
-        .profile-name {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 8px;
-        }
-
-        .profile-title {
-            font-size: 0.9rem;
-            color: #9ca3af;
-        }
-
-        .sidebar-section {
-            margin-bottom: 32px;
-        }
-
-        .sidebar-title {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #ffffff;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 16px;
-        }
-
-        .contact-item {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 12px;
-            font-size: 0.85rem;
-            color: #d1d5db;
-        }
-
-        .contact-item a {
-            color: #d1d5db;
-            text-decoration: none;
-        }
-
-        .contact-item a:hover {
-            color: #ffffff;
-        }
-
-        .skill-tag {
-            display: inline-block;
-            background: #1f2937;
-            color: #d1d5db;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            margin: 4px 4px 4px 0;
-            border: 1px solid #374151;
-        }
-
-        .cert-item {
-            margin-bottom: 12px;
-        }
-
-        .cert-name {
-            font-size: 0.85rem;
-            color: #e5e7eb;
-            font-weight: 500;
-        }
-
-        .cert-date {
-
-        .pdf-button {
-            width: 100%;
-            padding: 12px 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #ffffff;
-            border: none;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-        }
-
-        .pdf-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
-        }
-
-        .pdf-button:active {
-            transform: translateY(0);
-        }
-            font-size: 0.75rem;
-
-        .pdf-button {
-            width: 100%;
-            padding: 12px 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #ffffff;
-            border: none;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-        }
-
-        .pdf-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
-        }
-
-        .pdf-button:active {
-            transform: translateY(0);
-        }
-            color: #9ca3af;
-
-        .pdf-button {
-            width: 100%;
-            padding: 12px 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #ffffff;
-            border: none;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-        }
-
-        .pdf-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
-        }
-
-        .pdf-button:active {
-            transform: translateY(0);
-        }
-        }
-
-        .pdf-button {
-            width: 100%;
-            padding: 12px 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #ffffff;
-            border: none;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-        }
-
-        .pdf-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
-        }
-
-        .pdf-button:active {
-            transform: translateY(0);
-        }
-
-        /* Main Content */
         .main-content {
-            padding: 48px 56px;
-            background: #fafafa;
-        }
-
-        .section {
-            margin-bottom: 48px;
-        }
-
-        .section-title {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: #111827;
-            margin-bottom: 8px;
-            letter-spacing: -0.025em;
-        }
-
-        .section-subtitle {
-            font-size: 0.95rem;
-            color: #6b7280;
-            margin-bottom: 32px;
-            line-height: 1.6;
-        }
-
-        .experience-item {
-            margin-bottom: 40px;
-            padding-bottom: 32px;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .experience-item:last-child {
-            border-bottom: none;
-            padding-bottom: 0;
-        }
-
-        .company {
-            font-size: 1.15rem;
-            font-weight: 600;
-            color: #111827;
-            margin-bottom: 4px;
-        }
-
-        .period {
-            font-size: 0.85rem;
-            color: #6b7280;
-            margin-bottom: 12px;
-        }
-
-        .experience-item > p {
-            font-size: 0.95rem;
-            color: #4b5563;
-            margin-bottom: 16px;
-            line-height: 1.7;
-        }
-
-        .achievement {
-            background: #ffffff;
-            padding: 16px 20px;
-            border-radius: 6px;
-            margin: 12px 0;
-            border-left: 3px solid #111827;
-            font-size: 0.9rem;
-            line-height: 1.6;
-            color: #374151;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-        }
-
-        .projects-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-        }
-
-        .project-card {
-            background: #ffffff;
-            border-radius: 6px;
-            padding: 24px;
-            border: 1px solid #e5e7eb;
-            transition: all 0.2s ease;
-        }
-
-        .project-card:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            transform: translateY(-2px);
-        }
-
-        .project-title {
-            font-size: 1.05rem;
-            font-weight: 600;
-            color: #111827;
-            margin-bottom: 8px;
-        }
-
-        .project-card > p {
-            font-size: 0.85rem;
-            color: #6b7280;
-            line-height: 1.6;
-            margin-bottom: 12px;
-        }
-
-        .project-link {
-            display: inline-block;
-            font-size: 0.8rem;
-            color: #111827;
-            text-decoration: none;
-            font-weight: 500;
-            margin-top: 8px;
-        }
-
-        .project-link:hover {
-            text-decoration: underline;
+          padding: 32px 24px;
         }
 
         .approach-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
+          grid-template-columns: 1fr;
         }
 
-        .approach-item {
-            background: #ffffff;
-            padding: 24px;
-            border-radius: 6px;
-            border: 1px solid #e5e7eb;
+        .projects-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .main-content {
+          padding: 24px 16px;
         }
 
-        .approach-item h3 {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #111827;
-            margin-bottom: 12px;
+        .section-title {
+          font-size: 1.5rem;
         }
 
-        .approach-item p {
-            font-size: 0.875rem;
-            color: #6b7280;
-            line-height: 1.6;
+        .achievement {
+          padding: 12px 16px;
+          font-size: 0.85rem;
         }
 
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .resume-container {
-                grid-template-columns: 1fr;
-            }
+        .skill-tag {
+          font-size: 0.7rem;
+          padding: 5px 10px;
+        }
+      }
 
-            .sidebar {
-                padding: 32px 24px;
-            }
+      .back-button {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #667eea;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        z-index: 1000;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
 
-            .main-content {
-                padding: 32px 24px;
-            }
+      .back-button:hover {
+        background: #5568d3;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
 
-            .approach-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .projects-grid {
-                grid-template-columns: 1fr;
-            }
+      @media print {
+        body {
+          background: white;
         }
 
-        @media (max-width: 640px) {
-            .main-content {
-                padding: 24px 16px;
-            }
+        .resume-container {
+          max-width: 100%;
+        }
 
-            .section-title {
-                font-size: 1.5rem;
-            }
-
-            .achievement {
-                padding: 12px 16px;
-                font-size: 0.85rem;
-            }
-
-            .skill-tag {
-                font-size: 0.7rem;
-                padding: 5px 10px;
-            }
+        .sidebar {
+          background: #1a1a1a;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
         }
 
         .back-button {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #667eea;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.2s ease;
-            z-index: 1000;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+          display: none;
         }
-
-        .back-button:hover {
-            background: #5568d3;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-
-        @media print {
-            body {
-                background: white;
-            }
-
-            .resume-container {
-                max-width: 100%;
-            }
-
-            .sidebar {
-                background: #1a1a1a;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-
-            .back-button {
-                display: none;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <a href="index.html" class="back-button">← Back to Main</a>
     <div class="resume-container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="profile-section">
-                
-                <h1 class="profile-name">이재철</h1>
-                <p class="profile-title">Security Engineer (DevSecOps)</p>
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="profile-section">
+          <h1 class="profile-name">이재철</h1>
+          <p class="profile-title">Security Engineer (DevSecOps)</p>
+        </div>
+
+        <div class="sidebar-section">
+          <h2 class="sidebar-title">Contact</h2>
+          <div class="contact-item">
+            <a href="mailto:qws941@kakao.com">qws941@kakao.com</a>
+          </div>
+          <div class="contact-item">
+            <a href="tel:010-5757-9592">010-5757-9592</a>
+          </div>
+          <div class="contact-item">
+            <a href="https://github.com/jclee941" target="_blank">github.com/jclee941</a>
+          </div>
+          <div class="contact-item">
+            <a href="https://resume.jclee.me" target="_blank">resume.jclee.me</a>
+          </div>
+          <div class="contact-item">
+            <button onclick="window.print()" class="pdf-button">📄 PDF 다운로드</button>
+          </div>
+          <div class="contact-item">경기 시흥시 능곡동</div>
+        </div>
+
+        <div class="sidebar-section">
+          <h2 class="sidebar-title">Skills</h2>
+          <div>
+            <span class="skill-tag">Kubernetes</span>
+            <span class="skill-tag">Docker</span>
+            <span class="skill-tag">Python</span>
+            <span class="skill-tag">Flask</span>
+            <span class="skill-tag">GitOps</span>
+            <span class="skill-tag">ArgoCD</span>
+            <span class="skill-tag">Helm</span>
+            <span class="skill-tag">GitHub Actions</span>
+            <span class="skill-tag">AWS</span>
+            <span class="skill-tag">GCP</span>
+            <span class="skill-tag">Grafana</span>
+            <span class="skill-tag">Prometheus</span>
+            <span class="skill-tag">PostgreSQL</span>
+            <span class="skill-tag">Redis</span>
+            <span class="skill-tag">FortiGate</span>
+            <span class="skill-tag">Palo Alto</span>
+            <span class="skill-tag">ISMS</span>
+            <span class="skill-tag">DevSecOps</span>
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <h2 class="sidebar-title">Certifications</h2>
+          <div class="cert-item">
+            <div class="cert-name">CCNP</div>
+            <div class="cert-date">2020.08</div>
+          </div>
+          <div class="cert-item">
+            <div class="cert-name">RHCSA</div>
+            <div class="cert-date">2019.01</div>
+          </div>
+          <div class="cert-item">
+            <div class="cert-name">CompTIA Linux+</div>
+            <div class="cert-date">2019.02</div>
+          </div>
+          <div class="cert-item">
+            <div class="cert-name">LPIC Level 1</div>
+            <div class="cert-date">2019.02</div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <section class="section">
+          <h2 class="section-title">Professional Summary</h2>
+          <p class="section-subtitle">
+            7년간 금융·교육·제조 산업에서 클라우드 인프라 운영 및 보안 아키텍처를 설계하며,
+            Kubernetes 기반 플랫폼 구축과 DevSecOps 자동화를 통해 팀 생산성을 극대화해왔습니다.
+            Python/Flask 기반 자동화 시스템으로 일일 8시간 이상의 수작업을 제거하고, GitOps
+            워크플로우로 배포 프로세스를 표준화했습니다.
+          </p>
+        </section>
+
+        <section class="section">
+          <h2 class="section-title">Work Experience</h2>
+
+          <div class="experience-item">
+            <h3 class="company">아이티센 CTS | 정보보안 운영 엔지니어</h3>
+            <p class="period">2025.03 - 현재</p>
+            <p>
+              넥스트레이드 운영SM (정보보안팀) - 15종 이상 보안 솔루션 통합 운영 및 24/7 실시간
+              모니터링
+            </p>
+            <div class="achievement">
+              <strong>보안 솔루션 통합 운영:</strong> DDoS, IPS, WAF, NAC, DLP, EDR, APT 등 15종
+              이상 솔루션 실시간 모니터링 및 안정화
+            </div>
+            <div class="achievement">
+              <strong>금융감독원 정기 감사:</strong> 지적사항 0건 달성, 24/7 보안 이벤트 실시간
+              모니터링 및 대응 체계 구축
+            </div>
+          </div>
+
+          <div class="experience-item">
+            <h3 class="company">가온누리정보시스템 | 인프라 엔지니어 (프리랜서)</h3>
+            <p class="period">2024.03 - 2025.02</p>
+            <p>
+              ATS(다자간매매체결회사) 금융위원회 본인가 대비 보안 인프라 구축 및 K8S 기반
+              마이크로서비스 전환
+            </p>
+            <div class="achievement">
+              <strong>방화벽 자동화:</strong> Python REST API 기반 정책 배포 시스템 구축, 일일 3시간
+              수작업 완전 제거
+            </div>
+            <div class="achievement">
+              <strong>컨테이너 전환:</strong> 레거시 VM 기반 시스템을 K8S로 마이그레이션, GitOps
+              워크플로우 구축
+            </div>
+            <div class="achievement">
+              <strong>보안 솔루션 안정화:</strong> EPP/DLP 충돌 근본 원인 분석 및 해결, 시스템
+              가용성 99.9% 달성
+            </div>
+          </div>
+
+          <div class="experience-item">
+            <h3 class="company">콴텍투자일임 | 인프라·정보보호팀 인프라 엔지니어</h3>
+            <p class="period">2022.08 - 2024.03</p>
+            <p>금융보안데이터센터(FSDC) 내 서버 150대 운영 및 AWS 클라우드 보안 아키텍처 설계</p>
+            <div class="achievement">
+              DB 접근제어 정책 재설계를 통한 개발 환경 성능 최적화 및 개발팀 생산성 향상
+            </div>
+            <div class="achievement">
+              Python 기반 시스템 모니터링 자동화로 장애 예방 체계 구축 및 운영 효율성 개선
+            </div>
+          </div>
+
+          <div class="experience-item">
+            <h3 class="company">메타넷엠플랫폼 | 인프라·시스템 엔지니어</h3>
+            <p class="period">2019.12 - 2021.08</p>
+            <p>1,000명 규모 콜센터 재택근무 인프라 긴급 구축</p>
+            <div class="achievement">
+              코로나19 긴급 상황 대응: 2주 내 1,000명 규모 재택근무 보안 인프라 완전 구축
+            </div>
+            <div class="achievement">
+              Python 네트워크 점검 자동화로 일일 운영 업무 효율성 획기적 개선
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2 class="section-title">Personal Projects</h2>
+          <div class="projects-grid">
+            <div class="project-card">
+              <h3 class="project-title">Splunk-FortiNet Integration</h3>
+              <p><strong>Tech:</strong> Node.js, Cloudflare Workers, DDD Level 3</p>
+              <p>80대 방화벽 실시간 중앙관리, 초당 10만 이벤트 처리, 75,000% 확장여유</p>
+              <a href="https://splunk.jclee.me" target="_blank" class="project-link"
+                >View Project →</a
+              >
             </div>
 
-            <div class="sidebar-section">
-                <h2 class="sidebar-title">Contact</h2>
-                <div class="contact-item">
-                    <a href="mailto:qws941@kakao.com">qws941@kakao.com</a>
-                </div>
-                <div class="contact-item">
-                    <a href="tel:010-5757-9592">010-5757-9592</a>
-                </div>
-                <div class="contact-item">
-                    <a href="https://github.com/jclee941" target="_blank">github.com/jclee941</a>
-                </div>
-                <div class="contact-item">
-                    <a href="https://resume.jclee.me" target="_blank">resume.jclee.me</a>
-                </div>
-                <div class="contact-item">
-                    <button onclick="window.print()" class="pdf-button">📄 PDF 다운로드</button>
-                </div>
-                <div class="contact-item">
-                    경기 시흥시 능곡동
-                </div>
+            <div class="project-card">
+              <h3 class="project-title">SafeWork Industrial Health</h3>
+              <p><strong>Tech:</strong> Flask 3.0, PostgreSQL 15, Cloudflare Workers</p>
+              <p>산업보건 SaaS, Edge API 전국 동시접속, 집계오류 100% 제거</p>
+              <a href="https://safework.jclee.me" target="_blank" class="project-link"
+                >View Project →</a
+              >
             </div>
 
-            <div class="sidebar-section">
-                <h2 class="sidebar-title">Skills</h2>
-                <div>
-                    <span class="skill-tag">Kubernetes</span>
-                    <span class="skill-tag">Docker</span>
-                    <span class="skill-tag">Python</span>
-                    <span class="skill-tag">Flask</span>
-                    <span class="skill-tag">GitOps</span>
-                    <span class="skill-tag">ArgoCD</span>
-                    <span class="skill-tag">Helm</span>
-                    <span class="skill-tag">GitHub Actions</span>
-                    <span class="skill-tag">AWS</span>
-                    <span class="skill-tag">GCP</span>
-                    <span class="skill-tag">Grafana</span>
-                    <span class="skill-tag">Prometheus</span>
-                    <span class="skill-tag">PostgreSQL</span>
-                    <span class="skill-tag">Redis</span>
-                    <span class="skill-tag">FortiGate</span>
-                    <span class="skill-tag">Palo Alto</span>
-                    <span class="skill-tag">ISMS</span>
-                    <span class="skill-tag">DevSecOps</span>
-                </div>
+            <div class="project-card">
+              <h3 class="project-title">REGTECH Threat Intelligence</h3>
+              <p><strong>Tech:</strong> Flask, PostgreSQL 15, Portainer API, Claude AI</p>
+              <p>금융보안원 위협정보 자동수집, AI 5개 워크플로우, 일일 2시간 절감</p>
+              <a href="https://blacklist.jclee.me" target="_blank" class="project-link"
+                >View Project →</a
+              >
             </div>
 
-            <div class="sidebar-section">
-                <h2 class="sidebar-title">Certifications</h2>
-                <div class="cert-item">
-                    <div class="cert-name">CCNP</div>
-                    <div class="cert-date">2020.08</div>
-                </div>
-                <div class="cert-item">
-                    <div class="cert-name">RHCSA</div>
-                    <div class="cert-date">2019.01</div>
-                </div>
-                <div class="cert-item">
-                    <div class="cert-name">CompTIA Linux+</div>
-                    <div class="cert-date">2019.02</div>
-                </div>
-                <div class="cert-item">
-                    <div class="cert-name">LPIC Level 1</div>
-                    <div class="cert-date">2019.02</div>
-                </div>
+            <div class="project-card">
+              <h3 class="project-title">FortiGate Policy Orchestration</h3>
+              <p><strong>Tech:</strong> Flask, FortiManager JSON-RPC, Portainer, GitHub Actions</p>
+              <p>방화벽 정책 자동배포, 3-tier HA 무중단 서비스, 일일 3시간 절감</p>
+              <a href="https://fortinet.jclee.me" target="_blank" class="project-link"
+                >View Project →</a
+              >
             </div>
-        </aside>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <section class="section">
-                <h2 class="section-title">Professional Summary</h2>
-                <p class="section-subtitle">
-                    7년간 금융·교육·제조 산업에서 클라우드 인프라 운영 및 보안 아키텍처를 설계하며, Kubernetes 기반 플랫폼 구축과
-                    DevSecOps 자동화를 통해 팀 생산성을 극대화해왔습니다. Python/Flask 기반 자동화 시스템으로 일일 8시간 이상의
-                    수작업을 제거하고, GitOps 워크플로우로 배포 프로세스를 표준화했습니다.
-                </p>
-            </section>
+            <div class="project-card">
+              <h3 class="project-title">Full-Stack Observability</h3>
+              <p><strong>Tech:</strong> Grafana, Prometheus, Loki, Tempo, Traefik</p>
+              <p>메트릭·로그·트레이스 3종 통합, SSL 자동화, 인프라 전체 가시성</p>
+              <a href="https://grafana.jclee.me" target="_blank" class="project-link"
+                >View Project →</a
+              >
+            </div>
+          </div>
+        </section>
 
-            <section class="section">
-                <h2 class="section-title">Work Experience</h2>
-
-                <div class="experience-item">
-                    <h3 class="company">아이티센 CTS | 정보보안 운영 엔지니어</h3>
-                    <p class="period">2025.03 - 현재</p>
-                    <p>넥스트레이드 운영SM (정보보안팀) - 15종 이상 보안 솔루션 통합 운영 및 24/7 실시간 모니터링</p>
-                    <div class="achievement">
-                        <strong>보안 솔루션 통합 운영:</strong> DDoS, IPS, WAF, NAC, DLP, EDR, APT 등 15종 이상 솔루션 실시간 모니터링 및 안정화
-                    </div>
-                    <div class="achievement">
-                        <strong>금융감독원 정기 감사:</strong> 지적사항 0건 달성, 24/7 보안 이벤트 실시간 모니터링 및 대응 체계 구축
-                    </div>
-                </div>
-
-                <div class="experience-item">
-                    <h3 class="company">가온누리정보시스템 | 인프라 엔지니어 (프리랜서)</h3>
-                    <p class="period">2024.03 - 2025.02</p>
-                    <p>ATS(다자간매매체결회사) 금융위원회 본인가 대비 보안 인프라 구축 및 K8S 기반 마이크로서비스 전환</p>
-                    <div class="achievement">
-                        <strong>방화벽 자동화:</strong> Python REST API 기반 정책 배포 시스템 구축, 일일 3시간 수작업 완전 제거
-                    </div>
-                    <div class="achievement">
-                        <strong>컨테이너 전환:</strong> 레거시 VM 기반 시스템을 K8S로 마이그레이션, GitOps 워크플로우 구축
-                    </div>
-                    <div class="achievement">
-                        <strong>보안 솔루션 안정화:</strong> EPP/DLP 충돌 근본 원인 분석 및 해결, 시스템 가용성 99.9% 달성
-                    </div>
-                </div>
-
-                <div class="experience-item">
-                    <h3 class="company">콴텍투자일임 | 인프라·정보보호팀 인프라 엔지니어</h3>
-                    <p class="period">2022.08 - 2024.03</p>
-                    <p>금융보안데이터센터(FSDC) 내 서버 150대 운영 및 AWS 클라우드 보안 아키텍처 설계</p>
-                    <div class="achievement">
-                        DB 접근제어 정책 재설계를 통한 개발 환경 성능 최적화 및 개발팀 생산성 향상
-                    </div>
-                    <div class="achievement">
-                        Python 기반 시스템 모니터링 자동화로 장애 예방 체계 구축 및 운영 효율성 개선
-                    </div>
-                </div>
-
-                <div class="experience-item">
-                    <h3 class="company">메타넷엠플랫폼 | 인프라·시스템 엔지니어</h3>
-                    <p class="period">2019.12 - 2021.08</p>
-                    <p>1,000명 규모 콜센터 재택근무 인프라 긴급 구축</p>
-                    <div class="achievement">
-                        코로나19 긴급 상황 대응: 2주 내 1,000명 규모 재택근무 보안 인프라 완전 구축
-                    </div>
-                    <div class="achievement">
-                        Python 네트워크 점검 자동화로 일일 운영 업무 효율성 획기적 개선
-                    </div>
-                </div>
-            </section>
-
-            <section class="section">
-                <h2 class="section-title">Personal Projects</h2>
-                <div class="projects-grid">
-                    <div class="project-card">
-                        <h3 class="project-title">Splunk-FortiNet Integration</h3>
-                        <p><strong>Tech:</strong> Node.js, Cloudflare Workers, DDD Level 3</p>
-                        <p>80대 방화벽 실시간 중앙관리, 초당 10만 이벤트 처리, 75,000% 확장여유</p>
-                        <a href="https://splunk.jclee.me" target="_blank" class="project-link">View Project →</a>
-                    </div>
-
-                    <div class="project-card">
-                        <h3 class="project-title">SafeWork Industrial Health</h3>
-                        <p><strong>Tech:</strong> Flask 3.0, PostgreSQL 15, Cloudflare Workers</p>
-                        <p>산업보건 SaaS, Edge API 전국 동시접속, 집계오류 100% 제거</p>
-                        <a href="https://safework.jclee.me" target="_blank" class="project-link">View Project →</a>
-                    </div>
-
-                    <div class="project-card">
-                        <h3 class="project-title">REGTECH Threat Intelligence</h3>
-                        <p><strong>Tech:</strong> Flask, PostgreSQL 15, Portainer API, Claude AI</p>
-                        <p>금융보안원 위협정보 자동수집, AI 5개 워크플로우, 일일 2시간 절감</p>
-                        <a href="https://blacklist.jclee.me" target="_blank" class="project-link">View Project →</a>
-                    </div>
-
-                    <div class="project-card">
-                        <h3 class="project-title">FortiGate Policy Orchestration</h3>
-                        <p><strong>Tech:</strong> Flask, FortiManager JSON-RPC, Portainer, GitHub Actions</p>
-                        <p>방화벽 정책 자동배포, 3-tier HA 무중단 서비스, 일일 3시간 절감</p>
-                        <a href="https://fortinet.jclee.me" target="_blank" class="project-link">View Project →</a>
-                    </div>
-
-                    <div class="project-card">
-                        <h3 class="project-title">Full-Stack Observability</h3>
-                        <p><strong>Tech:</strong> Grafana, Prometheus, Loki, Tempo, Traefik</p>
-                        <p>메트릭·로그·트레이스 3종 통합, SSL 자동화, 인프라 전체 가시성</p>
-                        <a href="https://grafana.jclee.me" target="_blank" class="project-link">View Project →</a>
-                    </div>
-                </div>
-            </section>
-
-            <section class="section">
-                <h2 class="section-title">Work Philosophy</h2>
-                <div class="approach-grid">
-                    <div class="approach-item">
-                        <h3>문제 해결 지향</h3>
-                        <p>동료들의 불편함을 발견하고 자동화를 통한 근본적 해결책 제시</p>
-                    </div>
-                    <div class="approach-item">
-                        <h3>실무 중심 기술 습득</h3>
-                        <p>새로운 기술의 현업 적용 가능성을 우선 고려하여 학습</p>
-                    </div>
-                    <div class="approach-item">
-                        <h3>지속적 서비스 운영</h3>
-                        <p>개발 후 실제 운영을 통한 사용자 피드백 수집 및 지속적 개선</p>
-                    </div>
-                    <div class="approach-item">
-                        <h3>팀 효율성 최적화</h3>
-                        <p>개인 성과보다 팀 전체의 생산성 향상에 중점</p>
-                    </div>
-                </div>
-            </section>
-        </main>
+        <section class="section">
+          <h2 class="section-title">Work Philosophy</h2>
+          <div class="approach-grid">
+            <div class="approach-item">
+              <h3>문제 해결 지향</h3>
+              <p>동료들의 불편함을 발견하고 자동화를 통한 근본적 해결책 제시</p>
+            </div>
+            <div class="approach-item">
+              <h3>실무 중심 기술 습득</h3>
+              <p>새로운 기술의 현업 적용 가능성을 우선 고려하여 학습</p>
+            </div>
+            <div class="approach-item">
+              <h3>지속적 서비스 운영</h3>
+              <p>개발 후 실제 운영을 통한 사용자 피드백 수집 및 지속적 개선</p>
+            </div>
+            <div class="approach-item">
+              <h3>팀 효율성 최적화</h3>
+              <p>개인 성과보다 팀 전체의 생산성 향상에 중점</p>
+            </div>
+          </div>
+        </section>
+      </main>
     </div>
-</body>
+  </body>
 </html>

@@ -6,10 +6,7 @@
       "name": "Schedule Trigger",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.3,
-      "position": [
-        260,
-        240
-      ],
+      "position": [260, 240],
       "parameters": {
         "rule": {
           "interval": [
@@ -33,10 +30,7 @@
       "name": "Manual Webhook Trigger",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
-      "position": [
-        260,
-        420
-      ],
+      "position": [260, 420],
       "webhookId": "job-search-apply",
       "parameters": {
         "httpMethod": "POST",
@@ -49,10 +43,7 @@
       "name": "SSH Execute Pipeline",
       "type": "n8n-nodes-base.ssh",
       "typeVersion": 1,
-      "position": [
-        560,
-        320
-      ],
+      "position": [560, 320],
       "continueOnFail": true,
       "parameters": {
         "resource": "command",
@@ -72,10 +63,7 @@
       "name": "Parse Results",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        860,
-        320
-      ],
+      "position": [860, 320],
       "parameters": {
         "mode": "runOnceForAllItems",
         "language": "javaScript",
@@ -87,10 +75,7 @@
       "name": "Telegram Send Message",
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
-      "position": [
-        1160,
-        320
-      ],
+      "position": [1160, 320],
       "parameters": {
         "resource": "message",
         "operation": "sendMessage",

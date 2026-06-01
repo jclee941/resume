@@ -29,13 +29,15 @@ function scoreOf(job) {
 export function filterWorthy(jobs, minScore = WORTHY_MIN_SCORE, options = {}) {
   if (!Array.isArray(jobs)) return [];
   const keepUnscored = options.keepUnscored === true;
-  return jobs
-    .map((job) => ({ job, score: scoreOf(job) }))
-    .filter(({ score }) => {
-      if (score == null) return keepUnscored; // curated queue: unscored = vetted
-      return score >= minScore;
-    })
-    // Scored jobs sort by score desc; unscored (kept) sort last, original order.
-    .sort((a, b) => (b.score ?? -1) - (a.score ?? -1))
-    .map(({ job }) => job);
+  return (
+    jobs
+      .map((job) => ({ job, score: scoreOf(job) }))
+      .filter(({ score }) => {
+        if (score == null) return keepUnscored; // curated queue: unscored = vetted
+        return score >= minScore;
+      })
+      // Scored jobs sort by score desc; unscored (kept) sort last, original order.
+      .sort((a, b) => (b.score ?? -1) - (a.score ?? -1))
+      .map(({ job }) => job)
+  );
 }

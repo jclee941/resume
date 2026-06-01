@@ -1,7 +1,7 @@
 # 🔧 Local CI/CD Debugging Guide
 
 > Comprehensive guide to the local debugging infrastructure for the resume
-  monorepo.
+> monorepo.
 
 ## 📋 Overview
 

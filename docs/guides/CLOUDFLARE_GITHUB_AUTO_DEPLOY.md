@@ -37,16 +37,16 @@ Dashboard setup:
    - Build command: `npm run build`
 
 - Deploy command: `npx wrangler deploy --config apps/portfolio/wrangler.jsonc
-  --env production`
+--env production`
 
 1. Save and trigger with a new commit push.
 
 Recommended deploy command for Builds:
 
 - Active deploy: `npx wrangler deploy --config apps/portfolio/wrangler.jsonc
-  --env production`
+--env production`
 - Build-only (version upload): `npx wrangler versions upload --config
-  apps/portfolio/wrangler.jsonc --env production`
+apps/portfolio/wrangler.jsonc --env production`
 
 ## Monorepo Notes
 

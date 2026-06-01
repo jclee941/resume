@@ -123,9 +123,14 @@ export async function updateApplication(d1Client, id, updates) {
 
     const updated = await findById(d1Client, id);
     if (!updated) {
-      throw new AppError('Application update completed but record was not found', ErrorCodes.UNKNOWN, 500, {
-        id,
-      });
+      throw new AppError(
+        'Application update completed but record was not found',
+        ErrorCodes.UNKNOWN,
+        500,
+        {
+          id,
+        }
+      );
     }
 
     return updated;
@@ -187,10 +192,15 @@ export async function updateApplicationStatus(d1Client, id, status, note = '') {
 
     const updated = await findById(d1Client, id);
     if (!updated) {
-      throw new AppError('Status updated but could not fetch application', ErrorCodes.UNKNOWN, 500, {
-        id,
-        status,
-      });
+      throw new AppError(
+        'Status updated but could not fetch application',
+        ErrorCodes.UNKNOWN,
+        500,
+        {
+          id,
+          status,
+        }
+      );
     }
 
     return updated;

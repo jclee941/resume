@@ -19,48 +19,112 @@ const SKILL_DATA_FALLBACK = {
     title: 'Security Automation',
     icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>',
     skills: [
-      { name: 'Splunk ES (SIEM/SOAR)', level: 95, evidence: 'Designed custom detection rules, automated response pipeline' },
-      { name: 'FortiGate/FortiManager', level: 90, evidence: 'Designed and operated firewall policies for financial enterprise' },
-      { name: 'NSX-T Microsegmentation', level: 75, evidence: 'Implemented zero-trust microsegmentation in vSphere environment' },
-      { name: 'Wazuh (EDR)', level: 80, evidence: 'Deployed EDR solution with custom detection rules' },
-      { name: 'NAC/DLP', level: 70, evidence: 'Configured network access control and data loss prevention' }
-    ]
+      {
+        name: 'Splunk ES (SIEM/SOAR)',
+        level: 95,
+        evidence: 'Designed custom detection rules, automated response pipeline',
+      },
+      {
+        name: 'FortiGate/FortiManager',
+        level: 90,
+        evidence: 'Designed and operated firewall policies for financial enterprise',
+      },
+      {
+        name: 'NSX-T Microsegmentation',
+        level: 75,
+        evidence: 'Implemented zero-trust microsegmentation in vSphere environment',
+      },
+      {
+        name: 'Wazuh (EDR)',
+        level: 80,
+        evidence: 'Deployed EDR solution with custom detection rules',
+      },
+      {
+        name: 'NAC/DLP',
+        level: 70,
+        evidence: 'Configured network access control and data loss prevention',
+      },
+    ],
   },
   cloudEdge: {
     title: 'Cloud & Edge',
     icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>',
     skills: [
-      { name: 'Cloudflare Workers', level: 90, evidence: 'Portfolio deployed on Workers, edge-optimized rendering' },
-      { name: 'Cloudflare Pages', level: 85, evidence: 'Static assets served via Pages with edge functions' },
-      { name: 'Terraform', level: 85, evidence: 'IaC managed via Terraform for cloud infrastructure' }
-    ]
+      {
+        name: 'Cloudflare Workers',
+        level: 90,
+        evidence: 'Portfolio deployed on Workers, edge-optimized rendering',
+      },
+      {
+        name: 'Cloudflare Pages',
+        level: 85,
+        evidence: 'Static assets served via Pages with edge functions',
+      },
+      {
+        name: 'Terraform',
+        level: 85,
+        evidence: 'IaC managed via Terraform for cloud infrastructure',
+      },
+    ],
   },
   observability: {
     title: 'Observability',
     icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>',
     skills: [
-      { name: 'Grafana', level: 90, evidence: 'Built monitoring stack on Synology NAS, public dashboards' },
-      { name: 'Prometheus', level: 85, evidence: 'Metrics collection and alerting for infrastructure' },
-      { name: 'Splunk Dashboards', level: 88, evidence: 'Custom SPL queries and executive dashboards' }
-    ]
+      {
+        name: 'Grafana',
+        level: 90,
+        evidence: 'Built monitoring stack on Synology NAS, public dashboards',
+      },
+      {
+        name: 'Prometheus',
+        level: 85,
+        evidence: 'Metrics collection and alerting for infrastructure',
+      },
+      {
+        name: 'Splunk Dashboards',
+        level: 88,
+        evidence: 'Custom SPL queries and executive dashboards',
+      },
+    ],
   },
   infrastructureAsCode: {
     title: 'Infrastructure as Code',
     icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18 22 12 16 6"/><path d="M8 6 2 12 8 18"/></svg>',
     skills: [
       { name: 'Terraform', level: 85, evidence: 'Standardized firewall configs with Ansible Role' },
-      { name: 'Ansible', level: 82, evidence: 'Automated configuration management across the node fleet' },
-      { name: 'Docker', level: 78, evidence: 'Containerized applications for local development and CI/CD' }
-    ]
+      {
+        name: 'Ansible',
+        level: 82,
+        evidence: 'Automated configuration management across the node fleet',
+      },
+      {
+        name: 'Docker',
+        level: 78,
+        evidence: 'Containerized applications for local development and CI/CD',
+      },
+    ],
   },
   cicdAutomation: {
     title: 'CI/CD & Automation',
     icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>',
     skills: [
-      { name: 'GitHub Actions', level: 88, evidence: 'Automated resume sync to JobKorea, CI/CD pipelines' },
-      { name: 'n8n', level: 85, evidence: 'Workflow automation for job applications and data sync' },
-      { name: 'Python scripting', level: 82, evidence: 'Custom automation scripts for data processing' }
-    ]
+      {
+        name: 'GitHub Actions',
+        level: 88,
+        evidence: 'Automated resume sync to JobKorea, CI/CD pipelines',
+      },
+      {
+        name: 'n8n',
+        level: 85,
+        evidence: 'Workflow automation for job applications and data sync',
+      },
+      {
+        name: 'Python scripting',
+        level: 82,
+        evidence: 'Custom automation scripts for data processing',
+      },
+    ],
   },
   backendApi: {
     title: 'Backend & API',
@@ -68,9 +132,9 @@ const SKILL_DATA_FALLBACK = {
     skills: [
       { name: 'Node.js', level: 80, evidence: 'Built API clients for job portal automation' },
       { name: 'Python', level: 85, evidence: 'Backend services and automation scripts' },
-      { name: 'PostgreSQL', level: 78, evidence: 'DB query tuning and schema design' }
-    ]
-  }
+      { name: 'PostgreSQL', level: 78, evidence: 'DB query tuning and schema design' },
+    ],
+  },
 };
 
 // Build-time injected real skills from data.json (esbuild `define` replaces the
@@ -83,7 +147,7 @@ const SKILL_DATA =
 const LEVELS = {
   expert: { min: 90, label: 'Expert', color: 'var(--cyber-green)' },
   advanced: { min: 70, label: 'Advanced', color: 'var(--cyber-cyan)' },
-  intermediate: { min: 50, label: 'Intermediate', color: 'var(--cyber-magenta)' }
+  intermediate: { min: 50, label: 'Intermediate', color: 'var(--cyber-magenta)' },
 };
 
 function getLevelInfo(level) {
@@ -189,7 +253,7 @@ function createSkillPanel(domainKey, domain) {
   panel.innerHTML = `
     <div class="skill-panel__content">
       <ul class="skill-list" role="list">
-        ${domain.skills.map(skill => createSkillItem(skill)).join('')}
+        ${domain.skills.map((skill) => createSkillItem(skill)).join('')}
       </ul>
       <div class="skill-evidence-drawer">
         <h4 class="skill-evidence-drawer__title">
@@ -197,12 +261,16 @@ function createSkillPanel(domainKey, domain) {
           Evidence
         </h4>
         <ul class="skill-evidence-list" role="list">
-          ${domain.skills.map(skill => `
+          ${domain.skills
+            .map(
+              (skill) => `
             <li class="skill-evidence-item" data-skill="${escapeHtml(skill.name)}">
               <span class="skill-evidence-item__name">${escapeHtml(skill.name)}</span>
               <p class="skill-evidence-item__text">${escapeHtml(skill.evidence)}</p>
             </li>
-          `).join('')}
+          `
+            )
+            .join('')}
         </ul>
       </div>
     </div>
@@ -263,27 +331,28 @@ function filterSkills(searchTerm) {
 
   const normalizedSearch = searchTerm.toLowerCase().trim();
 
-  cards.forEach(card => {
+  cards.forEach((card) => {
     const domain = card.dataset.domain;
     const domainData = SKILL_DATA[domain];
-    const skillNames = domainData.skills.map(s => s.name.toLowerCase());
+    const skillNames = domainData.skills.map((s) => s.name.toLowerCase());
     const domainTitle = domainData.title.toLowerCase();
 
-    const matchesDomain = !normalizedSearch ||
+    const matchesDomain =
+      !normalizedSearch ||
       domainTitle.includes(normalizedSearch) ||
-      skillNames.some(name => name.includes(normalizedSearch));
+      skillNames.some((name) => name.includes(normalizedSearch));
 
     card.style.display = matchesDomain ? '' : 'none';
 
     if (matchesDomain) {
-      skillItems.forEach(item => {
+      skillItems.forEach((item) => {
         const skillName = item.dataset.skill.toLowerCase();
         const matchesSkill = !normalizedSearch || skillName.includes(normalizedSearch);
         item.style.display = matchesSkill ? '' : 'none';
         if (matchesSkill && matchesDomain) matchCount++;
       });
 
-      evidenceItems.forEach(item => {
+      evidenceItems.forEach((item) => {
         const skillName = item.dataset.skill.toLowerCase();
         const matchesEvidence = !normalizedSearch || skillName.includes(normalizedSearch);
         item.style.display = matchesEvidence ? '' : 'none';
@@ -322,7 +391,7 @@ function initSkillSearch() {
 function initSkillRadarScrollAnimation() {
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (prefersReducedMotion) {
-    document.querySelectorAll('.skill-item__bar').forEach(bar => {
+    document.querySelectorAll('.skill-item__bar').forEach((bar) => {
       bar.style.width = bar.style.getPropertyValue('--target-width');
     });
     return;
@@ -333,10 +402,10 @@ function initSkillRadarScrollAnimation() {
 
   const observer = new IntersectionObserver(
     (entries) => {
-      entries.forEach(entry => {
+      entries.forEach((entry) => {
         if (entry.isIntersecting) {
           const openCards = document.querySelectorAll('.skill-domain-card[aria-expanded="true"]');
-          openCards.forEach(card => animateSkillBars(card));
+          openCards.forEach((card) => animateSkillBars(card));
           observer.unobserve(entry.target);
         }
       });
@@ -352,7 +421,7 @@ function initSkillRadar() {
   initSkillSearch();
   initSkillRadarScrollAnimation();
 
-  document.querySelectorAll('.skill-domain-card[aria-expanded="true"]').forEach(card => {
+  document.querySelectorAll('.skill-domain-card[aria-expanded="true"]').forEach((card) => {
     animateSkillBars(card);
   });
 }

@@ -5,7 +5,8 @@ const SECTION_HEADERS = {
   certifications: /^(자격증|자격|certifications?|licenses?)$/i,
 };
 
-const NEXT_SECTION = /^(기본정보|인적사항|경력|경력사항|학력|학력사항|스킬|기술|보유기술|자격증|자격|career|work experience|education|skills|tech stack|certifications?|licenses?)$/i;
+const NEXT_SECTION =
+  /^(기본정보|인적사항|경력|경력사항|학력|학력사항|스킬|기술|보유기술|자격증|자격|career|work experience|education|skills|tech stack|certifications?|licenses?)$/i;
 
 function decodeEntities(value = '') {
   return value
@@ -19,7 +20,9 @@ function decodeEntities(value = '') {
 }
 
 function stripTags(html = '') {
-  return decodeEntities(html.replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ').trim();
+  return decodeEntities(html.replace(/<[^>]+>/g, ' '))
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 function visibleTextLines(html = '') {
@@ -108,7 +111,8 @@ function groupSectionRows(html, attrPattern, fallbackLines) {
   const semanticBlock = matchAttrBlock(html, attrPattern);
   if (!semanticBlock) return fallbackLines.length ? [fallbackLines] : [];
 
-  const rowPattern = /<(li|tr|article|section|div)[^>]*(?:class|data-[^=]+)=["'][^"']*(?:item|row|career|education|certificate|license)[^"']*["'][^>]*>([\s\S]*?)<\/\1>/gi;
+  const rowPattern =
+    /<(li|tr|article|section|div)[^>]*(?:class|data-[^=]+)=["'][^"']*(?:item|row|career|education|certificate|license)[^"']*["'][^>]*>([\s\S]*?)<\/\1>/gi;
   const rows = [];
   for (const match of semanticBlock.matchAll(rowPattern)) {
     const rowLines = visibleTextLines(match[2]);
@@ -121,21 +125,30 @@ function groupSectionRows(html, attrPattern, fallbackLines) {
 
 function parseCareerRow(lines) {
   const joined = lines.join(' ');
-  const period = firstMatch(joined, [/(\d{4}[.\-/년]\s*\d{0,2}.*?(?:현재|재직중|\d{4}[.\-/년]\s*\d{0,2}))/]);
+  const period = firstMatch(joined, [
+    /(\d{4}[.\-/년]\s*\d{0,2}.*?(?:현재|재직중|\d{4}[.\-/년]\s*\d{0,2}))/,
+  ]);
 
   return {
     company:
-      firstMatch(joined, [/(?:회사명|회사|company)\s*[:：]?\s*(.*?)(?=\s*(?:부서|직무|직책|담당업무|\d{4}|$))/i]) ||
+      firstMatch(joined, [
+        /(?:회사명|회사|company)\s*[:：]?\s*(.*?)(?=\s*(?:부서|직무|직책|담당업무|\d{4}|$))/i,
+      ]) ||
       lines[0] ||
       '',
-    department: firstMatch(joined, [/(?:부서|department)\s*[:：]?\s*(.*?)(?=\s*(?:직무|직책|담당업무|\d{4}|$))/i]),
+    department: firstMatch(joined, [
+      /(?:부서|department)\s*[:：]?\s*(.*?)(?=\s*(?:직무|직책|담당업무|\d{4}|$))/i,
+    ]),
     role:
-      firstMatch(joined, [/(?:직무|직책|role|position)\s*[:：]?\s*(.*?)(?=\s*(?:부서|담당업무|\d{4}|$))/i]) ||
+      firstMatch(joined, [
+        /(?:직무|직책|role|position)\s*[:：]?\s*(.*?)(?=\s*(?:부서|담당업무|\d{4}|$))/i,
+      ]) ||
       lines[1] ||
       '',
     period,
     description:
-      firstMatch(joined, [/(?:담당업무|업무|description)\s*[:：]?\s*(.+)$/i]) || lines.slice(2).join(' '),
+      firstMatch(joined, [/(?:담당업무|업무|description)\s*[:：]?\s*(.+)$/i]) ||
+      lines.slice(2).join(' '),
   };
 }
 
@@ -154,10 +167,14 @@ function parseEducation(html, lines) {
 
   return {
     school:
-      firstMatch(joined, [/(?:학교|school|university)\s*[:：]?\s*(.*?)(?=\s*(?:전공|졸업|재학|휴학|수료|중퇴|\d{4}|$))/i]) ||
+      firstMatch(joined, [
+        /(?:학교|school|university)\s*[:：]?\s*(.*?)(?=\s*(?:전공|졸업|재학|휴학|수료|중퇴|\d{4}|$))/i,
+      ]) ||
       row[0] ||
       '',
-    major: firstMatch(joined, [/(?:전공|major)\s*[:：]?\s*(.*?)(?=\s*(?:졸업|재학|휴학|수료|중퇴|\d{4}|$))/i]),
+    major: firstMatch(joined, [
+      /(?:전공|major)\s*[:：]?\s*(.*?)(?=\s*(?:졸업|재학|휴학|수료|중퇴|\d{4}|$))/i,
+    ]),
     status: firstMatch(joined, [/(졸업예정|졸업|재학|휴학|수료|중퇴|graduated|enrolled)/i]),
     period: firstMatch(joined, [/(\d{4}[.\-/년].*?(?:\d{4}[.\-/년]|현재|재학))/]),
   };
@@ -166,7 +183,14 @@ function parseEducation(html, lines) {
 function parseSkills(html, lines) {
   const semantic = matchAttrText(html, 'skill|tech-stack|technology');
   const source = semantic || sectionLines(lines, SECTION_HEADERS.skills).join(', ');
-  return [...new Set(source.split(/[,·•|/\n]+/).map((skill) => skill.trim()).filter(Boolean))];
+  return [
+    ...new Set(
+      source
+        .split(/[,·•|/\n]+/)
+        .map((skill) => skill.trim())
+        .filter(Boolean)
+    ),
+  ];
 }
 
 function parseCertificationRow(lines) {

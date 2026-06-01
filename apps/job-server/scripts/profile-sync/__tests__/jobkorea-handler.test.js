@@ -119,7 +119,10 @@ describe('JobKoreaHandler.describeField', () => {
   it('maps License field names to readable labels', () => {
     assert.strictEqual(handler.describeField('License[c9].Lc_Name'), 'License c9 name');
     assert.strictEqual(handler.describeField('License[c9].Lc_YYMM'), 'License c9 date');
-    assert.strictEqual(handler.describeField('License[c9].Lc_CredUrl'), 'License c9 credential URL');
+    assert.strictEqual(
+      handler.describeField('License[c9].Lc_CredUrl'),
+      'License c9 credential URL'
+    );
   });
 
   it('maps live JobKorea field names to readable labels', () => {
@@ -652,7 +655,10 @@ describe('PLATFORMS.jobkorea URL getters (rNo handling)', () => {
   it('S1: does NOT fabricate 30236578 when JOBKOREA_RNO is unset', () => {
     delete process.env.JOBKOREA_RNO;
     const { profileUrl, editUrl } = PLATFORMS.jobkorea;
-    assert.ok(!profileUrl.includes('30236578'), `profileUrl must not contain 30236578: ${profileUrl}`);
+    assert.ok(
+      !profileUrl.includes('30236578'),
+      `profileUrl must not contain 30236578: ${profileUrl}`
+    );
     assert.ok(!editUrl.includes('30236578'), `editUrl must not contain 30236578: ${editUrl}`);
   });
 
@@ -764,7 +770,11 @@ describe('waitForEditableForm (#frm1 wait with fail-loud on timeout)', () => {
       () => waitForEditableForm(page, { rNo: '9028903' }),
       (error) => {
         assert.match(error.message, /Execution context was destroyed/);
-        assert.notStrictEqual(error.failLoud, true, 'non-timeout error must NOT be masked as failLoud');
+        assert.notStrictEqual(
+          error.failLoud,
+          true,
+          'non-timeout error must NOT be masked as failLoud'
+        );
         return true;
       }
     );

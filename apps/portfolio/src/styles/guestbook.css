@@ -36,7 +36,9 @@
   font-family: var(--font-mono);
   font-size: var(--text-sm);
   padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .guestbook-field input:focus,
@@ -72,7 +74,9 @@
   padding: var(--space-2, 0.5rem) var(--space-4, 1rem);
   min-height: 44px;
   cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
 }
 
 .guestbook-submit:hover:not(:disabled) {

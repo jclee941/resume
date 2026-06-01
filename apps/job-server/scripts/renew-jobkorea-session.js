@@ -6,19 +6,19 @@
  */
 import { withStealthBrowser } from '../src/crawlers/browser-utils.js';
 import {
-buildCookieString,
-clickVisibleSubmit,
-defaultSessionFile as sessionFile,
+  buildCookieString,
+  clickVisibleSubmit,
+  defaultSessionFile as sessionFile,
   fillLoginForm,
   getActivePage,
-handleCaptchaIfNeeded,
-isLoggedIn,
-jobKoreaSessionTtlMs,
-resolveJobKoreaSession,
-saveResolvedJobKoreaSession,
-sleep,
-verifyAuthenticatedSession,
-waitForLoginConfirmation,
+  handleCaptchaIfNeeded,
+  isLoggedIn,
+  jobKoreaSessionTtlMs,
+  resolveJobKoreaSession,
+  saveResolvedJobKoreaSession,
+  sleep,
+  verifyAuthenticatedSession,
+  waitForLoginConfirmation,
 } from './jobkorea-session/index.js';
 import { pickJobKoreaBrowserProfile } from './jobkorea-session/user-agent-pool.js';
 
@@ -49,7 +49,9 @@ async function main() {
     async (page) => {
       const existing = resolveJobKoreaSession({ saveResolvedFallback: false });
       if (existing?.cookies && Array.isArray(existing.cookies)) {
-        const valid = existing.cookies.filter((cookie) => cookie.name && cookie.value && cookie.domain);
+        const valid = existing.cookies.filter(
+          (cookie) => cookie.name && cookie.value && cookie.domain
+        );
         if (valid.length) {
           // Puppeteer v22+: use page.setCookie(...spread). Map to Puppeteer's CookieParam shape.
           const puppeteerCookies = valid.map((c) => ({
@@ -91,7 +93,10 @@ async function main() {
       }
 
       const activePage = await getActivePage(page);
-      const cookies = await activePage.cookies('https://www.jobkorea.co.kr', 'https://www.jobkorea.co.kr/');
+      const cookies = await activePage.cookies(
+        'https://www.jobkorea.co.kr',
+        'https://www.jobkorea.co.kr/'
+      );
       const cookieString = buildCookieString(cookies);
       const session = {
         platform: 'jobkorea',

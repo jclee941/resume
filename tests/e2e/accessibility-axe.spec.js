@@ -51,8 +51,7 @@ test.describe('Accessibility - axe-core WCAG 2.1 AA', () => {
   });
 
   test('homepage should have zero serious or critical WCAG violations', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded'
-});
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
     // Wait for JS-rendered widgets (skill radar cards, command palette) to mount.
     await page.waitForSelector('#skill-radar-grid .skill-domain-card', { timeout: 15000 });
 

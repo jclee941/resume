@@ -6,11 +6,21 @@
  */
 
 import { BaseCrawler } from '../../src/crawlers/base-crawler.js';
-import { normalizeJob, normalizeJsonLd, parseJobDetail, parseSearchResults } from './job-extractor.js';
+import {
+  normalizeJob,
+  normalizeJsonLd,
+  parseJobDetail,
+  parseSearchResults,
+} from './job-extractor.js';
 import { buildSearchQuery, searchByKeyword, searchJobs } from './search.js';
 
 export { INDEED_DATE_POSTED, INDEED_JOB_TYPES } from './search.js';
-export { normalizeJob, normalizeJsonLd, parseJobDetail, parseSearchResults } from './job-extractor.js';
+export {
+  normalizeJob,
+  normalizeJsonLd,
+  parseJobDetail,
+  parseSearchResults,
+} from './job-extractor.js';
 export { applyPaginationParams, buildPaginationResult } from './pagination.js';
 
 export class IndeedCrawler extends BaseCrawler {
@@ -78,7 +88,12 @@ export class IndeedCrawler extends BaseCrawler {
   }
 
   _parseJobDetail(html, jobKey) {
-    return parseJobDetail(html, jobKey, this.normalizeJob.bind(this), this._normalizeJsonLd.bind(this));
+    return parseJobDetail(
+      html,
+      jobKey,
+      this.normalizeJob.bind(this),
+      this._normalizeJsonLd.bind(this)
+    );
   }
 
   _normalizeJsonLd(jsonLd) {

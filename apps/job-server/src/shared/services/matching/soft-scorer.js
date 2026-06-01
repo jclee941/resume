@@ -66,7 +66,9 @@ export function scoreBenefits(jobListing) {
     '인센티브',
   ];
 
-  const matched = benefitKeywords.filter((keyword) => benefitsText.includes(normalize(keyword))).length;
+  const matched = benefitKeywords.filter((keyword) =>
+    benefitsText.includes(normalize(keyword))
+  ).length;
   return Math.min(100, 40 + matched * 12);
 }
 
@@ -98,7 +100,9 @@ export function buildRecommendations(score, gapKeywords, matchedSkills, detailed
   }
 
   if (score < 70) {
-    recommendations.push('Tailor profile summary to align title and domain terms from this listing.');
+    recommendations.push(
+      'Tailor profile summary to align title and domain terms from this listing.'
+    );
   }
 
   return recommendations;

@@ -58,7 +58,11 @@ export async function requestApproval(context, job, matchScore) {
     `Manual approval required (match score ${score})`
   );
 
-  const notification = await context.notificationAdapter.sendApprovalRequest(job, score, applicationId);
+  const notification = await context.notificationAdapter.sendApprovalRequest(
+    job,
+    score,
+    applicationId
+  );
 
   return {
     applicationId,

@@ -1,385 +1,418 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>이재철 - Infrastructure & Security Engineer</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
+          sans-serif;
+        line-height: 1.6;
+        color: #24292f;
+        background: #ffffff;
+        padding: 40px 20px;
+        max-width: 850px;
+        margin: 0 auto;
+      }
+
+      /* Header */
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #d0d7de;
+      }
+
+      h1 {
+        font-size: 32px;
+        font-weight: 700;
+        color: #24292f;
+        margin-bottom: 8px;
+        letter-spacing: -0.5px;
+      }
+
+      .subtitle {
+        font-size: 14px;
+        color: #57606a;
+        margin-bottom: 16px;
+      }
+
+      .contact {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 16px;
+        font-size: 13px;
+        color: #57606a;
+      }
+
+      .contact a {
+        color: #0969da;
+        text-decoration: none;
+      }
+
+      .contact a:hover {
+        text-decoration: underline;
+      }
+
+      .pdf-btn {
+        display: inline-block;
+        padding: 6px 16px;
+        background: #0969da;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        text-decoration: none;
+      }
+
+      .pdf-btn:hover {
+        background: #0550ae;
+      }
+
+      /* Sections */
+      section {
+        margin-bottom: 32px;
+      }
+
+      h2 {
+        font-size: 20px;
+        font-weight: 600;
+        color: #24292f;
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #d0d7de;
+      }
+
+      h3 {
+        font-size: 16px;
+        font-weight: 600;
+        color: #24292f;
+        margin-bottom: 4px;
+      }
+
+      .date {
+        font-size: 13px;
+        color: #57606a;
+        font-style: italic;
+      }
+
+      p,
+      li {
+        font-size: 14px;
+        color: #57606a;
+        line-height: 1.7;
+      }
+
+      ul {
+        margin-left: 20px;
+        margin-top: 8px;
+      }
+
+      li {
+        margin-bottom: 6px;
+      }
+
+      /* Experience */
+      .exp-item {
+        margin-bottom: 24px;
+      }
+
+      .exp-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 8px;
+        flex-wrap: wrap;
+      }
+
+      .company {
+        font-weight: 600;
+        color: #24292f;
+      }
+
+      .exp-desc {
+        font-size: 13px;
+        color: #57606a;
+        margin-bottom: 8px;
+      }
+
+      /* Skills */
+      .skills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .skill-tag {
+        background: #ddf4ff;
+        color: #0969da;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      /* Projects */
+      .project-item {
+        margin-bottom: 16px;
+      }
+
+      .project-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 4px;
+      }
+
+      .project-title {
+        font-weight: 600;
+        color: #24292f;
+        font-size: 15px;
+      }
+
+      .project-link {
+        font-size: 12px;
+        color: #0969da;
+        text-decoration: none;
+      }
+
+      .project-link:hover {
+        text-decoration: underline;
+      }
+
+      .tech-stack {
+        font-size: 12px;
+        color: #57606a;
+        font-style: italic;
+        margin-bottom: 4px;
+      }
+
+      /* Print */
+      @media print {
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-            line-height: 1.6;
-            color: #24292f;
-            background: #ffffff;
-            padding: 40px 20px;
-            max-width: 850px;
-            margin: 0 auto;
+          padding: 0;
+          max-width: 100%;
         }
-
-        /* Header */
-        header {
-            text-align: center;
-            margin-bottom: 40px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #d0d7de;
-        }
-
-        h1 {
-            font-size: 32px;
-            font-weight: 700;
-            color: #24292f;
-            margin-bottom: 8px;
-            letter-spacing: -0.5px;
-        }
-
-        .subtitle {
-            font-size: 14px;
-            color: #57606a;
-            margin-bottom: 16px;
-        }
-
-        .contact {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 16px;
-            font-size: 13px;
-            color: #57606a;
-        }
-
-        .contact a {
-            color: #0969da;
-            text-decoration: none;
-        }
-
-        .contact a:hover {
-            text-decoration: underline;
-        }
-
         .pdf-btn {
-            display: inline-block;
-            padding: 6px 16px;
-            background: #0969da;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            text-decoration: none;
+          display: none;
         }
-
-        .pdf-btn:hover {
-            background: #0550ae;
-        }
-
-        /* Sections */
         section {
-            margin-bottom: 32px;
+          page-break-inside: avoid;
         }
+      }
 
-        h2 {
-            font-size: 20px;
-            font-weight: 600;
-            color: #24292f;
-            margin-bottom: 16px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #d0d7de;
+      @media (max-width: 640px) {
+        body {
+          padding: 20px 16px;
         }
-
-        h3 {
-            font-size: 16px;
-            font-weight: 600;
-            color: #24292f;
-            margin-bottom: 4px;
+        h1 {
+          font-size: 28px;
         }
-
-        .date {
-            font-size: 13px;
-            color: #57606a;
-            font-style: italic;
+        .contact {
+          flex-direction: column;
+          align-items: center;
+          gap: 8px;
         }
-
-        p, li {
-            font-size: 14px;
-            color: #57606a;
-            line-height: 1.7;
-        }
-
-        ul {
-            margin-left: 20px;
-            margin-top: 8px;
-        }
-
-        li {
-            margin-bottom: 6px;
-        }
-
-        /* Experience */
-        .exp-item {
-            margin-bottom: 24px;
-        }
-
         .exp-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            margin-bottom: 8px;
-            flex-wrap: wrap;
+          flex-direction: column;
         }
-
-        .company {
-            font-weight: 600;
-            color: #24292f;
-        }
-
-        .exp-desc {
-            font-size: 13px;
-            color: #57606a;
-            margin-bottom: 8px;
-        }
-
-        /* Skills */
-        .skills {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .skill-tag {
-            background: #ddf4ff;
-            color: #0969da;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-        /* Projects */
-        .project-item {
-            margin-bottom: 16px;
-        }
-
-        .project-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            margin-bottom: 4px;
-        }
-
-        .project-title {
-            font-weight: 600;
-            color: #24292f;
-            font-size: 15px;
-        }
-
-        .project-link {
-            font-size: 12px;
-            color: #0969da;
-            text-decoration: none;
-        }
-
-        .project-link:hover {
-            text-decoration: underline;
-        }
-
-        .tech-stack {
-            font-size: 12px;
-            color: #57606a;
-            font-style: italic;
-            margin-bottom: 4px;
-        }
-
-        /* Print */
-        @media print {
-            body {
-                padding: 0;
-                max-width: 100%;
-            }
-            .pdf-btn {
-                display: none;
-            }
-            section {
-                page-break-inside: avoid;
-            }
-        }
-
-        @media (max-width: 640px) {
-            body {
-                padding: 20px 16px;
-            }
-            h1 {
-                font-size: 28px;
-            }
-            .contact {
-                flex-direction: column;
-                align-items: center;
-                gap: 8px;
-            }
-            .exp-header {
-                flex-direction: column;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <header>
-        <h1>이재철 (Jaecheol Lee)</h1>
-        <p class="subtitle">Infrastructure & Security Engineer</p>
-        <div class="contact">
-            <span>📧 <a href="mailto:qws941@kakao.com">qws941@kakao.com</a></span>
-            <span>📱 010-5757-9592</span>
-            <span>📍 경기 시흥시 능곡동</span>
-            <span>💻 <a href="https://github.com/jclee941" target="_blank">github.com/jclee941</a></span>
-            <span>🌐 <a href="https://resume.jclee.me" target="_blank">resume.jclee.me</a></span>
-            <button onclick="window.print()" class="pdf-btn">📄 PDF 다운로드</button>
-        </div>
+      <h1>이재철 (Jaecheol Lee)</h1>
+      <p class="subtitle">Infrastructure & Security Engineer</p>
+      <div class="contact">
+        <span>📧 <a href="mailto:qws941@kakao.com">qws941@kakao.com</a></span>
+        <span>📱 010-5757-9592</span>
+        <span>📍 경기 시흥시 능곡동</span>
+        <span
+          >💻 <a href="https://github.com/jclee941" target="_blank">github.com/jclee941</a></span
+        >
+        <span>🌐 <a href="https://resume.jclee.me" target="_blank">resume.jclee.me</a></span>
+        <button onclick="window.print()" class="pdf-btn">📄 PDF 다운로드</button>
+      </div>
     </header>
 
     <section>
-        <h2>Summary</h2>
-        <p>7년간 금융·교육·제조 산업에서 클라우드 인프라 운영 및 보안 아키텍처를 설계하며, Kubernetes 기반 플랫폼 구축과 DevSecOps 자동화를 통해 팀 생산성을 극대화해왔습니다. Python/Flask 기반 자동화 시스템으로 일일 8시간 이상의 수작업을 제거하고, GitOps 워크플로우로 배포 프로세스를 표준화했습니다.</p>
+      <h2>Summary</h2>
+      <p>
+        7년간 금융·교육·제조 산업에서 클라우드 인프라 운영 및 보안 아키텍처를 설계하며, Kubernetes
+        기반 플랫폼 구축과 DevSecOps 자동화를 통해 팀 생산성을 극대화해왔습니다. Python/Flask 기반
+        자동화 시스템으로 일일 8시간 이상의 수작업을 제거하고, GitOps 워크플로우로 배포 프로세스를
+        표준화했습니다.
+      </p>
     </section>
 
     <section>
-        <h2>Experience</h2>
+      <h2>Experience</h2>
 
-        <div class="exp-item">
-            <div class="exp-header">
-                <h3>아이티센 CTS <span class="company">| 정보보안 운영 엔지니어</span></h3>
-                <span class="date">2025.03 - 현재</span>
-            </div>
-            <p class="exp-desc">넥스트레이드 운영SM (정보보안팀) - 15종 이상 보안 솔루션 통합 운영 및 24/7 실시간 모니터링</p>
-            <ul>
-                <li>DDoS, IPS, WAF, NAC, DLP, EDR, APT 등 15종 이상 보안 솔루션 실시간 모니터링 및 안정화</li>
-                <li>금융감독원 정기 감사 지적사항 0건 달성, 24/7 보안 이벤트 실시간 모니터링 및 대응 체계 구축</li>
-            </ul>
+      <div class="exp-item">
+        <div class="exp-header">
+          <h3>아이티센 CTS <span class="company">| 정보보안 운영 엔지니어</span></h3>
+          <span class="date">2025.03 - 현재</span>
         </div>
-
-        <div class="exp-item">
-            <div class="exp-header">
-                <h3>가온누리정보시스템 <span class="company">| 인프라 엔지니어 (프리랜서)</span></h3>
-                <span class="date">2024.03 - 2025.02</span>
-            </div>
-            <p class="exp-desc">ATS(다자간매매체결회사) 금융위원회 본인가 대비 보안 인프라 구축 및 K8S 기반 마이크로서비스 전환</p>
-            <ul>
-                <li><strong>방화벽 자동화:</strong> Python REST API 기반 정책 배포 시스템 구축, 일일 3시간 수작업 완전 제거</li>
-                <li><strong>컨테이너 전환:</strong> 레거시 VM 기반 시스템을 K8S로 마이그레이션, GitOps 워크플로우 구축</li>
-                <li><strong>보안 솔루션 안정화:</strong> EPP/DLP 충돌 근본 원인 분석 및 해결, 시스템 가용성 99.9% 달성</li>
-            </ul>
-        </div>
-
-        <div class="exp-item">
-            <div class="exp-header">
-                <h3>콴텍투자일임 <span class="company">| 인프라·정보보호팀 인프라 엔지니어</span></h3>
-                <span class="date">2022.08 - 2024.03</span>
-            </div>
-            <p class="exp-desc">금융보안데이터센터(FSDC) 내 서버 150대 운영 및 AWS 클라우드 보안 아키텍처 설계</p>
-            <ul>
-                <li>DB 접근제어 정책 재설계를 통한 개발 환경 성능 최적화 및 개발팀 생산성 향상</li>
-                <li>Python 기반 시스템 모니터링 자동화로 장애 예방 체계 구축 및 운영 효율성 개선</li>
-            </ul>
-        </div>
-
-        <div class="exp-item">
-            <div class="exp-header">
-                <h3>메타넷엠플랫폼 <span class="company">| 인프라·시스템 엔지니어</span></h3>
-                <span class="date">2019.12 - 2021.08</span>
-            </div>
-            <p class="exp-desc">1,000명 규모 콜센터 재택근무 인프라 긴급 구축</p>
-            <ul>
-                <li>코로나19 긴급 상황 대응: 2주 내 1,000명 규모 재택근무 보안 인프라 완전 구축</li>
-                <li>Python 네트워크 점검 자동화로 일일 운영 업무 효율성 획기적 개선</li>
-            </ul>
-        </div>
-    </section>
-
-    <section>
-        <h2>Skills</h2>
-        <div class="skills">
-            <span class="skill-tag">Kubernetes</span>
-            <span class="skill-tag">Docker</span>
-            <span class="skill-tag">Python</span>
-            <span class="skill-tag">Flask</span>
-            <span class="skill-tag">GitOps</span>
-            <span class="skill-tag">ArgoCD</span>
-            <span class="skill-tag">Helm</span>
-            <span class="skill-tag">GitHub Actions</span>
-            <span class="skill-tag">AWS</span>
-            <span class="skill-tag">GCP</span>
-            <span class="skill-tag">Grafana</span>
-            <span class="skill-tag">Prometheus</span>
-            <span class="skill-tag">PostgreSQL</span>
-            <span class="skill-tag">Redis</span>
-            <span class="skill-tag">FortiGate</span>
-            <span class="skill-tag">Palo Alto</span>
-            <span class="skill-tag">ISMS</span>
-            <span class="skill-tag">DevSecOps</span>
-        </div>
-    </section>
-
-    <section>
-        <h2>Projects</h2>
-
-        <div class="project-item">
-            <div class="project-header">
-                <h3 class="project-title">Splunk-FortiNet Integration</h3>
-                <a href="https://splunk.jclee.me" target="_blank" class="project-link">View →</a>
-            </div>
-            <p class="tech-stack">Node.js · Cloudflare Workers · DDD Level 3</p>
-            <p>80대 방화벽 실시간 중앙관리, 초당 10만 이벤트 처리, 75,000% 확장여유</p>
-        </div>
-
-        <div class="project-item">
-            <div class="project-header">
-                <h3 class="project-title">SafeWork Industrial Health</h3>
-                <a href="https://safework.jclee.me" target="_blank" class="project-link">View →</a>
-            </div>
-            <p class="tech-stack">Flask 3.0 · PostgreSQL 15 · Cloudflare Workers</p>
-            <p>산업보건 SaaS, Edge API 전국 동시접속, 집계오류 100% 제거</p>
-        </div>
-
-        <div class="project-item">
-            <div class="project-header">
-                <h3 class="project-title">REGTECH Threat Intelligence</h3>
-                <a href="https://blacklist.jclee.me" target="_blank" class="project-link">View →</a>
-            </div>
-            <p class="tech-stack">Flask · PostgreSQL 15 · Portainer API · Claude AI</p>
-            <p>금융보안원 위협정보 자동수집, AI 5개 워크플로우, 일일 2시간 절감</p>
-        </div>
-
-        <div class="project-item">
-            <div class="project-header">
-                <h3 class="project-title">FortiGate Policy Orchestration</h3>
-                <a href="https://fortinet.jclee.me" target="_blank" class="project-link">View →</a>
-            </div>
-            <p class="tech-stack">Flask · FortiManager JSON-RPC · GitHub Actions</p>
-            <p>방화벽 정책 자동배포, 3-tier HA 무중단 서비스, 일일 3시간 절감</p>
-        </div>
-
-        <div class="project-item">
-            <div class="project-header">
-                <h3 class="project-title">Full-Stack Observability</h3>
-                <a href="https://grafana.jclee.me" target="_blank" class="project-link">View →</a>
-            </div>
-            <p class="tech-stack">Grafana · Prometheus · Loki · Tempo · Traefik</p>
-            <p>메트릭·로그·트레이스 3종 통합, SSL 자동화, 인프라 전체 가시성</p>
-        </div>
-    </section>
-
-    <section>
-        <h2>Certifications</h2>
+        <p class="exp-desc">
+          넥스트레이드 운영SM (정보보안팀) - 15종 이상 보안 솔루션 통합 운영 및 24/7 실시간 모니터링
+        </p>
         <ul>
-            <li><strong>CCNP</strong> - Cisco Certified Network Professional (2020.08)</li>
-            <li><strong>RHCSA</strong> - Red Hat Certified System Administrator (2019.01)</li>
-            <li><strong>CompTIA Linux+</strong> (2019.02)</li>
-            <li><strong>LPIC Level 1</strong> - Linux Professional Institute Certification (2019.02)</li>
+          <li>
+            DDoS, IPS, WAF, NAC, DLP, EDR, APT 등 15종 이상 보안 솔루션 실시간 모니터링 및 안정화
+          </li>
+          <li>
+            금융감독원 정기 감사 지적사항 0건 달성, 24/7 보안 이벤트 실시간 모니터링 및 대응 체계
+            구축
+          </li>
         </ul>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-header">
+          <h3>가온누리정보시스템 <span class="company">| 인프라 엔지니어 (프리랜서)</span></h3>
+          <span class="date">2024.03 - 2025.02</span>
+        </div>
+        <p class="exp-desc">
+          ATS(다자간매매체결회사) 금융위원회 본인가 대비 보안 인프라 구축 및 K8S 기반 마이크로서비스
+          전환
+        </p>
+        <ul>
+          <li>
+            <strong>방화벽 자동화:</strong> Python REST API 기반 정책 배포 시스템 구축, 일일 3시간
+            수작업 완전 제거
+          </li>
+          <li>
+            <strong>컨테이너 전환:</strong> 레거시 VM 기반 시스템을 K8S로 마이그레이션, GitOps
+            워크플로우 구축
+          </li>
+          <li>
+            <strong>보안 솔루션 안정화:</strong> EPP/DLP 충돌 근본 원인 분석 및 해결, 시스템 가용성
+            99.9% 달성
+          </li>
+        </ul>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-header">
+          <h3>콴텍투자일임 <span class="company">| 인프라·정보보호팀 인프라 엔지니어</span></h3>
+          <span class="date">2022.08 - 2024.03</span>
+        </div>
+        <p class="exp-desc">
+          금융보안데이터센터(FSDC) 내 서버 150대 운영 및 AWS 클라우드 보안 아키텍처 설계
+        </p>
+        <ul>
+          <li>DB 접근제어 정책 재설계를 통한 개발 환경 성능 최적화 및 개발팀 생산성 향상</li>
+          <li>Python 기반 시스템 모니터링 자동화로 장애 예방 체계 구축 및 운영 효율성 개선</li>
+        </ul>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-header">
+          <h3>메타넷엠플랫폼 <span class="company">| 인프라·시스템 엔지니어</span></h3>
+          <span class="date">2019.12 - 2021.08</span>
+        </div>
+        <p class="exp-desc">1,000명 규모 콜센터 재택근무 인프라 긴급 구축</p>
+        <ul>
+          <li>코로나19 긴급 상황 대응: 2주 내 1,000명 규모 재택근무 보안 인프라 완전 구축</li>
+          <li>Python 네트워크 점검 자동화로 일일 운영 업무 효율성 획기적 개선</li>
+        </ul>
+      </div>
     </section>
-</body>
+
+    <section>
+      <h2>Skills</h2>
+      <div class="skills">
+        <span class="skill-tag">Kubernetes</span>
+        <span class="skill-tag">Docker</span>
+        <span class="skill-tag">Python</span>
+        <span class="skill-tag">Flask</span>
+        <span class="skill-tag">GitOps</span>
+        <span class="skill-tag">ArgoCD</span>
+        <span class="skill-tag">Helm</span>
+        <span class="skill-tag">GitHub Actions</span>
+        <span class="skill-tag">AWS</span>
+        <span class="skill-tag">GCP</span>
+        <span class="skill-tag">Grafana</span>
+        <span class="skill-tag">Prometheus</span>
+        <span class="skill-tag">PostgreSQL</span>
+        <span class="skill-tag">Redis</span>
+        <span class="skill-tag">FortiGate</span>
+        <span class="skill-tag">Palo Alto</span>
+        <span class="skill-tag">ISMS</span>
+        <span class="skill-tag">DevSecOps</span>
+      </div>
+    </section>
+
+    <section>
+      <h2>Projects</h2>
+
+      <div class="project-item">
+        <div class="project-header">
+          <h3 class="project-title">Splunk-FortiNet Integration</h3>
+          <a href="https://splunk.jclee.me" target="_blank" class="project-link">View →</a>
+        </div>
+        <p class="tech-stack">Node.js · Cloudflare Workers · DDD Level 3</p>
+        <p>80대 방화벽 실시간 중앙관리, 초당 10만 이벤트 처리, 75,000% 확장여유</p>
+      </div>
+
+      <div class="project-item">
+        <div class="project-header">
+          <h3 class="project-title">SafeWork Industrial Health</h3>
+          <a href="https://safework.jclee.me" target="_blank" class="project-link">View →</a>
+        </div>
+        <p class="tech-stack">Flask 3.0 · PostgreSQL 15 · Cloudflare Workers</p>
+        <p>산업보건 SaaS, Edge API 전국 동시접속, 집계오류 100% 제거</p>
+      </div>
+
+      <div class="project-item">
+        <div class="project-header">
+          <h3 class="project-title">REGTECH Threat Intelligence</h3>
+          <a href="https://blacklist.jclee.me" target="_blank" class="project-link">View →</a>
+        </div>
+        <p class="tech-stack">Flask · PostgreSQL 15 · Portainer API · Claude AI</p>
+        <p>금융보안원 위협정보 자동수집, AI 5개 워크플로우, 일일 2시간 절감</p>
+      </div>
+
+      <div class="project-item">
+        <div class="project-header">
+          <h3 class="project-title">FortiGate Policy Orchestration</h3>
+          <a href="https://fortinet.jclee.me" target="_blank" class="project-link">View →</a>
+        </div>
+        <p class="tech-stack">Flask · FortiManager JSON-RPC · GitHub Actions</p>
+        <p>방화벽 정책 자동배포, 3-tier HA 무중단 서비스, 일일 3시간 절감</p>
+      </div>
+
+      <div class="project-item">
+        <div class="project-header">
+          <h3 class="project-title">Full-Stack Observability</h3>
+          <a href="https://grafana.jclee.me" target="_blank" class="project-link">View →</a>
+        </div>
+        <p class="tech-stack">Grafana · Prometheus · Loki · Tempo · Traefik</p>
+        <p>메트릭·로그·트레이스 3종 통합, SSL 자동화, 인프라 전체 가시성</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Certifications</h2>
+      <ul>
+        <li><strong>CCNP</strong> - Cisco Certified Network Professional (2020.08)</li>
+        <li><strong>RHCSA</strong> - Red Hat Certified System Administrator (2019.01)</li>
+        <li><strong>CompTIA Linux+</strong> (2019.02)</li>
+        <li>
+          <strong>LPIC Level 1</strong> - Linux Professional Institute Certification (2019.02)
+        </li>
+      </ul>
+    </section>
+  </body>
 </html>

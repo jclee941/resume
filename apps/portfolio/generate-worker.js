@@ -20,11 +20,13 @@ function resolveGitSha() {
     process.env.WORKERS_CI_COMMIT_SHA;
   if (envSha) return envSha.trim();
   try {
-    return require('child_process').execSync('git rev-parse HEAD', {
-      cwd: path.join(__dirname, '..', '..'),
-      encoding: 'utf-8',
-      stdio: ['ignore', 'pipe', 'ignore'],
-    }).trim();
+    return require('child_process')
+      .execSync('git rev-parse HEAD', {
+        cwd: path.join(__dirname, '..', '..'),
+        encoding: 'utf-8',
+        stdio: ['ignore', 'pipe', 'ignore'],
+      })
+      .trim();
   } catch {
     return 'unknown';
   }

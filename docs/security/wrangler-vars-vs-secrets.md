@@ -16,21 +16,21 @@ secret-shaped strings appear in any committed `wrangler.jsonc` or
 
 ## Quick Decision Table
 
-| Value type                                                  | `vars` | Secrets | Reason                                          |
-| ----------------------------------------------------------- | ------ | ------- | ----------------------------------------------- |
-| Public URL (e.g. `https://api.example.com`)                 | yes    | no      | Not sensitive                                   |
-| Feature flag (e.g. `ENABLE_X = "true"`)                     | yes    | no      | Behavior toggle                                 |
-| Cron schedule (e.g. `CRON = "0 */6 * * *"`)                 | yes    | no      | Operational metadata                            |
-| Index / queue name (e.g. `ELASTICSEARCH_INDEX`)             | yes    | no      | Resource identifier, not credential             |
-| Public key fingerprint                                      | yes    | no      | Verifier, not signer                            |
-| Numeric tuning constant (rate limits, timeouts)             | yes    | no      | Operational parameter                           |
-| API key / token (any provider: Cloudflare, Wanted, etc.)    | no     | yes     | Authentication credential                       |
-| OAuth client secret                                         | no     | yes     | Authentication credential                       |
-| JWT signing key                                             | no     | yes     | Confidentiality of issued tokens                |
-| Symmetric encryption key                                    | no     | yes     | Cryptographic primitive                         |
-| Webhook signing secret                                      | no     | yes     | Integrity check                                 |
-| Database password / connection string with embedded creds   | no     | yes     | Authentication credential                       |
-| Personal email / phone of a user                            | no     | yes     | PII — treat as Secrets even when not a creds    |
+| Value type                                                | `vars` | Secrets | Reason                                       |
+| --------------------------------------------------------- | ------ | ------- | -------------------------------------------- |
+| Public URL (e.g. `https://api.example.com`)               | yes    | no      | Not sensitive                                |
+| Feature flag (e.g. `ENABLE_X = "true"`)                   | yes    | no      | Behavior toggle                              |
+| Cron schedule (e.g. `CRON = "0 */6 * * *"`)               | yes    | no      | Operational metadata                         |
+| Index / queue name (e.g. `ELASTICSEARCH_INDEX`)           | yes    | no      | Resource identifier, not credential          |
+| Public key fingerprint                                    | yes    | no      | Verifier, not signer                         |
+| Numeric tuning constant (rate limits, timeouts)           | yes    | no      | Operational parameter                        |
+| API key / token (any provider: Cloudflare, Wanted, etc.)  | no     | yes     | Authentication credential                    |
+| OAuth client secret                                       | no     | yes     | Authentication credential                    |
+| JWT signing key                                           | no     | yes     | Confidentiality of issued tokens             |
+| Symmetric encryption key                                  | no     | yes     | Cryptographic primitive                      |
+| Webhook signing secret                                    | no     | yes     | Integrity check                              |
+| Database password / connection string with embedded creds | no     | yes     | Authentication credential                    |
+| Personal email / phone of a user                          | no     | yes     | PII — treat as Secrets even when not a creds |
 
 **Rule of thumb**: if leaking the value would let an attacker impersonate the
 service, decrypt user data, sign messages on behalf of the project, or
@@ -48,8 +48,8 @@ exfiltrate PII — it is a **Secret**.
   "vars": {
     "DEPLOY_ENV": "production",
     "ELASTICSEARCH_INDEX": "logs-portfolio",
-    "RATE_LIMIT_RPM": "60"
-  }
+    "RATE_LIMIT_RPM": "60",
+  },
 }
 ```
 
@@ -109,18 +109,18 @@ This ordering avoids a window where production runs with no valid credential.
 `tools/scripts/security/check-wrangler-secrets.go` scans every committed
 `wrangler.jsonc` / `wrangler.toml` for known secret shapes:
 
-| Pattern                                                          | Matches                                       |
-| ---------------------------------------------------------------- | --------------------------------------------- |
-| `AKIA[0-9A-Z]{16}`                                               | AWS Access Key ID                             |
-| `sk_live_[0-9a-zA-Z]{16,}`                                       | Stripe live secret key                        |
-| `sk-[A-Za-z0-9_-]{20,}`                                          | OpenAI / Anthropic / similar `sk-` keys       |
-| `eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}`  | JWT (3 base64url segments)                    |
-| `gh[pous]_[A-Za-z0-9]{30,}`                                      | GitHub PAT                                    |
-| `xox[baprs]-[0-9]+-[A-Za-z0-9-]+`                                | Slack token                                   |
-| `AIza[0-9A-Za-z_-]{35}`                                          | Google API key                                |
-| `-----BEGIN ([A-Z]+ )?PRIVATE KEY-----`                          | Private key block                             |
-| `[a-fA-F0-9]{32,}` outside hash / resource-id keys               | Long hex blob (likely key/password)           |
-| Long key-name + literal value (e.g. `"api_key": "..."`)          | Heuristic credential catch-all                |
+| Pattern                                                         | Matches                                 |
+| --------------------------------------------------------------- | --------------------------------------- |
+| `AKIA[0-9A-Z]{16}`                                              | AWS Access Key ID                       |
+| `sk_live_[0-9a-zA-Z]{16,}`                                      | Stripe live secret key                  |
+| `sk-[A-Za-z0-9_-]{20,}`                                         | OpenAI / Anthropic / similar `sk-` keys |
+| `eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}` | JWT (3 base64url segments)              |
+| `gh[pous]_[A-Za-z0-9]{30,}`                                     | GitHub PAT                              |
+| `xox[baprs]-[0-9]+-[A-Za-z0-9-]+`                               | Slack token                             |
+| `AIza[0-9A-Za-z_-]{35}`                                         | Google API key                          |
+| `-----BEGIN ([A-Z]+ )?PRIVATE KEY-----`                         | Private key block                       |
+| `[a-fA-F0-9]{32,}` outside hash / resource-id keys              | Long hex blob (likely key/password)     |
+| Long key-name + literal value (e.g. `"api_key": "..."`)         | Heuristic credential catch-all          |
 
 The script exits non-zero on first match and is wired into `ci.yml`'s
 `secret-scan` job alongside the gitleaks repository-wide scan. The wrangler
@@ -140,9 +140,9 @@ public identifiers issued by Cloudflare, not credentials.
 
 ## Audit Trail
 
-| Date       | Event                              | Actor    |
-| ---------- | ---------------------------------- | -------- |
-| 2026-05-05 | Document created (#37 / SSOT-030)  | platform |
+| Date       | Event                             | Actor    |
+| ---------- | --------------------------------- | -------- |
+| 2026-05-05 | Document created (#37 / SSOT-030) | platform |
 
 ---
 

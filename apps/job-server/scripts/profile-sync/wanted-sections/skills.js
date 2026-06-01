@@ -17,14 +17,23 @@ function reportSkillDiff(diff) {
 export async function syncWantedSkills(api, ssot, profile) {
   const diff = await getSkillsDiff(ssot, profile);
 
-  log(`Skills: ${diff.unchanged.length} unchanged, ${diff.toAdd.length} to add, ${diff.toDelete.length} to delete`, 'info', 'wanted');
+  log(
+    `Skills: ${diff.unchanged.length} unchanged, ${diff.toAdd.length} to add, ${diff.toDelete.length} to delete`,
+    'info',
+    'wanted'
+  );
   if (diff.unmapped.length > 0) {
     log(`Unmapped skills (no tagTypeId): ${diff.unmapped.join(', ')}`, 'warn', 'wanted');
   }
 
   if (!CONFIG.APPLY || CONFIG.DIFF_ONLY) {
     reportSkillDiff(diff);
-    return { changes: diff.toAdd.length + diff.toDelete.length, added: 0, deleted: 0, dryRun: true };
+    return {
+      changes: diff.toAdd.length + diff.toDelete.length,
+      added: 0,
+      deleted: 0,
+      dryRun: true,
+    };
   }
 
   const resumes = await api.getResumeList();

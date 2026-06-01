@@ -53,11 +53,11 @@ describe('skill-tag-map', () => {
       { skill: 'Terraform', expected: 10498 },
       { skill: 'Grafana', expected: 10496 },
       // Existing aliases that already worked
-      { skill: 'AWS EC2', expected: 1698 },      // -> AWS
+      { skill: 'AWS EC2', expected: 1698 }, // -> AWS
       { skill: 'GitLab CI/CD', expected: 1413 }, // -> GitLab
       { skill: 'Docker Compose', expected: 2217 }, // -> Docker
-      { skill: 'EC2', expected: 1698 },          // -> AWS
-      { skill: 'EKS', expected: 1698 },          // -> AWS
+      { skill: 'EC2', expected: 1698 }, // -> AWS
+      { skill: 'EKS', expected: 1698 }, // -> AWS
       // Case-insensitive
       { skill: 'aws', expected: 1698 },
       { skill: 'prometheus', expected: 10497 },

@@ -1,7 +1,5 @@
 const { describe, test, expect } = require('@jest/globals');
-const {
-  generateSecurityHeaders,
-} = require('../../apps/portfolio/lib/security-headers.js');
+const { generateSecurityHeaders } = require('../../apps/portfolio/lib/security-headers.js');
 
 describe('Security Headers', () => {
   test('should include CSP header with required directives', () => {

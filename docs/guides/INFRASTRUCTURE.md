@@ -255,7 +255,7 @@ web_vitals_received{job="resume"}
 **Purpose**: Health monitoring and alerting
 
 > **📖 For detailed workflow documentation**, see
-  [infrastructure/n8n/README.md](../../infrastructure/n8n/README.md) for:
+> [infrastructure/n8n/README.md](../../infrastructure/n8n/README.md) for:
 >
 > - Complete workflow setup guides
 > - GitHub webhook integration
@@ -503,7 +503,7 @@ go run ./deploy-workflow.go resume-healthcheck-oauth2.json
 ## 🔒 Internal Service Access
 
 > **Note**: Prometheus, Loki, n8n do not have public DNS. Access via internal
-  network or Grafana proxy.
+> network or Grafana proxy.
 
 | Service        | Public URL                    | Internal Access           | Notes                               |
 | -------------- | ----------------------------- | ------------------------- | ----------------------------------- |

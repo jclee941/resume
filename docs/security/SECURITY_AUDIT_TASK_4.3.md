@@ -95,7 +95,7 @@ return await submitter();
 **Recommendations:**
 
 1. Set file permissions to 600 on session files: `chmod 600
-   ~/.opencode/data/*-session.json`
+~/.opencode/data/*-session.json`
 2. Consider encrypting session files at rest
 
 ---

@@ -73,15 +73,7 @@ export function buildJobText(jobPosting) {
 // Generic operational tokens that are too weak to indicate a real skill match
 // on their own (e.g. "1Password (홈랩 운영)" must not match a job that merely
 // says "클라우드 운영").
-const WEAK_MATCH_TOKENS = new Set([
-  '운영',
-  '관리',
-  '구축',
-  '설계',
-  '지원',
-  'ops',
-  'admin',
-]);
+const WEAK_MATCH_TOKENS = new Set(['운영', '관리', '구축', '설계', '지원', 'ops', 'admin']);
 
 function coreSkillTokens(skill) {
   // Drop parenthetical annotations like "(홈랩 운영)" before tokenizing so the

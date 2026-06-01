@@ -25,9 +25,9 @@
 ### 핵심 역량 (Technical & Domain Expertise)
 
 - **보안 솔루션 통합 운영**: DDoS, IPS, WAF, NAC, DLP, EDR, APT 등 보안 솔루션 설계, 구축 및
- 통합 관제
+  통합 관제
 - **클라우드 & 컨테이너 인프라**: AWS 기반 클라우드 환경 설계 및 운영, Docker, Kubernetes, Portainer
- API를 활용한 컨테이너 오케스트레이션 및 Private Registry 관리
+  API를 활용한 컨테이너 오케스트레이션 및 Private Registry 관리
 - **금융권 보안 규제 준수**: 금융감독원 감사 대응 및 규제 준수 체계 구축·운영
 - **대규모 시스템 운영**: 대규모 단말·서버 인프라 운영 및 안정화 경험
 - **운영 자동화**: Python/Shell 스크립트 기반 업무 자동화 시스템 개발, 반복 업무 절차 자동화
@@ -180,35 +180,35 @@
 #### Splunk-FortiNet Integration
 
 - **Live Demo**: [splunk.jclee.me](https://splunk.jclee.me) | **GitHub**:
- [github.com/qws941/splunk](https://github.com/qws941/splunk)
+  [github.com/qws941/splunk](https://github.com/qws941/splunk)
 - **목적**: 다수 방화벽 실시간 중앙관리 플랫폼 및 Splunk 중심 보안 통합
 - **기술스택**: Node.js, Cloudflare Workers, JavaScript, Splunk API,
- FortiManager/FortiOS API
+  FortiManager/FortiOS API
 - **아키텍처**: DDD Level 3로 여러 도메인 분리 설계, FortiManager/FortiAnalyzer 직접 API 연동
 - **핵심기능**:
- - Splunk를 통한 중앙 집중식 로그 분석 및 정책 검증
- - FortiManager/FortiAnalyzer 실시간 데이터 수집 및 정책 위반 자동 탐지
- - 대규모 이벤트 처리 및 충분한 확장 여유로 엔터프라이즈 검증 완료
+- Splunk를 통한 중앙 집중식 로그 분석 및 정책 검증
+- FortiManager/FortiAnalyzer 실시간 데이터 수집 및 정책 위반 자동 탐지
+- 대규모 이벤트 처리 및 충분한 확장 여유로 엔터프라이즈 검증 완료
 - **운영성과**:
- - 다수 방화벽 정책 실시간 중앙 관리 및 모니터링
- - 정책 검증 절차 자동화 (수동 검토 불필요)
- - AI 기반 위협 분석 및 자동 알림 시스템 구축
+- 다수 방화벽 정책 실시간 중앙 관리 및 모니터링
+- 정책 검증 절차 자동화 (수동 검토 불필요)
+- AI 기반 위협 분석 및 자동 알림 시스템 구축
 
 #### SafeWork Industrial Health Platform
 
 - **Live Demo**: [safework.jclee.me](https://safework.jclee.me) | **GitHub**:
- [github.com/qws941/safework](https://github.com/qws941/safework)
+  [github.com/qws941/safework](https://github.com/qws941/safework)
 - **목적**: 산업보건 설문조사 SaaS 플랫폼
 - **기술스택**: Flask 3.0, PostgreSQL 15, Redis 7, Cloudflare Workers
 - **아키텍처**: Cloudflare Workers Edge API 기반 전국 동시 접속 처리, Flask 3.0 하이브리드 아키텍처
 - **핵심기능**:
- - 종이 설문 디지털 전환 및 집계 자동화
- - 실시간 데이터 분석 및 리포팅
- - Edge API를 통한 고성능 및 저지연 서비스 제공
+- 종이 설문 디지털 전환 및 집계 자동화
+- 실시간 데이터 분석 및 리포팅
+- Edge API를 통한 고성능 및 저지연 서비스 제공
 - **운영성과**:
- - 종이 설문 대비 집계 오류 제거
- - 전국 동시 접속 환경에서 안정적인 서비스 제공
- - 다수 중소기업에 성공적으로 도입 및 운영 중
+- 종이 설문 대비 집계 오류 제거
+- 전국 동시 접속 환경에서 안정적인 서비스 제공
+- 다수 중소기업에 성공적으로 도입 및 운영 중
 
 ### 넥스트레이드 금융 인프라 구축 및 운영
 
@@ -250,20 +250,20 @@
 
 - **목적**: AI 기반의 지능형 인프라 운영 자동화 및 관측성(Observability) 플랫폼 구축
 - **기술스택**: OpenCode, MCP Protocol, Node.js, Python, Docker, Grafana Stack
- (Prometheus, Loki, Tempo), Traefik, Watchtower
+  (Prometheus, Loki, Tempo), Traefik, Watchtower
 - **아키텍처**: Docker Compose 기반 마이크로서비스 오케스트레이션, Git 기반 CI/CD 파이프라인
 - **핵심기능**:
- - 다수 자동화 명령어 체계(SlashCommand 시스템) 구축 및 통합
- - Universal Observability 아키텍처 구현 (메트릭, 로그, 트레이스 통합 모니터링)
- - MCP(Model Context Protocol) 도구 생태계 구축
- - AI 어시스턴트(OpenCode, GitHub Copilot, ChatGPT API) 통합을 통한 운영 절차 자동화
- - 실시간 로그 스트리밍 파이프라인(Promtail → Loki → Grafana) 구축
- - Watchtower 기반 Docker 컨테이너 자동 업데이트 및 무중단 배포
+- 다수 자동화 명령어 체계(SlashCommand 시스템) 구축 및 통합
+- Universal Observability 아키텍처 구현 (메트릭, 로그, 트레이스 통합 모니터링)
+- MCP(Model Context Protocol) 도구 생태계 구축
+- AI 어시스턴트(OpenCode, GitHub Copilot, ChatGPT API) 통합을 통한 운영 절차 자동화
+- 실시간 로그 스트리밍 파이프라인(Promtail → Loki → Grafana) 구축
+- Watchtower 기반 Docker 컨테이너 자동 업데이트 및 무중단 배포
 - **운영성과**:
- - AI 기반 자동화로 인프라 수동 작업을 자동화하고 운영 절차를 표준화
- - 통합 관측성 확보로 장애 발생 시 장애 대응에 필요한 관측성 확보
- - Git 기반 완전 자동화 CI/CD 파이프라인 구축으로 Git 기반 자동화 CI/CD 파이프라인 구성
- - 복수 서버에 걸친 다수 도구를 통합 관리하여 복수 서버 도구 통합 관리 구조 구성
+- AI 기반 자동화로 인프라 수동 작업을 자동화하고 운영 절차를 표준화
+- 통합 관측성 확보로 장애 발생 시 장애 대응에 필요한 관측성 확보
+- Git 기반 완전 자동화 CI/CD 파이프라인 구축으로 Git 기반 자동화 CI/CD 파이프라인 구성
+- 복수 서버에 걸친 다수 도구를 통합 관리하여 복수 서버 도구 통합 관리 구조 구성
 
 ---
 
@@ -313,14 +313,14 @@
 
 ## 자격증
 
-| 자격증명 | 발급기관 | 취득일 |
+| 자격증명           | 발급기관                     | 취득일  |
 | ------------------ | ---------------------------- | ------- |
-| CCNP | Cisco Systems | 2020.08 |
-| RHCSA | Red Hat | 2019.01 |
-| CompTIA Linux+ | CompTIA | 2019.02 |
-| LPIC Level 1 | Linux Professional Institute | 2019.02 |
-| 사무자동화산업기사 | 한국산업인력공단 | 2019.12 |
-| 리눅스마스터 2급 | 한국정보통신진흥협회 | 2019.01 |
+| CCNP               | Cisco Systems                | 2020.08 |
+| RHCSA              | Red Hat                      | 2019.01 |
+| CompTIA Linux+     | CompTIA                      | 2019.02 |
+| LPIC Level 1       | Linux Professional Institute | 2019.02 |
+| 사무자동화산업기사 | 한국산업인력공단             | 2019.12 |
+| 리눅스마스터 2급   | 한국정보통신진흥협회         | 2019.01 |
 
 ---
 

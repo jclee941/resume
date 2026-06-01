@@ -66,18 +66,17 @@ export class ExperienceEndpoint {
   }
 
   async update(experienceId, experienceData) {
-    const response = await this.#client.snsRequest(
-      `/user/experiences/${experienceId}`,
-      { method: 'PUT', body: experienceData },
-    );
+    const response = await this.#client.snsRequest(`/user/experiences/${experienceId}`, {
+      method: 'PUT',
+      body: experienceData,
+    });
     return response;
   }
 
   async delete(experienceId) {
-    const response = await this.#client.snsRequest(
-      `/user/experiences/${experienceId}`,
-      { method: 'DELETE' },
-    );
+    const response = await this.#client.snsRequest(`/user/experiences/${experienceId}`, {
+      method: 'DELETE',
+    });
     return response;
   }
 }
@@ -98,18 +97,17 @@ export class EducationEndpoint {
   }
 
   async update(educationId, educationData) {
-    const response = await this.#client.snsRequest(
-      `/user/educations/${educationId}`,
-      { method: 'PUT', body: educationData },
-    );
+    const response = await this.#client.snsRequest(`/user/educations/${educationId}`, {
+      method: 'PUT',
+      body: educationData,
+    });
     return response;
   }
 
   async delete(educationId) {
-    const response = await this.#client.snsRequest(
-      `/user/educations/${educationId}`,
-      { method: 'DELETE' },
-    );
+    const response = await this.#client.snsRequest(`/user/educations/${educationId}`, {
+      method: 'DELETE',
+    });
     return response;
   }
 }

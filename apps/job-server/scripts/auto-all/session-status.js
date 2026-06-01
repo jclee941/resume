@@ -7,14 +7,21 @@ export function checkSession(platform) {
     return { valid: false, reason: 'expired' };
 
   const cookieArr = Array.isArray(session.cookies) ? session.cookies : [];
-  const cookieStr = session.cookieString || (typeof session.cookies === 'string' ? session.cookies : '');
+  const cookieStr =
+    session.cookieString || (typeof session.cookies === 'string' ? session.cookies : '');
 
-  const hasAuth = cookieArr.length > 0
-    ? cookieArr.some((c) => c.name.includes('TOKEN') || c.name.includes('session') || c.name.includes('auth'))
-    : /TOKEN|session|auth/i.test(cookieStr);
+  const hasAuth =
+    cookieArr.length > 0
+      ? cookieArr.some(
+          (c) => c.name.includes('TOKEN') || c.name.includes('session') || c.name.includes('auth')
+        )
+      : /TOKEN|session|auth/i.test(cookieStr);
   if (!hasAuth) return { valid: false, reason: 'no auth cookie' };
 
-  return { valid: true, cookies: session.cookieCount || cookieArr.length || cookieStr.split(';').filter(Boolean).length };
+  return {
+    valid: true,
+    cookies: session.cookieCount || cookieArr.length || cookieStr.split(';').filter(Boolean).length,
+  };
 }
 
 export { SessionManager };

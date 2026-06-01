@@ -17,7 +17,6 @@ export async function verifyAuthenticatedSession({ cookieString, resumeUrl, user
     throw new Error(`Authenticated resume request failed with status ${response.status}`);
   }
 
-
   const body = await response.text();
   const expiredMarkers = [
     '세션이 만료 되었습니다',

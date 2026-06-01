@@ -66,8 +66,7 @@ export class ProfileAggregator {
                 status: 'synced',
                 lastSync: new Date().toISOString(),
               };
-              if (!unified.meta.sources.includes(platform))
-                unified.meta.sources.push(platform);
+              if (!unified.meta.sources.includes(platform)) unified.meta.sources.push(platform);
             } else {
               unified.meta.syncStatus[platform] = {
                 status: profileData.status === 'NOT_IMPLEMENTED' ? 'not_implemented' : 'error',
@@ -86,7 +85,7 @@ export class ProfileAggregator {
             error: e.message,
           };
         }
-      }),
+      })
     );
 
     unified.meta.lastUpdated = new Date().toISOString();
@@ -94,10 +93,7 @@ export class ProfileAggregator {
   }
 
   mergeProfile(unified, sourceProfile, platform) {
-    if (
-      platform === 'wanted' ||
-      (platform === 'linkedin' && !unified.basic.name)
-    ) {
+    if (platform === 'wanted' || (platform === 'linkedin' && !unified.basic.name)) {
       unified.basic.name = sourceProfile.name || unified.basic.name;
       unified.basic.email = sourceProfile.email || unified.basic.email;
       unified.basic.headline = sourceProfile.headline || unified.basic.headline;
@@ -109,7 +105,7 @@ export class ProfileAggregator {
         const exists = unified.careers.some(
           (c) =>
             c.company.toLowerCase() === career.company.toLowerCase() &&
-            c.startDate === career.startDate,
+            c.startDate === career.startDate
         );
         if (!exists) {
           unified.careers.push({ ...career, platform });
@@ -120,7 +116,7 @@ export class ProfileAggregator {
     if (sourceProfile.skills) {
       sourceProfile.skills.forEach((skill) => {
         const exists = unified.skills.some(
-          (s) => s.name.toLowerCase() === skill.name.toLowerCase(),
+          (s) => s.name.toLowerCase() === skill.name.toLowerCase()
         );
         if (!exists) {
           unified.skills.push({ ...skill, platform });

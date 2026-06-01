@@ -157,7 +157,9 @@ export async function runQueueAutoApply(args) {
     args.find((a) => !a.startsWith('--'));
 
   if (!queuePath) {
-    console.error('❌ Provide a queue file: apply_queue --queue=<path-to-submit-queue.json> [--apply] [--max=N]');
+    console.error(
+      '❌ Provide a queue file: apply_queue --queue=<path-to-submit-queue.json> [--apply] [--max=N]'
+    );
     return;
   }
 

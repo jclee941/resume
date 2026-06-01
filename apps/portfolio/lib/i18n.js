@@ -112,8 +112,7 @@ const TRANSLATIONS = {
     // Hero section
     'hero.title': 'イ・ジェチョル',
     'hero.subtitle': 'セキュリティエンジニア',
-    'hero.description':
-      'セキュリティ自動化とインフラ整備を通じて、安全なシステムを構築します',
+    'hero.description': 'セキュリティ自動化とインフラ整備を通じて、安全なシステムを構築します',
     'hero.download.complete': '完全版履歴書をダウンロード',
     'hero.download.pdf': 'PDF',
     'hero.download.docx': 'DOCX',

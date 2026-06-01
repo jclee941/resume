@@ -1,6 +1,11 @@
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
-import { buildPortfolioPayload, buildSavePayload, encodeFormFields, smartMergeFields } from '../jobkorea-handler/api-payload.js';
+import {
+  buildPortfolioPayload,
+  buildSavePayload,
+  encodeFormFields,
+  smartMergeFields,
+} from '../jobkorea-handler/api-payload.js';
 
 describe('JobKorea API payload helpers', () => {
   it('encodes form fields as application/x-www-form-urlencoded', () => {

@@ -205,7 +205,9 @@ export class RememberProfileSync extends BaseProfileSync {
       const headlineEl = document.querySelector('.headline, .intro, [class*="intro"]');
       const schoolEl = document.querySelector('[class*="school"], [data-section="education"]');
       const majorEl = document.querySelector('[class*="major"]');
-      const careerEls = document.querySelectorAll('[class*="career-item"], [class*="experience-item"]');
+      const careerEls = document.querySelectorAll(
+        '[class*="career-item"], [class*="experience-item"]'
+      );
       const certEls = document.querySelectorAll('[class*="cert-item"], [class*="certification"]');
       const skillEls = document.querySelectorAll('[class*="skill-tag"], [class*="skill-item"]');
       return {
@@ -217,7 +219,9 @@ export class RememberProfileSync extends BaseProfileSync {
         },
         careers: Array.from(careerEls).map((el) => ({ company: el.textContent?.trim() || '' })),
         certifications: Array.from(certEls).map((el) => ({ name: el.textContent?.trim() || '' })),
-        skills: Array.from(skillEls).map((el) => el.textContent?.trim()).filter(Boolean),
+        skills: Array.from(skillEls)
+          .map((el) => el.textContent?.trim())
+          .filter(Boolean),
       };
     });
     return { success: true, code: 'OK', data: snapshot };
@@ -251,7 +255,9 @@ export class RememberProfileSync extends BaseProfileSync {
   }
 
   async updateCertifications(certifications) {
-    const certSection = await this.page.$('[class*="certification"], [data-section="certification"]');
+    const certSection = await this.page.$(
+      '[class*="certification"], [data-section="certification"]'
+    );
     if (!certSection) return;
 
     for (const cert of certifications.slice(0, 6)) {
@@ -268,7 +274,9 @@ export class RememberProfileSync extends BaseProfileSync {
       }
 
       if (cert.issuer) {
-        const issuerInputs = await this.page.$$('input[name*="issuer"], input[placeholder*="발급기관"]');
+        const issuerInputs = await this.page.$$(
+          'input[name*="issuer"], input[placeholder*="발급기관"]'
+        );
         const lastIssuer = issuerInputs[issuerInputs.length - 1];
         if (lastIssuer) {
           await lastIssuer.fill(cert.issuer);
@@ -276,7 +284,9 @@ export class RememberProfileSync extends BaseProfileSync {
       }
 
       if (cert.date) {
-        const dateInputs = await this.page.$$('input[name*="date"], input[placeholder*="취득일"], input[type="date"]');
+        const dateInputs = await this.page.$$(
+          'input[name*="date"], input[placeholder*="취득일"], input[type="date"]'
+        );
         const lastDate = dateInputs[dateInputs.length - 1];
         if (lastDate) {
           await lastDate.fill(cert.date);

@@ -4,7 +4,12 @@ const { generateProfileBento } = require('../../../../../apps/portfolio/lib/card
 
 describe('cards/profile generateProfileBento', () => {
   const full = {
-    education: { school: '한양사이버대학교', major: '컴퓨터공학과', status: '재학중', startDate: '2024.03' },
+    education: {
+      school: '한양사이버대학교',
+      major: '컴퓨터공학과',
+      status: '재학중',
+      startDate: '2024.03',
+    },
     languages: [
       { name: 'Korean', level: 'Native' },
       { name: 'English', level: 'Working proficiency' },

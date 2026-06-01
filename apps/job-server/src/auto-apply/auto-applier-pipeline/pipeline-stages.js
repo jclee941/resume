@@ -19,11 +19,7 @@ export async function trackAndScoreJob(autoApplier, job, score, stageState) {
   const trackedApplication = await autoApplier.tracker.startTracking(job, score);
   stageState.track = true;
 
-  await autoApplier.tracker.recordScoring(
-    trackedApplication.id,
-    score,
-    job.matchType || 'hybrid'
-  );
+  await autoApplier.tracker.recordScoring(trackedApplication.id, score, job.matchType || 'hybrid');
 
   return trackedApplication;
 }

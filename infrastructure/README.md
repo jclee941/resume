@@ -19,7 +19,7 @@ graph TB
     User[User/Browser] --> CF[Cloudflare Edge]
     CF --> Portfolio[Portfolio Worker]
     Portfolio --> JobDash[job-dashboard module]
-    
+
     subgraph Self-Hosted
         Proxmox[Proxmox VE]
         Proxmox --> Grafana[Grafana + Loki]
@@ -27,14 +27,14 @@ graph TB
         Proxmox --> n8n[n8n Workflows]
         Proxmox --> Docker[Docker Host]
     end
-    
+
     Docker --> JobServer[job-server MCP]
     n8n --> JobServer
     JobServer --> D1[D1 Database]
     JobServer --> KV[KV Namespaces]
     JobServer --> Wanted[Wanted API]
     JobServer --> JK[JobKorea]
-    
+
     Portfolio --> D1
     Portfolio --> KV
 ```
@@ -45,7 +45,7 @@ graph TB
 - **Monitoring**: Grafana + Prometheus + Loki (hosted on Proxmox pve3
   (192.168.50.100))
 - **Automation**: n8n workflows (health checks, deployments)
-#TX|- **CI/CD**: GitHub Actions → Cloudflare Workers Builds
+  #TX|- **CI/CD**: GitHub Actions → Cloudflare Workers Builds
 
 ---
 
@@ -106,9 +106,9 @@ infrastructure/
 | **GitHub**     | <https://github.com/jclee941/resume> | ✅ Public   | Source repository       |
 
 > ⚠️ **Internal Services**: Prometheus, Loki, n8n are internal-only (no public
-  DNS).
+> DNS).
 > Access via internal IP or Grafana proxy. See [Access
-  Guide](#internal-service-access) below.
+> Guide](#internal-service-access) below.
 
 ### Application Endpoints
 
@@ -444,7 +444,8 @@ curl https://resume.jclee.me/metrics | grep error
 ## Related Documentation
 
 #YM|- **Main Documentation**: `../../AGENTS.md` (project overview, commands,
-  architecture)
+architecture)
+
 - **Monitoring Guide**: `monitoring/README.md` (comprehensive monitoring
   documentation)
 - **Grafana Config**: `configs/grafana/README.md` (alert rules, dashboard
@@ -466,7 +467,7 @@ For issues or questions:
 2. **Review Documentation**:
    - This file: `infrastructure/README.md`
    - Monitoring: `infrastructure/monitoring/README.md`
-   #TH|   - Project: `../../README.md`
+     #TH| - Project: `../../README.md`
 
 3. **Contact**:
    - Email: <qws941@kakao.com>

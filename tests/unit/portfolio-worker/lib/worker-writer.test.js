@@ -59,9 +59,7 @@ const {
   writeWorkerFile,
   buildAndWriteWorker,
 } = require('../../../../apps/portfolio/lib/worker-writer');
-const {
-  generateWorkerPreamble,
-} = require('../../../../apps/portfolio/lib/worker-preamble');
+const { generateWorkerPreamble } = require('../../../../apps/portfolio/lib/worker-preamble');
 const workerRoutes = require('../../../../apps/portfolio/lib/worker-routes');
 const routes = require('../../../../apps/portfolio/lib/routes');
 

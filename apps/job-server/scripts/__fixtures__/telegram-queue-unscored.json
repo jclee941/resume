@@ -1,4 +1,14 @@
 [
-  { "company": "CuratedA", "position": "Staff SRE", "url": "https://x.test/ca", "source": "wanted" },
-  { "company": "CuratedB", "position": "Security Engineer", "url": "https://x.test/cb", "source": "jobkorea" }
+  {
+    "company": "CuratedA",
+    "position": "Staff SRE",
+    "url": "https://x.test/ca",
+    "source": "wanted"
+  },
+  {
+    "company": "CuratedB",
+    "position": "Security Engineer",
+    "url": "https://x.test/cb",
+    "source": "jobkorea"
+  }
 ]

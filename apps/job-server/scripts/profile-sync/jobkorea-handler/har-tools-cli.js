@@ -27,7 +27,8 @@ export function parseHarToolsCliArgs(argv = process.argv.slice(2)) {
 
   if (!options.input) throw new Error('--input is required');
   if (command === 'sanitize' && !options.output) throw new Error('sanitize requires --output');
-  if (command === 'analyze' && options.output) throw new Error('analyze writes to stdout; omit --output');
+  if (command === 'analyze' && options.output)
+    throw new Error('analyze writes to stdout; omit --output');
 
   return options;
 }

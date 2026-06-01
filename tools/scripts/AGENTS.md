@@ -33,7 +33,7 @@ scripts/
 ## CONVENTIONS
 
 - Child scripts inherit root/`tools/` conventions (project root context, `set
-  -euo pipefail`, idempotency).
+-euo pipefail`, idempotency).
 
 ## ANTI-PATTERNS
 

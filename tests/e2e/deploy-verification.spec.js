@@ -332,7 +332,9 @@ test.describe('@deploy-verify API Endpoints', () => {
     expect(response.status()).toBeGreaterThanOrEqual(400);
   });
 
-  test('favicon.ico redirects (308) to canonical /assets/favicon.svg', async ({ request }, testInfo) => {
+  test('favicon.ico redirects (308) to canonical /assets/favicon.svg', async ({
+    request,
+  }, testInfo) => {
     const response = await request.get('/favicon.ico', {
       failOnStatusCode: false,
       maxRedirects: 0,
@@ -417,13 +419,20 @@ test.describe('@deploy-verify API Endpoints', () => {
     const response = await request.post('/api/csp-violation', {
       failOnStatusCode: false,
       headers: withProbeHeaders({ 'content-type': 'application/csp-report' }),
-      data: { 'csp-report': { 'document-uri': 'https://resume.jclee.me/', 'violated-directive': 'script-src' } },
+      data: {
+        'csp-report': {
+          'document-uri': 'https://resume.jclee.me/',
+          'violated-directive': 'script-src',
+        },
+      },
     });
     skipIfLocalRateLimited(response, '/api/csp-violation', testInfo);
     expect([200, 204]).toContain(response.status());
   });
 
-  test('/api/auth/status returns 200 JSON for unauthenticated session', async ({ request }, testInfo) => {
+  test('/api/auth/status returns 200 JSON for unauthenticated session', async ({
+    request,
+  }, testInfo) => {
     const response = await request.get('/api/auth/status', {
       failOnStatusCode: false,
       headers: withProbeHeaders(),

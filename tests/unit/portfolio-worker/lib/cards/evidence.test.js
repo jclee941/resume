@@ -67,7 +67,10 @@ describe('cards/evidence generateExpertiseSection', () => {
   });
 
   it('escapes HTML (XSS-safe)', () => {
-    const html = generateExpertiseSection({ expertise: ['<b>x</b>'], coreCompetencies: ['<i>y</i> & z'] });
+    const html = generateExpertiseSection({
+      expertise: ['<b>x</b>'],
+      coreCompetencies: ['<i>y</i> & z'],
+    });
     expect(html).not.toContain('<b>x</b>');
     expect(html).toContain('&lt;b&gt;');
     expect(html).toContain('&amp;');

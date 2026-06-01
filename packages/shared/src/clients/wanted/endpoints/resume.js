@@ -27,18 +27,17 @@ export class ResumeEndpoint {
   }
 
   async updateStatus(resumeId, isPublic) {
-    const response = await this.#client.chaosRequest(
-      `/resumes/v1/${resumeId}/status`,
-      { method: 'PUT', body: { is_public: isPublic } },
-    );
+    const response = await this.#client.chaosRequest(`/resumes/v1/${resumeId}/status`, {
+      method: 'PUT',
+      body: { is_public: isPublic },
+    });
     return response;
   }
 
   async regeneratePdf(resumeId) {
-    const response = await this.#client.chaosRequest(
-      `/resumes/v1/${resumeId}/pdf`,
-      { method: 'POST' },
-    );
+    const response = await this.#client.chaosRequest(`/resumes/v1/${resumeId}/pdf`, {
+      method: 'POST',
+    });
     return response;
   }
 }
@@ -53,23 +52,23 @@ export class ResumeCareerEndpoint {
   async update(resumeId, careerId, careerData) {
     const response = await this.#client.chaosRequest(
       `/resumes/v2/${resumeId}/careers/${careerId}`,
-      { method: 'PATCH', body: careerData },
+      { method: 'PATCH', body: careerData }
     );
     return response;
   }
 
   async add(resumeId, careerData) {
-    const response = await this.#client.chaosRequest(
-      `/resumes/v2/${resumeId}/careers`,
-      { method: 'POST', body: careerData },
-    );
+    const response = await this.#client.chaosRequest(`/resumes/v2/${resumeId}/careers`, {
+      method: 'POST',
+      body: careerData,
+    });
     return response;
   }
 
   async delete(resumeId, careerId) {
     const response = await this.#client.chaosRequest(
       `/resumes/v2/${resumeId}/careers/${careerId}`,
-      { method: 'DELETE' },
+      { method: 'DELETE' }
     );
     return response;
   }
@@ -77,7 +76,7 @@ export class ResumeCareerEndpoint {
   async addProject(resumeId, careerId, projectData) {
     const response = await this.#client.chaosRequest(
       `/resumes/v2/${resumeId}/careers/${careerId}/projects`,
-      { method: 'POST', body: projectData },
+      { method: 'POST', body: projectData }
     );
     return response;
   }
@@ -85,7 +84,7 @@ export class ResumeCareerEndpoint {
   async deleteProject(resumeId, careerId, projectId) {
     const response = await this.#client.chaosRequest(
       `/resumes/v2/${resumeId}/careers/${careerId}/projects/${projectId}`,
-      { method: 'DELETE' },
+      { method: 'DELETE' }
     );
     return response;
   }
@@ -101,23 +100,23 @@ export class ResumeEducationEndpoint {
   async update(resumeId, educationId, educationData) {
     const response = await this.#client.chaosRequest(
       `/resumes/v2/${resumeId}/educations/${educationId}`,
-      { method: 'PATCH', body: educationData },
+      { method: 'PATCH', body: educationData }
     );
     return response;
   }
 
   async add(resumeId, educationData) {
-    const response = await this.#client.chaosRequest(
-      `/resumes/v2/${resumeId}/educations`,
-      { method: 'POST', body: educationData },
-    );
+    const response = await this.#client.chaosRequest(`/resumes/v2/${resumeId}/educations`, {
+      method: 'POST',
+      body: educationData,
+    });
     return response;
   }
 
   async delete(resumeId, educationId) {
     const response = await this.#client.chaosRequest(
       `/resumes/v2/${resumeId}/educations/${educationId}`,
-      { method: 'DELETE' },
+      { method: 'DELETE' }
     );
     return response;
   }
@@ -131,18 +130,17 @@ export class ResumeSkillsEndpoint {
   }
 
   async add(resumeId, skillData) {
-    const response = await this.#client.chaosRequest(
-      `/resumes/v1/${resumeId}/skills`,
-      { method: 'POST', body: skillData },
-    );
+    const response = await this.#client.chaosRequest(`/resumes/v1/${resumeId}/skills`, {
+      method: 'POST',
+      body: skillData,
+    });
     return response;
   }
 
   async delete(resumeId, skillId) {
-    const response = await this.#client.chaosRequest(
-      `/resumes/v1/${resumeId}/skills/${skillId}`,
-      { method: 'DELETE' },
-    );
+    const response = await this.#client.chaosRequest(`/resumes/v1/${resumeId}/skills/${skillId}`, {
+      method: 'DELETE',
+    });
     return response;
   }
 }
@@ -157,23 +155,23 @@ export class ResumeActivityEndpoint {
   async update(resumeId, activityId, activityData) {
     const response = await this.#client.chaosRequest(
       `/resumes/v2/${resumeId}/activities/${activityId}`,
-      { method: 'PATCH', body: activityData },
+      { method: 'PATCH', body: activityData }
     );
     return response;
   }
 
   async add(resumeId, activityData) {
-    const response = await this.#client.chaosRequest(
-      `/resumes/v2/${resumeId}/activities`,
-      { method: 'POST', body: activityData },
-    );
+    const response = await this.#client.chaosRequest(`/resumes/v2/${resumeId}/activities`, {
+      method: 'POST',
+      body: activityData,
+    });
     return response;
   }
 
   async delete(resumeId, activityId) {
     const response = await this.#client.chaosRequest(
       `/resumes/v2/${resumeId}/activities/${activityId}`,
-      { method: 'DELETE' },
+      { method: 'DELETE' }
     );
     return response;
   }
@@ -189,23 +187,23 @@ export class ResumeLanguageCertEndpoint {
   async update(resumeId, certId, certData) {
     const response = await this.#client.chaosRequest(
       `/resumes/v2/${resumeId}/language_certs/${certId}`,
-      { method: 'PATCH', body: certData },
+      { method: 'PATCH', body: certData }
     );
     return response;
   }
 
   async add(resumeId, certData) {
-    const response = await this.#client.chaosRequest(
-      `/resumes/v2/${resumeId}/language_certs`,
-      { method: 'POST', body: certData },
-    );
+    const response = await this.#client.chaosRequest(`/resumes/v2/${resumeId}/language_certs`, {
+      method: 'POST',
+      body: certData,
+    });
     return response;
   }
 
   async delete(resumeId, certId) {
     const response = await this.#client.chaosRequest(
       `/resumes/v2/${resumeId}/language_certs/${certId}`,
-      { method: 'DELETE' },
+      { method: 'DELETE' }
     );
     return response;
   }

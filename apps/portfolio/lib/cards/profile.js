@@ -30,7 +30,10 @@ function generateProfileBento(data) {
   // Languages
   if (Array.isArray(data.languages) && data.languages.length > 0) {
     const langs = data.languages
-      .map((l) => `${escapeHtml(String(l.name))} <span class="profile-card__muted">${escapeHtml(String(l.level || ''))}</span>`)
+      .map(
+        (l) =>
+          `${escapeHtml(String(l.name))} <span class="profile-card__muted">${escapeHtml(String(l.level || ''))}</span>`
+      )
       .join(' · ');
     cards.push(`<div class="profile-card">
         <span class="profile-card__label">&gt; languages</span>
@@ -42,7 +45,9 @@ function generateProfileBento(data) {
   if (Array.isArray(data.awards) && data.awards.length > 0) {
     const items = data.awards
       .map((a) => {
-        const org = a.organization ? ` <span class="profile-card__muted">${escapeHtml(String(a.organization))}</span>` : '';
+        const org = a.organization
+          ? ` <span class="profile-card__muted">${escapeHtml(String(a.organization))}</span>`
+          : '';
         const year = a.year ? ` (${escapeHtml(String(a.year))})` : '';
         return `<li>${escapeHtml(String(a.name))}${org}${year}</li>`;
       })
@@ -74,7 +79,9 @@ function generateProfileBento(data) {
   // Military service
   if (data.military && data.military.status) {
     const m = data.military;
-    const period = m.period ? ` <span class="profile-card__muted">${escapeHtml(String(m.period))}</span>` : '';
+    const period = m.period
+      ? ` <span class="profile-card__muted">${escapeHtml(String(m.period))}</span>`
+      : '';
     cards.push(`<div class="profile-card">
         <span class="profile-card__label">&gt; military</span>
         <p class="profile-card__value">${escapeHtml(String(m.status))}${period}</p>

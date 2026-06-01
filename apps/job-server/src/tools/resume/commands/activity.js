@@ -21,7 +21,7 @@ export async function update_activity(api, params) {
   const result = await api.updateResumeActivity(
     params.resume_id,
     params.activity_id,
-    params.activity,
+    params.activity
   );
   return {
     success: true,
@@ -41,10 +41,7 @@ export async function add_activity(api, params) {
     };
   }
 
-  const result = await api.addResumeActivity(
-    params.resume_id,
-    params.activity,
-  );
+  const result = await api.addResumeActivity(params.resume_id, params.activity);
   return {
     success: true,
     message: 'Activity added successfully',

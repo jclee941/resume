@@ -8,9 +8,7 @@ function readWorkerFile(relPath) {
 
 describe('Network Failure Scenarios', () => {
   test('D1 unavailable should return graceful 503 in auto-apply webhook', () => {
-    const source = readWorkerFile(
-      'apps/job-dashboard/src/handlers/auto-apply-webhook-handler.js'
-    );
+    const source = readWorkerFile('apps/job-dashboard/src/handlers/auto-apply-webhook-handler.js');
 
     expect(source).toContain('if (!db)');
     expect(source).toContain('Database not configured');
@@ -26,18 +24,14 @@ describe('Network Failure Scenarios', () => {
   });
 
   test('R2 screenshot writes should be guarded by binding availability', () => {
-    const source = readWorkerFile(
-      'apps/job-server/src/crawlers/stealth-browser-crawler.js'
-    );
+    const source = readWorkerFile('apps/job-server/src/crawlers/stealth-browser-crawler.js');
 
     expect(source).toContain('this.screenshotOnError && this.env.SCREENSHOTS');
     expect(source).toContain('await this.env.SCREENSHOTS.put');
   });
 
   test('timeout handling should use AbortSignal timeout in webhook handlers', () => {
-    const resumeSync = readWorkerFile(
-      'apps/job-dashboard/src/handlers/resume-sync-handler.js'
-    );
+    const resumeSync = readWorkerFile('apps/job-dashboard/src/handlers/resume-sync-handler.js');
     const autoApply = readWorkerFile(
       'apps/job-dashboard/src/handlers/auto-apply-webhook-handler.js'
     );
@@ -48,9 +42,7 @@ describe('Network Failure Scenarios', () => {
   });
 
   test('error response format should be structured JSON with success=false and error', () => {
-    const resumeSync = readWorkerFile(
-      'apps/job-dashboard/src/handlers/resume-sync-handler.js'
-    );
+    const resumeSync = readWorkerFile('apps/job-dashboard/src/handlers/resume-sync-handler.js');
     const autoApply = readWorkerFile(
       'apps/job-dashboard/src/handlers/auto-apply-webhook-handler.js'
     );

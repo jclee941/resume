@@ -36,9 +36,10 @@ export async function findByJobId(d1Client, jobId) {
   }
 
   try {
-    return await d1Client.query('SELECT * FROM applications WHERE job_id = ? ORDER BY created_at DESC', [
-      jobId,
-    ]);
+    return await d1Client.query(
+      'SELECT * FROM applications WHERE job_id = ? ORDER BY created_at DESC',
+      [jobId]
+    );
   } catch (error) {
     throwD1Error('findByJobId', error, { jobId });
   }

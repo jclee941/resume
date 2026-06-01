@@ -67,7 +67,9 @@ export async function applyViaWantedApiFallback({
   );
 
   retryReporter('execution_success', { metrics: { successRate: 1 } });
-  notifications.notifyApplySuccess(job.company, job.title, job.sourceUrl, WANTED_PLATFORM).catch(() => {});
+  notifications
+    .notifyApplySuccess(job.company, job.title, job.sourceUrl, WANTED_PLATFORM)
+    .catch(() => {});
 
   return {
     success: true,

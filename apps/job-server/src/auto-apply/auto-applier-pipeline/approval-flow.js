@@ -101,7 +101,13 @@ export async function handleApproval(job, trackedApplication = null) {
   };
 }
 
-export async function evaluateApplyDecision(autoApplier, job, score, trackedApplication, stageState) {
+export async function evaluateApplyDecision(
+  autoApplier,
+  job,
+  score,
+  trackedApplication,
+  stageState
+) {
   stageState.checkApproval = true;
   return await autoApplier.shouldApply(
     {

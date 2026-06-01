@@ -3,16 +3,15 @@
 Automated resume deployment workflow using n8n (<https://n8n.jclee.me>).
 
 > **⚠️ Internal Service**: `n8n.jclee.me`, `loki.jclee.me`, and
-  > `prometheus.jclee.me` are internal-only domains. Ensure you are connected to
-  > the internal network or VPN.
+> `prometheus.jclee.me` are internal-only domains. Ensure you are connected to
+> the internal network or VPN.
 >
 > **📖 See also**: [Infrastructure Architecture](../../docs/guides/INFRASTRUCTURE.md#5-n8n-workflow-automation),
 > [Monitoring Setup Guide](../../docs/guides/MONITORING_SETUP.md)
 
 - n8n service details, configuration, and deployment workflow
->
-> - **[Monitoring Setup Guide](../../docs/guides/MONITORING_SETUP.md)** -
-  Integration with Prometheus, Grafana, and Loki
+  > - **[Monitoring Setup Guide](../../docs/guides/MONITORING_SETUP.md)** -
+  >   Integration with Prometheus, Grafana, and Loki
 
 ## Overview
 
@@ -341,7 +340,7 @@ See `resume-healthcheck-workflow.json` for full configuration.
 **Features**:
 
 - Pre-flight Wanted session check via Session Broker `GET
-  /api/session/wanted/status`
+/api/session/wanted/status`
 - Conditional Wanted renewal via `POST /api/session/wanted/renew` when invalid
   or near expiry
 - Graceful degradation: skip Wanted and continue other platforms when renewal
@@ -411,7 +410,7 @@ POST /automation-run-report → Format Payload (parse platforms/actions/errors)
 - `event`: Event type string (e.g., `automation-run`)
 - `timestamp`: ISO 8601 timestamp
 - `platforms`: Object mapping platform names to `{ valid: boolean, cookies:
-  number }`
+number }`
 - `actions`: Object with boolean flags `{ extract, sync, verify }`
 
 **Derived Fields** (computed by Format Payload node):
@@ -624,10 +623,12 @@ sudo chown -R n8n:n8n /home/jclee/dev/resume
 **Check**:
 
 #VS|```bash
+
 # Test Telegram Bot API manually
+
 curl -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
-  -H "Content-Type: application/json" \
-  -d "{\"chat_id\": \"$TELEGRAM_CHAT_ID\", \"text\": \"Test from n8n workflow\"}"
+ -H "Content-Type: application/json" \
+ -d "{\"chat_id\": \"$TELEGRAM_CHAT_ID\", \"text\": \"Test from n8n workflow\"}"
 
 **Solution**:
 
@@ -641,7 +642,7 @@ curl -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
 
 Modify workflow to deploy to different environments based on branch:
 
-```json
+````json
 {
   "parameters": {
     "conditions": {

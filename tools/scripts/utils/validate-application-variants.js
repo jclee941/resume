@@ -23,13 +23,7 @@ const fs = require('fs');
 const path = require('path');
 
 const REPO_ROOT = path.resolve(__dirname, '..', '..', '..');
-const APPLICATIONS_DIR = path.join(
-  REPO_ROOT,
-  'packages',
-  'data',
-  'resumes',
-  'applications'
-);
+const APPLICATIONS_DIR = path.join(REPO_ROOT, 'packages', 'data', 'resumes', 'applications');
 
 /**
  * Minimal contract every application-variant resume JSON must satisfy.
@@ -138,9 +132,7 @@ function main() {
   }
 
   if (failures > 0) {
-    console.error(
-      `\n❌ ${failures} application variant(s) failed contract validation.`
-    );
+    console.error(`\n❌ ${failures} application variant(s) failed contract validation.`);
     process.exit(1);
   }
 

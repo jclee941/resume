@@ -35,8 +35,7 @@ export function createScoringConfig(overrides = {}) {
     ...DEFAULT_SCORING_CONFIG,
     ...overrides,
     skillCategories: overrides.skillCategories || DEFAULT_SCORING_CONFIG.skillCategories,
-    preferredLocations:
-      overrides.preferredLocations || DEFAULT_SCORING_CONFIG.preferredLocations,
+    preferredLocations: overrides.preferredLocations || DEFAULT_SCORING_CONFIG.preferredLocations,
     topCompanies: overrides.topCompanies || DEFAULT_SCORING_CONFIG.topCompanies,
   };
 }
@@ -76,7 +75,10 @@ function scoreExperience(job, resumeExperience, matchDetails, config) {
   const jobExpMin = job.experienceMin || job.annual_from || 0;
   const jobExpMax = job.experienceMax || job.annual_to || 99;
 
-  if (resumeExperience >= jobExpMin && resumeExperience <= jobExpMax + config.experienceMaxToleranceYears) {
+  if (
+    resumeExperience >= jobExpMin &&
+    resumeExperience <= jobExpMax + config.experienceMaxToleranceYears
+  ) {
     matchDetails.experienceMatch = true;
     return { score: config.experienceMaxScore, maxScore: config.experienceMaxScore };
   }

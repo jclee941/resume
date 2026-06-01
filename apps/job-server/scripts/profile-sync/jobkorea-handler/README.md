@@ -17,11 +17,11 @@ risk.
 
 ### Three Execution Modes
 
-| Mode | Description |
-|------|-------------|
-| `playwright` (default) | Full Playwright form fill. Slowest but most reliable. |
-| `hybrid-api` | Playwright for auth and CAPTCHA, direct API for save and portfolio registration. |
-| `api-dry-run` | Diff detection only. No writes. Useful for verifying what would change. |
+| Mode                   | Description                                                                      |
+| ---------------------- | -------------------------------------------------------------------------------- |
+| `playwright` (default) | Full Playwright form fill. Slowest but most reliable.                            |
+| `hybrid-api`           | Playwright for auth and CAPTCHA, direct API for save and portfolio registration. |
+| `api-dry-run`          | Diff detection only. No writes. Useful for verifying what would change.          |
 
 ## Architecture
 
@@ -58,20 +58,20 @@ failing outright.
 
 ## Files
 
-| File | Role |
-|------|------|
-| `sync.js` | Main orchestrator. Chooses mode, runs change detection, triggers save and portfolio registration. |
-| `sync-hybrid.js` | Hybrid mode helpers. Bridges Playwright auth with API save operations. |
-| `api-client.js` | Direct API client for resume save and portfolio registration endpoints. |
-| `api-payload.js` | Payload encoding. Converts resume data to EUC-KR form fields and injects hidden tokens. |
-| `api-errors.js` | Error classification. Distinguishes auth errors, CAPTCHA blocks, validation failures, and transient network issues. |
-| `api-session.js` | Cookie session management. Extracts cookies from Playwright and attaches them to fetch calls. |
-| `session.js` | Playwright session management. Login flow, cookie persistence, and renewal logic. |
-| `har-capture.js` | Captures HAR archives during Playwright runs for later analysis. |
-| `har-analyze.js` | Parses captured HAR files to extract request patterns, headers, and payloads. |
-| `har-sanitize.js` | Removes PII, cookies, and tokens from HAR files before sharing or committing. |
-| `change-detection.js` | Diff detection. Compares current page or API state with source data to produce a change set. |
-| `section-slots.js` | DOM slot creation. Adds new rows to repeatable sections (career, education, certificates) in the Playwright page. |
+| File                  | Role                                                                                                                |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `sync.js`             | Main orchestrator. Chooses mode, runs change detection, triggers save and portfolio registration.                   |
+| `sync-hybrid.js`      | Hybrid mode helpers. Bridges Playwright auth with API save operations.                                              |
+| `api-client.js`       | Direct API client for resume save and portfolio registration endpoints.                                             |
+| `api-payload.js`      | Payload encoding. Converts resume data to EUC-KR form fields and injects hidden tokens.                             |
+| `api-errors.js`       | Error classification. Distinguishes auth errors, CAPTCHA blocks, validation failures, and transient network issues. |
+| `api-session.js`      | Cookie session management. Extracts cookies from Playwright and attaches them to fetch calls.                       |
+| `session.js`          | Playwright session management. Login flow, cookie persistence, and renewal logic.                                   |
+| `har-capture.js`      | Captures HAR archives during Playwright runs for later analysis.                                                    |
+| `har-analyze.js`      | Parses captured HAR files to extract request patterns, headers, and payloads.                                       |
+| `har-sanitize.js`     | Removes PII, cookies, and tokens from HAR files before sharing or committing.                                       |
+| `change-detection.js` | Diff detection. Compares current page or API state with source data to produce a change set.                        |
+| `section-slots.js`    | DOM slot creation. Adds new rows to repeatable sections (career, education, certificates) in the Playwright page.   |
 
 ## Environment Variables
 

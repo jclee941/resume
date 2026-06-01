@@ -10,7 +10,15 @@ const DEFAULT_DELAY_MS = 5000;
 // commit cb37858 (docs/architecture/MONOREPO_REVIEW_2026-04-29.md P0-5).
 const _lastSubmissionAtHolder = (() => {
   let v = 0;
-  return { get: () => v, set: (x) => { v = x; }, clear: () => { v = 0; } };
+  return {
+    get: () => v,
+    set: (x) => {
+      v = x;
+    },
+    clear: () => {
+      v = 0;
+    },
+  };
 })();
 
 export function classifyWantedError(error) {

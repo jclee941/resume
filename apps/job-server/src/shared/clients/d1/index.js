@@ -51,9 +51,7 @@ export class D1Client {
   }
 
   async getStats() {
-    const totalResult = await this.query(
-      'SELECT COUNT(*) as total FROM job_applications',
-    );
+    const totalResult = await this.query('SELECT COUNT(*) as total FROM job_applications');
     const statusResult = await this.query(`
       SELECT status, COUNT(*) as count 
       FROM job_applications 
@@ -119,10 +117,7 @@ export class D1Client {
   }
 
   async getAutomationRuns(limit = 20) {
-    return this.query(
-      'SELECT * FROM automation_runs ORDER BY started_at DESC LIMIT ?',
-      [limit],
-    );
+    return this.query('SELECT * FROM automation_runs ORDER BY started_at DESC LIMIT ?', [limit]);
   }
 
   async createAutomationRun(run) {
@@ -131,12 +126,7 @@ export class D1Client {
       VALUES (?, ?, ?, 'running', ?, datetime('now'))
     `;
     const id = `run_${Date.now()}`;
-    await this.query(sql, [
-      id,
-      run.run_type,
-      run.platform,
-      JSON.stringify(run.config || {}),
-    ]);
+    await this.query(sql, [id, run.run_type, run.platform, JSON.stringify(run.config || {})]);
     return { id };
   }
 
@@ -173,7 +163,7 @@ export class D1Client {
     // Primary check: exact job_id match
     const exactMatch = await this.query(
       'SELECT * FROM job_applications WHERE platform = ? AND job_id = ? LIMIT 1',
-      [platform, jobId],
+      [platform, jobId]
     );
 
     if (exactMatch.length > 0) {
@@ -194,7 +184,7 @@ export class D1Client {
           AND created_at > datetime('now', '-90 days')
         LIMIT 1
       `,
-        [company, title],
+        [company, title]
       );
 
       if (fuzzyMatch.length > 0) {
@@ -215,10 +205,9 @@ export class D1Client {
    * @returns {Promise<Set<string>>}
    */
   async getAppliedJobIds(platform) {
-    const results = await this.query(
-      'SELECT job_id FROM job_applications WHERE platform = ?',
-      [platform],
-    );
+    const results = await this.query('SELECT job_id FROM job_applications WHERE platform = ?', [
+      platform,
+    ]);
     return new Set(results.map((r) => r.job_id));
   }
 

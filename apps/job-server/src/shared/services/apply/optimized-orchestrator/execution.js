@@ -80,22 +80,26 @@ export function applyParallel({ applySingleJob, config, jobs, logger }) {
 export async function applyParallelWithPool({ applier, browserPool, config, jobs, logger }) {
   const results = [];
 
-  await applyToJobsParallel(jobs, (job) => applyJobWithPooledBrowser({ applier, browserPool, job }), {
-    maxConcurrency: config.maxConcurrentApplies,
-    delayBetweenApps: config.delayBetweenApplies,
-    onProgress: ({ completed, total, current, result }) => {
-      const job = current;
-      if (result.success) {
-        logger.log(`  ✅ Applied: ${job.company || job.title}`);
-      } else {
-        logger.error(`  ❌ Failed: ${job.company || job.title} - ${result.error}`);
-      }
+  await applyToJobsParallel(
+    jobs,
+    (job) => applyJobWithPooledBrowser({ applier, browserPool, job }),
+    {
+      maxConcurrency: config.maxConcurrentApplies,
+      delayBetweenApps: config.delayBetweenApplies,
+      onProgress: ({ completed, total, current, result }) => {
+        const job = current;
+        if (result.success) {
+          logger.log(`  ✅ Applied: ${job.company || job.title}`);
+        } else {
+          logger.error(`  ❌ Failed: ${job.company || job.title} - ${result.error}`);
+        }
 
-      if (completed % 5 === 0 || completed === total) {
-        logger.info(`  📊 Progress: ${completed}/${total} applications`);
-      }
-    },
-  }).then((r) => results.push(...r));
+        if (completed % 5 === 0 || completed === total) {
+          logger.info(`  📊 Progress: ${completed}/${total} applications`);
+        }
+      },
+    }
+  ).then((r) => results.push(...r));
 
   return results;
 }
@@ -158,7 +162,9 @@ export function applyInBatchesWithStrategy({ applySingleJob, config, jobs, logge
     delayBetweenBatches,
     concurrency: config.maxConcurrentApplies,
     onBatchComplete: ({ batchNumber, totalBatches, completed, total }) => {
-      logger.info(`  📦 Batch ${batchNumber}/${totalBatches} complete (${completed}/${total} total)`);
+      logger.info(
+        `  📦 Batch ${batchNumber}/${totalBatches} complete (${completed}/${total} total)`
+      );
     },
   });
 }

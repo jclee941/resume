@@ -36,7 +36,9 @@ export function toPlaywrightCookies(cookies) {
     return [];
   }
   return cookies
-    .filter((cookie) => cookie && cookie.name && cookie.value !== undefined && cookie.value !== null)
+    .filter(
+      (cookie) => cookie && cookie.name && cookie.value !== undefined && cookie.value !== null
+    )
     .map((cookie) => ({
       name: cookie.name,
       value: String(cookie.value),

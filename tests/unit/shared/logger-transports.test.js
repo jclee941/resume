@@ -370,13 +370,12 @@ describe('Logger pluggable transports — SSOT-038', () => {
     });
 
     test('es transport flush() delegates to underlying ES flush', async () => {
-      const { createElasticsearchTransport } = await import(
-        '@resume/shared/logger/transports/elasticsearch'
-      );
+      const { createElasticsearchTransport } =
+        await import('@resume/shared/logger/transports/elasticsearch');
       const transport = createElasticsearchTransport();
       await expect(transport.flush({}, { job: 'svc' })).resolves.not.toThrow();
-});
-});
+    });
+  });
 
   describe('Loki label flattening', () => {
     test('nested label objects are flattened with underscore-joined keys', async () => {
@@ -415,9 +414,7 @@ describe('Logger pluggable transports — SSOT-038', () => {
 
     test('loki transport swallows fetch errors silently (fire-and-forget)', async () => {
       const { createLokiTransport } = await import('@resume/shared/logger/transports/loki');
-      const fetchSpy = jest
-        .spyOn(globalThis, 'fetch')
-        .mockRejectedValue(new Error('network down'));
+      const fetchSpy = jest.spyOn(globalThis, 'fetch').mockRejectedValue(new Error('network down'));
 
       const transport = createLokiTransport();
       await expect(
@@ -435,13 +432,11 @@ describe('Logger pluggable transports — SSOT-038', () => {
 
     test('loki transport handles missing entry.env, entry.labels, entry.service', async () => {
       const { createLokiTransport } = await import('@resume/shared/logger/transports/loki');
-      const fetchSpy = jest.spyOn(globalThis, 'fetch').mockResolvedValue({ ok: true
-  });
+      const fetchSpy = jest.spyOn(globalThis, 'fetch').mockResolvedValue({ ok: true });
 
       const transport = createLokiTransport();
       // entry.env undefined exercises the `entry.env || {}` fallback (no-op path)
-      await transport.send({ level: 'INFO', message: 'no-env'
-});
+      await transport.send({ level: 'INFO', message: 'no-env' });
       expect(fetchSpy).not.toHaveBeenCalled();
 
       // entry.labels undefined and entry.service undefined exercise their || fallbacks
@@ -459,9 +454,8 @@ describe('Logger pluggable transports — SSOT-038', () => {
     });
 
     test('es transport flush() works with default options arg', async () => {
-      const { createElasticsearchTransport } = await import(
-        '@resume/shared/logger/transports/elasticsearch'
-      );
+      const { createElasticsearchTransport } =
+        await import('@resume/shared/logger/transports/elasticsearch');
       const transport = createElasticsearchTransport();
       // calling flush(env) without options exercises the `options = {}` default branch
       await expect(transport.flush({})).resolves.not.toThrow();

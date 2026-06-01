@@ -26,20 +26,21 @@ function connectWebSocket(wsUrl) {
 }
 
 function createCdpSender(ws) {
-  return (method, params = {}) => new Promise((resolve, reject) => {
-    const id = Date.now() + Math.random();
-    const timeout = setTimeout(() => reject(new Error('CDP timeout')), 5000);
-    const handler = (raw) => {
-      const msg = JSON.parse(raw.toString());
-      if (msg.id === id) {
-        clearTimeout(timeout);
-        ws.off('message', handler);
-        msg.error ? reject(new Error(msg.error.message)) : resolve(msg.result);
-      }
-    };
-    ws.on('message', handler);
-    ws.send(JSON.stringify({ id, method, params }));
-  });
+  return (method, params = {}) =>
+    new Promise((resolve, reject) => {
+      const id = Date.now() + Math.random();
+      const timeout = setTimeout(() => reject(new Error('CDP timeout')), 5000);
+      const handler = (raw) => {
+        const msg = JSON.parse(raw.toString());
+        if (msg.id === id) {
+          clearTimeout(timeout);
+          ws.off('message', handler);
+          msg.error ? reject(new Error(msg.error.message)) : resolve(msg.result);
+        }
+      };
+      ws.on('message', handler);
+      ws.send(JSON.stringify({ id, method, params }));
+    });
 }
 
 function buildPlatformSession(platform, platformCookies) {
@@ -91,7 +92,9 @@ export async function extractCookiesViaCDP(platforms) {
       const domains = PLATFORM_DOMAINS[platform];
       if (!domains) continue;
 
-      const platformCookies = cookies.filter((c) => domains.some((d) => c.domain.includes(d.replace('.', ''))));
+      const platformCookies = cookies.filter((c) =>
+        domains.some((d) => c.domain.includes(d.replace('.', '')))
+      );
       if (platformCookies.length === 0) {
         log(`${platform}: No cookies found (not logged in?)`, 'warn');
         continue;

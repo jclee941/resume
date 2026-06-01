@@ -21,7 +21,7 @@ export async function update_education(api, params) {
   const result = await api.updateResumeEducation(
     params.resume_id,
     params.education_id,
-    params.education,
+    params.education
   );
   return {
     success: true,
@@ -41,10 +41,7 @@ export async function add_education(api, params) {
     };
   }
 
-  const result = await api.addResumeEducation(
-    params.resume_id,
-    params.education,
-  );
+  const result = await api.addResumeEducation(params.resume_id, params.education);
   return {
     success: true,
     message: 'Education added successfully',

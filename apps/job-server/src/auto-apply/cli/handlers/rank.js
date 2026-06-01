@@ -56,9 +56,7 @@ export function mergeAndRankResults(results) {
       }
     }
   }
-  return [...byId.values()].sort(
-    (a, b) => (b.matchPercentage || 0) - (a.matchPercentage || 0)
-  );
+  return [...byId.values()].sort((a, b) => (b.matchPercentage || 0) - (a.matchPercentage || 0));
 }
 
 /**
@@ -73,8 +71,9 @@ export function mergeDetailIntoJob(job, detail) {
   const longest = (a, b) => ((b || '').length > (a || '').length ? b : a);
   return {
     ...job,
-    description: job.description && job.description.length ? job.description : (d.description || ''),
-    requirements: job.requirements && job.requirements.length ? job.requirements : (d.requirements || ''),
+    description: job.description && job.description.length ? job.description : d.description || '',
+    requirements:
+      job.requirements && job.requirements.length ? job.requirements : d.requirements || '',
     techStack:
       Array.isArray(job.techStack) && job.techStack.length
         ? job.techStack
@@ -100,9 +99,7 @@ export function rescoreJobs(jobs, options = {}) {
     maxResults: options.maxResults || jobs.length,
   });
   const prioritized = matcher.prioritizeApplications(scored);
-  return [...prioritized].sort(
-    (a, b) => (b.matchPercentage || 0) - (a.matchPercentage || 0)
-  );
+  return [...prioritized].sort((a, b) => (b.matchPercentage || 0) - (a.matchPercentage || 0));
 }
 
 /**
@@ -241,7 +238,9 @@ function printEnrichmentStats(stats) {
 }
 
 function printReport(report) {
-  console.log(`\n📋 스코어링 완료: ${report.totalScored}개 공고 (키워드: ${report.keywords.join(', ')})`);
+  console.log(
+    `\n📋 스코어링 완료: ${report.totalScored}개 공고 (키워드: ${report.keywords.join(', ')})`
+  );
   printEnrichmentStats(report.enrichmentStats);
   const isStrict = report.minScore >= REVIEW_THRESHOLD;
   const label = isStrict ? '지원 할만한 공고' : '후보 공고(경계선 포함, 추가검토 필요)';
@@ -249,7 +248,11 @@ function printReport(report) {
   const emoji = { auto: '🟢', review: '🟡', borderline: '⚪' };
   for (const [index, job] of report.worthApplying.entries()) {
     const tierLabel =
-      job.tier === 'auto' ? '자동지원 후보' : job.tier === 'review' ? '검토 후 지원' : '경계선(추가검토)';
+      job.tier === 'auto'
+        ? '자동지원 후보'
+        : job.tier === 'review'
+          ? '검토 후 지원'
+          : '경계선(추가검토)';
     console.log(
       `${index + 1}. [${job.matchPercentage}%] ${emoji[job.tier] || '⚪'} ${tierLabel} — ${job.position}`
     );
@@ -271,8 +274,12 @@ function printNextAction(report, queuePath, queueCount) {
   console.log('\nℹ️  이 명령은 공고를 랭킹만 합니다 — 자동 제출(지원)은 실행하지 않음.');
   console.log(`   자동지원 후보 ${autoCount}개 / 검토 후 지원 ${reviewCount}개.`);
   if (queueCount > 0) {
-    console.log(`   이 랭킹의 auto 후보 ${queueCount}개로 제출 큐를 생성했습니다. 검토 후 그 큐만 지원하려면:`);
-    console.log(`   node apps/job-server/src/auto-apply/cli/index.js apply_queue --queue=${queuePath} --apply --max=5`);
+    console.log(
+      `   이 랭킹의 auto 후보 ${queueCount}개로 제출 큐를 생성했습니다. 검토 후 그 큐만 지원하려면:`
+    );
+    console.log(
+      `   node apps/job-server/src/auto-apply/cli/index.js apply_queue --queue=${queuePath} --apply --max=5`
+    );
     console.log('   (주의: 유효한 세션/로그인 필요. apply_queue는 랭킹된 공고만 제출합니다.)');
   } else {
     console.log('   auto 등급 후보가 없어 제출 큐는 생성하지 않았습니다. URL을 수동 검토하세요.');
@@ -317,7 +324,9 @@ export async function rankJobs(args = []) {
   const maxResults = parsePositiveInt(getFlag('max', '50'), 50);
   const sources = DEFAULT_SOURCES;
 
-  console.log(`\n🔍 DevSecOps/SRE 공고 랭킹 — 키워드 ${keywords.length}개, 플랫폼: ${sources.join(', ')}`);
+  console.log(
+    `\n🔍 DevSecOps/SRE 공고 랭킹 — 키워드 ${keywords.length}개, 플랫폼: ${sources.join(', ')}`
+  );
   console.log(`   이력서: ${getResumeMasterMarkdownPath()}`);
 
   const crawler = new UnifiedJobCrawler({

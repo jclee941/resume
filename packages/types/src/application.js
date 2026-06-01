@@ -33,7 +33,6 @@ export function isValidApplicationStatus(status) {
   return APPLICATION_STATUSES.includes(status);
 }
 
-
 /**
  * @typedef {Object} ListOptions
  * @property {string} [status]

@@ -69,7 +69,17 @@ export const SKILL_CATEGORIES = {
     weight: 1.4,
   },
   finance: {
-    keywords: ['금융', 'finance', 'fintech', 'fsc', '금융감독원', '금융위원회', '증권', '거래소', '투자'],
+    keywords: [
+      '금융',
+      'finance',
+      'fintech',
+      'fsc',
+      '금융감독원',
+      '금융위원회',
+      '증권',
+      '거래소',
+      '투자',
+    ],
     weight: 1.3,
   },
 };

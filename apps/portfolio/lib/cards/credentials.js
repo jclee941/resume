@@ -6,7 +6,8 @@ const { escapeHtml } = require('../template-sanitizer');
 // Only 'in-progress' (준비중 / pursuing) is distinguished from acquired.
 function getCertificationStatus(status) {
   const normalized = String(status || '').toLowerCase();
-  const isPending = normalized === '준비중' || normalized === 'pending' || normalized === 'in-progress';
+  const isPending =
+    normalized === '준비중' || normalized === 'pending' || normalized === 'in-progress';
   return {
     statusClass: isPending ? 'cert-status--pending' : 'cert-status--active',
     statusLabel: isPending ? 'IN PROGRESS' : 'ACQUIRED',
@@ -17,7 +18,9 @@ function getCertificationStatus(status) {
 // acquisition date. e.g. '2020.08 (2023.08 만료)' -> '2020.08'
 function acquisitionDate(date) {
   if (!date) return '';
-  return String(date).replace(/\s*\([^)]*\)/g, '').trim();
+  return String(date)
+    .replace(/\s*\([^)]*\)/g, '')
+    .trim();
 }
 
 /**
@@ -34,9 +37,7 @@ function generateCertificationCards(certData, _dataHash) {
     .map((c) => {
       const { statusClass, statusLabel } = getCertificationStatus(c.status);
       const dateText = acquisitionDate(c.date);
-      const dateHtml = dateText
-        ? `<span class="cert-date">${escapeHtml(dateText)}</span>`
-        : '';
+      const dateHtml = dateText ? `<span class="cert-date">${escapeHtml(dateText)}</span>` : '';
       return `<li class="cert-item">
         <span class="cert-status ${statusClass}">[${escapeHtml(statusLabel)}]</span>
         <span class="cert-name">${escapeHtml(c.name)}</span>

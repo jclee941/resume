@@ -9,7 +9,9 @@ describe('entry.js merged-worker contract', () => {
   });
 
   test('imports job-dashboard worker as in-process module', () => {
-    expect(source).toMatch(/import\s+jobWorker(?:\s*,\s*\{[\s\S]*?\})?\s+from\s+['"]\.\.\/job-dashboard\/src\/index\.js['"]/);
+    expect(source).toMatch(
+      /import\s+jobWorker(?:\s*,\s*\{[\s\S]*?\})?\s+from\s+['"]\.\.\/job-dashboard\/src\/index\.js['"]/
+    );
   });
 
   test('re-exports workflow classes for wrangler binding registration', () => {

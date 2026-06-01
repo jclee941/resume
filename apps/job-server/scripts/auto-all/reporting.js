@@ -15,7 +15,8 @@ export function buildSummaryData(platforms = PLATFORMS) {
 }
 
 export async function sendWebhookNotification({ summaryData, doExtract, doSync, doVerify }) {
-  const webhookUrl = process.env.N8N_WEBHOOK_URL || 'https://n8n.jclee.me/webhook/automation-run-report';
+  const webhookUrl =
+    process.env.N8N_WEBHOOK_URL || 'https://n8n.jclee.me/webhook/automation-run-report';
   if (!webhookUrl) return;
 
   try {
@@ -29,7 +30,9 @@ export async function sendWebhookNotification({ summaryData, doExtract, doSync, 
     const secret = process.env.N8N_WEBHOOK_SECRET;
     if (secret) {
       const { createHmac } = await import('crypto');
-      headers['X-Webhook-Signature'] = createHmac('sha256', secret).update(JSON.stringify(payload)).digest('hex');
+      headers['X-Webhook-Signature'] = createHmac('sha256', secret)
+        .update(JSON.stringify(payload))
+        .digest('hex');
     }
     await fetch(webhookUrl, {
       method: 'POST',

@@ -99,12 +99,12 @@ picks an algorithm + an adapter.
 ### Phase 3 (follow-up PR — migrate consumers, one at a time)
 
 - [ ] B (job-server orchestrator) → consume canonical token-bucket +
-  memory adapter. Lowest-risk migration (in-process, no KV writes change
-  shape).
+      memory adapter. Lowest-risk migration (in-process, no KV writes change
+      shape).
 - [ ] C (job-dashboard workflows) → consume canonical token-bucket + kv
-  adapter. Verify KV key shape backward-compat.
+      adapter. Verify KV key shape backward-compat.
 - [ ] A (job-dashboard middleware) → consume canonical sliding-window + kv
-  adapter. Highest-risk (production HTTP path); land behind a feature flag.
+      adapter. Highest-risk (production HTTP path); land behind a feature flag.
 
 ### Future (separate ticket)
 

@@ -29,7 +29,7 @@ permissions). Rotate to a scoped token with only:
 - [ ] Old global key revoked
 - [ ] New scoped token created
 - [ ] Token stored in GitHub Secrets as `CF_API_TOKEN`
-  (and old `CLOUDFLARE_API_KEY` removed)
+      (and old `CLOUDFLARE_API_KEY` removed)
 - [ ] One production deploy validated end-to-end with the new token
 - [ ] Runbook checked-off
 

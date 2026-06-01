@@ -45,8 +45,10 @@ async function handleCookieStatus() {
     for (const platform of invalidPlatforms) {
       const refreshed = await SessionManager.tryRefresh(platform);
       log(
-        refreshed ? `${platform}: Session refreshed via tryRefresh()` : `${platform}: Could not refresh session`,
-        refreshed ? 'ok' : 'warn',
+        refreshed
+          ? `${platform}: Session refreshed via tryRefresh()`
+          : `${platform}: Could not refresh session`,
+        refreshed ? 'ok' : 'warn'
       );
     }
   }

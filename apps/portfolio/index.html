@@ -39,10 +39,7 @@
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:type" content="image/webp" />
-    <meta
-      property="og:image:alt"
-      content="Jaecheol Lee - Security"
-    />
+    <meta property="og:image:alt" content="Jaecheol Lee - Security" />
     <meta property="og:image:locale" content="ko_KR" />
     <meta property="og:image:locale:alternate" content="en_US" />
     <meta property="og:site_name" content="Jaecheol Lee Resume" />
@@ -77,12 +74,28 @@
         "url": "https://resume.jclee.me/",
         "email": "qws941@kakao.com",
         "telephone": "+82-10-5757-9592",
-        "sameAs": ["https://github.com/jclee941", "https://linkedin.com/in/jclee0109", "https://velog.io/@qws941"],
-        "knowsAbout": ["Security Operations", "SIEM/SOAR", "Network Security", "Infrastructure as Code", "Observability", "Cloud Security"],
+        "sameAs": [
+          "https://github.com/jclee941",
+          "https://linkedin.com/in/jclee0109",
+          "https://velog.io/@qws941"
+        ],
+        "knowsAbout": [
+          "Security Operations",
+          "SIEM/SOAR",
+          "Network Security",
+          "Infrastructure as Code",
+          "Observability",
+          "Cloud Security"
+        ],
         "knowsLanguage": ["ko", "en"],
         "image": "https://resume.jclee.me/og-image.webp",
         "seeks": { "@type": "Demand", "name": "Security/Infrastructure Engineer — 구직 중" },
-        "address": { "@type": "PostalAddress", "addressRegion": "경기도", "addressLocality": "시흥시", "addressCountry": "KR" }
+        "address": {
+          "@type": "PostalAddress",
+          "addressRegion": "경기도",
+          "addressLocality": "시흥시",
+          "addressCountry": "KR"
+        }
       }
     </script>
 
@@ -108,8 +121,8 @@
         "@type": "WebSite",
         "name": "이재철 - 보안 엔지니어",
         "description": "이재철 (Jaecheol Lee) 보안/SRE 엔지니어 포트폴리오 — SIEM/SOAR, Infrastructure as Code, Observability.",
-"url": "https://resume.jclee.me/",
-"inLanguage": "ko-KR"
+        "url": "https://resume.jclee.me/",
+        "inLanguage": "ko-KR"
       }
     </script>
 
@@ -534,7 +547,9 @@
         border: 1px solid var(--border-primary, #2a2a3e);
         border-radius: 6px;
         outline: none;
-        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        transition:
+          border-color 0.2s ease,
+          box-shadow 0.2s ease;
       }
       .skill-radar__search-input::placeholder {
         color: var(--text-muted, #71717a);
@@ -567,20 +582,25 @@
         border-radius: 8px;
         padding: var(--space-4, 1rem);
         cursor: pointer;
-        transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+        transition:
+          border-color 0.25s ease,
+          box-shadow 0.25s ease,
+          transform 0.25s ease;
         outline: none;
       }
       .skill-domain-card:hover,
       .skill-domain-card:focus-visible {
         border-color: var(--cyber-cyan, #00d4e0);
-        box-shadow: 0 0 20px rgba(0, 212, 224, 0.2), 0 4px 12px rgba(0, 0, 0, 0.3);
+        box-shadow:
+          0 0 20px rgba(0, 212, 224, 0.2),
+          0 4px 12px rgba(0, 0, 0, 0.3);
         transform: translateY(-2px);
       }
       .skill-domain-card:focus-visible {
         outline: 2px solid var(--cyber-cyan, #00d4e0);
         outline-offset: 2px;
       }
-      .skill-domain-card[aria-expanded="true"] {
+      .skill-domain-card[aria-expanded='true'] {
         border-color: var(--cyber-cyan, #00d4e0);
         box-shadow: 0 0 24px rgba(0, 212, 224, 0.25);
       }
@@ -653,8 +673,13 @@
         animation: pulse-dot 2s ease-in-out infinite;
       }
       @keyframes pulse-dot {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.5; }
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
       }
       .skill-domain-card__level-label {
         font-family: var(--font-mono, 'IBM Plex Mono', monospace);
@@ -723,7 +748,11 @@
       .skill-item__bar {
         height: 100%;
         width: 0;
-        background: linear-gradient(90deg, var(--bar-color, var(--cyber-cyan)) 0%, color-mix(in srgb, var(--bar-color, var(--cyber-cyan)) 80%, white 20%) 100%);
+        background: linear-gradient(
+          90deg,
+          var(--bar-color, var(--cyber-cyan)) 0%,
+          color-mix(in srgb, var(--bar-color, var(--cyber-cyan)) 80%, white 20%) 100%
+        );
         border-radius: 3px;
         transition: width 0.8s ease-out;
         box-shadow: 0 0 10px var(--bar-color, var(--cyber-cyan));
@@ -818,7 +847,12 @@
           <header class="site-header">
             <nav class="minimal-nav" role="navigation" aria-label="Main navigation">
               <a href="/" class="nav-logo" aria-label="~/jclee 홈으로 이동">~/jclee</a>
-              <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">
+              <button
+                class="nav-toggle"
+                aria-label="Toggle navigation"
+                aria-expanded="false"
+                aria-controls="nav-links"
+              >
                 <span class="hamburger"></span>
               </button>
               <div id="nav-links" class="nav-links">
@@ -828,7 +862,16 @@
                 <a href="#contact" class="nav-link" data-i18n-aria="nav.contact">contact</a>
               </div>
               <ul class="lang-switcher" aria-label="언어 선택 / Language">
-                <li><a href="/" hreflang="ko" aria-current="true" class="lang-link lang-link--active" lang="ko">KO</a></li>
+                <li>
+                  <a
+                    href="/"
+                    hreflang="ko"
+                    aria-current="true"
+                    class="lang-link lang-link--active"
+                    lang="ko"
+                    >KO</a
+                  >
+                </li>
                 <li><a href="/en/" hreflang="en" class="lang-link" lang="en">EN</a></li>
                 <li><a href="/ja/" hreflang="ja" class="lang-link" lang="ja">JA</a></li>
               </ul>
@@ -849,8 +892,13 @@
                     ><span class="cursor"></span></span
                   ><span class="sr-only">이재철</span>
                 </h1>
-                <p class="hero-positioning">8년차 보안·SRE 엔지니어 — 금융권 보안 인프라 설계·운영</p>
-                <p class="hero-tagline">FSC 본인가 통과 · SIEM 탐지·대응 자동화 · IaC 기반 관측성 · 이 사이트도 직접 빌드·배포</p>
+                <p class="hero-positioning">
+                  8년차 보안·SRE 엔지니어 — 금융권 보안 인프라 설계·운영
+                </p>
+                <p class="hero-tagline">
+                  FSC 본인가 통과 · SIEM 탐지·대응 자동화 · IaC 기반 관측성 · 이 사이트도 직접
+                  빌드·배포
+                </p>
                 <dl class="hero-kpi-grid" aria-label="핵심 성과 지표">
                   <div class="hero-kpi">
                     <dd class="hero-kpi__value">8년+</dd>
@@ -916,7 +964,11 @@
                 <!-- RESUME_CARDS_PLACEHOLDER -->
               </ul>
               <div class="hero-download" role="group" aria-label="채용 문의 옵션">
-                <a href="/resume.pdf" download="이재철_이력서.pdf" class="link-subtle" aria-label="이력서 PDF 다운로드"
+                <a
+                  href="/resume.pdf"
+                  download="이재철_이력서.pdf"
+                  class="link-subtle"
+                  aria-label="이력서 PDF 다운로드"
                   >📄 이력서 PDF 다운로드</a
                 >
                 <a href="#contact" class="link-subtle" aria-label="채용 또는 면접 문의하기"
@@ -953,9 +1005,9 @@
               <div class="tech-filter-container" role="toolbar" aria-label="Filter by technology">
                 <button class="tech-filter-btn active" data-filter="all">All</button>
               </div>
-<ul class="project-list">
-<!-- PROJECT_CARDS_PLACEHOLDER -->
-</ul>
+              <ul class="project-list">
+                <!-- PROJECT_CARDS_PLACEHOLDER -->
+              </ul>
             </section>
 
             <section
@@ -985,7 +1037,20 @@
                 <div class="skill-radar__search">
                   <label for="skill-search-input" class="sr-only">Filter skills</label>
                   <div class="skill-radar__search-input-wrapper">
-                    <svg class="skill-radar__search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                    <svg
+                      class="skill-radar__search-icon"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <circle cx="11" cy="11" r="8" />
+                      <path d="m21 21-4.3-4.3" />
+                    </svg>
                     <input
                       type="text"
                       id="skill-search-input"
@@ -994,9 +1059,18 @@
                       aria-label="Filter skills by name"
                     />
                   </div>
-                  <div id="skill-search-count" class="skill-radar__search-count" aria-live="polite"></div>
+                  <div
+                    id="skill-search-count"
+                    class="skill-radar__search-count"
+                    aria-live="polite"
+                  ></div>
                 </div>
-                <div id="skill-radar-grid" class="skill-radar__grid" role="group" aria-label="기술 역량 카드">
+                <div
+                  id="skill-radar-grid"
+                  class="skill-radar__grid"
+                  role="group"
+                  aria-label="기술 역량 카드"
+                >
                   <!-- Skill radar cards rendered by JS -->
                 </div>
               </div>
@@ -1063,7 +1137,7 @@
               <ul class="infra-grid">
                 <!-- INFRASTRUCTURE_CARDS_PLACEHOLDER -->
               </ul>
-                        </section>
+            </section>
 
             <section
               id="observability"
@@ -1076,7 +1150,8 @@
                 <span class="section-cmd__command">kubectl get pods -n monitoring</span>
               </div>
               <div class="observability-intro">
-                <p>실시간 인프라 모니터링 및 로그 수집 파이프라인
+                <p>
+                  실시간 인프라 모니터링 및 로그 수집 파이프라인
                   <a
                     href="https://kibana.jclee.me/s/portfolio-demo/app/dashboards?auth_provider_hint=portfolio_demo#/view/demo-live-logs"
                     target="_blank"
@@ -1111,7 +1186,12 @@
               </ul>
               <p class="observability-status" data-observability-status hidden>
                 <span class="observability-status__dot" aria-hidden="true"></span>
-                <span class="observability-status__text" data-observability-status-text role="status" aria-live="polite"></span>
+                <span
+                  class="observability-status__text"
+                  data-observability-status-text
+                  role="status"
+                  aria-live="polite"
+                ></span>
               </p>
               <div class="observability-stack">
                 <div class="observability-stack__item">
@@ -1178,19 +1258,49 @@
               <form id="guestbook-form" class="guestbook-form" novalidate>
                 <div class="guestbook-field">
                   <label for="guestbook-name" data-i18n="guestbook.nameLabel">이름</label>
-                  <input type="text" id="guestbook-name" name="name" maxlength="40" required autocomplete="name" data-i18n-placeholder="guestbook.namePlaceholder" placeholder="이름" />
+                  <input
+                    type="text"
+                    id="guestbook-name"
+                    name="name"
+                    maxlength="40"
+                    required
+                    autocomplete="name"
+                    data-i18n-placeholder="guestbook.namePlaceholder"
+                    placeholder="이름"
+                  />
                 </div>
                 <div class="guestbook-field">
                   <label for="guestbook-message" data-i18n="guestbook.messageLabel">메시지</label>
-                  <textarea id="guestbook-message" name="message" maxlength="500" rows="3" required data-i18n-placeholder="guestbook.messagePlaceholder" placeholder="메시지를 남겨주세요"></textarea>
+                  <textarea
+                    id="guestbook-message"
+                    name="message"
+                    maxlength="500"
+                    rows="3"
+                    required
+                    data-i18n-placeholder="guestbook.messagePlaceholder"
+                    placeholder="메시지를 남겨주세요"
+                  ></textarea>
                 </div>
                 <!-- Honeypot: hidden from humans, bots fill it. aria-hidden + off-screen. -->
                 <div class="guestbook-hp" aria-hidden="true">
                   <label for="guestbook-website">Website</label>
-                  <input type="text" id="guestbook-website" name="website" tabindex="-1" autocomplete="off" />
+                  <input
+                    type="text"
+                    id="guestbook-website"
+                    name="website"
+                    tabindex="-1"
+                    autocomplete="off"
+                  />
                 </div>
-                <button type="submit" class="guestbook-submit" data-i18n="guestbook.submit">남기기</button>
-                <p id="guestbook-status" class="guestbook-status" role="status" aria-live="polite"></p>
+                <button type="submit" class="guestbook-submit" data-i18n="guestbook.submit">
+                  남기기
+                </button>
+                <p
+                  id="guestbook-status"
+                  class="guestbook-status"
+                  role="status"
+                  aria-live="polite"
+                ></p>
               </form>
               <ul id="guestbook-list" class="guestbook-list" aria-label="방명록 목록"></ul>
             </section>
@@ -1202,11 +1312,18 @@
               <span class="footer-status">Connection closed.</span>
             </div>
             <div class="footer-build" data-footer-build>
-              <span class="footer-build__source"><a href="https://github.com/jclee941/resume" target="_blank" rel="noopener">source</a></span>
+              <span class="footer-build__source"
+                ><a href="https://github.com/jclee941/resume" target="_blank" rel="noopener"
+                  >source</a
+                ></span
+              >
               <span class="footer-build__sep" aria-hidden="true">·</span>
               <span class="footer-build__version">v<!-- BUILD_VERSION_PLACEHOLDER --></span>
               <span class="footer-build__sep" aria-hidden="true">·</span>
-              <span class="footer-build__deployed">deployed <!-- BUILD_DEPLOYED_DATE_PLACEHOLDER --></span>
+              <span class="footer-build__deployed"
+                >deployed
+                <!-- BUILD_DEPLOYED_DATE_PLACEHOLDER --></span
+              >
             </div>
           </footer>
 
@@ -1331,7 +1448,9 @@
           var resumeDataB64 = /* RESUME_CHAT_DATA_B64_PLACEHOLDER */ '';
           if (!resumeDataB64) return {};
           var resumeDataBinary = atob(resumeDataB64);
-          var resumeDataBytes = Uint8Array.from(resumeDataBinary, function (c) { return c.charCodeAt(0); });
+          var resumeDataBytes = Uint8Array.from(resumeDataBinary, function (c) {
+            return c.charCodeAt(0);
+          });
           return JSON.parse(new TextDecoder('utf-8').decode(resumeDataBytes));
         } catch (resumeDataError) {
           if (typeof console !== 'undefined' && console.warn) {
@@ -1773,8 +1892,7 @@
 
         window.terminalCommands.cat = function (args) {
           var files = {
-            'about.txt':
-              '보안 엔지니어',
+            'about.txt': '보안 엔지니어',
             'contact.txt': 'Email: qws941@kakao.com\\nGitHub: github.com/jclee941',
             'skills.json':
               '{\n  "observability": ["Grafana", "Prometheus", "Loki", "Splunk", "OpenTelemetry"],\n  "devops": ["GitLab CI/CD", "GitHub Actions", "Ansible", "Terraform"],\n  "programming": ["Python", "Bash", "Node.js", "TypeScript", "Go"]\n}',
@@ -2038,7 +2156,6 @@
             .finally(updateMainIndicator);
         });
       })();
-
     </script>
     <script>
       window.dataLayer = window.dataLayer || [];

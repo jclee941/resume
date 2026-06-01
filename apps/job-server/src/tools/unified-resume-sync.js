@@ -34,7 +34,8 @@ const RESUME_DATA_PATH = join(PROJECT_ROOT, 'packages/data/resumes/master/resume
 
 export const unifiedResumeSyncTool = {
   name: 'unified_resume_sync',
-  description: 'Sync resume_data.json to multiple job platforms.\n\n**Supported Platforms:**\n- wanted: API-based sync (full CRUD)\n- jobkorea: Browser automation (profile update)\n- saramin: Browser automation (profile update)\n- remember: Browser automation (profile update)\n- jumpit: Browser automation (profile update)\n- programmers: Browser automation (profile update)\n- rallit: Browser automation (profile update)\n- rocketpunch: Browser automation (profile update)\n- indeed: Browser automation (profile update)\n- linkedin: Browser automation (profile update)\n\n**Actions:**\n- status: Check sync status for all platforms\n- sync: Sync SSoT to specified platform(s)\n- diff: Compare local data with platform profile\n- preview: Preview changes without applying\n- propose: Crawl platform data and write human-reviewed proposal patches for SSoT',
+  description:
+    'Sync resume_data.json to multiple job platforms.\n\n**Supported Platforms:**\n- wanted: API-based sync (full CRUD)\n- jobkorea: Browser automation (profile update)\n- saramin: Browser automation (profile update)\n- remember: Browser automation (profile update)\n- jumpit: Browser automation (profile update)\n- programmers: Browser automation (profile update)\n- rallit: Browser automation (profile update)\n- rocketpunch: Browser automation (profile update)\n- indeed: Browser automation (profile update)\n- linkedin: Browser automation (profile update)\n\n**Actions:**\n- status: Check sync status for all platforms\n- sync: Sync SSoT to specified platform(s)\n- diff: Compare local data with platform profile\n- preview: Preview changes without applying\n- propose: Crawl platform data and write human-reviewed proposal patches for SSoT',
 
   inputSchema: {
     type: 'object',
@@ -45,7 +46,21 @@ export const unifiedResumeSyncTool = {
       },
       platforms: {
         type: 'array',
-        items: { type: 'string', enum: ['wanted', 'jobkorea', 'saramin', 'remember', 'jumpit', 'programmers', 'rallit', 'rocketpunch', 'indeed', 'linkedin'] },
+        items: {
+          type: 'string',
+          enum: [
+            'wanted',
+            'jobkorea',
+            'saramin',
+            'remember',
+            'jumpit',
+            'programmers',
+            'rallit',
+            'rocketpunch',
+            'indeed',
+            'linkedin',
+          ],
+        },
         description: 'Target platforms (default: all)',
       },
       dry_run: {
@@ -73,7 +88,22 @@ export const unifiedResumeSyncTool = {
   },
 
   async execute(params, { logger = console } = {}) {
-    const { action, platforms = ['wanted', 'jobkorea', 'saramin', 'remember', 'jumpit', 'programmers', 'rallit', 'rocketpunch', 'indeed', 'linkedin'], dry_run = false } = params;
+    const {
+      action,
+      platforms = [
+        'wanted',
+        'jobkorea',
+        'saramin',
+        'remember',
+        'jumpit',
+        'programmers',
+        'rallit',
+        'rocketpunch',
+        'indeed',
+        'linkedin',
+      ],
+      dry_run = false,
+    } = params;
 
     if (!existsSync(RESUME_DATA_PATH)) {
       return { success: false, error: `Source not found: ${RESUME_DATA_PATH}` };

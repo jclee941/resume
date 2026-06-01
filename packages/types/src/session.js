@@ -23,7 +23,6 @@
  * @property {string} timestamp
  */
 
-
 /**
  * @typedef {Object} SessionState
  * @property {string} id

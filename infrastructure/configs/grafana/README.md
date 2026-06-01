@@ -94,10 +94,10 @@ allow_embedding = true
 
 ### Security Model
 
-| Access type | Authentication | Role | Permissions |
-|-------------|----------------|------|-------------|
-| Public visitors | None | Viewer | View dashboards only |
-| Administrators | Basic auth | Admin | Full control |
+| Access type     | Authentication | Role   | Permissions          |
+| --------------- | -------------- | ------ | -------------------- |
+| Public visitors | None           | Viewer | View dashboards only |
+| Administrators  | Basic auth     | Admin  | Full control         |
 
 **Important security notes**:
 
@@ -137,6 +137,7 @@ The compose file mounts `grafana.ini` as a read-only volume, so any edit to the 
 ### Portfolio Integration
 
 The public dashboard is linked from the portfolio site. Visitors can click through from <https://resume.jclee.me> to the observability view at <https://grafana.jclee.me/d/resume-portfolio>. This provides transparency into uptime, request rates, and response latency without exposing sensitive operational data.
+
 ## Alert Rules
 
 ### 1. High Error Rate (CRITICAL)
@@ -489,7 +490,7 @@ When updating the dashboard:
   (PromQL)](https://prometheus.io/docs/prometheus/latest/querying/basics/)
 - [Grafana Alerting
   Documentation](https://grafana.com/docs/grafana/latest/alerting/)
-#VY|- [POST_DEPLOYMENT_ANALYSIS.md](../../../docs/analysis/POST_DEPLOYMENT_ANALYSIS_2025_10_17.md) (deleted)
+  #VY|- [POST_DEPLOYMENT_ANALYSIS.md](../../../docs/analysis/POST_DEPLOYMENT_ANALYSIS_2025_10_17.md) (deleted)
 
 ## Support
 

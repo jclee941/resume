@@ -26,7 +26,8 @@ function generateInfrastructureCards(infraData) {
 
   return infraData
     .map((item) => {
-      const statusClass = item.status === 'running' ? 'infra-status--running' : 'infra-status--stopped';
+      const statusClass =
+        item.status === 'running' ? 'infra-status--running' : 'infra-status--stopped';
       const statusLabel = item.status === 'running' ? 'RUNNING' : 'STOPPED';
       const titleContent = item.url
         ? `<a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer" class="infra-link" aria-label="Open ${escapeHtml(item.title)} (opens in new tab)">${escapeHtml(item.icon)} ${escapeHtml(item.title)} <span class="arrow">↗</span></a>`

@@ -182,7 +182,10 @@ describe('generateCoverLetter', () => {
 
     const result = await generateCoverLetter(resume, jobPosting, { analyzeFn });
 
-    assert.ok(result.coverLetter.includes('Dear Hiring Manager') || result.coverLetter.includes('experience'));
+    assert.ok(
+      result.coverLetter.includes('Dear Hiring Manager') ||
+        result.coverLetter.includes('experience')
+    );
     assert.ok(result.coverLetter.length > 100);
   });
 
@@ -203,7 +206,9 @@ describe('generateCoverLetter', () => {
       }
     );
 
-    assert.ok(result.coverLetter.includes('채용 담당자님께') || result.coverLetter.includes('포지션'));
+    assert.ok(
+      result.coverLetter.includes('채용 담당자님께') || result.coverLetter.includes('포지션')
+    );
   });
 
   it('builds fallback with optional-field defaults and title/company string requirement', async () => {
@@ -222,7 +227,9 @@ describe('generateCoverLetter', () => {
     const result = await generateCoverLetter(minimalResume, minimalJob, { analyzeFn });
 
     assert.equal(result.fallback, true);
-    assert.ok(result.coverLetter.includes('Dear Hiring Manager') || result.coverLetter.includes('Position'));
+    assert.ok(
+      result.coverLetter.includes('Dear Hiring Manager') || result.coverLetter.includes('Position')
+    );
     assert.ok(result.coverLetter.length > 100);
   });
 

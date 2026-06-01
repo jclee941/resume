@@ -26,7 +26,10 @@ describe('createJobPostingsMessage', () => {
     assert.equal(msg.parse_mode, 'HTML');
     // each job rendered as an anchor to its URL
     assert.match(msg.text, /<a href="https:\/\/www\.jobkorea\.co\.kr\/Recruit\/GI_Read\/1">/);
-    assert.match(msg.text, /<a href="https:\/\/www\.saramin\.co\.kr\/zf_user\/jobs\/relay\/view\?rec_idx=2">/);
+    assert.match(
+      msg.text,
+      /<a href="https:\/\/www\.saramin\.co\.kr\/zf_user\/jobs\/relay\/view\?rec_idx=2">/
+    );
     // company + position appear
     assert.match(msg.text, /유니포인트/);
     assert.match(msg.text, /인프라 엔지니어/);
@@ -46,7 +49,12 @@ describe('createJobPostingsMessage', () => {
 
   it('escapes HTML special chars in company/position to prevent breakage', () => {
     const msg = createJobPostingsMessage([
-      { company: 'A & B <Corp>', position: 'Dev <ops>', url: 'https://x.test/1', source: 'jobkorea' },
+      {
+        company: 'A & B <Corp>',
+        position: 'Dev <ops>',
+        url: 'https://x.test/1',
+        source: 'jobkorea',
+      },
     ]);
     assert.match(msg.text, /A &amp; B &lt;Corp&gt;/);
     assert.match(msg.text, /Dev &lt;ops&gt;/);
@@ -103,7 +111,7 @@ describe('createJobPostingsMessage', () => {
 
   it('never ends mid-tag even when a single posting exceeds the length budget', () => {
     // One posting whose URL alone is far larger than TELEGRAM_MAX_LENGTH.
-    const huge = 'https://x.test/' + 'a'.repeat(TELEGRAM_MAX_LENGTH + 500);
+    const huge = `https://x.test/${'a'.repeat(TELEGRAM_MAX_LENGTH + 500)}`;
     const msg = createJobPostingsMessage(
       [{ company: 'C', position: 'P', url: huge, source: 'jobkorea' }],
       { limit: 5 }
@@ -139,7 +147,9 @@ describe('createSingleJobMessage', () => {
     sourceUrl: 'https://www.jobkorea.co.kr/Recruit/GI_Read/1?x=1&y=2',
     source: 'jobkorea',
     matchPercentage: 82,
-    matchDetails: { skillMatches: [{ keyword: 'devsecops' }, { keyword: 'aws' }, { keyword: 'terraform' }] },
+    matchDetails: {
+      skillMatches: [{ keyword: 'devsecops' }, { keyword: 'aws' }, { keyword: 'terraform' }],
+    },
   };
 
   it('S3: returns an HTML payload <=4096 with escaped fields, anchor URL, and score', () => {
@@ -148,7 +158,10 @@ describe('createSingleJobMessage', () => {
     assert.equal(msg.disable_web_page_preview, true);
     assert.ok(msg.text.length <= TELEGRAM_MAX_LENGTH);
     // clickable anchor to the source URL (escaped & in href)
-    assert.match(msg.text, /<a href="https:\/\/www\.jobkorea\.co\.kr\/Recruit\/GI_Read\/1\?x=1&amp;y=2">/);
+    assert.match(
+      msg.text,
+      /<a href="https:\/\/www\.jobkorea\.co\.kr\/Recruit\/GI_Read\/1\?x=1&amp;y=2">/
+    );
     // special chars escaped, not raw
     assert.match(msg.text, /&lt;Senior&gt;/);
     assert.match(msg.text, /&amp; Co/);

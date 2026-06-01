@@ -102,7 +102,9 @@ export class JobFilter {
   }
 
   invalidateCache(jobId) {
-    const normalized = String(jobId || '').trim().toLowerCase();
+    const normalized = String(jobId || '')
+      .trim()
+      .toLowerCase();
     if (!normalized) return false;
 
     const byIdKey = this.#jobIdToCacheKey.get(normalized);

@@ -323,7 +323,9 @@ describe('ApplicationAnalytics', () => {
 
       const zeroBranchAnalytics = new ApplicationAnalytics({
         applicationService: {
-          listApplications: mock.fn(() => [{ job: { position: 'generic role' }, status: 'pending' }]),
+          listApplications: mock.fn(() => [
+            { job: { position: 'generic role' }, status: 'pending' },
+          ]),
         },
       });
 

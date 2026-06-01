@@ -26,13 +26,14 @@ test.describe('Portfolio UI', () => {
   });
 
   test('observability widget shows live stats and a status line', async ({ page }) => {
-await page.goto('/', { waitUntil: 'domcontentloaded'
-});
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
     // Bring the section into view so its IntersectionObserver-driven polling starts.
     await page.locator('#observability').scrollIntoViewIfNeeded();
 
     // At least one stat card should move off the '--' placeholder with live data.
-    const uptime = page.locator('.observability-stat:has(.stat-label:text-is("Uptime")) .stat-value');
+    const uptime = page.locator(
+      '.observability-stat:has(.stat-label:text-is("Uptime")) .stat-value'
+    );
     await expect(uptime).not.toHaveText('--', { timeout: 15000 });
 
     // The aria-live status line becomes visible and announces freshness.
@@ -60,8 +61,6 @@ await page.goto('/', { waitUntil: 'domcontentloaded'
 
     // Scrolling the section into view should start polling.
     await page.locator('#observability').scrollIntoViewIfNeeded();
-    await expect
-      .poll(() => metricsRequests.length, { timeout: 15000 })
-      .toBeGreaterThan(0);
+    await expect.poll(() => metricsRequests.length, { timeout: 15000 }).toBeGreaterThan(0);
   });
 });

@@ -44,18 +44,10 @@ const {
   extractStyleHashes,
   mergeHashes,
 } = require('../../../../apps/portfolio/lib/csp-hash-generator');
-const {
-  generateSecurityHeaders,
-} = require('../../../../apps/portfolio/lib/security-headers');
-const {
-  injectScriptNoncePlaceholder,
-} = require('../../../../apps/portfolio/lib/templates');
-const {
-  buildAndWriteWorker,
-} = require('../../../../apps/portfolio/lib/worker-writer');
-const {
-  runWorkerBuild,
-} = require('../../../../apps/portfolio/lib/build-orchestrator');
+const { generateSecurityHeaders } = require('../../../../apps/portfolio/lib/security-headers');
+const { injectScriptNoncePlaceholder } = require('../../../../apps/portfolio/lib/templates');
+const { buildAndWriteWorker } = require('../../../../apps/portfolio/lib/worker-writer');
+const { runWorkerBuild } = require('../../../../apps/portfolio/lib/build-orchestrator');
 
 describe('build-orchestrator', () => {
   const mockLogger = { log: jest.fn(), debug: jest.fn(), warn: jest.fn(), error: jest.fn() };

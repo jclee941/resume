@@ -25,7 +25,7 @@ errors.
 - **Wrangler CLI**: Install it globally using `npm install -g wrangler` or use
   `npx wrangler`. This is the official tool for developing, testing, and
   deploying Cloudflare Workers. Make sure to authenticate using `npx wrangler
-  login`.
+login`.
 
 ### 1.2 Version Control and System Tools
 
@@ -102,7 +102,7 @@ The deployment process follows a strict unidirectional data flow:
 4. **Artifact Creation**: `worker.js` is created as a single self-contained
    script.
 5. **Deployment**: `npx wrangler deploy --config apps/portfolio/wrangler.jsonc
-   --env production` uploads the artifact to the Cloudflare network.
+--env production` uploads the artifact to the Cloudflare network.
 
 ### 2.4 Architecture Diagram
 
@@ -386,7 +386,7 @@ The worker includes 5 scheduled workflow triggers for operational tasks:
   - _Symptom_: Browser console shows "Refused to execute script because it
     violates CSP".
   - _Fix_: You edited HTML or JS but didn't rebuild. Run `node
-    generate-worker.js`.
+generate-worker.js`.
 - **D1 Binding Error**:
   - _Symptom_: Worker returns 500 error with "DB not found".
   - _Fix_: Check wrangler config database IDs. Ensure you are logged into
@@ -398,12 +398,12 @@ The worker includes 5 scheduled workflow triggers for operational tasks:
 - **Wrangler Login Issues**:
   - _Symptom_: Deploy fails with authentication error.
   - _Fix_: Run `rm -rf ~/.wrangler` and re-authenticate with `npx wrangler
-    login`.
+login`.
 - **Missing entry-point to Worker script**:
   - _Symptom_: `npx wrangler deploy` fails from repo root with entry-point
     error.
   - _Fix_: Use explicit config path: `npx wrangler deploy --config
-    apps/portfolio/wrangler.jsonc --env production`.
+apps/portfolio/wrangler.jsonc --env production`.
 
 ---
 
@@ -470,9 +470,9 @@ Look for `Uncaught Error` or `Worker exceeded resource limits`.
 If a D1 migration fails during deployment:
 
 1. Check the migration status: `npx wrangler d1 migrations list
-   job-dashboard-db`
+job-dashboard-db`
 2. Manually apply the missing migration: `npx wrangler d1 execute
-   job-dashboard-db --file=migrations/XXXX.sql`
+job-dashboard-db --file=migrations/XXXX.sql`
 
 ### 10.3 CI/CD Pipeline Stalls
 

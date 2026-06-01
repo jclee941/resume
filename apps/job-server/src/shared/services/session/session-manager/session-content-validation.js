@@ -5,9 +5,7 @@ function hasEmptyCriticalCookie(cookie) {
   return (
     name &&
     value === '' &&
-    ['UID', 'User'].some((critical) =>
-      name.toLowerCase() === critical.toLowerCase()
-    )
+    ['UID', 'User'].some((critical) => name.toLowerCase() === critical.toLowerCase())
   );
 }
 
