@@ -45,17 +45,17 @@ async function generateOGImage(language = 'ko') {
   // Build SVG string
   let svg = `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">`;
   svg += '<defs><linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">';
-  svg += '<stop offset="0%" style="stop-color:#7c3aed;stop-opacity:1" />';
-  svg += '<stop offset="50%" style="stop-color:#5b21b6;stop-opacity:1" />';
-  svg += '<stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />';
+  svg += '<stop offset="0%" style="stop-color:#0c0c12;stop-opacity:1" />';
+  svg += '<stop offset="60%" style="stop-color:#0a1418;stop-opacity:1" />';
+  svg += '<stop offset="100%" style="stop-color:#05181c;stop-opacity:1" />';
   svg += '</linearGradient></defs>';
   svg += `<rect width="${width}" height="${height}" fill="url(#grad)"/>`;
 
   // Language badge (top-right)
   const badgeX = width - 115;
   const badgeY = 65;
-  svg += `<rect x="${width - 200}" y="30" width="170" height="50" rx="25" fill="#ffffff" opacity="0.1" stroke="#ffffff" stroke-width="2"/>`;
-  svg += `<text x="${badgeX}" y="${badgeY}" font-family="Inter, sans-serif" font-size="20" font-weight="600" fill="#ffffff" text-anchor="middle">${escapeXml(data.label)}</text>`;
+  svg += `<rect x="${width - 200}" y="30" width="170" height="50" rx="25" fill="#00d4e0" opacity="0.12" stroke="#00d4e0" stroke-width="2"/>`;
+  svg += `<text x="${badgeX}" y="${badgeY}" font-family="Inter, sans-serif" font-size="20" font-weight="600" fill="#00d4e0" text-anchor="middle">${escapeXml(data.label)}</text>`;
 
   // Content group
   svg += `<g transform="translate(${centerX}, ${centerY})">`;
@@ -64,13 +64,13 @@ async function generateOGImage(language = 'ko') {
   svg += `<text x="0" y="-80" font-family="Inter, sans-serif" font-size="72" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="-0.02em">${escapeXml(data.name)}</text>`;
 
   // Subtitle
-  svg += `<text x="0" y="0" font-family="Inter, sans-serif" font-size="48" font-weight="600" fill="#e0e7ff" text-anchor="middle">${escapeXml(data.subtitle)}</text>`;
+  svg += `<text x="0" y="0" font-family="Inter, sans-serif" font-size="48" font-weight="600" fill="#00d4e0" text-anchor="middle">${escapeXml(data.subtitle)}</text>`;
 
   // Stats
-  svg += `<text x="0" y="80" font-family="Inter, sans-serif" font-size="32" font-weight="500" fill="#c7d2fe" text-anchor="middle">${escapeXml(data.stats)}</text>`;
+  svg += `<text x="0" y="80" font-family="Inter, sans-serif" font-size="32" font-weight="500" fill="#c8d2d6" text-anchor="middle">${escapeXml(data.stats)}</text>`;
 
   // URL
-  svg += `<text x="0" y="140" font-family="Inter, sans-serif" font-size="28" font-weight="400" fill="#a5b4fc" text-anchor="middle">${escapeXml(data.url)}</text>`;
+  svg += `<text x="0" y="140" font-family="Inter, sans-serif" font-size="28" font-weight="400" fill="#d946a8" text-anchor="middle">${escapeXml(data.url)}</text>`;
 
   svg += '</g></svg>';
 
