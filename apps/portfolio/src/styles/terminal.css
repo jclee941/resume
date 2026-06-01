@@ -42,13 +42,13 @@
   opacity: 0.75;
 }
 .terminal-btn--close {
-  background: #ff5f56;
+  background: var(--terminal-btn-close);
 }
 .terminal-btn--minimize {
-  background: #ffbd2e;
+  background: var(--terminal-btn-minimize);
 }
 .terminal-btn--maximize {
-  background: #27ca40;
+  background: var(--terminal-btn-maximize);
 }
 .terminal-title {
   font-family: var(--font-mono);
@@ -164,4 +164,3 @@
     max-height: 25vh;
   }
 }
-

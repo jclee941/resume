@@ -1,21 +1,6 @@
 /* ==========================================================================
-   Cyberpunk Animations - Matrix Rain, Glitch, Scroll Reveal
+   Cyberpunk Animations - Glitch, Scroll Reveal
    ========================================================================== */
-
-/* --------------------------------------------------------------------------
-   Matrix Rain Background
-   -------------------------------------------------------------------------- */
-#matrix-bg {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-  opacity: 0.15;
-  pointer-events: none;
-}
 
 html {
   scroll-behavior: smooth;
@@ -410,10 +395,6 @@ button:hover,
   .reveal {
     opacity: 1;
     transform: none;
-  }
-
-  #matrix-bg {
-    display: none;
   }
 
   html {
