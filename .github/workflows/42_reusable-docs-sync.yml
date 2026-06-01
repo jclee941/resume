@@ -36,7 +36,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Check Markdown links
-        uses: lycheeverse/lychee-action@8646ba30535128ac92d33dfc9133794bfdd9b411 # v2.8.0
+        uses: lycheeverse/lychee-action@8646ba30535128ac92d33dfc9133794bfdd9b411  # v2.8.0
         with:
           args: >
             --exclude-all-private
@@ -62,7 +62,7 @@ jobs:
               `- Commit: ${{ github.sha }}\n` +
               `- Branch: ${{ github.ref }}\n\n` +
               `> 자동 생성됨 (Documentation Sync Workflow)`;
-
+            
             await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -116,6 +116,7 @@ jobs:
             echo "::error::Hardcoded private IP(s) found in Markdown docs. See log above."
             exit 1
           fi
+
 
   markdown-lint:
     if: ${{ inputs.is_pull_request }}
@@ -173,7 +174,7 @@ jobs:
               repo: context.repo.repo,
               pull_number: context.issue.number
             });
-
+            
             const changedFiles = files.map(f => f.filename);
             const hasCodeChanges = changedFiles.some(f => 
               f.endsWith('.py') || f.endsWith('.js') || f.endsWith('.ts') || 
@@ -187,17 +188,17 @@ jobs:
             const hasDocChange = changedFiles.some(f => 
               f.startsWith('docs/') || f.endsWith('.md')
             );
-
+            
             const warnings = [];
-
+            
             if (hasCodeChanges && !hasReadmeChange && !hasDocChange) {
               warnings.push('⚠️ 코드 변경이 있지만 README.md나 문서 업데이트가 없습니다. 새 기능/API 변경 시 문서 업데이트를 고려하세요.');
             }
-
+            
             if (hasConfigChanges && !hasReadmeChange) {
               warnings.push('⚠️ 설정 파일 변경이 있지만 README 업데이트가 없습니다. 설정 예시나 사용법 문서를 업데이트하세요.');
             }
-
+            
             if (warnings.length > 0) {
               const body = `## 📚 문서 현행화 체크\n\n` +
                 warnings.join('\n\n') + '\n\n' +
@@ -234,20 +235,20 @@ jobs:
               repo: context.repo.repo,
               pull_number: context.issue.number
             });
-
+            
             const changedFiles = files.map(f => f.filename);
-
+            
             // Check for API route changes
             const hasApiChanges = changedFiles.some(f =>
               f.includes('route') || f.includes('api') || f.includes('endpoint') ||
               f.includes('handler') || f.includes('controller')
             );
-
+            
             const hasApiDocs = changedFiles.some(f =>
               f.includes('openapi') || f.includes('swagger') || 
               f.includes('api-doc') || (f.startsWith('docs/') && f.includes('api'))
             );
-
+            
             if (hasApiChanges && !hasApiDocs) {
               const body = `## 🔌 API 문서 체크\n\n` +
                 `⚠️ API 관련 코드 변경이 있지만 API 문서 업데이트가 없습니다.\n\n` +
