@@ -151,3 +151,22 @@ describe('FAANG framing: case-study senior narrative', () => {
     expect(src).not.toMatch(/\b\d{1,3}\s?%/);
   });
 });
+
+describe('i18n JA: security section is localized in the generated JA page', () => {
+  const { buildJapaneseTemplate } = require(path.join(PORTFOLIO, 'lib', 'html-transformer.js'));
+  const koSource = read(path.join(PORTFOLIO, 'index.html'));
+  const ja = buildJapaneseTemplate(koSource);
+
+  test('JA page does not leave the security section in Korean', () => {
+    // These Korean strings come ONLY from the #site-security section.
+    expect(ja).not.toContain('이 사이트의 보안 설계');
+    expect(ja).not.toContain('이 포트폴리오는 설명하는 보안 원칙');
+    expect(ja).not.toContain('서명 세션');
+    expect(ja).not.toContain('CI 보안 스캔');
+  });
+
+  test('JA page renders the security section in Japanese', () => {
+    expect(ja).toMatch(/このサイトのセキュリティ|セキュリティ設計/);
+    expect(ja).toContain('Strict CSP');
+  });
+});
