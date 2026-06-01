@@ -25,14 +25,14 @@
 
 ## Features / 주요 기능
 
-| Feature | Description |
-|---------|-------------|
-| **Edge Portfolio Worker** | Cloudflare Workers deployed portfolio with sub-ms latency worldwide |
-| **Job Automation (MCP)** | MCP-based automation for Wanted and JobKorea platforms via CLIProxy API (`https://cliproxy.jclee.me/v1`) |
-| **SSoT Resume Data** | Authoritative resume content in `packages/data/` with Zod runtime validation |
-| **Self-Hosted Observability** | Infrastructure monitoring with Cloudflare dashboard integration |
-| **Multi-Package Monorepo** | 8 shared packages: `cli`, `env`, `data`, `shared`, `types`, `schemas`, `contracts`, `env` |
-| **Comprehensive CI/CD** | 37 GitHub Actions workflows covering PR checks, releases, security, and automation |
+| Feature                       | Description                                                                                              |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------- |
+| **Edge Portfolio Worker**     | Cloudflare Workers deployed portfolio with sub-ms latency worldwide                                      |
+| **Job Automation (MCP)**      | MCP-based automation for Wanted and JobKorea platforms via CLIProxy API (`https://cliproxy.jclee.me/v1`) |
+| **SSoT Resume Data**          | Authoritative resume content in `packages/data/` with Zod runtime validation                             |
+| **Self-Hosted Observability** | Infrastructure monitoring with Cloudflare dashboard integration                                          |
+| **Multi-Package Monorepo**    | 8 shared packages: `cli`, `env`, `data`, `shared`, `types`, `schemas`, `contracts`, `env`                |
+| **Comprehensive CI/CD**       | 37 GitHub Actions workflows covering PR checks, releases, security, and automation                       |
 
 ---
 
@@ -130,82 +130,82 @@ resume/
 
 #### Pull Request & Merge Automation
 
-| Workflow File | Purpose |
-|--------------|---------|
-| `01_branch-to-pr.yml` | Create PR from feature branch |
-| `03_pr-checks.yml` | PR validation: lint, typecheck, test |
-| `09_semantic-pr.yml` | Enforce semantic commit format |
-| `10_pr-review.yml` | AI-powered PR review via qodo-ai/pr-agent |
-| `security/11_pr-review.yml` | Security-focused PR review |
-| `13_pr-auto-merge.yml` | Auto-merge approved PRs |
-| `14_bot-auto-fix.yml` | Auto-fix PR linting issues |
-| `15_merged-pr-cleanup.yml` | Cleanup after PR merge |
+| Workflow File               | Purpose                                   |
+| --------------------------- | ----------------------------------------- |
+| `01_branch-to-pr.yml`       | Create PR from feature branch             |
+| `03_pr-checks.yml`          | PR validation: lint, typecheck, test      |
+| `09_semantic-pr.yml`        | Enforce semantic commit format            |
+| `10_pr-review.yml`          | AI-powered PR review via qodo-ai/pr-agent |
+| `security/11_pr-review.yml` | Security-focused PR review                |
+| `13_pr-auto-merge.yml`      | Auto-merge approved PRs                   |
+| `14_bot-auto-fix.yml`       | Auto-fix PR linting issues                |
+| `15_merged-pr-cleanup.yml`  | Cleanup after PR merge                    |
 
 #### Dependency Management
 
-| Workflow File | Purpose |
-|--------------|---------|
-| `07_dependency-review.yml` | Dependency vulnerability review |
-| `08_scorecard.yml` | OpenSSF Scorecard security assessment |
-| `12_dependabot-auto-merge.yml` | Auto-merge Dependabot PRs |
+| Workflow File                  | Purpose                               |
+| ------------------------------ | ------------------------------------- |
+| `07_dependency-review.yml`     | Dependency vulnerability review       |
+| `08_scorecard.yml`             | OpenSSF Scorecard security assessment |
+| `12_dependabot-auto-merge.yml` | Auto-merge Dependabot PRs             |
 
 #### Issue Management
 
-| Workflow File | Purpose |
-|--------------|---------|
-| `02_issue-to-branch.yml` | Create branch from issue |
-| `18_issue-management.yml` | Issue labeling and triage |
-| `19_issue-backfill.yml` | Issue content backfill |
+| Workflow File                      | Purpose                         |
+| ---------------------------------- | ------------------------------- |
+| `02_issue-to-branch.yml`           | Create branch from issue        |
+| `18_issue-management.yml`          | Issue labeling and triage       |
+| `19_issue-backfill.yml`            | Issue content backfill          |
 | `43_reusable-issue-management.yml` | Reusable issue management logic |
 
 #### Documentation
 
-| Workflow File | Purpose |
-|--------------|---------|
-| `20_readme-gen.yml` | Auto-generate README |
-| `21_docs-sync.yml` | Sync documentation changes |
-| `42_reusable-docs-sync.yml` | Reusable docs sync logic |
+| Workflow File               | Purpose                    |
+| --------------------------- | -------------------------- |
+| `20_readme-gen.yml`         | Auto-generate README       |
+| `21_docs-sync.yml`          | Sync documentation changes |
+| `42_reusable-docs-sync.yml` | Reusable docs sync logic   |
 
 #### Release & Publishing
 
-| Workflow File | Purpose |
-|--------------|---------|
-| `24_release-notes.yml` | Generate release notes |
+| Workflow File            | Purpose                   |
+| ------------------------ | ------------------------- |
+| `24_release-notes.yml`   | Generate release notes    |
 | `25_release-publish.yml` | Publish release artifacts |
-| `release.yml` | Main release workflow |
+| `release.yml`            | Main release workflow     |
 
 #### Security & Compliance
 
-| Workflow File | Purpose |
-|--------------|---------|
-| `04_actionlint.yml` | GitHub Actions workflow linting |
-| `05_gitleaks.yml` | Secret scanning |
-| `06_codeql.yml` | CodeQL static analysis |
-| `45_reusable-gitleaks.yml` | Reusable secret scanning |
+| Workflow File              | Purpose                         |
+| -------------------------- | ------------------------------- |
+| `04_actionlint.yml`        | GitHub Actions workflow linting |
+| `05_gitleaks.yml`          | Secret scanning                 |
+| `06_codeql.yml`            | CodeQL static analysis          |
+| `45_reusable-gitleaks.yml` | Reusable secret scanning        |
 
 #### CI/CD Operations
 
-| Workflow File | Purpose |
-|--------------|---------|
-| `ci.yml` | Main CI pipeline |
-| `auto-merge.yml` | Generic auto-merge |
-| `auto-sync-data.yml` | Auto-sync SSoT data |
-| `delete-standalone-job-worker.yml` | Cleanup stale workers |
-| `labeler.yml` | PR/issue label management |
-| `post-deploy-verify.yml` | Post-deployment verification |
-| `provision-queues.yml` | Queue provisioning |
-| `welcome.yml` | New contributor welcome |
-| `29_downstream-health-check.yml` | Downstream service health |
-| `37_ci-failure-issues.yml` | Create issues for CI failures |
-| `60_ci-auto-heal.yml` | Auto-heal broken CI |
+| Workflow File                      | Purpose                       |
+| ---------------------------------- | ----------------------------- |
+| `ci.yml`                           | Main CI pipeline              |
+| `auto-merge.yml`                   | Generic auto-merge            |
+| `auto-sync-data.yml`               | Auto-sync SSoT data           |
+| `delete-standalone-job-worker.yml` | Cleanup stale workers         |
+| `labeler.yml`                      | PR/issue label management     |
+| `post-deploy-verify.yml`           | Post-deployment verification  |
+| `provision-queues.yml`             | Queue provisioning            |
+| `welcome.yml`                      | New contributor welcome       |
+| `29_downstream-health-check.yml`   | Downstream service health     |
+| `37_ci-failure-issues.yml`         | Create issues for CI failures |
+| `60_ci-auto-heal.yml`              | Auto-heal broken CI           |
 
 ### External Tools & Services
 
-| Service | Endpoint | Purpose |
-|---------|----------|---------|
-| **CLIProxy API** | `https://cliproxy.jclee.me/v1` | MCP proxy for job platform automation |
-| **Bot Service** | `https://bot.jclee.me` | Bot operations |
-| **qodo-ai/pr-agent** | GitHub Marketplace | AI-powered PR review and automation |
+| Service              | Endpoint                       | Purpose                               |
+| -------------------- | ------------------------------ | ------------------------------------- |
+| **CLIProxy API**     | `https://cliproxy.jclee.me/v1` | MCP proxy for job platform automation |
+| **Bot Service**      | `https://bot.jclee.me`         | Bot operations                        |
+| **qodo-ai/pr-agent** | GitHub Marketplace             | AI-powered PR review and automation   |
 
 ---
 
@@ -273,23 +273,23 @@ npm run build:full
 
 ### Workspace Scripts
 
-| Command | Description |
-|---------|-------------|
-| `npm run sync:data` | Sync SSoT resume JSON data |
-| `npm run sync:pdf` | Generate PDF resume (Go) |
-| `npm run sync:pptx` | Generate PPTX presentation (Python) |
-| `npm run sync:all` | Sync data + PDF + PPTX |
-| `npm run enrich:github` | Enrich data with GitHub info |
-| `npm run enrich:skills` | Enrich with skills data |
-| `npm run enrich:ai` | AI-powered data enrichment |
-| `npm run enrich:all` | Run all enrichment scripts |
-| `npm run automate:ssot` | Full SSoT automation pipeline |
+| Command                 | Description                          |
+| ----------------------- | ------------------------------------ |
+| `npm run sync:data`     | Sync SSoT resume JSON data           |
+| `npm run sync:pdf`      | Generate PDF resume (Go)             |
+| `npm run sync:pptx`     | Generate PPTX presentation (Python)  |
+| `npm run sync:all`      | Sync data + PDF + PPTX               |
+| `npm run enrich:github` | Enrich data with GitHub info         |
+| `npm run enrich:skills` | Enrich with skills data              |
+| `npm run enrich:ai`     | AI-powered data enrichment           |
+| `npm run enrich:all`    | Run all enrichment scripts           |
+| `npm run automate:ssot` | Full SSoT automation pipeline        |
 | `npm run automate:full` | Complete build + validation pipeline |
-| `npm run build` | Build portfolio worker |
-| `npm run lint` | Run ESLint |
-| `npm run typecheck` | Run TypeScript type checking |
-| `npm test` | Run Jest tests |
-| `npm run test:e2e` | Run Playwright E2E tests |
+| `npm run build`         | Build portfolio worker               |
+| `npm run lint`          | Run ESLint                           |
+| `npm run typecheck`     | Run TypeScript type checking         |
+| `npm test`              | Run Jest tests                       |
+| `npm run test:e2e`      | Run Playwright E2E tests             |
 
 ### Container Deployment
 
@@ -313,38 +313,38 @@ docker compose down --rmi local
 
 ### Build Commands
 
-| Command | Workspace | Description |
-|---------|-----------|-------------|
-| `npm run build` | root | Build portfolio worker |
+| Command                   | Workspace      | Description                    |
+| ------------------------- | -------------- | ------------------------------ |
+| `npm run build`           | root           | Build portfolio worker         |
 | `npm run build:portfolio` | apps/portfolio | Build portfolio with data sync |
-| `npm run build:full` | root | Full build including CLI |
-| `npm run cli:build` | packages/cli | Build CLI binary |
+| `npm run build:full`      | root           | Full build including CLI       |
+| `npm run cli:build`       | packages/cli   | Build CLI binary               |
 
 ### Sync Commands
 
-| Command | Description |
-|---------|-------------|
-| `npm run sync:data` | Sync resume JSON to SSoT |
-| `npm run sync:pdf` | Generate PDF via Go |
-| `npm run sync:pptx` | Generate PPTX via Python |
-| `npm run sync:all` | Sync all formats |
-| `npm run sync:proposals` | Sync job proposals |
+| Command                  | Description              |
+| ------------------------ | ------------------------ |
+| `npm run sync:data`      | Sync resume JSON to SSoT |
+| `npm run sync:pdf`       | Generate PDF via Go      |
+| `npm run sync:pptx`      | Generate PPTX via Python |
+| `npm run sync:all`       | Sync all formats         |
+| `npm run sync:proposals` | Sync job proposals       |
 
 ### Enrichment Commands
 
-| Command | Description |
-|---------|-------------|
+| Command                 | Description            |
+| ----------------------- | ---------------------- |
 | `npm run enrich:github` | GitHub data enrichment |
 | `npm run enrich:skills` | Skills data enrichment |
-| `npm run enrich:ai` | AI-powered enrichment |
-| `npm run enrich:all` | All enrichment |
+| `npm run enrich:ai`     | AI-powered enrichment  |
+| `npm run enrich:all`    | All enrichment         |
 
 ### Automation Commands
 
-| Command | Description |
-|---------|-------------|
+| Command                 | Description                                |
+| ----------------------- | ------------------------------------------ |
 | `npm run automate:ssot` | Data sync → PDF → build → typecheck → test |
-| `npm run automate:full` | Full pipeline with lint and validation |
+| `npm run automate:full` | Full pipeline with lint and validation     |
 
 ---
 
@@ -404,9 +404,9 @@ MIT License — see [LICENSE](LICENSE) file for details.
 
 ## External Resources
 
-| Resource | Link |
-|----------|------|
-| CLIProxy API | `https://cliproxy.jclee.me/v1` |
-| Bot Service | `https://bot.jclee.me` |
+| Resource           | Link                                                          |
+| ------------------ | ------------------------------------------------------------- |
+| CLIProxy API       | `https://cliproxy.jclee.me/v1`                                |
+| Bot Service        | `https://bot.jclee.me`                                        |
 | PR-Agent (qodo-ai) | [GitHub Marketplace](https://github.com/marketplace/pr-agent) |
-| Cloudflare Workers | [Documentation](https://developers.cloudflare.com/workers/) |
+| Cloudflare Workers | [Documentation](https://developers.cloudflare.com/workers/)   |

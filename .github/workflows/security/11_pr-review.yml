@@ -75,12 +75,12 @@ jobs:
           OPENAI__API_BASE: https://cliproxy.jclee.me/v1
           OPENAI_API_KEY: ${{ secrets.CLIPROXY_API_KEY }}
           OPENAI_BASE_URL: https://cliproxy.jclee.me/v1
-          LITELLM_LOCAL_MODEL_COST_MAP: "True"
+          LITELLM_LOCAL_MODEL_COST_MAP: 'True'
           CONFIG__MODEL: gpt-5.5
           CONFIG__FALLBACK_MODELS: '["minimax-m2.7", "gpt-5.5"]'
           CONFIG__RESPONSE_LANGUAGE: ko
           CONFIG__AI_TIMEOUT: '300'
-          CONFIG__CUSTOM_MODEL_MAX_TOKENS: "128000"
+          CONFIG__CUSTOM_MODEL_MAX_TOKENS: '128000'
           GITHUB__USER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_REVIEWER__REQUIRE_SECURITY_REVIEW: 'true'
           PR_REVIEWER__REQUIRE_TESTS_REVIEW: 'false'
