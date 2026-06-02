@@ -311,7 +311,7 @@ LinkedIn 프로필 설정 → "Open to Work" 활성화:
 
 ### 절대 금지
 
-- ❌ 추정 수치 추가 ("월 200건 침해 시도 차단", "MTTR 30→12분") — Cloudflare는 실증 가능한 운영 사실을 더 신뢰
+- ❌ 추정 수치 추가 (검증 불가능한 건수·시간 지표) — Cloudflare는 실증 가능한 운영 사실을 더 신뢰
 - ❌ Buzzword 나열 ("synergy", "leverage", "best-in-class") — Cloudflare 채용은 구체성 우선
 - ❌ "Solutions Engineer 경험 8년" — 거짓. "운영 8년 + SE 직무 전환 의지"가 정직
 - ❌ AWS 경험 부풀리기 — "AWS SAA-C03 학습 중" 정직 표기
