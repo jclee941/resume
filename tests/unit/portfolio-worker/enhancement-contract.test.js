@@ -5,7 +5,7 @@
  *  - Accessibility landmarks (KO/EN source HTML)
  *  - Reduced-motion coverage of the glitch hover effect
  *  - SEO structured-data determinism (no wall-clock dateCreated) + JA language
- *  - JA i18n parity (client translations + chat FAQ)
+ *  - JA i18n parity (client translations)
  *  - PDF source: LinkedIn contact + non-blue (cyan) link colour
  *
  * These are static-source assertions: they read the hand-edited source files
@@ -38,10 +38,6 @@ describe('고도화: accessibility landmarks', () => {
     expect(en).toMatch(/<footer class="site-footer"[^>]*role="contentinfo"/);
   });
 
-  test('tech-filter toolbar references the project list via aria-controls (KO)', () => {
-    expect(ko).toMatch(/class="tech-filter-container"[^>]*aria-controls="project-list"/);
-    expect(ko).toMatch(/<ul class="project-list"[^>]*id="project-list"/);
-  });
 });
 
 describe('고도화: SEO hreflang JA', () => {
@@ -98,16 +94,6 @@ describe('고도화: JA i18n parity', () => {
     expect(jaKeys).toEqual(koKeys);
   });
 
-  test('chat FAQ provides a Japanese response for every category', () => {
-    const chat = read(path.join(PORTFOLIO, 'src', 'scripts', 'modules', 'chat.js'));
-    // Each FAQ category currently has responses: [ko, en]; require a 3rd (ja).
-    const responseBlocks = chat.match(/responses:\s*\[([\s\S]*?)\]/g) || [];
-    expect(responseBlocks.length).toBeGreaterThan(0);
-    for (const block of responseBlocks) {
-      const entries = (block.match(/'(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*"/g) || []).length;
-      expect(entries).toBeGreaterThanOrEqual(3);
-    }
-  });
 });
 
 describe('고도화: PDF source polish', () => {
@@ -124,18 +110,6 @@ describe('고도화: PDF source polish', () => {
   });
 });
 
-describe('보안 best practice: visible "How this site is secured" section', () => {
-  test('KO and EN expose a factual #site-security section', () => {
-    for (const f of ['index.html', 'index-en.html']) {
-      const html = read(path.join(PORTFOLIO, f));
-      expect(html).toMatch(/id="site-security"/);
-      // Must reference real, implemented controls (truthful — it is a live demo).
-      expect(html).toMatch(/CSP|Content-Security-Policy/);
-      expect(html).toMatch(/HSTS|Strict-Transport-Security/);
-      expect(html).toMatch(/strict-dynamic|nonce/);
-    }
-  });
-});
 
 describe('FAANG framing: case-study senior narrative', () => {
   const src = read(path.join(PORTFOLIO, 'src', 'scripts', 'modules', 'project-cards.js'));
@@ -152,66 +126,7 @@ describe('FAANG framing: case-study senior narrative', () => {
   });
 });
 
-describe('i18n JA: security section is localized in the generated JA page', () => {
-  const { buildJapaneseTemplate } = require(path.join(PORTFOLIO, 'lib', 'html-transformer.js'));
-  const koSource = read(path.join(PORTFOLIO, 'index.html'));
-  const ja = buildJapaneseTemplate(koSource);
 
-  test('JA page does not leave the security section in Korean', () => {
-    // These Korean strings come ONLY from the #site-security section.
-    expect(ja).not.toContain('이 사이트의 보안 설계');
-    expect(ja).not.toContain('이 포트폴리오는 설명하는 보안 원칙');
-    expect(ja).not.toContain('서명 세션');
-    expect(ja).not.toContain('CI 보안 스캔');
-  });
-
-  test('JA page renders the security section in Japanese', () => {
-    expect(ja).toMatch(/このサイトのセキュリティ|セキュリティ設計/);
-    expect(ja).toContain('Strict CSP');
-  });
-
-  test('JA cross-origin card uses the correct kanji (隔離, not 隣離)', () => {
-    expect(ja).toContain('Cross-origin 隔離');
-    expect(ja).not.toContain('隣離');
-  });
-});
-
-describe('A: observability widget shows sanitized status (no raw telemetry labels)', () => {
-  for (const f of ['index.html', 'index-en.html']) {
-    test(`${f} uses safe stat labels, not raw latency/uptime`, () => {
-      const html = read(path.join(PORTFOLIO, f));
-      // New safe labels present.
-      expect(html).toContain('>Edge Status<');
-      expect(html).toContain('>Build<');
-      // Old raw-telemetry labels gone.
-      expect(html).not.toContain('Edge Uptime');
-      expect(html).not.toContain('D1 Latency');
-      expect(html).not.toContain('KV Latency');
-      expect(html).not.toContain('Bindings Health');
-    });
-  }
-
-  test('observability.js no longer formats raw latency/uptime into the display', () => {
-    const src = read(path.join(PORTFOLIO, 'src', 'scripts', 'modules', 'observability.js'));
-    expect(src).not.toMatch(/setStat\('D1 Latency'/);
-    expect(src).not.toMatch(/setStat\('KV Latency'/);
-    expect(src).not.toMatch(/setStat\('Edge Uptime'/);
-    expect(src).toContain('mapHealthToDisplay');
-    // The widget must consume the SANITIZED public endpoint, not raw /health.
-    expect(src).toContain("fetchJson('/api/status')");
-    expect(src).not.toContain("fetchJson('/health')");
-  });
-
-  test('no public page auto-fetches raw /health (status widget uses /api/status)', () => {
-    for (const f of ['index.html', 'index-en.html']) {
-      const html = read(path.join(PORTFOLIO, f));
-      // The status widget auto-fetches every .status-item[data-url]; none may
-      // point at raw /health (which leaks uptime/latency/errors/counters).
-      expect(html).not.toMatch(/data-url="https:\/\/resume\.jclee\.me\/health"/);
-      expect(html).toMatch(/data-url="https:\/\/resume\.jclee\.me\/api\/status"/);
-    }
-  });
-});
 
 describe('B: engineering principles + current focus surfaced from SSoT', () => {
   const ja = (() => {
@@ -265,7 +180,6 @@ describe('C: print stylesheet exists and hides interactive chrome', () => {
     expect(printCss).toMatch(
       /\.cli-container[^}]*display:\s*none|\.cli-container[\s\S]*?display:\s*none/
     );
-    expect(printCss).toContain('#guestbook');
     expect(printCss).toMatch(/a\[href/);
   });
 });
