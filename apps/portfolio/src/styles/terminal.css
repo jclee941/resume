@@ -116,6 +116,18 @@
 .section-cmd__command {
   color: var(--cyber-cyan);
 }
+.section-cmd__story {
+  display: block;
+  margin-top: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  line-height: var(--leading-relaxed);
+}
+.section-cmd__story::before {
+  content: '# ';
+  color: var(--cyber-green);
+}
 /* ========================================
    TREE STRUCTURE (├── style)
    ======================================== */
