@@ -54,6 +54,7 @@ function injectPlaceholders(html, options) {
     .replace('<!-- PROFILE_BENTO_PLACEHOLDER -->', options.profileBentoHtml || '')
     .replace('<!-- ACHIEVEMENTS_PLACEHOLDER -->', options.achievementsHtml || '')
     .replace('<!-- EXPERTISE_PLACEHOLDER -->', options.expertiseHtml || '')
+    .replace('<!-- COVER_LETTER_PLACEHOLDER -->', options.coverLetterHtml || '')
     .replace(/<!-- BUILD_VERSION_PLACEHOLDER -->/g, options.buildVersion || '')
     .replace(/<!-- BUILD_DEPLOYED_AT_PLACEHOLDER -->/g, options.buildDeployedAt || '')
     .replace(
