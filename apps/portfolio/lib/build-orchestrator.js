@@ -68,7 +68,6 @@ async function runWorkerBuild({ baseDir, version, gitSha = 'unknown', allowedEma
     logger,
   });
   const resumeChatDataBase64Literal = `'${Buffer.from(JSON.stringify(projectData), 'utf-8').toString('base64')}'`;
-  const workerAiModel = '@cf/meta/llama-2-7b-chat-int8';
   // resume.pdf is served directly from the static assets binding (assets/resume.pdf),
   // so it is NOT inlined into worker.js (saves ~210KB of base64 in the bundle).
   const { ogImageBase64, ogImageEnBase64, ogImageJaBase64 } = encodeBinaryAssets({
@@ -222,8 +221,6 @@ async function runWorkerBuild({ baseDir, version, gitSha = 'unknown', allowedEma
     metrics,
     rateLimitConfig,
     allowedEmails,
-    resumeChatDataBase64: Buffer.from(JSON.stringify(projectData), 'utf-8').toString('base64'),
-    aiModel: workerAiModel,
     version,
   });
 

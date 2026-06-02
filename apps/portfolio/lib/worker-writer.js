@@ -23,7 +23,6 @@ const {
 const {
   generateAuthRoutes,
   generateControlRoutes,
-  generateChatRoute,
   generateCfStatsRoute,
   generateVitalsRoute,
   generateTrackRoute,
@@ -32,7 +31,6 @@ const {
   generateMetricsPostRoute,
   generateMetricsGetRoute,
   generateMetricsSnapshotRoute,
-  generateGuestbookRoute,
 } = require('./routes');
 
 /**
@@ -71,10 +69,6 @@ function buildWorkerCode(options) {
     generatePageRoutes() +
     generateAuthRoutes({ allowedEmailsJson: JSON.stringify(options.allowedEmails) }) +
     generateControlRoutes() +
-    generateChatRoute({
-      resumeChatDataBase64: options.resumeChatDataBase64,
-      aiModel: options.aiModel,
-    }) +
     generateCfStatsRoute() +
     generateStaticRoutes() +
     generateHealthRoute({
@@ -90,7 +84,6 @@ function buildWorkerCode(options) {
     generateMetricsPostRoute() +
     generateMetricsGetRoute() +
     generateMetricsSnapshotRoute() +
-    generateGuestbookRoute() +
     generateSeoRoutes() +
     generateFaviconRedirect() +
     generate404() +
