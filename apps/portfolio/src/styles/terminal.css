@@ -105,7 +105,7 @@
   color: var(--text-secondary);
   margin-bottom: var(--space-4);
   padding: var(--space-3) var(--space-4);
-  background: rgba(0, 240, 255, 0.02);
+  background: rgb(var(--cyber-cyan-rgb) / 0.02);
   border-left: 2px solid var(--cyber-green);
   border-radius: 0 4px 4px 0;
 }

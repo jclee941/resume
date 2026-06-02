@@ -77,8 +77,8 @@
   padding: 0 var(--space-2);
   font-size: 0.65rem;
   color: var(--cyber-cyan);
-  background: rgba(0, 240, 255, 0.08);
-  border: 1px solid rgba(0, 240, 255, 0.18);
+  background: rgb(var(--cyber-cyan-rgb) / 0.08);
+  border: 1px solid rgb(var(--cyber-cyan-rgb) / 0.18);
   border-radius: var(--radius-full, 9999px);
   font-weight: 500;
   letter-spacing: 0;
@@ -131,5 +131,5 @@
 }
 .skill-tag-glow:hover {
   box-shadow: var(--glow-cyan);
-  background: rgba(0, 240, 255, 0.1);
+  background: rgb(var(--cyber-cyan-rgb) / 0.1);
 }
