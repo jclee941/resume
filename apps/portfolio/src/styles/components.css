@@ -63,6 +63,41 @@
   padding-left: var(--space-4);
   border-left: 2px solid rgba(0, 212, 224, 0.2);
 }
+.operated-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-4);
+  list-style: none;
+  margin: var(--space-4) 0 0;
+  padding: 0;
+}
+.operated-card {
+  min-width: 0;
+  padding: var(--space-5);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glow-cyan-subtle);
+}
+.operated-card__title {
+  margin: 0 0 var(--space-3);
+  color: var(--cyber-cyan-bright);
+  font-family: var(--font-mono);
+  font-size: var(--text-base);
+  line-height: var(--leading-snug);
+}
+.operated-card__desc {
+  margin: 0;
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+}
+@media (max-width: 768px) {
+  .operated-grid {
+    grid-template-columns: 1fr;
+  }
+}
 /* ========================================
    BUTTONS
    ======================================== */

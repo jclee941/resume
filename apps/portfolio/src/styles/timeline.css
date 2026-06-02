@@ -272,40 +272,6 @@
 }
 
 /* ----------------------------------------
-   INCIDENT STAGES (Progress Icons)
-   ---------------------------------------- */
-.incident-stages {
-  display: flex;
-  gap: var(--space-3);
-  margin: var(--space-3) 0;
-  justify-content: flex-start;
-}
-
-.timeline-node:nth-child(odd) .incident-stages {
-  justify-content: flex-start;
-}
-
-@media (min-width: 768px) {
-  .timeline-node:nth-child(odd) .incident-stages {
-    justify-content: flex-end;
-  }
-}
-
-.incident-stage {
-  font-size: var(--text-lg);
-  opacity: 0.4;
-  transition: all 0.3s ease;
-  filter: grayscale(1);
-}
-
-.incident-stage--current,
-.timeline-node:hover .incident-stage {
-  opacity: 1;
-  filter: grayscale(0);
-  transform: scale(1.1);
-}
-
-/* ----------------------------------------
    TIMELINE IMPACT
    ---------------------------------------- */
 .timeline-impact {
@@ -511,8 +477,7 @@
   .timeline-card,
   .timeline-dot,
   .status-badge--active,
-  .expand-icon,
-  .incident-stage {
+  .expand-icon {
     animation: none !important;
     transition: none !important;
   }

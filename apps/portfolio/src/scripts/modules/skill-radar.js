@@ -1,6 +1,6 @@
 /**
  * Skill Radar Module
- * Interactive capability matrix with domain cards, skill proficiency bars, and evidence drawer
+ * Interactive capability matrix with domain cards, tier labels, and evidence drawer
  */
 
 // Escape HTML so build-time-injected SSoT skill data can never inject markup
@@ -156,9 +156,11 @@ function getLevelInfo(level) {
   return LEVELS.intermediate;
 }
 
-function getProficiencyLabel(level) {
+function getTierLabel(level) {
   const info = getLevelInfo(level);
-  return `${info.label} (${level}%)`;
+  if (info.label === 'Expert') return 'Core';
+  if (info.label === 'Advanced') return 'Strong working';
+  return 'Learning';
 }
 
 function createSkillRadar() {
@@ -193,13 +195,6 @@ function applyRadarStyles(root) {
       el.style.color = color;
     }
   });
-  root.querySelectorAll('.skill-item__bar[data-target-width]').forEach((bar) => {
-    const w = parseInt(bar.getAttribute('data-target-width'), 10);
-    const safeW = Number.isFinite(w) ? Math.min(Math.max(w, 0), 100) : 0;
-    bar.style.setProperty('--target-width', `${safeW}%`);
-    const barColor = bar.getAttribute('data-bar-color');
-    if (barColor) bar.style.setProperty('--bar-color', barColor);
-  });
 }
 
 function createDomainCard(domainKey, domain) {
@@ -224,9 +219,9 @@ function createDomainCard(domainKey, domain) {
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
       </div>
     </div>
-    <div class="skill-domain-card__level-indicator" data-level-color="${levelInfo.color}" aria-label="${getProficiencyLabel(domain.skills[0].level)}">
+    <div class="skill-domain-card__level-indicator" data-level-color="${levelInfo.color}" aria-label="${getTierLabel(domain.skills[0].level)}">
       <span class="skill-domain-card__level-dot"></span>
-      <span class="skill-domain-card__level-label">${getProficiencyLabel(domain.skills[0].level)}</span>
+      <span class="skill-domain-card__level-label">${getTierLabel(domain.skills[0].level)}</span>
     </div>
   `;
 
@@ -285,10 +280,7 @@ function createSkillItem(skill) {
     <li class="skill-item" data-skill="${escapeHtml(skill.name)}" data-level="${skill.level}">
       <div class="skill-item__header">
         <span class="skill-item__name">${escapeHtml(skill.name)}</span>
-        <span class="skill-item__level" data-level-color="${levelInfo.color}">${skill.level}%</span>
-      </div>
-      <div class="skill-item__bar-container" role="progressbar" aria-valuenow="${skill.level}" aria-valuemin="0" aria-valuemax="100" aria-label="${escapeHtml(skill.name)} proficiency">
-        <div class="skill-item__bar" data-target-width="${skill.level}" data-bar-color="${levelInfo.color}"></div>
+        <span class="skill-item__level" data-level-color="${levelInfo.color}">${getTierLabel(skill.level)}</span>
       </div>
     </li>
   `;
@@ -308,19 +300,7 @@ function toggleCard(card) {
     panel.hidden = false;
     expandIcon.style.transform = 'rotate(180deg)';
 
-    requestAnimationFrame(() => {
-      animateSkillBars(card);
-    });
   }
-}
-
-function animateSkillBars(card) {
-  const bars = card.querySelectorAll('.skill-item__bar');
-  bars.forEach((bar, index) => {
-    setTimeout(() => {
-      bar.classList.add('animate');
-    }, index * 100);
-  });
 }
 
 function filterSkills(searchTerm) {
@@ -389,31 +369,7 @@ function initSkillSearch() {
 }
 
 function initSkillRadarScrollAnimation() {
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (prefersReducedMotion) {
-    document.querySelectorAll('.skill-item__bar').forEach((bar) => {
-      bar.style.width = bar.style.getPropertyValue('--target-width');
-    });
-    return;
-  }
-
-  const grid = document.getElementById('skill-radar-grid');
-  if (!grid) return;
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const openCards = document.querySelectorAll('.skill-domain-card[aria-expanded="true"]');
-          openCards.forEach((card) => animateSkillBars(card));
-          observer.unobserve(entry.target);
-        }
-      });
-    },
-    { threshold: 0.2 }
-  );
-
-  observer.observe(grid);
+  return;
 }
 
 function initSkillRadar() {
