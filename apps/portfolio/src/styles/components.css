@@ -195,8 +195,8 @@
 @media (min-width: 1440px) {
   .terminal-window {
     box-shadow:
-      0 0 70px rgba(0, 240, 255, 0.22),
-      0 0 120px rgba(0, 240, 255, 0.12),
+      0 0 70px rgb(var(--cyber-cyan-rgb) / 0.22),
+      0 0 120px rgb(var(--cyber-cyan-rgb) / 0.12),
       0 32px 60px -16px rgba(0, 0, 0, 0.55),
       inset 0 1px 0 rgba(255, 255, 255, 0.06);
   }
