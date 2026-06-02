@@ -800,7 +800,7 @@
     {
       "icon": "🖥️",
       "title": "Proxmox VE",
-      "description": "가상화 플랫폼",
+      "description": "Synology DS215 NAS 호스트 / pve3 가상화 플랫폼",
       "status": "running"
     },
     {
@@ -826,7 +826,7 @@
     {
       "icon": "🗄️",
       "title": "Supabase",
-      "description": "BaaS (PostgreSQL + Auth)",
+      "description": "내부 BaaS (PostgreSQL + Auth)",
       "status": "running"
     },
     {
@@ -838,7 +838,7 @@
     {
       "icon": "🤖",
       "title": "MCP Server Hub",
-      "description": "AI 에이전트 도구 서버",
+      "description": "AI 에이전트 도구 서버 (CLIProxy API)",
       "status": "running"
     },
     {
@@ -850,9 +850,15 @@
     {
       "icon": "⚡",
       "title": "Cloudflare Workers",
-      "description": "Edge 런타임 / ~390KB 번들 / health-check 검증",
+      "description": "Edge 런타임 / 전역 배포 / health-check 검증",
       "status": "running",
       "url": "https://resume.jclee.me"
+    },
+    {
+      "icon": "🔀",
+      "title": "n8n",
+      "description": "워크플로 자동화 / 알림 파이프라인 (내부)",
+      "status": "running"
     },
     {
       "icon": "🏗️",
