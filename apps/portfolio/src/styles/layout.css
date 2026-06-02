@@ -123,6 +123,7 @@
 }
 
 .section-about,
+.section-cover-letter,
 .section-resume,
 .section-projects,
 .section-case-studies,
@@ -148,6 +149,9 @@
    reads with visual variety instead of one uniform cyan. */
 .section-about {
   --section-accent: var(--cyber-cyan);
+}
+.section-cover-letter {
+  --section-accent: var(--cyber-magenta);
 }
 .section-resume {
   --section-accent: var(--cyber-green);
