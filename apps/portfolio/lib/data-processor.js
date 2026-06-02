@@ -101,6 +101,14 @@ function processProjectData({ projectDataRaw, projectDataEnRaw, projectDataJaRaw
       `${dataHash}:ja-projects`
     ),
     certCardsHtml: generateCertificationCards(projectData.certifications, dataHash),
+    certCardsEnHtml: generateCertificationCards(
+      (projectDataEn && projectDataEn.certifications) || projectData.certifications,
+      `${dataHash}:en-certs`
+    ),
+    certCardsJaHtml: generateCertificationCards(
+      (projectDataJa && projectDataJa.certifications) || projectData.certifications,
+      `${dataHash}:ja-certs`
+    ),
     skillsHtml: generateSkillsList(projectData.skills, dataHash),
     skillsEnHtml: generateSkillsList(
       (projectDataEn && projectDataEn.skills) || projectData.skills,
