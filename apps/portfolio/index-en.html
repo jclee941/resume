@@ -522,10 +522,6 @@
                     <dd class="hero-kpi__value">5-Tier HA</dd>
                     <dt class="hero-kpi__label">FortiGate Segmentation</dt>
                   </div>
-                  <div class="hero-kpi">
-                    <dd class="hero-kpi__value">6 + CKS</dd>
-                    <dt class="hero-kpi__label">Certifications</dt>
-                  </div>
                 </dl>
                 <div
                   class="status-seeking"
@@ -535,10 +531,10 @@
                   <span class="status-seeking__label">Open to Work</span>
                   <span class="status-seeking__divider" aria-hidden="true">·</span>
                   <span class="status-seeking__availability">Available Immediately</span>
-                  <span class="status-seeking__divider" aria-hidden="true">·</span>
-                  <a href="#resume" class="status-seeking__cta">View Experience Evidence</a>
-                  <span class="status-seeking__divider" aria-hidden="true">·</span>
-                  <a href="mailto:qws941@kakao.com" class="status-seeking__cta">qws941@kakao.com</a>
+                </div>
+                <div class="hero-download" role="group" aria-label="Primary actions">
+                  <a href="#resume" class="link-subtle">View experience</a>
+                  <a href="mailto:qws941@kakao.com" class="link-subtle">Email</a>
                 </div>
               </div>
             </section>
@@ -653,24 +649,12 @@
                 <span class="section-cmd__story">Repetitive problems from the field were re-tested as personal projects and operational tools.</span>
               </div>
               <h2 id="projects-heading" class="sr-only">Projects</h2>
-              <ul class="project-list">
+              <ul class="project-list" id="project-list">
                 <!-- PROJECT_CARDS_PLACEHOLDER -->
               </ul>
             </section>
 
-            <section
-              id="case-studies"
-              class="section-case-studies reveal"
-              role="region"
-              aria-labelledby="case-studies-heading"
-            >
-              <h2 id="case-studies-heading" class="sr-only">Architecture Case Studies</h2>
-              <div class="section-cmd">
-                <span class="section-cmd__command">cat case-studies.md</span>
-                <span class="section-cmd__story">The focus was not a single feature, but structures that survive incidents, audits, and handover.</span>
-              </div>
-              <ul class="case-study-list"></ul>
-            </section>
+            
 
             <section
               id="skills"
@@ -726,236 +710,51 @@
               </div>
             </section>
 
-            <section
-              id="status"
-              class="section-status reveal"
-              role="region"
-              aria-labelledby="status-heading"
-            >
-              <h2 id="status-heading" class="sr-only">Status</h2>
-              <div class="section-cmd">
-                <span class="section-cmd__command">systemctl status services</span>
-                <span class="section-cmd__story">This portfolio is monitored as a running service, not treated as a static document.</span>
-              </div>
-              <div class="status-content">
-                <div class="status-header">
-                  <span class="status-indicator status-loading"></span>
-                  <span class="status-title">Service Status</span>
-                </div>
-                <ul class="status-list" id="status-list">
-                  <li class="status-item online" data-url="https://resume.jclee.me/api/status">
-                    <span class="status-dot"></span>
-                    <span class="status-name">☁️ Cloudflare Workers</span>
-                    <span class="status-state">operational</span>
-                  </li>
-                  <li class="status-item online" data-static="true">
-                    <span class="status-dot"></span>
-                    <span class="status-name">📊 Grafana + Prometheus + Loki</span>
-                    <span class="status-state">running</span>
-                  </li>
-                  <li class="status-item online" data-static="true">
-                    <span class="status-dot"></span>
-                    <span class="status-name">🖥️ Proxmox VE</span>
-                    <span class="status-state">running</span>
-                  </li>
-                  <li class="status-item online" data-static="true">
-                    <span class="status-dot"></span>
-                    <span class="status-name">🔍 ELK Stack</span>
-                    <span class="status-state">running</span>
-                  </li>
-                  <li class="status-item online" data-static="true">
-                    <span class="status-dot"></span>
-                    <span class="status-name">⚙️ Terraform IaC</span>
-                    <span class="status-state">running</span>
-                  </li>
-                </ul>
-              </div>
-            </section>
+            
 
-            <section
-              id="infrastructure"
-              class="section-infrastructure reveal"
-              role="region"
-              aria-labelledby="infrastructure-heading"
-            >
-              <h2 id="infrastructure-heading" class="sr-only">Infrastructure</h2>
-              <div class="section-cmd">
-                <span class="section-cmd__command"
-                  >docker ps --format "table
-                  &#123;&#123;.Names&#125;&#125;\t&#123;&#123;.Status&#125;&#125;"</span
-                >
-                <span class="section-cmd__story">The homelab is the operations lab where automation assumptions are validated first.</span>
-              </div>
-              <ul class="infra-grid">
-                <!-- INFRASTRUCTURE_CARDS_PLACEHOLDER -->
-              </ul>
-            </section>
+            
 
-            <section
-              id="site-security"
-              class="section-site-security reveal"
+            
+
+            
+
+                        <section
+              id="operated"
+              class="section-operated reveal"
               role="region"
-              aria-labelledby="site-security-heading"
+              aria-labelledby="operated-heading"
             >
-              <h2 id="site-security-heading" class="sr-only">How this site is secured</h2>
+              <h2 id="operated-heading" class="sr-only">How this site is operated</h2>
               <div class="section-cmd">
-                <span class="section-cmd__command"
-                  >curl -sI https://resume.jclee.me | grep -i security</span
-                >
-                <span class="section-cmd__story">The security principles described here are applied to this site's headers, sessions, and CI.</span>
+                <span class="section-cmd__command">cat operated.md</span>
+                <span class="section-cmd__story">This portfolio is a small operated system: headers, observability, and automation stay visible.</span>
               </div>
-              <p class="site-security__intro">
-                The items below are controls visible in deployed headers, Worker code, or CI
-                configuration.
-              </p>
-              <ul class="security-grid">
-                <li class="security-card">
-                  <span class="security-card__icon" aria-hidden="true">🔒</span>
-                  <h3 class="security-card__title">Strict CSP (nonce + strict-dynamic)</h3>
-                  <p class="security-card__desc">
-                    A fresh nonce per response plus strict-dynamic allows inline scripts with no
-                    unsafe-inline or unsafe-eval.
+              <ul class="operated-grid" aria-label="How the site is operated">
+                <li class="operated-card">
+                  <h3 class="operated-card__title">Edge runtime + security headers</h3>
+                  <p class="operated-card__desc">
+                    Served on Cloudflare Workers with CSP nonce strict-dynamic, HSTS,
+                    COOP/CORP, and frame-ancestors none applied at the response layer.
                   </p>
                 </li>
-                <li class="security-card">
-                  <span class="security-card__icon" aria-hidden="true">🛡️</span>
-                  <h3 class="security-card__title">HSTS preload-ready &amp; transport hardening</h3>
-                  <p class="security-card__desc">
-                    Strict-Transport-Security with preload, upgrade-insecure-requests,
-                    X-Content-Type-Options, X-Frame-Options DENY and frame-ancestors none.
+                <li class="operated-card">
+                  <h3 class="operated-card__title">Observability stack</h3>
+                  <p class="operated-card__desc">
+                    Grafana, Prometheus, Loki, and ELK keep logs and operational events
+                    reviewable through dashboards.
                   </p>
                 </li>
-                <li class="security-card">
-                  <span class="security-card__icon" aria-hidden="true">🧭</span>
-                  <h3 class="security-card__title">Cross-origin isolation, monitored</h3>
-                  <p class="security-card__desc">
-                    COOP and CORP are enforced; COEP and Trusted Types run report-only. The site
-                    embeds third-party analytics and an owned Grafana dashboard and needs no
-                    cross-origin-isolated APIs, so enforcing COEP would only break embeds.
-                  </p>
-                </li>
-                <li class="security-card">
-                  <span class="security-card__icon" aria-hidden="true">📝</span>
-                  <h3 class="security-card__title">Reporting &amp; security.txt</h3>
-                  <p class="security-card__desc">
-                    Violations are collected via Reporting-Endpoints and CSP report-to, and a RFC
-                    9116 /.well-known/security.txt publishes a disclosure contact.
-                  </p>
-                </li>
-                <li class="security-card">
-                  <span class="security-card__icon" aria-hidden="true">🚦</span>
-                  <h3 class="security-card__title">Signed sessions &amp; input defense</h3>
-                  <p class="security-card__desc">
-                    Admin sessions use HMAC-signed HttpOnly, SameSite=Strict, Secure cookies;
-                    guestbook and chat endpoints add rate limiting, input normalization and a
-                    honeypot.
-                  </p>
-                </li>
-                <li class="security-card">
-                  <span class="security-card__icon" aria-hidden="true">🔍</span>
-                  <h3 class="security-card__title">CI security scanning</h3>
-                  <p class="security-card__desc">
-                    CodeQL, gitleaks, OpenSSF Scorecard and Dependabot continuously review code,
-                    secrets and dependency risk; harden-runner constrains and monitors CI runner
-                    egress.
+                <li class="operated-card">
+                  <h3 class="operated-card__title">Automation + IaC</h3>
+                  <p class="operated-card__desc">
+                    n8n, MCP, Terraform, and GitHub Actions keep repeatable operations and
+                    deployment checks in code.
                   </p>
                 </li>
               </ul>
             </section>
 
-            <section
-              id="observability"
-              class="section-observability reveal"
-              role="region"
-              aria-labelledby="observability-heading"
-            >
-              <h2 id="observability-heading" class="sr-only">Observability</h2>
-              <div class="section-cmd">
-                <span class="section-cmd__command">kubectl get pods -n monitoring</span>
-                <span class="section-cmd__story">Operational evidence is left as metrics, logs, and dashboards, not intuition.</span>
-              </div>
-              <div class="observability-intro">
-                <p>
-                  Real-time infrastructure monitoring and log collection pipeline
-                  <a
-                    href="https://kibana.jclee.me/s/portfolio-demo/app/dashboards?auth_provider_hint=portfolio_demo#/view/demo-live-logs"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="btn--neon observability-btn"
-                  >
-                    <span class="btn-icon">📊</span> View Live Dashboard
-                  </a>
-                </p>
-              </div>
-              <ul class="stats-grid observability-stats">
-                <li class="stat-card observability-stat">
-                  <span class="stat-icon">💚</span>
-                  <span class="stat-value">--</span>
-                  <span class="stat-label">Edge Status</span>
-                </li>
-                <li class="stat-card observability-stat">
-                  <span class="stat-icon">🗄️</span>
-                  <span class="stat-value">--</span>
-                  <span class="stat-label">D1</span>
-                </li>
-                <li class="stat-card observability-stat">
-                  <span class="stat-icon">⚡</span>
-                  <span class="stat-value">--</span>
-                  <span class="stat-label">KV</span>
-                </li>
-                <li class="stat-card observability-stat">
-                  <span class="stat-icon">🟢</span>
-                  <span class="stat-value">--</span>
-                  <span class="stat-label">Build</span>
-                </li>
-              </ul>
-              <p class="observability-status" data-observability-status hidden>
-                <span class="observability-status__dot" aria-hidden="true"></span>
-                <span
-                  class="observability-status__text"
-                  data-observability-status-text
-                  role="status"
-                  aria-live="polite"
-                ></span>
-              </p>
-              <div class="observability-stack">
-                <div class="observability-stack__item">
-                  <span class="stack-icon">📊</span>
-                  <span class="stack-name">Grafana</span>
-                </div>
-                <div class="observability-stack__item">
-                  <span class="stack-icon">📈</span>
-                  <span class="stack-name">Prometheus</span>
-                </div>
-                <div class="observability-stack__item">
-                  <span class="stack-icon">📝</span>
-                  <span class="stack-name">Loki</span>
-                </div>
-                <div class="observability-stack__item">
-                  <span class="stack-icon">🔍</span>
-                  <span class="stack-name">ELK Stack</span>
-                </div>
-                <div class="observability-stack__item">
-                  <span class="stack-icon">🌐</span>
-                  <span class="stack-name">Cloudflare Workers</span>
-                </div>
-              </div>
-              <div class="observability-embed">
-                <div class="embed-header">
-                  <span class="embed-title">Live Dashboard</span>
-                  <a
-                    class="btn--neon embed-open"
-                    href="https://kibana.jclee.me/s/portfolio-demo/app/dashboards?auth_provider_hint=portfolio_demo#/view/demo-live-logs"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Open Live Dashboard ↗
-                  </a>
-                </div>
-              </div>
-            </section>
-
-            <section
+<section
               id="contact"
               class="section-contact reveal"
               role="region"
@@ -971,61 +770,7 @@
               </nav>
             </section>
 
-            <section
-              id="guestbook"
-              class="section-guestbook reveal"
-              role="region"
-              aria-labelledby="guestbook-heading"
-            >
-              <h2 id="guestbook-heading" class="sr-only">Guestbook</h2>
-              <div class="section-cmd">
-                <span class="section-cmd__command">cat guestbook.log</span>
-                <span class="section-cmd__story">Visitor traces are kept safely within input defense and logging flows.</span>
-              </div>
-              <form id="guestbook-form" class="guestbook-form" novalidate>
-                <div class="guestbook-field">
-                  <label for="guestbook-name">Name</label>
-                  <input
-                    type="text"
-                    id="guestbook-name"
-                    name="name"
-                    maxlength="40"
-                    required
-                    autocomplete="name"
-                    placeholder="Name"
-                  />
-                </div>
-                <div class="guestbook-field">
-                  <label for="guestbook-message">Message</label>
-                  <textarea
-                    id="guestbook-message"
-                    name="message"
-                    maxlength="500"
-                    rows="3"
-                    required
-                    placeholder="Leave a message"
-                  ></textarea>
-                </div>
-                <div class="guestbook-hp" aria-hidden="true">
-                  <label for="guestbook-website">Website</label>
-                  <input
-                    type="text"
-                    id="guestbook-website"
-                    name="website"
-                    tabindex="-1"
-                    autocomplete="off"
-                  />
-                </div>
-                <button type="submit" class="guestbook-submit">Sign</button>
-                <p
-                  id="guestbook-status"
-                  class="guestbook-status"
-                  role="status"
-                  aria-live="polite"
-                ></p>
-              </form>
-              <ul id="guestbook-list" class="guestbook-list" aria-label="Guestbook entries"></ul>
-            </section>
+            
           </main>
 
           <footer class="site-footer" role="contentinfo">
@@ -1097,63 +842,19 @@
         }
       })();
 
-      function formatCoverLetter(coverLetter, lang) {
-        var UNAVAILABLE = '> cover letter unavailable';
-        if (!coverLetter || typeof coverLetter !== 'object') return UNAVAILABLE;
-        var key = String(lang || 'ko')
-          .toLowerCase()
-          .split('-')[0];
-        function valid(entry) {
-          return (
-            !!entry &&
-            typeof entry === 'object' &&
-            typeof entry.headline === 'string' &&
-            entry.headline.length > 0 &&
-            Array.isArray(entry.paragraphs) &&
-            entry.paragraphs.length > 0 &&
-            typeof entry.closing === 'string'
-          );
-        }
-        var entry = null;
-        var candidates = [coverLetter[key], coverLetter.ko];
-        for (var i = 0; i < candidates.length && !entry; i++) {
-          if (valid(candidates[i])) entry = candidates[i];
-        }
-        if (!entry) {
-          var values = Object.keys(coverLetter).map(function (k) {
-            return coverLetter[k];
-          });
-          for (var j = 0; j < values.length && !entry; j++) {
-            if (valid(values[j])) entry = values[j];
-          }
-        }
-        if (!entry) return UNAVAILABLE;
-        var blocks = ['> ' + entry.headline];
-        entry.paragraphs.forEach(function (paragraph) {
-          if (typeof paragraph === 'string' && paragraph.length > 0) {
-            blocks.push(paragraph);
-          }
-        });
-        if (entry.closing.length > 0) blocks.push(entry.closing);
-        return blocks.join('\n\n');
-      }
-
       window.terminalCommands = {
         help: function () {
           return (
             '<div class="help-output">' +
-            'Available commands:\\n' +
-            '  <span class="cmd-name">about</span>      - Scroll to about\\n' +
-            '  <span class="cmd-name">resume</span>     - Scroll to experience\\n' +
-            '  <span class="cmd-name">projects</span>   - List personal projects\\n' +
-            '  <span class="cmd-name">social</span>     - Show social links\\n' +
-            '  <span class="cmd-name">download</span>   - Check resume PDF availability\\n' +
-            '  <span class="cmd-name">history</span>    - Show command history\\n' +
-            '  <span class="cmd-name">print</span>      - Open print dialog\\n' +
-            '  <span class="cmd-name">skills</span>     - Scroll to skills\\n' +
-            '  <span class="cmd-name">contact</span>    - Scroll to contact\\n' +
-            '  <span class="cmd-name">coverletter</span> - Read the cover letter (alias: cl)\\n' +
-            '  <span class="cmd-name">clear</span>      - Clear terminal' +
+            'Available commands:\n' +
+            '  <span class="cmd-name">help</span>     - List commands\n' +
+            '  <span class="cmd-name">whoami</span>   - Show role summary\n' +
+            '  <span class="cmd-name">resume</span>   - Scroll to experience\n' +
+            '  <span class="cmd-name">projects</span> - List projects\n' +
+            '  <span class="cmd-name">skills</span>   - Scroll to skills\n' +
+            '  <span class="cmd-name">contact</span>  - Contact information\n' +
+            '  <span class="cmd-name">download</span> - Open resume PDF\n' +
+            '  <span class="cmd-name">clear</span>    - Clear terminal' +
             '</div>'
           );
         },
@@ -1172,9 +873,8 @@
           return '';
         };
 
-        window.terminalCommands.about = function () {
-          document.getElementById('about').scrollIntoView({ behavior: 'smooth' });
-          return '> Scrolling to #about...';
+        window.terminalCommands.whoami = function () {
+          return 'jclee - Security Engineer';
         };
 
         window.terminalCommands.resume = function () {
@@ -1204,33 +904,9 @@
           return '> Scrolling to #contact...';
         };
 
-        window.terminalCommands.social = function () {
-          var links = Array.prototype.slice.call(
-            document.querySelectorAll('#contact a[href], .contact-links a[href]')
-          );
-          if (!links.length) return '> Social links are not available.';
-          return (
-            '> Social links:\\n' +
-            links
-              .slice(0, 6)
-              .map(function (a) {
-                return '- ' + a.textContent.trim() + ': ' + a.getAttribute('href');
-              })
-              .join('\\n')
-          );
-        };
-
-        window.terminalCommands.coverletter = function () {
-          var coverLetter = (window.__RESUME_CHAT_DATA__ || {}).coverLetter;
-          var lang = document.documentElement.getAttribute('lang') || 'en';
-          return formatCoverLetter(coverLetter, lang);
-        };
-
-        window.terminalCommands.cl = window.terminalCommands.coverletter;
-
         window.terminalCommands.download = function () {
           var pdfLink = document.querySelector(
-            '.hero-download a[download], .resume-download a[download]'
+            '.resume-download a[download], a[download]'
           );
           var url = pdfLink && pdfLink.getAttribute('href');
           if (!url || url.indexOf('<!--') !== -1) {
@@ -1238,22 +914,6 @@
           }
           window.open(url, '_blank', 'noopener,noreferrer');
           return '> Opening resume PDF in a new tab...';
-        };
-
-        window.terminalCommands.print = function () {
-          window.print();
-          return '> Print dialog opened.';
-        };
-
-        window.terminalCommands.history = function () {
-          if (!commandHistory.length) return '> No command history yet.';
-          var start = Math.max(commandHistory.length - 20, 0);
-          return commandHistory
-            .slice(start)
-            .map(function (item, idx) {
-              return String(start + idx + 1).padStart(2, '0') + '  ' + item;
-            })
-            .join('\\n');
         };
 
         function executeCommand(cmd) {
@@ -1330,48 +990,6 @@
       })();
     </script>
     <script>
-      (function () {
-        var statusList = document.getElementById('status-list');
-        var mainIndicator = document.querySelector('.status-indicator');
-        if (!statusList) return;
-        var items = statusList.querySelectorAll('.status-item');
-        var dynamicItems = statusList.querySelectorAll('.status-item[data-url]');
-        var pendingChecks = dynamicItems.length;
-        var allOnline = true;
-        function updateMainIndicator() {
-          pendingChecks--;
-          if (pendingChecks === 0 && mainIndicator) {
-            mainIndicator.classList.remove('status-loading');
-            mainIndicator.classList.add(allOnline ? 'status-ok' : 'status-error');
-          }
-        }
-        if (dynamicItems.length === 0 && mainIndicator) {
-          mainIndicator.classList.remove('status-loading');
-          mainIndicator.classList.add('status-ok');
-        }
-        dynamicItems.forEach(function (item) {
-          var url = item.getAttribute('data-url') || window.location.origin;
-          var stateEl = item.querySelector('.status-state');
-          var isSameOrigin = url.indexOf(window.location.origin) === 0;
-          fetch(url, { method: 'GET', mode: isSameOrigin ? 'same-origin' : 'no-cors' })
-            .then(function (response) {
-              if (response.type === 'opaque' || response.ok) {
-                item.classList.add('online');
-                stateEl.textContent = 'operational';
-              } else {
-                item.classList.add('offline');
-                stateEl.textContent = 'degraded (' + response.status + ')';
-                allOnline = false;
-              }
-            })
-            .catch(function () {
-              item.classList.add('offline');
-              stateEl.textContent = 'unreachable';
-              allOnline = false;
-            })
-            .finally(updateMainIndicator);
-        });
-      })();
     </script>
     <script>
       window.dataLayer = window.dataLayer || [];
