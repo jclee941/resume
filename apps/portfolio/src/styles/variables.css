@@ -16,6 +16,10 @@
   --cyber-cyan: #00d4e0;
   --cyber-magenta: #d946a8;
   --cyber-green: #00d97a;
+  --cyber-cyan-rgb: 0 212 224;
+  --cyber-magenta-rgb: 217 70 168;
+  --cyber-green-rgb: 0 217 122;
+  --bg-primary-rgb: 12 12 18;
 
   --text-primary: #e2e0dc;
   --text-secondary: #a1a1aa;
