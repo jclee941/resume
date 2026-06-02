@@ -4,12 +4,11 @@
  *
  * Features:
  * - Vertical timeline with incident response metaphor
- * - Phase badges: 구축 | 운영 | 자동화 | 안정화 | 기초
+ * - One compact phase badge per role
  * - Active/Completed status indicators
  * - Expandable role cards with impact metrics
  * - Keyboard navigation & accessibility
  *
- * Phase progression: detected → investigated → mitigated → improved
  */
 
 const TIMELINE_CONFIG = {
@@ -32,41 +31,26 @@ const TIMELINE_LABELS = {
   ko: {
     period: '근무 기간',
     phase: '단계',
-    incident: '인시던트 대응 단계',
     impact: '성과',
     detail: '상세 내용',
     expand: '상세 보기',
     collapse: '접기',
-    stageDetected: '탐지',
-    stageInvestigated: '분석',
-    stageMitigated: '대응',
-    stageImproved: '개선',
   },
   en: {
     period: 'Tenure',
     phase: 'Phase',
-    incident: 'Incident response stages',
     impact: 'Impact',
     detail: 'Details',
     expand: 'View details',
     collapse: 'Collapse',
-    stageDetected: 'Detect',
-    stageInvestigated: 'Analyze',
-    stageMitigated: 'Respond',
-    stageImproved: 'Improve',
   },
   ja: {
     period: '在籍期間',
     phase: 'フェーズ',
-    incident: 'インシデント対応ステージ',
     impact: '成果',
     detail: '詳細',
     expand: '詳細を見る',
     collapse: '閉じる',
-    stageDetected: '検知',
-    stageInvestigated: '分析',
-    stageMitigated: '対応',
-    stageImproved: '改善',
   },
 };
 
@@ -257,13 +241,6 @@ function createTimelineNode(career, index) {
           </h3>
           <p class="timeline-role">${career.role}</p>
           <p class="timeline-myrole">${career.myRole}</p>
-
-          <div class="incident-stages" aria-label="${L.incident}">
-            <span class="incident-stage" data-stage="detected" title="${L.stageDetected}">🔍</span>
-            <span class="incident-stage" data-stage="investigated" title="${L.stageInvestigated}">🔬</span>
-            <span class="incident-stage" data-stage="mitigated" title="${L.stageMitigated}">🛡️</span>
-            <span class="incident-stage ${isActive ? 'incident-stage--current' : ''}" data-stage="improved" title="${L.stageImproved}">✨</span>
-          </div>
 
           <div class="timeline-impact" aria-label="${L.impact}">
             <div class="impact-summary">

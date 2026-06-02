@@ -39,7 +39,7 @@
   color: var(--text-primary, #e2e0dc);
   background: var(--bg-secondary, #161625);
   border: 1px solid var(--border-primary, #2a2a3e);
-  border-radius: 6px;
+  border-radius: var(--radius-md, 8px);
   outline: none;
   transition:
     border-color 0.2s ease,
@@ -85,7 +85,7 @@
   position: relative;
   background: var(--bg-card, #181822);
   border: 1px solid var(--border-primary, #2a2a3e);
-  border-radius: 8px;
+  border-radius: var(--radius-md, 8px);
   padding: var(--space-4, 1rem);
   cursor: pointer;
   transition:
@@ -130,7 +130,7 @@
   color: var(--cyber-cyan, #00d4e0);
   background: rgba(0, 212, 224, 0.1);
   border: 1px solid rgba(0, 212, 224, 0.2);
-  border-radius: 8px;
+  border-radius: var(--radius-md, 8px);
 }
 
 .skill-domain-card__icon svg {
@@ -274,31 +274,6 @@
   font-weight: 600;
 }
 
-.skill-item__bar-container {
-  width: 100%;
-  height: 6px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.skill-item__bar {
-  height: 100%;
-  width: 0;
-  background: linear-gradient(
-    90deg,
-    var(--bar-color, var(--cyber-cyan)) 0%,
-    color-mix(in srgb, var(--bar-color, var(--cyber-cyan)) 80%, white 20%) 100%
-  );
-  border-radius: 3px;
-  transition: width 0.8s ease-out;
-  box-shadow: 0 0 10px var(--bar-color, var(--cyber-cyan));
-}
-
-.skill-item__bar.animate {
-  width: var(--target-width, 0%);
-}
-
 /* ----------------------------------------
    EVIDENCE DRAWER
    ---------------------------------------- */
@@ -385,14 +360,9 @@
    ---------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   .skill-domain-card,
-  .skill-panel,
-  .skill-item__bar {
+  .skill-panel {
     animation: none;
     transition: none;
-  }
-
-  .skill-item__bar {
-    width: var(--target-width, 0%);
   }
 
   .skill-domain-card__expand svg {
