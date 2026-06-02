@@ -1,5 +1,4 @@
 const { generateAuthRoutes, generateControlRoutes } = require('./auth');
-const { generateChatRoute } = require('./chat');
 const {
   generateMetricsPostRoute,
   generateMetricsGetRoute,
@@ -12,12 +11,10 @@ const {
   generateAnalyticsRoute,
   generateCspViolationRoute,
 } = require('./observability');
-const { generateGuestbookRoute } = require('./guestbook');
 
 module.exports = {
   generateAuthRoutes,
   generateControlRoutes,
-  generateChatRoute,
   generateCfStatsRoute,
   generateVitalsRoute,
   generateTrackRoute,
@@ -26,5 +23,4 @@ module.exports = {
   generateMetricsPostRoute,
   generateMetricsGetRoute,
   generateMetricsSnapshotRoute,
-  generateGuestbookRoute,
 };
