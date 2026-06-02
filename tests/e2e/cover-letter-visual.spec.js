@@ -92,12 +92,10 @@ test.describe('Cover Letter - visual section locale parity', () => {
   });
 });
 
-test.describe('Cover Letter - terminal CLI still works (regression)', () => {
-  test('S4: coverletter command still prints the KO headline', async ({ page }) => {
+test.describe('Cover Letter - section remains first-class', () => {
+  test('S4: coverletter command is removed while section still renders', async ({ page }) => {
     await safeGoto(page, '/');
-    const cliInput = page.locator('#terminal-input');
-    await cliInput.fill('coverletter');
-    await cliInput.press('Enter');
-    await expect(page.locator('#cli-output')).toContainText(coverLetter.ko.headline.slice(0, 12));
+    await expect(page.locator('#cover-letter .cover-letter-card')).toHaveCount(1);
+    await expect(page.locator('#cli-output')).not.toContainText(coverLetter.ko.headline.slice(0, 12));
   });
 });
