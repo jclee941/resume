@@ -119,6 +119,27 @@ test.describe('Declutter — consolidated operated section + regression', () => 
     expect(txt).toMatch(/レスポンスヘッダー|可観測性|デプロイ/);
   });
 
+  test('S6: /ja/ full page has no Korean leakage in visible copy', async ({ page }) => {
+    await go(page, '/ja/');
+    // Visible body text only — excludes <script> data blocks and code-fenced
+    // technology names; asserts no Hangul leaks into JA-rendered copy.
+    const koRuns = await page.evaluate(() => {
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+      const hits = [];
+      const hangul = /[\uac00-\ud7a3]{2,}/;
+      let n;
+      while ((n = walker.nextNode())) {
+        const p = n.parentElement;
+        if (!p) continue;
+        if (p.closest('script, style, code, pre, .terminal-cli, #cli-output')) continue;
+        const t = (n.textContent || '').trim();
+        if (hangul.test(t)) hits.push(t.slice(0, 60));
+      }
+      return hits;
+    });
+    expect(koRuns).toEqual([]);
+  });
+
   test('S7 (regression): cover-letter + project cards still render; no mobile overflow', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 812 });
     await go(page, '/');
