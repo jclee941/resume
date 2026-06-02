@@ -18,8 +18,9 @@ const TIMELINE_CONFIG = {
   activeClass: 'is-active',
 };
 
-// UI label i18n. Career DATA (role/description) stays Korean as the SSoT
-// canonical text; only the structural UI labels are localized by page lang.
+// UI label i18n. Career DATA (role/description) comes localized from the
+// per-locale data_*.json via window.__RESUME_CHAT_DATA__; these are the
+// structural UI labels localized by page lang.
 function timelineLang() {
   const l = (document.documentElement.lang || 'ko').toLowerCase();
   if (l.startsWith('en')) return 'en';
