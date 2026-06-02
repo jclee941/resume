@@ -35,6 +35,9 @@ const TIMELINE_LABELS = {
     detail: '상세 내용',
     expand: '상세 보기',
     collapse: '접기',
+    inProgress: '진행 중',
+    inProgressAria: '현재 진행 중',
+    phases: { 운영: '운영', 구축: '구축', 자동화: '자동화', 안정화: '안정화', 기초: '기초' },
   },
   en: {
     period: 'Tenure',
@@ -43,6 +46,9 @@ const TIMELINE_LABELS = {
     detail: 'Details',
     expand: 'View details',
     collapse: 'Collapse',
+    inProgress: 'In progress',
+    inProgressAria: 'Currently in progress',
+    phases: { 운영: 'Operate', 구축: 'Build', 자동화: 'Automate', 안정화: 'Stabilize', 기초: 'Foundation' },
   },
   ja: {
     period: '在籍期間',
@@ -51,6 +57,9 @@ const TIMELINE_LABELS = {
     detail: '詳細',
     expand: '詳細を見る',
     collapse: '閉じる',
+    inProgress: '進行中',
+    inProgressAria: '現在進行中',
+    phases: { 운영: '運用', 구축: '構築', 자동화: '自動化', 안정화: '安定化', 기초: '基礎' },
   },
 };
 
@@ -227,10 +236,10 @@ function createTimelineNode(career, index) {
             <time>${career.period}</time>
           </div>
           <div class="timeline-badges">
-            <span class="phase-badge phase-badge--${career.phase}" aria-label="${L.phase}: ${career.phase}">
-              ${phaseInfo.icon} ${career.phase}
+            <span class="phase-badge phase-badge--${career.phase}" aria-label="${L.phase}: ${(L.phases && L.phases[career.phase]) || career.phase}">
+              ${phaseInfo.icon} ${(L.phases && L.phases[career.phase]) || career.phase}
             </span>
-            ${isActive ? '<span class="status-badge status-badge--active" aria-label="현재 진행 중">진행 중</span>' : ''}
+            ${isActive ? `<span class="status-badge status-badge--active" aria-label="${L.inProgressAria}">${L.inProgress}</span>` : ''}
           </div>
         </header>
 
