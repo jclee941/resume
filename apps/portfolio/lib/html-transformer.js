@@ -169,11 +169,11 @@ function buildJapaneseTemplate(html) {
       )
       // === JA hero positioning / tagline / KPI grid ===
       .replace(
-        /<p class="hero-positioning">8년차 보안·SRE 엔지니어 — 금융권 보안 인프라 설계·운영<\/p>/g,
+        /<p class="hero-positioning">\s*8년차 보안·SRE 엔지니어 — 금융권 보안 인프라 설계·운영\s*<\/p>/g,
         '<p class="hero-positioning">8年目のセキュリティ・SREエンジニア — 金融業界セキュリティインフラの設計・運用</p>'
       )
       .replace(
-        /<p class="hero-tagline">FSC 본인가 통과 · SIEM 탐지·대응 자동화 · IaC 기반 관측성 · 이 사이트도 직접 빌드·배포<\/p>/g,
+        /<p class="hero-tagline">\s*FSC 본인가 통과 · SIEM 탐지·대응 자동화 · IaC 기반 관측성 · 이 사이트도 직접\s*빌드해 Cloudflare에 배포\s*<\/p>/g,
         '<p class="hero-tagline">FSC本認可審査対応 · SIEM検知・対応の自動化 · IaCベースの可観測性 · このサイトも自作・自前デプロイ</p>'
       )
       .replace(/aria-label="핵심 성과 지표"/g, 'aria-label="主要な実績指標"')
@@ -216,9 +216,14 @@ function buildJapaneseTemplate(html) {
         /<span class="status-seeking__availability">즉시 투입 가능<\/span>/g,
         '<span class="status-seeking__availability">即時入社可能</span>'
       )
+      .replace(/aria-label="주요 이동"/g, 'aria-label="主なナビゲーション"')
       .replace(
-        /<a href="#resume" class="status-seeking__cta">경력 근거 보기<\/a>/g,
-        '<a href="#resume" class="status-seeking__cta">経歴を見る</a>'
+        /<a href="#resume" class="link-subtle">경력 보기<\/a>/g,
+        '<a href="#resume" class="link-subtle">経歴を見る</a>'
+      )
+      .replace(
+        /<a href="mailto:qws941@kakao\.com" class="link-subtle">이메일<\/a>/g,
+        '<a href="mailto:qws941@kakao.com" class="link-subtle">メール</a>'
       )
       // === PDF / Contact CTA ===
       .replace(/aria-label="채용 문의 옵션"/g, 'aria-label="採用お問い合わせオプション"')
@@ -229,6 +234,48 @@ function buildJapaneseTemplate(html) {
       .replace(/>채용·면접 문의하기</g, '>採用・面接お問い合わせ<')
       // === Skip link ===
       .replace(/>바로 본문으로 이동</g, '>メインコンテンツへスキップ<')
+      // === JA JSON-LD jobTitle + address ===
+      .replace(
+        /"jobTitle": "Security Engineer \/ SRE \(보안·SRE 엔지니어\)"/g,
+        '"jobTitle": "Security Engineer / SRE (セキュリティ・SREエンジニア)"'
+      )
+      .replace(/"addressRegion": "경기도"/g, '"addressRegion": "京畿道"')
+      .replace(/"addressLocality": "시흥시"/g, '"addressLocality": "帋興市"')
+      // === JA nav + region aria-labels ===
+      .replace(/aria-label="~\/jclee 홈으로 이동"/g, 'aria-label="~/jclee ホームへ移動"')
+      .replace(/aria-label="언어 선택 \/ Language"/g, 'aria-label="言語選択 / Language"')
+      .replace(/aria-label="기술 역량 카드"/g, 'aria-label="スキルカード"')
+      .replace(/aria-label="연락처 및 소셜 링크"/g, 'aria-label="連絡先・ソーシャルリンク"')
+      // === JA cover-letter sr-only heading ===
+      .replace(
+        /<h2 id="cover-letter-heading" class="sr-only">커버레터<\/h2>/g,
+        '<h2 id="cover-letter-heading" class="sr-only">カバーレター</h2>'
+      )
+      // === JA section-cmd storytelling intros ===
+      .replace(
+        /<span class="section-cmd__story">수작업을 줄이는 방식으로 보안 운영을 배워 온 엔지니어입니다\.<\/span>/g,
+        '<span class="section-cmd__story">手作業を減らす方法でセキュリティ運用を学んできたエンジニアです。</span>'
+      )
+      .replace(
+        /<span class="section-cmd__story">폐쇄망 운영에서 금융권 보안 운영까지, 같은 질문은 반복되었습니다: 무엇을 자동화할 수 있는가\.<\/span>/g,
+        '<span class="section-cmd__story">閉鎖網運用から金融業界のセキュリティ運用まで、同じ問いが繰り返されました：何を自動化できるか。</span>'
+      )
+      .replace(
+        /<span class="section-cmd__story">Linux 기반을 다시 다진 뒤, 보안·네트워크·컨테이너 보안으로 학습 축을 확장했습니다\.<\/span>/g,
+        '<span class="section-cmd__story">Linuxの基礎を再構築した後、セキュリティ・ネットワーク・コンテナセキュリティへと学習軸を拡張しました。</span>'
+      )
+      .replace(
+        /<span class="section-cmd__story">현장에서 만난 반복 문제를 개인 프로젝트와 운영 도구로 다시 검증했습니다\.<\/span>/g,
+        '<span class="section-cmd__story">現場で出会った繰り返しの問題を、個人プロジェクトや運用ツールで検証し直しました。</span>'
+      )
+      .replace(
+        /<span class="section-cmd__story">기술 스택은 목적지가 아니라, 운영 문제를 자동화하기 위해 선택한 도구 목록입니다\.<\/span>/g,
+        '<span class="section-cmd__story">技術スタックは目的地ではなく、運用課題を自動化するために選んだツールのリストです。</span>'
+      )
+      .replace(
+        /<span class="section-cmd__story">다음 문제도 운영 문제에서 출발해 자동화 가능한 구조로 바꾸고 싶습니다\.<\/span>/g,
+        '<span class="section-cmd__story">次の問題も運用課題から出発し、自動化できる構造へと変えていきたいです。</span>'
+      )
       // === sr-only section headings ===
       .replace(
         /<h2 id="about-heading" class="sr-only">소개<\/h2>/g,
