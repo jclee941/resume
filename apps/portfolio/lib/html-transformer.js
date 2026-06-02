@@ -239,16 +239,26 @@ function buildJapaneseTemplate(html) {
         '<h2 id="skills-heading" class="sr-only">スキル</h2>'
       )
       .replace(
-        /<h2 id="infrastructure-heading" class="sr-only">인프라<\/h2>/g,
-        '<h2 id="infrastructure-heading" class="sr-only">インフラ</h2>'
+        /<h2 id="operated-heading" class="sr-only">이 사이트는 이렇게 운영됩니다<\/h2>/g,
+        '<h2 id="operated-heading" class="sr-only">このサイトの運用方法</h2>'
+      )
+      .replace(/cat operated\.md/g, 'cat operated.md')
+      .replace(/이 포트폴리오는 정적 문서가 아니라 보안 헤더, 관측, 자동화로 관리되는 작은 운영 시스템입니다\./g, 'このポートフォリオは、セキュリティヘッダー・可観測性・自動化で管理される小さな運用システムです。')
+      .replace(/Edge 런타임 \+ 보안 헤더/g, 'Edgeランタイム + セキュリティヘッダー')
+      .replace(/관측성 스택/g, '可観測性スタック')
+      .replace(/자동화·IaC/g, '自動化・IaC')
+      .replace(/aria-label="사이트 운영 방식"/g, 'aria-label="サイト運用方法"')
+      .replace(
+        /Cloudflare Workers에서 제공하며 CSP nonce·strict-dynamic, HSTS,\s+COOP\/CORP, frame-ancestors none을 응답 헤더로 적용합니다\./g,
+        'Cloudflare WorkersでCSP nonce・strict-dynamic、HSTS、COOP/CORP、frame-ancestors noneをレスポンスヘッダーとして適用します。'
       )
       .replace(
-        /<h2 id="status-heading" class="sr-only">상태<\/h2>/g,
-        '<h2 id="status-heading" class="sr-only">ステータス</h2>'
+        /Grafana, Prometheus, Loki, ELK로 로그와 운영 이벤트를 확인하고\s+대시보드 기반으로 상태를 검토합니다\./g,
+        'Grafana・Prometheus・Loki・ELKでログと運用イベントを確認し、ダッシュボードで状態を確認します。'
       )
       .replace(
-        /<h2 id="observability-heading" class="sr-only">옵저버빌리티<\/h2>/g,
-        '<h2 id="observability-heading" class="sr-only">オブザーバビリティ</h2>'
+        /n8n, MCP, Terraform, GitHub Actions를 통해 반복 운영 절차와 배포 검증을\s+코드로 관리합니다\./g,
+        'n8n・MCP・Terraform・GitHub Actionsで反復的な運用手順とデプロイ検証をコードとして管理します。'
       )
       .replace(
         /<h2 id="resume-heading" class="sr-only">경력사항<\/h2>/g,
@@ -259,10 +269,6 @@ function buildJapaneseTemplate(html) {
         '<h2 id="projects-heading" class="sr-only">主要プロジェクト</h2>'
       )
       .replace(
-        /<h2 id="case-studies-heading" class="sr-only">주요 아키텍처 케이스 스터디<\/h2>/g,
-        '<h2 id="case-studies-heading" class="sr-only">アーキテクチャケーススタディ</h2>'
-      )
-      .replace(
         /<h2 id="contact-heading" class="sr-only">연락처<\/h2>/g,
         '<h2 id="contact-heading" class="sr-only">連絡先</h2>'
       )
@@ -270,27 +276,11 @@ function buildJapaneseTemplate(html) {
         /<h2 id="contact-section-heading" class="sr-only">연락처<\/h2>/g,
         '<h2 id="contact-section-heading" class="sr-only">連絡先</h2>'
       )
-      // === Certifications + Guestbook + profile sr-only headings & labels ===
+      // === Certifications + profile sr-only headings & labels ===
       .replace(
         /<h2 id="certifications-heading" class="sr-only">자격증<\/h2>/g,
         '<h2 id="certifications-heading" class="sr-only">資格</h2>'
       )
-      .replace(
-        /<h2 id="guestbook-heading" class="sr-only">방명록<\/h2>/g,
-        '<h2 id="guestbook-heading" class="sr-only">ゲストブック</h2>'
-      )
-      .replace(/<label for="guestbook-name"[^>]*>이름<\/label>/g, (mm) =>
-        mm.replace('이름', 'お名前')
-      )
-      .replace(/<label for="guestbook-message"[^>]*>메시지<\/label>/g, (mm) =>
-        mm.replace('메시지', 'メッセージ')
-      )
-      .replace(/<button type="submit" class="guestbook-submit"[^>]*>남기기<\/button>/g, (mm) =>
-        mm.replace('남기기', '投稿')
-      )
-      .replace(/placeholder="이름"/g, 'placeholder="お名前"')
-      .replace(/placeholder="메시지를 남겨주세요"/g, 'placeholder="メッセージを残してください"')
-      .replace(/aria-label="방명록 목록"/g, 'aria-label="ゲストブック一覧"')
       .replace(
         /"name": "Security\/Infrastructure Engineer — 구직 중"/g,
         '"name": "Security / Infrastructure Engineer — 求職中"'
@@ -320,12 +310,6 @@ function buildJapaneseTemplate(html) {
       .replace(
         /<a href="\/ja\/" hreflang="ja" class="lang-link" lang="ja">JA<\/a>/g,
         '<a href="/ja/" hreflang="ja" aria-current="true" class="lang-link lang-link--active" lang="ja">JA</a>'
-      )
-      .replace(/aria-label="언어 선택 \/ Language"/g, 'aria-label="言語"')
-      // === Site security section (#site-security) KO -> JA ===
-      .replace(
-        /<h2 id="site-security-heading" class="sr-only">이 사이트의 보안 설계<\/h2>/g,
-        '<h2 id="site-security-heading" class="sr-only">このサイトのセキュリティ設計</h2>'
       )
       .replace(
         /이 포트폴리오는 설명하는 보안 원칙을 사이트 자체에 적용했습니다\. 아래 항목은 배포된\s+응답 헤더·워커 코드·CI 설정에서 실제로 동작하는 통제입니다\./g,
