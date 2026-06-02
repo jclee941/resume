@@ -698,7 +698,7 @@
       "name": "Terraform Homelab IaC",
       "period": "2024.06 ~ 현재",
       "githubUrl": "https://github.com/jclee941/terraform",
-      "description": "홈랩 인프라(Proxmox, Cloudflare DNS/Workers, K8s)를 GUI로 관리하다 보니 변경 이력 추적과 재구축이 어려웠습니다. Proxmox VM/LXC, Cloudflare DNS·Workers·WAF, k3s bootstrap 리소스를 Terraform module로 관리하고, PR마다 plan 검증을 수행했습니다. 12회 재구축과 48회 PR 검증을 통해 GUI 변경을 줄이고, 인프라 변경 이력을 Git 기준으로 추적하도록 전환했습니다.",
+      "description": "홈랩 인프라(Proxmox, Cloudflare DNS/Workers, K8s)를 GUI로 관리하다 보니 변경 이력 추적과 재구축이 어려웠습니다. Proxmox VM/LXC, Cloudflare DNS·Workers·WAF, k3s bootstrap 리소스를 Terraform module로 관리하고, PR마다 plan 검증을 수행했습니다. GUI 변경을 줄이고, 인프라 변경 이력을 Git 기준으로 추적하도록 전환했습니다.",
       "highlights": [
         "GUI 관리의 추적성 한계를 해결하기 위한 IaC 전환",
         "DNS·Edge 설정의 일관성 확보를 위한 코드화 관리",
@@ -792,7 +792,7 @@
     "Splunk ES dest_port 기반 탐지 룰, n8n 알림, FortiManager JSON-RPC API 정책 조회를 하나의 보안 이벤트 인지·분류·알림 흐름으로 연결해 콘솔 수동 조작을 API 조회 절차로 전환했습니다.",
     "Prometheus node_exporter로 Proxmox VM/CT 메트릭을 수집하고, Grafana Dashboard JSON 전량을 코드(Grafana-as-code)로 관리해 단일 화면 가시화를 IaC로 재현 가능하게 했습니다.",
     "Slack·GitHub Actions·Cloudflare 훅을 공통 자동화 워크플로우로 추상화하고, 에러 핸들링·재시도를 표준화해 신규 자동화 추가 시 설정만으로 배포 가능하도록 만들었습니다.",
-    "대규모 컨택센터 원격 근무 전환 과정에서 NAC 예외 요청·단말 등록·현장 점검 3개 절차를 Ansible 플레이북과 재사용 가능한 운영 체크리스트로 표준화했습니다.",
+    "대규모 컨택센터 원격 근무 전환 과정에서 NAC 예외 요청·단말 등록·현장 점검 절차를 Ansible 플레이북과 재사용 가능한 운영 체크리스트로 표준화했습니다.",
     "FortiGate SSL-VPN 환경에서 엔드포인트 보호 에이전트와 VPN 클라이언트 프로파일 충돌을 tcpdump로 root cause 분석해 FortiClient 프로파일 분리 정책으로 해결하고, 신규 사이트 VLAN 서브넷팅을 설계·적용했습니다.",
     "KAI 폐쇄망 Linux 서버 방화벽 정책에서 미사용 중복 규칙을 firewall-cmd 파싱으로 식별·정리해 방화벽 정책 셋을 정비했습니다."
   ],

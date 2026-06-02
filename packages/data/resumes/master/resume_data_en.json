@@ -821,7 +821,7 @@
     {
       "icon": "⚡",
       "title": "Cloudflare Workers",
-      "description": "Edge runtime / ~390KB bundle / health-check verified",
+      "description": "Edge runtime / global deployment / health-check verified",
       "status": "running",
       "url": "https://resume.jclee.me"
     },
