@@ -254,133 +254,34 @@
         color: var(--text-muted);
         margin-left: 1rem;
       }
-      .hack-mode-overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 255, 136, 0.1);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        z-index: 9999;
-        animation: hackFlash 0.1s ease-in-out 5;
-      }
-      .hack-text {
-        font-size: 3rem;
-        font-family: monospace;
-        color: #00ff88;
-        text-shadow: 0 0 20px #00ff88;
-        animation: glitchText 0.3s infinite;
-      }
-      .hack-sub {
-        color: #0ff;
-        font-family: monospace;
-        margin-top: 1rem;
-      }
-      .snake-game-overlay {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: #000;
-        border: 2px solid #0f0;
-        padding: 10px;
-        z-index: 9999;
-        font-family: monospace;
-      }
-      .snake-scoreboard {
-        color: #0f0;
-        font-size: 12px;
-        margin-top: 5px;
-      }
-      .neofetch-output {
-        color: #00ff88;
-        line-height: 1.3;
-      }
-      .nf-logo {
-        color: #0ff;
-      }
-      .nf-label {
-        color: #ff0088;
-      }
-      .nf-colors {
-        color: #f00;
-      }
-      .nf-colors.c2 {
-        color: #ff0;
-      }
-      .nf-colors.c3 {
-        color: #0f0;
-      }
-      .nf-colors.c4 {
-        color: #0ff;
-      }
-      .nf-colors.c5 {
-        color: #00f;
-      }
-      .nf-colors.c6 {
-        color: #f0f;
-      }
-      .nf-colors.c7 {
-        color: #fff;
-      }
-      .sudo-output {
-        color: #00ff88;
-      }
-      .sudo-success {
-        color: #0f0;
-        font-weight: bold;
-        margin: 0.5rem 0;
-      }
-      .sudo-msg {
-        color: #0ff;
-        margin-left: 1rem;
-      }
-      .rm-output {
-        color: #ff8800;
-      }
-      .rm-success {
-        color: #00ff88;
-        font-weight: bold;
-      }
-      .rm-hint {
-        color: #666;
-      }
-      .coffee-art {
-        color: #c4a000;
-      }
-      .coffee-msg,
-      .matrix-msg {
-        color: #00ff88;
-      }
       .help-output,
       .cli-result {
         white-space: pre-wrap;
       }
       .cmd-name,
       .cli-cmd {
-        color: #0ff;
+        color: var(--cyber-cyan);
       }
       .help-hint,
       .cli-input::placeholder {
-        color: #444;
+        color: var(--text-muted);
       }
       .cli-container {
         position: fixed;
         bottom: 0;
         left: 0;
         right: 0;
-        background: rgba(12, 12, 18, 0.95);
-        border-top: 1px solid #00ff88;
+        background: rgb(var(--bg-primary-rgb) / 0.95);
+        border-top: 1px solid var(--border-primary);
         padding: 1rem;
-        font-family: monospace;
+        font-family: var(--font-mono);
         z-index: 1000;
         max-height: 20vh;
         overflow-y: auto;
       }
       .cli-output {
         margin-bottom: 0.5rem;
-        color: #00ff88;
+        color: var(--cyber-green);
         font-size: 0.9rem;
         max-height: 30vh;
         overflow-y: auto;
@@ -390,7 +291,7 @@
         align-items: center;
       }
       .cli-prompt {
-        color: #00ff88;
+        color: var(--cyber-green);
         margin-right: 0.5rem;
         flex-shrink: 0;
       }
@@ -398,43 +299,14 @@
         flex: 1;
         background: transparent;
         border: none;
-        color: #0ff;
-        font-family: monospace;
+        color: var(--cyber-cyan);
+        font-family: var(--font-mono);
         font-size: 1rem;
         outline: none;
-        caret-color: #0ff;
+        caret-color: var(--cyber-cyan);
       }
       .cli-entry {
         margin-bottom: 0.5rem;
-      }
-      @keyframes hackFlash {
-        0%,
-        100% {
-          opacity: 1;
-        }
-        50% {
-          opacity: 0.5;
-        }
-      }
-      @keyframes glitchText {
-        0% {
-          transform: translate(0);
-        }
-        20% {
-          transform: translate(-2px, 2px);
-        }
-        40% {
-          transform: translate(2px, -2px);
-        }
-        60% {
-          transform: translate(-2px, -2px);
-        }
-        80% {
-          transform: translate(2px, 2px);
-        }
-        100% {
-          transform: translate(0);
-        }
       }
       .hero--terminal {
         text-align: left;
@@ -472,42 +344,6 @@
       .no-transition,
       .no-transition * {
         transition: none !important;
-      }
-      /* Tech Stack Filter */
-      .tech-filter-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        margin-bottom: 1.5rem;
-        justify-content: center;
-      }
-
-      .tech-filter-btn {
-        background: var(--card-bg, #fff);
-        color: var(--text-color, #333);
-        border: 1px solid var(--border-color, #ddd);
-        padding: 0.4rem 1rem;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        font-family: inherit;
-      }
-
-      .tech-filter-btn:hover {
-        background: var(--cyber-cyan, #0ff);
-        color: #000;
-        border-color: var(--cyber-cyan, #0ff);
-      }
-
-      .tech-filter-btn.active {
-        background: var(--cyber-cyan, #0ff);
-        color: #000;
-        border-color: var(--cyber-cyan, #0ff);
-      }
-
-      .project-card.filtered-out {
-        display: none;
       }
 
       .project-card {
@@ -913,19 +749,15 @@
                     <dd class="hero-kpi__value">5계층 HA</dd>
                     <dt class="hero-kpi__label">FortiGate 망분리 설계</dt>
                   </div>
-                  <div class="hero-kpi">
-                    <dd class="hero-kpi__value">6 + CKS</dd>
-                    <dt class="hero-kpi__label">보유·취득예정 자격증</dt>
-                  </div>
                 </dl>
                 <div class="status-seeking" role="status" aria-label="구직 중 · 즉시 투입 가능">
                   <span class="status-seeking__label">구직 중</span>
                   <span class="status-seeking__divider" aria-hidden="true">·</span>
                   <span class="status-seeking__availability">즉시 투입 가능</span>
-                  <span class="status-seeking__divider" aria-hidden="true">·</span>
-                  <a href="#resume" class="status-seeking__cta">경력 근거 보기</a>
-                  <span class="status-seeking__divider" aria-hidden="true">·</span>
-                  <a href="mailto:qws941@kakao.com" class="status-seeking__cta">qws941@kakao.com</a>
+                </div>
+                <div class="hero-download" role="group" aria-label="주요 이동">
+                  <a href="#resume" class="link-subtle">경력 보기</a>
+                  <a href="mailto:qws941@kakao.com" class="link-subtle">이메일</a>
                 </div>
               </div>
             </section>
@@ -1043,31 +875,9 @@
                 <span class="section-cmd__command">ls -la ~/projects/</span>
                 <span class="section-cmd__story">현장에서 만난 반복 문제를 개인 프로젝트와 운영 도구로 다시 검증했습니다.</span>
               </div>
-              <div
-                class="tech-filter-container"
-                role="toolbar"
-                aria-label="Filter by technology"
-                aria-controls="project-list"
-              >
-                <button class="tech-filter-btn active" data-filter="all">All</button>
-              </div>
               <ul class="project-list" id="project-list">
                 <!-- PROJECT_CARDS_PLACEHOLDER -->
               </ul>
-            </section>
-
-            <section
-              id="case-studies"
-              class="section-case-studies reveal"
-              role="region"
-              aria-labelledby="case-studies-heading"
-            >
-              <h2 id="case-studies-heading" class="sr-only">주요 아키텍처 케이스 스터디</h2>
-              <div class="section-cmd">
-                <span class="section-cmd__command">cat case-studies.md</span>
-                <span class="section-cmd__story">단일 기능보다 중요한 것은 장애, 감사, 인계까지 버티는 구조였습니다.</span>
-              </div>
-              <ul class="case-study-list"></ul>
             </section>
 
             <section
@@ -1125,229 +935,39 @@
             </section>
 
             <section
-              id="status"
-              class="section-status reveal"
+              id="operated"
+              class="section-operated reveal"
               role="region"
-              aria-labelledby="status-heading"
+              aria-labelledby="operated-heading"
             >
-              <h2 id="status-heading" class="sr-only">상태</h2>
+              <h2 id="operated-heading" class="sr-only">이 사이트는 이렇게 운영됩니다</h2>
               <div class="section-cmd">
-                <span class="section-cmd__command">systemctl status services</span>
-                <span class="section-cmd__story">포트폴리오도 문서가 아니라 운영 중인 서비스로 감시합니다.</span>
+                <span class="section-cmd__command">cat operated.md</span>
+                <span class="section-cmd__story">이 포트폴리오는 정적 문서가 아니라 보안 헤더, 관측, 자동화로 관리되는 작은 운영 시스템입니다.</span>
               </div>
-              <div class="status-content">
-                <div class="status-header">
-                  <span class="status-indicator status-loading"></span>
-                  <span class="status-title">Service Status</span>
-                </div>
-                <ul class="status-list" id="status-list">
-                  <li class="status-item online" data-url="https://resume.jclee.me/api/status">
-                    <span class="status-dot"></span>
-                    <span class="status-name">☁️ Cloudflare Workers</span>
-                    <span class="status-state">operational</span>
-                  </li>
-                  <li class="status-item online" data-static="true">
-                    <span class="status-dot"></span>
-                    <span class="status-name">📊 Grafana + Prometheus + Loki</span>
-                    <span class="status-state">running</span>
-                  </li>
-                  <li class="status-item online" data-static="true">
-                    <span class="status-dot"></span>
-                    <span class="status-name">🖥️ Proxmox VE</span>
-                    <span class="status-state">running</span>
-                  </li>
-                  <li class="status-item online" data-static="true">
-                    <span class="status-dot"></span>
-                    <span class="status-name">🔍 ELK Stack</span>
-                    <span class="status-state">running</span>
-                  </li>
-                  <li class="status-item online" data-static="true">
-                    <span class="status-dot"></span>
-                    <span class="status-name">⚙️ Terraform IaC</span>
-                    <span class="status-state">running</span>
-                  </li>
-                </ul>
-              </div>
-            </section>
-
-            <section
-              id="infrastructure"
-              class="section-infrastructure reveal"
-              role="region"
-              aria-labelledby="infrastructure-heading"
-            >
-              <h2 id="infrastructure-heading" class="sr-only">인프라</h2>
-              <div class="section-cmd">
-                <span class="section-cmd__command"
-                  >docker ps --format "table
-                  &#123;&#123;.Names&#125;&#125;\t&#123;&#123;.Status&#125;&#125;"</span
-                >
-                <span class="section-cmd__story">홈랩은 자동화 가설을 먼저 검증하는 운영 실험실입니다.</span>
-              </div>
-              <ul class="infra-grid">
-                <!-- INFRASTRUCTURE_CARDS_PLACEHOLDER -->
-              </ul>
-            </section>
-
-            <section
-              id="site-security"
-              class="section-site-security reveal"
-              role="region"
-              aria-labelledby="site-security-heading"
-            >
-              <h2 id="site-security-heading" class="sr-only">이 사이트의 보안 설계</h2>
-              <div class="section-cmd">
-                <span class="section-cmd__command"
-                  >curl -sI https://resume.jclee.me | grep -i security</span
-                >
-                <span class="section-cmd__story">말로 설명한 보안 원칙은 이 사이트의 헤더, 세션, CI에도 적용했습니다.</span>
-              </div>
-              <p class="site-security__intro">
-                아래 항목은 배포된 응답 헤더·워커 코드·CI 설정에서 확인 가능한 통제입니다.
-              </p>
-              <ul class="security-grid">
-                <li class="security-card">
-                  <span class="security-card__icon" aria-hidden="true">🔒</span>
-                  <h3 class="security-card__title">Strict CSP (nonce + strict-dynamic)</h3>
-                  <p class="security-card__desc">
-                    응답마다 nonce를 발급하고 strict-dynamic를 사용해 unsafe-inline·unsafe-eval 없이
-                    인라인 스크립트를 허용합니다.
+              <ul class="operated-grid" aria-label="사이트 운영 방식">
+                <li class="operated-card">
+                  <h3 class="operated-card__title">Edge 런타임 + 보안 헤더</h3>
+                  <p class="operated-card__desc">
+                    Cloudflare Workers에서 제공하며 CSP nonce·strict-dynamic, HSTS,
+                    COOP/CORP, frame-ancestors none을 응답 헤더로 적용합니다.
                   </p>
                 </li>
-                <li class="security-card">
-                  <span class="security-card__icon" aria-hidden="true">🛡️</span>
-                  <h3 class="security-card__title">HSTS preload-ready · 전송 강제</h3>
-                  <p class="security-card__desc">
-                    Strict-Transport-Security와 upgrade-insecure-requests로 HTTPS를 강제하고,
-                    X-Content-Type-Options·X-Frame-Options DENY·frame-ancestors none을 적용합니다.
+                <li class="operated-card">
+                  <h3 class="operated-card__title">관측성 스택</h3>
+                  <p class="operated-card__desc">
+                    Grafana, Prometheus, Loki, ELK로 로그와 운영 이벤트를 확인하고
+                    대시보드 기반으로 상태를 검토합니다.
                   </p>
                 </li>
-                <li class="security-card">
-                  <span class="security-card__icon" aria-hidden="true">🧭</span>
-                  <h3 class="security-card__title">Cross-origin 격리 · 모니터링</h3>
-                  <p class="security-card__desc">
-                    COOP·CORP를 강제하고, COEP·Trusted Types는 report-only로 운영합니다. 3rd-party
-                    분석·Grafana 임베드가 있고 cross-origin-isolated API가 필요 없어 강제는
-                    보류했습니다.
-                  </p>
-                </li>
-                <li class="security-card">
-                  <span class="security-card__icon" aria-hidden="true">📝</span>
-                  <h3 class="security-card__title">Reporting · security.txt</h3>
-                  <p class="security-card__desc">
-                    Reporting-Endpoints와 CSP report-to로 위반을 수집하고, RFC 9116
-                    /.well-known/security.txt로 취약점 제보 창구를 공개합니다.
-                  </p>
-                </li>
-                <li class="security-card">
-                  <span class="security-card__icon" aria-hidden="true">🚦</span>
-                  <h3 class="security-card__title">서명 세션 · 입력 방어</h3>
-                  <p class="security-card__desc">
-                    관리자 세션은 HMAC 서명 + HttpOnly·SameSite=Strict·Secure 쿠키를 쓰고,
-                    게스트북·챗 API는 레이트 제한·입력 정규화·하니팟으로 보호합니다.
-                  </p>
-                </li>
-                <li class="security-card">
-                  <span class="security-card__icon" aria-hidden="true">🔍</span>
-                  <h3 class="security-card__title">CI 보안 스캔</h3>
-                  <p class="security-card__desc">
-                    CodeQL·gitleaks·OpenSSF Scorecard·Dependabot으로 코드·시크릿·의존성 위험을
-                    지속스캔하고, harden-runner로 CI 런너의 egress를 제한·감시합니다.
+                <li class="operated-card">
+                  <h3 class="operated-card__title">자동화·IaC</h3>
+                  <p class="operated-card__desc">
+                    n8n, MCP, Terraform, GitHub Actions를 통해 반복 운영 절차와 배포 검증을
+                    코드로 관리합니다.
                   </p>
                 </li>
               </ul>
-            </section>
-
-            <section
-              id="observability"
-              class="section-observability reveal"
-              role="region"
-              aria-labelledby="observability-heading"
-            >
-              <h2 id="observability-heading" class="sr-only">옵저버빌리티</h2>
-              <div class="section-cmd">
-                <span class="section-cmd__command">kubectl get pods -n monitoring</span>
-                <span class="section-cmd__story">운영 근거는 감이 아니라 메트릭, 로그, 대시보드로 남깁니다.</span>
-              </div>
-              <div class="observability-intro">
-                <p>
-                  실시간 인프라 모니터링 및 로그 수집 파이프라인
-                  <a
-                    href="https://kibana.jclee.me/s/portfolio-demo/app/dashboards?auth_provider_hint=portfolio_demo#/view/demo-live-logs"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="btn--neon observability-btn"
-                  >
-                    <span class="btn-icon">📊</span> View Live Dashboard
-                  </a>
-                </p>
-              </div>
-              <ul class="stats-grid observability-stats">
-                <li class="stat-card observability-stat">
-                  <span class="stat-icon">💚</span>
-                  <span class="stat-value">--</span>
-                  <span class="stat-label">Edge Status</span>
-                </li>
-                <li class="stat-card observability-stat">
-                  <span class="stat-icon">🗄️</span>
-                  <span class="stat-value">--</span>
-                  <span class="stat-label">D1</span>
-                </li>
-                <li class="stat-card observability-stat">
-                  <span class="stat-icon">⚡</span>
-                  <span class="stat-value">--</span>
-                  <span class="stat-label">KV</span>
-                </li>
-                <li class="stat-card observability-stat">
-                  <span class="stat-icon">🟢</span>
-                  <span class="stat-value">--</span>
-                  <span class="stat-label">Build</span>
-                </li>
-              </ul>
-              <p class="observability-status" data-observability-status hidden>
-                <span class="observability-status__dot" aria-hidden="true"></span>
-                <span
-                  class="observability-status__text"
-                  data-observability-status-text
-                  role="status"
-                  aria-live="polite"
-                ></span>
-              </p>
-              <div class="observability-stack">
-                <div class="observability-stack__item">
-                  <span class="stack-icon">📊</span>
-                  <span class="stack-name">Grafana</span>
-                </div>
-                <div class="observability-stack__item">
-                  <span class="stack-icon">📈</span>
-                  <span class="stack-name">Prometheus</span>
-                </div>
-                <div class="observability-stack__item">
-                  <span class="stack-icon">📝</span>
-                  <span class="stack-name">Loki</span>
-                </div>
-                <div class="observability-stack__item">
-                  <span class="stack-icon">🔍</span>
-                  <span class="stack-name">ELK Stack</span>
-                </div>
-                <div class="observability-stack__item">
-                  <span class="stack-icon">🌐</span>
-                  <span class="stack-name">Cloudflare Workers</span>
-                </div>
-              </div>
-              <div class="observability-embed">
-                <div class="embed-header">
-                  <span class="embed-title">Live Dashboard</span>
-                  <a
-                    class="btn--neon embed-open"
-                    href="https://kibana.jclee.me/s/portfolio-demo/app/dashboards?auth_provider_hint=portfolio_demo#/view/demo-live-logs"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Open Live Dashboard ↗
-                  </a>
-                </div>
-              </div>
             </section>
 
             <section
@@ -1366,66 +986,6 @@
               </nav>
             </section>
 
-            <section
-              id="guestbook"
-              class="section-guestbook reveal"
-              role="region"
-              aria-labelledby="guestbook-heading"
-            >
-              <h2 id="guestbook-heading" class="sr-only">방명록</h2>
-              <div class="section-cmd">
-                <span class="section-cmd__command">cat guestbook.log</span>
-                <span class="section-cmd__story">방문자의 흔적도 입력 방어와 로그 흐름 안에서 안전하게 남깁니다.</span>
-              </div>
-              <form id="guestbook-form" class="guestbook-form" novalidate>
-                <div class="guestbook-field">
-                  <label for="guestbook-name" data-i18n="guestbook.nameLabel">이름</label>
-                  <input
-                    type="text"
-                    id="guestbook-name"
-                    name="name"
-                    maxlength="40"
-                    required
-                    autocomplete="name"
-                    data-i18n-placeholder="guestbook.namePlaceholder"
-                    placeholder="이름"
-                  />
-                </div>
-                <div class="guestbook-field">
-                  <label for="guestbook-message" data-i18n="guestbook.messageLabel">메시지</label>
-                  <textarea
-                    id="guestbook-message"
-                    name="message"
-                    maxlength="500"
-                    rows="3"
-                    required
-                    data-i18n-placeholder="guestbook.messagePlaceholder"
-                    placeholder="메시지를 남겨주세요"
-                  ></textarea>
-                </div>
-                <!-- Honeypot: hidden from humans, bots fill it. aria-hidden + off-screen. -->
-                <div class="guestbook-hp" aria-hidden="true">
-                  <label for="guestbook-website">Website</label>
-                  <input
-                    type="text"
-                    id="guestbook-website"
-                    name="website"
-                    tabindex="-1"
-                    autocomplete="off"
-                  />
-                </div>
-                <button type="submit" class="guestbook-submit" data-i18n="guestbook.submit">
-                  남기기
-                </button>
-                <p
-                  id="guestbook-status"
-                  class="guestbook-status"
-                  role="status"
-                  aria-live="polite"
-                ></p>
-              </form>
-              <ul id="guestbook-list" class="guestbook-list" aria-label="방명록 목록"></ul>
-            </section>
           </main>
 
           <footer class="site-footer" role="contentinfo">
@@ -1493,12 +1053,6 @@
 
       // Scroll reveal + section_view analytics are owned by src/scripts/modules/ui.js
 
-      // ========================================
-      // PHASE 1: Easter Eggs & Interactive Features
-      // ========================================
-
-      // Konami easter egg is owned by src/scripts/modules/konami.js (initKonami)
-
       // Interactive Terminal Commands (preparation for Phase 2)
       window.__RESUME_CHAT_DATA__ = (function () {
         try {
@@ -1540,407 +1094,25 @@
         return div.innerHTML;
       }
 
-      function normalizeText(value) {
-        return String(value || '')
-          .toLowerCase()
-          .replace(/[^a-z0-9가-힣\s]/g, ' ')
-          .replace(/\s+/g, ' ')
-          .trim();
-      }
-
       function toList(value) {
         return Array.isArray(value) ? value : [];
       }
 
-      function formatCoverLetter(coverLetter, lang) {
-        var UNAVAILABLE = '> cover letter unavailable';
-        if (!coverLetter || typeof coverLetter !== 'object') return UNAVAILABLE;
-        var key = String(lang || 'ko')
-          .toLowerCase()
-          .split('-')[0];
-        function valid(entry) {
-          return (
-            !!entry &&
-            typeof entry === 'object' &&
-            typeof entry.headline === 'string' &&
-            entry.headline.length > 0 &&
-            Array.isArray(entry.paragraphs) &&
-            entry.paragraphs.length > 0 &&
-            typeof entry.closing === 'string'
-          );
-        }
-        var entry = null;
-        var candidates = [coverLetter[key], coverLetter.ko];
-        for (var i = 0; i < candidates.length && !entry; i++) {
-          if (valid(candidates[i])) entry = candidates[i];
-        }
-        if (!entry) {
-          var values = Object.keys(coverLetter).map(function (k) {
-            return coverLetter[k];
-          });
-          for (var j = 0; j < values.length && !entry; j++) {
-            if (valid(values[j])) entry = values[j];
-          }
-        }
-        if (!entry) return UNAVAILABLE;
-        var blocks = ['> ' + entry.headline];
-        entry.paragraphs.forEach(function (paragraph) {
-          if (typeof paragraph === 'string' && paragraph.length > 0) {
-            blocks.push(paragraph);
-          }
-        });
-        if (entry.closing.length > 0) blocks.push(entry.closing);
-        return blocks.join('\n\n');
-      }
-
-      function getSkillItems(skills) {
-        if (!skills || typeof skills !== 'object') return [];
-        return Object.values(skills).flatMap(function (category) {
-          return toList(category && category.items).map(function (item) {
-            return {
-              name: item.name,
-              level: item.level,
-              category: category.title,
-            };
-          });
-        });
-      }
-
-      function findChatIntent(question) {
-        var q = normalizeText(question);
-        var intents = [
-          {
-            name: 'contact',
-            keywords: ['contact', 'email', 'phone', 'github', '연락', '이메일', '전화'],
-          },
-          {
-            name: 'skills',
-            keywords: ['skill', 'stack', 'tech', '기술', '스킬', '역량', 'tool'],
-          },
-          {
-            name: 'projects',
-            keywords: ['project', 'portfolio', '사이드', '프로젝트'],
-          },
-          {
-            name: 'certifications',
-            keywords: ['certificate', 'cert', '자격증', '인증'],
-          },
-          {
-            name: 'experience',
-            keywords: ['experience', 'career', 'work', '경력', '경험', '회사', '업무'],
-          },
-        ];
-
-        var best = { name: 'experience', score: 0 };
-        intents.forEach(function (intent) {
-          var score = intent.keywords.reduce(function (acc, keyword) {
-            return acc + (q.indexOf(keyword) !== -1 ? 1 : 0);
-          }, 0);
-          if (score > best.score) {
-            best = { name: intent.name, score: score };
-          }
-        });
-
-        return best.score > 0 ? best.name : 'fallback';
-      }
-
-      function buildLocalChatResponse(question) {
-        var data = window.__RESUME_CHAT_DATA__ || {};
-        var intent = findChatIntent(question);
-        var experiences = toList(data.resume);
-        var projects = toList(data.projects);
-        var certifications = toList(data.certifications);
-        var skills = getSkillItems(data.skills);
-        var contact = data.contact || {};
-
-        if (intent === 'experience' && experiences.length > 0) {
-          const topExperience = experiences.slice(0, 3).map(function (item) {
-            return item.title + ' (' + item.period + ')';
-          });
-          return (
-            'Top experience:\n- ' +
-            escapeHtml(topExperience.join('\n- ')) +
-            '\n\nCurrent focus: ' +
-            escapeHtml(
-              (data.hero && data.hero.subtitle) || 'Security infrastructure and observability'
-            )
-          );
-        }
-
-        if (intent === 'skills' && skills.length > 0) {
-          const topSkills = skills
-            .slice(0, 10)
-            .map(function (item) {
-              return item.name + (item.level ? ' (' + item.level + ')' : '');
-            })
-            .join(', ');
-          return 'Key skills: ' + escapeHtml(topSkills);
-        }
-
-        if (intent === 'projects' && projects.length > 0) {
-          const topProjects = projects.slice(0, 3).map(function (item) {
-            return item.title + ': ' + item.description;
-          });
-          return 'Featured projects:\n- ' + escapeHtml(topProjects.join('\n- '));
-        }
-
-        if (intent === 'certifications' && certifications.length > 0) {
-          const activeCerts = certifications
-            .filter(function (cert) {
-              return cert.status === 'active';
-            })
-            .map(function (cert) {
-              return cert.name;
-            });
-          const certLine = activeCerts.length > 0 ? activeCerts.join(', ') : certifications[0].name;
-          return 'Certifications: ' + escapeHtml(certLine);
-        }
-
-        if (intent === 'contact' && contact.email) {
-          return (
-            'Contact info:\n' +
-            'Email: ' +
-            escapeHtml(contact.email) +
-            '\nPhone: ' +
-            escapeHtml(contact.phone || 'N/A') +
-            '\nGitHub: ' +
-            escapeHtml(contact.github || 'N/A')
-          );
-        }
-
-        return 'I can tell you about my experience, skills, projects, certifications, or contact info';
-      }
-
       window.terminalCommands = {
-        neofetch: function () {
-          return (
-            '<pre class="neofetch-output">' +
-            '<span class="nf-logo">       ██╗ ██████╗██╗     ███████╗███████╗\\n' +
-            '       ██║██╔════╝██║     ██╔════╝██╔════╝\\n' +
-            '       ██║██║     ██║     █████╗  █████╗  \\n' +
-            '  ██   ██║██║     ██║     ██╔══╝  ██╔══╝  \\n' +
-            '  ╚█████╔╝╚██████╗███████╗███████╗███████╗\\n' +
-            '   ╚════╝  ╚═════╝╚══════╝╚══════╝╚══════╝</span>\\n' +
-            '  ─────────────────────────────────────────\\n' +
-            '  <span class="nf-label">Role:</span> Security Engineer\n' +
-            '  <span class="nf-label">Focus:</span> Security · Observability · IaC\\n' +
-            '  <span class="nf-label">Domain:</span> Finance · Public Sector · Cloud\\n' +
-            '  <span class="nf-label">Stack:</span> Splunk · Terraform · Prometheus\\n' +
-            '  ─────────────────────────────────────────\\n' +
-            '  <span class="nf-colors">███</span><span class="nf-colors c2">███</span><span class="nf-colors c3">███</span><span class="nf-colors c4">███</span><span class="nf-colors c5">███</span><span class="nf-colors c6">███</span><span class="nf-colors c7">███</span>\\n' +
-            '</pre>'
-          );
-        },
-
-        'sudo hire-me': function () {
-          return (
-            '<div class="sudo-output">' +
-            '<div>[sudo] password for recruiter: ********</div>' +
-            '<div class="sudo-success">✓ Access granted</div>' +
-            '<div class="sudo-msg">→ Resume downloading...</div>' +
-            '<div class="sudo-msg">→ Contact: qws941@kakao.com</div>' +
-            '<div class="sudo-msg">→ Ready for new challenges!</div>' +
-            '</div>'
-          );
-        },
-
-        'rm -rf doubt': function () {
-          return (
-            '<div class="rm-output">' +
-            "rm: removing 'doubt/impostor-syndrome'...<br>" +
-            "rm: removing 'doubt/fear-of-failure'...<br>" +
-            "rm: removing 'doubt/perfectionism'...<br>" +
-            '<span class="rm-success">✓ All doubts successfully removed.</span><br>' +
-            '<span class="rm-hint">// Done.</span>' +
-            '</div>'
-          );
-        },
-
-        coffee: function () {
-          return (
-            '<pre class="coffee-art">' +
-            '        ( (\n' +
-            '         ) )\n' +
-            '      ........\n' +
-            '      |      |]\n' +
-            '      \\      /\n' +
-            "       `----'\n" +
-            '  <span class="coffee-msg">Brewing productivity...</span>\n' +
-            '</pre>'
-          );
-        },
-
-        matrix: function () {
-          return '<span class="matrix-msg">// Matrix background retired from this build</span>';
-        },
-
-        chat: async function (question) {
-          var userQuestion = sanitizeCommandInput(question).trim();
-          if (!userQuestion) {
-            return (
-              'Chat mode enabled. Ask resume-related questions and press Enter.\n' +
-              'Type "exit" to leave chat mode.\n' +
-              'Example: tell me about your security experience'
-            );
-          }
-
-          try {
-            const response = await fetch('/api/chat', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ question: userQuestion }),
-            });
-
-            if (response.ok) {
-              const payload = await response.json();
-              if (payload && payload.answer) {
-                return escapeHtml(payload.answer);
-              }
-            }
-          } catch (chatError) {
-            if (typeof gtag === 'function') {
-              gtag('event', 'chat_api_error', {
-                event_category: 'error',
-                error_message: String(
-                  chatError && chatError.message ? chatError.message : chatError
-                ),
-              });
-            }
-          }
-
-          return buildLocalChatResponse(userQuestion);
-        },
-
-        ai: async function (question) {
-          return window.terminalCommands.chat(question);
-        },
-
         help: function () {
           return (
             '<div class="help-output">' +
-            'Available commands:\\n' +
-            '  <span class="cmd-name">about</span>      - Show profile summary\\n' +
-            '  <span class="cmd-name">resume</span>     - View career experience\\n' +
-            '  <span class="cmd-name">projects</span>   - List side projects\\n' +
-            '  <span class="cmd-name">social</span>     - Show social links\\n' +
-            '  <span class="cmd-name">download</span>   - Check resume PDF availability\\n' +
-            '  <span class="cmd-name">history</span>    - Show command history\\n' +
-            '  <span class="cmd-name">print</span>      - Open print dialog\\n' +
-            '  <span class="cmd-name">skills</span>     - Show tech stack\\n' +
-            '  <span class="cmd-name">chat</span>       - Enter interactive resume chat mode\\n' +
-            '  <span class="cmd-name">ai</span>         - Alias for chat command\\n' +
-            '  <span class="cmd-name">contact</span>    - Contact information\\n' +
-            '  <span class="cmd-name">coverletter</span> - Read the cover letter (alias: cl)\\n' +
-            '  <span class="cmd-name">theme</span>      - Switch terminal theme\\n' +
-            '  <span class="cmd-name">clear</span>      - Clear terminal' +
+            'Available commands:\n' +
+            '  <span class="cmd-name">help</span>     - List commands\n' +
+            '  <span class="cmd-name">whoami</span>   - Show role summary\n' +
+            '  <span class="cmd-name">resume</span>   - Scroll to experience\n' +
+            '  <span class="cmd-name">projects</span> - List projects\n' +
+            '  <span class="cmd-name">skills</span>   - Scroll to skills\n' +
+            '  <span class="cmd-name">contact</span>  - Contact information\n' +
+            '  <span class="cmd-name">download</span> - Open resume PDF\n' +
+            '  <span class="cmd-name">clear</span>    - Clear terminal' +
             '</div>'
           );
-        },
-
-        theme: function (arg) {
-          var root = document.documentElement;
-          var themes = {
-            dark: { bg: '#0c0c12', text: '#00ff88', accent: '#0ff' },
-            light: { bg: '#f0f0f0', text: '#006644', accent: '#0088cc' },
-            hacker: { bg: '#000', text: '#0f0', accent: '#0f0' },
-          };
-          var name = arg || 'hacker';
-          var t = themes[name];
-          if (!t) return 'Unknown theme. Available: dark, light, hacker';
-          root.style.setProperty('--bg-base', t.bg);
-          root.style.setProperty('--cyber-green', t.text);
-          root.style.setProperty('--cyber-cyan', t.accent);
-          return 'Theme switched to ' + name;
-        },
-
-        snake: function () {
-          if (document.getElementById('snake-game')) return 'Snake is already running!';
-          var gameDiv = document.createElement('div');
-          gameDiv.id = 'snake-game';
-          gameDiv.className = 'snake-game-overlay';
-          gameDiv.innerHTML =
-            '<canvas id="snake-canvas" width="200" height="200"></canvas><div class="snake-scoreboard">Score: <span id="snake-score">0</span> | WASD to move | Q to quit</div>';
-          document.body.appendChild(gameDiv);
-
-          var canvas = document.getElementById('snake-canvas');
-          var ctx = canvas.getContext('2d');
-          var size = 10;
-          var snake = [{ x: 100, y: 100 }];
-          var food = { x: 50, y: 50 };
-          var dir = { x: size, y: 0 };
-          var score = 0;
-          var gameLoop;
-
-          function draw() {
-            ctx.fillStyle = '#000';
-            ctx.fillRect(0, 0, 200, 200);
-            ctx.fillStyle = '#0f0';
-            snake.forEach(function (s) {
-              ctx.fillRect(s.x, s.y, size - 1, size - 1);
-            });
-            ctx.fillStyle = '#f00';
-            ctx.fillRect(food.x, food.y, size - 1, size - 1);
-          }
-
-          function update() {
-            const head = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
-            if (head.x < 0 || head.x >= 200 || head.y < 0 || head.y >= 200) return endGame();
-            for (let i = 0; i < snake.length; i++) {
-              if (snake[i].x === head.x && snake[i].y === head.y) return endGame();
-            }
-            snake.unshift(head);
-            if (head.x === food.x && head.y === food.y) {
-              score++;
-              document.getElementById('snake-score').textContent = score;
-              food = {
-                x: Math.floor(Math.random() * 20) * size,
-                y: Math.floor(Math.random() * 20) * size,
-              };
-            } else {
-              snake.pop();
-            }
-            draw();
-          }
-
-          function endGame() {
-            clearInterval(gameLoop);
-            document.removeEventListener('keydown', handleKey);
-            ctx.fillStyle = '#0f0';
-            ctx.font = '14px monospace';
-            ctx.fillText('GAME OVER', 60, 100);
-            ctx.fillText('Score: ' + score, 70, 120);
-            setTimeout(function () {
-              gameDiv.remove();
-            }, 2000);
-          }
-
-          function handleKey(e) {
-            if (e.key === 'q' || e.key === 'Q') {
-              clearInterval(gameLoop);
-              gameDiv.remove();
-              document.removeEventListener('keydown', handleKey);
-              return;
-            }
-            var dirs = {
-              ArrowUp: [0, -1],
-              ArrowDown: [0, 1],
-              ArrowLeft: [-1, 0],
-              ArrowRight: [1, 0],
-              w: [0, -1],
-              s: [0, 1],
-              a: [-1, 0],
-              d: [1, 0],
-            };
-            var d = dirs[e.key];
-            if (d && !(dir.x === -d[0] * size && dir.y === -d[1] * size)) {
-              dir = { x: d[0] * size, y: d[1] * size };
-            }
-          }
-
-          document.addEventListener('keydown', handleKey);
-          gameLoop = setInterval(update, 150);
-          draw();
-          return 'Snake game started! WASD/Arrows to move, Q to quit.';
         },
       };
 
@@ -1949,7 +1121,6 @@
         var cliOutput = document.getElementById('cli-output');
         var commandHistory = [];
         var historyIndex = -1;
-        var isInteractiveChatMode = false;
 
         if (!cliInput || !cliOutput) return;
 
@@ -1977,40 +1148,6 @@
           return 'jclee - Security Engineer';
         };
 
-        window.terminalCommands.pwd = function () {
-          return '/home/jclee/resume';
-        };
-
-        window.terminalCommands.date = function () {
-          return new Date().toString();
-        };
-
-        window.terminalCommands.ls = function () {
-          return 'about.txt  coverletter.txt  experience.log  projects/  skills.json  contact.txt';
-        };
-
-        window.terminalCommands.cat = function (args) {
-          var files = {
-            'about.txt': '보안 엔지니어',
-            'contact.txt': 'Email: qws941@kakao.com\\nGitHub: github.com/jclee941',
-            'skills.json':
-              '{\n  "observability": ["Grafana", "Prometheus", "Loki", "Splunk", "OpenTelemetry"],\n  "devops": ["GitLab CI/CD", "GitHub Actions", "Ansible", "Terraform"],\n  "programming": ["Python", "Bash", "Node.js", "TypeScript", "Go"]\n}',
-          };
-          if (!args) return 'cat: missing file operand';
-          if (args === 'coverletter.txt') {
-            return formatCoverLetter(
-              (window.__RESUME_CHAT_DATA__ || {}).coverLetter,
-              document.documentElement.getAttribute('lang') || 'ko'
-            );
-          }
-          return files[args] || 'cat: ' + args + ': No such file or directory';
-        };
-
-        terminalCommands['about'] = function () {
-          document.getElementById('about').scrollIntoView({ behavior: 'smooth' });
-          return '> 보안 엔지니어\n> Scrolling to #about...';
-        };
-
         terminalCommands['resume'] = function () {
           document.getElementById('resume').scrollIntoView({ behavior: 'smooth' });
           return '> Work Experience loaded.\n> Scrolling to #resume...';
@@ -2030,55 +1167,14 @@
           );
         };
 
-        terminalCommands['social'] = function () {
-          var contact = (window.__RESUME_CHAT_DATA__ || {}).contact || {};
-          var links = [];
-          if (contact.github) links.push('GitHub: ' + contact.github);
-          if (contact.linkedin) links.push('LinkedIn: ' + contact.linkedin);
-          if (contact.website) links.push('Website: ' + contact.website);
-          if (!links.length) {
-            links.push('GitHub: https://github.com/jclee941');
-            links.push('LinkedIn: N/A');
-          }
-          return '> Social links:\\n' + links.join('\\n');
-        };
-
-        terminalCommands['coverletter'] = function () {
-          var coverLetter = (window.__RESUME_CHAT_DATA__ || {}).coverLetter;
-          var lang = document.documentElement.getAttribute('lang') || 'ko';
-          return formatCoverLetter(coverLetter, lang);
-        };
-
-        terminalCommands['cl'] = terminalCommands['coverletter'];
-
         terminalCommands['download'] = function () {
-          var pdfLink = document.querySelector(
-            '.hero-download a[download], .resume-download a[download]'
-          );
+          var pdfLink = document.querySelector('.resume-download a[download], a[download]');
           var url = pdfLink && pdfLink.getAttribute('href');
           if (!url || url.indexOf('<!--') !== -1) {
             return '> Resume PDF URL is not available yet.';
           }
           window.open(url, '_blank', 'noopener,noreferrer');
           return '> Opening resume PDF in a new tab...';
-        };
-
-        terminalCommands['print'] = function () {
-          window.print();
-          return '> Print dialog opened.';
-        };
-
-        terminalCommands['history'] = function () {
-          if (!commandHistory.length) {
-            return '> No command history yet.';
-          }
-          var start = Math.max(commandHistory.length - 20, 0);
-          var recent = commandHistory.slice(start);
-          return recent
-            .map(function (item, idx) {
-              return String(start + idx + 1).padStart(2, '0') + '  ' + item;
-            })
-            .join('\\n');
         };
 
         terminalCommands['skills'] = function () {
@@ -2092,22 +1188,8 @@
         };
 
         async function executeCommand(cmd) {
-          var lowered;
-          var chatResult;
           cmd = sanitizeCommandInput(cmd).trim();
           if (!cmd) return '';
-
-          if (isInteractiveChatMode) {
-            lowered = cmd.toLowerCase();
-            if (lowered === 'exit' || lowered === 'quit') {
-              isInteractiveChatMode = false;
-              cliInput.placeholder = "type 'help' for commands...";
-              return 'Chat mode disabled. Back to terminal commands.';
-            }
-
-            chatResult = await window.terminalCommands.chat(cmd);
-            return '[chat] ' + chatResult;
-          }
 
           var parts = cmd.split(/\s+/);
           var command = parts[0];
@@ -2127,10 +1209,6 @@
           } else if (window.terminalCommands[command]) {
             result = await window.terminalCommands[command](args);
             found = true;
-            if ((command === 'chat' || command === 'ai') && !args.trim()) {
-              isInteractiveChatMode = true;
-              cliInput.placeholder = 'chat mode: ask resume questions, type "exit" to quit';
-            }
           } else {
             result = 'command not found: ' + command + '. Type "help" for available commands.';
           }
@@ -2222,53 +1300,6 @@
         });
       })();
 
-      (function () {
-        var statusList = document.getElementById('status-list');
-        var mainIndicator = document.querySelector('.status-indicator');
-        if (!statusList) return;
-
-        var items = statusList.querySelectorAll('.status-item');
-        var dynamicItems = statusList.querySelectorAll('.status-item[data-url]');
-        var pendingChecks = dynamicItems.length;
-        var allOnline = true;
-
-        function updateMainIndicator() {
-          pendingChecks--;
-          if (pendingChecks === 0 && mainIndicator) {
-            mainIndicator.classList.remove('status-loading');
-            mainIndicator.classList.add(allOnline ? 'status-ok' : 'status-error');
-          }
-        }
-
-        if (dynamicItems.length === 0 && mainIndicator) {
-          mainIndicator.classList.remove('status-loading');
-          mainIndicator.classList.add('status-ok');
-        }
-
-        dynamicItems.forEach(function (item) {
-          var url = item.getAttribute('data-url') || window.location.origin;
-          var stateEl = item.querySelector('.status-state');
-          var isSameOrigin = url.indexOf(window.location.origin) === 0;
-
-          fetch(url, { method: 'GET', mode: isSameOrigin ? 'same-origin' : 'no-cors' })
-            .then(function (response) {
-              if (response.type === 'opaque' || response.ok) {
-                item.classList.add('online');
-                stateEl.textContent = 'operational';
-              } else {
-                item.classList.add('offline');
-                stateEl.textContent = 'degraded (' + response.status + ')';
-                allOnline = false;
-              }
-            })
-            .catch(function () {
-              item.classList.add('offline');
-              stateEl.textContent = 'unreachable';
-              allOnline = false;
-            })
-            .finally(updateMainIndicator);
-        });
-      })();
     </script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -2284,62 +1315,6 @@
       _gs.src = 'https://www.googletagmanager.com/gtag/js?id=G-P9E8XY5K2L';
       _gs.async = true;
       document.head.appendChild(_gs);
-    </script>
-    <script>
-      (function () {
-        var container = document.querySelector('.tech-filter-container');
-        if (!container) return;
-        var cards = document.querySelectorAll('.project-card[data-tech]');
-        var techSet = {};
-
-        cards.forEach(function (card) {
-          var techs = (card.getAttribute('data-tech') || '').split(',');
-          techs.forEach(function (t) {
-            t = t.trim().toLowerCase();
-            if (t) techSet[t] = (techSet[t] || 0) + 1;
-          });
-        });
-
-        // Sort by frequency, then alphabetically
-        var techList = Object.keys(techSet).sort(function (a, b) {
-          return techSet[b] - techSet[a] || a.localeCompare(b);
-        });
-
-        // Create filter buttons dynamically
-        techList.forEach(function (tech) {
-          var btn = document.createElement('button');
-          btn.className = 'tech-filter-btn';
-          btn.setAttribute('data-filter', tech);
-          btn.textContent = tech.charAt(0).toUpperCase() + tech.slice(1);
-          container.appendChild(btn);
-        });
-
-        // Filter logic
-        container.addEventListener('click', function (e) {
-          var btn = e.target.closest('.tech-filter-btn');
-          if (!btn) return;
-
-          var filter = btn.getAttribute('data-filter');
-
-          container.querySelectorAll('.tech-filter-btn').forEach(function (b) {
-            b.classList.remove('active');
-          });
-          btn.classList.add('active');
-
-          cards.forEach(function (card) {
-            if (filter === 'all') {
-              card.classList.remove('filtered-out');
-            } else {
-              const techs = (card.getAttribute('data-tech') || '').toLowerCase();
-              if (techs.indexOf(filter) !== -1) {
-                card.classList.remove('filtered-out');
-              } else {
-                card.classList.add('filtered-out');
-              }
-            }
-          });
-        });
-      })();
     </script>
   </body>
 </html>
