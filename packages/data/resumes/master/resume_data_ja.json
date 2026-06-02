@@ -819,7 +819,7 @@
     {
       "icon": "⚡",
       "title": "Cloudflare Workers",
-      "description": "Edge ランタイム / ~390KB バンドル / health-check 検証済み",
+      "description": "Edge ランタイム / グローバル配信 / health-check 検証済み",
       "status": "running",
       "url": "https://resume.jclee.me"
     },
