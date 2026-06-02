@@ -41,7 +41,6 @@ jest.mock('../../../../apps/portfolio/lib/worker-routes', () => ({
 jest.mock('../../../../apps/portfolio/lib/routes', () => ({
   generateAuthRoutes: jest.fn(() => '/* auth-routes */\n'),
   generateControlRoutes: jest.fn(() => '/* control-routes */\n'),
-  generateChatRoute: jest.fn(() => '/* chat-route */\n'),
   generateCfStatsRoute: jest.fn(() => '/* cf-stats-route */\n'),
   generateVitalsRoute: jest.fn(() => '/* vitals-route */\n'),
   generateTrackRoute: jest.fn(() => '/* track-route */\n'),
@@ -50,7 +49,6 @@ jest.mock('../../../../apps/portfolio/lib/routes', () => ({
   generateMetricsPostRoute: jest.fn(() => '/* metrics-post-route */\n'),
   generateMetricsGetRoute: jest.fn(() => '/* metrics-get-route */\n'),
   generateMetricsSnapshotRoute: jest.fn(() => '/* metrics-snapshot-route */\n'),
-  generateGuestbookRoute: jest.fn(() => '/* guestbook-route */\n'),
 }));
 
 const fs = require('fs');
@@ -82,8 +80,6 @@ function createMinimalOptions(overrides = {}) {
     allowedEmails: ['test@example.com'],
     version: '1.0.0',
     baseDir: '/tmp/test-worker',
-    resumeChatDataBase64: 'chat==',
-    aiModel: 'gpt-4',
     ...overrides,
   };
 }
@@ -104,7 +100,6 @@ describe('worker-writer', () => {
       expect(result).toContain('/* page-routes */');
       expect(result).toContain('/* auth-routes */');
       expect(result).toContain('/* control-routes */');
-      expect(result).toContain('/* chat-route */');
       expect(result).toContain('/* cf-stats-route */');
       expect(result).toContain('/* static-routes */');
       expect(result).toContain('/* health-route */');
@@ -183,14 +178,6 @@ describe('worker-writer', () => {
       });
     });
 
-    it('should call generateChatRoute with chatData and aiModel', () => {
-      buildWorkerCode(createMinimalOptions());
-      expect(routes.generateChatRoute).toHaveBeenCalledWith({
-        resumeChatDataBase64: 'chat==',
-        aiModel: 'gpt-4',
-      });
-    });
-
     it('should fallback indexEnHtml to indexHtml when not provided', () => {
       const opts = createMinimalOptions();
       delete opts.indexEnHtml;
@@ -228,7 +215,6 @@ describe('worker-writer', () => {
       expect(routes.generateMetricsPostRoute).toHaveBeenCalledTimes(1);
       expect(routes.generateMetricsGetRoute).toHaveBeenCalledTimes(1);
       expect(routes.generateMetricsSnapshotRoute).toHaveBeenCalledTimes(1);
-      expect(routes.generateGuestbookRoute).toHaveBeenCalledTimes(1);
     });
   });
 
