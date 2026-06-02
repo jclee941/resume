@@ -138,11 +138,50 @@ const SKILL_DATA_FALLBACK = {
 };
 
 // Build-time injected real skills from data.json (esbuild `define` replaces the
-// __SKILL_DATA__ token). Falls back to the static copy above if not provided.
-const SKILL_DATA =
+// __SKILL_DATA__ token). This bundle is shared across locales, so it always
+// carries the Korean SSoT copy. When the page injects locale-correct skills via
+// window.__RESUME_CHAT_DATA__.skills (KO/EN/JA), prefer those and reuse the
+// build-injected radar icons (keyed by category) so the radar matches the page
+// language. Falls back to the static copy when nothing is injected.
+const SKILL_DATA_INJECTED =
   typeof __SKILL_DATA__ !== 'undefined' && __SKILL_DATA__ && Object.keys(__SKILL_DATA__).length > 0
     ? __SKILL_DATA__
     : SKILL_DATA_FALLBACK;
+
+const RADAR_LEVEL_MAP = { expert: 95, advanced: 80, intermediate: 60, beginner: 35 };
+
+// Transform the raw SSoT skills shape (title/icon/items[{name,level:string}])
+// into the radar shape (skills[{name,level:0-100,evidence}]), borrowing the
+// inline SVG icon from the build-injected radar data for the same category.
+function radarFromLocaleSkills(skills) {
+  if (!skills || typeof skills !== 'object') return null;
+  const out = {};
+  for (const [category, data] of Object.entries(skills)) {
+    if (!data || !Array.isArray(data.items) || data.items.length === 0) continue;
+    const injected = SKILL_DATA_INJECTED[category];
+    out[category] = {
+      title: String(data.title || category),
+      icon: (injected && injected.icon) || (SKILL_DATA_FALLBACK[category] && SKILL_DATA_FALLBACK[category].icon) || '',
+      skills: data.items.map((item) => {
+        const levelKey = String(item.level || 'intermediate').toLowerCase();
+        return {
+          name: String(item.name || 'Unknown'),
+          level: RADAR_LEVEL_MAP[levelKey] != null ? RADAR_LEVEL_MAP[levelKey] : 60,
+          evidence: `${levelKey.charAt(0).toUpperCase()}${levelKey.slice(1)} proficiency`,
+        };
+      }),
+    };
+  }
+  return Object.keys(out).length > 0 ? out : null;
+}
+
+function resolveSkillData() {
+  const injected =
+    typeof window !== 'undefined' && window.__RESUME_CHAT_DATA__
+      ? window.__RESUME_CHAT_DATA__.skills
+      : null;
+  return radarFromLocaleSkills(injected) || SKILL_DATA_INJECTED;
+}
 
 const LEVELS = {
   expert: { min: 90, label: 'Expert', color: 'var(--cyber-green)' },
@@ -168,7 +207,7 @@ function createSkillRadar() {
   if (!container) return;
 
   container.innerHTML = '';
-  Object.entries(SKILL_DATA).forEach(([domainKey, domain]) => {
+  Object.entries(resolveSkillData()).forEach(([domainKey, domain]) => {
     const card = createDomainCard(domainKey, domain);
     container.appendChild(card);
   });
@@ -313,7 +352,7 @@ function filterSkills(searchTerm) {
 
   cards.forEach((card) => {
     const domain = card.dataset.domain;
-    const domainData = SKILL_DATA[domain];
+    const domainData = resolveSkillData()[domain];
     const skillNames = domainData.skills.map((s) => s.name.toLowerCase());
     const domainTitle = domainData.title.toLowerCase();
 

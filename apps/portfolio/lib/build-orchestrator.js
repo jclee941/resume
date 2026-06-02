@@ -67,7 +67,20 @@ async function runWorkerBuild({ baseDir, version, gitSha = 'unknown', allowedEma
     projectDataJaRaw,
     logger,
   });
-  const resumeChatDataBase64Literal = `'${Buffer.from(JSON.stringify(projectData), 'utf-8').toString('base64')}'`;
+  const toChatLiteral = (data) =>
+    `'${Buffer.from(JSON.stringify(data), 'utf-8').toString('base64')}'`;
+  const resumeChatDataBase64Literal = toChatLiteral(projectData);
+  const parseLocaleData = (raw) => {
+    if (!raw) return projectData;
+    try {
+      return JSON.parse(raw);
+    } catch (err) {
+      logger.warn(`⚠ locale chat-data parse failed, falling back to KO: ${err.message}`);
+      return projectData;
+    }
+  };
+  const resumeChatDataBase64EnLiteral = toChatLiteral(parseLocaleData(projectDataEnRaw));
+  const resumeChatDataBase64JaLiteral = toChatLiteral(parseLocaleData(projectDataJaRaw));
   // resume.pdf is served directly from the static assets binding (assets/resume.pdf),
   // so it is NOT inlined into worker.js (saves ~210KB of base64 in the bundle).
   const { ogImageBase64, ogImageEnBase64, ogImageJaBase64 } = encodeBinaryAssets({
@@ -129,14 +142,14 @@ async function runWorkerBuild({ baseDir, version, gitSha = 'unknown', allowedEma
     projectCardsHtml: templates.projectCardsEnHtml,
     infrastructureCardsHtml: templates.infrastructureCardsEnHtml,
     skillsHtml: templates.skillsEnHtml,
-    certCardsHtml: templates.certCardsHtml,
+    certCardsHtml: templates.certCardsEnHtml,
     contactGridHtml: templates.contactGridHtml,
     aboutContentHtml: templates.aboutContentEnHtml,
     profileBentoHtml: templates.profileBentoEnHtml,
     achievementsHtml: templates.achievementsEnHtml,
     expertiseHtml: templates.expertiseEnHtml,
     coverLetterHtml: templates.coverLetterEnHtml,
-    resumeChatDataBase64: resumeChatDataBase64Literal,
+    resumeChatDataBase64: resumeChatDataBase64EnLiteral,
     buildVersion: version,
     buildDeployedAt,
     buildDeployedDate,
@@ -149,7 +162,7 @@ async function runWorkerBuild({ baseDir, version, gitSha = 'unknown', allowedEma
     projectCardsHtml: templates.projectCardsJaHtml,
     infrastructureCardsHtml: templates.infrastructureCardsJaHtml,
     skillsHtml: templates.skillsJaHtml,
-    certCardsHtml: templates.certCardsHtml,
+    certCardsHtml: templates.certCardsJaHtml,
     contactGridHtml: templates.contactGridHtml,
     aboutContentHtml: templates.aboutContentJaHtml,
     profileBentoHtml: templates.profileBentoJaHtml,
@@ -159,7 +172,7 @@ async function runWorkerBuild({ baseDir, version, gitSha = 'unknown', allowedEma
     buildVersion: version,
     buildDeployedAt,
     buildDeployedDate,
-    resumeChatDataBase64: resumeChatDataBase64Literal,
+    resumeChatDataBase64: resumeChatDataBase64JaLiteral,
   });
   logger.log('✓ Japanese HTML processed\n');
 
