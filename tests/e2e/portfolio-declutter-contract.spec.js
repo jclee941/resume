@@ -140,6 +140,20 @@ test.describe('Declutter — consolidated operated section + regression', () => 
     expect(koRuns).toEqual([]);
   });
 
+  test('S6: timeline phase badges are distinct per locale (no fallback collapse)', async ({ page }) => {
+    // CAREER_UI_META is keyed by locale-stable `period`; a regression that keys
+    // by localized `company` collapses every EN/JA badge to the default phase.
+    const phasesFor = async (url, expected) => {
+      await go(page, url);
+      const badges = await page.locator('.phase-badge').evaluateAll((els) =>
+        els.map((e) => (e.textContent || '').replace(/[^\p{L}\p{N}]/gu, '').trim()).filter(Boolean)
+      );
+      expect(badges).toEqual(expected);
+    };
+    await phasesFor('/ja/', ['運用', '構築', '安定化', '構築', '自動化', '基礎']);
+    await phasesFor('/en/', ['Operate', 'Build', 'Stabilize', 'Build', 'Automate', 'Foundation']);
+  });
+
   test('S7 (regression): cover-letter + project cards still render; no mobile overflow', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 812 });
     await go(page, '/');
