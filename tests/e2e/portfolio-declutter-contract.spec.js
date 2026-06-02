@@ -156,6 +156,40 @@ test.describe('Declutter — consolidated operated section + regression', () => 
     await phasesFor('/en/', ['Operate', 'Build', 'Stabilize', 'Build', 'Automate', 'Foundation']);
   });
 
+  for (const loc of ['/', '/en/', '/ja/']) {
+    test(`S6: ${loc} visible copy has no forbidden quantified metrics`, async ({ page }) => {
+      await go(page, loc);
+      // Benchmark rule: no fabricated performance metrics or absolute impact counts
+      // in visible copy. Allowed facts (tenure years, cert dates, 5-tier
+      // segmentation) are not matched by these patterns.
+      const hits = await page.evaluate(() => {
+        const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+        const bad = [];
+        const pats = [
+          /\d+\s*\uD68C/, // N\uD68C (N times)
+          /\d+\s*%/,
+          /\d+\s*\uBC30/, // N\uBC30 (N-fold)
+          /\b\d+x\b/i,
+          /\d+\s*ms\b/,
+          /~?\s*\d+\s*KB\b/,
+          /~?\s*\d+\s*MB\b/,
+          /\d+\s*\uAC74/, // N\uAC74 (N items, impact count)
+        ];
+        let n;
+        while ((n = walker.nextNode())) {
+          const p = n.parentElement;
+          if (!p) continue;
+          if (p.closest('script, style, code, pre, .terminal-cli, #cli-output')) continue;
+          const t = (n.textContent || '').trim();
+          if (!t) continue;
+          if (pats.some((re) => re.test(t))) bad.push(t.slice(0, 70));
+        }
+        return bad;
+      });
+      expect(hits).toEqual([]);
+    });
+  }
+
   test('S7 (regression): cover-letter + project cards still render; no mobile overflow', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 812 });
     await go(page, '/');
