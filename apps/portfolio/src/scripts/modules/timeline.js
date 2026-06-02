@@ -76,17 +76,19 @@ const PHASE_STAGES = {
   기초: { icon: '⚙️', label: '기반', key: 'foundation' },
 };
 
-// UI-only metadata keyed by company. The SSoT (resume_data.json careers[]) carries
-// the DATA fields (company/companyUrl/period/role/myRole/description); phase and status
-// are presentation concerns that do not belong in the SSoT, so they live here and are
-// merged onto the build-injected career data at render time.
+// UI-only metadata keyed by tenure period (locale-stable). The SSoT careers[]
+// carries the DATA fields (company/period/role/...); phase and status are
+// presentation concerns that do not belong in the SSoT, so they live here and
+// are merged onto the build-injected career data at render time. Keyed by
+// `period` (not `company`) because company names are localized per locale while
+// the tenure period is identical across ko/en/ja.
 const CAREER_UI_META = {
-  '(주)아이티센 CTS': { phase: '운영', status: 'completed' },
-  '(주)가온누리정보시스템': { phase: '구축', status: 'completed' },
-  '(주)콴텍투자일임': { phase: '안정화', status: 'completed' },
-  '(주)조인트리': { phase: '구축', status: 'completed' },
-  '(주)메타넷엠플랫폼': { phase: '자동화', status: 'completed' },
-  '(주)엠티데이타': { phase: '기초', status: 'completed' },
+  '2025.03 ~ 2026.02': { phase: '운영', status: 'completed' },
+  '2024.03 ~ 2025.02': { phase: '구축', status: 'completed' },
+  '2022.08 ~ 2024.03': { phase: '안정화', status: 'completed' },
+  '2021.09 ~ 2022.04': { phase: '구축', status: 'completed' },
+  '2019.12 ~ 2021.08': { phase: '자동화', status: 'completed' },
+  '2017.02 ~ 2018.10': { phase: '기초', status: 'completed' },
 };
 const DEFAULT_CAREER_UI_META = { phase: '기초', status: 'completed' };
 
@@ -126,7 +128,7 @@ function isTimelineSectionPresent() {
 export function mergeCareerUiMeta(careers) {
   if (!Array.isArray(careers)) return [];
   return careers.map((career) => {
-    const meta = CAREER_UI_META[career.company] || DEFAULT_CAREER_UI_META;
+    const meta = CAREER_UI_META[career.period] || DEFAULT_CAREER_UI_META;
     return { ...career, phase: career.phase || meta.phase, status: career.status || meta.status };
   });
 }
@@ -253,7 +255,7 @@ function createTimelineNode(career, index) {
 
           <div class="timeline-impact" aria-label="${L.impact}">
             <div class="impact-summary">
-              <span class="impact-label">Impact:</span>
+              <span class="impact-label">${L.impact}:</span>
               <span class="impact-text">${impactText.split('\n')[0]}</span>
             </div>
           </div>
