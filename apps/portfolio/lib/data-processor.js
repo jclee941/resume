@@ -19,6 +19,7 @@ const {
   generateProfileBento,
   generateAchievementsSection,
   generateExpertiseSection,
+  generateCoverLetterSection,
 } = require('./cards');
 
 /**
@@ -140,6 +141,17 @@ function processProjectData({ projectDataRaw, projectDataEnRaw, projectDataJaRaw
     expertiseHtml: generateExpertiseSection(projectData),
     expertiseEnHtml: generateExpertiseSection(projectDataEn || projectData),
     expertiseJaHtml: generateExpertiseSection(projectDataJa || projectData),
+    coverLetterHtml: generateCoverLetterSection(
+      projectData.coverLetter && projectData.coverLetter.ko
+    ),
+    coverLetterEnHtml: generateCoverLetterSection(
+      (projectData.coverLetter && projectData.coverLetter.en) ||
+        (projectDataEn && projectDataEn.coverLetter && projectDataEn.coverLetter.en)
+    ),
+    coverLetterJaHtml: generateCoverLetterSection(
+      (projectData.coverLetter && projectData.coverLetter.ja) ||
+        (projectDataJa && projectDataJa.coverLetter && projectDataJa.coverLetter.ja)
+    ),
   };
 
   return {
