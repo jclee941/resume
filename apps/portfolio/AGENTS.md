@@ -6,7 +6,7 @@
 
 ## OVERVIEW
 
-Cloudflare Worker serving a cyberpunk terminal-style portfolio (DevSecOps/SRE
+Cloudflare Worker serving a clean dark-neutral portfolio (DevSecOps/SRE
 positioning). Almost all assets are inlined at build time; the exception is the
 resume PDF, which is served from the static `assets` binding via `env.ASSETS`
 (see EXCEPTIONS) to keep it out of the worker bundle.

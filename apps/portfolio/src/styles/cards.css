@@ -1,5 +1,5 @@
 /* ========================================
-   CARDS - Terminal Style
+   CARDS
    ======================================== */
 .card {
   background: var(--glass-bg, var(--bg-card));
@@ -18,16 +18,8 @@
   box-shadow: var(--shadow-md);
   border-color: var(--border-hover);
 }
-.card--terminal {
-  border-left: 3px solid var(--color-accent);
-}
-.card--terminal::before {
-  content: '>';
-  color: var(--color-accent);
-  margin-right: 0.5rem;
-}
 /* ========================================
-   RESUME LIST - Log Entry Style
+   RESUME LIST
    ======================================== */
 .resume-list {
   list-style: none;
