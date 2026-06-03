@@ -1,0 +1,1907 @@
+{
+  "_meta": {
+    "description": "Complete JobKorea form payload generated from SSoT (packages/data/resumes/master/resume_data.json). Build via apps/job-server/scripts/profile-sync/jobkorea-sections.js buildJobKoreaFormData(). Feed to JobKorea sync (JOBKOREA_SYNC_MODE=hybrid-api, JOBKOREA_RNO=<rno>) to populate a JobKorea form resume.",
+    "generatedFrom": "packages/data/resumes/master/resume_data.json",
+    "builder": "apps/job-server/scripts/profile-sync/jobkorea-sections.js#buildJobKoreaFormData",
+    "fieldCount": 471,
+    "sectionCoverage": {
+      "career": 6,
+      "highSchool": true,
+      "university": true,
+      "license": 6,
+      "military": true,
+      "award": 1,
+      "language": 2,
+      "skill": 48,
+      "personalProject": 9,
+      "hope": 7
+    },
+    "note": "No auth/session material. Pure resume content. PII (resume data) intentional."
+  },
+  "fields": [
+    {
+      "name": "Career[c1].Index_Name",
+      "value": "c1"
+    },
+    {
+      "name": "Career[c1].C_Name",
+      "value": "아이티센 CTS"
+    },
+    {
+      "name": "Career[c1].Co_Code",
+      "value": ""
+    },
+    {
+      "name": "Career[c1].CName_Code",
+      "value": ""
+    },
+    {
+      "name": "Career[c1].M_MainCate",
+      "value": ""
+    },
+    {
+      "name": "Career[c1].Retire_Rsn_Code",
+      "value": ""
+    },
+    {
+      "name": "Career[c1].Retire_Rsn",
+      "value": ""
+    },
+    {
+      "name": "Career[c1].Biz_No",
+      "value": ""
+    },
+    {
+      "name": "Career[c1].NHIS_LINKED_STAT",
+      "value": ""
+    },
+    {
+      "name": "Career[c1].C_Part",
+      "value": ""
+    },
+    {
+      "name": "Career[c1].CSYM",
+      "value": "202503"
+    },
+    {
+      "name": "Career[c1].CEYM",
+      "value": "202602"
+    },
+    {
+      "name": "Career[c1].RetireSt",
+      "value": "2"
+    },
+    {
+      "name": "Career[c1].M_MainJob_Jikwi",
+      "value": "보안운영 엔지니어 (SOC/Security)"
+    },
+    {
+      "name": "Career[c1].Job_Type_Code",
+      "value": ""
+    },
+    {
+      "name": "Career[c1].M_MainField",
+      "value": "1000238"
+    },
+    {
+      "name": "Career[c1].M_MainJob",
+      "value": ""
+    },
+    {
+      "name": "Career[c1].Job_Field_Direct",
+      "value": ""
+    },
+    {
+      "name": "Career[c1].M_MainPay_User",
+      "value": ""
+    },
+    {
+      "name": "Career[c1].Prfm_Prt",
+      "value": "보안 운영 담당"
+    },
+    {
+      "name": "Career[c1].CNameHold",
+      "value": "0"
+    },
+    {
+      "name": "Career[c1].OpenStat",
+      "value": "1"
+    },
+    {
+      "name": "Career[c1].C_Client",
+      "value": "넥스트레이드(주)"
+    },
+    {
+      "name": "Career[c1].C_TeamSize",
+      "value": "정보보안팀 운영 셀"
+    },
+    {
+      "name": "Career[c1].C_MyRole",
+      "value": "보안 운영 담당"
+    },
+    {
+      "name": "Career[c1].C_WorkType",
+      "value": "정규직 (파견)"
+    },
+    {
+      "name": "Career[c1].Project[p1].P_Name",
+      "value": "넥스트레이드 보안운영"
+    },
+    {
+      "name": "Career[c1].Project[p1].P_Cntnt",
+      "value": "금융권 매매체결시스템의 보안 이벤트 탐지·대응 체계를 구성했습니다. Splunk ES 탐지 룰을 설계·운영하여 보안 이벤트 탐지 범위를 확장하고, n8n으로 Splunk와 Slack/SMS를 연동한 실시간 알림 파이프라인을 구축하여 이벤트 인지·분류·알림 흐름을 표준화했습니다. FortiManager API로 방화벽 정책을 자동 조회하는 툴을 개발하여 콘솔 수동 조작을 제거하고 접근 제어 일관성을 확보했습니다."
+    },
+    {
+      "name": "Career[c2].Index_Name",
+      "value": "c2"
+    },
+    {
+      "name": "Career[c2].C_Name",
+      "value": "가온누리정보시스템"
+    },
+    {
+      "name": "Career[c2].Co_Code",
+      "value": ""
+    },
+    {
+      "name": "Career[c2].CName_Code",
+      "value": ""
+    },
+    {
+      "name": "Career[c2].M_MainCate",
+      "value": ""
+    },
+    {
+      "name": "Career[c2].Retire_Rsn_Code",
+      "value": ""
+    },
+    {
+      "name": "Career[c2].Retire_Rsn",
+      "value": ""
+    },
+    {
+      "name": "Career[c2].Biz_No",
+      "value": ""
+    },
+    {
+      "name": "Career[c2].NHIS_LINKED_STAT",
+      "value": ""
+    },
+    {
+      "name": "Career[c2].C_Part",
+      "value": ""
+    },
+    {
+      "name": "Career[c2].CSYM",
+      "value": "202403"
+    },
+    {
+      "name": "Career[c2].CEYM",
+      "value": "202502"
+    },
+    {
+      "name": "Career[c2].RetireSt",
+      "value": "2"
+    },
+    {
+      "name": "Career[c2].M_MainJob_Jikwi",
+      "value": "보안 인프라 엔지니어 (구축)"
+    },
+    {
+      "name": "Career[c2].Job_Type_Code",
+      "value": ""
+    },
+    {
+      "name": "Career[c2].M_MainField",
+      "value": "1000238"
+    },
+    {
+      "name": "Career[c2].M_MainJob",
+      "value": ""
+    },
+    {
+      "name": "Career[c2].Job_Field_Direct",
+      "value": ""
+    },
+    {
+      "name": "Career[c2].M_MainPay_User",
+      "value": ""
+    },
+    {
+      "name": "Career[c2].Prfm_Prt",
+      "value": "보안 인프라 구축 담당"
+    },
+    {
+      "name": "Career[c2].CNameHold",
+      "value": "0"
+    },
+    {
+      "name": "Career[c2].OpenStat",
+      "value": "1"
+    },
+    {
+      "name": "Career[c2].C_Client",
+      "value": "넥스트레이드(주)"
+    },
+    {
+      "name": "Career[c2].C_TeamSize",
+      "value": "보안 구축 셀"
+    },
+    {
+      "name": "Career[c2].C_MyRole",
+      "value": "보안 인프라 구축 담당"
+    },
+    {
+      "name": "Career[c2].C_WorkType",
+      "value": "정규직 (파견)"
+    },
+    {
+      "name": "Career[c2].Project[p1].P_Name",
+      "value": "넥스트레이드 보안인프라 구축"
+    },
+    {
+      "name": "Career[c2].Project[p1].P_Cntnt",
+      "value": "금융권 매매체결시스템의 고가용성 보안 인프라를 구축했습니다. FortiGate FGCP 액티브-패시브 HA로 이중화를 구성하고, 금융위 본인가 기준에 맞춘 5계층 망분리 보안 아키텍처를 설계·문서화해 FSC 본인가 심사 대응을 완료했습니다. Ansible Role로 방화벽 정책 및 보안 장비 초기 설정을 표준화하여 구축 산출물이 운영 절차로 이어지도록 표준화했습니다."
+    },
+    {
+      "name": "Career[c3].Index_Name",
+      "value": "c3"
+    },
+    {
+      "name": "Career[c3].C_Name",
+      "value": "콴텍투자일임"
+    },
+    {
+      "name": "Career[c3].Co_Code",
+      "value": ""
+    },
+    {
+      "name": "Career[c3].CName_Code",
+      "value": ""
+    },
+    {
+      "name": "Career[c3].M_MainCate",
+      "value": ""
+    },
+    {
+      "name": "Career[c3].Retire_Rsn_Code",
+      "value": ""
+    },
+    {
+      "name": "Career[c3].Retire_Rsn",
+      "value": ""
+    },
+    {
+      "name": "Career[c3].Biz_No",
+      "value": ""
+    },
+    {
+      "name": "Career[c3].NHIS_LINKED_STAT",
+      "value": ""
+    },
+    {
+      "name": "Career[c3].C_Part",
+      "value": ""
+    },
+    {
+      "name": "Career[c3].CSYM",
+      "value": "202208"
+    },
+    {
+      "name": "Career[c3].CEYM",
+      "value": "202403"
+    },
+    {
+      "name": "Career[c3].RetireSt",
+      "value": "2"
+    },
+    {
+      "name": "Career[c3].M_MainJob_Jikwi",
+      "value": "인프라 엔지니어 (FSDC/금융DC)"
+    },
+    {
+      "name": "Career[c3].Job_Type_Code",
+      "value": ""
+    },
+    {
+      "name": "Career[c3].M_MainField",
+      "value": "1000233"
+    },
+    {
+      "name": "Career[c3].M_MainJob",
+      "value": ""
+    },
+    {
+      "name": "Career[c3].Job_Field_Direct",
+      "value": ""
+    },
+    {
+      "name": "Career[c3].M_MainPay_User",
+      "value": ""
+    },
+    {
+      "name": "Career[c3].Prfm_Prt",
+      "value": "인프라 운영 담당"
+    },
+    {
+      "name": "Career[c3].CNameHold",
+      "value": "0"
+    },
+    {
+      "name": "Career[c3].OpenStat",
+      "value": "1"
+    },
+    {
+      "name": "Career[c3].C_Client",
+      "value": "콴텍투자일임(주)"
+    },
+    {
+      "name": "Career[c3].C_TeamSize",
+      "value": "규모 미공개 인프라 운영팀"
+    },
+    {
+      "name": "Career[c3].C_MyRole",
+      "value": "인프라 운영 담당"
+    },
+    {
+      "name": "Career[c3].C_WorkType",
+      "value": "정규직"
+    },
+    {
+      "name": "Career[c3].Project[p1].P_Name",
+      "value": "Quantec AI Trading Platform 인프라 운영"
+    },
+    {
+      "name": "Career[c3].Project[p1].P_Cntnt",
+      "value": "금융보안데이터센터(FSDC)에서 AI 트레이딩 플랫폼 인프라를 운영하고 자동화했습니다. Python 기반 자동화 스크립트로 반복 인프라 작업을 표준화하고, DLP 정책 체계와 감사 산출물 템플릿을 구축하여 금융감독원 정기 감사에 대응했습니다. PostgreSQL 접근제어 쿼리를 튜닝하고, PB 플랫폼 POC 런칭을 지원했습니다."
+    },
+    {
+      "name": "Career[c4].Index_Name",
+      "value": "c4"
+    },
+    {
+      "name": "Career[c4].C_Name",
+      "value": "조인트리"
+    },
+    {
+      "name": "Career[c4].Co_Code",
+      "value": ""
+    },
+    {
+      "name": "Career[c4].CName_Code",
+      "value": ""
+    },
+    {
+      "name": "Career[c4].M_MainCate",
+      "value": ""
+    },
+    {
+      "name": "Career[c4].Retire_Rsn_Code",
+      "value": ""
+    },
+    {
+      "name": "Career[c4].Retire_Rsn",
+      "value": ""
+    },
+    {
+      "name": "Career[c4].Biz_No",
+      "value": ""
+    },
+    {
+      "name": "Career[c4].NHIS_LINKED_STAT",
+      "value": ""
+    },
+    {
+      "name": "Career[c4].C_Part",
+      "value": ""
+    },
+    {
+      "name": "Career[c4].CSYM",
+      "value": "202109"
+    },
+    {
+      "name": "Career[c4].CEYM",
+      "value": "202204"
+    },
+    {
+      "name": "Career[c4].RetireSt",
+      "value": "2"
+    },
+    {
+      "name": "Career[c4].M_MainJob_Jikwi",
+      "value": "네트워크 보안 엔지니어 (NSX-T/가상화)"
+    },
+    {
+      "name": "Career[c4].Job_Type_Code",
+      "value": ""
+    },
+    {
+      "name": "Career[c4].M_MainField",
+      "value": "1000233"
+    },
+    {
+      "name": "Career[c4].M_MainJob",
+      "value": ""
+    },
+    {
+      "name": "Career[c4].Job_Field_Direct",
+      "value": ""
+    },
+    {
+      "name": "Career[c4].M_MainPay_User",
+      "value": ""
+    },
+    {
+      "name": "Career[c4].Prfm_Prt",
+      "value": "네트워크 보안 구축 담당"
+    },
+    {
+      "name": "Career[c4].CNameHold",
+      "value": "0"
+    },
+    {
+      "name": "Career[c4].OpenStat",
+      "value": "1"
+    },
+    {
+      "name": "Career[c4].C_Client",
+      "value": "국민대학교"
+    },
+    {
+      "name": "Career[c4].C_TeamSize",
+      "value": "규모 미공개 보안 통합 구축팀"
+    },
+    {
+      "name": "Career[c4].C_MyRole",
+      "value": "네트워크 보안 구축 담당"
+    },
+    {
+      "name": "Career[c4].C_WorkType",
+      "value": "정규직 (파견)"
+    },
+    {
+      "name": "Career[c4].Project[p1].P_Name",
+      "value": "국민대 차세대 정보시스템"
+    },
+    {
+      "name": "Career[c4].Project[p1].P_Cntnt",
+      "value": "대학 캠퍼스 네트워크의 동서 트래픽 보안 정책을 세분화했습니다. NSX-T 마이크로세그멘테이션을 도입하여 서버 간 통신의 가시성과 세분화된 접근 제어를 확보하고, DFW 분산 방화벽 정책과 중앙 집중 관리 체계를 구성했습니다. NAC/DLP와 Wazuh를 통합 연동하여 실시간 보안 모니터링 및 침입 탐지 체계를 구성했습니다."
+    },
+    {
+      "name": "Career[c5].Index_Name",
+      "value": "c5"
+    },
+    {
+      "name": "Career[c5].C_Name",
+      "value": "메타넷엠플랫폼"
+    },
+    {
+      "name": "Career[c5].Co_Code",
+      "value": ""
+    },
+    {
+      "name": "Career[c5].CName_Code",
+      "value": ""
+    },
+    {
+      "name": "Career[c5].M_MainCate",
+      "value": ""
+    },
+    {
+      "name": "Career[c5].Retire_Rsn_Code",
+      "value": ""
+    },
+    {
+      "name": "Career[c5].Retire_Rsn",
+      "value": ""
+    },
+    {
+      "name": "Career[c5].Biz_No",
+      "value": ""
+    },
+    {
+      "name": "Career[c5].NHIS_LINKED_STAT",
+      "value": ""
+    },
+    {
+      "name": "Career[c5].C_Part",
+      "value": ""
+    },
+    {
+      "name": "Career[c5].CSYM",
+      "value": "201912"
+    },
+    {
+      "name": "Career[c5].CEYM",
+      "value": "202108"
+    },
+    {
+      "name": "Career[c5].RetireSt",
+      "value": "2"
+    },
+    {
+      "name": "Career[c5].M_MainJob_Jikwi",
+      "value": "인프라 운영 엔지니어 (VPN/NAC/자동화)"
+    },
+    {
+      "name": "Career[c5].Job_Type_Code",
+      "value": ""
+    },
+    {
+      "name": "Career[c5].M_MainField",
+      "value": "1000233"
+    },
+    {
+      "name": "Career[c5].M_MainJob",
+      "value": ""
+    },
+    {
+      "name": "Career[c5].Job_Field_Direct",
+      "value": ""
+    },
+    {
+      "name": "Career[c5].M_MainPay_User",
+      "value": ""
+    },
+    {
+      "name": "Career[c5].Prfm_Prt",
+      "value": "인프라 운영 담당"
+    },
+    {
+      "name": "Career[c5].CNameHold",
+      "value": "0"
+    },
+    {
+      "name": "Career[c5].OpenStat",
+      "value": "1"
+    },
+    {
+      "name": "Career[c5].C_Client",
+      "value": ""
+    },
+    {
+      "name": "Career[c5].C_TeamSize",
+      "value": "규모 미공개 인프라 운영팀"
+    },
+    {
+      "name": "Career[c5].C_MyRole",
+      "value": "인프라 운영 담당"
+    },
+    {
+      "name": "Career[c5].C_WorkType",
+      "value": "SI+SM"
+    },
+    {
+      "name": "Career[c5].Project[p1].P_Name",
+      "value": "컨택센터 원격근무 인프라"
+    },
+    {
+      "name": "Career[c5].Project[p1].P_Cntnt",
+      "value": "대규모 컨택센터의 재택근무 인프라 운영을 자동화했습니다. Python과 Ansible로 신규 단말 등록, 스위치 점검, 서버 설정을 자동화하고, NAC 정책 자동화 스크립트를 개발했습니다. FortiGate 로그 기반 VPN 세션 모니터링 대시보드를 구성하여 비정상 접근을 실시간 탐지하고, 재택근무 사이트 보안 아키텍처 설계했습니다."
+    },
+    {
+      "name": "Career[c6].Index_Name",
+      "value": "c6"
+    },
+    {
+      "name": "Career[c6].C_Name",
+      "value": "엠티데이타"
+    },
+    {
+      "name": "Career[c6].Co_Code",
+      "value": ""
+    },
+    {
+      "name": "Career[c6].CName_Code",
+      "value": ""
+    },
+    {
+      "name": "Career[c6].M_MainCate",
+      "value": ""
+    },
+    {
+      "name": "Career[c6].Retire_Rsn_Code",
+      "value": ""
+    },
+    {
+      "name": "Career[c6].Retire_Rsn",
+      "value": ""
+    },
+    {
+      "name": "Career[c6].Biz_No",
+      "value": ""
+    },
+    {
+      "name": "Career[c6].NHIS_LINKED_STAT",
+      "value": ""
+    },
+    {
+      "name": "Career[c6].C_Part",
+      "value": ""
+    },
+    {
+      "name": "Career[c6].CSYM",
+      "value": "201702"
+    },
+    {
+      "name": "Career[c6].CEYM",
+      "value": "201810"
+    },
+    {
+      "name": "Career[c6].RetireSt",
+      "value": "2"
+    },
+    {
+      "name": "Career[c6].M_MainJob_Jikwi",
+      "value": "IT지원·OA운영 (폐쇄망/Linux)"
+    },
+    {
+      "name": "Career[c6].Job_Type_Code",
+      "value": ""
+    },
+    {
+      "name": "Career[c6].M_MainField",
+      "value": "1000233"
+    },
+    {
+      "name": "Career[c6].M_MainJob",
+      "value": ""
+    },
+    {
+      "name": "Career[c6].Job_Field_Direct",
+      "value": ""
+    },
+    {
+      "name": "Career[c6].M_MainPay_User",
+      "value": ""
+    },
+    {
+      "name": "Career[c6].Prfm_Prt",
+      "value": "서버 운영 담당"
+    },
+    {
+      "name": "Career[c6].CNameHold",
+      "value": "0"
+    },
+    {
+      "name": "Career[c6].OpenStat",
+      "value": "1"
+    },
+    {
+      "name": "Career[c6].C_Client",
+      "value": "한국항공우주산업(주) (KAI)"
+    },
+    {
+      "name": "Career[c6].C_TeamSize",
+      "value": "규모 미공개 현장 IT 운영팀"
+    },
+    {
+      "name": "Career[c6].C_MyRole",
+      "value": "서버 운영 담당"
+    },
+    {
+      "name": "Career[c6].C_WorkType",
+      "value": "정규직 (파견)"
+    },
+    {
+      "name": "Career[c6].Project[p1].P_Name",
+      "value": "KAI 인프라 운영"
+    },
+    {
+      "name": "Career[c6].Project[p1].P_Cntnt",
+      "value": "항공우주산업 폐쇄망 환경에서 IT 인프라 운영 기초를 다졌습니다. Linux 로그 분석으로 하드웨어 장애를 사전 탐지하고, WSUS 기반 패치 자동화 체계를 구축하여 수백 대 서버의 보안 업데이트를 체계적으로 관리했습니다. 방화벽 정책 변경 이력 추적 및 접근 로그 분석 체계를 구축하여 보안 감사 대응 역량을 확보했습니다."
+    },
+    {
+      "name": "Career.index",
+      "value": "c1,c2,c3,c4,c5,c6"
+    },
+    {
+      "name": "UserResume.M_Career_Text",
+      "value": "반복 작업의 한계에서 출발해 자동화로 답한 보안 엔지니어\n\n커리어 시작점은 한국항공우주산업(KAI) 폐쇄망 IT 운영실에서 서버 패치 적용 일정을 손으로 엑셀에 적던 자리였습니다. 매주 같은 작업을 반복하면서, 보안 운영의 가치는 사고가 없기를 바라는 데 있지 않고 반복 가능한 절차와 자동화로 위험을 줄이는 데 있다는 확신이 생겼습니다. 이후 RHCSA·LPIC-1·리눅스마스터 2급을 연속 취득하며 Linux 시스템 기초를 다시 다졌고, 그 기반을 현장 운영 경험으로 이어갔습니다.\n\n메타넷엠플랫폼에서는 Ansible과 Python으로 대규모 컨택센터의 NAC 정책 배포 절차를 자동화했습니다. 조인트리에서는 국민대 차세대 정보시스템에 NSX-T 마이크로세그멘테이션을 적용해 동서 트래픽 보안 사각지대를 줄이고, NAC와 DLP 탐지 정책을 재정비했습니다. 도구는 바뀌었지만, 손이 반복해서 가는 작업은 자동화 대상으로 본다는 원칙은 그대로였습니다.\n\n콴텍투자일임 금융보안데이터센터(FSDC)에서 금융감독원 정기 감사를 대응하며, 보안 운영은 설정을 해두는 일이 아니라 감사와 장애 상황에서 운영 근거를 데이터로 제시할 수 있어야 한다는 점을 배웠습니다. DB 접근제어 쿼리 튜닝과 PB 플랫폼 POC 검증도 결국은 운영 상태를 데이터로 설명하고 변경 근거를 남기는 과정이었습니다.\n\n직전에는 가온누리에서 시작해 아이티센 CTS로 이어지는 넥스트레이드 매매체결시스템 보안 트랙을 구축 단계부터 운영 단계까지 연속 수행했습니다. FortiGate HA로 5계층 망분리를 설계하고 FSC 본인가 심사를 통과시켰으며, Ansible Role로 보안 장비 설정을 표준화하고 Splunk ES 탐지 룰, n8n 알림, FortiManager API 정책 조회를 연결해 보안 이벤트의 인지·분류·알림 흐름을 표준화했습니다.\n\n다음 단계에서는 자동화 대상을 보안 장비와 운영 스크립트에서 AI 에이전트와 Edge 런타임까지 넓히고 있습니다. 개인 홈랩에서 Cloudflare Workers, MCP, Grafana, 1Password를 Terraform으로 코드화해 운영하며, 반복되는 보안 운영 항목을 AI 에이전트가 먼저 정리하는 패턴을 실험하고 있습니다. 다음 커리어에서도 도구 자체보다 운영 문제가 먼저이고, 그 문제를 자동화 가능한 구조로 바꾸는 역할을 맡고 싶습니다.\n\n\"반복 작업의 한계\"라는 한 가지 문제 의식이 만든 궤적을, 귀사의 보안 인프라가 풀어야 할 다음 문제에서도 같은 방식으로 이어가겠습니다."
+    },
+    {
+      "name": "UserResume.M_Career_Text_Stat",
+      "value": "1"
+    },
+    {
+      "name": "InputStat.CareerInputStat",
+      "value": "True"
+    },
+    {
+      "name": "UnivSchool[c1].Schl_Name",
+      "value": "한양사이버대학교"
+    },
+    {
+      "name": "UnivSchool[c1].Schl_Type_Code",
+      "value": "2"
+    },
+    {
+      "name": "UnivSchool[c1].Entc_YM",
+      "value": "202403"
+    },
+    {
+      "name": "UnivSchool[c1].Grad_YM",
+      "value": "202802"
+    },
+    {
+      "name": "UnivSchool[c1].Grad_Type_Code",
+      "value": "4"
+    },
+    {
+      "name": "UnivSchool[c1].UnivMajor[0].Major_Name",
+      "value": "컴퓨터공학과"
+    },
+    {
+      "name": "UnivSchool[c1].UnivMajor[0].Major_Type_Code",
+      "value": "1"
+    },
+    {
+      "name": "UnivSchool.index",
+      "value": "c1"
+    },
+    {
+      "name": "InputStat.SchoolInputStat",
+      "value": "True"
+    },
+    {
+      "name": "License[c1].Index_Name",
+      "value": "c1"
+    },
+    {
+      "name": "License[c1].Naver_Lcns_Linked_Stat",
+      "value": ""
+    },
+    {
+      "name": "License[c1].Lc_Name",
+      "value": "CCNP"
+    },
+    {
+      "name": "License[c1].Lc_Code",
+      "value": ""
+    },
+    {
+      "name": "License[c1].Lc_Pub",
+      "value": "Cisco Systems"
+    },
+    {
+      "name": "License[c1].Lc_YYMM",
+      "value": "202008"
+    },
+    {
+      "name": "License[c1].Lc_Exp",
+      "value": "202308"
+    },
+    {
+      "name": "License[c1].Lc_CredId",
+      "value": ""
+    },
+    {
+      "name": "License[c1].Lc_CredUrl",
+      "value": ""
+    },
+    {
+      "name": "License[c1].Lc_Status",
+      "value": "expired"
+    },
+    {
+      "name": "License[c1].Lc_Note",
+      "value": "갱신 예정 — CCNP Security 또는 CCIE 학습 중"
+    },
+    {
+      "name": "License[c2].Index_Name",
+      "value": "c2"
+    },
+    {
+      "name": "License[c2].Naver_Lcns_Linked_Stat",
+      "value": ""
+    },
+    {
+      "name": "License[c2].Lc_Name",
+      "value": "RHCSA"
+    },
+    {
+      "name": "License[c2].Lc_Code",
+      "value": ""
+    },
+    {
+      "name": "License[c2].Lc_Pub",
+      "value": "Red Hat"
+    },
+    {
+      "name": "License[c2].Lc_YYMM",
+      "value": "201901"
+    },
+    {
+      "name": "License[c2].Lc_Exp",
+      "value": "202201"
+    },
+    {
+      "name": "License[c2].Lc_CredId",
+      "value": ""
+    },
+    {
+      "name": "License[c2].Lc_CredUrl",
+      "value": ""
+    },
+    {
+      "name": "License[c2].Lc_Status",
+      "value": "expired"
+    },
+    {
+      "name": "License[c2].Lc_Note",
+      "value": "갱신 예정 — CKA/CKS (Kubernetes) 학습 우선"
+    },
+    {
+      "name": "License[c3].Index_Name",
+      "value": "c3"
+    },
+    {
+      "name": "License[c3].Naver_Lcns_Linked_Stat",
+      "value": ""
+    },
+    {
+      "name": "License[c3].Lc_Name",
+      "value": "CompTIA Linux+"
+    },
+    {
+      "name": "License[c3].Lc_Code",
+      "value": ""
+    },
+    {
+      "name": "License[c3].Lc_Pub",
+      "value": "CompTIA"
+    },
+    {
+      "name": "License[c3].Lc_YYMM",
+      "value": "201902"
+    },
+    {
+      "name": "License[c3].Lc_Exp",
+      "value": ""
+    },
+    {
+      "name": "License[c3].Lc_CredId",
+      "value": ""
+    },
+    {
+      "name": "License[c3].Lc_CredUrl",
+      "value": ""
+    },
+    {
+      "name": "License[c3].Lc_Status",
+      "value": "active"
+    },
+    {
+      "name": "License[c3].Lc_Note",
+      "value": ""
+    },
+    {
+      "name": "License[c4].Index_Name",
+      "value": "c4"
+    },
+    {
+      "name": "License[c4].Naver_Lcns_Linked_Stat",
+      "value": ""
+    },
+    {
+      "name": "License[c4].Lc_Name",
+      "value": "LPIC Level 1"
+    },
+    {
+      "name": "License[c4].Lc_Code",
+      "value": ""
+    },
+    {
+      "name": "License[c4].Lc_Pub",
+      "value": "Linux Professional Institute"
+    },
+    {
+      "name": "License[c4].Lc_YYMM",
+      "value": "201902"
+    },
+    {
+      "name": "License[c4].Lc_Exp",
+      "value": ""
+    },
+    {
+      "name": "License[c4].Lc_CredId",
+      "value": ""
+    },
+    {
+      "name": "License[c4].Lc_CredUrl",
+      "value": ""
+    },
+    {
+      "name": "License[c4].Lc_Status",
+      "value": "active"
+    },
+    {
+      "name": "License[c4].Lc_Note",
+      "value": ""
+    },
+    {
+      "name": "License[c5].Index_Name",
+      "value": "c5"
+    },
+    {
+      "name": "License[c5].Naver_Lcns_Linked_Stat",
+      "value": ""
+    },
+    {
+      "name": "License[c5].Lc_Name",
+      "value": "사무자동화산업기사"
+    },
+    {
+      "name": "License[c5].Lc_Code",
+      "value": ""
+    },
+    {
+      "name": "License[c5].Lc_Pub",
+      "value": "한국산업인력공단"
+    },
+    {
+      "name": "License[c5].Lc_YYMM",
+      "value": "201912"
+    },
+    {
+      "name": "License[c5].Lc_Exp",
+      "value": ""
+    },
+    {
+      "name": "License[c5].Lc_CredId",
+      "value": ""
+    },
+    {
+      "name": "License[c5].Lc_CredUrl",
+      "value": ""
+    },
+    {
+      "name": "License[c5].Lc_Status",
+      "value": "active"
+    },
+    {
+      "name": "License[c5].Lc_Note",
+      "value": ""
+    },
+    {
+      "name": "License[c6].Index_Name",
+      "value": "c6"
+    },
+    {
+      "name": "License[c6].Naver_Lcns_Linked_Stat",
+      "value": ""
+    },
+    {
+      "name": "License[c6].Lc_Name",
+      "value": "리눅스마스터 2급"
+    },
+    {
+      "name": "License[c6].Lc_Code",
+      "value": ""
+    },
+    {
+      "name": "License[c6].Lc_Pub",
+      "value": "한국정보통신진흥협회"
+    },
+    {
+      "name": "License[c6].Lc_YYMM",
+      "value": "201901"
+    },
+    {
+      "name": "License[c6].Lc_Exp",
+      "value": ""
+    },
+    {
+      "name": "License[c6].Lc_CredId",
+      "value": ""
+    },
+    {
+      "name": "License[c6].Lc_CredUrl",
+      "value": ""
+    },
+    {
+      "name": "License[c6].Lc_Status",
+      "value": "active"
+    },
+    {
+      "name": "License[c6].Lc_Note",
+      "value": ""
+    },
+    {
+      "name": "License.index",
+      "value": "c1,c2,c3,c4,c5,c6"
+    },
+    {
+      "name": "InputStat.LicenseInputStat",
+      "value": "True"
+    },
+    {
+      "name": "UserAddition.Military_Stat",
+      "value": "4"
+    },
+    {
+      "name": "UserAddition.Military_Kind",
+      "value": "7"
+    },
+    {
+      "name": "UserAddition.Military_SYM",
+      "value": "201412"
+    },
+    {
+      "name": "UserAddition.Military_EYM",
+      "value": "201612"
+    },
+    {
+      "name": "InputStat.UserAdditionInputStat",
+      "value": "True"
+    },
+    {
+      "name": "PIOfferAgree.IpAgree",
+      "value": "1"
+    },
+    {
+      "name": "Award[c1].Index_Name",
+      "value": "c1"
+    },
+    {
+      "name": "Award[c1].Award_Name",
+      "value": "자율주행 경진대회 우수상"
+    },
+    {
+      "name": "Award[c1].Award_Inst_Name",
+      "value": "한양사이버대학교"
+    },
+    {
+      "name": "Award[c1].Award_Year",
+      "value": "2026"
+    },
+    {
+      "name": "Award[c1].Award_Cntnt",
+      "value": ""
+    },
+    {
+      "name": "Award.index",
+      "value": "c1"
+    },
+    {
+      "name": "InputStat.AwardInputStat",
+      "value": "True"
+    },
+    {
+      "name": "Language[c1].Index_Name",
+      "value": "c1"
+    },
+    {
+      "name": "Language[c1].Lang1_Name",
+      "value": "Korean"
+    },
+    {
+      "name": "Language[c1].Lang1_Stat",
+      "value": "Native"
+    },
+    {
+      "name": "Language[c2].Index_Name",
+      "value": "c2"
+    },
+    {
+      "name": "Language[c2].Lang1_Name",
+      "value": "English"
+    },
+    {
+      "name": "Language[c2].Lang1_Stat",
+      "value": "Working proficiency (technical reading & writing)"
+    },
+    {
+      "name": "Language.index",
+      "value": "c1,c2"
+    },
+    {
+      "name": "InputStat.LanguageInputStat",
+      "value": "True"
+    },
+    {
+      "name": "UserResume.Birth_YMD",
+      "value": "19941017"
+    },
+    {
+      "name": "UserResume.Address",
+      "value": "경기도 시흥시 장현천로61, 307동 1301호"
+    },
+    {
+      "name": "UserResume.GitHub",
+      "value": "https://github.com/jclee941"
+    },
+    {
+      "name": "HighSchool[c1].Schl_Name",
+      "value": "용남고등학교"
+    },
+    {
+      "name": "HighSchool[c1].Entc_YM",
+      "value": ""
+    },
+    {
+      "name": "HighSchool[c1].Grad_YM",
+      "value": "201302"
+    },
+    {
+      "name": "HighSchool[c1].Grad_Type_Code",
+      "value": "10"
+    },
+    {
+      "name": "HighSchool.index",
+      "value": "c1"
+    },
+    {
+      "name": "InputStat.HighSchoolInputStat",
+      "value": "True"
+    },
+    {
+      "name": "Skill[c1].Index_Name",
+      "value": "c1"
+    },
+    {
+      "name": "Skill[c1].Skill_Name",
+      "value": "Grafana"
+    },
+    {
+      "name": "Skill[c1].Skill_Level",
+      "value": "expert"
+    },
+    {
+      "name": "Skill[c2].Index_Name",
+      "value": "c2"
+    },
+    {
+      "name": "Skill[c2].Skill_Name",
+      "value": "Prometheus"
+    },
+    {
+      "name": "Skill[c2].Skill_Level",
+      "value": "expert"
+    },
+    {
+      "name": "Skill[c3].Index_Name",
+      "value": "c3"
+    },
+    {
+      "name": "Skill[c3].Skill_Name",
+      "value": "Loki"
+    },
+    {
+      "name": "Skill[c3].Skill_Level",
+      "value": "advanced"
+    },
+    {
+      "name": "Skill[c4].Index_Name",
+      "value": "c4"
+    },
+    {
+      "name": "Skill[c4].Skill_Name",
+      "value": "OpenTelemetry"
+    },
+    {
+      "name": "Skill[c4].Skill_Level",
+      "value": "intermediate"
+    },
+    {
+      "name": "Skill[c5].Index_Name",
+      "value": "c5"
+    },
+    {
+      "name": "Skill[c5].Skill_Name",
+      "value": "Elasticsearch/Kibana"
+    },
+    {
+      "name": "Skill[c5].Skill_Level",
+      "value": "advanced"
+    },
+    {
+      "name": "Skill[c6].Index_Name",
+      "value": "c6"
+    },
+    {
+      "name": "Skill[c6].Skill_Name",
+      "value": "Tempo (학습 중)"
+    },
+    {
+      "name": "Skill[c6].Skill_Level",
+      "value": "beginner"
+    },
+    {
+      "name": "Skill[c7].Index_Name",
+      "value": "c7"
+    },
+    {
+      "name": "Skill[c7].Skill_Name",
+      "value": "Pyroscope (학습 중)"
+    },
+    {
+      "name": "Skill[c7].Skill_Level",
+      "value": "beginner"
+    },
+    {
+      "name": "Skill[c8].Index_Name",
+      "value": "c8"
+    },
+    {
+      "name": "Skill[c8].Skill_Name",
+      "value": "Docker"
+    },
+    {
+      "name": "Skill[c8].Skill_Level",
+      "value": "expert"
+    },
+    {
+      "name": "Skill[c9].Index_Name",
+      "value": "c9"
+    },
+    {
+      "name": "Skill[c9].Skill_Name",
+      "value": "Kubernetes"
+    },
+    {
+      "name": "Skill[c9].Skill_Level",
+      "value": "advanced"
+    },
+    {
+      "name": "Skill[c10].Index_Name",
+      "value": "c10"
+    },
+    {
+      "name": "Skill[c10].Skill_Name",
+      "value": "Linux"
+    },
+    {
+      "name": "Skill[c10].Skill_Level",
+      "value": "expert"
+    },
+    {
+      "name": "Skill[c11].Index_Name",
+      "value": "c11"
+    },
+    {
+      "name": "Skill[c11].Skill_Name",
+      "value": "Cloudflare Workers"
+    },
+    {
+      "name": "Skill[c11].Skill_Level",
+      "value": "expert"
+    },
+    {
+      "name": "Skill[c12].Index_Name",
+      "value": "c12"
+    },
+    {
+      "name": "Skill[c12].Skill_Name",
+      "value": "Helm"
+    },
+    {
+      "name": "Skill[c12].Skill_Level",
+      "value": "advanced"
+    },
+    {
+      "name": "Skill[c13].Index_Name",
+      "value": "c13"
+    },
+    {
+      "name": "Skill[c13].Skill_Name",
+      "value": "k3s"
+    },
+    {
+      "name": "Skill[c13].Skill_Level",
+      "value": "advanced"
+    },
+    {
+      "name": "Skill[c14].Index_Name",
+      "value": "c14"
+    },
+    {
+      "name": "Skill[c14].Skill_Name",
+      "value": "Proxmox VE"
+    },
+    {
+      "name": "Skill[c14].Skill_Level",
+      "value": "expert"
+    },
+    {
+      "name": "Skill[c15].Index_Name",
+      "value": "c15"
+    },
+    {
+      "name": "Skill[c15].Skill_Name",
+      "value": "GitLab CI/CD"
+    },
+    {
+      "name": "Skill[c15].Skill_Level",
+      "value": "advanced"
+    },
+    {
+      "name": "Skill[c16].Index_Name",
+      "value": "c16"
+    },
+    {
+      "name": "Skill[c16].Skill_Name",
+      "value": "GitHub Actions"
+    },
+    {
+      "name": "Skill[c16].Skill_Level",
+      "value": "expert"
+    },
+    {
+      "name": "Skill[c17].Index_Name",
+      "value": "c17"
+    },
+    {
+      "name": "Skill[c17].Skill_Name",
+      "value": "Ansible"
+    },
+    {
+      "name": "Skill[c17].Skill_Level",
+      "value": "advanced"
+    },
+    {
+      "name": "Skill[c18].Index_Name",
+      "value": "c18"
+    },
+    {
+      "name": "Skill[c18].Skill_Name",
+      "value": "Terraform"
+    },
+    {
+      "name": "Skill[c18].Skill_Level",
+      "value": "advanced"
+    },
+    {
+      "name": "Skill[c19].Index_Name",
+      "value": "c19"
+    },
+    {
+      "name": "Skill[c19].Skill_Name",
+      "value": "ArgoCD (학습 중)"
+    },
+    {
+      "name": "Skill[c19].Skill_Level",
+      "value": "beginner"
+    },
+    {
+      "name": "Skill[c20].Index_Name",
+      "value": "c20"
+    },
+    {
+      "name": "Skill[c20].Skill_Name",
+      "value": "Crossplane (학습 중)"
+    },
+    {
+      "name": "Skill[c20].Skill_Level",
+      "value": "beginner"
+    },
+    {
+      "name": "Skill[c21].Index_Name",
+      "value": "c21"
+    },
+    {
+      "name": "Skill[c21].Skill_Name",
+      "value": "Pulumi (학습 중)"
+    },
+    {
+      "name": "Skill[c21].Skill_Level",
+      "value": "beginner"
+    },
+    {
+      "name": "Skill[c22].Index_Name",
+      "value": "c22"
+    },
+    {
+      "name": "Skill[c22].Skill_Name",
+      "value": "1Password (홈랩 운영)"
+    },
+    {
+      "name": "Skill[c22].Skill_Level",
+      "value": "intermediate"
+    },
+    {
+      "name": "Skill[c23].Index_Name",
+      "value": "c23"
+    },
+    {
+      "name": "Skill[c23].Skill_Name",
+      "value": "Python"
+    },
+    {
+      "name": "Skill[c23].Skill_Level",
+      "value": "advanced"
+    },
+    {
+      "name": "Skill[c24].Index_Name",
+      "value": "c24"
+    },
+    {
+      "name": "Skill[c24].Skill_Name",
+      "value": "Bash"
+    },
+    {
+      "name": "Skill[c24].Skill_Level",
+      "value": "expert"
+    },
+    {
+      "name": "Skill[c25].Index_Name",
+      "value": "c25"
+    },
+    {
+      "name": "Skill[c25].Skill_Name",
+      "value": "n8n"
+    },
+    {
+      "name": "Skill[c25].Skill_Level",
+      "value": "expert"
+    },
+    {
+      "name": "Skill[c26].Index_Name",
+      "value": "c26"
+    },
+    {
+      "name": "Skill[c26].Skill_Name",
+      "value": "Go"
+    },
+    {
+      "name": "Skill[c26].Skill_Level",
+      "value": "advanced"
+    },
+    {
+      "name": "Skill[c27].Index_Name",
+      "value": "c27"
+    },
+    {
+      "name": "Skill[c27].Skill_Name",
+      "value": "Playwright"
+    },
+    {
+      "name": "Skill[c27].Skill_Level",
+      "value": "advanced"
+    },
+    {
+      "name": "Skill[c28].Index_Name",
+      "value": "c28"
+    },
+    {
+      "name": "Skill[c28].Skill_Name",
+      "value": "MCP (Model Context Protocol)"
+    },
+    {
+      "name": "Skill[c28].Skill_Level",
+      "value": "advanced"
+    },
+    {
+      "name": "Skill[c29].Index_Name",
+      "value": "c29"
+    },
+    {
+      "name": "Skill[c29].Skill_Name",
+      "value": "PostgreSQL"
+    },
+    {
+      "name": "Skill[c29].Skill_Level",
+      "value": "advanced"
+    },
+    {
+      "name": "Skill[c30].Index_Name",
+      "value": "c30"
+    },
+    {
+      "name": "Skill[c30].Skill_Name",
+      "value": "MySQL"
+    },
+    {
+      "name": "Skill[c30].Skill_Level",
+      "value": "intermediate"
+    },
+    {
+      "name": "Skill[c31].Index_Name",
+      "value": "c31"
+    },
+    {
+      "name": "Skill[c31].Skill_Name",
+      "value": "Redis"
+    },
+    {
+      "name": "Skill[c31].Skill_Level",
+      "value": "intermediate"
+    },
+    {
+      "name": "Skill[c32].Index_Name",
+      "value": "c32"
+    },
+    {
+      "name": "Skill[c32].Skill_Name",
+      "value": "FortiGate"
+    },
+    {
+      "name": "Skill[c32].Skill_Level",
+      "value": "expert"
+    },
+    {
+      "name": "Skill[c33].Index_Name",
+      "value": "c33"
+    },
+    {
+      "name": "Skill[c33].Skill_Name",
+      "value": "FortiManager"
+    },
+    {
+      "name": "Skill[c33].Skill_Level",
+      "value": "expert"
+    },
+    {
+      "name": "Skill[c34].Index_Name",
+      "value": "c34"
+    },
+    {
+      "name": "Skill[c34].Skill_Name",
+      "value": "FortiAnalyzer"
+    },
+    {
+      "name": "Skill[c34].Skill_Level",
+      "value": "advanced"
+    },
+    {
+      "name": "Skill[c35].Index_Name",
+      "value": "c35"
+    },
+    {
+      "name": "Skill[c35].Skill_Name",
+      "value": "Splunk"
+    },
+    {
+      "name": "Skill[c35].Skill_Level",
+      "value": "expert"
+    },
+    {
+      "name": "Skill[c36].Index_Name",
+      "value": "c36"
+    },
+    {
+      "name": "Skill[c36].Skill_Name",
+      "value": "NAC"
+    },
+    {
+      "name": "Skill[c36].Skill_Level",
+      "value": "advanced"
+    },
+    {
+      "name": "Skill[c37].Index_Name",
+      "value": "c37"
+    },
+    {
+      "name": "Skill[c37].Skill_Name",
+      "value": "DLP"
+    },
+    {
+      "name": "Skill[c37].Skill_Level",
+      "value": "intermediate"
+    },
+    {
+      "name": "Skill[c38].Index_Name",
+      "value": "c38"
+    },
+    {
+      "name": "Skill[c38].Skill_Name",
+      "value": "Wazuh"
+    },
+    {
+      "name": "Skill[c38].Skill_Level",
+      "value": "advanced"
+    },
+    {
+      "name": "Skill[c39].Index_Name",
+      "value": "c39"
+    },
+    {
+      "name": "Skill[c39].Skill_Name",
+      "value": "OPA/Gatekeeper"
+    },
+    {
+      "name": "Skill[c39].Skill_Level",
+      "value": "beginner"
+    },
+    {
+      "name": "Skill[c40].Index_Name",
+      "value": "c40"
+    },
+    {
+      "name": "Skill[c40].Skill_Name",
+      "value": "Falco"
+    },
+    {
+      "name": "Skill[c40].Skill_Level",
+      "value": "beginner"
+    },
+    {
+      "name": "Skill[c41].Index_Name",
+      "value": "c41"
+    },
+    {
+      "name": "Skill[c41].Skill_Name",
+      "value": "eBPF/Cilium (학습 중)"
+    },
+    {
+      "name": "Skill[c41].Skill_Level",
+      "value": "beginner"
+    },
+    {
+      "name": "Skill[c42].Index_Name",
+      "value": "c42"
+    },
+    {
+      "name": "Skill[c42].Skill_Name",
+      "value": "Trivy"
+    },
+    {
+      "name": "Skill[c42].Skill_Level",
+      "value": "advanced"
+    },
+    {
+      "name": "Skill[c43].Index_Name",
+      "value": "c43"
+    },
+    {
+      "name": "Skill[c43].Skill_Name",
+      "value": "gitleaks"
+    },
+    {
+      "name": "Skill[c43].Skill_Level",
+      "value": "advanced"
+    },
+    {
+      "name": "Skill[c44].Index_Name",
+      "value": "c44"
+    },
+    {
+      "name": "Skill[c44].Skill_Name",
+      "value": "MITRE ATT&CK"
+    },
+    {
+      "name": "Skill[c44].Skill_Level",
+      "value": "intermediate"
+    },
+    {
+      "name": "Skill[c45].Index_Name",
+      "value": "c45"
+    },
+    {
+      "name": "Skill[c45].Skill_Name",
+      "value": "Cloudflare WAF"
+    },
+    {
+      "name": "Skill[c45].Skill_Level",
+      "value": "advanced"
+    },
+    {
+      "name": "Skill[c46].Index_Name",
+      "value": "c46"
+    },
+    {
+      "name": "Skill[c46].Skill_Name",
+      "value": "Node.js"
+    },
+    {
+      "name": "Skill[c46].Skill_Level",
+      "value": "advanced"
+    },
+    {
+      "name": "Skill[c47].Index_Name",
+      "value": "c47"
+    },
+    {
+      "name": "Skill[c47].Skill_Name",
+      "value": "TypeScript"
+    },
+    {
+      "name": "Skill[c47].Skill_Level",
+      "value": "advanced"
+    },
+    {
+      "name": "Skill[c48].Index_Name",
+      "value": "c48"
+    },
+    {
+      "name": "Skill[c48].Skill_Name",
+      "value": "Go"
+    },
+    {
+      "name": "Skill[c48].Skill_Level",
+      "value": "advanced"
+    },
+    {
+      "name": "Skill.index",
+      "value": "c1,c2,c3,c4,c5,c6,c7,c8,c9,c10,c11,c12,c13,c14,c15,c16,c17,c18,c19,c20,c21,c22,c23,c24,c25,c26,c27,c28,c29,c30,c31,c32,c33,c34,c35,c36,c37,c38,c39,c40,c41,c42,c43,c44,c45,c46,c47,c48"
+    },
+    {
+      "name": "InputStat.SkillInputStat",
+      "value": "True"
+    },
+    {
+      "name": "Project[c1].Index_Name",
+      "value": "c1"
+    },
+    {
+      "name": "Project[c1].P_Name",
+      "value": "Observability Platform"
+    },
+    {
+      "name": "Project[c1].P_Cntnt",
+      "value": "홈랩 인프라의 메트릭과 로그가 각 서비스별로 흩어져 있어 장애 발생 시 원인 파악에 시간이 걸렸습니다. Prometheus node_exporter로 Proxmox VM/CT 메트릭을 수집하고, Loki Promtail로 로그를 적재했습니다. Grafana 대시보드 정의를 코드(Grafana-as-code)로 관리하여 IaC로 재현 가능하게 했습니다. 장애 분석 시 메트릭과 로그를 Grafana Explore에서 교차 조회하도록 표준화해, 서비스별 로그 파일을 직접 확인하던 수동 절차를 제거했습니다."
+    },
+    {
+      "name": "Project[c1].P_Url",
+      "value": "https://grafana.jclee.me"
+    },
+    {
+      "name": "Project[c2].Index_Name",
+      "value": "c2"
+    },
+    {
+      "name": "Project[c2].P_Name",
+      "value": "Security Alert System"
+    },
+    {
+      "name": "Project[c2].P_Cntnt",
+      "value": "FortiGate 보안 이벤트가 장비 syslog와 Splunk에 분산되어 발생부터 담당자 인지까지 지연이 발생하는 환경을 정리했습니다. Splunk Saved Search와 Webhook을 연동하고, CSV 기반 state tracker로 상태 전이 시에만 알림이 발송되도록 중복 알림을 억제했습니다. FortiGate LogID를 severity/category 기준으로 매핑해 장비 syslog 확인 없이 Splunk 기준으로 이벤트를 분류할 수 있게 했습니다."
+    },
+    {
+      "name": "Project[c2].P_Url",
+      "value": "https://github.com/jclee941/splunk"
+    },
+    {
+      "name": "Project[c3].Index_Name",
+      "value": "c3"
+    },
+    {
+      "name": "Project[c3].P_Name",
+      "value": "IP Blacklist Platform"
+    },
+    {
+      "name": "Project[c3].P_Cntnt",
+      "value": "위협 인텔리전스 피드가 여러 외부 소스(AbuseIPDB, Emerging Threats, AlienVault OTX 등)에 흩어져 있어 악성 IP를 분석할 때 소스마다 별도 조회가 필요했습니다. AbuseIPDB, Emerging Threats, AlienVault OTX feed를 source adapter로 분리하고, SQLAlchemy 모델에서 IP, source, confidence, first_seen, last_seen을 정규화했습니다. Alembic으로 schema migration을 관리해 feed 추가 시 DB 변경과 adapter 구현을 분리했습니다."
+    },
+    {
+      "name": "Project[c3].P_Url",
+      "value": "https://github.com/jclee941/blacklist"
+    },
+    {
+      "name": "Project[c4].Index_Name",
+      "value": "c4"
+    },
+    {
+      "name": "Project[c4].P_Name",
+      "value": "HYCU FSDS 자율주행"
+    },
+    {
+      "name": "Project[c4].P_Cntnt",
+      "value": "Formula Student Driverless Simulator (FSDS) 환경에서 콘(Inflation-aware LiDAR Detection)·인지·주행 제어를 단일 런타임에서 통합 운영하는 과제가 있었습니다. ROS2 기반 인지·제어 노드를 Docker 컨테이너로 패키징하고, AirSim 시뮬레이션 환경에서 차량 동역학(vehicle dynamics)과 센서 모델을 통합 검증하는 파이프라인을 구축했습니다. 시뮬레이션 재현성과 노드 컨테이너화를 핵심 과제로, Gazebo-ROS 브릿지를 통해 실제 센서 레이턴시(laser_scan → pointcloud 필터 체인)를 재현하고, rviz2 기반 센서 시각화 디버깅 체계를 도입했습니다."
+    },
+    {
+      "name": "Project[c4].P_Url",
+      "value": "https://github.com/jclee941/hycu_fsds"
+    },
+    {
+      "name": "Project[c5].Index_Name",
+      "value": "c5"
+    },
+    {
+      "name": "Project[c5].P_Name",
+      "value": "Resume Portfolio"
+    },
+    {
+      "name": "Project[c5].P_Cntnt",
+      "value": "경력·프로젝트·운영 지표가 이력서·PDF·GitHub에 흩어져 있어 채용 담당자가 강점을 빠르게 파악하기 어려웠습니다. Cloudflare Workers에서 이력서 데이터를 SSoT로 렌더링하고, JSON-LD와 OpenGraph metadata를 함께 관리해 PDF/GitHub/site 간 내용 드리프트를 줄였습니다. 배포와 관찰 가능성은 GitHub Actions, Cloudflare Workers Logs, Loki 기반으로 연결했습니다."
+    },
+    {
+      "name": "Project[c5].P_Url",
+      "value": "https://github.com/jclee941/resume"
+    },
+    {
+      "name": "Project[c6].Index_Name",
+      "value": "c6"
+    },
+    {
+      "name": "Project[c6].P_Name",
+      "value": "Terraform Homelab IaC"
+    },
+    {
+      "name": "Project[c6].P_Cntnt",
+      "value": "홈랩 인프라(Proxmox, Cloudflare DNS/Workers, K8s)를 GUI로 관리하다 보니 변경 이력 추적과 재구축이 어려웠습니다. Proxmox VM/LXC, Cloudflare DNS·Workers·WAF, k3s bootstrap 리소스를 Terraform module로 관리하고, PR마다 plan 검증을 수행했습니다. GUI 변경을 줄이고, 인프라 변경 이력을 Git 기준으로 추적하도록 전환했습니다."
+    },
+    {
+      "name": "Project[c6].P_Url",
+      "value": "https://github.com/jclee941/terraform"
+    },
+    {
+      "name": "Project[c7].Index_Name",
+      "value": "c7"
+    },
+    {
+      "name": "Project[c7].P_Name",
+      "value": "SafetyWallet (CF Workers PWA)"
+    },
+    {
+      "name": "Project[c7].P_Cntnt",
+      "value": "현장 작업자가 안전 매뉴얼·교육 이수 증빙·비상 연락망을 종이로 관리하여 현장에서 즉시 조회가 불가능했고, 관리자가 종이 서류로 증빙을 수기 확인해야 하는 비효율이 있었습니다. Cloudflare Workers 기반 PWA + Next.js 어드민을 구축하여 이 문제를 해결했습니다. D1(SQLite) 데이터베이스에 작업자 프로필·교육 이수 상태·비상 연락처를 저장하고, Workers Queue로 교육 만료 알림과 같은 비동기 작업을 분리하여 요청 지연 시간을 줄였습니다. Workers KV에 매뉴얼 PDF 원본을 저장(Edge 캐시 활용)하고, Service Worker Cache API로 현장 단말의 네트워크 제약 환경에서도 오프라인 조회를 지원했습니다. 어드민 화면은 Next.js + TypeScript로 구축하며, 세션 인증은 JWT(Short-lived access token + HttpOnly refresh token)를 사용하고, 역할 기반 접근 제어(RBAC)로 현장 "
+    },
+    {
+      "name": "Project[c7].P_Url",
+      "value": "https://github.com/jclee941/safetywallet"
+    },
+    {
+      "name": "Project[c8].Index_Name",
+      "value": "c8"
+    },
+    {
+      "name": "Project[c8].P_Name",
+      "value": "AI GitHub PR Reviewer"
+    },
+    {
+      "name": "Project[c8].P_Cntnt",
+      "value": "보안·인프라 PR 리뷰가 1인 의존 구조였고 공통 패턴(시크릿 노출/RBAC 경로) 검증을 매번 수동으로 수행해야 했습니다. The-PR-Agent/pr-agent를 fork해 GitHub Actions self-hosted reviewer로 운영하고, gitleaks 기반 secret scan과 Kubernetes/RBAC manifest 경로 검증을 Check Run으로 게시했습니다. LiteLLM provider abstraction을 사용해 모델 변경을 설정 파일로 분리했습니다."
+    },
+    {
+      "name": "Project[c8].P_Url",
+      "value": "https://github.com/jclee941/pr-agent"
+    },
+    {
+      "name": "Project[c9].Index_Name",
+      "value": "c9"
+    },
+    {
+      "name": "Project[c9].P_Name",
+      "value": "Bug Bounty Recon Toolkit"
+    },
+    {
+      "name": "Project[c9].P_Cntnt",
+      "value": "버그바운티 정찰(서브도메인 발견 → 알림 → 취약점 스캔)을 매번 수작업으로 수행했습니다. Go 기반 정찰 파이프라인 + Python 결과 분석을 통합했습니다. Subfinder, httpx, Nuclei 단계를 Makefile CLI로 표준화하고, cron으로 주기 실행했습니다. 신규 서브도메인 발견 시 Slack 알림을 보내고, Nuclei 결과를 severity 기준으로 저장하도록 구성했습니다."
+    },
+    {
+      "name": "Project[c9].P_Url",
+      "value": "https://github.com/jclee941/bug"
+    },
+    {
+      "name": "Project.index",
+      "value": "c1,c2,c3,c4,c5,c6,c7,c8,c9"
+    },
+    {
+      "name": "InputStat.ProjectInputStat",
+      "value": "True"
+    },
+    {
+      "name": "HopeJob.HJ_Code",
+      "value": "10031"
+    },
+    {
+      "name": "HopeJob.HJ_Name_Code",
+      "value": "1000238,1000233"
+    },
+    {
+      "name": "HopeJob.HJ_Name",
+      "value": "보안 인프라,Security"
+    },
+    {
+      "name": "HopeJob.HJ_Local_Code",
+      "value": "I000"
+    },
+    {
+      "name": "HopeJob.HJ_Local_Name",
+      "value": "서울"
+    },
+    {
+      "name": "InputStat.HopeJobInputStat",
+      "value": "True"
+    },
+    {
+      "name": "HopeJob.HJ_Salary",
+      "value": "면접 후 협의"
+    },
+    {
+      "name": "HopeJob.HJ_Industry",
+      "value": "금융,핀테크,보안,클라우드"
+    }
+  ]
+}

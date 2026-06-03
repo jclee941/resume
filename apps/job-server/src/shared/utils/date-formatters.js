@@ -12,7 +12,10 @@ function normalizeDateParts(date) {
 
   const raw = String(date).trim();
   if (!raw) return null;
-  const [year = '', month = '', day = ''] = raw.match(/\d+/g) || [];
+  // Use only the FIRST date-like token so annotated values such as
+  // "2020.08 (2023.08 만료)" parse as 2020-08, not a mix of both dates.
+  const firstToken = raw.split(/[(\s]/)[0] || raw;
+  const [year = '', month = '', day = ''] = firstToken.match(/\d+/g) || [];
   if (!year || !month) return null;
 
   return {
@@ -48,7 +51,7 @@ export function parsePeriod(periodString) {
   const [rawStart = '', rawEnd = ''] = periodString
     .split(/\s*(?:~|-)\s*/)
     .map((part) => part.trim());
-  const isCurrent = rawEnd.includes('현재');
+  const isCurrent = /현재|재직중|present|current|now/i.test(rawEnd);
   const start = formatYYYYMM(rawStart);
   const end = isCurrent ? '' : formatYYYYMM(rawEnd);
 

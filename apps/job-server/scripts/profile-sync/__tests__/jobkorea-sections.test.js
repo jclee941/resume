@@ -9,6 +9,8 @@ import {
   mapHopeJobToFormFields,
   mapLicensesToFormFields,
   mapMilitaryToFormFields,
+  mapPersonalFieldsToFormFields,
+  mapPersonalProjectsToFormFields,
   mapPortfolioToFormFields,
   mapSchoolToFormFields,
   parseRange,
@@ -535,9 +537,19 @@ describe('buildJobKoreaFormData', () => {
     certifications: [{ name: 'CCNP', issuer: 'Cisco Systems', date: '2020.08' }],
     military: { status: '사회복무요원', period: '2014.12 - 2016.12' },
     awards: [{ name: '우수상', organization: '한양사이버대학교', year: '2026' }],
+    hope: {
+      roles: ['보안 엔지니어'],
+      jobCodes: ['1000238'],
+      salary: '5000만원 이상',
+      industries: ['금융', '보안'],
+    },
+    skills: {
+      observability: { items: [{ name: 'Prometheus', level: 'Advanced' }] },
+    },
+    personalProjects: [{ name: 'Proj A', description: 'Desc A', url: 'https://example.com' }],
   };
 
-  it('combines only live JobKorea form sections into one field array', () => {
+  it('combines all SSoT-backed JobKorea form sections into one field array', () => {
     const fields = buildJobKoreaFormData(fullSSOT, {});
     const names = fields.map((field) => field.name);
 
@@ -546,9 +558,9 @@ describe('buildJobKoreaFormData', () => {
     assert.ok(names.some((name) => name.startsWith('License[')));
     assert.ok(names.some((name) => name.startsWith('UserAddition.')));
     assert.ok(names.some((name) => name.startsWith('Award[')));
-    assert.ok(!names.some((name) => name.startsWith('HopeJob.')));
-    assert.ok(!names.some((name) => name.startsWith('Skill[')));
-    assert.ok(!names.some((name) => name.startsWith('Project[')));
+    assert.ok(names.some((name) => name.startsWith('HopeJob.')));
+    assert.ok(names.some((name) => name.startsWith('Skill[')));
+    assert.ok(names.some((name) => name.startsWith('Project[')));
     assert.ok(!names.some((name) => name.startsWith('HighSchool[')));
   });
 
@@ -568,7 +580,7 @@ describe('buildJobKoreaFormData', () => {
     assert.strictEqual(countMatching(fields, /^Award\[/), 5);
   });
 
-  it('omits sections absent from the live JobKorea resume edit form', () => {
+  it('includes optional SSoT-backed sections with available mappers', () => {
     const ssot = {
       ...fullSSOT,
       highSchool: {
@@ -604,17 +616,17 @@ describe('buildJobKoreaFormData', () => {
     });
     const names = fields.map((field) => field.name);
 
-    assert.ok(!names.some((name) => name.startsWith('HighSchool[')));
-    assert.ok(!names.some((name) => name === 'HighSchool.index'));
-    assert.ok(!names.some((name) => name === 'InputStat.HighSchoolInputStat'));
-    assert.ok(!names.some((name) => name.startsWith('HopeJob.')));
-    assert.ok(!names.some((name) => name === 'InputStat.HopeJobInputStat'));
-    assert.ok(!names.some((name) => name.startsWith('Skill[')));
-    assert.ok(!names.some((name) => name === 'Skill.index'));
-    assert.ok(!names.some((name) => name === 'InputStat.SkillInputStat'));
-    assert.ok(!names.some((name) => name.startsWith('Project[')));
-    assert.ok(!names.some((name) => name === 'Project.index'));
-    assert.ok(!names.some((name) => name === 'InputStat.ProjectInputStat'));
+    assert.ok(names.some((name) => name.startsWith('HighSchool[')));
+    assert.ok(names.some((name) => name === 'HighSchool.index'));
+    assert.ok(names.some((name) => name === 'InputStat.HighSchoolInputStat'));
+    assert.ok(names.some((name) => name.startsWith('HopeJob.')));
+    assert.ok(names.some((name) => name === 'InputStat.HopeJobInputStat'));
+    assert.ok(names.some((name) => name.startsWith('Skill[')));
+    assert.ok(names.some((name) => name === 'Skill.index'));
+    assert.ok(names.some((name) => name === 'InputStat.SkillInputStat'));
+    assert.ok(names.some((name) => name.startsWith('Project[')));
+    assert.ok(names.some((name) => name === 'Project.index'));
+    assert.ok(names.some((name) => name === 'InputStat.ProjectInputStat'));
   });
 
   it('returns non-empty field list for valid SSOT', () => {
@@ -653,6 +665,106 @@ describe('dry-run smoke with real SSOT', () => {
   });
 });
 
+describe('JobKorea SSoT field-mapping correctness — RED', () => {
+  it('B1 buildJobKoreaFormData normalizes real dotted birth date to 8 digits', () => {
+    const ssot = loadSSOT();
+    const byName = toMap(buildJobKoreaFormData(ssot, {}));
+
+    assert.strictEqual(byName.get('UserResume.Birth_YMD'), '19941017');
+  });
+
+  it('B1 mapPersonalFieldsToFormFields normalizes dotted birth date to 8 digits', () => {
+    const fields = mapPersonalFieldsToFormFields({ personal: { birthDate: '1994.10.17' } });
+    const byName = toMap(fields);
+
+    assert.strictEqual(byName.get('UserResume.Birth_YMD'), '19941017');
+  });
+
+  it('B2 buildJobKoreaFormData includes real SSoT skills', () => {
+    const ssot = loadSSOT();
+    const fields = buildJobKoreaFormData(ssot, {});
+
+    assert.ok(
+      fields.some((field) => /^Skill\[c\d+\]\.Skill_Name$/.test(field.name)),
+      `expected Skill[cN].Skill_Name fields for ${Object.values(ssot.skills ?? {}).flatMap((group) => group.items ?? []).length} SSoT skills`
+    );
+  });
+
+  it('B2 buildJobKoreaFormData includes real SSoT hope job fields', () => {
+    const ssot = loadSSOT();
+    const fields = buildJobKoreaFormData(ssot, {});
+
+    assert.ok(fields.some((field) => /^HopeJob\.HJ_/.test(field.name)), 'expected HopeJob.HJ_* fields');
+  });
+
+  it('B2 buildJobKoreaFormData includes real SSoT personal projects', () => {
+    const ssot = loadSSOT();
+    const fields = buildJobKoreaFormData(ssot, {});
+
+    assert.ok(
+      fields.some((field) => /^Project\[c\d+\]\.P_Name$/.test(field.name)),
+      `expected Project[cN].P_Name fields for ${ssot.personalProjects?.length ?? 0} personal projects`
+    );
+  });
+
+  it('B3/B4 mapPersonalProjectsToFormFields maps githubUrl to P_Url', () => {
+    const fields = mapPersonalProjectsToFormFields({
+      personalProjects: [
+        { name: 'Project X', description: 'Project X description', githubUrl: 'https://github.com/x' },
+      ],
+    });
+    const byName = toMap(fields);
+
+    assert.strictEqual(byName.get('Project[c1].P_Url'), 'https://github.com/x');
+  });
+
+  it('B3 buildJobKoreaFormData maps real education.highSchool to HighSchool Schl_Name', () => {
+    const ssot = loadSSOT();
+    const byName = toMap(buildJobKoreaFormData(ssot, {}));
+
+    assert.strictEqual(byName.get('HighSchool[c1].Schl_Name'), ssot.education.highSchool);
+  });
+
+  it('B5 mapCareersToFormFields emits Career[c1].CNameHold exactly once', () => {
+    const ssot = loadSSOT();
+    const fields = mapCareersToFormFields({ careers: [ssot.careers[0]] });
+    const count = fields.filter((field) => field.name === 'Career[c1].CNameHold').length;
+
+    assert.strictEqual(count, 1);
+  });
+
+  it('B6 buildJobKoreaFormData falls back M_Career_Text to careerSummary.ko when coverLetter.ko is absent', () => {
+    const fields = buildJobKoreaFormData({
+      careers: [{ company: 'Test', period: '2024.01 ~ 현재', role: 'Security', description: 'desc' }],
+      careerSummary: {
+        ko: {
+          headline: '경력 요약 헤드라인',
+          paragraphs: ['경력 요약 본문'],
+          closing: '경력 요약 마무리',
+        },
+      },
+    });
+    const byName = toMap(fields);
+
+    assert.ok(byName.get('UserResume.M_Career_Text')?.includes('경력 요약 헤드라인'));
+  });
+
+  it('COMPLETENESS real SSoT maps non-empty required fields for every career', () => {
+    const ssot = loadSSOT();
+    const fields = buildJobKoreaFormData(ssot, {});
+    const byName = toMap(fields);
+
+    ssot.careers.forEach((_, index) => {
+      const careerIndex = `c${index + 1}`;
+      for (const suffix of ['C_Name', 'CSYM', 'RetireSt', 'M_MainJob_Jikwi', 'Prfm_Prt']) {
+        const fieldName = `Career[${careerIndex}].${suffix}`;
+        assert.notStrictEqual(byName.get(fieldName), '', `${fieldName} should be non-empty`);
+      }
+    });
+    assert.notStrictEqual(byName.get('UserResume.M_Career_Text'), '', 'UserResume.M_Career_Text should be non-empty');
+  });
+});
+
 describe('normalizeCompanyName — Wanted/JobKorea parity (audit P2 fix)', () => {
   it('strips "(주)" prefix to match Wanted career sync normalization', () => {
     assert.strictEqual(normalizeCompanyName('(주)아이티센 CTS'), '아이티센 CTS');
@@ -672,7 +784,7 @@ describe('normalizeCompanyName — Wanted/JobKorea parity (audit P2 fix)', () =>
 });
 
 describe('JobKorea live form — skills', () => {
-  it('buildJobKoreaFormData omits skill fields because the live form has no Skill section', () => {
+  it('buildJobKoreaFormData includes skill fields from SSoT skills', () => {
     const ssot = {
       skills: {
         observability: { items: [{ name: 'Prometheus', level: 'Advanced' }] },
@@ -686,9 +798,9 @@ describe('JobKorea live form — skills', () => {
     const fields = buildJobKoreaFormData(ssot, {});
     const names = fields.map((field) => field.name);
 
-    assert.ok(!names.some((name) => name.startsWith('Skill[')));
-    assert.ok(!names.includes('Skill.index'));
-    assert.ok(!names.includes('InputStat.SkillInputStat'));
+    assert.ok(names.some((name) => name.startsWith('Skill[')));
+    assert.ok(names.includes('Skill.index'));
+    assert.ok(names.includes('InputStat.SkillInputStat'));
   });
 });
 
@@ -820,7 +932,7 @@ describe('JobKorea gap — certification extra fields', () => {
 });
 
 describe('JobKorea live form — high school', () => {
-  it('buildJobKoreaFormData omits high school because the live form has no HighSchool section', () => {
+  it('buildJobKoreaFormData includes high school from legacy ssot.highSchool object', () => {
     const ssot = {
       highSchool: {
         school: '용남고',
@@ -837,9 +949,12 @@ describe('JobKorea live form — high school', () => {
     const fields = buildJobKoreaFormData(ssot, {});
     const names = fields.map((field) => field.name);
 
-    assert.ok(!names.some((name) => name.startsWith('HighSchool[')));
-    assert.ok(!names.includes('HighSchool.index'));
-    assert.ok(!names.includes('InputStat.HighSchoolInputStat'));
+    assert.equal(
+      fields.find((f) => f.name === 'HighSchool[c1].Schl_Name')?.value,
+      '용남고'
+    );
+    assert.ok(names.includes('HighSchool.index'));
+    assert.ok(names.includes('InputStat.HighSchoolInputStat'));
   });
 });
 
@@ -856,7 +971,7 @@ describe('JobKorea gap — awards achievements fallback', () => {
 });
 
 describe('JobKorea live form — personal projects', () => {
-  it('buildJobKoreaFormData omits personal project fields because the live form has no Project section', () => {
+  it('buildJobKoreaFormData includes personal project fields from SSoT personalProjects', () => {
     const ssot = {
       personalProjects: [
         {
@@ -874,8 +989,8 @@ describe('JobKorea live form — personal projects', () => {
     const fields = buildJobKoreaFormData(ssot, {});
     const names = fields.map((field) => field.name);
 
-    assert.ok(!names.some((name) => name.startsWith('Project[')));
-    assert.ok(!names.includes('Project.index'));
-    assert.ok(!names.includes('InputStat.ProjectInputStat'));
+    assert.ok(names.some((name) => name.startsWith('Project[')));
+    assert.ok(names.includes('Project.index'));
+    assert.ok(names.includes('InputStat.ProjectInputStat'));
   });
 });

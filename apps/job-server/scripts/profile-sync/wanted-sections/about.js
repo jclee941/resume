@@ -4,7 +4,9 @@ import { WANTED_ABOUT_LIMIT } from '../../../src/tools/platforms/wanted-sync-ope
 
 /** @param {Object} client @param {Object} ssot @param {Object} resumeDetail @param {string} resumeId @returns {Promise<Object>} */
 export async function syncWantedAbout(client, ssot, resumeDetail, resumeId) {
-  const rawAbout = ssot.summary?.profileStatement || '';
+  // Prefer the Wanted-specific SSoT variant when present, else fall back to the
+  // generic profile statement.
+  const rawAbout = ssot.platformVariants?.wanted?.about || ssot.summary?.profileStatement || '';
   // Wanted about field has a 3000-char limit (WANTED_ABOUT_LIMIT). Truncate with ellipsis.
   const ssotAbout =
     rawAbout.length > WANTED_ABOUT_LIMIT
