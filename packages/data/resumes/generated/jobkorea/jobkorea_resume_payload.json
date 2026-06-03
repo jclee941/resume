@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "description": "Complete JobKorea form payload generated from SSoT (packages/data/resumes/master/resume_data.json). Build via apps/job-server/scripts/profile-sync/jobkorea-sections.js buildJobKoreaFormData(). Feed to JobKorea sync (JOBKOREA_SYNC_MODE=hybrid-api, JOBKOREA_RNO=<rno>) to populate a JobKorea form resume.",
+    "description": "Complete JobKorea form payload GENERATED FROM master SSoT (packages/data/resumes/master/resume_data.json) via apps/job-server/scripts/profile-sync/jobkorea-sections.js#buildJobKoreaFormData. Regenerate with: node -e \"require(...).buildJobKoreaFormData(masterSSoT)\". Feed to JobKorea sync (JOBKOREA_SYNC_MODE=hybrid-api JOBKOREA_RNO=<rno> node apps/job-server/scripts/profile-sync.js jobkorea --apply).",
     "generatedFrom": "packages/data/resumes/master/resume_data.json",
     "builder": "apps/job-server/scripts/profile-sync/jobkorea-sections.js#buildJobKoreaFormData",
     "fieldCount": 471,
@@ -16,7 +16,7 @@
       "personalProject": 9,
       "hope": 7
     },
-    "note": "No auth/session material. Pure resume content. PII (resume data) intentional."
+    "note": "Resume content only. No auth/session material."
   },
   "fields": [
     {
