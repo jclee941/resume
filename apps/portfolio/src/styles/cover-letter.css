@@ -1,5 +1,5 @@
 /* ============================================================
-   COVER LETTER — "terminal manuscript" card
+   COVER LETTER — clean manuscript card
    Renders the SSoT coverLetter as a first-class scrollable section.
    Tokens only (no hardcoded colors). Reduced-motion safe.
    ============================================================ */
@@ -46,7 +46,7 @@
   z-index: 1;
 }
 
-/* Terminal chrome strip: cat chip + file path + READ-ONLY pill */
+/* Header strip: file label + READ-ONLY pill */
 .cover-letter__chrome {
   display: flex;
   align-items: center;
@@ -208,7 +208,7 @@
   text-wrap: pretty;
 }
 
-/* Closing: terminal prompt + output as a two-column row */
+/* Closing: signature prompt + output as a two-column row */
 .cover-letter__closing {
   display: grid;
   grid-template-columns: max-content minmax(0, 62ch);

@@ -5,7 +5,7 @@ const { escapeHtml } = require('../template-sanitizer');
 /**
  * Generate an "achievements" evidence section surfacing the real SSoT
  * `achievements[]` array that was previously unsurfaced on the live
- * portfolio. Rendered as terminal-style evidence cards.
+ * portfolio. Rendered as clean evidence cards.
  *
  * @param {Object} data - data.json (uses `achievements[]` of strings).
  * @returns {string} HTML for the achievements list, or '' if nothing to show.

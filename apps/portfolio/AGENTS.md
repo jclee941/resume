@@ -61,11 +61,6 @@ index.html → generate-worker.js → worker.js → wrangler deploy
          inline CSS + data
 ```
 
-## CLI COMMANDS
-
-`help`, `whoami`, `pwd`, `date`, `ls`, `cat`, `about`, `resume`, `projects`,
-`skills`, `contact`, `social`, `neofetch`, `snake`, `clear`.
-
 ## CONVENTIONS
 
 - Inline assets at build time; the sole exception is `resume.pdf` (served via `env.ASSETS`).
@@ -90,7 +85,7 @@ Hardcoded content in `index.html`/`index-en.html` must match SSoT
 - Title/meta/OG/Twitter tags: `보안 엔지니어` (ko) / `Security Engineer` (en) / `セキュリティエンジニア` (ja)
 - JSON-LD Person schema: `knowsAbout` (12 domains), `jobTitle`, `description`
 - About section: career highlights (quantified achievements), current focus
-- Hero subtitle, neofetch command, terminal `whoami`/`cat about.txt` responses
+- Hero name, role line, and positioning sentence; section copy
 - After edits: `npm run sync:data && npm run build` to regenerate `worker.js`
 
 ## EXCEPTIONS

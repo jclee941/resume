@@ -1,9 +1,8 @@
 /**
  * Pure, locale-aware plain-text formatter for the SSoT `coverLetter` asset.
  *
- * Rendered by the terminal `coverletter` / `cl` command. Output is plain text
- * with `\n` separators (the terminal renders results via textContent with
- * white-space:pre), so this module emits NO HTML. Content is sourced verbatim
+ * Emits plain text with `\n` separators (rendered with white-space:pre), so
+ * this module emits NO HTML. Content is sourced verbatim
  * from the resume SSoT — this formatter never fabricates copy.
  * @module cover-letter-formatter
  */
@@ -56,7 +55,7 @@ function pickEntry(coverLetter, lang) {
 }
 
 /**
- * Render the cover letter for the given locale as terminal plain text.
+ * Render the cover letter for the given locale as plain text.
  * @param {Object|null} coverLetter - SSoT coverLetter map ({ ko, en, ja }).
  * @param {string} [lang] - Requested language tag; defaults to 'ko'.
  * @returns {string} Plain-text cover letter, or a friendly unavailable line.

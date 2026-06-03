@@ -5,7 +5,7 @@ const { escapeHtml } = require('../template-sanitizer');
 /**
  * Generate a compact "profile" bento block surfacing SSoT data that was
  * previously unsurfaced: education, languages, awards, OSS contributions,
- * military service. Rendered as terminal-style mini cards.
+ * military service. Rendered as clean mini cards.
  *
  * @param {Object} data - data.json (uses education, languages, awards,
  *   ossContributions, military).

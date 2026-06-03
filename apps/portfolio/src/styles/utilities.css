@@ -336,7 +336,6 @@ button:focus-visible {
     display: none !important;
   }
 
-  .terminal-header,
   .page-header-bar {
     display: none !important;
   }
