@@ -184,9 +184,9 @@ function resolveSkillData() {
 }
 
 const LEVELS = {
-  expert: { min: 90, label: 'Expert', color: 'var(--cyber-green)' },
-  advanced: { min: 70, label: 'Advanced', color: 'var(--cyber-cyan)' },
-  intermediate: { min: 50, label: 'Intermediate', color: 'var(--cyber-magenta)' },
+  expert: { min: 90, label: 'Expert', color: 'var(--color-accent-strong)' },
+  advanced: { min: 70, label: 'Advanced', color: 'var(--color-accent)' },
+  intermediate: { min: 50, label: 'Intermediate', color: 'var(--text-secondary)' },
 };
 
 function getLevelInfo(level) {

@@ -287,7 +287,7 @@
   color: var(--success-success, #79b88a);
 }
 .infra-status--stopped {
-  color: var(--cyber-red, #ff0040);
+  color: var(--color-error);
 }
 .infra-desc {
   font-size: var(--text-xs);

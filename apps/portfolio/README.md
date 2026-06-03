@@ -23,28 +23,33 @@ repository root.
 
 ## Design
 
-- Terminal-themed dark aesthetic
-- Fonts: IBM Plex Mono and Inter
-- Palette: intermediate-dim cyberpunk, with `#00d4e0` cyan, `#d946a8` magenta,
-  and `#00d97a` green
+- Clean dark-neutral professional layout
+- Fonts: Inter for primary UI text, with IBM Plex Mono reserved for compact
+  technical accents
+- Palette: graphite backgrounds with a restrained teal accent (`#5aa9b8`)
+- No terminal chrome, CLI panels, or neon/cyberpunk presentation layer
 
 ## Sections
 
 - hero
 - about
-- status, 5 items
-- experience
+- cover-letter
+- experience / resume
+- certifications
 - projects
-- skills, rendered with CSS progress bars
-- infrastructure
+- skills, rendered as searchable capability cards
+- operated
 - contact
 
 ## Styling
 
-CSS lives in `src/styles/` across 14 files:
+CSS lives in `src/styles/` across focused modules:
 
-`variables`, `base`, `layout`, `terminal`, `hero`, `cards`, `skills`, `status`,
-`contact`, `components`, `animations`, `media`, `utilities`, `main`.
+`variables`, `base`, `layout`, `hero`, `cards`, `skills`, `contact`,
+`components`, `animations`, `media`, `utilities`, and `main`.
+
+`main.css` imports the active clean-layout styles only; the removed terminal
+stylesheet is not part of the build.
 
 ## Data Flow
 

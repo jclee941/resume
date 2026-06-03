@@ -195,9 +195,9 @@
 }
 
 .phase-badge--안정화 {
-  background: rgba(255, 215, 0, 0.15);
-  border-color: var(--cyber-yellow);
-  color: var(--cyber-yellow);
+  background: rgba(216, 181, 104, 0.15);
+  border-color: var(--color-warning);
+  color: var(--color-warning);
 }
 
 .phase-badge--기초 {
