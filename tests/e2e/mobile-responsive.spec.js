@@ -23,17 +23,22 @@ test.describe('Mobile - Layout', () => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
   });
 
-  test('should display terminal window on mobile', async ({ page }) => {
-    const terminal = page.locator('.terminal-window').first();
-    await expect(terminal).toBeAttached();
+  test('should keep clean main content within the mobile viewport', async ({ page }) => {
+    const mainContent = page.locator('main#main-content');
+    await expect(mainContent).toBeAttached();
 
-    // Terminal should fill most of the viewport
     const viewportSize = page.viewportSize();
-    const terminalBox = await terminal.boundingBox();
+    const mainBox = await mainContent.boundingBox();
 
-    if (viewportSize && terminalBox) {
-      expect(terminalBox.width).toBeGreaterThan(viewportSize.width * 0.7);
+    if (viewportSize && mainBox) {
+      expect(mainBox.width).toBeLessThanOrEqual(viewportSize.width);
     }
+
+    const hasHorizontalOverflow = await page.evaluate(
+      () => document.documentElement.scrollWidth > window.innerWidth
+    );
+    expect(hasHorizontalOverflow).toBe(false);
+    await expect(page.locator('.terminal-window')).toHaveCount(0);
   });
 
   test('should display hero section correctly on mobile', async ({ page }) => {
@@ -68,44 +73,41 @@ test.describe('Mobile - Navigation', () => {
   });
 
   test('should be able to navigate to sections on mobile', async ({ page }) => {
-    const clickedVisibleAboutLink = await page.evaluate(() => {
-      const visibleLink = Array.from(document.querySelectorAll('a[href="#about"]')).find(
-        (link) => link.getClientRects().length > 0
-      );
-      if (!(visibleLink instanceof HTMLElement)) {
-        return false;
-      }
-      visibleLink.click();
-      return true;
-    });
+    // Mobile nav links live behind the hamburger toggle; open it first.
+    await page.locator('.nav-toggle').click();
+    await expect(page.locator('.nav-links')).toHaveClass(/open/);
+    const aboutLink = page.locator('.nav-links a[href="#about"]');
+    await expect(aboutLink).toBeVisible();
+    await aboutLink.click();
 
-    expect(clickedVisibleAboutLink).toBe(true);
-    await expect(page).toHaveURL(/#about/);
+    // Nav uses smooth-scroll (no hash push); assert the section is brought into view.
+    await page.waitForTimeout(600);
+    const aboutInView = await page.evaluate(() => {
+      const r = document.getElementById('about').getBoundingClientRect();
+      return r.top < window.innerHeight && r.bottom > 0;
+    });
+    expect(aboutInView).toBe(true);
   });
 });
 
-test.describe('Mobile - CLI', () => {
+test.describe('Mobile - Removed CLI', () => {
   test.beforeEach(async ({ page }) => {
     await page.setViewportSize(MOBILE_VIEWPORT);
     await page.goto('/', { waitUntil: 'domcontentloaded' });
   });
 
-  test('should display CLI container on mobile', async ({ page }) => {
-    const cliContainer = page.locator('#cli-container');
-    await expect(cliContainer).toBeVisible();
+  test('should not render CLI container, input, or output on mobile', async ({ page }) => {
+    await expect(page.locator('#cli-container')).toHaveCount(0);
+    await expect(page.locator('#terminal-input')).toHaveCount(0);
+    await expect(page.locator('#cli-output')).toHaveCount(0);
   });
 
-  test('should be able to interact with CLI on mobile', async ({ page }) => {
-    const cliInput = page.locator('#terminal-input');
+  test('should keep primary contact and resume download CTAs reachable on mobile', async ({ page }) => {
+    const contactLink = page.locator('a[href^="mailto:"]').first();
+    await expect(contactLink).toBeVisible();
 
-    await cliInput.focus();
-    await expect(cliInput).toBeFocused();
-
-    await cliInput.fill('help');
-    await cliInput.press('Enter');
-
-    const cliOutput = page.locator('#cli-output');
-    await expect(cliOutput.getByText('Available commands')).toBeVisible({ timeout: 10000 });
+    const resumePdfLink = page.locator('a[href="/resume.pdf"], a[href$="resume.pdf"]').first();
+    await expect(resumePdfLink).toBeVisible();
   });
 });
 
@@ -129,19 +131,18 @@ test.describe('Mobile - Touch Interactions', () => {
   });
 
   test('should support clicking navigation links', async ({ page }) => {
-    const clickedVisibleAboutLink = await page.evaluate(() => {
-      const visibleLink = Array.from(document.querySelectorAll('a[href="#about"]')).find(
-        (link) => link.getClientRects().length > 0
-      );
-      if (!(visibleLink instanceof HTMLElement)) {
-        return false;
-      }
-      visibleLink.click();
-      return true;
-    });
+    await page.locator('.nav-toggle').click();
+    await expect(page.locator('.nav-links')).toHaveClass(/open/);
+    const aboutLink = page.locator('.nav-links a[href="#about"]');
+    await expect(aboutLink).toBeVisible();
+    await aboutLink.click();
 
-    expect(clickedVisibleAboutLink).toBe(true);
-    await expect(page).toHaveURL(/#about/);
+    await page.waitForTimeout(600);
+    const aboutInView = await page.evaluate(() => {
+      const r = document.getElementById('about').getBoundingClientRect();
+      return r.top < window.innerHeight && r.bottom > 0;
+    });
+    expect(aboutInView).toBe(true);
   });
 });
 
@@ -152,7 +153,17 @@ test.describe('Mobile - Sections Visibility', () => {
   });
 
   test('should display all main sections on mobile', async ({ page }) => {
-    const sections = ['#hero', '#about', '#status', '#resume', '#projects', '#skills', '#contact'];
+    const sections = [
+      '#hero',
+      '#about',
+      '#cover-letter',
+      '#resume',
+      '#certifications',
+      '#projects',
+      '#skills',
+      '#operated',
+      '#contact',
+    ];
 
     for (const selector of sections) {
       const section = page.locator(selector);

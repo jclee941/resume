@@ -23,9 +23,9 @@
   width: 2px;
   background: linear-gradient(
     to bottom,
-    var(--cyber-cyan-dim) 0%,
-    var(--cyber-cyan) 50%,
-    var(--cyber-green-dim) 100%
+    var(--color-accent-dark) 0%,
+    var(--color-accent) 50%,
+    var(--color-accent-dark) 100%
   );
   opacity: 0.4;
 }
@@ -66,8 +66,8 @@
 }
 
 .timeline-node:focus-visible .timeline-card {
-  border-color: var(--cyber-cyan);
-  box-shadow: var(--shadow-glow);
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-sm);
 }
 
 /* ----------------------------------------
@@ -92,19 +92,18 @@
   z-index: 1;
 }
 
-/* Active status - blinking green */
+/* Active status - blinking success */
 .timeline-dot.status--active {
-  background: var(--cyber-green);
+  background: var(--color-success);
   box-shadow:
-    0 0 12px var(--cyber-green),
-    0 0 24px var(--cyber-green-dim);
-  animation: pulse-glow 2s ease-in-out infinite;
+    var(--shadow-sm);
+  animation: pulse-soft 2s ease-in-out infinite;
 }
 
-/* Completed status - solid cyan */
+/* Completed status - solid accent */
 .timeline-dot.status--completed {
-  background: var(--cyber-cyan);
-  box-shadow: 0 0 8px var(--cyber-cyan-dim);
+  background: var(--color-accent);
+  box-shadow: var(--shadow-sm);
 }
 
 /* ----------------------------------------
@@ -178,21 +177,21 @@
 }
 
 .phase-badge--운영 {
-  background: rgba(0, 217, 122, 0.15);
-  border-color: var(--cyber-green);
-  color: var(--cyber-green);
+  background: rgba(121, 184, 138, 0.14);
+  border-color: var(--color-success);
+  color: var(--color-success);
 }
 
 .phase-badge--구축 {
-  background: rgba(0, 212, 224, 0.15);
-  border-color: var(--cyber-cyan);
-  color: var(--cyber-cyan);
+  background: rgb(var(--color-accent-rgb) / 0.14);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
 }
 
 .phase-badge--자동화 {
-  background: rgba(217, 70, 168, 0.15);
-  border-color: var(--cyber-magenta);
-  color: var(--cyber-magenta-bright);
+  background: rgb(var(--color-accent-rgb) / 0.1);
+  border-color: var(--color-accent);
+  color: var(--color-accent-strong);
 }
 
 .phase-badge--안정화 {
@@ -215,7 +214,7 @@
   font-size: var(--text-xs);
   padding: 3px 8px;
   border-radius: 3px;
-  background: var(--cyber-green);
+  background: var(--color-success);
   color: var(--bg-primary);
   animation: blink 1.5s ease-in-out infinite;
 }
@@ -233,7 +232,7 @@
 }
 
 .timeline-card:hover {
-  border-color: var(--cyber-cyan-dim);
+  border-color: var(--color-accent-dark);
   transform: translateY(-2px);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
@@ -247,13 +246,13 @@
 }
 
 .company-link {
-  color: var(--cyber-cyan);
+  color: var(--color-accent);
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
 .company-link:hover {
-  color: var(--cyber-cyan-bright);
+  color: var(--color-accent-strong);
   text-decoration: underline;
 }
 
@@ -289,7 +288,7 @@
 }
 
 .impact-label {
-  color: var(--cyber-green);
+  color: var(--color-success);
   font-weight: 600;
 }
 
@@ -331,7 +330,7 @@
   position: relative;
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  color: var(--cyber-green);
+  color: var(--color-success);
   padding-left: var(--space-4);
   margin-bottom: var(--space-1);
 }
@@ -340,7 +339,7 @@
   content: '✓';
   position: absolute;
   left: 0;
-  color: var(--cyber-cyan);
+  color: var(--color-accent);
 }
 
 /* ----------------------------------------
@@ -363,8 +362,8 @@
 }
 
 .timeline-expand-btn:hover {
-  border-color: var(--cyber-cyan);
-  color: var(--cyber-cyan);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
 }
 
 .timeline-expand-btn:focus {
@@ -372,8 +371,8 @@
 }
 
 .timeline-expand-btn:focus-visible {
-  border-color: var(--cyber-cyan);
-  box-shadow: var(--shadow-glow);
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-sm);
 }
 
 .expand-icon {
@@ -387,17 +386,13 @@
    ---------------------------------------- */
 
 /* Active node pulse animation */
-@keyframes pulse-glow {
+@keyframes pulse-soft {
   0%,
   100% {
-    box-shadow:
-      0 0 12px var(--cyber-green),
-      0 0 24px var(--cyber-green-dim);
+    box-shadow: var(--shadow-sm);
   }
   50% {
-    box-shadow:
-      0 0 20px var(--cyber-green),
-      0 0 40px var(--cyber-green-dim);
+    box-shadow: var(--shadow-md);
   }
 }
 

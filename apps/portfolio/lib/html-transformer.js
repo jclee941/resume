@@ -167,7 +167,12 @@ function buildJapaneseTemplate(html) {
         /<span class="sr-only">이재철<\/span>/g,
         '<span class="sr-only">イ・ジェチョル</span>'
       )
+      .replace(/이재철/g, '李在哲')
       // === JA hero positioning / tagline / KPI grid ===
+      .replace(
+        /금융권 보안 인프라 설계·운영, SIEM 탐지·대응 자동화, IaC 기반 관측성을\s+실무 문제 해결에 연결합니다\./g,
+        '金融セキュリティインフラの設計・運用、SIEM検知・対応の自動化、IaCベースの可観測性を、実務の課題解決につなげています。'
+      )
       .replace(
         /<p class="hero-positioning">\s*8년차 보안·SRE 엔지니어 — 금융권 보안 인프라 설계·운영\s*<\/p>/g,
         '<p class="hero-positioning">8年目のセキュリティ・SREエンジニア — 金融業界セキュリティインフラの設計・運用</p>'
@@ -230,10 +235,20 @@ function buildJapaneseTemplate(html) {
       .replace(/download="이재철_이력서\.pdf"/g, 'download="Lee-Jaecheol-Resume-JA.pdf"')
       .replace(/aria-label="이력서 PDF 다운로드"/g, 'aria-label="履歴書PDFダウンロード"')
       .replace(/>📄 이력서 PDF 다운로드</g, '>📄 履歴書PDFダウンロード<')
+      .replace(/이력서 PDF/g, '履歴書PDF')
+      .replace(/이력서/g, '履歴書')
       .replace(/aria-label="채용 또는 면접 문의하기"/g, 'aria-label="採用・面接お問い合わせ"')
       .replace(/>채용·면접 문의하기</g, '>採用・面接お問い合わせ<')
       // === Skip link ===
       .replace(/>바로 본문으로 이동</g, '>メインコンテンツへスキップ<')
+      .replace(/(<h2[^>]*class="section-title"[^>]*>)소개(<\/h2>)/g, '$1概要$2')
+      .replace(/(<h2[^>]*class="section-title"[^>]*>)커버레터(<\/h2>)/g, '$1カバーレター$2')
+      .replace(/(<h2[^>]*class="section-title"[^>]*>)경력(<\/h2>)/g, '$1経歴$2')
+      .replace(/(<h2[^>]*class="section-title"[^>]*>)자격증(<\/h2>)/g, '$1資格$2')
+      .replace(/(<h2[^>]*class="section-title"[^>]*>)프로젝트(<\/h2>)/g, '$1プロジェクト$2')
+      .replace(/(<h2[^>]*class="section-title"[^>]*>)기술(<\/h2>)/g, '$1スキル$2')
+      .replace(/(<h2[^>]*class="section-title"[^>]*>)운영(<\/h2>)/g, '$1運用$2')
+      .replace(/(<h2[^>]*class="section-title"[^>]*>)연락처(<\/h2>)/g, '$1連絡先$2')
       // === JA JSON-LD jobTitle + address ===
       .replace(
         /"jobTitle": "Security Engineer \/ SRE \(보안·SRE 엔지니어\)"/g,

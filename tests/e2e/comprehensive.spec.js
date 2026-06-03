@@ -35,17 +35,6 @@ function buildAnyTextPattern(candidates) {
   return new RegExp(values.join('|'));
 }
 
-/**
- * @param {import('@playwright/test').Page} page
- * @param {string} command
- */
-async function runCliCommand(page, command) {
-  const cliInput = page.locator('#terminal-input');
-  await cliInput.fill(command);
-  await cliInput.press('Enter');
-  return page.locator('#cli-output');
-}
-
 test.describe('Navigation', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
@@ -97,11 +86,15 @@ test.describe('Hero Section', () => {
     expect(heroText || '').toMatch(heroPattern);
   });
 
-  test('should display terminal command output', async ({ page }) => {
-    const cmdOutput = page.locator('.cmd-output').first();
-    await expect(cmdOutput).toBeVisible();
-    const text = await cmdOutput.textContent();
-    expect(text?.length).toBeGreaterThan(10);
+  test('should display clean hero positioning copy without command output chrome', async ({ page }) => {
+    const title = page.locator('.hero-title');
+    await expect(title).toBeVisible();
+
+    const heroCopy = page.locator('.hero-positioning, .hero-subtitle, .hero-tagline').first();
+    await expect(heroCopy).toBeVisible();
+    const text = await heroCopy.textContent();
+    expect(text?.trim().length).toBeGreaterThan(10);
+    await expect(page.locator('.cmd-output')).toHaveCount(0);
   });
 });
 
@@ -112,8 +105,9 @@ test.describe('Resume Section', () => {
   });
 
   test('should have section header', async ({ page }) => {
-    const sectionCmd = page.locator('#resume .section-cmd');
-    await expect(sectionCmd).toBeVisible();
+    const heading = page.locator('#resume').getByRole('heading').first();
+    await expect(heading).toBeVisible();
+    await expect(page.locator('.section-cmd')).toHaveCount(0);
   });
 
   test('should display all resume items', async ({ page }) => {
@@ -144,8 +138,9 @@ test.describe('Projects Section', () => {
   });
 
   test('should have section header', async ({ page }) => {
-    const sectionCmd = page.locator('#projects .section-cmd');
-    await expect(sectionCmd).toBeVisible();
+    const heading = page.locator('#projects').getByRole('heading').first();
+    await expect(heading).toBeVisible();
+    await expect(page.locator('.section-cmd')).toHaveCount(0);
   });
 
   test('should display all project cards', async ({ page }) => {
@@ -199,17 +194,8 @@ test.describe('Case Studies Section', () => {
     await page.waitForLoadState('domcontentloaded');
   });
 
-  test('should render exactly four architecture case-study cards', async ({ page }) => {
-    const cards = page.locator('#case-studies .project-card[role="listitem"]');
-    await expect(cards).toHaveCount(4);
-  });
-
-  test('case-study card opens an architecture deep-dive overlay', async ({ page }) => {
-    const firstCard = page.locator('#case-studies .project-card[role="listitem"]').first();
-    await expect(firstCard).toBeVisible();
-    await firstCard.click();
-    const overlay = page.locator('.deep-dive-overlay[role="dialog"]');
-    await expect(overlay).toBeVisible();
+  test('should not render a standalone case studies section', async ({ page }) => {
+    await expect(page.locator('#case-studies')).toHaveCount(0);
   });
 });
 
@@ -220,8 +206,9 @@ test.describe('Contact Section', () => {
   });
 
   test('should have section header', async ({ page }) => {
-    const sectionCmd = page.locator('#contact .section-cmd');
-    await expect(sectionCmd).toBeVisible();
+    const heading = page.locator('#contact').getByRole('heading').first();
+    await expect(heading).toBeVisible();
+    await expect(page.locator('.section-cmd')).toHaveCount(0);
   });
 
   test('should display contact links', async ({ page }) => {
@@ -254,51 +241,13 @@ test.describe('Footer', () => {
   });
 });
 
-test.describe('CLI Terminal', () => {
-  test('should display CLI container', async ({ page }) => {
-    await page.goto('/');
-    const cliContainer = page.locator('#cli-container');
-    await expect(cliContainer).toBeVisible();
-  });
-
-  test('should have input field', async ({ page }) => {
-    await page.goto('/');
-    const cliInput = page.locator('#terminal-input');
-    await expect(cliInput).toBeVisible();
-    await expect(cliInput).toBeEditable();
-  });
-
-  test('help command should show available commands', async ({ page }) => {
-    await page.goto('/');
-    const cliInput = page.locator('#terminal-input');
-    await cliInput.fill('help');
-    await cliInput.press('Enter');
-
-    const cliOutput = page.locator('#cli-container');
-    await expect(cliOutput).toContainText('Available commands');
-  });
-});
-
-test.describe('CLI Core Commands', () => {
-  test.beforeEach(async ({ page }) => {
+test.describe('CLI Terminal Removed', () => {
+  test('should not expose legacy CLI terminal UI or command registry', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-  });
-
-  test('help command keeps core command list discoverable', async ({ page }) => {
-    const cliOutput = await runCliCommand(page, 'help');
-    await expect(cliOutput).toContainText('Available commands');
-    await expect(cliOutput).toContainText('about');
-    await expect(cliOutput).toContainText('clear');
-  });
-
-  test('unsupported single-word command returns not found message', async ({ page }) => {
-    const cliOutput = await runCliCommand(page, 'foobar');
-    await expect(cliOutput).toContainText('command not allowed: foobar');
-  });
-
-  test('unsupported multi-word command reports first token', async ({ page }) => {
-    const cliOutput = await runCliCommand(page, 'xyzzy dark');
-    await expect(cliOutput).toContainText('command not allowed: xyzzy');
+    await expect(page.locator('#cli-container')).toHaveCount(0);
+    await expect(page.locator('#terminal-input')).toHaveCount(0);
+    await expect(page.locator('#cli-output')).toHaveCount(0);
+    expect(await page.evaluate(() => 'terminalCommands' in window)).toBe(false);
   });
 });
 

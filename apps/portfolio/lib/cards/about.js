@@ -30,7 +30,7 @@ function generateAboutContent(aboutData, dataHash) {
         .join('\n          ');
       return `<div class="about-block">
         <span class="about-label">&gt; ${block.label}</span>
-        <ul class="cmd-output about-list">
+        <ul class="about-list">
           ${items}
         </ul>
       </div>`;

@@ -286,9 +286,9 @@ button:focus-visible {
 
   .cursor,
   .cmd-cursor,
-  .cli-input-line,
-  #terminal-input,
-  .terminal-titlebar,
+  .command-field-line,
+  #command-input,
+  .page-header-bar,
   .skip-link,
   .theme-toggle,
   .nav-links,
@@ -296,8 +296,8 @@ button:focus-visible {
     display: none !important;
   }
 
-  .terminal-window,
-  .terminal-body,
+  .page-shell,
+  .page-body,
   .container,
   .container-narrow,
   main {
@@ -309,8 +309,8 @@ button:focus-visible {
     padding: 0 !important;
   }
 
-  .cli-container,
-  .cli-output {
+  .command-panel,
+  .command-output {
     position: static !important;
     max-height: none !important;
     overflow: visible !important;
@@ -320,8 +320,7 @@ button:focus-visible {
   }
 
   a,
-  .cmd-output,
-  .section-cmd,
+  .section-note,
   .resume-description,
   .project-description,
   .about-list li,
@@ -333,12 +332,12 @@ button:focus-visible {
 }
 
 @media print {
-  .cli-container {
+  .command-panel {
     display: none !important;
   }
 
   .terminal-header,
-  .terminal-titlebar {
+  .page-header-bar {
     display: none !important;
   }
 
@@ -351,8 +350,8 @@ button:focus-visible {
   }
 
   .container-narrow,
-  .terminal-window,
-  .terminal-body,
+  .page-shell,
+  .page-body,
   main {
     max-width: 210mm;
     width: 100%;

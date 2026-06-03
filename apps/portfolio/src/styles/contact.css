@@ -20,8 +20,8 @@
 }
 .contact-item::before {
   content: '> ';
-  color: var(--cyber-green);
+  color: var(--color-success);
 }
 .contact-item:hover {
-  color: var(--cyber-cyan);
+  color: var(--color-accent);
 }

@@ -21,7 +21,8 @@ test.describe('Security Headers & CSP', () => {
   });
 
   test('should not have CSP violations (excluding Cloudflare injected)', async ({ page }) => {
-    const cspViolations = [];
+    const cspViolations = Array.of('');
+    cspViolations.length = 0;
 
     // Listen for CSP violations
     page.on('console', (msg) => {
@@ -96,11 +97,12 @@ test.describe('Security Headers & CSP', () => {
     expect(parseFloat(fontSize)).toBeGreaterThan(24);
   });
 
-  test('should allow inline scripts with CSP hash (terminal-window created by JS)', async ({
+  test('should allow inline scripts with CSP hash (timeline rendered by JS)', async ({
     page,
   }) => {
-    const terminalWindow = page.locator('.terminal-window');
-    await expect(terminalWindow).toBeVisible();
+    const phaseBadge = page.locator('.phase-badge').first();
+    await expect(phaseBadge).toBeVisible();
+    await expect(page.locator('.terminal-window')).toHaveCount(0);
   });
 
   test('should block external scripts not in CSP', async ({ page }) => {
