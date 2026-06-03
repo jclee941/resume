@@ -27,15 +27,15 @@ src/
 
 ## KEY CSS SELECTORS
 
-`.terminal-window`, `.cli-container`, `#cli-input`, `.typing-effect`, `.glitch`,
-`.skill-bar`.
+`.page-shell`, `.hero-title`, `.section-title`, `.card`, `.project-list`,
+`.skill-radar__grid`, `.timeline`.
 
 ## CONVENTIONS
 
 - Dark-only theme — no light-mode toggle.
 - Reuse CSS variables from `variables.css`.
 - Mobile-safe animations (reduce-motion media query).
-- `.typing-effect` and `.skill-bar` used in generated markup.
+- `.section-title` and `.card` used across generated markup.
 
 ## ANTI-PATTERNS
 
