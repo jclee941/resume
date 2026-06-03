@@ -1,8 +1,27 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert';
-import { syncWantedAbout } from '../wanted-sections.js';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import {
+  mapCareerToWanted,
+  syncWantedAbout,
+  syncWantedActivities,
+  syncWantedContactInfo,
+  syncWantedEducations,
+} from '../wanted-sections.js';
 import { CONFIG } from '../constants.js';
 import { WANTED_ABOUT_LIMIT } from '../../../src/tools/platforms/wanted-sync-operations.js';
+import { normalizePhone } from '@resume/shared/phone';
+import { diffSkills, flattenSkills } from '../../skill-tag-map.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const realSSoT = JSON.parse(
+  fs.readFileSync(
+    path.resolve(__dirname, '../../../../../packages/data/resumes/master/resume_data.json'),
+    'utf8'
+  )
+);
 
 function mockClient() {
   const calls = [];
@@ -12,8 +31,168 @@ function mockClient() {
       calls.push({ resumeId, fields });
       return { ok: true };
     },
+    addEducation: async (resumeId, payload) => {
+      calls.push({ method: 'addEducation', resumeId, payload });
+      return { ok: true };
+    },
+    addActivity: async (resumeId, payload) => {
+      calls.push({ method: 'addActivity', resumeId, payload });
+      return { ok: true };
+    },
   };
 }
+
+async function withApplyEnabled(fn) {
+  const original = { APPLY: CONFIG.APPLY, DIFF_ONLY: CONFIG.DIFF_ONLY };
+  CONFIG.APPLY = true;
+  CONFIG.DIFF_ONLY = false;
+  try {
+    return await fn();
+  } finally {
+    CONFIG.APPLY = original.APPLY;
+    CONFIG.DIFF_ONLY = original.DIFF_ONLY;
+  }
+}
+
+describe('Wanted SSoT field mapping correctness', () => {
+  it('mapCareerToWanted maps a representative real SSoT career to Wanted fields', () => {
+    const career = realSSoT.careers[0];
+
+    const mapped = mapCareerToWanted(career);
+
+    assert.strictEqual(mapped.company.name, career.company);
+    assert.strictEqual(mapped.company.type, 'CUSTOM');
+    assert.strictEqual(mapped.job_role, career.role);
+    assert.strictEqual(mapped.start_time, '2025-03-01');
+    assert.strictEqual(mapped.end_time, '2026-02-01');
+    assert.strictEqual(mapped.served, mapped.end_time === null);
+    assert.strictEqual(mapped.employment_type, 'FULLTIME');
+    assert.ok(
+      ['number', 'string'].includes(typeof mapped.job_category_id),
+      'job_category_id should be mapped to a Wanted category id or configured default'
+    );
+  });
+
+  it('mapCareerToWanted treats current careers as served with null end_time', () => {
+    const currentCareer = {
+      ...realSSoT.careers[0],
+      period: '2025.03 ~ 현재',
+    };
+
+    const mapped = mapCareerToWanted(currentCareer);
+
+    assert.strictEqual(mapped.start_time, '2025-03-01');
+    assert.strictEqual(mapped.end_time, null);
+    assert.strictEqual(mapped.served, true);
+  });
+
+  it('syncWantedEducations maps school, major, and start_time from real SSoT education', async () => {
+    await withApplyEnabled(async () => {
+      const client = mockClient();
+
+      await syncWantedEducations(client, realSSoT, { educations: [] }, 'resume-edu');
+
+      assert.strictEqual(client.calls.length, 1);
+      assert.strictEqual(client.calls[0].method, 'addEducation');
+      assert.strictEqual(client.calls[0].payload.school_name, realSSoT.education.school);
+      assert.strictEqual(client.calls[0].payload.major, realSSoT.education.major);
+      assert.strictEqual(client.calls[0].payload.start_time, '2024-03-01');
+    });
+  });
+
+  it('syncWantedEducations documents current known gap: status/schoolType/majorType are ignored', async () => {
+    await withApplyEnabled(async () => {
+      const client = mockClient();
+
+      await syncWantedEducations(client, realSSoT, { educations: [] }, 'resume-edu-gap');
+
+      const payload = client.calls[0].payload;
+      assert.strictEqual(payload.end_time, null, 'known gap: real 재학중 status is not explicitly mapped');
+      assert.strictEqual(payload.degree, '학사', 'known gap: degree is hardcoded, not derived from schoolType');
+      assert.ok(!('major_type' in payload), 'known gap: majorType is not sent to Wanted');
+    });
+  });
+
+  it('syncWantedActivities maps dated non-preparing certifications and skips preparing CKS', async () => {
+    await withApplyEnabled(async () => {
+      const client = mockClient();
+      const expectedCerts = realSSoT.certifications.filter((c) => c.date && c.status !== '준비중');
+
+      await syncWantedActivities(client, realSSoT, { activities: [] }, 'resume-act');
+
+      assert.strictEqual(client.calls.length, expectedCerts.length);
+      const ccnpCall = client.calls.find((call) => call.payload.title === 'CCNP');
+      assert.ok(ccnpCall, 'CCNP certification should be mapped to a Wanted activity');
+      assert.strictEqual(ccnpCall.payload.title, 'CCNP');
+      assert.ok(ccnpCall.payload.description.includes('Cisco Systems'));
+      assert.strictEqual(ccnpCall.payload.start_time, '2020-08-01');
+      assert.strictEqual(ccnpCall.payload.activity_type, 'CERTIFICATE');
+      assert.ok(
+        !client.calls.some((call) => call.payload.title === 'Certified Kubernetes Security Specialist (CKS)'),
+        'CKS has null date and 준비중 status, so it should be skipped'
+      );
+    });
+  });
+
+  it('flattenSkills reads real SSoT skills and diffSkills surfaces unmapped skills explicitly', () => {
+    const ssotSkills = flattenSkills(realSSoT.skills);
+
+    assert.ok(ssotSkills.length > 0, 'flattenSkills should produce entries from real SSoT skills');
+    assert.ok(ssotSkills.includes('Grafana'));
+
+    const diff = diffSkills(ssotSkills, []);
+    assert.ok(Array.isArray(diff.unmapped), 'diffSkills should return an unmapped list');
+    assert.ok(diff.unmapped.length > 0, 'real SSoT unmapped skills should be surfaced, not dropped');
+    assert.ok(
+      diff.unmapped.includes('Elasticsearch/Kibana'),
+      'expected current real unmapped skill to appear in diff.unmapped'
+    );
+  });
+
+  it('syncWantedContactInfo maps email and normalized mobile from personal fields', async () => {
+    await withApplyEnabled(async () => {
+      const client = mockClient();
+
+      await syncWantedContactInfo(client, realSSoT, { email: '', mobile: '' }, 'resume-contact');
+
+      assert.strictEqual(client.calls.length, 1);
+      assert.strictEqual(client.calls[0].fields.email, realSSoT.personal.email);
+      assert.strictEqual(client.calls[0].fields.mobile, normalizePhone(realSSoT.personal.phone));
+    });
+  });
+
+  it('syncWantedContactInfo documents known gap: SSoT contact links are ignored', async () => {
+    await withApplyEnabled(async () => {
+      const client = mockClient();
+
+      await syncWantedContactInfo(client, realSSoT, { email: '', mobile: '' }, 'resume-contact-gap');
+
+      assert.ok(realSSoT.contact.linkedin, 'real SSoT has linkedin contact data');
+      assert.ok(realSSoT.contact.velog, 'real SSoT has velog contact data');
+      assert.ok(realSSoT.contact.website, 'real SSoT has website contact data');
+      assert.deepStrictEqual(
+        Object.keys(client.calls[0].fields).sort(),
+        ['email', 'mobile'],
+        'known gap: only email/mobile are sent; profile links are not mapped'
+      );
+    });
+  });
+
+  it('RED: syncWantedAbout should prefer platformVariants.wanted.about when present', async () => {
+    await withApplyEnabled(async () => {
+      const client = mockClient();
+
+      await syncWantedAbout(client, realSSoT, { about: '' }, 'resume-about-variant');
+
+      assert.strictEqual(client.calls.length, 1);
+      assert.strictEqual(
+        client.calls[0].fields.about,
+        realSSoT.platformVariants.wanted.about,
+        'Wanted-specific platformVariants.wanted.about should be used instead of generic summary.profileStatement'
+      );
+    });
+  });
+});
 
 describe('syncWantedAbout — BUG-W1 regression', () => {
   it('does NOT truncate at 150 chars (legacy buggy limit)', async () => {

@@ -121,16 +121,35 @@ export function mapPortfolioToFormFields(ssot, fileIdx) {
 }
 
 export function mapHighSchoolToFormFields(ssot, schoolIndex) {
-  const highSchool = ssot?.highSchool;
-  if (!highSchool) return [];
+  // Real SSoT stores high school as education.highSchool (name string) and
+  // education.highSchoolGraduation (graduation year). Legacy ssot.highSchool
+  // object form is still supported as a fallback.
+  const eduName =
+    typeof ssot?.education?.highSchool === 'string' ? ssot.education.highSchool.trim() : '';
+  const legacy = ssot?.highSchool;
+  if (!eduName && !legacy) return [];
   const key = schoolIndex || 'c1';
-  const startRaw = toYYYYMM(highSchool.startDate || '');
-  const gradYM = toYYYYMM(highSchool.endDate || '');
+
+  if (eduName) {
+    const gradRaw = String(ssot?.education?.highSchoolGraduation || '').trim();
+    const gradYM = /^\d{4}$/.test(gradRaw) ? `${gradRaw}02` : toYYYYMM(gradRaw);
+    return [
+      [`HighSchool[${key}].Schl_Name`, eduName],
+      [`HighSchool[${key}].Entc_YM`, ''],
+      [`HighSchool[${key}].Grad_YM`, gradYM],
+      [`HighSchool[${key}].Grad_Type_Code`, GRAD_TYPE.졸업],
+      ['HighSchool.index', key],
+      ['InputStat.HighSchoolInputStat', 'True'],
+    ].map(([name, value]) => ({ name, value: toFieldValue(value) }));
+  }
+
+  const startRaw = toYYYYMM(legacy.startDate || '');
+  const gradYM = toYYYYMM(legacy.endDate || '');
   return [
-    [`HighSchool[${key}].Schl_Name`, highSchool.school || ''],
+    [`HighSchool[${key}].Schl_Name`, legacy.school || ''],
     [`HighSchool[${key}].Entc_YM`, startRaw],
     [`HighSchool[${key}].Grad_YM`, gradYM],
-    [`HighSchool[${key}].Grad_Type_Code`, GRAD_TYPE[highSchool.status] || GRAD_TYPE.졸업],
+    [`HighSchool[${key}].Grad_Type_Code`, GRAD_TYPE[legacy.status] || GRAD_TYPE.졸업],
     ['HighSchool.index', key],
     ['InputStat.HighSchoolInputStat', 'True'],
   ].map(([name, value]) => ({ name, value: toFieldValue(value) }));
@@ -158,7 +177,7 @@ export function mapPersonalFieldsToFormFields(ssot) {
   const personal = ssot?.personal || {};
   const fields = [];
   if (personal.birthDate) {
-    pushField(fields, 'UserResume.Birth_YMD', personal.birthDate.replace(/-/g, ''));
+    pushField(fields, 'UserResume.Birth_YMD', personal.birthDate.replace(/[^0-9]/g, ''));
   }
   if (personal.address) {
     pushField(fields, 'UserResume.Address', personal.address);
@@ -181,7 +200,11 @@ export function mapPersonalProjectsToFormFields(ssot, indices) {
     pushField(fields, `Project[${key}].Index_Name`, key);
     pushField(fields, `Project[${key}].P_Name`, project?.name || '');
     pushField(fields, `Project[${key}].P_Cntnt`, String(project?.description || '').slice(0, 500));
-    pushField(fields, `Project[${key}].P_Url`, project?.url || '');
+    pushField(
+      fields,
+      `Project[${key}].P_Url`,
+      project?.url || project?.githubUrl || project?.demoUrl || ''
+    );
   });
   pushField(fields, 'Project.index', keys.slice(0, projects.length).join(','));
   pushField(fields, 'InputStat.ProjectInputStat', 'True');

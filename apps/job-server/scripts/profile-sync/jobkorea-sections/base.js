@@ -1,12 +1,16 @@
 import {
-  mapAwardToFormFields,
-  mapCareersToFormFields,
-  mapLicensesToFormFields,
-  mapMilitaryToFormFields,
-  mapPortfolioToFormFields,
+mapAwardToFormFields,
+mapCareersToFormFields,
+mapLicensesToFormFields,
+mapMilitaryToFormFields,
+mapPortfolioToFormFields,
   mapSchoolToFormFields,
-  mapLanguagesToFormFields,
+  mapHighSchoolToFormFields,
+mapLanguagesToFormFields,
   mapPersonalFieldsToFormFields,
+  mapPersonalProjectsToFormFields,
+  mapSkillsToFormFields,
+  mapHopeJobToFormFields,
 } from './field-mappers.js';
 
 /**
@@ -14,7 +18,8 @@ import {
  * @param {object} ssot - SSOT resume data
  * @param {object} [sectionIndices] - Server-generated indices per section:
  *   { career: string[], license: string[], award: string[], school: string,
- *     language: string[] }
+ *     language: string[], highSchool: string, skill: string[],
+ *     project: string[] }
  */
 export function buildJobKoreaFormData(ssot, sectionIndices = {}) {
   return [
@@ -26,5 +31,9 @@ export function buildJobKoreaFormData(ssot, sectionIndices = {}) {
     ...mapPortfolioToFormFields(ssot, sectionIndices.portfolioFileIdx),
     ...mapLanguagesToFormFields(ssot, sectionIndices.language),
     ...mapPersonalFieldsToFormFields(ssot),
+    ...mapHighSchoolToFormFields(ssot, sectionIndices.highSchool),
+    ...mapSkillsToFormFields(ssot, sectionIndices.skill),
+    ...mapPersonalProjectsToFormFields(ssot, sectionIndices.project),
+    ...mapHopeJobToFormFields(ssot),
   ];
 }

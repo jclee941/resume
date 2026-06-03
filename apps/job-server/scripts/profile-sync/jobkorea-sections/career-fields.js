@@ -79,8 +79,6 @@ export function mapCareersToFormFields(ssot, indices) {
         );
       });
     }
-    pushField(fields, `Career[${key}].CNameHold`, '0');
-    pushField(fields, `Career[${key}].OpenStat`, '1');
   });
 
   pushField(fields, 'Career.index', keys.slice(0, careers.length).join(','));
