@@ -17,6 +17,20 @@ function collectContactUpdates(ssot, resumeDetail) {
     changes.push({ field: 'mobile', from: resumeDetail?.mobile, to: normalizedPhoneVal });
   }
 
+  // Profile links: map the SSoT contact URLs that Wanted supports.
+  const LINK_FIELDS = [
+    ['linkedin', ssot.contact?.linkedin],
+    ['website', ssot.contact?.website],
+    ['blog', ssot.contact?.velog],
+    ['github', ssot.contact?.github || ssot.personal?.github],
+  ];
+  for (const [field, value] of LINK_FIELDS) {
+    if (value && value !== resumeDetail?.[field]) {
+      updates[field] = value;
+      changes.push({ field, from: resumeDetail?.[field], to: value });
+    }
+  }
+
   return { updates, changes };
 }
 

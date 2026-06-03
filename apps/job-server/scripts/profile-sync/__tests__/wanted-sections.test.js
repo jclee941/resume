@@ -100,16 +100,18 @@ describe('Wanted SSoT field mapping correctness', () => {
     });
   });
 
-  it('syncWantedEducations documents current known gap: status/schoolType/majorType are ignored', async () => {
+  it('syncWantedEducations derives degree/major_type/end_time from SSoT metadata', async () => {
     await withApplyEnabled(async () => {
       const client = mockClient();
 
-      await syncWantedEducations(client, realSSoT, { educations: [] }, 'resume-edu-gap');
+      await syncWantedEducations(client, realSSoT, { educations: [] }, 'resume-edu');
 
       const payload = client.calls[0].payload;
-      assert.strictEqual(payload.end_time, null, 'known gap: real 재학중 status is not explicitly mapped');
-      assert.strictEqual(payload.degree, '학사', 'known gap: degree is hardcoded, not derived from schoolType');
-      assert.ok(!('major_type' in payload), 'known gap: majorType is not sent to Wanted');
+      // 4년제 → 학사; 재학중 → end_time null + is_attending true; majorType mapped.
+      assert.strictEqual(payload.degree, '학사', 'degree derived from schoolType (4년제)');
+      assert.strictEqual(payload.major_type, realSSoT.education.majorType, 'majorType mapped to major_type');
+      assert.strictEqual(payload.end_time, null, '재학중 status yields null end_time');
+      assert.strictEqual(payload.is_attending, true, '재학중 status yields is_attending true');
     });
   });
 
@@ -161,20 +163,17 @@ describe('Wanted SSoT field mapping correctness', () => {
     });
   });
 
-  it('syncWantedContactInfo documents known gap: SSoT contact links are ignored', async () => {
+  it('syncWantedContactInfo maps SSoT profile links (linkedin/website/blog/github)', async () => {
     await withApplyEnabled(async () => {
       const client = mockClient();
 
-      await syncWantedContactInfo(client, realSSoT, { email: '', mobile: '' }, 'resume-contact-gap');
+      await syncWantedContactInfo(client, realSSoT, { email: '', mobile: '' }, 'resume-contact-links');
 
-      assert.ok(realSSoT.contact.linkedin, 'real SSoT has linkedin contact data');
-      assert.ok(realSSoT.contact.velog, 'real SSoT has velog contact data');
-      assert.ok(realSSoT.contact.website, 'real SSoT has website contact data');
-      assert.deepStrictEqual(
-        Object.keys(client.calls[0].fields).sort(),
-        ['email', 'mobile'],
-        'known gap: only email/mobile are sent; profile links are not mapped'
-      );
+      const fields = client.calls[0].fields;
+      assert.strictEqual(fields.linkedin, realSSoT.contact.linkedin, 'linkedin link mapped');
+      assert.strictEqual(fields.website, realSSoT.contact.website, 'website link mapped');
+      assert.strictEqual(fields.blog, realSSoT.contact.velog, 'velog mapped to blog');
+      assert.ok(fields.github, 'github link mapped');
     });
   });
 

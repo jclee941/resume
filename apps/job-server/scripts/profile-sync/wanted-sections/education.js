@@ -2,13 +2,25 @@ import { CONFIG } from '../constants.js';
 import { log } from '../sync-logger.js';
 import { formatYYYY_MM_DD } from '../../../src/shared/utils/date-formatters.js';
 
+// Map SSoT schoolType to a Wanted degree label.
+const DEGREE_BY_SCHOOL_TYPE = {
+  '4년제': '학사',
+  '2년제': '전문학사',
+  대학원: '석사',
+  석사: '석사',
+  박사: '박사',
+};
+
 function mapEducationToWanted(ssotEducation) {
+  const isAttending = ssotEducation.status === '재학중';
   return {
     school_name: ssotEducation.school,
     major: ssotEducation.major,
+    major_type: ssotEducation.majorType || '전공',
     start_time: formatYYYY_MM_DD(ssotEducation.startDate),
-    end_time: null,
-    degree: '학사',
+    end_time: isAttending ? null : formatYYYY_MM_DD(ssotEducation.endDate),
+    is_attending: isAttending,
+    degree: DEGREE_BY_SCHOOL_TYPE[ssotEducation.schoolType] || '학사',
   };
 }
 
