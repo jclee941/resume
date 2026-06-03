@@ -405,7 +405,7 @@ describe('csp-hash-generator', () => {
       const html = `
         <style>
           [data-component*="header"] { color: red; }
-          .terminal-window::before { content: "\\$"; }
+          .profile-card::before { content: "\\$"; }
         </style>
       `;
       const hashes = extractStyleHashes(html);

@@ -11,56 +11,24 @@ test.describe('Portfolio UI', () => {
     await expect(page).toHaveTitle(/Jaecheol Lee/);
   });
 
-  test('should have terminal input', async ({ page }) => {
+  test('should not expose terminal input or command registry', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-    await expect(page.locator('#terminal-input')).toBeVisible();
+    await expect(page.locator('#terminal-input')).toHaveCount(0);
+    expect(await page.evaluate(() => 'terminalCommands' in window)).toBe(false);
   });
 
-  test('should execute help command', async ({ page }) => {
+  test('should not render CLI output', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-    const cliInput = page.locator('#terminal-input');
-    await cliInput.fill('help');
-    await cliInput.press('Enter');
-    await page.waitForTimeout(500);
-    await expect(page.locator('#cli-output')).toContainText('Available commands');
+    await expect(page.locator('#cli-output')).toHaveCount(0);
   });
 
-  test('observability widget shows live stats and a status line', async ({ page }) => {
+  test('should not render the removed observability widget', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-    // Bring the section into view so its IntersectionObserver-driven polling starts.
-    await page.locator('#observability').scrollIntoViewIfNeeded();
-
-    // At least one stat card should move off the '--' placeholder with live data.
-    const uptime = page.locator(
-      '.observability-stat:has(.stat-label:text-is("Uptime")) .stat-value'
-    );
-    await expect(uptime).not.toHaveText('--', { timeout: 15000 });
-
-    // The aria-live status line becomes visible and announces freshness.
-    const status = page.locator('[data-observability-status]');
-    await expect(status).toBeVisible();
-    const statusText = page.locator('[data-observability-status-text]');
-    await expect(statusText).toHaveAttribute('aria-live', 'polite');
-    await expect(statusText).not.toHaveText('');
+    await expect(page.locator('#observability')).toHaveCount(0);
   });
 
-  test('observability widget does not poll until the section is in view', async ({ page }) => {
-    // Track ONLY /api/metrics — the observability widget's unique endpoint.
-    // (/health is also fetched on load by the separate status-list badge widget,
-    // so it is not a reliable signal for observability polling.)
-    const metricsRequests = [];
-    page.on('request', (req) => {
-      if (req.url().includes('/api/metrics')) metricsRequests.push(req.url());
-    });
-
+  test('should keep observability polling UI removed from the homepage', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-    // Give any (incorrect) eager polling a chance to fire while above the fold.
-    await page.waitForTimeout(1500);
-    const beforeScroll = metricsRequests.length;
-    expect(beforeScroll, `eager off-screen /api/metrics: ${metricsRequests.join(', ')}`).toBe(0);
-
-    // Scrolling the section into view should start polling.
-    await page.locator('#observability').scrollIntoViewIfNeeded();
-    await expect.poll(() => metricsRequests.length, { timeout: 15000 }).toBeGreaterThan(0);
+    await expect(page.locator('#observability')).toHaveCount(0);
   });
 });

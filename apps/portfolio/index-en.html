@@ -209,36 +209,6 @@
       }
     </style>
     <style>
-      .typing-text {
-        display: inline-block;
-        overflow: hidden;
-        border-right: 3px solid var(--cyber-cyan);
-        white-space: nowrap;
-        animation:
-          typing 2s steps(20) forwards,
-          blink 0.7s step-end infinite;
-      }
-      @keyframes typing {
-        from {
-          width: 0;
-        }
-        to {
-          width: 100%;
-        }
-      }
-      @keyframes blink {
-        50% {
-          border-color: transparent;
-        }
-      }
-      .terminal-prompt {
-        color: var(--cyber-green, #00ff88);
-        font-family: 'JetBrains Mono', monospace;
-        margin-right: 0.5rem;
-      }
-      .terminal-titlebar-spacer {
-        width: 52px;
-      }
       .footer-prompt {
         font-size: var(--text-sm);
       }
@@ -246,60 +216,7 @@
         color: var(--text-muted);
         margin-left: 1rem;
       }
-      .help-output,
-      .cli-result {
-        white-space: pre-wrap;
-      }
-      .cmd-name,
-      .cli-cmd {
-        color: #0ff;
-      }
-      .cli-container {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: rgba(12, 12, 18, 0.95);
-        border-top: 1px solid #00ff88;
-        padding: 1rem;
-        font-family: monospace;
-        z-index: 1000;
-        max-height: 20vh;
-        overflow-y: auto;
-      }
-      .cli-output {
-        margin-bottom: 0.5rem;
-        color: #00ff88;
-        font-size: 0.9rem;
-        max-height: 30vh;
-        overflow-y: auto;
-      }
-      .cli-input-line {
-        display: flex;
-        align-items: center;
-      }
-      .cli-prompt {
-        color: #00ff88;
-        margin-right: 0.5rem;
-        flex-shrink: 0;
-      }
-      .cli-input {
-        flex: 1;
-        background: transparent;
-        border: none;
-        color: #0ff;
-        font-family: monospace;
-        font-size: 1rem;
-        outline: none;
-        caret-color: #0ff;
-      }
-      .cli-input::placeholder {
-        color: #444;
-      }
-      .cli-entry {
-        margin-bottom: 0.5rem;
-      }
-      .hero--terminal {
+      .hero--clean {
         text-align: left;
       }
       /* Dark mode smooth transitions */
@@ -442,18 +359,8 @@
   <body class="minimal-theme">
     <a href="#main-content" class="skip-link">Skip to main content</a>
 
-    <div class="container-narrow">
-      <div class="terminal-window" role="region" aria-label="Cyberpunk terminal portfolio">
-        <div class="terminal-titlebar">
-          <div class="terminal-buttons">
-            <span class="terminal-btn terminal-btn--close"></span>
-            <span class="terminal-btn terminal-btn--minimize"></span>
-            <span class="terminal-btn terminal-btn--maximize"></span>
-          </div>
-          <span class="terminal-title">jclee@resume:~</span>
-          <div class="terminal-titlebar-spacer"></div>
-        </div>
-        <div class="terminal-body">
+    <div class="page-shell">
+        <div class="page-body">
           <header class="site-header">
             <nav class="minimal-nav" role="navigation" aria-label="Main navigation">
               <a href="/" class="nav-logo">~/jclee</a>
@@ -488,53 +395,21 @@
             </nav>
           </header>
 
-          <main id="main-content">
-            <section id="hero" class="section-hero hero--terminal">
+          <main id="main-content" role="main">
+            <section id="hero" class="section-hero hero--clean">
               <div class="hero-content">
-                <div class="cmd-line">
-                  <span class="cmd-user">jclee</span><span class="cmd-separator">@</span
-                  ><span class="cmd-path">resume</span><span class="cmd-symbol">$</span>
-                  <span class="cmd-input">whoami</span>
-                </div>
                 <h1 class="hero-title" role="heading" aria-level="1">
-                  <span aria-hidden="true"
-                    ><span class="typing-effect glow-cyan">Jaecheol Lee</span
-                    ><span class="cursor"></span></span
-                  ><span class="sr-only">Jaecheol Lee</span>
+                  Jaecheol Lee
                 </h1>
+                <p class="hero-role">Security / SRE Engineer</p>
                 <p class="hero-positioning">
-                  8-Year Security &amp; SRE Engineer — Financial-Sector Security Infrastructure
+                  I connect financial-sector security infrastructure, SIEM detection and response
+                  automation, and IaC-based observability to practical operational problems.
                 </p>
-                <p class="hero-tagline">
-                  Passed FSC main-license review · SIEM detect &amp; respond automation · IaC
-                  observability · This site is self-built and deployed on Cloudflare
-                </p>
-                <dl class="hero-kpi-grid" aria-label="Key impact metrics">
-                  <div class="hero-kpi">
-                    <dd class="hero-kpi__value">8+ yrs</dd>
-                    <dt class="hero-kpi__label">Security &amp; Infra</dt>
-                  </div>
-                  <div class="hero-kpi">
-                    <dd class="hero-kpi__value">FSC Passed</dd>
-                    <dt class="hero-kpi__label">Financial-Sector License</dt>
-                  </div>
-                  <div class="hero-kpi">
-                    <dd class="hero-kpi__value">5-Tier HA</dd>
-                    <dt class="hero-kpi__label">FortiGate Segmentation</dt>
-                  </div>
-                </dl>
-                <div
-                  class="status-seeking"
-                  role="status"
-                  aria-label="Open to Work · Available Immediately"
-                >
-                  <span class="status-seeking__label">Open to Work</span>
-                  <span class="status-seeking__divider" aria-hidden="true">·</span>
-                  <span class="status-seeking__availability">Available Immediately</span>
-                </div>
-                <div class="hero-download" role="group" aria-label="Primary actions">
+                <div class="hero-cta" role="group" aria-label="Primary actions">
                   <a href="#resume" class="link-subtle">View experience</a>
                   <a href="mailto:qws941@kakao.com" class="link-subtle">Email</a>
+                  <a href="/resume.pdf" download="Jaecheol-Lee-Resume.pdf" class="link-subtle">Resume PDF</a>
                 </div>
               </div>
             </section>
@@ -545,11 +420,7 @@
               role="region"
               aria-labelledby="about-heading"
             >
-              <h2 id="about-heading" class="sr-only">About</h2>
-              <div class="section-cmd">
-                <span class="section-cmd__command">cat about.txt</span>
-                <span class="section-cmd__story">I learned security operations by turning manual work into repeatable systems.</span>
-              </div>
+              <h2 id="about-heading" class="section-title">About</h2>
               <!-- ABOUT_CONTENT_PLACEHOLDER -->
               <div class="expertise-block"><!-- EXPERTISE_PLACEHOLDER --></div>
               <div id="about-principles" class="about-principles">
@@ -574,9 +445,6 @@
               </div>
               <!-- PROFILE_BENTO_PLACEHOLDER -->
               <div class="achievements-block">
-                <div class="section-cmd">
-                  <span class="section-cmd__command">cat achievements.log</span>
-                </div>
                 <!-- ACHIEVEMENTS_PLACEHOLDER -->
               </div>
             </section>
@@ -587,10 +455,7 @@
               role="region"
               aria-labelledby="cover-letter-heading"
             >
-              <h2 id="cover-letter-heading" class="sr-only">Cover letter</h2>
-              <div class="section-cmd">
-                <span class="section-cmd__command">cat coverletter.txt</span>
-              </div>
+              <h2 id="cover-letter-heading" class="section-title">Cover Letter</h2>
               <!-- COVER_LETTER_PLACEHOLDER -->
             </section>
 
@@ -600,11 +465,7 @@
               role="region"
               aria-labelledby="resume-heading"
             >
-              <div class="section-cmd">
-                <span class="section-cmd__command">cat experience.log</span>
-                <span class="section-cmd__story">From closed-network operations to financial security operations, the same question repeated: what can be automated?</span>
-              </div>
-              <h2 id="resume-heading" class="sr-only">Work Experience</h2>
+              <h2 id="resume-heading" class="section-title">Experience</h2>
               <ul class="resume-list">
                 <!-- RESUME_CARDS_PLACEHOLDER -->
               </ul>
@@ -628,11 +489,7 @@
               role="region"
               aria-labelledby="certifications-heading"
             >
-              <h2 id="certifications-heading" class="sr-only">Certifications</h2>
-              <div class="section-cmd">
-                <span class="section-cmd__command">cat certifications.log</span>
-                <span class="section-cmd__story">After rebuilding the Linux foundation, the learning path expanded into security, networking, and container security.</span>
-              </div>
+              <h2 id="certifications-heading" class="section-title">Certifications</h2>
               <ul class="cert-list">
                 <!-- CERTIFICATION_CARDS_PLACEHOLDER -->
               </ul>
@@ -644,11 +501,7 @@
               role="region"
               aria-labelledby="projects-heading"
             >
-              <div class="section-cmd">
-                <span class="section-cmd__command">ls -la ~/projects/</span>
-                <span class="section-cmd__story">Repetitive problems from the field were re-tested as personal projects and operational tools.</span>
-              </div>
-              <h2 id="projects-heading" class="sr-only">Projects</h2>
+              <h2 id="projects-heading" class="section-title">Projects</h2>
               <ul class="project-list" id="project-list">
                 <!-- PROJECT_CARDS_PLACEHOLDER -->
               </ul>
@@ -662,11 +515,7 @@
               role="region"
               aria-labelledby="skills-heading"
             >
-              <h2 id="skills-heading" class="sr-only">Skills</h2>
-              <div class="section-cmd">
-                <span class="section-cmd__command">cat capability-matrix.json</span>
-                <span class="section-cmd__story">The stack is not the destination, but a toolset chosen to automate operational problems.</span>
-              </div>
+              <h2 id="skills-heading" class="section-title">Skills</h2>
               <div class="skill-radar" role="region" aria-label="Skill Capability Matrix">
                 <div class="skill-radar__search">
                   <label for="skill-search-input" class="sr-only">Filter skills</label>
@@ -724,11 +573,7 @@
               role="region"
               aria-labelledby="operated-heading"
             >
-              <h2 id="operated-heading" class="sr-only">How this site is operated</h2>
-              <div class="section-cmd">
-                <span class="section-cmd__command">cat operated.md</span>
-                <span class="section-cmd__story">This portfolio is a small operated system: headers, observability, and automation stay visible.</span>
-              </div>
+              <h2 id="operated-heading" class="section-title">Operations</h2>
               <ul class="operated-grid" aria-label="How the site is operated">
                 <li class="operated-card">
                   <h3 class="operated-card__title">Edge runtime + security headers</h3>
@@ -760,11 +605,7 @@
               role="region"
               aria-labelledby="contact-heading"
             >
-              <div class="section-cmd">
-                <span class="section-cmd__command">cat contact.txt</span>
-                <span class="section-cmd__story">I want the next problem to start from operations and become an automatable structure.</span>
-              </div>
-              <h2 id="contact-heading" class="sr-only">Contact</h2>
+              <h2 id="contact-heading" class="section-title">Contact</h2>
               <nav class="contact-grid" aria-label="Contact and social links">
                 <!-- CONTACT_GRID_PLACEHOLDER -->
               </nav>
@@ -775,7 +616,7 @@
 
           <footer class="site-footer" role="contentinfo">
             <div class="footer-content">
-              <span class="terminal-prompt footer-prompt">logout</span>
+              <span class="footer-prompt">logout</span>
               <span class="footer-status">Connection closed.</span>
             </div>
             <div class="footer-build" data-footer-build>
@@ -794,23 +635,7 @@
             </div>
           </footer>
 
-          <div id="cli-container" class="cli-container">
-            <div id="cli-output" class="cli-output" aria-live="polite"></div>
-            <div class="cli-input-line">
-              <span class="cli-prompt">jclee@resume:~$ </span>
-              <input
-                type="text"
-                id="terminal-input"
-                class="cli-input"
-                autocomplete="off"
-                spellcheck="false"
-                placeholder="type 'help' for commands..."
-                aria-label="Terminal command input"
-              />
-            </div>
-          </div>
         </div>
-      </div>
     </div>
 
     <!-- Scripts -->
@@ -826,11 +651,14 @@
       // Scroll reveal is owned by src/scripts/modules/ui.js (initScrollReveal)
 
       window.__RESUME_CHAT_DATA__ = (function () {
+        var resumeDataB64;
+        var resumeDataBinary;
+        var resumeDataBytes;
         try {
-          var resumeDataB64 = /* RESUME_CHAT_DATA_B64_PLACEHOLDER */ '';
+          resumeDataB64 = /* RESUME_CHAT_DATA_B64_PLACEHOLDER */ '';
           if (!resumeDataB64) return {};
-          var resumeDataBinary = atob(resumeDataB64);
-          var resumeDataBytes = Uint8Array.from(resumeDataBinary, function (c) {
+          resumeDataBinary = atob(resumeDataB64);
+          resumeDataBytes = Uint8Array.from(resumeDataBinary, function (c) {
             return c.charCodeAt(0);
           });
           return JSON.parse(new TextDecoder('utf-8').decode(resumeDataBytes));
@@ -841,155 +669,6 @@
           return {};
         }
       })();
-
-      window.terminalCommands = {
-        help: function () {
-          return (
-            '<div class="help-output">' +
-            'Available commands:\n' +
-            '  <span class="cmd-name">help</span>     - List commands\n' +
-            '  <span class="cmd-name">whoami</span>   - Show role summary\n' +
-            '  <span class="cmd-name">resume</span>   - Scroll to experience\n' +
-            '  <span class="cmd-name">projects</span> - List projects\n' +
-            '  <span class="cmd-name">skills</span>   - Scroll to skills\n' +
-            '  <span class="cmd-name">contact</span>  - Contact information\n' +
-            '  <span class="cmd-name">download</span> - Open resume PDF\n' +
-            '  <span class="cmd-name">clear</span>    - Clear terminal' +
-            '</div>'
-          );
-        },
-      };
-
-      (function () {
-        var cliInput = document.getElementById('terminal-input');
-        var cliOutput = document.getElementById('cli-output');
-        var commandHistory = [];
-        var historyIndex = -1;
-
-        if (!cliInput || !cliOutput) return;
-
-        window.terminalCommands.clear = function () {
-          cliOutput.innerHTML = '';
-          return '';
-        };
-
-        window.terminalCommands.whoami = function () {
-          return 'jclee - Security Engineer';
-        };
-
-        window.terminalCommands.resume = function () {
-          document.getElementById('resume').scrollIntoView({ behavior: 'smooth' });
-          return '> Scrolling to #resume...';
-        };
-
-        window.terminalCommands.projects = function () {
-          document.getElementById('projects').scrollIntoView({ behavior: 'smooth' });
-          var titles = Array.prototype.slice
-            .call(document.querySelectorAll('.project-title'))
-            .map(function (el) {
-              return '- ' + el.textContent.trim();
-            })
-            .slice(0, 6);
-          if (!titles.length) return '> No project entries found.\\n> Scrolling to #projects...';
-          return '> Personal projects:\\n' + titles.join('\\n') + '\\n> Scrolling to #projects...';
-        };
-
-        window.terminalCommands.skills = function () {
-          document.getElementById('skills').scrollIntoView({ behavior: 'smooth' });
-          return '> Scrolling to #skills...';
-        };
-
-        window.terminalCommands.contact = function () {
-          document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
-          return '> Scrolling to #contact...';
-        };
-
-        window.terminalCommands.download = function () {
-          var pdfLink = document.querySelector(
-            '.resume-download a[download], a[download]'
-          );
-          var url = pdfLink && pdfLink.getAttribute('href');
-          if (!url || url.indexOf('<!--') !== -1) {
-            return '> Resume PDF URL is not available yet.';
-          }
-          window.open(url, '_blank', 'noopener,noreferrer');
-          return '> Opening resume PDF in a new tab...';
-        };
-
-        function executeCommand(cmd) {
-          var input = cmd.trim();
-          if (!input) return '';
-          var parts = input.split(' ');
-          var command = parts[0];
-          var args = parts.slice(1).join(' ');
-
-          if (window.terminalCommands[input]) return window.terminalCommands[input]();
-          if (window.terminalCommands[command]) return window.terminalCommands[command](args);
-          return 'command not found: ' + command + '. Type "help" for available commands.';
-        }
-
-        function addOutput(cmd, result) {
-          var entry = document.createElement('div');
-          entry.className = 'cli-entry';
-
-          var cmdNode = document.createElement('div');
-          cmdNode.className = 'cli-cmd';
-          cmdNode.textContent = 'jclee@resume:~$ ' + cmd;
-          entry.appendChild(cmdNode);
-
-          if (result) {
-            var resultNode = document.createElement('div');
-            resultNode.className = 'cli-result';
-            resultNode.textContent = result;
-            entry.appendChild(resultNode);
-          }
-
-          cliOutput.appendChild(entry);
-          cliOutput.scrollTop = cliOutput.scrollHeight;
-        }
-
-        cliInput.addEventListener('keydown', function (e) {
-          if (e.key === 'Enter') {
-            const cmd = cliInput.value;
-            if (cmd.trim()) {
-              commandHistory.push(cmd);
-              historyIndex = commandHistory.length;
-            }
-            addOutput(cmd, executeCommand(cmd));
-            cliInput.value = '';
-          } else if (e.key === 'ArrowUp') {
-            e.preventDefault();
-            if (historyIndex > 0) {
-              historyIndex--;
-              cliInput.value = commandHistory[historyIndex];
-            }
-          } else if (e.key === 'ArrowDown') {
-            e.preventDefault();
-            if (historyIndex < commandHistory.length - 1) {
-              historyIndex++;
-              cliInput.value = commandHistory[historyIndex];
-            } else {
-              historyIndex = commandHistory.length;
-              cliInput.value = '';
-            }
-          } else if (e.key === 'Tab') {
-            e.preventDefault();
-            const val = cliInput.value.trimStart();
-            const parts = val.split(/\s+/);
-            const prefix = parts[0] || '';
-            const cmds = Object.keys(window.terminalCommands);
-            const matches = cmds.filter(function (c) {
-              return c.startsWith(prefix);
-            });
-            if (matches.length === 1) {
-              const rest = parts.slice(1).join(' ');
-              cliInput.value = rest ? matches[0] + ' ' + rest : matches[0];
-            }
-          }
-        });
-      })();
-    </script>
-    <script>
     </script>
     <script>
       window.dataLayer = window.dataLayer || [];

@@ -32,7 +32,7 @@
 .htop-label {
   width: 120px;
   flex-shrink: 0;
-  color: var(--cyber-cyan);
+  color: var(--color-accent);
   font-weight: 500;
 }
 .htop-bar {
@@ -41,13 +41,13 @@
   font-size: var(--text-xs);
 }
 .htop-filled {
-  color: var(--cyber-green);
+  color: var(--color-success);
 }
 .htop-pct {
   display: none;
   width: 35px;
   text-align: right;
-  color: var(--cyber-magenta);
+  color: var(--color-accent);
   font-weight: bold;
   font-size: var(--text-xs);
 }
@@ -76,20 +76,20 @@
   margin-left: var(--space-2);
   padding: 0 var(--space-2);
   font-size: 0.65rem;
-  color: var(--cyber-cyan);
-  background: rgb(var(--cyber-cyan-rgb) / 0.08);
-  border: 1px solid rgb(var(--cyber-cyan-rgb) / 0.18);
+  color: var(--color-accent);
+  background: rgb(var(--color-accent-rgb) / 0.08);
+  border: 1px solid rgb(var(--color-accent-rgb) / 0.18);
   border-radius: var(--radius-full, 9999px);
   font-weight: 500;
   letter-spacing: 0;
   vertical-align: baseline;
 }
 /* ============================================================
-   SKILL TAG GLOW
+   SKILL TAG SOFT
    ============================================================ */
-.skill-tag-glow {
-  border: 1px solid var(--cyber-cyan);
-  color: var(--cyber-cyan);
+.skill-tag-soft {
+  border: 1px solid var(--color-accent);
+  color: var(--color-accent);
   padding: 0.25rem 0.75rem;
   border-radius: 4px;
   font-family: var(--font-mono);
@@ -98,7 +98,7 @@
     box-shadow 0.3s ease,
     background 0.3s ease;
 }
-.skill-tag-glow:hover {
-  box-shadow: var(--glow-cyan);
-  background: rgb(var(--cyber-cyan-rgb) / 0.1);
+.skill-tag-soft:hover {
+  box-shadow: var(--shadow-sm);
+  background: rgb(var(--color-accent-rgb) / 0.1);
 }

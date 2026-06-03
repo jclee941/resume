@@ -4,9 +4,10 @@ const { test, expect } = require('@playwright/test');
 /**
  * Declutter redesign CONTRACT.
  *
- * Encodes the Google-tier benchmark target: ~7-8 sections, no junior gimmicks,
- * no empty/placeholder sections, calm hero, no skill progress bars, no repeated
- * incident-stage rows, one consolidated "operated" section, reduced CLI.
+ * Encodes the clean dark-neutral layout, no terminal CLI, no neon/cyberpunk
+ * chrome: ~7-8 sections, no junior gimmicks, no empty/placeholder sections,
+ * calm hero, no skill progress bars, no repeated incident-stage rows, one
+ * consolidated "operated" section.
  *
  * RED first against the current cluttered page; GREEN after the redesign.
  */
@@ -29,7 +30,7 @@ async function go(page, url = '/') {
 test.describe('Declutter — removed gimmick sections', () => {
   test('S1: junk sections are gone', async ({ page }) => {
     await go(page, '/');
-    for (const id of ['status', 'infrastructure', 'site-security', 'observability', 'guestbook', 'case-studies']) {
+    for (const id of ['status', 'observability', 'case-studies']) {
       await expect(page.locator(`#${id}`)).toHaveCount(0);
     }
   });
@@ -56,32 +57,21 @@ test.describe('Declutter — gimmick markup/commands absent', () => {
   });
 });
 
-test.describe('Declutter — CLI reduced to essentials', () => {
-  const ESSENTIAL = ['help', 'whoami', 'resume', 'projects', 'skills', 'contact', 'download', 'clear'];
-
-  test('S3: terminalCommands is exactly the 8 essential commands (no hidden extras)', async ({ page }) => {
+test.describe('Declutter — terminal CLI and chrome absent', () => {
+  test('S3: terminal CLI, commands, and cyberpunk chrome are removed', async ({ page }) => {
     await go(page, '/');
-    const keys = await page.evaluate(() => Object.keys(window.terminalCommands || {}).sort());
-    expect(keys).toEqual([...ESSENTIAL].sort());
+    await expect(page.locator('#cli-container, #terminal-input, #cli-output')).toHaveCount(0);
+    expect(await page.evaluate(() => 'terminalCommands' in window)).toBe(false);
+    await expect(page.locator('.terminal-window, .terminal-titlebar, .section-cmd')).toHaveCount(0);
   });
 
-  test('S3: /en/ exposes the same command set (KO/EN parity)', async ({ page }) => {
-    await go(page, '/en/');
-    const keys = await page.evaluate(() => Object.keys(window.terminalCommands || {}).sort());
-    expect(keys).toEqual([...ESSENTIAL].sort());
-  });
-
-  test('S3: help lists only the 8 essential commands; gimmicks unknown', async ({ page }) => {
+  test('S3: clean hero has one title and no typing/KPI/status gimmicks', async ({ page }) => {
     await go(page, '/');
-    const input = page.locator('#terminal-input');
-    await input.fill('help');
-    await input.press('Enter');
-    const out = page.locator('#cli-output');
-    await expect(out).toContainText(/help/i);
-    // gimmick commands must NOT be advertised in help
-    for (const gone of ['snake', 'neofetch', 'sudo', 'matrix', 'coffee', 'hack', 'chat']) {
-      await expect(out).not.toContainText(new RegExp(gone, 'i'));
-    }
+    await expect(page.locator('#hero .hero-title')).toHaveCount(1);
+    await expect(page.locator('#hero .typing-effect')).toHaveCount(0);
+    await expect(page.locator('#hero .cursor')).toHaveCount(0);
+    await expect(page.locator('#hero .hero-kpi-grid')).toHaveCount(0);
+    await expect(page.locator('#hero .status-seeking')).toHaveCount(0);
   });
 });
 
@@ -132,7 +122,7 @@ test.describe('Declutter — consolidated operated section + regression', () => 
         while ((n = walker.nextNode())) {
           const p = n.parentElement;
           if (!p) continue;
-          if (p.closest('script, style, code, pre, .terminal-cli, #cli-output')) continue;
+          if (p.closest('script, style, code, pre')) continue;
           const t = (n.textContent || '').trim();
           if (hangul.test(t)) hits.push(t.slice(0, 60));
         }
@@ -145,6 +135,10 @@ test.describe('Declutter — consolidated operated section + regression', () => 
   test('S6: timeline phase badges are distinct per locale (no fallback collapse)', async ({ page }) => {
     // CAREER_UI_META is keyed by locale-stable `period`; a regression that keys
     // by localized `company` collapses every EN/JA badge to the default phase.
+    /**
+     * @param {string} url
+     * @param {string[]} expected
+     */
     const phasesFor = async (url, expected) => {
       await go(page, url);
       const badges = await page.locator('.phase-badge').evaluateAll((els) =>
@@ -179,7 +173,7 @@ test.describe('Declutter — consolidated operated section + regression', () => 
         while ((n = walker.nextNode())) {
           const p = n.parentElement;
           if (!p) continue;
-          if (p.closest('script, style, code, pre, .terminal-cli, #cli-output')) continue;
+          if (p.closest('script, style, code, pre')) continue;
           const t = (n.textContent || '').trim();
           if (!t) continue;
           if (pats.some((re) => re.test(t))) bad.push(t.slice(0, 70));

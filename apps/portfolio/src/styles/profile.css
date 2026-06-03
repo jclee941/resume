@@ -4,38 +4,39 @@
 .profile-bento {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: var(--space-3);
-  margin-top: var(--space-5, 1.5rem);
+  gap: var(--space-5);
+  margin-top: var(--space-10);
   font-family: var(--font-mono);
 }
 
 .profile-card {
-  border: 1px solid var(--color-border, rgba(0, 212, 224, 0.18));
-  border-radius: var(--radius-sm, 4px);
-  background: rgba(0, 0, 0, 0.25);
-  padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  background: var(--glass-bg);
+  padding: var(--space-5);
   display: flex;
   flex-direction: column;
-  gap: var(--space-2, 0.5rem);
+  gap: var(--space-3);
+  box-shadow: var(--shadow-sm);
 }
 
 .profile-card__label {
-  color: var(--cyber-green);
-  font-size: var(--text-xs, 0.75rem);
-  letter-spacing: 0.04em;
+  color: var(--color-accent-strong);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
 }
 
 .profile-card__value {
   margin: 0;
   color: var(--text-primary);
   font-size: var(--text-sm);
-  line-height: 1.5;
+  line-height: var(--leading-relaxed);
   word-break: break-word;
 }
 
 .profile-card__muted {
-  color: var(--text-secondary, #8899aa);
-  font-size: var(--text-xs, 0.75rem);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
 }
 
 .profile-card__list {
@@ -44,22 +45,22 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
+  gap: var(--space-2);
 }
 
 .profile-card__list li {
   color: var(--text-primary);
   font-size: var(--text-sm);
-  line-height: 1.5;
+  line-height: var(--leading-relaxed);
 }
 
 .profile-card__list li::before {
   content: '> ';
-  color: var(--cyber-green);
+  color: var(--color-accent);
 }
 
 .profile-card__list a {
-  color: var(--cyber-cyan);
+  color: var(--color-accent);
   text-decoration: none;
 }
 
@@ -69,81 +70,90 @@
 
 /* ── Achievements evidence list (surfaced SSoT achievements[]) ── */
 .achievements-block {
-  margin-top: var(--space-4, 1rem);
+  margin-top: var(--space-10);
 }
 
 .achievements-list {
   list-style: none;
-  margin: var(--space-2, 0.5rem) 0 0;
+  margin: var(--space-4) 0 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-2, 0.5rem);
+  gap: var(--space-3);
 }
 
 .achievement-card {
   display: flex;
-  gap: var(--space-2, 0.5rem);
+  gap: var(--space-3);
   align-items: flex-start;
-  padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
-  border-left: 2px solid var(--cyber-green, #00d97a);
-  background: var(--surface-alt, rgba(255, 255, 255, 0.02));
-  border-radius: 0 var(--radius-sm, 4px) var(--radius-sm, 4px) 0;
+  padding: var(--space-4) var(--space-5);
+  border: 1px solid var(--glass-border);
+  border-left: 2px solid rgb(var(--color-accent-rgb) / 0.35);
+  background: var(--glass-bg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
   color: var(--text-primary);
   font-size: var(--text-sm);
-  line-height: 1.55;
+  line-height: var(--leading-loose);
   word-break: break-word;
 }
 
 .achievement-card__marker {
-  color: var(--cyber-green, #00d97a);
+  color: var(--color-accent);
   flex-shrink: 0;
   font-weight: 600;
 }
 
 /* ── Expertise tags + core competencies (surfaced SSoT summary.*) ── */
 .expertise-block {
-  margin-top: var(--space-3, 0.75rem);
+  margin-top: var(--space-10);
+  padding: var(--space-6);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
 }
 
 .expertise-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-2, 0.5rem);
-  margin: var(--space-2, 0.5rem) 0;
+  gap: var(--space-3);
+  margin: var(--space-4) 0;
 }
 
 .expertise-tag {
-  display: inline-block;
-  padding: 2px var(--space-2, 0.5rem);
-  border: 1px solid var(--cyber-cyan, #00d4e0);
-  border-radius: var(--radius-sm, 4px);
-  color: var(--cyber-cyan, #00d4e0);
-  font-size: var(--text-xs, 0.75rem);
-  font-family: var(--font-mono, monospace);
-  background: rgba(0, 212, 224, 0.06);
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--space-8);
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-full);
+  color: var(--color-accent-strong);
+  font-size: var(--text-sm);
+  font-family: var(--font-mono);
+  background: var(--bg-card);
 }
 
 .competency-list {
   list-style: none;
-  margin: var(--space-2, 0.5rem) 0 0;
+  margin: var(--space-5) 0 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-1, 0.25rem);
+  gap: var(--space-3);
 }
 
 .competency-item {
   display: flex;
-  gap: var(--space-2, 0.5rem);
+  gap: var(--space-3);
   align-items: flex-start;
   color: var(--text-primary);
-  font-size: var(--text-sm);
-  line-height: 1.5;
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
   word-break: break-word;
 }
 
 .competency-item__marker {
-  color: var(--cyber-cyan, #00d4e0);
+  color: var(--color-accent);
   flex-shrink: 0;
 }

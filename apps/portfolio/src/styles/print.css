@@ -1,7 +1,6 @@
 /*
  * Print stylesheet — produce a clean, recruiter-readable resume when the page is
- * printed (the terminal `print` command calls window.print()). Kept intentionally
- * minimal: it overrides the cyberpunk dark theme to black-on-white, hides all
+ * printed. Kept intentionally minimal: it overrides the clean dark theme to black-on-white, hides all
  * interactive / live-only chrome, and keeps the resume-relevant sections.
  *
  * Imported LAST from main.css so it wins the cascade for @media print.
@@ -25,29 +24,16 @@
   }
 
   /* Hide interactive / live-only / decorative chrome. */
-  .cli-container,
-  .terminal-input-line,
-  #terminal-input,
   .minimal-nav,
   .lang-switcher,
   .back-to-top,
   .scroll-progress,
   .deep-dive-overlay,
   .hero-download,
-  .status-seeking,
-  .cursor,
-  .cmd-cursor,
-  .typing-effect .cursor,
   .cover-letter__chrome,
   .cover-letter__index,
   .cover-letter__para::before {
     display: none !important;
-  }
-
-  /* Neutralize the hero atmospheric gradient layer for clean print. */
-  .section-hero::before {
-    display: none !important;
-    background: none !important;
   }
 
   /* Keep resume-relevant sections visible and unconstrained. */

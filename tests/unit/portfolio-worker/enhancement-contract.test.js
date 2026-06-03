@@ -3,10 +3,10 @@
  *
  * Locks the recruiter-facing enhancement work across six axes:
  *  - Accessibility landmarks (KO/EN source HTML)
- *  - Reduced-motion coverage of the glitch hover effect
+ *  - Reduced-motion coverage without glitch chrome
  *  - SEO structured-data determinism (no wall-clock dateCreated) + JA language
  *  - JA i18n parity (client translations)
- *  - PDF source: LinkedIn contact + non-blue (cyan) link colour
+ *  - PDF source: LinkedIn contact + accessible accent link colour
  *
  * These are static-source assertions: they read the hand-edited source files
  * (never the generated worker.js) so they stay deterministic and fast.
@@ -25,9 +25,12 @@ describe('고도화: accessibility landmarks', () => {
   const ko = read(path.join(PORTFOLIO, 'index.html'));
   const en = read(path.join(PORTFOLIO, 'index-en.html'));
 
-  test('terminal-window uses role="region", not role="application" (KO)', () => {
-    expect(ko).not.toMatch(/class="terminal-window"[^>]*role="application"/);
-    expect(ko).toMatch(/class="terminal-window"[^>]*role="region"/);
+  test('KO source removes terminal chrome and keeps semantic landmarks', () => {
+    expect(ko).not.toMatch(/class="terminal-window"/);
+    expect(ko).toMatch(/<main[^>]*id="main-content"/);
+    expect(ko).toMatch(/<nav[^>]*role="navigation"/);
+    expect(ko).toMatch(/<footer[^>]*role="contentinfo"/);
+    expect(ko).toMatch(/class="skip-link"[^>]*href="#main-content"|href="#main-content"[^>]*class="skip-link"/);
   });
 
   test('EN nav declares role="navigation"', () => {
@@ -52,13 +55,13 @@ describe('고도화: SEO hreflang JA', () => {
   });
 });
 
-describe('고도화: reduced-motion covers glitch hover', () => {
+describe('고도화: reduced-motion without glitch chrome', () => {
   const css = read(path.join(PORTFOLIO, 'src', 'styles', 'animations.css'));
   const reduced = css.slice(css.indexOf('@media (prefers-reduced-motion: reduce)'));
 
-  test('glitch hover pseudo-elements are disabled under reduced motion', () => {
-    expect(reduced).toMatch(/\.glitch:hover::before/);
-    expect(reduced).toMatch(/\.glitch:hover::after/);
+  test('glitch selectors are removed and reduced motion still neutralizes animation', () => {
+    expect(css).not.toMatch(/\.glitch\b/);
+    expect(reduced).toMatch(/animation:\s*none|transition:\s*none/);
   });
 });
 
@@ -102,11 +105,10 @@ describe('고도화: PDF source polish', () => {
     expect(md).toMatch(/linkedin\.com\/in\//i);
   });
 
-  test('PDF generator uses a cyan link colour, not blue', () => {
+  test('PDF generator uses a non-default accessible accent link colour, not literal blue', () => {
     const gen = read(path.join(TOOLS, 'pdf-generator.go'));
     expect(gen).not.toMatch(/linkcolor:blue/);
-    // Accept a cyan accent expressed as a named colour or an HTML hex model.
-    expect(gen).toMatch(/linkcolor:(?:cyan|\[HTML\]\{[0-9A-Fa-f]{6}\}|[0-9A-Fa-f]{6})/);
+    expect(gen).toMatch(/linkcolor:(?!(?:blue|black|gray|grey|white)\b)(?:[a-z]+|\[HTML\]\{[0-9A-Fa-f]{6}\}|[0-9A-Fa-f]{6})/);
   });
 });
 
@@ -163,7 +165,7 @@ describe('B: engineering principles + current focus surfaced from SSoT', () => {
   });
 });
 
-describe('C: print stylesheet exists and hides interactive chrome', () => {
+describe('C: print stylesheet exists without CLI chrome', () => {
   const printCss = (() => {
     const p = path.join(PORTFOLIO, 'src', 'styles', 'print.css');
     return require('fs').existsSync(p) ? read(p) : '';
@@ -175,11 +177,9 @@ describe('C: print stylesheet exists and hides interactive chrome', () => {
     expect(mainCss).toContain("@import './print.css'");
   });
 
-  test('print stylesheet wraps rules in @media print and hides interactive UI', () => {
+  test('print stylesheet wraps rules in @media print without CLI references and keeps links printable', () => {
     expect(printCss).toContain('@media print');
-    expect(printCss).toMatch(
-      /\.cli-container[^}]*display:\s*none|\.cli-container[\s\S]*?display:\s*none/
-    );
+    expect(printCss).not.toMatch(/\.cli-container|#cli-container/);
     expect(printCss).toMatch(/a\[href/);
   });
 });

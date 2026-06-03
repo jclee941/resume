@@ -4,14 +4,14 @@ const { test, expect } = require('@playwright/test');
 /**
  * Cover Letter — first-class VISUAL section E2E.
  *
- * The cover letter was previously reachable only via the terminal `coverletter`
- * command. These tests verify the dedicated scrollable `#cover-letter` section
- * renders the real SSoT copy per-locale, and that the terminal CLI command path
- * still works (regression). Zero fabricated fixtures — content comes from SSoT.
+ * These tests verify the dedicated scrollable `#cover-letter` section renders
+ * the real SSoT copy per-locale in the clean layout. Zero fabricated fixtures
+ * — content comes from SSoT.
  */
 
 const coverLetter = require('../../packages/data/resumes/master/resume_data.json').coverLetter;
 
+/** @param {import('@playwright/test').Page} page */
 async function safeGoto(page, url = '/') {
   try {
     const response = await page.goto(url, { waitUntil: 'domcontentloaded' });
@@ -19,10 +19,7 @@ async function safeGoto(page, url = '/') {
       test.skip(true, 'Server unavailable - skipping cover letter visual test');
     }
   } catch (error) {
-    if (
-      error.message?.includes('net::ERR_NETWORK_CHANGED') ||
-      error.message?.includes('net::ERR_INTERNET_DISCONNECTED')
-    ) {
+    if (error instanceof Error && (error.message.includes('net::ERR_NETWORK_CHANGED') || error.message.includes('net::ERR_INTERNET_DISCONNECTED'))) {
       test.skip(true, 'Network unavailable - skipping cover letter visual test');
     }
     throw error;
@@ -30,12 +27,14 @@ async function safeGoto(page, url = '/') {
 }
 
 test.describe('Cover Letter - visual section (scrollable page)', () => {
-  test('S1: KO page has a dedicated #cover-letter section with the cat motif', async ({ page }) => {
+  test('S1: KO page has a dedicated clean #cover-letter section', async ({ page }) => {
     await safeGoto(page, '/');
     const section = page.locator('#cover-letter');
     await expect(section).toHaveCount(1);
-    await expect(section.locator('.section-cmd__command')).toContainText('cat coverletter.txt');
+    await expect(section.getByRole('heading').first()).toBeVisible();
+    await expect(section).toContainText(coverLetter.ko.headline.slice(0, 12));
     await expect(section.locator('.cover-letter-card')).toHaveCount(1);
+    await expect(section.locator('.section-cmd, .section-cmd__command')).toHaveCount(0);
   });
 
   test('S1: KO section renders the real headline, every paragraph, and closing', async ({
@@ -96,6 +95,9 @@ test.describe('Cover Letter - section remains first-class', () => {
   test('S4: coverletter command is removed while section still renders', async ({ page }) => {
     await safeGoto(page, '/');
     await expect(page.locator('#cover-letter .cover-letter-card')).toHaveCount(1);
-    await expect(page.locator('#cli-output')).not.toContainText(coverLetter.ko.headline.slice(0, 12));
+    await expect(page.locator('#cli-output')).toHaveCount(0);
+    await expect(page.locator('#cover-letter .cover-letter-card')).toContainText(
+      coverLetter.ko.headline.slice(0, 12)
+    );
   });
 });

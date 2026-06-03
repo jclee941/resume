@@ -217,36 +217,6 @@
     </style>
     <!-- Image optimization N/A: no <img> elements are used; content is text/canvas/self-hosted assets. -->
     <style>
-      .typing-text {
-        display: inline-block;
-        overflow: hidden;
-        border-right: 3px solid var(--cyber-cyan);
-        white-space: nowrap;
-        animation:
-          typing 2s steps(20) forwards,
-          blink 0.7s step-end infinite;
-      }
-      @keyframes typing {
-        from {
-          width: 0;
-        }
-        to {
-          width: 100%;
-        }
-      }
-      @keyframes blink {
-        50% {
-          border-color: transparent;
-        }
-      }
-      .terminal-prompt {
-        color: var(--cyber-green, #00ff88);
-        font-family: 'JetBrains Mono', monospace;
-        margin-right: 0.5rem;
-      }
-      .terminal-titlebar-spacer {
-        width: 52px;
-      }
       .footer-prompt {
         font-size: var(--text-sm);
       }
@@ -254,61 +224,7 @@
         color: var(--text-muted);
         margin-left: 1rem;
       }
-      .help-output,
-      .cli-result {
-        white-space: pre-wrap;
-      }
-      .cmd-name,
-      .cli-cmd {
-        color: var(--cyber-cyan);
-      }
-      .help-hint,
-      .cli-input::placeholder {
-        color: var(--text-muted);
-      }
-      .cli-container {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: rgb(var(--bg-primary-rgb) / 0.95);
-        border-top: 1px solid var(--border-primary);
-        padding: 1rem;
-        font-family: var(--font-mono);
-        z-index: 1000;
-        max-height: 20vh;
-        overflow-y: auto;
-      }
-      .cli-output {
-        margin-bottom: 0.5rem;
-        color: var(--cyber-green);
-        font-size: 0.9rem;
-        max-height: 30vh;
-        overflow-y: auto;
-      }
-      .cli-input-line {
-        display: flex;
-        align-items: center;
-      }
-      .cli-prompt {
-        color: var(--cyber-green);
-        margin-right: 0.5rem;
-        flex-shrink: 0;
-      }
-      .cli-input {
-        flex: 1;
-        background: transparent;
-        border: none;
-        color: var(--cyber-cyan);
-        font-family: var(--font-mono);
-        font-size: 1rem;
-        outline: none;
-        caret-color: var(--cyber-cyan);
-      }
-      .cli-entry {
-        margin-bottom: 0.5rem;
-      }
-      .hero--terminal {
+      .hero--clean {
         text-align: left;
       }
     </style>
@@ -392,15 +308,15 @@
         color: var(--text-muted, #71717a);
       }
       .skill-radar__search-input:focus {
-        border-color: var(--cyber-cyan, #00d4e0);
-        box-shadow: 0 0 0 3px rgba(0, 212, 224, 0.15);
+        border-color: var(--color-accent, #5aa9b8);
+        box-shadow: 0 0 0 3px var(--color-accent-subtle);
       }
       .skill-radar__search-count {
         display: none;
         margin-top: var(--space-2, 0.5rem);
         font-family: var(--font-mono, 'IBM Plex Mono', monospace);
         font-size: var(--text-xs, 0.75rem);
-        color: var(--cyber-cyan, #00d4e0);
+        color: var(--color-accent, #5aa9b8);
       }
       .skill-radar__grid {
         display: grid;
@@ -427,19 +343,18 @@
       }
       .skill-domain-card:hover,
       .skill-domain-card:focus-visible {
-        border-color: var(--cyber-cyan, #00d4e0);
+        border-color: var(--color-accent, #5aa9b8);
         box-shadow:
-          0 0 20px rgba(0, 212, 224, 0.2),
-          0 4px 12px rgba(0, 0, 0, 0.3);
+          var(--shadow-md);
         transform: translateY(-2px);
       }
       .skill-domain-card:focus-visible {
-        outline: 2px solid var(--cyber-cyan, #00d4e0);
+        outline: 2px solid var(--color-accent, #5aa9b8);
         outline-offset: 2px;
       }
       .skill-domain-card[aria-expanded='true'] {
-        border-color: var(--cyber-cyan, #00d4e0);
-        box-shadow: 0 0 24px rgba(0, 212, 224, 0.25);
+        border-color: var(--color-accent, #5aa9b8);
+        box-shadow: var(--shadow-md);
       }
       .skill-domain-card__header {
         display: flex;
@@ -453,9 +368,9 @@
         width: 40px;
         height: 40px;
         flex-shrink: 0;
-        color: var(--cyber-cyan, #00d4e0);
-        background: rgba(0, 212, 224, 0.1);
-        border: 1px solid rgba(0, 212, 224, 0.2);
+        color: var(--color-accent, #5aa9b8);
+        background: rgb(var(--color-accent-rgb) / 0.1);
+        border: 1px solid rgb(var(--color-accent-rgb) / 0.16);
         border-radius: 8px;
       }
       .skill-domain-card__icon svg {
@@ -505,8 +420,8 @@
         width: 8px;
         height: 8px;
         border-radius: 50%;
-        background: var(--level-color, var(--cyber-green, #00d97a));
-        box-shadow: 0 0 8px var(--level-color, var(--cyber-green, #00d97a));
+        background: var(--level-color, var(--color-success, #79b88a));
+        box-shadow: var(--shadow-sm);
         animation: pulse-dot 2s ease-in-out infinite;
       }
       @keyframes pulse-dot {
@@ -521,7 +436,7 @@
       .skill-domain-card__level-label {
         font-family: var(--font-mono, 'IBM Plex Mono', monospace);
         font-size: var(--text-xs, 0.75rem);
-        color: var(--level-color, var(--cyber-green, #00d97a));
+        color: var(--level-color, var(--color-success, #79b88a));
         text-transform: uppercase;
         letter-spacing: 0.05em;
       }
@@ -587,12 +502,12 @@
         width: 0;
         background: linear-gradient(
           90deg,
-          var(--bar-color, var(--cyber-cyan)) 0%,
-          color-mix(in srgb, var(--bar-color, var(--cyber-cyan)) 80%, white 20%) 100%
+          var(--bar-color, var(--color-accent)) 0%,
+          color-mix(in srgb, var(--bar-color, var(--color-accent)) 80%, white 20%) 100%
         );
         border-radius: 3px;
         transition: width 0.8s ease-out;
-        box-shadow: 0 0 10px var(--bar-color, var(--cyber-cyan));
+        box-shadow: var(--shadow-sm);
       }
       .skill-item__bar.animate {
         width: var(--target-width, 0%);
@@ -621,7 +536,7 @@
       .skill-evidence-drawer__title svg {
         width: 14px;
         height: 14px;
-        color: var(--cyber-cyan, #00d4e0);
+        color: var(--color-accent, #5aa9b8);
       }
       .skill-evidence-list {
         list-style: none;
@@ -639,7 +554,7 @@
       .skill-evidence-item__name {
         font-family: var(--font-mono, 'IBM Plex Mono', monospace);
         font-size: var(--text-xs, 0.75rem);
-        color: var(--cyber-cyan, #00d4e0);
+        color: var(--color-accent, #5aa9b8);
         font-weight: 500;
       }
       .skill-evidence-item__text {
@@ -669,18 +584,8 @@
   <body class="minimal-theme">
     <a href="#main-content" class="skip-link">바로 본문으로 이동</a>
 
-    <div class="container-narrow">
-      <div class="terminal-window" role="region" aria-label="Cyberpunk terminal portfolio">
-        <div class="terminal-titlebar">
-          <div class="terminal-buttons">
-            <span class="terminal-btn terminal-btn--close"></span>
-            <span class="terminal-btn terminal-btn--minimize"></span>
-            <span class="terminal-btn terminal-btn--maximize"></span>
-          </div>
-          <span class="terminal-title">jclee@resume:~</span>
-          <div class="terminal-titlebar-spacer"></div>
-        </div>
-        <div class="terminal-body">
+    <div class="page-shell">
+        <div class="page-body">
           <header class="site-header">
             <nav class="minimal-nav" role="navigation" aria-label="Main navigation">
               <a href="/" class="nav-logo" aria-label="~/jclee 홈으로 이동">~/jclee</a>
@@ -716,48 +621,20 @@
           </header>
 
           <main id="main-content" role="main">
-            <section id="hero" class="section-hero hero--terminal">
+            <section id="hero" class="section-hero hero--clean">
               <div class="hero-content">
-                <div class="cmd-line">
-                  <span class="cmd-user">jclee</span><span class="cmd-separator">@</span
-                  ><span class="cmd-path">resume</span><span class="cmd-symbol">$</span>
-                  <span class="cmd-input">whoami</span>
-                </div>
                 <h1 class="hero-title" role="heading" aria-level="1">
-                  <span aria-hidden="true"
-                    ><span class="typing-effect glow-cyan">이재철</span
-                    ><span class="cursor"></span></span
-                  ><span class="sr-only">이재철</span>
+                  이재철<span class="sr-only"> Jaecheol Lee</span>
                 </h1>
+                <p class="hero-role">Security / SRE Engineer</p>
                 <p class="hero-positioning">
-                  8년차 보안·SRE 엔지니어 — 금융권 보안 인프라 설계·운영
+                  금융권 보안 인프라 설계·운영, SIEM 탐지·대응 자동화, IaC 기반 관측성을
+                  실무 문제 해결에 연결합니다.
                 </p>
-                <p class="hero-tagline">
-                  FSC 본인가 통과 · SIEM 탐지·대응 자동화 · IaC 기반 관측성 · 이 사이트도 직접
-                  빌드해 Cloudflare에 배포
-                </p>
-                <dl class="hero-kpi-grid" aria-label="핵심 성과 지표">
-                  <div class="hero-kpi">
-                    <dd class="hero-kpi__value">8년+</dd>
-                    <dt class="hero-kpi__label">보안·인프라 경력</dt>
-                  </div>
-                  <div class="hero-kpi">
-                    <dd class="hero-kpi__value">FSC 통과</dd>
-                    <dt class="hero-kpi__label">금융권 본인가</dt>
-                  </div>
-                  <div class="hero-kpi">
-                    <dd class="hero-kpi__value">5계층 HA</dd>
-                    <dt class="hero-kpi__label">FortiGate 망분리 설계</dt>
-                  </div>
-                </dl>
-                <div class="status-seeking" role="status" aria-label="구직 중 · 즉시 투입 가능">
-                  <span class="status-seeking__label">구직 중</span>
-                  <span class="status-seeking__divider" aria-hidden="true">·</span>
-                  <span class="status-seeking__availability">즉시 투입 가능</span>
-                </div>
-                <div class="hero-download" role="group" aria-label="주요 이동">
+                <div class="hero-cta" role="group" aria-label="주요 이동">
                   <a href="#resume" class="link-subtle">경력 보기</a>
                   <a href="mailto:qws941@kakao.com" class="link-subtle">이메일</a>
+                  <a href="/resume.pdf" download="이재철_이력서.pdf" class="link-subtle">이력서 PDF</a>
                 </div>
               </div>
             </section>
@@ -768,11 +645,7 @@
               role="region"
               aria-labelledby="about-heading"
             >
-              <h2 id="about-heading" class="sr-only">소개</h2>
-              <div class="section-cmd">
-                <span class="section-cmd__command">cat about.txt</span>
-                <span class="section-cmd__story">수작업을 줄이는 방식으로 보안 운영을 배워 온 엔지니어입니다.</span>
-              </div>
+              <h2 id="about-heading" class="section-title">소개</h2>
               <!-- ABOUT_CONTENT_PLACEHOLDER -->
               <div class="expertise-block"><!-- EXPERTISE_PLACEHOLDER --></div>
               <div id="about-principles" class="about-principles">
@@ -800,9 +673,6 @@
               </div>
               <!-- PROFILE_BENTO_PLACEHOLDER -->
               <div class="achievements-block">
-                <div class="section-cmd">
-                  <span class="section-cmd__command">cat achievements.log</span>
-                </div>
                 <!-- ACHIEVEMENTS_PLACEHOLDER -->
               </div>
             </section>
@@ -813,10 +683,7 @@
               role="region"
               aria-labelledby="cover-letter-heading"
             >
-              <h2 id="cover-letter-heading" class="sr-only">커버레터</h2>
-              <div class="section-cmd">
-                <span class="section-cmd__command">cat coverletter.txt</span>
-              </div>
+              <h2 id="cover-letter-heading" class="section-title">커버레터</h2>
               <!-- COVER_LETTER_PLACEHOLDER -->
             </section>
 
@@ -826,11 +693,7 @@
               role="region"
               aria-labelledby="resume-heading"
             >
-              <h2 id="resume-heading" class="sr-only">경력사항</h2>
-              <div class="section-cmd">
-                <span class="section-cmd__command">cat experience.log</span>
-                <span class="section-cmd__story">폐쇄망 운영에서 금융권 보안 운영까지, 같은 질문은 반복되었습니다: 무엇을 자동화할 수 있는가.</span>
-              </div>
+              <h2 id="resume-heading" class="section-title">경력</h2>
               <ul class="resume-list">
                 <!-- RESUME_CARDS_PLACEHOLDER -->
               </ul>
@@ -854,11 +717,7 @@
               role="region"
               aria-labelledby="certifications-heading"
             >
-              <h2 id="certifications-heading" class="sr-only">자격증</h2>
-              <div class="section-cmd">
-                <span class="section-cmd__command">cat certifications.log</span>
-                <span class="section-cmd__story">Linux 기반을 다시 다진 뒤, 보안·네트워크·컨테이너 보안으로 학습 축을 확장했습니다.</span>
-              </div>
+              <h2 id="certifications-heading" class="section-title">자격증</h2>
               <ul class="cert-list">
                 <!-- CERTIFICATION_CARDS_PLACEHOLDER -->
               </ul>
@@ -870,11 +729,7 @@
               role="region"
               aria-labelledby="projects-heading"
             >
-              <h2 id="projects-heading" class="sr-only">주요 프로젝트</h2>
-              <div class="section-cmd">
-                <span class="section-cmd__command">ls -la ~/projects/</span>
-                <span class="section-cmd__story">현장에서 만난 반복 문제를 개인 프로젝트와 운영 도구로 다시 검증했습니다.</span>
-              </div>
+              <h2 id="projects-heading" class="section-title">프로젝트</h2>
               <ul class="project-list" id="project-list">
                 <!-- PROJECT_CARDS_PLACEHOLDER -->
               </ul>
@@ -886,11 +741,7 @@
               role="region"
               aria-labelledby="skills-heading"
             >
-              <h2 id="skills-heading" class="sr-only">기술</h2>
-              <div class="section-cmd">
-                <span class="section-cmd__command">cat capability-matrix.json</span>
-                <span class="section-cmd__story">기술 스택은 목적지가 아니라, 운영 문제를 자동화하기 위해 선택한 도구 목록입니다.</span>
-              </div>
+              <h2 id="skills-heading" class="section-title">기술</h2>
               <div class="skill-radar" role="region" aria-label="Skill Capability Matrix">
                 <div class="skill-radar__search">
                   <label for="skill-search-input" class="sr-only">Filter skills</label>
@@ -940,11 +791,7 @@
               role="region"
               aria-labelledby="operated-heading"
             >
-              <h2 id="operated-heading" class="sr-only">이 사이트는 이렇게 운영됩니다</h2>
-              <div class="section-cmd">
-                <span class="section-cmd__command">cat operated.md</span>
-                <span class="section-cmd__story">이 포트폴리오는 정적 문서가 아니라 보안 헤더, 관측, 자동화로 관리되는 작은 운영 시스템입니다.</span>
-              </div>
+              <h2 id="operated-heading" class="section-title">운영</h2>
               <ul class="operated-grid" aria-label="사이트 운영 방식">
                 <li class="operated-card">
                   <h3 class="operated-card__title">Edge 런타임 + 보안 헤더</h3>
@@ -976,11 +823,7 @@
               role="region"
               aria-labelledby="contact-heading"
             >
-              <h2 id="contact-heading" class="sr-only">연락처</h2>
-              <div class="section-cmd">
-                <span class="section-cmd__command">cat contact.txt</span>
-                <span class="section-cmd__story">다음 문제도 운영 문제에서 출발해 자동화 가능한 구조로 바꾸고 싶습니다.</span>
-              </div>
+              <h2 id="contact-heading" class="section-title">연락처</h2>
               <nav class="contact-grid" aria-label="연락처 및 소셜 링크">
                 <!-- CONTACT_GRID_PLACEHOLDER -->
               </nav>
@@ -990,7 +833,7 @@
 
           <footer class="site-footer" role="contentinfo">
             <div class="footer-content">
-              <span class="terminal-prompt footer-prompt">logout</span>
+              <span class="footer-prompt">logout</span>
               <span class="footer-status">Connection closed.</span>
             </div>
             <div class="footer-build" data-footer-build>
@@ -1009,23 +852,7 @@
             </div>
           </footer>
 
-          <div id="cli-container" class="cli-container">
-            <div id="cli-output" class="cli-output" aria-live="polite"></div>
-            <div class="cli-input-line">
-              <span class="cli-prompt">jclee@resume:~$ </span>
-              <input
-                type="text"
-                id="terminal-input"
-                class="cli-input"
-                autocomplete="off"
-                spellcheck="false"
-                placeholder="type 'help' for commands..."
-                aria-label="Terminal command input"
-              />
-            </div>
-          </div>
         </div>
-      </div>
     </div>
 
     <!-- Scripts -->
@@ -1053,13 +880,15 @@
 
       // Scroll reveal + section_view analytics are owned by src/scripts/modules/ui.js
 
-      // Interactive Terminal Commands (preparation for Phase 2)
       window.__RESUME_CHAT_DATA__ = (function () {
+        var resumeDataB64;
+        var resumeDataBinary;
+        var resumeDataBytes;
         try {
-          var resumeDataB64 = /* RESUME_CHAT_DATA_B64_PLACEHOLDER */ '';
+          resumeDataB64 = /* RESUME_CHAT_DATA_B64_PLACEHOLDER */ '';
           if (!resumeDataB64) return {};
-          var resumeDataBinary = atob(resumeDataB64);
-          var resumeDataBytes = Uint8Array.from(resumeDataBinary, function (c) {
+          resumeDataBinary = atob(resumeDataB64);
+          resumeDataBytes = Uint8Array.from(resumeDataBinary, function (c) {
             return c.charCodeAt(0);
           });
           return JSON.parse(new TextDecoder('utf-8').decode(resumeDataBytes));
@@ -1070,236 +899,6 @@
           return {};
         }
       })();
-
-      function escapeHtml(value) {
-        return String(value || '')
-          .replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;')
-          .replace(/"/g, '&quot;')
-          .replace(/'/g, '&#39;');
-      }
-
-      function sanitize(value) {
-        return escapeHtml(value);
-      }
-
-      function sanitizeCommandInput(value) {
-        return String(value || '').slice(0, 500);
-      }
-
-      function sanitizeInput(str) {
-        const div = document.createElement('div');
-        div.textContent = str;
-        return div.innerHTML;
-      }
-
-      function toList(value) {
-        return Array.isArray(value) ? value : [];
-      }
-
-      window.terminalCommands = {
-        help: function () {
-          return (
-            '<div class="help-output">' +
-            'Available commands:\n' +
-            '  <span class="cmd-name">help</span>     - List commands\n' +
-            '  <span class="cmd-name">whoami</span>   - Show role summary\n' +
-            '  <span class="cmd-name">resume</span>   - Scroll to experience\n' +
-            '  <span class="cmd-name">projects</span> - List projects\n' +
-            '  <span class="cmd-name">skills</span>   - Scroll to skills\n' +
-            '  <span class="cmd-name">contact</span>  - Contact information\n' +
-            '  <span class="cmd-name">download</span> - Open resume PDF\n' +
-            '  <span class="cmd-name">clear</span>    - Clear terminal' +
-            '</div>'
-          );
-        },
-      };
-
-      (function () {
-        var cliInput = document.getElementById('terminal-input');
-        var cliOutput = document.getElementById('cli-output');
-        var commandHistory = [];
-        var historyIndex = -1;
-
-        if (!cliInput || !cliOutput) return;
-
-        function clearCliOutput() {
-          while (cliOutput.firstChild) {
-            cliOutput.removeChild(cliOutput.firstChild);
-          }
-        }
-
-        window.terminalCommands.clear = function () {
-          clearCliOutput();
-          return '';
-        };
-
-        function isWhitelistedCommandName(input) {
-          var raw = sanitizeCommandInput(input).trim();
-          if (!raw) return false;
-          var parts = raw.split(/\s+/);
-          var command = parts[0] || '';
-          var whitelist = new Set(Object.keys(window.terminalCommands));
-          return whitelist.has(raw) || whitelist.has(command);
-        }
-
-        window.terminalCommands.whoami = function () {
-          return 'jclee - Security Engineer';
-        };
-
-        terminalCommands['resume'] = function () {
-          document.getElementById('resume').scrollIntoView({ behavior: 'smooth' });
-          return '> Work Experience loaded.\n> Scrolling to #resume...';
-        };
-
-        terminalCommands['projects'] = function () {
-          document.getElementById('projects').scrollIntoView({ behavior: 'smooth' });
-          var projects = toList((window.__RESUME_CHAT_DATA__ || {}).projects);
-          if (!projects.length) {
-            return '> No project entries found.\\n> Scrolling to #projects...';
-          }
-          var projectLines = projects.slice(0, 6).map(function (project) {
-            return '- ' + (project.title || project.name || 'Untitled project');
-          });
-          return (
-            '> Personal projects:\\n' + projectLines.join('\\n') + '\\n> Scrolling to #projects...'
-          );
-        };
-
-        terminalCommands['download'] = function () {
-          var pdfLink = document.querySelector('.resume-download a[download], a[download]');
-          var url = pdfLink && pdfLink.getAttribute('href');
-          if (!url || url.indexOf('<!--') !== -1) {
-            return '> Resume PDF URL is not available yet.';
-          }
-          window.open(url, '_blank', 'noopener,noreferrer');
-          return '> Opening resume PDF in a new tab...';
-        };
-
-        terminalCommands['skills'] = function () {
-          document.getElementById('skills').scrollIntoView({ behavior: 'smooth' });
-          return '> Skill matrix loaded.\n> Scrolling to #skills...';
-        };
-
-        terminalCommands['contact'] = function () {
-          document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
-          return '> Contact channels:\\n> GitHub: jclee941 | Email: qws941@kakao.com\\n> Scrolling to #contact...';
-        };
-
-        async function executeCommand(cmd) {
-          cmd = sanitizeCommandInput(cmd).trim();
-          if (!cmd) return '';
-
-          var parts = cmd.split(/\s+/);
-          var command = parts[0];
-          var args = parts.slice(1).join(' ');
-
-          if (!isWhitelistedCommandName(cmd)) {
-            return (
-              'command not allowed: ' + sanitize(command) + '. Type "help" for available commands.'
-            );
-          }
-
-          var result;
-          var found = false;
-          if (window.terminalCommands[cmd]) {
-            result = await window.terminalCommands[cmd]();
-            found = true;
-          } else if (window.terminalCommands[command]) {
-            result = await window.terminalCommands[command](args);
-            found = true;
-          } else {
-            result = 'command not found: ' + command + '. Type "help" for available commands.';
-          }
-
-          if (typeof gtag === 'function') {
-            gtag('event', 'terminal_command', {
-              command_name: command,
-              command_found: found,
-              event_category: 'engagement',
-            });
-          }
-
-          return result;
-        }
-
-        function addOutput(cmd, result) {
-          var entry = document.createElement('div');
-          var resultNode;
-          entry.className = 'cli-entry';
-
-          var cmdNode = document.createElement('div');
-          cmdNode.className = 'cli-cmd';
-          cmdNode.innerHTML = 'jclee@resume:~$ ' + sanitizeInput(sanitizeCommandInput(cmd));
-          entry.appendChild(cmdNode);
-
-          if (result) {
-            resultNode = document.createElement('div');
-            resultNode.className = 'cli-result';
-            resultNode.textContent = sanitize(result);
-            entry.appendChild(resultNode);
-          }
-
-          cliOutput.appendChild(entry);
-          cliOutput.scrollTop = cliOutput.scrollHeight;
-          return resultNode;
-        }
-
-        cliInput.addEventListener('keydown', async function (e) {
-          if (e.key === 'Enter') {
-            if (cliInput.value.length > 500) {
-              addOutput('validation', 'Input too long. Maximum command length is 500 characters.');
-              cliInput.value = '';
-              return;
-            }
-            const cmd = sanitizeCommandInput(cliInput.value);
-            if (cmd.trim()) {
-              commandHistory.push(cmd);
-              historyIndex = commandHistory.length;
-            }
-            const pendingNode = addOutput(cmd, 'Processing...');
-            if (pendingNode) {
-              pendingNode.innerHTML = '<span class="terminal-loading">Processing...</span>';
-            }
-            const result = await executeCommand(cmd);
-            if (pendingNode) {
-              pendingNode.textContent = sanitize(result);
-              cliOutput.scrollTop = cliOutput.scrollHeight;
-            }
-            cliInput.value = '';
-          } else if (e.key === 'ArrowUp') {
-            e.preventDefault();
-            if (historyIndex > 0) {
-              historyIndex--;
-              cliInput.value = commandHistory[historyIndex];
-            }
-          } else if (e.key === 'ArrowDown') {
-            e.preventDefault();
-            if (historyIndex < commandHistory.length - 1) {
-              historyIndex++;
-              cliInput.value = commandHistory[historyIndex];
-            } else {
-              historyIndex = commandHistory.length;
-              cliInput.value = '';
-            }
-          } else if (e.key === 'Tab') {
-            e.preventDefault();
-            const val = cliInput.value.trimStart();
-            const parts = val.split(/\s+/);
-            const prefix = parts[0] || '';
-            const cmds = Object.keys(window.terminalCommands);
-            const matches = cmds.filter(function (c) {
-              return c.startsWith(prefix);
-            });
-            if (matches.length === 1) {
-              const rest = parts.slice(1).join(' ');
-              cliInput.value = rest ? matches[0] + ' ' + rest : matches[0];
-            }
-          }
-        });
-      })();
-
     </script>
     <script>
       window.dataLayer = window.dataLayer || [];

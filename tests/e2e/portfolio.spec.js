@@ -5,9 +5,9 @@ require('./fixtures/helpers');
 // Test Constants
 const SELECTORS = {
   HERO_TITLE: '.hero-title',
-  // project-cards.js replaces the built <ul.project-list> with a
-  // .project-cards-grid of .project-card tiles at runtime.
-  PROJECT_CARD: '#projects .project-cards-grid .project-card',
+  // Projects render server-side as <li.project-item.project-card> inside the
+  // clean <ul.project-list>. Sections use scroll-reveal (opacity 0 until in view).
+  PROJECT_CARD: '#projects .project-list .project-card',
   PROJECT_LINK_PRIMARY: '#projects .project-card a[href]',
 };
 
@@ -55,6 +55,14 @@ async function checkElementVisible(page, selector) {
   await expect(page.locator(selector)).toBeVisible();
 }
 
+// Sections animate in on scroll (opacity 0 until revealed). Bring #projects
+// into view and wait for the reveal before asserting card visibility.
+async function revealProjects(page) {
+  await page.locator('#projects').scrollIntoViewIfNeeded();
+  await page.waitForSelector(SELECTORS.PROJECT_CARD, { state: 'attached', timeout: 15000 });
+  await expect(page.locator('#projects')).toHaveCSS('opacity', '1');
+}
+
 test.describe('Portfolio Homepage', () => {
   test.beforeEach(async ({ page }, testInfo) => {
     await navigateToHome(page, testInfo);
@@ -70,23 +78,22 @@ test.describe('Portfolio Homepage', () => {
   });
 
   test('should display project cards', async ({ page }) => {
-    // project-cards.js renders the grid at runtime; wait for it.
-    await page.waitForSelector(SELECTORS.PROJECT_CARD, { timeout: 15000 });
+    await revealProjects(page);
     const projectCards = page.locator(SELECTORS.PROJECT_CARD);
     const count = await projectCards.count();
     expect(count).toBeGreaterThan(0);
     await expect(projectCards.first()).toBeVisible();
   });
 
-  test('project cards should be keyboard-focusable list items', async ({ page }) => {
-    await page.waitForSelector(SELECTORS.PROJECT_CARD, { timeout: 15000 });
+  test('project cards are semantic list items', async ({ page }) => {
+    await revealProjects(page);
     const cards = page.locator(SELECTORS.PROJECT_CARD);
     const count = await cards.count();
     expect(count).toBeGreaterThan(0);
-    // Cards are clickable/focusable divs (role=listitem, tabindex=0), not <a>.
+    // Clean layout renders cards as <li> inside <ul.project-list>.
     for (let i = 0; i < Math.min(count, 3); i++) {
-      await expect(cards.nth(i)).toHaveAttribute('role', 'listitem');
-      await expect(cards.nth(i)).toHaveAttribute('tabindex', '0');
+      const tag = await cards.nth(i).evaluate((el) => el.tagName.toLowerCase());
+      expect(tag).toBe('li');
     }
   });
 
@@ -105,7 +112,7 @@ test.describe('Responsive Design', () => {
     await safeGoto(page, testInfo);
 
     await checkElementVisible(page, SELECTORS.HERO_TITLE);
-    await page.waitForSelector(SELECTORS.PROJECT_CARD, { timeout: 15000 });
+    await revealProjects(page);
     const projectCards = page.locator(SELECTORS.PROJECT_CARD);
     await expect(projectCards.first()).toBeVisible();
 
@@ -130,8 +137,8 @@ test.describe('Responsive Design', () => {
 
     // Check content visibility
     await checkElementVisible(page, SELECTORS.HERO_TITLE);
-    // Project cards render at runtime; verify at least one is present.
-    await page.waitForSelector(SELECTORS.PROJECT_CARD, { timeout: 15000 });
+    // Project cards render server-side; verify at least one is present.
+    await revealProjects(page);
     await expect(page.locator(SELECTORS.PROJECT_CARD).first()).toBeVisible();
   });
 
@@ -150,7 +157,7 @@ test.describe('Responsive Design', () => {
     await page.setViewportSize({ width: 768, height: 1024 });
     await safeGoto(page, testInfo);
 
-    await page.waitForSelector(SELECTORS.PROJECT_CARD, { timeout: 15000 });
+    await revealProjects(page);
     const projectCards = page.locator(SELECTORS.PROJECT_CARD);
     await expect(projectCards.first()).toBeVisible();
 
@@ -169,7 +176,7 @@ test.describe('Responsive Design', () => {
     await safeGoto(page, testInfo);
 
     await checkElementVisible(page, SELECTORS.HERO_TITLE);
-    await page.waitForSelector(SELECTORS.PROJECT_CARD, { timeout: 15000 });
+    await revealProjects(page);
     await expect(page.locator(SELECTORS.PROJECT_CARD).first()).toBeVisible();
   });
 
@@ -182,8 +189,8 @@ test.describe('Responsive Design', () => {
     // Landscape
     await page.setViewportSize({ width: 667, height: 375 });
     await checkElementVisible(page, SELECTORS.HERO_TITLE);
-    const projectCards = page.locator(SELECTORS.PROJECT_CARD);
-    await expect(projectCards.first()).toBeVisible();
+    await revealProjects(page);
+    await expect(page.locator(SELECTORS.PROJECT_CARD).first()).toBeVisible();
   });
 
   test('should have readable content on small screens', async ({ page }, testInfo) => {
