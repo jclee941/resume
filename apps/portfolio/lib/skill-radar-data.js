@@ -29,7 +29,7 @@ const LEVEL_MAP = {
 
 /**
  * Inline SVG icons keyed by the lucide icon name used in the SSoT.
- * Falls back to a generic terminal glyph for unknown names.
+ * Falls back to a generic glyph for unknown names.
  */
 const ICON_SVG = {
   Activity:

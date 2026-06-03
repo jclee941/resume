@@ -63,7 +63,7 @@
     break-inside: avoid;
   }
 
-  /* Print the cover letter as a clean letter: drop terminal chrome + prompt. */
+  /* Print the cover letter as a clean letter: drop the header strip + signature prompt. */
   .cover-letter__headline {
     padding: 0 0 0.4cm !important;
     max-width: none !important;

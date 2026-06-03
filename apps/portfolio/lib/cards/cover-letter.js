@@ -3,7 +3,7 @@ const { escapeHtml } = require('../template-sanitizer');
 /**
  * A cover-letter locale entry is renderable only when it carries the three
  * required SSoT fields with content. Mirrors the validity contract of the
- * plain-text terminal formatter so the visual section and CLI never diverge.
+ * plain-text formatter so the visual section and plain-text output never diverge.
  * @param {*} entry - Candidate `coverLetter[locale]` object.
  * @returns {boolean} True when the entry can be rendered.
  */
@@ -22,7 +22,7 @@ function isRenderable(entry) {
 
 /**
  * Render a single SSoT cover-letter locale entry as a first-class visual
- * section ("terminal manuscript" card) for the scrollable portfolio page.
+ * section (clean manuscript card) for the scrollable portfolio page.
  *
  * Content is sourced VERBATIM from the SSoT and HTML-escaped — this renderer
  * never fabricates copy and never emits unescaped data. The numbered left rail

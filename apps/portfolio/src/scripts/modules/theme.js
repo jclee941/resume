@@ -1,6 +1,6 @@
 /**
  * Theme module - dark mode only
- * Portfolio is permanently dark-themed (neon/cyberpunk aesthetic).
+ * Portfolio is permanently dark-themed (clean dark-neutral aesthetic).
  */
 (function () {
   // Force dark theme immediately to prevent flash

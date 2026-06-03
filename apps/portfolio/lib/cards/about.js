@@ -4,7 +4,7 @@ const logger = require('../../logger');
 
 /**
  * Generate about section content HTML from SSoT aboutSection data.
- * Mirrors terminal-cmd aesthetic: label + bullet list per block.
+ * Clean layout: label + bullet list per block.
  * @param {Object|null} aboutData - aboutSection from data.json
  * @param {string} dataHash - Hash for cache validation
  * @returns {string} HTML string for about section content

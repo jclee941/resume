@@ -69,7 +69,7 @@ function generateSecurityHeaders(styleHashes, options = {}) {
   ];
 
   // Trusted Types in REPORT-ONLY: demonstrates DOM-XSS hardening intent without
-  // breaking the terminal CLI's innerHTML-based rendering. Enforce only after the
+  // breaking the existing innerHTML-based client rendering. Enforce only after the
   // runtime is migrated to Trusted Types-safe sinks.
   const cspReportOnly = [
     "require-trusted-types-for 'script'",
