@@ -160,66 +160,14 @@ function buildJapaneseTemplate(html) {
       )
       // === JA hero copy (replace KO hero text with Japanese) ===
       .replace(
-        /<span class="typing-effect glow-cyan">이재철<\/span/g,
-        '<span class="typing-effect glow-cyan">イ・ジェチョル</span'
-      )
-      .replace(
         /<span class="sr-only">이재철<\/span>/g,
         '<span class="sr-only">イ・ジェチョル</span>'
       )
       .replace(/이재철/g, '李在哲')
-      // === JA hero positioning / tagline / KPI grid ===
+      // === JA hero positioning ===
       .replace(
         /금융권 보안 인프라 설계·운영, SIEM 탐지·대응 자동화, IaC 기반 관측성을\s+실무 문제 해결에 연결합니다\./g,
         '金融セキュリティインフラの設計・運用、SIEM検知・対応の自動化、IaCベースの可観測性を、実務の課題解決につなげています。'
-      )
-      .replace(
-        /<p class="hero-positioning">\s*8년차 보안·SRE 엔지니어 — 금융권 보안 인프라 설계·운영\s*<\/p>/g,
-        '<p class="hero-positioning">8年目のセキュリティ・SREエンジニア — 金融業界セキュリティインフラの設計・運用</p>'
-      )
-      .replace(
-        /<p class="hero-tagline">\s*FSC 본인가 통과 · SIEM 탐지·대응 자동화 · IaC 기반 관측성 · 이 사이트도 직접\s*빌드해 Cloudflare에 배포\s*<\/p>/g,
-        '<p class="hero-tagline">FSC本認可審査対応 · SIEM検知・対応の自動化 · IaCベースの可観測性 · このサイトも自作・自前デプロイ</p>'
-      )
-      .replace(/aria-label="핵심 성과 지표"/g, 'aria-label="主要な実績指標"')
-      .replace(/<dd class="hero-kpi__value">8년\+<\/dd>/g, '<dd class="hero-kpi__value">8年+</dd>')
-      .replace(
-        /<dt class="hero-kpi__label">보안·인프라 경력<\/dt>/g,
-        '<dt class="hero-kpi__label">セキュリティ・インフラ経験</dt>'
-      )
-      .replace(
-        /<dd class="hero-kpi__value">FSC 통과<\/dd>/g,
-        '<dd class="hero-kpi__value">FSC通過</dd>'
-      )
-      .replace(
-        /<dt class="hero-kpi__label">금융권 본인가<\/dt>/g,
-        '<dt class="hero-kpi__label">金融業界 本認可</dt>'
-      )
-      .replace(
-        /<dd class="hero-kpi__value">5계층 HA<\/dd>/g,
-        '<dd class="hero-kpi__value">5層 HA</dd>'
-      )
-      .replace(
-        /<dt class="hero-kpi__label">FortiGate 망분리 설계<\/dt>/g,
-        '<dt class="hero-kpi__label">FortiGate 網分離設計</dt>'
-      )
-      .replace(
-        /<dd class="hero-kpi__value">6 \+ CKS<\/dd>/g,
-        '<dd class="hero-kpi__value">6 + CKS</dd>'
-      )
-      .replace(
-        /<dt class="hero-kpi__label">보유·취득예정 자격증<\/dt>/g,
-        '<dt class="hero-kpi__label">保有・取得予定の資格</dt>'
-      )
-      // === Status seeking strip ===
-      .replace(/aria-label="구직 중 · 즉시 투입 가능"/g, 'aria-label="求職中 · 即時入社可能"')
-      .replace(
-        /<span class="status-seeking__label">구직 중<\/span>/g,
-        '<span class="status-seeking__label">求職中</span>'
-      )
-      .replace(
-        /<span class="status-seeking__availability">즉시 투입 가능<\/span>/g,
-        '<span class="status-seeking__availability">即時入社可能</span>'
       )
       .replace(/aria-label="주요 이동"/g, 'aria-label="主なナビゲーション"')
       .replace(
@@ -266,31 +214,6 @@ function buildJapaneseTemplate(html) {
         /<h2 id="cover-letter-heading" class="sr-only">커버레터<\/h2>/g,
         '<h2 id="cover-letter-heading" class="sr-only">カバーレター</h2>'
       )
-      // === JA section-cmd storytelling intros ===
-      .replace(
-        /<span class="section-cmd__story">수작업을 줄이는 방식으로 보안 운영을 배워 온 엔지니어입니다\.<\/span>/g,
-        '<span class="section-cmd__story">手作業を減らす方法でセキュリティ運用を学んできたエンジニアです。</span>'
-      )
-      .replace(
-        /<span class="section-cmd__story">폐쇄망 운영에서 금융권 보안 운영까지, 같은 질문은 반복되었습니다: 무엇을 자동화할 수 있는가\.<\/span>/g,
-        '<span class="section-cmd__story">閉鎖網運用から金融業界のセキュリティ運用まで、同じ問いが繰り返されました：何を自動化できるか。</span>'
-      )
-      .replace(
-        /<span class="section-cmd__story">Linux 기반을 다시 다진 뒤, 보안·네트워크·컨테이너 보안으로 학습 축을 확장했습니다\.<\/span>/g,
-        '<span class="section-cmd__story">Linuxの基礎を再構築した後、セキュリティ・ネットワーク・コンテナセキュリティへと学習軸を拡張しました。</span>'
-      )
-      .replace(
-        /<span class="section-cmd__story">현장에서 만난 반복 문제를 개인 프로젝트와 운영 도구로 다시 검증했습니다\.<\/span>/g,
-        '<span class="section-cmd__story">現場で出会った繰り返しの問題を、個人プロジェクトや運用ツールで検証し直しました。</span>'
-      )
-      .replace(
-        /<span class="section-cmd__story">기술 스택은 목적지가 아니라, 운영 문제를 자동화하기 위해 선택한 도구 목록입니다\.<\/span>/g,
-        '<span class="section-cmd__story">技術スタックは目的地ではなく、運用課題を自動化するために選んだツールのリストです。</span>'
-      )
-      .replace(
-        /<span class="section-cmd__story">다음 문제도 운영 문제에서 출발해 자동화 가능한 구조로 바꾸고 싶습니다\.<\/span>/g,
-        '<span class="section-cmd__story">次の問題も運用課題から出発し、自動化できる構造へと変えていきたいです。</span>'
-      )
       // === sr-only section headings ===
       .replace(
         /<h2 id="about-heading" class="sr-only">소개<\/h2>/g,
@@ -304,7 +227,6 @@ function buildJapaneseTemplate(html) {
         /<h2 id="operated-heading" class="sr-only">이 사이트는 이렇게 운영됩니다<\/h2>/g,
         '<h2 id="operated-heading" class="sr-only">このサイトの運用方法</h2>'
       )
-      .replace(/cat operated\.md/g, 'cat operated.md')
       .replace(/이 포트폴리오는 정적 문서가 아니라 보안 헤더, 관측, 자동화로 관리되는 작은 운영 시스템입니다\./g, 'このポートフォリオは、セキュリティヘッダー・可観測性・自動化で管理される小さな運用システムです。')
       .replace(/Edge 런타임 \+ 보안 헤더/g, 'Edgeランタイム + セキュリティヘッダー')
       .replace(/관측성 스택/g, '可観測性スタック')
@@ -347,18 +269,6 @@ function buildJapaneseTemplate(html) {
         /"name": "Security\/Infrastructure Engineer — 구직 중"/g,
         '"name": "Security / Infrastructure Engineer — 求職中"'
       )
-      // === Inline JS terminal commands KO -> JA ===
-      .replace(/'보안 엔지니어'/g, "'セキュリティエンジニア'")
-      .replace(
-        /> 보안 엔지니어\\n> Scrolling to #about\.\.\./g,
-        '> セキュリティエンジニア\\n> Scrolling to #about...'
-      )
-      // === Inline JS terminal command keywords KO -> JA ===
-      .replace(/'연락', '이메일', '전화'/g, "'連絡', 'メール', '電話'")
-      .replace(/'기술', '스킬', '역량'/g, "'技術', 'スキル', 'スタック'")
-      .replace(/'사이드', '프로젝트'/g, "'サイド', 'プロジェクト'")
-      .replace(/'자격증', '인증'/g, "'資格', '認証'")
-      .replace(/'경력', '경험', '회사', '업무'/g, "'経歴', '経験', '会社', '業務'")
       // === JSON-LD knowsAbout KO -> JA ===
       .replace(/"Security"/g, '"Security"')
       .replace(/"name": "홈"/g, '"name": "ホーム"')

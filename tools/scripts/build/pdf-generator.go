@@ -39,9 +39,9 @@ var (
 
 	fontNanum   = "NanumGothic"
 	fontNoto    = "Noto Serif CJK KR"
-	margin      = "2cm"
-	fontSize    = "11pt"
-	lineStretch = "1.3"
+	margin      = "1.35cm"
+	fontSize    = "9pt"
+	lineStretch = "1.06"
 )
 
 // Resume variants: source|output|font
@@ -170,25 +170,7 @@ func checkDependencies() bool {
 }
 
 func generatePDFNative(source, output, font string, toc bool) error {
-	args := []string{
-		source,
-		"-o", output,
-		"--pdf-engine=xelatex",
-		"-V", fmt.Sprintf("mainfont=%s", font),
-		"-V", fmt.Sprintf("CJKmainfont=%s", font),
-		"-V", fmt.Sprintf("sansfont=%s", font),
-		"-V", fmt.Sprintf("monofont=%s", font),
-		"-V", fmt.Sprintf("geometry:margin=%s", margin),
-		"-V", fmt.Sprintf("fontsize=%s", fontSize),
-		"-V", fmt.Sprintf("linestretch=%s", lineStretch),
-		"-V", "colorlinks:true",
-		"-V", "linkcolor:[HTML]{00B3BF}",
-		"-V", "urlcolor:[HTML]{00B3BF}",
-		"--metadata", fmt.Sprintf("title=Resume - Jaecheol Lee"),
-		"--metadata", fmt.Sprintf("author=Jaecheol Lee"),
-		"--metadata", "lang=ko-KR",
-		"--lua-filter", "tools/scripts/build/strip-emoji.lua",
-	}
+	args := pandocPDFArgs(source, output, font)
 	if toc {
 		args = append(args, "--toc", "--toc-depth=3", "--number-sections")
 	}
@@ -211,21 +193,8 @@ func generatePDFDocker(source, output, font string, toc bool) error {
 		"-v", fmt.Sprintf("%s:/data", projectRoot),
 		"-w", "/data",
 		"pandoc/latex:latest",
-		relSource,
-		"-o", relOutput,
-		"--pdf-engine=xelatex",
-		"-V", fmt.Sprintf("mainfont=%s", font),
-		"-V", fmt.Sprintf("CJKmainfont=%s", font),
-		"-V", fmt.Sprintf("sansfont=%s", font),
-		"-V", fmt.Sprintf("monofont=%s", font),
-		"-V", fmt.Sprintf("geometry:margin=%s", margin),
-		"-V", fmt.Sprintf("fontsize=%s", fontSize),
-		"-V", fmt.Sprintf("linestretch=%s", lineStretch),
-		"--metadata", fmt.Sprintf("title=Resume - Jaecheol Lee"),
-		"--metadata", fmt.Sprintf("author=Jaecheol Lee"),
-		"--metadata", "lang=ko-KR",
-		"--lua-filter", "tools/scripts/build/strip-emoji.lua",
 	}
+	args = append(args, pandocPDFArgs(relSource, relOutput, font)...)
 	if toc {
 		args = append(args, "--toc", "--toc-depth=3", "--number-sections")
 	}
@@ -233,6 +202,29 @@ func generatePDFDocker(source, output, font string, toc bool) error {
 	cmd := exec.Command("docker", args...)
 	cmd.Env = deterministicEnv(source)
 	return cmd.Run()
+}
+
+func pandocPDFArgs(source, output, font string) []string {
+	return []string{
+		source,
+		"-o", output,
+		"--pdf-engine=xelatex",
+		"--include-in-header", "tools/scripts/build/resume-style.tex",
+		"-V", fmt.Sprintf("mainfont=%s", font),
+		"-V", fmt.Sprintf("CJKmainfont=%s", font),
+		"-V", fmt.Sprintf("sansfont=%s", font),
+		"-V", fmt.Sprintf("monofont=%s", font),
+		"-V", fmt.Sprintf("geometry:margin=%s", margin),
+		"-V", "papersize=a4",
+		"-V", fmt.Sprintf("fontsize=%s", fontSize),
+		"-V", fmt.Sprintf("linestretch=%s", lineStretch),
+		"-V", "colorlinks:true",
+		"-V", "linkcolor:[HTML]{5AA9B8}",
+		"-V", "urlcolor:[HTML]{5AA9B8}",
+		"--metadata", "author=Jaecheol Lee",
+		"--metadata", "lang=ko-KR",
+		"--lua-filter", "tools/scripts/build/strip-emoji.lua",
+	}
 }
 
 func formatOutputPath(output string) string {
