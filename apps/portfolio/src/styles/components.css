@@ -151,8 +151,7 @@
   align-items: center;
 }
 .nav-logo,
-.project-link-btn,
-.command-field {
+.project-link-btn {
   min-height: 48px;
 }
 @media (max-width: 375px) {
@@ -180,21 +179,6 @@
   .hero-title {
     font-size: var(--text-5xl);
   }
-  .command-panel {
-    padding: var(--space-3);
-  }
-  .command-output {
-    font-size: var(--text-xs);
-  }
-  .command-field {
-    font-size: 16px;
-    min-height: 44px;
-  }
-  .command-prompt {
-    min-height: 44px;
-    display: inline-flex;
-    align-items: center;
-  }
   .project-item,
   .resume-item,
   .infra-card {
@@ -211,14 +195,6 @@
   .page-body {
     padding: var(--space-3);
   }
-  .command-panel {
-    padding: var(--space-2);
-  }
-  .command-output {
-    font-size: 12px;
-  }
-  .command-field,
-  .command-prompt,
   .nav-links a,
   .theme-toggle,
   .project-link-btn,
@@ -360,26 +336,6 @@
   width: var(--space-2);
   height: 1px;
   background: var(--color-accent);
-}
-/* ============================================================
-   TYPING EFFECT
-   ============================================================ */
-.name-effect {
-  overflow: hidden;
-  white-space: nowrap;
-  border-right: 1.5px solid var(--color-accent);
-  animation:
-    typing 3.5s steps(40, end),
-    blink-cursor 0.75s step-end infinite;
-}
-@keyframes blink-cursor {
-  from,
-  to {
-    border-color: transparent;
-  }
-  50% {
-    border-color: var(--color-accent);
-  }
 }
 /* ============================================================
    FADE IN ANIMATION

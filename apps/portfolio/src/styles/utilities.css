@@ -285,9 +285,6 @@ button:focus-visible {
   }
 
   .cursor,
-  .cmd-cursor,
-  .command-field-line,
-  #command-input,
   .page-header-bar,
   .skip-link,
   .theme-toggle,
@@ -309,16 +306,6 @@ button:focus-visible {
     padding: 0 !important;
   }
 
-  .command-panel,
-  .command-output {
-    position: static !important;
-    max-height: none !important;
-    overflow: visible !important;
-    border: 0 !important;
-    padding: 0 !important;
-    color: #000000 !important;
-  }
-
   a,
   .section-note,
   .resume-description,
@@ -332,10 +319,6 @@ button:focus-visible {
 }
 
 @media print {
-  .command-panel {
-    display: none !important;
-  }
-
   .page-header-bar {
     display: none !important;
   }
