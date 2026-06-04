@@ -81,7 +81,7 @@ export function mapCareersToFormFields(ssot, indices) {
     }
   });
 
-  pushField(fields, 'Career.index', keys.slice(0, careers.length).join(','));
+  keys.slice(0, careers.length).forEach((key) => pushField(fields, 'Career.index', key));
   pushField(fields, 'UserResume.M_Career_Text', buildCareerSummary(ssot));
   pushField(fields, 'UserResume.M_Career_Text_Stat', '1');
   pushField(fields, 'InputStat.CareerInputStat', 'True');
