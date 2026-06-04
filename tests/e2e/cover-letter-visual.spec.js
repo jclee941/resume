@@ -61,6 +61,17 @@ test.describe('Cover Letter - visual section (scrollable page)', () => {
     await expect(markers).toHaveCount(coverLetter.ko.paragraphs.length);
   });
 
+  test('S2: Korean cover letter leads with client project work, not staffing company names', async ({
+    page,
+  }) => {
+    await safeGoto(page, '/');
+    const card = page.locator('#cover-letter .cover-letter-card');
+    await card.scrollIntoViewIfNeeded();
+    await expect(card).toContainText('넥스트레이드 매매체결시스템 보안 트랙을 구축 단계부터 운영 단계까지 연속 수행');
+    await expect(card).toContainText('(가온누리정보시스템 구축 단계, 아이티센 CTS 운영 단계)');
+    await expect(card).not.toContainText('직전에는 가온누리에서 시작해 아이티센 CTS로 이어지는');
+  });
+
   test('S4 (XSS guard): section content is text, not injected markup', async ({ page }) => {
     await safeGoto(page, '/');
     // No stray <script> elements should have been injected from the data.
