@@ -11,6 +11,8 @@ mapLanguagesToFormFields,
   mapPersonalProjectsToFormFields,
   mapSkillsToFormFields,
   mapHopeJobToFormFields,
+  mapIntroToFormFields,
+  mapResumeTitleToFormFields,
 } from './field-mappers.js';
 
 /**
@@ -23,6 +25,7 @@ mapLanguagesToFormFields,
  */
 export function buildJobKoreaFormData(ssot, sectionIndices = {}) {
   return [
+    ...mapResumeTitleToFormFields(ssot),
     ...mapCareersToFormFields(ssot, sectionIndices.career),
     ...mapSchoolToFormFields(ssot, sectionIndices.school),
     ...mapLicensesToFormFields(ssot, sectionIndices.license),
@@ -34,6 +37,7 @@ export function buildJobKoreaFormData(ssot, sectionIndices = {}) {
     ...mapHighSchoolToFormFields(ssot, sectionIndices.highSchool),
     ...mapSkillsToFormFields(ssot, sectionIndices.skill),
     ...mapPersonalProjectsToFormFields(ssot, sectionIndices.project),
+    ...mapIntroToFormFields(ssot, sectionIndices.intro),
     ...mapHopeJobToFormFields(ssot),
   ];
 }

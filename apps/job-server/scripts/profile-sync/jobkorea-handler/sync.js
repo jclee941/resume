@@ -36,6 +36,7 @@ async function activateRequiredSections(page) {
       'InputStat_PortfolioInputStat',
       'InputStat_SchoolInputStat',
       'InputStat_LanguageInputStat',
+      'InputStat_UserIntroduceInputStat',
     ];
     for (const syncId of requiredSections) {
       const btn = $(`button[data-sync_id="${syncId}"]`);
@@ -102,6 +103,7 @@ async function pruneOldSectionEntries(page, sectionIndices) {
     (indices) => {
       const sections = [
         { prefix: 'Career', keep: new Set(indices.career) },
+        { prefix: 'ResumeProfile', keep: new Set(indices.intro) },
         { prefix: 'License', keep: new Set(indices.license) },
         { prefix: 'Award', keep: new Set(indices.award) },
         { prefix: 'Portfolio', keep: new Set(indices.portfolio) },
@@ -116,6 +118,7 @@ async function pruneOldSectionEntries(page, sectionIndices) {
     },
     {
       career: sectionIndices.career,
+      intro: sectionIndices.intro,
       license: sectionIndices.license,
       award: sectionIndices.award,
       portfolio: sectionIndices.portfolio,
@@ -304,9 +307,11 @@ export async function syncJobKoreaProfile(handler, ssot, options = {}) {
     const dryRun = !CONFIG.APPLY || CONFIG.DIFF_ONLY || syncMode === 'api-dry-run';
     const sectionIndices = await handler.createEntrySlots(page, ssot, {
       recreateCareerEntries: !dryRun,
+      recreateIntroEntries: !dryRun,
     });
     logger(
       `Entry slots — Career: ${sectionIndices.career.length} (${sectionIndices.career.join(',')}), ` +
+        `Intro: ${(sectionIndices.intro || []).length} (${(sectionIndices.intro || []).join(',')}), ` +
         `License: ${sectionIndices.license.length} (${sectionIndices.license.join(',')}), ` +
         `Award: ${sectionIndices.award.length} (${sectionIndices.award.join(',')}), ` +
         `School: ${sectionIndices.school}, ` +

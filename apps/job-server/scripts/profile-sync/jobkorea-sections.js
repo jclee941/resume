@@ -20,6 +20,8 @@ export {
   mapAwardToFormFields,
   mapCareersToFormFields,
   mapHopeJobToFormFields,
+  mapIntroToFormFields,
+  mapResumeTitleToFormFields,
   mapLicensesToFormFields,
   mapMilitaryToFormFields,
   mapPortfolioToFormFields,
@@ -30,5 +32,6 @@ export {
   mapPersonalProjectsToFormFields,
   mapSkillsToFormFields,
   normalizeCompanyName,
+  JOBKOREA_RESUME_TITLE,
 } from './jobkorea-sections/field-mappers.js';
 export { parseRange, toYYYYMM } from './jobkorea-sections/validators.js';
