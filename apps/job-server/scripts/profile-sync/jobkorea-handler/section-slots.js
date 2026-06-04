@@ -78,17 +78,19 @@ async function recreateCareerEntries(handler, page, needed) {
     log(`Deleted ${deleted} existing Career entr${deleted === 1 ? 'y' : 'ies'} before rebuild`, 'info', 'jobkorea');
   }
 
-  await page.waitForFunction(
-    () => {
-      return !$('#frm1')
-        .serializeArray()
-        .some((f) => /^Career\[[^\]]+\]/.test(f.name));
-    },
-    null,
-    { timeout: 5000 }
-  );
+  if (deleted === 0) {
+    await page.waitForFunction(
+      () => {
+        return !$('#frm1')
+          .serializeArray()
+          .some((f) => /^Career\[[^\]]+\]/.test(f.name));
+      },
+      null,
+      { timeout: 5000 }
+    );
+  }
 
-  await addJobKoreaEntrySlots(handler, page, 'Career', needed);
+  await addJobKoreaEntrySlots(handler, page, 'Career', needed, { force: true });
 }
 
 async function recreateIntroEntries(handler, page, needed) {
@@ -99,23 +101,14 @@ async function recreateIntroEntries(handler, page, needed) {
     log(`Deleted ${deleted} existing intro entr${deleted === 1 ? 'y' : 'ies'} before rebuild`, 'info', 'jobkorea');
   }
 
-  await page.waitForFunction(
-    () => {
-      return !$('#frm1')
-        .serializeArray()
-        .some((f) => /^ResumeProfile\[[^\]]+\]/.test(f.name));
-    },
-    null,
-    { timeout: 5000 }
-  );
 
-  await addJobKoreaEntrySlots(handler, page, 'ResumeProfile', needed);
+  await addJobKoreaEntrySlots(handler, page, 'ResumeProfile', needed, { force: true });
 }
 
-async function addJobKoreaEntrySlots(handler, page, prefix, needed) {
+async function addJobKoreaEntrySlots(handler, page, prefix, needed, options = {}) {
   if (needed <= 0) return;
 
-  const existingCount = (await handler.readSectionIndices(page, prefix)).length;
+  const existingCount = options.force ? 0 : (await handler.readSectionIndices(page, prefix)).length;
   const slotsToAdd = Math.max(0, needed - existingCount);
   let addedCount = 0;
 
@@ -248,6 +241,8 @@ export async function createJobKoreaEntrySlots(handler, page, ssot, options = {}
 
   const allCareerIndices = await handler.readSectionIndices(page, 'Career');
   const allIntroIndices = await handler.readSectionIndices(page, 'ResumeProfile');
+  const careerIndices = options.recreateCareerEntries === true ? allCareerIndices.slice(-careers.length) : allCareerIndices;
+  const introIndices = options.recreateIntroEntries === true ? allIntroIndices.slice(-introNeeded) : allIntroIndices;
   const allLicenseIndices = await handler.readSectionIndices(page, 'License');
   const allAwardIndices = await handler.readSectionIndices(page, 'Award');
   const schoolIndices = await handler.readSectionIndices(page, 'UnivSchool');
@@ -255,8 +250,8 @@ export async function createJobKoreaEntrySlots(handler, page, ssot, options = {}
   const allLanguageIndices = await handler.readSectionIndices(page, 'Language');
 
   return {
-    career: allCareerIndices,
-    intro: allIntroIndices,
+    career: careerIndices,
+    intro: introIndices,
     license: allLicenseIndices,
     award: allAwardIndices,
     portfolio: allPortfolioIndices,

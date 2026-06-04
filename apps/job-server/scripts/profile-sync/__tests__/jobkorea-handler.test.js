@@ -214,6 +214,134 @@ describe('createJobKoreaEntrySlots', () => {
     ]);
   });
 
+  it('continues rebuilding Career slots when deleted row templates still serialize briefly', async () => {
+    let careerIndices = ['c7', 'c8'];
+    let addedCareers = 0;
+    const handler = {
+      readSectionIndices: async (_page, prefix) => {
+        if (prefix === 'Career') return [...careerIndices];
+        if (prefix === 'UnivSchool') return ['c2'];
+        return [];
+      },
+    };
+    const page = {
+      waitForFunction: async () => {
+        throw new Error('page.waitForFunction: Timeout 5000ms exceeded.');
+      },
+      evaluate: async (fn, prefix) => {
+        const source = String(fn);
+        if (source.includes('buttonDeleteField')) {
+          careerIndices = [];
+          return 2;
+        }
+        if (source.includes('buttonAddField') && prefix === 'Career') {
+          addedCareers++;
+          careerIndices.push(`fresh${addedCareers}`);
+          return true;
+        }
+        return false;
+      },
+    };
+    const ssot = {
+      careers: Array.from({ length: 3 }, (_, index) => ({ company: `Company ${index + 1}` })),
+      certifications: [],
+      awards: [],
+      languages: [],
+      personal: {},
+    };
+
+    const indices = await createJobKoreaEntrySlots(handler, page, ssot, {
+      recreateCareerEntries: true,
+    });
+
+    assert.deepStrictEqual(indices.career, ['fresh1', 'fresh2', 'fresh3']);
+  });
+
+  it('force-adds fresh Career slots when stale deleted indices still serialize', async () => {
+    let careerIndices = ['c7', 'c8'];
+    let addedCareers = 0;
+    const handler = {
+      readSectionIndices: async (_page, prefix) => {
+        if (prefix === 'Career') return [...careerIndices];
+        if (prefix === 'UnivSchool') return ['c2'];
+        return [];
+      },
+    };
+    const page = {
+      waitForFunction: async () => {
+        throw new Error('page.waitForFunction: Timeout 5000ms exceeded.');
+      },
+      evaluate: async (fn, prefix) => {
+        const source = String(fn);
+        if (source.includes('buttonDeleteField')) {
+          return 2;
+        }
+        if (source.includes('buttonAddField') && prefix === 'Career') {
+          addedCareers++;
+          careerIndices.push(`fresh${addedCareers}`);
+          return true;
+        }
+        return false;
+      },
+    };
+    const ssot = {
+      careers: Array.from({ length: 3 }, (_, index) => ({ company: `Company ${index + 1}` })),
+      certifications: [],
+      awards: [],
+      languages: [],
+      personal: {},
+    };
+
+    const indices = await createJobKoreaEntrySlots(handler, page, ssot, {
+      recreateCareerEntries: true,
+    });
+
+    assert.strictEqual(addedCareers, 3);
+    assert.deepStrictEqual(indices.career.slice(-3), ['fresh1', 'fresh2', 'fresh3']);
+  });
+
+  it('force-adds fresh intro slot when stale ResumeProfile fields still serialize', async () => {
+    let introIndices = ['c534'];
+    let addedIntro = 0;
+    const handler = {
+      readSectionIndices: async (_page, prefix) => {
+        if (prefix === 'ResumeProfile') return [...introIndices];
+        if (prefix === 'UnivSchool') return ['c2'];
+        return [];
+      },
+    };
+    const page = {
+      waitForFunction: async () => {
+        throw new Error('page.waitForFunction: Timeout 5000ms exceeded.');
+      },
+      evaluate: async (fn, prefix) => {
+        const source = String(fn);
+        if (source.includes('buttonDeleteField')) return 0;
+        if (source.includes('buttonAddField') && prefix === 'ResumeProfile') {
+          addedIntro++;
+          introIndices.push(`freshIntro${addedIntro}`);
+          return true;
+        }
+        return false;
+      },
+    };
+    const ssot = {
+      careers: [],
+      certifications: [],
+      awards: [],
+      languages: [],
+      personal: {},
+      coverLetter: { ko: { paragraphs: ['intro'] } },
+    };
+
+    const indices = await createJobKoreaEntrySlots(handler, page, ssot, {
+      recreateIntroEntries: true,
+    });
+
+    assert.strictEqual(addedIntro, 1);
+    assert.deepStrictEqual(indices.intro, ['freshIntro1']);
+  });
+
   it('does not delete live Career entries during diff-only slot discovery', async () => {
     let careerIndices = ['c7', 'c8', 'c9', 'c10', 'c11'];
     let deletedCareers = 0;
