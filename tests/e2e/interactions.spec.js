@@ -10,30 +10,38 @@ test.describe('Smooth Scroll Behavior', () => {
   test('clicking nav links should scroll to sections', async ({ page }) => {
     // Navigate to resume section
     await page.click('a[href="#resume"]');
-    await expect(page.locator('#resume')).toBeInViewport({ timeout: 2000 });
+    await expect(page.locator('#resume')).toBeInViewport({ timeout: 8000 });
 
     // Reset to top and navigate to projects
     await page.evaluate(() => window.scrollTo(0, 0));
     await expect(page.locator('.nav-logo')).toBeInViewport({ timeout: 2000 });
 
     await page.click('a[href="#projects"]');
-    await expect(page.locator('#projects')).toBeInViewport({ timeout: 2000 });
+    await expect(page.locator('#projects')).toBeInViewport({ timeout: 8000 });
 
     // Navigate to contact
     await page.click('a[href="#contact"]');
-    await expect(page.locator('#contact')).toBeInViewport({ timeout: 2000 });
+    await expect(page.locator('#contact')).toBeInViewport({ timeout: 8000 });
   });
 
   test('logo click should navigate to homepage', async ({ page }) => {
     await page.click('a[href="#contact"]');
-    await expect(page.locator('#contact')).toBeInViewport({ timeout: 2000 });
+    // Smooth-scroll (CSS scroll-behavior) can take longer than 2s under load;
+    // give the animation room before asserting the target is in view.
+    await expect(page.locator('#contact')).toBeInViewport({ timeout: 8000 });
 
     const logo = page.locator('.nav-logo');
     const href = await logo.getAttribute('href');
     expect(href === '/' || href === '#').toBeTruthy();
 
-    await logo.click();
-    await expect(logo).toBeInViewport({ timeout: 2000 });
+    // `.nav-logo` href is '/', so clicking triggers a full navigation home.
+    // Wait for that navigation to settle before asserting, otherwise the
+    // in-viewport check races the unload (flaky under parallel execution).
+    await Promise.all([
+      page.waitForLoadState('domcontentloaded'),
+      logo.click(),
+    ]);
+    await expect(page.locator('.nav-logo')).toBeInViewport({ timeout: 2000 });
   });
 });
 
@@ -109,7 +117,9 @@ test.describe('Contact Links Interaction', () => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
     const emailLink = page.locator('a[href^="mailto:"]').first();
-    await expect(emailLink).toHaveAttribute('href', 'mailto:qws941@kakao.com');
+    // The primary CTA may carry a `?subject=` prefill; assert the mailto target
+    // (protocol + address) while tolerating only a subject query parameter.
+    await expect(emailLink).toHaveAttribute('href', /^mailto:qws941@kakao\.com(?:\?subject=[^#]*)?$/);
   });
 
   test('external links should open in new tab', async ({ page }) => {

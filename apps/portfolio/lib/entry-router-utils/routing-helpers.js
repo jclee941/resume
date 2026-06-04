@@ -1,4 +1,4 @@
-function getPortfolioTargetPath(pathname, language) {
+function getPortfolioTargetPath(pathname, _language) {
   if (pathname === '/en' || pathname === '/en/') {
     return '/en/';
   }
@@ -10,16 +10,10 @@ function getPortfolioTargetPath(pathname, language) {
   if (pathname === '/ja' || pathname === '/ja/') {
     return '/ja/';
   }
-
+  // Root '/' always serves Korean canonical content. Language selection is
+  // explicit via /en/ and /ja/ paths; we no longer negotiate '/' by
+  // Accept-Language so the canonical URL stays stable and cacheable.
   if (pathname === '/') {
-    if (language === 'en') {
-      return '/en/';
-    }
-
-    if (language === 'ja') {
-      return '/ja/';
-    }
-
     return '/';
   }
 

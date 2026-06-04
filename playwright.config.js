@@ -20,13 +20,15 @@ module.exports = defineConfig({
   },
 
   use: {
-    // When SKIP_WEBSERVER is set, use PLAYWRIGHT_BASE_URL (for testing against production)
-    // Otherwise in CI, use local server; locally use env var or production
+    // SKIP_WEBSERVER: no local server is launched, so target PLAYWRIGHT_BASE_URL
+    // (or production) directly. Otherwise a local webServer IS launched below, so
+    // baseURL MUST point at it (localhost:8787) — both in CI and locally — unless
+    // the caller explicitly overrides with PLAYWRIGHT_BASE_URL. Previously the
+    // local (non-CI) branch fell back to production, so the launched webServer was
+    // started but never exercised by the tests.
     baseURL: process.env.SKIP_WEBSERVER
       ? process.env.PLAYWRIGHT_BASE_URL || 'https://resume.jclee.me'
-      : process.env.CI
-        ? 'http://localhost:8787'
-        : process.env.PLAYWRIGHT_BASE_URL || 'https://resume.jclee.me',
+      : process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:8787',
     // Force the Korean locale so '/' is not redirected to '/en/'. The data.json
     // fixtures the specs assert against are the Korean source of truth.
     locale: 'ko-KR',
@@ -84,15 +86,18 @@ module.exports = defineConfig({
     ? {}
     : {
         webServer: {
-          // Run from the repo root so `npm run build` (which needs the
-          // root-only `sync:data` script) resolves, then serve the generated
-          // worker directly. Avoids the workspace cwd issue where wrangler.jsonc's
-          // build command (`npm run sync:data && npm run build`) cannot find
-          // `sync:data` when invoked from apps/portfolio.
-          command: 'npm run build && npx wrangler dev apps/portfolio/worker.js --port 8787 --local',
+          // Serve the DEPLOYED entrypoint (wrangler.jsonc main = entry.js), not
+          // the portfolio worker.js directly, so local E2E exercises the real
+          // edge router (locale routing, /sw.js cache headers, applyResponseHeaders).
+          // Run from repo root so wrangler.jsonc's build command
+          // (`npm run sync:data && npm run build`, cwd ".") resolves the
+          // root-only `sync:data` script.
+          command: 'npx wrangler dev --config apps/portfolio/wrangler.jsonc --port 8787 --local',
           port: 8787,
           reuseExistingServer: !process.env.CI,
-          timeout: 180 * 1000,
+          // wrangler.jsonc's build command runs `npm run sync:data && npm run
+          // build` on startup; allow ample time for the data sync + worker build.
+          timeout: 300 * 1000,
         },
       }),
 });

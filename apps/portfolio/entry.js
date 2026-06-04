@@ -93,48 +93,32 @@ export default {
       } else if (url.pathname.startsWith(JOB_ROUTE_PREFIX)) {
         response = await fetchJobHandlerResponse(request, env, ctx, url.pathname);
       } else if (LOCALE_ROUTES.has(url.pathname)) {
-        // SEO: when '/' is hit purely because of Accept-Language negotiation,
-        // redirect non-Korean clients to /en/ or /ja/ so canonical URLs stay stable.
-        if (
-          url.pathname === '/' &&
-          languageContext.source === 'accept-language' &&
-          languageContext.language &&
-          languageContext.language !== DEFAULT_LANGUAGE
-        ) {
-          const localePathname = languageContext.language === 'en' ? '/en/' : '/ja/';
-          const redirectUrl = new URL(request.url);
-          redirectUrl.pathname = localePathname;
-          response = new Response(null, {
-            status: 302,
-            headers: {
-              Location: redirectUrl.toString(),
-              Vary: 'Accept-Language',
-              'Cache-Control': 'no-cache',
-            },
-          });
-        } else {
-          const targetPath = getPortfolioTargetPath(url.pathname, languageContext.language);
-          const targetUrl = new URL(request.url);
-          targetUrl.pathname = targetPath;
+        // Root '/' is always the Korean canonical page. Language is selected
+        // explicitly via /en/ and /ja/, never by Accept-Language negotiation,
+        // so '/' stays a stable, cacheable canonical URL (no per-user 302).
+        const effectiveLanguage =
+          url.pathname === '/' ? DEFAULT_LANGUAGE : languageContext.language;
+        const effectiveSource =
+          url.pathname === '/' ? 'default' : languageContext.source;
 
-          const localizedRequest = new Request(targetUrl.toString(), request);
-          localizedRequest.headers.set('X-Detected-Language', languageContext.language);
-          localizedRequest.headers.set('X-Language-Source', languageContext.source);
+        const targetPath = getPortfolioTargetPath(url.pathname, effectiveLanguage);
+        const targetUrl = new URL(request.url);
+        targetUrl.pathname = targetPath;
 
-          let portfolioResponse = await portfolioWorker.fetch(localizedRequest, env, ctx);
-          if (isHtmlResponse(portfolioResponse)) {
-            portfolioResponse = await localizeHtmlResponse(
-              portfolioResponse,
-              languageContext.language
-            );
-          }
+        const localizedRequest = new Request(targetUrl.toString(), request);
+        localizedRequest.headers.set('X-Detected-Language', effectiveLanguage);
+        localizedRequest.headers.set('X-Language-Source', effectiveSource);
 
-          response = applyResponseHeaders(portfolioResponse, url.pathname, {
-            language: languageContext.language,
-            source: languageContext.source,
-            varyAcceptLanguage: false,
-          });
+        let portfolioResponse = await portfolioWorker.fetch(localizedRequest, env, ctx);
+        if (isHtmlResponse(portfolioResponse)) {
+          portfolioResponse = await localizeHtmlResponse(portfolioResponse, effectiveLanguage);
         }
+
+        response = applyResponseHeaders(portfolioResponse, url.pathname, {
+          language: effectiveLanguage,
+          source: effectiveSource,
+          varyAcceptLanguage: false,
+        });
       } else {
         const portfolioResponse = await portfolioWorker.fetch(request, env, ctx);
         response = applyResponseHeaders(portfolioResponse, url.pathname, {
