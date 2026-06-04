@@ -4,12 +4,13 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
-  mapCareerToWanted,
-  syncWantedAbout,
-  syncWantedActivities,
-  syncWantedContactInfo,
-  syncWantedEducations,
+mapCareerToWanted,
+syncWantedAbout,
+syncWantedActivities,
+syncWantedContactInfo,
+syncWantedEducations,
 } from '../wanted-sections.js';
+import { syncCareerProjects, collectCareerProjects } from '../wanted-sections/career-projects.js';
 import { CONFIG } from '../constants.js';
 import { WANTED_ABOUT_LIMIT } from '../../../src/tools/platforms/wanted-sync-operations.js';
 import { normalizePhone } from '@resume/shared/phone';
@@ -35,8 +36,16 @@ function mockClient() {
       calls.push({ method: 'addEducation', resumeId, payload });
       return { ok: true };
     },
-    addActivity: async (resumeId, payload) => {
-      calls.push({ method: 'addActivity', resumeId, payload });
+addActivity: async (resumeId, payload) => {
+calls.push({ method: 'addActivity', resumeId, payload });
+return { ok: true };
+    },
+    addProject: async (resumeId, careerId, payload) => {
+      calls.push({ method: 'addProject', resumeId, careerId, payload });
+      return { ok: true };
+    },
+    deleteProject: async (resumeId, careerId, projectId) => {
+      calls.push({ method: 'deleteProject', resumeId, careerId, projectId });
       return { ok: true };
     },
   };
@@ -115,24 +124,79 @@ describe('Wanted SSoT field mapping correctness', () => {
     });
   });
 
-  it('syncWantedActivities maps dated non-preparing certifications and skips preparing CKS', async () => {
+  it('syncWantedActivities maps certs (with metadata) + awards and skips preparing CKS', async () => {
     await withApplyEnabled(async () => {
       const client = mockClient();
       const expectedCerts = realSSoT.certifications.filter((c) => c.date && c.status !== '준비중');
+      const expectedAwards = (realSSoT.awards || []).filter((a) => a.name);
 
       await syncWantedActivities(client, realSSoT, { activities: [] }, 'resume-act');
 
-      assert.strictEqual(client.calls.length, expectedCerts.length);
+      assert.strictEqual(
+        client.calls.length,
+        expectedCerts.length + expectedAwards.length,
+        'every dated cert AND every award is synced'
+      );
       const ccnpCall = client.calls.find((call) => call.payload.title === 'CCNP');
       assert.ok(ccnpCall, 'CCNP certification should be mapped to a Wanted activity');
-      assert.strictEqual(ccnpCall.payload.title, 'CCNP');
-      assert.ok(ccnpCall.payload.description.includes('Cisco Systems'));
-      assert.strictEqual(ccnpCall.payload.start_time, '2020-08-01');
       assert.strictEqual(ccnpCall.payload.activity_type, 'CERTIFICATE');
+      assert.strictEqual(ccnpCall.payload.start_time, '2020-08-01');
+      // W-O3: credential metadata must be preserved, not dropped.
+      assert.ok('credentialId' in ccnpCall.payload, 'credentialId is mapped');
+      assert.ok('credentialUrl' in ccnpCall.payload, 'credentialUrl is mapped');
+      assert.ok('expirationDate' in ccnpCall.payload, 'expirationDate is mapped');
+      assert.ok('status' in ccnpCall.payload, 'status is mapped');
+      assert.ok('note' in ccnpCall.payload, 'note is mapped');
+      // Awards are synced as AWARD activities.
+      if (expectedAwards.length > 0) {
+        const awardCall = client.calls.find((call) => call.payload.activity_type === 'AWARD');
+        assert.ok(awardCall, 'SSoT awards are synced as AWARD activities');
+        assert.strictEqual(awardCall.payload.title, expectedAwards[0].name);
+      }
       assert.ok(
         !client.calls.some((call) => call.payload.title === 'Certified Kubernetes Security Specialist (CKS)'),
         'CKS has null date and 준비중 status, so it should be skipped'
       );
+    });
+  });
+
+  it('collectCareerProjects maps structured careers[].projects[] with tech + achievements', () => {
+    const career = realSSoT.careers.find((c) => Array.isArray(c.projects) && c.projects.length > 0);
+    assert.ok(career, 'real SSoT has a career with structured projects[]');
+    const projects = collectCareerProjects(career);
+    assert.strictEqual(projects.length, career.projects.length, 'every structured project is mapped');
+    const first = projects[0];
+    assert.strictEqual(first.title, career.projects[0].name, 'project name mapped to title');
+    assert.ok(first.description.includes(career.projects[0].description), 'project description preserved');
+    if (Array.isArray(career.projects[0].techStack) && career.projects[0].techStack.length) {
+      assert.ok(first.description.includes(career.projects[0].techStack[0]), 'tech stack included');
+    }
+    if (Array.isArray(career.projects[0].achievements) && career.projects[0].achievements.length) {
+      assert.ok(first.description.includes(career.projects[0].achievements[0]), 'achievements included');
+    }
+  });
+
+  it('syncCareerProjects is non-destructive: keeps matching remote projects, adds new, deletes only stale', async () => {
+    await withApplyEnabled(async () => {
+      const client = mockClient();
+      const career = realSSoT.careers.find((c) => Array.isArray(c.projects) && c.projects.length > 0);
+      const desired = collectCareerProjects(career);
+      // Remote already has the first desired project (by title) + a stale one.
+      const existing = [
+        { id: 'keep-1', title: desired[0].title },
+        { id: 'stale-1', title: '이제 없는 프로젝트' },
+      ];
+
+      await syncCareerProjects(client, 'resume-1', 'career-1', career, existing);
+
+      const deletes = client.calls.filter((c) => c.method === 'deleteProject');
+      const adds = client.calls.filter((c) => c.method === 'addProject');
+      // W-O2: must NOT delete the matching remote project (no destructive wipe).
+      assert.ok(!deletes.some((d) => d.projectId === 'keep-1'), 'matching remote project kept');
+      assert.ok(deletes.some((d) => d.projectId === 'stale-1'), 'stale remote project deleted');
+      // The already-present project is not re-added; the rest are added.
+      assert.ok(!adds.some((a) => a.payload.title === desired[0].title), 'existing project not re-added');
+      assert.strictEqual(adds.length, desired.length - 1, 'only new projects are added');
     });
   });
 
