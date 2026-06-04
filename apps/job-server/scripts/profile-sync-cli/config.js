@@ -24,10 +24,15 @@ export const PLATFORMS = {
       headline: 'textarea[name="introduction"]',
       skills: '[data-testid="skills-section"]',
     },
-    mapData: (ssot) => ({
-      name: ssot.personal.name,
-      introduction: ssot.summary.profileStatement,
-    }),
+    mapData: (ssot) => {
+      // Wanted API rejects descriptions > 150 chars, and the write path truncates
+      // to 147 + "...". The diff target must match so the sync is idempotent.
+      const intro = ssot.summary.profileStatement || '';
+      return {
+        name: ssot.personal.name,
+        introduction: intro.length > 150 ? `${intro.slice(0, 147)}...` : intro,
+      };
+    },
   },
   jobkorea: {
     name: 'JobKorea',

@@ -227,17 +227,20 @@ describe('Wanted SSoT field mapping correctness', () => {
     });
   });
 
-  it('syncWantedContactInfo maps SSoT profile links (linkedin/website/blog/github)', async () => {
+  it('syncWantedContactInfo does NOT emit link fields the Wanted resume cannot persist', async () => {
     await withApplyEnabled(async () => {
       const client = mockClient();
 
       await syncWantedContactInfo(client, realSSoT, { email: '', mobile: '' }, 'resume-contact-links');
 
-      const fields = client.calls[0].fields;
-      assert.strictEqual(fields.linkedin, realSSoT.contact.linkedin, 'linkedin link mapped');
-      assert.strictEqual(fields.website, realSSoT.contact.website, 'website link mapped');
-      assert.strictEqual(fields.blog, realSSoT.contact.velog, 'velog mapped to blog');
-      assert.ok(fields.github, 'github link mapped');
+      // The Wanted resume schema has no linkedin/website/blog/github fields — the
+      // resume PUT silently drops them, so the sync must not claim to write them
+      // (otherwise it can never be idempotent). Only email/mobile are supported.
+      const fields = client.calls[0]?.fields || {};
+      assert.ok(!('linkedin' in fields), 'linkedin must not be sent to the resume endpoint');
+      assert.ok(!('website' in fields), 'website must not be sent to the resume endpoint');
+      assert.ok(!('blog' in fields), 'blog must not be sent to the resume endpoint');
+      assert.ok(!('github' in fields), 'github must not be sent to the resume endpoint');
     });
   });
 
@@ -279,6 +282,27 @@ describe('syncWantedAbout — BUG-W1 regression', () => {
         `expected full 500-char content sent (not truncated to 150); got length ${sentAbout.length}`
       );
       assert.strictEqual(sentAbout, longBody);
+    } finally {
+      CONFIG.APPLY = original.APPLY;
+      CONFIG.DIFF_ONLY = original.DIFF_ONLY;
+    }
+  });
+
+  it('is idempotent when stored about is the HTML-entity-encoded equivalent (no spurious re-write)', async () => {
+    const original = { APPLY: CONFIG.APPLY, DIFF_ONLY: CONFIG.DIFF_ONLY };
+    CONFIG.APPLY = true;
+    CONFIG.DIFF_ONLY = false;
+    try {
+      const client = mockClient();
+      const ssot = { summary: { profileStatement: '**"\ubc18\ubcf5 \uc791\uc5c5\uc740 \uc790\ub3d9\ud654"** \u2014 & test' } };
+      // Wanted stores the about HTML-encoded (" -> &quot;, & -> &amp;).
+      const resumeDetail = { about: '**&quot;\ubc18\ubcf5 \uc791\uc5c5\uc740 \uc790\ub3d9\ud654&quot;** \u2014 &amp; test' };
+      await syncWantedAbout(client, ssot, resumeDetail, 'resume-idemp');
+      assert.strictEqual(
+        client.calls.length,
+        0,
+        'HTML-entity-encoded stored about must be treated as equal (no re-write)'
+      );
     } finally {
       CONFIG.APPLY = original.APPLY;
       CONFIG.DIFF_ONLY = original.DIFF_ONLY;
