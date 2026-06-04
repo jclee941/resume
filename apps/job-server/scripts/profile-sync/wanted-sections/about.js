@@ -2,6 +2,17 @@ import { CONFIG } from '../constants.js';
 import { log } from '../sync-logger.js';
 import { WANTED_ABOUT_LIMIT } from '../../../src/tools/platforms/wanted-sync-operations.js';
 
+// Wanted stores the about field HTML-encoded (" -> &quot;, & -> &amp;, etc.).
+// Normalize both sides before comparing so the sync is idempotent.
+function decodeEntities(s) {
+  return String(s || '')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&');
+}
+
 /** @param {Object} client @param {Object} ssot @param {Object} resumeDetail @param {string} resumeId @returns {Promise<Object>} */
 export async function syncWantedAbout(client, ssot, resumeDetail, resumeId) {
   // Prefer the Wanted-specific SSoT variant when present, else fall back to the
@@ -14,7 +25,7 @@ export async function syncWantedAbout(client, ssot, resumeDetail, resumeId) {
       : rawAbout;
   const wantedAbout = resumeDetail?.about || '';
 
-  if (ssotAbout === wantedAbout) {
+  if (decodeEntities(ssotAbout) === decodeEntities(wantedAbout)) {
     log('About: no changes', 'info', 'wanted');
     return { changes: 0 };
   }
