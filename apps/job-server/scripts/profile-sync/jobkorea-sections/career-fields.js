@@ -3,15 +3,6 @@ import { EMPTY_CAREER_FIELDS } from './constants.js';
 import { parseRange, pushField } from './validators.js';
 
 function buildCareerSummary(ssot) {
-  const koreanCoverLetter = ssot?.coverLetter?.ko;
-  const coverParagraphs = koreanCoverLetter?.paragraphs;
-  if (coverParagraphs?.length > 0) {
-    return [koreanCoverLetter.headline, '', ...coverParagraphs, '', koreanCoverLetter.closing]
-      .filter(Boolean)
-      .join('\n\n')
-      .slice(0, 2000);
-  }
-
   const careerSummary = ssot?.careerSummary?.ko;
   if (careerSummary?.paragraphs?.length > 0) {
     return [careerSummary.headline, '', ...careerSummary.paragraphs, '', careerSummary.closing]

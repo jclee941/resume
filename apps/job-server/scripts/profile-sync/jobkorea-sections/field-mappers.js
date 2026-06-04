@@ -9,7 +9,9 @@ export {
   SCHOOL_TYPE,
 } from './constants.js';
 export { mapCareersToFormFields, normalizeCompanyName } from './career-fields.js';
+export { mapIntroToFormFields } from './intro-fields.js';
 export { mapHopeJobToFormFields } from './hope-job-fields.js';
+export { JOBKOREA_RESUME_TITLE, mapResumeTitleToFormFields } from './title-fields.js';
 export {
   mapAwardToFormFields,
   mapLicensesToFormFields,

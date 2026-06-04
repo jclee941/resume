@@ -3,15 +3,18 @@ import assert from 'node:assert';
 import {
   buildJobKoreaFormData,
   JK_LOCATION_CODES,
+  JOBKOREA_RESUME_TITLE,
   mapAwardToFormFields,
   mapCareersToFormFields,
   normalizeCompanyName,
   mapHopeJobToFormFields,
+  mapIntroToFormFields,
   mapLicensesToFormFields,
   mapMilitaryToFormFields,
   mapPersonalFieldsToFormFields,
   mapPersonalProjectsToFormFields,
   mapPortfolioToFormFields,
+  mapResumeTitleToFormFields,
   mapSchoolToFormFields,
   parseRange,
   toYYYYMM,
@@ -128,24 +131,33 @@ describe('mapCareersToFormFields', () => {
     assert.strictEqual(byName.get('Career[c1].M_MainField'), '1000999');
   });
 
-  it('maps SSoT coverLetter.ko to UserResume.M_Career_Text (headline + paragraphs + closing joined)', () => {
+  it('maps SSoT careerSummary.ko to UserResume.M_Career_Text without using coverLetter.ko', () => {
     const fields = mapCareersToFormFields({
       careers: [baseCareer],
       coverLetter: {
         ko: {
-          headline: 'OA에서 시작해 자동화로 도착한 8년차',
-          paragraphs: ['단락 1.', '단락 2.', '단락 3.'],
-          closing: '다음 함께하고 싶습니다.',
+          headline: '자기소개서 헤드라인',
+          paragraphs: ['자기소개서 단락 1.', '자기소개서 단락 2.'],
+          closing: '자기소개서 마무리.',
+        },
+      },
+      careerSummary: {
+        ko: {
+          headline: '경력기술서 헤드라인',
+          paragraphs: ['경력기술서 단락 1.', '경력기술서 단락 2.', '경력기술서 단락 3.'],
+          closing: '경력기술서 마무리.',
         },
       },
     });
     const byName = toMap(fields);
     const careerText = byName.get('UserResume.M_Career_Text');
 
-    assert.ok(careerText.startsWith('OA에서 시작해 자동화로 도착한 8년차'), 'headline at start');
-    assert.ok(careerText.includes('단락 1.'), 'first paragraph included');
-    assert.ok(careerText.includes('단락 3.'), 'last paragraph included');
-    assert.ok(careerText.includes('다음 함께하고 싶습니다.'), 'closing included');
+    assert.ok(careerText.startsWith('경력기술서 헤드라인'), 'careerSummary headline at start');
+    assert.ok(careerText.includes('경력기술서 단락 1.'), 'careerSummary first paragraph included');
+    assert.ok(careerText.includes('경력기술서 단락 3.'), 'careerSummary last paragraph included');
+    assert.ok(careerText.includes('경력기술서 마무리.'), 'careerSummary closing included');
+    assert.ok(!careerText.includes('자기소개서 헤드라인'), 'coverLetter headline excluded');
+    assert.ok(!careerText.includes('자기소개서 단락'), 'coverLetter paragraphs excluded');
     assert.strictEqual(byName.get('UserResume.M_Career_Text_Stat'), '1');
   });
 
@@ -153,7 +165,7 @@ describe('mapCareersToFormFields', () => {
     const longParagraph = '·'.repeat(800);
     const fields = mapCareersToFormFields({
       careers: [baseCareer],
-      coverLetter: {
+      careerSummary: {
         ko: {
           headline: 'H',
           paragraphs: [longParagraph, longParagraph, longParagraph, longParagraph],
@@ -167,11 +179,66 @@ describe('mapCareersToFormFields', () => {
     assert.ok(careerText.length <= 2000, `expected <= 2000, got ${careerText.length}`);
   });
 
-  it('emits empty UserResume.M_Career_Text when SSoT has no coverLetter', () => {
+  it('emits empty UserResume.M_Career_Text when SSoT has no careerSummary', () => {
     const fields = mapCareersToFormFields({ careers: [baseCareer] });
     const byName = toMap(fields);
 
     assert.strictEqual(byName.get('UserResume.M_Career_Text'), '');
+  });
+});
+
+describe('mapResumeTitleToFormFields', () => {
+  it('sets the stable JobKorea resume title', () => {
+    const fields = mapResumeTitleToFormFields();
+    const byName = toMap(fields);
+
+    assert.strictEqual(byName.get('UserResume.M_Resume_Title'), JOBKOREA_RESUME_TITLE);
+    assert.strictEqual(JOBKOREA_RESUME_TITLE, '이재철 - 보안·SRE 엔지니어');
+  });
+});
+
+describe('mapIntroToFormFields', () => {
+  it('maps SSoT coverLetter.ko into ResumeProfile fields', () => {
+    const fields = mapIntroToFormFields(
+      {
+        coverLetter: {
+          ko: {
+            headline: '반복 작업의 한계에서 출발해 자동화로 답한 보안 엔지니어',
+            paragraphs: ['자기소개서 단락 1.', '자기소개서 단락 2.'],
+            closing: '자기소개서 마무리.',
+          },
+        },
+      },
+      ['c1306']
+    );
+    const byName = toMap(fields);
+
+    assert.strictEqual(byName.get('ResumeProfile.Index'), 'c1306');
+    assert.strictEqual(
+      byName.get('ResumeProfile[c1306].Header'),
+      '반복 작업의 한계에서 출발해 자동화로 답한 보안 엔지니어'.slice(0, 50)
+    );
+    assert.strictEqual(
+      byName.get('ResumeProfile[c1306].Contents'),
+      '자기소개서 단락 1.\n\n자기소개서 단락 2.\n\n자기소개서 마무리.'
+    );
+    assert.strictEqual(byName.get('InputStat.UserIntroduceInputStat'), 'True');
+  });
+
+  it('truncates intro title and contents to JobKorea limits', () => {
+    const fields = mapIntroToFormFields({
+      coverLetter: {
+        ko: {
+          headline: '가'.repeat(80),
+          paragraphs: ['나'.repeat(2500)],
+          closing: '다'.repeat(20),
+        },
+      },
+    });
+    const byName = toMap(fields);
+
+    assert.strictEqual(byName.get('ResumeProfile[c1].Header').length, 50);
+    assert.strictEqual(byName.get('ResumeProfile[c1].Contents').length, 2000);
   });
 });
 

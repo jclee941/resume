@@ -32,7 +32,10 @@ const KEY_FIELD_PATTERNS = [
   /Award\[.*\]\.Award_Year$/,
   /^Award\[c\d+\]\.(Award_Cntnt)$/,
   /^Language\[c\d+\]\.(Lang1_Name|Lang1_Stat)$/,
+  /^ResumeProfile\[c\d+\]\.(Header|Contents)$/,
   /^UserResume\.(Birth_YMD|Address|GitHub)$/,
+  /^UserResume\.(M_Resume_Title|M_Career_Text|M_Career_Text_Stat)$/,
+  /^InputStat\.UserIntroduceInputStat$/,
   /Portfolio\[.*\]\.Prtf_Url$/,
 ];
 export function getEditUrl() {
@@ -178,6 +181,25 @@ export function describeJobKoreaField(name) {
       Skill_Level: 'level',
     };
     return `Skill ${match[1]} ${map[match[2]] || match[2]}`;
+  }
+
+  match = name.match(/^ResumeProfile\[([^\]]+)\]\.(Header|Contents)$/);
+  if (match) {
+    const map = {
+      Header: 'title',
+      Contents: 'contents',
+    };
+    return `Self introduction ${match[1]} ${map[match[2]] || match[2]}`;
+  }
+
+  match = name.match(/^UserResume\.(M_Resume_Title|M_Career_Text|M_Career_Text_Stat)$/);
+  if (match) {
+    const map = {
+      M_Resume_Title: 'resume title',
+      M_Career_Text: 'career statement',
+      M_Career_Text_Stat: 'career statement enabled',
+    };
+    return map[match[1]] || name;
   }
 
   match = name.match(/^Language\[([^\]]+)\]\.(Lang1_Name|Lang1_Stat)$/);

@@ -7,6 +7,10 @@ export async function readJobKoreaSectionIndices(page, prefix) {
     $('#frm1')
       .serializeArray()
       .forEach((f) => {
+        if (pfx === 'ResumeProfile' && f.name === 'ResumeProfile.Index' && f.value) {
+          if (!indices.includes(f.value)) indices.push(f.value);
+          return;
+        }
         const m = f.name.match(new RegExp(`^${escaped}\\[([^\\]]+)\\]\\.Index_Name$`));
         if (m && !indices.includes(m[1])) indices.push(m[1]);
       });
@@ -25,6 +29,32 @@ async function deleteExistingCareerEntries(page) {
 
     try {
       for (const field of careerNames) {
+        const input = document.getElementsByName(field.name)[0];
+        const container = input?.closest('.container');
+        const deleteButton = container?.querySelector('button.buttonDeleteField');
+        if (!deleteButton) continue;
+        deleteButton.click();
+        deleted++;
+      }
+    } finally {
+      window.confirm = originalConfirm;
+    }
+
+    return deleted;
+  });
+}
+
+async function deleteExistingIntroEntries(page) {
+  return page.evaluate(() => {
+    const originalConfirm = window.confirm;
+    window.confirm = () => true;
+    const introHeaders = $('#frm1')
+      .serializeArray()
+      .filter((f) => /^ResumeProfile\[[^\]]+\]\.Header$/.test(f.name));
+    let deleted = 0;
+
+    try {
+      for (const field of introHeaders) {
         const input = document.getElementsByName(field.name)[0];
         const container = input?.closest('.container');
         const deleteButton = container?.querySelector('button.buttonDeleteField');
@@ -61,6 +91,27 @@ async function recreateCareerEntries(handler, page, needed) {
   await addJobKoreaEntrySlots(handler, page, 'Career', needed);
 }
 
+async function recreateIntroEntries(handler, page, needed) {
+  if (needed <= 0) return;
+
+  const deleted = await deleteExistingIntroEntries(page);
+  if (deleted > 0) {
+    log(`Deleted ${deleted} existing intro entr${deleted === 1 ? 'y' : 'ies'} before rebuild`, 'info', 'jobkorea');
+  }
+
+  await page.waitForFunction(
+    () => {
+      return !$('#frm1')
+        .serializeArray()
+        .some((f) => /^ResumeProfile\[[^\]]+\]/.test(f.name));
+    },
+    null,
+    { timeout: 5000 }
+  );
+
+  await addJobKoreaEntrySlots(handler, page, 'ResumeProfile', needed);
+}
+
 async function addJobKoreaEntrySlots(handler, page, prefix, needed) {
   if (needed <= 0) return;
 
@@ -74,6 +125,7 @@ async function addJobKoreaEntrySlots(handler, page, prefix, needed) {
     const clicked = await page.evaluate((pfx) => {
       const sectionLabels = {
         Career: '경력',
+        ResumeProfile: '자기소개서',
         License: '자격증',
         Award: '수상',
         Portfolio: '포트폴리오',
@@ -151,8 +203,10 @@ export async function createJobKoreaEntrySlots(handler, page, ssot, options = {}
   );
   const awardItems = Array.isArray(ssot?.awards) ? ssot.awards : [];
   const languages = Array.isArray(ssot?.languages) ? ssot.languages : [];
+  const introNeeded = ssot?.coverLetter?.ko?.paragraphs?.length > 0 ? 1 : 0;
   const sections = [
     { prefix: 'Career', needed: careers.length },
+    { prefix: 'ResumeProfile', needed: introNeeded },
     { prefix: 'License', needed: validCerts.length },
     { prefix: 'Award', needed: awardItems.length },
     { prefix: 'Portfolio', needed: ssot?.personal?.portfolio ? 1 : 0 },
@@ -175,7 +229,7 @@ export async function createJobKoreaEntrySlots(handler, page, ssot, options = {}
         { timeout: 5000 }
       );
     } catch {
-      if (prefix !== 'Career') {
+      if (prefix !== 'Career' && prefix !== 'ResumeProfile') {
         log(`Section ${prefix} not found in form after activation`, 'warn', 'jobkorea');
         continue;
       }
@@ -185,12 +239,15 @@ export async function createJobKoreaEntrySlots(handler, page, ssot, options = {}
 
     if (prefix === 'Career' && options.recreateCareerEntries === true) {
       await recreateCareerEntries(handler, page, needed);
+    } else if (prefix === 'ResumeProfile' && options.recreateIntroEntries === true) {
+      await recreateIntroEntries(handler, page, needed);
     } else {
       await addJobKoreaEntrySlots(handler, page, prefix, needed);
     }
   }
 
   const allCareerIndices = await handler.readSectionIndices(page, 'Career');
+  const allIntroIndices = await handler.readSectionIndices(page, 'ResumeProfile');
   const allLicenseIndices = await handler.readSectionIndices(page, 'License');
   const allAwardIndices = await handler.readSectionIndices(page, 'Award');
   const schoolIndices = await handler.readSectionIndices(page, 'UnivSchool');
@@ -199,6 +256,7 @@ export async function createJobKoreaEntrySlots(handler, page, ssot, options = {}
 
   return {
     career: allCareerIndices,
+    intro: allIntroIndices,
     license: allLicenseIndices,
     award: allAwardIndices,
     portfolio: allPortfolioIndices,
