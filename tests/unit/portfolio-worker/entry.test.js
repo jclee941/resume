@@ -64,6 +64,14 @@ describe('entry.js merged-worker contract', () => {
     expect(source).toMatch(/portfolioWorker\.fetch\(localizedRequest,\s*env,\s*ctx\)/);
   });
 
+  test('serves "/" as Korean canonical without per-user language 302 redirect', () => {
+    // Root must never 302 to /en/ or /ja/ by Accept-Language; it stays a stable
+    // cacheable canonical page. Guard against reintroducing the negotiation redirect.
+    expect(source).not.toMatch(/status:\s*302/);
+    expect(source).not.toMatch(/Location:\s*redirectUrl/);
+    expect(source).toMatch(/url\.pathname === '\/' \? DEFAULT_LANGUAGE/);
+  });
+
   test('has error handling that logs and returns 500', () => {
     expect(source).toMatch(/catch \(error\)/);
     expect(source).toMatch(/console\.error\('\[entry\] Unhandled error:'/);

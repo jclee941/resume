@@ -154,12 +154,12 @@
       "projects": [
         {
           "name": "Quantec Investment Management AI Trading Platform Infrastructure Operations",
-          "description": "Developed Python-based infrastructure automation scripts to standardize repeated operations of manual operations and the repetitive work of audit response, and reviewed DB access-control queries with DB access-control query tuning to support PB platform POC launch.",
+          "description": "Developed Python automation scripts to standardize recurring operational and audit-response workflows, and tuned PostgreSQL access-control queries to support the PB platform POC launch.",
           "period": "2022.08 ~ 2024.03",
           "techStack": ["Python", "Linux", "DLP", "PostgreSQL", "FSDC"],
           "achievements": [
             "Refined DLP policy operations and standardized audit deliverables for FSS regular audits",
-            "Tuned DB access-control queries via DB access-control query tuning",
+            "Tuned PostgreSQL DB access-control queries to reduce query-planning overhead",
             "Validated PB platform POC performance and supported system launch"
           ]
         }
@@ -614,7 +614,7 @@
     {
       "name": "Security Alert System",
       "period": "2025.01 ~ Present",
-      "description": "FortiGate security events were scattered across device syslog and Splunk, delaying the time from event occurrence to operator awareness. Connected Splunk Saved Search webhooks to Slack/Telegram so security events are immediately notified upon detection. Standardized the security event notification and operator response flow and standardized operator response flow.",
+      "description": "FortiGate security events were scattered across device syslog and Splunk, delaying the time from event occurrence to operator awareness. Connected Splunk Saved Search webhooks to Slack/Telegram so security events are immediately notified upon detection. Standardized the security event notification and operator response flow.",
       "technologies": ["Splunk", "Python", "Slack"],
       "icon": "🔔",
       "tagline": "Security Alert Automation",

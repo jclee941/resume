@@ -3,7 +3,7 @@ const { test, expect } = require('@playwright/test');
 
 const NAME_PATTERN = /Jaecheol Lee|이재철/;
 const INFRA_PATTERN = /Infrastructure|인프라/i;
-const CANONICAL_URL_PATTERN = /^https:\/\/resume\.jclee\.me(?:\/en\/?)?$/;
+const CANONICAL_URL_PATTERN = /^https:\/\/resume\.jclee\.me\/(?:en\/|ja\/)?$/;
 const OG_LOCALE_PATTERN = /ko_KR|en_US/;
 const WEBSITE_LANGUAGE_PATTERN = /ko-KR|en-US/;
 
@@ -315,6 +315,29 @@ test.describe('JSON-LD Structured Data', () => {
       expect(canonical, `canonical for ${path}`).toBe(expected);
       await ctx.close();
     }
+  });
+
+  test('root "/" serves Korean canonical 200 even for English Accept-Language (no 302)', async ({
+    browser,
+  }) => {
+    // Regression: the per-user Accept-Language 302 from '/' to '/en/' was removed.
+    // '/' must always be the Korean canonical page, regardless of Accept-Language.
+    const ctx = await browser.newContext({
+      locale: 'en-US',
+      extraHTTPHeaders: { 'Accept-Language': 'en-US,en;q=0.9' },
+    });
+    const page = await ctx.newPage();
+    const response = await page.goto('/', { waitUntil: 'domcontentloaded' });
+    expect(response.status(), 'status for / under en Accept-Language').toBe(200);
+    expect(new URL(page.url()).pathname, 'pathname stays /').toBe('/');
+    const htmlLang = await page.locator('html').getAttribute('lang');
+    expect(htmlLang, 'root html lang').toBe('ko');
+    const canonical = await page
+      .locator('link[rel="canonical"]')
+      .first()
+      .getAttribute('href');
+    expect(canonical).toBe('https://resume.jclee.me/');
+    await ctx.close();
   });
 
   test('should have valid JSON-LD on KO root', async ({ page }) => {

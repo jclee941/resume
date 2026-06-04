@@ -110,9 +110,9 @@ describe('entry-router-utils', () => {
       expect(utils.getPortfolioTargetPath('/ja/', 'ja')).toBe('/ja/');
     });
 
-    test('routes root by detected language', () => {
-      expect(utils.getPortfolioTargetPath('/', 'en')).toBe('/en/');
-      expect(utils.getPortfolioTargetPath('/', 'ja')).toBe('/ja/');
+    test('root is always Korean canonical regardless of detected language', () => {
+      expect(utils.getPortfolioTargetPath('/', 'en')).toBe('/');
+      expect(utils.getPortfolioTargetPath('/', 'ja')).toBe('/');
       expect(utils.getPortfolioTargetPath('/', 'ko')).toBe('/');
     });
 
