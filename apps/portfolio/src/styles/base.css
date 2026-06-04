@@ -30,9 +30,10 @@ body {
   font-size: var(--text-base);
   line-height: var(--leading-relaxed);
   color: var(--text-primary);
-  background: var(--gradient-page-atmosphere);
-  /* Opaque base layer set AFTER the gradient shorthand (which resets
-     background-color); keeps a solid backdrop for contrast tooling. */
+  background: var(--bg-primary);
+  /* Explicit opaque background-color so computed background-color is never
+     transparent (gradients/background-image reset it), keeping a solid
+     backdrop behind light hero text for contrast tooling. */
   background-color: var(--bg-primary);
   background-attachment: fixed;
   overflow-x: hidden;
