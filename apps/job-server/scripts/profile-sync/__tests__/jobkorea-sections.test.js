@@ -616,7 +616,7 @@ describe('buildJobKoreaFormData', () => {
     });
     const names = fields.map((field) => field.name);
 
-    assert.ok(names.some((name) => name.startsWith('HighSchool[')));
+    assert.ok(names.some((name) => name.startsWith('HighSchool.')));
     assert.ok(names.some((name) => name === 'HighSchool.index'));
     assert.ok(names.some((name) => name === 'InputStat.HighSchoolInputStat'));
     assert.ok(names.some((name) => name.startsWith('HopeJob.')));
@@ -722,7 +722,7 @@ describe('JobKorea SSoT field-mapping correctness — RED', () => {
     const ssot = loadSSOT();
     const byName = toMap(buildJobKoreaFormData(ssot, {}));
 
-    assert.strictEqual(byName.get('HighSchool[c1].Schl_Name'), ssot.education.highSchool);
+    assert.strictEqual(byName.get('HighSchool.Schl_Name'), ssot.education.highSchool);
   });
 
   it('B5 mapCareersToFormFields emits Career[c1].CNameHold exactly once', () => {
@@ -950,7 +950,7 @@ describe('JobKorea live form — high school', () => {
     const names = fields.map((field) => field.name);
 
     assert.equal(
-      fields.find((f) => f.name === 'HighSchool[c1].Schl_Name')?.value,
+      fields.find((f) => f.name === 'HighSchool.Schl_Name')?.value,
       '용남고'
     );
     assert.ok(names.includes('HighSchool.index'));

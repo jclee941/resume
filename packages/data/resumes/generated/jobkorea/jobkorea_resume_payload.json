@@ -3,7 +3,7 @@
     "description": "Complete JobKorea form payload GENERATED FROM master SSoT (packages/data/resumes/master/resume_data.json) via apps/job-server/scripts/profile-sync/jobkorea-sections.js#buildJobKoreaFormData. Regenerate with: node -e \"require(...).buildJobKoreaFormData(masterSSoT)\". Feed to JobKorea sync (JOBKOREA_SYNC_MODE=hybrid-api JOBKOREA_RNO=<rno> node apps/job-server/scripts/profile-sync.js jobkorea --apply).",
     "generatedFrom": "packages/data/resumes/master/resume_data.json",
     "builder": "apps/job-server/scripts/profile-sync/jobkorea-sections.js#buildJobKoreaFormData",
-    "fieldCount": 471,
+    "fieldCount": 470,
     "sectionCoverage": {
       "career": 6,
       "highSchool": true,
@@ -1112,19 +1112,15 @@
       "value": "https://github.com/jclee941"
     },
     {
-      "name": "HighSchool[c1].Schl_Name",
+      "name": "HighSchool.Schl_Name",
       "value": "용남고등학교"
     },
     {
-      "name": "HighSchool[c1].Entc_YM",
-      "value": ""
+      "name": "HighSchool.Grad_Year",
+      "value": "2013"
     },
     {
-      "name": "HighSchool[c1].Grad_YM",
-      "value": "201302"
-    },
-    {
-      "name": "HighSchool[c1].Grad_Type_Code",
+      "name": "HighSchool.Grad_Type_Code",
       "value": "10"
     },
     {

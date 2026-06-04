@@ -132,24 +132,22 @@ export function mapHighSchoolToFormFields(ssot, schoolIndex) {
 
   if (eduName) {
     const gradRaw = String(ssot?.education?.highSchoolGraduation || '').trim();
-    const gradYM = /^\d{4}$/.test(gradRaw) ? `${gradRaw}02` : toYYYYMM(gradRaw);
+    const gradYear = /^\d{4}/.test(gradRaw) ? gradRaw.slice(0, 4) : toYYYYMM(gradRaw).slice(0, 4);
     return [
-      [`HighSchool[${key}].Schl_Name`, eduName],
-      [`HighSchool[${key}].Entc_YM`, ''],
-      [`HighSchool[${key}].Grad_YM`, gradYM],
-      [`HighSchool[${key}].Grad_Type_Code`, GRAD_TYPE.졸업],
+      ['HighSchool.Schl_Name', eduName],
+      ['HighSchool.Grad_Year', gradYear],
+      ['HighSchool.Grad_Type_Code', GRAD_TYPE.졸업],
       ['HighSchool.index', key],
       ['InputStat.HighSchoolInputStat', 'True'],
     ].map(([name, value]) => ({ name, value: toFieldValue(value) }));
   }
 
-  const startRaw = toYYYYMM(legacy.startDate || '');
   const gradYM = toYYYYMM(legacy.endDate || '');
+  const gradYear = gradYM.slice(0, 4);
   return [
-    [`HighSchool[${key}].Schl_Name`, legacy.school || ''],
-    [`HighSchool[${key}].Entc_YM`, startRaw],
-    [`HighSchool[${key}].Grad_YM`, gradYM],
-    [`HighSchool[${key}].Grad_Type_Code`, GRAD_TYPE[legacy.status] || GRAD_TYPE.졸업],
+    ['HighSchool.Schl_Name', legacy.school || ''],
+    ['HighSchool.Grad_Year', gradYear],
+    ['HighSchool.Grad_Type_Code', GRAD_TYPE[legacy.status] || GRAD_TYPE.졸업],
     ['HighSchool.index', key],
     ['InputStat.HighSchoolInputStat', 'True'],
   ].map(([name, value]) => ({ name, value: toFieldValue(value) }));

@@ -113,11 +113,13 @@ describe('JobKorea new resume payload contract from real SSoT', () => {
   });
 
   it('includes high school from real SSoT education', () => {
+    // JobKorea's live form expects scalar HighSchool.* names (not indexed),
+    // verified against the real Save endpoint.
     assert.strictEqual(
-      byName.get('HighSchool[c1].Schl_Name'),
+      byName.get('HighSchool.Schl_Name'),
       realSSoT.education.highSchool,
-      `HighSchool[c1].Schl_Name should match ${JSON.stringify(realSSoT.education.highSchool)}; got ${JSON.stringify(
-        byName.get('HighSchool[c1].Schl_Name')
+      `HighSchool.Schl_Name should match ${JSON.stringify(realSSoT.education.highSchool)}; got ${JSON.stringify(
+        byName.get('HighSchool.Schl_Name')
       )}`
     );
   });
