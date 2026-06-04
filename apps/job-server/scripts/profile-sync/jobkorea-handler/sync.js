@@ -127,13 +127,17 @@ async function pruneOldSectionEntries(page, sectionIndices) {
 async function fillTargetFields(page, targetFields) {
   const fillStats = await page.evaluate((fields) => {
     const form = document.getElementById('frm1');
+    const occurrenceByName = new Map();
     let filled = 0;
     let created = 0;
     for (const { name, value } of fields) {
       const els = document.getElementsByName(name);
-      if (els.length > 0) {
-        els[0].value = String(value);
-        els[0].dispatchEvent(new Event('change', { bubbles: true }));
+      const occurrence = occurrenceByName.get(name) || 0;
+      occurrenceByName.set(name, occurrence + 1);
+
+      if (els.length > occurrence) {
+        els[occurrence].value = String(value);
+        els[occurrence].dispatchEvent(new Event('change', { bubbles: true }));
         filled++;
       } else {
         const hidden = document.createElement('input');
@@ -297,7 +301,10 @@ export async function syncJobKoreaProfile(handler, ssot, options = {}) {
 
     await activateRequiredSections(page);
 
-    const sectionIndices = await handler.createEntrySlots(page, ssot);
+    const dryRun = !CONFIG.APPLY || CONFIG.DIFF_ONLY || syncMode === 'api-dry-run';
+    const sectionIndices = await handler.createEntrySlots(page, ssot, {
+      recreateCareerEntries: !dryRun,
+    });
     logger(
       `Entry slots — Career: ${sectionIndices.career.length} (${sectionIndices.career.join(',')}), ` +
         `License: ${sectionIndices.license.length} (${sectionIndices.license.join(',')}), ` +
@@ -357,7 +364,6 @@ export async function syncJobKoreaProfile(handler, ssot, options = {}) {
       }
     }
 
-    const dryRun = !CONFIG.APPLY || CONFIG.DIFF_ONLY || syncMode === 'api-dry-run';
     return { success: true, changes, dryRun };
   } catch (error) {
     logger(`Sync failed: ${error.message}`, 'error', 'jobkorea');

@@ -30,8 +30,8 @@ export default class JobKoreaHandler {
     return readJobKoreaSectionIndices(page, prefix);
   }
 
-  async createEntrySlots(page, ssot) {
-    return createJobKoreaEntrySlots(this, page, ssot);
+  async createEntrySlots(page, ssot, options = {}) {
+    return createJobKoreaEntrySlots(this, page, ssot, options);
   }
 
   async sync(ssot) {

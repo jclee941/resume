@@ -162,6 +162,98 @@ describe('JobKoreaHandler.describeField', () => {
 });
 
 describe('createJobKoreaEntrySlots', () => {
+  it('recreates Career slots before mapping SSoT careers', async () => {
+    let careerIndices = ['c7', 'c8', 'c9', 'c10', 'c11'];
+    let deletedCareers = 0;
+    let addedCareers = 0;
+    const handler = {
+      readSectionIndices: async (_page, prefix) => {
+        if (prefix === 'Career') return [...careerIndices];
+        if (prefix === 'UnivSchool') return ['c2'];
+        return [];
+      },
+    };
+    const page = {
+      waitForFunction: async () => {},
+      evaluate: async (fn, prefix) => {
+        const source = String(fn);
+        if (source.includes('buttonDeleteField')) {
+          deletedCareers = careerIndices.length;
+          careerIndices = [];
+          return deletedCareers;
+        }
+        if (source.includes('buttonAddField') && prefix === 'Career') {
+          addedCareers++;
+          careerIndices.push(`fresh${addedCareers}`);
+          return true;
+        }
+        return false;
+      },
+    };
+    const ssot = {
+      careers: Array.from({ length: 6 }, (_, index) => ({ company: `Company ${index + 1}` })),
+      certifications: [],
+      awards: [],
+      languages: [],
+      personal: {},
+    };
+
+    const indices = await createJobKoreaEntrySlots(handler, page, ssot, {
+      recreateCareerEntries: true,
+    });
+
+    assert.strictEqual(deletedCareers, 5);
+    assert.strictEqual(addedCareers, 6);
+    assert.deepStrictEqual(indices.career, [
+      'fresh1',
+      'fresh2',
+      'fresh3',
+      'fresh4',
+      'fresh5',
+      'fresh6',
+    ]);
+  });
+
+  it('does not delete live Career entries during diff-only slot discovery', async () => {
+    let careerIndices = ['c7', 'c8', 'c9', 'c10', 'c11'];
+    let deletedCareers = 0;
+    const handler = {
+      readSectionIndices: async (_page, prefix) => {
+        if (prefix === 'Career') return [...careerIndices];
+        if (prefix === 'UnivSchool') return ['c2'];
+        return [];
+      },
+    };
+    const page = {
+      waitForFunction: async () => {},
+      evaluate: async (fn, prefix) => {
+        const source = String(fn);
+        if (source.includes('buttonDeleteField')) {
+          deletedCareers = careerIndices.length;
+          careerIndices = [];
+          return deletedCareers;
+        }
+        if (source.includes('buttonAddField') && prefix === 'Career') {
+          careerIndices.push('preview-only');
+          return true;
+        }
+        return false;
+      },
+    };
+    const ssot = {
+      careers: Array.from({ length: 6 }, (_, index) => ({ company: `Company ${index + 1}` })),
+      certifications: [],
+      awards: [],
+      languages: [],
+      personal: {},
+    };
+
+    const indices = await createJobKoreaEntrySlots(handler, page, ssot);
+
+    assert.strictEqual(deletedCareers, 0);
+    assert.deepStrictEqual(indices.career, ['c7', 'c8', 'c9', 'c10', 'c11', 'preview-only']);
+  });
+
   it('reuses existing live DOM indices, including timestamp Award IDs', async () => {
     const readCalls = [];
     const handler = {
