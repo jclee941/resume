@@ -169,7 +169,24 @@ function buildJapaneseTemplate(html) {
         /금융권 보안 인프라 설계·운영, SIEM 탐지·대응 자동화, IaC 기반 관측성을\s+실무 문제 해결에 연결합니다\./g,
         '金融セキュリティインフラの設計・運用、SIEM検知・対応の自動化、IaCベースの可観測性を、実務の課題解決につなげています。'
       )
+      .replace(/채용 제안·면접 문의 환영/g, '採用提案・面接相談を歓迎')
+      .replace(/aria-label="대표 업무 증빙"/g, 'aria-label="代表的な業務証跡"')
+      .replace(
+        /넥스트레이드 매매체결시스템 보안 구축·운영 연속 수행/g,
+        'Nextrade売買締結システムのセキュリティ構築・運用を継続担当'
+      )
+      .replace(
+        /FortiGate HA 5계층 망분리, FSC 본인가 심사 대응/g,
+        'FortiGate HA 5層ネットワーク分離、FSC本認可審査対応'
+      )
+      .replace(
+        /Splunk ES · n8n · FortiManager API 기반 보안 이벤트 자동화/g,
+        'Splunk ES · n8n · FortiManager APIベースのセキュリティイベント自動化'
+      )
       .replace(/aria-label="주요 이동"/g, 'aria-label="主なナビゲーション"')
+      .replace(/채용 문의/g, '採用問い合わせ')
+      .replace(/채용 검토 자료/g, '採用検討資料')
+      .replace(/증빙 프로젝트 보기/g, '証跡プロジェクトを見る')
       .replace(
         /<a href="#resume" class="link-subtle">경력 보기<\/a>/g,
         '<a href="#resume" class="link-subtle">経歴を見る</a>'
@@ -326,47 +343,6 @@ function buildJapaneseTemplate(html) {
       .replace(
         /CodeQL·gitleaks·OpenSSF Scorecard·Dependabot으로 코드·시크릿·의존성 위험을\s+지속스캔하고, harden-runner로 CI 런너의 egress를 제한·감시합니다\./g,
         'CodeQL・gitleaks・OpenSSF Scorecard・Dependabotでコード・シークレット・依存リスクを継続スキャンし、harden-runnerでCIランナーのegressを制限・監視します。'
-      )
-      // === About principles / current focus (#about-principles) KO -> JA ===
-      .replace(
-        /<h3 class="about-principles__title">엔지니어링 원칙<\/h3>/g,
-        '<h3 class="about-principles__title">エンジニアリング原則</h3>'
-      )
-      .replace(
-        /관측 가능하지 않은 것은 운영할 수 없다 \(You can't operate what you can't\s+observe\)\./g,
-        '「観測できなければ、運用できない」'
-      )
-      .replace(
-        /수작업 → 자동화 파이프라인 → AI 에이전트 — 한 단계씩 점진적으로\./g,
-        '手作業 → 自動化パイプライン → AI エージェント'
-      )
-      .replace(
-        /Defense in Depth: 네트워크 → ID → 워크로드 → 데이터\./g,
-        'Infrastructure as Code、GitOps、宣言的構成'
-      )
-      .replace(
-        /코드만 PR을 받는다 — 정책도, 인프라도, 운영 절차도\./g,
-        'Defense in Depth: ネットワーク → ID → ワークロード → データ'
-      )
-      .replace(
-        /<h3 class="about-principles__title">현재 집중 영역<\/h3>/g,
-        '<h3 class="about-principles__title">現在の注力領域</h3>'
-      )
-      .replace(
-        /Splunk ES \+ n8n \+ FortiManager API 기반 SOC 운영/g,
-        'Splunk ES検知ルール・n8n・FortiManager APIによるSOC自動対応'
-      )
-      .replace(
-        /Cloudflare Workers Edge 기반 정책·관측·인증 통합 구조 학습/g,
-        'Cloudflare Workers Edge・IaCホームラボでDevOps能力拡張'
-      )
-      .replace(
-        /MCP\/AI 에이전트로 보안 운영 수작업 아이템 정리 시도/g,
-        'MCP/AIエージェント基盤のセキュリティ運用自動化ツール自社開発'
-      )
-      .replace(
-        /GitOps\(ArgoCD\) \+ 정책 자동화\(OPA\) 학습/g,
-        'GitOps(ArgoCD)・ポリシー自動化(OPA)学習中'
       )
   );
 }
