@@ -92,4 +92,13 @@ describe('portfolio visual CSS contract', () => {
     expect(animationsCss).toMatch(/\.reveal-ready\s+\.reveal\.revealed\s*{[^}]*opacity:\s*1/);
     expect(animationsCss).toMatch(/\.reveal-ready\s+\.reveal-stagger\.revealed\s*>\s*\*\s*{[^}]*opacity:\s*1/);
   });
+
+  test('S9 lang-switcher links meet 44px target size and have a focus-visible ring', () => {
+    // WCAG 2.5.5 target size + 2.4.7 focus visible for keyboard nav.
+    const layoutCss = readStyle('layout.css');
+    const langLink = layoutCss.match(/\.lang-link\s*{[^}]*}/);
+    expect(langLink).toBeTruthy();
+    expect(langLink[0]).toMatch(/min-height:\s*44px/);
+    expect(layoutCss).toMatch(/\.lang-link:focus-visible\s*{[^}]*outline/);
+  });
 });
