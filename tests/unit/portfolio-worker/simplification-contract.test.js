@@ -42,3 +42,34 @@ describe('simplification: no duplicated About principles/focus block', () => {
     expect(count(worker, '&gt; current_focus')).toBe(3);
   });
 });
+
+describe('simplification: project cards do not re-present the description as bullets', () => {
+  const fs = require('fs');
+  const path = require('path');
+  const expandPath = path.join(
+    __dirname,
+    '../../../apps/portfolio/src/scripts/modules/project-expand.js'
+  );
+  const mainPath = path.join(__dirname, '../../../apps/portfolio/src/scripts/main.js');
+  let expandSrc = '';
+  let mainSrc = '';
+  try {
+    expandSrc = fs.readFileSync(expandPath, 'utf8');
+  } catch {
+    expandSrc = '';
+  }
+  beforeAll(() => {
+    mainSrc = fs.readFileSync(mainPath, 'utf8');
+  });
+
+  test('the description-derived feature-bullet generator is gone', () => {
+    // The expand panel split .project-description into the same sentences as
+    // "주요 기능" / "Key Features" bullets — pure content duplication.
+    expect(expandSrc).not.toMatch(/splitFeatures/);
+    expect(expandSrc).not.toMatch(/project-details__features/);
+  });
+
+  test('main.js no longer bootstraps the redundant project-expand enhancement', () => {
+    expect(mainSrc).not.toMatch(/initProjectExpand/);
+  });
+});
