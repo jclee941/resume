@@ -10,7 +10,7 @@ html {
     transform 0.5s ease-out;
 }
 
-.reveal.revealed {
+.js .reveal.revealed {
   opacity: 1;
   transform: translateY(0);
 }
@@ -43,7 +43,7 @@ html {
   transition-delay: 0.3s;
 }
 
-.reveal-stagger.revealed > * {
+.js .reveal-stagger.revealed > * {
   opacity: 1;
   transform: translateY(0);
 }
