@@ -68,7 +68,7 @@
     "@resume/types": "*",
     "@resume/data": "*",
     "fastify": "^5.8.4",
-    "google-auth-library": "^10.6.1",
+    "google-auth-library": "^10.7.0",
     "googleapis": "^171.4.0",
     "node-fetch": "^3.3.2",
     "nodemailer": "^8.0.10",
