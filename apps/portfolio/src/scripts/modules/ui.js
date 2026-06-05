@@ -74,8 +74,9 @@ function initNavScrollEffect() {
   });
 }
 
-function initScrollReveal() {
-  const revealElements = document.querySelectorAll('.reveal');
+export function initScrollReveal(options = {}) {
+  const root = options.root || document;
+  const revealElements = Array.from(root.querySelectorAll('.reveal'));
   if (revealElements.length === 0) return;
 
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -117,7 +118,36 @@ function initScrollReveal() {
 
   // Only NOW, with a working observer wired up, opt into the hidden state.
   document.documentElement.classList.add('reveal-ready');
-  revealElements.forEach((el) => observer.observe(el));
+
+  const reveal = (el) => {
+    el.classList.add('revealed');
+    try {
+      observer.unobserve(el);
+    } catch {
+      /* unobserve is best-effort */
+    }
+  };
+
+  // FAIL-SAFE 1: reveal anything already in or above the viewport at init, so
+  // content visible on first paint never waits for a scroll event (fixes the
+  // "blank/잘림" impression on fast scroll or full-page capture).
+  const vh = window.innerHeight || 0;
+  revealElements.forEach((el) => {
+    const r = el.getBoundingClientRect();
+    // top above the fold bottom => in view OR already scrolled past: reveal now.
+    // Only elements still below the fold wait for the observer (normal fade).
+    if (r.top < vh) reveal(el);
+    else observer.observe(el);
+  });
+
+  // FAIL-SAFE 2: bounded safety timeout. If the IO callback never fires for a
+  // pending element (throttled main thread, headless capture, fast scroll),
+  // force-reveal everything so content is never permanently stuck hidden.
+  window.setTimeout(() => {
+    revealElements.forEach((el) => {
+      if (!el.classList.contains('revealed')) reveal(el);
+    });
+  }, 3000);
 }
 
 function initScrollProgress() {
