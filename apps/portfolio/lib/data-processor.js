@@ -20,6 +20,7 @@ const {
   generateAchievementsSection,
   generateExpertiseSection,
   generateCoverLetterSection,
+  generateProjectSchemasHtml,
 } = require('./cards');
 
 /**
@@ -99,6 +100,13 @@ function processProjectData({ projectDataRaw, projectDataEnRaw, projectDataJaRaw
     projectCardsJaHtml: generateProjectCards(
       (projectDataJa && projectDataJa.projects) || projectData.projects,
       `${dataHash}:ja-projects`
+    ),
+    projectSchemasHtml: generateProjectSchemasHtml(projectData.projects),
+    projectSchemasEnHtml: generateProjectSchemasHtml(
+      (projectDataEn && projectDataEn.projects) || projectData.projectsEn || projectData.projects
+    ),
+    projectSchemasJaHtml: generateProjectSchemasHtml(
+      (projectDataJa && projectDataJa.projects) || projectData.projects
     ),
     certCardsHtml: generateCertificationCards(projectData.certifications, dataHash),
     certCardsEnHtml: generateCertificationCards(

@@ -22,6 +22,7 @@ jest.mock('../../../../apps/portfolio/lib/cards', () => ({
   generateAchievementsSection: jest.fn(() => '<ul class="achievements-list"></ul>'),
   generateExpertiseSection: jest.fn(() => '<div class="expertise-tags"></div>'),
   generateCoverLetterSection: jest.fn(() => '<article class="cover-letter-card"></article>'),
+  generateProjectSchemasHtml: jest.fn(() => '<script type="application/ld+json">{}</script>'),
 }));
 
 const { TEMPLATE_CACHE } = require('../../../../apps/portfolio/lib/config');
