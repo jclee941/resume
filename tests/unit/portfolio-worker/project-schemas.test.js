@@ -20,7 +20,20 @@ describe('project CreativeWork JSON-LD schemas', () => {
       { title: 'X', description: 'evil </script> payload', related_skills: [] },
     ]);
     expect(html).not.toContain('</script> payload');
-    expect(html).toContain('<\\/script>');
+    expect(html).toContain('\\u003c/script>');
+  });
+
+  test('generated script content stays valid JSON even with </script> and <!-- in text', () => {
+    const html = generateProjectSchemasHtml([
+      { title: 'X', description: 'before <!-- c --> and </script> after', related_skills: [] },
+    ]);
+    const m = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
+    expect(m).toBeTruthy();
+    // Must parse without throwing (no invalid backslash-bang escape, no premature tag close).
+    const parsed = JSON.parse(m[1]);
+    expect(parsed['@type']).toBe('CreativeWork');
+    expect(parsed.description).toContain('<!-- c -->');
+    expect(parsed.description).toContain('</script>');
   });
 
   test('returns empty string for empty/invalid input', () => {

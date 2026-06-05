@@ -42,9 +42,10 @@ function generateProjectSchemasHtml(projects) {
   return projects
     .map((project, index) => {
       const json = JSON.stringify(buildProjectSchema(project, index))
-        // Prevent the JSON payload from prematurely closing the <script> tag.
-        .replace(/<\/(script)/gi, '<\\/$1')
-        .replace(/<!--/g, '<\\!--');
+        // Escape every '<' as a JSON unicode escape so the payload can never
+        // prematurely close the <script> tag or start an HTML comment. \u003c
+        // is valid JSON (unlike a literal backslash-bang) and parses back to '<'.
+        .replace(/</g, '\\u003c');
       return `<script type="application/ld+json">${json}</script>`;
     })
     .join('\n    ');
