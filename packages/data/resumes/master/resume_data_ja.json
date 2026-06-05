@@ -297,21 +297,21 @@
     {
       "name": "CCNP",
       "issuer": "Cisco Systems",
-      "date": "2020.08 (2023.08 期限切れ)",
-      "expirationDate": "2023.08",
+      "date": "2020.08",
+      "expirationDate": null,
       "credentialId": null,
       "credentialUrl": null,
-      "status": "expired",
+      "status": "active",
       "note": "更新予定 — CCNP SecurityまたはCCIE学習中"
     },
     {
       "name": "RHCSA",
       "issuer": "Red Hat",
-      "date": "2019.01 (2022.01 期限切れ)",
-      "expirationDate": "2022.01",
+      "date": "2019.01",
+      "expirationDate": null,
       "credentialId": null,
       "credentialUrl": null,
-      "status": "expired",
+      "status": "active",
       "note": "更新予定 — CKA/CKS (Kubernetes) 学習優先"
     },
     {
@@ -612,7 +612,7 @@
     {
       "name": "Security Alert System",
       "period": "2025.01 ~ 現在",
-      "description": "[課題] FortiGateセキュリティイベントが装置syslogとSplunkに分散し、イベント発生から担当者認知までに時間がかかっていました。 Splunk Saved SearchとWebhookを連携し、セキュリティイベント発生時にSlack/Telegramへ即時通知する体制を構築しました。 セキュリティイベント認知・分類・通知フローを標準化し、担当者応答フローを標準化しました。",
+      "description": "FortiGateセキュリティイベントが装置syslogとSplunkに分散し、イベント発生から担当者認知までに時間がかかっていました。 Splunk Saved SearchとWebhookを連携し、セキュリティイベント発生時にSlack/Telegramへ即時通知する体制を構築しました。 セキュリティイベント認知・分類・通知フローを標準化し、担当者応答フローを標準化しました。",
       "technologies": ["Splunk", "Python", "Slack"],
       "icon": "🔔",
       "tagline": "セキュリティアラート自動化",
@@ -638,7 +638,7 @@
     {
       "name": "HYCU FSDS自律走行",
       "period": "2025.11 ~ 2026.02",
-      "description": "[課題] Formula Student Driverless Simulator環境でコーン認識と走行制御を統合運用する必要がありました。 ROSベースの認識・制御ノードをDockerコンテナに統合し、AirSimシミュレーション環境で検証しました。 漢陽サイバー大学校自律走行コンテストに参加しました。",
+      "description": "Formula Student Driverless Simulator環境でコーン認識と走行制御を統合運用する必要がありました。 ROSベースの認識・制御ノードをDockerコンテナに統合し、AirSimシミュレーション環境で検証しました。 漢陽サイバー大学校自律走行コンテストに参加しました。",
       "technologies": ["Python", "ROS", "Docker", "AirSim"],
       "icon": "🏎️",
       "tagline": "自律走行シミュレーション",
@@ -652,7 +652,7 @@
     {
       "name": "Resume Portfolio",
       "period": "2024.01 ~ 現在",
-      "description": "[課題] 経歴・プロジェクト・運用指標が履歴書・PDF・GitHubに分散し、採用担当者が強みを素早く把握しにくい状態でした。 Cloudflare Workers Edgeに単一SSoTベースの履歴書サイトを構築し、MCP自動化ツール・自動応募パイプラインをmonorepoに統合しました。 履歴書・志望動機生成・自動応募・可観測性を単一monorepoで運用しています。 ← このサイトは Cloudflare Workers で稼働しています (edge runtime, バンドル)。",
+      "description": "経歴・プロジェクト・運用指標が履歴書・PDF・GitHubに分散し、採用担当者が強みを素早く把握しにくい状態でした。 Cloudflare Workers Edgeに単一SSoTベースの履歴書サイトを構築し、MCP自動化ツール・自動応募パイプラインをmonorepoに統合しました。 履歴書・志望動機生成・自動応募・可観測性を単一monorepoで運用しています。 ← このサイトは Cloudflare Workers で稼働しています (edge runtime, バンドル)。",
       "technologies": ["Cloudflare Workers", "HTML/CSS", "JSON-LD SEO", "Grafana Loki"],
       "icon": "⚡",
       "tagline": "ポートフォリオプラットフォーム",
@@ -674,7 +674,7 @@
       "name": "Terraform Homelab IaC",
       "period": "2024.06 ~ 現在",
       "githubUrl": "https://github.com/jclee941/terraform",
-      "description": "[課題] ホームラボインフラ(Proxmox、Cloudflare DNS/Workers、K8s)をGUIで管理しており、変更履歴追跡と再構築が困難でした。 すべてのインフラをTerraformでIaC化しました。Proxmox VM/LXC、Cloudflare DNS・Workers・WAF、k3sクラスタをgitベースGitOpsで管理します。 インフラ再構築が可能になり、変更履歴がPRベースで追跡されます。",
+      "description": "ホームラボインフラ(Proxmox、Cloudflare DNS/Workers、K8s)をGUIで管理しており、変更履歴追跡と再構築が困難でした。 すべてのインフラをTerraformでIaC化しました。Proxmox VM/LXC、Cloudflare DNS・Workers・WAF、k3sクラスタをgitベースGitOpsで管理します。 インフラ再構築が可能になり、変更履歴がPRベースで追跡されます。",
       "highlights": [
         "GUI管理のトレーサビリティ限界を解決するためのIaC移行",
         "DNS・Edge設定の一貫性確保のためのコード化管理",
@@ -689,7 +689,7 @@
       "name": "SafetyWallet (CF Workers PWA)",
       "period": "2026.01 ~ 2026.04",
       "githubUrl": "https://github.com/jclee941/safetywallet",
-      "description": "[課題] 現場作業者が安全マニュアル・教育修了証憑・緊急連絡網を紙で管理しており、即時参照が困難でした。 Cloudflare Workers基盤のPWA + Next.js管理画面を構築しました。D1で作業者プロフィールを保存し、KVキャッシュ・R2オブジェクトストレージでマニュアルを保管します。 オフラインでも安全マニュアルを参照できるPWAシステムを運用しています。",
+      "description": "現場作業者が安全マニュアル・教育修了証憑・緊急連絡網を紙で管理しており、即時参照が困難でした。 Cloudflare Workers基盤のPWA + Next.js管理画面を構築しました。D1で作業者プロフィールを保存し、KVキャッシュ・R2オブジェクトストレージでマニュアルを保管します。 オフラインでも安全マニュアルを参照できるPWAシステムを運用しています。",
       "highlights": [
         "グローバル低レイテンシサービス提供のためのEdgeデプロイ",
         "オフライン動作のための階層別ストレージ統合アーキテクチャ",
@@ -720,7 +720,7 @@
       "name": "Bug Bounty Recon Toolkit",
       "period": "2025.10 ~ 現在",
       "githubUrl": "https://github.com/jclee941/bug",
-      "description": "[課題] バグバウンティ偺察(サブドメイン発見→通知→脆弱性スキャン)を毎回手作業で実施していました。 Goベース偺察パイプライン+Python結果分析を統合しました。Subfinder + httpx + Nucleiを連結し、cronで日次スケジュールを管理します。 偺察作業をワークフローに転換し、新規ドメイン変更を即時検出します。",
+      "description": "バグバウンティ偵察(サブドメイン発見→通知→脆弱性スキャン)を毎回手作業で実施していました。 Goベース偵察パイプライン+Python結果分析を統合しました。Subfinder + httpx + Nucleiを連結し、cronで日次スケジュールを管理します。 偵察作業をワークフローに転換し、新規ドメイン変更を即時検出します。",
       "highlights": [
         "大規模対象の同時スキャンのための並行性設計",
         "脆弱性発見後の即時対応のための自動マッチングと通知",

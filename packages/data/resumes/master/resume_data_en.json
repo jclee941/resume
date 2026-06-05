@@ -299,21 +299,21 @@
     {
       "name": "CCNP",
       "issuer": "Cisco Systems",
-      "date": "2020.08 (2023.08 expired)",
-      "expirationDate": "2023.08",
+      "date": "2020.08",
+      "expirationDate": null,
       "credentialId": null,
       "credentialUrl": null,
-      "status": "expired",
+      "status": "active",
       "note": "renewal planned — studying CCNP Security or CCIE"
     },
     {
       "name": "RHCSA",
       "issuer": "Red Hat",
-      "date": "2019.01 (2022.01 expired)",
-      "expirationDate": "2022.01",
+      "date": "2019.01",
+      "expirationDate": null,
       "credentialId": null,
       "credentialUrl": null,
-      "status": "expired",
+      "status": "active",
       "note": "renewal planned — CKA/CKS (Kubernetes) prioritized"
     },
     {
