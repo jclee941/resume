@@ -68,7 +68,7 @@
 .resume-description {
   font-size: var(--text-sm);
   color: var(--text-primary);
-  line-height: 1.6;
+  line-height: 1.5;
   margin-bottom: var(--space-2);
   font-family: var(--font-sans);
 }
@@ -138,11 +138,22 @@
 .project-description {
   font-size: var(--text-sm);
   color: var(--text-secondary);
-  line-height: 1.6;
+  line-height: 1.5;
   margin: var(--space-2) 0;
   padding-left: var(--space-4);
   font-family: var(--font-sans);
 }
+.desc-toggle {
+  margin: var(--space-1) 0 0 var(--space-4);
+  padding: 0;
+  background: none;
+  border: none;
+  color: var(--color-accent);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  cursor: pointer;
+}
+.desc-toggle:hover { text-decoration: underline; }
 .project-tech {
   font-size: var(--text-xs);
   color: var(--color-accent);
