@@ -2,7 +2,7 @@ html {
   scroll-behavior: smooth;
 }
 
-.js .reveal {
+.reveal-ready .reveal {
   opacity: 0;
   transform: translateY(18px);
   transition:
@@ -10,12 +10,12 @@ html {
     transform 0.5s ease-out;
 }
 
-.js .reveal.revealed {
+.reveal-ready .reveal.revealed {
   opacity: 1;
   transform: translateY(0);
 }
 
-.js .reveal-stagger > * {
+.reveal-ready .reveal-stagger > * {
   opacity: 0;
   transform: translateY(14px);
   transition:
@@ -43,7 +43,7 @@ html {
   transition-delay: 0.3s;
 }
 
-.js .reveal-stagger.revealed > * {
+.reveal-ready .reveal-stagger.revealed > * {
   opacity: 1;
   transform: translateY(0);
 }

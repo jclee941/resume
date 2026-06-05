@@ -51,30 +51,28 @@ describe('architecture note: tri-source locale duplication documented', () => {
   });
 });
 
-describe('progressive enhancement: html.js bootstrap is present and CSP-safe', () => {
-  const { injectScriptNoncePlaceholder } = require(path.join(PORTFOLIO, 'lib', 'templates.js'));
-  const { generateSecurityHeaders, CSP_NONCE_PLACEHOLDER } = require(
-    path.join(PORTFOLIO, 'lib', 'security-headers.js')
-  );
+describe('progressive enhancement: reveal is fail-open (app-JS failure cannot blank content)', () => {
+  const ui = read(path.join('src', 'scripts', 'modules', 'ui.js'));
+
+  test('ui.js gates the hidden state by adding reveal-ready only after IO setup', () => {
+    // The hidden state lives in `.reveal-ready .reveal`. ui.js must add that
+    // class itself, so that if ui.js never runs (load failure / delay) the
+    // class is absent and content stays visible. A synchronous <head> `js`
+    // class would re-create the blank-content bug whenever app JS fails.
+    expect(ui).toMatch(/classList\.add\(['"]reveal-ready['"]\)/);
+  });
+
+  test('reveal-ready is added inside initScrollReveal, not via a head bootstrap', () => {
+    const head = ui.slice(ui.indexOf('function initScrollReveal'));
+    expect(head).toMatch(/classList\.add\(['"]reveal-ready['"]\)/);
+  });
 
   for (const f of ['index.html', 'index-en.html']) {
-    test(`${f} sets the js class synchronously in <head> before first paint`, () => {
+    test(`${f} no longer ships a synchronous html.js reveal bootstrap`, () => {
       const html = read(f);
-      // The bootstrap must live in <head>, before the CSS does its first paint,
-      // so `.js .reveal { opacity:0 }` only ever applies once JS is confirmed.
-      const head = html.slice(html.indexOf('<head>'), html.indexOf('</head>'));
-      expect(head).toMatch(/document\.documentElement\.classList\.add\(\s*['"]js['"]\s*\)/);
+      const headHtml = html.slice(html.indexOf('<head>'), html.indexOf('</head>'));
+      // No inline head script may add a `js` class to gate reveal visibility.
+      expect(headHtml).not.toMatch(/classList\.add\(\s*['"]js['"]\s*\)/);
     });
   }
-
-  test('build pipeline auto-injects a nonce into the bootstrap script (CSP-safe)', () => {
-    const bootstrap = "<script>document.documentElement.classList.add('js');</script>";
-    const injected = injectScriptNoncePlaceholder(bootstrap);
-    expect(injected).toContain(`nonce="${CSP_NONCE_PLACEHOLDER}"`);
-  });
-
-  test('CSP allows nonce-tagged inline scripts via the same placeholder', () => {
-    const csp = generateSecurityHeaders([])['Content-Security-Policy'];
-    expect(csp).toContain(`nonce-${CSP_NONCE_PLACEHOLDER}`);
-  });
 });

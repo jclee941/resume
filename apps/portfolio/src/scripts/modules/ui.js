@@ -72,36 +72,48 @@ function initNavScrollEffect() {
 }
 
 function initScrollReveal() {
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  if (prefersReducedMotion) {
-    document.querySelectorAll('.reveal').forEach((el) => {
-      el.classList.add('revealed');
-    });
-    return;
-  }
-
   const revealElements = document.querySelectorAll('.reveal');
   if (revealElements.length === 0) return;
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('revealed');
-          observer.unobserve(entry.target);
-        }
-      });
-    },
-    {
-      // threshold:0 (not 0.1) so a tall section reveals as soon as ANY part
-      // intersects. In short landscape viewports a tall section can never reach
-      // 10% visibility, which previously left it stuck at opacity 0.
-      threshold: 0,
-      rootMargin: '0px 0px -50px 0px',
-    }
-  );
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (prefersReducedMotion) {
+    // No animation: reveal everything immediately. We intentionally do NOT add
+    // `reveal-ready`, so the hidden-state rule never applies and content shows.
+    revealElements.forEach((el) => el.classList.add('revealed'));
+    return;
+  }
 
+  // IntersectionObserver may be missing (old engines) or throw. If reveal can't
+  // be driven, leave content visible by never adding `reveal-ready`. The hidden
+  // state is gated on `.reveal-ready .reveal`, so this is fail-open: app-JS
+  // failure/delay can no longer leave content stuck at opacity:0.
+  if (typeof IntersectionObserver !== 'function') return;
+
+  let observer;
+  try {
+    observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('revealed');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        // threshold:0 (not 0.1) so a tall section reveals as soon as ANY part
+        // intersects. In short landscape viewports a tall section can never reach
+        // 10% visibility, which previously left it stuck at opacity 0.
+        threshold: 0,
+        rootMargin: '0px 0px -50px 0px',
+      }
+    );
+  } catch {
+    return;
+  }
+
+  // Only NOW, with a working observer wired up, opt into the hidden state.
+  document.documentElement.classList.add('reveal-ready');
   revealElements.forEach((el) => observer.observe(el));
 }
 
