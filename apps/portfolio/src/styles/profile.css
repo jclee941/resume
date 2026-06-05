@@ -157,3 +157,20 @@
   color: var(--color-accent);
   flex-shrink: 0;
 }
+
+/* About sub-section grouping: titled groups reduce clutter without removing content */
+.about-subsection {
+  margin-top: var(--space-5);
+}
+.about-subsection:first-child {
+  margin-top: 0;
+}
+.about-subsection__heading {
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  letter-spacing: var(--tracking-wide);
+  color: var(--color-accent-light);
+  text-transform: lowercase;
+}

@@ -81,4 +81,19 @@ describe('cards/evidence generateExpertiseSection', () => {
     expect(html).toContain('expertise-tags');
     expect(html).not.toContain('competency-item');
   });
+
+  it('B-S1: groups expertise and competencies as labeled sub-sections (declutter)', () => {
+    const html = generateExpertiseSection({
+      expertise: ['보안', 'SRE', 'SIEM/SOAR'],
+      coreCompetencies: ['금융권 보안 인프라 구축', 'SIEM 탐지 룰 설계'],
+    });
+    // Each group is a titled sub-section so the dense block reads as structured
+    // groups, not loose content. Headings make the hierarchy scannable.
+    expect((html.match(/about-subsection__heading/g) || []).length).toBeGreaterThanOrEqual(2);
+    // No content lost: all tags + competencies still present.
+    expect(html).toContain('SIEM/SOAR');
+    expect(html).toContain('SIEM 탐지 룰 설계');
+    expect((html.match(/class="expertise-tag"/g) || []).length).toBe(3);
+    expect((html.match(/class="competency-item"/g) || []).length).toBe(2);
+  });
 });
