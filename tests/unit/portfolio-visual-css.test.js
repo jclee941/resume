@@ -101,4 +101,18 @@ describe('portfolio visual CSS contract', () => {
     expect(langLink[0]).toMatch(/min-height:\s*44px/);
     expect(layoutCss).toMatch(/\.lang-link:focus-visible\s*{[^}]*outline/);
   });
+
+  test('S10 about-content uses a readable line measure (<= 75ch), not an over-wide block', () => {
+    // Layout BP (web.dev typography): prose line length 45-75ch is the readable
+    // window; 900px lets long Korean lines run far past that, hurting scanability.
+    const componentsCss = readStyle('components.css');
+    const aboutContent = componentsCss.match(/\.about-content\s*{[^}]*}/);
+    expect(aboutContent).toBeTruthy();
+    // measure must be expressed in ch (readability unit) and <= 75ch.
+    const m = aboutContent[0].match(/max-width:\s*(\d+)ch/);
+    expect(m).toBeTruthy();
+    expect(Number(m[1])).toBeLessThanOrEqual(75);
+    // the old over-wide 900px block must be gone.
+    expect(aboutContent[0]).not.toMatch(/max-width:\s*900px/);
+  });
 });

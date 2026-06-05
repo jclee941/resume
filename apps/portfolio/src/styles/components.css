@@ -59,7 +59,9 @@
   gap: var(--space-4);
   font-size: var(--text-base);
   line-height: var(--leading-relaxed);
-  max-width: 900px;
+  /* Readable line measure (web.dev typography: 45-75ch). 70ch keeps long
+     Korean lines within the comfortable scan window instead of 900px. */
+  max-width: 70ch;
   color: var(--text-secondary);
   font-family: var(--font-sans);
   padding: var(--space-4);
