@@ -43,6 +43,7 @@ function injectPlaceholders(html, options) {
     .replace('<!-- RESUME_DESCRIPTION_PLACEHOLDER -->', options.resumeDescriptionHtml || '')
     .replace('<!-- RESUME_CARDS_PLACEHOLDER -->', options.resumeCardsHtml)
     .replace('<!-- PROJECT_CARDS_PLACEHOLDER -->', options.projectCardsHtml)
+    .replace('<!-- PROJECT_SCHEMAS_PLACEHOLDER -->', options.projectSchemasHtml || '')
     .replace('<!-- INFRASTRUCTURE_CARDS_PLACEHOLDER -->', options.infrastructureCardsHtml)
     .replace('<!-- CERTIFICATION_CARDS_PLACEHOLDER -->', options.certCardsHtml || '')
     .replace('<!-- SKILLS_LIST_PLACEHOLDER -->', options.skillsHtml)
