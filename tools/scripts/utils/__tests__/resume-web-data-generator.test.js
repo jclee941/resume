@@ -120,3 +120,28 @@ describe('generateWebData → coverLetter (unsurfaced SSoT asset)', () => {
     assert.equal(out.coverLetter, null);
   });
 });
+
+describe('generateWebData → resumeEn[].stats (EN experience tag badges)', () => {
+  it('S2: resumeEn stats are populated even when company names are English', () => {
+    // The English SSoT carries English company names (e.g. "ITCEN CTS Co., Ltd.").
+    // stats must still resolve so EN experience cards show tag badges like the
+    // KO page does. A company-name keyed map fails here; stats must key by index.
+    const enSource = {
+      ...ssot,
+      careers: ssot.careers.map((c, i) => ({
+        ...c,
+        company: ['ITCEN CTS Co., Ltd.', 'Gaonnuri Information System Co., Ltd.',
+          'Quantec Investment Management', 'Jointree Co., Ltd.',
+          'Metanet M Platform Co., Ltd.', 'MTData Co., Ltd.'][i] || `Company ${i}`,
+      })),
+    };
+    const out = generateWebData(enSource);
+    assert.ok(Array.isArray(out.resumeEn) && out.resumeEn.length > 0, 'resumeEn present');
+    const populated = out.resumeEn.filter((r) => Array.isArray(r.stats) && r.stats.length > 0);
+    assert.equal(
+      populated.length,
+      out.resumeEn.length,
+      'every resumeEn entry must have non-empty stats regardless of company language'
+    );
+  });
+});
