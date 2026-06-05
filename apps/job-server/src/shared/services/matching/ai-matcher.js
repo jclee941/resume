@@ -1,10 +1,13 @@
 import { loadResume } from './job-matcher.js';
 
 const CLAUDE_CONFIG = {
-  apiKey: process.env.CLAUDE_API_KEY || process.env.ANTHROPIC_API_KEY,
-  model: 'claude-3-5-sonnet-20241022',
+  apiKey:
+    process.env.CLIPROXY_API_KEY ||
+    process.env.CLAUDE_API_KEY ||
+    process.env.ANTHROPIC_API_KEY,
+  baseUrl: (process.env.CLIPROXY_BASE || 'https://cliproxy.jclee.me/v1').replace(/\/$/, ''),
+  model: process.env.CLIPROXY_MODEL || 'claude-opus-4-8',
   maxTokens: 4000,
-  temperature: 0.1,
 };
 
 export async function analyzeWithClaude(prompt, text, { logger = console } = {}) {
@@ -14,20 +17,23 @@ export async function analyzeWithClaude(prompt, text, { logger = console } = {})
   }
 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch(`${CLAUDE_CONFIG.baseUrl}/chat/completions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': CLAUDE_CONFIG.apiKey,
-        'anthropic-version': '2023-06-01',
+        Authorization: `Bearer ${CLAUDE_CONFIG.apiKey}`,
       },
       body: JSON.stringify({
         model: CLAUDE_CONFIG.model,
         max_tokens: CLAUDE_CONFIG.maxTokens,
-        temperature: CLAUDE_CONFIG.temperature,
-        system:
-          '당신은 채용 전문가입니다. 한국어 채용 공고와 이력서를 분석하여 상세한 매칭 정보를 제공해주세요.',
-        messages: [{ role: 'user', content: `${prompt}\n\n텍스트: ${text}` }],
+        messages: [
+          {
+            role: 'system',
+            content:
+              '당신은 채용 전문가입니다. 한국어 채용 공고와 이력서를 분석하여 상세한 매칭 정보를 제공해주세요.',
+          },
+          { role: 'user', content: `${prompt}\n\n텍스트: ${text}` },
+        ],
       }),
     });
 
@@ -36,7 +42,7 @@ export async function analyzeWithClaude(prompt, text, { logger = console } = {})
     }
 
     const result = await response.json();
-    return result.content[0].text;
+    return result.choices[0].message.content;
   } catch (error) {
     logger.error('Claude AI 분석 실패:', error.message);
     return null;
@@ -54,7 +60,15 @@ export async function analyzeJobPosting(jobPosting, { logger = console } = {}) {
 
 JSON 형식으로만 응답해주세요.`;
 
-  const analysis = await analyzeWithClaude(prompt, jobPosting.description || jobPosting.content, {
+  const jobText = [
+    jobPosting.position || jobPosting.title || '',
+    jobPosting.company ? `회사: ${jobPosting.company}` : '',
+    jobPosting.location ? `근무지: ${jobPosting.location}` : '',
+    jobPosting.description || jobPosting.content || '',
+  ]
+    .filter(Boolean)
+    .join('\n');
+  const analysis = await analyzeWithClaude(prompt, jobText, {
     logger,
   });
   if (!analysis) return null;
@@ -80,7 +94,9 @@ export async function analyzeResume(resume, { logger = console } = {}) {
 JSON 형식으로만 응답해주세요.`;
 
   const resumeText =
-    `${resume.summary || ''} ${resume.experience || ''} ${resume.skills || ''}`.trim();
+    typeof resume === 'string'
+      ? resume
+      : `${resume.summary || ''} ${resume.experience || ''} ${resume.skills || ''}`.trim();
   const analysis = await analyzeWithClaude(prompt, resumeText, { logger });
   if (!analysis) return null;
 

@@ -74,7 +74,7 @@ export async function aiSearchJobs(args) {
   console.log('🧠 AI 기반 재매칭 시작...\n');
 
   const aiResult = await matchJobsWithAI(
-    '../../../../../packages/data/resumes/master/resume_master.md',
+    getResumeMasterMarkdownPath(),
     searchResult.jobs,
     {
       minScore: 70,
