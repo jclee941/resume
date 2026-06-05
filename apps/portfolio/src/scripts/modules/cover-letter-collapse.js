@@ -24,6 +24,7 @@ export function initCoverLetterCollapse() {
   if (paras.length <= 2) return;
 
   const labels = collapseLang();
+  if (!list.id) list.id = 'cover-letter-paragraphs';
   const hidden = paras.slice(1); // keep paragraph 1, collapse the rest
   hidden.forEach((p) => {
     p.hidden = true;
@@ -33,6 +34,7 @@ export function initCoverLetterCollapse() {
   toggle.type = 'button';
   toggle.className = 'desc-toggle cover-letter__toggle';
   toggle.setAttribute('aria-expanded', 'false');
+  toggle.setAttribute('aria-controls', list.id);
   toggle.textContent = labels.more;
 
   toggle.addEventListener('click', (e) => {
