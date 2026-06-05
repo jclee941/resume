@@ -52,13 +52,17 @@ type Variant struct {
 }
 
 var resumeVariants = map[string]Variant{
-	"master":    {"packages/data/resumes/master/resume_master.md", "packages/data/resumes/master/resume_final.pdf", fontNanum},
-	"final":     {"packages/data/resumes/master/resume_master.md", "packages/data/resumes/master/resume_final.pdf", fontNanum},
-	"toss":      {"packages/data/resumes/applications/toss/toss_devops_engineer_resume.md", "packages/data/resumes/applications/toss/toss_devops_engineer_resume.pdf", fontNoto},
-	"general":   {"packages/data/resumes/generated/resume_general.md", "packages/data/resumes/generated/resume_general.pdf", fontNanum},
-	"technical": {"packages/data/resumes/generated/resume_technical.md", "packages/data/resumes/generated/resume_technical.pdf", fontNanum},
-	"security":  {"packages/data/resumes/generated/resume_security.md", "packages/data/resumes/generated/resume_security.pdf", fontNanum},
-	"short":     {"packages/data/resumes/generated/resume_short.md", "packages/data/resumes/generated/resume_short.pdf", fontNanum},
+	"master":         {"packages/data/resumes/master/resume_master.md", "packages/data/resumes/master/resume_final.pdf", fontNanum},
+	"final":          {"packages/data/resumes/master/resume_master.md", "packages/data/resumes/master/resume_final.pdf", fontNanum},
+	"toss":           {"packages/data/resumes/applications/toss/toss_devops_engineer_resume.md", "packages/data/resumes/applications/toss/toss_devops_engineer_resume.pdf", fontNoto},
+	"general":        {"packages/data/resumes/generated/resume_general.md", "packages/data/resumes/generated/resume_general.pdf", fontNanum},
+	"technical":      {"packages/data/resumes/generated/resume_technical.md", "packages/data/resumes/generated/resume_technical.pdf", fontNanum},
+	"security":       {"packages/data/resumes/generated/resume_security.md", "packages/data/resumes/generated/resume_security.pdf", fontNanum},
+	"short":          {"packages/data/resumes/generated/resume_short.md", "packages/data/resumes/generated/resume_short.pdf", fontNanum},
+	"nextfin":        {"packages/data/resumes/applications/nextfin/nextfin_security_engineer_resume.md", "packages/data/resumes/applications/nextfin/nextfin_security_engineer_resume.pdf", fontNanum},
+	"hyundaicapital": {"packages/data/resumes/applications/hyundaicapital/hyundaicapital_cloud_devsecops_resume.md", "packages/data/resumes/applications/hyundaicapital/hyundaicapital_cloud_devsecops_resume.pdf", fontNanum},
+	"coupang":        {"packages/data/resumes/applications/coupang/coupang_senior_security_engineer_resume.md", "packages/data/resumes/applications/coupang/coupang_senior_security_engineer_resume.pdf", fontNanum},
+	"musinsa":        {"packages/data/resumes/applications/musinsa/musinsa_network_security_engineer_resume.md", "packages/data/resumes/applications/musinsa/musinsa_network_security_engineer_resume.pdf", fontNanum},
 }
 
 // Doc variants: source|output
