@@ -48,8 +48,11 @@ function generateExpertiseSection(data) {
   if (expertise.length > 0) {
     const tags = expertise
       .map((e) => `<span class="expertise-tag">${escapeHtml(String(e))}</span>`)
-      .join('\n        ');
-    html += `<div class="expertise-tags">\n        ${tags}\n      </div>`;
+      .join('\n          ');
+    html += `<div class="about-subsection about-subsection--expertise">
+      <h3 class="about-subsection__heading">&gt; expertise</h3>
+      <div class="expertise-tags">\n          ${tags}\n      </div>
+    </div>`;
   }
   if (competencies.length > 0) {
     const items = competencies
@@ -59,8 +62,11 @@ function generateExpertiseSection(data) {
             String(c)
           )}</li>`
       )
-      .join('\n        ');
-    html += `\n      <ul class="competency-list">\n        ${items}\n      </ul>`;
+      .join('\n          ');
+    html += `\n      <div class="about-subsection about-subsection--competencies">
+      <h3 class="about-subsection__heading">&gt; core_competencies</h3>
+      <ul class="competency-list">\n          ${items}\n      </ul>
+    </div>`;
   }
   return html;
 }
