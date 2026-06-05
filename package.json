@@ -22,6 +22,8 @@
     "sync:pptx": "python3 tools/scripts/build/generate_shinhan_pptx.py",
     "sync:pdf": "go run ./tools/scripts/build/pdf-generator.go master",
     "sync:all": "npm run sync:data && npm run sync:pdf && npm run sync:pptx",
+    "op:run": "cd tools/scripts && go run ./onepassword/run",
+    "op:seed:resume": "cd tools/scripts && go run ./onepassword/seed-resume",
     "sync:proposals": "node apps/job-server/src/sync/proposal-review-cli.js && go run ./tools/scripts/sync/apply-proposals.go",
     "enrich:github": "cd tools/scripts/enrichment/github && go run main.go",
     "enrich:skills": "cd tools/scripts/enrichment/skills && go run main.go",
