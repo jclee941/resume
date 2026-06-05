@@ -1,7 +1,6 @@
 # PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-04-29
-**Commit:** `e02e53d`
+**Generated:** 2026-04-29 (verified fd0ba22)
 **Branch:** `master`
 
 ## OVERVIEW
@@ -111,13 +110,11 @@ observability/automation configs.
 - Never place runtime artifacts in source domains (`logs/`, `data/`, `tmp/`).
 - Never use catch-all names like `utils.ts` or `helpers.js`; use specific names
   (`date-formatter.js`).
-- Never exceed 500 LOC per file without splitting (see
-  `docs/conventions/architecture-rules.md`). Known tech debt files in job-server
-  (job-matcher.js 554L, auto-apply-config.js 499L, application-repository.js
-  492L, wanted-strategy.js 489L, performance-metrics.js 479L,
-  approval-manager.js 454L, application-tracker.js 452L,
-  renew-jobkorea-session.js 464L) and in job-dashboard (applications.js 9544L,
-  auto-apply.js 10963L) are scheduled for split per SSOT-047..049.
+- Never exceed 200 LOC per file without splitting (this project enforces the
+  soft 200-LOC limit as HARD; general fallback is 500). See
+  `docs/conventions/architecture-rules.md`. Epic 6 file-size hygiene is
+  complete — the previously oversized job-server/job-dashboard handlers have
+  been split; do not re-grow them.
 
 ## UNIQUE STYLES
 
@@ -173,7 +170,7 @@ pre-commit install                                              # Install pre-co
 
 ## NOTES
 
-#JR|- 45 child AGENTS.md files exist across `apps/`, `tests/`, `tools/`,
+- 48 child AGENTS.md files exist across `apps/`, `tests/`, `tools/`,
 `infrastructure/`, and `packages/`; avoid duplicating their scope from the
 root.
 
@@ -200,7 +197,7 @@ Active improvement plan: `docs/architecture/SSOT_IMPROVEMENT_PLAN.md`
 | Epic 3 | Env/Secrets SSOT                                                                              | Partial. Cloudflare Workers Secrets adopted as default; full secrets manager (Doppler/Keyflare) deferred.             |
 | Epic 4 | Domain SSOT consolidation                                                                     | Foundation modules created in @resume/shared. App-local migration is per-domain follow-up PRs.                        |
 | Epic 5 | Documentation SSOT                                                                            | Completed. .gitlab-legacy/ removed, rules/ moved to docs/conventions/, root binaries deleted.                         |
-| Epic 6 | File-size hygiene                                                                             | Pending. Splits of 9544L applications.js + 10963L auto-apply.js are large enough to warrant their own PR series.      |
+| Epic 6 | File-size hygiene                                                                             | Completed. job-dashboard/job-server oversized handlers split; largest source files now under the 200-LOC project limit.  |
 
 #AY|- Never include concrete performance metrics (percentages, ratios, or absolute numbers) in
 #QH| portfolio/resume text. Describe outcomes factually without quantified claims (e.g., say
