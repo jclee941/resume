@@ -50,3 +50,31 @@ describe('architecture note: tri-source locale duplication documented', () => {
     expect(t).toMatch(/locale-aware template/);
   });
 });
+
+describe('progressive enhancement: html.js bootstrap is present and CSP-safe', () => {
+  const { injectScriptNoncePlaceholder } = require(path.join(PORTFOLIO, 'lib', 'templates.js'));
+  const { generateSecurityHeaders, CSP_NONCE_PLACEHOLDER } = require(
+    path.join(PORTFOLIO, 'lib', 'security-headers.js')
+  );
+
+  for (const f of ['index.html', 'index-en.html']) {
+    test(`${f} sets the js class synchronously in <head> before first paint`, () => {
+      const html = read(f);
+      // The bootstrap must live in <head>, before the CSS does its first paint,
+      // so `.js .reveal { opacity:0 }` only ever applies once JS is confirmed.
+      const head = html.slice(html.indexOf('<head>'), html.indexOf('</head>'));
+      expect(head).toMatch(/document\.documentElement\.classList\.add\(\s*['"]js['"]\s*\)/);
+    });
+  }
+
+  test('build pipeline auto-injects a nonce into the bootstrap script (CSP-safe)', () => {
+    const bootstrap = "<script>document.documentElement.classList.add('js');</script>";
+    const injected = injectScriptNoncePlaceholder(bootstrap);
+    expect(injected).toContain(`nonce="${CSP_NONCE_PLACEHOLDER}"`);
+  });
+
+  test('CSP allows nonce-tagged inline scripts via the same placeholder', () => {
+    const csp = generateSecurityHeaders([])['Content-Security-Policy'];
+    expect(csp).toContain(`nonce-${CSP_NONCE_PLACEHOLDER}`);
+  });
+});

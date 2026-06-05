@@ -61,4 +61,26 @@ describe('portfolio visual CSS contract', () => {
     expect(bodyRule).toBeTruthy();
     expect(bodyRule[0]).toContain('background-color: var(--bg-primary);');
   });
+
+  test('S6 reveal hidden state is scoped to html.js for progressive enhancement', () => {
+    // Without JS the IntersectionObserver never adds `.revealed`, so an
+    // unconditional `.reveal { opacity: 0 }` permanently hides main content.
+    // Scope the hidden state to `.js` (set synchronously in <head>) so that
+    // no-JS / JS-delayed / JS-failed visitors still see all content.
+    const animationsCss = readStyle('animations.css');
+    expect(animationsCss).toContain('.js .reveal {');
+    // No unscoped `.reveal { ... opacity: 0 }` rule may exist.
+    const unscopedReveal = animationsCss.match(/^\.reveal\s*{[^}]*}/m);
+    expect(unscopedReveal && /opacity:\s*0/.test(unscopedReveal[0])).toBeFalsy();
+    // The revealed state stays intact.
+    expect(animationsCss).toMatch(/\.reveal\.revealed\s*{[^}]*opacity:\s*1/);
+  });
+
+  test('S7 reveal-stagger hidden state is scoped to html.js', () => {
+    const animationsCss = readStyle('animations.css');
+    expect(animationsCss).toContain('.js .reveal-stagger > * {');
+    const unscopedStagger = animationsCss.match(/^\.reveal-stagger\s*>\s*\*\s*{[^}]*}/m);
+    expect(unscopedStagger && /opacity:\s*0/.test(unscopedStagger[0])).toBeFalsy();
+    expect(animationsCss).toMatch(/\.reveal-stagger\.revealed\s*>\s*\*\s*{[^}]*opacity:\s*1/);
+  });
 });
