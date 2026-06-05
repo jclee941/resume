@@ -3,7 +3,6 @@ import { initUI } from './modules/ui.js';
 import { initSkillRadar } from './modules/skill-radar.js';
 import { initCareerTimeline } from './modules/timeline.js';
 import { initProjectCards } from './modules/project-cards.js';
-import { initCoverLetterCollapse } from './modules/cover-letter-collapse.js';
 import { initProjectMore } from './modules/project-more.js';
 
 // Initialize all modules. main.js is injected dynamically (a nonce'd loader
@@ -18,7 +17,6 @@ function bootstrapPortfolio() {
   initSkillRadar();
   initCareerTimeline();
   initProjectCards();
-  initCoverLetterCollapse();
   initProjectMore();
 
   // Service Worker Registration

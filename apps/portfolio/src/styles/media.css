@@ -152,6 +152,11 @@
     padding: var(--space-5) var(--space-4);
   }
 
+  .about-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
   .section-hero {
     min-height: auto;
   }

@@ -154,11 +154,6 @@
   padding: var(--space-5) 0;
   align-items: start;
 }
-/* Collapsed paragraphs must truly collapse: the .cover-letter__para grid rule
-   above out-specifies the UA [hidden]{display:none}, so restore it. */
-.cover-letter__para[hidden] {
-  display: none;
-}
 /* Continuous spine behind the numbered nodes */
 .cover-letter__para::before {
   content: '';
