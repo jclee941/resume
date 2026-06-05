@@ -36,3 +36,16 @@
   background: var(--glass-bg-hover);
   transform: translateX(var(--space-1));
 }
+
+/* Copy-to-clipboard affordance for the email contact (progressive enhancement) */
+.contact-copy-status {
+  display: block;
+  margin-top: var(--space-2);
+  min-height: 1em;
+  font-size: var(--text-sm);
+  color: var(--color-accent-light);
+}
+.contact-item--email.is-copied {
+  color: var(--color-accent-strong);
+  border-color: var(--color-accent);
+}
