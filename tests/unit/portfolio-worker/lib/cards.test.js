@@ -767,6 +767,21 @@ describe('Cards Module', () => {
       expect(html).toContain('href="mailto:test@example.com"');
     });
 
+    test('email link exposes copy-to-clipboard affordance while keeping mailto fallback', () => {
+      // Progressive enhancement: JS copies the address, but the anchor stays a
+      // working mailto so no-JS / failed-JS visitors still reach the inbox.
+      const contactData = { email: 'test@example.com' };
+      const html = generateContactGrid(contactData);
+      expect(html).toContain('href="mailto:test@example.com"');
+      expect(html).toContain('data-contact-email="test@example.com"');
+    });
+
+    test('contact grid includes an aria-live status region for copy feedback', () => {
+      const html = generateContactGrid({ email: 'test@example.com' });
+      expect(html).toMatch(/role="status"[^>]*aria-live="polite"|aria-live="polite"[^>]*role="status"/);
+      expect(html).toContain('contact-copy-status');
+    });
+
     test('should generate website link', () => {
       const contactData = { website: 'https://example.com' };
       const html = generateContactGrid(contactData);
@@ -793,8 +808,10 @@ describe('Cards Module', () => {
       const html = generateContactGrid(contactData);
       // target="_blank" links need an aria-label indicating a new tab opens.
       expect(html).toContain('GitHub (opens in new tab)');
-      // mailto link does NOT open a new tab, so it keeps a plain label.
-      expect(html).toContain('aria-label="Email"');
+      // mailto link does NOT open a new tab; its label now also signals the
+      // copy-to-clipboard affordance but must NOT claim a new tab opens.
+      expect(html).toContain('aria-label="Email (click to copy address)"');
+      expect(html).not.toContain('Email (opens in new tab)');
     });
 
     test('should generate all contact links when all provided', () => {

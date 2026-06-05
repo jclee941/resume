@@ -1,3 +1,5 @@
+import { initContactCopy } from './contact-copy.js';
+
 export function initUI() {
   initSmoothScroll();
   initNavScrollEffect();
@@ -6,6 +8,7 @@ export function initUI() {
   initScrollProgress();
   initBackToTop();
   initMobileNav();
+  initContactCopy();
 }
 
 /**
