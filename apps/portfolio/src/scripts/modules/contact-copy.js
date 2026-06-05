@@ -17,7 +17,7 @@ function announce(root, message) {
   if (status) status.textContent = message;
 }
 
-async function copyEmail(link, root) {
+async function copyEmail(link, root, navigate) {
   const email = link.dataset && link.dataset.contactEmail;
   if (!email) return;
   const clip = typeof navigator !== 'undefined' ? navigator.clipboard : null;
@@ -35,11 +35,22 @@ async function copyEmail(link, root) {
       announce(root, '');
     }, RESET_MS);
   } catch {
-    // Fail open: clipboard denied/unavailable — say nothing, mailto remains.
+    // Copy failed (permission denied / policy / transient). preventDefault()
+    // already ran, so the browser will NOT follow the mailto on its own.
+    // Fail open by navigating to the mailto target ourselves.
+    const href = link.getAttribute && link.getAttribute('href');
+    if (href) navigate(href);
   }
 }
 
-export function initContactCopy(root = document) {
+function defaultNavigate(href) {
+  if (typeof window !== 'undefined' && window.location) {
+    window.location.href = href;
+  }
+}
+
+export function initContactCopy(root = document, options = {}) {
+  const navigate = options.navigate || defaultNavigate;
   const links = root.querySelectorAll('[data-contact-email]');
   if (!links || links.length === 0) return;
   const hasClipboard =
@@ -52,7 +63,7 @@ export function initContactCopy(root = document) {
       // mailto link proceed untouched (true progressive enhancement).
       if (!hasClipboard) return;
       if (event && typeof event.preventDefault === 'function') event.preventDefault();
-      copyEmail(link, root);
+      copyEmail(link, root, navigate);
     });
   });
 }
