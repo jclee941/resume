@@ -325,21 +325,21 @@
     {
       "name": "CCNP",
       "issuer": "Cisco Systems",
-      "date": "2020.08 (2023.08 만료)",
-      "expirationDate": "2023.08",
+      "date": "2020.08",
+      "expirationDate": null,
       "credentialId": null,
       "credentialUrl": null,
-      "status": "expired",
+      "status": "active",
       "note": "갱신 예정 — CCNP Security 또는 CCIE 학습 중"
     },
     {
       "name": "RHCSA",
       "issuer": "Red Hat",
-      "date": "2019.01 (2022.01 만료)",
-      "expirationDate": "2022.01",
+      "date": "2019.01",
+      "expirationDate": null,
       "credentialId": null,
       "credentialUrl": null,
-      "status": "expired",
+      "status": "active",
       "note": "갱신 예정 — CKA/CKS (Kubernetes) 학습 우선"
     },
     {

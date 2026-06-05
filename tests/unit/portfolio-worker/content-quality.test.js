@@ -54,8 +54,9 @@ describe('SSoT content quality', () => {
 
     describe(file, () => {
       let strings;
+      let data;
       beforeAll(() => {
-        const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
         strings = collectStrings(data);
       });
 
@@ -71,6 +72,35 @@ describe('SSoT content quality', () => {
           .map((s) => ({ s, dup: findCircularViaPhrase(s) }))
           .filter((x) => x.dup);
         expect(offenders.map((o) => o.dup)).toEqual([]);
+      });
+
+      test('has no content-production work markers like [課題] in any string', () => {
+        // Bracketed problem-framing markers ([課題]=issue, [解決]=solution, etc.)
+        // are authoring scaffolds and must never reach rendered copy.
+        const markerRe = /\[(課題|解決|成果|問題|과제|해결|성과|Problem|Solution|Outcome)\]/;
+        const offenders = strings.filter((s) => markerRe.test(s));
+        expect(offenders).toEqual([]);
+      });
+
+      test('certifications expose acquisition date only (no expiry note/status/field)', () => {
+        const certs = (data && data.certifications) || [];
+        // No parenthetical expiry note baked into the date string.
+        const dateOffenders = certs.filter(
+          (c) => typeof c.date === 'string' && /\(/.test(c.date)
+        );
+        expect(dateOffenders.map((c) => `${c.name}: ${c.date}`)).toEqual([]);
+        // No 'expired' status and no populated expirationDate.
+        const statusOffenders = certs.filter(
+          (c) => String(c.status || '').toLowerCase() === 'expired'
+        );
+        expect(statusOffenders.map((c) => c.name)).toEqual([]);
+        const expiryOffenders = certs.filter((c) => c.expirationDate);
+        expect(expiryOffenders.map((c) => c.name)).toEqual([]);
+      });
+
+      test('Japanese reconnaissance term is not the typo \u507a\u5bdf', () => {
+        const offenders = strings.filter((s) => s.includes('\u507a\u5bdf'));
+        expect(offenders).toEqual([]);
       });
     });
   }
