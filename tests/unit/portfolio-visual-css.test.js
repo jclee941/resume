@@ -83,4 +83,13 @@ describe('portfolio visual CSS contract', () => {
     expect(unscopedStagger && /opacity:\s*0/.test(unscopedStagger[0])).toBeFalsy();
     expect(animationsCss).toMatch(/\.reveal-stagger\.revealed\s*>\s*\*\s*{[^}]*opacity:\s*1/);
   });
+
+  test('S8 revealed state outranks the hidden state regardless of rule order', () => {
+    // `.js .reveal` and `.reveal.revealed` are both 0-2-0; equal specificity
+    // means the later rule wins, making correctness order-dependent. Scope the
+    // revealed rule to `.js` too (0-3-0) so it always outranks the hidden rule.
+    const animationsCss = readStyle('animations.css');
+    expect(animationsCss).toMatch(/\.js\s+\.reveal\.revealed\s*{[^}]*opacity:\s*1/);
+    expect(animationsCss).toMatch(/\.js\s+\.reveal-stagger\.revealed\s*>\s*\*\s*{[^}]*opacity:\s*1/);
+  });
 });
