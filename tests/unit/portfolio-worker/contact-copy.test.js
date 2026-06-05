@@ -125,4 +125,18 @@ describe('contact-copy module', () => {
     await Promise.resolve();
     expect(navigate).toHaveBeenCalledWith('mailto:fail@x.com');
   });
+
+  test('contact-copy: clipboard vanishing after init still falls open to mailto', async () => {
+    // hasClipboard is computed at init; if the API disappears before the click,
+    // preventDefault() already fired, so we must still navigate to the mailto.
+    global.navigator = { clipboard: { writeText: jest.fn().mockResolvedValue(undefined) } };
+    const root = makeRoot({ email: 'gone@x.com' });
+    const navigate = jest.fn();
+    initContactCopy(root, { navigate });
+    global.navigator = {}; // API vanishes between init and click
+    root.link.dispatch('click');
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(navigate).toHaveBeenCalledWith('mailto:gone@x.com');
+  });
 });

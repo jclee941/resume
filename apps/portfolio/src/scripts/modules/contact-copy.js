@@ -22,7 +22,10 @@ async function copyEmail(link, root, navigate) {
   if (!email) return;
   const clip = typeof navigator !== 'undefined' ? navigator.clipboard : null;
   if (!clip || typeof clip.writeText !== 'function') {
-    // No Clipboard API: leave the mailto link to do its job (do not preventDefault elsewhere).
+    // Clipboard API disappeared between init and click (very rare). The click
+    // was already prevented, so fail open to the mailto target.
+    const href = link.getAttribute && link.getAttribute('href');
+    if (href) navigate(href);
     return;
   }
   try {
