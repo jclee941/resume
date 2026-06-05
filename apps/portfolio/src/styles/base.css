@@ -30,7 +30,7 @@ body {
   font-size: var(--text-base);
   line-height: var(--leading-relaxed);
   color: var(--text-primary);
-  background: var(--bg-primary);
+  background: var(--gradient-page-atmosphere);
   /* Explicit opaque background-color so computed background-color is never
      transparent (gradients/background-image reset it), keeping a solid
      backdrop behind light hero text for contrast tooling. */
