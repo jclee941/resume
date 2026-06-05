@@ -94,7 +94,10 @@ function initScrollReveal() {
       });
     },
     {
-      threshold: 0.1,
+      // threshold:0 (not 0.1) so a tall section reveals as soon as ANY part
+      // intersects. In short landscape viewports a tall section can never reach
+      // 10% visibility, which previously left it stuck at opacity 0.
+      threshold: 0,
       rootMargin: '0px 0px -50px 0px',
     }
   );
