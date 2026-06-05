@@ -9,6 +9,7 @@ syncWantedAbout,
 syncWantedActivities,
 syncWantedContactInfo,
 syncWantedEducations,
+  syncWantedCareers,
 } from '../wanted-sections.js';
 import { syncCareerProjects, collectCareerProjects } from '../wanted-sections/career-projects.js';
 import { CONFIG } from '../constants.js';
@@ -176,6 +177,57 @@ describe('Wanted SSoT field mapping correctness', () => {
     }
   });
 
+  it('syncWantedCareers is idempotent when live careers and projects already match SSoT', async () => {
+    const original = { APPLY: CONFIG.APPLY, DIFF_ONLY: CONFIG.DIFF_ONLY };
+    CONFIG.APPLY = false;
+    CONFIG.DIFF_ONLY = true;
+    try {
+      const ssotCareers = realSSoT.careers.slice(0, 2);
+      const liveCareers = ssotCareers.map((career, index) => {
+        const mapped = mapCareerToWanted(career);
+        return {
+          id: `career-${index + 1}`,
+          ...mapped,
+          projects: collectCareerProjects(career).map((project, projectIndex) => ({
+            id: `project-${index + 1}-${projectIndex + 1}`,
+            ...project,
+          })),
+        };
+      });
+      const client = {
+        getResumeDetail: async () => ({ careers: liveCareers }),
+      };
+
+      const result = await syncWantedCareers(client, { careers: ssotCareers }, {}, 'resume-careers');
+
+      assert.strictEqual(result.changes, 0);
+      assert.strictEqual(result.dryRun, true);
+    } finally {
+      CONFIG.APPLY = original.APPLY;
+      CONFIG.DIFF_ONLY = original.DIFF_ONLY;
+    }
+  });
+
+  it('syncCareerProjects replaces a matching-title project when description changed', async () => {
+    await withApplyEnabled(async () => {
+      const client = mockClient();
+      const career = realSSoT.careers.find((c) => Array.isArray(c.projects) && c.projects.length > 0);
+      const desired = collectCareerProjects(career);
+      const existing = [{ id: 'project-old', title: desired[0].title, description: 'old wording' }];
+
+      await syncCareerProjects(client, 'resume-1', 'career-1', career, existing);
+
+      assert.ok(
+        client.calls.some((call) => call.method === 'deleteProject' && call.projectId === 'project-old'),
+        'changed project should be deleted for replacement'
+      );
+      assert.ok(
+        client.calls.some((call) => call.method === 'addProject' && call.payload.title === desired[0].title),
+        'changed project should be re-added with desired description'
+      );
+    });
+  });
+
   it('syncCareerProjects is non-destructive: keeps matching remote projects, adds new, deletes only stale', async () => {
     await withApplyEnabled(async () => {
       const client = mockClient();
@@ -183,7 +235,7 @@ describe('Wanted SSoT field mapping correctness', () => {
       const desired = collectCareerProjects(career);
       // Remote already has the first desired project (by title) + a stale one.
       const existing = [
-        { id: 'keep-1', title: desired[0].title },
+        { id: 'keep-1', title: desired[0].title, description: desired[0].description },
         { id: 'stale-1', title: '이제 없는 프로젝트' },
       ];
 

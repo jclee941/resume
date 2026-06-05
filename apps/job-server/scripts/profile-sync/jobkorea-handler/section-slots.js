@@ -31,7 +31,7 @@ async function deleteExistingCareerEntries(page) {
       for (const field of careerNames) {
         const input = document.getElementsByName(field.name)[0];
         const container = input?.closest('.container');
-        const deleteButton = container?.querySelector('button.buttonDeleteField');
+        const deleteButton = container?.querySelector('button.buttonDeleteField, button.buttonDelete');
         if (!deleteButton) continue;
         deleteButton.click();
         deleted++;
@@ -57,7 +57,7 @@ async function deleteExistingIntroEntries(page) {
       for (const field of introHeaders) {
         const input = document.getElementsByName(field.name)[0];
         const container = input?.closest('.container');
-        const deleteButton = container?.querySelector('button.buttonDeleteField');
+        const deleteButton = container?.querySelector('button.buttonDeleteField, button.buttonDelete');
         if (!deleteButton) continue;
         deleteButton.click();
         deleted++;
@@ -101,6 +101,19 @@ async function recreateIntroEntries(handler, page, needed) {
     log(`Deleted ${deleted} existing intro entr${deleted === 1 ? 'y' : 'ies'} before rebuild`, 'info', 'jobkorea');
   }
 
+  try {
+    await page.waitForFunction(
+      () => {
+        return !$('#frm1')
+          .serializeArray()
+          .some((f) => /^ResumeProfile\[[^\]]+\]/.test(f.name));
+      },
+      null,
+      { timeout: 5000 }
+    );
+  } catch {
+    log('Timed out waiting for stale intro rows to disappear; forcing fresh intro slot', 'warn', 'jobkorea');
+  }
 
   await addJobKoreaEntrySlots(handler, page, 'ResumeProfile', needed, { force: true });
 }
