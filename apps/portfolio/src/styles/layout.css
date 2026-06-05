@@ -85,8 +85,8 @@
 .section-observability,
 .section-status,
 .section-contact {
-  margin-bottom: var(--space-16);
-  padding-bottom: var(--space-10);
+  margin-bottom: var(--space-12);
+  padding-bottom: var(--space-8);
   border-bottom: 1px solid var(--border-primary);
 }
 

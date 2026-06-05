@@ -59,9 +59,10 @@ function generateProjectCards(projectsData, dataHash) {
     return TEMPLATE_CACHE.projectCardsHtml;
   }
 
+  const FEATURED_VISIBLE = 5;
   const html = [...projectsData]
     .sort((a, b) => (a.displayOrder ?? 999) - (b.displayOrder ?? 999))
-    .map((project) => {
+    .map((project, idx) => {
       const githubUrl = project.githubUrl || project.repoUrl;
       const demoUrl = project.demoUrl || project.liveUrl;
       const hasLink = demoUrl || githubUrl;
@@ -69,9 +70,15 @@ function generateProjectCards(projectsData, dataHash) {
       const titleElement = buildProjectTitle(project, link, hasLink);
       const metaLine = buildProjectMeta(project, githubUrl, demoUrl);
       const projectLinks = buildProjectLinks(project, githubUrl, demoUrl);
+      // Progressive disclosure: show the top FEATURED_VISIBLE projects (by
+      // displayOrder) by default; collapse the rest behind a "\uB354\uBCF4\uAE30" toggle so
+      // the section is curated without removing any project from the DOM.
+      const collapsed = idx >= FEATURED_VISIBLE;
+      const collapsedClass = collapsed ? ' project-item--collapsed' : '';
+      const collapsedAttr = collapsed ? ' data-project-extra="true"' : '';
 
       return `
-         <li class="project-item project-card card" data-tech="${escapeHtml(String(project.tech || ''))}">
+         <li class="project-item project-card card${collapsedClass}"${collapsedAttr} data-tech="${escapeHtml(String(project.tech || ''))}">
              <div class="project-header">
                  <h3 class="project-title">
                      ${titleElement}

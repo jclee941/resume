@@ -37,9 +37,15 @@ describe('simplification: no duplicated About principles/focus block', () => {
     expect(count(worker, 'Current Focus')).toBe(0);
   });
 
-  test('canonical data-driven tech_philosophy / current_focus blocks remain (once per locale = 3)', () => {
-    expect(count(worker, '&gt; tech_philosophy')).toBe(3);
-    expect(count(worker, '&gt; current_focus')).toBe(3);
+  test('career_highlights remains as the single About narrative block (once per locale = 3)', () => {
+    expect(count(worker, '&gt; career_highlights')).toBe(3);
+  });
+
+  test('overlapping tech_philosophy / current_focus About blocks are removed', () => {
+    // These restated the career story already covered by career_highlights,
+    // achievements, and the career timeline — dropped to cut clutter.
+    expect(count(worker, '&gt; tech_philosophy')).toBe(0);
+    expect(count(worker, '&gt; current_focus')).toBe(0);
   });
 });
 

@@ -144,20 +144,21 @@ describe('B: engineering principles + current focus surfaced from SSoT (single s
     expect(en).not.toMatch(/id="about-principles"|class="about-principles"/);
   });
 
-  test('built KO locale surfaces the canonical principles/focus text once', () => {
-    // aboutSection is synced into portfolio data (gitignored) and injected at
-    // build time, so assert against the built worker artifact — the real surface.
-    expect(koLocale).toContain('운영할 수 없다');
-    expect(koLocale).toContain('Splunk ES + n8n + FortiManager API 기반 SOC 운영');
+  test('built KO locale surfaces career_highlights as the single About narrative', () => {
+    // About was simplified: career_highlights is the one narrative block; the
+    // overlapping tech_philosophy / current_focus blocks were removed to cut
+    // clutter (the career story is also covered by achievements + the timeline).
+    expect(koLocale).toContain('&gt; career_highlights');
     expect(koLocale).not.toMatch(/about-principles/);
+    expect(koLocale).not.toMatch(/&gt; tech_philosophy/);
+    expect(koLocale).not.toMatch(/&gt; current_focus/);
   });
 
-  test('built EN locale surfaces the canonical principles/focus text once', () => {
-    // EN aboutSection lives in the synced portfolio data (gitignored), so assert
-    // against the built worker artifact — the real deployed EN surface.
-    expect(enLocale).toContain('observe it');
-    expect(enLocale).toContain('SOC automated response with Splunk ES rules');
+  test('built EN locale surfaces career_highlights as the single About narrative', () => {
+    expect(enLocale).toContain('&gt; career_highlights');
     expect(enLocale).not.toMatch(/about-principles/);
+    expect(enLocale).not.toMatch(/&gt; tech_philosophy/);
+    expect(enLocale).not.toMatch(/&gt; current_focus/);
   });
 
   test('does not add resume-inflation sections (careerGap/awards/military)', () => {

@@ -718,3 +718,42 @@
   line-height: 1.6;
 }
 
+
+/* ----------------------------------------
+   #projects progressive disclosure
+   Top featured cards show by default; the rest collapse behind a
+   "더보기" toggle (no data removed — full list stays in the DOM).
+   ---------------------------------------- */
+.project-item--collapsed {
+  display: none;
+}
+.project-list.is-expanded .project-item--collapsed {
+  display: block;
+}
+.project-more {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-6);
+}
+.project-more-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-5);
+  background: transparent;
+  border: 1px solid var(--card-border, var(--glass-border));
+  border-radius: var(--radius-sm, 6px);
+  color: var(--color-accent);
+  font-family: var(--font-mono, monospace);
+  font-size: var(--text-sm, 0.85rem);
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+.project-more-btn:hover,
+.project-more-btn:focus-visible {
+  border-color: var(--card-border-hover, var(--color-accent));
+  background: var(--metric-bg, rgb(var(--color-accent-rgb) / 0.08));
+  outline: none;
+}
