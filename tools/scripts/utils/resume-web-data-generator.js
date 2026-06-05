@@ -103,14 +103,17 @@ function generateWebData(source) {
 
   const resumeEn = source.careers.map((career, idx) => {
     const icons = ['🏦', '🏗️', '📈', '☁️', '🎓', '📞', '✈️'];
-    const statsMapEn = {
-      '(주)아이티센 CTS': ['Security Operations', 'Compliance', 'DR'],
-      '(주)가온누리정보시스템': ['Architecture', 'Network Segmentation', 'Regulatory Approval'],
-      '(주)콴텍투자일임': ['AWS', 'Policy Design', 'Stable Operations'],
-      '(주)조인트리': ['NSX-T', 'Security Integration', 'Systems Integration'],
-      '(주)메타넷엠플랫폼': ['VPN/NAC', 'Ansible', 'Python'],
-      '(주)엠티데이타': ['Server Operations', 'Firewall', 'Network Segmentation'],
-    };
+    // Keyed by career index, not company name: the English SSoT uses English
+    // company names, so a Korean-name-keyed map would never match and every EN
+    // experience card would lose its tag badges.
+    const statsByIndexEn = [
+      ['Security Operations', 'Compliance', 'DR'],
+      ['Architecture', 'Network Segmentation', 'Regulatory Approval'],
+      ['AWS', 'Policy Design', 'Stable Operations'],
+      ['NSX-T', 'Security Integration', 'Systems Integration'],
+      ['VPN/NAC', 'Ansible', 'Python'],
+      ['Server Operations', 'Firewall', 'Network Segmentation'],
+    ];
 
     const translated = careerEnMap[career.company] || {};
     const entry = {
@@ -119,7 +122,7 @@ function generateWebData(source) {
       role: translated.role || career.myRole || career.role || '',
       description: translated.description || career.description,
       period: translated.period || career.period.replace('현재', 'Present'),
-      stats: statsMapEn[career.company] || [],
+      stats: statsByIndexEn[idx] || [],
       highlight: idx === 0,
     };
 
