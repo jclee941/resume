@@ -7,7 +7,38 @@
  * @param {Object} source - Master resume data.
  * @returns {Object} Portfolio data.json payload.
  */
-function generateWebData(source) {
+function generateWebData(source, language = 'ko') {
+  // Career stat tags keyed by career INDEX (language-agnostic). Company-name
+  // keying breaks for non-KO sources because the English/Japanese SSoT carry
+  // localized company names. data-processor.js renders these as <span class="tag">
+  // badges from each per-language data_*.json's resume[] array.
+  const STATS_BY_INDEX = {
+    ko: [
+      ['SIEM', '탐지·대응', '자동화'],
+      ['FortiGate HA', '망분리', '인허가'],
+      ['인프라운영', '자동화', '규제대응'],
+      ['NSX-T', '마이크로세그', '네트워크보안'],
+      ['Ansible', 'VPN/NAC', '자동화'],
+      ['Linux', '서버운영', '방화벽'],
+    ],
+    en: [
+      ['SIEM', 'Detection & Response', 'Automation'],
+      ['FortiGate HA', 'Network Segmentation', 'Regulatory Approval'],
+      ['Infra Ops', 'Automation', 'Compliance'],
+      ['NSX-T', 'Microsegmentation', 'Network Security'],
+      ['Ansible', 'VPN/NAC', 'Automation'],
+      ['Linux', 'Server Ops', 'Firewall'],
+    ],
+    ja: [
+      ['SIEM', '検知・対応', '自動化'],
+      ['FortiGate HA', 'ネットワーク分離', '認可'],
+      ['インフラ運用', '自動化', '規制対応'],
+      ['NSX-T', 'マイクロセグメンテーション', 'ネットワークセキュリティ'],
+      ['Ansible', 'VPN/NAC', '自動化'],
+      ['Linux', 'サーバー運用', 'ファイアウォール'],
+    ],
+  };
+  const statsByIndex = STATS_BY_INDEX[language] || STATS_BY_INDEX.ko;
   const careerEnMap = {
     '(주)아이티센 CTS': {
       title: 'ITCEN CTS Co., Ltd.',
@@ -74,14 +105,7 @@ function generateWebData(source) {
   //   If sub-projects need to render here, extend the entry below AND update apps/portfolio/lib/cards.js.
   const resume = source.careers.map((career, idx) => {
     const icons = ['🏦', '🏗️', '📈', '☁️', '🎓', '📞', '✈️'];
-    const statsMap = {
-      '(주)아이티센 CTS': ['보안관제', '컴플라이언스', 'DR'],
-      '(주)가온누리정보시스템': ['아키텍처', '망분리', '인허가'],
-      '(주)콴텍투자일임': ['AWS', '정책설계', '안정운영'],
-      '(주)조인트리': ['NSX-T', '보안통합', 'SI'],
-      '(주)메타넷엠플랫폼': ['VPN/NAC', 'Ansible', 'Python'],
-      '(주)엠티데이타': ['서버운영', '방화벽', '망분리'],
-    };
+    // stats come from the language-aware STATS_BY_INDEX selected at the top.
 
     const entry = {
       icon: icons[idx] || '💼',
@@ -89,7 +113,7 @@ function generateWebData(source) {
       role: career.myRole || career.role || '',
       description: career.description,
       period: career.period,
-      stats: statsMap[career.company] || [],
+      stats: statsByIndex[idx] || [],
       highlight: idx === 0,
     };
 
@@ -103,17 +127,9 @@ function generateWebData(source) {
 
   const resumeEn = source.careers.map((career, idx) => {
     const icons = ['🏦', '🏗️', '📈', '☁️', '🎓', '📞', '✈️'];
-    // Keyed by career index, not company name: the English SSoT uses English
-    // company names, so a Korean-name-keyed map would never match and every EN
-    // experience card would lose its tag badges.
-    const statsByIndexEn = [
-      ['Security Operations', 'Compliance', 'DR'],
-      ['Architecture', 'Network Segmentation', 'Regulatory Approval'],
-      ['AWS', 'Policy Design', 'Stable Operations'],
-      ['NSX-T', 'Security Integration', 'Systems Integration'],
-      ['VPN/NAC', 'Ansible', 'Python'],
-      ['Server Operations', 'Firewall', 'Network Segmentation'],
-    ];
+    // resumeEn is a secondary EN projection (fallback path); use English stats
+    // by index so it stays symmetric even if a non-EN source language is used.
+    const statsByIndexEn = STATS_BY_INDEX.en;
 
     const translated = careerEnMap[career.company] || {};
     const entry = {

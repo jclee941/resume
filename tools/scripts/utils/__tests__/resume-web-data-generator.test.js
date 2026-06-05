@@ -121,11 +121,19 @@ describe('generateWebData → coverLetter (unsurfaced SSoT asset)', () => {
   });
 });
 
-describe('generateWebData → resumeEn[].stats (EN experience tag badges)', () => {
-  it('S2: resumeEn stats are populated even when company names are English', () => {
-    // The English SSoT carries English company names (e.g. "ITCEN CTS Co., Ltd.").
-    // stats must still resolve so EN experience cards show tag badges like the
-    // KO page does. A company-name keyed map fails here; stats must key by index.
+describe('generateWebData → resume[].stats (the ACTUAL static-card render path)', () => {
+  // data-processor.js builds EN/JA static cards from projectDataEn.resume[] /
+  // projectDataJa.resume[] (the `resume` array of each per-language data_*.json),
+  // NOT from resumeEn[]. So `resume[].stats` is what reaches the rendered
+  // <span class="tag"> badges. It must be populated regardless of the source
+  // language's company names.
+  it('S2: resume[].stats populated for KO source (Korean company names)', () => {
+    const out = generateWebData(ssot, 'ko');
+    const populated = out.resume.filter((r) => Array.isArray(r.stats) && r.stats.length > 0);
+    assert.equal(populated.length, out.resume.length, 'every KO resume entry has stats');
+  });
+
+  it('S2b: resume[].stats populated for EN source (English company names)', () => {
     const enSource = {
       ...ssot,
       careers: ssot.careers.map((c, i) => ({
@@ -135,13 +143,16 @@ describe('generateWebData → resumeEn[].stats (EN experience tag badges)', () =
           'Metanet M Platform Co., Ltd.', 'MTData Co., Ltd.'][i] || `Company ${i}`,
       })),
     };
-    const out = generateWebData(enSource);
-    assert.ok(Array.isArray(out.resumeEn) && out.resumeEn.length > 0, 'resumeEn present');
-    const populated = out.resumeEn.filter((r) => Array.isArray(r.stats) && r.stats.length > 0);
+    const out = generateWebData(enSource, 'en');
+    const populated = out.resume.filter((r) => Array.isArray(r.stats) && r.stats.length > 0);
     assert.equal(
       populated.length,
-      out.resumeEn.length,
-      'every resumeEn entry must have non-empty stats regardless of company language'
+      out.resume.length,
+      'every EN resume entry must have non-empty stats regardless of company language'
+    );
+    assert.ok(
+      out.resume[0].stats.includes('SIEM'),
+      'EN resume[0] stats reflect the actual role (SIEM detection/response), in English'
     );
   });
 });
