@@ -151,8 +151,8 @@ describe('generateWebData → resume[].stats (the ACTUAL static-card render path
       'every EN resume entry must have non-empty stats regardless of company language'
     );
     assert.ok(
-      out.resume[0].stats.includes('SIEM'),
-      'EN resume[0] stats reflect the actual role (SIEM detection/response), in English'
+      out.resume[0].stats.includes('Splunk ES'),
+      'EN resume[0] stats reflect the actual role (Splunk ES detection/response), in English'
     );
   });
 });
