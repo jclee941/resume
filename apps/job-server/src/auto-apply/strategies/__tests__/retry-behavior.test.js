@@ -20,6 +20,7 @@ function createBaseContext({ platform, gotoFailures = 0, forceLogin = false }) {
     },
     title: async () => 'mock-title',
     $: async () => null,
+    evaluate: async () => ({ ok: true, status: 200, body: { id: 'application-1' } }),
     screenshot: async () => {},
   };
 
@@ -118,10 +119,10 @@ describe('auto-apply strategy retry behavior', () => {
     assert.equal(getGotoCalls(), 4);
   });
 
-  it('retries jobkorea apply up to configured limit (5 retries)', async () => {
+  it('retries jobkorea apply up to configured limit (3 retries)', async () => {
     const { ctx, getGotoCalls } = createBaseContext({
       platform: 'jobkorea',
-      gotoFailures: 5,
+      gotoFailures: 3,
     });
 
     const result = await applyToJobKorea.call(ctx, {
@@ -132,7 +133,7 @@ describe('auto-apply strategy retry behavior', () => {
     });
 
     assert.equal(result.success, true);
-    assert.equal(getGotoCalls(), 6);
+    assert.equal(getGotoCalls(), 4);
   });
 
   it('retries saramin apply up to configured limit (5 retries)', async () => {

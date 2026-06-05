@@ -1,3 +1,5 @@
+import { withRetry } from '@resume/shared/retry';
+
 import { APPLICATION_STATUS } from '../application-manager.js';
 import { notifications } from '../../shared/services/notifications/index.js';
 import { AuthError, ValidationError } from '../../shared/errors/apply-errors.js';
@@ -29,8 +31,75 @@ const _circuitStateHolder = (() => {
 
 export { getApplicationStatus, validateSession };
 
+const RETRY_CONFIG = {
+  platform: WANTED_PLATFORM,
+  maxRetries: 3,
+  baseDelay: 1000,
+  maxDelay: 30000,
+};
+
 export function resetCircuitState() {
   _circuitStateHolder.reset();
+}
+
+async function executeWantedBrowserApply(ctx, job, payload, resumeKey, retryReporter) {
+  const numericJobId = Number(String(job.id).replace(/^wanted_/, ''));
+  const jobUrl = job.sourceUrl || `https://www.wanted.co.kr/wd/${numericJobId}`;
+
+  await ctx.page.goto(jobUrl, { waitUntil: 'domcontentloaded', timeout: 15000 });
+  await sleep(1500);
+
+  const loginPrompt =
+    (await ctx.findByText?.('a', '로그인')) ||
+    (await ctx.findByText?.('button', '로그인')) ||
+    (await ctx.findByText?.('a', 'Login')) ||
+    (await ctx.findByText?.('button', 'Login'));
+  if (loginPrompt) {
+    throw new AuthError('Not logged in to Wanted', { platform: WANTED_PLATFORM });
+  }
+
+  const response = await ctx.page.evaluate(async (p) => {
+    const resp = await fetch('/api/chaos/applications/v1', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify(p),
+    });
+    const body = await resp.json().catch(() => ({}));
+    return { status: resp.status, ok: resp.ok, body };
+  }, payload);
+
+  if (!response.ok) {
+    const errorMsg = response.body?.message || `API request failed: ${response.status}`;
+    throw new ValidationError(errorMsg, {
+      platform: WANTED_PLATFORM,
+      status: response.status,
+    });
+  }
+
+  const applicationId = extractApplicationId(response.body);
+  const application = ctx.appManager.addApplication(job, {
+    resumeKey,
+    notes: 'Auto-applied via Wanted browser submission (Chaos API v1)',
+  });
+
+  ctx.appManager.updateStatus(
+    application.id,
+    APPLICATION_STATUS.APPLIED,
+    'Auto-applied via Wanted browser'
+  );
+
+  retryReporter('execution_success', { metrics: { successRate: 1 } });
+  notifications
+    .notifyApplySuccess(job.company, job.title, job.sourceUrl, WANTED_PLATFORM)
+    .catch(() => {});
+
+  return {
+    success: true,
+    applicationId: applicationId ?? application.id,
+    application,
+    retryable: false,
+  };
 }
 
 export async function applyToJob(job, options = {}) {
@@ -95,54 +164,12 @@ export async function applyToJob(job, options = {}) {
       });
     }
 
-    const numericJobId = Number(String(job.id).replace(/^wanted_/, ''));
-    const jobUrl = job.sourceUrl || `https://www.wanted.co.kr/wd/${numericJobId}`;
-
-    await this.page.goto(jobUrl, { waitUntil: 'domcontentloaded', timeout: 15000 });
-    await sleep(1500);
-
-    const response = await this.page.evaluate(async (p) => {
-      const resp = await fetch('/api/chaos/applications/v1', {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify(p),
-      });
-      const body = await resp.json().catch(() => ({}));
-      return { status: resp.status, ok: resp.ok, body };
-    }, payload);
-
-    if (!response.ok) {
-      const errorMsg = response.body?.message || `API request failed: ${response.status}`;
-      throw new ValidationError(errorMsg, {
-        platform: WANTED_PLATFORM,
-        status: response.status,
-      });
-    }
-
-    const applicationId = extractApplicationId(response.body);
-    const application = this.appManager.addApplication(job, {
-      resumeKey,
-      notes: 'Auto-applied via Wanted browser submission (Chaos API v1)',
+    return await withRetry(() => executeWantedBrowserApply(this, job, payload, resumeKey, retryReporter), {
+      ...RETRY_CONFIG,
+      logger: this.logger,
+      classifyError: classifyWantedError,
+      reporter: retryReporter,
     });
-
-    this.appManager.updateStatus(
-      application.id,
-      APPLICATION_STATUS.APPLIED,
-      'Auto-applied via Wanted browser'
-    );
-
-    retryReporter('execution_success', { metrics: { successRate: 1 } });
-    notifications
-      .notifyApplySuccess(job.company, job.title, job.sourceUrl, WANTED_PLATFORM)
-      .catch(() => {});
-
-    return {
-      success: true,
-      applicationId: applicationId ?? application.id,
-      application,
-      retryable: false,
-    };
   } catch (error) {
     const normalizedError = classifyWantedError(error);
     const retryable = isRetryableWantedError(error) || Boolean(normalizedError.retryable);

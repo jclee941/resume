@@ -1,8 +1,38 @@
 import { CONFIG } from '../constants.js';
 import { log } from '../sync-logger.js';
 import { normalizeCompanyName } from '@resume/shared/normalize';
-import { syncCareerProjects } from './career-projects.js';
+import { collectCareerProjects, syncCareerProjects } from './career-projects.js';
 import { mapCareerToWanted } from './field-mappings.js';
+
+function sameValue(left, right) {
+  return String(left ?? '') === String(right ?? '');
+}
+
+function projectsMatch(ssotCareer, wantedCareer) {
+  const desired = collectCareerProjects(ssotCareer);
+  const existing = Array.isArray(wantedCareer.projects) ? wantedCareer.projects : [];
+  if (desired.length !== existing.length) return false;
+  return desired.every((project) =>
+    existing.some(
+      (existingProject) =>
+        sameValue(existingProject.title, project.title) &&
+        sameValue(existingProject.description, project.description)
+    )
+  );
+}
+
+function careerMatches(mapped, wantedCareer, ssotCareer) {
+  return (
+    sameValue(wantedCareer.company?.name, mapped.company.name) &&
+    sameValue(wantedCareer.company?.type, mapped.company.type) &&
+    sameValue(wantedCareer.job_role, mapped.job_role) &&
+    sameValue(wantedCareer.start_time, mapped.start_time) &&
+    sameValue(wantedCareer.end_time, mapped.end_time) &&
+    Boolean(wantedCareer.served) === Boolean(mapped.served) &&
+    sameValue(wantedCareer.employment_type, mapped.employment_type) &&
+    projectsMatch(ssotCareer, wantedCareer)
+  );
+}
 
 function planCareerSync(ssotCareers, wantedCareers) {
   const toUpdate = [];
@@ -17,12 +47,14 @@ function planCareerSync(ssotCareers, wantedCareers) {
     const mapped = mapCareerToWanted(ssotCareer);
     if (wantedCareer) {
       matched.add(wantedCareer.id);
-      toUpdate.push({
-        id: wantedCareer.id,
-        data: mapped,
-        ssot: ssotCareer,
-        existingProjects: wantedCareer.projects || [],
-      });
+      if (!careerMatches(mapped, wantedCareer, ssotCareer)) {
+        toUpdate.push({
+          id: wantedCareer.id,
+          data: mapped,
+          ssot: ssotCareer,
+          existingProjects: wantedCareer.projects || [],
+        });
+      }
     } else {
       toAdd.push({ data: mapped, ssot: ssotCareer });
     }
@@ -41,7 +73,7 @@ function reportCareerDiff(toUpdate, toAdd, toDelete) {
 }
 
 /** @param {Object} client @param {Object} ssot @param {Object} profile @param {string} resumeId @returns {Promise<Object>} */
-export async function syncWantedCareers(client, ssot, profile, resumeId) {
+export async function syncWantedCareers(client, ssot, _profile, resumeId) {
   const ssotCareers = ssot.careers || [];
   const resumeDetail = await client.getResumeDetail(resumeId);
   const wantedCareers = resumeDetail?.careers || [];

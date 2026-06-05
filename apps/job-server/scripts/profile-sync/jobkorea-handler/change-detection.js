@@ -8,35 +8,11 @@ const KEY_FIELD_PATTERNS = [
   /\.M_MainJob_Jikwi$/,
   /\.RetireSt$/,
   /\.M_MainField$/,
-  /^Career\[c\d+\]\.(Co_Code|CName_Code|Biz_No|Job_Type_Code|M_MainField|M_MainJob|Job_Field_Direct|M_MainPay_User|Retire_Rsn_Code|NHIS_LINKED_STAT|CNameHold|OpenStat)$/,
+  /^Career\[c\d+\]\.(Co_Code|CName_Code|Biz_No|Job_Type_Code|M_MainField|M_MainJob|Job_Field_Direct|M_MainPay_User|Retire_Rsn_Code|CNameHold|OpenStat)$/,
   /\.Prfm_Prt$/,
-  /^Career\[c\d+\]\.(C_Client|C_TeamSize|C_MyRole|C_WorkType)$/,
-  /^Career\[c\d+\]\.Project\[p\d+\]\.(P_Name|P_Cntnt)$/,
-  /^UnivSchool\[[^\]]+\]\.Schl_Name$/,
-  /^UnivSchool\[[^\]]+\]\.Entc_YM$/,
-  /^UnivSchool\[[^\]]+\]\.Grad_YM$/,
-  /^UnivSchool\[c\d+\]\.(Schl_Type_Code)$/,
-  /\.Major_Name$/,
-  /^UnivSchool\[c\d+\]\.UnivMajor\[\d+\]\.Major_Type_Code$/,
-  /\.Lc_Name$/,
-  /\.Lc_Pub$/,
-  /\.Lc_YYMM$/,
-  /^License\[c\d+\]\.(Lc_Code|Naver_Lcns_Linked_Stat|Lc_Exp|Lc_CredId|Lc_CredUrl|Lc_Status|Lc_Note)$/,
-  /UserAddition\.Military_Stat$/,
-  /UserAddition\.Military_Kind$/,
-  /UserAddition\.Military_SYM$/,
-  /UserAddition\.Military_EYM$/,
-  /^PIOfferAgree\.(IpAgree)$/,
-  /Award\[.*\]\.Award_Name$/,
-  /Award\[.*\]\.Award_Inst_Name$/,
-  /Award\[.*\]\.Award_Year$/,
-  /^Award\[c\d+\]\.(Award_Cntnt)$/,
-  /^Language\[c\d+\]\.(Lang1_Name|Lang1_Stat)$/,
   /^ResumeProfile\[c\d+\]\.(Header|Contents)$/,
-  /^UserResume\.(Birth_YMD|Address|GitHub)$/,
   /^UserResume\.(M_Resume_Title|M_Career_Text|M_Career_Text_Stat)$/,
   /^InputStat\.UserIntroduceInputStat$/,
-  /Portfolio\[.*\]\.Prtf_Url$/,
 ];
 export function getEditUrl() {
   const profileUrl = PLATFORMS.jobkorea?.profileUrl || '';
@@ -50,6 +26,13 @@ export function getEditUrl() {
     throw error;
   }
   return `https://www.jobkorea.co.kr/User/Resume/Edit?RNo=${match[1]}`;
+}
+
+function normalizeJobKoreaValue(name, value) {
+  const text = String(value ?? '').replace(/\r\n/g, '\n').trim();
+  if (/^Career\[[^\]]+\]\.(CSYM|CEYM)$/.test(name)) return text.replace(/\./g, '');
+  if (/^Career\[[^\]]+\]\.M_MainJob_Jikwi$/.test(name)) return text.slice(0, 1);
+  return text;
 }
 
 export function computeChangesForJobKorea(currentFields, targetFields, describeField) {
@@ -68,7 +51,7 @@ export function computeChangesForJobKorea(currentFields, targetFields, describeF
     }
     const from = currentByName.get(field.name) ?? '';
     const to = String(field.value ?? '');
-    if (from !== to) {
+    if (normalizeJobKoreaValue(field.name, from) !== normalizeJobKoreaValue(field.name, to)) {
       changes.push({
         field: describeField(field.name),
         from: from || '(empty)',

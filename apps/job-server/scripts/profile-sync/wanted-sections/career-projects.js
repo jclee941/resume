@@ -47,13 +47,23 @@ export function collectCareerProjects(ssotCareer) {
  */
 export async function syncCareerProjects(client, resumeId, careerId, ssotCareer, existingProjects) {
   const desired = collectCareerProjects(ssotCareer);
-  const desiredTitles = new Set(desired.map((p) => p.title));
   const existing = Array.isArray(existingProjects) ? existingProjects : [];
-  const existingTitles = new Set(existing.map((p) => p.title));
+  const desiredByTitle = new Map(desired.map((p) => [p.title, p]));
+  const unchangedTitles = new Set(
+    existing
+      .filter((p) => {
+        const desiredProject = desiredByTitle.get(p.title);
+        return desiredProject && String(p.description ?? '') === desiredProject.description;
+      })
+      .map((p) => p.title)
+  );
 
-  // Delete only remote projects that are no longer represented in the SSoT.
+  // Delete remote projects that are no longer represented in the SSoT, or whose
+  // persisted description differs from the SSoT. Wanted has POST/DELETE for
+  // projects but no PATCH wrapper in the current client.
   for (const p of existing) {
-    if (desiredTitles.has(p.title)) continue;
+    const desiredProject = desiredByTitle.get(p.title);
+    if (desiredProject && String(p.description ?? '') === desiredProject.description) continue;
     try {
       await client.deleteProject(resumeId, careerId, p.id);
     } catch (e) {
@@ -63,7 +73,7 @@ export async function syncCareerProjects(client, resumeId, careerId, ssotCareer,
 
   // Add SSoT projects that are not already present remotely.
   for (const project of desired) {
-    if (existingTitles.has(project.title)) continue;
+    if (unchangedTitles.has(project.title)) continue;
     try {
       await client.addProject(resumeId, careerId, project);
     } catch (e) {

@@ -10,39 +10,6 @@
 import { describe, it, beforeEach, afterEach, mock } from 'node:test';
 import assert from 'node:assert/strict';
 
-// Import error classes to check against
-let _ErrorClasses;
-try {
-  const module = await import('../../shared/errors/apply-errors.js');
-  _ErrorClasses = module;
-} catch {
-  _ErrorClasses = {
-    AuthError: class extends Error {
-      constructor(m) {
-        super(m);
-        this.name = 'AuthError';
-      }
-    },
-    CaptchaError: class extends Error {
-      constructor(m) {
-        super(m);
-        this.name = 'CaptchaError';
-      }
-    },
-    RateLimitError: class extends Error {
-      constructor(m) {
-        super(m);
-        this.name = 'RateLimitError';
-      }
-    },
-    ValidationError: class extends Error {
-      constructor(m) {
-        super(m);
-        this.name = 'ValidationError';
-      }
-    },
-  };
-}
 // Mock the application manager
 const mockAppManager = {
   addApplication: mock.fn(() => ({
@@ -152,7 +119,7 @@ describe('JobKorea Strategy', () => {
         const mockSubmitButton = { click: mock.fn(() => Promise.resolve()) };
 
         const context = createContext(mockPage, {
-          findByText: mock.fn((tag, text, _cssAlt) => {
+          findByText: mock.fn((tag, text, cssAlt) => {
             if (tag === 'a' && text === '로그인') return Promise.resolve(null); // Not logged in but no prompt needed
             if (tag === 'button' && text === '즉시 지원') return Promise.resolve(mockApplyButton);
             if (tag === 'button' && text === '지원하기' && cssAlt === '#btnApplyDirect')

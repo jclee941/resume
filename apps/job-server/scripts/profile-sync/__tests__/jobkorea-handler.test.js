@@ -62,18 +62,47 @@ describe('JobKoreaHandler.computeChanges', () => {
     assert.strictEqual(changes[0].from, 'Old Company');
     assert.strictEqual(changes[0].to, 'New Company');
   });
-  it('detects Language Lang1_Name changes from live JobKorea fields', () => {
+  it('ignores language fields outside the JobKorea title/career/intro verification scope', () => {
     const before = [{ name: 'Language[c532].Lang1_Name', value: '' }];
     const after = [{ name: 'Language[c532].Lang1_Name', value: 'English' }];
 
     const changes = handler.computeChanges(before, after);
 
-    assert.strictEqual(changes.length, 1);
-    assert.deepStrictEqual(changes[0], {
-      field: 'Language c532 name',
-      from: '(empty)',
-      to: 'English',
-    });
+    assert.deepStrictEqual(changes, []);
+  });
+
+  it('normalizes persisted JobKorea career formats during dry-run comparison', () => {
+    const before = [
+      { name: 'Career[c7].CSYM', value: '2025.03' },
+      { name: 'Career[c7].CEYM', value: '2026.02' },
+      { name: 'Career[c7].M_MainJob_Jikwi', value: '보' },
+    ];
+    const after = [
+      { name: 'Career[c7].CSYM', value: '202503' },
+      { name: 'Career[c7].CEYM', value: '202602' },
+      { name: 'Career[c7].M_MainJob_Jikwi', value: '보안운영 엔지니어 (SOC/Security)' },
+    ];
+
+    const changes = handler.computeChanges(before, after);
+
+    assert.deepStrictEqual(changes, []);
+  });
+
+  it('ignores JobKorea career fields the platform does not persist from form saves', () => {
+    const before = [];
+    const after = [
+      { name: 'Career[c7].NHIS_LINKED_STAT', value: '' },
+      { name: 'Career[c7].C_Client', value: '넥스트레이드(주)' },
+      { name: 'Career[c7].C_TeamSize', value: '정보보안팀 운영 셀' },
+      { name: 'Career[c7].C_MyRole', value: '보안 운영 담당' },
+      { name: 'Career[c7].C_WorkType', value: '정규직 (파견)' },
+      { name: 'Career[c7].Project[p1].P_Name', value: '넥스트레이드 보안운영' },
+      { name: 'Career[c7].Project[p1].P_Cntnt', value: '설명' },
+    ];
+
+    const changes = handler.computeChanges(before, after);
+
+    assert.deepStrictEqual(changes, []);
   });
 
   it('ignores removed section fields that are not emitted by live JobKorea sync', () => {
@@ -177,7 +206,7 @@ describe('createJobKoreaEntrySlots', () => {
       waitForFunction: async () => {},
       evaluate: async (fn, prefix) => {
         const source = String(fn);
-        if (source.includes('buttonDeleteField')) {
+        if (source.includes('buttonDeleteField') || source.includes('button.buttonDelete') || source.includes('button.buttonDelete')) {
           deletedCareers = careerIndices.length;
           careerIndices = [];
           return deletedCareers;
@@ -230,7 +259,7 @@ describe('createJobKoreaEntrySlots', () => {
       },
       evaluate: async (fn, prefix) => {
         const source = String(fn);
-        if (source.includes('buttonDeleteField')) {
+        if (source.includes('buttonDeleteField') || source.includes('button.buttonDelete') || source.includes('button.buttonDelete')) {
           careerIndices = [];
           return 2;
         }
@@ -273,7 +302,7 @@ describe('createJobKoreaEntrySlots', () => {
       },
       evaluate: async (fn, prefix) => {
         const source = String(fn);
-        if (source.includes('buttonDeleteField')) {
+        if (source.includes('buttonDeleteField') || source.includes('button.buttonDelete') || source.includes('button.buttonDelete')) {
           return 2;
         }
         if (source.includes('buttonAddField') && prefix === 'Career') {
@@ -316,7 +345,7 @@ describe('createJobKoreaEntrySlots', () => {
       },
       evaluate: async (fn, prefix) => {
         const source = String(fn);
-        if (source.includes('buttonDeleteField')) return 0;
+        if (source.includes('buttonDeleteField') || source.includes('button.buttonDelete') || source.includes('button.buttonDelete')) return 0;
         if (source.includes('buttonAddField') && prefix === 'ResumeProfile') {
           addedIntro++;
           introIndices.push(`freshIntro${addedIntro}`);
@@ -356,7 +385,7 @@ describe('createJobKoreaEntrySlots', () => {
       waitForFunction: async () => {},
       evaluate: async (fn, prefix) => {
         const source = String(fn);
-        if (source.includes('buttonDeleteField')) {
+        if (source.includes('buttonDeleteField') || source.includes('button.buttonDelete') || source.includes('button.buttonDelete')) {
           deletedCareers = careerIndices.length;
           careerIndices = [];
           return deletedCareers;
