@@ -116,4 +116,24 @@ describe('portfolio visual CSS contract', () => {
     // the old over-wide 900px block must be gone.
     expect(aboutContent[0]).not.toMatch(/max-width:\s*900px/);
   });
+
+  test('S11 about-grid pairs narrative + expertise in 2 columns on desktop, 1 on mobile', () => {
+    // Declutter the vertical About stack: .about-content (narrative, keeps its
+    // own 70ch measure) and .expertise-block sit side-by-side at desktop and
+    // stack on mobile. Bento + achievements remain full-width below.
+    const profileCss = readStyle('profile.css');
+    const mediaCss = readStyle('media.css');
+    const aboutGrid = profileCss.match(/\.about-grid\s*{[^}]*}/);
+    expect(aboutGrid).toBeTruthy();
+    expect(aboutGrid[0]).toMatch(/display:\s*grid/);
+    // Desktop default is 2 columns.
+    expect(aboutGrid[0]).toMatch(/grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/);
+    // The narrative inside the grid must NOT keep a 70ch cap that would leave a
+    // huge empty gutter in its column; it stretches to fill the column instead.
+    const scopedAbout = profileCss.match(/\.about-grid\s+\.about-content\s*{[^}]*}/);
+    expect(scopedAbout).toBeTruthy();
+    expect(scopedAbout[0]).toMatch(/max-width:\s*none/);
+    // Mobile collapses to a single column.
+    expect(mediaCss).toMatch(/\.about-grid\s*{\s*grid-template-columns:\s*1fr/);
+  });
 });

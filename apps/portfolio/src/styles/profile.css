@@ -174,3 +174,23 @@
   color: var(--color-accent-light);
   text-transform: lowercase;
 }
+
+/* About 2-column declutter: pair the career narrative and the expertise block
+   side-by-side on desktop so the section reads as two panels instead of a
+   four-card vertical wall. Bento + achievements stay full-width below. */
+.about-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-5);
+  align-items: start;
+}
+/* Inside its own column the narrative fills the column width; the standalone
+   70ch readable cap (components.css) would otherwise leave a large gutter. */
+.about-grid .about-content {
+  max-width: none;
+}
+/* expertise-block already carries its own card chrome; drop the stacking
+   margin so both columns align at the grid top. */
+.about-grid .expertise-block {
+  margin-top: 0;
+}
