@@ -27,13 +27,20 @@ function makeEl(attrs = {}) {
       (listeners[type] ||= []).push(fn);
     },
     dispatch(type, event = {}) {
-      (listeners[type] || []).forEach((fn) => fn({ preventDefault() {}, ...event }));
+      let prevented = false;
+      const ev = { preventDefault() { prevented = true; }, ...event };
+      (listeners[type] || []).forEach((fn) => fn(ev));
+      this._lastPrevented = prevented;
     },
   };
 }
 
 function makeRoot({ email = 'test@example.com' } = {}) {
-  const link = makeEl({ dataset: { contactEmail: email }, textContent: 'Email' });
+  const link = makeEl({
+    dataset: { contactEmail: email },
+    textContent: 'Email',
+    href: `mailto:${email}`,
+  });
   const status = makeEl();
   status._attrs.class = 'contact-copy-status';
   return {
@@ -101,5 +108,21 @@ describe('contact-copy module', () => {
     await Promise.resolve();
     jest.advanceTimersByTime(2500);
     expect(root.link.classList.contains('is-copied')).toBe(false);
+  });
+
+  test('contact-copy: clipboard rejection falls open to the mailto link', async () => {
+    // The click is prevented to attempt a copy; if the copy FAILS the user must
+    // still reach the inbox. Otherwise they get neither copy nor mailto.
+    global.navigator = {
+      clipboard: { writeText: jest.fn().mockRejectedValue(new Error('denied')) },
+    };
+    const root = makeRoot({ email: 'fail@x.com' });
+    const navigate = jest.fn();
+    initContactCopy(root, { navigate });
+    root.link.dispatch('click');
+    await Promise.resolve();
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(navigate).toHaveBeenCalledWith('mailto:fail@x.com');
   });
 });
