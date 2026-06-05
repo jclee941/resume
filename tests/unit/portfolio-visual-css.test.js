@@ -108,10 +108,11 @@ describe('portfolio visual CSS contract', () => {
     const componentsCss = readStyle('components.css');
     const aboutContent = componentsCss.match(/\.about-content\s*{[^}]*}/);
     expect(aboutContent).toBeTruthy();
-    // measure must be expressed in ch (readability unit) and <= 75ch.
+    // measure must be expressed in ch (readability unit), within the 45-75ch window.
     const m = aboutContent[0].match(/max-width:\s*(\d+)ch/);
     expect(m).toBeTruthy();
     expect(Number(m[1])).toBeLessThanOrEqual(75);
+    expect(Number(m[1])).toBeGreaterThanOrEqual(45);
     // the old over-wide 900px block must be gone.
     expect(aboutContent[0]).not.toMatch(/max-width:\s*900px/);
   });
