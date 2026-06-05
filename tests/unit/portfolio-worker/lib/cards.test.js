@@ -461,6 +461,21 @@ describe('Cards Module', () => {
       expect(html).toContain('IN PROGRESS');
     });
 
+    test('pending cert shows IN PROGRESS for JA 準備中 and EN Preparing (locale parity)', () => {
+      // Bug: getCertificationStatus only matched KO '준비중', so a not-yet-earned
+      // cert (CKS) rendered as [ACQUIRED] on /en/ and /ja/ — falsely claiming the
+      // credential. All locale pending labels must map to IN PROGRESS.
+      for (const status of ['準備中', 'Preparing']) {
+        const html = generateCertificationCards(
+          [{ name: 'CKS', issuer: 'CNCF', status }],
+          `pending-${status}`
+        );
+        expect(html).toContain('cert-status--pending');
+        expect(html).toContain('IN PROGRESS');
+        expect(html).not.toContain('cert-status--active');
+      }
+    });
+
     test('missing status defaults to ACQUIRED', () => {
       const certData = [{ name: 'No Status Cert', issuer: 'Vendor', date: '2025-01' }];
       const html = generateCertificationCards(certData, 'unknown-hash');
