@@ -145,7 +145,7 @@ function runSync() {
     autoTranslatePeriods(sourceData, source.language);
 
     console.log(`🔄 Generating ${source.webDataPath}...`);
-    const webData = generateWebData(sourceData);
+    const webData = generateWebData(sourceData, source.language);
     fs.writeFileSync(source.webDataPath, `${JSON.stringify(webData, null, 2)}\n`);
     console.log(`✅ ${source.webDataPath} updated`);
 
