@@ -62,34 +62,34 @@ describe('portfolio visual CSS contract', () => {
     expect(bodyRule[0]).toContain('background-color: var(--bg-primary);');
   });
 
-  test('S6 reveal hidden state is scoped to html.js for progressive enhancement', () => {
-    // Without JS the IntersectionObserver never adds `.revealed`, so an
-    // unconditional `.reveal { opacity: 0 }` permanently hides main content.
-    // Scope the hidden state to `.js` (set synchronously in <head>) so that
-    // no-JS / JS-delayed / JS-failed visitors still see all content.
+  test('S6 reveal hidden state is gated on reveal-ready (fail-open enhancement)', () => {
+    // The hidden state must apply ONLY after ui.js confirms the reveal system
+    // initialized (it adds `reveal-ready`). If main.js/ui.js fails, is delayed,
+    // or IntersectionObserver is unsupported, the class is never added and all
+    // content stays visible. Gating on a synchronous `html.js` flag is NOT
+    // enough: JS-enabled-but-app-JS-failed would re-hide content forever.
     const animationsCss = readStyle('animations.css');
-    expect(animationsCss).toContain('.js .reveal {');
-    // No unscoped `.reveal { ... opacity: 0 }` rule may exist.
+    expect(animationsCss).toContain('.reveal-ready .reveal {');
+    // No hidden rule may be gated on `.js` (the app-JS-failure trap).
+    expect(animationsCss).not.toMatch(/\.js\s+\.reveal\s*{[^}]*opacity:\s*0/);
+    // No unscoped `.reveal { ... opacity: 0 }` rule may exist either.
     const unscopedReveal = animationsCss.match(/^\.reveal\s*{[^}]*}/m);
     expect(unscopedReveal && /opacity:\s*0/.test(unscopedReveal[0])).toBeFalsy();
-    // The revealed state stays intact.
-    expect(animationsCss).toMatch(/\.reveal\.revealed\s*{[^}]*opacity:\s*1/);
   });
 
-  test('S7 reveal-stagger hidden state is scoped to html.js', () => {
+  test('S7 reveal-stagger hidden state is gated on reveal-ready', () => {
     const animationsCss = readStyle('animations.css');
-    expect(animationsCss).toContain('.js .reveal-stagger > * {');
+    expect(animationsCss).toContain('.reveal-ready .reveal-stagger > * {');
+    expect(animationsCss).not.toMatch(/\.js\s+\.reveal-stagger\s*>\s*\*\s*{[^}]*opacity:\s*0/);
     const unscopedStagger = animationsCss.match(/^\.reveal-stagger\s*>\s*\*\s*{[^}]*}/m);
     expect(unscopedStagger && /opacity:\s*0/.test(unscopedStagger[0])).toBeFalsy();
-    expect(animationsCss).toMatch(/\.reveal-stagger\.revealed\s*>\s*\*\s*{[^}]*opacity:\s*1/);
   });
 
   test('S8 revealed state outranks the hidden state regardless of rule order', () => {
-    // `.js .reveal` and `.reveal.revealed` are both 0-2-0; equal specificity
-    // means the later rule wins, making correctness order-dependent. Scope the
-    // revealed rule to `.js` too (0-3-0) so it always outranks the hidden rule.
+    // `.reveal-ready .reveal` and `.reveal-ready .reveal.revealed` differ by one
+    // class (0-3-0 vs 0-2-0), so revealed always wins independent of order.
     const animationsCss = readStyle('animations.css');
-    expect(animationsCss).toMatch(/\.js\s+\.reveal\.revealed\s*{[^}]*opacity:\s*1/);
-    expect(animationsCss).toMatch(/\.js\s+\.reveal-stagger\.revealed\s*>\s*\*\s*{[^}]*opacity:\s*1/);
+    expect(animationsCss).toMatch(/\.reveal-ready\s+\.reveal\.revealed\s*{[^}]*opacity:\s*1/);
+    expect(animationsCss).toMatch(/\.reveal-ready\s+\.reveal-stagger\.revealed\s*>\s*\*\s*{[^}]*opacity:\s*1/);
   });
 });
