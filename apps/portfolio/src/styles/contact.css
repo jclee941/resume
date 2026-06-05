@@ -12,16 +12,27 @@
   font-size: var(--text-sm);
   color: var(--text-primary);
   text-decoration: none;
-  transition: color 0.2s ease;
+  transition:
+    color var(--transition-base),
+    border-color var(--transition-base),
+    background-color var(--transition-base),
+    transform var(--transition-base);
   min-height: 48px;
   display: inline-flex;
   align-items: center;
-  padding: var(--space-1) 0;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  background: var(--glass-bg);
 }
 .contact-item::before {
   content: '> ';
   color: var(--color-success);
+  margin-right: var(--space-2);
 }
 .contact-item:hover {
   color: var(--color-accent);
+  border-color: var(--glass-border-hover);
+  background: var(--glass-bg-hover);
+  transform: translateX(var(--space-1));
 }

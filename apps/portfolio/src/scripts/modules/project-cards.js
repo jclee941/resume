@@ -16,7 +16,7 @@ const PROJECTS = [
       { value: 'Realtime', label: 'Alerting', icon: '⚡' },
     ],
     description:
-      '금융권 매매체결시스템은 콘솔 수동 조작 의존도가 높아 대응 속도와 감사 추적성이 과제였습니다. 규제상 클라우드 SaaS SIEM을 쓸 수 없는 제약 속에서, 상용 SOAR 도입 대신 Splunk ES 탐지 → n8n webhook → Slack/SMS 로 이어지는 경량 파이프라인을 직접 설계했습니다 — 운영 투명성과 통제권을 얻는 대신 직접 유지보수 책임을 감수한 트레이드오프입니다.',
+      '매매체결시스템은 콘솔 수동 조작 의존도가 높아 대응 속도와 감사 추적성이 과제였습니다. 규제상 클라우드 SaaS SIEM을 쓸 수 없는 제약 속에서, 상용 SOAR 도입 대신 Splunk ES 탐지 → n8n webhook → Slack/SMS 로 이어지는 경량 파이프라인을 직접 설계했습니다 — 운영 투명성과 통제권을 얻는 대신 직접 유지보수 책임을 감수한 트레이드오프입니다.',
     achievements: [
       'Splunk ES 탐지 룰 직접 설계·운영',
       'Saved Search → n8n webhook → Slack/SMS 실시간 알림 파이프라인 구축',
