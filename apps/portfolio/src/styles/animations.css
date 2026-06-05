@@ -2,7 +2,7 @@ html {
   scroll-behavior: smooth;
 }
 
-.reveal {
+.js .reveal {
   opacity: 0;
   transform: translateY(18px);
   transition:
@@ -15,7 +15,7 @@ html {
   transform: translateY(0);
 }
 
-.reveal-stagger > * {
+.js .reveal-stagger > * {
   opacity: 0;
   transform: translateY(14px);
   transition:

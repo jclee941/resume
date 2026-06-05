@@ -1,6 +1,12 @@
 <!doctype html>
 <html lang="ko" data-theme="dark">
   <head>
+    <script>
+      // Progressive enhancement flag, set synchronously before first paint.
+      // Scroll-reveal hides `.reveal` only under `html.js`; without JS the
+      // content stays visible instead of being stuck at opacity:0 forever.
+      document.documentElement.classList.add('js');
+    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>이재철 - 보안 엔지니어</title>
