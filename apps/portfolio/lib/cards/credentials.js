@@ -6,8 +6,11 @@ const { escapeHtml } = require('../template-sanitizer');
 // Only 'in-progress' (준비중 / pursuing) is distinguished from acquired.
 function getCertificationStatus(status) {
   const normalized = String(status || '').toLowerCase();
-  const isPending =
-    normalized === '준비중' || normalized === 'pending' || normalized === 'in-progress';
+  // Pending labels across locales: KO 준비중, JA 準備中, EN Preparing/pursuing.
+  // Matching only KO previously caused not-yet-earned certs (e.g. CKS) to render
+  // as [ACQUIRED] on /en/ and /ja/ — a false credential claim.
+  const PENDING = new Set(['준비중', '準備中', 'pending', 'in-progress', 'in progress', 'preparing', 'pursuing']);
+  const isPending = PENDING.has(normalized);
   return {
     statusClass: isPending ? 'cert-status--pending' : 'cert-status--active',
     statusLabel: isPending ? 'IN PROGRESS' : 'ACQUIRED',
