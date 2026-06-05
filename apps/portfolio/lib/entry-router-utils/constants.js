@@ -1,4 +1,4 @@
-const BUILD_LASTMOD = '2026-05-04';
+const BUILD_LASTMOD = '2026-06-05';
 
 // Derive HTTP-format Last-Modified and ETag from BUILD_LASTMOD so they cannot drift.
 const BUILD_LASTMOD_HTTP = (() => {
