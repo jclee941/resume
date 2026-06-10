@@ -1,4 +1,5 @@
 import { calculateMatchScore } from './match-scoring.js';
+import { appendDecisionTrace } from './decision-trace.js';
 
 export function createSearchResults() {
   return {
@@ -13,10 +14,22 @@ export function createSearchResults() {
 }
 
 export function selectMatchedJobs({ allJobs, searchKeywords, minScore, searchResults }) {
-  const scoredJobs = allJobs.map((job) => ({
-    ...job,
-    matchScore: calculateMatchScore(job, { keywords: searchKeywords }),
-  }));
+  const scoredJobs = allJobs.map((job) => {
+    const matchScore = calculateMatchScore(job, { keywords: searchKeywords });
+    return appendDecisionTrace(
+      {
+        ...job,
+        matchScore,
+      },
+      {
+        stage: 'scored',
+        outcome: matchScore >= minScore ? 'matched' : 'filtered',
+        reason: matchScore >= minScore ? 'score_meets_threshold' : 'score_below_threshold',
+        score: matchScore,
+        threshold: minScore,
+      }
+    );
+  });
 
   const matchedJobs = scoredJobs
     .filter((job) => job.matchScore >= minScore)
