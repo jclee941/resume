@@ -86,7 +86,9 @@ test.describe('Hero Section', () => {
     expect(heroText || '').toMatch(heroPattern);
   });
 
-  test('should display clean hero positioning copy without command output chrome', async ({ page }) => {
+  test('should display clean hero positioning copy without command output chrome', async ({
+    page,
+  }) => {
     const title = page.locator('.hero-title');
     await expect(title).toBeVisible();
 
@@ -165,6 +167,11 @@ test.describe('Projects Section', () => {
   });
 
   test('should verify each project card content', async ({ page }) => {
+    const moreButton = page.locator('.project-more-btn');
+    if ((await moreButton.count()) > 0) {
+      await moreButton.click();
+    }
+
     for (let i = 0; i < orderedProjects.length; i++) {
       const project = orderedProjects[i];
       const card = page.locator('#projects li.project-item').nth(i);
