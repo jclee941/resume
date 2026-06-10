@@ -1,4 +1,5 @@
 import { normalizeError } from '@resume/shared/errors';
+import { appendDecisionTrace } from './decision-trace.js';
 
 export async function primeWantedSession({ env, clients, getWantedSession }) {
   const wantedCookies = await getWantedSession(env);
@@ -33,11 +34,22 @@ export async function searchPlatformJobs({
           const uniqueId = `${job.source || platform}_${job.sourceId || job.id}`;
           if (!seen.has(uniqueId)) {
             seen.add(uniqueId);
-            allJobs.push({
-              ...job,
-              source: platform,
-              keyword,
-            });
+            allJobs.push(
+              appendDecisionTrace(
+                {
+                  ...job,
+                  source: platform,
+                  keyword,
+                },
+                {
+                  stage: 'discovered',
+                  outcome: 'included',
+                  reason: 'search_result',
+                  platform,
+                  keyword,
+                }
+              )
+            );
             searchResults.byPlatform[platform].searched++;
           }
         }
@@ -52,6 +64,7 @@ export async function searchPlatformJobs({
           `[AutoApply] ${platform} search failed for "${keyword}":`,
           normalized.message
         );
+        searchResults.errors++;
       }
     }
   }

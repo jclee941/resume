@@ -1,4 +1,5 @@
 import { normalizeError } from '@resume/shared/errors';
+import { appendDecisionTrace, getDecisionTrace } from './decision-trace.js';
 
 function addJobResult(searchResults, job, action) {
   searchResults.jobs.push({
@@ -9,6 +10,7 @@ function addJobResult(searchResults, job, action) {
     matchScore: job.matchScore,
     url: job.sourceUrl || job.url,
     action,
+    decisionTrace: getDecisionTrace(job),
   });
 }
 
@@ -35,24 +37,36 @@ export async function applyMatchedJobs({
     if (appliedCount >= remaining) break;
 
     const alreadyApplied = await isAlreadyApplied(env, job.sourceId || job.id, job.source);
+    let tracedJob = appendDecisionTrace(job, {
+      stage: 'duplicate_checked',
+      outcome: alreadyApplied ? 'skipped' : 'passed',
+      reason: alreadyApplied ? 'already_applied' : 'not_previously_applied',
+    });
+
     if (alreadyApplied) {
+      addJobResult(searchResults, tracedJob, 'skipped_already_applied');
       searchResults.skipped++;
       continue;
     }
 
     if (dryRun) {
-      addJobResult(searchResults, job, 'would_apply');
-      await recordApplication(env, { job, source: job.source, status: 'pending' });
+      tracedJob = appendDecisionTrace(tracedJob, {
+        stage: 'dry_run_recorded',
+        outcome: 'would_apply',
+        reason: 'dry_run',
+      });
+      addJobResult(searchResults, tracedJob, 'would_apply');
+      await recordApplication(env, { job: tracedJob, source: tracedJob.source, status: 'pending' });
       appliedCount++;
-      incrementPlatformApplied(searchResults, job.source);
+      incrementPlatformApplied(searchResults, tracedJob.source);
       continue;
     }
 
-    if (job.source === 'wanted') {
+    if (tracedJob.source === 'wanted') {
       const applied = await applyWantedJob({
         env,
         clients,
-        job,
+        job: tracedJob,
         searchResults,
         recordApplication,
         getWantedSession,
@@ -63,10 +77,10 @@ export async function applyMatchedJobs({
       continue;
     }
 
-    await recordApplication(env, { job, source: job.source, status: 'pending' });
-    addJobResult(searchResults, job, 'saved_for_manual_apply');
+    await recordApplication(env, { job: tracedJob, source: tracedJob.source, status: 'pending' });
+    addJobResult(searchResults, tracedJob, 'saved_for_manual_apply');
     appliedCount++;
-    incrementPlatformApplied(searchResults, job.source);
+    incrementPlatformApplied(searchResults, tracedJob.source);
   }
 
   searchResults.applied = appliedCount;
@@ -83,15 +97,31 @@ async function applyWantedJob({
   try {
     const cookies = await getWantedSession(env);
     if (!cookies) {
+      const tracedJob = appendDecisionTrace(job, {
+        stage: 'session_checked',
+        outcome: 'skipped',
+        reason: 'missing_wanted_session',
+      });
+      addJobResult(searchResults, tracedJob, 'skipped_no_session');
       searchResults.skipped++;
       return false;
     }
 
+    const tracedJob = appendDecisionTrace(job, {
+      stage: 'session_checked',
+      outcome: 'passed',
+      reason: 'wanted_session_available',
+    });
     clients.wanted.setCookies(cookies);
-    const result = await clients.wanted.apply(job.sourceId || job.id);
-    await recordApplication(env, { job, source: job.source, status: 'applied', result });
-    addJobResult(searchResults, job, 'applied');
-    incrementPlatformApplied(searchResults, job.source);
+    const result = await clients.wanted.apply(tracedJob.sourceId || tracedJob.id);
+    await recordApplication(env, {
+      job: tracedJob,
+      source: tracedJob.source,
+      status: 'applied',
+      result,
+    });
+    addJobResult(searchResults, tracedJob, 'applied');
+    incrementPlatformApplied(searchResults, tracedJob.source);
     return true;
   } catch (err) {
     const normalized = normalizeError(err, {
