@@ -1,227 +1,59 @@
-# Contributing to Resume Monorepo
+# Contributing / 기여 가이드
 
-Thank you for your interest in contributing. This guide covers the conventions,
-processes, and standards for this project.
+English | [한국어](#한국어)
 
-For a detailed architecture overview, see [AGENTS.md](./AGENTS.md).
+## English
 
-## Table of Contents
+Thank you for your interest in contributing! This project follows standard open-source practices.
 
-- [Code of Conduct](#code-of-conduct)
-- [Prerequisites](#prerequisites)
-- [Getting Started](#getting-started)
-- [Project Structure](#project-structure)
-- [Branch Naming](#branch-naming)
-- [Commit Messages](#commit-messages)
-- [Pull Request Process](#pull-request-process)
-- [Coding Standards](#coding-standards)
-- [Testing](#testing)
-- [SSoT (Single Source of Truth)](#ssot-single-source-of-truth)
-- [Build Pipeline](#build-pipeline)
-- [Common Pitfalls](#common-pitfalls)
-- [Getting Help](#getting-help)
+### How to Contribute
 
-## Code of Conduct
+1. Fork the repository
+2. Create a branch with a standard prefix (`feat/`, `fix/`, `docs/`, etc.)
+3. Make your changes
+4. Ensure PR title follows [Conventional Commits](https://www.conventionalcommits.org/)
+5. Submit a pull request
 
-This project follows the [Contributor
-Covenant](https://www.contributor-covenant.org/) code of conduct. Be respectful,
-constructive, and inclusive in all interactions.
+### PR Requirements
 
-## Prerequisites
+- PR title must follow Conventional Commits format
+- Branch name must use standard prefix
+- Keep changes focused and atomic
+- Update documentation if needed
 
-| Tool       | Version             | Purpose                                              |
-| ---------- | ------------------- | ---------------------------------------------------- |
-| Node.js    | >= 22.0.0           | Runtime                                              |
-| npm        | Latest (workspaces) | Package management                                   |
-| Bazel      | Latest              | Build coordination (Bazel coordinates, npm executes) |
-| Wrangler   | Latest              | Cloudflare Workers deployment                        |
-| Playwright | Latest              | E2E testing (`npx playwright install`)               |
+### Automated Checks
 
-## Getting Started
+All PRs are automatically checked by:
 
-```bash
-git clone git@github.com:qws941/resume.git
-cd resume
-npm install
-npm run sync:data    # Propagate SSoT resume data
-npm run build        # Build portfolio worker
-npm run test         # Run unit tests
-npm run test:e2e     # Run E2E tests (requires Playwright browsers)
-```
+- **03_pr-checks.yml**: PR size, title, branch name validation
+- **05_gitleaks.yml**: Secret scanning
+- **jclee-bot**: AI code review (Korean responses)
 
-## Project Structure
+---
 
-```text
-resume/
-├── apps/                       # Deployable applications
-│   ├── portfolio/              # Edge-deployed portfolio (resume.jclee.me)
-│   ├── job-server/             # MCP Server + stealth crawlers
-│   └── job-dashboard/          # Job dashboard worker
-├── packages/                   # Shared packages
-│   ├── cli/                    # Deployment CLI (Commander.js)
-│   └── data/                   # SSoT resume data & schemas
-├── tools/                      # Build, deploy, CI scripts
-├── tests/                      # Jest unit + Playwright E2E
-├── infrastructure/             # Observability (Grafana/ELK/Prometheus)
-├── third_party/                # npm deps (One Version Rule)
-├── docs/                       # Documentation hub
-└── .github/                    # CI/CD workflows, CODEOWNERS
-```
+## 한국어
 
-Each subdirectory contains its own `AGENTS.md` with domain-specific context. See
-the root [AGENTS.md](./AGENTS.md) for the full hierarchy.
+기여에 관심을 가져 주셔서 감사합니다! 이 프로젝트는 표준 오픈소스 관행을 따릅니다.
 
-## Branch Naming
+### 기여 방법
 
-Format: `{type}/{short-description}`
+1. 레포지토리 Fork
+2. 표준 prefix를 사용하여 브랜치 생성 (`feat/`, `fix/`, `docs/` 등)
+3. 변경사항 작업
+4. PR 제목이 [Conventional Commits](https://www.conventionalcommits.org/) 규약을 준수하는지 확인
+5. Pull Request 제출
 
-| Type        | Use Case             |
-| ----------- | -------------------- |
-| `feat/`     | New features         |
-| `fix/`      | Bug fixes            |
-| `docs/`     | Documentation        |
-| `refactor/` | Code restructuring   |
-| `test/`     | Test additions/fixes |
-| `chore/`    | Maintenance tasks    |
-| `ci/`       | CI/CD changes        |
+### PR 요구사항
 
-Examples: `feat/parallel-crawling`, `fix/csp-hash-mismatch`,
-`docs/deployment-guide`
+- PR 제목은 Conventional Commits 형식을 따라야 함
+- 브랜치 이름은 표준 prefix 사용
+- 변경사항은 집중적이고 원자적이어야 함
+- 필요시 문서 업데이트
 
-## Commit Messages
+### 자동화 검증
 
-This project uses [Conventional Commits](https://www.conventionalcommits.org/)
-enforced by commitlint.
+모든 PR은 다음 자동 검증을 통과해야 합니다:
 
-Format: `type(scope): description`
-
-**Types**: `feat`, `fix`, `docs`, `chore`, `refactor`, `test`, `ci`
-
-**Scopes**: `portfolio`, `job-automation`, `cli`, `data`, `ci`, `tests`, `infra`
-
-Examples from this repo:
-
-```text
-feat(job-automation): add 4 Korean platform crawlers
-fix(ci): resolve 43 E2E failures from CI run
-docs: add comprehensive job-automation architecture guide
-chore: update root AGENTS.md version metadata
-docs(workers): enhance AGENTS.md with handler classes and workflows
-```
-
-## Pull Request Process
-
-1. Create a feature branch from `master` using the [branch
-   naming](#branch-naming) convention.
-2. Make changes with [conventional commits](#commit-messages).
-3. Ensure all checks pass:
-
-   ```bash
-   npm run lint          # ESLint
-   npm run test          # Unit tests
-   npm run test:e2e      # E2E tests
-   ```
-
-4. Push your branch and open a Pull Request.
-5. PR requires CODEOWNERS review (`@qws941` for all files).
-6. All CI checks must pass before merge.
-7. Squash merge is preferred for clean history.
-
-## Coding Standards
-
-### Language and Modules
-
-- **ESM modules** — Use `import`/`export`, not `require`/`module.exports`.
-- **JSDoc** — Document all public APIs with JSDoc comments.
-- **Google3-style** — OWNERS files, BUILD.bazel, language-based directory
-  structure.
-
-### Linting
-
-- ESLint 9 flat config (`eslint.config.cjs`). Run `npm run lint` before
-  committing.
-- Prettier is available (`npm run format`) but not strictly enforced.
-
-### Strict Rules
-
-| Rule                                          | Rationale                         |
-| --------------------------------------------- | --------------------------------- |
-| No `as any`, `@ts-ignore`, `@ts-expect-error` | Preserve type safety              |
-| No empty catch blocks `catch(e) {}`           | Always handle errors meaningfully |
-| No deleting failing tests                     | Fix the root cause instead        |
-
-### Script Execution
-
-- Always run scripts from the project root (`pwd` = project root).
-- Use `npm run <script>` — see `package.json` for the full list.
-
-## Testing
-
-| Type     | Command                 | Framework  |
-| -------- | ----------------------- | ---------- |
-| Unit     | `npm test`              | Jest       |
-| E2E      | `npm run test:e2e`      | Playwright |
-| Coverage | `npm run test:coverage` | c8         |
-
-**Requirements**:
-
-- New features must include unit tests.
-- Bug fixes must include regression tests.
-- Never delete or skip failing tests to make the suite "pass".
-
-## SSoT (Single Source of Truth)
-
-All resume data flows from a single canonical source:
-
-```text
-packages/data/resumes/master/resume_data.json
-```
-
-- **Never** edit resume data in multiple places.
-- After editing `resume_data.json`, run `npm run sync:data` to propagate
-  changes.
-- The portfolio worker inlines all data at build time — there is no runtime data
-  fetching.
-
-## Build Pipeline
-
-```text
-resume_data.json (SSoT)
-    -> sync-resume-data.js
-index.html
-    -> generate-worker.js (escape backticks, compute CSP hashes)
-worker.js (GENERATED — never edit directly)
-    -> wrangler deploy
-resume.jclee.me (Cloudflare Edge)
-```
-
-Key commands:
-
-```bash
-npm run build          # Build portfolio worker
-npm run build:full     # Build portfolio + CLI
-npm run deploy         # Version bump + build + deploy
-npm run sync:data      # Propagate SSoT data
-```
-
-## Common Pitfalls
-
-| Don't                              | Do Instead                                             |
-| ---------------------------------- | ------------------------------------------------------ |
-| Edit `worker.js` directly          | Edit `generate-worker.js` or source HTML               |
-| Use `trim()` before CSP hash       | Hash the exact source string (whitespace matters)      |
-| Use naked Puppeteer/Playwright     | Use `BaseCrawler` with stealth plugins                 |
-| Hardcode secrets in source         | Use `.env` or `wrangler secret`                        |
-| Import across client boundaries    | Keep each client isolated in its own directory         |
-| Edit resume data in multiple files | Edit only `resume_data.json`, then `npm run sync:data` |
-| Skip OWNERS review                 | Get OWNERS approval on all PRs                         |
-
-## Getting Help
-
-- **GitHub Issues**:
-  [qws941/resume/issues](https://github.com/qws941/resume/issues) — Report bugs
-  or request features.
-- **Architecture Context**: Each directory has an `AGENTS.md` with
-  domain-specific documentation. Start with the root [AGENTS.md](./AGENTS.md).
-- **Build System**: See [tools/AGENTS.md](./tools/AGENTS.md) for build scripts
-  and CI utilities.
+- **03_pr-checks.yml**: PR 크기, 제목, 브랜치 이름 검증
+- **05_gitleaks.yml**: 민감정보 스캔
+- **jclee-bot**: AI 코드 리뷰 (한국어 응답)
