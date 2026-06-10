@@ -43,9 +43,11 @@ test.describe('Portfolio recruiter enhancements', () => {
   }) => {
     const matrix = page.locator('.project-evidence-matrix');
     await expect(matrix).toBeVisible();
+    await expect(page.getByRole('heading', { name: '직무별 검토 경로' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: '프로젝트 근거 매트릭스' })).toBeVisible();
     await expect(matrix.locator('.project-evidence-card')).toHaveCount(4);
     await expect(matrix.locator('.project-evidence-card').first()).toContainText(/역할|Role/);
-    await expect(matrix.locator('.project-evidence-card').first()).toContainText(/증거|Evidence/);
+    await expect(matrix.locator('.project-evidence-card').first()).toContainText(/근거|Evidence/);
 
     const projectCards = page.locator('#projects li.project-item');
     await expect(projectCards).toHaveCount(9);
@@ -63,7 +65,7 @@ test.describe('Portfolio recruiter enhancements', () => {
   }) => {
     const reviewerLink = page
       .locator('[data-evidence-project="AI GitHub PR Reviewer"]')
-      .getByText(/증거 보기|Open proof/);
+      .getByText(/근거 보기|Open proof/);
     await reviewerLink.click();
 
     await expect(page.locator('#project-list')).toHaveClass(/is-expanded/);
