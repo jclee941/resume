@@ -527,6 +527,47 @@
     <!-- Scripts -->
     <script>
       (function () {
+        function bindMobileNav() {
+          var toggle = document.querySelector('.nav-toggle');
+          var navLinks = document.querySelector('.nav-links');
+          if (!toggle || !navLinks || toggle.dataset.mobileNavBound === 'true') return;
+
+          toggle.dataset.mobileNavBound = 'true';
+
+          function closeMenu(focusToggle) {
+            toggle.setAttribute('aria-expanded', 'false');
+            navLinks.classList.remove('open');
+            if (focusToggle) toggle.focus();
+          }
+
+          toggle.addEventListener('click', function () {
+            var expanded = toggle.getAttribute('aria-expanded') === 'true';
+            toggle.setAttribute('aria-expanded', String(!expanded));
+            navLinks.classList.toggle('open');
+          });
+
+          navLinks.querySelectorAll('a').forEach(function (link) {
+            link.addEventListener('click', function () {
+              closeMenu(false);
+            });
+          });
+
+          document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape' && navLinks.classList.contains('open')) {
+              closeMenu(true);
+            }
+          });
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', bindMobileNav, { once: true });
+        } else {
+          bindMobileNav();
+        }
+      })();
+    </script>
+    <script>
+      (function () {
         var s = document.createElement('script');
         s.src = '/main.js?v=<!-- BUILD_CACHE_KEY_PLACEHOLDER -->';
         s.defer = true;
