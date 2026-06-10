@@ -82,6 +82,11 @@ Health (3), Stats (4), Auth (7), Applications CRUD (6), Webhooks (9), Auto-apply
   and idempotency constraints.
 - `src/middleware/AGENTS.md` owns middleware ordering, auth/rate-limit behavior,
   and response safety rules.
+- `src/routes/AGENTS.md` owns route table wiring and path registration rules.
+- `src/services/AGENTS.md` owns dashboard-local integrations and service
+  boundaries.
+- `src/queues/AGENTS.md` owns Cloudflare Queue message, retry, and DLQ rules.
+- `src/views/AGENTS.md` owns generated dashboard HTML/CSS/JS conventions.
 
 ## CONVENTIONS
 
