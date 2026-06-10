@@ -45,6 +45,8 @@ src/
 - Session file: `~/.OpenCode/data/wanted-session.json`.
 - Import from `shared/` directly, not `lib/` wrappers.
 - `lib/` directory is deprecated — do not add new files.
+- `server/AGENTS.md` owns Fastify app assembly, plugins, and HTTP server
+  boundaries; `server/routes/AGENTS.md` owns route modules.
 
 ## ANTI-PATTERNS
 

@@ -30,7 +30,7 @@ observability/automation configs.
 ├── infrastructure/       # Cloudflare, monitoring, n8n, DB config
 ├── docs/                 # guides, ADRs, architecture, conventions, security
 ├── ta/                   # TA profile generation (Python/PPTX)
-├── supabase/             # Supabase edge functions
+├── supabase/             # Supabase edge functions (Deno runtime)
 ├── third_party/          # vendored external dependencies (npm-managed)
 ├── .github/              # CI/release/maintenance control plane
 └── package.json          # workspace root + operator scripts
@@ -56,6 +56,7 @@ observability/automation configs.
 | Design/procedure docs         | `docs/`                                  | ADRs, architecture, conventions, security, guides                      |
 | Architecture rules            | `docs/conventions/architecture-rules.md` | 200-LOC limit, no catch-all names, n8n SSoT for workflows (was rules/) |
 | Security playbooks            | `docs/security/`                         | SECRET_ROTATION_PLAYBOOK.md, secret manager guidance                   |
+| Supabase edge functions       | `supabase/functions/`                    | Deno runtime; not part of npm workspaces                                |
 | TA profile generation         | `ta/`                                    | Python PPTX scripts, not a workspace package                           |
 
 ## CONVENTIONS
@@ -170,14 +171,16 @@ pre-commit install                                              # Install pre-co
 
 ## NOTES
 
-- 48 child AGENTS.md files exist across `apps/`, `tests/`, `tools/`,
-`infrastructure/`, and `packages/`; avoid duplicating their scope from the
-root.
+- 54 child AGENTS.md files exist across `apps/`, `tests/`, `tools/`,
+`infrastructure/`, `packages/`, `supabase/`, and `ta/`; avoid duplicating their
+scope from the root.
 
 - `infrastructure/n8n/` and `infrastructure/monitoring/` are distinct enough to
   warrant child AGENTS files; `docs/` stays governed at the docs-root level.
-- `supabase/functions/` contains Supabase edge functions — distinct runtime, not
-  part of npm workspaces.
+- `supabase/functions/` contains Supabase edge functions — distinct Deno
+  runtime, not part of npm workspaces.
+- `ta/` contains Python PPTX tooling and generated presentation outputs; it is
+  intentionally outside npm workspaces.
   #QR|- Go scripts in `infrastructure/n8n/` (13 files) — shell-to-Go migration
   XB| complete per monorepo standards.
 - New packages (types/schemas/contracts) created in Epic 2 each have their own
