@@ -140,6 +140,10 @@
   background: var(--gradient-accent);
 }
 
+.hero-cta .link-subtle--primary {
+  color: var(--text-inverse);
+}
+
 .link-subtle--primary:hover {
   color: var(--text-inverse);
   border-color: var(--color-accent-light);
