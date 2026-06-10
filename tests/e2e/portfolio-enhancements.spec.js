@@ -82,6 +82,25 @@ test.describe('Portfolio recruiter enhancements', () => {
       expect(source).toContain(entity);
     }
   });
+
+  test('mobile primary CTA keeps readable text on accent background', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+
+    const primaryAction = page.getByRole('link', { name: /채용 논의하기|Discuss a role/ });
+    await expect(primaryAction).toBeVisible();
+
+    const styles = await primaryAction.evaluate((element) => {
+      const computed = window.getComputedStyle(element);
+      return {
+        color: computed.color,
+        backgroundImage: computed.backgroundImage,
+      };
+    });
+
+    expect(styles.backgroundImage).toContain('linear-gradient');
+    expect(styles.color).toBe('rgb(15, 17, 21)');
+  });
 });
 
 test.describe('Mobile recruiter actions', () => {
