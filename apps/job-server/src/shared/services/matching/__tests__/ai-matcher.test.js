@@ -11,10 +11,14 @@ process.env.CLAUDE_API_KEY = 'test-key';
 const ai = await import('../ai-matcher.js');
 
 function claudeResponse(text) {
-  return new Response(JSON.stringify({ content: [{ text }] }), {
+  return new Response(JSON.stringify({ choices: [{ message: { content: text } }] }), {
     status: 200,
     headers: { 'Content-Type': 'application/json' },
   });
+}
+
+function promptContent(body) {
+  return body.messages.find((message) => message.role === 'user')?.content || '';
 }
 
 function mockLoadResume() {
@@ -252,7 +256,7 @@ describe('ai-matcher (with API key)', { concurrency: 1 }, () => {
       return claudeResponse('{"keywords":["react"],"tech_stack":[],"importance_scores":{}}');
     });
     await ai.extractKeywordsWithAI('text', 'frontend');
-    assert.ok(capturedBody.messages[0].content.includes('frontend'));
+    assert.ok(promptContent(capturedBody).includes('frontend'));
   });
 
   it('extractKeywordsWithAI returns fallback when no JSON', async () => {
@@ -275,7 +279,7 @@ describe('ai-matcher (with API key)', { concurrency: 1 }, () => {
 
     mock.method(globalThis, 'fetch', async (_, init) => {
       const body = JSON.parse(init.body);
-      const content = body.messages[0].content;
+      const content = promptContent(body);
 
       if (content.includes('이력서를 분석하여')) {
         return claudeResponse('{"skills":["devops"],"experience_level":"senior"}');
@@ -315,7 +319,7 @@ describe('ai-matcher (with API key)', { concurrency: 1 }, () => {
     mockLoadResume();
     mock.method(globalThis, 'fetch', async (_, init) => {
       const body = JSON.parse(init.body);
-      const content = body.messages[0].content;
+      const content = promptContent(body);
 
       if (content.includes('이력서를 분석하여')) {
         return claudeResponse('{"skills":["devops"]}');
@@ -353,7 +357,7 @@ describe('ai-matcher (with API key)', { concurrency: 1 }, () => {
     mockLoadResume();
     mock.method(globalThis, 'fetch', async (_, init) => {
       const body = JSON.parse(init.body);
-      const content = body.messages[0].content;
+      const content = promptContent(body);
 
       if (content.includes('이력서를 분석하여')) {
         return claudeResponse('{"skills":["devops"]}');
