@@ -4,6 +4,7 @@ import { initSkillRadar } from './modules/skill-radar.js';
 import { initCareerTimeline } from './modules/timeline.js';
 import { initProjectCards } from './modules/project-cards.js';
 import { initProjectMore } from './modules/project-more.js';
+import { initRecruiterEnhancements } from './modules/recruiter-enhancements.js';
 
 // Initialize all modules. main.js is injected dynamically (a nonce'd loader
 // does document.body.appendChild(script src=/main.js, defer)). A dynamically
@@ -18,6 +19,7 @@ function bootstrapPortfolio() {
   initCareerTimeline();
   initProjectCards();
   initProjectMore();
+  initRecruiterEnhancements();
 
   // Service Worker Registration
   if ('serviceWorker' in navigator) {
