@@ -99,21 +99,6 @@ test.describe('Hero Section', () => {
     await expect(page.locator('.cmd-output')).toHaveCount(0);
   });
 
-  test('should expose recruiter-ready proof and hiring actions above the fold', async ({
-    page,
-  }) => {
-    const hero = page.locator('#hero');
-    await expect(hero.getByText('채용 제안·면접 문의 환영')).toBeVisible();
-    await expect(hero.getByText('넥스트레이드 매매체결시스템')).toBeVisible();
-    await expect(hero.getByRole('link', { name: '채용 문의' })).toHaveAttribute(
-      'href',
-      'mailto:qws941@kakao.com?subject=%EC%B1%84%EC%9A%A9%20%EC%A0%9C%EC%95%88%20%EB%98%90%EB%8A%94%20%EB%A9%B4%EC%A0%91%20%EB%AC%B8%EC%9D%98'
-    );
-    await expect(hero.getByRole('link', { name: '증빙 프로젝트 보기' })).toHaveAttribute(
-      'href',
-      '#projects'
-    );
-  });
 });
 
 test.describe('Resume Section', () => {

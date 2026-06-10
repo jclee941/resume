@@ -55,10 +55,10 @@ export function getRecruiterLabels() {
   const lang = (document.documentElement.lang || 'ko').toLowerCase();
   if (lang.startsWith('en')) {
     return {
-      quickTitle: 'Role quick paths',
-      quickDesc: 'Choose a hiring track to focus the project evidence below.',
-      matrixTitle: 'Project evidence matrix',
-      matrixDesc: 'Role, proof, and source links are grouped for fast review.',
+      quickTitle: 'Role review paths',
+      quickDesc: 'Choose a hiring track to review the most relevant project evidence.',
+      matrixTitle: 'Project evidence map',
+      matrixDesc: 'Role, evidence, and source links are grouped for fast review.',
       role: 'Role',
       evidence: 'Evidence',
       open: 'Open proof',
@@ -70,13 +70,13 @@ export function getRecruiterLabels() {
   }
   if (lang.startsWith('ja')) {
     return {
-      quickTitle: 'ロール別クイックパス',
-      quickDesc: '採用トラックを選ぶと関連プロジェクト証跡を強調します。',
-      matrixTitle: 'プロジェクト証跡マトリクス',
-      matrixDesc: 'ロール、証跡、リンクをレビューしやすく整理しました。',
+      quickTitle: '職務別レビュー経路',
+      quickDesc: '採用トラックを選ぶと関連プロジェクト根拠を確認できます。',
+      matrixTitle: 'プロジェクト根拠マップ',
+      matrixDesc: 'ロール、根拠、リンクをレビューしやすく整理しました。',
       role: 'ロール',
-      evidence: '証跡',
-      open: '証跡を見る',
+      evidence: '根拠',
+      open: '根拠を見る',
       contact: '連絡',
       projects: 'プロジェクト',
       pdf: 'PDF',
@@ -84,13 +84,13 @@ export function getRecruiterLabels() {
     };
   }
   return {
-    quickTitle: '역할별 빠른 경로',
-    quickDesc: '채용 포지션을 선택하면 관련 프로젝트 증거를 바로 강조합니다.',
-    matrixTitle: '프로젝트 증거 매트릭스',
-    matrixDesc: '역할, 증거, 링크를 채용 검토 흐름에 맞춰 묶었습니다.',
+    quickTitle: '직무별 검토 경로',
+    quickDesc: '채용 트랙을 선택하면 관련 프로젝트 근거를 바로 확인할 수 있습니다.',
+    matrixTitle: '프로젝트 근거 매트릭스',
+    matrixDesc: '역할, 근거, 링크를 채용 검토 흐름에 맞춰 묶었습니다.',
     role: '역할',
-    evidence: '증거',
-    open: '증거 보기',
+    evidence: '근거',
+    open: '근거 보기',
     contact: '문의',
     projects: '프로젝트',
     pdf: 'PDF',

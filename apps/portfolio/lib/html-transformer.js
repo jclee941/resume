@@ -170,7 +170,7 @@ function buildJapaneseTemplate(html) {
         /금융권 보안 인프라 설계·운영, SIEM 탐지·대응 자동화, IaC 기반 관측성을\s+실무 문제 해결에 연결합니다\./g,
         '金融セキュリティインフラの設計・運用、SIEM検知・対応の自動化、IaCベースの可観測性を、実務の課題解決につなげています。'
       )
-      .replace(/채용 제안·면접 문의 환영/g, '採用提案・面接相談を歓迎')
+      .replace(/채용 검토·면접 논의 가능/g, '採用検討・面接相談が可能')
       .replace(/aria-label="대표 업무 증빙"/g, 'aria-label="代表的な業務証跡"')
       .replace(
         /넥스트레이드 매매체결시스템 보안 구축·운영 연속 수행/g,
@@ -185,9 +185,9 @@ function buildJapaneseTemplate(html) {
         'Splunk ES · n8n · FortiManager APIベースのセキュリティイベント自動化'
       )
       .replace(/aria-label="주요 이동"/g, 'aria-label="主なナビゲーション"')
-      .replace(/채용 문의/g, '採用問い合わせ')
-      .replace(/채용 검토 자료/g, '採用検討資料')
-      .replace(/증빙 프로젝트 보기/g, '証跡プロジェクトを見る')
+      .replace(/채용 논의하기/g, '採用相談をする')
+      .replace(/경력 근거 보기/g, '経歴根拠を見る')
+      .replace(/프로젝트 근거 보기/g, 'プロジェクト根拠を見る')
       .replace(
         /<a href="#resume" class="link-subtle">경력 보기<\/a>/g,
         '<a href="#resume" class="link-subtle">経歴を見る</a>'
@@ -245,7 +245,10 @@ function buildJapaneseTemplate(html) {
         /<h2 id="operated-heading" class="sr-only">이 사이트는 이렇게 운영됩니다<\/h2>/g,
         '<h2 id="operated-heading" class="sr-only">このサイトの運用方法</h2>'
       )
-      .replace(/이 포트폴리오는 정적 문서가 아니라 보안 헤더, 관측, 자동화로 관리되는 작은 운영 시스템입니다\./g, 'このポートフォリオは、セキュリティヘッダー・可観測性・自動化で管理される小さな運用システムです。')
+      .replace(
+        /이 포트폴리오는 정적 문서가 아니라 보안 헤더, 관측, 자동화로 관리되는 작은 운영 시스템입니다\./g,
+        'このポートフォリオは、セキュリティヘッダー・可観測性・自動化で管理される小さな運用システムです。'
+      )
       .replace(/Edge 런타임 \+ 보안 헤더/g, 'Edgeランタイム + セキュリティヘッダー')
       .replace(/관측성 스택/g, '可観測性スタック')
       .replace(/자동화·IaC/g, '自動化・IaC')
