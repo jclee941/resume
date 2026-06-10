@@ -4,6 +4,31 @@ const { test, expect } = require('@playwright/test');
 const MOBILE_VIEWPORT = { width: 390, height: 844 };
 const HERO_NAME_PATTERN = /Jaecheol Lee|이재철/;
 
+async function gotoMobilePage(page) {
+  await page.setViewportSize(MOBILE_VIEWPORT);
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+}
+
+function createMainJsDelay() {
+  let release = () => {};
+  const hold = new Promise((resolve) => {
+    release = resolve;
+  });
+
+  return { hold, release };
+}
+
+async function delayMainJsUntilReleased(page) {
+  const delay = createMainJsDelay();
+
+  await page.route('**/main.js*', async (route) => {
+    await delay.hold;
+    await route.abort('aborted');
+  });
+
+  return delay.release;
+}
+
 /**
  * Mobile Responsive E2E Tests
  *
@@ -62,17 +87,61 @@ test.describe('Mobile - Layout', () => {
 });
 
 test.describe('Mobile - Navigation', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.setViewportSize(MOBILE_VIEWPORT);
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+  test('should open mobile navigation immediately after domcontentloaded even when main.js is delayed', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 375, height: 667 });
+    const releaseMainJs = await delayMainJsUntilReleased(page);
+    const mainJsRequested = page.waitForRequest((request) => {
+      const url = new URL(request.url());
+      return url.pathname === '/main.js';
+    });
+
+    try {
+      await page.goto('/', { waitUntil: 'domcontentloaded' });
+      await mainJsRequested;
+
+      await page.locator('.nav-toggle').click();
+
+      await expect(page.locator('.nav-links')).toHaveClass(/(?:^|\s)open(?:\s|$)/);
+      await expect(page.locator('.nav-toggle')).toHaveAttribute('aria-expanded', 'true');
+    } finally {
+      releaseMainJs();
+    }
+  });
+
+  test('should close mobile navigation with Escape before main.js finishes loading', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 667 });
+    const releaseMainJs = await delayMainJsUntilReleased(page);
+    const mainJsRequested = page.waitForRequest((request) => {
+      const url = new URL(request.url());
+      return url.pathname === '/main.js';
+    });
+
+    try {
+      await page.goto('/', { waitUntil: 'domcontentloaded' });
+      await mainJsRequested;
+
+      await page.locator('.nav-toggle').click();
+      await expect(page.locator('.nav-links')).toHaveClass(/(?:^|\s)open(?:\s|$)/);
+
+      await page.keyboard.press('Escape');
+
+      await expect(page.locator('.nav-links')).not.toHaveClass(/(?:^|\s)open(?:\s|$)/);
+      await expect(page.locator('.nav-toggle')).toHaveAttribute('aria-expanded', 'false');
+    } finally {
+      releaseMainJs();
+    }
   });
 
   test('should display navigation on mobile', async ({ page }) => {
+    await gotoMobilePage(page);
     const nav = page.locator('.minimal-nav');
     await expect(nav).toBeAttached();
   });
 
   test('should be able to navigate to sections on mobile', async ({ page }) => {
+    await gotoMobilePage(page);
     // Mobile nav links live behind the hamburger toggle; open it first.
     await page.locator('.nav-toggle').click();
     await expect(page.locator('.nav-links')).toHaveClass(/open/);

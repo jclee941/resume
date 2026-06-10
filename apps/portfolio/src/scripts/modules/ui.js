@@ -193,6 +193,9 @@ function initMobileNav() {
   if (!toggle) return;
   const navLinks = document.querySelector('.nav-links');
   if (!navLinks) return;
+  if (toggle.dataset.mobileNavBound === 'true') return;
+
+  toggle.dataset.mobileNavBound = 'true';
 
   toggle.addEventListener('click', () => {
     const expanded = toggle.getAttribute('aria-expanded') === 'true';
