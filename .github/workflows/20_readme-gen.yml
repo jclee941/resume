@@ -51,14 +51,22 @@ jobs:
           fetch-depth: 1
 
       - name: Generate README.md
+        id: generate
         env:
           MINIMAX_API_KEY: ${{ secrets.MINIMAX_API_KEY }}
           OPENAI_BASE_URL: https://api.minimax.io/v1
         run: |
           set -eu
+          if [ -z "${MINIMAX_API_KEY:-}" ]; then
+            echo "::warning::MINIMAX_API_KEY secret is not set; skipping README generation."
+            echo "skipped=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "skipped=false" >> "$GITHUB_OUTPUT"
           python3 _bot-scripts/scripts/generate_readme.py --repo .
 
       - name: Normalize generated README (markdownlint --fix)
+        if: steps.generate.outputs.skipped != 'true'
         # Use the SAME markdownlint-cli version + .markdownlint.json config that
         # 42_reusable-docs-sync.yml enforces, so the generated README passes the
         # Documentation Sync 'markdown-lint' check instead of failing it.
@@ -68,6 +76,7 @@ jobs:
           markdownlint --fix --config .markdownlint.json README.md || true
 
       - name: Check for changes
+        if: steps.generate.outputs.skipped != 'true'
         id: diff
         run: |
           set -eu
@@ -80,7 +89,7 @@ jobs:
           fi
 
       - name: Commit and push to branch
-        if: steps.diff.outputs.changed == 'true'
+        if: steps.generate.outputs.skipped != 'true' && steps.diff.outputs.changed == 'true'
         run: |
           set -eu
           git config user.email "bot@jclee.me"
@@ -104,7 +113,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
 
       - name: Create or update PR
-        if: steps.diff.outputs.changed == 'true'
+        if: steps.generate.outputs.skipped != 'true' && steps.diff.outputs.changed == 'true'
         run: |
           set -eu
           # Resolve the repo default branch for the PR base. GITHUB_REF_NAME can be
@@ -126,7 +135,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
 
       - name: Enable auto-merge
-        if: steps.diff.outputs.changed == 'true'
+        if: steps.generate.outputs.skipped != 'true' && steps.diff.outputs.changed == 'true'
         run: |
           set -eu
           pr_number=$(gh pr list --head bot/auto-readme-update --json number --jq '.[0].number')
