@@ -25,12 +25,13 @@ describe('wanted profile mappers', () => {
   });
 
   it('mapCareerToWanted keeps mapping contract and category fallback', () => {
+    const knownRole = '백엔드 개발자';
     const mappedKnown = mapCareerToWanted({
       company: 'ACME',
-      role: '소프트웨어 엔지니어',
+      role: knownRole,
       period: '2024.01 ~ 2024.12',
     });
-    assert.strictEqual(mappedKnown.job_category_id, JOB_CATEGORY_MAPPING['소프트웨어 엔지니어']);
+    assert.strictEqual(mappedKnown.job_category_id, JOB_CATEGORY_MAPPING[knownRole]);
     assert.strictEqual(mappedKnown.served, false);
     assert.strictEqual(mappedKnown.employment_type, 'FULLTIME');
 

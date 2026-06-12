@@ -3,6 +3,7 @@ export function registerApplicationsRoutes(router, ctx) {
 
   router.get('/api/applications', (req) => apps.list(req));
   router.post('/api/applications', (req) => apps.create(req));
+  router.post('/api/applications/sync/wanted', (req) => apps.syncWantedHistory(req));
   router.get('/api/applications/:id', (req) => apps.get(req));
   router.put('/api/applications/:id', (req) => apps.update(req));
   router.delete('/api/applications/:id', (req) => apps.delete(req));

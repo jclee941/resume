@@ -1,20 +1,8 @@
-/**
- * Application Repository — D1 persistence for the applications domain.
- *
- * Owns all SQL for the `applications` and `application_timeline` tables.
- * Operations files call these methods instead of direct `handler.db.prepare()`.
- */
-
 export class ApplicationRepository {
   constructor(db) {
     this.db = db;
   }
 
-  /**
-   * Insert a new application record.
-   * @param {Object} app
-   * @returns {Promise<Object>} The inserted row
-   */
   async insert(app) {
     await this.db
       .prepare(
@@ -45,10 +33,6 @@ export class ApplicationRepository {
     return this.findById(app.id);
   }
 
-  /**
-   * Insert a timeline event.
-   * @param {Object} event
-   */
   async insertTimeline(event) {
     await this.db
       .prepare(
@@ -67,20 +51,10 @@ export class ApplicationRepository {
       .run();
   }
 
-  /**
-   * Find an application by ID.
-   * @param {string} id
-   * @returns {Promise<Object|null>}
-   */
   async findById(id) {
     return this.db.prepare('SELECT * FROM applications WHERE id = ?').bind(id).first();
   }
 
-  /**
-   * Find timeline events for an application.
-   * @param {string} applicationId
-   * @returns {Promise<Array<Object>>}
-   */
   async findTimelineByAppId(applicationId) {
     const result = await this.db
       .prepare(
@@ -91,18 +65,6 @@ export class ApplicationRepository {
     return result.results || [];
   }
 
-  /**
-   * List applications with optional filters.
-   * @param {Object} filters
-   * @param {string} [filters.status]
-   * @param {string} [filters.source]
-   * @param {string} [filters.company]
-   * @param {string} [filters.sortBy='created_at']
-   * @param {string} [filters.sortOrder='desc']
-   * @param {number} [filters.limit=100]
-   * @param {number} [filters.offset=0]
-   * @returns {Promise<Array<Object>>}
-   */
   async findAll({
     status,
     source,
@@ -141,23 +103,11 @@ export class ApplicationRepository {
     return result.results || [];
   }
 
-  /**
-   * Count all applications.
-   * @returns {Promise<number>}
-   */
   async countAll() {
     const result = await this.db.prepare('SELECT COUNT(*) as total FROM applications').first();
     return result?.total || 0;
   }
 
-  /**
-   * Update application status with optional applied_at.
-   * @param {string} id
-   * @param {Object} data
-   * @param {string} data.status
-   * @param {string} data.updatedAt
-   * @param {string|null} data.appliedAt
-   */
   async updateStatus(id, { status, updatedAt, appliedAt }) {
     let sql = 'UPDATE applications SET status = ?, updated_at = ?';
     const params = [status, updatedAt];
@@ -177,12 +127,6 @@ export class ApplicationRepository {
     return this.findById(id);
   }
 
-  /**
-   * Partial update of an application.
-   * @param {string} id
-   * @param {Object} fields
-   * @param {string} updatedAt
-   */
   async update(id, fields, updatedAt) {
     const updates = [];
     const params = [];
@@ -214,10 +158,6 @@ export class ApplicationRepository {
     return this.findById(id);
   }
 
-  /**
-   * Delete an application and its timeline.
-   * @param {string} id
-   */
   async delete(id) {
     await this.db
       .prepare('DELETE FROM application_timeline WHERE application_id = ?')
@@ -226,11 +166,6 @@ export class ApplicationRepository {
     await this.db.prepare('DELETE FROM applications WHERE id = ?').bind(id).run();
   }
 
-  /**
-   * Mark expired pending applications as expired.
-   * @param {string} cutoffDate — ISO date string
-   * @returns {Promise<number>} Number of rows updated
-   */
   async cleanupExpired(cutoffDate) {
     const result = await this.db
       .prepare(

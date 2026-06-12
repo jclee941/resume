@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strings"
 )
 
@@ -93,13 +94,8 @@ func main() {
 		}
 	}
 
-	// Validate migration sequence has no gaps
-	prevNum := -1
-	for seqNum := range upFiles {
-		if prevNum >= 0 && seqNum != prevNum+1 {
-			fmt.Printf("⚠️  Gap in migration sequence: %d → %d\n", prevNum, seqNum)
-		}
-		prevNum = seqNum
+	for _, warning := range migrationSequenceWarnings(upFiles) {
+		fmt.Println(warning)
 	}
 
 	fmt.Println()
@@ -110,6 +106,24 @@ func main() {
 		fmt.Printf("✅ All %d migration files validated successfully\n", len(sqlFiles))
 		os.Exit(0)
 	}
+}
+
+func migrationSequenceWarnings(upFiles map[int]string) []string {
+	seqNums := make([]int, 0, len(upFiles))
+	for seqNum := range upFiles {
+		seqNums = append(seqNums, seqNum)
+	}
+	sort.Ints(seqNums)
+
+	var warnings []string
+	prevNum := -1
+	for _, seqNum := range seqNums {
+		if prevNum >= 0 && seqNum != prevNum+1 {
+			warnings = append(warnings, fmt.Sprintf("⚠️  Gap in migration sequence: %d → %d", prevNum, seqNum))
+		}
+		prevNum = seqNum
+	}
+	return warnings
 }
 
 func findSQLFiles(dir string) ([]string, error) {
@@ -126,14 +140,7 @@ func findSQLFiles(dir string) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	// Sort files
-	for i := 0; i < len(files)-1; i++ {
-		for j := i + 1; j < len(files); j++ {
-			if files[i] > files[j] {
-				files[i], files[j] = files[j], files[i]
-			}
-		}
-	}
+	sort.Strings(files)
 	return files, nil
 }
 
