@@ -1,7 +1,11 @@
 const DEFAULT_KEYWORDS = ['DevOps', 'SRE', 'Platform Engineer', '보안'];
 
+function getDb(env) {
+  return env?.DB || env?.JOB_DB;
+}
+
 export async function getConfig(env) {
-  const db = env?.DB;
+  const db = getDb(env);
   if (!db) {
     return {
       autoApplyEnabled: false,
@@ -33,7 +37,7 @@ export async function getConfig(env) {
 }
 
 export async function getTodayApplicationCount(env, platform = null) {
-  const db = env?.DB;
+  const db = getDb(env);
   if (!db) return 0;
 
   const today = new Date().toISOString().split('T')[0];
@@ -56,7 +60,7 @@ export async function getTodayApplicationCount(env, platform = null) {
 }
 
 export async function isAlreadyApplied(env, jobId, source) {
-  const db = env?.DB;
+  const db = getDb(env);
   if (!db) return false;
 
   const result = await db
@@ -68,7 +72,7 @@ export async function isAlreadyApplied(env, jobId, source) {
 }
 
 export async function recordApplication(env, applicationData) {
-  const db = env?.DB;
+  const db = getDb(env);
   if (!db) return;
 
   const { job, source, status, result = null } = applicationData;

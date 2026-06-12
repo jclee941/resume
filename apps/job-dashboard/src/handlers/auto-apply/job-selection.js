@@ -15,7 +15,8 @@ export function createSearchResults() {
 
 export function selectMatchedJobs({ allJobs, searchKeywords, minScore, searchResults }) {
   const scoredJobs = allJobs.map((job) => {
-    const matchScore = calculateMatchScore(job, { keywords: searchKeywords });
+    const providedScore = Number.isFinite(job.matchScore) ? job.matchScore : null;
+    const matchScore = providedScore ?? calculateMatchScore(job, { keywords: searchKeywords });
     return appendDecisionTrace(
       {
         ...job,
