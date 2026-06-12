@@ -134,10 +134,19 @@ jobs:
             gh issue edit "$EXISTING" -R "${{ github.repository }}" --body "$BODY"
             gh issue comment "$EXISTING" -R "${{ github.repository }}" --body "Updated: ${{ steps.health.outputs.count }} failures detected at $(date -u +%Y-%m-%dT%H:%M:%SZ)"
           else
+            LABEL_ARGS=()
+            for LABEL in health-check automated; do
+              if gh label list -R "${{ github.repository }}" --search "$LABEL" --json name \
+                -q ".[] | select(.name == \"$LABEL\") | .name" | grep -qx "$LABEL"; then
+                LABEL_ARGS+=(--label "$LABEL")
+              else
+                echo "::warning::Label '$LABEL' does not exist; creating issue without it."
+              fi
+            done
             gh issue create -R "${{ github.repository }}" \
               --title "$TITLE" \
               --body "$BODY" \
-              --label "health-check,automated"
+              "${LABEL_ARGS[@]}"
           fi
 
       - name: Close health-check issue if all green
