@@ -67,7 +67,7 @@ describe('CI/CD Pipeline Integration', () => {
         'infrastructure',
         'database',
         'migrations',
-        '20260330_create_vault.sql'
+        '0006_create_vault.sql'
       );
       expect(fs.existsSync(vaultSchemaPath)).toBe(true);
 
