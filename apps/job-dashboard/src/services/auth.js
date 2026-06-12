@@ -8,6 +8,7 @@ import {
 const ADMIN_ROUTES = [
   '/api/applications',
   '/api/automation',
+  '/api/auto-apply',
   '/api/auth',
   '/api/config',
   '/api/cleanup',

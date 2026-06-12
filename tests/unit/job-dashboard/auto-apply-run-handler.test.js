@@ -27,8 +27,8 @@ function createMockDb({ alreadyApplied = false } = {}) {
       }
 
       if (query.includes('SELECT id FROM applications')) {
-        return makeStatement(() => ({
-          first: async () => (alreadyApplied ? { id: 'wanted_job-1' } : null),
+        return makeStatement((jobId, source) => ({
+          first: async () => (alreadyApplied ? { id: `${source}_${jobId}` } : null),
         }));
       }
 

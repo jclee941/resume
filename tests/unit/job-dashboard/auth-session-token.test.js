@@ -107,4 +107,10 @@ describe('auth-service mintSessionToken / verifySessionToken (P1-5)', () => {
     expect(result.ok).toBe(false);
     expect(result.status).toBe(401);
   });
+
+  test('requiresAuth protects auto-apply control endpoints', () => {
+    expect(auth.requiresAuth('/api/auto-apply/run')).toBe(true);
+    expect(auth.requiresAuth('/api/auto-apply/config')).toBe(true);
+    expect(auth.requiresAuth('/api/auto-apply/status')).toBe(true);
+  });
 });

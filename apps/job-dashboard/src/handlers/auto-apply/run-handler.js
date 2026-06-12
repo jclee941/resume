@@ -9,6 +9,7 @@ import { getWantedSession } from './session-helpers.js';
 import { SUPPORTED_PLATFORMS } from './constants.js';
 import { jsonResponse } from './response.js';
 import { applyMatchedJobs } from './application-actions.js';
+import { readExplicitCandidates } from './explicit-candidates.js';
 import { createSearchResults, selectMatchedJobs } from './job-selection.js';
 import { primeWantedSession, searchPlatformJobs } from './job-search.js';
 
@@ -21,6 +22,17 @@ export async function runAutoApply({ request, env, clients }) {
     platforms = ['wanted', 'linkedin', 'remember'],
   } = body;
   const config = await getConfig(env);
+  const explicitCandidates = readExplicitCandidates(body);
+  if (explicitCandidates.error) {
+    return jsonResponse(
+      {
+        success: false,
+        error: explicitCandidates.error,
+        errorCode: 'INVALID_AUTO_APPLY_REQUEST',
+      },
+      explicitCandidates.status
+    );
+  }
 
   if (!config.autoApplyEnabled && !dryRun) {
     return jsonResponse(
@@ -58,16 +70,18 @@ export async function runAutoApply({ request, env, clients }) {
 
   const searchResults = createSearchResults();
   try {
-    if (activePlatforms.includes('wanted')) {
+    if (!explicitCandidates.hasExplicitCandidates && activePlatforms.includes('wanted')) {
       await primeWantedSession({ env, clients, getWantedSession });
     }
 
-    const allJobs = await searchPlatformJobs({
-      clients,
-      activePlatforms,
-      searchKeywords,
-      searchResults,
-    });
+    const allJobs = explicitCandidates.hasExplicitCandidates
+      ? explicitCandidates.jobs
+      : await searchPlatformJobs({
+          clients,
+          activePlatforms,
+          searchKeywords,
+          searchResults,
+        });
     const matchedJobs = selectMatchedJobs({ allJobs, searchKeywords, minScore, searchResults });
     await applyMatchedJobs({
       env,
@@ -89,6 +103,7 @@ export async function runAutoApply({ request, env, clients }) {
       todayApplications: todayCount,
       remaining,
       results: searchResults,
+      recursion: explicitCandidates.recursion,
     });
   } catch (error) {
     const normalized = normalizeError(error, { handler: 'AutoApply', action: 'executeAutoApply' });
