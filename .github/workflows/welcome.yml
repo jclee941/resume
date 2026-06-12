@@ -1,4 +1,3 @@
-# Source: jclee941/.github/.github/workflows/_welcome.yml
 name: Welcome
 on:
   issues:
@@ -11,4 +10,29 @@ permissions:
   pull-requests: write
 jobs:
   welcome:
-    uses: jclee941/.github/.github/workflows/_welcome.yml@master
+    if: >
+      github.actor != 'github-actions[bot]' &&
+      (github.event_name != 'issues' ||
+        !startsWith(github.event.issue.title, '[health-check]'))
+    runs-on: ${{ github.repository_visibility == 'private' && 'self-hosted' || 'ubuntu-latest' }}
+    timeout-minutes: 5
+    steps:
+      - name: Comment on new issue
+        if: github.event_name == 'issues'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          set -eu
+          gh issue comment "$ISSUE_NUMBER" \
+            --body "Thanks for opening this issue. I will review the details."
+
+      - name: Comment on new pull request
+        if: github.event_name == 'pull_request_target'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -eu
+          gh pr comment "$PR_NUMBER" \
+            --body "Thanks for opening this pull request. Automated checks will run shortly."
