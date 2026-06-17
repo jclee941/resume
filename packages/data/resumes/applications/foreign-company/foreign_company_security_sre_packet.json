@@ -1,0 +1,155 @@
+{
+  "packet": {
+    "name": "Foreign Company Security/SRE Application Packet",
+    "language": "en",
+    "audience": "Foreign companies hiring security, SRE, platform, or cloud security engineers",
+    "targetRoles": [
+      "Security Engineer",
+      "Site Reliability Engineer",
+      "Platform Engineer",
+      "Cloud Security Engineer"
+    ],
+    "locationPreferences": ["Remote", "Seoul", "Incheon", "Gyeonggi"],
+    "workingPreferences": [
+      "English technical documentation",
+      "Distributed engineering collaboration",
+      "Security operations and platform automation"
+    ],
+    "sourcePolicy": "Hand-crafted application variant independent from master resume parity"
+  },
+  "personal": {
+    "name": "Jaecheol Lee",
+    "email": "qws941@kakao.com",
+    "phone": "010-5757-9592",
+    "location": "Siheung-si, Gyeonggi-do, South Korea",
+    "github": "https://github.com/jclee941",
+    "portfolio": "https://resume.jclee.me"
+  },
+  "summary": {
+    "headline": "Security and platform engineer focused on financial security operations, infrastructure automation, and observability",
+    "profile": "Security-focused infrastructure engineer with hands-on work across Linux operations, network security, financial security infrastructure, SIEM workflows, and automation. Comfortable translating manual operational procedures into repeatable scripts, documented runbooks, and observable platform workflows.",
+    "roleFit": [
+      "Security engineering for regulated or high-change infrastructure",
+      "SRE and platform operations using Linux, Docker, observability, and automation",
+      "Cloud security workflows involving IAM, network controls, logging, and alerting",
+      "Incident triage support through SIEM rules, alert routing, and security runbooks"
+    ],
+    "locationPreference": "Remote first; open to Seoul, Incheon, and Gyeonggi on-site or hybrid roles"
+  },
+  "careers": [
+    {
+      "company": "ITCEN CTS Co., Ltd.",
+      "period": "2025.03 ~ 2026.02",
+      "project": "Nextrade Trading System Security Operations",
+      "role": "Security Operations Engineer",
+      "description": "Operated security workflows for an exchange environment by connecting Splunk ES detections, n8n notification flows, and FortiManager API scripts for firewall policy lookup and operator triage."
+    },
+    {
+      "company": "Gaonnuri Information System Co., Ltd.",
+      "period": "2024.03 ~ 2025.02",
+      "project": "Nextrade Trading System Construction",
+      "role": "Security Infrastructure Build Engineer",
+      "description": "Built FortiGate HA and FortiManager-based security infrastructure, standardized device setup with Ansible roles, and prepared security architecture evidence for financial license review."
+    },
+    {
+      "company": "Quantec Investment Management",
+      "period": "2022.08 ~ 2024.03",
+      "project": "Financial Security Data Center Operations",
+      "role": "Infrastructure Engineer",
+      "description": "Operated financial data-center infrastructure, supported audit-response workflows, maintained DLP policies, and wrote Python scripts for recurring operations."
+    },
+    {
+      "company": "Jointree Co., Ltd.",
+      "period": "2021.09 ~ 2022.04",
+      "project": "Kookmin University Next-Generation Information System",
+      "role": "Systems Engineer",
+      "description": "Implemented VMware NSX-T microsegmentation, virtual network security policies, and integrated security controls for a university information system."
+    },
+    {
+      "company": "Metanet M Platform Co., Ltd.",
+      "period": "2019.12 ~ 2021.08",
+      "project": "Contact Center Infrastructure",
+      "role": "Systems Engineer",
+      "description": "Maintained Linux-based infrastructure, FortiGate VPN operations, NAC workflows, and Python or Ansible automation for repeatable remote-work operations."
+    },
+    {
+      "company": "MTData Co., Ltd.",
+      "period": "2017.02 ~ 2018.10",
+      "project": "Korea Aerospace Industries Infrastructure Operations",
+      "role": "IT Support and Systems Operations Engineer",
+      "description": "Operated Linux servers, firewall policies, patch routines, and closed-network operational procedures in an aerospace infrastructure environment."
+    }
+  ],
+  "projects": [
+    {
+      "period": "2025.03 ~ 2026.02",
+      "name": "Security Operations Automation",
+      "client": "Nextrade",
+      "technologies": ["Splunk ES", "n8n", "FortiManager API", "Python", "Docker"],
+      "os": "Linux",
+      "role": "Security operations automation",
+      "description": "Connected detection rules, notification workflows, and firewall policy lookup scripts into a repeatable operator workflow."
+    },
+    {
+      "period": "2024.03 ~ 2025.02",
+      "name": "Security Infrastructure Build",
+      "client": "Nextrade",
+      "technologies": ["FortiGate", "FortiManager", "Ansible", "Python", "VMware"],
+      "os": "Linux, VMware",
+      "role": "Security infrastructure build",
+      "description": "Built HA firewall and policy-management foundations for a regulated financial trading environment."
+    },
+    {
+      "period": "2024.06 ~ Present",
+      "name": "Observability Platform",
+      "client": "Personal infrastructure",
+      "technologies": ["Grafana", "Prometheus", "Loki", "Docker"],
+      "os": "Linux",
+      "role": "Platform observability",
+      "description": "Maintains metrics and log observability for homelab infrastructure with dashboard definitions managed as code."
+    }
+  ],
+  "skills": {
+    "security": [
+      "Splunk ES",
+      "FortiGate",
+      "FortiManager",
+      "WAF",
+      "NAC",
+      "DLP",
+      "Wazuh",
+      "gitleaks"
+    ],
+    "sre_platform": ["Linux", "Docker", "Grafana", "Prometheus", "Loki", "Ansible", "Terraform"],
+    "cloud_security": ["AWS IAM", "CloudTrail", "GuardDuty", "VPC", "Cloudflare WAF"],
+    "automation": ["Python", "Bash", "Go", "Node.js", "n8n", "GitHub Actions"],
+    "collaboration": [
+      "English technical writing",
+      "Runbooks",
+      "Incident triage",
+      "Vendor support communication"
+    ]
+  },
+  "certifications": [
+    {
+      "name": "CCNP",
+      "issuer": "Cisco Systems",
+      "date": "2020.08"
+    },
+    {
+      "name": "RHCSA",
+      "issuer": "Red Hat",
+      "date": "2019.01"
+    },
+    {
+      "name": "CompTIA Linux+",
+      "issuer": "CompTIA",
+      "date": "2019.02"
+    },
+    {
+      "name": "LPIC Level 1",
+      "issuer": "Linux Professional Institute",
+      "date": "2019.02"
+    }
+  ]
+}

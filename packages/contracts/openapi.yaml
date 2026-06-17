@@ -24,6 +24,8 @@ tags:
   - name: AutoApply
     description: Automated job application
 
+security: []
+
 paths:
   /health:
     get:
@@ -377,33 +379,321 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                dryRun:
-                  type: boolean
-                  default: true
-                keywords:
-                  type: array
-                  items:
-                    type: string
-                minScore:
-                  type: integer
-                maxApplications:
-                  type: integer
+              $ref: '#/components/schemas/AutoApplyRunRequest'
       responses:
-        '202':
-          description: Auto-apply started
+        '200':
+          description: Auto-apply run result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AutoApplyRunResponse'
+
+  # ===== ADDED 2026-04-29 closing OpenAPI drift (audit P1) =====
+  # Auth routes (apps/job-dashboard/src/routes/auth.js)
+  /api/auth/status:
+    get:
+      tags: [Auth]
+      summary: Current admin session status
+      responses:
+        '200':
+          description: Session status
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  success:
+                  authenticated:
                     type: boolean
-                  message:
+                  expiresAt:
                     type: string
-                  status:
-                    type: string
+
+  /api/auth/login:
+    post:
+      tags: [Auth]
+      summary: Mint a 4h HMAC session token from a valid ADMIN_TOKEN
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token]
+              properties:
+                token:
+                  type: string
+      responses:
+        '200':
+          description: Sets adminToken cookie
+        '401':
+          description: Invalid token
+
+  /api/auth/logout:
+    post:
+      tags: [Auth]
+      summary: Clear admin session cookie
+      responses:
+        '200':
+          description: Session cleared
+
+  /api/auth/sync:
+    post:
+      tags: [Auth]
+      summary: Ingest platform cookies from external script (requires X-Auth-Sync-Secret)
+      parameters:
+        - in: header
+          name: X-Auth-Sync-Secret
+          schema:
+            type: string
+          required: true
+      responses:
+        '200': { description: Synced }
+        '401': { description: Invalid secret }
+        '503': { description: AUTH_SYNC_SECRET not configured }
+
+  /api/auth/set:
+    post:
+      tags: [Auth]
+      summary: Manually set platform auth (admin)
+      responses:
+        '200':
+          description: Auth updated
+
+  /api/auth/profile:
+    get:
+      tags: [Auth]
+      summary: Read Wanted profile via authenticated session
+      responses:
+        '200':
+          description: Profile status
+
+  /api/auth/{platform}:
+    delete:
+      tags: [Auth]
+      summary: Clear platform-specific session
+      parameters:
+        - in: path
+          name: platform
+          schema: { type: string }
+          required: true
+      responses:
+        '200':
+          description: Platform session cleared
+
+  # Workflows (apps/job-dashboard/src/routes/workflows.js)
+  /api/workflows/job-crawling:
+    post:
+      tags: [Workflows]
+      summary: Trigger job-crawling Cloudflare Workflow
+      responses:
+        '202':
+          description: Workflow started
+
+  /api/workflows/application:
+    post:
+      tags: [Workflows]
+      summary: Trigger application Cloudflare Workflow
+      responses:
+        '202':
+          description: Workflow started
+
+  /api/workflows/resume-sync:
+    post:
+      tags: [Workflows]
+      summary: Trigger resume-sync Cloudflare Workflow
+      responses:
+        '202':
+          description: Workflow started
+
+  /api/workflows/daily-report:
+    post:
+      tags: [Workflows]
+      summary: Trigger daily-report Cloudflare Workflow
+      responses:
+        '202':
+          description: Workflow started
+
+  /api/workflows/{workflowType}/{instanceId}:
+    get:
+      tags: [Workflows]
+      summary: Read workflow instance status
+      parameters:
+        - in: path
+          name: workflowType
+          schema: { type: string }
+          required: true
+        - in: path
+          name: instanceId
+          schema: { type: string }
+          required: true
+      responses:
+        '200':
+          description: Workflow status
+
+  /api/workflows/application/{instanceId}/approve:
+    post:
+      tags: [Workflows]
+      summary: Approve a pending application workflow step
+      parameters:
+        - in: path
+          name: instanceId
+          schema: { type: string }
+          required: true
+      responses:
+        '200':
+          description: Approval recorded
+
+  /api/workflows/application/{instanceId}/reject:
+    post:
+      tags: [Workflows]
+      summary: Reject a pending application workflow step
+      parameters:
+        - in: path
+          name: instanceId
+          schema: { type: string }
+          required: true
+      responses:
+        '200':
+          description: Rejection recorded
+
+  # Automation triggers (apps/job-dashboard/src/routes/automation.js)
+  /api/automation/search:
+    post:
+      tags: [Automation]
+      summary: Trigger job-search webhook
+      responses:
+        '202':
+          description: Search triggered
+
+  /api/automation/apply:
+    post:
+      tags: [Automation]
+      summary: Trigger auto-apply webhook
+      responses:
+        '202':
+          description: Auto-apply triggered
+
+  /api/automation/report:
+    post:
+      tags: [Automation]
+      summary: Trigger daily-report webhook
+      responses:
+        '202':
+          description: Report triggered
+
+  /api/automation/resume:
+    post:
+      tags: [Automation]
+      summary: Trigger resume-sync webhook
+      responses:
+        '202':
+          description: Resume sync triggered
+
+  /api/automation/profile-sync:
+    post:
+      tags: [Automation]
+      summary: Trigger profile-sync webhook
+      responses:
+        '202':
+          description: Profile sync triggered
+
+  /api/automation/profile-sync/history:
+    get:
+      tags: [Automation]
+      summary: Profile sync history
+      responses:
+        '200':
+          description: Profile sync history
+
+  /api/automation/profile-sync/{syncId}:
+    get:
+      tags: [Automation]
+      summary: Profile sync status by ID
+      parameters:
+        - in: path
+          name: syncId
+          schema: { type: string }
+          required: true
+      responses:
+        '200':
+          description: Profile sync status
+
+  /api/automation/profile-sync/callback:
+    post:
+      tags: [Automation]
+      summary: Profile-sync completion callback
+      responses:
+        '200':
+          description: Callback accepted
+
+  /api/auto-apply/config:
+    get:
+      tags: [Automation]
+      summary: Auto-apply configuration
+      responses:
+        '200':
+          description: Auto-apply configuration
+
+  # Resume master (apps/job-dashboard/src/routes/automation.js)
+  /api/resume/master:
+    get:
+      tags: [Resume]
+      summary: Read master resume blob
+      responses:
+        '200':
+          description: Master resume
+    put:
+      tags: [Resume]
+      summary: Upload master resume
+      responses:
+        '200':
+          description: Master resume updated
+
+  /api/test/chaos-resumes:
+    get:
+      tags: [Test]
+      summary: Test endpoint for Wanted chaos-resume API
+      responses:
+        '200':
+          description: Test response
+
+  # Admin (apps/job-dashboard/src/routes/admin.js)
+  /api/diagnostics/bindings:
+    get:
+      tags: [Admin]
+      summary: Diagnose Cloudflare Worker bindings (D1, KV, AI, browser)
+      responses:
+        '200':
+          description: Binding diagnostics
+
+  /api/config:
+    get:
+      tags: [Admin]
+      summary: Read worker config from D1
+      responses:
+        '200':
+          description: Worker config
+    put:
+      tags: [Admin]
+      summary: Update worker config in D1
+      responses:
+        '200':
+          description: Worker config updated
+
+  /api/queue/enqueue:
+    post:
+      tags: [Admin]
+      summary: Enqueue a job to the crawl-tasks queue
+      responses:
+        '202':
+          description: Job enqueued
+
+  /api/queue/status:
+    get:
+      tags: [Admin]
+      summary: Queue status overview
+      responses:
+        '200':
+          description: Queue status
 
 components:
   schemas:
@@ -463,14 +753,15 @@ components:
       type: object
       properties:
         id:
-          type: integer
+          oneOf:
+            - type: integer
+            - type: string
         company:
           type: string
         position:
           type: string
         source:
-          type: string
-          enum: [wanted, saramin, jobkorea, linkedin]
+          $ref: '#/components/schemas/AutoApplyPlatform'
         matchScore:
           type: integer
         url:
@@ -505,6 +796,335 @@ components:
           type: array
           items:
             type: string
+
+    ForeignAtsPlatform:
+      type: string
+      enum: [ashby, greenhouse, lever, smartrecruiters, teamtailor, workday]
+
+    ForeignAtsLocation:
+      type: object
+      additionalProperties: false
+      required: [countryCode]
+      properties:
+        countryCode:
+          type: string
+          pattern: ^[A-Z]{2}$
+        region:
+          type: string
+          minLength: 1
+          maxLength: 100
+        city:
+          type: string
+          minLength: 1
+          maxLength: 100
+        remote:
+          type: boolean
+
+    ForeignAtsSource:
+      type: object
+      additionalProperties: false
+      required: [platform, sourceUrl]
+      properties:
+        platform:
+          $ref: '#/components/schemas/ForeignAtsPlatform'
+        sourceUrl:
+          type: string
+          format: uri
+          maxLength: 2000
+        externalJobId:
+          type: string
+          minLength: 1
+          maxLength: 200
+        requisitionId:
+          type: string
+          minLength: 1
+          maxLength: 200
+        location:
+          $ref: '#/components/schemas/ForeignAtsLocation'
+
+    ForeignAtsApplicationPacketMetadata:
+      type: object
+      additionalProperties: false
+      required: [source, capturedAt]
+      properties:
+        source:
+          $ref: '#/components/schemas/ForeignAtsSource'
+        capturedAt:
+          type: string
+          format: date-time
+        externalApplicationId:
+          type: string
+          minLength: 1
+          maxLength: 200
+        status:
+          type: string
+          enum: [pending, applied, reviewing, interview, offer, rejected, withdrawn]
+        raw:
+          type: object
+
+    ForeignAtsApplicationPacket:
+      type: object
+      additionalProperties: false
+      required: [metadata]
+      properties:
+        metadata:
+          $ref: '#/components/schemas/ForeignAtsApplicationPacketMetadata'
+        application:
+          $ref: '#/components/schemas/Application'
+
+    AutoApplyPlatform:
+      type: string
+      enum: [wanted, linkedin, remember, jobkorea, saramin, greenhouse, lever, ashby]
+
+    ForeignAtsAdapterCapability:
+      type: object
+      additionalProperties: false
+      properties:
+        platform:
+          $ref: '#/components/schemas/ForeignAtsPlatform'
+        mode:
+          type: string
+          enum: [dry-run, manual-review, supported-submit]
+        canSubmit:
+          type: boolean
+          description: True only for adapters that support real submissions.
+        dryRunFirst:
+          type: boolean
+          description: Adapter must support dry-run preview before any real submission.
+
+    ForeignAtsApprovalMetadata:
+      type: object
+      additionalProperties: false
+      properties:
+        score:
+          type: number
+          nullable: true
+        source:
+          $ref: '#/components/schemas/AutoApplyPlatform'
+        adapterCapability:
+          $ref: '#/components/schemas/ForeignAtsAdapterCapability'
+        packetPath:
+          type: string
+          nullable: true
+        approvalId:
+          type: string
+        approvedAt:
+          type: string
+          format: date-time
+
+    AutoApplyRunCandidate:
+      type: object
+      required: [id, source, company]
+      properties:
+        id:
+          type: string
+        sourceId:
+          type: string
+        source:
+          $ref: '#/components/schemas/AutoApplyPlatform'
+        company:
+          type: string
+        position:
+          type: string
+        title:
+          type: string
+        sourceUrl:
+          type: string
+          format: uri
+        applicationUrl:
+          type: string
+          format: uri
+        externalJobId:
+          type: string
+        payloadHash:
+          type: string
+        atsStub:
+          type: boolean
+        matchScore:
+          type: number
+        approvalId:
+          type: string
+        approvalMetadata:
+          $ref: '#/components/schemas/ForeignAtsApprovalMetadata'
+        applicationPacket:
+          $ref: '#/components/schemas/ForeignAtsApplicationPacket'
+
+    ForeignAtsSubmissionPreview:
+      type: object
+      additionalProperties: false
+      properties:
+        success:
+          type: boolean
+        dryRun:
+          type: boolean
+        networkWrite:
+          type: boolean
+          description: False for Greenhouse, Lever, and Ashby dry-run previews.
+        action:
+          type: string
+          enum: [would_apply]
+        status:
+          type: string
+          enum: [dry-run]
+        platform:
+          $ref: '#/components/schemas/ForeignAtsPlatform'
+        jobId:
+          type: string
+        sourceUrl:
+          type: string
+        company:
+          type: string
+        position:
+          type: string
+        resumeId:
+          type: string
+        matchScore:
+          type: number
+          nullable: true
+        approvalMetadata:
+          $ref: '#/components/schemas/ForeignAtsApprovalMetadata'
+
+    AutoApplyRunRequest:
+      type: object
+      properties:
+        dryRun:
+          type: boolean
+          default: true
+          description: Must remain true for default QA and dry-run walkthroughs.
+        atsStub:
+          type: boolean
+          default: false
+          description: Enables Greenhouse, Lever, and Ashby stub jobs only when dryRun is true.
+        platforms:
+          type: array
+          items:
+            $ref: '#/components/schemas/AutoApplyPlatform'
+          example: [greenhouse, lever, ashby]
+        keywords:
+          type: array
+          items:
+            type: string
+        minScore:
+          type: integer
+        maxApplications:
+          type: integer
+        candidates:
+          type: array
+          description: Explicit opt-in candidate list for walkthroughs and gated submits.
+          items:
+            $ref: '#/components/schemas/AutoApplyRunCandidate'
+        maxDepth:
+          type: integer
+          minimum: 0
+          maximum: 5
+          default: 1
+        approvalId:
+          type: string
+          description: Approval identifier required by real-submission opt-in flows.
+        explicitSubmit:
+          type: boolean
+          default: false
+          description: Must be true with dryRun false before any real ATS submission.
+        submitOptIn:
+          type: boolean
+          default: false
+          description: Secondary operator opt-in for T16/T17 real-submit paths.
+
+    AutoApplyRunResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        dryRun:
+          type: boolean
+        submitted:
+          type: integer
+          description: Zero for dry-run ATS walkthroughs.
+        platforms:
+          type: array
+          items:
+            $ref: '#/components/schemas/AutoApplyPlatform'
+        config:
+          type: object
+          properties:
+            keywords:
+              type: array
+              items:
+                type: string
+            minMatchScore:
+              type: integer
+            maxDailyApplications:
+              type: integer
+        todayApplications:
+          type: integer
+        remaining:
+          type: integer
+        results:
+          $ref: '#/components/schemas/AutoApplyRunResults'
+        recursion:
+          type: object
+          properties:
+            maxDepth:
+              type: integer
+            maxVisitedDepth:
+              type: integer
+            visited:
+              type: integer
+            truncated:
+              type: integer
+        previews:
+          type: array
+          items:
+            $ref: '#/components/schemas/ForeignAtsSubmissionPreview'
+
+    AutoApplyRunResults:
+      type: object
+      properties:
+        searched:
+          type: integer
+        matched:
+          type: integer
+        applied:
+          type: integer
+        skipped:
+          type: integer
+        errors:
+          type: integer
+        byPlatform:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              searched:
+                type: integer
+              matched:
+                type: integer
+              applied:
+                type: integer
+        jobs:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              source:
+                $ref: '#/components/schemas/AutoApplyPlatform'
+              position:
+                type: string
+              company:
+                type: string
+              matchScore:
+                type: number
+              url:
+                type: string
+              action:
+                type: string
+                enum: [would_apply, applied, saved_for_manual_apply, skipped_already_applied]
+              decisionTrace:
+                type: array
+                items:
+                  type: object
 
     SearchResult:
       type: object
@@ -579,229 +1199,62 @@ components:
           type: number
         memoryUsage:
           type: number
-
-  # ===== ADDED 2026-04-29 closing OpenAPI drift (audit P1) =====
-  # Auth routes (apps/job-dashboard/src/routes/auth.js)
-  /api/auth/status:
-    get:
-      tags: [Auth]
-      summary: Current admin session status
-      responses:
-        '200':
-          description: Session status
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  authenticated:
-                    type: boolean
-                  expiresAt:
-                    type: string
-
-  /api/auth/login:
-    post:
-      tags: [Auth]
-      summary: Mint a 4h HMAC session token from a valid ADMIN_TOKEN
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [token]
-              properties:
-                token:
-                  type: string
-      responses:
-        '200':
-          description: Sets adminToken cookie
-        '401':
-          description: Invalid token
-
-  /api/auth/logout:
-    post:
-      tags: [Auth]
-      summary: Clear admin session cookie
-      responses:
-        '200':
-          description: Session cleared
-
-  /api/auth/sync:
-    post:
-      tags: [Auth]
-      summary: Ingest platform cookies from external script (requires X-Auth-Sync-Secret)
-      parameters:
-        - in: header
-          name: X-Auth-Sync-Secret
-          schema:
+        enabled:
+          type: boolean
+        supportedPlatforms:
+          type: array
+          items:
+            $ref: '#/components/schemas/AutoApplyPlatform'
+        todayApplications:
+          type: integer
+        maxDaily:
+          type: integer
+        remaining:
+          type: integer
+        minMatchScore:
+          type: integer
+        keywords:
+          type: array
+          items:
             type: string
-          required: true
-      responses:
-        '200': { description: Synced }
-        '401': { description: Invalid secret }
-        '503': { description: AUTH_SYNC_SECRET not configured }
+        dryRun:
+          type: object
+          properties:
+            enabledByDefault:
+              type: boolean
+            atsAdapters:
+              type: array
+              items:
+                $ref: '#/components/schemas/ForeignAtsPlatform'
+              example: [greenhouse, lever, ashby]
+        pendingApprovals:
+          type: integer
+        platforms:
+          type: object
+          properties:
+            greenhouse:
+              $ref: '#/components/schemas/AutoApplyPlatformStatus'
+            lever:
+              $ref: '#/components/schemas/AutoApplyPlatformStatus'
+            ashby:
+              $ref: '#/components/schemas/AutoApplyPlatformStatus'
+          additionalProperties:
+            $ref: '#/components/schemas/AutoApplyPlatformStatus'
 
-  /api/auth/set:
-    post:
-      tags: [Auth]
-      summary: Manually set platform auth (admin)
-
-  /api/auth/profile:
-    get:
-      tags: [Auth]
-      summary: Read Wanted profile via authenticated session
-
-  /api/auth/{platform}:
-    delete:
-      tags: [Auth]
-      summary: Clear platform-specific session
-      parameters:
-        - in: path
-          name: platform
-          schema: { type: string }
-          required: true
-
-  # Workflows (apps/job-dashboard/src/routes/workflows.js)
-  /api/workflows/job-crawling:
-    post:
-      tags: [Workflows]
-      summary: Trigger job-crawling Cloudflare Workflow
-
-  /api/workflows/application:
-    post:
-      tags: [Workflows]
-      summary: Trigger application Cloudflare Workflow
-
-  /api/workflows/resume-sync:
-    post:
-      tags: [Workflows]
-      summary: Trigger resume-sync Cloudflare Workflow
-
-  /api/workflows/daily-report:
-    post:
-      tags: [Workflows]
-      summary: Trigger daily-report Cloudflare Workflow
-
-  /api/workflows/{workflowType}/{instanceId}:
-    get:
-      tags: [Workflows]
-      summary: Read workflow instance status
-      parameters:
-        - in: path
-          name: workflowType
-          schema: { type: string }
-          required: true
-        - in: path
-          name: instanceId
-          schema: { type: string }
-          required: true
-
-  /api/workflows/application/{instanceId}/approve:
-    post:
-      tags: [Workflows]
-      summary: Approve a pending application workflow step
-      parameters:
-        - in: path
-          name: instanceId
-          schema: { type: string }
-          required: true
-
-  /api/workflows/application/{instanceId}/reject:
-    post:
-      tags: [Workflows]
-      summary: Reject a pending application workflow step
-      parameters:
-        - in: path
-          name: instanceId
-          schema: { type: string }
-          required: true
-
-  # Automation triggers (apps/job-dashboard/src/routes/automation.js)
-  /api/automation/search:
-    post:
-      tags: [Automation]
-      summary: Trigger job-search webhook
-
-  /api/automation/apply:
-    post:
-      tags: [Automation]
-      summary: Trigger auto-apply webhook
-
-  /api/automation/report:
-    post:
-      tags: [Automation]
-      summary: Trigger daily-report webhook
-
-  /api/automation/resume:
-    post:
-      tags: [Automation]
-      summary: Trigger resume-sync webhook
-
-  /api/automation/profile-sync:
-    post:
-      tags: [Automation]
-      summary: Trigger profile-sync webhook
-
-  /api/automation/profile-sync/history:
-    get:
-      tags: [Automation]
-      summary: Profile sync history
-
-  /api/automation/profile-sync/{syncId}:
-    get:
-      tags: [Automation]
-      summary: Profile sync status by ID
-      parameters:
-        - in: path
-          name: syncId
-          schema: { type: string }
-          required: true
-
-  /api/automation/profile-sync/callback:
-    post:
-      tags: [Automation]
-      summary: Profile-sync completion callback
-
-  /api/auto-apply/config:
-    get:
-      tags: [Automation]
-      summary: Auto-apply configuration
-
-  # Resume master (apps/job-dashboard/src/routes/automation.js)
-  /api/resume/master:
-    get:
-      tags: [Resume]
-      summary: Read master resume blob
-    put:
-      tags: [Resume]
-      summary: Upload master resume
-
-  /api/test/chaos-resumes:
-    get:
-      tags: [Test]
-      summary: Test endpoint for Wanted chaos-resume API
-
-  # Admin (apps/job-dashboard/src/routes/admin.js)
-  /api/diagnostics/bindings:
-    get:
-      tags: [Admin]
-      summary: Diagnose Cloudflare Worker bindings (D1, KV, AI, browser)
-
-  /api/config:
-    get:
-      tags: [Admin]
-      summary: Read worker config from D1
-    put:
-      tags: [Admin]
-      summary: Update worker config in D1
-
-  /api/queue/enqueue:
-    post:
-      tags: [Admin]
-      summary: Enqueue a job to the crawl-tasks queue
-
-  /api/queue/status:
-    get:
-      tags: [Admin]
-      summary: Queue status overview
+    AutoApplyPlatformStatus:
+      type: object
+      properties:
+        todayApplications:
+          type: integer
+        authenticated:
+          type: boolean
+        mode:
+          type: string
+          enum: [direct, dry-run, manual-review]
+        redacted:
+          type: boolean
+        submissions:
+          type: string
+          enum: [enabled, disabled, dry-run-only, requires-opt-in]
+        pendingApprovals:
+          type: integer

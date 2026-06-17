@@ -1,3 +1,11 @@
+const {
+  createRequest,
+  makeApprovalIdOnlyBody,
+  makeJob,
+  makeRealSubmitBody,
+  parseJson,
+} = require('./auto-apply-run-handler-fixtures.js');
+
 const makeStatement = (handler) => ({
   bind: (...params) => handler(...params),
 });
@@ -45,20 +53,6 @@ function createMockDb() {
   };
 }
 
-function makeJob(overrides = {}) {
-  return {
-    id: 'job-1',
-    sourceId: 'job-1',
-    source: 'wanted',
-    position: 'DevOps Engineer',
-    company: 'Edge Co',
-    sourceUrl: 'https://wanted.co.kr/wd/job-1',
-    ...overrides,
-  };
-}
-
-const parseJson = async (response) => JSON.parse(await response.text());
-
 describe('job-dashboard auto-apply run handler edge cases', () => {
   let runAutoApply;
   let consoleError;
@@ -87,7 +81,7 @@ describe('job-dashboard auto-apply run handler edge cases', () => {
     };
 
     const response = await runAutoApply({
-      request: { json: async () => ({ dryRun: true, platforms: ['wanted'] }) },
+      request: createRequest({ dryRun: true, platforms: ['wanted'] }),
       env: { DB: createMockDb() },
       clients,
     });
@@ -112,7 +106,7 @@ describe('job-dashboard auto-apply run handler edge cases', () => {
     };
 
     const response = await runAutoApply({
-      request: { json: async () => ({ dryRun: false, platforms: ['wanted'] }) },
+      request: createRequest(makeRealSubmitBody()),
       env: { DB: createMockDb() },
       clients,
     });
@@ -136,7 +130,7 @@ describe('job-dashboard auto-apply run handler edge cases', () => {
     expect(clients.wanted.apply).not.toHaveBeenCalled();
   });
 
-  test('runAutoApply traces a valid wanted session before real apply', async () => {
+  test('runAutoApply requires human approval before real wanted apply with a session', async () => {
     const clients = {
       wanted: {
         setCookies: jest.fn(),
@@ -146,7 +140,7 @@ describe('job-dashboard auto-apply run handler edge cases', () => {
     };
 
     const response = await runAutoApply({
-      request: { json: async () => ({ dryRun: false, platforms: ['wanted'] }) },
+      request: createRequest(makeApprovalIdOnlyBody()),
       env: {
         DB: createMockDb(),
         SESSIONS: {
@@ -158,18 +152,22 @@ describe('job-dashboard auto-apply run handler edge cases', () => {
     const body = await parseJson(response);
 
     expect(body.success).toBe(true);
-    expect(body.results).toMatchObject({ applied: 1, skipped: 0, errors: 0 });
+    expect(body.results).toMatchObject({ applied: 0, skipped: 1, errors: 0 });
     expect(body.results.jobs[0]).toMatchObject({
-      action: 'applied',
+      action: 'skipped_human_approval_required',
       decisionTrace: expect.arrayContaining([
         expect.objectContaining({
           stage: 'session_checked',
           outcome: 'passed',
           reason: 'wanted_session_available',
         }),
+        expect.objectContaining({
+          stage: 'human_approval_checked',
+          outcome: 'skipped',
+          reason: 'missing_explicit_human_approval',
+        }),
       ]),
     });
-    expect(clients.wanted.setCookies).toHaveBeenCalledWith('wanted-cookie=value');
-    expect(clients.wanted.apply).toHaveBeenCalledWith('job-1');
+    expect(clients.wanted.apply).not.toHaveBeenCalled();
   });
 });

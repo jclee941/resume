@@ -66,8 +66,8 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
     return logWorkflowStep(this, workflowId, stepName, status, details);
   }
 
-  async createApprovalRequest(workflowId, job, status, matchScore) {
-    return createApprovalRequest(this, workflowId, job, status, matchScore);
+  async createApprovalRequest(workflowId, job, status, matchScore, approvalMetadata) {
+    return createApprovalRequest(this, workflowId, job, status, matchScore, approvalMetadata);
   }
 
   async getApprovalStatus(requestId) {
