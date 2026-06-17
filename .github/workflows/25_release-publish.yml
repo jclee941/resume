@@ -54,8 +54,9 @@ jobs:
         run: |
           set -eu
           SHA="${INPUT_SHA:-${GITHUB_SHA}}"
-          # Latest tag (if any).
-          PREV_TAG=$(git describe --tags --abbrev=0 --match 'v*' 2>/dev/null || echo "")
+          # Highest reachable semver tag. `git describe` can pick the lower tag
+          # when multiple v* tags point at the same commit, causing collisions.
+          PREV_TAG=$(git tag --merged "$SHA" --list 'v[0-9]*' | sort -V | tail -1)
           if [ -z "$PREV_TAG" ]; then
             PREV_VERSION="0.0.0"
             COMMIT_RANGE="$SHA"
