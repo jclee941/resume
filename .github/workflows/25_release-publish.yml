@@ -122,6 +122,14 @@ jobs:
               exit 1
             fi
           fi
+          REMOTE_SHA=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$NEW_TAG" --jq '.object.sha' 2>/dev/null || true)
+          if [ "$REMOTE_SHA" = "$SHA" ]; then
+            echo "::notice::Remote tag $NEW_TAG already at $SHA; skipping creation."
+            exit 0
+          elif [ -n "$REMOTE_SHA" ]; then
+            echo "::warning::Remote tag $NEW_TAG exists at $REMOTE_SHA, but we want $SHA. Refusing to move; manual intervention required."
+            exit 1
+          fi
           if [ "$DRY_RUN" = "true" ]; then
             echo "::notice::DRY-RUN: would create $NEW_TAG (bump=$BUMP) at $SHA"
             exit 0
