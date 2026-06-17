@@ -1,6 +1,6 @@
 # PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-04-29 (verified fd0ba22)
+**Generated:** 2026-06-12 (verified 011dd571)
 **Branch:** `master`
 
 ## OVERVIEW
@@ -56,7 +56,7 @@ observability/automation configs.
 | Design/procedure docs         | `docs/`                                  | ADRs, architecture, conventions, security, guides                      |
 | Architecture rules            | `docs/conventions/architecture-rules.md` | 200-LOC limit, no catch-all names, n8n SSoT for workflows (was rules/) |
 | Security playbooks            | `docs/security/`                         | SECRET_ROTATION_PLAYBOOK.md, secret manager guidance                   |
-| Supabase edge functions       | `supabase/functions/`                    | Deno runtime; not part of npm workspaces                                |
+| Supabase edge functions       | `supabase/functions/`                    | Deno runtime; not part of npm workspaces                               |
 | TA profile generation         | `ta/`                                    | Python PPTX scripts, not a workspace package                           |
 
 ## CONVENTIONS
@@ -171,12 +171,16 @@ pre-commit install                                              # Install pre-co
 
 ## NOTES
 
-- 54 child AGENTS.md files exist across `apps/`, `tests/`, `tools/`,
-`infrastructure/`, `packages/`, `supabase/`, and `ta/`; avoid duplicating their
-scope from the root.
+- 56 child AGENTS.md files exist across `.github/`, `apps/`, `tests/`,
+  `tools/`, `infrastructure/`, `packages/`, `supabase/`, and `ta/`; avoid
+  duplicating their scope from the root.
 
 - `infrastructure/n8n/` and `infrastructure/monitoring/` are distinct enough to
   warrant child AGENTS files; `docs/` stays governed at the docs-root level.
+- `.github/` has a child AGENTS because workflow check names, reusable workflow
+  indirection, and branch-protection contracts are distinct from app code.
+- `tools/scripts/onepassword/` has a child AGENTS because it handles local
+  secret/session migration and must preserve stricter no-print/no-argv rules.
 - `supabase/functions/` contains Supabase edge functions — distinct Deno
   runtime, not part of npm workspaces.
 - `ta/` contains Python PPTX tooling and generated presentation outputs; it is
@@ -192,15 +196,15 @@ scope from the root.
 
 Active improvement plan: `docs/architecture/SSOT_IMPROVEMENT_PLAN.md`
 
-| Epic   | Scope                                                                                         | Status                                                                                                                |
-| ------ | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| Epic 0 | P0 security: committed secrets purge, gitignore hardening, gitleaks CI gate, KV ownership doc | Completed (working tree). History rewrite + force push pending owner per `docs/security/SECRET_ROTATION_PLAYBOOK.md`. |
-| Epic 1 | Build/Config SSOT: drop Bazel, fix tsconfig, decouple ESLint, workspace:\*                    | Completed                                                                                                             |
-| Epic 2 | Types/Schemas/Contracts SSOT: new packages/types, /schemas, /contracts                        | Completed (creation). Migrating callers is incremental.                                                               |
-| Epic 3 | Env/Secrets SSOT                                                                              | Partial. Cloudflare Workers Secrets adopted as default; full secrets manager (Doppler/Keyflare) deferred.             |
-| Epic 4 | Domain SSOT consolidation                                                                     | Foundation modules created in @resume/shared. App-local migration is per-domain follow-up PRs.                        |
-| Epic 5 | Documentation SSOT                                                                            | Completed. .gitlab-legacy/ removed, rules/ moved to docs/conventions/, root binaries deleted.                         |
-| Epic 6 | File-size hygiene                                                                             | Completed. job-dashboard/job-server oversized handlers split; largest source files now under the 200-LOC project limit.  |
+| Epic   | Scope                                                                                         | Status                                                                                                                  |
+| ------ | --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| Epic 0 | P0 security: committed secrets purge, gitignore hardening, gitleaks CI gate, KV ownership doc | Completed (working tree). History rewrite + force push pending owner per `docs/security/SECRET_ROTATION_PLAYBOOK.md`.   |
+| Epic 1 | Build/Config SSOT: drop Bazel, fix tsconfig, decouple ESLint, workspace:\*                    | Completed                                                                                                               |
+| Epic 2 | Types/Schemas/Contracts SSOT: new packages/types, /schemas, /contracts                        | Completed (creation). Migrating callers is incremental.                                                                 |
+| Epic 3 | Env/Secrets SSOT                                                                              | Partial. Cloudflare Workers Secrets adopted as default; full secrets manager (Doppler/Keyflare) deferred.               |
+| Epic 4 | Domain SSOT consolidation                                                                     | Foundation modules created in @resume/shared. App-local migration is per-domain follow-up PRs.                          |
+| Epic 5 | Documentation SSOT                                                                            | Completed. .gitlab-legacy/ removed, rules/ moved to docs/conventions/, root binaries deleted.                           |
+| Epic 6 | File-size hygiene                                                                             | Completed. job-dashboard/job-server oversized handlers split; largest source files now under the 200-LOC project limit. |
 
 #AY|- Never include concrete performance metrics (percentages, ratios, or absolute numbers) in
 #QH| portfolio/resume text. Describe outcomes factually without quantified claims (e.g., say

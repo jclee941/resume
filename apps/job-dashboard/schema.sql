@@ -153,6 +153,7 @@ CREATE TABLE IF NOT EXISTS approval_requests (
   reviewed_by TEXT,
   reviewed_at TEXT,
   notes TEXT,
+  approval_metadata TEXT,
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   updated_at TEXT NOT NULL DEFAULT (datetime('now')),
   FOREIGN KEY (workflow_id) REFERENCES application_workflows(id) ON DELETE CASCADE

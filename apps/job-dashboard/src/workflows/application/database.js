@@ -49,24 +49,58 @@ export async function logWorkflowStep(ctx, workflowId, stepName, status, details
     .run();
 }
 
-export async function createApprovalRequest(ctx, workflowId, job, status, matchScore) {
+export async function createApprovalRequest(
+  ctx,
+  workflowId,
+  job,
+  status,
+  matchScore,
+  approvalMetadata = null
+) {
   const requestId = `approval-${workflowId}-${job.id}`;
+  const metadataJson = approvalMetadata === null ? null : JSON.stringify(approvalMetadata);
 
+  await insertApprovalRequest(ctx, {
+    requestId,
+    workflowId,
+    job,
+    status,
+    matchScore,
+    metadataJson,
+  });
+
+  return requestId;
+}
+
+async function insertApprovalRequest(ctx, params) {
   await ctx.env.JOB_DB.prepare(
     `
       INSERT INTO approval_requests (
         id, workflow_id, job_id, job_title, company, platform,
-        match_score, status, created_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+        match_score, status, approval_metadata, created_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
       ON CONFLICT (id) DO UPDATE SET
         status = excluded.status,
+        approval_metadata = excluded.approval_metadata,
         updated_at = datetime('now')
       `
   )
-    .bind(requestId, workflowId, job.id, job.position, job.company, job.source, matchScore, status)
+    .bind(...approvalRequestParams(params))
     .run();
+}
 
-  return requestId;
+function approvalRequestParams({ requestId, workflowId, job, status, matchScore, metadataJson }) {
+  return [
+    requestId,
+    workflowId,
+    job.id,
+    job.position,
+    job.company,
+    job.source,
+    matchScore,
+    status,
+    metadataJson,
+  ];
 }
 
 export async function getApprovalStatus(ctx, requestId) {

@@ -26,12 +26,56 @@ export const APPLICATION_STATUSES = Object.freeze([
 ]);
 
 /**
+ * @typedef {'ashby' | 'greenhouse' | 'lever' | 'smartrecruiters' | 'teamtailor' | 'workday'} ForeignAtsPlatform
+ */
+export const FOREIGN_ATS_PLATFORMS = Object.freeze([
+  'ashby',
+  'greenhouse',
+  'lever',
+  'smartrecruiters',
+  'teamtailor',
+  'workday',
+]);
+
+/**
  * @param {string} status
  * @returns {boolean}
  */
 export function isValidApplicationStatus(status) {
   return APPLICATION_STATUSES.includes(status);
 }
+
+/**
+ * @typedef {Object} ForeignAtsLocation
+ * @property {string} countryCode ISO 3166-1 alpha-2 country code.
+ * @property {string} [region]
+ * @property {string} [city]
+ * @property {boolean} [remote]
+ */
+
+/**
+ * @typedef {Object} ForeignAtsSource
+ * @property {ForeignAtsPlatform} platform
+ * @property {string} sourceUrl
+ * @property {string} [externalJobId]
+ * @property {string} [requisitionId]
+ * @property {ForeignAtsLocation} [location]
+ */
+
+/**
+ * @typedef {Object} ForeignAtsApplicationPacketMetadata
+ * @property {ForeignAtsSource} source
+ * @property {string} capturedAt
+ * @property {string} [externalApplicationId]
+ * @property {ApplicationStatus} [status]
+ * @property {Object} [raw]
+ */
+
+/**
+ * @typedef {Object} ForeignAtsApplicationPacket
+ * @property {ForeignAtsApplicationPacketMetadata} metadata
+ * @property {Application} [application]
+ */
 
 /**
  * @typedef {Object} ListOptions

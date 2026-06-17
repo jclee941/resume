@@ -1,7 +1,16 @@
+import { createForeignAtsAdapterRegistry } from '../ats/foreign-ats-registry.js';
+import {
+  countApplyResults,
+  createDryRunOnlyResult,
+  createDryRunResult,
+} from './orchestrator-results.js';
+import { searchApplySource } from './foreign-ats-search.js';
+
 export class ApplyOrchestrator {
   #crawler;
   #applier;
   #appManager;
+  #foreignAtsRegistry;
   #config;
   #stats;
 
@@ -9,6 +18,7 @@ export class ApplyOrchestrator {
     this.#crawler = crawler;
     this.#applier = applier;
     this.#appManager = appManager;
+    this.#foreignAtsRegistry = config.foreignAtsRegistry ?? createForeignAtsAdapterRegistry();
     this.logger = config.logger ?? console;
     this.#config = {
       maxDailyApplications: config.maxDailyApplications || 20,
@@ -40,7 +50,7 @@ export class ApplyOrchestrator {
 
     if (this.#config.parallelSearch) {
       const results = await Promise.allSettled(
-        platforms.map((platform) => this.#crawler.search(platform, keywords, options))
+        platforms.map((platform) => this.#searchPlatform(platform, keywords, options))
       );
 
       for (const result of results) {
@@ -51,7 +61,7 @@ export class ApplyOrchestrator {
     } else {
       for (const platform of platforms) {
         try {
-          const result = await this.#crawler.search(platform, keywords, options);
+          const result = await this.#searchPlatform(platform, keywords, options);
           if (result) jobs.push(...result);
         } catch (e) {
           this.logger.error(`Failed to search platform ${platform}:`, e);
@@ -64,11 +74,21 @@ export class ApplyOrchestrator {
     return jobs;
   }
 
+  async #searchPlatform(platform, keywords, options) {
+    return searchApplySource({
+      crawler: this.#crawler,
+      foreignAtsRegistry: this.#foreignAtsRegistry,
+      platform,
+      keywords,
+      options,
+      locationTargets: this.#config.locationTargets,
+    });
+  }
+
   async applyToJobs(jobs, dryRun = true) {
     const results = [];
     const todayCount = this.#getTodayApplicationCount();
     const remaining = this.#config.maxDailyApplications - todayCount;
-
     if (remaining <= 0) {
       return {
         results: [],
@@ -78,17 +98,21 @@ export class ApplyOrchestrator {
     }
 
     const toApply = jobs.slice(0, remaining);
+    const realApplyJobs = dryRun
+      ? []
+      : toApply.filter((job) => !job.dryRunOnly && !job.submissionSkipped);
 
-    // Initialize browser for real applies
-    if (!dryRun && this.#applier?.initBrowser) {
+    if (realApplyJobs.length > 0 && this.#applier?.initBrowser) {
       try {
         await this.#applier.initBrowser();
       } catch (error) {
         return {
-          results: [],
+          results: toApply
+            .filter((job) => job.dryRunOnly || job.submissionSkipped)
+            .map((job) => createDryRunOnlyResult(job)),
           applied: 0,
-          failed: toApply.length,
-          skipped: jobs.length - toApply.length,
+          failed: realApplyJobs.length,
+          skipped: jobs.length - realApplyJobs.length,
           error: `Browser init failed: ${error.message}`,
         };
       }
@@ -98,13 +122,10 @@ export class ApplyOrchestrator {
       for (const job of toApply) {
         try {
           if (dryRun) {
-            results.push({
-              job,
-              success: true,
-              dryRun: true,
-              message: 'Would apply',
-            });
+            results.push(createDryRunResult(job));
             this.#stats.applied++;
+          } else if (job.dryRunOnly || job.submissionSkipped) {
+            results.push(createDryRunOnlyResult(job));
           } else {
             this.logger.log(
               `  🎯 Applying to: ${job.company || job.title} (${job.source}) — ${job.sourceUrl}`
@@ -128,8 +149,7 @@ export class ApplyOrchestrator {
         }
       }
     } finally {
-      // Cleanup browser after real applies
-      if (!dryRun && this.#applier?.closeBrowser) {
+      if (realApplyJobs.length > 0 && this.#applier?.closeBrowser) {
         try {
           await this.#applier.closeBrowser();
         } catch (e) {
@@ -138,14 +158,13 @@ export class ApplyOrchestrator {
       }
     }
 
-    this.#stats.skipped = jobs.length - toApply.length;
+    const summary = countApplyResults(results, jobs.length - toApply.length);
+    this.#stats.skipped = summary.skipped;
     this.#stats.endTime = Date.now();
 
     return {
       results,
-      applied: results.filter((r) => r.success).length,
-      failed: results.filter((r) => !r.success).length,
-      skipped: this.#stats.skipped,
+      ...summary,
     };
   }
 

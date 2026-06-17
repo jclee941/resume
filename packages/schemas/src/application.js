@@ -1,72 +1,10 @@
 import { z } from 'zod';
-import { idSchema, platformSchema, isoTimestampSchema } from './common.js';
+import { applicationPriorityWideSchema } from './application-dashboard.js';
+import { applicationStatusWideSchema } from './application-core.js';
 
-export const applicationStatusSchema = z.enum([
-  'pending',
-  'applied',
-  'reviewing',
-  'interview',
-  'offer',
-  'rejected',
-  'withdrawn',
-]);
-
-// Wider enum used by apps/job-dashboard's API surface, which historically
-// supports additional intermediate states. The narrow `applicationStatusSchema`
-// above is the canonical contract for cross-app communication; the wider
-// `applicationStatusWideSchema` is for legacy dashboard endpoints. New code
-// should prefer the narrow set.
-export const applicationStatusWideSchema = z.enum([
-  'pending',
-  'saved',
-  'applied',
-  'viewed',
-  'in_progress',
-  'interview',
-  'offer',
-  'rejected',
-  'withdrawn',
-  'expired',
-]);
-
-export const applicationCreateSchema = z.object({
-  jobId: idSchema,
-  platform: platformSchema,
-  company: z.string().min(1).max(200),
-  position: z.string().min(1).max(300),
-  status: applicationStatusSchema.optional().default('pending'),
-  metadata: z.record(z.unknown()).optional(),
-});
-
-export const applicationUpdateSchema = z
-  .object({
-    company: z.string().min(1).max(200).optional(),
-    position: z.string().min(1).max(300).optional(),
-    status: applicationStatusSchema.optional(),
-    metadata: z.record(z.unknown()).optional(),
-  })
-  .refine((d) => Object.keys(d).length > 0, { message: 'at least one field required' });
-
-export const applicationStatusUpdateSchema = z.object({
-  status: applicationStatusSchema,
-});
-
-export const applicationSchema = applicationCreateSchema.extend({
-  id: z.string().min(1),
-  appliedAt: isoTimestampSchema,
-  updatedAt: isoTimestampSchema.optional(),
-});
-
-/**
- * @typedef {z.infer<typeof applicationSchema>} ApplicationFromSchema
- * @typedef {z.infer<typeof applicationCreateSchema>} ApplicationCreate
- * @typedef {z.infer<typeof applicationUpdateSchema>} ApplicationUpdate
- * @typedef {z.infer<typeof applicationStatusUpdateSchema>} ApplicationStatusUpdate
- */
-
-export const VALID_APPLICATION_STATUSES = applicationStatusSchema.options;
-
-export const VALID_APPLICATION_STATUSES_WIDE = applicationStatusWideSchema.options;
+export * from './application-core.js';
+export * from './foreign-ats-application.js';
+export * from './application-dashboard.js';
 
 // === Dashboard-shape application schemas (issue #17 Phase 2) ===
 //
@@ -79,8 +17,6 @@ export const VALID_APPLICATION_STATUSES_WIDE = applicationStatusWideSchema.optio
 //
 // These schemas back the wrapper functions in @resume/shared/validation so the
 // runtime validation lives in one place while the call-site shape stays unchanged.
-export const applicationPriorityWideSchema = z.enum(['low', 'medium', 'high']);
-
 const dashboardJobBaseSchema = z.object({
   position: z.string().min(1).max(500).optional(),
   title: z.string().min(1).max(500).optional(),

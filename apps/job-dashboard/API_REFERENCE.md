@@ -760,6 +760,97 @@ curl https://resume.jclee.me/job/api/workflows/wf_abc123def456/status \
 
 ---
 
+### Auto-Apply
+
+#### POST /api/auto-apply/run
+
+Run the application search pipeline. Foreign ATS sources are available only in
+dry-run mode with the local ATS stub enabled. This path searches Greenhouse,
+Lever, and Ashby fixtures, scores the matches, records preview records for
+approval review, and returns `submitted: 0`.
+
+**Request**:
+
+```bash
+curl -X POST http://127.0.0.1:$PORT/job/api/auto-apply/run \
+  -H "Content-Type: application/json" \
+  -d '{
+    "dryRun": true,
+    "atsStub": true,
+    "platforms": ["greenhouse", "lever", "ashby"],
+    "keywords": ["security"]
+  }'
+```
+
+**Response** (200 OK):
+
+```json
+{
+  "success": true,
+  "dryRun": true,
+  "submitted": 0,
+  "platforms": ["greenhouse", "lever", "ashby"],
+  "results": {
+    "searched": 3,
+    "matched": 3,
+    "applied": 3,
+    "jobs": [
+      {
+        "source": "greenhouse",
+        "action": "would_apply",
+        "matchScore": 100
+      }
+    ]
+  }
+}
+```
+
+The `would_apply` action is a preview only. It must not be treated as an
+external ATS submission.
+
+#### GET /api/auto-apply/status
+
+Return automation status with foreign ATS adapter status redacted. For dry-run
+walkthroughs, use this endpoint after `POST /api/auto-apply/run` to confirm the
+adapters remain in dry-run mode and external submissions are disabled.
+
+**Request**:
+
+```bash
+curl http://127.0.0.1:$PORT/job/api/auto-apply/status
+```
+
+**Response** (200 OK):
+
+```json
+{
+  "dryRun": {
+    "enabledByDefault": true,
+    "atsAdapters": ["greenhouse", "lever", "ashby"]
+  },
+  "pendingApprovals": 0,
+  "platforms": {
+    "greenhouse": {
+      "mode": "dry-run",
+      "redacted": true,
+      "submissions": "disabled"
+    }
+  }
+}
+```
+
+For the complete local CLI walkthrough, run:
+
+```bash
+npm run foreign-apply:dry-run -- --ats-stub
+```
+
+The command starts the local dashboard stub, exercises search, scoring, preview,
+pending approval/status reporting, validates `submitted: 0`, and stops the stub
+before exiting.
+
+---
+
 ## Response Format
 
 ### Success Response
