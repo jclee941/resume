@@ -287,7 +287,7 @@ describe('createJobKoreaEntrySlots', () => {
   });
 
   it('force-adds fresh Career slots when stale deleted indices still serialize', async () => {
-    const careerIndices = ['c7', 'c8'];
+    let careerIndices = ['c7', 'c8'];
     let addedCareers = 0;
     const handler = {
       readSectionIndices: async (_page, prefix) => {
@@ -330,7 +330,7 @@ describe('createJobKoreaEntrySlots', () => {
   });
 
   it('force-adds fresh intro slot when stale ResumeProfile fields still serialize', async () => {
-    const introIndices = ['c534'];
+    let introIndices = ['c534'];
     let addedIntro = 0;
     const handler = {
       readSectionIndices: async (_page, prefix) => {
