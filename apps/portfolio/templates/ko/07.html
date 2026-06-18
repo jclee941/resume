@@ -1,0 +1,79 @@
+              closeMenu(false);
+            });
+          });
+
+          document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape' && navLinks.classList.contains('open')) {
+              closeMenu(true);
+            }
+          });
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', bindMobileNav, { once: true });
+        } else {
+          bindMobileNav();
+        }
+      })();
+    </script>
+    <script>
+      (function () {
+        var s = document.createElement('script');
+        s.src = '/main.js?v=<!-- BUILD_CACHE_KEY_PLACEHOLDER -->';
+        s.defer = true;
+        document.body.appendChild(s);
+      })();
+    </script>
+    <script>
+      (function () {
+        document.querySelectorAll('.nav-link').forEach(function (link) {
+          link.addEventListener('click', function () {
+            if (typeof gtag === 'function') {
+              gtag('event', 'navigation_click', {
+                section: link.getAttribute('href').replace('#', ''),
+                event_category: 'engagement',
+              });
+            }
+          });
+        });
+      })();
+
+      // Scroll reveal + section_view analytics are owned by src/scripts/modules/ui.js
+
+      window.__RESUME_CHAT_DATA__ = (function () {
+        var resumeDataB64;
+        var resumeDataBinary;
+        var resumeDataBytes;
+        try {
+          resumeDataB64 = /* RESUME_CHAT_DATA_B64_PLACEHOLDER */ '';
+          if (!resumeDataB64) return {};
+          resumeDataBinary = atob(resumeDataB64);
+          resumeDataBytes = Uint8Array.from(resumeDataBinary, function (c) {
+            return c.charCodeAt(0);
+          });
+          return JSON.parse(new TextDecoder('utf-8').decode(resumeDataBytes));
+        } catch (resumeDataError) {
+          if (typeof console !== 'undefined' && console.warn) {
+            console.warn('Failed to parse embedded resume chat data', resumeDataError);
+          }
+          return {};
+        }
+      })();
+    </script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      gtag('config', 'G-P9E8XY5K2L', {
+        page_path: window.location.pathname,
+        language: 'ko',
+      });
+      var _gs = document.createElement('script');
+      _gs.src = 'https://www.googletagmanager.com/gtag/js?id=G-P9E8XY5K2L';
+      _gs.async = true;
+      document.head.appendChild(_gs);
+    </script>
+  </body>
+</html>

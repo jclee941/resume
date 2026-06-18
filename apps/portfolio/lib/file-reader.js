@@ -7,6 +7,7 @@ const path = require('path');
 const esbuild = require('esbuild');
 const { ESCAPE_PATTERNS } = require('./config');
 const { readAllFiles } = require('./file-operations');
+const { expandHtmlIncludes } = require('./html-partials');
 const { buildSkillRadarData } = require('./skill-radar-data');
 
 /**
@@ -154,6 +155,14 @@ async function readBuildInputs({ baseDir, logger }) {
   logger.log('📂 Reading source files...');
   const filesToRead = getFilesToRead(baseDir);
   const fileContents = readAllFiles(filesToRead);
+  fileContents.indexHtmlRaw = expandHtmlIncludes(fileContents.indexHtmlRaw, {
+    baseDir,
+    sourcePath: path.join(baseDir, 'index.html'),
+  });
+  fileContents.indexEnHtmlRaw = expandHtmlIncludes(fileContents.indexEnHtmlRaw, {
+    baseDir,
+    sourcePath: path.join(baseDir, 'index-en.html'),
+  });
 
   logger.log('📦 Bundling main.js...');
   // Inject real skills from data.json into the client skill-radar widget via

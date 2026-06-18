@@ -1,0 +1,150 @@
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .skill-panel {
+        margin-top: var(--space-4, 1rem);
+        padding-top: var(--space-4, 1rem);
+        border-top: 1px solid var(--border-primary, #2a2a3e);
+        animation: slideDown 0.3s ease-out;
+      }
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .skill-panel__content {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-4, 1rem);
+      }
+      .skill-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3, 0.75rem);
+      }
+      .skill-item {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-1, 0.25rem);
+      }
+      .skill-item__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .skill-item__name {
+        font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+        font-size: var(--text-sm, 0.875rem);
+        color: var(--text-primary, #e2e0dc);
+        font-weight: 500;
+      }
+      .skill-item__level {
+        font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+        font-size: var(--text-xs, 0.75rem);
+        font-weight: 600;
+      }
+      .skill-item__bar-container {
+        width: 100%;
+        height: 6px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 3px;
+        overflow: hidden;
+      }
+      .skill-item__bar {
+        height: 100%;
+        width: 0;
+        background: linear-gradient(
+          90deg,
+          var(--bar-color, var(--color-accent)) 0%,
+          color-mix(in srgb, var(--bar-color, var(--color-accent)) 80%, white 20%) 100%
+        );
+        border-radius: 3px;
+        transition: width 0.8s ease-out;
+        box-shadow: var(--shadow-sm);
+      }
+      .skill-item__bar.animate {
+        width: var(--target-width, 0%);
+      }
+      .skill-evidence-drawer {
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--border-primary, #2a2a3e);
+        border-radius: 6px;
+        padding: var(--space-3, 0.75rem);
+        margin-top: var(--space-2, 0.5rem);
+      }
+      .skill-evidence-drawer__title {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2, 0.5rem);
+        font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+        font-size: var(--text-xs, 0.75rem);
+        font-weight: 600;
+        color: var(--text-secondary, #a1a1aa);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin: 0 0 var(--space-3, 0.75rem);
+        padding-bottom: var(--space-2, 0.5rem);
+        border-bottom: 1px solid var(--border-primary, #2a2a3e);
+      }
+      .skill-evidence-drawer__title svg {
+        width: 14px;
+        height: 14px;
+        color: var(--color-accent, #5aa9b8);
+      }
+      .skill-evidence-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3, 0.75rem);
+      }
+      .skill-evidence-item {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-1, 0.25rem);
+      }
+      .skill-evidence-item__name {
+        font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+        font-size: var(--text-xs, 0.75rem);
+        color: var(--color-accent, #5aa9b8);
+        font-weight: 500;
+      }
+      .skill-evidence-item__text {
+        font-family: var(--font-sans, 'Inter', sans-serif);
+        font-size: var(--text-sm, 0.875rem);
+        color: var(--text-secondary, #a1a1aa);
+        line-height: 1.5;
+        margin: 0;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .skill-domain-card,
+        .skill-panel,
+        .skill-item__bar {
+          animation: none;
+          transition: none;
+        }
+        .skill-item__bar {
+          width: var(--target-width, 0%);
+        }
+        .skill-domain-card__expand svg {
+          transition: none;
+        }
+      }
+      /* CSS_PLACEHOLDER */
+    </style>
+  </head>
+  <body class="minimal-theme">
+    <a href="#main-content" class="skip-link">바로 본문으로 이동</a>
+
+    <div class="page-shell">
+        <div class="page-body">
+          <header class="site-header">
