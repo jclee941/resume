@@ -8,8 +8,9 @@ Cloudflare Worker portfolio for <https://resume.jclee.me>.
 node generate-worker.js
 ```
 
-This compiles `worker.js`, a single-file Cloudflare Worker of about 410KB. Never
-edit `worker.js` directly.
+This compiles `worker.js`, a single-file Cloudflare Worker (roughly 0.8 MB after
+the in-process job-dashboard merge described in `docs/adr/0009-single-worker-consolidation.md`).
+Never edit `worker.js` directly.
 
 ## Development
 
