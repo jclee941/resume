@@ -1,5 +1,616 @@
-<!-- @include templates/en/01.html -->
-<!-- @include templates/en/02.html -->
-<!-- @include templates/en/03.html -->
-<!-- @include templates/en/04.html -->
-<!-- @include templates/en/05.html -->
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jaecheol Lee - Security Engineer</title>
+    <meta
+      name="description"
+      content="Jaecheol Lee — Security/SRE Engineer. Financial & public-sector security infrastructure, SIEM/SOAR detection & response, Infrastructure as Code, Observability (Grafana, Prometheus, Loki)."
+    />
+    <meta
+      name="keywords"
+      content="Jaecheol Lee, Security Engineer, SRE, DevSecOps, Infrastructure as Code, Observability, SIEM, SOAR, Cloudflare Workers, Kubernetes"
+    />
+    <meta name="author" content="Jaecheol Lee" />
+    <meta name="robots" content="index, follow" />
+    <meta name="google-site-verification" content="2a5f8c3b7d4e9a1f6c2b5e8d1a4f7c0b9e3d6a9f2c5" />
+
+    <link rel="canonical" href="https://resume.jclee.me/en/" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://www.googletagmanager.com" />
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin />
+
+    <link rel="alternate" hreflang="ko-KR" href="https://resume.jclee.me" />
+    <link rel="alternate" hreflang="en-US" href="https://resume.jclee.me/en/" />
+    <link rel="alternate" hreflang="x-default" href="https://resume.jclee.me" />
+    <link rel="alternate" hreflang="ja-JP" href="https://resume.jclee.me/ja/" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="profile" />
+    <meta property="og:url" content="https://resume.jclee.me/en/" />
+    <meta property="og:title" content="Jaecheol Lee - Security Engineer" />
+    <meta property="og:description" content="Jaecheol Lee - Security Engineer portfolio" />
+    <meta property="og:image" content="https://resume.jclee.me/og-image-en.webp" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/webp" />
+    <meta property="og:image:alt" content="Jaecheol Lee - Security Engineer" />
+    <meta property="og:image:locale" content="en_US" />
+    <meta property="og:image:locale:alternate" content="ko_KR" />
+    <meta property="og:site_name" content="Jaecheol Lee Resume" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="ko_KR" />
+    <meta property="og:locale:alternate" content="ja_JP" />
+    <meta property="profile:first_name" content="Jaecheol" />
+    <meta property="profile:last_name" content="Lee" />
+    <meta property="profile:username" content="jclee941" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://resume.jclee.me/en/" />
+    <meta name="twitter:title" content="Jaecheol Lee - Security Engineer" />
+    <meta name="twitter:description" content="Jaecheol Lee - Security Engineer portfolio" />
+    <meta name="twitter:image" content="https://resume.jclee.me/og-image-en.webp" />
+    <meta name="twitter:creator" content="@jclee941" />
+    <meta name="twitter:site" content="@jclee941" />
+
+    <!-- JSON-LD Structured Data: Person -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "@id": "https://resume.jclee.me/#person",
+        "name": "Jaecheol Lee",
+        "alternateName": "이재철",
+        "jobTitle": "Security Engineer",
+        "url": "https://resume.jclee.me/en/",
+        "email": "qws941@kakao.com",
+        "telephone": "+82-10-5757-9592",
+        "sameAs": [
+          "https://github.com/jclee941",
+          "https://linkedin.com/in/jclee0109",
+          "https://velog.io/@qws941"
+        ],
+        "knowsAbout": [
+          "Security Operations",
+          "SIEM/SOAR",
+          "Network Security",
+          "Infrastructure as Code",
+          "Observability",
+          "Cloud Security"
+        ],
+        "knowsLanguage": ["ko", "en"],
+        "image": "https://resume.jclee.me/og-image-en.webp",
+        "seeks": { "@type": "Demand", "name": "Security / Infrastructure Engineer — open to work" },
+        "address": {
+          "@type": "PostalAddress",
+          "addressRegion": "Gyeonggi-do",
+          "addressLocality": "Siheung-si",
+          "addressCountry": "KR"
+        }
+      }
+    </script>
+
+    <!-- JSON-LD Structured Data: ProfilePage (recency + entity wrapping) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "ProfilePage",
+        "dateModified": "<!-- BUILD_DEPLOYED_AT_PLACEHOLDER -->",
+        "mainEntity": { "@id": "https://resume.jclee.me/#person" }
+      }
+    </script>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://resume.jclee.me/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "English",
+            "item": "https://resume.jclee.me/en/"
+          }
+        ]
+      }
+    </script>
+
+    <!-- JSON-LD Structured Data: WebSite -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Jaecheol Lee - Security Engineer",
+        "url": "https://resume.jclee.me/en/",
+        "description": "Jaecheol Lee — Security/SRE Engineer portfolio: SIEM/SOAR detection & response, Infrastructure as Code, Observability.",
+        "inLanguage": "en-US"
+      }
+    </script>
+    <!-- PROJECT_SCHEMAS_PLACEHOLDER -->
+
+    <link rel="manifest" href="/manifest_en.json" />
+    <meta name="theme-color" content="#0c0c12" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="JC Lee Resume" />
+    <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
+
+    <!-- Preload Critical Font -->
+    <link
+      rel="preload"
+      href="/assets/fonts/ibm-plex-mono-v19-latin-regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/assets/fonts/ibm-plex-mono-v19-latin-700.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/assets/fonts/inter-v13-latin-regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/assets/fonts/inter-v13-latin-700.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <style>
+      @font-face {
+        font-family: 'IBM Plex Mono';
+        font-style: normal;
+        font-weight: 300;
+        font-display: swap;
+        src: url('/assets/fonts/ibm-plex-mono-v19-latin-300.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'IBM Plex Mono';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url('/assets/fonts/ibm-plex-mono-v19-latin-regular.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'IBM Plex Mono';
+        font-style: normal;
+        font-weight: 500;
+        font-display: swap;
+        src: url('/assets/fonts/ibm-plex-mono-v19-latin-500.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'IBM Plex Mono';
+        font-style: normal;
+        font-weight: 700;
+        font-display: swap;
+        src: url('/assets/fonts/ibm-plex-mono-v19-latin-700.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url('/assets/fonts/inter-v13-latin-regular.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 700;
+        font-display: swap;
+        src: url('/assets/fonts/inter-v13-latin-700.woff2') format('woff2');
+      }
+    </style>
+    <style>
+      .footer-prompt {
+        font-size: var(--text-sm);
+      }
+      .footer-status {
+        color: var(--text-muted);
+        margin-left: 1rem;
+      }
+      .hero--clean {
+        text-align: left;
+      }
+      /* Dark mode smooth transitions */
+      body,
+      .card,
+      .nav-logo,
+      .minimal-nav,
+      .site-footer,
+      .hero,
+      .section-title,
+      .timeline-content,
+      .skill-tag,
+      .contact-item,
+      .project-card,
+      .cert-card,
+      .infra-card {
+        transition:
+          background-color 0.3s ease,
+          color 0.3s ease,
+          border-color 0.3s ease,
+          box-shadow 0.3s ease;
+      }
+
+      a,
+      .nav-link {
+        transition: color 0.3s ease;
+      }
+
+      /* Disable transitions on initial page load to prevent flash */
+      .no-transition,
+      .no-transition * {
+        transition: none !important;
+      }
+      /* CSS_PLACEHOLDER */
+    </style>
+  </head>
+  <body class="minimal-theme">
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <div class="page-shell">
+        <div class="page-body">
+          <header class="site-header">
+            <nav class="minimal-nav" role="navigation" aria-label="Main navigation">
+              <a href="/" class="nav-logo">~/jclee</a>
+              <button
+                class="nav-toggle"
+                aria-label="Toggle navigation"
+                aria-expanded="false"
+                aria-controls="nav-links"
+              >
+                <span class="hamburger"></span>
+              </button>
+              <div id="nav-links" class="nav-links">
+                <a href="#about">about</a>
+                <a href="#resume">exp</a>
+                <a href="#projects">projects</a>
+                <a href="#contact">contact</a>
+              </div>
+              <ul class="lang-switcher" aria-label="Language">
+                <li><a href="/" hreflang="ko" class="lang-link" lang="ko">KO</a></li>
+                <li>
+                  <a
+                    href="/en/"
+                    hreflang="en"
+                    aria-current="true"
+                    class="lang-link lang-link--active"
+                    lang="en"
+                    >EN</a
+                  >
+                </li>
+                <li><a href="/ja/" hreflang="ja" class="lang-link" lang="ja">JA</a></li>
+              </ul>
+            </nav>
+          </header>
+
+          <main id="main-content" role="main">
+            <section id="hero" class="section-hero hero--clean">
+              <div class="hero-content">
+                <h1 class="hero-title" role="heading" aria-level="1">
+                  Jaecheol Lee
+                </h1>
+                <p class="hero-role">Security / SRE Engineer</p>
+                <p class="hero-availability">Open to role discussions and interviews</p>
+                <p class="hero-positioning">
+                  I connect financial-sector security infrastructure, SIEM detection and response
+                  automation, and IaC-based observability to practical operational problems.
+                </p>
+                <ul class="hero-proof-list" aria-label="Representative proof of work">
+                  <li>Continuous Nextrade exchange security build-to-operations engagement</li>
+                  <li>FortiGate HA 5-tier segmentation and FSC main-license review support</li>
+                  <li>Splunk ES · n8n · FortiManager API security-event automation</li>
+                </ul>
+                <div class="hero-cta" role="group" aria-label="Primary actions">
+                  <a href="mailto:qws941@kakao.com?subject=Hiring%20proposal%20or%20interview%20request" class="link-subtle link-subtle--primary">Discuss a role</a>
+                  <a href="#resume" class="link-subtle">Review career evidence</a>
+                  <a href="#projects" class="link-subtle">Review project evidence</a>
+                  <a href="/resume.pdf" download="Jaecheol-Lee-Resume.pdf" class="link-subtle">Resume PDF</a>
+                </div>
+              </div>
+            </section>
+
+            <section
+              id="about"
+              class="section-about reveal"
+              role="region"
+              aria-labelledby="about-heading"
+            >
+              <h2 id="about-heading" class="section-title">About</h2>
+              <div class="about-grid">
+                <!-- ABOUT_CONTENT_PLACEHOLDER -->
+                <div class="expertise-block"><!-- EXPERTISE_PLACEHOLDER --></div>
+              </div>
+              <!-- PROFILE_BENTO_PLACEHOLDER -->
+              <div class="achievements-block">
+                <!-- ACHIEVEMENTS_PLACEHOLDER -->
+              </div>
+            </section>
+
+            <section
+              id="cover-letter"
+              class="section-cover-letter reveal"
+              role="region"
+              aria-labelledby="cover-letter-heading"
+            >
+              <h2 id="cover-letter-heading" class="section-title">Cover Letter</h2>
+              <!-- COVER_LETTER_PLACEHOLDER -->
+            </section>
+
+            <section
+              id="resume"
+              class="section-resume reveal"
+              role="region"
+              aria-labelledby="resume-heading"
+            >
+              <h2 id="resume-heading" class="section-title">Experience</h2>
+              <ul class="resume-list">
+                <!-- RESUME_CARDS_PLACEHOLDER -->
+              </ul>
+              <div class="resume-download card">
+                <a
+                  href="/resume.pdf"
+                  download="Jaecheol-Lee-Resume.pdf"
+                  class="link-subtle"
+                  aria-label="Download resume PDF"
+                  >📄 Download Resume PDF</a
+                >
+                <a href="#contact" class="link-subtle" aria-label="Contact for interview or hiring"
+                  >Contact for Interview / Hiring</a
+                >
+              </div>
+            </section>
+
+            <section
+              id="certifications"
+              class="section-certifications reveal"
+              role="region"
+              aria-labelledby="certifications-heading"
+            >
+              <h2 id="certifications-heading" class="section-title">Certifications</h2>
+              <ul class="cert-list">
+                <!-- CERTIFICATION_CARDS_PLACEHOLDER -->
+              </ul>
+            </section>
+
+            <section
+              id="projects"
+              class="section-projects reveal"
+              role="region"
+              aria-labelledby="projects-heading"
+            >
+              <h2 id="projects-heading" class="section-title">Projects</h2>
+              <ul class="project-list" id="project-list">
+                <!-- PROJECT_CARDS_PLACEHOLDER -->
+              </ul>
+            </section>
+
+            <section
+              id="skills"
+              class="section-skills reveal"
+              role="region"
+              aria-labelledby="skills-heading"
+            >
+              <h2 id="skills-heading" class="section-title">Skills</h2>
+              <div class="skill-radar" role="region" aria-label="Skill Capability Matrix">
+                <div class="skill-radar__search">
+                  <label for="skill-search-input" class="sr-only">Filter skills</label>
+                  <div class="skill-radar__search-input-wrapper">
+                    <svg
+                      class="skill-radar__search-icon"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <circle cx="11" cy="11" r="8" />
+                      <path d="m21 21-4.3-4.3" />
+                    </svg>
+                    <input
+                      type="text"
+                      id="skill-search-input"
+                      class="skill-radar__search-input"
+                      placeholder="Filter skills..."
+                      aria-label="Filter skills by name"
+                    />
+                  </div>
+                  <div
+                    id="skill-search-count"
+                    class="skill-radar__search-count"
+                    aria-live="polite"
+                  ></div>
+                </div>
+                <div
+                  id="skill-radar-grid"
+                  class="skill-radar__grid"
+                  role="group"
+                  aria-label="Technical capability cards"
+                >
+                  <!-- Skill radar cards rendered by JS -->
+                </div>
+              </div>
+            </section>
+
+            <section
+              id="operated"
+              class="section-operated reveal"
+              role="region"
+              aria-labelledby="operated-heading"
+            >
+              <h2 id="operated-heading" class="section-title">Operations</h2>
+              <ul class="operated-grid" aria-label="How the site is operated">
+                <li class="operated-card">
+                  <h3 class="operated-card__title">Edge runtime + security headers</h3>
+                  <p class="operated-card__desc">
+                    Served on Cloudflare Workers with CSP nonce strict-dynamic, HSTS,
+                    COOP/CORP, and frame-ancestors none applied at the response layer.
+                  </p>
+                </li>
+                <li class="operated-card">
+                  <h3 class="operated-card__title">Observability stack</h3>
+                  <p class="operated-card__desc">
+                    Grafana, Prometheus, Loki, and ELK keep logs and operational events
+                    reviewable through dashboards.
+                  </p>
+                </li>
+                <li class="operated-card">
+                  <h3 class="operated-card__title">Automation + IaC</h3>
+                  <p class="operated-card__desc">
+                    n8n, MCP, Terraform, and GitHub Actions keep repeatable operations and
+                    deployment checks in code.
+                  </p>
+                </li>
+              </ul>
+            </section>
+
+            <section
+              id="contact"
+              class="section-contact reveal"
+              role="region"
+              aria-labelledby="contact-heading"
+            >
+              <h2 id="contact-heading" class="section-title">Contact</h2>
+              <nav class="contact-grid" aria-label="Contact and social links">
+                <!-- CONTACT_GRID_PLACEHOLDER -->
+              </nav>
+            </section>
+
+          </main>
+
+          <footer class="site-footer" role="contentinfo">
+            <div class="footer-content">
+              <span class="footer-prompt">logout</span>
+              <span class="footer-status">Connection closed.</span>
+            </div>
+            <div class="footer-build" data-footer-build>
+              <span class="footer-build__source"
+                ><a href="https://github.com/jclee941/resume" target="_blank" rel="noopener"
+                  >source</a
+                ></span
+              >
+              <span class="footer-build__sep" aria-hidden="true">·</span>
+              <span class="footer-build__version">v<!-- BUILD_VERSION_PLACEHOLDER --></span>
+              <span class="footer-build__sep" aria-hidden="true">·</span>
+              <span class="footer-build__deployed"
+                >deployed
+                <!-- BUILD_DEPLOYED_DATE_PLACEHOLDER --></span
+              >
+            </div>
+          </footer>
+
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+      (function () {
+        function bindMobileNav() {
+          var toggle = document.querySelector('.nav-toggle');
+          var navLinks = document.querySelector('.nav-links');
+          if (!toggle || !navLinks || toggle.dataset.mobileNavBound === 'true') return;
+
+          toggle.dataset.mobileNavBound = 'true';
+
+          function closeMenu(focusToggle) {
+            toggle.setAttribute('aria-expanded', 'false');
+            navLinks.classList.remove('open');
+            if (focusToggle) toggle.focus();
+          }
+
+          toggle.addEventListener('click', function () {
+            var expanded = toggle.getAttribute('aria-expanded') === 'true';
+            toggle.setAttribute('aria-expanded', String(!expanded));
+            navLinks.classList.toggle('open');
+          });
+
+          navLinks.querySelectorAll('a').forEach(function (link) {
+            link.addEventListener('click', function () {
+              closeMenu(false);
+            });
+          });
+
+          document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape' && navLinks.classList.contains('open')) {
+              closeMenu(true);
+            }
+          });
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', bindMobileNav, { once: true });
+        } else {
+          bindMobileNav();
+        }
+      })();
+    </script>
+    <script>
+      (function () {
+        var s = document.createElement('script');
+        s.src = '/main.js?v=<!-- BUILD_CACHE_KEY_PLACEHOLDER -->';
+        s.defer = true;
+        document.body.appendChild(s);
+      })();
+    </script>
+    <script>
+      // Scroll reveal is owned by src/scripts/modules/ui.js (initScrollReveal)
+
+      window.__RESUME_CHAT_DATA__ = (function () {
+        var resumeDataB64;
+        var resumeDataBinary;
+        var resumeDataBytes;
+        try {
+          resumeDataB64 = /* RESUME_CHAT_DATA_B64_PLACEHOLDER */ '';
+          if (!resumeDataB64) return {};
+          resumeDataBinary = atob(resumeDataB64);
+          resumeDataBytes = Uint8Array.from(resumeDataBinary, function (c) {
+            return c.charCodeAt(0);
+          });
+          return JSON.parse(new TextDecoder('utf-8').decode(resumeDataBytes));
+        } catch (resumeDataError) {
+          if (typeof console !== 'undefined' && console.warn) {
+            console.warn('Failed to parse embedded resume chat data', resumeDataError);
+          }
+          return {};
+        }
+      })();
+    </script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      gtag('config', 'G-P9E8XY5K2L', {
+        page_path: window.location.pathname,
+        language: 'en',
+      });
+      var _gs = document.createElement('script');
+      _gs.src = 'https://www.googletagmanager.com/gtag/js?id=G-P9E8XY5K2L';
+      _gs.async = true;
+      document.head.appendChild(_gs);
+    </script>
+  </body>
+</html>

@@ -5,7 +5,7 @@
  *  - Accessibility landmarks (KO/EN source HTML)
  *  - Reduced-motion coverage without glitch chrome
  *  - SEO structured-data determinism (no wall-clock dateCreated) + JA language
- *  - JA i18n parity (server-side locale data: data_ja.json vs data.json)
+ *  - JA i18n parity (client translations)
  *  - PDF source: LinkedIn contact + accessible accent link colour
  *
  * These are static-source assertions: they read the hand-edited source files
@@ -14,18 +14,12 @@
 
 const fs = require('fs');
 const path = require('path');
-const { expandHtmlIncludes } = require('../../../apps/portfolio/lib/html-partials');
 
 const PORTFOLIO = path.join(__dirname, '..', '..', '..', 'apps', 'portfolio');
 const DATA = path.join(__dirname, '..', '..', '..', 'packages', 'data', 'resumes', 'master');
 const TOOLS = path.join(__dirname, '..', '..', '..', 'tools', 'scripts', 'build');
 
-const read = (p) => {
-  const content = fs.readFileSync(p, 'utf-8');
-  return path.dirname(p) === PORTFOLIO && path.basename(p).startsWith('index')
-    ? expandHtmlIncludes(content, { baseDir: PORTFOLIO, sourcePath: p })
-    : content;
-};
+const read = (p) => fs.readFileSync(p, 'utf-8');
 
 describe('고도화: accessibility landmarks', () => {
   const ko = read(path.join(PORTFOLIO, 'index.html'));
@@ -84,16 +78,25 @@ describe('고도화: structured-data determinism', () => {
 });
 
 describe('고도화: JA i18n parity', () => {
-  test('built ja locale data has top-level key parity with the ko locale', () => {
-    // The site serves Japanese via server-side per-locale data (data_ja.json),
-    // not a client-side translation dictionary. Assert real parity there.
-    const ko = JSON.parse(read(path.join(PORTFOLIO, 'data.json')));
-    const ja = JSON.parse(read(path.join(PORTFOLIO, 'data_ja.json')));
-    const koKeys = Object.keys(ko).sort();
-    const jaKeys = Object.keys(ja).sort();
+  test('client translations expose a ja block with full key parity', () => {
+    // translations.js is an ESM source module; parse it as text to avoid CJS/ESM
+    // interop and assert key parity between the ko and ja blocks.
+    const src = read(path.join(PORTFOLIO, 'src', 'scripts', 'data', 'translations.js'));
+    const blockKeys = (lang) => {
+      const start = src.indexOf(`${lang}: {`);
+      expect(start).toBeGreaterThan(-1);
+      // Slice from the lang block start to the next top-level locale or EOF.
+      const rest = src.slice(start + lang.length + 3);
+      const end = rest.search(/\n {2}[a-z]{2}: \{|\n\};/);
+      const body = end === -1 ? rest : rest.slice(0, end);
+      return (body.match(/'([a-zA-Z.]+)':/g) || []).map((m) => m.slice(1, -2)).sort();
+    };
+    const koKeys = blockKeys('ko');
+    const jaKeys = blockKeys('ja');
     expect(jaKeys.length).toBeGreaterThan(0);
     expect(jaKeys).toEqual(koKeys);
   });
+
 });
 
 describe('고도화: PDF source polish', () => {
