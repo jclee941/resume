@@ -76,6 +76,7 @@ describe('scroll-reveal fail-safe', () => {
   });
 
   test('A-S1: reveals in-viewport and above-viewport sections during init (no scroll needed)', () => {
+    jest.useFakeTimers();
     installFakeDom({ ioWorks: true });
     const inView = makeEl({ top: 100, bottom: 700 }); // within 0..800
     const above = makeEl({ top: -500, bottom: -100 }); // scrolled past
