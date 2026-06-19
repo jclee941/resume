@@ -4,7 +4,7 @@ const RESUME_STATS_BY_INDEX = {
     ['FortiGate HA', '5계층 망분리', '본인가 대응'],
     ['금융DC 운영', '감사 대응', 'Python 자동화'],
     ['NSX-T', '마이크로세그멘테이션', '침입 탐지'],
-    ['VPN/NAC 운영', '단말 등록 요청', '운영 점검'],
+    ['Ansible 자동화', 'NAC', 'VPN 모니터링'],
     ['Linux 운영', '방화벽 정책', '패치 관리'],
   ],
   en: [
@@ -12,7 +12,7 @@ const RESUME_STATS_BY_INDEX = {
     ['FortiGate HA', '5-Tier Segmentation', 'FSC Approval'],
     ['Financial DC Ops', 'Audit Response', 'Python Automation'],
     ['NSX-T', 'Microsegmentation', 'Intrusion Detection'],
-    ['VPN/NAC Operations', 'Terminal Requests', 'Operations Checks'],
+    ['Ansible Automation', 'NAC', 'VPN Monitoring'],
     ['Linux Ops', 'Firewall Policy', 'Patch Management'],
   ],
   ja: [
@@ -20,7 +20,7 @@ const RESUME_STATS_BY_INDEX = {
     ['FortiGate HA', '5階層ネットワーク分離', '本認可対応'],
     ['金融DC運用', '監査対応', 'Python自動化'],
     ['NSX-T', 'マイクロセグメンテーション', '侵入検知'],
-    ['VPN/NAC運用', '端末登録依頼', '運用点検'],
+    ['Ansible自動化', 'NAC', 'VPNモニタリング'],
     ['Linux運用', 'ファイアウォールポリシー', 'パッチ管理'],
   ],
 };
@@ -50,7 +50,7 @@ const CAREER_EN_OVERRIDES = {
   '(주)메타넷엠플랫폼': {
     title: 'Metanet M Platform Co., Ltd.',
     description:
-      'Supported contact-center remote-work infrastructure operations by handling VPN/NAC access requests, terminal registration, incident intake, access-status checks, and field inspection procedures.',
+      'Solved server configuration consistency and remote-access visibility for a large-scale remote work environment by building Python and Ansible automation, and operated FortiGate VPN infrastructure for new contact-center sites.',
   },
   '(주)엠티데이타': {
     title: 'MT Data Co., Ltd.',
@@ -84,6 +84,10 @@ const PROJECT_EN_OVERRIDES = {
 
 const RESUME_CARD_ICONS = ['🏦', '🏗️', '📈', '☁️', '🎓', '📞', '✈️'];
 
+function resumeStatsFor(statsByIndex, idx) {
+  return [...(statsByIndex[idx] || [])];
+}
+
 function generateWebData(source, language = 'ko') {
   const statsByIndex = RESUME_STATS_BY_INDEX[language] || RESUME_STATS_BY_INDEX.ko;
 
@@ -101,7 +105,7 @@ function generateWebData(source, language = 'ko') {
       role: career.myRole || career.role || '',
       description: career.description,
       period: career.period,
-      stats: statsByIndex[idx] || [],
+      stats: resumeStatsFor(statsByIndex, idx),
       highlight: idx === 0,
     };
 
@@ -125,7 +129,7 @@ function generateWebData(source, language = 'ko') {
       role: translated.role || career.myRole || career.role || '',
       description: translated.description || career.description,
       period: translated.period || career.period.replace('현재', 'Present'),
-      stats: statsByIndexEn[idx] || [],
+      stats: resumeStatsFor(statsByIndexEn, idx),
       highlight: idx === 0,
     };
 
