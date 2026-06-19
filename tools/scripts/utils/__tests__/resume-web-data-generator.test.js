@@ -155,4 +155,36 @@ describe('generateWebData → resume[].stats (the ACTUAL static-card render path
       'EN resume[0] stats reflect the actual role (Splunk ES detection/response), in English'
     );
   });
+
+  it('S2c: stats arrays are isolated across generator calls', () => {
+    const first = generateWebData(ssot, 'ko');
+    first.resume[0].stats.push('mutated');
+    first.resumeEn[0].stats.push('mutated-en');
+
+    const second = generateWebData(ssot, 'ko');
+    assert.ok(!second.resume[0].stats.includes('mutated'));
+    assert.ok(!second.resumeEn[0].stats.includes('mutated-en'));
+  });
+
+  it('S2d: preserves existing Metanet stats and English fallback copy', () => {
+    assert.deepEqual(generateWebData(ssot, 'ko').resume[4].stats, [
+      'Ansible 자동화',
+      'NAC',
+      'VPN 모니터링',
+    ]);
+    assert.deepEqual(generateWebData(ssot, 'en').resume[4].stats, [
+      'Ansible Automation',
+      'NAC',
+      'VPN Monitoring',
+    ]);
+    assert.deepEqual(generateWebData(ssot, 'ja').resume[4].stats, [
+      'Ansible自動化',
+      'NAC',
+      'VPNモニタリング',
+    ]);
+    assert.equal(
+      generateWebData(ssot, 'ko').resumeEn[4].description,
+      'Solved server configuration consistency and remote-access visibility for a large-scale remote work environment by building Python and Ansible automation, and operated FortiGate VPN infrastructure for new contact-center sites.'
+    );
+  });
 });
