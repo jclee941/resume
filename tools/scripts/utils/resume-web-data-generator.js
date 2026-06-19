@@ -1,100 +1,91 @@
-/**
- * Resume apps/portfolio data transformation utilities.
- */
+const RESUME_STATS_BY_INDEX = {
+  ko: [
+    ['Splunk ES', '탐지·대응', '보안 자동화'],
+    ['FortiGate HA', '5계층 망분리', '본인가 대응'],
+    ['금융DC 운영', '감사 대응', 'Python 자동화'],
+    ['NSX-T', '마이크로세그멘테이션', '침입 탐지'],
+    ['VPN/NAC 운영', '단말 등록 요청', '운영 점검'],
+    ['Linux 운영', '방화벽 정책', '패치 관리'],
+  ],
+  en: [
+    ['Splunk ES', 'Detection & Response', 'Security Automation'],
+    ['FortiGate HA', '5-Tier Segmentation', 'FSC Approval'],
+    ['Financial DC Ops', 'Audit Response', 'Python Automation'],
+    ['NSX-T', 'Microsegmentation', 'Intrusion Detection'],
+    ['VPN/NAC Operations', 'Terminal Requests', 'Operations Checks'],
+    ['Linux Ops', 'Firewall Policy', 'Patch Management'],
+  ],
+  ja: [
+    ['Splunk ES', '検知・対応', 'セキュリティ自動化'],
+    ['FortiGate HA', '5階層ネットワーク分離', '本認可対応'],
+    ['金融DC運用', '監査対応', 'Python自動化'],
+    ['NSX-T', 'マイクロセグメンテーション', '侵入検知'],
+    ['VPN/NAC運用', '端末登録依頼', '運用点検'],
+    ['Linux運用', 'ファイアウォールポリシー', 'パッチ管理'],
+  ],
+};
 
-/**
- * Generate portfolio apps/portfolio data from master resume source data.
- * @param {Object} source - Master resume data.
- * @returns {Object} Portfolio data.json payload.
- */
+const CAREER_EN_OVERRIDES = {
+  '(주)아이티센 CTS': {
+    title: 'ITCEN CTS Co., Ltd.',
+    period: '2025.03 ~ 2026.02',
+    description:
+      'Built integrated security operations to reduce the delay between security event detection and responder notification by connecting Splunk ES with Slack via n8n and developing a FortiManager API-based firewall policy lookup tool.',
+  },
+  '(주)가온누리정보시스템': {
+    title: 'Gaonnuri Information Systems Co., Ltd.',
+    description:
+      'Eliminated single points of failure for a financial trading system by configuring FortiGate HA and standardized security appliance setup with Ansible Role to reduce the handoff cost from build to operations phases.',
+  },
+  '(주)콴텍투자일임': {
+    title: 'Quantec Investment Management Co., Ltd.',
+    description:
+      'Established change traceability and auditability for cloud infrastructure by codifying VPC/Subnet/SG with Terraform, and resolved the difficulty of correlating distributed security logs through integrated CloudTrail and GuardDuty analysis.',
+  },
+  '(주)조인트리': {
+    title: 'Jointree Co., Ltd.',
+    description:
+      'Resolved east-west traffic blind spots from perimeter-based security by applying NSX-T micro-segmentation, and built centralized security policy management at the VDS level.',
+  },
+  '(주)메타넷엠플랫폼': {
+    title: 'Metanet M Platform Co., Ltd.',
+    description:
+      'Supported contact-center remote-work infrastructure operations by handling VPN/NAC access requests, terminal registration, incident intake, access-status checks, and field inspection procedures.',
+  },
+  '(주)엠티데이타': {
+    title: 'MT Data Co., Ltd.',
+    description:
+      'Established a routine log analysis cadence and adhered to security audit guidelines to identify hardware failure indicators early in a closed network environment.',
+  },
+};
+
+const PROJECT_EN_OVERRIDES = {
+  'Observability Platform': {
+    description:
+      'Built unified observability for homelab infrastructure to remove the need to switch between per-service consoles by integrating Prometheus, Loki, and Grafana into a single dashboard.',
+    tagline: 'Monitoring Platform',
+  },
+  'n8n Automation': {
+    description:
+      'Centralized scattered automation tasks (alerts, deployments, data collection) into n8n so new integrations can be added without writing code.',
+    tagline: 'Workflow Automation',
+  },
+  'Security Alert System': {
+    description:
+      'FortiGate security events were scattered across device syslog and Splunk, causing delays from event occurrence to responder awareness. Integrated Splunk Saved Search with Webhooks and implemented EMS state-tracking pattern (11 CSV state trackers) to prevent duplicate alerts by sending notifications only on state transitions. Classifies events with 6,091 FortiGate LogID mappings. When FortiGate syslog events occur, alerts are immediately routed through Splunk Saved Search → Webhook → Slack/Telegram in a single path.',
+    tagline: 'Security Alert Automation',
+  },
+  'IP Blacklist Platform': {
+    description:
+      'Built a unified threat intel lookup over Flask and Next.js so analysts query a single interface instead of multiple external feeds.',
+    tagline: 'Threat Intelligence',
+  },
+};
+
+const RESUME_CARD_ICONS = ['🏦', '🏗️', '📈', '☁️', '🎓', '📞', '✈️'];
+
 function generateWebData(source, language = 'ko') {
-  // Career stat tags keyed by career INDEX (language-agnostic). Company-name
-  // keying breaks for non-KO sources because the English/Japanese SSoT carry
-  // localized company names. data-processor.js renders these as <span class="tag">
-  // badges from each per-language data_*.json's resume[] array.
-  const STATS_BY_INDEX = {
-    ko: [
-      ['Splunk ES', '탐지·대응', '보안 자동화'],
-      ['FortiGate HA', '5계층 망분리', '본인가 대응'],
-      ['금융DC 운영', '감사 대응', 'Python 자동화'],
-      ['NSX-T', '마이크로세그멘테이션', '침입 탐지'],
-      ['Ansible 자동화', 'NAC', 'VPN 모니터링'],
-      ['Linux 운영', '방화벽 정책', '패치 관리'],
-    ],
-    en: [
-      ['Splunk ES', 'Detection & Response', 'Security Automation'],
-      ['FortiGate HA', '5-Tier Segmentation', 'FSC Approval'],
-      ['Financial DC Ops', 'Audit Response', 'Python Automation'],
-      ['NSX-T', 'Microsegmentation', 'Intrusion Detection'],
-      ['Ansible Automation', 'NAC', 'VPN Monitoring'],
-      ['Linux Ops', 'Firewall Policy', 'Patch Management'],
-    ],
-    ja: [
-      ['Splunk ES', '検知・対応', 'セキュリティ自動化'],
-      ['FortiGate HA', '5階層ネットワーク分離', '本認可対応'],
-      ['金融DC運用', '監査対応', 'Python自動化'],
-      ['NSX-T', 'マイクロセグメンテーション', '侵入検知'],
-      ['Ansible自動化', 'NAC', 'VPNモニタリング'],
-      ['Linux運用', 'ファイアウォールポリシー', 'パッチ管理'],
-    ],
-  };
-  const statsByIndex = STATS_BY_INDEX[language] || STATS_BY_INDEX.ko;
-  const careerEnMap = {
-    '(주)아이티센 CTS': {
-      title: 'ITCEN CTS Co., Ltd.',
-      period: '2025.03 ~ 2026.02',
-      description:
-        'Built integrated security operations to reduce the delay between security event detection and responder notification by connecting Splunk ES with Slack via n8n and developing a FortiManager API-based firewall policy lookup tool.',
-    },
-    '(주)가온누리정보시스템': {
-      title: 'Gaonnuri Information Systems Co., Ltd.',
-      description:
-        'Eliminated single points of failure for a financial trading system by configuring FortiGate HA and standardized security appliance setup with Ansible Role to reduce the handoff cost from build to operations phases.',
-    },
-    '(주)콴텍투자일임': {
-      title: 'Quantec Investment Management Co., Ltd.',
-      description:
-        'Established change traceability and auditability for cloud infrastructure by codifying VPC/Subnet/SG with Terraform, and resolved the difficulty of correlating distributed security logs through integrated CloudTrail and GuardDuty analysis.',
-    },
-    '(주)조인트리': {
-      title: 'Jointree Co., Ltd.',
-      description:
-        'Resolved east-west traffic blind spots from perimeter-based security by applying NSX-T micro-segmentation, and built centralized security policy management at the VDS level.',
-    },
-    '(주)메타넷엠플랫폼': {
-      title: 'Metanet M Platform Co., Ltd.',
-      description:
-        'Solved server configuration consistency and remote-access visibility for a large-scale remote work environment by building Python and Ansible automation, and operated FortiGate VPN infrastructure for new contact-center sites.',
-    },
-    '(주)엠티데이타': {
-      title: 'MT Data Co., Ltd.',
-      description:
-        'Established a routine log analysis cadence and adhered to security audit guidelines to identify hardware failure indicators early in a closed network environment.',
-    },
-  };
-
-  const projectEnMap = {
-    'Observability Platform': {
-      description:
-        'Built unified observability for homelab infrastructure to remove the need to switch between per-service consoles by integrating Prometheus, Loki, and Grafana into a single dashboard.',
-      tagline: 'Monitoring Platform',
-    },
-    'n8n Automation': {
-      description:
-        'Centralized scattered automation tasks (alerts, deployments, data collection) into n8n so new integrations can be added without writing code.',
-      tagline: 'Workflow Automation',
-    },
-    'Security Alert System': {
-      description:
-        'FortiGate security events were scattered across device syslog and Splunk, causing delays from event occurrence to responder awareness. Integrated Splunk Saved Search with Webhooks and implemented EMS state-tracking pattern (11 CSV state trackers) to prevent duplicate alerts by sending notifications only on state transitions. Classifies events with 6,091 FortiGate LogID mappings. When FortiGate syslog events occur, alerts are immediately routed through Splunk Saved Search → Webhook → Slack/Telegram in a single path.',
-      tagline: 'Security Alert Automation',
-    },
-    'IP Blacklist Platform': {
-      description:
-        'Built a unified threat intel lookup over Flask and Next.js so analysts query a single interface instead of multiple external feeds.',
-      tagline: 'Threat Intelligence',
-    },
-  };
+  const statsByIndex = RESUME_STATS_BY_INDEX[language] || RESUME_STATS_BY_INDEX.ko;
 
   // SSoT → portfolio data contract:
   // - source.careers[] → resume[] (flat career cards: icon, title, description, period, stats, highlight)
@@ -104,11 +95,8 @@ function generateWebData(source, language = 'ko') {
   //   The terminal-themed portfolio shows summarized career cards only.
   //   If sub-projects need to render here, extend the entry below AND update apps/portfolio/lib/cards.js.
   const resume = source.careers.map((career, idx) => {
-    const icons = ['🏦', '🏗️', '📈', '☁️', '🎓', '📞', '✈️'];
-    // stats come from the language-aware STATS_BY_INDEX selected at the top.
-
     const entry = {
-      icon: icons[idx] || '💼',
+      icon: RESUME_CARD_ICONS[idx] || '💼',
       title: career.company,
       role: career.myRole || career.role || '',
       description: career.description,
@@ -126,14 +114,13 @@ function generateWebData(source, language = 'ko') {
   });
 
   const resumeEn = source.careers.map((career, idx) => {
-    const icons = ['🏦', '🏗️', '📈', '☁️', '🎓', '📞', '✈️'];
     // resumeEn is a secondary EN projection (fallback path); use English stats
     // by index so it stays symmetric even if a non-EN source language is used.
-    const statsByIndexEn = STATS_BY_INDEX.en;
+    const statsByIndexEn = RESUME_STATS_BY_INDEX.en;
 
-    const translated = careerEnMap[career.company] || {};
+    const translated = CAREER_EN_OVERRIDES[career.company] || {};
     const entry = {
-      icon: icons[idx] || '💼',
+      icon: RESUME_CARD_ICONS[idx] || '💼',
       title: translated.title || career.company,
       role: translated.role || career.myRole || career.role || '',
       description: translated.description || career.description,
@@ -171,7 +158,7 @@ function generateWebData(source, language = 'ko') {
   }));
 
   const projectsEn = (source.personalProjects || []).map((proj) => {
-    const translated = projectEnMap[proj.name] || {};
+    const translated = PROJECT_EN_OVERRIDES[proj.name] || {};
 
     return {
       icon: proj.icon || '💻',
