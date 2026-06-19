@@ -9,6 +9,27 @@ const EXTERNAL_SRI = {
   GOOGLE_GSI: 'sha384-Li3+JwrJUjnnr4ZvOP9SRczNCfPkOLWRVCzUTrD2TOhgQLBfRKs5Q5/lxh2tWguw',
 };
 
+const JAPANESE_LANGUAGE = 'ja';
+const LANGUAGE_LINK_RE = /<a\b([^>]*\bhreflang="(ko|en|ja)"[^>]*)>\s*(KO|EN|JA)\s*<\/a\s*>/g;
+
+function buildLanguageLink(attrs, lang, label) {
+  const baseAttrs = attrs
+    .replace(/\s+aria-current="true"/g, '')
+    .replace(/\s+class="([^"]*)"/, (_, classValue) => {
+      const classes = classValue
+        .split(/\s+/)
+        .filter((className) => className && className !== 'lang-link--active');
+
+      if (lang === JAPANESE_LANGUAGE) {
+        classes.push('lang-link--active');
+      }
+
+      return ` class="${classes.join(' ')}"`;
+    });
+
+  return `<a${baseAttrs}${lang === JAPANESE_LANGUAGE ? ' aria-current="true"' : ''}>${label}</a>`;
+}
+
 function applyExternalSri(html) {
   return html.replace(
     /<script\s+src="https:\/\/accounts\.google\.com\/gsi\/client"\s+async\s+defer><\/script>/g,
@@ -295,14 +316,9 @@ function buildJapaneseTemplate(html) {
       .replace(/"name": "홈"/g, '"name": "ホーム"')
       // === Inline JS character class: extend Korean-only range to also cover Japanese ===
       .replace(/\[\^a-z0-9가-힣\\s\]/g, '[^a-z0-9\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF\\s]')
-      // === Language switcher: KO active -> JA active ===
-      .replace(
-        /<a href="\/" hreflang="ko" aria-current="true" class="lang-link lang-link--active" lang="ko">KO<\/a>/g,
-        '<a href="/" hreflang="ko" class="lang-link" lang="ko">KO</a>'
-      )
-      .replace(
-        /<a href="\/ja\/" hreflang="ja" class="lang-link" lang="ja">JA<\/a>/g,
-        '<a href="/ja/" hreflang="ja" aria-current="true" class="lang-link lang-link--active" lang="ja">JA</a>'
+      // === Language switcher: ensure only JA is active even when source anchors are formatted across lines ===
+      .replace(LANGUAGE_LINK_RE, (_match, attrs, lang, label) =>
+        buildLanguageLink(attrs, lang, label)
       )
       .replace(
         /이 포트폴리오는 설명하는 보안 원칙을 사이트 자체에 적용했습니다\. 아래 항목은 배포된\s+응답 헤더·워커 코드·CI 설정에서 실제로 동작하는 통제입니다\./g,
