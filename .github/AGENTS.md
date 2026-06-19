@@ -65,9 +65,8 @@ and branch-protection-facing checks.
 
 ## NOTES
 
-- `.github/workflows/18_issue-management.yml`, `21_docs-sync.yml`, and
-  `auto-merge.yml` use external reusable workflows; keep that ownership visible
-  in PR descriptions when touched.
+- Issue auto-labeling and stale-label removal are App-owned by jclee-bot;
+  keep that ownership visible in PR descriptions when touched.
 - `provision-queues.yml` can affect paid Cloudflare resources. Treat it as an
   operator action, not routine CI.
 
