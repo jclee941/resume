@@ -154,9 +154,9 @@ resume/
 | Workflow File                      | Purpose                         |
 | ---------------------------------- | ------------------------------- |
 | `02_issue-to-branch.yml`           | Create branch from issue        |
-| `18_issue-management.yml`          | Issue labeling and triage       |
+| `jclee-bot App issue-management`          | Issue labeling and triage       |
 | `19_issue-backfill.yml`            | Issue content backfill          |
-| `43_reusable-issue-management.yml` | Reusable issue management logic |
+| `jclee-bot App issue-management` | Reusable issue management logic |
 
 #### Documentation
 
@@ -390,7 +390,7 @@ Use `09_semantic-pr.yml` to enforce semantic commits.
 
 ### Reporting Issues
 
-- Use issue templates (managed by `18_issue-management.yml`)
+- Use issue templates (managed by `jclee-bot App issue-management`)
 - Tag appropriately for triage
 - For security issues, follow responsible disclosure
 
