@@ -80,7 +80,7 @@
     "@cloudflare/puppeteer": "^1.0.6"
   },
   "devDependencies": {
-    "better-sqlite3": "^12.10.0",
+    "better-sqlite3": "^12.11.1",
     "playwright": "^1.58.2",
     "ws": "^8.21.0"
   }
