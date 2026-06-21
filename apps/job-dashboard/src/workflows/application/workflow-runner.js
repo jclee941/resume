@@ -1,5 +1,6 @@
 import { processApprovalGates } from './approval-gates.js';
 import { submitApprovedApplications } from './application-submissions.js';
+import { normalizeApplicationPlatforms } from './platforms.js';
 import {
   checkDailyLimits,
   initializeWorkflow,
@@ -16,23 +17,28 @@ import {
 export async function runApplicationWorkflow(ctx, event, step) {
   const {
     triggerType = 'manual',
-    platforms = ['wanted'],
+    platforms: requestedPlatforms = ['wanted'],
     searchCriteria = {},
     resumeId = 'default',
     autoApprove = false,
     autoApproveThreshold = 75,
     minMatchScore = 60,
     maxDailyApplications = 10,
-    dryRun = false,
+    dryRun = true,
+    atsStub = false,
+    explicitSubmit = false,
+    submitOptIn = false,
     _eventData = {},
   } = event.payload;
+  const platforms = normalizeApplicationPlatforms(requestedPlatforms, { atsStub, dryRun });
+  const criteria = atsStub ? { ...searchCriteria, atsStub } : searchCriteria;
 
   const workflow = createWorkflowRecord(event, triggerType);
   const notificationService = createNotificationService(ctx);
 
   await initializeWorkflow(ctx, step, workflow, triggerType, platforms);
   const dailyCheck = await checkDailyLimits(ctx, step, workflow, maxDailyApplications);
-  const jobsFound = await searchWorkflowJobs(ctx, step, workflow, platforms, searchCriteria);
+  const jobsFound = await searchWorkflowJobs(ctx, step, workflow, platforms, criteria);
 
   if (jobsFound.length === 0) {
     return completeWithoutJobs(ctx, step, workflow, notificationService, triggerType, platforms);
@@ -60,7 +66,8 @@ export async function runApplicationWorkflow(ctx, event, step) {
     workflow,
     approvedJobs,
     resumeId,
-    dryRun
+    dryRun,
+    { explicitSubmit, submitOptIn }
   );
 
   completeWorkflow(workflow);

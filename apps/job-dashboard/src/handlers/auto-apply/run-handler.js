@@ -1,25 +1,42 @@
 import { normalizeError } from '@resume/shared/errors';
 import {
+  isAtsDryRunPlatform,
+  normalizeApplicationPlatforms,
+  supportedApplicationPlatforms,
+} from '../../workflows/application/platforms.js';
+import {
   getConfig,
   getTodayApplicationCount,
   isAlreadyApplied,
   recordApplication,
 } from './db-helpers.js';
 import { getWantedSession } from './session-helpers.js';
-import { SUPPORTED_PLATFORMS } from './constants.js';
 import { jsonResponse } from './response.js';
 import { applyMatchedJobs } from './application-actions.js';
 import { readExplicitCandidates } from './explicit-candidates.js';
 import { createSearchResults, selectMatchedJobs } from './job-selection.js';
 import { primeWantedSession, searchPlatformJobs } from './job-search.js';
+import { rejectInvalidRealSubmit } from './real-submit-gate.js';
 
 export async function runAutoApply({ request, env, clients }) {
   const body = await request.json().catch(() => ({}));
+  if (hasMalformedPlatforms(body)) {
+    return jsonResponse(
+      {
+        success: false,
+        error: 'platforms must be an array when provided',
+        errorCode: 'INVALID_AUTO_APPLY_REQUEST',
+      },
+      400
+    );
+  }
+
   const {
     dryRun = true,
     maxApplications = null,
     keywords = null,
     platforms = ['wanted', 'linkedin', 'remember'],
+    atsStub = false,
   } = body;
   const config = await getConfig(env);
   const explicitCandidates = readExplicitCandidates(body);
@@ -33,6 +50,8 @@ export async function runAutoApply({ request, env, clients }) {
       explicitCandidates.status
     );
   }
+  const realSubmitRejection = rejectInvalidRealSubmit(body, dryRun, explicitCandidates);
+  if (realSubmitRejection) return realSubmitRejection;
 
   if (!config.autoApplyEnabled && !dryRun) {
     return jsonResponse(
@@ -45,10 +64,11 @@ export async function runAutoApply({ request, env, clients }) {
     );
   }
 
-  const activePlatforms = platforms.filter((platform) => SUPPORTED_PLATFORMS.includes(platform));
+  const activePlatforms = normalizeApplicationPlatforms(platforms, { atsStub, dryRun });
   if (activePlatforms.length === 0) {
+    const supported = supportedApplicationPlatforms({ atsStub, dryRun }).join(', ');
     return jsonResponse(
-      { success: false, error: `No valid platforms. Supported: ${SUPPORTED_PLATFORMS.join(', ')}` },
+      { success: false, error: `No valid platforms. Supported: ${supported}` },
       400
     );
   }
@@ -70,15 +90,19 @@ export async function runAutoApply({ request, env, clients }) {
 
   const searchResults = createSearchResults();
   try {
-    if (!explicitCandidates.hasExplicitCandidates && activePlatforms.includes('wanted')) {
+    const searchablePlatforms = activePlatforms.filter((platform) =>
+      canSearchPlatform(clients, platform)
+    );
+
+    if (!explicitCandidates.hasExplicitCandidates && searchablePlatforms.includes('wanted')) {
       await primeWantedSession({ env, clients, getWantedSession });
     }
 
     const allJobs = explicitCandidates.hasExplicitCandidates
       ? explicitCandidates.jobs
-      : await searchPlatformJobs({
+      : await collectPlatformJobs({
           clients,
-          activePlatforms,
+          activePlatforms: searchablePlatforms,
           searchKeywords,
           searchResults,
         });
@@ -98,6 +122,7 @@ export async function runAutoApply({ request, env, clients }) {
     return jsonResponse({
       success: true,
       dryRun,
+      submitted: countSubmittedApplications(searchResults, dryRun),
       platforms: activePlatforms,
       config: { keywords: searchKeywords, minMatchScore: minScore, maxDailyApplications: maxApps },
       todayApplications: todayCount,
@@ -118,4 +143,32 @@ export async function runAutoApply({ request, env, clients }) {
       500
     );
   }
+}
+
+async function collectPlatformJobs({
+  clients,
+  activePlatforms,
+  searchKeywords,
+  searchResults,
+}) {
+  return searchPlatformJobs({
+    clients,
+    activePlatforms,
+    searchKeywords,
+    searchResults,
+  });
+}
+
+function canSearchPlatform(clients, platform) {
+  if (!isAtsDryRunPlatform(platform)) return true;
+  return typeof clients?.[platform]?.searchJobs === 'function';
+}
+
+function countSubmittedApplications(searchResults, dryRun) {
+  if (dryRun) return 0;
+  return searchResults.jobs.filter((job) => job.action === 'applied').length;
+}
+
+function hasMalformedPlatforms(body) {
+  return Object.prototype.hasOwnProperty.call(body, 'platforms') && !Array.isArray(body.platforms);
 }

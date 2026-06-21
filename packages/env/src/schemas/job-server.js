@@ -21,6 +21,9 @@ export const jobServerEnvSchema = z.object({
   // ===== Wanted platform =====
   WANTED_USER_AGENT: z.string().optional(),
 
+  // ===== Foreign ATS backend integrations =====
+  ASHBY_API_KEY: z.string().min(1).optional(),
+
   // ===== GitLab integration (homelab) =====
   GITLAB_URL: z.string().url().optional(),
   GITLAB_OAUTH_APP_ID: z.string().optional(),

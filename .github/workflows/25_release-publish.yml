@@ -42,7 +42,7 @@ jobs:
         with:
           egress-policy: audit
       - name: Checkout (full history for tag scan)
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -54,8 +54,9 @@ jobs:
         run: |
           set -eu
           SHA="${INPUT_SHA:-${GITHUB_SHA}}"
-          # Latest tag (if any).
-          PREV_TAG=$(git describe --tags --abbrev=0 --match 'v*' 2>/dev/null || echo "")
+          # Highest reachable semver tag. `git describe` can pick the lower tag
+          # when multiple v* tags point at the same commit, causing collisions.
+          PREV_TAG=$(git tag --merged "$SHA" --list 'v[0-9]*' | sort -V | tail -1)
           if [ -z "$PREV_TAG" ]; then
             PREV_VERSION="0.0.0"
             COMMIT_RANGE="$SHA"
@@ -121,14 +122,29 @@ jobs:
               exit 1
             fi
           fi
+          REMOTE_SHA=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$NEW_TAG" --jq '.object.sha' 2>/dev/null | sed -nE '/^[0-9a-f]{40}$/p' | head -1 || true)
+          if [ "$REMOTE_SHA" = "$SHA" ]; then
+            echo "::notice::Remote tag $NEW_TAG already at $SHA; skipping creation."
+            exit 0
+          elif [ -n "$REMOTE_SHA" ]; then
+            echo "::warning::Remote tag $NEW_TAG exists at $REMOTE_SHA, but we want $SHA. Refusing to move; manual intervention required."
+            exit 1
+          fi
           if [ "$DRY_RUN" = "true" ]; then
             echo "::notice::DRY-RUN: would create $NEW_TAG (bump=$BUMP) at $SHA"
             exit 0
           fi
-          gh api -X POST "repos/$GITHUB_REPOSITORY/git/refs" \
+          if ! gh api -X POST "repos/$GITHUB_REPOSITORY/git/refs" \
             -f "ref=refs/tags/$NEW_TAG" \
-            -f "sha=$SHA" \
-            || { echo "::warning::tag create failed"; exit 1; }
+            -f "sha=$SHA"; then
+            REMOTE_SHA=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$NEW_TAG" --jq '.object.sha' 2>/dev/null | sed -nE '/^[0-9a-f]{40}$/p' | head -1 || true)
+            if [ "$REMOTE_SHA" = "$SHA" ]; then
+              echo "::notice::Remote tag $NEW_TAG already at $SHA after create retry; skipping creation."
+              exit 0
+            fi
+            echo "::warning::tag create failed"
+            exit 1
+          fi
           echo "Created $NEW_TAG at $SHA (bump=$BUMP)"
 
       - name: Publish release (using release-drafter draft if present)

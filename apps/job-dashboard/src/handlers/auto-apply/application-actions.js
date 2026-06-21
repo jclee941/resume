@@ -8,8 +8,10 @@ function addJobResult(searchResults, job, action) {
     position: job.position || job.title,
     company: job.company,
     matchScore: job.matchScore,
+    sourceUrl: job.sourceUrl,
     url: job.sourceUrl || job.url,
     action,
+    adapterBacked: job.adapterBacked === true,
     decisionTrace: getDecisionTrace(job),
   });
 }
@@ -18,6 +20,14 @@ function incrementPlatformApplied(searchResults, source) {
   if (searchResults.byPlatform[source]) {
     searchResults.byPlatform[source].applied++;
   }
+}
+
+function hasHumanApprovalForDestination(job, destination) {
+  const approval =
+    job?.humanApproval ||
+    job?.workflowApprovalMetadata?.humanApproval ||
+    job?.approvalMetadata?.humanApproval;
+  return approval?.status === 'approved' && approval?.destination === destination;
 }
 
 export async function applyMatchedJobs({
@@ -107,10 +117,26 @@ async function applyWantedJob({
       return false;
     }
 
-    const tracedJob = appendDecisionTrace(job, {
+    let tracedJob = appendDecisionTrace(job, {
       stage: 'session_checked',
       outcome: 'passed',
       reason: 'wanted_session_available',
+    });
+    if (!hasHumanApprovalForDestination(tracedJob, 'wanted')) {
+      tracedJob = appendDecisionTrace(tracedJob, {
+        stage: 'human_approval_checked',
+        outcome: 'skipped',
+        reason: 'missing_explicit_human_approval',
+      });
+      addJobResult(searchResults, tracedJob, 'skipped_human_approval_required');
+      searchResults.skipped++;
+      return false;
+    }
+
+    tracedJob = appendDecisionTrace(tracedJob, {
+      stage: 'human_approval_checked',
+      outcome: 'passed',
+      reason: 'explicit_human_approval',
     });
     clients.wanted.setCookies(cookies);
     const result = await clients.wanted.apply(tracedJob.sourceId || tracedJob.id);

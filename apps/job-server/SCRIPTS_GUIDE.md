@@ -26,6 +26,46 @@ recommended approaches.
 | `metrics-exporter.js`      | Monitoring    | ✅ Active | YES         | Export application metrics to Prometheus           |
 | `import-cookies-manual.js` | Session       | ⚠️ Manual | NO          | Manually import cookies from file                  |
 | `get-cookies.js`           | Session       | ⚠️ Manual | NO          | Get cookies from Chrome user data dir              |
+| `foreign-apply:dry-run`    | QA            | ✅ Active | **YES**     | Local foreign ATS dry-run walkthrough              |
+
+---
+
+## Foreign ATS Dry-Run Walkthrough
+
+Use this command before any foreign-company application work. It uses the local
+dashboard stub, never reads credentials, and refuses to run unless the ATS stub
+flag is explicit.
+
+```bash
+npm run foreign-apply:dry-run -- --ats-stub
+```
+
+The walkthrough performs the conservative dashboard flow:
+
+1. Starts `apps/job-dashboard/scripts/dev/start-job-dashboard-stub.mjs` on a
+   local port.
+2. Calls `POST /job/api/auto-apply/run` with `dryRun: true`, `atsStub: true`,
+   and the Greenhouse, Lever, and Ashby platforms.
+3. Verifies search and scoring produced ATS stub matches.
+4. Verifies every preview action is `would_apply`.
+5. Calls `GET /job/api/auto-apply/status` and verifies ATS submissions remain
+   disabled.
+6. Prints `T17-PASS submitted=0` only after the zero-submit assertion passes.
+7. Stops the local stub before exit.
+
+Expected output includes:
+
+```text
+Foreign ATS dry-run walkthrough
+preview jobs=3 actions=would_apply networkWrites=0
+pending approval/status candidates=3 statusPending=0
+submissions submitted=0
+T17-PASS submitted=0
+cleanup stopped local stub pid=<pid>
+```
+
+Do not use production ATS credentials for this walkthrough. Real submissions are
+outside this command and require the separate approval-gated opt-in path.
 
 ---
 
@@ -398,6 +438,7 @@ auth-sync              node scripts/auth-sync.js
 auth-persistent        node scripts/auth-persistent.js
 profile-sync-dry-run   node scripts/profile-sync/index.js
 profile-sync-apply     node scripts/profile-sync/index.js --apply
+foreign-apply-dry-run  npm run foreign-apply:dry-run -- --ats-stub
 auto-all-pipeline      node scripts/auto-all.js --all
 metrics-export         node scripts/metrics-exporter.js
 skill-mapping          node scripts/skill-tag-map.js

@@ -22,7 +22,6 @@ export class AutoApplyWebhookHandler extends BaseHandler {
     }
 
     try {
-      // 1. Get Wanted auth cookies
       const cookies = await this.auth.getCookies('wanted');
       if (!cookies) {
         return this.jsonResponse(
@@ -34,7 +33,6 @@ export class AutoApplyWebhookHandler extends BaseHandler {
         );
       }
 
-      // 2. Get default resume ID
       const listResponse = await fetch('https://www.wanted.co.kr/api/chaos/resumes/v1/list', {
         headers: { Cookie: cookies },
         signal: AbortSignal.timeout(10000),
@@ -58,7 +56,6 @@ export class AutoApplyWebhookHandler extends BaseHandler {
         );
       }
 
-      // 3. Get high-match jobs from D1 that haven't been applied yet
       const jobs = await db
         .prepare(
           `SELECT id, job_id, position, company, match_score, source_url 
@@ -88,7 +85,6 @@ export class AutoApplyWebhookHandler extends BaseHandler {
       const results = { applied: [], failed: [], skipped: [] };
       const now = new Date().toISOString();
 
-      // 4. Apply to each job
       for (const job of candidates) {
         if (dryRun) {
           results.skipped.push({
@@ -102,7 +98,6 @@ export class AutoApplyWebhookHandler extends BaseHandler {
         }
 
         try {
-          // Call Wanted Apply API
           const applyResponse = await fetch('https://www.wanted.co.kr/api/chaos/applications/v2', {
             method: 'POST',
             headers: {
@@ -118,13 +113,13 @@ export class AutoApplyWebhookHandler extends BaseHandler {
           });
 
           if (applyResponse.ok) {
-            // Update status in D1
             await db
-              .prepare('UPDATE applications SET status = ?, updated_at = ? WHERE id = ?')
-              .bind('applied', now, job.id)
+              .prepare(
+                'UPDATE applications SET status = ?, applied_at = ?, updated_at = ? WHERE id = ?'
+              )
+              .bind('applied', now, now, job.id)
               .run();
 
-            // Add timeline entry
             await db
               .prepare(
                 'INSERT INTO application_timeline (application_id, status, note, timestamp) VALUES (?, ?, ?, ?)'
@@ -162,7 +157,6 @@ export class AutoApplyWebhookHandler extends BaseHandler {
           });
         }
 
-        // Rate limit: wait 2s between applications
         if (!dryRun && candidates.indexOf(job) < candidates.length - 1) {
           await new Promise((resolve) => setTimeout(resolve, 2000));
         }

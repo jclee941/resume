@@ -1,4 +1,5 @@
 const {
+  buildJapaneseTemplate,
   injectPlaceholders,
   minifyHtml,
   escapeForTemplateLiteral,
@@ -139,6 +140,42 @@ describe('html-transformer', () => {
 
     test('handles empty string', () => {
       expect(escapeForTemplateLiteral('', escapePatterns)).toBe('');
+    });
+  });
+
+  describe('buildJapaneseTemplate', () => {
+    test('marks only JA active when the KO language link spans lines', () => {
+      const html = `
+        <html lang="ko">
+          <body>
+            <ul class="lang-switcher" aria-label="언어 선택 / Language">
+              <li>
+                <a
+                  href="/"
+                  hreflang="ko"
+                  aria-current="true"
+                  class="lang-link lang-link--active"
+                  lang="ko"
+                  >KO</a
+                >
+              </li>
+              <li><a href="/en/" hreflang="en" class="lang-link" lang="en">EN</a></li>
+              <li><a href="/ja/" hreflang="ja" class="lang-link" lang="ja">JA</a></li>
+            </ul>
+          </body>
+        </html>
+      `;
+
+      const result = buildJapaneseTemplate(html);
+      const activeLabels = [
+        ...result.matchAll(/<a\b[^>]*class="[^"]*lang-link--active[^"]*"[^>]*>\s*(KO|EN|JA)\s*<\/a\s*>/g),
+      ].map((match) => match[1]);
+      const currentLabels = [
+        ...result.matchAll(/<a\b[^>]*aria-current="true"[^>]*>\s*(KO|EN|JA)\s*<\/a\s*>/g),
+      ].map((match) => match[1]);
+
+      expect(activeLabels).toEqual(['JA']);
+      expect(currentLabels).toEqual(['JA']);
     });
   });
 

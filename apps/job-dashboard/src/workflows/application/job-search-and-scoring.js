@@ -1,4 +1,5 @@
 import { calculateMatchScore } from '../../handlers/auto-apply/match-scoring.js';
+import { isAtsDryRunPlatform } from './platforms.js';
 import { averageScore } from './workflow-records.js';
 
 export async function initializeWorkflow(ctx, step, workflow, triggerType, platforms) {
@@ -93,10 +94,7 @@ export async function scoreWorkflowJobs(ctx, step, workflow, jobsFound, minMatch
       const config = await ctx.getMatchingConfig();
 
       return jobsFound
-        .map((job) => ({
-          ...job,
-          matchScore: calculateMatchScore(job, config),
-        }))
+        .map((job) => scoreJob(job, config))
         .filter((job) => job.matchScore >= minMatchScore)
         .sort((a, b) => b.matchScore - a.matchScore)
         .slice(0, dailyCheck.remaining);
@@ -111,4 +109,28 @@ export async function scoreWorkflowJobs(ctx, step, workflow, jobsFound, minMatch
   });
 
   return scoredJobs;
+}
+
+function scoreJob(job, config) {
+  const matchScore = hasDeterministicAtsDryRunScore(job)
+    ? job.matchScore
+    : calculateMatchScore(job, config);
+  const scoredJob = { ...job, matchScore };
+
+  if (!isAtsDryRunJob(scoredJob)) return scoredJob;
+
+  return {
+    ...scoredJob,
+    dryRun: true,
+    status: 'dry-run',
+    action: 'would_apply',
+  };
+}
+
+function hasDeterministicAtsDryRunScore(job) {
+  return isAtsDryRunJob(job) && Number.isFinite(job.matchScore);
+}
+
+function isAtsDryRunJob(job) {
+  return job?.atsStub === true && isAtsDryRunPlatform(job.source);
 }

@@ -1,3 +1,5 @@
+import { recordAtsApplication } from './ats-application-recorder.js';
+
 export class ApplicationRepository {
   constructor(db) {
     this.db = db;
@@ -31,6 +33,10 @@ export class ApplicationRepository {
       .run();
 
     return this.findById(app.id);
+  }
+
+  async recordAtsApplication(app) {
+    return recordAtsApplication(this, app);
   }
 
   async insertTimeline(event) {

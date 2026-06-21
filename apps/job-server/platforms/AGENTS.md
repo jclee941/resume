@@ -30,6 +30,10 @@ anti-detection requirements.
 - Never use headless-only for Wanted/LinkedIn (detected).
 - Never aggressive scraping — triggers permanent bans.
 - Never share cookies across platforms.
+- Never make LinkedIn website automation the default path; require explicit
+  approval for any LinkedIn browser automation.
+- Never hardcode credentials, cookies, tokens, auth headers, or account-specific
+  identifiers in platform adapters, fixtures, logs, or docs.
 
 ---
 
