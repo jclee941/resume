@@ -191,20 +191,42 @@ function buildJapaneseTemplate(html) {
         /금융권 보안 인프라 설계·운영, SIEM 탐지·대응 자동화, IaC 기반 관측성을\s+실무 문제 해결에 연결합니다\./g,
         '金融セキュリティインフラの設計・運用、SIEM検知・対応の自動化、IaCベースの可観測性を、実務の課題解決につなげています。'
       )
+      .replace(/보안 운영 · SRE · DevSecOps 채용 검토 가능/g, '採用検討・面接相談が可能')
       .replace(/채용 검토·면접 논의 가능/g, '採用検討・面接相談が可能')
       .replace(/aria-label="대표 업무 증빙"/g, 'aria-label="代表的な業務証跡"')
       .replace(
+        /넥스트레이드 보안 구축·운영/g,
+        'Nextrade売買締結システムのセキュリティ構築・運用を継続担当'
+      )
+      .replace(
         /넥스트레이드 매매체결시스템 보안 구축·운영 연속 수행/g,
         'Nextrade売買締結システムのセキュリティ構築・運用を継続担当'
+      )
+      .replace(
+        /FortiGate HA 분리·FSC 대응/g,
+        'FortiGate HA 5層ネットワーク分離、FSC本認可審査対応'
       )
       .replace(
         /FortiGate HA 5계층 망분리, FSC 본인가 심사 대응/g,
         'FortiGate HA 5層ネットワーク分離、FSC本認可審査対応'
       )
       .replace(
+        /Splunk ES 탐지·알림 자동화/g,
+        'Splunk ES · n8n · FortiManager APIベースのセキュリティイベント自動化'
+      )
+      .replace(
         /Splunk ES · n8n · FortiManager API 기반 보안 이벤트 자동화/g,
         'Splunk ES · n8n · FortiManager APIベースのセキュリティイベント自動化'
       )
+      .replace(/aria-label="채용 검토 패킷"/g, 'aria-label="採用検討パケット"')
+      .replace(/채용 검토 패킷/g, '採用検討パケット')
+      .replace(/요청부서 검토 포인트/g, '依頼部門の確認ポイント')
+      .replace(/보안 운영, SRE, DevSecOps 직무 적합성/g, 'セキュリティ運用、SRE、DevSecOpsの職務適合性')
+      .replace(/검증 자료/g, '検証資料')
+      .replace(/경력 근거, 프로젝트 근거, 이력서 PDF/g, '経歴根拠、プロジェクト根拠、履歴書PDF')
+      .replace(/경력 근거, 프로젝트 근거, 履歴書PDF/g, '経歴根拠、プロジェクト根拠、履歴書PDF')
+      .replace(/다음 액션/g, '次のアクション')
+      .replace(/메일로 채용 논의 또는 면접 일정 협의/g, 'メールで採用相談または面接日程を調整')
       .replace(/aria-label="주요 이동"/g, 'aria-label="主なナビゲーション"')
       .replace(/채용 논의하기/g, '採用相談をする')
       .replace(/경력 근거 보기/g, '経歴根拠を見る')
