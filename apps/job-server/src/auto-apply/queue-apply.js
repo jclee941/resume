@@ -1,6 +1,7 @@
 import { readFileSync } from 'fs';
 
 import { SessionManager } from '../shared/services/session/index.js';
+import { parseWantedJobId } from './strategies/wanted-id.js';
 
 // Platforms with a working browser-based apply strategy (applyTo<Platform>) and
 // per-platform cookie/session loading. saramin + jobkorea are the user's
@@ -17,12 +18,16 @@ const SUPPORTED_PLATFORMS = new Set(['jobkorea', 'saramin', 'wanted']);
  */
 export function normalizeQueueEntry(entry) {
   const source = entry.source || entry.loginPlatform || '';
+  const id = entry.id || `${source}_${entry.url || entry.position || ''}`;
+  const wantedJobId = source === 'wanted' ? parseWantedJobId(id) : null;
   return {
-    id: entry.id || `${source}_${entry.url || entry.position || ''}`,
+    id,
     source,
     company: entry.company || '',
     title: entry.position || entry.title || '',
-    sourceUrl: entry.url || entry.sourceUrl || '',
+    sourceUrl: wantedJobId
+      ? `https://www.wanted.co.kr/wd/${wantedJobId}`
+      : entry.url || entry.sourceUrl || '',
   };
 }
 
@@ -43,6 +48,9 @@ export function assessQueueEntry(job, deps = {}) {
   }
   if (!SUPPORTED_PLATFORMS.has(job.source)) {
     return { ok: false, reason: `unsupported_platform:${job.source}` };
+  }
+  if (job.source === 'wanted' && parseWantedJobId(job.id) === null) {
+    return { ok: false, reason: 'invalid_wanted_id' };
   }
   if (!job.sourceUrl) {
     return { ok: false, reason: 'missing_url' };
@@ -100,7 +108,10 @@ export async function runQueueApply(params, deps = {}) {
   const plan = planQueueApply(queuePath, deps);
 
   let submittable = plan.submittable;
-  if (typeof max === 'number' && max >= 0) {
+  if (typeof max === 'number') {
+    if (max < 0) {
+      throw new RangeError('max must be non-negative');
+    }
     submittable = submittable.slice(0, max);
   }
 

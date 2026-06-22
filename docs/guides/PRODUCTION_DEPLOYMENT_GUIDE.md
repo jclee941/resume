@@ -138,7 +138,7 @@ node src/auto-apply/cli/index.js unified --max=1
 go run ./apps/job-server/scripts/ops/auto-monitor/main.go
 
 # 유지보수 테스트
-go run ./apps/job-server/scripts/ops/auto-maintenance/main.go
+GO111MODULE=off go run ./apps/job-server/scripts/ops/auto-maintenance
 ```
 
 ### 3단계: 플랫폼 연결 테스트
@@ -323,7 +323,7 @@ pm2 monit
 ### 정기 점검 항목
 
 - [ ] 매일: 시스템 상태 모니터링 (`go run ./apps/job-server/scripts/ops/auto-monitor/main.go`)
-- [ ] 매주: 전체 시스템 점검 (`go run ./apps/job-server/scripts/ops/auto-maintenance/main.go`)
+- [ ] 매주: 전체 시스템 점검 (`GO111MODULE=off go run ./apps/job-server/scripts/ops/auto-maintenance`)
 - [ ] 매월: 성능 분석 및 최적화
 - [ ] 분기별: 보안 업데이트 및 패치 적용
 

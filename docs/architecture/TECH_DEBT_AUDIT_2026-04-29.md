@@ -29,8 +29,9 @@ test/CI, architecture+performance) + Oracle holistic review.
 
 이전 round-3에서 7 services를 closure-bound holder로 전환했으나 추가 4건 발견:
 
-- `apps/job-server/src/auto-apply/strategies/wanted-helpers.js:8` — `let
-lastSubmissionAt` (production rate-limit state) → closure-bound holder
+- `apps/job-server/src/auto-apply/strategies/wanted-retry.js` —
+  `lastSubmissionAt` (production rate-limit state) → closure-bound holder
+  in the dedicated retry/rate-limit module
 - `apps/job-server/src/tools/auto-apply/state.js:1` — `let sessionState` →
   closure-bound holder
 - `apps/job-server/src/shared/services/orchestrator/`

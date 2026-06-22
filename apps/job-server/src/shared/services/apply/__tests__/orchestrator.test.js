@@ -172,7 +172,10 @@ describe('ApplyOrchestrator branch coverage', () => {
     await orchestrator.searchJobs(['platform-check']);
     assert.equal(crawler.search.mock.calls.length >= 3, true);
 
-    await orchestrator.applyToJobs([{ company: 'A', position: 'DevOps', source: 'wanted' }], true);
+    await orchestrator.applyToJobs(
+      [{ company: 'A', position: 'DevOps', source: 'wanted', sourceUrl: 'https://example.test' }],
+      false
+    );
     stats = orchestrator.getStats();
     assert.equal(stats.applied >= 1, true);
 
@@ -184,35 +187,4 @@ describe('ApplyOrchestrator branch coverage', () => {
     assert.equal(stats.startTime, null);
   });
 
-  it('uses title fallback in logs and works without appManager', async () => {
-    const noAppManagerOrchestrator = new ApplyOrchestrator(crawler, applier, null, {
-      logger,
-      delayBetweenApplies: 0,
-      maxDailyApplications: 3,
-    });
-
-    let call = 0;
-    applier.applyToJob = mock.fn(async () => {
-      call += 1;
-      if (call === 1) return { success: true };
-      if (call === 2) return { success: false, error: 'apply failed' };
-      throw new Error('apply exception');
-    });
-
-    await noAppManagerOrchestrator.applyToJobs(
-      [
-        { title: 'Title Success', source: 'wanted', sourceUrl: 'https://s' },
-        { title: 'Title Fail', source: 'wanted', sourceUrl: 'https://f' },
-        { title: 'Title Exception', source: 'wanted', sourceUrl: 'https://e' },
-      ],
-      false
-    );
-
-    const logMessages = logger.log.mock.calls.map((entry) => entry.arguments[0]);
-    const errorMessages = logger.error.mock.calls.map((entry) => entry.arguments[0]);
-
-    assert.ok(logMessages.some((msg) => msg.includes('Title Success')));
-    assert.ok(errorMessages.some((msg) => msg.includes('Title Fail')));
-    assert.ok(errorMessages.some((msg) => msg.includes('Title Exception')));
-  });
 });

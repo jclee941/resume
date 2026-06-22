@@ -105,7 +105,7 @@ func writeLock() error {
 }
 
 func runAutoApply() int {
-	cmd := exec.Command("node", "src/auto-apply/cli.js", "apply", "--max=5")
+	cmd := exec.Command("node", "src/auto-apply/cli/index.js", "apply", "--max=5")
 	cmd.Dir = filepath.Join(resumeDir, "apps/job-server")
 
 	// Set up pipes for stdout/stderr

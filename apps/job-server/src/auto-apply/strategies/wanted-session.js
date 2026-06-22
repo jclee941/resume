@@ -1,11 +1,11 @@
 import SessionManager from '../../shared/services/session/session-manager.js';
 import {
-  classifyWantedError,
   extractApplicationId,
   isAppliedJob,
   normalizeApplicationEntries,
-  WANTED_PLATFORM,
-} from './wanted-helpers.js';
+} from './wanted-applications.js';
+import { WANTED_PLATFORM } from './wanted-id.js';
+import { classifyWantedError } from './wanted-retry.js';
 
 export async function validateSession() {
   const session = SessionManager.load(WANTED_PLATFORM);

@@ -18,7 +18,7 @@ func main() {
 	fmt.Println("===========================================")
 
 	fmt.Println("📊 시스템 상태 확인...")
-	stats := runNodeCapture(root, "src/auto-apply/cli.js", "stats")
+	stats := runNodeCapture(root, "src/auto-apply/cli/index.js", "stats")
 	fmt.Println("✅ 시스템 정상")
 
 	totalApps := extractFirst(stats, `Total Applications:\s*([0-9,]+)`)

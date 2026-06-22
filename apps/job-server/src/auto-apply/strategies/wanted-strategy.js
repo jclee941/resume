@@ -1,21 +1,18 @@
 import { withRetry } from '@resume/shared/retry';
 
-import { APPLICATION_STATUS } from '../application-manager.js';
 import { notifications } from '../../shared/services/notifications/index.js';
-import { AuthError, ValidationError } from '../../shared/errors/apply-errors.js';
+import { AuthError } from '../../shared/errors/apply-errors.js';
 import { applyViaWantedApiFallback } from './wanted-api-fallback.js';
+import { buildApplicationPayload, parseWantedJobId, WANTED_PLATFORM } from './wanted-id.js';
+import { resolveResumeKey } from './wanted-applications.js';
 import {
-  buildApplicationPayload,
   classifyWantedError,
   createRetryReporter,
   enforceRateLimit,
-  extractApplicationId,
   getErrorStatus,
   isRetryableWantedError,
-  resolveResumeKey,
-  sleep,
-  WANTED_PLATFORM,
-} from './wanted-helpers.js';
+} from './wanted-retry.js';
+import { executeWantedBrowserApply } from './wanted-browser-apply.js';
 import { getApplicationStatus, validateSession } from './wanted-session.js';
 
 // Issue #16: closure-bound holder eliminates top-level mutable object binding.
@@ -42,72 +39,21 @@ export function resetCircuitState() {
   _circuitStateHolder.reset();
 }
 
-async function executeWantedBrowserApply(ctx, job, payload, resumeKey, retryReporter) {
-  const numericJobId = Number(String(job.id).replace(/^wanted_/, ''));
-  const jobUrl = job.sourceUrl || `https://www.wanted.co.kr/wd/${numericJobId}`;
-
-  await ctx.page.goto(jobUrl, { waitUntil: 'domcontentloaded', timeout: 15000 });
-  await sleep(1500);
-
-  const loginPrompt =
-    (await ctx.findByText?.('a', '로그인')) ||
-    (await ctx.findByText?.('button', '로그인')) ||
-    (await ctx.findByText?.('a', 'Login')) ||
-    (await ctx.findByText?.('button', 'Login'));
-  if (loginPrompt) {
-    throw new AuthError('Not logged in to Wanted', { platform: WANTED_PLATFORM });
-  }
-
-  const response = await ctx.page.evaluate(async (p) => {
-    const resp = await fetch('/api/chaos/applications/v1', {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify(p),
-    });
-    const body = await resp.json().catch(() => ({}));
-    return { status: resp.status, ok: resp.ok, body };
-  }, payload);
-
-  if (!response.ok) {
-    const errorMsg = response.body?.message || `API request failed: ${response.status}`;
-    throw new ValidationError(errorMsg, {
-      platform: WANTED_PLATFORM,
-      status: response.status,
-    });
-  }
-
-  const applicationId = extractApplicationId(response.body);
-  const application = ctx.appManager.addApplication(job, {
-    resumeKey,
-    notes: 'Auto-applied via Wanted browser submission (Chaos API v1)',
-  });
-
-  ctx.appManager.updateStatus(
-    application.id,
-    APPLICATION_STATUS.APPLIED,
-    'Auto-applied via Wanted browser'
-  );
-
-  retryReporter('execution_success', { metrics: { successRate: 1 } });
-  notifications
-    .notifyApplySuccess(job.company, job.title, job.sourceUrl, WANTED_PLATFORM)
-    .catch(() => {});
-
-  return {
-    success: true,
-    applicationId: applicationId ?? application.id,
-    application,
-    retryable: false,
-  };
-}
-
 export async function applyToJob(job, options = {}) {
   if (!job?.id) {
     return {
       success: false,
       applicationId: null,
       error: 'job.id is required for Wanted application',
+      retryable: false,
+    };
+  }
+
+  if (parseWantedJobId(job.id) === null) {
+    return {
+      success: false,
+      applicationId: null,
+      error: 'Invalid Wanted job.id; expected a numeric ID or wanted_<numeric ID>',
       retryable: false,
     };
   }

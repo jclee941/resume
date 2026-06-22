@@ -1,5 +1,5 @@
 export function createDryRunResult(job) {
-  return { job, success: true, dryRun: true, message: 'Would apply' };
+  return { job, success: true, dryRun: true, skipped: true, message: 'Would apply' };
 }
 
 export function createDryRunOnlyResult(job) {

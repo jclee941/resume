@@ -83,12 +83,17 @@ describe('AutoApplier strategy methods', () => {
       const linkedinFailedCalls = linkedinContent.match(/notifyApplyFailed[\s\S]*?'wanted'/g);
       expect(linkedinFailedCalls).toBeNull();
 
-      // Check wanted strategy (should use 'wanted')
-      const wantedHelpersContent = fs.readFileSync(
-        path.join(strategiesDir, 'wanted-helpers.js'),
+      const wantedIdContent = fs.readFileSync(
+        path.join(strategiesDir, 'wanted-id.js'),
         'utf8'
       );
-      expect(wantedHelpersContent).toContain("'wanted'");
+      expect(wantedIdContent).toContain("export const WANTED_PLATFORM = 'wanted'");
+
+      const wantedRetryContent = fs.readFileSync(
+        path.join(strategiesDir, 'wanted-retry.js'),
+        'utf8'
+      );
+      expect(wantedRetryContent).toContain('WANTED_PLATFORM');
     });
 
     test('jobkorea strategy uses correct n8n notification platform', () => {

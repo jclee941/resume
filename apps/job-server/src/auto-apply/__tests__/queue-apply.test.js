@@ -14,7 +14,7 @@ const invalidHealth = { valid: false, reason: 'no_session' };
 const queue = [
   { company: 'A', position: 'SRE', source: 'jobkorea', url: 'https://www.jobkorea.co.kr/wd/1' },
   { company: 'B', position: '보안', source: 'saramin', url: 'https://www.saramin.co.kr/2' },
-  { company: 'C', position: 'DevOps', source: 'wanted', url: 'https://www.wanted.co.kr/wd/3' },
+  { id: 'wanted_3', company: 'C', position: 'DevOps', source: 'wanted', url: 'https://www.wanted.co.kr/wd/3' },
   { company: 'D', position: 'nourl', source: 'jobkorea', url: '' },
   { company: 'E', position: 'eng', source: 'linkedin', url: 'https://www.linkedin.com/jobs/5' },
 ];
@@ -30,6 +30,18 @@ describe('normalizeQueueEntry', () => {
     assert.equal(job.title, 'SRE');
     assert.equal(job.company, 'A');
     assert.equal(job.sourceUrl, 'https://www.jobkorea.co.kr/wd/1');
+  });
+
+  it('reconstructs Wanted URLs from validated Wanted ids', () => {
+    const job = normalizeQueueEntry({
+      id: 'wanted_123',
+      company: 'C',
+      position: 'DevOps',
+      source: 'wanted',
+      url: 'https://evil.example/apply',
+    });
+    assert.equal(job.id, 'wanted_123');
+    assert.equal(job.sourceUrl, 'https://www.wanted.co.kr/wd/123');
   });
 });
 
@@ -65,6 +77,19 @@ describe('assessQueueEntry', () => {
     const job = normalizeQueueEntry(queue[0]);
     const v = assessQueueEntry(job, { checkHealth: () => validHealth });
     assert.equal(v.ok, true);
+  });
+
+  it('blocks Wanted queue entries without a valid Wanted id', () => {
+    const job = normalizeQueueEntry({
+      id: 'wanted_bad',
+      company: 'C',
+      position: 'DevOps',
+      source: 'wanted',
+      url: 'https://www.wanted.co.kr/wd/bad',
+    });
+    const v = assessQueueEntry(job, { checkHealth: () => validHealth });
+    assert.equal(v.ok, false);
+    assert.match(v.reason, /invalid_wanted_id/);
   });
 });
 
@@ -133,5 +158,16 @@ describe('runQueueApply', () => {
       { readFile: fakeRead, checkHealth: () => validHealth }
     );
     assert.equal(res.applied.length, 0);
+  });
+
+  it('rejects negative max limits', async () => {
+    const applier = { applyToJob: async () => ({ success: true }) };
+    await assert.rejects(
+      runQueueApply(
+        { queuePath: 'q.json', applier, dryRun: false, max: -1, logger: { info() {} } },
+        { readFile: fakeRead, checkHealth: () => validHealth }
+      ),
+      /max must be non-negative/
+    );
   });
 });
