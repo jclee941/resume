@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 import { searchJobs, aiSearchJobs } from './handlers/search.js';
 import { rankJobs } from './handlers/rank.js';
-import { runAutoApply, runUnifiedSystem, runQueueAutoApply } from './handlers/apply.js';
+import { runAutoApply, runUnifiedSystem } from './handlers/apply.js';
+import { runQueueAutoApply } from './handlers/queue-apply-handler.js';
 import { runAIUnifiedSystem, showAICareerAdvice } from './handlers/ai-apply.js';
 import { listApplications, showStats, showReport, updateStatus } from './handlers/management.js';
 
@@ -22,14 +23,28 @@ const COMMANDS = {
 
 async function main() {
   const args = process.argv.slice(2);
-  const command = args[0] || 'help';
+  let command = args[0] || 'help';
+  let commandArgs = args.slice(1);
+
+  if (command === 'apply' && commandArgs[0] === 'apply_queue') {
+    command = 'apply_queue';
+    commandArgs = commandArgs.slice(1);
+  }
+
+  if (command === 'help') {
+    showHelp();
+    return 0;
+  }
 
   const entry = COMMANDS[command];
   if (entry) {
-    await entry.handler(args.slice(1));
-  } else {
-    showHelp();
+    const status = await entry.handler(commandArgs);
+    return typeof status === 'number' ? status : 0;
   }
+
+  console.error(`❌ Unknown command: ${command}`);
+  showHelp();
+  return 1;
 }
 
 function showHelp() {
@@ -77,4 +92,11 @@ AI 기능:
 `);
 }
 
-main().catch(console.error);
+main()
+  .then((status) => {
+    process.exitCode = status;
+  })
+  .catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+  });

@@ -3,7 +3,6 @@ import { ApplicationManager } from '../../application-manager.js';
 import { UnifiedJobCrawler } from '../../../crawlers/unified/unified-job-crawler.js';
 import { AutoApplier } from '../../auto-applier.js';
 import { getResumeMasterMarkdownPath } from '../../../shared/utils/paths.js';
-import { runQueueApply } from '../../queue-apply.js';
 
 export async function runAutoApply(args) {
   const dryRun = !args.includes('--apply');
@@ -48,7 +47,7 @@ export async function runAutoApply(args) {
 
   if (!result.success) {
     console.error('❌ Auto apply failed:', result.error);
-    return;
+    return 1;
   }
 
   console.log(`
@@ -64,6 +63,7 @@ export async function runAutoApply(args) {
     console.log(`
 ⚠️ This was a dry run. Use --apply to actually apply.`);
   }
+  return 0;
 }
 
 export async function runUnifiedSystem(args) {
@@ -121,7 +121,7 @@ export async function runUnifiedSystem(args) {
 
   if (!result.success) {
     console.error('❌ Unified system failed:', result.error);
-    return;
+    return 1;
   }
 
   console.log('\n🎉 Workflow Complete!\n');
@@ -145,67 +145,5 @@ export async function runUnifiedSystem(args) {
   } else {
     console.log('\n✅ Applications submitted successfully!');
   }
-}
-
-// Queue-driven apply: submits EXACTLY the curated submit-queue.json entries,
-// refuses unsupported platforms / missing sessions instead of crawling fresh jobs.
-export async function runQueueAutoApply(args) {
-  const dryRun = !args.includes('--apply');
-  const max = parseInt(args.find((a) => a.startsWith('--max='))?.split('=')[1], 10);
-  const queuePath =
-    args.find((a) => a.startsWith('--queue='))?.split('=')[1] ||
-    args.find((a) => !a.startsWith('--'));
-
-  if (!queuePath) {
-    console.error(
-      '❌ Provide a queue file: apply_queue --queue=<path-to-submit-queue.json> [--apply] [--max=N]'
-    );
-    return;
-  }
-
-  console.log(`\n🤖 Queue Apply ${dryRun ? '(DRY RUN)' : ''} — ${queuePath}\n`);
-
-  const appManager = new ApplicationManager();
-  const applier = new AutoApplier({ dryRun, autoApply: !dryRun, appManager });
-
-  let browserInitialized = false;
-  const ensureBrowser = async () => {
-    if (!browserInitialized && !dryRun) {
-      await applier.initBrowser();
-      browserInitialized = true;
-    }
-  };
-
-  try {
-    await ensureBrowser();
-    const result = await runQueueApply({
-      queuePath,
-      applier,
-      dryRun,
-      max: Number.isNaN(max) ? undefined : max,
-      logger: console,
-    });
-
-    console.log('\n--- Queue Apply Results ---\n');
-    console.log(`📋 Planned: ${result.planned}`);
-    console.log(`✅ Submittable now: ${result.submittable}`);
-    console.log(`📝 Applied: ${result.applied.filter((a) => a.success).length}`);
-    console.log(`❌ Apply failed: ${result.applied.filter((a) => !a.success).length}`);
-    console.log(`⛔ Blocked: ${result.blocked.length}`);
-
-    if (result.blocked.length > 0) {
-      console.log('\nBlocked entries (reason):');
-      for (const b of result.blocked) {
-        console.log(`   • [${b.job.source || '?'}] ${b.job.title} — ${b.reason}`);
-      }
-    }
-
-    if (dryRun) {
-      console.log('\n⚠️ Dry run. Add --apply to actually submit the submittable entries.');
-    }
-  } finally {
-    if (browserInitialized) {
-      await applier.closeBrowser();
-    }
-  }
+  return 0;
 }

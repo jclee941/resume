@@ -123,7 +123,6 @@ export class ApplyOrchestrator {
         try {
           if (dryRun) {
             results.push(createDryRunResult(job));
-            this.#stats.applied++;
           } else if (job.dryRunOnly || job.submissionSkipped) {
             results.push(createDryRunOnlyResult(job));
           } else {

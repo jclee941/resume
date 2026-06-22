@@ -1,9 +1,15 @@
-import { beforeEach, describe, it } from 'node:test';
+import { afterEach, beforeEach, describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { applyToWanted } from '../wanted-strategy.js';
 import { applyToJobKorea } from '../jobkorea-strategy.js';
 import { applyToSaramin } from '../saramin-strategy.js';
-import { resetRetryState } from '@resume/shared/retry';
+import {
+  configureWantedSession,
+  createMemorySessionStore,
+  createWantedApi,
+  resetWantedApplyState,
+  resetWantedSession,
+} from './wanted-test-doubles.js';
 
 function createBaseContext({ platform, gotoFailures = 0, forceLogin = false }) {
   let gotoCalls = 0;
@@ -99,7 +105,16 @@ function createBaseContext({ platform, gotoFailures = 0, forceLogin = false }) {
 
 describe('auto-apply strategy retry behavior', () => {
   beforeEach(() => {
-    resetRetryState();
+    resetWantedApplyState();
+    const store = createMemorySessionStore({
+      cookies: 'wanted_session=test',
+      email: 'test@example.com',
+    });
+    configureWantedSession({ api: createWantedApi(), store });
+  });
+
+  afterEach(() => {
+    resetWantedSession();
   });
 
   it('retries wanted apply up to configured limit (3 retries)', async () => {

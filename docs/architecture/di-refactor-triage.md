@@ -18,7 +18,7 @@ the elimination phase.
 
 |   # | Service          | File                                                          | Held state         | Worker-isolate risk                                                     |
 | --: | ---------------- | ------------------------------------------------------------- | ------------------ | ----------------------------------------------------------------------- |
-|   1 | wanted-helpers   | `apps/job-server/src/auto-apply/strategies/wanted-helpers.js` | `lastSubmissionAt` | **High** — submission rate-limit shared across requests                 |
+|   1 | wanted retry     | `apps/job-server/src/auto-apply/strategies/wanted-retry.js`   | `lastSubmissionAt` | **High** — submission rate-limit shared across requests                 |
 |   2 | auto-apply state | `apps/job-server/src/tools/auto-apply/state.js`               | `sessionState`     | **High** — apply-flow state cross-request                               |
 |   3 | match-engine     | `apps/job-server/src/services/match-engine.js`                | config cache       | **Medium** — config is read-mostly, but may include user-scoped weights |
 |   4 | cover-letter     | `apps/job-server/src/services/cover-letter.js`                | template cache     | **Low** — templates are read-only                                       |
@@ -99,7 +99,7 @@ mergeable and reversible.
 - **#5 wanted-client** — token holder
   - Constructor takes a `tokenStore` (Worker KV adapter, in-process Map for
     job-server, or `null` for stateless usage).
-- **#1 wanted-helpers** — `lastSubmissionAt` rate-limit state
+- **#1 wanted retry** — `lastSubmissionAt` rate-limit state
   - Migrate to consume the canonical token-bucket from SSOT-035 / #44 once
     that lands.
 - **#2 auto-apply state** — `sessionState`
@@ -138,5 +138,5 @@ land and the worker-isolate smoke test passes.
 - [`docs/architecture/MONOREPO_REVIEW_2026-04-29.md`](./MONOREPO_REVIEW_2026-04-29.md)
   § P0-5 — review entry that produced this issue.
 - [`docs/architecture/rate-limiting-triage.md`](./rate-limiting-triage.md)
-  — Slice C #1 (wanted-helpers) consumes the canonical token-bucket from
+  — Slice C #1 (Wanted retry rate limiting) consumes the canonical token-bucket from
   this track once it lands.

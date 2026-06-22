@@ -1,6 +1,8 @@
 import { APPLICATION_STATUS } from '../application-manager.js';
 import { notifications } from '../../shared/services/notifications/index.js';
-import { extractApplicationId, getErrorStatus, sleep, WANTED_PLATFORM } from './wanted-helpers.js';
+import { WANTED_PLATFORM } from './wanted-id.js';
+import { extractApplicationId } from './wanted-applications.js';
+import { getErrorStatus, sleep } from './wanted-retry.js';
 
 export async function applyViaWantedApiFallback({
   ctx,

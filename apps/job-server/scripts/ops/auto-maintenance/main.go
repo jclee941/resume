@@ -2,9 +2,7 @@ package main
 
 import (
 	"fmt"
-	"io/fs"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 	"time"
@@ -67,7 +65,7 @@ func main() {
 	must(os.MkdirAll(backupDir, 0o755))
 	copyIfExists(filepath.Join(root, "config"), filepath.Join(backupDir, "config"))
 	copyIfExists(filepath.Join(root, "package.json"), filepath.Join(backupDir, "package.json"))
-	stats := runNodeCapture(root, "src/auto-apply/cli.js", "stats")
+	stats := runNodeCapture(root, "src/auto-apply/cli/index.js", "stats")
 	must(os.WriteFile(filepath.Join(backupDir, fmt.Sprintf("stats_%s.txt", time.Now().Format("20060102"))), []byte(stats), 0o644))
 	fmt.Printf("✅ 백업 완료: %s\n", backupDir)
 
@@ -104,140 +102,4 @@ func must(err error) {
 	if err != nil {
 		panic(err)
 	}
-}
-
-func removeOlderThan(root, suffix string, age time.Duration) {
-	cutoff := time.Now().Add(-age)
-	filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
-		if err != nil || d.IsDir() || !strings.HasSuffix(d.Name(), suffix) {
-			return nil
-		}
-		if info, statErr := d.Info(); statErr == nil && info.ModTime().Before(cutoff) {
-			_ = os.Remove(path)
-		}
-		return nil
-	})
-}
-
-func removePatternOlderThan(root, contains string, age time.Duration) {
-	cutoff := time.Now().Add(-age)
-	filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
-		if err != nil || d.IsDir() || !strings.Contains(d.Name(), contains) {
-			return nil
-		}
-		if info, statErr := d.Info(); statErr == nil && info.ModTime().Before(cutoff) {
-			_ = os.Remove(path)
-		}
-		return nil
-	})
-}
-
-func removePattern(root, suffix string) {
-	filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
-		if err != nil || d.IsDir() || !strings.HasSuffix(d.Name(), suffix) {
-			return nil
-		}
-		_ = os.Remove(path)
-		return nil
-	})
-}
-
-func removeSuffix(root, suffix string) {
-	filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
-		if err != nil || d.IsDir() || !strings.HasSuffix(d.Name(), suffix) {
-			return nil
-		}
-		_ = os.Remove(path)
-		return nil
-	})
-}
-
-func printVersion(command, label string) {
-	version := runCapture(command, []string{"--version"})
-	if version == "N/A" {
-		fmt.Printf("❌ %s이 설치되어 있지 않습니다\n", label)
-	} else {
-		fmt.Printf("✅ %s: %s\n", label, version)
-	}
-}
-
-func runCapture(command string, args []string) string {
-	cmd := exec.Command(command, args...)
-	out, err := cmd.Output()
-	if err != nil {
-		return "N/A"
-	}
-	return strings.TrimSpace(string(out))
-}
-
-func runNodeCapture(dir string, args ...string) string {
-	cmd := exec.Command("node", args...)
-	cmd.Dir = dir
-	cmd.Stderr = os.Stderr
-	out, err := cmd.Output()
-	if err != nil {
-		if exitErr, ok := err.(*exec.ExitError); ok {
-			os.Exit(exitErr.ExitCode())
-		}
-		panic(err)
-	}
-	return string(out)
-}
-
-func copyIfExists(src, dst string) {
-	info, err := os.Stat(src)
-	if err != nil {
-		return
-	}
-	if info.IsDir() {
-		_ = filepath.Walk(src, func(path string, info fs.FileInfo, err error) error {
-			if err != nil {
-				return nil
-			}
-			rel, _ := filepath.Rel(src, path)
-			target := filepath.Join(dst, rel)
-			if info.IsDir() {
-				return os.MkdirAll(target, 0o755)
-			}
-			data, readErr := os.ReadFile(path)
-			if readErr == nil {
-				_ = os.MkdirAll(filepath.Dir(target), 0o755)
-				_ = os.WriteFile(target, data, 0o644)
-			}
-			return nil
-		})
-		return
-	}
-	data, err := os.ReadFile(src)
-	if err == nil {
-		_ = os.WriteFile(dst, data, 0o644)
-	}
-}
-
-func pruneOldDirs(root string, age time.Duration) {
-	entries, err := os.ReadDir(root)
-	if err != nil {
-		return
-	}
-	cutoff := time.Now().Add(-age)
-	for _, entry := range entries {
-		if !entry.IsDir() {
-			continue
-		}
-		info, err := entry.Info()
-		if err == nil && info.ModTime().Before(cutoff) {
-			_ = os.RemoveAll(filepath.Join(root, entry.Name()))
-		}
-	}
-}
-
-func countMatching(root, suffix string) int {
-	count := 0
-	filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
-		if err == nil && !d.IsDir() && strings.HasSuffix(d.Name(), suffix) {
-			count++
-		}
-		return nil
-	})
-	return count
 }

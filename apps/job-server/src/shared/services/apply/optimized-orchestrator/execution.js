@@ -25,9 +25,9 @@ export async function applyToJobsWithStrategy(context) {
         job,
         success: true,
         dryRun: true,
+        skipped: true,
         message: 'Would apply',
       });
-      stats.applied++;
     }
   } else if (config.parallelApply && config.useBrowserPool) {
     results.push(...(await applyParallelWithPool({ ...context, jobs: toApply })));
@@ -37,7 +37,7 @@ export async function applyToJobsWithStrategy(context) {
     results.push(...(await applySequential({ applySingleJob, config, jobs: toApply })));
   }
 
-  stats.skipped = jobs.length - toApply.length;
+  stats.skipped = jobs.length - toApply.length + results.filter((r) => r.skipped).length;
   stats.endTime = Date.now();
 
   metrics.measure('apply:start', {
@@ -47,8 +47,8 @@ export async function applyToJobsWithStrategy(context) {
 
   return {
     results,
-    applied: results.filter((r) => r.success).length,
-    failed: results.filter((r) => !r.success).length,
+    applied: dryRun ? 0 : results.filter((r) => r.success).length,
+    failed: results.filter((r) => !r.success && !r.skipped).length,
     skipped: stats.skipped,
   };
 }
