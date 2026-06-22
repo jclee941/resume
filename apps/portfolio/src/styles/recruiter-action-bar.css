@@ -31,6 +31,7 @@
   color: var(--text-primary);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
+  line-height: 1.2;
   text-decoration: none;
   background: rgb(var(--color-accent-rgb) / 0.08);
   border: 1px solid var(--border-primary);
@@ -49,6 +50,11 @@
   cursor: pointer;
 }
 
+.recruiter-action-bar__dismiss-icon {
+  width: 16px;
+  height: 16px;
+}
+
 @media (max-width: 768px) {
   .recruiter-action-bar.is-visible {
     display: grid;
@@ -56,6 +62,23 @@
 
   body {
     padding-bottom: 72px;
+  }
+}
+
+@media (max-width: 420px) {
+  .recruiter-action-bar {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) 36px;
+    gap: 6px;
+  }
+
+  .recruiter-action-bar__link,
+  .recruiter-action-bar__dismiss {
+    min-height: 38px;
+    padding: var(--space-1);
+  }
+
+  .recruiter-action-bar__dismiss {
+    width: 36px;
   }
 }
 

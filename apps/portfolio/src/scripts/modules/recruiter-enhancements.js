@@ -1,9 +1,11 @@
 import {
-  EVIDENCE_ITEMS,
-  HIRING_MAIL,
   ROLE_PROFILES,
+  getEvidenceItems,
+  getHiringActions,
   getRecruiterLabels,
+  getRoleProfiles,
 } from './recruiter-enhancements-data.js';
+import { renderIcon } from './project-card-formatting.js';
 
 function escapeHtml(value) {
   return String(value).replace(
@@ -39,6 +41,7 @@ function renderRoleQuickPaths(labels) {
   if (document.querySelector('.role-quick-paths')) return;
   const hero = document.querySelector('#hero .hero-content');
   if (!hero) return;
+  const roleProfiles = getRoleProfiles();
   const section = document.createElement('section');
   section.className = 'role-quick-paths';
   section.setAttribute('aria-label', labels.quickTitle);
@@ -48,10 +51,7 @@ function renderRoleQuickPaths(labels) {
       <p class="role-quick-paths__desc">${escapeHtml(labels.quickDesc)}</p>
     </div>
     <div class="role-quick-paths__controls" role="group" aria-label="${escapeHtml(labels.quickTitle)}">
-      ${ROLE_PROFILES.map(
-        (
-          role
-        ) => `<button type="button" class="role-chip" data-role-filter="${role.id}" aria-pressed="false">
+      ${roleProfiles.map((role) => `<button type="button" class="role-chip" data-role-filter="${role.id}" aria-pressed="false">
           <span class="role-chip__label">${escapeHtml(role.label)}</span>
           <span class="role-chip__proof">${escapeHtml(role.proof)}</span>
         </button>`
@@ -65,6 +65,8 @@ function renderEvidenceMatrix(labels) {
   if (document.querySelector('.project-evidence-matrix')) return;
   const list = document.querySelector('#project-list');
   if (!list) return;
+  const roleProfiles = getRoleProfiles();
+  const evidenceItems = getEvidenceItems();
   const matrix = document.createElement('section');
   matrix.className = 'project-evidence-matrix';
   matrix.setAttribute('aria-label', labels.matrixTitle);
@@ -74,8 +76,8 @@ function renderEvidenceMatrix(labels) {
       <p class="project-evidence-matrix__desc">${escapeHtml(labels.matrixDesc)}</p>
     </div>
     <div class="project-evidence-matrix__grid">
-      ${EVIDENCE_ITEMS.map((item) => {
-        const role = ROLE_PROFILES.find((candidate) => candidate.id === item.roleId);
+      ${evidenceItems.map((item) => {
+        const role = roleProfiles.find((candidate) => candidate.id === item.roleId);
         return `<article class="project-evidence-card" data-role="${item.roleId}">
           <span class="project-evidence-card__label">${escapeHtml(labels.role)}</span>
           <strong class="project-evidence-card__role">${escapeHtml(role ? role.label : item.roleId)}</strong>
@@ -139,14 +141,15 @@ function bindEvidenceLinks() {
 
 function renderMobileActionBar(labels) {
   if (document.querySelector('.recruiter-action-bar')) return;
+  const actions = getHiringActions();
   const bar = document.createElement('aside');
   bar.className = 'recruiter-action-bar';
   bar.setAttribute('aria-label', 'Recruiter actions');
   bar.innerHTML = `
-    <a class="recruiter-action-bar__link" href="${HIRING_MAIL}">${escapeHtml(labels.contact)}</a>
+    <a class="recruiter-action-bar__link" href="${escapeHtml(actions.mail)}">${escapeHtml(labels.contact)}</a>
     <a class="recruiter-action-bar__link" href="#projects">${escapeHtml(labels.projects)}</a>
-    <a class="recruiter-action-bar__link" href="/resume.pdf" download="이재철_이력서.pdf">${escapeHtml(labels.pdf)}</a>
-    <button type="button" class="recruiter-action-bar__dismiss" aria-label="${escapeHtml(labels.dismiss)}">×</button>
+    <a class="recruiter-action-bar__link" href="/resume.pdf" download="${escapeHtml(actions.downloadName)}">${escapeHtml(labels.pdf)}</a>
+    <button type="button" class="recruiter-action-bar__dismiss" aria-label="${escapeHtml(labels.dismiss)}">${renderIcon('x', 'recruiter-action-bar__dismiss-icon')}</button>
   `;
   bar.querySelector('button')?.addEventListener('click', () => {
     bar.hidden = true;
@@ -154,10 +157,35 @@ function renderMobileActionBar(labels) {
   });
   document.body.appendChild(bar);
 
+  let coverLetterInView = false;
+  let reviewPacketInView = false;
   const updateVisibility = () => {
     if (bar.hidden) return;
-    bar.classList.toggle('is-visible', window.scrollY > 320);
+    bar.classList.toggle(
+      'is-visible',
+      window.scrollY > 120 && !coverLetterInView && !reviewPacketInView
+    );
   };
+  if (typeof IntersectionObserver === 'function') {
+    const coverLetter = document.querySelector('#cover-letter');
+    const observer = new IntersectionObserver(
+      (entries) => {
+        coverLetterInView = entries.some((entry) => entry.isIntersecting);
+        updateVisibility();
+      },
+      { rootMargin: '0px 0px -15% 0px', threshold: 0 }
+    );
+    if (coverLetter) observer.observe(coverLetter);
+    const reviewPacket = document.querySelector('.hiring-review-packet');
+    const packetObserver = new IntersectionObserver(
+      (entries) => {
+        reviewPacketInView = entries.some((entry) => entry.isIntersecting);
+        updateVisibility();
+      },
+      { rootMargin: '0px 0px -10% 0px', threshold: 0 }
+    );
+    if (reviewPacket) packetObserver.observe(reviewPacket);
+  }
   window.addEventListener('scroll', updateVisibility, { passive: true });
   updateVisibility();
 }

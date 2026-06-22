@@ -11,6 +11,8 @@
  *
  */
 
+import { renderIcon } from './project-card-formatting.js';
+
 const TIMELINE_CONFIG = {
   scrollOffset: 80,
   animationDuration: 300,
@@ -70,11 +72,11 @@ function tl() {
 
 // Phase to incident response stage mapping
 const PHASE_STAGES = {
-  운영: { icon: '🔍', label: '탐지', key: 'detected' },
-  구축: { icon: '🔬', label: '분석', key: 'investigated' },
-  자동화: { icon: '🛡️', label: '대응', key: 'mitigated' },
-  안정화: { icon: '✨', label: '개선', key: 'improved' },
-  기초: { icon: '⚙️', label: '기반', key: 'foundation' },
+  운영: { icon: 'search', label: '탐지', key: 'detected' },
+  구축: { icon: 'layers', label: '분석', key: 'investigated' },
+  자동화: { icon: 'shield', label: '대응', key: 'mitigated' },
+  안정화: { icon: 'sync', label: '개선', key: 'improved' },
+  기초: { icon: 'automation', label: '기반', key: 'foundation' },
 };
 
 // UI-only metadata keyed by tenure period (locale-stable). The SSoT careers[]
@@ -88,8 +90,8 @@ const CAREER_UI_META = {
   '2024.03 ~ 2025.02': { phase: '구축', status: 'completed' },
   '2022.08 ~ 2024.03': { phase: '안정화', status: 'completed' },
   '2021.09 ~ 2022.04': { phase: '구축', status: 'completed' },
-  '2019.12 ~ 2021.08': { phase: '자동화', status: 'completed' },
-  '2017.02 ~ 2018.10': { phase: '기초', status: 'completed' },
+  '2019.10 ~ 2020.10': { phase: '운영', status: 'completed' },
+  '2017.10 ~ 2018.10': { phase: '기초', status: 'completed' },
 };
 const DEFAULT_CAREER_UI_META = { phase: '기초', status: 'completed' };
 
@@ -240,7 +242,7 @@ function createTimelineNode(career, index) {
           </div>
           <div class="timeline-badges">
             <span class="phase-badge phase-badge--${career.phase}" aria-label="${L.phase}: ${(L.phases && L.phases[career.phase]) || career.phase}">
-              ${phaseInfo.icon} ${(L.phases && L.phases[career.phase]) || career.phase}
+              ${renderIcon(phaseInfo.icon, 'phase-badge__icon')} ${(L.phases && L.phases[career.phase]) || career.phase}
             </span>
             ${isActive ? `<span class="status-badge status-badge--active" aria-label="${L.inProgressAria}">${L.inProgress}</span>` : ''}
           </div>
