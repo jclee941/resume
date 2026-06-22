@@ -1,494 +1,1193 @@
-# Resume Portfolio Monorepo
-# 이력서 포트폴리오 모노레포
+# Resume Portfolio Monorepo / 이력서 포트폴리오 모노레포
 
-[![Version](https://img.shields.io/badge/version-1.40.11-blue)](package.json)
-[![Node.js](https://img.shields.io/badge/Node.js-%E2%89%A522-green)](https://nodejs.org/)
-[![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-orange)](https://workers.cloudflare.com/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
-[![Docker](https://img.shields.io/badge/Docker-enabled-blue)](Dockerfile)
-[![Wrangler](https://img.shields.io/badge/Wrangler-configured-yellow)](wrangler.jsonc)
-[![PR-Agent](https://img.shields.io/badge/PR--Agent-qodo--ai-purple)](https://github.com/qodo-ai/pr-agent)
-[![MCP Server](https://img.shields.io/badge/MCP-job--server-blueviolet)](apps/job-server)
-[![README Generator](https://img.shields.io/badge/README--gen-gpt--5.5-purple)](README.md)
+`version: 1.40.11` `Node.js: >=22` `Docker: enabled` `Cloudflare Workers: configured` `Wrangler: configured` `License: MIT` `PR-Agent: qodo-ai/pr-agent` `Bot: jclee-bot` `README-gen: gpt-5.5` `fallback: minimax-m3 via CLIProxyAPI`
 
-> **Bilingual documentation** / **이중 언어 문서**: This README is provided in English first, followed by a Korean (한국어) translation of each section. Every section header is duplicated in both languages.
-> 이 README는 모든 섹션을 영어와 한국어로 병기합니다. 각 섹션 제목은 양국어로 제공됩니다.
-
-> **Primary README generator model:** `gpt-5.5` (fallback: `minimax-m3` via [https://cliproxy.jclee.me/v1](https://cliproxy.jclee.me/v1)).
-> **README 생성 기본 모델:** `gpt-5.5` (대체: [https://cliproxy.jclee.me/v1](https://cliproxy.jclee.me/v1) 경유 `minimax-m3`).
+- PR-Agent: [qodo-ai/pr-agent](https://github.com/qodo-ai/pr-agent)
+- CLIProxyAPI endpoint: [https://cliproxy.jclee.me/v1](https://cliproxy.jclee.me/v1)
+- Bot surface: [https://bot.jclee.me](https://bot.jclee.me)
 
 ---
 
 ## Overview / 개요
 
-`resume` is a **private resume portfolio monorepo** that combines a Cloudflare Worker edge portfolio, structured resume and job-application assets, job-application tracking and automation, a dashboard Worker for operational workflows, and a Dockerized Node.js runtime that exposes a job-automation HTTP API.
+### English
 
-`resume`는 Cloudflare Worker 기반 포트폴리오, 구조화된 이력서 및 지원 자료, 채용 지원 추적 및 자동화, 운영 워크플로우용 대시보드 Worker, 그리고 채용 자동화 HTTP API를 노출하는 Docker 기반 Node.js 런타임을 결합한 **개인 이력서 포트폴리오 모노레포**입니다.
+This repository is a private resume and job-application automation monorepo. It combines resume artifacts, application packages, Cloudflare Worker dashboard code, Dockerized runtime configuration, CI/release automation, and bot-owned GitHub operations.
 
-The repository is designed as a single operational workspace for:
+The repository is centered around three operational concerns:
 
-이 저장소는 다음을 위한 단일 운영 워크스페이스로 설계되었습니다.
+1. Resume and career material management
+   - Resume/application documents under `applications/`
+   - TA presentation assets under `ta/`
+   - Generated and reviewed candidate-facing files such as PDFs, HTML resumes, cover letters, and profile decks
 
-- **Portfolio and resume publishing** — Cloudflare Worker edge deployment with generated bundles.
-  **포트폴리오 및 이력서 게시** — 생성된 번들과 Cloudflare Worker 엣지 배포.
-- **Authoritative resume content** — A single source of truth (SSoT) in `packages/data/` consumed by every surface.
-  **권위 있는 이력서 콘텐츠** — `packages/data/`의 단일 진실 공급원(SSoT)을 모든 표면이 소비.
-- **Job-application automation** — Crawlers, MCP tools, and HTTP API clients for Wanted, JobKorea, and other ATS.
-  **채용 지원 자동화** — Wanted, JobKorea 등 ATS 대상 크롤러, MCP 도구, HTTP API 클라이언트.
-- **Operational dashboard** — A Cloudflare Worker dashboard with Queues, Workflows, and admin routes.
-  **운영 대시보드** — Queues, Workflows, 관리 라우트를 갖춘 Cloudflare Worker 대시보드.
-- **Self-hosted observability** — Logs and metrics shipped to a homelab ELK stack and LLM proxy.
-  **자체 호스팅 옵저버빌리티** — 자택 ELK 스택과 LLM 프록시로 로그/메트릭 전송.
-- **Reproducible automation** — 21 numbered GitHub Actions workflows handle CI, review, release, and self-healing.
-  **재현 가능한 자동화** — 21개의 번호가 매겨진 GitHub Actions 워크플로우가 CI, 리뷰, 릴리스, 자가 치유를 처리.
+2. Job dashboard and automation APIs
+   - Cloudflare Worker-oriented dashboard code under `apps/job-dashboard/`
+   - Routes, handlers, middleware, migrations, and schema files for application tracking and automation metadata
+
+3. Repository automation
+   - Mutating GitHub automation is owned by `jclee-bot`
+   - GitHub workflow files are implementation triggers only, not the automation source of truth
+   - Bot behavior is described by App-owned automation surfaces and repository policy, not by treating workflow YAML files as product features
+
+The root `package.json` identifies the project as:
+
+> Resume portfolio monorepo: Cloudflare Worker edge site, job automation, SSoT data, self-hosted observability
+
+Current README generation metadata:
+
+- Primary model: `gpt-5.5`
+- Fallback model: `minimax-m3` via [https://cliproxy.jclee.me/v1](https://cliproxy.jclee.me/v1)
+
+### 한국어
+
+이 저장소는 이력서 및 채용 지원 자동화를 위한 비공개 모노레포입니다. 이력서 산출물, 지원서 패키지, Cloudflare Worker 기반 대시보드 코드, Docker 런타임 설정, CI/릴리스 자동화, 봇 소유 GitHub 운영을 하나의 저장소에서 관리합니다.
+
+저장소의 핵심 운영 영역은 다음 세 가지입니다.
+
+1. 이력서 및 커리어 자료 관리
+   - `applications/` 아래의 이력서/지원서 문서
+   - `ta/` 아래의 TA 발표 자료
+   - PDF, HTML 이력서, 자기소개서, 프로필 덱 등 지원자용 산출물
+
+2. 채용 대시보드 및 자동화 API
+   - `apps/job-dashboard/` 아래의 Cloudflare Worker 지향 대시보드 코드
+   - 지원 현황, 자동화 메타데이터, 인증, 관리자 기능을 위한 라우트/핸들러/미들웨어/마이그레이션/스키마
+
+3. 저장소 자동화
+   - 변경을 수행하는 GitHub 자동화는 `jclee-bot`이 소유합니다.
+   - GitHub workflow 파일은 구현 트리거일 뿐이며 자동화의 원천 정보가 아닙니다.
+   - 봇 동작은 workflow YAML 목록이 아니라 App 소유 자동화 표면과 저장소 정책으로 설명합니다.
+
+루트 `package.json` 기준 프로젝트 설명은 다음과 같습니다.
+
+> Resume portfolio monorepo: Cloudflare Worker edge site, job automation, SSoT data, self-hosted observability
+
+README 생성 메타데이터:
+
+- 기본 모델: `gpt-5.5`
+- 대체 모델: [https://cliproxy.jclee.me/v1](https://cliproxy.jclee.me/v1)을 경유하는 `minimax-m3`
 
 ---
 
 ## Features / 주요 기능
 
-### Core / 코어
+### English
 
-- **Cloudflare Worker edge portfolio** — `apps/portfolio/` with `wrangler.jsonc` and a generated `worker.js`.
-  **Cloudflare Worker 엣지 포트폴리오** — `wrangler.jsonc`와 생성된 `worker.js`를 갖춘 `apps/portfolio/`.
-- **Job-automation MCP server** — `apps/job-server/` packaged as a multi-stage `node:22-alpine` Docker image with healthcheck.
-  **채용 자동화 MCP 서버** — 헬스체크가 포함된 다단계 `node:22-alpine` Docker 이미지로 패키징된 `apps/job-server/`.
-- **Dashboard Worker** — `apps/job-dashboard/` with Queue consumer, router, CORS/CSRF middleware, and 7 route modules.
-  **대시보드 Worker** — Queue consumer, router, CORS/CSRF 미들웨어, 7개 라우트 모듈을 갖춘 `apps/job-dashboard/`.
-- **Workspace monorepo** — npm workspaces covering CLI, env, data, shared, types, schemas, and contracts packages.
-  **워크스페이스 모노레포** — CLI, env, data, shared, types, schemas, contracts 패키지를 포함하는 npm 워크스페이스.
+- Resume portfolio monorepo
+  - Centralized repository for resumes, cover letters, job-specific application packs, TA profile slides, and related generated artifacts.
 
-### Data & Contracts / 데이터 및 계약
+- Cloudflare Worker dashboard
+  - `apps/job-dashboard/` contains Worker-oriented dashboard code with routes for applications, authentication, automation, health checks, stats, and workflow-related API surfaces.
 
-- **Zod-validated runtime schemas** in `packages/schemas/` with inferred TS types.
-  **`packages/schemas/`의 Zod 검증 런타임 스키마**와 추론된 TS 타입.
-- **OpenAPI contract** in `packages/contracts/openapi.yaml` validated by `redocly.yaml`.
-  **`redocly.yaml`로 검증되는 `packages/contracts/openapi.yaml`의 OpenAPI 계약.**
-- **Type-safe Cloudflare Env** re-exported from the contracts package.
-  **계약 패키지에서 재내보내기되는 타입 안전 Cloudflare Env.**
+- Job application tracking
+  - Application-specific directories under `applications/` preserve role-specific resumes, cover letters, previews, guides, and interview preparation notes.
 
-### Automation / 자동화
+- Automation-aware API layout
+  - Dashboard handlers and routes separate concerns for admin operations, applications, authentication, automation webhooks, health, stats, and workflow state.
 
-- **21 numbered GitHub Actions workflows** covering PR review, auto-merge, dependabot, issue triage, release, and self-healing.
-  **PR 리뷰, 자동 머지, Dependabot, 이슈 분류, 릴리스, 자가 치유를 다루는 21개 번호 매겨진 GitHub Actions 워크플로우.**
-- **PR-Agent integration** via [qodo-ai/pr-agent](https://github.com/qodo-ai/pr-agent) for AI-assisted review.
-  **[qodo-ai/pr-agent](https://github.com/qodo-ai/pr-agent)를 통한 PR-Agent 통합으로 AI 지원 리뷰 제공.**
-- **Operator scripts** in `package.json` for data sync, PDF/PPTX generation, 1Password seeding, and GitHub enrichment.
-  **데이터 동기화, PDF/PPTX 생성, 1Password 시딩, GitHub enrichment를 위한 `package.json` 운영 스크립트.**
+- Dockerized runtime
+  - `Dockerfile` and `docker-compose.yml` define a Node.js 22 Alpine runtime intended for a job automation server process.
+  - The Compose service exposes port `3000` and includes a persistent volume for runtime data.
 
-### Operations / 운영
+- Bot-owned GitHub mutation
+  - Mutating automation is owned by `jclee-bot`.
+  - Pull request, issue, dependency, release, cleanup, failure-reporting, and synchronization behavior is triggered through GitHub Actions but should be reasoned about as bot-owned automation surfaces.
 
-- **Docker Compose** with persistent volume and healthcheck-driven restart.
-  **영구 볼륨과 헬스체크 기반 재시작을 갖춘 Docker Compose.**
-- **Lychee link checker** (`lychee.toml`) for broken-link CI.
-  **깨진 링크 CI를 위한 Lychee 링크 체커** (`lychee.toml`).
-- **Playwright + Jest** E2E and unit test configuration.
-  **Playwright + Jest E2E 및 단위 테스트 설정.**
+- PR review integration
+  - Repository documentation references PR-Agent through [qodo-ai/pr-agent](https://github.com/qodo-ai/pr-agent).
+
+- Edge model fallback
+  - README generation and other model-backed automation may fall back through [https://cliproxy.jclee.me/v1](https://cliproxy.jclee.me/v1).
+
+### 한국어
+
+- 이력서 포트폴리오 모노레포
+  - 이력서, 자기소개서, 직무별 지원 패키지, TA 프로필 슬라이드, 관련 생성 산출물을 중앙 저장소에서 관리합니다.
+
+- Cloudflare Worker 대시보드
+  - `apps/job-dashboard/`에는 지원서, 인증, 자동화, 헬스 체크, 통계, 워크플로 상태 API를 위한 Worker 지향 대시보드 코드가 포함되어 있습니다.
+
+- 채용 지원 이력 관리
+  - `applications/` 아래의 직무별 디렉터리에 역할별 이력서, 자기소개서, 미리보기, 지원 가이드, 인터뷰 준비 자료를 보관합니다.
+
+- 자동화 친화적 API 구조
+  - 대시보드 핸들러와 라우트는 관리자 기능, 지원서, 인증, 자동화 웹훅, 헬스 체크, 통계, 워크플로 상태를 역할별로 분리합니다.
+
+- Docker 런타임
+  - `Dockerfile`과 `docker-compose.yml`은 Node.js 22 Alpine 기반의 잡 자동화 서버 런타임을 정의합니다.
+  - Compose 서비스는 `3000` 포트를 노출하고 런타임 데이터 보존을 위한 볼륨을 사용합니다.
+
+- 봇 소유 GitHub 변경 자동화
+  - 변경을 수행하는 자동화는 `jclee-bot`이 소유합니다.
+  - PR, 이슈, 의존성, 릴리스, 정리, 실패 보고, 동기화 동작은 GitHub Actions를 통해 트리거되지만, 자동화의 개념적 소유자는 봇입니다.
+
+- PR 리뷰 연동
+  - 저장소 문서는 [qodo-ai/pr-agent](https://github.com/qodo-ai/pr-agent)를 통한 PR-Agent 연동을 참조합니다.
+
+- 엣지 모델 대체 경로
+  - README 생성 및 모델 기반 자동화는 [https://cliproxy.jclee.me/v1](https://cliproxy.jclee.me/v1)을 통해 대체 모델로 전환될 수 있습니다.
 
 ---
 
 ## Architecture / 아키텍처
 
-The monorepo is organised into four runtime tiers: **edge** (Cloudflare Workers), **container** (Dockerized MCP server), **homelab** (private LLM proxy and observability), and **automation** (GitHub Actions). All tiers converge on the SSoT resume data in `packages/data/`.
+### English
 
-이 모노레포는 네 개의 런타임 계층 — **엣지** (Cloudflare Workers), **컨테이너** (Docker화된 MCP 서버), **자택 인프라** (사설 LLM 프록시 및 옵저버빌리티), **자동화** (GitHub Actions) — 로 구성됩니다. 모든 계층은 `packages/data/`의 SSoT 이력서 데이터로 수렴합니다.
+The repository has three layers:
+
+1. Content layer
+   - Resume/application artifacts in `applications/`
+   - TA presentation and verification artifacts in `ta/`
+
+2. Application/API layer
+   - `apps/job-dashboard/` Worker dashboard
+   - Routes, handlers, middleware, SQL schema, and migrations
+
+3. Automation/control layer
+   - GitHub Actions as trigger implementation
+   - `jclee-bot` as mutating automation owner
+   - CLIProxyAPI as model fallback edge surface
+   - Docker Compose as local/runtime packaging surface
 
 ```mermaid
-flowchart TB
-    User["User / Recruiter<br/>방문자"]
+flowchart TD
+  Human["Maintainer / Contributor<br/>관리자 / 기여자"]
+  Repo["Repository<br/>resume portfolio monorepo"]
+  Content["Content Layer<br/>applications/ + ta/"]
+  Dashboard["Dashboard Worker<br/>apps/job-dashboard/"]
+  API["Routes + Handlers<br/>auth, applications, automation, health, stats"]
+  Data["Schema + Migrations<br/>schema.sql + migrations/"]
+  Docker["Docker Runtime<br/>Dockerfile + docker-compose.yml"]
+  Bot["jclee-bot<br/>App-owned mutating automation"]
+  Issues["Issues / Pull Requests<br/>GitHub collaboration surface"]
+  Actions["GitHub Actions<br/>implementation triggers only"]
+  PRAgent["PR-Agent<br/>qodo-ai/pr-agent"]
+  CLIProxy["CLIProxyAPI<br/>https://cliproxy.jclee.me/v1"]
+  BotUI["Bot Surface<br/>https://bot.jclee.me"]
+  HomelabHost["&lt;homelab-host&gt;<br/>runtime placeholder"]
+  HomelabELK["&lt;homelab-elk&gt;<br/>observability placeholder"]
 
-    subgraph EDGE["Cloudflare Edge / 엣지"]
-        Portfolio["apps/portfolio<br/>Cloudflare Worker<br/>generated bundle"]
-        Dashboard["apps/job-dashboard<br/>Cloudflare Worker<br/>+ Queues &amp; Workflows"]
-    end
+  Human --> Repo
+  Repo --> Content
+  Repo --> Dashboard
+  Dashboard --> API
+  Dashboard --> Data
+  Repo --> Docker
+  Docker --> HomelabHost
 
-    subgraph RUNTIME["Container Runtime / 컨테이너 런타임"]
-        MCPServer["apps/job-server<br/>Node.js MCP Server<br/>Docker container :3000"]
-    end
+  Human --> Issues
+  Issues --> Bot
+  Actions --> Bot
+  Bot --> Repo
+  Bot --> Issues
 
-    subgraph HOMELAB["Homelab / 자택 인프라"]
-        CLIProxy["&lt;homelab-host&gt;:8317<br/>CLIProxyAPI<br/>https://cliproxy.jclee.me/v1"]
-        ELK["&lt;homelab-elk&gt;<br/>ELK Observability"]
-    end
-
-    subgraph DATA["Authoritative Data / 권위 데이터"]
-        SSoT["packages/data<br/>resume_data.json<br/>(Single Source of Truth)"]
-    end
-
-    subgraph JOB["Job Sources / 채용 소스"]
-        JobSites["Wanted / JobKorea<br/>&amp; other ATS"]
-    end
-
-    subgraph AUTO["Automation / 자동화"]
-        Actions[".github/workflows<br/>21 workflows (01-91)"]
-        PRAgent["PR-Agent<br/>qodo-ai/pr-agent"]
-    end
-
-    User --> Portfolio
-    User --> Dashboard
-    Dashboard --> MCPServer
-    MCPServer --> CLIProxy
-    MCPServer --> JobSites
-    MCPServer --> SSoT
-    MCPServer -. logs &amp; metrics .-> ELK
-    Portfolio --> SSoT
-    Dashboard --> SSoT
-    Actions -. CI/CD .-> Portfolio
-    Actions -. CI/CD .-> Dashboard
-    Actions -. CI/CD .-> MCPServer
-    Actions --> PRAgent
-    PRAgent -. review comments .-> Actions
+  Bot --> PRAgent
+  Bot --> CLIProxy
+  Bot --> BotUI
+  HomelabHost --> HomelabELK
 ```
 
-### Key architectural rules / 핵심 아키텍처 규칙
+### 한국어
 
-1. **`packages/data/` is the SSoT.** Every surface (portfolio, dashboard, MCP server, generated PDFs/PPTX) reads from `resume_data.json`. Never duplicate.
-   **`packages/data/`는 SSoT입니다.** 모든 표면(포트폴리오, 대시보드, MCP 서버, 생성된 PDF/PPTX)은 `resume_data.json`에서 읽습니다. 절대 중복하지 마세요.
-2. **All automation goes through `.github/workflows/`.** No cron jobs on homelab trigger production data writes.
-   **모든 자동화는 `.github/workflows/`를 거칩니다.** 자택 인프라의 cron은 운영 데이터 쓰기를 트리거하지 않습니다.
-3. **Secrets are type-checked at boot** by `packages/env/` and seeded via the `op:*` scripts; no plaintext in the repo.
-   **시크릿은 `packages/env/`에서 부팅 시 타입 검사**되며 `op:*` 스크립트로 시드됩니다. 저장소에 평문이 없습니다.
-4. **PR-Agent runs as a workflow step**, not as a long-lived service, to keep the homelab free of idle workloads.
-   **PR-Agent는 워크플로우 단계로 실행**되며 장기 실행 서비스가 아닙니다. 자택 인프라의 유휴 부하를 방지합니다.
+이 저장소는 세 계층으로 볼 수 있습니다.
 
----
+1. 콘텐츠 계층
+   - `applications/`의 이력서/지원서 산출물
+   - `ta/`의 발표 및 검증 산출물
 
-## Automation Inventory / 자동화 인벤토리
+2. 애플리케이션/API 계층
+   - `apps/job-dashboard/` Worker 대시보드
+   - 라우트, 핸들러, 미들웨어, SQL 스키마, 마이그레이션
 
-### GitHub Actions Workflows / GitHub Actions 워크플로우
+3. 자동화/제어 계층
+   - GitHub Actions는 구현 트리거 역할
+   - `jclee-bot`은 변경 자동화의 소유자
+   - CLIProxyAPI는 모델 대체 엣지 표면
+   - Docker Compose는 로컬/런타임 패키징 표면
 
-21 workflows (all paths under `.github/workflows/`). Names keep their numeric prefix.
-
-총 21개 워크플로우 (모두 `.github/workflows/` 하위). 이름은 숫자 접두사를 유지합니다.
-
-#### CI & verification / CI 및 검증
-
-| Workflow / 워크플로우 | Purpose / 용도 |
-| --- | --- |
-| `ci.yml` | Lint, typecheck, unit/integration tests on PRs and pushes. / PR 및 push에 대한 린트, 타입 체크, 단위/통합 테스트. |
-| `post-deploy-verify.yml` | Smoke tests against deployed edge + container endpoints. / 배포된 엣지 + 컨테이너 엔드포인트 대상 스모크 테스트. |
-| `delete-standalone-job-worker.yml` | Tear down ephemeral stand-alone job workers. / 임시 단독 작업 워커 제거. |
-| `provision-queues.yml` | Provision Cloudflare Queues referenced by `apps/job-dashboard`. / `apps/job-dashboard`가 참조하는 Cloudflare Queues 프로비저닝. |
-
-#### Pull-request automation / PR 자동화
-
-| Workflow / 워크플로우 | Purpose / 용도 |
-| --- | --- |
-| `01_branch-to-pr.yml` | Open a draft PR for active branches lacking one. / PR이 없는 활성 브랜치에 대해 draft PR 열기. |
-| `10_pr-review.yml` | Trigger [PR-Agent](https://github.com/qodo-ai/pr-agent) review. / [PR-Agent](https://github.com/qodo-ai/pr-agent) 리뷰 트리거. |
-| `11_security-pr-review.yml` | Security-focused PR review with extra SAST prompts. / SAST 프롬프트를 추가한 보안 중심 PR 리뷰. |
-| `12_dependabot-auto-merge.yml` | Auto-merge trusted Dependabot patches. / 신뢰할 수 있는 Dependabot 패치 자동 머지. |
-| `13_pr-auto-merge.yml` | Auto-merge PRs labelled `auto-merge`. / `auto-merge` 라벨이 붙은 PR 자동 머지. |
-| `14_bot-auto-fix.yml` | Apply automated fixes (lint, format, import-order) on bot-authored commits. / 봇 커밋에 자동 수정(린트, 포맷, import 순서) 적용. |
-| `15_merged-pr-cleanup.yml` | Delete merged feature branches. / 머지된 기능 브랜치 삭제. |
-
-#### Issue automation / 이슈 자동화
-
-| Workflow / 워크플로우 | Purpose / 용도 |
-| --- | --- |
-| `02_issue-to-branch.yml` | Create a branch from an issue using the issue title. / 이슈 제목으로 이슈에서 브랜치 생성. |
-| `19_issue-backfill.yml` | Backfill missing labels/milestones on legacy issues. / 레거시 이슈의 누락된 라벨/마일스톤 보충. |
-| `37_ci-failure-issues.yml` | Open an issue when CI fails repeatedly. / CI가 반복 실패할 때 이슈 열기. |
-| `91_issue-classification.yml` | Classify incoming issues by labels and assignees. / 들어오는 이슈를 라벨과 담당자로 분류. |
-
-#### Release & publishing / 릴리스 및 게시
-
-| Workflow / 워크플로우 | Purpose / 용도 |
-| --- | --- |
-| `release.yml` | Tag-driven release orchestration. / 태그 기반 릴리스 오케스트레이션. |
-| `24_release-notes.yml` | Auto-generate release notes from PRs and issues. / PR과 이슈에서 릴리스 노트 자동 생성. |
-| `25_release-publish.yml` | Publish release artefacts to the appropriate registry. / 적절한 레지스트리에 릴리스 아티팩트 게시. |
-
-#### Operations & self-healing / 운영 및 자가 치유
-
-| Workflow / 워크플로우 | Purpose / 용도 |
-| --- | --- |
-| `29_downstream-health-check.yml` | Verify downstream services (homelab endpoints) are reachable. / 다운스트림 서비스(자택 엔드포인트) 도달 가능성 확인. |
-| `60_ci-auto-heal.yml` | Auto-retry or patch transient CI failures. / 일시적 CI 실패 자동 재시도 또는 패치. |
-| `auto-sync-data.yml` | Periodically refresh SSoT data from approved sources. / 승인된 소스에서 SSoT 데이터 주기적 새로 고침. |
-
-### Go Automation Tools / Go 자동화 도구
-
-No standalone Go binaries live in this repository; Go entry points are declared in `package.json` (e.g. `sync:pdf`, `op:*`, `enrich:*`, `sync:proposals`) and resolved from `tools/scripts/` at run time. Treat the `tools/scripts/` paths as the canonical location for any Go automation.
-
-이 저장소에는 독립 실행형 Go 바이너리가 없습니다. Go 진입점은 `package.json`(`sync:pdf`, `op:*`, `enrich:*`, `sync:proposals` 등)에 선언되어 있으며 런타임 시 `tools/scripts/`에서 해석됩니다. 모든 Go 자동화의 정식 위치로 `tools/scripts/` 경로를 취급하세요.
+주의: 다이어그램의 `<homelab-host>` 및 `<homelab-elk>`는 실제 내부 주소가 아니라 런타임/관측성 대상을 표현하는 플레이스홀더입니다.
 
 ---
 
 ## Repository Structure / 저장소 구조
 
+### English
+
+The current top-level layout provided for this repository is:
+
 ```text
-.
-├── AGENTS.md                      # Project knowledge base (SSoT for AGENTS)
+/
+├── AGENTS.md
 ├── CHANGELOG.md
 ├── CONTRIBUTING.md
-├── Dockerfile                     # Multi-stage build for job-server
+├── Dockerfile
 ├── LICENSE
 ├── OWNERS
-├── README.md                      # This file
-├── docker-compose.yml             # mcp-server service definition
+├── README.md
+├── docker-compose.yml
 ├── eslint.config.cjs
 ├── jest.config.cjs
-├── lychee.toml                    # Link-checker config
-├── package.json                   # Workspace root + operator scripts
+├── lychee.toml
 ├── package-lock.json
+├── package.json
 ├── playwright.config.js
-├── redocly.yaml                   # OpenAPI lint rules
+├── redocly.yaml
 ├── tsconfig.base.json
 ├── tsconfig.json
-├── wrangler.jsonc                 # Cloudflare Worker config
-├── ta/                            # TA profile generation (Python/PPTX)
-│   ├── improve_visual.py
-│   ├── inspect.py
-│   ├── verify.py
-│   ├── *.pptx
-│   └── output/
-├── applications/                  # Per-company application packets
-│   ├── airpremia-security-2026/
-│   ├── infrastructure-architecture-2026/
-│   ├── coupang-fintech-sre-2026/
-│   ├── cloudflare-one-se-2026/
-│   └── gitlab-apac-security-2026/
+├── wrangler.jsonc
+├── ta/
+├── applications/
 └── apps/
-    └── job-dashboard/             # Cloudflare Worker dashboard
-        ├── API_REFERENCE.md
-        ├── DEPLOYMENT_GUIDE.md
-        ├── DEVELOPMENT_GUIDE.md
-        ├── DIAGRAMS.md
-        ├── OWNERS
-        ├── README.md
-        ├── SECRETS.md
-        ├── migrate-json-to-d1.cjs
-        ├── migration-data.sql
-        ├── schema.sql
-        ├── tsconfig.json
-        ├── package.json
-        ├── migrations/
-        │   └── 0002_add_approval_metadata.sql
-        └── src/
-            ├── index.js
-            ├── queue-consumer.js
-            ├── router.js
-            ├── middleware/
-            │   ├── cors.js
-            │   ├── csrf.js
-            │   └── rate-limit.test.js
-            ├── routes/
-            │   ├── admin.js
-            │   ├── applications.js
-            │   ├── auth.js
-            │   ├── automation.js
-            │   ├── health.js
-            │   ├── index.js
-            │   ├── stats.js
-            │   └── workflows.js
-            └── handlers/
-                ├── applications.js
-                ├── auth.js
-                └── auto-apply-webhook-handler.js
+    └── job-dashboard/
 ```
 
-> **Note / 참고:** `package.json` declares additional workspaces (`apps/portfolio`, `apps/job-server`, `packages/cli`, `packages/data`, `packages/shared`, `packages/types`, `packages/schemas`, `packages/contracts`, `packages/env`). Their presence is governed by the lockfile; consult `AGENTS.md` for the full inventory.
-> `package.json`은 추가 워크스페이스(`apps/portfolio`, `apps/job-server`, `packages/cli`, `packages/data`, `packages/shared`, `packages/types`, `packages/schemas`, `packages/contracts`, `packages/env`)를 선언합니다. 이들의 존재는 lockfile에 의해 결정되며, 전체 인벤토리는 `AGENTS.md`를 참조하세요.
+Important visible subtrees:
+
+```text
+ta/
+├── AGENTS.md
+├── improve_visual.py
+├── inspect.py
+├── verify.py
+├── *.pptx
+└── output/
+    ├── *.pptx
+    └── verify_report_20260212.txt
+
+applications/
+├── airpremia-security-2026/
+├── infrastructure-architecture-2026/
+├── coupang-fintech-sre-2026/
+├── cloudflare-one-se-2026/
+└── gitlab-apac-security-2026/
+
+apps/job-dashboard/
+├── AGENTS.md
+├── API_REFERENCE.md
+├── DEPLOYMENT_GUIDE.md
+├── DEVELOPMENT_GUIDE.md
+├── DIAGRAMS.md
+├── OWNERS
+├── README.md
+├── SECRETS.md
+├── migrate-json-to-d1.cjs
+├── migration-data.sql
+├── package.json
+├── schema.sql
+├── tsconfig.json
+├── migrations/
+└── src/
+    ├── index.js
+    ├── queue-consumer.js
+    ├── router.js
+    ├── middleware/
+    ├── routes/
+    └── handlers/
+```
+
+The root `package.json` references additional workspaces and runtime paths. When running workspace-level commands, ensure the checked-out repository contains the referenced workspace sources required by that command.
+
+### 한국어
+
+이 저장소에 제공된 현재 최상위 구조는 다음과 같습니다.
+
+```text
+/
+├── AGENTS.md
+├── CHANGELOG.md
+├── CONTRIBUTING.md
+├── Dockerfile
+├── LICENSE
+├── OWNERS
+├── README.md
+├── docker-compose.yml
+├── eslint.config.cjs
+├── jest.config.cjs
+├── lychee.toml
+├── package-lock.json
+├── package.json
+├── playwright.config.js
+├── redocly.yaml
+├── tsconfig.base.json
+├── tsconfig.json
+├── wrangler.jsonc
+├── ta/
+├── applications/
+└── apps/
+    └── job-dashboard/
+```
+
+주요 하위 구조는 다음과 같습니다.
+
+```text
+ta/
+├── AGENTS.md
+├── improve_visual.py
+├── inspect.py
+├── verify.py
+├── *.pptx
+└── output/
+    ├── *.pptx
+    └── verify_report_20260212.txt
+
+applications/
+├── airpremia-security-2026/
+├── infrastructure-architecture-2026/
+├── coupang-fintech-sre-2026/
+├── cloudflare-one-se-2026/
+└── gitlab-apac-security-2026/
+
+apps/job-dashboard/
+├── AGENTS.md
+├── API_REFERENCE.md
+├── DEPLOYMENT_GUIDE.md
+├── DEVELOPMENT_GUIDE.md
+├── DIAGRAMS.md
+├── OWNERS
+├── README.md
+├── SECRETS.md
+├── migrate-json-to-d1.cjs
+├── migration-data.sql
+├── package.json
+├── schema.sql
+├── tsconfig.json
+├── migrations/
+└── src/
+    ├── index.js
+    ├── queue-consumer.js
+    ├── router.js
+    ├── middleware/
+    ├── routes/
+    └── handlers/
+```
+
+루트 `package.json`은 추가 workspace 및 런타임 경로를 참조합니다. workspace 단위 명령을 실행할 때는 해당 명령이 필요로 하는 소스가 체크아웃에 포함되어 있는지 확인하십시오.
+
+---
+
+## jclee-bot Automation Surfaces / jclee-bot 자동화 표면
+
+### English
+
+Mutating automation in this repository is owned by `jclee-bot`.
+
+GitHub workflow files exist as implementation triggers. They should not be treated as the durable source of truth for automation ownership. The durable automation model is App-owned behavior performed by `jclee-bot`.
+
+Primary automation surfaces:
+
+- Issue automation
+  - Converts eligible issues into implementation branches or PR work.
+  - Backfills or normalizes issue metadata where required.
+  - May create follow-up issues for CI failures, deployment verification failures, or maintenance tasks.
+  - Issue automation behavior must include the marker: `jclee-bot에의해자동화됨`
+
+- Pull request automation
+  - Opens, updates, reviews, fixes, merges, or cleans up PRs according to repository policy.
+  - Applies automated review or repair behavior through bot-owned execution.
+  - PR-Agent integration is represented by [qodo-ai/pr-agent](https://github.com/qodo-ai/pr-agent).
+
+- Dependency automation
+  - Handles dependency update review and merge paths when policy allows.
+  - Automated mutation remains `jclee-bot` owned even when the trigger originates from dependency events.
+
+- Release automation
+  - Generates release notes and publishes release artifacts according to repository policy.
+  - Release workflow triggers are implementation details; release mutation is bot-owned.
+
+- CI failure and health automation
+  - Converts relevant CI/deployment failures into actionable records.
+  - Performs downstream health checks and post-deploy verification as bot-owned operational behavior.
+
+- Data synchronization automation
+  - Synchronizes generated data, resume artifacts, dashboards, or application metadata where configured.
+  - Treat generated outputs as bot-managed unless a human maintainer explicitly owns the change.
+
+- Cleanup automation
+  - Removes merged branches or stale automation artifacts according to policy.
+  - Cleanup that mutates repository state is owned by `jclee-bot`.
+
+Operational principles:
+
+- Do not describe workflow YAML files as the source of truth.
+- Do not rely on workflow filenames to define product behavior.
+- Do describe what the App-owned automation does.
+- Do preserve human review boundaries where OWNERS, branch protection, or contribution policy requires approval.
+- Do mark issue automation behavior with `jclee-bot에의해자동화됨`.
+
+### 한국어
+
+이 저장소에서 변경을 수행하는 자동화는 `jclee-bot`이 소유합니다.
+
+GitHub workflow 파일은 구현 트리거입니다. 자동화 소유권의 지속적인 원천 정보로 간주하지 않습니다. 지속적인 자동화 모델은 `jclee-bot`이 수행하는 App 소유 동작입니다.
+
+주요 자동화 표면은 다음과 같습니다.
+
+- 이슈 자동화
+  - 조건을 만족하는 이슈를 구현 브랜치 또는 PR 작업으로 전환합니다.
+  - 필요한 경우 이슈 메타데이터를 보강하거나 정규화합니다.
+  - CI 실패, 배포 검증 실패, 유지보수 작업에 대한 후속 이슈를 생성할 수 있습니다.
+  - 이슈 자동화 동작에는 반드시 다음 마커가 포함되어야 합니다: `jclee-bot에의해자동화됨`
+
+- Pull Request 자동화
+  - 저장소 정책에 따라 PR을 생성, 업데이트, 리뷰, 수정, 병합 또는 정리합니다.
+  - 자동 리뷰 또는 자동 수정 동작은 봇 소유 실행으로 수행됩니다.
+  - PR-Agent 연동은 [qodo-ai/pr-agent](https://github.com/qodo-ai/pr-agent)로 표현됩니다.
+
+- 의존성 자동화
+  - 정책이 허용하는 경우 의존성 업데이트 리뷰 및 병합 경로를 처리합니다.
+  - 트리거가 의존성 이벤트에서 시작되더라도 변경 자동화는 `jclee-bot` 소유입니다.
+
+- 릴리스 자동화
+  - 저장소 정책에 따라 릴리스 노트를 생성하고 릴리스 산출물을 게시합니다.
+  - 릴리스 workflow 트리거는 구현 세부사항이며, 릴리스 변경은 봇 소유입니다.
+
+- CI 실패 및 헬스 체크 자동화
+  - 관련 CI/배포 실패를 실행 가능한 기록으로 전환합니다.
+  - 다운스트림 헬스 체크 및 배포 후 검증을 봇 소유 운영 동작으로 수행합니다.
+
+- 데이터 동기화 자동화
+  - 구성된 경우 생성 데이터, 이력서 산출물, 대시보드, 지원서 메타데이터를 동기화합니다.
+  - 사람이 명시적으로 소유하지 않은 생성 산출물은 봇 관리 변경으로 취급합니다.
+
+- 정리 자동화
+  - 정책에 따라 병합된 브랜치 또는 오래된 자동화 산출물을 제거합니다.
+  - 저장소 상태를 변경하는 정리 작업은 `jclee-bot`이 소유합니다.
+
+운영 원칙:
+
+- workflow YAML 파일을 원천 정보로 설명하지 않습니다.
+- workflow 파일명을 제품 동작 정의로 사용하지 않습니다.
+- App 소유 자동화가 무엇을 수행하는지 설명합니다.
+- OWNERS, 브랜치 보호, 기여 정책이 승인을 요구하는 경우 사람의 리뷰 경계를 유지합니다.
+- 이슈 자동화 동작에는 `jclee-bot에의해자동화됨` 마커를 보존합니다.
+
+---
+
+## Go Tools / Go 도구
+
+### English
+
+Discovered Go automation tools in the provided automation inventory: `0`.
+
+No concrete Go automation tool directories were provided in the current repository structure. Therefore this README does not claim any active repository-local Go automation binaries as source-of-truth tools.
+
+However, the root `package.json` contains script references to Go-based commands and paths. Treat these as command declarations that require the corresponding source paths to exist in the checkout before execution:
+
+- `pdf-generator.go`
+- `onepassword/run`
+- `onepassword/native-run`
+- `onepassword/seed-resume`
+- `onepassword/session-files`
+- `apply-proposals.go`
+- `enrichment/github`
+- `enrichment/skills`
+- `enrichment/ai`
+
+If these paths are absent in a minimal checkout, do not run the associated npm scripts until the required source tree is restored.
+
+### 한국어
+
+제공된 자동화 인벤토리 기준으로 발견된 Go 자동화 도구 수는 `0`개입니다.
+
+현재 제공된 저장소 구조에는 구체적인 Go 자동화 도구 디렉터리가 포함되어 있지 않습니다. 따라서 이 README는 저장소 로컬의 활성 Go 자동화 바이너리를 원천 도구로 주장하지 않습니다.
+
+다만 루트 `package.json`에는 Go 기반 명령 및 경로 참조가 포함되어 있습니다. 다음 항목은 실행 전에 해당 소스 경로가 체크아웃에 존재해야 하는 명령 선언으로 취급하십시오.
+
+- `pdf-generator.go`
+- `onepassword/run`
+- `onepassword/native-run`
+- `onepassword/seed-resume`
+- `onepassword/session-files`
+- `apply-proposals.go`
+- `enrichment/github`
+- `enrichment/skills`
+- `enrichment/ai`
+
+최소 체크아웃에 해당 경로가 없다면 필요한 소스 트리가 복원될 때까지 관련 npm 스크립트를 실행하지 마십시오.
 
 ---
 
 ## Quick Start / 빠른 시작
 
-### Prerequisites / 사전 요구 사항
+### English
 
-- **Node.js ≥ 22** (matches the runtime in `Dockerfile`).
-  **Node.js ≥ 22** (`Dockerfile`의 런타임과 일치).
-- **npm** with workspace support (npm 10+ recommended).
-  **워크스페이스를 지원하는 npm** (npm 10+ 권장).
-- **Docker** + **Docker Compose** for the MCP server runtime.
-  **MCP 서버 런타임을 위한 Docker + Docker Compose**.
-- **Wrangler** for Cloudflare Worker development.
-  **Cloudflare Worker 개발을 위한 Wrangler**.
-- Optional: **Go ≥ 1.22**, **Python 3.11+**, **1Password CLI** for full operator scripts.
-  선택: 전체 운영 스크립트를 위한 **Go ≥ 1.22**, **Python 3.11+**, **1Password CLI**.
+Prerequisites:
 
-### Clone & install / 복제 및 설치
+- Node.js 22 or newer
+- npm with lockfile support
+- Docker and Docker Compose, if running the containerized runtime
+- Wrangler-compatible Cloudflare environment, if deploying Worker surfaces
+- Python 3, if working with `ta/` scripts
+- Go, only if the Go-referenced package scripts are available in the checkout
+
+Install dependencies:
 
 ```bash
-git clone <repository-url> resume
-cd resume
 npm ci
 ```
 
-### Run the MCP server (Docker) / MCP 서버 실행 (Docker)
+Inspect available scripts:
 
 ```bash
-docker compose up -d mcp-server
-docker compose ps
+npm run
+```
+
+Run dashboard workspace commands, if available:
+
+```bash
+npm --workspace apps/job-dashboard run
+```
+
+Run the Dockerized runtime:
+
+```bash
+docker compose up --build
+```
+
+Check the local health endpoint exposed by the Compose service:
+
+```bash
 curl -fsS http://127.0.0.1:3000/health
 ```
 
-### Run the dashboard Worker locally / 대시보드 Worker 로컬 실행
+Work with TA verification scripts:
 
 ```bash
-cd apps/job-dashboard
-npm run dev   # wrangler dev
+python3 ta/inspect.py
+python3 ta/verify.py
 ```
 
-### Generate resume artefacts / 이력서 아티팩트 생성
+Before running generation or sync scripts, confirm their referenced paths exist in the local checkout.
+
+### 한국어
+
+필수 조건:
+
+- Node.js 22 이상
+- lockfile을 지원하는 npm
+- 컨테이너 런타임 실행 시 Docker 및 Docker Compose
+- Worker 배포 시 Wrangler 호환 Cloudflare 환경
+- `ta/` 스크립트 작업 시 Python 3
+- Go 참조 npm 스크립트가 체크아웃에 존재하는 경우에만 Go
+
+의존성 설치:
 
 ```bash
-npm run sync:data   # refresh SSoT JSON
-npm run sync:pdf    # regenerate PDFs via Go
-npm run sync:pptx   # regenerate PPTX via Python
-npm run sync:all    # data + pdf + pptx
+npm ci
 ```
+
+사용 가능한 스크립트 확인:
+
+```bash
+npm run
+```
+
+대시보드 workspace 명령 확인:
+
+```bash
+npm --workspace apps/job-dashboard run
+```
+
+Docker 런타임 실행:
+
+```bash
+docker compose up --build
+```
+
+Compose 서비스가 노출하는 로컬 헬스 엔드포인트 확인:
+
+```bash
+curl -fsS http://127.0.0.1:3000/health
+```
+
+TA 검증 스크립트 실행:
+
+```bash
+python3 ta/inspect.py
+python3 ta/verify.py
+```
+
+생성 또는 동기화 스크립트를 실행하기 전에는 해당 스크립트가 참조하는 경로가 로컬 체크아웃에 존재하는지 확인하십시오.
 
 ---
 
 ## Local Development / 로컬 개발
 
-### Branch & PR convention / 브랜치 및 PR 규칙
+### English
 
-- Branch names follow `<type>/<scope>-<ticket>` (e.g. `feat/dashboard-rate-limit-123`).
-  브랜치 이름은 `<type>/<scope>-<ticket>` 형식을 따릅니다 (예: `feat/dashboard-rate-limit-123`).
-- PRs must reference an issue; `01_branch-to-pr.yml` and `02_issue-to-branch.yml` keep the two linked.
-  PR은 이슈를 참조해야 합니다. `01_branch-to-pr.yml`과 `02_issue-to-branch.yml`이 두 가지를 연결 상태로 유지합니다.
-- Use the `auto-merge` label for safe changes; `12_dependabot-auto-merge.yml` and `13_pr-auto-merge.yml` will handle the rest.
-  안전한 변경에는 `auto-merge` 라벨을 사용하세요. `12_dependabot-auto-merge.yml`과 `13_pr-auto-merge.yml`이 나머지를 처리합니다.
+Recommended workflow:
 
-### Testing / 테스트
+1. Install dependencies with `npm ci`.
+2. Read the root `AGENTS.md` and any nested `AGENTS.md` file before editing a subtree.
+3. For dashboard work, start with:
+   - `apps/job-dashboard/README.md`
+   - `apps/job-dashboard/DEVELOPMENT_GUIDE.md`
+   - `apps/job-dashboard/API_REFERENCE.md`
+   - `apps/job-dashboard/SECRETS.md`
+4. Make changes in the smallest relevant subtree.
+5. Run lint, typecheck, and tests supported by the local checkout.
+6. Do not commit secrets, internal host addresses, private IPs, or machine-specific runtime identifiers.
+7. Treat generated artifacts as generated. If editing generated files, document why the generated source could not be used.
+
+Dashboard development areas:
+
+- `apps/job-dashboard/src/index.js`
+  - Worker/application entrypoint
+
+- `apps/job-dashboard/src/router.js`
+  - Request routing composition
+
+- `apps/job-dashboard/src/routes/`
+  - Route definitions for admin, applications, auth, automation, health, stats, and workflow-related API surfaces
+
+- `apps/job-dashboard/src/handlers/`
+  - Business logic for applications, auth, and automation webhook handling
+
+- `apps/job-dashboard/src/middleware/`
+  - CORS, CSRF, rate limiting, and related request middleware
+
+- `apps/job-dashboard/schema.sql`
+  - Database schema
+
+- `apps/job-dashboard/migrations/`
+  - Incremental database migrations
+
+Docker local runtime:
 
 ```bash
-npm run lint            # ESLint (eslint.config.cjs)
-npm run typecheck       # TypeScript (tsconfig.base.json)
-npm run test            # Jest (jest.config.cjs)
-npm run test:e2e        # Playwright (playwright.config.js)
-npm run links           # Lychee link check (lychee.toml)
-npm run openapi:lint    # Redocly CLI (redocly.yaml)
+docker compose up --build
 ```
 
-### Secrets & 1Password / 시크릿 및 1Password
+Stop services:
 
 ```bash
-npm run op:seed:resume      # seed resume secrets
-npm run op:seed:sessions    # seed browser session files
-npm run op:restore:sessions # restore session files
-npm run op:run              # run one-shot 1Password job
-npm run op:native:run       # run native 1Password binary
+docker compose down
 ```
 
-### Local observability / 로컬 옵저버빌리티
+Remove the named data volume only when intentionally resetting local runtime data:
 
-The MCP server pushes structured logs and metrics to the homelab ELK stack at `<homelab-elk>`. To point a local run elsewhere, override the `LOG_SINK` and `METRICS_SINK` environment variables defined in `packages/env/`.
+```bash
+docker compose down -v
+```
 
-MCP 서버는 자택 ELK 스택(`<homelab-elk>`)으로 구조화 로그와 메트릭을 전송합니다. 로컬 실행에서 다른 대상으로 보내려면 `packages/env/`에 정의된 `LOG_SINK` 및 `METRICS_SINK` 환경 변수를 재정의하세요.
+### 한국어
+
+권장 개발 흐름:
+
+1. `npm ci`로 의존성을 설치합니다.
+2. 수정 전에 루트 `AGENTS.md`와 하위 디렉터리의 `AGENTS.md`를 읽습니다.
+3. 대시보드 작업은 다음 문서부터 확인합니다.
+   - `apps/job-dashboard/README.md`
+   - `apps/job-dashboard/DEVELOPMENT_GUIDE.md`
+   - `apps/job-dashboard/API_REFERENCE.md`
+   - `apps/job-dashboard/SECRETS.md`
+4. 가장 작은 관련 하위 트리에서 변경합니다.
+5. 로컬 체크아웃이 지원하는 lint, typecheck, test를 실행합니다.
+6. secrets, 내부 호스트 주소, 사설 IP, 머신 고유 런타임 식별자를 커밋하지 않습니다.
+7. 생성 산출물은 생성 산출물로 취급합니다. 생성 파일을 직접 수정하는 경우 생성 원본을 사용할 수 없었던 이유를 문서화합니다.
+
+대시보드 개발 영역:
+
+- `apps/job-dashboard/src/index.js`
+  - Worker/애플리케이션 진입점
+
+- `apps/job-dashboard/src/router.js`
+  - 요청 라우팅 구성
+
+- `apps/job-dashboard/src/routes/`
+  - admin, applications, auth, automation, health, stats, workflow 관련 API 표면의 라우트 정의
+
+- `apps/job-dashboard/src/handlers/`
+  - applications, auth, automation webhook 처리를 위한 비즈니스 로직
+
+- `apps/job-dashboard/src/middleware/`
+  - CORS, CSRF, rate limiting 및 관련 요청 미들웨어
+
+- `apps/job-dashboard/schema.sql`
+  - 데이터베이스 스키마
+
+- `apps/job-dashboard/migrations/`
+  - 점진적 데이터베이스 마이그레이션
+
+Docker 로컬 런타임:
+
+```bash
+docker compose up --build
+```
+
+서비스 중지:
+
+```bash
+docker compose down
+```
+
+로컬 런타임 데이터를 의도적으로 초기화할 때만 named volume을 함께 제거합니다.
+
+```bash
+docker compose down -v
+```
 
 ---
 
-## Commands Reference / 명령어 레퍼런스
+## Commands Reference / 명령어 참조
 
-All commands are declared in the root `package.json` and run from the repository root unless otherwise noted.
+### English
 
-모든 명령어는 루트 `package.json`에 선언되어 있으며 별도 표기가 없는 한 저장소 루트에서 실행합니다.
+The following commands are declared in the visible root `package.json` excerpt.
 
-### Data & content sync / 데이터 및 콘텐츠 동기화
+#### Install and inspect
 
-| Command / 명령어 | Description / 설명 |
-| --- | --- |
-| `npm run strip-exif` | Strip EXIF metadata from portfolio images via `exiftool`. / `exiftool`로 포트폴리오 이미지의 EXIF 메타데이터 제거. |
-| `npm run sync:data` | Refresh SSoT JSON from authoritative sources. / 권위 소스에서 SSoT JSON 새로 고침. |
-| `npm run sync:pdf` | Regenerate resume PDFs (Go). / 이력서 PDF 재생성 (Go). |
-| `npm run sync:pptx` | Regenerate TA PPTX (Python). / TA PPTX 재생성 (Python). |
-| `npm run sync:all` | `sync:data` + `sync:pdf` + `sync:pptx`. |
-| `npm run sync:proposals` | Review + apply job-board proposals. / 채용 공고 제안 검토 및 적용. |
+```bash
+npm ci
+npm run
+```
 
-### 1Password & secrets / 1Password 및 시크릿
+#### Data and artifact synchronization
 
-| Command / 명령어 | Description / 설명 |
-| --- | --- |
-| `npm run op:run` | Run a one-shot 1Password job. / 일회성 1Password 작업 실행. |
-| `npm run op:native:run` | Run the native 1Password binary. / 네이티브 1Password 바이너리 실행. |
-| `npm run op:seed:resume` | Seed resume-specific secrets. / 이력서 전용 시크릿 시드. |
-| `npm run op:seed:sessions` | Seed browser session files. / 브라우저 세션 파일 시드. |
-| `npm run op:restore:sessions` | Restore session files from 1Password. / 1Password에서 세션 파일 복원. |
+```bash
+npm run sync:data
+npm run sync:pptx
+npm run sync:pdf
+npm run sync:all
+```
 
-### Enrichment / 인리치먼트
+Notes:
 
-| Command / 명령어 | Description / 설명 |
-| --- | --- |
-| `npm run enrich:github` | Enrich profiles from GitHub data. / GitHub 데이터로 프로필 인리치. |
-| `npm run enrich:skills` | Enrich the skills catalog. / 스킬 카탈로그 인리치. |
-| `npm run enrich:ai` | Enrich via LLM (CLIProxyAPI). / LLM으로 인리치 (CLIProxyAPI). |
-| `npm run enrich:all` | Run all three enrichment passes. / 세 가지 인리치 패스 모두 실행. |
+- `sync:data` runs a Node.js data synchronization script.
+- `sync:pptx` runs a Python PPTX generation script.
+- `sync:pdf` references a Go PDF generator.
+- Ensure the referenced source paths exist before running these commands.
 
-### Automation pipelines / 자동화 파이프라인
+#### 1Password helper scripts
 
-| Command / 명령어 | Description / 설명 |
-| --- | --- |
-| `npm run automate:ssot` | SSoT pipeline: sync + build + typecheck + test. / SSoT 파이프라인: 동기화 + 빌드 + 타입 체크 + 테스트. |
-| `npm run automate:full` | Full pipeline including lint, typecheck, enrichment, and publish. / 린트, 타입 체크, 인리치먼트, 게재를 포함한 전체 파이프라인. |
+```bash
+npm run op:run
+npm run op:native:run
+npm run op:seed:resume
+npm run op:seed:sessions
+npm run op:restore:sessions
+```
+
+Notes:
+
+- These commands reference Go-based helper paths.
+- They may require local authentication, environment configuration, and source paths not present in a minimal checkout.
+- Do not print or commit secret values.
+
+#### Proposal synchronization
+
+```bash
+npm run sync:proposals
+```
+
+This command combines a Node.js proposal review CLI with a Go proposal application script. Run it only when the referenced application server and script paths exist.
+
+#### Enrichment
+
+```bash
+npm run enrich:github
+npm run enrich:skills
+npm run enrich:ai
+npm run enrich:all
+```
+
+These commands reference Go enrichment tools for GitHub, skills, and AI enrichment. They require the corresponding source tree and credentials/configuration.
+
+#### Automation bundles
+
+```bash
+npm run automate:ssot
+npm run automate:full
+```
+
+`automate:ssot` is intended to run data sync, PDF generation, build, typecheck, and Node tests.
+
+`automate:full` begins with full sync and quality gates. Because the provided `package.json` excerpt is truncated after the command prefix, inspect the local `package.json` before relying on the complete behavior.
+
+#### Docker
+
+```bash
+docker compose up --build
+docker compose down
+```
+
+The Compose service is named `mcp-server` and uses the image built from `Dockerfile`.
+
+#### TA scripts
+
+```bash
+python3 ta/inspect.py
+python3 ta/improve_visual.py
+python3 ta/verify.py
+```
+
+Use these scripts for inspecting, improving, and verifying TA presentation artifacts.
+
+### 한국어
+
+다음 명령어는 제공된 루트 `package.json` 발췌에 선언된 항목입니다.
+
+#### 설치 및 확인
+
+```bash
+npm ci
+npm run
+```
+
+#### 데이터 및 산출물 동기화
+
+```bash
+npm run sync:data
+npm run sync:pptx
+npm run sync:pdf
+npm run sync:all
+```
+
+참고:
+
+- `sync:data`는 Node.js 데이터 동기화 스크립트를 실행합니다.
+- `sync:pptx`는 Python PPTX 생성 스크립트를 실행합니다.
+- `sync:pdf`는 Go PDF 생성기를 참조합니다.
+- 실행 전에 참조 경로가 실제로 존재하는지 확인하십시오.
+
+#### 1Password 보조 스크립트
+
+```bash
+npm run op:run
+npm run op:native:run
+npm run op:seed:resume
+npm run op:seed:sessions
+npm run op:restore:sessions
+```
+
+참고:
+
+- 이 명령들은 Go 기반 보조 경로를 참조합니다.
+- 로컬 인증, 환경 설정, 최소 체크아웃에 없는 소스 경로가 필요할 수 있습니다.
+- secret 값을 출력하거나 커밋하지 마십시오.
+
+#### 제안 동기화
+
+```bash
+npm run sync:proposals
+```
+
+이 명령은 Node.js 제안 리뷰 CLI와 Go 제안 적용 스크립트를 결합합니다. 참조되는 애플리케이션 서버 및 스크립트 경로가 존재할 때만 실행하십시오.
+
+#### 보강 작업
+
+```bash
+npm run enrich:github
+npm run enrich:skills
+npm run enrich:ai
+npm run enrich:all
+```
+
+이 명령들은 GitHub, skills, AI 보강을 위한 Go 도구를 참조합니다. 해당 소스 트리와 인증/설정이 필요합니다.
+
+#### 자동화 묶음
+
+```bash
+npm run automate:ssot
+npm run automate:full
+```
+
+`automate:ssot`는 데이터 동기화, PDF 생성, build, typecheck, Node 테스트를 실행하는 용도입니다.
+
+`automate:full`은 전체 동기화 및 품질 게이트로 시작합니다. 제공된 `package.json` 발췌가 명령 중간에서 잘려 있으므로 전체 동작에 의존하기 전에 로컬 `package.json`을 확인하십시오.
+
+#### Docker
+
+```bash
+docker compose up --build
+docker compose down
+```
+
+Compose 서비스 이름은 `mcp-server`이며 `Dockerfile`에서 빌드된 이미지를 사용합니다.
+
+#### TA 스크립트
+
+```bash
+python3 ta/inspect.py
+python3 ta/improve_visual.py
+python3 ta/verify.py
+```
+
+TA 발표 산출물의 검사, 시각 개선, 검증에 사용합니다.
+
+---
+
+## Configuration and Secrets / 설정 및 시크릿
+
+### English
+
+Configuration files visible at the repository root include:
+
+- `wrangler.jsonc`
+  - Cloudflare Worker/Wrangler configuration
+
+- `redocly.yaml`
+  - API documentation/OpenAPI tooling configuration
+
+- `eslint.config.cjs`
+  - ESLint configuration
+
+- `jest.config.cjs`
+  - Jest configuration
+
+- `playwright.config.js`
+  - Playwright configuration
+
+- `tsconfig.json` and `tsconfig.base.json`
+  - TypeScript configuration
+
+- `lychee.toml`
+  - Link checking configuration
+
+- `docker-compose.yml`
+  - Local/runtime service composition
+
+- `Dockerfile`
+  - Node.js 22 Alpine runtime image definition
+
+Secrets policy:
+
+- Do not commit `.env` files.
+- Do not commit API tokens, session files, generated credentials, or private key material.
+- Do not hardcode internal host addresses, private network addresses, container numbers, or machine-local identifiers.
+- Use placeholders such as `<homelab-host>` and `<homelab-elk>` in documentation.
+- Prefer documented secret names over secret values.
+
+### 한국어
+
+저장소 루트에서 확인되는 설정 파일은 다음과 같습니다.
+
+- `wrangler.jsonc`
+  - Cloudflare Worker/Wrangler 설정
+
+- `redocly.yaml`
+  - API 문서/OpenAPI 도구 설정
+
+- `eslint.config.cjs`
+  - ESLint 설정
+
+- `jest.config.cjs`
+  - Jest 설정
+
+- `playwright.config.js`
+  - Playwright 설정
+
+- `tsconfig.json` 및 `tsconfig.base.json`
+  - TypeScript 설정
+
+- `lychee.toml`
+  - 링크 검사 설정
+
+- `docker-compose.yml`
+  - 로컬/런타임 서비스 구성
+
+- `Dockerfile`
+  - Node.js 22 Alpine 런타임 이미지 정의
+
+시크릿 정책:
+
+- `.env` 파일을 커밋하지 않습니다.
+- API 토큰, 세션 파일, 생성된 인증 정보, 개인 키 자료를 커밋하지 않습니다.
+- 내부 호스트 주소, 사설 네트워크 주소, 컨테이너 번호, 머신 로컬 식별자를 하드코딩하지 않습니다.
+- 문서에서는 `<homelab-host>`, `<homelab-elk>` 같은 플레이스홀더를 사용합니다.
+- secret 값 대신 문서화된 secret 이름을 사용합니다.
+
+---
+
+## Testing and Quality Gates / 테스트 및 품질 게이트
+
+### English
+
+Use the commands available in the local checkout. The repository includes configuration for multiple quality layers:
+
+- ESLint for JavaScript/TypeScript linting
+- Jest for unit or Node-oriented tests
+- Playwright for browser/end-to-end testing
+- Lychee for link checking
+- TypeScript configuration for type-aware checks
+- Redocly for API documentation validation
+- Worker/Dashboard-specific tests under `apps/job-dashboard/`, including middleware tests
+
+Suggested local quality sequence:
+
+```bash
+npm ci
+npm run
+```
+
+Then run the relevant scripts exposed by your checkout, such as linting, typechecking, testing, or build commands.
+
+For dashboard-specific changes, inspect `apps/job-dashboard/package.json` and run its workspace-level scripts.
+
+### 한국어
+
+로컬 체크아웃에서 사용 가능한 명령을 기준으로 실행하십시오. 저장소에는 여러 품질 계층을 위한 설정이 포함되어 있습니다.
+
+- JavaScript/TypeScript linting을 위한 ESLint
+- 단위 또는 Node 지향 테스트를 위한 Jest
+- 브라우저/E2E 테스트를 위한 Playwright
+- 링크 검사를 위한 Lychee
+- 타입 인지 검사를 위한 TypeScript 설정
+- API 문서 검증을 위한 Redocly
+- 미들웨어 테스트를 포함한 `apps/job-dashboard/` 전용 테스트
+
+권장 로컬 품질 확인 순서:
+
+```bash
+npm ci
+npm run
+```
+
+그다음 로컬 체크아웃이 제공하는 lint, typecheck, test, build 명령을 실행하십시오.
+
+대시보드 관련 변경은 `apps/job-dashboard/package.json`을 확인하고 workspace 단위 스크립트를 실행하십시오.
+
+---
+
+## Deployment / 배포
+
+### English
+
+Deployment surfaces visible in this repository:
+
+- Cloudflare Worker configuration through `wrangler.jsonc`
+- Dashboard Worker code under `apps/job-dashboard/`
+- Dockerized Node.js runtime through `Dockerfile`
+- Compose service named `mcp-server`
+- Bot and automation surfaces represented through [https://bot.jclee.me](https://bot.jclee.me)
+- Model fallback through [https://cliproxy.jclee.me/v1](https://cliproxy.jclee.me/v1)
+
+Docker runtime characteristics:
+
+- Base image: `node:22-alpine`
+- Runtime working directory: `/app/apps/job-server`
+- Exposed port: `3000`
+- Health endpoint: `/health`
+- Compose volume: `job_automation_data`
+
+Before deployment:
+
+1. Confirm required workspace source paths exist.
+2. Confirm secrets are provided through the deployment secret manager or `.env` for local Compose only.
+3. Run relevant quality gates.
+4. Confirm no generated file contains private/internal host data.
+5. Confirm bot-owned automation changes are clearly attributed to `jclee-bot`.
+
+### 한국어
+
+이 저장소에서 확인되는 배포 표면은 다음과 같습니다.
+
+- `wrangler.jsonc`를 통한 Cloudflare Worker 설정
+- `apps/job-dashboard/` 아래의 대시보드 Worker 코드
+- `Dockerfile`을 통한 Docker 기반 Node.js 런타임
+- `mcp-server`라는 Compose 서비스
+- [https://bot.jclee.me](https://bot.jclee.me)로 표현되는 봇 및 자동화 표면
+- [https://cliproxy.jclee.me/v1](https://cliproxy.jclee.me/v1)을 통한 모델 대체 경로
+
+Docker 런타임 특성:
+
+- Base image: `node:22-alpine`
+- Runtime working directory: `/app/apps/job-server`
+- Exposed port: `3000`
+- Health endpoint: `/health`
+- Compose volume: `job_automation_data`
+
+배포 전 확인 사항:
+
+1. 필요한 workspace 소스 경로가 존재하는지 확인합니다.
+2. secret이 배포 secret manager 또는 로컬 Compose 전용 `.env`로 제공되는지 확인합니다.
+3. 관련 품질 게이트를 실행합니다.
+4. 생성 파일에 사설/내부 호스트 데이터가 포함되어 있지 않은지 확인합니다.
+5. 봇 소유 자동화 변경이 `jclee-bot`으로 명확히 귀속되는지 확인합니다.
 
 ---
 
 ## Contribution Guide / 기여 가이드
 
-### Ground rules / 기본 규칙
+### English
 
-1. **All changes flow through a PR.** Direct pushes to `master` are blocked by branch protection; the CI workflow and `37_ci-failure-issues.yml` enforce quality gates.
-   **모든 변경은 PR을 거칩니다.** `master`로의 직접 푸시는 브랜치 보호에 의해 차단되며 CI 워크플로우와 `37_ci-failure-issues.yml`이 품질 게이트를 강제합니다.
-2. **PR-Agent is mandatory.** Both `10_pr-review.yml` and `11_security-pr-review.yml` will leave review comments. Address or explicitly defer each one.
-   **PR-Agent는 필수입니다.** `10_pr-review.yml`과 `11_security-pr-review.yml`이 모두 리뷰 댓글을 남깁니다. 각 항목에 응답하거나 명시적으로 연기하세요.
-3. **Keep the SSoT authoritative.** Do not edit generated artefacts directly. Run the appropriate `sync:*` command instead.
-   **SSoT를 권위 있게 유지하세요.** 생성된 아티팩트를 직접 편집하지 마세요. 적절한 `sync:*` 명령을 실행하세요.
-4. **Respect workspace boundaries.** Internal packages communicate through `packages/contracts/` (OpenAPI) and `packages/types/` (JSDoc/TS). Do not reach into another workspace's `src/`.
-   **워크스페이스 경계를 존중하세요.** 내부 패키지는 `packages/contracts/`(OpenAPI) 및 `packages/types/`(JSDoc/TS)을 통해 통신합니다. 다른 워크스페이스의 `src/`에 직접 접근하지 마세요.
+Before contributing:
 
-### Adding a new workflow / 새 워크플로우 추가
+1. Read `CONTRIBUTING.md`.
+2. Read `OWNERS`.
+3. Read the nearest `AGENTS.md` for the files you plan to edit.
+4. Check existing application, dashboard, or TA documentation in the target subtree.
+5. Keep changes focused and reviewable.
 
-- Choose a numeric prefix that fits the existing ordering (see `AGENTS.md` for the convention). The next free slot in the operational range is in the 60s for self-healing, 90s for classification, and unprefixed for top-level orchestration.
-  기존 정렬에 맞는 숫자 접두사를 선택하세요(규칙은 `AGENTS.md` 참조). 자가 치유는 60대, 분류는 90대, 최상위 오케스트레이션은 접두사 없음이 다음 빈 슬롯입니다.
-- Place the file under `.github/workflows/` with the chosen prefix.
-  선택한 접두사로 `.github/workflows/` 하위에 파일을 배치하세요.
-- Wire any new secrets through `packages/env/` and `op:seed:*` so they are validated at boot.
-  새 시크릿을 `packages/env/`와 `op:seed:*`를 통해 연결하여 부팅 시 검증되도록 하세요.
-- Update the **Automation Inventory** table in this README in the same PR.
-  동일 PR에서 본 README의 **자동화 인벤토리** 표를 업데이트하세요.
+Contribution rules:
 
-### Adding a new internal package / 새 내부 패키지 추가
+- Use branches and pull requests for non-trivial changes.
+- Do not commit secrets or machine-local configuration.
+- Do not hardcode private/internal addresses.
+- Use placeholders such as `<homelab-host>` and `<homelab-elk>` in docs.
+- Keep generated files reproducible where possible.
+- If changing generated artifacts manually, explain why.
+- Preserve bilingual documentation where a section is already bilingual.
+- Update command references when scripts change.
+- Update dashboard docs when API behavior changes.
+- Respect App-owned automation boundaries:
+  - Mutating automation belongs to `jclee-bot`.
+  - Workflow files are triggers, not the automation source of truth.
+  - Issue automation must preserve `jclee-bot에의해자동화됨`.
 
-- Add the package to the `workspaces` array in `package.json`.
-  `package.json`의 `workspaces` 배열에 패키지를 추가하세요.
-- Add its `package.json` path to the `COPY` steps in `Dockerfile` (the `deps` stage resolves the workspace graph).
-  `Dockerfile`의 `COPY` 단계에 해당 `package.json` 경로를 추가하세요 (`deps` 단계가 워크스페이스 그래프를 해석).
-- Document the package's role in `AGENTS.md` and link it from the **Repository Structure** section above.
-  `AGENTS.md`에 패키지의 역할을 문서화하고 위 **저장소 구조** 섹션에서 링크하세요.
+Pull request expectations:
 
-### Reporting issues / 이슈 보고
+- Describe the problem and solution.
+- List affected areas.
+- Include test or verification evidence.
+- Identify generated artifacts.
+- Note any required secret/configuration changes without exposing values.
+- Request review from the appropriate owner.
 
-- Issues are auto-classified by `91_issue-classification.yml`. Provide enough context to be assigned correctly: reproduction steps, expected vs. actual behaviour, and the relevant workflow log URL.
-  이슈는 `91_issue-classification.yml`에 의해 자동 분류됩니다. 올바르게 할당되도록 재현 단계, 예상 동작과 실제 동작, 관련 워크플로우 로그 URL 등 충분한 맥락을 제공하세요.
-- Security-sensitive issues: follow the disclosure process in `docs/security/` (or the latest entry in `AGENTS.md`) and **do not** open a public issue.
-  보안 관련 이슈: `docs/security/`(또는 `AGENTS.md`의 최신 항목)의 공개 프로세스를 따르며 **절대** 공개 이슈를 열지 마세요.
+### 한국어
 
-### Code of conduct / 행동 강령
+기여 전 확인 사항:
 
-This is a private monorepo; contributions are limited to maintainers listed in `OWNERS`. External contributions are not accepted at this time. Behavioural expectations follow the conventions documented in `AGENTS.md` and `CONTRIBUTING.md`.
+1. `CONTRIBUTING.md`를 읽습니다.
+2. `OWNERS`를 읽습니다.
+3. 수정하려는 파일에 가장 가까운 `AGENTS.md`를 읽습니다.
+4. 대상 하위 트리의 application, dashboard, TA 관련 문서를 확인합니다.
+5. 변경 범위를 작고 리뷰 가능하게 유지합니다.
 
-이 저장소는 사적 모노레포이며, 기여는 `OWNERS`에 나열된 메인테이너로 제한됩니다. 현재 외부 기여는 허용되지 않습니다. 행동 기대치는 `AGENTS.md`와 `CONTRIBUTING.md`에 문서화된 규칙을 따릅니다.
+기여 규칙:
+
+- 중요 변경은 브랜치와 Pull Request를 사용합니다.
+- secret 또는 머신 로컬 설정을 커밋하지 않습니다.
+- 사설/내부 주소를 하드코딩하지 않습니다.
+- 문서에서는 `<homelab-host>`, `<homelab-elk>` 같은 플레이스홀더를 사용합니다.
+- 가능한 경우 생성 파일은 재현 가능하게 유지합니다.
+- 생성 산출물을 수동 수정하는 경우 이유를 설명합니다.
+- 이미 이중 언어로 작성된 섹션은 이중 언어 구조를 유지합니다.
+- 스크립트가 변경되면 명령어 참조를 업데이트합니다.
+- API 동작이 변경되면 대시보드 문서를 업데이트합니다.
+- App 소유 자동화 경계를 존중합니다.
+  - 변경 자동화는 `jclee-bot` 소유입니다.
+  - workflow 파일은 트리거이며 자동화의 원천 정보가 아닙니다.
+  - 이슈 자동화는 `jclee-bot에의해자동화됨`을 보존해야 합니다.
+
+Pull Request 기대 사항:
+
+- 문제와 해결책을 설명합니다.
+- 영향 범위를 나열합니다.
+- 테스트 또는 검증 근거를 포함합니다.
+- 생성 산출물을 식별합니다.
+- 필요한 secret/configuration 변경 사항을 값 노출 없이 설명합니다.
+- 적절한 owner에게 리뷰를 요청합니다.
 
 ---
 
 ## License / 라이선스
 
-MIT — see [LICENSE](LICENSE).
+### English
 
-MIT — [LICENSE](LICENSE) 참조.
+This repository is licensed under the terms provided in `LICENSE`.
 
----
+### 한국어
 
-## Maintainers / 메인테이너
-
-See [OWNERS](OWNERS).
-
-[OWNERS](OWNERS) 참조.
-
----
-
-*Generated by `gpt-5.5`. Last regenerated against commit `011dd571` on 2026-06-12.*
-*`gpt-5.5`로 생성됨. 커밋 `011dd571` 기준으로 2026-06-12에 마지막 재생성됨.*
+이 저장소는 `LICENSE` 파일에 명시된 조건에 따라 라이선스가 부여됩니다.
