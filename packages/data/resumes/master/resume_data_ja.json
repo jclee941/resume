@@ -59,7 +59,7 @@
         "Linux学び直し (2018.11~2019.11) — RHCSA、CompTIA Linux+、LPIC-1、Linuxマスター2級取得",
         "自動化導入 (2019~2022 Metanet · Jointree) — Ansible/Python 大規模コンタクトセンタ、NSX-Tマイクロセグメンテーション、Wazuh OSS監視",
         "金融インフラ (2022~2024 Quantec FSDC) — 金融監督院監査対応、DBクエリチューニング",
-        "金融セキュリティ構築・運用 (2024~ Gaonnuri · ITCEN Nextrade) — FortiGate HA 5層分離、FSC本認可審査対応、Splunk ES + n8n + FortiManager APIによる自動検知・対応"
+        "金融セキュリティ構築・運用 (2024~ Gaonnuri · ITCEN Nextrade) — ネットワーク分離・エンドポイントセキュリティ構築・運用、FSC本認可審査対応、Splunk ES + n8n + FortiManager APIによる自動検知・対応"
       ],
       "techPhilosophy": [
         "「観測できなければ、運用できない」",
@@ -130,7 +130,7 @@
           "techStack": ["FortiGate", "FortiManager", "Ansible", "Python", "VMware"],
           "achievements": [
             "サービス継続性確保のためFortiGate FGCPアクティブ-パッシブHAセキュリティアーキテクチャを設計",
-            "FSC本認可審査基準を充足するため、5層ネットワーク分離アーキテクチャを設計・文書化",
+            "FSC本認可審査基準を充足するため、ネットワーク分離・エンドポイントセキュリティ統制を設計・文書化",
             "機器ごとの機器ごとの設定基準を標準化するため、Ansible Roleでポリシー展開を標準化"
           ]
         }
@@ -757,7 +757,7 @@
     "contact": "連絡先"
   },
   "achievements": [
-    "Nextrade取引システムのセキュリティインフラ（FortiGate FGCP active-passive HA 2ノード、5層分離）を設計・運用し、FSC本認可審査に対応しました。",
+    "Nextrade取引システムのセキュリティインフラ（FortiGate FGCP active-passive HA、ネットワーク分離、エンドポイントセキュリティ統制）を設計・運用し、FSC本認可審査に対応しました。",
     "Splunk ESでdest_portベースの流出検知ルールとNSX-T DFWログcorrelationルールを設計し、n8nからFortiManager JSON-RPC APIを呼び出してポリシー照会を自動化したセキュリティアラートパイプラインを運用しました。",
     "Prometheus node_exporterでProxmox VM/CTメトリクスを収集し、Grafanaダッシュボード定義をコード（Grafana-as-code）で管理することで、単一画面の可観測性をIaCで再現可能にしました。",
     "Slack・GitHub Actions・Cloudflareフックを共通自動化ワークフローに抽象化し、エラーハンドリングとリトライを標準化することで、新規自動化追加時はノード追加のみで完結する構成にしました。",
@@ -860,11 +860,11 @@
   "platformVariants": {
     "wanted": {
       "headline": "OA → Security | 金融セキュリティ基盤 | FSC本認可審査対応 | Splunk ES · n8n · FortiGate HA",
-      "about": "OA運用からセキュリティ運用までを経験してきたセキュリティエンジニアです。\n\n[成長ストーリー]\n2017.02 — MT DataにてKAI(韓国航空宇宙産業)閉鎖網のOA運用を開始。Linuxサーバのパッチ、ファイアウォール/IDSポリシー管理、WSUS運用、ログ分析を手動で実施し、繰り返し作業の限界を認識しました。\n\n2018.11 — 11ヶ月間Linuxシステムを学び直し、RHCSA、CompTIA Linux+、LPIC-1、Linuxマスター2級を取得しました。\n\n2019.12 — Metanet M Platformにて大規模コンタクトセンタ在宅勤務環境をSSL VPN/NACで構築し、Ansible・Pythonで新規端末登録とスイッチ点検を自動化しました(NACポリシー展開をAnsibleで自動化)。\n\n2021.09 — Jointreeにて国民大学校の次世代情報システムにNSX-Tマイクロセグメンテーションを適用し、Wazuh基盤のOSSセキュリティ監視を構築しました。\n\n2022.08 — Quantecにて金融セキュリティデータセンタ(FSDC)インフラを運用し、金融監督院定期監査対応、DLPポリシー運用、DBアクセス制御クエリチューニング、PBプラットフォームPOC検証を実施しました。\n\n2024.03 — GaonnuriにてNextrade取引所のセキュリティインフラを構築。FortiGate HA 5層ネットワーク分離設計、Ansible Roleによる標準化(ファイアウォールポリシーをAnsible Roleで標準化)。FSC本認可審査に対応しました。\n\n2025.03 — ITCEN CTSにてNextradeセキュリティ運用を担当。Splunk ES検知ルール設計、n8n + FortiManager APIによる自動対応体制を構築（自動検知・対応により運用認知・分類・通知フローの標準化）。\n\n[保有能力]\nSIEMルール設計(Splunk ES)、セキュリティ運用自動化(n8n、FortiManager API)、高可用性セキュリティアーキテクチャ(FortiGate HA、NSX-T)、IaCインフラ管理(Ansible Role、Terraform)、可観測性プラットフォーム運用(Grafana/Prometheus/Loki)、金融規制対応(FSC本認可審査、金融監督院監査)\n\nポートフォリオ: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
+      "about": "OA運用からセキュリティ運用までを経験してきたセキュリティエンジニアです。\n\n[成長ストーリー]\n2017.02 — MT DataにてKAI(韓国航空宇宙産業)閉鎖網のOA運用を開始。Linuxサーバのパッチ、ファイアウォール/IDSポリシー管理、WSUS運用、ログ分析を手動で実施し、繰り返し作業の限界を認識しました。\n\n2018.11 — 11ヶ月間Linuxシステムを学び直し、RHCSA、CompTIA Linux+、LPIC-1、Linuxマスター2級を取得しました。\n\n2019.12 — Metanet M Platformにて大規模コンタクトセンタ在宅勤務環境をSSL VPN/NACで構築し、Ansible・Pythonで新規端末登録とスイッチ点検を自動化しました(NACポリシー展開をAnsibleで自動化)。\n\n2021.09 — Jointreeにて国民大学校の次世代情報システムにNSX-Tマイクロセグメンテーションを適用し、Wazuh基盤のOSSセキュリティ監視を構築しました。\n\n2022.08 — Quantecにて金融セキュリティデータセンタ(FSDC)インフラを運用し、金融監督院定期監査対応、DLPポリシー運用、DBアクセス制御クエリチューニング、PBプラットフォームPOC検証を実施しました。\n\n2024.03 — GaonnuriにてNextrade取引所のセキュリティインフラを構築。ネットワーク分離・エンドポイントセキュリティ構築・運用、Ansible Roleによる標準化(ファイアウォールポリシーをAnsible Roleで標準化)。FSC本認可審査に対応しました。\n\n2025.03 — ITCEN CTSにてNextradeセキュリティ運用を担当。Splunk ES検知ルール設計、n8n + FortiManager APIによる自動対応体制を構築（自動検知・対応により運用認知・分類・通知フローの標準化）。\n\n[保有能力]\nSIEMルール設計(Splunk ES)、セキュリティ運用自動化(n8n、FortiManager API)、高可用性セキュリティアーキテクチャ(FortiGate HA、NSX-T)、IaCインフラ管理(Ansible Role、Terraform)、可観測性プラットフォーム運用(Grafana/Prometheus/Loki)、金融規制対応(FSC本認可審査、金融監督院監査)\n\nポートフォリオ: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
     },
     "jobkorea": {
       "headline": "OA → Security — 金融セキュリティ基盤 (FSC本認可審査、Splunk ES、FortiGate HA、n8n)",
-      "about": "OA運用からセキュリティ運用までを経験してきたセキュリティエンジニアです。\n\n[主要経歴]\n• ITCEN CTS — 2025.03~2026.02 — Nextrade取引所セキュリティ運用SM。Splunk ES + n8n + FortiManager APIで自動検知・対応体制構築。\n• Gaonnuri — 2024.03~2025.02 — Nextradeセキュリティインフラ構築。FortiGate HA + 5層分離 + Ansible Role標準化。FSC本認可審査通過。\n• Quantec — 2022.08~2024.03 — 金融セキュリティデータセンタ(FSDC)運用。金融監督院監査対応、DBクエリチューニング。\n• Jointree — 2021.09~2022.04 — 国民大学校次世代システム。NSX-Tマイクロセグメンテーション + Wazuh。\n• Metanet — 2019.12~2021.08 — 大規模コンタクトセンタ在宅勤務環境。Ansible/Python自動化。\n• MT Data — 2017.02~2018.10 — KAI閉鎖網IT支援/OA運用。\n\n[成長背景]\n2017年OAエンジニアとして始まり、閉鎖網で手動運用の限界を経験しました。2018.11から11ヶ月間RHCSA・LPIC-1・Linuxマスター2級でLinuxを学び直し、自動化・セキュリティ領域への成長経路を設定しました。コンタクトセンタ・教育・金融インフラを経て、直近では証券取引所のセキュリティ運用を自動化し、現在は次のセキュリティ・インフラの役割を探しています。\n\n[保有技術]\nSplunk ES、n8n、FortiGate/FortiManager、Ansible、Python、Terraform、Docker、NSX-T、Prometheus/Grafana/Loki、Cloudflare Workers、MCP/AIエージェント\n\nポートフォリオ: https://resume.jclee.me"
+      "about": "OA運用からセキュリティ運用までを経験してきたセキュリティエンジニアです。\n\n[主要経歴]\n• ITCEN CTS — 2025.03~2026.02 — Nextrade取引所セキュリティ運用SM。Splunk ES + n8n + FortiManager APIで自動検知・対応体制構築。\n• Gaonnuri — 2024.03~2025.02 — Nextradeセキュリティインフラ構築。ネットワーク分離・エンドポイントセキュリティ構築・運用 + Ansible Role標準化。FSC本認可審査通過。\n• Quantec — 2022.08~2024.03 — 金融セキュリティデータセンタ(FSDC)運用。金融監督院監査対応、DBクエリチューニング。\n• Jointree — 2021.09~2022.04 — 国民大学校次世代システム。NSX-Tマイクロセグメンテーション + Wazuh。\n• Metanet — 2019.12~2021.08 — 大規模コンタクトセンタ在宅勤務環境。Ansible/Python自動化。\n• MT Data — 2017.02~2018.10 — KAI閉鎖網IT支援/OA運用。\n\n[成長背景]\n2017年OAエンジニアとして始まり、閉鎖網で手動運用の限界を経験しました。2018.11から11ヶ月間RHCSA・LPIC-1・Linuxマスター2級でLinuxを学び直し、自動化・セキュリティ領域への成長経路を設定しました。コンタクトセンタ・教育・金融インフラを経て、直近では証券取引所のセキュリティ運用を自動化し、現在は次のセキュリティ・インフラの役割を探しています。\n\n[保有技術]\nSplunk ES、n8n、FortiGate/FortiManager、Ansible、Python、Terraform、Docker、NSX-T、Prometheus/Grafana/Loki、Cloudflare Workers、MCP/AIエージェント\n\nポートフォリオ: https://resume.jclee.me"
     }
   },
   "coverLetter": {
@@ -874,7 +874,7 @@
         "キャリアの出発点は、韓国航空宇宙産業(KAI)の閉鎖網IT運用室で、LinuxサーバのパッチスケジュールをExcelに手書きしていた現場でした。毎週同じ作業を繰り返しながら、セキュリティ運用の価値は事故が起きないことを願うことではなく、反復可能な手順と自動化でリスクを下げることにあると確信しました。その後、RHCSA・LPIC-1・Linuxマスター2級を連続取得してLinuxシステムの基礎を再構築し、その基盤を現場での運用経験につなげました。",
         "メタネットMプラットフォームでAnsibleとPythonを用いて、大規模コンタクトセンタのNACポリシー展開手順を自動化しました。ジョイントリーでは国民大学校の次世代情報システムにNSX-Tマイクロセグメンテーションを適用し、東西トラフィックの盲点を減らし、NACとDLP検知ポリシーを再整備しました。ツールは変わっても、手が繰り返しかかる作業は自動化の対象として見るという原則は変わりませんでした。",
         "クォンテック投資一任の金融セキュリティデータセンタ(FSDC)で金融監督院の定期監査に対応する中で、セキュリティ運用は設定を一度整えることではなく、監査や障害の場面で運用の根拠をデータで提示できることが重要だと学びました。DBアクセス制御クエリチューニングもPBプラットフォーPOC検証も、結局は運用状態をデータで説明し、変更の根拠を残す過程でした。",
-        "直前の経歴では、ガオンヌリで構築段階を担当し、ITCEN CTSで運用段階まで連続して担当したNextrade取引所セキュリティトラックに携わりました。FortiGate HAで5層ネットワーク分離を設計し、FSC本認可審査を通過し、Ansible Roleでセキュリティ機器設定を標準化し、Splunk ES検知ルール、n8n通知、FortiManager APIポリシー照会を連携させてセキュリティイベントの認知・分類・通知フローを標準化しました。",
+        "直前の経歴では、ガオンヌリで構築段階を担当し、ITCEN CTSで運用段階まで連続して担当したNextrade取引所セキュリティトラックに携わりました。ネットワーク分離・エンドポイントセキュリティを構築・運用し、FSC本認可審査を通過し、Ansible Roleでセキュリティ機器設定を標準化し、Splunk ES検知ルール、n8n通知、FortiManager APIポリシー照会を連携させてセキュリティイベントの認知・分類・通知フローを標準化しました。",
         "次のステップでは、自動化の対象をセキュリティ機器や運用スクリプトからAIエージェントとEdgeランタイムまで広げています。個人のホームラボでCloudflare Workers、MCP、Grafana、1PasswordをTerraformでIaC化して運用し、繰り返されるセキュリティ運用項目をAIエージェントが先に整理するパターンを実験しています。次のキャリアでも、ツールそのものより運用の問題が先であり、その問題を自動化可能な構造に変える役割を担いたいと考えています。"
       ],
       "closing": "「繰り返し作業の限界」という一つの問題意識が作った軌跡をもって、貴社のセキュリティインフラが次に解くべき問題にも同じやり方で取り組みます。"
@@ -885,7 +885,7 @@
       "headline": "보안 엔지니어 경력기술서",
       "paragraphs": [
         "(주)아이티센 CTS (2025.03 ~ 2026.02): 넥스트레이드 매매체결시스템 보안 운영에서 Splunk ES 탐지 룰 설계·운영, n8n + Slack/SMS 실시간 알림 파이프라인 구축, FortiManager API 기반 방화벽 정책 자동 조회 시스템 개발로 운영 자동화 및 인지·분류·알림 흐름 표준화.",
-        "(주)가온누리정보시스템 (2024.03 ~ 2025.02): 넥스트레이드 보안 인프라 구축에서 FortiGate HA 5계층 망분리 설계, FSC 본인가 심사 통과, Ansible Role로 방화벽 정책 표준화.",
+        "(주)가온누리정보시스템 (2024.03 ~ 2025.02): 넥스트레이드 보안 인프라 구축에서 망분리·엔드포인트 보안 구축·운영, FSC 본인가 심사 통과, Ansible Role로 방화벽 정책 표준화.",
         "(주)콴텍투자일임 (2022.08 ~ 2024.03): 금융보안데이터센터(FSDC) 인프라 운영 자동화, 금융감독원 감사 대응, DB 접근제어 쿼리 튜닝, PB 플랫폼 POC 런칭 지원.",
         "메타넷엠플랫폼 (2019.11 ~ 2022.07): 대규모 컨택센터 NAC 정책 배포 Ansible 자동화, NSX-T 마이크로세그멘테이션 적용, NAC 및 DLP 탐지 정책 재정비.",
         "한국항공우주산업(KAI) (2017.06 ~ 2018.10): 폐쇄망 Linux 서버 운영, 패치/방화벽/IDS 정책 수기 관리, RHCSA·LPIC-1·리눅스마스터 2급 취득."

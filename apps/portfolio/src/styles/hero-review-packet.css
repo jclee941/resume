@@ -1,0 +1,122 @@
+.section-hero {
+  padding: var(--space-10) 0 var(--space-12);
+}
+
+.hero-proof-list {
+  margin: 0;
+}
+
+.hiring-review-packet {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(180deg, rgb(var(--color-accent-rgb) / 0.08), transparent 64%),
+    var(--glass-bg);
+  box-shadow: var(--shadow-sm);
+}
+
+.hiring-review-packet__eyebrow {
+  margin: 0;
+  color: var(--color-accent-strong);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  letter-spacing: var(--tracking-wide);
+}
+
+.hiring-review-packet__list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+  margin: 0;
+}
+
+.hiring-review-packet__list > div {
+  min-width: 0;
+  padding: var(--space-3);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  background: rgb(var(--bg-primary-rgb) / 0.34);
+}
+
+.hiring-review-packet dt {
+  margin: 0 0 var(--space-1);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: var(--leading-snug);
+}
+
+.hiring-review-packet dd {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  line-height: var(--leading-relaxed);
+}
+
+.hero-cta {
+  margin-top: 0;
+}
+
+.hero-link:active,
+.link-subtle:active {
+  transform: translateY(0);
+}
+
+@media (min-width: 769px) {
+  .hero-content {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.75fr);
+    column-gap: var(--space-8);
+    max-width: 100%;
+    align-items: start;
+  }
+
+  .hero-title,
+  .hero-role,
+  .hero-availability,
+  .hero-positioning,
+  .hero-proof-list {
+    grid-column: 1;
+  }
+
+  .hiring-review-packet {
+    grid-column: 2;
+    grid-row: 1 / span 5;
+    align-self: stretch;
+  }
+
+  .hero-cta {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .section-hero {
+    padding: var(--space-8) 0 var(--space-12);
+  }
+
+  .hero-cta {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-2);
+  }
+
+  .hero-cta .link-subtle {
+    min-width: 0;
+    justify-content: center;
+    padding-inline: var(--space-3);
+    text-align: center;
+    white-space: normal;
+  }
+}
+
+@media (max-width: 640px) {
+  .hiring-review-packet {
+    padding: var(--space-4);
+  }
+}
