@@ -27,7 +27,7 @@ function bootstrapPortfolio() {
       navigator.serviceWorker
         .register('/sw.js')
         .then((registration) => {
-          console.log('✅ Service Worker registered:', registration.scope);
+          console.log('[ServiceWorker] registered:', registration.scope);
 
           // Check for updates periodically
           setInterval(
@@ -38,13 +38,13 @@ function bootstrapPortfolio() {
           ); // Check every hour
         })
         .catch((error) => {
-          console.log('❌ Service Worker registration failed:', error);
+          console.log('[ServiceWorker] registration failed:', error);
         });
     });
 
     // Handle service worker updates
     navigator.serviceWorker.addEventListener('controllerchange', () => {
-      console.log('🔄 Service Worker updated - page will reload');
+      console.log('[ServiceWorker] updated - page will reload');
       window.location.reload();
     });
   }

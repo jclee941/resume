@@ -176,6 +176,12 @@
   letter-spacing: 0.05em;
 }
 
+.phase-badge__icon {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+
 .phase-badge--운영 {
   background: rgba(121, 184, 138, 0.14);
   border-color: var(--color-success);
@@ -336,10 +342,16 @@
 }
 
 .details-achievements li::before {
-  content: '✓';
+  content: '';
   position: absolute;
   left: 0;
+  top: 0.25em;
+  width: 6px;
+  height: 10px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
   color: var(--color-accent);
+  transform: rotate(40deg);
 }
 
 /* ----------------------------------------

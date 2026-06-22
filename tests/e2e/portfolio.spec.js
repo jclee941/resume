@@ -8,6 +8,8 @@ const SELECTORS = {
   // Projects render server-side as <li.project-item.project-card> inside the
   // clean <ul.project-list>. Sections use scroll-reveal (opacity 0 until in view).
   PROJECT_CARD: '#projects .project-list .project-card',
+  DEEP_DIVE_GRID: '.project-cards-grid',
+  DEEP_DIVE_CARD: '.project-cards-grid .project-card',
   PROJECT_LINK_PRIMARY: '#projects .project-card a[href]',
 };
 
@@ -95,6 +97,24 @@ test.describe('Portfolio Homepage', () => {
       const tag = await cards.nth(i).evaluate((el) => el.tagName.toLowerCase());
       expect(tag).toBe('li');
     }
+  });
+
+  test('should render and open deep-dive project cards', async ({ page }) => {
+    const deepDiveGrid = page.locator(SELECTORS.DEEP_DIVE_GRID);
+    await deepDiveGrid.scrollIntoViewIfNeeded();
+    await expect(deepDiveGrid).toBeVisible();
+
+    const deepDiveCards = page.locator(SELECTORS.DEEP_DIVE_CARD);
+    await expect(deepDiveCards.first()).toBeVisible();
+    await expect(deepDiveGrid.locator('.portfolio-icon').first()).toBeVisible();
+    await expect(deepDiveGrid).not.toContainText(/[\u{1F300}-\u{1FAFF}]/u);
+    await deepDiveCards.first().click();
+
+    const dialog = page.getByRole('dialog');
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByRole('heading').first()).toBeVisible();
+    await expect(dialog.locator('.portfolio-icon').first()).toBeVisible();
+    await expect(dialog).not.toContainText(/[\u{1F300}-\u{1FAFF}]/u);
   });
 
   test('should have working scroll to sections', async ({ page }) => {
