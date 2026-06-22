@@ -11,205 +11,238 @@
 [![MCP Server](https://img.shields.io/badge/MCP-job--server-blueviolet)](apps/job-server)
 [![README Generator](https://img.shields.io/badge/README--gen-gpt--5.5-purple)](README.md)
 
-> **Bilingual documentation** / **이중 언어 문서**: This README is provided in English first, followed by a Korean (한국어) translation of each section. Every section header is duplicated in both languages. / 이 README는 모든 섹션을 영어와 한국어로 병기합니다.
+> **Bilingual documentation** / **이중 언어 문서**: This README is provided in English first, followed by a Korean (한국어) translation of each section. Every section header is duplicated in both languages.
+> 이 README는 모든 섹션을 영어와 한국어로 병기합니다. 각 섹션 제목은 양국어로 제공됩니다.
 
-> **Primary README generator model:** `gpt-5.5` (fallback: `minimax-m3` via [https://cliproxy.jclee.me/v1](https://cliproxy.jclee.me/v1)). / **README 생성 기본 모델:** `gpt-5.5` (대체: [https://cliproxy.jclee.me/v1](https://cliproxy.jclee.me/v1) 경유 `minimax-m3`).
+> **Primary README generator model:** `gpt-5.5` (fallback: `minimax-m3` via [https://cliproxy.jclee.me/v1](https://cliproxy.jclee.me/v1)).
+> **README 생성 기본 모델:** `gpt-5.5` (대체: [https://cliproxy.jclee.me/v1](https://cliproxy.jclee.me/v1) 경유 `minimax-m3`).
 
 ---
 
 ## Overview / 개요
 
-`resume` is a private resume portfolio monorepo that combines a Cloudflare Worker edge portfolio, structured resume/application assets, job-application tracking and automation, a dashboard Worker for operational workflows, and a Dockerized Node.js runtime that exposes a job-automation HTTP API. /
+`resume` is a private resume portfolio monorepo that combines a Cloudflare Worker edge portfolio, structured resume/application assets, job-application tracking and automation, a dashboard Worker for operational workflows, and a Dockerized Node.js runtime that exposes a job-automation HTTP API.
 
 `resume`는 Cloudflare Worker 기반 포트폴리오, 구조화된 이력서 및 지원 자료, 채용 지원 추적 및 자동화, 운영 워크플로우용 대시보드 Worker, 그리고 채용 자동화 HTTP API를 노출하는 Docker 기반 Node.js 런타임을 결합한 **개인 이력서 포트폴리오 모노레포**입니다.
 
 The repository is designed as a single operational workspace for:
 
-이 저장소는 다음 목적을 위한 단일 운영 워크스페이스로 설계되었습니다.
+이 저장소는 다음을 위한 단일 운영 워크스페이스로 설계되었습니다.
 
-- **Portfolio and resume publishing** at the Cloudflare edge (Worker, generated from the Single Source of Truth). / **포트폴리오 및 이력서 게시** — Cloudflare 엣지에서 Single Source of Truth (SSoT)로부터 생성.
-- **Job-application tracking and automation** (Wanted, JobKorea, Greenhouse, LinkedIn, Coupang Playwright crawler). / **채용 지원 추적 및 자동화** — Wanted, 잡코리아, Greenhouse, LinkedIn, Coupang Playwright 크롤러.
-- **Application-specific cover letters and resumes** for in-flight opportunities, versioned in `applications/`. / **지원 회사별 자기소개서 및 이력서** — `applications/` 하위에 버전 관리.
-- **Dashboard APIs** for applications, auth, health, stats, workflows, and automation. / **대시보드 API** — 지원 현황, 인증, 헬스체크, 통계, 워크플로우, 자동화.
-- **CI/CD, security scanning, PR review automation, release automation, and maintenance workflows** (21 GitHub Actions workflows). / **CI/CD, 보안 스캔, PR 리뷰 자동화, 릴리스 자동화, 유지보수 자동화** — 21개의 GitHub Actions 워크플로우.
-- **Containerized runtime** for the job automation server, exposed on port `3000` with a `/health` endpoint. / **컨테이너 기반 런타임** — 포트 `3000`에서 `/health` 엔드포인트 제공.
-
-Package version: `1.40.11` (see `package.json`).
+- **Portfolio and resume publishing** at the Cloudflare edge.
+  Cloudflare Edge에서의 **포트폴리오 및 이력서 게시**.
+- **Job-application automation** for Wanted / JobKorea (ingestion, sync, MCP tools).
+  원티드/잡코리아 대상 **채용 지원 자동화** (수집, 동기화, MCP 도구).
+- **Single source of truth (SSoT)** for resume data, types, schemas, and contracts.
+  이력서 데이터, 타입, 스키마, 계약의 **단일 진실 공급원 (SSoT)**.
+- **Operational dashboards** powered by Cloudflare Workflows.
+  Cloudflare Workflows 기반의 **운영 대시보드**.
+- **Self-hosted observability** via an ELK stack on a homelab host.
+  홈랩 호스트의 ELK 스택을 통한 **자체 호스팅 옵저버빌리티**.
 
 ---
 
 ## Features / 주요 기능
 
-| Area / 영역 | English | 한국어 |
-| --- | --- | --- |
-| Edge portfolio / 엣지 포트폴리오 | Cloudflare Worker surface generated from `packages/data` SSoT; Wrangler-driven build. | `packages/data` SSoT에서 생성된 Cloudflare Worker; Wrangler 기반 빌드. |
-| Job dashboard / 채용 대시보드 | Worker application at `apps/job-dashboard` with handlers, middleware, and Cloudflare workflows. | `apps/job-dashboard`의 Worker 앱, 핸들러, 미들웨어, Cloudflare 워크플로우. |
-| Job automation runtime / 채용 자동화 런타임 | Node.js service at `apps/job-server` packaged via multi-stage `Dockerfile` and `docker-compose.yml`. | `apps/job-server`의 Node.js 서비스, 멀티 스테이지 `Dockerfile` 및 `docker-compose.yml`로 패키징. |
-| SSoT data layer / SSoT 데이터 계층 | `packages/data` holds canonical JSON; `packages/types` defines JSDoc/TS types; `packages/schemas` provides Zod validation. | `packages/data`가 정식 JSON 보유; `packages/types`가 JSDoc/TS 타입; `packages/schemas`가 Zod 검증 제공. |
-| Cross-app contracts / 앱 간 계약 | `packages/contracts` exposes OpenAPI spec and Worker `Env` interface. | `packages/contracts`가 OpenAPI 스펙과 Worker `Env` 인터페이스 노출. |
-| Shared utilities / 공용 유틸 | `packages/shared` provides errors, logger, retry, crypto, rate-limit, auth, browser, clients. | `packages/shared`가 errors, logger, retry, crypto, rate-limit, auth, browser, clients 제공. |
-| CLI / CLI | `packages/cli` is the resume operator CLI. | `packages/cli`는 이력서 운영 CLI. |
-| Environment / 환경 변수 | `packages/env` validates and types secrets. | `packages/env`가 시크릿 검증 및 타입 부여. |
-| PR review automation / PR 리뷰 자동화 | [qodo-ai/pr-agent](https://github.com/qodo-ai/pr-agent) and the local bot at [https://bot.jclee.me](https://bot.jclee.me). | [qodo-ai/pr-agent](https://github.com/qodo-ai/pr-agent) 및 [https://bot.jclee.me](https://bot.jclee.me) 로컬 봇. |
-| Container health / 컨테이너 헬스 | Built-in `HEALTHCHECK` against `/health` on port `3000`. | 포트 `3000`의 `/health` 대상 내장 `HEALTHCHECK`. |
+- **Edge portfolio** — `apps/portfolio` is a Cloudflare Worker that serves the public resume and tailors content from `packages/data` (SSoT).
+  **Edge 포트폴리오** — `apps/portfolio`는 Cloudflare Worker로 동작하며, `packages/data` (SSoT)에서 콘텐츠를 가져와 공개 이력서를 제공합니다.
+- **Job automation runtime** — `apps/job-server` runs as a Docker container (`Dockerfile`, `docker-compose.yml`) and exposes MCP-compatible HTTP endpoints on port `3000`.
+  **채용 자동화 런타임** — `apps/job-server`는 Docker 컨테이너(`Dockerfile`, `docker-compose.yml`)로 실행되며, `3000` 포트에서 MCP 호환 HTTP 엔드포인트를 노출합니다.
+- **Dashboard Worker** — `apps/job-dashboard` ships handlers, middleware (CORS/CSRF/rate-limit), and Cloudflare Workflows for operational tooling.
+  **대시보드 Worker** — `apps/job-dashboard`는 핸들러, 미들웨어(CORS/CSRF/rate-limit) 및 운영 도구용 Cloudflare Workflows를 제공합니다.
+- **SSoT data + contracts** — `packages/data` (master resume JSON), `packages/types` (JSDoc/TS), `packages/schemas` (Zod), `packages/contracts` (OpenAPI + Worker Env).
+  **SSoT 데이터 및 계약** — `packages/data` (마스터 이력서 JSON), `packages/types` (JSDoc/TS), `packages/schemas` (Zod), `packages/contracts` (OpenAPI + Worker Env).
+- **Cross-package utilities** — `packages/shared` exposes `errors`, `logger`, `retry`, `crypto`, `rate-limit`, `auth`, `browser`, and `clients`.
+  **공유 유틸리티** — `packages/shared`는 `errors`, `logger`, `retry`, `crypto`, `rate-limit`, `auth`, `browser`, `clients`를 제공합니다.
+- **GitHub-native CI/CD** — 21 numbered workflows in `.github/workflows/` cover CI, PR review, auto-merge, release, and operational maintenance.
+  **GitHub 네이티브 CI/CD** — `.github/workflows/`의 21개 번호 매겨진 워크플로우로 CI, PR 리뷰, 자동 머지, 릴리스, 운영 유지보수를 처리합니다.
+- **PR-Agent integration** — [qodo-ai/pr-agent](https://github.com/qodo-ai/pr-agent) drives the `10_pr-review.yml` and `11_security-pr-review.yml` workflows.
+  **PR-Agent 통합** — [qodo-ai/pr-agent](https://github.com/qodo-ai/pr-agent)가 `10_pr-review.yml` 및 `11_security-pr-review.yml` 워크플로우를 구동합니다.
+- **Self-hosted LLM gateway** — Internal requests route through `https://cliproxy.jclee.me/v1` to a CLIProxyAPI backend on a homelab host.
+  **자체 호스팅 LLM 게이트웨이** — 내부 요청은 `https://cliproxy.jclee.me/v1`을 통해 홈랩 호스트의 CLIProxyAPI 백엔드로 라우팅됩니다.
+- **TA profile generation** — `ta/` contains Python tooling to generate, inspect, and verify teaching-assistant profile PowerPoint artifacts.
+  **TA 프로필 생성** — `ta/`는 파이썬 도구로 TA(Teaching Assistant) 프로필 PowerPoint 산출물을 생성, 검사 및 검증합니다.
 
 ---
 
 ## Architecture / 아키텍처
 
-The repository follows a strict **SSoT → Build → Edge / Runtime → Observability** flow. The build pipeline is driven from `packages/data` (the canonical JSON) and feeds the Cloudflare Worker surfaces, the dashboard, the PDF/PPTX artifacts, and the Docker image. /
-
-저장소는 **SSoT → Build → Edge / Runtime → Observability** 흐름을 엄격히 따릅니다. 빌드 파이프라인은 `packages/data`(정식 JSON)에서 시작되어 Cloudflare Worker, 대시보드, PDF/PPTX 산출물, Docker 이미지를 공급합니다.
-
 ```mermaid
 flowchart TB
-    subgraph SSoT["SSoT - Single Source of Truth"]
-        A1["packages/data<br/>resume_data.json"]
-        A2["packages/types<br/>JSDoc / TS types"]
-        A3["packages/schemas<br/>Zod validation"]
-        A4["packages/contracts<br/>OpenAPI + Env"]
+    subgraph MONOREPO["Monorepo (this repo)"]
+        direction TB
+        PKGS["packages/<br/>data, types, schemas, shared, env, contracts, cli"]
+        APPS["apps/<br/>portfolio, job-dashboard, job-server"]
+        APPS --> PKGS
     end
 
-    subgraph Build["Build and Sync"]
-        B1["npm run sync:data"]
-        B2["npm run sync:pdf (Go)"]
-        B3["npm run sync:pptx (Python)"]
-        B4["wrangler build"]
-        B5["Docker multi-stage build"]
+    subgraph CI[".github/workflows/ (21 files)"]
+        direction TB
+        WCI[ci.yml]
+        WPR["10_pr-review.yml<br/>11_security-pr-review.yml"]
+        WAM["13_pr-auto-merge.yml<br/>12_dependabot-auto-merge.yml"]
+        WREL["release.yml<br/>24_release-notes.yml<br/>25_release-publish.yml"]
+        WPV[post-deploy-verify.yml]
+        WOT["01, 02, 14, 15, 19, 29, 37, 60, 91<br/>+ auto-sync-data, provision-queues, delete-standalone-job-worker"]
     end
 
-    subgraph Edge["Edge - Cloudflare Workers"]
-        C1["apps/portfolio<br/>Public site"]
-        C2["apps/job-dashboard<br/>Dashboard + workflows"]
+    subgraph EDGE["Cloudflare Edge"]
+        CW1["apps/portfolio<br/>Public resume Worker"]
+        CW2["apps/job-dashboard<br/>Dashboard + Workflows"]
     end
 
-    subgraph Runtime["Runtime - Job Automation"]
-        D1["apps/job-server<br/>MCP + crawlers"]
-        D2["Docker container<br/>:3000 /health"]
+    subgraph DR["Docker runtime"]
+        JS["apps/job-server :3000<br/>MCP + job automation"]
     end
 
-    subgraph External["External - Proxy and Observability"]
-        E1["https://cliproxy.jclee.me/v1<br/>LLM proxy (CLIProxyAPI)"]
-        E2["&lt;homelab-host&gt;<br/>homelab ELK / n8n"]
+    subgraph EXT["External systems"]
+        EP[cliproxy.jclee.me]
+        HL["&lt;homelab-host&gt; :8317<br/>CLIProxyAPI backend"]
+        JB["Wanted / JobKorea<br/>Job platforms"]
+        OBS["&lt;homelab-elk&gt;<br/>ELK observability"]
     end
 
-    A1 --> B1
-    A1 --> B2
-    A1 --> B3
-    A1 --> C1
-    A1 --> C2
-    A1 --> D1
-    A2 --> C1
-    A2 --> C2
-    A2 --> D1
-    A3 --> C1
-    A3 --> C2
-    A3 --> D1
-    A4 --> C1
-    A4 --> C2
-    B1 --> B4
-    B4 --> C1
-    B4 --> C2
-    D1 --> B5
-    B5 --> D2
-    C2 --> D1
-    C1 --> E1
-    C2 --> E1
-    D1 --> E1
-    D1 --> E2
+    MONOREPO --> CI
+    CI --> EDGE
+    CI --> DR
+    WPV --> EXT
+
+    APPS --> CW1
+    APPS --> CW2
+    APPS --> JS
+
+    JS --> EP
+    EP --> HL
+    JS --> JB
+    JS --> OBS
+    CW2 --> JS
 ```
 
-Key architectural notes / 아키텍처 핵심:
-
-- **SSoT is `packages/data`**, not the Worker bundle. The Worker source under `apps/portfolio/` is generated; never edit generated files. / **SSoT는 `packages/data`이며 Worker 번들이 아닙니다.** `apps/portfolio/`의 Worker 소스는 생성되므로 수정하지 마세요.
-- **LLM calls are routed** through the public proxy at [https://cliproxy.jclee.me/v1](https://cliproxy.jclee.me/v1); no raw provider endpoints are used in the application code. / **LLM 호출은** [https://cliproxy.jclee.me/v1](https://cliproxy.jclee.me/v1) **퍼블릭 프록시를 경유**하며, 애플리케이션 코드에는 원본 provider 엔드포인트를 사용하지 않습니다.
-- **The job-server is the only long-lived service** that runs as a container; both Workers are serverless at the edge. / **job-server는 컨테이너로 실행되는 유일한 상시 서비스**이며, 두 Worker는 엣지에서 서버리스로 동작합니다.
-- **Observability targets** are homelab-hosted (placeholder `<homelab-host>`); concrete hostnames/ports are intentionally not hardcoded. / **관측 대상은 홈랩에서 호스팅**되며, 구체 호스트명/포트는 의도적으로 하드코딩하지 않습니다.
+> Notes / 참고:
+> - `<homelab-host>` and `<homelab-elk>` are placeholders for self-hosted infrastructure and are **not** real hostnames or IPs. Resolve them from your secrets manager (1Password) at deploy time.
+>   `<homelab-host>` 및 `<homelab-elk>`는 자체 호스팅 인프라를 가리키는 **자리표시자**이며 실제 호스트명이나 IP가 아닙니다. 배포 시 시크릿 매니저(1Password)에서 해석하세요.
+> - The public LLM gateway endpoint is `https://cliproxy.jclee.me/v1`; everything behind it (the CLIProxyAPI daemon) lives on the homelab host.
+>   공개 LLM 게이트웨이 엔드포인트는 `https://cliproxy.jclee.me/v1`이며, 그 뒤의 CLIProxyAPI 데몬은 홈랩 호스트에 위치합니다.
 
 ---
 
 ## Repository Structure / 저장소 구조
 
+The layout below reflects the canonical structure documented in `AGENTS.md` and the actual on-disk top-level entries.
+아래 구조는 `AGENTS.md`에 명시된 표준 구조와 실제 최상위 디렉터리 구성을 반영합니다.
+
 ```text
 .
-├── AGENTS.md                       # Operational knowledge base (project SSoT for agents)
-├── CHANGELOG.md                    # Release-by-release changelog
-├── CONTRIBUTING.md                 # Contribution conventions
-├── Dockerfile                      # Multi-stage build for the job-server runtime
-├── LICENSE                         # MIT license
-├── OWNERS                          # Code ownership map
-├── README.md                       # This file
-├── docker-compose.yml              # Local container orchestration
-├── eslint.config.cjs               # Linting rules
-├── jest.config.cjs                 # Jest configuration
-├── lychee.toml                     # Link checker configuration
-├── package.json                    # Workspace root + operator scripts
-├── package-lock.json               # Locked dependency graph
-├── playwright.config.js            # E2E test configuration
-├── redocly.yaml                    # OpenAPI linting
-├── tsconfig.base.json              # Shared TypeScript config
-├── tsconfig.json                   # TypeScript config
-├── wrangler.jsonc                  # Cloudflare Workers config
-├── applications/                   # In-flight job applications (cover letters, resumes)
+├── AGENTS.md                    # Canonical project knowledge base
+├── CHANGELOG.md                 # Versioned change log
+├── CONTRIBUTING.md              # Contribution guide
+├── Dockerfile                   # Multi-stage build for job-server
+├── LICENSE                      # MIT
+├── OWNERS                       # Code ownership
+├── README.md                    # This file
+├── docker-compose.yml           # Local mcp-server stack
+├── eslint.config.cjs            # Root ESLint config
+├── jest.config.cjs              # Root Jest config
+├── lychee.toml                  # Link checker config
+├── package.json                 # Workspace root + operator scripts
+├── package-lock.json
+├── playwright.config.js         # Playwright E2E config
+├── redocly.yaml                 # OpenAPI lint config
+├── tsconfig.base.json           # Shared TS config
+├── tsconfig.json
+├── wrangler.jsonc               # Cloudflare Worker config
+│
+├── applications/                # Per-company job application materials
 │   ├── airpremia-security-2026/
 │   ├── cloudflare-one-se-2026/
 │   ├── coupang-fintech-sre-2026/
 │   ├── gitlab-apac-security-2026/
 │   └── infrastructure-architecture-2026/
-├── apps/                           # Deployable applications
-│   ├── portfolio/                  # (declared workspace) Edge Worker
-│   ├── job-server/                 # (declared workspace) MCP / job automation runtime
-│   └── job-dashboard/              # (declared workspace) Dashboard Worker
-│       ├── API_REFERENCE.md
-│       ├── DEPLOYMENT_GUIDE.md
-│       ├── DEVELOPMENT_GUIDE.md
-│       ├── DIAGRAMS.md
-│       ├── OWNERS
-│       ├── README.md
-│       ├── SECRETS.md
-│       ├── migrate-json-to-d1.cjs
-│       ├── migration-data.sql
-│       ├── package.json
-│       ├── schema.sql
-│       ├── tsconfig.json
-│       ├── migrations/
-│       │   └── 0002_add_approval_metadata.sql
-│       └── src/
-│           ├── index.js
-│           ├── queue-consumer.js
-│           ├── router.js
-│           ├── middleware/         # cors, csrf, rate-limit
-│           ├── routes/             # admin, applications, auth, automation, health, stats, workflows
-│           └── handlers/           # applications, auth, auto-apply-webhook-handler
-├── packages/                       # (declared workspaces)
-│   ├── cli/                        # Resume operator CLI
-│   ├── contracts/                  # OpenAPI spec + Worker Env interface
-│   ├── data/                       # Canonical resume JSON (SSoT)
-│   ├── env/                        # Environment validation
-│   ├── schemas/                    # Zod validation
-│   ├── shared/                     # Cross-package utilities
-│   └── types/                      # JSDoc/TS type SSoT
-├── tools/                          # Build, deploy, verification scripts (Go + JS)
-├── tests/                          # Jest, integration, Playwright E2E
-├── infrastructure/                 # Cloudflare, monitoring, n8n, DB config
-├── docs/                           # Guides, ADRs, architecture, conventions, security
-├── ta/                             # TA profile generation (Python/PPTX)
+│
+├── apps/                        # Deployable apps
+│   ├── portfolio/               # Public Cloudflare Worker resume site
+│   ├── job-server/              # MCP / job automation runtime (Docker)
+│   └── job-dashboard/           # Dashboard Worker + Cloudflare Workflows
+│
+├── packages/                    # Shared libraries
+│   ├── cli/                     # resume CLI
+│   ├── contracts/               # OpenAPI spec + Worker Env interface
+│   ├── data/                    # SSoT resume JSON + JSON schema
+│   ├── env/                     # Type-safe env validation
+│   ├── schemas/                 # Runtime Zod validation
+│   ├── shared/                  # Cross-package utils (errors, logger, retry, crypto, ...)
+│   └── types/                   # Canonical JSDoc/TS type definitions
+│
+├── ta/                          # TA profile generation (Python + PPTX)
 │   ├── improve_visual.py
 │   ├── inspect.py
 │   ├── verify.py
-│   ├── 2.pptx
-│   ├── lee_jaecheol_profile_ta.pptx
-│   ├── lee_jaecheol_ta.pptx
-│   ├── lee_jaecheol_ta_profile.pptx
-│   ├── ta.pptx
-│   └── output/                     # Generated TA artifacts + verify reports
-├── supabase/                       # Supabase edge functions (Deno runtime)
-├── third_party/                    # Vendored external dependencies
-└── .github/                        # CI, release, maintenance control plane
-    └── workflows/                  # 21 GitHub Actions workflows
+│   └── output/                  # Generated artifacts
+│
+├── tools/                       # Build, deploy, verification scripts
+├── tests/                       # unit/, integration/, e2e/
+├── infrastructure/              # Cloudflare, monitoring, n8n, DB config
+├── docs/                        # Guides, ADRs, architecture, conventions
+├── supabase/                    # Supabase edge functions (Deno runtime)
+├── third_party/                 # Vendored external deps (npm-managed)
+└── .github/                     # CI / release / maintenance control plane
+    └── workflows/               # 21 workflow files (see Automation)
 ```
 
-> The CI checkout path used by some workflows (e.g. `actions/checkout`) is transient and not a real directory in the source tree. / 일부 워크플로우의 CI 체크아웃 경로(예: `actions/checkout`)는 일시적이며 소스 트리의 실제 디렉터리가 아닙니다.
+---
+
+## Applications / 지원 자료 (applications/)
+
+Each subfolder under `applications/` is a self-contained, per-company job application package: cover letter, tailored resume, and (where applicable) an application guide.
+`applications/`의 각 하위 폴더는 회사별 **채용 지원 패키지**로, 자기소개서, 맞춤 이력서, 그리고 (해당되는 경우) 지원 가이드를 포함합니다.
+
+| Folder / 폴더 | Company / 회사 | Role / 직무 | Key files / 주요 파일 |
+| --- | --- | --- | --- |
+| `airpremia-security-2026/` | Air Premia | Security (2026) | `cover_letter.md`, `application-guide.md`, screenshot |
+| `cloudflare-one-se-2026/` | Cloudflare | Solutions Engineer, Cloudflare One (2026) | `cover_letter.md`, `resume-cloudflare-one-se.html`, `greenhouse-application-guide.md`, `interview-qa-10.md`, `linkedin-profile-optimization.md`, `preview.png` |
+| `coupang-fintech-sre-2026/` | Coupang Pay | Fintech SRE (2026) | `cover_letter.md`, `resume-coupang-fintech-sre.html`, PDF resume |
+| `gitlab-apac-security-2026/` | GitLab | APAC InfraSec (2026) | `cover_letter.md`, `resume-gitlab-apac-security.html`, PDF resume |
+| `infrastructure-architecture-2026/` | (Generic) | Infrastructure Architecture (2026) | `homelab-infrastructure-architecture.md` |
+
+---
+
+## Apps / 앱 (apps/)
+
+| App / 앱 | Runtime / 런타임 | Purpose / 목적 | Key paths / 주요 경로 |
+| --- | --- | --- | --- |
+| `apps/portfolio` | Cloudflare Worker (`wrangler.jsonc`) | Public resume site, served from the edge. The public Worker is generated from a source/build pipeline; edit the source, not the emitted `worker.js`. | `worker.js` (generated), `src/` |
+| `apps/job-server` | Node.js 22 Docker image (`Dockerfile`) | MCP-compatible job-automation HTTP API. Exposes port `3000`, persists data under `apps/job-server/.data` (Docker volume `job_automation_data`). | `src/server/`, `src/sync/`, `.data/` |
+| `apps/job-dashboard` | Cloudflare Worker + Workflows | Operational dashboard. Includes CORS / CSRF / rate-limit middleware, queue consumer, automation / workflows / stats / health routes, and a JSON-to-D1 migrator. | `src/index.js`, `src/router.js`, `src/middleware/`, `src/routes/`, `src/handlers/`, `migrations/`, `schema.sql` |
+
+---
+
+## Packages / 패키지 (packages/)
+
+| Package / 패키지 | Purpose / 목적 | Notable exports / 주요 export |
+| --- | --- | --- |
+| `packages/data` | Single source of truth for resume content. | `packages/data/resumes/master/resume_data.json`, JSON schema |
+| `packages/types` | Canonical JSDoc/TS type definitions (zero runtime deps). | `Application`, `Resume`, `WantedJob`, `WorkerEnv`, ... |
+| `packages/schemas` | Runtime Zod validation; types inferred via `z.infer<>`. | Resume, auth, API payload schemas |
+| `packages/contracts` | API contracts. | `openapi.yaml`, `WorkerEnv` interface re-export |
+| `packages/shared` | Cross-package utilities. | `errors`, `logger`, `retry`, `crypto`, `rate-limit`, `auth`, `browser`, `clients` |
+| `packages/env` | Type-safe environment validation. | Env loaders, secret type guards |
+| `packages/cli` | Resume-domain CLI. | Used by `npm run sync:*` and `op:*` scripts |
+
+---
+
+## TA Profile Generation / TA 프로필 생성
+
+The `ta/` folder hosts a small Python toolchain for producing teaching-assistant (TA) profile PowerPoint artifacts. It is intentionally isolated from the Node.js monorepo toolchain.
+`ta/` 폴더는 TA(Teaching Assistant) 프로필 PowerPoint 산출물을 생성하기 위한 파이썬 도구 체인입니다. Node.js 모노레포 도구 체인과 의도적으로 분리되어 있습니다.
+
+- `improve_visual.py` — visual improvements over the base PPTX.
+  `improve_visual.py` — 기본 PPTX에 시각적 개선을 적용합니다.
+- `inspect.py` — introspection helper for PPTX contents.
+  `inspect.py` — PPTX 내용 검사용 헬퍼입니다.
+- `verify.py` — verification pass; writes a timestamped report to `ta/output/`.
+  `verify.py` — 검증 단계로, 타임스탬프가 찍힌 리포트를 `ta/output/`에 기록합니다.
+- `ta/output/` — generated artifacts (`.pptx`, `verify_report_*.txt`).
+  `ta/output/` — 생성된 산출물 (`.pptx`, `verify_report_*.txt`).
 
 ---
 
@@ -217,267 +250,120 @@ Key architectural notes / 아키텍처 핵심:
 
 ### GitHub Actions Workflows / GitHub Actions 워크플로우
 
-The repository carries **21 GitHub Actions workflows** under `.github/workflows/`. Names retain their on-disk numeric prefix; the prefix encodes a functional group (issue/branch, PR, security, release, post-deploy, etc.). /
+All 21 workflow files live in `.github/workflows/`. Filenames retain their numeric prefix; the descriptions below are inferred from each file's name and standard usage patterns.
+21개 워크플로우 파일은 모두 `.github/workflows/`에 있습니다. 파일명은 숫자 접두사를 그대로 유지하며, 아래 설명은 파일명과 일반적인 사용 패턴에서 추론한 것입니다.
 
-저장소에는 **21개의 GitHub Actions 워크플로우**가 `.github/workflows/`에 있습니다. 이름은 디스크 상의 숫자 접두사를 그대로 유지하며, 접두사는 기능 그룹(issue/branch, PR, security, release, post-deploy 등)을 의미합니다.
-
-| # | Workflow file / 워크플로우 파일 | Group / 그룹 | Purpose / 목적 |
-| --- | --- | --- | --- |
-| 01 | `01_branch-to-pr.yml` | Issue/branch | Creates a PR from a long-lived branch. / 장기 브랜치에서 PR 생성. |
-| 02 | `02_issue-to-branch.yml` | Issue/branch | Branches a tracked issue into a working branch. / 이슈를 작업 브랜치로 분기. |
-| 10 | `10_pr-review.yml` | PR | Standard PR review automation (PR-Agent). / 표준 PR 리뷰 자동화 (PR-Agent). |
-| 11 | `11_security-pr-review.yml` | PR | Security-focused PR review pass. / 보안 중심 PR 리뷰. |
-| 12 | `12_dependabot-auto-merge.yml` | PR | Auto-merges vetted Dependabot PRs. / 검증된 Dependabot PR 자동 병합. |
-| 13 | `13_pr-auto-merge.yml` | PR | Auto-merge for PRs that pass all gates. / 모든 게이트 통과 PR 자동 병합. |
-| 14 | `14_bot-auto-fix.yml` | PR | Local bot ([https://bot.jclee.me](https://bot.jclee.me)) applies automated fixes. / 로컬 봇이 자동 수정 적용. |
-| 15 | `15_merged-pr-cleanup.yml` | PR | Cleans up branches and stale refs after merge. / 병합 후 브랜치/참조 정리. |
-| 19 | `19_issue-backfill.yml` | Issue/branch | Backfills historical issue metadata. / 과거 이슈 메타데이터 백필. |
-| 24 | `24_release-notes.yml` | Release | Generates release notes from merged PRs. / 병합된 PR에서 릴리스 노트 생성. |
-| 25 | `25_release-publish.yml` | Release | Publishes the release (tag + artifacts). / 릴리스 게시 (태그 + 아티팩트). |
-| 29 | `29_downstream-health-check.yml` | Post-deploy | Verifies downstream services after deploy. / 배포 후 다운스트림 서비스 검증. |
-| 37 | `37_ci-failure-issues.yml` | CI | Opens issues on CI failures. / CI 실패 시 이슈 개설. |
-| 60 | `60_ci-auto-heal.yml` | CI | Attempts to auto-heal recurring CI failures. / 반복 CI 실패 자동 복구 시도. |
-| 91 | `91_issue-classification.yml` | Issue/branch | Classifies and labels new issues. / 신규 이슈 분류/라벨링. |
-| — | `auto-sync-data.yml` | Sync | Periodic SSoT data sync. / 주기적 SSoT 데이터 동기화. |
-| — | `ci.yml` | CI | Primary CI pipeline. / 기본 CI 파이프라인. |
-| — | `delete-standalone-job-worker.yml` | Operations | Tears down a standalone job worker. / 단독 잡 워커 제거. |
-| — | `post-deploy-verify.yml` | Post-deploy | Post-deploy smoke verification. / 배포 후 스모크 검증. |
-| — | `provision-queues.yml` | Operations | Provisions Cloudflare Queues. / Cloudflare Queues 프로비저닝. |
-| — | `release.yml` | Release | Release orchestration. / 릴리스 오케스트레이션. |
-
-### Operator Tooling / 운영 도구
-
-The operator surface is exposed through `package.json` scripts. These are the entry points used both locally and from CI. / 운영 진입점은 `package.json` 스크립트로 노출됩니다. 로컬과 CI 모두에서 사용됩니다.
-
-| Script / 스크립트 | Purpose / 목적 |
-| --- | --- |
-| `npm run sync:data` | Sync SSoT resume data into downstream artifacts (JSON). / SSoT 이력서 데이터를 다운스트림(JSON) 아티팩트로 동기화. |
-| `npm run sync:pdf` | Generate the master PDF (Go-based generator). / 마스터 PDF 생성 (Go 기반). |
-| `npm run sync:pptx` | Generate the Shinhan PPTX deck (Python). / 신한 PPTX 자료 생성 (Python). |
-| `npm run sync:all` | Run `sync:data` → `sync:pdf` → `sync:pptx`. / `sync:data` → `sync:pdf` → `sync:pptx` 순차 실행. |
-| `npm run automate:ssot` | End-to-end SSoT automation: sync + build + typecheck + tests. / SSoT 풀 자동화: 동기화 + 빌드 + 타입체크 + 테스트. |
-| `npm run automate:full` | Full pipeline: sync + lint + typecheck + tests. / 전체 파이프라인: 동기화 + 린트 + 타입체크 + 테스트. |
-| `npm run sync:proposals` | Apply JSON proposals to the resume data SSoT. / JSON 제안서를 이력서 SSoT에 적용. |
-| `npm run enrich:github` | Enrich profile data from GitHub. / GitHub 프로필 데이터 보강. |
-| `npm run enrich:skills` | Enrich skill taxonomy. / 스킬 분류 보강. |
-| `npm run enrich:ai` | AI-assisted enrichment of SSoT content. / SSoT 콘텐츠 AI 보강. |
-| `npm run enrich:all` | Run all enrichments in order. / 모든 보강 작업 순차 실행. |
-| `npm run op:run` | Run the 1Password integration. / 1Password 통합 실행. |
-| `npm run op:native:run` | Run the native 1Password runner. / 네이티브 1Password 러너 실행. |
-| `npm run op:seed:resume` | Seed resume-related 1Password items. / 이력서 관련 1Password 항목 시드. |
-| `npm run op:seed:sessions` | Seed session files. / 세션 파일 시드. |
-| `npm run op:restore:sessions` | Restore sessions from 1Password. / 1Password에서 세션 복원. |
-| `npm run strip-exif` | Strip EXIF metadata from portfolio images (uses `exiftool`). / 포트폴리오 이미지에서 EXIF 메타데이터 제거 (`exiftool` 사용). |
-
-> The Go-based automation tools in `tools/scripts/` are intentionally not enumerated here; they are wired up through the operator scripts above. / `tools/scripts/`의 Go 자동화 도구는 위의 운영 스크립트를 통해 연결되므로 여기서는 의도적으로 나열하지 않습니다.
-
----
-
-## Applications in Progress / 진행 중인 지원
-
-Job-specific deliverables are versioned under `applications/`. Each directory contains the tailored resume, cover letter, and (where relevant) screenshots or HTML previews. /
-
-회사별 지원 자료는 `applications/` 하위에서 버전 관리됩니다. 각 디렉터리에는 맞춤형 이력서, 자기소개서, 그리고 (해당되는 경우) 스크린샷/HTML 미리보기가 포함됩니다.
-
-| Directory / 디렉터리 | Track / 트랙 | Key assets / 주요 자료 |
+| File / 파일 | Category / 분류 | Purpose / 목적 |
 | --- | --- | --- |
-| `applications/airpremia-security-2026/` | Air Premia — Security | `cover_letter.md`, `application-guide.md`, signup-gate screenshot. / 자기소개서, 지원 가이드, 가입 게이트 스크린샷. |
-| `applications/cloudflare-one-se-2026/` | Cloudflare — One SE | `cover_letter.md`, `greenhouse-application-guide.md`, `linkedin-profile-optimization.md`, `interview-qa-10.md`, HTML resume, PDF, `preview.png`. / 자기소개서, 지원 가이드, LinkedIn 프로필 최적화, 면접 Q&A 10선, HTML 이력서, PDF, 미리보기. |
-| `applications/coupang-fintech-sre-2026/` | Coupang Pay — Fintech SRE | `cover_letter.md`, `resume-coupang-fintech-sre.html`, PDF. / 자기소개서, HTML 이력서, PDF. |
-| `applications/gitlab-apac-security-2026/` | GitLab — APAC InfraSec | `cover_letter.md`, `resume-gitlab-apac-security.html`, PDF. / 자기소개서, HTML 이력서, PDF. |
-| `applications/infrastructure-architecture-2026/` | Homelab infra-architecture | `homelab-infrastructure-architecture.md`. / 홈랩 인프라 아키텍처 문서. |
+| `01_branch-to-pr.yml` | Branch/PR lifecycle / 브랜치·PR | Open a PR from a feature branch. / 기능 브랜치에서 PR을 엽니다. |
+| `02_issue-to-branch.yml` | Branch/PR lifecycle / 브랜치·PR | Create a feature branch from an issue. / 이슈에서 기능 브랜치를 생성합니다. |
+| `10_pr-review.yml` | PR review / PR 리뷰 | Automated PR review via [qodo-ai/pr-agent](https://github.com/qodo-ai/pr-agent). / [qodo-ai/pr-agent](https://github.com/qodo-ai/pr-agent) 기반 자동 PR 리뷰. |
+| `11_security-pr-review.yml` | PR review / PR 리뷰 | Security-focused PR review pass. / 보안 중심 PR 리뷰 패스. |
+| `12_dependabot-auto-merge.yml` | PR automation / PR 자동화 | Auto-merge qualifying Dependabot PRs. / 조건을 만족하는 Dependabot PR 자동 머지. |
+| `13_pr-auto-merge.yml` | PR automation / PR 자동화 | Auto-merge qualifying PRs after checks. / 검사 통과 후 PR 자동 머지. |
+| `14_bot-auto-fix.yml` | Maintenance / 유지보수 | Bot-driven auto-fixes (lint/format). / 봇이 린트/포맷 자동 수정. |
+| `15_merged-pr-cleanup.yml` | Maintenance / 유지보수 | Branch / ref cleanup after merge. / 머지 후 브랜치·참조 정리. |
+| `19_issue-backfill.yml` | Issue hygiene / 이슈 관리 | Backfill missing issues / labels. / 누락된 이슈·라벨 백필. |
+| `24_release-notes.yml` | Release / 릴리스 | Generate release notes. / 릴리스 노트 생성. |
+| `25_release-publish.yml` | Release / 릴리스 | Publish GitHub release. / GitHub 릴리스 게시. |
+| `29_downstream-health-check.yml` | Operations / 운영 | Verify downstream health after deploy. / 배포 후 다운스트림 헬스 확인. |
+| `37_ci-failure-issues.yml` | Operations / 운영 | Open issues for recurring CI failures. / 반복되는 CI 실패에 대해 이슈를 생성. |
+| `60_ci-auto-heal.yml` | Operations / 운영 | Auto-heal common CI failures. / 일반적인 CI 실패 자동 복구. |
+| `91_issue-classification.yml` | Issue hygiene / 이슈 관리 | Classify / label incoming issues. / 들어오는 이슈 분류 및 라벨링. |
+| `auto-sync-data.yml` | Data sync / 데이터 동기화 | Sync SSoT data to downstream consumers. / SSoT 데이터를 다운스트림 컨슈머에 동기화. |
+| `ci.yml` | CI | Main CI pipeline (lint / test / build). / 메인 CI 파이프라인 (린트·테스트·빌드). |
+| `delete-standalone-job-worker.yml` | Operations / 운영 | Tear down a standalone job worker. / 단독 잡 워커 해체. |
+| `post-deploy-verify.yml` | Operations / 운영 | Post-deploy smoke verification. / 배포 후 스모크 검증. |
+| `provision-queues.yml` | Provisioning / 프로비저닝 | Provision Cloudflare Queues. / Cloudflare Queues 프로비저닝. |
+| `release.yml` | Release / 릴리스 | Coordinated release pipeline. / 조정된 릴리스 파이프라인. |
 
-The `ta/` workspace holds the TA (technical assessment) profile generator: `improve_visual.py`, `inspect.py`, and `verify.py` operate on the `*.pptx` files in `ta/` and emit deterministic outputs into `ta/output/`. / `ta/` 워크스페이스는 TA(기술 평가) 프로필 생성기를 보관합니다. `improve_visual.py`, `inspect.py`, `verify.py`가 `ta/`의 `*.pptx`를 처리하여 `ta/output/`에 결정적 출력을 생성합니다.
+### Operator Scripts (npm) / 운영 스크립트 (npm)
+
+These scripts are defined in the root `package.json` and cover data sync, 1Password-mediated secrets, enrichment, and full automation pipelines.
+루트 `package.json`에 정의된 스크립트로, 데이터 동기화, 1Password 기반 시크릿, 데이터 보강, 전체 자동화 파이프라인을 다룹니다.
+
+- **Data sync / 데이터 동기화**
+  - `npm run strip-exif` — strip EXIF metadata from portfolio images (no-op if `exiftool` missing).
+    포트폴리오 이미지의 EXIF 메타데이터 제거 (`exiftool` 없으면 no-op).
+  - `npm run sync:data` — sync master resume JSON into downstream artifacts.
+    마스터 이력서 JSON을 다운스트림 산출물에 동기화.
+  - `npm run sync:pptx` — generate Shinhan PPTX artifacts.
+    신한 PPTX 산출물 생성.
+  - `npm run sync:pdf` — run the Go PDF generator for the master resume.
+    Go PDF 생성기를 마스터 이력서로 실행.
+  - `npm run sync:all` — `sync:data` + `sync:pdf` + `sync:pptx`.
+  - `npm run sync:proposals` — review and apply proposal sync.
+    제안 동기화 검토 및 적용.
+- **1Password-mediated secrets / 1Password 시크릿**
+  - `npm run op:run`, `op:native:run`, `op:seed:resume`, `op:seed:sessions`, `op:restore:sessions` — 1Password CLI helpers under `tools/scripts/onepassword/`.
+    `tools/scripts/onepassword/` 경로의 1Password CLI 헬퍼.
+- **Enrichment / 데이터 보강**
+  - `npm run enrich:github`, `enrich:skills`, `enrich:ai` — Go-based enrichment jobs under `tools/scripts/enrichment/`.
+    `tools/scripts/enrichment/`의 Go 기반 보강 잡.
+  - `npm run enrich:all` — run all three enrichment jobs in sequence.
+    세 보강 잡을 순차 실행.
+- **Automation pipelines / 자동화 파이프라인**
+  - `npm run automate:ssot` — sync SSoT data, regenerate PDFs, build, typecheck, and run Node tests.
+    SSoT 데이터 동기화 → PDF 재생성 → 빌드 → 타입체크 → Node 테스트.
+  - `npm run automate:full` — full SSoT + lint + typecheck + test pipeline.
+    SSoT + 린트 + 타입체크 + 테스트 전체 파이프라인.
+
+> The Go automation tools table is intentionally empty for this revision: this repo currently relies on npm scripts that delegate to `tools/scripts/**/*.go`, and there are no standalone Go automation binaries in the workspace root.
+> 이번 리비전의 Go 자동화 도구 표는 의도적으로 비어 있습니다. 현재 저장소는 `tools/scripts/**/*.go`에 위임하는 npm 스크립트에 의존하며, 워크스페이스 루트에 독립 실행형 Go 자동화 바이너리는 없습니다.
 
 ---
 
 ## Quick Start / 빠른 시작
 
-### Prerequisites / 사전 요구사항
+### Prerequisites / 사전 준비물
 
-- **Node.js ≥ 22** (matches `package.json` engines and `Dockerfile` base image). / **Node.js 22 이상** (`package.json` engines와 `Dockerfile` 베이스 이미지에 일치).
-- **npm ≥ 10** (for workspace support). / **npm 10 이상** (워크스페이스 지원).
-- **Docker + Docker Compose** (for the containerized job-server). / **Docker + Docker Compose** (job-server 컨테이너 실행용).
-- **Go ≥ 1.22** and **Python ≥ 3.11** (only if you intend to run `sync:pdf` / `sync:pptx` locally). / **Go 1.22 이상**, **Python 3.11 이상** (로컬에서 `sync:pdf` / `sync:pptx` 실행 시에만 필요).
+- **Node.js ≥ 22** (matches `Dockerfile` `node:22-alpine`).
+  **Node.js ≥ 22** (`Dockerfile`의 `node:22-alpine`과 일치).
+- **npm** (workspace-aware, uses the root `package-lock.json`).
+  **npm** (워크스페이스 인식, 루트 `package-lock.json` 사용).
+- **Docker** + **Docker Compose** (for the `mcp-server` runtime).
+  **Docker** + **Docker Compose** (`mcp-server` 런타임용).
+- **Wrangler** (`wrangler.jsonc` is configured at the root for Cloudflare Workers).
+  **Wrangler** (`wrangler.jsonc`이 Cloudflare Workers용으로 루트에 설정되어 있음).
+- **1Password CLI** (for `op:*` operator scripts).
+  **1Password CLI** (`op:*` 운영 스크립트용).
 
-### Run the job-server container / job-server 컨테이너 실행
-
-```bash
-# 1. Copy the env template and fill in required secrets.
-# 1. 환경 템플릿을 복사하고 필요한 시크릿을 채웁니다.
-cp .env.example .env   # adjust as needed / 필요 시 조정
-
-# 2. Build and start the MCP server.
-# 2. MCP 서버를 빌드하고 시작합니다.
-docker compose up -d --build
-
-# 3. Verify health.
-# 3. 헬스체크를 확인합니다.
-curl -fsS http://127.0.0.1:3000/health
-```
-
-The compose file defines a single service `mcp-server` (container name `resume-mcp-server`) that builds from the root `Dockerfile`, exposes port `3000`, and persists `/app/apps/job-server/.data` to the named volume `job_automation_data`. /
-
-`compose` 파일은 루트 `Dockerfile`로 빌드되어 포트 `3000`을 노출하고, `/app/apps/job-server/.data`를 명명된 볼륨 `job_automation_data`에 영속화하는 단일 서비스 `mcp-server`(컨테이너명 `resume-mcp-server`)를 정의합니다.
-
-### Deploy the Cloudflare Worker surfaces / Cloudflare Worker 배포
+### First-time setup / 초기 설정
 
 ```bash
-# Edge portfolio
-npm --workspace apps/portfolio run deploy
+# 1. Clone / 클론
+git clone <repo-url> resume
+cd resume
 
-# Dashboard
-npm --workspace apps/job-dashboard run deploy
+# 2. Install all workspace dependencies / 워크스페이스 의존성 설치
+npm ci
+
+# 3. Build shared packages (types/schemas/data/env/shared) / 공유 패키지 빌드
+npm run build
+
+# 4. Verify CI is happy locally / 로컬 CI 검증
+npm run lint
+npm run typecheck
+npm run test:node
 ```
 
-`wrangler.jsonc` is the single source for routes, environment bindings, and Queues. / `wrangler.jsonc`는 라우트, 환경 바인딩, Queues의 단일 출처입니다.
+### Run the job-server / job-server 실행
+
+```bash
+# Build & start the MCP-compatible HTTP server on :3000
+# :3000에서 MCP 호환 HTTP 서버 빌드 및 기동
+docker compose up --build
+```
+
+The service exposes `/health` for the in-container healthcheck defined in both `Dockerfile` and `docker-compose.yml`.
+이 서비스는 `Dockerfile`과 `docker-compose.yml`에 정의된 컨테이너 내부 헬스체크용 `/health`를 노출합니다.
 
 ---
 
 ## Local Development / 로컬 개발
 
-1. **Install workspace dependencies.** / **워크스페이스 의존성 설치.**
-   ```bash
-   npm ci
-   ```
-2. **Validate the SSoT.** / **SSoT 검증.**
-   ```bash
-   npm run sync:data
-   ```
-3. **Typecheck, lint, and test.** / **타입체크, 린트, 테스트.**
-   ```bash
-   npm run typecheck
-   npm run lint
-   npm test
-   ```
-4. **Run the E2E suite (optional, requires Playwright browsers).** / **E2E 스위트 실행 (선택, Playwright 브라우저 필요).**
-   ```bash
-   npx playwright test
-   ```
-5. **Run the dashboard worker locally.** / **대시보드 Worker 로컬 실행.**
-   ```bash
-   npm --workspace apps/job-dashboard run dev
-   ```
-6. **Run the job-server in watch mode (without Docker).** / **job-server 워치 모드 실행 (Docker 미사용).**
-   ```bash
-   cd apps/job-server && npm run dev
-   ```
-
-Conventions enforced locally / 로컬에서 강제되는 규칙:
-
-- **TypeScript**: `tsconfig.base.json` is the shared base; per-package `tsconfig.json` extends it. / TypeScript는 `tsconfig.base.json`을 공유 베이스로 사용.
-- **Linting**: `eslint.config.cjs` (flat config). / 린트는 플랫 컨피그 `eslint.config.cjs`.
-- **API contract**: `redocly.yaml` lints the OpenAPI spec in `packages/contracts/`. / API 계약은 `packages/contracts/`의 OpenAPI 스펙을 `redocly.yaml`로 린트.
-- **Link checking**: `lychee.toml`. / 링크 검사는 `lychee.toml`.
-
----
-
-## Commands Reference / 명령어 레퍼런스
-
-| Command / 명령어 | Description / 설명 |
-| --- | --- |
-| `npm run strip-exif` | Remove EXIF metadata from portfolio images. / 포트폴리오 이미지 EXIF 메타데이터 제거. |
-| `npm run sync:data` | Sync SSoT resume data (JSON). / SSoT 이력서 데이터(JSON) 동기화. |
-| `npm run sync:pptx` | Generate PPTX deck (Python). / PPTX 자료 생성 (Python). |
-| `npm run sync:pdf` | Generate master PDF (Go). / 마스터 PDF 생성 (Go). |
-| `npm run sync:all` | Run all sync steps. / 모든 동기화 단계 실행. |
-| `npm run op:run` | Run 1Password integration. / 1Password 통합 실행. |
-| `npm run op:native:run` | Run native 1Password runner. / 네이티브 1Password 러너 실행. |
-| `npm run op:seed:resume` | Seed resume-related 1Password items. / 이력서 관련 1Password 항목 시드. |
-| `npm run op:seed:sessions` | Seed session files into 1Password. / 세션 파일을 1Password에 시드. |
-| `npm run op:restore:sessions` | Restore sessions from 1Password. / 1Password에서 세션 복원. |
-| `npm run sync:proposals` | Apply pending JSON proposals to the SSoT. / 대기 중인 JSON 제안서를 SSoT에 적용. |
-| `npm run enrich:github` | Enrich from GitHub data. / GitHub 데이터로 보강. |
-| `npm run enrich:skills` | Enrich skill taxonomy. / 스킬 분류 보강. |
-| `npm run enrich:ai` | AI-assisted SSoT enrichment. / SSoT AI 보조 보강. |
-| `npm run enrich:all` | Run all enrichments. / 모든 보강 작업 실행. |
-| `npm run automate:ssot` | SSoT automation: sync + build + typecheck + node tests. / SSoT 자동화. |
-| `npm run automate:full` | Full automation: sync + lint + typecheck + tests. / 전체 자동화. |
-
----
-
-## Contribution Guide / 기여 가이드
-
-This is a private monorepo. Contributions are still expected to follow the conventions in `CONTRIBUTING.md` and `AGENTS.md`. The summary below mirrors them. /
-
-이 저장소는 비공개 모노레포이지만, 기여는 `CONTRIBUTING.md` 및 `AGENTS.md`의 규약을 따라야 합니다. 아래는 그 요약입니다.
-
-### 1. Branching and issues / 브랜치와 이슈
-
-- Branch from `master` using the `02_issue-to-branch.yml` convention: `issue/<id>-<slug>`. / `master`에서 분기하며 `02_issue-to-branch.yml` 규약에 따라 `issue/<id>-<slug>` 형식을 사용.
-- Long-lived branches are converted to PRs by `01_branch-to-pr.yml`. / 장기 브랜치는 `01_branch-to-pr.yml`이 PR로 변환.
-- Issues are auto-classified by `91_issue-classification.yml` and backfilled by `19_issue-backfill.yml`. / 이슈는 `91_issue-classification.yml`로 자동 분류, `19_issue-backfill.yml`로 백필.
-
-### 2. Commits and PRs / 커밋과 PR
-
-- **Conventional Commits** (e.g. `feat:`, `fix:`, `chore:`, `docs:`). / **Conventional Commits** 사용.
-- A PR is reviewed by:
-  - `10_pr-review.yml` — standard PR-Agent review ([qodo-ai/pr-agent](https://github.com/qodo-ai/pr-agent)).
-  - `11_security-pr-review.yml` — security-focused review.
-  - `14_bot-auto-fix.yml` — local bot ([https://bot.jclee.me](https://bot.jclee.me)) applies auto-fixes. / 로컬 봇이 자동 수정.
-- Auto-merge is handled by:
-  - `12_dependabot-auto-merge.yml` for Dependabot PRs. / Dependabot PR.
-  - `13_pr-auto-merge.yml` for green PRs. / 통과 PR.
-- After merge, `15_merged-pr-cleanup.yml` removes stale refs. / 병합 후 `15_merged-pr-cleanup.yml`이 참조 정리.
-
-### 3. Quality gates / 품질 게이트
-
-Before requesting review / 리뷰 요청 전:
+### Portfolio Worker / 포트폴리오 Worker
 
 ```bash
-npm run sync:data
-npm run typecheck
-npm run lint
-npm test
-```
-
-CI runs `ci.yml` and will fail fast on type, lint, or test regressions. CI failure events are converted into issues by `37_ci-failure-issues.yml`; recurring failures trigger `60_ci-auto-heal.yml`. /
-
-CI는 `ci.yml`을 실행하며 타입/린트/테스트 회귀에서 빠르게 실패합니다. CI 실패 이벤트는 `37_ci-failure-issues.yml`로 이슈화되고, 반복 실패는 `60_ci-auto-heal.yml`을 트리거합니다.
-
-### 4. Releases / 릴리스
-
-- `24_release-notes.yml` generates the changelog from merged PRs. / `24_release-notes.yml`이 병합된 PR에서 변경 로그 생성.
-- `25_release-publish.yml` and `release.yml` orchestrate tagging, artifact publishing, and the GitHub release. / `25_release-publish.yml`과 `release.yml`이 태깅, 아티팩트 게시, GitHub 릴리스를 오케스트레이션.
-- `29_downstream-health-check.yml` and `post-deploy-verify.yml` validate the deploy before sign-off. / `29_downstream-health-check.yml`과 `post-deploy-verify.yml`이 배포를 사인오프 전 검증.
-
-### 5. Operational runbooks / 운영 런북
-
-- `provision-queues.yml` provisions Cloudflare Queues. / `provision-queues.yml`이 Cloudflare Queues 프로비저닝.
-- `delete-standalone-job-worker.yml` tears down a temporary worker. / `delete-standalone-job-worker.yml`이 임시 워커 제거.
-- `auto-sync-data.yml` keeps the SSoT fresh on a schedule. / `auto-sync-data.yml`이 SSoT를 주기적으로 신선하게 유지.
-
----
-
-## Security and Compliance / 보안 및 컴플라이언스
-
-- **Secrets** must be sourced from 1Password via `op:run` / `op:native:run`; never commit `.env` files. / **시크릿**은 `op:run` / `op:native:run`을 통해 1Password에서만 조달하며 `.env` 커밋 금지.
-- **EXIF stripping** is part of the release flow (`strip-exif`). / **EXIF 제거**는 릴리스 플로우의 일부(`strip-exif`).
-- **OpenAPI** is linted by `redocly.yaml` against the `packages/contracts/openapi.yaml` spec. / **OpenAPI**는 `packages/contracts/openapi.yaml`을 `redocly.yaml`로 린트.
-- **PR security review** is mandatory (`11_security-pr-review.yml`). / **PR 보안 리뷰**는 필수.
-- **No private/internal IPs are hardcoded**: this repository uses placeholders such as `<homelab-host>` for homelab targets and the public LLM proxy endpoint `https://cliproxy.jclee.me/v1` for LLM traffic. / **사설/내부 IP는 하드코딩하지 않음**: 홈랩 대상에는 `<homelab-host>` 같은 플레이스홀더를, LLM 트래픽에는 퍼블릭 프록시 `https://cliproxy.jclee.me/v1`를 사용합니다.
-
----
-
-## License / 라이선스
-
-This project is released under the **MIT License**. See [LICENSE](LICENSE) for the full text. / 본 프로젝트는 **MIT 라이선스**로 배포됩니다. 전문은 [LICENSE](LICENSE)를 참조하세요.
-
----
-
-## Contact and Links / 연락처 및 링크
-
-| Link / 링크 | Purpose / 용도 |
-| --- | --- |
-| [https://bot.jclee.me](https://bot.jclee.me) | Local automation bot (PR auto-fix, label sync). / 로컬 자동화 봇 (PR 자동 수정, 라벨 동기화). |
-| [https://cliproxy.jclee.me](https://cliproxy.jclee.me) | Public LLM proxy used by automation tools. / 자동화 도구가 사용하는 퍼블릭 LLM 프록시. |
-| [https://github.com/qodo-ai/pr-agent](https://github.com/qodo-ai/pr-agent) | Upstream PR-Agent used by `10_pr-review.yml`. / `10_pr-review.yml`이 사용하는 PR-Agent. |
-| `AGENTS.md` | Operational knowledge base (project SSoT for agents). / 운영 지식 베이스 (에이전트용 프로젝트 SSoT). |
-| `CHANGELOG.md` | Per-release changelog. / 릴리스별 변경 로그. |
-| `CONTRIBUTING.md` | Contribution conventions. / 기여 규약. |
-| `OWNERS` | Code ownership map. / 코드 소유권 맵. |
-
----
-
-*Generated by the README generator with primary model `gpt-5.5` (fallback: `minimax-m3` via `https://cliproxy.jclee.me/v1`).* /
-*README 생성기 기본 모델 `gpt-5.5`(대체: `https://cliproxy.jclee.me/v1` 경유 `minimax-m3`)로 생성되었습니다.*
+# Local Wrangler dev server (uses wrangler.jsonc) / Wrangler 로컬 개발 서버
+npx wr
