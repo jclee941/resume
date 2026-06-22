@@ -203,12 +203,12 @@ function buildJapaneseTemplate(html) {
         'Nextrade売買締結システムのセキュリティ構築・運用を継続担当'
       )
       .replace(
-        /FortiGate HA 분리·FSC 대응/g,
-        'FortiGate HA 5層ネットワーク分離、FSC本認可審査対応'
+        /망분리·엔드포인트 보안 구축·운영/g,
+        'ネットワーク分離・エンドポイントセキュリティ構築・運用'
       )
       .replace(
-        /FortiGate HA 5계층 망분리, FSC 본인가 심사 대응/g,
-        'FortiGate HA 5層ネットワーク分離、FSC本認可審査対応'
+        /FortiGate HA 분리·FSC 대응/g,
+        'ネットワーク分離・エンドポイントセキュリティ構築・運用'
       )
       .replace(
         /Splunk ES 탐지·알림 자동화/g,
