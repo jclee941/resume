@@ -105,7 +105,7 @@ describe('고도화: PDF source polish', () => {
 
 
 describe('FAANG framing: case-study senior narrative', () => {
-  const src = read(path.join(PORTFOLIO, 'src', 'scripts', 'modules', 'project-cards.js'));
+  const src = read(path.join(PORTFOLIO, 'src', 'scripts', 'modules', 'project-cards-data.js'));
 
   test('Nextrade case studies frame a design decision / trade-off', () => {
     // The two Nextrade cards should read like senior engineering: an explicit
