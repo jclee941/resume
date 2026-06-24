@@ -193,8 +193,8 @@
     },
     {
       "company": "Metanet M Platform Co., Ltd.",
-      "period": "2019.12 ~ 2021.08",
-      "duration": "1 year 9 months",
+      "period": "2020.08 ~ 2021.08",
+      "duration": "1 year",
       "project": "Contact Center Infrastructure",
       "role": "Systems Engineer",
       "client": "Metanet M Platform",
@@ -206,7 +206,7 @@
         {
           "name": "Contact Center Remote-Work Infrastructure",
           "description": "VPN infrastructure design and automation for large-scale remote access.\n• Synchronized large-scale server configurations via Python scripts and Ansible.\n• Built VPN session monitoring and abnormal-access detection dashboards.",
-          "period": "2019.12 ~ 2021.08",
+          "period": "2020.08 ~ 2021.08",
           "techStack": ["Ansible", "Python", "VPN", "NAC", "FortiGate"],
           "achievements": [
             "Designed Ansible playbooks to standardize manual configuration workflows",
@@ -218,8 +218,8 @@
     },
     {
       "company": "MTData Co., Ltd.",
-      "period": "2017.02 ~ 2018.10",
-      "duration": "1 year 9 months",
+      "period": "2018.10 ~ 2019.10",
+      "duration": "1 year",
       "project": "Korea Aerospace Industries (KAI)",
       "role": "IT Support / OA Operations",
       "client": "Korea Aerospace Industries (KAI)",
@@ -232,7 +232,7 @@
         {
           "name": "KAI Infrastructure Operations",
           "description": "Reliable availability of closed-network security infrastructure.\n• Proactive hardware-failure detection via periodic system log analysis.\n• Compliance with internal security audit standards and configuration guidelines.",
-          "period": "2017.02 ~ 2018.10",
+          "period": "2018.10 ~ 2019.10",
           "techStack": ["Linux", "Bash", "Firewall", "WSUS"],
           "achievements": [
             "Sustained Linux server availability under closed-network constraints",
@@ -272,7 +272,7 @@
       "description": "Implemented SDN-based network virtualization and micro-segmentation\n• Controlled east-west traffic with VMware NSX-T Distributed Firewall (DFW)\n• Centralized network security policies at the VDS layer"
     },
     {
-      "period": "2019.12 ~ 2021.08",
+      "period": "2020.08 ~ 2021.08",
       "name": "Contact Center Remote Work Infrastructure",
       "client": "Metanet M Platform",
       "technologies": ["Ansible", "Python", "VPN", "NAC"],
@@ -281,7 +281,7 @@
       "description": "Designed and automated VPN infrastructure for large-scale remote access\n• Synchronized configurations across remote-access servers with Python and Ansible\n• Built dashboards for VPN session monitoring and anomaly detection"
     },
     {
-      "period": "2017.02 ~ 2018.10",
+      "period": "2018.10 ~ 2019.10",
       "name": "KAI Infrastructure Operations",
       "client": "Korea Aerospace Industries (KAI)",
       "technologies": ["Linux", "Bash", "Firewall"],
@@ -291,7 +291,7 @@
     }
   ],
   "careerGap": {
-    "period": "2018.11 ~ 2019.11",
+    "period": "2019.11 ~ 2020.07",
     "reason": "Focused on Linux systems training and earned multiple related certifications.",
     "result": "Earned RHCSA, CompTIA Linux+, LPIC-1, and Linux Master Level 2"
   },

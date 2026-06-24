@@ -191,8 +191,8 @@
     },
     {
       "company": "メタネットMプラットフォーム",
-      "period": "2019.12 ~ 2021.08",
-      "duration": "1年9か月",
+      "period": "2020.08 ~ 2021.08",
+      "duration": "1年",
       "project": "コンタクトセンター インフラ",
       "role": "システムエンジニア",
       "client": "メタネットMプラットフォーム",
@@ -204,7 +204,7 @@
         {
           "name": "コンタクトセンター リモートワーク基盤",
           "description": "大規模リモートアクセス向けVPNインフラ設計および自動化。\n• PythonスクリプトとAnsibleを連携した大規模サーバー設定の同期。\n• VPNセッション監視および異常アクセス検知ダッシュボードの構築。",
-          "period": "2019.12 ~ 2021.08",
+          "period": "2020.08 ~ 2021.08",
           "techStack": ["Ansible", "Python", "VPN", "NAC", "FortiGate"],
           "achievements": [
             "手動設定の手動設定手順を標準化するためAnsibleプレイブックを設計",
@@ -216,8 +216,8 @@
     },
     {
       "company": "(株)エムティデータ",
-      "period": "2017.02 ~ 2018.10",
-      "duration": "1年9か月",
+      "period": "2018.10 ~ 2019.10",
+      "duration": "1年",
       "project": "韓国航空宇宙産業（KAI）",
       "role": "IT支援 / OA運用",
       "client": "韓国航空宇宙産業(KAI)",
@@ -230,7 +230,7 @@
         {
           "name": "KAI インフラ運用",
           "description": "閉域網セキュリティインフラの安定的可用性確保。\n• サーバーシステムログの定期分析によるハードウェア障害兆候の事前把握。\n• 内部セキュリティ監査基準に基づくシステム設定セキュリティガイドラインの遵守。",
-          "period": "2017.02 ~ 2018.10",
+          "period": "2018.10 ~ 2019.10",
           "techStack": ["Linux", "Bash", "Firewall", "WSUS"],
           "achievements": [
             "閉域網環境の制約下でLinuxサーバ可用性を維持",
@@ -270,7 +270,7 @@
       "description": "SDNベースのネットワーク仮想化とマイクロセグメンテーションを実装\n• VMware NSX-T分散ファイアウォール（DFW）でサーバー間トラフィックを制御\n• VDSレベルでネットワークセキュリティポリシーを一元管理"
     },
     {
-      "period": "2019.12 ~ 2021.08",
+      "period": "2020.08 ~ 2021.08",
       "name": "コンタクトセンター 在宅勤務インフラ",
       "client": "メタネットMプラットフォーム",
       "technologies": ["Ansible", "Python", "VPN", "NAC"],
@@ -279,7 +279,7 @@
       "description": "大規模リモート接続向けVPNインフラを設計・自動化\n• PythonとAnsible連携で500台超のサーバー設定を同期\n• VPNセッション監視と異常アクセス検知ダッシュボードを構築"
     },
     {
-      "period": "2017.02 ~ 2018.10",
+      "period": "2018.10 ~ 2019.10",
       "name": "KAIインフラ運用",
       "client": "韓国航空宇宙産業（KAI）",
       "technologies": ["Linux", "Bash", "Firewall"],
@@ -289,7 +289,7 @@
     }
   ],
   "careerGap": {
-    "period": "2018.11 ~ 2019.11",
+    "period": "2019.11 ~ 2020.07",
     "reason": "Linuxシステム学習に専念し、関連資格を取得しました。",
     "result": "RHCSA、CompTIA Linux+、LPIC-1、Linux Master 2級を取得"
   },
