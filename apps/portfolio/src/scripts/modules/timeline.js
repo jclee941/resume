@@ -51,7 +51,13 @@ const TIMELINE_LABELS = {
     collapse: 'Collapse',
     inProgress: 'In progress',
     inProgressAria: 'Currently in progress',
-    phases: { 운영: 'Operate', 구축: 'Build', 자동화: 'Automate', 안정화: 'Stabilize', 기초: 'Foundation' },
+    phases: {
+      운영: 'Operate',
+      구축: 'Build',
+      자동화: 'Automate',
+      안정화: 'Stabilize',
+      기초: 'Foundation',
+    },
   },
   ja: {
     period: '在籍期間',
@@ -90,9 +96,8 @@ const CAREER_UI_META = {
   '2024.03 ~ 2025.02': { phase: '구축', status: 'completed' },
   '2022.08 ~ 2024.03': { phase: '안정화', status: 'completed' },
   '2021.09 ~ 2022.04': { phase: '구축', status: 'completed' },
-  '2019.12 ~ 2021.08': { phase: '자동화', status: 'completed' },
-  '2019.10 ~ 2020.10': { phase: '운영', status: 'completed' },
-  '2017.10 ~ 2018.10': { phase: '기초', status: 'completed' },
+  '2020.08 ~ 2021.08': { phase: '자동화', status: 'completed' },
+  '2018.10 ~ 2019.10': { phase: '기초', status: 'completed' },
 };
 const DEFAULT_CAREER_UI_META = { phase: '기초', status: 'completed' };
 

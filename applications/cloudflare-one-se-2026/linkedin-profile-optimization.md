@@ -158,7 +158,7 @@ Sr. DevSecOps/SRE · 8 yrs · Financial-exchange Security Ops | Cloudflare Worke
 
 **Skills**: VMware NSX-T · Wazuh · Microsegmentation · OSS Security
 
-### Metanet — Network Security Engineer (2019.12 – 2021.08)
+### Metanet — Network Security Engineer (2020.08 – 2021.08)
 
 **한 줄**: 대규모 컨택센터 재택 환경 — Ansible/Python 자동화
 
@@ -170,7 +170,7 @@ Sr. DevSecOps/SRE · 8 yrs · Financial-exchange Security Ops | Cloudflare Worke
 
 **Skills**: Ansible · Python · FortiGate · NAC · SSL VPN
 
-### MT Data (KAI 폐쇄망) — IT Support / OA Operations (2017.02 – 2018.10)
+### MT Data (KAI 폐쇄망) — IT Support / OA Operations (2018.10 – 2019.10)
 
 **한 줄**: 한국항공우주산업 폐쇄망 IT 운영실 — Linux 서버 수기 운영
 

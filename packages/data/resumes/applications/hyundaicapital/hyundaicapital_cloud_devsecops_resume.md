@@ -98,7 +98,7 @@ DevOps와 Security를 통합 설계하고 IaC·자동화로 표준화하는 직�
 
 ### ㈜메타넷엠플랫폼 | 시스템 보안 엔지니어
 
-2019.12 ~ 2021.08 (1년 9개월) | 대규모 콜센터 인프라
+2020.08 ~ 2021.08 (1년 9개월) | 대규모 콜센터 인프라
 
 - OpenVPN 기반 재택근무 VPN·NAC 연동 접근 체계 구축
 - 천 명 이상 사용자 계정·인증서 자동화 관리 (Ansible)
@@ -109,7 +109,7 @@ DevOps와 Security를 통합 설계하고 IaC·자동화로 표준화하는 직�
 
 ### ㈜엠티데이타 | 서버 시스템 엔지니어
 
-2017.02 ~ 2018.10 (1년 9개월) | 한국항공우주산업
+2018.10 ~ 2019.10 (1년 9개월) | 한국항공우주산업
 
 - 폐쇄망 보안 인프라 운영, 망분리 환경 관리 및 보안 패치 적용
 
@@ -120,21 +120,25 @@ DevOps와 Security를 통합 설계하고 IaC·자동화로 표준화하는 직�
 ## 기술 스택
 
 ### Cloud Platform & 보안
+
 - AWS: VPC, IAM, Security Group, WAF, CloudTrail, GuardDuty
 - 하이브리드 클라우드: 금융 온프레미스–AWS 네트워크 연동 보안
 - 컨테이너: Kubernetes RBAC, Pod Security, Docker
 
 ### DevSecOps & IaC
+
 - CI/CD: GitLab CI/CD, GitHub Actions (보안 점검 통합)
 - IaC: Terraform, Ansible
 - 자동화: Python, Bash, n8n, REST API
 
 ### 보안 솔루션 & 모니터링
+
 - 네트워크: FortiGate, FortiManager, IPS/IDS, WAF, DDoS
 - 접근제어/엔드포인트: NAC, DLP, EDR, SSL VPN, RADIUS, 2FA
 - SIEM/관측성: Splunk, ELK, Prometheus, Grafana
 
 ### 컴플라이언스
+
 - 금융위 본인가, 금융감독원 감사, 전자금융감독규정, ISMS, CCE
 
 ---
@@ -142,9 +146,11 @@ DevOps와 Security를 통합 설계하고 IaC·자동화로 표준화하는 직�
 ## 학력 및 자격증
 
 ### 학력
+
 - 한양사이버대학교 컴퓨터공학과 (재학중, 2024.03 ~ 현재)
 
 ### 자격증
+
 - CCNP (Cisco Systems, 2020.08)
 - RHCSA (Red Hat, 2019.01)
 - CompTIA Linux+ (2019.02)
@@ -156,14 +162,14 @@ DevOps와 Security를 통합 설계하고 IaC·자동화로 표준화하는 직�
 
 ## JD 충족 요약 (현대캐피탈)
 
-| 요구사항 | 충족 근거 |
-| --- | --- |
-| Cloud 기반 DevSecOps 표준 체계 구축 | GitLab CI/CD 보안 검수 자동화, IaC 표준화 |
-| Cloud 보안 거버넌스 수립·적용 | 금융위 본인가 보안 아키텍처 설계·문서화 |
-| CI/CD 파이프라인 보안 위험 분석·개선 | 펀엔씨 CI/CD 보안 검수 자동화 경험 |
-| 침해위협 모니터링·운영 자동화 | Splunk·GuardDuty 위협 탐지, n8n/Python 자동화 |
-| 금융권 Hybrid Cloud 구축/연동 (우대) | 콴텍 FSDC–AWS 하이브리드 보안 관리 |
-| 금융권 보안솔루션 운영 (우대) | FortiGate/NAC/DLP/SIEM 통합 운영 |
+| 요구사항                             | 충족 근거                                     |
+| ------------------------------------ | --------------------------------------------- |
+| Cloud 기반 DevSecOps 표준 체계 구축  | GitLab CI/CD 보안 검수 자동화, IaC 표준화     |
+| Cloud 보안 거버넌스 수립·적용        | 금융위 본인가 보안 아키텍처 설계·문서화       |
+| CI/CD 파이프라인 보안 위험 분석·개선 | 펀엔씨 CI/CD 보안 검수 자동화 경험            |
+| 침해위협 모니터링·운영 자동화        | Splunk·GuardDuty 위협 탐지, n8n/Python 자동화 |
+| 금융권 Hybrid Cloud 구축/연동 (우대) | 콴텍 FSDC–AWS 하이브리드 보안 관리            |
+| 금융권 보안솔루션 운영 (우대)        | FortiGate/NAC/DLP/SIEM 통합 운영              |
 
 ---
 
