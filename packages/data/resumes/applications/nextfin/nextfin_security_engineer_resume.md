@@ -102,7 +102,7 @@ Security Engineer (Cloud) — 넥스트증권 지원
 
 ### ㈜메타넷엠플랫폼 | 시스템 보안 엔지니어
 
-2019.12 ~ 2021.08 (1년 9개월) | 대규모 콜센터 인프라
+2020.08 ~ 2021.08 (1년 9개월) | 대규모 콜센터 인프라
 
 - OpenVPN 기반 재택근무 VPN 인프라 및 VPN-NAC 연동 접근 체계 구축
 - 천 명 이상 사용자 계정·인증서 자동화 관리 (Ansible)
@@ -114,7 +114,7 @@ Security Engineer (Cloud) — 넥스트증권 지원
 
 ### ㈜엠티데이타 | 서버 시스템 엔지니어
 
-2017.02 ~ 2018.10 (1년 9개월) | 한국항공우주산업
+2018.10 ~ 2019.10 (1년 9개월) | 한국항공우주산업
 
 - 폐쇄망 보안 인프라 운영, 망분리 환경 관리 및 보안 패치 적용
 - 보안 감사 대응 및 인프라 자산 관리
@@ -126,21 +126,25 @@ Security Engineer (Cloud) — 넥스트증권 지원
 ## 기술 스택
 
 ### 클라우드 보안
+
 - AWS: VPC, IAM, Security Group, WAF, CloudTrail, GuardDuty
 - 멀티 계정/하이브리드: 온프레미스–AWS 연동 보안 관리
 - 컨테이너 보안: Kubernetes RBAC, Pod Security, Docker
 
 ### DevSecOps & 자동화
+
 - CI/CD: GitLab CI/CD, GitHub Actions (SAST/DAST/Dependency Scan 연계)
 - IaC: Terraform, Ansible
 - 언어/도구: Python, Bash, n8n, REST API
 
 ### 보안 솔루션
+
 - 네트워크: FortiGate, IPS/IDS, WAF, DDoS
 - 엔드포인트/접근제어: NAC, DLP, EDR, SSL VPN, RADIUS, 2FA
 - SIEM/모니터링: Splunk, ELK, Prometheus, Grafana
 
 ### 컴플라이언스
+
 - 전자금융감독규정, 금융위 본인가, 금융감독원 감사, ISMS, CCE 취약점 점검
 
 ---
@@ -148,9 +152,11 @@ Security Engineer (Cloud) — 넥스트증권 지원
 ## 학력 및 자격증
 
 ### 학력
+
 - 한양사이버대학교 컴퓨터공학과 (재학중, 2024.03 ~ 현재)
 
 ### 자격증
+
 - CCNP (Cisco Systems, 2020.08)
 - RHCSA (Red Hat, 2019.01)
 - CompTIA Linux+ (CompTIA, 2019.02)
@@ -162,14 +168,14 @@ Security Engineer (Cloud) — 넥스트증권 지원
 
 ## JD 충족 요약 (넥스트증권)
 
-| 요구사항 | 충족 근거 |
-| --- | --- |
+| 요구사항                                         | 충족 근거                                       |
+| ------------------------------------------------ | ----------------------------------------------- |
 | AWS 멀티계정/IAM/VPC/WAF/GuardDuty 보안 아키텍처 | 콴텍 AWS 보안 인프라 운영, 하이브리드 보안 관리 |
-| CI/CD 보안 점검(SAST/DAST/Dependency) 통합 | 펀엔씨 GitLab CI/CD 보안 검수 자동화 |
-| CloudTrail/GuardDuty/SIEM 로그 수집·분석 | CloudTrail·GuardDuty 통합 분석, Splunk 모니터링 |
-| 전자금융감독규정/ISMS 컴플라이언스 | 금융위 본인가, 금감원 감사 대응 |
-| Python/Bash 자동화 (우대) | n8n+Python 보안 자동화 다수 |
-| K8s/Docker 컨테이너 보안 (우대) | RBAC/Pod Security, CKS 준비 중 |
+| CI/CD 보안 점검(SAST/DAST/Dependency) 통합       | 펀엔씨 GitLab CI/CD 보안 검수 자동화            |
+| CloudTrail/GuardDuty/SIEM 로그 수집·분석         | CloudTrail·GuardDuty 통합 분석, Splunk 모니터링 |
+| 전자금융감독규정/ISMS 컴플라이언스               | 금융위 본인가, 금감원 감사 대응                 |
+| Python/Bash 자동화 (우대)                        | n8n+Python 보안 자동화 다수                     |
+| K8s/Docker 컨테이너 보안 (우대)                  | RBAC/Pod Security, CKS 준비 중                  |
 
 ---
 

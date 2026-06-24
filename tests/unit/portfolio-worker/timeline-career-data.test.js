@@ -50,7 +50,7 @@ describe('mergeCareerUiMeta()', () => {
         role: 'Security Operations Engineer (SOC/Security)',
         achievements: ['Built a SIEM detection/response pipeline'],
       },
-      { company: 'メタネットMプラットフォーム', period: '2019.12 ~ 2021.08', role: 'インフラ運用' },
+      { company: 'メタネットMプラットフォーム', period: '2020.08 ~ 2021.08', role: 'インフラ運用' },
     ]);
     expect(out[0].phase).toBe('운영');
     expect(out[0].status).toBe('completed');
@@ -62,7 +62,12 @@ describe('mergeCareerUiMeta()', () => {
 
   test('S2: preserves explicit phase/status if already present', () => {
     const out = mergeCareerUiMeta([
-      { company: '(주)아이티센 CTS', period: '2025.03 ~ 2026.02', phase: '커스텀', status: 'active' },
+      {
+        company: '(주)아이티센 CTS',
+        period: '2025.03 ~ 2026.02',
+        phase: '커스텀',
+        status: 'active',
+      },
     ]);
     expect(out[0].phase).toBe('커스텀');
     expect(out[0].status).toBe('active');

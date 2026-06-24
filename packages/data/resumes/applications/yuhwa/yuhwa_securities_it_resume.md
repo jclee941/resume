@@ -67,11 +67,11 @@ date: '2026-06'
 - 로보어드바이저 서비스 서버 인프라 운영
 - Python 기반 반복 점검·백업·운영 업무 자동화
 - PostgreSQL 기반 DB 접근제어 쿼리 튜닝
-- Pro*C 연계 배치 처리 흐름, DB 연동, SQL 검증 업무 지원
+- Pro\*C 연계 배치 처리 흐름, DB 연동, SQL 검증 업무 지원
 - 증권사 PB 플랫폼 POC 성능 검증 및 런칭 지원
 - 감사 대응 시스템 운영 근거 및 변경 이력 정리
 
-기술: Linux, Python, PostgreSQL, SQL, Pro*C 연계 배치, Shell, AWS, Docker
+기술: Linux, Python, PostgreSQL, SQL, Pro\*C 연계 배치, Shell, AWS, Docker
 
 ---
 
@@ -89,7 +89,7 @@ date: '2026-06'
 
 ### ㈜메타넷엠플랫폼 | 시스템 엔지니어
 
-2019.12 ~ 2021.08 | 대규모 컨택센터 인프라 운영
+2020.08 ~ 2021.08 | 대규모 컨택센터 인프라 운영
 
 - VPN, Linux 서버, 네트워크 장비 운영
 - Ansible, Python 기반 서버·네트워크 점검 자동화
@@ -101,7 +101,7 @@ date: '2026-06'
 
 ### ㈜엠티데이타 | 서버·시스템 엔지니어
 
-2017.02 ~ 2018.10 | 한국항공우주산업(KAI)
+2018.10 ~ 2019.10 | 한국항공우주산업(KAI)
 
 - 폐쇄망 Linux 서버 운영, 패치, 로그 확인, 계정·접근제어 운영
 - 네트워크 정책 관리와 제조망/개발망 분리 운영
@@ -113,12 +113,12 @@ date: '2026-06'
 
 ## 기술 스택
 
-| 구분 | 기술 |
-| --- | --- |
-| OS/인프라 | Linux, Windows Server, VMware, Docker |
-| DB/SQL | Oracle SQL, PostgreSQL, SQL 검증, DB 연동 확인 |
-| 자동화 | Python, Shell, Ansible, n8n, REST API |
-| 로그/모니터링 | Splunk, Grafana, Prometheus, Loki |
+| 구분          | 기술                                           |
+| ------------- | ---------------------------------------------- |
+| OS/인프라     | Linux, Windows Server, VMware, Docker          |
+| DB/SQL        | Oracle SQL, PostgreSQL, SQL 검증, DB 연동 확인 |
+| 자동화        | Python, Shell, Ansible, n8n, REST API          |
+| 로그/모니터링 | Splunk, Grafana, Prometheus, Loki              |
 
 ---
 

@@ -18,8 +18,8 @@
 - 콴텍투자일임 (2022.08~2024.03): AWS 금융 보안 (VPC/IAM/CloudTrail/GuardDuty)
 - 펀엔씨 (2022.05~07): DevOps, K8s 사전검토
 - 조인트리 (2021.09~2022.04): NSX-T, NAC/DLP/APT 통합 운영
-- 메타넷 (2019.12~2021.08): 대규모 재택근무 VPN, Ansible 자동화
-- 엠티데이타 (2017.02~2018.10): KAI 폐쇄망
+- 메타넷 (2020.08~2021.08): 대규모 재택근무 VPN, Ansible 자동화
+- 엠티데이타 (2018.10~2019.10): KAI 폐쇄망
 
 [현재 운영 중인 개인 인프라 — 면접 무기]
 - Proxmox 홈랩: 단일 노드(pve3, Ryzen 9800X3D, DDR5 메모리)에서 복수 LXC와 VM 운영. Terraform IaC, 1Password Connect 시크릿 관리, Cloudflare Tunnel 외부 노출
