@@ -10,21 +10,21 @@ name: CI Failure Issues
 on:
   workflow_run:
     workflows:
-      - "Sanity"
-      - "Auto Deploy Workflows"
-      - "PR Checks"
-      - "Gitleaks"
-      - "CodeQL"
-      - "Runtime Health Check"
-      - "ELK Health Check"
-      - "ELK Setup"
-      - "Downstream Health Check"
-      - "Bot Health Monitor"
-      - "Drift Detector"
-      - "CI Auto-Heal"
-      - "Repository Health Check"
-      - "Auto Hardcode Scan"
-      - "Live E2E Tests"
+      - 'Sanity'
+      - 'Auto Deploy Workflows'
+      - 'PR Checks'
+      - 'Gitleaks'
+      - 'CodeQL'
+      - 'Runtime Health Check'
+      - 'ELK Health Check'
+      - 'ELK Setup'
+      - 'Downstream Health Check'
+      - 'Bot Health Monitor'
+      - 'Drift Detector'
+      - 'CI Auto-Heal'
+      - 'Repository Health Check'
+      - 'Auto Hardcode Scan'
+      - 'Live E2E Tests'
     types: [completed]
   # NOTE: no `issues:` trigger — the sweep CLOSES/EDITS issues, which via GH_PAT
   # would re-trigger this workflow (feedback loop). Sweep runs on workflow_run

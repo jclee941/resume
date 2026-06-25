@@ -127,7 +127,7 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.MINIMAX_API_KEY }}
           OPENAI_BASE_URL: https://api.minimax.io/v1
           LITELLM_LOG: ${{ vars.PR_REVIEW_DEBUG == '1' && 'DEBUG' || 'INFO' }}
-          LITELLM_LOCAL_MODEL_COST_MAP: "True"
+          LITELLM_LOCAL_MODEL_COST_MAP: 'True'
           PR_REVIEW_DEBUG: ${{ vars.PR_REVIEW_DEBUG || '0' }}
           CONFIG__MODEL: ${{ matrix.model }}
           # Canonical fallback chain (matches .pr_agent.toml + configuration.toml +
@@ -135,20 +135,20 @@ jobs:
           # MiniMax: fallback == primary == MiniMax-M3 (one retry, no loop).
           CONFIG__FALLBACK_MODELS: '["MiniMax-M3"]'
           CONFIG__RESPONSE_LANGUAGE: ko
-          CONFIG__AI_TIMEOUT: "180"
-          CONFIG__CUSTOM_MODEL_MAX_TOKENS: "1000000"
+          CONFIG__AI_TIMEOUT: '180'
+          CONFIG__CUSTOM_MODEL_MAX_TOKENS: '1000000'
           # Quality knobs — produce richer review output even on small diffs.
           # See pr_agent/tools/pr_reviewer.py:85-94 for toggle->prompt mapping.
-          PR_REVIEWER__REQUIRE_SCORE_REVIEW: "true"
-          PR_REVIEWER__REQUIRE_TESTS_REVIEW: "true"
-          PR_REVIEWER__REQUIRE_ESTIMATE_EFFORT_TO_REVIEW: "true"
-          PR_REVIEWER__REQUIRE_ESTIMATE_CONTRIBUTION_TIME_COST: "true"
-          PR_REVIEWER__REQUIRE_CAN_BE_SPLIT_REVIEW: "true"
-          PR_REVIEWER__REQUIRE_SECURITY_REVIEW: "true"
-          PR_REVIEWER__REQUIRE_TODO_SCAN: "true"
-          PR_REVIEWER__REQUIRE_TICKET_ANALYSIS_REVIEW: "true"
-          PR_REVIEWER__NUM_MAX_FINDINGS: "5"
-          PR_REVIEWER__PUBLISH_OUTPUT_NO_SUGGESTIONS: "false"
+          PR_REVIEWER__REQUIRE_SCORE_REVIEW: 'true'
+          PR_REVIEWER__REQUIRE_TESTS_REVIEW: 'true'
+          PR_REVIEWER__REQUIRE_ESTIMATE_EFFORT_TO_REVIEW: 'true'
+          PR_REVIEWER__REQUIRE_ESTIMATE_CONTRIBUTION_TIME_COST: 'true'
+          PR_REVIEWER__REQUIRE_CAN_BE_SPLIT_REVIEW: 'true'
+          PR_REVIEWER__REQUIRE_SECURITY_REVIEW: 'true'
+          PR_REVIEWER__REQUIRE_TODO_SCAN: 'true'
+          PR_REVIEWER__REQUIRE_TICKET_ANALYSIS_REVIEW: 'true'
+          PR_REVIEWER__NUM_MAX_FINDINGS: '5'
+          PR_REVIEWER__PUBLISH_OUTPUT_NO_SUGGESTIONS: 'false'
           GITHUB__USER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # NOTE: Dynaconf maps `GITHUB__USER_TOKEN` (double underscore) to the nested setting

@@ -16,15 +16,15 @@ the elimination phase.
 
 ## Inventory
 
-|   # | Service          | File                                                          | Held state         | Worker-isolate risk                                                     |
-| --: | ---------------- | ------------------------------------------------------------- | ------------------ | ----------------------------------------------------------------------- |
-|   1 | wanted retry     | `apps/job-server/src/auto-apply/strategies/wanted-retry.js`   | `lastSubmissionAt` | **High** — submission rate-limit shared across requests                 |
-|   2 | auto-apply state | `apps/job-server/src/tools/auto-apply/state.js`               | `sessionState`     | **High** — apply-flow state cross-request                               |
-|   3 | match-engine     | `apps/job-server/src/services/match-engine.js`                | config cache       | **Medium** — config is read-mostly, but may include user-scoped weights |
-|   4 | cover-letter     | `apps/job-server/src/services/cover-letter.js`                | template cache     | **Low** — templates are read-only                                       |
-|   5 | wanted-client    | `apps/job-server/src/clients/wanted-client.js`                | token holder       | **High** — auth token must not cross tenants                            |
-|   6 | session-broker   | `apps/job-server/src/session-broker/index.js`                 | browser instance   | **Medium** — single Node process; isolate not applicable                |
-|   7 | resume-sync      | `apps/job-server/src/services/resume-sync.js`                 | sync state         | **Medium** — sync mutex                                                 |
+|   # | Service          | File                                                        | Held state         | Worker-isolate risk                                                     |
+| --: | ---------------- | ----------------------------------------------------------- | ------------------ | ----------------------------------------------------------------------- |
+|   1 | wanted retry     | `apps/job-server/src/auto-apply/strategies/wanted-retry.js` | `lastSubmissionAt` | **High** — submission rate-limit shared across requests                 |
+|   2 | auto-apply state | `apps/job-server/src/tools/auto-apply/state.js`             | `sessionState`     | **High** — apply-flow state cross-request                               |
+|   3 | match-engine     | `apps/job-server/src/services/match-engine.js`              | config cache       | **Medium** — config is read-mostly, but may include user-scoped weights |
+|   4 | cover-letter     | `apps/job-server/src/services/cover-letter.js`              | template cache     | **Low** — templates are read-only                                       |
+|   5 | wanted-client    | `apps/job-server/src/clients/wanted-client.js`              | token holder       | **High** — auth token must not cross tenants                            |
+|   6 | session-broker   | `apps/job-server/src/session-broker/index.js`               | browser instance   | **Medium** — single Node process; isolate not applicable                |
+|   7 | resume-sync      | `apps/job-server/src/services/resume-sync.js`               | sync state         | **Medium** — sync mutex                                                 |
 
 ---
 

@@ -90,12 +90,12 @@ jobs:
           OPENAI__API_BASE: https://api.minimax.io/v1
           OPENAI_API_KEY: ${{ secrets.MINIMAX_API_KEY }}
           OPENAI_BASE_URL: https://api.minimax.io/v1
-          LITELLM_LOCAL_MODEL_COST_MAP: "True"
+          LITELLM_LOCAL_MODEL_COST_MAP: 'True'
           CONFIG__MODEL: MiniMax-M3
           CONFIG__FALLBACK_MODELS: '["MiniMax-M3"]'
           CONFIG__RESPONSE_LANGUAGE: ko
           CONFIG__AI_TIMEOUT: '300'
-          CONFIG__CUSTOM_MODEL_MAX_TOKENS: "1000000"
+          CONFIG__CUSTOM_MODEL_MAX_TOKENS: '1000000'
           GITHUB__USER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_REVIEWER__REQUIRE_SECURITY_REVIEW: 'true'
           PR_REVIEWER__REQUIRE_TESTS_REVIEW: 'false'

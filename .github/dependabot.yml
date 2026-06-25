@@ -1,36 +1,36 @@
 version: 2
 updates:
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
-      interval: "weekly"
+      interval: 'weekly'
     open-pull-requests-limit: 5
     labels:
-      - "dependencies"
-      - "github-actions"
+      - 'dependencies'
+      - 'github-actions'
     commit-message:
-      prefix: "chore"
-      include: "scope"
+      prefix: 'chore'
+      include: 'scope'
 
   # Python dependencies (pyproject.toml + requirements*.txt)
   # Auto-merge policy in dependabot-auto-merge.yml: patch + minor → squash;
   # major → manual review.
-  - package-ecosystem: "pip"
-    directory: "/"
+  - package-ecosystem: 'pip'
+    directory: '/'
     schedule:
-      interval: "weekly"
+      interval: 'weekly'
     open-pull-requests-limit: 5
     labels:
-      - "dependencies"
-      - "python"
+      - 'dependencies'
+      - 'python'
     commit-message:
-      prefix: "chore"
-      include: "scope"
+      prefix: 'chore'
+      include: 'scope'
     groups:
       python-minor-patch:
         update-types:
-          - "minor"
-          - "patch"
+          - 'minor'
+          - 'patch'
 
   # NOTE: no npm ecosystem here. This source repo (jclee941/.github) is Python-
   # only and has no package.json, so an npm ecosystem would fail every weekly
@@ -45,19 +45,19 @@ updates:
   # JavaScript/TypeScript dependencies (package.json + package-lock.json).
   # Injected downstream by deploy-to-repos; Dependabot skips repos without a
   # package.json, so this is safe everywhere it lands.
-  - package-ecosystem: "npm"
-    directory: "/"
+  - package-ecosystem: 'npm'
+    directory: '/'
     schedule:
-      interval: "weekly"
+      interval: 'weekly'
     open-pull-requests-limit: 5
     labels:
-      - "dependencies"
-      - "javascript"
+      - 'dependencies'
+      - 'javascript'
     commit-message:
-      prefix: "chore"
-      include: "scope"
+      prefix: 'chore'
+      include: 'scope'
     groups:
       npm-minor-patch:
         update-types:
-          - "minor"
-          - "patch"
+          - 'minor'
+          - 'patch'
