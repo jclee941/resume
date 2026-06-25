@@ -100,7 +100,7 @@
     "chrome-launcher": "^1.2.1",
     "lighthouse": "^13.3.0",
     "@playwright/test": "^1.60.0",
-    "@redocly/cli": "^2.31.6",
+    "@redocly/cli": "^2.34.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^25.9.1",
     "c8": "^11.0.0",
@@ -111,7 +111,7 @@
     "prettier": "^3.8.1",
     "sharp": "^0.34.5",
     "typescript": "^6.0.3",
-    "wrangler": "^4.98.0"
+    "wrangler": "^4.103.0"
   },
   "overrides": {
     "semver": "^7.6.3",
