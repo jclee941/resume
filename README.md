@@ -441,3 +441,4 @@ docker compose ps
 - **볼륨**: `job_automation_data` (잡 자동화 영속 데이터)
 - **주요 워크스페이스**: `apps/portfolio`, `apps/job-server`, `apps/job-dashboard`, `packages/{cli,data,shared,types,schemas,contracts,env}`
 - **보조 디렉터리**: `ta/` (TA 자산), `applications/` (회사별 지원 패키지), `tools/scripts/` (빌드/동기화/보강/1Password 도구)
+- **라이선스**: [`LICENSE`](LICENSE)에 명시된 조건을 따릅니다.
