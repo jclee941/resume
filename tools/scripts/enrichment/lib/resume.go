@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -18,6 +19,7 @@ type ResumePersonal struct {
 
 // ResumeProject represents a personal project entry.
 type ResumeProject struct {
+	ID           string   `json:"id"`
 	Name         string   `json:"name"`
 	Period       string   `json:"period"`
 	Description  string   `json:"description"`
@@ -57,8 +59,8 @@ type ResumeSkills struct {
 
 // ResumeData is the top-level structure of resume_data.json.
 type ResumeData struct {
-	Personal       ResumePersonal  `json:"personal"`
-	Skills         ResumeSkills    `json:"skills"`
+	Personal         ResumePersonal  `json:"personal"`
+	Skills           ResumeSkills    `json:"skills"`
 	PersonalProjects []ResumeProject `json:"personalProjects"`
 }
 
@@ -124,16 +126,59 @@ func FindExistingProject(projects []ResumeProject, name string) (int, bool) {
 	return -1, false
 }
 
+// GitHubProjectID returns a deterministic normalized ID for a GitHub project.
+func GitHubProjectID(name string) string {
+	var builder strings.Builder
+	previousDash := false
+	for _, r := range strings.ToLower(name) {
+		isSafe := (r >= 'a' && r <= 'z') || (r >= '0' && r <= '9')
+		if isSafe {
+			builder.WriteRune(r)
+			previousDash = false
+			continue
+		}
+		if builder.Len() > 0 && !previousDash {
+			builder.WriteByte('-')
+		}
+		previousDash = true
+	}
+
+	slug := strings.Trim(builder.String(), "-")
+	if slug == "" {
+		return "github-project"
+	}
+	return "github-" + slug
+}
+
+// ExtractStars returns the integer star count from a generated project tagline.
+func ExtractStars(tagline string) int {
+	parts := strings.Split(tagline, "⭐")
+	if len(parts) < 2 {
+		return 0
+	}
+	s := strings.TrimSpace(parts[1])
+	n, _ := strconv.Atoi(s)
+	return n
+}
+
+// DerefString returns the string value behind s, or an empty string for nil.
+func DerefString(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
+}
+
 // ApplicationRecord represents a job application record from job-server storage.
 type ApplicationRecord struct {
-	ID            string   `json:"id"`
-	Company       string   `json:"company"`
-	Title         string   `json:"title"`
-	Description   string   `json:"description"`
+	ID             string   `json:"id"`
+	Company        string   `json:"company"`
+	Title          string   `json:"title"`
+	Description    string   `json:"description"`
 	RequiredSkills []string `json:"requiredSkills"`
-	Status        string   `json:"status"`
-	AppliedAt     string   `json:"appliedAt"`
-	Platform      string   `json:"platform"`
+	Status         string   `json:"status"`
+	AppliedAt      string   `json:"appliedAt"`
+	Platform       string   `json:"platform"`
 }
 
 // ReadApplicationRecords reads application records from a JSON file.
