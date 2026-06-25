@@ -57,8 +57,20 @@ describe('Auto-Apply match filtering integration', () => {
       autoApplyThreshold: 75,
       platformPriority: [],
     }).filter([
-      { jobId: '1', position: 'Senior DevOps', company: 'Company A', source: 'wanted', matchScore: 80 },
-      { jobId: '2', position: 'Principal Engineer', company: 'Company B', source: 'wanted', matchScore: 90 },
+      {
+        jobId: '1',
+        position: 'Senior DevOps',
+        company: 'Company A',
+        source: 'wanted',
+        matchScore: 80,
+      },
+      {
+        jobId: '2',
+        position: 'Principal Engineer',
+        company: 'Company B',
+        source: 'wanted',
+        matchScore: 90,
+      },
     ]);
 
     expect(result.jobs.length).toBe(2);

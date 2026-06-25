@@ -4,54 +4,232 @@
     <meta charset="utf-8" />
     <title>이재철 — 보안운영·침해대응 이력서</title>
     <style>
-      @page { size: A4; margin: 8mm 10mm; }
+      @page {
+        size: A4;
+        margin: 8mm 10mm;
+      }
       :root {
-        --surface-primary: #f7f4ef; --surface-secondary: #ffffff; --surface-muted: #eee8de;
-        --text-primary: #171613; --text-secondary: #5b564e; --text-tertiary: #837a6f;
-        --border-default: #d8d0c4; --border-subtle: #e8e1d7;
-        --accent-primary: #b15c18; --accent-secondary: #2e5b4e; --status-info: #25324a;
-        --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 20px;
+        --surface-primary: #f7f4ef;
+        --surface-secondary: #ffffff;
+        --surface-muted: #eee8de;
+        --text-primary: #171613;
+        --text-secondary: #5b564e;
+        --text-tertiary: #837a6f;
+        --border-default: #d8d0c4;
+        --border-subtle: #e8e1d7;
+        --accent-primary: #b15c18;
+        --accent-secondary: #2e5b4e;
+        --status-info: #25324a;
+        --space-1: 4px;
+        --space-2: 8px;
+        --space-3: 12px;
+        --space-4: 16px;
+        --space-5: 20px;
       }
-      * { box-sizing: border-box; }
-      html, body {
-        margin: 0; padding: 0; background: var(--surface-primary); color: var(--text-primary);
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: var(--surface-primary);
+        color: var(--text-primary);
         font-family: NanumSquare, NanumBarunGothic, NanumGothic, system-ui, sans-serif;
-        font-size: 8.15pt; line-height: 1.46; -webkit-print-color-adjust: exact; print-color-adjust: exact;
-        word-break: keep-all; overflow-wrap: anywhere;
+        font-size: 8.15pt;
+        line-height: 1.46;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        word-break: keep-all;
+        overflow-wrap: anywhere;
       }
-      body { padding: 0; }
-      .page { width: 188mm; min-height: 281mm; margin: 0 auto; background: var(--surface-secondary); border: 1px solid var(--border-default); display: flex; flex-direction: column; }
-      header { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: var(--space-4); padding: 24px var(--space-5) var(--space-3); border-top: 5px solid var(--accent-primary); }
-      h1 { margin: 0; font-size: 22pt; line-height: 1.05; font-weight: 800; }
-      .role { margin-top: var(--space-1); font-size: 12pt; line-height: 1.2; font-weight: 800; color: var(--accent-primary); }
-      .lead { margin-top: var(--space-2); max-width: 82ch; color: var(--text-secondary); }
-      .contact { text-align: right; color: var(--text-secondary); font-size: 7.1pt; line-height: 1.45; }
-      a { color: var(--status-info); text-decoration: none; }
-      .fitbar { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-2); padding: 0 var(--space-5) var(--space-3); }
-      .fit { background: var(--surface-muted); border-left: 3px solid var(--accent-primary); padding: var(--space-2); min-height: 47px; }
-      .fit b { display: block; font-size: 7.2pt; color: var(--text-tertiary); font-weight: 700; }
-      .fit span { display: block; margin-top: 2px; font-weight: 800; line-height: 1.24; }
-      main { flex: 1; display: grid; grid-template-columns: 1.36fr 1fr; gap: var(--space-4); padding: 0 var(--space-5) var(--space-4); }
-      section { margin-top: var(--space-3); }
-      h2 { margin: 0 0 var(--space-2); padding-bottom: 3px; border-bottom: 1px solid var(--border-default); color: var(--accent-primary); font-size: 8.4pt; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 800; }
-      .item { padding: 0 0 10px; margin-bottom: 10px; border-bottom: 1px solid var(--border-subtle); }
-      .item:last-child { border-bottom: 0; margin-bottom: 0; padding-bottom: 0; }
-      .head { display: flex; justify-content: space-between; gap: var(--space-2); align-items: baseline; }
-      h3 { margin: 0; font-size: 8.7pt; line-height: 1.25; font-weight: 800; }
-      .meta { color: var(--text-tertiary); font-size: 6.8pt; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
-      ul { margin: 3px 0 0 12px; padding: 0; }
-      li { margin-bottom: 2px; }
-      .tags { margin-top: 4px; display: flex; flex-wrap: wrap; gap: 3px; }
-      .tag { border: 1px solid var(--border-default); color: var(--accent-secondary); background: var(--surface-primary); border-radius: 3px; padding: 1px 5px; font-size: 6.8pt; font-weight: 700; line-height: 1.25; }
-      .panel { background: var(--surface-primary); border: 1px solid var(--border-subtle); padding: var(--space-2); }
-      .stack { display: grid; gap: var(--space-2); }
-      .kv { display: grid; grid-template-columns: 58px 1fr; gap: var(--space-2); border-bottom: 1px solid var(--border-subtle); padding-bottom: 5px; }
-      .kv:last-child { border-bottom: 0; padding-bottom: 0; }
-      .kv b { color: var(--text-tertiary); font-size: 6.8pt; }
-      .compact { margin: 0; list-style: none; }
-      .compact li { margin: 0 0 4px; }
-      footer { padding: var(--space-2) var(--space-5); border-top: 1px solid var(--border-default); color: var(--text-tertiary); font-size: 6.8pt; display: flex; justify-content: space-between; }
-      code { font-family: NanumGothicCoding, "Noto Sans Mono", monospace; font-size: 7pt; color: var(--status-info); }
+      body {
+        padding: 0;
+      }
+      .page {
+        width: 188mm;
+        min-height: 281mm;
+        margin: 0 auto;
+        background: var(--surface-secondary);
+        border: 1px solid var(--border-default);
+        display: flex;
+        flex-direction: column;
+      }
+      header {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: var(--space-4);
+        padding: 24px var(--space-5) var(--space-3);
+        border-top: 5px solid var(--accent-primary);
+      }
+      h1 {
+        margin: 0;
+        font-size: 22pt;
+        line-height: 1.05;
+        font-weight: 800;
+      }
+      .role {
+        margin-top: var(--space-1);
+        font-size: 12pt;
+        line-height: 1.2;
+        font-weight: 800;
+        color: var(--accent-primary);
+      }
+      .lead {
+        margin-top: var(--space-2);
+        max-width: 82ch;
+        color: var(--text-secondary);
+      }
+      .contact {
+        text-align: right;
+        color: var(--text-secondary);
+        font-size: 7.1pt;
+        line-height: 1.45;
+      }
+      a {
+        color: var(--status-info);
+        text-decoration: none;
+      }
+      .fitbar {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--space-2);
+        padding: 0 var(--space-5) var(--space-3);
+      }
+      .fit {
+        background: var(--surface-muted);
+        border-left: 3px solid var(--accent-primary);
+        padding: var(--space-2);
+        min-height: 47px;
+      }
+      .fit b {
+        display: block;
+        font-size: 7.2pt;
+        color: var(--text-tertiary);
+        font-weight: 700;
+      }
+      .fit span {
+        display: block;
+        margin-top: 2px;
+        font-weight: 800;
+        line-height: 1.24;
+      }
+      main {
+        flex: 1;
+        display: grid;
+        grid-template-columns: 1.36fr 1fr;
+        gap: var(--space-4);
+        padding: 0 var(--space-5) var(--space-4);
+      }
+      section {
+        margin-top: var(--space-3);
+      }
+      h2 {
+        margin: 0 0 var(--space-2);
+        padding-bottom: 3px;
+        border-bottom: 1px solid var(--border-default);
+        color: var(--accent-primary);
+        font-size: 8.4pt;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-weight: 800;
+      }
+      .item {
+        padding: 0 0 10px;
+        margin-bottom: 10px;
+        border-bottom: 1px solid var(--border-subtle);
+      }
+      .item:last-child {
+        border-bottom: 0;
+        margin-bottom: 0;
+        padding-bottom: 0;
+      }
+      .head {
+        display: flex;
+        justify-content: space-between;
+        gap: var(--space-2);
+        align-items: baseline;
+      }
+      h3 {
+        margin: 0;
+        font-size: 8.7pt;
+        line-height: 1.25;
+        font-weight: 800;
+      }
+      .meta {
+        color: var(--text-tertiary);
+        font-size: 6.8pt;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+      ul {
+        margin: 3px 0 0 12px;
+        padding: 0;
+      }
+      li {
+        margin-bottom: 2px;
+      }
+      .tags {
+        margin-top: 4px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 3px;
+      }
+      .tag {
+        border: 1px solid var(--border-default);
+        color: var(--accent-secondary);
+        background: var(--surface-primary);
+        border-radius: 3px;
+        padding: 1px 5px;
+        font-size: 6.8pt;
+        font-weight: 700;
+        line-height: 1.25;
+      }
+      .panel {
+        background: var(--surface-primary);
+        border: 1px solid var(--border-subtle);
+        padding: var(--space-2);
+      }
+      .stack {
+        display: grid;
+        gap: var(--space-2);
+      }
+      .kv {
+        display: grid;
+        grid-template-columns: 58px 1fr;
+        gap: var(--space-2);
+        border-bottom: 1px solid var(--border-subtle);
+        padding-bottom: 5px;
+      }
+      .kv:last-child {
+        border-bottom: 0;
+        padding-bottom: 0;
+      }
+      .kv b {
+        color: var(--text-tertiary);
+        font-size: 6.8pt;
+      }
+      .compact {
+        margin: 0;
+        list-style: none;
+      }
+      .compact li {
+        margin: 0 0 4px;
+      }
+      footer {
+        padding: var(--space-2) var(--space-5);
+        border-top: 1px solid var(--border-default);
+        color: var(--text-tertiary);
+        font-size: 6.8pt;
+        display: flex;
+        justify-content: space-between;
+      }
+      code {
+        font-family: NanumGothicCoding, 'Noto Sans Mono', monospace;
+        font-size: 7pt;
+        color: var(--status-info);
+      }
     </style>
   </head>
   <body>
@@ -60,11 +238,18 @@
         <div>
           <h1>이재철</h1>
           <div class="role">보안운영 · 침해대응 · 보안 인프라 엔지니어</div>
-          <p class="lead">금융권 보안운영과 보안 인프라 구축을 함께 수행했습니다. Splunk ES 탐지 룰, n8n 알림 흐름, FortiManager API 조회 자동화, FortiGate HA, DLP/NAC/NSX-T 기반 통제 경험을 국내 보안관제·침해대응 업무에 연결할 수 있습니다.</p>
+          <p class="lead">
+            금융권 보안운영과 보안 인프라 구축을 함께 수행했습니다. Splunk ES 탐지 룰, n8n 알림
+            흐름, FortiManager API 조회 자동화, FortiGate HA, DLP/NAC/NSX-T 기반 통제 경험을 국내
+            보안관제·침해대응 업무에 연결할 수 있습니다.
+          </p>
         </div>
         <div class="contact">
           <div>qws941@kakao.com · 010-5757-9592</div>
-          <div><a href="https://resume.jclee.me">resume.jclee.me</a> · <a href="https://github.com/jclee941">github.com/jclee941</a></div>
+          <div>
+            <a href="https://resume.jclee.me">resume.jclee.me</a> ·
+            <a href="https://github.com/jclee941">github.com/jclee941</a>
+          </div>
           <div>경기도 시흥시 · 1994.10.17</div>
           <div>한양사이버대학교 컴퓨터공학과 재학</div>
         </div>
@@ -80,52 +265,118 @@
           <section>
             <h2>Security Evidence</h2>
             <div class="item">
-              <div class="head"><h3>넥스트레이드 보안운영 · 아이티센 CTS</h3><div class="meta">2025.03 - 2026.02</div></div>
+              <div class="head">
+                <h3>넥스트레이드 보안운영 · 아이티센 CTS</h3>
+                <div class="meta">2025.03 - 2026.02</div>
+              </div>
               <ul>
-                <li>Splunk ES 기반 보안 이벤트 탐지 룰을 설계·운영하고, Saved Search에서 담당자 알림까지의 인지 흐름을 표준화했습니다.</li>
-                <li>FortiManager JSON-RPC API로 방화벽 정책 조회를 자동화해 침해대응 시 접근제어 근거 확인을 빠르게 수행할 수 있게 했습니다.</li>
+                <li>
+                  Splunk ES 기반 보안 이벤트 탐지 룰을 설계·운영하고, Saved Search에서 담당자
+                  알림까지의 인지 흐름을 표준화했습니다.
+                </li>
+                <li>
+                  FortiManager JSON-RPC API로 방화벽 정책 조회를 자동화해 침해대응 시 접근제어 근거
+                  확인을 빠르게 수행할 수 있게 했습니다.
+                </li>
               </ul>
-              <div class="tags"><span class="tag">Splunk ES</span><span class="tag">n8n</span><span class="tag">FortiManager API</span><span class="tag">SOC</span></div>
+              <div class="tags">
+                <span class="tag">Splunk ES</span><span class="tag">n8n</span
+                ><span class="tag">FortiManager API</span><span class="tag">SOC</span>
+              </div>
             </div>
             <div class="item">
-              <div class="head"><h3>넥스트레이드 보안 인프라 구축 · 가온누리정보시스템</h3><div class="meta">2024.03 - 2025.02</div></div>
+              <div class="head">
+                <h3>넥스트레이드 보안 인프라 구축 · 가온누리정보시스템</h3>
+                <div class="meta">2024.03 - 2025.02</div>
+              </div>
               <ul>
-                <li>매매체결시스템의 보안 아키텍처를 구축하며 FortiGate HA, 망분리, 엔드포인트 보안 통제, 변경 근거 관리 절차를 정리했습니다.</li>
-                <li>금융위 본인가 심사에 필요한 보안 산출물과 운영 인수 기준을 구축 단계부터 운영 절차로 이어지도록 문서화했습니다.</li>
+                <li>
+                  매매체결시스템의 보안 아키텍처를 구축하며 FortiGate HA, 망분리, 엔드포인트 보안
+                  통제, 변경 근거 관리 절차를 정리했습니다.
+                </li>
+                <li>
+                  금융위 본인가 심사에 필요한 보안 산출물과 운영 인수 기준을 구축 단계부터 운영
+                  절차로 이어지도록 문서화했습니다.
+                </li>
               </ul>
-              <div class="tags"><span class="tag">FortiGate HA</span><span class="tag">망분리</span><span class="tag">Ansible</span><span class="tag">FSC</span></div>
+              <div class="tags">
+                <span class="tag">FortiGate HA</span><span class="tag">망분리</span
+                ><span class="tag">Ansible</span><span class="tag">FSC</span>
+              </div>
             </div>
             <div class="item">
-              <div class="head"><h3>금융보안데이터센터 운영 · 콴텍투자일임</h3><div class="meta">2022.08 - 2024.03</div></div>
+              <div class="head">
+                <h3>금융보안데이터센터 운영 · 콴텍투자일임</h3>
+                <div class="meta">2022.08 - 2024.03</div>
+              </div>
               <ul>
-                <li>DLP 정책 운영 체계와 금융감독원 감사 산출물 템플릿을 정리해 반복 감사 대응을 재사용 가능한 절차로 전환했습니다.</li>
-                <li>AI 투자 서비스 인프라에서 Linux, PostgreSQL, AWS 보안 로그와 접근제어 흐름을 운영하며 금융 데이터 보호 기준을 유지했습니다.</li>
+                <li>
+                  DLP 정책 운영 체계와 금융감독원 감사 산출물 템플릿을 정리해 반복 감사 대응을
+                  재사용 가능한 절차로 전환했습니다.
+                </li>
+                <li>
+                  AI 투자 서비스 인프라에서 Linux, PostgreSQL, AWS 보안 로그와 접근제어 흐름을
+                  운영하며 금융 데이터 보호 기준을 유지했습니다.
+                </li>
               </ul>
-              <div class="tags"><span class="tag">DLP</span><span class="tag">FSS 감사</span><span class="tag">AWS Security</span><span class="tag">DB 접근제어</span></div>
+              <div class="tags">
+                <span class="tag">DLP</span><span class="tag">FSS 감사</span
+                ><span class="tag">AWS Security</span><span class="tag">DB 접근제어</span>
+              </div>
             </div>
             <div class="item">
-              <div class="head"><h3>NSX-T 마이크로세그멘테이션 · 조인트리</h3><div class="meta">2021.09 - 2022.04</div></div>
+              <div class="head">
+                <h3>NSX-T 마이크로세그멘테이션 · 조인트리</h3>
+                <div class="meta">2021.09 - 2022.04</div>
+              </div>
               <ul>
-                <li>국민대학교 차세대 정보시스템에서 NSX-T DFW 정책과 NAC/DLP/Wazuh 연동을 구성해 서버 간 통신 가시성을 확보했습니다.</li>
+                <li>
+                  국민대학교 차세대 정보시스템에서 NSX-T DFW 정책과 NAC/DLP/Wazuh 연동을 구성해 서버
+                  간 통신 가시성을 확보했습니다.
+                </li>
               </ul>
-              <div class="tags"><span class="tag">NSX-T DFW</span><span class="tag">NAC</span><span class="tag">DLP</span><span class="tag">Wazuh</span></div>
+              <div class="tags">
+                <span class="tag">NSX-T DFW</span><span class="tag">NAC</span
+                ><span class="tag">DLP</span><span class="tag">Wazuh</span>
+              </div>
             </div>
             <div class="item">
-              <div class="head"><h3>원격근무·폐쇄망 보안 운영 · 메타넷엠플랫폼 / 엠티데이타</h3><div class="meta">2017.02 - 2021.08</div></div>
+              <div class="head">
+                <h3>원격근무·폐쇄망 보안 운영 · 메타넷엠플랫폼 / 엠티데이타</h3>
+                <div class="meta">2017.02 - 2021.08</div>
+              </div>
               <ul>
-                <li>VPN/NAC 기반 원격근무 보안환경과 KAI 폐쇄망 Linux 서버·방화벽 정책 운영을 수행하며 보안 운영 기본기를 쌓았습니다.</li>
-                <li>Ansible과 Shell을 활용해 단말 등록, 스위치 점검, 패치 운영, 정책 이력 확인 같은 반복 절차를 표준화했습니다.</li>
+                <li>
+                  VPN/NAC 기반 원격근무 보안환경과 KAI 폐쇄망 Linux 서버·방화벽 정책 운영을 수행하며
+                  보안 운영 기본기를 쌓았습니다.
+                </li>
+                <li>
+                  Ansible과 Shell을 활용해 단말 등록, 스위치 점검, 패치 운영, 정책 이력 확인 같은
+                  반복 절차를 표준화했습니다.
+                </li>
               </ul>
-              <div class="tags"><span class="tag">VPN</span><span class="tag">NAC</span><span class="tag">Linux</span><span class="tag">방화벽 정책</span></div>
+              <div class="tags">
+                <span class="tag">VPN</span><span class="tag">NAC</span
+                ><span class="tag">Linux</span><span class="tag">방화벽 정책</span>
+              </div>
             </div>
           </section>
           <section>
             <h2>Application Focus</h2>
             <div class="panel">
               <ul>
-                <li><b>침해 징후 확인</b>: SIEM 탐지 이벤트, 방화벽 정책, VPN/NAC 로그를 한 흐름으로 대조합니다.</li>
-                <li><b>대응 근거 정리</b>: 탐지 룰, 정책 변경 근거, 감사 산출물을 추적 가능한 운영 기록으로 남깁니다.</li>
-                <li><b>운영 자동화</b>: 반복 조회·알림·등록 절차를 Python, n8n, Ansible 기반 절차로 전환합니다.</li>
+                <li>
+                  <b>침해 징후 확인</b>: SIEM 탐지 이벤트, 방화벽 정책, VPN/NAC 로그를 한 흐름으로
+                  대조합니다.
+                </li>
+                <li>
+                  <b>대응 근거 정리</b>: 탐지 룰, 정책 변경 근거, 감사 산출물을 추적 가능한 운영
+                  기록으로 남깁니다.
+                </li>
+                <li>
+                  <b>운영 자동화</b>: 반복 조회·알림·등록 절차를 Python, n8n, Ansible 기반 절차로
+                  전환합니다.
+                </li>
               </ul>
             </div>
           </section>
@@ -134,19 +385,33 @@
           <section>
             <h2>Security Stack</h2>
             <div class="panel stack">
-              <div class="kv"><b>탐지/대응</b><span>Splunk ES, SIEM, Wazuh, 로그 분석, 인시던트 분류</span></div>
-              <div class="kv"><b>보안장비</b><span>FortiGate, FortiManager, IPS, WAF, NAC, DLP, EDR</span></div>
-              <div class="kv"><b>네트워크</b><span>VMware NSX-T, VPN, 방화벽 정책, 망분리, IDS</span></div>
+              <div class="kv">
+                <b>탐지/대응</b><span>Splunk ES, SIEM, Wazuh, 로그 분석, 인시던트 분류</span>
+              </div>
+              <div class="kv">
+                <b>보안장비</b><span>FortiGate, FortiManager, IPS, WAF, NAC, DLP, EDR</span>
+              </div>
+              <div class="kv">
+                <b>네트워크</b><span>VMware NSX-T, VPN, 방화벽 정책, 망분리, IDS</span>
+              </div>
               <div class="kv"><b>자동화</b><span>Python, Shell, Ansible, n8n, Terraform</span></div>
-              <div class="kv"><b>클라우드</b><span>AWS Security, GuardDuty, CloudTrail, VPC, IAM, Docker</span></div>
+              <div class="kv">
+                <b>클라우드</b><span>AWS Security, GuardDuty, CloudTrail, VPC, IAM, Docker</span>
+              </div>
             </div>
           </section>
           <section>
             <h2>Projects</h2>
             <div class="panel">
               <ul>
-                <li><b>FortiManager API Client</b>: ADOM 잠금, 재시도, 정책 조회 흐름을 포함한 보안운영 자동화 도구</li>
-                <li><b>resume.jclee.me</b>: Cloudflare Workers 기반 포트폴리오, CSP <code>strict-dynamic</code> 적용</li>
+                <li>
+                  <b>FortiManager API Client</b>: ADOM 잠금, 재시도, 정책 조회 흐름을 포함한
+                  보안운영 자동화 도구
+                </li>
+                <li>
+                  <b>resume.jclee.me</b>: Cloudflare Workers 기반 포트폴리오, CSP
+                  <code>strict-dynamic</code> 적용
+                </li>
               </ul>
             </div>
           </section>

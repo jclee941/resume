@@ -212,7 +212,10 @@ function buildJapaneseTemplate(html) {
         'セキュリティインフラの経験を実務課題として整理します。'
       )
       .replace(/보안 운영 · SRE · DevSecOps 채용 검토 가능/g, '採用検討・面接相談が可能')
-      .replace(/보안 운영 · SRE · DevSecOps 검토 가능/g, 'セキュリティ運用・SRE・DevSecOpsを検討可能')
+      .replace(
+        /보안 운영 · SRE · DevSecOps 검토 가능/g,
+        'セキュリティ運用・SRE・DevSecOpsを検討可能'
+      )
       .replace(/채용 검토·면접 논의 가능/g, '採用検討・面接相談が可能')
       .replace(/aria-label="대표 업무 증빙"/g, 'aria-label="代表的な業務証跡"')
       .replace(/거래소 보안 인프라 구축·운영/g, '取引所セキュリティインフラの構築・運用')
@@ -228,10 +231,7 @@ function buildJapaneseTemplate(html) {
         /망분리·엔드포인트 보안 구축·운영/g,
         'ネットワーク分離・エンドポイントセキュリティ構築・運用'
       )
-      .replace(
-        /망분리·엔드포인트 보안 운영/g,
-        'ネットワーク分離・エンドポイントセキュリティ運用'
-      )
+      .replace(/망분리·엔드포인트 보안 운영/g, 'ネットワーク分離・エンドポイントセキュリティ運用')
       .replace(
         /FortiGate HA 분리·FSC 대응/g,
         'ネットワーク分離・エンドポイントセキュリティ構築・運用'
