@@ -77,7 +77,11 @@ export async function syncCareerProjects(client, resumeId, careerId, ssotCareer,
     try {
       await client.addProject(resumeId, careerId, project);
     } catch (e) {
-      log(`Failed to add project "${project.title}" for ${ssotCareer.company}: ${e.message}`, 'error', 'wanted');
+      log(
+        `Failed to add project "${project.title}" for ${ssotCareer.company}: ${e.message}`,
+        'error',
+        'wanted'
+      );
     }
   }
 }

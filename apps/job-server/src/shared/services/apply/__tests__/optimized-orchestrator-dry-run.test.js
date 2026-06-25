@@ -31,8 +31,14 @@ describe('OptimizedApplyOrchestrator dry-run behavior', () => {
     assert.equal(result.failed, 0);
     assert.equal(result.skipped, 2);
     assert.equal(result.results.length, 2);
-    assert.equal(result.results.every((entry) => entry.dryRun === true), true);
-    assert.equal(result.results.every((entry) => entry.skipped === true), true);
+    assert.equal(
+      result.results.every((entry) => entry.dryRun === true),
+      true
+    );
+    assert.equal(
+      result.results.every((entry) => entry.skipped === true),
+      true
+    );
     assert.equal(stats.applied, 0);
   });
 });

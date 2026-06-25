@@ -20,15 +20,25 @@ describe('profile-sync-cli config — Wanted mapData introduction truncation', (
     // because the Wanted API rejects descriptions > 150 chars. The diff target MUST be
     // truncated the same way, otherwise the diff is never idempotent (re-writes every run).
     const target = PLATFORMS.wanted.mapData(realSSoT);
-    assert.ok(target.introduction.length <= 150, `introduction must be <= 150 chars, got ${target.introduction.length}`);
+    assert.ok(
+      target.introduction.length <= 150,
+      `introduction must be <= 150 chars, got ${target.introduction.length}`
+    );
   });
 
   it('ends with "..." ellipsis when the source profileStatement exceeds 150 chars', () => {
     const source = realSSoT.summary.profileStatement || '';
     if (source.length > 150) {
       const target = PLATFORMS.wanted.mapData(realSSoT);
-      assert.strictEqual(target.introduction.length, 150, 'truncated introduction should be exactly 150 chars');
-      assert.ok(target.introduction.endsWith('...'), 'truncated introduction should end with "..."');
+      assert.strictEqual(
+        target.introduction.length,
+        150,
+        'truncated introduction should be exactly 150 chars'
+      );
+      assert.ok(
+        target.introduction.endsWith('...'),
+        'truncated introduction should end with "..."'
+      );
       assert.strictEqual(
         target.introduction,
         `${source.slice(0, 147)}...`,
@@ -38,7 +48,10 @@ describe('profile-sync-cli config — Wanted mapData introduction truncation', (
   });
 
   it('leaves short introductions unchanged (no spurious ellipsis)', () => {
-    const shortSSoT = { ...realSSoT, summary: { ...realSSoT.summary, profileStatement: '짧은 소개' } };
+    const shortSSoT = {
+      ...realSSoT,
+      summary: { ...realSSoT.summary, profileStatement: '짧은 소개' },
+    };
     const target = PLATFORMS.wanted.mapData(shortSSoT);
     assert.strictEqual(target.introduction, '짧은 소개');
   });

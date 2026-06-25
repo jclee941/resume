@@ -1,7 +1,10 @@
 import { describe, it, mock } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { applyToJob, resetCircuitState } from '../../../../auto-apply/strategies/wanted-strategy.js';
+import {
+  applyToJob,
+  resetCircuitState,
+} from '../../../../auto-apply/strategies/wanted-strategy.js';
 import SessionManager from '../../session/session-manager.js';
 import { notifications } from '../../notifications/index.js';
 import { createApplyServiceFixture } from './integration-fixtures.js';

@@ -71,12 +71,24 @@ describe('JobKorea new resume payload contract from real SSoT', () => {
   });
 
   it('includes at least one award', () => {
-    assertAtLeastOneNonEmpty(fields, /^Award\[c\d+\]\.Award_Name$/, 'expected Award[cN].Award_Name');
+    assertAtLeastOneNonEmpty(
+      fields,
+      /^Award\[c\d+\]\.Award_Name$/,
+      'expected Award[cN].Award_Name'
+    );
   });
 
   it('includes language names and mapped language levels', () => {
-    assertAtLeastOneNonEmpty(fields, /^Language\[c\d+\]\.Lang1_Name$/, 'expected Language[cN].Lang1_Name');
-    assertAtLeastOneNonEmpty(fields, /^Language\[c\d+\]\.Lang1_Stat$/, 'expected Language[cN].Lang1_Stat');
+    assertAtLeastOneNonEmpty(
+      fields,
+      /^Language\[c\d+\]\.Lang1_Name$/,
+      'expected Language[cN].Lang1_Name'
+    );
+    assertAtLeastOneNonEmpty(
+      fields,
+      /^Language\[c\d+\]\.Lang1_Stat$/,
+      'expected Language[cN].Lang1_Stat'
+    );
   });
 
   it('includes normalized personal identity and links', () => {
@@ -101,7 +113,11 @@ describe('JobKorea new resume payload contract from real SSoT', () => {
   });
 
   it('includes skills for the new resume payload', () => {
-    assertAtLeastOneNonEmpty(fields, /^Skill\[c\d+\]\.Skill_Name$/, 'expected Skill[cN].Skill_Name');
+    assertAtLeastOneNonEmpty(
+      fields,
+      /^Skill\[c\d+\]\.Skill_Name$/,
+      'expected Skill[cN].Skill_Name'
+    );
   });
 
   it('includes hope job fields for the new resume payload', () => {
@@ -153,6 +169,10 @@ describe('JobKorea new resume payload contract from real SSoT', () => {
     }
 
     const duplicates = [...counts.entries()].filter(([, count]) => count > 1);
-    assert.deepStrictEqual(duplicates, [], `duplicate Career[c1].* fields: ${JSON.stringify(duplicates)}`);
+    assert.deepStrictEqual(
+      duplicates,
+      [],
+      `duplicate Career[c1].* fields: ${JSON.stringify(duplicates)}`
+    );
   });
 });

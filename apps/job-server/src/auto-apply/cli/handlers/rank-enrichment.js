@@ -11,7 +11,8 @@ export function mergeDetailIntoJob(job, detail) {
   return {
     ...job,
     description: job.description && job.description.length ? job.description : d.description || '',
-    requirements: job.requirements && job.requirements.length ? job.requirements : d.requirements || '',
+    requirements:
+      job.requirements && job.requirements.length ? job.requirements : d.requirements || '',
     techStack:
       Array.isArray(job.techStack) && job.techStack.length
         ? job.techStack

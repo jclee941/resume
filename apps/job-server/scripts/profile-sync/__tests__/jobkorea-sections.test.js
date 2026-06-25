@@ -761,7 +761,10 @@ describe('JobKorea SSoT field-mapping correctness — RED', () => {
     const ssot = loadSSOT();
     const fields = buildJobKoreaFormData(ssot, {});
 
-    assert.ok(fields.some((field) => /^HopeJob\.HJ_/.test(field.name)), 'expected HopeJob.HJ_* fields');
+    assert.ok(
+      fields.some((field) => /^HopeJob\.HJ_/.test(field.name)),
+      'expected HopeJob.HJ_* fields'
+    );
   });
 
   it('B2 buildJobKoreaFormData includes real SSoT personal projects', () => {
@@ -777,7 +780,11 @@ describe('JobKorea SSoT field-mapping correctness — RED', () => {
   it('B3/B4 mapPersonalProjectsToFormFields maps githubUrl to P_Url', () => {
     const fields = mapPersonalProjectsToFormFields({
       personalProjects: [
-        { name: 'Project X', description: 'Project X description', githubUrl: 'https://github.com/x' },
+        {
+          name: 'Project X',
+          description: 'Project X description',
+          githubUrl: 'https://github.com/x',
+        },
       ],
     });
     const byName = toMap(fields);
@@ -802,7 +809,9 @@ describe('JobKorea SSoT field-mapping correctness — RED', () => {
 
   it('B6 buildJobKoreaFormData falls back M_Career_Text to careerSummary.ko when coverLetter.ko is absent', () => {
     const fields = buildJobKoreaFormData({
-      careers: [{ company: 'Test', period: '2024.01 ~ 현재', role: 'Security', description: 'desc' }],
+      careers: [
+        { company: 'Test', period: '2024.01 ~ 현재', role: 'Security', description: 'desc' },
+      ],
       careerSummary: {
         ko: {
           headline: '경력 요약 헤드라인',
@@ -828,7 +837,11 @@ describe('JobKorea SSoT field-mapping correctness — RED', () => {
         assert.notStrictEqual(byName.get(fieldName), '', `${fieldName} should be non-empty`);
       }
     });
-    assert.notStrictEqual(byName.get('UserResume.M_Career_Text'), '', 'UserResume.M_Career_Text should be non-empty');
+    assert.notStrictEqual(
+      byName.get('UserResume.M_Career_Text'),
+      '',
+      'UserResume.M_Career_Text should be non-empty'
+    );
   });
 });
 
@@ -1016,10 +1029,7 @@ describe('JobKorea live form — high school', () => {
     const fields = buildJobKoreaFormData(ssot, {});
     const names = fields.map((field) => field.name);
 
-    assert.equal(
-      fields.find((f) => f.name === 'HighSchool.Schl_Name')?.value,
-      '용남고'
-    );
+    assert.equal(fields.find((f) => f.name === 'HighSchool.Schl_Name')?.value, '용남고');
     assert.ok(names.includes('HighSchool.index'));
     assert.ok(names.includes('InputStat.HighSchoolInputStat'));
   });

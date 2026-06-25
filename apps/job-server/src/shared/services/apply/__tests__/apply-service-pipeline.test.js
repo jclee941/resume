@@ -6,7 +6,10 @@ import { ApprovalWorkflowManager } from '../approval-manager.js';
 import { ApplicationTrackerService } from '../application-tracker.js';
 import { CoverLetterService } from '../cover-letter-service.js';
 import { TelegramNotificationAdapter } from '../../notifications/telegram-adapter.js';
-import { applyToJob, resetCircuitState } from '../../../../auto-apply/strategies/wanted-strategy.js';
+import {
+  applyToJob,
+  resetCircuitState,
+} from '../../../../auto-apply/strategies/wanted-strategy.js';
 import SessionManager from '../../session/session-manager.js';
 import { notifications } from '../../notifications/index.js';
 import { createApplyServiceFixture, getTimeline } from './integration-fixtures.js';

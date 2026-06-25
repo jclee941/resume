@@ -2,9 +2,7 @@ import { loadResume } from './job-matcher.js';
 
 const CLAUDE_CONFIG = {
   apiKey:
-    process.env.CLIPROXY_API_KEY ||
-    process.env.CLAUDE_API_KEY ||
-    process.env.ANTHROPIC_API_KEY,
+    process.env.CLIPROXY_API_KEY || process.env.CLAUDE_API_KEY || process.env.ANTHROPIC_API_KEY,
   baseUrl: (process.env.CLIPROXY_BASE || 'https://cliproxy.jclee.me/v1').replace(/\/$/, ''),
   model: process.env.CLIPROXY_MODEL || 'claude-opus-4-8',
   maxTokens: 4000,

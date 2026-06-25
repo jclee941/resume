@@ -73,15 +73,11 @@ export async function aiSearchJobs(args) {
   console.log(`📊 기본 검색 완료: ${searchResult.jobs.length}개 공고 발견`);
   console.log('🧠 AI 기반 재매칭 시작...\n');
 
-  const aiResult = await matchJobsWithAI(
-    getResumeMasterMarkdownPath(),
-    searchResult.jobs,
-    {
-      minScore: 70,
-      maxResults: limit,
-      useAI: true,
-    }
-  );
+  const aiResult = await matchJobsWithAI(getResumeMasterMarkdownPath(), searchResult.jobs, {
+    minScore: 70,
+    maxResults: limit,
+    useAI: true,
+  });
 
   if (!aiResult.success && aiResult.jobs.length === 0) {
     console.log('⚠️ AI 매칭 실패, 기본 결과 표시\n');

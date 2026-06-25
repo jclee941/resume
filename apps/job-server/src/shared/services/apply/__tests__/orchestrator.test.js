@@ -186,5 +186,4 @@ describe('ApplyOrchestrator branch coverage', () => {
     assert.equal(stats.failed, 0);
     assert.equal(stats.startTime, null);
   });
-
 });

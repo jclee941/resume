@@ -22,10 +22,15 @@ describe('Auto-Apply I/O integration', () => {
       { jobId: '1', position: 'DevOps', company: 'A', source: 'wanted' },
       { jobId: '2', position: 'Backend', company: 'B', source: 'jobkorea' },
     ]);
-    const orchestrator = new ApplyOrchestrator(crawler, createMockApplier(), createMockAppManager(), {
-      enabledPlatforms: ['wanted', 'jobkorea'],
-      delayBetweenApplies: 100,
-    });
+    const orchestrator = new ApplyOrchestrator(
+      crawler,
+      createMockApplier(),
+      createMockAppManager(),
+      {
+        enabledPlatforms: ['wanted', 'jobkorea'],
+        delayBetweenApplies: 100,
+      }
+    );
 
     await orchestrator.searchJobs([' Engineer'], { platforms: ['wanted', 'jobkorea'] });
 

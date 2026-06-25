@@ -58,11 +58,51 @@ describe('Auto-Apply match filtering integration', () => {
       platformPriority: [],
     }).filter([
       { jobId: '1', position: 'Senior DevOps', company: 'Company A', source: 'wanted', matchScore: 80 },
-      { jobId: '2', position: 'Lead Engineer', company: 'Company B', source: 'wanted', matchScore: 90 },
+      { jobId: '2', position: 'Principal Engineer', company: 'Company B', source: 'wanted', matchScore: 90 },
     ]);
 
     expect(result.jobs.length).toBe(2);
     expect(result.jobs.every((job) => job.tier === 'auto-apply')).toBe(true);
+  });
+
+  test('leadership security roles are skipped by default', async () => {
+    const result = await new JobFilter({
+      reviewThreshold: 60,
+      autoApplyThreshold: 75,
+      platformPriority: [],
+    }).filter([
+      {
+        jobId: '1',
+        position: '[공통] 정보보안 팀장 (Security Lead)',
+        company: '고위드',
+        source: 'greeting',
+        matchScore: 95,
+      },
+      {
+        jobId: '2',
+        position: 'Lead Security Engineer',
+        company: 'Company B',
+        source: 'wanted',
+        matchScore: 90,
+      },
+      {
+        jobId: '3',
+        position: 'Security Manager',
+        company: 'Company C',
+        source: 'wanted',
+        matchScore: 90,
+      },
+      {
+        jobId: '4',
+        position: '정보보안 담당자',
+        company: 'Company D',
+        source: 'wanted',
+        matchScore: 90,
+      },
+    ]);
+
+    expect(result.jobs).toHaveLength(1);
+    expect(result.jobs[0].position).toBe('정보보안 담당자');
   });
 
   test('keyword matching raises the relevant job above review threshold', async () => {
