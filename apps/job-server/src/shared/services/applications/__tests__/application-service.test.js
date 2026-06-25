@@ -118,7 +118,7 @@ describe('ApplicationService', () => {
     });
 
     const service = new ApplicationService({ manager });
-    const ok = service.updateStatus('ok', 'interviewing', 'note');
+    const ok = service.updateStatus('ok', 'interview', 'note');
     const bad = service.updateStatus('bad', 'invalid', 'note');
 
     assert.equal(ok.statusCode, 200);

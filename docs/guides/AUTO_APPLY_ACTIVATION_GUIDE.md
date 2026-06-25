@@ -190,8 +190,8 @@ curl -X PUT http://localhost:3456/api/applications/{id}/status \
 - `interview` - 면접 예정
 - `offer` - 제안 받음
 - `rejected` - 불합격
-- `accepted` - 합격
 - `withdrawn` - 지원 철회
+- `expired` - 공고 만료
 
 ---
 
@@ -301,8 +301,8 @@ node src/auto-apply/cli/index.js update app_123 interview "1차 면접 예정"
 # 불합격 처리
 node src/auto-apply/cli/index.js update app_123 rejected "서류 불합격"
 
-# 합격 처리
-node src/auto-apply/cli/index.js update app_123 accepted "최종 합격"
+# 제안 처리
+node src/auto-apply/cli/index.js update app_123 offer "최종 제안"
 ```
 
 ---

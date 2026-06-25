@@ -3,12 +3,15 @@ import { idSchema, platformSchema, isoTimestampSchema } from './common.js';
 
 export const applicationStatusSchema = z.enum([
   'pending',
+  'saved',
   'applied',
-  'reviewing',
+  'viewed',
+  'in_progress',
   'interview',
   'offer',
   'rejected',
   'withdrawn',
+  'expired',
 ]);
 
 export const applicationStatusWideSchema = z.enum([

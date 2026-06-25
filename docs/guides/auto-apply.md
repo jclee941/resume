@@ -521,8 +521,8 @@ Body: {
 - `interview` - 면접 예정
 - `offer` - 제안 받음
 - `rejected` - 불합격
-- `accepted` - 합격
 - `withdrawn` - 지원 철회
+- `expired` - 공고 만료
 
 #### Auto-Apply
 
@@ -581,7 +581,7 @@ GET /api/report?date=2026-03-31
   "byStatus": {
     "pending": 3,
     "applied": 30,
-    "interviewing": 8,
+    "interview": 8,
     "rejected": 4
   },
   "bySource": {

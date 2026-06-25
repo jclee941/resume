@@ -50,7 +50,7 @@ describe('ApplicationsHandler — Wanted application sync', () => {
         applications: [
           {
             id: 91,
-            status: 'accepted',
+            status: 'offer',
             applied_at: '2026-06-11T01:02:03.000Z',
             resume_id: 7,
             job: {

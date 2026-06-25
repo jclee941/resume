@@ -60,7 +60,7 @@ export class ReportHandler extends BaseHandler {
         .prepare(
           `SELECT id, company, position, match_score, created_at 
            FROM applications 
-           WHERE status IN ('saved', 'reviewing') 
+           WHERE status IN ('saved', 'viewed', 'in_progress')
              AND match_score >= 80 
            ORDER BY match_score DESC 
            LIMIT 5`

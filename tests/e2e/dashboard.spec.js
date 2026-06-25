@@ -231,7 +231,7 @@ test.describe('Dashboard - Applications CRUD (Protected)', () => {
   test('PUT /api/applications/:id/status should update status', async ({ request }) => {
     skipIfDashboardApiUnavailable();
     const response = await request.put(`${DASHBOARD_BASE}/api/applications/test-id/status`, {
-      data: { status: 'accepted' },
+      data: { status: 'offer' },
     });
     expect([401, 403, 404]).toContain(response.status());
   });
