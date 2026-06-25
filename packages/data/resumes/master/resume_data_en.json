@@ -44,22 +44,22 @@
       "Observability",
       "Cloud Security"
     ],
-    "profileStatement": "Security engineer with experience spanning OA operations to stock exchange security. Started in 2017 at MT Data operating Linux servers with manual patches and firewall rules in KAI's closed network, then spent 11 months from 2018.11 rebuilding Linux fundamentals (RHCSA, CompTIA Linux+, LPIC-1, Linux Master Level 2). Grew through Metanet and Jointree adopting Ansible, Python, NSX-T, and Wazuh; deepened in financial infrastructure at Quantec Investment Management FSDC and Gaonnuri, owning FortiGate HA segmentation and FSC main-license review; most recently built and operated Nextrade exchange security at ITCEN CTS using Splunk ES, n8n, FortiManager API, and Docker. Currently seeking a new security/infrastructure role.",
+    "profileStatement": "Security engineer with a path from closed-network OA operations to financial security infrastructure, SOC alerting automation, observability, and IaC-driven operations. Most recently, in a financial security team, connected Splunk ES, n8n, and FortiManager API in a FortiGate HA segmented environment to standardize security-event recognition, classification, and alerting. Currently seeking a security infrastructure, Security Operations, Observability, or automation-focused role.",
     "coreCompetencies": [
       "Designed and operated high-availability security infrastructure in financial regulated environments and passed licensing audits",
-      "Built SIEM detection rules and automated response systems to address delays in manual detection and response",
-      "Migrated infrastructure to IaC for change traceability and consistency",
+      "Reviewed SIEM detection rules and built automation around alert classification and notification workflows",
+      "Moved infrastructure operations toward IaC for change traceability and consistency",
       "Built an observability platform to enable cross-analysis of metrics and logs scattered across services",
       "Integrated static analysis into CI pipelines to catch vulnerabilities and secret leaks at build time",
       "Developed API-based automation scripts to replace repetitive manual console operations with API-based workflows on security appliances"
     ],
     "aboutSection": {
       "careerHighlights": [
-        "Started as OA engineer (2017 KAI closed network) — operated Linux servers with patches and firewall rules",
+        "Started from closed-network OA operations at KAI — Linux server operations, patch routines, and firewall rule handling",
         "Linux foundations rebuilt (2018.11~2019.11) — RHCSA, CompTIA Linux+, LPIC-1, Linux Master Level 2",
         "Automation entry (2019~2022 Metanet · Jointree) — Ansible/Python for a large-scale contact center, NSX-T microsegmentation, Wazuh OSS monitoring",
         "Financial infrastructure (2022~2024 Quantec Investment Management FSDC) — financial regulator audit response, DB query tuning",
-        "Financial security build/ops (2024~ Gaonnuri · ITCEN Nextrade) — network segmentation and endpoint security build/operations, FSC main-license review passed, Splunk ES + n8n + FortiManager API automated detection/response"
+        "Financial security build/ops (Gaonnuri · ITCEN Nextrade) — network segmentation and endpoint security build/operations, FSC main-license review support, Splunk ES + n8n + FortiManager API alert workflow standardization"
       ],
       "techPhilosophy": [
         "\"If you can't observe it, you can't operate it\"",
@@ -919,7 +919,7 @@
     },
     "jobkorea": {
       "headline": "OA → Security — Financial Security Infrastructure (FSC Main-License Review, Splunk ES, FortiGate HA, n8n)",
-      "about": "Security engineer with experience from OA operations into financial security automation.\n\n[Career Summary]\n• ITCEN CTS — 2025.03~2026.02 — Nextrade exchange security operations SM. Splunk ES + n8n + FortiManager API automated detection/response.\n• Gaonnuri — 2024.03~2025.02 — Nextrade security infrastructure build. Network segmentation and endpoint security build/operations + Ansible Role standardization. FSC main-license review audit passed.\n• Quantec Investment Management — 2022.08~2024.03 — Financial Security Data Center (FSDC) operations. Financial regulator audit response, DB query tuning.\n• Jointree — 2021.09~2022.04 — Kookmin University next-gen system. NSX-T microsegmentation + Wazuh.\n• Metanet — 2020.08~2021.08 — large-scale contact-center remote-work. Ansible/Python automation.\n• MT Data — 2018.10~2019.10 — KAI closed-network IT support / OA operations.\n\n[Growth Background]\nStarted as an OA engineer in 2017 and recognized the limits of manual operations on a closed network. From 2018.11 spent 11 months rebuilding Linux fundamentals with RHCSA, LPIC-1, and Linux Master Level 2 to set the path toward automation and security. After contact-center, education, and financial infrastructure work, I most recently automated financial-exchange security operations and am now seeking my next security/infrastructure role.\n\n[Skills]\nSplunk ES, n8n, FortiGate/FortiManager, Ansible, Python, Terraform, Docker, NSX-T, Prometheus/Grafana/Loki, Cloudflare Workers, MCP/AI agents\n\nPortfolio: https://resume.jclee.me"
+      "about": "Security engineer with experience from OA operations into financial security automation.\n\n[Career Summary]\n• ITCEN CTS — 2025.03~2026.02 — Nextrade exchange security operations SM. Splunk ES + n8n + FortiManager API standardized detection, classification, and alerting workflows.\n• Gaonnuri — 2024.03~2025.02 — Nextrade security infrastructure build. Network segmentation and endpoint security build/operations + Ansible Role standardization. FSC main-license review audit passed.\n• Quantec Investment Management — 2022.08~2024.03 — Financial Security Data Center (FSDC) operations. Financial regulator audit response, DB query tuning.\n• Jointree — 2021.09~2022.04 — Kookmin University next-gen system. NSX-T microsegmentation + Wazuh.\n• Metanet — 2020.08~2021.08 — large-scale contact-center remote-work. Ansible/Python automation.\n• MT Data — 2018.10~2019.10 — KAI closed-network IT support / OA operations.\n\n[Growth Background]\nStarted as an OA engineer in 2017 and recognized the limits of manual operations on a closed network. From 2018.11 spent 11 months rebuilding Linux fundamentals with RHCSA, LPIC-1, and Linux Master Level 2 to set the path toward automation and security. After contact-center, education, and financial infrastructure work, I most recently standardized financial-exchange security operations workflows and am now seeking my next security/infrastructure role.\n\n[Skills]\nSplunk ES, n8n, FortiGate/FortiManager, Ansible, Python, Terraform, Docker, NSX-T, Prometheus/Grafana/Loki, Cloudflare Workers, MCP/AI agents\n\nPortfolio: https://resume.jclee.me"
     }
   },
   "coverLetter": {

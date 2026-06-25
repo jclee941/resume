@@ -44,22 +44,22 @@
       "관측성",
       "클라우드 보안"
     ],
-    "profileStatement": "폐쇄망 OA 운영에서 출발해 금융권 보안 인프라까지 운영해 온 보안 엔지니어입니다. 반복 운영 업무를 자동화 스크립트로 전환하며 운영 부담을 줄여 왔고, 직전 금융권 정보보안팀에서는 FortiGate HA 망분리 환경의 Splunk ES·n8n·FortiManager API 연동을 구축·운영했습니다. 현재 새로운 보안·인프라 역할을 찾는 구직 중입니다.",
+    "profileStatement": "폐쇄망 OA 운영에서 시작해 금융권 보안 인프라 구축·운영, SOC 탐지·알림 자동화, 관측성·IaC 기반 운영 개선을 이어 온 보안 엔지니어입니다. 직전 금융권 정보보안팀에서는 FortiGate HA 망분리 환경에서 Splunk ES, n8n, FortiManager API를 연결해 보안 이벤트 인지·분류·알림 흐름을 표준화했습니다. 현재 보안 인프라, Security Operations, Observability, 자동화 중심의 역할을 찾고 있습니다.",
     "coreCompetencies": [
       "금융권 규제 환경의 보안 인프라 구축·운영 프로젝트 수행 경험",
       "수동 탐지·대응 흐름을 정리하기 위해 SIEM 탐지 룰 검토와 자동화 스크립트를 작성한 경험",
-      "설정 변경 이력 추적과 일관된 인프라 관리를 위해 IaC 기반 코드적 관리로 전환한 경험",
+      "설정 변경 이력 추적과 일관된 인프라 관리를 위해 IaC 기반 운영 방식으로 전환한 경험",
       "서비스별로 흩어진 메트릭·로그를 단일 대시보드에서 교차 분석할 수 있도록 관측성 플랫폼을 구성한 경험",
       "빌드 단계에서 취약점·시크릿 노출을 놓치지 않도록 CI 파이프라인에 정적 분석을 적용해 본 경험",
       "보안 장비 콘솔 수작업 부담을 줄이기 위해 API 기반 자동화 스크립트를 작성한 경험"
     ],
     "aboutSection": {
       "careerHighlights": [
-        "현장 운영 → 자동화 스크립트 → AI 에이전트: 운영 흐름을 유지하면서 도구를 바꿔 왔습니다.",
+        "현장 운영 → 자동화 스크립트 → AI 에이전트: 운영 문제를 먼저 정의하고 도구를 맞춰 왔습니다.",
         "금융 규제 환경 운영 경험: 금감원 감사 자료 준비, FSC 본인가 심사 자료 준비, 전자금융감독규정 대응 업무를 수행.",
         "주요 활동: NAC·방화벽 정책 자동화 스크립트 작성, 보안 이벤트 탐지 룰 검토·조건 조정 업무.",
-        "다양한 스택 운영: Linux · Python · Ansible · Terraform · Splunk SPL · n8n · Cloudflare Workers — 이종 환경에 빨리 적응하는 편입니다.",
-        "홈랩 = 실험실: Proxmox·Grafana·k3s·1Password·MCP를 IaC로 운영하며 도구를 미리 검증."
+        "다양한 스택 운영: Linux · Python · Ansible · Terraform · Splunk SPL · n8n · Cloudflare Workers를 운영 맥락에 맞게 연결합니다.",
+        "홈랩 실험: Proxmox·Grafana·k3s·1Password·MCP를 IaC로 운영하며 도구 적용 가능성을 먼저 검증."
       ],
       "techPhilosophy": [
         "관측 가능하지 않은 것은 운영할 수 없다 (You can't operate what you can't observe).",
@@ -69,8 +69,8 @@
       ],
       "currentFocus": [
         "Splunk ES + n8n + FortiManager API 기반 SOC 운영",
-        "Cloudflare Workers Edge 기반 정책·관측·인증 통합 구조 학습",
-        "MCP/AI 에이전트로 보안 운영 수작업 아이템 정리 시도",
+        "Cloudflare Workers Edge 기반 정책·관측·인증 통합 구조 검증",
+        "MCP/AI 에이전트로 반복 보안 운영 항목을 분류·정리하는 패턴 검증",
         "GitOps(ArgoCD) + 정책 자동화(OPA) 학습"
       ]
     },
@@ -79,11 +79,11 @@
   "platformVariants": {
     "wanted": {
       "headline": "OA 엔지니어로 출발한 보안 엔지니어 — 금융권 SOC + FSC 본인가 + Splunk ES·n8n·FortiGate HA",
-      "about": "**\"반복 작업은 자동화 되어야 한다\"** — 이 한 가지 신념으로 운영해 온 보안 엔지니어입니다.\n\n**현장 → 자동화 → AI 에이전트**, 한 번도 운영의 손을 놓지 않으면서 도구만 바꿔왔습니다. KAI 폐쇄망에서 Linux를 수기로 운영하던 시절, 메타넷·조인트리에서 Ansible·Python·NSX-T·Wazuh로 자동화에 입문하던 시기, 콸텍투자일임 FSDC에서 금융감독원 감사를 데이터로 대응하던 경험을 거치며, 가온누리·아이티센 트랙에서 넥스트레이드 매매체결시스템의 망분리·엔드포인트 보안 구축·운영, FSC 본인가, Splunk ES + n8n + FortiManager API 운영을 수행했습니다. 현재는 다음 보안·인프라 역할을 찾는 구직 중입니다.\n\n**대표 임팩트**:\n• NAC 정책 배포를 자동화해 반복 수작업을 표준화\n• 방화벽 정책을 Ansible Role로 표준화\n• 보안 이벤트 자동 탐지·대응으로 인지·분류·알림 흐름 표준화\n• 운영 환경: 매매체결시스템의 보안 운영·규제 대응 환경\n\n**보유 역량**: SIEM 탐지 룰 설계(Splunk ES), 보안 운영 자동화(n8n, FortiManager API), HA 보안 아키텍처(FortiGate HA, NSX-T), IaC(Ansible Role, Terraform), 관측성(Grafana/Prometheus/Loki), 금융 규제(FSC 본인가, 금감원 감사)\n\n포트폴리오: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
+      "about": "**\"반복 작업은 자동화 되어야 한다\"** — 이 한 가지 신념으로 운영해 온 보안 엔지니어입니다.\n\n**현장 → 자동화 → AI 에이전트**, 한 번도 운영의 손을 놓지 않으면서 도구만 바꿔왔습니다. KAI 폐쇄망에서 Linux를 수기로 운영하던 시절, 메타넷·조인트리에서 Ansible·Python·NSX-T·Wazuh로 자동화에 입문하던 시기, 콴텍투자일임 FSDC에서 금융감독원 감사를 데이터로 대응하던 경험을 거치며, 가온누리·아이티센 트랙에서 넥스트레이드 매매체결시스템의 망분리·엔드포인트 보안 구축·운영, FSC 본인가, Splunk ES + n8n + FortiManager API 운영을 수행했습니다. 현재는 다음 보안·인프라 역할을 찾는 구직 중입니다.\n\n**대표 임팩트**:\n• NAC 정책 배포를 자동화해 반복 수작업을 표준화\n• 방화벽 정책을 Ansible Role로 표준화\n• 보안 이벤트 자동 탐지·대응으로 인지·분류·알림 흐름 표준화\n• 운영 환경: 매매체결시스템의 보안 운영·규제 대응 환경\n\n**보유 역량**: SIEM 탐지 룰 설계(Splunk ES), 보안 운영 자동화(n8n, FortiManager API), HA 보안 아키텍처(FortiGate HA, NSX-T), IaC(Ansible Role, Terraform), 관측성(Grafana/Prometheus/Loki), 금융 규제(FSC 본인가, 금감원 감사)\n\n포트폴리오: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
     },
     "jobkorea": {
       "headline": "보안 엔지니어 — OA→자동화→FSC 본인가→보안 운영 (Splunk ES, n8n, FortiGate HA)",
-      "about": "**\"반복 작업은 자동화 되어야 한다\"** — 한 가지 신념으로 운영의 도구를 진화시켜 왔습니다.\n\n[경력 흐름: 현장 운영 → 자동화 → AI 에이전트]\n• KAI 폐쇄망 (2018–2019): Linux 수기 운영, 패치/방화벽/IDS 정책\n• Linux 기초 재정비 (2019.11–2020.07): RHCSA·LPIC-1·리눅스마스터 2급 연속 취득\n• 자동화 입문 (2020–2022): 메타넷 컴택센터 대규모 SSL VPN/NAC + Ansible/Python; 조인트리 NSX-T 마이크로세그멘테이션 + Wazuh\n• 금융 인프라 (2022–2024): 콸텍투자일임 FSDC, 금감원 감사 대응 + DB 튜닝\n• 보안 구축·운영 (2024–2026): 넥스트레이드, 망분리·엔드포인트 보안 구축·운영 + Ansible Role 표준화 + FSC 본인가 통과\n• 보안 운영 자동화 (2025–2026): 아이티센 CTS 넥스트레이드, Splunk ES + n8n + FortiManager API 기반 자동 탐지·대응 운영\n• 현재: 구직 중 (보안·인프라 엔지니어)\n\n[측정 가능한 임팩트]\nNAC·방화벽 정책 배포 자동화 · 보안 이벤트 자동 탐지·대응 · 접근 제어 정책 정비 · DLP 정책 운영 표준화\n\n[보유 기술 스택]\nSplunk ES, n8n, FortiGate/FortiManager API, Ansible Role, Python, Terraform, Docker, NSX-T, Wazuh, Grafana/Prometheus/Loki, Cloudflare Workers, MCP/AI 에이전트\n\n포트폴리오: https://resume.jclee.me",
+      "about": "**\"반복 작업은 자동화 되어야 한다\"** — 한 가지 신념으로 운영의 도구를 진화시켜 왔습니다.\n\n[경력 흐름: 현장 운영 → 자동화 → AI 에이전트]\n• KAI 폐쇄망 (2018–2019): Linux 수기 운영, 패치/방화벽/IDS 정책\n• Linux 기초 재정비 (2019.11–2020.07): RHCSA·LPIC-1·리눅스마스터 2급 연속 취득\n• 자동화 입문 (2020–2022): 메타넷 컨택센터 SSL VPN/NAC + Ansible/Python; 조인트리 NSX-T 마이크로세그멘테이션 + Wazuh\n• 금융 인프라 (2022–2024): 콴텍투자일임 FSDC, 금감원 감사 대응 + DB 튜닝\n• 보안 구축·운영 (2024–2026): 넥스트레이드, 망분리·엔드포인트 보안 구축·운영 + Ansible Role 표준화 + FSC 본인가 통과\n• 보안 운영 자동화 (2025–2026): 아이티센 CTS 넥스트레이드, Splunk ES + n8n + FortiManager API 기반 자동 탐지·대응 운영\n• 현재: 구직 중 (보안·인프라 엔지니어)\n\n[검증 가능한 운영 개선]\nNAC·방화벽 정책 배포 자동화 · 보안 이벤트 자동 탐지·대응 · 접근 제어 정책 정비 · DLP 정책 운영 표준화\n\n[보유 기술 스택]\nSplunk ES, n8n, FortiGate/FortiManager API, Ansible Role, Python, Terraform, Docker, NSX-T, Wazuh, Grafana/Prometheus/Loki, Cloudflare Workers, MCP/AI 에이전트\n\n포트폴리오: https://resume.jclee.me",
       "defaultJobCode": ""
     }
   },
@@ -964,7 +964,7 @@
       "paragraphs": [
         "キャリアの出発点は、韓国航空宇宙産業(KAI)の閉鎖網IT運用室で、LinuxサーバのパッチスケジュールをExcelに手書きしていた現場でした。毎週同じ作業を繰り返しながら、セキュリティ運用の価値は事故が起きないことを願うことではなく、反復可能な手順と自動化でリスクを下げることにあると確信しました。その後、RHCSA・LPIC-1・Linuxマスター2級を連続取得してLinuxシステムの基礎を再構築し、その基盤を現場での運用経験につなげました。",
         "メタネットMプラットフォームでAnsibleとPythonを用いて、大規模コンタクトセンタのNACポリシー展開手順を自動化しました。ジョイントリーでは国民大学校の次世代情報システムにNSX-Tマイクロセグメンテーションを適用し、東西トラフィックの盲点を減らし、NACとDLP検知ポリシーを再整備しました。ツールは変わっても、手が繰り返しかかる作業は自動化の対象として見るという原則は変わりませんでした。",
-        "クォンテック投資一任の金融セキュリティデータセンタ(FSDC)で金融監督院の定期監査に対応する中で、セキュリティ運用は設定を一度整えることではなく、監査や障害の場面で運用の根拠をデータで提示できることが重要だと学びました。DBアクセス制御クエリチューニングもPBプラットフォーPOC検証も、結局は運用状態をデータで説明し、変更の根拠を残す過程でした。",
+        "クォンテック投資一任の金融セキュリティデータセンタ(FSDC)で金融監督院の定期監査に対応する中で、セキュリティ運用は設定を一度整えることではなく、監査や障害の場面で運用の根拠をデータで提示できることが重要だと学びました。DBアクセス制御クエリチューニングもPBプラットフォームPOC検証も、結局は運用状態をデータで説明し、変更の根拠を残す過程でした。",
         "直前の経歴では、ガオンヌリで構築段階を担当し、ITCEN CTSで運用段階まで連続して担当したNextrade取引所セキュリティトラックに携わりました。ネットワーク分離・エンドポイントセキュリティを構築・運用し、FSC本認可審査を通過し、Ansible Roleでセキュリティ機器設定を標準化し、Splunk ES検知ルール、n8n通知、FortiManager APIポリシー照会を連携させてセキュリティイベントの認知・分類・通知フローを標準化しました。",
         "次のステップでは、自動化の対象をセキュリティ機器や運用スクリプトからAIエージェントとEdgeランタイムまで広げています。個人のホームラボでCloudflare Workers、MCP、Grafana、1PasswordをTerraformでIaC化して運用し、繰り返されるセキュリティ運用項目をAIエージェントが先に整理するパターンを実験しています。次のキャリアでも、ツールそのものより運用の問題が先であり、その問題を自動化可能な構造に変える役割を担いたいと考えています。"
       ],
