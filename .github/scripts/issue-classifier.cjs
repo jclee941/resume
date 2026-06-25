@@ -29,32 +29,95 @@ const RESOLVED_MARKER = '<!-- issue-classification:resolved -->';
 // duplicate, and we only auto-close resolved issues when a merged PR explicitly
 // references them. Everything is overridable via config (workflow inputs/env).
 const DEFAULT_CONFIG = {
-  duplicateThreshold: 0.58,        // min score to flag as a possible duplicate
-  duplicateCloseThreshold: 0.86,   // min score required before a close is allowed
-  closeDuplicates: false,          // auto-close duplicates at all
-  maxDuplicateMatches: 3,          // cap links posted in the comment
-  closeResolvedByPr: true,         // close issues a merged PR says it resolves
-  closeResolvedBySignal: false,    // close issues with only a text "fixed" signal
-  maxCandidates: 100,              // cap candidates scanned for duplicates
-  dryRun: false,                   // compute the plan but mark it a no-op
+  duplicateThreshold: 0.58, // min score to flag as a possible duplicate
+  duplicateCloseThreshold: 0.86, // min score required before a close is allowed
+  closeDuplicates: false, // auto-close duplicates at all
+  maxDuplicateMatches: 3, // cap links posted in the comment
+  closeResolvedByPr: true, // close issues a merged PR says it resolves
+  closeResolvedBySignal: false, // close issues with only a text "fixed" signal
+  maxCandidates: 100, // cap candidates scanned for duplicates
+  dryRun: false, // compute the plan but mark it a no-op
 };
 
 // Stopwords are dropped before similarity so boilerplate ("the", "a", "to")
 // does not inflate the overlap between unrelated issues.
 const STOPWORDS = new Set([
-  'the', 'a', 'an', 'and', 'or', 'of', 'to', 'in', 'on', 'for', 'with', 'is',
-  'are', 'was', 'were', 'be', 'been', 'this', 'that', 'it', 'as', 'at', 'by',
-  'from', 'i', 'we', 'you', 'my', 'me', 'so', 'if', 'no', 'not', 'do', 'does',
-  'did', 'has', 'have', 'had', 'but', 'when', 'then', 'there', 'here', 'out',
-  'up', 'about', 'into', 'over', 'after', 'before', 'please', 'would', 'could',
-  'should', 'can', 'will', 'just', 'also', 'any', 'all', 'some', 'more',
+  'the',
+  'a',
+  'an',
+  'and',
+  'or',
+  'of',
+  'to',
+  'in',
+  'on',
+  'for',
+  'with',
+  'is',
+  'are',
+  'was',
+  'were',
+  'be',
+  'been',
+  'this',
+  'that',
+  'it',
+  'as',
+  'at',
+  'by',
+  'from',
+  'i',
+  'we',
+  'you',
+  'my',
+  'me',
+  'so',
+  'if',
+  'no',
+  'not',
+  'do',
+  'does',
+  'did',
+  'has',
+  'have',
+  'had',
+  'but',
+  'when',
+  'then',
+  'there',
+  'here',
+  'out',
+  'up',
+  'about',
+  'into',
+  'over',
+  'after',
+  'before',
+  'please',
+  'would',
+  'could',
+  'should',
+  'can',
+  'will',
+  'just',
+  'also',
+  'any',
+  'all',
+  'some',
+  'more',
 ]);
 
 // Closing keywords GitHub itself honours, plus our `issue-N` branch convention.
 const CLOSING_KEYWORDS = [
-  'close', 'closes', 'closed',
-  'fix', 'fixes', 'fixed',
-  'resolve', 'resolves', 'resolved',
+  'close',
+  'closes',
+  'closed',
+  'fix',
+  'fixes',
+  'fixed',
+  'resolve',
+  'resolves',
+  'resolved',
 ];
 
 // Phrases that signal an issue is effectively resolved. Deliberately specific
@@ -112,10 +175,10 @@ const NEGATIONS = [
 function normalizeText(text) {
   if (text === null || text === undefined) return '';
   let s = String(text).toLowerCase();
-  s = s.replace(/```[\s\S]*?```/g, ' ');   // drop fenced code blocks
-  s = s.replace(/`[^`]*`/g, ' ');          // drop inline code
-  s = s.replace(/https?:\/\/\S+/g, ' ');   // drop URLs
-  s = s.replace(/[^a-z0-9\s]/g, ' ');      // punctuation -> space
+  s = s.replace(/```[\s\S]*?```/g, ' '); // drop fenced code blocks
+  s = s.replace(/`[^`]*`/g, ' '); // drop inline code
+  s = s.replace(/https?:\/\/\S+/g, ' '); // drop URLs
+  s = s.replace(/[^a-z0-9\s]/g, ' '); // punctuation -> space
   s = s.replace(/\s+/g, ' ').trim();
   return s;
 }
@@ -125,7 +188,7 @@ function tokenize(text) {
   if (!norm) return new Set();
   const out = new Set();
   for (const tok of norm.split(' ')) {
-    if (tok.length < 2) continue;          // single chars carry no signal
+    if (tok.length < 2) continue; // single chars carry no signal
     if (STOPWORDS.has(tok)) continue;
     out.add(tok);
   }
@@ -146,14 +209,8 @@ function jaccardSimilarity(aTokens, bTokens) {
 // Combine title and body similarity. Titles are weighted more heavily because
 // they are the most reliable signal of "same problem".
 function scoreIssueSimilarity(target, candidate) {
-  const titleScore = jaccardSimilarity(
-    tokenize(target.title),
-    tokenize(candidate.title),
-  );
-  const bodyScore = jaccardSimilarity(
-    tokenize(target.body),
-    tokenize(candidate.body),
-  );
+  const titleScore = jaccardSimilarity(tokenize(target.title), tokenize(candidate.title));
+  const bodyScore = jaccardSimilarity(tokenize(target.body), tokenize(candidate.body));
   return 0.65 * titleScore + 0.35 * bodyScore;
 }
 
@@ -206,7 +263,7 @@ function findDuplicateCandidates(target, candidates, config = DEFAULT_CONFIG) {
       scored.push({ number: cand.number, title: cand.title, score: round2(score) });
     }
   }
-  scored.sort((x, y) => (y.score - x.score) || (x.number - y.number));
+  scored.sort((x, y) => y.score - x.score || x.number - y.number);
   return scored.slice(0, cfg.maxDuplicateMatches);
 }
 
@@ -269,10 +326,7 @@ function hasResolvedSignal(issueOrComment) {
 function classifyResolvedByPr(pr, config = DEFAULT_CONFIG) {
   const cfg = { ...DEFAULT_CONFIG, ...config };
   const branch = (pr.head && pr.head.ref) || pr.headRefName || '';
-  const issueNumbers = extractLinkedIssueNumbers(
-    `${pr.title || ''}\n${pr.body || ''}`,
-    branch,
-  );
+  const issueNumbers = extractLinkedIssueNumbers(`${pr.title || ''}\n${pr.body || ''}`, branch);
   if (issueNumbers.length === 0) {
     return { issueNumbers: [], label: null, comment: null, shouldClose: false, dryRun: cfg.dryRun };
   }
@@ -305,9 +359,10 @@ function buildDuplicateComment(matches, config = DEFAULT_CONFIG) {
     .slice(0, cfg.maxDuplicateMatches)
     .map((m) => `- #${m.number} (similarity ${m.score})`)
     .join('\n');
-  const lead = matches.length === 1
-    ? `This issue looks like a possible duplicate of #${matches[0].number}.`
-    : 'This issue looks like a possible duplicate of:';
+  const lead =
+    matches.length === 1
+      ? `This issue looks like a possible duplicate of #${matches[0].number}.`
+      : 'This issue looks like a possible duplicate of:';
   return (
     `${DUP_MARKER}\n` +
     `🔁 **Possible duplicate detected**\n\n` +

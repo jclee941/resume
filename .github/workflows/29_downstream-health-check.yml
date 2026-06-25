@@ -6,7 +6,7 @@ name: Downstream Health Check
 
 on:
   workflow_run:
-    workflows: ["Auto Deploy Workflows", "PR Checks", "Gitleaks", "actionlint"]
+    workflows: ['Auto Deploy Workflows', 'PR Checks', 'Gitleaks', 'actionlint']
     types: [completed]
   repository_dispatch:
     types: [downstream-health-check]
