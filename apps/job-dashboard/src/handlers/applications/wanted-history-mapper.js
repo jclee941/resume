@@ -20,7 +20,8 @@ export function mapWantedStatus(status) {
   if (normalized.includes('reject')) return APPLICATION_STATUS.REJECTED;
   if (normalized.includes('withdraw')) return APPLICATION_STATUS.WITHDRAWN;
   if (normalized.includes('interview')) return APPLICATION_STATUS.INTERVIEW;
-  if (normalized.includes('offer') || normalized.includes('accept')) return APPLICATION_STATUS.OFFER;
+  if (normalized.includes('offer') || normalized.includes('accept'))
+    return APPLICATION_STATUS.OFFER;
   if (normalized.includes('view')) return APPLICATION_STATUS.VIEWED;
   if (normalized.includes('progress') || normalized.includes('screen')) {
     return APPLICATION_STATUS.IN_PROGRESS;
@@ -45,10 +46,17 @@ export function normalizeWantedApplication(item, now = new Date().toISOString())
   }
 
   const position = firstString(item.job?.position, item.job?.title, item.position, item.title);
-  const company = firstString(item.job?.company?.name, item.company?.name, item.company_name, item.company);
-  const appliedAt = firstString(item.applied_at, item.appliedAt, item.created_at, item.createdAt) || now;
+  const company = firstString(
+    item.job?.company?.name,
+    item.company?.name,
+    item.company_name,
+    item.company
+  );
+  const appliedAt =
+    firstString(item.applied_at, item.appliedAt, item.created_at, item.createdAt) || now;
   const updatedAt =
-    firstString(item.updated_at, item.updatedAt, item.status_updated_at, item.statusUpdatedAt) || appliedAt;
+    firstString(item.updated_at, item.updatedAt, item.status_updated_at, item.statusUpdatedAt) ||
+    appliedAt;
   const sourceUrl =
     firstString(item.source_url, item.sourceUrl, item.job?.url) ||
     (wantedJobId ? `https://www.wanted.co.kr/wd/${wantedJobId}` : null);

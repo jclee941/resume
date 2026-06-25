@@ -22,9 +22,13 @@ function createRequest({ body, url = 'http://localhost/api/applications/sync/wan
 }
 
 function createHandler({ auth, fetcher } = {}) {
-  const handler = new ApplicationsHandler({ prepare: () => assert.fail('DB should not be used') }, auth, {
-    fetcher,
-  });
+  const handler = new ApplicationsHandler(
+    { prepare: () => assert.fail('DB should not be used') },
+    auth,
+    {
+      fetcher,
+    }
+  );
   const wantedRows = [];
   const dashboardRows = [];
 

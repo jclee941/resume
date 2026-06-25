@@ -13,10 +13,10 @@
  */
 
 const { test, expect } = require('@playwright/test');
+const { createDashboardEnvironment } = require('./fixtures/dashboard-environment.cjs');
 
-// Get the base URL - dashboard is served at /job/* prefix
-const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:8787';
-const DASHBOARD_BASE = `${BASE_URL}/job`;
+let BASE_URL = '';
+let DASHBOARD_BASE = '';
 
 // Check if the dashboard backend is available (may be down/503 in some environments)
 let apiAvailable = false;
@@ -37,27 +37,12 @@ function skipIfTransientDashboardStatus(response, label) {
   );
 }
 
-test.beforeAll(async ({ request }) => {
-  const PROBE_TIMEOUT_MS = 5000;
-
-  try {
-    const apiResponse = await request.get(`${DASHBOARD_BASE}/api/auth/status`, {
-      timeout: PROBE_TIMEOUT_MS,
-    });
-    apiAvailable = [200, 401].includes(apiResponse.status());
-  } catch {
-    apiAvailable = false;
-  }
-
-  try {
-    const uiResponse = await request.get(`${DASHBOARD_BASE}/`, {
-      timeout: PROBE_TIMEOUT_MS,
-    });
-    const uiHtml = await uiResponse.text();
-    uiAvailable = uiResponse.status() === 200 && /Job Dashboard/i.test(uiHtml);
-  } catch {
-    uiAvailable = false;
-  }
+test.beforeAll(async ({ request }, testInfo) => {
+  const dashboard = await createDashboardEnvironment(request, testInfo.workerIndex);
+  BASE_URL = dashboard.baseUrl;
+  DASHBOARD_BASE = dashboard.dashboardBase;
+  apiAvailable = dashboard.apiAvailable;
+  uiAvailable = dashboard.uiAvailable;
 });
 
 test.describe('Dashboard - Health & Status Endpoints', () => {
