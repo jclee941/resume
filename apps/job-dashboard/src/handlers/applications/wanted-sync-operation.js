@@ -1,7 +1,4 @@
-import {
-  extractWantedApplications,
-  normalizeWantedApplication,
-} from './wanted-history-mapper.js';
+import { extractWantedApplications, normalizeWantedApplication } from './wanted-history-mapper.js';
 
 const WANTED_APPLICATIONS_URL = 'https://www.wanted.co.kr/api/v4/applications';
 

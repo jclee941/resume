@@ -394,6 +394,7 @@ paths:
     get:
       tags: [Auth]
       summary: Current admin session status
+      operationId: getAuthStatus
       responses:
         '200':
           description: Session status
@@ -406,11 +407,14 @@ paths:
                     type: boolean
                   expiresAt:
                     type: string
+        '401':
+          $ref: '#/components/responses/Unauthorized'
 
   /api/auth/login:
     post:
       tags: [Auth]
       summary: Mint a 4h HMAC session token from a valid ADMIN_TOKEN
+      operationId: loginAuth
       requestBody:
         required: true
         content:
@@ -431,14 +435,18 @@ paths:
     post:
       tags: [Auth]
       summary: Clear admin session cookie
+      operationId: logoutAuth
       responses:
         '200':
           description: Session cleared
+        '401':
+          $ref: '#/components/responses/Unauthorized'
 
   /api/auth/sync:
     post:
       tags: [Auth]
       summary: Ingest platform cookies from external script (requires X-Auth-Sync-Secret)
+      operationId: syncAuth
       parameters:
         - in: header
           name: X-Auth-Sync-Secret
@@ -454,22 +462,29 @@ paths:
     post:
       tags: [Auth]
       summary: Manually set platform auth (admin)
+      operationId: setAuth
       responses:
         '200':
           description: Auth updated
+        '401':
+          $ref: '#/components/responses/Unauthorized'
 
   /api/auth/profile:
     get:
       tags: [Auth]
       summary: Read Wanted profile via authenticated session
+      operationId: getAuthProfile
       responses:
         '200':
           description: Profile status
+        '401':
+          $ref: '#/components/responses/Unauthorized'
 
   /api/auth/{platform}:
     delete:
       tags: [Auth]
       summary: Clear platform-specific session
+      operationId: deleteAuthPlatform
       parameters:
         - in: path
           name: platform
@@ -478,44 +493,59 @@ paths:
       responses:
         '200':
           description: Platform session cleared
+        '401':
+          $ref: '#/components/responses/Unauthorized'
 
   # Workflows (apps/job-dashboard/src/routes/workflows.js)
   /api/workflows/job-crawling:
     post:
       tags: [Workflows]
       summary: Trigger job-crawling Cloudflare Workflow
+      operationId: triggerJobCrawlingWorkflow
       responses:
         '202':
           description: Workflow started
+        '400':
+          $ref: '#/components/responses/BadRequest'
 
   /api/workflows/application:
     post:
       tags: [Workflows]
       summary: Trigger application Cloudflare Workflow
+      operationId: triggerApplicationWorkflow
       responses:
         '202':
           description: Workflow started
+        '400':
+          $ref: '#/components/responses/BadRequest'
 
   /api/workflows/resume-sync:
     post:
       tags: [Workflows]
       summary: Trigger resume-sync Cloudflare Workflow
+      operationId: triggerResumeSyncWorkflow
       responses:
         '202':
           description: Workflow started
+        '400':
+          $ref: '#/components/responses/BadRequest'
 
   /api/workflows/daily-report:
     post:
       tags: [Workflows]
       summary: Trigger daily-report Cloudflare Workflow
+      operationId: triggerDailyReportWorkflow
       responses:
         '202':
           description: Workflow started
+        '400':
+          $ref: '#/components/responses/BadRequest'
 
   /api/workflows/{workflowType}/{instanceId}:
     get:
       tags: [Workflows]
       summary: Read workflow instance status
+      operationId: getWorkflowInstance
       parameters:
         - in: path
           name: workflowType
@@ -528,11 +558,14 @@ paths:
       responses:
         '200':
           description: Workflow status
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   /api/workflows/application/{instanceId}/approve:
     post:
       tags: [Workflows]
       summary: Approve a pending application workflow step
+      operationId: approveApplicationWorkflow
       parameters:
         - in: path
           name: instanceId
@@ -541,11 +574,14 @@ paths:
       responses:
         '200':
           description: Approval recorded
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   /api/workflows/application/{instanceId}/reject:
     post:
       tags: [Workflows]
       summary: Reject a pending application workflow step
+      operationId: rejectApplicationWorkflow
       parameters:
         - in: path
           name: instanceId
@@ -554,60 +590,81 @@ paths:
       responses:
         '200':
           description: Rejection recorded
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # Automation triggers (apps/job-dashboard/src/routes/automation.js)
   /api/automation/search:
     post:
       tags: [Automation]
       summary: Trigger job-search webhook
+      operationId: triggerAutomationSearch
       responses:
         '202':
           description: Search triggered
+        '400':
+          $ref: '#/components/responses/BadRequest'
 
   /api/automation/apply:
     post:
       tags: [Automation]
       summary: Trigger auto-apply webhook
+      operationId: triggerAutomationApply
       responses:
         '202':
           description: Auto-apply triggered
+        '400':
+          $ref: '#/components/responses/BadRequest'
 
   /api/automation/report:
     post:
       tags: [Automation]
       summary: Trigger daily-report webhook
+      operationId: triggerAutomationReport
       responses:
         '202':
           description: Report triggered
+        '400':
+          $ref: '#/components/responses/BadRequest'
 
   /api/automation/resume:
     post:
       tags: [Automation]
       summary: Trigger resume-sync webhook
+      operationId: triggerAutomationResume
       responses:
         '202':
           description: Resume sync triggered
+        '400':
+          $ref: '#/components/responses/BadRequest'
 
   /api/automation/profile-sync:
     post:
       tags: [Automation]
       summary: Trigger profile-sync webhook
+      operationId: triggerAutomationProfileSync
       responses:
         '202':
           description: Profile sync triggered
+        '400':
+          $ref: '#/components/responses/BadRequest'
 
   /api/automation/profile-sync/history:
     get:
       tags: [Automation]
       summary: Profile sync history
+      operationId: listProfileSyncHistory
       responses:
         '200':
           description: Profile sync history
+        '401':
+          $ref: '#/components/responses/Unauthorized'
 
   /api/automation/profile-sync/{syncId}:
     get:
       tags: [Automation]
       summary: Profile sync status by ID
+      operationId: getProfileSyncStatus
       parameters:
         - in: path
           name: syncId
@@ -616,87 +673,145 @@ paths:
       responses:
         '200':
           description: Profile sync status
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   /api/automation/profile-sync/callback:
     post:
       tags: [Automation]
       summary: Profile-sync completion callback
+      operationId: receiveProfileSyncCallback
       responses:
         '200':
           description: Callback accepted
+        '400':
+          $ref: '#/components/responses/BadRequest'
 
   /api/auto-apply/config:
     get:
       tags: [Automation]
       summary: Auto-apply configuration
+      operationId: getAutoApplyConfig
       responses:
         '200':
           description: Auto-apply configuration
+        '401':
+          $ref: '#/components/responses/Unauthorized'
 
   # Resume master (apps/job-dashboard/src/routes/automation.js)
   /api/resume/master:
     get:
       tags: [Resume]
       summary: Read master resume blob
+      operationId: getMasterResume
       responses:
         '200':
           description: Master resume
+        '401':
+          $ref: '#/components/responses/Unauthorized'
     put:
       tags: [Resume]
       summary: Upload master resume
+      operationId: updateMasterResume
       responses:
         '200':
           description: Master resume updated
+        '400':
+          $ref: '#/components/responses/BadRequest'
 
   /api/test/chaos-resumes:
     get:
       tags: [Test]
       summary: Test endpoint for Wanted chaos-resume API
+      operationId: testChaosResumes
       responses:
         '200':
           description: Test response
+        '400':
+          $ref: '#/components/responses/BadRequest'
 
   # Admin (apps/job-dashboard/src/routes/admin.js)
   /api/diagnostics/bindings:
     get:
       tags: [Admin]
       summary: Diagnose Cloudflare Worker bindings (D1, KV, AI, browser)
+      operationId: getBindingDiagnostics
       responses:
         '200':
           description: Binding diagnostics
+        '401':
+          $ref: '#/components/responses/Unauthorized'
 
   /api/config:
     get:
       tags: [Admin]
       summary: Read worker config from D1
+      operationId: getConfig
       responses:
         '200':
           description: Worker config
+        '401':
+          $ref: '#/components/responses/Unauthorized'
     put:
       tags: [Admin]
       summary: Update worker config in D1
+      operationId: updateConfig
       responses:
         '200':
           description: Worker config updated
+        '400':
+          $ref: '#/components/responses/BadRequest'
 
   /api/queue/enqueue:
     post:
       tags: [Admin]
       summary: Enqueue a job to the crawl-tasks queue
+      operationId: enqueueQueueJob
       responses:
         '202':
           description: Job enqueued
+        '400':
+          $ref: '#/components/responses/BadRequest'
 
   /api/queue/status:
     get:
       tags: [Admin]
       summary: Queue status overview
+      operationId: getQueueStatus
       responses:
         '200':
           description: Queue status
+        '401':
+          $ref: '#/components/responses/Unauthorized'
 
 components:
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
   schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+
     HealthResponse:
       type: object
       properties:
