@@ -251,12 +251,38 @@ jobs:
       - name: Build Go scripts
         run: |
           set -euo pipefail
+          has_go_mod() {
+            local dir="$1"
+            while [ "$dir" != "." ] && [ "$dir" != "/" ]; do
+              if [ -f "$dir/go.mod" ]; then
+                return 0
+              fi
+              dir=$(dirname "$dir")
+            done
+            [ -f "go.mod" ]
+          }
           while IFS= read -r script; do
+            if [[ "$script" == *_test.go ]]; then
+              continue
+            fi
+            if ! grep -Eq '^package main$' "$script" || ! grep -Eq '^func main\(' "$script"; then
+              continue
+            fi
             name=$(basename "$script" .go)
-            tmpdir=$(mktemp -d)
-            cp "$script" "$tmpdir/main.go"
-            (cd "$tmpdir" && go build -o /dev/null main.go)
-            rm -rf "$tmpdir"
+            dir=$(dirname "$script")
+            file=$(basename "$script")
+            entrypoints=$(find "$dir" -maxdepth 1 -type f -name '*.go' ! -name '*_test.go' -exec grep -El '^func main\(' {} \; | wc -l)
+            if has_go_mod "$dir"; then
+              if [ "$entrypoints" -eq 1 ]; then
+                (cd "$dir" && go build -o /dev/null .)
+              else
+                (cd "$dir" && go build -o /dev/null "$file")
+              fi
+            elif [ "$entrypoints" -eq 1 ]; then
+              (cd "$dir" && GO111MODULE=off go build -o /dev/null .)
+            else
+              (cd "$dir" && GO111MODULE=off go build -o /dev/null "$file")
+            fi
             echo "✅ Built $name"
           done < <(find tools/scripts infrastructure -type f -name '*.go')
 
