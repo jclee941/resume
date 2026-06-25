@@ -38,6 +38,7 @@ export async function runAutoApply({ request, env, clients }) {
     platforms = ['wanted', 'linkedin', 'remember'],
     atsStub = false,
   } = body;
+  const runId = getAutoApplyRunId(body);
   const config = await getConfig(env);
   const explicitCandidates = readExplicitCandidates(body);
   if (explicitCandidates.error) {
@@ -117,10 +118,12 @@ export async function runAutoApply({ request, env, clients }) {
       isAlreadyApplied,
       recordApplication,
       getWantedSession,
+      runId,
     });
 
     return jsonResponse({
       success: true,
+      runId,
       dryRun,
       submitted: countSubmittedApplications(searchResults, dryRun),
       platforms: activePlatforms,
@@ -171,4 +174,16 @@ function countSubmittedApplications(searchResults, dryRun) {
 
 function hasMalformedPlatforms(body) {
   return Object.prototype.hasOwnProperty.call(body, 'platforms') && !Array.isArray(body.platforms);
+}
+
+function getAutoApplyRunId(body) {
+  if (typeof body.runId === 'string' && body.runId.trim().length > 0) {
+    return body.runId.trim();
+  }
+
+  if (typeof globalThis.crypto?.randomUUID === 'function') {
+    return globalThis.crypto.randomUUID();
+  }
+
+  return `auto-apply-${Date.now()}`;
 }

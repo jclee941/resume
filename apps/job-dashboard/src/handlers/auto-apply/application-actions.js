@@ -40,6 +40,7 @@ export async function applyMatchedJobs({
   isAlreadyApplied,
   recordApplication,
   getWantedSession,
+  runId,
 }) {
   let appliedCount = 0;
 
@@ -66,7 +67,14 @@ export async function applyMatchedJobs({
         reason: 'dry_run',
       });
       addJobResult(searchResults, tracedJob, 'would_apply');
-      await recordApplication(env, { job: tracedJob, source: tracedJob.source, status: 'pending' });
+      await recordApplication(env, {
+        job: tracedJob,
+        source: tracedJob.source,
+        status: 'pending',
+        dryRun,
+        action: 'would_apply',
+        runId,
+      });
       appliedCount++;
       incrementPlatformApplied(searchResults, tracedJob.source);
       continue;
@@ -80,6 +88,7 @@ export async function applyMatchedJobs({
         searchResults,
         recordApplication,
         getWantedSession,
+        runId,
       });
       if (applied) {
         appliedCount++;
@@ -87,7 +96,14 @@ export async function applyMatchedJobs({
       continue;
     }
 
-    await recordApplication(env, { job: tracedJob, source: tracedJob.source, status: 'pending' });
+    await recordApplication(env, {
+      job: tracedJob,
+      source: tracedJob.source,
+      status: 'pending',
+      dryRun,
+      action: 'saved_for_manual_apply',
+      runId,
+    });
     addJobResult(searchResults, tracedJob, 'saved_for_manual_apply');
     appliedCount++;
     incrementPlatformApplied(searchResults, tracedJob.source);
@@ -103,6 +119,7 @@ async function applyWantedJob({
   searchResults,
   recordApplication,
   getWantedSession,
+  runId,
 }) {
   try {
     const cookies = await getWantedSession(env);
@@ -145,6 +162,9 @@ async function applyWantedJob({
       source: tracedJob.source,
       status: 'applied',
       result,
+      dryRun: false,
+      action: 'applied',
+      runId,
     });
     addJobResult(searchResults, tracedJob, 'applied');
     incrementPlatformApplied(searchResults, tracedJob.source);
@@ -166,6 +186,9 @@ async function applyWantedJob({
       source: job.source,
       status: 'error',
       result: { error: normalized.message },
+      dryRun: false,
+      action: 'error',
+      runId,
     });
     return false;
   }

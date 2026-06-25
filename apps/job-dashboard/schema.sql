@@ -14,7 +14,14 @@ CREATE TABLE IF NOT EXISTS applications (
   notes TEXT,
   created_at TEXT NOT NULL,
   updated_at TEXT NOT NULL,
-  applied_at TEXT
+  applied_at TEXT,
+  auto_apply_run_id TEXT,
+  auto_apply_dry_run INTEGER DEFAULT 0,
+  auto_apply_action TEXT,
+  adapter_backed INTEGER DEFAULT 0,
+  decision_trace TEXT,
+  approval_metadata TEXT,
+  apply_result TEXT
 );
 CREATE TABLE IF NOT EXISTS application_timeline (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -44,6 +51,8 @@ CREATE INDEX IF NOT EXISTS idx_applications_status ON applications(status);
 CREATE INDEX IF NOT EXISTS idx_applications_source ON applications(source);
 CREATE INDEX IF NOT EXISTS idx_applications_company ON applications(company);
 CREATE INDEX IF NOT EXISTS idx_applications_created_at ON applications(created_at);
+CREATE INDEX IF NOT EXISTS idx_applications_auto_apply_run ON applications(auto_apply_run_id);
+CREATE INDEX IF NOT EXISTS idx_applications_auto_apply_action ON applications(auto_apply_action);
 CREATE INDEX IF NOT EXISTS idx_timeline_application_id ON application_timeline(application_id);
 CREATE TABLE IF NOT EXISTS wanted_application_history (
   wanted_application_id TEXT PRIMARY KEY,
