@@ -90,7 +90,9 @@ describe('portfolio visual CSS contract', () => {
     // class (0-3-0 vs 0-2-0), so revealed always wins independent of order.
     const animationsCss = readStyle('animations.css');
     expect(animationsCss).toMatch(/\.reveal-ready\s+\.reveal\.revealed\s*{[^}]*opacity:\s*1/);
-    expect(animationsCss).toMatch(/\.reveal-ready\s+\.reveal-stagger\.revealed\s*>\s*\*\s*{[^}]*opacity:\s*1/);
+    expect(animationsCss).toMatch(
+      /\.reveal-ready\s+\.reveal-stagger\.revealed\s*>\s*\*\s*{[^}]*opacity:\s*1/
+    );
   });
 
   test('S9 lang-switcher links meet 44px target size and have a focus-visible ring', () => {

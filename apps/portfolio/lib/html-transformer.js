@@ -191,9 +191,31 @@ function buildJapaneseTemplate(html) {
         /금융권 보안 인프라 설계·운영, SIEM 탐지·대응 자동화, IaC 기반 관측성을\s+실무 문제 해결에 연결합니다\./g,
         '金融セキュリティインフラの設計・運用、SIEM検知・対応の自動化、IaCベースの可観測性を、実務の課題解決につなげています。'
       )
+      .replace(
+        /금융권 보안 인프라 운영 경험을 바탕으로 탐지, 자동화, 관측성 과제를 실무 단위로\s+정리합니다\./g,
+        '金融セキュリティインフラの運用経験をもとに、検知・自動化・可観測性の課題を実務単位で整理します。'
+      )
+      .replace(
+        /금융권 보안 인프라 운영 경험을 바탕으로 탐지, 자동 운영, 관측성 과제를 실무 단위로\s+정리합니다\./g,
+        '金融セキュリティインフラの運用経験をもとに、検知・運用自動化・可観測性の課題を実務単位で整理します。'
+      )
+      .replace(
+        /금융권 보안 인프라 운영 경험으로 탐지·운영·관측성 과제를 실무 단위로 정리합니다\./g,
+        '金融セキュリティインフラの運用経験をもとに、検知・運用・可観測性の課題を実務単位で整理します。'
+      )
+      .replace(
+        /금융권 보안 인프라 경험 기반으로 탐지·운영·관측성 과제를 정리합니다\./g,
+        '金融セキュリティインフラの経験をもとに、検知・運用・可観測性の課題を整理します。'
+      )
+      .replace(
+        /보안 인프라 경험을 실무 과제로 정리합니다\./g,
+        'セキュリティインフラの経験を実務課題として整理します。'
+      )
       .replace(/보안 운영 · SRE · DevSecOps 채용 검토 가능/g, '採用検討・面接相談が可能')
+      .replace(/보안 운영 · SRE · DevSecOps 검토 가능/g, 'セキュリティ運用・SRE・DevSecOpsを検討可能')
       .replace(/채용 검토·면접 논의 가능/g, '採用検討・面接相談が可能')
       .replace(/aria-label="대표 업무 증빙"/g, 'aria-label="代表的な業務証跡"')
+      .replace(/거래소 보안 인프라 구축·운영/g, '取引所セキュリティインフラの構築・運用')
       .replace(
         /넥스트레이드 보안 구축·운영/g,
         'Nextrade売買締結システムのセキュリティ構築・運用を継続担当'
@@ -205,6 +227,10 @@ function buildJapaneseTemplate(html) {
       .replace(
         /망분리·엔드포인트 보안 구축·운영/g,
         'ネットワーク分離・エンドポイントセキュリティ構築・運用'
+      )
+      .replace(
+        /망분리·엔드포인트 보안 운영/g,
+        'ネットワーク分離・エンドポイントセキュリティ運用'
       )
       .replace(
         /FortiGate HA 분리·FSC 대응/g,
@@ -219,18 +245,32 @@ function buildJapaneseTemplate(html) {
         'Splunk ES · n8n · FortiManager APIベースのセキュリティイベント自動化'
       )
       .replace(/aria-label="채용 검토 패킷"/g, 'aria-label="採用検討パケット"')
+      .replace(/aria-label="채용 검토 자료"/g, 'aria-label="採用検討資料"')
       .replace(/채용 검토 패킷/g, '採用検討パケット')
+      .replace(/채용 검토 자료/g, '採用検討資料')
       .replace(/요청부서 검토 포인트/g, '依頼部門の確認ポイント')
-      .replace(/보안 운영, SRE, DevSecOps 직무 적합성/g, 'セキュリティ運用、SRE、DevSecOpsの職務適合性')
+      .replace(/적합 역할/g, '適合する役割')
+      .replace(
+        /보안 운영, SRE, DevSecOps 직무 적합성/g,
+        'セキュリティ運用、SRE、DevSecOpsの職務適合性'
+      )
+      .replace(/보안 운영, SRE, DevSecOps/g, 'セキュリティ運用、SRE、DevSecOps')
       .replace(/검증 자료/g, '検証資料')
+      .replace(/확인 자료/g, '確認資料')
+      .replace(/경력·프로젝트 근거와 PDF/g, '経歴・プロジェクト根拠とPDF')
       .replace(/경력 근거, 프로젝트 근거, 이력서 PDF/g, '経歴根拠、プロジェクト根拠、履歴書PDF')
       .replace(/경력 근거, 프로젝트 근거, 履歴書PDF/g, '経歴根拠、プロジェクト根拠、履歴書PDF')
       .replace(/다음 액션/g, '次のアクション')
+      .replace(/다음 단계/g, '次のステップ')
+      .replace(/메일로 제안 또는 면접 일정 협의/g, 'メールで提案または面接日程を調整')
       .replace(/메일로 채용 논의 또는 면접 일정 협의/g, 'メールで採用相談または面接日程を調整')
       .replace(/aria-label="주요 이동"/g, 'aria-label="主なナビゲーション"')
       .replace(/채용 논의하기/g, '採用相談をする')
+      .replace(/채용 논의/g, '採用相談')
       .replace(/경력 근거 보기/g, '経歴根拠を見る')
+      .replace(/경력 근거/g, '経歴根拠')
       .replace(/프로젝트 근거 보기/g, 'プロジェクト根拠を見る')
+      .replace(/프로젝트 근거/g, 'プロジェクト根拠')
       .replace(
         /<a href="#resume" class="link-subtle">경력 보기<\/a>/g,
         '<a href="#resume" class="link-subtle">経歴を見る</a>'
@@ -244,6 +284,7 @@ function buildJapaneseTemplate(html) {
       .replace(/download="이재철_이력서\.pdf"/g, 'download="Lee-Jaecheol-Resume-JA.pdf"')
       .replace(/aria-label="이력서 PDF 다운로드"/g, 'aria-label="履歴書PDFダウンロード"')
       .replace(/>📄 이력서 PDF 다운로드</g, '>📄 履歴書PDFダウンロード<')
+      .replace(/>이력서 PDF 다운로드</g, '>履歴書PDFダウンロード<')
       .replace(/이력서 PDF/g, '履歴書PDF')
       .replace(/이력서/g, '履歴書')
       .replace(/aria-label="채용 또는 면접 문의하기"/g, 'aria-label="採用・面接お問い合わせ"')
@@ -301,11 +342,23 @@ function buildJapaneseTemplate(html) {
         'Cloudflare WorkersでCSP nonce・strict-dynamic、HSTS、COOP/CORP、frame-ancestors noneをレスポンスヘッダーとして適用します。'
       )
       .replace(
+        /Cloudflare Workers에서 제공하며 CSP nonce·strict-dynamic, HSTS,[\s\S]*?COOP\/CORP,[\s\S]*?frame-ancestors none을 응답 헤더로 적용합니다\./g,
+        'Cloudflare WorkersでCSP nonce・strict-dynamic、HSTS、COOP/CORP、frame-ancestors noneをレスポンスヘッダーとして適用します。'
+      )
+      .replace(
         /Grafana, Prometheus, Loki, ELK로 로그와 운영 이벤트를 확인하고\s+대시보드 기반으로 상태를 검토합니다\./g,
         'Grafana・Prometheus・Loki・ELKでログと運用イベントを確認し、ダッシュボードで状態を確認します。'
       )
       .replace(
+        /Grafana, Prometheus, Loki, ELK로 로그와 운영 이벤트를 확인하고[\s\S]*?대시보드 기반으로[\s\S]*?상태를 검토합니다\./g,
+        'Grafana・Prometheus・Loki・ELKでログと運用イベントを確認し、ダッシュボードで状態を確認します。'
+      )
+      .replace(
         /n8n, MCP, Terraform, GitHub Actions를 통해 반복 운영 절차와 배포 검증을\s+코드로 관리합니다\./g,
+        'n8n・MCP・Terraform・GitHub Actionsで反復的な運用手順とデプロイ検証をコードとして管理します。'
+      )
+      .replace(
+        /n8n, MCP, Terraform, GitHub Actions를 통해 반복 운영 절차와 배포 검증을[\s\S]*?코드로[\s\S]*?관리합니다\./g,
         'n8n・MCP・Terraform・GitHub Actionsで反復的な運用手順とデプロイ検証をコードとして管理します。'
       )
       .replace(

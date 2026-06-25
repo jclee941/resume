@@ -13,8 +13,7 @@
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
   background:
-    linear-gradient(180deg, rgb(var(--color-accent-rgb) / 0.08), transparent 64%),
-    var(--glass-bg);
+    linear-gradient(180deg, rgb(var(--color-accent-rgb) / 0.08), transparent 64%), var(--glass-bg);
   box-shadow: var(--shadow-sm);
 }
 

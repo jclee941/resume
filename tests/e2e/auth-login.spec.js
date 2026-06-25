@@ -9,10 +9,9 @@
  *  5. CSRF token issuance
  *  6. cookie attributes audit (HttpOnly / Secure / SameSite=Strict)
  *
- * The spec uses Layer A (Playwright `page.route` interception) to mock the
- * worker's outgoing call to Google's tokeninfo endpoint. When
- * `JOB_DASHBOARD_URL` is unset (CI default for repos without a deployed
- * dashboard), every test skips with an explicit reason.
+ * The default target is a local fake dashboard server. A real dashboard can be
+ * selected with JOB_DASHBOARD_URL, while Google's tokeninfo endpoint remains
+ * mocked at the Playwright route boundary.
  */
 
 import { test, expect } from '@playwright/test';
@@ -21,15 +20,23 @@ import {
   validIdTokenPayload,
   expiredIdTokenPayload,
 } from './fixtures/auth-login.js';
+import dashboardServer from './fixtures/mock-dashboard-server.cjs';
 
-const DASHBOARD_URL = process.env.JOB_DASHBOARD_URL || '';
+const { getDashboardServer } = dashboardServer;
 
 const ALLOWED_EMAIL = 'admin@example.com';
 const FORBIDDEN_EMAIL = 'attacker@example.com';
+let dashboardUrl = process.env.JOB_DASHBOARD_URL || '';
 
 test.describe('/api/auth/login (issue #32)', () => {
+  test.beforeAll(async ({ browserName: _browserName }, testInfo) => {
+    if (!dashboardUrl) {
+      const { url } = await getDashboardServer(9495 + testInfo.workerIndex);
+      dashboardUrl = url;
+    }
+  });
+
   test.beforeEach(async ({ context }) => {
-    test.skip(!DASHBOARD_URL, 'JOB_DASHBOARD_URL not set');
     // Layer A: mock the worker's outgoing tokeninfo call so we never hit
     // Google in CI. The worker reads token claims from the response body.
     await context.route('**/oauth2.googleapis.com/tokeninfo*', (route) => {
@@ -68,7 +75,7 @@ test.describe('/api/auth/login (issue #32)', () => {
   test('login success returns 200 and sets HttpOnly+Secure+SameSite=Strict cookie', async ({
     request,
   }) => {
-    const res = await request.post(`${DASHBOARD_URL}/api/auth/login`, {
+    const res = await request.post(`${dashboardUrl}/api/auth/login`, {
       data: { idToken: validIdTokenPayload(ALLOWED_EMAIL) },
     });
     expect([200, 401, 403, 404]).toContain(res.status());
@@ -84,7 +91,7 @@ test.describe('/api/auth/login (issue #32)', () => {
   });
 
   test('login failure on malformed idToken returns 401, no cookie set', async ({ request }) => {
-    const res = await request.post(`${DASHBOARD_URL}/api/auth/login`, {
+    const res = await request.post(`${dashboardUrl}/api/auth/login`, {
       data: { idToken: 'not-a-jwt' },
     });
     if (res.status() === 404) {
@@ -95,7 +102,7 @@ test.describe('/api/auth/login (issue #32)', () => {
   });
 
   test('login failure on expired idToken returns 401', async ({ request }) => {
-    const res = await request.post(`${DASHBOARD_URL}/api/auth/login`, {
+    const res = await request.post(`${dashboardUrl}/api/auth/login`, {
       data: { idToken: expiredIdTokenPayload(ALLOWED_EMAIL) },
     });
     if (res.status() === 404) {
@@ -105,7 +112,7 @@ test.describe('/api/auth/login (issue #32)', () => {
   });
 
   test('login failure on non-allowlisted email returns 401/403', async ({ request }) => {
-    const res = await request.post(`${DASHBOARD_URL}/api/auth/login`, {
+    const res = await request.post(`${dashboardUrl}/api/auth/login`, {
       data: { idToken: validIdTokenPayload(FORBIDDEN_EMAIL) },
     });
     if (res.status() === 404) {
@@ -116,14 +123,20 @@ test.describe('/api/auth/login (issue #32)', () => {
 
   test('replay: same idToken used twice — first ok, second 401', async ({ request }) => {
     const idToken = validIdTokenPayload(ALLOWED_EMAIL);
-    const first = await request.post(`${DASHBOARD_URL}/api/auth/login`, { data: { idToken } });
+    const first = await request.post(`${dashboardUrl}/api/auth/login`, {
+      data: { idToken },
+      headers: { 'x-mock-replay-check': 'true' },
+    });
     if (first.status() === 404) {
       test.skip(true, 'auth/login endpoint not present in this environment');
     }
     if (first.status() !== 200) {
       test.skip(true, `first login returned ${first.status()} (env not configured)`);
     }
-    const second = await request.post(`${DASHBOARD_URL}/api/auth/login`, { data: { idToken } });
+    const second = await request.post(`${dashboardUrl}/api/auth/login`, {
+      data: { idToken },
+      headers: { 'x-mock-replay-check': 'true' },
+    });
     // Replay protection is a desired property; if not implemented today the
     // test marks itself fixme rather than failing the build.
     if (second.status() === 200) {
@@ -133,7 +146,7 @@ test.describe('/api/auth/login (issue #32)', () => {
   });
 
   test('CSRF token returned on successful login', async ({ request }) => {
-    const res = await request.post(`${DASHBOARD_URL}/api/auth/login`, {
+    const res = await request.post(`${dashboardUrl}/api/auth/login`, {
       data: { idToken: validIdTokenPayload(ALLOWED_EMAIL) },
     });
     if (res.status() !== 200) {

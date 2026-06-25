@@ -73,9 +73,7 @@ describe('formatCoverLetter', () => {
     // Only a malformed ko entry present -> no valid locale -> unavailable.
     const malformed = { ko: { headline: 'x' } };
     expect(() => formatCoverLetter(malformed, 'ko')).not.toThrow();
-    expect(formatCoverLetter(malformed, 'ko').toLowerCase()).toContain(
-      'cover letter unavailable'
-    );
+    expect(formatCoverLetter(malformed, 'ko').toLowerCase()).toContain('cover letter unavailable');
   });
 
   test('S4: when requested locale absent, falls back to KO then first valid', () => {

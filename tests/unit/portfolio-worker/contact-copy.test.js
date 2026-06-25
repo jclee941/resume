@@ -28,7 +28,12 @@ function makeEl(attrs = {}) {
     },
     dispatch(type, event = {}) {
       let prevented = false;
-      const ev = { preventDefault() { prevented = true; }, ...event };
+      const ev = {
+        preventDefault() {
+          prevented = true;
+        },
+        ...event,
+      };
       (listeners[type] || []).forEach((fn) => fn(ev));
       this._lastPrevented = prevented;
     },
@@ -54,9 +59,8 @@ function makeRoot({ email = 'test@example.com' } = {}) {
 describe('contact-copy module', () => {
   let initContactCopy;
   beforeAll(async () => {
-    ({ initContactCopy } = await import(
-      '../../../apps/portfolio/src/scripts/modules/contact-copy.js'
-    ));
+    ({ initContactCopy } =
+      await import('../../../apps/portfolio/src/scripts/modules/contact-copy.js'));
   });
 
   afterEach(() => {
@@ -77,7 +81,9 @@ describe('contact-copy module', () => {
   });
 
   test('contact-copy: fails open when clipboard rejects (no throw)', async () => {
-    global.navigator = { clipboard: { writeText: jest.fn().mockRejectedValue(new Error('denied')) } };
+    global.navigator = {
+      clipboard: { writeText: jest.fn().mockRejectedValue(new Error('denied')) },
+    };
     const root = makeRoot();
     initContactCopy(root);
     await expect(

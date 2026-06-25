@@ -7,18 +7,21 @@ test.describe('Portfolio hiring copy', () => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
     const hero = page.locator('#hero');
-    await expect(hero.getByText('채용 검토·면접 논의 가능')).toBeVisible();
+    await expect(hero.getByText('보안 운영 · SRE · DevSecOps 검토 가능')).toBeVisible();
+    await expect(
+      hero.getByText('보안 인프라 경험을 실무 과제로 정리합니다.')
+    ).toBeVisible();
     await expect(hero.getByText('채용 제안·면접 문의 환영')).toHaveCount(0);
-    await expect(hero.getByText('넥스트레이드 매매체결시스템')).toBeVisible();
-    await expect(hero.getByRole('link', { name: '채용 논의하기' })).toHaveAttribute(
+    await expect(hero.getByText('거래소 보안 인프라 구축·운영')).toBeVisible();
+    await expect(hero.getByRole('link', { name: '채용 논의' })).toHaveAttribute(
       'href',
       'mailto:qws941@kakao.com?subject=%EC%B1%84%EC%9A%A9%20%EC%A0%9C%EC%95%88%20%EB%98%90%EB%8A%94%20%EB%A9%B4%EC%A0%91%20%EB%AC%B8%EC%9D%98'
     );
-    await expect(hero.getByRole('link', { name: '경력 근거 보기' })).toHaveAttribute(
+    await expect(hero.getByRole('link', { name: '경력 근거' })).toHaveAttribute(
       'href',
       '#resume'
     );
-    await expect(hero.getByRole('link', { name: '프로젝트 근거 보기' })).toHaveAttribute(
+    await expect(hero.getByRole('link', { name: '프로젝트 근거' })).toHaveAttribute(
       'href',
       '#projects'
     );
@@ -30,7 +33,9 @@ test.describe('Portfolio hiring copy', () => {
   }) => {
     await page.goto('/en/', { waitUntil: 'domcontentloaded' });
     const englishHero = page.locator('#hero');
-    await expect(englishHero.getByText('Open to role discussions and interviews')).toBeVisible();
+    await expect(
+      englishHero.getByText('Available for Security Ops, SRE, and DevSecOps review')
+    ).toBeVisible();
     await expect(englishHero.getByRole('link', { name: 'Discuss a role' })).toHaveAttribute(
       'href',
       'mailto:qws941@kakao.com?subject=Hiring%20proposal%20or%20interview%20request'
@@ -45,10 +50,16 @@ test.describe('Portfolio hiring copy', () => {
 
     await page.goto('/ja/', { waitUntil: 'domcontentloaded' });
     const japaneseHero = page.locator('#hero');
-    await expect(japaneseHero.getByText('採用検討・面接相談が可能')).toBeVisible();
-    await expect(japaneseHero.getByRole('link', { name: '採用相談をする' })).toBeVisible();
     await expect(
-      japaneseHero.getByRole('link', { name: 'プロジェクト根拠を見る' })
-    ).toHaveAttribute('href', '#projects');
+      japaneseHero.getByText('セキュリティ運用・SRE・DevSecOpsを検討可能')
+    ).toBeVisible();
+    await expect(
+      japaneseHero.getByText('セキュリティインフラの経験を実務課題として整理します。')
+    ).toBeVisible();
+    await expect(japaneseHero.getByRole('link', { name: '採用相談' })).toBeVisible();
+    await expect(japaneseHero.getByRole('link', { name: 'プロジェクト根拠' })).toHaveAttribute(
+      'href',
+      '#projects'
+    );
   });
 });

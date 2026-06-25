@@ -168,7 +168,9 @@ describe('html-transformer', () => {
 
       const result = buildJapaneseTemplate(html);
       const activeLabels = [
-        ...result.matchAll(/<a\b[^>]*class="[^"]*lang-link--active[^"]*"[^>]*>\s*(KO|EN|JA)\s*<\/a\s*>/g),
+        ...result.matchAll(
+          /<a\b[^>]*class="[^"]*lang-link--active[^"]*"[^>]*>\s*(KO|EN|JA)\s*<\/a\s*>/g
+        ),
       ].map((match) => match[1]);
       const currentLabels = [
         ...result.matchAll(/<a\b[^>]*aria-current="true"[^>]*>\s*(KO|EN|JA)\s*<\/a\s*>/g),

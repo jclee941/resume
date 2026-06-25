@@ -12,7 +12,9 @@ const read = (p) => fs.readFileSync(path.join(SRC, p), 'utf8');
 describe('contact-copy wiring + style contract', () => {
   test('ui.js imports and invokes initContactCopy', () => {
     const ui = read('scripts/modules/ui.js');
-    expect(ui).toMatch(/import\s*{[^}]*initContactCopy[^}]*}\s*from\s*['"]\.\/contact-copy(\.js)?['"]/);
+    expect(ui).toMatch(
+      /import\s*{[^}]*initContactCopy[^}]*}\s*from\s*['"]\.\/contact-copy(\.js)?['"]/
+    );
     expect(ui).toMatch(/initContactCopy\(/);
   });
 

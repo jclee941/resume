@@ -37,10 +37,7 @@ test.describe('Smooth Scroll Behavior', () => {
     // `.nav-logo` href is '/', so clicking triggers a full navigation home.
     // Wait for that navigation to settle before asserting, otherwise the
     // in-viewport check races the unload (flaky under parallel execution).
-    await Promise.all([
-      page.waitForLoadState('domcontentloaded'),
-      logo.click(),
-    ]);
+    await Promise.all([page.waitForLoadState('domcontentloaded'), logo.click()]);
     await expect(page.locator('.nav-logo')).toBeInViewport({ timeout: 2000 });
   });
 });
@@ -119,7 +116,10 @@ test.describe('Contact Links Interaction', () => {
     const emailLink = page.locator('a[href^="mailto:"]').first();
     // The primary CTA may carry a `?subject=` prefill; assert the mailto target
     // (protocol + address) while tolerating only a subject query parameter.
-    await expect(emailLink).toHaveAttribute('href', /^mailto:qws941@kakao\.com(?:\?subject=[^#]*)?$/);
+    await expect(emailLink).toHaveAttribute(
+      'href',
+      /^mailto:qws941@kakao\.com(?:\?subject=[^#]*)?$/
+    );
   });
 
   test('external links should open in new tab', async ({ page }) => {

@@ -1,0 +1,161 @@
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-nav);
+  padding-block: var(--space-3);
+  margin-bottom: var(--space-6);
+  background: rgb(var(--bg-primary-rgb) / 0.84);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+
+.minimal-nav { min-height: 48px; }
+
+.nav-links a, .lang-link {
+  border-radius: var(--radius-md);
+  justify-content: center;
+  min-width: 44px;
+}
+
+.nav-links a:hover, .nav-links a:focus-visible { background: var(--color-accent-subtle); }
+
+.section-hero::before {
+  inset: var(--space-3) calc(var(--space-6) * -1) 0;
+  background:
+    radial-gradient(circle at 12% 0%, rgb(var(--color-accent-rgb) / 0.09), transparent 34%),
+    linear-gradient(135deg, rgb(var(--bg-primary-rgb) / 0.76), var(--bg-secondary));
+  box-shadow: var(--shadow-md);
+}
+
+.section-hero::after {
+  content: '';
+  position: absolute;
+  inset: var(--space-3) calc(var(--space-6) * -1) 0;
+  z-index: -1;
+  border-radius: var(--radius-xl);
+  background: linear-gradient(180deg, transparent 0%, rgb(var(--bg-primary-rgb) / 0.38) 100%);
+  pointer-events: none;
+}
+
+.hero-title { text-shadow: 0 0 28px rgb(var(--color-accent-rgb) / 0.18); }
+
+.hero-positioning { max-width: 66ch; }
+
+.hero-proof-list { padding: var(--space-3); border-color: rgb(var(--color-accent-rgb) / 0.13); background: var(--glass-bg); }
+
+.hero-proof-list li { padding-left: var(--space-4); }
+
+.hero-proof-list li::before {
+  width: 0.36rem;
+  height: 0.36rem;
+  background: var(--color-accent);
+  box-shadow: 0 0 0 3px rgb(var(--color-accent-rgb) / 0.1);
+}
+
+.hiring-review-packet { gap: var(--space-3); padding: var(--space-4); border-color: rgb(var(--color-accent-rgb) / 0.14); background: var(--glass-bg); }
+
+.hiring-review-packet__list > div { background: rgb(var(--bg-primary-rgb) / 0.24); padding: var(--space-2) var(--space-3); }
+
+.hero-proof-list,
+.hiring-review-packet,
+.about-content,
+.expertise-block,
+.achievements-block,
+.profile-bento__item,
+.role-chip,
+.project-evidence-matrix,
+.project-evidence-card,
+.resume-item,
+.operated-card,
+.contact-item,
+.skill-domain-card {
+  box-shadow:
+    inset 0 1px 0 var(--glass-border),
+    var(--shadow-sm);
+}
+
+.resume-item, .project-item, .cert-item { border-color: var(--glass-border); }
+
+.project-item {
+  border-radius: var(--radius-md);
+  transition:
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    transform var(--transition-base);
+}
+
+.project-item:hover {
+  background: rgb(var(--color-accent-rgb) / 0.035);
+  border-color: rgb(var(--color-accent-rgb) / 0.22);
+}
+
+.project-link-title, .project-description, .resume-description, .cover-letter-step__body,
+.operated-card__desc { text-wrap: pretty; }
+
+.hero-cta .link-subtle,
+.hero-download .link-subtle,
+.resume-download .link-subtle {
+  white-space: normal;
+  text-align: center;
+}
+
+.back-to-top { box-shadow: var(--shadow-md); }
+
+.company-link,
+.timeline-expand-btn,
+.project-evidence-card__link,
+.project-item a[href^='http'],
+.profile-card__list a[href^='http'],
+.project-more-btn,
+.footer-build a,
+.deep-dive-close {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+.company-link,
+.project-evidence-card__link,
+.project-item a[href^='http'],
+.profile-card__list a[href^='http'],
+.footer-build a {
+  display: inline-flex;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .site-header { position: static; padding-block: var(--space-2); margin-bottom: var(--space-4); }
+  .nav-logo { order: 1; }
+  .lang-switcher { order: 2; width: auto; margin-left: auto; }
+  .nav-toggle { order: 3; margin-left: var(--space-2); }
+  .nav-links { order: 4; }
+  .section-hero::before, .section-hero::after { inset-inline: calc(var(--space-3) * -1); }
+  .section-hero { padding: var(--space-5) 0 var(--space-8); }
+  .hero-content { display: flex; flex-direction: column; }
+  .hero-title { word-break: keep-all; }
+  .hero-role, .hero-availability { margin-bottom: var(--space-3); }
+  .hero-positioning { margin-bottom: var(--space-4); }
+  .hero-proof-list { gap: var(--space-2); }
+  .hero-proof-list + .hiring-review-packet { margin-top: var(--space-3); }
+  .hiring-review-packet { order: 7; padding: var(--space-3); }
+  .hiring-review-packet__list { gap: var(--space-2); }
+  .hiring-review-packet__list > div { display: grid; grid-template-columns: 4.75rem 1fr; gap: var(--space-2); padding: var(--space-1) 0; border: 0; background: transparent; }
+  .hiring-review-packet dt { margin: 0; }
+  .hero-cta { order: 6; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: var(--space-3); margin-bottom: var(--space-3); }
+  .hero-cta .link-subtle { min-width: 0; padding-inline: var(--space-2); }
+  .hero-positioning, .hero-proof-list li, .hiring-review-packet dd,
+  .about-content, .resume-description, .project-description { word-break: keep-all; overflow-wrap: anywhere; }
+}
+
+@media (max-width: 480px) {
+  .section-about,
+  .section-cover-letter,
+  .section-resume,
+  .section-certifications,
+  .section-projects,
+  .section-skills,
+  .section-operated,
+  .section-contact {
+    margin-bottom: var(--space-10);
+    padding-bottom: var(--space-6);
+  }
+}

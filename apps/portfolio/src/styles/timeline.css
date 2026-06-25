@@ -95,8 +95,7 @@
 /* Active status - blinking success */
 .timeline-dot.status--active {
   background: var(--color-success);
-  box-shadow:
-    var(--shadow-sm);
+  box-shadow: var(--shadow-sm);
   animation: pulse-soft 2s ease-in-out infinite;
 }
 

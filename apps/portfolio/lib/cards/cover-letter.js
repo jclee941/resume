@@ -37,9 +37,7 @@ function isRenderable(entry) {
 function generateCoverLetterSection(entry) {
   if (!isRenderable(entry)) return '';
 
-  const paragraphs = entry.paragraphs.filter(
-    (p) => typeof p === 'string' && p.length > 0
-  );
+  const paragraphs = entry.paragraphs.filter((p) => typeof p === 'string' && p.length > 0);
 
   const paragraphsHtml = paragraphs
     .map((paragraph, i) => {

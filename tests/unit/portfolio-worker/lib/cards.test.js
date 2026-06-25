@@ -778,7 +778,9 @@ describe('Cards Module', () => {
 
     test('contact grid includes an aria-live status region for copy feedback', () => {
       const html = generateContactGrid({ email: 'test@example.com' });
-      expect(html).toMatch(/role="status"[^>]*aria-live="polite"|aria-live="polite"[^>]*role="status"/);
+      expect(html).toMatch(
+        /role="status"[^>]*aria-live="polite"|aria-live="polite"[^>]*role="status"/
+      );
       expect(html).toContain('contact-copy-status');
     });
 

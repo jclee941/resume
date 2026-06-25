@@ -75,7 +75,11 @@
   z-index: -1;
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-xl);
-  background: linear-gradient(135deg, rgb(var(--bg-primary-rgb) / 0.54), rgb(var(--color-accent-rgb) / 0.05));
+  background: linear-gradient(
+    135deg,
+    rgb(var(--bg-primary-rgb) / 0.54),
+    rgb(var(--color-accent-rgb) / 0.05)
+  );
   box-shadow: var(--shadow-lg);
 }
 
@@ -185,7 +189,9 @@
   height: 2px;
   background: currentColor;
   border-radius: var(--radius-full);
-  transition: transform var(--transition-base), opacity var(--transition-base);
+  transition:
+    transform var(--transition-base),
+    opacity var(--transition-base);
 }
 
 .hamburger {

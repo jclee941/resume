@@ -347,10 +347,7 @@ test.describe('JSON-LD Structured Data', () => {
     expect(new URL(page.url()).pathname, 'pathname stays /').toBe('/');
     const htmlLang = await page.locator('html').getAttribute('lang');
     expect(htmlLang, 'root html lang').toBe('ko');
-    const canonical = await page
-      .locator('link[rel="canonical"]')
-      .first()
-      .getAttribute('href');
+    const canonical = await page.locator('link[rel="canonical"]').first().getAttribute('href');
     expect(canonical).toBe('https://resume.jclee.me/');
     await ctx.close();
   });

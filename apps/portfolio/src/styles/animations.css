@@ -3,8 +3,8 @@ html {
 }
 
 .reveal-ready .reveal {
-  opacity: 0;
-  transform: translateY(18px);
+  opacity: 1;
+  transform: translateY(12px);
   transition:
     opacity 0.5s ease-out,
     transform 0.5s ease-out;
