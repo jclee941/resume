@@ -32,10 +32,13 @@ export function buildWantedJobUrl(jobId) {
 export function buildApplicationPayload(job, options, resumeKey, profileData = {}) {
   const numericJobId = parseWantedJobId(job.id);
   if (numericJobId === null) {
-    throw new ValidationError('Invalid Wanted job.id; expected a numeric ID or wanted_<numeric ID>', {
-      platform: WANTED_PLATFORM,
-      metadata: { jobId: job.id },
-    });
+    throw new ValidationError(
+      'Invalid Wanted job.id; expected a numeric ID or wanted_<numeric ID>',
+      {
+        platform: WANTED_PLATFORM,
+        metadata: { jobId: job.id },
+      }
+    );
   }
 
   const session = SessionManager.load(WANTED_PLATFORM) || {};

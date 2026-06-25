@@ -36,10 +36,10 @@ const createMockAppManager = (existingApps = []) => {
 };
 
 const loadApplyModules = async () => {
-  const orchestratorModule = await import(
-    '../../apps/job-server/src/shared/services/apply/orchestrator.js'
-  );
-  const filterModule = await import('../../apps/job-server/src/shared/services/apply/job-filter.js');
+  const orchestratorModule =
+    await import('../../apps/job-server/src/shared/services/apply/orchestrator.js');
+  const filterModule =
+    await import('../../apps/job-server/src/shared/services/apply/job-filter.js');
   return {
     ApplyOrchestrator: orchestratorModule.ApplyOrchestrator,
     JobFilter: filterModule.JobFilter,

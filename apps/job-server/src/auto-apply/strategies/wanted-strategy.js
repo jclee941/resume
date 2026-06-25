@@ -110,12 +110,15 @@ export async function applyToJob(job, options = {}) {
       });
     }
 
-    return await withRetry(() => executeWantedBrowserApply(this, job, payload, resumeKey, retryReporter), {
-      ...RETRY_CONFIG,
-      logger: this.logger,
-      classifyError: classifyWantedError,
-      reporter: retryReporter,
-    });
+    return await withRetry(
+      () => executeWantedBrowserApply(this, job, payload, resumeKey, retryReporter),
+      {
+        ...RETRY_CONFIG,
+        logger: this.logger,
+        classifyError: classifyWantedError,
+        reporter: retryReporter,
+      }
+    );
   } catch (error) {
     const normalizedError = classifyWantedError(error);
     const retryable = isRetryableWantedError(error) || Boolean(normalizedError.retryable);

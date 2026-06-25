@@ -206,7 +206,11 @@ describe('createJobKoreaEntrySlots', () => {
       waitForFunction: async () => {},
       evaluate: async (fn, prefix) => {
         const source = String(fn);
-        if (source.includes('buttonDeleteField') || source.includes('button.buttonDelete') || source.includes('button.buttonDelete')) {
+        if (
+          source.includes('buttonDeleteField') ||
+          source.includes('button.buttonDelete') ||
+          source.includes('button.buttonDelete')
+        ) {
           deletedCareers = careerIndices.length;
           careerIndices = [];
           return deletedCareers;
@@ -259,7 +263,11 @@ describe('createJobKoreaEntrySlots', () => {
       },
       evaluate: async (fn, prefix) => {
         const source = String(fn);
-        if (source.includes('buttonDeleteField') || source.includes('button.buttonDelete') || source.includes('button.buttonDelete')) {
+        if (
+          source.includes('buttonDeleteField') ||
+          source.includes('button.buttonDelete') ||
+          source.includes('button.buttonDelete')
+        ) {
           careerIndices = [];
           return 2;
         }
@@ -302,7 +310,11 @@ describe('createJobKoreaEntrySlots', () => {
       },
       evaluate: async (fn, prefix) => {
         const source = String(fn);
-        if (source.includes('buttonDeleteField') || source.includes('button.buttonDelete') || source.includes('button.buttonDelete')) {
+        if (
+          source.includes('buttonDeleteField') ||
+          source.includes('button.buttonDelete') ||
+          source.includes('button.buttonDelete')
+        ) {
           return 2;
         }
         if (source.includes('buttonAddField') && prefix === 'Career') {
@@ -345,7 +357,12 @@ describe('createJobKoreaEntrySlots', () => {
       },
       evaluate: async (fn, prefix) => {
         const source = String(fn);
-        if (source.includes('buttonDeleteField') || source.includes('button.buttonDelete') || source.includes('button.buttonDelete')) return 0;
+        if (
+          source.includes('buttonDeleteField') ||
+          source.includes('button.buttonDelete') ||
+          source.includes('button.buttonDelete')
+        )
+          return 0;
         if (source.includes('buttonAddField') && prefix === 'ResumeProfile') {
           addedIntro++;
           introIndices.push(`freshIntro${addedIntro}`);
@@ -385,7 +402,11 @@ describe('createJobKoreaEntrySlots', () => {
       waitForFunction: async () => {},
       evaluate: async (fn, prefix) => {
         const source = String(fn);
-        if (source.includes('buttonDeleteField') || source.includes('button.buttonDelete') || source.includes('button.buttonDelete')) {
+        if (
+          source.includes('buttonDeleteField') ||
+          source.includes('button.buttonDelete') ||
+          source.includes('button.buttonDelete')
+        ) {
           deletedCareers = careerIndices.length;
           careerIndices = [];
           return deletedCareers;

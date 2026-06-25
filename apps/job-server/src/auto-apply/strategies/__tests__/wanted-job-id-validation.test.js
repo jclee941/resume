@@ -96,12 +96,28 @@ describe('Wanted job ID validation', () => {
 
     const result = await applyToWanted.call(ctx, createWantedJob('wanted_bad'));
 
-    assert.equal(store.calls.load.length, 0, 'session store should not be read for malformed Wanted job IDs');
+    assert.equal(
+      store.calls.load.length,
+      0,
+      'session store should not be read for malformed Wanted job IDs'
+    );
     assert.equal(api.calls.getProfile, 0, 'session validation should not call the Wanted API');
-    assert.equal(api.calls.chaosRequest.length, 0, 'malformed IDs should not reach Wanted API requests');
+    assert.equal(
+      api.calls.chaosRequest.length,
+      0,
+      'malformed IDs should not reach Wanted API requests'
+    );
     assert.equal(page.goto.mock.callCount(), 0, 'malformed IDs should not open the browser flow');
-    assert.equal(page.evaluate.mock.callCount(), 0, 'malformed IDs should not submit from the browser');
-    assert.equal(ctx.appManager.addApplication.mock.callCount(), 0, 'malformed IDs should not be tracked');
+    assert.equal(
+      page.evaluate.mock.callCount(),
+      0,
+      'malformed IDs should not submit from the browser'
+    );
+    assert.equal(
+      ctx.appManager.addApplication.mock.callCount(),
+      0,
+      'malformed IDs should not be tracked'
+    );
     assert.equal(result.success, false);
     assert.equal(result.applicationId, null);
     assert.equal(result.retryable, false);
@@ -113,7 +129,9 @@ describe('Wanted job ID validation', () => {
 
     const result = await applyToWanted.call(ctx, createWantedJob(123456));
 
-    const applicationRequest = api.calls.chaosRequest.find((call) => call.path === '/applications/v1');
+    const applicationRequest = api.calls.chaosRequest.find(
+      (call) => call.path === '/applications/v1'
+    );
     assert.equal(result.success, true);
     assert.equal(result.applicationId, 'application-123456');
     assert.equal(applicationRequest.options.method, 'POST');
@@ -127,7 +145,9 @@ describe('Wanted job ID validation', () => {
 
     const result = await applyToWanted.call(ctx, createWantedJob('wanted_789012'));
 
-    const applicationRequest = api.calls.chaosRequest.find((call) => call.path === '/applications/v1');
+    const applicationRequest = api.calls.chaosRequest.find(
+      (call) => call.path === '/applications/v1'
+    );
     assert.equal(result.success, true);
     assert.equal(result.applicationId, 'application-789012');
     assert.equal(applicationRequest.options.method, 'POST');
@@ -168,7 +188,9 @@ describe('Wanted job ID validation', () => {
       },
     });
 
-    const applicationRequest = api.calls.chaosRequest.find((call) => call.path === '/applications/v1');
+    const applicationRequest = api.calls.chaosRequest.find(
+      (call) => call.path === '/applications/v1'
+    );
     assert.equal(result.success, true);
     assert.equal(applicationRequest.options.body.job_id, 654);
     assert.deepEqual(applicationRequest.options.body.resume_keys, ['resume-key-1']);

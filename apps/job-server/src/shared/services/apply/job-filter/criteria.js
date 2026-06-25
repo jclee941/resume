@@ -1,9 +1,33 @@
+export const DEFAULT_EXCLUDE_KEYWORDS = Object.freeze([
+  '팀장',
+  '팀 리드',
+  '테크 리드',
+  '기술 리드',
+  '보안 리드',
+  '조직장',
+  '파트장',
+  '본부장',
+  '실장',
+  '매니저',
+  'lead security',
+  'lead engineer',
+  'security lead',
+  'security manager',
+  'team lead',
+  'team manager',
+  'tech lead',
+  'technical lead',
+  'engineering lead',
+  'engineering manager',
+  'head of',
+  'people manager',
+]);
+
 export function createFilterConfig(config = {}) {
   return {
     reviewThreshold: config.reviewThreshold || 60,
     autoApplyThreshold: config.autoApplyThreshold || 75,
     minMatchScore: config.minMatchScore || config.reviewThreshold || 60,
-    excludeKeywords: config.excludeKeywords || [],
     excludeCompanies: config.excludeCompanies || [],
     preferredCompanies: config.preferredCompanies || [],
     keywords: config.keywords || [],
@@ -12,6 +36,7 @@ export function createFilterConfig(config = {}) {
     aiCacheTtl: config.aiCacheTtl || 24,
     aiMinConfidence: config.aiMinConfidence || 0.7,
     ...config,
+    excludeKeywords: [...DEFAULT_EXCLUDE_KEYWORDS, ...(config.excludeKeywords || [])],
   };
 }
 

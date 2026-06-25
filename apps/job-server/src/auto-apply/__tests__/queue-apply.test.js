@@ -14,7 +14,13 @@ const invalidHealth = { valid: false, reason: 'no_session' };
 const queue = [
   { company: 'A', position: 'SRE', source: 'jobkorea', url: 'https://www.jobkorea.co.kr/wd/1' },
   { company: 'B', position: '보안', source: 'saramin', url: 'https://www.saramin.co.kr/2' },
-  { id: 'wanted_3', company: 'C', position: 'DevOps', source: 'wanted', url: 'https://www.wanted.co.kr/wd/3' },
+  {
+    id: 'wanted_3',
+    company: 'C',
+    position: 'DevOps',
+    source: 'wanted',
+    url: 'https://www.wanted.co.kr/wd/3',
+  },
   { company: 'D', position: 'nourl', source: 'jobkorea', url: '' },
   { company: 'E', position: 'eng', source: 'linkedin', url: 'https://www.linkedin.com/jobs/5' },
 ];

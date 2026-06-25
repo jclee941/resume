@@ -83,10 +83,7 @@ describe('AutoApplier strategy methods', () => {
       const linkedinFailedCalls = linkedinContent.match(/notifyApplyFailed[\s\S]*?'wanted'/g);
       expect(linkedinFailedCalls).toBeNull();
 
-      const wantedIdContent = fs.readFileSync(
-        path.join(strategiesDir, 'wanted-id.js'),
-        'utf8'
-      );
+      const wantedIdContent = fs.readFileSync(path.join(strategiesDir, 'wanted-id.js'), 'utf8');
       expect(wantedIdContent).toContain("export const WANTED_PLATFORM = 'wanted'");
 
       const wantedRetryContent = fs.readFileSync(

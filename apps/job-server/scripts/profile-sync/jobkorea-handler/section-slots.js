@@ -31,7 +31,9 @@ async function deleteExistingCareerEntries(page) {
       for (const field of careerNames) {
         const input = document.getElementsByName(field.name)[0];
         const container = input?.closest('.container');
-        const deleteButton = container?.querySelector('button.buttonDeleteField, button.buttonDelete');
+        const deleteButton = container?.querySelector(
+          'button.buttonDeleteField, button.buttonDelete'
+        );
         if (!deleteButton) continue;
         deleteButton.click();
         deleted++;
@@ -57,7 +59,9 @@ async function deleteExistingIntroEntries(page) {
       for (const field of introHeaders) {
         const input = document.getElementsByName(field.name)[0];
         const container = input?.closest('.container');
-        const deleteButton = container?.querySelector('button.buttonDeleteField, button.buttonDelete');
+        const deleteButton = container?.querySelector(
+          'button.buttonDeleteField, button.buttonDelete'
+        );
         if (!deleteButton) continue;
         deleteButton.click();
         deleted++;
@@ -75,7 +79,11 @@ async function recreateCareerEntries(handler, page, needed) {
 
   const deleted = await deleteExistingCareerEntries(page);
   if (deleted > 0) {
-    log(`Deleted ${deleted} existing Career entr${deleted === 1 ? 'y' : 'ies'} before rebuild`, 'info', 'jobkorea');
+    log(
+      `Deleted ${deleted} existing Career entr${deleted === 1 ? 'y' : 'ies'} before rebuild`,
+      'info',
+      'jobkorea'
+    );
   }
 
   if (deleted === 0) {
@@ -98,7 +106,11 @@ async function recreateIntroEntries(handler, page, needed) {
 
   const deleted = await deleteExistingIntroEntries(page);
   if (deleted > 0) {
-    log(`Deleted ${deleted} existing intro entr${deleted === 1 ? 'y' : 'ies'} before rebuild`, 'info', 'jobkorea');
+    log(
+      `Deleted ${deleted} existing intro entr${deleted === 1 ? 'y' : 'ies'} before rebuild`,
+      'info',
+      'jobkorea'
+    );
   }
 
   try {
@@ -112,7 +124,11 @@ async function recreateIntroEntries(handler, page, needed) {
       { timeout: 5000 }
     );
   } catch {
-    log('Timed out waiting for stale intro rows to disappear; forcing fresh intro slot', 'warn', 'jobkorea');
+    log(
+      'Timed out waiting for stale intro rows to disappear; forcing fresh intro slot',
+      'warn',
+      'jobkorea'
+    );
   }
 
   await addJobKoreaEntrySlots(handler, page, 'ResumeProfile', needed, { force: true });
@@ -254,8 +270,12 @@ export async function createJobKoreaEntrySlots(handler, page, ssot, options = {}
 
   const allCareerIndices = await handler.readSectionIndices(page, 'Career');
   const allIntroIndices = await handler.readSectionIndices(page, 'ResumeProfile');
-  const careerIndices = options.recreateCareerEntries === true ? allCareerIndices.slice(-careers.length) : allCareerIndices;
-  const introIndices = options.recreateIntroEntries === true ? allIntroIndices.slice(-introNeeded) : allIntroIndices;
+  const careerIndices =
+    options.recreateCareerEntries === true
+      ? allCareerIndices.slice(-careers.length)
+      : allCareerIndices;
+  const introIndices =
+    options.recreateIntroEntries === true ? allIntroIndices.slice(-introNeeded) : allIntroIndices;
   const allLicenseIndices = await handler.readSectionIndices(page, 'License');
   const allAwardIndices = await handler.readSectionIndices(page, 'Award');
   const schoolIndices = await handler.readSectionIndices(page, 'UnivSchool');

@@ -4,11 +4,11 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
-mapCareerToWanted,
-syncWantedAbout,
-syncWantedActivities,
-syncWantedContactInfo,
-syncWantedEducations,
+  mapCareerToWanted,
+  syncWantedAbout,
+  syncWantedActivities,
+  syncWantedContactInfo,
+  syncWantedEducations,
   syncWantedCareers,
 } from '../wanted-sections.js';
 import { syncCareerProjects, collectCareerProjects } from '../wanted-sections/career-projects.js';
@@ -37,9 +37,9 @@ function mockClient() {
       calls.push({ method: 'addEducation', resumeId, payload });
       return { ok: true };
     },
-addActivity: async (resumeId, payload) => {
-calls.push({ method: 'addActivity', resumeId, payload });
-return { ok: true };
+    addActivity: async (resumeId, payload) => {
+      calls.push({ method: 'addActivity', resumeId, payload });
+      return { ok: true };
     },
     addProject: async (resumeId, careerId, payload) => {
       calls.push({ method: 'addProject', resumeId, careerId, payload });
@@ -119,7 +119,11 @@ describe('Wanted SSoT field mapping correctness', () => {
       const payload = client.calls[0].payload;
       // 4년제 → 학사; 재학중 → end_time null + is_attending true; majorType mapped.
       assert.strictEqual(payload.degree, '학사', 'degree derived from schoolType (4년제)');
-      assert.strictEqual(payload.major_type, realSSoT.education.majorType, 'majorType mapped to major_type');
+      assert.strictEqual(
+        payload.major_type,
+        realSSoT.education.majorType,
+        'majorType mapped to major_type'
+      );
       assert.strictEqual(payload.end_time, null, '재학중 status yields null end_time');
       assert.strictEqual(payload.is_attending, true, '재학중 status yields is_attending true');
     });
@@ -155,7 +159,9 @@ describe('Wanted SSoT field mapping correctness', () => {
         assert.strictEqual(awardCall.payload.title, expectedAwards[0].name);
       }
       assert.ok(
-        !client.calls.some((call) => call.payload.title === 'Certified Kubernetes Security Specialist (CKS)'),
+        !client.calls.some(
+          (call) => call.payload.title === 'Certified Kubernetes Security Specialist (CKS)'
+        ),
         'CKS has null date and 준비중 status, so it should be skipped'
       );
     });
@@ -165,15 +171,25 @@ describe('Wanted SSoT field mapping correctness', () => {
     const career = realSSoT.careers.find((c) => Array.isArray(c.projects) && c.projects.length > 0);
     assert.ok(career, 'real SSoT has a career with structured projects[]');
     const projects = collectCareerProjects(career);
-    assert.strictEqual(projects.length, career.projects.length, 'every structured project is mapped');
+    assert.strictEqual(
+      projects.length,
+      career.projects.length,
+      'every structured project is mapped'
+    );
     const first = projects[0];
     assert.strictEqual(first.title, career.projects[0].name, 'project name mapped to title');
-    assert.ok(first.description.includes(career.projects[0].description), 'project description preserved');
+    assert.ok(
+      first.description.includes(career.projects[0].description),
+      'project description preserved'
+    );
     if (Array.isArray(career.projects[0].techStack) && career.projects[0].techStack.length) {
       assert.ok(first.description.includes(career.projects[0].techStack[0]), 'tech stack included');
     }
     if (Array.isArray(career.projects[0].achievements) && career.projects[0].achievements.length) {
-      assert.ok(first.description.includes(career.projects[0].achievements[0]), 'achievements included');
+      assert.ok(
+        first.description.includes(career.projects[0].achievements[0]),
+        'achievements included'
+      );
     }
   });
 
@@ -198,7 +214,12 @@ describe('Wanted SSoT field mapping correctness', () => {
         getResumeDetail: async () => ({ careers: liveCareers }),
       };
 
-      const result = await syncWantedCareers(client, { careers: ssotCareers }, {}, 'resume-careers');
+      const result = await syncWantedCareers(
+        client,
+        { careers: ssotCareers },
+        {},
+        'resume-careers'
+      );
 
       assert.strictEqual(result.changes, 0);
       assert.strictEqual(result.dryRun, true);
@@ -211,18 +232,24 @@ describe('Wanted SSoT field mapping correctness', () => {
   it('syncCareerProjects replaces a matching-title project when description changed', async () => {
     await withApplyEnabled(async () => {
       const client = mockClient();
-      const career = realSSoT.careers.find((c) => Array.isArray(c.projects) && c.projects.length > 0);
+      const career = realSSoT.careers.find(
+        (c) => Array.isArray(c.projects) && c.projects.length > 0
+      );
       const desired = collectCareerProjects(career);
       const existing = [{ id: 'project-old', title: desired[0].title, description: 'old wording' }];
 
       await syncCareerProjects(client, 'resume-1', 'career-1', career, existing);
 
       assert.ok(
-        client.calls.some((call) => call.method === 'deleteProject' && call.projectId === 'project-old'),
+        client.calls.some(
+          (call) => call.method === 'deleteProject' && call.projectId === 'project-old'
+        ),
         'changed project should be deleted for replacement'
       );
       assert.ok(
-        client.calls.some((call) => call.method === 'addProject' && call.payload.title === desired[0].title),
+        client.calls.some(
+          (call) => call.method === 'addProject' && call.payload.title === desired[0].title
+        ),
         'changed project should be re-added with desired description'
       );
     });
@@ -231,7 +258,9 @@ describe('Wanted SSoT field mapping correctness', () => {
   it('syncCareerProjects is non-destructive: keeps matching remote projects, adds new, deletes only stale', async () => {
     await withApplyEnabled(async () => {
       const client = mockClient();
-      const career = realSSoT.careers.find((c) => Array.isArray(c.projects) && c.projects.length > 0);
+      const career = realSSoT.careers.find(
+        (c) => Array.isArray(c.projects) && c.projects.length > 0
+      );
       const desired = collectCareerProjects(career);
       // Remote already has the first desired project (by title) + a stale one.
       const existing = [
@@ -245,9 +274,15 @@ describe('Wanted SSoT field mapping correctness', () => {
       const adds = client.calls.filter((c) => c.method === 'addProject');
       // W-O2: must NOT delete the matching remote project (no destructive wipe).
       assert.ok(!deletes.some((d) => d.projectId === 'keep-1'), 'matching remote project kept');
-      assert.ok(deletes.some((d) => d.projectId === 'stale-1'), 'stale remote project deleted');
+      assert.ok(
+        deletes.some((d) => d.projectId === 'stale-1'),
+        'stale remote project deleted'
+      );
       // The already-present project is not re-added; the rest are added.
-      assert.ok(!adds.some((a) => a.payload.title === desired[0].title), 'existing project not re-added');
+      assert.ok(
+        !adds.some((a) => a.payload.title === desired[0].title),
+        'existing project not re-added'
+      );
       assert.strictEqual(adds.length, desired.length - 1, 'only new projects are added');
     });
   });
@@ -260,7 +295,10 @@ describe('Wanted SSoT field mapping correctness', () => {
 
     const diff = diffSkills(ssotSkills, []);
     assert.ok(Array.isArray(diff.unmapped), 'diffSkills should return an unmapped list');
-    assert.ok(diff.unmapped.length > 0, 'real SSoT unmapped skills should be surfaced, not dropped');
+    assert.ok(
+      diff.unmapped.length > 0,
+      'real SSoT unmapped skills should be surfaced, not dropped'
+    );
     assert.ok(
       diff.unmapped.includes('Elasticsearch/Kibana'),
       'expected current real unmapped skill to appear in diff.unmapped'
@@ -283,7 +321,12 @@ describe('Wanted SSoT field mapping correctness', () => {
     await withApplyEnabled(async () => {
       const client = mockClient();
 
-      await syncWantedContactInfo(client, realSSoT, { email: '', mobile: '' }, 'resume-contact-links');
+      await syncWantedContactInfo(
+        client,
+        realSSoT,
+        { email: '', mobile: '' },
+        'resume-contact-links'
+      );
 
       // The Wanted resume schema has no linkedin/website/blog/github fields — the
       // resume PUT silently drops them, so the sync must not claim to write them
@@ -346,9 +389,17 @@ describe('syncWantedAbout — BUG-W1 regression', () => {
     CONFIG.DIFF_ONLY = false;
     try {
       const client = mockClient();
-      const ssot = { summary: { profileStatement: '**"\ubc18\ubcf5 \uc791\uc5c5\uc740 \uc790\ub3d9\ud654"** \u2014 & test' } };
+      const ssot = {
+        summary: {
+          profileStatement:
+            '**"\ubc18\ubcf5 \uc791\uc5c5\uc740 \uc790\ub3d9\ud654"** \u2014 & test',
+        },
+      };
       // Wanted stores the about HTML-encoded (" -> &quot;, & -> &amp;).
-      const resumeDetail = { about: '**&quot;\ubc18\ubcf5 \uc791\uc5c5\uc740 \uc790\ub3d9\ud654&quot;** \u2014 &amp; test' };
+      const resumeDetail = {
+        about:
+          '**&quot;\ubc18\ubcf5 \uc791\uc5c5\uc740 \uc790\ub3d9\ud654&quot;** \u2014 &amp; test',
+      };
       await syncWantedAbout(client, ssot, resumeDetail, 'resume-idemp');
       assert.strictEqual(
         client.calls.length,

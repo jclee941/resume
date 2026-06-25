@@ -29,7 +29,9 @@ export function getEditUrl() {
 }
 
 function normalizeJobKoreaValue(name, value) {
-  const text = String(value ?? '').replace(/\r\n/g, '\n').trim();
+  const text = String(value ?? '')
+    .replace(/\r\n/g, '\n')
+    .trim();
   if (/^Career\[[^\]]+\]\.(CSYM|CEYM)$/.test(name)) return text.replace(/\./g, '');
   if (/^Career\[[^\]]+\]\.M_MainJob_Jikwi$/.test(name)) return text.slice(0, 1);
   return text;
