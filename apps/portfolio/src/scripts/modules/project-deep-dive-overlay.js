@@ -63,7 +63,7 @@ function openDeepDive(project) {
       ${renderTextSection('개요', `<p class="project-detail__description">${escapeHtml(project.description)}</p>`)}
       ${renderTextSection('주요 성과', renderAchievements(project.achievements))}
       ${renderTextSection('메트릭스', renderMetrics(project.metrics))}
-      ${renderTextSection('아키텍처', `<div class="architecture-diagram"><pre class="architecture-diagram__text">${escapeHtml(project.architecture)}</pre></div>`)}
+      ${renderTextSection('아키텍처', renderArchitecture(project))}
       ${renderTextSection('사용 도구', renderTools(project.tools))}
     </div>
   `;
@@ -80,6 +80,12 @@ function openDeepDive(project) {
 
 function renderTextSection(title, content) {
   return `<div class="deep-dive-section"><h3 class="deep-dive-section__title">${title}</h3>${content}</div>`;
+}
+
+function renderArchitecture(project) {
+  return `<div class="architecture-diagram" tabindex="0" role="img" aria-label="${escapeHtml(project.title)} architecture flow">
+    <pre class="architecture-diagram__text">${escapeHtml(project.architecture)}</pre>
+  </div>`;
 }
 
 function renderAchievements(achievements) {

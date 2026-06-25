@@ -18,16 +18,21 @@ export const PROJECTS = [
       'FortiManager API 연동 자동화',
       '보안 이벤트 탐지 범위 확장',
     ],
-    architecture: `┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-│ Splunk ES   │───▶│ Webhook Automation         │───▶│ Slack/SMS   │
-│ (Detection) │    │ (Automation)│    │ (Alert)     │
-└─────────────┘    └─────────────┘    └─────────────┘
-       │
-       ▼
-┌─────────────┐
-│ FortiManager│
-│ (Response)  │
-└─────────────┘`,
+    architecture: `┌────────────┐
+│ Splunk ES  │
+│ Detection  │
+└─────┬──────┘
+      ▼
+┌────────────┐
+│ Webhook    │
+│ Relay      │
+└─────┬──────┘
+      ├────────────┐
+      ▼            ▼
+┌────────────┐ ┌────────────┐
+│ Slack/SMS  │ │ FortiMgr   │
+│ Alert      │ │ Response   │
+└────────────┘ └────────────┘`,
     tools: [
       { icon: 'search', name: 'Splunk ES' },
       { icon: 'automation', name: 'Webhook Automation' },
@@ -55,12 +60,30 @@ export const PROJECTS = [
       '방화벽 정책 표준화 및 자동화',
       'FSC 본인가 통과',
     ],
-    architecture: `┌─────────┐    ┌─────────┐    ┌─────────┐    ┌─────────┐    ┌─────────┐
-│  DMZ    │───▶│  WAS    │───▶│  API    │───▶│  DB     │───▶│  Admin  │
-│ (Web)   │    │ (App)   │    │ (Gateway)│   │ (Core)  │    │ (Mgmt)  │
-└─────────┘    └─────────┘    └─────────┘    └─────────┘    └─────────┘
-     │                                                           │
-     └─────────────────────▶ FortiGate HA ◀──────────────────────┘`,
+    architecture: `┌─────────┐
+│  DMZ    │
+│  Web    │
+└────┬────┘
+     ▼
+┌─────────┐
+│  WAS    │
+│  App    │
+└────┬────┘
+     ▼
+┌─────────┐
+│  API    │
+│ Gateway │
+└────┬────┘
+     ▼
+┌─────────┐
+│  DB     │
+│  Core   │
+└────┬────┘
+     ▼
+┌─────────────┐
+│ FortiGate HA│
+│ Control     │
+└─────────────┘`,
     tools: [
       { icon: 'shield', name: 'FortiGate' },
       { icon: 'automation', name: 'Ansible' },
@@ -86,15 +109,25 @@ export const PROJECTS = [
       '백업·복구 체계 구축',
       '인프라 모니터링 체계 운영',
     ],
-    architecture: `┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-│  Traders    │───▶│  API Server │───▶│  PostgreSQL │
-│  (Clients)  │    │  (Python)   │    │  (Primary)  │
-└─────────────┘    └─────────────┘    └──────┬──────┘
-                                              │
-                                         ┌────┴────┐
-                                         │ Replica │
-                                         │ (Standby)│
-                                         └─────────┘`,
+    architecture: `┌────────────┐
+│ Traders    │
+│ Clients    │
+└─────┬──────┘
+      ▼
+┌────────────┐
+│ API Server │
+│ Python     │
+└─────┬──────┘
+      ▼
+┌────────────┐
+│ PostgreSQL │
+│ Primary    │
+└─────┬──────┘
+      ▼
+┌────────────┐
+│ Replica    │
+│ Standby    │
+└────────────┘`,
     tools: [
       { icon: 'database', name: 'PostgreSQL' },
       { icon: 'code', name: 'Python' },
@@ -120,18 +153,25 @@ export const PROJECTS = [
       'Wazuh 기반 엔드포인트 보안 모니터링',
       'VMware vSphere 인프라 구축',
     ],
-    architecture: `┌─────────┐     ┌─────────┐     ┌─────────┐
-│  Web    │────▶│  App    │────▶│  DB     │
-│  Tier   │     │  Tier   │     │  Tier   │
-└────┬────┘     └────┬────┘     └────┬────┘
-     │               │               │
-     └───────────────┼───────────────┘
-                     │
-              ┌──────┴──────┐
-              │  NSX-T      │
-              │  Micro-Seg  │
-              │  (Firewall) │
-              └─────────────┘`,
+    architecture: `┌─────────┐
+│  Web    │
+│  Tier   │
+└────┬────┘
+     ▼
+┌─────────┐
+│  App    │
+│  Tier   │
+└────┬────┘
+     ▼
+┌─────────┐
+│  DB     │
+│  Tier   │
+└────┬────┘
+     ▼
+┌─────────────┐
+│ NSX-T       │
+│ Micro-Seg   │
+└─────────────┘`,
     tools: [
       { icon: 'route', name: 'NSX-T' },
       { icon: 'server', name: 'VMware' },
