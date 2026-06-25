@@ -33,7 +33,7 @@ describe('StatsService', () => {
     const list = mock.fn(() => ({
       applications: [
         { createdAt: `${today}T10:00:00.000Z`, status: 'pending', source: 'wanted' },
-        { createdAt: `${yesterday}T09:00:00.000Z`, status: 'accepted', source: 'saramin' },
+        { createdAt: `${yesterday}T09:00:00.000Z`, status: 'offer', source: 'saramin' },
         { createdAt: eightDaysAgo, status: 'pending', source: 'wanted' },
       ],
     }));
@@ -51,7 +51,7 @@ describe('StatsService', () => {
     assert.equal(result.byDay[today], 1);
     assert.equal(result.byDay[yesterday], 1);
     assert.equal(result.byStatus.pending, 2);
-    assert.equal(result.byStatus.accepted, 1);
+    assert.equal(result.byStatus.offer, 1);
     assert.equal(result.bySource.wanted, 2);
     assert.equal(result.bySource.saramin, 1);
     assert.equal(typeof result.period.start, 'string');

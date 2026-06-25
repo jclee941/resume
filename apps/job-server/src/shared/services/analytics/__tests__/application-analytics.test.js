@@ -10,14 +10,14 @@ describe('ApplicationAnalytics', () => {
     {
       id: '1',
       job: { company: 'Toss', position: 'DevOps Engineer', matchScore: 85 },
-      status: 'offered',
+      status: 'offer',
       source: 'wanted',
       appliedAt: new Date().toISOString(),
     },
     {
       id: '2',
       job: { company: 'Kakao', position: 'Security Engineer', matchScore: 75 },
-      status: 'interviewing',
+      status: 'interview',
       source: 'wanted',
       appliedAt: new Date().toISOString(),
     },
@@ -223,6 +223,27 @@ describe('ApplicationAnalytics', () => {
       const result = await zeroBranchAnalytics.getTopPerformingCompanies();
       assert.strictEqual(result[0].responseRate, 0);
     });
+
+    it('does not double-count offers in company response rate', async () => {
+      const offerOnlyAnalytics = new ApplicationAnalytics({
+        applicationService: {
+          listApplications: mock.fn(() => [
+            {
+              id: 'offer-1',
+              job: { company: 'Offer Co', position: 'SRE' },
+              status: 'offer',
+              appliedAt: new Date().toISOString(),
+            },
+          ]),
+        },
+      });
+
+      const result = await offerOnlyAnalytics.getTopPerformingCompanies();
+
+      assert.strictEqual(result[0].interviews, 0);
+      assert.strictEqual(result[0].offers, 1);
+      assert.strictEqual(result[0].responseRate, '100.0');
+    });
   });
 
   describe('getPositionTypeAnalysis()', () => {
@@ -288,13 +309,13 @@ describe('ApplicationAnalytics', () => {
             {
               id: 'fe-1',
               job: { company: 'UI Co', position: 'Frontend React Engineer' },
-              status: 'interviewing',
+              status: 'interview',
               appliedAt: new Date().toISOString(),
             },
             {
               id: 'ml-1',
               job: { company: 'AI Co', position: 'Data ML Engineer' },
-              status: 'offered',
+              status: 'offer',
               appliedAt: new Date().toISOString(),
             },
           ]),

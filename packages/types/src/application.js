@@ -12,17 +12,20 @@
  */
 
 /**
- * @typedef {'pending' | 'applied' | 'reviewing' | 'interview' | 'offer' | 'rejected' | 'withdrawn'} ApplicationStatus
+ * @typedef {'pending' | 'saved' | 'applied' | 'viewed' | 'in_progress' | 'interview' | 'offer' | 'rejected' | 'withdrawn' | 'expired'} ApplicationStatus
  */
 
 export const APPLICATION_STATUSES = Object.freeze([
   'pending',
+  'saved',
   'applied',
-  'reviewing',
+  'viewed',
+  'in_progress',
   'interview',
   'offer',
   'rejected',
   'withdrawn',
+  'expired',
 ]);
 
 /**

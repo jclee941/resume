@@ -13,21 +13,24 @@ import {
 } from '../application.js';
 
 describe('canonical application schemas', () => {
-  it('applicationStatusSchema covers the 7 canonical statuses', () => {
+  it('applicationStatusSchema covers the 10 dashboard statuses', () => {
     const allowed = [
       'pending',
+      'saved',
       'applied',
-      'reviewing',
+      'viewed',
+      'in_progress',
       'interview',
       'offer',
       'rejected',
       'withdrawn',
+      'expired',
     ];
     assert.deepEqual(VALID_APPLICATION_STATUSES, allowed);
     for (const s of allowed) {
       assert.equal(applicationStatusSchema.parse(s), s);
     }
-    assert.throws(() => applicationStatusSchema.parse('saved'));
+    assert.throws(() => applicationStatusSchema.parse('archived'));
   });
 
   it('applicationStatusWideSchema covers the 10 dashboard statuses', () => {

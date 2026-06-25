@@ -9,11 +9,16 @@ export async function getApplicationStats(env, type) {
     `
       SELECT 
         COUNT(*) as total,
+        SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending,
+        SUM(CASE WHEN status = 'saved' THEN 1 ELSE 0 END) as saved,
         SUM(CASE WHEN status = 'applied' THEN 1 ELSE 0 END) as applied,
-        SUM(CASE WHEN status = 'interviewing' THEN 1 ELSE 0 END) as interviewing,
-        SUM(CASE WHEN status = 'offered' THEN 1 ELSE 0 END) as offered,
+        SUM(CASE WHEN status = 'viewed' THEN 1 ELSE 0 END) as viewed,
+        SUM(CASE WHEN status = 'in_progress' THEN 1 ELSE 0 END) as in_progress,
+        SUM(CASE WHEN status = 'interview' THEN 1 ELSE 0 END) as interview,
+        SUM(CASE WHEN status = 'offer' THEN 1 ELSE 0 END) as offer,
         SUM(CASE WHEN status = 'rejected' THEN 1 ELSE 0 END) as rejected,
-        SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending
+        SUM(CASE WHEN status = 'withdrawn' THEN 1 ELSE 0 END) as withdrawn,
+        SUM(CASE WHEN status = 'expired' THEN 1 ELSE 0 END) as expired
       FROM applications
       WHERE date(created_at) >= ${dateFilter}
     `
@@ -21,11 +26,16 @@ export async function getApplicationStats(env, type) {
 
   return {
     total: stats?.total || 0,
-    applied: stats?.applied || 0,
-    interviewing: stats?.interviewing || 0,
-    offered: stats?.offered || 0,
-    rejected: stats?.rejected || 0,
     pending: stats?.pending || 0,
+    saved: stats?.saved || 0,
+    applied: stats?.applied || 0,
+    viewed: stats?.viewed || 0,
+    in_progress: stats?.in_progress || 0,
+    interview: stats?.interview || 0,
+    offer: stats?.offer || 0,
+    rejected: stats?.rejected || 0,
+    withdrawn: stats?.withdrawn || 0,
+    expired: stats?.expired || 0,
   };
 }
 
@@ -37,7 +47,7 @@ export async function getPlatformStats(env, type) {
       SELECT 
         platform,
         COUNT(*) as count,
-        SUM(CASE WHEN status = 'interviewing' OR status = 'offered' THEN 1 ELSE 0 END) as success
+        SUM(CASE WHEN status = 'interview' OR status = 'offer' THEN 1 ELSE 0 END) as success
       FROM applications
       WHERE date(created_at) >= ${dateFilter}
       GROUP BY platform

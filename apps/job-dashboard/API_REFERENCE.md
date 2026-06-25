@@ -372,9 +372,9 @@ curl https://resume.jclee.me/job/api/stats \
     "total_applications": 150,
     "by_status": {
       "applied": 95,
-      "reviewing": 30,
+      "in_progress": 30,
       "rejected": 15,
-      "accepted": 10
+      "offer": 10
     },
     "by_platform": {
       "wanted": 60,
@@ -420,9 +420,9 @@ curl "https://resume.jclee.me/job/api/stats/weekly?weeks=4" \
         "applications": 40,
         "by_status": {
           "applied": 25,
-          "reviewing": 10,
+          "in_progress": 10,
           "rejected": 3,
-          "accepted": 2
+          "offer": 2
         },
         "acceptance_rate": 0.05
       }
@@ -464,9 +464,9 @@ curl "https://resume.jclee.me/job/api/stats/daily?days=7" \
         "applications": 12,
         "statuses": {
           "applied": 8,
-          "reviewing": 3,
+          "interview": 3,
           "rejected": 1,
-          "accepted": 0
+          "offer": 0
         }
       }
     ],
@@ -555,7 +555,7 @@ curl "https://resume.jclee.me/job/api/applications?status=applied&limit=20" \
 
 | Parameter  | Type    | Default | Description                                    |
 | ---------- | ------- | ------- | ---------------------------------------------- |
-| `status`   | string  | -       | Filter: applied, reviewing, rejected, accepted |
+| `status`   | string  | -       | Filter: pending, saved, applied, viewed, in_progress, interview, offer, rejected, withdrawn, expired |
 | `platform` | string  | -       | Filter: wanted, jobkorea, linkedin, saramin    |
 | `limit`    | integer | 20      | Max results per page                           |
 | `offset`   | integer | 0       | Pagination offset                              |
@@ -640,7 +640,7 @@ Update status only (quick update).
 curl -X PATCH https://resume.jclee.me/job/api/applications/app_123/status \
   -H "Authorization: Bearer <token>" \
   -H "Content-Type: application/json" \
-  -d '{"status": "accepted"}'
+  -d '{"status": "offer"}'
 ```
 
 **Response** (200 OK):
@@ -650,8 +650,8 @@ curl -X PATCH https://resume.jclee.me/job/api/applications/app_123/status \
   "success": true,
   "data": {
     "id": "app_123",
-    "status": "accepted",
-    "previous_status": "reviewing",
+    "status": "offer",
+    "previous_status": "in_progress",
     "updated_at": "2026-02-11T06:00:00.000Z"
   }
 }

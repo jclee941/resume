@@ -28,8 +28,8 @@ export class ApplicationAnalytics {
         };
       }
       bySource[source].total++;
-      if (app.status === 'interviewing') bySource[source].interviews++;
-      if (app.status === 'offered') bySource[source].offers++;
+      if (app.status === 'interview') bySource[source].interviews++;
+      if (app.status === 'offer') bySource[source].offers++;
       if (app.status === 'rejected') bySource[source].rejections++;
     }
 
@@ -61,10 +61,10 @@ export class ApplicationAnalytics {
       else bucket = '<60';
 
       buckets[bucket].total++;
-      if (app.status === 'interviewing' || app.status === 'offered') {
+      if (app.status === 'interview') {
         buckets[bucket].interviews++;
       }
-      if (app.status === 'offered') {
+      if (app.status === 'offer') {
         buckets[bucket].offers++;
       }
     }
@@ -72,7 +72,9 @@ export class ApplicationAnalytics {
     return Object.entries(buckets).map(([range, stats]) => ({
       scoreRange: range,
       ...stats,
-      successRate: stats.total ? ((stats.interviews / stats.total) * 100).toFixed(1) : 0,
+      successRate: stats.total
+        ? (((stats.interviews + stats.offers) / stats.total) * 100).toFixed(1)
+        : 0,
     }));
   }
 
@@ -96,8 +98,8 @@ export class ApplicationAnalytics {
         week: `W-${i}`,
         weekStart: weekStart.toISOString().slice(0, 10),
         applied: weekApps.length,
-        interviews: weekApps.filter((a) => a.status === 'interviewing').length,
-        offers: weekApps.filter((a) => a.status === 'offered').length,
+        interviews: weekApps.filter((a) => a.status === 'interview').length,
+        offers: weekApps.filter((a) => a.status === 'offer').length,
         rejections: weekApps.filter((a) => a.status === 'rejected').length,
       });
     }
@@ -115,8 +117,8 @@ export class ApplicationAnalytics {
         byCompany[company] = { total: 0, interviews: 0, offers: 0 };
       }
       byCompany[company].total++;
-      if (app.status === 'interviewing') byCompany[company].interviews++;
-      if (app.status === 'offered') byCompany[company].offers++;
+      if (app.status === 'interview') byCompany[company].interviews++;
+      if (app.status === 'offer') byCompany[company].offers++;
     }
 
     return Object.entries(byCompany)
@@ -151,8 +153,8 @@ export class ApplicationAnalytics {
         byType[type] = { total: 0, interviews: 0, offers: 0 };
       }
       byType[type].total++;
-      if (app.status === 'interviewing') byType[type].interviews++;
-      if (app.status === 'offered') byType[type].offers++;
+      if (app.status === 'interview') byType[type].interviews++;
+      if (app.status === 'offer') byType[type].offers++;
     }
 
     return Object.entries(byType).map(([type, stats]) => ({
@@ -173,8 +175,8 @@ export class ApplicationAnalytics {
 
     const apps = this.appService.listApplications();
     const total = apps.length;
-    const interviews = apps.filter((a) => a.status === 'interviewing').length;
-    const offers = apps.filter((a) => a.status === 'offered').length;
+    const interviews = apps.filter((a) => a.status === 'interview').length;
+    const offers = apps.filter((a) => a.status === 'offer').length;
 
     return {
       generatedAt: new Date().toISOString(),

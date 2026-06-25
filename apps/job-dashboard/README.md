@@ -269,7 +269,7 @@ curl https://resume.jclee.me/job/status
 ```bash
 # Get overall stats
 curl https://resume.jclee.me/job/api/stats
-# Returns: { "total": 45, "applied": 30, "reviewing": 10, "rejected": 5 }
+# Returns: { "total": 45, "applied": 30, "in_progress": 10, "rejected": 5 }
 
 # Weekly stats
 curl https://resume.jclee.me/job/api/stats/weekly
@@ -336,7 +336,7 @@ curl https://resume.jclee.me/job/api/applications/abc123 \
 curl -X PUT https://resume.jclee.me/job/api/applications/abc123 \
   -H "Authorization: Bearer <token>" \
   -H "Content-Type: application/json" \
-  -d '{"status": "reviewing"}'
+  -d '{"status": "in_progress"}'
 
 # Update status only
 curl -X PATCH https://resume.jclee.me/job/api/applications/abc123/status \
@@ -433,7 +433,7 @@ curl -X POST https://resume.jclee.me/job/webhooks/job-found \
 # Application status change
 curl -X POST https://resume.jclee.me/job/webhooks/application-status \
   -H "X-Webhook-Signature: <hmac-sha256>" \
-  -d '{"application_id": "abc123", "old_status": "applied", "new_status": "reviewing"}'
+  -d '{"application_id": "abc123", "old_status": "applied", "new_status": "in_progress"}'
 
 # Error logging webhook
 curl -X POST https://resume.jclee.me/job/webhooks/error \
