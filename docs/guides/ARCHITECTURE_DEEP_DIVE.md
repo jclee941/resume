@@ -213,7 +213,7 @@ const securityHeaders = {
     {
       "icon": "🤖",
       "title": "ClaudeOS",
-      "tech": "Go, gRPC, Prometheus, n8n",
+      "tech": "Go, gRPC, Prometheus, automation",
       "description": "AI development platform...",
       "tagline": "Multi-model AI agent automation platform",
       "metrics": {
@@ -222,8 +222,8 @@ const securityHeaders = {
         "uptime": "99.5%",
         "response_time": "Under 2s"
       },
-      "related_skills": ["Go", "gRPC", "Prometheus", "n8n", "AI/ML"],
-      "related_projects": ["Monitoring Platform", "Workflow Automation"],
+      "related_skills": ["Go", "gRPC", "Prometheus", "automation", "AI/ML"],
+      "related_projects": ["Monitoring Platform", "Automation"],
       "businessImpact": "70% reduction in development time",
       "liveUrl": "https://grafana.jclee.me/...",
       "githubUrl": "https://github.com/qws941/resume/..."

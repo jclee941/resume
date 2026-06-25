@@ -1,4 +1,4 @@
-import { MAX_RETRIES, N8N_TIMEOUT_MS, RETRY_DELAYS, TELEGRAM_TIMEOUT_MS } from './constants.js';
+import { MAX_RETRIES, RETRY_DELAYS, TELEGRAM_TIMEOUT_MS, WEBHOOK_TIMEOUT_MS } from './constants.js';
 import { formatNotificationText, sanitizeData } from './formatters.js';
 
 function sleep(ms) {
@@ -141,9 +141,9 @@ export async function sendTelegramNotification(service, data, options = {}) {
   };
 }
 
-export async function triggerN8nWebhook(service, event, data) {
-  if (!service.n8nWebhookUrl) {
-    console.log('[NotificationService] n8n not configured');
+export async function triggerAutomationWebhook(service, event, data) {
+  if (!service.automationWebhookUrl) {
+    console.log('[NotificationService] automation webhook not configured');
     return { sent: false, reason: 'not_configured' };
   }
 
@@ -156,10 +156,10 @@ export async function triggerN8nWebhook(service, event, data) {
   };
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), N8N_TIMEOUT_MS);
+  const timeoutId = setTimeout(() => controller.abort(), WEBHOOK_TIMEOUT_MS);
 
   try {
-    const response = await fetch(service.n8nWebhookUrl, {
+    const response = await fetch(service.automationWebhookUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -173,12 +173,12 @@ export async function triggerN8nWebhook(service, event, data) {
     clearTimeout(timeoutId);
 
     if (response.ok) {
-      console.log(`[NotificationService] n8n webhook sent: ${event}`);
+      console.log(`[NotificationService] automation webhook sent: ${event}`);
       return { sent: true };
     }
 
     const errorText = await response.text();
-    console.warn(`[NotificationService] n8n webhook failed: ${response.status}`);
+    console.warn(`[NotificationService] automation webhook failed: ${response.status}`);
     return {
       sent: false,
       reason: 'http_error',
@@ -187,7 +187,7 @@ export async function triggerN8nWebhook(service, event, data) {
     };
   } catch (error) {
     clearTimeout(timeoutId);
-    console.warn('[NotificationService] n8n webhook error:', error.message);
+    console.warn('[NotificationService] automation webhook error:', error.message);
     return {
       sent: false,
       reason: error.name === 'AbortError' ? 'timeout' : 'network_error',

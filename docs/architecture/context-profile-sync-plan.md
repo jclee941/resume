@@ -60,7 +60,7 @@
 
 1. Crawler extracts new data (e.g., skills from job history)
 2. Generates a `.proposal.json` patch
-3. CLI tool or n8n workflow presents proposal for review
+3. CLI tool or automation workflow presents proposal for review
 4. Human approves → merged into `resume_data.json`
 5. Auto-rebuild portfolio
 

@@ -126,13 +126,13 @@ openssl rand -base64 32
 
 ---
 
-### 5. N8N_WEBHOOK_URL (Optional - For Notifications)
+### 5. AUTOMATION_WEBHOOK_URL (Optional - For Notifications)
 
-**Purpose**: Send deployment notifications to n8n workflow automation
+**Purpose**: Send deployment notifications to automation
 
 **How to get it**:
 
-1. In your n8n instance, create a webhook trigger
+1. In your automation instance, create a webhook trigger
 2. Copy the webhook URL
 3. Add authentication token if required (add to URL: `?token=YOUR_TOKEN`)
 
@@ -148,7 +148,7 @@ openssl rand -base64 32
 **Example**:
 
 ```text
-https://n8n.example.com/webhook/my-workflow?token=abc123
+https://automation.example.com/webhook/my-workflow?token=abc123
 ```
 
 ---
@@ -274,9 +274,9 @@ Monitor the deployment:
 2. Verify format: 32-character hex string
 3. Add to GitHub Secrets
 
-### "Job skipped: Missing N8N_WEBHOOK_URL"
+### "Job skipped: Missing AUTOMATION_WEBHOOK_URL"
 
-**Cause**: N8N_WEBHOOK_URL is optional and not configured
+**Cause**: AUTOMATION_WEBHOOK_URL is optional and not configured
 **Solution**: This is normal - notifications are skipped. Only configure if you
 want notifications.
 
@@ -357,7 +357,7 @@ wrangler deployments list --name resume-portfolio
 | CLOUDFLARE_API_TOKEN  | ✅     | ✅              | ✅            |            |
 | CLOUDFLARE_ACCOUNT_ID | ✅     | ✅              | ✅            |            |
 | GITHUB_TOKEN          | ✅     |                 | ✅            |            |
-| N8N_WEBHOOK_URL       | ✅     | ✅              |               |            |
+| AUTOMATION_WEBHOOK_URL       | ✅     | ✅              |               |            |
 | AUTH_SYNC_SECRET      |        | ✅              |               |            |
 | ENCRYPTION_KEY        |        | ✅              |               |            |
 | TF_STATE_URL          |        | ✅              | ✅            |            |
@@ -384,8 +384,8 @@ Value: [output from: openssl rand -base64 32]
 Name: ENCRYPTION_KEY
 Value: [output from: openssl rand -hex 32]
 
-Name: N8N_WEBHOOK_URL
-Value: [your n8n webhook URL]
+Name: AUTOMATION_WEBHOOK_URL
+Value: [your automation webhook URL]
 ```
 
 ---

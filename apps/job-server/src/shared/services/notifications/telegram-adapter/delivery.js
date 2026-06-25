@@ -1,9 +1,9 @@
 import {
-  N8N_TIMEOUT_MS,
   RATE_LIMIT_MAX_PER_MINUTE,
   RATE_LIMIT_WINDOW_MS,
   RETRY_DELAYS_MS,
   TELEGRAM_TIMEOUT_MS,
+  WEBHOOK_TIMEOUT_MS,
 } from './constants.js';
 import { formatNotificationText } from './formatters.js';
 import {
@@ -190,8 +190,8 @@ export async function sendTelegramNotification(adapter, message = {}) {
   };
 }
 
-export async function triggerN8nWebhook(adapter, eventType, data, message) {
-  if (!adapter.n8nWebhookUrl) {
+export async function triggerAutomationWebhook(adapter, eventType, data, message) {
+  if (!adapter.automationWebhookUrl) {
     return { sent: false, reason: 'not_configured' };
   }
 
@@ -208,10 +208,10 @@ export async function triggerN8nWebhook(adapter, eventType, data, message) {
   };
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), N8N_TIMEOUT_MS);
+  const timeoutId = setTimeout(() => controller.abort(), WEBHOOK_TIMEOUT_MS);
 
   try {
-    const response = await fetch(adapter.n8nWebhookUrl, {
+    const response = await fetch(adapter.automationWebhookUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -248,7 +248,7 @@ export async function triggerN8nWebhook(adapter, eventType, data, message) {
 export async function notify(adapter, eventType, data, telegramPayload) {
   const historyRecord = createNotificationHistoryRecord(eventType, data);
   let telegramResult = { sent: false, reason: 'not_attempted' };
-  let n8nResult;
+  let webhookResult;
 
   if (adapter.telegramToken && adapter.telegramChatId) {
     historyRecord.channels.push('telegram');
@@ -256,14 +256,14 @@ export async function notify(adapter, eventType, data, telegramPayload) {
     historyRecord.results.telegram = telegramResult;
   }
 
-  const shouldUseN8NFallback =
-    !!adapter.n8nWebhookUrl &&
+  const shouldUseWebhookFallback =
+    !!adapter.automationWebhookUrl &&
     (!telegramResult.sent || !(adapter.telegramToken && adapter.telegramChatId));
 
-  if (shouldUseN8NFallback) {
-    historyRecord.channels.push('n8n');
-    n8nResult = await triggerN8nWebhook(adapter, eventType, data, telegramPayload);
-    historyRecord.results.n8n = n8nResult;
+  if (shouldUseWebhookFallback) {
+    historyRecord.channels.push('webhook');
+    webhookResult = await triggerAutomationWebhook(adapter, eventType, data, telegramPayload);
+    historyRecord.results.webhook = webhookResult;
   }
 
   historyRecord.status = determineNotificationStatus(historyRecord.results);

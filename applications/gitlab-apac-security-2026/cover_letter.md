@@ -30,7 +30,7 @@ GitLab의 all-remote 문화 또한 저와 잘 맞습니다. 개인 인프라를 
 
 **분산 환경 운영 및 비동기 협업**
 
-GitLab의 all-remote 방식은 제게 낯설지 않은 협업 환경입니다. 개인 인프라를 시흥의 홈랩에서 Proxmox, k3s, Grafana, Prometheus, Loki, n8n으로 구성하고 Terraform으로 코드화해 원격으로 운영하고 있습니다. Cloudflare Workers 기반 포트폴리오와 AI PR Reviewer도 전적으로 원격으로 운영하고 있으며, GitHub Issues와 PR을 통한 비동기 협업, 문서 중심 커뮤니케이션은 일상입니다. 영어 working proficiency 수준으로 기술 문서를 읽고 쓰며, 벤더 지원 correspondence와 Cloudflare 콘솔 운영을 영어로 수행하고 있습니다. APAC 타임존(Asia/Seoul, UTC+9) 기반에서 비동기 우선으로 업무를 진행할 수 있습니다.
+GitLab의 all-remote 방식은 제게 낯설지 않은 협업 환경입니다. 개인 인프라를 시흥의 홈랩에서 Proxmox, k3s, Grafana, Prometheus, Loki, 알림 워크플로으로 구성하고 Terraform으로 코드화해 원격으로 운영하고 있습니다. Cloudflare Workers 기반 포트폴리오와 AI PR Reviewer도 전적으로 원격으로 운영하고 있으며, GitHub Issues와 PR을 통한 비동기 협업, 문서 중심 커뮤니케이션은 일상입니다. 영어 working proficiency 수준으로 기술 문서를 읽고 쓰며, 벤더 지원 correspondence와 Cloudflare 콘솔 운영을 영어로 수행하고 있습니다. APAC 타임존(Asia/Seoul, UTC+9) 기반에서 비동기 우선으로 업무를 진행할 수 있습니다.
 
 ## 협업 및 커뮤니케이션
 

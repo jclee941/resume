@@ -87,16 +87,16 @@ Thresholds Reference:
 - > 200 LOC: Assess if natural split points exist (SOFT - this project uses as
   > HARD)
 
-Rule 5: ALL Automation Workflows MUST be Handled by n8n
+Rule 5: ALL Automation Workflows MUST be Handled by automation
 Do NOT write custom code, standalone scripts, or cron jobs for automation,
 scheduled tasks, webhooks, or API orchestrations.
 
-- n8n is the SINGLE source of truth for all automation workflows.
+- automation is the SINGLE source of truth for all automation workflows.
 - If a task involves triggering an action on a schedule, connecting multiple
   third-party APIs, or automating a sequential business process, it MUST be
-  built as a node-based workflow in n8n.
+  built as a node-based workflow in automation.
 - Your code should only expose modular APIs, Webhooks, or individual functions
-  that n8n can consume and orchestrate. Do not hardcode the orchestration logic
+  that automation can consume and orchestrate. Do not hardcode the orchestration logic
   in the application codebase.
 
 [NAMING CONVENTIONS]
@@ -143,7 +143,7 @@ When reading, writing, or editing ANY codebase:
 3. If creating a new file — ensure it has exactly one responsibility and stays
    under 200 LOC.
 4. If building an automation/scheduled task — halt coding and move the
-   orchestration logic to n8n immediately.
+   orchestration logic to automation immediately.
 5. If renaming/moving files — update all direct references in
    docs/config/scripts.
 

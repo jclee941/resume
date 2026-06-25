@@ -25,7 +25,7 @@ date: '2026-06'
 - 넥스트레이드 매매체결시스템 구축·운영: 인프라 구성, 운영 전환, 장애·변경 대응
 - 전산 운영: 로그 확인, 장애 원인 파악, DR 점검, 운영 근거 정리
 - DB/SQL: Oracle SQL 기반 이슈 확인, PostgreSQL 쿼리 튜닝, DB 연동 검증
-- 자동화: Python, Shell, Ansible, n8n 기반 점검·조회 업무 자동화
+- 자동화: Python, Shell, Ansible, automation 기반 점검·조회 업무 자동화
 
 ---
 
@@ -38,10 +38,10 @@ date: '2026-06'
 - 넥스트레이드 매매체결시스템 운영 점검 및 이슈 확인
 - 장애 대응, 변경 작업, DR 점검 등 정기 운영 업무 담당
 - 로그와 모니터링 데이터 기반 장애 원인 확인 및 관련 부서 협업
-- Python, n8n 기반 운영 점검·조회·알림 자동화
+- Python, automation 기반 운영 점검·조회·알림 자동화
 - 장애 처리 내역, 변경 이력, 점검 결과 등 운영 문서 정리
 
-기술: Linux, Python, Shell, Splunk, Grafana, n8n, Docker, REST API
+기술: Linux, Python, Shell, Splunk, Grafana, automation, Docker, REST API
 
 ---
 
@@ -117,7 +117,7 @@ date: '2026-06'
 | ------------- | ---------------------------------------------- |
 | OS/인프라     | Linux, Windows Server, VMware, Docker          |
 | DB/SQL        | Oracle SQL, PostgreSQL, SQL 검증, DB 연동 확인 |
-| 자동화        | Python, Shell, Ansible, n8n, REST API          |
+| 자동화        | Python, Shell, Ansible, automation, REST API          |
 | 로그/모니터링 | Splunk, Grafana, Prometheus, Loki              |
 
 ---

@@ -55,7 +55,7 @@ describe('portfolio hiring appeal copy', () => {
     expect(html).toContain('<ul class="hero-proof-list" aria-label="代表的な業務証跡">');
     expect(html).toContain('取引所セキュリティインフラの構築・運用');
     expect(html).toContain('ネットワーク分離・エンドポイントセキュリティ運用');
-    expect(html).toContain('Splunk ES · n8n · FortiManager APIベースのセキュリティイベント自動化');
+    expect(html).toContain('Splunk ES · 通知ワークフロー · FortiManager APIベースのセキュリティイベント自動化');
     expect(extractHeroActions(html)).toEqual([
       expect.objectContaining({ href: expect.stringMatching(/^mailto:/), label: '採用相談' }),
       { href: '#resume', label: '経歴根拠' },

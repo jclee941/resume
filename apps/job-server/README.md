@@ -22,7 +22,7 @@ LinkedIn, and related workflows.
 ┌─────────────────────────────────────────┐
 │           Client Adapters               │
 │  Wanted API · JobKorea · Playwright    │
-│  Elasticsearch · Telegram · n8n         │
+│  Elasticsearch · Telegram · automation         │
 └─────────────────────────────────────────┘
 ```
 

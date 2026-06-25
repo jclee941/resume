@@ -218,9 +218,9 @@ func main() {
 		log("   Please start Chrome with: google-chrome --remote-debugging-port=9222", logFile)
 		log("   Or login manually and run: node scripts/extract-cookies-cdp.js "+platform, logFile)
 
-		if n8nURL := os.Getenv("N8N_WEBHOOK_URL"); n8nURL != "" {
+		if webhookURL := os.Getenv("AUTOMATION_WEBHOOK_URL"); webhookURL != "" {
 			msg := fmt.Sprintf("⚠️ '%s' session renewal failed. Please login manually.", platform)
-			sendNotification(n8nURL, "session_renewal_failed", platform, "chrome_devtools_not_available", msg)
+			sendNotification(webhookURL, "session_renewal_failed", platform, "chrome_devtools_not_available", msg)
 		}
 
 		os.Exit(1)
@@ -238,9 +238,9 @@ func main() {
 	if err == nil && valid {
 		log("✅ Session renewed successfully", logFile)
 
-		if n8nURL := os.Getenv("N8N_WEBHOOK_URL"); n8nURL != "" {
+		if webhookURL := os.Getenv("AUTOMATION_WEBHOOK_URL"); webhookURL != "" {
 			msg := fmt.Sprintf("✅ '%s' session renewed successfully", platform)
-			sendNotification(n8nURL, "session_renewal_success", platform, "", msg)
+			sendNotification(webhookURL, "session_renewal_success", platform, "", msg)
 		}
 
 		os.Exit(0)

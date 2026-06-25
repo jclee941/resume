@@ -43,7 +43,7 @@ fontsize: 11pt
 ### Automation & Scripting
 
 - **언어**: Python, Shell 스크립트 개발 (실무형 자동화 프로젝트 경험)
-- **자동화 도구**: Ansible, n8n, REST API 통합
+- **자동화 도구**: Ansible, automation, REST API 통합
 - **FortiManager API**: 방화벽 정책 자동화 (Python SDK)
 
 ### Monitoring & Observability
@@ -71,9 +71,9 @@ fontsize: 11pt
   - 국내 대체거래소 인프라 교대 운영
   - SIEM(Splunk) 기반 보안 로그 분석 및 실시간 모니터링
   - Python 기반 운영 자동화 스크립트 개발 (배치 작업, 헬스체크 등)
-  - n8n을 활용한 알림 워크플로우 구성 (Slack, 이메일 통합)
+  - 자동화 워크플로를 활용한 알림 워크플로우 구성 (Slack, 이메일 통합)
 
-- **기술 스택**: Python, Splunk, n8n, Docker, Linux (CentOS 7/Rocky Linux 9)
+- **기술 스택**: Python, Splunk, automation, Docker, Linux (CentOS 7/Rocky Linux 9)
 
 - **성과**:
   - 운영 자동화로 반복 작업 부담을 줄임

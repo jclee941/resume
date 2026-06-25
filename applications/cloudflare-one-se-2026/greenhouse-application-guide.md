@@ -141,7 +141,7 @@ My day job for the last eight years has been Korean financial security
 infrastructure. At Gaonnuri and ITCEN CTS for the Nextrade exchange, I
 designed FortiGate HA in active-passive with five-tier network segmentation,
 passed the FSC pre-licensing review, standardized firewall policy
-distribution with Ansible Role, and now operate Splunk ES + n8n +
+distribution with Ansible Role, and now operate Splunk ES + automation +
 FortiManager JSON-RPC API for automated security-event detection and
 response. Earlier at Jointree, I deployed NSX-T microsegmentation; at
 Quantec FSDC, I responded to FSS regulatory audits.

@@ -25,7 +25,7 @@ const TRANSLATIONS = {
     en: {
       name: 'Nextrade Security Operations',
       description:
-        'Security operations automation using Splunk ES and FortiGate API.\n• Integrated n8n workflows for real-time Slack alerting on security events.\n• Built a firewall policy lookup tool via FortiManager API.',
+        'Security operations automation using Splunk ES and FortiGate API.\n• Integrated automation for real-time Slack alerting on security events.\n• Built a firewall policy lookup tool via FortiManager API.',
       achievements: [
         'Designed and operated 32 SIEM detection rules',
         'Established real-time security event alerting pipeline',
@@ -35,7 +35,7 @@ const TRANSLATIONS = {
     ja: {
       name: 'ネクストレード セキュリティ運用',
       description:
-        'Splunk ESとFortiGate APIを活用したセキュリティ運用自動化。\n• n8nワークフローと連携し、セキュリティイベント検知時のリアルタイムSlack通知を実装。\n• FortiManager APIによるファイアウォールポリシー自動照会ツールを開発。',
+        'Splunk ESとFortiGate APIを活用したセキュリティ運用自動化。\n• automationワークフローと連携し、セキュリティイベント検知時のリアルタイムSlack通知を実装。\n• FortiManager APIによるファイアウォールポリシー自動照会ツールを開発。',
       achievements: [
         'SIEM検知ルール32件の設計・運用',
         'セキュリティイベントのリアルタイムアラートパイプライン構築',

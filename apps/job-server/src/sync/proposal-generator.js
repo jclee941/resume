@@ -63,7 +63,7 @@ const KNOWN_SKILLS = [
   'Kubernetes',
   'Linux',
   'Loki',
-  'n8n',
+  'automation',
   'Node.js',
   'OpenTelemetry',
   'PostgreSQL',

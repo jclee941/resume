@@ -24,7 +24,7 @@
 ### 강점
 
 1. 보안 이벤트/위협 탐지 로직 설계 및 대응 프로세스 운영 — Splunk ES 32개 탐지 룰
-2. AI와 자동화 — n8n + FortiManager API, Ansible, Python
+2. AI와 자동화 — 알림 워크플로 + FortiManager API, Ansible, Python
 3. AWS 클라우드 보안 — Terraform IaC, CloudTrail+GuardDuty
 4. DevSecOps 확장 기반 — IaC/자동화/관측성
 5. 보안 아키텍처 설계 — FortiGate HA → 금융위 본인가
@@ -102,7 +102,7 @@ Q13. 가장 어려웠던 보안 과제는?
 구조가 안전한지'를 설명 가능한 상태여야 했거든요."
 
 Q14. 자동화로 가장 크게 효율화한 사례는?
-"n8n과 FortiManager API를 이용해서 방화벽 정책 조회를 자동화했던 경험이 기억에 남습니다."
+"알림 워크플로와 FortiManager API를 이용해서 방화벽 정책 조회를 자동화했던 경험이 기억에 남습니다."
 
 Q15. 실수했거나 아쉬웠던 경험도 있나요?
 "초기에는 탐지 룰을 만들 때 '많이 잡는 것'에 조금 치우쳤던 적이 있습니다. 실제 운영에서는 오탐이 많아지면 대응 피로도가 커지더라고요."
@@ -209,11 +209,11 @@ Q20. 어떤 Security Partner가 될 수 있다고 보나요?
 - A: 32개 룰 설계, 오탐/정탐 튜닝
 - R: 대응 피로도 감소, 탐지 품질 향상
 
-### STAR 3: n8n + FortiManager API 자동화
+### STAR 3: 알림 워크플로 + FortiManager API 자동화
 
 - S: 반복적 방화벽 정책 조회 수작업
 - T: 자동화로 시간/정확도 개선
-- A: n8n 워크플로우 + API 연동
+- A: 자동화 워크플로우 + API 연동
 - R: 반복 업무 시간 감소, 분석 업무 집중 가능
 
 ## 8. 면접 직전 압축 메모

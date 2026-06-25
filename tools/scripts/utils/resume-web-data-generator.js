@@ -38,7 +38,7 @@ const CAREER_EN_OVERRIDES = {
     title: 'ITCEN CTS Co., Ltd.',
     period: '2025.03 ~ 2026.02',
     description:
-      'Built integrated security operations to reduce the delay between security event detection and responder notification by connecting Splunk ES with Slack via n8n and developing a FortiManager API-based firewall policy lookup tool.',
+      'Built integrated security operations by connecting Splunk ES with Slack through alert workflows and developing a FortiManager API-based firewall policy lookup tool.',
   },
   '(주)가온누리정보시스템': {
     title: 'Gaonnuri Information Systems Co., Ltd.',
@@ -73,10 +73,10 @@ const PROJECT_EN_OVERRIDES = {
       'Built unified observability for homelab infrastructure to remove the need to switch between per-service consoles by integrating Prometheus, Loki, and Grafana into a single dashboard.',
     tagline: 'Monitoring Platform',
   },
-  'n8n Automation': {
+  'Automation': {
     description:
-      'Centralized scattered automation tasks (alerts, deployments, data collection) into n8n so new integrations can be added without writing code.',
-    tagline: 'Workflow Automation',
+      'Centralized scattered automation tasks such as alerts, deployments, and data collection into reusable workflow patterns.',
+    tagline: 'Automation',
   },
   'Security Alert System': {
     description:

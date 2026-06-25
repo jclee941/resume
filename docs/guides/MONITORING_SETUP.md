@@ -3,7 +3,7 @@
 Complete guide for setting up monitoring infrastructure for Resume Portfolio
 
 **Target Environment**: Proxmox pve3 (192.168.50.100)
-**Services**: Prometheus, Grafana, Loki, n8n
+**Services**: Prometheus, Grafana, Loki, automation
 **Last Updated**: 2025-11-20
 
 ## 📋 Prerequisites
@@ -13,7 +13,7 @@ Complete guide for setting up monitoring infrastructure for Resume Portfolio
 - Domain name configured (jclee.me)
 - SSL certificates (Let's Encrypt)
 - Network access to ports: 9090 (Prometheus), 3000 (Grafana), 3100 (Loki), 5678
-  (n8n)
+  (automation)
 
 ## 1. Prometheus Setup
 
@@ -525,21 +525,21 @@ curl -G "http://localhost:3100/loki/api/v1/query_range" \
   --data-urlencode 'limit=10'
 ```
 
-## 4. n8n Workflow Deployment
+## 4. automation Workflow Deployment
 
 ### Prerequisites
 
 ```bash
-# Set n8n API key
-export N8N_API_KEY="your_n8n_api_key"
-export N8N_URL="https://n8n.jclee.me"
+# Set automation API key
+export AUTOMATION_API_KEY="your_automation_api_key"
+export AUTOMATION_URL="https://automation.example.com"
 ```
 
 ### Deploy Health Check Workflow
 
 ```bash
-# Navigate to n8n directory
-cd /home/jclee/dev/resume/infrastructure/n8n
+# Navigate to automation directory
+cd /home/jclee/dev/resume/infrastructure/automation
 
 # Deploy workflow
 go run ./deploy-workflow.go resume-healthcheck-oauth2.json
@@ -547,7 +547,7 @@ go run ./deploy-workflow.go resume-healthcheck-oauth2.json
 # Expected output:
 # ✓ Reading workflow file...
 # ✓ Validating JSON...
-# ✓ Uploading to n8n...
+# ✓ Uploading to automation...
 # ✅ Workflow deployed successfully!
 #    Workflow ID: 123
 #    Name: Resume Portfolio - Health Check Monitor (OAuth2)
@@ -555,26 +555,26 @@ go run ./deploy-workflow.go resume-healthcheck-oauth2.json
 
 ### Configure Slack OAuth2
 
-Follow steps in `infrastructure/n8n/SLACK_OAUTH2_SETUP.md`:
+Follow steps in `infrastructure/automation/SLACK_OAUTH2_SETUP.md`:
 
 1. Create Slack App
 2. Enable OAuth & Permissions
 3. Add OAuth scopes: `chat:write`, `chat:write.public`
 4. Install app to workspace
 5. Copy OAuth token
-6. Add credential to n8n
+6. Add credential to automation
 
 ### Activate Workflow
 
 ```bash
-# Via n8n API
-curl -X PATCH "https://n8n.jclee.me/api/v1/workflows/123" \
-  -H "X-N8N-API-KEY: $N8N_API_KEY" \
+# Via automation API
+curl -X PATCH "https://automation.example.com/api/v1/workflows/123" \
+  -H "X-AUTOMATION-API-KEY: $AUTOMATION_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"active": true}'
 
 # Or via UI
-# n8n UI → Workflows → Resume Portfolio Health Check → Activate
+# automation UI → Workflows → Resume Portfolio Health Check → Activate
 ```
 
 ## 5. Reverse Proxy (Nginx)
@@ -635,10 +635,10 @@ server {
     }
 }
 
-# n8n
+# automation
 server {
     listen 443 ssl http2;
-    server_name n8n.jclee.me;
+    server_name automation.example.com;
 
     ssl_certificate /path/to/cert.pem;
     ssl_certificate_key /path/to/key.pem;
@@ -670,7 +670,7 @@ sudo systemctl reload nginx
 # Verify SSL
 curl -I https://grafana.jclee.me
 curl -I https://prometheus.jclee.me
-curl -I https://n8n.jclee.me
+curl -I https://automation.example.com
 ```
 
 ## 6. Verification
@@ -690,8 +690,8 @@ curl -s http://localhost:3000/api/health | jq '.'
 curl -s http://localhost:3100/ready
 # Expected: ready
 
-# n8n
-curl -s https://n8n.jclee.me/healthz
+# automation
+curl -s https://automation.example.com/healthz
 # Expected: {"status":"ok"}
 ```
 
@@ -708,7 +708,7 @@ curl -s "http://localhost:9090/api/v1/query?query=up{job=\"resume\"}"
 # Open: https://grafana.jclee.me
 # Navigate to: Dashboards → Resume Portfolio
 
-# 4. Test n8n workflow
+# 4. Test automation workflow
 # Temporarily break resume.jclee.me and check Slack for alert
 ```
 
@@ -717,7 +717,7 @@ curl -s "http://localhost:9090/api/v1/query?query=up{job=\"resume\"}"
 ### Daily Tasks
 
 - Check Grafana dashboard for anomalies
-- Review Slack alerts from n8n
+- Review Slack alerts from automation
 - Monitor disk space on Synology NAS
 
 ### Weekly Tasks
@@ -803,23 +803,23 @@ curl -G "http://localhost:3100/loki/api/v1/query_range" \
   --data-urlencode 'limit=10' | jq '.'
 ```
 
-### n8n Workflow Not Running
+### automation Workflow Not Running
 
 ```bash
-# Check n8n logs
-docker logs n8n | tail -50
+# Check automation logs
+docker logs automation | tail -50
 
 # List workflows
-curl -X GET "https://n8n.jclee.me/api/v1/workflows" \
-  -H "X-N8N-API-KEY: $N8N_API_KEY"
+curl -X GET "https://automation.example.com/api/v1/workflows" \
+  -H "X-AUTOMATION-API-KEY: $AUTOMATION_API_KEY"
 
 # Check workflow status
-curl -X GET "https://n8n.jclee.me/api/v1/workflows/123" \
-  -H "X-N8N-API-KEY: $N8N_API_KEY" | jq '.active'
+curl -X GET "https://automation.example.com/api/v1/workflows/123" \
+  -H "X-AUTOMATION-API-KEY: $AUTOMATION_API_KEY" | jq '.active'
 
 # Test workflow manually
-curl -X POST "https://n8n.jclee.me/api/v1/workflows/123/execute" \
-  -H "X-N8N-API-KEY: $N8N_API_KEY"
+curl -X POST "https://automation.example.com/api/v1/workflows/123/execute" \
+  -H "X-AUTOMATION-API-KEY: $AUTOMATION_API_KEY"
 ```
 
 ## 📚 References
@@ -827,7 +827,7 @@ curl -X POST "https://n8n.jclee.me/api/v1/workflows/123/execute" \
 - [Prometheus Configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/)
 - [Grafana Provisioning](https://grafana.com/docs/grafana/latest/administration/provisioning/)
 - [Loki Configuration](https://grafana.com/docs/loki/latest/configuration/)
-- [n8n API Documentation](https://docs.n8n.io/api/)
+- [automation API Documentation](https://docs.automation.io/api/)
 - [Nginx Reverse Proxy Guide](https://docs.nginx.com/nginx/admin-guide/apps/portfolio-server/reverse-proxy/)
 
 ## 📝 Next Steps

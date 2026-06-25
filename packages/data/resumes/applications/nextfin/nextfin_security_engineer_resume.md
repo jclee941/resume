@@ -40,9 +40,9 @@ Security Engineer (Cloud) — 넥스트증권 지원
 - 보안 솔루션 통합 운영 (FortiGate, NAC, DLP, EDR, SIEM)
 - Splunk 기반 상시 보안 모니터링 체계 운영 및 인시던트 대응
 - 인시던트 평균 대응 절차 자동화, 반복 장애 원인 정리·재발 방지
-- n8n 워크플로우 + Python 스크립트로 보안 로그 분석·리포팅·알림 자동화
+- 자동화 워크플로우 + Python 스크립트로 보안 로그 분석·리포팅·알림 자동화
 
-기술 스택: Splunk, FortiGate, Python, n8n, Linux
+기술 스택: Splunk, FortiGate, Python, automation, Linux
 
 ---
 
@@ -135,7 +135,7 @@ Security Engineer (Cloud) — 넥스트증권 지원
 
 - CI/CD: GitLab CI/CD, GitHub Actions (SAST/DAST/Dependency Scan 연계)
 - IaC: Terraform, Ansible
-- 언어/도구: Python, Bash, n8n, REST API
+- 언어/도구: Python, Bash, automation, REST API
 
 ### 보안 솔루션
 
@@ -174,7 +174,7 @@ Security Engineer (Cloud) — 넥스트증권 지원
 | CI/CD 보안 점검(SAST/DAST/Dependency) 통합       | 펀엔씨 GitLab CI/CD 보안 검수 자동화            |
 | CloudTrail/GuardDuty/SIEM 로그 수집·분석         | CloudTrail·GuardDuty 통합 분석, Splunk 모니터링 |
 | 전자금융감독규정/ISMS 컴플라이언스               | 금융위 본인가, 금감원 감사 대응                 |
-| Python/Bash 자동화 (우대)                        | n8n+Python 보안 자동화 다수                     |
+| Python/Bash 자동화 (우대)                        | automation+Python 보안 자동화 다수                     |
 | K8s/Docker 컨테이너 보안 (우대)                  | RBAC/Pod Security, CKS 준비 중                  |
 
 ---

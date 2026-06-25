@@ -25,7 +25,7 @@ automation. Run from project root.
 | `ops/`                         | operational helper scripts                  |
 | `profile-sync.js`              | resume → API sync (966 lines)               |
 | `profile-sync/`                | profile sync helper modules                 |
-| `job-search-apply-pipeline.js` | n8n pipeline: search + apply + profile sync |
+| `job-search-apply-pipeline.js` | automation pipeline: search + apply + profile sync |
 | `skill-tag-map.js`             | skill name → tag ID mapping                 |
 
 ## AUTH EVOLUTION
@@ -59,7 +59,7 @@ JobKorea portfolio URL registration uses `AddUserFileDB` API (not form POST):
 3. Form save includes the server-generated IDX → portfolio persists
 
 Pipeline (`job-search-apply-pipeline.js`) runs this automatically at 9am/9pm KST
-via n8n.
+via automation.
 
 ---
 

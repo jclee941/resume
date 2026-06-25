@@ -26,7 +26,7 @@
 
 - **보안**: FortiGate 방화벽, DDoS, IPS, WAF, NAC, DLP, EDR, APT, Splunk SIEM
 - **클라우드**: AWS (EC2, VPC, IAM, S3), Docker, Kubernetes, Cloudflare Workers
-- **자동화**: Python, Shell, Ansible, Terraform, n8n
+- **자동화**: Python, Shell, Ansible, Terraform, automation
 - **모니터링**: Grafana, Prometheus, Loki, Sentry
 - **DevOps**: GitLab EE, CI/CD, Container Registry, Docker Compose
 - **AI/ML**: OpenCode AI, ML 기반 위협 예측 및 자동 라우팅 시스템, MCP 서버 통합
@@ -80,7 +80,7 @@
 - Splunk-FortiNet 통합: 방화벽 중앙 관리, 정책 배포 시간 단축
 - Grafana 모니터링 대시보드 구축, 평균 복구 시간 단축
 - OpenCode AI 위협 정보 자동화: 수동 분석 작업 자동화, 처리 속도 개선
-- n8n 워크플로우 자동화: API 처리 성능 개선, 반복 작업 자동화
+- 자동화 워크플로우 자동화: API 처리 성능 개선, 반복 작업 자동화
 - 보안 오탐 감소
 - 취약점 처리 SLA 준수
 - DR 복구 시간 단축
@@ -337,7 +337,7 @@
 **시스템 규모 & 아키텍처**
 
 - **인프라**: Rocky Linux 9.6, Hyper-V
-- **프로젝트**: 프로덕션 애플리케이션 (blacklist, mcp, resume, safework, grafana, n8n 등)
+- **프로젝트**: 프로덕션 애플리케이션 (blacklist, mcp, resume, safework, grafana, automation 등)
 - **컨테이너**: Docker, 운영 컨테이너 (Prometheus, Loki, Promtail, cAdvisor, Node
   Exporter)
 - **모니터링**: 중앙 집중식 Grafana Stack (Synology NAS), 고가용성
@@ -364,14 +364,14 @@
 - **GitHub**:
   [github.com/jclee941/OpenCode](https://github.com/jclee941/OpenCode)
 
-**2. n8n Workflow Automation**
+**2. automation Automation**
 
 - **목적**: Self-hosted 워크플로우 자동화 플랫폼
-- **기술스택**: n8n, PostgreSQL, Redis, Docker
+- **기술스택**: automation, PostgreSQL, Redis, Docker
 - **규모**: 템플릿, API 오케스트레이션
 - **성과**: 반복 작업 자동화로 시간 절감, 워크플로우 재사용성 향상
-- **Live**: <https://n8n.jclee.me>
-- **GitHub**: [github.com/jclee941/n8n](https://github.com/jclee941/n8n)
+- **Live**: <https://automation.example.com>
+- **GitHub**: [github.com/jclee941/automation](https://github.com/jclee941/automation)
 
 **3. GitLab Enterprise Edition**
 
@@ -445,13 +445,13 @@
 
 2. **Multi-Host Docker Context System**
    - 로컬 Docker (localhost): blacklist, mcp, local-exporters
-   - Synology Docker (192.168.50.215): grafana, n8n, xwiki, file
-   - NFS 마운트: /home/jclee/app/{grafana,n8n,xwiki}, Synology 동기화
+   - Synology Docker (192.168.50.215): grafana, automation, xwiki, file
+   - NFS 마운트: /home/jclee/app/{grafana,automation,xwiki}, Synology 동기화
    - `.docker-context` 파일 기반 자동 라우팅
 
 3. **AI-Driven Automation Framework**
    - SlashCommand 시스템
-   - MCP 도구 생태계: filesystem, github, slack, tmux, n8n, sqlite, puppeteer
+   - MCP 도구 생태계: filesystem, github, slack, tmux, automation, sqlite, puppeteer
    - Constitutional AI 거버넌스 (OpenCode.md: 자율 실행, 검증, 메타 학습)
    - 자동화 스크립트: Bash scripts (보안, 모니터링, 배포, 테스트)
 
@@ -489,7 +489,7 @@
 **MCP Platform (AI 도구 통합)**
 
 - 역할: Model Context Protocol 서버 통합 플랫폼
-- 규모: MCP 서버, 도구 (filesystem, github, slack, tmux, n8n)
+- 규모: MCP 서버, 도구 (filesystem, github, slack, tmux, automation)
 - WebUI: Node.js, Nginx reverse proxy
 - 성과: AI 작업 효율 향상, 도구 통합 복잡성 감소
 

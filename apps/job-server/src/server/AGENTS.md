@@ -7,7 +7,7 @@
 ## OVERVIEW
 
 Fastify HTTP server for job automation APIs, dashboard support, plugins, and
-n8n webhook integration. This is separate from the MCP stdio entry at
+automation webhook integration. This is separate from the MCP stdio entry at
 `src/index.js`.
 
 ## STRUCTURE
@@ -17,7 +17,7 @@ server/
 ├── index.js              # Fastify app assembly and route registration
 ├── config/               # env-backed server config
 ├── middleware/           # error handling
-├── plugins/              # auth, metrics, services, swagger, n8n webhook
+├── plugins/              # auth, metrics, services, swagger, automation webhook
 ├── routes/               # HTTP route modules (see routes/AGENTS.md)
 └── __tests__/            # server and webhook tests
 ```

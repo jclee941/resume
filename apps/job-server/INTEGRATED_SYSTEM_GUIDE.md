@@ -6,7 +6,7 @@
 2. Core Components
 3. API Endpoints
 4. Automation Scripts
-5. n8n Workflow Integration
+5. automation Workflow Integration
 6. [Configuration](#configuration)
 7. Performance Metrics
 8. Safety Features
@@ -40,7 +40,7 @@
 │  Dashboard     │              │  Automation  │
 │  (Port 3456)   │              │  Scripts     │
 │  - Chart.js    │              │  - Workflows │
-│  - Express     │              │  - n8n       │
+│  - Express     │              │  - automation       │
 └────────────────┘              └──────────────┘
         │                               │
         └───────────────┬───────────────┘
@@ -192,8 +192,8 @@ PUT    /api/applications/:id/status - Update status
 ```text
 GET  /api/search              - Search job postings
 POST /api/auto-apply/run      - Run auto-application
-POST /api/n8n/trigger         - Trigger n8n workflow
-POST /api/n8n/webhook         - n8n webhook handler
+POST /api/automation/trigger         - Trigger automation workflow
+POST /api/automation/webhook         - automation webhook handler
 ```
 
 ### AI Features
@@ -301,7 +301,7 @@ curl -X POST https://resume.jclee.me/job/api/workflows/cleanup/run
 
 ---
 
-## 🔄 n8n Workflow Integration
+## 🔄 automation Workflow Integration
 
 ### Available Workflows (3)
 
@@ -341,7 +341,7 @@ curl -X POST https://resume.jclee.me/job/api/workflows/cleanup/run
 ### Webhook URLs
 
 ```text
-Base URL: https://n8n.jclee.me/webhook
+Base URL: https://automation.example.com/webhook
 
 Endpoints:
 - /webhook/job-application
@@ -398,7 +398,7 @@ Endpoints:
 ```bash
 # Required
 WANTED_PASSWORD=your_password
-N8N_WEBHOOK_BASE=https://n8n.jclee.me/webhook
+AUTOMATION_WEBHOOK_BASE=https://automation.example.com/webhook
 
 # Optional
 ANTHROPIC_API_KEY=your_api_key
@@ -490,7 +490,7 @@ cp .env.example .env
 
 # Edit environment variables
 nano .env
-# Set: WANTED_PASSWORD, N8N_WEBHOOK_BASE, SLACK_WEBHOOK_URL
+# Set: WANTED_PASSWORD, AUTOMATION_WEBHOOK_BASE, SLACK_WEBHOOK_URL
 
 # Copy config template
 cp config.example.json config.json

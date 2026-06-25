@@ -424,7 +424,7 @@ Versioning](https://semver.org/).
 
 ### Changes
 
-- feat(content): restore live demo URLs (n8n + Kibana public read-only)
+- feat(content): restore live demo URLs (알림 워크플로 + Kibana public read-only)
   (de0c5bf)
 
 ## [v1.12.12] - 2026-04-28
@@ -625,7 +625,7 @@ Versioning](https://semver.org/).
 - fix(ci): remove duplicate run key in validate-go job (bffece8)
 - chore: raise file size limit from 200 to 500 LOC (538c0b0)
 - chore(gitignore): ignore generated dashboard.html (45c6220)
-- docs: add wishket portfolio and n8n workflow export (4a0aba3)
+- docs: add wishket portfolio and automation workflow export (4a0aba3)
 - fix(ci): use temporary directory for individual Go script builds (7e31712)
 - Merge branch 'master' of <https://github.com/jclee941/resume> (2986192)
 - refactor: split renew-jobkorea-session into modular session helpers (d90db10)
@@ -640,7 +640,7 @@ Versioning](https://semver.org/).
 - refactor: split auto-apply-config into helpers and validation modules
   (1e2136c)
 - refactor: split job-matcher into domain-specific scoring modules (de47807)
-- feat: migrate n8n operational scripts from shell to Go (2103eb2)
+- feat: migrate automation operational scripts from shell to Go (2103eb2)
 - chore: add per-package ESLint flat configs (f3cfdde)
 - ci: add Go build validation to GitHub Actions workflow (0419613)
 - chore: clean up binary artifacts and update AGENTS.md inventory (8d3b03e)

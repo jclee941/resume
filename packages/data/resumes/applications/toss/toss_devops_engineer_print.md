@@ -77,7 +77,7 @@ DevOps&SRE팀이 추구하는 **개발자 경험 개선**과 **Cloud Native 기�
   운영
 - **컨테이너 오케스트레이션** — EKS 기반 Kubernetes 클러스터 구축, Helm Chart 배포 자동화
 - **네트워크 & 트러블슈팅** — L2~L7 네트워크 설계, 방화벽 HA, VPN 인프라, NSX-T 마이크로세그멘테이션 (CCNP)
-- **자동화 & 툴 개발** — Python/Ansible 인프라 자동화, n8n 워크플로우 오케스트레이션, API 자동화 툴 개발
+- **자동화 & 툴 개발** — Python/Ansible 인프라 자동화, 자동화 워크플로우 오케스트레이션, API 자동화 툴 개발
 - **CI/CD** — GitLab CI/CD, GitHub Actions Self-hosted Runner, 컨테이너 빌드·배포 파이프라인
 - **IaC & 클라우드** — Terraform 기반 AWS 인프라 코드 관리, Cloudflare Workers Edge 배포
 
@@ -90,11 +90,11 @@ DevOps&SRE팀이 추구하는 **개발자 경험 개선**과 **Cloud Native 기�
 넥스트레이드 대체거래소 운영SM
 
 - **보안 모니터링**: Splunk 기반 보안 로그 분석 개선 및 실시간 위협 모니터링 운영
-- **실시간 알림 자동화**: n8n + Splunk 연동 이벤트 탐지 시 Slack 알림 파이프라인 구축
+- **실시간 알림 자동화**: 알림 워크플로 + Splunk 연동 이벤트 탐지 시 Slack 알림 파이프라인 구축
 - **운영 자동화 툴 개발**: FortiManager API 기반 방화벽 정책 조회 Python 라이브러리 개발
 - **인프라 안정성**: HA 구성 기반 고가용성 유지 및 장애 대응
 
-### 기술: Splunk, FortiGate, n8n, Python, Docker, Linux
+### 기술: Splunk, FortiGate, automation, Python, Docker, Linux
 
 \lightrule
 
@@ -186,7 +186,7 @@ AI 자산운용 플랫폼 클라우드 인프라 운영
 
 - Docker 멀티 서비스, Traefik 리버스 프록시, **HashiCorp Vault** 시크릿 관리
 - **Terraform** IaC (DNS/Workers/Proxmox), **GitHub Actions** Self-hosted Runner
-- **n8n** 워크플로우 자동화 (Slack, GitHub, Cloudflare, Grafana 연동)
+- **automation** 워크플로우 자동화 (Slack, GitHub, Cloudflare, Grafana 연동)
 
 ## HYCU FSDS 자율주행 (2025.11 ~ 2026.02) — 한양사이버대학교 포뮬러 경진대회 우수상
 
@@ -203,7 +203,7 @@ AI 자산운용 플랫폼 클라우드 인프라 운영
 | **Observability** | Prometheus, Grafana, Loki, ELK Stack (Elasticsearch/Kibana), Splunk        |
 | **Container**     | Docker, Kubernetes (EKS), Helm, Docker Compose                             |
 | **Cloud**         | AWS (EC2, VPC, EKS, IAM, S3, CloudTrail), Cloudflare Workers, Proxmox VE   |
-| **CI/CD**         | GitHub Actions (Self-hosted Runner), GitLab CI/CD, Ansible, Terraform, n8n |
+| **CI/CD**         | GitHub Actions (Self-hosted Runner), GitLab CI/CD, Ansible, Terraform, automation |
 | **Network**       | FortiGate, NSX-T, VPN, NAC, Traefik/Nginx                                  |
 | **Language**      | Python, Shell, Node.js/TypeScript                                          |
 | **Secret/IaC**    | HashiCorp Vault, Terraform                                                 |

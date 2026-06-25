@@ -36,7 +36,7 @@ process.
 | **Auto Apply**          | Automated form submission via Playwright              | ✅ Active |
 | **Multi-Platform**      | Support for 4+ job platforms                          | ✅ Active |
 | **Real-time Dashboard** | Web-based monitoring and analytics                    | ✅ Active |
-| **n8n Automation**      | Scheduled workflows and notifications                 | ✅ Active |
+| **Automation**      | Scheduled workflows and notifications                 | ✅ Active |
 | **Slack Integration**   | Real-time application notifications                   | ✅ Active |
 
 ### Supported Platforms
@@ -74,7 +74,7 @@ process.
 - Playwright browsers (npx playwright install)
 
 # Optional
-- n8n instance (for workflow automation)
+- automation instance (for automation)
 - Slack workspace (for notifications)
 ```
 
@@ -173,7 +173,7 @@ curl -X POST http://localhost:3456/api/auto-apply/run \
 | `WANTED_COOKIES`         | ⚠️       | Session cookies (alternative to password) | session=abc123...                  |
 | `WANTED_ONEID_CLIENT_ID` | ⚠️       | OneID OAuth client ID                     | abc123...                          |
 | `SLACK_WEBHOOK_URL`      | ❌       | Slack notifications                       | <https://hooks.slack.com/>...      |
-| `N8N_WEBHOOK_URL`        | ❌       | n8n integration                           | <https://n8n.jclee.me/webhook/>... |
+| `AUTOMATION_WEBHOOK_URL`        | ❌       | automation integration                           | <https://automation.example.com/webhook/>... |
 | `JOB_SERVER_ADMIN_TOKEN` | ❌       | Admin API token                           | eyJhbGciOiJIUzI1NiIs...            |
 
 ### Config File (config.json)
@@ -274,7 +274,7 @@ flowchart TB
         SA[Saramin Web]
         LI[LinkedIn]
         SL[Slack]
-        N8N[n8n]
+        AUTOMATION[automation]
     end
 
     OC --> MCP
@@ -291,7 +291,7 @@ flowchart TB
     UAS --> LI
 
     AM --> SL
-    AM --> N8N
+    AM --> AUTOMATION
 ```
 
 ### Data Flow
@@ -372,7 +372,7 @@ flowchart LR
     UAS --> SS
 ```
 
-### n8n Workflow Architecture
+### automation Workflow Architecture
 
 ```mermaid
 flowchart TB
@@ -601,11 +601,11 @@ GET /api/report?date=2026-03-31
 POST /webhooks/automation-run-report
 Headers: X-Webhook-Signature: <hmac>
 
-# n8n trigger
-POST /api/n8n/trigger
+# automation trigger
+POST /api/automation/trigger
 
-# n8n webhook
-POST /api/n8n/webhook
+# automation webhook
+POST /api/automation/webhook
 ```
 
 ### CLI Commands
@@ -709,7 +709,7 @@ pkill -f dashboard
 npm run dashboard
 ```
 
-#### 4. n8n Workflow Not Triggering
+#### 4. automation Workflow Not Triggering
 
 **Symptoms**: Scheduled workflows not running
 
@@ -717,14 +717,14 @@ npm run dashboard
 
 ```bash
 # Check workflow status
-curl -H "X-N8N-API-KEY: $N8N_API_KEY" \
-  https://n8n.jclee.me/api/v1/workflows | jq
+curl -H "X-AUTOMATION-API-KEY: $AUTOMATION_API_KEY" \
+  https://automation.example.com/api/v1/workflows | jq
 
 # Verify webhook URL
-curl https://n8n.jclee.me/webhook/job-search-trigger
+curl https://automation.example.com/webhook/job-search-trigger
 
 # Check recent executions
-# Visit: https://n8n.jclee.me/executions
+# Visit: https://automation.example.com/executions
 ```
 
 #### 5. CAPTCHA Blocking
@@ -803,15 +803,15 @@ curl http://localhost:3456/api/stats | jq
 # 3. Check error logs
 grep "ERROR" ~/.OpenCode/data/wanted-logs/errors-$(date +%Y-%m-%d).log
 
-# 4. Verify n8n workflows
-curl -H "X-N8N-API-KEY: $N8N_API_KEY" \
-  https://n8n.jclee.me/api/v1/workflows | jq '.data[] | {name, active}'
+# 4. Verify automation
+curl -H "X-AUTOMATION-API-KEY: $AUTOMATION_API_KEY" \
+  https://automation.example.com/api/v1/workflows | jq '.data[] | {name, active}'
 ```
 
 #### Auto-Apply Run
 
 ```bash
-# Daily auto-apply (triggered by n8n)
+# Daily auto-apply (triggered by automation)
 curl -X POST http://localhost:3456/api/auto-apply/run \
   -H "Content-Type: application/json" \
   -d '{
@@ -962,7 +962,7 @@ open https://grafana.jclee.me/d/resume-portfolio
 - Daily report delivery
 - Error alerts
 
-**n8n Monitoring**:
+**automation Monitoring**:
 
 - Health check every 5 minutes
 - Workflow execution tracking
@@ -981,7 +981,7 @@ open https://grafana.jclee.me/d/resume-portfolio
 | CLI Interface       | `apps/job-server/src/auto-apply/cli/index.js`           |
 | MCP Tools           | `apps/job-server/src/tools/`                            |
 | Crawlers            | `apps/job-server/src/crawlers/`                         |
-| n8n Workflows       | `infrastructure/n8n/`                                   |
+| Automation       | `infrastructure/automation/`                                   |
 | Config File         | `apps/job-server/config.json`                           |
 | Session Data        | `~/.OpenCode/data/wanted-session.json`                  |
 | Logs                | `~/.OpenCode/data/wanted-logs/`                         |

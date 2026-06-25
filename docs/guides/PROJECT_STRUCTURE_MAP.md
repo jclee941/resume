@@ -34,7 +34,7 @@ Fastify-based REST API for Dashboard & Webhooks.
 | **Dashboard** | `routes/dashboard.js` | Frontend stats & config  |
 | **Profile**   | `routes/profile.js`   | User profile aggregation |
 | **AI**        | `routes/ai.js`        | LLM-based operations     |
-| **Webhooks**  | `routes/n8n.js`       | n8n automation triggers  |
+| **Webhooks**  | `routes/automation.js`       | automation triggers  |
 
 ### CLI (`src/auto-apply/cli/index.js`)
 

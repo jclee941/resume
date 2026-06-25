@@ -60,7 +60,7 @@ export default async function authRoutes(fastify) {
     return result;
   });
 
-  // Session renewal endpoint for n8n automation
+  // Session renewal endpoint for automation
   fastify.post('/renew', {
     config: { public: false },
     handler: async (request, reply) => {

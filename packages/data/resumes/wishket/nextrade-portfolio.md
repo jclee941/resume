@@ -18,7 +18,7 @@
 | -------------- | ----------------------- |
 | **Firewall**   | FortiGate, FortiManager |
 | **SIEM**       | Splunk                  |
-| **Automation** | Python, Ansible, n8n    |
+| **Automation** | Python, Ansible, automation    |
 | **OS**         | Linux, VMware           |
 | **Protocol**   | FortiManager API        |
 
@@ -48,7 +48,7 @@
 
 1. 구축 단계와 운영 단계를 별개 프로젝트처럼 보지 않고 연속된 보안 체계로 설계했습니다.
 2. 구축 단계에서는 FGCP Active-Passive HA와 정책 배포 표준화를 중심으로 보안 인프라를 설계했습니다.
-3. 운영 단계에서는 Splunk, n8n, FortiManager API를 활용해 탐지와 알림, 조회 자동화를 강화했습니다.
+3. 운영 단계에서는 Splunk, automation, FortiManager API를 활용해 탐지와 알림, 조회 자동화를 강화했습니다.
 4. 금융 시스템에 맞는 통제 수준과 운영 절차의 일관성을 동시에 확보하는 방향으로 기술을 선택했습니다.
 5. 공개 가능한 범위와 NDA 범위를 명확히 나눠 기술했습니다.
 
@@ -76,7 +76,7 @@
 
 구축이 끝난 뒤에는 운영 속도가 중요해졌습니다. 보안 이벤트가 발생했을 때 사람이 늦게 보면 설계가 좋아도 운영 품질은 낮아질 수 있습니다.
 
-그래서 Splunk 기반 탐지 체계를 운영하고, n8n 워크플로우와 연동해 실시간 알림 흐름을 구성했습니다. 이 과정에서 다수 탐지 룰 운영과
+그래서 Splunk 기반 탐지 체계를 운영하고, 자동화 워크플로우와 연동해 실시간 알림 흐름을 구성했습니다. 이 과정에서 다수 탐지 룰 운영과
 보안 이벤트 신속 알림이라는 운영 기준을 확보했습니다.
 
 ### 4. 조회 자동화로 운영 병목 해소
@@ -105,9 +105,9 @@ flowchart TB
   subgraph Phase2[2단계 · 운용 · 2025.03-]
     direction LR
     Devices[FortiGate / FortiAnalyzer<br/>syslog · API] --> Splunk[Splunk ES<br/>탐지 룰]
-    Splunk -->|webhook| N8N[n8n<br/>자동 대응]
-    N8N -->|JSON-RPC| FMG[FortiManager API<br/>정책 조정]
-    N8N --> Slack[Slack/Telegram<br/>알림]
+    Splunk -->|webhook| AUTOMATION[automation<br/>자동 대응]
+    AUTOMATION -->|JSON-RPC| FMG[FortiManager API<br/>정책 조정]
+    AUTOMATION --> Slack[Slack/Telegram<br/>알림]
   end
   Phase1 ==>|고도화| Phase2
 ```
@@ -134,7 +134,7 @@ FGCP Active-Passive HA는 가용성 확보의 중심이었고, Ansible Role 표�
 #### 핵심 구현 내용
 
 - Splunk ES 및 FortiGate API를 활용한 보안 운영 자동화
-- n8n 워크플로우를 연동하여 보안 이벤트 탐지 시 실시간 알림 연동
+- 자동화 워크플로우를 연동하여 보안 이벤트 탐지 시 실시간 알림 연동
 - FortiManager API를 이용한 방화벽 정책 자동 조회 툴 개발
 - 다수 탐지 룰 운영
 - 보안 취약점 점검 및 월간 정기 리포트 작성
@@ -144,7 +144,7 @@ FGCP Active-Passive HA는 가용성 확보의 중심이었고, Ansible Role 표�
 보안 인프라는 구축만 잘해도 충분하지 않습니다. 실제 운영에서는 이벤트를 보고, 분류하고, 필요한 정책을 확인하고, 반복 작업을 줄이는 체계가
 필요합니다.
 
-그래서 운영 단계에서는 Splunk, n8n, FortiManager API를 조합해 탐지, 전달, 조회를 연결했습니다.
+그래서 운영 단계에서는 Splunk, automation, FortiManager API를 조합해 탐지, 전달, 조회를 연결했습니다.
 
 ### 구현 포인트 1. 구축과 운영의 기준 일치
 
@@ -180,7 +180,7 @@ HA 기반 고가용성 설계는 단순 수치가 아니라 금융 환경에서 
 ## 스크린샷
 
 ![대시보드 스크린샷 1](TODO: Splunk 보안 운영 대시보드 또는 탐지 현황 화면 첨부)
-![대시보드 스크린샷 2](TODO: n8n 알림 흐름 또는 운영 자동화 화면 첨부)
+![대시보드 스크린샷 2](TODO: 알림 워크플로 흐름 또는 운영 자동화 화면 첨부)
 ![대시보드 스크린샷 3](TODO: 공개 가능한 범위의 방화벽 정책 조회 도구 화면 첨부)
 ![대시보드 스크린샷 4](TODO: 공개 가능한 범위의 HA 구성 개요 또는 운영 아키텍처 화면 첨부)
 
@@ -212,7 +212,7 @@ HA 기반 고가용성 설계는 단순 수치가 아니라 금융 환경에서 
 
 초기 설정과 정책 배포 표준화에 활용했습니다. 금융 환경에서 중요한 일관성과 재현성을 확보하는 데 효과적이었습니다.
 
-### n8n
+### automation
 
 운영 단계의 실시간 알림 흐름을 연결하는 자동화 레이어로 사용했습니다.
 

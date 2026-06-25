@@ -89,7 +89,7 @@ git commit -m "chore(seo): enhance sitemap with hreflang & language variants
 - Included project pages with language variants (#project-1 through #project-5)
 - Added infrastructure section URLs with proper priorities
 - Added API endpoints (/health, /metrics)
-- Included external services (Grafana, n8n)
+- Included external services (Grafana, automation)
 - Validated all 40 hreflang links (19 ko-KR, 19 en-US, 2 x-default)
 - Updated robots.txt documentation with validation summary
 - Added comprehensive SEO_IMPLEMENTATION.md guide

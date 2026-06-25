@@ -16,7 +16,7 @@ export function buildSummaryData(platforms = PLATFORMS) {
 
 export async function sendWebhookNotification({ summaryData, doExtract, doSync, doVerify }) {
   const webhookUrl =
-    process.env.N8N_WEBHOOK_URL || 'https://n8n.jclee.me/webhook/automation-run-report';
+    process.env.AUTOMATION_WEBHOOK_URL || 'https://automation.example.com/webhook/automation-run-report';
   if (!webhookUrl) return;
 
   try {
@@ -27,7 +27,7 @@ export async function sendWebhookNotification({ summaryData, doExtract, doSync, 
       actions: { extract: doExtract, sync: doSync, verify: doVerify },
     };
     const headers = { 'Content-Type': 'application/json' };
-    const secret = process.env.N8N_WEBHOOK_SECRET;
+    const secret = process.env.AUTOMATION_WEBHOOK_SECRET;
     if (secret) {
       const { createHmac } = await import('crypto');
       headers['X-Webhook-Signature'] = createHmac('sha256', secret)

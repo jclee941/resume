@@ -15,7 +15,7 @@ Portfolio (<https://resume.jclee.me>).
 - **Grafana**: Dashboard visualization (<https://grafana.jclee.me>)
 - **Prometheus**: Metrics collection and storage
 - **Loki**: Log aggregation from Cloudflare Workers
-- **n8n**: Automated health checks and alerting
+- **automation**: Automated health checks and alerting
 
 ---
 
@@ -260,8 +260,7 @@ curl -s https://resume.jclee.me/health | jq
 ## Related Files
 
 - **Alert Rules**: `infrastructure/configs/grafana/alert-rules.yaml`
-- **n8n Health Checks**: `infrastructure/n8n/resume-healthcheck-workflow.json`
-- **Deployment Workflows**: `infrastructure/workflows/configured/`
+- **Automation Timers**: `infrastructure/automation/`
 - **Project Documentation**: `OpenCode.md`, `README.md`
 
 ---

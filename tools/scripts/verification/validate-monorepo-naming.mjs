@@ -29,7 +29,6 @@ const EXCLUDED_DIRS = new Set([
   '.venv',
   '.ruff_cache',
   'thoughts',
-  'infrastructure/n8n',
 ]);
 
 // Allowed shell script exceptions (≤5 line stubs in .githooks/)

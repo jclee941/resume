@@ -25,7 +25,7 @@ DevOps와 Security를 통합 설계하고 IaC·자동화로 표준화하는 직�
 
 - **Cloud Platform Engineering**: AWS VPC/IAM/Security Group/CloudTrail/GuardDuty 운영, 금융보안데이터센터–AWS 하이브리드 인프라 보안 관리
 - **DevSecOps 통합 설계**: GitLab CI/CD 파이프라인 보안 검수 자동화, 빌드–배포 단계 보안 위험 요소 분석 및 개선
-- **IaC & Automation 표준화**: Terraform·Ansible로 보안 인프라 코드화, FortiManager API 연동 방화벽 정책 배포 자동화, Python·n8n 운영 자동화
+- **IaC & Automation 표준화**: Terraform·Ansible로 보안 인프라 코드화, FortiManager API 연동 방화벽 정책 배포 자동화, Python·automation 운영 자동화
 - **보안 거버넌스/컴플라이언스**: 금융위 본인가 심사 대응, 금융감독원 감사 대응, 보안 아키텍처 기술 문서 작성
 - **침해위협 모니터링**: Splunk SIEM·CloudTrail·GuardDuty 기반 상시 위협 탐지 및 인시던트 대응 자동화
 
@@ -39,9 +39,9 @@ DevOps와 Security를 통합 설계하고 IaC·자동화로 표준화하는 직�
 
 - Splunk 기반 상시 보안 모니터링·인시던트 대응 체계 운영
 - 인시던트 평균 대응 절차 자동화 및 반복 장애 재발 방지
-- n8n 워크플로우 + Python으로 보안 로그 분석·리포팅·알림 자동화
+- 자동화 워크플로우 + Python으로 보안 로그 분석·리포팅·알림 자동화
 
-기술 스택: Splunk, FortiGate, Python, n8n, Linux
+기술 스택: Splunk, FortiGate, Python, automation, Linux
 
 ---
 
@@ -129,7 +129,7 @@ DevOps와 Security를 통합 설계하고 IaC·자동화로 표준화하는 직�
 
 - CI/CD: GitLab CI/CD, GitHub Actions (보안 점검 통합)
 - IaC: Terraform, Ansible
-- 자동화: Python, Bash, n8n, REST API
+- 자동화: Python, Bash, automation, REST API
 
 ### 보안 솔루션 & 모니터링
 
@@ -167,7 +167,7 @@ DevOps와 Security를 통합 설계하고 IaC·자동화로 표준화하는 직�
 | Cloud 기반 DevSecOps 표준 체계 구축  | GitLab CI/CD 보안 검수 자동화, IaC 표준화     |
 | Cloud 보안 거버넌스 수립·적용        | 금융위 본인가 보안 아키텍처 설계·문서화       |
 | CI/CD 파이프라인 보안 위험 분석·개선 | 펀엔씨 CI/CD 보안 검수 자동화 경험            |
-| 침해위협 모니터링·운영 자동화        | Splunk·GuardDuty 위협 탐지, n8n/Python 자동화 |
+| 침해위협 모니터링·운영 자동화        | Splunk·GuardDuty 위협 탐지, automation/Python 자동화 |
 | 금융권 Hybrid Cloud 구축/연동 (우대) | 콴텍 FSDC–AWS 하이브리드 보안 관리            |
 | 금융권 보안솔루션 운영 (우대)        | FortiGate/NAC/DLP/SIEM 통합 운영              |
 

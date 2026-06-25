@@ -1,5 +1,5 @@
 import { NotificationChannel, NotificationEvent } from './constants.js';
-import { sendTelegramNotification, triggerN8nWebhook } from './delivery.js';
+import { sendTelegramNotification, triggerAutomationWebhook } from './delivery.js';
 import { determineStatus, escapeHtml, sanitizeData } from './formatters.js';
 import { saveNotificationHistory } from './history-preferences.js';
 
@@ -33,8 +33,8 @@ export async function notify(service, eventType, data, options = {}) {
     results.telegram = await sendTelegramNotification(service, data, options.telegram);
   }
 
-  if (channels.includes(NotificationChannel.N8N) || channels.includes(NotificationChannel.BOTH)) {
-    results.n8n = await triggerN8nWebhook(service, eventType, data);
+  if (channels.includes(NotificationChannel.WEBHOOK) || channels.includes(NotificationChannel.BOTH)) {
+    results.webhook = await triggerAutomationWebhook(service, eventType, data);
   }
 
   historyRecord.status = determineStatus(results);

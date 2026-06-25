@@ -23,7 +23,7 @@
 
 [현재 운영 중인 개인 인프라 — 면접 무기]
 - Proxmox 홈랩: 단일 노드(pve3, Ryzen 9800X3D, DDR5 메모리)에서 복수 LXC와 VM 운영. Terraform IaC, 1Password Connect 시크릿 관리, Cloudflare Tunnel 외부 노출
-- 호스팅 서비스: Traefik(ingress), CoreDNS, ELK Stack, Grafana(grafana.jclee.me 퍼블릭), n8n(n8n.jclee.me), MCP Hub
+- 호스팅 서비스: Traefik(ingress), CoreDNS, ELK Stack, Grafana(grafana.jclee.me 퍼블릭), automation(automation.example.com), MCP Hub
 - 옵저버빌리티: Filebeat → Logstash → Elasticsearch → Kibana, Prometheus + Grafana 대시보드, 백업 vzdump+zstd 일 02:00 (RTO/RPO 기준을 둔 백업 체계)
 - IP Blacklist 플랫폼 (github.com/qws941/blacklist): Flask + PostgreSQL 15 + Redis 7 + Next.js 15. REGTECH(한국금융보안원) 위협정보 자동수집, FortiGate Threat Feed API + Cloudflare WAF Lists API 양방향 연동, 대규모 IP 관리, 다수 자동화 테스트
 - Splunk SIEM (splunk.jclee.me, github.com/jclee941/splunk): FortiGate syslog 수집 → Splunk 탐지 → Python Block Kit 가공 → Slack 알림. 다수 탐지룰, 이벤트 발생 후 신속한 알림, 대용량 이벤트 처리 가능성 검증
@@ -45,7 +45,7 @@
 
 [솔직히 답할 약점]
 - OSINT/CTI: 직접 전담 없음 → Claude AI 위협정보 자동화 경험으로 대체
-- 상용 SOAR: 없음 → n8n 541노드로 보안 자동화 경험
+- 상용 SOAR: 없음 → automation 541노드로 보안 자동화 경험
 - 커뮤니티 어뷰징: 없음 → 금융 이상거래/게임 어뷰징 경험
 - K8s 프로덕션 보안: 제한적 → RBAC/Pod Security 사전검토만
 - Ruby: 주력 아님 → Python/Shell/Node.js 주력

@@ -117,20 +117,20 @@ describe('TelegramNotificationAdapter.sendJobPostingsSeparately', () => {
     assert.equal(res.sent, 0);
   });
 
-  it('R2: counts a job as failed when Telegram chunk fails even if n8n fallback succeeds', async () => {
-    // Telegram endpoint always 500s; n8n webhook succeeds. notify() would report
+  it('R2: counts a job as failed when Telegram chunk fails even if automation webhook fallback succeeds', async () => {
+    // Telegram endpoint always 500s; automation webhook succeeds. notify() would report
     // partial-success, but per-job success must be judged by TELEGRAM delivery only.
     const fakeFetch = async (url) => {
       if (/\/sendMessage$/.test(url)) {
         return { ok: false, status: 500, json: async () => ({}), text: async () => 'tg down' };
       }
-      // n8n webhook
+      // automation webhook
       return { ok: true, status: 200, json: async () => ({ ok: true }), text: async () => '' };
     };
     const adapter = new TelegramNotificationAdapter({
       telegramToken: 'T',
       telegramChatId: 'C',
-      n8nWebhookUrl: 'https://n8n.test/webhook/x',
+      automationWebhookUrl: 'https://automation.test/webhook/x',
       fetchImpl: fakeFetch,
     });
     const res = await adapter.sendJobPostingsSeparately([jobs[0]]);

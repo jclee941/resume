@@ -2,7 +2,7 @@
 
 **Scope**: resume.jclee.me (portfolio + job-server + job-dashboard + 6 packages
 
-- 60 Go scripts + 28 n8n workflows)
+- 60 Go scripts + 28 automation)
   **Method**: 5 parallel explorer agents (code quality, architecture, CI/security,
   docs drift, test+observability) + Oracle senior security review + 직접 sanity
   verification
@@ -142,11 +142,11 @@ AGENTS.md `shared/AGENTS.md` 명시: **"No global state or singletons"**. 직접
 - `maxRetries: 5` (default 3) — captcha/rate-limit 후에도 재시도
 - **조치**: 3회로 축소, captcha/auth 에러는 non-retryable 마킹
 
-### P1-8 — public n8n webhook URL exposed in portfolio data
+### P1-8 — public automation webhook URL exposed in portfolio data
 
 **Source**: Oracle (`apps/portfolio/data.json:219, 231`)
 
-- `https://n8n.jclee.me/webhook/portfolio/demo` 가 portfolio site에 공개
+- `https://automation.example.com/webhook/portfolio/demo` 가 portfolio site에 공개
 - **조치**: signed token 또는 captcha 보호, 또는 read-only landing으로 교체
 
 ### P1-9 — CHANGELOG.md semver order broken
@@ -197,7 +197,7 @@ AGENTS.md `shared/AGENTS.md` 명시: **"No global state or singletons"**. 직접
 | P2-10 | 코드       | console.log/error in worker production code                          | `worker.js:231-2251` (generated, fix source)      |
 | P2-11 | 테스트     | test-helpers/{mocks,setup,fixtures}.js 1637 LOC untested             | `apps/job-server/src/test-helpers/`               |
 | P2-12 | 테스트     | packages/cli no tests                                                | `packages/cli/`                                   |
-| P2-13 | 테스트     | n8n workflows no schema validation                                   | 28 JSON files in `infrastructure/n8n/`            |
+| P2-13 | 테스트     | automation no schema validation                                   | 28 JSON files in `infrastructure/automation/`            |
 | P2-14 | 보안       | `puppeteer` aliased to `rebrowser-puppeteer`                         | supply chain risk acceptable for stealth          |
 | P2-15 | 보안       | `imap-simple@5.1.0` legacy                                           | 2021 last update                                  |
 | P2-16 | 보안       | `compatibility_date: 2026-02-21` outdated                            | both wrangler.jsonc                               |
@@ -220,7 +220,7 @@ AGENTS.md `shared/AGENTS.md` 명시: **"No global state or singletons"**. 직접
 | P3-4 | ADR-0007 "47 endpoints" vs README "30+ endpoints"                           |
 | P3-5 | docs/README.md duplicate `JOB_JCLEE_ME_IMPLEMENTATION.md` entry             |
 | P3-6 | `web-vitals.js:92-107` no retry on beacon failure                           |
-| P3-7 | n8n location `infrastructure/n8n/` vs theoretical `packages/contracts/n8n/` |
+| P3-7 | automation location `infrastructure/automation/` vs theoretical `packages/contracts/automation/` |
 
 ---
 
@@ -308,7 +308,7 @@ tracked 안 됨. 디스크에는 평문이지만 git history에는 없음. P0 �
 | P1-5 Admin token replay         | TRACKED      | 964901a             | bearer 재활용 위험 코멘트 + JWT migration plan                                                                                                                        |
 | P1-6 .affected/ untrack         | RESOLVED     | b51c0f4             | (prior commit)                                                                                                                                                        |
 | P1-7 JK retry 5→3               | RESOLVED     | 964901a             | AGENTS.md "3 max" 준수                                                                                                                                                |
-| P1-8 n8n public webhook         | RESOLVED     | 964901a             | demoUrl → null + sync:data 재생성                                                                                                                                     |
+| P1-8 automation public webhook         | RESOLVED     | 964901a             | demoUrl → null + sync:data 재생성                                                                                                                                     |
 | P1-9 CHANGELOG semver           | RESOLVED     | b51c0f4             | (prior commit)                                                                                                                                                        |
 | P1-10 BUILD.bazel 삭제          | RESOLVED     | b51c0f4             | (prior commit)                                                                                                                                                        |
 | P1-11 gitlab-legacy             | RESOLVED     | b51c0f4             | (prior commit)                                                                                                                                                        |

@@ -147,9 +147,20 @@ function generateControlRoutes() {
           }
 
           const body = await request.json();
-          // Forward command to N8N Webhook (The Real Engine)
-          const webhookBase = (typeof env !== 'undefined' && env.N8N_WEBHOOK_BASE) || "https://n8n.jclee.me/webhook";
-          const n8nResponse = await fetch(\`\${webhookBase}/auto-apply-trigger\`, {
+          const webhookBase = (typeof env !== 'undefined' && env.AUTOMATION_WEBHOOK_BASE) || '';
+          if (!webhookBase) {
+            return new Response(JSON.stringify({ error: 'Automation webhook is not configured' }), {
+              status: 503,
+              headers: {
+                ...SECURITY_HEADERS,
+                ...rateLimitHeaders,
+                ...corsHeaders,
+                'Content-Type': 'application/json'
+              }
+            });
+          }
+
+          const automationResponse = await fetch(\`\${webhookBase}/auto-apply-trigger\`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -159,9 +170,9 @@ function generateControlRoutes() {
             })
           });
 
-          if (n8nResponse.ok) {
+          if (automationResponse.ok) {
              metrics.requests_success++;
-             return new Response(JSON.stringify({ success: true, message: "Automation triggered via N8N" }), {
+             return new Response(JSON.stringify({ success: true, message: "Automation triggered" }), {
               headers: {
                 ...SECURITY_HEADERS,
                 ...rateLimitHeaders,
@@ -170,7 +181,7 @@ function generateControlRoutes() {
               }
             });
           } else {
-            throw new Error(\`N8N Error: \${n8nResponse.status}\`);
+            throw new Error(\`Automation webhook error: \${automationResponse.status}\`);
           }
         } catch (e) {
           return new Response(JSON.stringify({ error: e.message }), {

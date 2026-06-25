@@ -62,7 +62,7 @@ infrastructure/cloudflare/
 - `README.md` is more trustworthy than the old AGENTS content was: it reflects
   `backend.tf` and the current file layout.
 - This subtree is distinct from general infrastructure because Terraform
-  ownership boundaries matter here more than in `monitoring/` or `n8n/`.
+  ownership boundaries matter here more than in `monitoring/` or `automation/`.
 
 ---
 

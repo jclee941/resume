@@ -2,9 +2,9 @@
 
 보안 엔지니어
 
-폐쇄망 OA 운영에서 출발해 금융권 보안 인프라까지 운영해 온 8년차 보안·SRE 엔지니어입니다. 직전 금융권 정보보안팀에서 FortiGate HA 망분리 환경의 Splunk ES·n8n·FortiManager API 연동을 구축·운영했고, 금융위원회 본인가 심사 보안 분야를 통과했습니다. 반복 운영 업무를 자동화 스크립트와 IaC로 전환하며 운영 부담을 줄여 왔습니다.
+폐쇄망 OA 운영에서 시작해 금융권 보안 인프라 구축·운영, SOC 탐지·알림 자동화, 관측성·IaC 기반 운영 개선을 이어 온 보안 엔지니어입니다. 직전 금융권 정보보안팀에서는 FortiGate HA 망분리 환경에서 Splunk ES, Slack/SMS 알림 워크플로, FortiManager API를 연결해 보안 이벤트 인지·분류·알림 흐름을 표준화했습니다. 현재 보안 인프라, Security Operations, Observability, 자동화 중심의 역할을 찾고 있습니다.
 
-**핵심 역량**: 금융권 보안 인프라 설계·운영 · FortiGate 다층 망분리 · Splunk SIEM 탐지·대응 자동화 · IaC 기반 관측성 · 금융감독원 감사 대응
+**핵심 역량**: 금융권 보안 인프라 설계·운영 · FortiGate 다층 망분리 · Splunk SIEM 탐지·알림 흐름 표준화 · IaC 기반 관측성 · 금융감독원 감사 대응
 
 ## 연락처
 
@@ -31,7 +31,7 @@
 
 - **보안**: FortiGate 방화벽, DDoS, IPS, WAF, NAC, DLP, EDR, APT, Splunk SIEM
 - **클라우드**: Docker, Kubernetes, Cloudflare Workers (Edge Computing)
-- **자동화**: Python, Shell, Ansible, Terraform, n8n (워크플로우 오케스트레이션)
+- **자동화**: Python, Shell, Ansible, Terraform, 워크플로 오케스트레이션
 - **모니터링**: Grafana, Prometheus, Loki (통합 관제 플랫폼)
 - **DevOps**: GitLab EE, CI/CD, Container Registry, Docker Compose
 - **AI/ML**: Claude AI 기반 자동화 파이프라인, ML 기반 위협 예측 및 자동 라우팅 시스템
@@ -80,7 +80,7 @@
 - Splunk-FortiNet 연동 환경에서 방화벽 정책 조회·배포 자동화 스크립트 작성
 - Grafana 대시보드로 시스템·컨테이너·로그 지표를 한 화면에 정리
 - Claude AI를 활용한 위협 정보 수집·분류 스크립트 작성으로 수동 분석 의존도 낮춤
-- n8n 워크플로우로 반복 API 호출 자동화
+- 알림 워크플로로 반복 API 호출 자동화
 - SIEM 탐지 룰 검토 및 조건 조정으로 오탐 정리
 - 취약점 SLA 기준에 따라 패치 일정을 관리
 - DR 복구 절차를 스크립트화하고 주기적 훈련 수행
@@ -301,7 +301,7 @@
 **시스템 규모 & 아키텍처**
 
 - **인프라**: Rocky Linux, Hyper-V 기반 홈랩 환경
-- **프로젝트**: 다양한 프로덕션 애플리케이션 (blacklist, mcp, resume, safework, grafana, n8n 등)
+- **프로젝트**: 다양한 프로덕션 애플리케이션 (blacklist, mcp, resume, safework, grafana, alert-workflow 등)
 - **컨테이너**: Docker 기반 운영 컨테이너 (Prometheus, Loki, Promtail, cAdvisor, Node Exporter)
 - **모니터링**: 중앙 집중식 Grafana Stack (Synology NAS), 안정적 운영 유지
 
@@ -323,13 +323,10 @@
 - **규모**: 스크립트 관리, Constitutional Framework
 - **성과**: AI 작업 흐름 자동화, 자동 에이전트 라우팅으로 의사결정 재활용성 강화
 
-**2. n8n Workflow Automation**
+**2. Automation**
 
-- **목적**: Self-hosted 워크플로우 자동화 플랫폼
-- **기술스택**: n8n, PostgreSQL, Redis, Docker
-- **규모**: 템플릿 기반 API 오케스트레이션
-- **성과**: 반복 작업 자동화, 워크플로우 재사용성 강화
-- **Live**: <https://n8n.jclee.me>
+- **목적**: 운영 알림과 반복 API 호출 워크플로 표준화
+- **기술스택**: PostgreSQL, Redis, Docker, Webhook Automation
 
 **3. GitLab Enterprise Edition**
 
@@ -393,13 +390,13 @@
 
 2. **Multi-Host Docker Context System**
    - 로컬 Docker: blacklist, mcp, local-exporters
-   - Synology Docker: grafana, n8n, xwiki, file
+   - Synology Docker: grafana, xwiki, file
    - NFS 마운트: 로컬 작업 디렉터리 → Synology (realtime sync)
    - `.docker-context` 파일 기반 자동 라우팅 (투명한 컨텍스트 전환)
 
 3. **AI-Driven Automation Framework**
    - SlashCommand 기반 자동화 시스템
-   - MCP 도구 생태계: filesystem, github, slack, tmux, n8n, sqlite, puppeteer
+   - MCP 도구 생태계: filesystem, github, slack, tmux, sqlite, puppeteer
    - Constitutional AI 거버넌스 (자율 실행, 검증, 메타 학습)
    - 자동화 스크립트: 보안·모니터링·배포·테스트 영역의 Bash 스크립트 묶음
 
@@ -435,7 +432,7 @@
 **MCP Platform (AI 도구 통합)**
 
 - 역할: Model Context Protocol 서버 통합 플랫폼
-- 규모: 다수 MCP 서버 및 도구 (filesystem, github, slack, tmux, n8n)
+- 규모: 다수 MCP 서버 및 도구 (filesystem, github, slack, tmux)
 - WebUI: Node.js 기반 백엔드 + Nginx reverse proxy
 - 성과: AI 작업 흐름 자동화, 도구 통합 구조 정리
 

@@ -5,7 +5,7 @@ BEGIN;
 -- resume_profiles
 
 INSERT INTO resume_profiles (id, locale, slug, personal, education, military, summary, current_employment, career_gap, hero, section_descriptions, contact, achievements)
-VALUES ('1e8b81c6-d88b-4035-8160-1897f0f3b7e5', 'ko', 'jclee', '{"name":"이재철","birthDate":"1994.10.17","email":"qws941@kakao.com","phone":"010-5757-9592","address":"경기도 시흥시 장현천로61, 307동 1301호","github":"https://github.com/qws941"}'::jsonb, '{"school":"한양사이버대학교","major":"컴퓨터공학과","startDate":"2024.03","status":"재학중","highSchool":"용남고등학교","highSchoolGraduation":"2013"}'::jsonb, '{"status":"사회복무요원","period":"2014.12 - 2016.12"}'::jsonb, '{"totalExperience":"9년","experienceStart":"2017.02","grade":null,"expertise":["Observability","보안 인프라","자동화"],"profileStatement":"9년차 인프라 엔지니어로 금융·공공 분야에서 보안 인프라 설계와 운영을 담당했습니다. Observability 체계 구축과 운영 자동화를 수행하고 있습니다."}'::jsonb, NULL, '{"period":"2018.11 ~ 2019.11","reason":"Linux 시스템 학습에 집중하여 관련 자격증을 취득했습니다.","result":"RHCSA, CompTIA Linux+, LPIC-1, 리눅스마스터 2급 취득"}'::jsonb, '{"badge":"Infrastructure Engineer","title":"이재철","titleEn":"Jaecheol Lee","subtitle":"보안 인프라 설계 · Observability · 자동화"}'::jsonb, '{"resume":"9년차 인프라 경력","projects":"사이드 프로젝트","infrastructure":"운영 중인 서비스","skills":"기술 스택","certifications":"자격증","contact":"연락처"}'::jsonb, '{"email":"qws941@kakao.com","phone":"010-5757-9592","github":"https://github.com/qws941","linkedin":"https://linkedin.com/in/jclee0109","website":"https://resume.jclee.me","monitoring":"https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b"}'::jsonb, ARRAY['넥스트레이드 ATS 보안 인프라 설계 (금융위 본인가 통과)', 'Splunk-FortiNet 통합 모니터링 체계 구축 (방화벽 중앙 관리 및 정책 배포 자동화)', '보안 인프라 자동화 도입을 통한 운영 효율화 (넥스트레이드)', 'WAF/IPS 정책 최적화를 통한 오탐률 개선 (넥스트레이드)', 'Grafana/Prometheus/Loki 기반 Observability 플랫폼 구축 및 운영', 'n8n 워크플로우 자동화 플랫폼 구축 (반복 운영 업무 자동화)', 'Claude AI 기반 보안 위협 분석 자동화 도입', '로보어드바이저 테스트베드 심사 보안 지원 (콴텍)', '클라우드 마이그레이션 프로젝트 수행 (조인트리)', '대규모 재택근무 환경을 위한 VPN 보안 인프라 구축 (메타넷)'])
+VALUES ('1e8b81c6-d88b-4035-8160-1897f0f3b7e5', 'ko', 'jclee', '{"name":"이재철","birthDate":"1994.10.17","email":"qws941@kakao.com","phone":"010-5757-9592","address":"경기도 시흥시 장현천로61, 307동 1301호","github":"https://github.com/qws941"}'::jsonb, '{"school":"한양사이버대학교","major":"컴퓨터공학과","startDate":"2024.03","status":"재학중","highSchool":"용남고등학교","highSchoolGraduation":"2013"}'::jsonb, '{"status":"사회복무요원","period":"2014.12 - 2016.12"}'::jsonb, '{"totalExperience":"9년","experienceStart":"2017.02","grade":null,"expertise":["Observability","보안 인프라","자동화"],"profileStatement":"9년차 인프라 엔지니어로 금융·공공 분야에서 보안 인프라 설계와 운영을 담당했습니다. Observability 체계 구축과 운영 자동화를 수행하고 있습니다."}'::jsonb, NULL, '{"period":"2018.11 ~ 2019.11","reason":"Linux 시스템 학습에 집중하여 관련 자격증을 취득했습니다.","result":"RHCSA, CompTIA Linux+, LPIC-1, 리눅스마스터 2급 취득"}'::jsonb, '{"badge":"Infrastructure Engineer","title":"이재철","titleEn":"Jaecheol Lee","subtitle":"보안 인프라 설계 · Observability · 자동화"}'::jsonb, '{"resume":"9년차 인프라 경력","projects":"사이드 프로젝트","infrastructure":"운영 중인 서비스","skills":"기술 스택","certifications":"자격증","contact":"연락처"}'::jsonb, '{"email":"qws941@kakao.com","phone":"010-5757-9592","github":"https://github.com/qws941","linkedin":"https://linkedin.com/in/jclee0109","website":"https://resume.jclee.me","monitoring":"https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b"}'::jsonb, ARRAY['넥스트레이드 ATS 보안 인프라 설계 (금융위 본인가 통과)', 'Splunk-FortiNet 통합 모니터링 체계 구축 (방화벽 중앙 관리 및 정책 배포 자동화)', '보안 인프라 자동화 도입을 통한 운영 효율화 (넥스트레이드)', 'WAF/IPS 정책 최적화를 통한 오탐률 개선 (넥스트레이드)', 'Grafana/Prometheus/Loki 기반 Observability 플랫폼 구축 및 운영', '자동화 워크플로우 자동화 플랫폼 구축 (반복 운영 업무 자동화)', 'Claude AI 기반 보안 위협 분석 자동화 도입', '로보어드바이저 테스트베드 심사 보안 지원 (콴텍)', '클라우드 마이그레이션 프로젝트 수행 (조인트리)', '대규모 재택근무 환경을 위한 VPN 보안 인프라 구축 (메타넷)'])
 ON CONFLICT (slug) DO UPDATE SET
   locale = EXCLUDED.locale,
   personal = EXCLUDED.personal,
@@ -167,8 +167,8 @@ DELETE FROM resume_careers WHERE resume_id = '1e8b81c6-d88b-4035-8160-1897f0f3b7
 -- resume_projects
 
 INSERT INTO resume_projects (id, resume_id, career_id, period, start_date, end_date, name, client, technologies, os, role, description, metrics, display_order)
-VALUES ('d7c4e14b-1c43-44cc-ba4e-e3df408bad8c', '1e8b81c6-d88b-4035-8160-1897f0f3b7e5', NULL, '2025.03 ~ 2026.02', '2025-03-01', '2026-02-01', '넥스트레이드 보안운영', '넥스트레이드', ARRAY['Python', 'Splunk', 'n8n', 'Fortinet'], 'Linux, Docker', '보안운영 담당', 'Splunk ES 및 FortiGate API를 활용한 보안 운영 자동화
-• n8n 워크플로우를 연동하여 보안 이벤트 탐지 시 실시간 Slack 알림 연동
+VALUES ('d7c4e14b-1c43-44cc-ba4e-e3df408bad8c', '1e8b81c6-d88b-4035-8160-1897f0f3b7e5', NULL, '2025.03 ~ 2026.02', '2025-03-01', '2026-02-01', '넥스트레이드 보안운영', '넥스트레이드', ARRAY['Python', 'Splunk', 'automation', 'Fortinet'], 'Linux, Docker', '보안운영 담당', 'Splunk ES 및 FortiGate API를 활용한 보안 운영 자동화
+• 자동화 워크플로우를 연동하여 보안 이벤트 탐지 시 실시간 Slack 알림 연동
 • FortiManager API를 이용한 방화벽 정책 자동 조회 툴 개발', '{"detectionRules":"32개 탐지 룰 운영","responseTime":"보안 이벤트 30초 내 알림","automation":"방화벽 정책 조회 자동화"}'::jsonb, 0)
 ON CONFLICT (id) DO UPDATE SET
   resume_id = EXCLUDED.resume_id,
@@ -628,7 +628,7 @@ ON CONFLICT (id) DO UPDATE SET
   updated_at = now();
 
 INSERT INTO resume_skills (id, category_id, name, level, proficiency, display_order)
-VALUES ('cabe56be-e216-40c4-a149-054881c1a9c6', '0485a018-b3c3-4bd1-b156-165060a3af57', 'n8n', 'expert', 95, 2)
+VALUES ('cabe56be-e216-40c4-a149-054881c1a9c6', '0485a018-b3c3-4bd1-b156-165060a3af57', 'automation', 'expert', 95, 2)
 ON CONFLICT (id) DO UPDATE SET
   category_id = EXCLUDED.category_id,
   name = EXCLUDED.name,
@@ -777,7 +777,7 @@ ON CONFLICT (id) DO UPDATE SET
   updated_at = now();
 
 INSERT INTO resume_personal_projects (id, resume_id, name, period, description, technologies, icon, tagline, stars, language, forks, github_url, demo_url, metrics, display_order)
-VALUES ('6d162437-7a8d-42d4-bd18-f0ecd5ce2a4a', '1e8b81c6-d88b-4035-8160-1897f0f3b7e5', 'n8n Automation', '2024.01 ~ 현재', '알림, 배포, 데이터 수집 워크플로우 자동화.', ARRAY['n8n', 'PostgreSQL', 'Docker'], '🔄', '워크플로우 자동화', 0, 'JavaScript', 0, NULL, NULL, '{"workflows":"15+","executions":"일 200+ 실행","integrations":"Slack, GitHub, Cloudflare, Grafana"}'::jsonb, 1)
+VALUES ('6d162437-7a8d-42d4-bd18-f0ecd5ce2a4a', '1e8b81c6-d88b-4035-8160-1897f0f3b7e5', 'Automation', '2024.01 ~ 현재', '알림, 배포, 데이터 수집 워크플로우 자동화.', ARRAY['automation', 'PostgreSQL', 'Docker'], '🔄', '워크플로우 자동화', 0, 'JavaScript', 0, NULL, NULL, '{"workflows":"15+","executions":"일 200+ 실행","integrations":"Slack, GitHub, Cloudflare, Grafana"}'::jsonb, 1)
 ON CONFLICT (id) DO UPDATE SET
   resume_id = EXCLUDED.resume_id,
   name = EXCLUDED.name,
@@ -994,7 +994,7 @@ ON CONFLICT (id) DO UPDATE SET
   updated_at = now();
 
 INSERT INTO resume_infrastructure (id, resume_id, icon, title, description, status, url, display_order)
-VALUES ('4e57c602-f866-4f80-abba-d6cb591b1504', '1e8b81c6-d88b-4035-8160-1897f0f3b7e5', '🔄', 'n8n', '워크플로우 자동화 (15+ 워크플로우, 일 200+ 실행)', 'running', 'https://n8n.jclee.me', 8)
+VALUES ('4e57c602-f866-4f80-abba-d6cb591b1504', '1e8b81c6-d88b-4035-8160-1897f0f3b7e5', '🔄', 'automation', '워크플로우 자동화 (15+ 워크플로우, 일 200+ 실행)', 'running', 'https://automation.example.com', 8)
 ON CONFLICT (id) DO UPDATE SET
   resume_id = EXCLUDED.resume_id,
   icon = EXCLUDED.icon,

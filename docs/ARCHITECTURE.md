@@ -104,14 +104,14 @@ MS|│   └── job-dashboard/          # Dashboard API module (imported into
 │   ├── schemas/                # Runtime Zod validation schemas
 │   └── contracts/              # OpenAPI spec + Worker Env interface
 ├── infrastructure/
-│   ├── automation/             # n8n workflow automation scripts
+│   ├── automation/             # automation scripts
 │   ├── cloudflare/             # Terraform (Cloudflare resources)
 │   ├── configs/                # Shared configuration files
 │   ├── database/               # D1 migration scripts
 │   ├── docker/                 # Docker configuration and scripts
 │   ├── mocks/                  # Mock services and test utilities
 │   ├── monitoring/             # Grafana, Loki, Prometheus configs
-│   ├── n8n/                    # Workflow automation
+│   ├── automation/                    # Workflow automation
 │   ├── systemd/                # Systemd service configs
 │   └── workflows/              # Workflow automation exports
 ├── tools/

@@ -8,12 +8,6 @@ import (
 	"strings"
 	"time"
 )
-	"encoding/json"
-	"fmt"
-	"net/http"
-	"strings"
-	"time"
-)
 
 func runVerifyE2E() int {
 	v := &verifier{cfg: loadConfig(), client: &http.Client{Timeout: 15 * time.Second}}
@@ -30,7 +24,7 @@ func (v *verifier) run() int {
 	v.testSessionStatus()
 	v.testSessionRenewal()
 	v.testErrorHandling()
-	v.testN8NWebhook()
+	v.testAutomationWebhook()
 	v.testTelegramNotification()
 	passed, failed, skipped, criticalFailed := 0, 0, 0, false
 	for _, r := range v.results {
@@ -172,23 +166,23 @@ func (v *verifier) testErrorHandling() {
 	v.pass("invalid-platform", true, "Invalid platform is handled gracefully with HTTP 400")
 }
 
-func (v *verifier) testN8NWebhook() {
-	fmt.Println("→ Testing n8n webhook integration...")
-	if v.cfg.n8nWebhookURL == "" {
-		v.skip("n8n", false, "n8n webhook integration skipped (N8N_WEBHOOK_URL not configured)")
+func (v *verifier) testAutomationWebhook() {
+	fmt.Println("→ Testing automation webhook integration...")
+	if v.cfg.automationWebhookURL == "" {
+		v.skip("automation-webhook", false, "automation webhook integration skipped (AUTOMATION_WEBHOOK_URL not configured)")
 		return
 	}
-	body, status, err := v.rawJSONRequest(v.cfg.n8nWebhookURL, map[string]any{"event": "session-broker.e2e", "source": "verify-e2e.go", "timestamp": time.Now().UTC().Format(time.RFC3339)})
+	body, status, err := v.rawJSONRequest(v.cfg.automationWebhookURL, map[string]any{"event": "session-broker.e2e", "source": "verify-e2e.go", "timestamp": time.Now().UTC().Format(time.RFC3339)})
 	if err != nil {
-		v.fail("n8n", false, "n8n webhook integration failed: %v", err)
-		v.recommend("Verify N8N_WEBHOOK_URL routing and webhook availability")
+		v.fail("automation-webhook", false, "automation webhook integration failed: %v", err)
+		v.recommend("Verify AUTOMATION_WEBHOOK_URL routing and webhook availability")
 		return
 	}
 	if status < 200 || status >= 300 {
-		v.fail("n8n", false, "n8n webhook returned HTTP %d: %s", status, compact(string(body)))
+		v.fail("automation-webhook", false, "automation webhook returned HTTP %d: %s", status, compact(string(body)))
 		return
 	}
-	v.pass("n8n", false, "n8n webhook integration functional")
+	v.pass("automation-webhook", false, "automation webhook integration functional")
 }
 
 func (v *verifier) testTelegramNotification() {

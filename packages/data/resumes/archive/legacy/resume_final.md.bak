@@ -27,7 +27,7 @@ DevSecOps / SRE 엔지니어
 - **보안**: FortiGate 방화벽, DDoS, IPS, WAF, NAC, DLP, EDR, APT, Splunk SIEM (15종 운영
   경험)
 - **클 라우드**: Docker, Kubernetes, Cloudflare Workers (Edge Computing)
-- **자동화**: Python, Shell, Ansible, Terraform, n8n (워크플로우 오케스트레이션)
+- **자동화**: Python, Shell, Ansible, Terraform, automation (워크플로우 오케스트레이션)
 - **모니터링**: Grafana, Prometheus, Loki (통합 관제 플랫폼)
 - **DevOps**: GitLab EE, CI/CD, Container Registry, Docker Compose
 - **AI/ML**: Claude AI (자동화 파이프라인), ML 기반 위협 예측 및 자동 라우팅 시스템 (22 MCP 서버 통합)
@@ -80,7 +80,7 @@ DevSecOps / SRE 엔지니어
   (30분 → 12분) | **비용 절감**: 장애 손실 70% 감소, 연 약 3억원 상당 리스크 완화
 - **Claude AI 기반 위협 정보 자동화**: 금융 위협 정보 수집·분류 자동화, 수동 분석 시간 100% 제거 (주 8시간 →
   0시간), 처리 속도 50% 향상 | **비용 절감**: 연간 보안 분석 인력 약 4,000만원 절감
-- **n8n 워크플로우 자동화 플랫폼 구축**: 541개 노드 활용, API 오케스트레이션 처리 속도 2배 향상 (250 RPS → 500
+- **자동화 워크플로우 자동화 플랫폼 구축**: 541개 노드 활용, API 오케스트레이션 처리 속도 2배 향상 (250 RPS → 500
   RPS), 반복 작업 80% 자동화 (주 40시간 → 8시간) | **비용 절감**: 운영 효율화로 연간 인건비 약 6,000만원 절감
 - 보안 오탐 50% 감소 (SIEM 룰 최적화, 일 200건 → 100건)
 - 취약점 893건 처리 (SLA 준수율 98.5%)
@@ -308,7 +308,7 @@ DevSecOps / SRE 엔지니어
 **시스템 규모 & 아키텍처**
 
 - **인프라**: Rocky Linux 9.6, Hyper-V, 40GB RAM, 8 CPU cores
-- **프로젝트**: 12개 프로덕션 애플리케이션 (blacklist, mcp, resume, safework, grafana, n8n 등)
+- **프로젝트**: 12개 프로덕션 애플리케이션 (blacklist, mcp, resume, safework, grafana, automation 등)
 - **컨테이너**: Docker 28.5.1, 14개 운영 컨테이너 (Prometheus, Loki, Promtail, cAdvisor,
   Node Exporter)
 - **모니터링**: 중앙 집중식 Grafana Stack (Synology NAS), 15개 리스닝 포트, 99.9% 가용성
@@ -334,14 +334,14 @@ DevSecOps / SRE 엔지니어
 - **Live**: <http://127.0.0.1:5001>
 - **GitHub**: [github.com/jclee941/claude](https://github.com/jclee941/claude)
 
-**2. n8n Workflow Automation**
+**2. automation Automation**
 
 - **목적**: Self-hosted 워크플로우 자동화 플랫폼
-- **기술스택**: n8n, PostgreSQL, Redis, Docker, 541 Nodes
+- **기술스택**: automation, PostgreSQL, Redis, Docker, 541 Nodes
 - **규모**: 2709+ 템플릿, API 오케스트레이션
 - **성과**: 반복 작업 자동화로 월 100+ 시간 절감, 워크플로우 재사용성 95% 향상
-- **Live**: <https://n8n.jclee.me>
-- **GitHub**: [github.com/jclee941/n8n](https://github.com/jclee941/n8n)
+- **Live**: <https://automation.example.com>
+- **GitHub**: [github.com/jclee941/automation](https://github.com/jclee941/automation)
 
 **3. GitLab Enterprise Edition**
 
@@ -413,13 +413,13 @@ DevSecOps / SRE 엔지니어
 
 2. **Multi-Host Docker Context System**
    - 로컬 Docker (localhost): blacklist, mcp, local-exporters
-   - Synology Docker (192.168.50.215): grafana, n8n, xwiki, file
-   - NFS 마운트: /home/jclee/app/{grafana,n8n,xwiki} → Synology (realtime sync)
+   - Synology Docker (192.168.50.215): grafana, automation, xwiki, file
+   - NFS 마운트: /home/jclee/app/{grafana,automation,xwiki} → Synology (realtime sync)
    - `.docker-context` 파일 기반 자동 라우팅 (투명한 컨텍스트 전환)
 
 3. **AI-Driven Automation Framework**
    - 150+ SlashCommand 시스템 (/.opencode/command/)
-   - MCP 도구 생태계: filesystem, github, slack, tmux, n8n, sqlite, puppeteer
+   - MCP 도구 생태계: filesystem, github, slack, tmux, automation, sqlite, puppeteer
    - Constitutional AI 거버넌스 (CLAUDE.md: 자율 실행, 검증, 메타 학습)
    - 자동화 스크립트: 57개 Bash scripts (보안, 모니터링, 배포, 테스트)
 
@@ -456,7 +456,7 @@ DevSecOps / SRE 엔지니어
 **MCP Platform (AI 도구 통합)**
 
 - 역할: Model Context Protocol 서버 통합 플랫폼
-- 규모: 14개 MCP 서버, 70개 도구 (filesystem, github, slack, tmux, n8n)
+- 규모: 14개 MCP 서버, 70개 도구 (filesystem, github, slack, tmux, automation)
 - WebUI: Node.js 22 (3001), Nginx reverse proxy (3002)
 - 성과: AI 작업 효율 80% 향상, 도구 통합 복잡성 감소
 

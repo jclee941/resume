@@ -43,10 +43,10 @@ Senior Security Engineer (클라우드 보안 인프라)
 - FortiGate, NAC, DLP, EDR, SIEM 등 **보안 솔루션 통합 운영**
 - **Splunk** 기반 상시 보안 모니터링 체계 운영 및 **인시던트 대응**
 - 정기 **보안 취약점 점검** 및 월간 리포트 작성
-- **n8n 워크플로우**를 활용한 보안 알림 자동화
+- **자동화 워크플로우**를 활용한 보안 알림 자동화
 - **Python 스크립트** 개발로 보안 로그 분석 및 리포팅 자동화
 
-기술 스택: Splunk, FortiGate, NAC, DLP, EDR, Python, n8n, Linux
+기술 스택: Splunk, FortiGate, NAC, DLP, EDR, Python, automation, Linux
 
 ---
 
@@ -145,7 +145,7 @@ Senior Security Engineer (클라우드 보안 인프라)
 
 - IaC: Terraform, Ansible
 - 언어: Python, Shell Script
-- 자동화 도구: n8n, REST API
+- 자동화 도구: automation, REST API
 
 ### 모니터링 및 관측성
 

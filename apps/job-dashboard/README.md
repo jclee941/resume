@@ -398,7 +398,7 @@ you attempt to apply to these platforms.
 
 1. Use job-server CLI: `npm run auto-apply -- --platforms=linkedin,remember
 --apply`
-2. Trigger via n8n webhook (integrates with job-server)
+2. Trigger via automation webhook (integrates with job-server)
 
 **Job Details Cache**: The `ApplicationWorkflow` can fetch job details from
 Wanted API directly, but LinkedIn/Remember require cached data from previous

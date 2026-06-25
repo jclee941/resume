@@ -120,10 +120,9 @@ logs/
 /verify-content-integrity
 /verify-health
 
-# Go build artifacts (n8n scripts)
+# Go build artifacts
 /deploy-auto-apply
 /deploy-workflow
-/n8n-browser-auth
 /setup-api-key
 
 # Wrangler generated types

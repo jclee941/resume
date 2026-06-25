@@ -37,7 +37,7 @@ const ALLOWED_EMAILS = process.env.ALLOWED_EMAILS
   ? process.env.ALLOWED_EMAILS.split(',').map((email) => email.trim())
   : [];
 const _GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
-const _N8N_WEBHOOK_BASE = process.env.N8N_WEBHOOK_BASE || 'https://n8n.jclee.me/webhook';
+const _AUTOMATION_WEBHOOK_BASE = process.env.AUTOMATION_WEBHOOK_BASE || '';
 
 (async () => {
   if (process.env.NODE_ENV === 'test') {

@@ -238,7 +238,7 @@ Link related skills in project cards:
 {
   "title": "Grafana",
   "related_skills": ["Prometheus", "Loki", "Traefik"],
-  "related_projects": ["N8N Automation", "GitHub Actions"]
+  "related_projects": ["AUTOMATION Automation", "GitHub Actions"]
 }
 ```
 

@@ -31,7 +31,7 @@ const DEFAULT_CONFIG = {
   },
   notifications: {
     telegram: { enabled: true, rateLimitPerMinute: 20, botToken: null, chatId: null },
-    n8n: { enabled: false, webhookUrl: null },
+    webhook: { enabled: false, url: null },
   },
   platforms: {
     wanted: { enabled: true, priority: 1 },

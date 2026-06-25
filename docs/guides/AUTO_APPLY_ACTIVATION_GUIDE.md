@@ -15,7 +15,7 @@
 - ✅ AI 기반 채용공고 매칭 (85%+ 정확도)
 - ✅ 자동 지원 실행 (Playwright 기반)
 - ✅ 실시간 대시보드 모니터링
-- ✅ n8n 워크플로우 자동화
+- ✅ 자동화 워크플로우 자동화
 - ✅ Slack 알림 통합
 
 **비즈니스 임팩트:**
@@ -358,7 +358,7 @@ node src/auto-apply/cli/index.js update app_123 offer "최종 제안"
 
 ---
 
-## 🔄 n8n 워크플로우 자동화
+## 🔄 자동화 워크플로우 자동화
 
 ### 1. 일일 자동 지원 워크플로우
 
@@ -387,7 +387,7 @@ node src/auto-apply/cli/index.js update app_123 offer "최종 제안"
 **수동 트리거:**
 
 ```bash
-curl -X POST https://n8n.jclee.me/webhook/job-search-trigger \
+curl -X POST https://automation.example.com/webhook/job-search-trigger \
   -H "Content-Type: application/json" \
   -d '{
     "keyword": "DevOps",
@@ -450,7 +450,7 @@ curl -X POST https://n8n.jclee.me/webhook/job-search-trigger \
 **수동 트리거:**
 
 ```bash
-curl -X POST https://n8n.jclee.me/webhook/resume-sync \
+curl -X POST https://automation.example.com/webhook/resume-sync \
   -H "Content-Type: application/json" \
   -d '{
     "resumeId": "AwcICwcLBAFIAgcDCwUAB01F",
@@ -802,7 +802,7 @@ npm run dashboard
 ### 프로덕션
 
 - [ ] 실제 지원 테스트 (`node cli.js apply --apply --max=1`)
-- [ ] n8n 워크플로우 설정
+- [ ] 자동화 워크플로우 설정
 - [ ] Slack 알림 테스트
 - [ ] 스케줄 작업 등록
 - [ ] 백업 설정
@@ -818,7 +818,7 @@ npm run dashboard
 1. ✅ 대시보드 실행 (`npm run dashboard`)
 2. ✅ Dry Run 테스트 (`node cli.js apply --max=3`)
 3. ✅ 실제 지원 활성화 (`node cli.js apply --apply --max=5`)
-4. ✅ n8n 워크플로우 설정
+4. ✅ 자동화 워크플로우 설정
 5. ✅ Slack 알림 설정
 
 **지원 및 문의:**

@@ -65,7 +65,6 @@ sections below, then use the archived sections for historical context only.
 - [INFRASTRUCTURE.md](guides/INFRASTRUCTURE.md)
 - [CF_API_TOKEN_SETUP.md](guides/CF_API_TOKEN_SETUP.md)
 - [CLOUDFLARE_AUTH_METHODS.md](guides/CLOUDFLARE_AUTH_METHODS.md)
-- [N8N_TELEGRAM_SETUP.md](guides/N8N_TELEGRAM_SETUP.md)
 - [SLACK_INTEGRATION.md](guides/SLACK_INTEGRATION.md)
 
 #### Troubleshooting

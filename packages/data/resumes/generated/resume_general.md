@@ -37,7 +37,7 @@
 
 - **보안**: FortiGate 방화벽, DDoS, IPS, WAF, NAC, DLP, EDR, APT, Splunk SIEM
 - **클라우드**: Docker, Kubernetes, Cloudflare Workers (Edge Computing)
-- **자동화**: Python, Shell, Ansible, Terraform, n8n (워크플로우 오케스트레이션)
+- **자동화**: Python, Shell, Ansible, Terraform, automation (워크플로우 오케스트레이션)
 - **모니터링**: Grafana, Prometheus, Loki (통합 관제 플랫폼)
 - **DevOps**: GitLab EE, CI/CD, Container Registry, Docker Compose
 - **AI/ML**: Claude AI 기반 자동화 파이프라인, ML 기반 위협 예측 및 자동 라우팅 시스템
@@ -88,7 +88,7 @@
 - Splunk-FortiNet 연동 환경에서 방화벽 정책 조회·배포 자동화 스크립트 작성
 - Grafana 대시보드로 시스템·컨테이너·로그 지표를 한 화면에 정리
 - Claude AI를 활용한 위협 정보 수집·분류 스크립트 작성으로 수동 분석 의존도 낮춤
-- n8n 워크플로우로 반복 API 호출 자동화
+- 자동화 워크플로우로 반복 API 호출 자동화
 - SIEM 탐지 룰 검토 및 조건 조정으로 오탐 정리
 - 취약점 SLA 기준에 따라 패치 일정을 관리
 - DR 복구 절차를 스크립트화하고 주기적 훈련 수행
@@ -311,7 +311,7 @@
 **시스템 규모 & 아키텍처**
 
 - **인프라**: Rocky Linux, Hyper-V 기반 홈랩 환경
-- **프로젝트**: 다양한 프로덕션 애플리케이션 (blacklist, mcp, resume, safework, grafana, n8n 등)
+- **프로젝트**: 다양한 프로덕션 애플리케이션 (blacklist, mcp, resume, safework, grafana, automation 등)
 - **컨테이너**: Docker 기반 운영 컨테이너 (Prometheus, Loki, Promtail, cAdvisor, Node Exporter)
 - **모니터링**: 중앙 집중식 Grafana Stack (Synology NAS), 안정적 운영 유지
 
@@ -334,14 +334,14 @@
 - **성과**: AI 작업 흐름 자동화, 자동 에이전트 라우팅으로 의사결정 재활용성 강화
 - **GitHub**: [github.com/jclee941/claude](https://github.com/jclee941/claude)
 
-**2. n8n Workflow Automation**
+**2. automation Automation**
 
 - **목적**: Self-hosted 워크플로우 자동화 플랫폼
-- **기술스택**: n8n, PostgreSQL, Redis, Docker
+- **기술스택**: automation, PostgreSQL, Redis, Docker
 - **규모**: 템플릿 기반 API 오케스트레이션
 - **성과**: 반복 작업 자동화, 워크플로우 재사용성 강화
-- **Live**: <https://n8n.jclee.me>
-- **GitHub**: [github.com/jclee941/n8n](https://github.com/jclee941/n8n)
+- **Live**: <https://automation.example.com>
+- **GitHub**: [github.com/jclee941/automation](https://github.com/jclee941/automation)
 
 **3. GitLab Enterprise Edition**
 
@@ -412,13 +412,13 @@
 
 2. **Multi-Host Docker Context System**
    - 로컬 Docker: blacklist, mcp, local-exporters
-   - Synology Docker: grafana, n8n, xwiki, file
+   - Synology Docker: grafana, automation, xwiki, file
    - NFS 마운트: 로컬 작업 디렉터리 → Synology (realtime sync)
    - `.docker-context` 파일 기반 자동 라우팅 (투명한 컨텍스트 전환)
 
 3. **AI-Driven Automation Framework**
    - SlashCommand 기반 자동화 시스템
-   - MCP 도구 생태계: filesystem, github, slack, tmux, n8n, sqlite, puppeteer
+   - MCP 도구 생태계: filesystem, github, slack, tmux, automation, sqlite, puppeteer
    - Constitutional AI 거버넌스 (자율 실행, 검증, 메타 학습)
    - 자동화 스크립트: 보안·모니터링·배포·테스트 영역의 Bash 스크립트 묶음
 
@@ -454,7 +454,7 @@
 **MCP Platform (AI 도구 통합)**
 
 - 역할: Model Context Protocol 서버 통합 플랫폼
-- 규모: 다수 MCP 서버 및 도구 (filesystem, github, slack, tmux, n8n)
+- 규모: 다수 MCP 서버 및 도구 (filesystem, github, slack, tmux, automation)
 - WebUI: Node.js 기반 백엔드 + Nginx reverse proxy
 - 성과: AI 작업 흐름 자동화, 도구 통합 구조 정리
 

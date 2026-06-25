@@ -66,10 +66,10 @@ Navigate to: `https://github.com/YOUR_USERNAME/resume/settings/secrets/actions`
    # Copy webhook URL
    ```
 
-3. **`N8N_WEBHOOK_URL`** (for workflow automation)
+3. **`AUTOMATION_WEBHOOK_URL`** (for automation)
 
    ```bash
-   # Get from your n8n instance
+   # Get from your automation instance
    # Create webhook workflow
    # Copy webhook URL
    ```
@@ -307,11 +307,11 @@ open https://codecov.io/gh/YOUR_USERNAME/resume
 # 3. Team gets notified on deployments
 ```
 
-### Enable n8n Automation
+### Enable Automation
 
 ```bash
-# 1. Create n8n webhook workflow
-# 2. Add N8N_WEBHOOK_URL to GitHub Secrets
+# 1. Create automation webhook workflow
+# 2. Add AUTOMATION_WEBHOOK_URL to GitHub Secrets
 # 3. Automate post-deployment tasks
 ```
 

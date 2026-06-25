@@ -42,7 +42,7 @@
       "period": "2025.03 ~ 2026.02",
       "project": "Nextrade Trading System Security Operations",
       "role": "Security Operations Engineer",
-      "description": "Operated security workflows for an exchange environment by connecting Splunk ES detections, n8n notification flows, and FortiManager API scripts for firewall policy lookup and operator triage."
+      "description": "Operated security workflows for an exchange environment by connecting Splunk ES detections, automation notification flows, and FortiManager API scripts for firewall policy lookup and operator triage."
     },
     {
       "company": "Gaonnuri Information System Co., Ltd.",
@@ -85,7 +85,7 @@
       "period": "2025.03 ~ 2026.02",
       "name": "Security Operations Automation",
       "client": "Nextrade",
-      "technologies": ["Splunk ES", "n8n", "FortiManager API", "Python", "Docker"],
+      "technologies": ["Splunk ES", "automation", "FortiManager API", "Python", "Docker"],
       "os": "Linux",
       "role": "Security operations automation",
       "description": "Connected detection rules, notification workflows, and firewall policy lookup scripts into a repeatable operator workflow."
@@ -122,7 +122,7 @@
     ],
     "sre_platform": ["Linux", "Docker", "Grafana", "Prometheus", "Loki", "Ansible", "Terraform"],
     "cloud_security": ["AWS IAM", "CloudTrail", "GuardDuty", "VPC", "Cloudflare WAF"],
-    "automation": ["Python", "Bash", "Go", "Node.js", "n8n", "GitHub Actions"],
+    "automation": ["Python", "Bash", "Go", "Node.js", "automation", "GitHub Actions"],
     "collaboration": [
       "English technical writing",
       "Runbooks",

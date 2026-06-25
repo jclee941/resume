@@ -24,12 +24,12 @@ graph TB
         Proxmox[Proxmox VE]
         Proxmox --> Grafana[Grafana + Loki]
         Proxmox --> ES[Elasticsearch]
-        Proxmox --> n8n[n8n Workflows]
+        Proxmox --> automation[Automation]
         Proxmox --> Docker[Docker Host]
     end
 
     Docker --> JobServer[job-server MCP]
-    n8n --> JobServer
+    automation --> JobServer
     JobServer --> D1[D1 Database]
     JobServer --> KV[KV Namespaces]
     JobServer --> Wanted[Wanted API]
@@ -44,7 +44,7 @@ graph TB
 - **Application**: Cloudflare Workers (serverless, global CDN)
 - **Monitoring**: Grafana + Prometheus + Loki (hosted on Proxmox pve3
   (192.168.50.100))
-- **Automation**: n8n workflows (health checks, deployments)
+- **Automation**: automation (health checks, deployments)
   #TX|- **CI/CD**: GitHub Actions → Cloudflare Workers Builds
 
 ---
@@ -74,7 +74,7 @@ infrastructure/
 ├── monitoring/                       # Grafana dashboard JSON (primary)
 │   ├── README.md
 │   └── grafana-dashboard-resume-portfolio.json
-├── n8n/                              # n8n workflow exports
+├── automation/                              # automation workflow exports
 │   ├── resume-healthcheck-workflow.json
 │   ├── resume-healthcheck-oauth2.json
 │   └── workflows/
@@ -102,10 +102,10 @@ infrastructure/
 | **Grafana**    | <https://grafana.jclee.me>           | ✅ Public   | Dashboard visualization |
 | **Prometheus** | 192.168.50.100:9090                  | 🔒 Internal | Metrics storage         |
 | **Loki**       | grafana.jclee.me/loki/...            | 🔒 Proxy    | Log aggregation         |
-| **n8n**        | 192.168.50.100:5678                  | 🔒 Internal | Workflow automation     |
+| **automation**        | 192.168.50.100:5678                  | 🔒 Internal | Workflow automation     |
 | **GitHub**     | <https://github.com/jclee941/resume> | ✅ Public   | Source repository       |
 
-> ⚠️ **Internal Services**: Prometheus, Loki, n8n are internal-only (no public
+> ⚠️ **Internal Services**: Prometheus, Loki, automation are internal-only (no public
 > DNS).
 > Access via internal IP or Grafana proxy. See [Access
 > Guide](#internal-service-access) below.
@@ -193,9 +193,9 @@ npm run deploy  # Cloudflare Workers via API
 - **Group By**: alertname, severity
 - **Repeat Interval**: 4 hours
 
-### 3. n8n Workflows
+### 3. Automation
 
-**Directory**: `infrastructure/n8n/`
+**Directory**: `infrastructure/automation/`
 
 **Available Workflows**
 
@@ -267,9 +267,9 @@ curl -H "Authorization: Bearer $GRAFANA_API_KEY" \
   https://grafana.jclee.me/api/ruler/grafana/api/v1/rules | jq
 ```
 
-### Deploy n8n Workflows
+### Deploy Automation
 
-1. Open <https://n8n.jclee.me>
+1. Open <https://automation.example.com>
 2. Go to **Workflows** → **Import from File**
 3. Select workflow JSON file
 4. Configure credentials (if required)
@@ -279,7 +279,7 @@ curl -H "Authorization: Bearer $GRAFANA_API_KEY" \
 
 ## Internal Service Access
 
-> ⚠️ **Prometheus, Loki, n8n** do not have public DNS.
+> ⚠️ **Prometheus, Loki, automation** do not have public DNS.
 > Access via internal network (192.168.50.x) or Grafana proxy.
 
 | Service        | Public Access       | Internal Access           | Notes               |
@@ -287,7 +287,7 @@ curl -H "Authorization: Bearer $GRAFANA_API_KEY" \
 | **Grafana**    | ✅ grafana.jclee.me | 192.168.50.100:3000       | All dashboards      |
 | **Prometheus** | 🔒 Internal Only    | 192.168.50.100:9090       | Use Grafana Explore |
 | **Loki**       | 🔒 Grafana Proxy    | grafana.jclee.me/loki/... | Grafana proxy       |
-| **n8n**        | 🔒 Internal Only    | 192.168.50.100:5678       | Workflow editor     |
+| **automation**        | 🔒 Internal Only    | 192.168.50.100:5678       | Workflow editor     |
 
 **Access Methods**
 
@@ -300,7 +300,7 @@ curl http://192.168.50.100:9090/api/v1/query?query=up
 
 # Option 3: SSH Tunnel (for remote access)
 ssh -L 9090:192.168.50.100:9090 -L 5678:192.168.50.100:5678 user@gateway
-# Then access: http://localhost:9090 (Prometheus), http://localhost:5678 (n8n)
+# Then access: http://localhost:9090 (Prometheus), http://localhost:5678 (automation)
 ```
 
 ---
@@ -423,7 +423,7 @@ curl https://resume.jclee.me/metrics | grep error
 - ✅ Enhanced dashboard with deployment annotations
 - ✅ Created comprehensive README for monitoring/
 - ✅ Verified alert-rules.yaml (4 rules, production-ready)
-- ✅ Reviewed n8n workflows (4 workflows, active)
+- ✅ Reviewed automation (4 workflows, active)
 - ✅ Updated infrastructure README (this file)
 - ✅ Clarified internal-only service access
 
@@ -436,7 +436,7 @@ curl https://resume.jclee.me/metrics | grep error
 
 - **2025-11-26**: Initial consolidation
 - **2025-11-23**: Initial GitHub Actions pipeline integration
-- **2025-11-20**: Added n8n health check workflows
+- **2025-11-20**: Added automation health check workflows
 - **2025-11-19**: Created workflow configurations
 
 ---

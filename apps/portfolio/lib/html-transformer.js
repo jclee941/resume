@@ -238,11 +238,11 @@ function buildJapaneseTemplate(html) {
       )
       .replace(
         /Splunk ES 탐지·알림 자동화/g,
-        'Splunk ES · n8n · FortiManager APIベースのセキュリティイベント自動化'
+        'Splunk ES · 通知ワークフロー · FortiManager APIベースのセキュリティイベント自動化'
       )
       .replace(
-        /Splunk ES · n8n · FortiManager API 기반 보안 이벤트 자동화/g,
-        'Splunk ES · n8n · FortiManager APIベースのセキュリティイベント自動化'
+        /Splunk ES · 알림 워크플로 · FortiManager API 기반 보안 이벤트 자동화/g,
+        'Splunk ES · 通知ワークフロー · FortiManager APIベースのセキュリティイベント自動化'
       )
       .replace(/aria-label="채용 검토 패킷"/g, 'aria-label="採用検討パケット"')
       .replace(/aria-label="채용 검토 자료"/g, 'aria-label="採用検討資料"')
@@ -354,12 +354,12 @@ function buildJapaneseTemplate(html) {
         'Grafana・Prometheus・Loki・ELKでログと運用イベントを確認し、ダッシュボードで状態を確認します。'
       )
       .replace(
-        /n8n, MCP, Terraform, GitHub Actions를 통해 반복 운영 절차와 배포 검증을\s+코드로 관리합니다\./g,
-        'n8n・MCP・Terraform・GitHub Actionsで反復的な運用手順とデプロイ検証をコードとして管理します。'
+        /MCP, Terraform, GitHub Actions를 통해 반복 운영 절차와 배포 검증을\s+코드로 관리합니다\./g,
+        'MCP・Terraform・GitHub Actionsで反復的な運用手順とデプロイ検証をコードとして管理します。'
       )
       .replace(
-        /n8n, MCP, Terraform, GitHub Actions를 통해 반복 운영 절차와 배포 검증을[\s\S]*?코드로[\s\S]*?관리합니다\./g,
-        'n8n・MCP・Terraform・GitHub Actionsで反復的な運用手順とデプロイ検証をコードとして管理します。'
+        /MCP, Terraform, GitHub Actions를 통해 반복 운영 절차와 배포 검증을[\s\S]*?코드로[\s\S]*?관리합니다\./g,
+        'MCP・Terraform・GitHub Actionsで反復的な運用手順とデプロイ検証をコードとして管理します。'
       )
       .replace(
         /<h2 id="resume-heading" class="sr-only">경력사항<\/h2>/g,

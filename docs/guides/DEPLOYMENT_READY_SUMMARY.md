@@ -22,7 +22,7 @@
   - Automated deployment to Cloudflare Workers
   - Comprehensive post-deployment verification
   - Health checks, performance tests, security validation
-  - Slack/n8n notifications
+  - Slack/automation notifications
   - Manual trigger support (production/staging)
 
 #### Verification Script
@@ -153,7 +153,7 @@
 
 - [ ] `CLOUDFLARE_API_TOKEN` (Required)
 - [ ] `CLOUDFLARE_ACCOUNT_ID` (Required)
-- [ ] `N8N_WEBHOOK_URL` (Optional)
+- [ ] `AUTOMATION_WEBHOOK_URL` (Optional)
 - [ ] `SLACK_WEBHOOK_URL` (Optional)
 - [ ] `CODECOV_TOKEN` (Optional)
 
@@ -202,7 +202,7 @@
 
 1. **Enable Codecov** for coverage tracking
 2. **Configure Slack notifications** for team alerts
-3. **Set up n8n webhooks** for workflow automation
+3. **Set up automation webhooks** for automation
 4. **Review and optimize** CI/CD performance
 
 ### Long-term (Optional)
@@ -237,7 +237,7 @@
 
 - ✅ GitHub Actions notifications
 - ✅ Slack integration (optional)
-- ✅ n8n webhooks (optional)
+- ✅ automation webhooks (optional)
 - ✅ Codecov integration (optional)
 
 ---

@@ -109,22 +109,22 @@ function validateAutoApplyConfig(candidateConfig) {
     }
   }
 
-  if (!isPlainObject(config.notifications?.n8n)) {
-    errors.push('notifications.n8n must be an object');
+  if (!isPlainObject(config.notifications?.webhook)) {
+    errors.push('notifications.webhook must be an object');
   } else {
-    if (!isValidBoolean(config.notifications.n8n.enabled)) {
-      errors.push('notifications.n8n.enabled must be boolean');
+    if (!isValidBoolean(config.notifications.webhook.enabled)) {
+      errors.push('notifications.webhook.enabled must be boolean');
     }
-    const webhookUrl = config.notifications.n8n.webhookUrl;
+    const webhookUrl = config.notifications.webhook.url;
     const validWebhookType = webhookUrl === null || typeof webhookUrl === 'string';
     if (!validWebhookType) {
-      errors.push('notifications.n8n.webhookUrl must be a string or null');
+      errors.push('notifications.webhook.url must be a string or null');
     }
     if (
-      config.notifications.n8n.enabled &&
+      config.notifications.webhook.enabled &&
       (typeof webhookUrl !== 'string' || webhookUrl.trim() === '')
     ) {
-      errors.push('notifications.n8n.webhookUrl is required when notifications.n8n.enabled=true');
+      errors.push('notifications.webhook.url is required when notifications.webhook.enabled=true');
     }
   }
 
