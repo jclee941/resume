@@ -55,6 +55,16 @@ describe('resume locale parity', () => {
     }
   });
 
+  test('JobKorea default job code follows KO hope primary job code', () => {
+    expect(ko.platformVariants.jobkorea.defaultJobCode).toBe(ko.hope.jobCodes[0]);
+    expect(ko.platformVariants.jobkorea.defaultJobCode).toMatch(/^\d+$/);
+    expect(ko.hope.jobCodes).toContain(ko.platformVariants.jobkorea.defaultJobCode);
+  });
+
+  test('KO resume prose avoids metric-like server scale phrases', () => {
+    expect(JSON.stringify(ko)).not.toMatch(/수백\s*대/);
+  });
+
   test('critical array lengths match across locales', () => {
     expect(en.summary.expertise).toHaveLength(ko.summary.expertise.length);
     expect(ja.summary.expertise).toHaveLength(ko.summary.expertise.length);

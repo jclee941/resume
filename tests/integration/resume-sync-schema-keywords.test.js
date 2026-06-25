@@ -34,6 +34,12 @@ describe('Resume schema live-field contract', () => {
     expect(careerProperties.jobkoreaJobCode).toMatchObject({ type: 'string' });
   });
 
+  test('defines JobKorea platform default job code used by resume data', () => {
+    const jobkoreaProperties = readJson(SCHEMA_PATH).properties.platformVariants.properties.jobkorea.properties;
+
+    expect(jobkoreaProperties.defaultJobCode).toMatchObject({ type: 'string' });
+  });
+
   test('defines live personal project extension fields used by resume data', () => {
     const projectProperties = schemaProperties('personalProjects');
 

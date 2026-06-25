@@ -84,7 +84,7 @@
     "jobkorea": {
       "headline": "보안 엔지니어 — OA→자동화→FSC 본인가→보안 운영 (Splunk ES, 워크플로 자동화, FortiGate HA)",
       "about": "**\"반복 작업은 자동화 되어야 한다\"** — 한 가지 신념으로 운영의 도구를 진화시켜 왔습니다.\n\n[경력 흐름: 현장 운영 → 자동화 → AI 에이전트]\n• KAI 폐쇄망 (2018–2019): Linux 수기 운영, 패치/방화벽/IDS 정책\n• Linux 기초 재정비 (2019.11–2020.07): RHCSA·LPIC-1·리눅스마스터 2급 연속 취득\n• 자동화 입문 (2020–2022): 메타넷 컨택센터 SSL VPN/NAC + Ansible/Python; 조인트리 NSX-T 마이크로세그멘테이션 + Wazuh\n• 금융 인프라 (2022–2024): 콴텍투자일임 FSDC, 금감원 감사 대응 + DB 튜닝\n• 보안 구축·운영 (2024–2026): 넥스트레이드, 망분리·엔드포인트 보안 구축·운영 + Ansible Role 표준화 + FSC 본인가 통과\n• 보안 운영 자동화 (2025–2026): 아이티센 CTS 넥스트레이드, Splunk ES + Slack/SMS 알림 워크플로 + FortiManager API 기반 자동 탐지·대응 운영\n• 현재: 구직 중 (보안·인프라 엔지니어)\n\n[검증 가능한 운영 개선]\nNAC·방화벽 정책 배포 자동화 · 보안 이벤트 자동 탐지·대응 · 접근 제어 정책 정비 · DLP 정책 운영 표준화\n\n[보유 기술 스택]\nSplunk ES, 워크플로 자동화, FortiGate/FortiManager API, Ansible Role, Python, Terraform, Docker, NSX-T, Wazuh, Grafana/Prometheus/Loki, Cloudflare Workers, MCP/AI 에이전트\n\n포트폴리오: https://resume.jclee.me",
-      "defaultJobCode": ""
+      "defaultJobCode": "1000238"
     }
   },
   "current": {
@@ -268,7 +268,7 @@
         {
           "id": "kai-infrastructure-operations",
           "name": "KAI 인프라 운영",
-          "description": "항공우주산업 폐쇄망 환경에서 IT 인프라 운영 기초를 다졌습니다. Linux 로그 분석으로 하드웨어 장애를 사전 탐지하고, WSUS 기반 패치 자동화 체계를 구축하여 수백 대 서버의 보안 업데이트를 체계적으로 관리했습니다. 방화벽 정책 변경 이력 추적 및 접근 로그 분석 체계를 구축하여 보안 감사 대응 역량을 확보했습니다.",
+          "description": "항공우주산업 폐쇄망 환경에서 IT 인프라 운영 기초를 다졌습니다. Linux 로그 분석으로 하드웨어 장애를 사전 탐지하고, WSUS 기반 패치 자동화 체계를 구축하여 폐쇄망 서버의 보안 업데이트를 체계적으로 관리했습니다. 방화벽 정책 변경 이력 추적 및 접근 로그 분석 체계를 구축하여 보안 감사 대응 역량을 확보했습니다.",
           "period": "2018.10 ~ 2019.10",
           "techStack": ["Linux", "Bash", "Firewall", "WSUS"],
           "achievements": [

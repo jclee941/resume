@@ -80,7 +80,7 @@ const PROJECT_EN_OVERRIDES = {
   },
   'Security Alert System': {
     description:
-      'FortiGate security events were scattered across device syslog and Splunk, causing delays from event occurrence to responder awareness. Integrated Splunk Saved Search with Webhooks and implemented EMS state-tracking pattern (11 CSV state trackers) to prevent duplicate alerts by sending notifications only on state transitions. Classifies events with 6,091 FortiGate LogID mappings. When FortiGate syslog events occur, alerts are immediately routed through Splunk Saved Search → Webhook → Slack/Telegram in a single path.',
+      'FortiGate security events were scattered across device syslog and Splunk, causing delays from event occurrence to responder awareness. Integrated Splunk Saved Search with Webhooks and implemented an EMS state-tracking pattern to prevent duplicate alerts by sending notifications only on state transitions. Classifies events with maintained FortiGate LogID mappings. When FortiGate syslog events occur, alerts are routed through Splunk Saved Search → Webhook → Slack/Telegram in a single path.',
     tagline: 'Security Alert Automation',
   },
   'IP Blacklist Platform': {
@@ -151,6 +151,7 @@ function generateWebData(source, language = 'ko') {
     ossContributions: source.ossContributions || null,
     military: source.military || null,
     coverLetter: source.coverLetter || null,
+    platformVariants: source.platformVariants || null,
   };
 }
 
