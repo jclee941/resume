@@ -71,6 +71,7 @@ module.exports = [
       '.cache/**',
       '.opencode/**',
       '.sisyphus/**',
+      '.omo/**',
       'apps/natively/**',
       'downloaded_files/**',
       '**/*.backup-*',
