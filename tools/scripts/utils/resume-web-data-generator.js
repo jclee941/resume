@@ -1,3 +1,11 @@
+const {
+  careerCardFromSource,
+  englishCareerCardFromSource,
+  englishProjectCardFromSource,
+  projectCardFromSource,
+  timelineCareerFromSource,
+} = require('./resume-web-data-projections.js');
+
 const RESUME_STATS_BY_INDEX = {
   ko: [
     ['Splunk ES', '탐지·대응', '보안 자동화'],
@@ -82,12 +90,6 @@ const PROJECT_EN_OVERRIDES = {
   },
 };
 
-const RESUME_CARD_ICONS = ['🏦', '🏗️', '📈', '☁️', '🎓', '📞', '✈️'];
-
-function resumeStatsFor(statsByIndex, idx) {
-  return [...(statsByIndex[idx] || [])];
-}
-
 function generateWebData(source, language = 'ko') {
   const statsByIndex = RESUME_STATS_BY_INDEX[language] || RESUME_STATS_BY_INDEX.ko;
 
@@ -98,92 +100,16 @@ function generateWebData(source, language = 'ko') {
   //   These are job-application detail consumed by Wanted/JobKorea sync, not portfolio content.
   //   The terminal-themed portfolio shows summarized career cards only.
   //   If sub-projects need to render here, extend the entry below AND update apps/portfolio/lib/cards.js.
-  const resume = source.careers.map((career, idx) => {
-    const entry = {
-      icon: RESUME_CARD_ICONS[idx] || '💼',
-      title: career.company,
-      role: career.myRole || career.role || '',
-      description: career.description,
-      period: career.period,
-      stats: resumeStatsFor(statsByIndex, idx),
-      highlight: idx === 0,
-    };
-
-    if (idx === 0) {
-      entry.completePdfUrl =
-        'https://raw.githubusercontent.com/jclee941/resume/master/packages/data/resumes/technical/nextrade/exports/Nextrade_Full_Documentation.pdf';
-    }
-
-    return entry;
-  });
-
-  const resumeEn = source.careers.map((career, idx) => {
-    // resumeEn is a secondary EN projection (fallback path); use English stats
-    // by index so it stays symmetric even if a non-EN source language is used.
-    const statsByIndexEn = RESUME_STATS_BY_INDEX.en;
-
-    const translated = CAREER_EN_OVERRIDES[career.company] || {};
-    const entry = {
-      icon: RESUME_CARD_ICONS[idx] || '💼',
-      title: translated.title || career.company,
-      role: translated.role || career.myRole || career.role || '',
-      description: translated.description || career.description,
-      period: translated.period || career.period.replace('현재', 'Present'),
-      stats: resumeStatsFor(statsByIndexEn, idx),
-      highlight: idx === 0,
-    };
-
-    if (idx === 0) {
-      entry.completePdfUrl =
-        'https://raw.githubusercontent.com/jclee941/resume/master/packages/data/resumes/technical/nextrade/exports/Nextrade_Full_Documentation.pdf';
-    }
-
-    return entry;
-  });
-
-  const projects = (source.personalProjects || []).map((proj) => ({
-    icon: proj.icon || '💻',
-    title: proj.name,
-    tech: Array.isArray(proj.technologies) ? proj.technologies.join(', ') : proj.technologies,
-    description: proj.description,
-    tagline: proj.tagline || proj.description,
-
-    language: proj.language,
-
-    githubUrl: proj.githubUrl,
-    demoUrl: proj.demoUrl,
-
-    related_skills: proj.technologies || [],
-    liveUrl: proj.demoUrl || proj.url,
-    repoUrl: proj.githubUrl || proj.repoUrl,
-    businessImpact: proj.businessImpact,
-    displayOrder: typeof proj.displayOrder === 'number' ? proj.displayOrder : 999,
-    featured: proj.featured === true,
-  }));
-
-  const projectsEn = (source.personalProjects || []).map((proj) => {
-    const translated = PROJECT_EN_OVERRIDES[proj.name] || {};
-
-    return {
-      icon: proj.icon || '💻',
-      title: translated.title || proj.name,
-      tech: Array.isArray(proj.technologies) ? proj.technologies.join(', ') : proj.technologies,
-      description: translated.description || proj.description,
-      tagline: translated.tagline || proj.tagline || proj.description,
-
-      language: proj.language,
-
-      githubUrl: proj.githubUrl,
-      demoUrl: proj.demoUrl,
-
-      related_skills: proj.technologies || [],
-      liveUrl: proj.demoUrl || proj.url,
-      repoUrl: proj.githubUrl || proj.repoUrl,
-      businessImpact: proj.businessImpact,
-      displayOrder: typeof proj.displayOrder === 'number' ? proj.displayOrder : 999,
-      featured: proj.featured === true,
-    };
-  });
+  const resume = source.careers.map((career, idx) =>
+    careerCardFromSource(career, idx, statsByIndex)
+  );
+  const resumeEn = source.careers.map((career, idx) =>
+    englishCareerCardFromSource(career, idx, RESUME_STATS_BY_INDEX.en, CAREER_EN_OVERRIDES)
+  );
+  const projects = (source.personalProjects || []).map(projectCardFromSource);
+  const projectsEn = (source.personalProjects || []).map((project) =>
+    englishProjectCardFromSource(project, PROJECT_EN_OVERRIDES)
+  );
 
   // SSoT careers[] → top-level careers[] for the client timeline module.
   // Preserves the data fields apps/portfolio/src/scripts/modules/timeline.js renders
@@ -192,17 +118,7 @@ function generateWebData(source, language = 'ko') {
   // `achievements` is flattened from the SSoT work sub-projects (career.projects[].achievements)
   // so the timeline "Impact" text + expanded list stay sourced from the SSoT (no drift).
   // UI-only metadata (phase/status) is NOT part of the SSoT and is attached in timeline.js.
-  const careers = source.careers.map((career) => ({
-    company: career.company,
-    companyUrl: career.companyUrl || null,
-    period: career.period,
-    role: career.role,
-    myRole: career.myRole,
-    description: career.description,
-    achievements: (career.projects || [])
-      .flatMap((project) => project.achievements || [])
-      .filter((achievement) => typeof achievement === 'string' && achievement.length > 0),
-  }));
+  const careers = source.careers.map(timelineCareerFromSource);
 
   return {
     resumeDownload: {
