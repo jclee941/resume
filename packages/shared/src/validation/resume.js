@@ -32,7 +32,9 @@ function loadValidatorEngine() {
     return {
       validateResumeData: () => ({
         valid: false,
-        errors: [{ path: '(validator)', message: 'Canonical resume validator could not be loaded' }],
+        errors: [
+          { path: '(validator)', message: 'Canonical resume validator could not be loaded' },
+        ],
       }),
     };
   }

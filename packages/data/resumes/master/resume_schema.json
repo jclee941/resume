@@ -3,23 +3,12 @@
   "title": "Resume Data Schema",
   "description": "JSON Schema for validating resume_data.json structure and content",
   "type": "object",
-  "required": [
-    "personal",
-    "education",
-    "summary",
-    "current",
-    "careers",
-    "skills"
-  ],
+  "required": ["personal", "education", "summary", "current", "careers", "skills"],
   "properties": {
     "personal": {
       "type": "object",
       "description": "Personal information",
-      "required": [
-        "name",
-        "email",
-        "phone"
-      ],
+      "required": ["name", "email", "phone"],
       "properties": {
         "name": {
           "type": "string",
@@ -57,10 +46,7 @@
     "education": {
       "type": "object",
       "description": "Education information",
-      "required": [
-        "school",
-        "major"
-      ],
+      "required": ["school", "major"],
       "properties": {
         "school": {
           "type": "string",
@@ -125,10 +111,7 @@
     "summary": {
       "type": "object",
       "description": "Career summary",
-      "required": [
-        "totalExperience",
-        "expertise"
-      ],
+      "required": ["totalExperience", "expertise"],
       "properties": {
         "totalExperience": {
           "type": "string",
@@ -140,10 +123,7 @@
           "description": "Career start date in YYYY.MM format"
         },
         "grade": {
-          "type": [
-            "string",
-            "null"
-          ],
+          "type": ["string", "null"],
           "description": "Grade or level (optional)"
         },
         "expertise": {
@@ -189,10 +169,7 @@
           "description": "Months employed"
         },
         "participationRate": {
-          "type": [
-            "number",
-            "null"
-          ],
+          "type": ["number", "null"],
           "description": "Employment percentage (optional)"
         }
       },
@@ -204,12 +181,7 @@
       "description": "Career history",
       "items": {
         "type": "object",
-        "required": [
-          "id",
-          "company",
-          "period",
-          "role"
-        ],
+        "required": ["id", "company", "period", "role"],
         "properties": {
           "id": {
             "type": "string",
@@ -222,10 +194,7 @@
             "description": "Company name"
           },
           "companyUrl": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": ["string", "null"],
             "format": "uri",
             "description": "Company website URL"
           },
@@ -248,10 +217,7 @@
             "description": "Job role/position"
           },
           "client": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": ["string", "null"],
             "description": "Client name (null if direct employment)"
           },
           "teamSize": {
@@ -271,10 +237,7 @@
             "description": "One-liner summary for Wanted platform"
           },
           "continuousEngagement": {
-            "type": [
-              "string",
-              "boolean"
-            ],
+            "type": ["string", "boolean"],
             "description": "Continuous engagement marker or description"
           },
           "jobkoreaJobCode": {
@@ -282,10 +245,7 @@
             "description": "JobKorea job code"
           },
           "note": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": ["string", "null"],
             "description": "Additional notes (null if none)"
           },
           "projects": {
@@ -327,9 +287,7 @@
                 }
               },
               "additionalProperties": true,
-              "required": [
-                "id"
-              ]
+              "required": ["id"]
             }
           },
           "description": {
@@ -345,12 +303,7 @@
       "description": "Project history",
       "items": {
         "type": "object",
-        "required": [
-          "id",
-          "name",
-          "role",
-          "technologies"
-        ],
+        "required": ["id", "name", "role", "technologies"],
         "properties": {
           "id": {
             "type": "string",
@@ -422,11 +375,7 @@
       "description": "Professional certifications",
       "items": {
         "type": "object",
-        "required": [
-          "id",
-          "name",
-          "issuer"
-        ],
+        "required": ["id", "name", "issuer"],
         "properties": {
           "id": {
             "type": "string",
@@ -444,52 +393,31 @@
             "description": "Issuing organization"
           },
           "date": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": ["string", "null"],
             "pattern": "^\\d{4}\\.\\d{2}$",
             "description": "Issue date in YYYY.MM format (null if not yet obtained)"
           },
           "expirationDate": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": ["string", "null"],
             "pattern": "^\\d{4}\\.\\d{2}$",
             "description": "Expiration date in YYYY.MM format (null if non-expiring or not yet obtained)"
           },
           "credentialId": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": ["string", "null"],
             "description": "Credential identifier (null if not available)"
           },
           "credentialUrl": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": ["string", "null"],
             "format": "uri",
             "description": "URL to verify the credential (null if not available)"
           },
           "status": {
             "type": "string",
-            "enum": [
-              "active",
-              "expired",
-              "준비중",
-              "Preparing",
-              "準備中"
-            ],
+            "enum": ["active", "expired", "준비중", "Preparing", "準備中"],
             "description": "Certification status (KO/EN/JA)"
           },
           "note": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": ["string", "null"],
             "description": "Optional localized certification note"
           }
         },
@@ -534,9 +462,7 @@
                             "type": "string"
                           }
                         },
-                        "required": [
-                          "name"
-                        ]
+                        "required": ["name"]
                       }
                     ]
                   }
@@ -580,9 +506,7 @@
                             "type": "string"
                           }
                         },
-                        "required": [
-                          "name"
-                        ]
+                        "required": ["name"]
                       }
                     ]
                   }
@@ -626,9 +550,7 @@
                             "type": "string"
                           }
                         },
-                        "required": [
-                          "name"
-                        ]
+                        "required": ["name"]
                       }
                     ]
                   }
@@ -672,9 +594,7 @@
                             "type": "string"
                           }
                         },
-                        "required": [
-                          "name"
-                        ]
+                        "required": ["name"]
                       }
                     ]
                   }
@@ -718,9 +638,7 @@
                             "type": "string"
                           }
                         },
-                        "required": [
-                          "name"
-                        ]
+                        "required": ["name"]
                       }
                     ]
                   }
@@ -764,9 +682,7 @@
                             "type": "string"
                           }
                         },
-                        "required": [
-                          "name"
-                        ]
+                        "required": ["name"]
                       }
                     ]
                   }
@@ -810,9 +726,7 @@
                             "type": "string"
                           }
                         },
-                        "required": [
-                          "name"
-                        ]
+                        "required": ["name"]
                       }
                     ]
                   }
@@ -856,9 +770,7 @@
                             "type": "string"
                           }
                         },
-                        "required": [
-                          "name"
-                        ]
+                        "required": ["name"]
                       }
                     ]
                   }
@@ -902,9 +814,7 @@
                             "type": "string"
                           }
                         },
-                        "required": [
-                          "name"
-                        ]
+                        "required": ["name"]
                       }
                     ]
                   }
@@ -922,12 +832,7 @@
       "description": "Personal/side projects",
       "items": {
         "type": "object",
-        "required": [
-          "id",
-          "name",
-          "description",
-          "technologies"
-        ],
+        "required": ["id", "name", "description", "technologies"],
         "properties": {
           "id": {
             "type": "string",
@@ -966,10 +871,7 @@
             "description": "One-liner tagline"
           },
           "url": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": ["string", "null"],
             "format": "uri",
             "description": "Project URL"
           },
@@ -978,18 +880,12 @@
             "description": "Primary project language"
           },
           "githubUrl": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": ["string", "null"],
             "format": "uri",
             "description": "GitHub repository URL"
           },
           "demoUrl": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": ["string", "null"],
             "format": "uri",
             "description": "Demo URL"
           },
@@ -1103,17 +999,13 @@
           }
         },
         "additionalProperties": true,
-        "required": [
-          "id"
-        ]
+        "required": ["id"]
       }
     },
     "contact": {
       "type": "object",
       "description": "Contact information",
-      "required": [
-        "email"
-      ],
+      "required": ["email"],
       "properties": {
         "email": {
           "type": "string",
@@ -1214,9 +1106,7 @@
           }
         },
         "additionalProperties": true,
-        "required": [
-          "id"
-        ]
+        "required": ["id"]
       }
     },
     "awards": {
@@ -1244,9 +1134,7 @@
           }
         },
         "additionalProperties": true,
-        "required": [
-          "id"
-        ]
+        "required": ["id"]
       }
     },
     "hope": {
@@ -1335,9 +1223,7 @@
               "description": "Closing line"
             }
           },
-          "required": [
-            "paragraphs"
-          ],
+          "required": ["paragraphs"],
           "additionalProperties": false
         },
         "en": {
@@ -1360,9 +1246,7 @@
               "description": "Closing line"
             }
           },
-          "required": [
-            "paragraphs"
-          ],
+          "required": ["paragraphs"],
           "additionalProperties": false
         },
         "ja": {
@@ -1385,9 +1269,7 @@
               "description": "Closing line"
             }
           },
-          "required": [
-            "paragraphs"
-          ],
+          "required": ["paragraphs"],
           "additionalProperties": false
         }
       },

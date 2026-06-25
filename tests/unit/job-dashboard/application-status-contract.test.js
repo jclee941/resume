@@ -80,9 +80,8 @@ describe('application status contract', () => {
     const expected = EXPECTED_DASHBOARD_STATUSES;
 
     // When: each status source is loaded from the workspace.
-    const runtime = await import(
-      '../../../apps/job-dashboard/src/handlers/applications/statuses.js'
-    );
+    const runtime =
+      await import('../../../apps/job-dashboard/src/handlers/applications/statuses.js');
     const schemas = await import('../../../packages/schemas/src/application.js');
     const types = await import('../../../packages/types/src/application.js');
     const openApi = YAML.parse(fs.readFileSync(OPENAPI_PATH, 'utf8'));
@@ -100,9 +99,8 @@ describe('application status contract', () => {
   });
 
   test('returns current dashboard statuses from daily report stats behavior', async () => {
-    const { getApplicationStats } = await import(
-      '../../../apps/job-dashboard/src/workflows/daily-report-stats.js'
-    );
+    const { getApplicationStats } =
+      await import('../../../apps/job-dashboard/src/workflows/daily-report-stats.js');
     const stats = await getApplicationStats(
       {
         JOB_DB: createStatsDbWithResult({
@@ -144,9 +142,11 @@ describe('application status contract', () => {
     try {
       const response = await new ReportHandler({ DB: db }, null).triggerDailyReport({});
       const payload = await response.json();
-      const highPrioritySql = db.statements.map((statement) => statement.sql).find((sql) => {
-        return sql.includes('match_score >= 80');
-      });
+      const highPrioritySql = db.statements
+        .map((statement) => statement.sql)
+        .find((sql) => {
+          return sql.includes('match_score >= 80');
+        });
 
       expect(payload.success).toBe(true);
       expect(highPrioritySql).toContain("status IN ('saved', 'viewed', 'in_progress')");

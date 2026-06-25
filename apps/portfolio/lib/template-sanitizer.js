@@ -71,8 +71,7 @@ function sanitizeHref(url) {
   const trimmed = url.trim();
   if (!trimmed) return '';
   // Block control characters (null-byte injection, tab/newline smuggling)
-  // eslint-disable-next-line no-control-regex
-  if (/[\u0000-\u001F\u007F]/.test(trimmed)) return '';
+  if (hasControlCharacter(trimmed)) return '';
   // Block protocol-relative URLs (//evil.com). Browsers normalize backslashes to
   // forward slashes in URL context, so a leading backslash is the same threat
   // (\\evil.com -> //evil.com); block any leading / or \ run that isn't a single
@@ -96,6 +95,14 @@ function sanitizeHref(url) {
     if (!trimmed.includes(':') || trimmed.indexOf('/') < trimmed.indexOf(':')) return trimmed;
   }
   return '';
+}
+
+function hasControlCharacter(value) {
+  for (const char of value) {
+    const code = char.charCodeAt(0);
+    if (code <= 0x1f || code === 0x7f) return true;
+  }
+  return false;
 }
 
 module.exports = {

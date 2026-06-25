@@ -1,7 +1,4 @@
-const {
-  validateNumberValue,
-  validateStringValue,
-} = require('./json-schema-lite-primitives.js');
+const { validateNumberValue, validateStringValue } = require('./json-schema-lite-primitives.js');
 
 class JsonSchemaLiteValidator {
   constructor(schema) {
@@ -148,7 +145,6 @@ class JsonSchemaLiteValidator {
       .map((type) => `'${type}'`)
       .join(' or ');
   }
-
 }
 
 module.exports = {
