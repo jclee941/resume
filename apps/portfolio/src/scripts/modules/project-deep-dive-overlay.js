@@ -74,7 +74,9 @@ function openDeepDive(project) {
   document.body.style.overflow = 'hidden';
   overlay.querySelector('.deep-dive-close')?.focus();
   window.setTimeout(() => {
-    overlay.querySelectorAll('.metric-card__value').forEach((el) => el.classList.add('animate-counter'));
+    overlay
+      .querySelectorAll('.metric-card__value')
+      .forEach((el) => el.classList.add('animate-counter'));
   }, 400);
 }
 

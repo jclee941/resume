@@ -98,7 +98,6 @@ test.describe('Hero Section', () => {
     expect(text?.trim().length).toBeGreaterThan(10);
     await expect(page.locator('.cmd-output')).toHaveCount(0);
   });
-
 });
 
 test.describe('Resume Section', () => {

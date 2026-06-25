@@ -110,7 +110,9 @@ test.describe('Mobile - Navigation', () => {
     }
   });
 
-  test('should close mobile navigation with Escape before main.js finishes loading', async ({ page }) => {
+  test('should close mobile navigation with Escape before main.js finishes loading', async ({
+    page,
+  }) => {
     await page.setViewportSize({ width: 375, height: 667 });
     const releaseMainJs = await delayMainJsUntilReleased(page);
     const mainJsRequested = page.waitForRequest((request) => {
@@ -171,7 +173,9 @@ test.describe('Mobile - Removed CLI', () => {
     await expect(page.locator('#cli-output')).toHaveCount(0);
   });
 
-  test('should keep primary contact and resume download CTAs reachable on mobile', async ({ page }) => {
+  test('should keep primary contact and resume download CTAs reachable on mobile', async ({
+    page,
+  }) => {
     const contactLink = page.locator('a[href^="mailto:"]').first();
     await expect(contactLink).toBeVisible();
 

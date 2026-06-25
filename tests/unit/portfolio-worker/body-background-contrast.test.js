@@ -31,9 +31,7 @@ describe('body background contrast contract', () => {
         referenced.add(m[1]);
       }
     }
-    const undefinedVars = [...referenced].filter(
-      (name) => !variablesCss.includes(`${name}:`)
-    );
+    const undefinedVars = [...referenced].filter((name) => !variablesCss.includes(`${name}:`));
     expect(undefinedVars).toEqual([]);
   });
 });

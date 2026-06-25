@@ -15,9 +15,10 @@ function buildProjectSchema(project, index) {
     '@id': `https://resume.jclee.me/#project-${index + 1}`,
     name: project.title || project.name || '',
     description: project.description || '',
-    keywords: Array.isArray(project.related_skills) && project.related_skills.length
-      ? project.related_skills.join(', ')
-      : project.tech || '',
+    keywords:
+      Array.isArray(project.related_skills) && project.related_skills.length
+        ? project.related_skills.join(', ')
+        : project.tech || '',
     creator: {
       '@type': 'Person',
       name: '이재철',

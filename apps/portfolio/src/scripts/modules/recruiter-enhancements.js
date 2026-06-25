@@ -51,11 +51,16 @@ function renderRoleQuickPaths(labels) {
       <p class="role-quick-paths__desc">${escapeHtml(labels.quickDesc)}</p>
     </div>
     <div class="role-quick-paths__controls" role="group" aria-label="${escapeHtml(labels.quickTitle)}">
-      ${roleProfiles.map((role) => `<button type="button" class="role-chip" data-role-filter="${role.id}" aria-pressed="false">
+      ${roleProfiles
+        .map(
+          (
+            role
+          ) => `<button type="button" class="role-chip" data-role-filter="${role.id}" aria-pressed="false">
           <span class="role-chip__label">${escapeHtml(role.label)}</span>
           <span class="role-chip__proof">${escapeHtml(role.proof)}</span>
         </button>`
-      ).join('')}
+        )
+        .join('')}
     </div>
   `;
   hero.appendChild(section);
@@ -76,16 +81,18 @@ function renderEvidenceMatrix(labels) {
       <p class="project-evidence-matrix__desc">${escapeHtml(labels.matrixDesc)}</p>
     </div>
     <div class="project-evidence-matrix__grid">
-      ${evidenceItems.map((item) => {
-        const role = roleProfiles.find((candidate) => candidate.id === item.roleId);
-        return `<article class="project-evidence-card" data-role="${item.roleId}">
+      ${evidenceItems
+        .map((item) => {
+          const role = roleProfiles.find((candidate) => candidate.id === item.roleId);
+          return `<article class="project-evidence-card" data-role="${item.roleId}">
           <span class="project-evidence-card__label">${escapeHtml(labels.role)}</span>
           <strong class="project-evidence-card__role">${escapeHtml(role ? role.label : item.roleId)}</strong>
           <span class="project-evidence-card__label">${escapeHtml(labels.evidence)}</span>
           <p class="project-evidence-card__proof">${escapeHtml(item.proof)}</p>
           <a class="project-evidence-card__link" href="#projects" data-evidence-project="${escapeHtml(item.title)}">${escapeHtml(labels.open)}</a>
         </article>`;
-      }).join('')}
+        })
+        .join('')}
     </div>
   `;
   list.insertAdjacentElement('beforebegin', matrix);

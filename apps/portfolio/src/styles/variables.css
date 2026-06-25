@@ -50,7 +50,11 @@
 
   --gradient-hero-light: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
   --gradient-hero-dark: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
-  --gradient-accent: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%);
+  --gradient-accent: linear-gradient(
+    135deg,
+    var(--color-accent) 0%,
+    var(--color-accent-light) 100%
+  );
   --gradient-subtle: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0));
   --gradient-page-atmosphere:
     radial-gradient(circle at 18% 8%, rgb(var(--color-accent-rgb) / 0.14), transparent 28rem),

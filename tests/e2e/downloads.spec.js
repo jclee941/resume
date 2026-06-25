@@ -5,9 +5,8 @@ const { test, expect } = require('@playwright/test');
  * E2E Tests for Download Functionality
  * Tests all download buttons on the portfolio site
  *
- * NOTE: Tests run against the configured baseURL (production or staging).
- * In CI/CD, PLAYWRIGHT_BASE_URL is set to staging URL.
- * Locally, it defaults to production URL from playwright.config.js.
+ * NOTE: Default tests run against the configured Playwright baseURL, which
+ * launches the local portfolio Worker unless SKIP_WEBSERVER is set.
  */
 
 test.describe('Download Functionality', () => {
@@ -88,8 +87,7 @@ test.describe('Download Functionality', () => {
   });
 
   test.describe('Network Request Validation (Optional)', () => {
-    test('download links should return 200 OK', async ({ page, request }) => {
-      // Requires external hosting (raw.githubusercontent.com) to be reachable
+    test('download links should return 200 OK', async ({ page, request, baseURL }) => {
       const downloadLinks = page.locator('a[download]');
       const count = await downloadLinks.count();
 
@@ -98,8 +96,17 @@ test.describe('Download Functionality', () => {
         return;
       }
 
-      const firstLink = await downloadLinks.first().getAttribute('href');
-      const response = await request.head(firstLink);
+      const hrefs = await downloadLinks.evaluateAll((links) =>
+        links.map((link) => link.getAttribute('href')).filter(Boolean)
+      );
+      const localHref = hrefs.find((href) => href.startsWith('/') || href.startsWith(baseURL));
+
+      if (!localHref) {
+        test.skip(true, 'No local Worker download links found on page');
+        return;
+      }
+
+      const response = await request.head(localHref);
       expect(response.status()).toBe(200);
     });
   });

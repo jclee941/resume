@@ -8,9 +8,7 @@
  * terminal formatter) and must NEVER fabricate copy.
  */
 
-const {
-  generateCoverLetterSection,
-} = require('../../../../apps/portfolio/lib/cards/cover-letter');
+const { generateCoverLetterSection } = require('../../../../apps/portfolio/lib/cards/cover-letter');
 
 const ssot = require('../../../../packages/data/resumes/master/resume_data.json');
 const coverLetter = ssot.coverLetter;

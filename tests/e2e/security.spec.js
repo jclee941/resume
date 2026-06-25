@@ -97,9 +97,7 @@ test.describe('Security Headers & CSP', () => {
     expect(parseFloat(fontSize)).toBeGreaterThan(24);
   });
 
-  test('should allow inline scripts with CSP hash (timeline rendered by JS)', async ({
-    page,
-  }) => {
+  test('should allow inline scripts with CSP hash (timeline rendered by JS)', async ({ page }) => {
     const phaseBadge = page.locator('.phase-badge').first();
     await expect(phaseBadge).toBeVisible();
     await expect(page.locator('.terminal-window')).toHaveCount(0);

@@ -10,7 +10,15 @@ const fs = require('fs');
 const path = require('path');
 
 const MASTER_DIR = path.resolve(__dirname, '../../../packages/data/resumes/master');
-const LOCALES = ['resume_data.json', 'resume_data_en.json', 'resume_data_ja.json'];
+const PORTFOLIO_DIR = path.resolve(__dirname, '../../../apps/portfolio');
+const DATA_FILES = [
+  { dir: MASTER_DIR, file: 'resume_data.json' },
+  { dir: MASTER_DIR, file: 'resume_data_en.json' },
+  { dir: MASTER_DIR, file: 'resume_data_ja.json' },
+  { dir: PORTFOLIO_DIR, file: 'data.json' },
+  { dir: PORTFOLIO_DIR, file: 'data_en.json' },
+  { dir: PORTFOLIO_DIR, file: 'data_ja.json' },
+];
 
 /** Collect every string value in a nested JSON structure. */
 function collectStrings(node, out = []) {
@@ -49,8 +57,8 @@ function findCircularViaPhrase(text) {
 }
 
 describe('SSoT content quality', () => {
-  for (const file of LOCALES) {
-    const filePath = path.join(MASTER_DIR, file);
+  for (const { dir, file } of DATA_FILES) {
+    const filePath = path.join(dir, file);
 
     describe(file, () => {
       let strings;
@@ -85,9 +93,7 @@ describe('SSoT content quality', () => {
       test('certifications expose acquisition date only (no expiry note/status/field)', () => {
         const certs = (data && data.certifications) || [];
         // No parenthetical expiry note baked into the date string.
-        const dateOffenders = certs.filter(
-          (c) => typeof c.date === 'string' && /\(/.test(c.date)
-        );
+        const dateOffenders = certs.filter((c) => typeof c.date === 'string' && /\(/.test(c.date));
         expect(dateOffenders.map((c) => `${c.name}: ${c.date}`)).toEqual([]);
         // No 'expired' status and no populated expirationDate.
         const statusOffenders = certs.filter(

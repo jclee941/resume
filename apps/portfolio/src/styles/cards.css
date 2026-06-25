@@ -153,7 +153,9 @@
   font-size: var(--text-xs);
   cursor: pointer;
 }
-.desc-toggle:hover { text-decoration: underline; }
+.desc-toggle:hover {
+  text-decoration: underline;
+}
 .project-tech {
   font-size: var(--text-xs);
   color: var(--color-accent);
@@ -381,4 +383,3 @@
   line-height: 1.6;
   margin: 0;
 }
-

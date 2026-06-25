@@ -45,14 +45,24 @@ test.describe('Declutter — removed gimmick sections', () => {
 test.describe('Declutter — gimmick markup/commands absent', () => {
   test('S2: no easter-egg DOM overlays', async ({ page }) => {
     await go(page, '/');
-    for (const sel of ['.hack-mode-overlay', '.snake-game-overlay', '.mission-control', '.mc-status-bar', '.chat-widget', '.section-guestbook']) {
+    for (const sel of [
+      '.hack-mode-overlay',
+      '.snake-game-overlay',
+      '.mission-control',
+      '.mc-status-bar',
+      '.chat-widget',
+      '.section-guestbook',
+    ]) {
       await expect(page.locator(sel)).toHaveCount(0);
     }
   });
 
   test('S2: no ops-dashboard placeholder stats (--)', async ({ page }) => {
     await go(page, '/');
-    const dashes = await page.locator('.stat-value, .observability-stat .stat-value').filter({ hasText: '--' }).count();
+    const dashes = await page
+      .locator('.stat-value, .observability-stat .stat-value')
+      .filter({ hasText: '--' })
+      .count();
     expect(dashes).toBe(0);
   });
 });
@@ -79,7 +89,9 @@ test.describe('Declutter — skills have no progress bars', () => {
   test('S4: no skill progress bars or percent proficiency', async ({ page }) => {
     await go(page, '/');
     await expect(page.locator('#skills .skill-item__bar')).toHaveCount(0);
-    const pct = await page.locator('#skills').evaluate((el) => /\b\d{1,3}\s?%/.test(el.textContent || ''));
+    const pct = await page
+      .locator('#skills')
+      .evaluate((el) => /\b\d{1,3}\s?%/.test(el.textContent || ''));
     expect(pct).toBe(false);
   });
 });
@@ -132,7 +144,9 @@ test.describe('Declutter — consolidated operated section + regression', () => 
     });
   }
 
-  test('S6: timeline phase badges are distinct per locale (no fallback collapse)', async ({ page }) => {
+  test('S6: timeline phase badges are distinct per locale (no fallback collapse)', async ({
+    page,
+  }) => {
     // CAREER_UI_META is keyed by locale-stable `period`; a regression that keys
     // by localized `company` collapses every EN/JA badge to the default phase.
     /**
@@ -141,9 +155,13 @@ test.describe('Declutter — consolidated operated section + regression', () => 
      */
     const phasesFor = async (url, expected) => {
       await go(page, url);
-      const badges = await page.locator('.phase-badge').evaluateAll((els) =>
-        els.map((e) => (e.textContent || '').replace(/[^\p{L}\p{N}]/gu, '').trim()).filter(Boolean)
-      );
+      const badges = await page
+        .locator('.phase-badge')
+        .evaluateAll((els) =>
+          els
+            .map((e) => (e.textContent || '').replace(/[^\p{L}\p{N}]/gu, '').trim())
+            .filter(Boolean)
+        );
       expect(badges).toEqual(expected);
     };
     await phasesFor('/ja/', ['運用', '構築', '安定化', '構築', '自動化', '基礎']);
@@ -184,21 +202,29 @@ test.describe('Declutter — consolidated operated section + regression', () => 
     });
   }
 
-  test('S7 (regression): cover-letter + project cards still render; no mobile overflow', async ({ page }) => {
+  test('S7 (regression): cover-letter + project cards still render; no mobile overflow', async ({
+    page,
+  }) => {
     await page.setViewportSize({ width: 375, height: 812 });
     await go(page, '/');
     await expect(page.locator('#cover-letter .cover-letter-card')).toHaveCount(1);
-    const cards = await page.locator('#projects #project-list .project-card, #projects .project-card').count();
+    const cards = await page
+      .locator('#projects #project-list .project-card, #projects .project-card')
+      .count();
     expect(cards).toBeGreaterThan(0);
-    const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1);
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1
+    );
     expect(overflow).toBe(false);
   });
 
   test('S7 (regression): no dead internal nav links', async ({ page }) => {
     await go(page, '/');
-    const hrefs = await page.locator('a[href^="#"]').evaluateAll((els) =>
-      els.map((a) => a.getAttribute('href')).filter((h) => h && h.length > 1)
-    );
+    const hrefs = await page
+      .locator('a[href^="#"]')
+      .evaluateAll((els) =>
+        els.map((a) => a.getAttribute('href')).filter((h) => h && h.length > 1)
+      );
     for (const h of hrefs) {
       if (!h) continue;
       const id = h.slice(1);

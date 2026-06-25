@@ -98,8 +98,7 @@ export default {
         // so '/' stays a stable, cacheable canonical URL (no per-user 302).
         const effectiveLanguage =
           url.pathname === '/' ? DEFAULT_LANGUAGE : languageContext.language;
-        const effectiveSource =
-          url.pathname === '/' ? 'default' : languageContext.source;
+        const effectiveSource = url.pathname === '/' ? 'default' : languageContext.source;
 
         const targetPath = getPortfolioTargetPath(url.pathname, effectiveLanguage);
         const targetUrl = new URL(request.url);

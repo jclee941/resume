@@ -30,7 +30,9 @@ describe('고도화: accessibility landmarks', () => {
     expect(ko).toMatch(/<main[^>]*id="main-content"/);
     expect(ko).toMatch(/<nav[^>]*role="navigation"/);
     expect(ko).toMatch(/<footer[^>]*role="contentinfo"/);
-    expect(ko).toMatch(/class="skip-link"[^>]*href="#main-content"|href="#main-content"[^>]*class="skip-link"/);
+    expect(ko).toMatch(
+      /class="skip-link"[^>]*href="#main-content"|href="#main-content"[^>]*class="skip-link"/
+    );
   });
 
   test('EN nav declares role="navigation"', () => {
@@ -40,7 +42,6 @@ describe('고도화: accessibility landmarks', () => {
   test('EN footer declares role="contentinfo"', () => {
     expect(en).toMatch(/<footer class="site-footer"[^>]*role="contentinfo"/);
   });
-
 });
 
 describe('고도화: SEO hreflang JA', () => {
@@ -99,10 +100,11 @@ describe('고도화: PDF source polish', () => {
   test('PDF generator uses a non-default accessible accent link colour, not literal blue', () => {
     const gen = read(path.join(TOOLS, 'pdf-generator.go'));
     expect(gen).not.toMatch(/linkcolor:blue/);
-    expect(gen).toMatch(/linkcolor:(?!(?:blue|black|gray|grey|white)\b)(?:[a-z]+|\[HTML\]\{[0-9A-Fa-f]{6}\}|[0-9A-Fa-f]{6})/);
+    expect(gen).toMatch(
+      /linkcolor:(?!(?:blue|black|gray|grey|white)\b)(?:[a-z]+|\[HTML\]\{[0-9A-Fa-f]{6}\}|[0-9A-Fa-f]{6})/
+    );
   });
 });
-
 
 describe('FAANG framing: case-study senior narrative', () => {
   const src = read(path.join(PORTFOLIO, 'src', 'scripts', 'modules', 'project-cards-data.js'));
@@ -136,8 +138,6 @@ describe('Project deep-dive architecture diagram accessibility', () => {
     expect(overlay).toMatch(/aria-label="\$\{escapeHtml\(project\.title\)\} architecture flow"/);
   });
 });
-
-
 
 describe('B: engineering principles + current focus surfaced from SSoT (single source)', () => {
   const ko = read(path.join(PORTFOLIO, 'index.html'));

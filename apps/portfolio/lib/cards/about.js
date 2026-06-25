@@ -19,9 +19,7 @@ function generateAboutContent(aboutData, dataHash) {
   // career_highlights is the single About narrative block. tech_philosophy and
   // current_focus restated the same career story (also covered by achievements
   // and the career timeline), so they are intentionally not rendered here.
-  const blocks = [
-    { label: 'career_highlights', items: aboutData.careerHighlights || [] },
-  ];
+  const blocks = [{ label: 'career_highlights', items: aboutData.careerHighlights || [] }];
 
   const blocksHtml = blocks
     .filter((block) => Array.isArray(block.items) && block.items.length > 0)

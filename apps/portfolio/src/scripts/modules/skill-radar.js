@@ -161,7 +161,10 @@ function radarFromLocaleSkills(skills) {
     const injected = SKILL_DATA_INJECTED[category];
     out[category] = {
       title: String(data.title || category),
-      icon: (injected && injected.icon) || (SKILL_DATA_FALLBACK[category] && SKILL_DATA_FALLBACK[category].icon) || '',
+      icon:
+        (injected && injected.icon) ||
+        (SKILL_DATA_FALLBACK[category] && SKILL_DATA_FALLBACK[category].icon) ||
+        '',
       skills: data.items.map((item) => {
         const levelKey = String(item.level || 'intermediate').toLowerCase();
         return {
@@ -338,7 +341,6 @@ function toggleCard(card) {
     card.setAttribute('aria-expanded', 'true');
     panel.hidden = false;
     expandIcon.style.transform = 'rotate(180deg)';
-
   }
 }
 
