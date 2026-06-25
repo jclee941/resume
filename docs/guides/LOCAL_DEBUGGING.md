@@ -12,7 +12,7 @@ without pushing to GitHub or depending on remote infrastructure.
 **Why local debugging?**
 
 - **Faster feedback loops** — catch CI failures in seconds, not minutes
-- **Offline development** — no dependency on GitHub Actions, n8n, or Cloudflare
+- **Offline development** — no dependency on GitHub Actions, automation, or Cloudflare
 - **Deterministic testing** — mock external services with predictable behavior
 - **Debugging isolation** — reproduce and fix issues without polluting CI
   history
@@ -23,7 +23,6 @@ without pushing to GitHub or depending on remote infrastructure.
 | --------------------- | ----------------------- | --------------------------------- |
 | `run-ci-local.go`     | `tools/scripts/`        | Simulate CI pipeline locally      |
 | `local-dev-up.go`     | `tools/scripts/`        | Orchestrate local dev environment |
-| `n8n-mock-server.go`  | `infrastructure/mocks/` | Mock n8n webhook server           |
 | `cf-bindings-mock.js` | `infrastructure/mocks/` | Mock Cloudflare Worker bindings   |
 
 ---
@@ -34,11 +33,8 @@ without pushing to GitHub or depending on remote infrastructure.
 # See all CI simulation options
 go run tools/scripts/run-ci-local.go --help
 
-# Start full local dev environment (portfolio + job-server + n8n mock)
+# Start full local dev environment (portfolio + job-server)
 go run tools/scripts/local-dev-up.go --all
-
-# Start n8n mock server standalone
-go run infrastructure/mocks/n8n-mock-server.go
 ```
 
 ---
@@ -125,20 +121,17 @@ aggregated log output and graceful shutdown.
 #### Usage
 
 ```bash
-# Start all services (portfolio + job-server + n8n mock)
+# Start all services (portfolio + job-server)
 go run tools/scripts/local-dev-up.go --all
 
-# Start only n8n mock (default: enabled)
+# Show local-dev options
 go run tools/scripts/local-dev-up.go
 
-# Start portfolio dev server + n8n mock
+# Start portfolio dev server
 go run tools/scripts/local-dev-up.go --portfolio
 
 # Start specific combination
 go run tools/scripts/local-dev-up.go --portfolio --job-server
-
-# Disable n8n mock (enabled by default)
-go run tools/scripts/local-dev-up.go --portfolio --n8n=false
 ```
 
 #### Service flags
@@ -147,14 +140,12 @@ go run tools/scripts/local-dev-up.go --portfolio --n8n=false
 | -------------- | ------- | ------------------------------------------------------------- |
 | `--portfolio`  | `false` | Start portfolio dev server (`npm start` in `apps/portfolio/`) |
 | `--job-server` | `false` | Start job-server via docker-compose (`apps/job-server/`)      |
-| `--n8n`        | `true`  | Start n8n mock server                                         |
 | `--all`        | `false` | Enable all services                                           |
 
 #### Service details
 
 | Service    | URL                      | Health Endpoint | Health Timeout | Command                                                       |
 | ---------- | ------------------------ | --------------- | -------------- | ------------------------------------------------------------- |
-| n8n-mock   | `http://localhost:15678` | `/health`       | 25s            | `go run infrastructure/mocks/n8n-mock-server.go --port 15678` |
 | portfolio  | `http://localhost:8787`  | `/`             | 40s            | `npm start` (in `apps/portfolio/`)                            |
 | job-server | `http://localhost:3456`  | `/health`       | 90s            | `docker-compose up` (in `apps/job-server/`)                   |
 
@@ -171,90 +162,6 @@ go run tools/scripts/local-dev-up.go --portfolio --n8n=false
 
 - **portfolio**: Node.js installed, `npm ci` run
 - **job-server**: `docker-compose` or `docker compose` available in PATH
-- **n8n-mock**: Go installed (compiles on the fly)
-
----
-
-### `n8n-mock-server.go` — Mock n8n Webhook Server
-
-A lightweight HTTP server that mimics n8n webhook endpoints, logging all
-received payloads to JSON files for inspection.
-
-#### Usage
-
-```bash
-# Start with defaults (port 15678, logs to infrastructure/mocks/logs/)
-go run infrastructure/mocks/n8n-mock-server.go
-
-# Custom port
-go run infrastructure/mocks/n8n-mock-server.go --port 9999
-
-# Custom log directory
-go run infrastructure/mocks/n8n-mock-server.go --log-dir /tmp/n8n-logs
-
-# Verbose mode (log full request bodies to stdout)
-go run infrastructure/mocks/n8n-mock-server.go --verbose
-```
-
-#### Flags
-
-| Flag        | Default                     | Description                             |
-| ----------- | --------------------------- | --------------------------------------- |
-| `--port`    | `15678`                     | Port to listen on                       |
-| `--log-dir` | `infrastructure/mocks/logs` | Directory for webhook payload JSON logs |
-| `--verbose` | `false`                     | Log full request bodies to stdout       |
-
-#### Endpoints
-
-| Method | Path                             | Description               | Response                                       |
-| ------ | -------------------------------- | ------------------------- | ---------------------------------------------- |
-| `GET`  | `/health`                        | Health check              | `{"status":"healthy","version":"mock-1.0"}`    |
-| `GET`  | `/api/workflows`                 | List mock workflows       | Array of 3 workflow objects                    |
-| `POST` | `/webhook/resume-deploy`         | Resume deploy webhook     | `{"executionId":"mock-123","status":"queued"}` |
-| `POST` | `/webhook/automation-run-report` | Automation report webhook | `{"executionId":"mock-123","status":"queued"}` |
-
-#### Webhook logging
-
-All `POST /webhook/*` payloads are persisted to daily JSON files:
-
-```text
-infrastructure/mocks/logs/n8n-webhook-YYYY-MM-DD.json
-```
-
-Each entry contains:
-
-```json
-{
-  "timestamp": "2026-03-29T10:30:00+09:00",
-  "method": "POST",
-  "path": "/webhook/resume-deploy",
-  "headers": { "Content-Type": "application/json" },
-  "body": { "key": "value" }
-}
-```
-
-#### Testing with curl
-
-```bash
-# Health check
-curl http://localhost:15678/health
-
-# List workflows
-curl http://localhost:15678/api/workflows
-
-# Simulate resume deploy webhook
-curl -X POST http://localhost:15678/webhook/resume-deploy \
-  -H "Content-Type: application/json" \
-  -d '{"repository":"resume","branch":"master","commit":"abc123"}'
-
-# Simulate automation report
-curl -X POST http://localhost:15678/webhook/automation-run-report \
-  -H "Content-Type: application/json" \
-  -d '{"workflow":"ci","status":"success","duration":120}'
-
-# Inspect logged payloads
-cat infrastructure/mocks/logs/n8n-webhook-$(date +%Y-%m-%d).json | jq .
-```
 
 ---
 
@@ -426,21 +333,6 @@ npx playwright test tests/e2e/specific-test.spec.ts --headed --debug
 npx playwright show-report
 ```
 
-### Test n8n webhooks without real n8n
-
-```bash
-# Start mock server
-go run infrastructure/mocks/n8n-mock-server.go --verbose
-
-# Trigger webhook from your code or curl
-curl -X POST http://localhost:15678/webhook/resume-deploy \
-  -H "Content-Type: application/json" \
-  -d '{"event":"deploy","status":"success"}'
-
-# Inspect what was received
-cat infrastructure/mocks/logs/n8n-webhook-$(date +%Y-%m-%d).json | jq .
-```
-
 ### Mock Cloudflare bindings for unit tests
 
 ```javascript
@@ -605,17 +497,6 @@ docker --version
 docker compose version
 ```
 
-### n8n mock log directory permission error
-
-**Symptom**: `failed to create log directory`
-
-**Fix**: Ensure the log directory is writable.
-
-```bash
-mkdir -p infrastructure/mocks/logs
-chmod 755 infrastructure/mocks/logs
-```
-
 ### `cf-bindings-mock.js` import fails
 
 **Symptom**: `Cannot find module 'better-sqlite3'`
@@ -626,20 +507,6 @@ chmod 755 infrastructure/mocks/logs
 npm ci
 # or specifically
 npm install better-sqlite3
-```
-
-### Port already in use
-
-**Symptom**: `listen tcp :15678: bind: address already in use`
-
-**Fix**: Find and kill the conflicting process.
-
-```bash
-lsof -i :15678
-kill <PID>
-
-# Or use a different port
-go run infrastructure/mocks/n8n-mock-server.go --port 19999
 ```
 
 ### Stale mock data causing test failures
@@ -657,5 +524,4 @@ Or delete manually:
 
 ```bash
 rm -rf infrastructure/mocks/data/
-rm -rf infrastructure/mocks/logs/
 ```

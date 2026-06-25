@@ -63,7 +63,6 @@ func main() {
 	var (
 		withPortfolio = flag.Bool("portfolio", false, "start portfolio dev server")
 		withJobServer = flag.Bool("job-server", false, "start job-server via docker-compose")
-		withN8N       = flag.Bool("n8n", true, "start n8n mock server")
 		withAll       = flag.Bool("all", false, "start all services")
 	)
 	flag.Parse()
@@ -73,7 +72,7 @@ func main() {
 		ldFatalf("failed to resolve repository root: %v", err)
 	}
 
-	specs, warnings, err := buildServiceSpecs(repoRoot, *withPortfolio, *withJobServer, *withN8N, *withAll)
+	specs, warnings, err := buildServiceSpecs(repoRoot, *withPortfolio, *withJobServer, *withAll)
 	if err != nil {
 		ldFatalf("service selection failed: %v", err)
 	}
@@ -83,7 +82,7 @@ func main() {
 	}
 
 	if len(specs) == 0 {
-		ldFatalf("no services selected; use --n8n, --portfolio, --job-server, or --all")
+		ldFatalf("no services selected; use --portfolio, --job-server, or --all")
 	}
 
 	printer := &linePrinter{}
@@ -137,33 +136,18 @@ func main() {
 	printer.print("%sLocal development environment stopped.%s\n", ldColorGreen, ldColorReset)
 }
 
-func buildServiceSpecs(repoRoot string, withPortfolio, withJobServer, withN8N, withAll bool) ([]serviceSpec, []string, error) {
+func buildServiceSpecs(repoRoot string, withPortfolio, withJobServer, withAll bool) ([]serviceSpec, []string, error) {
 	if withAll {
 		withPortfolio = true
 		withJobServer = true
-		withN8N = true
 	}
 
-	if !withPortfolio && !withJobServer && !withN8N {
+	if !withPortfolio && !withJobServer {
 		return nil, nil, errors.New("all service flags disabled")
 	}
 
 	warnings := make([]string, 0)
-	specs := make([]serviceSpec, 0, 3)
-
-	if withN8N {
-		specs = append(specs, serviceSpec{
-			Name:          "n8n-mock",
-			DisplayName:   "n8n-mock",
-			URL:           "http://localhost:15678",
-			HealthURL:     "http://localhost:15678/health",
-			Workdir:       repoRoot,
-			Command:       "go",
-			Args:          []string{"run", "infrastructure/mocks/n8n-mock-server.go", "--port", "15678"},
-			Color:         ldColorCyan,
-			HealthTimeout: 25 * time.Second,
-		})
-	}
+	specs := make([]serviceSpec, 0, 2)
 
 	if withPortfolio {
 		specs = append(specs, serviceSpec{
@@ -198,7 +182,6 @@ func buildServiceSpecs(repoRoot string, withPortfolio, withJobServer, withN8N, w
 				Args:          args,
 				Color:         ldColorYellow,
 				HealthTimeout: 90 * time.Second,
-				Env:           []string{"N8N_WEBHOOK_URL=http://host.docker.internal:15678"},
 			})
 		}
 	}
@@ -416,7 +399,7 @@ func ldResolveRepoRoot() (string, error) {
 
 	cur := wd
 	for {
-		if hasPath(cur, "infrastructure/mocks/n8n-mock-server.go") && hasPath(cur, "apps/portfolio") && hasPath(cur, "apps/job-server") {
+		if hasPath(cur, "apps/portfolio") && hasPath(cur, "apps/job-server") {
 			return cur, nil
 		}
 		parent := filepath.Dir(cur)

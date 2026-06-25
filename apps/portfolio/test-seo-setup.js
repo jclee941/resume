@@ -133,7 +133,7 @@ async function validateSitemap() {
       else if (loc.includes('#infra')) stats.infrastructure++;
       else if (loc.includes('/health') || loc.includes('/metrics')) stats.apiEndpoints++;
       else if (loc === DOMAIN || loc === `${DOMAIN}/en/`) stats.homePages++;
-      else if (loc.includes('grafana') || loc.includes('gitlab') || loc.includes('n8n'))
+      else if (loc.includes('grafana') || loc.includes('gitlab') || loc.includes('automation'))
         stats.externalServices++;
       else stats.sections++;
     });

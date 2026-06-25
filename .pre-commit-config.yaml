@@ -23,7 +23,7 @@ repos:
       - id: check-merge-conflict
       - id: check-yaml
         args: [--allow-multiple-documents]
-        exclude: ^(infrastructure/n8n|\.gitlab-legacy)/
+        exclude: ^\.gitlab-legacy/
       - id: check-json
         exclude: ^(.*\.jsonc|.*\.json5)$
       - id: end-of-file-fixer

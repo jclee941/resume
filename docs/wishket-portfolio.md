@@ -9,7 +9,7 @@ end-to-end로 책임지는 시니어 역할에 집중합니다.
 ## 보유 기술
 
 Splunk, FortiGate, FortiManager, FortiAnalyzer, Prometheus, Grafana, Loki, AWS,
-Terraform, Docker, Kubernetes, Linux, Ansible, Python, n8n, GitHub Actions,
+Terraform, Docker, Kubernetes, Linux, Ansible, Python, automation, GitHub Actions,
 GitLab CI/CD, PostgreSQL, Elasticsearch, Kibana, VMware NSX-T, VPN, NAC, Shell
 Script
 
@@ -24,7 +24,7 @@ Script
 - **기간**: 2025.03 ~ 2026.02
 - **역할**: 1인 보안 자동화 담당
 - **참여율**: 100%
-- **관련 기술**: Splunk, FortiGate, FortiManager, n8n, Python, Docker, Linux
+- **관련 기술**: Splunk, FortiGate, FortiManager, automation, Python, Docker, Linux
 
 **배경**
 매매체결시스템 환경에서 보안 이벤트 대응과 방화벽 정책 조회가 수동 중심으로 운영되고 있었습니다.
@@ -32,7 +32,7 @@ Script
 **진행 과정**
 
 1. Splunk ES 탐지 룰 설계·운영
-2. n8n 워크플로우 → Slack 실시간 알림 연동
+2. 자동화 워크플로우 → Slack 실시간 알림 연동
 3. FortiManager API 기반 정책 조회 Python 라이브러리 개발
 
 **성과**

@@ -249,12 +249,12 @@ func checkGitHubSecrets() {
 		warnCount++
 	}
 
-	// Check N8N_WEBHOOK_URL
-	if strings.Contains(output, "N8N_WEBHOOK_URL") {
-		fmt.Printf("%s✅%s N8N_WEBHOOK_URL 설정됨 (선택)\n", Green, NoColor)
+	// Check AUTOMATION_WEBHOOK_URL
+	if strings.Contains(output, "AUTOMATION_WEBHOOK_URL") {
+		fmt.Printf("%s✅%s AUTOMATION_WEBHOOK_URL 설정됨 (선택)\n", Green, NoColor)
 		passCount++
 	} else {
-		fmt.Printf("%s⚠️%s N8N_WEBHOOK_URL 미설정 (선택 사항)\n", Yellow, NoColor)
+		fmt.Printf("%s⚠️%s AUTOMATION_WEBHOOK_URL 미설정 (선택 사항)\n", Yellow, NoColor)
 		warnCount++
 	}
 }

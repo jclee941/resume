@@ -43,10 +43,10 @@ Security Engineer (시스템 보안)
 - 보안 장애 건수를 줄이고 반복 원인을 정리
 - 인시던트 평균 대응 절차를 자동화
 - 정기 보안 취약점 점검 및 월간 리포트 작성
-- n8n 워크플로우를 활용한 보안 알림 자동화
+- 자동화 워크플로우를 활용한 보안 알림 자동화
 - Python 스크립트 개발로 보안 로그 분석 및 리포팅 자동화
 
-기술 스택: Splunk, FortiGate, Python, n8n, Linux
+기술 스택: Splunk, FortiGate, Python, automation, Linux
 
 ---
 
@@ -150,7 +150,7 @@ Security Engineer (시스템 보안)
 
 - 언어: Python, Shell Script
 - IaC: Ansible, Terraform
-- 자동화 도구: n8n, REST API
+- 자동화 도구: automation, REST API
 
 ### 모니터링 및 관측성
 

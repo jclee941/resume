@@ -234,15 +234,6 @@ jobs:
             echo "⚠️  validate-application-variants.js not present — skipping"
           fi
 
-      - name: Validate n8n workflow JSON structure
-        run: |
-          set -euo pipefail
-          if [ -f tools/scripts/utils/validate-n8n-workflows.js ]; then
-            node tools/scripts/utils/validate-n8n-workflows.js
-          else
-            echo "⚠️  validate-n8n-workflows.js not present — skipping"
-          fi
-
   validate-go:
     name: Go Script Validation
     runs-on: ubuntu-latest
@@ -257,17 +248,17 @@ jobs:
           go-version: '1.24'
           cache: false
 
-      - name: Build n8n Go scripts
+      - name: Build Go scripts
         run: |
           set -euo pipefail
-          for script in infrastructure/n8n/*.go; do
+          while IFS= read -r script; do
             name=$(basename "$script" .go)
             tmpdir=$(mktemp -d)
             cp "$script" "$tmpdir/main.go"
             (cd "$tmpdir" && go build -o /dev/null main.go)
             rm -rf "$tmpdir"
             echo "✅ Built $name"
-          done
+          done < <(find tools/scripts infrastructure -type f -name '*.go')
 
   validate-openapi:
     name: OpenAPI Spec Validation

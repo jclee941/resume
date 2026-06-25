@@ -253,7 +253,7 @@ apps/portfolio/
 **Secondary**:
 
 - Grafana, Prometheus, Loki
-- n8n Workflow Automation
+- automation Automation
 - FortiGate Security
 - GitHub Actions
 

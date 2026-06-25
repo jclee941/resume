@@ -27,7 +27,7 @@ Network Security Engineer (SASE/CASB)
 
 - **사용자 및 단말 접근통제**: NAC, SSL VPN, IPSec, RADIUS, 2FA 기반 접근제어 체계 설계 및 운영
 - **데이터 보호 및 DLP 운영**: 민감정보 유출 탐지 및 SaaS 인접 환경 데이터 흐름 통제 경험
-- **보안 자동화**: FortiManager API 연동 방화벽 정책 자동화, n8n 및 Python 기반 보안 로그 분석과 알림 자동화
+- **보안 자동화**: FortiManager API 연동 방화벽 정책 자동화, automation 및 Python 기반 보안 로그 분석과 알림 자동화
 - **마이크로세그멘테이션**: VMware NSX-T 분산 방화벽 기반 서버 간 트래픽 제어 및 정책 중앙 집중화
 - **사용자행위 분석**: VPN 세션 모니터링 및 비정상 접근 탐지 대시보드 구축 경험
 - **금융권 규제 대응**: 금융감독원 정기 감사 대응, 정보보호 인증 점검 대응
@@ -43,10 +43,10 @@ Network Security Engineer (SASE/CASB)
 - **FortiGate, NAC, DLP, EDR, SIEM** 등 보안 솔루션을 통합 운영했습니다
 - **Splunk** 기반 상시 보안 모니터링 체계를 운영하며 인시던트에 대응했습니다
 - 정기 보안 취약점 점검 및 월간 보안 리포트를 작성했습니다
-- **n8n 워크플로우**를 활용한 보안 알림 자동화 체계를 구축했습니다
+- **자동화 워크플로우**를 활용한 보안 알림 자동화 체계를 구축했습니다
 - **Python 스크립트**를 개발하여 보안 로그 분석 및 리포팅 업무를 자동화했습니다
 
-기술 스택: Splunk, FortiGate, Python, n8n, Linux
+기술 스택: Splunk, FortiGate, Python, automation, Linux
 
 ---
 
@@ -146,7 +146,7 @@ Network Security Engineer (SASE/CASB)
 
 - 언어: Python, Shell Script
 - IaC: Ansible
-- 자동화 도구: n8n, REST API, FortiManager API
+- 자동화 도구: automation, REST API, FortiManager API
 
 ### 모니터링 및 관측성
 
@@ -194,7 +194,7 @@ Network Security Engineer (SASE/CASB)
 | SASE 보안정책 운영 및 고도화 (사용자/단말/애플리케이션 접근제어) | 메타넷 VPN-NAC 연동 원격 접근제어 체계 구축, 가온누리 RADIUS와 2FA 통합 접근제어 구축, 조인트리 NSX-T 기반 서버 간 접근통제 |
 | CASB SaaS 보안 (Shadow IT 식별, 민감정보 탐지 및 통제)           | 아이티센 DLP 정책 운영 및 민감정보 유출 탐지, 콴텍과 가온누리 NAC 및 DLP 통합 운영으로 SaaS 인접 환경 데이터 흐름 통제 경험 |
 | 데이터 보호 및 접근통제 (DLP 정책 운영, 탐지 및 차단 최적화)     | 아이티센 DLP 통합 운영, 가온누리 DLP 신규 도입 및 정책 설계, 콴텍 NAC와 DLP 하이브리드 보안 관리                            |
-| API 연동 및 스크립트 보안운영 자동화                             | 가온누리 FortiManager API 연동 방화벽 정책 자동화, 아이티센 n8n과 Python 기반 보안 로그 분석 및 알림 자동화                 |
+| API 연동 및 스크립트 보안운영 자동화                             | 가온누리 FortiManager API 연동 방화벽 정책 자동화, 아이티센 알림 워크플로와 Python 기반 보안 로그 분석 및 알림 자동화                 |
 | 보안로그 및 사용자행위 이상탐지 분석                             | 아이티센 Splunk 상시 모니터링 및 인시던트 대응, 메타넷 VPN 세션 모니터링 및 비정상 접근 탐지 대시보드 구축                  |
 | 정보보호 및 개인정보보호 인증 점검 대응                          | 아이티센 금융감독원 정기 감사 대응, 콘텍 CCE 취약점 점검 및 대응, 월간 보안 리포트 작성                                     |
 | 사용자편의 및 보안 균형, 유관부서 협업                           | 넥스트레이드 금융위 본인가 심사 대응 시 보안 아키텍처 기술 문서 작성 및 유관부서 협업, 예외정책 관리 경험                   |

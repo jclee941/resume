@@ -81,11 +81,11 @@ valid.**
 
 **P0** (3/5): KV cookie encryption, Jest threshold (75→90), 4 module-state
 residuals
-**P1** (10/12): Production env gate, auth/CSRF gaps, JK retry 3, n8n webhook
+**P1** (10/12): Production env gate, auth/CSRF gaps, JK retry 3, automation webhook
 removal, CHANGELOG fix, BUILD.bazel deletion, gitlab-legacy deletion, variant
 validator tests, .affected/ untrack, P1-5 HMAC token wiring
 **P2** (~14/22): Doc drift × 6, normalizeCompanyName consolidation, BUILD.bazel
-cleanup, OpenAPI drift (16/48 → 45/48), n8n schema validation, dependabot
+cleanup, OpenAPI drift (16/48 → 45/48), automation schema validation, dependabot
 config, cf_metrics NaN defaults, ES log success counter, application variant
 tests, test-helpers smoke tests, CLI smoke tests
 **P3** (5/7): tools/scripts README date, dashboard "(8th workflow) TBD",
@@ -116,7 +116,7 @@ Documented as intentional per AGENTS.md:
 - `puppeteer` → `rebrowser-puppeteer` alias (anti-detection)
 - Terminal Easter egg in index.html (non-SSoT decoration)
 - Generated `worker.js` (gitignored, regenerates from source)
-- `infrastructure/n8n/` location (per `infrastructure/AGENTS.md`)
+- `infrastructure/automation/` location (per `infrastructure/AGENTS.md`)
 - `packages/contracts` JS exports (0 consumers but `openapi.yaml` is canonical
   SSoT)
 
@@ -148,7 +148,7 @@ production: v1.14.18 healthy (D1 + KV bindings healthy)
 
 - JSON Schema validation: 3/3 SSoT files
 - Application variants validator: 3/3
-- n8n workflow validator: 36 active pass
+- automation workflow validator: 36 active pass
 - Build: 0.17s, 408KB
 - YAML lint: 4 files valid
 - npm audit: 0 vulnerabilities

@@ -16,7 +16,7 @@ FortiManager API를 연동해 방화벽 정책 배포를 자동화하고, Ansibl
 GitLab CI/CD 파이프라인에 보안 검수(SAST/Dependency Scan)를 통합하고, Kubernetes RBAC·Pod Security를 설정했습니다. 빌드–배포 단계에서 보안 위험 요소를 사전에 차단하는 흐름을 구축했습니다.
 
 **침해위협 모니터링·운영 자동화 (아이티센 CTS)**
-Splunk SIEM과 n8n·Python을 결합해 보안 이벤트 인지–분류–알림 흐름을 표준화하고, 인시던트 대응 절차를 자동화했습니다. 운영 단계에서 금융감독원 정기 감사를 대응했습니다.
+Splunk SIEM과 automation·Python을 결합해 보안 이벤트 인지–분류–알림 흐름을 표준화하고, 인시던트 대응 절차를 자동화했습니다. 운영 단계에서 금융감독원 정기 감사를 대응했습니다.
 
 ## 3. 부족한 부분과 보완 계획
 

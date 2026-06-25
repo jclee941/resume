@@ -175,7 +175,7 @@ Your `.env` file contains 6 primary sections:
   encryption.
 - **Portfolio Secrets**: Signing secrets for security headers and analytics.
 - **Observability**: Connection strings for Elasticsearch and Loki.
-- **Platform Secrets**: API keys for external integrations (Slack, n8n, etc.).
+- **Platform Secrets**: API keys for external integrations (Slack, automation, etc.).
 
 ### 3.3 Wrangler Configuration
 
@@ -359,7 +359,7 @@ Request triggers this flow:
     - A critical safety job that only runs if the **Verify** job fails.
     - Executes `npx wrangler rollback` to restore the previous stable version.
 11. **Notify**:
-    - Dispatches a webhook to N8N and Slack with the deployment outcome.
+    - Dispatches a webhook to AUTOMATION and Slack with the deployment outcome.
     - Includes commit messages, actor names, and environment URLs.
 12. **Deploy-Preview**:
     - (PR Only) Deploys an ephemeral worker for manual review.

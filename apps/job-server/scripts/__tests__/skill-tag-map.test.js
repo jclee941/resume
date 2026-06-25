@@ -10,7 +10,7 @@ describe('skill-tag-map', () => {
       'Splunk',
       'GitHub Actions',
       'Ansible',
-      'n8n',
+      'automation',
       'FortiGate',
       'FortiManager',
     ];

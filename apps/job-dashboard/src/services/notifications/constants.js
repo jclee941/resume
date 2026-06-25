@@ -1,5 +1,5 @@
 export const TELEGRAM_MAX_LENGTH = 4096;
-export const N8N_TIMEOUT_MS = 10000;
+export const WEBHOOK_TIMEOUT_MS = 10000;
 export const TELEGRAM_TIMEOUT_MS = 10000;
 export const MAX_RETRIES = 3;
 export const RETRY_DELAYS = [1000, 2000, 4000];
@@ -17,7 +17,7 @@ export const NotificationEvent = {
 
 export const NotificationChannel = {
   TELEGRAM: 'telegram',
-  N8N: 'n8n',
+  WEBHOOK: 'webhook',
   BOTH: 'both',
 };
 
@@ -27,8 +27,8 @@ export const DEFAULT_NOTIFICATION_PREFERENCES = {
   application_failed: { channels: [NotificationChannel.BOTH], enabled: true },
   daily_summary: { channels: [NotificationChannel.TELEGRAM], enabled: true },
   captcha_detected: { channels: [NotificationChannel.BOTH], enabled: true },
-  job_started: { channels: [NotificationChannel.N8N], enabled: false },
-  job_completed: { channels: [NotificationChannel.N8N], enabled: false },
+  job_started: { channels: [NotificationChannel.WEBHOOK], enabled: false },
+  job_completed: { channels: [NotificationChannel.WEBHOOK], enabled: false },
   resume_sync: { channels: [NotificationChannel.BOTH], enabled: true },
 };
 

@@ -393,7 +393,7 @@
       "id": 14,
       "options": {
         "code": { "language": "plaintext", "showLineNumbers": false },
-        "content": "### Automation\n\n- **GitLab CI/CD** - Automated deployment\n- **n8n** - Health check workflows\n- **Bazel** - Build coordination\n- Zero-downtime deploys\n- Self-healing infrastructure",
+        "content": "### Automation\n\n- **GitLab CI/CD** - Automated deployment\n- **automation** - Health check workflows\n- **Bazel** - Build coordination\n- Zero-downtime deploys\n- Self-healing infrastructure",
         "mode": "markdown"
       },
       "title": "",

@@ -144,7 +144,7 @@ action: 'sync_skills'   → Update only skills
 action: 'sync_educations' → Update only education
 action: 'pipeline_status' → Check automation status
 action: 'pipeline_run'    → Execute full pipeline
-action: 'pipeline_schedule' → Schedule via n8n
+action: 'pipeline_schedule' → Schedule via automation
 ```
 
 ## SERVER ROUTES ARCHITECTURE
@@ -163,7 +163,7 @@ action: 'pipeline_schedule' → Schedule via n8n
 | `dashboard.js`         | `/dashboard`      | Dashboard data aggregation  |
 | `resume.js`            | `/resume`         | Resume operations           |
 | `auth.js`              | `/auth`           | Authentication endpoints    |
-| `webhooks.js`          | `/webhooks`       | n8n webhook receiver        |
+| `webhooks.js`          | `/webhooks`       | automation webhook receiver        |
 | `export.js`            | `/export`         | Data export (JSON, CSV)     |
 | `sync.js`              | `/sync`           | Manual sync trigger         |
 

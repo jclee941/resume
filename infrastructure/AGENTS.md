@@ -6,7 +6,7 @@
 
 ## OVERVIEW
 
-IaC for Cloudflare resources, monitoring (Grafana/Loki/Prometheus), n8n
+IaC for Cloudflare resources, monitoring (Grafana/Loki/Prometheus), automation
 automation, and database migrations.
 
 ## STRUCTURE
@@ -16,7 +16,7 @@ infrastructure/
 ├── cloudflare/           # Terraform for CF resources (see cloudflare/AGENTS.md)
 ├── monitoring/           # Grafana dashboard JSON
 ├── automation/           # systemd service files
-├── n8n/                  # workflow export JSON
+├── automation/                  # workflow export JSON
 ├── configs/              # alert configurations
 ├── database/             # D1 migration SQL files
 └── nginx/                # proxy + CSP config

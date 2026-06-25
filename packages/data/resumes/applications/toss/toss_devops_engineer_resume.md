@@ -34,7 +34,7 @@ DevOps Engineer
   운영 (홈랩 8 VM/CT)
 - **네트워크 인프라 & 트러블슈팅**: L2~L7 네트워크 설계, 방화벽 HA 구성, VPN 대규모 인프라, NSX-T 마이크로세그멘테이션
   — CCNP 보유
-- **자동화 & 툴 개발**: Python/Ansible 기반 인프라 자동화, n8n 워크플로우 오케스트레이션, FortiManager API 자동화 툴 개발
+- **자동화 & 툴 개발**: Python/Ansible 기반 인프라 자동화, 자동화 워크플로우 오케스트레이션, FortiManager API 자동화 툴 개발
 - **CI/CD 파이프라인**: GitLab CI/CD 파이프라인 구축, GitHub Actions Self-hosted Runner 운영,
   컨테이너 이미지 빌드·배포 자동화
 - **IaC & 클라우드**: Terraform 기반 AWS 인프라 코드화 (VPC/Subnet/SG), Cloudflare Workers
@@ -52,12 +52,12 @@ DevOps Engineer
 
 - **Observability 플랫폼 구축**: Grafana + Prometheus + Loki 기반 시스템·컨테이너·로그 통합 모니터링
   체계 구축, 장애 감지 절차 자동화
-- **실시간 알림 자동화**: n8n 워크플로우와 Splunk를 연동하여 이벤트 탐지 시 신속한 Slack 알림 자동화 (다수 탐지 룰)
+- **실시간 알림 자동화**: 자동화 워크플로우와 Splunk를 연동하여 이벤트 탐지 시 신속한 Slack 알림 자동화 (다수 탐지 룰)
 - **운영 자동화 툴 개발**: FortiManager API 기반 방화벽 정책 자동 조회 Python 라이브러리 개발, 수동 작업 대비
   수동 정책 조회 절차를 자동화
 - **인프라 안정성**: HA 구성 기반 서비스 안정성 유지, 인시던트 대응 흐름 표준화
 
-기술: Splunk, Prometheus, Grafana, Loki, n8n, Python, Docker, Linux
+기술: Splunk, Prometheus, Grafana, Loki, automation, Python, Docker, Linux
 
 ---
 
@@ -161,7 +161,7 @@ Proxmox VE 기반 가상화 플랫폼에서 여러 서비스 운영
 - **시크릿 관리**: HashiCorp Vault 기반 PKI 및 시크릿 중앙 관리
 - **IaC**: Terraform으로 DNS/Workers/Proxmox 인프라 코드 관리
 - **CI/CD**: GitHub Actions Self-hosted Runner 운영, Cloudflare Workers Edge 배포
-- **자동화**: n8n 워크플로우 오케스트레이션 (n8n 워크플로우 오케스트레이션 및 연동, Slack/GitHub/Grafana 연동)
+- **자동화**: 자동화 워크플로우 오케스트레이션 (자동화 워크플로우 오케스트레이션 및 연동, Slack/GitHub/Grafana 연동)
 - **스토리지**: MinIO 오브젝트 스토리지, Supabase(PostgreSQL) BaaS
 
 ### 자율주행 시뮬레이션 (2025.11 ~ 2026.02)
@@ -190,7 +190,7 @@ VE
 
 ### CI/CD & Automation
 
-GitHub Actions (Self-hosted Runner), GitLab CI/CD, Ansible, Terraform, n8n
+GitHub Actions (Self-hosted Runner), GitLab CI/CD, Ansible, Terraform, automation
 
 ### Network & Security
 

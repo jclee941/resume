@@ -55,8 +55,8 @@
                 │  └──────────────────┘  │
                 │                        │
                 │  ┌──────────────────┐  │
-                │  │  n8n             │  │
-                │  │  n8n.jclee.me    │  │
+                │  │  automation             │  │
+                │  │  automation.example.com    │  │
                 │  └──────────────────┘  │
                 └────────────────────────┘
 ```
@@ -70,7 +70,7 @@
 | Grafana    | ✅ grafana.jclee.me    | 192.168.50.100:3000 | External DNS 사용         |
 | Prometheus | ❌ prometheus.jclee.me | 192.168.50.100:9090 | Grafana Explore 패널 사용 |
 | Loki       | ❌ loki.jclee.me       | 192.168.50.100:3100 | Grafana Explore 패널 사용 |
-| n8n        | ✅ n8n.jclee.me        | 192.168.50.100:5678 | External DNS 사용         |
+| automation        | ✅ automation.example.com        | 192.168.50.100:5678 | External DNS 사용         |
 
 **접근 방법**:
 
@@ -248,14 +248,14 @@ web_vitals_received{job="resume"}
 {job="resume-worker"} | json | path="/health"
 ```
 
-### 5. n8n (Workflow Automation)
+### 5. automation (Automation)
 
-**URL**: <https://n8n.jclee.me>
+**URL**: <https://automation.example.com>
 **Location**: Proxmox pve3 (192.168.50.100)
 **Purpose**: Health monitoring and alerting
 
 > **📖 For detailed workflow documentation**, see
-> [infrastructure/n8n/README.md](../../infrastructure/n8n/README.md) for:
+> [infrastructure/automation/README.md](../../infrastructure/automation/README.md) for:
 >
 > - Complete workflow setup guides
 > - GitHub webhook integration
@@ -280,7 +280,7 @@ web_vitals_received{job="resume"}
   "nodes": [
     {
       "name": "Every 5 Minutes",
-      "type": "n8n-nodes-base.scheduleTrigger",
+      "type": "workflow-nodes.scheduleTrigger",
       "parameters": {
         "rule": {
           "interval": [{ "field": "minutes", "minutesInterval": 5 }]
@@ -289,7 +289,7 @@ web_vitals_received{job="resume"}
     },
     {
       "name": "Check Resume Health",
-      "type": "n8n-nodes-base.httpRequest",
+      "type": "workflow-nodes.httpRequest",
       "parameters": {
         "url": "https://resume.jclee.me/health",
         "method": "GET",
@@ -299,7 +299,7 @@ web_vitals_received{job="resume"}
     },
     {
       "name": "Is Down?",
-      "type": "n8n-nodes-base.if",
+      "type": "workflow-nodes.if",
       "parameters": {
         "conditions": {
           "conditions": [
@@ -319,7 +319,7 @@ web_vitals_received{job="resume"}
     },
     {
       "name": "Send Slack Alert (OAuth2)",
-      "type": "n8n-nodes-base.slack",
+      "type": "workflow-nodes.slack",
       "parameters": {
         "resource": "message",
         "operation": "post",
@@ -340,13 +340,13 @@ web_vitals_received{job="resume"}
 **Deployment**:
 
 ```bash
-# Deploy workflow to n8n
-cd infrastructure/n8n
+# Deploy workflow to automation
+cd infrastructure/automation
 go run ./deploy-workflow.go resume-healthcheck-oauth2.json
 
 # Check workflow status
-curl -X GET "https://n8n.jclee.me/api/v1/workflows" \
-  -H "X-N8N-API-KEY: your_api_key"
+curl -X GET "https://automation.example.com/api/v1/workflows" \
+  -H "X-AUTOMATION-API-KEY: your_api_key"
 ```
 
 ## 📈 Performance Metrics
@@ -431,8 +431,8 @@ cp monitoring/grafana-dashboard-resume-portfolio.json \
 sudo vim /volume1/docker/prometheus/prometheus.yml
 sudo systemctl restart prometheus
 
-# Update n8n workflow
-cd infrastructure/n8n
+# Update automation workflow
+cd infrastructure/automation
 go run ./deploy-workflow.go resume-healthcheck-oauth2.json
 ```
 
@@ -448,7 +448,7 @@ go run ./deploy-workflow.go resume-healthcheck-oauth2.json
 
 - Prometheus metrics (7-day retention)
 - Loki logs (7-day retention)
-- n8n workflow definitions
+- automation workflow definitions
 
 **Monthly Backups**:
 
@@ -475,7 +475,7 @@ go run ./deploy-workflow.go resume-healthcheck-oauth2.json
 - [Cloudflare Workers Documentation](https://developers.cloudflare.com/workers/)
 - [Prometheus Best Practices](https://prometheus.io/docs/practices/)
 - [Grafana Dashboard Guide](https://grafana.com/docs/grafana/latest/dashboards/)
-- [n8n Workflow Documentation](https://docs.n8n.io/)
+- [automation Workflow Documentation](https://docs.automation.io/)
 
 ## 📝 Change Log
 
@@ -498,11 +498,11 @@ go run ./deploy-workflow.go resume-healthcheck-oauth2.json
 - ✅ Initial production deployment
 - ✅ Cloudflare Workers setup
 - ✅ Basic health check endpoint
-- ✅ n8n monitoring workflow
+- ✅ automation monitoring workflow
 
 ## 🔒 Internal Service Access
 
-> **Note**: Prometheus, Loki, n8n do not have public DNS. Access via internal
+> **Note**: Prometheus, Loki, automation do not have public DNS. Access via internal
 > network or Grafana proxy.
 
 | Service        | Public URL                    | Internal Access           | Notes                               |
@@ -510,7 +510,7 @@ go run ./deploy-workflow.go resume-healthcheck-oauth2.json
 | **Grafana**    | ✅ <https://grafana.jclee.me> | 192.168.50.100:3000       | Primary dashboard                   |
 | **Prometheus** | 🔒 Internal Only              | 192.168.50.100:9090       | Metrics only via Grafana datasource |
 | **Loki**       | 🔒 Grafana Proxy              | grafana.jclee.me/loki/... | Log queries via Grafana proxy       |
-| **n8n**        | 🔒 Internal Only              | 192.168.50.100:5678       | Workflow automation (internal only) |
+| **automation**        | 🔒 Internal Only              | 192.168.50.100:5678       | Workflow automation (internal only) |
 
 **Access Methods**:
 
@@ -525,5 +525,5 @@ go run ./deploy-workflow.go resume-healthcheck-oauth2.json
 - **Live Site**: <https://resume.jclee.me>
 - **Grafana**: <https://grafana.jclee.me> (✅ Public)
 - **Prometheus**: 192.168.50.100:9090 (🔒 Internal)
-- **n8n**: 192.168.50.100:5678 (🔒 Internal)
+- **automation**: 192.168.50.100:5678 (🔒 Internal)
 - **GitHub**: <https://github.com/jclee941/resume>

@@ -1,20 +1,20 @@
 import fp from 'fastify-plugin';
 import { signWebhookPayload } from '../../shared/services/webhook/webhook-signer.js';
 
-async function n8nWebhookPlugin(fastify) {
-  const webhookUrl = process.env.N8N_URL || process.env.N8N_WEBHOOK_URL;
-  const webhookSecret = process.env.N8N_WEBHOOK_SECRET;
+async function automationWebhookPlugin(fastify) {
+  const webhookUrl = process.env.AUTOMATION_WEBHOOK_URL || process.env.WEBHOOK_URL;
+  const webhookSecret = process.env.AUTOMATION_WEBHOOK_SECRET || process.env.WEBHOOK_SECRET;
 
   if (!webhookUrl) {
-    fastify.decorate('triggerN8nWebhook', async (event, _data) => {
-      fastify.log.debug({ event }, 'n8n webhook skipped (N8N_WEBHOOK_URL not configured)');
+    fastify.decorate('triggerAutomationWebhook', async (event, _data) => {
+      fastify.log.debug({ event }, 'automation webhook skipped (AUTOMATION_WEBHOOK_URL not configured)');
       return { sent: false, event, reason: 'not-configured' };
     });
-    fastify.log.info('n8n webhook plugin loaded (disabled — N8N_WEBHOOK_URL not set)');
+    fastify.log.info('automation webhook plugin loaded (disabled)');
     return;
   }
 
-  fastify.decorate('triggerN8nWebhook', async (event, data) => {
+  fastify.decorate('triggerAutomationWebhook', async (event, data) => {
     try {
       const payload = JSON.stringify({ event, data, timestamp: new Date().toISOString() });
       const headers = {
@@ -35,19 +35,19 @@ async function n8nWebhookPlugin(fastify) {
       });
 
       if (!response.ok) {
-        fastify.log.error({ event, status: response.status }, 'n8n webhook request failed');
+        fastify.log.error({ event, status: response.status }, 'automation webhook request failed');
         return { sent: false, event, status: response.status };
       }
 
-      fastify.log.info({ event }, 'n8n webhook triggered successfully');
+      fastify.log.info({ event }, 'automation webhook triggered successfully');
       return { sent: true, event };
     } catch (error) {
-      fastify.log.error({ event, error: error.message }, 'n8n webhook error');
+      fastify.log.error({ event, error: error.message }, 'automation webhook error');
       return { sent: false, event, error: error.message };
     }
   });
 
-  fastify.log.info({ url: webhookUrl }, 'n8n webhook plugin loaded');
+  fastify.log.info({ url: webhookUrl }, 'automation webhook plugin loaded');
 }
 
-export default fp(n8nWebhookPlugin, { name: 'n8n-webhook' });
+export default fp(automationWebhookPlugin, { name: 'automation-webhook' });

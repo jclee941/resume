@@ -55,7 +55,7 @@ npx wrangler versions upload --config apps/portfolio/wrangler.jsonc --env produc
 ## Required Secrets
 
 - GitHub CI: no Cloudflare deploy secret required for validation-only flow
-- Optional notification: `N8N_WEBHOOK_URL`
+- Optional notification: `AUTOMATION_WEBHOOK_URL`
 
 ## Quick Verification
 

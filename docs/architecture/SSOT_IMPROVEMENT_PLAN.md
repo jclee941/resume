@@ -18,7 +18,7 @@ for the current execution and remain task-tracked here.
 | **Epic 2** Types/Schemas/Contracts | ✅ Foundation complete   | `a14f7c5`            | 3 new packages created: `@resume/types` (8 modules), `@resume/schemas` (5 Zod modules), `@resume/contracts` (env + openapi). Each with own AGENTS.md. **Migration of existing call-sites is per-domain follow-up PRs.**                                                                                                                       |
 | **Epic 3** Env/Secrets             | ⚠️ Partial               | (Epic 0)             | CI gitleaks gate + pre-commit hook landed in Epic 0. Full secrets manager (Doppler/Keyflare) deferred. t3-env / `packages/env` not yet created.                                                                                                                                                                                               |
 | **Epic 4** Domain SSOT             | ✅ Foundation complete   | `bc2aff0`            | New canonical modules in `@resume/shared`: `retry/` (http + circuit-breaker), `crypto/` (webcrypto + node), `rate-limit/` (token-bucket + sliding-window), `auth/` (cookie + hmac). Smoke test passes. **Migration of app-local consumers (errors, logger, retry, crypto, rate-limit, auth, validation, wanted-client) is per-PR follow-up.** |
-| **Epic 5** Documentation           | ✅ Complete              | `230823b`, `a1880c1` | `.gitlab-legacy/` deleted (10 YAMLs + 5 Go scripts + 3 docs). `rules/` → `docs/conventions/architecture-rules.md`. Root binaries (deploy-auto-apply, deploy-workflow, n8n-browser-auth, setup-api-key) deleted (~24MB; rebuild from `infrastructure/n8n/*.go`). Root AGENTS.md refreshed for current state. CI pipeline test updated.         |
+| **Epic 5** Documentation           | ✅ Complete              | `230823b`, `a1880c1` | `.gitlab-legacy/` deleted (10 YAMLs + 5 Go scripts + 3 docs). `rules/` → `docs/conventions/architecture-rules.md`. Root binaries (deploy-auto-apply, deploy-workflow, automation-browser-auth, setup-api-key) deleted (~24MB; rebuild from `infrastructure/automation/*.go`). Root AGENTS.md refreshed for current state. CI pipeline test updated.         |
 | **Epic 6** File splits             | ✅ Complete              | `9c70c11`            | applications.js → applications/. auto-apply.js → auto-apply/. job-server oversized files reduced below 500L. All tests pass.                                                                                                                                                                                                                  |
 
 ### Verification (post-execution)
@@ -424,7 +424,7 @@ npm scripts directly`. Bazel symlinks at root confuse tooling.
     (draft-07) but isn't bound to TS types.
   - **Acceptance:**
     - `packages/schemas/src/` defines Zod schemas for: resume_data, application
-      payload, status update, auth cookie, webhook signature, n8n payload.
+      payload, status update, auth cookie, webhook signature, automation payload.
     - Each schema exports `z.infer<typeof X>` so types come from schemas (no
       drift with `packages/types`).
     - `apps/portfolio/lib/validators.js`,
@@ -787,18 +787,18 @@ npm scripts directly`. Bazel symlinks at root confuse tooling.
   - **Acceptance:** Split into HTML template, CSS module, JS module.
     `generate-worker.js` composes at build.
 
-- [ ] **SSOT-051 — Move root Go binaries to `tools/` or `infrastructure/n8n/`**
+- [ ] **SSOT-051 — Move root Go binaries to `tools/` or `infrastructure/automation/`**
   - **Severity:** P3 · **Effort:** S
   - **Files:**
     - `/home/jclee/dev/resume/deploy-auto-apply` (7.5MB)
     - `/home/jclee/dev/resume/deploy-workflow` (7.5MB)
-    - `/home/jclee/dev/resume/n8n-browser-auth` (2.4MB)
+    - `/home/jclee/dev/resume/automation-browser-auth` (2.4MB)
     - `/home/jclee/dev/resume/setup-api-key` (7.2MB)
   - **Why:** 24MB+ of compiled binaries at repo root pollutes file search and is
-    unconventional. Source is in `infrastructure/n8n/`.
+    unconventional. Source is in `infrastructure/automation/`.
   - **Acceptance:**
     - Binaries removed from root.
-    - Build process (Go) lives in `infrastructure/n8n/build.go` or similar.
+    - Build process (Go) lives in `infrastructure/automation/build.go` or similar.
     - If binaries are needed in CI/dev, build them at run time, do not commit.
     - `.gitignore` updated to prevent re-commit.
 
@@ -966,14 +966,14 @@ Refresh AGENTS.md, link checks, GitLab legacy purge, root cleanup.
 
 - **`docs/conventions/architecture-rules.md`** (formerly
   `rules/MANDATORY_ARCHITECTURE_AND_WORKFLOW_RULE.md`) is the canonical rules
-  file (200 LOC limit, no catch-all names, n8n SSoT for workflows). Moved during
+  file (200 LOC limit, no catch-all names, automation SSoT for workflows). Moved during
   Epic 5 execution.
 - **`packages/data/resumes/master/resume_data.json`** (the project's existing
   SSoT) is preserved unchanged. SSOT-023 generates JSON Schema from Zod
   alongside it; SSOT-026/SSOT-027 generate types from DB schemas.
 - **`infrastructure/`** is mostly well-organized (clear
-  k8s/Cloudflare/n8n/monitoring split). Only minor doc/cleanup tasks touch it
-  (SSOT-051 for root binaries that source from `infrastructure/n8n/`).
+  k8s/Cloudflare/automation/monitoring split). Only minor doc/cleanup tasks touch it
+  (SSOT-051 for root binaries that source from `infrastructure/automation/`).
 - **`ta/`** (Python PPTX) is intentionally out of npm workspaces. No changes.
 - **`supabase/`** top-level directory (Edge Functions only) and
   `infrastructure/database/supabase/` (PostgreSQL schema) are correctly

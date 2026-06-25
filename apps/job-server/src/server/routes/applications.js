@@ -36,19 +36,19 @@ export default async function applicationsRoutes(fastify) {
   });
 
   fastify.put('/:id/status', async (request) => {
-    const { status, note, notifyN8n } = request.body || {};
+    const { status, note, notifyAutomation } = request.body || {};
     const result = fastify.applicationService.updateStatus(request.params.id, status, note);
 
-    if (result.success && notifyN8n !== false) {
+    if (result.success && notifyAutomation !== false) {
       fastify
-        .triggerN8nWebhook?.('status-change', {
+        .triggerAutomationWebhook?.('status-change', {
           applicationId: request.params.id,
           newStatus: status,
           note,
           application: result.application,
         })
         .catch((e) => {
-          fastify.log.error('Failed to trigger n8n webhook:', e);
+          fastify.log.error('Failed to trigger automation webhook:', e);
         });
     }
 

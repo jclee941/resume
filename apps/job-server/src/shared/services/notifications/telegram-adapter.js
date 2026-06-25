@@ -27,7 +27,8 @@ export class TelegramNotificationAdapter {
 
     this.telegramToken = options.telegramToken || env.TELEGRAM_BOT_TOKEN;
     this.telegramChatId = options.telegramChatId || env.TELEGRAM_CHAT_ID;
-    this.n8nWebhookUrl = options.n8nWebhookUrl || env.N8N_WEBHOOK_URL || env.N8N_URL;
+    this.automationWebhookUrl =
+      options.automationWebhookUrl || env.AUTOMATION_WEBHOOK_URL || env.WEBHOOK_URL;
     this.fetchImpl = options.fetchImpl || null;
     this.sleepImpl = options.sleepImpl || ((ms) => new Promise((r) => setTimeout(r, ms)));
 
@@ -116,8 +117,6 @@ export class TelegramNotificationAdapter {
           break; // non-rate-limit failure, or out of retries
         }
         results.push(result);
-        // Judge success by ACTUAL Telegram delivery, not the aggregate status
-        // (notify() reports success when only the n8n fallback delivered).
         if (!telegramSent) {
           jobOk = false;
           // Stop sending the remaining chunks of this job — a partially-sent

@@ -1,4 +1,4 @@
-// Auto-apply runner - runs directly on resume host, bypassing n8n
+// Auto-apply runner - runs directly on resume host, bypassing automation
 package main
 
 import (

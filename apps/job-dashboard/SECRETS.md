@@ -29,7 +29,7 @@ openssl rand -base64 32
 
 ### WEBHOOK_SECRET
 
-**Purpose**: Validate incoming webhooks from n8n/external sources  
+**Purpose**: Validate incoming webhooks from automation/external sources
 **Format**: Shared secret with webhook sender  
 **Generate**:
 
@@ -82,5 +82,5 @@ npx wrangler secret put ENCRYPTION_KEY --env production
 
 - Never commit secrets to git
 - Rotate ENCRYPTION_KEY periodically (invalidates all sessions)
-- WEBHOOK_SECRET must match n8n workflow configuration
+- WEBHOOK_SECRET must match automation workflow configuration
 - ADMIN_TOKEN should be unique per environment

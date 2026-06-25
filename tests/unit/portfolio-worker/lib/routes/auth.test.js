@@ -110,9 +110,9 @@ describe('routes/auth', () => {
       expect(result).toContain('415');
     });
 
-    it('references N8N webhook', () => {
+    it('references automation webhook', () => {
       const result = generateControlRoutes();
-      expect(result).toContain('N8N_WEBHOOK_BASE');
+      expect(result).toContain('AUTOMATION_WEBHOOK_BASE');
     });
 
     it('handles errors with 500', () => {

@@ -115,7 +115,7 @@ const SKILL_DATA_FALLBACK = {
         evidence: 'Automated resume sync to JobKorea, CI/CD pipelines',
       },
       {
-        name: 'n8n',
+        name: 'Automation',
         level: 85,
         evidence: 'Workflow automation for job applications and data sync',
       },

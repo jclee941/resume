@@ -29,7 +29,7 @@ Cloudflare HR/리크루터는 LinkedIn Recruiter에서 다음 키워드로 후�
 ### ✅ 추천 — 한국어 + 영어 양면 헤드라인 (220자 한도)
 
 ```
-DevSecOps / SRE · 8년차 · 금융 거래소 보안 운영 | Cloudflare Workers · Splunk ES · FortiGate HA · n8n | Zero Trust 도입 자문 가능 | 구직 중 · 즉시 투입 가능
+DevSecOps / SRE · 8년차 · 금융 거래소 보안 운영 | Cloudflare Workers · Splunk ES · FortiGate HA · 알림 워크플로 | Zero Trust 도입 자문 가능 | 구직 중 · 즉시 투입 가능
 ```
 
 **왜 이 형식**:
@@ -37,14 +37,14 @@ DevSecOps / SRE · 8년차 · 금융 거래소 보안 운영 | Cloudflare Worker
 - "DevSecOps / SRE" — Cloudflare 리쿠르터 1차 필터 키워드
 - "8년차" + "금융 거래소" — 시니어 + 도메인 명시
 - "Cloudflare Workers" — vendor 매칭 (LinkedIn에서 Cloudflare가 본인을 찾을 때 매칭)
-- "Splunk ES · FortiGate HA · n8n" — 직무 공고 키워드 직접 노출
+- "Splunk ES · FortiGate HA · 알림 워크플로" — 직무 공고 키워드 직접 노출
 - "Zero Trust 도입 자문 가능" — SE 직무 자가 포지셔닝
 - "구직 중 · 즉시 투입 가능" — Open to Work 상태
 
 **대안 (영문 위주 글로벌 회사용)**:
 
 ```
-Sr. DevSecOps/SRE · 8 yrs · Financial-exchange Security Ops | Cloudflare Workers operator | Splunk ES · FortiGate HA · n8n | SASE/Zero Trust ready | Open to work
+Sr. DevSecOps/SRE · 8 yrs · Financial-exchange Security Ops | Cloudflare Workers operator | Splunk ES · FortiGate HA · automation | SASE/Zero Trust ready | Open to work
 ```
 
 ---
@@ -52,10 +52,10 @@ Sr. DevSecOps/SRE · 8 yrs · Financial-exchange Security Ops | Cloudflare Worke
 ## 2. About (자기소개) — 2,000자 한도
 
 ```
-폐쇄망 OA 운영실에서 출발해 금융 거래소 보안 운영으로 도착한 8년차 DevSecOps/SRE 엔지니어입니다. "반복 작업은 자동화 되어야 한다"는 신념으로 도구를 바꿔왔고, 지금은 FortiGate HA 5계층 망분리 위에서 Splunk ES + n8n + FortiManager API로 보안 이벤트 자동 탐지·대응을 운영합니다.
+폐쇄망 OA 운영실에서 출발해 금융 거래소 보안 운영으로 도착한 8년차 DevSecOps/SRE 엔지니어입니다. "반복 작업은 자동화 되어야 한다"는 신념으로 도구를 바꿔왔고, 지금은 FortiGate HA 5계층 망분리 위에서 Splunk ES + 알림 워크플로 + FortiManager API로 보안 이벤트 자동 탐지·대응을 운영합니다.
 
 [현재]
-아이티센 CTS @ 넥스트레이드 거래소 보안 운영 (2025.03~2026.02). FSC 본인가 사전 심사 통과한 인프라에서 Splunk Saved Search → n8n → Slack 라우팅 파이프라인을 만들고, FortiManager JSON-RPC API 호출로 정책 조회를 자동화합니다.
+아이티센 CTS @ 넥스트레이드 거래소 보안 운영 (2025.03~2026.02). FSC 본인가 사전 심사 통과한 인프라에서 Splunk Saved Search → 알림 워크플로 → Slack 라우팅 파이프라인을 만들고, FortiManager JSON-RPC API 호출로 정책 조회를 자동화합니다.
 
 [trajectory]
 • MT Data → KAI 폐쇄망 50대 Linux 서버 수기 운영 (2017)
@@ -64,7 +64,7 @@ Sr. DevSecOps/SRE · 8 yrs · Financial-exchange Security Ops | Cloudflare Worke
 • Jointree → NSX-T 마이크로세그멘테이션 + Wazuh OSS 보안 모니터링
 • Quantec FSDC → 금감원 정기 감사 대응 + DLP 운영
 • Gaonnuri → 넥스트레이드 FortiGate HA 5계층 망분리 + Ansible Role 표준화 + FSC 본인가 통과
-• ITCEN CTS → 넥스트레이드 보안 운영 (Splunk ES + n8n + FortiManager API)
+• ITCEN CTS → 넥스트레이드 보안 운영 (Splunk ES + 알림 워크플로 + FortiManager API)
 
 [differentiation]
 1. 금융 규제 환경에서 운영 사이드 8년 — FSC 본인가, FSS 감사, 전자금융감독규정을 한국어로 그대로 다뤄본 엔지니어
@@ -79,7 +79,7 @@ Sr. DevSecOps/SRE · 8 yrs · Financial-exchange Security Ops | Cloudflare Worke
 • 금융 규제 → SaaS 형태 SASE 게이트웨이 도입 시 망분리 양립 자문
 
 [홈랩]
-• Proxmox 위에 NSX-T, K3s, Grafana, Prometheus, Loki, n8n, 1Password를 IaC(Terraform + Ansible)로 운영
+• Proxmox 위에 NSX-T, K3s, Grafana, Prometheus, Loki, 알림 워크플로, 1Password를 IaC(Terraform + Ansible)로 운영
 • Cloudflare Workers 위에 자체 AI PR Reviewer (gitleaks + RBAC 검사 + GitHub Check Run API + CLIProxyAPI 비용 통제)
 
 [자격증·학습]
@@ -112,15 +112,15 @@ Sr. DevSecOps/SRE · 8 yrs · Financial-exchange Security Ops | Cloudflare Worke
 
 ### ITCEN CTS — Security Operations Engineer (2025.03 – 2026.02)
 
-**한 줄**: 넥스트레이드 거래소 보안 운영 — Splunk ES + n8n + FortiManager API 자동 탐지·대응
+**한 줄**: 넥스트레이드 거래소 보안 운영 — Splunk ES + 알림 워크플로 + FortiManager API 자동 탐지·대응
 
 **본문**:
 
-- Splunk ES 탐지 룰 설계, n8n + FortiManager JSON-RPC API 자동 탐지·대응 파이프라인 운영
-- 알림 경로 단순화: Splunk Saved Search → n8n webhook → Slack/SMS 라우팅
+- Splunk ES 탐지 룰 설계, 알림 워크플로 + FortiManager JSON-RPC API 자동 탐지·대응 파이프라인 운영
+- 알림 경로 단순화: Splunk Saved Search → 알림 워크플로 webhook → Slack/SMS 라우팅
 - 콘솔 수동 작업 제거: FortiManager JSON-RPC API 호출 기반 정책 조회 자동화
 
-**Skills 태그**: Splunk Enterprise Security · n8n · FortiManager API · SOC · 침해사고 대응
+**Skills 태그**: Splunk Enterprise Security · 알림 워크플로 · FortiManager API · SOC · 침해사고 대응
 
 ### Gaonnuri — Security Infrastructure Engineer (2024.03 – 2025.02)
 
@@ -199,7 +199,7 @@ Sr. DevSecOps/SRE · 8 yrs · Financial-exchange Security Ops | Cloudflare Worke
 6. Zero Trust
 7. SASE
 8. SIEM
-9. n8n (Automation)
+9. automation (Automation)
 10. NSX-T Microsegmentation
 11. Ansible
 12. Terraform

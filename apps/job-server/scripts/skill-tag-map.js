@@ -64,7 +64,7 @@ export const SKILL_ALIASES = {
   'Splunk Enterprise Security': 'Prometheus',
   'GitHub Actions': 'GitLab',
   Ansible: 'DevOps',
-  n8n: 'DevOps',
+  automation: 'DevOps',
   FortiGate: '인프라',
   'FortiGate HA': '인프라',
   FortiManager: '인프라',

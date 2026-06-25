@@ -22,7 +22,7 @@
 
 - **보안**: FortiGate 방화벽, DDoS, IPS, WAF, NAC, DLP, EDR, APT, Splunk SIEM
 - **클라우드**: Docker, Kubernetes, Cloudflare Workers (Edge Computing)
-- **자동화**: Python, Shell, Ansible, Terraform, n8n (워크플로우 오케스트레이션)
+- **자동화**: Python, Shell, Ansible, Terraform, automation (워크플로우 오케스트레이션)
 - **모니터링**: Grafana, Prometheus, Loki (통합 관제 플랫폼)
 - **DevOps**: GitLab EE, CI/CD, Container Registry, Docker Compose
 - **AI/ML**: Claude AI 기반 자동화 파이프라인, ML 기반 위협 예측 및 자동 라우팅 시스템
@@ -73,7 +73,7 @@
 - Splunk-FortiNet 연동 환경에서 방화벽 정책 조회·배포 자동화 스크립트 작성
 - Grafana 대시보드로 시스템·컨테이너·로그 지표를 한 화면에 정리
 - Claude AI를 활용한 위협 정보 수집·분류 스크립트 작성으로 수동 분석 의존도 낮춤
-- n8n 워크플로우로 반복 API 호출 자동화
+- 자동화 워크플로우로 반복 API 호출 자동화
 - SIEM 탐지 룰 검토 및 조건 조정으로 오탐 정리
 - 취약점 SLA 기준에 따라 패치 일정을 관리
 - DR 복구 절차를 스크립트화하고 주기적 훈련 수행

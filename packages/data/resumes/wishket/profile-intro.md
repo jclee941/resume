@@ -17,7 +17,7 @@
 1. **보안 인프라 (9년)**: FortiGate/FortiManager 설계·운영, Splunk ES 탐지 룰 설계, 금융위원회 본인가
    심사 대응
 2. **관측성 구축**: Grafana, Prometheus, Loki 스택, ELK 통합, 다수 대시보드 운영
-3. **자동화 파이프라인 (5년)**: n8n 워크플로우, Ansible, Python, FortiNet API 연동
+3. **자동화 파이프라인 (5년)**: 자동화 워크플로우, Ansible, Python, FortiNet API 연동
 
 ## 주요 고객사
 

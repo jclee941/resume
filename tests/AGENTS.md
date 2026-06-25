@@ -19,7 +19,7 @@ tests/
 │   ├── fixtures/           # helpers.js (shared utilities)
 │   └── snapshots/          # visual regression baselines
 ├── integration/            # 3 integration test files
-└── n8n-webhook-test.go     # webhook testing
+└── automation-webhook-test.go     # webhook testing
 ```
 
 ## COVERAGE TARGETS

@@ -27,7 +27,7 @@ observability/automation configs.
 │   └── contracts/        # OpenAPI spec + Cloudflare Worker Env interface
 ├── tools/                # CI, build, deploy, verification scripts (Go + JS)
 ├── tests/                # Jest, integration, Playwright E2E
-├── infrastructure/       # Cloudflare, monitoring, n8n, DB config
+├── infrastructure/       # Cloudflare, monitoring, automation, DB config
 ├── docs/                 # guides, ADRs, architecture, conventions, security
 ├── ta/                   # TA profile generation (Python/PPTX)
 ├── supabase/             # Supabase edge functions (Deno runtime)
@@ -52,9 +52,9 @@ observability/automation configs.
 | CI/release behavior           | `.github/workflows/`                     | GitHub Actions only — GitLab CI archive removed during Epic 5          |
 | Shared operational scripts    | `tools/scripts/`                         | build, deployment, verification, sync utilities                        |
 | Tests by layer                | `tests/`                                 | `unit/`, `integration/`, `e2e/` with child guides                      |
-| Monitoring and n8n automation | `infrastructure/`                        | dashboards, alerting, webhook workflows; n8n Go binaries source        |
+| Monitoring and automation | `infrastructure/`                        | dashboards, alerting, webhook workflows; automation Go binaries source        |
 | Design/procedure docs         | `docs/`                                  | ADRs, architecture, conventions, security, guides                      |
-| Architecture rules            | `docs/conventions/architecture-rules.md` | 200-LOC limit, no catch-all names, n8n SSoT for workflows (was rules/) |
+| Architecture rules            | `docs/conventions/architecture-rules.md` | 200-LOC limit, no catch-all names, automation SSoT for workflows (was rules/) |
 | Security playbooks            | `docs/security/`                         | SECRET_ROTATION_PLAYBOOK.md, secret manager guidance                   |
 | Supabase edge functions       | `supabase/functions/`                    | Deno runtime; not part of npm workspaces                               |
 | TA profile generation         | `ta/`                                    | Python PPTX scripts, not a workspace package                           |
@@ -127,7 +127,7 @@ observability/automation configs.
   for system shape, conventions for required rules, guides for operational
   how-to, security for secret handling, reports/analysis for historical output.
 - Monitoring is split by backend role: Elasticsearch for app logs,
-  Loki/Grafana/n8n for ops/infra workflows.
+  Loki/Grafana/automation for ops/infra workflows.
 - Type / validation split: pure JSDoc types live in `@resume/types`, Zod runtime
   schemas live in `@resume/schemas`, contracts in `@resume/contracts`. Schemas
   infer their TS types from themselves to prevent drift.
@@ -175,7 +175,7 @@ pre-commit install                                              # Install pre-co
   `tools/`, `infrastructure/`, `packages/`, `supabase/`, and `ta/`; avoid
   duplicating their scope from the root.
 
-- `infrastructure/n8n/` and `infrastructure/monitoring/` are distinct enough to
+- `infrastructure/automation/` and `infrastructure/monitoring/` are distinct enough to
   warrant child AGENTS files; `docs/` stays governed at the docs-root level.
 - `.github/` has a child AGENTS because workflow check names, reusable workflow
   indirection, and branch-protection contracts are distinct from app code.
@@ -185,7 +185,7 @@ pre-commit install                                              # Install pre-co
   runtime, not part of npm workspaces.
 - `ta/` contains Python PPTX tooling and generated presentation outputs; it is
   intentionally outside npm workspaces.
-  #QR|- Go scripts in `infrastructure/n8n/` (13 files) — shell-to-Go migration
+  #QR|- Go scripts in `infrastructure/automation/` (13 files) — shell-to-Go migration
   XB| complete per monorepo standards.
 - New packages (types/schemas/contracts) created in Epic 2 each have their own
   focused AGENTS.md.

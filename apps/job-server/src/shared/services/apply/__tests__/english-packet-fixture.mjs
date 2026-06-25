@@ -64,7 +64,7 @@ for (const targetRoles of [
   assert.equal(emittedCoverLetter, '');
 }
 
-for (const projects of [[null], ['manual workflow automation']]) {
+for (const projects of [[null], ['manual automation']]) {
   let emittedCoverLetter = '';
   await assert.rejects(async () => {
     const rejectedPacket = await new CoverLetterService({

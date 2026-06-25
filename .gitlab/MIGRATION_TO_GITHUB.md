@@ -42,7 +42,7 @@ lint, typecheck, test, JSON check                resume.jclee.me updated
 | verify/security-headers.yml | Not yet ported         | Manual: curl -I          |
 | test/e2e.yml                | Not yet ported         | Manual: npm run test:e2e |
 | release.yml                 | Not yet ported         | Low priority             |
-| n8n-notifications.yml       | Not yet ported         | Optional                 |
+| automation-notifications.yml       | Not yet ported         | Optional                 |
 | auto-sync.yml (Wanted)      | Not yet ported         | Scheduled task           |
 
 ## Preserved as Reference

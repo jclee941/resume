@@ -53,10 +53,10 @@ var secrets = []Secret{
 	{"TELEGRAM_CHAT_ID", "notification/telegram_chat_id/v1", "notification", "Telegram chat ID for notifications"},
 
 	// infra (6)
-	{"N8N_WEBHOOK_URL", "infra/n8n_webhook_url/v1", "infra", "n8n webhook URL"},
-	{"N8N_WEBHOOK_SECRET", "infra/n8n_webhook_secret/v1", "infra", "n8n webhook secret"},
-	{"N8N_API_KEY", "infra/n8n_api_key/v1", "infra", "n8n API key"},
-	{"N8N_URL", "infra/n8n_url/v1", "infra", "n8n instance URL"},
+	{"AUTOMATION_WEBHOOK_URL", "infra/automation_webhook_url/v1", "infra", "automation webhook URL"},
+	{"AUTOMATION_WEBHOOK_SECRET", "infra/automation_webhook_secret/v1", "infra", "automation webhook secret"},
+	{"AUTOMATION_API_KEY", "infra/automation_api_key/v1", "infra", "automation API key"},
+	{"AUTOMATION_URL", "infra/automation_url/v1", "infra", "automation instance URL"},
 	{"CF_ACCESS_CLIENT_ID", "infra/cf_access_client_id/v1", "infra", "Cloudflare Access client ID"},
 	{"CF_ACCESS_CLIENT_SECRET", "infra/cf_access_client_secret/v1", "infra", "Cloudflare Access client secret"},
 }

@@ -1,74 +1,78 @@
 /**
  * Notification Service for Job Automation
- * Consolidated notification path: app -> N8NWebhookService -> n8n -> Telegram
- * All notifications route through n8n for centralized credential management
+ * Consolidated notification path for automation event webhooks.
  */
 
-import { n8n } from '../n8n/index.js';
+import { signWebhookPayload } from '../webhook/webhook-signer.js';
 
 class NotificationService {
-  constructor() {
-    this.enabled = !!(process.env.N8N_URL || process.env.N8N_WEBHOOK_URL);
+  constructor(env = process.env) {
+    this.env = env;
+    this.webhookUrl = env.AUTOMATION_WEBHOOK_URL || env.WEBHOOK_URL || null;
+    this.webhookSecret = env.AUTOMATION_WEBHOOK_SECRET || env.WEBHOOK_SECRET || null;
+    this.enabled = !!this.webhookUrl;
+  }
+
+  async postEvent(event, data) {
+    if (!this.enabled) {
+      console.log('Notifications disabled (AUTOMATION_WEBHOOK_URL not set)');
+      return { sent: false, event, reason: 'not-configured' };
+    }
+
+    const payload = JSON.stringify({ event, data, timestamp: new Date().toISOString() });
+    const headers = {
+      'Content-Type': 'application/json',
+      'X-Webhook-Event': event,
+    };
+
+    if (this.webhookSecret) {
+      const { signature } = signWebhookPayload(payload, this.webhookSecret);
+      headers['X-Webhook-Signature'] = signature;
+    }
+
+    const response = await fetch(this.webhookUrl, {
+      method: 'POST',
+      headers,
+      body: payload,
+      signal: AbortSignal.timeout(10000),
+    });
+
+    return { sent: response.ok, event, status: response.status };
   }
 
   /**
    * 입사지원 성공 알림
-   * Routes through n8n webhook -> Telegram
    */
   async notifyApplySuccess(companyName, jobTitle, jobUrl, platform = 'wanted') {
-    if (!this.enabled) {
-      console.log('ℹ️ Notifications disabled (N8N_WEBHOOK_URL not set)');
-      return;
-    }
-    return n8n.notifyApplySuccess(companyName, jobTitle, jobUrl, platform);
+    return this.postEvent('apply.success', { companyName, jobTitle, jobUrl, platform });
   }
 
   /**
    * 입사지원 실패 알림
-   * Routes through n8n webhook -> Telegram
    */
   async notifyApplyFailed(companyName, jobTitle, jobUrl, error, platform = 'wanted') {
-    if (!this.enabled) {
-      console.log('ℹ️ Notifications disabled (N8N_WEBHOOK_URL not set)');
-      return;
-    }
-    return n8n.notifyApplyFailed(companyName, jobTitle, jobUrl, error, platform);
+    return this.postEvent('apply.failed', { companyName, jobTitle, jobUrl, error, platform });
   }
 
   /**
    * 이력서 동기화 완료 알림
-   * Routes through n8n webhook -> Telegram
    */
   async notifyResumeSync(platform, resumeId, success = true) {
-    if (!this.enabled) {
-      console.log('ℹ️ Notifications disabled (N8N_WEBHOOK_URL not set)');
-      return;
-    }
-    return n8n.notifyResumeSync(platform, resumeId, success);
+    return this.postEvent('resume.sync', { platform, resumeId, success });
   }
 
   /**
    * 자동화 작업 시작 알림
-   * Routes through n8n webhook -> Telegram
    */
   async notifyJobStarted(jobType, details = {}) {
-    if (!this.enabled) {
-      console.log('ℹ️ Notifications disabled (N8N_WEBHOOK_URL not set)');
-      return;
-    }
-    return n8n.notifyJobStarted(jobType, details);
+    return this.postEvent('job.started', { jobType, details });
   }
 
   /**
    * 자동화 작업 완료 알림
-   * Routes through n8n webhook -> Telegram
    */
   async notifyJobCompleted(jobType, result, duration) {
-    if (!this.enabled) {
-      console.log('ℹ️ Notifications disabled (N8N_WEBHOOK_URL not set)');
-      return;
-    }
-    return n8n.notifyJobCompleted(jobType, result, duration);
+    return this.postEvent('job.completed', { jobType, result, duration });
   }
 }
 

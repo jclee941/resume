@@ -93,7 +93,7 @@ describe('AutoApplier strategy methods', () => {
       expect(wantedRetryContent).toContain('WANTED_PLATFORM');
     });
 
-    test('jobkorea strategy uses correct n8n notification platform', () => {
+    test('jobkorea strategy uses correct automation notification platform', () => {
       const strategiesDir = path.join(
         __dirname,
         '../../../apps/job-server/src/auto-apply/strategies'
@@ -110,7 +110,7 @@ describe('AutoApplier strategy methods', () => {
       });
     });
 
-    test('saramin strategy uses correct n8n notification platform', () => {
+    test('saramin strategy uses correct automation notification platform', () => {
       const strategiesDir = path.join(
         __dirname,
         '../../../apps/job-server/src/auto-apply/strategies'
@@ -125,7 +125,7 @@ describe('AutoApplier strategy methods', () => {
       });
     });
 
-    test('linkedin strategy uses correct n8n notification platform', () => {
+    test('linkedin strategy uses correct automation notification platform', () => {
       const strategiesDir = path.join(
         __dirname,
         '../../../apps/job-server/src/auto-apply/strategies'

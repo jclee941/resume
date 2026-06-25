@@ -72,4 +72,4 @@ Medium - Current implementations work but have maintenance overhead.
 ## Decision
 
 Defer full consolidation to dedicated refactoring sprint.
-Current fixes (n8n references, error messages) address immediate issues.
+Current fixes (automation references, error messages) address immediate issues.

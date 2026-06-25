@@ -55,7 +55,7 @@
 > - **Stream 2**: 동일 src_ip가 짧은 시간(예: 5분) 안에 N개 이상 unique dest_port로 접속 (port scan 패턴)
 > - **Sequential Scenario**: Stream 1 이벤트가 발생한 src_ip가 Stream 2 패턴도 만족하면 high-priority alert
 >
-> 이 alert은 n8n으로 흘러가서 FortiManager API로 자동으로 source IP를 임시 차단 정책에 추가하고, Slack에 분석 요청을 보냅니다.
+> 이 alert은 알림 워크플로으로 흘러가서 FortiManager API로 자동으로 source IP를 임시 차단 정책에 추가하고, Slack에 분석 요청을 보냅니다.
 >
 > Cloudflare One에서는 동등 패턴을 Gateway HTTP 카테고리 로그 + Access deny 로그로 만들 수 있습니다. customer가 이미 Splunk를 쓰고 있다면 Logpush → Splunk HEC로 보내고 같은 correlation rule 모델을 그대로 옮길 수 있습니다.
 

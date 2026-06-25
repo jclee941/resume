@@ -1,6 +1,6 @@
 /**
  * Notification Service for Job Dashboard
- * Dual-channel support: Telegram Bot API + n8n Webhooks
+ * Dual-channel support: Telegram Bot API + automation webhooks
  * Features: Approval gates, action buttons, notification history, preferences
  *
  * This is the main notification service that consolidates all notification functionality.

@@ -1,6 +1,6 @@
 /**
  * Notification Service for Job Dashboard
- * Dual-channel support: Telegram Bot API + n8n Webhooks
+ * Dual-channel support: Telegram Bot API + automation webhooks
  * Features: Approval gates, action buttons, notification history, preferences
  */
 
@@ -15,7 +15,7 @@ import {
   checkRateLimit,
   recordMessageSent,
   sendTelegramNotification as deliverTelegramNotification,
-  triggerN8nWebhook,
+  triggerAutomationWebhook,
 } from './notifications/delivery.js';
 import {
   notify,
@@ -56,7 +56,7 @@ export class NotificationService {
     this.env = env;
     this.telegramToken = env?.TELEGRAM_BOT_TOKEN;
     this.telegramChatId = env?.TELEGRAM_CHAT_ID;
-    this.n8nWebhookUrl = env?.N8N_WEBHOOK_URL || env?.N8N_URL;
+    this.automationWebhookUrl = env?.AUTOMATION_WEBHOOK_URL || env?.WEBHOOK_URL;
     this.rateLimiter = new TokenBucketRateLimiter(env, {
       capacity: 20,
       refillRate: 20 / 60,
@@ -78,8 +78,8 @@ export class NotificationService {
       if (channel === NotificationChannel.TELEGRAM) {
         return !!(this.telegramToken && this.telegramChatId);
       }
-      if (channel === NotificationChannel.N8N) {
-        return !!this.n8nWebhookUrl;
+      if (channel === NotificationChannel.WEBHOOK) {
+        return !!this.automationWebhookUrl;
       }
       return true;
     });
@@ -133,8 +133,8 @@ export class NotificationService {
   async sendTelegramNotification(data, options = {}) {
     return deliverTelegramNotification(this, data, options);
   }
-  async triggerN8nWebhook(event, data) {
-    return triggerN8nWebhook(this, event, data);
+  async triggerAutomationWebhook(event, data) {
+    return triggerAutomationWebhook(this, event, data);
   }
   async handleTelegramCommand(command, args, message) {
     return handleTelegramCommand(this, command, args, message);

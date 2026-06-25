@@ -17,7 +17,7 @@ import (
 )
 
 type config struct {
-	serverURL, adminToken, telegramToken, telegramChatID, n8nWebhookURL, jobServerRoot string
+	serverURL, adminToken, telegramToken, telegramChatID, automationWebhookURL, jobServerRoot string
 }
 type result struct {
 	name, status, message string
@@ -35,12 +35,12 @@ type verifier struct {
 func loadConfig() config {
 	_, file, _, _ := runtime.Caller(0)
 	return config{
-		serverURL:      strings.TrimRight(firstNonEmpty(os.Getenv("JOB_SERVER_URL"), "http://localhost:3456"), "/"),
-		adminToken:     firstNonEmpty(os.Getenv("JOB_SERVER_ADMIN_TOKEN"), os.Getenv("ADMIN_TOKEN")),
-		telegramToken:  strings.TrimSpace(os.Getenv("TELEGRAM_BOT_TOKEN")),
-		telegramChatID: strings.TrimSpace(os.Getenv("TELEGRAM_CHAT_ID")),
-		n8nWebhookURL:  firstNonEmpty(os.Getenv("N8N_WEBHOOK_URL"), os.Getenv("N8N_URL")),
-		jobServerRoot:  filepath.Clean(filepath.Join(filepath.Dir(file), "..", "..", "..")),
+		serverURL:            strings.TrimRight(firstNonEmpty(os.Getenv("JOB_SERVER_URL"), "http://localhost:3456"), "/"),
+		adminToken:           firstNonEmpty(os.Getenv("JOB_SERVER_ADMIN_TOKEN"), os.Getenv("ADMIN_TOKEN")),
+		telegramToken:        strings.TrimSpace(os.Getenv("TELEGRAM_BOT_TOKEN")),
+		telegramChatID:       strings.TrimSpace(os.Getenv("TELEGRAM_CHAT_ID")),
+		automationWebhookURL: firstNonEmpty(os.Getenv("AUTOMATION_WEBHOOK_URL"), os.Getenv("WEBHOOK_URL")),
+		jobServerRoot:        filepath.Clean(filepath.Join(filepath.Dir(file), "..", "..", "..")),
 	}
 }
 

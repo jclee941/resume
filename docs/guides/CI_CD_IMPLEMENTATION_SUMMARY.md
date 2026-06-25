@@ -59,7 +59,7 @@
   - Core Web Vitals 측정
   - 성능 메트릭 수집
 - ✅ **Notify**: 배포 알림
-  - n8n webhook 호출
+  - automation webhook 호출
   - 배포 요약 생성
 
 **특징**:
@@ -166,7 +166,7 @@ CLOUDFLARE_ACCOUNT_ID     # Cloudflare 계정 ID
 ### GitHub Secrets (선택)
 
 ```bash
-N8N_WEBHOOK_URL          # n8n webhook URL
+AUTOMATION_WEBHOOK_URL          # automation webhook URL
 SLACK_WEBHOOK_URL        # Slack webhook URL
 CODECOV_TOKEN            # Codecov 토큰
 ```
@@ -233,7 +233,7 @@ git push origin master
 
 ### 5. 자동 알림
 
-- ✅ n8n webhook
+- ✅ automation webhook
 - ✅ Slack 알림
 - ✅ 배포 요약
 
@@ -253,7 +253,7 @@ Repository → Actions → 워크플로우 선택
 Dashboard → Workers → resume → Deployments
 ```
 
-### n8n
+### automation
 
 ```text
 Workflows → Deployment Webhook → Executions

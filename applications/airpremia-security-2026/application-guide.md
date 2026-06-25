@@ -46,7 +46,7 @@
 
 - AWS 보안 운영/보안성 검토: 금융보안데이터센터 및 클라우드 운영 경험, Cloudflare Workers 기반 포트폴리오 운영 경험으로 연결합니다.
 - 보안 솔루션 2개 이상 운영: FortiGate, IPS, WAF, NAC, DLP, Splunk SIEM 운영 경험을 강조합니다.
-- 보안 이슈 원인 분석과 조치: Splunk ES 탐지 룰 검토, FortiManager API 기반 정책 조회, n8n 알림 흐름 표준화 경험을 사용합니다.
+- 보안 이슈 원인 분석과 조치: Splunk ES 탐지 룰 검토, FortiManager API 기반 정책 조회, 알림 워크플로 알림 흐름 표준화 경험을 사용합니다.
 - 협업 역량: 금융위원회 본인가 심사와 금융감독원 감사 대응에서 개발팀·인프라팀·운영팀과 보안 요구사항을 문서화한 경험을 사용합니다.
 - 우대사항: Terraform, Ansible, SIEM, Kubernetes 보안 학습·홈랩 운영 경험을 보조 근거로 제시합니다.
 

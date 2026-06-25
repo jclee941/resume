@@ -205,7 +205,7 @@ validate → build → deploy → verify → lighthouse → notify
 
 ```yaml
 - 배포 정보 수집
-- n8n webhook 호출
+- automation webhook 호출
 - 배포 요약 생성
 ```
 
@@ -229,7 +229,7 @@ CLOUDFLARE_ACCOUNT_ID     # Cloudflare 계정 ID
 선택 Secrets:
 
 ```bash
-N8N_WEBHOOK_URL          # n8n webhook URL
+AUTOMATION_WEBHOOK_URL          # automation webhook URL
 SLACK_WEBHOOK_URL        # Slack webhook URL
 CODECOV_TOKEN            # Codecov 토큰
 ```
@@ -252,8 +252,8 @@ gh secret set CLOUDFLARE_API_TOKEN
 # Cloudflare Account ID
 gh secret set CLOUDFLARE_ACCOUNT_ID
 
-# n8n Webhook URL (선택)
-gh secret set N8N_WEBHOOK_URL
+# automation webhook URL (선택)
+gh secret set AUTOMATION_WEBHOOK_URL
 
 # Slack Webhook URL (선택)
 gh secret set SLACK_WEBHOOK_URL
@@ -434,12 +434,12 @@ Cloudflare Dashboard → Workers → resume → Deployments
 wrangler tail
 ```
 
-### n8n Webhook
+### automation webhook
 
 #### Webhook 로그 확인
 
 ```text
-n8n → Workflows → Deployment Webhook → Executions
+automation → Workflows → Deployment Webhook → Executions
 ```
 
 ---
