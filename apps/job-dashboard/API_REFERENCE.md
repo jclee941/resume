@@ -553,12 +553,12 @@ curl "https://resume.jclee.me/job/api/applications?status=applied&limit=20" \
 
 **Query Parameters**:
 
-| Parameter  | Type    | Default | Description                                    |
-| ---------- | ------- | ------- | ---------------------------------------------- |
+| Parameter  | Type    | Default | Description                                                                                          |
+| ---------- | ------- | ------- | ---------------------------------------------------------------------------------------------------- |
 | `status`   | string  | -       | Filter: pending, saved, applied, viewed, in_progress, interview, offer, rejected, withdrawn, expired |
-| `platform` | string  | -       | Filter: wanted, jobkorea, linkedin, saramin    |
-| `limit`    | integer | 20      | Max results per page                           |
-| `offset`   | integer | 0       | Pagination offset                              |
+| `platform` | string  | -       | Filter: wanted, jobkorea, linkedin, saramin                                                          |
+| `limit`    | integer | 20      | Max results per page                                                                                 |
+| `offset`   | integer | 0       | Pagination offset                                                                                    |
 
 **Response** (200 OK):
 

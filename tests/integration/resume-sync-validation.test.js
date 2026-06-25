@@ -97,9 +97,9 @@ describe('Resume Sync Validation', () => {
   test('import and sync commands extend base command', () => {
     const importCommand = readProjectFile('apps/job-server/src/tools/commands/import-command.js');
     const syncCommand = readProjectFile('apps/job-server/src/tools/commands/sync-command.js');
-    expect(importCommand.includes('extends BaseCommand') || importCommand.includes('BaseCommand')).toBe(
-      true
-    );
+    expect(
+      importCommand.includes('extends BaseCommand') || importCommand.includes('BaseCommand')
+    ).toBe(true);
     expect(syncCommand.includes('extends BaseCommand') || syncCommand.includes('BaseCommand')).toBe(
       true
     );

@@ -269,12 +269,12 @@ npm run sync:all
 
 루트의 `.env`는 `docker-compose.yml`에서 자동 로드됩니다. 주요 항목:
 
-| 변수 | 용도 | 예시 |
-| --- | --- | --- |
-| `NODE_ENV` | 런타임 모드 | `production` |
-| `PORT` | job-server 리스닝 포트 | `3000` |
-| `OP_*` | 1Password CLI 통합 토큰 | (시크릿) |
-| `CLOUDFLARE_*` | Wrangler/Workers 자격증명 | (시크릿) |
+| 변수           | 용도                      | 예시         |
+| -------------- | ------------------------- | ------------ |
+| `NODE_ENV`     | 런타임 모드               | `production` |
+| `PORT`         | job-server 리스닝 포트    | `3000`       |
+| `OP_*`         | 1Password CLI 통합 토큰   | (시크릿)     |
+| `CLOUDFLARE_*` | Wrangler/Workers 자격증명 | (시크릿)     |
 
 자세한 시크릿 카탈로그는 `apps/job-dashboard/SECRETS.md`를 참고하세요.
 
@@ -296,25 +296,25 @@ npm run sync:all
 
 루트 `package.json`에서 노출되는 주요 스크립트:
 
-| 스크립트 | 설명 |
-| --- | --- |
-| `npm run strip-exif` | `apps/portfolio`의 PNG/WebP에서 EXIF 제거 (exiftool 사용) |
-| `npm run sync:data` | SSoT 데이터 동기화 (`tools/scripts/utils/sync-resume-data.js`) |
-| `npm run sync:pptx` | 신한 PPTX 생성 (`tools/scripts/build/generate_shinhan_pptx.py`) |
-| `npm run sync:pdf` | 마스터 PDF 생성 (`tools/scripts/build/pdf-generator.go`) |
-| `npm run sync:all` | `sync:data` → `sync:pdf` → `sync:pptx` 체인 실행 |
-| `npm run op:run` | 1Password 시크릿을 환경변수로 주입하여 명령 실행 |
-| `npm run op:native:run` | 1Password 네이티브 런처로 명령 실행 |
-| `npm run op:seed:resume` | 1Password에 이력서 시크릿 시드 |
-| `npm run op:seed:sessions` | 세션 파일 시드 |
-| `npm run op:restore:sessions` | 세션 파일 복원 |
-| `npm run sync:proposals` | 제안서 동기화 CLI + Go 어플라이어 |
-| `npm run enrich:github` | GitHub 활동 기반 인리치먼트 (Go) |
-| `npm run enrich:skills` | 스킬 인리치먼트 (Go) |
-| `npm run enrich:ai` | AI 인리치먼트 (Go) |
-| `npm run enrich:all` | 3개 인리치먼트 직렬 실행 |
-| `npm run automate:ssot` | 동기화 + 빌드 + 타입체크 + Node 테스트 |
-| `npm run automate:full` | 동기화 + 린트 + 타입체크 + 전체 테스트 |
+| 스크립트                      | 설명                                                            |
+| ----------------------------- | --------------------------------------------------------------- |
+| `npm run strip-exif`          | `apps/portfolio`의 PNG/WebP에서 EXIF 제거 (exiftool 사용)       |
+| `npm run sync:data`           | SSoT 데이터 동기화 (`tools/scripts/utils/sync-resume-data.js`)  |
+| `npm run sync:pptx`           | 신한 PPTX 생성 (`tools/scripts/build/generate_shinhan_pptx.py`) |
+| `npm run sync:pdf`            | 마스터 PDF 생성 (`tools/scripts/build/pdf-generator.go`)        |
+| `npm run sync:all`            | `sync:data` → `sync:pdf` → `sync:pptx` 체인 실행                |
+| `npm run op:run`              | 1Password 시크릿을 환경변수로 주입하여 명령 실행                |
+| `npm run op:native:run`       | 1Password 네이티브 런처로 명령 실행                             |
+| `npm run op:seed:resume`      | 1Password에 이력서 시크릿 시드                                  |
+| `npm run op:seed:sessions`    | 세션 파일 시드                                                  |
+| `npm run op:restore:sessions` | 세션 파일 복원                                                  |
+| `npm run sync:proposals`      | 제안서 동기화 CLI + Go 어플라이어                               |
+| `npm run enrich:github`       | GitHub 활동 기반 인리치먼트 (Go)                                |
+| `npm run enrich:skills`       | 스킬 인리치먼트 (Go)                                            |
+| `npm run enrich:ai`           | AI 인리치먼트 (Go)                                              |
+| `npm run enrich:all`          | 3개 인리치먼트 직렬 실행                                        |
+| `npm run automate:ssot`       | 동기화 + 빌드 + 타입체크 + Node 테스트                          |
+| `npm run automate:full`       | 동기화 + 린트 + 타입체크 + 전체 테스트                          |
 
 > 참고 / Note — `package.json`의 스크립트 본문이 길어 잘릴 수 있습니다. 전체 목록은 루트 매니페스트를 직접 확인하세요.
 
@@ -365,13 +365,13 @@ node apps/job-dashboard/migrate-json-to-d1.cjs
 
 ## 테스트 / Testing
 
-| 영역 | 러너 | 설정 |
-| --- | --- | --- |
-| 단위 / 통합 (Node) | Jest | `jest.config.cjs` |
-| E2E (브라우저) | Playwright | `playwright.config.js` |
-| 타입 검사 | TypeScript | `tsconfig.base.json` |
-| 링크 무결성 | lychee | `lychee.toml` |
-| API 스펙 린트 | Redocly | `redocly.yaml` |
+| 영역               | 러너       | 설정                   |
+| ------------------ | ---------- | ---------------------- |
+| 단위 / 통합 (Node) | Jest       | `jest.config.cjs`      |
+| E2E (브라우저)     | Playwright | `playwright.config.js` |
+| 타입 검사          | TypeScript | `tsconfig.base.json`   |
+| 링크 무결성        | lychee     | `lychee.toml`          |
+| API 스펙 린트      | Redocly    | `redocly.yaml`         |
 
 자주 쓰는 명령:
 

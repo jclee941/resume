@@ -88,7 +88,9 @@ function withCompletePdf(entry, idx) {
 }
 
 function technologiesText(project) {
-  return Array.isArray(project.technologies) ? project.technologies.join(', ') : project.technologies;
+  return Array.isArray(project.technologies)
+    ? project.technologies.join(', ')
+    : project.technologies;
 }
 
 module.exports = {

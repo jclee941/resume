@@ -148,12 +148,7 @@ export async function runAutoApply({ request, env, clients }) {
   }
 }
 
-async function collectPlatformJobs({
-  clients,
-  activePlatforms,
-  searchKeywords,
-  searchResults,
-}) {
+async function collectPlatformJobs({ clients, activePlatforms, searchKeywords, searchResults }) {
   return searchPlatformJobs({
     clients,
     activePlatforms,

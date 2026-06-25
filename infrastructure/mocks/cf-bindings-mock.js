@@ -859,8 +859,9 @@ export class MockQueue {
   async sendBatch(batch) {
     for (const item of batch) {
       if (item && typeof item === 'object' && 'body' in item) {
-        // @ts-expect-error runtime guard handles shape
-        await this.send(item.body, { delaySeconds: item.delaySeconds || 0 });
+        const delaySeconds =
+          'delaySeconds' in item && typeof item.delaySeconds === 'number' ? item.delaySeconds : 0;
+        await this.send(item.body, { delaySeconds });
       } else {
         await this.send(item);
       }
