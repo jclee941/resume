@@ -121,6 +121,28 @@ describe('generateWebData → coverLetter (unsurfaced SSoT asset)', () => {
   });
 });
 
+describe('generateWebData → platformVariants (job platform sync metadata)', () => {
+  it('propagates SSoT platformVariants verbatim so JobKorea defaults do not drift', () => {
+    const out = generateWebData(ssot);
+
+    assert.deepEqual(out.platformVariants, ssot.platformVariants);
+    assert.equal(
+      out.platformVariants.jobkorea.defaultJobCode,
+      ssot.platformVariants.jobkorea.defaultJobCode
+    );
+  });
+});
+
+describe('generateWebData → content policy', () => {
+  it('does not emit concrete count metrics in generated project copy', () => {
+    const out = generateWebData(ssot, 'en');
+    const generatedText = JSON.stringify(out.projectsEn);
+
+    assert.doesNotMatch(generatedText, /\b\d[\d,]*\s+CSV\b/);
+    assert.doesNotMatch(generatedText, /\b\d[\d,]*\s+FortiGate\s+LogID/);
+  });
+});
+
 describe('generateWebData → resume[].stats (the ACTUAL static-card render path)', () => {
   // data-processor.js builds EN/JA static cards from projectDataEn.resume[] /
   // projectDataJa.resume[] (the `resume` array of each per-language data_*.json),
