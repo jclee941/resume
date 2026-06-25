@@ -138,9 +138,15 @@ describe('generateWebData → resume[].stats (the ACTUAL static-card render path
       ...ssot,
       careers: ssot.careers.map((c, i) => ({
         ...c,
-        company: ['ITCEN CTS Co., Ltd.', 'Gaonnuri Information System Co., Ltd.',
-          'Quantec Investment Management', 'Jointree Co., Ltd.',
-          'Metanet M Platform Co., Ltd.', 'MTData Co., Ltd.'][i] || `Company ${i}`,
+        company:
+          [
+            'ITCEN CTS Co., Ltd.',
+            'Gaonnuri Information System Co., Ltd.',
+            'Quantec Investment Management',
+            'Jointree Co., Ltd.',
+            'Metanet M Platform Co., Ltd.',
+            'MTData Co., Ltd.',
+          ][i] || `Company ${i}`,
       })),
     };
     const out = generateWebData(enSource, 'en');
