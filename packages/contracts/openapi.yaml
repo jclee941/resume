@@ -100,7 +100,19 @@ paths:
           in: query
           schema:
             type: string
-            enum: [pending, saved, applied, viewed, in_progress, interview, offer, rejected, withdrawn, expired]
+            enum:
+              [
+                pending,
+                saved,
+                applied,
+                viewed,
+                in_progress,
+                interview,
+                offer,
+                rejected,
+                withdrawn,
+                expired,
+              ]
         - name: limit
           in: query
           schema:
@@ -221,7 +233,19 @@ paths:
               properties:
                 status:
                   type: string
-                  enum: [pending, saved, applied, viewed, in_progress, interview, offer, rejected, withdrawn, expired]
+                  enum:
+                    [
+                      pending,
+                      saved,
+                      applied,
+                      viewed,
+                      in_progress,
+                      interview,
+                      offer,
+                      rejected,
+                      withdrawn,
+                      expired,
+                    ]
                 note:
                   type: string
                 notifyN8n:
@@ -891,7 +915,19 @@ components:
           $ref: '#/components/schemas/Job'
         status:
           type: string
-          enum: [pending, saved, applied, viewed, in_progress, interview, offer, rejected, withdrawn, expired]
+          enum:
+            [
+              pending,
+              saved,
+              applied,
+              viewed,
+              in_progress,
+              interview,
+              offer,
+              rejected,
+              withdrawn,
+              expired,
+            ]
         appliedAt:
           type: string
           format: date-time
@@ -973,7 +1009,19 @@ components:
           maxLength: 200
         status:
           type: string
-          enum: [pending, saved, applied, viewed, in_progress, interview, offer, rejected, withdrawn, expired]
+          enum:
+            [
+              pending,
+              saved,
+              applied,
+              viewed,
+              in_progress,
+              interview,
+              offer,
+              rejected,
+              withdrawn,
+              expired,
+            ]
         raw:
           type: object
 

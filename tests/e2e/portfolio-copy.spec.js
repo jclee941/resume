@@ -8,19 +8,14 @@ test.describe('Portfolio hiring copy', () => {
 
     const hero = page.locator('#hero');
     await expect(hero.getByText('보안 운영 · SRE · DevSecOps 검토 가능')).toBeVisible();
-    await expect(
-      hero.getByText('보안 인프라 경험을 실무 과제로 정리합니다.')
-    ).toBeVisible();
+    await expect(hero.getByText('보안 인프라 경험을 실무 과제로 정리합니다.')).toBeVisible();
     await expect(hero.getByText('채용 제안·면접 문의 환영')).toHaveCount(0);
     await expect(hero.getByText('거래소 보안 인프라 구축·운영')).toBeVisible();
     await expect(hero.getByRole('link', { name: '채용 논의' })).toHaveAttribute(
       'href',
       'mailto:qws941@kakao.com?subject=%EC%B1%84%EC%9A%A9%20%EC%A0%9C%EC%95%88%20%EB%98%90%EB%8A%94%20%EB%A9%B4%EC%A0%91%20%EB%AC%B8%EC%9D%98'
     );
-    await expect(hero.getByRole('link', { name: '경력 근거' })).toHaveAttribute(
-      'href',
-      '#resume'
-    );
+    await expect(hero.getByRole('link', { name: '경력 근거' })).toHaveAttribute('href', '#resume');
     await expect(hero.getByRole('link', { name: '프로젝트 근거' })).toHaveAttribute(
       'href',
       '#projects'

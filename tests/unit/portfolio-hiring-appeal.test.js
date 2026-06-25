@@ -17,9 +17,9 @@ describe('portfolio hiring appeal copy', () => {
     return Array.from(
       groupMatch[1].matchAll(/<a\s+[^>]*href="([^"]+)"[^>]*>\s*([^<]+?)\s*<\/a\s*>/g)
     ).map(([, href, label]) => ({
-        href,
-        label: label.trim(),
-      }));
+      href,
+      label: label.trim(),
+    }));
   };
 
   test('Korean hero gives recruiters a direct review-pack path', () => {

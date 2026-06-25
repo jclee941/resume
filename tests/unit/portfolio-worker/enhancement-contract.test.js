@@ -131,7 +131,9 @@ describe('FAANG framing: case-study senior narrative', () => {
 });
 
 describe('Project deep-dive architecture diagram accessibility', () => {
-  const overlay = read(path.join(PORTFOLIO, 'src', 'scripts', 'modules', 'project-deep-dive-overlay.js'));
+  const overlay = read(
+    path.join(PORTFOLIO, 'src', 'scripts', 'modules', 'project-deep-dive-overlay.js')
+  );
 
   test('architecture diagram is keyboard focusable and exposed as an image-like flow', () => {
     expect(overlay).toMatch(/class="architecture-diagram"[^`]*tabindex="0"[^`]*role="img"/);

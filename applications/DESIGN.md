@@ -8,19 +8,19 @@ A quiet security operations dossier. It should feel like a concise incident-resp
 
 ### Palette
 
-| Role | Token | Light | Dark | Usage |
-|------|-------|-------|------|-------|
-| Surface/primary | --surface-primary | #F7F4EF | #11100E | A4 paper background |
-| Surface/secondary | --surface-secondary | #FFFFFF | #1A1815 | Evidence panels |
-| Surface-muted | --surface-muted | #EEE8DE | #29241E | Summary bands |
-| Text/primary | --text-primary | #171613 | #F8F5EF | Name, headings, body |
-| Text/secondary | --text-secondary | #5B564E | #C8BFB2 | Metadata and supporting text |
-| Text/tertiary | --text-tertiary | #837A6F | #958A7D | Dates and quiet labels |
-| Border/default | --border-default | #D8D0C4 | #403A31 | Section separators |
-| Border/subtle | --border-subtle | #E8E1D7 | #2E2923 | Internal dividers |
-| Accent/primary | --accent-primary | #B15C18 | #D98232 | Security command rail, role label |
-| Accent/secondary | --accent-secondary | #2E5B4E | #66A088 | Trust/security tags |
-| Status/info | --status-info | #25324A | #8EA0C0 | Links and portfolio references |
+| Role              | Token               | Light   | Dark    | Usage                             |
+| ----------------- | ------------------- | ------- | ------- | --------------------------------- |
+| Surface/primary   | --surface-primary   | #F7F4EF | #11100E | A4 paper background               |
+| Surface/secondary | --surface-secondary | #FFFFFF | #1A1815 | Evidence panels                   |
+| Surface-muted     | --surface-muted     | #EEE8DE | #29241E | Summary bands                     |
+| Text/primary      | --text-primary      | #171613 | #F8F5EF | Name, headings, body              |
+| Text/secondary    | --text-secondary    | #5B564E | #C8BFB2 | Metadata and supporting text      |
+| Text/tertiary     | --text-tertiary     | #837A6F | #958A7D | Dates and quiet labels            |
+| Border/default    | --border-default    | #D8D0C4 | #403A31 | Section separators                |
+| Border/subtle     | --border-subtle     | #E8E1D7 | #2E2923 | Internal dividers                 |
+| Accent/primary    | --accent-primary    | #B15C18 | #D98232 | Security command rail, role label |
+| Accent/secondary  | --accent-secondary  | #2E5B4E | #66A088 | Trust/security tags               |
+| Status/info       | --status-info       | #25324A | #8EA0C0 | Links and portfolio references    |
 
 ### Rules
 
@@ -32,15 +32,15 @@ A quiet security operations dossier. It should feel like a concise incident-resp
 
 ### Scale
 
-| Level | Size | Weight | Line Height | Tracking | Usage |
-|-------|------|--------|-------------|----------|-------|
-| Display | 22pt | 800 | 1.05 | 0 | Candidate name |
-| H1 | 12pt | 800 | 1.2 | 0 | Primary role |
-| H2 | 8.4pt | 800 | 1.25 | 0.08em | Section labels |
-| H3 | 8.7pt | 800 | 1.25 | 0 | Role and project titles |
-| Body | 7.8pt | 400 | 1.42 | 0 | Resume body |
-| Body/sm | 7.1pt | 400 | 1.35 | 0 | Metadata |
-| Caption | 6.8pt | 700 | 1.3 | 0.04em | Tags and dates |
+| Level   | Size  | Weight | Line Height | Tracking | Usage                   |
+| ------- | ----- | ------ | ----------- | -------- | ----------------------- |
+| Display | 22pt  | 800    | 1.05        | 0        | Candidate name          |
+| H1      | 12pt  | 800    | 1.2         | 0        | Primary role            |
+| H2      | 8.4pt | 800    | 1.25        | 0.08em   | Section labels          |
+| H3      | 8.7pt | 800    | 1.25        | 0        | Role and project titles |
+| Body    | 7.8pt | 400    | 1.42        | 0        | Resume body             |
+| Body/sm | 7.1pt | 400    | 1.35        | 0        | Metadata                |
+| Caption | 6.8pt | 700    | 1.3         | 0.04em   | Tags and dates          |
 
 ### Font Stack
 
@@ -59,14 +59,14 @@ A quiet security operations dossier. It should feel like a concise incident-resp
 
 All spacing derives from a base of 4px.
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| --space-1 | 4px | Tight inline separation |
-| --space-2 | 8px | Compact list spacing |
-| --space-3 | 12px | Panel padding |
-| --space-4 | 16px | Section spacing |
-| --space-5 | 20px | Header group spacing |
-| --space-6 | 24px | Major vertical rhythm |
+| Token     | Value | Usage                   |
+| --------- | ----- | ----------------------- |
+| --space-1 | 4px   | Tight inline separation |
+| --space-2 | 8px   | Compact list spacing    |
+| --space-3 | 12px  | Panel padding           |
+| --space-4 | 16px  | Section spacing         |
+| --space-5 | 20px  | Header group spacing    |
+| --space-6 | 24px  | Major vertical rhythm   |
 
 ### Grid
 
@@ -101,9 +101,9 @@ All spacing derives from a base of 4px.
 
 ### Timing
 
-| Type | Duration | Easing | Usage |
-|------|----------|--------|-------|
-| Static | 0ms | none | Print/PDF application documents |
+| Type   | Duration | Easing | Usage                           |
+| ------ | -------- | ------ | ------------------------------- |
+| Static | 0ms      | none   | Print/PDF application documents |
 
 ### Rules
 
@@ -115,7 +115,7 @@ All spacing derives from a base of 4px.
 
 Use borders-only with tonal shifts. No shadows.
 
-| Type | Value | Usage |
-|------|-------|-------|
-| Default | 1px solid var(--border-default) | Major blocks |
-| Subtle | 1px solid var(--border-subtle) | Internal item separators |
+| Type    | Value                           | Usage                    |
+| ------- | ------------------------------- | ------------------------ |
+| Default | 1px solid var(--border-default) | Major blocks             |
+| Subtle  | 1px solid var(--border-subtle)  | Internal item separators |
