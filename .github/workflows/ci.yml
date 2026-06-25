@@ -37,7 +37,7 @@ jobs:
       - name: Setup Go (for wrangler secret scan)
         uses: actions/setup-go@v6
         with:
-          go-version: '1.24'
+          go-version: '1.25.0'
 
       - name: Wrangler config secret scan (SSOT-030)
         # Implements docs/security/wrangler-vars-vs-secrets.md.
@@ -245,7 +245,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v6
         with:
-          go-version: '1.24'
+          go-version: '1.25.0'
           cache: false
 
       - name: Build Go scripts
@@ -320,7 +320,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v6
         with:
-          go-version: '1.24'
+          go-version: '1.25.0'
 
       - name: Check env-schema drift vs .dev.vars.example (#35 / SSOT-031)
         # Implements docs/architecture/env-validation-plan.md Phase 4.
