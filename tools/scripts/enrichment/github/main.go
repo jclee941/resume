@@ -7,7 +7,6 @@ import (
 	"flag"
 	"fmt"
 	"net/http"
-	"strconv"
 	"strings"
 	"time"
 
@@ -30,10 +29,10 @@ type GitHubRepo struct {
 
 func main() {
 	var (
-		username   = flag.String("username", "", "GitHub username (default: from resume_data.json)")
-		minStars   = flag.Int("min-stars", 0, "Minimum stars to include a repo")
+		username     = flag.String("username", "", "GitHub username (default: from resume_data.json)")
+		minStars     = flag.Int("min-stars", 0, "Minimum stars to include a repo")
 		excludeForks = flag.Bool("exclude-forks", true, "Exclude forked repositories")
-		maxRepos   = flag.Int("max-repos", 20, "Maximum repositories to fetch")
+		maxRepos     = flag.Int("max-repos", 20, "Maximum repositories to fetch")
 	)
 	flag.Parse()
 
@@ -186,6 +185,7 @@ func generateProposals(root string, proposed []lib.ResumeProject) error {
 		if idx, exists := lib.FindExistingProject(resume.PersonalProjects, proj.Name); exists {
 			// Generate update proposal.
 			existing := resume.PersonalProjects[idx]
+			proj.ID = existing.ID
 			proj.DisplayOrder = existing.DisplayOrder
 
 			target := lib.ProposalTarget{
@@ -193,19 +193,20 @@ func generateProposals(root string, proposed []lib.ResumeProject) error {
 				Operation: "replace",
 			}
 			if err := lib.WriteProposal(root, enrichSource, fmt.Sprintf("update-%s", proj.Name), target, proj,
-				fmt.Sprintf("Updated from GitHub: %s, stars=%d", derefString(proj.GithubURL), extractStars(proj.Tagline))); err != nil {
+				fmt.Sprintf("Updated from GitHub: %s, stars=%d", lib.DerefString(proj.GithubURL), lib.ExtractStars(proj.Tagline))); err != nil {
 				return err
 			}
 			updatedCount++
 		} else {
 			// Generate add proposal.
+			proj.ID = lib.GitHubProjectID(proj.Name)
 			proj.DisplayOrder = nextOrder + i
 			target := lib.ProposalTarget{
 				Path:      "/personalProjects/-",
 				Operation: "add",
 			}
 			if err := lib.WriteProposal(root, enrichSource, fmt.Sprintf("add-%s", proj.Name), target, proj,
-				fmt.Sprintf("New project from GitHub: %s, stars=%d", derefString(proj.GithubURL), extractStars(proj.Tagline))); err != nil {
+				fmt.Sprintf("New project from GitHub: %s, stars=%d", lib.DerefString(proj.GithubURL), lib.ExtractStars(proj.Tagline))); err != nil {
 				return err
 			}
 			newCount++
@@ -234,23 +235,6 @@ func firstSentence(s string) string {
 		return strings.TrimSpace(s[:idx+1])
 	}
 	return s
-}
-
-func extractStars(tagline string) int {
-	// Tagline format: "Lang · ⭐ 42"
-	parts := strings.Split(tagline, "⭐")
-	if len(parts) < 2 {
-		return 0
-	}
-	s := strings.TrimSpace(parts[1])
-	n, _ := strconv.Atoi(s)
-	return n
-}
-func derefString(s *string) string {
-	if s == nil {
-		return ""
-	}
-	return *s
 }
 
 // go.mod stub: this file is intended to be run via `go run` from the repo root.
