@@ -6,8 +6,7 @@
     "phone": "010-5757-9592",
     "address": "京畿道 始興市（韓国）",
     "github": "https://github.com/jclee941",
-    "portfolio": "https://resume.jclee.me",
-    "profileStatement": "OA運用から証券取引所セキュリティ運用までを経験してきたセキュリティエンジニアです。2017年MT DataにてKAI(韓国航空宇宙産業)閉鎖網のLinuxサーバ手動パッチ・ファイアウォールルール運用を経験し、2018.11から11ヶ月間RHCSA・LPIC-1などの資格でLinuxの基礎を立て直しました。Metanet、JointreeにてAnsible・Python・NSX-T・Wazuhで自動化を本格化し、Quantec FSDCで金融監督対応、Gaonnuri・Nextradeの構築でFortiGate HA・FSC本認可審査を担当し、ITCEN CTS・Nextrade運用でSplunk ES・n8n・FortiManager API・Dockerによる自動検知・対応体制を構築・運用しました。現在は新しいセキュリティ・インフラの役割を探している求職中です。"
+    "portfolio": "https://resume.jclee.me"
   },
   "education": {
     "school": "漢陽サイバー大学",
@@ -79,10 +78,16 @@
   "current": {
     "status": "求職中",
     "availability": "2026.03〜、即時参画可",
-    "desiredRoles": ["セキュリティ基盤", "Security", "Observability", "自動化"]
+    "desiredRoles": [
+      "セキュリティ基盤",
+      "Security",
+      "Observability",
+      "自動化"
+    ]
   },
   "careers": [
     {
+      "id": "itcen-cts",
       "company": "(株)アイティセンCTS",
       "period": "2025.03 ~ 2026.02",
       "duration": "1年",
@@ -97,10 +102,17 @@
       "note": "アイティセンCTS所属、ネクストレード売買決済システム セキュリティ運用SMへ派遣",
       "projects": [
         {
+          "id": "nextrade-security-operations",
           "name": "ネクストレード セキュリティ運用",
           "description": "Splunk ESとFortiGate APIを活用したセキュリティ運用自動化\n• n8nワークフロー連携により、セキュリティイベント検知時にSlackへリアルタイム通知\n• FortiManager APIを利用したファイアウォールポリシー自動照会ツールを開発",
           "period": "2025.03 ~ 2026.02",
-          "techStack": ["Splunk ES", "FortiManager API", "n8n", "Python", "Docker"],
+          "techStack": [
+            "Splunk ES",
+            "FortiManager API",
+            "n8n",
+            "Python",
+            "Docker"
+          ],
           "achievements": [
             "手動ルール管理の手順を標準化するためSplunk ES検知ルールを設計・運用し、セキュリティイベント検知範囲を拡張",
             "イベント発生から担当者認知までの通知フローを標準化するため、n8n + Slack/SMS リアルタイム通知パイプラインを構築",
@@ -110,6 +122,7 @@
       ]
     },
     {
+      "id": "gaonnuri-information-system",
       "company": "(株)ガオンヌリ情報システム",
       "period": "2024.03 ~ 2025.02",
       "duration": "1年",
@@ -124,10 +137,17 @@
       "note": "ガオンヌリ情報システム所属、ネクストレード売買決済システム構築へ派遣",
       "projects": [
         {
+          "id": "nextrade-security-infrastructure",
           "name": "ネクストレード セキュリティ基盤構築",
           "description": "高可用性を前提とした証券売買システムのセキュリティアーキテクチャを設計\n• FGCP（FortiGate Clustering Protocol）ベースのActive-Passive HAを構成\n• Ansible Roleを活用し、セキュリティ機器の初期設定とポリシー配布を標準化",
           "period": "2024.03 ~ 2025.02",
-          "techStack": ["FortiGate", "FortiManager", "Ansible", "Python", "VMware"],
+          "techStack": [
+            "FortiGate",
+            "FortiManager",
+            "Ansible",
+            "Python",
+            "VMware"
+          ],
           "achievements": [
             "サービス継続性確保のためFortiGate FGCPアクティブ-パッシブHAセキュリティアーキテクチャを設計",
             "FSC本認可審査基準を充足するため、ネットワーク分離・エンドポイントセキュリティ統制を設計・文書化",
@@ -137,6 +157,7 @@
       ]
     },
     {
+      "id": "quantec-investment",
       "company": "Quantec投資一任",
       "period": "2022.08 ~ 2024.03",
       "duration": "1年7ヶ月",
@@ -151,10 +172,17 @@
       "note": "Quantec投資一任正社員、AI Trading Platformインフラ運用",
       "projects": [
         {
+          "id": "quantec-ai-trading-platform",
           "name": "Quantec AI Trading Platformインフラ運用",
           "description": "手動運用と監査対応の繰り返し作業を標準化するためPython基盤のインフラ自動化スクリプトを開発し、DBアクセス制御クエリをチューニングし、PBプラットフォームPOCローンチを支援しました。",
           "period": "2022.08 ~ 2024.03",
-          "techStack": ["Python", "Linux", "DLP", "PostgreSQL", "FSDC"],
+          "techStack": [
+            "Python",
+            "Linux",
+            "DLP",
+            "PostgreSQL",
+            "FSDC"
+          ],
           "achievements": [
             "金融監督院定期監査対応のためDLPポリシー運用体系を整備し、監査成果物を標準化",
             "DBアクセス制御クエリをチューニング",
@@ -164,6 +192,7 @@
       ]
     },
     {
+      "id": "jointree",
       "company": "(株)ジョイントリー",
       "period": "2021.09 ~ 2022.04",
       "duration": "8か月",
@@ -177,10 +206,17 @@
       "note": "ジョイントリー所属、国民大学校次世代情報システム構築へ派遣",
       "projects": [
         {
+          "id": "kookmin-next-system",
           "name": "国民大学校 次世代情報システム",
           "description": "SDNベースのネットワーク仮想化およびマイクロセグメンテーション実装。\n• VMware NSX-T分散ファイアウォール(DFW)を活用したサーバー間トラフィック制御。\n• 仮想スイッチ(VDS)レベルでのネットワークセキュリティポリシー集中管理。",
           "period": "2021.09 ~ 2022.04",
-          "techStack": ["VMware NSX-T", "vSphere", "NAC", "DLP", "Wazuh"],
+          "techStack": [
+            "VMware NSX-T",
+            "vSphere",
+            "NAC",
+            "DLP",
+            "Wazuh"
+          ],
           "achievements": [
             "東西トラフィックの盲点を解消するためNSX-Tマイクロセグメンテーションを設計・適用",
             "サーバ間通信の可視性と制御を確保するためNSX-T DFW分散ファイアウォールポリシーを設計",
@@ -190,6 +226,7 @@
       ]
     },
     {
+      "id": "metanet-mplatform",
       "company": "メタネットMプラットフォーム",
       "period": "2020.08 ~ 2021.08",
       "duration": "1年",
@@ -202,10 +239,17 @@
       "description": "コンタクトセンタの大規模在宅勤務環境にSSL VPN/NACを構築し、Ansible・Pythonで新規端末登録・スイッチ点検を自動化(NACポリシー展開をAnsibleで自動化)。",
       "projects": [
         {
+          "id": "contact-center-remote-work",
           "name": "コンタクトセンター リモートワーク基盤",
           "description": "大規模リモートアクセス向けVPNインフラ設計および自動化。\n• PythonスクリプトとAnsibleを連携した大規模サーバー設定の同期。\n• VPNセッション監視および異常アクセス検知ダッシュボードの構築。",
           "period": "2020.08 ~ 2021.08",
-          "techStack": ["Ansible", "Python", "VPN", "NAC", "FortiGate"],
+          "techStack": [
+            "Ansible",
+            "Python",
+            "VPN",
+            "NAC",
+            "FortiGate"
+          ],
           "achievements": [
             "手動設定の手動設定手順を標準化するためAnsibleプレイブックを設計",
             "新規端末登録の新規端末登録手順を自動化するためNACポリシー自動化スクリプトを開発",
@@ -215,6 +259,7 @@
       ]
     },
     {
+      "id": "mtdata",
       "company": "(株)エムティデータ",
       "period": "2018.10 ~ 2019.10",
       "duration": "1年",
@@ -228,10 +273,16 @@
       "note": "エムティデータ所属、韓国航空宇宙産業(KAI) IT インフラ現場運用へ派遣",
       "projects": [
         {
+          "id": "kai-infrastructure-operations",
           "name": "KAI インフラ運用",
           "description": "閉域網セキュリティインフラの安定的可用性確保。\n• サーバーシステムログの定期分析によるハードウェア障害兆候の事前把握。\n• 内部セキュリティ監査基準に基づくシステム設定セキュリティガイドラインの遵守。",
           "period": "2018.10 ~ 2019.10",
-          "techStack": ["Linux", "Bash", "Firewall", "WSUS"],
+          "techStack": [
+            "Linux",
+            "Bash",
+            "Firewall",
+            "WSUS"
+          ],
           "achievements": [
             "閉域網環境の制約下でLinuxサーバ可用性を維持",
             "未使用ルールによる未使用ルールを整理するためファイアウォールポリシーを再設計",
@@ -243,46 +294,73 @@
   ],
   "projects": [
     {
+      "id": "nextrade-security-operations",
       "period": "2025.03 ~ 2026.02",
       "name": "ネクストレード セキュリティ運用",
       "client": "ネクストレード",
-      "technologies": ["Python", "Splunk", "n8n", "Fortinet"],
+      "technologies": [
+        "Python",
+        "Splunk",
+        "n8n",
+        "Fortinet"
+      ],
       "os": "Linux, Docker",
       "role": "セキュリティ運用担当",
       "description": "Splunk ESとFortiGate APIを活用したセキュリティ運用自動化\n• n8nワークフロー連携により、セキュリティイベント検知時にSlackへリアルタイム通知\n• FortiManager APIを利用したファイアウォールポリシー自動照会ツールを開発"
     },
     {
+      "id": "nextrade-security-infrastructure",
       "period": "2024.03 ~ 2025.02",
       "name": "ネクストレード セキュリティ基盤構築",
       "client": "ネクストレード",
-      "technologies": ["Python", "FortiManager API", "Ansible"],
+      "technologies": [
+        "Python",
+        "FortiManager API",
+        "Ansible"
+      ],
       "os": "Linux, VMware",
       "role": "セキュリティ基盤設計",
       "description": "高可用性を前提とした証券売買システムのセキュリティアーキテクチャを設計\n• FGCP（FortiGate Clustering Protocol）ベースのActive-Passive HAを構成\n• Ansible Roleを活用し、セキュリティ機器の初期設定とポリシー配布を標準化"
     },
     {
+      "id": "kookmin-next-system",
       "period": "2021.09 ~ 2022.04",
       "name": "国民大学 次世代情報システム",
       "client": "国民大学校",
-      "technologies": ["VMware NSX-T", "Firewall", "NAC"],
+      "technologies": [
+        "VMware NSX-T",
+        "Firewall",
+        "NAC"
+      ],
       "os": "Linux, vSphere",
       "role": "ネットワーク仮想化",
       "description": "SDNベースのネットワーク仮想化とマイクロセグメンテーションを実装\n• VMware NSX-T分散ファイアウォール（DFW）でサーバー間トラフィックを制御\n• VDSレベルでネットワークセキュリティポリシーを一元管理"
     },
     {
+      "id": "contact-center-remote-work",
       "period": "2020.08 ~ 2021.08",
       "name": "コンタクトセンター 在宅勤務インフラ",
       "client": "メタネットMプラットフォーム",
-      "technologies": ["Ansible", "Python", "VPN", "NAC"],
+      "technologies": [
+        "Ansible",
+        "Python",
+        "VPN",
+        "NAC"
+      ],
       "os": "Linux",
       "role": "在宅勤務インフラ",
       "description": "大規模リモート接続向けVPNインフラを設計・自動化\n• PythonとAnsible連携で500台超のサーバー設定を同期\n• VPNセッション監視と異常アクセス検知ダッシュボードを構築"
     },
     {
+      "id": "kai-infrastructure-operations",
       "period": "2018.10 ~ 2019.10",
       "name": "KAIインフラ運用",
       "client": "韓国航空宇宙産業（KAI）",
-      "technologies": ["Linux", "Bash", "Firewall"],
+      "technologies": [
+        "Linux",
+        "Bash",
+        "Firewall"
+      ],
       "os": "Linux",
       "role": "システム運用",
       "description": "閉域網セキュリティ基盤の安定稼働を確保\n• サーバーログの定期分析でハードウェア障害兆候を先行把握\n• 内部監査基準に沿ってシステム設定ガイドラインを遵守"
@@ -295,6 +373,7 @@
   },
   "certifications": [
     {
+      "id": "ccnp",
       "name": "CCNP",
       "issuer": "Cisco Systems",
       "date": "2020.08",
@@ -305,6 +384,7 @@
       "note": "更新予定 — CCNP SecurityまたはCCIE学習中"
     },
     {
+      "id": "rhcsa",
       "name": "RHCSA",
       "issuer": "Red Hat",
       "date": "2019.01",
@@ -315,6 +395,7 @@
       "note": "更新予定 — CKA/CKS (Kubernetes) 学習優先"
     },
     {
+      "id": "comptia-linux-plus",
       "name": "CompTIA Linux+",
       "issuer": "CompTIA",
       "date": "2019.02",
@@ -324,6 +405,7 @@
       "status": "active"
     },
     {
+      "id": "lpic-level-1",
       "name": "LPIC Level 1",
       "issuer": "Linux Professional Institute",
       "date": "2019.02",
@@ -333,6 +415,7 @@
       "status": "active"
     },
     {
+      "id": "office-automation-industrial-engineer",
       "name": "事務自動化産業技士（Office Automation Industrial Engineer）",
       "issuer": "韓国産業人材公団 (Human Resources Development Service of Korea)",
       "date": "2019.12",
@@ -342,6 +425,7 @@
       "status": "active"
     },
     {
+      "id": "linux-master-level-2",
       "name": "リナックスマスター2級（Linux Master Level 2）",
       "issuer": "韓国情報通信振興協会 (Korea Association for ICT Promotion)",
       "date": "2019.01",
@@ -351,6 +435,7 @@
       "status": "active"
     },
     {
+      "id": "cks",
       "name": "Certified Kubernetes Security Specialist (CKS)",
       "issuer": "CNCF",
       "date": null,
@@ -597,10 +682,17 @@
   },
   "personalProjects": [
     {
+      "id": "observability-platform",
       "name": "Observability Platform",
       "period": "2024.06 ~ 現在",
       "description": "ホームラボインフラのメトリクスとログがサービスごとに分散し、障害発生時の原因究明に時間がかかっていました。 Prometheus node_exporterでProxmox VM/CTメトリクスを収集し、Loki Promtailでログを取り込み、Grafanaダッシュボード定義をコード（Grafana-as-code）で管理することでIaC再現可能にしました。 Grafana ExploreでPromQLとLogQLを交差クエリし、メトリクスとログを単一画面で分析できる環境を運用しています。",
-      "technologies": ["Grafana", "Prometheus", "Loki", "Blackbox Exporter", "Docker"],
+      "technologies": [
+        "Grafana",
+        "Prometheus",
+        "Loki",
+        "Blackbox Exporter",
+        "Docker"
+      ],
       "icon": "📊",
       "tagline": "監視プラットフォーム",
       "language": "PromQL",
@@ -610,10 +702,15 @@
       "displayOrder": 2
     },
     {
+      "id": "security-alert-system",
       "name": "Security Alert System",
       "period": "2025.01 ~ 現在",
       "description": "FortiGateセキュリティイベントが装置syslogとSplunkに分散し、イベント発生から担当者認知までに時間がかかっていました。 Splunk Saved SearchとWebhookを連携し、セキュリティイベント発生時にSlack/Telegramへ即時通知する体制を構築しました。 セキュリティイベント認知・分類・通知フローを標準化し、担当者応答フローを標準化しました。",
-      "technologies": ["Splunk", "Python", "Slack"],
+      "technologies": [
+        "Splunk",
+        "Python",
+        "Slack"
+      ],
       "icon": "🔔",
       "tagline": "セキュリティアラート自動化",
       "language": "Python",
@@ -623,10 +720,16 @@
       "displayOrder": 3
     },
     {
+      "id": "ip-blacklist-platform",
       "name": "IP Blacklist Platform",
       "period": "2024.12 ~ 現在",
       "description": "脅威インテリジェンスフィードが複数の外部ソース（AbuseIPDB、Emerging Threats、AlienVault OTX等）に分散し、悪性IP分析時にソースごとに個別照会が必要でした。 Flask Blueprintsでソース別アダプタを構造化し、SQLAlchemy + Alembicマイグレーションでスキーマバージョンを管理。Next.jsフロントエンドでIPごとの信頼度・頻度・分布を交差比較可能にしました。 複数の脅威フィードを再現可能なパイプラインから一元的に照会・交差分析できるツールとして運用しています。",
-      "technologies": ["JavaScript", "Flask", "PostgreSQL", "Python"],
+      "technologies": [
+        "JavaScript",
+        "Flask",
+        "PostgreSQL",
+        "Python"
+      ],
       "icon": "🚫",
       "tagline": "脅威インテリジェンス",
       "language": "JavaScript",
@@ -636,10 +739,16 @@
       "displayOrder": 5
     },
     {
+      "id": "hycu-fsds-autonomous-driving",
       "name": "HYCU FSDS自律走行",
       "period": "2025.11 ~ 2026.02",
       "description": "Formula Student Driverless Simulator環境でコーン認識と走行制御を統合運用する必要がありました。 ROSベースの認識・制御ノードをDockerコンテナに統合し、AirSimシミュレーション環境で検証しました。 漢陽サイバー大学校自律走行コンテストに参加しました。",
-      "technologies": ["Python", "ROS", "Docker", "AirSim"],
+      "technologies": [
+        "Python",
+        "ROS",
+        "Docker",
+        "AirSim"
+      ],
       "icon": "🏎️",
       "tagline": "自律走行シミュレーション",
       "url": "https://github.com/jclee941/hycu_fsds",
@@ -650,10 +759,16 @@
       "displayOrder": 11
     },
     {
+      "id": "resume-portfolio",
       "name": "Resume Portfolio",
       "period": "2024.01 ~ 現在",
       "description": "経歴・プロジェクト・運用指標が履歴書・PDF・GitHubに分散し、採用担当者が強みを素早く把握しにくい状態でした。 Cloudflare Workers Edgeに単一SSoTベースの履歴書サイトを構築し、MCP自動化ツール・自動応募パイプラインをmonorepoに統合しました。 履歴書・志望動機生成・自動応募・可観測性を単一monorepoで運用しています。 ← このサイトは Cloudflare Workers で稼働しています (edge runtime, バンドル)。",
-      "technologies": ["Cloudflare Workers", "HTML/CSS", "JSON-LD SEO", "Grafana Loki"],
+      "technologies": [
+        "Cloudflare Workers",
+        "HTML/CSS",
+        "JSON-LD SEO",
+        "Grafana Loki"
+      ],
       "icon": "⚡",
       "tagline": "ポートフォリオプラットフォーム",
       "language": "JavaScript",
@@ -671,6 +786,7 @@
       "displayOrder": 1
     },
     {
+      "id": "terraform-homelab-iac",
       "name": "Terraform Homelab IaC",
       "period": "2024.06 ~ 現在",
       "githubUrl": "https://github.com/jclee941/terraform",
@@ -681,11 +797,18 @@
         "クラスタクラスタ再構築手順の自動化のための自動プロビジョニング",
         "IaC品質管理のためのCI自動検証パイプライン"
       ],
-      "technologies": ["Terraform", "Proxmox VE", "Cloudflare", "Helm", "k3s"],
+      "technologies": [
+        "Terraform",
+        "Proxmox VE",
+        "Cloudflare",
+        "Helm",
+        "k3s"
+      ],
       "featured": true,
       "displayOrder": 4
     },
     {
+      "id": "safetywallet-cf-workers-pwa",
       "name": "SafetyWallet (CF Workers PWA)",
       "period": "2026.01 ~ 2026.04",
       "githubUrl": "https://github.com/jclee941/safetywallet",
@@ -696,12 +819,19 @@
         "ネットワーク制約環境でもマニュアルアクセス可能にしたオフライン対応",
         "権限分離とセッションセキュリティのためのRBAC + JWT設計"
       ],
-      "technologies": ["Cloudflare Workers", "TypeScript", "Hono", "Drizzle ORM", "D1"],
+      "technologies": [
+        "Cloudflare Workers",
+        "TypeScript",
+        "Hono",
+        "Drizzle ORM",
+        "D1"
+      ],
       "featured": false,
       "displayOrder": 7,
       "language": "TypeScript"
     },
     {
+      "id": "ai-github-pr-reviewer",
       "name": "AI GitHub PR Reviewer",
       "period": "2026.03 ~ 現在",
       "githubUrl": "https://github.com/jclee941/pr-agent",
@@ -712,11 +842,17 @@
         "PRレビュー通知フローの自動化のためのWebhookベースの即時通知",
         "サービス中断のないデプロイのためのEdge無停止デプロイ設計"
       ],
-      "technologies": ["TypeScript", "Cloudflare Workers", "AI/LLM", "GitHub API"],
+      "technologies": [
+        "TypeScript",
+        "Cloudflare Workers",
+        "AI/LLM",
+        "GitHub API"
+      ],
       "featured": true,
       "displayOrder": 6
     },
     {
+      "id": "bug-bounty-recon-toolkit",
       "name": "Bug Bounty Recon Toolkit",
       "period": "2025.10 ~ 現在",
       "githubUrl": "https://github.com/jclee941/bug",
@@ -727,7 +863,13 @@
         "定期偵察と担当者通知連携のためのワークフロー",
         "検知結果をMITREフレームワークで整列し、リスク判断を支援"
       ],
-      "technologies": ["JavaScript", "Subfinder", "httpx", "Nuclei", "Go"],
+      "technologies": [
+        "JavaScript",
+        "Subfinder",
+        "httpx",
+        "Nuclei",
+        "Go"
+      ],
       "featured": false,
       "displayOrder": 8,
       "language": "JavaScript"
@@ -735,10 +877,17 @@
   ],
   "ossContributions": [
     {
+      "id": "resume-portfolio",
       "name": "resume-portfolio",
       "url": "https://github.com/jclee941/resume",
       "description": "履歴書自動化モノレポ — Cloudflare Worker ポートフォリオ、自動応募パイプライン（Wanted/JobKorea）、AI 自己紹介書生成、MCP自動化ツール",
-      "techStack": ["TypeScript", "Cloudflare Workers", "Playwright", "n8n", "Elasticsearch"],
+      "techStack": [
+        "TypeScript",
+        "Cloudflare Workers",
+        "Playwright",
+        "n8n",
+        "Elasticsearch"
+      ],
       "role": "個人開発"
     }
   ],
@@ -767,12 +916,14 @@
   ],
   "infrastructure": [
     {
+      "id": "proxmox-ve",
       "icon": "🖥️",
       "title": "Proxmox VE",
       "description": "仮想化プラットフォーム（8 VM/CT運用: 3 VM + 5 LXC）",
       "status": "running"
     },
     {
+      "id": "grafana-prometheus",
       "icon": "📊",
       "title": "Grafana + Prometheus",
       "description": "Observabilityスタック（メトリクス収集/可視化）",
@@ -780,6 +931,7 @@
       "url": "https://grafana.jclee.me"
     },
     {
+      "id": "elk-stack",
       "icon": "🔍",
       "title": "ELK Stack",
       "description": "ログ収集/分析/可視化（Elasticsearch + Kibana）",
@@ -787,36 +939,42 @@
       "url": "https://elk.jclee.me"
     },
     {
+      "id": "traefik",
       "icon": "🌐",
       "title": "Traefik",
       "description": "リバースプロキシ / Ingress",
       "status": "running"
     },
     {
+      "id": "supabase",
       "icon": "🗄️",
       "title": "Supabase",
       "description": "BaaS（PostgreSQL + Auth）",
       "status": "running"
     },
     {
+      "id": "minio",
       "icon": "💾",
       "title": "MinIO",
       "description": "オブジェクトストレージ / キャッシュ",
       "status": "running"
     },
     {
+      "id": "mcp-server-hub",
       "icon": "🤖",
       "title": "MCP Server Hub",
       "description": "AIエージェントツールサーバー（17 MCP）",
       "status": "running"
     },
     {
+      "id": "onepassword",
       "icon": "🔐",
       "title": "1Password",
       "description": "シークレット管理 / SSH・CLI統合",
       "status": "running"
     },
     {
+      "id": "cloudflare-workers",
       "icon": "⚡",
       "title": "Cloudflare Workers",
       "description": "Edge ランタイム / グローバル配信 / health-check 検証済み",
@@ -824,12 +982,21 @@
       "url": "https://resume.jclee.me"
     },
     {
+      "id": "n8n",
+      "icon": "🔄",
+      "title": "n8n",
+      "description": "履歴書同期、求人自動化、監視運用のワークフロー自動化。",
+      "status": "運用中"
+    },
+    {
+      "id": "terraform",
       "icon": "🏗️",
       "title": "Terraform",
       "description": "IaC（DNS/Workers/Proxmox）",
       "status": "running"
     },
     {
+      "id": "github-actions-runner",
       "icon": "🏃",
       "title": "GitHub Actions Runner",
       "description": "Self-hosted CI/CD",
@@ -848,14 +1015,22 @@
   "availability": "求職中 - 2026.03〜、即時参画可",
   "awards": [
     {
+      "id": "autonomous-driving-competition-excellence",
       "name": "自律走行コンテスト優秀賞",
       "organization": "漢陽サイバー大学校",
       "year": "2026"
     }
   ],
   "hope": {
-    "locations": ["ソウル"],
-    "roles": ["セキュリティ基盤", "Security", "Observability", "自動化"]
+    "locations": [
+      "ソウル"
+    ],
+    "roles": [
+      "セキュリティ基盤",
+      "Security",
+      "Observability",
+      "自動化"
+    ]
   },
   "platformVariants": {
     "wanted": {

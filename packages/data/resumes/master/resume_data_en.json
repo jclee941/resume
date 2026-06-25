@@ -79,10 +79,16 @@
   "current": {
     "status": "Open to work",
     "availability": "Available from 2026.03, immediate start possible",
-    "desiredRoles": ["Security Infrastructure", "Security", "Observability", "Automation"]
+    "desiredRoles": [
+      "Security Infrastructure",
+      "Security",
+      "Observability",
+      "Automation"
+    ]
   },
   "careers": [
     {
+      "id": "itcen-cts",
       "company": "ITCEN CTS Co., Ltd.",
       "period": "2025.03 ~ 2026.02",
       "duration": "1 year",
@@ -97,10 +103,17 @@
       "note": "ITCEN CTS employee, dispatched to Nextrade Trading System Security Operations SM",
       "projects": [
         {
+          "id": "nextrade-security-operations",
           "name": "Nextrade Security Operations",
           "description": "Automated security operations with Splunk ES and FortiGate APIs\n• Integrated n8n workflows to deliver real-time Slack alerts when security events are detected\n• Built an automated firewall policy lookup tool using FortiManager API",
           "period": "2025.03 ~ 2026.02",
-          "techStack": ["Splunk ES", "FortiManager API", "n8n", "Python", "Docker"],
+          "techStack": [
+            "Splunk ES",
+            "FortiManager API",
+            "n8n",
+            "Python",
+            "Docker"
+          ],
           "achievements": [
             "Standardized manual rule-management workflows by designing and operating Splunk ES detection rules, expanding security event coverage",
             "Standardized operator notification flow by building an n8n + Slack/SMS real-time alert pipeline",
@@ -111,6 +124,7 @@
       "continuousEngagement": "NextTrade Trading System (2024.03~2026.02 continuous engagement, build → operate)"
     },
     {
+      "id": "gaonnuri-information-system",
       "company": "Gaonnuri Information System Co., Ltd.",
       "period": "2024.03 ~ 2025.02",
       "duration": "1 year",
@@ -125,10 +139,17 @@
       "note": "Gaonnuri Information System employee, dispatched to Nextrade Trading System construction",
       "projects": [
         {
+          "id": "nextrade-security-infrastructure",
           "name": "Nextrade Security Infrastructure Build",
           "description": "Designed a high-availability security architecture for a securities trading platform\n• Implemented Active-Passive HA with FGCP (FortiGate Clustering Protocol)\n• Standardized initial device setup and policy deployment with reusable Ansible roles",
           "period": "2024.03 ~ 2025.02",
-          "techStack": ["FortiGate", "FortiManager", "Ansible", "Python", "VMware"],
+          "techStack": [
+            "FortiGate",
+            "FortiManager",
+            "Ansible",
+            "Python",
+            "VMware"
+          ],
           "achievements": [
             "Designed FortiGate FGCP active-passive HA security architecture to ensure service continuity",
             "Designed and documented network segmentation and endpoint security controls to meet FSC main-license review criteria",
@@ -139,6 +160,7 @@
       "continuousEngagement": "NextTrade Trading System (2024.03~2026.02 continuous engagement, build → operate)"
     },
     {
+      "id": "quantec-investment",
       "company": "Quantec Investment Management",
       "period": "2022.08 ~ 2024.03",
       "duration": "1 year 7 months",
@@ -153,10 +175,17 @@
       "note": "Full-time at Quantec Investment Management, AI Trading Platform infrastructure operations",
       "projects": [
         {
+          "id": "quantec-ai-trading-platform",
           "name": "Quantec Investment Management AI Trading Platform Infrastructure Operations",
           "description": "Developed Python automation scripts to standardize recurring operational and audit-response workflows, and tuned PostgreSQL access-control queries to support the PB platform POC launch.",
           "period": "2022.08 ~ 2024.03",
-          "techStack": ["Python", "Linux", "DLP", "PostgreSQL", "FSDC"],
+          "techStack": [
+            "Python",
+            "Linux",
+            "DLP",
+            "PostgreSQL",
+            "FSDC"
+          ],
           "achievements": [
             "Refined DLP policy operations and standardized audit deliverables for FSS regular audits",
             "Tuned PostgreSQL DB access-control queries to reduce query-planning overhead",
@@ -166,6 +195,7 @@
       ]
     },
     {
+      "id": "jointree",
       "company": "Jointree Co., Ltd.",
       "period": "2021.09 ~ 2022.04",
       "duration": "8 months",
@@ -179,10 +209,17 @@
       "note": "Jointree employee, dispatched to Kookmin University Next-Gen Information System project",
       "projects": [
         {
+          "id": "kookmin-next-system",
           "name": "Kookmin University Next-Generation Information System",
           "description": "SDN-based network virtualization and microsegmentation.\n• Server-to-server traffic control via VMware NSX-T Distributed Firewall (DFW).\n• Centralized network security policies at the virtual switch (VDS) layer.",
           "period": "2021.09 ~ 2022.04",
-          "techStack": ["VMware NSX-T", "vSphere", "NAC", "DLP", "Wazuh"],
+          "techStack": [
+            "VMware NSX-T",
+            "vSphere",
+            "NAC",
+            "DLP",
+            "Wazuh"
+          ],
           "achievements": [
             "Designed and applied NSX-T microsegmentation to eliminate east-west traffic blind spots",
             "Designed NSX-T DFW distributed firewall policies for server-to-server visibility and control",
@@ -192,6 +229,7 @@
       ]
     },
     {
+      "id": "metanet-mplatform",
       "company": "Metanet M Platform Co., Ltd.",
       "period": "2020.08 ~ 2021.08",
       "duration": "1 year",
@@ -204,10 +242,17 @@
       "description": "Solved server configuration consistency and remote-access visibility for a large-scale contact-center remote-work environment by building Python and Ansible automation, and operated FortiGate VPN infrastructure for new contact-center sites.",
       "projects": [
         {
+          "id": "contact-center-remote-work",
           "name": "Contact Center Remote-Work Infrastructure",
           "description": "VPN infrastructure design and automation for large-scale remote access.\n• Synchronized large-scale server configurations via Python scripts and Ansible.\n• Built VPN session monitoring and abnormal-access detection dashboards.",
           "period": "2020.08 ~ 2021.08",
-          "techStack": ["Ansible", "Python", "VPN", "NAC", "FortiGate"],
+          "techStack": [
+            "Ansible",
+            "Python",
+            "VPN",
+            "NAC",
+            "FortiGate"
+          ],
           "achievements": [
             "Designed Ansible playbooks to standardize manual configuration workflows",
             "Developed NAC policy automation scripts to eliminate repetitive new-terminal registration",
@@ -217,6 +262,7 @@
       ]
     },
     {
+      "id": "mtdata",
       "company": "MTData Co., Ltd.",
       "period": "2018.10 ~ 2019.10",
       "duration": "1 year",
@@ -230,10 +276,16 @@
       "note": "MTData employee, dispatched to Korea Aerospace Industries (KAI) IT infrastructure field operations",
       "projects": [
         {
+          "id": "kai-infrastructure-operations",
           "name": "KAI Infrastructure Operations",
           "description": "Reliable availability of closed-network security infrastructure.\n• Proactive hardware-failure detection via periodic system log analysis.\n• Compliance with internal security audit standards and configuration guidelines.",
           "period": "2018.10 ~ 2019.10",
-          "techStack": ["Linux", "Bash", "Firewall", "WSUS"],
+          "techStack": [
+            "Linux",
+            "Bash",
+            "Firewall",
+            "WSUS"
+          ],
           "achievements": [
             "Sustained Linux server availability under closed-network constraints",
             "Redesigned firewall policies to remove unused-rule security risk",
@@ -245,46 +297,73 @@
   ],
   "projects": [
     {
+      "id": "nextrade-security-operations",
       "period": "2025.03 ~ 2026.02",
       "name": "Nextrade Security Operations",
       "client": "Nextrade",
-      "technologies": ["Python", "Splunk", "n8n", "Fortinet"],
+      "technologies": [
+        "Python",
+        "Splunk",
+        "n8n",
+        "Fortinet"
+      ],
       "os": "Linux, Docker",
       "role": "Security Operations Engineer",
       "description": "Automated security operations with Splunk ES and FortiGate APIs\n• Integrated n8n workflows to deliver real-time Slack alerts when security events are detected\n• Built an automated firewall policy lookup tool using FortiManager API"
     },
     {
+      "id": "nextrade-security-infrastructure",
       "period": "2024.03 ~ 2025.02",
       "name": "Nextrade Security Infrastructure Build",
       "client": "Nextrade",
-      "technologies": ["Python", "FortiManager API", "Ansible"],
+      "technologies": [
+        "Python",
+        "FortiManager API",
+        "Ansible"
+      ],
       "os": "Linux, VMware",
       "role": "Security Infrastructure Design",
       "description": "Designed a high-availability security architecture for a securities trading platform\n• Implemented Active-Passive HA with FGCP (FortiGate Clustering Protocol)\n• Standardized initial device setup and policy deployment with reusable Ansible roles"
     },
     {
+      "id": "kookmin-next-system",
       "period": "2021.09 ~ 2022.04",
       "name": "Kookmin University Next-Generation Information System",
       "client": "Kookmin University",
-      "technologies": ["VMware NSX-T", "Firewall", "NAC"],
+      "technologies": [
+        "VMware NSX-T",
+        "Firewall",
+        "NAC"
+      ],
       "os": "Linux, vSphere",
       "role": "Network Virtualization",
       "description": "Implemented SDN-based network virtualization and micro-segmentation\n• Controlled east-west traffic with VMware NSX-T Distributed Firewall (DFW)\n• Centralized network security policies at the VDS layer"
     },
     {
+      "id": "contact-center-remote-work",
       "period": "2020.08 ~ 2021.08",
       "name": "Contact Center Remote Work Infrastructure",
       "client": "Metanet M Platform",
-      "technologies": ["Ansible", "Python", "VPN", "NAC"],
+      "technologies": [
+        "Ansible",
+        "Python",
+        "VPN",
+        "NAC"
+      ],
       "os": "Linux",
       "role": "Remote Work Infrastructure",
       "description": "Designed and automated VPN infrastructure for large-scale remote access\n• Synchronized configurations across remote-access servers with Python and Ansible\n• Built dashboards for VPN session monitoring and anomaly detection"
     },
     {
+      "id": "kai-infrastructure-operations",
       "period": "2018.10 ~ 2019.10",
       "name": "KAI Infrastructure Operations",
       "client": "Korea Aerospace Industries (KAI)",
-      "technologies": ["Linux", "Bash", "Firewall"],
+      "technologies": [
+        "Linux",
+        "Bash",
+        "Firewall"
+      ],
       "os": "Linux",
       "role": "Systems Operations",
       "description": "Ensured stable availability for closed-network security infrastructure\n• Proactively identified hardware failure signs through periodic system log analysis\n• Complied with internal security audit standards for system configuration"
@@ -297,6 +376,7 @@
   },
   "certifications": [
     {
+      "id": "ccnp",
       "name": "CCNP",
       "issuer": "Cisco Systems",
       "date": "2020.08",
@@ -307,6 +387,7 @@
       "note": "renewal planned — studying CCNP Security or CCIE"
     },
     {
+      "id": "rhcsa",
       "name": "RHCSA",
       "issuer": "Red Hat",
       "date": "2019.01",
@@ -317,6 +398,7 @@
       "note": "renewal planned — CKA/CKS (Kubernetes) prioritized"
     },
     {
+      "id": "comptia-linux-plus",
       "name": "CompTIA Linux+",
       "issuer": "CompTIA",
       "date": "2019.02",
@@ -326,6 +408,7 @@
       "status": "active"
     },
     {
+      "id": "lpic-level-1",
       "name": "LPIC Level 1",
       "issuer": "Linux Professional Institute",
       "date": "2019.02",
@@ -335,6 +418,7 @@
       "status": "active"
     },
     {
+      "id": "office-automation-industrial-engineer",
       "name": "Office Automation Industrial Engineer",
       "issuer": "Human Resources Development Service of Korea",
       "date": "2019.12",
@@ -344,6 +428,7 @@
       "status": "active"
     },
     {
+      "id": "linux-master-level-2",
       "name": "Linux Master Level 2",
       "issuer": "Korea Association for ICT Promotion",
       "date": "2019.01",
@@ -353,6 +438,7 @@
       "status": "active"
     },
     {
+      "id": "cks",
       "name": "Certified Kubernetes Security Specialist (CKS)",
       "issuer": "CNCF",
       "date": null,
@@ -599,10 +685,17 @@
   },
   "personalProjects": [
     {
+      "id": "observability-platform",
       "name": "Observability Platform",
       "period": "2024.06 ~ Present",
       "description": "Homelab infrastructure metrics and logs were scattered per-service, slowing root-cause analysis during incidents. Scraped Proxmox VM/CT metrics via Prometheus node_exporter, ingested logs via Loki Promtail, and managed Grafana dashboard definitions as code (Grafana-as-code) for IaC-reproducible deployment. PromQL + LogQL cross-queries in Grafana Explore unify metrics and logs in a single analysis surface.",
-      "technologies": ["Grafana", "Prometheus", "Loki", "Blackbox Exporter", "Docker"],
+      "technologies": [
+        "Grafana",
+        "Prometheus",
+        "Loki",
+        "Blackbox Exporter",
+        "Docker"
+      ],
       "icon": "📊",
       "tagline": "Monitoring Platform",
       "language": "PromQL",
@@ -612,10 +705,15 @@
       "displayOrder": 2
     },
     {
+      "id": "security-alert-system",
       "name": "Security Alert System",
       "period": "2025.01 ~ Present",
       "description": "FortiGate security events were scattered across device syslog and Splunk, delaying the time from event occurrence to operator awareness. Connected Splunk Saved Search webhooks to Slack/Telegram so security events are immediately notified upon detection. Standardized the security event notification and operator response flow.",
-      "technologies": ["Splunk", "Python", "Slack"],
+      "technologies": [
+        "Splunk",
+        "Python",
+        "Slack"
+      ],
       "icon": "🔔",
       "tagline": "Security Alert Automation",
       "language": "Python",
@@ -625,10 +723,16 @@
       "displayOrder": 3
     },
     {
+      "id": "ip-blacklist-platform",
       "name": "IP Blacklist Platform",
       "period": "2024.12 ~ Present",
       "description": "Threat intelligence feeds were scattered across external sources (AbuseIPDB, Emerging Threats, AlienVault OTX, etc.), requiring separate lookups per source when analyzing malicious IPs. Structured per-source adapters via Flask Blueprints, managed schema versions via SQLAlchemy + Alembic migrations, and built a Next.js frontend for cross-comparing IP reputation, frequency, and distribution. Multiple threat feeds queryable and cross-analyzable from a reproducible pipeline.",
-      "technologies": ["JavaScript", "Flask", "PostgreSQL", "Python"],
+      "technologies": [
+        "JavaScript",
+        "Flask",
+        "PostgreSQL",
+        "Python"
+      ],
       "icon": "🚫",
       "tagline": "Threat Intelligence",
       "language": "JavaScript",
@@ -638,10 +742,16 @@
       "displayOrder": 5
     },
     {
+      "id": "hycu-fsds-autonomous-driving",
       "name": "HYCU FSDS Autonomous Driving",
       "period": "2025.11 ~ 2026.02",
       "description": "Needed integrated cone perception and driving control in the Formula Student Driverless Simulator environment. Integrated ROS-based perception/control nodes into Docker containers and validated them in the AirSim simulation environment. Participated in the Hanyang Cyber University Autonomous Driving Competition.",
-      "technologies": ["Python", "ROS", "Docker", "AirSim"],
+      "technologies": [
+        "Python",
+        "ROS",
+        "Docker",
+        "AirSim"
+      ],
       "icon": "🏎️",
       "tagline": "Autonomous Driving Simulation",
       "url": "https://github.com/jclee941/hycu_fsds",
@@ -652,10 +762,16 @@
       "displayOrder": 11
     },
     {
+      "id": "resume-portfolio",
       "name": "Resume Portfolio",
       "period": "2024.01 ~ Present",
       "description": "Personal monorepo addressing the difficulty of presenting consolidated career evidence to recruiters. Hosts a single-SSoT resume site on Cloudflare Workers Edge alongside MCP tools and an auto-apply pipeline. Operates resume rendering, cover-letter generation, auto-apply, and observability from a single monorepo. ← this site runs on Cloudflare Workers (edge runtime, global CDN).",
-      "technologies": ["Cloudflare Workers", "HTML/CSS", "JSON-LD SEO", "Grafana Loki"],
+      "technologies": [
+        "Cloudflare Workers",
+        "HTML/CSS",
+        "JSON-LD SEO",
+        "Grafana Loki"
+      ],
       "icon": "⚡",
       "tagline": "Portfolio Platform",
       "language": "JavaScript",
@@ -673,6 +789,7 @@
       "displayOrder": 1
     },
     {
+      "id": "terraform-homelab-iac",
       "name": "Terraform Homelab IaC",
       "period": "2024.06 ~ Present",
       "githubUrl": "https://github.com/jclee941/terraform",
@@ -683,11 +800,18 @@
         "Automated provisioning for cluster-rebuild",
         "CI auto-validation pipeline for IaC quality management"
       ],
-      "technologies": ["Terraform", "Proxmox VE", "Cloudflare", "Helm", "k3s"],
+      "technologies": [
+        "Terraform",
+        "Proxmox VE",
+        "Cloudflare",
+        "Helm",
+        "k3s"
+      ],
       "featured": true,
       "displayOrder": 4
     },
     {
+      "id": "safetywallet-cf-workers-pwa",
       "name": "SafetyWallet (CF Workers PWA)",
       "period": "2026.01 ~ 2026.04",
       "githubUrl": "https://github.com/jclee941/safetywallet",
@@ -698,12 +822,19 @@
         "Offline support enabling manual access in constrained-network environments",
         "RBAC + JWT design for permission separation and session security"
       ],
-      "technologies": ["Cloudflare Workers", "TypeScript", "Hono", "Drizzle ORM", "D1"],
+      "technologies": [
+        "Cloudflare Workers",
+        "TypeScript",
+        "Hono",
+        "Drizzle ORM",
+        "D1"
+      ],
       "featured": false,
       "displayOrder": 7,
       "language": "TypeScript"
     },
     {
+      "id": "ai-github-pr-reviewer",
       "name": "AI GitHub PR Reviewer",
       "period": "2026.03 ~ Present",
       "githubUrl": "https://github.com/jclee941/pr-agent",
@@ -714,11 +845,17 @@
         "Webhook-based immediate notifications for PR review",
         "Zero-downtime Edge deployment design"
       ],
-      "technologies": ["TypeScript", "Cloudflare Workers", "AI/LLM", "GitHub API"],
+      "technologies": [
+        "TypeScript",
+        "Cloudflare Workers",
+        "AI/LLM",
+        "GitHub API"
+      ],
       "featured": true,
       "displayOrder": 6
     },
     {
+      "id": "bug-bounty-recon-toolkit",
       "name": "Bug Bounty Recon Toolkit",
       "period": "2025.10 ~ Present",
       "githubUrl": "https://github.com/jclee941/bug",
@@ -729,7 +866,13 @@
         "Workflow integrating periodic recon with operator notifications",
         "Aligns detection results to MITRE ATT&CK for risk assessment"
       ],
-      "technologies": ["JavaScript", "Subfinder", "httpx", "Nuclei", "Go"],
+      "technologies": [
+        "JavaScript",
+        "Subfinder",
+        "httpx",
+        "Nuclei",
+        "Go"
+      ],
       "featured": false,
       "displayOrder": 8,
       "language": "JavaScript"
@@ -737,10 +880,17 @@
   ],
   "ossContributions": [
     {
+      "id": "resume-portfolio",
       "name": "resume-portfolio",
       "url": "https://github.com/jclee941/resume",
       "description": "Personal monorepo built to address the difficulty recruiters have in quickly grasping a candidate's strengths, by consolidating resume automation around a single SSoT pipeline",
-      "techStack": ["TypeScript", "Cloudflare Workers", "Playwright", "n8n", "Elasticsearch"],
+      "techStack": [
+        "TypeScript",
+        "Cloudflare Workers",
+        "Playwright",
+        "n8n",
+        "Elasticsearch"
+      ],
       "role": "Solo developer"
     }
   ],
@@ -769,12 +919,14 @@
   ],
   "infrastructure": [
     {
+      "id": "proxmox-ve",
       "icon": "🖥️",
       "title": "Proxmox VE",
       "description": "Virtualization platform",
       "status": "running"
     },
     {
+      "id": "grafana-prometheus",
       "icon": "📊",
       "title": "Grafana + Prometheus",
       "description": "Observability stack (metrics collection and visualization)",
@@ -782,6 +934,7 @@
       "url": "https://grafana.jclee.me"
     },
     {
+      "id": "elk-stack",
       "icon": "🔍",
       "title": "ELK Stack",
       "description": "Log collection, analysis, and visualization (Elasticsearch + Kibana)",
@@ -789,36 +942,42 @@
       "url": "https://elk.jclee.me"
     },
     {
+      "id": "traefik",
       "icon": "🌐",
       "title": "Traefik",
       "description": "Reverse proxy / ingress",
       "status": "running"
     },
     {
+      "id": "supabase",
       "icon": "🗄️",
       "title": "Supabase",
       "description": "BaaS (PostgreSQL + Auth)",
       "status": "running"
     },
     {
+      "id": "minio",
       "icon": "💾",
       "title": "MinIO",
       "description": "Object storage / cache",
       "status": "running"
     },
     {
+      "id": "mcp-server-hub",
       "icon": "🤖",
       "title": "MCP Server Hub",
       "description": "AI agent tooling server",
       "status": "running"
     },
     {
+      "id": "onepassword",
       "icon": "🔐",
       "title": "1Password",
       "description": "Secrets management / SSH & CLI integration",
       "status": "running"
     },
     {
+      "id": "cloudflare-workers",
       "icon": "⚡",
       "title": "Cloudflare Workers",
       "description": "Edge runtime / global deployment / health-check verified",
@@ -826,12 +985,21 @@
       "url": "https://resume.jclee.me"
     },
     {
+      "id": "n8n",
+      "icon": "🔄",
+      "title": "n8n",
+      "description": "Workflow automation for resume sync, job automation, and monitoring operations.",
+      "status": "operating"
+    },
+    {
+      "id": "terraform",
       "icon": "🏗️",
       "title": "Terraform",
       "description": "IaC (DNS/Workers/Proxmox)",
       "status": "running"
     },
     {
+      "id": "github-actions-runner",
       "icon": "🏃",
       "title": "GitHub Actions Runner",
       "description": "Self-hosted CI/CD",
@@ -850,14 +1018,22 @@
   "availability": "Open to work - Available from 2026.03, immediate start possible",
   "awards": [
     {
+      "id": "autonomous-driving-competition-excellence",
       "name": "Autonomous Driving Competition Excellence Award",
       "organization": "Hanyang Cyber University",
       "year": "2026"
     }
   ],
   "hope": {
-    "locations": ["Seoul"],
-    "roles": ["Security Infrastructure", "Security", "Observability", "Automation"]
+    "locations": [
+      "Seoul"
+    ],
+    "roles": [
+      "Security Infrastructure",
+      "Security",
+      "Observability",
+      "Automation"
+    ]
   },
   "platformVariants": {
     "wanted": {

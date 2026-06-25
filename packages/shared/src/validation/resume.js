@@ -29,7 +29,12 @@ function loadValidatorEngine() {
     const require = createRequire(import.meta.url);
     return require('../../../../tools/scripts/utils/validate-resume-data.js');
   } catch {
-    return { validateResumeData: () => ({ valid: true, errors: undefined }) };
+    return {
+      validateResumeData: () => ({
+        valid: false,
+        errors: [{ path: '(validator)', message: 'Canonical resume validator could not be loaded' }],
+      }),
+    };
   }
 }
 
