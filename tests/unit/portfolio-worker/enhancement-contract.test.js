@@ -117,6 +117,24 @@ describe('FAANG framing: case-study senior narrative', () => {
     // Guard the no-metrics rule on the case-study source.
     expect(src).not.toMatch(/\b\d{1,3}\s?%/);
   });
+
+  test('architecture diagrams stay compact enough for mobile deep-dive panels', () => {
+    const matches = [...src.matchAll(/architecture:\s*`([\s\S]*?)`/g)];
+    expect(matches.length).toBeGreaterThan(0);
+    for (const [, diagram] of matches) {
+      const lineLengths = diagram.split('\n').map((line) => [...line].length);
+      expect(Math.max(...lineLengths)).toBeLessThanOrEqual(32);
+    }
+  });
+});
+
+describe('Project deep-dive architecture diagram accessibility', () => {
+  const overlay = read(path.join(PORTFOLIO, 'src', 'scripts', 'modules', 'project-deep-dive-overlay.js'));
+
+  test('architecture diagram is keyboard focusable and exposed as an image-like flow', () => {
+    expect(overlay).toMatch(/class="architecture-diagram"[^`]*tabindex="0"[^`]*role="img"/);
+    expect(overlay).toMatch(/aria-label="\$\{escapeHtml\(project\.title\)\} architecture flow"/);
+  });
 });
 
 
