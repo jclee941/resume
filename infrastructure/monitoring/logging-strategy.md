@@ -50,15 +50,14 @@ Two logging backends operate in parallel with overlapping responsibilities:
 3. **Ensure traceId** is present in ALL ES log entries (enables Trace-to-Logs)
 4. **Configure Grafana Explore** to query both ES and Loki with traceId
    correlation
-5. **Update Grafana alert rules** that query Loki for app logs → point to ES
-   instead
-   - Exception: `resume_error_log_spike` alert currently queries Loki — migrate
-     to ES query
+5. ~~**Update Grafana alert rules** that query Loki for app logs → point to ES
+   instead~~ ✅ Done (2026-06-25): `resume_error_log_spike` now queries the
+   `elasticsearch-resume` datasource for `resume-logs-*`.
 
 ### Success Criteria
 
 - [x] Zero dual-write log events (each event goes to exactly ONE backend)
 - [ ] All application logs in ES with traceId field
 - [ ] Grafana Explore can jump from trace → ES log → Loki infra log
-- [ ] `resume_error_log_spike` alert queries ES (not Loki) for app errors
+- [x] `resume_error_log_spike` alert queries ES (not Loki) for app errors
 - [x] Loki receives only infrastructure/ops logs (not application request logs)

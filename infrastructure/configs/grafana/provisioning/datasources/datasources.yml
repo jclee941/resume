@@ -55,6 +55,7 @@ datasources:
     editable: false
 
   - name: Elasticsearch-Resume
+    uid: elasticsearch-resume
     type: elasticsearch
     access: proxy
     url: ${ELASTICSEARCH_URL}

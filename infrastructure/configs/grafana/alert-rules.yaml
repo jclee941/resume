@@ -97,16 +97,60 @@ groups:
 
       - uid: resume_error_log_spike
         title: Error Log Spike - Resume Portfolio
-        condition: A
+        condition: C
         data:
           - refId: A
             relativeTimeRange:
               from: 300
               to: 0
-            datasourceUid: loki
+            datasourceUid: elasticsearch-resume
             model:
-              expr: sum(count_over_time({job="resume-worker"} |~ "(?i)error" [5m])) > 50
+              datasource:
+                type: elasticsearch
+                uid: elasticsearch-resume
+              query: '(serviceName:"resume-worker" OR serviceName:"resume-worker-entry") AND (log.level:error OR level:error OR message:*error*)'
+              queryType: lucene
+              metrics:
+                - id: '1'
+                  type: count
+              bucketAggs:
+                - id: '2'
+                  type: date_histogram
+                  field: '@timestamp'
+                  settings:
+                    interval: auto
+              intervalMs: 1000
+              maxDataPoints: 43200
               refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 0
+              to: 0
+            datasourceUid: __expr__
+            model:
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              reducer: sum
+              type: reduce
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: B
+          - refId: C
+            relativeTimeRange:
+              from: 0
+              to: 0
+            datasourceUid: __expr__
+            model:
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: $B > 50
+              type: math
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: C
         noDataState: OK
         execErrState: OK
         for: 3m
