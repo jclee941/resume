@@ -68,7 +68,7 @@
     "@resume/types": "*",
     "@resume/data": "*",
     "fastify": "^5.8.4",
-    "google-auth-library": "^10.7.0",
+    "google-auth-library": "^10.9.0",
     "googleapis": "^173.0.0",
     "node-fetch": "^3.3.2",
     "nodemailer": "^8.0.10",
@@ -80,7 +80,7 @@
     "@cloudflare/puppeteer": "^1.0.6"
   },
   "devDependencies": {
-    "better-sqlite3": "^12.10.0",
+    "better-sqlite3": "^12.11.1",
     "playwright": "^1.58.2",
     "ws": "^8.21.0"
   }
