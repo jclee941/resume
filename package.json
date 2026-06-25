@@ -93,7 +93,7 @@
   "author": "Jaecheol Lee <qws941@kakao.com>",
   "license": "MIT",
   "devDependencies": {
-    "@eslint/js": "^9.39.1",
+    "@eslint/js": "^10.0.1",
     "@axe-core/playwright": "^4.12.1",
     "@typescript-eslint/eslint-plugin": "^8.62.0",
     "@typescript-eslint/parser": "^8.59.1",
