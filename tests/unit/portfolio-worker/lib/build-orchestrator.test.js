@@ -91,6 +91,12 @@ describe('build-orchestrator', () => {
         projectCardsHtml: '<div>projects</div>',
         projectCardsEnHtml: '<div>projects-en</div>',
         projectCardsJaHtml: '<div>projects-ja</div>',
+        projectSchemasHtml:
+          '<script>{"creator":{"@type":"Person","name":"이재철","alternateName":"Jaecheol Lee"}}</script>',
+        projectSchemasEnHtml:
+          '<script>{"creator":{"@type":"Person","name":"이재철","alternateName":"Jaecheol Lee"}}</script>',
+        projectSchemasJaHtml:
+          '<script>{"creator":{"@type":"Person","name":"이재철","alternateName":"Jaecheol Lee"},"isPartOf":{"@type":"WebSite","name":"Jaecheol Lee Resume"}}</script>',
         infrastructureCardsHtml: '<div>infra</div>',
         certCardsHtml: '<div>certs</div>',
         skillsHtml: '<div>skills</div>',
