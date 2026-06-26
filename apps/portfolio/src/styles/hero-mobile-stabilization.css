@@ -1,0 +1,84 @@
+@media (max-width: 640px) {
+  .section-hero {
+    padding: var(--space-5) 0 var(--space-8);
+  }
+
+  .hero-content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hero-title {
+    word-break: keep-all;
+  }
+
+  .hero-role,
+  .hero-availability {
+    margin-bottom: var(--space-3);
+  }
+
+  .hero-positioning {
+    margin-bottom: var(--space-4);
+  }
+
+  .hero-proof-list,
+  .hero-review-path {
+    gap: var(--space-2);
+  }
+
+  .hero-review-path {
+    order: 5;
+  }
+
+  .hero-review-path + .hiring-review-packet {
+    margin-top: var(--space-3);
+  }
+
+  .hiring-review-packet {
+    order: 7;
+    padding: var(--space-3);
+  }
+
+  .hiring-review-packet__list {
+    gap: var(--space-2);
+  }
+
+  .hiring-review-packet__list > div {
+    display: grid;
+    grid-template-columns: 4.5rem 1fr;
+    gap: var(--space-2);
+    padding: var(--space-1) 0;
+    border: 0;
+    background: transparent;
+  }
+
+  .hiring-review-packet dt {
+    margin: 0;
+  }
+
+  .hero-cta {
+    order: 6;
+    grid-template-columns: 1fr;
+    margin-top: var(--space-3);
+    margin-bottom: var(--space-3);
+  }
+
+  .hero-cta .link-subtle {
+    min-width: 0;
+    padding-inline: var(--space-2);
+  }
+
+  .hero-cta .link-subtle--primary {
+    grid-column: 1 / -1;
+  }
+
+  .hero-positioning,
+  .hero-proof-list li,
+  .hiring-review-packet dd,
+  .about-content,
+  .resume-description,
+  .project-description {
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+  }
+}
