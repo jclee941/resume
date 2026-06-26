@@ -120,9 +120,3 @@
     padding: var(--space-4);
   }
 }
-
-@media (max-width: 480px) {
-  .hero-cta {
-    grid-template-columns: 1fr;
-  }
-}
