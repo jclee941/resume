@@ -27,12 +27,12 @@ describe('job-dashboard auto-apply run handler', () => {
       id: 'job-1',
       source: 'wanted',
       action: 'would_apply',
-      decisionTrace: [
+      decisionTrace: expect.arrayContaining([
         expect.objectContaining({ stage: 'discovered', outcome: 'included' }),
         expect.objectContaining({ stage: 'scored', reason: 'score_meets_threshold' }),
         expect.objectContaining({ stage: 'duplicate_checked', reason: 'not_previously_applied' }),
         expect.objectContaining({ stage: 'dry_run_recorded', reason: 'dry_run' }),
-      ],
+      ]),
     });
     expect(clients.applyCalls).toHaveLength(0);
   });

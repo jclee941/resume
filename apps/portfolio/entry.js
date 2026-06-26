@@ -161,4 +161,8 @@ export default {
   async queue(batch, env, ctx) {
     return jobWorker.queue(batch, env, ctx);
   },
+
+  async scheduled(controller, env, ctx) {
+    return jobWorker.scheduled(controller, env, ctx);
+  },
 };

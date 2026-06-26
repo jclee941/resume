@@ -10,6 +10,7 @@ import {
   isAlreadyApplied,
   recordApplication,
 } from './db-helpers.js';
+import { isCompanyAlreadyApplied } from './duplicate-company.js';
 import { getWantedSession } from './session-helpers.js';
 import { jsonResponse } from './response.js';
 import { applyMatchedJobs } from './application-actions.js';
@@ -116,6 +117,7 @@ export async function runAutoApply({ request, env, clients }) {
       remaining,
       searchResults,
       isAlreadyApplied,
+      isCompanyAlreadyApplied,
       recordApplication,
       getWantedSession,
       runId,
