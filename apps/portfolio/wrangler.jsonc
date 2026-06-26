@@ -66,6 +66,9 @@
           "custom_domain": true,
         },
       ],
+      "triggers": {
+        "crons": ["0 23 * * *"],
+      },
       "assets": {
         "directory": "./assets",
         "binding": "ASSETS",

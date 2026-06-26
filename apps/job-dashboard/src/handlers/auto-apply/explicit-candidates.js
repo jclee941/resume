@@ -78,10 +78,16 @@ function collectRecursiveReferences(job, maxDepth) {
 }
 
 export function readExplicitCandidates(body) {
-  if (!body || typeof body !== 'object' || !Object.hasOwn(body, 'candidates')) {
+  if (!body || typeof body !== 'object') {
     return { hasExplicitCandidates: false };
   }
-  if (!Array.isArray(body.candidates)) {
+
+  const candidates = Object.hasOwn(body, 'candidates') ? body.candidates : body.explicitCandidates;
+  if (!Object.hasOwn(body, 'candidates') && !Object.hasOwn(body, 'explicitCandidates')) {
+    return { hasExplicitCandidates: false };
+  }
+
+  if (!Array.isArray(candidates)) {
     return {
       hasExplicitCandidates: true,
       error: 'candidates must be an array',
@@ -98,8 +104,8 @@ export function readExplicitCandidates(body) {
   let visited = 0;
   let truncated = 0;
   let maxVisitedDepth = 0;
-  for (let index = 0; index < body.candidates.length; index++) {
-    const normalized = normalizeCandidate(body.candidates[index], index);
+  for (let index = 0; index < candidates.length; index++) {
+    const normalized = normalizeCandidate(candidates[index], index);
     if (normalized.error) {
       return { hasExplicitCandidates: true, error: normalized.error, status: 400 };
     }

@@ -1,34 +1,10 @@
 import { normalizeError } from '@resume/shared/errors';
-import { appendDecisionTrace, getDecisionTrace } from './decision-trace.js';
-
-function addJobResult(searchResults, job, action) {
-  searchResults.jobs.push({
-    id: job.sourceId || job.id,
-    source: job.source,
-    position: job.position || job.title,
-    company: job.company,
-    matchScore: job.matchScore,
-    sourceUrl: job.sourceUrl,
-    url: job.sourceUrl || job.url,
-    action,
-    adapterBacked: job.adapterBacked === true,
-    decisionTrace: getDecisionTrace(job),
-  });
-}
-
-function incrementPlatformApplied(searchResults, source) {
-  if (searchResults.byPlatform[source]) {
-    searchResults.byPlatform[source].applied++;
-  }
-}
-
-function hasHumanApprovalForDestination(job, destination) {
-  const approval =
-    job?.humanApproval ||
-    job?.workflowApprovalMetadata?.humanApproval ||
-    job?.approvalMetadata?.humanApproval;
-  return approval?.status === 'approved' && approval?.destination === destination;
-}
+import { appendDecisionTrace } from './decision-trace.js';
+import {
+  addJobResult,
+  hasHumanApprovalForDestination,
+  incrementPlatformApplied,
+} from './application-result-helpers.js';
 
 export async function applyMatchedJobs({
   env,
@@ -38,6 +14,7 @@ export async function applyMatchedJobs({
   remaining,
   searchResults,
   isAlreadyApplied,
+  isCompanyAlreadyApplied,
   recordApplication,
   getWantedSession,
   runId,
@@ -56,6 +33,20 @@ export async function applyMatchedJobs({
 
     if (alreadyApplied) {
       addJobResult(searchResults, tracedJob, 'skipped_already_applied');
+      searchResults.skipped++;
+      continue;
+    }
+
+    const companyAlreadyApplied = await isCompanyAlreadyApplied(env, job.company);
+    tracedJob = appendDecisionTrace(tracedJob, {
+      stage: 'company_duplicate_checked',
+      outcome: companyAlreadyApplied ? 'skipped' : 'passed',
+      reason: companyAlreadyApplied ? 'company_already_applied' : 'company_not_previously_applied',
+      company: job.company,
+    });
+
+    if (companyAlreadyApplied) {
+      addJobResult(searchResults, tracedJob, 'skipped_company_already_applied');
       searchResults.skipped++;
       continue;
     }

@@ -4,6 +4,7 @@ import { StatsHandler } from './handlers/stats.js';
 import { AuthHandler } from './handlers/auth.js';
 import { WebhookHandler } from './handlers/webhooks.js';
 import { AutoApplyHandler } from './handlers/auto-apply/handler.js';
+import scheduledCliproxyAutoApply from './handlers/auto-apply/scheduled-cliproxy.js';
 import { DiagnosticsHandler } from './handlers/diagnostics.js';
 import { ResumeMasterHandler } from './handlers/resume-master-handler.js';
 import { jsonResponse, addCorsHeaders } from './middleware/cors.js';
@@ -189,5 +190,9 @@ export default {
     const logger = Logger.create(env, { service: 'job-worker' });
     const consumer = new QueueConsumer(env, logger);
     await consumer.processBatch(batch, ctx);
+  },
+
+  async scheduled(controller, env, ctx) {
+    await scheduledCliproxyAutoApply.scheduled(controller, env, ctx);
   },
 };
