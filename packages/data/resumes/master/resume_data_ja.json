@@ -121,20 +121,20 @@
       "teamSize": "セキュリティ構築セル",
       "myRole": "セキュリティインフラ構築担当",
       "workType": "正社員（派遣）",
-      "description": "金融委員会本認可審査技術対応およびセキュリティアーキテクチャ策定、ネットワーク分離・アクセス制御ポリシー設計によるセキュリティコンプライアンス遵守、FortiGate HA高可用性構成と障害復旧プロセス策定。",
-      "wantedSummary": "ネクストレード セキュリティインフラ構築 | FortiGate HA · FortiManager · Ansible\n→ 金融委員会本認可通過、高可用性セキュリティアーキテクチャ設計",
+      "description": "金融委員会本認可審査への技術対応、ネットワーク分離・アクセス制御ポリシーの整備、FortiGate HA高可用性構成と障害復旧プロセスを担当。",
+      "wantedSummary": "ネクストレード セキュリティインフラ構築 | FortiGate HA · FortiManager · Ansible\n→ 金融委員会本認可通過、高可用性セキュリティ構成",
       "note": "ガオンヌリ情報システム所属、ネクストレード売買決済システム構築へ派遣",
       "projects": [
         {
           "id": "nextrade-security-infrastructure",
           "name": "ネクストレード セキュリティ基盤構築",
-          "description": "高可用性を前提とした証券売買システムのセキュリティアーキテクチャを設計\n• FGCP（FortiGate Clustering Protocol）ベースのActive-Passive HAを構成\n• Ansible Roleを活用し、セキュリティ機器の初期設定とポリシー配布を標準化",
+          "description": "高可用性を前提とした証券売買システムのセキュリティ構成を整備\n• FGCP（FortiGate Clustering Protocol）ベースのActive-Passive HAを構成\n• Ansible Roleを活用し、セキュリティ機器の初期設定とポリシー配布を標準化",
           "period": "2024.03 ~ 2025.02",
           "techStack": ["FortiGate", "FortiManager", "Ansible", "Python", "VMware"],
           "achievements": [
-            "サービス継続性確保のためFortiGate FGCPアクティブ-パッシブHAセキュリティアーキテクチャを設計",
+            "サービス継続性確保のためFortiGate FGCPアクティブ-パッシブHA構成を整備",
             "FSC本認可審査基準を充足するため、ネットワーク分離・エンドポイントセキュリティ統制を設計・文書化",
-            "機器ごとの機器ごとの設定基準を標準化するため、Ansible Roleでポリシー展開を標準化"
+            "機器ごとの設定基準を統一するため、Ansible Roleでポリシー展開を標準化"
           ]
         }
       ]
@@ -271,7 +271,7 @@
       "technologies": ["Python", "FortiManager API", "Ansible"],
       "os": "Linux, VMware",
       "role": "セキュリティ基盤設計",
-      "description": "高可用性を前提とした証券売買システムのセキュリティアーキテクチャを設計\n• FGCP（FortiGate Clustering Protocol）ベースのActive-Passive HAを構成\n• Ansible Roleを活用し、セキュリティ機器の初期設定とポリシー配布を標準化"
+      "description": "高可用性を前提とした証券売買システムのセキュリティ構成を整備\n• FGCP（FortiGate Clustering Protocol）ベースのActive-Passive HAを構成\n• Ansible Roleを活用し、セキュリティ機器の初期設定とポリシー配布を標準化"
     },
     {
       "id": "kookmin-next-system",
@@ -771,7 +771,13 @@
       "name": "resume-portfolio",
       "url": "https://github.com/jclee941/resume",
       "description": "履歴書自動化モノレポ — Cloudflare Worker ポートフォリオ、自動応募パイプライン（Wanted/JobKorea）、AI 自己紹介書生成、MCP自動化ツール",
-      "techStack": ["TypeScript", "Cloudflare Workers", "Playwright", "ワークフロー自動化", "Elasticsearch"],
+      "techStack": [
+        "TypeScript",
+        "Cloudflare Workers",
+        "Playwright",
+        "ワークフロー自動化",
+        "Elasticsearch"
+      ],
       "role": "個人開発"
     }
   ],
@@ -912,7 +918,7 @@
   "platformVariants": {
     "wanted": {
       "headline": "OA → Security | 金融セキュリティ基盤 | FSC本認可審査対応 | Splunk ES · 通知ワークフロー · FortiGate HA",
-      "about": "OA運用からセキュリティ運用までを経験してきたセキュリティエンジニアです。\n\n[成長ストーリー]\n2018.10 — MT DataにてKAI(韓国航空宇宙産業)閉鎖網のOA運用を開始。Linuxサーバのパッチ、ファイアウォール/IDSポリシー管理、WSUS運用、ログ分析を手動で実施し、繰り返し作業の限界を認識しました。\n\n2018.11 — 11ヶ月間Linuxシステムを学び直し、RHCSA、CompTIA Linux+、LPIC-1、Linuxマスター2級を取得しました。\n\n2020.08 — Metanet M Platformにて大規模コンタクトセンタ在宅勤務環境をSSL VPN/NACで構築し、Ansible・Pythonで新規端末登録とスイッチ点検を自動化しました(NACポリシー展開をAnsibleで自動化)。\n\n2021.09 — Jointreeにて国民大学校の次世代情報システムにNSX-Tマイクロセグメンテーションを適用し、Wazuh基盤のOSSセキュリティ監視を構築しました。\n\n2022.08 — Quantecにて金融セキュリティデータセンタ(FSDC)インフラを運用し、金融監督院定期監査対応、DLPポリシー運用、DBアクセス制御クエリチューニング、PBプラットフォームPOC検証を実施しました。\n\n2024.03 — GaonnuriにてNextrade取引所のセキュリティインフラを構築。ネットワーク分離・エンドポイントセキュリティ構築・運用、Ansible Roleによる標準化(ファイアウォールポリシーをAnsible Roleで標準化)。FSC本認可審査に対応しました。\n\n2025.03 — ITCEN CTSにてNextradeセキュリティ運用を担当。Splunk ES検知ルール設計、通知ワークフロー + FortiManager APIによる自動対応体制を構築（自動検知・対応により運用認知・分類・通知フローの標準化）。\n\n[保有能力]\nSIEMルール設計(Splunk ES)、セキュリティ運用自動化(通知ワークフロー、FortiManager API)、高可用性セキュリティアーキテクチャ(FortiGate HA、NSX-T)、IaCインフラ管理(Ansible Role、Terraform)、可観測性プラットフォーム運用(Grafana/Prometheus/Loki)、金融規制対応(FSC本認可審査、金融監督院監査)\n\nポートフォリオ: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
+      "about": "OA運用からセキュリティ運用までを経験してきたセキュリティエンジニアです。\n\n[成長ストーリー]\n2018.10 — MT DataにてKAI(韓国航空宇宙産業)閉鎖網のOA運用を開始。Linuxサーバのパッチ、ファイアウォール/IDSポリシー管理、WSUS運用、ログ分析を手動で実施し、繰り返し作業の限界を認識しました。\n\n2018.11 — 11ヶ月間Linuxシステムを学び直し、RHCSA、CompTIA Linux+、LPIC-1、Linuxマスター2級を取得しました。\n\n2020.08 — Metanet M Platformにて大規模コンタクトセンタ在宅勤務環境をSSL VPN/NACで構築し、Ansible・Pythonで新規端末登録とスイッチ点検を自動化しました(NACポリシー展開をAnsibleで自動化)。\n\n2021.09 — Jointreeにて国民大学校の次世代情報システムにNSX-Tマイクロセグメンテーションを適用し、Wazuh基盤のOSSセキュリティ監視を構築しました。\n\n2022.08 — Quantecにて金融セキュリティデータセンタ(FSDC)インフラを運用し、金融監督院定期監査対応、DLPポリシー運用、DBアクセス制御クエリチューニング、PBプラットフォームPOC検証を実施しました。\n\n2024.03 — GaonnuriにてNextrade取引所のセキュリティインフラを構築。ネットワーク分離・エンドポイントセキュリティ構築・運用、Ansible Roleによる標準化(ファイアウォールポリシーをAnsible Roleで標準化)。FSC本認可審査に対応しました。\n\n2025.03 — ITCEN CTSにてNextradeセキュリティ運用を担当。Splunk ES検知ルール設計、通知ワークフロー + FortiManager APIによる自動対応体制を構築（自動検知・対応により運用認知・分類・通知フローの標準化）。\n\n[保有能力]\nSIEMルール設計(Splunk ES)、セキュリティ運用自動化(通知ワークフロー、FortiManager API)、高可用性セキュリティ構成運用(FortiGate HA、NSX-T)、IaCインフラ管理(Ansible Role、Terraform)、可観測性プラットフォーム運用(Grafana/Prometheus/Loki)、金融規制対応(FSC本認可審査、金融監督院監査)\n\nポートフォリオ: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
     },
     "jobkorea": {
       "headline": "OA → Security — 金融セキュリティ基盤 (FSC本認可審査、Splunk ES、FortiGate HA、ワークフロー自動化)",

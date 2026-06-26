@@ -63,7 +63,7 @@ function openDeepDive(project) {
       ${renderTextSection('개요', `<p class="project-detail__description">${escapeHtml(project.description)}</p>`)}
       ${renderTextSection('주요 성과', renderAchievements(project.achievements))}
       ${renderTextSection('메트릭스', renderMetrics(project.metrics))}
-      ${renderTextSection('아키텍처', renderArchitecture(project))}
+      ${renderTextSection('구성 흐름', renderArchitecture(project))}
       ${renderTextSection('사용 도구', renderTools(project.tools))}
     </div>
   `;
