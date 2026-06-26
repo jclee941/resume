@@ -55,6 +55,7 @@
   font-size: var(--text-sm);
   font-weight: var(--font-medium);
   line-height: var(--leading-relaxed);
+  text-wrap: pretty;
 }
 
 .hero-cta {
@@ -69,7 +70,7 @@
 @media (min-width: 769px) {
   .hero-content {
     display: grid;
-    grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.75fr);
+    grid-template-columns: minmax(0, 1.08fr) minmax(276px, 0.68fr);
     column-gap: var(--space-8);
     max-width: 100%;
     align-items: start;
@@ -117,5 +118,11 @@
 @media (max-width: 640px) {
   .hiring-review-packet {
     padding: var(--space-4);
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-cta {
+    grid-template-columns: 1fr;
   }
 }

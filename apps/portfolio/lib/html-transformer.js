@@ -211,6 +211,14 @@ function buildJapaneseTemplate(html) {
         /보안 인프라 경험을 실무 과제로 정리합니다\./g,
         'セキュリティインフラの経験を実務課題として整理します。'
       )
+      .replace(
+        /금융권 보안 운영,\s+SIEM 탐지 자동화,\s+IaC 관측성 경험을\s+채용 검토 가능한\s+근거로\s+정리합니다\./g,
+        '金融セキュリティ運用、SIEM検知自動化、IaC可観測性の経験を、採用検討可能な根拠として整理します。'
+      )
+      .replace(
+        /보안 운영 · SRE · DevSecOps 역할 검토 가능/g,
+        'セキュリティ運用・SRE・DevSecOpsを検討可能'
+      )
       .replace(/보안 운영 · SRE · DevSecOps 채용 검토 가능/g, '採用検討・面接相談が可能')
       .replace(
         /보안 운영 · SRE · DevSecOps 검토 가능/g,
@@ -218,6 +226,12 @@ function buildJapaneseTemplate(html) {
       )
       .replace(/채용 검토·면접 논의 가능/g, '採用検討・面接相談が可能')
       .replace(/aria-label="대표 업무 증빙"/g, 'aria-label="代表的な業務証跡"')
+      .replace(
+        /거래소 망분리·엔드포인트 보안 구축·운영/g,
+        '取引所ネットワーク分離・エンドポイントセキュリティ構築・運用'
+      )
+      .replace(/Splunk ES 탐지 룰·알림 워크플로 정리/g, 'Splunk ES検知ルール・通知ワークフロー整理')
+      .replace(/FortiManager API·IaC 기반 운영 자동화/g, 'FortiManager API・IaCベースの運用自動化')
       .replace(/거래소 보안 인프라 구축·운영/g, '取引所セキュリティインフラの構築・運用')
       .replace(
         /넥스트레이드 보안 구축·운영/g,
@@ -248,6 +262,11 @@ function buildJapaneseTemplate(html) {
       .replace(/aria-label="채용 검토 자료"/g, 'aria-label="採用検討資料"')
       .replace(/채용 검토 패킷/g, '採用検討パケット')
       .replace(/채용 검토 자료/g, '採用検討資料')
+      .replace(/검토 역할/g, '検討ロール')
+      .replace(/보안 운영 · SRE · DevSecOps/g, 'セキュリティ運用・SRE・DevSecOps')
+      .replace(/검토 근거/g, '確認根拠')
+      .replace(/경력 요약 · 프로젝트 증빙 · PDF/g, '職務要約・プロジェクト根拠・PDF')
+      .replace(/연락 방식/g, '連絡方法')
       .replace(/요청부서 검토 포인트/g, '依頼部門の確認ポイント')
       .replace(/적합 역할/g, '適合する役割')
       .replace(
@@ -266,9 +285,12 @@ function buildJapaneseTemplate(html) {
       .replace(/메일로 채용 논의 또는 면접 일정 협의/g, 'メールで採用相談または面接日程を調整')
       .replace(/aria-label="주요 이동"/g, 'aria-label="主なナビゲーション"')
       .replace(/채용 논의하기/g, '採用相談をする')
+      .replace(/채용 문의/g, '採用相談')
       .replace(/채용 논의/g, '採用相談')
+      .replace(/경력 보기/g, '経歴を見る')
       .replace(/경력 근거 보기/g, '経歴根拠を見る')
       .replace(/경력 근거/g, '経歴根拠')
+      .replace(/프로젝트 보기/g, 'プロジェクトを見る')
       .replace(/프로젝트 근거 보기/g, 'プロジェクト根拠を見る')
       .replace(/프로젝트 근거/g, 'プロジェクト根拠')
       .replace(
