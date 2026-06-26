@@ -47,6 +47,8 @@ function contentOptions(templates, locale) {
 }
 
 function localizeProjectSchemas(html, locale) {
+  if (!html) return '';
+
   if (locale === 'en') {
     return html.replace(
       /"creator":\{"@type":"Person","name":"이재철","alternateName":"Jaecheol Lee"\}/g,
