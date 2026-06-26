@@ -124,17 +124,17 @@
       "myRole": "Security Infrastructure Build",
       "workType": "Full-time (Dispatched)",
       "description": "Owned FortiGate HA configuration and Ansible Role standardization for a financial trading system, easing the handoff between build and operations phases.",
-      "wantedSummary": "Nextrade Security Infra Build | FortiGate HA · FortiManager · Ansible\n→ Passed FSC license review, HA security architecture design",
+      "wantedSummary": "Nextrade Security Infra Build | FortiGate HA · FortiManager · Ansible\n→ Passed FSC license review, HA security configuration",
       "note": "Gaonnuri Information System employee, dispatched to Nextrade Trading System construction",
       "projects": [
         {
           "id": "nextrade-security-infrastructure",
           "name": "Nextrade Security Infrastructure Build",
-          "description": "Designed a high-availability security architecture for a securities trading platform\n• Implemented Active-Passive HA with FGCP (FortiGate Clustering Protocol)\n• Standardized initial device setup and policy deployment with reusable Ansible roles",
+          "description": "Built a high-availability security configuration for a securities trading platform\n• Implemented Active-Passive HA with FGCP (FortiGate Clustering Protocol)\n• Standardized initial device setup and policy deployment with reusable Ansible roles",
           "period": "2024.03 ~ 2025.02",
           "techStack": ["FortiGate", "FortiManager", "Ansible", "Python", "VMware"],
           "achievements": [
-            "Designed FortiGate FGCP active-passive HA security architecture to ensure service continuity",
+            "Built FortiGate FGCP active-passive HA configuration to support service continuity",
             "Designed and documented network segmentation and endpoint security controls to meet FSC main-license review criteria",
             "Standardized policy deployment with Ansible Role to eliminate per-device configuration drift"
           ]
@@ -274,7 +274,7 @@
       "technologies": ["Python", "FortiManager API", "Ansible"],
       "os": "Linux, VMware",
       "role": "Security Infrastructure Design",
-      "description": "Designed a high-availability security architecture for a securities trading platform\n• Implemented Active-Passive HA with FGCP (FortiGate Clustering Protocol)\n• Standardized initial device setup and policy deployment with reusable Ansible roles"
+      "description": "Built a high-availability security configuration for a securities trading platform\n• Implemented Active-Passive HA with FGCP (FortiGate Clustering Protocol)\n• Standardized initial device setup and policy deployment with reusable Ansible roles"
     },
     {
       "id": "kookmin-next-system",
@@ -774,7 +774,13 @@
       "name": "resume-portfolio",
       "url": "https://github.com/jclee941/resume",
       "description": "Personal monorepo built to address the difficulty recruiters have in quickly grasping a candidate's strengths, by consolidating resume automation around a single SSoT pipeline",
-      "techStack": ["TypeScript", "Cloudflare Workers", "Playwright", "automation", "Elasticsearch"],
+      "techStack": [
+        "TypeScript",
+        "Cloudflare Workers",
+        "Playwright",
+        "automation",
+        "Elasticsearch"
+      ],
       "role": "Solo developer"
     }
   ],
@@ -915,7 +921,7 @@
   "platformVariants": {
     "wanted": {
       "headline": "OA → Security | Financial Security Infrastructure | FSC Main-License Review | Splunk ES · alert workflows · FortiGate HA",
-      "about": "Security engineer with experience from OA operations into financial security automation.\n\n[Growth Story]\n2018.10 — Started OA operations at MT Data on KAI (Korea Aerospace Industries) closed network. Manually managed patches, firewall/IDS policies, WSUS, and log analysis for the closed-network Linux fleet. Recognized the limits of manual operations.\n\n2018.11 — Spent 11 months rebuilding Linux fundamentals: RHCSA, CompTIA Linux+, LPIC-1, Linux Master Level 2.\n\n2020.08 — At Metanet M Platform, built a large-scale contact-center remote-work environment using SSL VPN/NAC and automated new-terminal registration and switch inspection with Ansible/Python (NAC policy deployment automated via Ansible).\n\n2021.09 — At Jointree, applied NSX-T microsegmentation to Kookmin University's next-gen information system and built Wazuh-based OSS security monitoring.\n\n2022.08 — At Quantec Investment Management, operated FSDC (Financial Security Data Center) infrastructure: financial regulator audit response, DLP policy operations, DB access-control query tuning, PB platform POC validation.\n\n2024.03 — At Gaonnuri, built Nextrade exchange security infrastructure: FortiGate HA with network segmentation and endpoint security controls, Ansible Role standardization (firewall policy standardized via Ansible Role). Passed FSC main-license review audit.\n\n2025.03 — At ITCEN CTS, operated Nextrade security (through 2026.02): designed Splunk ES detection rules and built automated response with alert workflows + FortiManager API for exchange security detection and response.\n\n[Capabilities]\nSIEM rule design (Splunk ES), security ops automation (alert workflows, FortiManager API), HA security architecture (FortiGate HA, NSX-T), IaC infrastructure (Ansible Role, Terraform), observability platforms (Grafana/Prometheus/Loki), financial regulatory response (FSC main-license review, FSS audits)\n\nPortfolio: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
+      "about": "Security engineer with experience from OA operations into financial security automation.\n\n[Growth Story]\n2018.10 — Started OA operations at MT Data on KAI (Korea Aerospace Industries) closed network. Manually managed patches, firewall/IDS policies, WSUS, and log analysis for the closed-network Linux fleet. Recognized the limits of manual operations.\n\n2018.11 — Spent 11 months rebuilding Linux fundamentals: RHCSA, CompTIA Linux+, LPIC-1, Linux Master Level 2.\n\n2020.08 — At Metanet M Platform, built a large-scale contact-center remote-work environment using SSL VPN/NAC and automated new-terminal registration and switch inspection with Ansible/Python (NAC policy deployment automated via Ansible).\n\n2021.09 — At Jointree, applied NSX-T microsegmentation to Kookmin University's next-gen information system and built Wazuh-based OSS security monitoring.\n\n2022.08 — At Quantec Investment Management, operated FSDC (Financial Security Data Center) infrastructure: financial regulator audit response, DLP policy operations, DB access-control query tuning, PB platform POC validation.\n\n2024.03 — At Gaonnuri, built Nextrade exchange security infrastructure: FortiGate HA with network segmentation and endpoint security controls, Ansible Role standardization (firewall policy standardized via Ansible Role). Passed FSC main-license review audit.\n\n2025.03 — At ITCEN CTS, operated Nextrade security (through 2026.02): designed Splunk ES detection rules and built automated response with alert workflows + FortiManager API for exchange security detection and response.\n\n[Capabilities]\nSIEM rule design (Splunk ES), security ops automation (alert workflows, FortiManager API), HA security configuration operations (FortiGate HA, NSX-T), IaC infrastructure (Ansible Role, Terraform), observability platforms (Grafana/Prometheus/Loki), financial regulatory response (FSC main-license review, FSS audits)\n\nPortfolio: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
     },
     "jobkorea": {
       "headline": "OA → Security — Financial Security Infrastructure (FSC Main-License Review, Splunk ES, FortiGate HA, automation)",

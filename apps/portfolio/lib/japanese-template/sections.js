@@ -1,6 +1,8 @@
 function applyJapaneseSections(html) {
   return html
+    .replace(/aria-label="exp — 경력"/g, 'aria-label="exp — 経歴"')
     .replace(/aria-label="채용 문의 옵션"/g, 'aria-label="採用お問い合わせオプション"')
+    .replace(/aria-label="採用相談 옵션"/g, 'aria-label="採用相談オプション"')
     .replace(/download="이재철_이력서\.pdf"/g, 'download="Lee-Jaecheol-Resume-JA.pdf"')
     .replace(/aria-label="이력서 PDF 다운로드"/g, 'aria-label="履歴書PDFダウンロード"')
     .replace(/>📄 이력서 PDF 다운로드</g, '>📄 履歴書PDFダウンロード<')

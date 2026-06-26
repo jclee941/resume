@@ -53,7 +53,7 @@ export const PROJECTS = [
       { value: 'FSC', label: 'Approval Passed', icon: 'check' },
     ],
     description:
-      '금융위 본인가 심사는 망분리, 엔드포인트 보안, 가용성을 함께 봤습니다. 단일 방화벽 장애가 거래 중단으로 이어지지 않도록 FortiGate FGCP active-passive HA 기반의 망분리 구조를 설계했고, 엔드포인트 보안 통제와 방화벽 정책을 운영 기준에 맞춰 정리했습니다. 이후 운영 단계에서도 정책 조회와 변경 근거를 추적할 수 있도록 Ansible Role과 FortiManager 기준으로 절차를 표준화했습니다.',
+      '금융위 본인가 심사는 망분리, 엔드포인트 보안, 가용성을 함께 봤습니다. 단일 방화벽 장애가 거래 중단으로 이어지지 않도록 FortiGate FGCP active-passive HA 기반의 망분리 구성을 적용했고, 엔드포인트 보안 통제와 방화벽 정책을 운영 기준에 맞춰 정리했습니다. 이후 운영 단계에서도 정책 조회와 변경 근거를 추적할 수 있도록 Ansible Role과 FortiManager 기준으로 절차를 표준화했습니다.',
     achievements: [
       '망분리 및 엔드포인트 보안 구축·운영',
       'FortiGate HA 클러스터 구성',
