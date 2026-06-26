@@ -104,6 +104,15 @@ All spacing derives from a base of 4px.
 - **Accessibility**: list keeps native semantics and an `aria-label`.
 - **Motion**: none.
 
+### Hero Review Path
+
+- **Structure**: `nav.hero-review-path > a > span + strong`.
+- **Variants**: three equal columns on desktop; one-column scan path on mobile.
+- **Spacing**: `--space-2` gap, `--space-3` link padding.
+- **States**: hover/focus uses accent border and subtle background only.
+- **Accessibility**: nav uses a locale-specific `aria-label`; link text remains visible.
+- **Motion**: translateY hover only, matching existing subtle link motion.
+
 ### Hiring Review Packet
 
 - **Structure**: `div.hiring-review-packet > p + dl > div > dt + dd`.
