@@ -66,4 +66,57 @@ describe('CliproxyClient', () => {
     );
     assert.equal(result.jobs[0].sourceUrl, 'https://jobs.example/enterprise');
   });
+
+  it('throws when Cliproxy returns non-JSON assistant content', async () => {
+    const fetcher = mock.fn(async () => ({
+      ok: true,
+      async json() {
+        return {
+          choices: [
+            {
+              message: {
+                content: "I don't have any tools available to search a job database.",
+              },
+            },
+          ],
+        };
+      },
+    }));
+    const client = new CliproxyClient(
+      {
+        CLIPROXY_BASE: 'https://cliproxy.example.test/v1',
+        CLIPROXY_API_KEY: 'secret-test-key',
+      },
+      { fetcher }
+    );
+
+    await assert.rejects(
+      () => client.searchJobs('security', { limit: 1 }),
+      /Cliproxy returned non-JSON job content/
+    );
+  });
+
+  it('throws when Cliproxy returns an HTTP error', async () => {
+    const fetcher = mock.fn(async () => ({
+      ok: false,
+      status: 400,
+      async text() {
+        return JSON.stringify({
+          error: { message: '`temperature` is deprecated for this model.' },
+        });
+      },
+    }));
+    const client = new CliproxyClient(
+      {
+        CLIPROXY_BASE: 'https://cliproxy.example.test/v1',
+        CLIPROXY_API_KEY: 'secret-test-key',
+      },
+      { fetcher }
+    );
+
+    await assert.rejects(
+      () => client.searchJobs('security', { limit: 1 }),
+      /Cliproxy job search failed with HTTP 400/
+    );
+  });
 });
