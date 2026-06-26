@@ -258,6 +258,13 @@ function buildJapaneseTemplate(html) {
         /Splunk ES · 알림 워크플로 · FortiManager API 기반 보안 이벤트 자동화/g,
         'Splunk ES · 通知ワークフロー · FortiManager APIベースのセキュリティイベント自動化'
       )
+      .replace(/aria-label="검토 경로"/g, 'aria-label="確認ルート"')
+      .replace(/운영 맥락/g, '運用文脈')
+      .replace(/금융 보안 운영 경력/g, '金融セキュリティ運用経験')
+      .replace(/자동화 방식/g, '自動化アプローチ')
+      .replace(/탐지·IaC·API 흐름/g, '検知・IaC・APIフロー')
+      .replace(/채용 자료/g, '採用資料')
+      .replace(/PDF·메일 연결/g, 'PDF・メール連携')
       .replace(/aria-label="채용 검토 패킷"/g, 'aria-label="採用検討パケット"')
       .replace(/aria-label="채용 검토 자료"/g, 'aria-label="採用検討資料"')
       .replace(/채용 검토 패킷/g, '採用検討パケット')
