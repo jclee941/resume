@@ -81,6 +81,7 @@
 }
 
 .hero-proof-list,
+.hero-review-path,
 .hiring-review-packet,
 .about-content,
 .expertise-block,
@@ -202,7 +203,11 @@
   .hero-proof-list {
     gap: var(--space-2);
   }
-  .hero-proof-list + .hiring-review-packet {
+  .hero-review-path {
+    order: 5;
+    gap: var(--space-2);
+  }
+  .hero-review-path + .hiring-review-packet {
     margin-top: var(--space-3);
   }
   .hiring-review-packet {

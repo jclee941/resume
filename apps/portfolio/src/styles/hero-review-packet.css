@@ -84,6 +84,10 @@
     grid-column: 1;
   }
 
+  .hero-review-path {
+    grid-column: 1;
+  }
+
   .hiring-review-packet {
     grid-column: 2;
     grid-row: 1 / span 5;
