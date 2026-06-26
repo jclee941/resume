@@ -45,7 +45,10 @@ export class CliproxyClient {
     });
 
     if (!response.ok) {
-      return { jobs: [] };
+      const details = await readErrorDetails(response);
+      throw new Error(
+        `Cliproxy job search failed with HTTP ${response.status || 'error'}${details}`
+      );
     }
 
     const payload = await response.json().catch(() => null);
@@ -69,7 +72,9 @@ export class CliproxyClient {
       }));
 
     return {
-      jobs: jobs.filter((job) => job.company && job.position && job.sourceUrl && isLargeCompany(job)),
+      jobs: jobs.filter(
+        (job) => job.company && job.position && job.sourceUrl && isLargeCompany(job)
+      ),
     };
   }
 }
@@ -112,9 +117,29 @@ export function isLargeCompany(job) {
 
 function parseJobs(text) {
   const parsed = parseJson(text);
+  if (parsed === null) {
+    throw new Error('Cliproxy returned non-JSON job content');
+  }
   if (Array.isArray(parsed)) return parsed;
   if (Array.isArray(parsed?.jobs)) return parsed.jobs;
   return [];
+}
+
+async function readErrorDetails(response) {
+  if (typeof response.text !== 'function') return '';
+  const text = await response.text().catch(() => '');
+  const message = extractErrorMessage(text);
+  return message ? `: ${message}` : '';
+}
+
+function extractErrorMessage(text) {
+  if (typeof text !== 'string' || !text.trim()) return '';
+  try {
+    const parsed = JSON.parse(text);
+    return String(parsed?.error?.message || parsed?.message || '').slice(0, 200);
+  } catch {
+    return text.slice(0, 200);
+  }
 }
 
 function normalizeScale(value) {
