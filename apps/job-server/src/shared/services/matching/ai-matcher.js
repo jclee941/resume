@@ -4,7 +4,7 @@ const CLAUDE_CONFIG = {
   apiKey:
     process.env.CLIPROXY_API_KEY || process.env.CLAUDE_API_KEY || process.env.ANTHROPIC_API_KEY,
   baseUrl: (process.env.CLIPROXY_BASE || 'https://cliproxy.jclee.me/v1').replace(/\/$/, ''),
-  model: process.env.CLIPROXY_MODEL || 'claude-opus-4-8',
+  model: process.env.CLIPROXY_MODEL || 'gpt-5.5',
   maxTokens: 4000,
 };
 

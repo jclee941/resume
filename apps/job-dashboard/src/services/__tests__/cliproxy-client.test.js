@@ -21,6 +21,55 @@ function createCliproxyResponse(content) {
 }
 
 describe('CliproxyClient', () => {
+  it('uses GPT-5.5 as the default model for Cliproxy requests', async () => {
+    let requestBody = null;
+    const fetcher = mock.fn(async (_url, options) => {
+      requestBody = JSON.parse(options.body);
+      return createCliproxyResponse({
+        jobs: [
+          {
+            id: 'enterprise-job',
+            company: 'Enterprise Co',
+            position: 'Security Engineer',
+            sourceUrl: 'https://jobs.example/enterprise',
+            companyScale: 'enterprise',
+          },
+        ],
+      });
+    });
+    const client = new CliproxyClient(
+      {
+        CLIPROXY_BASE: 'https://cliproxy.example.test/v1',
+        CLIPROXY_API_KEY: 'secret-test-key',
+      },
+      { fetcher }
+    );
+
+    await client.searchJobs('security', { limit: 1 });
+
+    assert.equal(requestBody.model, 'gpt-5.5');
+  });
+
+  it('allows CLIPROXY_MODEL to override the default model', async () => {
+    let requestBody = null;
+    const fetcher = mock.fn(async (_url, options) => {
+      requestBody = JSON.parse(options.body);
+      return createCliproxyResponse({ jobs: [] });
+    });
+    const client = new CliproxyClient(
+      {
+        CLIPROXY_BASE: 'https://cliproxy.example.test/v1',
+        CLIPROXY_API_KEY: 'secret-test-key',
+        CLIPROXY_MODEL: 'custom-model',
+      },
+      { fetcher }
+    );
+
+    await client.searchJobs('security', { limit: 1 });
+
+    assert.equal(requestBody.model, 'custom-model');
+  });
+
   it('keeps only HTTP large-company postings when Cliproxy returns mixed jobs', async () => {
     const fetcher = mock.fn(async () =>
       createCliproxyResponse({

@@ -18,6 +18,8 @@ import { readExplicitCandidates } from './explicit-candidates.js';
 import { createSearchResults, selectMatchedJobs } from './job-selection.js';
 import { primeWantedSession, searchPlatformJobs } from './job-search.js';
 import { rejectInvalidRealSubmit } from './real-submit-gate.js';
+import { isFailedDiscoveryRun } from './discovery-failure.js';
+import { getAutoApplyRunId } from './run-id.js';
 
 export async function runAutoApply({ request, env, clients }) {
   const body = await request.json().catch(() => ({}));
@@ -108,6 +110,20 @@ export async function runAutoApply({ request, env, clients }) {
           searchKeywords,
           searchResults,
         });
+    if (isFailedDiscoveryRun(explicitCandidates, allJobs, searchResults)) {
+      return jsonResponse(
+        {
+          success: false,
+          error: 'Auto-apply discovery failed before any candidate was found',
+          errorCode: 'AUTO_APPLY_DISCOVERY_FAILED',
+          runId,
+          dryRun,
+          platforms: activePlatforms,
+          results: searchResults,
+        },
+        500
+      );
+    }
     const matchedJobs = selectMatchedJobs({ allJobs, searchKeywords, minScore, searchResults });
     await applyMatchedJobs({
       env,
@@ -171,16 +187,4 @@ function countSubmittedApplications(searchResults, dryRun) {
 
 function hasMalformedPlatforms(body) {
   return Object.prototype.hasOwnProperty.call(body, 'platforms') && !Array.isArray(body.platforms);
-}
-
-function getAutoApplyRunId(body) {
-  if (typeof body.runId === 'string' && body.runId.trim().length > 0) {
-    return body.runId.trim();
-  }
-
-  if (typeof globalThis.crypto?.randomUUID === 'function') {
-    return globalThis.crypto.randomUUID();
-  }
-
-  return `auto-apply-${Date.now()}`;
 }
