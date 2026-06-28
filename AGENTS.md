@@ -1,212 +1,149 @@
 # PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-06-12 (verified 011dd571)
+**Generated:** 2026-06-28 (verified 76f0a897)
 **Branch:** `master`
 
 ## OVERVIEW
 
 Resume monorepo: Cloudflare Worker portfolio, job automation runtimes, dashboard
-APIs, shared data/types/schemas/contracts/utility packages, and self-hosted
-observability/automation configs.
+APIs, shared type/schema/contract packages, content SSoT data, and self-hosted
+automation/observability support.
 
 ## STRUCTURE
 
 ```text
 ./
 ├── apps/
-│   ├── portfolio/        # public worker + generated edge bundle
-│   ├── job-server/       # MCP/job automation runtime
-│   └── job-dashboard/    # dashboard worker + workflows
+│   ├── portfolio/        # public Cloudflare Worker; worker.js is generated
+│   ├── job-server/       # MCP/job automation runtime, crawlers, scripts
+│   └── job-dashboard/    # dashboard Worker, queues, workflows
 ├── packages/
-│   ├── cli/              # resume CLI
-│   ├── env/              # environment validation + type-safe secrets
-│   ├── data/             # SSoT resumes and JSON schema
-│   ├── shared/           # cross-package utilities (errors, logger, retry, crypto, rate-limit, auth, browser, clients)
-│   ├── types/            # canonical JSDoc/TS type definitions (zero runtime deps)
-│   ├── schemas/          # runtime Zod validation schemas
-│   └── contracts/        # OpenAPI spec + Cloudflare Worker Env interface
-├── tools/                # CI, build, deploy, verification scripts (Go + JS)
-├── tests/                # Jest, integration, Playwright E2E
-├── infrastructure/       # Cloudflare, monitoring, automation, DB config
-├── docs/                 # guides, ADRs, architecture, conventions, security
-├── ta/                   # TA profile generation (Python/PPTX)
-├── supabase/             # Supabase edge functions (Deno runtime)
-├── third_party/          # vendored external dependencies (npm-managed)
-├── .github/              # CI/release/maintenance control plane
-└── package.json          # workspace root + operator scripts
+│   ├── cli/              # resume operator CLI
+│   ├── data/             # authoritative resume/application content
+│   ├── env/              # runtime environment validation
+│   ├── shared/           # cross-package utilities and clients
+│   ├── types/            # canonical JSDoc/TS domain types
+│   ├── schemas/          # Zod runtime schemas
+│   └── contracts/        # OpenAPI and Worker env contracts
+├── applications/         # per-role application packets and generated run logs
+├── tools/                # CI/build/deploy/verification scripts
+├── tests/                # Jest, Node, Playwright suites
+├── infrastructure/       # Cloudflare, DB, monitoring, system automation
+├── docs/                 # ADRs, architecture, conventions, guides, security
+├── ta/                   # Python/PPTX TA profile generation
+├── supabase/functions/   # Deno edge functions
+├── third_party/          # npm-managed vendored material
+└── package.json          # workspace root and command hub
 ```
 
 ## WHERE TO LOOK
 
-| Task                          | Location                                 | Notes                                                                  |
-| ----------------------------- | ---------------------------------------- | ---------------------------------------------------------------------- |
-| Portfolio build/runtime       | `apps/portfolio/`                        | `worker.js` is generated; edit source/build pipeline instead           |
-| Wanted/job automation         | `apps/job-server/`                       | API clients, crawlers, MCP tools, sync/auth scripts                    |
-| Dashboard/API workflows       | `apps/job-dashboard/`                    | handlers, middleware, Cloudflare workflows                             |
-| Authoritative resume content  | `packages/data/`                         | `packages/data/resumes/master/resume_data.json` is the SSoT            |
-| Shared types (JSDoc/TS)       | `packages/types/`                        | Canonical type SSoT — Application, Resume, WantedJob, WorkerEnv, etc.  |
-| Runtime validation (Zod)      | `packages/schemas/`                      | API payload + resume + auth schemas; types inferred via z.infer<>      |
-| Cross-app contracts           | `packages/contracts/`                    | openapi.yaml + Env interface re-export                                 |
-| Cross-package utilities       | `packages/shared/`                       | errors, logger, retry, crypto, rate-limit, auth, browser, clients      |
-| Workspace commands            | `package.json`                           | `automate:ssot`, `automate:full`, `build`, `test`                      |
-| CI/release behavior           | `.github/workflows/`                     | GitHub Actions only — GitLab CI archive removed during Epic 5          |
-| Shared operational scripts    | `tools/scripts/`                         | build, deployment, verification, sync utilities                        |
-| Tests by layer                | `tests/`                                 | `unit/`, `integration/`, `e2e/` with child guides                      |
-| Monitoring and automation | `infrastructure/`                        | dashboards, alerting, webhook workflows; automation Go binaries source        |
-| Design/procedure docs         | `docs/`                                  | ADRs, architecture, conventions, security, guides                      |
-| Architecture rules            | `docs/conventions/architecture-rules.md` | 200-LOC limit, no catch-all names, automation SSoT for workflows (was rules/) |
-| Security playbooks            | `docs/security/`                         | SECRET_ROTATION_PLAYBOOK.md, secret manager guidance                   |
-| Supabase edge functions       | `supabase/functions/`                    | Deno runtime; not part of npm workspaces                               |
-| TA profile generation         | `ta/`                                    | Python PPTX scripts, not a workspace package                           |
+| Task | Location | Notes |
+| --- | --- | --- |
+| Portfolio runtime/build | `apps/portfolio/` | edit `entry.js`, HTML, `src/`, or `lib/`; never hand-edit `worker.js` |
+| Job automation | `apps/job-server/` | MCP server, crawlers, auto-apply, scripts, platform clients |
+| Dashboard/API workflows | `apps/job-dashboard/` | Worker fetch/queue/scheduled entry, handlers, middleware, workflows |
+| Resume/content SSoT | `packages/data/` | `resumes/master/resume_data.json` is authoritative resume data |
+| Application packets | `applications/` | role-specific resumes, cover letters, previews, run outputs |
+| Types and validation | `packages/types/`, `packages/schemas/` | define domain types once, validate with Zod schemas |
+| Contracts | `packages/contracts/` | OpenAPI spec and Cloudflare Worker env contract surface |
+| Shared utilities | `packages/shared/` | errors, logger, retry, crypto, rate-limit, auth, browser, clients |
+| Operational scripts | `tools/scripts/` | Go-first build, sync, deploy, verification, security tooling |
+| Tests | `tests/` | unit/integration/e2e child guides define test-layer rules |
+| CI/release | `.github/workflows/` | validation and release jobs; production deploy authority is Cloudflare Workers Builds |
+| Architecture rules | `docs/conventions/architecture-rules.md` | 200-LOC rule, naming, automation SSoT, script language policy |
+| Secrets/security | `docs/security/`, `tools/scripts/onepassword/` | secret rotation and local 1Password/session migration |
+
+## CODE MAP
+
+| Symbol/File | Type | Location | Role |
+| --- | --- | --- | --- |
+| `package.json` | script hub | `./package.json` | root build/test/sync/deploy command surface |
+| `fetch` worker entry | Worker | `apps/portfolio/entry.js` | hand-authored portfolio edge entry before generated bundle |
+| `generate-worker.js` | build generator | `apps/portfolio/` | creates `apps/portfolio/worker.js` from HTML/data/lib modules |
+| `main()` | MCP bootstrap | `apps/job-server/src/index.js` | job-server process entry and shutdown handling |
+| server bootstrap | Node/Fastify | `apps/job-server/src/server/index.js` | dashboard/server-side job automation entry |
+| `fetch`/`queue`/`scheduled` | Worker | `apps/job-dashboard/src/index.js` | dashboard request, queue, and scheduled orchestrator |
+| `Router` | class | `apps/job-dashboard/src/router.js` | route matching and Worker request dispatch |
+| `validateEnv()` | function | `packages/env/src/parse.js` | environment validation choke point |
+| `AppError`/`HttpError` | classes | `packages/shared/src/errors/index.js` | shared typed error hierarchy |
+| `resumeSchema` | Zod schema | `packages/schemas/src/resume.js` | runtime resume validation SSoT |
+| `APPLICATION_STATUSES` | domain constant | `packages/types/src/application.js` | canonical application status values |
+| `openapi.yaml` | contract | `packages/contracts/` | API contract source |
 
 ## CONVENTIONS
 
-- npm workspaces are the **only** build orchestrator. Bazel was dropped (see
-  `docs/adr/0008-drop-bazel-facade.md`).
-- Workspace deps use `*` (npm workspaces resolves) — never `file:../..` paths.
-- Cloudflare Workers Builds owns production deploy authority; local deploy
-  scripts are non-authoritative.
-- `apps/portfolio/worker.js` is generated from source/build inputs; treat it as
-  an artifact.
-- Job automation code follows hexagonal boundaries: routes/tools/crawlers call
-  shared services and clients, not each other ad hoc.
-- Wanted sync automation uses `WANTED_EMAIL` + either `WANTED_COOKIES` or
-  password fallback via `WANTED_ONEID_CLIENT_ID`.
-- CI is validation-first: secret-scan (gitleaks), lint, typecheck, unit/E2E,
-  security, Cloudflare-native validation, then release/verify.
-- TypeScript strict-mode flags live in `tsconfig.json`; the JS-only base lives
-  in `tsconfig.base.json` (was `jsconfig.json`). Avoid adding new unsuppressed
-  strict violations.
-- Secrets MUST come from secrets manager (Cloudflare Workers Secrets /
-  1Password); never commit `.env`, `.env.secrets`, `.env.automation`, session
-  JSONs.
+- npm workspaces are the only build orchestrator; Bazel was removed by ADR 0008.
+- Workspace dependencies use `*`; do not reintroduce `file:../..` links.
+- `npm run build` runs SSoT sync before portfolio worker generation.
+- Cloudflare Workers Builds owns production deploy authority. Local Wrangler
+  commands are verification or emergency tools, not the normal release path.
+- TypeScript strict-mode flags live in `tsconfig.json`; JS support and aliases
+  live in `tsconfig.base.json`.
+- Job automation follows hexagonal boundaries: routes/tools/crawlers call shared
+  services and clients, not each other ad hoc.
+- Secrets come from Cloudflare Workers Secrets or 1Password-managed local flows;
+  never commit `.env*`, session JSON, cookies, or API tokens.
+- New operational scripts are Go unless a child guide explicitly allows another
+  runtime.
 
-## ANTI-PATTERNS (THIS PROJECT)
+## ANTI-PATTERNS
 
-- Never edit generated artifacts directly (`apps/portfolio/worker.js`, derived
-  resume outputs, generated dashboards).
-- Never hardcode credentials, resume IDs, worker bindings, or Cloudflare
-  resource IDs.
-- Never commit `.env*` files containing real values, session cookies, or API
-  tokens. Pre-commit gitleaks hook and CI `secret-scan` job will block.
-- Never use `networkidle` as a required Playwright load state for
-  terminal-animation pages; use `domcontentloaded` or explicit waits.
-- Never bypass CI/security/verification gates to make deploy or release look
+- Never edit generated artifacts directly: `apps/portfolio/worker.js`, derived
+  resume/application outputs, generated dashboards, or run artifacts.
+- Never hardcode credentials, resume IDs, worker bindings, Cloudflare resource
+  IDs, cookies, or session material.
+- Never bypass CI/security/verification gates to make a deploy or release look
   green.
-- Never add new logic under deprecated wrapper modules; import from
-  `apps/job-server/src/shared/` or `@resume/shared/*` directly.
-- Never re-introduce Bazel files (BUILD.bazel, MODULE.bazel, WORKSPACE,
-  .bazelrc) without an ADR superseding 0008.
-- Never define a domain type in two packages — put it in `@resume/types` and
-  import from there.
-- Never write a hand-rolled validator when a `@resume/schemas` Zod schema fits —
-  extend the schema instead.
-
-## Additional Anti-Patterns (from docs/conventions/architecture-rules.md)
-
-- Never use `.sh` for operational scripts (use Go `.go` instead).
-- Never suppress type errors with `as any` or `@ts-ignore`.
-- Never batch MCP tool calls (`mcphub_*`); call each directly.
-- Never auto-init a git repo with `initializeIfNotPresent=true`.
-- Never place runtime artifacts in source domains (`logs/`, `data/`, `tmp/`).
-- Never use catch-all names like `utils.ts` or `helpers.js`; use specific names
-  (`date-formatter.js`).
-- Never exceed 200 LOC per file without splitting (this project enforces the
-  soft 200-LOC limit as HARD; general fallback is 500). See
-  `docs/conventions/architecture-rules.md`. Epic 6 file-size hygiene is
-  complete — the previously oversized job-server/job-dashboard handlers have
-  been split; do not re-grow them.
+- Never use `networkidle` as a required Playwright load state for portfolio
+  pages; use `domcontentloaded` or explicit waits.
+- Never add new logic under deprecated job-server wrapper modules; import from
+  `apps/job-server/src/shared/` or `@resume/shared/*`.
+- Never define the same domain type in multiple packages; put it in
+  `@resume/types` and validate via `@resume/schemas`.
+- Never suppress type errors with `as any`, `@ts-ignore`, or broad unchecked
+  casts.
+- Never exceed the project 200-LOC source-file limit without splitting.
+- Never include concrete performance metrics in portfolio or resume text; keep
+  claims factual and verifiable without percentages, ratios, or absolute metrics.
 
 ## UNIQUE STYLES
 
-- Mixed runtime stack: Cloudflare Worker edge app, Node-based automation
-  runtimes, and selective Python build tooling.
-- Deep AGENTS hierarchy already exists in app/test/tool trees; add new child
-  files only where a directory has distinct rules, not just many files.
-- Docs split by responsibility: ADRs for durable decisions, architecture docs
-  for system shape, conventions for required rules, guides for operational
-  how-to, security for secret handling, reports/analysis for historical output.
-- Monitoring is split by backend role: Elasticsearch for app logs,
-  Loki/Grafana/automation for ops/infra workflows.
-- Type / validation split: pure JSDoc types live in `@resume/types`, Zod runtime
-  schemas live in `@resume/schemas`, contracts in `@resume/contracts`. Schemas
-  infer their TS types from themselves to prevent drift.
+- Mixed runtime stack: Cloudflare Workers, Node automation, Go operational
+  scripts, Deno Supabase functions, and selective Python/PPTX tooling.
+- Deep child AGENTS files already govern hot paths; add new child files only for
+  distinct domains, not just large directories.
+- Docs are split by purpose: ADRs for decisions, architecture for system shape,
+  conventions for rules, guides for procedures, security for secret handling.
+- Type/validation/contract split is intentional: `@resume/types` has no runtime
+  dependency, `@resume/schemas` validates, `@resume/contracts` publishes API/env
+  contracts.
 
 ## COMMANDS
 
 ```bash
-# Full automation pipelines
-npm run automate:ssot     # SSOT sync + build + typecheck + test:node
-npm run automate:full     # Full CI pipeline (sync + lint + test + build + validate)
-
-# Build & development
-npm run build             # Generate worker.js from HTML templates
-npm run dev               # Local dev with Miniflare
-npm run dev:wrangler      # Wrangler dev mode
-
-# Testing
-npm test                  # All tests (Jest + Node)
-npm run test:jest         # Jest unit/integration tests
-npm run test:node         # Node native tests (job-server)
-npm run test:e2e          # Playwright E2E tests
-npm run test:e2e:smoke    # Smoke tests (worker-health + deploy-verification)
-npm run verify:production # Verify against live production site
-
-# Validation & quality
-npm run lint              # ESLint check (single root config now)
-npm run lint:fix          # ESLint auto-fix
-npm run typecheck         # TypeScript strict mode check
-npm run format            # Prettier format
-npm run format:check      # Prettier check only
-
-# Data sync
-npm run sync:data         # Sync resume data from SSoT
-npm run sync:pptx         # Generate PPTX profiles (Shinhan)
-npm run sync:all          # Both sync operations
-
-# Security
-gitleaks detect --source . --config .gitleaks.toml --redact   # Manual secret scan
-pre-commit install                                              # Install pre-commit hooks
+npm run automate:ssot       # sync + build + typecheck + job-server node tests
+npm run automate:full       # full validation pipeline
+npm run build               # sync data and generate portfolio worker
+npm run lint
+npm run typecheck
+npm test
+npm run test:e2e
+npm run test:e2e:smoke
+npm run verify:production
+npm run sync:data
+npm run sync:all
+npm run deploy:wrangler:root:dry-run
+go run ./tools/ci/validate-cloudflare-native.go
+gitleaks detect --source . --config .gitleaks.toml --redact
 ```
 
 ## NOTES
 
-- 56 child AGENTS.md files exist across `.github/`, `apps/`, `tests/`,
-  `tools/`, `infrastructure/`, `packages/`, `supabase/`, and `ta/`; avoid
-  duplicating their scope from the root.
-
-- `infrastructure/automation/` and `infrastructure/monitoring/` are distinct enough to
-  warrant child AGENTS files; `docs/` stays governed at the docs-root level.
-- `.github/` has a child AGENTS because workflow check names, reusable workflow
-  indirection, and branch-protection contracts are distinct from app code.
-- `tools/scripts/onepassword/` has a child AGENTS because it handles local
-  secret/session migration and must preserve stricter no-print/no-argv rules.
-- `supabase/functions/` contains Supabase edge functions — distinct Deno
-  runtime, not part of npm workspaces.
-- `ta/` contains Python PPTX tooling and generated presentation outputs; it is
-  intentionally outside npm workspaces.
-  #QR|- Go scripts in `infrastructure/automation/` (13 files) — shell-to-Go migration
-  XB| complete per monorepo standards.
-- New packages (types/schemas/contracts) created in Epic 2 each have their own
-  focused AGENTS.md.
-- Foundation modules in `@resume/shared` (retry/crypto/rate-limit/auth) created
-  in Epic 4; app-local consumers will be migrated in follow-up PRs.
-
-## SSOT IMPROVEMENT STATUS
-
-Active improvement plan: `docs/architecture/SSOT_IMPROVEMENT_PLAN.md`
-
-| Epic   | Scope                                                                                         | Status                                                                                                                  |
-| ------ | --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| Epic 0 | P0 security: committed secrets purge, gitignore hardening, gitleaks CI gate, KV ownership doc | Completed (working tree). History rewrite + force push pending owner per `docs/security/SECRET_ROTATION_PLAYBOOK.md`.   |
-| Epic 1 | Build/Config SSOT: drop Bazel, fix tsconfig, decouple ESLint, workspace:\*                    | Completed                                                                                                               |
-| Epic 2 | Types/Schemas/Contracts SSOT: new packages/types, /schemas, /contracts                        | Completed (creation). Migrating callers is incremental.                                                                 |
-| Epic 3 | Env/Secrets SSOT                                                                              | Partial. Cloudflare Workers Secrets adopted as default; full secrets manager (Doppler/Keyflare) deferred.               |
-| Epic 4 | Domain SSOT consolidation                                                                     | Foundation modules created in @resume/shared. App-local migration is per-domain follow-up PRs.                          |
-| Epic 5 | Documentation SSOT                                                                            | Completed. .gitlab-legacy/ removed, rules/ moved to docs/conventions/, root binaries deleted.                           |
-| Epic 6 | File-size hygiene                                                                             | Completed. job-dashboard/job-server oversized handlers split; largest source files now under the 200-LOC project limit. |
-
-#AY|- Never include concrete performance metrics (percentages, ratios, or absolute numbers) in
-#QH| portfolio/resume text. Describe outcomes factually without quantified claims (e.g., say
-#WR| "automated manual workflows to reduce operational burden" instead of "80% reduction").
-#ER| Be conservative—state only what is verifiable.
+- `applications/` is now scoped because it is a distinct top-level content
+  corpus outside npm workspaces.
+- `apps/portfolio/worker.js` may appear in code search because it is committed
+  as a generated edge bundle; fix the generator or source inputs instead.
+- LSP was unavailable during this refresh because the MCP transport was closed;
+  code-map evidence came from codegraph, filesystem structure, configs, and
+  explorer passes.
