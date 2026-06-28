@@ -1,17 +1,16 @@
 #!/usr/bin/env node
-/**
- * Renew Wanted session via Puppeteer headless login.
- * Uses page.type() for React controlled inputs.
- * Requires: WANTED_EMAIL, WANTED_PASSWORD, PUPPETEER_EXECUTABLE_PATH
- */
 import { withStealthBrowser } from '../src/crawlers/browser-utils.js';
 import SessionManager from '../src/shared/services/session/session-manager.js';
 
+export const WANTED_EMAIL_LOGIN_MATCHER = Object.freeze({
+  identity: '이메일',
+  actions: Object.freeze(['계속', '시작', '로그인']),
+});
+
 export async function renewWantedSession(email, password) {
-  console.log('Renewing Wanted session for:', email);
+  console.log('Renewing Wanted session for:', '[redacted-email]');
 
   const newSession = await withStealthBrowser(async (page) => {
-    // Inject existing cookies if any
     const existing = SessionManager.load('wanted');
     if (existing?.cookies && Array.isArray(existing.cookies)) {
       const valid = existing.cookies.filter((c) => c.name && c.value && c.domain);
@@ -21,7 +20,6 @@ export async function renewWantedSession(email, password) {
       }
     }
 
-    // Check if already logged in
     await page.goto('https://www.wanted.co.kr', { waitUntil: 'domcontentloaded', timeout: 30000 });
     await new Promise((r) => setTimeout(r, 3000));
 
@@ -39,23 +37,16 @@ export async function renewWantedSession(email, password) {
       });
       await new Promise((r) => setTimeout(r, 3000));
 
-      // Look for "Continue with email" button
-      const emailBtn = await page.evaluateHandle(() => {
-        const buttons = Array.from(
-          document.querySelectorAll('button, a[role="button"], [role="button"]')
-        );
-        return buttons.find((b) => b.textContent && b.textContent.includes('이메일로 계속하기'));
-      });
+      const emailBtn = await page.evaluateHandle(findWantedEmailLoginButton, WANTED_EMAIL_LOGIN_MATCHER);
       if (emailBtn) {
         const btn = await emailBtn.asElement();
         if (btn) {
           await btn.click();
-          console.log('  Clicked "Continue with email"');
+          console.log('  Clicked email login button');
           await new Promise((r) => setTimeout(r, 3000));
         }
       }
 
-      // Find email input
       const emailSelectors = [
         'input[type="email"]',
         'input[name="email"]',
@@ -83,7 +74,6 @@ export async function renewWantedSession(email, password) {
 
       await new Promise((r) => setTimeout(r, 500));
 
-      // Find password input
       const passInput = await page.$('input[type="password"]');
       if (passInput) {
         await passInput.click({ clickCount: 3 });
@@ -93,7 +83,6 @@ export async function renewWantedSession(email, password) {
 
       await new Promise((r) => setTimeout(r, 500));
 
-      // Submit
       const submitBtn = await page.$('button[type="submit"]');
       if (submitBtn) {
         await submitBtn.click();
@@ -105,7 +94,6 @@ export async function renewWantedSession(email, password) {
 
       await new Promise((r) => setTimeout(r, 6000));
 
-      // Check for CAPTCHA / WAF
       const blocked = await page.evaluate(() => {
         const text = document.body?.textContent || '';
         return (
@@ -138,7 +126,6 @@ export async function renewWantedSession(email, password) {
       }
     }
 
-    // Extract fresh cookies
     const cookies = await page.cookies();
     return {
       platform: 'wanted',
@@ -157,7 +144,6 @@ export async function renewWantedSession(email, password) {
   console.log('\n✅ Session renewed:', newSession.cookieCount, 'cookies');
   console.log('   Expires:', newSession.expiresAt);
 
-  // Verify session works
   const api = await SessionManager.getAPI('wanted');
   if (api) {
     try {
@@ -169,6 +155,31 @@ export async function renewWantedSession(email, password) {
   }
 
   return newSession;
+}
+
+export function isWantedEmailLoginText(text, matcher = WANTED_EMAIL_LOGIN_MATCHER) {
+  const normalized = String(text || '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return (
+    normalized.includes(matcher.identity) &&
+    matcher.actions.some((word) => normalized.includes(word))
+  );
+}
+
+export function findWantedEmailLoginButton(matcher = WANTED_EMAIL_LOGIN_MATCHER) {
+  const buttons = Array.from(
+    document.querySelectorAll('button, a[role="button"], [role="button"]')
+  );
+  return buttons.find((button) => {
+    const normalized = String(button.textContent || '')
+      .replace(/\s+/g, ' ')
+      .trim();
+    return (
+      normalized.includes(matcher.identity) &&
+      matcher.actions.some((word) => normalized.includes(word))
+    );
+  });
 }
 
 // CLI entry
