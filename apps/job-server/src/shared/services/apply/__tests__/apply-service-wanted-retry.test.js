@@ -29,6 +29,9 @@ describe('Apply service Wanted retry integration', () => {
           }
           return { application_id: 'retry-success-id' };
         }
+        if (mode === 'already-applied') {
+          throw Object.assign(new Error('이미 지원한 포지션입니다.'), { status: 400 });
+        }
         throw Object.assign(new Error('Bad request (non-retryable)'), { status: 400 });
       },
     };
@@ -72,6 +75,20 @@ describe('Apply service Wanted retry integration', () => {
     assert.equal(firstAttempt.applicationId, 'retry-success-id');
     assert.equal(statsService.recordApplyRetryMetric.mock.calls.length >= 1, true);
     assert.equal(appManager.recordRetryMetric.mock.calls.length >= 1, true);
+
+    mode = 'already-applied';
+    const alreadyApplied = await applyToJob.call(
+      wantedContext,
+      { ...job, id: 'wanted_2500' },
+      {
+        coverLetter: 'Already applied attempt',
+        delayBetweenSubmissionsMs: 0,
+      }
+    );
+
+    assert.equal(alreadyApplied.success, true);
+    assert.equal(alreadyApplied.applied, false);
+    assert.equal(alreadyApplied.status, 'already_applied');
 
     mode = 'force-circuit-open';
     let circuitResult = null;

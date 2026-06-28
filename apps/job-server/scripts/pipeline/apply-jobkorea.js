@@ -6,6 +6,10 @@ import { APPLY_DELAY_MS, config } from './constants.js';
 import { log, recordJobToElk, summarizeError } from './logging.js';
 import { mapAppliedJob, mapFailedJob } from './result-state.js';
 
+export function getJobKoreaApplyKey(job) {
+  return String(job.sourceId || job.id || job.url || job.sourceUrl || '');
+}
+
 export async function applyToJobKoreaJobs(result, jobs, dedupCache, updateDedupEntry, sleep) {
   const session = SessionManager.load('jobkorea');
   if (!session?.cookies && !session?.cookieString) {
@@ -16,6 +20,7 @@ export async function applyToJobKoreaJobs(result, jobs, dedupCache, updateDedupE
   const applyDelayMs = config.limits?.delayBetweenApps ?? APPLY_DELAY_MS;
   const maxPerPlatform = config.limits?.maxPerPlatform?.jobkorea ?? 10;
   let appliedThisRun = 0;
+  const touchedJobIds = new Set();
 
   const { chromium } = await import('playwright');
   let browser = null;
@@ -52,10 +57,27 @@ export async function applyToJobKoreaJobs(result, jobs, dedupCache, updateDedupE
       }
 
       const job = jobs[index];
+      const jobKey = getJobKoreaApplyKey(job);
+      if (jobKey && touchedJobIds.has(jobKey)) {
+        result.skippedJobs.push({
+          id: job.id,
+          title: job.title,
+          company: job.company,
+          source: 'jobkorea',
+          reason: 'duplicate_in_run',
+        });
+        result.skipped += 1;
+        log('jobkorea: duplicate skipped in current run', { id: job.id });
+        continue;
+      }
+
       const jobUrl = job.url || job.sourceUrl;
       if (!jobUrl) {
         log('jobkorea: skipping job without URL', { id: job.id, title: job.title });
         continue;
+      }
+      if (jobKey) {
+        touchedJobIds.add(jobKey);
       }
 
       try {

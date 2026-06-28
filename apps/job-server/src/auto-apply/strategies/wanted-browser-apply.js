@@ -3,7 +3,7 @@ import { notifications } from '../../shared/services/notifications/index.js';
 import { AuthError, ValidationError } from '../../shared/errors/apply-errors.js';
 import { WANTED_PLATFORM, buildWantedJobUrl } from './wanted-id.js';
 import { extractApplicationId } from './wanted-applications.js';
-import { sleep } from './wanted-retry.js';
+import { isAlreadyAppliedWantedError, sleep } from './wanted-retry.js';
 
 export async function executeWantedBrowserApply(ctx, job, payload, resumeKey, retryReporter) {
   const jobUrl = buildWantedJobUrl(job.id);
@@ -33,9 +33,21 @@ export async function executeWantedBrowserApply(ctx, job, payload, resumeKey, re
 
   if (!response.ok) {
     const errorMsg = response.body?.message || `API request failed: ${response.status}`;
+    const error = { message: errorMsg, status: response.status };
+    if (isAlreadyAppliedWantedError(error)) {
+      return {
+        success: true,
+        applied: false,
+        skipped: true,
+        status: 'already_applied',
+        applicationId: null,
+        retryable: false,
+      };
+    }
+
     throw new ValidationError(errorMsg, {
       platform: WANTED_PLATFORM,
-      status: response.status,
+      metadata: { status: response.status },
     });
   }
 

@@ -132,8 +132,10 @@ export class ApplyOrchestrator {
             const result = await this.#applier.applyToJob(job);
             results.push({ job, ...result });
 
-            if (result.success) {
+            if (result.success && !result.skipped && result.applied !== false) {
               this.#stats.applied++;
+            } else if (result.success) {
+              this.#stats.skipped++;
             } else {
               this.logger.error(`❌ Apply failed for ${job.company || job.title}: ${result.error}`);
               this.#stats.failed++;

@@ -11,6 +11,7 @@ import {
   enforceRateLimit,
   getErrorStatus,
   isRetryableWantedError,
+  isAlreadyAppliedWantedError,
 } from './wanted-retry.js';
 import { executeWantedBrowserApply } from './wanted-browser-apply.js';
 import { getApplicationStatus, validateSession } from './wanted-session.js';
@@ -122,6 +123,17 @@ export async function applyToJob(job, options = {}) {
   } catch (error) {
     const normalizedError = classifyWantedError(error);
     const retryable = isRetryableWantedError(error) || Boolean(normalizedError.retryable);
+
+    if (isAlreadyAppliedWantedError(error)) {
+      return {
+        success: true,
+        applied: false,
+        skipped: true,
+        status: 'already_applied',
+        applicationId: null,
+        retryable: false,
+      };
+    }
 
     retryReporter('execution_failed', {
       metrics: { successRate: 0 },

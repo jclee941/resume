@@ -13,10 +13,10 @@ import { log, summarizeError } from './logging.js';
 
 export function getDedupKey(job) {
   if (job.source === 'jobkorea') {
-    return job.sourceUrl;
+    return `${job.source}:${job.sourceId || job.id || job.sourceUrl}`;
   }
 
-  return String(job.id);
+  return `${job.source || 'wanted'}:${job.id}`;
 }
 
 export function getCrossRunDedupKey(job) {

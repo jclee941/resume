@@ -45,6 +45,16 @@ export function isRetryableWantedError(error) {
   return status === 429 || (status >= 500 && status <= 599);
 }
 
+export function isAlreadyAppliedWantedError(error) {
+  const status = getErrorStatus(error);
+  const message = String(error?.message || error?.body?.message || '').toLowerCase();
+
+  return (
+    status === 400 &&
+    (message.includes('already') || message.includes('duplicate') || message.includes('이미 지원'))
+  );
+}
+
 export function resolveDelayMs(ctx, options = {}) {
   const configured =
     options.delayBetweenSubmissionsMs ??
