@@ -7,6 +7,8 @@
 [![TypeScript](https://img.shields.io/badge/typescript-strict-blue.svg)](tsconfig.base.json)
 [![License: Private](https://img.shields.io/badge/license-private-lightgrey.svg)](LICENSE)
 
+> Resume portfolio monorepo: Cloudflare Worker edge site, job automation (Wanted/JobKorea), SSoT data, self-hosted observability
+
 이 저장소는 개인 포트폴리오 사이트, 채용 자동화 워커, 단일 진실 공급원(SSoT) 데이터 레이어, 그리고 운영 대시보드를 하나의 npm 워크스페이스 모노레포로 통합한 사설 저장소입니다.
 
 This repository is a private npm workspaces monorepo that unifies a personal portfolio site, job automation tooling, a Single Source of Truth (SSoT) data layer, and an operations dashboard under a single, versioned codebase.
@@ -40,107 +42,110 @@ This repository is a private npm workspaces monorepo that unifies a personal por
 
 - **단일 진실 공급원 (SSoT)** — 이력, 프로필, 스킬, 직무 데이터는 `packages/data`에서 한 번 정의되고 포트폴리오, 이력서 PDF, PPTX, 운영 대시보드 등 모든 산출물로 자동 동기화됩니다.
 - **엣지 우선 포트폴리오** — `apps/portfolio`는 Cloudflare Worker(`wrangler.jsonc`)로 글로벌 엣지에 배포되어 저지연으로 페이지를 제공합니다.
-- **운영 가능한 잡 자동화** — `apps/job-server`는 Docker로 컨테이너화되는 Node.js 서버로, 1Password CLI 연동, Wanted/JobKorea 등 채용 플랫폼 자동화, 제안서 동기화 파이프라인을 포함합니다.
-- **셀프 호스팅 옵저버빌리티** — `apps/job-dashboard`는 인증, CSRF, 레이트 리밋 미들웨어와 관리/자동화/지원 라우트를 갖춘 운영 대시보드입니다.
+- **운영 가능한 잡 자동화** — `apps/job-server`는 Docker로 컨테이너화되는 Node.js 서버로, Wanted/JobKorea 같은 한국 채용 플랫폼용 자동화 워크플로를 실행합니다.
+- **관측 가능성(Observability)** — 헬스 체크, 메트릭, 구조화 로그를 자체 호스팅하는 대시보드(`apps/job-dashboard`)로 제공합니다.
+- **엄격한 타입 안정성** — `tsconfig.base.json`은 strict 모드를 사용하며 공유 타입(`packages/types`), 스키마(`packages/schemas`), 계약(`packages/contracts`)을 워크스페이스 전반에 강제합니다.
 
 ---
 
 ## 주요 기능 / Features
 
-- **SSoT 데이터 동기화 파이프라인** — `sync:data` → `sync:pdf` → `sync:pptx` 순으로 단일 데이터에서 PDF 이력서와 발표용 PPTX까지 자동 생성합니다.
-- **1Password 기반 시크릿 관리** — `op:run`, `op:native:run`, `op:seed:resume`, `op:seed:sessions`, `op:restore:sessions` 명령어로 시크릿과 세션 파일을 안전하게 주입합니다.
-- **GitHub/스킬/AI 강화(enrichment)** — `enrich:github`, `enrich:skills`, `enrich:ai`로 외부 소스에서 프로필 데이터를 보강합니다.
-- **지원서 패키지** — `applications/` 디렉터리에 회사별 이력서(PDF/HTML)와 자기소개서가 버전 관리되어 있습니다(Airpremia, Coupang Fintech SRE, Cloudflare One SE, GitLab APAC Security, Security IR 등).
-- **다층 보안** — `apps/job-dashboard`는 CORS, CSRF, 레이트 리밋 미들웨어로 보호되며, RBAC 기반 인증 라우트(`routes/auth.js`)와 관리자 라우트(`routes/admin.js`)를 제공합니다.
-- **헬스체크와 자동화 라우트** — `routes/health.js`는 Docker `HEALTHCHECK`에서 호출되며, `routes/automation.js`와 `routes/applications.js`는 워커 큐와 연동됩니다.
-- **도큐멘테이션 우선** — 각 앱은 자체 `README.md`, `DEPLOYMENT_GUIDE.md`, `DEVELOPMENT_GUIDE.md`, `API_REFERENCE.md`, `DIAGRAMS.md`, `SECRETS.md`를 갖추고 있습니다.
-- **계약 중심 패키지** — `packages/contracts`가 외부 API 계약을, `packages/schemas`가 런타임 검증을, `packages/types`가 타입 안정성을 담당합니다.
+### 한국어
+
+- **모노레포 통합 빌드**: `npm workspaces`로 10개의 워크스페이스(`apps/*`, `packages/*`)를 단일 의존성 그래프로 관리합니다.
+- **Cloudflare Worker 포트폴리오**: `apps/portfolio`가 엣지에서 정적·동적 페이지를 모두 렌더링합니다.
+- **잡 자동화 서버**: `apps/job-server`가 큐 컨슈머, 라우터, 미들웨어(CORS/CSRF/레이트 리미트)를 포함하는 Node.js HTTP 서버입니다.
+- **운영 대시보드**: `apps/job-dashboard`가 인증, 관리자 라우트, 자동화 상태, 지원 트래킹, 헬스 체크를 제공합니다.
+- **데이터 SSoT**: `packages/data`가 정규화된 이력/스킬/직무 데이터를 보유하고 모든 산출물의 입력으로 작동합니다.
+- **다중 산출물 생성기**: 동기화 스크립트가 PDF(`sync:pdf`, Go), PPTX(`sync:pptx`, Python), 정적 JSON(`sync:data`, Node)을 한 번의 명령으로 갱신합니다.
+- **보안 비공개 저장소**: 자격증명은 1Password CLI 통합 스크립트로 시드/복원되며 저장소에는 평문 비밀을 두지 않습니다.
+- **품질 도구 체인**: ESLint(`eslint.config.cjs`), Jest(`jest.config.cjs`), Playwright(`playwright.config.js`), Redocly(`redocly.yaml`), lychee 링크 검사(`lychee.toml`)가 기본 통합되어 있습니다.
+- **컨테이너 배포**: 멀티 스테이지 `Dockerfile`과 `docker-compose.yml`로 단일 명령(`docker compose up`)으로 로컬/원격 운영이 가능합니다.
+- **지원용 자료 패키지**: `applications/` 하위에 회사별(쿠팡 파이낸테크 SRE, Cloudflare One SE, GitLab APAC InfraSec 등) 커버레터·이력서 PDF·HTML을 보관합니다.
+
+### English
+
+- **Monorepo unified build**: 10 workspaces (`apps/*`, `packages/*`) managed through `npm workspaces` with a single dependency graph.
+- **Cloudflare Worker portfolio**: `apps/portfolio` renders both static and dynamic content at the edge.
+- **Job automation server**: `apps/job-server` is a Dockerized Node.js HTTP server with queue consumer, router, and middleware (CORS, CSRF, rate limit).
+- **Operations dashboard**: `apps/job-dashboard` provides authentication, admin routes, automation status, application tracking, and health checks.
+- **SSoT data**: `packages/data` holds normalized resume, skill, and role data that feeds every generated artifact.
+- **Multi-format generators**: Sync scripts regenerate PDFs (Go), PPTX (Python), and static JSON (Node) in a single pipeline.
+- **Secure private repo**: Credentials are seeded/restored via 1Password CLI integration scripts; no plaintext secrets live in the repo.
+- **Quality toolchain**: ESLint, Jest, Playwright, Redocly, and lychee are preconfigured.
+- **Container deployment**: Multi-stage `Dockerfile` plus `docker-compose.yml` enable one-command local/remote ops.
+- **Application material kits**: Company-specific cover letters, resume PDFs, and HTML live under `applications/`.
 
 ---
 
 ## 아키텍처 / Architecture
 
-이 모노레포는 데이터(SSoT), 표현(엣지 포트폴리오), 자동화(MCP/잡 서버), 운영(대시보드)의 4개 책임 영역으로 나뉘며, 공유 패키지를 통해 결합도를 낮춥니다.
-
-The monorepo is split into four responsibility areas — data (SSoT), presentation (edge portfolio), automation (job server), and operations (dashboard) — connected through shared packages.
+`packages/data`를 중심으로 데이터가 한 번 작성되고, 여러 빌드 스크립트와 런타임이 이를 소비합니다.
 
 ```mermaid
 flowchart LR
-  subgraph SSoT["SSoT &amp; Shared"]
-    Data["packages/data"]
+  subgraph SSoT["SSoT / Data"]
+    Data["packages/data<br/>(resume, skills, roles)"]
     Types["packages/types"]
     Schemas["packages/schemas"]
     Contracts["packages/contracts"]
-    Shared["packages/shared"]
-    Env["packages/env"]
+  end
+
+  subgraph Build["Build / Sync"]
+    SyncData["sync:data<br/>(Node)"]
+    SyncPDF["sync:pdf<br/>(Go)"]
+    SyncPPTX["sync:pptx<br/>(Python)"]
+    Enrich["enrich:github / skills / ai<br/>(Go)"]
+  end
+
+  subgraph Runtime["Runtime Apps"]
+    Portfolio["apps/portfolio<br/>Cloudflare Worker"]
+    JobServer["apps/job-server<br/>Node.js + Docker"]
+    JobDashboard["apps/job-dashboard<br/>Edge HTTP"]
     CLI["packages/cli"]
   end
 
-  subgraph Apps["Applications"]
-    Portfolio["apps/portfolio<br/>(Cloudflare Worker)"]
-    JobServer["apps/job-server<br/>(Node.js MCP server)"]
-    JobDashboard["apps/job-dashboard<br/>(Operations UI)"]
-  end
-
-  subgraph Tooling["Build &amp; Sync"]
-    SyncData["sync:data"]
-    SyncPDF["sync:pdf"]
-    SyncPPTX["sync:pptx"]
-    Enrich["enrich:*"]
-    OnePwd["op:* (1Password)"]
-  end
-
-  subgraph External["External Surfaces"]
-    CFE[("Cloudflare Edge")]
-    Docker[("Docker Compose")]
-    Sites["Wanted / JobKorea"]
+  subgraph External["External Services"]
+    CF["Cloudflare Edge"]
+    OneP["1Password CLI"]
+    Wanted["Wanted / JobKorea"]
     GH["GitHub API"]
-    LLM["AI provider"]
   end
 
+  Data --> SyncData
+  Data --> SyncPDF
+  Data --> SyncPPTX
   Data --> Portfolio
   Data --> JobServer
   Data --> JobDashboard
-  Schemas --> Portfolio
-  Schemas --> JobServer
+  Enrich --> Data
+  Types --> Portfolio
   Types --> JobServer
   Types --> JobDashboard
-  Shared --> JobServer
-  Shared --> JobDashboard
+  Schemas --> JobServer
+  Schemas --> JobDashboard
   Contracts --> JobServer
-  Env --> JobServer
-  Env --> JobDashboard
-  CLI --> JobServer
+  Contracts --> JobDashboard
 
-  SyncData --> Data
-  SyncPDF --> Data
-  SyncPPTX --> Data
-  Enrich --> Data
-  OnePwd --> Env
-
-  Portfolio --> CFE
-  JobServer --> Docker
-  JobServer --> Sites
+  Portfolio --> CF
+  JobServer --> Wanted
+  JobServer --> OneP
+  JobDashboard --> CF
+  SyncData --> CLI
   Enrich --> GH
-  Enrich --> LLM
-  JobDashboard --> JobServer
 ```
 
-### 데이터 플로우 / Data flow
+핵심 흐름 / Key flows:
 
-1. `packages/data`에 정의된 마스터 레쥬메 JSON이 모든 산출물의 소스입니다.
-2. `sync:data`가 JSON을 검증·정규화하고, `sync:pdf`(Go)·`sync:pptx`(Python)가 회사별 PDF 이력서와 발표용 PPTX를 생성합니다.
-3. `apps/portfolio` 워커는 빌드 시점에 SSoT를 임베드해 엣지에서 정적으로 서빙합니다.
-4. `apps/job-server`는 런타임에 SSoT를 읽어 채용 플랫폼 자동화와 MCP 엔드포인트를 제공합니다.
-5. `apps/job-dashboard`는 같은 SSoT를 공유하며 잡 자동화 상태를 시각화합니다.
+- **읽기 경로(Read path)**: `packages/data` → `apps/portfolio` (엣지 SSR) → 최종 방문자.
+- **자동화 경로(Automation path)**: `packages/data` → `apps/job-server` → Wanted/JobKorea 어댑터 → 큐 컨슈머(`apps/job-server/src/queue-consumer.js`) → `apps/job-dashboard`에서 관측.
+- **동기화 경로(Sync path)**: `packages/data` → `sync:data` (JSON), `sync:pdf` (Go), `sync:pptx` (Python) → `applications/` 및 `ta/` 산출물.
 
 ---
 
 ## 저장소 구조 / Repository Structure
 
-저장소 최상위 구조는 다음과 같습니다(생성된 디렉터리만 표시).
-
-The top-level layout of this repository is as follows (generated directories only):
+실제 최상위 디렉터리만 반영합니다. (Subdirectories are truncated to what is visible in the source tree.)
 
 ```
 .
@@ -163,13 +168,15 @@ The top-level layout of this repository is as follows (generated directories onl
 ├── tsconfig.base.json
 ├── tsconfig.json
 ├── wrangler.jsonc
-├── ta/                                # 발표용 PPTX 산출물 디렉터리
-│   ├── *.pptx
+├── ta/                                  # PPTX 빌드/검증 스크립트 (Python)
 │   ├── improve_visual.py
 │   ├── inspect.py
 │   ├── verify.py
-│   └── output/                        # 검증된 PPTX와 리포트
-├── applications/                      # 회사별 지원 패키지
+│   ├── lee_jaecheol_ta*.pptx
+│   ├── ta.pptx
+│   └── output/                          # 생성된 PPTX 산출물
+├── applications/                        # 회사별 지원 패키지 (PDF/HTML/커버레터)
+│   ├── DESIGN.md
 │   ├── airpremia-security-2026/
 │   ├── infrastructure-architecture-2026/
 │   ├── coupang-fintech-sre-2026/
@@ -177,9 +184,8 @@ The top-level layout of this repository is as follows (generated directories onl
 │   ├── gitlab-apac-security-2026/
 │   └── security-ir-2026/
 └── apps/
-    ├── portfolio/                     # Cloudflare Worker 포트폴리오 (main 진입점)
-    ├── job-server/                    # MCP 호환 잡 자동화 서버 (Docker 타깃)
-    └── job-dashboard/                 # 운영 대시보드 (auth/admin/automation)
+    └── job-dashboard/                   # 운영 대시보드 (Worker + 큐 컨슈머)
+        ├── AGENTS.md
         ├── API_REFERENCE.md
         ├── DEPLOYMENT_GUIDE.md
         ├── DEVELOPMENT_GUIDE.md
@@ -187,251 +193,251 @@ The top-level layout of this repository is as follows (generated directories onl
         ├── OWNERS
         ├── README.md
         ├── SECRETS.md
-        ├── schema.sql
         ├── migrate-json-to-d1.cjs
         ├── migration-data.sql
-        ├── migrations/                # SQL 마이그레이션 시퀀스
+        ├── schema.sql
+        ├── package.json
+        ├── tsconfig.json
+        ├── migrations/
+        │   ├── 0002_add_approval_metadata.sql
+        │   └── 0003_add_auto_apply_application_metadata.sql
         └── src/
             ├── index.js
             ├── queue-consumer.js
             ├── router.js
-            ├── middleware/            # cors, csrf, rate-limit
-            └── routes/                # admin, applications, auth, automation, health
+            ├── middleware/              # cors, csrf, rate-limit
+            └── routes/                  # admin, applications, auth, automation, health
 ```
 
-워크스페이스로 선언된 패키지(요약):
+워크스페이스 멤버(`package.json#workspaces` 기준):
 
-| 경로 / Path            | 역할 / Role                                                |
-| ---------------------- | ---------------------------------------------------------- |
-| `apps/portfolio`       | Cloudflare Worker 엣지 포트폴리오 (`main: worker.js`)       |
-| `apps/job-server`      | Docker로 컨테이너화되는 MCP 호환 잡 자동화 서버            |
-| `apps/job-dashboard`   | 인증·관리·자동화 라우트를 갖춘 운영 대시보드               |
-| `packages/cli`         | 잡 서버가 사용하는 CLI 도구                                |
-| `packages/data`        | SSoT 레쥬메 데이터                                         |
-| `packages/shared`      | 워커/서버/대시보드 공용 유틸                               |
-| `packages/types`       | TypeScript 타입 정의                                       |
-| `packages/schemas`     | 런타임 스키마 (Zod 등)                                     |
-| `packages/contracts`   | 외부 API 계약 정의                                         |
-| `packages/env`         | 환경변수/시크릿 래퍼 (1Password 연동)                       |
+- `apps/portfolio` — Cloudflare Worker 포트폴리오 (메인 엔트리: `worker.js`)
+- `apps/job-server` — 잡 자동화 Node.js 서버 (Docker 이미지 대상)
+- `apps/job-dashboard` — 운영 대시보드 Worker
+- `packages/cli` — 공유 CLI 진입점
+- `packages/data` — SSoT 데이터
+- `packages/shared` — 공유 유틸리티
+- `packages/types` — 공유 타입 정의
+- `packages/schemas` — 검증 스키마
+- `packages/contracts` — API/DTO 계약
+- `packages/env` — 환경 변수 검증
 
 ---
 
 ## 빠른 시작 / Quick Start
 
-요구 사항 / Prerequisites:
+### 사전 요구 사항 / Prerequisites
 
-- **Node.js 22 이상** (Dockerfile 베이스 이미지와 일치)
-- **npm 10 이상** (워크스페이스와 `package-lock.json` 사용)
-- **Wrangler** — Cloudflare Worker 로컬 실행/배포용
-- **Docker + Docker Compose** — `job-server` 컨테이너 실행용
-- (선택) **Go 1.22+**, **Python 3.11+**, **exiftool** — 동기화/빌드 스크립트 실행 시
+- Node.js **22.x** (`Dockerfile` 기준)
+- npm **10.x** 이상 (workspaces 지원)
+- Docker & Docker Compose (컨테이너 실행 시)
+- Python 3.x (`sync:pptx`, `ta/*.py` 사용 시)
+- Go 1.22+ (`sync:pdf`, enrichment 스크립트 사용 시)
+- 1Password CLI (`op` 명령, 자격증명 시드/복원 시)
 
-설치와 첫 동기화 / Install and first sync:
+### 설치 / Install
 
 ```bash
-# 1) 의존성 설치 (워크스페이스 전체)
+# 1) 워크스페이스 의존성 설치
 npm ci
 
-# 2) 환경 변수 템플릿 복사 후 1Password 또는 .env로 시크릿 주입
-cp .env.example .env   # (필요한 키에 한해)
-
-# 3) SSoT에서 PDF/PPTX까지 한 번에 동기화
-npm run sync:all
-
-# 4) 포트폴리오 워커 로컬 실행
-npm run dev --workspace apps/portfolio
-
-# 5) 잡 서버를 Docker로 기동
-docker compose up -d --build
-
-# 6) 운영 대시보드 로컬 실행
-npm run dev --workspace apps/job-dashboard
+# 2) (선택) 1Password 자격증명 시드
+npm run op:seed:resume
+npm run op:seed:sessions
 ```
 
-> 첫 부팅 시 `routes/health.js`의 `/health` 엔드포인트가 `200 OK`를 반환하면 정상입니다. Docker `HEALTHCHECK`도 동일 엔드포인트를 사용합니다.
+### 로컬 실행 / Run locally
+
+```bash
+# (a) Docker로 잡 서버 + 대시보드 실행
+docker compose up --build
+
+# (b) Cloudflare Worker 포트폴리오를 로컬에서 미리보기
+cd apps/portfolio
+npx wrangler dev
+
+# (c) 잡 대시보드 로컬 개발
+cd apps/job-dashboard
+npm run dev
+```
+
+### 데이터 동기화 / Sync artifacts
+
+```bash
+# JSON 데이터 → PDF → PPTX를 한 번에
+npm run sync:all
+
+# 외부 enrichment 파이프라인
+npm run enrich:all
+```
 
 ---
 
 ## 설정 / Configuration
 
-설정은 다음 네 계층으로 분리됩니다.
+### 환경 변수
 
-| 계층 / Layer       | 위치                                       | 용도                                              |
-| ------------------ | ------------------------------------------ | ------------------------------------------------- |
-| 루트 환경 변수     | `.env` (env_file), `docker-compose.yml`    | `NODE_ENV`, `PORT`, 컨테이너 마운트               |
-| Cloudflare Worker  | `wrangler.jsonc`                           | 컴플라인, 바인딩, 환경 변수, 크론 트리거          |
-| 1Password 시크릿   | `packages/env` 래퍼 + `op:*` 스크립트       | API 토큰, 세션 쿠키, 자격증명                    |
-| SQL 스키마         | `apps/job-dashboard/schema.sql`, `migrations/` | 대시보드 데이터 모델 및 점진적 마이그레이션   |
+루트 `.env` 파일을 사용합니다 (`docker-compose.yml`의 `env_file`). 시크릿은 절대 커밋하지 마세요.
 
-자주 사용하는 환경 변수 / Common variables:
+| 변수 / Variable          | 용도 / Purpose                       | 필수 / Required |
+| ------------------------ | ------------------------------------ | --------------- |
+| `NODE_ENV`               | `production` / `development`         | 권장 / Recommended |
+| `PORT`                   | HTTP 리스닝 포트 (기본 3000)         | 아니오 / No     |
+| `OP_SERVICE_ACCOUNT_TOKEN` | 1Password 서비스 계정 토큰          | 예 (운영) / Yes (prod) |
+| `WANTED_SESSION_*`       | Wanted 자동화 세션 자격증명           | 자동화 시 / For automation |
+| `JOBKOREA_SESSION_*`     | JobKorea 자동화 세션 자격증명         | 자동화 시 / For automation |
+| `CF_API_TOKEN`           | Cloudflare API 토큰 (배포 시)        | 배포 시 / For deploy |
+| `D1_BINDING`             | Cloudflare D1 바인딩 (대시보드)      | 대시보드 운영 시 / For dashboard |
 
-- `NODE_ENV` — `production` (Docker) / `development` (로컬)
-- `PORT` — `job-server`가 노출할 포트 (기본 `3000`)
-- Cloudflare Worker 바인딩 — `wrangler.jsonc`에서 KV, D1, R2, Queue, Secret을 선언합니다.
+> 자세한 시크릿 목록과 교체 절차는 [`apps/job-dashboard/SECRETS.md`](apps/job-dashboard/SECRETS.md)를 참고하세요.
 
-`apps/job-dashboard`는 자체 `SECRETS.md`에 시크릿 명세를, `DEPLOYMENT_GUIDE.md`에 배포 환경별 키 매핑을 문서화합니다.
+### TypeScript / Lint 설정
+
+- `tsconfig.base.json` — strict 모드 베이스.
+- `eslint.config.cjs` — Flat config 기반 린트 규칙.
+- `jest.config.cjs` — Node 및 Worker 테스트.
+- `playwright.config.js` — E2E 테스트.
+- `redocly.yaml` — OpenAPI 레퍼런스 검증.
+- `lychee.toml` — 저장소 내 링크 검사.
 
 ---
 
 ## 명령어 레퍼런스 / Commands Reference
 
-루트 `package.json`에서 노출되는 주요 스크립트:
+루트 `package.json` 기준 주요 스크립트:
 
-### 동기화 / Sync
+| 스크립트 / Script             | 설명 / Description                                                |
+| ----------------------------- | ----------------------------------------------------------------- |
+| `npm run strip-exif`          | 포트폴리오 이미지에서 EXIF 메타데이터 제거 (exiftool 사용).       |
+| `npm run sync:data`           | SSoT 데이터 → 정적 JSON 동기화 (Node).                            |
+| `npm run sync:pdf`            | 이력서 PDF 생성 (Go).                                             |
+| `npm run sync:pptx`           | 회사 프레젠테이션 PPTX 생성 (Python).                             |
+| `npm run sync:all`            | 위 세 단계를 순차 실행.                                           |
+| `npm run op:run`              | 1Password 래퍼 실행 (Go).                                         |
+| `npm run op:native:run`       | 1Password 네이티브 호출 래퍼.                                     |
+| `npm run op:seed:resume`      | 이력서용 1Password 항목 시드.                                      |
+| `npm run op:seed:sessions`    | 자동화 세션용 1Password 항목 시드.                                |
+| `npm run op:restore:sessions` | 세션 자격증명 복원.                                               |
+| `npm run sync:proposals`      | 잡 제안 검토 CLI + 적용 파이프라인.                               |
+| `npm run enrich:github`       | GitHub 활동 데이터 enrichment (Go).                               |
+| `npm run enrich:skills`       | 스킬 enrichment.                                                  |
+| `npm run enrich:ai`           | AI 기반 enrichment.                                                |
+| `npm run enrich:all`          | 위 세 단계 순차 실행.                                             |
+| `npm run automate:ssot`       | SSoT 동기화 + 빌드 + 타입체크 + Node 테스트.                      |
+| `npm run automate:full`       | 전체 동기화 + 린트 + 타입체크 + 테스트 (스크립트가 잘린 경우 상세 내용은 `package.json` 참조). |
 
-| 명령어 / Command        | 설명 / Description                                                       |
-| ----------------------- | ------------------------------------------------------------------------ |
-| `npm run sync:data`     | SSoT JSON 정규화 및 워크스페이스 전파 (`sync-resume-data.js`)            |
-| `npm run sync:pdf`      | Go로 회사별 PDF 이력서 생성 (`pdf-generator.go master`)                  |
-| `npm run sync:pptx`     | Python으로 발표용 PPTX 생성 (`generate_shinhan_pptx.py`)                 |
-| `npm run sync:all`      | `sync:data` → `sync:pdf` → `sync:pptx` 순차 실행                         |
-| `npm run sync:proposals`| 제안서 검토 CLI 실행 후 `apply-proposals.go`로 적용                      |
-
-### 1Password 시크릿 / Secrets
-
-| 명령어 / Command              | 설명 / Description                                       |
-| ----------------------------- | -------------------------------------------------------- |
-| `npm run op:run`              | 1Password 래퍼 실행 (`onepassword/run`)                  |
-| `npm run op:native:run`       | 네이티브 1Password 바이너리 실행 (`onepassword/native-run`) |
-| `npm run op:seed:resume`      | 레쥬메 SSoT용 시크릿 시드                                 |
-| `npm run op:seed:sessions`    | 잡 자동화 세션 파일 시드                                  |
-| `npm run op:restore:sessions` | 세션 파일 복원                                            |
-
-### 데이터 보강 / Enrichment
-
-| 명령어 / Command       | 설명 / Description                                     |
-| ---------------------- | ------------------------------------------------------ |
-| `npm run enrich:github`| GitHub API로 프로필/기여도 보강 (`enrichment/github`)  |
-| `npm run enrich:skills`| 외부 스킬 분류 소스 동기화 (`enrichment/skills`)       |
-| `npm run enrich:ai`    | AI 제공자로 자기소개서·요약 보강 (`enrichment/ai`)      |
-| `npm run enrich:all`   | 세 보강 작업 순차 실행                                  |
-
-### 자동화 파이프라인 / Automation pipelines
-
-| 명령어 / Command         | 설명 / Description                                                       |
-| ------------------------ | ------------------------------------------------------------------------ |
-| `npm run automate:ssot`  | 데이터 동기화 → 빌드 → 타입체크 → Node 테스트                             |
-| `npm run automate:full`  | 전체 동기화 + 린트 + 타입체크                                              |
-| `npm run strip-exif`     | `exiftool`로 PNG/WebP의 EXIF 메타데이터 제거 (없으면 경고만 출력)        |
-
-> 그 외 `lint`, `test`, `test:node`, `typecheck`, `build` 등은 각 워크스페이스의 `package.json`에 정의되어 있습니다.
+> 그 외 워크스페이스 단위 스크립트(예: `apps/portfolio`, `apps/job-server`, `packages/*`)는 각 패키지의 `package.json`에서 확인하세요.
 
 ---
 
 ## 로컬 개발 / Local Development
 
-### 포트폴리오 워커 / Portfolio worker
+### 워크플로 / Workflow
+
+1. **데이터 변경**: `packages/data` 내 YAML/JSON/TypeScript 데이터 수정.
+2. **동기화**: `npm run sync:data`로 산출 JSON을 생성.
+3. **타입·린트**: `npm run typecheck`, `npm run lint` (워크스페이스별 `package.json` 참고).
+4. **단위 테스트**: `npm test` (Jest).
+5. **E2E 테스트**: `npm run test:e2e` (Playwright).
+6. **로컬 미리보기**: 각 앱 디렉터리에서 `npm run dev` 또는 `wrangler dev`.
+
+### 워크스페이스 간 의존성
+
+`@resume/*` 스코프 패키지(`shared`, `schemas`, `types`, `data`, `env`, `contracts`, `cli`)를 사용할 때는 항상 워크스페이스 심볼릭 링크를 통해 의존성을 추가합니다.
 
 ```bash
-npm run dev --workspace apps/portfolio      # wrangler dev
-npm run deploy --workspace apps/portfolio   # wrangler deploy
+npm install @resume/data --workspace=apps/job-server
 ```
 
-### 잡 서버 / Job server
+### 환경 격리
 
-```bash
-# 옵션 A: Docker Compose (권장)
-docker compose up --build
-
-# 옵션 B: 워크스페이스에서 직접 실행
-npm run dev --workspace apps/job-server
-```
-
-- 데이터 볼륨 `job_automation_data`가 `apps/job-server/.data`에 마운트됩니다.
-- 헬스체크: `GET /health` → `200 OK`.
-
-### 잡 대시보드 / Job dashboard
-
-```bash
-npm run dev --workspace apps/job-dashboard   # 로컬 서버
-npm run build --workspace apps/job-dashboard  # 프로덕션 빌드
-npm run migrate --workspace apps/job-dashboard # migrate-json-to-d1.cjs
-```
-
-- 라우트 구성: `admin`, `applications`, `auth`, `automation`, `health`.
-- 미들웨어: `cors`, `csrf`, `rate-limit` (단위 테스트 포함).
-- SQL 마이그레이션: `apps/job-dashboard/migrations/*.sql`을 순서대로 적용합니다.
-
-### 공통 / Shared
-
-- 타입 안정성: `tsconfig.base.json`을 모든 워크스페이스가 확장합니다.
-- 린트: `eslint.config.cjs` (flat config).
-- 링크 검사: `lychee.toml`.
-- API 문서: `redocly.yaml`로 OpenAPI 산출물을 린트합니다.
+`packages/env`가 환경 변수 검증을 담당합니다. 새 변수를 도입할 때 해당 워크스페이스의 스키마를 함께 업데이트하세요.
 
 ---
 
 ## 테스트 / Testing
 
-루트에서 사용 가능한 테스트 도구:
-
-| 도구 / Tool         | 설정 파일                  | 용도                                       |
-| ------------------- | -------------------------- | ------------------------------------------ |
-| Jest                | `jest.config.cjs`          | Node 단위/통합 테스트 (`rate-limit.test.js` 등) |
-| Playwright          | `playwright.config.js`     | 포트폴리오/대시보드 E2E                    |
-| ESLint              | `eslint.config.cjs`        | 정적 분석                                  |
-| TypeScript          | `tsconfig.base.json`       | 타입체크                                   |
-| Redocly CLI         | `redocly.yaml`             | OpenAPI 린트                               |
-| lychee              | `lychee.toml`              | 마크다운 링크 검사                         |
-
-실행 예시 / Example invocations:
+- **단위 테스트**: Jest (`jest.config.cjs`). 일부 모듈은 인-파일 테스트(`*.test.js`)를 포함합니다 (예: `apps/job-dashboard/src/middleware/rate-limit.test.js`).
+- **E2E 테스트**: Playwright (`playwright.config.js`). 브라우저 자동화는 포트폴리오 사이트의 시각 회귀 및 사용자 흐름 검증을 다룹니다.
+- **링크 검사**: `lychee.toml` 기반의 정기 링크 무결성 검사.
+- **API 레퍼런스**: Redocly (`redocly.yaml`)로 OpenAPI 명세 린트.
+- **데이터 검증**: `packages/schemas`(Zod 등) — 자동화 입력의 런타임 검증을 담당합니다.
 
 ```bash
-npm test                              # Jest 전체
-npx playwright test                   # E2E
-npm run lint                          # ESLint
-npm run typecheck                     # TypeScript
-npx redocly lint                      # OpenAPI
-npx lychee --config lychee.toml '**/*.md'
+npm test                 # Jest
+npm run test:e2e         # Playwright
+npx lychee --config lychee.toml './**/*.md'
+npx redocly lint
 ```
 
 ---
 
 ## 배포 / Deployment
 
-### Cloudflare Worker (`apps/portfolio`)
+### Cloudflare Worker (포트폴리오/대시보드)
 
 ```bash
-npm run deploy --workspace apps/portfolio
+cd apps/portfolio
+npx wrangler deploy
+
+cd apps/job-dashboard
+npx wrangler deploy
 ```
 
-- 설정은 `wrangler.jsonc`로 관리되며, 환경/바인딩은 동일 파일에서 선언합니다.
-- 크론 트리거, KV, D1, R2, Queue 등 Worker 자원은 Wrangler 바인딩으로 주입됩니다.
+설정은 `wrangler.jsonc`에서 관리하며, `D1`, KV, R2 등 바인딩은 환경별로 분리합니다.
 
-### `apps/job-server` (Docker)
+### Docker (잡 서버)
 
 ```bash
-docker compose up -d --build
+docker compose up --build -d
 docker compose logs -f mcp-server
-docker compose ps                     # HEALTHCHECK 상태 확인
 ```
 
-- `Dockerfile`은 멀티 스테이지(`deps`, `runtime`)로 프로덕션 의존성만 이미지에 포함합니다.
-- `docker-compose.yml`은 `.env`를 `env_file`로 읽고, 데이터 볼륨을 호스트에 영속화합니다.
+- 멀티 스테이지 빌드: `deps` 스테이지에서 `npm ci --omit=dev --ignore-scripts`, `runtime` 스테이지에서 프로덕션 노드 모듈 + `apps/job-server` 소스만 복사.
+- 헬스 체크: `/health` 엔드포인트 (`HEALTHCHECK` 명령).
+- 영속 데이터: `job_automation_data` 볼륨 (`/app/apps/job-server/.data`).
 
-### `apps/job-dashboard`
+### 회사별 지원 자료
 
-- 데이터 마이그레이션: `migrate-json-to-d1.cjs` 또는 `migration-data.sql` + `migrations/0002_*`, `migrations/0003_*`를 순서대로 적용합니다.
-- 자세한 절차는 `apps/job-dashboard/DEPLOYMENT_GUIDE.md`와 `apps/job-dashboard/SECRETS.md`를 참조하세요.
+`applications/<company>-<role>-<year>/` 디렉터리에는 다음이 포함됩니다.
+
+- `cover_letter.md` — 회사·직무 맞춤 커버레터.
+- `Jaecheol_Lee_Resume_<Company>_<Role>.pdf` — 최종 PDF 이력서.
+- `resume-<company>-<role>.html` — 웹 미리보기.
+- (선택) `application-guide.md`, `interview-qa-10.md`, `preview.png` 등 보조 자료.
 
 ---
 
 ## 기여 / Contribution
 
-기여 절차는 [`CONTRIBUTING.md`](CONTRIBUTING.md)와 [`AGENTS.md`](AGENTS.md)에 정의되어 있습니다. 일반적으로 다음 흐름을 따릅니다.
+이 저장소는 사설이며 외부 풀 리퀘스트는 받지 않습니다. 내부 기여 절차는 [`CONTRIBUTING.md`](CONTRIBUTING.md)와 [`AGENTS.md`](AGENTS.md)를 참고하세요.
 
-1. 이슈 또는 작업을 생성합니다 (`OWNERS` 참고).
-2. 해당 워크스페이스(`apps/*` 또는 `packages/*`)에 변경을 추가합니다.
-3. `npm run lint && npm run typecheck && npm test && npx playwright test`를 로컬에서 통과시킵니다.
-4. SSoT 변경 시 `npm run sync:data`로 동기화 후 산출물 차이를 검토합니다.
-5. PR을 열고 자동 리뷰/체크가 통과하면 리뷰어에게 알립니다.
+기여 전 체크리스트:
 
-> `applications/` 디렉터리는 회사별 지원 패키지이므로 새로운 지원이 진행될 때만 변경됩니다.
+1. `npm run sync:data`로 SSoT를 최신화했는지 확인.
+2. `npm run typecheck && npm run lint && npm test` 통과.
+3. 변경 영향이 있는 워크스페이스의 `CHANGELOG.md` 항목 추가.
+4. 새 환경 변수는 `packages/env` 스키마와 `SECRETS.md`에 동시 등록.
+5. 코드는 사내 OWNERS 파일의 리뷰어 승인을 받아 머지.
 
 ---
 
 ## 라이선스 / License
 
-이 저장소는 **사설(private)** 라이선스입니다. 자세한 내용은 [`LICENSE`](LICENSE)를 참조하세요.
+이 저장소는 사설이며 [`LICENSE`](LICENSE) 파일에 명시된 조건 하에서만 사용할 수 있습니다. 무단 복제·배포를 금합니다.
 
-This repository is distributed under a **private** license. See [`LICENSE`](LICENSE) for full terms.
+This repository is private. See [`LICENSE`](LICENSE) for the terms under which the contents may be used. Unauthorized copying or redistribution is prohibited.
+
+---
+
+### 추가 문서 / Further Reading
+
+- [`apps/job-dashboard/README.md`](apps/job-dashboard/README.md) — 대시보드 운영 가이드.
+- [`apps/job-dashboard/API_REFERENCE.md`](apps/job-dashboard/API_REFERENCE.md) — 대시보드 API 레퍼런스.
+- [`apps/job-dashboard/DEPLOYMENT_GUIDE.md`](apps/job-dashboard/DEPLOYMENT_GUIDE.md) — 배포 절차.
+- [`apps/job-dashboard/DEVELOPMENT_GUIDE.md`](apps/job-dashboard/DEVELOPMENT_GUIDE.md) — 대시보드 개발 환경.
+- [`apps/job-dashboard/SECRETS.md`](apps/job-dashboard/SECRETS.md) — 시크릿 관리 정책.
+- [`apps/job-dashboard/DIAGRAMS.md`](apps/job-dashboard/DIAGRAMS.md) — 대시보드 시퀀스/플로우 다이어그램.
+- [`applications/DESIGN.md`](applications/DESIGN.md) — 지원 패키지 디자인 가이드.
+- [`ta/AGENTS.md`](ta/AGENTS.md) — PPTX 생성 에이전트 가이드.
+- [`CHANGELOG.md`](CHANGELOG.md) — 버전별 변경 이력.
