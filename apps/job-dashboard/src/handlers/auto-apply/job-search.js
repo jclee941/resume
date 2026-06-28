@@ -27,6 +27,7 @@ export async function searchPlatformJobs({
 
     for (const keyword of searchKeywords.slice(0, 5)) {
       try {
+        searchResults.searchAttempts++;
         const result = await client.searchJobs(keyword, { limit: 20 });
         const jobs = result.jobs || result || [];
 
@@ -60,14 +61,33 @@ export async function searchPlatformJobs({
           platform,
           keyword,
         });
+        const sanitizedMessage = sanitizeSearchError(normalized.message);
         console.error(
           `[AutoApply] ${platform} search failed for "${keyword}":`,
-          normalized.message
+          sanitizedMessage
         );
         searchResults.errors++;
+        searchResults.searchFailures++;
+        searchResults.errorDetails.push({
+          platform,
+          keyword,
+          message: sanitizedMessage,
+          errorCode: normalized.errorCode,
+        });
       }
     }
   }
 
   return allJobs;
+}
+
+function sanitizeSearchError(message) {
+  return String(message || 'Unknown search error')
+    .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, '[redacted-email]')
+    .replace(/Bearer\s+[A-Za-z0-9._~+/=-]+/gi, 'Bearer [redacted-token]')
+    .replace(
+      /\b(authorization|cookie|set-cookie|password|token|api[_-]?key)\b\s*[:=]\s*[^,\n]+/gi,
+      '$1=[redacted]'
+    )
+    .slice(0, 200);
 }

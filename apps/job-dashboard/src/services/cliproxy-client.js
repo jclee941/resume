@@ -1,4 +1,4 @@
-const DEFAULT_MODEL = 'claude-opus-4-8';
+const DEFAULT_MODEL = 'gpt-5.5';
 
 export class CliproxyClient {
   constructor(env = {}, options = {}) {

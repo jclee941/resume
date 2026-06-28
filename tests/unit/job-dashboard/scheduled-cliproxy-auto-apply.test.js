@@ -86,4 +86,34 @@ describe('scheduled Cliproxy auto-apply discovery', () => {
     expect(cliproxy.searchJobs).not.toHaveBeenCalled();
     expect(db.recorded).toEqual([]);
   });
+
+  test('reports a failed scheduled run when Cliproxy search fails before any candidate', async () => {
+    const db = createMockDb();
+    const cliproxy = {
+      searchJobs: jest.fn(async () => {
+        throw new Error('Cliproxy job search failed with HTTP 502');
+      }),
+    };
+
+    const response = await runScheduledCliproxyAutoApply({
+      controller: { scheduledTime: Date.parse('2026-06-26T00:00:00.000Z') },
+      env: {
+        DB: db,
+        CLIPROXY_AUTO_APPLY_KEYWORDS: 'security',
+        CLIPROXY_AUTO_APPLY_MAX_APPLICATIONS: '1',
+      },
+      clients: { cliproxy },
+    });
+    const body = await parseJson(response);
+
+    expect(response.status).toBe(500);
+    expect(body).toMatchObject({
+      success: false,
+      errorCode: 'AUTO_APPLY_DISCOVERY_FAILED',
+      dryRun: true,
+      runId: expect.stringMatching(/^scheduled-cliproxy-/),
+      results: { errors: 1 },
+    });
+    expect(db.recorded).toEqual([]);
+  });
 });

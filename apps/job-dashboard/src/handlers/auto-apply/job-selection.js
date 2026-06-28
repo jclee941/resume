@@ -8,6 +8,9 @@ export function createSearchResults() {
     applied: 0,
     skipped: 0,
     errors: 0,
+    searchAttempts: 0,
+    searchFailures: 0,
+    errorDetails: [],
     jobs: [],
     byPlatform: {},
   };

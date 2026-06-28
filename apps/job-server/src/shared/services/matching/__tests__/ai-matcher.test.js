@@ -38,9 +38,14 @@ describe('ai-matcher (with API key)', { concurrency: 1 }, () => {
   });
 
   it('returns text on success', async () => {
-    mock.method(globalThis, 'fetch', async () => claudeResponse('{"ok":true}'));
+    let requestBody = null;
+    mock.method(globalThis, 'fetch', async (_url, options) => {
+      requestBody = JSON.parse(options.body);
+      return claudeResponse('{"ok":true}');
+    });
     const result = await ai.analyzeWithClaude('prompt', 'text');
     assert.strictEqual(result, '{"ok":true}');
+    assert.strictEqual(requestBody.model, 'gpt-5.5');
   });
 
   it('returns null on non-ok response', async () => {
