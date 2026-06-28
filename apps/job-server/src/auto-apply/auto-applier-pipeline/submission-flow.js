@@ -69,6 +69,25 @@ export async function submitApprovedApplication(
     coverLetter,
   });
 
+  if (submissionResult.status === 'already_applied' || submissionResult.alreadyApplied) {
+    await autoApplier.repository.updateStatus(
+      trackedApplication.id,
+      'already_applied',
+      'Application already exists on platform'
+    );
+    await autoApplier.tracker.recordCompletion(
+      trackedApplication.id,
+      'already_applied',
+      'Application already exists on platform'
+    );
+
+    return {
+      ...submissionResult,
+      applied: false,
+      status: 'already_applied',
+    };
+  }
+
   if (!submissionResult.success) {
     throw new Error(submissionResult.error || 'Unknown submission error');
   }
@@ -102,6 +121,19 @@ export async function submitApprovedApplication(
 }
 
 export function createSubmittedResult(jobId, trackedApplication, submissionResult, stageState) {
+  if (submissionResult.applied === false) {
+    return {
+      success: true,
+      applied: false,
+      status: submissionResult.status || 'skipped',
+      reason: submissionResult.reason || submissionResult.status,
+      jobId,
+      applicationId: trackedApplication.id,
+      submission: submissionResult,
+      stages: stageState,
+    };
+  }
+
   return {
     success: true,
     applied: true,

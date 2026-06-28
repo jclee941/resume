@@ -2,7 +2,7 @@ import { APPLICATION_STATUS } from '../application-manager.js';
 import { notifications } from '../../shared/services/notifications/index.js';
 import { WANTED_PLATFORM } from './wanted-id.js';
 import { extractApplicationId } from './wanted-applications.js';
-import { getErrorStatus, sleep } from './wanted-retry.js';
+import { getErrorStatus, isAlreadyAppliedWantedError, sleep } from './wanted-retry.js';
 
 export async function applyViaWantedApiFallback({
   ctx,
@@ -36,6 +36,17 @@ export async function applyViaWantedApiFallback({
       });
       break;
     } catch (error) {
+      if (isAlreadyAppliedWantedError(error)) {
+        return {
+          success: true,
+          applied: false,
+          skipped: true,
+          status: 'already_applied',
+          applicationId: null,
+          retryable: false,
+        };
+      }
+
       const status = getErrorStatus(error);
       if (status >= 500 && attempt < maxRetries) {
         retryReporter('retry', { attempt, error });
