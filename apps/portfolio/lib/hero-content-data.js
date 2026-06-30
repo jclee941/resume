@@ -20,6 +20,8 @@ const HERO_CONTENT = {
     ],
     packetLabel: '채용 검토 자료',
     packetEyebrow: '채용 검토 자료',
+    packetStatus: '검토 준비됨',
+    packetSummary: '경력, 프로젝트, PDF를 요청부서가 같은 순서로 확인할 수 있게 정리했습니다.',
     packetItems: [
       ['검토 역할', '보안 운영 · SRE · DevSecOps'],
       ['검토 근거', '경력 요약 · 프로젝트 증빙 · PDF'],
@@ -58,6 +60,9 @@ const HERO_CONTENT = {
     ],
     packetLabel: 'Hiring review packet',
     packetEyebrow: 'Hiring review packet',
+    packetStatus: 'Review-ready',
+    packetSummary:
+      'Career context, project evidence, and the resume PDF are organized for the same review flow.',
     packetItems: [
       ['Target roles', 'Security Ops · SRE · DevSecOps'],
       ['Evidence set', 'Career summary · project proof · resume PDF'],
@@ -113,6 +118,8 @@ const HERO_CONTENT = {
     ],
     packetLabel: '採用検討資料',
     packetEyebrow: '採用検討資料',
+    packetStatus: '確認準備済み',
+    packetSummary: '経歴、プロジェクト証跡、PDFを同じ順序で確認できるよう整理しています。',
     packetItems: [
       ['検討ロール', 'セキュリティ運用・SRE・DevSecOps'],
       ['確認根拠', '経歴要約・プロジェクト証跡・PDF'],
