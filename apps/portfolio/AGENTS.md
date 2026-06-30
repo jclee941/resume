@@ -1,15 +1,14 @@
 # PORTFOLIO WORKER KNOWLEDGE BASE
 
-**Generated:** 2026-04-19
-**Commit:** `133c230`
+**Generated:** 2026-06-28
+**Commit:** `4bd11dd2`
 **Branch:** `master`
 
 ## OVERVIEW
 
-Cloudflare Worker serving a clean dark-neutral portfolio (DevSecOps/SRE
-positioning). Almost all assets are inlined at build time; the exception is the
-resume PDF, which is served from the static `assets` binding via `env.ASSETS`
-(see EXCEPTIONS) to keep it out of the worker bundle.
+Cloudflare Worker serving the public portfolio and the in-process `/job/*`
+dashboard API. `worker.js` is generated; `entry.js` is the hand-authored merged
+edge router.
 
 ## STRUCTURE
 
@@ -19,7 +18,7 @@ portfolio/
 ├── index-en.html           # English portfolio source
 ├── generate-worker.js      # build compiler
 ├── worker.js               # GENERATED — never edit
-├── entry.js                # edge router (proxies /job/* via Service Binding)
+├── entry.js                # merged edge router; imports job-dashboard in-process
 ├── data.json               # Generated resume snapshot (KO), built from packages/data SSoT
 ├── data_en.json            # English resume data
 ├── data_ja.json            # Japanese resume data
@@ -39,22 +38,22 @@ portfolio/
 
 ## WHERE TO LOOK
 
-| Task            | Location                      | Notes                                                |
-| --------------- | ----------------------------- | ---------------------------------------------------- |
-| Build pipeline  | `generate-worker.js`          | HTML→CSP→inline→worker.js                            |
-| Source markup   | `index.html`, `index-en.html` | KO/EN portfolio templates                            |
-| Runtime modules | `lib/`                        | 25 stateless JS modules                              |
-| Multi-language  | `i18n.js`, `data_*.json`      | KO/EN/JA support                                     |
-| OG Image Gen    | `generate-og-image.js`        | Canvas-based social image generation                 |
-| Project Schemas | `*project-schemas.js`         | JSON-LD generation and injection                     |
-| SEO/Metadata    | `SEO_IMPLEMENTATION.md`       | sitemap, robots, meta tags                           |
-| Edge routing    | `entry.js`                    | proxies /job/\* to job-dashboard via Service Binding |
+| Task            | Location                      | Notes                                                      |
+| --------------- | ----------------------------- | ---------------------------------------------------------- |
+| Build pipeline  | `generate-worker.js`          | HTML→CSP→inline→worker.js                                  |
+| Source markup   | `index.html`, `index-en.html` | KO/EN portfolio templates                                  |
+| Runtime modules | `lib/`                        | 25 stateless JS modules                                    |
+| Multi-language  | `i18n.js`, `data_*.json`      | KO/EN/JA support                                           |
+| OG Image Gen    | `generate-og-image.js`        | Canvas-based social image generation                       |
+| Project Schemas | `*project-schemas.js`         | JSON-LD generation and injection                           |
+| SEO/Metadata    | `SEO_IMPLEMENTATION.md`       | sitemap, robots, meta tags                                 |
+| Edge routing    | `entry.js`                    | routes `/job/*` into job-dashboard without Service Binding |
 
 ## BUILD PIPELINE
 
 ```text
 resume_data.json → sync → data.json
-index.html → generate-worker.js → worker.js → wrangler deploy
+index.html → generate-worker.js → worker.js → entry.js → Workers Builds
                  ↓
          escape backticks
          compute CSP hashes
@@ -68,6 +67,8 @@ index.html → generate-worker.js → worker.js → wrangler deploy
 - Pure functions in `lib/` — receive env, no side effects.
 - Fire-and-forget telemetry (ES logger, metrics).
 - Multi-language: `data.json` (ko), `data_en.json`, `data_ja.json`.
+- `entry.js` is the sanctioned ADR 0009 cross-app import point for
+  `../job-dashboard/src/index.js`.
 
 ## ANTI-PATTERNS
 
@@ -76,6 +77,7 @@ index.html → generate-worker.js → worker.js → wrangler deploy
 - Never add runtime fetch for assets — inline at build (EXCEPTION: `/resume.pdf` reads `env.ASSETS`).
 - Never hardcode colors — use CSS variables.
 - Never add light-mode without updating root docs.
+- Never reintroduce a Service Binding for `/job/*` unless ADR 0009 is reversed.
 
 ## CONTENT UPDATE PATTERN
 

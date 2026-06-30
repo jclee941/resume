@@ -1,39 +1,32 @@
 # TESTS KNOWLEDGE BASE
 
-**Generated:** 2026-03-17
-**Commit:** `882b837`
+**Generated:** 2026-06-28
+**Commit:** `4bd11dd2`
 **Branch:** `master`
 
 ## OVERVIEW
 
-Centralized test hub. Jest (unit/integration) + Playwright (E2E).
+Centralized test hub for Jest, Node `--test`, Go checks, and Playwright E2E.
 
 ## STRUCTURE
 
 ```text
 tests/
-├── unit/                   # Jest, mirrors apps/portfolio/lib
-│   └── portfolio/
-│       └── lib/            # 18 .test.js files
-├── e2e/                    # Playwright, 23 .spec.js files
-│   ├── fixtures/           # helpers.js (shared utilities)
-│   └── snapshots/          # visual regression baselines
-├── integration/            # 3 integration test files
-└── automation-webhook-test.go     # webhook testing
+├── unit/                   # Jest unit suites for apps/packages
+├── integration/            # Jest cross-module contract suites
+├── e2e/                    # Playwright browser/API flows
+│   ├── fixtures/           # shared helpers and mock sites
+│   └── visual.spec.js-snapshots/
+└── automation-webhook-test.go
 ```
-
-## COVERAGE TARGETS
-
-- 90% floor for shared libraries.
-- 100% for `generate-worker.js`.
 
 ## E2E CONFIGURATION
 
-- Defaults to production URL.
+- Defaults to `http://localhost:8787`; production verification sets
+  `PLAYWRIGHT_BASE_URL=https://resume.jclee.me`.
 - 5 device projects: chromium + 4 mobile.
 - `maxDiffPixelRatio: 0.05` for visual snapshots.
-- Fixtures: `executeCliCommand`, `navigateToSection`, `validateLinks`,
-  `waitForAnimation`.
+- Screenshots are `only-on-failure`; traces are `on-first-retry`.
 
 ## CHILD GUIDES
 
@@ -57,6 +50,8 @@ terminal animations.**
 ## CONVENTIONS
 
 - `node:test` at depth 5+ for isolated module tests.
+- Root `npm test` fans out across Jest, job-server node tests, schema/env
+  tests, tools tests, and CLI tests.
 - Handle flaky tests via `retries` in `playwright.config.js` (2 in CI, 0
   locally).
 
