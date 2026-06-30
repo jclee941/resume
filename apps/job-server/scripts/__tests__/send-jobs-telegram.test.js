@@ -103,4 +103,29 @@ describe('send-jobs-telegram.js --separate --dry-run', () => {
     assert.match(stdout, /Staff SRE/);
     assert.match(stdout, /Security Engineer/);
   });
+
+  it('S11: --ats-only sends only worthy ATS postings and excludes Wanted/JobKorea/JK', async () => {
+    const atsMixed = resolve(__dirname, '../__fixtures__/telegram-queue-ats-mixed.json');
+    const { error, stdout } = await runScript([
+      '--ats-only',
+      '--separate',
+      '--dry-run',
+      `--queue=${atsMixed}`,
+    ]);
+
+    assert.equal(error, null, `script should exit 0, stderr: ${error?.message}`);
+    const markers = stdout.match(/would send/gi) || [];
+    assert.equal(
+      markers.length,
+      3,
+      `expected 3 ATS worthy would-send markers, got ${markers.length}\n${stdout}`
+    );
+    assert.match(stdout, /Senior Cloud Security Engineer/);
+    assert.match(stdout, /Staff SRE/);
+    assert.match(stdout, /Infrastructure Security Engineer/);
+    assert.ok(!/Wanted Security Engineer/.test(stdout), 'Wanted postings must be excluded');
+    assert.ok(!/JobKorea SRE/.test(stdout), 'JobKorea postings must be excluded');
+    assert.ok(!/JK Cloud Engineer/.test(stdout), 'JK alias postings must be excluded');
+    assert.ok(!/Entry Sales Engineer/.test(stdout), 'low-score ATS postings must be excluded');
+  });
 });

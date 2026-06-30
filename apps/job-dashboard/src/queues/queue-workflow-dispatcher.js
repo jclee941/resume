@@ -42,6 +42,19 @@ export class QueueWorkflowDispatcher {
   }
 
   async handleApply(payload) {
+    if (isApplicationWorkflowPayload(payload)) {
+      const instance = await this.env.APPLICATION_WORKFLOW.create({
+        params: { ...payload, source: payload.source || 'queue' },
+      });
+
+      this.logger.info('Application workflow started', {
+        instanceId: instance.id,
+        triggerType: payload.triggerType,
+        candidates: payload.candidates?.length || 0,
+      });
+      return;
+    }
+
     const instance = await this.env.APPLICATION_WORKFLOW.create({
       params: {
         jobId: payload.jobId,
@@ -103,4 +116,13 @@ export class QueueWorkflowDispatcher {
       targets: payload.targets,
     });
   }
+}
+
+function isApplicationWorkflowPayload(payload) {
+  return (
+    Array.isArray(payload?.candidates) ||
+    Array.isArray(payload?.platforms) ||
+    payload?.searchCriteria ||
+    payload?.triggerType
+  );
 }

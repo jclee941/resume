@@ -8,6 +8,7 @@ import {
   submitToAtsDryRunOnly,
   supportedApplicationPlatforms,
 } from './application-platform-catalog.js';
+import { submitWithBrowserRendering } from './browser-rendering-submit.js';
 
 export {
   ATS_DRY_RUN_PLATFORMS,
@@ -120,13 +121,13 @@ export async function searchRemember(_ctx, criteria) {
       location: job.location?.name || '',
     }));
 }
-export async function submitApplication(ctx, { platform, jobId, resume, coverLetter }) {
+export async function submitApplication(ctx, { platform, jobId, sourceUrl, resume, coverLetter, job }) {
   const submitters = {
     wanted: () => submitToWanted(ctx, jobId, resume, coverLetter),
     linkedin: () => submitToLinkedIn(ctx, jobId, resume, coverLetter),
     remember: () => submitToRemember(ctx, jobId, resume, coverLetter),
-    jobkorea: () => submitToJobKorea(ctx, jobId, resume, coverLetter),
-    saramin: () => submitToSaramin(ctx, jobId, resume, coverLetter),
+    jobkorea: () => submitToJobKorea(ctx, jobId, resume, coverLetter, { sourceUrl, job }),
+    saramin: () => submitToSaramin(ctx, jobId, resume, coverLetter, { sourceUrl, job }),
     greenhouse: () => submitToAtsDryRunOnly('greenhouse'),
     lever: () => submitToAtsDryRunOnly('lever'),
     ashby: () => submitToAtsDryRunOnly('ashby'),
@@ -168,17 +169,32 @@ export async function submitToLinkedIn(_ctx, _jobId, _resume, _coverLetter) {
 export async function submitToRemember(_ctx, _jobId, _resume, _coverLetter) {
   return browserAutomationRequired('remember', 'Remember application');
 }
-export async function submitToJobKorea(_ctx, _jobId, _resume, _coverLetter) {
-  return browserAutomationRequired('jobkorea', 'JobKorea application');
+export async function submitToJobKorea(ctx, jobId, resume, coverLetter, options = {}) {
+  return submitWithBrowserRendering(ctx, {
+    platform: 'jobkorea',
+    jobId,
+    sourceUrl: options.sourceUrl,
+    resume,
+    coverLetter,
+    job: options.job,
+  });
 }
-export async function submitToSaramin(_ctx, _jobId, _resume, _coverLetter) {
-  return browserAutomationRequired('saramin', 'Saramin application');
+export async function submitToSaramin(ctx, jobId, resume, coverLetter, options = {}) {
+  return submitWithBrowserRendering(ctx, {
+    platform: 'saramin',
+    jobId,
+    sourceUrl: options.sourceUrl,
+    resume,
+    coverLetter,
+    job: options.job,
+  });
 }
 function browserAutomationRequired(platform, label) {
   return {
     success: false,
-    error: `${label} requires browser automation (Puppeteer). Use job-server CLI.`,
+    error: `${label} requires browser automation. Cloudflare native workflow recorded a handoff instead of retrying local CLI submission.`,
     platform,
     requiresJobServer: true,
+    requiresBrowserAutomation: true,
   };
 }

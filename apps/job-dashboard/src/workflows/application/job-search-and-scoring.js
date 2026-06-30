@@ -112,9 +112,12 @@ export async function scoreWorkflowJobs(ctx, step, workflow, jobsFound, minMatch
 }
 
 function scoreJob(job, config) {
-  const matchScore = hasDeterministicAtsDryRunScore(job)
-    ? job.matchScore
-    : calculateMatchScore(job, config);
+  const explicitScore = Number(job?.matchScore);
+  const matchScore = Number.isFinite(explicitScore)
+    ? explicitScore
+    : hasDeterministicAtsDryRunScore(job)
+      ? job.matchScore
+      : calculateMatchScore(job, config);
   const scoredJob = { ...job, matchScore };
 
   if (!isAtsDryRunJob(scoredJob)) return scoredJob;

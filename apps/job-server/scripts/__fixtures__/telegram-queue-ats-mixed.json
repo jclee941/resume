@@ -1,0 +1,51 @@
+[
+  {
+    "company": "GreenhouseSec",
+    "position": "Senior Cloud Security Engineer",
+    "applicationUrl": "https://boards.greenhouse.io/greenhousesec/jobs/1001/apply",
+    "source": "greenhouse",
+    "matchPercentage": 88
+  },
+  {
+    "company": "LeverOps",
+    "position": "Staff SRE",
+    "sourceUrl": "https://jobs.lever.co/leverops/2002",
+    "source": "lever",
+    "matchScore": 76
+  },
+  {
+    "company": "AshbyInfra",
+    "position": "Infrastructure Security Engineer",
+    "url": "https://jobs.ashbyhq.com/ashbyinfra/3003",
+    "source": "ashby",
+    "score": 64
+  },
+  {
+    "company": "WantedLegacy",
+    "position": "Wanted Security Engineer",
+    "url": "https://www.wanted.co.kr/wd/4004",
+    "source": "wanted",
+    "matchPercentage": 95
+  },
+  {
+    "company": "JobKoreaLegacy",
+    "position": "JobKorea SRE",
+    "url": "https://www.jobkorea.co.kr/Recruit/GI_Read/5005",
+    "source": "jobkorea",
+    "matchPercentage": 91
+  },
+  {
+    "company": "JkLegacy",
+    "position": "JK Cloud Engineer",
+    "url": "https://www.jobkorea.co.kr/Recruit/GI_Read/6006",
+    "source": "jk",
+    "matchPercentage": 90
+  },
+  {
+    "company": "LowAts",
+    "position": "Entry Sales Engineer",
+    "url": "https://jobs.lever.co/lowats/7007",
+    "source": "lever",
+    "matchPercentage": 35
+  }
+]

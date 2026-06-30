@@ -114,12 +114,12 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
     return submitToRemember(this, jobId, resume, coverLetter);
   }
 
-  async submitToJobKorea(jobId, resume, coverLetter) {
-    return submitToJobKorea(this, jobId, resume, coverLetter);
+  async submitToJobKorea(jobId, resume, coverLetter, options) {
+    return submitToJobKorea(this, jobId, resume, coverLetter, options);
   }
 
-  async submitToSaramin(jobId, resume, coverLetter) {
-    return submitToSaramin(this, jobId, resume, coverLetter);
+  async submitToSaramin(jobId, resume, coverLetter, options) {
+    return submitToSaramin(this, jobId, resume, coverLetter, options);
   }
 
   async generateCoverLetter(job) {

@@ -1,5 +1,6 @@
 import { processApprovalGates } from './approval-gates.js';
 import { submitApprovedApplications } from './application-submissions.js';
+import { normalizeApplicationPlatform } from './application-platform-catalog.js';
 import { normalizeApplicationPlatforms } from './platforms.js';
 import {
   checkDailyLimits,
@@ -17,7 +18,7 @@ import {
 export async function runApplicationWorkflow(ctx, event, step) {
   const {
     triggerType = 'manual',
-    platforms: requestedPlatforms = ['wanted'],
+    platforms: requestedPlatforms,
     searchCriteria = {},
     resumeId = 'default',
     autoApprove = false,
@@ -28,9 +29,16 @@ export async function runApplicationWorkflow(ctx, event, step) {
     atsStub = false,
     explicitSubmit = false,
     submitOptIn = false,
+    candidates = [],
     _eventData = {},
   } = event.payload;
-  const platforms = normalizeApplicationPlatforms(requestedPlatforms, { atsStub, dryRun });
+  const explicitCandidates = normalizeWorkflowCandidates(candidates);
+  const platformInput = explicitCandidates.length
+    ? Array.isArray(requestedPlatforms) && requestedPlatforms.length
+      ? requestedPlatforms
+      : [...new Set(explicitCandidates.map((job) => job.source).filter(Boolean))]
+    : requestedPlatforms || ['wanted'];
+  const platforms = normalizeApplicationPlatforms(platformInput, { atsStub, dryRun });
   const criteria = atsStub ? { ...searchCriteria, atsStub } : searchCriteria;
 
   const workflow = createWorkflowRecord(event, triggerType);
@@ -38,7 +46,9 @@ export async function runApplicationWorkflow(ctx, event, step) {
 
   await initializeWorkflow(ctx, step, workflow, triggerType, platforms);
   const dailyCheck = await checkDailyLimits(ctx, step, workflow, maxDailyApplications);
-  const jobsFound = await searchWorkflowJobs(ctx, step, workflow, platforms, criteria);
+  const jobsFound = explicitCandidates.length
+    ? await loadExplicitCandidates(ctx, step, workflow, explicitCandidates, platforms)
+    : await searchWorkflowJobs(ctx, step, workflow, platforms, criteria);
 
   if (jobsFound.length === 0) {
     return completeWithoutJobs(ctx, step, workflow, notificationService, triggerType, platforms);
@@ -92,6 +102,50 @@ export async function runApplicationWorkflow(ctx, event, step) {
     applications: applicationResults,
     dryRun,
   };
+}
+
+async function loadExplicitCandidates(ctx, step, workflow, candidates, platforms) {
+  const platformSet = new Set(platforms);
+  const jobsFound = await step.do(
+    'load-explicit-candidates',
+    {
+      retries: { limit: 1, delay: '5 seconds' },
+      timeout: '30 seconds',
+    },
+    async () => candidates.filter((job) => !platformSet.size || platformSet.has(job.source))
+  );
+
+  workflow.stats.jobsFound = jobsFound.length;
+  workflow.steps.push({
+    step: 'load-explicit-candidates',
+    status: 'completed',
+    count: jobsFound.length,
+  });
+  await ctx.logWorkflowStep(workflow.id, 'load-explicit-candidates', 'completed', {
+    count: jobsFound.length,
+    platforms,
+  });
+  return jobsFound;
+}
+
+function normalizeWorkflowCandidates(candidates) {
+  if (!Array.isArray(candidates)) return [];
+  return candidates
+    .filter((candidate) => candidate && typeof candidate === 'object')
+    .map((candidate) => {
+      const source = normalizeApplicationPlatform(
+        candidate.source || candidate.platform || candidate.loginPlatform
+      );
+      const id = candidate.id || candidate.sourceId || `${source}-${candidate.url || candidate.title}`;
+      return {
+        ...candidate,
+        id,
+        sourceId: candidate.sourceId || id,
+        source,
+        position: candidate.position || candidate.title || '',
+        sourceUrl: candidate.sourceUrl || candidate.url || candidate.applyUrl || '',
+      };
+    });
 }
 
 async function completeWithoutJobs(

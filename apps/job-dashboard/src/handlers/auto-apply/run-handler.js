@@ -14,6 +14,10 @@ import { isCompanyAlreadyApplied } from './duplicate-company.js';
 import { getWantedSession } from './session-helpers.js';
 import { jsonResponse } from './response.js';
 import { applyMatchedJobs } from './application-actions.js';
+import {
+  dispatchCloudflareNativeAutoApply,
+  shouldDispatchCloudflareNative,
+} from './native-dispatch.js';
 import { readExplicitCandidates } from './explicit-candidates.js';
 import { createSearchResults, selectMatchedJobs } from './job-selection.js';
 import { primeWantedSession, searchPlatformJobs } from './job-search.js';
@@ -42,7 +46,6 @@ export async function runAutoApply({ request, env, clients }) {
     atsStub = false,
   } = body;
   const runId = getAutoApplyRunId(body);
-  const config = await getConfig(env);
   const explicitCandidates = readExplicitCandidates(body);
   if (explicitCandidates.error) {
     return jsonResponse(
@@ -55,8 +58,7 @@ export async function runAutoApply({ request, env, clients }) {
     );
   }
   const realSubmitRejection = rejectInvalidRealSubmit(body, dryRun, explicitCandidates);
-  if (realSubmitRejection) return realSubmitRejection;
-
+  const config = await getConfig(env);
   if (!config.autoApplyEnabled && !dryRun) {
     return jsonResponse(
       {
@@ -67,6 +69,12 @@ export async function runAutoApply({ request, env, clients }) {
       400
     );
   }
+
+  if (shouldDispatchCloudflareNative({ body, env, explicitCandidates, dryRun })) {
+    if (realSubmitRejection) return realSubmitRejection;
+    return dispatchCloudflareNativeAutoApply({ body, env, explicitCandidates });
+  }
+  if (realSubmitRejection) return realSubmitRejection;
 
   const activePlatforms = normalizeApplicationPlatforms(platforms, { atsStub, dryRun });
   if (activePlatforms.length === 0) {

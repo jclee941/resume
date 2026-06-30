@@ -47,5 +47,8 @@
   },
   "dependencies": {
     "@resume/schemas": "*"
+  },
+  "optionalDependencies": {
+    "@cloudflare/puppeteer": "^1.0.6"
   }
 }
