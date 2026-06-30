@@ -816,100 +816,76 @@ npm scripts directly`. Bazel symlinks at root confuse tooling.
 
 ## Dependency Graph
 
-```mermaid
-flowchart TD
-  D1[D-1: Bazel decision]
-  D2[D-2: Secrets manager]
-  D3[D-3: packages/shared scope]
-  D4[D-4: TypeScript strategy]
+#### Diagram summary 1
 
-  subgraph "Wave 1 — Critical Security (parallel)"
-    S001[SSOT-001<br/>Remove session JSONs]
-    S002[SSOT-002<br/>.env.automation]
-    S003[SSOT-003<br/>app .env files]
-    S004[SSOT-004<br/>gitleaks gate]
-    S005[SSOT-005<br/>KV ownership doc]
-  end
+- Type: flowchart
+- Component: D-1: Bazel decision (D1)
+- Component: D-2: Secrets manager (D2)
+- Component: D-3: packages/shared scope (D3)
+- Component: D-4: TypeScript strategy (D4)
+- Component: SSOT-001 / Remove session JSONs (S001)
+- Component: SSOT-002 / .env.automation (S002)
+- Component: SSOT-003 / app .env files (S003)
+- Component: SSOT-004 / gitleaks gate (S004)
+- Component: SSOT-005 / KV ownership doc (S005)
+- Component: SSOT-006 / tsconfig fix (S006)
+- Component: SSOT-018 / Bazel decision exec (S018)
+- Component: SSOT-020 / workspace: protocol (S020)
+- Component: SSOT-028 / Adopt secrets mgr (S028)
+- SSOT-007 (S007) -> SSOT-006 / tsconfig fix (S006)
+- SSOT-008 / per-pkg tsconfig (S008) -> SSOT-006 / tsconfig fix (S006)
+- SSOT-009 (S009) -> SSOT-008 / per-pkg tsconfig (S008)
+- SSOT-010 / ESLint root (S010) -> SSOT-012 (S012)
+- SSOT-011 (S011) -> SSOT-010 / ESLint root (S010)
+- Component: SSOT-013 (S013)
+- Component: SSOT-014 (S014)
+- Component: SSOT-015 / wrangler base (S015)
+- Component: SSOT-016 (S016)
+- Component: SSOT-017 (S017)
+- SSOT-019 (S019) -> SSOT-018 / Bazel decision exec (S018)
+- Component: SSOT-021 (S021)
+- SSOT-022 / packages/types (S022) -> SSOT-008 / per-pkg tsconfig (S008)
+- SSOT-023 / packages/schemas (S023) -> SSOT-022 / packages/types (S022)
+- SSOT-024 / packages/contracts (S024) -> SSOT-022 / packages/types (S022)
+- SSOT-025 (S025) -> SSOT-022 / packages/types (S022)
+- SSOT-026 (S026) -> SSOT-022 / packages/types (S022)
+- SSOT-027 (S027) -> SSOT-022 / packages/types (S022)
+- SSOT-029 / t3-env (S029) -> SSOT-023 / packages/schemas (S023)
+- SSOT-029 / t3-env (S029) -> SSOT-028 / Adopt secrets mgr (S028)
+- Component: SSOT-030 (S030)
+- SSOT-031 (S031) -> SSOT-029 / t3-env (S029)
+- SSOT-032 / Errors (S032) -> D-3: packages/shared scope (D3)
+- Component: SSOT-033 / Crypto (S033)
+- Component: SSOT-034 / Session (S034)
+- Component: SSOT-035 / Rate limit (S035)
+- SSOT-036 / Validation (S036) -> SSOT-023 / packages/schemas (S023)
+- SSOT-037 / Wanted client (S037) -> SSOT-022 / packages/types (S022)
+- SSOT-037 / Wanted client (S037) -> D-3: packages/shared scope (D3)
+- Component: SSOT-038 / Logger (S038)
+- Component: SSOT-039 / Retry (S039)
+- SSOT-040 / OpenAPI (S040) -> SSOT-024 / packages/contracts (S024)
+- Component: SSOT-041 (S041)
+- SSOT-042 (S042) -> SSOT-018 / Bazel decision exec (S018)
+- SSOT-042 (S042) -> SSOT-022 / packages/types (S022)
+- SSOT-042 (S042) -> SSOT-023 / packages/schemas (S023)
+- SSOT-042 (S042) -> SSOT-024 / packages/contracts (S024)
+- SSOT-042 (S042) -> SSOT-028 / Adopt secrets mgr (S028)
+- Component: SSOT-043 (S043)
+- Component: SSOT-044 (S044)
+- Component: SSOT-045 (S045)
+- Component: SSOT-046 (S046)
+- SSOT-047 / auto-apply.js 10963L (S047) -> SSOT-034 / Session (S034)
+- SSOT-048 / applications.js 9544L (S048) -> SSOT-032 / Errors (S032)
+- Component: SSOT-049 / job-server splits (S049)
+- Component: SSOT-050 / dashboard.html (S050)
+- Component: SSOT-051 / root Go binaries (S051)
+- SSOT-052 / Env interfaces (S052) -> SSOT-024 / packages/contracts (S024)
+- D-1: Bazel decision (D1) -> SSOT-018 / Bazel decision exec (S018)
+- D-2: Secrets manager (D2) -> SSOT-028 / Adopt secrets mgr (S028)
+- D-3: packages/shared scope (D3) -> SSOT-032 / Errors (S032)
+- D-3: packages/shared scope (D3) -> SSOT-037 / Wanted client (S037)
+- D-4: TypeScript strategy (D4) -> SSOT-006 / tsconfig fix (S006)
 
-  subgraph "Wave 2 — Foundations (after decisions)"
-    S006[SSOT-006<br/>tsconfig fix]
-    S018[SSOT-018<br/>Bazel decision exec]
-    S020[SSOT-020<br/>workspace:* protocol]
-    S028[SSOT-028<br/>Adopt secrets mgr]
-  end
-
-  subgraph "Wave 3 — Build Hygiene"
-    S007[SSOT-007] --> S006
-    S008[SSOT-008<br/>per-pkg tsconfig] --> S006
-    S009[SSOT-009] --> S008
-    S010[SSOT-010<br/>ESLint root] --> S012[SSOT-012]
-    S011[SSOT-011] --> S010
-    S013[SSOT-013]
-    S014[SSOT-014]
-    S015[SSOT-015<br/>wrangler base]
-    S016[SSOT-016]
-    S017[SSOT-017]
-    S019[SSOT-019] --> S018
-    S021[SSOT-021]
-  end
-
-  subgraph "Wave 4 — Types/Schemas/Contracts"
-    S022[SSOT-022<br/>packages/types] --> S008
-    S023[SSOT-023<br/>packages/schemas] --> S022
-    S024[SSOT-024<br/>packages/contracts] --> S022
-    S025[SSOT-025] --> S022
-    S026[SSOT-026] --> S022
-    S027[SSOT-027] --> S022
-  end
-
-  subgraph "Wave 5 — Env / Secrets type-safe"
-    S029[SSOT-029<br/>t3-env] --> S023
-    S029 --> S028
-    S030[SSOT-030]
-    S031[SSOT-031] --> S029
-  end
-
-  subgraph "Wave 6 — Domain SSOT (parallel)"
-    S032[SSOT-032<br/>Errors] --> D3
-    S033[SSOT-033<br/>Crypto]
-    S034[SSOT-034<br/>Session]
-    S035[SSOT-035<br/>Rate limit]
-    S036[SSOT-036<br/>Validation] --> S023
-    S037[SSOT-037<br/>Wanted client] --> S022
-    S037 --> D3
-    S038[SSOT-038<br/>Logger]
-    S039[SSOT-039<br/>Retry]
-    S040[SSOT-040<br/>OpenAPI] --> S024
-  end
-
-  subgraph "Wave 7 — Docs & Hygiene"
-    S041[SSOT-041]
-    S042[SSOT-042] --> S018
-    S042 --> S022
-    S042 --> S023
-    S042 --> S024
-    S042 --> S028
-    S043[SSOT-043]
-    S044[SSOT-044]
-    S045[SSOT-045]
-    S046[SSOT-046]
-  end
-
-  subgraph "Wave 8 — File splits (after Domain SSOT)"
-    S047[SSOT-047<br/>auto-apply.js 10963L] --> S034
-    S048[SSOT-048<br/>applications.js 9544L] --> S032
-    S049[SSOT-049<br/>job-server splits]
-    S050[SSOT-050<br/>dashboard.html]
-    S051[SSOT-051<br/>root Go binaries]
-    S052[SSOT-052<br/>Env interfaces] --> S024
-  end
-
-  D1 --> S018
-  D2 --> S028
-  D3 --> S032
-  D3 --> S037
-  D4 --> S006
-```
 
 ---
 

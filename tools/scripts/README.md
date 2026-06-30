@@ -117,20 +117,21 @@ npx wrangler login
 
 ## Deployment Flow
 
-```mermaid
-graph TD
-    A[Start] --> B{API Token Set?}
-    B -->|No| C[Show setup instructions]
-    B -->|Yes| D[Check Prerequisites]
-    D --> E[Run Tests]
-    E --> F[Build Worker]
-    F --> G[Deploy to Cloudflare]
-    G --> H[Verify Deployment]
-    H --> I{All Checks Pass?}
-    I -->|Yes| J[Success - Show URLs]
-    I -->|No| K[Show Failures]
-    K --> L[See Troubleshooting]
-```
+#### Diagram summary 1
+
+- Type: flowchart
+- Start (A) -> API Token Set? (B)
+- API Token Set? (B) -> Show setup instructions (C)
+- API Token Set? (B) -> Check Prerequisites (D)
+- Check Prerequisites (D) -> Run Tests (E)
+- Run Tests (E) -> Build Worker (F)
+- Build Worker (F) -> Deploy to Cloudflare (G)
+- Deploy to Cloudflare (G) -> Verify Deployment (H)
+- Verify Deployment (H) -> All Checks Pass? (I)
+- All Checks Pass? (I) -> Success - Show URLs (J)
+- All Checks Pass? (I) -> Show Failures (K)
+- Show Failures (K) -> See Troubleshooting (L)
+
 
 ## Troubleshooting
 

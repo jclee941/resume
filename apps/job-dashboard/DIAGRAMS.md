@@ -17,69 +17,45 @@ component interactions.
 
 High-level overview of all major components and their relationships:
 
-```mermaid
-graph TB
-    subgraph Client["Client Layer"]
-        Browser["🌐 Browser"]
-        MCP["🔧 MCP Server"]
-        CLI["💻 CLI Tool"]
-    end
+#### Diagram summary 1
 
-    subgraph Worker["Cloudflare Worker"]
-        Fetch["Fetch Handler"]
-        Middleware["Middleware Stack<br/>7 Layers"]
-        Router["Router<br/>30+ Endpoints"]
-        Handlers["Handler Classes<br/>8 Handlers"]
-    end
+- Type: flowchart
+- Component: 🌐 Browser (Browser)
+- Component: 🔧 MCP Server (MCP)
+- Component: 💻 CLI Tool (CLI)
+- Component: Fetch Handler (Fetch)
+- Component: Middleware Stack / 7 Layers (Middleware)
+- Component: Router / 30+ Endpoints (Router)
+- Component: Handler Classes / 8 Handlers (Handlers)
+- Component: AuthService (Auth)
+- Component: StatsService (Stats)
+- Component: ApplicationsService (Apps)
+- Component: WorkflowService (Workflows)
+- Component: 📊 D1 Database / 3 Tables (D1)
+- Component: ⚡ KV Storage / 3 Namespaces (KV)
+- Component: 📦 R2 Bucket / Screenshots (R2)
+- Component: 🔔 Slack Notifications (Slack)
+- Component: ☁️ Cloudflare API (CF)
+- Component: 🪝 Webhooks (Webhooks)
+- 🌐 Browser (Browser) -> Fetch Handler (Fetch)
+- 🔧 MCP Server (MCP) -> Fetch Handler (Fetch)
+- 💻 CLI Tool (CLI) -> Fetch Handler (Fetch)
+- Fetch Handler (Fetch) -> Middleware Stack / 7 Layers (Middleware)
+- Middleware Stack / 7 Layers (Middleware) -> Router / 30+ Endpoints (Router)
+- Router / 30+ Endpoints (Router) -> Handler Classes / 8 Handlers (Handlers)
+- Handler Classes / 8 Handlers (Handlers) -> AuthService (Auth)
+- Handler Classes / 8 Handlers (Handlers) -> StatsService (Stats)
+- Handler Classes / 8 Handlers (Handlers) -> ApplicationsService (Apps)
+- Handler Classes / 8 Handlers (Handlers) -> WorkflowService (Workflows)
+- AuthService (Auth) -> ⚡ KV Storage / 3 Namespaces (KV)
+- AuthService (Auth) -> 📊 D1 Database / 3 Tables (D1)
+- StatsService (Stats) -> 📊 D1 Database / 3 Tables (D1)
+- ApplicationsService (Apps) -> 📊 D1 Database / 3 Tables (D1)
+- ApplicationsService (Apps) -> 📦 R2 Bucket / Screenshots (R2)
+- WorkflowService (Workflows) -> 🔔 Slack Notifications (Slack)
+- WorkflowService (Workflows) -> ☁️ Cloudflare API (CF)
+- 🌐 Browser (Browser) -> 🪝 Webhooks (Webhooks)
 
-    subgraph Services["Service Layer"]
-        Auth["AuthService"]
-        Stats["StatsService"]
-        Apps["ApplicationsService"]
-        Workflows["WorkflowService"]
-    end
-
-    subgraph Storage["Storage & Persistence"]
-        D1["📊 D1 Database<br/>3 Tables"]
-        KV["⚡ KV Storage<br/>3 Namespaces"]
-        R2["📦 R2 Bucket<br/>Screenshots"]
-    end
-
-    subgraph External["External Services"]
-        Slack["🔔 Slack Notifications"]
-        CF["☁️ Cloudflare API"]
-        Webhooks["🪝 Webhooks"]
-    end
-
-    Browser -->|HTTP Request| Fetch
-    MCP -->|API Calls| Fetch
-    CLI -->|Worker Commands| Fetch
-
-    Fetch --> Middleware
-    Middleware --> Router
-    Router --> Handlers
-
-    Handlers --> Auth
-    Handlers --> Stats
-    Handlers --> Apps
-    Handlers --> Workflows
-
-    Auth --> KV
-    Auth --> D1
-    Stats --> D1
-    Apps --> D1
-    Apps --> R2
-
-    Workflows --> Slack
-    Workflows --> CF
-    Browser -.->|Webhooks| Webhooks
-
-    style Client fill:#e1f5ff
-    style Worker fill:#fff3e0
-    style Services fill:#f3e5f5
-    style Storage fill:#e8f5e9
-    style External fill:#fce4ec
-```
 
 ### Component Descriptions
 
@@ -124,56 +100,45 @@ graph TB
 
 Detailed sequence diagram showing how a request flows through the entire system:
 
-```mermaid
-sequenceDiagram
-    participant Client as 🌐 Client
-    participant Fetch as Fetch Handler
-    participant Logger as Logger Middleware
-    participant CORS as CORS Middleware
-    participant RateLimit as Rate Limit
-    participant Auth as Auth Middleware
-    participant Handler as Handler Instance
-    participant Service as Service Layer
-    participant Database as D1 Database
-    participant Response as Response Logger
+#### Diagram summary 2
 
-    Client->>Fetch: HTTP Request<br/>/job/api/applications
-    Fetch->>Fetch: Strip /job prefix<br/>/api/applications
-    Fetch->>Logger: Pass request
+- Type: sequence
+- Participant: Client as 🌐 Client
+- Participant: Fetch as Fetch Handler
+- Participant: Logger as Logger Middleware
+- Participant: CORS as CORS Middleware
+- Participant: RateLimit as Rate Limit
+- Participant: Auth as Auth Middleware
+- Participant: Handler as Handler Instance
+- Participant: Service as Service Layer
+- Participant: Database as D1 Database
+- Participant: Response as Response Logger
+- Client -> Fetch: HTTP Request / /job/api/applications
+- Fetch -> Fetch: Strip /job prefix / /api/applications
+- Fetch -> Logger: Pass request
+- Logger -> Logger: Log request (ECS format)
+- Logger -> CORS: Continue
+- CORS -> CORS: Validate origin / Add CORS headers
+- CORS -> RateLimit: Continue
+- RateLimit -> RateLimit: Check token bucket / IP: 203.0.113.42
+- RateLimit -> RateLimit: Decrement token count / 59/60 remaining
+- RateLimit -> Auth: Continue (if tokens available)
+- Auth -> Auth: Extract Bearer token / from Authorization header
+- Auth -> Auth: Validate JWT signature / Check expiration (24h)
+- Auth -> Handler: Continue (if valid)
+- Handler -> Handler: Parse request body / Validate schema
+- Handler -> Service: Call getApplications(page=1)
+- Service -> Database: SELECT FROM applications / LIMIT 50 OFFSET 0
+- Database -> Database: Query execution / 4.5ms
+- Database -> Service: Return 42 rows
+- Service -> Service: Format response / Add pagination metadata
+- Service -> Handler: Return results
+- Handler -> Handler: Build response JSON
+- Handler -> Response: Pass response
+- Response -> Response: Log response (ECS format) / Status: 200 / Duration: 12ms / Size: 8.2KB
+- Response -> Client: HTTP 200 OK / Content-Type: application/json / Access-Control-Allow-Origin:
+- Client -> Client: Parse JSON / Render UI
 
-    Logger->>Logger: Log request (ECS format)
-    Logger->>CORS: Continue
-
-    CORS->>CORS: Validate origin<br/>Add CORS headers
-    CORS->>RateLimit: Continue
-
-    RateLimit->>RateLimit: Check token bucket<br/>IP: 203.0.113.42
-    RateLimit->>RateLimit: Decrement token count<br/>59/60 remaining
-    RateLimit->>Auth: Continue (if tokens available)
-
-    Auth->>Auth: Extract Bearer token<br/>from Authorization header
-    Auth->>Auth: Validate JWT signature<br/>Check expiration (24h)
-    Auth->>Handler: Continue (if valid)
-
-    Handler->>Handler: Parse request body<br/>Validate schema
-    Handler->>Service: Call getApplications(page=1)
-
-    Service->>Database: SELECT * FROM applications<br/>LIMIT 50 OFFSET 0
-    Database->>Database: Query execution<br/>4.5ms
-    Database->>Service: Return 42 rows
-
-    Service->>Service: Format response<br/>Add pagination metadata
-    Service->>Handler: Return results
-
-    Handler->>Handler: Build response JSON
-    Handler->>Response: Pass response
-
-    Response->>Response: Log response (ECS format)<br/>Status: 200<br/>Duration: 12ms<br/>Size: 8.2KB
-    Response->>Client: HTTP 200 OK<br/>Content-Type: application/json<br/>Access-Control-Allow-Origin: *
-
-    Client->>Client: Parse JSON<br/>Render UI
-
-```
 
 ### Key Points
 
@@ -191,41 +156,29 @@ sequenceDiagram
 
 Sequence of events during a scheduled or triggered workflow:
 
-```mermaid
-timeline
-    title Workflow Execution: Daily Report (0 9 * * *)
+#### Diagram summary 3
 
-    section Schedule
-        09:00 UTC : Event trigger fires
-        09:00:100ms : Workflow instance created
-        09:00:200ms : Load workflow definition
-        09:00:300ms : Authenticate workflow
+- Type: timeline
+- Component: 0 9 (Report)
+- 09: 00 UTC : Event trigger fires
+- 09: 00:100ms : Workflow instance created
+- 09: 00:200ms : Load workflow definition
+- 09: 00:300ms : Authenticate workflow
+- 09: 00:400ms : Step 1 - Fetch statistics
+- Component: SELECT COUNT (D1)
+- Component: 600ms (complete)
+- 09: 00:700ms : Step 2 - Format report
+- 09: 00:800ms : Process template
+- 09: 00:900ms : Step 3 - Send Slack notification
+- 09: 01:100ms : Call Slack API
+- 09: 01:500ms : Store execution record
+- 09: 01:600ms : Workflow success
+- Component: ECS format (completion)
+- Component: if failure (Handling)
+- 09: 02:000ms : Catch error handler
+- 09: 02:100ms : Send error notification
+- 09: 02:500ms : Workflow failed
 
-    section Execution Phase 1
-        09:00:400ms : Step 1 - Fetch statistics
-        09:00:500ms : Query D1 (SELECT COUNT)
-        09:00:700ms : Step 1 complete (200ms)
-
-    section Execution Phase 2
-        09:00:700ms : Step 2 - Format report
-        09:00:800ms : Process template
-        09:00:900ms : Step 2 complete (200ms)
-
-    section Execution Phase 3
-        09:00:900ms : Step 3 - Send Slack notification
-        09:01:100ms : Call Slack API
-        09:01:500ms : Step 3 complete (600ms)
-
-    section Completion
-        09:01:500ms : Store execution record
-        09:01:600ms : Workflow success
-        09:01:700ms : Log completion (ECS format)
-
-    section Error Handling (if failure)
-        09:02:000ms : Catch error handler
-        09:02:100ms : Send error notification
-        09:02:500ms : Workflow failed
-```
 
 ### Timeline Breakdown
 
@@ -272,54 +225,31 @@ timeline
 
 Complete authentication and session lifecycle:
 
-```mermaid
-graph TD
-    Start["🔐 Authentication Start"] --> CheckCookie{"Cookie<br/>Present?"}
+#### Diagram summary 4
 
-    CheckCookie -->|Yes| ValidateCookie{"JWT<br/>Valid?"}
-    CheckCookie -->|No| Login["Redirect to<br/>/api/auth/login"]
+- Type: flowchart
+- 🔐 Authentication Start (Start) -> Cookie / Present? (CheckCookie)
+- Cookie / Present? (CheckCookie) -> JWT / Valid? (ValidateCookie)
+- Cookie / Present? (CheckCookie) -> Redirect to / /api/auth/login (Login)
+- JWT / Valid? (ValidateCookie) -> Token / Expiring / Soon? (CheckExpiration)
+- JWT / Valid? (ValidateCookie) -> Clear invalid / session (ClearSession)
+- Clear invalid / session (ClearSession) -> Redirect to / /api/auth/login (Login)
+- Token / Expiring / Soon? (CheckExpiration) -> Call refresh endpoint / /api/auth/refresh (Refresh)
+- Token / Expiring / Soon? (CheckExpiration) -> ✅ Authenticated (Authenticated)
+- Call refresh endpoint / /api/auth/refresh (Refresh) -> Generate new JWT / exp: now + 24h (GenerateNewToken)
+- Generate new JWT / exp: now + 24h (GenerateNewToken) -> Store in KV / SESSIONS namespace / TTL: 24h (StoreSession)
+- Store in KV / SESSIONS namespace / TTL: 24h (StoreSession) -> Set HTTP-only cookie / secure, SameSite=Strict (SetCookie)
+- Set HTTP-only cookie / secure, SameSite=Strict (SetCookie) -> ✅ Authenticated (Authenticated)
+- Redirect to / /api/auth/login (Login) -> User enters / username/password (EnterCreds)
+- User enters / username/password (EnterCreds) -> Hash password / bcrypt (HashPassword)
+- Hash password / bcrypt (HashPassword) -> Hash / Match? (VerifyHash)
+- Hash / Match? (VerifyHash) -> ❌ Unauthorized / 401 (ErrorAuth)
+- Hash / Match? (VerifyHash) -> Generate JWT / payload: {user, exp} (GenerateToken)
+- Generate JWT / payload: {user, exp} (GenerateToken) -> Sign with / JWTSECRET (SignToken)
+- Sign with / JWTSECRET (SignToken) -> Store in KV / SESSIONS namespace / TTL: 24h (StoreSession)
+- ✅ Authenticated (Authenticated) -> ✅ Access API / Send Authorization header (AccessAPI)
+- ❌ Unauthorized / 401 (ErrorAuth) -> Clear invalid / session (ClearSession)
 
-    ValidateCookie -->|Yes| CheckExpiration{"Token<br/>Expiring<br/>Soon?"}
-    ValidateCookie -->|No| ClearSession["Clear invalid<br/>session"]
-    ClearSession --> Login
-
-    CheckExpiration -->|Yes| Refresh["Call refresh endpoint<br/>/api/auth/refresh"]
-    CheckExpiration -->|No| Authenticated["✅ Authenticated"]
-
-    Refresh --> GenerateNewToken["Generate new JWT<br/>exp: now + 24h"]
-    GenerateNewToken --> StoreSession["Store in KV<br/>SESSIONS namespace<br/>TTL: 24h"]
-    StoreSession --> SetCookie["Set HTTP-only cookie<br/>secure, SameSite=Strict"]
-    SetCookie --> Authenticated
-
-    Login --> EnterCreds["User enters<br/>username/password"]
-    EnterCreds --> HashPassword["Hash password<br/>bcrypt"]
-    HashPassword --> VerifyHash{"Hash<br/>Match?"}
-
-    VerifyHash -->|No| ErrorAuth["❌ Unauthorized<br/>401"]
-    VerifyHash -->|Yes| GenerateToken["Generate JWT<br/>payload: {user, exp}"]
-
-    GenerateToken --> SignToken["Sign with<br/>JWT_SECRET"]
-    SignToken --> StoreSession
-
-    Authenticated --> AccessAPI["✅ Access API<br/>Send Authorization header"]
-    ErrorAuth --> ClearSession
-
-    style Start fill:#e1f5ff
-    style CheckCookie fill:#fff3e0
-    style ValidateCookie fill:#fff3e0
-    style CheckExpiration fill:#fff3e0
-    style VerifyHash fill:#fff3e0
-    style Login fill:#ffebee
-    style EnterCreds fill:#ffebee
-    style HashPassword fill:#f3e5f5
-    style GenerateToken fill:#f3e5f5
-    style SignToken fill:#f3e5f5
-    style StoreSession fill:#e8f5e9
-    style SetCookie fill:#e8f5e9
-    style Authenticated fill:#c8e6c9
-    style ErrorAuth fill:#ffcdd2
-    style AccessAPI fill:#c8e6c9
-```
 
 ### Authentication Details
 
@@ -359,42 +289,24 @@ graph TD
 
 Token bucket algorithm for rate limiting (60 requests/minute per IP):
 
-```mermaid
-graph TD
-    Request["📥 Request arrives<br/>Client IP: 203.0.113.42"] -->CalculateKey["Calculate KV key<br/>rate-limit:203.0.113.42"]
+#### Diagram summary 5
 
-    CalculateKey --> CheckKV{"KV entry<br/>exists?"}
+- Type: flowchart
+- 📥 Request arrives / Client IP: 203.0.113.42 (Request) -> Calculate KV key / rate-limit:203.0.113.42 (CalculateKey)
+- Calculate KV key / rate-limit:203.0.113.42 (CalculateKey) -> KV entry / exists? (CheckKV)
+- KV entry / exists? (CheckKV) -> Initialize bucket / tokens: 60 / lastrefill: now (Initialize)
+- Initialize bucket / tokens: 60 / lastrefill: now (Initialize) -> Store in KV / TTL: 60 seconds (AddEntry)
+- Store in KV / TTL: 60 seconds (AddEntry) -> tokens > 0? (HasTokens)
+- KV entry / exists? (CheckKV) -> Retrieve from KV / tokens: X / lastrefill: T (Retrieve)
+- Retrieve from KV / tokens: X / lastrefill: T (Retrieve) -> Calculate time elapsed / since lastrefill (CalculateRefill)
+- Calculate time elapsed / since lastrefill (CalculateRefill) -> Refill tokens / +1 token/second / max: 60 (RefillTokens)
+- Refill tokens / +1 token/second / max: 60 (RefillTokens) -> tokens > 0? (HasTokens)
+- tokens > 0? (HasTokens) -> Decrement by 1 / tokens: X - 1 (Decrement)
+- Decrement by 1 / tokens: X - 1 (Decrement) -> Update KV entry / Store new state (Update)
+- Update KV entry / Store new state (Update) -> ✅ Allow request / X-RateLimit-Remaining: X-1 (AllowRequest)
+- tokens > 0? (HasTokens) -> ❌ Reject request / HTTP 429 / Retry-After: 60 (Deny)
+- ❌ Reject request / HTTP 429 / Retry-After: 60 (Deny) -> Clear from KV / when TTL expires / or manually (ClearAfterTTL)
 
-    CheckKV -->|No| Initialize["Initialize bucket<br/>tokens: 60<br/>last_refill: now"]
-    Initialize --> AddEntry["Store in KV<br/>TTL: 60 seconds"]
-    AddEntry --> HasTokens
-
-    CheckKV -->|Yes| Retrieve["Retrieve from KV<br/>tokens: X<br/>last_refill: T"]
-    Retrieve --> CalculateRefill["Calculate time elapsed<br/>since last_refill"]
-    CalculateRefill --> RefillTokens["Refill tokens<br/>+1 token/second<br/>max: 60"]
-    RefillTokens --> HasTokens{"tokens > 0?"}
-
-    HasTokens -->|Yes| Decrement["Decrement by 1<br/>tokens: X - 1"]
-    Decrement --> Update["Update KV entry<br/>Store new state"]
-    Update --> AllowRequest["✅ Allow request<br/>X-RateLimit-Remaining: X-1"]
-
-    HasTokens -->|No| Deny["❌ Reject request<br/>HTTP 429<br/>Retry-After: 60"]
-    Deny --> ClearAfterTTL["Clear from KV<br/>when TTL expires<br/>or manually"]
-
-    style Request fill:#e1f5ff
-    style CalculateKey fill:#f3e5f5
-    style CheckKV fill:#fff3e0
-    style Initialize fill:#e8f5e9
-    style AddEntry fill:#e8f5e9
-    style Retrieve fill:#e8f5e9
-    style RefillTokens fill:#f3e5f5
-    style HasTokens fill:#fff3e0
-    style Decrement fill:#f3e5f5
-    style Update fill:#e8f5e9
-    style AllowRequest fill:#c8e6c9
-    style Deny fill:#ffcdd2
-    style ClearAfterTTL fill:#e8f5e9
-```
 
 ### Rate Limiting Details
 

@@ -294,24 +294,22 @@
 
 ## 🔄 CI/CD 배포 파이프라인 (CI/CD Deployment Pipeline)
 
-```mermaid
-flowchart LR
-    Push["GitHub Push to master"] --> CI
-    subgraph CI ["CI Pipeline"]
-        direction LR
-        SS["🔒 secret-scan"] --> Lint
-        SS --> TC
-        SS --> TJ
-        SS --> TN
-        SS --> VD
-        Lint["⚡ lint"] && TC["📝 typecheck"] && TJ["🧪 test-jest"] && TN["🧪 test-node"] && VD["✅ validate-data"] --> Result{"Pass?"}
-    end
-    Result -->|Yes + master| CF["☁️ Cloudflare Workers Builds<br/>(authoritative)"]
-    Result -->|No| Fail["❌ CI Failed"]
-    CF --> Worker["📦 portfolio worker.js"]
-    CF --> Docker["🐳 job-server<br/>(Docker + MCP)"]
-    Worker --> Live["🌐 resume.jclee.me"]
-```
+#### Diagram summary 1
+
+- Type: flowchart
+- GitHub Push to master (Push) -> CI Pipeline (CI)
+- 🔒 secret-scan (SS) -> ⚡ lint (Lint)
+- 🔒 secret-scan (SS) -> 📝 typecheck (TC)
+- 🔒 secret-scan (SS) -> 🧪 test-jest (TJ)
+- 🔒 secret-scan (SS) -> 🧪 test-node (TN)
+- 🔒 secret-scan (SS) -> ✅ validate-data (VD)
+- ⚡ lint (Lint) -> Pass? (Result)
+- Pass? (Result) -> ☁️ Cloudflare Workers Builds / (authoritative) (CF)
+- Pass? (Result) -> ❌ CI Failed (Fail)
+- ☁️ Cloudflare Workers Builds / (authoritative) (CF) -> 📦 portfolio worker.js (Worker)
+- ☁️ Cloudflare Workers Builds / (authoritative) (CF) -> 🐳 job-server / (Docker + MCP) (Docker)
+- 📦 portfolio worker.js (Worker) -> 🌐 resume.jclee.me (Live)
+
 
 ## 🔍 검증 체크리스트 (Verification Checklist)
 

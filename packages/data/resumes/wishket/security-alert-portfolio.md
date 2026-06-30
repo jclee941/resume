@@ -80,15 +80,16 @@ Slack Block Kit를 사용한 이유도 여기에 있습니다. 제목, 이벤트
 구현의 핵심은 FortiGate syslog, Splunk 탐지, Python 가공, Slack 알림을 분리된 도구 집합이 아니라 하나의 대응
 흐름으로 묶는 것이었습니다.
 
-```mermaid
-flowchart LR
-  FG[FortiGate<br/>• syslog 이벤트] -->|UDP/514| SPL[Splunk<br/>수집 + Saved Search]
-  SPL -->|탐지 조건 매칭| WH[Splunk Webhook]
-  WH -->|HTTPS POST<br/>JSON| PY[Python 가공춤<br/>· 컴텍스트 추가<br/>· 대응 가이드 매핑]
-  PY -->|Block Kit JSON| Slack[Slack 채널<br/>· 운영자 알림]
-  PY -->|optional| Tel[Telegram]
-  Slack -.->|담당자 대응| Op[운영 회선]
-```
+#### Diagram summary 1
+
+- Type: flowchart
+- FortiGate / • syslog 이벤트 (FG) -> Splunk / 수집 + Saved Search (SPL)
+- Splunk / 수집 + Saved Search (SPL) -> Splunk Webhook (WH)
+- Splunk Webhook (WH) -> Python 가공춤 / · 컴텍스트 추가 / · 대응 가이드 매핑 (PY)
+- Python 가공춤 / · 컴텍스트 추가 / · 대응 가이드 매핑 (PY) -> Slack 채널 / · 운영자 알림 (Slack)
+- Python 가공춤 / · 컴텍스트 추가 / · 대응 가이드 매핑 (PY) -> Telegram (Tel)
+- Slack 채널 / · 운영자 알림 (Slack) -> 운영 회선 (Op)
+
 
 ### 아키텍처 개요
 
