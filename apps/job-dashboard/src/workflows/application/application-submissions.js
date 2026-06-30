@@ -1,16 +1,14 @@
-import { isAtsDryRunPlatform } from './platforms.js';
+import {
+  attachWorkflowApproval,
+  createAtsGateResult,
+  createAtsSubmissionPreviews,
+  evaluateAtsSubmitGate,
+  hasLaterSubmitCandidate,
+  safePreviewText,
+  WORKFLOW_APPROVAL,
+} from './application-submission-gates.js';
 
-export const WORKFLOW_APPROVAL = Symbol('workflowApproval');
-
-export function attachWorkflowApproval(job, approval) {
-  return {
-    ...job,
-    workflowApprovalRequestId: approval.id,
-    workflowApprovalStatus: approval.status,
-    workflowApprovalMetadata: approval.metadata,
-    [WORKFLOW_APPROVAL]: approval,
-  };
-}
+export { attachWorkflowApproval, WORKFLOW_APPROVAL };
 
 // prettier-ignore
 export async function submitApprovedApplications(ctx, step, workflow, approvedJobs, resumeId, dryRun, submitOptions = {}) {
@@ -59,116 +57,33 @@ export async function submitApprovedApplications(ctx, step, workflow, approvedJo
   return applicationResults;
 }
 
-function createAtsSubmissionPreviews(jobs, resumeId) {
-  return jobs.filter(isPreviewableAtsJob).map((job) => ({
-    success: true,
-    dryRun: true,
-    networkWrite: false,
-    action: 'would_apply',
-    status: 'dry-run',
-    platform: job.source,
-    jobId: safePreviewText(job.id || job.sourceId),
-    company: safePreviewText(job.company),
-    position: safePreviewText(job.position || job.title),
-    resumeId: safePreviewText(resumeId),
-  }));
-}
-
-function isPreviewableAtsJob(job) {
-  return Boolean(job?.id || job?.sourceId) && isAtsDryRunPlatform(job.source);
-}
-
-function evaluateAtsSubmitGate(job, submitOptIn) {
-  if (!isAtsDryRunPlatform(job?.source)) return { canSubmit: true };
-  if (!hasSubmitCapability(job)) {
-    return { canSubmit: false, status: 'rejected', reason: 'ATS adapter cannot submit' };
-  }
-  const approvalGate = evaluateHumanApprovalGate(job);
-  if (!approvalGate.canSubmit) return approvalGate;
-  if (!submitOptIn) {
-    return {
-      canSubmit: false,
-      status: 'missing-opt-in',
-      reason: 'Explicit ATS submit flag is required',
-    };
-  }
-  return { canSubmit: true };
-}
-
-function hasSubmitCapability(job) {
-  const capability = getWorkflowApproval(job)?.metadata?.adapterCapability;
-  return Boolean(
-    capability?.canSubmit === true ||
-    capability?.supportsSubmit === true ||
-    capability?.submitSupported === true
-  );
-}
-
-function evaluateHumanApprovalGate(job) {
-  const approval = getWorkflowApproval(job);
-  if (approval?.status === 'pending') {
-    return { canSubmit: false, status: 'pending', reason: 'ATS approval is pending' };
-  }
-  if (approval?.status === 'rejected') {
-    return { canSubmit: false, status: 'rejected', reason: 'ATS approval was rejected' };
-  }
-  if (hasExplicitHumanApproval(job)) return { canSubmit: true };
-  return {
-    canSubmit: false,
-    status: 'human-approval-required',
-    reason: 'Explicit human ATS approval is required for this destination',
-  };
-}
-
-function hasExplicitHumanApproval(job) {
-  const approval = getWorkflowApproval(job);
-  const marker = approval?.metadata?.humanApproval;
-  return Boolean(
-    approval?.id &&
-    (approval.status === 'human-approved' || marker?.status === 'approved') &&
-    marker?.destination === job?.source
-  );
-}
-
-function createAtsGateResult(job, gate) {
-  return {
-    success: false,
-    networkWrite: false,
-    action: 'blocked',
-    status: gate.status,
-    reason: gate.reason,
-    platform: safePreviewText(job?.source),
-    jobId: safePreviewText(job?.id || job?.sourceId),
-    company: safePreviewText(job?.company),
-    position: safePreviewText(job?.position || job?.title),
-  };
-}
-
-function hasLaterSubmitCandidate(jobs, index, submitOptIn) {
-  return jobs.slice(index + 1).some((job) => evaluateAtsSubmitGate(job, submitOptIn).canSubmit);
-}
-
-function getWorkflowApproval(job) {
-  return job?.[WORKFLOW_APPROVAL] || null;
-}
-
-function safePreviewText(value) {
-  if (value == null) return '';
-  return Array.from(String(value), safePreviewCharacter).join('').slice(0, 160);
-}
-
-function safePreviewCharacter(character) {
-  const code = character.charCodeAt(0);
-  return code < 32 || code === 127 ? ' ' : character;
-}
-
 async function submitApprovedApplication(ctx, workflow, job, resumeId) {
   try {
     const coverLetter = await ctx.generateCoverLetter(job);
     const resume = await ctx.getResume(resumeId);
 
     // prettier-ignore
-    const submitResult = await ctx.submitApplication({ platform: job.source, jobId: job.id, resume, coverLetter });
+    const submitResult = await ctx.submitApplication({
+      platform: job.source,
+      jobId: job.id,
+      sourceUrl: job.sourceUrl || job.url,
+      resume,
+      coverLetter,
+      job,
+    });
+
+    if (submitResult.alreadyApplied || submitResult.status === 'already_applied') {
+      return {
+        success: true,
+        networkWrite: false,
+        action: 'already_applied',
+        status: 'already_applied',
+        platform: safePreviewText(job.source),
+        jobId: safePreviewText(job.id),
+        company: safePreviewText(job.company),
+        position: safePreviewText(job.position),
+      };
+    }
 
     if (submitResult.success) {
       workflow.stats.jobsApplied++;
@@ -187,12 +102,41 @@ async function submitApprovedApplication(ctx, workflow, job, resumeId) {
       return { success: true, jobId: job.id, company: job.company, position: job.position };
     }
 
+    if (requiresDeferredBrowserAction(submitResult)) {
+      return {
+        success: true,
+        networkWrite: submitResult.networkWrite === true,
+        action: submitResult.browserRendered
+          ? 'browser_rendered_review_required'
+          : 'handoff_required',
+        status: submitResult.browserRendered ? 'rendered-review-required' : 'handoff-required',
+        platform: safePreviewText(job.source),
+        jobId: safePreviewText(job.id),
+        company: safePreviewText(job.company),
+        position: safePreviewText(job.position),
+        reason: safePreviewText(submitResult.error),
+        browserRendered: submitResult.browserRendered === true,
+        targetUrl: safePreviewText(submitResult.targetUrl),
+        finalUrl: safePreviewText(submitResult.finalUrl),
+        visibleAction: safePreviewText(submitResult.visibleAction),
+      };
+    }
+
     workflow.stats.jobsFailed++;
     return createSubmitFailure(job.id, submitResult.error);
   } catch (error) {
     workflow.stats.jobsFailed++;
     return createSubmitFailure(job.id, error.message);
   }
+}
+
+function requiresDeferredBrowserAction(result) {
+  return Boolean(
+    result?.requiresJobServer === true ||
+      result?.requiresBrowserAutomation === true ||
+      result?.browserRequired === true ||
+      result?.requiresBrowserRendering === true
+  );
 }
 
 function createSubmitFailure(jobId, error) {

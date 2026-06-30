@@ -14,6 +14,7 @@
  *   --queue=<path>     use a curated queue file instead of crawling
  *   --limit=N          max postings rendered in the message (default 10)
  *   --keywords=a,b,c   override search keywords (crawl mode)
+ *   --ats-only         keep only ATS postings (greenhouse, lever, ashby)
  *   --dry-run          format + print the message, do NOT send
  *
  * Usage:
@@ -25,6 +26,7 @@ import { readFileSync } from 'fs';
 import { TelegramNotificationAdapter } from '../src/shared/services/notifications/telegram-adapter.js';
 import { filterWorthy, WORTHY_MIN_SCORE } from './worthiness.js';
 
+const ATS_SOURCES = new Set(['greenhouse', 'lever', 'ashby']);
 const DEFAULT_KEYWORDS = ['보안 엔지니어', 'DevOps', 'SRE', '클라우드 엔지니어', '인프라 엔지니어'];
 
 function parseArgs(argv) {
@@ -44,6 +46,7 @@ function parseArgs(argv) {
       : DEFAULT_KEYWORDS,
     dryRun: argv.includes('--dry-run'),
     separate: argv.includes('--separate'),
+    atsOnly: argv.includes('--ats-only'),
     minScore: Number.parseInt(get('min-score') ?? String(WORTHY_MIN_SCORE), 10) || WORTHY_MIN_SCORE,
   };
 }
@@ -52,7 +55,7 @@ function normalizeJob(entry) {
   return {
     company: entry.company || entry.companyName || '',
     position: entry.position || entry.pos || entry.title || '',
-    url: entry.url || entry.sourceUrl || '',
+    url: entry.url || entry.applicationUrl || entry.sourceUrl || '',
     source: entry.source || entry.src || entry.platform || '',
     matchScore: entry.matchScore ?? entry.score ?? entry.relevantKeywordHits,
     matchPercentage: entry.matchPercentage,
@@ -91,9 +94,12 @@ async function crawlJobs(keywords, minScore) {
 async function main() {
   const args = parseArgs(process.argv.slice(2));
 
-  const collected = args.queuePath
+  const discovered = args.queuePath
     ? await loadFromQueue(args.queuePath)
     : await crawlJobs(args.keywords, args.minScore);
+  const collected = args.atsOnly
+    ? discovered.filter((job) => ATS_SOURCES.has(String(job.source || '').trim().toLowerCase()))
+    : discovered;
 
   // Keep only 지원할만한 (worthy) postings, best-first. Crawl results are gated by
   // score (>=minScore). A queue file is hand-curated, so unscored queue entries
@@ -102,7 +108,8 @@ async function main() {
 
   console.log(
     `📋 ${jobs.length} worthy posting(s) of ${collected.length} collected ` +
-      `(${args.queuePath ? 'queue' : `crawl, score>=${args.minScore}`})`
+      `(${args.queuePath ? 'queue' : `crawl, score>=${args.minScore}`}` +
+      `${args.atsOnly ? ', ats-only' : ''})`
   );
 
   const adapter = new TelegramNotificationAdapter();

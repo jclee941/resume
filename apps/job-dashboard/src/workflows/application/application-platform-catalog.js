@@ -12,8 +12,14 @@ const DIRECT_APPLICATION_PLATFORMS = [
 ];
 const ALL_APPLICATION_PLATFORMS = [...DIRECT_APPLICATION_PLATFORMS, ...ATS_DRY_RUN_PLATFORMS];
 
+export function normalizeApplicationPlatform(platform) {
+  return typeof platform === 'string' ? platform.trim().toLowerCase() : '';
+}
+
 export function normalizeApplicationPlatforms(platforms, { atsStub = false, dryRun = false } = {}) {
-  const requested = selectRequestedPlatforms(platforms);
+  const requested = selectRequestedPlatforms(platforms)
+    .map((platform) => normalizeApplicationPlatform(platform))
+    .filter(Boolean);
   const supported = atsStub && dryRun ? ALL_APPLICATION_PLATFORMS : DIRECT_APPLICATION_PLATFORMS;
   return requested.filter((platform) => supported.includes(platform));
 }

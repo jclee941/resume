@@ -1,4 +1,5 @@
 import { appendDecisionTrace } from './decision-trace.js';
+import { normalizeApplicationPlatform } from '../../workflows/application/application-platform-catalog.js';
 
 const DEFAULT_MAX_DEPTH = 1;
 const MAX_ALLOWED_DEPTH = 5;
@@ -12,11 +13,12 @@ function parseMaxDepth(value) {
 }
 
 function hasRequiredJobFields(job) {
+  const source = getCandidateSource(job);
   return (
     job &&
     typeof job === 'object' &&
     (job.id || job.sourceId) &&
-    job.source &&
+    source &&
     (job.position || job.title) &&
     job.company
   );
@@ -24,17 +26,20 @@ function hasRequiredJobFields(job) {
 
 function normalizeCandidate(candidate, index) {
   if (!hasRequiredJobFields(candidate)) {
-    return { error: `candidates[${index}] must include id, source, position, and company` };
+    return {
+      error: `candidates[${index}] must include id, source/platform, position, and company`,
+    };
   }
 
   const sourceId = String(candidate.sourceId || candidate.id);
+  const source = getCandidateSource(candidate);
   return {
     job: appendDecisionTrace(
       {
         ...candidate,
         id: sourceId,
         sourceId,
-        source: candidate.source,
+        source,
         sourceUrl: candidate.sourceUrl || candidate.url || '',
       },
       {
@@ -44,6 +49,12 @@ function normalizeCandidate(candidate, index) {
       }
     ),
   };
+}
+
+function getCandidateSource(candidate) {
+  return normalizeApplicationPlatform(
+    candidate?.source || candidate?.platform || candidate?.loginPlatform
+  );
 }
 
 function collectRecursiveReferences(job, maxDepth) {
