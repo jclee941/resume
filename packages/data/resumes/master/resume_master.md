@@ -2,7 +2,7 @@
 
 보안 엔지니어
 
-폐쇄망 OA 운영에서 시작해 금융권 보안 인프라 구축·운영, SOC 탐지·알림 자동화, 관측성·IaC 기반 운영 개선을 이어 온 보안 엔지니어입니다. 직전 금융권 정보보안팀에서는 FortiGate HA 망분리 환경에서 Splunk ES, Slack/SMS 알림 워크플로, FortiManager API를 연결해 보안 이벤트 인지·분류·알림 흐름을 표준화했습니다. 현재 보안 인프라, Security Operations, Observability, 자동화 중심의 역할을 찾고 있습니다.
+폐쇄망 OA 운영에서 시작해 금융권 보안 인프라 구축·운영, SOC 탐지·알림 운영 스크립트, 관측성·IaC 기반 운영 개선을 이어 온 보안 엔지니어입니다. 직전 금융권 정보보안팀에서는 FortiGate HA 망분리 환경에서 Splunk ES, Slack/SMS 알림 워크플로, FortiManager API를 연결해 보안 이벤트 인지·분류·알림 흐름을 표준화했습니다. 현재 보안 인프라, Security Operations, Observability, 운영 스크립트 중심의 역할을 찾고 있습니다.
 
 **핵심 역량**: 금융권 보안 인프라 설계·운영 · FortiGate 다층 망분리 · Splunk SIEM 탐지·알림 흐름 표준화 · IaC 기반 관측성 · 금융감독원 감사 대응
 
@@ -31,10 +31,10 @@
 
 - **보안**: FortiGate 방화벽, DDoS, IPS, WAF, NAC, DLP, EDR, APT, Splunk SIEM
 - **클라우드**: Docker, Kubernetes, Cloudflare Workers (Edge Computing)
-- **자동화**: Python, Shell, Ansible, Terraform, 워크플로 오케스트레이션
+- **운영 스크립트**: Python, Shell, Ansible, Terraform, 워크플로 오케스트레이션
 - **모니터링**: Grafana, Prometheus, Loki (통합 관제 플랫폼)
 - **DevOps**: GitLab EE, CI/CD, Container Registry, Docker Compose
-- **AI/ML**: Claude AI 기반 자동화 파이프라인, ML 기반 위협 예측 및 자동 라우팅 시스템
+- **AI/ML**: Claude 기반 운영 보조 도구, ML 기반 위협 예측 및 라우팅 실험
 
 ### 자격증 및 교육
 
@@ -74,13 +74,13 @@
 
 주요 성과
 
-- 근무 기간 동안 보안 침해사고 없이 운영
+- 보안 운영 증적과 감사 대응 자료를 정리
 - 금융감독원 감사 자료 준비 및 대응 수행
 - 거래 플랫폼 운영 기준 유지
-- Splunk-FortiNet 연동 환경에서 방화벽 정책 조회·배포 자동화 스크립트 작성
+- Splunk-FortiNet 연동 환경에서 방화벽 정책 조회·배포 운영 스크립트 작성
 - Grafana 대시보드로 시스템·컨테이너·로그 지표를 한 화면에 정리
 - Claude AI를 활용한 위협 정보 수집·분류 스크립트 작성으로 수동 분석 의존도 낮춤
-- 알림 워크플로로 반복 API 호출 자동화
+- 알림 워크플로로 반복 API 호출 운영 스크립트
 - SIEM 탐지 룰 검토 및 조건 조정으로 오탐 정리
 - 취약점 SLA 기준에 따라 패치 일정을 관리
 - DR 복구 절차를 스크립트화하고 주기적 훈련 수행
@@ -101,18 +101,18 @@
 
 - 보안 아키텍처 구축: 다층 망분리(외부/거래/내부/개발/관리) 및 Air-Gap 설정
 - 보안 솔루션(시스템/네트워크/엔드포인트) 설치 및 연동 작업
-- Python 기반 방화벽/NAC/DLP 정책 자동화 스크립트 작성
+- Python 기반 방화벽/NAC/DLP 정책 운영 스크립트 작성
 - FSC 본인가 심사 대응 자료 준비 및 보안 체크리스트 이행
 - DR 사이트 구성 수행
 
 주요 성과
 
-- 방화벽 정책 자동화 스크립트 작성 (Python)
+- 방화벽 정책 운영 스크립트 작성 (Python)
 - EPP/DLP 설정 조정으로 단말 보안 에이전트 정책 정비
-- 구축 기간 동안 보안 침해사고 없이 운영
+- 구축 기간 동안 보안 운영 점검 내역과 심사 증빙을 정리
 - FSC 본인가 심사 보안 분야 질의와 증빙 자료에 대응
 - 다층 망분리 구성 수행
-- NAC 정책 배포 자동화 스크립트 작성
+- NAC 정책 배포 스크립트 작성
 - DR 복구 절차 스크립트화
 - DB 접근제어 쿼리 튜닝 수행
 - PB 플랫폼 POC 검증 수행
@@ -126,7 +126,7 @@
 주요 업무
 
 - 금융보안데이터센터(FSDC) 서버 인프라 운영
-- Python 기반 인프라 자동화 스크립트 개발
+- Python 기반 인프라 운영 스크립트 개발
 - 금융감독원 정기 감사 대응 및 DLP 정책 운영
 - DB 접근제어 쿼리 튜닝 및 시스템 성능 최적화 수행
 - PB 플랫폼 POC 검증 및 시스템 런칭 지원
@@ -165,9 +165,9 @@
 
 주요 성과
 
-- Python으로 네트워크 점검 자동화
+- Python으로 네트워크 점검 운영 스크립트
 - 백신-VPN 충돌 원인 분석 및 해결, 대응 절차 정리
-- Ansible로 NAC 정책 배포 자동화
+- Ansible로 NAC 정책 배포 스크립트
 - 신규 사이트 네트워크 구성 수행
 
 ---
@@ -192,7 +192,7 @@
 
 ## 주요 프로젝트
 
-### 보안 운영 자동화 플랫폼 (2024 ~ 현재)
+### 보안 운영 스크립트 플랫폼 (2024 ~ 현재)
 
 **개인 프로젝트**
 **GitHub**: [github.com/jclee941](https://github.com/jclee941)
@@ -208,7 +208,7 @@
   - 대용량 이벤트 처리 시스템
 - **운영성과**:
   - 방화벽 중앙 관리
-  - 정책 검증 자동화
+  - 정책 검증 운영 스크립트
   - 위협 분석 및 알림 시스템
 
 #### SafeWork Industrial Health Platform
@@ -217,7 +217,7 @@
 - **기술스택**: Flask, PostgreSQL, Redis, Cloudflare Workers
 - **아키텍처**: Cloudflare Workers Edge API 기반 전국 동시 접속 처리, Flask 하이브리드 아키텍처
 - **핵심기능**:
-  - 종이 설문 디지털 전환 및 집계 자동화
+  - 종이 설문 디지털 전환 및 집계 운영 스크립트
   - 실시간 데이터 분석 및 리포팅
   - Edge API를 통한 안정적 저지연 서비스 제공
 - **운영성과**:
@@ -257,12 +257,12 @@
 - **수행 분야**:
   - 다층 망분리 (외부망/거래망/내부망/개발망/관리망)
   - 보안 솔루션 통합 (시스템보안 / 네트워크보안 / 엔드포인트보안)
-  - Python 기반 보안 자동화 프레임워크 (방화벽, NAC, DLP 정책 자동화)
+  - Python 기반 보안 운영 스크립트 프레임워크 (방화벽, NAC, DLP 정책 운영 스크립트)
 - **주요 경험**:
   - FSC 본인가 심사 보안 분야 안정 통과
-  - 방화벽 정책 자동화로 수작업 부담 완화
+  - 방화벽 정책 스크립트로 수작업 부담 완화
   - EPP/DLP 설정 조정으로 단말 보안 에이전트 정책 정비
-  - 구축 기간 동안 보안 침해사고 없이 운영
+  - 구축 기간 동안 보안 운영 점검 내역과 심사 증빙을 정리
 
 **운영 단계 (2025.03 ~ 2026.02)**
 
@@ -272,17 +272,17 @@
   - 보안 솔루션 상태 점검 및 등급별 대응 절차에 따른 인시던트 처리
   - DR 사이트 점검 및 주기적 DR 테스트 수행
 - **주요 성과**:
-  - 보안 침해사고 없이 운영을 지속
+  - 보안 운영 증적과 감사 대응 자료를 정리
   - 금융감독원 감사에서 안정적인 대응 수행
   - 거래 플랫폼 가용성을 운영 기준에 맞춰 유지
   - SIEM 룰 정비로 보안 오탐 흐름 정리
-  - DR 복구 절차 자동화 및 주기적 훈련
+  - DR 복구 절차 스크립트화 및 주기적 훈련
 
 **경험 요약**
 
-- **자동화**: Python 기반 자동화 스크립트로 반복 수작업 항목을 정리하고 표준화
+- **운영 스크립트**: Python 기반 운영 스크립트로 반복 수작업 항목을 정리하고 표준화
 - **안정성**: 거래 플랫폼 운영 기준과 DR 복구 절차를 문서화하고 점검
-- **보안 경험**: 근무 기간 동안 침해사고 없이 운영하며 취약점 대응 SLA를 관리
+- **보안 경험**: 취약점 대응 SLA와 운영 증적을 관리
 
 ### 대규모 콜센터 원격근무 전환
 
@@ -291,9 +291,9 @@
 역할: 보안 인프라 구축 담당
 규모: 대규모 동시 접속 환경
 기술: SSL VPN, NAC, Ansible, Python
-경험: COVID-19 대응 재택근무 인프라를 구축하고 운영 자동화 스크립트를 작성
+경험: COVID-19 대응 재택근무 인프라를 구축하고 운영 스크립트를 작성
 
-### AI 기반 인프라 자동화 플랫폼 (2024.09 ~ 현재)
+### 인프라 운영 도구 플랫폼 (2024.09 ~ 현재)
 
 **개인 프로젝트 | AI-Powered Infrastructure Automation & Observability Platform**
 **GitHub**: [github.com/jclee941](https://github.com/jclee941) | **Live**: <https://resume.jclee.me>
@@ -318,10 +318,10 @@
 
 **1. ML Agent Selection System**
 
-- **목적**: ML 기반 자동 에이전트 라우팅 시스템
+- **목적**: ML 기반 도구 라우팅 시스템
 - **기술스택**: Python, Flask, Scikit-learn, PostgreSQL, MCP Servers
 - **규모**: 스크립트 관리, Constitutional Framework
-- **성과**: AI 작업 흐름 자동화, 자동 에이전트 라우팅으로 의사결정 재활용성 강화
+- **성과**: 작업 흐름 정리, 도구 라우팅으로 의사결정 재활용성 강화
 
 **2. Automation**
 
@@ -333,7 +333,7 @@
 - **목적**: Self-hosted DevOps 플랫폼 및 Container Registry
 - **기술스택**: GitLab EE, PostgreSQL, Redis, Traefik
 - **규모**: CI/CD pipelines, Container Registry, 주기적 자동 백업
-- **성과**: Private 코드 호스팅, 자동화된 CI/CD, 컨테이너 이미지 관리
+- **성과**: Private 코드 호스팅, 표준화된 CI/CD, 컨테이너 이미지 관리
 
 **4. Nginx Airgap Configuration**
 
@@ -344,10 +344,10 @@
 
 **5. Python Automation Framework**
 
-- **목적**: 인프라 자동화 프레임워크
+- **목적**: 인프라 운영 스크립트 프레임워크
 - **기술스택**: Python, Ansible, Bash, Git Hooks
 - **특징**: 파일 거버넌스, AI 보상 시스템, 세션 연속성
-- **성과**: 인프라 운영 수작업 자동화 및 스크립트 재사용성 강화
+- **성과**: 인프라 운영 수작업 정리 및 스크립트 재사용성 강화
 
 **6. Constitutional Governance System**
 
@@ -365,11 +365,11 @@
 
 **8. Ansible FortiManager Automation**
 
-- **목적**: FortiManager 방화벽 정책 자동화 (Infrastructure as Code)
+- **목적**: FortiManager 방화벽 정책 스크립트 (Infrastructure as Code)
 - **기술스택**: Ansible, FortiManager API, Ansible Vault, Docker
 - **규모**: 플레이북 기반 fortinet.fortimanager collection
-- **기능**: 정책 조회/생성/수정, 백업/복원, 오브젝트 관리, Docker 배포 자동화
-- **성과**: 정책 배포 자동화 및 수작업 의존도 완화
+- **기능**: 정책 조회/생성/수정, 백업/복원, 오브젝트 관리, Docker 배포 스크립트
+- **성과**: 정책 배포 스크립트 및 수작업 의존도 완화
 
 **9. NAS Infrastructure Deployment**
 
@@ -377,7 +377,7 @@
 - **기술스택**: Bash, rsync, SSH, Docker Compose, Synology DSM
 - **규모**: 관찰성·CI/CD·프록시 서비스 묶음 (Grafana, Prometheus, Loki, AlertManager, GitLab, Traefik, Splunk, Promtail, Node Exporter)
 - **기능**: 원격 Docker 관리, 자동 rsync 동기화, 멀티 서비스 오케스트레이션
-- **성과**: 배포 자동화 및 인프라 동기화 흐름 표준화
+- **성과**: 배포 스크립트 및 인프라 동기화 흐름 표준화
 
 **핵심 아키텍처 설계**
 
@@ -395,16 +395,16 @@
    - `.docker-context` 파일 기반 자동 라우팅 (투명한 컨텍스트 전환)
 
 3. **AI-Driven Automation Framework**
-   - SlashCommand 기반 자동화 시스템
+   - SlashCommand 기반 운영 스크립트 시스템
    - MCP 도구 생태계: filesystem, github, slack, tmux, sqlite, puppeteer
    - Constitutional AI 거버넌스 (자율 실행, 검증, 메타 학습)
-   - 자동화 스크립트: 보안·모니터링·배포·테스트 영역의 Bash 스크립트 묶음
+   - 운영 스크립트: 보안·모니터링·배포·테스트 영역의 Bash 스크립트 묶음
 
 4. **Production-Ready CI/CD Pipeline**
    - GitLab CI/CD: resume (Cloudflare Workers), blacklist (Docker)
    - Watchtower: 자동 이미지 업데이트 및 무중단 재배포
    - Git-based: 모든 변경사항 추적 가능, 자동 롤백 지원
-   - 테스트 자동화: Jest (유닛), Playwright (E2E)
+   - 테스트 스크립트: Jest (유닛), Playwright (E2E)
 
 **프로젝트별 상세**
 **Resume Portfolio (Cloudflare Workers + Observability)**
@@ -434,7 +434,7 @@
 - 역할: Model Context Protocol 서버 통합 플랫폼
 - 규모: 다수 MCP 서버 및 도구 (filesystem, github, slack, tmux)
 - WebUI: Node.js 기반 백엔드 + Nginx reverse proxy
-- 성과: AI 작업 흐름 자동화, 도구 통합 구조 정리
+- 성과: 작업 흐름 정리, 도구 통합 구조 정리
 
 **Local Exporters (모니터링 스택)**
 
@@ -450,7 +450,7 @@
 
 **운영 성과 (2024.09 ~ 현재)**
 
-- **자동화**: 반복 작업 자동화로 수작 배포 흐름 제거
+- **운영 스크립트**: 반복 작업 운영 스크립트로 수작 배포 흐름 제거
 - **안정성**: 장애 인지·복구 흐름 정비
 - **가시성**: 통합 대시보드 구축, 모든 서비스 실시간 모니터링
 - **테스트**: Jest + Playwright 통합, 핵심 로직 커버리지 확보
@@ -459,7 +459,7 @@
 
 **기술적 하이라이트**
 
-- Worker 생성 자동화 (HTML → Template Literal 변환, 보안 헤더 주입)
+- Worker 생성 스크립트 (HTML → Template Literal 변환, 보안 헤더 주입)
 - ROUTES 객체 패턴 기반 라우팅 확장성
 - Integration 테스트 (Worker ↔ HTML 통합 검증, 빌드 재현성)
 - Constitutional AI (자율 실행, 검증 필수, 메타 학습 의무화)
@@ -481,18 +481,18 @@
 - 가상화: VMware vSphere, NSX-T, Hyper-V
 - 컨테이너: Docker, Kubernetes, Helm
 
-### 자동화 및 개발
+### 운영 스크립트 및 개발
 
 - Languages: Python, Shell Script, PowerShell, Node.js, TypeScript, JavaScript
 - IaC: Ansible, Terraform, CloudFormation
 - CI/CD: Jenkins, GitLab CI, GitLab CI/CD, Watchtower
 - 모니터링: Prometheus, Grafana, Loki, ELK Stack, Tempo, Splunk
 
-### AI/ML 및 자동화
+### AI/ML 및 운영 도구
 
 - AI 도구: Claude Code, GitHub Copilot, ChatGPT API
 - MCP 프로토콜: 다수 서버 통합 (filesystem, github, brave-search, memory, tmux 등)
-- 자동화 프레임워크: Custom SlashCommand 시스템
+- 운영 스크립트 프레임워크: Custom SlashCommand 시스템
 - 관찰성: Universal Observability 아키텍처 (Grafana 중심)
 
 ### 컨테이너 및 오케스트레이션
@@ -500,7 +500,7 @@
 - 컨테이너 플랫폼: Docker, Portainer API, Docker Compose
 - 레지스트리: Private Docker Registry (registry.jclee.me)
 - 배포 전략: Multi-Port Deployment, Blue-Green, Canary
-- 자동화: Watchtower 기반 자동 업데이트, 무중단 배포
+- 운영 스크립트: Watchtower 기반 자동 업데이트, 무중단 배포
 
 ### 네트워크
 

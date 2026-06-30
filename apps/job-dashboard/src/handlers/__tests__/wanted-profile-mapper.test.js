@@ -53,6 +53,28 @@ describe('wanted profile mappers', () => {
     assert.strictEqual(mappedUnknown.end_time, null);
   });
 
+  it('mapCareerToWanted normalizes Korean corporation markers from company.name', () => {
+    const mapped = mapCareerToWanted({
+      company: '(주)가온누리정보시스템',
+      role: '보안 인프라 엔지니어',
+      period: '2024.03 ~ 2025.02',
+      workType: '프리랜서',
+    });
+
+    assert.strictEqual(mapped.company.name, '가온누리정보시스템');
+  });
+
+  it('mapCareerToWanted preserves security category when role label is normalized', () => {
+    const mapped = mapCareerToWanted({
+      company: 'ACME',
+      role: '보안운영 담당',
+      period: '2024.01 ~ 2024.12',
+    });
+
+    assert.strictEqual(mapped.job_role, '보안 운영');
+    assert.strictEqual(mapped.job_category_id, 672);
+  });
+
   it('mapEducationToWanted handles 재학중 and 졸업 states', () => {
     const enrolled = mapEducationToWanted({
       school: '한양사이버대학교',

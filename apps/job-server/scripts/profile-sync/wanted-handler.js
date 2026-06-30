@@ -156,11 +156,11 @@ export default class WantedHandler {
 
         try {
           const careersResult = await syncWantedCareers(client, ssot, profile, resumeId);
-          if (careersResult.added > 0 || careersResult.updated > 0) {
+          if (careersResult.changes > 0) {
             changes.push({
               field: 'careers',
-              from: `${careersResult.updated} updated`,
-              to: `+${careersResult.added} added`,
+              from: `${careersResult.updated || 0} updated, ${careersResult.deleted || 0} deleted`,
+              to: `+${careersResult.added || 0} added`,
             });
           }
         } catch (e) {
@@ -169,11 +169,11 @@ export default class WantedHandler {
 
         try {
           const educationsResult = await syncWantedEducations(client, ssot, profile, resumeId);
-          if (educationsResult.added > 0 || educationsResult.updated > 0) {
+          if (educationsResult.changes > 0) {
             changes.push({
               field: 'educations',
-              from: `${educationsResult.updated} updated`,
-              to: `+${educationsResult.added} added`,
+              from: `${educationsResult.updated || 0} updated`,
+              to: `+${educationsResult.added || 0} added`,
             });
           }
         } catch (e) {
@@ -182,11 +182,11 @@ export default class WantedHandler {
 
         try {
           const activitiesResult = await syncWantedActivities(client, ssot, profile, resumeId);
-          if (activitiesResult.added > 0 || activitiesResult.updated > 0) {
+          if (activitiesResult.changes > 0) {
             changes.push({
               field: 'activities',
-              from: `${activitiesResult.updated} updated`,
-              to: `+${activitiesResult.added} added`,
+              from: `${activitiesResult.updated || 0} updated`,
+              to: `+${activitiesResult.added || 0} added`,
             });
           }
         } catch (e) {
@@ -197,7 +197,7 @@ export default class WantedHandler {
           const resumeDetail = await client.getResumeDetail(resumeId);
 
           const aboutResult = await syncWantedAbout(client, ssot, resumeDetail?.resume, resumeId);
-          if (aboutResult.updated > 0) {
+          if (aboutResult.changes > 0) {
             changes.push({ field: 'about', from: 'old', to: 'updated' });
           }
 
@@ -207,7 +207,7 @@ export default class WantedHandler {
             resumeDetail?.resume,
             resumeId
           );
-          if (contactResult.updated > 0) {
+          if (contactResult.changes > 0) {
             changes.push({ field: 'contact', from: 'old', to: 'updated' });
           }
         } catch (e) {

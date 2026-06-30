@@ -1,9 +1,9 @@
 import { flattenSkills, flattenSkillsWithLevels } from '../../../../scripts/skill-tag-map.js';
 import {
-  JOB_CATEGORY_MAPPING,
-  DEFAULT_JOB_CATEGORY,
+  resolveJobCategoryId,
 } from '../../../../scripts/profile-sync/constants.js';
 import { mapWorkTypeToWantedEmploymentType } from '@resume/shared/employment-types';
+import { normalizeCareerRole, normalizeCompanyName } from '@resume/shared/normalize';
 import { parseDate } from '../../date-parser.js';
 
 import { WANTED_HEADLINE_LIMIT } from './constants.js';
@@ -53,11 +53,12 @@ export function mapToWantedFormat(source) {
       const [startStr, endStr] = (c.period || '').split(/~| - /).map((s) => s.trim());
       const start_time = parseDate(startStr);
       const end_time = endStr === '현재' || !endStr ? null : parseDate(endStr);
-      const jobCategoryId = JOB_CATEGORY_MAPPING[c.role] || DEFAULT_JOB_CATEGORY;
+      const jobRole = normalizeCareerRole(c.role);
+      const jobCategoryId = resolveJobCategoryId(c.role);
 
       return {
-        company: { name: c.company, type: 'CUSTOM' },
-        job_role: c.role,
+        company: { name: normalizeCompanyName(c.company), type: 'CUSTOM' },
+        job_role: jobRole,
         job_category_id: jobCategoryId,
         start_time,
         end_time,

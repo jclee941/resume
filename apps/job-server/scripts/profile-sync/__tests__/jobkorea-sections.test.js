@@ -82,6 +82,22 @@ describe('mapCareersToFormFields', () => {
     assert.strictEqual(byName.get('Career.index'), 'c1');
   });
 
+  it('normalizes platform-facing role and work type values', () => {
+    const fields = mapCareersToFormFields({
+      careers: [
+        {
+          ...baseCareer,
+          role: '보안운영 담당',
+          workType: '정규직 (파견)',
+        },
+      ],
+    });
+    const byName = toMap(fields);
+
+    assert.strictEqual(byName.get('Career[c1].M_MainJob_Jikwi'), '보안 운영');
+    assert.strictEqual(byName.get('Career[c1].C_WorkType'), '정규직');
+  });
+
   it('uses provided server-generated indices', () => {
     const fields = mapCareersToFormFields({ careers: [baseCareer] }, ['c844']);
     const byName = toMap(fields);

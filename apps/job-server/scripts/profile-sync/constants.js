@@ -75,4 +75,9 @@ export const PLATFORMS = {
 
 // Re-export pure data constants from Workers-compatible module.
 // CLI consumers can keep importing from this file unchanged.
-export { JOB_CATEGORY_MAPPING, DEFAULT_JOB_CATEGORY } from '@resume/shared/job-categories';
+export {
+  JOB_CATEGORY_MAPPING,
+  DEFAULT_JOB_CATEGORY,
+  hasJobCategoryMapping,
+  resolveJobCategoryId,
+} from '@resume/shared/job-categories';
