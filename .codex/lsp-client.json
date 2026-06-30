@@ -1,0 +1,25 @@
+{
+  "lsp": {
+    "basedpyright": {
+      "priority": 100
+    },
+    "bash": {
+      "priority": 100
+    },
+    "dockerfile": {
+      "priority": 100
+    },
+    "gopls": {
+      "priority": 100
+    },
+    "terraform": {
+      "priority": 100
+    },
+    "typescript": {
+      "priority": 100
+    },
+    "yaml-ls": {
+      "priority": 100
+    }
+  }
+}
