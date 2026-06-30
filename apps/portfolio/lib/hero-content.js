@@ -39,11 +39,22 @@ function renderReviewPath(content) {
 
 function renderReviewPacket(content) {
   const items = content.packetItems
-    .map(([term, description]) => `<div><dt>${term}</dt><dd>${description}</dd></div>`)
+    .map(([term, description], index) => {
+      const step = String(index + 1).padStart(2, '0');
+      return (
+        '<div>' +
+        `<span class="hiring-review-packet__step" aria-hidden="true">${step}</span>` +
+        `<dt>${term}</dt><dd>${description}</dd></div>`
+      );
+    })
     .join('');
   return (
     `<div class="hiring-review-packet" aria-label="${content.packetLabel}">` +
+    '<div class="hiring-review-packet__header">' +
     `<p class="hiring-review-packet__eyebrow">${content.packetEyebrow}</p>` +
+    `<p class="hiring-review-packet__status"><span aria-hidden="true"></span>${content.packetStatus}</p>` +
+    '</div>' +
+    `<p class="hiring-review-packet__summary">${content.packetSummary}</p>` +
     `<dl class="hiring-review-packet__list">${items}</dl></div>`
   );
 }
