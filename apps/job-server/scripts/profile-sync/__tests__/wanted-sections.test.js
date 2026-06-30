@@ -70,7 +70,7 @@ describe('Wanted SSoT field mapping correctness', () => {
 
     const mapped = mapCareerToWanted(career);
 
-    assert.strictEqual(mapped.company.name, career.company);
+    assert.strictEqual(mapped.company.name, '아이티센 CTS');
     assert.strictEqual(mapped.company.type, 'CUSTOM');
     assert.strictEqual(mapped.job_role, career.role);
     assert.strictEqual(mapped.start_time, '2025-03-01');
@@ -94,6 +94,29 @@ describe('Wanted SSoT field mapping correctness', () => {
     assert.strictEqual(mapped.start_time, '2025-03-01');
     assert.strictEqual(mapped.end_time, null);
     assert.strictEqual(mapped.served, true);
+  });
+
+  it('mapCareerToWanted normalizes Korean corporation markers from company.name', () => {
+    const mapped = mapCareerToWanted({
+      company: '(주)아이티센 CTS',
+      role: '보안 운영 엔지니어',
+      period: '2025.03 ~ 2026.02',
+      workType: '프리랜서',
+    });
+
+    assert.strictEqual(mapped.company.name, '아이티센 CTS');
+  });
+
+  it('mapCareerToWanted keeps Wanted security category when role label is normalized', () => {
+    const mapped = mapCareerToWanted({
+      company: '(주)아이티센 CTS',
+      role: '보안운영 담당',
+      period: '2025.03 ~ 2026.02',
+      workType: '프리랜서',
+    });
+
+    assert.strictEqual(mapped.job_role, '보안 운영');
+    assert.strictEqual(mapped.job_category_id, 672);
   });
 
   it('mapCareerToWanted keeps full-time SSoT careers as FULLTIME', () => {
@@ -235,6 +258,79 @@ describe('Wanted SSoT field mapping correctness', () => {
       CONFIG.APPLY = original.APPLY;
       CONFIG.DIFF_ONLY = original.DIFF_ONLY;
     }
+  });
+
+  it('syncWantedCareers is idempotent when live company keeps a Korean corporation prefix', async () => {
+    const original = { APPLY: CONFIG.APPLY, DIFF_ONLY: CONFIG.DIFF_ONLY };
+    CONFIG.APPLY = false;
+    CONFIG.DIFF_ONLY = true;
+    try {
+      const ssotCareer = realSSoT.careers[0];
+      const mapped = mapCareerToWanted(ssotCareer);
+      const client = {
+        getResumeDetail: async () => ({
+          careers: [
+            {
+              id: 'career-prefixed-company',
+              ...mapped,
+              company: { ...mapped.company, name: ssotCareer.company },
+              projects: collectCareerProjects(ssotCareer).map((project, projectIndex) => ({
+                id: `project-prefixed-${projectIndex + 1}`,
+                ...project,
+              })),
+            },
+          ],
+        }),
+      };
+
+      const result = await syncWantedCareers(client, { careers: [ssotCareer] }, {}, 'resume-careers');
+
+      assert.strictEqual(result.changes, 0);
+      assert.strictEqual(result.dryRun, true);
+    } finally {
+      CONFIG.APPLY = original.APPLY;
+      CONFIG.DIFF_ONLY = original.DIFF_ONLY;
+    }
+  });
+
+  it('syncWantedCareers does not update a substring-matched wrong company', async () => {
+    await withApplyEnabled(async () => {
+      const ssotCareer = {
+        company: '(주)아이티센',
+        role: '보안 운영 엔지니어',
+        period: '2025.03 ~ 2026.02',
+        workType: '프리랜서',
+      };
+      const mapped = mapCareerToWanted(ssotCareer);
+      const client = {
+        calls: [],
+        getResumeDetail: async () => ({
+          careers: [
+            { id: 'wrong-long', ...mapped, company: { name: '아이티센 CTS', type: 'CUSTOM' } },
+            { id: 'right-exact', ...mapped },
+          ],
+        }),
+        updateCareer: async (resumeId, id, data) => client.calls.push({ method: 'update', id, data }),
+        addCareer: async (resumeId, data) => {
+          client.calls.push({ method: 'add', data });
+          return { id: 'added' };
+        },
+        deleteCareer: async (resumeId, id) => client.calls.push({ method: 'delete', id }),
+        addProject: async () => {},
+        deleteProject: async () => {},
+      };
+
+      await syncWantedCareers(client, { careers: [ssotCareer] }, {}, 'resume-careers');
+
+      assert.ok(
+        !client.calls.some((call) => call.method === 'update' && call.id === 'wrong-long'),
+        'substring-matched company must not be updated as if it were the SSOT career'
+      );
+      assert.ok(
+        client.calls.some((call) => call.method === 'delete' && call.id === 'wrong-long'),
+        'unmatched longer company remains a separate stale remote entry'
+      );
+    });
   });
 
   it('syncCareerProjects replaces a matching-title project when description changed', async () => {

@@ -31,3 +31,17 @@ export function normalizeCompanyName(name) {
     .replace(/주식회사/g, '')
     .trim();
 }
+
+export function normalizeCareerRole(role) {
+  const normalized = String(role || '')
+    .replace(/\s*담당$/, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return normalized.replace(/^보안운영(?=\s|$)/, '보안 운영');
+}
+
+export function normalizeWorkTypeForProfile(workType) {
+  const normalized = String(workType || '').replace(/\s+/g, ' ').trim();
+  if (/^정규직\s*\([^)]*파견[^)]*\)$/.test(normalized)) return '정규직';
+  return normalized;
+}

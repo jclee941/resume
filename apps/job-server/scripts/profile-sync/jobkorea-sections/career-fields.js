@@ -1,4 +1,8 @@
-import { normalizeCompanyName } from '@resume/shared/normalize';
+import {
+  normalizeCareerRole,
+  normalizeCompanyName,
+  normalizeWorkTypeForProfile,
+} from '@resume/shared/normalize';
 import { EMPTY_CAREER_FIELDS } from './constants.js';
 import { parseRange, pushField } from './validators.js';
 
@@ -41,8 +45,7 @@ export function mapCareersToFormFields(ssot, indices) {
     pushField(fields, `Career[${key}].CSYM`, start);
     pushField(fields, `Career[${key}].CEYM`, end);
     pushField(fields, `Career[${key}].RetireSt`, isCurrent ? 1 : 2);
-    const jikwiText = String(career?.role || '').replace(/ 담당$/, '');
-    pushField(fields, `Career[${key}].M_MainJob_Jikwi`, jikwiText);
+    pushField(fields, `Career[${key}].M_MainJob_Jikwi`, normalizeCareerRole(career?.role));
     pushField(fields, `Career[${key}].Job_Type_Code`, '');
     const jobCode =
       career?.jobkoreaJobCode || ssot?.platformVariants?.jobkorea?.defaultJobCode || '';
@@ -58,7 +61,7 @@ export function mapCareersToFormFields(ssot, indices) {
     pushField(fields, `Career[${key}].C_Client`, career?.client || '');
     pushField(fields, `Career[${key}].C_TeamSize`, String(career?.teamSize || ''));
     pushField(fields, `Career[${key}].C_MyRole`, career?.myRole || '');
-    pushField(fields, `Career[${key}].C_WorkType`, career?.workType || '');
+    pushField(fields, `Career[${key}].C_WorkType`, normalizeWorkTypeForProfile(career?.workType));
     if (Array.isArray(career?.projects)) {
       career.projects.forEach((project, pIdx) => {
         const pKey = `p${pIdx + 1}`;

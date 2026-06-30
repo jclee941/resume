@@ -122,8 +122,8 @@ export async function syncCareers(api, resume_id, localCareers, remoteCareers, s
     const ssotCareer = ssotCareers[i] || {};
     const companyName = career.company?.name || career.company || '';
     const normalizedName = normalizeCompanyName(companyName);
-    const matchedCareer = remoteCareers.find((rc) =>
-      (rc.company?.name || '').includes(normalizedName)
+    const matchedCareer = remoteCareers.find(
+      (rc) => normalizeCompanyName(rc.company?.name || rc.company_name) === normalizedName
     );
 
     if (matchedCareer) {

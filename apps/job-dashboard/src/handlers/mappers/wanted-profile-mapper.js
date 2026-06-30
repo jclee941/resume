@@ -1,5 +1,6 @@
-import { JOB_CATEGORY_MAPPING, DEFAULT_JOB_CATEGORY } from '@resume/shared/job-categories';
+import { resolveJobCategoryId } from '@resume/shared/job-categories';
 import { mapWorkTypeToWantedEmploymentType } from '@resume/shared/employment-types';
+import { normalizeCareerRole, normalizeCompanyName } from '@resume/shared/normalize';
 
 export function parsePeriod(period = '') {
   const parts = String(period)
@@ -13,10 +14,11 @@ export function parsePeriod(period = '') {
 
 export function mapCareerToWanted(career) {
   const { start, end } = parsePeriod(career.period);
+  const jobRole = normalizeCareerRole(career.role);
   return {
-    company: { name: career.company, type: 'CUSTOM' },
-    job_role: career.role,
-    job_category_id: JOB_CATEGORY_MAPPING[career.role] || DEFAULT_JOB_CATEGORY,
+    company: { name: normalizeCompanyName(career.company), type: 'CUSTOM' },
+    job_role: jobRole,
+    job_category_id: resolveJobCategoryId(career.role),
     start_time: start,
     end_time: end,
     served: end === null,

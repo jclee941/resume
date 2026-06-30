@@ -3,9 +3,11 @@
 
 describe('@resume/shared/normalize', () => {
   let normalize;
+  let jobCategories;
 
   beforeAll(async () => {
     normalize = await import('../../../packages/shared/src/normalize/index.js');
+    jobCategories = await import('../../../packages/shared/src/job-categories.js');
   });
 
   describe('normalizeCompanyName — Korean corporation prefix/suffix stripping', () => {
@@ -79,6 +81,27 @@ describe('@resume/shared/normalize', () => {
       for (const [input, expected] of samples) {
         expect(normalize.normalizeCompanyName(input)).toBe(expected);
       }
+    });
+  });
+
+  describe('career platform field normalization', () => {
+    test('normalizeCareerRole maps compact Korean security-ops roles to platform label', () => {
+      expect(normalize.normalizeCareerRole('보안운영 담당')).toBe('보안 운영');
+      expect(normalize.normalizeCareerRole('보안운영')).toBe('보안 운영');
+      expect(normalize.normalizeCareerRole('보안 운영 담당')).toBe('보안 운영');
+      expect(normalize.normalizeCareerRole('보안 운영 엔지니어')).toBe('보안 운영 엔지니어');
+    });
+
+    test('resolveJobCategoryId preserves security category across role normalization', () => {
+      expect(jobCategories.resolveJobCategoryId('보안운영 담당')).toBe(672);
+      expect(jobCategories.resolveJobCategoryId('보안 운영')).toBe(672);
+      expect(jobCategories.hasJobCategoryMapping('보안운영 담당')).toBe(true);
+    });
+
+    test('normalizeWorkTypeForProfile removes dispatch annotation from full-time labels', () => {
+      expect(normalize.normalizeWorkTypeForProfile('정규직 (파견)')).toBe('정규직');
+      expect(normalize.normalizeWorkTypeForProfile('정규직(파견)')).toBe('정규직');
+      expect(normalize.normalizeWorkTypeForProfile('프리랜서')).toBe('프리랜서');
     });
   });
 });

@@ -1,4 +1,5 @@
 import { normalizePhone } from '@resume/shared/phone';
+import { normalizeCompanyName } from '@resume/shared/normalize';
 import {
   mapCareerToWanted,
   mapCertificationToWanted,
@@ -31,11 +32,9 @@ export function buildWantedChanges(ssotData, profileData, currentResume) {
 
   const careerChanges = { toUpdate: [], toAdd: [], toDelete: [] };
   for (const career of ssotData.careers || []) {
-    const normalizedCompany = String(career.company || '')
-      .replace(/\(주\)/g, '')
-      .trim();
-    const existing = currentCareers.find((item) =>
-      String(item.company?.name || item.company_name || '').includes(normalizedCompany)
+    const normalizedCompany = normalizeCompanyName(career.company);
+    const existing = currentCareers.find(
+      (item) => normalizeCompanyName(item.company?.name || item.company_name) === normalizedCompany
     );
     const mapped = mapCareerToWanted(career);
     if (existing) {

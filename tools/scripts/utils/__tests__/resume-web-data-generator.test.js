@@ -41,7 +41,7 @@ describe('generateWebData → careers[] (SSoT timeline data)', () => {
   it('S2: drift guard — first career role + segmented company URLs match live SSoT', () => {
     const out = generateWebData(ssot);
     assert.equal(out.careers[0].role, ssot.careers[0].role);
-    assert.match(out.careers[0].role, /SOC/);
+    assert.match(out.careers[0].role, /보안 운영|Security Operations|SOC/);
     [3, 4, 5].forEach((i) => {
       if (ssot.careers[i] && ssot.careers[i].companyUrl) {
         assert.equal(out.careers[i].companyUrl, ssot.careers[i].companyUrl);

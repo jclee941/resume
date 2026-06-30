@@ -23,7 +23,7 @@ function projectsMatch(ssotCareer, wantedCareer) {
 
 function careerMatches(mapped, wantedCareer, ssotCareer) {
   return (
-    sameValue(wantedCareer.company?.name, mapped.company.name) &&
+    sameValue(normalizeCompanyName(wantedCareer.company?.name), normalizeCompanyName(mapped.company.name)) &&
     sameValue(wantedCareer.company?.type, mapped.company.type) &&
     sameValue(wantedCareer.job_role, mapped.job_role) &&
     sameValue(wantedCareer.start_time, mapped.start_time) &&
@@ -41,8 +41,8 @@ function planCareerSync(ssotCareers, wantedCareers) {
 
   for (const ssotCareer of ssotCareers) {
     const ssotCompanyNormalized = normalizeCompanyName(ssotCareer.company);
-    const wantedCareer = wantedCareers.find((w) =>
-      (w.company?.name || '').includes(ssotCompanyNormalized)
+    const wantedCareer = wantedCareers.find(
+      (w) => normalizeCompanyName(w.company?.name || w.company_name) === ssotCompanyNormalized
     );
     const mapped = mapCareerToWanted(ssotCareer);
     if (wantedCareer) {

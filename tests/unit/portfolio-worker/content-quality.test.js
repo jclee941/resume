@@ -11,6 +11,7 @@ const path = require('path');
 
 const MASTER_DIR = path.resolve(__dirname, '../../../packages/data/resumes/master');
 const PORTFOLIO_DIR = path.resolve(__dirname, '../../../apps/portfolio');
+const MASTER_LOCALE_FILES = ['resume_data.json', 'resume_data_en.json', 'resume_data_ja.json'];
 const DATA_FILES = [
   { dir: MASTER_DIR, file: 'resume_data.json' },
   { dir: MASTER_DIR, file: 'resume_data_en.json' },
@@ -30,6 +31,27 @@ function collectStrings(node, out = []) {
     for (const value of Object.values(node)) collectStrings(value, out);
   }
   return out;
+}
+
+function collectNamedStrings(node, rootPath = [], out = []) {
+  if (typeof node === 'string') {
+    out.push({ path: rootPath.join('.'), value: node });
+  } else if (Array.isArray(node)) {
+    node.forEach((item, index) => collectNamedStrings(item, rootPath.concat(index), out));
+  } else if (node && typeof node === 'object') {
+    for (const [key, value] of Object.entries(node)) {
+      collectNamedStrings(value, rootPath.concat(key), out);
+    }
+  }
+  return out;
+}
+
+function collectProfileCopy(data) {
+  return [
+    ...collectNamedStrings(data.summary || {}, ['summary']),
+    ...collectNamedStrings(data.platformVariants || {}, ['platformVariants']),
+    ...collectNamedStrings(data.careerSummary || {}, ['careerSummary']),
+  ].filter(({ path }) => !/^(certifications|awards)\.\d+\.name$/.test(path));
 }
 
 /**
@@ -56,7 +78,58 @@ function findCircularViaPhrase(text) {
   return m ? m[1] : null;
 }
 
+function findCjkRepeatedToken(text) {
+  const adjacent = text.match(/([\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]{2,12})\1/u);
+  if (adjacent) return adjacent[0];
+
+  const particleRepeated = text.match(
+    /([\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]{2,16})(?:の|による)\1/u
+  );
+  if (particleRepeated) return particleRepeated[0];
+
+  const slashRepeated = text.match(
+    /\b([A-Z][A-Z0-9]{1,})\/\1(?=[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]|\b)/u
+  );
+  return slashRepeated ? slashRepeated[0] : null;
+}
+
 describe('SSoT content quality', () => {
+  describe('active master locale profile copy', () => {
+    for (const file of MASTER_LOCALE_FILES) {
+      const filePath = path.join(MASTER_DIR, file);
+
+      test(`${file} has no AI-slop profile terms outside certificate/award names`, () => {
+        const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        const offenders = collectProfileCopy(data)
+          .map(({ path: jsonPath, value }) => {
+            const matches = [
+              /자동화/.test(value) ? '자동화' : null,
+              /AI\s*(?:에이전트|agents?|エージェント)/i.test(value) ? 'AI agent term' : null,
+            ].filter(Boolean);
+            return matches.length > 0
+              ? {
+                  path: jsonPath,
+                  matches,
+                  value,
+                }
+              : null;
+          })
+          .filter(Boolean);
+
+        expect(offenders).toEqual([]);
+      });
+
+      test(`${file} has no financial security automation phrasing in platform variants`, () => {
+        const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        const offenders = collectNamedStrings(data.platformVariants || {}, ['platformVariants']).filter(
+          ({ value }) => /financial security automation/i.test(value)
+        );
+
+        expect(offenders).toEqual([]);
+      });
+    }
+  });
+
   for (const { dir, file } of DATA_FILES) {
     const filePath = path.join(dir, file);
 
@@ -80,6 +153,18 @@ describe('SSoT content quality', () => {
           .map((s) => ({ s, dup: findCircularViaPhrase(s) }))
           .filter((x) => x.dup);
         expect(offenders.map((o) => o.dup)).toEqual([]);
+      });
+
+      test('has no CJK or slash-joined duplicated content tokens', () => {
+        const offenders = strings
+          .map((s) => ({ s, dup: findCjkRepeatedToken(s) }))
+          .filter((x) => x.dup);
+        expect(offenders.map((o) => o.dup)).toEqual([]);
+      });
+
+      test('has no known article-agreement copy regressions', () => {
+        const offenders = strings.filter((s) => /\ban repeatable\b/i.test(s));
+        expect(offenders).toEqual([]);
       });
 
       test('has no content-production work markers like [課題] in any string', () => {

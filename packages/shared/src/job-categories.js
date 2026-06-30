@@ -1,3 +1,5 @@
+import { normalizeCareerRole } from './normalize/index.js';
+
 /**
  * Job category ID mapping for Wanted Korea.
  *
@@ -10,6 +12,7 @@
  */
 export const JOB_CATEGORY_MAPPING = {
   '보안운영 담당': 672,
+  '보안 운영': 672,
   '보안 운영 엔지니어': 672,
   '보안 인프라 엔지니어': 672,
   '네트워크 보안 엔지니어': 672,
@@ -40,3 +43,22 @@ export const JOB_CATEGORY_MAPPING = {
 
 /** @type {number} */
 export const DEFAULT_JOB_CATEGORY = 674;
+
+function getRoleCategoryCandidates(role) {
+  const raw = String(role || '').replace(/\s+/g, ' ').trim();
+  const normalized = normalizeCareerRole(raw);
+  return [...new Set([raw, normalized].filter(Boolean))];
+}
+
+export function hasJobCategoryMapping(role) {
+  return getRoleCategoryCandidates(role).some((candidate) =>
+    Object.hasOwn(JOB_CATEGORY_MAPPING, candidate)
+  );
+}
+
+export function resolveJobCategoryId(role, fallback = DEFAULT_JOB_CATEGORY) {
+  for (const candidate of getRoleCategoryCandidates(role)) {
+    if (Object.hasOwn(JOB_CATEGORY_MAPPING, candidate)) return JOB_CATEGORY_MAPPING[candidate];
+  }
+  return fallback;
+}
