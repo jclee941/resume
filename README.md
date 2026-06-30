@@ -91,51 +91,41 @@ This repository is a private npm workspaces monorepo that unifies a personal por
 
 ## 아키텍처 / Architecture
 
-```mermaid
-flowchart LR
-    subgraph SRC["SSoT Layer / SSoT 계층"]
-        DATA["packages/data<br/>resume_data.json<br/>profile + skills"]
-        TYPES["packages/types<br/>JSDoc/TS 도메인 타입"]
-        SCHEMA["packages/schemas<br/>Zod 런타임 스키마"]
-        CONTRACT["packages/contracts<br/>OpenAPI + Worker env"]
-        ENV["packages/env<br/>런타임 환경 검증"]
-        SHARED["packages/shared<br/>logger, retry, crypto,<br/>rate-limit, auth, browser"]
-    end
+#### Diagram summary 1
 
-    subgraph APPS["App Runtimes / 앱 런타임"]
-        PORTFOLIO["apps/portfolio<br/>Cloudflare Worker<br/>(edge site)"]
-        DASH["apps/job-dashboard<br/>Worker fetch/queue/scheduled<br/>D1 + Queues + Workflows"]
-        JOB["apps/job-server<br/>MCP 서버<br/>Node 22 + Fastify"]
-    end
+- Type: flowchart
+- Component: packages/data / resumedata.json / profile + skills (DATA)
+- Component: packages/types / JSDoc/TS 도메인 타입 (TYPES)
+- Component: packages/schemas / Zod 런타임 스키마 (SCHEMA)
+- Component: packages/contracts / OpenAPI + Worker env (CONTRACT)
+- Component: packages/env / 런타임 환경 검증 (ENV)
+- Component: packages/shared / logger, retry, crypto, / rate-limit, auth, browser (SHARED)
+- Component: apps/portfolio / Cloudflare Worker / (edge site) (PORTFOLIO)
+- Component: apps/job-dashboard / Worker fetch/queue/scheduled / D1 + Queues + Workflows (DASH)
+- Component: apps/job-server / MCP 서버 / Node 22 + Fastify (JOB)
+- Component: Cloudflare Edge / &lt;placeholder&gt; 도메인 (EDGE)
+- Component: Wanted / JobKorea / 외부 채용 플랫폼 (PLATFORMS)
+- Component: 운영자 / Recruiter / 대시보드 UI (OPS)
+- Component: Docker / jobautomationdata 볼륨 (DOCKER)
+- packages/data / resumedata.json / profile + skills (DATA) -> apps/portfolio / Cloudflare Worker / (edge site) (PORTFOLIO)
+- packages/data / resumedata.json / profile + skills (DATA) -> apps/job-dashboard / Worker fetch/queue/scheduled / D1 + Queues + Workflows (DASH)
+- packages/data / resumedata.json / profile + skills (DATA) -> apps/job-server / MCP 서버 / Node 22 + Fastify (JOB)
+- packages/types / JSDoc/TS 도메인 타입 (TYPES) -> apps/portfolio / Cloudflare Worker / (edge site) (PORTFOLIO)
+- packages/types / JSDoc/TS 도메인 타입 (TYPES) -> apps/job-dashboard / Worker fetch/queue/scheduled / D1 + Queues + Workflows (DASH)
+- packages/types / JSDoc/TS 도메인 타입 (TYPES) -> apps/job-server / MCP 서버 / Node 22 + Fastify (JOB)
+- packages/schemas / Zod 런타임 스키마 (SCHEMA) -> apps/job-dashboard / Worker fetch/queue/scheduled / D1 + Queues + Workflows (DASH)
+- packages/schemas / Zod 런타임 스키마 (SCHEMA) -> apps/job-server / MCP 서버 / Node 22 + Fastify (JOB)
+- packages/contracts / OpenAPI + Worker env (CONTRACT) -> apps/portfolio / Cloudflare Worker / (edge site) (PORTFOLIO)
+- packages/contracts / OpenAPI + Worker env (CONTRACT) -> apps/job-dashboard / Worker fetch/queue/scheduled / D1 + Queues + Workflows (DASH)
+- packages/env / 런타임 환경 검증 (ENV) -> apps/job-server / MCP 서버 / Node 22 + Fastify (JOB)
+- packages/env / 런타임 환경 검증 (ENV) -> apps/job-dashboard / Worker fetch/queue/scheduled / D1 + Queues + Workflows (DASH)
+- packages/shared / logger, retry, crypto, / rate-limit, auth, browser (SHARED) -> apps/job-server / MCP 서버 / Node 22 + Fastify (JOB)
+- packages/shared / logger, retry, crypto, / rate-limit, auth, browser (SHARED) -> apps/job-dashboard / Worker fetch/queue/scheduled / D1 + Queues + Workflows (DASH)
+- apps/portfolio / Cloudflare Worker / (edge site) (PORTFOLIO) -> Cloudflare Edge / &lt;placeholder&gt; 도메인 (EDGE)
+- apps/job-dashboard / Worker fetch/queue/scheduled / D1 + Queues + Workflows (DASH) -> 운영자 / Recruiter / 대시보드 UI (OPS)
+- apps/job-dashboard / Worker fetch/queue/scheduled / D1 + Queues + Workflows (DASH) -> apps/job-server / MCP 서버 / Node 22 + Fastify (JOB)
+- apps/job-server / MCP 서버 / Node 22 + Fastify (JOB) -> Wanted / JobKorea / 외부 채용 플랫폼 (PLATFORMS)
 
-    subgraph OUT["External Surfaces / 외부"]
-        EDGE["Cloudflare Edge<br/>&lt;placeholder&gt; 도메인"]
-        PLATFORMS["Wanted / JobKorea<br/>외부 채용 플랫폼"]
-        OPS["운영자 / Recruiter<br/>대시보드 UI"]
-        DOCKER["Docker<br/>job_automation_data 볼륨"]
-    end
-
-    DATA --> PORTFOLIO
-    DATA --> DASH
-    DATA --> JOB
-    TYPES --> PORTFOLIO
-    TYPES --> DASH
-    TYPES --> JOB
-    SCHEMA --> DASH
-    SCHEMA --> JOB
-    CONTRACT --> PORTFOLIO
-    CONTRACT --> DASH
-    ENV --> JOB
-    ENV --> DASH
-    SHARED --> JOB
-    SHARED --> DASH
-
-    PORTFOLIO --> EDGE
-    DASH --> OPS
-    DASH -- "queue message" --> JOB
-    JOB --> PLATFORMS
-    JOB -. "persistent state" .- DOCKER
-```
 
 핵심 흐름 / Key flows:
 

@@ -91,26 +91,21 @@ FortiManager API를 이용한 방화벽 정책 자동 조회 툴을 개발해 �
 
 이 프로젝트는 구축과 운영이 분리된 이력 나열이 아니라, 하나의 금융 보안 체계를 단계별로 고도화한 사례입니다.
 
-```mermaid
-flowchart TB
-  subgraph Phase1[1단계 · 구축 · 2024.03-2025.02]
-    direction LR
-    HA1[FortiGate Active] -.->|HA sync| HA2[FortiGate Standby]
-    HA1 --> Tier1[외부 경계]
-    Tier1 --> Tier2[DMZ]
-    Tier2 --> Tier3[서비스]
-    Tier3 --> Tier4[운용]
-    Tier4 --> Tier5[데이터]
-  end
-  subgraph Phase2[2단계 · 운용 · 2025.03-]
-    direction LR
-    Devices[FortiGate / FortiAnalyzer<br/>syslog · API] --> Splunk[Splunk ES<br/>탐지 룰]
-    Splunk -->|webhook| AUTOMATION[automation<br/>자동 대응]
-    AUTOMATION -->|JSON-RPC| FMG[FortiManager API<br/>정책 조정]
-    AUTOMATION --> Slack[Slack/Telegram<br/>알림]
-  end
-  Phase1 ==>|고도화| Phase2
-```
+#### Diagram summary 1
+
+- Type: flowchart
+- FortiGate Active (HA1) -> FortiGate Standby (HA2)
+- FortiGate Active (HA1) -> 외부 경계 (Tier1)
+- 외부 경계 (Tier1) -> DMZ (Tier2)
+- DMZ (Tier2) -> 서비스 (Tier3)
+- 서비스 (Tier3) -> 운용 (Tier4)
+- 운용 (Tier4) -> 데이터 (Tier5)
+- FortiGate / FortiAnalyzer / syslog · API (Devices) -> Splunk ES / 탐지 룰 (Splunk)
+- Splunk ES / 탐지 룰 (Splunk) -> automation / 자동 대응 (AUTOMATION)
+- automation / 자동 대응 (AUTOMATION) -> FortiManager API / 정책 조정 (FMG)
+- automation / 자동 대응 (AUTOMATION) -> Slack/Telegram / 알림 (Slack)
+- 1단계 · 구축 · 2024.03-2025.02 (Phase1) -> 2단계 · 운용 · 2025.03- (Phase2)
+
 
 ### 1단계. 보안 인프라 구축, 2024.03 ~ 2025.02
 

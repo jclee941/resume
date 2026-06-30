@@ -100,33 +100,28 @@ Prometheus는 수치 기반 상태 확인에 적합하고, Loki는 로그 흐름
 
 이 프로젝트의 구현 핵심은 도구를 많이 붙이는 것이 아니라, 서로 다른 관측 데이터를 같은 운영 흐름으로 연결하는 데 있었습니다.
 
-```mermaid
-flowchart LR
-  subgraph Sources[수집 대상]
-    Hosts[Linux/Windows<br/>호스트]
-    Apps[애플리케이션<br/>다수 /metrics 엔드포인트]
-    Endpoints[외부 엔드포인트]
-  end
-  subgraph Collect[수집 레이어]
-    Prom[Prometheus<br/>메트릭 scrape]
-    Loki[Loki<br/>로그 stream]
-    BB[Blackbox Exporter<br/>HTTP/TCP probe]
-    Beats[Beats/Logstash<br/>→ Elasticsearch]
-  end
-  Hosts --> Prom
-  Apps --> Prom
-  Apps --> Loki
-  Endpoints --> BB
-  Apps --> Beats
-  subgraph Visualize[분석/시각화]
-    Graf[Grafana<br/>PromQL · LogQL · Explore]
-    Kib[Elasticsearch + Kibana<br/>로그 차원 분석]
-  end
-  Prom --> Graf
-  Loki --> Graf
-  BB --> Graf
-  Beats --> Kib
-```
+#### Diagram summary 1
+
+- Type: flowchart
+- Component: Linux/Windows / 호스트 (Hosts)
+- Component: 애플리케이션 / 다수 /metrics 엔드포인트 (Apps)
+- Component: 외부 엔드포인트 (Endpoints)
+- Component: Prometheus / 메트릭 scrape (Prom)
+- Component: Loki / 로그 stream (Loki)
+- Component: Blackbox Exporter / HTTP/TCP probe (BB)
+- Component: Beats/Logstash / → Elasticsearch (Beats)
+- Linux/Windows / 호스트 (Hosts) -> Prometheus / 메트릭 scrape (Prom)
+- 애플리케이션 / 다수 /metrics 엔드포인트 (Apps) -> Prometheus / 메트릭 scrape (Prom)
+- 애플리케이션 / 다수 /metrics 엔드포인트 (Apps) -> Loki / 로그 stream (Loki)
+- 외부 엔드포인트 (Endpoints) -> Blackbox Exporter / HTTP/TCP probe (BB)
+- 애플리케이션 / 다수 /metrics 엔드포인트 (Apps) -> Beats/Logstash / → Elasticsearch (Beats)
+- Component: Grafana / PromQL · LogQL · Explore (Graf)
+- Component: Elasticsearch + Kibana / 로그 차원 분석 (Kib)
+- Prometheus / 메트릭 scrape (Prom) -> Grafana / PromQL · LogQL · Explore (Graf)
+- Loki / 로그 stream (Loki) -> Grafana / PromQL · LogQL · Explore (Graf)
+- Blackbox Exporter / HTTP/TCP probe (BB) -> Grafana / PromQL · LogQL · Explore (Graf)
+- Beats/Logstash / → Elasticsearch (Beats) -> Elasticsearch + Kibana / 로그 차원 분석 (Kib)
+
 
 ### 아키텍처 개요
 

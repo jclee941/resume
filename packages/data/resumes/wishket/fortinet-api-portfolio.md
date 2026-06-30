@@ -83,15 +83,16 @@ FortiManager와 FortiAnalyzer는 역할이 다르고 운영자가 얻고 싶은 
 구현의 핵심은 FortiManager와 FortiAnalyzer를 단일 제품처럼 다루는 것이 아니라, 운영자가 필요한 결과를 빠르게 얻을 수
 있게 공통 자동화 계층을 만드는 데 있었습니다.
 
-```mermaid
-flowchart LR
-  Op[オペレータ / SOC 运用 스크립트] -->|Python| Lib[FortiManager / FortiAnalyzer<br/>공통 자동화 라이브러리]
-  Lib -->|JSON-RPC| FMG[FortiManager REST API<br/>· 정책 조회 · 라우트 관리]
-  Lib -->|JSON-RPC| FAZ[FortiAnalyzer REST API<br/>· 로그 통계 수집]
-  FMG -->|ADOM lock<br/>멱등성| Lib
-  FAZ -->|재시도/백오프| Lib
-  Lib -->|결과| Op
-```
+#### Diagram summary 1
+
+- Type: flowchart
+- オペレータ / SOC 运用 스크립트 (Op) -> FortiManager / FortiAnalyzer / 공통 자동화 라이브러리 (Lib)
+- FortiManager / FortiAnalyzer / 공통 자동화 라이브러리 (Lib) -> FortiManager REST API / · 정책 조회 · 라우트 관리 (FMG)
+- FortiManager / FortiAnalyzer / 공통 자동화 라이브러리 (Lib) -> FortiAnalyzer REST API / · 로그 통계 수집 (FAZ)
+- FortiManager REST API / · 정책 조회 · 라우트 관리 (FMG) -> FortiManager / FortiAnalyzer / 공통 자동화 라이브러리 (Lib)
+- FortiAnalyzer REST API / · 로그 통계 수집 (FAZ) -> FortiManager / FortiAnalyzer / 공통 자동화 라이브러리 (Lib)
+- FortiManager / FortiAnalyzer / 공통 자동화 라이브러리 (Lib) -> オペレータ / SOC 运用 스크립트 (Op)
+
 
 ### 아키텍처 개요
 

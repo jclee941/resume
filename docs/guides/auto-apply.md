@@ -247,190 +247,140 @@ Score Interpretation:
 
 ### System Overview
 
-```mermaid
-flowchart TB
-    subgraph Client["Client Layer"]
-        OC[OpenCode MCP Client]
-        CLI[CLI Interface]
-        UI[Dashboard UI]
-    end
+#### Diagram summary 1
 
-    subgraph Core["Core Services"]
-        MCP[MCP Server<br/>9 Tools, 32 Actions]
-        API[REST API<br/>15 Endpoints]
-        WF[Workflows<br/>7 Workflows]
-    end
+- Type: flowchart
+- Component: OpenCode MCP Client (OC)
+- Component: CLI Interface (CLI)
+- Component: Dashboard UI (UI)
+- Component: MCP Server / 9 Tools, 32 Actions (MCP)
+- Component: REST API / 15 Endpoints (API)
+- Component: Workflows / 7 Workflows (WF)
+- Component: JobMatcher / 2-Tier Scoring (JM)
+- Component: UnifiedApplySystem / Form Fill + Stealth (UAS)
+- Component: ApplicationManager / Tracking + Retry (AM)
+- Component: SessionManager / Cookie Persistence (SM)
+- Component: Wanted API (WA)
+- Component: JobKorea Web (JK)
+- Component: Saramin Web (SA)
+- Component: LinkedIn (LI)
+- Component: Slack (SL)
+- Component: automation (AUTOMATION)
+- OpenCode MCP Client (OC) -> MCP Server / 9 Tools, 32 Actions (MCP)
+- CLI Interface (CLI) -> REST API / 15 Endpoints (API)
+- Dashboard UI (UI) -> REST API / 15 Endpoints (API)
+- MCP Server / 9 Tools, 32 Actions (MCP) -> Domain Services (Domain)
+- REST API / 15 Endpoints (API) -> Domain Services (Domain)
+- Workflows / 7 Workflows (WF) -> Domain Services (Domain)
+- UnifiedApplySystem / Form Fill + Stealth (UAS) -> Wanted API (WA)
+- UnifiedApplySystem / Form Fill + Stealth (UAS) -> JobKorea Web (JK)
+- UnifiedApplySystem / Form Fill + Stealth (UAS) -> Saramin Web (SA)
+- UnifiedApplySystem / Form Fill + Stealth (UAS) -> LinkedIn (LI)
+- ApplicationManager / Tracking + Retry (AM) -> Slack (SL)
+- ApplicationManager / Tracking + Retry (AM) -> automation (AUTOMATION)
 
-    subgraph Domain["Domain Services"]
-        JM[JobMatcher<br/>2-Tier Scoring]
-        UAS[UnifiedApplySystem<br/>Form Fill + Stealth]
-        AM[ApplicationManager<br/>Tracking + Retry]
-        SM[SessionManager<br/>Cookie Persistence]
-    end
-
-    subgraph External["External Services"]
-        WA[Wanted API]
-        JK[JobKorea Web]
-        SA[Saramin Web]
-        LI[LinkedIn]
-        SL[Slack]
-        AUTOMATION[automation]
-    end
-
-    OC --> MCP
-    CLI --> API
-    UI --> API
-
-    MCP --> Domain
-    API --> Domain
-    WF --> Domain
-
-    UAS --> WA
-    UAS --> JK
-    UAS --> SA
-    UAS --> LI
-
-    AM --> SL
-    AM --> AUTOMATION
-```
 
 ### Data Flow
 
-```mermaid
-sequenceDiagram
-    participant User as User/API
-    participant API as Dashboard API
-    participant UAS as UnifiedApplySystem
-    participant JM as JobMatcher
-    participant BC as BaseCrawler
-    participant Platform as Job Platform
+#### Diagram summary 2
 
-    User->>API: POST /api/auto-apply/run
-    API->>UAS: execute({keywords, maxApplications})
+- Type: sequence
+- Participant: User as User/API
+- Participant: API as Dashboard API
+- Participant: UAS as UnifiedApplySystem
+- Participant: JM as JobMatcher
+- Participant: BC as BaseCrawler
+- Participant: Platform as Job Platform
+- User -> API: POST /api/auto-apply/run
+- API -> UAS: execute({keywords, maxApplications})
+- UAS -> BC: searchJobs(keywords)
+- BC -> Platform: HTTP Request (stealth headers)
+- Platform -> BC: Job Listings
+- BC -> UAS: Normalized Jobs
+- UAS -> JM: calculateMatch(job, profile)
+- JM -> UAS: matchScore, priority
+- UAS -> UAS: Filter by threshold
+- UAS -> Platform: Auto-apply (Playwright)
+- Platform -> UAS: Application Result
+- UAS -> API: Track application
+- API -> User: Application Summary
 
-    UAS->>BC: searchJobs(keywords)
-    BC->>Platform: HTTP Request (stealth headers)
-    Platform-->>BC: Job Listings
-    BC-->>UAS: Normalized Jobs
-
-    loop Each Job
-        UAS->>JM: calculateMatch(job, profile)
-        JM-->>UAS: matchScore, priority
-    end
-
-    UAS->>UAS: Filter by threshold
-
-    loop Selected Jobs
-        UAS->>Platform: Auto-apply (Playwright)
-        Platform-->>UAS: Application Result
-        UAS->>API: Track application
-    end
-
-    API-->>User: Application Summary
-```
 
 ### Component Architecture
 
-```mermaid
-flowchart LR
-    subgraph Crawlers["Crawler System"]
-        BC[BaseCrawler<br/>HTTP + Stealth]
-        WC[WantedCrawler<br/>284 lines]
-        JC[JobKoreaCrawler<br/>252 lines]
-        SC[SaraminCrawler<br/>252 lines]
-        LC[LinkedInCrawler<br/>232 lines]
-    end
+#### Diagram summary 3
 
-    subgraph Services["Shared Services"]
-        UAS[UnifiedApplySystem<br/>150+ lines]
-        SM[SessionManager<br/>80+ lines]
-        JM[JobMatcher<br/>120+ lines]
-        JF[JobFilter<br/>90+ lines]
-        SS[SlackService<br/>60+ lines]
-    end
+- Type: flowchart
+- Component: BaseCrawler / HTTP + Stealth (BC)
+- Component: WantedCrawler / 284 lines (WC)
+- Component: JobKoreaCrawler / 252 lines (JC)
+- Component: SaraminCrawler / 252 lines (SC)
+- Component: LinkedInCrawler / 232 lines (LC)
+- Component: UnifiedApplySystem / 150+ lines (UAS)
+- Component: SessionManager / 80+ lines (SM)
+- Component: JobMatcher / 120+ lines (JM)
+- Component: JobFilter / 90+ lines (JF)
+- Component: SlackService / 60+ lines (SS)
+- Component: WantedAPI / 40+ methods (WA)
+- Component: JobKoreaClient (JKA)
+- Component: SaraminClient (SA)
+- Component: LinkedInClient (LA)
+- BaseCrawler / HTTP + Stealth (BC) -> WantedCrawler / 284 lines (WC)
+- BaseCrawler / HTTP + Stealth (BC) -> JobKoreaCrawler / 252 lines (JC)
+- BaseCrawler / HTTP + Stealth (BC) -> SaraminCrawler / 252 lines (SC)
+- BaseCrawler / HTTP + Stealth (BC) -> LinkedInCrawler / 232 lines (LC)
+- WantedCrawler / 284 lines (WC) -> WantedAPI / 40+ methods (WA)
+- JobKoreaCrawler / 252 lines (JC) -> JobKoreaClient (JKA)
+- SaraminCrawler / 252 lines (SC) -> SaraminClient (SA)
+- LinkedInCrawler / 232 lines (LC) -> LinkedInClient (LA)
+- UnifiedApplySystem / 150+ lines (UAS) -> JobMatcher / 120+ lines (JM)
+- UnifiedApplySystem / 150+ lines (UAS) -> JobFilter / 90+ lines (JF)
+- UnifiedApplySystem / 150+ lines (UAS) -> SessionManager / 80+ lines (SM)
+- UnifiedApplySystem / 150+ lines (UAS) -> SlackService / 60+ lines (SS)
 
-    subgraph Clients["API Clients"]
-        WA[WantedAPI<br/>40+ methods]
-        JKA[JobKoreaClient]
-        SA[SaraminClient]
-        LA[LinkedInClient]
-    end
-
-    BC --> WC
-    BC --> JC
-    BC --> SC
-    BC --> LC
-
-    WC --> WA
-    JC --> JKA
-    SC --> SA
-    LC --> LA
-
-    UAS --> JM
-    UAS --> JF
-    UAS --> SM
-    UAS --> SS
-```
 
 ### automation Workflow Architecture
 
-```mermaid
-flowchart TB
-    subgraph Schedule["Scheduled Workflows"]
-        JAA[Job Auto-Apply<br/>Daily 9:00 AM]
-        DJR[Daily Job Report<br/>Daily 6:00 PM]
-    end
+#### Diagram summary 4
 
-    subgraph Event["Event Workflows"]
-        RSP[Resume Sync Pipeline]
-        SN[Slack Notification]
-    end
+- Type: flowchart
+- Component: Job Auto-Apply / Daily 9:00 AM (JAA)
+- Component: Daily Job Report / Daily 6:00 PM (DJR)
+- Component: Resume Sync Pipeline (RSP)
+- Component: Slack Notification (SN)
+- Component: Schedule Trigger (ST)
+- Component: Trigger Auto-Apply (TA)
+- Component: Wait & Poll (WP)
+- Component: Format Result (FR)
+- Component: Telegram Notify (TN)
+- Job Auto-Apply / Daily 9:00 AM (JAA) -> Schedule Trigger (ST)
+- Schedule Trigger (ST) -> Trigger Auto-Apply (TA)
+- Trigger Auto-Apply (TA) -> Wait & Poll (WP)
+- Wait & Poll (WP) -> Format Result (FR)
+- Format Result (FR) -> Telegram Notify (TN)
 
-    subgraph Actions["Action Flow"]
-        ST[Schedule Trigger]
-        TA[Trigger Auto-Apply]
-        WP[Wait & Poll]
-        FR[Format Result]
-        TN[Telegram Notify]
-    end
-
-    JAA --> ST
-    ST --> TA
-    TA --> WP
-    WP --> FR
-    FR --> TN
-```
 
 ### Storage Architecture
 
-```mermaid
-flowchart TB
-    subgraph Local["Local Storage"]
-        SF[~/.OpenCode/data/]
-        WF[wanted-session.json<br/>24h TTL]
-        WR[wanted-resume/]
-        WL[wanted-logs/]
-    end
+#### Diagram summary 5
 
-    subgraph Cloud["Cloud Storage"]
-        D1[(D1 Database<br/>applications)]
-        KV[(KV Namespace<br/>sessions, rate limits)]
-        R2[(R2 Bucket<br/>screenshots)]
-    end
+- Type: flowchart
+- Component: ~/.OpenCode/data/ (SF)
+- Component: wanted-session.json / 24h TTL (WF)
+- Component: wanted-resume/ (WR)
+- Component: wanted-logs/ (WL)
+- Component: (D1 Database / applications) (D1)
+- Component: (KV Namespace / sessions, rate limits) (KV)
+- Component: (R2 Bucket / screenshots) (R2)
+- Component: jobcache / 1h TTL (JC)
+- Component: sessioncache / 24h TTL (SC)
+- ~/.OpenCode/data/ (SF) -> wanted-session.json / 24h TTL (WF)
+- ~/.OpenCode/data/ (SF) -> wanted-resume/ (WR)
+- ~/.OpenCode/data/ (SF) -> wanted-logs/ (WL)
+- (D1 Database / applications) (D1) -> jobcache / 1h TTL (JC)
+- (KV Namespace / sessions, rate limits) (KV) -> sessioncache / 24h TTL (SC)
+- (KV Namespace / sessions, rate limits) (KV) -> jobcache / 1h TTL (JC)
 
-    subgraph Cache["Cache Layer"]
-        JC[job_cache<br/>1h TTL]
-        SC[session_cache<br/>24h TTL]
-    end
-
-    SF --> WF
-    SF --> WR
-    SF --> WL
-
-    D1 --> JC
-    KV --> SC
-    KV --> JC
-```
 
 ---
 

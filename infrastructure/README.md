@@ -14,30 +14,26 @@ XN|application.
 
 **Infrastructure Topology**
 
-```mermaid
-graph TB
-    User[User/Browser] --> CF[Cloudflare Edge]
-    CF --> Portfolio[Portfolio Worker]
-    Portfolio --> JobDash[job-dashboard module]
+#### Diagram summary 1
 
-    subgraph Self-Hosted
-        Proxmox[Proxmox VE]
-        Proxmox --> Grafana[Grafana + Loki]
-        Proxmox --> ES[Elasticsearch]
-        Proxmox --> automation[Automation]
-        Proxmox --> Docker[Docker Host]
-    end
+- Type: flowchart
+- User/Browser (User) -> Cloudflare Edge (CF)
+- Cloudflare Edge (CF) -> Portfolio Worker (Portfolio)
+- Portfolio Worker (Portfolio) -> job-dashboard module (JobDash)
+- Component: Proxmox VE (Proxmox)
+- Proxmox VE (Proxmox) -> Grafana + Loki (Grafana)
+- Proxmox VE (Proxmox) -> Elasticsearch (ES)
+- Proxmox VE (Proxmox) -> Automation (automation)
+- Proxmox VE (Proxmox) -> Docker Host (Docker)
+- Docker Host (Docker) -> job-server MCP (JobServer)
+- Automation (automation) -> job-server MCP (JobServer)
+- job-server MCP (JobServer) -> D1 Database (D1)
+- job-server MCP (JobServer) -> KV Namespaces (KV)
+- job-server MCP (JobServer) -> Wanted API (Wanted)
+- job-server MCP (JobServer) -> JobKorea (JK)
+- Portfolio Worker (Portfolio) -> D1 Database (D1)
+- Portfolio Worker (Portfolio) -> KV Namespaces (KV)
 
-    Docker --> JobServer[job-server MCP]
-    automation --> JobServer
-    JobServer --> D1[D1 Database]
-    JobServer --> KV[KV Namespaces]
-    JobServer --> Wanted[Wanted API]
-    JobServer --> JK[JobKorea]
-
-    Portfolio --> D1
-    Portfolio --> KV
-```
 
 **Infrastructure Stack**
 
