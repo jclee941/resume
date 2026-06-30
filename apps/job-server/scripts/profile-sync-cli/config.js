@@ -27,7 +27,7 @@ export const PLATFORMS = {
     mapData: (ssot) => {
       // Wanted API rejects descriptions > 150 chars, and the write path truncates
       // to 147 + "...". The diff target must match so the sync is idempotent.
-      const intro = ssot.summary.profileStatement || '';
+      const intro = ssot.platformVariants?.wanted?.headline || ssot.summary.profileStatement || '';
       return {
         name: ssot.personal.name,
         introduction: intro.length > 150 ? `${intro.slice(0, 147)}...` : intro,

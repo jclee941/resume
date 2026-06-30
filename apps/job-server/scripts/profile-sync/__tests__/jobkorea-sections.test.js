@@ -179,6 +179,33 @@ describe('mapCareersToFormFields', () => {
     assert.ok(careerText.length <= 2000, `expected <= 2000, got ${careerText.length}`);
   });
 
+  it('keeps real JobKorea career statement factual and inside the field limit', () => {
+    const ssot = loadSSOT();
+    const fields = mapCareersToFormFields(ssot);
+    const byName = toMap(fields);
+    const careerText = byName.get('UserResume.M_Career_Text');
+
+    assert.ok(careerText.length <= 2000, `expected <= 2000, got ${careerText.length}`);
+    for (const phrase of ['AI 에이전트', '반복 작업', 'OA에서 시작', '도착한', '기여하고자']) {
+      assert.ok(!careerText.includes(phrase), `career statement still contains "${phrase}"`);
+    }
+  });
+
+  it('keeps Nextrade carrier records as freelancer contracts in the real SSoT', () => {
+    const ssot = loadSSOT();
+    const nextradeCareers = ssot.careers.filter((career) =>
+      ['itcen-cts', 'gaonnuri-information-system'].includes(career.id)
+    );
+
+    assert.strictEqual(nextradeCareers.length, 2);
+    for (const career of nextradeCareers) {
+      assert.strictEqual(career.workType, '프리랜서 계약');
+      assert.ok(career.note.includes('프리랜서 계약'));
+      assert.ok(!career.note.includes('소속'));
+      assert.ok(!career.note.includes('파견'));
+    }
+  });
+
   it('emits empty UserResume.M_Career_Text when SSoT has no careerSummary', () => {
     const fields = mapCareersToFormFields({ careers: [baseCareer] });
     const byName = toMap(fields);
@@ -194,6 +221,15 @@ describe('mapResumeTitleToFormFields', () => {
 
     assert.strictEqual(byName.get('UserResume.M_Resume_Title'), JOBKOREA_RESUME_TITLE);
     assert.strictEqual(JOBKOREA_RESUME_TITLE, '이재철 - 보안·SRE 엔지니어');
+  });
+
+  it('prefers platformVariants.jobkorea.headline when present', () => {
+    const fields = mapResumeTitleToFormFields({
+      platformVariants: { jobkorea: { headline: 'JobKorea 전용 제목' } },
+    });
+    const byName = toMap(fields);
+
+    assert.strictEqual(byName.get('UserResume.M_Resume_Title'), 'JobKorea 전용 제목');
   });
 });
 
@@ -239,6 +275,46 @@ describe('mapIntroToFormFields', () => {
 
     assert.strictEqual(byName.get('ResumeProfile[c1].Header').length, 50);
     assert.strictEqual(byName.get('ResumeProfile[c1].Contents').length, 2000);
+  });
+
+  it('prefers platformVariants.jobkorea.about for intro contents and keeps JobKorea limits', () => {
+    const fields = mapIntroToFormFields(
+      {
+        platformVariants: {
+          jobkorea: {
+            headline: 'JobKorea 전용 자기소개 제목',
+            about: 'JobKorea 전용 자기소개 본문',
+          },
+        },
+        coverLetter: {
+          ko: {
+            headline: '일반 자기소개 제목',
+            paragraphs: ['일반 자기소개 본문'],
+            closing: '',
+          },
+        },
+      },
+      ['c1306']
+    );
+    const byName = toMap(fields);
+
+    assert.strictEqual(byName.get('ResumeProfile[c1306].Header'), 'JobKorea 전용 자기소개 제목');
+    assert.strictEqual(byName.get('ResumeProfile[c1306].Contents'), 'JobKorea 전용 자기소개 본문');
+    assert.ok(byName.get('ResumeProfile[c1306].Header').length <= 50);
+    assert.ok(byName.get('ResumeProfile[c1306].Contents').length <= 2000);
+  });
+
+  it('keeps real JobKorea platform copy inside mapped field limits', () => {
+    const ssot = loadSSOT();
+    const fields = mapIntroToFormFields(ssot, ['c1']);
+    const byName = toMap(fields);
+
+    assert.ok(byName.get('ResumeProfile[c1].Header').length <= 50);
+    assert.ok(byName.get('ResumeProfile[c1].Contents').length <= 2000);
+    assert.strictEqual(
+      byName.get('ResumeProfile[c1].Contents'),
+      ssot.platformVariants.jobkorea.about
+    );
   });
 });
 

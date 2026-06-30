@@ -33,7 +33,7 @@ export const PLATFORMS = {
       skills: '[data-testid="skills-section"]',
     },
     mapData: (ssot) => {
-      const intro = ssot.summary.profileStatement || '';
+      const intro = ssot.platformVariants?.wanted?.headline || ssot.summary.profileStatement || '';
       return {
         name: ssot.personal.name,
         // Wanted API limit: 150 chars

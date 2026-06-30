@@ -78,12 +78,12 @@
   },
   "platformVariants": {
     "wanted": {
-      "headline": "OA 엔지니어로 출발한 보안 엔지니어 — 금융권 SOC + FSC 본인가 + Splunk ES·알림 워크플로·FortiGate HA",
-      "about": "**\"반복 작업은 자동화 되어야 한다\"** — 이 한 가지 신념으로 운영해 온 보안 엔지니어입니다.\n\n**현장 → 자동화 → AI 에이전트**, 한 번도 운영의 손을 놓지 않으면서 도구만 바꿔왔습니다. KAI 폐쇄망에서 Linux를 수기로 운영하던 시절, 메타넷·조인트리에서 Ansible·Python·NSX-T·Wazuh로 자동화에 입문하던 시기, 콴텍투자일임 FSDC에서 금융감독원 감사를 데이터로 대응하던 경험을 거치며, 가온누리·아이티센 트랙에서 넥스트레이드 매매체결시스템의 망분리·엔드포인트 보안 구축·운영, FSC 본인가, Splunk ES + Slack/SMS 알림 워크플로 + FortiManager API 운영을 수행했습니다. 현재는 다음 보안·인프라 역할을 찾는 구직 중입니다.\n\n**대표 임팩트**:\n• NAC 정책 배포를 자동화해 반복 수작업을 표준화\n• 방화벽 정책을 Ansible Role로 표준화\n• 보안 이벤트 자동 탐지·대응으로 인지·분류·알림 흐름 표준화\n• 운영 환경: 매매체결시스템의 보안 운영·규제 대응 환경\n\n**보유 역량**: SIEM 탐지 룰 설계(Splunk ES), 보안 운영 자동화(알림 워크플로, FortiManager API), HA 보안 구성 운영(FortiGate HA, NSX-T), IaC(Ansible Role, Terraform), 관측성(Grafana/Prometheus/Loki), 금융 규제(FSC 본인가, 금감원 감사)\n\n포트폴리오: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
+      "headline": "보안 운영 엔지니어 | 금융권 보안 인프라·SIEM·FortiGate·자동화",
+      "about": "금융권 보안 인프라 구축·운영과 SOC 탐지·알림 자동화를 수행한 보안 엔지니어입니다.\n\n[현재 포지션]\n보안 운영, SRE/Observability, DevSecOps 자동화 역할을 검토 중입니다. 반복 운영을 절차·스크립트·API 연동으로 줄이고, 감사와 장애 상황에서 설명 가능한 운영 근거를 남기는 일을 해왔습니다.\n\n[주요 경험]\n- 넥스트레이드 매매체결시스템 보안 운영: 아이티센 CTS 프리랜서 계약, Splunk ES 탐지 룰, Slack/SMS 알림 워크플로, FortiManager API 조회 절차 운영\n- 넥스트레이드 보안 인프라 구축: 가온누리정보시스템 프리랜서 계약, FortiGate HA, 망분리, 엔드포인트 보안, Ansible Role 기반 설정 표준화\n- 금융보안데이터센터(FSDC): 금감원 감사 대응, DB 접근제어 쿼리 튜닝, 운영 증적 정리\n- 네트워크·원격근무 인프라: NSX-T, Wazuh, NAC, VPN, Python/Ansible 자동화\n\n[기술]\nSplunk ES, FortiGate/FortiManager, Ansible, Python, Terraform, Docker, Grafana/Prometheus/Loki, Cloudflare Workers, Kubernetes\n\n포트폴리오: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
     },
     "jobkorea": {
-      "headline": "보안 엔지니어 — OA→자동화→FSC 본인가→보안 운영 (Splunk ES, 워크플로 자동화, FortiGate HA)",
-      "about": "**\"반복 작업은 자동화 되어야 한다\"** — 한 가지 신념으로 운영의 도구를 진화시켜 왔습니다.\n\n[경력 흐름: 현장 운영 → 자동화 → AI 에이전트]\n• KAI 폐쇄망 (2018–2019): Linux 수기 운영, 패치/방화벽/IDS 정책\n• Linux 기초 재정비 (2019.11–2020.07): RHCSA·LPIC-1·리눅스마스터 2급 연속 취득\n• 자동화 입문 (2020–2022): 메타넷 컨택센터 SSL VPN/NAC + Ansible/Python; 조인트리 NSX-T 마이크로세그멘테이션 + Wazuh\n• 금융 인프라 (2022–2024): 콴텍투자일임 FSDC, 금감원 감사 대응 + DB 튜닝\n• 보안 구축·운영 (2024–2026): 넥스트레이드, 망분리·엔드포인트 보안 구축·운영 + Ansible Role 표준화 + FSC 본인가 통과\n• 보안 운영 자동화 (2025–2026): 아이티센 CTS 넥스트레이드, Splunk ES + Slack/SMS 알림 워크플로 + FortiManager API 기반 자동 탐지·대응 운영\n• 현재: 구직 중 (보안·인프라 엔지니어)\n\n[검증 가능한 운영 개선]\nNAC·방화벽 정책 배포 자동화 · 보안 이벤트 자동 탐지·대응 · 접근 제어 정책 정비 · DLP 정책 운영 표준화\n\n[보유 기술 스택]\nSplunk ES, 워크플로 자동화, FortiGate/FortiManager API, Ansible Role, Python, Terraform, Docker, NSX-T, Wazuh, Grafana/Prometheus/Loki, Cloudflare Workers, MCP/AI 에이전트\n\n포트폴리오: https://resume.jclee.me",
+      "headline": "보안 운영 엔지니어 | 금융권 보안 인프라·SIEM·자동화",
+      "about": "[지원 포지션]\n보안 운영, 보안 인프라, SRE/Observability, DevSecOps 자동화 역할을 검토하고 있습니다. 현장 운영에서 반복되는 절차를 표준화하고, 감사·장애 대응 시 근거를 남기는 방식으로 일해왔습니다.\n\n[경력 요약]\n- 아이티센 CTS: 프리랜서 계약으로 넥스트레이드 보안 운영 수행. Splunk ES 탐지 룰, Slack/SMS 알림 워크플로, FortiManager API 조회 절차 운영\n- 가온누리정보시스템: 프리랜서 계약으로 넥스트레이드 보안 인프라 구축 수행. FortiGate HA, 망분리, 엔드포인트 보안, Ansible Role 기반 설정 표준화\n- 콴텍투자일임: 금융보안데이터센터(FSDC) 운영. 금감원 감사 대응, DB 접근제어 쿼리 튜닝, 운영 증적 정리\n- 조인트리/메타넷엠플랫폼: NSX-T, Wazuh, NAC, VPN, Python/Ansible 기반 인프라 운영 자동화\n- 엠티데이타: KAI 폐쇄망 Linux/OA 운영, 패치·방화벽 정책 관리\n\n[기술 스택]\nSplunk ES, FortiGate/FortiManager, FortiAnalyzer, Ansible, Python, Terraform, Docker, Linux, NSX-T, Wazuh, Grafana/Prometheus/Loki, Cloudflare Workers\n\n포트폴리오: https://resume.jclee.me",
       "defaultJobCode": "1000238"
     }
   },
@@ -105,10 +105,10 @@
       "client": "넥스트레이드(주)",
       "teamSize": "정보보안팀 운영 셀",
       "myRole": "보안 운영 담당",
-      "workType": "정규직 (파견)",
+      "workType": "프리랜서 계약",
       "description": "넥스트레이드 매매체결시스템의 보안 운영 체계를 SIEM 기반 탐지·대응 파이프라인으로 전환했습니다. Splunk ES 탐지 룰을 직접 설계·운영하여 보안 이벤트 탐지 범위를 확장하고, Splunk Saved Search → Webhook Automation → Slack/SMS 연동 실시간 알림 파이프라인을 구축하여 이벤트 인지·분류·알림 흐름을 표준화했습니다. FortiManager JSON-RPC API를 활용한 방화벽 정책 자동 조회 시스템을 개발하여 콘솔 수동 조작을 제거하고 접근 제어 일관성을 확보했습니다. Python과 Docker 기반 마이크로서비스로 탐지 룰의 버전 관리 및 배포 자동화를 구현하여 룰 변경 이력을 추적 가능한 운영 단위로 전환했습니다.",
       "wantedSummary": "SIEM 탐지·대응의 수동 반복을 자동화하여 보안 운영 절차를 표준화한 경험",
-      "note": "아이티센 CTS 소속, 넥스트레이드 매매체결시스템 보안운영SM 파견",
+      "note": "아이티센 CTS 프리랜서 계약, 넥스트레이드 매매체결시스템 보안운영SM 수행",
       "projects": [
         {
           "id": "nextrade-security-operations",
@@ -123,7 +123,7 @@
           ]
         }
       ],
-      "continuousEngagement": "넥스트레이드 매매체결시스템 트랙 (가온누리 구축 단계 2024.03~2025.02 → 아이티센 CTS 운영 단계 2025.03~2026.02, 동일 고객사 연속 수행)",
+      "continuousEngagement": "넥스트레이드 매매체결시스템 트랙 (가온누리 프리랜서 구축 단계 2024.03~2025.02 → 아이티센 CTS 프리랜서 운영 단계 2025.03~2026.02, 동일 고객사 연속 수행)",
       "jobkoreaJobCode": "1000238"
     },
     {
@@ -137,10 +137,10 @@
       "client": "넥스트레이드(주)",
       "teamSize": "보안 구축 셀",
       "myRole": "보안 인프라 구축 담당",
-      "workType": "정규직 (파견)",
+      "workType": "프리랜서 계약",
       "description": "넥스트레이드 매매체결시스템의 금융위 본인가 심사 기준을 충족하는 고가용성 보안 인프라를 구축했습니다. 서비스 연속성 확보를 위해 FortiGate FGCP 액티브-패시브 HA를 구성하고, 금융권 규제에 맞는 망분리 구조와 엔드포인트 보안 통제를 설계·문서화하여 FSC 본인가 심사를 통과시켰습니다. 이후 운영 단계에서도 방화벽 정책, 엔드포인트 보안 통제, 변경 근거를 추적할 수 있도록 Ansible Role과 FortiManager 기준으로 절차를 표준화했습니다. VMware 환경에서 가상 방화벽 구성과 장애 대응 절차를 담당했습니다.",
       "wantedSummary": "금융권 규제 심사 기준에 맞춘 고가용성 보안 구성을 구축한 경험",
-      "note": "가온누리정보시스템 소속, 넥스트레이드 매매체결시스템 구축 파견",
+      "note": "가온누리정보시스템 프리랜서 계약, 넥스트레이드 매매체결시스템 구축 수행",
       "projects": [
         {
           "id": "nextrade-security-infrastructure",
@@ -155,7 +155,7 @@
           ]
         }
       ],
-      "continuousEngagement": "넥스트레이드 매매체결시스템 트랙 (가온누리 구축 단계 2024.03~2025.02 → 아이티센 CTS 운영 단계 2025.03~2026.02, 동일 고객사 연속 수행)",
+      "continuousEngagement": "넥스트레이드 매매체결시스템 트랙 (가온누리 프리랜서 구축 단계 2024.03~2025.02 → 아이티센 CTS 프리랜서 운영 단계 2025.03~2026.02, 동일 고객사 연속 수행)",
       "jobkoreaJobCode": "1000238"
     },
     {
@@ -979,16 +979,16 @@
   },
   "careerSummary": {
     "ko": {
-      "headline": "보안 엔지니어 경력기술서",
+      "headline": "보안 운영·인프라 경력기술서",
       "paragraphs": [
-        "(주)아이티센 CTS (2025.03 ~ 2026.02): 넥스트레이드 매매체결시스템 보안 운영을 담당하며, Splunk ES 탐지 룰을 운영하고, Slack/SMS 실시간 알림 파이프라인 구축, FortiManager API 연동 방화벽 정책 자동 조회 시스템 개발로 보안 운영 절차 자동화와 알림 흐름 표준화를 수행.",
-        "(주)가온누리정보시스템 (2024.03 ~ 2025.02): 넥스트레이드 보안 인프라 구축을 주도하여 망분리·엔드포인트 보안 구축·운영, FSC 본인가 심사 통과, Ansible Role 기반 방화벽 정책 표준화로 구축-운영 전환의 원활한 인계를 실현.",
-        "(주)콴텍투자일임 (2022.08 ~ 2024.03): 금융보안데이터센터(FSDC) 환경에서 AI 트레이딩 플랫폼 인프라 운영의 안정성을 확보하고, Python 기반 운영 자동화, 금융감독원 감사 대응, DB 쿼리 튜닝, PB 플랫폼 POC 런칭 지원 등 금융 규제 환경에서의 인프라 역량을 강화.",
-        "(주)조인트리 (2021.09 ~ 2022.04): 국민대학교 차세대 정보시스템 구축에서 VMware NSX-T 마이크로세그멘테이션 및 DFW 분산 방화벽 정책을 설계·적용하여 동서 트래픽 보안 사각지대를 해소하고, NAC/DLP와 Wazuh를 통합 연동한 실시간 보안 모니터링 체계를 구축.",
-        "(주)메타넷엠플랫폼 (2020.08 ~ 2021.08): 대규모 컨택센터의 코로나19 대응 재택근무 환경에서 Python·Ansible 기반 인프라 운영 자동화를 주도하고, NAC 정책 자동화 및 FortiGate VPN 세션 모니터링 대시보드를 구성하여 원격 근무 환경의 안정성과 보안성을 확보.",
-        "(주)엠티데이타 (2018.10 ~ 2019.10): 한국항공우주산업(KAI) 폐쇄망 환경에서 Linux 시스템 로그 분석, WSUS 기반 패치 자동화, 방화벽 정책 변경 이력 추적 체계를 구축하며 IT 인프라 운영의 기초를 다지고 RHCSA·LPIC-1·리눅스마스터 2급을 연속 취득."
+        "(주)아이티센 CTS (2025.03 ~ 2026.02): 프리랜서 계약으로 넥스트레이드 매매체결시스템 보안 운영에 참여해 Splunk ES 탐지 룰, Slack/SMS 알림 워크플로, FortiManager API 기반 방화벽 정책 조회 절차를 운영했습니다.",
+        "(주)가온누리정보시스템 (2024.03 ~ 2025.02): 프리랜서 계약으로 넥스트레이드 보안 인프라 구축 단계에 참여해 FortiGate HA, 망분리, 엔드포인트 보안, Ansible Role 기반 설정 표준화, FSC 본인가 대응 업무를 수행했습니다.",
+        "(주)콴텍투자일임 (2022.08 ~ 2024.03): 금융보안데이터센터(FSDC) 환경에서 인프라 운영, 금감원 감사 대응, DB 접근제어 쿼리 튜닝, PB 플랫폼 POC 검증을 담당했습니다.",
+        "(주)조인트리 (2021.09 ~ 2022.04): 국민대학교 차세대 정보시스템 구축에서 VMware NSX-T 마이크로세그멘테이션, DFW 정책, NAC/DLP, Wazuh 연동 모니터링 구성을 담당했습니다.",
+        "(주)메타넷엠플랫폼 (2020.08 ~ 2021.08): 대규모 컨택센터 재택근무 환경에서 SSL VPN/NAC 운영, 단말 등록 절차 정리, Python·Ansible 기반 운영 자동화, FortiGate VPN 세션 모니터링을 수행했습니다.",
+        "(주)엠티데이타 (2018.10 ~ 2019.10): 한국항공우주산업(KAI) 폐쇄망 환경에서 Linux 로그 분석, WSUS 패치, 방화벽 정책 변경 이력 관리, OA 운영 지원을 수행했습니다."
       ],
-      "closing": "OA에서 시작해 자동화로 도착한 보안 엔지니어 경력을 바탕으로, 보안 인프라의 자동화와 고가용성 설계에 기여하고자 합니다."
+      "closing": "보안 인프라 운영, SIEM 탐지·알림, 감사 대응, 반복 운영 자동화를 연결해 운영 절차를 문서와 시스템으로 남기는 방식으로 일했습니다."
     }
   }
 }
