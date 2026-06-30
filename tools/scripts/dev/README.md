@@ -1,10 +1,11 @@
-# Local Development with Miniflare
+# Local Development with Wrangler
 
-This setup provides a local Cloudflare Worker runtime with D1, KV, and R2 simulation.
+This setup provides a local Cloudflare Worker runtime through Wrangler dev, which uses
+Miniflare for local execution.
 
 ## Files
 
-- `miniflare.config.js`: Miniflare v3 local runtime config.
+- `miniflare.config.js`: legacy local runtime config retained for reference.
 - `.dev.vars.example`: template for local worker environment variables.
 
 ## Quick Start
@@ -25,13 +26,9 @@ npm run dev
 
 The local endpoint listens on `http://localhost:8787`.
 
-## Optional: Wrangler Dev
+## Alias
 
-If you want direct Wrangler runtime instead of Miniflare:
-
-```bash
-npm run dev:wrangler
-```
+`npm run dev:wrangler` runs the same local worker command as `npm run dev`.
 
 ## Local Bindings
 

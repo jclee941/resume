@@ -3,9 +3,9 @@ export const ROLE_PROFILES = [
     id: 'security',
     label: 'Security Ops',
     proof: {
-      ko: 'SIEM 탐지·대응, 금융권 보안 운영, 망분리 심사 대응',
+      ko: 'SIEM 탐지·대응, 금융 보안 운영',
       en: 'SIEM response, financial security operations, segmentation review',
-      ja: 'SIEM対応、金融セキュリティ運用、分離審査対応',
+      ja: 'SIEM対応、金融セキュリティ運用',
     },
     keywords: ['Security', 'Alert', 'Blacklist', 'Bug Bounty', 'FortiGate', 'Splunk', '보안'],
   },
@@ -13,9 +13,9 @@ export const ROLE_PROFILES = [
     id: 'sre',
     label: 'SRE / Observability',
     proof: {
-      ko: '운영 로그·메트릭 관측성, 장애 조사 흐름, 런타임 상태 검증',
+      ko: '로그·메트릭 관측성, 장애 조사',
       en: 'Operational logs, metrics observability, incident investigation',
-      ja: '運用ログ、メトリクス可観測性、障害調査フロー',
+      ja: '運用ログ、メトリクス可観測性',
     },
     keywords: ['Observability', 'Resume Portfolio', 'Grafana', 'Loki', 'Prometheus'],
   },
@@ -23,9 +23,9 @@ export const ROLE_PROFILES = [
     id: 'devsecops',
     label: 'DevSecOps / IaC',
     proof: {
-      ko: 'Cloudflare Workers, Terraform, GitHub Actions, 보안 검증 자동화',
+      ko: 'Cloudflare Workers, Terraform, 보안 검증',
       en: 'Cloudflare Workers, Terraform, GitHub Actions, security checks',
-      ja: 'Cloudflare Workers、Terraform、GitHub Actions、セキュリティ検証',
+      ja: 'Cloudflare Workers、Terraform、検証自動化',
     },
     keywords: ['Terraform', 'Resume Portfolio', 'AI GitHub PR Reviewer', 'SafetyWallet'],
   },
@@ -33,9 +33,9 @@ export const ROLE_PROFILES = [
     id: 'automation',
     label: 'Automation',
     proof: {
-      ko: '반복 운영 절차 표준화, API 연동, 보안 이벤트 워크플로우',
+      ko: '운영 절차 표준화, API 연동 자동화',
       en: 'Repeatable operating procedures, API integration, event workflows',
-      ja: '反復運用手順、API連携、セキュリティイベントワークフロー',
+      ja: '運用手順、API連携、自動化',
     },
     keywords: ['Security Alert', 'Bug Bounty', 'AI GitHub PR Reviewer', 'SafetyWallet'],
   },
@@ -131,7 +131,7 @@ export function getRecruiterLabels() {
     };
   }
   return {
-    quickTitle: '직무 적합도 검토 경로',
+    quickTitle: '직무별 검토 경로',
     quickDesc: '채용하려는 역할을 먼저 고르면 요청부서가 확인할 근거로 바로 이동합니다.',
     matrixTitle: '프로젝트 근거 매트릭스',
     matrixDesc: '각 카드는 채용 판단 포인트와 요청부서가 확인할 근거를 연결합니다.',
@@ -150,6 +150,18 @@ function localeKey() {
   if (lang.startsWith('en')) return 'en';
   if (lang.startsWith('ja')) return 'ja';
   return 'ko';
+}
+
+export function getProofCountLabel(count) {
+  const key = localeKey();
+  if (key === 'en') {
+    const formatted = new Intl.NumberFormat('en-US').format(count);
+    return `${formatted} ${count === 1 ? 'proof' : 'proofs'}`;
+  }
+  if (key === 'ja') {
+    return `${new Intl.NumberFormat('ja-JP').format(count)}件の根拠`;
+  }
+  return `${new Intl.NumberFormat('ko-KR').format(count)}개 근거`;
 }
 
 function localizeProof(item, key) {
