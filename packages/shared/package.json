@@ -12,6 +12,7 @@
     "./es-client": "./src/clients/elasticsearch/index.js",
     "./ua": "./src/ua.js",
     "./phone": "./src/phone.js",
+    "./employment-types": "./src/employment-types.js",
     "./job-categories": "./src/job-categories.js",
     "./browser": "./src/browser/index.js",
     "./browser/stealth": "./src/browser/stealth-patches.js",

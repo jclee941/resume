@@ -35,6 +35,14 @@ describe('wanted profile mappers', () => {
     assert.strictEqual(mappedKnown.served, false);
     assert.strictEqual(mappedKnown.employment_type, 'FULLTIME');
 
+    const mappedFreelance = mapCareerToWanted({
+      company: 'ACME',
+      role: knownRole,
+      period: '2024.01 ~ 2024.12',
+      workType: '프리랜서',
+    });
+    assert.strictEqual(mappedFreelance.employment_type, 'FREELANCE');
+
     const mappedUnknown = mapCareerToWanted({
       company: 'ACME2',
       role: '알수없는역할',

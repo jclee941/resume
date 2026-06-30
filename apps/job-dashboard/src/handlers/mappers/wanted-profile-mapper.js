@@ -1,4 +1,5 @@
 import { JOB_CATEGORY_MAPPING, DEFAULT_JOB_CATEGORY } from '@resume/shared/job-categories';
+import { mapWorkTypeToWantedEmploymentType } from '@resume/shared/employment-types';
 
 export function parsePeriod(period = '') {
   const parts = String(period)
@@ -19,7 +20,7 @@ export function mapCareerToWanted(career) {
     start_time: start,
     end_time: end,
     served: end === null,
-    employment_type: 'FULLTIME',
+    employment_type: mapWorkTypeToWantedEmploymentType(career.workType),
   };
 }
 

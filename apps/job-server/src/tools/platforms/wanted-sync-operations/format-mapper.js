@@ -3,6 +3,7 @@ import {
   JOB_CATEGORY_MAPPING,
   DEFAULT_JOB_CATEGORY,
 } from '../../../../scripts/profile-sync/constants.js';
+import { mapWorkTypeToWantedEmploymentType } from '@resume/shared/employment-types';
 import { parseDate } from '../../date-parser.js';
 
 import { WANTED_HEADLINE_LIMIT } from './constants.js';
@@ -61,7 +62,7 @@ export function mapToWantedFormat(source) {
         start_time,
         end_time,
         served: end_time === null,
-        employment_type: 'FULLTIME',
+        employment_type: mapWorkTypeToWantedEmploymentType(c.workType),
       };
     }),
     educations: [
