@@ -293,7 +293,7 @@
   },
   {
     "name": "UserResume.M_Career_Text",
-    "value": "- 넥스트레이드 매매체결시스템 보안 인프라(FortiGate HA, 5계층 망분리)를 설계·운영하며 금융위 본인가 사전 심사를 통과했습니다.\r\n- Splunk ES 탐지 룰, 알림 워크플로 알림, FortiManager 정책 조회를 하나의 보안 이벤트 인지·분류·알림 흐름으로 연결해 운영합니다.\r\n- Prometheus node_exporter로 Proxmox VM/CT 메트릭을 수집하고, Grafana Dashboard JSON을 코드(Grafana-as-code)로 관리해 단일 화면 가시화를 IaC로 재현 가능하게 했습니다.\r\n- Slack·GitHub Actions·Cloudflare 훅을 공통 자동화 워크플로우로 추상화하고, 에러 핸들링·재시도를 표준화해 신규 자동화 추가 시 노드 추가만으로 배포 가능하도록 만들었습니다.\r\n- 컨택센터 원격 근무 전환 과정에서 NAC 예외 요청, 단말 등록, 현장 점검 절차를 재사용 가능한 운영 체크리스트로 정리했습니다.\r\n- FortiGate SSL-VPN"
+    "value": "- 넥스트레이드 매매체결시스템 보안 인프라(FortiGate HA, 5계층 망분리)를 설계·운영하며 금융위 본인가 사전 심사를 통과했습니다.\r\n- Splunk ES 탐지 룰, 알림 워크플로, FortiManager 정책 조회를 하나의 보안 이벤트 인지·분류·알림 흐름으로 연결해 운영합니다.\r\n- Prometheus node_exporter로 Proxmox VM/CT 메트릭을 수집하고, Grafana Dashboard JSON을 코드(Grafana-as-code)로 관리해 단일 화면 가시화를 IaC로 재현 가능하게 했습니다.\r\n- Slack·GitHub Actions·Cloudflare 훅을 공통 운영 스크립트와 재시도 규칙으로 정리해 반복 작업의 누락 가능성을 낮췄습니다.\r\n- 컨택센터 원격 근무 전환 과정에서 NAC 예외 요청, 단말 등록, 현장 점검 절차를 재사용 가능한 운영 체크리스트로 정리했습니다.\r\n- FortiGate SSL-VPN"
   },
   {
     "name": "UserResume.M_Career_Text_Stat",

@@ -76,7 +76,7 @@ describe('Wanted SSoT field mapping correctness', () => {
     assert.strictEqual(mapped.start_time, '2025-03-01');
     assert.strictEqual(mapped.end_time, '2026-02-01');
     assert.strictEqual(mapped.served, mapped.end_time === null);
-    assert.strictEqual(mapped.employment_type, 'FULLTIME');
+    assert.strictEqual(mapped.employment_type, 'FREELANCE');
     assert.ok(
       ['number', 'string'].includes(typeof mapped.job_category_id),
       'job_category_id should be mapped to a Wanted category id or configured default'
@@ -94,6 +94,14 @@ describe('Wanted SSoT field mapping correctness', () => {
     assert.strictEqual(mapped.start_time, '2025-03-01');
     assert.strictEqual(mapped.end_time, null);
     assert.strictEqual(mapped.served, true);
+  });
+
+  it('mapCareerToWanted keeps full-time SSoT careers as FULLTIME', () => {
+    const career = realSSoT.careers.find((item) => item.workType === '정규직');
+
+    const mapped = mapCareerToWanted(career);
+
+    assert.strictEqual(mapped.employment_type, 'FULLTIME');
   });
 
   it('syncWantedEducations maps school, major, and start_time from real SSoT education', async () => {

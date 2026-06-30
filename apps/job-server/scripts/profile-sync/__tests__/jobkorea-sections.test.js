@@ -186,22 +186,51 @@ describe('mapCareersToFormFields', () => {
     const careerText = byName.get('UserResume.M_Career_Text');
 
     assert.ok(careerText.length <= 2000, `expected <= 2000, got ${careerText.length}`);
-    for (const phrase of ['AI 에이전트', '반복 작업', 'OA에서 시작', '도착한', '기여하고자']) {
+    for (const phrase of [
+      'AI 에이전트',
+      '반복 작업',
+      '자동화',
+      'OA에서 시작',
+      '도착한',
+      '기여하고자',
+    ]) {
       assert.ok(!careerText.includes(phrase), `career statement still contains "${phrase}"`);
     }
   });
 
-  it('keeps Nextrade carrier records as freelancer contracts in the real SSoT', () => {
+  it('keeps real SSoT career role labels plain for job platform sync', () => {
     const ssot = loadSSOT();
-    const nextradeCareers = ssot.careers.filter((career) =>
-      ['itcen-cts', 'gaonnuri-information-system'].includes(career.id)
-    );
+    const expectedRoles = {
+      'itcen-cts': '보안 운영 엔지니어',
+      'gaonnuri-information-system': '보안 인프라 엔지니어',
+      'quantec-investment': '인프라 엔지니어',
+      jointree: '네트워크 보안 엔지니어',
+      'metanet-mplatform': '인프라 운영 엔지니어',
+      mtdata: 'IT/OA 운영 엔지니어',
+    };
+
+    for (const [id, expectedRole] of Object.entries(expectedRoles)) {
+      const career = ssot.careers.find((item) => item.id === id);
+      assert.ok(career, `missing career ${id}`);
+      assert.strictEqual(career.role, expectedRole);
+      assert.ok(!/[()]/.test(career.role), `${id} role still has parentheses`);
+    }
+  });
+
+  it('maps Nextrade career work type to freelancer in JobKorea form fields', () => {
+    const ssot = loadSSOT();
+    const fields = mapCareersToFormFields(ssot);
+    const byName = toMap(fields);
+    const nextradeCareers = ssot.careers
+      .map((career, index) => ({ career, index }))
+      .filter(({ career }) => ['itcen-cts', 'gaonnuri-information-system'].includes(career.id));
 
     assert.strictEqual(nextradeCareers.length, 2);
-    for (const career of nextradeCareers) {
-      assert.strictEqual(career.workType, '프리랜서 계약');
-      assert.ok(career.note.includes('프리랜서 계약'));
-      assert.ok(!career.note.includes('소속'));
+    for (const { career, index } of nextradeCareers) {
+      assert.strictEqual(career.workType, '프리랜서');
+      assert.strictEqual(byName.get(`Career[c${index + 1}].C_WorkType`), '프리랜서');
+      assert.ok(!career.note.includes('프리랜서 계약'));
+      assert.ok(!career.note.includes('정규직'));
       assert.ok(!career.note.includes('파견'));
     }
   });
@@ -308,13 +337,16 @@ describe('mapIntroToFormFields', () => {
     const ssot = loadSSOT();
     const fields = mapIntroToFormFields(ssot, ['c1']);
     const byName = toMap(fields);
+    const header = byName.get('ResumeProfile[c1].Header');
+    const contents = byName.get('ResumeProfile[c1].Contents');
 
-    assert.ok(byName.get('ResumeProfile[c1].Header').length <= 50);
-    assert.ok(byName.get('ResumeProfile[c1].Contents').length <= 2000);
-    assert.strictEqual(
-      byName.get('ResumeProfile[c1].Contents'),
-      ssot.platformVariants.jobkorea.about
-    );
+    assert.ok(header.length <= 50);
+    assert.ok(contents.length <= 2000);
+    assert.strictEqual(contents, ssot.platformVariants.jobkorea.about);
+    for (const phrase of ['자동화', 'AI 에이전트']) {
+      assert.ok(!header.includes(phrase), `JobKorea intro header still contains "${phrase}"`);
+      assert.ok(!contents.includes(phrase), `JobKorea intro contents still contain "${phrase}"`);
+    }
   });
 });
 
