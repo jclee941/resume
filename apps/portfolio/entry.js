@@ -50,6 +50,25 @@ async function fetchJobHandlerResponse(request, env, ctx, pathname) {
   return applyResponseHeaders(response, pathname);
 }
 
+function isFreshSitemapRequest(request) {
+  if (request.headers.get('if-none-match') === SITEMAP_ETAG) {
+    return true;
+  }
+
+  const ifModifiedSince = request.headers.get('if-modified-since');
+  if (!ifModifiedSince) {
+    return false;
+  }
+
+  const requestTimestamp = Date.parse(ifModifiedSince);
+  const lastModifiedTimestamp = Date.parse(LAST_MODIFIED);
+  return (
+    Number.isFinite(requestTimestamp) &&
+    Number.isFinite(lastModifiedTimestamp) &&
+    requestTimestamp >= lastModifiedTimestamp
+  );
+}
+
 export default {
   async fetch(request, env, ctx) {
     const startTime = Date.now();
@@ -60,7 +79,7 @@ export default {
 
     try {
       if (url.pathname === '/sitemap.xml') {
-        if (request.headers.get('if-none-match') === SITEMAP_ETAG) {
+        if (isFreshSitemapRequest(request)) {
           response = new Response(null, {
             status: 304,
             headers: {
@@ -110,7 +129,11 @@ export default {
 
         let portfolioResponse = await portfolioWorker.fetch(localizedRequest, env, ctx);
         if (isHtmlResponse(portfolioResponse)) {
-          portfolioResponse = await localizeHtmlResponse(portfolioResponse, effectiveLanguage);
+          portfolioResponse = await localizeHtmlResponse(
+            portfolioResponse,
+            effectiveLanguage,
+            url.pathname
+          );
         }
 
         response = applyResponseHeaders(portfolioResponse, url.pathname, {

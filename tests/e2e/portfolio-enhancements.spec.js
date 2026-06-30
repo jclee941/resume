@@ -87,7 +87,7 @@ test.describe('Portfolio recruiter enhancements', () => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-    const primaryAction = page.getByRole('link', { name: /채용 논의하기|Discuss a role/ });
+    const primaryAction = page.getByRole('link', { name: /채용 문의|Contact about role/ });
     await expect(primaryAction).toBeVisible();
 
     const styles = await primaryAction.evaluate((element) => {
@@ -113,7 +113,7 @@ test.describe('Mobile recruiter actions', () => {
     const actionBar = page.locator('.recruiter-action-bar');
     await expect(actionBar).toBeHidden();
 
-    await page.evaluate(() => window.scrollBy(0, 720));
+    await page.evaluate(() => window.scrollTo(0, 240));
 
     await expect(actionBar).toBeVisible();
     await expect(actionBar.getByRole('link', { name: /문의|Contact/ })).toHaveAttribute(

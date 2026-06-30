@@ -1,12 +1,29 @@
 import { DEFAULT_LANGUAGE, HREFLANG_LINKS, SUPPORTED_LANGUAGES } from './constants.js';
 
-function localizeHtmlDocument(html, language) {
+const CANONICAL_BY_PATH = new Map([
+  ['/', 'https://resume.jclee.me/'],
+  ['/ko', 'https://resume.jclee.me/ko/'],
+  ['/ko/', 'https://resume.jclee.me/ko/'],
+  ['/en', 'https://resume.jclee.me/en/'],
+  ['/en/', 'https://resume.jclee.me/en/'],
+  ['/ja', 'https://resume.jclee.me/ja/'],
+  ['/ja/', 'https://resume.jclee.me/ja/'],
+]);
+
+function localizeHtmlDocument(html, language, requestPath = null) {
   const localized = SUPPORTED_LANGUAGES.includes(language) ? language : DEFAULT_LANGUAGE;
   const htmlWithLang = /<html[^>]*\slang=["'][^"']*["'][^>]*>/i.test(html)
     ? html.replace(/(<html[^>]*\slang=["'])[^"']*(["'][^>]*>)/i, `$1${localized}$2`)
     : html.replace(/<html([^>]*)>/i, `<html lang="${localized}"$1>`);
+  const canonicalUrl = requestPath ? CANONICAL_BY_PATH.get(requestPath) : null;
+  const htmlWithCanonical = canonicalUrl
+    ? htmlWithLang.replace(
+        /<link\s+rel=["']canonical["'][^>]*>/i,
+        `<link rel="canonical" href="${canonicalUrl}" />`
+      )
+    : htmlWithLang;
 
-  const htmlWithoutAlternates = htmlWithLang.replace(
+  const htmlWithoutAlternates = htmlWithCanonical.replace(
     /\s*<link\s+rel=["']alternate["'][^>]*>/gi,
     ''
   );
@@ -23,10 +40,10 @@ function isHtmlResponse(response) {
   return contentType.includes('text/html');
 }
 
-async function localizeHtmlResponse(response, language) {
+async function localizeHtmlResponse(response, language, requestPath = null) {
   const html = await response.text();
   const headers = new Headers(response.headers);
-  const localizedHtml = localizeHtmlDocument(html, language);
+  const localizedHtml = localizeHtmlDocument(html, language, requestPath);
 
   return new Response(localizedHtml, {
     status: response.status,

@@ -1,6 +1,6 @@
 @media (max-width: 640px) {
   .section-hero {
-    padding: var(--space-5) 0 var(--space-8);
+    padding: var(--space-4) 0 var(--space-6);
   }
 
   .hero-content {
@@ -28,6 +28,17 @@
 
   .hero-review-path {
     order: 5;
+    min-block-size: auto;
+    margin-bottom: var(--space-4);
+  }
+
+  .hero-review-path a {
+    min-block-size: var(--hero-review-link-min-block);
+    padding: var(--space-2);
+  }
+
+  .hero-review-path strong {
+    font-size: var(--text-xs);
   }
 
   .hero-review-path + .hiring-review-packet {
@@ -58,18 +69,15 @@
 
   .hero-cta {
     order: 6;
-    grid-template-columns: 1fr;
-    margin-top: var(--space-3);
-    margin-bottom: var(--space-3);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: var(--space-2);
+    margin-bottom: var(--space-2);
   }
 
   .hero-cta .link-subtle {
     min-width: 0;
     padding-inline: var(--space-2);
-  }
-
-  .hero-cta .link-subtle--primary {
-    grid-column: 1 / -1;
   }
 
   .hero-positioning,

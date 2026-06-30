@@ -1,0 +1,136 @@
+const HERO_CONTENT = {
+  ko: {
+    title: '이재철',
+    srTitle: 'Jaecheol Lee',
+    role: 'Security / SRE Engineer',
+    availability: '보안 운영 · SRE · DevSecOps 역할 검토 가능',
+    positioning:
+      '금융권 보안 운영, SIEM 탐지 자동화, IaC 관측성 경험을 채용 검토 가능한 근거로 정리합니다.',
+    proofLabel: '대표 업무 증빙',
+    proofItems: [
+      '거래소 망분리·엔드포인트 보안 구축·운영',
+      'Splunk ES 탐지 룰·알림 워크플로 정리',
+      'FortiManager API·IaC 기반 운영 자동화',
+    ],
+    reviewLabel: '검토 경로',
+    reviewLinks: [
+      ['#resume', '운영 맥락', '금융 보안 운영 경력'],
+      ['#projects', '자동화 방식', '탐지·IaC·API 흐름'],
+      ['#contact', '채용 자료', 'PDF·메일 연결'],
+    ],
+    packetLabel: '채용 검토 자료',
+    packetEyebrow: '채용 검토 자료',
+    packetItems: [
+      ['검토 역할', '보안 운영 · SRE · DevSecOps'],
+      ['검토 근거', '경력 요약 · 프로젝트 증빙 · PDF'],
+      ['연락 방식', '메일로 제안 또는 면접 일정 협의'],
+    ],
+    quickTitle: '직무별 검토 경로',
+    quickDesc: '채용하려는 역할을 먼저 고르면 요청부서가 확인할 근거로 바로 이동합니다.',
+    quickRoles: [
+      ['security', 'Security Ops', 'SIEM 탐지·대응, 금융 보안 운영'],
+      ['sre', 'SRE / Observability', '로그·메트릭 관측성, 장애 조사'],
+      ['devsecops', 'DevSecOps / IaC', 'Cloudflare Workers, Terraform, 보안 검증'],
+      ['automation', 'Automation', '운영 절차 표준화, API 연동 자동화'],
+    ],
+    actionsLabel: '주요 이동',
+    mailSubject: '채용 제안 또는 면접 문의',
+    actions: ['채용 문의', '경력 보기', '프로젝트 보기', '이력서 PDF'],
+    downloadName: '이재철_이력서.pdf',
+  },
+  en: {
+    title: 'Jaecheol Lee',
+    role: 'Security / SRE Engineer',
+    availability: 'Open to Security Ops, SRE, and DevSecOps roles',
+    positioning:
+      'I present financial-sector security operations, SIEM detection automation, and IaC-based observability as inspectable evidence for hiring review.',
+    proofLabel: 'Representative proof of work',
+    proofItems: [
+      'Exchange network segmentation and endpoint security operations',
+      'Splunk ES detection rules and alert workflow automation',
+      'FortiManager API and IaC-based operations automation',
+    ],
+    reviewLabel: 'Review path',
+    reviewLinks: [
+      ['#resume', 'Operating context', 'Financial security operations'],
+      ['#projects', 'Automation approach', 'Detection · IaC · API flow'],
+      ['#contact', 'Hiring materials', 'PDF and email handoff'],
+    ],
+    packetLabel: 'Hiring review packet',
+    packetEyebrow: 'Hiring review packet',
+    packetItems: [
+      ['Target roles', 'Security Ops · SRE · DevSecOps'],
+      ['Evidence set', 'Career summary · project proof · resume PDF'],
+      ['Contact path', 'Email for a role proposal or interview scheduling'],
+    ],
+    quickTitle: 'Role-fit review paths',
+    quickDesc: 'Start with the role you are hiring for, then review the proof that supports fit.',
+    quickRoles: [
+      [
+        'security',
+        'Security Ops',
+        'SIEM response, financial security operations, segmentation review',
+      ],
+      [
+        'sre',
+        'SRE / Observability',
+        'Operational logs, metrics observability, incident investigation',
+      ],
+      [
+        'devsecops',
+        'DevSecOps / IaC',
+        'Cloudflare Workers, Terraform, GitHub Actions, security checks',
+      ],
+      [
+        'automation',
+        'Automation',
+        'Repeatable operating procedures, API integration, event workflows',
+      ],
+    ],
+    actionsLabel: 'Primary actions',
+    mailSubject: 'Hiring proposal or interview request',
+    actions: ['Contact about role', 'Career evidence', 'Project evidence', 'Resume PDF'],
+    downloadName: 'Jaecheol-Lee-Resume.pdf',
+  },
+  ja: {
+    title: '李在哲',
+    srTitle: 'イ・ジェチョル',
+    role: 'Security / SRE Engineer',
+    availability: 'セキュリティ運用・SRE・DevSecOpsを検討可能',
+    positioning:
+      '金融セキュリティ運用、SIEM検知自動化、IaC可観測性の経験を、採用検討可能な根拠として整理します。',
+    proofLabel: '代表的な業務証跡',
+    proofItems: [
+      '取引所ネットワーク分離・エンドポイントセキュリティ構築・運用',
+      'Splunk ES検知ルール・通知ワークフロー整理',
+      'FortiManager API・IaCベースの運用自動化',
+    ],
+    reviewLabel: '確認ルート',
+    reviewLinks: [
+      ['#resume', '運用文脈', '金融セキュリティ運用経験'],
+      ['#projects', '自動化アプローチ', '検知・IaC・APIフロー'],
+      ['#contact', '採用資料', 'PDF・メール連携'],
+    ],
+    packetLabel: '採用検討資料',
+    packetEyebrow: '採用検討資料',
+    packetItems: [
+      ['検討ロール', 'セキュリティ運用・SRE・DevSecOps'],
+      ['確認根拠', '経歴要約・プロジェクト証跡・PDF'],
+      ['連絡方法', 'メールで提案または面接日程を相談'],
+    ],
+    quickTitle: '職務別レビュー経路',
+    quickDesc: '採用トラックを選ぶと関連プロジェクト根拠を確認できます。',
+    quickRoles: [
+      ['security', 'Security Ops', 'SIEM対応、金融セキュリティ運用'],
+      ['sre', 'SRE / Observability', '運用ログ、メトリクス可観測性'],
+      ['devsecops', 'DevSecOps / IaC', 'Cloudflare Workers、Terraform、検証自動化'],
+      ['automation', 'Automation', '運用手順、API連携、自動化'],
+    ],
+    actionsLabel: '主要導線',
+    mailSubject: '採用提案または面接相談',
+    actions: ['採用相談', '経歴を見る', 'プロジェクトを見る', '履歴書PDF'],
+    downloadName: 'Lee-Jaecheol-Resume-JA.pdf',
+  },
+};
+
+module.exports = { HERO_CONTENT };

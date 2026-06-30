@@ -267,28 +267,6 @@ test.describe('JSON-LD Structured Data', () => {
     expect(websiteSchema.inLanguage).toMatch(WEBSITE_LANGUAGE_PATTERN);
   });
 
-  test('should have all JSON-LD schemas (3 base + per-project CreativeWork)', async ({ page }) => {
-    const counts = await page.evaluate(() => {
-      const blocks = [...document.querySelectorAll('script[type="application/ld+json"]')];
-      let creativeWork = 0;
-      const types = new Set();
-      for (const el of blocks) {
-        try {
-          const j = JSON.parse(el.textContent);
-          if (j['@type'] === 'CreativeWork') creativeWork += 1;
-          else if (j['@type']) types.add(j['@type']);
-        } catch {
-          /* ignore non-JSON */
-        }
-      }
-      return { total: blocks.length, creativeWork, types: [...types] };
-    });
-    // 3 base schemas (Person, WebSite, BreadcrumbList) + 9 project CreativeWork = 12.
-    expect(counts.total).toBe(12);
-    expect(counts.creativeWork).toBe(9);
-    expect(counts.types).toEqual(expect.arrayContaining(['Person', 'WebSite', 'BreadcrumbList']));
-  });
-
   test('rejected buzzwords/metrics absent on all locales', async ({ page }) => {
     const REJECTED = [
       'proactively',

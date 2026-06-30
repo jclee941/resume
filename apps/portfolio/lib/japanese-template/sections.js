@@ -9,7 +9,7 @@ function applyJapaneseSections(html) {
     .replace(/>이력서 PDF 다운로드</g, '>履歴書PDFダウンロード<')
     .replace(/이력서 PDF/g, '履歴書PDF')
     .replace(/이력서/g, '履歴書')
-    .replace(/aria-label="채용 또는 면접 문의하기"/g, 'aria-label="採用・面接お問い合わせ"')
+    .replace(/aria-label="채용(?: 또는 |·)면접 문의하기"/g, 'aria-label="採用・面接お問い合わせ"')
     .replace(/>채용·면접 문의하기</g, '>採用・面接お問い合わせ<')
     .replace(/>바로 본문으로 이동</g, '>メインコンテンツへスキップ<')
     .replace(/(<h2[^>]*class="section-title"[^>]*>)소개(<\/h2>)/g, '$1概要$2')

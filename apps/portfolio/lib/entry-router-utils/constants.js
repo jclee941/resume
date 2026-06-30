@@ -1,4 +1,4 @@
-const BUILD_LASTMOD = '2026-06-05';
+const BUILD_LASTMOD = '2026-06-30';
 
 // Derive HTTP-format Last-Modified and ETag from BUILD_LASTMOD so they cannot drift.
 const BUILD_LASTMOD_HTTP = (() => {
@@ -17,7 +17,7 @@ const SINGLE_WORKER_PROFILE_SYNC_STATUS_PATTERN = /^\/api\/automation\/resume-up
 const JOB_ROUTE_PREFIX = '/job';
 const LOCALE_ROUTES = new Set(['/', '/ko', '/ko/', '/en', '/en/', '/ja', '/ja/']); // /ja kept for redirect
 const HREFLANG_LINKS = [
-  '<link rel="alternate" hreflang="ko-KR" href="https://resume.jclee.me/" />',
+  '<link rel="alternate" hreflang="ko-KR" href="https://resume.jclee.me/ko/" />',
   '<link rel="alternate" hreflang="en-US" href="https://resume.jclee.me/en/" />',
   '<link rel="alternate" hreflang="ja-JP" href="https://resume.jclee.me/ja/" />',
   '<link rel="alternate" hreflang="x-default" href="https://resume.jclee.me/" />',
@@ -31,7 +31,17 @@ const SITEMAP_XML = `<?xml version="1.0" encoding="UTF-8"?>
     <lastmod>${SITEMAP_LASTMOD}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="ko-KR" href="https://resume.jclee.me/"/>
+    <xhtml:link rel="alternate" hreflang="ko-KR" href="https://resume.jclee.me/ko/"/>
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://resume.jclee.me/en/"/>
+    <xhtml:link rel="alternate" hreflang="ja-JP" href="https://resume.jclee.me/ja/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://resume.jclee.me/"/>
+  </url>
+  <url>
+    <loc>https://resume.jclee.me/ko/</loc>
+    <lastmod>${SITEMAP_LASTMOD}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="ko-KR" href="https://resume.jclee.me/ko/"/>
     <xhtml:link rel="alternate" hreflang="en-US" href="https://resume.jclee.me/en/"/>
     <xhtml:link rel="alternate" hreflang="ja-JP" href="https://resume.jclee.me/ja/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://resume.jclee.me/"/>
@@ -41,7 +51,7 @@ const SITEMAP_XML = `<?xml version="1.0" encoding="UTF-8"?>
     <lastmod>${SITEMAP_LASTMOD}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="ko-KR" href="https://resume.jclee.me/"/>
+    <xhtml:link rel="alternate" hreflang="ko-KR" href="https://resume.jclee.me/ko/"/>
     <xhtml:link rel="alternate" hreflang="en-US" href="https://resume.jclee.me/en/"/>
     <xhtml:link rel="alternate" hreflang="ja-JP" href="https://resume.jclee.me/ja/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://resume.jclee.me/"/>
@@ -51,7 +61,7 @@ const SITEMAP_XML = `<?xml version="1.0" encoding="UTF-8"?>
     <lastmod>${SITEMAP_LASTMOD}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="ko-KR" href="https://resume.jclee.me/"/>
+    <xhtml:link rel="alternate" hreflang="ko-KR" href="https://resume.jclee.me/ko/"/>
     <xhtml:link rel="alternate" hreflang="en-US" href="https://resume.jclee.me/en/"/>
     <xhtml:link rel="alternate" hreflang="ja-JP" href="https://resume.jclee.me/ja/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://resume.jclee.me/"/>

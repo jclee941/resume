@@ -1,13 +1,18 @@
 .hero-review-path {
+  --hero-review-path-min-block: calc(var(--space-6) + var(--space-3));
+  --hero-review-link-min-block: calc(var(--space-6) + var(--space-2));
+
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-2);
   max-width: 760px;
-  margin: calc(var(--space-5) * -1) 0 var(--space-8);
+  min-block-size: var(--hero-review-path-min-block);
+  margin: var(--space-4) 0 var(--space-8);
 }
 
 .hero-review-path a {
   min-width: 0;
+  min-block-size: var(--hero-review-link-min-block);
   padding: var(--space-3);
   border: 1px solid var(--border-primary);
   border-radius: var(--radius-md);
@@ -55,6 +60,7 @@
 @media (max-width: 640px) {
   .hero-review-path {
     grid-template-columns: 1fr;
-    margin-top: calc(var(--space-4) * -1);
+    min-block-size: calc((var(--hero-review-link-min-block) * 3) + (var(--space-2) * 2));
+    margin-top: var(--space-3);
   }
 }
