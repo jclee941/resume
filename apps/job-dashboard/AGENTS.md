@@ -1,13 +1,14 @@
 # JOB DASHBOARD WORKER KNOWLEDGE BASE
 
-**Generated:** 2026-03-17
-**Commit:** `882b837`
+**Generated:** 2026-06-30
+**Commit:** `766d220c`
 **Branch:** `master`
 
 ## OVERVIEW
 
-Cloudflare Worker serving the job dashboard API at `resume.jclee.me/job/*`.
-Class-based handlers, 7 scheduled workflows, D1+KV storage.
+Dashboard Worker module serving `resume.jclee.me/job/*` after it is imported
+in-process by `apps/portfolio/entry.js`. Standalone deploy is disabled; source
+still owns dashboard routes, handlers, workflows, queues, and storage bindings.
 
 ## STRUCTURE
 
@@ -20,19 +21,20 @@ job-dashboard/
 │   ├── middleware/            # 5-layer request pipeline
 │   ├── services/             # cache, migration, tracing, backup
 │   └── utils/                # helpers
-├── wrangler.jsonc             # worker config (name: job)
-└── package.json
+├── package.json            # standalone deploy script intentionally fails
+└── migrations/             # dashboard D1 migrations
 ```
 
 ## WHERE TO LOOK
 
 | Task               | Location                  | Notes                             |
 | ------------------ | ------------------------- | --------------------------------- |
-| Request routing    | `src/index.js`            | strips /job prefix, routes        |
+| Request routing    | `src/index.js`            | strips `/job` prefix after portfolio entry forwards |
 | Handler logic      | `src/handlers/`           | 14 handlers extending BaseHandler |
 | Workflow schedules | `src/workflows/`          | 7 CF Workflow classes             |
 | Auth middleware    | `src/middleware/`         | 5-layer middleware stack          |
-| DB migrations      | `src/services/migration/` | D1 schema management              |
+| DB migrations      | `migrations/`             | dashboard D1 migrations           |
+| Native auto-apply  | `src/handlers/auto-apply/`, `src/workflows/application/` | explicit candidates, approval gates, Browser Rendering |
 
 ## HANDLERS (14)
 
@@ -74,6 +76,15 @@ response-logger`
 Health (3), Stats (4), Auth (7), Applications CRUD (6), Webhooks (9), Auto-apply
 (3), Workflows (7), Config (2), Testing (2), Diagnostics (2), Reports (2).
 
+## NATIVE AUTO-APPLY
+
+- HTTP payload parsing lives under `src/handlers/auto-apply/`.
+- `native-dispatch.js` bridges explicit candidates into Cloudflare Workflows.
+- `src/workflows/application/` owns platform normalization, approval gates,
+  dry-run preview metadata, and Browser Rendering submission.
+- JobKorea/Saramin native submits must go through URL host allowlisting before
+  browser/session hydration.
+
 ## CHILD GUIDES
 
 - `src/handlers/AGENTS.md` owns handler-level contracts, route-to-handler
@@ -94,6 +105,13 @@ Health (3), Stats (4), Auth (7), Applications CRUD (6), Webhooks (9), Auto-apply
 - Request/response logging via middleware, not handlers.
 - KV entries MUST have TTL — never set without expiry.
 - Rate limiting: 60 req/min per IP per endpoint.
+- Keep dashboard exports compatible with `apps/portfolio/entry.js`; workflows
+  and `BrowserSessionDO` are re-exported by the merged worker entry.
+- Use shared packages (`@resume/shared`, `@resume/schemas`, `@resume/types`)
+  for cross-app behavior instead of importing portfolio internals.
+- Queue `APPLY` payloads that already include `candidates`, `platforms`,
+  `searchCriteria`, or `triggerType` should pass through to
+  `APPLICATION_WORKFLOW` instead of being downgraded to legacy jobId payloads.
 
 ## ANTI-PATTERNS
 
@@ -101,6 +119,10 @@ Health (3), Stats (4), Auth (7), Applications CRUD (6), Webhooks (9), Auto-apply
 - Never log credentials or session tokens.
 - Never set KV without TTL.
 - Never bypass CSRF for state-changing operations.
+- Never re-enable standalone deploy from this package without updating ADR 0009,
+  root deploy docs, and portfolio entry routing in the same change.
+- Never send an arbitrary external URL to Browser Rendering; normalize and
+  allowlist the platform host first.
 
 ---
 

@@ -1,13 +1,13 @@
 # SCRIPTS KNOWLEDGE BASE
 
-**Generated:** 2026-04-19
-**Commit:** `133c230`
+**Generated:** 2026-06-30
+**Commit:** `766d220c`
 **Branch:** `master`
 
 ## OVERVIEW
 
-17 utility scripts for authentication, data sync, metrics, and profile
-automation. Run from project root.
+Utility scripts for authentication, data sync, metrics, Telegram notification,
+pipeline orchestration, and profile automation. Run from project root.
 
 ## KEY SCRIPTS
 
@@ -26,6 +26,7 @@ automation. Run from project root.
 | `profile-sync.js`              | resume → API sync (966 lines)               |
 | `profile-sync/`                | profile sync helper modules                 |
 | `job-search-apply-pipeline.js` | automation pipeline: search + apply + profile sync |
+| `send-jobs-telegram.js`        | Telegram job queue notification and ATS-only dry-run |
 | `skill-tag-map.js`             | skill name → tag ID mapping                 |
 
 ## AUTH EVOLUTION
@@ -41,12 +42,16 @@ CDP (recommended) > Playwright > SQLite > Profile.
 - All scripts run from project root.
 - Use `auth-persistent.js` for auth flows.
 - `profile-sync/` subdirectory has 8 helper modules + 3 test files.
+- Notification dry-runs should use fixtures under `scripts/__fixtures__/` and
+  must not require live Telegram credentials.
 
 ## ANTI-PATTERNS
 
 - Never commit cookies or session files.
 - Never use deprecated `direct-login` scripts (already removed).
 - Never hardcode paths — use config.
+- Never send non-ATS or already-filtered queues from dry-run fixtures unless
+  the test explicitly covers mixed filtering behavior.
 
 ## PROFILE-SYNC PORTFOLIO FLOW
 

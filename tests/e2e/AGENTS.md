@@ -1,7 +1,7 @@
 # PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-03-17
-**Commit:** `882b837`
+**Generated:** 2026-06-30
+**Commit:** `766d220c`
 **Branch:** `master`
 
 ## OVERVIEW
@@ -18,6 +18,7 @@ accessibility, and deployment verification paths.
 | Security and auth checks    | `security.spec.js`, `deploy-verification.spec.js`                                  | policy and endpoint validation      |
 | Accessibility gates         | `accessibility.spec.js`, `accessibility-axe.spec.js`, `accessibility-wcag.spec.js` | a11y compliance checks              |
 | Mobile and performance      | `mobile.spec.js`, `mobile-responsive.spec.js`, `performance.spec.js`               | device and perf expectations        |
+| SEO/i18n behavior           | `seo.spec.js`, `seo-hreflang.spec.js`                                              | metadata, canonical, locale links   |
 | Visual regression           | `visual.spec.js`, `visual.spec.js-snapshots/`                                      | snapshot-based UI drift detection   |
 | Shared E2E helpers          | `fixtures/helpers.js`                                                              | common setup/helper utilities       |
 
@@ -28,6 +29,9 @@ accessibility, and deployment verification paths.
 - Use `domcontentloaded` for page load state in this project.
 - Keep test flows independent; avoid cross-test state coupling.
 - Co-locate visual snapshots under `visual.spec.js-snapshots/` only.
+- Production verification sets `SKIP_WEBSERVER=1` and
+  `PLAYWRIGHT_BASE_URL=https://resume.jclee.me`; local specs should not bake
+  that host into assertions.
 
 ## ANTI-PATTERNS
 

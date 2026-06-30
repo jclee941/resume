@@ -1,6 +1,7 @@
 # PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-06-28 (verified 76f0a897)
+**Generated:** 2026-06-30 (verified 766d220c)
+**Commit:** `766d220c`
 **Branch:** `master`
 
 ## OVERVIEW
@@ -46,6 +47,7 @@ automation/observability support.
 | Resume/content SSoT | `packages/data/` | `resumes/master/resume_data.json` is authoritative resume data |
 | Application packets | `applications/` | role-specific resumes, cover letters, previews, run outputs |
 | Types and validation | `packages/types/`, `packages/schemas/` | define domain types once, validate with Zod schemas |
+| Workspace packages | `packages/` | shared package boundary rules; child guides own package-local rules |
 | Contracts | `packages/contracts/` | OpenAPI spec and Cloudflare Worker env contract surface |
 | Shared utilities | `packages/shared/` | errors, logger, retry, crypto, rate-limit, auth, browser, clients |
 | Operational scripts | `tools/scripts/` | Go-first build, sync, deploy, verification, security tooling |
@@ -59,12 +61,14 @@ automation/observability support.
 | Symbol/File | Type | Location | Role |
 | --- | --- | --- | --- |
 | `package.json` | script hub | `./package.json` | root build/test/sync/deploy command surface |
-| `fetch` worker entry | Worker | `apps/portfolio/entry.js` | hand-authored portfolio edge entry before generated bundle |
+| `fetch` worker entry | Worker | `apps/portfolio/entry.js` | merged edge router for portfolio plus in-process `/job/*` dashboard |
 | `generate-worker.js` | build generator | `apps/portfolio/` | creates `apps/portfolio/worker.js` from HTML/data/lib modules |
 | `main()` | MCP bootstrap | `apps/job-server/src/index.js` | job-server process entry and shutdown handling |
 | server bootstrap | Node/Fastify | `apps/job-server/src/server/index.js` | dashboard/server-side job automation entry |
 | `fetch`/`queue`/`scheduled` | Worker | `apps/job-dashboard/src/index.js` | dashboard request, queue, and scheduled orchestrator |
 | `Router` | class | `apps/job-dashboard/src/router.js` | route matching and Worker request dispatch |
+| `QueueWorkflowDispatcher` | class | `apps/job-dashboard/src/queues/queue-workflow-dispatcher.js` | queue message to Workflow binding switchboard |
+| `ApplicationWorkflow` | class | `apps/job-dashboard/src/workflows/application.js` | application automation workflow orchestration |
 | `validateEnv()` | function | `packages/env/src/parse.js` | environment validation choke point |
 | `AppError`/`HttpError` | classes | `packages/shared/src/errors/index.js` | shared typed error hierarchy |
 | `resumeSchema` | Zod schema | `packages/schemas/src/resume.js` | runtime resume validation SSoT |
@@ -76,6 +80,8 @@ automation/observability support.
 - npm workspaces are the only build orchestrator; Bazel was removed by ADR 0008.
 - Workspace dependencies use `*`; do not reintroduce `file:../..` links.
 - `npm run build` runs SSoT sync before portfolio worker generation.
+- Node is `>=22`; TypeScript stays strict and ESLint blocks unsanctioned cross-app imports.
+- Dashboard routes run through `apps/portfolio/entry.js` per ADR 0009.
 - Cloudflare Workers Builds owns production deploy authority. Local Wrangler
   commands are verification or emergency tools, not the normal release path.
 - TypeScript strict-mode flags live in `tsconfig.json`; JS support and aliases
@@ -129,10 +135,8 @@ npm run lint
 npm run typecheck
 npm test
 npm run test:e2e
-npm run test:e2e:smoke
 npm run verify:production
 npm run sync:data
-npm run sync:all
 npm run deploy:wrangler:root:dry-run
 go run ./tools/ci/validate-cloudflare-native.go
 gitleaks detect --source . --config .gitleaks.toml --redact
@@ -144,6 +148,3 @@ gitleaks detect --source . --config .gitleaks.toml --redact
   corpus outside npm workspaces.
 - `apps/portfolio/worker.js` may appear in code search because it is committed
   as a generated edge bundle; fix the generator or source inputs instead.
-- LSP was unavailable during this refresh because the MCP transport was closed;
-  code-map evidence came from codegraph, filesystem structure, configs, and
-  explorer passes.
