@@ -7,6 +7,11 @@ function applyJapaneseSecurity(html) {
     .replace(/Edge 런타임 \+ 보안 헤더/g, 'Edgeランタイム + セキュリティヘッダー')
     .replace(/관측성 스택/g, '可観測性スタック')
     .replace(/자동화·IaC/g, '自動化・IaC')
+    .replace(
+      /aria-label="ELK Kibana 데모 대시보드 열기 \(새 탭\)"/g,
+      'aria-label="ELK Kibanaデモダッシュボードを開く（新しいタブ）"'
+    )
+    .replace(/ELK 데모 보기/g, 'ELKデモを見る')
     .replace(/aria-label="사이트 운영 방식"/g, 'aria-label="サイト運用方法"')
     .replace(
       /Cloudflare Workers에서 제공하며 CSP nonce·strict-dynamic, HSTS,\s+COOP\/CORP, frame-ancestors none을 응답 헤더로 적용합니다\./g,
