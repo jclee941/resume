@@ -58,7 +58,7 @@ function applyJapaneseHero(html) {
     .replace(/Splunk ES 탐지 룰·알림 워크플로 정리/g, 'Splunk ES検知ルール・通知ワークフロー整理')
     .replace(/Splunk ES 탐지 룰·알림 워크플로 운영/g, 'Splunk ES検知ルール・通知ワークフロー運用')
     .replace(/Splunk ES 탐지 룰·Slack\/SMS 알림/g, 'Splunk ES検知ルール・Slack/SMS通知')
-    .replace(/FortiManager API·IaC 기반 운영 자동화/g, 'FortiManager API・IaCベースの運用自動化')
+    .replace(/FortiManager API·IaC 기반 운영 자동화/g, 'FortiManager API・IaCベースの運用手順整理')
     .replace(
       /FortiManager API·IaC 기반 운영 절차 정리/g,
       'FortiManager API・IaCベースの運用手順整理'
@@ -84,18 +84,19 @@ function applyJapaneseHero(html) {
     )
     .replace(
       /Splunk ES 탐지·알림 자동화/g,
-      'Splunk ES · 通知ワークフロー · FortiManager APIベースのセキュリティイベント自動化'
+      'Splunk ES · 通知ワークフロー · FortiManager APIベースのセキュリティイベントフロー'
     )
     .replace(
       /Splunk ES · 알림 워크플로 · FortiManager API 기반 보안 이벤트 자동화/g,
-      'Splunk ES · 通知ワークフロー · FortiManager APIベースのセキュリティイベント自動化'
+      'Splunk ES · 通知ワークフロー · FortiManager APIベースのセキュリティイベントフロー'
     )
     .replace(/aria-label="검토 경로"/g, 'aria-label="確認ルート"')
     .replace(/운영 맥락/g, '運用文脈')
     .replace(/금융 보안 운영 경력/g, '金融セキュリティ運用経験')
     .replace(/금융권 보안 운영 경력/g, '金融セキュリティ運用経験')
     .replace(/금융권 보안 인프라/g, '金融セキュリティ基盤')
-    .replace(/자동화 방식/g, '自動化アプローチ')
+    .replace(/자동화 방식/g, '運用フロー')
+    .replace(/운영 흐름/g, '運用フロー')
     .replace(/탐지·IaC·API 흐름/g, '検知・IaC・APIフロー')
     .replace(/탐지·IaC·API 연결/g, '検知・IaC・API連携')
     .replace(/탐지·알림·API 조회/g, '検知・通知・API照会')

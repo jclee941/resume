@@ -16,7 +16,20 @@ const SSOT_PATH = path.join(
   'master',
   'resume_data.json'
 );
+const EN_SSOT_PATH = path.join(
+  __dirname,
+  '..',
+  '..',
+  '..',
+  '..',
+  'packages',
+  'data',
+  'resumes',
+  'master',
+  'resume_data_en.json'
+);
 const ssot = require(SSOT_PATH);
+const enSsot = require(EN_SSOT_PATH);
 
 describe('generateWebData → careers[] (SSoT timeline data)', () => {
   it('S1: emits a top-level careers[] with one entry per SSoT career', () => {
@@ -196,23 +209,40 @@ describe('generateWebData → resume[].stats (the ACTUAL static-card render path
 
   it('S2d: preserves existing Metanet stats and English fallback copy', () => {
     assert.deepEqual(generateWebData(ssot, 'ko').resume[4].stats, [
-      'Ansible 자동화',
+      'Ansible Runbook',
       'NAC',
       'VPN 모니터링',
     ]);
     assert.deepEqual(generateWebData(ssot, 'en').resume[4].stats, [
-      'Ansible Automation',
+      'Ansible Runbooks',
       'NAC',
       'VPN Monitoring',
     ]);
     assert.deepEqual(generateWebData(ssot, 'ja').resume[4].stats, [
-      'Ansible自動化',
+      'Ansible Runbook',
       'NAC',
       'VPNモニタリング',
     ]);
     assert.equal(
       generateWebData(ssot, 'ko').resumeEn[4].description,
-      'Solved server configuration consistency and remote-access visibility for a large-scale remote work environment by building Python and Ansible automation, and operated FortiGate VPN infrastructure for new contact-center sites.'
+      'Handled VPN/NAC operations during a large contact-center remote-work transition, using Python and Ansible runbooks for endpoint registration, switch checks, and server configuration tasks.'
     );
+    assert.equal(
+      generateWebData(enSsot, 'en').resume[4].description,
+      'Solved server configuration consistency and remote-access visibility for a large-scale contact-center remote-work environment by building Python and Ansible runbooks, and operated FortiGate VPN infrastructure for new contact-center sites.'
+    );
+  });
+
+  it('S2e: actual English locale cards use concrete security operations copy', () => {
+    const out = generateWebData(enSsot, 'en');
+
+    assert.match(out.resume[0].description, /Splunk ES alerts/);
+    assert.match(out.resume[0].description, /FortiManager API policy lookups/);
+    assert.deepEqual(out.resume[0].stats, [
+      'Splunk ES',
+      'Detection & Response',
+      'Security Event Flow',
+    ]);
+    assert.doesNotMatch(out.resume[0].description, /via automation|Automated security operations/i);
   });
 });

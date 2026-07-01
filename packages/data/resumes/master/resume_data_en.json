@@ -44,20 +44,20 @@
       "Observability",
       "Cloud Security"
     ],
-    "profileStatement": "Security engineer with a path from closed-network OA operations to financial security infrastructure, SOC alerting runbooks, observability, and IaC-driven operations. Most recently, in a financial security team, connected Splunk ES, alert workflows, and FortiManager API in a FortiGate HA segmented environment to standardize security-event recognition, classification, and alerting. Currently seeking a security infrastructure, Security Operations, Observability, or automation-focused role.",
+    "profileStatement": "Security/SRE engineer who has connected financial-sector security infrastructure and SIEM operations into real operating procedures. The work spans FortiGate HA segmentation, endpoint security, Splunk ES detection rules, Slack/SMS alerting, FortiManager API lookups, audit evidence, and IaC-backed runbooks. Currently seeking security infrastructure, Security Operations, Observability/SRE, or DevSecOps roles.",
     "coreCompetencies": [
       "Designed and operated high-availability security infrastructure in financial regulated environments and passed licensing audits",
-      "Reviewed SIEM detection rules and built automation around alert classification and notification workflows",
+      "Reviewed SIEM detection rules and connected alert classification with notification workflows",
       "Moved infrastructure operations toward IaC for change traceability and consistency",
       "Built an observability platform to enable cross-analysis of metrics and logs scattered across services",
       "Integrated static analysis into CI pipelines to catch vulnerabilities and secret leaks at build time",
-      "Developed API-based automation scripts to replace repetitive manual console operations with API-based workflows on security appliances"
+      "Developed API-based lookup scripts that replace repetitive console checks with reviewable security-appliance workflows"
     ],
     "aboutSection": {
       "careerHighlights": [
         "Started from closed-network OA operations at KAI — Linux server operations, patch routines, and firewall rule handling",
         "Linux foundations rebuilt (2018.11~2019.11) — RHCSA, CompTIA Linux+, LPIC-1, Linux Master Level 2",
-        "Automation entry (2019~2022 Metanet · Jointree) — Ansible/Python for a large-scale contact center, NSX-T microsegmentation, Wazuh OSS monitoring",
+        "Operations scripting track (2019~2022 Metanet · Jointree) — Ansible/Python for a large-scale contact center, NSX-T microsegmentation, Wazuh OSS monitoring",
         "Financial infrastructure (2022~2024 Quantec Investment Management FSDC) — financial regulator audit response, DB query tuning",
         "Financial security build/ops (Gaonnuri · ITCEN Nextrade) — network segmentation and endpoint security build/operations, FSC main-license review support, Splunk ES + alert workflow + FortiManager API alert workflow standardization"
       ],
@@ -68,10 +68,10 @@
         "Defense in Depth: Network → Identity → Workload → Data"
       ],
       "currentFocus": [
-        "SOC automated response with Splunk ES rules · automation · FortiManager API",
+        "SOC event flow with Splunk ES rules · Slack/SMS alerts · FortiManager API",
         "DevOps capability extension via Cloudflare Workers Edge and IaC homelab",
-        "Self-developed MCP tooling based security operations automation tools",
-        "Learning GitOps (ArgoCD) and policy automation (OPA)"
+        "Self-developed MCP tooling for security operations triage",
+        "Learning GitOps (ArgoCD) and policy-as-code (OPA)"
       ]
     },
     "totalExperience": "working total"
@@ -79,12 +79,7 @@
   "current": {
     "status": "Open to work",
     "availability": "Currently available, immediate start possible",
-    "desiredRoles": [
-      "Security Infrastructure",
-      "Security",
-      "Observability",
-      "Automation"
-    ]
+    "desiredRoles": ["Security Infrastructure", "Security", "Observability", "DevSecOps"]
   },
   "careers": [
     {
@@ -98,26 +93,20 @@
       "teamSize": "Information Security Operations Cell",
       "myRole": "Security Operations",
       "workType": "Full-time (Dispatched)",
-      "description": "Worked on integrated security operations connecting Splunk ES with Slack via automation and writing FortiManager API-based scripts for firewall policy lookups, standardizing operator notification and triage paths.",
-      "wantedSummary": "Nextrade Security Operations SM | Splunk ES · FortiManager API · automation\n→ SIEM detection rule design and automated security event response",
+      "description": "Worked on integrated security operations connecting Splunk ES alerts with Slack/SMS notification flows and FortiManager API policy lookups, making operator triage paths easier to review.",
+      "wantedSummary": "Nextrade Security Operations SM | Splunk ES · FortiManager API · Slack/SMS\n→ SIEM detection rule design and reviewable security-event response",
       "note": "ITCEN CTS employee, dispatched to Nextrade Trading System Security Operations SM",
       "projects": [
         {
           "id": "nextrade-security-operations",
           "name": "Nextrade Security Operations",
-          "description": "Automated security operations with Splunk ES and FortiGate APIs\n• Integrated automation workflows to deliver real-time Slack alerts when security events are detected\n• Built an automated firewall policy lookup tool using FortiManager API",
+          "description": "Security-event operations with Splunk ES and FortiManager APIs\n• Connected Splunk ES Saved Searches with Slack/SMS notifications for security events\n• Built a firewall policy lookup tool using FortiManager API",
           "period": "2025.03 ~ 2026.02",
-          "techStack": [
-            "Splunk ES",
-            "FortiManager API",
-            "automation",
-            "Python",
-            "Docker"
-          ],
+          "techStack": ["Splunk ES", "FortiManager API", "Python", "Docker", "Slack/SMS"],
           "achievements": [
             "Standardized manual rule-management workflows by designing and operating Splunk ES detection rules, expanding security event coverage",
             "Standardized operator notification flow by building an Slack/SMS alert workflow real-time alert pipeline",
-            "Automated firewall policy lookup via FortiManager JSON-RPC API, eliminating repetitive console actions"
+            "Scripted firewall policy lookup via FortiManager JSON-RPC API, reducing repetitive console checks"
           ]
         }
       ],
@@ -143,13 +132,7 @@
           "name": "Nextrade Security Infrastructure Build",
           "description": "Built a high-availability security configuration for a securities trading platform\n• Implemented Active-Passive HA with FGCP (FortiGate Clustering Protocol)\n• Standardized initial device setup and policy deployment with reusable Ansible roles",
           "period": "2024.03 ~ 2025.02",
-          "techStack": [
-            "FortiGate",
-            "FortiManager",
-            "Ansible",
-            "Python",
-            "VMware"
-          ],
+          "techStack": ["FortiGate", "FortiManager", "Ansible", "Python", "VMware"],
           "achievements": [
             "Built FortiGate FGCP active-passive HA configuration to support service continuity",
             "Designed and documented network segmentation and endpoint security controls to meet FSC main-license review criteria",
@@ -170,22 +153,16 @@
       "teamSize": "Infrastructure operations team (size undisclosed)",
       "myRole": "Infrastructure Operations",
       "workType": "Full-time",
-      "description": "Operated the Financial Security Data Center (FSDC) environment including Financial Supervisory Service periodic audit response. Wrote Python-based automation scripts, operated DLP policies, and tuned DB access-control queries.",
-      "wantedSummary": "Financial Security Data Center (FSDC) infrastructure operations automation and audit response experience",
+      "description": "Operated the Financial Security Data Center (FSDC) environment including Financial Supervisory Service periodic audit response. Wrote Python-based runbooks, operated DLP policies, and tuned DB access-control queries.",
+      "wantedSummary": "Financial Security Data Center (FSDC) infrastructure operations scripting and audit response experience",
       "note": "Full-time at Quantec Investment Management, AI Trading Platform infrastructure operations",
       "projects": [
         {
           "id": "quantec-ai-trading-platform",
           "name": "Quantec Investment Management AI Trading Platform Infrastructure Operations",
-          "description": "Developed Python automation scripts to standardize recurring operational and audit-response workflows, and tuned PostgreSQL access-control queries to support the PB platform POC launch.",
+          "description": "Developed Python runbooks for recurring operational and audit-response workflows, and tuned PostgreSQL access-control queries to support the PB platform POC launch.",
           "period": "2022.08 ~ 2024.03",
-          "techStack": [
-            "Python",
-            "Linux",
-            "DLP",
-            "PostgreSQL",
-            "FSDC"
-          ],
+          "techStack": ["Python", "Linux", "DLP", "PostgreSQL", "FSDC"],
           "achievements": [
             "Refined DLP policy operations and standardized audit deliverables for FSS regular audits",
             "Tuned PostgreSQL DB access-control queries to reduce query-planning overhead",
@@ -213,13 +190,7 @@
           "name": "Kookmin University Next-Generation Information System",
           "description": "SDN-based network virtualization and microsegmentation.\n• Server-to-server traffic control via VMware NSX-T Distributed Firewall (DFW).\n• Centralized network security policies at the virtual switch (VDS) layer.",
           "period": "2021.09 ~ 2022.04",
-          "techStack": [
-            "VMware NSX-T",
-            "vSphere",
-            "NAC",
-            "DLP",
-            "Wazuh"
-          ],
+          "techStack": ["VMware NSX-T", "vSphere", "NAC", "DLP", "Wazuh"],
           "achievements": [
             "Designed and applied NSX-T microsegmentation to eliminate east-west traffic blind spots",
             "Designed NSX-T DFW distributed firewall policies for server-to-server visibility and control",
@@ -239,23 +210,17 @@
       "teamSize": "Infrastructure operations team (size undisclosed)",
       "myRole": "Infrastructure Operations",
       "workType": "SI+SM",
-      "description": "Solved server configuration consistency and remote-access visibility for a large-scale contact-center remote-work environment by building Python and Ansible automation, and operated FortiGate VPN infrastructure for new contact-center sites.",
+      "description": "Solved server configuration consistency and remote-access visibility for a large-scale contact-center remote-work environment by building Python and Ansible runbooks, and operated FortiGate VPN infrastructure for new contact-center sites.",
       "projects": [
         {
           "id": "contact-center-remote-work",
           "name": "Contact Center Remote-Work Infrastructure",
-          "description": "VPN infrastructure design and automation for large-scale remote access.\n• Synchronized large-scale server configurations via Python scripts and Ansible.\n• Built VPN session monitoring and abnormal-access detection dashboards.",
+          "description": "VPN infrastructure design and runbooks for large-scale remote access.\n• Synchronized large-scale server configurations via Python scripts and Ansible.\n• Built VPN session monitoring and abnormal-access detection dashboards.",
           "period": "2020.08 ~ 2021.08",
-          "techStack": [
-            "Ansible",
-            "Python",
-            "VPN",
-            "NAC",
-            "FortiGate"
-          ],
+          "techStack": ["Ansible", "Python", "VPN", "NAC", "FortiGate"],
           "achievements": [
             "Designed Ansible playbooks to standardize manual configuration workflows",
-            "Developed NAC policy automation scripts to eliminate repetitive new-terminal registration",
+            "Developed NAC policy runbooks to reduce repetitive new-terminal registration",
             "Built a FortiGate-log-based detection dashboard for VPN session anomaly visibility"
           ]
         }
@@ -280,12 +245,7 @@
           "name": "KAI Infrastructure Operations",
           "description": "Reliable availability of closed-network security infrastructure.\n• Proactive hardware-failure detection via periodic system log analysis.\n• Compliance with internal security audit standards and configuration guidelines.",
           "period": "2018.10 ~ 2019.10",
-          "techStack": [
-            "Linux",
-            "Bash",
-            "Firewall",
-            "WSUS"
-          ],
+          "techStack": ["Linux", "Bash", "Firewall", "WSUS"],
           "achievements": [
             "Sustained Linux server availability under closed-network constraints",
             "Redesigned firewall policies to remove unused-rule security risk",
@@ -301,26 +261,17 @@
       "period": "2025.03 ~ 2026.02",
       "name": "Nextrade Security Operations",
       "client": "Nextrade",
-      "technologies": [
-        "Python",
-        "Splunk",
-        "automation",
-        "Fortinet"
-      ],
+      "technologies": ["Python", "Splunk ES", "FortiManager API", "Fortinet"],
       "os": "Linux, Docker",
       "role": "Security Operations Engineer",
-      "description": "Automated security operations with Splunk ES and FortiGate APIs\n• Integrated automation workflows to deliver real-time Slack alerts when security events are detected\n• Built an automated firewall policy lookup tool using FortiManager API"
+      "description": "Security-event operations with Splunk ES and FortiManager APIs\n• Connected Splunk ES Saved Searches with Slack/SMS notifications for security events\n• Built a firewall policy lookup tool using FortiManager API"
     },
     {
       "id": "nextrade-security-infrastructure",
       "period": "2024.03 ~ 2025.02",
       "name": "Nextrade Security Infrastructure Build",
       "client": "Nextrade",
-      "technologies": [
-        "Python",
-        "FortiManager API",
-        "Ansible"
-      ],
+      "technologies": ["Python", "FortiManager API", "Ansible"],
       "os": "Linux, VMware",
       "role": "Security Infrastructure Design",
       "description": "Built a high-availability security configuration for a securities trading platform\n• Implemented Active-Passive HA with FGCP (FortiGate Clustering Protocol)\n• Standardized initial device setup and policy deployment with reusable Ansible roles"
@@ -330,11 +281,7 @@
       "period": "2021.09 ~ 2022.04",
       "name": "Kookmin University Next-Generation Information System",
       "client": "Kookmin University",
-      "technologies": [
-        "VMware NSX-T",
-        "Firewall",
-        "NAC"
-      ],
+      "technologies": ["VMware NSX-T", "Firewall", "NAC"],
       "os": "Linux, vSphere",
       "role": "Network Virtualization",
       "description": "Implemented SDN-based network virtualization and micro-segmentation\n• Controlled east-west traffic with VMware NSX-T Distributed Firewall (DFW)\n• Centralized network security policies at the VDS layer"
@@ -344,26 +291,17 @@
       "period": "2020.08 ~ 2021.08",
       "name": "Contact Center Remote Work Infrastructure",
       "client": "Metanet M Platform",
-      "technologies": [
-        "Ansible",
-        "Python",
-        "VPN",
-        "NAC"
-      ],
+      "technologies": ["Ansible", "Python", "VPN", "NAC"],
       "os": "Linux",
       "role": "Remote Work Infrastructure",
-      "description": "Designed and automated VPN infrastructure for large-scale remote access\n• Synchronized configurations across remote-access servers with Python and Ansible\n• Built dashboards for VPN session monitoring and anomaly detection"
+      "description": "Designed VPN infrastructure runbooks for large-scale remote access\n• Synchronized configurations across remote-access servers with Python and Ansible\n• Built dashboards for VPN session monitoring and anomaly detection"
     },
     {
       "id": "kai-infrastructure-operations",
       "period": "2018.10 ~ 2019.10",
       "name": "KAI Infrastructure Operations",
       "client": "Korea Aerospace Industries (KAI)",
-      "technologies": [
-        "Linux",
-        "Bash",
-        "Firewall"
-      ],
+      "technologies": ["Linux", "Bash", "Firewall"],
       "os": "Linux",
       "role": "Systems Operations",
       "description": "Ensured stable availability for closed-network security infrastructure\n• Proactively identified hardware failure signs through periodic system log analysis\n• Complied with internal security audit standards for system configuration"
@@ -689,13 +627,7 @@
       "name": "Observability Platform",
       "period": "2024.06 ~ Present",
       "description": "Homelab infrastructure metrics and logs were scattered per-service, slowing root-cause analysis during incidents. Scraped Proxmox VM/CT metrics via Prometheus node_exporter, ingested logs via Loki Promtail, and managed Grafana dashboard definitions as code (Grafana-as-code) for IaC-reproducible deployment. PromQL + LogQL cross-queries in Grafana Explore unify metrics and logs in a single analysis surface.",
-      "technologies": [
-        "Grafana",
-        "Prometheus",
-        "Loki",
-        "Blackbox Exporter",
-        "Docker"
-      ],
+      "technologies": ["Grafana", "Prometheus", "Loki", "Blackbox Exporter", "Docker"],
       "icon": "📊",
       "tagline": "Monitoring Platform",
       "language": "PromQL",
@@ -709,11 +641,7 @@
       "name": "Security Alert System",
       "period": "2025.01 ~ Present",
       "description": "FortiGate security events were scattered across device syslog and Splunk, delaying the time from event occurrence to operator awareness. Connected Splunk Saved Search webhooks to Slack/Telegram so security events are immediately notified upon detection. Standardized the security event notification and operator response flow.",
-      "technologies": [
-        "Splunk",
-        "Python",
-        "Slack"
-      ],
+      "technologies": ["Splunk", "Python", "Slack"],
       "icon": "🔔",
       "tagline": "Security Alert Automation",
       "language": "Python",
@@ -727,12 +655,7 @@
       "name": "IP Blacklist Platform",
       "period": "2024.12 ~ Present",
       "description": "Threat intelligence feeds were scattered across external sources (AbuseIPDB, Emerging Threats, AlienVault OTX, etc.), requiring separate lookups per source when analyzing malicious IPs. Structured per-source adapters via Flask Blueprints, managed schema versions via SQLAlchemy + Alembic migrations, and built a Next.js frontend for cross-comparing IP reputation, frequency, and distribution. Multiple threat feeds queryable and cross-analyzable from a reproducible pipeline.",
-      "technologies": [
-        "JavaScript",
-        "Flask",
-        "PostgreSQL",
-        "Python"
-      ],
+      "technologies": ["JavaScript", "Flask", "PostgreSQL", "Python"],
       "icon": "🚫",
       "tagline": "Threat Intelligence",
       "language": "JavaScript",
@@ -746,12 +669,7 @@
       "name": "HYCU FSDS Autonomous Driving",
       "period": "2025.11 ~ 2026.02",
       "description": "Needed integrated cone perception and driving control in the Formula Student Driverless Simulator environment. Integrated ROS-based perception/control nodes into Docker containers and validated them in the AirSim simulation environment. Participated in the Hanyang Cyber University Autonomous Driving Competition.",
-      "technologies": [
-        "Python",
-        "ROS",
-        "Docker",
-        "AirSim"
-      ],
+      "technologies": ["Python", "ROS", "Docker", "AirSim"],
       "icon": "🏎️",
       "tagline": "Autonomous Driving Simulation",
       "url": "https://github.com/jclee941/hycu_fsds",
@@ -766,12 +684,7 @@
       "name": "Resume Portfolio",
       "period": "2024.01 ~ Present",
       "description": "Personal monorepo addressing the difficulty of presenting consolidated career evidence to recruiters. Hosts a single-SSoT resume site on Cloudflare Workers Edge alongside MCP tools and an auto-apply pipeline. Operates resume rendering, cover-letter generation, auto-apply, and observability from a single monorepo. ← this site runs on Cloudflare Workers (edge runtime, global CDN).",
-      "technologies": [
-        "Cloudflare Workers",
-        "HTML/CSS",
-        "JSON-LD SEO",
-        "Grafana Loki"
-      ],
+      "technologies": ["Cloudflare Workers", "HTML/CSS", "JSON-LD SEO", "Grafana Loki"],
       "icon": "⚡",
       "tagline": "Portfolio Platform",
       "language": "JavaScript",
@@ -800,13 +713,7 @@
         "Automated provisioning for cluster-rebuild",
         "CI auto-validation pipeline for IaC quality management"
       ],
-      "technologies": [
-        "Terraform",
-        "Proxmox VE",
-        "Cloudflare",
-        "Helm",
-        "k3s"
-      ],
+      "technologies": ["Terraform", "Proxmox VE", "Cloudflare", "Helm", "k3s"],
       "featured": true,
       "displayOrder": 4
     },
@@ -822,13 +729,7 @@
         "Offline support enabling manual access in constrained-network environments",
         "RBAC + JWT design for permission separation and session security"
       ],
-      "technologies": [
-        "Cloudflare Workers",
-        "TypeScript",
-        "Hono",
-        "Drizzle ORM",
-        "D1"
-      ],
+      "technologies": ["Cloudflare Workers", "TypeScript", "Hono", "Drizzle ORM", "D1"],
       "featured": false,
       "displayOrder": 7,
       "language": "TypeScript"
@@ -845,12 +746,7 @@
         "Webhook-based immediate notifications for PR review",
         "Zero-downtime Edge deployment design"
       ],
-      "technologies": [
-        "TypeScript",
-        "Cloudflare Workers",
-        "AI/LLM",
-        "GitHub API"
-      ],
+      "technologies": ["TypeScript", "Cloudflare Workers", "AI/LLM", "GitHub API"],
       "featured": true,
       "displayOrder": 6
     },
@@ -866,13 +762,7 @@
         "Workflow integrating periodic recon with operator notifications",
         "Aligns detection results to MITRE ATT&CK for risk assessment"
       ],
-      "technologies": [
-        "JavaScript",
-        "Subfinder",
-        "httpx",
-        "Nuclei",
-        "Go"
-      ],
+      "technologies": ["JavaScript", "Subfinder", "httpx", "Nuclei", "Go"],
       "featured": false,
       "displayOrder": 8,
       "language": "JavaScript"
@@ -898,7 +788,7 @@
     "badge": "Security Engineer",
     "title": "Jaecheol Lee",
     "titleEn": "Jaecheol Lee",
-    "subtitle": "Security Engineer · Operations Automation · Observability"
+    "subtitle": "Security Engineer · Security Operations · Observability"
   },
   "sectionDescriptions": {
     "resume": "infrastructure experience",
@@ -910,10 +800,10 @@
   },
   "achievements": [
     "Designed and operated Nextrade exchange security infrastructure (FortiGate FGCP active-passive HA, 2 nodes, network segmentation) and passed the FSC main-license review.",
-    "Designed Splunk ES dest_port-based exfiltration rules and NSX-T DFW log correlation rules, and operated a security alert pipeline that calls FortiManager JSON-RPC API via automation for automated policy lookup.",
+    "Designed Splunk ES dest_port-based exfiltration rules and NSX-T DFW log correlation rules, and operated a security alert pipeline that calls FortiManager JSON-RPC API for reviewable policy lookup.",
     "Scraped Proxmox VM/CT metrics with Prometheus node_exporter and managed Grafana dashboard JSON as code (Grafana-as-code), making single-pane observability reproducible via IaC.",
-    "Abstracted Slack, GitHub Actions, and Cloudflare hooks into shared automation workflows with standardized error handling and retry, so new automations deploy via configuration rather than custom scripts.",
-    "Automated NAC exception handling and switch inspection at Metanet's contact-center remote-work environment via Ansible playbooks, including a new-terminal registration pipeline.",
+    "Abstracted Slack, GitHub Actions, and Cloudflare hooks into shared event workflows with standardized error handling and retry, so new notification paths deploy via configuration rather than custom scripts.",
+    "Handled NAC exception processing and switch inspection at Metanet's contact-center remote-work environment through Ansible playbooks, including a new-terminal registration pipeline.",
     "Root-caused a FortiGate SSL-VPN session collision between the endpoint-protection agent and the VPN client via tcpdump, resolved it with FortiClient profile separation, and designed VLAN subnetting for new sites.",
     "Identified and removed unused duplicate firewall rules across KAI closed-network Linux servers via firewall-cmd parsing, cleaning up the firewall policy set."
   ],
@@ -1026,24 +916,17 @@
     }
   ],
   "hope": {
-    "locations": [
-      "Seoul"
-    ],
-    "roles": [
-      "Security Infrastructure",
-      "Security",
-      "Observability",
-      "Automation"
-    ]
+    "locations": ["Seoul"],
+    "roles": ["Security Infrastructure", "Security", "Observability", "DevSecOps"]
   },
   "platformVariants": {
     "wanted": {
-      "headline": "Security Operations Engineer | Financial Infrastructure, SIEM, FortiGate",
-      "about": "Security engineer focused on financial security infrastructure and SOC detection/alert operations.\n\n[Current Position]\nI am considering security operations, SRE/Observability, and DevSecOps roles. My work reduces repeated operations through procedures, scripts, and API integrations while keeping audit and incident response evidence explainable.\n\n[Key Experience]\n- Nextrade exchange security operations: Splunk ES detection rules, Slack/SMS alert workflows, and FortiManager API lookup procedures\n- Nextrade security infrastructure build: FortiGate HA, network segmentation, endpoint security, and Ansible Role-based configuration standardization\n- Financial Security Data Center (FSDC): financial regulator audit response, DB access-control query tuning, and operations evidence management\n- Network and remote-work infrastructure: NSX-T, Wazuh, NAC, VPN, Python/Ansible operational scripts\n\n[Skills]\nSplunk ES, FortiGate/FortiManager, Ansible, Python, Terraform, Docker, Grafana/Prometheus/Loki, Cloudflare Workers, Kubernetes\n\nPortfolio: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
+      "headline": "Security/SRE Engineer | Financial Security Infrastructure · SIEM · FortiGate",
+      "about": "Security/SRE engineer who connects financial-sector security infrastructure and SIEM operations into real operating procedures. I have handled both build and operations work across FortiGate HA segmentation, Splunk ES detection rules, Slack/SMS alerting, FortiManager API lookups, and audit evidence documentation.\n\n[Target Roles]\nI am considering Security Operations, security infrastructure, SRE/Observability, and DevSecOps roles. I reduce repeated response work through documents, scripts, and API integrations while keeping audit and incident-response evidence explainable.\n\n[Key Experience]\n- Nextrade exchange security operations: Splunk ES Saved Searches, Webhooks, Slack/SMS alerts, and FortiManager API lookups\n- Nextrade security infrastructure build: FortiGate HA, network segmentation, endpoint security, and Ansible Role-based configuration management\n- Financial Security Data Center (FSDC): financial regulator audit response, DB access-control query tuning, and DLP policy artifact management\n- Network and remote-work infrastructure: NSX-T, Wazuh, NAC, VPN, and Python/Ansible operational scripts\n\n[Skills]\nSplunk ES, FortiGate/FortiManager, FortiAnalyzer, Ansible, Python, Terraform, Docker, Linux, Grafana/Prometheus/Loki, Cloudflare Workers\n\nPortfolio: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
     },
     "jobkorea": {
-      "headline": "Security Operations | Financial Infra and SIEM",
-      "about": "[Target Roles]\nI am considering security operations, security infrastructure, SRE/Observability, and DevSecOps roles. I standardize repeated operating procedures and leave clear evidence for audits and incident response.\n\n[Career Summary]\n- ITCEN CTS: Nextrade exchange security operations with Splunk ES detection rules, Slack/SMS alert workflows, and FortiManager API lookup procedures\n- Gaonnuri Information Systems: Nextrade security infrastructure build with FortiGate HA, network segmentation, endpoint security, and Ansible Role-based configuration standardization\n- Quantec Investment Management: Financial Security Data Center (FSDC) operations, financial regulator audit response, DB access-control query tuning, and evidence management\n- Jointree / Metanet M Platform: NSX-T, Wazuh, NAC, VPN, and Python/Ansible operational scripts\n- MT Data: KAI closed-network Linux/OA operations, patching, and firewall policy management\n\n[Tech Stack]\nSplunk ES, FortiGate/FortiManager, FortiAnalyzer, Ansible, Python, Terraform, Docker, Linux, NSX-T, Wazuh, Grafana/Prometheus/Loki, Cloudflare Workers\n\nPortfolio: https://resume.jclee.me"
+      "headline": "Security/SRE | Financial Security · SIEM",
+      "about": "[Target Roles]\nI am considering Security Operations, security infrastructure, SRE/Observability, and DevSecOps roles. I connect FortiGate, Splunk ES, FortiManager API, and Python/Ansible work to operating procedures that reduce repeated response work and leave explainable evidence for audits and incidents.\n\n[Career Summary]\n- ITCEN CTS: Nextrade exchange security operations with Splunk ES Saved Searches, Webhooks, Slack/SMS alerts, and FortiManager API lookup procedures\n- Gaonnuri Information Systems: Nextrade security infrastructure build with FortiGate HA, network segmentation, endpoint security, and Ansible Role-based configuration management\n- Quantec Investment Management: Financial Security Data Center (FSDC) operations, financial regulator audit response, DB access-control query tuning, and DLP policy artifact management\n- Jointree / Metanet M Platform: NSX-T, Wazuh, NAC, VPN, and Python/Ansible operational scripts\n- MT Data: KAI closed-network Linux/OA operations, patching, and firewall policy change-history management\n\n[Tech Stack]\nSplunk ES, FortiGate/FortiManager, FortiAnalyzer, Ansible, Python, Terraform, Docker, Linux, NSX-T, Wazuh, Grafana/Prometheus/Loki, Cloudflare Workers\n\nPortfolio: https://resume.jclee.me"
     }
   },
   "coverLetter": {

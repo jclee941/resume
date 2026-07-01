@@ -48,7 +48,7 @@
     "coreCompetencies": [
       "FortiGate HA·망분리·엔드포인트 보안을 본인가·감사 대응 문서와 함께 운영한 경험",
       "Splunk ES Saved Search, Webhook, Slack/SMS를 연결해 이벤트 인지·분류·알림 흐름을 만든 경험",
-      "FortiManager JSON-RPC API로 방화벽 정책 조회를 자동화하고 변경 근거를 추적한 경험",
+      "FortiManager JSON-RPC API로 방화벽 정책 조회를 스크립트화하고 변경 근거를 추적한 경험",
       "FSDC 감사 대응에서 DLP 정책, DB 접근제어, 운영 증적을 재사용 가능한 산출물로 만든 경험",
       "Grafana·Prometheus·Loki로 메트릭과 로그를 함께 보는 관측성 스택을 운영한 경험",
       "Terraform·Ansible로 장비·edge·홈랩 구성을 코드 리뷰 가능한 형태로 관리한 경험"

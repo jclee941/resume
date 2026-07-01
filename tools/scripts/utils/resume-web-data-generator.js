@@ -8,27 +8,27 @@ const {
 
 const RESUME_STATS_BY_INDEX = {
   ko: [
-    ['Splunk ES', '탐지·대응', '보안 자동화'],
+    ['Splunk ES', '탐지·대응', '보안 이벤트 흐름'],
     ['FortiGate HA', '5계층 망분리', '본인가 대응'],
-    ['금융DC 운영', '감사 대응', 'Python 자동화'],
+    ['금융DC 운영', '감사 대응', 'Python Runbook'],
     ['NSX-T', '마이크로세그멘테이션', '침입 탐지'],
-    ['Ansible 자동화', 'NAC', 'VPN 모니터링'],
+    ['Ansible Runbook', 'NAC', 'VPN 모니터링'],
     ['Linux 운영', '방화벽 정책', '패치 관리'],
   ],
   en: [
-    ['Splunk ES', 'Detection & Response', 'Security Automation'],
+    ['Splunk ES', 'Detection & Response', 'Security Event Flow'],
     ['FortiGate HA', '5-Tier Segmentation', 'FSC Approval'],
-    ['Financial DC Ops', 'Audit Response', 'Python Automation'],
+    ['Financial DC Ops', 'Audit Response', 'Python Runbooks'],
     ['NSX-T', 'Microsegmentation', 'Intrusion Detection'],
-    ['Ansible Automation', 'NAC', 'VPN Monitoring'],
+    ['Ansible Runbooks', 'NAC', 'VPN Monitoring'],
     ['Linux Ops', 'Firewall Policy', 'Patch Management'],
   ],
   ja: [
-    ['Splunk ES', '検知・対応', 'セキュリティ自動化'],
+    ['Splunk ES', '検知・対応', 'セキュリティイベントフロー'],
     ['FortiGate HA', '5階層ネットワーク分離', '本認可対応'],
-    ['金融DC運用', '監査対応', 'Python自動化'],
+    ['金融DC運用', '監査対応', 'Python Runbook'],
     ['NSX-T', 'マイクロセグメンテーション', '侵入検知'],
-    ['Ansible自動化', 'NAC', 'VPNモニタリング'],
+    ['Ansible Runbook', 'NAC', 'VPNモニタリング'],
     ['Linux運用', 'ファイアウォールポリシー', 'パッチ管理'],
   ],
 };
@@ -38,17 +38,17 @@ const CAREER_EN_OVERRIDES = {
     title: 'ITCEN CTS Co., Ltd.',
     period: '2025.03 ~ 2026.02',
     description:
-      'Built integrated security operations by connecting Splunk ES with Slack through alert workflows and developing a FortiManager API-based firewall policy lookup tool.',
+      'Connected Splunk ES Saved Searches, Webhooks, Slack/SMS alerts, and FortiManager API policy lookups into a security-event operating flow for exchange operations.',
   },
   '(주)가온누리정보시스템': {
     title: 'Gaonnuri Information Systems Co., Ltd.',
     description:
-      'Eliminated single points of failure for a financial trading system by configuring FortiGate HA and standardized security appliance setup with Ansible Role to reduce the handoff cost from build to operations phases.',
+      'Built FortiGate HA, network segmentation, and endpoint-security controls for the Nextrade exchange track, then documented the configuration evidence needed for approval and operations handoff.',
   },
   '(주)콴텍투자일임': {
     title: 'Quantec Investment Management Co., Ltd.',
     description:
-      'Established change traceability and auditability for cloud infrastructure by codifying VPC/Subnet/SG with Terraform, and resolved the difficulty of correlating distributed security logs through integrated CloudTrail and GuardDuty analysis.',
+      'Operated Financial Security Data Center infrastructure and audit evidence, including DLP policy artifacts, DB access-control query tuning, and PB platform validation work.',
   },
   '(주)조인트리': {
     title: 'Jointree Co., Ltd.',
@@ -58,7 +58,7 @@ const CAREER_EN_OVERRIDES = {
   '(주)메타넷엠플랫폼': {
     title: 'Metanet M Platform Co., Ltd.',
     description:
-      'Solved server configuration consistency and remote-access visibility for a large-scale remote work environment by building Python and Ansible automation, and operated FortiGate VPN infrastructure for new contact-center sites.',
+      'Handled VPN/NAC operations during a large contact-center remote-work transition, using Python and Ansible runbooks for endpoint registration, switch checks, and server configuration tasks.',
   },
   '(주)엠티데이타': {
     title: 'MT Data Co., Ltd.',
@@ -73,7 +73,7 @@ const PROJECT_EN_OVERRIDES = {
       'Built unified observability for homelab infrastructure to remove the need to switch between per-service consoles by integrating Prometheus, Loki, and Grafana into a single dashboard.',
     tagline: 'Monitoring Platform',
   },
-  'Automation': {
+  Automation: {
     description:
       'Centralized scattered automation tasks such as alerts, deployments, and data collection into reusable workflow patterns.',
     tagline: 'Automation',

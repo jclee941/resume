@@ -16,13 +16,13 @@ function escapeHtml(unsafe) {
 
 const SKILL_DATA_FALLBACK = {
   securityAutomation: {
-    title: 'Security Automation',
+    title: 'Security Response',
     icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>',
     skills: [
       {
         name: 'Splunk ES (SIEM/SOAR)',
         level: 95,
-        evidence: 'Designed custom detection rules, automated response pipeline',
+        evidence: 'Designed custom detection rules and alert response pipeline',
       },
       {
         name: 'FortiGate/FortiManager',
@@ -96,7 +96,7 @@ const SKILL_DATA_FALLBACK = {
       {
         name: 'Ansible',
         level: 82,
-        evidence: 'Automated configuration management across the node fleet',
+        evidence: 'Configuration management across the node fleet',
       },
       {
         name: 'Docker',
@@ -106,23 +106,23 @@ const SKILL_DATA_FALLBACK = {
     ],
   },
   cicdAutomation: {
-    title: 'CI/CD & Automation',
+    title: 'CI/CD & Workflow',
     icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>',
     skills: [
       {
         name: 'GitHub Actions',
         level: 88,
-        evidence: 'Automated resume sync to JobKorea, CI/CD pipelines',
+        evidence: 'Resume sync to JobKorea and CI/CD pipelines',
       },
       {
-        name: 'Automation',
+        name: 'Workflow Tooling',
         level: 85,
-        evidence: 'Workflow automation for job applications and data sync',
+        evidence: 'Workflow tooling for job applications and data sync',
       },
       {
         name: 'Python scripting',
         level: 82,
-        evidence: 'Custom automation scripts for data processing',
+        evidence: 'Custom scripts for data processing',
       },
     ],
   },
@@ -130,8 +130,8 @@ const SKILL_DATA_FALLBACK = {
     title: 'Backend & API',
     icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>',
     skills: [
-      { name: 'Node.js', level: 80, evidence: 'Built API clients for job portal automation' },
-      { name: 'Python', level: 85, evidence: 'Backend services and automation scripts' },
+      { name: 'Node.js', level: 80, evidence: 'Built API clients for job portal workflows' },
+      { name: 'Python', level: 85, evidence: 'Backend services and operational scripts' },
       { name: 'PostgreSQL', level: 78, evidence: 'DB query tuning and schema design' },
     ],
   },
