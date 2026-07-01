@@ -1,0 +1,45 @@
+# 다음 액션
+
+## 프로필 sync
+
+SSoT 문구를 플랫폼별 생성 데이터에 반영한다.
+
+```bash
+npm run sync:data
+```
+
+플랫폼 프로필 동기화는 세션/로그인이 필요하므로, 세션이 준비된 상태에서만 실행한다.
+
+## 잡코리아/사람인 검토 큐 제출
+
+기존 문서: `applications/_auto-apply-runs/HOW-TO-SUBMIT.md`
+
+원칙:
+- 먼저 dry-run
+- 세션 유효성 확인
+- `--apply --max=N`으로 제한 제출
+- 자소서 fallback 문구는 제출 전 직접 검토
+
+## 오늘 바로 할 수 있는 지원 흐름
+
+1. `profile-copy.md`의 Wanted/JobKorea 문구 반영
+2. 보안/SRE/DevSecOps 키워드로 공고 검색
+3. `application-scorecard.md` 기준 7점 이상만 선별
+4. 선별 공고에 맞춰 `outreach-templates.md` 첫 문단의 `[공고 키워드]`만 교체
+5. 지원 후 3영업일 내 팔로업
+
+## 지원하면 좋은 검색어
+
+- 보안 운영
+- 보안 인프라
+- 정보보안 엔지니어
+- DevSecOps
+- SRE
+- Observability
+- SIEM
+- Splunk
+- FortiGate
+- 네트워크 보안
+- 클라우드 보안
+- 인프라 자동화
+
