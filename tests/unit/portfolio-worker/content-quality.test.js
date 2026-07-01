@@ -12,6 +12,16 @@ const path = require('path');
 const MASTER_DIR = path.resolve(__dirname, '../../../packages/data/resumes/master');
 const PORTFOLIO_DIR = path.resolve(__dirname, '../../../apps/portfolio');
 const MASTER_LOCALE_FILES = ['resume_data.json', 'resume_data_en.json', 'resume_data_ja.json'];
+const STALE_ROLE_LABELS = {
+  'resume_data.json': [/자동화/],
+  'resume_data_en.json': [/\bAutomation\b/],
+  'resume_data_ja.json': [/標準化/, /自動化/],
+};
+const STALE_PROFILE_TERMS = {
+  'resume_data.json': [/자동화/],
+  'resume_data_en.json': [/\b(?:automation|automated|automating)\b/i],
+  'resume_data_ja.json': [/自動化/],
+};
 const DATA_FILES = [
   { dir: MASTER_DIR, file: 'resume_data.json' },
   { dir: MASTER_DIR, file: 'resume_data_en.json' },
@@ -49,6 +59,8 @@ function collectNamedStrings(node, rootPath = [], out = []) {
 function collectProfileCopy(data) {
   return [
     ...collectNamedStrings(data.summary || {}, ['summary']),
+    ...collectNamedStrings(data.hero || {}, ['hero']),
+    ...collectNamedStrings(data.achievements || [], ['achievements']),
     ...collectNamedStrings(data.platformVariants || {}, ['platformVariants']),
     ...collectNamedStrings(data.careerSummary || {}, ['careerSummary']),
   ].filter(({ path }) => !/^(certifications|awards)\.\d+\.name$/.test(path));
@@ -100,10 +112,13 @@ describe('SSoT content quality', () => {
 
       test(`${file} has no AI-slop profile terms outside certificate/award names`, () => {
         const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        const staleProfileTerms = STALE_PROFILE_TERMS[file] || [];
         const offenders = collectProfileCopy(data)
           .map(({ path: jsonPath, value }) => {
             const matches = [
-              /자동화/.test(value) ? '자동화' : null,
+              ...staleProfileTerms
+                .filter((pattern) => pattern.test(value))
+                .map((pattern) => pattern.toString()),
               /AI\s*(?:에이전트|agents?|エージェント)/i.test(value) ? 'AI agent term' : null,
             ].filter(Boolean);
             return matches.length > 0
@@ -119,11 +134,28 @@ describe('SSoT content quality', () => {
         expect(offenders).toEqual([]);
       });
 
+      test(`${file} has no stale automation-role label in current or hope roles`, () => {
+        const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        const staleLabels = STALE_ROLE_LABELS[file] || [];
+        const roleStrings = [
+          ...collectNamedStrings((data.current && data.current.desiredRoles) || [], [
+            'current',
+            'desiredRoles',
+          ]),
+          ...collectNamedStrings((data.hope && data.hope.roles) || [], ['hope', 'roles']),
+        ];
+        const offenders = roleStrings.filter(({ value }) =>
+          staleLabels.some((pattern) => pattern.test(value))
+        );
+
+        expect(offenders).toEqual([]);
+      });
+
       test(`${file} has no financial security automation phrasing in platform variants`, () => {
         const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-        const offenders = collectNamedStrings(data.platformVariants || {}, ['platformVariants']).filter(
-          ({ value }) => /financial security automation/i.test(value)
-        );
+        const offenders = collectNamedStrings(data.platformVariants || {}, [
+          'platformVariants',
+        ]).filter(({ value }) => /financial security automation/i.test(value));
 
         expect(offenders).toEqual([]);
       });

@@ -7,7 +7,7 @@ export function escapeHtml(text) {
 export function getTechClass(tech) {
   const map = {
     Splunk: 'splunk',
-    'Webhook Automation': 'webhook',
+    'Webhook Workflow': 'webhook',
     FortiManager: 'fortimanager',
     Python: 'python',
     Docker: 'docker',

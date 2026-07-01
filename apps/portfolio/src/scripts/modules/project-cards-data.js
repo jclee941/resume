@@ -6,7 +6,7 @@ export const PROJECTS = [
     title: '넥스트레이드 매매체결시스템 보안 운영',
     period: '2025.03 ~ 2026.02',
     icon: 'shield',
-    stack: ['Splunk', 'Webhook Automation', 'FortiManager', 'Python', 'Docker'],
+    stack: ['Splunk', 'Webhook Workflow', 'FortiManager', 'Python', 'Docker'],
     metrics: [
       { value: 'Custom', label: 'Detection Rules', icon: 'search' },
       { value: 'Continuous', label: 'Monitoring', icon: 'eye' },
@@ -17,7 +17,7 @@ export const PROJECTS = [
     achievements: [
       'Splunk ES 탐지 룰 직접 설계·운영',
       'Saved Search → webhook relay → Slack/SMS 실시간 알림 파이프라인 구축',
-      'FortiManager API 연동 자동화',
+      'FortiManager API 연동 조회 절차',
       '보안 이벤트 탐지 범위 확장',
     ],
     architecture: `┌────────────┐
@@ -37,7 +37,7 @@ export const PROJECTS = [
 └────────────┘ └────────────┘`,
     tools: [
       { icon: 'search', name: 'Splunk ES' },
-      { icon: 'automation', name: 'Webhook Automation' },
+      { icon: 'automation', name: 'Webhook Workflow' },
       { icon: 'brick', name: 'FortiManager' },
       { icon: 'code', name: 'Python' },
       { icon: 'container', name: 'Docker' },
@@ -59,7 +59,7 @@ export const PROJECTS = [
     achievements: [
       '망분리 및 엔드포인트 보안 구축·운영',
       'FortiGate HA 클러스터 구성',
-      '방화벽 정책 표준화 및 자동화',
+      '방화벽 정책 표준화 및 절차화',
       'FSC 본인가 통과',
     ],
     architecture: `┌─────────┐

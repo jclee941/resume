@@ -25,17 +25,17 @@ export const ROLE_PROFILES = [
     proof: {
       ko: 'Cloudflare Workers, Terraform, 보안 검증',
       en: 'Cloudflare Workers, Terraform, GitHub Actions, security checks',
-      ja: 'Cloudflare Workers、Terraform、検証自動化',
+      ja: 'Cloudflare Workers、Terraform、検証フロー',
     },
     keywords: ['Terraform', 'Resume Portfolio', 'AI GitHub PR Reviewer', 'SafetyWallet'],
   },
   {
     id: 'automation',
-    label: 'Automation',
+    label: 'Response Workflow',
     proof: {
-      ko: '운영 절차 표준화, API 연동 자동화',
+      ko: '운영 절차, API 연동, 이벤트 흐름',
       en: 'Repeatable operating procedures, API integration, event workflows',
-      ja: '運用手順、API連携、自動化',
+      ja: '運用手順、API連携、イベントフロー',
     },
     keywords: ['Security Alert', 'Bug Bounty', 'AI GitHub PR Reviewer', 'SafetyWallet'],
   },
