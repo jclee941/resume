@@ -658,7 +658,17 @@
       "tagline": "모니터링 플랫폼",
       "language": "PromQL",
       "githubUrl": null,
-      "demoUrl": "https://grafana.jclee.me",
+      "demoUrl": "https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b",
+      "dashboards": [
+        {
+          "name": "Grafana",
+          "url": "https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b"
+        },
+        {
+          "name": "ELK",
+          "url": "https://kibana.jclee.me/s/portfolio-demo/app/dashboards?auth_provider_hint=portfolio_demo#/view/portfolio-demo-dashboard"
+        }
+      ],
       "featured": true,
       "displayOrder": 2
     },

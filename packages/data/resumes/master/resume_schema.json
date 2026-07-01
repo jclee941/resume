@@ -889,6 +889,25 @@
             "format": "uri",
             "description": "Demo URL"
           },
+          "dashboards": {
+            "type": "array",
+            "description": "Named live dashboard links",
+            "items": {
+              "type": "object",
+              "required": ["name", "url"],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "url": {
+                  "type": "string",
+                  "format": "uri"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
           "highlights": {
             "type": "array",
             "description": "Project highlights",

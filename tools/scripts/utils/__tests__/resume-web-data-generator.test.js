@@ -156,6 +156,25 @@ describe('generateWebData → content policy', () => {
   });
 });
 
+describe('generateWebData → projects[] live demo dashboards', () => {
+  it('propagates Observability Platform Grafana and ELK dashboard links from SSoT', () => {
+    const out = generateWebData(ssot, 'ko');
+    const project = out.projects.find((item) => item.id === 'observability-platform');
+
+    assert.ok(project, 'Observability Platform must be projected');
+    assert.deepEqual(project.dashboards, [
+      {
+        name: 'Grafana',
+        url: 'https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b',
+      },
+      {
+        name: 'ELK',
+        url: 'https://kibana.jclee.me/s/portfolio-demo/app/dashboards?auth_provider_hint=portfolio_demo#/view/portfolio-demo-dashboard',
+      },
+    ]);
+  });
+});
+
 describe('generateWebData → resume[].stats (the ACTUAL static-card render path)', () => {
   // data-processor.js builds EN/JA static cards from projectDataEn.resume[] /
   // projectDataJa.resume[] (the `resume` array of each per-language data_*.json),

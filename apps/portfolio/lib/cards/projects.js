@@ -9,9 +9,16 @@ function buildProjectTitle(project, link, hasLink) {
     : `<div class="project-link-title">${titleContent}</div>`;
 }
 
+function projectDashboards(project) {
+  return Array.isArray(project.dashboards)
+    ? project.dashboards.filter((dashboard) => dashboard && dashboard.name && dashboard.url)
+    : [];
+}
+
 function buildProjectMeta(project, githubUrl, demoUrl) {
   const language = project.language ? escapeHtml(String(project.language)) : null;
   const metaBadges = [];
+  const dashboards = projectDashboards(project);
 
   if (language) {
     metaBadges.push(
@@ -21,7 +28,7 @@ function buildProjectMeta(project, githubUrl, demoUrl) {
 
   metaBadges.push('<span class="project-meta-badge project-meta-badge--active">ACTIVE</span>');
 
-  if (demoUrl) {
+  if (demoUrl || dashboards.length > 0) {
     metaBadges.push('<span class="project-meta-badge project-meta-badge--live">LIVE</span>');
   } else if (githubUrl) {
     metaBadges.push('<span class="project-meta-badge project-meta-badge--repo">REPO</span>');
@@ -31,20 +38,34 @@ function buildProjectMeta(project, githubUrl, demoUrl) {
 }
 
 function buildProjectLinks(project, githubUrl, demoUrl) {
-  return githubUrl || demoUrl
-    ? `<div class="project-links">
-              ${
-                githubUrl
-                  ? `<a href="${escapeHtml(githubUrl)}" target="_blank" rel="noopener noreferrer" class="project-link-btn" aria-label="Open ${escapeHtml(project.title)} GitHub repository (opens in new tab)">[GitHub]</a>`
-                  : ''
-              }
-              ${
-                demoUrl
-                  ? `<a href="${escapeHtml(demoUrl)}" target="_blank" rel="noopener noreferrer" class="project-link-btn" aria-label="Open ${escapeHtml(project.title)} demo (opens in new tab)">[Demo]</a>`
-                  : ''
-              }
-            </div>`
-    : '';
+  const dashboards = projectDashboards(project);
+  const linkFragments = [];
+
+  if (githubUrl) {
+    linkFragments.push(
+      `<a href="${escapeHtml(githubUrl)}" target="_blank" rel="noopener noreferrer" class="project-link-btn" aria-label="Open ${escapeHtml(project.title)} GitHub repository (opens in new tab)">[GitHub]</a>`
+    );
+  }
+
+  if (dashboards.length > 0) {
+    for (const dashboard of dashboards) {
+      linkFragments.push(
+        `<a href="${escapeHtml(dashboard.url)}" target="_blank" rel="noopener noreferrer" class="project-link-btn" aria-label="Open ${escapeHtml(project.title)} ${escapeHtml(dashboard.name)} dashboard (opens in new tab)">[${escapeHtml(dashboard.name)}]</a>`
+      );
+    }
+  } else if (demoUrl) {
+    linkFragments.push(
+      `<a href="${escapeHtml(demoUrl)}" target="_blank" rel="noopener noreferrer" class="project-link-btn" aria-label="Open ${escapeHtml(project.title)} demo (opens in new tab)">[Demo]</a>`
+    );
+  }
+
+  if (linkFragments.length === 0) {
+    return '';
+  }
+
+  return `<div class="project-links">
+              ${linkFragments.join('')}
+            </div>`;
 }
 
 /**
@@ -65,8 +86,10 @@ function generateProjectCards(projectsData, dataHash) {
     .map((project, idx) => {
       const githubUrl = project.githubUrl || project.repoUrl;
       const demoUrl = project.demoUrl || project.liveUrl;
-      const hasLink = demoUrl || githubUrl;
-      const link = demoUrl || githubUrl;
+      const dashboards = projectDashboards(project);
+      const dashboardUrl = dashboards[0]?.url;
+      const hasLink = demoUrl || dashboardUrl || githubUrl;
+      const link = demoUrl || dashboardUrl || githubUrl;
       const titleElement = buildProjectTitle(project, link, hasLink);
       const metaLine = buildProjectMeta(project, githubUrl, demoUrl);
       const projectLinks = buildProjectLinks(project, githubUrl, demoUrl);
