@@ -27,6 +27,7 @@ const ICON_PATHS = {
     '<path d="M12 18v4"/><path d="M8.5 14.5a5 5 0 0 1 7 0"/><path d="M5 11a10 10 0 0 1 14 0"/><circle cx="12" cy="12" r="1.5"/>',
   automation:
     '<path d="M12 3v3"/><path d="M12 18v3"/><path d="M3 12h3"/><path d="M18 12h3"/><circle cx="12" cy="12" r="4"/><path d="m15 9 3-3"/><path d="m6 18 3-3"/>',
+  bot: '<rect x="6" y="8" width="12" height="10" rx="2"/><path d="M12 4v4"/><path d="M9 13h.01"/><path d="M15 13h.01"/><path d="M10 18v2"/><path d="M14 18v2"/>',
   brick: '<path d="M4 8h16v10H4z"/><path d="M4 13h16"/><path d="M9 8v5"/><path d="M15 13v5"/>',
   chart: '<path d="M4 19h16"/><path d="M7 16V9"/><path d="M12 16V5"/><path d="M17 16v-4"/>',
   check: '<path d="m5 12 4 4L19 6"/>',
@@ -38,6 +39,7 @@ const ICON_PATHS = {
   eye: '<path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6z"/><circle cx="12" cy="12" r="2.5"/>',
   graduation:
     '<path d="m3 8 9-4 9 4-9 4z"/><path d="M7 10v5c0 1.7 2.2 3 5 3s5-1.3 5-3v-5"/><path d="M21 8v6"/>',
+  git: '<circle cx="6" cy="6" r="2"/><circle cx="18" cy="18" r="2"/><circle cx="6" cy="18" r="2"/><path d="M8 6h4a4 4 0 0 1 4 4v6"/><path d="M8 18h8"/>',
   grid: '<path d="M4 4h6v6H4z"/><path d="M14 4h6v6h-6z"/><path d="M4 14h6v6H4z"/><path d="M14 14h6v6h-6z"/>',
   layers: '<path d="m12 3 9 5-9 5-9-5z"/><path d="m3 12 9 5 9-5"/><path d="m3 16 9 5 9-5"/>',
   network:

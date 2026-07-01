@@ -1,3 +1,5 @@
+import { AUTOMATION_PROJECTS } from './project-cards-automation-data.js';
+
 export const PROJECTS = [
   {
     id: 'nexttrade-security-ops',
@@ -178,4 +180,5 @@ export const PROJECTS = [
       { icon: 'search', name: 'Wazuh' },
     ],
   },
+  ...AUTOMATION_PROJECTS,
 ];
