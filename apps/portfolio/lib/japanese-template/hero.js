@@ -31,8 +31,16 @@ function applyJapaneseHero(html) {
       '金融セキュリティ運用、SIEM検知自動化、IaC可観測性の経験を、採用検討可能な根拠として整理します。'
     )
     .replace(
+      /금융권 보안 인프라,\s+SIEM 탐지·알림,\s+IaC 관측성 경험을\s+운영 근거 중심으로\s+정리합니다\./g,
+      '金融セキュリティインフラ、SIEM検知・通知、IaC可観測性の経験を、運用根拠を中心に整理します。'
+    )
+    .replace(
       /보안 운영 · SRE · DevSecOps 역할 검토 가능/g,
       'セキュリティ運用・SRE・DevSecOpsを検討可能'
+    )
+    .replace(
+      /보안 운영 · SRE · DevSecOps 역할 검토 중/g,
+      'セキュリティ運用・SRE・DevSecOpsを検討中'
     )
     .replace(/보안 운영 · SRE · DevSecOps 채용 검토 가능/g, '採用検討・面接相談が可能')
     .replace(/보안 운영 · SRE · DevSecOps 검토 가능/g, 'セキュリティ運用・SRE・DevSecOpsを検討可能')
@@ -43,7 +51,12 @@ function applyJapaneseHero(html) {
       '取引所ネットワーク分離・エンドポイントセキュリティ構築・運用'
     )
     .replace(/Splunk ES 탐지 룰·알림 워크플로 정리/g, 'Splunk ES検知ルール・通知ワークフロー整理')
+    .replace(/Splunk ES 탐지 룰·알림 워크플로 운영/g, 'Splunk ES検知ルール・通知ワークフロー運用')
     .replace(/FortiManager API·IaC 기반 운영 자동화/g, 'FortiManager API・IaCベースの運用自動化')
+    .replace(
+      /FortiManager API·IaC 기반 운영 절차 정리/g,
+      'FortiManager API・IaCベースの運用手順整理'
+    )
     .replace(/거래소 보안 인프라 구축·운영/g, '取引所セキュリティインフラの構築・運用')
     .replace(
       /넥스트레이드 보안 구축·운영/g,
@@ -73,8 +86,10 @@ function applyJapaneseHero(html) {
     .replace(/aria-label="검토 경로"/g, 'aria-label="確認ルート"')
     .replace(/운영 맥락/g, '運用文脈')
     .replace(/금융 보안 운영 경력/g, '金融セキュリティ運用経験')
+    .replace(/금융권 보안 운영 경력/g, '金融セキュリティ運用経験')
     .replace(/자동화 방식/g, '自動化アプローチ')
     .replace(/탐지·IaC·API 흐름/g, '検知・IaC・APIフロー')
+    .replace(/탐지·IaC·API 연결/g, '検知・IaC・API連携')
     .replace(/채용 자료/g, '採用資料')
     .replace(/PDF·메일 연결/g, 'PDF・メール連携');
 }
