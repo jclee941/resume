@@ -32,6 +32,14 @@ function loadBrowserTemplate() {
   }
 }
 
+function isLicenseField(name) {
+  return (
+    name === 'License.index' ||
+    name === 'InputStat.LicenseInputStat' ||
+    name.startsWith('License[')
+  );
+}
+
 /**
  * Create a pattern from a field name by replacing indices with wildcards.
  * e.g., "Career[c1].C_Name" → "Career[*].C_Name"
@@ -44,11 +52,14 @@ function fieldPattern(name) {
  * Overlay target fields onto browser template fields.
  * Matches by field pattern (ignoring index differences).
  */
-function overlayTemplate(templateFields, targetFields) {
+export function overlayTemplate(templateFields, targetFields) {
+  const templateFieldsToMerge = targetFields.some((field) => isLicenseField(field.name))
+    ? templateFields.filter((field) => !isLicenseField(field.name))
+    : templateFields;
   const patternMap = new Map();
 
   // Group template fields by pattern
-  for (const f of templateFields) {
+  for (const f of templateFieldsToMerge) {
     const p = fieldPattern(f.name);
     if (!patternMap.has(p)) patternMap.set(p, []);
     patternMap.get(p).push(f);
@@ -78,7 +89,12 @@ function overlayTemplate(templateFields, targetFields) {
     }
   }
 
-  return templateFields;
+  return targetFields.some((field) => isLicenseField(field.name))
+    ? [
+        ...templateFieldsToMerge,
+        ...targetFields.filter((field) => isLicenseField(field.name)),
+      ]
+    : templateFieldsToMerge;
 }
 /**
  * Execute JobKorea sync purely via API (no browser automation).
