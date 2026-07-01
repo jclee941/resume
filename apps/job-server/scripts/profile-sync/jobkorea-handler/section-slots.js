@@ -74,6 +74,34 @@ async function deleteExistingIntroEntries(page) {
   });
 }
 
+async function deleteExistingLicenseEntries(page) {
+  return page.evaluate(() => {
+    const originalConfirm = window.confirm;
+    window.confirm = () => true;
+    const licenseNames = $('#frm1')
+      .serializeArray()
+      .filter((f) => /^License\[[^\]]+\]\.Lc_Name$/.test(f.name));
+    let deleted = 0;
+
+    try {
+      for (const field of licenseNames) {
+        const input = document.getElementsByName(field.name)[0];
+        const container = input?.closest('.container');
+        const deleteButton = container?.querySelector(
+          'button.buttonDeleteField, button.buttonDelete'
+        );
+        if (!deleteButton) continue;
+        deleteButton.click();
+        deleted++;
+      }
+    } finally {
+      window.confirm = originalConfirm;
+    }
+
+    return deleted;
+  });
+}
+
 async function recreateCareerEntries(handler, page, needed) {
   if (needed <= 0) return;
 
@@ -132,6 +160,21 @@ async function recreateIntroEntries(handler, page, needed) {
   }
 
   await addJobKoreaEntrySlots(handler, page, 'ResumeProfile', needed, { force: true });
+}
+
+async function recreateLicenseEntries(handler, page, needed) {
+  if (needed <= 0) return;
+
+  const deleted = await deleteExistingLicenseEntries(page);
+  if (deleted > 0) {
+    log(
+      `Deleted ${deleted} existing License entr${deleted === 1 ? 'y' : 'ies'} before rebuild`,
+      'info',
+      'jobkorea'
+    );
+  }
+
+  await addJobKoreaEntrySlots(handler, page, 'License', needed, { force: true });
 }
 
 async function addJobKoreaEntrySlots(handler, page, prefix, needed, options = {}) {
@@ -263,6 +306,8 @@ export async function createJobKoreaEntrySlots(handler, page, ssot, options = {}
       await recreateCareerEntries(handler, page, needed);
     } else if (prefix === 'ResumeProfile' && options.recreateIntroEntries === true) {
       await recreateIntroEntries(handler, page, needed);
+    } else if (prefix === 'License' && options.recreateLicenseEntries === true) {
+      await recreateLicenseEntries(handler, page, needed);
     } else {
       await addJobKoreaEntrySlots(handler, page, prefix, needed);
     }

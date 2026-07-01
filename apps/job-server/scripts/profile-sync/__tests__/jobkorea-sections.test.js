@@ -29,6 +29,12 @@ function countMatching(fields, regex) {
   return fields.filter((field) => regex.test(field.name)).length;
 }
 
+function valuesForName(fields, name) {
+  return fields
+    .filter((field) => field.name === name)
+    .map((field) => String(field.value ?? ''));
+}
+
 describe('jobkorea-sections helpers', () => {
   it('toYYYYMM maps YYYY.MM to YYYYMM', () => {
     assert.strictEqual(toYYYYMM('2024.03'), '202403');
@@ -500,9 +506,8 @@ describe('mapLicensesToFormFields', () => {
 
   it('filters out certifications without date (준비중)', () => {
     const fields = mapLicensesToFormFields({ certifications: certs });
-    const byName = toMap(fields);
 
-    assert.strictEqual(byName.get('License.index'), 'c1,c2');
+    assert.deepStrictEqual(valuesForName(fields, 'License.index'), ['c1', 'c2']);
     assert.strictEqual(countMatching(fields, /^License\[c\d+\]\.Lc_Name$/), 2);
   });
 

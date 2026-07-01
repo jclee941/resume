@@ -58,7 +58,9 @@ export function mapLicensesToFormFields(ssot, indices) {
     pushField(fields, `License[${key}].Lc_Status`, cert?.status || '');
     pushField(fields, `License[${key}].Lc_Note`, cert?.note || '');
   });
-  pushField(fields, 'License.index', keys.slice(0, validCerts.length).join(','));
+  for (const key of keys.slice(0, validCerts.length)) {
+    pushField(fields, 'License.index', key);
+  }
   pushField(fields, 'InputStat.LicenseInputStat', 'True');
   return fields;
 }
