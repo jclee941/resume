@@ -1007,6 +1007,7 @@
     "email": "qws941@kakao.com",
     "phone": "010-5757-9592",
     "github": "https://github.com/jclee941",
+    "githubBot": "https://github.com/jclee-bot",
     "linkedin": "https://linkedin.com/in/jclee0109",
     "velog": "https://velog.io/@qws941",
     "website": "https://resume.jclee.me",
@@ -1034,12 +1035,12 @@
   },
   "platformVariants": {
     "wanted": {
-      "headline": "OA → Security | 金融セキュリティ基盤 | FSC本認可審査対応 | Splunk ES · 通知ワークフロー · FortiGate HA",
-      "about": "OA運用からセキュリティ運用までを経験してきたセキュリティエンジニアです。\n\n[成長ストーリー]\n2018.10 — MT DataにてKAI(韓国航空宇宙産業)閉鎖網のOA運用を開始。Linuxサーバのパッチ、ファイアウォール/IDSポリシー管理、WSUS運用、ログ分析を手動で実施し、繰り返し作業の限界を認識しました。\n\n2018.11 — 11ヶ月間Linuxシステムを学び直し、RHCSA、CompTIA Linux+、LPIC-1、Linuxマスター2級を取得しました。\n\n2020.08 — Metanet M Platformにて大規模コンタクトセンタ在宅勤務環境をSSL VPN/NACで構築し、Ansible・Pythonで新規端末登録とスイッチ点検を標準化しました(NACポリシー展開をAnsibleで標準化)。\n\n2021.09 — Jointreeにて国民大学校の次世代情報システムにNSX-Tマイクロセグメンテーションを適用し、Wazuh基盤のOSSセキュリティ監視を構築しました。\n\n2022.08 — Quantecにて金融セキュリティデータセンタ(FSDC)インフラを運用し、金融監督院定期監査対応、DLPポリシー運用、DBアクセス制御クエリチューニング、PBプラットフォームPOC検証を実施しました。\n\n2024.03 — GaonnuriにてNextrade取引所のセキュリティインフラを構築。ネットワーク分離・エンドポイントセキュリティ構築・運用、Ansible Roleによる標準化(ファイアウォールポリシーをAnsible Roleで標準化)。FSC本認可審査に対応しました。\n\n2025.03 — ITCEN CTSにてNextradeセキュリティ運用を担当。Splunk ES検知ルール設計、通知ワークフロー + FortiManager APIによる対応フロー体制を構築（自動検知・対応により運用認知・分類・通知フローの標準化）。\n\n[保有能力]\nSIEMルール設計(Splunk ES)、セキュリティ運用(通知ワークフロー、FortiManager API)、高可用性セキュリティ構成運用(FortiGate HA、NSX-T)、IaCインフラ管理(Ansible Role、Terraform)、可観測性プラットフォーム運用(Grafana/Prometheus/Loki)、金融規制対応(FSC本認可審査、金融監督院監査)\n\nポートフォリオ: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
+      "headline": "セキュリティ運用エンジニア | 金融セキュリティ基盤・SIEM・FortiGate",
+      "about": "金融セキュリティ基盤の構築・運用とSOC検知・通知フローを扱うセキュリティエンジニアです。\n\n[現在のポジション]\nセキュリティ運用、SRE/Observability、DevSecOpsの役割を検討しています。繰り返し運用を手順・スクリプト・API連携で減らし、監査や障害対応で説明できる運用根拠を残してきました。\n\n[主要経験]\n- Nextrade取引所セキュリティ運用: Splunk ES検知ルール、Slack/SMS通知ワークフロー、FortiManager API照会手順の運用\n- Nextradeセキュリティ基盤構築: FortiGate HA、ネットワーク分離、エンドポイントセキュリティ、Ansible Roleベースの設定標準化\n- 金融セキュリティデータセンタ(FSDC): 金融監督機関の監査対応、DBアクセス制御クエリチューニング、運用証跡整理\n- ネットワーク・リモートワーク基盤: NSX-T、Wazuh、NAC、VPN、Python/Ansible運用スクリプト\n\n[技術]\nSplunk ES、FortiGate/FortiManager、Ansible、Python、Terraform、Docker、Grafana/Prometheus/Loki、Cloudflare Workers、Kubernetes\n\nポートフォリオ: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
     },
     "jobkorea": {
-      "headline": "OA → Security — 金融セキュリティ基盤 (FSC本認可審査、Splunk ES、FortiGate HA、通知ワークフロー)",
-      "about": "OA運用からセキュリティ運用までを経験してきたセキュリティエンジニアです。\n\n[主要経歴]\n• ITCEN CTS — 2025.03~2026.02 — Nextrade取引所セキュリティ運用SM。Splunk ES + 通知ワークフロー + FortiManager APIで認知・分類・通知フローを標準化。\n• Gaonnuri — 2024.03~2025.02 — Nextradeセキュリティインフラ構築。ネットワーク分離・エンドポイントセキュリティ構築・運用 + Ansible Role標準化。FSC本認可審査通過。\n• Quantec — 2022.08~2024.03 — 金融セキュリティデータセンタ(FSDC)運用。金融監督院監査対応、DBクエリチューニング。\n• Jointree — 2021.09~2022.04 — 国民大学校次世代システム。NSX-Tマイクロセグメンテーション + Wazuh。\n• Metanet — 2020.08~2021.08 — 大規模コンタクトセンタ在宅勤務環境。Ansible/Python標準化。\n• MT Data — 2018.10~2019.10 — KAI閉鎖網IT支援/OA運用。\n\n[成長背景]\n2018.10にMT DataでOA運用を開始し、閉鎖網で手動運用の限界を経験しました。2018.11から11ヶ月間RHCSA・LPIC-1・Linuxマスター2級でLinuxを学び直し、標準化・セキュリティ領域への成長経路を設定しました。コンタクトセンタ・教育・金融インフラを経て、直近では証券取引所のセキュリティ運用フローを標準化し、現在は次のセキュリティ・インフラの役割を探しています。\n\n[保有技術]\nSplunk ES、通知ワークフロー、FortiGate/FortiManager、Ansible、Python、Terraform、Docker、NSX-T、Prometheus/Grafana/Loki、Cloudflare Workers、MCPツール\n\nポートフォリオ: https://resume.jclee.me"
+      "headline": "セキュリティ運用エンジニア | 金融セキュリティ基盤・SIEM",
+      "about": "[希望ポジション]\nセキュリティ運用、セキュリティ基盤、SRE/Observability、DevSecOpsの役割を検討しています。現場運用で繰り返される手順を標準化し、監査・障害対応時に根拠を残す形で取り組んできました。\n\n[経歴要約]\n- ITCEN CTS: Nextradeセキュリティ運用。Splunk ES検知ルール、Slack/SMS通知ワークフロー、FortiManager API照会手順の運用\n- Gaonnuri Information Systems: Nextradeセキュリティ基盤構築。FortiGate HA、ネットワーク分離、エンドポイントセキュリティ、Ansible Roleベースの設定標準化\n- Quantec Investment Management: 金融セキュリティデータセンタ(FSDC)運用。金融監督機関の監査対応、DBアクセス制御クエリチューニング、運用証跡整理\n- Jointree / Metanet M Platform: NSX-T、Wazuh、NAC、VPN、Python/Ansible運用スクリプト\n- MT Data: KAI閉鎖網Linux/OA運用、パッチ、ファイアウォールポリシー管理\n\n[技術スタック]\nSplunk ES、FortiGate/FortiManager、FortiAnalyzer、Ansible、Python、Terraform、Docker、Linux、NSX-T、Wazuh、Grafana/Prometheus/Loki、Cloudflare Workers\n\nポートフォリオ: https://resume.jclee.me"
     }
   },
   "coverLetter": {

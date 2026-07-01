@@ -10,6 +10,7 @@ const {
   generateResumeCards,
   generateProjectCards,
 } = require('../../../../apps/portfolio/lib/cards');
+const { generateContactGrid } = require('../../../../apps/portfolio/lib/cards/layout');
 const { TEMPLATE_CACHE } = require('../../../../apps/portfolio/lib/config');
 
 describe('Cards Module', () => {
@@ -181,6 +182,23 @@ describe('Cards Module', () => {
 
       expect(html).not.toContain('<script>');
       expect(html).toContain('&lt;script&gt;');
+    });
+  });
+
+  describe('generateContactGrid', () => {
+    test('should render the secondary GitHub bot profile when present', () => {
+      const html = generateContactGrid({
+        email: 'qws941@kakao.com',
+        github: 'https://github.com/jclee941',
+        githubBot: 'https://github.com/jclee-bot',
+        linkedin: 'https://linkedin.com/in/jclee0109',
+        velog: 'https://velog.io/@qws941',
+        website: 'https://resume.jclee.me',
+      });
+
+      expect(html).toContain('https://github.com/jclee-bot');
+      expect(html).toContain('GitHub Bot');
+      expect(html).toContain('aria-label="GitHub Bot (opens in new tab)"');
     });
   });
 
