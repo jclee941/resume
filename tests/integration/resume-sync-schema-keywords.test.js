@@ -48,6 +48,14 @@ describe('Resume schema live-field contract', () => {
       expect(hasType(projectProperties[key], 'string')).toBe(true);
       expect(hasType(projectProperties[key], 'null')).toBe(true);
     }
+    expect(projectProperties.dashboards).toMatchObject({
+      type: 'array',
+      items: {
+        type: 'object',
+        required: ['name', 'url'],
+      },
+    });
+    expect(projectProperties.dashboards.items.properties.url).toMatchObject({ format: 'uri' });
     expect(projectProperties.language).toMatchObject({ type: 'string' });
     expect(projectProperties.highlights).toMatchObject({
       type: 'array',
@@ -93,6 +101,7 @@ describe('Resume schema live-field contract', () => {
           'url',
           'githubUrl',
           'demoUrl',
+          'dashboards',
           'language',
           'highlights',
           'featured',

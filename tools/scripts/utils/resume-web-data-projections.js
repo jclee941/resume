@@ -44,6 +44,7 @@ function projectCardFromSource(project) {
     language: project.language,
     githubUrl: project.githubUrl,
     demoUrl: project.demoUrl,
+    dashboards: Array.isArray(project.dashboards) ? project.dashboards : [],
     related_skills: project.technologies || [],
     liveUrl: project.demoUrl || project.url,
     repoUrl: project.githubUrl || project.repoUrl,

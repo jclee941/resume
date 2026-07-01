@@ -17,20 +17,27 @@ type ResumePersonal struct {
 	Portfolio string `json:"portfolio"`
 }
 
+// ResumeDashboard represents a named dashboard link for a personal project.
+type ResumeDashboard struct {
+	Name string `json:"name"`
+	URL  string `json:"url"`
+}
+
 // ResumeProject represents a personal project entry.
 type ResumeProject struct {
-	ID           string   `json:"id"`
-	Name         string   `json:"name"`
-	Period       string   `json:"period"`
-	Description  string   `json:"description"`
-	Technologies []string `json:"technologies"`
-	Icon         string   `json:"icon"`
-	Tagline      string   `json:"tagline"`
-	Language     string   `json:"language"`
-	GithubURL    *string  `json:"githubUrl"`
-	DemoURL      *string  `json:"demoUrl"`
-	Featured     bool     `json:"featured"`
-	DisplayOrder int      `json:"displayOrder"`
+	ID           string            `json:"id"`
+	Name         string            `json:"name"`
+	Period       string            `json:"period"`
+	Description  string            `json:"description"`
+	Technologies []string          `json:"technologies"`
+	Icon         string            `json:"icon"`
+	Tagline      string            `json:"tagline"`
+	Language     string            `json:"language"`
+	GithubURL    *string           `json:"githubUrl"`
+	DemoURL      *string           `json:"demoUrl"`
+	Dashboards   []ResumeDashboard `json:"dashboards,omitempty"`
+	Featured     bool              `json:"featured"`
+	DisplayOrder int               `json:"displayOrder"`
 }
 
 // ResumeSkillItem represents a single skill within a category.
