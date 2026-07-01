@@ -80,7 +80,7 @@ export function createTimelineNode(career, index) {
   const impactText = impactTextFor(career);
 
   return `
-    <article class="timeline-node ${nodeClass}" role="listitem" tabindex="0"
+    <li class="timeline-node ${nodeClass}" role="listitem" tabindex="0"
              data-phase="${career.phase}"
              data-status="${career.status}"
              aria-label="${career.company} - ${career.period}">
@@ -138,6 +138,6 @@ export function createTimelineNode(career, index) {
           </button>
         </div>
       </div>
-    </article>
+    </li>
   `;
 }

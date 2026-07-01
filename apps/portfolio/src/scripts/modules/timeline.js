@@ -93,17 +93,10 @@ function injectTimeline() {
 
   const careers = getCareerData();
 
-  // Build the timeline as a standalone container. We REPLACE the <ul.resume-list>
-  // wrapper entirely (instead of nesting a role="list" <div> inside a <ul>, which
-  // violates WCAG list rules) so the role="list"/role="listitem" semantics are valid.
-  const timeline = document.createElement('div');
+  const timeline = document.createElement('ul');
   timeline.className = 'incident-timeline resume-list';
-  timeline.setAttribute('role', 'list');
   timeline.setAttribute('aria-label', 'Career incident response timeline');
-  timeline.innerHTML = `
-    <div class="timeline-line" aria-hidden="true"></div>
-    ${careers.map((career, index) => createTimelineNode(career, index)).join('')}
-  `;
+  timeline.innerHTML = careers.map((career, index) => createTimelineNode(career, index)).join('');
 
   // Swap the <ul> placeholder for the semantic timeline container.
   existingList.replaceWith(timeline);

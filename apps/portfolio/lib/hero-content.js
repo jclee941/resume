@@ -107,9 +107,9 @@ function buildHeroContent(locale) {
     `<p class="hero-availability">${content.availability}</p>`,
     `<p class="hero-positioning">${content.positioning}</p>`,
     renderProofList(content),
+    renderActions(content),
     renderReviewPath(content),
     renderReviewPacket(content),
-    renderActions(content),
     renderRoleQuickPaths(content),
   ].join('');
 }

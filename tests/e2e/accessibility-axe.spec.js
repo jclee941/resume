@@ -83,4 +83,28 @@ test.describe('Accessibility - axe-core WCAG 2.1 AA', () => {
     const ids = results.violations.map((v) => `${v.id} x${v.nodes.length}`);
     expect(ids, `violations: ${JSON.stringify(ids, null, 2)}`).toEqual([]);
   });
+
+  test('timeline accessibility should not use disallowed ARIA roles', async ({ page }) => {
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('#resume .timeline-node', { timeout: 15000 });
+
+    const results = await new AxeBuilder({ page }).withRules(['aria-allowed-role']).analyze();
+    const timelineViolations = results.violations
+      .filter((violation) => violation.id === 'aria-allowed-role')
+      .flatMap((violation) =>
+        violation.nodes
+          .filter((node) => node.target.some((target) => target.includes('timeline-node')))
+          .map((node) => ({
+            id: violation.id,
+            impact: violation.impact,
+            target: node.target,
+            failureSummary: node.failureSummary,
+          }))
+      );
+
+    expect(
+      timelineViolations,
+      `timeline aria-allowed-role violations: ${JSON.stringify(timelineViolations, null, 2)}`
+    ).toEqual([]);
+  });
 });

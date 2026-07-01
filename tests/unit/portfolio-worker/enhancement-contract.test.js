@@ -14,6 +14,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { buildJapaneseTemplate } = require('../../../apps/portfolio/lib/html-transformer');
 
 const PORTFOLIO = path.join(__dirname, '..', '..', '..', 'apps', 'portfolio');
 const DATA = path.join(__dirname, '..', '..', '..', 'packages', 'data', 'resumes', 'master');
@@ -41,6 +42,38 @@ describe('고도화: accessibility landmarks', () => {
 
   test('EN footer declares role="contentinfo"', () => {
     expect(en).toMatch(/<footer class="site-footer"[^>]*role="contentinfo"/);
+  });
+});
+
+describe('T3: localized nav toggle copy and deferred metadata', () => {
+  const ko = read(path.join(PORTFOLIO, 'index.html'));
+  const en = read(path.join(PORTFOLIO, 'index-en.html'));
+  const ja = buildJapaneseTemplate(ko);
+  const manifest = JSON.parse(read(path.join(PORTFOLIO, 'manifest.json')));
+
+  test('nav toggle accessible names are localized per locale', () => {
+    expect(ko).toContain('aria-label="메뉴 열기"');
+    expect(ko).toContain('data-nav-label-close="메뉴 닫기"');
+    expect(en).toContain('aria-label="Toggle navigation"');
+    expect(ja).toContain('aria-label="メニューを開く"');
+    expect(ja).toContain('data-nav-label-close="メニューを閉じる"');
+  });
+
+  test('title/meta/manifest strings stay on the AGENTS.md SSoT convention for this pass', () => {
+    expect(ko).toContain('<title>이재철 - 보안 엔지니어</title>');
+    expect(ko).toContain('<meta property="og:title" content="이재철 - 보안 엔지니어" />');
+    expect(ko).toContain('<meta name="twitter:title" content="이재철 - 보안 엔지니어" />');
+    expect(en).toContain('<title>Jaecheol Lee - Security Engineer</title>');
+    expect(en).toContain('<meta property="og:title" content="Jaecheol Lee - Security Engineer" />');
+    expect(en).toContain('<meta name="twitter:title" content="Jaecheol Lee - Security Engineer" />');
+    expect(ja).toContain('<title>イ・ジェチョル - セキュリティエンジニア</title>');
+    expect(ja).toContain(
+      '<meta property="og:title" content="イ・ジェチョル - セキュリティエンジニア" />'
+    );
+    expect(manifest.name).toBe('이재철 - 보안 엔지니어');
+    expect(manifest.description).toBe(
+      '보안 엔지니어 포트폴리오 - 금융·공공 보안 인프라, SIEM, IaC, Observability 자동화'
+    );
   });
 });
 

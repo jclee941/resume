@@ -27,7 +27,7 @@
   }
 
   .hero-review-path {
-    order: 5;
+    order: 6;
     min-block-size: auto;
     margin-bottom: var(--space-4);
   }
@@ -46,7 +46,7 @@
   }
 
   .hiring-review-packet {
-    order: 6;
+    order: 7;
     padding: var(--space-3);
   }
 
@@ -68,11 +68,15 @@
   }
 
   .hero-cta {
-    order: 7;
+    order: 5;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     margin-top: var(--space-2);
     margin-bottom: var(--space-2);
+  }
+
+  .role-quick-paths {
+    order: 8;
   }
 
   .hero-cta .link-subtle {

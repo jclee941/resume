@@ -154,9 +154,9 @@ function processProjectData({ projectDataRaw, projectDataEnRaw, projectDataJaRaw
     achievementsHtml: generateAchievementsSection(projectData),
     achievementsEnHtml: generateAchievementsSection(projectDataEn || projectData),
     achievementsJaHtml: generateAchievementsSection(projectDataJa || projectData),
-    expertiseHtml: generateExpertiseSection(projectData),
-    expertiseEnHtml: generateExpertiseSection(projectDataEn || projectData),
-    expertiseJaHtml: generateExpertiseSection(projectDataJa || projectData),
+    expertiseHtml: generateExpertiseSection(projectData, 'ko'),
+    expertiseEnHtml: generateExpertiseSection(projectDataEn || projectData, 'en'),
+    expertiseJaHtml: generateExpertiseSection(projectDataJa || projectData, 'ja'),
     coverLetterHtml: generateCoverLetterSection(
       projectData.coverLetter && projectData.coverLetter.ko
     ),

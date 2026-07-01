@@ -2,6 +2,16 @@
 
 const { escapeHtml } = require('../template-sanitizer');
 
+const EXPERTISE_LABELS = {
+  ko: { expertise: '전문 분야', competencies: '핵심 역량' },
+  en: { expertise: 'Areas of expertise', competencies: 'Core competencies' },
+  ja: { expertise: '専門分野', competencies: '中核スキル' },
+};
+
+function normalizeExpertiseLocale(locale) {
+  return Object.prototype.hasOwnProperty.call(EXPERTISE_LABELS, locale) ? locale : 'en';
+}
+
 /**
  * Generate an "achievements" evidence section surfacing the real SSoT
  * `achievements[]` array that was previously unsurfaced on the live
@@ -32,9 +42,10 @@ function generateAchievementsSection(data) {
  * (experience bullets) that were previously unsurfaced on the live portfolio.
  *
  * @param {Object} data - data.json (uses `expertise[]`, `coreCompetencies[]`).
+ * @param {'ko'|'en'|'ja'} [locale='en'] - Locale for generated section headings.
  * @returns {string} HTML, or '' if nothing to show.
  */
-function generateExpertiseSection(data) {
+function generateExpertiseSection(data, locale = 'en') {
   if (!data) return '';
   const expertise = Array.isArray(data.expertise)
     ? data.expertise.filter((e) => typeof e === 'string' && e.trim().length > 0)
@@ -43,6 +54,7 @@ function generateExpertiseSection(data) {
     ? data.coreCompetencies.filter((c) => typeof c === 'string' && c.trim().length > 0)
     : [];
   if (expertise.length === 0 && competencies.length === 0) return '';
+  const labels = EXPERTISE_LABELS[normalizeExpertiseLocale(locale)];
 
   let html = '';
   if (expertise.length > 0) {
@@ -50,7 +62,7 @@ function generateExpertiseSection(data) {
       .map((e) => `<span class="expertise-tag">${escapeHtml(String(e))}</span>`)
       .join('\n          ');
     html += `<div class="about-subsection about-subsection--expertise">
-      <h3 class="about-subsection__heading">&gt; expertise</h3>
+      <h3 class="about-subsection__heading">${labels.expertise}</h3>
       <div class="expertise-tags">\n          ${tags}\n      </div>
     </div>`;
   }
@@ -64,7 +76,7 @@ function generateExpertiseSection(data) {
       )
       .join('\n          ');
     html += `\n      <div class="about-subsection about-subsection--competencies">
-      <h3 class="about-subsection__heading">&gt; core_competencies</h3>
+      <h3 class="about-subsection__heading">${labels.competencies}</h3>
       <ul class="competency-list">\n          ${items}\n      </ul>
     </div>`;
   }

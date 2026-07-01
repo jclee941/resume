@@ -27,6 +27,8 @@ function applyJapaneseSections(html) {
     .replace(/"addressRegion": "경기도"/g, '"addressRegion": "京畿道"')
     .replace(/"addressLocality": "시흥시"/g, '"addressLocality": "帋興市"')
     .replace(/aria-label="~\/jclee 홈으로 이동"/g, 'aria-label="~/jclee ホームへ移動"')
+    .replace(/메뉴 열기/g, 'メニューを開く')
+    .replace(/메뉴 닫기/g, 'メニューを閉じる')
     .replace(/aria-label="언어 선택 \/ Language"/g, 'aria-label="言語選択 / Language"')
     .replace(/aria-label="기술 역량 카드"/g, 'aria-label="スキルカード"')
     .replace(/aria-label="연락처 및 소셜 링크"/g, 'aria-label="連絡先・ソーシャルリンク"')
