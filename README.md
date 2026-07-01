@@ -1,4 +1,4 @@
-# 레쥬메 모노레포 / Resume Portfolio Monorepo
+# 포트폴리오 자동화 워크스페이스 / Portfolio Automation Workspace
 
 [![Version](https://img.shields.io/badge/version-1.40.11-blue.svg)](package.json)
 [![Node 22](https://img.shields.io/badge/node-22-green.svg)](Dockerfile)
@@ -7,11 +7,11 @@
 [![TypeScript](https://img.shields.io/badge/typescript-strict-blue.svg)](tsconfig.base.json)
 [![License: Private](https://img.shields.io/badge/license-private-lightgrey.svg)](LICENSE)
 
-> Resume portfolio monorepo: Cloudflare Worker edge site, job automation (Wanted/JobKorea), SSoT data, self-hosted observability
+> Portfolio automation workspace: Cloudflare Worker edge site, job automation (Wanted/JobKorea), SSoT data, self-hosted observability
 
-이 저장소는 개인 포트폴리오 사이트, 채용 자동화 워커, 단일 진실 공급원(SSoT) 데이터 레이어, 그리고 운영 대시보드를 하나의 npm 워크스페이스 모노레포로 통합한 사설 저장소입니다.
+이 저장소는 개인 포트폴리오 사이트, 채용 자동화 워커, 단일 진실 공급원(SSoT) 데이터 레이어, 그리고 운영 대시보드를 하나의 자동화 워크스페이스로 통합한 사설 저장소입니다.
 
-This repository is a private npm workspaces monorepo that unifies a personal portfolio site, job automation tooling, a Single Source of Truth (SSoT) data layer, and an operations dashboard under a single, versioned codebase.
+This repository is a private automation workspace that unifies a personal portfolio site, job automation tooling, a Single Source of Truth (SSoT) data layer, and an operations dashboard under a single, versioned codebase.
 
 ---
 
@@ -34,9 +34,9 @@ This repository is a private npm workspaces monorepo that unifies a personal por
 
 ## Overview / 개요
 
-`package.json`의 `description` 필드는 이 모노레포를 다음과 같이 정의합니다.
+`package.json`의 `description` 필드는 이 워크스페이스를 다음과 같이 정의합니다.
 
-> Resume portfolio monorepo: Cloudflare Worker edge site, job automation (Wanted/JobKorea), SSoT data, self-hosted observability
+> Portfolio automation workspace: Cloudflare Worker edge site, job automation (Wanted/JobKorea), SSoT data, self-hosted observability
 
 핵심 가치 / Core values:
 
@@ -65,7 +65,7 @@ This repository is a private npm workspaces monorepo that unifies a personal por
 
 ## 주요 기능 / Features
 
-- **npm 워크스페이스 모노레포** — `apps/*`와 `packages/*`를 하나의 `package-lock.json`과 `tsconfig.base.json`로 통합 빌드합니다.
+- **npm 워크스페이스 빌드** — `apps/*`와 `packages/*`를 하나의 `package-lock.json`과 `tsconfig.base.json`로 통합 빌드합니다.
 - **Cloudflare Worker 빌드 파이프라인** — `apps/portfolio/generate-worker.js`가 HTML/데이터/라이브러리 모듈을 번들링해 `worker.js`를 생성합니다(절대 직접 수정 금지).
 - **MCP 기반 잡 자동화 서버** — `apps/job-server`는 Node 22 위에서 Wanted/JobKorea 크롤러, 오토어플라이어, 세션 복구 러너를 호스팅합니다.
 - **Cloudflare D1 + Queues + Workflows 대시보드** — `apps/job-dashboard`는 관리자 라우트, 자동화 라우트, 헬스 체크, CORS/CSRF/레이트 리미트 미들웨어를 갖춘 Worker로 배포됩니다.
@@ -76,7 +76,7 @@ This repository is a private npm workspaces monorepo that unifies a personal por
 - **문서 자동 검증** — `lychee.toml`(링크 체크), `redocly.yaml`(OpenAPI 린트), `eslint.config.cjs`(JS 린트), `tsconfig.base.json`(strict 타입), `jest.config.cjs`/`playwright.config.js`(테스트)를 통합합니다.
 - **Docker 컨테이너화** — 멀티 스테이지 `Dockerfile`이 프로덕션 의존성만 담은 job-server 이미지를 빌드합니다.
 
-- **npm workspaces monorepo** — Unifies `apps/*` and `packages/*` under one lockfile and base TS config.
+- **npm workspaces build** — Unifies `apps/*` and `packages/*` under one lockfile and base TS config.
 - **Cloudflare Worker build pipeline** — `apps/portfolio/generate-worker.js` bundles HTML/data/lib modules into `worker.js` (never hand-edit).
 - **MCP-driven job automation server** — Node 22 runtime hosts Wanted/JobKorea crawlers, auto-appliers, and session restore runners.
 - **Cloudflare D1 + Queues + Workflows dashboard** — `apps/job-dashboard` deploys admin/automation/health routes with CORS/CSRF/rate-limit middleware.
