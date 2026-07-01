@@ -35,6 +35,10 @@ function applyJapaneseHero(html) {
       '金融セキュリティインフラ、SIEM検知・通知、IaC可観測性の経験を、運用根拠を中心に整理します。'
     )
     .replace(
+      /FortiGate HA,\s+Splunk ES,\s+FortiManager API를\s+실제 운영 절차와\s+감사 근거로\s+연결해 왔습니다\./g,
+      'FortiGate HA、Splunk ES、FortiManager APIを運用手順と監査根拠につなげてきました。'
+    )
+    .replace(
       /보안 운영 · SRE · DevSecOps 역할 검토 가능/g,
       'セキュリティ運用・SRE・DevSecOpsを検討可能'
     )
@@ -42,6 +46,7 @@ function applyJapaneseHero(html) {
       /보안 운영 · SRE · DevSecOps 역할 검토 중/g,
       'セキュリティ運用・SRE・DevSecOpsを検討中'
     )
+    .replace(/보안 인프라 · SIEM · SRE 역할 검토 중/g, 'セキュリティ基盤・SIEM・SREを検討中')
     .replace(/보안 운영 · SRE · DevSecOps 채용 검토 가능/g, '採用検討・面接相談が可能')
     .replace(/보안 운영 · SRE · DevSecOps 검토 가능/g, 'セキュリティ運用・SRE・DevSecOpsを検討可能')
     .replace(/채용 검토·면접 논의 가능/g, '採用検討・面接相談が可能')
@@ -52,11 +57,13 @@ function applyJapaneseHero(html) {
     )
     .replace(/Splunk ES 탐지 룰·알림 워크플로 정리/g, 'Splunk ES検知ルール・通知ワークフロー整理')
     .replace(/Splunk ES 탐지 룰·알림 워크플로 운영/g, 'Splunk ES検知ルール・通知ワークフロー運用')
+    .replace(/Splunk ES 탐지 룰·Slack\/SMS 알림/g, 'Splunk ES検知ルール・Slack/SMS通知')
     .replace(/FortiManager API·IaC 기반 운영 자동화/g, 'FortiManager API・IaCベースの運用自動化')
     .replace(
       /FortiManager API·IaC 기반 운영 절차 정리/g,
       'FortiManager API・IaCベースの運用手順整理'
     )
+    .replace(/FortiManager API 기반 정책 조회/g, 'FortiManager APIベースのポリシー照会')
     .replace(/거래소 보안 인프라 구축·운영/g, '取引所セキュリティインフラの構築・運用')
     .replace(
       /넥스트레이드 보안 구축·운영/g,
@@ -87,9 +94,11 @@ function applyJapaneseHero(html) {
     .replace(/운영 맥락/g, '運用文脈')
     .replace(/금융 보안 운영 경력/g, '金融セキュリティ運用経験')
     .replace(/금융권 보안 운영 경력/g, '金融セキュリティ運用経験')
+    .replace(/금융권 보안 인프라/g, '金融セキュリティ基盤')
     .replace(/자동화 방식/g, '自動化アプローチ')
     .replace(/탐지·IaC·API 흐름/g, '検知・IaC・APIフロー')
     .replace(/탐지·IaC·API 연결/g, '検知・IaC・API連携')
+    .replace(/탐지·알림·API 조회/g, '検知・通知・API照会')
     .replace(/채용 자료/g, '採用資料')
     .replace(/PDF·메일 연결/g, 'PDF・メール連携');
 }
