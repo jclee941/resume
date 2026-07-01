@@ -54,8 +54,12 @@ function generateInfrastructureCards(infraData) {
  */
 function generateContactGrid(contactData) {
   const velog = contactData.velog || 'https://velog.io/@qws941';
+  const githubBotLink = contactData.githubBot
+    ? `<a href="${escapeHtml(contactData.githubBot)}" target="_blank" rel="noopener noreferrer" class="contact-item" aria-label="GitHub Bot (opens in new tab)">GitHub Bot</a>`
+    : '';
   return `
         <a href="${escapeHtml(contactData.github)}" target="_blank" rel="noopener noreferrer" class="contact-item" aria-label="GitHub (opens in new tab)">GitHub</a>
+        ${githubBotLink}
         <a href="${escapeHtml(contactData.linkedin)}" target="_blank" rel="noopener noreferrer" class="contact-item" aria-label="LinkedIn (opens in new tab)">LinkedIn</a>
         <a href="${escapeHtml(velog)}" target="_blank" rel="noopener noreferrer" class="contact-item" aria-label="Velog (opens in new tab)">Velog</a>
         <a href="mailto:${escapeHtml(contactData.email)}" class="contact-item contact-item--email" data-contact-email="${escapeHtml(contactData.email)}" aria-label="Email (click to copy address)">Email</a>
