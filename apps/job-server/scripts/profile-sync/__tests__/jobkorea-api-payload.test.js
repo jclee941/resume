@@ -6,6 +6,7 @@ import {
   encodeFormFields,
   smartMergeFields,
 } from '../jobkorea-handler/api-payload.js';
+import { overlayTemplate } from '../jobkorea-handler/sync-api-only.js';
 
 describe('JobKorea API payload helpers', () => {
   it('encodes form fields as application/x-www-form-urlencoded', () => {
@@ -96,5 +97,45 @@ describe('JobKorea API payload helpers', () => {
     assert.strictEqual(map.get('Career[c1].C_Name'), 'New');
     assert.strictEqual(map.get('Career[c1].C_Part'), 'NewDept');
     assert.strictEqual(map.get('Career[c1].CSYM'), '202301');
+  });
+
+  it('preserves every target license when the API template has one blank slot', () => {
+    const base = [
+      { name: 'License.index', value: 'c14' },
+      { name: 'License[c14].Index_Name', value: 'c14' },
+      { name: 'License[c14].Naver_Lcns_Linked_Stat', value: '' },
+      { name: 'License[c14].Lc_Name', value: '' },
+      { name: 'License[c14].Lc_Code', value: '' },
+      { name: 'License[c14].Lc_Pub', value: '' },
+      { name: 'License[c14].Lc_YYMM', value: '' },
+      { name: 'InputStat.LicenseInputStat', value: 'False' },
+    ];
+    const target = [
+      { name: 'License[c1].Index_Name', value: 'c1' },
+      { name: 'License[c1].Naver_Lcns_Linked_Stat', value: '' },
+      { name: 'License[c1].Lc_Name', value: 'CCNP' },
+      { name: 'License[c1].Lc_Code', value: '' },
+      { name: 'License[c1].Lc_Pub', value: 'Cisco Systems' },
+      { name: 'License[c1].Lc_YYMM', value: '202008' },
+      { name: 'License[c2].Index_Name', value: 'c2' },
+      { name: 'License[c2].Naver_Lcns_Linked_Stat', value: '' },
+      { name: 'License[c2].Lc_Name', value: 'RHCSA' },
+      { name: 'License[c2].Lc_Code', value: '' },
+      { name: 'License[c2].Lc_Pub', value: 'Red Hat' },
+      { name: 'License[c2].Lc_YYMM', value: '201901' },
+      { name: 'License.index', value: 'c1,c2' },
+      { name: 'InputStat.LicenseInputStat', value: 'True' },
+    ];
+
+    const merged = overlayTemplate(base, target);
+    const licenseNames = merged
+      .filter((field) => /^License\[[^\]]+\]\.Lc_Name$/.test(field.name))
+      .map((field) => field.value)
+      .filter((value) => String(value).trim().length > 0);
+    const byName = new Map(merged.map((field) => [field.name, field.value]));
+
+    assert.deepStrictEqual(licenseNames, ['CCNP', 'RHCSA']);
+    assert.strictEqual(byName.get('License.index'), 'c1,c2');
+    assert.strictEqual(byName.get('InputStat.LicenseInputStat'), 'True');
   });
 });
