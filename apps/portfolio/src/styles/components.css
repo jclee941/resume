@@ -100,6 +100,9 @@
   font-size: var(--text-sm);
   line-height: var(--leading-relaxed);
 }
+.operated-card__link {
+  margin-top: var(--space-4);
+}
 @media (max-width: 768px) {
   .operated-grid {
     grid-template-columns: 1fr;
