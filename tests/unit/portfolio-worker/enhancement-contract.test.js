@@ -139,6 +139,14 @@ describe('Project deep-dive architecture diagram accessibility', () => {
     expect(overlay).toMatch(/class="architecture-diagram"[^`]*tabindex="0"[^`]*role="img"/);
     expect(overlay).toMatch(/aria-label="\$\{escapeHtml\(project\.title\)\} architecture flow"/);
   });
+
+  test('architecture flow includes a mobile-readable step list before the ascii diagram', () => {
+    expect(overlay).toMatch(/function renderArchitectureSteps/);
+    expect(overlay).toMatch(/function architectureSteps/);
+    expect(overlay).toMatch(/class="architecture-steps"/);
+    expect(overlay).toMatch(/class="architecture-step__index"/);
+    expect(overlay).toMatch(/class="architecture-step__label"/);
+  });
 });
 
 describe('B: engineering principles + current focus surfaced from SSoT (single source)', () => {
