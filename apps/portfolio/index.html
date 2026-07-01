@@ -600,7 +600,9 @@
             <a href="/" class="nav-logo" aria-label="~/jclee 홈으로 이동">~/jclee</a>
             <button
               class="nav-toggle"
-              aria-label="Toggle navigation"
+              aria-label="메뉴 열기"
+              data-nav-label-open="메뉴 열기"
+              data-nav-label-close="메뉴 닫기"
               aria-expanded="false"
               aria-controls="nav-links"
             >
@@ -847,16 +849,26 @@
           if (!toggle || !navLinks || toggle.dataset.mobileNavBound === 'true') return;
 
           toggle.dataset.mobileNavBound = 'true';
+          var openLabel = toggle.getAttribute('data-nav-label-open');
+          var closeLabel = toggle.getAttribute('data-nav-label-close');
+
+          function setToggleLabel(expanded) {
+            if (!openLabel || !closeLabel) return;
+            toggle.setAttribute('aria-label', expanded ? closeLabel : openLabel);
+          }
 
           function closeMenu(focusToggle) {
             toggle.setAttribute('aria-expanded', 'false');
+            setToggleLabel(false);
             navLinks.classList.remove('open');
             if (focusToggle) toggle.focus();
           }
 
           toggle.addEventListener('click', function () {
             var expanded = toggle.getAttribute('aria-expanded') === 'true';
-            toggle.setAttribute('aria-expanded', String(!expanded));
+            var nextExpanded = !expanded;
+            toggle.setAttribute('aria-expanded', String(nextExpanded));
+            setToggleLabel(nextExpanded);
             navLinks.classList.toggle('open');
           });
 

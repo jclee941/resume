@@ -26,6 +26,26 @@ test.describe('Portfolio role proof routing', () => {
 
     await page.getByRole('button', { name: /Security Ops/ }).click();
 
+    await expect(page.getByRole('button', { name: /Security Ops/ })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    );
+    const roleOrientation = page.locator('[data-role-status]');
+    await expect(roleOrientation).toHaveAttribute('aria-live', 'polite');
+    await expect(roleOrientation).toContainText('Security Ops');
+    await expect(roleOrientation).toContainText('4개 근거');
+    await expect
+      .poll(() =>
+        page.evaluate(() => ({
+          hash: window.location.hash,
+          state: window.history.state,
+        }))
+      )
+      .toMatchObject({
+        hash: '#projects',
+        state: expect.objectContaining({ selectedRole: 'security' }),
+      });
+
     for (const title of SECURITY_PROJECT_TITLES) {
       await expect(
         page.locator('#projects li.project-item.is-role-match').filter({ hasText: title })
@@ -61,6 +81,8 @@ test.describe('Portfolio role proof routing', () => {
     await expect(page.locator('.project-evidence-matrix')).toHaveCount(1);
 
     await page.getByRole('button', { name: /Security Ops/ }).click();
+
+    await expect(page.locator('[data-role-status]')).toContainText('Security Ops');
 
     const projectScrollCalls = await page.evaluate(
       () => window.__roleScrollTargets.filter((target) => target === 'projects').length

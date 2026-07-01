@@ -89,6 +89,40 @@ test.describe('Mobile Responsiveness', () => {
     expect(tooSmallCount).toBeLessThanOrEqual(allowedSmall);
   });
 
+  test('mobile resume company links keep 44px tap targets', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await safeMobileGoto(page);
+    await page.waitForSelector('#resume .timeline-company .company-link', { timeout: 15000 });
+
+    const companyTargets = await page.locator('#resume .timeline-company .company-link').evaluateAll(
+      (links) =>
+        links
+          .filter((link) => {
+            const style = window.getComputedStyle(link);
+            return style.visibility !== 'hidden' && style.display !== 'none';
+          })
+          .map((link) => {
+            const rect = link.getBoundingClientRect();
+            const wrapperRect = link.parentElement?.getBoundingClientRect();
+            return {
+              text: (link.textContent || '').replace(/\s+/g, ' ').trim(),
+              linkHeight: Math.round(rect.height),
+              wrapperHeight: wrapperRect ? Math.round(wrapperRect.height) : 0,
+            };
+          })
+    );
+
+    expect(companyTargets.length).toBeGreaterThan(0);
+
+    const undersized = companyTargets.filter(
+      (target) => target.linkHeight < 44 && target.wrapperHeight < 44
+    );
+    expect(
+      undersized,
+      `company links under 44px tap target: ${JSON.stringify(undersized, null, 2)}`
+    ).toEqual([]);
+  });
+
   test('should not have horizontal overflow', async ({ page }) => {
     await safeMobileGoto(page);
     await page.waitForLoadState('domcontentloaded');

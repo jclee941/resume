@@ -21,8 +21,10 @@ function escapeHtml(value) {
 }
 
 function renderRoleQuickPaths(labels, proofCounts) {
-  if (document.querySelector('.role-quick-paths')) {
+  const existingSection = document.querySelector('.role-quick-paths');
+  if (existingSection) {
     applyRoleProofCounts(proofCounts);
+    ensureRoleStatus(existingSection);
     return;
   }
   const hero = document.querySelector('#hero .hero-content');
@@ -50,8 +52,22 @@ function renderRoleQuickPaths(labels, proofCounts) {
         })
         .join('')}
     </div>
+    <p class="role-quick-paths__status selected-role-status" data-role-status aria-live="polite" aria-atomic="true"></p>
   `;
   hero.appendChild(section);
+}
+
+function ensureRoleStatus(section) {
+  const status = section.querySelector('[data-role-status]');
+  if (status) return status;
+  const roleControls = section.querySelector('.role-quick-paths__controls');
+  const createdStatus = document.createElement('p');
+  createdStatus.className = 'role-quick-paths__status selected-role-status';
+  createdStatus.setAttribute('data-role-status', '');
+  createdStatus.setAttribute('aria-live', 'polite');
+  createdStatus.setAttribute('aria-atomic', 'true');
+  roleControls?.insertAdjacentElement('afterend', createdStatus);
+  return createdStatus;
 }
 
 function renderEvidenceMatrix(labels) {
@@ -90,13 +106,45 @@ function clearRoleFocus(cards) {
   cards.forEach((card) => card.classList.remove('is-role-match', 'is-role-dimmed'));
 }
 
-function bindRoleControls(cards) {
+function selectedRoleStatusText(role, countText) {
+  const lang = (document.documentElement.lang || 'ko').toLowerCase();
+  if (lang.startsWith('en')) return `${role.label} selected: ${countText}.`;
+  if (lang.startsWith('ja')) return `${role.label}を選択: ${countText}`;
+  return `${role.label} 선택됨: ${countText}`;
+}
+
+function setRoleHistoryState(role) {
+  if (!window.history?.pushState) {
+    window.location.hash = 'projects';
+    return;
+  }
+  const currentState =
+    window.history.state && typeof window.history.state === 'object' ? window.history.state : {};
+  const url = new URL(window.location.href);
+  url.hash = 'projects';
+  window.history.pushState(
+    {
+      ...currentState,
+      selectedRole: role.id,
+      selectedRoleLabel: role.label,
+      projectAnchor: 'projects',
+    },
+    '',
+    url
+  );
+}
+
+function bindRoleControls(cards, proofCounts) {
   const buttons = Array.from(document.querySelectorAll('.role-chip'));
+  const roleProfiles = getRoleProfiles();
+  const status = document.querySelector('[data-role-status]');
   buttons.forEach((button) => {
     if (button.dataset.roleFilterBound === 'true') return;
     button.dataset.roleFilterBound = 'true';
     button.addEventListener('click', () => {
       const role = button.getAttribute('data-role-filter') || '';
+      const roleProfile = roleProfiles.find((candidate) => candidate.id === role);
+      if (!roleProfile) return;
       buttons.forEach((candidate) =>
         candidate.setAttribute('aria-pressed', String(candidate === button))
       );
@@ -105,6 +153,8 @@ function bindRoleControls(cards) {
         const roles = (card.getAttribute('data-role') || '').split(/\s+/);
         card.classList.add(roles.includes(role) ? 'is-role-match' : 'is-role-dimmed');
       });
+      status.textContent = selectedRoleStatusText(roleProfile, roleProofCountText(proofCounts, role));
+      setRoleHistoryState(roleProfile);
       document.querySelector('#projects')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   });
@@ -140,9 +190,10 @@ function bindEvidenceLinks() {
 export function initRecruiterEnhancements() {
   const labels = getRecruiterLabels();
   const cards = tagProjectCards();
-  renderRoleQuickPaths(labels, countRoleProofs(cards));
+  const proofCounts = countRoleProofs(cards);
+  renderRoleQuickPaths(labels, proofCounts);
   renderEvidenceMatrix(labels);
-  bindRoleControls(cards);
+  bindRoleControls(cards, proofCounts);
   bindEvidenceLinks();
   renderMobileActionBar(labels);
 }
