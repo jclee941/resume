@@ -3,7 +3,7 @@ const HERO_CONTENT = {
     title: '이재철',
     srTitle: 'Jaecheol Lee',
     role: 'Security / SRE Engineer',
-    availability: '보안 인프라 · SIEM · SRE 역할 검토 중',
+    availability: '즉시 투입 가능하며 채용 제안과 면접 일정을 적극 검토하고 있습니다.',
     positioning:
       'FortiGate HA, Splunk ES, FortiManager API를 실제 운영 절차와 감사 근거로 연결해 왔습니다.',
     proofLabel: '대표 업무 증빙',
@@ -43,7 +43,7 @@ const HERO_CONTENT = {
   en: {
     title: 'Jaecheol Lee',
     role: 'Security / SRE Engineer',
-    availability: 'Open to Security Ops, SRE, and DevSecOps roles',
+    availability: 'Immediately available and actively reviewing role proposals and interview requests.',
     positioning:
       'I connect FortiGate HA, Splunk ES, and FortiManager API work into operating procedures and audit evidence.',
     proofLabel: 'Representative proof of work',
@@ -84,7 +84,7 @@ const HERO_CONTENT = {
     title: '李在哲',
     srTitle: 'イ・ジェチョル',
     role: 'Security / SRE Engineer',
-    availability: 'セキュリティ基盤・SIEM・SREを検討中',
+    availability: 'すぐ参画可能で、採用提案と面接相談を積極的に確認しています。',
     positioning:
       'FortiGate HA、Splunk ES、FortiManager APIを運用手順と監査根拠につなげてきました。',
     proofLabel: '代表的な業務証跡',
