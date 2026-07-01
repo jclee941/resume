@@ -308,6 +308,7 @@ export async function syncJobKoreaProfile(handler, ssot, options = {}) {
     const sectionIndices = await handler.createEntrySlots(page, ssot, {
       recreateCareerEntries: !dryRun,
       recreateIntroEntries: !dryRun,
+      recreateLicenseEntries: !dryRun,
     });
     logger(
       `Entry slots — Career: ${sectionIndices.career.length} (${sectionIndices.career.join(',')}), ` +

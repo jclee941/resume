@@ -432,6 +432,65 @@ describe('createJobKoreaEntrySlots', () => {
     assert.deepStrictEqual(indices.career, ['c7', 'c8', 'c9', 'c10', 'c11', 'preview-only']);
   });
 
+  it('rebuilds live License entries during apply slot creation', async () => {
+    let licenseIndices = ['c19', 'c20', 'c21', 'c22', 'c23'];
+    let deletedLicenses = 0;
+    let addedLicenses = 0;
+    const handler = {
+      readSectionIndices: async (_page, prefix) => {
+        if (prefix === 'License') return [...licenseIndices];
+        if (prefix === 'UnivSchool') return ['c2'];
+        return [];
+      },
+    };
+    const page = {
+      waitForFunction: async () => {},
+      evaluate: async (fn, prefix) => {
+        const source = String(fn);
+        if (
+          source.includes('buttonDeleteField') ||
+          source.includes('button.buttonDelete') ||
+          source.includes('button.buttonDelete')
+        ) {
+          deletedLicenses = licenseIndices.length;
+          licenseIndices = [];
+          return deletedLicenses;
+        }
+        if (source.includes('buttonAddField') && prefix === 'License') {
+          addedLicenses++;
+          licenseIndices.push(`freshLicense${addedLicenses}`);
+          return true;
+        }
+        return false;
+      },
+    };
+    const ssot = {
+      careers: [],
+      certifications: Array.from({ length: 6 }, (_, index) => ({
+        name: `Cert ${index + 1}`,
+        date: '2020.08',
+      })),
+      awards: [],
+      languages: [],
+      personal: {},
+    };
+
+    const indices = await createJobKoreaEntrySlots(handler, page, ssot, {
+      recreateLicenseEntries: true,
+    });
+
+    assert.strictEqual(deletedLicenses, 5);
+    assert.strictEqual(addedLicenses, 6);
+    assert.deepStrictEqual(indices.license, [
+      'freshLicense1',
+      'freshLicense2',
+      'freshLicense3',
+      'freshLicense4',
+      'freshLicense5',
+      'freshLicense6',
+    ]);
+  });
+
   it('reuses existing live DOM indices, including timestamp Award IDs', async () => {
     const readCalls = [];
     const handler = {

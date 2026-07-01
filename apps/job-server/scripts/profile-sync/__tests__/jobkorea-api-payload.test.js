@@ -123,7 +123,8 @@ describe('JobKorea API payload helpers', () => {
       { name: 'License[c2].Lc_Code', value: '' },
       { name: 'License[c2].Lc_Pub', value: 'Red Hat' },
       { name: 'License[c2].Lc_YYMM', value: '201901' },
-      { name: 'License.index', value: 'c1,c2' },
+      { name: 'License.index', value: 'c1' },
+      { name: 'License.index', value: 'c2' },
       { name: 'InputStat.LicenseInputStat', value: 'True' },
     ];
 
@@ -133,9 +134,12 @@ describe('JobKorea API payload helpers', () => {
       .map((field) => field.value)
       .filter((value) => String(value).trim().length > 0);
     const byName = new Map(merged.map((field) => [field.name, field.value]));
+    const licenseIndexValues = merged
+      .filter((field) => field.name === 'License.index')
+      .map((field) => field.value);
 
     assert.deepStrictEqual(licenseNames, ['CCNP', 'RHCSA']);
-    assert.strictEqual(byName.get('License.index'), 'c1,c2');
+    assert.deepStrictEqual(licenseIndexValues, ['c1', 'c2']);
     assert.strictEqual(byName.get('InputStat.LicenseInputStat'), 'True');
   });
 });
