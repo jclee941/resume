@@ -1,0 +1,72 @@
+.resume-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.resume-item {
+  margin-bottom: var(--space-6);
+  padding: var(--space-4);
+  background: rgb(var(--color-accent-rgb) / 0.02);
+  border-left: 2px solid var(--color-success);
+  border-radius: 0 4px 4px 0;
+  font-family: var(--font-mono);
+}
+.resume-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: var(--space-2);
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.resume-title {
+  font-size: var(--text-base);
+  font-weight: var(--font-medium);
+  color: var(--color-accent);
+}
+.resume-period {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+.resume-role {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: var(--font-bold);
+  color: var(--color-accent-strong);
+  text-shadow: var(--shadow-sm);
+  margin-bottom: var(--space-2);
+  letter-spacing: var(--tracking-tight);
+}
+.resume-role::before {
+  content: '▸ ';
+  color: var(--color-accent);
+}
+.resume-description {
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  line-height: 1.5;
+  margin-bottom: var(--space-2);
+  font-family: var(--font-sans);
+}
+.resume-tags {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+.resume-metrics {
+  margin-top: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-success);
+  opacity: 0.95;
+}
+.tag {
+  font-size: var(--text-xs);
+  color: var(--color-accent-strong);
+  background: rgb(var(--color-accent-rgb) / 0.1);
+  border: 1px solid rgb(var(--color-accent-rgb) / 0.1);
+  padding: 2px 8px;
+  border-radius: 2px;
+  font-family: var(--font-mono);
+}
