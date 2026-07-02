@@ -4,13 +4,13 @@ const KOREAN_ROLE_PROOF_COUNTS = [
   ['security', 'Security Ops', '4개 근거'],
   ['sre', 'SRE / Observability', '2개 근거'],
   ['devsecops', 'DevSecOps / IaC', '4개 근거'],
-  ['automation', '운영 워크플로', '4개 근거'],
+  ['automation', '운영 워크플로', '5개 근거'],
 ];
 
 const SECURITY_PROJECT_TITLES = [
   'Security Alert System',
   'IP Blacklist Platform',
-  'AI GitHub PR Reviewer',
+  'Firewall Policy Automation',
   'Bug Bounty Recon Toolkit',
 ];
 
@@ -97,7 +97,7 @@ test.describe('Portfolio role proof routing', () => {
 
     await page.goto('/ja/', { waitUntil: 'domcontentloaded' });
     await expect(page.locator('.role-chip[data-role-filter="security"]')).toContainText(
-      '3件の根拠'
+      '4件の根拠'
     );
     await expect(page.locator('.role-chip[data-role-filter="sre"]')).toContainText('2件の根拠');
   });
