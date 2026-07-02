@@ -5,6 +5,12 @@
 @import './hero-actions.css';
 @import './hero-review-path.css';
 @import './cards.css';
+@import './resume-cards.css';
+@import './project-list.css';
+@import './project-review.css';
+@import './credential-cards.css';
+@import './infrastructure-cards.css';
+@import './site-security-cards.css';
 @import './skills.css';
 @import './status.css';
 @import './contact.css';
