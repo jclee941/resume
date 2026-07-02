@@ -37,14 +37,22 @@ describe('portfolio hiring appeal copy', () => {
   test('Korean hero gives recruiters a direct review-pack path', () => {
     const html = buildHeroContent('ko');
 
-    expect(html).toContain('보안 인프라·SIEM·SRE 역할로 바로 합류할 수 있습니다.');
-    expect(html).toContain('운영 흐름');
+    expect(html).toContain('보안 운영 · 보안 인프라 · SRE 면접 제안 환영');
+    expect(html).toContain(
+      '최근 보안 운영 경력, 이메일 연락, 면접 일정·근무 형태 협의를 먼저 연결합니다.'
+    );
+    expect(html).toContain('희망 역할: 보안 운영 · 보안 인프라 · SRE');
+    expect(html).toContain('최근 역할: 거래소 보안 인프라 구축·운영');
+    expect(html).toContain('면접 제안 가능');
+    expect(html).toContain('보안 자동화와 코드 검토 역할 적합도');
+    expect(html).toContain('SRE 장애 조사와 운영 가시성 근거');
     expect(html).toContain('운영 워크플로');
+    expect(html).not.toContain('검토 가능');
     expect(html).not.toContain('자동화 방식');
     expect(extractHeroActions(html)).toEqual([
-      expect.objectContaining({ href: expect.stringMatching(/^mailto:/), label: '채용 문의' }),
-      { href: '#resume', label: '경력 보기' },
-      { href: '#projects', label: '프로젝트 보기' },
+      expect.objectContaining({ href: expect.stringMatching(/^mailto:/), label: '면접 문의' }),
+      { href: '#resume', label: '경력 확인' },
+      { href: '#projects', label: '프로젝트 확인' },
       expect.objectContaining({ href: '/resume.pdf', label: '이력서 PDF' }),
     ]);
     expect(readPortfolioFile('index.html')).toContain('<!-- HERO_CONTENT_PLACEHOLDER -->');
@@ -54,19 +62,27 @@ describe('portfolio hiring appeal copy', () => {
     const html = buildHeroContent('en');
 
     expect(html).toContain(
-      'Available now for security infrastructure, SIEM, and SRE roles.'
+      'Open to interview requests for Security Ops, Security Infrastructure, and SRE'
     );
-    expect(html).toContain('Response workflow');
+    expect(html).toContain(
+      'Recent security operations work is grouped for role fit, email contact, interviews, and work-mode discussion.'
+    );
+    expect(html).toContain('Target roles: Security Ops, Security Infrastructure, SRE');
+    expect(html).toContain('Recent role: exchange security infrastructure build and operations');
+    expect(html).toContain('Open to interview requests');
+    expect(html).toContain('Security automation and code-review role fit');
+    expect(html).toContain('SRE incident review and operational visibility');
     expect(html).toContain('Response Workflow');
+    expect(html).not.toContain('Ready to review');
     expect(html).not.toContain('Automation approach');
     expect(html).not.toContain('>Automation<');
     expect(extractHeroActions(html)).toEqual([
       expect.objectContaining({
         href: expect.stringMatching(/^mailto:/),
-        label: 'Contact about role',
+        label: 'Interview request',
       }),
-      { href: '#resume', label: 'Career evidence' },
-      { href: '#projects', label: 'Project evidence' },
+      { href: '#resume', label: 'Review career' },
+      { href: '#projects', label: 'Review projects' },
       expect.objectContaining({ href: '/resume.pdf', label: 'Resume PDF' }),
     ]);
     expect(readPortfolioFile('index-en.html')).toContain('<!-- HERO_CONTENT_PLACEHOLDER -->');
@@ -75,19 +91,24 @@ describe('portfolio hiring appeal copy', () => {
   test('Japanese hero localizes recruiter proof and review-pack actions', () => {
     const html = buildHeroContent('ja');
 
-    expect(html).toContain('セキュリティ基盤・SIEM・SREの役割ですぐ参画できます。');
+    expect(html).toContain('セキュリティ運用・セキュリティ基盤・SREの面接相談を歓迎');
+    expect(html).toContain(
+      '直近のセキュリティ運用経験、メール連絡、面接日程、勤務形態の相談を先に示します。'
+    );
     expect(html).toContain('<ul class="hero-proof-list" aria-label="確認すべき主要証跡">');
-    expect(html).toContain('取引所ネットワーク分離・エンドポイントセキュリティ運用');
-    expect(html).toContain('Splunk ES検知ルール・Slack/SMS通知');
-    expect(html).toContain('FortiManager APIベースのポリシー照会');
-    expect(html).toContain('運用フロー');
+    expect(html).toContain('希望職種: セキュリティ運用・セキュリティ基盤・SRE');
+    expect(html).toContain('直近役割: 取引所セキュリティ基盤の構築・運用');
+    expect(html).toContain('面接相談を受付中');
+    expect(html).toContain('セキュリティ自動化とコードレビューの適合性');
+    expect(html).toContain('SRE障害調査と運用可視性の根拠');
     expect(html).toContain('運用ワークフロー');
+    expect(html).not.toContain('確認可能');
     expect(html).not.toContain('自動化アプローチ');
     expect(html).not.toContain('>Automation<');
     expect(extractHeroActions(html)).toEqual([
-      expect.objectContaining({ href: expect.stringMatching(/^mailto:/), label: '採用相談' }),
-      { href: '#resume', label: '経歴を見る' },
-      { href: '#projects', label: 'プロジェクトを見る' },
+      expect.objectContaining({ href: expect.stringMatching(/^mailto:/), label: '面接相談' }),
+      { href: '#resume', label: '経歴確認' },
+      { href: '#projects', label: 'プロジェクト確認' },
       expect.objectContaining({ href: '/resume.pdf', label: '履歴書PDF' }),
     ]);
 

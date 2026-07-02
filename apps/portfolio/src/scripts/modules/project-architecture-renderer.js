@@ -1,28 +1,39 @@
-import { escapeHtml } from './project-card-formatting.js';
-
-export function renderArchitecture(project) {
-  return `<div class="architecture-flow" role="group" aria-label="${escapeHtml(project.title)} architecture flow">
-    ${renderArchitectureSteps(project.architecture)}
-    <div class="architecture-diagram" tabindex="0" role="img" aria-label="${escapeHtml(project.title)} architecture flow">
-      <pre class="architecture-diagram__text">${escapeHtml(project.architecture)}</pre>
-    </div>
-  </div>`;
+function createElement(tagName, className, text = '') {
+  const element = document.createElement(tagName);
+  if (className) element.className = className;
+  if (text) element.textContent = text;
+  return element;
 }
 
-function renderArchitectureSteps(architecture) {
-  const steps = architectureSteps(architecture);
-  if (steps.length === 0) return '';
+export function createArchitectureElement(project) {
+  const flow = createElement('div', 'architecture-flow');
+  flow.setAttribute('role', 'group');
+  flow.setAttribute('aria-label', `${project.title} architecture flow`);
+  const steps = createArchitectureSteps(project.architecture);
+  if (steps) flow.appendChild(steps);
+  const diagram = createElement('div', 'architecture-diagram');
+  diagram.tabIndex = 0;
+  diagram.setAttribute('role', 'img');
+  diagram.setAttribute('aria-label', `${project.title} architecture flow`);
+  diagram.appendChild(createElement('pre', 'architecture-diagram__text', project.architecture));
+  flow.appendChild(diagram);
+  return flow;
+}
 
-  return `<ol class="architecture-steps">
-    ${steps
-      .map(
-        (step, index) => `<li class="architecture-step">
-          <span class="architecture-step__index">${String(index + 1).padStart(2, '0')}</span>
-          <span class="architecture-step__label">${escapeHtml(step)}</span>
-        </li>`
-      )
-      .join('')}
-  </ol>`;
+function createArchitectureSteps(architecture) {
+  const steps = architectureSteps(architecture);
+  if (steps.length === 0) return null;
+
+  const list = createElement('ol', 'architecture-steps');
+  steps.forEach((step, index) => {
+    const item = createElement('li', 'architecture-step');
+    item.append(
+      createElement('span', 'architecture-step__index', String(index + 1).padStart(2, '0')),
+      createElement('span', 'architecture-step__label', step)
+    );
+    list.appendChild(item);
+  });
+  return list;
 }
 
 function architectureSteps(architecture) {

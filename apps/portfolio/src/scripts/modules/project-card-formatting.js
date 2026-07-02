@@ -57,7 +57,38 @@ const ICON_PATHS = {
   zap: '<path d="M13 2 4 14h7l-1 8 10-13h-7z"/>',
 };
 
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
 export function renderIcon(name, className = 'portfolio-icon') {
   const path = ICON_PATHS[name] || ICON_PATHS.layers;
   return `<svg class="${className}" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${path}</svg>`;
+}
+
+function applySvgAttributes(element, attrs) {
+  const matches = attrs.matchAll(/([a-zA-Z0-9:-]+)="([^"]*)"/g);
+  for (const match of matches) {
+    element.setAttribute(match[1], match[2]);
+  }
+}
+
+export function createIconElement(name, className = 'portfolio-icon') {
+  const svg = document.createElementNS(SVG_NS, 'svg');
+  svg.setAttribute('class', className);
+  svg.setAttribute('aria-hidden', 'true');
+  svg.setAttribute('focusable', 'false');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('fill', 'none');
+  svg.setAttribute('stroke', 'currentColor');
+  svg.setAttribute('stroke-width', '1.8');
+  svg.setAttribute('stroke-linecap', 'round');
+  svg.setAttribute('stroke-linejoin', 'round');
+
+  const path = ICON_PATHS[name] || ICON_PATHS.layers;
+  const nodeMatches = path.matchAll(/<([a-z]+)\s+([^/>]+)\/>/g);
+  for (const match of nodeMatches) {
+    const node = document.createElementNS(SVG_NS, match[1]);
+    applySvgAttributes(node, match[2]);
+    svg.appendChild(node);
+  }
+  return svg;
 }

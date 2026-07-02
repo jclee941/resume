@@ -27,10 +27,6 @@ function applyJapaneseHero(html) {
       'セキュリティインフラの経験を実務課題として整理します。'
     )
     .replace(
-      /금융권 보안 운영,\s+SIEM 탐지 자동화,\s+IaC 관측성 경험을\s+채용 검토 가능한\s+근거로\s+정리합니다\./g,
-      '金融セキュリティ運用、SIEM検知自動化、IaC可観測性の経験を、採用検討可能な根拠として整理します。'
-    )
-    .replace(
       /금융권 보안 인프라,\s+SIEM 탐지·알림,\s+IaC 관측성 경험을\s+운영 근거 중심으로\s+정리합니다\./g,
       '金融セキュリティインフラ、SIEM検知・通知、IaC可観測性の経験を、運用根拠を中心に整理します。'
     )
@@ -39,16 +35,9 @@ function applyJapaneseHero(html) {
       'FortiGate HA、Splunk ES、FortiManager APIを運用手順と監査根拠につなげてきました。'
     )
     .replace(
-      /보안 운영 · SRE · DevSecOps 역할 검토 가능/g,
-      'セキュリティ運用・SRE・DevSecOpsを検討可能'
+      /보안 운영 · 보안 인프라 · SRE 면접 제안 환영/g,
+      'セキュリティ運用・セキュリティ基盤・SREの面接相談を歓迎'
     )
-    .replace(
-      /보안 운영 · SRE · DevSecOps 역할 검토 중/g,
-      'セキュリティ運用・SRE・DevSecOpsを検討中'
-    )
-    .replace(/보안 인프라 · SIEM · SRE 역할 검토 중/g, 'セキュリティ基盤・SIEM・SREを検討中')
-    .replace(/보안 운영 · SRE · DevSecOps 채용 검토 가능/g, '採用検討・面接相談が可能')
-    .replace(/보안 운영 · SRE · DevSecOps 검토 가능/g, 'セキュリティ運用・SRE・DevSecOpsを検討可能')
     .replace(/채용 검토·면접 논의 가능/g, '採用検討・面接相談が可能')
     .replace(/aria-label="대표 업무 증빙"/g, 'aria-label="代表的な業務証跡"')
     .replace(
