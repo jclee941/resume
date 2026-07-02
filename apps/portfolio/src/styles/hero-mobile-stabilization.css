@@ -39,8 +39,12 @@
   }
 
   .hero-review-path a {
-    min-block-size: var(--hero-review-link-min-block);
+    min-block-size: calc(var(--space-10) + var(--space-2));
     padding: var(--space-2);
+  }
+
+  .hero-review-path a:last-child {
+    grid-column: 1 / -1;
   }
 
   .hero-review-path strong {
@@ -60,10 +64,15 @@
     gap: var(--space-2);
   }
 
+  .hiring-review-packet__summary {
+    display: none;
+  }
+
   .hiring-review-packet__list > div {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
-    gap: var(--space-2);
+    column-gap: var(--space-2);
+    row-gap: calc(var(--space-1) / 2);
     padding: var(--space-1) 0;
     border: 0;
     background: transparent;

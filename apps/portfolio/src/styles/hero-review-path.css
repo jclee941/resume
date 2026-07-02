@@ -59,8 +59,12 @@
 
 @media (max-width: 640px) {
   .hero-review-path {
-    grid-template-columns: 1fr;
-    min-block-size: calc((var(--hero-review-link-min-block) * 3) + (var(--space-2) * 2));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    min-block-size: auto;
     margin-top: var(--space-3);
+  }
+
+  .hero-review-path a {
+    min-block-size: calc(var(--space-10) + var(--space-2));
   }
 }
