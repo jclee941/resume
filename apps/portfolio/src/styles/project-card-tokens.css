@@ -1,0 +1,25 @@
+:root {
+  --card-border: rgb(var(--color-accent-rgb) / 0.14);
+  --card-border-hover: var(--color-accent);
+  --card-shadow: var(--shadow-sm);
+  --card-shadow-hover: var(--shadow-md);
+  --card-bg: var(--bg-card);
+  --card-bg-hover: var(--bg-tertiary);
+  --overlay-bg: rgba(12, 12, 18, 0.95);
+  --deep-dive-bg: var(--bg-secondary);
+  --deep-dive-border: rgb(var(--color-accent-rgb) / 0.16);
+  --metric-color: var(--color-success);
+  --metric-bg: rgba(121, 184, 138, 0.12);
+  --tag-splunk: #ff6b35;
+  --tag-webhook: #ea4b71;
+  --tag-fortimanager: #00a8e0;
+  --tag-python: #3776ab;
+  --tag-docker: #2496ed;
+  --tag-fortigate: #00a8e0;
+  --tag-ansible: #ee0000;
+  --tag-vmware: #607078;
+  --tag-postgresql: #4169e1;
+  --tag-aws: #ff9900;
+  --tag-nsx: #77bc43;
+  --tag-wazuh: #339966;
+}

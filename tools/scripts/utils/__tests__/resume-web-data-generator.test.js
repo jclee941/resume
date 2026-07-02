@@ -175,6 +175,36 @@ describe('generateWebData → projects[] live demo dashboards', () => {
   });
 });
 
+describe('generateWebData → public jclee941 repository showcase', () => {
+  it('includes selected public repos and excludes user-rejected repos', () => {
+    const out = generateWebData(ssot, 'ko');
+    const projectIds = out.projects.map((project) => project.id);
+    const repoUrls = out.projects.map((project) => project.repoUrl);
+
+    assert.ok(projectIds.includes('jclee-bot-github-app'), 'jclee-bot must be showcased');
+    assert.ok(
+      projectIds.includes('firewall-policy-automation'),
+      'firewall automation must be showcased'
+    );
+    assert.ok(projectIds.includes('tmux-productivity-suite'), 'tmux suite must be showcased');
+    assert.ok(repoUrls.includes('https://github.com/jclee941/jclee-bot'));
+    assert.ok(repoUrls.includes('https://github.com/jclee941/firewall'));
+    assert.ok(repoUrls.includes('https://github.com/jclee941/tmux'));
+
+    for (const rejected of [
+      'idle-outpost',
+      'account',
+      'meetup-coordinator-mcp',
+      'nunchi-translator-mcp',
+    ]) {
+      assert.ok(
+        !JSON.stringify(out.projects).includes(rejected),
+        `${rejected} must stay excluded from public projects`
+      );
+    }
+  });
+});
+
 describe('generateWebData → resume[].stats (the ACTUAL static-card render path)', () => {
   // data-processor.js builds EN/JA static cards from projectDataEn.resume[] /
   // projectDataJa.resume[] (the `resume` array of each per-language data_*.json),

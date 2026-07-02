@@ -7,7 +7,7 @@ export const ROLE_PROFILES = [
       en: 'SIEM response, financial security operations, segmentation review',
       ja: 'SIEM対応、金融セキュリティ運用',
     },
-    keywords: ['Security', 'Alert', 'Blacklist', 'Bug Bounty', 'FortiGate', 'Splunk', '보안'],
+    keywords: ['Security', 'Alert', 'Blacklist', 'Bug Bounty', 'FortiGate', 'Splunk', 'Firewall', '보안'],
   },
   {
     id: 'sre',
@@ -27,7 +27,7 @@ export const ROLE_PROFILES = [
       en: 'Cloudflare Workers, Terraform, GitHub Actions, security checks',
       ja: 'Cloudflare Workers、Terraform、検証フロー',
     },
-    keywords: ['Terraform', 'Resume Portfolio', 'AI GitHub PR Reviewer', 'SafetyWallet'],
+    keywords: ['Terraform', 'Resume Portfolio', 'jclee-bot', 'SafetyWallet'],
   },
   {
     id: 'automation',
@@ -37,7 +37,7 @@ export const ROLE_PROFILES = [
       en: 'Repeatable operating procedures, API integration, event workflows',
       ja: '運用手順、API連携、イベントフロー',
     },
-    keywords: ['Security Alert', 'Bug Bounty', 'AI GitHub PR Reviewer', 'SafetyWallet'],
+    keywords: ['Security Alert', 'Bug Bounty', 'jclee-bot', 'SafetyWallet', 'tmux'],
   },
 ];
 
@@ -71,11 +71,11 @@ export const EVIDENCE_ITEMS = [
   },
   {
     roleId: 'automation',
-    title: 'AI GitHub PR Reviewer',
+    title: 'jclee-bot GitHub App',
     proof: {
-      ko: 'PR 리뷰, secret scan, manifest 검증을 self-hosted workflow로 연결',
-      en: 'Self-hosted workflow for PR review, secret scan, and manifest checks',
-      ja: 'PRレビュー、secret scan、manifest検証をself-hosted workflowで連携',
+      ko: 'PR 리뷰, secret scan, actionlint, docs policy를 GitHub App workflow로 연결',
+      en: 'GitHub App workflow for PR review, secret scan, actionlint, and docs policy',
+      ja: 'PRレビュー、secret scan、actionlint、docs policyをGitHub App workflowで連携',
     },
   },
 ];

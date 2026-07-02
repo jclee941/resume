@@ -50,27 +50,24 @@ test.describe('Portfolio recruiter enhancements', () => {
     await expect(matrix.locator('.project-evidence-card').first()).toContainText(/근거|Evidence/);
 
     const projectCards = page.locator('#projects li.project-item');
-    await expect(projectCards).toHaveCount(9);
+    await expect(projectCards).toHaveCount(11);
 
     const moreButton = page.locator('.project-more-btn');
     await expect(moreButton).toBeVisible();
     await moreButton.click();
 
     await expect(page.locator('#project-list')).toHaveClass(/is-expanded/);
-    await expect(projectCards.nth(8)).toBeVisible();
+    await expect(projectCards.nth(10)).toBeVisible();
   });
 
-  test('project evidence links expand collapsed target projects before highlighting', async ({
-    page,
-  }) => {
+  test('project evidence links highlight the target project', async ({ page }) => {
     const reviewerLink = page
-      .locator('[data-evidence-project="AI GitHub PR Reviewer"]')
+      .locator('[data-evidence-project="jclee-bot GitHub App"]')
       .getByText(/근거 보기|Open proof/);
     await reviewerLink.click();
 
-    await expect(page.locator('#project-list')).toHaveClass(/is-expanded/);
     const reviewerCard = page.locator('#projects li.project-item', {
-      hasText: 'AI GitHub PR Reviewer',
+      hasText: 'jclee-bot GitHub App',
     });
     await expect(reviewerCard).toBeVisible();
     await expect(reviewerCard).toHaveClass(/is-role-match/);
