@@ -120,7 +120,16 @@ describe('file-reader', () => {
         outputFiles: [{ text: 'let x = ${y}' }],
       });
       const result = await bundleMainScript('/base');
-      expect(result).toContain('\\$');
+      expect(result).toContain('\\${y}');
+    });
+
+    it('does not escape standalone dollar signs in minified identifiers', async () => {
+      esbuild.build.mockResolvedValue({
+        outputFiles: [{ text: 'var $e=()=>{};function use(){return $e()}' }],
+      });
+      const result = await bundleMainScript('/base');
+      expect(result).toContain('var $e=()=>{}');
+      expect(result).not.toContain('\\$e');
     });
 
     it('returns a string', async () => {

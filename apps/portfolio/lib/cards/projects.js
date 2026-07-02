@@ -1,6 +1,12 @@
 const { TEMPLATE_CACHE } = require('../config');
 const { escapeHtml } = require('../template-sanitizer');
 const logger = require('../../logger');
+const {
+  buildProjectCaseNotes,
+  buildProjectReviewRail,
+  projectAnchor,
+  projectLabelsFor,
+} = require('./project-review');
 
 function buildProjectTitle(project, link, hasLink) {
   const titleContent = `${escapeHtml(project.title)}<span class="arrow">↗</span>`;
@@ -81,8 +87,12 @@ function generateProjectCards(projectsData, dataHash) {
   }
 
   const FEATURED_VISIBLE = 5;
-  const html = [...projectsData]
-    .sort((a, b) => (a.displayOrder ?? 999) - (b.displayOrder ?? 999))
+  const labels = projectLabelsFor(projectsData);
+  const sortedProjects = [...projectsData].sort(
+    (a, b) => (a.displayOrder ?? 999) - (b.displayOrder ?? 999)
+  );
+  const reviewRail = buildProjectReviewRail(sortedProjects, labels);
+  const projectItems = sortedProjects
     .map((project, idx) => {
       const githubUrl = project.githubUrl || project.repoUrl;
       const demoUrl = project.demoUrl || project.liveUrl;
@@ -93,20 +103,23 @@ function generateProjectCards(projectsData, dataHash) {
       const titleElement = buildProjectTitle(project, link, hasLink);
       const metaLine = buildProjectMeta(project, githubUrl, demoUrl);
       const projectLinks = buildProjectLinks(project, githubUrl, demoUrl);
+      const caseNotes = buildProjectCaseNotes(project, labels, githubUrl, demoUrl, dashboards);
       // Progressive disclosure: show the top FEATURED_VISIBLE projects (by
       // displayOrder) by default; collapse the rest behind a "\uB354\uBCF4\uAE30" toggle so
       // the section is curated without removing any project from the DOM.
       const collapsed = idx >= FEATURED_VISIBLE;
       const collapsedClass = collapsed ? ' project-item--collapsed' : '';
       const collapsedAttr = collapsed ? ' data-project-extra="true"' : '';
+      const anchor = projectAnchor(project, idx);
 
       return `
-         <li class="project-item project-card card${collapsedClass}"${collapsedAttr} data-tech="${escapeHtml(String(project.tech || ''))}">
+         <li id="${escapeHtml(anchor)}" class="project-item project-card card${collapsedClass}"${collapsedAttr} data-tech="${escapeHtml(String(project.tech || ''))}">
              <div class="project-header">
                  <h3 class="project-title">
                      ${titleElement}
                  </h3>
              </div>
+              ${caseNotes}
               <p class="project-description">${escapeHtml(project.description).replace(/\n/g, '<br>')}</p>
               <div class="project-tech">
                   ${escapeHtml(project.tech)}
@@ -117,6 +130,7 @@ function generateProjectCards(projectsData, dataHash) {
     })
     .join('\n');
 
+  const html = `${reviewRail}\n${projectItems}`;
   TEMPLATE_CACHE.projectCardsHtml = html;
   return html;
 }

@@ -126,7 +126,7 @@ async function bundleMainScript(baseDir, defines = {}) {
   return bundleResult.outputFiles[0].text
     .replace(ESCAPE_PATTERNS.BACKSLASH, '\\\\')
     .replace(ESCAPE_PATTERNS.BACKTICK, '\\`')
-    .replace(ESCAPE_PATTERNS.DOLLAR, '\\$');
+    .replace(ESCAPE_PATTERNS.DOLLAR_BRACE, () => '\\${');
 }
 
 /**

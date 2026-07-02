@@ -116,26 +116,26 @@ describe('html-transformer', () => {
     const escapePatterns = {
       BACKSLASH: /\\/g,
       BACKTICK: /`/g,
-      DOLLAR: /\$/g,
+      DOLLAR_BRACE: /\$\{/g,
     };
 
-    test('escapes in strict order: backslash, then backtick, then dollar', () => {
-      const input = '\\`$\\';
+    test('escapes in strict order: backslash, then backtick, then dollar-brace', () => {
+      const input = '\\`${value}\\';
       const escaped = escapeForTemplateLiteral(input, escapePatterns);
       const wrongOrderEscaped = input
         .replace(escapePatterns.BACKTICK, '\\`')
         .replace(escapePatterns.BACKSLASH, '\\\\')
-        .replace(escapePatterns.DOLLAR, '\\$');
+        .replace(escapePatterns.DOLLAR_BRACE, () => '\\${');
 
-      expect(escaped).toBe('\\\\\\`\\$\\\\');
+      expect(escaped).toBe('\\\\\\`\\${value}\\\\');
       expect(escaped).not.toBe(wrongOrderEscaped);
     });
 
     test('escapes mixed content', () => {
-      const input = 'path\\to\\file `price` is $100';
+      const input = 'path\\to\\file `price` is $100 and ${name}';
       const escaped = escapeForTemplateLiteral(input, escapePatterns);
 
-      expect(escaped).toBe('path\\\\to\\\\file \\`price\\` is \\$100');
+      expect(escaped).toBe('path\\\\to\\\\file \\`price\\` is $100 and \\${name}');
     });
 
     test('handles empty string', () => {
