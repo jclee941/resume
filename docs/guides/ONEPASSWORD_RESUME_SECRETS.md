@@ -4,31 +4,43 @@ Resume automation secrets are owned by the `homelab` vault item named `resume`.
 Tracked files contain only `op://` references; real values must never be written
 to `.env`, logs, commits, or shell history.
 
-## Required 1Password fields
+## Current 1Password fields
 
-Create these fields on the `homelab/resume` item when the matching integration is
-used:
+The committed `.env.1password.example` references only fields currently present
+on the `homelab/resume` item:
 
-- `WANTED_EMAIL`
+- `wanted/email`
 - `WANTED_PASSWORD`
-- `WANTED_ONEID_CLIENT_ID`
-- `WANTED_RESUME_ID`
-- `WANTED_COOKIES`
-- `JOBKOREA_USERNAME`
-- `JOBKOREA_EMAIL`
-- `JOBKOREA_PASSWORD`
+- `wanted/oneid_client_id`
+- `wanted/resume_id`
+- `jobkorea/username`
+- `jobkorea/email`
+- `jobkorea/password`
 - `JOBKOREA_RNO`
-- `JOBKOREA_COOKIES`
 - `CLIPROXY_BASE`
 - `CLIPROXY_API_KEY`
+- `TELEGRAM_BOT_TOKEN`
+- `TELEGRAM_CHAT_ID`
+- `CLOUDFLARE_ACCOUNT_ID`
+- `CLOUDFLARE_API_KEY`
+- `CLOUDFLARE_EMAIL`
+
+## Optional fields to add when needed
+
+Create these fields on the `homelab/resume` item when the matching integration is
+enabled:
+
+- `WANTED_COOKIES`
+- `JOBKOREA_COOKIES`
 - `ADMIN_TOKEN`
 - `AUTOMATION_WEBHOOK_SECRET`
 - `AUTH_SYNC_SECRET`
 - `SESSION_ENCRYPTION_KEY`
-- `CLOUDFLARE_ACCOUNT_ID`
-- `CLOUDFLARE_API_KEY`
 - `CLOUDFLARE_API_TOKEN`
-- `CLOUDFLARE_EMAIL`
+
+Cloudflare deploys should prefer `CLOUDFLARE_API_TOKEN`. The legacy
+`CLOUDFLARE_API_KEY` and `CLOUDFLARE_EMAIL` fields remain only for migration and
+must be rotated if Cloudflare rejects them.
 
 ## Required 1Password documents
 
