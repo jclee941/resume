@@ -678,7 +678,7 @@
       "githubUrl": "https://github.com/jclee941/blacklist",
       "demoUrl": null,
       "featured": true,
-      "displayOrder": 5
+      "displayOrder": 6
     },
     {
       "id": "hycu-fsds-autonomous-driving",
@@ -747,24 +747,25 @@
       ],
       "technologies": ["Cloudflare Workers", "TypeScript", "Hono", "Drizzle ORM", "D1"],
       "featured": false,
-      "displayOrder": 7,
+      "displayOrder": 8,
       "language": "TypeScript"
     },
     {
-      "id": "ai-github-pr-reviewer",
-      "name": "AI GitHub PR Reviewer",
+      "id": "jclee-bot-github-app",
+      "name": "jclee-bot GitHub App",
       "period": "2026.04 ~ Present",
-      "githubUrl": "https://github.com/jclee941/pr-agent",
-      "description": "Security and infra PR reviews were single-person dependent, with shared patterns (secret leaks, RBAC paths) verified manually every time. Run a self-hosted AI PR reviewer on Cloudflare Workers: gitleaks-pattern secret detection and RBAC path checks posted via GitHub Check Run API, with CLIProxyAPI proxy reducing LLM call cost. Every PR receives automated comments for secret-exposure and RBAC patterns, and LLM cost is controlled through the self-hosted proxy.",
+      "githubUrl": "https://github.com/jclee941/jclee-bot",
+      "description": "GitHub App automation platform for jclee941 repositories, built to keep PR review, secret scanning, GitHub Actions policy checks, and repository documentation checks in one operating flow. It publishes PR metadata, secret scan, actionlint, and docs-policy results as Check Runs while leaving Korean-first review comments and observable run logs.",
       "highlights": [
-        "Self-operated proxy to control LLM invocation routing",
-        "Auto pattern detection for early security-defect identification",
-        "Webhook-based immediate notifications for PR review",
-        "Zero-downtime Edge deployment design"
+        "GitHub App event flow for PR automation",
+        "Check Runs for secret scan, actionlint, and docs policy",
+        "Korean-first review comments and PR descriptions",
+        "ELK observability connected to GitHub Actions evidence"
       ],
-      "technologies": ["TypeScript", "Cloudflare Workers", "AI/LLM", "GitHub API"],
+      "technologies": ["Python", "GitHub App", "GitHub Actions", "ELK", "GitHub API"],
       "featured": true,
-      "displayOrder": 6
+      "displayOrder": 5,
+      "language": "Python"
     },
     {
       "id": "bug-bounty-recon-toolkit",
@@ -780,8 +781,42 @@
       ],
       "technologies": ["JavaScript", "Subfinder", "httpx", "Nuclei", "Go"],
       "featured": false,
-      "displayOrder": 8,
+      "displayOrder": 9,
       "language": "JavaScript"
+    },
+    {
+      "id": "firewall-policy-automation",
+      "name": "Firewall Policy Automation",
+      "period": "2026.06 ~ Present",
+      "githubUrl": "https://github.com/jclee941/firewall",
+      "description": "Excel VBA tool that turns firewall policy request forms and firewall range tables into one reviewable workflow. It validates request rows, firewall inventories, and range criteria in a single workbook so the target firewall decision and review evidence remain traceable.",
+      "highlights": [
+        "Common input contract for request forms and firewall ranges",
+        "Row-level traceability for target-firewall decisions",
+        "VBA workflow that stays inside the operator's existing Excel format",
+        "Reduced repetitive work in firewall-policy review"
+      ],
+      "technologies": ["Excel VBA", "Firewall Policy", "Network Operations", "Runbook"],
+      "featured": false,
+      "displayOrder": 10,
+      "language": "VBA"
+    },
+    {
+      "id": "tmux-productivity-suite",
+      "name": "tmux Productivity Suite",
+      "period": "2026.06 ~ Present",
+      "githubUrl": "https://github.com/jclee941/tmux",
+      "description": "Terminal productivity suite that organizes recurring development operations around tmux sessions, project layouts, and a Slack bridge. Bash configuration, YAML layouts, and a Bun/TypeScript TUI are versioned together so context switching and session recovery are repeatable.",
+      "highlights": [
+        "Project-specific tmux sessions and layout management",
+        "YAML-defined workspaces with terminal UI control",
+        "Scripts and key bindings for repeated entry points",
+        "Personal operations tooling managed as versioned infrastructure"
+      ],
+      "technologies": ["TypeScript", "Bun", "tmux", "Bash", "YAML"],
+      "featured": false,
+      "displayOrder": 12,
+      "language": "TypeScript"
     }
   ],
   "ossContributions": [

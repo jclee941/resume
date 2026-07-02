@@ -704,7 +704,7 @@
       "githubUrl": "https://github.com/jclee941/blacklist",
       "demoUrl": null,
       "featured": true,
-      "displayOrder": 5
+      "displayOrder": 6
     },
     {
       "id": "hycu-fsds-autonomous-driving",
@@ -769,24 +769,25 @@
       ],
       "technologies": ["Cloudflare Workers", "TypeScript", "Hono", "Drizzle ORM", "D1"],
       "featured": false,
-      "displayOrder": 7,
+      "displayOrder": 8,
       "language": "TypeScript"
     },
     {
-      "id": "ai-github-pr-reviewer",
-      "name": "AI GitHub PR Reviewer",
+      "id": "jclee-bot-github-app",
+      "name": "jclee-bot GitHub App",
       "period": "2026.04 ~ 현재",
-      "githubUrl": "https://github.com/jclee941/pr-agent",
-      "description": "보안·인프라 PR 리뷰가 특정 담당자에게 몰리고, 시크릿 노출·Kubernetes/RBAC 경로 같은 반복 검증을 매번 수동으로 확인해야 했습니다. The-PR-Agent/pr-agent를 fork해 GitHub Actions self-hosted reviewer로 운영하고, gitleaks 기반 secret scan과 Kubernetes/RBAC manifest 경로 검증을 Check Run으로 게시했습니다. LiteLLM provider abstraction으로 모델 설정을 분리했습니다.",
+      "githubUrl": "https://github.com/jclee941/jclee-bot",
+      "description": "jclee941 하위 레포의 PR 검토, 시크릿 스캔, GitHub Actions 정책 점검을 한 흐름에서 처리하기 위한 GitHub App 자동화 플랫폼입니다. PR 메타데이터, secret scan, actionlint, docs policy를 Check Run으로 묶고, 한국어 우선 리뷰 코멘트와 운영 로그를 남기도록 구성했습니다.",
       "highlights": [
-        "LLM 호출 경로를 통제하기 위한 자체 프록시 운영",
-        "시크릿·RBAC 패턴의 조기 탐지를 위한 Check Run 검증",
-        "PR 리뷰 지연을 줄이기 위한 Webhook 기반 즉시 알림",
-        "서비스 중단 없이 배포하기 위한 Edge 무중단 배포 설계"
+        "GitHub App 기반 PR 이벤트 처리 흐름",
+        "secret scan, actionlint, docs policy를 Check Run으로 게시",
+        "한국어 우선 리뷰 코멘트와 변경 설명 생성",
+        "ELK 관측성과 GitHub Actions 운영 증거 연결"
       ],
-      "technologies": ["Python", "GitHub Actions", "Docker", "LiteLLM", "GitHub API"],
+      "technologies": ["Python", "GitHub App", "GitHub Actions", "ELK", "GitHub API"],
       "featured": true,
-      "displayOrder": 6
+      "displayOrder": 5,
+      "language": "Python"
     },
     {
       "id": "bug-bounty-recon-toolkit",
@@ -802,8 +803,42 @@
       ],
       "technologies": ["JavaScript", "Subfinder", "httpx", "Nuclei", "Go"],
       "featured": false,
-      "displayOrder": 8,
+      "displayOrder": 9,
       "language": "JavaScript"
+    },
+    {
+      "id": "firewall-policy-automation",
+      "name": "Firewall Policy Automation",
+      "period": "2026.06 ~ 현재",
+      "githubUrl": "https://github.com/jclee941/firewall",
+      "description": "방화벽 정책 요청서와 방화벽 대역표를 수작업으로 대조하던 절차를 Excel VBA 기반 도구로 정리한 프로젝트입니다. 정책 요청 행, 방화벽 목록, 대역 기준표를 하나의 통합 문서에서 검증해 대상 방화벽 판단과 검토 근거를 남기도록 구성했습니다.",
+      "highlights": [
+        "정책 요청서와 방화벽 대역표를 같은 입력 계약으로 정리",
+        "대상 방화벽 판단 근거를 행 단위로 추적",
+        "운영자가 기존 Excel 양식 안에서 검토할 수 있는 VBA 흐름",
+        "방화벽 정책 검토 절차의 반복 작업 감소"
+      ],
+      "technologies": ["Excel VBA", "Firewall Policy", "Network Operations", "Runbook"],
+      "featured": false,
+      "displayOrder": 10,
+      "language": "VBA"
+    },
+    {
+      "id": "tmux-productivity-suite",
+      "name": "tmux Productivity Suite",
+      "period": "2026.06 ~ 현재",
+      "githubUrl": "https://github.com/jclee941/tmux",
+      "description": "터미널 세션, 프로젝트별 작업 레이아웃, Slack 브리지 같은 반복 개발 운영을 tmux 중심으로 묶은 생산성 도구입니다. Bash 설정, YAML 레이아웃, Bun/TypeScript TUI를 함께 관리해 작업 컨텍스트 전환과 세션 복구를 표준화했습니다.",
+      "highlights": [
+        "프로젝트별 tmux 세션과 레이아웃 관리",
+        "YAML 기반 작업 공간 정의와 터미널 UI",
+        "반복 작업 진입점을 스크립트와 키 바인딩으로 통합",
+        "개인 운영 도구도 버전 관리와 검증 대상으로 관리"
+      ],
+      "technologies": ["TypeScript", "Bun", "tmux", "Bash", "YAML"],
+      "featured": false,
+      "displayOrder": 12,
+      "language": "TypeScript"
     }
   ],
   "ossContributions": [

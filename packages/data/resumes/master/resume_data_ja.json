@@ -675,7 +675,7 @@
       "githubUrl": "https://github.com/jclee941/blacklist",
       "demoUrl": null,
       "featured": true,
-      "displayOrder": 5
+      "displayOrder": 6
     },
     {
       "id": "hycu-fsds-autonomous-driving",
@@ -744,24 +744,25 @@
       ],
       "technologies": ["Cloudflare Workers", "TypeScript", "Hono", "Drizzle ORM", "D1"],
       "featured": false,
-      "displayOrder": 7,
+      "displayOrder": 8,
       "language": "TypeScript"
     },
     {
-      "id": "ai-github-pr-reviewer",
-      "name": "AI GitHub PR Reviewer",
+      "id": "jclee-bot-github-app",
+      "name": "jclee-bot GitHub App",
       "period": "2026.04 ~ 現在",
-      "githubUrl": "https://github.com/jclee941/pr-agent",
-      "description": "セキュリティ・インフラPRレビューが1人依存で、共通パターン（シークレット露出/RBACパス）の検証を毎回手動で行う必要がありました。 Self-hosted AI PRレビューアをCloudflare Workersで運用しています。gitleaksパターンベースのシークレット検出とRBACパス検査をGitHub Check Run APIでコメントし、CLIProxyAPIプロキシでLLM呼び出し経路を制御しています。 PRごとにシークレット露出とRBACパス検証が自動コメントされ、LLM呼び出しコストを自前プロキシで制御できるようになりました。",
+      "githubUrl": "https://github.com/jclee941/jclee-bot",
+      "description": "jclee941配下リポジトリのPRレビュー、シークレットスキャン、GitHub Actionsポリシーチェック、ドキュメント確認を一つの運用フローにまとめるGitHub App自動化基盤です。PRメタデータ、secret scan、actionlint、docs policyをCheck Runとして公開し、韓国語優先のレビューコメントと実行ログを残します。",
       "highlights": [
-        "LLM呼び出し経路制御のための自社プロキシ運用",
-        "セキュリティ欠陥の早期検出のための自動パターン検出",
-        "PRレビュー通知フローの標準化のためのWebhookベースの即時通知",
-        "サービス中断のないデプロイのためのEdge無停止デプロイ設計"
+        "GitHub AppベースのPRイベント処理",
+        "secret scan、actionlint、docs policyのCheck Run公開",
+        "韓国語優先のレビューコメントとPR説明生成",
+        "ELK可観測性とGitHub Actions実行証跡の接続"
       ],
-      "technologies": ["TypeScript", "Cloudflare Workers", "AI/LLM", "GitHub API"],
+      "technologies": ["Python", "GitHub App", "GitHub Actions", "ELK", "GitHub API"],
       "featured": true,
-      "displayOrder": 6
+      "displayOrder": 5,
+      "language": "Python"
     },
     {
       "id": "bug-bounty-recon-toolkit",
@@ -777,8 +778,42 @@
       ],
       "technologies": ["JavaScript", "Subfinder", "httpx", "Nuclei", "Go"],
       "featured": false,
-      "displayOrder": 8,
+      "displayOrder": 9,
       "language": "JavaScript"
+    },
+    {
+      "id": "firewall-policy-automation",
+      "name": "Firewall Policy Automation",
+      "period": "2026.06 ~ 現在",
+      "githubUrl": "https://github.com/jclee941/firewall",
+      "description": "ファイアウォールポリシー申請書とレンジ表を手作業で照合していた手順を、Excel VBA上のレビュー可能なワークフローに整理したプロジェクトです。申請行、ファイアウォール一覧、レンジ条件を同じブックで検証し、対象ファイアウォールの判断と確認根拠を追跡できるようにしました。",
+      "highlights": [
+        "申請書とファイアウォールレンジ表を同じ入力契約で整理",
+        "対象ファイアウォール判断の行単位トレーサビリティ",
+        "既存Excel形式の中で運用者が確認できるVBAフロー",
+        "ファイアウォールポリシーレビューの反復作業を削減"
+      ],
+      "technologies": ["Excel VBA", "Firewall Policy", "Network Operations", "Runbook"],
+      "featured": false,
+      "displayOrder": 10,
+      "language": "VBA"
+    },
+    {
+      "id": "tmux-productivity-suite",
+      "name": "tmux Productivity Suite",
+      "period": "2026.06 ~ 現在",
+      "githubUrl": "https://github.com/jclee941/tmux",
+      "description": "ターミナルセッション、プロジェクト別レイアウト、Slackブリッジなどの反復開発運用をtmux中心にまとめた生産性ツールです。Bash設定、YAMLレイアウト、Bun/TypeScript TUIを一緒に管理し、作業コンテキスト切替とセッション復旧を標準化しました。",
+      "highlights": [
+        "プロジェクト別tmuxセッションとレイアウト管理",
+        "YAMLベースのワークスペース定義とターミナルUI",
+        "反復作業の入口をスクリプトとキーバインドで統合",
+        "個人運用ツールもバージョン管理と検証対象として管理"
+      ],
+      "technologies": ["TypeScript", "Bun", "tmux", "Bash", "YAML"],
+      "featured": false,
+      "displayOrder": 12,
+      "language": "TypeScript"
     }
   ],
   "ossContributions": [
