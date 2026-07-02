@@ -72,7 +72,11 @@ function openDeepDive(project) {
   overlay.classList.add('active');
   isOpen = true;
   document.body.style.overflow = 'hidden';
-  overlay.querySelector('.deep-dive-close')?.focus();
+  const focusCloseButton = () => {
+    overlay?.querySelector('.deep-dive-close')?.focus({ preventScroll: true });
+  };
+  window.setTimeout(focusCloseButton, 0);
+  window.setTimeout(focusCloseButton, 120);
   window.setTimeout(() => {
     overlay
       .querySelectorAll('.metric-card__value')
