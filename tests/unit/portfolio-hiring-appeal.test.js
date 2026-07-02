@@ -37,7 +37,7 @@ describe('portfolio hiring appeal copy', () => {
   test('Korean hero gives recruiters a direct review-pack path', () => {
     const html = buildHeroContent('ko');
 
-    expect(html).toContain('즉시 투입 가능하며 채용 제안과 면접 일정을 적극 검토하고 있습니다.');
+    expect(html).toContain('보안 인프라·SIEM·SRE 역할로 바로 합류할 수 있습니다.');
     expect(html).toContain('운영 흐름');
     expect(html).toContain('운영 워크플로');
     expect(html).not.toContain('자동화 방식');
@@ -54,7 +54,7 @@ describe('portfolio hiring appeal copy', () => {
     const html = buildHeroContent('en');
 
     expect(html).toContain(
-      'Immediately available and actively reviewing role proposals and interview requests.'
+      'Available now for security infrastructure, SIEM, and SRE roles.'
     );
     expect(html).toContain('Response workflow');
     expect(html).toContain('Response Workflow');
@@ -75,8 +75,8 @@ describe('portfolio hiring appeal copy', () => {
   test('Japanese hero localizes recruiter proof and review-pack actions', () => {
     const html = buildHeroContent('ja');
 
-    expect(html).toContain('すぐ参画可能で、採用提案と面接相談を積極的に確認しています。');
-    expect(html).toContain('<ul class="hero-proof-list" aria-label="代表的な業務証跡">');
+    expect(html).toContain('セキュリティ基盤・SIEM・SREの役割ですぐ参画できます。');
+    expect(html).toContain('<ul class="hero-proof-list" aria-label="確認すべき主要証跡">');
     expect(html).toContain('取引所ネットワーク分離・エンドポイントセキュリティ運用');
     expect(html).toContain('Splunk ES検知ルール・Slack/SMS通知');
     expect(html).toContain('FortiManager APIベースのポリシー照会');

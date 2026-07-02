@@ -54,17 +54,18 @@ describe('Config Module', () => {
       expect('`test`'.match(ESCAPE_PATTERNS.BACKTICK)).toHaveLength(2);
     });
 
-    test('should have DOLLAR pattern', () => {
-      expect(ESCAPE_PATTERNS.DOLLAR).toBeInstanceOf(RegExp);
-      expect('$test$'.match(ESCAPE_PATTERNS.DOLLAR)).toHaveLength(2);
+    test('should have DOLLAR_BRACE pattern', () => {
+      expect(ESCAPE_PATTERNS.DOLLAR_BRACE).toBeInstanceOf(RegExp);
+      expect('${test}'.match(ESCAPE_PATTERNS.DOLLAR_BRACE)).toHaveLength(1);
+      expect('$test$'.match(ESCAPE_PATTERNS.DOLLAR_BRACE)).toBeNull();
     });
 
     test('BACKTICK pattern should be global', () => {
       expect(ESCAPE_PATTERNS.BACKTICK.flags).toContain('g');
     });
 
-    test('DOLLAR pattern should be global', () => {
-      expect(ESCAPE_PATTERNS.DOLLAR.flags).toContain('g');
+    test('DOLLAR_BRACE pattern should be global', () => {
+      expect(ESCAPE_PATTERNS.DOLLAR_BRACE.flags).toContain('g');
     });
   });
 
