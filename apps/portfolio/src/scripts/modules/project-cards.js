@@ -38,8 +38,9 @@ function resolveMount() {
   const caseStudyList = document.querySelector('.case-study-list');
   if (caseStudyList) return { mode: 'replace', target: caseStudyList };
 
+  const lang = currentLanguage();
   const projectList = document.querySelector('#project-list');
-  if (projectList) return { mode: 'after', target: projectList };
+  if (lang.startsWith('ko') && projectList) return { mode: 'after', target: projectList };
   return null;
 }
 

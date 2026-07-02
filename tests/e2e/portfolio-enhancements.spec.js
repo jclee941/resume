@@ -75,6 +75,16 @@ test.describe('Portfolio recruiter enhancements', () => {
     await expect(section.locator('.project-card__cta').first()).toContainText('상세 검토');
   });
 
+  test('localized pages do not leak Korean deep-dive cards', async ({ page }) => {
+    await page.goto('/en/', { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('.case-study-deep-dives')).toHaveCount(0);
+    await expect(page.locator('body')).not.toContainText('넥스트레이드 매매체결시스템 보안 운영');
+
+    await page.goto('/ja/', { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('.case-study-deep-dives')).toHaveCount(0);
+    await expect(page.locator('body')).not.toContainText('넥스트레이드 매매체결시스템 보안 운영');
+  });
+
   test('project evidence links highlight the target project', async ({ page }) => {
     const reviewerLink = page
       .locator('[data-evidence-project="jclee-bot GitHub App"]')
