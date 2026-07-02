@@ -2,6 +2,8 @@
 
 목표: 보안 인프라, Security Operations, Observability/SRE, DevSecOps 역할에 집중해 지원 품질을 높이고 회신 가능한 접점을 늘린다.
 
+마스터플랜: `docs/hiring-success-masterplan.md`
+
 ## 타깃 포지션
 
 우선순위 1:
@@ -33,14 +35,15 @@
 - Splunk ES Saved Search, Webhook, Slack/SMS 알림, FortiManager API 조회 절차
 - FSDC 감사 대응, DB 접근제어 쿼리 튜닝, DLP 정책 산출물 관리
 - Grafana, Prometheus, Loki, ELK 기반 관측성 데모
-- Cloudflare Workers 포트폴리오와 자동화 런타임 운영
+- Cloudflare Workers 포트폴리오와 jclee-bot GitHub App 운영 증거
+- CCNP 기반 네트워크 보안 이해
 
 ## 7일 실행 루틴
 
 Day 1:
 - Wanted/JobKorea 프로필 문구를 `packages/data/resumes/master/resume_data.json` 기준으로 sync
 - 기존 큐에서 안전하게 지원 가능한 공고만 재검토
-- `profile-copy.md`의 짧은 자기소개를 플랫폼에 반영
+- `profile-copy.md`의 짧은 자기소개와 CCNP 표기를 플랫폼에 반영
 
 Day 2:
 - Wanted: 보안, DevSecOps, SRE, SIEM, FortiGate, Splunk 키워드 검색
@@ -53,7 +56,7 @@ Day 3:
 
 Day 4:
 - 면접 대비: `interview-answers.md` 1분 자기소개와 프로젝트 설명 암기
-- resume.jclee.me에서 Observability Platform, Security Alert System, Resume Portfolio 데모 경로 점검
+- resume.jclee.me에서 Observability Platform, Security Alert System, jclee-bot proof path 점검
 
 Day 5:
 - 전날 미회신 공고 팔로업
@@ -88,5 +91,5 @@ Day 7:
 - 공고 요구 기술 중 FortiGate, Splunk, SIEM, Linux, Python, Ansible, Terraform, Cloudflare, Grafana 중 하나 이상이 있는가
 - 자기소개 첫 문단이 회사명 없이도 구체적인가
 - 포트폴리오 링크가 들어가 있는가
+- JobKorea에는 CCNP가 빠지지 않았는가
 - “직접 통과”, “완벽”, “압도적” 같은 과장 표현이 없는가
-

@@ -71,6 +71,7 @@ describe('generateWebData → public jclee941 repository showcase', () => {
     ]);
 
     for (const rejected of [
+      'mcp-server-hub',
       'idle-outpost',
       'account',
       'meetup-coordinator-mcp',
@@ -79,6 +80,23 @@ describe('generateWebData → public jclee941 repository showcase', () => {
       assert.ok(
         !searchableProjectRefs.some((value) => String(value || '').includes(rejected)),
         `${rejected} must stay excluded from public projects`
+      );
+    }
+  });
+
+  it('excludes rejected infrastructure cards from public portfolio data', () => {
+    const out = generateWebData(ssot, 'ko');
+    const infrastructureRefs = out.infrastructure.flatMap((item) => [
+      item.id,
+      item.title,
+      item.description,
+      item.url,
+    ]);
+
+    for (const rejected of ['mcp-server-hub', 'MCP Server Hub', 'idle-outpost', 'account']) {
+      assert.ok(
+        !infrastructureRefs.some((value) => String(value || '').includes(rejected)),
+        `${rejected} must stay excluded from public infrastructure cards`
       );
     }
   });

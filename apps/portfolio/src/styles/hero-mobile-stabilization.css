@@ -22,8 +22,14 @@
   }
 
   .hero-proof-list,
+  .hero-public-proof,
   .hero-review-path {
     gap: var(--space-2);
+  }
+
+  .hero-public-proof {
+    order: 4;
+    margin-bottom: var(--space-2);
   }
 
   .hero-review-path {
@@ -86,6 +92,7 @@
 
   .hero-positioning,
   .hero-proof-list li,
+  .hero-public-proof strong,
   .hiring-review-packet dd,
   .about-content,
   .resume-description,

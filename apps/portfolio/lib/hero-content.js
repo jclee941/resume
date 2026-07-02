@@ -27,6 +27,21 @@ function renderProofList(content) {
   return `<ul class="hero-proof-list" aria-label="${content.proofLabel}">${items}</ul>`;
 }
 
+function renderPublicProofLinks(content) {
+  const links = content.publicProofLinks
+    .map(
+      ([href, label, detail]) =>
+        `<a href="${escapeHtml(href)}"><span>${escapeHtml(label)}</span><strong>${escapeHtml(detail)}</strong></a>`
+    )
+    .join('');
+  return (
+    `<section class="hero-public-proof" aria-label="${content.publicProofLabel}">` +
+    `<p class="hero-public-proof__label">${escapeHtml(content.publicProofLabel)}</p>` +
+    `<nav class="hero-public-proof__links">${links}</nav>` +
+    '</section>'
+  );
+}
+
 function renderReviewPath(content) {
   const links = content.reviewLinks
     .map(
@@ -107,6 +122,7 @@ function buildHeroContent(locale) {
     `<p class="hero-availability">${content.availability}</p>`,
     `<p class="hero-positioning">${content.positioning}</p>`,
     renderProofList(content),
+    renderPublicProofLinks(content),
     renderActions(content),
     renderReviewPath(content),
     renderReviewPacket(content),
