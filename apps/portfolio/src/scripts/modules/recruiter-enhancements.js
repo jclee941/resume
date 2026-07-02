@@ -153,7 +153,10 @@ function bindRoleControls(cards, proofCounts) {
           const roles = (card.getAttribute('data-role') || '').split(/\s+/);
           card.classList.add(roles.includes(role) ? 'is-role-match' : 'is-role-dimmed');
         });
-        status.textContent = selectedRoleStatusText(roleProfile, roleProofCountText(proofCounts, role));
+        status.textContent = selectedRoleStatusText(
+          roleProfile,
+          roleProofCountText(proofCounts, role)
+        );
         setRoleHistoryState(roleProfile);
         document.querySelector('#projects')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
