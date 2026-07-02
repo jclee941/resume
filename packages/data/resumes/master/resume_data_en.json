@@ -657,6 +657,12 @@
       "language": "Python",
       "githubUrl": "https://github.com/jclee941/splunk",
       "demoUrl": "https://kibana.jclee.me/s/portfolio-demo/app/dashboards?auth_provider_hint=portfolio_demo#/view/portfolio-demo-dashboard",
+      "dashboards": [
+        {
+          "name": "ELK",
+          "url": "https://kibana.jclee.me/s/portfolio-demo/app/dashboards?auth_provider_hint=portfolio_demo#/view/portfolio-demo-dashboard"
+        }
+      ],
       "featured": true,
       "displayOrder": 3
     },
