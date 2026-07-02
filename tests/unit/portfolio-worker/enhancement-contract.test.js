@@ -167,18 +167,22 @@ describe('Project deep-dive architecture diagram accessibility', () => {
   const overlay = read(
     path.join(PORTFOLIO, 'src', 'scripts', 'modules', 'project-deep-dive-overlay.js')
   );
+  const renderer = read(
+    path.join(PORTFOLIO, 'src', 'scripts', 'modules', 'project-architecture-renderer.js')
+  );
 
   test('architecture diagram is keyboard focusable and exposed as an image-like flow', () => {
-    expect(overlay).toMatch(/class="architecture-diagram"[^`]*tabindex="0"[^`]*role="img"/);
-    expect(overlay).toMatch(/aria-label="\$\{escapeHtml\(project\.title\)\} architecture flow"/);
+    expect(renderer).toMatch(/class="architecture-diagram"[^`]*tabindex="0"[^`]*role="img"/);
+    expect(renderer).toMatch(/aria-label="\$\{escapeHtml\(project\.title\)\} architecture flow"/);
+    expect(overlay).toMatch(/renderArchitecture\(project\)/);
   });
 
   test('architecture flow includes a mobile-readable step list before the ascii diagram', () => {
-    expect(overlay).toMatch(/function renderArchitectureSteps/);
-    expect(overlay).toMatch(/function architectureSteps/);
-    expect(overlay).toMatch(/class="architecture-steps"/);
-    expect(overlay).toMatch(/class="architecture-step__index"/);
-    expect(overlay).toMatch(/class="architecture-step__label"/);
+    expect(renderer).toMatch(/function renderArchitectureSteps/);
+    expect(renderer).toMatch(/function architectureSteps/);
+    expect(renderer).toMatch(/class="architecture-steps"/);
+    expect(renderer).toMatch(/class="architecture-step__index"/);
+    expect(renderer).toMatch(/class="architecture-step__label"/);
   });
 });
 
