@@ -73,6 +73,16 @@ test.describe('Portfolio recruiter enhancements', () => {
       '케이스 스터디'
     );
     await expect(section.locator('.project-card__cta').first()).toContainText('상세 검토');
+
+    await section.locator('.project-card').first().click();
+    await expect(page.locator('.deep-dive-overlay')).toHaveClass(/active/);
+    await expect
+      .poll(() =>
+        page.evaluate(() =>
+          Boolean(document.querySelector('.deep-dive-overlay.active')?.contains(document.activeElement))
+        )
+      )
+      .toBe(true);
   });
 
   test('localized pages do not leak Korean deep-dive cards', async ({ page }) => {
