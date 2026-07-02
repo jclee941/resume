@@ -64,7 +64,7 @@ function renderRoleQuickPaths(content) {
     .map(([id, label, proof]) => {
       const accessibleLabel = `${label}: ${proof}`;
       return (
-        `<button type="button" class="role-chip" data-role-filter="${escapeHtml(id)}" aria-pressed="false" aria-label="${escapeHtml(accessibleLabel)}">` +
+        `<button type="button" class="role-chip" data-role-filter="${escapeHtml(id)}" aria-pressed="false" aria-label="${escapeHtml(accessibleLabel)}" disabled>` +
         `<span class="role-chip__label">${escapeHtml(label)}</span>` +
         '<span class="role-chip__separator" aria-hidden="true"></span>' +
         `<span class="role-chip__proof">${escapeHtml(proof)}</span>` +

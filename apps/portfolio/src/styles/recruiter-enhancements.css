@@ -81,6 +81,11 @@
   border-color: var(--color-accent);
 }
 
+.role-chip:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
 .role-chip:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;

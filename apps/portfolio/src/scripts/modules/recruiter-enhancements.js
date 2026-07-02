@@ -43,7 +43,7 @@ function renderRoleQuickPaths(labels, proofCounts) {
         .map((role) => {
           const countText = roleProofCountText(proofCounts, role.id);
           const accessibleLabel = `${role.label}: ${countText}. ${role.proof}`;
-          return `<button type="button" class="role-chip" data-role-filter="${role.id}" aria-pressed="false" aria-label="${escapeHtml(accessibleLabel)}">
+          return `<button type="button" class="role-chip" data-role-filter="${role.id}" aria-pressed="false" aria-label="${escapeHtml(accessibleLabel)}" disabled>
           <span class="role-chip__label">${escapeHtml(role.label)}</span>
           <span class="role-chip__count">${escapeHtml(countText)}</span>
           <span class="role-chip__separator" aria-hidden="true"></span>
@@ -139,24 +139,26 @@ function bindRoleControls(cards, proofCounts) {
   const roleProfiles = getRoleProfiles();
   const status = document.querySelector('[data-role-status]');
   buttons.forEach((button) => {
-    if (button.dataset.roleFilterBound === 'true') return;
-    button.dataset.roleFilterBound = 'true';
-    button.addEventListener('click', () => {
-      const role = button.getAttribute('data-role-filter') || '';
-      const roleProfile = roleProfiles.find((candidate) => candidate.id === role);
-      if (!roleProfile) return;
-      buttons.forEach((candidate) =>
-        candidate.setAttribute('aria-pressed', String(candidate === button))
-      );
-      clearRoleFocus(cards);
-      cards.forEach((card) => {
-        const roles = (card.getAttribute('data-role') || '').split(/\s+/);
-        card.classList.add(roles.includes(role) ? 'is-role-match' : 'is-role-dimmed');
+    if (button.dataset.roleFilterBound !== 'true') {
+      button.dataset.roleFilterBound = 'true';
+      button.addEventListener('click', () => {
+        const role = button.getAttribute('data-role-filter') || '';
+        const roleProfile = roleProfiles.find((candidate) => candidate.id === role);
+        if (!roleProfile) return;
+        buttons.forEach((candidate) =>
+          candidate.setAttribute('aria-pressed', String(candidate === button))
+        );
+        clearRoleFocus(cards);
+        cards.forEach((card) => {
+          const roles = (card.getAttribute('data-role') || '').split(/\s+/);
+          card.classList.add(roles.includes(role) ? 'is-role-match' : 'is-role-dimmed');
+        });
+        status.textContent = selectedRoleStatusText(roleProfile, roleProofCountText(proofCounts, role));
+        setRoleHistoryState(roleProfile);
+        document.querySelector('#projects')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
-      status.textContent = selectedRoleStatusText(roleProfile, roleProofCountText(proofCounts, role));
-      setRoleHistoryState(roleProfile);
-      document.querySelector('#projects')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
+    }
+    button.disabled = false;
   });
 }
 

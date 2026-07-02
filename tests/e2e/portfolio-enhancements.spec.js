@@ -38,6 +38,31 @@ test.describe('Portfolio recruiter enhancements', () => {
     await expect(projectCards).toHaveCount(initialProjectCount);
   });
 
+  test('server-rendered role chips wait for hydration before accepting clicks', async ({
+    page,
+  }) => {
+    let continueMainScript = () => {};
+    const mainScriptBlocked = new Promise((resolve) => {
+      continueMainScript = () => resolve(undefined);
+    });
+    await page.route('**/main.js*', async (route) => {
+      await mainScriptBlocked;
+      await route.continue();
+    });
+
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+
+    const securityChip = page.locator('.role-chip[data-role-filter="security"]');
+    await expect(securityChip).toBeDisabled();
+
+    continueMainScript();
+    await expect(securityChip).toBeEnabled();
+    await securityChip.click();
+
+    await expect(securityChip).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.locator('#projects li.project-item.is-role-match')).not.toHaveCount(0);
+  });
+
   test('project evidence matrix preserves project list and project more behavior', async ({
     page,
   }) => {
