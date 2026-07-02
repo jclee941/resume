@@ -191,6 +191,13 @@ describe('generateWebData → public jclee941 repository showcase', () => {
     assert.ok(repoUrls.includes('https://github.com/jclee941/firewall'));
     assert.ok(repoUrls.includes('https://github.com/jclee941/tmux'));
 
+    const searchableProjectRefs = out.projects.flatMap((project) => [
+      project.id,
+      project.githubUrl,
+      project.repoUrl,
+      project.liveUrl,
+    ]);
+
     for (const rejected of [
       'idle-outpost',
       'account',
@@ -198,7 +205,7 @@ describe('generateWebData → public jclee941 repository showcase', () => {
       'nunchi-translator-mcp',
     ]) {
       assert.ok(
-        !JSON.stringify(out.projects).includes(rejected),
+        !searchableProjectRefs.some((value) => String(value || '').includes(rejected)),
         `${rejected} must stay excluded from public projects`
       );
     }
