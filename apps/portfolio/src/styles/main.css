@@ -23,9 +23,11 @@
 @import './timeline.css';
 @import './project-card-tokens.css';
 @import './project-case-study-grid.css';
+@import './project-case-study-card-content.css';
 @import './project-tech-tags.css';
 @import './project-deep-dive.css';
 @import './project-deep-dive-content.css';
+@import './project-deep-dive-metrics.css';
 @import './project-architecture-flow.css';
 @import './project-more.css';
 @import './recruiter-enhancements.css';
