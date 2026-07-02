@@ -5,7 +5,7 @@ test.describe('Mobile recruiter actions', () => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-    const contactAction = page.locator('.hero-cta').getByRole('link', { name: '채용 문의' });
+    const contactAction = page.locator('.hero-cta').getByRole('link', { name: '면접 문의' });
     const pdfAction = page.locator('.hero-cta').getByRole('link', { name: '이력서 PDF' });
     await expect(contactAction).toBeVisible();
     await expect(pdfAction).toBeVisible();
@@ -50,9 +50,11 @@ test.describe('Mobile recruiter actions', () => {
     }
 
     const contactIndex = firstTabStops.findIndex(
-      (stop) => stop?.isHeroCta && stop.text === '채용 문의'
+      (stop) => stop?.isHeroCta && stop.text === '면접 문의'
     );
-    const pdfIndex = firstTabStops.findIndex((stop) => stop?.isHeroCta && stop.text === '이력서 PDF');
+    const pdfIndex = firstTabStops.findIndex(
+      (stop) => stop?.isHeroCta && stop.text === '이력서 PDF'
+    );
     const reviewOrRoleIndex = firstTabStops.findIndex((stop) => stop?.isReviewOrRole);
 
     expect(contactIndex).toBeGreaterThanOrEqual(0);

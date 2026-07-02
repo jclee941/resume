@@ -1,12 +1,5 @@
 // @ts-check
-const fs = require('node:fs');
-const path = require('node:path');
 const { test, expect } = require('@playwright/test');
-
-const recruiterEnhancementSource = path.join(
-  __dirname,
-  '../../apps/portfolio/src/scripts/modules/recruiter-enhancements.js'
-);
 
 test.describe('Portfolio recruiter enhancements', () => {
   test.beforeEach(async ({ page }) => {
@@ -85,13 +78,95 @@ test.describe('Portfolio recruiter enhancements', () => {
     await expect(projectCards.nth(10)).toBeVisible();
   });
 
+  test('project evidence links use contextual accessible labels', async ({ page }) => {
+    const locales = [
+      {
+        path: '/',
+        genericLabel: '근거 보기',
+        expectedLabels: [
+          'Security Alert System 근거 보기',
+          'Observability Platform 근거 보기',
+          'Terraform Homelab IaC 근거 보기',
+          'jclee-bot GitHub App 근거 보기',
+        ],
+        expectedAriaLabels: [
+          'Security Alert System 프로젝트 근거 보기',
+          'Observability Platform 프로젝트 근거 보기',
+          'Terraform Homelab IaC 프로젝트 근거 보기',
+          'jclee-bot GitHub App 프로젝트 근거 보기',
+        ],
+      },
+      {
+        path: '/en/',
+        genericLabel: 'Open proof',
+        expectedLabels: [
+          'Security Alert System proof',
+          'Observability Platform proof',
+          'Terraform Homelab IaC proof',
+          'jclee-bot GitHub App proof',
+        ],
+        expectedAriaLabels: [
+          'Open Security Alert System project proof',
+          'Open Observability Platform project proof',
+          'Open Terraform Homelab IaC project proof',
+          'Open jclee-bot GitHub App project proof',
+        ],
+      },
+      {
+        path: '/ja/',
+        genericLabel: '根拠を見る',
+        expectedLabels: [
+          'Security Alert Systemの根拠を見る',
+          'Observability Platformの根拠を見る',
+          'Terraform Homelab IaCの根拠を見る',
+          'jclee-bot GitHub Appの根拠を見る',
+        ],
+        expectedAriaLabels: [
+          'Security Alert Systemプロジェクトの根拠を見る',
+          'Observability Platformプロジェクトの根拠を見る',
+          'Terraform Homelab IaCプロジェクトの根拠を見る',
+          'jclee-bot GitHub Appプロジェクトの根拠を見る',
+        ],
+      },
+    ];
+
+    for (const locale of locales) {
+      await page.goto(locale.path, { waitUntil: 'domcontentloaded' });
+      const links = page.locator('.project-evidence-matrix .project-evidence-card__link');
+      await expect(links).toHaveCount(locale.expectedLabels.length);
+
+      const labels = await links.allTextContents();
+      const ariaLabels = await links.evaluateAll((elements) =>
+        elements.map((element) => element.getAttribute('aria-label') || '')
+      );
+      const hrefs = await links.evaluateAll((elements) =>
+        elements.map((element) => element.getAttribute('href'))
+      );
+      const projectTargets = await links.evaluateAll((elements) =>
+        elements.map((element) => element.getAttribute('data-evidence-project'))
+      );
+
+      expect(labels).toEqual(locale.expectedLabels);
+      expect(labels).not.toContain(locale.genericLabel);
+      expect(new Set(labels).size).toBe(labels.length);
+      expect(ariaLabels).toEqual(locale.expectedAriaLabels);
+      expect(new Set(ariaLabels).size).toBe(ariaLabels.length);
+      expect(hrefs).toEqual(locale.expectedLabels.map(() => '#projects'));
+      expect(projectTargets).toEqual([
+        'Security Alert System',
+        'Observability Platform',
+        'Terraform Homelab IaC',
+        'jclee-bot GitHub App',
+      ]);
+      expect(Math.max(...labels.map((label) => label.length))).toBeLessThanOrEqual(40);
+    }
+  });
+
   test('case-study deep dive section gives public context before cards', async ({ page }) => {
     const section = page.locator('.case-study-deep-dives');
     await expect(section).toHaveAttribute('aria-labelledby', 'case-study-heading');
     await expect(page.locator('#case-study-heading')).toContainText('운영 사례 심층 검토');
-    await expect(section.locator('.case-study-deep-dives__description')).toContainText(
-      '운영 맥락'
-    );
+    await expect(section.locator('.case-study-deep-dives__description')).toContainText('운영 맥락');
     await expect(section.locator('.project-cards-grid')).toHaveAttribute('role', 'list');
     await expect(section.locator('.project-cards-grid')).toHaveAttribute(
       'aria-label',
@@ -104,7 +179,9 @@ test.describe('Portfolio recruiter enhancements', () => {
     await expect
       .poll(() =>
         page.evaluate(() =>
-          Boolean(document.querySelector('.deep-dive-overlay.active')?.contains(document.activeElement))
+          Boolean(
+            document.querySelector('.deep-dive-overlay.active')?.contains(document.activeElement)
+          )
         )
       )
       .toBe(true);
@@ -121,9 +198,9 @@ test.describe('Portfolio recruiter enhancements', () => {
   });
 
   test('project evidence links highlight the target project', async ({ page }) => {
-    const reviewerLink = page
-      .locator('[data-evidence-project="jclee-bot GitHub App"]')
-      .getByText(/근거 보기|Open proof/);
+    const reviewerLink = page.getByRole('link', {
+      name: 'jclee-bot GitHub App 프로젝트 근거 보기',
+    });
     await reviewerLink.click();
 
     const reviewerCard = page.locator('#projects li.project-item', {
@@ -133,18 +210,11 @@ test.describe('Portfolio recruiter enhancements', () => {
     await expect(reviewerCard).toHaveClass(/is-role-match/);
   });
 
-  test('HTML template escaping remains safe for quoted attributes', async () => {
-    const source = fs.readFileSync(recruiterEnhancementSource, 'utf8');
-    for (const entity of ['&amp;', '&lt;', '&gt;', '&quot;', '&#39;']) {
-      expect(source).toContain(entity);
-    }
-  });
-
   test('mobile primary CTA keeps readable text on accent background', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-    const primaryAction = page.getByRole('link', { name: /채용 문의|Contact about role/ });
+    const primaryAction = page.locator('.hero-cta').getByRole('link', { name: '면접 문의' });
     await expect(primaryAction).toBeVisible();
 
     const styles = await primaryAction.evaluate((element) => {

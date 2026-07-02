@@ -7,22 +7,30 @@ test.describe('Portfolio hiring copy', () => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
     const hero = page.locator('#hero');
-    await expect(hero.getByText('보안 운영 · SRE · DevSecOps 검토 가능')).toBeVisible();
-    await expect(hero.getByText('보안 인프라 경험을 실무 과제로 정리합니다.')).toBeVisible();
-    await expect(hero.getByText('채용 제안·면접 문의 환영')).toHaveCount(0);
-    await expect(hero.getByText('거래소 보안 인프라 구축·운영')).toBeVisible();
-    await expect(hero.getByRole('link', { name: '채용 문의', exact: true })).toHaveAttribute(
+    await expect(hero.getByText('보안 운영 · 보안 인프라 · SRE 면접 제안 환영')).toBeVisible();
+    await expect(
+      hero.getByText(
+        '최근 보안 운영 경력, 이메일 연락, 면접 일정·근무 형태 협의를 먼저 연결합니다.'
+      )
+    ).toBeVisible();
+    await expect(hero.getByText('희망 역할: 보안 운영 · 보안 인프라 · SRE')).toBeVisible();
+    await expect(hero.getByText('면접 제안 가능')).toBeVisible();
+    await expect(hero.getByText('검토 가능')).toHaveCount(0);
+    await expect(hero.getByRole('link', { name: '면접 문의', exact: true })).toHaveAttribute(
       'href',
       'mailto:qws941@kakao.com?subject=%EC%B1%84%EC%9A%A9%20%EC%A0%9C%EC%95%88%20%EB%98%90%EB%8A%94%20%EB%A9%B4%EC%A0%91%20%EB%AC%B8%EC%9D%98'
     );
-    await expect(hero.getByRole('link', { name: '경력 근거', exact: true })).toHaveAttribute(
+    await expect(hero.getByRole('link', { name: '경력 확인', exact: true })).toHaveAttribute(
       'href',
       '#resume'
     );
-    await expect(hero.getByRole('link', { name: '프로젝트 근거', exact: true })).toHaveAttribute(
+    await expect(hero.getByRole('link', { name: '프로젝트 확인', exact: true })).toHaveAttribute(
       'href',
       '#projects'
     );
+    await expect(
+      hero.getByRole('link', { name: /jclee-bot 보안 자동화와 코드 검토 역할 적합도/ })
+    ).toBeVisible();
     await expect(hero.getByText('증빙 프로젝트 보기')).toHaveCount(0);
   });
 
@@ -32,30 +40,38 @@ test.describe('Portfolio hiring copy', () => {
     await page.goto('/en/', { waitUntil: 'domcontentloaded' });
     const englishHero = page.locator('#hero');
     await expect(
-      englishHero.getByText('Available for Security Ops, SRE, and DevSecOps review')
+      englishHero.getByText(
+        'Open to interview requests for Security Ops, Security Infrastructure, and SRE'
+      )
     ).toBeVisible();
-    await expect(englishHero.getByRole('link', { name: 'Contact about role' })).toHaveAttribute(
+    await expect(
+      englishHero.getByText('Open to interview requests', { exact: true })
+    ).toBeVisible();
+    await expect(englishHero.getByRole('link', { name: 'Interview request' })).toHaveAttribute(
       'href',
       'mailto:qws941@kakao.com?subject=Hiring%20proposal%20or%20interview%20request'
     );
     await expect(
-      englishHero.getByRole('link', { name: 'Review career evidence', exact: true })
+      englishHero.getByRole('link', { name: 'Review career', exact: true })
     ).toHaveAttribute('href', '#resume');
     await expect(
-      englishHero.getByRole('link', { name: 'Review project evidence', exact: true })
+      englishHero.getByRole('link', { name: 'Review projects', exact: true })
     ).toHaveAttribute('href', '#projects');
 
     await page.goto('/ja/', { waitUntil: 'domcontentloaded' });
     const japaneseHero = page.locator('#hero');
     await expect(
-      japaneseHero.getByText('セキュリティ運用・SRE・DevSecOpsを検討可能')
+      japaneseHero.getByText('セキュリティ運用・セキュリティ基盤・SREの面接相談を歓迎')
     ).toBeVisible();
     await expect(
-      japaneseHero.getByText('セキュリティインフラの経験を実務課題として整理します。')
+      japaneseHero.getByText(
+        '直近のセキュリティ運用経験、メール連絡、面接日程、勤務形態の相談を先に示します。'
+      )
     ).toBeVisible();
-    await expect(japaneseHero.getByRole('link', { name: '採用相談', exact: true })).toBeVisible();
+    await expect(japaneseHero.getByText('確認可能')).toHaveCount(0);
+    await expect(japaneseHero.getByRole('link', { name: '面接相談', exact: true })).toBeVisible();
     await expect(
-      japaneseHero.getByRole('link', { name: 'プロジェクト根拠', exact: true })
+      japaneseHero.getByRole('link', { name: 'プロジェクト確認', exact: true })
     ).toHaveAttribute('href', '#projects');
   });
 });
