@@ -25,11 +25,11 @@
   width: 2px;
   background: linear-gradient(
     to bottom,
-    var(--color-accent-dark) 0%,
-    var(--color-accent) 50%,
-    var(--color-accent-dark) 100%
+    var(--color-accent) 0%,
+    var(--color-accent-strong) 50%,
+    var(--color-accent) 100%
   );
-  opacity: 0.4;
+  opacity: 0.9;
   pointer-events: none;
 }
 
@@ -52,8 +52,8 @@
   display: flex;
   gap: var(--space-4);
   margin-bottom: var(--space-8);
-  opacity: 0;
-  transform: translateY(20px);
+  opacity: 1;
+  transform: translateY(0);
   transition:
     opacity 0.4s ease,
     transform 0.4s ease;
@@ -87,10 +87,10 @@
 }
 
 .timeline-dot {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
-  border: 2px solid var(--bg-primary);
+  border: 3px solid var(--bg-primary);
   transition: all 0.3s ease;
   z-index: 1;
 }
@@ -98,14 +98,18 @@
 /* Active status - blinking success */
 .timeline-dot.status--active {
   background: var(--color-success);
-  box-shadow: var(--shadow-sm);
+  box-shadow:
+    0 0 0 3px rgb(var(--bg-primary-rgb) / 0.92),
+    0 0 0 6px rgba(121, 184, 138, 0.26);
   animation: pulse-soft 2s ease-in-out infinite;
 }
 
 /* Completed status - solid accent */
 .timeline-dot.status--completed {
-  background: var(--color-accent);
-  box-shadow: var(--shadow-sm);
+  background: var(--color-accent-strong);
+  box-shadow:
+    0 0 0 3px rgb(var(--bg-primary-rgb) / 0.92),
+    0 0 0 6px rgb(var(--color-accent-rgb) / 0.24);
 }
 
 /* ----------------------------------------
@@ -152,7 +156,7 @@
 .timeline-date {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  color: var(--text-muted);
+  color: var(--text-primary);
   letter-spacing: 0.02em;
 }
 
@@ -231,10 +235,13 @@
    TIMELINE CARD
    ---------------------------------------- */
 .timeline-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-primary);
+  background: color-mix(in srgb, var(--bg-card) 62%, var(--bg-secondary) 38%);
+  border: 1px solid color-mix(in srgb, var(--border-primary) 42%, var(--text-primary) 58%);
   border-radius: 6px;
   padding: var(--space-4);
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgb(255 255 255 / 0.04);
   transition: all 0.3s ease;
   cursor: pointer;
 }
@@ -270,14 +277,14 @@
 .timeline-role {
   font-family: var(--font-sans);
   font-size: var(--text-sm);
-  color: var(--text-secondary);
+  color: var(--text-primary);
   margin: 0 0 var(--space-1) 0;
 }
 
 .timeline-myrole {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  color: var(--text-muted);
+  color: color-mix(in srgb, var(--text-primary) 82%, var(--color-accent) 18%);
   margin: 0;
 }
 
@@ -300,7 +307,7 @@
 .timeline-impact {
   margin-top: var(--space-3);
   padding-top: var(--space-3);
-  border-top: 1px solid var(--border-primary);
+  border-top: 1px solid color-mix(in srgb, var(--border-primary) 70%, var(--text-secondary) 30%);
 }
 
 .impact-summary {
@@ -317,7 +324,7 @@
 }
 
 .impact-text {
-  color: var(--text-secondary);
+  color: var(--text-primary);
 }
 
 /* ----------------------------------------
@@ -339,7 +346,7 @@
 .details-description {
   font-family: var(--font-sans);
   font-size: var(--text-sm);
-  color: var(--text-secondary);
+  color: var(--text-primary);
   line-height: 1.6;
   margin: 0 0 var(--space-3) 0;
 }
@@ -354,7 +361,7 @@
   position: relative;
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  color: var(--color-success);
+  color: color-mix(in srgb, var(--color-success) 86%, white 14%);
   padding-left: var(--space-4);
   margin-bottom: var(--space-1);
 }
@@ -381,10 +388,10 @@
   gap: var(--space-2);
   margin-top: var(--space-3);
   padding: var(--space-2) var(--space-3);
-  background: transparent;
-  border: 1px solid var(--border-secondary);
+  background: rgb(var(--bg-primary-rgb) / 0.42);
+  border: 1px solid color-mix(in srgb, var(--border-secondary) 50%, var(--text-secondary) 50%);
   border-radius: 4px;
-  color: var(--text-muted);
+  color: var(--text-primary);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   cursor: pointer;
@@ -450,7 +457,9 @@
 }
 
 .timeline-node--animate {
-  animation: timeline-entrance 0.4s ease forwards;
+  animation: none;
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* ----------------------------------------

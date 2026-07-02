@@ -90,6 +90,18 @@ const PROJECT_EN_OVERRIDES = {
   },
 };
 
+const PUBLIC_PORTFOLIO_EXCLUDED_IDS = new Set([
+  'mcp-server-hub',
+  'idle-outpost',
+  'account',
+  'meetup-coordinator-mcp',
+  'nunchi-translator-mcp',
+]);
+
+function publicPortfolioItems(items) {
+  return (items || []).filter((item) => !PUBLIC_PORTFOLIO_EXCLUDED_IDS.has(item.id));
+}
+
 function generateWebData(source, language = 'ko') {
   const statsByIndex = RESUME_STATS_BY_INDEX[language] || RESUME_STATS_BY_INDEX.ko;
 
@@ -106,8 +118,9 @@ function generateWebData(source, language = 'ko') {
   const resumeEn = source.careers.map((career, idx) =>
     englishCareerCardFromSource(career, idx, RESUME_STATS_BY_INDEX.en, CAREER_EN_OVERRIDES)
   );
-  const projects = (source.personalProjects || []).map(projectCardFromSource);
-  const projectsEn = (source.personalProjects || []).map((project) =>
+  const publicProjects = publicPortfolioItems(source.personalProjects);
+  const projects = publicProjects.map(projectCardFromSource);
+  const projectsEn = publicProjects.map((project) =>
     englishProjectCardFromSource(project, PROJECT_EN_OVERRIDES)
   );
 
@@ -138,7 +151,7 @@ function generateWebData(source, language = 'ko') {
     hero: source.hero,
     sectionDescriptions: source.sectionDescriptions,
     achievements: source.achievements,
-    infrastructure: source.infrastructure,
+    infrastructure: publicPortfolioItems(source.infrastructure),
     contact: source.contact,
     aboutSection:
       source.summary && source.summary.aboutSection ? source.summary.aboutSection : null,

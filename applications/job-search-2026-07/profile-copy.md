@@ -3,7 +3,7 @@
 ## Wanted 헤드라인
 
 ```text
-보안/SRE 엔지니어 | 금융권 보안 인프라 · SIEM · FortiGate
+보안/SRE 엔지니어 | FortiGate · Splunk ES · 금융권 보안운영
 ```
 
 ## Wanted 소개
@@ -20,8 +20,8 @@
 - 금융보안데이터센터(FSDC): 금감원 감사 대응, DB 접근제어 쿼리 튜닝, DLP 정책 산출물 관리
 - 네트워크·원격근무 인프라: NSX-T, Wazuh, NAC, VPN, Python/Ansible 운영 스크립트
 
-[기술]
-Splunk ES, FortiGate/FortiManager, FortiAnalyzer, Ansible, Python, Terraform, Docker, Linux, Grafana/Prometheus/Loki, Cloudflare Workers
+[기술/자격]
+Splunk ES, FortiGate/FortiManager, FortiAnalyzer, Ansible, Python, Terraform, Docker, Linux, Grafana/Prometheus/Loki, Elasticsearch/Kibana, CCNP
 
 포트폴리오: https://resume.jclee.me
 GitHub: https://github.com/jclee941
@@ -30,7 +30,7 @@ GitHub: https://github.com/jclee941
 ## JobKorea 헤드라인
 
 ```text
-보안/SRE 엔지니어 | 금융권 보안 인프라 · SIEM
+보안/SRE 엔지니어 | FortiGate · Splunk ES · CCNP
 ```
 
 ## JobKorea 소개
@@ -46,8 +46,8 @@ GitHub: https://github.com/jclee941
 - 조인트리/메타넷엠플랫폼: NSX-T, Wazuh, NAC, VPN, Python/Ansible 기반 운영 스크립트
 - 엠티데이타: KAI 폐쇄망 Linux/OA 운영, 패치·방화벽 정책 변경 이력 관리
 
-[기술 스택]
-Splunk ES, FortiGate/FortiManager, FortiAnalyzer, Ansible, Python, Terraform, Docker, Linux, NSX-T, Wazuh, Grafana/Prometheus/Loki, Cloudflare Workers
+[기술/자격]
+Splunk ES, FortiGate/FortiManager, FortiAnalyzer, Ansible, Python, Terraform, Docker, Linux, NSX-T, Wazuh, Grafana/Prometheus/Loki, Elasticsearch/Kibana, CCNP
 
 포트폴리오: https://resume.jclee.me
 ```
@@ -81,4 +81,3 @@ Portfolio: https://resume.jclee.me
 GitHub: https://github.com/jclee941
 Email: qws941@kakao.com
 ```
-
