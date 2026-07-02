@@ -39,14 +39,15 @@ describe('portfolio hiring appeal copy', () => {
 
     expect(html).toContain('보안 운영 · 보안 인프라 · SRE 면접 제안 환영');
     expect(html).toContain(
-      '최근 보안 운영 경력, 이메일 연락, 면접 일정·근무 형태 협의를 먼저 연결합니다.'
+      '보안 인프라 구축·운영과 SIEM·API 자동화 근거를 채용 검토 순서로 묶었습니다.'
     );
     expect(html).toContain('희망 역할: 보안 운영 · 보안 인프라 · SRE');
-    expect(html).toContain('최근 역할: 거래소 보안 인프라 구축·운영');
+    expect(html).toContain('최근 근거: 거래소 보안 인프라 구축·운영');
     expect(html).toContain('면접 제안 가능');
-    expect(html).toContain('보안 자동화와 코드 검토 역할 적합도');
-    expect(html).toContain('SRE 장애 조사와 운영 가시성 근거');
+    expect(html).toContain('PR 리뷰 · 시크릿 스캔 · ELK 로그');
+    expect(html).toContain('관측성 대시보드');
     expect(html).toContain('운영 워크플로');
+    expect(html).toContain('PDF·메일 연결');
     expect(html).not.toContain('검토 가능');
     expect(html).not.toContain('자동화 방식');
     expect(extractHeroActions(html)).toEqual([

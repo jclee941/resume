@@ -10,7 +10,7 @@ test.describe('Portfolio hiring copy', () => {
     await expect(hero.getByText('보안 운영 · 보안 인프라 · SRE 면접 제안 환영')).toBeVisible();
     await expect(
       hero.getByText(
-        '최근 보안 운영 경력, 이메일 연락, 면접 일정·근무 형태 협의를 먼저 연결합니다.'
+        '보안 인프라 구축·운영과 SIEM·API 자동화 근거를 채용 검토 순서로 묶었습니다.'
       )
     ).toBeVisible();
     await expect(hero.getByText('희망 역할: 보안 운영 · 보안 인프라 · SRE')).toBeVisible();
@@ -29,7 +29,7 @@ test.describe('Portfolio hiring copy', () => {
       '#projects'
     );
     await expect(
-      hero.getByRole('link', { name: /jclee-bot 보안 자동화와 코드 검토 역할 적합도/ })
+      hero.getByRole('link', { name: /jclee-bot PR 리뷰 · 시크릿 스캔 · ELK 로그/ })
     ).toBeVisible();
     await expect(hero.getByText('증빙 프로젝트 보기')).toHaveCount(0);
   });
