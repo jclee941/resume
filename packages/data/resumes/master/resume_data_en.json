@@ -959,17 +959,17 @@
     }
   },
   "careerSummary": {
-    "ko": {
-      "headline": "보안 운영·인프라 경력기술서",
+    "en": {
+      "headline": "Security operations and infrastructure career summary",
       "paragraphs": [
-        "(주)아이티센 CTS (2025.03 ~ 2026.02): 넥스트레이드 매매체결시스템 보안 운영에 참여해 Splunk ES 탐지 룰, Slack/SMS 알림 워크플로, FortiManager API 기반 방화벽 정책 조회 절차를 운영했습니다.",
-        "(주)가온누리정보시스템 (2024.03 ~ 2025.02): 넥스트레이드 보안 인프라 구축 단계에 참여해 FortiGate HA, 망분리, 엔드포인트 보안, Ansible Role 기반 설정 표준화, FSC 본인가 대응 업무를 수행했습니다.",
-        "(주)콴텍투자일임 (2022.08 ~ 2024.03): 금융보안데이터센터(FSDC) 환경에서 인프라 운영, 금감원 감사 대응, DB 접근제어 쿼리 튜닝, PB 플랫폼 POC 검증을 담당했습니다.",
-        "(주)조인트리 (2021.09 ~ 2022.04): 국민대학교 차세대 정보시스템 구축에서 VMware NSX-T 마이크로세그멘테이션, DFW 정책, NAC/DLP, Wazuh 연동 모니터링 구성을 담당했습니다.",
-        "(주)메타넷엠플랫폼 (2020.08 ~ 2021.08): 대규모 컨택센터 재택근무 환경에서 SSL VPN/NAC 운영, 단말 등록 절차 정리, Python·Ansible 기반 운영 스크립트, FortiGate VPN 세션 모니터링을 수행했습니다.",
-        "(주)엠티데이타 (2018.10 ~ 2019.10): 한국항공우주산업(KAI) 폐쇄망 환경에서 Linux 로그 분석, WSUS 패치, 방화벽 정책 변경 이력 관리, OA 운영 지원을 수행했습니다."
+        "ITCEN CTS (2025.03 ~ 2026.02): Operated Nextrade exchange security workflows covering Splunk ES detection rules, Slack/SMS alert flows, and FortiManager API firewall-policy lookups.",
+        "Gaonnuri Information Systems (2024.03 ~ 2025.02): Built Nextrade security infrastructure, including FortiGate HA, network segmentation, endpoint security, Ansible Role-based configuration standards, and FSC main-license review support.",
+        "Quantec Investment Management (2022.08 ~ 2024.03): Operated Financial Security Data Center infrastructure, supported financial regulator audits, tuned DB access-control queries, and validated PB platform POC work.",
+        "Jointree (2021.09 ~ 2022.04): Worked on Kookmin University information-system infrastructure with VMware NSX-T microsegmentation, DFW policies, NAC/DLP controls, and Wazuh monitoring integration.",
+        "Metanet M Platform (2020.08 ~ 2021.08): Supported remote-work infrastructure for a large contact center, including SSL VPN/NAC operations, endpoint registration runbooks, Python/Ansible operational scripts, and FortiGate VPN session monitoring.",
+        "MT Data (2018.10 ~ 2019.10): Operated KAI closed-network Linux/OA environments, patch schedules, firewall policy change history, and site IT support."
       ],
-      "closing": "보안 인프라 운영, SIEM 탐지·알림, 감사 대응, 반복 운영 절차를 연결해 운영 근거를 문서와 시스템으로 남기는 방식으로 일했습니다."
+      "closing": "Across security infrastructure, SIEM detection and alerting, audits, and repeated operations, I leave operating evidence in documents and systems that teams can review."
     }
   }
 }

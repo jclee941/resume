@@ -29,6 +29,7 @@ function applyExternalSri(html) {
  * @param {string} options.resumeDescriptionHtml - Resume description.
  * @param {string} options.resumeCardsHtml - Resume cards.
  * @param {string} options.projectCardsHtml - Project cards.
+ * @param {string} [options.projectSchemasHtml] - Project JSON-LD schemas.
  * @param {string} options.infrastructureCardsHtml - Infrastructure cards.
  * @param {string} options.certCardsHtml - Certification cards.
  * @param {string} options.skillsHtml - Skills list.
@@ -88,16 +89,16 @@ async function minifyHtml(html) {
 
 /**
  * Escape HTML for safe JavaScript template literal embedding.
- * CRITICAL: Escape order matters: backslash first, then backtick and dollar.
+ * CRITICAL: Escape order matters: backslash first, then backtick and dollar-brace.
  * @param {string} html - HTML content.
- * @param {{BACKSLASH: RegExp, BACKTICK: RegExp, DOLLAR: RegExp}} escapePatterns - Escape patterns.
+ * @param {{BACKSLASH: RegExp, BACKTICK: RegExp, DOLLAR_BRACE: RegExp}} escapePatterns - Escape patterns.
  * @returns {string} Escaped HTML.
  */
 function escapeForTemplateLiteral(html, escapePatterns) {
   return html
     .replace(escapePatterns.BACKSLASH, '\\\\')
     .replace(escapePatterns.BACKTICK, '\\`')
-    .replace(escapePatterns.DOLLAR, '\\$');
+    .replace(escapePatterns.DOLLAR_BRACE, () => '\\${');
 }
 
 /**
