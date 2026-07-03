@@ -1,14 +1,15 @@
 import { JobMatcher } from '../../../shared/services/matching/index.js';
 
 export const DEFAULT_KEYWORDS = [
-  'DevSecOps',
-  'SRE',
+  '보안 운영',
+  '보안 인프라',
+  'SIEM',
   '보안 엔지니어',
-  '클라우드 보안',
-  'Site Reliability',
-  'Cloud Engineer',
-  'DevOps',
-  'Infrastructure Engineer',
+  '정보보안',
+  'FortiGate',
+  'Splunk',
+  'Security Operations',
+  'Security Infrastructure',
 ];
 
 export const DEFAULT_SOURCES = ['wanted', 'jobkorea', 'saramin'];

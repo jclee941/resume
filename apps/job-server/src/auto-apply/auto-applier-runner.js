@@ -20,7 +20,7 @@ export function createRunResults() {
 
 export async function runAutoApply(options = {}) {
   const {
-    keywords = ['시니어 엔지니어', '클라우드 엔지니어', 'SRE'],
+    keywords = ['보안 운영', '보안 인프라', 'SIEM'],
     categories = [],
     experience = 8,
     location = 'seoul',

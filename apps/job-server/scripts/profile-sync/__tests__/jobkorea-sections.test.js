@@ -271,7 +271,7 @@ describe('mapResumeTitleToFormFields', () => {
     const byName = toMap(fields);
 
     assert.strictEqual(byName.get('UserResume.M_Resume_Title'), JOBKOREA_RESUME_TITLE);
-    assert.strictEqual(JOBKOREA_RESUME_TITLE, '이재철 - 보안·SRE 엔지니어');
+    assert.strictEqual(JOBKOREA_RESUME_TITLE, '이재철 - 보안 운영/인프라 엔지니어');
   });
 
   it('prefers platformVariants.jobkorea.headline when present', () => {

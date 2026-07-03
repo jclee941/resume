@@ -63,7 +63,7 @@ export default async function aiRoutes(fastify) {
     const {
       dryRun = true,
       maxApplications = 3,
-      keywords = ['DevSecOps'],
+      keywords = ['보안 운영'],
       platforms,
     } = request.body || {};
 

@@ -22,7 +22,7 @@ describe('JobKorea API contract fixtures', () => {
   it('encodes serialized form-array payloads for save', () => {
     const payload = encodePayload(editFields);
 
-    assert.match(payload, /UserResume\.Resume_Title=DevSecOps\+SRE\+Engineer/);
+    assert.match(payload, /UserResume\.Resume_Title=Security\+Operations\+Engineer/);
     assert.match(payload, /Career%5Bc1%5D\.C_Name=Example\+Cloud\+Operations/);
     assert.match(payload, /hdnIsCompleteSave=False/);
     assert.doesNotMatch(payload, /person@example|010-/);

@@ -13,7 +13,7 @@ export async function runAutoApply(args) {
 `);
 
   const enabledPlatforms = ['wanted', 'jobkorea', 'saramin'];
-  const keywords = ['시니어 엔지니어', '클라우드 엔지니어', 'SRE'];
+  const keywords = ['보안 운영', '보안 인프라', 'SIEM'];
 
   const crawler = new UnifiedJobCrawler({
     sources: enabledPlatforms,
@@ -75,7 +75,7 @@ export async function runUnifiedSystem(args) {
   const resumePath = getResumeMasterMarkdownPath();
 
   const enabledPlatforms = ['wanted', 'jobkorea', 'saramin'];
-  const keywords = ['시니어 엔지니어', '클라우드 엔지니어', 'SRE', 'DevOps'];
+  const keywords = ['보안 운영', '보안 인프라', 'SIEM', 'FortiGate', 'Splunk'];
   const reviewThreshold = 60;
   const autoApplyThreshold = 75;
 

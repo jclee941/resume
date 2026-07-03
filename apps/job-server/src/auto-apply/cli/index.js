@@ -56,7 +56,7 @@ function showHelp() {
 명령어:
   search [keyword] [limit]           채용공고 검색 (통합 시스템, 기본: 시니어 엔지니어, 20개)
   ai_search [keyword] [limit]        🤖 AI 기반 지능형 채용공고 검색 (Claude AI 활용)
-  rank [keyword|all] [minScore]      🎯 지원 할만한 공고 랭킹 (DevSecOps/SRE 키워드, 로컬 스코어링, 기본 60%+)
+  rank [keyword|all] [minScore]      🎯 지원 할만한 공고 랭킹 (보안 운영/인프라 키워드, 로컬 스코어링, 기본 60%+)
   apply [--apply] [--max=N]          자동 지원 실행 (통합 시스템, 기본: dry-run, 최대 5개)
   unified [--apply] [--max=N]        통합 시스템 실행 (검색 + 지원, 기본: dry-run, 최대 3개)
   ai_unified [--apply] [--max=N]     🚀 AI 기반 통합 시스템 실행 (고급 매칭 + 예측)
@@ -81,7 +81,7 @@ AI 기능:
   • LinkedIn (linkedin.com)
 
 예시:
-  node cli.js search "DevSecOps" 30
+  node cli.js search "보안 운영" 30
   node cli.js ai_search "보안 엔지니어" 10
   node cli.js apply --apply --max=10
   node cli.js unified --apply --max=5

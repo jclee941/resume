@@ -50,7 +50,7 @@ describe('apply-commands wiring', () => {
         dryRun: true,
         maxDailyApplications: 5,
         enabledPlatforms: ['wanted'],
-        keywords: ['SRE'],
+        keywords: ['보안 운영'],
       },
     };
 
@@ -112,7 +112,7 @@ describe('config defaults', () => {
       reviewThreshold: 60,
       autoApplyThreshold: 75,
       enabledPlatforms: ['wanted'],
-      keywords: ['시니어 엔지니어', '클라우드 엔지니어', 'SRE'],
+      keywords: ['보안 운영', '보안 인프라', 'SIEM'],
     };
 
     expect(defaults.reviewThreshold).toBe(60);

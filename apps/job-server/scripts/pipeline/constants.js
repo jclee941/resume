@@ -47,12 +47,13 @@ export const TITLE_KEYWORDS = [
 ];
 
 export const JOBKOREA_KEYWORDS = [
-  'DevOps',
-  'SRE',
-  'DevSecOps',
+  '보안 운영',
+  '보안 인프라',
+  'SIEM',
+  'FortiGate',
+  'Splunk',
   '보안 엔지니어',
   '인프라 엔지니어',
-  '클라우드 엔지니어',
 ];
 
 export const SARAMIN_KEYWORDS = [...JOBKOREA_KEYWORDS];

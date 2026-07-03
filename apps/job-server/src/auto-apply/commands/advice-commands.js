@@ -15,10 +15,10 @@ export async function showAICareerAdvice(args) {
   try {
     const jobPosting = {
       url: jobUrl,
-      title: 'DevSecOps Engineer',
+      title: 'Security Operations Engineer',
       company: '테크 회사',
-      description: 'DevSecOps 엔지니어 포지션입니다. 보안과 DevOps 경험을 보유한 분을 찾습니다.',
-      requirements: '3년 이상 DevOps 경험, 보안 지식 보유',
+      description: '보안 운영 엔지니어 포지션입니다. SIEM 운영과 보안 인프라 경험을 보유한 분을 찾습니다.',
+      requirements: '3년 이상 보안 운영 경험, SIEM 또는 방화벽 운영 경험 보유',
     };
 
     const advice = await getAICareerAdvice(
