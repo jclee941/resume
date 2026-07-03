@@ -235,7 +235,6 @@ async function callVisionModel(image, model) {
 export function normalizeCaptchaAnswer(raw) {
   const tokens = String(raw)
     .split(/[^A-Za-z0-9]+/)
-    .map((token) => token.trim())
     .filter(Boolean);
   const candidates = tokens.filter(isPlausibleCaptchaAnswer);
   return candidates.length ? candidates[candidates.length - 1] : '';
@@ -279,7 +278,7 @@ export async function solveJobKoreaCaptcha(page) {
   for (const model of resolveVisionModels()) {
     try {
       const text = await callVisionModel(image, model);
-      if (text && text !== 'ZZZZZZ' && text.length >= 3 && text.length <= 12) {
+      if (text) {
         log(`CAPTCHA solved via ${model}: "${text}"`, 'ok', 'jobkorea');
         return { text, model };
       }

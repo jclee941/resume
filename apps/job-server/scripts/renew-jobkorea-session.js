@@ -1,9 +1,4 @@
 #!/usr/bin/env node
-/**
- * Renew JobKorea session via stealth Puppeteer login.
- * Uses fallback selectors and CAPTCHA-aware login verification.
- * Requires: JOBKOREA_EMAIL, JOBKOREA_PASSWORD, PUPPETEER_EXECUTABLE_PATH
- */
 import { withStealthBrowser } from '../src/crawlers/browser-utils.js';
 import {
   buildCookieString,

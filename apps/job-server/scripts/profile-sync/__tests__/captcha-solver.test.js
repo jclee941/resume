@@ -104,12 +104,18 @@ describe('captcha-solver.normalizeCaptchaAnswer', () => {
 
 describe('captcha-solver.solveJobKoreaCaptcha', () => {
   const originalEnv = { ...process.env };
+  const originalFetch = globalThis.fetch;
 
   afterEach(() => {
     Object.keys(process.env).forEach((k) => delete process.env[k]);
     Object.entries(originalEnv).forEach(([k, v]) => {
       if (v !== undefined) process.env[k] = v;
     });
+    if (originalFetch) {
+      globalThis.fetch = originalFetch;
+    } else {
+      delete globalThis.fetch;
+    }
   });
 
   it('returns null when no CAPTCHA image is found', async () => {
@@ -149,7 +155,33 @@ describe('captcha-solver.solveJobKoreaCaptcha', () => {
 
     const result = await solveJobKoreaCaptcha(page);
     assert.strictEqual(result, null);
+  });
 
-    delete globalThis.fetch;
+  it('skips descriptive model answers and returns the next plausible result', async () => {
+    process.env.CLIPROXY_BASE = 'https://cliproxy.example.com';
+    process.env.CLIPROXY_API_KEY = 'test-key';
+    process.env.JOBKOREA_CAPTCHA_MODELS = 'model-a,model-b';
+
+    let evaluateCalls = 0;
+    const page = {
+      evaluate: mock.fn(async () => {
+        evaluateCalls += 1;
+        return evaluateCalls === 1
+          ? 'https://www.jobkorea.co.kr/login/captcha.asp'
+          : { base64: 'fakebase64', mime: 'image/png' };
+      }),
+    };
+    const modelAnswers = ['images', 'A7kP2'];
+    globalThis.fetch = mock.fn(async () => ({
+      ok: true,
+      json: async () => ({
+        choices: [{ message: { content: modelAnswers.shift() } }],
+      }),
+    }));
+
+    const result = await solveJobKoreaCaptcha(page);
+
+    assert.deepStrictEqual(result, { text: 'A7kP2', model: 'model-b' });
+    assert.strictEqual(globalThis.fetch.mock.callCount(), 2);
   });
 });
