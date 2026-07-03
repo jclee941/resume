@@ -37,17 +37,19 @@ describe('portfolio hiring appeal copy', () => {
   test('Korean hero gives recruiters a direct review-pack path', () => {
     const html = buildHeroContent('ko');
 
-    expect(html).toContain('보안 운영 · 보안 인프라 · SRE 면접 제안 환영');
+    expect(html).toContain('보안 운영 · 보안 인프라 역할 중심으로 면접 제안 환영');
     expect(html).toContain(
-      '보안 인프라 구축·운영과 SIEM·API 자동화 근거를 채용 검토 순서로 묶었습니다.'
+      '거래소 보안 인프라 구축·운영, SIEM 알림, 장비 API 조회 근거를 먼저 볼 수 있게 정리했습니다.'
     );
-    expect(html).toContain('희망 역할: 보안 운영 · 보안 인프라 · SRE');
+    expect(html).toContain('희망 역할: 보안 운영 · 보안 인프라');
     expect(html).toContain('최근 근거: 거래소 보안 인프라 구축·운영');
     expect(html).toContain('면접 제안 가능');
     expect(html).toContain('PR 리뷰 · 시크릿 스캔 · ELK 로그');
-    expect(html).toContain('관측성 대시보드');
-    expect(html).toContain('운영 워크플로');
+    expect(html).toContain('운영 로그·메트릭 확인 흐름');
+    expect(html).toContain('Ops Workflow');
     expect(html).toContain('PDF·메일 연결');
+    expect(html).not.toContain('보안 운영 · 보안 인프라 · SRE');
+    expect(html).not.toContain('DevSecOps');
     expect(html).not.toContain('검토 가능');
     expect(html).not.toContain('자동화 방식');
     expect(extractHeroActions(html)).toEqual([
@@ -63,17 +65,19 @@ describe('portfolio hiring appeal copy', () => {
     const html = buildHeroContent('en');
 
     expect(html).toContain(
-      'Open to interview requests for Security Ops, Security Infrastructure, and SRE'
+      'Open to interview requests for security operations and security infrastructure roles'
     );
     expect(html).toContain(
-      'Recent security operations work is grouped for role fit, email contact, interviews, and work-mode discussion.'
+      'Exchange security build and operations, SIEM alerting, and appliance API lookup evidence are grouped first.'
     );
-    expect(html).toContain('Target roles: Security Ops, Security Infrastructure, SRE');
+    expect(html).toContain('Target roles: Security Operations and Security Infrastructure');
     expect(html).toContain('Recent role: exchange security infrastructure build and operations');
     expect(html).toContain('Open to interview requests');
     expect(html).toContain('Security automation and code-review role fit');
-    expect(html).toContain('SRE incident review and operational visibility');
-    expect(html).toContain('Response Workflow');
+    expect(html).toContain('Operational log and metric visibility');
+    expect(html).toContain('Ops Workflow');
+    expect(html).not.toContain('Security Infrastructure, and SRE');
+    expect(html).not.toContain('DevSecOps');
     expect(html).not.toContain('Ready to review');
     expect(html).not.toContain('Automation approach');
     expect(html).not.toContain('>Automation<');
@@ -92,17 +96,19 @@ describe('portfolio hiring appeal copy', () => {
   test('Japanese hero localizes recruiter proof and review-pack actions', () => {
     const html = buildHeroContent('ja');
 
-    expect(html).toContain('セキュリティ運用・セキュリティ基盤・SREの面接相談を歓迎');
+    expect(html).toContain('セキュリティ運用・セキュリティ基盤の面接相談を歓迎');
     expect(html).toContain(
-      '直近のセキュリティ運用経験、メール連絡、面接日程、勤務形態の相談を先に示します。'
+      '取引所セキュリティ基盤の構築・運用、SIEM通知、機器API照会の根拠を先に示します。'
     );
     expect(html).toContain('<ul class="hero-proof-list" aria-label="確認すべき主要証跡">');
-    expect(html).toContain('希望職種: セキュリティ運用・セキュリティ基盤・SRE');
+    expect(html).toContain('希望職種: セキュリティ運用・セキュリティ基盤');
     expect(html).toContain('直近役割: 取引所セキュリティ基盤の構築・運用');
     expect(html).toContain('面接相談を受付中');
     expect(html).toContain('セキュリティ自動化とコードレビューの適合性');
-    expect(html).toContain('SRE障害調査と運用可視性の根拠');
-    expect(html).toContain('運用ワークフロー');
+    expect(html).toContain('運用ログ・メトリクス確認の根拠');
+    expect(html).toContain('Ops Workflow');
+    expect(html).not.toContain('セキュリティ基盤・SRE');
+    expect(html).not.toContain('DevSecOps');
     expect(html).not.toContain('確認可能');
     expect(html).not.toContain('自動化アプローチ');
     expect(html).not.toContain('>Automation<');
@@ -126,7 +132,7 @@ describe('portfolio hiring appeal copy', () => {
       ...Object.values(role.proof || {}),
     ]);
 
-    expect(roleCopy).toContain('Response Workflow');
+    expect(roleCopy).toContain('Ops Workflow');
     expect(roleCopy).not.toContain('Automation');
     expect(roleCopy.join('\n')).not.toMatch(/自動化|자동화/);
   });
