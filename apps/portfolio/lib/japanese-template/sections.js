@@ -22,7 +22,7 @@ function applyJapaneseSections(html) {
     .replace(/(<h2[^>]*class="section-title"[^>]*>)연락처(<\/h2>)/g, '$1連絡先$2')
     .replace(
       /"jobTitle": "Security Engineer \/ SRE \(보안·SRE 엔지니어\)"/g,
-      '"jobTitle": "Security Engineer / SRE (セキュリティ・SREエンジニア)"'
+      '"jobTitle": "Security Operations / Infrastructure Engineer (セキュリティ運用・基盤エンジニア)"'
     )
     .replace(/"addressRegion": "경기도"/g, '"addressRegion": "京畿道"')
     .replace(/"addressLocality": "시흥시"/g, '"addressLocality": "帋興市"')

@@ -2,9 +2,9 @@ const { test, expect } = require('@playwright/test');
 
 const KOREAN_ROLE_PROOF_COUNTS = [
   ['security', 'Security Ops', '4개 근거'],
-  ['sre', 'SRE / Observability', '2개 근거'],
-  ['devsecops', 'DevSecOps / IaC', '4개 근거'],
-  ['automation', '운영 워크플로', '5개 근거'],
+  ['infra', 'Security Infra', '2개 근거'],
+  ['observability', 'Ops Visibility', '2개 근거'],
+  ['automation', 'Ops Workflow', '5개 근거'],
 ];
 
 const SECURITY_PROJECT_TITLES = [
@@ -93,12 +93,18 @@ test.describe('Portfolio role proof routing', () => {
   test('role proof counts localize on English and Japanese pages', async ({ page }) => {
     await page.goto('/en/', { waitUntil: 'domcontentloaded' });
     await expect(page.locator('.role-chip[data-role-filter="security"]')).toContainText('4 proofs');
-    await expect(page.locator('.role-chip[data-role-filter="sre"]')).toContainText('2 proofs');
+    await expect(page.locator('.role-chip[data-role-filter="infra"]')).toContainText('2 proofs');
+    await expect(page.locator('.role-chip[data-role-filter="observability"]')).toContainText(
+      '2 proofs'
+    );
 
     await page.goto('/ja/', { waitUntil: 'domcontentloaded' });
     await expect(page.locator('.role-chip[data-role-filter="security"]')).toContainText(
       '4件の根拠'
     );
-    await expect(page.locator('.role-chip[data-role-filter="sre"]')).toContainText('2件の根拠');
+    await expect(page.locator('.role-chip[data-role-filter="infra"]')).toContainText('2件の根拠');
+    await expect(page.locator('.role-chip[data-role-filter="observability"]')).toContainText(
+      '2件の根拠'
+    );
   });
 });
