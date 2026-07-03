@@ -7,14 +7,15 @@ test.describe('Portfolio hiring copy', () => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
     const hero = page.locator('#hero');
-    await expect(hero.getByText('보안 운영 · 보안 인프라 · SRE 면접 제안 환영')).toBeVisible();
+    await expect(hero.getByText('보안 운영 · 보안 인프라 역할 중심으로 면접 제안 환영')).toBeVisible();
     await expect(
       hero.getByText(
-        '보안 인프라 구축·운영과 SIEM·API 자동화 근거를 채용 검토 순서로 묶었습니다.'
+        '거래소 보안 인프라 구축·운영, SIEM 알림, 장비 API 조회 근거를 먼저 볼 수 있게 정리했습니다.'
       )
     ).toBeVisible();
-    await expect(hero.getByText('희망 역할: 보안 운영 · 보안 인프라 · SRE')).toBeVisible();
+    await expect(hero.getByText('희망 역할: 보안 운영 · 보안 인프라')).toBeVisible();
     await expect(hero.getByText('면접 제안 가능')).toBeVisible();
+    await expect(hero.getByText(/SRE|DevSecOps/)).toHaveCount(0);
     await expect(hero.getByText('검토 가능')).toHaveCount(0);
     await expect(hero.getByRole('link', { name: '면접 문의', exact: true })).toHaveAttribute(
       'href',
@@ -41,7 +42,7 @@ test.describe('Portfolio hiring copy', () => {
     const englishHero = page.locator('#hero');
     await expect(
       englishHero.getByText(
-        'Open to interview requests for Security Ops, Security Infrastructure, and SRE'
+        'Open to interview requests for security operations and security infrastructure roles'
       )
     ).toBeVisible();
     await expect(
@@ -61,13 +62,14 @@ test.describe('Portfolio hiring copy', () => {
     await page.goto('/ja/', { waitUntil: 'domcontentloaded' });
     const japaneseHero = page.locator('#hero');
     await expect(
-      japaneseHero.getByText('セキュリティ運用・セキュリティ基盤・SREの面接相談を歓迎')
+      japaneseHero.getByText('セキュリティ運用・セキュリティ基盤の面接相談を歓迎')
     ).toBeVisible();
     await expect(
       japaneseHero.getByText(
-        '直近のセキュリティ運用経験、メール連絡、面接日程、勤務形態の相談を先に示します。'
+        '取引所セキュリティ基盤の構築・運用、SIEM通知、機器API照会の根拠を先に示します。'
       )
     ).toBeVisible();
+    await expect(japaneseHero.getByText(/SRE|DevSecOps/)).toHaveCount(0);
     await expect(japaneseHero.getByText('確認可能')).toHaveCount(0);
     await expect(japaneseHero.getByRole('link', { name: '面接相談', exact: true })).toBeVisible();
     await expect(

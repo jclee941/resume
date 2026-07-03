@@ -36,7 +36,7 @@ function applyJapaneseHero(html) {
     )
     .replace(
       /보안 운영 · 보안 인프라 · SRE 면접 제안 환영/g,
-      'セキュリティ運用・セキュリティ基盤・SREの面接相談を歓迎'
+      'セキュリティ運用・セキュリティ基盤の面接相談を歓迎'
     )
     .replace(/채용 검토·면접 논의 가능/g, '採用検討・面接相談が可能')
     .replace(/aria-label="대표 업무 증빙"/g, 'aria-label="代表的な業務証跡"')
