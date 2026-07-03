@@ -10,24 +10,24 @@ export const ROLE_PROFILES = [
     keywords: ['Security', 'Alert', 'Blacklist', 'Bug Bounty', 'FortiGate', 'Splunk', 'Firewall', '보안'],
   },
   {
-    id: 'sre',
-    label: 'SRE / Observability',
+    id: 'infra',
+    label: 'Security Infra',
     proof: {
-      ko: 'Grafana·Prometheus·Loki·ELK 관측성',
-      en: 'Grafana, Prometheus, Loki, and ELK observability',
-      ja: 'Grafana・Prometheus・Loki・ELK 可観測性',
+      ko: 'FortiGate HA, 망분리, Ansible 절차',
+      en: 'FortiGate HA, segmentation, and Ansible procedures',
+      ja: 'FortiGate HA、分離、Ansible手順',
     },
-    keywords: ['Observability', 'Resume Portfolio', 'Grafana', 'Loki', 'Prometheus'],
+    keywords: ['FortiGate', 'FortiManager', 'Ansible', 'Firewall', 'Nextrade'],
   },
   {
-    id: 'devsecops',
-    label: 'DevSecOps / IaC',
+    id: 'observability',
+    label: 'Ops Visibility',
     proof: {
-      ko: 'Terraform, Cloudflare Workers, GitHub Actions 검증',
-      en: 'Terraform, Cloudflare Workers, and GitHub Actions checks',
-      ja: 'Terraform、Cloudflare Workers、GitHub Actions 検証',
+      ko: 'Grafana·Prometheus·Loki·ELK 로그 확인',
+      en: 'Grafana, Prometheus, Loki, and ELK visibility',
+      ja: 'Grafana・Prometheus・Loki・ELKの可視化',
     },
-    keywords: ['Terraform', 'Resume Portfolio', 'jclee-bot', 'SafetyWallet'],
+    keywords: ['Observability', 'Resume Portfolio', 'Grafana', 'Loki', 'Prometheus'],
   },
   {
     id: 'automation',
@@ -52,21 +52,21 @@ export const EVIDENCE_ITEMS = [
     },
   },
   {
-    roleId: 'sre',
+    roleId: 'infra',
+    title: 'Nextrade Security Infrastructure',
+    proof: {
+      ko: 'FortiGate HA, 망분리, 엔드포인트 보안 통제, Ansible 절차화',
+      en: 'FortiGate HA, segmentation, endpoint security controls, and Ansible procedures',
+      ja: 'FortiGate HA、分離、エンドポイントセキュリティ制御、Ansible手順化',
+    },
+  },
+  {
+    roleId: 'observability',
     title: 'Observability Platform',
     proof: {
       ko: 'Prometheus, Loki, Grafana를 코드 기반 운영 흐름으로 묶은 관측성 구성',
       en: 'Observability setup connecting Prometheus, Loki, and Grafana as code',
       ja: 'Prometheus、Loki、Grafanaをコードベース運用に接続した可観測性構成',
-    },
-  },
-  {
-    roleId: 'devsecops',
-    title: 'Terraform Homelab IaC',
-    proof: {
-      ko: 'Proxmox, Cloudflare, k3s 리소스를 Terraform 모듈과 검증 흐름으로 관리',
-      en: 'Proxmox, Cloudflare, and k3s resources managed through Terraform modules',
-      ja: 'Proxmox、Cloudflare、k3sをTerraformモジュールと検証フローで管理',
     },
   },
   {

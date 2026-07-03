@@ -14,22 +14,19 @@ function createElement(tagName, className, text = '') {
 }
 
 const LEVELS = {
-  expert: { min: 90, label: 'Expert', color: 'var(--color-accent-strong)' },
-  advanced: { min: 70, label: 'Advanced', color: 'var(--color-accent)' },
-  intermediate: { min: 50, label: 'Intermediate', color: 'var(--text-secondary)' },
+  primary: { min: 90, label: 'Primary', color: 'var(--color-accent-strong)' },
+  applied: { min: 70, label: 'Applied', color: 'var(--color-accent)' },
+  working: { min: 50, label: 'Working', color: 'var(--text-secondary)' },
 };
 
 function getLevelInfo(level) {
-  if (level >= LEVELS.expert.min) return LEVELS.expert;
-  if (level >= LEVELS.advanced.min) return LEVELS.advanced;
-  return LEVELS.intermediate;
+  if (level >= LEVELS.primary.min) return LEVELS.primary;
+  if (level >= LEVELS.applied.min) return LEVELS.applied;
+  return LEVELS.working;
 }
 
 function getTierLabel(level) {
-  const info = getLevelInfo(level);
-  if (info.label === 'Expert') return 'Core';
-  if (info.label === 'Advanced') return 'Strong working';
-  return 'Learning';
+  return getLevelInfo(level).label;
 }
 
 function createSkillRadar() {

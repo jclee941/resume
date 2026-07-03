@@ -5,17 +5,17 @@ function applyJapaneseReviewPacket(html) {
     .replace(/채용 검토 패킷/g, '採用検討パケット')
     .replace(/채용 검토 자료/g, '採用検討資料')
     .replace(/검토 역할/g, '検討ロール')
-    .replace(/보안 운영 · SRE · DevSecOps/g, 'セキュリティ運用・SRE・DevSecOps')
+    .replace(/보안 운영 · 보안 인프라 · SIEM/g, 'セキュリティ運用・セキュリティ基盤・SIEM')
     .replace(/검토 근거/g, '確認根拠')
     .replace(/경력 요약 · 프로젝트 증빙 · PDF/g, '職務要約・プロジェクト根拠・PDF')
     .replace(/연락 방식/g, '連絡方法')
     .replace(/요청부서 검토 포인트/g, '依頼部門の確認ポイント')
     .replace(/적합 역할/g, '適合する役割')
     .replace(
-      /보안 운영, SRE, DevSecOps 직무 적합성/g,
-      'セキュリティ運用、SRE、DevSecOpsの職務適合性'
+      /보안 운영, 보안 인프라, SIEM 직무 적합성/g,
+      'セキュリティ運用、セキュリティ基盤、SIEMの職務適合性'
     )
-    .replace(/보안 운영, SRE, DevSecOps/g, 'セキュリティ運用、SRE、DevSecOps')
+    .replace(/보안 운영, 보안 인프라, SIEM/g, 'セキュリティ運用、セキュリティ基盤、SIEM')
     .replace(/검증 자료/g, '検証資料')
     .replace(/확인 자료/g, '確認資料')
     .replace(/경력·프로젝트 근거와 PDF/g, '経歴・プロジェクト根拠とPDF')
