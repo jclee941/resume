@@ -16,20 +16,21 @@ export async function downloadCaptchaImage(page, captchaSrc) {
 
   if (!raw.mime.includes('bmp')) return raw;
 
+  const fs = await import('fs');
+  const { execSync } = await import('child_process');
+  const tmpBmp = `/tmp/jk-captcha-${Date.now()}.bmp`;
+  const tmpPng = tmpBmp.replace(/\.bmp$/, '.png');
   try {
-    const fs = await import('fs');
-    const { execSync } = await import('child_process');
-    const tmpBmp = `/tmp/jk-captcha-${Date.now()}.bmp`;
-    const tmpPng = tmpBmp.replace(/\.bmp$/, '.png');
     fs.writeFileSync(tmpBmp, Buffer.from(raw.base64, 'base64'));
     execSync(`python3 -c "from PIL import Image; Image.open('${tmpBmp}').save('${tmpPng}')"`, {
       stdio: 'ignore',
     });
     const pngBuf = fs.readFileSync(tmpPng);
-    fs.rmSync(tmpBmp, { force: true });
-    fs.rmSync(tmpPng, { force: true });
     return { base64: pngBuf.toString('base64'), mime: 'image/png' };
   } catch {
     return raw;
+  } finally {
+    fs.rmSync(tmpBmp, { force: true });
+    fs.rmSync(tmpPng, { force: true });
   }
 }
