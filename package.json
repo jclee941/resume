@@ -102,7 +102,7 @@
     "@playwright/test": "^1.61.1",
     "@redocly/cli": "^2.37.0",
     "@types/jest": "^30.0.0",
-    "@types/node": "^25.9.1",
+    "@types/node": "^26.1.0",
     "c8": "^11.0.0",
     "eslint": "^10.6.0",
     "globals": "^17.7.0",
