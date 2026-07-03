@@ -5,6 +5,7 @@ import {
   resolveCliproxyApiKey,
   isCliproxyConfigured,
   findCaptchaImageUrl,
+  normalizeCaptchaAnswer,
   solveJobKoreaCaptcha,
 } from '../jobkorea-handler/captcha-solver.js';
 
@@ -87,6 +88,17 @@ describe('captcha-solver.findCaptchaImageUrl', () => {
     };
     const result = await findCaptchaImageUrl(page);
     assert.strictEqual(result, null);
+  });
+});
+
+describe('captcha-solver.normalizeCaptchaAnswer', () => {
+  it('rejects descriptive words returned by vision models', () => {
+    assert.strictEqual(normalizeCaptchaAnswer('images'), '');
+    assert.strictEqual(normalizeCaptchaAnswer('CAPTCHAs'), '');
+  });
+
+  it('extracts the last plausible alphanumeric answer', () => {
+    assert.strictEqual(normalizeCaptchaAnswer('The answer is A7kP2'), 'A7kP2');
   });
 });
 

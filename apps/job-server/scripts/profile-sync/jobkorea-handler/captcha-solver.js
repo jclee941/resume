@@ -8,16 +8,30 @@
 
 import { log } from '../sync-logger.js';
 
-// Vision-capable models in priority order. GPT first per operator preference;
-// Claude vision models follow as fallback. Must match model ids actually served
-// by the cliproxy backend (https://cliproxy.jclee.me/v1/models).
 const VISION_MODELS = [
-  'gpt-5.5',
   'gpt-5.4',
+  'gpt-5.5',
+  'gemini-3.5-flash-low',
+  'gemini-3-flash',
   'gpt-5.4-mini',
-  'claude-sonnet-4-5-20250929',
-  'claude-opus-4-8',
+  'gemini-3.1-flash-lite',
 ];
+
+const WEAK_CAPTCHA_TOKENS = new Set([
+  'answer',
+  'captcha',
+  'captchas',
+  'characters',
+  'image',
+  'images',
+  'letter',
+  'letters',
+  'number',
+  'numbers',
+  'text',
+  'word',
+  'words',
+]);
 
 /**
  * Resolve the ordered list of vision model ids to try, allowing a
@@ -187,11 +201,12 @@ async function callVisionModel(image, model) {
               'It is usually 5 to 8 characters long and contains no real words. ' +
               'Do NOT guess, do NOT output any word that is not literally drawn in the image. ' +
               'Reply with ONLY those characters — no spaces, no punctuation, no explanation. ' +
+              'The answer must not be a normal word like image, captcha, letters, or text. ' +
               'If the characters are illegible, reply with exactly: ZZZZZZ.',
           },
           {
             type: 'image_url',
-            image_url: { url: `data:${image.mime};base64,${image.base64}` },
+            image_url: { url: `data:${image.mime};base64,${image.base64}`, detail: 'high' },
           },
         ],
       },
@@ -214,12 +229,23 @@ async function callVisionModel(image, model) {
   }
   const data = await res.json();
   const raw = data?.choices?.[0]?.message?.content || '';
-  // Reasoning models may prepend thoughts. Extract the last alphanumeric token of length 3-12.
+  return normalizeCaptchaAnswer(raw);
+}
+
+export function normalizeCaptchaAnswer(raw) {
   const tokens = String(raw)
     .split(/[^A-Za-z0-9]+/)
-    .filter((t) => t.length >= 3 && t.length <= 12 && t !== 'ZZZZZZ');
-  const cleaned = tokens.length ? tokens[tokens.length - 1] : '';
-  return cleaned;
+    .map((token) => token.trim())
+    .filter(Boolean);
+  const candidates = tokens.filter(isPlausibleCaptchaAnswer);
+  return candidates.length ? candidates[candidates.length - 1] : '';
+}
+
+function isPlausibleCaptchaAnswer(token) {
+  if (token === 'ZZZZZZ') return false;
+  if (token.length < 4 || token.length > 8) return false;
+  if (WEAK_CAPTCHA_TOKENS.has(token.toLowerCase())) return false;
+  return /^[A-Za-z0-9]+$/.test(token);
 }
 
 /**

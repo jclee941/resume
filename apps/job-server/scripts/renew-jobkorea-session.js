@@ -22,7 +22,7 @@ import {
 } from './jobkorea-session/index.js';
 import { pickJobKoreaBrowserProfile } from './jobkorea-session/user-agent-pool.js';
 
-const email = process.env.JOBKOREA_EMAIL || process.env.JOBKOREA_USERNAME;
+const loginId = process.env.JOBKOREA_USERNAME || process.env.JOBKOREA_EMAIL;
 const password = process.env.JOBKOREA_PASSWORD;
 const headless = process.env.HEADLESS !== 'false';
 const headlessEnv = process.env.HEADLESS;
@@ -34,12 +34,12 @@ function log(...args) {
 }
 
 async function main() {
-  if (!email || !password) {
-    console.error('[jobkorea-session] JOBKOREA_EMAIL and JOBKOREA_PASSWORD required');
+  if (!loginId || !password) {
+    console.error('[jobkorea-session] JOBKOREA_USERNAME/JOBKOREA_EMAIL and JOBKOREA_PASSWORD required');
     process.exit(1);
   }
 
-  log('Renewing JobKorea session for:', email);
+  log('Renewing JobKorea session for configured login id');
   const browserProfile = pickJobKoreaBrowserProfile();
   const { userAgent } = browserProfile;
 
@@ -80,7 +80,7 @@ async function main() {
         log('Session expired or CAPTCHA detected, performing fresh login...');
 
         await handleCaptchaIfNeeded(page, { log, headlessEnv });
-        await fillLoginForm(page, { email, password, log });
+        await fillLoginForm(page, { email: loginId, password, log });
         await clickVisibleSubmit(page, { log });
         await waitForLoginConfirmation(page, {
           verifyAuthenticatedSession,
@@ -100,7 +100,7 @@ async function main() {
       const cookieString = buildCookieString(cookies);
       const session = {
         platform: 'jobkorea',
-        email,
+        email: process.env.JOBKOREA_EMAIL || loginId,
         cookies,
         cookieString,
         cookieCount: cookies.length,
