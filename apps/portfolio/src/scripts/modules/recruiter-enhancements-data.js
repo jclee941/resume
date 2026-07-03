@@ -31,7 +31,7 @@ export const ROLE_PROFILES = [
   },
   {
     id: 'automation',
-    label: 'Response Workflow',
+    label: 'Ops Workflow',
     proof: {
       ko: 'jclee-bot, PR 검토, 시크릿 스캔, 운영 로그',
       en: 'jclee-bot, PR review, secret scan, and runtime logs',
