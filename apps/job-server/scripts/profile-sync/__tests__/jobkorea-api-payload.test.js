@@ -11,12 +11,12 @@ import { overlayTemplate } from '../jobkorea-handler/sync-api-only.js';
 describe('JobKorea API payload helpers', () => {
   it('encodes form fields as application/x-www-form-urlencoded', () => {
     const payload = encodeFormFields([
-      { name: 'UserResume.Resume_Title', value: 'DevSecOps SRE Engineer' },
+      { name: 'UserResume.Resume_Title', value: 'Security Operations Engineer' },
       { name: 'Career[c1].C_Name', value: 'Example Cloud Operations' },
       { name: 'Nullable', value: null },
     ]);
 
-    assert.match(payload, /UserResume\.Resume_Title=DevSecOps\+SRE\+Engineer/);
+    assert.match(payload, /UserResume\.Resume_Title=Security\+Operations\+Engineer/);
     assert.match(payload, /Career%5Bc1%5D\.C_Name=Example\+Cloud\+Operations/);
     assert.match(payload, /Nullable=/);
   });
@@ -61,7 +61,7 @@ describe('JobKorea API payload helpers', () => {
     ];
     const target = [
       { name: 'Career[c1].C_Name', value: 'New Corp' },
-      { name: 'Career[c1].C_Part', value: 'DevSecOps' },
+      { name: 'Career[c1].C_Part', value: 'Security Operations' },
       { name: 'Language[c1].Lang1_Name', value: 'Japanese' },
       { name: 'Language[c1].Lang1_Stat', value: 'business' },
     ];
@@ -71,7 +71,7 @@ describe('JobKorea API payload helpers', () => {
 
     // Complete section overridden
     assert.strictEqual(map.get('Career[c1].C_Name'), 'New Corp');
-    assert.strictEqual(map.get('Career[c1].C_Part'), 'DevSecOps');
+    assert.strictEqual(map.get('Career[c1].C_Part'), 'Security Operations');
     // Incomplete section (Language) skipped — base fields preserved
     assert.strictEqual(map.get('Language[c1].Lang1_Name'), 'English');
     assert.strictEqual(map.get('Language[c1].Eval_Category'), '2');

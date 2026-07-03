@@ -57,7 +57,7 @@ export async function rankJobs(args = []) {
   const sources = DEFAULT_SOURCES;
 
   console.log(
-    `\n🔍 DevSecOps/SRE 공고 랭킹 — 키워드 ${keywords.length}개, 플랫폼: ${sources.join(', ')}`
+    `\n🔍 보안 운영/인프라 공고 랭킹 — 키워드 ${keywords.length}개, 플랫폼: ${sources.join(', ')}`
   );
   console.log(`   이력서: ${getResumeMasterMarkdownPath()}`);
 

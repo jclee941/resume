@@ -27,7 +27,7 @@ import { TelegramNotificationAdapter } from '../src/shared/services/notification
 import { filterWorthy, WORTHY_MIN_SCORE } from './worthiness.js';
 
 const ATS_SOURCES = new Set(['greenhouse', 'lever', 'ashby']);
-const DEFAULT_KEYWORDS = ['보안 엔지니어', 'DevOps', 'SRE', '클라우드 엔지니어', '인프라 엔지니어'];
+const DEFAULT_KEYWORDS = ['보안 운영', '보안 인프라', 'SIEM', 'FortiGate', 'Splunk'];
 
 function parseArgs(argv) {
   const get = (name) =>

@@ -104,7 +104,7 @@ export class AutoApplyScheduler extends EventEmitter {
       }
 
       const runOptions = {
-        keywords: ['시니어 엔지니어', '클라우드 엔지니어', 'SRE'],
+        keywords: ['보안 운영', '보안 인프라', 'SIEM'],
         maxApplications: 10,
         ...options,
       };

@@ -1,6 +1,6 @@
 import { pushField } from './validators.js';
 
-export const JOBKOREA_RESUME_TITLE = '이재철 - 보안·SRE 엔지니어';
+export const JOBKOREA_RESUME_TITLE = '이재철 - 보안 운영/인프라 엔지니어';
 
 export function mapResumeTitleToFormFields(ssot = {}) {
   const fields = [];

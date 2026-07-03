@@ -15,7 +15,7 @@ const sampleJobs = [
   {
     id: 'wanted_1',
     source: 'wanted',
-    position: 'DevSecOps Engineer',
+    position: 'Security Operations Engineer',
     company: 'AlphaSec',
     location: '서울 강남구',
     sourceUrl: 'https://www.wanted.co.kr/wd/1',
@@ -23,14 +23,14 @@ const sampleJobs = [
     matchPercentage: 82,
     applicationPriority: 'high',
     matchDetails: {
-      skillMatches: [{ category: 'security', keyword: 'devsecops' }],
+      skillMatches: [{ category: 'security', keyword: 'siem' }],
       bonusPoints: [],
     },
   },
   {
     id: 'jobkorea_2',
     source: 'jobkorea',
-    position: 'SRE',
+    position: 'Security Infrastructure Engineer',
     company: 'BetaCloud',
     location: '서울',
     sourceUrl: 'https://www.jobkorea.co.kr/Recruit/GI_Read/2',
@@ -83,7 +83,10 @@ describe('mergeAndRankResults', () => {
 
 describe('buildRankedReport', () => {
   it('filters to worth-applying jobs at/above minScore and tags tiers', () => {
-    const report = buildRankedReport(sampleJobs, { minScore: 60, keywords: ['DevSecOps', 'SRE'] });
+    const report = buildRankedReport(sampleJobs, {
+      minScore: 60,
+      keywords: ['보안 운영', '보안 인프라'],
+    });
     assert.equal(report.totalScored, 3);
     assert.equal(report.worthApplying.length, 2, 'only >=60 are worth applying');
     assert.deepEqual(
@@ -93,7 +96,7 @@ describe('buildRankedReport', () => {
     // tier classification per <60 skip / 60-74 review / >=75 auto
     assert.equal(report.worthApplying[0].tier, 'auto');
     assert.equal(report.worthApplying[1].tier, 'review');
-    assert.deepEqual(report.keywords, ['DevSecOps', 'SRE']);
+    assert.deepEqual(report.keywords, ['보안 운영', '보안 인프라']);
     assert.ok(report.generatedAt, 'has timestamp');
   });
 
@@ -128,7 +131,7 @@ describe('mergeDetailIntoJob', () => {
   it('fills empty description/requirements/techStack from detail payload', () => {
     const job = {
       id: 'wanted_9',
-      position: 'SRE',
+      position: 'Security Infrastructure Engineer',
       description: '',
       requirements: '',
       techStack: [],
@@ -150,7 +153,7 @@ describe('mergeDetailIntoJob', () => {
   it('keeps original job unchanged when detail failed', () => {
     const job = {
       id: 'wanted_9',
-      position: 'SRE',
+      position: 'Security Infrastructure Engineer',
       description: 'orig',
       requirements: '',
       techStack: [],
@@ -316,7 +319,7 @@ describe('buildSubmitQueue', () => {
     {
       id: 'j2',
       source: 'jobkorea',
-      position: 'SRE',
+      position: 'Security Infrastructure Engineer',
       company: 'B',
       location: '서울',
       sourceUrl: 'https://j/2',

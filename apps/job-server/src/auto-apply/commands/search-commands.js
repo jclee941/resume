@@ -51,7 +51,7 @@ export async function searchJobs(args) {
 }
 
 export async function aiSearchJobs(args) {
-  const keyword = args[0] || 'DevSecOps';
+  const keyword = args[0] || '보안 운영';
   const limit = parseInt(args[1]) || 10;
 
   console.log(`🤖 AI 기반 검색: ${keyword} (최대 ${limit}개)\n`);
