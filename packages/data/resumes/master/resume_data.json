@@ -97,7 +97,7 @@
     {
       "id": "itcen-cts",
       "company": "(주)아이티센 CTS",
-      "companyUrl": "https://itcencts.com/",
+      "companyUrl": null,
       "period": "2025.03 ~ 2026.02",
       "duration": "1년",
       "project": "넥스트레이드 정보보안운영SM",
@@ -192,7 +192,7 @@
     {
       "id": "jointree",
       "company": "(주)조인트리",
-      "companyUrl": "https://www.jointree.co.kr/",
+      "companyUrl": null,
       "period": "2021.09 ~ 2022.04",
       "duration": "8개월",
       "project": "국민대학교 차세대 정보시스템",
@@ -981,7 +981,7 @@
     "email": "qws941@kakao.com",
     "phone": "010-5757-9592",
     "github": "https://github.com/jclee941",
-    "githubBot": "https://github.com/jclee-bot",
+    "githubBot": "https://github.com/jclee941/jclee-bot",
     "linkedin": "https://linkedin.com/in/jclee0109",
     "velog": "https://velog.io/@qws941",
     "website": "https://resume.jclee.me",

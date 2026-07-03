@@ -190,13 +190,13 @@ describe('Cards Module', () => {
       const html = generateContactGrid({
         email: 'qws941@kakao.com',
         github: 'https://github.com/jclee941',
-        githubBot: 'https://github.com/jclee-bot',
+        githubBot: 'https://github.com/jclee941/jclee-bot',
         linkedin: 'https://linkedin.com/in/jclee0109',
         velog: 'https://velog.io/@qws941',
         website: 'https://resume.jclee.me',
       });
 
-      expect(html).toContain('https://github.com/jclee-bot');
+      expect(html).toContain('https://github.com/jclee941/jclee-bot');
       expect(html).toContain('GitHub Bot');
       expect(html).toContain('aria-label="GitHub Bot (opens in new tab)"');
     });

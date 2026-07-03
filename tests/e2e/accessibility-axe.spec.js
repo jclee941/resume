@@ -84,6 +84,42 @@ test.describe('Accessibility - axe-core WCAG 2.1 AA', () => {
     expect(ids, `violations: ${JSON.stringify(ids, null, 2)}`).toEqual([]);
   });
 
+  test('skill radar cards should not use disallowed interactive roles', async ({ page }) => {
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('#skill-radar-grid .skill-domain-card', { timeout: 15000 });
+
+    const results = await new AxeBuilder({ page })
+      .include('#skill-radar-grid')
+      .withRules(['aria-allowed-role'])
+      .analyze();
+    const skillRadarViolations = results.violations
+      .filter((violation) => violation.id === 'aria-allowed-role')
+      .flatMap((violation) =>
+        violation.nodes.map((node) => ({
+          id: violation.id,
+          impact: violation.impact,
+          target: node.target,
+          failureSummary: node.failureSummary,
+        }))
+      );
+
+    expect(
+      skillRadarViolations,
+      `skill radar aria-allowed-role violations: ${JSON.stringify(skillRadarViolations, null, 2)}`
+    ).toEqual([]);
+
+    const firstCard = page.locator('#skill-radar-grid .skill-domain-card').first();
+    await expect(firstCard).toHaveAccessibleName(/^[^:]+: .+, \d+ skills$/);
+    await expect(firstCard).not.toHaveAccessibleName(/Evidence|Recent proof|Related project/i);
+    await expect(firstCard).toHaveAttribute('aria-expanded', 'false');
+    await firstCard.click();
+    await expect(firstCard).toHaveAttribute('aria-expanded', 'true');
+    await firstCard.press('Enter');
+    await expect(firstCard).toHaveAttribute('aria-expanded', 'false');
+    await firstCard.press(' ');
+    await expect(firstCard).toHaveAttribute('aria-expanded', 'true');
+  });
+
   test('timeline accessibility should not use disallowed ARIA roles', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     await page.waitForSelector('#resume .timeline-node', { timeout: 15000 });

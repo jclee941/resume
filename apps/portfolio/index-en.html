@@ -75,7 +75,7 @@
         "telephone": "+82-10-5757-9592",
         "sameAs": [
           "https://github.com/jclee941",
-          "https://github.com/jclee-bot",
+          "https://github.com/jclee941/jclee-bot",
           "https://linkedin.com/in/jclee0109",
           "https://velog.io/@qws941"
         ],
@@ -279,7 +279,9 @@
             <a href="/" class="nav-logo">~/jclee</a>
             <button
               class="nav-toggle"
-              aria-label="Toggle navigation"
+              aria-label="Open navigation"
+              data-nav-label-open="Open navigation"
+              data-nav-label-close="Close navigation"
               aria-expanded="false"
               aria-controls="nav-links"
             >
@@ -526,16 +528,26 @@
           if (!toggle || !navLinks || toggle.dataset.mobileNavBound === 'true') return;
 
           toggle.dataset.mobileNavBound = 'true';
+          var openLabel = toggle.getAttribute('data-nav-label-open');
+          var closeLabel = toggle.getAttribute('data-nav-label-close');
+
+          function setToggleLabel(expanded) {
+            if (!openLabel || !closeLabel) return;
+            toggle.setAttribute('aria-label', expanded ? closeLabel : openLabel);
+          }
 
           function closeMenu(focusToggle) {
             toggle.setAttribute('aria-expanded', 'false');
+            setToggleLabel(false);
             navLinks.classList.remove('open');
             if (focusToggle) toggle.focus();
           }
 
           toggle.addEventListener('click', function () {
             var expanded = toggle.getAttribute('aria-expanded') === 'true';
-            toggle.setAttribute('aria-expanded', String(!expanded));
+            var nextExpanded = !expanded;
+            toggle.setAttribute('aria-expanded', String(nextExpanded));
+            setToggleLabel(nextExpanded);
             navLinks.classList.toggle('open');
           });
 
