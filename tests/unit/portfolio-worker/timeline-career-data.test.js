@@ -13,6 +13,10 @@ const TIMELINE_PATH = path.resolve(
   __dirname,
   '../../../apps/portfolio/src/scripts/modules/timeline.js'
 );
+const TIMELINE_RENDERING_PATH = path.resolve(
+  __dirname,
+  '../../../apps/portfolio/src/scripts/modules/timeline-rendering.js'
+);
 
 describe('timeline.js source contract (no hardcoded careers)', () => {
   let source;
@@ -83,5 +87,37 @@ describe('mergeCareerUiMeta()', () => {
     expect(mergeCareerUiMeta(undefined)).toEqual([]);
     expect(mergeCareerUiMeta(null)).toEqual([]);
     expect(mergeCareerUiMeta([])).toEqual([]);
+  });
+});
+
+describe('createTimelineNode()', () => {
+  let createTimelineNode;
+  beforeAll(async () => {
+    ({ createTimelineNode } = await import(TIMELINE_RENDERING_PATH));
+    global.document = { documentElement: { lang: 'ko' } };
+  });
+
+  afterAll(() => {
+    delete global.document;
+  });
+
+  test('renders company text without a dead # link when companyUrl is absent', () => {
+    const html = createTimelineNode(
+      {
+        company: '(주)조인트리',
+        companyUrl: null,
+        period: '2021.09 ~ 2022.04',
+        phase: '구축',
+        status: 'completed',
+        role: '네트워크 보안 엔지니어',
+        myRole: '네트워크 보안 구축 담당',
+        description: 'NSX-T 마이크로세그멘테이션 적용',
+        achievements: ['동서 트래픽 보안 정책 세분화'],
+      },
+      0
+    );
+
+    expect(html).toContain('company-link--text');
+    expect(html).not.toContain('href="#"');
   });
 });

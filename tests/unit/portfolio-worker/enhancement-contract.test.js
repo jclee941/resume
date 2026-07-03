@@ -54,7 +54,8 @@ describe('T3: localized nav toggle copy and deferred metadata', () => {
   test('nav toggle accessible names are localized per locale', () => {
     expect(ko).toContain('aria-label="메뉴 열기"');
     expect(ko).toContain('data-nav-label-close="메뉴 닫기"');
-    expect(en).toContain('aria-label="Toggle navigation"');
+    expect(en).toContain('aria-label="Open navigation"');
+    expect(en).toContain('data-nav-label-close="Close navigation"');
     expect(ja).toContain('aria-label="メニューを開く"');
     expect(ja).toContain('data-nav-label-close="メニューを閉じる"');
   });

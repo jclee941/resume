@@ -196,10 +196,19 @@ function initMobileNav() {
   if (toggle.dataset.mobileNavBound === 'true') return;
 
   toggle.dataset.mobileNavBound = 'true';
+  const openLabel = toggle.getAttribute('data-nav-label-open');
+  const closeLabel = toggle.getAttribute('data-nav-label-close');
+
+  function setToggleLabel(expanded) {
+    if (!openLabel || !closeLabel) return;
+    toggle.setAttribute('aria-label', expanded ? closeLabel : openLabel);
+  }
 
   toggle.addEventListener('click', () => {
     const expanded = toggle.getAttribute('aria-expanded') === 'true';
-    toggle.setAttribute('aria-expanded', String(!expanded));
+    const nextExpanded = !expanded;
+    toggle.setAttribute('aria-expanded', String(nextExpanded));
+    setToggleLabel(nextExpanded);
     navLinks.classList.toggle('open');
   });
 
@@ -207,6 +216,7 @@ function initMobileNav() {
   navLinks.querySelectorAll('a').forEach((link) => {
     link.addEventListener('click', () => {
       toggle.setAttribute('aria-expanded', 'false');
+      setToggleLabel(false);
       navLinks.classList.remove('open');
     });
   });
@@ -215,6 +225,7 @@ function initMobileNav() {
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && navLinks.classList.contains('open')) {
       toggle.setAttribute('aria-expanded', 'false');
+      setToggleLabel(false);
       navLinks.classList.remove('open');
       toggle.focus();
     }

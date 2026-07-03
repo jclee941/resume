@@ -67,15 +67,17 @@ function applyRadarStyles(root) {
 }
 
 function createDomainCard(domainKey, domain) {
-  const article = document.createElement('article');
-  article.className = 'skill-domain-card';
-  article.dataset.domain = domainKey;
-  article.setAttribute('tabindex', '0');
-  article.setAttribute('role', 'button');
-  article.setAttribute('aria-expanded', 'false');
-  article.setAttribute('aria-controls', `skill-panel-${domainKey}`);
+  const card = document.createElement('div');
+  card.className = 'skill-domain-card';
+  card.dataset.domain = domainKey;
+  card.setAttribute('tabindex', '0');
+  card.setAttribute('role', 'button');
+  card.setAttribute('aria-expanded', 'false');
+  card.setAttribute('aria-controls', `skill-panel-${domainKey}`);
 
   const levelInfo = getLevelInfo(domain.skills[0].level);
+  const tierLabel = getTierLabel(domain.skills[0].level);
+  card.setAttribute('aria-label', `${domain.title}: ${tierLabel}, ${domain.skills.length} skills`);
 
   const header = createElement('div', 'skill-domain-card__header');
   const icon = createElement('div', 'skill-domain-card__icon');
@@ -93,24 +95,24 @@ function createDomainCard(domainKey, domain) {
 
   const indicator = createElement('div', 'skill-domain-card__level-indicator');
   indicator.dataset.levelColor = levelInfo.color;
-  indicator.setAttribute('aria-label', getTierLabel(domain.skills[0].level));
+  indicator.setAttribute('aria-label', tierLabel);
   indicator.append(
     createElement('span', 'skill-domain-card__level-dot'),
-    createElement('span', 'skill-domain-card__level-label', getTierLabel(domain.skills[0].level))
+    createElement('span', 'skill-domain-card__level-label', tierLabel)
   );
 
   const panel = createSkillPanel(domainKey, domain);
-  article.append(header, indicator, panel);
+  card.append(header, indicator, panel);
 
-  article.addEventListener('click', () => toggleCard(article));
-  article.addEventListener('keydown', (e) => {
+  card.addEventListener('click', () => toggleCard(card));
+  card.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
-      toggleCard(article);
+      toggleCard(card);
     }
   });
 
-  return article;
+  return card;
 }
 
 function createSkillPanel(domainKey, domain) {

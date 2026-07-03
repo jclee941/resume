@@ -79,6 +79,11 @@ export function createTimelineNode(career, index) {
   const phaseLabel = (labels.phases && labels.phases[career.phase]) || career.phase;
   const impactText = impactTextFor(career);
 
+  const companyName = career.companyUrl
+    ? `<a href="${career.companyUrl}" target="_blank" rel="noopener noreferrer"
+               class="company-link">${career.company}</a>`
+    : `<span class="company-link company-link--text">${career.company}</span>`;
+
   return `
     <li class="timeline-node ${nodeClass}" role="listitem" tabindex="0"
              data-phase="${career.phase}"
@@ -103,8 +108,7 @@ export function createTimelineNode(career, index) {
 
         <div class="timeline-card" tabindex="-1">
           <h3 class="timeline-company">
-            <a href="${career.companyUrl || '#'}" target="_blank" rel="noopener noreferrer"
-               class="company-link">${career.company}</a>
+            ${companyName}
           </h3>
           <p class="timeline-role">${career.role}</p>
           <p class="timeline-myrole">${career.myRole}</p>

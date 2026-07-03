@@ -87,6 +87,25 @@ test.describe('Mobile - Layout', () => {
 });
 
 test.describe('Mobile - Navigation', () => {
+  test('English mobile navigation announces open and closed states', async ({ page }) => {
+    await page.setViewportSize(MOBILE_VIEWPORT);
+    await page.goto('/en/', { waitUntil: 'domcontentloaded' });
+
+    const toggle = page.locator('.nav-toggle');
+
+    await expect(toggle).toHaveAttribute('aria-label', /^Open navigation/);
+
+    await toggle.click();
+
+    await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    await expect(toggle).toHaveAttribute('aria-label', 'Close navigation');
+
+    await page.keyboard.press('Escape');
+
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    await expect(toggle).toHaveAttribute('aria-label', 'Open navigation');
+  });
+
   test('should open mobile navigation immediately after domcontentloaded even when main.js is delayed', async ({
     page,
   }) => {
