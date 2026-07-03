@@ -5,23 +5,23 @@ const SKILL_DATA_FALLBACK = {
       {
         name: 'Splunk ES (SIEM/SOAR)',
         level: 95,
-        evidence: 'Designed custom detection rules and alert response pipeline',
+        evidence: 'SIEM detection and alert-response workflow evidence',
       },
       {
         name: 'FortiGate/FortiManager',
         level: 90,
-        evidence: 'Designed and operated firewall policies for financial enterprise',
+        evidence: 'Firewall policy operations in financial infrastructure',
       },
       {
         name: 'NSX-T Microsegmentation',
         level: 75,
-        evidence: 'Implemented zero-trust microsegmentation in vSphere environment',
+        evidence: 'NSX-T microsegmentation project evidence',
       },
-      { name: 'Wazuh (EDR)', level: 80, evidence: 'Deployed EDR solution with custom detection rules' },
+      { name: 'Wazuh (EDR)', level: 80, evidence: 'Host-level monitoring project evidence' },
       {
         name: 'NAC/DLP',
         level: 70,
-        evidence: 'Configured network access control and data loss prevention',
+        evidence: 'Network access and DLP operations evidence',
       },
     ],
   },
@@ -31,46 +31,46 @@ const SKILL_DATA_FALLBACK = {
       {
         name: 'Cloudflare Workers',
         level: 90,
-        evidence: 'Portfolio deployed on Workers, edge-optimized rendering',
+        evidence: 'This portfolio runs on Cloudflare Workers',
       },
       {
         name: 'Cloudflare Pages',
         level: 85,
-        evidence: 'Static assets served via Pages with edge functions',
+        evidence: 'Static asset and edge route operations evidence',
       },
-      { name: 'Terraform', level: 85, evidence: 'IaC managed via Terraform for cloud infrastructure' },
+      { name: 'Terraform', level: 85, evidence: 'IaC practice across edge and homelab operations' },
     ],
   },
   observability: {
     title: 'Observability',
     skills: [
-      { name: 'Grafana', level: 90, evidence: 'Built monitoring stack on Synology NAS, public dashboards' },
-      { name: 'Prometheus', level: 85, evidence: 'Metrics collection and alerting for infrastructure' },
-      { name: 'Splunk Dashboards', level: 88, evidence: 'Custom SPL queries and executive dashboards' },
+      { name: 'Grafana', level: 90, evidence: 'Operational dashboard evidence' },
+      { name: 'Prometheus', level: 85, evidence: 'Metrics collection and alerting evidence' },
+      { name: 'Splunk Dashboards', level: 88, evidence: 'SPL query and SIEM dashboard evidence' },
     ],
   },
   infrastructureAsCode: {
     title: 'Infrastructure as Code',
     skills: [
-      { name: 'Terraform', level: 85, evidence: 'Standardized firewall configs with Ansible Role' },
-      { name: 'Ansible', level: 82, evidence: 'Configuration management across the node fleet' },
-      { name: 'Docker', level: 78, evidence: 'Containerized applications for local development and CI/CD' },
+      { name: 'Terraform', level: 85, evidence: 'Reviewable infrastructure-change evidence' },
+      { name: 'Ansible', level: 82, evidence: 'Security appliance setup procedure evidence' },
+      { name: 'Docker', level: 78, evidence: 'Containerized operations tooling evidence' },
     ],
   },
   cicdAutomation: {
     title: 'CI/CD & Workflow',
     skills: [
-      { name: 'GitHub Actions', level: 88, evidence: 'Resume sync to JobKorea and CI/CD pipelines' },
-      { name: 'Workflow Tooling', level: 85, evidence: 'Workflow tooling for job applications and data sync' },
-      { name: 'Python scripting', level: 82, evidence: 'Custom scripts for data processing' },
+      { name: 'GitHub Actions', level: 88, evidence: 'CI and repository policy automation evidence' },
+      { name: 'Workflow Tooling', level: 85, evidence: 'Repeatable operations workflow evidence' },
+      { name: 'Python scripting', level: 82, evidence: 'Operational script evidence' },
     ],
   },
   backendApi: {
     title: 'Backend & API',
     skills: [
-      { name: 'Node.js', level: 80, evidence: 'Built API clients for job portal workflows' },
-      { name: 'Python', level: 85, evidence: 'Backend services and operational scripts' },
-      { name: 'PostgreSQL', level: 78, evidence: 'DB query tuning and schema design' },
+      { name: 'Node.js', level: 80, evidence: 'Worker and API tooling evidence' },
+      { name: 'Python', level: 85, evidence: 'Operational scripts and API lookup evidence' },
+      { name: 'PostgreSQL', level: 78, evidence: 'DB access-control query tuning evidence' },
     ],
   },
 };
@@ -81,6 +81,12 @@ const SKILL_DATA_INJECTED =
     : SKILL_DATA_FALLBACK;
 
 const RADAR_LEVEL_MAP = { expert: 95, advanced: 80, intermediate: 60, beginner: 35 };
+const RADAR_EVIDENCE_LABELS = {
+  expert: 'Primary operating evidence',
+  advanced: 'Applied in project work',
+  intermediate: 'Working familiarity',
+  beginner: 'Currently learning',
+};
 
 function radarFromLocaleSkills(skills) {
   if (!skills || typeof skills !== 'object') return null;
@@ -94,7 +100,7 @@ function radarFromLocaleSkills(skills) {
         return {
           name: String(item.name || 'Unknown'),
           level: RADAR_LEVEL_MAP[levelKey] != null ? RADAR_LEVEL_MAP[levelKey] : 60,
-          evidence: `${levelKey.charAt(0).toUpperCase()}${levelKey.slice(1)} proficiency`,
+          evidence: RADAR_EVIDENCE_LABELS[levelKey] || RADAR_EVIDENCE_LABELS.intermediate,
         };
       }),
     };

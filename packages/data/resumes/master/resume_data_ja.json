@@ -35,15 +35,14 @@
   "summary": {
     "expertise": [
       "Security",
-      "Site Reliability Engineering (SRE)",
-      "Platform Engineering",
+      "セキュリティ運用",
+      "セキュリティ基盤",
       "SIEM/SOAR",
       "ネットワークセキュリティ",
-      "Infrastructure as Code",
-      "オブザーバビリティ",
-      "クラウドセキュリティ"
+      "Fortinet",
+      "オブザーバビリティ"
     ],
-    "profileStatement": "金融セキュリティ基盤とSIEM運用を、実際の運用手順につなげてきたSecurity/SREエンジニアです。FortiGate HA分離、エンドポイントセキュリティ、Splunk ES検知ルール、Slack/SMS通知、FortiManager API照会、監査証跡、IaCベースの手順化まで、構築と運用の両方を担当してきました。現在はセキュリティ基盤、Security Operations、Observability/SRE、DevSecOpsの役割を検討しています。",
+    "profileStatement": "金融セキュリティ基盤とSIEM運用を、実際の運用手順につなげてきたセキュリティ運用・基盤エンジニアです。FortiGate HA分離、エンドポイントセキュリティ、Splunk ES検知ルール、Slack/SMS通知、FortiManager API照会、監査証跡、IaCベースの手順化まで、構築と運用の両方を担当してきました。現在はセキュリティ運用、セキュリティ基盤、SIEM運用の役割を優先して検討しています。",
     "coreCompetencies": [
       "金融業界の規制環境で高可用性セキュリティインフラを設計・運用し、本認可審査対応を通過した経験",
       "手動検知・対応の遅延を整理するために、SIEM検知ルール確認と通知ワークフローを構築した経験",
@@ -68,9 +67,9 @@
       ],
       "currentFocus": [
         "Splunk ES検知ルール・通知ワークフロー・FortiManager APIによるSOC対応フロー",
-        "Cloudflare Workers Edge・IaCホームラボでDevOps能力拡張",
+        "Cloudflare Workers Edge上のポートフォリオ運用、IaC、ログ確認",
         "MCPツール基盤のセキュリティ運用ツール自社開発",
-        "GitOps(ArgoCD)・Policy as Code(OPA)学習中"
+        "GitOpsとPolicy as Codeの実験による運用手順のコード化"
       ]
     },
     "totalExperience": "在職合計"
@@ -78,7 +77,7 @@
   "current": {
     "status": "求職中",
     "availability": "現在参画可能、即時参画可",
-    "desiredRoles": ["セキュリティ基盤", "Security", "Observability", "DevSecOps"]
+    "desiredRoles": ["セキュリティ運用", "セキュリティ基盤", "SIEM運用", "Observability"]
   },
   "careers": [
     {
@@ -389,11 +388,11 @@
       "items": [
         {
           "name": "Grafana",
-          "level": "expert"
+          "level": "advanced"
         },
         {
           "name": "Prometheus",
-          "level": "expert"
+          "level": "advanced"
         },
         {
           "name": "Loki",
@@ -406,14 +405,6 @@
         {
           "name": "Elasticsearch/Kibana",
           "level": "advanced"
-        },
-        {
-          "name": "Tempo (学習中)",
-          "level": "beginner"
-        },
-        {
-          "name": "Pyroscope (学習中)",
-          "level": "beginner"
         }
       ]
     },
@@ -423,7 +414,7 @@
       "items": [
         {
           "name": "Docker",
-          "level": "expert"
+          "level": "advanced"
         },
         {
           "name": "Kubernetes",
@@ -431,11 +422,11 @@
         },
         {
           "name": "Linux",
-          "level": "expert"
+          "level": "advanced"
         },
         {
           "name": "Cloudflare Workers",
-          "level": "expert"
+          "level": "advanced"
         },
         {
           "name": "Helm",
@@ -447,7 +438,7 @@
         },
         {
           "name": "Proxmox VE",
-          "level": "expert"
+          "level": "advanced"
         }
       ]
     },
@@ -461,7 +452,7 @@
         },
         {
           "name": "GitHub Actions",
-          "level": "expert"
+          "level": "advanced"
         },
         {
           "name": "Ansible",
@@ -470,18 +461,6 @@
         {
           "name": "Terraform",
           "level": "advanced"
-        },
-        {
-          "name": "ArgoCD (学習中)",
-          "level": "beginner"
-        },
-        {
-          "name": "Crossplane (学習中)",
-          "level": "beginner"
-        },
-        {
-          "name": "Pulumi (学習中)",
-          "level": "beginner"
         },
         {
           "name": "1Password (ホームラボ運用)",
@@ -499,11 +478,11 @@
         },
         {
           "name": "Bash",
-          "level": "expert"
+          "level": "advanced"
         },
         {
           "name": "通知ワークフロー",
-          "level": "expert"
+          "level": "advanced"
         },
         {
           "name": "Go",
@@ -543,11 +522,11 @@
       "items": [
         {
           "name": "FortiGate",
-          "level": "expert"
+          "level": "advanced"
         },
         {
           "name": "FortiManager",
-          "level": "expert"
+          "level": "advanced"
         },
         {
           "name": "FortiAnalyzer",
@@ -555,7 +534,7 @@
         },
         {
           "name": "Splunk",
-          "level": "expert"
+          "level": "advanced"
         },
         {
           "name": "NAC",
@@ -568,18 +547,6 @@
         {
           "name": "Wazuh",
           "level": "advanced"
-        },
-        {
-          "name": "OPA/Gatekeeper",
-          "level": "beginner"
-        },
-        {
-          "name": "Falco",
-          "level": "beginner"
-        },
-        {
-          "name": "eBPF/Cilium (学習中)",
-          "level": "beginner"
         },
         {
           "name": "Trivy",
@@ -965,16 +932,16 @@
   ],
   "hope": {
     "locations": ["ソウル"],
-    "roles": ["セキュリティ基盤", "Security", "Observability", "DevSecOps"]
+    "roles": ["セキュリティ運用", "セキュリティ基盤", "SIEM運用", "Observability"]
   },
   "platformVariants": {
     "wanted": {
-      "headline": "Security/SREエンジニア | FortiGate・Splunk ES・金融セキュリティ運用",
-      "about": "すぐ参画可能なSecurity/SREエンジニアです。金融セキュリティ基盤とSIEM運用で、FortiGate HA分離、Splunk ES検知ルール、Slack/SMS通知、FortiManager API照会、監査対応文書化まで、構築と運用の両方を担当しました。\n\n[検討ポジション]\nセキュリティ運用、セキュリティ基盤、SRE/Observability、DevSecOpsの役割を積極的に検討しています。繰り返し対応を文書・スクリプト・API連携で減らし、監査や障害対応で説明できる運用根拠を残すチームに合います。\n\n[主要根拠]\n- Nextrade: Splunk ES Saved Search、Webhook、Slack/SMS通知、FortiManager API照会手順の運用\n- セキュリティ基盤構築: FortiGate HA、ネットワーク分離、エンドポイントセキュリティ、Ansible Roleベースの設定管理\n- FSDC: 金融監督機関の監査対応、DBアクセス制御クエリチューニング、DLPポリシー成果物管理\n- ネットワーク/システム: NSX-T、Wazuh、NAC、VPN、Linux、Python/Ansible運用スクリプト\n\n[技術/資格]\nSplunk ES、FortiGate/FortiManager、FortiAnalyzer、Ansible、Python、Terraform、Docker、Linux、Grafana/Prometheus/Loki、Elasticsearch/Kibana、CCNP\n\nポートフォリオ: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
+      "headline": "セキュリティ運用/基盤エンジニア | FortiGate・Splunk ES・金融セキュリティ運用",
+      "about": "金融セキュリティ基盤とSIEM運用で、FortiGate HA分離、Splunk ES検知ルール、Slack/SMS通知、FortiManager API照会、監査対応文書化まで、構築と運用の両方を担当しました。\n\n[検討ポジション]\nセキュリティ運用、セキュリティ基盤、SIEM運用の役割を優先して検討しています。繰り返し対応を文書・スクリプト・API連携で減らし、監査や障害対応で説明できる運用根拠を残すチームに合います。\n\n[主要根拠]\n- Nextrade: Splunk ES Saved Search、Webhook、Slack/SMS通知、FortiManager API照会手順の運用\n- セキュリティ基盤構築: FortiGate HA、ネットワーク分離、エンドポイントセキュリティ、Ansible Roleベースの設定管理\n- FSDC: 金融監督機関の監査対応、DBアクセス制御クエリチューニング、DLPポリシー成果物管理\n- ネットワーク/システム: NSX-T、Wazuh、NAC、VPN、Linux、Python/Ansible運用スクリプト\n\n[技術/資格]\nSplunk ES、FortiGate/FortiManager、FortiAnalyzer、Ansible、Python、Terraform、Docker、Linux、Grafana/Prometheus/Loki、Elasticsearch/Kibana、CCNP\n\nポートフォリオ: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
     },
     "jobkorea": {
-      "headline": "Security/SREエンジニア | FortiGate・Splunk ES・CCNP",
-      "about": "[希望ポジション]\nすぐ参画可能で、セキュリティ運用、セキュリティ基盤、SRE/Observability、DevSecOpsの役割を積極的に検討しています。FortiGate、Splunk ES、FortiManager API、Python/Ansibleを現場の運用手順につなげ、繰り返し対応を減らし、監査・障害対応時に説明できる根拠を残してきました。\n\n[経歴要約]\n- ITCEN CTS: Nextradeセキュリティ運用。Splunk ES Saved Search、Webhook、Slack/SMS通知、FortiManager API照会手順の運用\n- Gaonnuri Information Systems: Nextradeセキュリティ基盤構築。FortiGate HA、ネットワーク分離、エンドポイントセキュリティ、Ansible Roleベースの設定管理\n- Quantec Investment Management: 金融セキュリティデータセンタ(FSDC)運用。金融監督機関の監査対応、DBアクセス制御クエリチューニング、DLPポリシー成果物管理\n- Jointree / Metanet M Platform: NSX-T、Wazuh、NAC、VPN、Python/Ansible運用スクリプト\n- MT Data: KAI閉鎖網Linux/OA運用、パッチ、ファイアウォールポリシー変更履歴管理\n\n[技術/資格]\nSplunk ES、FortiGate/FortiManager、FortiAnalyzer、Ansible、Python、Terraform、Docker、Linux、NSX-T、Wazuh、Grafana/Prometheus/Loki、Elasticsearch/Kibana、CCNP\n\nポートフォリオ: https://resume.jclee.me"
+      "headline": "セキュリティ運用/基盤エンジニア | FortiGate・Splunk ES・CCNP",
+      "about": "[希望ポジション]\nセキュリティ運用、セキュリティ基盤、SIEM運用の役割を優先して検討しています。FortiGate、Splunk ES、FortiManager API、Python/Ansibleを現場の運用手順につなげ、繰り返し対応を減らし、監査・障害対応時に説明できる根拠を残してきました。\n\n[経歴要約]\n- ITCEN CTS: Nextradeセキュリティ運用。Splunk ES Saved Search、Webhook、Slack/SMS通知、FortiManager API照会手順の運用\n- Gaonnuri Information Systems: Nextradeセキュリティ基盤構築。FortiGate HA、ネットワーク分離、エンドポイントセキュリティ、Ansible Roleベースの設定管理\n- Quantec Investment Management: 金融セキュリティデータセンタ(FSDC)運用。金融監督機関の監査対応、DBアクセス制御クエリチューニング、DLPポリシー成果物管理\n- Jointree / Metanet M Platform: NSX-T、Wazuh、NAC、VPN、Python/Ansible運用スクリプト\n- MT Data: KAI閉鎖網Linux/OA運用、パッチ、ファイアウォールポリシー変更履歴管理\n\n[技術/資格]\nSplunk ES、FortiGate/FortiManager、FortiAnalyzer、Ansible、Python、Terraform、Docker、Linux、NSX-T、Wazuh、Grafana/Prometheus/Loki、Elasticsearch/Kibana、CCNP\n\nポートフォリオ: https://resume.jclee.me"
     }
   },
   "coverLetter": {

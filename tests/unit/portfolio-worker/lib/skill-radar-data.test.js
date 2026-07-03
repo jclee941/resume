@@ -61,10 +61,10 @@ describe('skill-radar-data', () => {
     expect(out.x.icon).toContain('<svg');
   });
 
-  it('synthesizes an evidence string from the proficiency tier', () => {
+  it('synthesizes an evidence string from the public evidence tier', () => {
     const out = buildSkillRadarData(sample);
-    expect(out.observability.skills[0].evidence).toBe('Expert proficiency');
-    expect(out.observability.skills[1].evidence).toBe('Advanced proficiency');
+    expect(out.observability.skills[0].evidence).toBe('Primary operating evidence');
+    expect(out.observability.skills[1].evidence).toBe('Applied in project work');
   });
 
   it('preserves all skill names', () => {

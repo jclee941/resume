@@ -27,6 +27,13 @@ const LEVEL_MAP = {
   beginner: 35,
 };
 
+const EVIDENCE_LABELS = {
+  expert: 'Primary operating evidence',
+  advanced: 'Applied in project work',
+  intermediate: 'Working familiarity',
+  beginner: 'Currently learning',
+};
+
 /**
  * Inline SVG icons keyed by the lucide icon name used in the SSoT.
  * Falls back to a generic glyph for unknown names.
@@ -68,8 +75,7 @@ function buildSkillRadarData(skills) {
         return {
           name: String(item.name || 'Unknown'),
           level: LEVEL_MAP[levelKey] != null ? LEVEL_MAP[levelKey] : 60,
-          // SSoT has no per-skill evidence; surface the proficiency tier instead.
-          evidence: `${levelKey.charAt(0).toUpperCase()}${levelKey.slice(1)} proficiency`,
+          evidence: EVIDENCE_LABELS[levelKey] || EVIDENCE_LABELS.intermediate,
         };
       }),
     };

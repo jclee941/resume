@@ -36,15 +36,14 @@
   "summary": {
     "expertise": [
       "Security",
-      "Site Reliability Engineering (SRE)",
-      "Platform Engineering",
+      "Security Operations",
+      "Security Infrastructure",
       "SIEM/SOAR",
       "Network Security",
-      "Infrastructure as Code",
-      "Observability",
-      "Cloud Security"
+      "Fortinet",
+      "Observability"
     ],
-    "profileStatement": "Security/SRE engineer who has connected financial-sector security infrastructure and SIEM operations into real operating procedures. The work spans FortiGate HA segmentation, endpoint security, Splunk ES detection rules, Slack/SMS alerting, FortiManager API lookups, audit evidence, and IaC-backed runbooks. Currently seeking security infrastructure, Security Operations, Observability/SRE, or DevSecOps roles.",
+    "profileStatement": "Security operations and infrastructure engineer who has connected financial-sector security infrastructure and SIEM operations into real operating procedures. The work spans FortiGate HA segmentation, endpoint security, Splunk ES detection rules, Slack/SMS alerting, FortiManager API lookups, audit evidence, and IaC-backed runbooks. Currently prioritizing Security Operations, Security Infrastructure, and SIEM operations roles.",
     "coreCompetencies": [
       "Designed and operated high-availability security infrastructure in financial regulated environments and passed licensing audits",
       "Reviewed SIEM detection rules and connected alert classification with notification workflows",
@@ -69,17 +68,17 @@
       ],
       "currentFocus": [
         "SOC event flow with Splunk ES rules · Slack/SMS alerts · FortiManager API",
-        "DevOps capability extension via Cloudflare Workers Edge and IaC homelab",
+        "Portfolio operations on Cloudflare Workers Edge with IaC and log review practice",
         "Self-developed MCP tooling for security operations triage",
-        "Learning GitOps (ArgoCD) and policy-as-code (OPA)"
+        "GitOps and policy-as-code experiments for reviewable operations"
       ]
     },
     "totalExperience": "working total"
   },
   "current": {
     "status": "Open to work",
-    "availability": "Currently available, immediate start possible",
-    "desiredRoles": ["Security Infrastructure", "Security", "Observability", "DevSecOps"]
+    "availability": "Open to interview requests",
+    "desiredRoles": ["Security Operations", "Security Infrastructure", "SIEM Operations", "Observability"]
   },
   "careers": [
     {
@@ -88,7 +87,7 @@
       "period": "2025.03 ~ 2026.02",
       "duration": "1 year",
       "project": "Nextrade Trading System Security Operations SM",
-      "role": "Security Operations Lead",
+      "role": "Security Operations Engineer",
       "client": "Nextrade Co., Ltd.",
       "teamSize": "Information Security Operations Cell",
       "myRole": "Security Operations",
@@ -104,8 +103,8 @@
           "period": "2025.03 ~ 2026.02",
           "techStack": ["Splunk ES", "FortiManager API", "Python", "Docker", "Slack/SMS"],
           "achievements": [
-            "Standardized manual rule-management workflows by designing and operating Splunk ES detection rules, expanding security event coverage",
-            "Standardized operator notification flow by building an Slack/SMS alert workflow real-time alert pipeline",
+            "Standardized manual rule-management workflows by operating Splunk ES detection rules",
+            "Built a Slack/SMS alert workflow for operator notification",
             "Scripted firewall policy lookup via FortiManager JSON-RPC API, reducing repetitive console checks"
           ]
         }
@@ -392,11 +391,11 @@
       "items": [
         {
           "name": "Grafana",
-          "level": "expert"
+          "level": "advanced"
         },
         {
           "name": "Prometheus",
-          "level": "expert"
+          "level": "advanced"
         },
         {
           "name": "Loki",
@@ -409,14 +408,6 @@
         {
           "name": "Elasticsearch/Kibana",
           "level": "advanced"
-        },
-        {
-          "name": "Tempo (learning)",
-          "level": "beginner"
-        },
-        {
-          "name": "Pyroscope (learning)",
-          "level": "beginner"
         }
       ]
     },
@@ -426,7 +417,7 @@
       "items": [
         {
           "name": "Docker",
-          "level": "expert"
+          "level": "advanced"
         },
         {
           "name": "Kubernetes",
@@ -434,11 +425,11 @@
         },
         {
           "name": "Linux",
-          "level": "expert"
+          "level": "advanced"
         },
         {
           "name": "Cloudflare Workers",
-          "level": "expert"
+          "level": "advanced"
         },
         {
           "name": "Helm",
@@ -450,7 +441,7 @@
         },
         {
           "name": "Proxmox VE",
-          "level": "expert"
+          "level": "advanced"
         }
       ]
     },
@@ -464,7 +455,7 @@
         },
         {
           "name": "GitHub Actions",
-          "level": "expert"
+          "level": "advanced"
         },
         {
           "name": "Ansible",
@@ -473,18 +464,6 @@
         {
           "name": "Terraform",
           "level": "advanced"
-        },
-        {
-          "name": "ArgoCD (learning)",
-          "level": "beginner"
-        },
-        {
-          "name": "Crossplane (learning)",
-          "level": "beginner"
-        },
-        {
-          "name": "Pulumi (learning)",
-          "level": "beginner"
         },
         {
           "name": "1Password (homelab)",
@@ -502,11 +481,11 @@
         },
         {
           "name": "Bash",
-          "level": "expert"
+          "level": "advanced"
         },
         {
-          "name": "automation",
-          "level": "expert"
+          "name": "Alert workflow",
+          "level": "advanced"
         },
         {
           "name": "Go",
@@ -546,11 +525,11 @@
       "items": [
         {
           "name": "FortiGate",
-          "level": "expert"
+          "level": "advanced"
         },
         {
           "name": "FortiManager",
-          "level": "expert"
+          "level": "advanced"
         },
         {
           "name": "FortiAnalyzer",
@@ -558,7 +537,7 @@
         },
         {
           "name": "Splunk",
-          "level": "expert"
+          "level": "advanced"
         },
         {
           "name": "NAC",
@@ -571,18 +550,6 @@
         {
           "name": "Wazuh",
           "level": "advanced"
-        },
-        {
-          "name": "OPA/Gatekeeper",
-          "level": "beginner"
-        },
-        {
-          "name": "Falco",
-          "level": "beginner"
-        },
-        {
-          "name": "eBPF/Cilium (learning)",
-          "level": "beginner"
         },
         {
           "name": "Trivy",
@@ -957,7 +924,7 @@
     "website": "https://resume.jclee.me",
     "monitoring": "https://grafana.jclee.me"
   },
-  "availability": "Open to work - currently available, immediate start possible",
+  "availability": "Open to interview requests",
   "awards": [
     {
       "id": "autonomous-driving-competition-excellence",
@@ -968,16 +935,16 @@
   ],
   "hope": {
     "locations": ["Seoul"],
-    "roles": ["Security Infrastructure", "Security", "Observability", "DevSecOps"]
+    "roles": ["Security Operations", "Security Infrastructure", "SIEM Operations", "Observability"]
   },
   "platformVariants": {
     "wanted": {
-      "headline": "Security/SRE Engineer | FortiGate · Splunk ES · Financial Security Ops",
-      "about": "Security/SRE engineer available for immediate start. In financial security infrastructure and SIEM operations, I handled both build and operations work across FortiGate HA segmentation, Splunk ES detection rules, Slack/SMS alerts, FortiManager API lookups, and audit evidence documentation.\n\n[Target Roles]\nI am actively reviewing Security Operations, security infrastructure, SRE/Observability, and DevSecOps opportunities. I fit teams that reduce repeated response work through runbooks, scripts, and API integrations while keeping audit and incident-response evidence explainable.\n\n[Evidence]\n- Nextrade: Splunk ES Saved Searches, Webhooks, Slack/SMS alerts, and FortiManager API lookup procedures\n- Security infrastructure build: FortiGate HA, network segmentation, endpoint security, and Ansible Role-based configuration management\n- FSDC: financial regulator audit response, DB access-control query tuning, and DLP policy artifact management\n- Network/systems: NSX-T, Wazuh, NAC, VPN, Linux, and Python/Ansible operational scripts\n\n[Skills/Cert]\nSplunk ES, FortiGate/FortiManager, FortiAnalyzer, Ansible, Python, Terraform, Docker, Linux, Grafana/Prometheus/Loki, Elasticsearch/Kibana, CCNP\n\nPortfolio: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
+      "headline": "Security Operations / Infrastructure Engineer | FortiGate · Splunk ES · Financial Security Ops",
+      "about": "In financial security infrastructure and SIEM operations, I handled both build and operations work across FortiGate HA segmentation, Splunk ES detection rules, Slack/SMS alerts, FortiManager API lookups, and audit evidence documentation.\n\n[Target Roles]\nI am prioritizing Security Operations, Security Infrastructure, and SIEM Operations opportunities. I fit teams that reduce repeated response work through runbooks, scripts, and API integrations while keeping audit and incident-response evidence explainable.\n\n[Evidence]\n- Nextrade: Splunk ES Saved Searches, Webhooks, Slack/SMS alerts, and FortiManager API lookup procedures\n- Security infrastructure build: FortiGate HA, network segmentation, endpoint security, and Ansible Role-based configuration management\n- FSDC: financial regulator audit response, DB access-control query tuning, and DLP policy artifact management\n- Network/systems: NSX-T, Wazuh, NAC, VPN, Linux, and Python/Ansible operational scripts\n\n[Skills/Cert]\nSplunk ES, FortiGate/FortiManager, FortiAnalyzer, Ansible, Python, Terraform, Docker, Linux, Grafana/Prometheus/Loki, Elasticsearch/Kibana, CCNP\n\nPortfolio: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
     },
     "jobkorea": {
-      "headline": "Security/SRE Engineer | FortiGate · Splunk ES · CCNP",
-      "about": "[Target Roles]\nAvailable for immediate start and actively reviewing Security Operations, security infrastructure, SRE/Observability, and DevSecOps opportunities. I connect FortiGate, Splunk ES, FortiManager API, and Python/Ansible work to operating procedures that reduce repeated response work and leave explainable evidence for audits and incidents.\n\n[Career Summary]\n- ITCEN CTS: Nextrade exchange security operations with Splunk ES Saved Searches, Webhooks, Slack/SMS alerts, and FortiManager API lookup procedures\n- Gaonnuri Information Systems: Nextrade security infrastructure build with FortiGate HA, network segmentation, endpoint security, and Ansible Role-based configuration management\n- Quantec Investment Management: Financial Security Data Center (FSDC) operations, financial regulator audit response, DB access-control query tuning, and DLP policy artifact management\n- Jointree / Metanet M Platform: NSX-T, Wazuh, NAC, VPN, and Python/Ansible operational scripts\n- MT Data: KAI closed-network Linux/OA operations, patching, and firewall policy change-history management\n\n[Skills/Cert]\nSplunk ES, FortiGate/FortiManager, FortiAnalyzer, Ansible, Python, Terraform, Docker, Linux, NSX-T, Wazuh, Grafana/Prometheus/Loki, Elasticsearch/Kibana, CCNP\n\nPortfolio: https://resume.jclee.me"
+      "headline": "Security Operations / Infrastructure Engineer | FortiGate · Splunk ES · CCNP",
+      "about": "[Target Roles]\nI am prioritizing Security Operations, Security Infrastructure, and SIEM Operations opportunities. I connect FortiGate, Splunk ES, FortiManager API, and Python/Ansible work to operating procedures that reduce repeated response work and leave explainable evidence for audits and incidents.\n\n[Career Summary]\n- ITCEN CTS: Nextrade exchange security operations with Splunk ES Saved Searches, Webhooks, Slack/SMS alerts, and FortiManager API lookup procedures\n- Gaonnuri Information Systems: Nextrade security infrastructure build with FortiGate HA, network segmentation, endpoint security, and Ansible Role-based configuration management\n- Quantec Investment Management: Financial Security Data Center (FSDC) operations, financial regulator audit response, DB access-control query tuning, and DLP policy artifact management\n- Jointree / Metanet M Platform: NSX-T, Wazuh, NAC, VPN, and Python/Ansible operational scripts\n- MT Data: KAI closed-network Linux/OA operations, patching, and firewall policy change-history management\n\n[Skills/Cert]\nSplunk ES, FortiGate/FortiManager, FortiAnalyzer, Ansible, Python, Terraform, Docker, Linux, NSX-T, Wazuh, Grafana/Prometheus/Loki, Elasticsearch/Kibana, CCNP\n\nPortfolio: https://resume.jclee.me"
     }
   },
   "coverLetter": {
