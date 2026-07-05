@@ -125,9 +125,7 @@ test.describe('Contact Links Interaction', () => {
   test('external links should open in new tab', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-    const githubLink = page
-      .locator('.contact-grid a, .contact-links a')
-      .filter({ hasText: 'GitHub' });
+    const githubLink = page.getByRole('link', { name: /^GitHub \(opens in new tab\)$/ });
     await expect(githubLink).toHaveAttribute('target', '_blank');
     await expect(githubLink).toHaveAttribute('rel', /noopener/);
   });

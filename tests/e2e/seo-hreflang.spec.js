@@ -1,4 +1,5 @@
 const { test, expect } = require('@playwright/test');
+const resumeData = require('../../packages/data/resumes/master/resume_data.json');
 
 const KOREAN_CANONICAL = 'https://resume.jclee.me/ko/';
 const PREVIOUS_SITEMAP_ETAG = 'W/"resume-sitemap-20260605"';
@@ -82,8 +83,8 @@ test.describe('SEO hreflang canonical alignment', () => {
       return { total: blocks.length, creativeWork, types: [...types] };
     });
 
-    expect(counts.total).toBe(13);
-    expect(counts.creativeWork).toBe(9);
+    expect(counts.total).toBe(resumeData.personalProjects.length + 4);
+    expect(counts.creativeWork).toBe(resumeData.personalProjects.length);
     expect(counts.types).toEqual(
       expect.arrayContaining(['Person', 'ProfilePage', 'WebSite', 'BreadcrumbList'])
     );
