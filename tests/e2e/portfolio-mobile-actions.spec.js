@@ -1,6 +1,49 @@
 const { test, expect } = require('@playwright/test');
 
 test.describe('Mobile recruiter actions', () => {
+  const mobileHeroLocales = [
+    { path: '/', label: 'ko' },
+    { path: '/en/', label: 'en' },
+    { path: '/ja/', label: 'ja' },
+  ];
+
+  for (const { path, label } of mobileHeroLocales) {
+    test(`mobile hero CTA links stay fully visible in the first viewport (${label})`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width: 375, height: 812 });
+      await page.goto(path, { waitUntil: 'domcontentloaded' });
+
+      const layout = await page.evaluate(() => {
+        const links = [...document.querySelectorAll('.hero-cta a')].map((element) => {
+          const rect = element.getBoundingClientRect();
+          return {
+            text: element.textContent?.replace(/\s+/g, ' ').trim(),
+            top: Math.round(rect.top),
+            bottom: Math.round(rect.bottom),
+            height: Math.round(rect.height),
+          };
+        });
+        return {
+          links,
+          viewportHeight: window.innerHeight,
+          scrollWidth: document.documentElement.scrollWidth,
+          innerWidth: window.innerWidth,
+        };
+      });
+
+      expect(layout.links).toHaveLength(4);
+      expect(layout.scrollWidth).toBeLessThanOrEqual(layout.innerWidth);
+      for (const link of layout.links) {
+        expect(link.height, `${label} CTA target height: ${link.text}`).toBeGreaterThanOrEqual(44);
+        expect(link.top, `${label} CTA fully visible: ${link.text}`).toBeGreaterThanOrEqual(0);
+        expect(link.bottom, `${label} CTA fully visible: ${link.text}`).toBeLessThanOrEqual(
+          layout.viewportHeight
+        );
+      }
+    });
+  }
+
   test('mobile hero CTA appears and focuses before recruiter review paths', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/', { waitUntil: 'domcontentloaded' });
