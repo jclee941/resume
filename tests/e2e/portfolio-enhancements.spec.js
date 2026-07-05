@@ -85,31 +85,31 @@ test.describe('Portfolio recruiter enhancements', () => {
         genericLabel: '근거 보기',
         expectedLabels: [
           'Security Alert System 근거 보기',
+          'Nextrade Security Infra 근거 보기',
           'Observability Platform 근거 보기',
-          'Terraform Homelab IaC 근거 보기',
           'jclee-bot GitHub App 근거 보기',
         ],
         expectedAriaLabels: [
           'Security Alert System 프로젝트 근거 보기',
+          'Nextrade Security Infra 프로젝트 근거 보기',
           'Observability Platform 프로젝트 근거 보기',
-          'Terraform Homelab IaC 프로젝트 근거 보기',
           'jclee-bot GitHub App 프로젝트 근거 보기',
         ],
       },
       {
         path: '/en/',
-        genericLabel: 'Open proof',
+        genericLabel: 'Open evidence',
         expectedLabels: [
-          'Security Alert System proof',
-          'Observability Platform proof',
-          'Terraform Homelab IaC proof',
-          'jclee-bot GitHub App proof',
+          'Security Alert System evidence',
+          'Nextrade Security Infra evidence',
+          'Observability Platform evidence',
+          'jclee-bot GitHub App evidence',
         ],
         expectedAriaLabels: [
-          'Open Security Alert System project proof',
-          'Open Observability Platform project proof',
-          'Open Terraform Homelab IaC project proof',
-          'Open jclee-bot GitHub App project proof',
+          'Open Security Alert System project evidence',
+          'Open Nextrade Security Infra project evidence',
+          'Open Observability Platform project evidence',
+          'Open jclee-bot GitHub App project evidence',
         ],
       },
       {
@@ -117,14 +117,14 @@ test.describe('Portfolio recruiter enhancements', () => {
         genericLabel: '根拠を見る',
         expectedLabels: [
           'Security Alert Systemの根拠を見る',
+          'Nextrade Security Infraの根拠を見る',
           'Observability Platformの根拠を見る',
-          'Terraform Homelab IaCの根拠を見る',
           'jclee-bot GitHub Appの根拠を見る',
         ],
         expectedAriaLabels: [
           'Security Alert Systemプロジェクトの根拠を見る',
+          'Nextrade Security Infraプロジェクトの根拠を見る',
           'Observability Platformプロジェクトの根拠を見る',
-          'Terraform Homelab IaCプロジェクトの根拠を見る',
           'jclee-bot GitHub Appプロジェクトの根拠を見る',
         ],
       },
@@ -154,8 +154,8 @@ test.describe('Portfolio recruiter enhancements', () => {
       expect(hrefs).toEqual(locale.expectedLabels.map(() => '#projects'));
       expect(projectTargets).toEqual([
         'Security Alert System',
+        'Nextrade Security Infra',
         'Observability Platform',
-        'Terraform Homelab IaC',
         'jclee-bot GitHub App',
       ]);
       expect(Math.max(...labels.map((label) => label.length))).toBeLessThanOrEqual(40);

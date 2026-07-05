@@ -23,7 +23,7 @@ export const ROLE_PROFILES = [
     id: 'observability',
     label: 'Ops Visibility',
     proof: {
-      ko: 'Grafana·Prometheus·Loki·ELK 로그 확인',
+      ko: 'Grafana·Prometheus·Loki·ELK 운영 가시성',
       en: 'Grafana, Prometheus, Loki, and ELK visibility',
       ja: 'Grafana・Prometheus・Loki・ELKの可視化',
     },
@@ -33,7 +33,7 @@ export const ROLE_PROFILES = [
     id: 'automation',
     label: 'Ops Workflow',
     proof: {
-      ko: 'jclee-bot, PR 검토, 시크릿 스캔, 운영 로그',
+      ko: 'jclee-bot, PR 검토, 시크릿 스캔, Check Run',
       en: 'jclee-bot, PR review, secret scan, and runtime logs',
       ja: 'jclee-bot、PRレビュー、シークレットスキャン、運用ログ',
     },
@@ -53,7 +53,7 @@ export const EVIDENCE_ITEMS = [
   },
   {
     roleId: 'infra',
-    title: 'Nextrade Security Infrastructure',
+    title: 'Nextrade Security Infra',
     proof: {
       ko: 'FortiGate HA, 망분리, 엔드포인트 보안 통제, Ansible 절차화',
       en: 'FortiGate HA, segmentation, endpoint security controls, and Ansible procedures',
@@ -73,7 +73,7 @@ export const EVIDENCE_ITEMS = [
     roleId: 'automation',
     title: 'jclee-bot GitHub App',
     proof: {
-      ko: 'PR 리뷰, secret scan, actionlint, docs policy를 GitHub App workflow로 연결',
+      ko: 'PR 리뷰, secret scan, actionlint, docs policy를 GitHub App 흐름으로 연결',
       en: 'GitHub App workflow for PR review, secret scan, actionlint, and docs policy',
       ja: 'PRレビュー、secret scan、actionlint、docs policyをGitHub App workflowで連携',
     },
@@ -103,9 +103,9 @@ export function getRecruiterLabels() {
   if (lang.startsWith('en')) {
     return {
       quickTitle: 'Role-fit review paths',
-      quickDesc: 'Start with the role you are hiring for, then review the proof that supports fit.',
+      quickDesc: 'Start with the role you are hiring for, then review the evidence that supports fit.',
       matrixTitle: 'Project evidence map',
-      matrixDesc: 'Each card connects a hiring claim to the proof a requesting team can inspect.',
+      matrixDesc: 'Each card connects a hiring claim to the evidence a requesting team can inspect.',
       role: 'Role',
       evidence: 'Evidence',
       contact: 'Contact',
@@ -130,9 +130,9 @@ export function getRecruiterLabels() {
   }
   return {
     quickTitle: '직무별 검토 경로',
-    quickDesc: '채용하려는 역할을 먼저 고르면 요청부서가 확인할 근거로 바로 이동합니다.',
+    quickDesc: '채용하려는 역할을 먼저 고르면 검토할 근거로 바로 이동합니다.',
     matrixTitle: '프로젝트 근거 매트릭스',
-    matrixDesc: '각 카드는 채용 판단 포인트와 요청부서가 확인할 근거를 연결합니다.',
+    matrixDesc: '각 카드는 채용 판단 포인트와 확인 가능한 운영 근거를 연결합니다.',
     role: '역할',
     evidence: '근거',
     contact: '문의',
@@ -153,7 +153,7 @@ export function getProofCountLabel(count) {
   const key = localeKey();
   if (key === 'en') {
     const formatted = new Intl.NumberFormat('en-US').format(count);
-    return `${formatted} ${count === 1 ? 'proof' : 'proofs'}`;
+    return `${formatted} ${count === 1 ? 'evidence item' : 'evidence items'}`;
   }
   if (key === 'ja') {
     return `${new Intl.NumberFormat('ja-JP').format(count)}件の根拠`;

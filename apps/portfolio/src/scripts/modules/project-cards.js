@@ -27,7 +27,7 @@ function caseStudyCopy(lang) {
     return {
       title: '運用事例の詳細',
       description:
-        '選定プロジェクトを、運用背景・証跡・構成フローの観点でもう一度確認できます。',
+        '選定プロジェクトを、運用背景・根拠・構成フローの観点でもう一度確認できます。',
       gridLabel: 'ケーススタディ',
       cta: '詳細を見る',
     };
@@ -35,7 +35,7 @@ function caseStudyCopy(lang) {
   return {
     title: '운영 사례 심층 검토',
     description:
-      '프로젝트 목록에서 선별한 사례를 운영 맥락, 증거, 구성 흐름 기준으로 다시 볼 수 있습니다.',
+      '프로젝트 목록에서 선별한 사례를 운영 맥락, 근거, 구성 흐름 기준으로 다시 볼 수 있습니다.',
     gridLabel: '케이스 스터디',
     cta: '상세 검토',
   };

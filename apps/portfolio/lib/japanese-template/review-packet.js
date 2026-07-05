@@ -7,9 +7,10 @@ function applyJapaneseReviewPacket(html) {
     .replace(/검토 역할/g, '検討ロール')
     .replace(/보안 운영 · 보안 인프라 · SIEM/g, 'セキュリティ運用・セキュリティ基盤・SIEM')
     .replace(/검토 근거/g, '確認根拠')
-    .replace(/경력 요약 · 프로젝트 증빙 · PDF/g, '職務要約・プロジェクト根拠・PDF')
+    .replace(/핵심 근거/g, '主要根拠')
+    .replace(/경력 요약 · 프로젝트 근거 · PDF/g, '職務要約・プロジェクト根拠・PDF')
     .replace(/연락 방식/g, '連絡方法')
-    .replace(/요청부서 검토 포인트/g, '依頼部門の確認ポイント')
+    .replace(/채용 검토 포인트/g, '採用レビューの確認ポイント')
     .replace(/적합 역할/g, '適合する役割')
     .replace(
       /보안 운영, 보안 인프라, SIEM 직무 적합성/g,
@@ -19,6 +20,8 @@ function applyJapaneseReviewPacket(html) {
     .replace(/검증 자료/g, '検証資料')
     .replace(/확인 자료/g, '確認資料')
     .replace(/경력·프로젝트 근거와 PDF/g, '経歴・プロジェクト根拠とPDF')
+    .replace(/검토 순서대로 경력·프로젝트·PDF를 연결했습니다\./g, '確認順に経歴・プロジェクト・PDFを接続しました。')
+    .replace(/넥스트레이드 구축·운영 · FSDC 감사 대응/g, 'Nextrade構築・運用・FSDC監査対応')
     .replace(/경력 근거, 프로젝트 근거, 이력서 PDF/g, '経歴根拠、プロジェクト根拠、履歴書PDF')
     .replace(/경력 근거, 프로젝트 근거, 履歴書PDF/g, '経歴根拠、プロジェクト根拠、履歴書PDF')
     .replace(/다음 액션/g, '次のアクション')

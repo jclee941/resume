@@ -19,7 +19,7 @@ function validateEnv() {
     throw new Error(`Missing required environment variables: ${missing.join(', ')}`);
   }
 
-  logger.debug('Environment validation passed');
+  logger.debug('Environment validated');
   logger.debug(
     'Required variables:',
     required.filter((k) => process.env[k])

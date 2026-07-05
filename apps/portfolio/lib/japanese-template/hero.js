@@ -39,7 +39,7 @@ function applyJapaneseHero(html) {
       'セキュリティ運用・セキュリティ基盤の面接相談を歓迎'
     )
     .replace(/채용 검토·면접 논의 가능/g, '採用検討・面接相談が可能')
-    .replace(/aria-label="대표 업무 증빙"/g, 'aria-label="代表的な業務証跡"')
+    .replace(/aria-label="대표 업무 근거"/g, 'aria-label="代表的な業務根拠"')
     .replace(
       /거래소 망분리·엔드포인트 보안 구축·운영/g,
       '取引所ネットワーク分離・エンドポイントセキュリティ構築・運用'
@@ -68,9 +68,17 @@ function applyJapaneseHero(html) {
     )
     .replace(/망분리·엔드포인트 보안 운영/g, 'ネットワーク分離・エンドポイントセキュリティ運用')
     .replace(
-      /FortiGate HA 분리·FSC 대응/g,
+      /FortiGate HA 분리·금융위 본인가 대응/g,
       'ネットワーク分離・エンドポイントセキュリティ構築・運用'
     )
+    .replace(
+      /본인가와 감사 대응에서 설명 가능한 보안 운영 근거를 먼저 볼 수 있게 정리했습니다\./g,
+      '本認可と監査対応で説明できるセキュリティ運用根拠を先に確認できるよう整理しました。'
+    )
+    .replace(/공개 근거 바로가기/g, '公開根拠へのショートカット')
+    .replace(/검토할 핵심 근거/g, '確認すべき主要根拠')
+    .replace(/본인가·감사 대응 이력/g, '本認可・監査対応の経歴')
+    .replace(/메일·PDF 확인/g, 'メール・PDF確認')
     .replace(
       /Splunk ES 탐지·알림 자동화/g,
       'Splunk ES · 通知ワークフロー · FortiManager APIベースのセキュリティイベントフロー'

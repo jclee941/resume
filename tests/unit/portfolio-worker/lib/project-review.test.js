@@ -10,7 +10,7 @@ describe('project review cards', () => {
     {
       id: 'elk-demo',
       title: 'ELK Live Demo',
-      tagline: '운영 증거',
+      tagline: '운영 근거',
       tech: 'Elasticsearch, Kibana',
       description: '로그 탐색 경로를 만들었습니다. 대시보드와 알림 흐름을 연결했습니다. 운영 확인 근거를 남겼습니다.',
     },
@@ -42,7 +42,7 @@ describe('project review cards', () => {
       projectLabelsFor([
         {
           title: '運用',
-          description: '運用証跡が明確な事例です。',
+          description: '運用根拠が明確な事例です。',
         },
       ]).railTitle
     ).toBe('採用レビュー向けプロジェクト導線');
@@ -62,7 +62,7 @@ describe('project review cards', () => {
         tagline: 'fallback',
         tech: '<b>ELK</b>',
         description:
-          '<img src=x onerror=alert(1)> 문제를 정리했습니다. 역할을 나눴습니다. 증거를 남겼습니다.',
+          '<img src=x onerror=alert(1)> 문제를 정리했습니다. 역할을 나눴습니다. 근거를 남겼습니다.',
       },
       labels,
       '',

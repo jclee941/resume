@@ -41,7 +41,7 @@ DevSecOps / SRE · 8년차 · 금융 거래소 보안 운영 | Cloudflare Worker
 - "Zero Trust 도입 자문 가능" — SE 직무 자가 포지셔닝
 - "구직 중 · 즉시 투입 가능" — Open to Work 상태
 
-**대안 (영문 위주 글로벌 회사용)**:
+**대안 (영문 위주 외국계 회사용)**:
 
 ```
 Sr. DevSecOps/SRE · 8 yrs · Financial-exchange Security Ops | Cloudflare Workers operator | Splunk ES · FortiGate HA · automation | SASE/Zero Trust ready | Open to work
@@ -55,7 +55,7 @@ Sr. DevSecOps/SRE · 8 yrs · Financial-exchange Security Ops | Cloudflare Worke
 폐쇄망 OA 운영실에서 출발해 금융 거래소 보안 운영으로 도착한 8년차 DevSecOps/SRE 엔지니어입니다. "반복 작업은 자동화 되어야 한다"는 신념으로 도구를 바꿔왔고, 지금은 FortiGate HA 5계층 망분리 위에서 Splunk ES + 알림 워크플로 + FortiManager API로 보안 이벤트 자동 탐지·대응을 운영합니다.
 
 [현재]
-아이티센 CTS @ 넥스트레이드 거래소 보안 운영 (2025.03~2026.02). FSC 본인가 사전 심사 통과한 인프라에서 Splunk Saved Search → 알림 워크플로 → Slack 라우팅 파이프라인을 만들고, FortiManager JSON-RPC API 호출로 정책 조회를 자동화합니다.
+아이티센 CTS @ 넥스트레이드 거래소 보안 운영 (2025.03~2026.02). FSC 본인가 심사에 대응한 인프라에서 Splunk Saved Search → 알림 워크플로 → Slack 라우팅 파이프라인을 만들고, FortiManager JSON-RPC API 호출로 정책 조회를 자동화합니다.
 
 [trajectory]
 • MT Data → KAI 폐쇄망 50대 Linux 서버 수기 운영 (2017)
@@ -63,7 +63,7 @@ Sr. DevSecOps/SRE · 8 yrs · Financial-exchange Security Ops | Cloudflare Worke
 • Metanet → 컨택센터 SSL VPN/NAC + Ansible 자동화 입문
 • Jointree → NSX-T 마이크로세그멘테이션 + Wazuh OSS 보안 모니터링
 • Quantec FSDC → 금감원 정기 감사 대응 + DLP 운영
-• Gaonnuri → 넥스트레이드 FortiGate HA 5계층 망분리 + Ansible Role 표준화 + FSC 본인가 통과
+• Gaonnuri → 넥스트레이드 FortiGate HA 5계층 망분리 + Ansible Role 표준화 + FSC 본인가 대응
 • ITCEN CTS → 넥스트레이드 보안 운영 (Splunk ES + 알림 워크플로 + FortiManager API)
 
 [differentiation]
@@ -124,13 +124,13 @@ Sr. DevSecOps/SRE · 8 yrs · Financial-exchange Security Ops | Cloudflare Worke
 
 ### Gaonnuri — Security Infrastructure Engineer (2024.03 – 2025.02)
 
-**한 줄**: 넥스트레이드 거래소 보안 인프라 구축 — FortiGate HA 5계층 망분리 + FSC 본인가 통과
+**한 줄**: 넥스트레이드 거래소 보안 인프라 구축 — FortiGate HA 5계층 망분리 + FSC 본인가 대응
 
 **본문**:
 
 - FortiGate FGCP active-passive HA + 5계층 망분리 보안 아키텍처 설계
 - Ansible Role로 정책 배포 표준화, 장비별 설정 차이 제거
-- **금융위 본인가 사전 심사 통과** — 금감원 가이드 기반 망분리·정보보호 통제 항목 설계·문서화
+- **금융위 본인가 사전 심사 대응** — 금감원 가이드 기반 망분리·정보보호 통제 항목 설계·문서화
 
 **Skills**: FortiGate · FortiManager · Ansible · 금융 규제 대응 · Network Segmentation
 
@@ -160,7 +160,7 @@ Sr. DevSecOps/SRE · 8 yrs · Financial-exchange Security Ops | Cloudflare Worke
 
 ### Metanet — Network Security Engineer (2020.08 – 2021.08)
 
-**한 줄**: 대규모 컨택센터 재택 환경 — Ansible/Python 자동화
+**한 줄**: 컨택센터 재택 환경 — Ansible/Python 자동화
 
 **본문**:
 

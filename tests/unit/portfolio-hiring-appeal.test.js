@@ -37,25 +37,30 @@ describe('portfolio hiring appeal copy', () => {
   test('Korean hero gives recruiters a direct review-pack path', () => {
     const html = buildHeroContent('ko');
 
-    expect(html).toContain('보안 운영 · 보안 인프라 역할 중심으로 면접 제안 환영');
+    expect(html).toContain('보안 운영 · 보안 인프라 역할의 면접 제안을 우선 검토합니다');
     expect(html).toContain(
-      '거래소 보안 인프라 구축·운영, SIEM 알림, 장비 API 조회 근거를 먼저 볼 수 있게 정리했습니다.'
+      '본인가와 감사 대응에서 설명 가능한 보안 운영 근거를 먼저 볼 수 있게 정리했습니다.'
     );
-    expect(html).toContain('희망 역할: 보안 운영 · 보안 인프라');
-    expect(html).toContain('최근 근거: 거래소 보안 인프라 구축·운영');
-    expect(html).toContain('면접 제안 가능');
-    expect(html).toContain('PR 리뷰 · 시크릿 스캔 · ELK 로그');
-    expect(html).toContain('운영 로그·메트릭 확인 흐름');
+    expect(html).toContain('<ul class="hero-proof-list" aria-label="검토할 핵심 근거">');
+    expect(html).toContain('공개 근거 바로가기');
+    expect(html).toContain('검토 역할: 보안 운영 · 보안 인프라 · SIEM');
+    expect(html).toContain('최근 근거: 넥스트레이드 구축·운영과 FSDC 감사 대응');
+    expect(html).toContain('면접 제안 우선 검토');
+    expect(html).toContain('PR 리뷰 · 시크릿 스캔 · Check Run');
+    expect(html).toContain('메트릭·로그를 함께 보는 운영 대시보드');
     expect(html).toContain('Ops Workflow');
-    expect(html).toContain('PDF·메일 연결');
+    expect(html).toContain('메일·PDF 확인');
+    expect(html).toContain('검토 순서대로 경력·프로젝트·PDF를 연결했습니다.');
+    expect(html).not.toContain('공개 증거 바로가기');
+    expect(html).not.toContain('검토할 핵심 증거');
     expect(html).not.toContain('보안 운영 · 보안 인프라 · SRE');
     expect(html).not.toContain('DevSecOps');
-    expect(html).not.toContain('검토 가능');
+    expect(html).not.toContain('면접 제안 가능');
     expect(html).not.toContain('자동화 방식');
     expect(extractHeroActions(html)).toEqual([
       expect.objectContaining({ href: expect.stringMatching(/^mailto:/), label: '면접 문의' }),
-      { href: '#resume', label: '경력 확인' },
-      { href: '#projects', label: '프로젝트 확인' },
+      { href: '#resume', label: '경력 보기' },
+      { href: '#projects', label: '프로젝트 보기' },
       expect.objectContaining({ href: '/resume.pdf', label: '이력서 PDF' }),
     ]);
     expect(readPortfolioFile('index.html')).toContain('<!-- HERO_CONTENT_PLACEHOLDER -->');
@@ -76,6 +81,8 @@ describe('portfolio hiring appeal copy', () => {
     expect(html).toContain('Security automation and code-review role fit');
     expect(html).toContain('Operational log and metric visibility');
     expect(html).toContain('Ops Workflow');
+    expect(html).toContain('Public evidence shortcuts');
+    expect(html).not.toContain('Public proof shortcuts');
     expect(html).not.toContain('Security Infrastructure, and SRE');
     expect(html).not.toContain('DevSecOps');
     expect(html).not.toContain('Ready to review');
@@ -93,14 +100,14 @@ describe('portfolio hiring appeal copy', () => {
     expect(readPortfolioFile('index-en.html')).toContain('<!-- HERO_CONTENT_PLACEHOLDER -->');
   });
 
-  test('Japanese hero localizes recruiter proof and review-pack actions', () => {
+  test('Japanese hero localizes recruiter evidence and review-pack actions', () => {
     const html = buildHeroContent('ja');
 
     expect(html).toContain('セキュリティ運用・セキュリティ基盤の面接相談を歓迎');
     expect(html).toContain(
       '取引所セキュリティ基盤の構築・運用、SIEM通知、機器API照会の根拠を先に示します。'
     );
-    expect(html).toContain('<ul class="hero-proof-list" aria-label="確認すべき主要証跡">');
+    expect(html).toContain('<ul class="hero-proof-list" aria-label="確認すべき主要根拠">');
     expect(html).toContain('希望職種: セキュリティ運用・セキュリティ基盤');
     expect(html).toContain('直近役割: 取引所セキュリティ基盤の構築・運用');
     expect(html).toContain('面接相談を受付中');
@@ -122,7 +129,7 @@ describe('portfolio hiring appeal copy', () => {
     expect(html).not.toMatch(/[\uac00-\ud7a3]{2,}/);
   });
 
-  test('client recruiter role proof labels avoid stale automation copy', () => {
+  test('client recruiter role evidence labels avoid stale automation copy', () => {
     const roleProfiles = importModuleExport(
       'src/scripts/modules/recruiter-enhancements-data.js',
       'ROLE_PROFILES'
@@ -133,7 +140,9 @@ describe('portfolio hiring appeal copy', () => {
     ]);
 
     expect(roleCopy).toContain('Ops Workflow');
+    expect(roleCopy).toContain('jclee-bot, PR 검토, 시크릿 스캔, Check Run');
     expect(roleCopy).not.toContain('Automation');
+    expect(roleCopy).not.toContain('jclee-bot, PR 검토, 시크릿 스캔, 운영 로그');
     expect(roleCopy.join('\n')).not.toMatch(/自動化|자동화/);
   });
 });
