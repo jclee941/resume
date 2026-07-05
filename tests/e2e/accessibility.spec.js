@@ -169,9 +169,8 @@ test.describe('Accessibility (a11y)', () => {
 
     for (let i = 0; i < count; i++) {
       const ariaLabel = await externalLinks.nth(i).getAttribute('aria-label');
-      // Should indicate it opens in new tab
       if (ariaLabel) {
-        expect(ariaLabel.toLowerCase()).toMatch(/new tab|external/i);
+        expect(ariaLabel.toLowerCase()).toMatch(/new tab|external|새 탭/i);
       }
     }
   });

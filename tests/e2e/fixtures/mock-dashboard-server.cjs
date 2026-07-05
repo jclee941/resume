@@ -163,8 +163,21 @@ async function createServer(port) {
         return json(res, 200, { success: true });
       return routeDashboard(req, res, url);
     });
-    server.on('error', reject);
-    server.listen(port, () => resolve(server));
+    let triedEphemeralPort = false;
+    server.once('listening', () => {
+      const address = server.address();
+      const actualPort = address && typeof address === 'object' ? address.port : port;
+      resolve({ server, url: `http://localhost:${actualPort}` });
+    });
+    server.on('error', (error) => {
+      if (error.code === 'EADDRINUSE' && !triedEphemeralPort) {
+        triedEphemeralPort = true;
+        server.listen(0);
+        return;
+      }
+      reject(error);
+    });
+    server.listen(port);
   });
 }
 
@@ -172,8 +185,9 @@ async function getDashboardServer(port = 9494) {
   if (serverInstance && serverUrl) return { server: serverInstance, url: serverUrl };
   if (startupPromise) return startupPromise;
   startupPromise = (async () => {
-    serverUrl = `http://localhost:${port}`;
-    serverInstance = await createServer(port);
+    const created = await createServer(port);
+    serverInstance = created.server;
+    serverUrl = created.url;
     return { server: serverInstance, url: serverUrl };
   })();
   return startupPromise;
