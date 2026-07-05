@@ -84,7 +84,7 @@ export class JobKoreaCrawler extends BaseCrawler {
     return withStealthBrowser(async (page) => {
       const query = this.buildSearchQuery(params);
       const url = `${this.baseUrl}/Search/?${query}`;
-      await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
+      await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
 
       await page
         .waitForSelector('a[href*="/Recruit/GI_Read/"]', {

@@ -164,7 +164,7 @@ test.describe('Card Interactions', () => {
     const projectLinksCount = await projectLinks.count();
 
     if (projectLinksCount === 0) {
-      test.skip();
+      test.skip(true, 'current portfolio data has no project link title anchors');
       return;
     }
 

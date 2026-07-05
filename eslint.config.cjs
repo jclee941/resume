@@ -126,6 +126,26 @@ module.exports = [
     rules: crossAppImportRule(['job-server', 'job-dashboard']),
   },
   {
+    files: ['apps/portfolio/entry.js'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              regex: 'job-server',
+              message: 'Cross-app import. Use @resume/shared/* instead.',
+            },
+            {
+              regex: 'job-dashboard/(?!src/index\\.js$)',
+              message: 'Only the ADR 0009 job-dashboard worker entry import is allowed here.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
     files: ['apps/job-server/**/*.{js,mjs}'],
     rules: crossAppImportRule(['job-dashboard', 'portfolio']),
   },

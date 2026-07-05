@@ -39,8 +39,6 @@ export const SKILL_TAG_MAP = {
 };
 
 export const SKILL_ALIASES = {
-  // These are approximate routings; real tagTypeIds require a manual probe against Wanted's
-  // /sns-api/profile skill-search endpoint (see docs/guides/wanted-skill-probe.md — TODO)
   'AWS EC2': 'AWS',
   'AWS VPC': 'AWS',
   'AWS IAM': 'AWS',

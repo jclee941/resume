@@ -7,10 +7,12 @@ export async function loginWanted(page, config, log) {
   log('Navigating to login page', 'info', 'wanted');
 
   await page.goto(platform.urls.login, {
-    waitUntil: 'networkidle2',
+    waitUntil: 'domcontentloaded',
     timeout: 30000,
   });
-  await sleep(2000);
+  await page.waitForSelector('button, a[role="button"], div[role="button"]', {
+    timeout: 10000,
+  });
 
   const cookies = await page.cookies();
   if (cookies.some((c) => c.name === platform.sessionCookie)) {
@@ -19,7 +21,6 @@ export async function loginWanted(page, config, log) {
   }
 
   log('Clicking email login button', 'info', 'wanted');
-  await sleep(1000);
   const buttons = await page.$$('button, a[role="button"], div[role="button"]');
   for (const btn of buttons) {
     const text = await btn.evaluate((el) => el.textContent?.toLowerCase() || '');
@@ -29,6 +30,10 @@ export async function loginWanted(page, config, log) {
       break;
     }
   }
+  await page.waitForSelector(
+    'input[type="email"], input[type="text"][name*="email"], input[placeholder*="이메일"], input[placeholder*="email"]',
+    { timeout: 10000 }
+  );
 
   log('Entering email', 'info', 'wanted');
   const emailInput = await page.waitForSelector(
@@ -37,7 +42,6 @@ export async function loginWanted(page, config, log) {
   );
   await emailInput.click({ clickCount: 3 });
   await emailInput.type(config.WANTED_EMAIL, { delay: 30 });
-  await sleep(500);
 
   log('Clicking next', 'info', 'wanted');
   const nextButtons = await page.$$('button[type="submit"], button');
@@ -53,7 +57,10 @@ export async function loginWanted(page, config, log) {
       break;
     }
   }
-  await sleep(3000);
+  await page.waitForSelector('input[type="password"]', {
+    visible: true,
+    timeout: 10000,
+  });
 
   log('Entering password', 'info', 'wanted');
   const passwordInput = await page.waitForSelector('input[type="password"]', {
@@ -62,7 +69,6 @@ export async function loginWanted(page, config, log) {
   });
   await passwordInput.click();
   await passwordInput.type(config.WANTED_PASSWORD, { delay: 30 });
-  await sleep(500);
 
   log('Clicking login', 'info', 'wanted');
   const loginButtons = await page.$$('button[type="submit"], button');
@@ -73,10 +79,8 @@ export async function loginWanted(page, config, log) {
       break;
     }
   }
-  await sleep(5000);
 
-  await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 30000 }).catch(() => {});
-  await sleep(3000);
+  await page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 30000 }).catch(() => {});
 
   const finalCookies = await page.cookies();
   const loggedIn = finalCookies.some((c) => c.name === platform.sessionCookie);

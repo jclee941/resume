@@ -70,8 +70,7 @@ export async function applyChanges(page, platform, changes) {
   const config = PLATFORMS[platform];
 
   try {
-    await page.goto(config.editUrl, { waitUntil: 'networkidle' });
-    await page.waitForTimeout(2000);
+    await page.goto(config.editUrl, { waitUntil: 'domcontentloaded' });
 
     for (const change of changes) {
       log(`Applying: ${change.field} = ${change.to}`, 'info', platform);
@@ -82,7 +81,7 @@ export async function applyChanges(page, platform, changes) {
         continue;
       }
 
-      const element = await page.$(selector);
+      const element = await page.waitForSelector(selector, { timeout: 10000 }).catch(() => null);
       if (!element) {
         log(`Element not found: ${selector}`, 'warn', platform);
         continue;

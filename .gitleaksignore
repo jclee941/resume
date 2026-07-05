@@ -7,6 +7,7 @@
 4356183fc08dfdd1179492035c16ea3cd65e0aee:docs/reports/DEPLOYMENT_STATUS.md:cloudflare-api-key:45
 4356183fc08dfdd1179492035c16ea3cd65e0aee:docs/reports/CICD_DEBUG_FINAL.md:cloudflare-api-key:109
 4356183fc08dfdd1179492035c16ea3cd65e0aee:docs/reports/CICD_DEBUG_FINAL.md:cloudflare-api-token:109
+01d903d9cd1b6b056acd18cb79f7d203ca55a548:infrastructure/n8n/EVOLUTION_API_SETUP.md:curl-auth-header:28
 01d903d9cd1b6b056acd18cb79f7d203ca55a548:infrastructure/automation/EVOLUTION_API_SETUP.md:curl-auth-header:28
 f15dd89dbb197fadb88336525b84de83824c3c16:DEPLOYMENT_STATUS_DETAILED.md:generic-api-key:28
 f6521cd2ba49ad620c0eb740f9994a2fbaf52492:PHASE_6_ANALYTICS_PLAN.md:generic-api-key:35
