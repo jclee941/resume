@@ -57,12 +57,8 @@ describe('TaskIdCounter (issue #16 / P0-5 Slice A)', () => {
     const c = new TaskIdCounter();
     c.next();
     assert.equal(Object.keys(c).length, 0);
-    // Trying to access private field throws
-    assert.throws(
-      // eslint-disable-next-line no-eval
-      () => eval('c.#n'),
-      SyntaxError
-    );
+    assert.equal(c.n, undefined);
+    assert.equal(c['#n'], undefined);
   });
 });
 

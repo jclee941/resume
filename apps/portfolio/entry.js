@@ -1,7 +1,6 @@
 import portfolioWorker from './worker.js';
 // Single-worker consolidation per ADR 0009: import the job-dashboard worker in-process
 // instead of via Service Binding. This is the one sanctioned cross-app import.
-// eslint-disable-next-line no-restricted-imports
 import jobWorker, {
   JobCrawlingWorkflow,
   ApplicationWorkflow,

@@ -288,7 +288,7 @@ test.describe('Tablet Features', () => {
     // Skip if not iPad viewport (width >= 768px)
     const viewport = page.viewportSize();
     if (!viewport || viewport.width < 768) {
-      test.skip();
+      test.skip(true, 'orientation scenario only applies to tablet-width projects');
       return;
     }
 

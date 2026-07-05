@@ -11,7 +11,7 @@ export async function extractCookies(page, config) {
   log('Extracting cookies', 'info', platformKey);
 
   await page
-    .goto(platform.urls.main, { waitUntil: 'networkidle2', timeout: 30000 })
+    .goto(platform.urls.main, { waitUntil: 'domcontentloaded', timeout: 30000 })
     .catch(() => {});
 
   await new Promise((resolve) => setTimeout(resolve, 2000));

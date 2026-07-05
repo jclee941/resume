@@ -45,14 +45,14 @@ export class BrowserProfileSync extends BaseProfileSync {
 
   async checkLogin() {
     if (!this.page || !this.urls.profile) return false;
-    await this.page.goto(this.urls.profile, { waitUntil: 'networkidle' });
+    await this.page.goto(this.urls.profile, { waitUntil: 'domcontentloaded' });
     const url = this.page.url();
     return !url.includes('/login') && !url.includes('/auth');
   }
 
   async waitForManualLogin() {
     if (!this.urls.login) throw new Error('login URL not configured');
-    await this.page.goto(this.urls.login, { waitUntil: 'networkidle' });
+    await this.page.goto(this.urls.login, { waitUntil: 'domcontentloaded' });
     console.log(`[${this.platform}] Please login manually...`);
     await this.page.waitForURL('**/mypage/**', { timeout: 300000 });
 
@@ -71,11 +71,12 @@ export class BrowserProfileSync extends BaseProfileSync {
     if (!this.page) {
       return { success: false, code: 'NOT_INITIALIZED', data: null };
     }
-    await this.page.goto(this.urls.profile, { waitUntil: 'networkidle' });
+    await this.page.goto(this.urls.profile, { waitUntil: 'domcontentloaded' });
     const url = this.page.url();
     if (url.includes('/login') || url.includes('/auth')) {
       return { success: false, code: 'AUTH_REQUIRED', data: null };
     }
+    await this.waitForConfiguredProfileSelectors();
 
     const data = await this.page.evaluate((sel) => {
       const text = (q) => document.querySelector(q)?.textContent?.trim() || '';
@@ -185,8 +186,9 @@ export class BrowserProfileSync extends BaseProfileSync {
 
   async fillPersonalInfo(personal) {
     if (!this.urls.edit) return;
-    await this.page.goto(this.urls.edit, { waitUntil: 'networkidle' });
+    await this.page.goto(this.urls.edit, { waitUntil: 'domcontentloaded' });
     const s = this.selectors;
+    await this.waitForConfiguredEditSelectors();
     if (s.nameInput && personal.name) {
       const el = await this.page.$(s.nameInput);
       if (el) await el.fill(personal.name);
@@ -199,6 +201,34 @@ export class BrowserProfileSync extends BaseProfileSync {
       const el = await this.page.$(s.phoneInput);
       if (el) await el.fill(personal.phone);
     }
+  }
+
+  async waitForConfiguredProfileSelectors() {
+    await this.waitForAnyConfiguredSelector([
+      this.selectors.name,
+      this.selectors.headline,
+      this.selectors.email,
+      this.selectors.phone,
+      this.selectors.skills,
+    ]);
+  }
+
+  async waitForConfiguredEditSelectors() {
+    await this.waitForAnyConfiguredSelector([
+      this.selectors.nameInput,
+      this.selectors.emailInput,
+      this.selectors.phoneInput,
+    ]);
+  }
+
+  async waitForAnyConfiguredSelector(selectors) {
+    const candidates = selectors.filter((selector) => typeof selector === 'string' && selector.length > 0);
+    if (candidates.length === 0) return;
+    await this.page.waitForFunction(
+      (selectorList) => selectorList.some((selector) => document.querySelector(selector)),
+      candidates,
+      { timeout: 10000 }
+    );
   }
 
   async fillCareers(careers) {

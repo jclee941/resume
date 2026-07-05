@@ -72,8 +72,7 @@ export default class BrowserHandler {
     }
 
     try {
-      await page.goto(this.config.editUrl, { waitUntil: 'networkidle' });
-      await page.waitForTimeout(2000);
+      await page.goto(this.config.editUrl, { waitUntil: 'domcontentloaded' });
 
       for (const change of changes) {
         log(`Applying: ${change.field} = ${change.to}`, 'info', this.platformKey);
@@ -84,7 +83,7 @@ export default class BrowserHandler {
           continue;
         }
 
-        const element = await page.$(selector);
+        const element = await page.waitForSelector(selector, { timeout: 10000 }).catch(() => null);
         if (!element) {
           log(`Element not found: ${selector}`, 'warn', this.platformKey);
           continue;

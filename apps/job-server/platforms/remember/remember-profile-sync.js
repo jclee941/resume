@@ -15,6 +15,9 @@ const REMEMBER_URLS = {
   resume: 'https://career.rememberapp.co.kr/mypage/resume',
 };
 
+const PROFILE_READY_SELECTOR =
+  '.user-name, .name, [class*="profile"] h1, h2, .headline, .intro, [class*="intro"], [class*="career"], [class*="skill"]';
+
 export class RememberProfileSync extends BaseProfileSync {
   constructor(options = {}) {
     super(options);
@@ -61,13 +64,17 @@ export class RememberProfileSync extends BaseProfileSync {
   }
 
   async checkLogin() {
-    await this.page.goto(REMEMBER_URLS.profile, { waitUntil: 'networkidle' });
+    await this.page.goto(REMEMBER_URLS.profile, { waitUntil: 'domcontentloaded' });
     const url = this.page.url();
-    return !url.includes('/login');
+    if (url.includes('/login')) {
+      return false;
+    }
+    await this.page.waitForSelector(PROFILE_READY_SELECTOR, { timeout: 10000 });
+    return true;
   }
 
   async waitForManualLogin() {
-    await this.page.goto(REMEMBER_URLS.login, { waitUntil: 'networkidle' });
+    await this.page.goto(REMEMBER_URLS.login, { waitUntil: 'domcontentloaded' });
 
     console.log('Please login via Remember mobile app QR code...');
 
@@ -104,7 +111,8 @@ export class RememberProfileSync extends BaseProfileSync {
       };
     }
 
-    await this.page.goto(REMEMBER_URLS.profile, { waitUntil: 'networkidle' });
+    await this.page.goto(REMEMBER_URLS.profile, { waitUntil: 'domcontentloaded' });
+    await this.page.waitForSelector(PROFILE_READY_SELECTOR, { timeout: 10000 });
 
     try {
       await this.updateHeadline(sourceData);
@@ -195,11 +203,12 @@ export class RememberProfileSync extends BaseProfileSync {
     if (!this.page) {
       return { success: false, code: 'NOT_INITIALIZED', data: null };
     }
-    await this.page.goto(REMEMBER_URLS.profile, { waitUntil: 'networkidle' });
+    await this.page.goto(REMEMBER_URLS.profile, { waitUntil: 'domcontentloaded' });
     const url = this.page.url();
     if (url.includes('/login')) {
       return { success: false, code: 'AUTH_REQUIRED', data: null };
     }
+    await this.page.waitForSelector(PROFILE_READY_SELECTOR, { timeout: 10000 });
     const snapshot = await this.page.evaluate(() => {
       const nameEl = document.querySelector('.user-name, .name, [class*="profile"] h1, h2');
       const headlineEl = document.querySelector('.headline, .intro, [class*="intro"]');

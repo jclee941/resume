@@ -83,7 +83,7 @@ export class SaraminCrawler extends BaseCrawler {
     return withStealthBrowser(async (page) => {
       const query = this.buildSearchQuery(params);
       const url = `${this.baseUrl}/zf_user/search/recruit?${query}`;
-      await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
+      await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
 
       await page
         .waitForSelector('.item_recruit, [class*="job_item"]', { timeout: 10000 })
@@ -126,7 +126,10 @@ export class SaraminCrawler extends BaseCrawler {
     try {
       const job = await withStealthBrowser(async (page) => {
         const url = `${this.baseUrl}/zf_user/jobs/relay/view?rec_idx=${jobId}`;
-        await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
+        await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
+        await page.waitForSelector('.tit_job, h1, [class*="company"], .job_contents, main', {
+          timeout: 10000,
+        });
 
         return page.evaluate((jid) => {
           const title = document.querySelector('.tit_job, h1')?.textContent?.trim() || '';

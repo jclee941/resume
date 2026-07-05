@@ -34,7 +34,7 @@ export class StealthBrowserCrawler extends BaseCrawler {
    * @param {number} [options.timeout=45000] - Navigation timeout in ms
    * @param {object} options.env - CF Worker env (must have MYBROWSER binding)
    * @param {boolean} [options.screenshot=false] - Capture screenshots on error
-   * @param {string} [options.waitUntil='networkidle0'] - Page load wait strategy
+   * @param {string} [options.waitUntil='domcontentloaded'] - Page load wait strategy
    */
   constructor(name, options = {}) {
     super(name, {
@@ -60,7 +60,7 @@ export class StealthBrowserCrawler extends BaseCrawler {
     this.screenshotOnError = options.screenshot ?? false;
 
     /** @type {string} */
-    this.waitUntil = options.waitUntil ?? 'networkidle0';
+    this.waitUntil = options.waitUntil ?? 'domcontentloaded';
 
     /** @type {number} Navigation timeout */
     this.navigationTimeout = options.timeout ?? 45000;

@@ -102,7 +102,7 @@ export class RememberCrawler extends BaseCrawler {
       const query = params.keyword ? `?search=${encodeURIComponent(params.keyword)}` : '';
       const url = `${this.baseUrl}/job/postings${query}`;
 
-      await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
+      await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
       await page.waitForSelector('a[href*="/job/posting/"]', { timeout: 10000 }).catch(() => {});
 
       const jobs = await page.evaluate((limit) => {
@@ -183,11 +183,14 @@ export class RememberCrawler extends BaseCrawler {
   }
 
   async getJobDetailWithBrowser(jobId) {
-    const job = await withStealthBrowser(async (page) => {
-      const url = `${this.baseUrl}/job/posting/${jobId}`;
-      await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
+      const job = await withStealthBrowser(async (page) => {
+        const url = `${this.baseUrl}/job/posting/${jobId}`;
+        await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
+        await page.waitForSelector('h1, [class*="title"], [class*="company"], main', {
+          timeout: 10000,
+        });
 
-      return page.evaluate((jid) => {
+        return page.evaluate((jid) => {
         const getText = (sel) => document.querySelector(sel)?.textContent?.trim() || '';
         const title = getText('h1') || getText('[class*="title"]');
         const company = getText('[class*="company"]') || getText('[class*="CompanyName"]');
