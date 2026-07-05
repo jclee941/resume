@@ -1,38 +1,44 @@
 const { test, expect } = require('@playwright/test');
 
 test.describe('Portfolio hiring copy', () => {
-  test('should expose recruiter-ready proof and hiring actions above the fold', async ({
+  test('should expose recruiter-ready evidence and hiring actions above the fold', async ({
     page,
   }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
     const hero = page.locator('#hero');
-    await expect(hero.getByText('보안 운영 · 보안 인프라 역할 중심으로 면접 제안 환영')).toBeVisible();
+    await expect(
+      hero.getByText('보안 운영 · 보안 인프라 역할의 면접 제안을 우선 검토합니다')
+    ).toBeVisible();
     await expect(
       hero.getByText(
-        '거래소 보안 인프라 구축·운영, SIEM 알림, 장비 API 조회 근거를 먼저 볼 수 있게 정리했습니다.'
+        '본인가와 감사 대응에서 설명 가능한 보안 운영 근거를 먼저 볼 수 있게 정리했습니다.'
       )
     ).toBeVisible();
-    await expect(hero.getByText('희망 역할: 보안 운영 · 보안 인프라')).toBeVisible();
-    await expect(hero.getByText('면접 제안 가능')).toBeVisible();
+    await expect(hero.getByText('검토 역할: 보안 운영 · 보안 인프라 · SIEM')).toBeVisible();
+    await expect(hero.getByText('면접 제안 우선 검토')).toBeVisible();
     await expect(hero.getByText(/SRE|DevSecOps/)).toHaveCount(0);
     await expect(hero.getByText('검토 가능')).toHaveCount(0);
     await expect(hero.getByRole('link', { name: '면접 문의', exact: true })).toHaveAttribute(
       'href',
       'mailto:qws941@kakao.com?subject=%EC%B1%84%EC%9A%A9%20%EC%A0%9C%EC%95%88%20%EB%98%90%EB%8A%94%20%EB%A9%B4%EC%A0%91%20%EB%AC%B8%EC%9D%98'
     );
-    await expect(hero.getByRole('link', { name: '경력 확인', exact: true })).toHaveAttribute(
+    await expect(hero.getByRole('link', { name: '경력 보기', exact: true })).toHaveAttribute(
       'href',
       '#resume'
     );
-    await expect(hero.getByRole('link', { name: '프로젝트 확인', exact: true })).toHaveAttribute(
+    await expect(hero.getByRole('link', { name: '프로젝트 보기', exact: true })).toHaveAttribute(
       'href',
       '#projects'
     );
     await expect(
       hero.getByRole('link', { name: /jclee-bot PR 리뷰 · 시크릿 스캔 · ELK 로그/ })
+    ).toHaveCount(0);
+    await expect(
+      hero.getByRole('link', { name: /jclee-bot PR 리뷰 · 시크릿 스캔 · Check Run/ })
     ).toBeVisible();
     await expect(hero.getByText('증빙 프로젝트 보기')).toHaveCount(0);
+    await expect(hero.getByText('공개 증거 바로가기')).toHaveCount(0);
   });
 
   test('should keep localized hiring copy aligned across English and Japanese pages', async ({
@@ -48,6 +54,9 @@ test.describe('Portfolio hiring copy', () => {
     await expect(
       englishHero.getByText('Open to interview requests', { exact: true })
     ).toBeVisible();
+    await expect(englishHero.getByText('Public evidence shortcuts')).toBeVisible();
+    await expect(englishHero.getByText('Public proof shortcuts')).toHaveCount(0);
+    await expect(englishHero.getByText(/passed the FSC|passed licensing audits/i)).toHaveCount(0);
     await expect(englishHero.getByRole('link', { name: 'Interview request' })).toHaveAttribute(
       'href',
       'mailto:qws941@kakao.com?subject=Hiring%20proposal%20or%20interview%20request'
@@ -71,6 +80,12 @@ test.describe('Portfolio hiring copy', () => {
     ).toBeVisible();
     await expect(japaneseHero.getByText(/SRE|DevSecOps/)).toHaveCount(0);
     await expect(japaneseHero.getByText('確認可能')).toHaveCount(0);
+    await expect(japaneseHero.getByText('証跡')).toHaveCount(0);
+    await expect(japaneseHero.getByText(/通過|FSC本認可/)).toHaveCount(0);
+    await expect(japaneseHero.locator('.hero-proof-list')).toHaveAttribute(
+      'aria-label',
+      '確認すべき主要根拠'
+    );
     await expect(japaneseHero.getByRole('link', { name: '面接相談', exact: true })).toBeVisible();
     await expect(
       japaneseHero.getByRole('link', { name: 'プロジェクト確認', exact: true })

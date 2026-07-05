@@ -35,7 +35,7 @@
 산업보건 설문조사 SaaS 플랫폼. 종이 설문 디지털 전환.
 
 - Flask 3.0 RESTful API + PostgreSQL 15 스키마 설계
-- Cloudflare Workers Edge API로 전국 동시 접속 처리
+- Cloudflare Workers Edge API로 설문 응답 라우팅 구성
 - Redis 7 캐싱 레이어 구성
 - 하이브리드 아키텍처 (인터넷 + 폐쇄망 동시 지원)
 - 다수 관리 패널 (설문 생성/배포/수집/집계/리포팅)
@@ -46,7 +46,7 @@
 ## 주요 성과
 
 - 집계 오류 제거 (자동화)
-- 전국 동시 접속 처리 (Edge API)
+- Edge API 기반 응답 흐름 운영
 - 응답 캐싱 구성 (Redis)
 - 배포 절차 자동화 (CI/CD)
 - 중소기업 10곳+ 실운영

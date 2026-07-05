@@ -14,7 +14,7 @@
 >
 > 두 번째 단계로 **Cloudflare Tunnel**을 외부 협력사 접속 채널로 도입합니다. 기존 SSL VPN을 즉시 폐기하지 않고 Tunnel을 병렬 운영하면서, FortiGate에 들어오는 외부 접속을 점진 마이그레이션할 수 있습니다.
 >
-> 세 번째 단계가 가장 어려운데, **내부망 ZTNA**입니다. 이 단계는 금감원과 사전 협의가 필요하고, "물리적 분리"는 유지하되 "논리적 통제 강화"로 해석하는 합의가 있어야 가능합니다. 제가 가온누리에서 FSC 본인가 통과 시 비슷한 통제 항목을 다뤘기 때문에, 이 협의 자료 작성을 customer SE 입장에서 같이 만들 수 있습니다.
+> 세 번째 단계가 가장 어려운데, **내부망 ZTNA**입니다. 이 단계는 금감원과 사전 협의가 필요하고, "물리적 분리"는 유지하되 "논리적 통제 강화"로 해석하는 합의가 있어야 가능합니다. 제가 가온누리에서 FSC 본인가 심사 대응 시 비슷한 통제 항목을 다뤘기 때문에, 이 협의 자료 작성을 customer SE 입장에서 같이 만들 수 있습니다.
 
 ---
 
@@ -67,7 +67,7 @@
 >
 > 1. **한국 PoP 밀도**: Cloudflare는 서울 + 부산 PoP. Zscaler는 서울만. Netskope는 한국 PoP 제한적. 한국 origin → 한국 PoP는 Cloudflare가 latency 우위.
 > 2. **개발자 친화도**: Cloudflare는 Workers + R2 + D1로 *플랫폼*까지 제공. Zscaler/Netskope는 보안 게이트웨이만. 한국 핀테크는 _Edge에서 보안 + 비즈니스 로직 동시_ 처리를 원하는 경우가 많아서 Cloudflare가 유리합니다.
-> 3. **가격 모델**: Cloudflare One은 user-based + add-on. Zscaler는 user + bandwidth. 한국 대기업 IT 예산 구조에서 *예측 가능한 user-based*가 PoC 통과율이 높습니다.
+> 3. **가격 모델**: Cloudflare One은 user-based + add-on. Zscaler는 user + bandwidth. 한국 대기업 IT 예산 구조에서는 *예측 가능한 user-based* 모델을 설명하기 쉽습니다.
 >
 > 다만 정직한 단점: Zscaler는 한국 시장 진입 더 빨라서 *brand recognition*에서 우위. 큰 금융사는 "이미 옆 회사도 Zscaler 씁니다"가 강력한 buyer signal입니다. 이 부분은 Cloudflare가 한국 reference customer 사례를 더 많이 만드는 게 답이고, SE로서 제가 reference를 만드는 데 직접 기여하고 싶습니다.
 
@@ -87,7 +87,7 @@
 
 > 윤리적 충돌은 없다고 봅니다. 8년 동안 vendor를 바꾼 적이 여러 번 있고, 매번 *고객 가치*가 더 큰 쪽으로 갔습니다. FortiGate를 쓰는 이유는 FortiGate라서가 아니라, 그 시점에 FortiGate가 가장 잘 풀어주는 문제가 있었기 때문입니다.
 >
-> Cloudflare One이 FortiGate보다 잘 푸는 영역(글로벌 사용자 기반 Zero Trust, SaaS-first 환경, edge에서 보안 + 비즈니스 로직 결합)이 명확하면 customer에게 솔직히 그 차이를 설명합니다. 반대로 Cloudflare One이 못 푸는 영역(예: NGFW deep packet inspection의 일부 use case, 특정 IPS 시그니처)이 있으면 그것도 솔직히 말합니다.
+> Cloudflare One이 FortiGate보다 잘 푸는 영역(분산 사용자 기반 Zero Trust, SaaS-first 환경, edge에서 보안 + 비즈니스 로직 결합)이 명확하면 customer에게 솔직히 그 차이를 설명합니다. 반대로 Cloudflare One이 못 푸는 영역(예: NGFW deep packet inspection의 일부 use case, 특정 IPS 시그니처)이 있으면 그것도 솔직히 말합니다.
 >
 > SE의 신뢰 자산은 *vendor 영업이 아니라 customer 문제 해결*에서 나온다고 생각합니다. 운영 사이드에서 이 부분을 가장 많이 학습했습니다.
 

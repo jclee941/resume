@@ -86,7 +86,7 @@
 **참고 근거 (시장 조사)**:
 
 - Seoul SE roles at foreign tech (8년차 senior): KRW 100M–180M base
-- Cloudflare는 글로벌 표준 + APAC 가산 → 130M~160M base 예상
+- Cloudflare는 전사 표준 + APAC 가산 → 130M~160M base 예상
 - Total comp (RSU 포함): 200M~250M 가능
 
 **❌ 피할 것**: USD 단위 입력 (한국 로컬 채용에 부적합), 너무 낮은 floor (협상 약화), 너무 높은 ceiling (auto-screen-out)
@@ -102,7 +102,7 @@
 Greenhouse에 별도 "Why Cloudflare?" 필드가 있으면 다음 답변 사용:
 
 ```
-I'm applying because the role I'd play on Cloudflare One in Seoul matches a translation gap I've been on the customer side of for eight years. Korean financial enterprises do not ask whether Zero Trust works — they ask how SWG, CASB, DLP, and ZTNA coexist with 전자금융감독규정 and the 망분리 mandate. I have answered that question from inside the regulated environment for eight years (FSC pre-licensing audit passed at Nextrade, FSS regulatory audits at Quantec FSDC), and I want to answer it from Cloudflare's side for the next chapter.
+I'm applying because the role I'd play on Cloudflare One in Seoul matches a translation gap I've been on the customer side of for eight years. Korean financial enterprises do not ask whether Zero Trust works — they ask how SWG, CASB, DLP, and ZTNA coexist with 전자금융감독규정 and the 망분리 mandate. I have answered that question from inside the regulated environment for eight years (FSC pre-licensing audit support at Nextrade, FSS regulatory audit response at Quantec FSDC), and I want to answer it from Cloudflare's side for the next chapter.
 
 Cloudflare is also the first company where my homelab work is the day-job credential. resume.jclee.me runs on Cloudflare Workers in production — D1, KV, Workflows, Wrangler GitHub Actions CI/CD, build-time HTML injection, Accept-Language routing, CSP strict-dynamic, 9 JSON-LD blocks across three locales validated by Playwright E2E. I'd be demoing customer-facing technology I already operate.
 
@@ -140,7 +140,7 @@ built and operate it as a Worker, not as a static site behind Workers.
 My day job for the last eight years has been Korean financial security
 infrastructure. At Gaonnuri and ITCEN CTS for the Nextrade exchange, I
 designed FortiGate HA in active-passive with five-tier network segmentation,
-passed the FSC pre-licensing review, standardized firewall policy
+	supported the FSC pre-licensing review, standardized firewall policy
 distribution with Ansible Role, and now operate Splunk ES + automation +
 FortiManager JSON-RPC API for automated security-event detection and
 response. Earlier at Jointree, I deployed NSX-T microsegmentation; at

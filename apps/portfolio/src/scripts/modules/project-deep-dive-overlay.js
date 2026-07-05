@@ -104,7 +104,7 @@ function createDeepDiveBody(project) {
   body.append(
     createTextSection('개요', createElement('p', 'project-detail__description', project.description)),
     createTextSection('주요 성과', createAchievements(project.achievements)),
-    createTextSection('메트릭스', createMetrics(project.metrics)),
+    createTextSection('운영 지표', createMetrics(project.metrics)),
     createTextSection('구성 흐름', createArchitectureElement(project)),
     createTextSection('사용 도구', createTools(project.tools))
   );

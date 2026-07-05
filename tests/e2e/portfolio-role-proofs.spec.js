@@ -1,6 +1,6 @@
 const { test, expect } = require('@playwright/test');
 
-const KOREAN_ROLE_PROOF_COUNTS = [
+const KOREAN_ROLE_EVIDENCE_COUNTS = [
   ['security', 'Security Ops', '4개 근거'],
   ['infra', 'Security Infra', '2개 근거'],
   ['observability', 'Ops Visibility', '2개 근거'],
@@ -14,11 +14,11 @@ const SECURITY_PROJECT_TITLES = [
   'Bug Bounty Recon Toolkit',
 ];
 
-test.describe('Portfolio role proof routing', () => {
-  test('Korean role chips show proof counts and focus all matching projects', async ({ page }) => {
+test.describe('Portfolio role evidence routing', () => {
+  test('Korean role chips show evidence counts and focus all matching projects', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-    for (const [roleId, label, countLabel] of KOREAN_ROLE_PROOF_COUNTS) {
+    for (const [roleId, label, countLabel] of KOREAN_ROLE_EVIDENCE_COUNTS) {
       const roleChip = page.locator(`.role-chip[data-role-filter="${roleId}"]`);
       await expect(roleChip).toContainText(label);
       await expect(roleChip).toContainText(countLabel);
@@ -90,12 +90,16 @@ test.describe('Portfolio role proof routing', () => {
     expect(projectScrollCalls).toBe(1);
   });
 
-  test('role proof counts localize on English and Japanese pages', async ({ page }) => {
+  test('role evidence counts localize on English and Japanese pages', async ({ page }) => {
     await page.goto('/en/', { waitUntil: 'domcontentloaded' });
-    await expect(page.locator('.role-chip[data-role-filter="security"]')).toContainText('4 proofs');
-    await expect(page.locator('.role-chip[data-role-filter="infra"]')).toContainText('2 proofs');
+    await expect(page.locator('.role-chip[data-role-filter="security"]')).toContainText(
+      '4 evidence items'
+    );
+    await expect(page.locator('.role-chip[data-role-filter="infra"]')).toContainText(
+      '2 evidence items'
+    );
     await expect(page.locator('.role-chip[data-role-filter="observability"]')).toContainText(
-      '2 proofs'
+      '2 evidence items'
     );
 
     await page.goto('/ja/', { waitUntil: 'domcontentloaded' });

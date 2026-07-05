@@ -33,13 +33,13 @@ function appendRoleChip(controls, role, countText) {
 }
 
 function evidenceLinkText(locale, title) {
-  if (locale === 'en') return `${title} proof`;
+  if (locale === 'en') return `${title} evidence`;
   if (locale === 'ja') return `${title}の根拠を見る`;
   return `${title} 근거 보기`;
 }
 
 function evidenceLinkLabel(locale, title) {
-  if (locale === 'en') return `Open ${title} project proof`;
+  if (locale === 'en') return `Open ${title} project evidence`;
   if (locale === 'ja') return `${title}プロジェクトの根拠を見る`;
   return `${title} 프로젝트 근거 보기`;
 }
