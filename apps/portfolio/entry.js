@@ -46,7 +46,9 @@ async function fetchJobHandlerResponse(request, env, ctx, pathname) {
   // Job dashboard runs in-process (merged worker — no Service Binding needed).
   // The job worker's internal router strips the /job prefix itself.
   const response = await jobWorker.fetch(request, env, ctx);
-  return applyResponseHeaders(response, pathname);
+  return applyResponseHeaders(response, pathname, {
+    acceptEncoding: request.headers.get('Accept-Encoding'),
+  });
 }
 
 function isFreshSitemapRequest(request) {
@@ -136,6 +138,7 @@ export default {
         }
 
         response = applyResponseHeaders(portfolioResponse, url.pathname, {
+          acceptEncoding: request.headers.get('Accept-Encoding'),
           language: effectiveLanguage,
           source: effectiveSource,
           varyAcceptLanguage: false,
@@ -143,6 +146,7 @@ export default {
       } else {
         const portfolioResponse = await portfolioWorker.fetch(request, env, ctx);
         response = applyResponseHeaders(portfolioResponse, url.pathname, {
+          acceptEncoding: request.headers.get('Accept-Encoding'),
           language: languageContext.language || DEFAULT_LANGUAGE,
           source: languageContext.source,
         });

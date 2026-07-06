@@ -2,7 +2,7 @@
  * Unit tests for the career-timeline data path.
  *
  * After the SSoT refactor, timeline.js no longer hardcodes career content.
- * It reads window.__RESUME_CHAT_DATA__.careers (build-injected from the SSoT)
+ * It reads window.__RESUME_CHAT_DATA__.careers (client-loaded from the SSoT)
  * and merges UI-only phase/status via mergeCareerUiMeta(). These tests pin that
  * pure merge behavior and assert the hardcoded fallback is gone from source.
  */
@@ -24,7 +24,7 @@ describe('timeline.js source contract (no hardcoded careers)', () => {
     source = fs.readFileSync(TIMELINE_PATH, 'utf8');
   });
 
-  test('reads build-injected __RESUME_CHAT_DATA__.careers', () => {
+  test('reads client-loaded __RESUME_CHAT_DATA__.careers', () => {
     expect(source).toMatch(/window\.__RESUME_CHAT_DATA__/);
   });
 

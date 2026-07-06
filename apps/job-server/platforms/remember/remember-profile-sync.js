@@ -3,6 +3,13 @@ import { readFileSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { getResumeBasePath } from '../../src/shared/utils/paths.js';
 import { BaseProfileSync } from '../base-profile-sync.js';
+import {
+  updateRememberCareers,
+  updateRememberCertifications,
+  updateRememberEducation,
+  updateRememberHeadline,
+  updateRememberSkills,
+} from './remember-profile-sections.js';
 
 const PROJECT_ROOT = getResumeBasePath();
 const RESUME_DATA_PATH = join(PROJECT_ROOT, 'packages/data/resumes/master/resume_data.json');
@@ -139,65 +146,15 @@ export class RememberProfileSync extends BaseProfileSync {
   }
 
   async updateHeadline(sourceData) {
-    const editBtn = await this.page.$('button:has-text("수정"), [class*="edit"]');
-    if (editBtn) {
-      await editBtn.click();
-      await this.page.waitForTimeout(500);
-    }
-
-    const headline = `${sourceData.current?.position || sourceData.careers?.[0]?.role || ''} | ${sourceData.summary.totalExperience}`;
-    const headlineInput = await this.page.$('input[name*="headline"], textarea[name*="intro"]');
-    if (headlineInput) {
-      await headlineInput.fill(headline);
-    }
-
-    const saveBtn = await this.page.$('button:has-text("저장"), button[type="submit"]');
-    if (saveBtn) {
-      await saveBtn.click();
-      await this.page.waitForTimeout(1000);
-    }
+    return updateRememberHeadline(this.page, sourceData);
   }
 
   async updateCareers(careers) {
-    const careerSection = await this.page.$('[class*="career"], [data-section="career"]');
-    if (!careerSection) return;
-
-    for (const career of careers.slice(0, 5)) {
-      const addBtn = await this.page.$('button:has-text("경력 추가")');
-      if (addBtn) {
-        await addBtn.click();
-        await this.page.waitForTimeout(500);
-      }
-
-      const companyInput = await this.page.$('input[name*="company"]:last-of-type');
-      if (companyInput) {
-        await companyInput.fill(career.company);
-      }
-
-      const titleInput = await this.page.$('input[name*="title"]:last-of-type');
-      if (titleInput) {
-        await titleInput.fill(career.role);
-      }
-
-      const periodInput = await this.page.$('input[name*="period"]:last-of-type');
-      if (periodInput) {
-        await periodInput.fill(career.period);
-      }
-    }
+    return updateRememberCareers(this.page, careers);
   }
 
   async updateSkills(skills) {
-    const skillSection = await this.page.$('[class*="skill"], [data-section="skill"]');
-    if (!skillSection) return;
-
-    for (const skill of skills) {
-      const skillInput = await this.page.$('input[name*="skill"], input[placeholder*="스킬"]');
-      if (skillInput) {
-        await skillInput.fill(skill);
-        await this.page.keyboard.press('Enter');
-        await this.page.waitForTimeout(300);
-      }
-    }
+    return updateRememberSkills(this.page, skills);
   }
   async getProfile() {
     if (!this.page) {
@@ -237,77 +194,11 @@ export class RememberProfileSync extends BaseProfileSync {
   }
 
   async updateEducation(education) {
-    const eduSection = await this.page.$('[class*="education"], [data-section="education"]');
-    if (!eduSection) return;
-
-    const editBtn = await eduSection.$('button:has-text("수정"), button[class*="edit"]');
-    if (editBtn) {
-      await editBtn.click();
-      await this.page.waitForTimeout(500);
-    }
-
-    const schoolInput = await this.page.$('input[name*="school"], input[placeholder*="학교"]');
-    if (schoolInput) {
-      await schoolInput.fill(education.school);
-    }
-
-    const majorInput = await this.page.$('input[name*="major"], input[placeholder*="전공"]');
-    if (majorInput) {
-      await majorInput.fill(education.major);
-    }
-
-    const saveBtn = await eduSection.$('button:has-text("저장"), button[type="submit"]');
-    if (saveBtn) {
-      await saveBtn.click();
-      await this.page.waitForTimeout(1000);
-    }
+    return updateRememberEducation(this.page, education);
   }
 
   async updateCertifications(certifications) {
-    const certSection = await this.page.$(
-      '[class*="certification"], [data-section="certification"]'
-    );
-    if (!certSection) return;
-
-    for (const cert of certifications.slice(0, 6)) {
-      const addBtn = await certSection.$('button:has-text("추가"), button[class*="add"]');
-      if (addBtn) {
-        await addBtn.click();
-        await this.page.waitForTimeout(300);
-      }
-
-      const certInputs = await this.page.$$('input[name*="cert"], input[placeholder*="자격증"]');
-      const lastCert = certInputs[certInputs.length - 1];
-      if (lastCert) {
-        await lastCert.fill(cert.name);
-      }
-
-      if (cert.issuer) {
-        const issuerInputs = await this.page.$$(
-          'input[name*="issuer"], input[placeholder*="발급기관"]'
-        );
-        const lastIssuer = issuerInputs[issuerInputs.length - 1];
-        if (lastIssuer) {
-          await lastIssuer.fill(cert.issuer);
-        }
-      }
-
-      if (cert.date) {
-        const dateInputs = await this.page.$$(
-          'input[name*="date"], input[placeholder*="취득일"], input[type="date"]'
-        );
-        const lastDate = dateInputs[dateInputs.length - 1];
-        if (lastDate) {
-          await lastDate.fill(cert.date);
-        }
-      }
-
-      const saveBtn = await certSection.$('button:has-text("저장"), button[type="submit"]');
-      if (saveBtn) {
-        await saveBtn.click();
-        await this.page.waitForTimeout(500);
-      }
-    }
+    return updateRememberCertifications(this.page, certifications);
   }
 
   async close() {

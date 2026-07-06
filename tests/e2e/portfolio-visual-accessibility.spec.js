@@ -5,6 +5,7 @@ test.describe('Portfolio visual accessibility', () => {
     await page.goto('/ko/', { waitUntil: 'domcontentloaded' });
 
     const buttons = page.locator('button.timeline-expand-btn');
+    await expect(buttons.first()).toBeVisible();
     const count = await buttons.count();
     expect(count).toBeGreaterThan(0);
 
@@ -32,6 +33,7 @@ test.describe('Portfolio visual accessibility', () => {
     await page.goto('/ko/', { waitUntil: 'domcontentloaded' });
 
     const search = page.locator('#skill-search-input');
+    await expect(search).toBeVisible();
     await search.scrollIntoViewIfNeeded();
     const box = await search.boundingBox();
 

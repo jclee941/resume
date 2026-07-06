@@ -20,6 +20,27 @@ function generateStaticRoutes() {
         });
       }
 
+      if (
+        url.pathname === '/resume-data.json' ||
+        url.pathname === '/en/resume-data.json' ||
+        url.pathname === '/ja/resume-data.json'
+      ) {
+        const resumeDataContent = url.pathname.startsWith('/en/')
+          ? RESUME_DATA_EN_JSON
+          : url.pathname.startsWith('/ja/')
+            ? RESUME_DATA_JA_JSON
+            : RESUME_DATA_JSON;
+        metrics.requests_success++;
+        return new Response(resumeDataContent, {
+          headers: {
+            ...applyNonceToHeaders(SECURITY_HEADERS, ""),
+            ...CACHE_POLICIES.static,
+            ...rateLimitHeaders,
+            'Content-Type': 'application/json'
+          }
+        });
+      }
+
       if (url.pathname === '/sw.js' || url.pathname === '/en/sw.js') {
         metrics.requests_success++;
         return new Response(SERVICE_WORKER, {

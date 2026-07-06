@@ -65,6 +65,7 @@ describe('build-orchestrator', () => {
       indexHtmlRaw: '<html></html>',
       indexEnHtmlRaw: '<html lang="en"></html>',
       projectDataRaw: '{"resume":[],"projects":[]}',
+      projectDataEnRaw: '{"resume":[],"projects":[],"locale":"en"}',
       projectDataJaRaw: '{"resume":[],"projects":[]}',
       mainJs: 'main()',
       cssContent: 'body{}',
@@ -114,7 +115,7 @@ describe('build-orchestrator', () => {
     extractStyleHashes.mockReturnValue(["'sha256-style'"]);
     mergeHashes.mockReturnValue(["'sha256-style'"]);
     injectScriptNoncePlaceholder.mockImplementation((html) => html);
-    escapeForTemplateLiteral.mockReturnValue('<html>escaped</html>');
+    escapeForTemplateLiteral.mockImplementation((value) => `escaped:${value}`);
     generateSecurityHeaders.mockReturnValue('const SECURITY_HEADERS = {};');
     buildAndWriteWorker.mockReturnValue({ workerSizeKB: '100.00' });
   });
@@ -157,9 +158,9 @@ describe('build-orchestrator', () => {
       expect(mergeHashes).toHaveBeenCalled();
     });
 
-    it('calls escapeForTemplateLiteral for all locale HTML', async () => {
+    it('calls escapeForTemplateLiteral for all locale HTML and data payloads', async () => {
       await runWorkerBuild(buildOpts);
-      expect(escapeForTemplateLiteral).toHaveBeenCalledTimes(3);
+      expect(escapeForTemplateLiteral).toHaveBeenCalledTimes(6);
     });
 
     it('calls generateSecurityHeaders', async () => {
@@ -187,6 +188,14 @@ describe('build-orchestrator', () => {
       await runWorkerBuild(buildOpts);
       const writerCall = buildAndWriteWorker.mock.calls[0][0];
       expect(writerCall.allowedEmails).toEqual(['test@test.com']);
+    });
+
+    it('passes escaped locale resume data to buildAndWriteWorker', async () => {
+      await runWorkerBuild(buildOpts);
+      const writerCall = buildAndWriteWorker.mock.calls[0][0];
+      expect(writerCall.resumeDataJson).toBe('escaped:{"resume":[],"projects":[]}');
+      expect(writerCall.resumeDataEnJson).toBe('escaped:{"resume":[],"projects":[],"locale":"en"}');
+      expect(writerCall.resumeDataJaJson).toBe('escaped:{"resume":[],"projects":[]}');
     });
 
     it('exits if worker size exceeds 1300KB sanity threshold', async () => {

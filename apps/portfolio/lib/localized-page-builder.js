@@ -5,20 +5,6 @@ const {
 } = require('./html-transformer');
 const { buildHeroContent } = require('./hero-content');
 
-function toChatLiteral(data) {
-  return `'${Buffer.from(JSON.stringify(data), 'utf-8').toString('base64')}'`;
-}
-
-function parseLocaleData(raw, fallback, logger) {
-  if (!raw) return fallback;
-  try {
-    return JSON.parse(raw);
-  } catch (err) {
-    logger.warn(`⚠ locale chat-data parse failed, falling back to KO: ${err.message}`);
-    return fallback;
-  }
-}
-
 function sharedPageOptions({ cssContent, templates, version, buildDeployedAt, buildDeployedDate }) {
   return {
     cssContent,
@@ -70,32 +56,23 @@ function localizeProjectSchemas(html, locale) {
 }
 
 async function buildPortfolioPages(options) {
-  const { indexHtmlRaw, indexEnHtmlRaw, projectData, projectDataEnRaw, projectDataJaRaw, logger } =
-    options;
+  const { indexHtmlRaw, indexEnHtmlRaw } = options;
   const shared = sharedPageOptions(options);
-  const chatData = {
-    ko: toChatLiteral(projectData),
-    en: toChatLiteral(parseLocaleData(projectDataEnRaw, projectData, logger)),
-    ja: toChatLiteral(parseLocaleData(projectDataJaRaw, projectData, logger)),
-  };
 
   const indexHtml = await buildLocalizedHtml(indexHtmlRaw, {
     ...shared,
     ...contentOptions(options.templates, 'ko'),
     heroContentHtml: buildHeroContent('ko'),
-    resumeChatDataBase64: chatData.ko,
   });
   const indexEnHtml = await buildLocalizedHtml(indexEnHtmlRaw, {
     ...shared,
     ...contentOptions(options.templates, 'en'),
     heroContentHtml: buildHeroContent('en'),
-    resumeChatDataBase64: chatData.en,
   });
   const indexJaHtml = await buildLocalizedHtml(buildJapaneseTemplate(indexHtmlRaw), {
     ...shared,
     ...contentOptions(options.templates, 'ja'),
     heroContentHtml: buildHeroContent('ja'),
-    resumeChatDataBase64: chatData.ja,
   });
 
   return { indexHtml, indexEnHtml, indexJaHtml };

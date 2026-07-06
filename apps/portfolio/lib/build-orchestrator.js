@@ -8,6 +8,7 @@ const { readBuildInputs } = require('./file-reader');
 const { processProjectData, encodeBinaryAssets } = require('./data-processor');
 const { buildPortfolioPages, escapePortfolioPages } = require('./localized-page-builder');
 const { buildAndWriteWorker } = require('./worker-writer');
+const { escapeForTemplateLiteral } = require('./html-transformer');
 
 function copyResumePdf(logger) {
   const pdfSource = path.resolve(
@@ -157,6 +158,9 @@ async function runWorkerBuild({ baseDir, version, gitSha = 'unknown', allowedEma
     indexHtml: pages.indexHtml,
     indexEnHtml: pages.indexEnHtml,
     indexJaHtml: pages.indexJaHtml,
+    resumeDataJson: escapeForTemplateLiteral(inputs.projectDataRaw, ESCAPE_PATTERNS),
+    resumeDataEnJson: escapeForTemplateLiteral(inputs.projectDataEnRaw, ESCAPE_PATTERNS),
+    resumeDataJaJson: escapeForTemplateLiteral(inputs.projectDataJaRaw, ESCAPE_PATTERNS),
     manifestJson: inputs.manifestJson,
     manifestEnJson: inputs.manifestEnJson,
     serviceWorker: inputs.serviceWorker,

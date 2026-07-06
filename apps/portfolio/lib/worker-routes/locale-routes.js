@@ -29,7 +29,8 @@ function generatePageRoutes() {
           headers: {
             ...applyNonceToHeaders(SECURITY_HEADERS, nonce),
             ...CACHE_POLICIES.html,
-            ...rateLimitHeaders
+            ...rateLimitHeaders,
+            'Content-Type': 'text/html;charset=UTF-8'
           }
         });
         metrics.requests_success++;
@@ -51,7 +52,8 @@ function generatePageRoutes() {
           headers: {
             ...applyNonceToHeaders(SECURITY_HEADERS, nonce),
             ...CACHE_POLICIES.html,
-            ...rateLimitHeaders
+            ...rateLimitHeaders,
+            'Content-Type': 'text/html;charset=UTF-8'
           }
         });
         metrics.requests_success++;
@@ -73,7 +75,8 @@ function generatePageRoutes() {
           headers: {
             ...applyNonceToHeaders(SECURITY_HEADERS, nonce),
             ...CACHE_POLICIES.html,
-            ...rateLimitHeaders
+            ...rateLimitHeaders,
+            'Content-Type': 'text/html;charset=UTF-8'
           }
         });
         metrics.requests_success++;

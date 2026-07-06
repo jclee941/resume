@@ -37,7 +37,6 @@ function applyExternalSri(html) {
  * @param {string} options.resumePdfUrl - Resume PDF URL.
  * @param {string} options.resumeDocxUrl - Resume DOCX URL.
  * @param {string} options.resumeMdUrl - Resume markdown URL.
- * @param {string} [options.resumeChatDataBase64] - Base64-encoded resume JSON for client chat.
  * @returns {string} HTML with placeholders replaced.
  */
 function injectPlaceholders(html, options) {
@@ -69,8 +68,7 @@ function injectPlaceholders(html, options) {
         .replace(/[^0-9]/g, '')
         .slice(0, 14)}`
     )
-    .replace(/<!-- BUILD_DEPLOYED_DATE_PLACEHOLDER -->/g, options.buildDeployedDate || '')
-    .replace("/* RESUME_CHAT_DATA_B64_PLACEHOLDER */ ''", options.resumeChatDataBase64 || "''");
+    .replace(/<!-- BUILD_DEPLOYED_DATE_PLACEHOLDER -->/g, options.buildDeployedDate || '');
 }
 
 /**
