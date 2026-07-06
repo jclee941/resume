@@ -43,9 +43,9 @@ describe('scroll-reveal dedup: ui.js owns reveal + section analytics', () => {
 });
 
 describe('architecture note: tri-source locale duplication documented', () => {
-  test('html-transformer.js documents the KO/EN/JA tri-source future refactor', () => {
+  test('html-transformer.js documents the KO/EN/JA tri-source contract without debt markers', () => {
     const t = read(path.join('lib', 'html-transformer.js'));
-    expect(t).toMatch(/ARCHITECTURE TODO/);
+    expect(t).not.toMatch(/\b(TODO|FIXME|HACK|XXX)\b/);
     expect(t).toMatch(/tri-source/);
     expect(t).toMatch(/locale-aware template/);
   });
