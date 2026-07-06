@@ -50,6 +50,8 @@ describe('T3: localized nav toggle copy and deferred metadata', () => {
   const en = read(path.join(PORTFOLIO, 'index-en.html'));
   const ja = buildJapaneseTemplate(ko);
   const manifest = JSON.parse(read(path.join(PORTFOLIO, 'manifest.json')));
+  const manifestEn = JSON.parse(read(path.join(PORTFOLIO, 'manifest_en.json')));
+  const targetRole = 'Security Operations / Infrastructure Engineer';
 
   test('nav toggle accessible names are localized per locale', () => {
     expect(ko).toContain('aria-label="메뉴 열기"');
@@ -60,21 +62,23 @@ describe('T3: localized nav toggle copy and deferred metadata', () => {
     expect(ja).toContain('data-nav-label-close="メニューを閉じる"');
   });
 
-  test('title/meta/manifest strings stay on the AGENTS.md SSoT convention for this pass', () => {
-    expect(ko).toContain('<title>이재철 - 보안 엔지니어</title>');
-    expect(ko).toContain('<meta property="og:title" content="이재철 - 보안 엔지니어" />');
-    expect(ko).toContain('<meta name="twitter:title" content="이재철 - 보안 엔지니어" />');
-    expect(en).toContain('<title>Jaecheol Lee - Security Engineer</title>');
-    expect(en).toContain('<meta property="og:title" content="Jaecheol Lee - Security Engineer" />');
-    expect(en).toContain('<meta name="twitter:title" content="Jaecheol Lee - Security Engineer" />');
-    expect(ja).toContain('<title>イ・ジェチョル - セキュリティエンジニア</title>');
-    expect(ja).toContain(
-      '<meta property="og:title" content="イ・ジェチョル - セキュリティエンジニア" />'
+  test('title/meta/manifest strings use the hiring-decision role convention', () => {
+    expect(ko).toContain(`<title>이재철 - ${targetRole}</title>`);
+    expect(ko).toContain(`<meta property="og:title" content="이재철 - ${targetRole}" />`);
+    expect(ko).toContain(`<meta name="twitter:title" content="이재철 - ${targetRole}" />`);
+    expect(en).toContain(`<title>Jaecheol Lee - ${targetRole}</title>`);
+    expect(en).toMatch(
+      new RegExp(`<meta\\s+property="og:title"\\s+content="Jaecheol Lee - ${targetRole}"`)
     );
-    expect(manifest.name).toBe('이재철 - 보안 엔지니어');
-    expect(manifest.description).toBe(
-      '보안 엔지니어 포트폴리오 - 금융·공공 보안 인프라, SIEM, IaC, Observability 자동화'
+    expect(en).toMatch(
+      new RegExp(`<meta\\s+name="twitter:title"\\s+content="Jaecheol Lee - ${targetRole}"`)
     );
+    expect(ja).toContain(`<title>イ・ジェチョル - ${targetRole}</title>`);
+    expect(ja).toContain(`<meta property="og:title" content="イ・ジェチョル - ${targetRole}" />`);
+    expect(manifest.name).toBe(`이재철 - ${targetRole}`);
+    expect(manifest.description).toContain(targetRole);
+    expect(manifestEn.name).toBe(`Jaecheol Lee - ${targetRole}`);
+    expect(manifestEn.description).toContain(targetRole);
   });
 });
 
@@ -176,7 +180,9 @@ describe('Project deep-dive architecture diagram accessibility', () => {
     expect(renderer).toMatch(/createElement\('div', 'architecture-diagram'\)/);
     expect(renderer).toMatch(/diagram\.tabIndex = 0/);
     expect(renderer).toMatch(/diagram\.setAttribute\('role', 'img'\)/);
-    expect(renderer).toMatch(/diagram\.setAttribute\('aria-label', `\$\{project\.title\} architecture flow`\)/);
+    expect(renderer).toMatch(
+      /diagram\.setAttribute\('aria-label', `\$\{project\.title\} architecture flow`\)/
+    );
     expect(overlay).toMatch(/createArchitectureElement\(project\)/);
   });
 

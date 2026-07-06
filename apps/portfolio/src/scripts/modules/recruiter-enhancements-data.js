@@ -7,7 +7,16 @@ export const ROLE_PROFILES = [
       en: 'SIEM response, FortiGate, financial security operations',
       ja: 'SIEM対応、FortiGate、金融セキュリティ運用',
     },
-    keywords: ['Security', 'Alert', 'Blacklist', 'Bug Bounty', 'FortiGate', 'Splunk', 'Firewall', '보안'],
+    keywords: [
+      'Security',
+      'Alert',
+      'Blacklist',
+      'Bug Bounty',
+      'FortiGate',
+      'Splunk',
+      'Firewall',
+      '보안',
+    ],
   },
   {
     id: 'infra',
@@ -102,10 +111,12 @@ export function getRecruiterLabels() {
   const lang = (document.documentElement.lang || 'ko').toLowerCase();
   if (lang.startsWith('en')) {
     return {
-      quickTitle: 'Role-fit review paths',
-      quickDesc: 'Start with the role you are hiring for, then review the evidence that supports fit.',
+      quickTitle: 'Role-fit decision paths',
+      quickDesc:
+        'Start with the role you are hiring for, then inspect the evidence that supports fit.',
       matrixTitle: 'Project evidence map',
-      matrixDesc: 'Each card connects a hiring claim to the evidence a requesting team can inspect.',
+      matrixDesc:
+        'Each card connects a hiring claim to the evidence a requesting team can inspect.',
       role: 'Role',
       evidence: 'Evidence',
       contact: 'Contact',
@@ -116,10 +127,10 @@ export function getRecruiterLabels() {
   }
   if (lang.startsWith('ja')) {
     return {
-      quickTitle: '職務別レビュー経路',
+      quickTitle: '職務別判断ルート',
       quickDesc: '採用トラックを選ぶと関連プロジェクト根拠を確認できます。',
       matrixTitle: 'プロジェクト根拠マップ',
-      matrixDesc: 'ロール、根拠、リンクをレビューしやすく整理しました。',
+      matrixDesc: 'ロール、根拠、リンクを判断しやすく整理しました。',
       role: 'ロール',
       evidence: '根拠',
       contact: '連絡',
@@ -129,8 +140,8 @@ export function getRecruiterLabels() {
     };
   }
   return {
-    quickTitle: '직무별 검토 경로',
-    quickDesc: '채용하려는 역할을 먼저 고르면 검토할 근거로 바로 이동합니다.',
+    quickTitle: '직무별 판단 경로',
+    quickDesc: '채용하려는 역할을 먼저 고르면 판단할 근거로 바로 이동합니다.',
     matrixTitle: '프로젝트 근거 매트릭스',
     matrixDesc: '각 카드는 채용 판단 포인트와 확인 가능한 운영 근거를 연결합니다.',
     role: '역할',

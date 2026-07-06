@@ -35,8 +35,8 @@ function applyJapaneseHero(html) {
       'FortiGate HA、Splunk ES、FortiManager APIを運用手順と監査根拠につなげてきました。'
     )
     .replace(
-      /보안 운영 · 보안 인프라 · SRE 면접 제안 환영/g,
-      'セキュリティ運用・セキュリティ基盤の面接相談を歓迎'
+      /보안 운영 · 보안 인프라 역할의 면접 제안을 환영합니다/g,
+      'セキュリティ運用・セキュリティ基盤の面接依頼を歓迎'
     )
     .replace(/채용 검토·면접 논의 가능/g, '採用検討・面接相談が可能')
     .replace(/aria-label="대표 업무 근거"/g, 'aria-label="代表的な業務根拠"')
@@ -72,11 +72,11 @@ function applyJapaneseHero(html) {
       'ネットワーク分離・エンドポイントセキュリティ構築・運用'
     )
     .replace(
-      /본인가와 감사 대응에서 설명 가능한 보안 운영 근거를 먼저 볼 수 있게 정리했습니다\./g,
-      '本認可と監査対応で説明できるセキュリティ運用根拠を先に確認できるよう整理しました。'
+      /채용 판단에 필요한 공개 운영 근거, 연락·PDF, 최근 보안 인프라 이력을 먼저 배치했습니다\./g,
+      '採用判断に必要な公開運用根拠、連絡・履歴書PDF、直近の基盤運用を先に示します。'
     )
-    .replace(/공개 근거 바로가기/g, '公開根拠へのショートカット')
-    .replace(/검토할 핵심 근거/g, '確認すべき主要根拠')
+    .replace(/공개 운영 근거/g, '公開運用根拠')
+    .replace(/채용 판단 핵심 근거/g, '採用判断の主要根拠')
     .replace(/본인가·감사 대응 이력/g, '本認可・監査対応の経歴')
     .replace(/메일·PDF 확인/g, 'メール・PDF確認')
     .replace(
@@ -87,7 +87,7 @@ function applyJapaneseHero(html) {
       /Splunk ES · 알림 워크플로 · FortiManager API 기반 보안 이벤트 자동화/g,
       'Splunk ES · 通知ワークフロー · FortiManager APIベースのセキュリティイベントフロー'
     )
-    .replace(/aria-label="검토 경로"/g, 'aria-label="確認ルート"')
+    .replace(/aria-label="의사결정 경로"/g, 'aria-label="判断ルート"')
     .replace(/운영 맥락/g, '運用文脈')
     .replace(/금융 보안 운영 경력/g, '金融セキュリティ運用経験')
     .replace(/금융권 보안 운영 경력/g, '金融セキュリティ運用経験')
