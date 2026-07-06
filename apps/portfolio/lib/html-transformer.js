@@ -1,8 +1,7 @@
 /**
  * HTML transformation utilities for worker generation
- * ARCHITECTURE TODO: replace the current KO/EN/JA tri-source HTML shells with
- * one locale-aware template once localized metadata and body sections share a
- * single content contract.
+ * The current KO/EN/JA tri-source HTML shells are preserved until localized
+ * metadata and body sections share one locale-aware template contract.
  * @module html-transformer
  */
 
