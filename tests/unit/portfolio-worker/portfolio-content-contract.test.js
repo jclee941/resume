@@ -100,7 +100,7 @@ describe('portfolio first-screen hiring decision contract', () => {
     expect(countMatches(en, /\breview path\b/gi)).toBe(0);
     expect(countMatches(en, /\breview\b/gi)).toBeLessThanOrEqual(1);
     expect(countMatches(ja, /レビュー/g)).toBe(0);
-    expect(ja).not.toMatch(/>(Security Ops|Security Infra|Ops Visibility|Ops Workflow)</);
+    expect(ja).not.toMatch(/\b(Security Ops|Security Infra|Ops Visibility|Ops Workflow)\b/);
   });
 
   test('public proof details explain why each artifact is useful to hiring leads', () => {

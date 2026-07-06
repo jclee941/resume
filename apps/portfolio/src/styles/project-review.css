@@ -113,6 +113,7 @@
   font-family: var(--font-sans);
   font-size: var(--text-xs);
   line-height: var(--leading-relaxed);
+  overflow-wrap: anywhere;
   text-wrap: pretty;
 }
 @media (max-width: 768px) {
@@ -126,13 +127,5 @@
   }
   .project-case-notes {
     padding-left: 0;
-  }
-}
-@media (min-width: 769px) {
-  .project-case-notes dd {
-    display: -webkit-box;
-    overflow: hidden;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
   }
 }

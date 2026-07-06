@@ -19,21 +19,21 @@ async function generateOGImage(language = 'ko') {
   const content = {
     ko: {
       name: '이재철',
-      subtitle: 'Security Operations / Infrastructure Engineer',
+      subtitleLines: ['Security Operations', 'Infrastructure Engineer'],
       stats: '8년차 | 금융 보안 인프라 · SIEM · IaC',
       url: 'resume.jclee.me',
       label: '한국어',
     },
     en: {
       name: 'Jaecheol Lee',
-      subtitle: 'Security Operations / Infrastructure Engineer',
+      subtitleLines: ['Security Operations', 'Infrastructure Engineer'],
       stats: '8 years | Financial Security Infrastructure · SIEM · IaC',
       url: 'resume.jclee.me',
       label: 'English',
     },
     ja: {
       name: 'イ・ジェチョル',
-      subtitle: 'Security Operations / Infrastructure Engineer',
+      subtitleLines: ['Security Operations', 'Infrastructure Engineer'],
       stats: '8年目 | 金融セキュリティインフラ · SIEM · IaC',
       url: 'resume.jclee.me',
       label: '日本語',
@@ -64,13 +64,17 @@ async function generateOGImage(language = 'ko') {
   svg += `<text x="0" y="-80" font-family="Inter, sans-serif" font-size="72" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="-0.02em">${escapeXml(data.name)}</text>`;
 
   // Subtitle
-  svg += `<text x="0" y="0" font-family="Inter, sans-serif" font-size="48" font-weight="600" fill="#00d4e0" text-anchor="middle">${escapeXml(data.subtitle)}</text>`;
+  const subtitleLines = data.subtitleLines || ['Security Operations', 'Infrastructure Engineer'];
+  subtitleLines.forEach((line, index) => {
+    const y = index === 0 ? -18 : 34;
+    svg += `<text x="0" y="${y}" font-family="Inter, sans-serif" font-size="46" font-weight="600" fill="#00d4e0" text-anchor="middle">${escapeXml(line)}</text>`;
+  });
 
   // Stats
-  svg += `<text x="0" y="80" font-family="Inter, sans-serif" font-size="32" font-weight="500" fill="#c8d2d6" text-anchor="middle">${escapeXml(data.stats)}</text>`;
+  svg += `<text x="0" y="105" font-family="Inter, sans-serif" font-size="32" font-weight="500" fill="#c8d2d6" text-anchor="middle">${escapeXml(data.stats)}</text>`;
 
   // URL
-  svg += `<text x="0" y="140" font-family="Inter, sans-serif" font-size="28" font-weight="400" fill="#d946a8" text-anchor="middle">${escapeXml(data.url)}</text>`;
+  svg += `<text x="0" y="165" font-family="Inter, sans-serif" font-size="28" font-weight="400" fill="#d946a8" text-anchor="middle">${escapeXml(data.url)}</text>`;
 
   svg += '</g></svg>';
 
