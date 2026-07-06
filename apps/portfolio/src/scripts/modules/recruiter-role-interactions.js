@@ -52,11 +52,14 @@ export function bindRoleControls(cards, proofCounts) {
           const roles = (card.getAttribute('data-role') || '').split(/\s+/);
           card.classList.add(roles.includes(role) ? 'is-role-match' : 'is-role-dimmed');
         });
+        const visibleLabel =
+          button.querySelector('.role-chip__label')?.textContent?.trim() || roleProfile.label;
+        const selectedRole = { ...roleProfile, label: visibleLabel };
         status.textContent = selectedRoleStatusText(
-          roleProfile,
+          selectedRole,
           roleProofCountText(proofCounts, role)
         );
-        setRoleHistoryState(roleProfile);
+        setRoleHistoryState(selectedRole);
         document.querySelector('#projects')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
     }

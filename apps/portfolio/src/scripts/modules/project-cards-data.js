@@ -3,22 +3,22 @@ import { AUTOMATION_PROJECTS } from './project-cards-automation-data.js';
 export const PROJECTS = [
   {
     id: 'nexttrade-security-ops',
-    title: '넥스트레이드 매매체결시스템 보안 운영',
+    title: '넥스트레이드 보안 운영 아키텍처 자동화',
     period: '2025.03 ~ 2026.02',
     icon: 'shield',
-    stack: ['Splunk', 'Webhook Flow', 'FortiManager', 'Python', 'Docker'],
+    stack: ['Splunk', 'FortiGate', 'FortiManager', 'Python', 'Claude AI'],
     metrics: [
       { value: 'Custom', label: 'Detection Rule', icon: 'search' },
       { value: 'Continuous', label: 'Event Review', icon: 'eye' },
       { value: 'Webhook', label: 'Alert Flow', icon: 'zap' },
     ],
     description:
-      '매매체결시스템은 콘솔 확인 의존도가 높아 대응 속도와 감사 추적성이 과제였습니다. 클라우드 SaaS SIEM을 쓰기 어려운 제약 속에서 상용 SOAR 도입 대신 Splunk ES 탐지 → webhook relay → Slack/SMS로 이어지는 경량 파이프라인을 설계했습니다. 운영 통제권을 확보하는 대신 직접 유지보수 책임을 감수한 선택이었습니다.',
+      '매매체결시스템은 콘솔 확인 의존도가 높아 대응 속도와 감사 추적성이 과제였습니다. 클라우드 SaaS SIEM을 쓰기 어려운 제약 속에서 상용 SOAR 도입 대신 Splunk ES 탐지 → webhook relay → Slack/SMS 알림 → FortiManager API 정책 조회로 이어지는 경량 보안 운영 아키텍처를 설계했습니다. Python·Docker 기반 state tracker와 Claude AI 보조 분석을 연결해 반복 수동 확인과 오탐 검토 흐름을 정리하고, 운영 통제권과 감사 추적성을 확보했습니다.',
     achievements: [
-      'Splunk ES 탐지 룰 직접 설계·운영',
+      'Splunk ES 탐지 룰과 FortiGate 이벤트 분류 기준 설계',
       'Saved Search → webhook relay → Slack/SMS 알림 파이프라인 구축',
       'FortiManager API 기반 정책 조회 절차 정리',
-      '보안 이벤트 탐지 범위 확장',
+      'Claude AI 보조 분석으로 반복 오탐 검토 흐름 정리',
     ],
     architecture: `┌────────────┐
 │ Splunk ES  │

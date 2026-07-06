@@ -11,13 +11,13 @@ test.describe('Portfolio recruiter enhancements', () => {
   }) => {
     const projectCards = page.locator('#projects li.project-item');
     const initialProjectCount = await projectCards.count();
+    const securityOpsChip = page.getByRole('button', {
+      name: /보안 자동화|Security Automation/,
+    });
 
-    await page.getByRole('button', { name: /Security Ops/ }).click();
+    await securityOpsChip.click();
 
-    await expect(page.getByRole('button', { name: /Security Ops/ })).toHaveAttribute(
-      'aria-pressed',
-      'true'
-    );
+    await expect(securityOpsChip).toHaveAttribute('aria-pressed', 'true');
     await expect(page.locator('#projects')).toBeInViewport({ timeout: 2000 });
     await expect(page.locator('#projects li.project-item.is-role-match')).not.toHaveCount(0);
     await expect(
@@ -61,21 +61,43 @@ test.describe('Portfolio recruiter enhancements', () => {
   }) => {
     const matrix = page.locator('.project-evidence-matrix');
     await expect(matrix).toBeVisible();
-    await expect(page.getByRole('heading', { name: '직무별 검토 경로' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: '직무별 판단 경로' })).toBeVisible();
     await expect(page.getByRole('heading', { name: '프로젝트 근거 매트릭스' })).toBeVisible();
     await expect(matrix.locator('.project-evidence-card')).toHaveCount(4);
     await expect(matrix.locator('.project-evidence-card').first()).toContainText(/역할|Role/);
     await expect(matrix.locator('.project-evidence-card').first()).toContainText(/근거|Evidence/);
 
     const projectCards = page.locator('#projects li.project-item');
-    await expect(projectCards).toHaveCount(11);
+    await expect(projectCards).toHaveCount(12);
 
     const moreButton = page.locator('.project-more-btn');
     await expect(moreButton).toBeVisible();
     await moreButton.click();
 
     await expect(page.locator('#project-list')).toHaveClass(/is-expanded/);
-    await expect(projectCards.nth(10)).toBeVisible();
+    await expect(projectCards.nth(11)).toBeVisible();
+  });
+
+  test('default project order starts with security operations evidence', async ({ page }) => {
+    const expectedVisibleOrder = [
+      'Security Alert System',
+      'Observability Platform',
+      'Terraform Homelab IaC',
+      'Firewall Policy Automation',
+      'IP Blacklist Platform',
+    ];
+
+    for (const path of ['/', '/en/', '/ja/']) {
+      await page.goto(path, { waitUntil: 'domcontentloaded' });
+
+      const visibleProjectTitles = await page
+        .locator('#projects li.project-item:not(.project-item--collapsed) .project-link-title')
+        .evaluateAll((elements) =>
+          elements.map((element) => element.textContent?.replace('↗', '').trim())
+        );
+
+      expect(visibleProjectTitles).toEqual(expectedVisibleOrder);
+    }
   });
 
   test('project evidence links use contextual accessible labels', async ({ page }) => {

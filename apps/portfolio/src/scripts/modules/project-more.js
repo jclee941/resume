@@ -1,8 +1,8 @@
 /**
  * Project "more" Module
  *
- * Progressive disclosure for #projects: the top featured cards render visible,
- * the rest carry `.project-item--collapsed` (hidden via CSS). This adds a
+ * Progressive disclosure for #projects: the displayOrder-curated cards render
+ * visible, and the rest carry `.project-item--collapsed` (hidden via CSS). This adds a
  * "더보기 N개 / show N more" button that toggles `.is-expanded` on the list to
  * reveal/hide the extra cards. No project is removed from the DOM (SEO-safe,
  * accessible) — only the default visual prominence is curated.

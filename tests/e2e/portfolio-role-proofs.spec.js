@@ -1,10 +1,10 @@
 const { test, expect } = require('@playwright/test');
 
 const KOREAN_ROLE_EVIDENCE_COUNTS = [
-  ['security', 'Security Ops', '4개 근거'],
-  ['infra', 'Security Infra', '2개 근거'],
-  ['observability', 'Ops Visibility', '2개 근거'],
-  ['automation', 'Ops Workflow', '5개 근거'],
+  ['security', '보안 자동화', '4개 근거'],
+  ['infra', '보안 인프라', '2개 근거'],
+  ['observability', '관측성', '2개 근거'],
+  ['automation', '자동화 연계', '5개 근거'],
 ];
 
 const SECURITY_PROJECT_TITLES = [
@@ -24,15 +24,15 @@ test.describe('Portfolio role evidence routing', () => {
       await expect(roleChip).toContainText(countLabel);
     }
 
-    await page.getByRole('button', { name: /Security Ops/ }).click();
+    await page.getByRole('button', { name: /보안 자동화/ }).click();
 
-    await expect(page.getByRole('button', { name: /Security Ops/ })).toHaveAttribute(
+    await expect(page.getByRole('button', { name: /보안 자동화/ })).toHaveAttribute(
       'aria-pressed',
       'true'
     );
     const roleOrientation = page.locator('[data-role-status]');
     await expect(roleOrientation).toHaveAttribute('aria-live', 'polite');
-    await expect(roleOrientation).toContainText('Security Ops');
+    await expect(roleOrientation).toContainText('보안 자동화');
     await expect(roleOrientation).toContainText('4개 근거');
     await expect
       .poll(() =>
@@ -80,9 +80,9 @@ test.describe('Portfolio role evidence routing', () => {
     await expect(page.locator('.role-quick-paths')).toHaveCount(1);
     await expect(page.locator('.project-evidence-matrix')).toHaveCount(1);
 
-    await page.getByRole('button', { name: /Security Ops/ }).click();
+    await page.getByRole('button', { name: /보안 자동화/ }).click();
 
-    await expect(page.locator('[data-role-status]')).toContainText('Security Ops');
+    await expect(page.locator('[data-role-status]')).toContainText('보안 자동화');
 
     const projectScrollCalls = await page.evaluate(
       () => window.__roleScrollTargets.filter((target) => target === 'projects').length

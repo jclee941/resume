@@ -26,8 +26,8 @@ const TRANSLATIONS = {
 
     // Hero section
     'hero.title': '이재철',
-    'hero.subtitle': 'Security Operations / Infrastructure Engineer',
-    'hero.description': '채용 판단에 필요한 보안 운영 근거와 인프라 이력을 먼저 제공합니다',
+    'hero.subtitle': 'Security Automation / Infrastructure Engineer',
+    'hero.description': '채용 판단에 필요한 보안 자동화 근거와 인프라 이력을 먼저 제공합니다',
     'hero.download.complete': '완전한 이력서 다운로드',
     'hero.download.pdf': 'PDF',
     'hero.download.docx': 'DOCX',
@@ -68,9 +68,9 @@ const TRANSLATIONS = {
 
     // Hero section
     'hero.title': 'Jaecheol Lee',
-    'hero.subtitle': 'Security Operations / Infrastructure Engineer',
+    'hero.subtitle': 'Security Automation / Infrastructure Engineer',
     'hero.description':
-      'Security operations evidence and infrastructure history are organized for hiring decisions',
+      'Security automation evidence and infrastructure history are organized for hiring decisions',
     'hero.download.complete': 'Download Complete Resume',
     'hero.download.pdf': 'PDF',
     'hero.download.docx': 'DOCX',
@@ -111,8 +111,8 @@ const TRANSLATIONS = {
 
     // Hero section
     'hero.title': 'イ・ジェチョル',
-    'hero.subtitle': 'Security Operations / Infrastructure Engineer',
-    'hero.description': '採用判断に必要な運用根拠とセキュリティ基盤の履歴を先に示します',
+    'hero.subtitle': 'Security Automation / Infrastructure Engineer',
+    'hero.description': '採用判断に必要な自動化根拠とセキュリティ基盤の履歴を先に示します',
     'hero.download.complete': '完全版履歴書をダウンロード',
     'hero.download.pdf': 'PDF',
     'hero.download.docx': 'DOCX',
