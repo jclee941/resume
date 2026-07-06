@@ -7,6 +7,9 @@ describe('Worker Preamble', () => {
     deployedAt: '2024-01-01T00:00:00Z',
     indexHtml: '<html><body>KO</body></html>',
     indexEnHtml: '<html><body>EN</body></html>',
+    resumeDataJson: '{"locale":"ko"}',
+    resumeDataEnJson: '{"locale":"en"}',
+    resumeDataJaJson: '{"locale":"ja"}',
     manifestJson: '{"name":"test","short_name":"test"}',
     serviceWorker: 'self.addEventListener("fetch",()=>{})',
     mainJs: 'console.log("main")',
@@ -54,6 +57,12 @@ describe('Worker Preamble', () => {
 
     it('should contain MAIN_JS constant', () => {
       expect(code).toContain('MAIN_JS');
+    });
+
+    it('should contain locale resume data constants', () => {
+      expect(code).toContain('RESUME_DATA_JSON');
+      expect(code).toContain('RESUME_DATA_EN_JSON');
+      expect(code).toContain('RESUME_DATA_JA_JSON');
     });
 
     it('should contain ROBOTS_TXT constant', () => {

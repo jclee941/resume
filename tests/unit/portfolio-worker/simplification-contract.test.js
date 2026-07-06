@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const vm = require('vm');
 
 /**
  * Layout/content simplification contract: removes always-visible duplication.
@@ -77,5 +78,72 @@ describe('simplification: project cards do not re-present the description as bul
 
   test('main.js no longer bootstraps the redundant project-expand enhancement', () => {
     expect(mainSrc).not.toMatch(/initProjectExpand/);
+  });
+
+  test('main.js registers the service worker even when imported after window load', async () => {
+    let resolveFetch;
+    const registration = { scope: 'http://localhost/', update: jest.fn() };
+    const calls = [];
+    const context = {
+      console: { log: jest.fn(), warn: jest.fn() },
+      setInterval: jest.fn(),
+      requestAnimationFrame: (callback) => callback(),
+      fetch: jest.fn(
+        () =>
+          new Promise((resolve) => {
+            resolveFetch = () =>
+              resolve({
+                ok: true,
+                json: async () => ({ careers: [], skills: {} }),
+              });
+          })
+      ),
+      window: {
+        __RESUME_CHAT_DATA__: undefined,
+        location: { hash: '' },
+        addEventListener: jest.fn(),
+        reload: jest.fn(),
+      },
+      document: {
+        readyState: 'complete',
+        documentElement: { lang: 'ko' },
+        addEventListener: jest.fn(),
+        getElementById: jest.fn(),
+      },
+      navigator: {
+        serviceWorker: {
+          register: jest.fn(() => {
+            calls.push('register-service-worker');
+            return Promise.resolve(registration);
+          }),
+          addEventListener: jest.fn(),
+        },
+      },
+      initWebVitals: jest.fn(() => calls.push('web-vitals')),
+      initUI: jest.fn(() => calls.push('ui')),
+      initSkillRadar: jest.fn(() => calls.push('skill-radar')),
+      initCareerTimeline: jest.fn(() => calls.push('career-timeline')),
+      initProjectCards: jest.fn(() => calls.push('project-cards')),
+      initProjectMore: jest.fn(() => calls.push('project-more')),
+      initRecruiterEnhancements: jest.fn(() => calls.push('recruiter-enhancements')),
+    };
+    context.window.window = context.window;
+
+    const executableMain = mainSrc.replace(/^import .*;\n/gm, '');
+    vm.runInNewContext(executableMain, context);
+
+    expect(context.navigator.serviceWorker.register).toHaveBeenCalledWith('/sw.js');
+    expect(context.fetch).toHaveBeenCalledWith('/resume-data.json', {
+      headers: { Accept: 'application/json' },
+      credentials: 'same-origin',
+    });
+    expect(calls).toContain('register-service-worker');
+    expect(calls).not.toContain('skill-radar');
+
+    resolveFetch();
+    await new Promise((resolve) => setImmediate(resolve));
+
+    expect(context.initSkillRadar).toHaveBeenCalledTimes(1);
+    expect(context.initCareerTimeline).toHaveBeenCalledTimes(1);
   });
 });

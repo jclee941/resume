@@ -23,7 +23,6 @@ describe('html-transformer', () => {
         <a href="<!-- RESUME_PDF_URL -->">PDF</a>
         <a href="<!-- RESUME_DOCX_URL -->">DOCX</a>
         <a href="<!-- RESUME_MD_URL -->">MD</a>
-        <script>const chatData = /* RESUME_CHAT_DATA_B64_PLACEHOLDER */ '';</script>
       `;
 
       const options = {
@@ -39,7 +38,6 @@ describe('html-transformer', () => {
         resumePdfUrl: '/resume.pdf',
         resumeDocxUrl: '/resume.docx',
         resumeMdUrl: '/resume.md',
-        resumeChatDataBase64: "'YmFzZTY0'",
       };
 
       const result = injectPlaceholders(html, options);
@@ -56,22 +54,9 @@ describe('html-transformer', () => {
       expect(result).toContain(options.resumePdfUrl);
       expect(result).toContain(options.resumeDocxUrl);
       expect(result).toContain(options.resumeMdUrl);
-      expect(result).toContain(options.resumeChatDataBase64);
 
       expect(result).not.toContain('CSS_PLACEHOLDER');
       expect(result).not.toContain('HERO_CONTENT_PLACEHOLDER');
-      expect(result).not.toContain('RESUME_CHAT_DATA_B64_PLACEHOLDER');
-    });
-
-    test('uses default chat data when chat payload is empty string or falsy', () => {
-      const html = "<script>const chatData = /* RESUME_CHAT_DATA_B64_PLACEHOLDER */ '';</script>";
-
-      expect(injectPlaceholders(html, { resumeChatDataBase64: '' })).toContain(
-        "const chatData = '';"
-      );
-      expect(injectPlaceholders(html, { resumeChatDataBase64: null })).toContain(
-        "const chatData = '';"
-      );
     });
 
     test('leaves html unchanged when no placeholders are present', () => {
@@ -203,7 +188,6 @@ describe('html-transformer', () => {
             <a href="<!-- RESUME_PDF_URL -->">PDF</a>
             <a href="<!-- RESUME_DOCX_URL -->">DOCX</a>
             <a href="<!-- RESUME_MD_URL -->">MD</a>
-            <script>const chatData = /* RESUME_CHAT_DATA_B64_PLACEHOLDER */ '';</script>
           </body>
         </html>
       `;
@@ -221,7 +205,6 @@ describe('html-transformer', () => {
         resumePdfUrl: '/resume.pdf',
         resumeDocxUrl: '/resume.docx',
         resumeMdUrl: '/resume.md',
-        resumeChatDataBase64: "'YWJj'",
       });
 
       expect(typeof output).toBe('string');

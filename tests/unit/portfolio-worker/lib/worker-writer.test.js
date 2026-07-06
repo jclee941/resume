@@ -66,6 +66,9 @@ function createMinimalOptions(overrides = {}) {
     deployedAt: '2024-01-01T00:00:00Z',
     indexHtml: '<html>ko</html>',
     indexEnHtml: '<html>en</html>',
+    resumeDataJson: '{"locale":"ko"}',
+    resumeDataEnJson: '{"locale":"en"}',
+    resumeDataJaJson: '{"locale":"ja"}',
     manifestJson: '{}',
     serviceWorker: '// sw',
     mainJs: '// main',
@@ -124,6 +127,9 @@ describe('worker-writer', () => {
       expect(preambleOpts.deployedAt).toBe('2024-01-01T00:00:00Z');
       expect(preambleOpts.indexHtml).toBe('<html>ko</html>');
       expect(preambleOpts.indexEnHtml).toBe('<html>en</html>');
+      expect(preambleOpts.resumeDataJson).toBe('{"locale":"ko"}');
+      expect(preambleOpts.resumeDataEnJson).toBe('{"locale":"en"}');
+      expect(preambleOpts.resumeDataJaJson).toBe('{"locale":"ja"}');
       expect(preambleOpts.ogImageBase64).toBe('og==');
       // resume.pdf is served from the static assets binding, not inlined; the
       // preamble must NOT receive a resumePdfBase64 option.
@@ -184,6 +190,16 @@ describe('worker-writer', () => {
       buildWorkerCode(opts);
       const preambleOpts = generateWorkerPreamble.mock.calls[0][0];
       expect(preambleOpts.indexEnHtml).toBe('<html>ko</html>');
+    });
+
+    it('should fallback localized resume data to Korean data when not provided', () => {
+      const opts = createMinimalOptions();
+      delete opts.resumeDataEnJson;
+      delete opts.resumeDataJaJson;
+      buildWorkerCode(opts);
+      const preambleOpts = generateWorkerPreamble.mock.calls[0][0];
+      expect(preambleOpts.resumeDataEnJson).toBe('{"locale":"ko"}');
+      expect(preambleOpts.resumeDataJaJson).toBe('{"locale":"ko"}');
     });
 
     it('should fallback ogImageEnBase64 to ogImageBase64 when not provided', () => {

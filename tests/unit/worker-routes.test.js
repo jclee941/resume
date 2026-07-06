@@ -114,6 +114,14 @@ describe('Worker Routes', () => {
     it('should contain /main.js route', () => {
       expect(code).toContain('/main.js');
     });
+
+    it('should contain locale resume data routes', () => {
+      expect(code).toContain('/resume-data.json');
+      expect(code).toContain('/en/resume-data.json');
+      expect(code).toContain('/ja/resume-data.json');
+      expect(code).toContain('RESUME_DATA_EN_JSON');
+      expect(code).toContain('RESUME_DATA_JA_JSON');
+    });
   });
 
   describe('generateHealthRoute', () => {

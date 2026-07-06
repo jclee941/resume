@@ -56,11 +56,11 @@ export function mergeCareerUiMeta(careers) {
 }
 
 /**
- * Get career data from the build-injected SSoT snapshot.
+ * Get career data from the client-loaded SSoT snapshot.
  *
- * The build pipeline base64-injects the full generated portfolio data into
- * window.__RESUME_CHAT_DATA__ (see apps/portfolio/lib/build-orchestrator.js +
- * html-transformer.js). Its `careers[]` is derived from the SSoT
+ * The build pipeline exposes locale-specific portfolio data at
+ * /resume-data.json and main.js loads it into window.__RESUME_CHAT_DATA__.
+ * Its `careers[]` is derived from the SSoT
  * (packages/data/resumes/master/resume_data.json) by
  * tools/scripts/utils/resume-web-data-generator.js, so there is no hardcoded
  * career content here to drift out of sync. UI-only phase/status are merged on.
