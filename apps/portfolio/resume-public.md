@@ -1,6 +1,6 @@
 # 이재철
 
-인프라·보안 엔지니어
+Security Operations / Infrastructure Engineer
 
 ## 연락처
 
