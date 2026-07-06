@@ -3,7 +3,7 @@ function applyJapaneseReviewPacket(html) {
     .replace(/aria-label="채용 판단 자료"/g, 'aria-label="採用判断資料"')
     .replace(/채용 판단 자료/g, '採用判断資料')
     .replace(/대상 역할/g, '希望職種')
-    .replace(/보안 운영 · 보안 인프라 · SIEM/g, 'セキュリティ運用・セキュリティ基盤・SIEM')
+    .replace(/보안 자동화 · 보안 인프라 · SIEM/g, 'セキュリティ自動化・セキュリティ基盤・SIEM')
     .replace(/공개 근거/g, '公開根拠')
     .replace(/핵심 근거/g, '主要根拠')
     .replace(/경력 요약 · 프로젝트 근거 · PDF/g, '職務要約・プロジェクト根拠・PDF')
@@ -19,8 +19,8 @@ function applyJapaneseReviewPacket(html) {
     .replace(/확인 자료/g, '確認資料')
     .replace(/경력·프로젝트 근거와 PDF/g, '経歴・プロジェクト根拠とPDF')
     .replace(
-      /보안 운영 역할 판단에 필요한 경력, 공개 운영 근거, 연락·PDF를 연결했습니다\./g,
-      'セキュリティ運用の判断に必要な経歴、公開運用根拠、連絡・履歴書PDFを整理しました。'
+      /보안 자동화 역할 판단에 필요한 경력, 공개 자동화 근거, 연락·PDF를 연결했습니다\./g,
+      'セキュリティ自動化の判断に必要な経歴、公開自動化根拠、連絡・履歴書PDFを整理しました。'
     )
     .replace(/넥스트레이드 구축·운영 · FSDC 감사 대응/g, 'Nextrade構築・運用・FSDC監査対応')
     .replace(/경력 근거, 프로젝트 근거, 이력서 PDF/g, '経歴根拠、プロジェクト根拠、履歴書PDF')

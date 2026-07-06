@@ -1,11 +1,11 @@
 export const ROLE_PROFILES = [
   {
     id: 'security',
-    label: 'Security Ops',
+    label: 'Security Automation',
     proof: {
-      ko: 'SIEM 탐지·대응, FortiGate, 금융 보안 운영',
-      en: 'SIEM response, FortiGate, financial security operations',
-      ja: 'SIEM対応、FortiGate、金融セキュリティ運用',
+      ko: 'SIEM 탐지·대응, FortiGate, 금융 보안 자동화',
+      en: 'SIEM response, FortiGate, financial security automation',
+      ja: 'SIEM対応、FortiGate、金融セキュリティ自動化',
     },
     keywords: [
       'Security',
@@ -30,9 +30,9 @@ export const ROLE_PROFILES = [
   },
   {
     id: 'observability',
-    label: 'Ops Visibility',
+    label: 'Observability',
     proof: {
-      ko: 'Grafana·Prometheus·Loki·ELK 운영 가시성',
+      ko: 'Grafana·Prometheus·Loki·ELK 관측성',
       en: 'Grafana, Prometheus, Loki, and ELK visibility',
       ja: 'Grafana・Prometheus・Loki・ELKの可視化',
     },
@@ -40,11 +40,11 @@ export const ROLE_PROFILES = [
   },
   {
     id: 'automation',
-    label: 'Ops Workflow',
+    label: 'Automation Workflow',
     proof: {
       ko: 'jclee-bot, PR 검토, 시크릿 스캔, Check Run',
       en: 'jclee-bot, PR review, secret scan, and runtime logs',
-      ja: 'jclee-bot、PRレビュー、シークレットスキャン、運用ログ',
+      ja: 'jclee-bot、PRレビュー、シークレットスキャン、自動化ログ',
     },
     keywords: ['Security Alert', 'Bug Bounty', 'jclee-bot', 'SafetyWallet', 'tmux'],
   },

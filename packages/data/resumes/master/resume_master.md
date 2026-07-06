@@ -2,9 +2,9 @@
 
 보안 엔지니어
 
-폐쇄망 OA 운영에서 시작해 금융권 보안 인프라 구축·운영, SOC 탐지·알림 운영 스크립트, 관측성·IaC 기반 운영 개선을 이어 온 보안 엔지니어입니다. 직전 금융권 정보보안팀에서는 FortiGate HA 망분리 환경에서 Splunk ES, Slack/SMS 알림 워크플로, FortiManager API를 연결해 보안 이벤트 인지·분류·알림 흐름을 표준화했습니다. 현재 보안 인프라, Security Operations, Observability, 운영 스크립트 중심의 역할을 찾고 있습니다.
+폐쇄망 OA 환경에서 출발해 금융권 보안 인프라 구축, SIEM 탐지·알림 자동화, 관측성·IaC 기반 개선을 이어 온 보안 엔지니어입니다. 직전 금융권 정보보안팀에서는 FortiGate HA 망분리 환경에서 Splunk ES, Slack/SMS 알림 워크플로, FortiManager API, Claude AI 보조 분석을 연결해 보안 이벤트 인지·분류·알림 흐름을 설계했습니다. 현재 보안 인프라, Security Automation, SIEM Engineering, Observability 중심의 역할을 찾고 있습니다.
 
-**핵심 역량**: 금융권 보안 인프라 설계·운영 · FortiGate 다층 망분리 · Splunk SIEM 탐지·알림 흐름 표준화 · IaC 기반 관측성 · 금융감독원 감사 대응
+**핵심 역량**: 금융권 보안 인프라 설계·구축 · FortiGate 다층 망분리 · Splunk SIEM 탐지·알림 자동화 · IaC 기반 관측성 · 금융감독원 감사 대응
 
 ## 연락처
 
@@ -53,34 +53,35 @@
 
 ## 경력사항
 
-### ㈜아이티센 CTS | 정보보안 운영 엔지니어
+### ㈜아이티센 CTS | 보안 운영 자동화 엔지니어
 
-2025.03 ~ 2026.02 | Nextrade 매매체결시스템 운영SM (정보보안팀)
+2025.03 ~ 2026.02 | Nextrade 보안 운영 아키텍처 자동화 (정보보안팀)
 
 **업무 개요**
 
-- 매매체결시스템 정보보안팀 운영SM(System Maintenance)
-- 정보보안 장비 운영 및 임직원 환경의 보안 이벤트 확인
+- Splunk ES, FortiGate/FortiManager, Slack/SMS 알림을 연결한 보안 이벤트 대응 아키텍처 설계
+- Python·Docker 기반 자동화 도구와 Claude AI 보조 분석으로 반복 수동 확인·오탐 검토 흐름 정리
 
 주요 업무
 
-- SOC 교대 근무에서 보안 이벤트를 확인하고 등급별 대응 절차를 실행
-- 보안 솔루션(시스템/네트워크/엔드포인트) 상태 점검 및 이벤트 확인
-- 보안 이벤트 분석 및 등급별 대응 절차에 따른 인시던트 처리
+- Splunk ES Saved Search와 FortiGate 이벤트 기준을 연결해 탐지·분류·알림 흐름 설계
+- Webhook relay와 Slack/SMS 알림으로 보안 이벤트 전달 경로 표준화
+- FortiManager JSON-RPC API 기반 방화벽 정책 조회 흐름 구축
+- Claude AI를 활용한 위협 정보 수집·분류 보조와 오탐 흐름 정리
 - DR 사이트 점검 및 주기적 DR 테스트 수행
 - 취약점 스캔 결과 정리 및 심각도 기준의 패치 적용
 - 개발팀·거래팀·운영팀과 보안 요구사항 커뮤니케이션
-- 긴급 인시던트 발생 시 대응 절차에 따라 원인 분석 수행
+- 긴급 인시던트 발생 시 탐지 근거, 정책 조회, 알림 이력을 연결해 원인 분석 수행
 
 주요 성과
 
-- 보안 운영 증적과 감사 대응 자료를 정리
+- 보안 이벤트 탐지 룰, 알림 조건, 방화벽 정책 조회 결과를 감사 대응 가능한 근거로 구조화
 - 금융감독원 감사 자료 준비 및 대응 수행
 - 거래 플랫폼 운영 기준 유지
-- Splunk-FortiNet 연동 환경에서 방화벽 정책 조회·배포 운영 스크립트 작성
+- Splunk-FortiNet 연동 환경에서 방화벽 정책 조회·배포 자동화 스크립트 작성
 - Grafana 대시보드로 시스템·컨테이너·로그 지표를 한 화면에 정리
 - Claude AI를 활용한 위협 정보 수집·분류 스크립트 작성으로 수동 분석 의존도 낮춤
-- 알림 워크플로로 반복 API 호출 운영 스크립트
+- 알림 워크플로로 반복 API 호출 자동화 스크립트 정리
 - SIEM 탐지 룰 검토 및 조건 조정으로 오탐 정리
 - 취약점 SLA 기준에 따라 패치 일정을 관리
 - DR 복구 절차를 스크립트화하고 주기적 훈련 수행
@@ -205,7 +206,7 @@
 - **핵심기능**:
   - 중앙 집중식 로그 분석 및 정책 검증
   - 방화벽 실시간 데이터 수집 및 정책 위반 자동 탐지
-  - 대용량 이벤트 처리 시스템
+  - 이벤트 분류와 알림 흐름 자동화
 - **운영성과**:
   - 방화벽 중앙 관리
   - 정책 검증 운영 스크립트
@@ -228,7 +229,7 @@
 #### Public Grafana Dashboard (퍼블릭 대시보드)
 
 - **목적**: 실시간 인프라 모니터링 및 관찰성 플랫폼 공개
-- **기술스택**: Grafana, Prometheus, Loki, Tempo, Synology NAS
+- **기술스택**: Grafana, Prometheus, Loki, Tempo, Proxmox VE
 - **접근**: <https://grafana.jclee.me> (퍼블릭 접근 가능)
 - **핵심기능**:
   - 프로덕션 서비스 실시간 모니터링
@@ -247,7 +248,7 @@
 **프로젝트 개요**
 
 - **프로젝트 성격**: 매매체결시스템 (다자간매매체결)
-- **인프라 규모**: 정보보안 장비 통합 운영, 대용량 일일 주문 처리
+- **인프라 범위**: 정보보안 장비 통합, 매매체결시스템 보안 통제
 - **사용자**: 사내 임직원 전반
 - **핵심 시스템**: 매매체결시스템
 
@@ -264,23 +265,24 @@
   - EPP/DLP 설정 조정으로 단말 보안 에이전트 정책 정비
   - 구축 기간 동안 보안 운영 점검 내역과 심사 자료를 정리
 
-**운영 단계 (2025.03 ~ 2026.02)**
+**보안 운영 자동화 단계 (2025.03 ~ 2026.02)**
 
-- **역할**: 정보보안팀 운영 엔지니어 (아이티센 CTS)
+- **역할**: 보안 운영 아키텍처/자동화 엔지니어 (아이티센 CTS)
 - **주요 업무**:
-  - SOC 교대 근무에서 보안 이벤트를 확인하고 인시던트 대응 절차를 실행
-  - 보안 솔루션 상태 점검 및 등급별 대응 절차에 따른 인시던트 처리
+  - Splunk ES Saved Search, webhook relay, Slack/SMS 알림을 연결한 보안 이벤트 전달 흐름 설계
+  - FortiManager JSON-RPC API 기반 방화벽 정책 조회 자동화
+  - Claude AI 보조 분석으로 반복 수동 확인과 오탐 검토 흐름 정리
   - DR 사이트 점검 및 주기적 DR 테스트 수행
 - **주요 성과**:
-  - 보안 운영 증적과 감사 대응 자료를 정리
+  - 보안 이벤트 탐지·알림·정책 조회 결과를 감사 대응 가능한 운영 근거로 구조화
   - 금융감독원 감사에서 안정적인 대응 수행
   - 거래 플랫폼 가용성을 운영 기준에 맞춰 유지
-  - SIEM 룰 정비로 보안 오탐 흐름 정리
+  - SIEM 룰 정비와 AI 보조 분석으로 보안 오탐 흐름 정리
   - DR 복구 절차 스크립트화 및 주기적 훈련
 
 **경험 요약**
 
-- **운영 스크립트**: Python 기반 운영 스크립트로 반복 수작업 항목을 정리하고 표준화
+- **자동화 스크립트**: Python 기반 스크립트로 반복 수작업 항목을 정리하고 표준화
 - **안정성**: 거래 플랫폼 운영 기준과 DR 복구 절차를 문서화하고 점검
 - **보안 경험**: 취약점 대응 SLA와 운영 증적을 관리
 
@@ -300,10 +302,10 @@
 
 **시스템 규모 & 아키텍처**
 
-- **인프라**: Rocky Linux, Hyper-V 기반 홈랩 환경
-- **프로젝트**: 다양한 프로덕션 애플리케이션 (blacklist, mcp, resume, safework, grafana, alert-workflow 등)
-- **컨테이너**: Docker 기반 운영 컨테이너 (Prometheus, Loki, Promtail, cAdvisor, Node Exporter)
-- **모니터링**: 중앙 집중식 Grafana Stack (Synology NAS), 안정적 운영 유지
+- **인프라**: NVMe 스토리지 기반 Proxmox VE 홈랩 환경
+- **프로젝트**: resume, blacklist, mcp, grafana, alert-workflow, content automation 등
+- **컨테이너**: Docker 기반 관측성·자동화 컨테이너 (Prometheus, Loki, Promtail, cAdvisor, Node Exporter)
+- **모니터링**: 중앙 집중식 Grafana Stack (<https://grafana.jclee.me>)과 라이브 포트폴리오(<https://resume.jclee.me>)로 공개 검증 경로 제공
 
 **기술스택 & 도구**
 
@@ -311,97 +313,53 @@
 - **컨테이너**: Docker, Docker Compose, Watchtower, Portainer API
 - **모니터링**: Grafana, Prometheus, Loki, Tempo, Splunk, cAdvisor, Node Exporter
 - **언어**: Python, Node.js, JavaScript/TypeScript, Shell Script
-- **CI/CD**: GitLab CI/CD, Cloudflare Workers, Git-based automation
-- **네트워크**: Traefik (Reverse Proxy), NFS (Synology integration), Multi-host Docker
+- **CI/CD**: GitHub Actions, Cloudflare Workers, Git-based automation
+- **네트워크**: Traefik (Reverse Proxy), Proxmox VE, Multi-host Docker
 
-**세부 프로젝트 컴포넌트**
+**핵심 프로젝트 카테고리**
 
-**1. ML Agent Selection System**
+1. **Observability 아키텍처**
+   - Proxmox VE, Docker, Cloudflare Workers 로그와 메트릭을 Prometheus, Loki, Grafana로 통합
+   - Grafana Dashboard JSON을 코드로 관리해 변경 이력과 재현성을 확보
+   - 공개 Grafana 대시보드로 실제 운영 표면을 확인 가능하게 구성
 
-- **목적**: ML 기반 도구 라우팅 시스템
-- **기술스택**: Python, Flask, Scikit-learn, PostgreSQL, MCP Servers
-- **규모**: 스크립트 관리, Constitutional Framework
-- **성과**: 작업 흐름 정리, 도구 라우팅으로 의사결정 재활용성 강화
+2. **AI/자동화 거버넌스**
+   - Claude Code, MCP, GitHub App, 세션 자동화 도구를 운영 흐름으로 통합
+   - Python·n8n·Supabase 기반 콘텐츠 자동화 파이프라인으로 스크립트 생성, TTS, 영상 생성, 업로드 단계를 분리
+   - 작업 상태와 산출물 메타데이터를 저장해 실패 재시도와 채널별 후처리 기준을 관리
 
-**2. Automation**
+3. **CI/CD 및 컨테이너 파이프라인**
+   - Cloudflare Workers, Docker Compose, self-hosted runner 기반 배포·검증 경로 운영
+   - PR 기반 검증, 이미지 업데이트, health-check를 Git 기준으로 추적
+   - Worker 포트폴리오와 자동화 서비스의 빌드·테스트·배포 단계를 재현 가능하게 정리
 
-- **목적**: 운영 알림과 반복 API 호출 워크플로 표준화
-- **기술스택**: PostgreSQL, Redis, Docker, Webhook Automation
-
-**3. GitLab Enterprise Edition**
-
-- **목적**: Self-hosted DevOps 플랫폼 및 Container Registry
-- **기술스택**: GitLab EE, PostgreSQL, Redis, Traefik
-- **규모**: CI/CD pipelines, Container Registry, 주기적 자동 백업
-- **성과**: Private 코드 호스팅, 표준화된 CI/CD, 컨테이너 이미지 관리
-
-**4. Nginx Airgap Configuration**
-
-- **목적**: 폐쇄망 환경용 Nginx 설정 및 보안 강화
-- **기술스택**: Nginx, Airgap Deployment, Security Hardening
-- **특징**: 패키지 사전 준비, 오프라인 설치 지원
-- **성과**: 폐쇄망 환경에서 자급 배포 구조 표준화
-
-**5. Python Automation Framework**
-
-- **목적**: 인프라 운영 스크립트 프레임워크
-- **기술스택**: Python, Ansible, Bash, Git Hooks
-- **특징**: 파일 거버넌스, AI 보상 시스템, 세션 연속성
-- **성과**: 인프라 운영 수작업 정리 및 스크립트 재사용성 강화
-
-**6. Constitutional Governance System**
-
-- **목적**: 파일 생성 쿼터 관리 및 구조 거버넌스
-- **기술스택**: Bash, Python, JSONL, Git Hooks
-- **규모**: 파일 생성 쿼터 관리, 유사도 감지, 자동 로깅
-- **성과**: 파일 중복 억제 및 프로젝트 구조 일관성 유지
-
-**7. AI Compensation Core**
-
-- **목적**: AI 한계 보상 시스템
-- **기술스택**: Python, Pattern Detection, Multi-Model Validation
-- **보상 영역**: Context window, Hallucination 감지, Real-time data, Domain routing
-- **성과**: AI 응답 신뢰도 강화 및 환각 탐지 흐름 표준화
-
-**8. Ansible FortiManager Automation**
-
-- **목적**: FortiManager 방화벽 정책 스크립트 (Infrastructure as Code)
-- **기술스택**: Ansible, FortiManager API, Ansible Vault, Docker
-- **규모**: 플레이북 기반 fortinet.fortimanager collection
-- **기능**: 정책 조회/생성/수정, 백업/복원, 오브젝트 관리, Docker 배포 스크립트
-- **성과**: 정책 배포 스크립트 및 수작업 의존도 완화
-
-**9. NAS Infrastructure Deployment**
-
-- **목적**: Synology NAS 인프라 자동 배포 시스템
-- **기술스택**: Bash, rsync, SSH, Docker Compose, Synology DSM
-- **규모**: 관찰성·CI/CD·프록시 서비스 묶음 (Grafana, Prometheus, Loki, AlertManager, GitLab, Traefik, Splunk, Promtail, Node Exporter)
-- **기능**: 원격 Docker 관리, 자동 rsync 동기화, 멀티 서비스 오케스트레이션
-- **성과**: 배포 스크립트 및 인프라 동기화 흐름 표준화
+4. **보안 자동화 및 정책 관리**
+   - Splunk-FortiNet 연동, FortiManager API 조회, 방화벽 정책 검토 도구를 보안 이벤트 대응 흐름에 연결
+   - 알림 워크플로와 정책 조회 결과를 감사 대응 가능한 근거로 남기도록 설계
 
 **핵심 아키텍처 설계**
 
 1. **Universal Observability Architecture**
-   - 중앙 집중식 모니터링 (Synology NAS: grafana.jclee.me)
-   - 메트릭 수집: Prometheus (로컬 scrape → Synology 통합)
+   - 중앙 집중식 모니터링 (Proxmox VE + Grafana: grafana.jclee.me)
+   - 메트릭 수집: Prometheus (Proxmox/Docker scrape → Grafana 통합)
    - 로그 수집: Promtail → Loki → Grafana (실시간 스트리밍)
    - 컨테이너 메트릭: cAdvisor + Node Exporter
    - 헬스체크: 모든 서비스 `/health` 엔드포인트 표준화
 
 2. **Multi-Host Docker Context System**
    - 로컬 Docker: blacklist, mcp, local-exporters
-   - Synology Docker: grafana, xwiki, file
-   - NFS 마운트: 로컬 작업 디렉터리 → Synology (realtime sync)
+   - Proxmox/Docker: grafana, automation, content pipeline
+   - NVMe 스토리지 기반 작업 디렉터리와 서비스 데이터 분리
    - `.docker-context` 파일 기반 자동 라우팅 (투명한 컨텍스트 전환)
 
 3. **운영 자동화 프레임워크**
    - SlashCommand 기반 운영 스크립트 시스템
    - MCP 도구 생태계: filesystem, github, slack, tmux, sqlite, puppeteer
    - Constitutional AI 거버넌스 (자율 실행, 검증, 메타 학습)
-   - 운영 스크립트: 보안·모니터링·배포·테스트 영역의 Bash 스크립트 묶음
+   - 자동화 스크립트: 보안·모니터링·배포·테스트·콘텐츠 파이프라인 영역의 Python/Bash 스크립트 묶음
 
 4. **CI/CD 운영 파이프라인**
-   - GitLab CI/CD: resume (Cloudflare Workers), blacklist (Docker)
+   - GitHub Actions: resume (Cloudflare Workers), blacklist (Docker)
    - Watchtower: 이미지 업데이트와 재배포 절차 정리
    - Git-based: 변경사항 추적과 복구 절차 관리
    - 테스트 스크립트: Jest (유닛), Playwright (E2E)
@@ -411,10 +369,10 @@
 
 - **배포**: <https://resume.jclee.me> (Cloudflare Workers 엣지 응답)
 - **기술스택**: Cloudflare Workers, HTML/CSS, JSON-LD SEO, Grafana Loki 통합
-- **인프라**: GitLab (Primary) + GitHub (Mirror, CI/CD)
-- **CI/CD**: GitLab CI/CD 자동 배포, 배포 타임스탬프 주입
+- **인프라**: GitHub Actions + Cloudflare Workers + Grafana/Loki
+- **CI/CD**: GitHub Actions 기반 검증, 배포 타임스탬프 주입
 - **모니터링**:
-  - Grafana Loki 실시간 로깅 (<https://grafana.jclee.me/loki>)
+  - Grafana Loki 실시간 로깅 (<https://grafana.jclee.me>)
   - Prometheus 메트릭 수집 (/metrics 엔드포인트)
   - Web Vitals 추적 (LCP, FID, CLS, FCP, TTFB)
   - Health Check (/health): 배포 시각, 가동 시간, 요청 통계
@@ -440,22 +398,21 @@
 
 - 구성: Prometheus, Node Exporter, cAdvisor, Promtail
 - 메트릭: 시스템 (CPU, RAM, Disk), 컨테이너 (Docker stats), 로그 (Loki)
-- 중앙 통합: Synology Grafana
+- 중앙 통합: Grafana 대시보드
 
 **Splunk Demo (로그 분석)**
 
-- 규모: 대용량 이벤트 처리 가능
 - 구성: WebUI / HEC / Forwarder
 - 용도: 보안 이벤트 중앙 집중 분석, FortiNet 통합
 
 **운영 성과 (2024.09 ~ 현재)**
 
-- **운영 스크립트**: 반복 작업 운영 스크립트로 수작 배포 흐름 제거
+- **자동화 스크립트**: 반복 작업 자동화 스크립트로 수작 배포 흐름 정리
 - **안정성**: 장애 인지·복구 흐름 정비
 - **가시성**: 통합 대시보드 구축, 모든 서비스 실시간 모니터링
 - **테스트**: Jest + Playwright 통합, 핵심 로직 커버리지 확보
 - **보안**: SELinux + Firewall 구성 (현재 disabled, 활성화 준비 중)
-- **비용**: 로컬 + Synology 하이브리드로 클라우드 비용 부담 완화
+- **인프라**: Proxmox VE 기반 홈랩과 Cloudflare Edge를 조합해 공개 서비스 운영
 
 **기술적 하이라이트**
 
@@ -478,7 +435,7 @@
 
 ### 클라우드 및 가상화
 
-- 가상화: VMware vSphere, NSX-T, Hyper-V
+- 가상화: VMware vSphere, NSX-T, Proxmox VE, Hyper-V
 - 컨테이너: Docker, Kubernetes, Helm
 
 ### 운영 스크립트 및 개발

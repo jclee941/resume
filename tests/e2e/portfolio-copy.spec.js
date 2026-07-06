@@ -8,15 +8,15 @@ test.describe('Portfolio hiring copy', () => {
 
     const hero = page.locator('#hero');
     await expect(
-      hero.getByText('보안 운영 · 보안 인프라 역할의 면접 제안을 우선 검토합니다')
+      hero.getByText('보안 자동화 · 보안 인프라 역할의 면접 제안을 환영합니다')
     ).toBeVisible();
     await expect(
       hero.getByText(
-        '본인가와 감사 대응에서 설명 가능한 보안 운영 근거를 먼저 볼 수 있게 정리했습니다.'
+        '채용 판단에 필요한 자동화 근거, 연락·PDF, 최근 보안 인프라 이력을 먼저 배치했습니다.'
       )
     ).toBeVisible();
-    await expect(hero.getByText('검토 역할: 보안 운영 · 보안 인프라 · SIEM')).toBeVisible();
-    await expect(hero.getByText('면접 제안 우선 검토')).toBeVisible();
+    await expect(hero.getByText('보안 자동화 · 보안 인프라 · SIEM')).toBeVisible();
+    await expect(hero.getByText('면접 제안 가능')).toBeVisible();
     await expect(hero.getByText(/SRE|DevSecOps/)).toHaveCount(0);
     await expect(hero.getByText('검토 가능')).toHaveCount(0);
     await expect(hero.getByRole('link', { name: '면접 문의', exact: true })).toHaveAttribute(
@@ -38,7 +38,7 @@ test.describe('Portfolio hiring copy', () => {
       hero.getByRole('link', { name: /jclee-bot PR 리뷰 · 시크릿 스캔 · Check Run/ })
     ).toBeVisible();
     await expect(hero.getByText('증빙 프로젝트 보기')).toHaveCount(0);
-    await expect(hero.getByText('공개 증거 바로가기')).toHaveCount(0);
+    await expect(hero.getByText('공개 운영 근거')).toHaveCount(0);
   });
 
   test('should keep localized hiring copy aligned across English and Japanese pages', async ({
@@ -48,34 +48,38 @@ test.describe('Portfolio hiring copy', () => {
     const englishHero = page.locator('#hero');
     await expect(
       englishHero.getByText(
-        'Open to interview requests for security operations and security infrastructure roles'
+        'Open to interview requests for security automation and security infrastructure roles'
       )
     ).toBeVisible();
     await expect(
       englishHero.getByText('Open to interview requests', { exact: true })
     ).toBeVisible();
-    await expect(englishHero.getByText('Public evidence shortcuts')).toBeVisible();
+    await expect(englishHero.locator('.hero-public-proof__label')).toContainText(
+      'Public automation evidence'
+    );
     await expect(englishHero.getByText('Public proof shortcuts')).toHaveCount(0);
     await expect(englishHero.getByText(/passed the FSC|passed licensing audits/i)).toHaveCount(0);
-    await expect(englishHero.getByRole('link', { name: 'Interview request' })).toHaveAttribute(
+    await expect(
+      englishHero.getByRole('link', { name: 'Interview request', exact: true })
+    ).toHaveAttribute(
       'href',
       'mailto:qws941@kakao.com?subject=Hiring%20proposal%20or%20interview%20request'
     );
     await expect(
-      englishHero.getByRole('link', { name: 'Review career', exact: true })
+      englishHero.getByRole('link', { name: 'Career evidence', exact: true })
     ).toHaveAttribute('href', '#resume');
     await expect(
-      englishHero.getByRole('link', { name: 'Review projects', exact: true })
+      englishHero.getByRole('link', { name: 'Project evidence', exact: true })
     ).toHaveAttribute('href', '#projects');
 
     await page.goto('/ja/', { waitUntil: 'domcontentloaded' });
     const japaneseHero = page.locator('#hero');
     await expect(
-      japaneseHero.getByText('セキュリティ運用・セキュリティ基盤の面接相談を歓迎')
+      japaneseHero.getByText('セキュリティ自動化・セキュリティ基盤の面接依頼を歓迎')
     ).toBeVisible();
     await expect(
       japaneseHero.getByText(
-        '取引所セキュリティ基盤の構築・運用、SIEM通知、機器API照会の根拠を先に示します。'
+        '採用判断に必要な公開自動化根拠、連絡・履歴書PDF、直近の基盤構築を先に示します。'
       )
     ).toBeVisible();
     await expect(japaneseHero.getByText(/SRE|DevSecOps/)).toHaveCount(0);
@@ -84,9 +88,9 @@ test.describe('Portfolio hiring copy', () => {
     await expect(japaneseHero.getByText(/通過|FSC本認可/)).toHaveCount(0);
     await expect(japaneseHero.locator('.hero-proof-list')).toHaveAttribute(
       'aria-label',
-      '確認すべき主要根拠'
+      '採用判断の主要根拠'
     );
-    await expect(japaneseHero.getByRole('link', { name: '面接相談', exact: true })).toBeVisible();
+    await expect(japaneseHero.getByRole('link', { name: '面接依頼', exact: true })).toBeVisible();
     await expect(
       japaneseHero.getByRole('link', { name: 'プロジェクト確認', exact: true })
     ).toHaveAttribute('href', '#projects');
