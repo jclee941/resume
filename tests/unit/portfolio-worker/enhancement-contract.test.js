@@ -51,7 +51,7 @@ describe('T3: localized nav toggle copy and deferred metadata', () => {
   const ja = buildJapaneseTemplate(ko);
   const manifest = JSON.parse(read(path.join(PORTFOLIO, 'manifest.json')));
   const manifestEn = JSON.parse(read(path.join(PORTFOLIO, 'manifest_en.json')));
-  const targetRole = 'Security Operations / Infrastructure Engineer';
+  const targetRole = 'Security Automation / Infrastructure Engineer';
 
   test('nav toggle accessible names are localized per locale', () => {
     expect(ko).toContain('aria-label="메뉴 열기"');

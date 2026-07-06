@@ -248,7 +248,7 @@ apps/portfolio/
 - AIOps Platform Engineer
 - Infrastructure Automation
 - Observability Stack
-- Security Operations
+- Security Automation
 
 **Secondary**:
 

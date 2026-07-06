@@ -37,21 +37,21 @@ describe('portfolio hiring appeal copy', () => {
   test('Korean hero gives recruiters a direct hiring-decision path', () => {
     const html = buildHeroContent('ko');
 
-    expect(html).toContain('보안 운영 · 보안 인프라 역할의 면접 제안을 환영합니다');
+    expect(html).toContain('보안 자동화 · 보안 인프라 역할의 면접 제안을 환영합니다');
     expect(html).toContain(
-      '채용 판단에 필요한 공개 운영 근거, 연락·PDF, 최근 보안 인프라 이력을 먼저 배치했습니다.'
+      '채용 판단에 필요한 자동화 근거, 연락·PDF, 최근 보안 인프라 이력을 먼저 배치했습니다.'
     );
     expect(html).toContain('<ul class="hero-proof-list" aria-label="채용 판단 핵심 근거">');
-    expect(html).toContain('공개 운영 근거');
-    expect(html).toContain('대상 역할: Security Operations / Infrastructure Engineer');
-    expect(html).toContain('최근 근거: 넥스트레이드 보안 인프라 구축·운영과 FSDC 감사 대응');
+    expect(html).toContain('공개 자동화 근거');
+    expect(html).toContain('대상 역할: Security Automation / Infrastructure Engineer');
+    expect(html).toContain('최근 근거: 넥스트레이드 보안 인프라 구축·자동화와 FSDC 감사 대응');
     expect(html).toContain('면접 제안 가능');
     expect(html).toContain('PR 리뷰 · 시크릿 스캔 · Check Run으로 코드 변경 위험을 설명');
-    expect(html).toContain('메트릭·로그 운영 가시성으로 장애와 보안 신호를 함께 확인');
-    expect(html).toContain('운영 연계');
+    expect(html).toContain('메트릭·로그 관측성으로 장애와 보안 신호를 함께 확인');
+    expect(html).toContain('자동화 연계');
     expect(html).toContain('연락·PDF');
     expect(html).toContain(
-      '보안 운영 역할 판단에 필요한 경력, 공개 운영 근거, 연락·PDF를 연결했습니다.'
+      '보안 자동화 역할 판단에 필요한 경력, 공개 자동화 근거, 연락·PDF를 연결했습니다.'
     );
     expect(html).not.toContain('공개 증거 바로가기');
     expect(html).not.toContain('검토할 핵심 증거');
@@ -72,20 +72,18 @@ describe('portfolio hiring appeal copy', () => {
     const html = buildHeroContent('en');
 
     expect(html).toContain(
-      'Open to interview requests for security operations and security infrastructure roles'
+      'Open to interview requests for security automation and security infrastructure roles'
     );
     expect(html).toContain(
-      'Hiring decision signals are grouped first: public operations evidence, contact and resume PDF, and recent security infrastructure work.'
+      'Hiring decision signals are grouped first: public automation evidence, contact and resume PDF, and recent security infrastructure work.'
     );
-    expect(html).toContain('Target role: Security Operations / Infrastructure Engineer');
-    expect(html).toContain('Recent role: exchange security infrastructure build and operations');
+    expect(html).toContain('Target role: Security Automation / Infrastructure Engineer');
+    expect(html).toContain('Recent role: exchange security infrastructure build and automation');
     expect(html).toContain('Open to interview requests');
     expect(html).toContain('PR review, secrets scan, and check runs explain change risk');
-    expect(html).toContain(
-      'Metrics and logs provide operational visibility for incidents and signals'
-    );
-    expect(html).toContain('Ops Workflow');
-    expect(html).toContain('Public operations evidence');
+    expect(html).toContain('Metrics and logs provide observability for incidents and signals');
+    expect(html).toContain('Automation Workflow');
+    expect(html).toContain('Public automation evidence');
     expect(html).not.toContain('Public proof shortcuts');
     expect(html).not.toContain('Review path');
     expect(html).not.toContain('Security Infrastructure, and SRE');
@@ -108,17 +106,17 @@ describe('portfolio hiring appeal copy', () => {
   test('Japanese hero localizes recruiter evidence and hiring-decision actions', () => {
     const html = buildHeroContent('ja');
 
-    expect(html).toContain('セキュリティ運用・セキュリティ基盤の面接依頼を歓迎');
+    expect(html).toContain('セキュリティ自動化・セキュリティ基盤の面接依頼を歓迎');
     expect(html).toContain(
-      '採用判断に必要な公開運用根拠、連絡・履歴書PDF、直近の基盤運用を先に示します。'
+      '採用判断に必要な公開自動化根拠、連絡・履歴書PDF、直近の基盤構築を先に示します。'
     );
     expect(html).toContain('<ul class="hero-proof-list" aria-label="採用判断の主要根拠">');
-    expect(html).toContain('希望職種: Security Operations / Infrastructure Engineer');
-    expect(html).toContain('直近役割: 取引所セキュリティ基盤の構築・運用');
+    expect(html).toContain('希望職種: Security Automation / Infrastructure Engineer');
+    expect(html).toContain('直近役割: 取引所セキュリティ基盤の構築・自動化');
     expect(html).toContain('面接依頼を受付中');
     expect(html).toContain('PR確認・シークレットスキャン・チェックランで変更リスクを説明');
-    expect(html).toContain('メトリクスとログの運用可視性で障害とセキュリティ信号を確認');
-    expect(html).toContain('運用連携');
+    expect(html).toContain('メトリクスとログの可観測性で障害とセキュリティ信号を確認');
+    expect(html).toContain('自動化連携');
     expect(html).not.toContain('職務別レビュー経路');
     expect(html).not.toContain('セキュリティ基盤・SRE');
     expect(html).not.toContain('DevSecOps');
@@ -135,7 +133,7 @@ describe('portfolio hiring appeal copy', () => {
     expect(html).not.toMatch(/[\uac00-\ud7a3]{2,}/);
   });
 
-  test('client recruiter role evidence labels avoid stale automation copy', () => {
+  test('client recruiter role evidence labels avoid stale operations copy', () => {
     const roleProfiles = importModuleExport(
       'src/scripts/modules/recruiter-enhancements-data.js',
       'ROLE_PROFILES'
@@ -145,10 +143,10 @@ describe('portfolio hiring appeal copy', () => {
       ...Object.values(role.proof || {}),
     ]);
 
-    expect(roleCopy).toContain('Ops Workflow');
+    expect(roleCopy).toContain('Automation Workflow');
     expect(roleCopy).toContain('jclee-bot, PR 검토, 시크릿 스캔, Check Run');
-    expect(roleCopy).not.toContain('Automation');
+    expect(roleCopy).not.toContain('Ops Workflow');
     expect(roleCopy).not.toContain('jclee-bot, PR 검토, 시크릿 스캔, 운영 로그');
-    expect(roleCopy.join('\n')).not.toMatch(/自動化|자동화/);
+    expect(roleCopy.join('\n')).not.toMatch(/Security Ops|Ops Visibility/);
   });
 });

@@ -5,7 +5,7 @@ const { buildHeroContent } = require('../../../apps/portfolio/lib/hero-content')
 const { HERO_CONTENT } = require('../../../apps/portfolio/lib/hero-content-data');
 
 const PORTFOLIO_DIR = path.resolve(__dirname, '../../../apps/portfolio');
-const TARGET_ROLE = 'Security Operations / Infrastructure Engineer';
+const TARGET_ROLE = 'Security Automation / Infrastructure Engineer';
 
 function readPortfolioFile(fileName) {
   return fs.readFileSync(path.join(PORTFOLIO_DIR, fileName), 'utf8');
@@ -36,7 +36,7 @@ function visibleText(html) {
 }
 
 describe('portfolio first-screen hiring decision contract', () => {
-  test('KO and EN metadata names the security operations/infrastructure role', () => {
+  test('KO and EN metadata names the security automation/infrastructure role', () => {
     for (const fileName of ['index.html', 'index-en.html']) {
       const html = readPortfolioFile(fileName);
       const title = extractTagContent(html, /<title>([^<]+)<\/title>/i);
@@ -68,14 +68,14 @@ describe('portfolio first-screen hiring decision contract', () => {
     });
 
     const expectations = {
-      ko: ['채용 판단', '공개 운영 근거', '연락·PDF', '면접 제안'],
+      ko: ['채용 판단', '공개 자동화 근거', '연락·PDF', '면접 제안'],
       en: [
         'hiring decision',
-        'public operations evidence',
+        'public automation evidence',
         'contact and resume PDF',
         'interview request',
       ],
-      ja: ['採用判断', '公開運用根拠', '連絡・履歴書PDF', '面接依頼'],
+      ja: ['採用判断', '公開自動化根拠', '連絡・履歴書PDF', '面接依頼'],
     };
 
     for (const [locale, requiredTerms] of Object.entries(expectations)) {
@@ -110,7 +110,7 @@ describe('portfolio first-screen hiring decision contract', () => {
     expect(combinedHero).toMatch(/시크릿 스캔|secrets scan|シークレットスキャン/);
     expect(combinedHero).toMatch(/Check Run|check runs|チェックラン/);
     expect(combinedHero).toMatch(/메트릭.*로그|metrics.*logs|メトリクス.*ログ/);
-    expect(combinedHero).toMatch(/운영 가시성|operational visibility|運用可視性/);
+    expect(combinedHero).toMatch(/관측성|observability|可観測性/);
     expect(combinedHero).toMatch(
       /보안 이벤트 수집|security event collection|セキュリティイベント収集/
     );
