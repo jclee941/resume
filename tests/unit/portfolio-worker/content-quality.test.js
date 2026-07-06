@@ -13,14 +13,14 @@ const MASTER_DIR = path.resolve(__dirname, '../../../packages/data/resumes/maste
 const PORTFOLIO_DIR = path.resolve(__dirname, '../../../apps/portfolio');
 const MASTER_LOCALE_FILES = ['resume_data.json', 'resume_data_en.json', 'resume_data_ja.json'];
 const STALE_ROLE_LABELS = {
-  'resume_data.json': [/자동화/],
-  'resume_data_en.json': [/\bAutomation\b/],
-  'resume_data_ja.json': [/標準化/, /自動化/],
+  'resume_data.json': [/운영\s*SM/i, /System Maintenance/i],
+  'resume_data_en.json': [/\bSecurity Operations\b/, /\bSystem Maintenance\b/i],
+  'resume_data_ja.json': [/セキュリティ運用/, /System Maintenance/i],
 };
 const STALE_PROFILE_TERMS = {
-  'resume_data.json': [/자동화/],
-  'resume_data_en.json': [/\b(?:automation|automated|automating)\b/i],
-  'resume_data_ja.json': [/自動化/],
+  'resume_data.json': [/운영\s*SM/i, /System Maintenance/i],
+  'resume_data_en.json': [/\bSystem Maintenance\b/i],
+  'resume_data_ja.json': [/System Maintenance/i],
 };
 const DATA_FILES = [
   { dir: MASTER_DIR, file: 'resume_data.json' },
@@ -110,7 +110,7 @@ describe('SSoT content quality', () => {
     for (const file of MASTER_LOCALE_FILES) {
       const filePath = path.join(MASTER_DIR, file);
 
-      test(`${file} has no AI-slop profile terms outside certificate/award names`, () => {
+      test(`${file} has no stale maintenance profile terms outside certificate/award names`, () => {
         const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
         const staleProfileTerms = STALE_PROFILE_TERMS[file] || [];
         const offenders = collectProfileCopy(data)
@@ -134,7 +134,7 @@ describe('SSoT content quality', () => {
         expect(offenders).toEqual([]);
       });
 
-      test(`${file} has no stale automation-role label in current or hope roles`, () => {
+      test(`${file} has no stale maintenance-role label in current or hope roles`, () => {
         const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
         const staleLabels = STALE_ROLE_LABELS[file] || [];
         const roleStrings = [

@@ -51,7 +51,7 @@ describe('mergeCareerUiMeta()', () => {
       {
         company: 'ITCEN CTS Co., Ltd.',
         period: '2025.03 ~ 2026.02',
-        role: 'Security Operations Engineer (SOC/Security)',
+        role: 'Security Infrastructure Engineer (SIEM/Security)',
         achievements: ['Built a SIEM detection/response pipeline'],
       },
       { company: 'メタネットMプラットフォーム', period: '2020.08 ~ 2021.08', role: 'インフラ運用' },
@@ -59,7 +59,7 @@ describe('mergeCareerUiMeta()', () => {
     expect(out[0].phase).toBe('운영');
     expect(out[0].status).toBe('completed');
     expect(out[1].phase).toBe('자동화');
-    expect(out[0].role).toBe('Security Operations Engineer (SOC/Security)');
+    expect(out[0].role).toBe('Security Infrastructure Engineer (SIEM/Security)');
     // SSoT-derived achievements pass through untouched (feeds timeline Impact text).
     expect(out[0].achievements).toEqual(['Built a SIEM detection/response pipeline']);
   });

@@ -1,7 +1,7 @@
 {
-  "name": "이재철 - Security Operations / Infrastructure Engineer",
+  "name": "이재철 - Security Automation / Infrastructure Engineer",
   "short_name": "JC Lee Resume",
-  "description": "Security Operations / Infrastructure Engineer 포트폴리오 - 금융 보안 인프라, SIEM, 운영 가시성",
+  "description": "Security Automation / Infrastructure Engineer 포트폴리오 - 금융 보안 인프라, SIEM, 관측성",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0f0f23",

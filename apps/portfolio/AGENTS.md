@@ -84,7 +84,7 @@ index.html → generate-worker.js → worker.js → entry.js → Workers Builds
 Hardcoded content in `index.html`/`index-en.html` must match SSoT
 (`resume_data.json`):
 
-- Title/meta/OG/Twitter tags: `Security Operations / Infrastructure Engineer` across KO/EN/JA, with localized name prefixes where needed
+- Title/meta/OG/Twitter tags: `Security Automation / Infrastructure Engineer` across KO/EN/JA, with localized name prefixes where needed
 - JSON-LD Person schema: `knowsAbout` (12 domains), `jobTitle`, `description`
 - About section: career highlights (quantified achievements), current focus
 - Hero name, role line, and positioning sentence; section copy

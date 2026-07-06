@@ -81,8 +81,8 @@
       "about": "금융권 보안 인프라와 SIEM 엔지니어링에서 FortiGate HA 망분리, Splunk ES 탐지 룰, Slack/SMS 알림, FortiManager API 조회, Claude AI 보조 분석, 감사 대응 문서화를 구축과 자동화 관점에서 맡았습니다.\n\n[찾는 역할]\n보안 자동화, 보안 인프라, SIEM 엔지니어링 역할의 제안과 면접을 우선 검토합니다. 반복 대응을 문서·스크립트·API 연동으로 줄이고, 감사·장애 상황에서 설명 가능한 운영 근거를 남기는 팀에 잘 맞습니다.\n\n[핵심 근거]\n- 넥스트레이드: Splunk ES Saved Search, Webhook relay, Slack/SMS 알림, FortiManager API 조회, Claude AI 보조 분석 흐름 설계\n- 보안 인프라 구축: FortiGate HA, 망분리, 엔드포인트 보안, Ansible Role 기반 설정 관리\n- FSDC: 금감원 감사 대응, DB 접근제어 쿼리 튜닝, DLP 정책 산출물 관리\n- 네트워크/시스템: NSX-T, Wazuh, NAC, VPN, Linux, Python/Ansible 자동화 스크립트\n\n[기술/자격]\nSplunk ES, FortiGate/FortiManager, FortiAnalyzer, Ansible, Python, Terraform, Docker, Linux, Grafana/Prometheus/Loki, Elasticsearch/Kibana, CCNP\n\n포트폴리오: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
     },
     "jobkorea": {
-      "headline": "보안 자동화/인프라 엔지니어 | 본인가·감사 대응 | FortiGate · Splunk ES",
-      "about": "[지원 방향]\n보안 자동화, 보안 인프라, SIEM 엔지니어링 역할의 제안과 면접을 우선 검토합니다. FortiGate, Splunk ES, FortiManager API, Claude AI 보조 분석, Python/Ansible을 대응 아키텍처로 연결해 반복 대응을 줄이고, 감사·장애 상황에서 설명 가능한 근거를 남겨 왔습니다.\n\n[경력 요약]\n- 아이티센 CTS: 넥스트레이드 보안 운영 아키텍처 자동화. Splunk ES Saved Search, Webhook relay, Slack/SMS 알림, FortiManager API 조회, Claude AI 보조 분석 흐름 설계\n- 가온누리정보시스템: 넥스트레이드 보안 인프라 구축. FortiGate HA, 망분리, 엔드포인트 보안, Ansible Role 기반 설정 관리\n- 콴텍투자일임: 금융보안데이터센터(FSDC) 인프라 표준화. 금감원 감사 대응, DB 접근제어 쿼리 튜닝, DLP 정책 산출물 관리\n- 조인트리/메타넷엠플랫폼: NSX-T, Wazuh, NAC, VPN, Python/Ansible 기반 자동화 스크립트\n- 엠티데이타: KAI 폐쇄망 Linux/OA 환경, 패치·방화벽 정책 변경 이력 관리\n\n[기술/자격]\nSplunk ES, FortiGate/FortiManager, FortiAnalyzer, Ansible, Python, Terraform, Docker, Linux, NSX-T, Wazuh, Grafana/Prometheus/Loki, Elasticsearch/Kibana, CCNP\n\n포트폴리오: https://resume.jclee.me",
+      "headline": "보안 인프라/SIEM 엔지니어 | 본인가·감사 대응 | FortiGate · Splunk ES",
+      "about": "[지원 방향]\n보안 인프라, SIEM 엔지니어링, 금융권 정보보안 역할의 제안과 면접을 우선 검토합니다. FortiGate, Splunk ES, FortiManager API, Claude AI 보조 분석, Python/Ansible을 대응 아키텍처로 연결해 반복 대응을 줄이고, 감사·장애 상황에서 설명 가능한 근거를 남겨 왔습니다.\n\n[경력 요약]\n- 아이티센 CTS: 넥스트레이드 보안 이벤트 대응 아키텍처 설계. Splunk ES Saved Search, Webhook relay, Slack/SMS 알림, FortiManager API 조회, Claude AI 보조 분석 흐름 설계\n- 가온누리정보시스템: 넥스트레이드 보안 인프라 구축. FortiGate HA, 망분리, 엔드포인트 보안, Ansible Role 기반 설정 관리\n- 콴텍투자일임: 금융보안데이터센터(FSDC) 인프라 표준화. 금감원 감사 대응, DB 접근제어 쿼리 튜닝, DLP 정책 산출물 관리\n- 조인트리/메타넷엠플랫폼: NSX-T, Wazuh, NAC, VPN, Python/Ansible 기반 스크립트\n- 엠티데이타: KAI 폐쇄망 Linux/OA 환경, 패치·방화벽 정책 변경 이력 관리\n\n[기술/자격]\nSplunk ES, FortiGate/FortiManager, FortiAnalyzer, Ansible, Python, Terraform, Docker, Linux, NSX-T, Wazuh, Grafana/Prometheus/Loki, Elasticsearch/Kibana, CCNP\n\n포트폴리오: https://resume.jclee.me",
       "defaultJobCode": "1000238"
     }
   },
@@ -100,7 +100,7 @@
       "period": "2025.03 ~ 2026.02",
       "duration": "1년",
       "project": "넥스트레이드 보안 운영 아키텍처 자동화",
-      "role": "보안 운영 자동화 엔지니어",
+      "role": "보안 인프라 엔지니어",
       "client": "넥스트레이드(주)",
       "teamSize": "정보보안팀 자동화 셀",
       "myRole": "SIEM·방화벽 정책 자동화 설계",
@@ -1015,7 +1015,7 @@
   },
   "careerSummary": {
     "ko": {
-      "headline": "보안 인프라·자동화 경력기술서",
+      "headline": "보안 인프라·SIEM 경력기술서",
       "paragraphs": [
         "(주)아이티센 CTS (2025.03 ~ 2026.02): 넥스트레이드 매매체결시스템에서 Splunk ES 탐지 룰, Slack/SMS 알림 워크플로, FortiManager API 기반 방화벽 정책 조회, Claude AI 보조 분석을 연결한 보안 운영 아키텍처를 설계했습니다.",
         "(주)가온누리정보시스템 (2024.03 ~ 2025.02): 넥스트레이드 보안 인프라 구축 단계에서 FortiGate HA, 망분리, 엔드포인트 보안, Ansible Role 기반 설정 정리, 금융위 본인가 대응 업무를 수행했습니다.",
@@ -1024,7 +1024,7 @@
         "(주)메타넷엠플랫폼 (2020.08 ~ 2021.08): 컨택센터 재택근무 환경에서 SSL VPN/NAC 운영, 단말 등록 절차 정리, Python·Ansible 기반 운영 스크립트, FortiGate VPN 세션 모니터링을 수행했습니다.",
         "(주)엠티데이타 (2018.10 ~ 2019.10): 한국항공우주산업(KAI) 폐쇄망 환경에서 Linux 로그 분석, WSUS 패치, 방화벽 정책 변경 이력 관리, OA 운영 지원을 수행했습니다."
       ],
-      "closing": "보안 인프라 구축, SIEM 탐지·알림, 감사 대응, 반복 대응 자동화를 연결해 운영 근거를 문서와 시스템에 남기는 방식으로 일했습니다."
+      "closing": "보안 인프라 구축, SIEM 탐지·알림, 감사 대응, 반복 대응 절차 표준화를 연결해 운영 근거를 문서와 시스템에 남기는 방식으로 일했습니다."
     }
   }
 }

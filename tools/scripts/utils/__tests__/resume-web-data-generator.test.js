@@ -54,7 +54,7 @@ describe('generateWebData → careers[] (SSoT timeline data)', () => {
   it('S2: drift guard — first career role + segmented company URLs match live SSoT', () => {
     const out = generateWebData(ssot);
     assert.equal(out.careers[0].role, ssot.careers[0].role);
-    assert.match(out.careers[0].role, /보안 운영|Security Operations|SOC/);
+    assert.match(out.careers[0].role, /보안 인프라|Security Infrastructure|SIEM/);
     [3, 4, 5].forEach((i) => {
       if (ssot.careers[i] && ssot.careers[i].companyUrl) {
         assert.equal(out.careers[i].companyUrl, ssot.careers[i].companyUrl);
@@ -223,11 +223,12 @@ describe('generateWebData → resume[].stats (the ACTUAL static-card render path
     );
   });
 
-  it('S2e: actual English locale cards use concrete security operations copy', () => {
+  it('S2e: actual English locale cards use concrete security infrastructure copy', () => {
     const out = generateWebData(enSsot, 'en');
 
-    assert.match(out.resume[0].description, /Splunk ES alerts/);
-    assert.match(out.resume[0].description, /FortiManager API policy lookups/);
+    assert.match(out.resume[0].description, /Splunk ES Saved Searches/);
+    assert.match(out.resume[0].description, /Slack\/SMS alerting/);
+    assert.match(out.resume[0].description, /FortiManager JSON-RPC API policy lookups/);
     assert.deepEqual(out.resume[0].stats, [
       'Splunk ES',
       'Detection & Response',

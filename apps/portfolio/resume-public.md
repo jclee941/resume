@@ -1,6 +1,6 @@
 # 이재철
 
-Security Operations / Infrastructure Engineer
+Security Automation / Infrastructure Engineer
 
 ## 연락처
 
@@ -37,22 +37,22 @@ Security Operations / Infrastructure Engineer
 
 ## 경력사항
 
-### ㈜아이티센 CTS | 정보보안 운영 엔지니어
+### ㈜아이티센 CTS | 보안 인프라 엔지니어
 
-2025.03 ~ 2026.02 | 넥스트레이드 운영SM (정보보안팀)
+2025.03 ~ 2026.02 | 넥스트레이드 보안 이벤트 대응 아키텍처
 
 주요 업무
 
-- 금융위원회 본인가 이후 운영 보안 체계 안정화
-- 보안 솔루션 통합 운영 및 정책 정비
-- 보안 이벤트 모니터링 및 교대 대응
-- 정기 보안 점검 및 취약점 관리
+- Splunk ES Saved Search 기반 보안 이벤트 탐지·알림 흐름 설계
+- FortiManager API 기반 방화벽 정책 조회 절차 구성
+- Slack/SMS 알림과 Webhook relay 연동 흐름 정리
+- Claude AI 보조 분석을 활용한 반복 오탐 검토 절차 표준화
 
 주요 성과
 
-- **대응 표준화**: 보안 이벤트 대응 흐름 표준화
+- **대응 아키텍처**: 보안 이벤트 탐지·알림·정책 조회 흐름 표준화
 - **규제 대응**: 금융감독원 정기 감사 대응 자료 정리
-- **운영 정비**: 보안 정책 재설계로 탐지 기준 정비
+- **근거 정리**: 탐지 룰, 알림 조건, 방화벽 정책 조회 결과를 변경 이력과 함께 정리
 
 ---
 
@@ -172,9 +172,9 @@ Security Operations / Infrastructure Engineer
 
 ## 주요 프로젝트
 
-### 실전 보안 운영 자동화 (2024 ~ 현재)
+### 실전 보안 자동화 플랫폼 (2024 ~ 현재)
 
-**개인 프로젝트 | Security Operations Platform**
+**개인 프로젝트 | Security Automation Platform**
 **GitHub**: [github.com/qws941](https://github.com/qws941)
 
 #### Splunk-FortiNet Integration

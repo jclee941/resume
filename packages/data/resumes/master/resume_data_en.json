@@ -86,19 +86,19 @@
       "company": "ITCEN CTS Co., Ltd.",
       "period": "2025.03 ~ 2026.02",
       "duration": "1 year",
-      "project": "Nextrade Security Operations Architecture Automation",
-      "role": "Security Automation Engineer",
+      "project": "Nextrade Security Event Response Architecture Automation",
+      "role": "Security Infrastructure Engineer",
       "client": "Nextrade Co., Ltd.",
       "teamSize": "Information Security Automation Cell",
       "myRole": "SIEM and firewall-policy automation design",
       "workType": "Full-time (Dispatched)",
       "description": "Designed a security-operations architecture for the Nextrade trading system by connecting Splunk ES Saved Searches, webhook relay, Slack/SMS alerting, and FortiManager JSON-RPC API policy lookups. Consolidated FortiGate events and policy-review paths around Splunk, then used Python/Docker state tracking and Claude AI-assisted review to reduce dependence on repetitive manual checks and false-positive triage. Structured detection rules, alert conditions, and firewall-policy lookup results as reviewable operating evidence.",
       "wantedSummary": "Splunk-FortiNet integration, FortiManager API, and Claude AI-assisted review for automated security-event analysis and firewall-policy lookup",
-      "note": "ITCEN CTS engagement for Nextrade security-operations architecture automation",
+      "note": "ITCEN CTS engagement for Nextrade security-event response architecture automation",
       "projects": [
         {
           "id": "nextrade-security-operations",
-          "name": "Nextrade Security Operations Architecture Automation",
+          "name": "Nextrade Security Event Response Architecture Automation",
           "description": "Designed a security-event workflow where Splunk ES detections feed webhook relay and Slack/SMS alerts, while FortiManager API queries retrieve related firewall policies. Reframed console-heavy checks into a Splunk-FortiNet detection, classification, and lookup path, with Claude AI-assisted review supporting repetitive false-positive triage.",
           "period": "2025.03 ~ 2026.02",
           "techStack": ["Splunk ES", "FortiGate", "FortiManager API", "Python", "Claude AI"],
@@ -258,7 +258,7 @@
     {
       "id": "nextrade-security-operations",
       "period": "2025.03 ~ 2026.02",
-      "name": "Nextrade Security Operations Architecture Automation",
+      "name": "Nextrade Security Event Response Architecture Automation",
       "client": "Nextrade",
       "technologies": ["Python", "Splunk ES", "FortiManager API", "Fortinet"],
       "os": "Linux, Docker",
@@ -960,8 +960,8 @@
       "about": "In financial security infrastructure and SIEM engineering, I handled build and automation work across FortiGate HA segmentation, Splunk ES detection rules, Slack/SMS alerts, FortiManager API lookups, Claude AI-assisted review, and audit evidence documentation.\n\n[Target Roles]\nI am prioritizing Security Automation, Security Infrastructure, and SIEM Engineering opportunities. I fit teams that reduce repeated response work through runbooks, scripts, and API integrations while keeping audit records and incident handling explainable.\n\n[Evidence]\n- Nextrade: Splunk ES Saved Searches, webhook relay, Slack/SMS alerts, FortiManager API lookup, and Claude AI-assisted review flow design\n- Security infrastructure build: FortiGate HA, network segmentation, endpoint security, and Ansible Role-based configuration management\n- FSDC: financial regulator audit response, DB access-control query tuning, and DLP policy artifact management\n- Network/systems: NSX-T, Wazuh, NAC, VPN, Linux, and Python/Ansible automation scripts\n\n[Skills/Cert]\nSplunk ES, FortiGate/FortiManager, FortiAnalyzer, Ansible, Python, Terraform, Docker, Linux, Grafana/Prometheus/Loki, Elasticsearch/Kibana, CCNP\n\nPortfolio: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
     },
     "jobkorea": {
-      "headline": "Security Automation / Infrastructure Engineer | FortiGate · Splunk ES · CCNP",
-      "about": "[Target Roles]\nI am prioritizing Security Automation, Security Infrastructure, and SIEM Engineering opportunities. I connect FortiGate, Splunk ES, FortiManager API, Claude AI-assisted review, and Python/Ansible work into response architecture that reduces repeated work and leaves explainable evidence for audits and incidents.\n\n[Career Summary]\n- ITCEN CTS: Nextrade exchange security-operations architecture automation with Splunk ES Saved Searches, webhook relay, Slack/SMS alerts, FortiManager API lookup, and Claude AI-assisted review\n- Gaonnuri Information Systems: Nextrade security infrastructure build with FortiGate HA, network segmentation, endpoint security, and Ansible Role-based configuration management\n- Quantec Investment Management: Financial Security Data Center (FSDC) infrastructure standardization, financial regulator audit response, DB access-control query tuning, and DLP policy artifact management\n- Jointree / Metanet M Platform: NSX-T, Wazuh, NAC, VPN, and Python/Ansible automation scripts\n- MT Data: KAI closed-network Linux/OA environment, patching, and firewall policy change-history management\n\n[Skills/Cert]\nSplunk ES, FortiGate/FortiManager, FortiAnalyzer, Ansible, Python, Terraform, Docker, Linux, NSX-T, Wazuh, Grafana/Prometheus/Loki, Elasticsearch/Kibana, CCNP\n\nPortfolio: https://resume.jclee.me"
+      "headline": "Security Infrastructure / SIEM Engineer | FortiGate · Splunk ES · CCNP",
+      "about": "[Target Roles]\nI am prioritizing Security Infrastructure, SIEM Engineering, and financial information security opportunities. I connect FortiGate, Splunk ES, FortiManager API, Claude AI-assisted review, and Python/Ansible work into response architecture that reduces repeated work and leaves explainable evidence for audits and incidents.\n\n[Career Summary]\n- ITCEN CTS: Nextrade exchange security-event response architecture with Splunk ES Saved Searches, webhook relay, Slack/SMS alerts, FortiManager API lookup, and Claude AI-assisted review\n- Gaonnuri Information Systems: Nextrade security infrastructure build with FortiGate HA, network segmentation, endpoint security, and Ansible Role-based configuration management\n- Quantec Investment Management: Financial Security Data Center (FSDC) infrastructure standardization, financial regulator audit response, DB access-control query tuning, and DLP policy artifact management\n- Jointree / Metanet M Platform: NSX-T, Wazuh, NAC, VPN, and Python/Ansible scripts\n- MT Data: KAI closed-network Linux/OA environment, patching, and firewall policy change-history management\n\n[Skills/Cert]\nSplunk ES, FortiGate/FortiManager, FortiAnalyzer, Ansible, Python, Terraform, Docker, Linux, NSX-T, Wazuh, Grafana/Prometheus/Loki, Elasticsearch/Kibana, CCNP\n\nPortfolio: https://resume.jclee.me"
     }
   },
   "coverLetter": {

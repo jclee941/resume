@@ -223,7 +223,7 @@ describe('mapCareersToFormFields', () => {
   it('keeps real SSoT career role labels plain for job platform sync', () => {
     const ssot = loadSSOT();
     const expectedRoles = {
-      'itcen-cts': '보안 운영 엔지니어',
+      'itcen-cts': '보안 인프라 엔지니어',
       'gaonnuri-information-system': '보안 인프라 엔지니어',
       'quantec-investment': '인프라 엔지니어',
       jointree: '네트워크 보안 엔지니어',
