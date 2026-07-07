@@ -164,10 +164,10 @@
       "period": "2022.08 ~ 2024.03",
       "duration": "1 year 7 months",
       "project": "Quantec Investment Management AI Trading Platform / FSDC Operations",
-      "role": "Infrastructure Engineer",
+      "role": "Information Security Specialist",
       "client": "Quantec Investment Management",
       "teamSize": "Infrastructure operations team (size undisclosed)",
-      "myRole": "Infrastructure Operations",
+      "myRole": "Infrastructure & Information Security Operations",
       "workType": "Full-time",
       "description": "Financial Security Data Center (FSDC) operations, with Financial Supervisory Service periodic audits on the calendar every quarter. Python runbooks absorbed the recurring work, DLP policy operations stayed current with audit deliverables, and PostgreSQL access-control queries were tuned until the planners stopped second-guessing them.",
       "wantedSummary": "Financial Security Data Center (FSDC) infrastructure operations scripting and audit response experience",
@@ -667,11 +667,11 @@
       "tagline": "Monitoring Platform",
       "language": "PromQL",
       "githubUrl": null,
-      "demoUrl": "https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b",
+      "demoUrl": "https://grafana.jclee.me/public-dashboards/d179bed28cb64b87877464527550396e",
       "dashboards": [
         {
           "name": "Grafana",
-          "url": "https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b"
+          "url": "https://grafana.jclee.me/public-dashboards/d179bed28cb64b87877464527550396e"
         },
         {
           "name": "ELK",

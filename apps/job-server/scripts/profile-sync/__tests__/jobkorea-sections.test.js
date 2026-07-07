@@ -225,7 +225,7 @@ describe('mapCareersToFormFields', () => {
     const expectedRoles = {
       'itcen-cts': '보안 인프라 엔지니어',
       'gaonnuri-information-system': '보안 인프라 엔지니어',
-      'quantec-investment': '인프라 엔지니어',
+      'quantec-investment': '정보보안 담당자',
       jointree: '네트워크 보안 엔지니어',
       'metanet-mplatform': '인프라 운영 엔지니어',
       mtdata: 'IT/OA 운영 엔지니어',
