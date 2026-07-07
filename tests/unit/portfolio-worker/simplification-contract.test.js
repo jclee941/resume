@@ -38,8 +38,13 @@ describe('simplification: no duplicated About principles/focus block', () => {
     expect(count(worker, 'Current Focus')).toBe(0);
   });
 
-  test('career_highlights remains as the single About narrative block (once per locale = 3)', () => {
-    expect(count(worker, '&gt; career_highlights')).toBe(3);
+  test('career-highlights narrative remains the single About block, localized per locale', () => {
+    // Localized reader-facing headings replaced the '&gt; career_highlights'
+    // terminal-style label (one heading per locale page).
+    expect(count(worker, 'about-label">경력 하이라이트<')).toBe(1);
+    expect(count(worker, 'about-label">Career highlights<')).toBe(1);
+    expect(count(worker, 'about-label">経歴ハイライト<')).toBe(1);
+    expect(count(worker, '&gt; career_highlights')).toBe(0);
   });
 
   test('overlapping tech_philosophy / current_focus About blocks are removed', () => {

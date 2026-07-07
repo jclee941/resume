@@ -111,12 +111,6 @@ test.describe('Portfolio recruiter enhancements', () => {
           'Observability Platform 근거 보기',
           'jclee-bot GitHub App 근거 보기',
         ],
-        expectedAriaLabels: [
-          'Security Alert System 프로젝트 근거 보기',
-          'Nextrade Security Infra 프로젝트 근거 보기',
-          'Observability Platform 프로젝트 근거 보기',
-          'jclee-bot GitHub App 프로젝트 근거 보기',
-        ],
       },
       {
         path: '/en/',
@@ -126,12 +120,6 @@ test.describe('Portfolio recruiter enhancements', () => {
           'Nextrade Security Infra evidence',
           'Observability Platform evidence',
           'jclee-bot GitHub App evidence',
-        ],
-        expectedAriaLabels: [
-          'Open Security Alert System project evidence',
-          'Open Nextrade Security Infra project evidence',
-          'Open Observability Platform project evidence',
-          'Open jclee-bot GitHub App project evidence',
         ],
       },
       {
@@ -143,12 +131,6 @@ test.describe('Portfolio recruiter enhancements', () => {
           'Observability Platformの根拠を見る',
           'jclee-bot GitHub Appの根拠を見る',
         ],
-        expectedAriaLabels: [
-          'Security Alert Systemプロジェクトの根拠を見る',
-          'Nextrade Security Infraプロジェクトの根拠を見る',
-          'Observability Platformプロジェクトの根拠を見る',
-          'jclee-bot GitHub Appプロジェクトの根拠を見る',
-        ],
       },
     ];
 
@@ -159,7 +141,7 @@ test.describe('Portfolio recruiter enhancements', () => {
 
       const labels = await links.allTextContents();
       const ariaLabels = await links.evaluateAll((elements) =>
-        elements.map((element) => element.getAttribute('aria-label') || '')
+        elements.map((element) => element.getAttribute('aria-label'))
       );
       const hrefs = await links.evaluateAll((elements) =>
         elements.map((element) => element.getAttribute('href'))
@@ -171,8 +153,9 @@ test.describe('Portfolio recruiter enhancements', () => {
       expect(labels).toEqual(locale.expectedLabels);
       expect(labels).not.toContain(locale.genericLabel);
       expect(new Set(labels).size).toBe(labels.length);
-      expect(ariaLabels).toEqual(locale.expectedAriaLabels);
-      expect(new Set(ariaLabels).size).toBe(ariaLabels.length);
+      // WCAG 2.5.3 Label in Name: no aria-label override — the unique visible
+      // link text IS the accessible name.
+      expect(ariaLabels).toEqual(locale.expectedLabels.map(() => null));
       expect(hrefs).toEqual(locale.expectedLabels.map(() => '#projects'));
       expect(projectTargets).toEqual([
         'Security Alert System',
@@ -221,7 +204,7 @@ test.describe('Portfolio recruiter enhancements', () => {
 
   test('project evidence links highlight the target project', async ({ page }) => {
     const reviewerLink = page.getByRole('link', {
-      name: 'jclee-bot GitHub App 프로젝트 근거 보기',
+      name: 'jclee-bot GitHub App 근거 보기',
     });
     await reviewerLink.click();
 

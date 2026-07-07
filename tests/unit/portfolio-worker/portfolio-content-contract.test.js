@@ -117,4 +117,17 @@ describe('portfolio first-screen hiring decision contract', () => {
     expect(combinedHero).toMatch(/분류|triage|トリアージ/);
     expect(combinedHero).toMatch(/추적|tracking|追跡/);
   });
+
+  test('role chips use visible text as the accessible name (WCAG 2.5.3 Label in Name)', () => {
+    for (const locale of ['ko', 'en', 'ja']) {
+      const html = buildHeroContent(locale);
+      const chips = html.match(/<button[^>]*class="role-chip"[^>]*>/g) || [];
+      expect(chips.length).toBeGreaterThan(0);
+      for (const chip of chips) {
+        // No aria-label override: the accessible name must come from the
+        // visible label/count/proof content so it always matches what users see.
+        expect(chip).not.toContain('aria-label=');
+      }
+    }
+  });
 });

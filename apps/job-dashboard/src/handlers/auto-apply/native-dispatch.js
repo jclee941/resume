@@ -1,6 +1,6 @@
 import { MESSAGE_TYPES, PRIORITY } from '../../queues/queue-message-constants.js';
 import { normalizeApplicationPlatform } from '../../workflows/application/application-platform-catalog.js';
-import { jsonResponse } from './response.js';
+import { jsonResponse } from '../../middleware/cors.js';
 
 const NATIVE_MODES = new Set(['cf-native', 'cloudflare-native', 'workflow', 'queue']);
 const AUTO_NATIVE_PLATFORMS = new Set(['jobkorea', 'saramin']);

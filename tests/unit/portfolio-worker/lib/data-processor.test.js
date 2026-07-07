@@ -134,7 +134,8 @@ describe('data-processor', () => {
       expect(cards.generateProjectCards).toHaveBeenCalledWith(data.projects, 'mock-hash-abc123');
       expect(cards.generateCertificationCards).toHaveBeenCalledWith(
         data.certifications,
-        'mock-hash-abc123'
+        'mock-hash-abc123',
+        'ko'
       );
       expect(cards.generateSkillsList).toHaveBeenCalledWith(data.skills, 'mock-hash-abc123');
       expect(cards.generateHeroContent).toHaveBeenCalledWith({

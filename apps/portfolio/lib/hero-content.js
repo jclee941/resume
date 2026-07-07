@@ -77,9 +77,10 @@ function renderReviewPacket(content) {
 function renderRoleQuickPaths(content) {
   const roles = content.quickRoles
     .map(([id, label, proof]) => {
-      const accessibleLabel = `${label}: ${proof}`;
+      // No aria-label: the accessible name comes from the visible
+      // label/count/proof spans (WCAG 2.5.3 Label in Name).
       return (
-        `<button type="button" class="role-chip" data-role-filter="${escapeHtml(id)}" aria-pressed="false" aria-label="${escapeHtml(accessibleLabel)}" disabled>` +
+        `<button type="button" class="role-chip" data-role-filter="${escapeHtml(id)}" aria-pressed="false" disabled>` +
         `<span class="role-chip__label">${escapeHtml(label)}</span>` +
         '<span class="role-chip__separator" aria-hidden="true"></span>' +
         `<span class="role-chip__proof">${escapeHtml(proof)}</span>` +

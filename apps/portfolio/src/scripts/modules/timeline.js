@@ -95,7 +95,13 @@ function injectTimeline() {
 
   const timeline = document.createElement('ul');
   timeline.className = 'incident-timeline resume-list';
-  timeline.setAttribute('aria-label', 'Career incident response timeline');
+  const lang = (document.documentElement.lang || 'ko').toLowerCase();
+  const timelineLabel = lang.startsWith('en')
+    ? 'Career timeline'
+    : lang.startsWith('ja')
+      ? '経歴タイムライン'
+      : '경력 타임라인';
+  timeline.setAttribute('aria-label', timelineLabel);
   timeline.innerHTML = careers.map((career, index) => createTimelineNode(career, index)).join('');
 
   // Swap the <ul> placeholder for the semantic timeline container.

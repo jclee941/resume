@@ -12,6 +12,16 @@
 const COPIED_CLASS = 'is-copied';
 const RESET_MS = 2000;
 
+function copiedMessage(email) {
+  const lang =
+    typeof document !== 'undefined' && document.documentElement
+      ? (document.documentElement.lang || 'ko').toLowerCase()
+      : 'ko';
+  if (lang.startsWith('en')) return `${email} copied`;
+  if (lang.startsWith('ja')) return `${email} をコピーしました`;
+  return `${email} 복사됨`;
+}
+
 function announce(root, message) {
   const status = root.querySelector('.contact-copy-status');
   if (status) status.textContent = message;
@@ -31,7 +41,7 @@ async function copyEmail(link, root, navigate) {
   try {
     await clip.writeText(email);
     link.classList.add(COPIED_CLASS);
-    announce(root, `${email} 복사됨`);
+    announce(root, copiedMessage(email));
     if (link._copyTimer) clearTimeout(link._copyTimer);
     link._copyTimer = setTimeout(() => {
       link.classList.remove(COPIED_CLASS);

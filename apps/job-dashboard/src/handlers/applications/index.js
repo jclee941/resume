@@ -4,7 +4,7 @@ import { createApplication } from './create-operation.js';
 import { deleteApplication } from './delete-operation.js';
 import { getApplication } from './detail-query.js';
 import { listApplications } from './list-query.js';
-import { jsonResponse } from './responses.js';
+import { jsonResponse } from '../../middleware/cors.js';
 import { updateApplicationStatus } from './status-operation.js';
 import { updateApplication } from './update-operation.js';
 import { syncWantedApplications } from './wanted-sync-operation.js';

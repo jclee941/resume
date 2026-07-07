@@ -2,17 +2,48 @@
 
 const { escapeHtml } = require('../template-sanitizer');
 
+const PROFILE_LABELS = {
+  ko: {
+    education: '학력',
+    languages: '어학',
+    awards: '수상',
+    openSource: '오픈소스',
+    military: '병역',
+  },
+  en: {
+    education: 'Education',
+    languages: 'Languages',
+    awards: 'Awards',
+    openSource: 'Open source',
+    military: 'Military service',
+  },
+  ja: {
+    education: '学歴',
+    languages: '語学',
+    awards: '受賞',
+    openSource: 'オープンソース',
+    military: '兵役',
+  },
+};
+
+function profileLabels(locale) {
+  return PROFILE_LABELS[locale] || PROFILE_LABELS.ko;
+}
+
 /**
  * Generate a compact "profile" bento block surfacing SSoT data that was
  * previously unsurfaced: education, languages, awards, OSS contributions,
- * military service. Rendered as clean mini cards.
+ * military service. Rendered as clean mini cards with localized,
+ * reader-facing labels (no terminal-style '>' prefixes).
  *
  * @param {Object} data - data.json (uses education, languages, awards,
  *   ossContributions, military).
+ * @param {'ko'|'en'|'ja'} [locale='ko'] - Locale for card labels.
  * @returns {string} HTML for the profile bento, or '' if nothing to show.
  */
-function generateProfileBento(data) {
+function generateProfileBento(data, locale = 'ko') {
   if (!data) return '';
+  const labels = profileLabels(locale);
   const cards = [];
 
   // Education
@@ -22,7 +53,7 @@ function generateProfileBento(data) {
     const status = e.status ? ` (${escapeHtml(String(e.status))})` : '';
     const period = e.startDate ? ` ${escapeHtml(String(e.startDate))}` : '';
     cards.push(`<div class="profile-card">
-        <span class="profile-card__label">&gt; education</span>
+        <span class="profile-card__label">${labels.education}</span>
         <p class="profile-card__value">${escapeHtml(String(e.school))}${major}${status}${period}</p>
       </div>`);
   }
@@ -36,7 +67,7 @@ function generateProfileBento(data) {
       )
       .join(' · ');
     cards.push(`<div class="profile-card">
-        <span class="profile-card__label">&gt; languages</span>
+        <span class="profile-card__label">${labels.languages}</span>
         <p class="profile-card__value">${langs}</p>
       </div>`);
   }
@@ -53,7 +84,7 @@ function generateProfileBento(data) {
       })
       .join('');
     cards.push(`<div class="profile-card">
-        <span class="profile-card__label">&gt; awards</span>
+        <span class="profile-card__label">${labels.awards}</span>
         <ul class="profile-card__list">${items}</ul>
       </div>`);
   }
@@ -71,7 +102,7 @@ function generateProfileBento(data) {
       })
       .join('');
     cards.push(`<div class="profile-card">
-        <span class="profile-card__label">&gt; open_source</span>
+        <span class="profile-card__label">${labels.openSource}</span>
         <ul class="profile-card__list">${items}</ul>
       </div>`);
   }
@@ -83,7 +114,7 @@ function generateProfileBento(data) {
       ? ` <span class="profile-card__muted">${escapeHtml(String(m.period))}</span>`
       : '';
     cards.push(`<div class="profile-card">
-        <span class="profile-card__label">&gt; military</span>
+        <span class="profile-card__label">${labels.military}</span>
         <p class="profile-card__value">${escapeHtml(String(m.status))}${period}</p>
       </div>`);
   }

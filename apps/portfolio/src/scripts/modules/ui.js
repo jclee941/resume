@@ -169,9 +169,15 @@ function initScrollProgress() {
 }
 
 function initBackToTop() {
+  const lang = (document.documentElement.lang || 'ko').toLowerCase();
+  const backToTopLabel = lang.startsWith('en')
+    ? 'Scroll to top'
+    : lang.startsWith('ja')
+      ? 'ページ上部へ'
+      : '맨 위로';
   const btn = document.createElement('button');
   btn.className = 'back-to-top';
-  btn.setAttribute('aria-label', 'Scroll to top');
+  btn.setAttribute('aria-label', backToTopLabel);
   btn.setAttribute('aria-hidden', 'true');
   btn.innerHTML = '↑';
   document.body.appendChild(btn);

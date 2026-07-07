@@ -1,5 +1,5 @@
 import { getConfig } from './db-helpers.js';
-import { jsonResponse } from './response.js';
+import { jsonResponse } from '../../middleware/cors.js';
 
 export async function configureAutoApply({ request, env, db }) {
   if (!db) {

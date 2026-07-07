@@ -33,9 +33,6 @@ export function applyRoleProofCounts(proofCounts) {
   document.querySelectorAll('.role-chip').forEach((button) => {
     const roleId = button.getAttribute('data-role-filter') || '';
     const countText = roleProofCountText(proofCounts, roleId);
-    const labelText = button.querySelector('.role-chip__label')?.textContent?.trim() || roleId;
-    const proofText = button.querySelector('.role-chip__proof')?.textContent?.trim() || '';
-    button.setAttribute('aria-label', `${labelText}: ${countText}. ${proofText}`);
 
     const existingCount = button.querySelector('.role-chip__count');
     if (existingCount) {

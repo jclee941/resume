@@ -213,14 +213,14 @@ describe('B: engineering principles + current focus surfaced from SSoT (single s
     // About was simplified: career_highlights is the one narrative block; the
     // overlapping tech_philosophy / current_focus blocks were removed to cut
     // clutter (the career story is also covered by achievements + the timeline).
-    expect(koLocale).toContain('&gt; career_highlights');
+    expect(koLocale).toContain('about-label">경력 하이라이트<');
     expect(koLocale).not.toMatch(/about-principles/);
     expect(koLocale).not.toMatch(/&gt; tech_philosophy/);
     expect(koLocale).not.toMatch(/&gt; current_focus/);
   });
 
   test('built EN locale surfaces career_highlights as the single About narrative', () => {
-    expect(enLocale).toContain('&gt; career_highlights');
+    expect(enLocale).toContain('about-label">Career highlights<');
     expect(enLocale).not.toMatch(/about-principles/);
     expect(enLocale).not.toMatch(/&gt; tech_philosophy/);
     expect(enLocale).not.toMatch(/&gt; current_focus/);
