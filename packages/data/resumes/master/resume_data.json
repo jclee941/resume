@@ -181,10 +181,10 @@
       "period": "2022.08 ~ 2024.03",
       "duration": "1년 7개월",
       "project": "Quantec AI Trading Platform / FSDC 운영",
-      "role": "인프라 엔지니어",
+      "role": "정보보안 담당자",
       "client": "콴텍투자일임(주)",
       "teamSize": "규모 미공개 인프라 운영팀",
-      "myRole": "인프라 운영 담당",
+      "myRole": "인프라·정보보안 운영 담당",
       "workType": "정규직",
       "description": "금융보안데이터센터(FSDC)에서 AI 트레이딩 플랫폼 인프라를 맡아 금융감독원 감사를 상시 대응 가능한 상태로 만들었습니다. 반복 작업은 Python 운영 스크립트로 걷어내고, DLP 정책과 감사 산출물 템플릿은 감사관이 바로 확인할 수 있는 형태로 유지했습니다. PostgreSQL 접근제어 쿼리 튜닝, PB 플랫폼 POC 검증, 백업·데이터 보호 정책까지 운영 상태를 근거 자료로 설명할 수 있는 수준을 지켰습니다.",
       "wantedSummary": "FSDC 인프라 운영과 금감원 감사 대응 산출물을 정리한 경험",
@@ -693,11 +693,11 @@
       "tagline": "모니터링 플랫폼",
       "language": "PromQL",
       "githubUrl": null,
-      "demoUrl": "https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b",
+      "demoUrl": "https://grafana.jclee.me/public-dashboards/d179bed28cb64b87877464527550396e",
       "dashboards": [
         {
           "name": "Grafana",
-          "url": "https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b"
+          "url": "https://grafana.jclee.me/public-dashboards/d179bed28cb64b87877464527550396e"
         },
         {
           "name": "ELK",

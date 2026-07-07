@@ -37,7 +37,7 @@ describe('generateWebData → projects[] live demo dashboards', () => {
     assert.deepEqual(project.dashboards, [
       {
         name: 'Grafana',
-        url: 'https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b',
+        url: 'https://grafana.jclee.me/public-dashboards/d179bed28cb64b87877464527550396e',
       },
       {
         name: 'ELK',

@@ -31,7 +31,7 @@ describe('project dashboard links', () => {
         dashboards: [
           {
             name: 'Grafana',
-            url: 'https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b',
+            url: 'https://grafana.jclee.me/public-dashboards/d179bed28cb64b87877464527550396e',
           },
           {
             name: 'ELK',
@@ -46,7 +46,7 @@ describe('project dashboard links', () => {
     expect(html).toContain('[Grafana]');
     expect(html).toContain('[ELK]');
     expect(html).toContain(
-      'href="https://grafana.jclee.me/public-dashboards/2e98809632c841439635ffe2f8dc249b"'
+      'href="https://grafana.jclee.me/public-dashboards/d179bed28cb64b87877464527550396e"'
     );
     expect(html).toContain(`href="${KIBANA_DEMO_URL.replace(/&/g, '&amp;')}"`);
     expect(html).toContain('project-meta-badge--live');
