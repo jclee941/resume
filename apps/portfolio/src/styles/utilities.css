@@ -1,8 +1,11 @@
 /* Skip to content link for accessibility */
 .skip-link {
   position: absolute;
-  top: -40px;
+  top: 0;
   left: 0;
+  /* Height-independent off-screen hide: the 48px tap-target min-height made a
+     fixed `top: -40px` leave a visible sliver at the top-left corner. */
+  transform: translateY(-110%);
   background: var(--color-accent-deep);
   color: white;
   padding: 8px 16px;
@@ -10,11 +13,11 @@
   z-index: 10000;
   border-radius: 0 0 4px 0;
   font-weight: var(--font-semibold);
-  transition: top 0.2s ease;
+  transition: transform 0.2s ease;
 }
 
 .skip-link:focus {
-  top: 0;
+  transform: translateY(0);
 }
 
 /* Focus-visible styles for keyboard navigation */

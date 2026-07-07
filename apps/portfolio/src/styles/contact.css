@@ -8,6 +8,16 @@
   gap: var(--space-3);
   font-family: var(--font-mono);
 }
+
+@media (min-width: 768px) {
+  /* Six sparse full-width bars read as dead space on desktop; a three-column
+     grid keeps every link a 48px tap target while tightening the section. */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-3);
+  }
+}
 .contact-item {
   font-size: var(--text-sm);
   color: var(--text-primary);
