@@ -1,5 +1,5 @@
 import { createAutoApplyClients } from './client-factory.js';
-import { jsonResponse } from './response.js';
+import { jsonResponse } from '../../middleware/cors.js';
 import { runAutoApply } from './run-handler.js';
 import { getAutoApplyStatus } from './status-handler.js';
 import { configureAutoApply } from './config-handler.js';

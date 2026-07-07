@@ -220,7 +220,7 @@ describe('entry-router-utils', () => {
       );
 
       const fallback = utils.applyResponseHeaders(base, '/projects');
-      expect(fallback.headers.get('Cache-Control')).toBe('private, no-store, must-revalidate');
+      expect(fallback.headers.get('Cache-Control')).toBe('private, no-cache');
     });
   });
 

@@ -482,7 +482,7 @@ describe('Cards Module', () => {
     test('pending cert shows IN PROGRESS for JA 準備中 and EN Preparing (locale parity)', () => {
       // Bug: getCertificationStatus only matched KO '준비중', so a not-yet-earned
       // cert (CKS) rendered as [ACQUIRED] on /en/ and /ja/ — falsely claiming the
-      // credential. All locale pending labels must map to IN PROGRESS.
+      // credential. All locale pending labels must map to the pending status.
       for (const status of ['準備中', 'Preparing']) {
         const html = generateCertificationCards(
           [{ name: 'CKS', issuer: 'CNCF', status }],
@@ -492,6 +492,25 @@ describe('Cards Module', () => {
         expect(html).toContain('IN PROGRESS');
         expect(html).not.toContain('cert-status--active');
       }
+    });
+
+    test('status badges are localized per locale (KO 취득/준비 중, JA 取得済み/準備中)', () => {
+      const acquired = [{ name: 'CCNP', issuer: 'Cisco', date: '2020.08', status: 'active' }];
+      const pending = [{ name: 'CKS', issuer: 'CNCF', status: '준비중' }];
+
+      const koActive = generateCertificationCards(acquired, 'ko-a', 'ko');
+      expect(koActive).toContain('[취득]');
+      expect(koActive).not.toContain('ACQUIRED');
+      const koPending = generateCertificationCards(pending, 'ko-p', 'ko');
+      expect(koPending).toContain('[준비 중]');
+
+      const jaActive = generateCertificationCards(acquired, 'ja-a', 'ja');
+      expect(jaActive).toContain('[取得済み]');
+      const jaPending = generateCertificationCards(pending, 'ja-p', 'ja');
+      expect(jaPending).toContain('[準備中]');
+
+      // Default (EN) keeps the existing English badges.
+      expect(generateCertificationCards(acquired, 'en-a', 'en')).toContain('[ACQUIRED]');
     });
 
     test('missing status defaults to ACQUIRED', () => {

@@ -1,4 +1,4 @@
-import { jsonResponse } from './response.js';
+import { jsonResponse } from '../../middleware/cors.js';
 
 const REAL_SUBMIT_ERROR = 'REAL_SUBMIT_APPROVAL_REQUIRED';
 

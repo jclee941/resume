@@ -146,12 +146,52 @@ Implemented fixes:
 - Compressed mobile review-path cards from one-column repetition to a two-column layout with the contact path spanning the row.
 - Removed the mobile hiring-packet summary from the visual flow because the card list already carries the same facts.
 
+## Architecture Review - 2026-07-07
+
+Scope: full-repo architecture/site review (Lighthouse mobile, live headers, duplication scan, a11y audit).
+
+Fixed in this pass:
+- HTML `Cache-Control` changed from `private, no-store, must-revalidate` to `private, no-cache` (`apps/portfolio/lib/entry-router-utils/response-headers.js`). `private` still blocks shared/CDN caching (CSP nonce safety); dropping `no-store` re-enables the browser back/forward cache, which Lighthouse flagged as 3 bf-cache failures.
+- Role-chip and evidence-link `aria-label` overrides removed (WCAG 2.5.3 Label in Name); the visible text is now the accessible name (`lib/hero-content.js`, `src/scripts/modules/recruiter-rendering.js`, `recruiter-role-proofs.js`).
+- Removed 4 unused root-level icon duplicates (`apps/portfolio/icon-*.{png,svg}` were byte-identical to `assets/` copies; all references point to `/assets/`).
+- Deduplicated byte-identical `jsonResponse` helpers in job-dashboard handlers into `src/middleware/cors.js`.
+
+Known issues (documented, not fixed here):
+- Zone-level header override: the live site serves `X-Frame-Options: SAMEORIGIN` and `Referrer-Policy: same-origin`, overriding the worker's `DENY` / `strict-origin-when-cross-origin` (grafana.jclee.me shows the same values; not managed in `infrastructure/cloudflare` Terraform). CSP `frame-ancestors 'none'` still wins in modern browsers, so impact is minimal. Fix requires Cloudflare dashboard action (managed transform/zone rule), out of repo scope.
+- Migration mirror drift risk: `apps/job-dashboard/migrations/0003_add_auto_apply_application_metadata.sql` is byte-identical to `infrastructure/database/migrations/0008_add_auto_apply_application_metadata.sql`. Possibly an intentional mirror; do not delete either copy without checking D1 migration state.
+- Performance debt (Lighthouse mobile, 2026-07-07: perf 74): TBT 930ms, main-thread Style & Layout 2.0s, forced reflow ~27ms in `main.js`. Deferred — needs a dedicated profiling pass (likely batching DOM reads/writes in the recruiter/timeline modules).
+- Lighthouse best-practices 77 is dominated by Cloudflare's injected challenge-platform script deprecation warnings (third-party, unfixable in repo).
+
+## Copy Improvement Pass - 2026-07-07
+
+Scope: site-wide wording pass (전체 문구 개선) across ko/en/ja, focused on reader-facing labels, untranslated UI strings, and terminal-chrome copy. Hero copy and resume SSoT prose were intentionally left untouched (recently tuned; 40+ exact-string test pins).
+
+Changed:
+- About/profile labels are now localized reader-facing headings instead of terminal-style tokens: `> career_highlights` → `경력 하이라이트` / `Career highlights` / `経歴ハイライト`; `> education/languages/awards/open_source/military` → `학력/어학/수상/오픈소스/병역` (+ EN/JA) (`lib/cards/about.js`, `lib/cards/profile.js`, `lib/data-processor.js`).
+- Skills search UI localized on the KO page (`기술 검색`, `기술 역량 매트릭스`, `기술 이름으로 검색`) with matching JA transforms (`スキル検索`, `スキルマトリクス`); EN keeps `Filter skills`.
+- Client-injected copy is locale-aware: back-to-top label, skill counter (`N개 기술` / `N件のスキル` / `N skills`), clipboard announcement (`복사됨` / `copied` / `コピーしました`), and the timeline aria-label dropped `Career incident response timeline` jargon for `경력 타임라인` / `Career timeline` / `経歴タイムライン`.
+- Footer terminal chrome (`logout` / `Connection closed.`) removed per DESIGN.md's no-terminal-chrome rule; replaced with `읽어주셔서 감사합니다.` / `Thanks for reading.` / `お読みいただきありがとうございます。` (unused `.footer-prompt` CSS cleaned up).
+- New contract tests: `tests/unit/portfolio-worker/copy-localization-contract.test.js`, `client-copy-localization.test.js`; updated profile/simplification/about-grid/enhancement contracts to pin the new localized labels.
+
+Deliberately out of scope (documented decisions):
+- Hero/recruiter copy (`lib/hero-content-data.js`) — recently tuned, heavily pinned; revisit only with a dedicated content review.
+- Resume SSoT prose (`packages/data/resumes/master/*.json`) — factual career claims; separate editorial pass.
+- Lowercase nav `about/exp/projects/contact` and `~/jclee` logo — intentional brand style.
+- Cover-letter file chrome (`~/resume/coverletter.txt`, `read-only` is aria-hidden) — cohesive with the `~/jclee` brand.
+
+Second pass (모든 문구 리뷰, same day):
+- Certification status badges are now localized per locale: KO `[취득]`/`[준비 중]`, JA `[取得済み]`/`[準備中]`, EN keeps `[ACQUIRED]`/`[IN PROGRESS]` (`lib/cards/credentials.js` + `data-processor.js`). Pending≠acquired mapping preserved (no false-credential claims).
+- Skill-radar tier labels localized: `주력/실무 적용/활용 가능` (KO), `主力/実務適用/活用可能` (JA), `Primary/Applied/Working` (EN) in `skill-radar.js`; runtime evidence-tier labels localized in `skill-radar-data.js` (`주요 운영 경험` / `主な運用経験` etc.). Verified per locale with Playwright against wrangler dev.
+- Remaining out-of-scope after review: hero copy (unchanged — reviewed again, reads intentionally; revisit only with a content strategy change), resume SSoT prose, tech-name strings (Splunk ES, FortiGate etc. — proper nouns), and English domain titles fed from SSoT `skills[].title` (data-owned; localizing requires an SSoT data change, not a copy change).
+
+Debt register updates: DD-002 and DD-003 were found already resolved in source (title now names the target role; nav toggle labels are localized per locale) — closed below.
+
 ## Design Debt Register
 
-_Items: 3 | Critical: 0 | Oldest: 2026-07-01_
+_Items: 3 | Open: 1 | Resolved: 2 | Critical: 0 | Oldest: 2026-07-01_
 
 | ID | Date | Source | Severity | What | Who is affected | Suggested fix | Status | Notes |
 |----|------|--------|----------|------|----------------|---------------|--------|-------|
 | DD-001 | 2026-07-01 | heuristic-evaluator | Minor | `mailto:` CTA has no visible fallback if the user's mail client is not configured | Recruiters on locked-down corporate devices, mobile users | Show a copyable email address near the first CTA or provide an adjacent `Email` contact link | Open | Deferred because the link itself works and the contact section has email later |
-| DD-002 | 2026-07-01 | heuristic-evaluator | Minor | Browser title is narrower than visible role positioning | Recruiters using tabs/bookmarks, search result scanners | Align title/meta with `Security / SRE Engineer` positioning | Open | Deferred until copy/SEO pass |
-| DD-003 | 2026-07-01 | heuristic-evaluator | Minor | Korean page mobile menu toggle accessible label is English-only: `Toggle navigation` | Korean screen-reader users, non-English users | Localize the accessible label, for example `메뉴 열기` / `메뉴 닫기` | Open | Deferred behind higher-priority mobile CTA/focus fixes |
+| DD-002 | 2026-07-01 | heuristic-evaluator | Minor | Browser title is narrower than visible role positioning | Recruiters using tabs/bookmarks, search result scanners | Align title/meta with the target role positioning | Resolved 2026-07-07 | Title/meta now read `이재철 - Security Automation / Infrastructure Engineer` and are pinned by enhancement-contract tests |
+| DD-003 | 2026-07-01 | heuristic-evaluator | Minor | Korean page mobile menu toggle accessible label is English-only: `Toggle navigation` | Korean screen-reader users, non-English users | Localize the accessible label, for example `메뉴 열기` / `메뉴 닫기` | Resolved 2026-07-07 | Toggle now uses `메뉴 열기/메뉴 닫기` (KO), `Open/Close navigation` (EN), `メニューを開く/閉じる` (JA), pinned by enhancement-contract tests |

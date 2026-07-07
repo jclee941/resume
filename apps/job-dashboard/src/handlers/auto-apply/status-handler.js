@@ -1,7 +1,7 @@
 import { getConfig, getTodayApplicationCount } from './db-helpers.js';
 import { getWantedSession } from './session-helpers.js';
 import { SUPPORTED_PLATFORMS } from './constants.js';
-import { jsonResponse } from './response.js';
+import { jsonResponse } from '../../middleware/cors.js';
 import { ATS_DRY_RUN_PLATFORMS } from '../../workflows/application/platforms.js';
 
 const SAFE_CONFIG = {

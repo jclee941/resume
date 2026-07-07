@@ -20,7 +20,8 @@ function appendRoleChip(controls, role, countText) {
   chip.dataset.roleFilter = role.id;
   chip.disabled = true;
   chip.setAttribute('aria-pressed', 'false');
-  chip.setAttribute('aria-label', `${role.label}: ${countText}. ${role.proof}`);
+  // No aria-label: the accessible name comes from the visible
+  // label/count/proof spans (WCAG 2.5.3 Label in Name).
 
   chip.append(
     createElement('span', 'role-chip__label', role.label),
@@ -38,11 +39,6 @@ function evidenceLinkText(locale, title) {
   return `${title} 근거 보기`;
 }
 
-function evidenceLinkLabel(locale, title) {
-  if (locale === 'en') return `Open ${title} project evidence`;
-  if (locale === 'ja') return `${title}プロジェクトの根拠を見る`;
-  return `${title} 프로젝트 근거 보기`;
-}
 
 function ensureRoleStatus(section) {
   const status = section.querySelector('[data-role-status]');
@@ -115,7 +111,8 @@ export function renderEvidenceMatrix(labels) {
     );
     link.href = '#projects';
     link.dataset.evidenceProject = item.title;
-    link.setAttribute('aria-label', evidenceLinkLabel(locale, item.title));
+    // No aria-label: the visible link text is unique and contextual
+    // (WCAG 2.5.3 Label in Name).
 
     const card = createElement('article', 'project-evidence-card');
     card.dataset.role = item.roleId;

@@ -13,10 +13,23 @@ function createElement(tagName, className, text = '') {
   return element;
 }
 
+const TIER_LABELS = {
+  ko: { primary: '주력', applied: '실무 적용', working: '활용 가능' },
+  en: { primary: 'Primary', applied: 'Applied', working: 'Working' },
+  ja: { primary: '主力', applied: '実務適用', working: '活用可能' },
+};
+
+function tierLabels() {
+  const lang = (document.documentElement.lang || 'ko').toLowerCase();
+  if (lang.startsWith('en')) return TIER_LABELS.en;
+  if (lang.startsWith('ja')) return TIER_LABELS.ja;
+  return TIER_LABELS.ko;
+}
+
 const LEVELS = {
-  primary: { min: 90, label: 'Primary', color: 'var(--color-accent-strong)' },
-  applied: { min: 70, label: 'Applied', color: 'var(--color-accent)' },
-  working: { min: 50, label: 'Working', color: 'var(--text-secondary)' },
+  primary: { min: 90, key: 'primary', color: 'var(--color-accent-strong)' },
+  applied: { min: 70, key: 'applied', color: 'var(--color-accent)' },
+  working: { min: 50, key: 'working', color: 'var(--text-secondary)' },
 };
 
 function getLevelInfo(level) {
@@ -26,7 +39,7 @@ function getLevelInfo(level) {
 }
 
 function getTierLabel(level) {
-  return getLevelInfo(level).label;
+  return tierLabels()[getLevelInfo(level).key];
 }
 
 function createSkillRadar() {
@@ -74,7 +87,7 @@ function createDomainCard(domainKey, domain) {
 
   const levelInfo = getLevelInfo(domain.skills[0].level);
   const tierLabel = getTierLabel(domain.skills[0].level);
-  card.setAttribute('aria-label', `${domain.title}: ${tierLabel}, ${domain.skills.length} skills`);
+  card.setAttribute('aria-label', `${domain.title}: ${tierLabel}, ${skillCountText(domain.skills.length)}`);
 
   const header = createElement('div', 'skill-domain-card__header');
   const icon = createElement('div', 'skill-domain-card__icon');
@@ -83,7 +96,7 @@ function createDomainCard(domainKey, domain) {
   const info = createElement('div', 'skill-domain-card__info');
   info.append(
     createElement('h3', 'skill-domain-card__title', domain.title),
-    createElement('span', 'skill-domain-card__count', `${domain.skills.length} skills`)
+    createElement('span', 'skill-domain-card__count', skillCountText(domain.skills.length))
   );
   const expand = createElement('div', 'skill-domain-card__expand');
   expand.setAttribute('aria-hidden', 'true');
@@ -125,7 +138,9 @@ function createSkillPanel(domainKey, domain) {
 
   const drawer = createElement('div', 'skill-evidence-drawer');
   const drawerTitle = createElement('h4', 'skill-evidence-drawer__title');
-  drawerTitle.append(createIconElement('database'), document.createTextNode(' Evidence'));
+  const lang = (document.documentElement.lang || 'ko').toLowerCase();
+  const evidenceHeading = lang.startsWith('en') ? ' Evidence' : lang.startsWith('ja') ? ' 根拠' : ' 근거';
+  drawerTitle.append(createIconElement('database'), document.createTextNode(evidenceHeading));
   const evidenceList = createElement('ul', 'skill-evidence-list');
   evidenceList.setAttribute('role', 'list');
   domain.skills.forEach((skill) => evidenceList.appendChild(createEvidenceItem(skill)));
@@ -227,10 +242,22 @@ function filterSkills(searchTerm) {
   updateMatchCount(matchCount);
 }
 
+function skillCountText(count) {
+  const lang = (document.documentElement.lang || 'ko').toLowerCase();
+  if (lang.startsWith('en')) return `${count} skill${count !== 1 ? 's' : ''}`;
+  if (lang.startsWith('ja')) return `${count}件のスキル`;
+  return `${count}개 기술`;
+}
+
 function updateMatchCount(count) {
   const counter = document.getElementById('skill-search-count');
   if (counter) {
-    counter.textContent = `${count} skill${count !== 1 ? 's' : ''} found`;
+    const lang = (document.documentElement.lang || 'ko').toLowerCase();
+    counter.textContent = lang.startsWith('en')
+      ? `${skillCountText(count)} found`
+      : lang.startsWith('ja')
+        ? `${skillCountText(count)}が見つかりました`
+        : `${skillCountText(count)} 검색됨`;
     counter.style.display = count > 0 ? '' : 'none';
   }
 }

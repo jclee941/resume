@@ -108,14 +108,16 @@ function processProjectData({ projectDataRaw, projectDataEnRaw, projectDataJaRaw
     projectSchemasJaHtml: generateProjectSchemasHtml(
       (projectDataJa && projectDataJa.projects) || projectData.projects
     ),
-    certCardsHtml: generateCertificationCards(projectData.certifications, dataHash),
+    certCardsHtml: generateCertificationCards(projectData.certifications, dataHash, 'ko'),
     certCardsEnHtml: generateCertificationCards(
       (projectDataEn && projectDataEn.certifications) || projectData.certifications,
-      `${dataHash}:en-certs`
+      `${dataHash}:en-certs`,
+      'en'
     ),
     certCardsJaHtml: generateCertificationCards(
       (projectDataJa && projectDataJa.certifications) || projectData.certifications,
-      `${dataHash}:ja-certs`
+      `${dataHash}:ja-certs`,
+      'ja'
     ),
     skillsHtml: generateSkillsList(projectData.skills, dataHash),
     skillsEnHtml: generateSkillsList(
@@ -139,18 +141,20 @@ function processProjectData({ projectDataRaw, projectDataEnRaw, projectDataJaRaw
       (projectDataJa && projectDataJa.infrastructure) || projectData.infrastructure
     ),
     contactGridHtml: generateContactGrid(projectData.contact),
-    aboutContentHtml: generateAboutContent(projectData.aboutSection, dataHash),
+    aboutContentHtml: generateAboutContent(projectData.aboutSection, dataHash, 'ko'),
     aboutContentEnHtml: generateAboutContent(
       (projectDataEn && projectDataEn.aboutSection) || projectData.aboutSection,
-      `${dataHash}:en-about`
+      `${dataHash}:en-about`,
+      'en'
     ),
     aboutContentJaHtml: generateAboutContent(
       (projectDataJa && projectDataJa.aboutSection) || projectData.aboutSection,
-      `${dataHash}:ja-about`
+      `${dataHash}:ja-about`,
+      'ja'
     ),
-    profileBentoHtml: generateProfileBento(projectData),
-    profileBentoEnHtml: generateProfileBento(projectDataEn || projectData),
-    profileBentoJaHtml: generateProfileBento(projectDataJa || projectData),
+    profileBentoHtml: generateProfileBento(projectData, 'ko'),
+    profileBentoEnHtml: generateProfileBento(projectDataEn || projectData, 'en'),
+    profileBentoJaHtml: generateProfileBento(projectDataJa || projectData, 'ja'),
     achievementsHtml: generateAchievementsSection(projectData),
     achievementsEnHtml: generateAchievementsSection(projectDataEn || projectData),
     achievementsJaHtml: generateAchievementsSection(projectDataJa || projectData),

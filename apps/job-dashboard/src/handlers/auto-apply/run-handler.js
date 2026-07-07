@@ -12,7 +12,7 @@ import {
 } from './db-helpers.js';
 import { isCompanyAlreadyApplied } from './duplicate-company.js';
 import { getWantedSession } from './session-helpers.js';
-import { jsonResponse } from './response.js';
+import { jsonResponse } from '../../middleware/cors.js';
 import { applyMatchedJobs } from './application-actions.js';
 import {
   dispatchCloudflareNativeAutoApply,

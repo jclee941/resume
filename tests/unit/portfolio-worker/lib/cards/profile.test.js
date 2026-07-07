@@ -24,11 +24,24 @@ describe('cards/profile generateProfileBento', () => {
     expect(generateProfileBento({})).toBe('');
   });
 
-  it('renders all five cards when data is present', () => {
+  it('renders all five cards with localized KO labels by default', () => {
     const html = generateProfileBento(full);
     expect(html).toContain('profile-bento');
-    ['education', 'languages', 'awards', 'open_source', 'military'].forEach((label) => {
-      expect(html).toContain(`&gt; ${label}`);
+    ['학력', '어학', '수상', '오픈소스', '병역'].forEach((label) => {
+      expect(html).toContain(`profile-card__label">${label}<`);
+    });
+    // Terminal-style '>' prefixes are gone from reader-facing labels.
+    expect(html).not.toContain('&gt;');
+  });
+
+  it('renders localized EN and JA labels', () => {
+    const en = generateProfileBento(full, 'en');
+    ['Education', 'Languages', 'Awards', 'Open source', 'Military service'].forEach((label) => {
+      expect(en).toContain(`profile-card__label">${label}<`);
+    });
+    const ja = generateProfileBento(full, 'ja');
+    ['学歴', '語学', '受賞', 'オープンソース', '兵役'].forEach((label) => {
+      expect(ja).toContain(`profile-card__label">${label}<`);
     });
   });
 
@@ -65,8 +78,8 @@ describe('cards/profile generateProfileBento', () => {
 
   it('omits sections that have no data', () => {
     const html = generateProfileBento({ military: { status: '사회복무요원' } });
-    expect(html).toContain('&gt; military');
-    expect(html).not.toContain('&gt; education');
-    expect(html).not.toContain('&gt; awards');
+    expect(html).toContain('profile-card__label">병역<');
+    expect(html).not.toContain('학력');
+    expect(html).not.toContain('수상');
   });
 });

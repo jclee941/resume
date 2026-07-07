@@ -38,9 +38,11 @@ function getCacheControlForPath(pathname) {
   }
 
   // HTML pages: nonce-bearing CSP requires per-response uniqueness.
-  // Caching HTML at CDN causes nonce mismatch (body cached, header regenerated).
-  // Per Oracle review: HTML responses with dynamic nonces MUST NOT be shared-cacheable.
-  return 'private, no-store, must-revalidate';
+  // 'private' forbids shared/CDN caching (prevents nonce mismatch: body cached,
+  // header regenerated). 'no-cache' forces revalidation on reuse but — unlike
+  // 'no-store' — keeps the page eligible for the browser back/forward cache
+  // (bfcache restores the in-memory page with its original nonce, so CSP is safe).
+  return 'private, no-cache';
 }
 
 function acceptedEncodings(headerValue) {

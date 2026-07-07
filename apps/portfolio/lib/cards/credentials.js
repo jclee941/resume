@@ -4,7 +4,13 @@ const { escapeHtml } = require('../template-sanitizer');
 // NOT surface expiry state or expiration dates — holding the cert is the
 // signal; an expired renewal date adds noise and a negative impression.
 // Only 'in-progress' (준비중 / pursuing) is distinguished from acquired.
-function getCertificationStatus(status) {
+const STATUS_LABELS = {
+  ko: { active: '취득', pending: '준비 중' },
+  en: { active: 'ACQUIRED', pending: 'IN PROGRESS' },
+  ja: { active: '取得済み', pending: '準備中' },
+};
+
+function getCertificationStatus(status, locale = 'en') {
   const normalized = String(status || '').toLowerCase();
   // Pending labels across locales: KO 준비중, JA 準備中, EN Preparing/pursuing.
   // Matching only KO previously caused not-yet-earned certs (e.g. CKS) to render
@@ -19,9 +25,10 @@ function getCertificationStatus(status) {
     'pursuing',
   ]);
   const isPending = PENDING.has(normalized);
+  const labels = STATUS_LABELS[locale] || STATUS_LABELS.en;
   return {
     statusClass: isPending ? 'cert-status--pending' : 'cert-status--active',
-    statusLabel: isPending ? 'IN PROGRESS' : 'ACQUIRED',
+    statusLabel: isPending ? labels.pending : labels.active,
   };
 }
 
@@ -39,14 +46,15 @@ function acquisitionDate(date) {
  * Shows acquired credentials only (no expiry badge / no expiration date).
  * @param {Array} certData - Array of certification objects
  * @param {string} _dataHash - Hash of the data for cache validation
+ * @param {'ko'|'en'|'ja'} [locale='en'] - Locale for the status badge text
  * @returns {string} HTML string for certification cards
  */
-function generateCertificationCards(certData, _dataHash) {
+function generateCertificationCards(certData, _dataHash, locale = 'en') {
   if (!certData || certData.length === 0) return '';
 
   return certData
     .map((c) => {
-      const { statusClass, statusLabel } = getCertificationStatus(c.status);
+      const { statusClass, statusLabel } = getCertificationStatus(c.status, locale);
       const dateText = acquisitionDate(c.date);
       const dateHtml = dateText ? `<span class="cert-date">${escapeHtml(dateText)}</span>` : '';
       return `<li class="cert-item">

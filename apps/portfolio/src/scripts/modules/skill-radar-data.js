@@ -81,12 +81,36 @@ const SKILL_DATA_INJECTED =
     : SKILL_DATA_FALLBACK;
 
 const RADAR_LEVEL_MAP = { expert: 95, advanced: 80, intermediate: 60, beginner: 35 };
-const RADAR_EVIDENCE_LABELS = {
-  expert: 'Primary operating evidence',
-  advanced: 'Applied in project work',
-  intermediate: 'Working familiarity',
-  beginner: 'Currently learning',
+const RADAR_EVIDENCE_LABELS_BY_LOCALE = {
+  ko: {
+    expert: '주요 운영 경험',
+    advanced: '프로젝트 적용 경험',
+    intermediate: '실무 활용 가능',
+    beginner: '학습 중',
+  },
+  en: {
+    expert: 'Primary operating evidence',
+    advanced: 'Applied in project work',
+    intermediate: 'Working familiarity',
+    beginner: 'Currently learning',
+  },
+  ja: {
+    expert: '主な運用経験',
+    advanced: 'プロジェクト適用経験',
+    intermediate: '実務活用可能',
+    beginner: '学習中',
+  },
 };
+
+function radarEvidenceLabels() {
+  const lang =
+    typeof document !== 'undefined' && document.documentElement
+      ? (document.documentElement.lang || 'ko').toLowerCase()
+      : 'ko';
+  if (lang.startsWith('en')) return RADAR_EVIDENCE_LABELS_BY_LOCALE.en;
+  if (lang.startsWith('ja')) return RADAR_EVIDENCE_LABELS_BY_LOCALE.ja;
+  return RADAR_EVIDENCE_LABELS_BY_LOCALE.ko;
+}
 
 function radarFromLocaleSkills(skills) {
   if (!skills || typeof skills !== 'object') return null;
@@ -97,10 +121,11 @@ function radarFromLocaleSkills(skills) {
       title: String(data.title || category),
       skills: data.items.map((item) => {
         const levelKey = String(item.level || 'intermediate').toLowerCase();
+        const evidenceLabels = radarEvidenceLabels();
         return {
           name: String(item.name || 'Unknown'),
           level: RADAR_LEVEL_MAP[levelKey] != null ? RADAR_LEVEL_MAP[levelKey] : 60,
-          evidence: RADAR_EVIDENCE_LABELS[levelKey] || RADAR_EVIDENCE_LABELS.intermediate,
+          evidence: evidenceLabels[levelKey] || evidenceLabels.intermediate,
         };
       }),
     };

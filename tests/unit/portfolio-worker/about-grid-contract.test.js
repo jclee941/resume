@@ -36,7 +36,9 @@ describe('about grid: narrative + expertise paired without losing content', () =
     expect(count(worker, 'class="achievements-block"')).toBe(3);
   });
 
-  test('career_highlights narrative is preserved (single block per locale)', () => {
-    expect(count(worker, '&gt; career_highlights')).toBe(3);
+  test('career-highlights narrative is preserved (single localized block per locale)', () => {
+    expect(count(worker, 'about-label">경력 하이라이트<')).toBe(1);
+    expect(count(worker, 'about-label">Career highlights<')).toBe(1);
+    expect(count(worker, 'about-label">経歴ハイライト<')).toBe(1);
   });
 });
