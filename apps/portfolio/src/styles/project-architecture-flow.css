@@ -99,17 +99,10 @@
     display: block;
   }
 
+  /* The fixed-width ASCII box art cannot render intact on narrow screens
+     (it clipped and read as broken). The numbered step list above is the
+     mobile representation of the same flow, so hide the diagram entirely. */
   .architecture-diagram {
-    background: var(--bg-tertiary);
-    border-color: var(--border-primary);
-    padding: var(--space-2);
-    max-block-size: 12rem;
-    overflow: auto;
-    opacity: 0.78;
-    font-size: var(--text-xs);
-  }
-
-  .architecture-diagram__text {
-    line-height: var(--leading-normal);
+    display: none;
   }
 }

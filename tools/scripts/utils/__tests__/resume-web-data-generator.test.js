@@ -219,7 +219,7 @@ describe('generateWebData → resume[].stats (the ACTUAL static-card render path
     );
     assert.equal(
       generateWebData(enSsot, 'en').resume[4].description,
-      'Solved server configuration consistency and remote-access visibility for a contact-center remote-work environment by building Python and Ansible runbooks, and operated FortiGate VPN infrastructure for new contact-center sites.'
+      'The contact-center remote-work environment was drifting in two places at once: server configurations that disagreed per node, and remote-access activity that no one could see in real time. Python and Ansible runbooks closed the configuration gap, and FortiGate VPN infrastructure supported each new contact-center site with the same baseline.'
     );
   });
 

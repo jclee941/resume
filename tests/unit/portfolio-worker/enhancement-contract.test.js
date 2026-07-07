@@ -193,6 +193,15 @@ describe('Project deep-dive architecture diagram accessibility', () => {
     expect(renderer).toMatch(/createElement\('span', 'architecture-step__index'/);
     expect(renderer).toMatch(/createElement\('span', 'architecture-step__label'/);
   });
+
+  test('mobile hides the ascii diagram and shows only the step list (no clipped box art)', () => {
+    const css = read(path.join(PORTFOLIO, 'src', 'styles', 'project-architecture-flow.css'));
+    const mobileBlock = css.slice(css.indexOf('@media (max-width: 768px)'));
+    expect(mobileBlock).toContain('.architecture-steps');
+    expect(mobileBlock).toMatch(/\.architecture-diagram\s*\{[^}]*display:\s*none/);
+    // The clipped-scroll presentation that rendered as broken box art is gone.
+    expect(mobileBlock).not.toContain('max-block-size');
+  });
 });
 
 describe('B: engineering principles + current focus surfaced from SSoT (single source)', () => {
