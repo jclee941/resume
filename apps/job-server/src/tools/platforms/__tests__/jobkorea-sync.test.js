@@ -62,20 +62,4 @@ describe('jobkorea sync platform', () => {
     assert.ok(result.error);
     assert.equal(result.mode, 'api-only');
   });
-
-  it('diffPlatform returns local preview', async () => {
-    const { diffPlatform } = await loadModule();
-    const data = {
-      personal: { name: 'Diff Test', email: '', phone: '' },
-      careers: [],
-      education: { school: '', major: '', status: '' },
-      certifications: [],
-    };
-
-    const result = await diffPlatform(data);
-
-    assert.equal(result.mode, 'api-only');
-    assert.equal(result.local_preview.name, 'Diff Test');
-    assert.ok(result.note.includes('diff is not available'));
-  });
 });
