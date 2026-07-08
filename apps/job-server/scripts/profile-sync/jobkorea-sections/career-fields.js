@@ -3,7 +3,7 @@ import {
   normalizeCompanyName,
   normalizeWorkTypeForProfile,
 } from '@resume/shared/normalize';
-import { EMPTY_CAREER_FIELDS } from './constants.js';
+import { EMPTY_CAREER_FIELDS_PRE_RETIRE, EMPTY_CAREER_FIELDS_POST_RETIRE } from './constants.js';
 import { parseRange, pushField } from './validators.js';
 
 function buildCareerSummary(ssot) {
@@ -38,19 +38,33 @@ export function mapCareersToFormFields(ssot, indices) {
 
     pushField(fields, `Career[${key}].Index_Name`, key);
     pushField(fields, `Career[${key}].C_Name`, normalizeCompanyName(career?.company));
-    EMPTY_CAREER_FIELDS.slice(0, 7).forEach((name) =>
+    EMPTY_CAREER_FIELDS_PRE_RETIRE.forEach((name) =>
       pushField(fields, `Career[${key}].${name}`, '')
     );
     pushField(fields, `Career[${key}].C_Part`, career?.department || '');
     pushField(fields, `Career[${key}].CSYM`, start);
     pushField(fields, `Career[${key}].CEYM`, end);
     pushField(fields, `Career[${key}].RetireSt`, isCurrent ? 1 : 2);
+    const retireReasonCode = isCurrent
+      ? ''
+      : (career?.jobkoreaRetireReasonCode ??
+        ssot?.platformVariants?.jobkorea?.defaultRetireReasonCode ??
+        '');
+    const retireReason = isCurrent
+      ? ''
+      : (career?.jobkoreaRetireReason ??
+        ssot?.platformVariants?.jobkorea?.defaultRetireReason ??
+        '');
+    pushField(fields, `Career[${key}].Retire_Rsn_Code`, retireReasonCode);
+    pushField(fields, `Career[${key}].Retire_Rsn`, retireReason);
     pushField(fields, `Career[${key}].M_MainJob_Jikwi`, normalizeCareerRole(career?.role));
     pushField(fields, `Career[${key}].Job_Type_Code`, '');
     const jobCode =
       career?.jobkoreaJobCode || ssot?.platformVariants?.jobkorea?.defaultJobCode || '';
     pushField(fields, `Career[${key}].M_MainField`, jobCode);
-    EMPTY_CAREER_FIELDS.slice(7).forEach((name) => pushField(fields, `Career[${key}].${name}`, ''));
+    EMPTY_CAREER_FIELDS_POST_RETIRE.forEach((name) =>
+      pushField(fields, `Career[${key}].${name}`, '')
+    );
     pushField(
       fields,
       `Career[${key}].Prfm_Prt`,

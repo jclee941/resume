@@ -31,7 +31,7 @@
   ],
   "military": {
     "status": "사회복무요원",
-    "period": "2014.12 - 2016.12"
+    "period": "2014.12 ~ 2016.12"
   },
   "summary": {
     "expertise": [
@@ -77,13 +77,14 @@
   },
   "platformVariants": {
     "wanted": {
-      "headline": "보안 자동화/인프라 엔지니어 | 본인가·감사 대응 | FortiGate · Splunk ES",
+      "headline": "정보보안 엔지니어",
       "about": "금융권 보안 인프라와 SIEM 엔지니어링에서 FortiGate HA 망분리, Splunk ES 탐지 룰, Slack/SMS 알림, FortiManager API 조회, Claude AI 보조 분석, 감사 대응 문서화를 구축과 자동화 관점에서 맡았습니다.\n\n[찾는 역할]\n보안 자동화, 보안 인프라, SIEM 엔지니어링 역할의 제안과 면접을 우선 검토합니다. 반복 대응을 문서·스크립트·API 연동으로 줄이고, 감사·장애 상황에서 설명 가능한 운영 근거를 남기는 팀에 잘 맞습니다.\n\n[핵심 근거]\n- 넥스트레이드: Splunk ES Saved Search, Webhook relay, Slack/SMS 알림, FortiManager API 조회, Claude AI 보조 분석 흐름 설계\n- 보안 인프라 구축: FortiGate HA, 망분리, 엔드포인트 보안, Ansible Role 기반 설정 관리\n- FSDC: 금감원 감사 대응, DB 접근제어 쿼리 튜닝, DLP 정책 산출물 관리\n- 네트워크/시스템: NSX-T, Wazuh, NAC, VPN, Linux, Python/Ansible 자동화 스크립트\n\n[기술/자격]\nSplunk ES, FortiGate/FortiManager, FortiAnalyzer, Ansible, Python, Terraform, Docker, Linux, Grafana/Prometheus/Loki, Elasticsearch/Kibana, CCNP\n\n포트폴리오: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
     },
     "jobkorea": {
-      "headline": "보안 인프라/SIEM 엔지니어 | 본인가·감사 대응 | FortiGate · Splunk ES",
+      "headline": "정보보안 엔지니어",
       "about": "[지원 방향]\n보안 인프라, SIEM 엔지니어링, 금융권 정보보안 역할의 제안과 면접을 우선 검토합니다. FortiGate, Splunk ES, FortiManager API, Claude AI 보조 분석, Python/Ansible을 대응 아키텍처로 연결해 반복 대응을 줄이고, 감사·장애 상황에서 설명 가능한 근거를 남겨 왔습니다.\n\n[경력 요약]\n- 아이티센 CTS: 넥스트레이드 보안 이벤트 대응 아키텍처 설계. Splunk ES Saved Search, Webhook relay, Slack/SMS 알림, FortiManager API 조회, Claude AI 보조 분석 흐름 설계\n- 가온누리정보시스템: 넥스트레이드 보안 인프라 구축. FortiGate HA, 망분리, 엔드포인트 보안, Ansible Role 기반 설정 관리\n- 콴텍투자일임: 금융보안데이터센터(FSDC) 인프라 표준화. 금감원 감사 대응, DB 접근제어 쿼리 튜닝, DLP 정책 산출물 관리\n- 조인트리/메타넷엠플랫폼: NSX-T, Wazuh, NAC, VPN, Python/Ansible 기반 스크립트\n- 엠티데이타: KAI 폐쇄망 Linux/OA 환경, 패치·방화벽 정책 변경 이력 관리\n\n[기술/자격]\nSplunk ES, FortiGate/FortiManager, FortiAnalyzer, Ansible, Python, Terraform, Docker, Linux, NSX-T, Wazuh, Grafana/Prometheus/Loki, Elasticsearch/Kibana, CCNP\n\n포트폴리오: https://resume.jclee.me",
-      "defaultJobCode": "1000238"
+      "defaultJobCode": "1000238",
+      "defaultRetireReason": "계약기간 만료"
     }
   },
   "current": {
@@ -133,7 +134,7 @@
           ]
         }
       ],
-      "continuousEngagement": "넥스트레이드 매매체결시스템 트랙: 가온누리 구축 단계 2024.03~2025.02 → 아이티센 CTS 자동화 단계 2025.03~2026.02, 동일 고객사 연속 수행",
+      "continuousEngagement": "넥스트레이드 매매체결시스템 트랙: 가온누리 구축 단계 2024.03 ~ 2025.02 → 아이티센 CTS 자동화 단계 2025.03 ~ 2026.02, 동일 고객사 연속 수행",
       "jobkoreaJobCode": "1000238"
     },
     {
@@ -171,7 +172,7 @@
           ]
         }
       ],
-      "continuousEngagement": "넥스트레이드 매매체결시스템 트랙: 가온누리 구축 단계 2024.03~2025.02 → 아이티센 CTS 운영 단계 2025.03~2026.02, 동일 고객사 연속 수행",
+      "continuousEngagement": "넥스트레이드 매매체결시스템 트랙: 가온누리 구축 단계 2024.03 ~ 2025.02 → 아이티센 CTS 운영 단계 2025.03 ~ 2026.02, 동일 고객사 연속 수행",
       "jobkoreaJobCode": "1000238"
     },
     {
@@ -971,10 +972,10 @@
     }
   ],
   "hero": {
-    "badge": "보안 엔지니어",
+    "badge": "정보보안 엔지니어",
     "title": "이재철",
     "titleEn": "Jaecheol Lee",
-    "subtitle": "보안 엔지니어 · 자동화 아키텍처 · 관측성"
+    "subtitle": "정보보안 엔지니어"
   },
   "sectionDescriptions": {
     "resume": "인프라 경력",

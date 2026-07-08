@@ -124,6 +124,47 @@ describe('mapCareersToFormFields', () => {
     assert.strictEqual(byName.get('Career[c1].RetireSt'), '1');
   });
 
+  it('emits retirement reason for resigned careers from platform default', () => {
+    const fields = mapCareersToFormFields({
+      careers: [baseCareer],
+      platformVariants: {
+        jobkorea: { defaultRetireReasonCode: '5', defaultRetireReason: '계약기간 만료' },
+      },
+    });
+    const byName = toMap(fields);
+
+    assert.strictEqual(byName.get('Career[c1].RetireSt'), '2');
+    assert.strictEqual(byName.get('Career[c1].Retire_Rsn_Code'), '5');
+    assert.strictEqual(byName.get('Career[c1].Retire_Rsn'), '계약기간 만료');
+  });
+
+  it('prefers per-career retire reason override', () => {
+    const fields = mapCareersToFormFields({
+      careers: [{ ...baseCareer, jobkoreaRetireReasonCode: '3', jobkoreaRetireReason: '자발적 이직' }],
+      platformVariants: {
+        jobkorea: { defaultRetireReasonCode: '5', defaultRetireReason: '계약기간 만료' },
+      },
+    });
+    const byName = toMap(fields);
+
+    assert.strictEqual(byName.get('Career[c1].Retire_Rsn_Code'), '3');
+    assert.strictEqual(byName.get('Career[c1].Retire_Rsn'), '자발적 이직');
+  });
+
+  it('leaves retirement reason empty for 현재 (current) careers', () => {
+    const fields = mapCareersToFormFields({
+      careers: [{ ...baseCareer, period: '2024.03 ~ 현재' }],
+      platformVariants: {
+        jobkorea: { defaultRetireReasonCode: '5', defaultRetireReason: '계약기간 만료' },
+      },
+    });
+    const byName = toMap(fields);
+
+    assert.strictEqual(byName.get('Career[c1].RetireSt'), '1');
+    assert.strictEqual(byName.get('Career[c1].Retire_Rsn_Code'), '');
+    assert.strictEqual(byName.get('Career[c1].Retire_Rsn'), '');
+  });
+
   it('truncates long myRole to 500 chars', () => {
     const longMyRole = 'a'.repeat(800);
     const fields = mapCareersToFormFields({
@@ -271,7 +312,7 @@ describe('mapResumeTitleToFormFields', () => {
     const byName = toMap(fields);
 
     assert.strictEqual(byName.get('UserResume.M_Resume_Title'), JOBKOREA_RESUME_TITLE);
-    assert.strictEqual(JOBKOREA_RESUME_TITLE, '이재철 - 보안 운영/인프라 엔지니어');
+    assert.strictEqual(JOBKOREA_RESUME_TITLE, '이재철 - 정보보안 엔지니어');
   });
 
   it('prefers platformVariants.jobkorea.headline when present', () => {
