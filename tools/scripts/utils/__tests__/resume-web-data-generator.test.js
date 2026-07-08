@@ -215,7 +215,7 @@ describe('generateWebData → resume[].stats (the ACTUAL static-card render path
     ]);
     assert.equal(
       generateWebData(ssot, 'ko').resumeEn[4].description,
-      'Handled VPN/NAC operations during a large contact-center remote-work transition, using Python and Ansible runbooks for endpoint registration, switch checks, and server configuration tasks.'
+      'Handled VPN/NAC operations during a contact-center remote-work transition, using Python and Ansible runbooks for endpoint registration, switch checks, and server configuration tasks.'
     );
     assert.equal(
       generateWebData(enSsot, 'en').resume[4].description,
