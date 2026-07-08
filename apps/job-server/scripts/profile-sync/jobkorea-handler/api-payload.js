@@ -59,11 +59,15 @@ export function smartMergeFields(baseFields, targetFields, tokens = {}) {
       skipPrefixes.add(`${key}.`);
     }
   }
+  // Fields that must always overlay even inside an "incomplete" section, because
+  // JobKorea server-side validation rejects a stale/mis-formatted base value
+  // (e.g. UnivSchool date fields stored dotted as "2024.03" instead of "202403").
+  const FORCE_OVERLAY = /\.(Entc_YM|Grad_YM|CSYM|CEYM|Lc_YYMM)$/;
 
   // Start with base fields
   const merged = new Map(baseMap);
 
-  // Apply target overrides, skipping incomplete sections
+  // Apply target overrides, skipping incomplete sections (except forced fields)
   for (const f of targetFields) {
     let skip = false;
     for (const prefix of skipPrefixes) {
@@ -72,7 +76,7 @@ export function smartMergeFields(baseFields, targetFields, tokens = {}) {
         break;
       }
     }
-    if (!skip) {
+    if (!skip || FORCE_OVERLAY.test(f.name)) {
       merged.set(f.name, f.value ?? '');
     }
   }
