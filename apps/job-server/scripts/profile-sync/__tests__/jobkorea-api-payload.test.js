@@ -142,4 +142,31 @@ describe('JobKorea API payload helpers', () => {
     assert.deepStrictEqual(licenseIndexValues, ['c1', 'c2']);
     assert.strictEqual(byName.get('InputStat.LicenseInputStat'), 'True');
   });
+
+  it('overlays target values for fields present in base even when the section is incomplete', () => {
+    // UnivSchool regression: base carries many extra fields (majors, grades), our
+    // target maps only the core fields. The section counts as incomplete, but the
+    // core fields we DO map (Entc_YM) must still overlay so JobKorea validation
+    // does not reject a stale/dotted base value.
+    const base = [
+      { name: 'UnivSchool[c3].Schl_Name', value: '한양사이버대학교' },
+      { name: 'UnivSchool[c3].Entc_YM', value: '2024.03' },
+      { name: 'UnivSchool[c3].UnivMajor[1].Major_Name', value: '' },
+      { name: 'UnivSchool[c3].UnivMajor[1].Major_Code', value: '' },
+      { name: 'UnivSchool[c3].Grade', value: '' },
+    ];
+    const target = [
+      { name: 'UnivSchool[c3].Schl_Name', value: '한양사이버대학교' },
+      { name: 'UnivSchool[c3].Entc_YM', value: '202403' },
+    ];
+
+    const merged = smartMergeFields(base, target);
+    const map = new Map(merged.map((f) => [f.name, f.value]));
+
+    // Core mapped field overlaid with our normalized value
+    assert.strictEqual(map.get('UnivSchool[c3].Entc_YM'), '202403');
+    // Base-only extra fields preserved (not dropped)
+    assert.strictEqual(map.get('UnivSchool[c3].UnivMajor[1].Major_Name'), '');
+    assert.strictEqual(map.get('UnivSchool[c3].Grade'), '');
+  });
 });
