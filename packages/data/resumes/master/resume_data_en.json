@@ -31,7 +31,7 @@
   ],
   "military": {
     "status": "Social Service Agent",
-    "period": "2014.12 - 2016.12"
+    "period": "2014.12 ~ 2016.12"
   },
   "summary": {
     "expertise": [
@@ -55,10 +55,10 @@
     "aboutSection": {
       "careerHighlights": [
         "Began in KAI's closed network on Linux server operations, patch routines, and firewall rule reviews.",
-        "2018.11~2019.11: rebuilt Linux foundations through RHCSA, CompTIA Linux+, LPIC-1, and Linux Master Level 2.",
-        "2019~2022 (Metanet, Jointree): brought Ansible and Python to contact-center operations, NSX-T microsegmentation to Kookmin University's next-gen system, and Wazuh OSS into the monitoring stack.",
-        "2022~2024 (Quantec FSDC): Financial Supervisory Service audit response and PostgreSQL access-control tuning for the AI trading platform POC.",
-        "2024~2026 (Gaonnuri, ITCEN CTS, Nextrade): from build to automation of the Nextrade security track, network segmentation, endpoint security, Korean Financial Services Commission main-license review, Splunk ES detection rules, and FortiManager API lookups."
+        "2018.11 ~ 2019.11: rebuilt Linux foundations through RHCSA, CompTIA Linux+, LPIC-1, and Linux Master Level 2.",
+        "2019 ~ 2022 (Metanet, Jointree): brought Ansible and Python to contact-center operations, NSX-T microsegmentation to Kookmin University's next-gen system, and Wazuh OSS into the monitoring stack.",
+        "2022 ~ 2024 (Quantec FSDC): Financial Supervisory Service audit response and PostgreSQL access-control tuning for the AI trading platform POC.",
+        "2024 ~ 2026 (Gaonnuri, ITCEN CTS, Nextrade): from build to automation of the Nextrade security track, network segmentation, endpoint security, Korean Financial Services Commission main-license review, Splunk ES detection rules, and FortiManager API lookups."
       ],
       "techPhilosophy": [
         "\"If you can't observe it, you can't operate it\"",
@@ -120,7 +120,7 @@
           ]
         }
       ],
-      "continuousEngagement": "NextTrade Trading System (2024.03~2026.02 continuous engagement, build → automate)"
+      "continuousEngagement": "NextTrade Trading System (2024.03 ~ 2026.02 continuous engagement, build → automate)"
     },
     {
       "id": "gaonnuri-information-system",
@@ -156,7 +156,7 @@
           ]
         }
       ],
-      "continuousEngagement": "NextTrade Trading System (2024.03~2026.02 continuous engagement, build → operate)"
+      "continuousEngagement": "NextTrade Trading System (2024.03 ~ 2026.02 continuous engagement, build → operate)"
     },
     {
       "id": "quantec-investment",
@@ -949,10 +949,10 @@
     }
   ],
   "hero": {
-    "badge": "Security Engineer",
+    "badge": "Information Security Engineer",
     "title": "Jaecheol Lee",
     "titleEn": "Jaecheol Lee",
-    "subtitle": "Security Engineer · Automation Architecture · Observability"
+    "subtitle": "Information Security Engineer"
   },
   "sectionDescriptions": {
     "resume": "infrastructure experience",
@@ -1092,11 +1092,11 @@
   },
   "platformVariants": {
     "wanted": {
-      "headline": "Security Automation / Infrastructure Engineer | FortiGate · Splunk ES · Financial Security",
+      "headline": "Information Security Engineer",
       "about": "In financial security infrastructure and SIEM engineering, I handled build and automation work across FortiGate HA segmentation, Splunk ES detection rules, Slack/SMS alerts, FortiManager API lookups, Claude AI-assisted review, and audit evidence documentation.\n\n[Target Roles]\nI am prioritizing Security Automation, Security Infrastructure, and SIEM Engineering opportunities. I fit teams that reduce repeated response work through runbooks, scripts, and API integrations while keeping audit records and incident handling explainable.\n\n[Evidence]\n- Nextrade: Splunk ES Saved Searches, webhook relay, Slack/SMS alerts, FortiManager API lookup, and Claude AI-assisted review flow design\n- Security infrastructure build: FortiGate HA, network segmentation, endpoint security, and Ansible Role-based configuration management\n- FSDC: financial regulator audit response, DB access-control query tuning, and DLP policy artifact management\n- Network/systems: NSX-T, Wazuh, NAC, VPN, Linux, and Python/Ansible automation scripts\n\n[Skills/Cert]\nSplunk ES, FortiGate/FortiManager, FortiAnalyzer, Ansible, Python, Terraform, Docker, Linux, Grafana/Prometheus/Loki, Elasticsearch/Kibana, CCNP\n\nPortfolio: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
     },
     "jobkorea": {
-      "headline": "Security Infrastructure / SIEM Engineer | FortiGate · Splunk ES · CCNP",
+      "headline": "Information Security Engineer",
       "about": "[Target Roles]\nI am prioritizing Security Infrastructure, SIEM Engineering, and financial information security opportunities. I connect FortiGate, Splunk ES, FortiManager API, Claude AI-assisted review, and Python/Ansible work into response architecture that reduces repeated work and leaves explainable evidence for audits and incidents.\n\n[Career Summary]\n- ITCEN CTS: Nextrade exchange security-event response architecture with Splunk ES Saved Searches, webhook relay, Slack/SMS alerts, FortiManager API lookup, and Claude AI-assisted review\n- Gaonnuri Information Systems: Nextrade security infrastructure build with FortiGate HA, network segmentation, endpoint security, and Ansible Role-based configuration management\n- Quantec Investment Management: Financial Security Data Center (FSDC) infrastructure standardization, financial regulator audit response, DB access-control query tuning, and DLP policy artifact management\n- Jointree / Metanet M Platform: NSX-T, Wazuh, NAC, VPN, and Python/Ansible scripts\n- MT Data: KAI closed-network Linux/OA environment, patching, and firewall policy change-history management\n\n[Skills/Cert]\nSplunk ES, FortiGate/FortiManager, FortiAnalyzer, Ansible, Python, Terraform, Docker, Linux, NSX-T, Wazuh, Grafana/Prometheus/Loki, Elasticsearch/Kibana, CCNP\n\nPortfolio: https://resume.jclee.me"
     }
   },

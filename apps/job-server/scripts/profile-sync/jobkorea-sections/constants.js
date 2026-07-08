@@ -49,12 +49,12 @@ export const MAJOR_TYPE = {
   複数専攻: 3,
 };
 
-export const EMPTY_CAREER_FIELDS = [
-  'Co_Code',
-  'CName_Code',
-  'M_MainCate',
-  'Retire_Rsn_Code',
-  'Retire_Rsn',
+// Career fields that are always emitted empty. Retire_Rsn_Code/Retire_Rsn are
+  // NOT here: they are emitted explicitly by mapCareersToFormFields so resigned
+  // careers carry a valid retirement reason instead of a forced blank.
+  // PRE_RETIRE_* is emitted before RetireSt; POST_RETIRE_* after M_MainJob_Jikwi.
+  export const EMPTY_CAREER_FIELDS_PRE_RETIRE = ['Co_Code', 'CName_Code', 'M_MainCate'];
+  export const EMPTY_CAREER_FIELDS_POST_RETIRE = [
   'Biz_No',
   'NHIS_LINKED_STAT',
   'M_MainJob',
