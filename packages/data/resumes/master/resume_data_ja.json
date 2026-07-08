@@ -682,7 +682,7 @@
       "id": "security-alert-system",
       "name": "Security Alert System",
       "period": "2025.01 ~ 現在",
-      "description": "FortiGateのセキュリティイベントが装置syslogとSplunkに分かれ、イベント発生から担当者認知までが分単位の遅れになっていました。Splunk Saved SearchとWebhookをつなぎ、検知ルールがマッチした瞬間にSlack/Telegramへ即時通知する経路に切り替えました。認知・分類・通知のフローは一つの場所に揃え、担当者応答も同じ流れで動くよう標準化しています。",
+      "description": "FortiGateのセキュリティイベントが装置syslogとSplunkに分かれ、担当者認知と応答ハンドオフを一貫して保ちにくい状態でした。Splunk Saved SearchとWebhookをつなぎ、検知ルールにマッチしたイベントをSlackへ通知する経路に切り替えました。認知・分類・通知のフローは一つの場所に揃え、担当者応答も同じ流れで動くよう標準化しています。",
       "technologies": [
         "Splunk",
         "Python",
@@ -952,7 +952,7 @@
     "subtitle": "情報セキュリティエンジニア"
   },
   "sectionDescriptions": {
-    "resume": "インフラ経験8年",
+    "resume": "インフラ経験",
     "projects": "構築・自動化プロジェクト",
     "infrastructure": "運用中インフラ",
     "skills": "技術スタック",
