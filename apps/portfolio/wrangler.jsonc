@@ -151,7 +151,7 @@
         },
       ],
       // Queue bindings INACTIVE: producer functions (enqueueTask, enqueueBatch, enqueueNotification)
-      // are defined in apps/job-dashboard/src/{queue-consumer,services/notifications}.js but no current
+      // are defined in apps/job-dashboard/src/queues/queue-enqueuer.js and src/services/notifications.js but no current
       // workflow handler invokes them — workflows trigger via direct Workflow.create() calls instead.
       // To activate: (1) provision queues via .github/workflows/provision-queues.yml,
       // (2) repopulate producers/consumers arrays below from infrastructure/cloudflare/queues.json.
