@@ -58,7 +58,7 @@ const CAREER_EN_OVERRIDES = {
   '(주)메타넷엠플랫폼': {
     title: 'Metanet M Platform Co., Ltd.',
     description:
-      'Handled VPN/NAC operations during a large contact-center remote-work transition, using Python and Ansible runbooks for endpoint registration, switch checks, and server configuration tasks.',
+      'Handled VPN/NAC operations during a contact-center remote-work transition, using Python and Ansible runbooks for endpoint registration, switch checks, and server configuration tasks.',
   },
   '(주)엠티데이타': {
     title: 'MT Data Co., Ltd.',
@@ -80,7 +80,7 @@ const PROJECT_EN_OVERRIDES = {
   },
   'Security Alert System': {
     description:
-      'FortiGate security events were scattered across device syslog and Splunk, causing delays from event occurrence to responder awareness. Integrated Splunk Saved Search with Webhooks and implemented an EMS state-tracking pattern to prevent duplicate alerts by sending notifications only on state transitions. Classifies events with maintained FortiGate LogID mappings. When FortiGate syslog events occur, alerts are routed through Splunk Saved Search → Webhook → Slack/Telegram in a single path.',
+      'FortiGate security events were scattered across device syslog and Splunk, making operator awareness and response handoff hard to keep consistent. Integrated Splunk Saved Search with Webhooks and implemented an EMS state-tracking pattern to prevent duplicate alerts by sending notifications only on state transitions. Classifies events with maintained FortiGate LogID mappings. When FortiGate syslog events occur, alerts are routed through Splunk Saved Search → Webhook → Slack in a single path.',
     tagline: 'Security Alert Automation',
   },
   'IP Blacklist Platform': {

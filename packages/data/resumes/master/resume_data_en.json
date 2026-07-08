@@ -45,7 +45,7 @@
     ],
     "profileStatement": "Security infrastructure and automation engineer who builds reviewable artifacts from license-review and audit evidence: FortiGate HA segmentation, endpoint security controls, Splunk ES detection rules, Slack/SMS alerting, FortiManager API lookups, Claude AI-assisted review, and IaC-backed runbooks. Prioritizing Security Automation, Security Infrastructure, and SIEM engineering roles now.",
     "coreCompetencies": [
-      "Six years inside financial regulated environments, where every security change needs to be reviewable on demand for license reviews and audits.",
+      "In regulated financial environments, security changes stay reviewable on demand for license reviews and audits.",
       "SIEM detection rules feed directly into alert classification and notification workflows, so an event never sits unexplained between Splunk and the operator.",
       "Pulled infrastructure operations into IaC so change history, drift, and reconstruction all live in Git rather than in tribal memory.",
       "An observability platform that joins scattered metrics and logs under a single query surface, so cross-service root-cause analysis stops being a tab-switching exercise.",
@@ -685,7 +685,7 @@
       "id": "security-alert-system",
       "name": "Security Alert System",
       "period": "2025.01 ~ Present",
-      "description": "FortiGate security events were scattered across device syslog and Splunk, with the gap between event and operator measured in minutes, not seconds. Splunk Saved Search webhooks now fire to Slack and Telegram the moment a detection rule matches, and the security-event notification plus operator-response flow lives in one place.",
+      "description": "FortiGate security events were scattered across device syslog and Splunk, making operator awareness and response handoff hard to keep consistent. Splunk Saved Search webhooks now send matching detections to Slack, and the security-event notification plus operator-response flow lives in one place.",
       "technologies": [
         "Splunk",
         "Python",
@@ -1121,7 +1121,7 @@
         "Gaonnuri Information Systems (2024.03 ~ 2025.02): Built Nextrade security infrastructure, including FortiGate HA, network segmentation, endpoint security, Ansible Role-based configuration standards, and Korean Financial Services Commission main-license review response.",
         "Quantec Investment Management (2022.08 ~ 2024.03): Operated Financial Security Data Center infrastructure, supported financial regulator audits, tuned DB access-control queries, and validated PB platform POC work.",
         "Jointree (2021.09 ~ 2022.04): Worked on Kookmin University information-system infrastructure with VMware NSX-T microsegmentation, DFW policies, NAC/DLP controls, and Wazuh monitoring integration.",
-        "Metanet M Platform (2020.08 ~ 2021.08): Supported remote-work infrastructure for a large contact center, including SSL VPN/NAC operations, endpoint registration runbooks, Python/Ansible operational scripts, and FortiGate VPN session monitoring.",
+        "Metanet M Platform (2020.08 ~ 2021.08): Supported remote-work infrastructure for a contact center, including SSL VPN/NAC operations, endpoint registration runbooks, Python/Ansible operational scripts, and FortiGate VPN session monitoring.",
         "MT Data (2018.10 ~ 2019.10): Operated KAI closed-network Linux/OA environments, patch schedules, firewall policy change history, and site IT support."
       ],
       "closing": "Across security infrastructure build, SIEM detection and alerting, audits, and repeated-response automation, I leave operating evidence in documents and systems that teams can review."
