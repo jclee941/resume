@@ -73,19 +73,3 @@ export async function syncToJobKorea(data, params = {}) {
     return { error: e.message, mode: 'api-only' };
   }
 }
-
-/**
- * Diff local resume data with JobKorea remote data.
- * API-only mode returns a preview of what would change.
- *
- * @param {object} sourceData - Local resume data
- * @param {object} params - Parameters (unused in API-only, kept for compat)
- */
-export async function diffPlatform(sourceData, _params = {}) {
-  const local = mapToJobKoreaFormat(sourceData);
-  return {
-    mode: 'api-only',
-    local_preview: local,
-    note: 'API-only mode: diff is not available without remote fetch. Use syncToJobKorea with dry_run for preview.',
-  };
-}
