@@ -22,9 +22,15 @@ import {
   shouldUseHybridMode,
   getJobKoreaSyncMode,
 } from './sync-hybrid.js';
+import {
+  assertJobKoreaCareerSlotCoverage,
+  selectJobKoreaCareerSectionIndices,
+} from './career-guards.js';
 import { pickJobKoreaBrowserProfile } from '../../jobkorea-session/user-agent-pool.js';
 import { fileURLToPath } from 'url';
 import path from 'path';
+
+export { assertJobKoreaCareerSlotCoverage } from './career-guards.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 async function activateRequiredSections(page) {
@@ -306,7 +312,6 @@ export async function syncJobKoreaProfile(handler, ssot, options = {}) {
 
     const dryRun = !CONFIG.APPLY || CONFIG.DIFF_ONLY || syncMode === 'api-dry-run';
     const sectionIndices = await handler.createEntrySlots(page, ssot, {
-      recreateCareerEntries: !dryRun,
       recreateIntroEntries: !dryRun,
       recreateLicenseEntries: !dryRun,
     });
@@ -320,8 +325,12 @@ export async function syncJobKoreaProfile(handler, ssot, options = {}) {
       'info',
       'jobkorea'
     );
+    assertJobKoreaCareerSlotCoverage(ssot, sectionIndices, { dryRun });
+    const saveSectionIndices = selectJobKoreaCareerSectionIndices(ssot, sectionIndices, {
+      dryRun,
+    });
 
-    const targetFields = buildJobKoreaFormData(ssot, sectionIndices);
+    const targetFields = buildJobKoreaFormData(ssot, saveSectionIndices);
     let apiClient = null;
     if (hybridMode) {
       apiClient =
@@ -352,7 +361,7 @@ export async function syncJobKoreaProfile(handler, ssot, options = {}) {
     logChangeSummary(changes);
 
     if (hybridMode) {
-      const saveResult = await executeHybridSave(apiClient, targetFields, page, sectionIndices, {
+      const saveResult = await executeHybridSave(apiClient, targetFields, page, saveSectionIndices, {
         logger,
         apply: CONFIG.APPLY,
         diffOnly: CONFIG.DIFF_ONLY,
@@ -364,7 +373,7 @@ export async function syncJobKoreaProfile(handler, ssot, options = {}) {
         return { success: false, changes, error: saveResult.error };
       }
     } else if (CONFIG.APPLY && !CONFIG.DIFF_ONLY) {
-      const saveResult = await executePlaywrightSave(page, targetFields, sectionIndices, logger);
+      const saveResult = await executePlaywrightSave(page, targetFields, saveSectionIndices, logger);
       if (saveResult.success === false) {
         return { success: false, changes, error: saveResult.error };
       }
