@@ -1,5 +1,8 @@
 import { describe, it, mock, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert';
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
 import JobKoreaHandler from '../jobkorea-handler.js';
 import { syncJobKoreaProfile } from '../jobkorea-handler/sync.js';
 import { createJobKoreaEntrySlots } from '../jobkorea-handler/section-slots.js';
@@ -10,8 +13,53 @@ import {
   assertEditableResume,
   waitForEditableForm,
   JOBKOREA_SESSION_RENEW_PATH,
+  loadJobKoreaSession,
 } from '../jobkorea-handler/session.js';
-import { PLATFORMS } from '../constants.js';
+import { CONFIG, PLATFORMS } from '../constants.js';
+
+async function withApplyConfig(fn) {
+  const originalApply = CONFIG.APPLY;
+  const originalDiffOnly = CONFIG.DIFF_ONLY;
+  const originalMode = process.env.JOBKOREA_SYNC_MODE;
+  CONFIG.APPLY = true;
+  CONFIG.DIFF_ONLY = false;
+  delete process.env.JOBKOREA_SYNC_MODE;
+  try {
+    return await fn();
+  } finally {
+    CONFIG.APPLY = originalApply;
+    CONFIG.DIFF_ONLY = originalDiffOnly;
+    if (originalMode === undefined) {
+      delete process.env.JOBKOREA_SYNC_MODE;
+    } else {
+      process.env.JOBKOREA_SYNC_MODE = originalMode;
+    }
+  }
+}
+
+async function withSyncConfig({ apply = true, diffOnly = false, mode }, fn) {
+  const originalApply = CONFIG.APPLY;
+  const originalDiffOnly = CONFIG.DIFF_ONLY;
+  const originalMode = process.env.JOBKOREA_SYNC_MODE;
+  CONFIG.APPLY = apply;
+  CONFIG.DIFF_ONLY = diffOnly;
+  if (mode === undefined) {
+    delete process.env.JOBKOREA_SYNC_MODE;
+  } else {
+    process.env.JOBKOREA_SYNC_MODE = mode;
+  }
+  try {
+    return await fn();
+  } finally {
+    CONFIG.APPLY = originalApply;
+    CONFIG.DIFF_ONLY = originalDiffOnly;
+    if (originalMode === undefined) {
+      delete process.env.JOBKOREA_SYNC_MODE;
+    } else {
+      process.env.JOBKOREA_SYNC_MODE = originalMode;
+    }
+  }
+}
 
 describe('JobKoreaHandler.computeChanges', () => {
   const handler = new JobKoreaHandler();
@@ -696,6 +744,42 @@ describe('JobKoreaHandler.loadSession - auth-sync compatibility', () => {
     assert.strictEqual(result[0].name, 'ACNT_COOKIE');
     assert.strictEqual(result[1].domain, '.jobkorea.co.kr');
   });
+
+  it('can load fallback session without migrating it during read-only dry-run', () => {
+    const tempDir = mkdtempSync(path.join(tmpdir(), 'jobkorea-session-readonly-'));
+    const fallbackFile = path.join(tempDir, 'jobkorea.json');
+    let saveCalls = 0;
+    mock.method(SessionManager, 'load', () => null);
+    mock.method(SessionManager, 'save', () => {
+      saveCalls += 1;
+      return true;
+    });
+    writeFileSync(
+      fallbackFile,
+      JSON.stringify({
+        platform: 'jobkorea',
+        cookies: [{ name: 'ACNT_COOKIE', value: 'abc', domain: '.jobkorea.co.kr', path: '/' }],
+        cookieString: 'ACNT_COOKIE=abc',
+        cookieCount: 1,
+        extractedAt: '2026-03-18T00:00:00.000Z',
+        expiresAt: '2999-03-19T00:00:00.000Z',
+      })
+    );
+
+    try {
+      const result = loadJobKoreaSession({
+        fallbackFiles: [fallbackFile],
+        saveResolvedFallback: false,
+      });
+
+      assert.strictEqual(saveCalls, 0);
+      assert.ok(Array.isArray(result), 'must return array');
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].name, 'ACNT_COOKIE');
+    } finally {
+      rmSync(tempDir, { recursive: true, force: true });
+    }
+  });
 });
 
 describe('resolveCliproxyBase', () => {
@@ -716,7 +800,7 @@ describe('resolveCliproxyBase', () => {
   it('throws when CLIPROXY_BASE does not use HTTP or HTTPS', () => {
     assert.throws(
       () => resolveCliproxyBase({ CLIPROXY_BASE: 'ftp://vision.example.test/v1' }),
-      /CLIPROXY_BASE must start with http:\/\/ or https:\/\//
+      /CLIPROXY_BASE must use https unless it targets localhost/
     );
   });
 
@@ -749,7 +833,10 @@ describe('JobKorea fail-loud guards', () => {
     const logs = [];
     const page = {
       goto: async () => {},
-      url: () => overrides.url ?? 'https://www.jobkorea.co.kr/User/Resume/Edit?RNo=30236578',
+      url: () =>
+        typeof overrides.url === 'function'
+          ? overrides.url()
+          : (overrides.url ?? 'https://www.jobkorea.co.kr/User/Resume/Edit?RNo=30236578'),
       content: async () => overrides.content ?? '<form id="frm1"></form>',
       waitForFunction: async () => {},
       waitForTimeout: async () => {},
@@ -763,6 +850,7 @@ describe('JobKorea fail-loud guards', () => {
     };
     const context = {
       addCookies: async () => {},
+      clearCookies: async () => {},
       addInitScript: async () => {},
       newPage: async () => page,
       cookies: async () => [],
@@ -794,20 +882,22 @@ describe('JobKorea fail-loud guards', () => {
     const harness = createSyncHarness();
     const ssot = { personal: { portfolio: 'https://portfolio.example.com' } };
 
-    await assert.rejects(
-      () =>
-        syncJobKoreaProfile(harness.handler, ssot, {
-          launchBrowser: async () => harness.browser,
-          registerPortfolioUrl: async () => null,
-          getTimestamp: () => '2026-04-21T10:00:00.000Z',
-          logger: harness.logger,
-        }),
-      (error) => {
-        assert.match(error.message, /JobKorea portfolio URL registration failed/);
-        assert.match(error.message, /https:\/\/portfolio\.example\.com/);
-        assert.match(error.message, /2026-04-21T10:00:00\.000Z/);
-        return true;
-      }
+    await withApplyConfig(() =>
+      assert.rejects(
+        () =>
+          syncJobKoreaProfile(harness.handler, ssot, {
+            launchBrowser: async () => harness.browser,
+            registerPortfolioUrl: async () => null,
+            getTimestamp: () => '2026-04-21T10:00:00.000Z',
+            logger: harness.logger,
+          }),
+        (error) => {
+          assert.match(error.message, /JobKorea portfolio URL registration failed/);
+          assert.match(error.message, /https:\/\/portfolio\.example\.com/);
+          assert.match(error.message, /2026-04-21T10:00:00\.000Z/);
+          return true;
+        }
+      )
     );
   });
 
@@ -817,42 +907,43 @@ describe('JobKorea fail-loud guards', () => {
     for (const falsyResult of falsyResults) {
       const harness = createSyncHarness();
 
-      await assert.rejects(
-        () =>
-          syncJobKoreaProfile(
-            harness.handler,
-            { personal: { portfolio: 'https://portfolio.example.com' } },
-            {
-              launchBrowser: async () => harness.browser,
-              registerPortfolioUrl: async () => falsyResult,
-              getTimestamp: () => '2026-04-21T10:00:00.000Z',
-              logger: harness.logger,
-            }
-          ),
-        (error) => {
-          assert.match(error.message, /JobKorea portfolio URL registration failed/);
-          assert.match(error.message, /https:\/\/portfolio\.example\.com/);
-          return true;
-        }
+      await withApplyConfig(() =>
+        assert.rejects(
+          () =>
+            syncJobKoreaProfile(
+              harness.handler,
+              { personal: { portfolio: 'https://portfolio.example.com' } },
+              {
+                launchBrowser: async () => harness.browser,
+                registerPortfolioUrl: async () => falsyResult,
+                getTimestamp: () => '2026-04-21T10:00:00.000Z',
+                logger: harness.logger,
+              }
+            ),
+          (error) => {
+            assert.match(error.message, /JobKorea portfolio URL registration failed/);
+            assert.match(error.message, /https:\/\/portfolio\.example\.com/);
+            return true;
+          }
+        )
       );
     }
   });
 
   it('continues with warning when JOBKOREA_PORTFOLIO_OPTIONAL=true', async () => {
     const harness = createSyncHarness();
+    const ssot = { personal: { portfolio: 'https://portfolio.example.com' } };
     const original = process.env.JOBKOREA_PORTFOLIO_OPTIONAL;
     process.env.JOBKOREA_PORTFOLIO_OPTIONAL = 'true';
 
     try {
-      const result = await syncJobKoreaProfile(
-        harness.handler,
-        { personal: { portfolio: 'https://portfolio.example.com' } },
-        {
+      const result = await withApplyConfig(() =>
+        syncJobKoreaProfile(harness.handler, ssot, {
           launchBrowser: async () => harness.browser,
           registerPortfolioUrl: async () => null,
           getTimestamp: () => '2026-04-21T10:00:00.000Z',
           logger: harness.logger,
-        }
+        })
       );
 
       assert.strictEqual(result.success, true);
@@ -889,18 +980,188 @@ describe('JobKorea fail-loud guards', () => {
       },
     });
 
-    const result = await syncJobKoreaProfile(
-      harness.handler,
-      { personal: { portfolio: 'https://portfolio.example.com' } },
-      {
+    const result = await withApplyConfig(() =>
+      syncJobKoreaProfile(
+        harness.handler,
+        { personal: { portfolio: 'https://portfolio.example.com' } },
+        {
+          launchBrowser: async () => harness.browser,
+          registerPortfolioUrl: async () => 123,
+          logger: harness.logger,
+        }
+      )
+    );
+
+    assert.strictEqual(result.success, true, result.error);
+    assert.deepStrictEqual(savedCookies, [refreshedCookies[0]]);
+  });
+
+  it('auto-renews when no fresh saved JobKorea session is available', async () => {
+    let renewCalls = 0;
+    let loadCalls = 0;
+    const harness = createSyncHarness({
+      handler: {
+        loadSession: () => {
+          loadCalls += 1;
+          if (loadCalls === 1) {
+            return null;
+          }
+          return [{ name: 'ACNT_COOKIE', value: 'fresh', domain: '.jobkorea.co.kr', path: '/' }];
+        },
+      },
+    });
+
+    const result = await withApplyConfig(() =>
+      syncJobKoreaProfile(harness.handler, {}, {
         launchBrowser: async () => harness.browser,
-        registerPortfolioUrl: async () => 123,
+        renewSession: async () => {
+          renewCalls += 1;
+        },
         logger: harness.logger,
-      }
+      })
+    );
+
+    assert.strictEqual(result.success, true, result.error);
+    assert.strictEqual(renewCalls, 1);
+    assert.equal(loadCalls >= 2, true);
+    assert.ok(
+      harness.logs.some((entry) => entry.message.includes('No fresh JobKorea session'))
+    );
+  });
+
+  it('uses renewed cookies for the hybrid API client after a login redirect', async () => {
+    const editUrl = 'https://www.jobkorea.co.kr/User/Resume/Edit?RNo=30236578';
+    let currentUrl = 'https://www.jobkorea.co.kr/Login';
+    let renewCalls = 0;
+    let loadCalls = 0;
+    let apiCookieString = '';
+    const harness = createSyncHarness({
+      url: () => currentUrl,
+      handler: {
+        loadSession: () => {
+          loadCalls += 1;
+          if (loadCalls === 1) {
+            return [{ name: 'ACNT_COOKIE', value: 'stale', domain: '.jobkorea.co.kr', path: '/' }];
+          }
+          return [{ name: 'ACNT_COOKIE', value: 'fresh', domain: '.jobkorea.co.kr', path: '/' }];
+        },
+      },
+    });
+
+    const result = await withSyncConfig({ mode: 'hybrid-api' }, () =>
+      syncJobKoreaProfile(harness.handler, {}, {
+        launchBrowser: async () => harness.browser,
+        renewSession: async () => {
+          renewCalls += 1;
+          currentUrl = editUrl;
+        },
+        apiClientFactory: ({ cookieString }) => {
+          apiCookieString = cookieString;
+          return {
+            saveResume: async () => ({ success: true }),
+          };
+        },
+        logger: harness.logger,
+      })
     );
 
     assert.strictEqual(result.success, true);
-    assert.deepStrictEqual(savedCookies, [refreshedCookies[0]]);
+    assert.strictEqual(renewCalls, 1);
+    assert.match(apiCookieString, /ACNT_COOKIE=fresh/);
+    assert.doesNotMatch(apiCookieString, /ACNT_COOKIE=stale/);
+  });
+
+  it('does not auto-renew a missing session during dry-run', async () => {
+    let renewCalls = 0;
+    const harness = createSyncHarness({
+      handler: {
+        loadSession: () => null,
+      },
+    });
+
+    const result = await withSyncConfig({ mode: 'api-dry-run', apply: true }, () =>
+      syncJobKoreaProfile(harness.handler, {}, {
+        launchBrowser: async () => harness.browser,
+        renewSession: async () => {
+          renewCalls += 1;
+        },
+        logger: harness.logger,
+      })
+    );
+
+    assert.strictEqual(result.success, false);
+    assert.strictEqual(renewCalls, 0);
+    assert.match(result.error, /No fresh JobKorea session available for dry-run/);
+  });
+
+  it('does not allow fallback session migration during dry-run', async () => {
+    const loadOptions = [];
+    const harness = createSyncHarness({
+      handler: {
+        loadSession: (options) => {
+          loadOptions.push(options);
+          return [{ name: 'ACNT_COOKIE', value: 'abc', domain: '.jobkorea.co.kr', path: '/' }];
+        },
+      },
+    });
+
+    const result = await withSyncConfig({ mode: 'api-dry-run', apply: true }, () =>
+      syncJobKoreaProfile(harness.handler, {}, {
+        launchBrowser: async () => harness.browser,
+        logger: harness.logger,
+      })
+    );
+
+    assert.strictEqual(result.success, true, result.error);
+    assert.ok(loadOptions.length >= 1);
+    assert.ok(loadOptions.every((options) => options?.saveResolvedFallback === false));
+  });
+
+  it('does not auto-renew a login redirect during dry-run', async () => {
+    let renewCalls = 0;
+    const harness = createSyncHarness({
+      url: () => 'https://www.jobkorea.co.kr/Login',
+    });
+
+    const result = await withSyncConfig({ mode: 'api-dry-run', apply: true }, () =>
+      syncJobKoreaProfile(harness.handler, {}, {
+        launchBrowser: async () => harness.browser,
+        renewSession: async () => {
+          renewCalls += 1;
+        },
+        logger: harness.logger,
+      })
+    );
+
+    assert.strictEqual(result.success, false);
+    assert.strictEqual(renewCalls, 0);
+    assert.match(result.error, /session expired during dry-run/);
+  });
+
+  it('does not persist refreshed browser cookies during dry-run', async () => {
+    let saved = false;
+    const harness = createSyncHarness({
+      context: {
+        cookies: async () => [
+          { name: 'ACNT_COOKIE', value: 'dry', domain: '.jobkorea.co.kr', path: '/' },
+        ],
+      },
+      handler: {
+        saveSession: () => {
+          saved = true;
+        },
+      },
+    });
+
+    const result = await withSyncConfig({ mode: 'api-dry-run', apply: true }, () =>
+      syncJobKoreaProfile(harness.handler, {}, {
+        launchBrowser: async () => harness.browser,
+        logger: harness.logger,
+      })
+    );
+
+    assert.strictEqual(result.success, true, result.error);
+    assert.strictEqual(saved, false);
   });
 
   it('does not persist browser cookies when login verification fails', async () => {

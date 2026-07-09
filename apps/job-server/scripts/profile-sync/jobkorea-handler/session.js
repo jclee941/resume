@@ -92,8 +92,8 @@ export async function assertJobKoreaResumeAccess(page, options = {}) {
   }
 }
 
-export function loadJobKoreaSession() {
-  const resolvedSession = resolveJobKoreaSession();
+export function loadJobKoreaSession(options = {}) {
+  const resolvedSession = resolveJobKoreaSession(options);
   return resolvedSession ? getJobKoreaSessionCookies(resolvedSession) : null;
 }
 

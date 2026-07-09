@@ -42,6 +42,8 @@
     "jobkorea:har:capture:dry": "node scripts/profile-sync/jobkorea-handler/har-capture-cli.js --dry-run",
     "jobkorea:har:sanitize": "node scripts/profile-sync/jobkorea-handler/har-tools-cli.js sanitize",
     "jobkorea:har:analyze": "node scripts/profile-sync/jobkorea-handler/har-tools-cli.js analyze",
+    "jobkorea:sync": "env JOBKOREA_SYNC_MODE=hybrid-api node scripts/profile-sync.js jobkorea --apply",
+    "jobkorea:sync:dry": "env JOBKOREA_SYNC_MODE=api-dry-run node scripts/profile-sync.js jobkorea --diff",
     "jobkorea:api:test": "node --test 'scripts/profile-sync/__tests__/jobkorea-api-client.test.js' 'scripts/profile-sync/__tests__/jobkorea-api-payload.test.js'",
     "jobkorea:sync:hybrid:test": "node --test 'scripts/profile-sync/__tests__/jobkorea-sync-hybrid.test.js'",
     "jobkorea:test:all": "node --test 'scripts/profile-sync/__tests__/jobkorea-*.test.js'"

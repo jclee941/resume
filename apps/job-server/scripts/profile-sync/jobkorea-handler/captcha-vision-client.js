@@ -12,13 +12,22 @@ const WEAK_CAPTCHA_TOKENS = new Set([
   'captcha',
   'captchas',
   'characters',
+  'cannot',
+  'guess',
+  'help',
   'image',
   'images',
   'letter',
   'letters',
+  'like',
   'number',
   'numbers',
+  'sorry',
+  'solve',
+  'style',
   'text',
+  'unclear',
+  'unable',
   'word',
   'words',
 ]);
@@ -39,13 +48,16 @@ export function resolveCliproxyBase(env = process.env) {
   if (!rawBase) {
     throw new Error('CLIPROXY_BASE is required for JobKorea CAPTCHA solving');
   }
-  if (!/^https?:\/\//.test(rawBase)) {
-    throw new Error('CLIPROXY_BASE must start with http:// or https://');
-  }
+  let parsed;
   try {
-    new URL(rawBase);
+    parsed = new URL(rawBase);
   } catch {
     throw new Error('CLIPROXY_BASE must be a valid URL');
+  }
+  const isLocalHttp =
+    parsed.protocol === 'http:' && ['localhost', '127.0.0.1', '::1'].includes(parsed.hostname);
+  if (parsed.protocol !== 'https:' && !isLocalHttp) {
+    throw new Error('CLIPROXY_BASE must use https unless it targets localhost');
   }
   return rawBase.replace(/\/+$/, '');
 }

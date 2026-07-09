@@ -67,6 +67,28 @@ cleanup stopped local stub pid=<pid>
 Do not use production ATS credentials for this walkthrough. Real submissions are
 outside this command and require the separate approval-gated opt-in path.
 
+## JobKorea Resume Sync
+
+Use the root scripts for normal JobKorea resume synchronization. They resolve
+1Password references, renew an expired JobKorea session automatically, and use
+hybrid API save mode.
+
+```bash
+# Apply SSoT resume data to JobKorea
+npm run sync:jobkorea
+
+# Read-only verification after a sync
+npm run sync:jobkorea:dry
+```
+
+The workspace-local commands are available when secrets are already loaded in
+the environment:
+
+```bash
+npm run jobkorea:sync --workspace=@resume/job-automation
+npm run jobkorea:sync:dry --workspace=@resume/job-automation
+```
+
 ---
 
 ## Authentication Scripts

@@ -22,7 +22,7 @@ describe('captcha-solver.resolveCliproxyBase', () => {
   it('throws when CLIPROXY_BASE is not a valid URL scheme', () => {
     assert.throws(
       () => resolveCliproxyBase({ CLIPROXY_BASE: 'ftp://example.com' }),
-      /must start with http:\/\/ or https:\/\//
+      /must use https unless it targets localhost/
     );
   });
 
@@ -30,6 +30,20 @@ describe('captcha-solver.resolveCliproxyBase', () => {
     assert.throws(
       () => resolveCliproxyBase({ CLIPROXY_BASE: 'http://bad url with spaces' }),
       /must be a valid URL/
+    );
+  });
+
+  it('throws when CLIPROXY_BASE uses plaintext HTTP for a remote host', () => {
+    assert.throws(
+      () => resolveCliproxyBase({ CLIPROXY_BASE: 'http://cliproxy.example.com' }),
+      /must use https unless it targets localhost/
+    );
+  });
+
+  it('allows plaintext HTTP only for localhost debug proxies', () => {
+    assert.strictEqual(
+      resolveCliproxyBase({ CLIPROXY_BASE: 'http://localhost:8787/' }),
+      'http://localhost:8787'
     );
   });
 });
@@ -95,6 +109,10 @@ describe('captcha-solver.normalizeCaptchaAnswer', () => {
   it('rejects descriptive words returned by vision models', () => {
     assert.strictEqual(normalizeCaptchaAnswer('images'), '');
     assert.strictEqual(normalizeCaptchaAnswer('CAPTCHAs'), '');
+    assert.strictEqual(normalizeCaptchaAnswer('solve'), '');
+    assert.strictEqual(normalizeCaptchaAnswer('help'), '');
+    assert.strictEqual(normalizeCaptchaAnswer('style'), '');
+    assert.strictEqual(normalizeCaptchaAnswer('Sorry'), '');
   });
 
   it('extracts the last plausible alphanumeric answer', () => {
@@ -172,6 +190,34 @@ describe('captcha-solver.solveJobKoreaCaptcha', () => {
       }),
     };
     const modelAnswers = ['images', 'A7kP2'];
+    globalThis.fetch = mock.fn(async () => ({
+      ok: true,
+      json: async () => ({
+        choices: [{ message: { content: modelAnswers.shift() } }],
+      }),
+    }));
+
+    const result = await solveJobKoreaCaptcha(page);
+
+    assert.deepStrictEqual(result, { text: 'A7kP2', model: 'model-b' });
+    assert.strictEqual(globalThis.fetch.mock.callCount(), 2);
+  });
+
+  it('prefers a stronger mixed captcha answer over lowercase-only text', async () => {
+    process.env.CLIPROXY_BASE = 'https://cliproxy.example.com';
+    process.env.CLIPROXY_API_KEY = 'test-key';
+    process.env.JOBKOREA_CAPTCHA_MODELS = 'model-a,model-b';
+
+    let evaluateCalls = 0;
+    const page = {
+      evaluate: mock.fn(async () => {
+        evaluateCalls += 1;
+        return evaluateCalls === 1
+          ? 'https://www.jobkorea.co.kr/login/captcha.asp'
+          : { base64: 'fakebase64', mime: 'image/png' };
+      }),
+    };
+    const modelAnswers = ['abcdx', 'A7kP2'];
     globalThis.fetch = mock.fn(async () => ({
       ok: true,
       json: async () => ({

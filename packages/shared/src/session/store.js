@@ -33,10 +33,16 @@ export function createFileSessionStore(config) {
   const dirname = config.dirname || defaultDirname;
   const logger = config.logger || console;
   const options = { getTtlMs: config.getTtlMs };
+  const privateFileMode = config.fileMode ?? 0o600;
 
   function ensureDir() {
     const dir = dirname(filePath);
     if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
+  }
+
+  function writeSessionFile(contents) {
+    writeFileSync(filePath, contents, { mode: privateFileMode });
+    config.chmodSync?.(filePath, privateFileMode);
   }
 
   function load(platform = null) {
@@ -57,7 +63,7 @@ export function createFileSessionStore(config) {
       ensureDir();
       const allSessions = load() || {};
       allSessions[platform] = normalizePlatformSession(platform, data, options);
-      writeFileSync(filePath, JSON.stringify(allSessions, null, 2));
+      writeSessionFile(JSON.stringify(allSessions, null, 2));
       return true;
     } catch (error) {
       logger.error(`Failed to save session for ${platform}:`, error.message);
@@ -71,9 +77,9 @@ export function createFileSessionStore(config) {
       if (platform) {
         const allSessions = load() || {};
         delete allSessions[platform];
-        writeFileSync(filePath, JSON.stringify(allSessions, null, 2));
+        writeSessionFile(JSON.stringify(allSessions, null, 2));
       } else {
-        writeFileSync(filePath, '{}');
+        writeSessionFile('{}');
       }
       return true;
     } catch (error) {

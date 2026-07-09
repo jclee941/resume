@@ -4,7 +4,7 @@
 
 | Variable                      | Default      | Values                                    | Description                                           |
 | ----------------------------- | ------------ | ----------------------------------------- | ----------------------------------------------------- |
-| `JOBKOREA_SYNC_MODE`          | `playwright` | `playwright`, `hybrid-api`, `api-dry-run` | Sync execution mode                                   |
+| `JOBKOREA_SYNC_MODE`          | `playwright` | `playwright`, `hybrid-api`, `api-dry-run` | Low-level sync mode; root sync scripts set this       |
 | `JOBKOREA_API_FALLBACK`       | `true`       | `true`, `false`                           | Fall back to Playwright on API auth or CAPTCHA errors |
 | `JOBKOREA_PORTFOLIO_OPTIONAL` | `false`      | `true`, `false`                           | Continue sync if portfolio registration fails         |
 | `HEADLESS`                    | `true`       | `true`, `false`                           | Playwright headless mode                              |
@@ -34,9 +34,16 @@ Controls which sync strategy is used.
 - `hybrid-api` — API save with Playwright auth. Fast and low detection risk.
 - `api-dry-run` — Read-only diff. No changes are written.
 
+The operator default is the root script, which loads 1Password references and
+sets the mode automatically:
+
 ```bash
-export JOBKOREA_SYNC_MODE=hybrid-api
+npm run sync:jobkorea      # hybrid-api apply
+npm run sync:jobkorea:dry  # api-dry-run diff
 ```
+
+Set `JOBKOREA_SYNC_MODE` directly only when debugging a lower-level mode outside
+the root scripts.
 
 ### `JOBKOREA_API_FALLBACK`
 
@@ -84,8 +91,12 @@ This file contains cookies and session tokens. It is created automatically after
 the first successful login. Do not commit it to source control. The directory is
 already ignored by the repository `.gitignore`.
 
-If the session expires, delete this file or run the renewal script to refresh
-it.
+If the session expires, `npm run sync:jobkorea` renews it automatically before
+saving. The standalone renewal script remains available for debugging:
+
+```bash
+node apps/job-server/scripts/renew-jobkorea-session.js
+```
 
 ## HAR Output Directory
 
