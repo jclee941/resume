@@ -1,5 +1,5 @@
 import { buildPortfolioPayload, buildSavePayload, smartMergeFields } from './api-payload.js';
-import { classifyError } from './api-errors.js';
+import { classifyError, JobKoreaSaveError } from './api-errors.js';
 import { createAPISession } from './api-session.js';
 import { isJwtExpired } from './jwt-utils.js';
 
@@ -172,6 +172,7 @@ export class JobKoreaAPIClient {
       }),
     });
     const html = await response.text();
+    this.throwIfInvalidResponse(response, SESSION_CHECK_ENDPOINT, html, {});
 
     const baseFields = [];
     const inputRegex = /<input[^>]*name=["']([^"']+)["'][^>]*>/gi;
@@ -195,6 +196,17 @@ export class JobKoreaAPIClient {
     const textareaRegex = /<textarea[^>]*name=["']([^"']+)["'][^>]*>([\s\S]*?)<\/textarea>/gi;
     while ((match = textareaRegex.exec(html)) !== null) {
       baseFields.push({ name: match[1], value: match[2] });
+    }
+
+    if (baseFields.length === 0) {
+      throw new JobKoreaSaveError(
+        'JobKorea edit-page base fields were empty; refusing to save without preservation base',
+        {
+          endpoint: SESSION_CHECK_ENDPOINT,
+          statusCode: response.status,
+          responseBody: html,
+        }
+      );
     }
 
     return baseFields;
