@@ -140,4 +140,24 @@ describe('JobKoreaAPIClient', () => {
 
     assert.strictEqual(requests[0].options.headers.Cookie, 'NEW=2; OTHER=3');
   });
+
+  it('rejects login pages when fetching edit-page base fields', async () => {
+    global.fetch = async () =>
+      jsonResponse('<html>login</html>', { url: 'https://www.jobkorea.co.kr/Login/Login_Tot.asp' });
+
+    const client = new JobKoreaAPIClient({ cookieString: 'JKSESSION=abc' });
+
+    await assert.rejects(() => client.fetchEditPageBaseFields(), JobKoreaAuthError);
+  });
+
+  it('rejects empty edit-page base fields before a preservation-sensitive save', async () => {
+    global.fetch = async () => jsonResponse('<html><form id="frm1"></form></html>');
+
+    const client = new JobKoreaAPIClient({ cookieString: 'JKSESSION=abc' });
+
+    await assert.rejects(
+      () => client.fetchEditPageBaseFields(),
+      /edit-page base fields were empty/
+    );
+  });
 });

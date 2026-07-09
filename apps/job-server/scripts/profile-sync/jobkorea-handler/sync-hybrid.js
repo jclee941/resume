@@ -19,6 +19,35 @@ function resolveLogger(options) {
   return options.logger ?? (() => {});
 }
 
+async function readBrowserBaseFields(page) {
+  if (typeof page?.evaluate !== 'function') {
+    return [];
+  }
+  return page.evaluate(() => $('#frm1').serializeArray());
+}
+
+async function readApiBaseFields(apiClient) {
+  if (typeof apiClient?.fetchEditPageBaseFields !== 'function') {
+    return [];
+  }
+  return apiClient.fetchEditPageBaseFields();
+}
+
+function mergeBaseFields(rawFields, browserFields) {
+  const merged = new Map();
+  for (const field of rawFields || []) {
+    if (field?.name) {
+      merged.set(field.name, field.value ?? '');
+    }
+  }
+  for (const field of browserFields || []) {
+    if (field?.name) {
+      merged.set(field.name, field.value ?? '');
+    }
+  }
+  return Array.from(merged.entries()).map(([name, value]) => ({ name, value }));
+}
+
 export async function executeHybridSave(
   apiClient,
   targetFields,
@@ -35,12 +64,23 @@ export async function executeHybridSave(
     return { success: true, dryRun: true, usedApi: false };
   }
 
+  let baseFields;
   try {
-    // Extract current form state from Playwright page to use as base for smart merge
-    const baseFields =
-      typeof page?.evaluate === 'function'
-        ? await page.evaluate(() => $('#frm1').serializeArray())
-        : [];
+    const [rawBaseFields, browserBaseFields] = await Promise.all([
+      readApiBaseFields(apiClient),
+      readBrowserBaseFields(page),
+    ]);
+    baseFields = mergeBaseFields(rawBaseFields, browserBaseFields);
+  } catch (error) {
+    logger(
+      `Failed to load JobKorea preservation base: ${error.message}`,
+      'error',
+      'jobkorea'
+    );
+    return { success: false, error: error.message, usedApi: false };
+  }
+
+  try {
     const saveResult = await apiClient.saveResume(targetFields, { baseFields });
     logger(
       `API save response: ${JSON.stringify(saveResult.result ?? saveResult).slice(0, 500)}`,

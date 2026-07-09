@@ -92,6 +92,41 @@ describe('executeHybridSave', () => {
     assert.ok(logs.some((entry) => entry.message.includes('Resume API save completed')));
   });
 
+  it('preserves raw edit-page profile and photo fields missing from browser serialization', async () => {
+    const { logger } = collectLogs();
+    let observedBaseFields = [];
+    const apiClient = {
+      fetchEditPageBaseFields: async () => [
+        { name: 'UserResume.Photo_File_Name', value: 'existing-photo.jpg' },
+        { name: 'UserResume.Profile_Image_Path', value: '/profile/existing-photo.jpg' },
+      ],
+      saveResume: async (_fields, options = {}) => {
+        observedBaseFields = options.baseFields || [];
+        return { success: true, result: { saveResult: { IsSuccess: true } } };
+      },
+    };
+    const page = {
+      evaluate: async () => [{ name: 'UserResume.Resume_Title', value: 'Current title' }],
+    };
+
+    await executeHybridSave(
+      apiClient,
+      [{ name: 'UserResume.Resume_Title', value: 'Target title' }],
+      page,
+      {},
+      {
+        logger,
+        apply: true,
+        diffOnly: false,
+      }
+    );
+
+    const baseMap = new Map(observedBaseFields.map((field) => [field.name, field.value]));
+    assert.strictEqual(baseMap.get('UserResume.Resume_Title'), 'Current title');
+    assert.strictEqual(baseMap.get('UserResume.Photo_File_Name'), 'existing-photo.jpg');
+    assert.strictEqual(baseMap.get('UserResume.Profile_Image_Path'), '/profile/existing-photo.jpg');
+  });
+
   it('falls back to Playwright save on auth errors', async () => {
     const { logs, logger } = collectLogs();
     let fallbackArgs = null;
@@ -120,6 +155,39 @@ describe('executeHybridSave', () => {
     assert.ok(
       logs.some((entry) => entry.level === 'warn' && entry.message.includes('falling back'))
     );
+  });
+
+  it('does not fall back to serialize-only Playwright save when preservation base loading fails', async () => {
+    const { logs, logger } = collectLogs();
+    let fallbackCalls = 0;
+    const apiClient = {
+      fetchEditPageBaseFields: async () => {
+        throw new JobKoreaAuthError('base unavailable');
+      },
+      saveResume: async () => {
+        throw new Error('saveResume should not run without base fields');
+      },
+    };
+
+    const result = await executeHybridSave(
+      apiClient,
+      [{ name: 'UserResume.Resume_Title', value: 'Target title' }],
+      { evaluate: async () => [{ name: 'UserResume.Resume_Title', value: 'Current title' }] },
+      {},
+      {
+        logger,
+        apply: true,
+        diffOnly: false,
+        fallbackSave: async () => {
+          fallbackCalls++;
+        },
+      }
+    );
+
+    assert.strictEqual(result.success, false);
+    assert.match(result.error, /base unavailable/);
+    assert.strictEqual(fallbackCalls, 0);
+    assert.ok(logs.some((entry) => entry.level === 'error' && entry.message.includes('base')));
   });
 
   it('skips API and Playwright save in dry-run mode', async () => {
