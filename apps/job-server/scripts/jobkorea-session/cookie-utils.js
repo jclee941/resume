@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
+import { chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { homedir } from 'os';
 import { dirname, join, resolve } from 'path';
 import { fileURLToPath } from 'url';
@@ -67,18 +67,24 @@ export function hasFreshSession(session) {
 export function ensureSessionDir(filePath) {
   const dir = dirname(filePath);
   if (!existsSync(dir)) {
-    mkdirSync(dir, { recursive: true });
+    mkdirSync(dir, { recursive: true, mode: 0o700 });
   }
 }
 
-export function savePlatformSession(data, filePath = defaultSessionFile) {
+function writePrivateSessionFile(filePath, data) {
+  writeFileSync(filePath, JSON.stringify(data, null, 2), { mode: 0o600 });
+  chmodSync(filePath, 0o600);
+}
+
+export function savePlatformSession(data, filePath = defaultSessionFile, options = {}) {
+  const mirrorRepo = options.mirrorRepo !== false;
   ensureSessionDir(filePath);
-  writeFileSync(filePath, JSON.stringify(data, null, 2));
+  writePrivateSessionFile(filePath, data);
   // Mirror to repo root for backward compatibility with older profile-sync runs.
-  if (filePath !== repoSessionFile) {
+  if (mirrorRepo && filePath !== repoSessionFile) {
     try {
       ensureSessionDir(repoSessionFile);
-      writeFileSync(repoSessionFile, JSON.stringify(data, null, 2));
+      writePrivateSessionFile(repoSessionFile, data);
     } catch (error) {
       // non-fatal: profile-sync will warn separately if missing
       console.warn(`[jobkorea-session] mirror to repo failed: ${error.message}`);

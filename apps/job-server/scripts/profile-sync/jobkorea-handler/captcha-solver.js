@@ -77,12 +77,18 @@ export async function solveJobKoreaCaptcha(page) {
   );
 
   const errors = [];
+  let fallbackAnswer = null;
   for (const model of resolveVisionModels()) {
     try {
       const text = await callVisionModel(image, model);
       if (text) {
-        log(`CAPTCHA solved via ${model}: "${text}"`, 'ok', 'jobkorea');
-        return { text, model };
+        if (isStrongCaptchaAnswer(text)) {
+          log(`CAPTCHA solved via ${model}: "${text}"`, 'ok', 'jobkorea');
+          return { text, model };
+        }
+        fallbackAnswer ??= { text, model };
+        log(`CAPTCHA solver "${model}" returned low-confidence answer: "${text}"`, 'warn', 'jobkorea');
+        continue;
       }
       log(`CAPTCHA solver "${model}" returned weak answer: "${text}"`, 'warn', 'jobkorea');
     } catch (err) {
@@ -90,6 +96,18 @@ export async function solveJobKoreaCaptcha(page) {
       log(`CAPTCHA solver "${model}" failed: ${err.message}`, 'warn', 'jobkorea');
     }
   }
+  if (fallbackAnswer) {
+    log(
+      `CAPTCHA solved via ${fallbackAnswer.model}: "${fallbackAnswer.text}"`,
+      'ok',
+      'jobkorea'
+    );
+    return fallbackAnswer;
+  }
   log(`All CAPTCHA solvers failed: ${errors.join(' | ')}`, 'error', 'jobkorea');
   return null;
+}
+
+function isStrongCaptchaAnswer(text) {
+  return /[0-9]/.test(text);
 }

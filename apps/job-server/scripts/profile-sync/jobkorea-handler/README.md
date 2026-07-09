@@ -19,8 +19,8 @@ risk.
 
 | Mode                   | Description                                                                      |
 | ---------------------- | -------------------------------------------------------------------------------- |
-| `playwright` (default) | Full Playwright form fill. Slowest but most reliable.                            |
-| `hybrid-api`           | Playwright for auth and CAPTCHA, direct API for save and portfolio registration. |
+| `hybrid-api` (default command) | Playwright for auth and CAPTCHA, direct API for save and portfolio registration. |
+| `playwright`           | Full Playwright form fill. Slowest but most browser-dependent.                  |
 | `api-dry-run`          | Diff detection only. No writes. Useful for verifying what would change.          |
 
 ## Architecture
@@ -89,14 +89,14 @@ See [ENV_REFERENCE.md](ENV_REFERENCE.md) for the full reference.
 ## Usage
 
 ```bash
-# Default (Playwright full form fill)
-npm run jobkorea:sync
+# Normal operator command: resolves secrets, renews the session, and applies changes
+npm run sync:jobkorea
 
-# Hybrid mode (API save + Playwright auth)
-JOBKOREA_SYNC_MODE=hybrid-api npm run jobkorea:sync
+# Workspace-local equivalent when secrets are already loaded
+npm run jobkorea:sync --workspace=@resume/job-automation
 
 # Dry-run (diff only, no save)
-JOBKOREA_SYNC_MODE=api-dry-run npm run jobkorea:sync
+npm run sync:jobkorea:dry
 
 # HAR capture for analysis
 npm run jobkorea:har:capture

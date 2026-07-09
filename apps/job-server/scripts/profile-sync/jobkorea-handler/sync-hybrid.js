@@ -88,11 +88,16 @@ export async function executeHybridPortfolio(
   ssot,
   options = {}
 ) {
+  const logger = resolveLogger(options);
+  const dryRun = options.dryRun || getJobKoreaSyncMode() === 'api-dry-run';
+  if (dryRun) {
+    logger('Hybrid portfolio registration skipped (dry-run)', 'info', 'jobkorea');
+    return { success: true, skipped: true, dryRun: true, usedApi: false };
+  }
+
   if (!portfolioUrl) {
     return { success: true, skipped: true, usedApi: false };
   }
-
-  const logger = resolveLogger(options);
 
   try {
     const result = await apiClient.registerPortfolio(portfolioUrl);

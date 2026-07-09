@@ -1,6 +1,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { toPlaywrightCookies } from '../cookie-utils.js';
+import { mkdtempSync, readFileSync, statSync } from 'fs';
+import { tmpdir } from 'os';
+import { join } from 'path';
+import { savePlatformSession, toPlaywrightCookies } from '../cookie-utils.js';
 
 test('fills missing domain and path so Playwright addCookies accepts the cookie', () => {
   const [cookie] = toPlaywrightCookies([{ name: 'SES_ID', value: 'abc' }]);
@@ -39,4 +42,16 @@ test('drops cookies missing a name or value rather than emitting invalid entries
 test('returns an empty array for non-array input', () => {
   assert.deepEqual(toPlaywrightCookies(null), []);
   assert.deepEqual(toPlaywrightCookies(undefined), []);
+});
+
+test('saves JobKorea session files with owner-only permissions', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'jobkorea-session-'));
+  const sessionPath = join(dir, 'jobkorea.json');
+
+  savePlatformSession({ cookies: [{ name: 'sid', value: 'secret' }] }, sessionPath, {
+    mirrorRepo: false,
+  });
+
+  assert.equal(statSync(sessionPath).mode & 0o777, 0o600);
+  assert.match(readFileSync(sessionPath, 'utf8'), /sid/);
 });

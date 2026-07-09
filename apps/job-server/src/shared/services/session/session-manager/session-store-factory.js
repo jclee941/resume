@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
+import { chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { createFileSessionStore } from '@resume/shared/session';
 import { getResumeBasePath } from '../../../utils/paths.js';
@@ -12,6 +12,7 @@ export function createStore(logger) {
     existsSync,
     readFileSync,
     writeFileSync,
+    chmodSync,
     mkdirSync,
     filePath: SESSION_FILE,
     logger,

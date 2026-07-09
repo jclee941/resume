@@ -10,8 +10,8 @@ import {
 import { syncJobKoreaProfile } from './jobkorea-handler/sync.js';
 
 export default class JobKoreaHandler {
-  loadSession() {
-    return loadJobKoreaSession();
+  loadSession(options = {}) {
+    return loadJobKoreaSession(options);
   }
 
   saveSession(cookies) {

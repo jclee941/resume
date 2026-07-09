@@ -22,6 +22,8 @@
     "sync:pptx": "python3 tools/scripts/build/generate_shinhan_pptx.py",
     "sync:pdf": "go run ./tools/scripts/build/pdf-generator.go master",
     "sync:all": "npm run sync:data && npm run sync:pdf && npm run sync:pptx",
+    "sync:jobkorea": "npm run op:run -- --env-file ../../.env.1password -- env JOBKOREA_SYNC_MODE=hybrid-api node ../../apps/job-server/scripts/profile-sync.js jobkorea --apply",
+    "sync:jobkorea:dry": "npm run op:run -- --env-file ../../.env.1password -- env JOBKOREA_SYNC_MODE=api-dry-run node ../../apps/job-server/scripts/profile-sync.js jobkorea --diff",
     "op:run": "cd tools/scripts && go run ./onepassword/run",
     "op:native:run": "cd tools/scripts && go run ./onepassword/native-run",
     "op:seed:resume": "cd tools/scripts && go run ./onepassword/seed-resume",

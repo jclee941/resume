@@ -14,6 +14,7 @@ import {
   sleep,
   verifyAuthenticatedSession,
   waitForLoginConfirmation,
+  withTimeout,
 } from './jobkorea-session/index.js';
 import { pickJobKoreaBrowserProfile } from './jobkorea-session/user-agent-pool.js';
 
@@ -23,6 +24,7 @@ const headless = process.env.HEADLESS !== 'false';
 const headlessEnv = process.env.HEADLESS;
 const loginUrl = 'https://www.jobkorea.co.kr/Login';
 const resumeUrl = `https://www.jobkorea.co.kr/User/Resume/View?rNo=${process.env.JOBKOREA_RNO}`;
+const loginConfirmationTimeoutMs = 180000;
 
 function log(...args) {
   console.log('[jobkorea-session]', ...args);
@@ -77,13 +79,22 @@ async function main() {
         await handleCaptchaIfNeeded(page, { log, headlessEnv });
         await fillLoginForm(page, { email: loginId, password, log });
         await clickVisibleSubmit(page, { log });
-        await waitForLoginConfirmation(page, {
-          verifyAuthenticatedSession,
-          resumeUrl,
-          userAgent,
-          headlessEnv,
-          log,
-        });
+        const loginConfirmed = await withTimeout(
+          waitForLoginConfirmation(page, {
+            verifyAuthenticatedSession,
+            resumeUrl,
+            userAgent,
+            headlessEnv,
+            log,
+          }),
+          loginConfirmationTimeoutMs,
+          false
+        );
+        if (!loginConfirmed) {
+          throw new Error(
+            `Login confirmation timed out after ${loginConfirmationTimeoutMs / 1000}s`
+          );
+        }
         log('Login successful');
       }
 

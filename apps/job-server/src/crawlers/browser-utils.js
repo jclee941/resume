@@ -14,6 +14,18 @@ const LAUNCH_ARGS = [
   '--disable-dev-shm-usage',
   '--disable-gpu',
 ];
+const DEFAULT_PROTOCOL_TIMEOUT_MS = 600000;
+
+function resolveProtocolTimeout(options = {}) {
+  if (Number.isFinite(options.protocolTimeout)) {
+    return options.protocolTimeout;
+  }
+
+  const rawTimeout = Number(process.env.PUPPETEER_PROTOCOL_TIMEOUT_MS);
+  return Number.isFinite(rawTimeout) && rawTimeout > 0
+    ? rawTimeout
+    : DEFAULT_PROTOCOL_TIMEOUT_MS;
+}
 
 async function safeBrowserClose(browser, timeoutMs = 10000) {
   if (!browser) return;
@@ -61,6 +73,7 @@ export async function withStealthBrowser(action, options = {}) {
     browser = await puppeteer.launch({
       headless: resolveHeadlessMode(options.headless),
       executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
+      protocolTimeout: resolveProtocolTimeout(options),
       args: LAUNCH_ARGS,
     });
 
@@ -78,6 +91,7 @@ export async function launchStealthBrowser() {
   const browser = await puppeteer.launch({
     headless: resolveHeadlessMode(),
     executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
+    protocolTimeout: resolveProtocolTimeout(),
     args: LAUNCH_ARGS,
   });
   const page = await browser.newPage();

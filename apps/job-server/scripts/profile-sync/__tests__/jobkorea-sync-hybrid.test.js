@@ -152,6 +152,32 @@ describe('executeHybridSave', () => {
 });
 
 describe('executeHybridPortfolio', () => {
+  it('does not register portfolio URLs in dry-run mode', async () => {
+    let registerCalls = 0;
+    const result = await withSyncMode('api-dry-run', () =>
+      executeHybridPortfolio(
+        {
+          registerPortfolio: async () => {
+            registerCalls++;
+            return { success: true, fileIdx: 9876 };
+          },
+        },
+        'https://portfolio.example.test',
+        [],
+        {},
+        { personal: { portfolio: 'https://portfolio.example.test' } }
+      )
+    );
+
+    assert.deepStrictEqual(result, {
+      success: true,
+      skipped: true,
+      dryRun: true,
+      usedApi: false,
+    });
+    assert.strictEqual(registerCalls, 0);
+  });
+
   it('registers portfolio through API and appends mapped fields', async () => {
     const targetFields = [];
     const apiClient = {

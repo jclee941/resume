@@ -28,6 +28,7 @@ function createFsState(initialFiles = {}) {
       files.set(targetPath, String(data));
       dirs.add(dirname(targetPath));
     },
+    chmodSync: () => {},
     mkdirSync: (targetPath) => {
       dirs.add(targetPath);
     },
@@ -39,6 +40,7 @@ function setupFs(options = {}) {
   mock.method(fsCjs, 'existsSync', options.existsSync ?? state.existsSync);
   mock.method(fsCjs, 'readFileSync', options.readFileSync ?? state.readFileSync);
   mock.method(fsCjs, 'writeFileSync', options.writeFileSync ?? state.writeFileSync);
+  mock.method(fsCjs, 'chmodSync', options.chmodSync ?? state.chmodSync);
   mock.method(fsCjs, 'mkdirSync', options.mkdirSync ?? state.mkdirSync);
   syncBuiltinESMExports();
   return {
@@ -153,6 +155,12 @@ describe('SessionManager', () => {
     assert.equal(ok, true);
     assert.equal(fsCjs.mkdirSync.mock.callCount(), 1);
     assert.equal(fsCjs.mkdirSync.mock.calls[0].arguments[0], dataDir);
+    assert.deepEqual(fsCjs.writeFileSync.mock.calls[0].arguments.slice(0, 3), [
+      sessionFile,
+      state.files.get(sessionFile),
+      { mode: 0o600 },
+    ]);
+    assert.deepEqual(fsCjs.chmodSync.mock.calls[0].arguments, [sessionFile, 0o600]);
     const saved = JSON.parse(state.files.get(sessionFile));
     assert.equal(saved.wanted.platform, 'wanted');
     assert.equal(saved.wanted.cookies, null);
