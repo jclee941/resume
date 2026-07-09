@@ -2,6 +2,7 @@ import { JobKoreaAPIClient } from './api-client.js';
 import { JobKoreaAuthError } from './api-errors.js';
 import { log } from '../sync-logger.js';
 import { buildJobKoreaFormData } from '../jobkorea-sections.js';
+import { assertJobKoreaCareerPayloadCoverage } from './career-guards.js';
 import { isJwtExpired } from './jwt-utils.js';
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
@@ -146,6 +147,8 @@ export async function syncToJobKoreaAPI(ssot, options = {}) {
   // 3. Overlay our updates onto the browser template
   const mergedFields = overlayTemplate(browserTemplate, targetFields);
   logger(`Merged fields: ${mergedFields.length}`, 'info', 'jobkorea');
+
+  assertJobKoreaCareerPayloadCoverage(ssot, mergedFields, { dryRun });
 
   // 4. Portfolio URL registration (via API)
   const portfolioUrl = ssot?.personal?.portfolio;
