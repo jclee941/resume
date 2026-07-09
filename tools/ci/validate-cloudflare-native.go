@@ -24,6 +24,11 @@ func main() {
 		os.Exit(1)
 	}
 
+	if err := validateDeployBuildConfig(rootDir); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
 	legacyPattern := regexp.MustCompile(`/home/jclee/applications/resume|cd web\b|web/wrangler\.toml|web/worker\.js`)
 	legacyTargets := []string{
 		filepath.Join(rootDir, ".github/workflows"),
@@ -71,6 +76,33 @@ func main() {
 	}
 
 	fmt.Println("OK: Cloudflare native structure validated")
+}
+
+func validateDeployBuildConfig(rootDir string) error {
+	configs := []string{
+		"wrangler.jsonc",
+		"apps/portfolio/wrangler.jsonc",
+	}
+	buildBlock := regexp.MustCompile(`(?m)^\s*"build"\s*:\s*\{`)
+	buildCommand := regexp.MustCompile(`(?m)^\s*"command"\s*:\s*"npm run build"\s*,?\s*$`)
+	buildCWD := regexp.MustCompile(`(?m)^\s*"cwd"\s*:\s*"\."\s*,?\s*$`)
+	for _, config := range configs {
+		body, err := os.ReadFile(filepath.Join(rootDir, config))
+		if err != nil {
+			return fmt.Errorf("ERROR: read %s: %w", config, err)
+		}
+		text := string(body)
+		if !buildBlock.MatchString(text) {
+			return fmt.Errorf("ERROR: %s missing deploy build block; production deploy must run root `npm run build` so SSoT sync happens before bundling", config)
+		}
+		if !buildCommand.MatchString(text) {
+			return fmt.Errorf("ERROR: %s build.command must be `npm run build`; root build chains sync:data before worker generation", config)
+		}
+		if !buildCWD.MatchString(text) {
+			return fmt.Errorf("ERROR: %s build.cwd must be `.` so deploy builds execute from the repository root", config)
+		}
+	}
+	return nil
 }
 
 func detectRootDir() string {

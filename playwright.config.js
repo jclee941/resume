@@ -90,13 +90,12 @@ module.exports = defineConfig({
           // the portfolio worker.js directly, so local E2E exercises the real
           // edge router (locale routing, /sw.js cache headers, applyResponseHeaders).
           // Run from repo root so wrangler.jsonc's build command
-          // (`npm run sync:data && npm run build`, cwd ".") resolves the
-          // root-only `sync:data` script.
+          // (`npm run build`, cwd ".") resolves the root-only sync/build chain.
           command: 'npx wrangler dev --config apps/portfolio/wrangler.jsonc --port 8787 --local',
           port: 8787,
           reuseExistingServer: !process.env.CI,
-          // wrangler.jsonc's build command runs `npm run sync:data && npm run
-          // build` on startup; allow ample time for the data sync + worker build.
+          // wrangler.jsonc's build command runs the root build on startup;
+          // allow ample time for the data sync + worker build.
           timeout: 300 * 1000,
         },
       }),

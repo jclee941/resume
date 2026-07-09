@@ -4,6 +4,13 @@
   "main": "apps/portfolio/entry.js",
   "compatibility_date": "2026-02-21",
   "compatibility_flags": ["nodejs_compat"],
+  // Cloudflare Workers Builds may resolve the root config. Keep deployment
+  // builds anchored at the repository root so `npm run build` performs
+  // sync:data before generating apps/portfolio/worker.js.
+  "build": {
+    "command": "npm run build",
+    "cwd": ".",
+  },
   "observability": {
     "enabled": true,
     "head_sampling_rate": 1,

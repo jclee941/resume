@@ -4,15 +4,11 @@
   "main": "entry.js",
   "compatibility_date": "2026-04-29",
   "compatibility_flags": ["nodejs_compat"],
-  // entry.js imports ./worker.js — a generated bundle that was previously
-  // committed but is now gitignored (audit fix). This build command makes
-  // sure wrangler regenerates worker.js + the locale data.json snapshots
-  // before bundling, so `wrangler deploy` (incl. Cloudflare Workers Builds)
-  // works on a fresh checkout. cwd is relative to where wrangler was
-  // invoked — both local (npm run deploy:wrangler:root) and Cloudflare
-  // Workers Builds run wrangler from the repo root, so '.' is correct.
+  // entry.js imports ./worker.js — a generated bundle that is gitignored.
+  // The root build script chains sync:data before worker generation, so every
+  // wrangler deploy path uses fresh SSoT snapshots before bundling.
   "build": {
-    "command": "npm run sync:data && npm run build",
+    "command": "npm run build",
     "cwd": ".",
   },
   "observability": {
